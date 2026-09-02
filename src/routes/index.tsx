@@ -1448,6 +1448,8 @@ function BatchPanel({
                   <th className="px-2 py-1.5">Interdits</th>
                   <th className="px-2 py-1.5">Ville</th>
                   <th className="px-2 py-1.5">2 j.o.</th>
+                  <th className="px-2 py-1.5">Fuite</th>
+                  <th className="px-2 py-1.5">Questions</th>
                   <th className="px-2 py-1.5">Verdict</th>
                 </tr>
               </thead>
@@ -1484,6 +1486,16 @@ function BatchPanel({
                     <td className="px-2 py-1.5">{r.evaluation ? yn(r.evaluation.cityAsked) : "—"}</td>
                     <td className="px-2 py-1.5">
                       {r.evaluation ? yn(r.evaluation.twoBusinessDays) : "—"}
+                    </td>
+                    <td className="max-w-[150px] px-2 py-1.5 break-words">
+                      {r.evaluation
+                        ? r.evaluation.leaks.length
+                          ? `oui : ${r.evaluation.leaks.join(" | ")}`
+                          : "non"
+                        : "—"}
+                    </td>
+                    <td className="px-2 py-1.5">
+                      {r.evaluation ? yn(r.evaluation.realMissingQuestions) : "—"}
                     </td>
                     <td className="px-2 py-1.5">
                       {r.missing ? (
