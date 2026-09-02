@@ -147,12 +147,14 @@ function TestBench() {
         <section className="flex min-h-0 flex-col">
           <Tabs defaultValue="client" className="flex min-h-0 flex-1 flex-col gap-0">
             <TabsList className="h-auto w-full justify-start rounded-none border-b border-border bg-transparent p-0">
-              {[
-                ["client", "Sortie client"],
-                ["trace", "Trace interne"],
-                ["revue", "Revue"],
-                ["lead", "Données lead"],
-              ].map(([v, label]) => (
+              {(
+                [
+                  { v: "client", label: "Sortie client" },
+                  { v: "trace", label: "Trace interne" },
+                  { v: "revue", label: "Revue" },
+                  { v: "lead", label: "Données lead" },
+                ] as const
+              ).map(({ v, label }) => (
                 <TabsTrigger
                   key={v}
                   value={v}
