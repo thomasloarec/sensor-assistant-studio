@@ -28,6 +28,12 @@ import {
   type DossierSection,
 } from "@/lib/standex/application-dossier";
 import { buildCsv, buildMarkdown, downloadText } from "@/lib/standex/export";
+import {
+  buildComparisonPack,
+  runExperimental,
+  saveComparisonVerdict,
+  type ExperimentalRun,
+} from "@/lib/standex/experimental-run";
 import type { AssistantMode } from "@/lib/standex/baseline";
 import {
   BaselineModePanel,
@@ -539,7 +545,7 @@ function Bench({ user }: { user: User }) {
       ],
       { tester: user.email ?? user.id, date: new Date().toISOString().slice(0, 10) },
     );
-    downloadText(`pack-comparaison-${scenario.scenario_id}.md`, md);
+    downloadText(`pack-comparaison-${scenario.scenario_id}.md`, md, "text/markdown");
   };
 
 
@@ -894,6 +900,12 @@ function Bench({ user }: { user: User }) {
                   <BaselineModePanel
                     mode={assistantMode}
                     onModeChange={setAssistantMode}
+                    run={expRun}
+                    busy={expBusy}
+                    canRun={Boolean(scenario && activeId)}
+                    onGenerate={() => void generateExperimental()}
+                    onVerdict={(p, n) => void saveExperimentalVerdict(p, n)}
+                    onExportPack={exportComparisonPack}
                     baselineResponse={lastOutput?.customer_summary ?? null}
                     baselineTrace={
                       lastTrace
