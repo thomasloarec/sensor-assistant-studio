@@ -65,7 +65,10 @@ export async function runScenario(params: {
     confidence: composed.confidence,
     routing_reason: composed.routingReason,
     product_candidates: [],
-    datasheet_values_used: {},
+    datasheet_values_used: {
+      ...composed.datasheetValues,
+      distributor_path_allowed: composed.distributorPathAllowed,
+    } as never,
   });
 
   const review = await db.insertReview({
