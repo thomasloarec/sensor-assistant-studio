@@ -26,7 +26,9 @@ export async function runScenario(params: {
   scenario: import("./types").SensorTestScenario;
   startTurnIndex: number;
   assistantText?: string;
-}): Promise<ScenarioRunResult> {
+  verdict?: import("./types").Verdict;
+  notes?: string;
+}): Promise<ScenarioRunResult & { composed: ReturnType<typeof composeResponse> }> {
   const { sessionId, reviewerId, scenario, startTurnIndex } = params;
   const composed = composeResponse(scenario);
   const assistantText = params.assistantText?.trim() || composed.customerText;
@@ -70,9 +72,11 @@ export async function runScenario(params: {
     session_id: sessionId,
     reviewer_id: reviewerId,
     reviewer_role: "thomas",
-    verdict: "not_reviewed",
-    notes: `Exécution automatique du scénario ${scenario.scenario_id} (contrat V0.2).`,
+    verdict: params.verdict ?? "not_reviewed",
+    notes:
+      params.notes ??
+      `Exécution automatique du scénario ${scenario.scenario_id} (contrat V0.2).`,
   });
 
-  return { messages: [prospectMsg, assistantMsg], output, trace, review };
+  return { messages: [prospectMsg, assistantMsg], output, trace, review, composed };
 }

@@ -19,6 +19,8 @@ import {
 import { isSupabaseConfigured, supabase } from "@/lib/standex/supabase";
 import * as db from "@/lib/standex/queries";
 import { runScenario, safeOutputType, splitList } from "@/lib/standex/scenario-run";
+import { composeResponse } from "@/lib/standex/response-contract";
+import { evaluateRun, type ScenarioEvaluation } from "@/lib/standex/evaluate";
 import {
   REVIEWER_ROLES,
   VERDICTS,
@@ -212,6 +214,28 @@ function SignIn() {
   );
 }
 
+const PRIORITY_SCENARIOS = [
+  "MVP-TS-002",
+  "MVP-TS-003",
+  "MVP-TS-004",
+  "MVP-TS-005",
+  "MVP-TS-006",
+  "MVP-TS-007",
+  "MVP-TS-021",
+  "MVP-TS-022",
+] as const;
+
+interface BatchRow {
+  code: string;
+  missing?: boolean;
+  scenario?: SensorTestScenario;
+  evaluation?: ScenarioEvaluation;
+  outputType?: string;
+  guardrails?: string[];
+  customerText?: string;
+  sessionId?: string;
+}
+
 function Bench({ user }: { user: User }) {
   const [sessions, setSessions] = useState<SensorTestSession[]>([]);
   const [scenarios, setScenarios] = useState<SensorTestScenario[]>([]);
@@ -224,6 +248,8 @@ function Bench({ user }: { user: User }) {
   const [error, setError] = useState<string | null>(null);
   const [draft, setDraft] = useState("");
   const [running, setRunning] = useState(false);
+  const [batch, setBatch] = useState<BatchRow[]>([]);
+  const [batchBusy, setBatchBusy] = useState(false);
 
   const activeSession = useMemo(
     () => sessions.find((s) => s.id === activeId) ?? null,
@@ -336,6 +362,55 @@ function Bench({ user }: { user: User }) {
         setDraft("");
       } finally {
         setRunning(false);
+      }
+    });
+
+  // Lot prioritaire : une session dédiée par scénario, tout est persisté.
+  const runBatch = () =>
+    guard(async () => {
+      if (batchBusy) return;
+      setBatchBusy(true);
+      setBatch([]);
+      try {
+        for (const code of PRIORITY_SCENARIOS) {
+          const sc = scenarios.find((s) => s.scenario_id === code);
+          if (!sc) {
+            setBatch((prev) => [...prev, { code, missing: true }]);
+            continue;
+          }
+          const composed = composeResponse(sc);
+          const evaluation = evaluateRun(sc, composed);
+          const session = await db.createSession(user.id, {
+            prospect_company: `Lot prioritaire · ${sc.scenario_id}`,
+            channel: "lovable_test",
+            status: "in_review",
+          });
+          const res = await runScenario({
+            sessionId: session.id,
+            reviewerId: user.id,
+            scenario: sc,
+            startTurnIndex: 0,
+            verdict: evaluation.verdict === "OK" ? "good" : "needs_revision",
+            notes: `Lot prioritaire · ${evaluation.verdict}${
+              evaluation.failures.length ? ` · ${evaluation.failures.join(" ; ")}` : ""
+            }`,
+          });
+          setSessions((prev) => [session, ...prev]);
+          setBatch((prev) => [
+            ...prev,
+            {
+              code,
+              scenario: sc,
+              evaluation,
+              outputType: res.output.output_type,
+              guardrails: composed.guardrails,
+              customerText: composed.customerText,
+              sessionId: session.id,
+            },
+          ]);
+        }
+      } finally {
+        setBatchBusy(false);
       }
     });
 
@@ -501,6 +576,7 @@ function Bench({ user }: { user: User }) {
                   { v: "trace", label: "Trace interne" },
                   { v: "revue", label: "Revue" },
                   { v: "lead", label: "Données lead" },
+                  { v: "batch", label: "Synthèse P0" },
                 ] as const
               ).map(({ v, label }) => (
                 <TabsTrigger
@@ -644,6 +720,17 @@ function Bench({ user }: { user: User }) {
                       </div>
                     )}
                   </div>
+                </ScrollArea>
+              </TabsContent>
+
+              <TabsContent value="batch" className="m-0 h-full">
+                <ScrollArea className="h-full">
+                  <BatchPanel
+                    rows={batch}
+                    busy={batchBusy}
+                    onRun={() => void runBatch()}
+                    onOpen={setActiveId}
+                  />
                 </ScrollArea>
               </TabsContent>
             </div>
@@ -872,6 +959,112 @@ function ContractList({
             </li>
           ))}
         </ul>
+      )}
+    </div>
+  );
+}
+
+function BatchPanel({
+  rows,
+  busy,
+  onRun,
+  onOpen,
+}: {
+  rows: BatchRow[];
+  busy: boolean;
+  onRun: () => void;
+  onOpen: (id: string) => void;
+}) {
+  const ok = rows.filter((r) => r.evaluation?.verdict === "OK").length;
+  return (
+    <div className="space-y-3 p-4">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div>
+          <h3 className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
+            Lot prioritaire · 8 scénarios
+          </h3>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Réponse client, sortie, trace interne, garde-fous et verdict — tout est persisté.
+          </p>
+        </div>
+        <Button size="sm" disabled={busy} onClick={onRun} className="shrink-0">
+          {busy ? `Exécution… (${rows.length}/8)` : "Lancer les 8 scénarios"}
+        </Button>
+      </div>
+
+      {rows.length === 0 ? (
+        <Empty>Aucun lot exécuté pour l'instant.</Empty>
+      ) : (
+        <>
+          <p className="font-mono text-xs text-accent">
+            {ok}/{rows.length} OK · {rows.length - ok} à corriger
+          </p>
+          <div className="overflow-x-auto rounded-md border border-border">
+            <table className="w-full border-collapse font-mono text-[11px]">
+              <thead>
+                <tr className="border-b border-border bg-secondary/50 text-left">
+                  <th className="px-2 py-1.5">Scénario</th>
+                  <th className="px-2 py-1.5">Sortie</th>
+                  <th className="px-2 py-1.5">Garde-fous</th>
+                  <th className="px-2 py-1.5">Verdict</th>
+                </tr>
+              </thead>
+              <tbody>
+                {rows.map((r) => (
+                  <tr key={r.code} className="border-b border-border/60 align-top">
+                    <td className="px-2 py-1.5">
+                      {r.sessionId ? (
+                        <button
+                          className="text-accent underline-offset-2 hover:underline"
+                          onClick={() => onOpen(r.sessionId!)}
+                        >
+                          {r.code}
+                        </button>
+                      ) : (
+                        r.code
+                      )}
+                    </td>
+                    <td className="px-2 py-1.5">{r.outputType ?? "—"}</td>
+                    <td className="max-w-[220px] px-2 py-1.5 break-words">
+                      {r.guardrails?.length ? r.guardrails.join(", ") : "—"}
+                    </td>
+                    <td className="px-2 py-1.5">
+                      {r.missing ? (
+                        <Badge variant="outline" className="font-mono text-[10px]">
+                          absent
+                        </Badge>
+                      ) : (
+                        <Badge
+                          variant="outline"
+                          className={`font-mono text-[10px] ${
+                            r.evaluation?.verdict === "OK" ? "text-success" : "text-destructive"
+                          }`}
+                        >
+                          {r.evaluation?.verdict}
+                        </Badge>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {rows
+            .filter((r) => r.evaluation && r.evaluation.failures.length > 0)
+            .map((r) => (
+              <div key={`f-${r.code}`} className="rounded-md border border-border bg-card p-3">
+                <p className="font-mono text-[11px] text-destructive">{r.code}</p>
+                <ul className="mt-1 space-y-0.5">
+                  {r.evaluation!.failures.map((f) => (
+                    <li key={f} className="font-mono text-[11px] text-muted-foreground">
+                      · {f}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+        </>
       )}
     </div>
   );
