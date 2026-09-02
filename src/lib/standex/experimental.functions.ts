@@ -246,7 +246,7 @@ export const generateExperimentalResponse = createServerFn({ method: "POST" })
       };
     }
 
-    const payload = extractJson(text);
+    const payload = toolPayload ?? extractJson(text);
     console.log("[experimental]", model, "tokens", JSON.stringify(usage));
     if (!payload) {
       return {
