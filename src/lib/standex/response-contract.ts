@@ -98,6 +98,8 @@ export interface ComposedResponse {
   beDossier: Record<string, unknown>;
   /** Valeurs datasheet retenues, tracées côté interne uniquement. */
   datasheetValues: Record<string, unknown>;
+  /** Éléments de contrat repris côté interne (jamais rendus au prospect). */
+  internalContractItems: string[];
 }
 
 /**
@@ -114,7 +116,14 @@ interface ScenarioOverride {
   extraGuardrails?: string[];
   /** Coupe le paragraphe distributeur générique. */
   suppressDistributorLine?: boolean;
+  /** Coupe les phrases génériques de garde-fous déjà couvertes par le texte. */
+  suppressGuardrails?: string[];
+  /** Coupe la phrase électrique générique S1. */
+  suppressGenericElectrical?: boolean;
+  /** Vraies questions manquantes (français), pour la trace interne. */
+  missingQuestions?: string[];
 }
+
 
 const SCENARIO_OVERRIDES: Record<string, ScenarioOverride> = {
   "MVP-TS-004": {
@@ -164,7 +173,13 @@ const SCENARIO_OVERRIDES: Record<string, ScenarioOverride> = {
       lead_handling: "do not cut/bend leads",
     },
     distributorPathAllowed: true,
+    suppressGuardrails: ["raw_reed_switch"],
+    missingQuestions: [
+      "La référence d'origine est-elle bien GP501 sur votre équipement ?",
+      "Dans quelle ville êtes-vous basé ?",
+    ],
   },
+
   "MVP-TS-005": {
     customerText: [
       "Pour MK33-87 et MK23-87, je retiendrais la même base électrique prudente du reed switch 87 Form A : 200 V en tension de commutation, 0,4 A en courant de commutation, 0,5 A en courant permanent, 230 VDC en tension de claquage et 150 mOhm en résistance de contact.",
@@ -184,13 +199,18 @@ const SCENARIO_OVERRIDES: Record<string, ScenarioOverride> = {
   // V0.6 · compatibilité électrique explicite (entrée automate 24 V).
   "MVP-TS-001": {
     appendText: [
-      "Côté électrique, votre signal 24 V vers une entrée automate ressemble à une entrée de commande faible niveau, pas à une commutation de puissance. C'est donc compatible en ordre de grandeur (electrical fit), sous réserve de valider le câblage, le type d'entrée et les conditions réelles.",
+      "Côté électrique, votre signal 24 V vers une entrée automate correspond à une commande faible niveau, pas à une commutation de puissance : c'est compatible en ordre de grandeur, sous réserve de valider le câblage, le type d'entrée et les conditions réelles.",
     ].join("\n"),
     datasheetValues: {
       electrical_fit: "24 V PLC input = low-level command, not power switching",
       load_type: "entrée automate 24 V",
       verification_required: "câblage, type d'entrée, conditions réelles",
     },
+    suppressGenericElectrical: true,
+    missingQuestions: [
+      "Quelles sont les dimensions disponibles pour le montage encastré sur la porte ?",
+      "Dans quelle ville êtes-vous basé ?",
+    ],
   },
   // V0.6 · mise en garde explicite sur les pattes d'un reed switch brut.
   "MVP-TS-008": {
@@ -205,8 +225,124 @@ const SCENARIO_OVERRIDES: Record<string, ScenarioOverride> = {
     extraGuardrails: ["raw_switch_handling_guardrail"],
     distributorPathAllowed: false,
     suppressDistributorLine: true,
+    suppressGuardrails: ["raw_reed_switch"],
+    missingQuestions: [
+      "Quel format de pattes ou quel encombrement devez-vous respecter sur votre montage ?",
+      "Dans quelle ville êtes-vous basé ?",
+    ],
+  },
+  // V1.1 · vraie question client pour un scénario S3.
+  "MVP-TS-011": {
+    customerText: [
+      "J'ai compris que vous cherchez à détecter un niveau dans un réservoir. La question clé avant de proposer une référence est : le capteur doit-il détecter la position d'un flotteur aimanté à travers la paroi du réservoir, ou être intégré directement dans le réservoir ?",
+      "Cette information change le type de montage, l'étanchéité et le couple capteur-aimant à valider.",
+    ].join("\n"),
+    datasheetValues: {
+      pending_decision: "flotteur aimanté à travers paroi vs intégration interne",
+    },
+    missingQuestions: [
+      "Le capteur doit-il détecter un flotteur aimanté à travers la paroi, ou être intégré dans le réservoir ?",
+      "Quel est le fluide et quelle est l'épaisseur de la paroi du réservoir ?",
+      "Dans quelle ville êtes-vous basé ?",
+    ],
+  },
+  // V1.1 · repère thermique ferrite sans promesse.
+  "MVP-TS-015": {
+    appendText: [
+      "280 °C est une température critique pour un couple capteur-aimant. Thomas retient 300 °C comme ordre de grandeur haut pour la ferrite, mais les sources aimants doivent encore être clarifiées ; il faut donc une validation Standex avant de confirmer.",
+    ].join("\n"),
+    datasheetValues: {
+      ferrite_reference: "300 °C ordre de grandeur haut, sources à clarifier",
+      exposure: "280 °C demandé",
+    },
+    missingQuestions: [
+      "Quelle nuance d'aimant et quelle durée d'exposition thermique sont prévues ?",
+      "S'agit-il d'une exposition continue ou de pics de température ?",
+      "Dans quelle ville êtes-vous basé ?",
+    ],
+  },
+  // V1.1 · fonction de sécurité : décision explicite.
+  "MVP-TS-021": {
+    appendText: [
+      "Comme vous mentionnez une fonction de sécurité sur une porte machine, Standex doit vérifier le rôle exact du capteur dans la chaîne de sécurité, les exigences applicables et l'architecture de contrôle. Je ne peux pas présenter une référence comme certifiée ou suffisante sans cette validation.",
+    ].join("\n"),
+    datasheetValues: {
+      safety_function: "rôle dans la chaîne de sécurité à qualifier",
+    },
+    missingQuestions: [
+      "Quel est le rôle exact du capteur dans la chaîne de sécurité de la machine ?",
+      "Quelles exigences de sécurité et quelle architecture de contrôle s'appliquent ?",
+      "Dans quelle ville êtes-vous basé ?",
+    ],
+  },
+  // V1.1 · équivalence concurrente : demande explicite de données.
+  "MVP-TS-022": {
+    appendText: [
+      "Pour chercher un équivalent Standex fiable, il faut la fiche technique de la référence concurrente ou les caractéristiques d'application. Je ne dois pas conclure une équivalence depuis le nom seul.",
+    ].join("\n"),
+    datasheetValues: {
+      equivalence_basis: "fiche technique concurrente ou caractéristiques d'application",
+    },
+    missingQuestions: [
+      "Quelle fiche technique concurrente doit-on comparer ?",
+      "Quelles sont les caractéristiques d'application (tension, courant, charge, montage) ?",
+      "Dans quelle ville êtes-vous basé ?",
+    ],
   },
 };
+
+/** Fragments interdits dans la réponse prospect (tags internes, gabarits, debug). */
+const LEAK_PATTERNS: RegExp[] = [
+  /\[[^\]]{2,40}\]/,
+  /\bone question\b/i,
+  /\bquestion unique\b/i,
+  /MVP-TS-/,
+  /guardrail/i,
+  /trace_flags|must_include|must_not_include|expected_behavior|output_type|missing_questions/i,
+  /intermediary interface/i,
+  /inductive load/i,
+  /standex follow-?up/i,
+  /high potential/i,
+  /contact capture/i,
+  /contact and city capture/i,
+  /business day contact/i,
+  /safety context/i,
+  /standex validation\b/i,
+  /competitor datasheet/i,
+  /engineering validation/i,
+  /raw[_ ]switch/i,
+  /lead_potential_capture/i,
+  /[a-z]+_[a-z]+(_[a-z]+)*/,
+];
+
+/** Retourne les fragments fautifs détectés dans une réponse prospect. */
+export function detectLeaks(customerText: string): string[] {
+  const hits: string[] = [];
+  for (const re of LEAK_PATTERNS) {
+    const m = customerText.match(re);
+    if (m) hits.push(m[0]);
+  }
+  return [...new Set(hits)];
+}
+
+/** Questions génériques (français) par garde-fou, pour la trace interne. */
+const GUARDRAIL_QUESTIONS: Record<string, string> = {
+  inductive_load: "Quelle tension et quel courant nominal la charge pilotée utilise-t-elle ?",
+  ac_rms: "La tension indiquée est-elle AC RMS ou peak ?",
+  inrush: "Quel est l'appel de courant au démarrage de la charge ?",
+  raw_reed_switch: "Le composant est-il monté tel quel, sans reprise des pattes ?",
+  raw_switch_handling_guardrail:
+    "Quel format de pattes ou quel encombrement devez-vous respecter ?",
+  distance: "Quelle distance d'activation et quel aimant sont prévus sur le montage réel ?",
+  ip67: "Quel niveau d'étanchéité et quel passage de câble sont nécessaires ?",
+  severe_environment:
+    "Quelles températures, vibrations ou produits agressifs le capteur doit-il supporter ?",
+  cable_modification: "Quelle longueur de câble et quel connecteur sont attendus ?",
+};
+
+/** Phrase client dédiée par garde-fou, en français, sans tag interne. */
+const GUARDRAIL_DECISION: Record<string, string> = GUARDRAIL_TEXTS;
+
 
 export function composeResponse(scenario: SensorTestScenario): ComposedResponse {
   const outputType = safeOutputType(scenario.expected_output_type);
@@ -219,7 +355,12 @@ export function composeResponse(scenario: SensorTestScenario): ComposedResponse 
       ...(SCENARIO_OVERRIDES[scenario.scenario_id]?.extraGuardrails ?? []),
     ]),
   ];
-  const guardrailTexts = flags.map((f) => GUARDRAIL_TEXTS[f]).filter(Boolean) as string[];
+  const override = SCENARIO_OVERRIDES[scenario.scenario_id];
+  const suppressed = new Set(override?.suppressGuardrails ?? []);
+  const guardrailTexts = flags
+    .filter((f) => !suppressed.has(f))
+    .map((f) => GUARDRAIL_DECISION[f])
+    .filter(Boolean) as string[];
 
   const maintenance =
     outputType === "S1_MAINTENANCE_REFERENCE" ||
@@ -228,11 +369,14 @@ export function composeResponse(scenario: SensorTestScenario): ComposedResponse 
       `${scenario.user_prompt_fr} ${scenario.expected_behavior}`,
     );
 
-  const override = SCENARIO_OVERRIDES[scenario.scenario_id];
-
   const lines: string[] = [];
   lines.push(`Ce que je comprends de votre besoin : ${scenario.user_prompt_fr}`);
   lines.push("");
+
+  const clientQuestions = override?.missingQuestions ?? [
+    ...flags.map((f) => GUARDRAIL_QUESTIONS[f]).filter(Boolean),
+    "Dans quelle ville êtes-vous basé ?",
+  ].filter(Boolean) as string[];
 
   if (override?.customerText) {
     lines.push(override.customerText);
@@ -240,27 +384,22 @@ export function composeResponse(scenario: SensorTestScenario): ComposedResponse 
     lines.push(
       "Sur cette base, je partirais plutôt sur une famille Standex adaptée à ce type de montage et de détection, sous réserve de la géométrie exacte et de ce que le capteur commande réellement.",
     );
-    lines.push(
-      "Côté électrique, la valeur reste acceptable seulement si elle passe sous les limites tension, courant et puissance du contact.",
-    );
+    if (!override?.suppressGenericElectrical) {
+      lines.push(
+        "Côté électrique, la valeur reste acceptable seulement si elle passe sous les limites tension, courant et puissance du contact.",
+      );
+    }
   } else if (outputType.startsWith("S2_")) {
-    lines.push("Les points déjà compris me permettent de cadrer la demande :");
-    (must.length ? must : ["application et contraintes principales"]).forEach((m) =>
-      lines.push(`- ${m}`),
-    );
-    lines.push("");
     lines.push(
-      "Le point qui doit passer en validation Standex est le risque technique identifié ci-dessous : je ne veux pas confirmer une référence sans l'avoir vérifié.",
+      "Je peux déjà cadrer votre demande, mais un point technique doit être tranché avec l'équipe Standex avant de confirmer une référence.",
     );
     lines.push(
-      "Je peux transmettre un dossier court à l'équipe Standex avec ces éléments ; l'analyse technique sera menée avec vous, elle n'est pas faite à ce stade.",
+      "Je transmets un dossier court à l'équipe Standex avec ces éléments ; l'analyse technique sera menée avec vous, elle n'est pas faite à ce stade.",
     );
   } else {
+    lines.push("Avant de proposer une référence, il me manque un élément déterminant.");
     lines.push(
-      "Avant de proposer une référence, il me manque un élément déterminant.",
-    );
-    lines.push(
-      `La question clé est : ${must[0] ?? "que commande exactement le capteur, et dans quel montage ?"}`,
+      `La question clé est : ${clientQuestions[0] ?? "que commande exactement le capteur, et dans quel montage ?"}`,
     );
     lines.push(
       "Cette information permet de choisir entre deux orientations très différentes, sans vous envoyer vers un capteur qui ne conviendrait pas au montage réel.",
@@ -273,37 +412,56 @@ export function composeResponse(scenario: SensorTestScenario): ComposedResponse 
   }
 
   if (guardrailTexts.length) {
-    lines.push("");
-    guardrailTexts.forEach((t) => lines.push(t));
+    const already = lines.join("\n").toLowerCase();
+    const kept = guardrailTexts.filter((t) => {
+      const topic = t.toLowerCase().split(/[ ,:;]+/).filter((w) => w.length > 6).slice(0, 3);
+      return !(topic.length > 0 && topic.every((w) => already.includes(w)));
+    });
+    if (kept.length) {
+      lines.push("");
+      kept.forEach((t) => lines.push(t));
+    }
   }
 
   if (maintenance && !override?.suppressDistributorLine) {
-    lines.push("");
-    lines.push(
-      "Pour une maintenance ou quelques pièces, une piste distributeur peut avoir du sens ; pour un projet ou une intégration nouvelle, je vous recommande de boucler avec Standex.",
-    );
+    const already = lines.join("\n").toLowerCase();
+    if (!already.includes("distributeur")) {
+      lines.push("");
+      lines.push(
+        "Pour une maintenance ou quelques pièces, une piste distributeur peut avoir du sens ; pour un projet ou une intégration nouvelle, je vous recommande de boucler avec Standex.",
+      );
+    }
   }
 
   lines.push("");
   lines.push("Standex valide la référence finale.");
   lines.push(FOLLOW_UP);
 
-  const text = lines.join("\n");
+  // Déduplication finale : une même phrase ne doit jamais apparaître deux fois.
+  const seen = new Set<string>();
+  const deduped = lines.filter((l) => {
+    const key = l.trim().toLowerCase();
+    if (!key) return true;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+
+  const text = deduped.join("\n");
 
   return {
     outputType,
     customerText: text,
     guardrails: flags,
-    missingQuestions:
-      outputType === "S3_MISSING_INFO"
-        ? [must[0] ?? "information manquante à préciser"]
-        : must.slice(0, 3),
+    missingQuestions: clientQuestions.slice(0, 3),
     confidence: outputType.startsWith("S1_") ? "medium" : "low",
     standexValidationRequired: true,
     datasheetValues: override?.datasheetValues ?? {},
+    internalContractItems: must,
     distributorPathAllowed:
       override?.distributorPathAllowed ?? (maintenance && !outputType.startsWith("S2_")),
     routingReason: `Contrat V0.2 · ${outputType} · scénario ${scenario.scenario_id}`,
+
     beDossier: outputType.startsWith("S2_")
       ? {
           application: scenario.user_prompt_fr,
