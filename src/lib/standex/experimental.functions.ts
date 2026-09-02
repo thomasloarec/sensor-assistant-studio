@@ -38,6 +38,78 @@ function asStringArray(v: unknown): string[] {
   return Array.isArray(v) ? v.filter((x): x is string => typeof x === "string") : [];
 }
 
+/** Schéma imposé à Claude via tool use forcé : la sortie est structurée, jamais du texte libre. */
+const RESPONSE_TOOL = {
+  name: "reponse_capteur",
+  description:
+    "Retourne la réponse prospect et la trace interne de l'assistant capteur Standex. Toujours utiliser cet outil.",
+  input_schema: {
+    type: "object",
+    properties: {
+      customer_response: { type: "string", description: "Texte français destiné au prospect." },
+      output_type: {
+        type: "string",
+        enum: [
+          "S1_STANDARD_SUGGESTION",
+          "S1_WITH_GUARDRAIL",
+          "S1_MAINTENANCE_REFERENCE",
+          "S2_BE_DOSSIER",
+          "S2_BE_DOSSIER_OR_WARNING",
+          "S2_BE_DOSSIER_OR_S1_WITH_CAVEAT",
+          "S3_MISSING_INFO",
+        ],
+      },
+      confidence: { type: "string", enum: ["low", "medium", "high"] },
+      routing_reason: { type: "string" },
+      guardrails_triggered: { type: "array", items: { type: "string" } },
+      missing_questions: { type: "array", items: { type: "string" } },
+      be_dossier: {
+        type: "object",
+        properties: {
+          application_summary: { type: "string" },
+          electrical_points: { type: "array", items: { type: "string" } },
+          mechanical_points: { type: "array", items: { type: "string" } },
+          risk_points: { type: "array", items: { type: "string" } },
+          next_questions: { type: "array", items: { type: "string" } },
+        },
+        required: [
+          "application_summary",
+          "electrical_points",
+          "mechanical_points",
+          "risk_points",
+          "next_questions",
+        ],
+      },
+    },
+    required: [
+      "customer_response",
+      "output_type",
+      "confidence",
+      "routing_reason",
+      "guardrails_triggered",
+      "missing_questions",
+      "be_dossier",
+    ],
+  },
+} as const;
+
+function normalize(obj: Record<string, unknown>): ExperimentalPayload | null {
+  if (typeof obj["customer_response"] !== "string" || !obj["customer_response"].trim()) return null;
+  return {
+    customer_response: obj["customer_response"],
+    output_type: typeof obj["output_type"] === "string" ? obj["output_type"] : "S3_MISSING_INFO",
+    confidence: typeof obj["confidence"] === "string" ? obj["confidence"] : "unknown",
+    routing_reason: typeof obj["routing_reason"] === "string" ? obj["routing_reason"] : "",
+    guardrails_triggered: asStringArray(obj["guardrails_triggered"]),
+    missing_questions: asStringArray(obj["missing_questions"]),
+    be_dossier:
+      obj["be_dossier"] && typeof obj["be_dossier"] === "object"
+        ? (obj["be_dossier"] as Record<string, Json>)
+        : {},
+  };
+}
+
+/** Filet de sécurité : seulement si l'outil n'a pas été utilisé. */
 function extractJson(text: string): ExperimentalPayload | null {
   const cleaned = text.replace(/^```(?:json)?/i, "").replace(/```$/, "").trim();
   const start = cleaned.indexOf("{");
