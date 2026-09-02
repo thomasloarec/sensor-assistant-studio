@@ -833,6 +833,9 @@ function DossierPanel({
           confiance produit : {dossier.productConfidence ?? "—"}
         </Badge>
         <Badge variant="outline" className="font-mono text-[10px]">
+          confiance routage : {dossier.routingConfidence ?? "—"}
+        </Badge>
+        <Badge variant="outline" className="font-mono text-[10px]">
           {dossier.fields.filter((f) => f.value).length}/24 champs
         </Badge>
         <div className="ml-auto flex gap-2">

@@ -385,7 +385,7 @@ export function buildApplicationDossier(input: {
 
   // --- Synthèse en français naturel ---
   const summaryParts: string[] = [];
-  if (appContext) summaryParts.push(`Le besoin porte sur ${appContext}.`);
+  if (appContext) summaryParts.push(`Le besoin porte sur : ${appContext}.`);
   if (volume) summaryParts.push(`Le volume annoncé est de ${volume}.`);
   if (inductive)
     summaryParts.push(
