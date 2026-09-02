@@ -98,6 +98,8 @@ export interface ComposedResponse {
   beDossier: Record<string, unknown>;
   /** Valeurs datasheet retenues, tracées côté interne uniquement. */
   datasheetValues: Record<string, unknown>;
+  /** Éléments de contrat repris côté interne (jamais rendus au prospect). */
+  internalContractItems: string[];
 }
 
 /**
@@ -114,7 +116,14 @@ interface ScenarioOverride {
   extraGuardrails?: string[];
   /** Coupe le paragraphe distributeur générique. */
   suppressDistributorLine?: boolean;
+  /** Coupe les phrases génériques de garde-fous déjà couvertes par le texte. */
+  suppressGuardrails?: string[];
+  /** Coupe la phrase électrique générique S1. */
+  suppressGenericElectrical?: boolean;
+  /** Vraies questions manquantes (français), pour la trace interne. */
+  missingQuestions?: string[];
 }
+
 
 const SCENARIO_OVERRIDES: Record<string, ScenarioOverride> = {
   "MVP-TS-004": {
