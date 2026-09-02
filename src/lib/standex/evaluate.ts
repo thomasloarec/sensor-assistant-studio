@@ -86,7 +86,7 @@ export function evaluateRun(
   });
 
   const forbidden = splitList(scenario.must_not_include);
-  const presentForbidden = forbidden.filter((f) => matches(text, f));
+  const presentForbidden = forbidden.filter((f) => matchesStrict(text, f));
   checks.push({
     label: "Éléments interdits",
     ok: presentForbidden.length === 0,
