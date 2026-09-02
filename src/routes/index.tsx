@@ -367,14 +367,22 @@ function Bench({ user }: { user: User }) {
       }
     });
 
-  // Lot prioritaire : une session dédiée par scénario, tout est persisté.
-  const runBatch = () =>
+  // Lot de test : une session dédiée par scénario, tout est persisté.
+  const runBatch = (scope: "p0" | "all") =>
     guard(async () => {
       if (batchBusy) return;
+      const codes =
+        scope === "p0"
+          ? [...PRIORITY_SCENARIOS]
+          : scenarios.map((s) => s.scenario_id).sort((a, b) => a.localeCompare(b));
       setBatchBusy(true);
+      setBatchScope(scope);
+      setBatchTotal(codes.length);
       setBatch([]);
+      setBatchRunAt(new Date().toISOString());
+      const label = scope === "p0" ? "Lot prioritaire" : "Régression 22";
       try {
-        for (const code of PRIORITY_SCENARIOS) {
+        for (const code of codes) {
           const sc = scenarios.find((s) => s.scenario_id === code);
           if (!sc) {
             setBatch((prev) => [...prev, { code, missing: true }]);
@@ -383,7 +391,7 @@ function Bench({ user }: { user: User }) {
           const composed = composeResponse(sc);
           const evaluation = evaluateRun(sc, composed);
           const session = await db.createSession(user.id, {
-            prospect_company: `Lot prioritaire · ${sc.scenario_id}`,
+            prospect_company: `${label} · ${sc.scenario_id}`,
             channel: "lovable_test",
             status: "in_review",
           });
@@ -392,8 +400,13 @@ function Bench({ user }: { user: User }) {
             reviewerId: user.id,
             scenario: sc,
             startTurnIndex: 0,
-            verdict: evaluation.verdict === "OK" ? "good" : "needs_revision",
-            notes: `Lot prioritaire · ${evaluation.verdict}${
+            verdict:
+              scope === "p0"
+                ? evaluation.verdict === "OK"
+                  ? "good"
+                  : "needs_revision"
+                : "not_reviewed",
+            notes: `${label} · ${evaluation.verdict}${
               evaluation.failures.length ? ` · ${evaluation.failures.join(" ; ")}` : ""
             }`,
           });
@@ -402,6 +415,7 @@ function Bench({ user }: { user: User }) {
             ...prev,
             {
               code,
+              priority: sc.priority,
               scenario: sc,
               evaluation,
               outputType: res.output.output_type,
