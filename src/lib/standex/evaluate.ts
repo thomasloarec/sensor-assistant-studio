@@ -15,6 +15,17 @@ export interface ScenarioEvaluation {
   verdict: "OK" | "à corriger";
   checks: ScenarioCheck[];
   failures: string[];
+  /** Détails structurés, pour la synthèse et l'export. */
+  expectedOutput: string;
+  outputOk: boolean;
+  expectedFlags: string[];
+  missingFlags: string[];
+  missingMust: string[];
+  presentForbidden: string[];
+  cityAsked: boolean;
+  twoBusinessDays: boolean;
+  traceSufficient: boolean;
+  suggestion: string | null;
 }
 
 function norm(v: string): string {
