@@ -135,7 +135,7 @@ const SCENARIO_OVERRIDES: Record<string, ScenarioOverride> = {
       "- tension de claquage : 200 VDC ;",
       "- résistance de contact : 150 mOhm.",
       "",
-      "Attention à ne pas reprendre des valeurs génériques d'autres contacts : ni 1,25 A en courant permanent, ni 200 V au-delà des 200 VDC de claquage propres au 66.",
+      "Attention à ne pas reprendre des valeurs plus favorables issues d'autres contextes : ni 1,25 A en courant permanent, ni 250 VDC en tension de claquage. Pour le 66 Form A, on retient 1 A en courant permanent et 200 VDC en tension de claquage.",
       "Le point important est la distinction entre commutation et courant permanent : 0,5 A en commutation, 1 A en courant permanent seulement si le contact ne commute pas la charge.",
     ].join("\n"),
     datasheetValues: {

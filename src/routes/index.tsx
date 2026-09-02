@@ -36,6 +36,7 @@ import {
 import {
   REVIEW_PACK_SCENARIOS,
   buildReviewPack,
+  isTestMetadataCompany,
 } from "@/lib/standex/review-pack";
 import {
   REVIEWER_ROLES,
@@ -369,7 +370,8 @@ function Bench({ user }: { user: User }) {
         let sessionId = activeId;
         if (!sessionId) {
           const s = await db.createSession(user.id, {
-            prospect_company: `Scénario ${scenario.scenario_id}`,
+            // Jamais de métadonnée de test dans un champ métier lead.
+            consent_notes: `Scénario ${scenario.scenario_id}`,
             channel: "lovable_test",
             status: "in_review",
           });
@@ -415,7 +417,8 @@ function Bench({ user }: { user: User }) {
           const composed = composeResponse(sc);
           const evaluation = evaluateRun(sc, composed);
           const session = await db.createSession(user.id, {
-            prospect_company: `${label} · ${sc.scenario_id}`,
+            // Métadonnée de test hors des champs métier lead.
+            consent_notes: `${label} · ${sc.scenario_id}`,
             channel: "lovable_test",
             status: "in_review",
           });
@@ -515,7 +518,9 @@ function Bench({ user }: { user: User }) {
                         : "text-muted-foreground hover:bg-secondary/60"
                     }`}
                   >
-                    <div className="truncate">{s.prospect_company ?? s.id.slice(0, 8)}</div>
+                    <div className="truncate">
+                      {s.consent_notes ?? s.prospect_company ?? s.id.slice(0, 8)}
+                    </div>
                     <div className="text-[10px] opacity-70">
                       {s.status} · {new Date(s.created_at).toLocaleDateString("fr-FR")}
                     </div>
@@ -775,7 +780,14 @@ function Bench({ user }: { user: User }) {
                       <div className="rounded-md border border-border bg-card p-4">
                         <dl className="grid grid-cols-2 gap-2 font-mono text-xs">
                           <Field k="Nom" v={activeSession.prospect_name} />
-                          <Field k="Société" v={activeSession.prospect_company} />
+                          <Field
+                            k="Société"
+                            v={
+                              isTestMetadataCompany(activeSession.prospect_company)
+                                ? null
+                                : activeSession.prospect_company
+                            }
+                          />
                           <Field k="Email" v={activeSession.prospect_email} />
                           <Field k="Téléphone" v={activeSession.prospect_phone} />
                           <Field k="Ville prospect" v={activeSession.prospect_city} />

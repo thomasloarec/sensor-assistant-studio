@@ -79,6 +79,27 @@ export interface ReviewPackMeta {
 const dash = (v: unknown) =>
   v === null || v === undefined || v === "" ? "—" : String(v);
 
+/** Métadonnées de test interdites dans les champs métier lead. */
+const TEST_METADATA = /(MVP-TS-|R[ée]gression|Lot prioritaire|Sc[ée]nario\s+MVP)/i;
+
+export function isTestMetadataCompany(v: string | null | undefined): boolean {
+  return !!v && TEST_METADATA.test(v);
+}
+
+/** Une société issue d'une métadonnée de test n'est jamais affichée. */
+function companyLabel(v: string | null | undefined): string {
+  if (!v || v.trim() === "") return "_manquant_";
+  return isTestMetadataCompany(v) ? "_manquant_" : v;
+}
+
+/** Libellé humain de l'engagement de rappel (jamais la valeur technique). */
+function callbackLabel(v: string | null | undefined): string {
+  if (!v || v.trim() === "") return "—";
+  if (/within_2_business_days|2 business day/i.test(v))
+    return "reprise par un responsable Standex sous 2 jours ouvrés";
+  return v;
+}
+
 function traceBlock(t: SensorTestInternalTrace | undefined): string[] {
   if (!t) return ["_Trace interne non disponible._"];
   return [
@@ -97,13 +118,18 @@ function leadBlock(s: SensorTestSession | undefined, asked: boolean): string[] {
   const lines: string[] = [];
   if (s) {
     lines.push(
-      `- Société : ${dash(s.prospect_company)}`,
+      `- Société : ${companyLabel(s.prospect_company)}`,
       `- Contact : ${dash(s.prospect_name)} · ${dash(s.prospect_email)} · ${dash(s.prospect_phone)}`,
       `- Ville prospect : ${dash(s.prospect_city)}`,
       `- Ville Standex : ${dash(s.standex_city)}`,
       `- Bande volume : ${dash(s.volume_band)} · potentiel : ${dash(s.lead_potential)}`,
-      `- Engagement de rappel : ${dash(s.callback_commitment)}`,
+      `- Engagement de rappel : ${callbackLabel(s.callback_commitment)}`,
     );
+    if (isTestMetadataCompany(s.prospect_company)) {
+      lines.push(
+        "- ⚠ Avertissement : la société de session contenait une métadonnée de test, elle n'est pas exposée comme donnée prospect.",
+      );
+    }
   } else {
     lines.push("- Session lead non disponible.");
   }
