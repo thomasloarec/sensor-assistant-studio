@@ -289,6 +289,16 @@ function Bench({ user }: { user: User }) {
   const [batchScope, setBatchScope] = useState<"p0" | "all">("p0");
   const [batchTotal, setBatchTotal] = useState(0);
   const [batchRunAt, setBatchRunAt] = useState<string | null>(null);
+  const [migration, setMigration] = useState<MigrationStatus>({
+    checked: false,
+    applied: false,
+    missing: [],
+  });
+  const [sqlCopied, setSqlCopied] = useState(false);
+
+  useEffect(() => {
+    void checkMigrationV03().then(setMigration);
+  }, []);
 
   const activeSession = useMemo(
     () => sessions.find((s) => s.id === activeId) ?? null,
