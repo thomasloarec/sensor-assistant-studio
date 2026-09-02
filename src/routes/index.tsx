@@ -416,7 +416,8 @@ function Bench({ user }: { user: User }) {
           const composed = composeResponse(sc);
           const evaluation = evaluateRun(sc, composed);
           const session = await db.createSession(user.id, {
-            prospect_company: `${label} · ${sc.scenario_id}`,
+            // Métadonnée de test hors des champs métier lead.
+            consent_notes: `${label} · ${sc.scenario_id}`,
             channel: "lovable_test",
             status: "in_review",
           });
