@@ -492,7 +492,7 @@ function Bench({ user }: { user: User }) {
         </section>
 
         {/* Inspecteur */}
-        <section className="flex min-h-0 flex-col">
+        <section className="flex min-h-0 min-w-0 flex-col overflow-hidden">
           <Tabs defaultValue="client" className="flex min-h-0 flex-1 flex-col gap-0">
             <TabsList className="h-auto w-full justify-start rounded-none border-b border-border bg-transparent p-0">
               {(
@@ -762,7 +762,7 @@ function JsonBlock({ label, value }: { label: string; value: unknown }) {
       <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
         {label}
       </p>
-      <pre className="mt-1 overflow-x-auto rounded-sm bg-secondary p-2 font-mono text-[11px]">
+      <pre className="mt-1 whitespace-pre-wrap break-words rounded-sm bg-secondary p-2 font-mono text-[11px]">
         {JSON.stringify(value ?? null, null, 2)}
       </pre>
     </div>
