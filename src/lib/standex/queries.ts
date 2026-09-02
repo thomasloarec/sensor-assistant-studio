@@ -125,3 +125,17 @@ export async function insertReview(
   const sb = requireSupabase();
   return unwrap(await sb.from("sensor_test_reviews").insert(input).select("*").single());
 }
+
+export async function insertOutput(
+  input: Partial<SensorTestOutput> & { session_id: string; output_type: string; customer_summary: string },
+): Promise<SensorTestOutput> {
+  const sb = requireSupabase();
+  return unwrap(await sb.from("sensor_test_outputs").insert(input).select("*").single());
+}
+
+export async function insertTrace(
+  input: Partial<SensorTestInternalTrace> & { session_id: string },
+): Promise<SensorTestInternalTrace> {
+  const sb = requireSupabase();
+  return unwrap(await sb.from("sensor_test_internal_traces").insert(input).select("*").single());
+}
