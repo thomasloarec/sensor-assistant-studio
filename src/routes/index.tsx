@@ -722,6 +722,17 @@ function Bench({ user }: { user: User }) {
                   </div>
                 </ScrollArea>
               </TabsContent>
+
+              <TabsContent value="batch" className="m-0 h-full">
+                <ScrollArea className="h-full">
+                  <BatchPanel
+                    rows={batch}
+                    busy={batchBusy}
+                    onRun={() => void runBatch()}
+                    onOpen={setActiveId}
+                  />
+                </ScrollArea>
+              </TabsContent>
             </div>
           </Tabs>
         </section>
