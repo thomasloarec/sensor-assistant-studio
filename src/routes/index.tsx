@@ -255,6 +255,8 @@ interface BatchRow {
   review?: SensorTestReview;
   session?: SensorTestSession;
   sessionId?: string;
+  dossierMarkdown?: string;
+
 }
 
 function Bench({ user }: { user: User }) {
