@@ -963,3 +963,109 @@ function ContractList({
     </div>
   );
 }
+
+function BatchPanel({
+  rows,
+  busy,
+  onRun,
+  onOpen,
+}: {
+  rows: BatchRow[];
+  busy: boolean;
+  onRun: () => void;
+  onOpen: (id: string) => void;
+}) {
+  const ok = rows.filter((r) => r.evaluation?.verdict === "OK").length;
+  return (
+    <div className="space-y-3 p-4">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div>
+          <h3 className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
+            Lot prioritaire · 8 scénarios
+          </h3>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Réponse client, sortie, trace interne, garde-fous et verdict — tout est persisté.
+          </p>
+        </div>
+        <Button size="sm" disabled={busy} onClick={onRun} className="shrink-0">
+          {busy ? `Exécution… (${rows.length}/8)` : "Lancer les 8 scénarios"}
+        </Button>
+      </div>
+
+      {rows.length === 0 ? (
+        <Empty>Aucun lot exécuté pour l'instant.</Empty>
+      ) : (
+        <>
+          <p className="font-mono text-xs text-accent">
+            {ok}/{rows.length} OK · {rows.length - ok} à corriger
+          </p>
+          <div className="overflow-x-auto rounded-md border border-border">
+            <table className="w-full border-collapse font-mono text-[11px]">
+              <thead>
+                <tr className="border-b border-border bg-secondary/50 text-left">
+                  <th className="px-2 py-1.5">Scénario</th>
+                  <th className="px-2 py-1.5">Sortie</th>
+                  <th className="px-2 py-1.5">Garde-fous</th>
+                  <th className="px-2 py-1.5">Verdict</th>
+                </tr>
+              </thead>
+              <tbody>
+                {rows.map((r) => (
+                  <tr key={r.code} className="border-b border-border/60 align-top">
+                    <td className="px-2 py-1.5">
+                      {r.sessionId ? (
+                        <button
+                          className="text-accent underline-offset-2 hover:underline"
+                          onClick={() => onOpen(r.sessionId!)}
+                        >
+                          {r.code}
+                        </button>
+                      ) : (
+                        r.code
+                      )}
+                    </td>
+                    <td className="px-2 py-1.5">{r.outputType ?? "—"}</td>
+                    <td className="max-w-[220px] px-2 py-1.5 break-words">
+                      {r.guardrails?.length ? r.guardrails.join(", ") : "—"}
+                    </td>
+                    <td className="px-2 py-1.5">
+                      {r.missing ? (
+                        <Badge variant="outline" className="font-mono text-[10px]">
+                          absent
+                        </Badge>
+                      ) : (
+                        <Badge
+                          variant="outline"
+                          className={`font-mono text-[10px] ${
+                            r.evaluation?.verdict === "OK" ? "text-success" : "text-destructive"
+                          }`}
+                        >
+                          {r.evaluation?.verdict}
+                        </Badge>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {rows
+            .filter((r) => r.evaluation && r.evaluation.failures.length > 0)
+            .map((r) => (
+              <div key={`f-${r.code}`} className="rounded-md border border-border bg-card p-3">
+                <p className="font-mono text-[11px] text-destructive">{r.code}</p>
+                <ul className="mt-1 space-y-0.5">
+                  {r.evaluation!.failures.map((f) => (
+                    <li key={f} className="font-mono text-[11px] text-muted-foreground">
+                      · {f}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+        </>
+      )}
+    </div>
+  );
+}
