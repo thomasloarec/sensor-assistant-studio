@@ -749,124 +749,90 @@ function Bench({ user }: { user: User }) {
                         <p className="mt-4 border-t border-border pt-3 text-xs text-muted-foreground">
                           {lastOutput.callback_text}
                         </p>
-                        <JsonBlock label="be_dossier" value={lastOutput.be_dossier} />
                       </div>
                     )}
-                  </div>
-                </ScrollArea>
-              </TabsContent>
 
-              <TabsContent value="trace" className="m-0 h-full">
-                <ScrollArea className="h-full">
-                  <div className="space-y-3 p-4">
-                    {!lastTrace ? (
-                      <Empty>Aucune trace interne pour cette session.</Empty>
-                    ) : (
-                      <div className="rounded-md border border-border bg-card p-4">
-                        <dl className="grid grid-cols-2 gap-2 font-mono text-xs">
-                          <Field k="Application" v={lastTrace.understood_application} />
-                          <Field k="Cible détection" v={lastTrace.detection_target} />
-                          <Field k="Géométrie" v={lastTrace.mounting_geometry} />
-                          <Field k="Charge élec." v={lastTrace.electrical_load} />
-                          <Field k="Tension" v={lastTrace.voltage_value} />
-                          <Field k="Courant" v={lastTrace.current_value} />
-                          <Field k="Puissance" v={lastTrace.power_value} />
-                          <Field k="Volume" v={lastTrace.volume_signal} />
-                          <Field k="Confiance" v={lastTrace.confidence} />
-                          <Field k="Routage" v={lastTrace.routing_reason} />
-                        </dl>
-                        <TagList label="Guardrails" items={lastTrace.guardrails_triggered} />
-                        <TagList label="Questions manquantes" items={lastTrace.missing_questions} />
-                        <JsonBlock label="product_candidates" value={lastTrace.product_candidates} />
-                        <JsonBlock
-                          label="datasheet_values_used"
-                          value={lastTrace.datasheet_values_used}
-                        />
-                      </div>
-                    )}
-                  </div>
-                </ScrollArea>
-              </TabsContent>
+                    <Accordion type="multiple" className="w-full">
+                      <AccordionItem value="trace">
+                        <AccordionTrigger className="text-sm">
+                          Détails techniques — trace interne
+                        </AccordionTrigger>
+                        <AccordionContent>
+                          {!lastTrace ? (
+                            <Empty>Aucune trace interne pour cette session.</Empty>
+                          ) : (
+                            <div className="rounded-md border border-border bg-card p-4">
+                              <dl className="grid grid-cols-2 gap-2 font-mono text-xs">
+                                <Field k="Application" v={lastTrace.understood_application} />
+                                <Field k="Cible détection" v={lastTrace.detection_target} />
+                                <Field k="Géométrie" v={lastTrace.mounting_geometry} />
+                                <Field k="Charge élec." v={lastTrace.electrical_load} />
+                                <Field k="Tension" v={lastTrace.voltage_value} />
+                                <Field k="Courant" v={lastTrace.current_value} />
+                                <Field k="Puissance" v={lastTrace.power_value} />
+                                <Field k="Volume" v={lastTrace.volume_signal} />
+                                <Field k="Confiance" v={lastTrace.confidence} />
+                                <Field k="Routage" v={lastTrace.routing_reason} />
+                              </dl>
+                              <TagList label="Guardrails" items={lastTrace.guardrails_triggered} />
+                              <TagList
+                                label="Questions manquantes"
+                                items={lastTrace.missing_questions}
+                              />
+                              <JsonBlock
+                                label="product_candidates"
+                                value={lastTrace.product_candidates}
+                              />
+                              <JsonBlock
+                                label="datasheet_values_used"
+                                value={lastTrace.datasheet_values_used}
+                              />
+                              {lastOutput ? (
+                                <JsonBlock label="be_dossier" value={lastOutput.be_dossier} />
+                              ) : null}
+                            </div>
+                          )}
+                        </AccordionContent>
+                      </AccordionItem>
 
-              <TabsContent value="revue" className="m-0 h-full">
-                <ScrollArea className="h-full">
-                  <div className="space-y-3 p-4">
-                    <div className="rounded-md border border-border bg-card p-3">
-                      <ReviewPackButton
-                        rows={batch}
-                        tester={user.email ?? "—"}
-                        runAt={batchRunAt}
-                      />
-                    </div>
-
-                    {activeSession ? (
-                      <ReviewForm
-                        sessionId={activeSession.id}
-                        reviewerId={user.id}
-                        onCreated={(r) => setReviews((prev) => [r, ...prev])}
-                        onError={setError}
-                      />
-                    ) : null}
-                    {reviews.length === 0 ? (
-                      <Empty>Aucune revue enregistrée.</Empty>
-                    ) : (
-                      reviews.map((r) => (
-                        <div key={r.id} className="rounded-md border border-border bg-card p-3">
-                          <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-                            <Badge variant="outline" className="font-mono text-[10px]">
-                              {r.verdict}
-                            </Badge>
-                            <span>{r.reviewer_role}</span>
-                            <span>{new Date(r.created_at).toLocaleString("fr-FR")}</span>
-                          </div>
-                          {r.notes ? <p className="mt-2 text-sm">{r.notes}</p> : null}
-                          {r.corrected_output_type ? (
-                            <p className="mt-2 font-mono text-xs text-accent">
-                              → {r.corrected_output_type}
-                            </p>
-                          ) : null}
-                        </div>
-                      ))
-                    )}
-                  </div>
-                </ScrollArea>
-              </TabsContent>
-
-              <TabsContent value="lead" className="m-0 h-full">
-                <ScrollArea className="h-full">
-                  <div className="p-4">
-                    {!activeSession ? (
-                      <Empty>Aucune session sélectionnée.</Empty>
-                    ) : (
-                      <div className="rounded-md border border-border bg-card p-4">
-                        <dl className="grid grid-cols-2 gap-2 font-mono text-xs">
-                          <Field k="Nom" v={activeSession.prospect_name} />
-                          <Field
-                            k="Société"
-                            v={
-                              isTestMetadataCompany(activeSession.prospect_company)
-                                ? null
-                                : activeSession.prospect_company
-                            }
-                          />
-                          <Field k="Email" v={activeSession.prospect_email} />
-                          <Field k="Téléphone" v={activeSession.prospect_phone} />
-                          <Field k="Ville prospect" v={activeSession.prospect_city} />
-                          <Field k="Ville Standex" v={activeSession.standex_city} />
-                          <Field k="Bande volume" v={activeSession.volume_band} />
-                          <Field k="Potentiel lead" v={activeSession.lead_potential} />
-                          <Field k="Statut" v={activeSession.status} />
-                          <Field k="Canal" v={activeSession.channel} />
-                          <Field k="Locale" v={activeSession.locale} />
-                          <Field k="Rappel" v={activeSession.callback_commitment} />
-                        </dl>
-                        {activeSession.consent_notes ? (
-                          <p className="mt-3 border-t border-border pt-3 text-xs text-muted-foreground">
-                            {activeSession.consent_notes}
-                          </p>
-                        ) : null}
-                      </div>
-                    )}
+                      <AccordionItem value="lead">
+                        <AccordionTrigger className="text-sm">Données lead</AccordionTrigger>
+                        <AccordionContent>
+                          {!activeSession ? (
+                            <Empty>Aucune session sélectionnée.</Empty>
+                          ) : (
+                            <div className="rounded-md border border-border bg-card p-4">
+                              <dl className="grid grid-cols-2 gap-2 font-mono text-xs">
+                                <Field k="Nom" v={activeSession.prospect_name} />
+                                <Field
+                                  k="Société"
+                                  v={
+                                    isTestMetadataCompany(activeSession.prospect_company)
+                                      ? null
+                                      : activeSession.prospect_company
+                                  }
+                                />
+                                <Field k="Email" v={activeSession.prospect_email} />
+                                <Field k="Téléphone" v={activeSession.prospect_phone} />
+                                <Field k="Ville prospect" v={activeSession.prospect_city} />
+                                <Field k="Ville Standex" v={activeSession.standex_city} />
+                                <Field k="Bande volume" v={activeSession.volume_band} />
+                                <Field k="Potentiel lead" v={activeSession.lead_potential} />
+                                <Field k="Statut" v={activeSession.status} />
+                                <Field k="Canal" v={activeSession.channel} />
+                                <Field k="Locale" v={activeSession.locale} />
+                                <Field k="Rappel" v={activeSession.callback_commitment} />
+                              </dl>
+                              {activeSession.consent_notes ? (
+                                <p className="mt-3 border-t border-border pt-3 text-xs text-muted-foreground">
+                                  {activeSession.consent_notes}
+                                </p>
+                              ) : null}
+                            </div>
+                          )}
+                        </AccordionContent>
+                      </AccordionItem>
+                    </Accordion>
                   </div>
                 </ScrollArea>
               </TabsContent>
