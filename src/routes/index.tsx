@@ -753,6 +753,27 @@ function Bench({ user }: { user: User }) {
                 </ScrollArea>
               </TabsContent>
 
+              <TabsContent value="dossier" className="m-0 h-full">
+                <ScrollArea className="h-full">
+                  <div className="p-4">
+                    {!activeSession ? (
+                      <Empty>Aucune session sélectionnée.</Empty>
+                    ) : (
+                      <DossierPanel
+                        session={activeSession}
+                        messages={messages}
+                        output={lastOutput}
+                        trace={lastTrace}
+                        reviews={reviews}
+                        tester={user.email ?? user.id}
+                      />
+                    )}
+                  </div>
+                </ScrollArea>
+              </TabsContent>
+
+
+
               <TabsContent value="batch" className="m-0 h-full">
                 <ScrollArea className="h-full">
                   <BatchPanel
