@@ -393,8 +393,12 @@ function Bench({ user }: { user: User }) {
               {scenarios.map((sc) => (
                 <button
                   key={sc.id}
-                  onClick={() => setDraft(sc.user_prompt_fr)}
-                  className="mb-1 block w-full rounded-sm px-2 py-1.5 text-left font-mono text-[11px] text-muted-foreground transition-colors hover:bg-secondary/60"
+                  onClick={() => selectScenario(sc.id)}
+                  className={`mb-1 block w-full rounded-sm px-2 py-1.5 text-left font-mono text-[11px] transition-colors hover:bg-secondary/60 ${
+                    sc.id === scenarioId
+                      ? "bg-secondary text-foreground"
+                      : "text-muted-foreground"
+                  }`}
                   title={sc.expected_behavior}
                 >
                   <span className="text-accent">{sc.priority}</span> {sc.scenario_id}
