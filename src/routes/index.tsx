@@ -577,6 +577,36 @@ function Bench({ user }: { user: User }) {
           {error}
         </div>
       ) : null}
+      {migration.checked && !migration.applied ? (
+        <div className="shrink-0 border-b border-border bg-secondary px-5 py-3 text-xs">
+          <p className="font-semibold text-primary">
+            Une mise à jour de la base est nécessaire pour comparer les deux assistants.
+          </p>
+          <p className="mt-1 text-muted-foreground">
+            Copiez le texte ci-dessous et collez-le dans l'éditeur SQL de votre projet Supabase, puis
+            rechargez la page. Le banc continue de fonctionner en attendant : seule la comparaison
+            reste indisponible.
+          </p>
+          <div className="mt-2 flex flex-wrap items-center gap-2">
+            <Button
+              size="sm"
+              onClick={() => {
+                void navigator.clipboard.writeText(MIGRATION_V03_SQL);
+                setSqlCopied(true);
+              }}
+            >
+              {sqlCopied ? "Copié" : "Copier la mise à jour"}
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => void checkMigrationV03().then(setMigration)}
+            >
+              Revérifier
+            </Button>
+          </div>
+        </div>
+      ) : null}
       <main className="grid min-h-0 flex-1 grid-cols-1 lg:grid-cols-[220px_minmax(0,1fr)_minmax(0,1.1fr)]">
         {/* Sessions + scénarios */}
         <aside className="hidden min-h-0 flex-col border-r border-border lg:flex">
