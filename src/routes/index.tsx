@@ -369,7 +369,8 @@ function Bench({ user }: { user: User }) {
         let sessionId = activeId;
         if (!sessionId) {
           const s = await db.createSession(user.id, {
-            prospect_company: `Scénario ${scenario.scenario_id}`,
+            // Jamais de métadonnée de test dans un champ métier lead.
+            consent_notes: `Scénario ${scenario.scenario_id}`,
             channel: "lovable_test",
             status: "in_review",
           });
