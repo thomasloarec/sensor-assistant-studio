@@ -349,7 +349,12 @@ export function composeResponse(scenario: SensorTestScenario): ComposedResponse 
       ...(SCENARIO_OVERRIDES[scenario.scenario_id]?.extraGuardrails ?? []),
     ]),
   ];
-  const guardrailTexts = flags.map((f) => GUARDRAIL_TEXTS[f]).filter(Boolean) as string[];
+  const override = SCENARIO_OVERRIDES[scenario.scenario_id];
+  const suppressed = new Set(override?.suppressGuardrails ?? []);
+  const guardrailTexts = flags
+    .filter((f) => !suppressed.has(f))
+    .map((f) => GUARDRAIL_DECISION[f])
+    .filter(Boolean) as string[];
 
   const maintenance =
     outputType === "S1_MAINTENANCE_REFERENCE" ||
@@ -358,11 +363,14 @@ export function composeResponse(scenario: SensorTestScenario): ComposedResponse 
       `${scenario.user_prompt_fr} ${scenario.expected_behavior}`,
     );
 
-  const override = SCENARIO_OVERRIDES[scenario.scenario_id];
-
   const lines: string[] = [];
   lines.push(`Ce que je comprends de votre besoin : ${scenario.user_prompt_fr}`);
   lines.push("");
+
+  const clientQuestions = override?.missingQuestions ?? [
+    ...flags.map((f) => GUARDRAIL_QUESTIONS[f]).filter(Boolean),
+    "Dans quelle ville êtes-vous basé ?",
+  ].filter(Boolean) as string[];
 
   if (override?.customerText) {
     lines.push(override.customerText);
@@ -370,27 +378,22 @@ export function composeResponse(scenario: SensorTestScenario): ComposedResponse 
     lines.push(
       "Sur cette base, je partirais plutôt sur une famille Standex adaptée à ce type de montage et de détection, sous réserve de la géométrie exacte et de ce que le capteur commande réellement.",
     );
-    lines.push(
-      "Côté électrique, la valeur reste acceptable seulement si elle passe sous les limites tension, courant et puissance du contact.",
-    );
+    if (!override?.suppressGenericElectrical) {
+      lines.push(
+        "Côté électrique, la valeur reste acceptable seulement si elle passe sous les limites tension, courant et puissance du contact.",
+      );
+    }
   } else if (outputType.startsWith("S2_")) {
-    lines.push("Les points déjà compris me permettent de cadrer la demande :");
-    (must.length ? must : ["application et contraintes principales"]).forEach((m) =>
-      lines.push(`- ${m}`),
-    );
-    lines.push("");
     lines.push(
-      "Le point qui doit passer en validation Standex est le risque technique identifié ci-dessous : je ne veux pas confirmer une référence sans l'avoir vérifié.",
+      "Je peux déjà cadrer votre demande, mais un point technique doit être tranché avec l'équipe Standex avant de confirmer une référence.",
     );
     lines.push(
-      "Je peux transmettre un dossier court à l'équipe Standex avec ces éléments ; l'analyse technique sera menée avec vous, elle n'est pas faite à ce stade.",
+      "Je transmets un dossier court à l'équipe Standex avec ces éléments ; l'analyse technique sera menée avec vous, elle n'est pas faite à ce stade.",
     );
   } else {
+    lines.push("Avant de proposer une référence, il me manque un élément déterminant.");
     lines.push(
-      "Avant de proposer une référence, il me manque un élément déterminant.",
-    );
-    lines.push(
-      `La question clé est : ${must[0] ?? "que commande exactement le capteur, et dans quel montage ?"}`,
+      `La question clé est : ${clientQuestions[0] ?? "que commande exactement le capteur, et dans quel montage ?"}`,
     );
     lines.push(
       "Cette information permet de choisir entre deux orientations très différentes, sans vous envoyer vers un capteur qui ne conviendrait pas au montage réel.",
@@ -403,37 +406,56 @@ export function composeResponse(scenario: SensorTestScenario): ComposedResponse 
   }
 
   if (guardrailTexts.length) {
-    lines.push("");
-    guardrailTexts.forEach((t) => lines.push(t));
+    const already = lines.join("\n").toLowerCase();
+    const kept = guardrailTexts.filter((t) => {
+      const topic = t.toLowerCase().split(/[ ,:;]+/).filter((w) => w.length > 6).slice(0, 3);
+      return !(topic.length > 0 && topic.every((w) => already.includes(w)));
+    });
+    if (kept.length) {
+      lines.push("");
+      kept.forEach((t) => lines.push(t));
+    }
   }
 
   if (maintenance && !override?.suppressDistributorLine) {
-    lines.push("");
-    lines.push(
-      "Pour une maintenance ou quelques pièces, une piste distributeur peut avoir du sens ; pour un projet ou une intégration nouvelle, je vous recommande de boucler avec Standex.",
-    );
+    const already = lines.join("\n").toLowerCase();
+    if (!already.includes("distributeur")) {
+      lines.push("");
+      lines.push(
+        "Pour une maintenance ou quelques pièces, une piste distributeur peut avoir du sens ; pour un projet ou une intégration nouvelle, je vous recommande de boucler avec Standex.",
+      );
+    }
   }
 
   lines.push("");
   lines.push("Standex valide la référence finale.");
   lines.push(FOLLOW_UP);
 
-  const text = lines.join("\n");
+  // Déduplication finale : une même phrase ne doit jamais apparaître deux fois.
+  const seen = new Set<string>();
+  const deduped = lines.filter((l) => {
+    const key = l.trim().toLowerCase();
+    if (!key) return true;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+
+  const text = deduped.join("\n");
 
   return {
     outputType,
     customerText: text,
     guardrails: flags,
-    missingQuestions:
-      outputType === "S3_MISSING_INFO"
-        ? [must[0] ?? "information manquante à préciser"]
-        : must.slice(0, 3),
+    missingQuestions: clientQuestions.slice(0, 3),
     confidence: outputType.startsWith("S1_") ? "medium" : "low",
     standexValidationRequired: true,
     datasheetValues: override?.datasheetValues ?? {},
+    internalContractItems: must,
     distributorPathAllowed:
       override?.distributorPathAllowed ?? (maintenance && !outputType.startsWith("S2_")),
     routingReason: `Contrat V0.2 · ${outputType} · scénario ${scenario.scenario_id}`,
+
     beDossier: outputType.startsWith("S2_")
       ? {
           application: scenario.user_prompt_fr,
