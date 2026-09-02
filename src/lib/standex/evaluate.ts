@@ -2,7 +2,7 @@
 // Aucun affichage brut du contrat : uniquement des verdicts et des motifs.
 
 import type { ComposedResponse } from "./response-contract";
-import { safeOutputType, splitList } from "./response-contract";
+import { detectLeaks, safeOutputType, splitList } from "./response-contract";
 import type { SensorTestScenario } from "./types";
 
 export interface ScenarioCheck {
@@ -25,6 +25,10 @@ export interface ScenarioEvaluation {
   cityAsked: boolean;
   twoBusinessDays: boolean;
   traceSufficient: boolean;
+  /** Fragments internes/gabarits fuités dans la réponse client. */
+  leaks: string[];
+  /** missing_questions contient de vraies questions français. */
+  realMissingQuestions: boolean;
   suggestion: string | null;
 }
 
@@ -147,6 +151,24 @@ export function evaluateRun(
     Object.keys(composed.datasheetValues).length > 0;
   checks.push({ label: "Trace interne séparée", ok: traceSufficient });
 
+  const leaks = detectLeaks(composed.customerText);
+  checks.push({
+    label: "Pas de fuite de texte interne",
+    ok: leaks.length === 0,
+    detail: leaks.length ? `fragments : ${leaks.join(" | ")}` : undefined,
+  });
+
+  const realMissingQuestions =
+    composed.missingQuestions.length > 0 &&
+    composed.missingQuestions.every(
+      (q) => /\?\s*$/.test(q.trim()) && !/_/.test(q) && q.trim().split(/\s+/).length >= 4,
+    );
+  checks.push({
+    label: "Questions manquantes réelles",
+    ok: realMissingQuestions,
+    detail: realMissingQuestions ? undefined : composed.missingQuestions.join(" | "),
+  });
+
   const failures = checks
     .filter((c) => !c.ok)
     .map((c) => (c.detail ? `${c.label} (${c.detail})` : c.label));
@@ -165,6 +187,10 @@ export function evaluateRun(
   if (!/\bville\b/.test(text)) suggestions.push("demander la ville du prospect");
   if (!/2 jours ouvres/.test(text))
     suggestions.push("annoncer la reprise Standex sous 2 jours ouvrés");
+  if (leaks.length)
+    suggestions.push(`supprimer les fragments internes ${leaks.join(" / ")} de la réponse client`);
+  if (!realMissingQuestions)
+    suggestions.push("reformuler missing_questions en vraies questions client");
   if (!traceSufficient)
     suggestions.push("enrichir la trace interne (garde-fous, questions, valeurs datasheet)");
 
@@ -181,6 +207,8 @@ export function evaluateRun(
     cityAsked: /\bville\b/.test(text),
     twoBusinessDays: /2 jours ouvres/.test(text),
     traceSufficient,
+    leaks,
+    realMissingQuestions,
     suggestion: suggestions.length ? suggestions.join(" ; ") : null,
   };
 }
