@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/select";
 import { isSupabaseConfigured, supabase } from "@/lib/standex/supabase";
 import * as db from "@/lib/standex/queries";
+import { runScenario, safeOutputType, splitList } from "@/lib/standex/scenario-run";
 import {
   REVIEWER_ROLES,
   VERDICTS,
@@ -214,6 +215,7 @@ function SignIn() {
 function Bench({ user }: { user: User }) {
   const [sessions, setSessions] = useState<SensorTestSession[]>([]);
   const [scenarios, setScenarios] = useState<SensorTestScenario[]>([]);
+  const [scenarioId, setScenarioId] = useState<string | null>(null);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [messages, setMessages] = useState<SensorTestMessage[]>([]);
   const [outputs, setOutputs] = useState<SensorTestOutput[]>([]);
@@ -221,10 +223,15 @@ function Bench({ user }: { user: User }) {
   const [reviews, setReviews] = useState<SensorTestReview[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [draft, setDraft] = useState("");
+  const [running, setRunning] = useState(false);
 
   const activeSession = useMemo(
     () => sessions.find((s) => s.id === activeId) ?? null,
     [sessions, activeId],
+  );
+  const scenario = useMemo(
+    () => scenarios.find((s) => s.id === scenarioId) ?? null,
+    [scenarios, scenarioId],
   );
 
   const guard = useCallback(async (fn: () => Promise<void>) => {
@@ -293,6 +300,45 @@ function Bench({ user }: { user: User }) {
       setDraft("");
     });
 
+
+  const selectScenario = (id: string) => {
+    setScenarioId(id);
+    const sc = scenarios.find((s) => s.id === id);
+    if (sc) setDraft(sc.user_prompt_fr);
+  };
+
+  // Exécute le scénario sélectionné : session (créée si besoin), messages,
+  // sortie assistant, trace interne et revue sont persistés dans Supabase.
+  const runSelectedScenario = () =>
+    guard(async () => {
+      if (!scenario || running) return;
+      setRunning(true);
+      try {
+        let sessionId = activeId;
+        if (!sessionId) {
+          const s = await db.createSession(user.id, {
+            prospect_company: `Scénario ${scenario.scenario_id}`,
+            channel: "lovable_test",
+            status: "in_review",
+          });
+          setSessions((prev) => [s, ...prev]);
+          setActiveId(s.id);
+          sessionId = s.id;
+        }
+        const existing = await db.fetchMessages(sessionId);
+        await runScenario({
+          sessionId,
+          reviewerId: user.id,
+          scenario,
+          startTurnIndex: existing.length,
+        });
+        await loadSession(sessionId);
+        setDraft("");
+      } finally {
+        setRunning(false);
+      }
+    });
+
   const lastOutput = outputs[0] ?? null;
   const lastTrace = traces[0] ?? null;
 
@@ -345,8 +391,12 @@ function Bench({ user }: { user: User }) {
               {scenarios.map((sc) => (
                 <button
                   key={sc.id}
-                  onClick={() => setDraft(sc.user_prompt_fr)}
-                  className="mb-1 block w-full rounded-sm px-2 py-1.5 text-left font-mono text-[11px] text-muted-foreground transition-colors hover:bg-secondary/60"
+                  onClick={() => selectScenario(sc.id)}
+                  className={`mb-1 block w-full rounded-sm px-2 py-1.5 text-left font-mono text-[11px] transition-colors hover:bg-secondary/60 ${
+                    sc.id === scenarioId
+                      ? "bg-secondary text-foreground"
+                      : "text-muted-foreground"
+                  }`}
                   title={sc.expected_behavior}
                 >
                   <span className="text-accent">{sc.priority}</span> {sc.scenario_id}
@@ -360,7 +410,7 @@ function Bench({ user }: { user: User }) {
         </aside>
 
         {/* Conversation */}
-        <section className="flex min-h-0 flex-col border-border lg:border-r">
+        <section className="flex min-h-0 min-w-0 flex-col overflow-hidden border-border lg:border-r">
           <div className="flex items-center justify-between border-b border-border px-4 py-2">
             <h2 className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
               Conversation
@@ -369,6 +419,13 @@ function Bench({ user }: { user: User }) {
               {activeSession ? `${messages.length} tour(s)` : "aucune session"}
             </span>
           </div>
+          <ScenarioPanel
+            scenarios={scenarios}
+            scenario={scenario}
+            onSelect={selectScenario}
+            onRun={() => void runSelectedScenario()}
+            running={running}
+          />
           <ScrollArea className="min-h-0 flex-1">
             <div className="flex flex-col gap-3 p-4">
               {!activeSession ? (
@@ -716,6 +773,106 @@ function Empty({ children }: { children: React.ReactNode }) {
   return (
     <div className="rounded-md border border-dashed border-border bg-card/50 p-6 text-sm text-muted-foreground">
       {children}
+    </div>
+  );
+}
+
+function ScenarioPanel({
+  scenarios,
+  scenario,
+  onSelect,
+  onRun,
+  running,
+}: {
+  scenarios: SensorTestScenario[];
+  scenario: SensorTestScenario | null;
+  onSelect: (id: string) => void;
+  onRun: () => void;
+  running: boolean;
+}) {
+  const mustInclude = splitList(scenario?.must_include ?? null);
+  const mustNotInclude = splitList(scenario?.must_not_include ?? null);
+
+  return (
+    <div className="w-full shrink-0 overflow-hidden border-b border-border bg-card/40 px-4 py-3">
+      <div className="flex w-full min-w-0 items-center gap-2">
+        <Select value={scenario?.id ?? ""} onValueChange={onSelect}>
+          <SelectTrigger className="h-8 min-w-0 flex-1 font-mono text-xs">
+            <SelectValue placeholder={`Scénario de test (${scenarios.length})`} />
+          </SelectTrigger>
+          <SelectContent className="max-h-80">
+            {scenarios.map((sc) => (
+              <SelectItem key={sc.id} value={sc.id} className="font-mono text-xs">
+                {sc.priority} · {sc.scenario_id} — {sc.user_prompt_fr.slice(0, 60)}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Button size="sm" disabled={!scenario || running} onClick={onRun} className="h-8 shrink-0">
+          {running ? "Exécution…" : "Lancer la réponse"}
+        </Button>
+      </div>
+
+      {scenario ? (
+        <div className="mt-3 space-y-2">
+          <div className="flex flex-wrap items-center gap-1.5">
+            <Badge className="font-mono text-[10px]">{scenario.priority}</Badge>
+            <Badge variant="outline" className="font-mono text-[10px]">
+              attendu · {scenario.expected_output_type}
+            </Badge>
+            <Badge variant="outline" className="font-mono text-[10px] text-accent">
+              enregistré · {safeOutputType(scenario.expected_output_type)}
+            </Badge>
+          </div>
+          <p className="text-xs text-muted-foreground">{scenario.expected_behavior}</p>
+          <div className="grid gap-2 sm:grid-cols-2">
+            <ContractList
+              label="Éléments obligatoires"
+              items={mustInclude}
+              tone="text-success"
+            />
+            <ContractList
+              label="Éléments interdits"
+              items={mustNotInclude}
+              tone="text-destructive"
+            />
+          </div>
+          <TagList label="Garde-fous attendus" items={scenario.trace_flags ?? []} />
+        </div>
+      ) : (
+        <p className="mt-2 font-mono text-[11px] text-muted-foreground">
+          Sélectionne un scénario pour préremplir la conversation.
+        </p>
+      )}
+    </div>
+  );
+}
+
+function ContractList({
+  label,
+  items,
+  tone,
+}: {
+  label: string;
+  items: string[];
+  tone: string;
+}) {
+  return (
+    <div className="rounded-sm border border-border bg-card p-2">
+      <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+        {label}
+      </p>
+      {items.length === 0 ? (
+        <p className="mt-1 font-mono text-[11px] text-muted-foreground">—</p>
+      ) : (
+        <ul className="mt-1 space-y-0.5">
+          {items.map((i) => (
+            <li key={i} className={`font-mono text-[11px] ${tone}`}>
+              · {i}
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
