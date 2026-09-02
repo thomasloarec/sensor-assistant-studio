@@ -93,10 +93,15 @@ export interface ComposedResponse {
  * scénarios où la formulation générique ne respectait pas le contrat.
  */
 interface ScenarioOverride {
-  customerText: string;
+  /** Remplace le corps générique de la réponse prospect. */
+  customerText?: string;
+  /** Complète le corps générique sans le remplacer. */
+  appendText?: string;
   datasheetValues: Record<string, unknown>;
   distributorPathAllowed?: boolean;
   extraGuardrails?: string[];
+  /** Coupe le paragraphe distributeur générique. */
+  suppressDistributorLine?: boolean;
 }
 
 const SCENARIO_OVERRIDES: Record<string, ScenarioOverride> = {
