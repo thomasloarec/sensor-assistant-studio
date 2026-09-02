@@ -21,6 +21,12 @@ import * as db from "@/lib/standex/queries";
 import { runScenario, safeOutputType, splitList } from "@/lib/standex/scenario-run";
 import { composeResponse } from "@/lib/standex/response-contract";
 import { evaluateRun, type ScenarioEvaluation } from "@/lib/standex/evaluate";
+import {
+  SECTION_LABELS,
+  buildApplicationDossier,
+  buildDossierMarkdown,
+  type DossierSection,
+} from "@/lib/standex/application-dossier";
 import { buildCsv, buildMarkdown, downloadText } from "@/lib/standex/export";
 import {
   REVIEW_PACK_SCENARIOS,
@@ -605,6 +611,7 @@ function Bench({ user }: { user: User }) {
                   { v: "trace", label: "Trace interne" },
                   { v: "revue", label: "Revue" },
                   { v: "lead", label: "Données lead" },
+                  { v: "dossier", label: "Dossier application" },
                   { v: "batch", label: "Synthèse P0" },
                 ] as const
               ).map(({ v, label }) => (
@@ -752,6 +759,27 @@ function Bench({ user }: { user: User }) {
                 </ScrollArea>
               </TabsContent>
 
+              <TabsContent value="dossier" className="m-0 h-full">
+                <ScrollArea className="h-full">
+                  <div className="p-4">
+                    {!activeSession ? (
+                      <Empty>Aucune session sélectionnée.</Empty>
+                    ) : (
+                      <DossierPanel
+                        session={activeSession}
+                        messages={messages}
+                        output={lastOutput}
+                        trace={lastTrace}
+                        reviews={reviews}
+                        tester={user.email ?? user.id}
+                      />
+                    )}
+                  </div>
+                </ScrollArea>
+              </TabsContent>
+
+
+
               <TabsContent value="batch" className="m-0 h-full">
                 <ScrollArea className="h-full">
                   <BatchPanel
@@ -774,6 +802,144 @@ function Bench({ user }: { user: User }) {
     </>
   );
 }
+
+function DossierPanel({
+  session,
+  messages,
+  output,
+  trace,
+  reviews,
+  tester,
+}: {
+  session: SensorTestSession;
+  messages: SensorTestMessage[];
+  output: SensorTestOutput | null;
+  trace: SensorTestInternalTrace | null;
+  reviews: SensorTestReview[];
+  tester: string;
+}) {
+  const [copied, setCopied] = useState(false);
+  const dossier = buildApplicationDossier({ session, messages, output, trace, reviews });
+  const markdown = buildDossierMarkdown(dossier, { tester });
+  const critical = dossier.missingCritical.filter((f) => f.importance === "critique");
+
+  return (
+    <div className="space-y-4">
+      <div className="flex flex-wrap items-center gap-2">
+        <Badge variant="outline" className="font-mono text-[10px]">
+          {dossier.outputType ?? "sortie —"}
+        </Badge>
+        <Badge variant="outline" className="font-mono text-[10px]">
+          confiance : {dossier.confidence ?? "—"}
+        </Badge>
+        <Badge variant="outline" className="font-mono text-[10px]">
+          {dossier.fields.filter((f) => f.value).length}/24 champs
+        </Badge>
+        <div className="ml-auto flex gap-2">
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => {
+              void navigator.clipboard.writeText(markdown);
+              setCopied(true);
+              window.setTimeout(() => setCopied(false), 1500);
+            }}
+          >
+            {copied ? "Copié" : "Copier (MD)"}
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() =>
+              downloadText(
+                `dossier-application-${session.id.slice(0, 8)}.md`,
+                markdown,
+                "text/markdown",
+              )
+            }
+          >
+            Télécharger (MD)
+          </Button>
+        </div>
+      </div>
+
+      {(Object.keys(SECTION_LABELS) as DossierSection[]).map((section) => (
+        <div key={section} className="rounded-md border border-border bg-card p-4">
+          <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+            {SECTION_LABELS[section]}
+          </p>
+          <div className="mt-3 space-y-2">
+            {dossier.fields
+              .filter((f) => f.section === section)
+              .map((f) => (
+                <div
+                  key={f.id}
+                  className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] gap-3 border-b border-border/50 pb-2 font-mono text-xs last:border-0 last:pb-0"
+                >
+                  <div className="min-w-0">
+                    <p className="break-words text-muted-foreground">{f.labelFr}</p>
+                    <span className="text-[10px] uppercase tracking-widest text-muted-foreground/70">
+                      {f.importance}
+                    </span>
+                  </div>
+                  <div className="min-w-0">
+                    {f.value ? (
+                      <p className="break-words">{f.value}</p>
+                    ) : (
+                      <p className="text-destructive">manquant</p>
+                    )}
+                    {f.source ? (
+                      <span className="text-[10px] uppercase tracking-widest text-accent">
+                        source : {f.source}
+                      </span>
+                    ) : null}
+                  </div>
+                </div>
+              ))}
+          </div>
+        </div>
+      ))}
+
+      <div className="rounded-md border border-border bg-card p-4">
+        <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+          Champs manquants prioritaires
+        </p>
+        {critical.length === 0 ? (
+          <p className="mt-2 text-xs text-muted-foreground">Aucun champ critique manquant.</p>
+        ) : (
+          <ul className="mt-2 space-y-1 font-mono text-xs">
+            {critical.map((f) => (
+              <li key={f.id} className="break-words">
+                · {f.labelFr}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
+      <div className="rounded-md border border-border bg-card p-4">
+        <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+          Questions conseillées (testeur)
+        </p>
+        {dossier.suggestedQuestions.length === 0 ? (
+          <p className="mt-2 text-xs text-muted-foreground">Aucune question prioritaire.</p>
+        ) : (
+          <ol className="mt-2 space-y-1 text-xs">
+            {dossier.suggestedQuestions.map((q, i) => (
+              <li key={q} className="break-words">
+                {i + 1}. {q}
+              </li>
+            ))}
+          </ol>
+        )}
+      </div>
+
+      <TagList label="Garde-fous déclenchés" items={dossier.guardrails} />
+    </div>
+  );
+}
+
+
 
 function ReviewForm({
   sessionId,
