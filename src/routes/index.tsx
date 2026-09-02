@@ -421,6 +421,13 @@ function Bench({ user }: { user: User }) {
               {activeSession ? `${messages.length} tour(s)` : "aucune session"}
             </span>
           </div>
+          <ScenarioPanel
+            scenarios={scenarios}
+            scenario={scenario}
+            onSelect={selectScenario}
+            onRun={() => void runSelectedScenario()}
+            running={running}
+          />
           <ScrollArea className="min-h-0 flex-1">
             <div className="flex flex-col gap-3 p-4">
               {!activeSession ? (
