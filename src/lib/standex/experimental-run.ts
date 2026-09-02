@@ -151,6 +151,7 @@ export async function runExperimental(params: {
     violations,
     outputId: output.id,
     schemaWarning: warning ?? traceWarning,
+    rawText: null,
     usage: result.usage,
   };
 }
