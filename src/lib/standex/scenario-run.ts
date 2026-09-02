@@ -51,7 +51,7 @@ export async function runScenario(params: {
     customer_summary: assistantText,
     standex_validation_required: composed.standexValidationRequired,
     distributor_path_allowed: composed.distributorPathAllowed,
-    be_dossier: composed.beDossier,
+    be_dossier: composed.beDossier as never,
   });
 
   const trace = await db.insertTrace({
