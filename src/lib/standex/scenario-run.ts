@@ -22,18 +22,14 @@ export function splitList(value: string | null): string[] {
     .filter(Boolean);
 }
 
-export function resolveOutputType(expected: string): OutputType {
+export function safeOutputType(expected: string): OutputType {
+  const direct = expected.trim().toUpperCase();
+  if ((OUTPUT_TYPES as readonly string[]).includes(direct)) return direct as OutputType;
   const first = expected
     .split(/[\s/|,]+/)
     .map((v) => v.trim().toUpperCase())
     .find((v) => (OUTPUT_TYPES as readonly string[]).includes(v));
-  return (first as OutputType) ?? (expected.trim().toUpperCase() as OutputType) ??
-    "S3_MISSING_INFO";
-}
-
-export function safeOutputType(expected: string): OutputType {
-  const t = resolveOutputType(expected);
-  return (OUTPUT_TYPES as readonly string[]).includes(t) ? t : "S3_MISSING_INFO";
+  return (first as OutputType | undefined) ?? "S3_MISSING_INFO";
 }
 
 function confidenceFor(type: OutputType): Confidence {
