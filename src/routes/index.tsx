@@ -28,6 +28,11 @@ import {
   type DossierSection,
 } from "@/lib/standex/application-dossier";
 import { buildCsv, buildMarkdown, downloadText } from "@/lib/standex/export";
+import type { AssistantMode } from "@/lib/standex/baseline";
+import {
+  BaselineModePanel,
+  BaselineStatusBadge,
+} from "@/components/standex/baseline-mode";
 import {
   REVIEW_PACK_SCENARIOS,
   buildReviewPack,
@@ -112,6 +117,7 @@ function Header({ user }: { user: User | null }) {
         <Badge variant="outline" className="font-mono text-[10px] uppercase">
           interne · schéma V0.2
         </Badge>
+        <BaselineStatusBadge />
       </div>
       <div className="flex items-center gap-2 font-mono text-xs text-muted-foreground">
         <span className="inline-flex items-center gap-1.5">
@@ -449,6 +455,8 @@ function Bench({ user }: { user: User }) {
       }
     });
 
+  const [assistantMode, setAssistantMode] = useState<AssistantMode>("baseline");
+
   const lastOutput = outputs[0] ?? null;
   const lastTrace = traces[0] ?? null;
 
@@ -604,7 +612,7 @@ function Bench({ user }: { user: User }) {
         {/* Inspecteur */}
         <section className="flex min-h-0 min-w-0 flex-col overflow-hidden">
           <Tabs defaultValue="client" className="flex min-h-0 flex-1 flex-col gap-0">
-            <TabsList className="h-auto w-full justify-start rounded-none border-b border-border bg-transparent p-0">
+            <TabsList className="h-auto w-full flex-wrap justify-start rounded-none border-b border-border bg-transparent p-0">
               {(
                 [
                   { v: "client", label: "Sortie client" },
@@ -612,6 +620,7 @@ function Bench({ user }: { user: User }) {
                   { v: "revue", label: "Revue" },
                   { v: "lead", label: "Données lead" },
                   { v: "dossier", label: "Dossier application" },
+                  { v: "mode", label: "Mode assistant" },
                   { v: "batch", label: "Synthèse P0" },
                 ] as const
               ).map(({ v, label }) => (
@@ -779,6 +788,32 @@ function Bench({ user }: { user: User }) {
               </TabsContent>
 
 
+
+              <TabsContent value="mode" className="m-0 h-full">
+                <ScrollArea className="h-full">
+                  <BaselineModePanel
+                    mode={assistantMode}
+                    onModeChange={setAssistantMode}
+                    baselineResponse={lastOutput?.customer_summary ?? null}
+                    baselineTrace={
+                      lastTrace
+                        ? JSON.stringify(
+                            {
+                              understood_application: lastTrace.understood_application,
+                              detection_target: lastTrace.detection_target,
+                              electrical_load: lastTrace.electrical_load,
+                              guardrails_triggered: lastTrace.guardrails_triggered,
+                              confidence: lastTrace.confidence,
+                              routing_reason: lastTrace.routing_reason,
+                            },
+                            null,
+                            2,
+                          )
+                        : null
+                    }
+                  />
+                </ScrollArea>
+              </TabsContent>
 
               <TabsContent value="batch" className="m-0 h-full">
                 <ScrollArea className="h-full">

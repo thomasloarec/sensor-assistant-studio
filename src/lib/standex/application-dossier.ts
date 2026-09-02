@@ -464,7 +464,7 @@ export function buildDossierMarkdown(
   L.push(`- Champs critiques manquants : ${d.missingCritical.filter((f) => f.importance === "critique").length}`);
   L.push("");
   L.push("## Notes de revue", "");
-  L.push(d.reviewNotes.length ? d.reviewNotes.map((n) => `- ${n}`).join("\n") : "- aucune revue");
+  L.push(d.reviewNotes.length ? d.reviewNotes.map((n) => `- ${n}`).join("\n") : "Revue humaine : non effectuée.");
   L.push("");
   return L.join("\n");
 }
