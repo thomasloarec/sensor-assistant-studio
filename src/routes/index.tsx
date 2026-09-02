@@ -23,6 +23,10 @@ import { composeResponse } from "@/lib/standex/response-contract";
 import { evaluateRun, type ScenarioEvaluation } from "@/lib/standex/evaluate";
 import { buildCsv, buildMarkdown, downloadText } from "@/lib/standex/export";
 import {
+  REVIEW_PACK_SCENARIOS,
+  buildReviewPack,
+} from "@/lib/standex/review-pack";
+import {
   REVIEWER_ROLES,
   VERDICTS,
   type ReviewerRole,
@@ -235,6 +239,9 @@ interface BatchRow {
   outputType?: string;
   guardrails?: string[];
   customerText?: string;
+  trace?: SensorTestInternalTrace;
+  review?: SensorTestReview;
+  session?: SensorTestSession;
   sessionId?: string;
 }
 
@@ -424,6 +431,9 @@ function Bench({ user }: { user: User }) {
               outputType: res.output.output_type,
               guardrails: composed.guardrails,
               customerText: composed.customerText,
+              trace: res.trace,
+              review: res.review,
+              session,
               sessionId: session.id,
             },
           ]);
@@ -1024,6 +1034,15 @@ function BatchPanel({
     supabaseUrl: SUPABASE_URL,
   };
   const markdown = rows.length ? buildMarkdown(rows, meta) : "";
+  const reviewRows = rows.filter((r) => REVIEW_PACK_SCENARIOS.includes(r.code));
+  const reviewPack = reviewRows.length
+    ? buildReviewPack(reviewRows, {
+        testedAt: meta.testedAt,
+        tester: meta.tester,
+        contractVersion: "Contrat de réponse V0.2 (moteur déterministe, sans modèle génératif)",
+        regressionScore: `${ok}/${rows.length} OK`,
+      })
+    : "";
 
   const copy = async (text: string, tag: string) => {
     await navigator.clipboard.writeText(text);
@@ -1105,7 +1124,34 @@ function BatchPanel({
             >
               Exporter la synthèse (CSV)
             </Button>
+            <Button
+              size="sm"
+              disabled={reviewRows.length === 0}
+              onClick={() =>
+                downloadText(
+                  `pack-revue-qualitative-${meta.testedAt.slice(0, 10)}.md`,
+                  reviewPack,
+                  "text/markdown",
+                )
+              }
+            >
+              Exporter pack de revue qualitative
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              disabled={reviewRows.length === 0}
+              onClick={() => void copy(reviewPack, "pack")}
+            >
+              {copied === "pack" ? "Copié" : "Copier le pack de revue"}
+            </Button>
           </div>
+          {rows.length > 0 ? (
+            <p className="font-mono text-[11px] text-muted-foreground">
+              Pack de revue : {reviewRows.length}/{REVIEW_PACK_SCENARIOS.length} scénarios de
+              relecture disponibles dans ce lot.
+            </p>
+          ) : null}
 
           <div className="overflow-x-auto rounded-md border border-border">
             <table className="w-full border-collapse font-mono text-[11px]">
