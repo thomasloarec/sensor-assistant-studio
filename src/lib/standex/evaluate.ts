@@ -54,6 +54,12 @@ export function evaluateRun(
   composed: ComposedResponse,
 ): ScenarioEvaluation {
   const text = norm(composed.customerText);
+  // Certains éléments obligatoires du contrat sont tracés côté interne
+  // (valeurs datasheet) plutôt que formulés tels quels au prospect.
+  const traceText = norm(
+    `${JSON.stringify(composed.datasheetValues)} ${composed.guardrails.join(" ")} ${composed.missingQuestions.join(" ")}`,
+  );
+  const mustText = `${text} ${traceText}`;
   const checks: ScenarioCheck[] = [];
 
   const expected = safeOutputType(scenario.expected_output_type);
