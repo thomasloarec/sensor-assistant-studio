@@ -226,6 +226,8 @@ function Bench({ user }: { user: User }) {
   const [error, setError] = useState<string | null>(null);
   const [draft, setDraft] = useState("");
   const [running, setRunning] = useState(false);
+  const [batch, setBatch] = useState<BatchRow[]>([]);
+  const [batchBusy, setBatchBusy] = useState(false);
 
   const activeSession = useMemo(
     () => sessions.find((s) => s.id === activeId) ?? null,
