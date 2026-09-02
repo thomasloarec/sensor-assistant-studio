@@ -216,15 +216,24 @@ export const generateExperimentalResponse = createServerFn({ method: "POST" })
 
     let text = "";
     let usage: ExperimentalResult["usage"] = null;
+    let toolPayload: ExperimentalPayload | null = null;
     try {
       const body = JSON.parse(bodyText) as {
-        content?: { type: string; text?: string }[];
+        content?: { type: string; text?: string; name?: string; input?: unknown }[];
         usage?: { input_tokens?: number; output_tokens?: number };
       };
-      text = (body.content ?? [])
+      const blocks = body.content ?? [];
+      text = blocks
         .filter((c) => c.type === "text" && typeof c.text === "string")
         .map((c) => c.text as string)
         .join("\n");
+      const tool = blocks.find(
+        (c) => c.type === "tool_use" && c.name === RESPONSE_TOOL.name && c.input,
+      );
+      if (tool) {
+        toolPayload = normalize(tool.input as Record<string, unknown>);
+        if (!text) text = JSON.stringify(tool.input, null, 2);
+      }
       usage = body.usage ?? null;
     } catch {
       return {
