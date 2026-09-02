@@ -612,7 +612,7 @@ function Bench({ user }: { user: User }) {
         {/* Inspecteur */}
         <section className="flex min-h-0 min-w-0 flex-col overflow-hidden">
           <Tabs defaultValue="client" className="flex min-h-0 flex-1 flex-col gap-0">
-            <TabsList className="h-auto w-full justify-start rounded-none border-b border-border bg-transparent p-0">
+            <TabsList className="h-auto w-full flex-wrap justify-start rounded-none border-b border-border bg-transparent p-0">
               {(
                 [
                   { v: "client", label: "Sortie client" },
