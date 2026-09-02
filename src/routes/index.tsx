@@ -830,7 +830,7 @@ function DossierPanel({
           {dossier.outputType ?? "sortie —"}
         </Badge>
         <Badge variant="outline" className="font-mono text-[10px]">
-          confiance : {dossier.confidence ?? "—"}
+          confiance produit : {dossier.productConfidence ?? "—"}
         </Badge>
         <Badge variant="outline" className="font-mono text-[10px]">
           {dossier.fields.filter((f) => f.value).length}/24 champs

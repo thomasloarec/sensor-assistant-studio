@@ -193,7 +193,7 @@ export function buildApplicationDossier(input: {
     .join("\n");
   const lower = prospectText.toLowerCase();
   const has = (...needles: string[]) => needles.some((n) => lower.includes(n));
-  const when = (cond: boolean, label: string): string | null => (cond ? label : null);
+  const when = (cond: boolean, label: string | null): string | null => (cond ? label : null);
 
   const loadHit = LOAD_WORDS.find(([re]) => re.test(prospectText));
   const inductive = Boolean(loadHit);
