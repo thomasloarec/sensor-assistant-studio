@@ -184,6 +184,8 @@ export const generateExperimentalResponse = createServerFn({ method: "POST" })
           max_tokens: 1200,
           system: EXPERIMENTAL_SYSTEM_PROMPT,
           messages: [{ role: "user", content: userContent }],
+          tools: [RESPONSE_TOOL],
+          tool_choice: { type: "tool", name: RESPONSE_TOOL.name },
         }),
       });
     } catch (e) {
