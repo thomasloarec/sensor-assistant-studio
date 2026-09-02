@@ -23,6 +23,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { isSupabaseConfigured, supabase } from "@/lib/standex/supabase";
+import {
+  checkMigrationV03,
+  MIGRATION_V03_SQL,
+  type MigrationStatus,
+} from "@/lib/standex/migration-status";
 import * as db from "@/lib/standex/queries";
 import { runScenario, safeOutputType, splitList } from "@/lib/standex/scenario-run";
 import { composeResponse } from "@/lib/standex/response-contract";
