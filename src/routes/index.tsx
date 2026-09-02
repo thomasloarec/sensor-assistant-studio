@@ -325,16 +325,14 @@ function Bench({ user }: { user: User }) {
           setActiveId(s.id);
           sessionId = s.id;
         }
-        const res = await runScenario({
+        const existing = await db.fetchMessages(sessionId);
+        await runScenario({
           sessionId,
           reviewerId: user.id,
           scenario,
-          startTurnIndex: messages.length,
+          startTurnIndex: existing.length,
         });
-        setMessages((prev) => [...prev, ...res.messages]);
-        setOutputs((prev) => [res.output, ...prev]);
-        setTraces((prev) => [res.trace, ...prev]);
-        setReviews((prev) => [res.review, ...prev]);
+        await loadSession(sessionId);
         setDraft("");
       } finally {
         setRunning(false);
