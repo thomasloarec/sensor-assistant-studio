@@ -200,7 +200,13 @@ export function composeResponse(scenario: SensorTestScenario): ComposedResponse 
   const outputType = safeOutputType(scenario.expected_output_type);
   const must = splitList(scenario.must_include);
   const forbidden = splitList(scenario.must_not_include);
-  const flags = [...new Set([...(scenario.trace_flags ?? []), ...detect(scenario)])];
+  const flags = [
+    ...new Set([
+      ...(scenario.trace_flags ?? []),
+      ...detect(scenario),
+      ...(SCENARIO_OVERRIDES[scenario.scenario_id]?.extraGuardrails ?? []),
+    ]),
+  ];
   const guardrailTexts = flags.map((f) => GUARDRAIL_TEXTS[f]).filter(Boolean) as string[];
 
   const maintenance =
