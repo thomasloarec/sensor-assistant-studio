@@ -191,7 +191,7 @@ export function composeResponse(scenario: SensorTestScenario): ComposedResponse 
   lines.push(`Ce que je comprends de votre besoin : ${scenario.user_prompt_fr}`);
   lines.push("");
 
-  if (override) {
+  if (override?.customerText) {
     lines.push(override.customerText);
   } else if (outputType.startsWith("S1_")) {
     lines.push(
