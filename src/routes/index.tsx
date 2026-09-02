@@ -988,55 +988,146 @@ function ContractList({
   );
 }
 
+
+const SUPABASE_URL = import.meta.env["VITE_SUPABASE_URL"] ?? "";
+
+function yn(v: boolean | undefined) {
+  return v === undefined ? "—" : v ? "oui" : "non";
+}
+
 function BatchPanel({
   rows,
   busy,
+  scope,
+  total,
+  runAt,
+  tester,
+  scenarioCount,
   onRun,
   onOpen,
 }: {
   rows: BatchRow[];
   busy: boolean;
-  onRun: () => void;
+  scope: "p0" | "all";
+  total: number;
+  runAt: string | null;
+  tester: string;
+  scenarioCount: number;
+  onRun: (scope: "p0" | "all") => void;
   onOpen: (id: string) => void;
 }) {
+  const [copied, setCopied] = useState<string | null>(null);
   const ok = rows.filter((r) => r.evaluation?.verdict === "OK").length;
+  const meta = {
+    testedAt: runAt ?? new Date().toISOString(),
+    tester,
+    supabaseUrl: SUPABASE_URL,
+  };
+  const markdown = rows.length ? buildMarkdown(rows, meta) : "";
+
+  const copy = async (text: string, tag: string) => {
+    await navigator.clipboard.writeText(text);
+    setCopied(tag);
+    setTimeout(() => setCopied(null), 2000);
+  };
+
+  const readiness =
+    rows.length === 0
+      ? null
+      : ok === rows.length
+        ? "Prêt pour revue qualitative Thomas / Claude / BE."
+        : ok >= Math.ceil(rows.length * (18 / 22))
+          ? "Corriger les écarts listés puis relancer le lot."
+          : "Revoir le moteur déterministe avant de brancher un vrai assistant.";
+
   return (
     <div className="space-y-3 p-4">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <div>
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div className="min-w-0">
           <h3 className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
-            Lot prioritaire · 8 scénarios
+            Synthèse de test
           </h3>
           <p className="mt-1 text-xs text-muted-foreground">
-            Réponse client, sortie, trace interne, garde-fous et verdict — tout est persisté.
+            Session, message prospect, réponse assistant, sortie, trace interne et revue sont
+            persistés pour chaque scénario.
           </p>
         </div>
-        <Button size="sm" disabled={busy} onClick={onRun} className="shrink-0">
-          {busy ? `Exécution… (${rows.length}/8)` : "Lancer les 8 scénarios"}
-        </Button>
+        <div className="flex shrink-0 flex-wrap gap-2">
+          <Button size="sm" variant="outline" disabled={busy} onClick={() => onRun("p0")}>
+            {busy && scope === "p0" ? `Exécution… (${rows.length}/${total})` : "Lancer les 8 scénarios"}
+          </Button>
+          <Button size="sm" disabled={busy || scenarioCount === 0} onClick={() => onRun("all")}>
+            {busy && scope === "all"
+              ? `Exécution… (${rows.length}/${total})`
+              : `Lancer les ${scenarioCount || 22} scénarios`}
+          </Button>
+        </div>
       </div>
 
       {rows.length === 0 ? (
         <Empty>Aucun lot exécuté pour l'instant.</Empty>
       ) : (
         <>
-          <p className="font-mono text-xs text-accent">
-            {ok}/{rows.length} OK · {rows.length - ok} à corriger
-          </p>
+          <div className="flex flex-wrap items-center gap-3">
+            <p className="font-mono text-xs text-accent">
+              {ok}/{rows.length} OK · {rows.length - ok} à corriger
+            </p>
+            <p className="font-mono text-[11px] text-muted-foreground">{readiness}</p>
+          </div>
+
+          <div className="flex flex-wrap gap-2">
+            <Button size="sm" variant="outline" onClick={() => void copy(markdown, "md")}>
+              {copied === "md" ? "Copié" : "Copier la synthèse (Markdown)"}
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() =>
+                downloadText(
+                  `regression-capteur-${meta.testedAt.slice(0, 10)}.md`,
+                  markdown,
+                  "text/markdown",
+                )
+              }
+            >
+              Exporter la synthèse (MD)
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() =>
+                downloadText(
+                  `regression-capteur-${meta.testedAt.slice(0, 10)}.csv`,
+                  buildCsv(rows, meta),
+                  "text/csv",
+                )
+              }
+            >
+              Exporter la synthèse (CSV)
+            </Button>
+          </div>
+
           <div className="overflow-x-auto rounded-md border border-border">
             <table className="w-full border-collapse font-mono text-[11px]">
               <thead>
                 <tr className="border-b border-border bg-secondary/50 text-left">
                   <th className="px-2 py-1.5">Scénario</th>
-                  <th className="px-2 py-1.5">Sortie</th>
-                  <th className="px-2 py-1.5">Garde-fous</th>
+                  <th className="px-2 py-1.5">Prio</th>
+                  <th className="px-2 py-1.5">Sortie attendue</th>
+                  <th className="px-2 py-1.5">Sortie obtenue</th>
+                  <th className="px-2 py-1.5">GF attendus</th>
+                  <th className="px-2 py-1.5">GF obtenus</th>
+                  <th className="px-2 py-1.5">Oblig.</th>
+                  <th className="px-2 py-1.5">Interdits</th>
+                  <th className="px-2 py-1.5">Ville</th>
+                  <th className="px-2 py-1.5">2 j.o.</th>
                   <th className="px-2 py-1.5">Verdict</th>
                 </tr>
               </thead>
               <tbody>
                 {rows.map((r) => (
                   <tr key={r.code} className="border-b border-border/60 align-top">
-                    <td className="px-2 py-1.5">
+                    <td className="px-2 py-1.5 whitespace-nowrap">
                       {r.sessionId ? (
                         <button
                           className="text-accent underline-offset-2 hover:underline"
@@ -1048,9 +1139,24 @@ function BatchPanel({
                         r.code
                       )}
                     </td>
+                    <td className="px-2 py-1.5">{r.priority ?? "—"}</td>
+                    <td className="px-2 py-1.5">{r.evaluation?.expectedOutput ?? "—"}</td>
                     <td className="px-2 py-1.5">{r.outputType ?? "—"}</td>
-                    <td className="max-w-[220px] px-2 py-1.5 break-words">
+                    <td className="max-w-[170px] px-2 py-1.5 break-words">
+                      {r.evaluation?.expectedFlags.join(", ") || "—"}
+                    </td>
+                    <td className="max-w-[170px] px-2 py-1.5 break-words">
                       {r.guardrails?.length ? r.guardrails.join(", ") : "—"}
+                    </td>
+                    <td className="px-2 py-1.5">
+                      {r.evaluation ? yn(r.evaluation.missingMust.length === 0) : "—"}
+                    </td>
+                    <td className="px-2 py-1.5">
+                      {r.evaluation ? yn(r.evaluation.presentForbidden.length === 0) : "—"}
+                    </td>
+                    <td className="px-2 py-1.5">{r.evaluation ? yn(r.evaluation.cityAsked) : "—"}</td>
+                    <td className="px-2 py-1.5">
+                      {r.evaluation ? yn(r.evaluation.twoBusinessDays) : "—"}
                     </td>
                     <td className="px-2 py-1.5">
                       {r.missing ? (
@@ -1075,19 +1181,47 @@ function BatchPanel({
           </div>
 
           {rows
-            .filter((r) => r.evaluation && r.evaluation.failures.length > 0)
+            .filter((r) => r.missing || (r.evaluation && r.evaluation.verdict !== "OK"))
             .map((r) => (
               <div key={`f-${r.code}`} className="rounded-md border border-border bg-card p-3">
                 <p className="font-mono text-[11px] text-destructive">{r.code}</p>
-                <ul className="mt-1 space-y-0.5">
-                  {r.evaluation!.failures.map((f) => (
-                    <li key={f} className="font-mono text-[11px] text-muted-foreground">
-                      · {f}
+                {r.missing ? (
+                  <p className="mt-1 font-mono text-[11px] text-muted-foreground">
+                    · Scénario introuvable dans sensor_test_scenarios
+                  </p>
+                ) : (
+                  <ul className="mt-1 space-y-0.5 font-mono text-[11px] text-muted-foreground">
+                    <li>· Éléments obligatoires absents : {r.evaluation!.missingMust.join(" | ") || "—"}</li>
+                    <li>
+                      · Éléments interdits présents : {r.evaluation!.presentForbidden.join(" | ") || "—"}
                     </li>
-                  ))}
-                </ul>
+                    <li>· Garde-fous manquants : {r.evaluation!.missingFlags.join(", ") || "—"}</li>
+                    <li>
+                      · Sortie :{" "}
+                      {r.evaluation!.outputOk
+                        ? "conforme"
+                        : `incorrecte (${r.outputType} vs ${r.evaluation!.expectedOutput})`}
+                    </li>
+                    <li>
+                      · Trace interne : {r.evaluation!.traceSufficient ? "suffisante" : "insuffisante"}
+                    </li>
+                    <li>· Suggestion : {r.evaluation!.suggestion ?? "—"}</li>
+                  </ul>
+                )}
               </div>
             ))}
+
+          <div className="rounded-md border border-border bg-card p-3">
+            <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+              Export Markdown copiable
+            </p>
+            <Textarea
+              readOnly
+              value={markdown}
+              className="mt-2 h-48 font-mono text-[11px]"
+              onFocus={(e) => e.currentTarget.select()}
+            />
+          </div>
         </>
       )}
     </div>
