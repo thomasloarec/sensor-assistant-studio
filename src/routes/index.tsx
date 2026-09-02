@@ -797,9 +797,9 @@ function ScenarioPanel({
 
   return (
     <div className="shrink-0 border-b border-border bg-card/40 px-4 py-3">
-      <div className="flex items-center gap-2">
+      <div className="flex w-full min-w-0 items-center gap-2">
         <Select value={scenario?.id ?? ""} onValueChange={onSelect}>
-          <SelectTrigger className="h-8 flex-1 font-mono text-xs">
+          <SelectTrigger className="h-8 min-w-0 flex-1 font-mono text-xs">
             <SelectValue placeholder={`Scénario de test (${scenarios.length})`} />
           </SelectTrigger>
           <SelectContent className="max-h-80">
@@ -810,7 +810,7 @@ function ScenarioPanel({
             ))}
           </SelectContent>
         </Select>
-        <Button size="sm" disabled={!scenario || running} onClick={onRun} className="h-8">
+        <Button size="sm" disabled={!scenario || running} onClick={onRun} className="h-8 shrink-0">
           {running ? "Exécution…" : "Lancer la réponse"}
         </Button>
       </div>
