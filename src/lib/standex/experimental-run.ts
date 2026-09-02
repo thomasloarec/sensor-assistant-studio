@@ -98,6 +98,7 @@ export async function runExperimental(params: {
       violations: [],
       outputId: null,
       schemaWarning: null,
+      rawText: result.rawText,
       usage: result.usage,
     };
   }
