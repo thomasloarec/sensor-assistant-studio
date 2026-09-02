@@ -706,13 +706,10 @@ function Bench({ user }: { user: User }) {
             <TabsList className="h-auto w-full flex-wrap justify-start rounded-none border-b border-border bg-transparent p-0">
               {(
                 [
-                  { v: "client", label: "Sortie client" },
-                  { v: "trace", label: "Trace interne" },
+                  { v: "client", label: "Tester" },
+                  { v: "mode", label: "Comparer" },
+                  { v: "dossier", label: "Dossier" },
                   { v: "revue", label: "Revue" },
-                  { v: "lead", label: "Données lead" },
-                  { v: "dossier", label: "Dossier application" },
-                  { v: "mode", label: "Mode assistant" },
-                  { v: "batch", label: "Synthèse" },
                 ] as const
               ).map(({ v, label }) => (
                 <TabsTrigger
