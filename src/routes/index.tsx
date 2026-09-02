@@ -778,3 +778,103 @@ function Empty({ children }: { children: React.ReactNode }) {
     </div>
   );
 }
+
+function ScenarioPanel({
+  scenarios,
+  scenario,
+  onSelect,
+  onRun,
+  running,
+}: {
+  scenarios: SensorTestScenario[];
+  scenario: SensorTestScenario | null;
+  onSelect: (id: string) => void;
+  onRun: () => void;
+  running: boolean;
+}) {
+  const mustInclude = splitList(scenario?.must_include ?? null);
+  const mustNotInclude = splitList(scenario?.must_not_include ?? null);
+
+  return (
+    <div className="shrink-0 border-b border-border bg-card/40 px-4 py-3">
+      <div className="flex items-center gap-2">
+        <Select value={scenario?.id ?? ""} onValueChange={onSelect}>
+          <SelectTrigger className="h-8 flex-1 font-mono text-xs">
+            <SelectValue placeholder={`Scénario de test (${scenarios.length})`} />
+          </SelectTrigger>
+          <SelectContent className="max-h-80">
+            {scenarios.map((sc) => (
+              <SelectItem key={sc.id} value={sc.id} className="font-mono text-xs">
+                {sc.priority} · {sc.scenario_id} — {sc.user_prompt_fr.slice(0, 60)}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Button size="sm" disabled={!scenario || running} onClick={onRun} className="h-8">
+          {running ? "Exécution…" : "Lancer la réponse"}
+        </Button>
+      </div>
+
+      {scenario ? (
+        <div className="mt-3 space-y-2">
+          <div className="flex flex-wrap items-center gap-1.5">
+            <Badge className="font-mono text-[10px]">{scenario.priority}</Badge>
+            <Badge variant="outline" className="font-mono text-[10px]">
+              attendu · {scenario.expected_output_type}
+            </Badge>
+            <Badge variant="outline" className="font-mono text-[10px] text-accent">
+              enregistré · {safeOutputType(scenario.expected_output_type)}
+            </Badge>
+          </div>
+          <p className="text-xs text-muted-foreground">{scenario.expected_behavior}</p>
+          <div className="grid gap-2 sm:grid-cols-2">
+            <ContractList
+              label="Éléments obligatoires"
+              items={mustInclude}
+              tone="text-success"
+            />
+            <ContractList
+              label="Éléments interdits"
+              items={mustNotInclude}
+              tone="text-destructive"
+            />
+          </div>
+          <TagList label="Garde-fous attendus" items={scenario.trace_flags ?? []} />
+        </div>
+      ) : (
+        <p className="mt-2 font-mono text-[11px] text-muted-foreground">
+          Sélectionne un scénario pour préremplir la conversation.
+        </p>
+      )}
+    </div>
+  );
+}
+
+function ContractList({
+  label,
+  items,
+  tone,
+}: {
+  label: string;
+  items: string[];
+  tone: string;
+}) {
+  return (
+    <div className="rounded-sm border border-border bg-card p-2">
+      <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+        {label}
+      </p>
+      {items.length === 0 ? (
+        <p className="mt-1 font-mono text-[11px] text-muted-foreground">—</p>
+      ) : (
+        <ul className="mt-1 space-y-0.5">
+          {items.map((i) => (
+            <li key={i} className={`font-mono text-[11px] ${tone}`}>
+              · {i}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
