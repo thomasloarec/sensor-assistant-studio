@@ -1,7 +1,10 @@
 // Panneau « Mode assistant » : baseline gelée V1.0 + mode expérimental désactivé.
 // Aucun appel modèle, aucune écriture Supabase : préparation d'interface seulement.
 
+import { useState } from "react";
+
 import { Badge } from "@/components/ui/badge";
+import type { ExperimentalRun } from "@/lib/standex/experimental-run";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import {
