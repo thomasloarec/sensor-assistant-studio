@@ -164,6 +164,15 @@ export function buildReviewPack(rows: ReviewPackRow[], meta: ReviewPackMeta): st
     out.push(...traceBlock(r.trace));
 
     out.push("");
+    out.push("### Dossier application");
+    out.push("");
+    out.push(
+      r.dossierMarkdown
+        ? r.dossierMarkdown.replace(/^# /gm, "#### ").replace(/^## /gm, "#### ")
+        : "_Dossier application non disponible._",
+    );
+
+    out.push("");
     out.push("### Données lead capturées ou demandées");
     out.push("");
     out.push(...leadBlock(r.session, e?.cityAsked ?? false));
