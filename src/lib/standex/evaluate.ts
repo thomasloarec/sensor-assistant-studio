@@ -34,9 +34,19 @@ function keywords(item: string): string[] {
 
 function matches(text: string, item: string): boolean {
   const kws = keywords(item);
-  if (kws.length === 0) return true;
+  if (kws.length === 0) return text.includes(norm(item));
   const hits = kws.filter((k) => text.includes(k)).length;
   return hits / kws.length >= 0.5;
+}
+
+/**
+ * Un élément interdit n'est considéré présent que si tous ses mots
+ * significatifs apparaissent : évite les faux positifs sur un mot isolé.
+ */
+function matchesStrict(text: string, item: string): boolean {
+  const kws = keywords(item);
+  if (kws.length === 0) return text.includes(norm(item));
+  return kws.every((k) => text.includes(k));
 }
 
 export function evaluateRun(
