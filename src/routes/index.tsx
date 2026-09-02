@@ -214,6 +214,28 @@ function SignIn() {
   );
 }
 
+const PRIORITY_SCENARIOS = [
+  "MVP-TS-002",
+  "MVP-TS-003",
+  "MVP-TS-004",
+  "MVP-TS-005",
+  "MVP-TS-006",
+  "MVP-TS-007",
+  "MVP-TS-021",
+  "MVP-TS-022",
+] as const;
+
+interface BatchRow {
+  code: string;
+  missing?: boolean;
+  scenario?: SensorTestScenario;
+  evaluation?: ScenarioEvaluation;
+  outputType?: string;
+  guardrails?: string[];
+  customerText?: string;
+  sessionId?: string;
+}
+
 function Bench({ user }: { user: User }) {
   const [sessions, setSessions] = useState<SensorTestSession[]>([]);
   const [scenarios, setScenarios] = useState<SensorTestScenario[]>([]);
