@@ -576,6 +576,7 @@ function Bench({ user }: { user: User }) {
                   { v: "trace", label: "Trace interne" },
                   { v: "revue", label: "Revue" },
                   { v: "lead", label: "Données lead" },
+                  { v: "batch", label: "Synthèse P0" },
                 ] as const
               ).map(({ v, label }) => (
                 <TabsTrigger
