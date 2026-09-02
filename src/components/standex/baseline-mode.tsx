@@ -126,9 +126,29 @@ export function BaselineModePanel({
           </Button>
         </div>
         {run?.error && (
-          <p className="mt-2 rounded-sm border border-destructive/50 bg-destructive/10 p-2 font-mono text-[11px] text-destructive">
-            {run.error} — la baseline reste affichée et inchangée.
-          </p>
+          <div className="mt-2 rounded-sm border border-destructive/50 bg-destructive/10 p-2 text-[11px] text-destructive">
+            <p>{run.error}</p>
+            <div className="mt-2 flex flex-wrap items-center gap-2">
+              <Button
+                size="sm"
+                variant="outline"
+                disabled={!canRun || busy}
+                onClick={() => onGenerate?.()}
+              >
+                Relancer Claude
+              </Button>
+            </div>
+            {run.rawText ? (
+              <details className="mt-2">
+                <summary className="cursor-pointer text-muted-foreground">
+                  Voir le fragment brut renvoyé
+                </summary>
+                <pre className="mt-1 max-h-40 overflow-auto whitespace-pre-wrap break-words font-mono text-[10px] text-muted-foreground">
+                  {run.rawText}
+                </pre>
+              </details>
+            ) : null}
+          </div>
         )}
         {run?.schemaWarning && (
           <p className="mt-2 rounded-sm border border-warning/40 bg-warning/10 p-2 font-mono text-[11px] text-warning">
