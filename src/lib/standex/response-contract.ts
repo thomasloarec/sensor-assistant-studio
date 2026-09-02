@@ -60,7 +60,9 @@ function detect(scenario: SensorTestScenario): string[] {
   const flags: string[] = [];
   if (hit(/inductif|inductive|moteur|pompe|electrovanne|électrovanne|bobine|relais|solenoid/))
     flags.push("inductive_load");
-  if (hit(/\bac\b|vac|230 ?v|secteur|rms|peak/)) flags.push("ac_rms");
+  // Garde-fou AC seulement si la demande parle vraiment d'alternatif :
+  // une tension DC (ex. 230 VDC) ne doit pas déclencher ce garde-fou.
+  if (hit(/\bac\b|vac|secteur|\brms\b|peak/)) flags.push("ac_rms");
   if (hit(/inrush|appel de courant|demarrage|démarrage/)) flags.push("inrush");
   if (hit(/reed (switch )?(brut|nu)|raw reed|pattes|leads/)) flags.push("raw_reed_switch");
   if (hit(/distance|mm d'activation|activation distance|entrefer|aimant/)) flags.push("distance");
