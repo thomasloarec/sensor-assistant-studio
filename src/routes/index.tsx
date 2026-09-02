@@ -517,7 +517,9 @@ function Bench({ user }: { user: User }) {
                         : "text-muted-foreground hover:bg-secondary/60"
                     }`}
                   >
-                    <div className="truncate">{s.prospect_company ?? s.id.slice(0, 8)}</div>
+                    <div className="truncate">
+                      {s.consent_notes ?? s.prospect_company ?? s.id.slice(0, 8)}
+                    </div>
                     <div className="text-[10px] opacity-70">
                       {s.status} · {new Date(s.created_at).toLocaleDateString("fr-FR")}
                     </div>
