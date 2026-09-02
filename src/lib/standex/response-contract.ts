@@ -229,7 +229,9 @@ export function composeResponse(scenario: SensorTestScenario): ComposedResponse 
         : must.slice(0, 3),
     confidence: outputType.startsWith("S1_") ? "medium" : "low",
     standexValidationRequired: true,
-    distributorPathAllowed: maintenance && !outputType.startsWith("S2_"),
+    datasheetValues: override?.datasheetValues ?? {},
+    distributorPathAllowed:
+      override?.distributorPathAllowed ?? (maintenance && !outputType.startsWith("S2_")),
     routingReason: `Contrat V0.2 · ${outputType} · scénario ${scenario.scenario_id}`,
     beDossier: outputType.startsWith("S2_")
       ? {
