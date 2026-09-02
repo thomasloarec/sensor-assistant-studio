@@ -643,7 +643,7 @@ function Bench({ user }: { user: User }) {
                   { v: "lead", label: "Données lead" },
                   { v: "dossier", label: "Dossier application" },
                   { v: "mode", label: "Mode assistant" },
-                  { v: "batch", label: "Synthèse P0" },
+                  { v: "batch", label: "Synthèse" },
                 ] as const
               ).map(({ v, label }) => (
                 <TabsTrigger
