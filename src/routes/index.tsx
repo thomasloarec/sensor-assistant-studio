@@ -725,6 +725,14 @@ function Bench({ user }: { user: User }) {
               <TabsContent value="revue" className="m-0 h-full">
                 <ScrollArea className="h-full">
                   <div className="space-y-3 p-4">
+                    <div className="rounded-md border border-border bg-card p-3">
+                      <ReviewPackButton
+                        rows={batch}
+                        tester={user.email ?? "—"}
+                        runAt={batchRunAt}
+                      />
+                    </div>
+
                     {activeSession ? (
                       <ReviewForm
                         sessionId={activeSession.id}
