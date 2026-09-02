@@ -252,6 +252,9 @@ function Bench({ user }: { user: User }) {
   const [running, setRunning] = useState(false);
   const [batch, setBatch] = useState<BatchRow[]>([]);
   const [batchBusy, setBatchBusy] = useState(false);
+  const [batchScope, setBatchScope] = useState<"p0" | "all">("p0");
+  const [batchTotal, setBatchTotal] = useState(0);
+  const [batchRunAt, setBatchRunAt] = useState<string | null>(null);
 
   const activeSession = useMemo(
     () => sessions.find((s) => s.id === activeId) ?? null,
