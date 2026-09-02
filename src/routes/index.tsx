@@ -896,19 +896,68 @@ function Bench({ user }: { user: User }) {
                 </ScrollArea>
               </TabsContent>
 
-              <TabsContent value="batch" className="m-0 h-full">
+              <TabsContent value="revue" className="m-0 h-full">
                 <ScrollArea className="h-full">
-                  <BatchPanel
-                    rows={batch}
-                    busy={batchBusy}
-                    scope={batchScope}
-                    total={batchTotal}
-                    runAt={batchRunAt}
-                    tester={user.email ?? user.id}
-                    scenarioCount={scenarios.length}
-                    onRun={(s) => void runBatch(s)}
-                    onOpen={setActiveId}
-                  />
+                  <div className="space-y-3 p-4">
+                    <div className="rounded-md border border-border bg-card p-3">
+                      <ReviewPackButton
+                        rows={batch}
+                        tester={user.email ?? "—"}
+                        runAt={batchRunAt}
+                      />
+                    </div>
+
+                    {activeSession ? (
+                      <ReviewForm
+                        sessionId={activeSession.id}
+                        reviewerId={user.id}
+                        onCreated={(r) => setReviews((prev) => [r, ...prev])}
+                        onError={setError}
+                      />
+                    ) : null}
+                    {reviews.length === 0 ? (
+                      <Empty>Aucune revue enregistrée.</Empty>
+                    ) : (
+                      reviews.map((r) => (
+                        <div key={r.id} className="rounded-md border border-border bg-card p-3">
+                          <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+                            <Badge variant="outline" className="font-mono text-[10px]">
+                              {r.verdict}
+                            </Badge>
+                            <span>{r.reviewer_role}</span>
+                            <span>{new Date(r.created_at).toLocaleString("fr-FR")}</span>
+                          </div>
+                          {r.notes ? <p className="mt-2 text-sm">{r.notes}</p> : null}
+                          {r.corrected_output_type ? (
+                            <p className="mt-2 font-mono text-xs text-accent">
+                              → {r.corrected_output_type}
+                            </p>
+                          ) : null}
+                        </div>
+                      ))
+                    )}
+
+                    <Accordion type="single" collapsible className="w-full">
+                      <AccordionItem value="batch">
+                        <AccordionTrigger className="text-sm">
+                          Régression complète et synthèse (avancé)
+                        </AccordionTrigger>
+                        <AccordionContent>
+                          <BatchPanel
+                            rows={batch}
+                            busy={batchBusy}
+                            scope={batchScope}
+                            total={batchTotal}
+                            runAt={batchRunAt}
+                            tester={user.email ?? user.id}
+                            scenarioCount={scenarios.length}
+                            onRun={(s) => void runBatch(s)}
+                            onOpen={setActiveId}
+                          />
+                        </AccordionContent>
+                      </AccordionItem>
+                    </Accordion>
+                  </div>
                 </ScrollArea>
               </TabsContent>
             </div>
