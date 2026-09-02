@@ -15,6 +15,17 @@ export interface ScenarioEvaluation {
   verdict: "OK" | "à corriger";
   checks: ScenarioCheck[];
   failures: string[];
+  /** Détails structurés, pour la synthèse et l'export. */
+  expectedOutput: string;
+  outputOk: boolean;
+  expectedFlags: string[];
+  missingFlags: string[];
+  missingMust: string[];
+  presentForbidden: string[];
+  cityAsked: boolean;
+  twoBusinessDays: boolean;
+  traceSufficient: boolean;
+  suggestion: string | null;
 }
 
 function norm(v: string): string {
@@ -120,14 +131,46 @@ export function evaluateRun(
         .join(" "),
     ),
   });
-  checks.push({
-    label: "Trace interne séparée",
-    ok: composed.guardrails.length > 0 || composed.missingQuestions.length > 0,
-  });
+  const traceSufficient =
+    composed.guardrails.length > 0 ||
+    composed.missingQuestions.length > 0 ||
+    Object.keys(composed.datasheetValues).length > 0;
+  checks.push({ label: "Trace interne séparée", ok: traceSufficient });
 
   const failures = checks
     .filter((c) => !c.ok)
     .map((c) => (c.detail ? `${c.label} (${c.detail})` : c.label));
 
-  return { verdict: failures.length ? "à corriger" : "OK", checks, failures };
+  const suggestions: string[] = [];
+  if (composed.outputType !== expected)
+    suggestions.push(`aligner la sortie sur ${expected}`);
+  if (missingFlags.length)
+    suggestions.push(`déclencher les garde-fous ${missingFlags.join(", ")}`);
+  if (missingMust.length)
+    suggestions.push(
+      `citer explicitement ${missingMust.join(" / ")} dans la réponse client ou la trace`,
+    );
+  if (presentForbidden.length)
+    suggestions.push(`retirer toute formulation type ${presentForbidden.join(" / ")}`);
+  if (!/\bville\b/.test(text)) suggestions.push("demander la ville du prospect");
+  if (!/2 jours ouvres/.test(text))
+    suggestions.push("annoncer la reprise Standex sous 2 jours ouvrés");
+  if (!traceSufficient)
+    suggestions.push("enrichir la trace interne (garde-fous, questions, valeurs datasheet)");
+
+  return {
+    verdict: failures.length ? "à corriger" : "OK",
+    checks,
+    failures,
+    expectedOutput: expected,
+    outputOk: composed.outputType === expected,
+    expectedFlags,
+    missingFlags,
+    missingMust,
+    presentForbidden,
+    cityAsked: /\bville\b/.test(text),
+    twoBusinessDays: /2 jours ouvres/.test(text),
+    traceSufficient,
+    suggestion: suggestions.length ? suggestions.join(" ; ") : null,
+  };
 }
