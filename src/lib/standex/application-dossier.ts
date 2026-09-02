@@ -175,7 +175,9 @@ export function buildApplicationDossier(input: {
     ]),
     competitor_reference_or_datasheet: pick([
       [
-        fromProspect(has("concurrent", "équivalen", "equivalen")) ? "référence concurrente évoquée, datasheet à obtenir" : null,
+        has("concurrent", "équivalen", "equivalen")
+          ? "référence concurrente évoquée, datasheet à obtenir"
+          : null,
         "prospect",
       ],
       [datasheet && datasheet !== "{}" ? "valeurs datasheet Standex utilisées" : null, "trace interne"],
