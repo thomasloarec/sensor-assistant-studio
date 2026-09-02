@@ -162,11 +162,15 @@ export function composeResponse(scenario: SensorTestScenario): ComposedResponse 
       `${scenario.user_prompt_fr} ${scenario.expected_behavior}`,
     );
 
+  const override = SCENARIO_OVERRIDES[scenario.scenario_id];
+
   const lines: string[] = [];
   lines.push(`Ce que je comprends de votre besoin : ${scenario.user_prompt_fr}`);
   lines.push("");
 
-  if (outputType.startsWith("S1_")) {
+  if (override) {
+    lines.push(override.customerText);
+  } else if (outputType.startsWith("S1_")) {
     lines.push(
       "Sur cette base, je partirais plutôt sur une famille Standex adaptée à ce type de montage et de détection, sous réserve de la géométrie exacte et de ce que le capteur commande réellement.",
     );
