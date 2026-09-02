@@ -30,14 +30,14 @@ export const ASSISTANT_MODES: readonly AssistantModeDef[] = [
   },
   {
     id: "experimental",
-    label: "Assistant expérimental (bientôt disponible)",
-    available: false,
-    hint: "Mode génératif non configuré.",
+    label: "Assistant expérimental (Claude)",
+    available: true,
+    hint: "Génération Claude côté serveur, hors baseline gelée.",
   },
 ] as const;
 
 export const EXPERIMENTAL_NOTICE =
-  "Mode expérimental non configuré. La baseline déterministe reste la référence.";
+  "Mode expérimental : sortie Claude non validée, jamais exposée à un prospect réel. La baseline déterministe reste la référence.";
 
 /**
  * Proposition de modification de schéma — NON APPLIQUÉE.
