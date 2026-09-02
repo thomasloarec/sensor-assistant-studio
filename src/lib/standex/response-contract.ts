@@ -60,7 +60,9 @@ function detect(scenario: SensorTestScenario): string[] {
   const flags: string[] = [];
   if (hit(/inductif|inductive|moteur|pompe|electrovanne|électrovanne|bobine|relais|solenoid/))
     flags.push("inductive_load");
-  if (hit(/\bac\b|vac|230 ?v|secteur|rms|peak/)) flags.push("ac_rms");
+  // Garde-fou AC seulement si la demande parle vraiment d'alternatif :
+  // une tension DC (ex. 230 VDC) ne doit pas déclencher ce garde-fou.
+  if (hit(/\bac\b|vac|secteur|\brms\b|peak/)) flags.push("ac_rms");
   if (hit(/inrush|appel de courant|demarrage|démarrage/)) flags.push("inrush");
   if (hit(/reed (switch )?(brut|nu)|raw reed|pattes|leads/)) flags.push("raw_reed_switch");
   if (hit(/distance|mm d'activation|activation distance|entrefer|aimant/)) flags.push("distance");
@@ -145,6 +147,22 @@ const SCENARIO_OVERRIDES: Record<string, ScenarioOverride> = {
       lead_handling: "do not cut/bend leads",
     },
     distributorPathAllowed: true,
+  },
+  "MVP-TS-005": {
+    customerText: [
+      "Pour MK33-87 et MK23-87, je retiendrais la même base électrique prudente du reed switch 87 Form A : 200 V en tension de commutation, 0,4 A en courant de commutation, 0,5 A en courant permanent, 230 VDC en tension de claquage et 150 mOhm en résistance de contact.",
+      "Ces valeurs sont celles du contact 87 lui-même : la différence entre les deux références se joue sur le packaging et le montage, pas sur cette baseline électrique.",
+      "Je ne présenterais pas 250 VDC comme valeur générique du 87 : la valeur de claquage à retenir reste 230 VDC.",
+    ].join("\n"),
+    datasheetValues: {
+      reference: "MK33-87 / MK23-87 (87 Form A)",
+      switching_voltage: "200 V",
+      switching_current: "0.4 A",
+      carry_current: "0.5 A",
+      breakdown_voltage: "230 VDC",
+      contact_resistance: "150 mOhm",
+      excluded_generic_values: ["250 VDC as confirmed generic"],
+    },
   },
 };
 
