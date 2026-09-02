@@ -330,7 +330,6 @@ function Bench({ user }: { user: User }) {
           reviewerId: user.id,
           scenario,
           startTurnIndex: messages.length,
-          assistantText: draft.trim() === scenario.user_prompt_fr ? undefined : undefined,
         });
         setMessages((prev) => [...prev, ...res.messages]);
         setOutputs((prev) => [res.output, ...prev]);
