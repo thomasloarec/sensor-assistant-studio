@@ -1231,6 +1231,57 @@ function yn(v: boolean | undefined) {
   return v === undefined ? "—" : v ? "oui" : "non";
 }
 
+/** Pack de revue qualitative construit à partir du dernier lot exécuté. */
+function buildPackFromBatch(rows: BatchRow[], tester: string, runAt: string | null) {
+  const testedAt = runAt ?? new Date().toISOString();
+  const reviewRows = rows.filter((r) => REVIEW_PACK_SCENARIOS.includes(r.code));
+  const ok = rows.filter((r) => r.evaluation?.verdict === "OK").length;
+  const pack = reviewRows.length
+    ? buildReviewPack(reviewRows, {
+        testedAt,
+        tester,
+        contractVersion: "Contrat de réponse V0.2 (moteur déterministe, sans modèle génératif)",
+        regressionScore: `${ok}/${rows.length} OK`,
+      })
+    : "";
+  return { testedAt, reviewRows, pack };
+}
+
+function ReviewPackButton({
+  rows,
+  tester,
+  runAt,
+}: {
+  rows: BatchRow[];
+  tester: string;
+  runAt: string | null;
+}) {
+  const { testedAt, reviewRows, pack } = buildPackFromBatch(rows, tester, runAt);
+  return (
+    <div className="space-y-1">
+      <Button
+        size="sm"
+        disabled={reviewRows.length === 0}
+        onClick={() =>
+          downloadText(
+            `pack-revue-qualitative-${testedAt.slice(0, 10)}.md`,
+            pack,
+            "text/markdown",
+          )
+        }
+      >
+        Exporter pack de revue qualitative
+      </Button>
+      <p className="font-mono text-[11px] text-muted-foreground">
+        {reviewRows.length === 0
+          ? "Lancez un lot dans l'onglet Synthèse pour activer l'export."
+          : `${reviewRows.length}/${REVIEW_PACK_SCENARIOS.length} scénarios de relecture disponibles.`}
+      </p>
+    </div>
+  );
+}
+
+
 function BatchPanel({
   rows,
   busy,
