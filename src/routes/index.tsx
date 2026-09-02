@@ -229,6 +229,7 @@ const PRIORITY_SCENARIOS = [
 interface BatchRow {
   code: string;
   missing?: boolean;
+  priority?: string | null;
   scenario?: SensorTestScenario;
   evaluation?: ScenarioEvaluation;
   outputType?: string;
