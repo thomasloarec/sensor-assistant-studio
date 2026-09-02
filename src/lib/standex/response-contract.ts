@@ -169,6 +169,31 @@ const SCENARIO_OVERRIDES: Record<string, ScenarioOverride> = {
       excluded_generic_values: ["250 VDC as confirmed generic"],
     },
   },
+  // V0.6 · compatibilité électrique explicite (entrée automate 24 V).
+  "MVP-TS-001": {
+    appendText: [
+      "Côté électrique, votre signal 24 V vers une entrée automate ressemble à une entrée de commande faible niveau, pas à une commutation de puissance. C'est donc compatible en ordre de grandeur (electrical fit), sous réserve de valider le câblage, le type d'entrée et les conditions réelles.",
+    ].join("\n"),
+    datasheetValues: {
+      electrical_fit: "24 V PLC input = low-level command, not power switching",
+      load_type: "entrée automate 24 V",
+      verification_required: "câblage, type d'entrée, conditions réelles",
+    },
+  },
+  // V0.6 · mise en garde explicite sur les pattes d'un reed switch brut.
+  "MVP-TS-008": {
+    appendText: [
+      "Je vous déconseille de couper ou plier les pattes d'un reed switch brut si ce n'est pas déjà un process maîtrisé et validé dans votre entreprise. Cette opération peut endommager l'ampoule, modifier la sensibilité magnétique ou dégrader la fiabilité.",
+      "La bonne approche est de partir d'une version packagée ou d'un format de pattes déjà adapté, plutôt que de modifier le composant après coup.",
+    ].join("\n"),
+    datasheetValues: {
+      raw_switch_handling: "do not cut/bend/modify leads outside a validated process",
+      risk: "verre fragilisé, sensibilité magnétique modifiée, fiabilité dégradée",
+    },
+    extraGuardrails: ["raw_switch_handling_guardrail"],
+    distributorPathAllowed: false,
+    suppressDistributorLine: true,
+  },
 };
 
 export function composeResponse(scenario: SensorTestScenario): ComposedResponse {
