@@ -435,6 +435,25 @@ function Bench({ user }: { user: User }) {
             }`,
           });
           setSessions((prev) => [session, ...prev]);
+          const dossierMarkdown = buildDossierMarkdown(
+            buildApplicationDossier({
+              session,
+              messages: [
+                {
+                  id: `${session.id}-prospect`,
+                  session_id: session.id,
+                  role: "prospect",
+                  content: sc.user_prompt_fr,
+                  turn_index: 0,
+                  created_at: session.created_at,
+                } as SensorTestMessage,
+              ],
+              output: res.output,
+              trace: res.trace,
+              reviews: [res.review],
+            }),
+            { tester: user.email ?? "—", scenarioCode: code },
+          );
           setBatch((prev) => [
             ...prev,
             {
@@ -449,7 +468,10 @@ function Bench({ user }: { user: User }) {
               review: res.review,
               session,
               sessionId: session.id,
+              dossierMarkdown,
             },
+          ]);
+
           ]);
         }
       } finally {
