@@ -65,6 +65,8 @@ export interface ReviewPackRow {
   review?: SensorTestReview | undefined;
   session?: SensorTestSession | undefined;
   sessionId?: string | undefined;
+  dossierMarkdown?: string | undefined;
+
 }
 
 export interface ReviewPackMeta {
