@@ -214,6 +214,7 @@ function SignIn() {
 function Bench({ user }: { user: User }) {
   const [sessions, setSessions] = useState<SensorTestSession[]>([]);
   const [scenarios, setScenarios] = useState<SensorTestScenario[]>([]);
+  const [scenarioId, setScenarioId] = useState<string | null>(null);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [messages, setMessages] = useState<SensorTestMessage[]>([]);
   const [outputs, setOutputs] = useState<SensorTestOutput[]>([]);
@@ -221,10 +222,15 @@ function Bench({ user }: { user: User }) {
   const [reviews, setReviews] = useState<SensorTestReview[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [draft, setDraft] = useState("");
+  const [running, setRunning] = useState(false);
 
   const activeSession = useMemo(
     () => sessions.find((s) => s.id === activeId) ?? null,
     [sessions, activeId],
+  );
+  const scenario = useMemo(
+    () => scenarios.find((s) => s.id === scenarioId) ?? null,
+    [scenarios, scenarioId],
   );
 
   const guard = useCallback(async (fn: () => Promise<void>) => {
@@ -279,18 +285,45 @@ function Bench({ user }: { user: User }) {
       setActiveId(s.id);
     });
 
-  const send = (role: "prospect" | "internal" = "prospect") =>
+  const selectScenario = (id: string) => {
+    setScenarioId(id);
+    const sc = scenarios.find((s) => s.id === id);
+    if (sc) setDraft(sc.user_prompt_fr);
+  };
+
+  // Exécute le scénario sélectionné : session (créée si besoin), messages,
+  // sortie assistant, trace interne et revue sont persistés dans Supabase.
+  const runSelectedScenario = () =>
     guard(async () => {
-      const content = draft.trim();
-      if (!content || !activeId) return;
-      const msg = await db.insertMessage({
-        session_id: activeId,
-        role,
-        content,
-        turn_index: messages.length,
-      });
-      setMessages((prev) => [...prev, msg]);
-      setDraft("");
+      if (!scenario || running) return;
+      setRunning(true);
+      try {
+        let sessionId = activeId;
+        if (!sessionId) {
+          const s = await db.createSession(user.id, {
+            prospect_company: `Scénario ${scenario.scenario_id}`,
+            channel: "lovable_test",
+            status: "in_review",
+          });
+          setSessions((prev) => [s, ...prev]);
+          setActiveId(s.id);
+          sessionId = s.id;
+        }
+        const res = await runScenario({
+          sessionId,
+          reviewerId: user.id,
+          scenario,
+          startTurnIndex: messages.length,
+          assistantText: draft.trim() === scenario.user_prompt_fr ? undefined : undefined,
+        });
+        setMessages((prev) => [...prev, ...res.messages]);
+        setOutputs((prev) => [res.output, ...prev]);
+        setTraces((prev) => [res.trace, ...prev]);
+        setReviews((prev) => [res.review, ...prev]);
+        setDraft("");
+      } finally {
+        setRunning(false);
+      }
     });
 
   const lastOutput = outputs[0] ?? null;
