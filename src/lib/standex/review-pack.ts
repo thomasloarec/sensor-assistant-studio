@@ -40,6 +40,7 @@ export const REVIEW_PACK_LABELS: Record<string, string> = {
   "MVP-TS-022": "équivalence concurrente",
 };
 
+
 const CHECKLIST: readonly string[] = [
   "La réponse aide-t-elle vraiment le prospect ?",
   "Le ton est-il clair et professionnel ?",
