@@ -343,6 +343,55 @@ function Bench({ user }: { user: User }) {
       }
     });
 
+  // Lot prioritaire : une session dédiée par scénario, tout est persisté.
+  const runBatch = () =>
+    guard(async () => {
+      if (batchBusy) return;
+      setBatchBusy(true);
+      setBatch([]);
+      try {
+        for (const code of PRIORITY_SCENARIOS) {
+          const sc = scenarios.find((s) => s.scenario_id === code);
+          if (!sc) {
+            setBatch((prev) => [...prev, { code, missing: true }]);
+            continue;
+          }
+          const composed = composeResponse(sc);
+          const evaluation = evaluateRun(sc, composed);
+          const session = await db.createSession(user.id, {
+            prospect_company: `Lot prioritaire · ${sc.scenario_id}`,
+            channel: "lovable_test",
+            status: "in_review",
+          });
+          const res = await runScenario({
+            sessionId: session.id,
+            reviewerId: user.id,
+            scenario: sc,
+            startTurnIndex: 0,
+            verdict: evaluation.verdict === "OK" ? "good" : "needs_revision",
+            notes: `Lot prioritaire · ${evaluation.verdict}${
+              evaluation.failures.length ? ` · ${evaluation.failures.join(" ; ")}` : ""
+            }`,
+          });
+          setSessions((prev) => [session, ...prev]);
+          setBatch((prev) => [
+            ...prev,
+            {
+              code,
+              scenario: sc,
+              evaluation,
+              outputType: res.output.output_type,
+              guardrails: composed.guardrails,
+              customerText: composed.customerText,
+              sessionId: session.id,
+            },
+          ]);
+        }
+      } finally {
+        setBatchBusy(false);
+      }
+    });
+
   const lastOutput = outputs[0] ?? null;
   const lastTrace = traces[0] ?? null;
 
