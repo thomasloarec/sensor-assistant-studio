@@ -3,6 +3,8 @@
 
 import { createServerFn } from "@tanstack/react-start";
 
+import type { Json } from "./types";
+
 export interface ExperimentalInput {
   accessToken: string;
   scenarioId: string;
@@ -20,7 +22,7 @@ export interface ExperimentalPayload {
   routing_reason: string;
   guardrails_triggered: string[];
   missing_questions: string[];
-  be_dossier: Record<string, unknown>;
+  be_dossier: Record<string, Json>;
 }
 
 export interface ExperimentalResult {
@@ -53,7 +55,7 @@ function extractJson(text: string): ExperimentalPayload | null {
       missing_questions: asStringArray(obj["missing_questions"]),
       be_dossier:
         obj["be_dossier"] && typeof obj["be_dossier"] === "object"
-          ? (obj["be_dossier"] as Record<string, unknown>)
+          ? (obj["be_dossier"] as Record<string, Json>)
           : {},
     };
   } catch {
