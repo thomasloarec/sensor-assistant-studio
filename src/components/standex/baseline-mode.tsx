@@ -48,20 +48,39 @@ export function BaselineModePanel({
   onModeChange,
   baselineResponse,
   baselineTrace,
+  run,
+  busy,
+  canRun,
+  onGenerate,
+  onVerdict,
+  onExportPack,
 }: {
   mode: AssistantMode;
   onModeChange: (m: AssistantMode) => void;
   baselineResponse: string | null;
   baselineTrace: string | null;
+  run?: ExperimentalRun | null;
+  busy?: boolean;
+  canRun?: boolean;
+  onGenerate?: () => void;
+  onVerdict?: (preferred: "baseline" | "experimental" | "neither", notes: string) => void;
+  onExportPack?: () => void;
 }) {
-  const experimentalResponse = "";
+  const [notes, setNotes] = useState("");
+  const experimentalResponse = run?.payload?.customer_response ?? "";
   const rows = diffLines(baselineResponse ?? "", experimentalResponse);
+  const experimentalActive = mode === "experimental";
 
   return (
     <div className="space-y-4 p-4">
       <Card title="Statut">
         <div className="flex flex-wrap items-center gap-2">
           <BaselineStatusBadge />
+          {run?.model && (
+            <Badge variant="outline" className="font-mono text-[10px] uppercase">
+              {run.model}
+            </Badge>
+          )}
         </div>
         <ul className="mt-3 space-y-1 font-mono text-xs text-muted-foreground">
           {BASELINE_FACTS.map((f) => (
@@ -91,6 +110,28 @@ export function BaselineModePanel({
         <p className="mt-3 rounded-sm border border-warning/40 bg-warning/10 p-2 font-mono text-[11px] text-warning">
           {EXPERIMENTAL_NOTICE}
         </p>
+        <div className="mt-3 flex flex-wrap gap-2">
+          <Button
+            size="sm"
+            disabled={!experimentalActive || !canRun || busy}
+            onClick={() => onGenerate?.()}
+          >
+            {busy ? "Génération…" : "Générer la réponse expérimentale"}
+          </Button>
+          <Button size="sm" variant="outline" disabled={!run?.payload} onClick={() => onExportPack?.()}>
+            Exporter le pack comparatif
+          </Button>
+        </div>
+        {run?.error && (
+          <p className="mt-2 rounded-sm border border-destructive/50 bg-destructive/10 p-2 font-mono text-[11px] text-destructive">
+            {run.error} — la baseline reste affichée et inchangée.
+          </p>
+        )}
+        {run?.schemaWarning && (
+          <p className="mt-2 rounded-sm border border-warning/40 bg-warning/10 p-2 font-mono text-[11px] text-warning">
+            {run.schemaWarning}
+          </p>
+        )}
       </Card>
 
       <div className="grid gap-4 lg:grid-cols-2">
@@ -100,7 +141,11 @@ export function BaselineModePanel({
           </p>
         </Card>
         <Card title="Réponse assistant expérimental">
-          <p className="text-xs text-muted-foreground">{EXPERIMENTAL_NOTICE}</p>
+          {experimentalResponse ? (
+            <p className="whitespace-pre-wrap break-words text-xs">{experimentalResponse}</p>
+          ) : (
+            <p className="text-xs text-muted-foreground">{EXPERIMENTAL_NOTICE}</p>
+          )}
         </Card>
         <Card title="Trace interne baseline">
           <pre className="max-h-56 overflow-auto whitespace-pre-wrap break-words font-mono text-[11px] text-muted-foreground">
@@ -108,7 +153,26 @@ export function BaselineModePanel({
           </pre>
         </Card>
         <Card title="Trace interne générative">
-          <p className="text-xs text-muted-foreground">Non disponible (mode désactivé).</p>
+          {run?.payload ? (
+            <pre className="max-h-56 overflow-auto whitespace-pre-wrap break-words font-mono text-[11px] text-muted-foreground">
+              {JSON.stringify(
+                {
+                  output_type: run.payload.output_type,
+                  confidence: run.payload.confidence,
+                  routing_reason: run.payload.routing_reason,
+                  guardrails_triggered: run.payload.guardrails_triggered,
+                  missing_questions: run.payload.missing_questions,
+                  fuites: run.leaks,
+                  ecarts: run.violations,
+                  tokens: run.usage,
+                },
+                null,
+                2,
+              )}
+            </pre>
+          ) : (
+            <p className="text-xs text-muted-foreground">Aucune génération expérimentale.</p>
+          )}
         </Card>
       </div>
 
@@ -133,26 +197,47 @@ export function BaselineModePanel({
           </ul>
         ) : (
           <p className="text-xs text-muted-foreground">
-            Comparaison disponible une fois le mode expérimental configuré.
+            Comparaison disponible après une génération expérimentale.
           </p>
         )}
       </Card>
 
       <Card title="Verdict humain (comparaison)">
         <Textarea
-          disabled
-          placeholder="Verdict humain sur la comparaison — disponible avec le mode expérimental."
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
+          disabled={!run?.payload}
+          placeholder="Verdict humain sur la comparaison baseline / expérimental."
           className="min-h-20 font-mono text-xs"
         />
-        <div className="mt-2 flex gap-2">
-          <Button size="sm" variant="outline" disabled>
+        <div className="mt-2 flex flex-wrap gap-2">
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={!run?.payload}
+            onClick={() => onVerdict?.("baseline", notes)}
+          >
             Préférer la baseline
           </Button>
-          <Button size="sm" variant="outline" disabled>
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={!run?.payload}
+            onClick={() => onVerdict?.("experimental", notes)}
+          >
             Préférer l'expérimental
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={!run?.payload}
+            onClick={() => onVerdict?.("neither", notes)}
+          >
+            Aucun des deux
           </Button>
         </div>
       </Card>
     </div>
   );
 }
+
