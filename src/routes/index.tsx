@@ -1205,6 +1205,9 @@ function BatchPanel({
                     <li>
                       · Trace interne : {r.evaluation!.traceSufficient ? "suffisante" : "insuffisante"}
                     </li>
+                    <li>
+                      · Règles en échec : {r.evaluation!.failures.join(" | ") || "—"}
+                    </li>
                     <li>· Suggestion : {r.evaluation!.suggestion ?? "—"}</li>
                   </ul>
                 )}
