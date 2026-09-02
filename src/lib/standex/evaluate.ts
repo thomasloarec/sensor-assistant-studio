@@ -78,7 +78,7 @@ export function evaluateRun(
   });
 
   const must = splitList(scenario.must_include);
-  const missingMust = must.filter((m) => !matches(text, m));
+  const missingMust = must.filter((m) => !matches(mustText, m));
   checks.push({
     label: "Éléments obligatoires",
     ok: missingMust.length === 0,
