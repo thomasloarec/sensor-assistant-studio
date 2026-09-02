@@ -173,7 +173,13 @@ const SCENARIO_OVERRIDES: Record<string, ScenarioOverride> = {
       lead_handling: "do not cut/bend leads",
     },
     distributorPathAllowed: true,
+    suppressGuardrails: ["raw_reed_switch"],
+    missingQuestions: [
+      "La référence d'origine est-elle bien GP501 sur votre équipement ?",
+      "Dans quelle ville êtes-vous basé ?",
+    ],
   },
+
   "MVP-TS-005": {
     customerText: [
       "Pour MK33-87 et MK23-87, je retiendrais la même base électrique prudente du reed switch 87 Form A : 200 V en tension de commutation, 0,4 A en courant de commutation, 0,5 A en courant permanent, 230 VDC en tension de claquage et 150 mOhm en résistance de contact.",
