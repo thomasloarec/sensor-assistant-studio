@@ -26,7 +26,9 @@ export async function runScenario(params: {
   scenario: import("./types").SensorTestScenario;
   startTurnIndex: number;
   assistantText?: string;
-}): Promise<ScenarioRunResult> {
+  verdict?: import("./types").Verdict;
+  notes?: string;
+}): Promise<ScenarioRunResult & { composed: ReturnType<typeof composeResponse> }> {
   const { sessionId, reviewerId, scenario, startTurnIndex } = params;
   const composed = composeResponse(scenario);
   const assistantText = params.assistantText?.trim() || composed.customerText;
