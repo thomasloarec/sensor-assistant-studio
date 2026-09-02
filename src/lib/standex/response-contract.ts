@@ -255,12 +255,17 @@ export function composeResponse(scenario: SensorTestScenario): ComposedResponse 
     );
   }
 
+  if (override?.appendText) {
+    lines.push("");
+    lines.push(override.appendText);
+  }
+
   if (guardrailTexts.length) {
     lines.push("");
     guardrailTexts.forEach((t) => lines.push(t));
   }
 
-  if (maintenance) {
+  if (maintenance && !override?.suppressDistributorLine) {
     lines.push("");
     lines.push(
       "Pour une maintenance ou quelques pièces, une piste distributeur peut avoir du sens ; pour un projet ou une intégration nouvelle, je vous recommande de boucler avec Standex.",
