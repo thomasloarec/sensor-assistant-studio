@@ -72,9 +72,11 @@ export async function runScenario(params: {
     session_id: sessionId,
     reviewer_id: reviewerId,
     reviewer_role: "thomas",
-    verdict: "not_reviewed",
-    notes: `Exécution automatique du scénario ${scenario.scenario_id} (contrat V0.2).`,
+    verdict: params.verdict ?? "not_reviewed",
+    notes:
+      params.notes ??
+      `Exécution automatique du scénario ${scenario.scenario_id} (contrat V0.2).`,
   });
 
-  return { messages: [prospectMsg, assistantMsg], output, trace, review };
+  return { messages: [prospectMsg, assistantMsg], output, trace, review, composed };
 }
