@@ -1361,6 +1361,34 @@ function BatchPanel({
         </div>
       </div>
 
+      <div className="flex flex-wrap gap-2">
+        <Button
+          size="sm"
+          disabled={reviewRows.length === 0}
+          onClick={() =>
+            downloadText(
+              `pack-revue-qualitative-${meta.testedAt.slice(0, 10)}.md`,
+              reviewPack,
+              "text/markdown",
+            )
+          }
+        >
+          Exporter pack de revue qualitative
+        </Button>
+        <Button
+          size="sm"
+          variant="outline"
+          disabled={reviewRows.length === 0}
+          onClick={() => void copy(reviewPack, "pack")}
+        >
+          {copied === "pack" ? "Copié" : "Copier le pack de revue"}
+        </Button>
+      </div>
+      <p className="font-mono text-[11px] text-muted-foreground">
+        Pack de revue : {reviewRows.length}/{REVIEW_PACK_SCENARIOS.length} scénarios de relecture
+        disponibles dans ce lot.
+      </p>
+
       {rows.length === 0 ? (
         <Empty>Aucun lot exécuté pour l'instant.</Empty>
       ) : (
@@ -1373,6 +1401,7 @@ function BatchPanel({
           </div>
 
           <div className="flex flex-wrap gap-2">
+
             <Button size="sm" variant="outline" onClick={() => void copy(markdown, "md")}>
               {copied === "md" ? "Copié" : "Copier la synthèse (Markdown)"}
             </Button>
