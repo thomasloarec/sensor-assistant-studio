@@ -1431,34 +1431,8 @@ function BatchPanel({
             >
               Exporter la synthèse (CSV)
             </Button>
-            <Button
-              size="sm"
-              disabled={reviewRows.length === 0}
-              onClick={() =>
-                downloadText(
-                  `pack-revue-qualitative-${meta.testedAt.slice(0, 10)}.md`,
-                  reviewPack,
-                  "text/markdown",
-                )
-              }
-            >
-              Exporter pack de revue qualitative
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              disabled={reviewRows.length === 0}
-              onClick={() => void copy(reviewPack, "pack")}
-            >
-              {copied === "pack" ? "Copié" : "Copier le pack de revue"}
-            </Button>
           </div>
-          {rows.length > 0 ? (
-            <p className="font-mono text-[11px] text-muted-foreground">
-              Pack de revue : {reviewRows.length}/{REVIEW_PACK_SCENARIOS.length} scénarios de
-              relecture disponibles dans ce lot.
-            </p>
-          ) : null}
+
 
           <div className="overflow-x-auto rounded-md border border-border">
             <table className="w-full border-collapse font-mono text-[11px]">
