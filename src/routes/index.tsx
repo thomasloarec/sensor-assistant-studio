@@ -28,6 +28,12 @@ import {
   type DossierSection,
 } from "@/lib/standex/application-dossier";
 import { buildCsv, buildMarkdown, downloadText } from "@/lib/standex/export";
+import {
+  buildComparisonPack,
+  runExperimental,
+  saveComparisonVerdict,
+  type ExperimentalRun,
+} from "@/lib/standex/experimental-run";
 import type { AssistantMode } from "@/lib/standex/baseline";
 import {
   BaselineModePanel,
@@ -481,9 +487,67 @@ function Bench({ user }: { user: User }) {
     });
 
   const [assistantMode, setAssistantMode] = useState<AssistantMode>("baseline");
+  const [expRun, setExpRun] = useState<ExperimentalRun | null>(null);
+  const [expBusy, setExpBusy] = useState(false);
+  const [expBaselineText, setExpBaselineText] = useState<string>("");
 
   const lastOutput = outputs[0] ?? null;
   const lastTrace = traces[0] ?? null;
+
+  // Mode expérimental : génération Claude côté serveur, baseline jamais modifiée.
+  const generateExperimental = () =>
+    guard(async () => {
+      if (!scenario || !activeId || expBusy) return;
+      setExpBusy(true);
+      try {
+        const baselineText =
+          outputs.find((o) => o.customer_summary)?.customer_summary ?? "";
+        setExpBaselineText(baselineText);
+        const run = await runExperimental({
+          sessionId: activeId,
+          scenario,
+          baselineOutputId: lastOutput?.id ?? null,
+        });
+        setExpRun(run);
+        await loadSession(activeId);
+      } finally {
+        setExpBusy(false);
+      }
+    });
+
+  const saveExperimentalVerdict = (
+    preferred: "baseline" | "experimental" | "neither",
+    notes: string,
+  ) =>
+    guard(async () => {
+      if (!activeId) return;
+      await saveComparisonVerdict({
+        sessionId: activeId,
+        reviewerId: user.id,
+        preferredMode: preferred,
+        comparedOutputId: expRun?.outputId ?? null,
+        notes,
+      });
+      await loadSession(activeId);
+    });
+
+  const exportComparisonPack = () => {
+    if (!expRun || !scenario || !activeId) return;
+    const md = buildComparisonPack(
+      [
+        {
+          scenarioId: scenario.scenario_id,
+          prompt: scenario.user_prompt_fr,
+          baselineText: expBaselineText,
+          run: expRun,
+          sessionId: activeId,
+        },
+      ],
+      { tester: user.email ?? user.id, date: new Date().toISOString().slice(0, 10) },
+    );
+    downloadText(`pack-comparaison-${scenario.scenario_id}.md`, md, "text/markdown");
+  };
+
 
   return (
     <>
@@ -836,6 +900,12 @@ function Bench({ user }: { user: User }) {
                   <BaselineModePanel
                     mode={assistantMode}
                     onModeChange={setAssistantMode}
+                    run={expRun}
+                    busy={expBusy}
+                    canRun={Boolean(scenario && activeId)}
+                    onGenerate={() => void generateExperimental()}
+                    onVerdict={(p, n) => void saveExperimentalVerdict(p, n)}
+                    onExportPack={exportComparisonPack}
                     baselineResponse={lastOutput?.customer_summary ?? null}
                     baselineTrace={
                       lastTrace
