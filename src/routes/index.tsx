@@ -1319,15 +1319,8 @@ function BatchPanel({
     supabaseUrl: SUPABASE_URL,
   };
   const markdown = rows.length ? buildMarkdown(rows, meta) : "";
-  const reviewRows = rows.filter((r) => REVIEW_PACK_SCENARIOS.includes(r.code));
-  const reviewPack = reviewRows.length
-    ? buildReviewPack(reviewRows, {
-        testedAt: meta.testedAt,
-        tester: meta.tester,
-        contractVersion: "Contrat de réponse V0.2 (moteur déterministe, sans modèle génératif)",
-        regressionScore: `${ok}/${rows.length} OK`,
-      })
-    : "";
+  const { reviewRows, pack: reviewPack } = buildPackFromBatch(rows, tester, runAt);
+
 
   const copy = async (text: string, tag: string) => {
     await navigator.clipboard.writeText(text);
