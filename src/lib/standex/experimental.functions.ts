@@ -254,7 +254,8 @@ export const generateExperimentalResponse = createServerFn({ method: "POST" })
         model,
         payload: null,
         rawText: text,
-        error: "JSON Claude invalide : la baseline reste la référence.",
+        error:
+          "Claude n'a pas renvoyé de réponse exploitable. La baseline déterministe reste affichée.",
         usage,
       };
     }
