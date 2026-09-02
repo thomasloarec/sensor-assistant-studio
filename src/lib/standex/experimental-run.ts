@@ -20,6 +20,8 @@ export interface ExperimentalRun {
   violations: string[];
   outputId: string | null;
   schemaWarning: string | null;
+  /** Fragment brut renvoyé par Claude, utile seulement en cas d'échec. */
+  rawText: string | null;
   usage: { input_tokens?: number; output_tokens?: number } | null;
 }
 
