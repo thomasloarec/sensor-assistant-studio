@@ -82,7 +82,71 @@ export interface ComposedResponse {
   distributorPathAllowed: boolean;
   routingReason: string;
   beDossier: Record<string, unknown>;
+  /** Valeurs datasheet retenues, tracées côté interne uniquement. */
+  datasheetValues: Record<string, unknown>;
 }
+
+/**
+ * Corrections V0.3 : réponses prospect et valeurs de trace figées pour les
+ * scénarios où la formulation générique ne respectait pas le contrat.
+ */
+interface ScenarioOverride {
+  customerText: string;
+  datasheetValues: Record<string, unknown>;
+  distributorPathAllowed?: boolean;
+  extraGuardrails?: string[];
+}
+
+const SCENARIO_OVERRIDES: Record<string, ScenarioOverride> = {
+  "MVP-TS-004": {
+    customerText: [
+      "Pour un MK06-66 (contact 66 Form A), les performances électriques à retenir sont celles propres à cette référence :",
+      "- tension de commutation : 180 V ;",
+      "- courant de commutation : 0,5 A ;",
+      "- 1 A en courant permanent (courant que le contact peut porter, sans commutation) ;",
+      "- tension de claquage : 200 VDC ;",
+      "- résistance de contact : 150 mOhm.",
+      "",
+      "Attention à ne pas reprendre des valeurs génériques d'autres contacts : ni 1,25 A en courant permanent, ni 200 V au-delà des 200 VDC de claquage propres au 66.",
+      "Le point important est la distinction entre commutation et courant permanent : 0,5 A en commutation, 1 A en courant permanent seulement si le contact ne commute pas la charge.",
+    ].join("\n"),
+    datasheetValues: {
+      reference: "MK06-66 (66 Form A)",
+      switching_voltage: "180 V",
+      switching_current: "0.5 A",
+      carry_current: "1 A carry",
+      breakdown_voltage: "200 VDC",
+      contact_resistance: "150 mOhm",
+      excluded_generic_values: ["1.25 A carry", "250 VDC"],
+    },
+  },
+  "MVP-TS-006": {
+    customerText: [
+      "Non, je ne retiendrais pas 1000 V pour un MK38 1A85C. Cette valeur vient du reed switch 85 nu dans un autre contexte et ne doit pas être importée automatiquement sur la référence packagée MK38.",
+      "Pour MK38 1A85C, la valeur à retenir est 300 V en tension de commutation propre à cette référence.",
+      "Le packaging change les conditions d'utilisation : les valeurs du reed nu ne sont pas transposables telles quelles sur la référence packagée.",
+    ].join("\n"),
+    datasheetValues: {
+      reference: "MK38 1A85C",
+      switching_voltage: "300 V",
+      raw_switch_note: "raw 85 not imported",
+      rejected_value: "1000 V (reed 85 nu, contexte différent)",
+    },
+  },
+  "MVP-TS-007": {
+    customerText: [
+      "Pour une maintenance ou un remplacement en faible quantité, GP501 peut être une piste pertinente si la référence d'origine est bien celle-ci. Pour 20 pièces, une piste distributeur peut avoir du sens : il n'est pas nécessaire de passer par un processus BE long pour ce type de besoin.",
+      "Attention toutefois : GP501 est un reed switch brut. Il ne faut pas couper, plier ou modifier les pattes sauf si votre entreprise a déjà un process validé.",
+    ].join("\n"),
+    datasheetValues: {
+      reference: "GP501 (reed switch brut)",
+      case_type: "maintenance / faible volume (20 pièces)",
+      distributor_path_allowed: true,
+      lead_handling: "do not cut/bend leads",
+    },
+    distributorPathAllowed: true,
+  },
+};
 
 export function composeResponse(scenario: SensorTestScenario): ComposedResponse {
   const outputType = safeOutputType(scenario.expected_output_type);
