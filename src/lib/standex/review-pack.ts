@@ -40,6 +40,7 @@ export const REVIEW_PACK_LABELS: Record<string, string> = {
   "MVP-TS-022": "équivalence concurrente",
 };
 
+
 const CHECKLIST: readonly string[] = [
   "La réponse aide-t-elle vraiment le prospect ?",
   "Le ton est-il clair et professionnel ?",
@@ -64,6 +65,8 @@ export interface ReviewPackRow {
   review?: SensorTestReview | undefined;
   session?: SensorTestSession | undefined;
   sessionId?: string | undefined;
+  dossierMarkdown?: string | undefined;
+
 }
 
 export interface ReviewPackMeta {
@@ -159,6 +162,15 @@ export function buildReviewPack(rows: ReviewPackRow[], meta: ReviewPackMeta): st
     out.push("### Trace interne complète");
     out.push("");
     out.push(...traceBlock(r.trace));
+
+    out.push("");
+    out.push("### Dossier application");
+    out.push("");
+    out.push(
+      r.dossierMarkdown
+        ? r.dossierMarkdown.replace(/^# /gm, "#### ").replace(/^## /gm, "#### ")
+        : "_Dossier application non disponible._",
+    );
 
     out.push("");
     out.push("### Données lead capturées ou demandées");

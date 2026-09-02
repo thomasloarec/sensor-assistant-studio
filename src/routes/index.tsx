@@ -255,6 +255,8 @@ interface BatchRow {
   review?: SensorTestReview;
   session?: SensorTestSession;
   sessionId?: string;
+  dossierMarkdown?: string;
+
 }
 
 function Bench({ user }: { user: User }) {
@@ -433,6 +435,25 @@ function Bench({ user }: { user: User }) {
             }`,
           });
           setSessions((prev) => [session, ...prev]);
+          const dossierMarkdown = buildDossierMarkdown(
+            buildApplicationDossier({
+              session,
+              messages: [
+                {
+                  id: `${session.id}-prospect`,
+                  session_id: session.id,
+                  role: "prospect",
+                  content: sc.user_prompt_fr,
+                  turn_index: 0,
+                  created_at: session.created_at,
+                } as SensorTestMessage,
+              ],
+              output: res.output,
+              trace: res.trace,
+              reviews: [res.review],
+            }),
+            { tester: user.email ?? "—", scenarioCode: code },
+          );
           setBatch((prev) => [
             ...prev,
             {
@@ -447,6 +468,7 @@ function Bench({ user }: { user: User }) {
               review: res.review,
               session,
               sessionId: session.id,
+              dossierMarkdown,
             },
           ]);
         }
@@ -621,7 +643,7 @@ function Bench({ user }: { user: User }) {
                   { v: "lead", label: "Données lead" },
                   { v: "dossier", label: "Dossier application" },
                   { v: "mode", label: "Mode assistant" },
-                  { v: "batch", label: "Synthèse P0" },
+                  { v: "batch", label: "Synthèse" },
                 ] as const
               ).map(({ v, label }) => (
                 <TabsTrigger
@@ -703,6 +725,14 @@ function Bench({ user }: { user: User }) {
               <TabsContent value="revue" className="m-0 h-full">
                 <ScrollArea className="h-full">
                   <div className="space-y-3 p-4">
+                    <div className="rounded-md border border-border bg-card p-3">
+                      <ReviewPackButton
+                        rows={batch}
+                        tester={user.email ?? "—"}
+                        runAt={batchRunAt}
+                      />
+                    </div>
+
                     {activeSession ? (
                       <ReviewForm
                         sessionId={activeSession.id}
@@ -1209,6 +1239,57 @@ function yn(v: boolean | undefined) {
   return v === undefined ? "—" : v ? "oui" : "non";
 }
 
+/** Pack de revue qualitative construit à partir du dernier lot exécuté. */
+function buildPackFromBatch(rows: BatchRow[], tester: string, runAt: string | null) {
+  const testedAt = runAt ?? new Date().toISOString();
+  const reviewRows = rows.filter((r) => REVIEW_PACK_SCENARIOS.includes(r.code));
+  const ok = rows.filter((r) => r.evaluation?.verdict === "OK").length;
+  const pack = reviewRows.length
+    ? buildReviewPack(reviewRows, {
+        testedAt,
+        tester,
+        contractVersion: "Contrat de réponse V0.2 (moteur déterministe, sans modèle génératif)",
+        regressionScore: `${ok}/${rows.length} OK`,
+      })
+    : "";
+  return { testedAt, reviewRows, pack };
+}
+
+function ReviewPackButton({
+  rows,
+  tester,
+  runAt,
+}: {
+  rows: BatchRow[];
+  tester: string;
+  runAt: string | null;
+}) {
+  const { testedAt, reviewRows, pack } = buildPackFromBatch(rows, tester, runAt);
+  return (
+    <div className="space-y-1">
+      <Button
+        size="sm"
+        disabled={reviewRows.length === 0}
+        onClick={() =>
+          downloadText(
+            `pack-revue-qualitative-${testedAt.slice(0, 10)}.md`,
+            pack,
+            "text/markdown",
+          )
+        }
+      >
+        Exporter pack de revue qualitative
+      </Button>
+      <p className="font-mono text-[11px] text-muted-foreground">
+        {reviewRows.length === 0
+          ? "Lancez un lot dans l'onglet Synthèse pour activer l'export."
+          : `${reviewRows.length}/${REVIEW_PACK_SCENARIOS.length} scénarios de relecture disponibles.`}
+      </p>
+    </div>
+  );
+}
+
+
 function BatchPanel({
   rows,
   busy,
@@ -1238,15 +1319,8 @@ function BatchPanel({
     supabaseUrl: SUPABASE_URL,
   };
   const markdown = rows.length ? buildMarkdown(rows, meta) : "";
-  const reviewRows = rows.filter((r) => REVIEW_PACK_SCENARIOS.includes(r.code));
-  const reviewPack = reviewRows.length
-    ? buildReviewPack(reviewRows, {
-        testedAt: meta.testedAt,
-        tester: meta.tester,
-        contractVersion: "Contrat de réponse V0.2 (moteur déterministe, sans modèle génératif)",
-        regressionScore: `${ok}/${rows.length} OK`,
-      })
-    : "";
+  const { reviewRows, pack: reviewPack } = buildPackFromBatch(rows, tester, runAt);
+
 
   const copy = async (text: string, tag: string) => {
     await navigator.clipboard.writeText(text);
@@ -1287,6 +1361,34 @@ function BatchPanel({
         </div>
       </div>
 
+      <div className="flex flex-wrap gap-2">
+        <Button
+          size="sm"
+          disabled={reviewRows.length === 0}
+          onClick={() =>
+            downloadText(
+              `pack-revue-qualitative-${meta.testedAt.slice(0, 10)}.md`,
+              reviewPack,
+              "text/markdown",
+            )
+          }
+        >
+          Exporter pack de revue qualitative
+        </Button>
+        <Button
+          size="sm"
+          variant="outline"
+          disabled={reviewRows.length === 0}
+          onClick={() => void copy(reviewPack, "pack")}
+        >
+          {copied === "pack" ? "Copié" : "Copier le pack de revue"}
+        </Button>
+      </div>
+      <p className="font-mono text-[11px] text-muted-foreground">
+        Pack de revue : {reviewRows.length}/{REVIEW_PACK_SCENARIOS.length} scénarios de relecture
+        disponibles dans ce lot.
+      </p>
+
       {rows.length === 0 ? (
         <Empty>Aucun lot exécuté pour l'instant.</Empty>
       ) : (
@@ -1299,6 +1401,7 @@ function BatchPanel({
           </div>
 
           <div className="flex flex-wrap gap-2">
+
             <Button size="sm" variant="outline" onClick={() => void copy(markdown, "md")}>
               {copied === "md" ? "Copié" : "Copier la synthèse (Markdown)"}
             </Button>
@@ -1328,34 +1431,8 @@ function BatchPanel({
             >
               Exporter la synthèse (CSV)
             </Button>
-            <Button
-              size="sm"
-              disabled={reviewRows.length === 0}
-              onClick={() =>
-                downloadText(
-                  `pack-revue-qualitative-${meta.testedAt.slice(0, 10)}.md`,
-                  reviewPack,
-                  "text/markdown",
-                )
-              }
-            >
-              Exporter pack de revue qualitative
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              disabled={reviewRows.length === 0}
-              onClick={() => void copy(reviewPack, "pack")}
-            >
-              {copied === "pack" ? "Copié" : "Copier le pack de revue"}
-            </Button>
           </div>
-          {rows.length > 0 ? (
-            <p className="font-mono text-[11px] text-muted-foreground">
-              Pack de revue : {reviewRows.length}/{REVIEW_PACK_SCENARIOS.length} scénarios de
-              relecture disponibles dans ce lot.
-            </p>
-          ) : null}
+
 
           <div className="overflow-x-auto rounded-md border border-border">
             <table className="w-full border-collapse font-mono text-[11px]">
