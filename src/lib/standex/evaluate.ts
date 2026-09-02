@@ -8,7 +8,7 @@ import type { SensorTestScenario } from "./types";
 export interface ScenarioCheck {
   label: string;
   ok: boolean;
-  detail?: string;
+  detail?: string | undefined;
 }
 
 export interface ScenarioEvaluation {
