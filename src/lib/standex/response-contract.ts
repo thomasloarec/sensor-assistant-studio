@@ -93,10 +93,15 @@ export interface ComposedResponse {
  * scénarios où la formulation générique ne respectait pas le contrat.
  */
 interface ScenarioOverride {
-  customerText: string;
+  /** Remplace le corps générique de la réponse prospect. */
+  customerText?: string;
+  /** Complète le corps générique sans le remplacer. */
+  appendText?: string;
   datasheetValues: Record<string, unknown>;
   distributorPathAllowed?: boolean;
   extraGuardrails?: string[];
+  /** Coupe le paragraphe distributeur générique. */
+  suppressDistributorLine?: boolean;
 }
 
 const SCENARIO_OVERRIDES: Record<string, ScenarioOverride> = {
@@ -164,13 +169,44 @@ const SCENARIO_OVERRIDES: Record<string, ScenarioOverride> = {
       excluded_generic_values: ["250 VDC as confirmed generic"],
     },
   },
+  // V0.6 · compatibilité électrique explicite (entrée automate 24 V).
+  "MVP-TS-001": {
+    appendText: [
+      "Côté électrique, votre signal 24 V vers une entrée automate ressemble à une entrée de commande faible niveau, pas à une commutation de puissance. C'est donc compatible en ordre de grandeur (electrical fit), sous réserve de valider le câblage, le type d'entrée et les conditions réelles.",
+    ].join("\n"),
+    datasheetValues: {
+      electrical_fit: "24 V PLC input = low-level command, not power switching",
+      load_type: "entrée automate 24 V",
+      verification_required: "câblage, type d'entrée, conditions réelles",
+    },
+  },
+  // V0.6 · mise en garde explicite sur les pattes d'un reed switch brut.
+  "MVP-TS-008": {
+    appendText: [
+      "Je vous déconseille de couper ou plier les pattes d'un reed switch brut si ce n'est pas déjà un process maîtrisé et validé dans votre entreprise. Cette opération peut endommager l'ampoule, modifier la sensibilité magnétique ou dégrader la fiabilité.",
+      "La bonne approche est de partir d'une version packagée ou d'un format de pattes déjà adapté, plutôt que de modifier le composant après coup.",
+    ].join("\n"),
+    datasheetValues: {
+      raw_switch_handling: "do not cut/bend/modify leads outside a validated process",
+      risk: "verre fragilisé, sensibilité magnétique modifiée, fiabilité dégradée",
+    },
+    extraGuardrails: ["raw_switch_handling_guardrail"],
+    distributorPathAllowed: false,
+    suppressDistributorLine: true,
+  },
 };
 
 export function composeResponse(scenario: SensorTestScenario): ComposedResponse {
   const outputType = safeOutputType(scenario.expected_output_type);
   const must = splitList(scenario.must_include);
   const forbidden = splitList(scenario.must_not_include);
-  const flags = [...new Set([...(scenario.trace_flags ?? []), ...detect(scenario)])];
+  const flags = [
+    ...new Set([
+      ...(scenario.trace_flags ?? []),
+      ...detect(scenario),
+      ...(SCENARIO_OVERRIDES[scenario.scenario_id]?.extraGuardrails ?? []),
+    ]),
+  ];
   const guardrailTexts = flags.map((f) => GUARDRAIL_TEXTS[f]).filter(Boolean) as string[];
 
   const maintenance =
@@ -186,7 +222,7 @@ export function composeResponse(scenario: SensorTestScenario): ComposedResponse 
   lines.push(`Ce que je comprends de votre besoin : ${scenario.user_prompt_fr}`);
   lines.push("");
 
-  if (override) {
+  if (override?.customerText) {
     lines.push(override.customerText);
   } else if (outputType.startsWith("S1_")) {
     lines.push(
@@ -219,12 +255,17 @@ export function composeResponse(scenario: SensorTestScenario): ComposedResponse 
     );
   }
 
+  if (override?.appendText) {
+    lines.push("");
+    lines.push(override.appendText);
+  }
+
   if (guardrailTexts.length) {
     lines.push("");
     guardrailTexts.forEach((t) => lines.push(t));
   }
 
-  if (maintenance) {
+  if (maintenance && !override?.suppressDistributorLine) {
     lines.push("");
     lines.push(
       "Pour une maintenance ou quelques pièces, une piste distributeur peut avoir du sens ; pour un projet ou une intégration nouvelle, je vous recommande de boucler avec Standex.",
