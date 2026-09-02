@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/select";
 import { isSupabaseConfigured, supabase } from "@/lib/standex/supabase";
 import * as db from "@/lib/standex/queries";
+import { runScenario, safeOutputType, splitList } from "@/lib/standex/scenario-run";
 import {
   REVIEWER_ROLES,
   VERDICTS,
@@ -284,6 +285,21 @@ function Bench({ user }: { user: User }) {
       setSessions((prev) => [s, ...prev]);
       setActiveId(s.id);
     });
+
+  const send = (role: "prospect" | "internal" = "prospect") =>
+    guard(async () => {
+      const content = draft.trim();
+      if (!content || !activeId) return;
+      const msg = await db.insertMessage({
+        session_id: activeId,
+        role,
+        content,
+        turn_index: messages.length,
+      });
+      setMessages((prev) => [...prev, msg]);
+      setDraft("");
+    });
+
 
   const selectScenario = (id: string) => {
     setScenarioId(id);
