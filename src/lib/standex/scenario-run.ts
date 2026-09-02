@@ -68,7 +68,9 @@ export async function runScenario(params: {
     datasheet_values_used: {
       ...composed.datasheetValues,
       distributor_path_allowed: composed.distributorPathAllowed,
+      contract_items: composed.internalContractItems,
     } as never,
+
   });
 
   const review = await db.insertReview({
