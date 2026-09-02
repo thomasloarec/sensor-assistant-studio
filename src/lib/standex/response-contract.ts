@@ -56,6 +56,12 @@ function detect(scenario: SensorTestScenario): string[] {
   ]
     .join(" ")
     .toLowerCase();
+  // Le garde-fou « reed brut » ne se déduit que de la demande réelle et des
+  // garde-fous attendus : un scénario produit packagé ne doit pas l'hériter
+  // d'une simple mention dans les éléments interdits.
+  const rawHay = [scenario.user_prompt_fr, (scenario.trace_flags ?? []).join(" ")]
+    .join(" ")
+    .toLowerCase();
   const hit = (re: RegExp) => re.test(hay);
   const flags: string[] = [];
   if (hit(/inductif|inductive|moteur|pompe|electrovanne|électrovanne|bobine|relais|solenoid/))
@@ -64,7 +70,13 @@ function detect(scenario: SensorTestScenario): string[] {
   // une tension DC (ex. 230 VDC) ne doit pas déclencher ce garde-fou.
   if (hit(/\bac\b|vac|secteur|\brms\b|peak/)) flags.push("ac_rms");
   if (hit(/inrush|appel de courant|demarrage|démarrage/)) flags.push("inrush");
-  if (hit(/reed (switch )?(brut|nu)|raw reed|pattes|leads/)) flags.push("raw_reed_switch");
+  if (
+    /reed (switch )?(brut|nu)|raw reed|raw_reed|raw_switch|(couper|plier|limer|modifier)[^.]{0,40}(pattes|leads)/.test(
+      rawHay,
+    )
+  )
+    flags.push("raw_reed_switch");
+
   if (hit(/distance|mm d'activation|activation distance|entrefer|aimant/)) flags.push("distance");
   if (hit(/ip6[7-9]|etanche|étanche|lavage/)) flags.push("ip67");
   if (hit(/temperature|température|vibration|chimique|exterieur|extérieur|severe|sévère/))
