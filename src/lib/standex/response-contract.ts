@@ -94,8 +94,9 @@ export function composeResponse(scenario: SensorTestScenario): ComposedResponse 
   const maintenance =
     outputType === "S1_MAINTENANCE_REFERENCE" ||
     outputType === "KNOWLEDGE_ONLY_WITH_MAINTENANCE_EXCEPTION" ||
-    scenario.volume_band === "maintenance" ||
-    scenario.volume_band === "very_low";
+    /maintenance|remplacement|quelques pi|faible (volume|quantit)/i.test(
+      `${scenario.user_prompt_fr} ${scenario.expected_behavior}`,
+    );
 
   const lines: string[] = [];
   lines.push(`Ce que je comprends de votre besoin : ${scenario.user_prompt_fr}`);
@@ -159,7 +160,7 @@ export function composeResponse(scenario: SensorTestScenario): ComposedResponse 
         ? [must[0] ?? "information manquante à préciser"]
         : must.slice(0, 3),
     confidence: outputType.startsWith("S1_") ? "medium" : "low",
-    standexValidationRequired: !maintenance || outputType.startsWith("S2_") ? true : true,
+    standexValidationRequired: true,
     distributorPathAllowed: maintenance && !outputType.startsWith("S2_"),
     routingReason: `Contrat V0.2 · ${outputType} · scénario ${scenario.scenario_id}`,
     beDossier: outputType.startsWith("S2_")
