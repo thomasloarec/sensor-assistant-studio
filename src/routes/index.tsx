@@ -747,7 +747,12 @@ function Bench({ user }: { user: User }) {
                   <BatchPanel
                     rows={batch}
                     busy={batchBusy}
-                    onRun={() => void runBatch()}
+                    scope={batchScope}
+                    total={batchTotal}
+                    runAt={batchRunAt}
+                    tester={user.email ?? user.id}
+                    scenarioCount={scenarios.length}
+                    onRun={(s) => void runBatch(s)}
                     onOpen={setActiveId}
                   />
                 </ScrollArea>
