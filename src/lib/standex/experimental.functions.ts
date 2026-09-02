@@ -38,6 +38,78 @@ function asStringArray(v: unknown): string[] {
   return Array.isArray(v) ? v.filter((x): x is string => typeof x === "string") : [];
 }
 
+/** Schéma imposé à Claude via tool use forcé : la sortie est structurée, jamais du texte libre. */
+const RESPONSE_TOOL = {
+  name: "reponse_capteur",
+  description:
+    "Retourne la réponse prospect et la trace interne de l'assistant capteur Standex. Toujours utiliser cet outil.",
+  input_schema: {
+    type: "object",
+    properties: {
+      customer_response: { type: "string", description: "Texte français destiné au prospect." },
+      output_type: {
+        type: "string",
+        enum: [
+          "S1_STANDARD_SUGGESTION",
+          "S1_WITH_GUARDRAIL",
+          "S1_MAINTENANCE_REFERENCE",
+          "S2_BE_DOSSIER",
+          "S2_BE_DOSSIER_OR_WARNING",
+          "S2_BE_DOSSIER_OR_S1_WITH_CAVEAT",
+          "S3_MISSING_INFO",
+        ],
+      },
+      confidence: { type: "string", enum: ["low", "medium", "high"] },
+      routing_reason: { type: "string" },
+      guardrails_triggered: { type: "array", items: { type: "string" } },
+      missing_questions: { type: "array", items: { type: "string" } },
+      be_dossier: {
+        type: "object",
+        properties: {
+          application_summary: { type: "string" },
+          electrical_points: { type: "array", items: { type: "string" } },
+          mechanical_points: { type: "array", items: { type: "string" } },
+          risk_points: { type: "array", items: { type: "string" } },
+          next_questions: { type: "array", items: { type: "string" } },
+        },
+        required: [
+          "application_summary",
+          "electrical_points",
+          "mechanical_points",
+          "risk_points",
+          "next_questions",
+        ],
+      },
+    },
+    required: [
+      "customer_response",
+      "output_type",
+      "confidence",
+      "routing_reason",
+      "guardrails_triggered",
+      "missing_questions",
+      "be_dossier",
+    ],
+  },
+} as const;
+
+function normalize(obj: Record<string, unknown>): ExperimentalPayload | null {
+  if (typeof obj["customer_response"] !== "string" || !obj["customer_response"].trim()) return null;
+  return {
+    customer_response: obj["customer_response"],
+    output_type: typeof obj["output_type"] === "string" ? obj["output_type"] : "S3_MISSING_INFO",
+    confidence: typeof obj["confidence"] === "string" ? obj["confidence"] : "unknown",
+    routing_reason: typeof obj["routing_reason"] === "string" ? obj["routing_reason"] : "",
+    guardrails_triggered: asStringArray(obj["guardrails_triggered"]),
+    missing_questions: asStringArray(obj["missing_questions"]),
+    be_dossier:
+      obj["be_dossier"] && typeof obj["be_dossier"] === "object"
+        ? (obj["be_dossier"] as Record<string, Json>)
+        : {},
+  };
+}
+
+/** Filet de sécurité : seulement si l'outil n'a pas été utilisé. */
 function extractJson(text: string): ExperimentalPayload | null {
   const cleaned = text.replace(/^```(?:json)?/i, "").replace(/```$/, "").trim();
   const start = cleaned.indexOf("{");
@@ -112,6 +184,8 @@ export const generateExperimentalResponse = createServerFn({ method: "POST" })
           max_tokens: 1200,
           system: EXPERIMENTAL_SYSTEM_PROMPT,
           messages: [{ role: "user", content: userContent }],
+          tools: [RESPONSE_TOOL],
+          tool_choice: { type: "tool", name: RESPONSE_TOOL.name },
         }),
       });
     } catch (e) {
@@ -142,15 +216,24 @@ export const generateExperimentalResponse = createServerFn({ method: "POST" })
 
     let text = "";
     let usage: ExperimentalResult["usage"] = null;
+    let toolPayload: ExperimentalPayload | null = null;
     try {
       const body = JSON.parse(bodyText) as {
-        content?: { type: string; text?: string }[];
+        content?: { type: string; text?: string; name?: string; input?: unknown }[];
         usage?: { input_tokens?: number; output_tokens?: number };
       };
-      text = (body.content ?? [])
+      const blocks = body.content ?? [];
+      text = blocks
         .filter((c) => c.type === "text" && typeof c.text === "string")
         .map((c) => c.text as string)
         .join("\n");
+      const tool = blocks.find(
+        (c) => c.type === "tool_use" && c.name === RESPONSE_TOOL.name && c.input,
+      );
+      if (tool) {
+        toolPayload = normalize(tool.input as Record<string, unknown>);
+        if (!text) text = JSON.stringify(tool.input, null, 2);
+      }
       usage = body.usage ?? null;
     } catch {
       return {
@@ -163,7 +246,7 @@ export const generateExperimentalResponse = createServerFn({ method: "POST" })
       };
     }
 
-    const payload = extractJson(text);
+    const payload = toolPayload ?? extractJson(text);
     console.log("[experimental]", model, "tokens", JSON.stringify(usage));
     if (!payload) {
       return {
@@ -171,7 +254,8 @@ export const generateExperimentalResponse = createServerFn({ method: "POST" })
         model,
         payload: null,
         rawText: text,
-        error: "JSON Claude invalide : la baseline reste la référence.",
+        error:
+          "Claude n'a pas renvoyé de réponse exploitable. La baseline déterministe reste affichée.",
         usage,
       };
     }

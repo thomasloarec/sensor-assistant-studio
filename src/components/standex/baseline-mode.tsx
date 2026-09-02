@@ -8,6 +8,12 @@ import type { ExperimentalRun } from "@/lib/standex/experimental-run";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -126,9 +132,29 @@ export function BaselineModePanel({
           </Button>
         </div>
         {run?.error && (
-          <p className="mt-2 rounded-sm border border-destructive/50 bg-destructive/10 p-2 font-mono text-[11px] text-destructive">
-            {run.error} — la baseline reste affichée et inchangée.
-          </p>
+          <div className="mt-2 rounded-sm border border-destructive/50 bg-destructive/10 p-2 text-[11px] text-destructive">
+            <p>{run.error}</p>
+            <div className="mt-2 flex flex-wrap items-center gap-2">
+              <Button
+                size="sm"
+                variant="outline"
+                disabled={!canRun || busy}
+                onClick={() => onGenerate?.()}
+              >
+                Relancer Claude
+              </Button>
+            </div>
+            {run.rawText ? (
+              <details className="mt-2">
+                <summary className="cursor-pointer text-muted-foreground">
+                  Voir le fragment brut renvoyé
+                </summary>
+                <pre className="mt-1 max-h-40 overflow-auto whitespace-pre-wrap break-words font-mono text-[10px] text-muted-foreground">
+                  {run.rawText}
+                </pre>
+              </details>
+            ) : null}
+          </div>
         )}
         {run?.schemaWarning && (
           <p className="mt-2 rounded-sm border border-warning/40 bg-warning/10 p-2 font-mono text-[11px] text-warning">
@@ -150,60 +176,73 @@ export function BaselineModePanel({
             <p className="text-xs text-muted-foreground">{EXPERIMENTAL_NOTICE}</p>
           )}
         </Card>
-        <Card title="Trace interne baseline">
-          <pre className="max-h-56 overflow-auto whitespace-pre-wrap break-words font-mono text-[11px] text-muted-foreground">
-            {baselineTrace ?? "—"}
-          </pre>
-        </Card>
-        <Card title="Trace interne générative">
-          {run?.payload ? (
-            <pre className="max-h-56 overflow-auto whitespace-pre-wrap break-words font-mono text-[11px] text-muted-foreground">
-              {JSON.stringify(
-                {
-                  output_type: run.payload.output_type,
-                  confidence: run.payload.confidence,
-                  routing_reason: run.payload.routing_reason,
-                  guardrails_triggered: run.payload.guardrails_triggered,
-                  missing_questions: run.payload.missing_questions,
-                  fuites: run.leaks,
-                  ecarts: run.violations,
-                  tokens: run.usage,
-                },
-                null,
-                2,
-              )}
-            </pre>
-          ) : (
-            <p className="text-xs text-muted-foreground">Aucune génération expérimentale.</p>
-          )}
-        </Card>
       </div>
 
-      <Card title="Différences baseline / expérimental">
-        {experimentalResponse ? (
-          <ul className="space-y-1 font-mono text-[11px]">
-            {rows.map((r, i) => (
-              <li
-                key={`${r.kind}-${i}`}
-                className={
-                  r.kind === "same"
-                    ? "text-muted-foreground"
-                    : r.kind === "baseline"
-                      ? "text-accent"
-                      : "text-warning"
-                }
-              >
-                {r.kind === "same" ? "= " : r.kind === "baseline" ? "− " : "+ "}
-                {r.text}
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="text-xs text-muted-foreground">
-            Comparaison disponible après une génération expérimentale.
-          </p>
-        )}
-      </Card>
+      <Accordion type="multiple" className="w-full">
+        <AccordionItem value="diff">
+          <AccordionTrigger className="text-sm">Différences ligne à ligne</AccordionTrigger>
+          <AccordionContent>
+            {experimentalResponse ? (
+              <ul className="space-y-1 font-mono text-[11px]">
+                {rows.map((r, i) => (
+                  <li
+                    key={`${r.kind}-${i}`}
+                    className={
+                      r.kind === "same"
+                        ? "text-muted-foreground"
+                        : r.kind === "baseline"
+                          ? "text-accent"
+                          : "text-warning"
+                    }
+                  >
+                    {r.kind === "same" ? "= " : r.kind === "baseline" ? "− " : "+ "}
+                    {r.text}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-xs text-muted-foreground">
+                Comparaison disponible après une génération expérimentale.
+              </p>
+            )}
+          </AccordionContent>
+        </AccordionItem>
+
+        <AccordionItem value="traces">
+          <AccordionTrigger className="text-sm">Traces internes (avancé)</AccordionTrigger>
+          <AccordionContent>
+            <div className="grid gap-4 lg:grid-cols-2">
+              <Card title="Trace interne baseline">
+                <pre className="max-h-56 overflow-auto whitespace-pre-wrap break-words font-mono text-[11px] text-muted-foreground">
+                  {baselineTrace ?? "—"}
+                </pre>
+              </Card>
+              <Card title="Trace interne générative">
+                {run?.payload ? (
+                  <pre className="max-h-56 overflow-auto whitespace-pre-wrap break-words font-mono text-[11px] text-muted-foreground">
+                    {JSON.stringify(
+                      {
+                        output_type: run.payload.output_type,
+                        confidence: run.payload.confidence,
+                        routing_reason: run.payload.routing_reason,
+                        guardrails_triggered: run.payload.guardrails_triggered,
+                        missing_questions: run.payload.missing_questions,
+                        fuites: run.leaks,
+                        ecarts: run.violations,
+                        tokens: run.usage,
+                      },
+                      null,
+                      2,
+                    )}
+                  </pre>
+                ) : (
+                  <p className="text-xs text-muted-foreground">Aucune génération expérimentale.</p>
+                )}
+              </Card>
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
 
       <Card title="Verdict humain (comparaison)">
         <Textarea

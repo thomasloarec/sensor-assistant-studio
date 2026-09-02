@@ -8,6 +8,12 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -17,6 +23,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { isSupabaseConfigured, supabase } from "@/lib/standex/supabase";
+import {
+  checkMigrationV03,
+  MIGRATION_V03_SQL,
+  type MigrationStatus,
+} from "@/lib/standex/migration-status";
 import * as db from "@/lib/standex/queries";
 import { runScenario, safeOutputType, splitList } from "@/lib/standex/scenario-run";
 import { composeResponse } from "@/lib/standex/response-contract";
@@ -283,6 +294,16 @@ function Bench({ user }: { user: User }) {
   const [batchScope, setBatchScope] = useState<"p0" | "all">("p0");
   const [batchTotal, setBatchTotal] = useState(0);
   const [batchRunAt, setBatchRunAt] = useState<string | null>(null);
+  const [migration, setMigration] = useState<MigrationStatus>({
+    checked: false,
+    applied: false,
+    missing: [],
+  });
+  const [sqlCopied, setSqlCopied] = useState(false);
+
+  useEffect(() => {
+    void checkMigrationV03().then(setMigration);
+  }, []);
 
   const activeSession = useMemo(
     () => sessions.find((s) => s.id === activeId) ?? null,
@@ -556,6 +577,36 @@ function Bench({ user }: { user: User }) {
           {error}
         </div>
       ) : null}
+      {migration.checked && !migration.applied ? (
+        <div className="shrink-0 border-b border-border bg-secondary px-5 py-3 text-xs">
+          <p className="font-semibold text-primary">
+            Une mise à jour de la base est nécessaire pour comparer les deux assistants.
+          </p>
+          <p className="mt-1 text-muted-foreground">
+            Copiez le texte ci-dessous et collez-le dans l'éditeur SQL de votre projet Supabase, puis
+            rechargez la page. Le banc continue de fonctionner en attendant : seule la comparaison
+            reste indisponible.
+          </p>
+          <div className="mt-2 flex flex-wrap items-center gap-2">
+            <Button
+              size="sm"
+              onClick={() => {
+                void navigator.clipboard.writeText(MIGRATION_V03_SQL);
+                setSqlCopied(true);
+              }}
+            >
+              {sqlCopied ? "Copié" : "Copier la mise à jour"}
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => void checkMigrationV03().then(setMigration)}
+            >
+              Revérifier
+            </Button>
+          </div>
+        </div>
+      ) : null}
       <main className="grid min-h-0 flex-1 grid-cols-1 lg:grid-cols-[220px_minmax(0,1fr)_minmax(0,1.1fr)]">
         {/* Sessions + scénarios */}
         <aside className="hidden min-h-0 flex-col border-r border-border lg:flex">
@@ -706,13 +757,10 @@ function Bench({ user }: { user: User }) {
             <TabsList className="h-auto w-full flex-wrap justify-start rounded-none border-b border-border bg-transparent p-0">
               {(
                 [
-                  { v: "client", label: "Sortie client" },
-                  { v: "trace", label: "Trace interne" },
+                  { v: "client", label: "Tester" },
+                  { v: "mode", label: "Comparer" },
+                  { v: "dossier", label: "Dossier" },
                   { v: "revue", label: "Revue" },
-                  { v: "lead", label: "Données lead" },
-                  { v: "dossier", label: "Dossier application" },
-                  { v: "mode", label: "Mode assistant" },
-                  { v: "batch", label: "Synthèse" },
                 ] as const
               ).map(({ v, label }) => (
                 <TabsTrigger
@@ -752,124 +800,90 @@ function Bench({ user }: { user: User }) {
                         <p className="mt-4 border-t border-border pt-3 text-xs text-muted-foreground">
                           {lastOutput.callback_text}
                         </p>
-                        <JsonBlock label="be_dossier" value={lastOutput.be_dossier} />
                       </div>
                     )}
-                  </div>
-                </ScrollArea>
-              </TabsContent>
 
-              <TabsContent value="trace" className="m-0 h-full">
-                <ScrollArea className="h-full">
-                  <div className="space-y-3 p-4">
-                    {!lastTrace ? (
-                      <Empty>Aucune trace interne pour cette session.</Empty>
-                    ) : (
-                      <div className="rounded-md border border-border bg-card p-4">
-                        <dl className="grid grid-cols-2 gap-2 font-mono text-xs">
-                          <Field k="Application" v={lastTrace.understood_application} />
-                          <Field k="Cible détection" v={lastTrace.detection_target} />
-                          <Field k="Géométrie" v={lastTrace.mounting_geometry} />
-                          <Field k="Charge élec." v={lastTrace.electrical_load} />
-                          <Field k="Tension" v={lastTrace.voltage_value} />
-                          <Field k="Courant" v={lastTrace.current_value} />
-                          <Field k="Puissance" v={lastTrace.power_value} />
-                          <Field k="Volume" v={lastTrace.volume_signal} />
-                          <Field k="Confiance" v={lastTrace.confidence} />
-                          <Field k="Routage" v={lastTrace.routing_reason} />
-                        </dl>
-                        <TagList label="Guardrails" items={lastTrace.guardrails_triggered} />
-                        <TagList label="Questions manquantes" items={lastTrace.missing_questions} />
-                        <JsonBlock label="product_candidates" value={lastTrace.product_candidates} />
-                        <JsonBlock
-                          label="datasheet_values_used"
-                          value={lastTrace.datasheet_values_used}
-                        />
-                      </div>
-                    )}
-                  </div>
-                </ScrollArea>
-              </TabsContent>
+                    <Accordion type="multiple" className="w-full">
+                      <AccordionItem value="trace">
+                        <AccordionTrigger className="text-sm">
+                          Détails techniques — trace interne
+                        </AccordionTrigger>
+                        <AccordionContent>
+                          {!lastTrace ? (
+                            <Empty>Aucune trace interne pour cette session.</Empty>
+                          ) : (
+                            <div className="rounded-md border border-border bg-card p-4">
+                              <dl className="grid grid-cols-2 gap-2 font-mono text-xs">
+                                <Field k="Application" v={lastTrace.understood_application} />
+                                <Field k="Cible détection" v={lastTrace.detection_target} />
+                                <Field k="Géométrie" v={lastTrace.mounting_geometry} />
+                                <Field k="Charge élec." v={lastTrace.electrical_load} />
+                                <Field k="Tension" v={lastTrace.voltage_value} />
+                                <Field k="Courant" v={lastTrace.current_value} />
+                                <Field k="Puissance" v={lastTrace.power_value} />
+                                <Field k="Volume" v={lastTrace.volume_signal} />
+                                <Field k="Confiance" v={lastTrace.confidence} />
+                                <Field k="Routage" v={lastTrace.routing_reason} />
+                              </dl>
+                              <TagList label="Guardrails" items={lastTrace.guardrails_triggered} />
+                              <TagList
+                                label="Questions manquantes"
+                                items={lastTrace.missing_questions}
+                              />
+                              <JsonBlock
+                                label="product_candidates"
+                                value={lastTrace.product_candidates}
+                              />
+                              <JsonBlock
+                                label="datasheet_values_used"
+                                value={lastTrace.datasheet_values_used}
+                              />
+                              {lastOutput ? (
+                                <JsonBlock label="be_dossier" value={lastOutput.be_dossier} />
+                              ) : null}
+                            </div>
+                          )}
+                        </AccordionContent>
+                      </AccordionItem>
 
-              <TabsContent value="revue" className="m-0 h-full">
-                <ScrollArea className="h-full">
-                  <div className="space-y-3 p-4">
-                    <div className="rounded-md border border-border bg-card p-3">
-                      <ReviewPackButton
-                        rows={batch}
-                        tester={user.email ?? "—"}
-                        runAt={batchRunAt}
-                      />
-                    </div>
-
-                    {activeSession ? (
-                      <ReviewForm
-                        sessionId={activeSession.id}
-                        reviewerId={user.id}
-                        onCreated={(r) => setReviews((prev) => [r, ...prev])}
-                        onError={setError}
-                      />
-                    ) : null}
-                    {reviews.length === 0 ? (
-                      <Empty>Aucune revue enregistrée.</Empty>
-                    ) : (
-                      reviews.map((r) => (
-                        <div key={r.id} className="rounded-md border border-border bg-card p-3">
-                          <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-                            <Badge variant="outline" className="font-mono text-[10px]">
-                              {r.verdict}
-                            </Badge>
-                            <span>{r.reviewer_role}</span>
-                            <span>{new Date(r.created_at).toLocaleString("fr-FR")}</span>
-                          </div>
-                          {r.notes ? <p className="mt-2 text-sm">{r.notes}</p> : null}
-                          {r.corrected_output_type ? (
-                            <p className="mt-2 font-mono text-xs text-accent">
-                              → {r.corrected_output_type}
-                            </p>
-                          ) : null}
-                        </div>
-                      ))
-                    )}
-                  </div>
-                </ScrollArea>
-              </TabsContent>
-
-              <TabsContent value="lead" className="m-0 h-full">
-                <ScrollArea className="h-full">
-                  <div className="p-4">
-                    {!activeSession ? (
-                      <Empty>Aucune session sélectionnée.</Empty>
-                    ) : (
-                      <div className="rounded-md border border-border bg-card p-4">
-                        <dl className="grid grid-cols-2 gap-2 font-mono text-xs">
-                          <Field k="Nom" v={activeSession.prospect_name} />
-                          <Field
-                            k="Société"
-                            v={
-                              isTestMetadataCompany(activeSession.prospect_company)
-                                ? null
-                                : activeSession.prospect_company
-                            }
-                          />
-                          <Field k="Email" v={activeSession.prospect_email} />
-                          <Field k="Téléphone" v={activeSession.prospect_phone} />
-                          <Field k="Ville prospect" v={activeSession.prospect_city} />
-                          <Field k="Ville Standex" v={activeSession.standex_city} />
-                          <Field k="Bande volume" v={activeSession.volume_band} />
-                          <Field k="Potentiel lead" v={activeSession.lead_potential} />
-                          <Field k="Statut" v={activeSession.status} />
-                          <Field k="Canal" v={activeSession.channel} />
-                          <Field k="Locale" v={activeSession.locale} />
-                          <Field k="Rappel" v={activeSession.callback_commitment} />
-                        </dl>
-                        {activeSession.consent_notes ? (
-                          <p className="mt-3 border-t border-border pt-3 text-xs text-muted-foreground">
-                            {activeSession.consent_notes}
-                          </p>
-                        ) : null}
-                      </div>
-                    )}
+                      <AccordionItem value="lead">
+                        <AccordionTrigger className="text-sm">Données lead</AccordionTrigger>
+                        <AccordionContent>
+                          {!activeSession ? (
+                            <Empty>Aucune session sélectionnée.</Empty>
+                          ) : (
+                            <div className="rounded-md border border-border bg-card p-4">
+                              <dl className="grid grid-cols-2 gap-2 font-mono text-xs">
+                                <Field k="Nom" v={activeSession.prospect_name} />
+                                <Field
+                                  k="Société"
+                                  v={
+                                    isTestMetadataCompany(activeSession.prospect_company)
+                                      ? null
+                                      : activeSession.prospect_company
+                                  }
+                                />
+                                <Field k="Email" v={activeSession.prospect_email} />
+                                <Field k="Téléphone" v={activeSession.prospect_phone} />
+                                <Field k="Ville prospect" v={activeSession.prospect_city} />
+                                <Field k="Ville Standex" v={activeSession.standex_city} />
+                                <Field k="Bande volume" v={activeSession.volume_band} />
+                                <Field k="Potentiel lead" v={activeSession.lead_potential} />
+                                <Field k="Statut" v={activeSession.status} />
+                                <Field k="Canal" v={activeSession.channel} />
+                                <Field k="Locale" v={activeSession.locale} />
+                                <Field k="Rappel" v={activeSession.callback_commitment} />
+                              </dl>
+                              {activeSession.consent_notes ? (
+                                <p className="mt-3 border-t border-border pt-3 text-xs text-muted-foreground">
+                                  {activeSession.consent_notes}
+                                </p>
+                              ) : null}
+                            </div>
+                          )}
+                        </AccordionContent>
+                      </AccordionItem>
+                    </Accordion>
                   </div>
                 </ScrollArea>
               </TabsContent>
@@ -927,19 +941,68 @@ function Bench({ user }: { user: User }) {
                 </ScrollArea>
               </TabsContent>
 
-              <TabsContent value="batch" className="m-0 h-full">
+              <TabsContent value="revue" className="m-0 h-full">
                 <ScrollArea className="h-full">
-                  <BatchPanel
-                    rows={batch}
-                    busy={batchBusy}
-                    scope={batchScope}
-                    total={batchTotal}
-                    runAt={batchRunAt}
-                    tester={user.email ?? user.id}
-                    scenarioCount={scenarios.length}
-                    onRun={(s) => void runBatch(s)}
-                    onOpen={setActiveId}
-                  />
+                  <div className="space-y-3 p-4">
+                    <div className="rounded-md border border-border bg-card p-3">
+                      <ReviewPackButton
+                        rows={batch}
+                        tester={user.email ?? "—"}
+                        runAt={batchRunAt}
+                      />
+                    </div>
+
+                    {activeSession ? (
+                      <ReviewForm
+                        sessionId={activeSession.id}
+                        reviewerId={user.id}
+                        onCreated={(r) => setReviews((prev) => [r, ...prev])}
+                        onError={setError}
+                      />
+                    ) : null}
+                    {reviews.length === 0 ? (
+                      <Empty>Aucune revue enregistrée.</Empty>
+                    ) : (
+                      reviews.map((r) => (
+                        <div key={r.id} className="rounded-md border border-border bg-card p-3">
+                          <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+                            <Badge variant="outline" className="font-mono text-[10px]">
+                              {r.verdict}
+                            </Badge>
+                            <span>{r.reviewer_role}</span>
+                            <span>{new Date(r.created_at).toLocaleString("fr-FR")}</span>
+                          </div>
+                          {r.notes ? <p className="mt-2 text-sm">{r.notes}</p> : null}
+                          {r.corrected_output_type ? (
+                            <p className="mt-2 font-mono text-xs text-accent">
+                              → {r.corrected_output_type}
+                            </p>
+                          ) : null}
+                        </div>
+                      ))
+                    )}
+
+                    <Accordion type="single" collapsible className="w-full">
+                      <AccordionItem value="batch">
+                        <AccordionTrigger className="text-sm">
+                          Régression complète et synthèse (avancé)
+                        </AccordionTrigger>
+                        <AccordionContent>
+                          <BatchPanel
+                            rows={batch}
+                            busy={batchBusy}
+                            scope={batchScope}
+                            total={batchTotal}
+                            runAt={batchRunAt}
+                            tester={user.email ?? user.id}
+                            scenarioCount={scenarios.length}
+                            onRun={(s) => void runBatch(s)}
+                            onOpen={setActiveId}
+                          />
+                        </AccordionContent>
+                      </AccordionItem>
+                    </Accordion>
+                  </div>
                 </ScrollArea>
               </TabsContent>
             </div>
