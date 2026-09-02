@@ -471,8 +471,6 @@ function Bench({ user }: { user: User }) {
               dossierMarkdown,
             },
           ]);
-
-          ]);
         }
       } finally {
         setBatchBusy(false);
