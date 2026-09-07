@@ -32,3 +32,6 @@ dist-ssr
 *.sw?
 
 .env
+
+# Local source review and visual QA intermediates
+/tmp/

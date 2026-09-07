@@ -24,8 +24,13 @@ import {
   simulateCycle,
   summarizeWorkshop,
 } from "@/lib/standex/magnetic-workshop";
-import type { WorkshopConfig, CycleSample, Contact } from "@/lib/standex/magnetic-workshop";
+import type { WorkshopConfig, Contact } from "@/lib/standex/magnetic-workshop";
 import "./workshop.css";
+import FlatScene from "./flat-scene";
+import SensorCatalog from "./sensor-catalog";
+import ContactIndicator from "./contact-indicator";
+import { SensorPlan } from "./sensor-plan";
+import { sensorById, sizeLabel, sensorSource } from "@/lib/standex/sensor-catalog";
 
 const Scene = lazy(() => import("./scene"));
 const contactLabel: Record<Contact, string> = {
@@ -45,48 +50,6 @@ class SceneBoundary extends Component<
   override render() {
     return this.state.failed ? this.props.fallback : this.props.children;
   }
-}
-function FlatScene({ config, sample }: { config: WorkshopConfig; sample: CycleSample }) {
-  const isRef = config.mode === "reference";
-  return (
-    <svg
-      viewBox="-60 -30 150 110"
-      role="img"
-      aria-label="Vue plane du capteur et de l'aimant"
-      className="mw-flat"
-    >
-      <defs>
-        <pattern id="mw-grid" width="5" height="5" patternUnits="userSpaceOnUse">
-          <path d="M 5 0 L 0 0 0 5" fill="none" stroke="#d5dfe6" strokeWidth=".2" />
-        </pattern>
-      </defs>
-      <rect x="-60" y="-30" width="150" height="110" fill="url(#mw-grid)" />
-      <g transform={`translate(${config.mountX} ${config.mountZ}) rotate(${config.mountAngle})`}>
-        <g transform={`rotate(${isRef ? 0 : config.sensorAngle})`}>
-          <rect x="-10" y="-3" width="20" height="6" rx="1" fill="#254061" />
-          <circle cx="0" cy="0" r="1" fill={sample.contact === "closed" ? "#3bcaac" : "#adb9c1"} />
-        </g>
-        <g
-          transform={`translate(${sample.position[0]} ${sample.position[2]}) rotate(${sample.angle})`}
-        >
-          <rect
-            x={isRef ? -10 : -6}
-            y="-3"
-            width={isRef ? 20 : 12}
-            height="6"
-            rx="1"
-            fill="#738bb0"
-          />
-        </g>
-        <text x="-10" y="-7" fontSize="3.5" fill="#254061">
-          Capteur
-        </text>
-        <text x={sample.position[0] - 8} y={sample.position[2] + 9} fontSize="3.5" fill="#254061">
-          Aimant
-        </text>
-      </g>
-    </svg>
-  );
 }
 function Range({
   label,
@@ -154,9 +117,22 @@ export default function MagneticWorkshop({
     [playing, setPlaying] = useState(false);
   const [view, setView] = useState<"3d" | "top">("3d"),
     [zones, setZones] = useState(true),
-    [field, setField] = useState(false);
+    [field, setField] = useState(false),
+    [xray, setXray] = useState(true),
+    [dimensions, setDimensions] = useState(true),
+    [focus, setFocus] = useState<"assembly" | "sensor">("assembly"),
+    [catalogOpen, setCatalogOpen] = useState(false);
+  const [reduced, setReduced] = useState(false);
+  useEffect(() => {
+    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const sync = () => setReduced(media.matches);
+    sync();
+    media.addEventListener("change", sync);
+    return () => media.removeEventListener("change", sync);
+  }, []);
+  const sensor = sensorById(config.sensorId);
   const [saved, setSaved] = useState<string | null>(
-      initialConfig ? JSON.stringify(initialConfig) : null,
+      initialConfig ? JSON.stringify(parseWorkshopConfig(initialConfig)) : null,
     ),
     [saving, setSaving] = useState(false),
     [error, setError] = useState<string | null>(null);
@@ -168,7 +144,7 @@ export default function MagneticWorkshop({
       Math.min(result.samples.length - 1, Math.round(progress * (result.samples.length - 1)))
     ]!;
   const reference = config.mode === "reference",
-    unit = reference ? " mm" : " u.";
+    unit = " mm";
   const summary = useMemo(() => summarizeWorkshop(config), [config]);
   const fingerprint = JSON.stringify(config),
     dirty = saved !== fingerprint;
@@ -209,6 +185,7 @@ export default function MagneticWorkshop({
       mode === "reference"
         ? {
             mode,
+            sensorId: "MK03",
             motion: "approach",
             sensorAngle: 0,
             magnetAngle: 0,
@@ -238,7 +215,7 @@ export default function MagneticWorkshop({
     try {
       if (file.size > 20000) throw new Error("Le fichier de montage est trop volumineux.");
       const parsed = parseWorkshopConfig(JSON.parse(await file.text()));
-      if (!parsed) throw new Error("Ce fichier ne contient pas un montage V1 valide.");
+      if (!parsed) throw new Error("Ce fichier ne contient pas un montage valide (V1 ou V2).");
       setPlaying(false);
       setProgress(0);
       setConfig(parsed);
@@ -271,7 +248,7 @@ export default function MagneticWorkshop({
           STANDEX <span>DETECT</span>
           <small>ATELIER MAGNÉTIQUE</small>
         </div>
-        <span className="mw-prototype">Prototype interne · V0.1</span>
+        <span className="mw-prototype">Prototype interne · V0.2</span>
       </header>
       <div className="mw-intro">
         <div>
@@ -334,7 +311,7 @@ export default function MagneticWorkshop({
             <p>
               {reference
                 ? "MK03 + M02 · distances typiques publiées"
-                : "Reed et aimant génériques · aucune référence produit"}
+                : "Forme réelle · réponse du contact non calibrée"}
             </p>
           </div>
           <nav className="mw-steps" aria-label="Étapes du montage">
@@ -355,15 +332,25 @@ export default function MagneticWorkshop({
               <>
                 <h2>Installez le capteur</h2>
                 <p className="mw-help">Le plan quadrillé représente le repère de votre machine.</p>
-                <div className="mw-product">
-                  <span className="mw-product-icon">{reference ? "MK" : "REED"}</span>
-                  <div>
-                    <strong>
-                      {reference ? `MK03-1A66${config.sensitivity}-500W` : "Reed générique"}
-                    </strong>
-                    <span>Contact normalement ouvert · Form A</span>
-                  </div>
+                <div className="mw-selected-sensor">
+                  <svg viewBox="-38 -17 76 34" aria-hidden="true">
+                    <SensorPlan model={sensor} xray={false} />
+                  </svg>
+                  <strong>{reference ? `MK03-1A66${config.sensitivity}-500W` : sensor.name}</strong>
+                  <span>{sizeLabel(sensor)}</span>
+                  <button
+                    className="mw-button mw-secondary mw-wide"
+                    onClick={() => setCatalogOpen(true)}
+                  >
+                    Choisir dans le catalogue
+                  </button>
+                  {sensorSource(sensor) && (
+                    <a href={sensorSource(sensor)!} target="_blank" rel="noreferrer">
+                      Voir la fiche et le plan Standex ↗
+                    </a>
+                  )}
                 </div>
+                {sensor.note && <p className="mw-help">{sensor.note}</p>}
                 {reference && (
                   <label className="mw-select-label">
                     Classe de sensibilité
@@ -397,7 +384,7 @@ export default function MagneticWorkshop({
                     value={config.mountX}
                     min={-25}
                     max={25}
-                    unit=" u."
+                    unit=" mm"
                     onChange={(mountX) => update({ mountX })}
                   />
                   <Range
@@ -405,11 +392,11 @@ export default function MagneticWorkshop({
                     value={config.mountZ}
                     min={-25}
                     max={25}
-                    unit=" u."
+                    unit=" mm"
                     onChange={(mountZ) => update({ mountZ })}
                   />
                   <p className="mw-help">
-                    Placement visuel en unités de scène. Cette rotation déplace ensemble le capteur
+                    Placement géométrique en millimètres. Cette rotation déplace ensemble le capteur
                     et la trajectoire.
                   </p>
                   <label className="mw-check">
@@ -477,9 +464,9 @@ export default function MagneticWorkshop({
                       </select>
                     </label>
                     <p className="mw-help">
-                      L'orientation relative reste celle de la figure Standex. Les volumes des
-                      boîtiers sont schématiques et la position interne des pôles n'est pas
-                      caractérisée ici.
+                      L'orientation relative reste celle de la figure Standex. L'enveloppe du M02
+                      mesure 32,4 × 16,7 × 10 mm. Les couleurs N/S illustrent les pôles ; leur
+                      emplacement interne n'est pas caractérisé ici.
                     </p>
                     <a href={DISTANCE_SOURCE} target="_blank" rel="noreferrer">
                       Voir le montage de référence ↗
@@ -578,7 +565,7 @@ export default function MagneticWorkshop({
                       min={6}
                       max={30}
                       step={0.5}
-                      unit=" u."
+                      unit=" mm"
                       onChange={(offset) => update({ offset })}
                     />
                     {config.motion === "slide" ? (
@@ -587,7 +574,7 @@ export default function MagneticWorkshop({
                         value={config.travel}
                         min={10}
                         max={50}
-                        unit=" u."
+                        unit=" mm"
                         onChange={(travel) => update({ travel })}
                       />
                     ) : (
@@ -697,13 +684,29 @@ export default function MagneticWorkshop({
               aria-label={`Montage ${reference ? config.geometry : motionLabels[config.motion]}. ${contactLabel[sample.contact]}.`}
             >
               {view === "top" ? (
-                <FlatScene config={config} sample={sample} />
+                <FlatScene
+                  config={config}
+                  sample={sample}
+                  samples={result.samples}
+                  xray={xray}
+                  dimensions={dimensions}
+                  zones={zones}
+                  focus={focus}
+                />
               ) : (
                 <SceneBoundary
                   fallback={
                     <div className="mw-fallback">
                       <p>La 3D n'est pas disponible. Le cycle reste consultable en vue plane.</p>
-                      <FlatScene config={config} sample={sample} />
+                      <FlatScene
+                        config={config}
+                        sample={sample}
+                        samples={result.samples}
+                        xray={xray}
+                        dimensions={dimensions}
+                        zones={zones}
+                        focus={focus}
+                      />
                     </div>
                   }
                 >
@@ -717,6 +720,10 @@ export default function MagneticWorkshop({
                       view={view}
                       zones={zones}
                       field={field}
+                      xray={xray}
+                      dimensions={dimensions}
+                      focus={focus}
+                      reduced={reduced}
                     />
                   </Suspense>
                 </SceneBoundary>
@@ -737,13 +744,24 @@ export default function MagneticWorkshop({
             </div>
             <div className="mw-layers">
               <label>
+                <input type="checkbox" checked={xray} onChange={(e) => setXray(e.target.checked)} />
+                Voir les contacts
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={dimensions}
+                  onChange={(e) => setDimensions(e.target.checked)}
+                />
+                Dimensions
+              </label>
+              <label>
                 <input
                   type="checkbox"
                   checked={zones}
-                  disabled={view === "top"}
                   onChange={(e) => setZones(e.target.checked)}
                 />
-                {reference ? "Repères d'activation" : "Zones indicatives"}
+                Colorer le parcours
               </label>
               {!reference && (
                 <label>
@@ -753,16 +771,22 @@ export default function MagneticWorkshop({
                     disabled={view === "top"}
                     onChange={(e) => setField(e.target.checked)}
                   />
-                  Lignes de champ
+                  Champ idéal
                 </label>
               )}
+              <button
+                className="mw-focus-button"
+                onClick={() => setFocus(focus === "assembly" ? "sensor" : "assembly")}
+              >
+                {focus === "assembly" ? "Zoom sur le capteur" : "Voir tout le montage"}
+              </button>
               <span>
-                {reference
-                  ? "Entrefer selon la figure Standex"
-                  : "Centre de l'aimant : vert = fermeture ; ocre = seuil de relâchement. Orientation actuelle."}
+                Quadrillage : 5 mm · Vert : fermé · Gris : ouvert · Ocre : indéterminé · Contacts
+                internes symboliques
               </span>
             </div>
           </div>
+          <ContactIndicator contact={sample.contact} />
           <div className="mw-playback">
             <div className="mw-play-controls">
               <button
@@ -894,6 +918,29 @@ export default function MagneticWorkshop({
           </a>
         </p>
       </footer>
+      {catalogOpen && (
+        <SensorCatalog
+          selected={config.sensorId}
+          onClose={() => setCatalogOpen(false)}
+          onSelect={(sensorId) => {
+            if (sensorId === "MK03") {
+              update({
+                sensorId,
+                mode: "reference",
+                motion: "approach",
+                sensorAngle: 0,
+                magnetAngle: 0,
+                magnetization: "axial",
+                polarity: 1,
+              });
+            } else {
+              update({ sensorId, mode: "education" });
+            }
+            setCatalogOpen(false);
+            setField(false);
+          }}
+        />
+      )}
       <details className="mw-summary">
         <summary>Résumé du montage et hypothèses</summary>
         <pre>{summary}</pre>

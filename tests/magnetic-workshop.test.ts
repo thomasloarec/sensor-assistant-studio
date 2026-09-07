@@ -124,7 +124,7 @@ describe("Persistence and input validation", () => {
     { start: Infinity },
     { end: 40 },
     { targetStart: 70, targetEnd: 20 },
-    { version: 2 },
+    { version: 999 },
     { sensorAngle: 900 },
     { mode: "calibrated" },
   ])("rejects invalid scene %o", (patch) =>

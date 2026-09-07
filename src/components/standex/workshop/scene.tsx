@@ -1,116 +1,245 @@
-import { useEffect, useMemo } from "react";
-import { Canvas } from "@react-three/fiber";
+import { useMemo, useRef } from "react";
+import { Canvas, useFrame } from "@react-three/fiber";
 import { Html, Line, OrbitControls, Grid } from "@react-three/drei";
-import { BufferAttribute, BufferGeometry } from "three";
+import { Shape, Path } from "three";
+import type { Group } from "three";
 import {
-  educationSignal,
   fieldAt,
   length,
+  approachOffset,
+  magnetSize,
   MK03_DISTANCES,
   unavailableReason,
 } from "@/lib/standex/magnetic-workshop";
-import type { WorkshopConfig, CycleSample, Vec3 } from "@/lib/standex/magnetic-workshop";
+import type { WorkshopConfig, CycleSample, Vec3, Contact } from "@/lib/standex/magnetic-workshop";
+import { sensorById, bladeLength, bladeOffsetZ, formatMm } from "@/lib/standex/sensor-catalog";
+import type { SensorModel } from "@/lib/standex/sensor-catalog";
 
-function Label({ position, children }: { position: Vec3; children: React.ReactNode }) {
+const STATUS = { closed: "#009d78", open: "#8497a6", unknown: "#c18b39" };
+function Label({
+  position,
+  children,
+  className = "",
+}: {
+  position: Vec3;
+  children: React.ReactNode;
+  className?: string;
+}) {
   return (
     <Html position={position} center style={{ pointerEvents: "none" }}>
-      <span className="mw-scene-label">{children}</span>
+      <span className={`mw-scene-label ${className}`}>{children}</span>
     </Html>
   );
 }
-function Reed({ closed, reference }: { closed: boolean; reference: boolean }) {
+function rounded(path: Shape | Path, x: number, z: number, w: number, h: number, r: number) {
+  path.moveTo(x + r, z);
+  path.lineTo(x + w - r, z);
+  path.quadraticCurveTo(x + w, z, x + w, z + r);
+  path.lineTo(x + w, z + h - r);
+  path.quadraticCurveTo(x + w, z + h, x + w - r, z + h);
+  path.lineTo(x + r, z + h);
+  path.quadraticCurveTo(x, z + h, x, z + h - r);
+  path.lineTo(x, z + r);
+  path.quadraticCurveTo(x, z, x + r, z);
+  path.closePath();
+}
+function Body({ model, xray }: { model: SensorModel; xray: boolean }) {
+  const [l, h, w] = model.body,
+    opacity = xray ? 0.25 : 1;
+  const baseShape = useMemo(() => {
+    const s = new Shape();
+    rounded(s, -l / 2, -w / 2, l, w, Math.min(0.6, w * 0.1));
+    model.holes?.forEach(([x, z, hl, hw]) => {
+      const hole = new Path();
+      rounded(hole, x - hl / 2, -z - hw / 2, hl, hw, Math.min(hl, hw) / 2);
+      s.holes.push(hole);
+    });
+    return s;
+  }, [model, l, w]);
+  const material = (
+    <meshStandardMaterial
+      color={model.color}
+      transparent={xray}
+      opacity={opacity}
+      depthWrite={!xray}
+      metalness={model.shape === "threaded" ? 0.4 : 0.12}
+      roughness={0.4}
+    />
+  );
+  const cylindrical = ["cylinder", "threaded", "pressfit", "glass"].includes(model.shape);
   return (
     <group>
-      <mesh>
-        <boxGeometry args={[20, 4, 6]} />
+      {cylindrical ? (
+        <mesh rotation={[0, 0, Math.PI / 2]} scale={[h / 2, 1, w / 2]}>
+          <cylinderGeometry args={[1, 1, l, 48]} />
+          {material}
+        </mesh>
+      ) : (
+        <mesh position={[0, -h / 2, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+          <extrudeGeometry
+            args={[
+              baseShape,
+              {
+                depth: model.shape === "flange" ? (model.baseThickness ?? h) : h,
+                bevelEnabled: false,
+                curveSegments: 8,
+              },
+            ]}
+          />
+          {material}
+        </mesh>
+      )}
+      {model.shape === "flange" && (
+        <mesh position={[0, (model.baseThickness ?? h) / 2, -w / 2 + (model.raisedDepth ?? w) / 2]}>
+          <boxGeometry args={[l, h - (model.baseThickness ?? h), model.raisedDepth ?? w]} />
+          {material}
+        </mesh>
+      )}
+      {model.shape === "threaded" && (
+        <>
+          {Array.from({ length: Math.floor(l / 1.6) }, (_, i) => (
+            <mesh key={i} position={[-l / 2 + i * 1.6 + 0.5, 0, 0]} rotation={[0, Math.PI / 2, 0]}>
+              <torusGeometry args={[w / 2, 0.11, 4, 32]} />
+              <meshStandardMaterial color={model.color} transparent opacity={xray ? 0.25 : 0.8} />
+            </mesh>
+          ))}
+          {[-0.24, 0.24].map((x) => (
+            <mesh key={x} position={[l * x, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
+              <cylinderGeometry
+                args={[
+                  (model.nutWidth ?? w) / Math.sqrt(3),
+                  (model.nutWidth ?? w) / Math.sqrt(3),
+                  Math.max(2, w * 0.4),
+                  6,
+                ]}
+              />
+              {material}
+            </mesh>
+          ))}
+        </>
+      )}
+      {model.shape === "pressfit" && (
+        <mesh position={[l / 2 - 0.5, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
+          <cylinderGeometry
+            args={[(model.collarDiameter ?? w) / 2, (model.collarDiameter ?? w) / 2, 1, 48]}
+          />
+          {material}
+        </mesh>
+      )}
+      {model.shape === "smd"
+        ? [-1, 1].map((sign) => (
+            <mesh key={sign} position={[sign * (l / 2 - 0.1), -h / 2 + 0.18, 0]}>
+              <boxGeometry args={[((model.terminalSpan ?? l) - l) / 2 + 0.45, 0.28, w * 0.65]} />
+              <meshStandardMaterial color="#a7b5bd" metalness={0.8} roughness={0.25} />
+            </mesh>
+          ))
+        : [-1, 1].map((sign) => {
+            const side = model.cableSide ?? -1,
+              z = bladeOffsetZ(model) + sign * Math.min(0.65, w * 0.15);
+            return (
+              <Line
+                key={sign}
+                points={[
+                  [(side * l) / 2, 0, z],
+                  [side * (l / 2 + 8), 0, z],
+                  [side * (l / 2 + 10), 0, z],
+                ]}
+                color="#60727d"
+                lineWidth={2}
+              />
+            );
+          })}
+    </group>
+  );
+}
+function ContactFlow({ span, reduced }: { span: number; reduced: boolean }) {
+  const ref = useRef<Group>(null);
+  useFrame(({ clock }) => {
+    ref.current?.children.forEach((p, i) => {
+      p.position.x = ((((reduced ? 0 : clock.elapsedTime * 0.48) + i / 4) % 1) - 0.5) * span;
+    });
+  });
+  return (
+    <group ref={ref}>
+      {[0, 1, 2, 3].map((i) => (
+        <mesh key={i} position={[0, 0.35, 0]}>
+          <sphereGeometry args={[Math.max(0.1, Math.min(0.48, span * 0.025)), 10, 10]} />
+          <meshBasicMaterial color="#fff3ac" />
+        </mesh>
+      ))}
+    </group>
+  );
+}
+function Contacts({
+  model,
+  contact,
+  reduced,
+}: {
+  model: SensorModel;
+  contact: Contact;
+  reduced: boolean;
+}) {
+  const span = bladeLength(model),
+    thickness = Math.max(0.09, Math.min(0.55, model.body[1] * 0.1));
+  const closed = contact === "closed",
+    gap = closed ? 0 : Math.max(0.17, model.body[2] * 0.1);
+  return (
+    <group position={[0, 0, bladeOffsetZ(model)]}>
+      <mesh position={[-span * 0.23, 0, -gap]}>
+        <boxGeometry args={[span * 0.56, thickness, thickness]} />
         <meshStandardMaterial
-          color={reference ? "#254061" : "#bcd6dd"}
-          transparent
-          opacity={reference ? 0.86 : 0.26}
-          roughness={0.35}
+          color={STATUS[contact]}
+          emissive={STATUS[contact]}
+          emissiveIntensity={closed ? 0.75 : 0.15}
         />
       </mesh>
-      <mesh position={[-4.5, 0, closed ? 0 : -0.5]}>
-        <boxGeometry args={[11, 0.6, 0.7]} />
+      <mesh position={[span * 0.23, 0, gap]}>
+        <boxGeometry args={[span * 0.56, thickness, thickness]} />
         <meshStandardMaterial
-          color={closed ? "#31bb9c" : "#aab3bb"}
-          metalness={0.6}
-          roughness={0.3}
+          color={STATUS[contact]}
+          emissive={STATUS[contact]}
+          emissiveIntensity={closed ? 0.75 : 0.15}
         />
       </mesh>
-      <mesh position={[4.5, 0, closed ? 0 : 0.5]}>
-        <boxGeometry args={[11, 0.6, 0.7]} />
-        <meshStandardMaterial
-          color={closed ? "#31bb9c" : "#aab3bb"}
-          metalness={0.6}
-          roughness={0.3}
-        />
-      </mesh>
-      <Line
-        points={[
-          [-16, 0, 0],
-          [-10, 0, 0],
-        ]}
-        color="#535759"
-        lineWidth={3}
-      />
-      <Line
-        points={[
-          [10, 0, 0],
-          [16, 0, 0],
-        ]}
-        color="#535759"
-        lineWidth={3}
-      />
-      <mesh position={[0, 2.3, 0]}>
-        <sphereGeometry args={[0.8, 16, 16]} />
-        <meshBasicMaterial color={closed ? "#008667" : "#8d9aa6"} />
-      </mesh>
-      <Label position={[0, 5, -5]}>{reference ? "Capteur MK03 · schéma" : "Reed générique"}</Label>
+      {closed && <ContactFlow span={span} reduced={reduced} />}
     </group>
   );
 }
 function Magnet({ config, sample }: { config: WorkshopConfig; sample: CycleSample }) {
-  const reference = config.mode === "reference";
-  const magnetizationAngle = config.magnetization === "axial" ? 0 : Math.PI / 2;
+  const [l, h, w] = magnetSize(config),
+    axial = config.magnetization === "axial" || config.mode === "reference";
   return (
     <group position={sample.position} rotation={[0, (-sample.angle * Math.PI) / 180, 0]}>
-      <mesh>
-        <boxGeometry args={reference ? [20, 4, 6] : [12, 4, 6]} />
-        <meshStandardMaterial color="#738bb0" roughness={0.45} />
-      </mesh>
-      {!reference && (
-        <group rotation={[0, -magnetizationAngle, 0]}>
-          {([-1, 1] as const).map((sign) => (
-            <group
-              key={sign}
-              position={[sign * (config.magnetization === "axial" ? 6.4 : 3.4), 0, 0]}
+      {([-1, 1] as const).map((sign) => {
+        const north = sign * config.polarity === 1;
+        return (
+          <group key={sign} position={axial ? [(sign * l) / 4, 0, 0] : [0, 0, (sign * w) / 4]}>
+            <mesh>
+              <boxGeometry args={axial ? [l / 2, h, w] : [l, h, w / 2]} />
+              <meshStandardMaterial color={north ? "#e14242" : "#237dd0"} roughness={0.4} />
+            </mesh>
+            <Label
+              position={[0, h / 2 + 0.8, 0]}
+              className={north ? "mw-pole north" : "mw-pole south"}
             >
-              <mesh>
-                <sphereGeometry args={[1.3, 16, 16]} />
-                <meshBasicMaterial color={sign * config.polarity === 1 ? "#d46f56" : "#356fac"} />
-              </mesh>
-              <Label position={[0, 4, 0]}>{sign * config.polarity === 1 ? "N" : "S"}</Label>
-            </group>
-          ))}
-        </group>
-      )}
-      <Label position={[0, 5, reference ? 5 : 9]}>
-        {reference ? "Aimant M02 · schéma" : "Aimant générique"}
-      </Label>
+              {north ? "N" : "S"}
+            </Label>
+          </group>
+        );
+      })}
     </group>
   );
 }
 function FieldLines({ config, sample }: { config: WorkshopConfig; sample: CycleSample }) {
   const lines = useMemo(
     () =>
-      Array.from({ length: 10 }, (_, j) => {
-        const theta = (j / 10) * Math.PI * 2;
+      Array.from({ length: 6 }, (_, j) => {
+        const theta = (j / 6) * Math.PI * 2;
         let p: Vec3 = [6, 3 * Math.cos(theta), 3 * Math.sin(theta)];
         const points: Vec3[] = [p];
-        for (let i = 0; i < 180; i++) {
+        for (let i = 0; i < 160; i++) {
           const b = fieldAt(p, [0, 0, 0], [1, 0, 0]);
-          if (!b || length(p) > 70) break;
+          if (!b || length(p) > 65) break;
           const n = length(b);
           if (n < 1e-8) break;
           p = [p[0] + (b[0] / n) * 1.1, p[1] + (b[1] / n) * 1.1, p[2] + (b[2] / n) * 1.1];
@@ -126,75 +255,123 @@ function FieldLines({ config, sample }: { config: WorkshopConfig; sample: CycleS
     (config.polarity === -1 ? 180 : 0);
   return (
     <group position={sample.position} rotation={[0, (-angle * Math.PI) / 180, 0]}>
-      {lines.map((points, i) => (
-        <Line key={i} points={points} color="#6982a7" transparent opacity={0.48} lineWidth={1} />
+      {lines.map((p, i) => (
+        <Line key={i} points={p} color="#8b9fae" transparent opacity={0.38} lineWidth={1} />
       ))}
     </group>
   );
 }
-function Zones({ config, angle }: { config: WorkshopConfig; angle: number }) {
-  const geometries = useMemo(() => {
-    const close: number[] = [],
-      hold: number[] = [];
-    for (let x = -36; x <= 36; x += 3)
-      for (let y = -18; y <= 18; y += 3)
-        for (let z = -36; z <= 36; z += 3) {
-          const s = educationSignal(config, [x, y, z], angle);
-          if (s === null) continue;
-          if (s >= 1) close.push(x, y, z);
-          else if (s >= 0.67 && s <= 0.77) hold.push(x, y, z);
-        }
-    return [close, hold].map((p) => {
-      const g = new BufferGeometry();
-      g.setAttribute("position", new BufferAttribute(new Float32Array(p), 3));
-      return g;
-    });
-  }, [config, angle]);
-  useEffect(() => () => geometries.forEach((geometry) => geometry.dispose()), [geometries]);
+function Trajectory({
+  samples,
+  returning,
+  colored,
+}: {
+  samples: CycleSample[];
+  returning: boolean;
+  colored: boolean;
+}) {
+  const runs = useMemo(() => {
+    const part = samples.filter((s) => (returning ? s.t >= 0.5 : s.t <= 0.5));
+    const result: { contact: Contact; points: Vec3[] }[] = [];
+    for (let i = 0; i < part.length; i++) {
+      const s = part[i]!,
+        last = result.at(-1),
+        point: Vec3 = [s.position[0], -0.4, s.position[2]];
+      if (!last || last.contact !== s.contact)
+        result.push({ contact: s.contact, points: i ? [part[i - 1]!.position, point] : [point] });
+      else last.points.push(point);
+    }
+    return result.filter((r) => r.points.length > 1);
+  }, [samples, returning]);
   return (
     <group>
-      {geometries.map((geometry, i) => (
-        <points key={geometry.uuid} geometry={geometry}>
-          <pointsMaterial
-            color={i === 0 ? "#309c84" : "#d4a35d"}
-            size={1.2}
-            transparent
-            opacity={0.65}
-            depthWrite={false}
-          />
-        </points>
+      {runs.map((r, i) => (
+        <Line
+          key={i}
+          points={r.points}
+          color={colored ? STATUS[r.contact] : "#90a3b1"}
+          lineWidth={colored ? 4 : 1.5}
+          transparent
+          opacity={0.85}
+          dashed={!colored || r.contact === "unknown"}
+          dashSize={1}
+          gapSize={0.6}
+        />
       ))}
+    </group>
+  );
+}
+function Dimensions({ model }: { model: SensorModel }) {
+  const [l, , w] = model.body,
+    z = -w / 2 - 5;
+  return (
+    <group>
+      <Line
+        points={[
+          [-l / 2, 0, z],
+          [-l / 2, 0, z - 1],
+          [l / 2, 0, z - 1],
+          [l / 2, 0, z],
+        ]}
+        color="#577287"
+        lineWidth={1}
+      />
+      <Label position={[0, 0, z - 4]} className="mw-dimension">
+        {formatMm(l)} mm · corps
+      </Label>
+      <Line
+        points={[
+          [-5, -4, 42],
+          [5, -4, 42],
+        ]}
+        color="#577287"
+        lineWidth={2}
+      />
+      {[-5, 0, 5].map((x) => (
+        <Line
+          key={x}
+          points={[
+            [x, -4, 41],
+            [x, -4, 43],
+          ]}
+          color="#577287"
+          lineWidth={1}
+        />
+      ))}
+      <Label position={[0, -3, 46]} className="mw-dimension">
+        10 mm
+      </Label>
     </group>
   );
 }
 function ReferenceMarkers({ config }: { config: WorkshopConfig }) {
-  const [pull, drop] = MK03_DISTANCES[config.sensitivity][config.geometry];
-  const d1 = config.geometry === "D1";
+  const [pull, drop] = MK03_DISTANCES[config.sensitivity][config.geometry],
+    d1 = config.geometry === "D1";
   return (
     <group>
-      {([pull, drop] as const).map((d, i) => {
-        const p = d + (d1 ? 6 : 20);
+      {[pull, drop].map((d, i) => {
+        const p = d + approachOffset(config);
         return (
           <group key={i}>
             <Line
               points={
                 d1
                   ? [
-                      [-17, 0, p],
-                      [17, 0, p],
+                      [-19, -0.6, p],
+                      [19, -0.6, p],
                     ]
                   : [
-                      [p, 0, -12],
-                      [p, 0, 12],
+                      [p, -0.6, -12],
+                      [p, -0.6, 12],
                     ]
               }
-              color={i === 0 ? "#008667" : "#c38a36"}
-              lineWidth={2}
+              color={i === 0 ? "#009d78" : "#c18b39"}
+              lineWidth={1.5}
               dashed
               dashSize={1.1}
-              gapSize={0.7}
+              gapSize={0.8}
             />
-            <Label position={d1 ? [i === 0 ? -22 : 22, 1, p] : [p, 1, i === 0 ? -18 : 18]}>
+            <Label position={d1 ? [i === 0 ? -24 : 24, 1, p] : [p, 1, i === 0 ? -17 : 17]}>
               {i === 0 ? "Ferme" : "Ouvre"} · {d} mm
             </Label>
           </group>
@@ -207,94 +384,74 @@ export default function WorkshopScene({
   config,
   sample,
   samples,
-  view,
   zones,
   field,
+  xray = true,
+  dimensions = true,
+  focus = "assembly",
+  reduced = false,
 }: {
   config: WorkshopConfig;
   sample: CycleSample;
   samples: CycleSample[];
-  view: "3d" | "top";
+  view?: "3d" | "top";
   zones: boolean;
   field: boolean;
+  xray?: boolean;
+  dimensions?: boolean;
+  focus?: "assembly" | "sensor";
+  reduced?: boolean;
 }) {
-  const reference = config.mode === "reference",
+  const model = sensorById(config.sensorId),
+    reference = config.mode === "reference",
     available = !unavailableReason(config);
-  const path = useMemo(
-    () =>
-      samples
-        .filter((_, i) => i % 10 === 0)
-        .slice(0, 31)
-        .map((s) => s.position),
-    [samples],
-  );
+  const dist = Math.max(14, model.body[0] * 1.6),
+    target: Vec3 = focus === "sensor" ? [config.mountX, 0, config.mountZ] : [6, 0, 18];
   return (
     <Canvas
-      key={view}
-      orthographic={view === "top"}
-      camera={
-        view === "top"
-          ? { position: [0, 110, 0.01], zoom: 5.1, near: 0.1, far: 500 }
-          : { position: [64, 66, 89], fov: 43, near: 0.1, far: 500 }
-      }
+      key={focus === "sensor" ? focus + config.sensorId : focus}
+      camera={{
+        position:
+          focus === "sensor"
+            ? [target[0] + dist * 0.6, dist * 0.7, target[2] + dist]
+            : [80, 70, 105],
+        fov: 43,
+        near: 0.1,
+        far: 600,
+      }}
       dpr={[1, 1.5]}
       gl={{ antialias: true, alpha: false }}
       onCreated={({ gl }) => gl.setClearColor("#f0f4f7")}
     >
-      <ambientLight intensity={1.9} />
-      <directionalLight position={[30, 60, 20]} intensity={2.4} />
+      <ambientLight intensity={2} />
+      <directionalLight position={[30, 60, 20]} intensity={2.2} />
       <Grid
-        position={[0, -3, 0]}
-        args={[180, 180]}
+        position={[0, -7, 0]}
+        args={[220, 220]}
         cellSize={5}
         cellThickness={0.5}
-        cellColor="#d1dbe3"
+        cellColor="#d3dfe6"
         sectionSize={25}
-        sectionColor="#bbcbd7"
+        sectionColor="#bdceda"
         sectionThickness={0.8}
-        fadeDistance={220}
-        fadeStrength={1.5}
+        fadeDistance={250}
       />
       <group
         position={[config.mountX, 0, config.mountZ]}
         rotation={[0, (-config.mountAngle * Math.PI) / 180, 0]}
       >
-        <group rotation={[0, (-(reference ? 0 : config.sensorAngle) * Math.PI) / 180, 0]}>
-          <Reed closed={sample.contact === "closed"} reference={reference} />
+        <group rotation={[0, (-config.sensorAngle * Math.PI) / 180, 0]}>
+          <Body model={model} xray={xray} />
+          {xray && <Contacts model={model} contact={sample.contact} reduced={reduced} />}
+          <Label position={[0, model.body[1] / 2 + 3, model.body[2] / 2 + 5]}>{model.name}</Label>
+          {dimensions && <Dimensions model={model} />}
         </group>
         <Magnet config={config} sample={sample} />
-        <Line points={path} color="#667e96" lineWidth={1.5} dashed dashSize={1} gapSize={1} />
+        <Trajectory samples={samples} returning={sample.t > 0.5} colored={zones} />
         {reference && available && zones && <ReferenceMarkers config={config} />}
-        {!reference && available && zones && <Zones config={config} angle={sample.angle} />}
         {!reference && available && field && <FieldLines config={config} sample={sample} />}
-        <Line
-          points={[
-            [0, -2, 0],
-            [24, -2, 0],
-          ]}
-          color="#a6b5c0"
-          lineWidth={1}
-        />
-        <Label position={[26, -1, 0]}>x</Label>
-        <Line
-          points={[
-            [0, -2, 0],
-            [0, -2, 24],
-          ]}
-          color="#a6b5c0"
-          lineWidth={1}
-        />
-        <Label position={[0, -1, 26]}>z</Label>
       </group>
-      <OrbitControls
-        makeDefault
-        enableRotate={view === "3d"}
-        target={[5, 0, 12]}
-        minDistance={45}
-        maxDistance={240}
-        minZoom={2}
-        maxZoom={12}
-      />
+      <OrbitControls makeDefault target={target} minDistance={5} maxDistance={300} />
     </Canvas>
   );
 }

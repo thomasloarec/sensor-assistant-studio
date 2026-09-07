@@ -1,9 +1,12 @@
+import "./studio.css";
+import { Magnet, ArrowUpRight, MessageSquare, FolderOpen } from "lucide-react";
 import { createFileRoute } from "@tanstack/react-router";
 import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import {
   lastWorkshop,
   serializeWorkshop,
   displayWorkshopMessage,
+  parseWorkshopNote,
 } from "@/lib/standex/magnetic-workshop";
 import type { WorkshopConfig } from "@/lib/standex/magnetic-workshop";
 import type { Session, User } from "@supabase/supabase-js";
@@ -52,10 +55,7 @@ import {
   type ExperimentalRun,
 } from "@/lib/standex/experimental-run";
 import type { AssistantMode } from "@/lib/standex/baseline";
-import {
-  BaselineModePanel,
-  BaselineStatusBadge,
-} from "@/components/standex/baseline-mode";
+import { BaselineModePanel, BaselineStatusBadge } from "@/components/standex/baseline-mode";
 import {
   REVIEW_PACK_SCENARIOS,
   buildReviewPack,
@@ -117,7 +117,7 @@ function TestBench() {
   }, []);
 
   return (
-    <div className="flex h-screen flex-col bg-background font-sans text-foreground">
+    <div className="studio flex h-screen flex-col bg-background font-sans text-foreground">
       <Header user={user} />
       {!isSupabaseConfigured ? (
         <NotConfigured />
@@ -134,38 +134,33 @@ function TestBench() {
 
 function Header({ user }: { user: User | null }) {
   return (
-    <header className="flex shrink-0 items-center justify-between border-b border-border px-5 py-3">
-      <div className="flex items-center gap-3">
-        <span className="rounded-sm bg-primary px-2 py-1 font-mono text-xs font-semibold tracking-widest text-primary-foreground">
-          STANDEX
-        </span>
-        <h1 className="text-sm font-semibold tracking-tight">Banc de test — assistant capteur</h1>
-        <Badge variant="outline" className="font-mono text-[10px] uppercase">
-          interne · schéma V0.2
-        </Badge>
-        <BaselineStatusBadge />
+    <header className="studio-header">
+      <div className="studio-brand">
+        STANDEX <span>DETECT</span>
+        <small>VOTRE PROJET CAPTEUR</small>
       </div>
-      <div className="flex items-center gap-2 font-mono text-xs text-muted-foreground">
-        <span className="inline-flex items-center gap-1.5">
-          <span
-            className={`size-1.5 rounded-full ${isSupabaseConfigured ? "bg-success" : "bg-warning"}`}
-          />
-          {isSupabaseConfigured ? "Supabase connecté" : "Supabase non configuré"}
-        </span>
-        {user ? (
-          <>
-            <Separator orientation="vertical" className="h-4" />
-            <span>{user.email}</span>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-7 font-mono text-xs"
-              onClick={() => supabase?.auth.signOut()}
-            >
-              Déconnexion
-            </Button>
-          </>
-        ) : null}
+      <div className="studio-header-center">
+        <span>Conversation</span>
+        <i />
+        <span>Dossier</span>
+        <i />
+        <span>Atelier magnétique</span>
+      </div>
+      <div className="studio-account">
+        <span className="studio-internal">Espace de test interne</span>
+        {user && (
+          <details>
+            <summary>Mon espace</summary>
+            <div>
+              <p>{user.email}</p>
+              <p>{isSupabaseConfigured ? "Données connectées" : "Connexion à configurer"}</p>
+              <BaselineStatusBadge />
+              <Button variant="ghost" size="sm" onClick={() => supabase?.auth.signOut()}>
+                Déconnexion
+              </Button>
+            </div>
+          </details>
+        )}
       </div>
     </header>
   );
@@ -218,7 +213,10 @@ function SignIn() {
 
   return (
     <div className="flex flex-1 items-center justify-center p-8">
-      <form onSubmit={submit} className="w-full max-w-sm rounded-md border border-border bg-card p-6">
+      <form
+        onSubmit={submit}
+        className="w-full max-w-sm rounded-md border border-border bg-card p-6"
+      >
         <h2 className="font-mono text-xs uppercase tracking-widest text-accent">
           Accès testeur Standex
         </h2>
@@ -282,7 +280,6 @@ interface BatchRow {
   session?: SensorTestSession;
   sessionId?: string;
   dossierMarkdown?: string;
-
 }
 
 function Bench({ user }: { user: User }) {
@@ -388,7 +385,6 @@ function Bench({ user }: { user: User }) {
       setMessages((prev) => [...prev, msg]);
       setDraft("");
     });
-
 
   const selectScenario = (id: string) => {
     setScenarioId(id);
@@ -530,8 +526,7 @@ function Bench({ user }: { user: User }) {
       if (!scenario || !activeId || expBusy) return;
       setExpBusy(true);
       try {
-        const baselineText =
-          outputs.find((o) => o.customer_summary)?.customer_summary ?? "";
+        const baselineText = outputs.find((o) => o.customer_summary)?.customer_summary ?? "";
         setExpBaselineText(baselineText);
         const run = await runExperimental({
           sessionId: activeId,
@@ -601,7 +596,6 @@ function Bench({ user }: { user: User }) {
     downloadText(`pack-comparaison-${scenario.scenario_id}.md`, md, "text/markdown");
   };
 
-
   if (workshopOpen) {
     return (
       <div className="fixed inset-0 z-50 overflow-auto bg-background">
@@ -618,12 +612,38 @@ function Bench({ user }: { user: User }) {
 
   return (
     <>
-      <div className="flex shrink-0 flex-wrap items-center justify-between gap-4 border-b border-border bg-card px-5 py-3">
-        <p className="text-sm text-muted-foreground">
-          Construisez votre montage capteur–aimant et joignez-le au dossier.
-        </p>
-        <Button size="sm" onClick={() => setWorkshopOpen(true)}>
-          Ouvrir l'atelier magnétique
+      <div className="studio-intro">
+        <div>
+          <p className="studio-eyebrow">DE L'IDÉE AU BON MONTAGE</p>
+          <h1>Votre projet prend forme.</h1>
+          <p>Précisez votre besoin, rassemblez les informations et explorez le montage.</p>
+        </div>
+        <button className="studio-workshop-link" onClick={() => setWorkshopOpen(true)}>
+          <span className="studio-workshop-icon">
+            <Magnet size={25} />
+          </span>
+          <span>
+            <strong>Atelier magnétique</strong>
+            <small>Choisir un capteur · visualiser son mouvement</small>
+          </span>
+          <ArrowUpRight size={19} />
+        </button>
+      </div>
+      <div className="studio-mobile-sessions">
+        <select
+          aria-label="Session active"
+          value={activeId ?? ""}
+          onChange={(e) => setActiveId(e.target.value || null)}
+        >
+          <option value="">Sélectionner une session</option>
+          {sessions.map((s) => (
+            <option key={s.id} value={s.id}>
+              {s.consent_notes ?? s.prospect_company ?? s.id.slice(0, 8)}
+            </option>
+          ))}
+        </select>
+        <Button size="sm" onClick={newSession}>
+          + Nouvelle
         </Button>
       </div>
       {error ? (
@@ -637,9 +657,9 @@ function Bench({ user }: { user: User }) {
             Une mise à jour de la base est nécessaire pour comparer les deux assistants.
           </p>
           <p className="mt-1 text-muted-foreground">
-            Copiez le texte ci-dessous et collez-le dans l'éditeur SQL de votre projet Supabase, puis
-            rechargez la page. Le banc continue de fonctionner en attendant : seule la comparaison
-            reste indisponible.
+            Copiez le texte ci-dessous et collez-le dans l'éditeur SQL de votre projet Supabase,
+            puis rechargez la page. Le banc continue de fonctionner en attendant : seule la
+            comparaison reste indisponible.
           </p>
           <div className="mt-2 flex flex-wrap items-center gap-2">
             <Button
@@ -661,14 +681,19 @@ function Bench({ user }: { user: User }) {
           </div>
         </div>
       ) : null}
-      <main className="grid min-h-0 flex-1 grid-cols-1 lg:grid-cols-[220px_minmax(0,1fr)_minmax(0,1.1fr)]">
+      <main className="studio-grid">
         {/* Sessions + scénarios */}
-        <aside className="hidden min-h-0 flex-col border-r border-border lg:flex">
+        <aside className="studio-sessions hidden min-h-0 flex-col lg:flex">
           <div className="flex items-center justify-between border-b border-border px-3 py-2">
             <h2 className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
               Sessions
             </h2>
-            <Button size="sm" variant="ghost" className="h-7 font-mono text-xs" onClick={newSession}>
+            <Button
+              size="sm"
+              variant="ghost"
+              className="h-7 font-mono text-xs"
+              onClick={newSession}
+            >
               + Nouvelle
             </Button>
           </div>
@@ -697,59 +722,72 @@ function Bench({ user }: { user: User }) {
                 ))
               )}
             </div>
-            <Separator />
-            <div className="p-2">
-              <h3 className="px-2 py-1 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-                Scénarios actifs
-              </h3>
-              {scenarios.map((sc) => (
-                <button
-                  key={sc.id}
-                  onClick={() => selectScenario(sc.id)}
-                  className={`mb-1 block w-full rounded-sm px-2 py-1.5 text-left font-mono text-[11px] transition-colors hover:bg-secondary/60 ${
-                    sc.id === scenarioId
-                      ? "bg-secondary text-foreground"
-                      : "text-muted-foreground"
-                  }`}
-                  title={sc.expected_behavior}
-                >
-                  <span className="text-accent">{sc.priority}</span> {sc.scenario_id}
-                </button>
-              ))}
-              {scenarios.length === 0 ? (
-                <p className="px-2 text-xs text-muted-foreground">Aucun scénario chargé.</p>
-              ) : null}
-            </div>
+            <details className="studio-scenario-list">
+              <summary>Bibliothèque de scénarios</summary>
+              <div className="p-2">
+                <h3 className="px-2 py-1 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+                  Scénarios actifs
+                </h3>
+                {scenarios.map((sc) => (
+                  <button
+                    key={sc.id}
+                    onClick={() => selectScenario(sc.id)}
+                    className={`mb-1 block w-full rounded-sm px-2 py-1.5 text-left font-mono text-[11px] transition-colors hover:bg-secondary/60 ${
+                      sc.id === scenarioId
+                        ? "bg-secondary text-foreground"
+                        : "text-muted-foreground"
+                    }`}
+                    title={sc.expected_behavior}
+                  >
+                    <span className="text-accent">{sc.priority}</span> {sc.scenario_id}
+                  </button>
+                ))}
+                {scenarios.length === 0 ? (
+                  <p className="px-2 text-xs text-muted-foreground">Aucun scénario chargé.</p>
+                ) : null}
+              </div>
+            </details>
           </ScrollArea>
         </aside>
 
         {/* Conversation */}
-        <section className="flex min-h-0 min-w-0 flex-col overflow-hidden border-border lg:border-r">
+        <section className="studio-conversation studio-card flex min-h-0 min-w-0 flex-col overflow-hidden">
           <div className="flex items-center justify-between border-b border-border px-4 py-2">
             <h2 className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
-              Conversation
+              <MessageSquare size={16} /> Conversation
             </h2>
             <span className="font-mono text-[10px] text-muted-foreground">
               {activeSession ? `${messages.length} tour(s)` : "aucune session"}
             </span>
           </div>
-          <ScenarioPanel
-            scenarios={scenarios}
-            scenario={scenario}
-            onSelect={selectScenario}
-            onRun={() => void runSelectedScenario()}
-            running={running}
-          />
+          <details className="studio-scenario-panel">
+            <summary>Rejouer un scénario de test</summary>
+            <ScenarioPanel
+              scenarios={scenarios}
+              scenario={scenario}
+              onSelect={selectScenario}
+              onRun={() => void runSelectedScenario()}
+              running={running}
+            />
+          </details>
           <ScrollArea className="min-h-0 flex-1">
             <div className="flex flex-col gap-3 p-4">
               {!activeSession ? (
-                <p className="text-sm text-muted-foreground">
-                  Crée une session de test pour démarrer.
-                </p>
+                <div className="studio-empty">
+                  <MessageSquare size={29} />
+                  <h3>Commençons par votre application.</h3>
+                  <p>Créez une session pour conserver vos échanges et votre montage.</p>
+                  <Button onClick={newSession}>Créer une session</Button>
+                </div>
               ) : messages.length === 0 ? (
-                <p className="text-sm text-muted-foreground">
-                  Aucun message. Saisis un prompt ou charge un scénario.
-                </p>
+                <div className="studio-empty">
+                  <MessageSquare size={29} />
+                  <h3>Quel mouvement souhaitez-vous détecter ?</h3>
+                  <p>
+                    Décrivez la machine, le capteur envisagé et les contraintes connues. Les
+                    messages sont conservés dans cette session de test.
+                  </p>
+                </div>
               ) : (
                 messages.map((m) => (
                   <div
@@ -765,9 +803,19 @@ function Bench({ user }: { user: User }) {
                     <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
                       #{m.turn_index} · {m.role}
                     </div>
-                    <p className="mt-1 text-sm whitespace-pre-wrap">
-                      {m.role === "internal" ? displayWorkshopMessage(m.content) : m.content}
-                    </p>
+                    {m.role === "internal" && parseWorkshopNote(m.content) ? (
+                      <details className="studio-montage-message">
+                        <summary>
+                          <Magnet size={16} />
+                          Montage magnétique joint au dossier
+                        </summary>
+                        <p className="mt-2 text-xs whitespace-pre-wrap">
+                          {displayWorkshopMessage(m.content)}
+                        </p>
+                      </details>
+                    ) : (
+                      <p className="mt-1 text-sm whitespace-pre-wrap">{m.content}</p>
+                    )}
                   </div>
                 ))
               )}
@@ -784,7 +832,7 @@ function Bench({ user }: { user: User }) {
                 }
               }}
               disabled={!activeSession}
-              placeholder="Message prospect… (Entrée pour envoyer)"
+              placeholder="Décrivez votre application… (Entrée pour envoyer)"
               className="min-h-20 resize-none bg-card font-mono text-sm"
             />
             <div className="mt-2 flex items-center justify-end gap-2">
@@ -808,14 +856,14 @@ function Bench({ user }: { user: User }) {
         </section>
 
         {/* Inspecteur */}
-        <section className="flex min-h-0 min-w-0 flex-col overflow-hidden">
-          <Tabs defaultValue="client" className="flex min-h-0 flex-1 flex-col gap-0">
+        <section className="studio-inspector studio-card flex min-h-0 min-w-0 flex-col overflow-hidden">
+          <Tabs defaultValue="dossier" className="flex min-h-0 flex-1 flex-col gap-0">
             <TabsList className="h-auto w-full flex-wrap justify-start rounded-none border-b border-border bg-transparent p-0">
               {(
                 [
+                  { v: "dossier", label: "Dossier" },
                   { v: "client", label: "Tester" },
                   { v: "mode", label: "Comparer" },
-                  { v: "dossier", label: "Dossier" },
                   { v: "revue", label: "Revue" },
                 ] as const
               ).map(({ v, label }) => (
@@ -963,8 +1011,6 @@ function Bench({ user }: { user: User }) {
                 </ScrollArea>
               </TabsContent>
 
-
-
               <TabsContent value="mode" className="m-0 h-full">
                 <ScrollArea className="h-full">
                   <BaselineModePanel
@@ -1090,7 +1136,34 @@ function DossierPanel({
   const critical = dossier.missingCritical.filter((f) => f.importance === "critique");
 
   return (
-    <div className="space-y-4">
+    <div className="studio-dossier space-y-4">
+      <div className="studio-dossier-title">
+        <span>
+          <FolderOpen size={22} />
+        </span>
+        <div>
+          <p className="studio-eyebrow">VOTRE DOSSIER D'APPLICATION</p>
+          <h2>Les informations de votre projet</h2>
+          <p>
+            {dossier.fields.filter((f) => f.value).length} informations renseignées sur{" "}
+            {dossier.fields.length}
+          </p>
+        </div>
+      </div>
+      <div
+        className="studio-completion"
+        role="progressbar"
+        aria-label="Informations renseignées"
+        aria-valuenow={dossier.fields.filter((f) => f.value).length}
+        aria-valuemin={0}
+        aria-valuemax={dossier.fields.length}
+      >
+        <span
+          style={{
+            width: `${(dossier.fields.filter((f) => f.value).length / dossier.fields.length) * 100}%`,
+          }}
+        />
+      </div>
       <div className="flex flex-wrap items-center gap-2">
         <Badge variant="outline" className="font-mono text-[10px]">
           {dossier.outputType ?? "sortie —"}
@@ -1114,7 +1187,7 @@ function DossierPanel({
               window.setTimeout(() => setCopied(false), 1500);
             }}
           >
-            {copied ? "Copié" : "Copier (MD)"}
+            {copied ? "Copié" : "Copier"}
           </Button>
           <Button
             size="sm"
@@ -1127,13 +1200,13 @@ function DossierPanel({
               )
             }
           >
-            Télécharger (MD)
+            Télécharger
           </Button>
         </div>
       </div>
 
       {dossier.workshopSummary && (
-        <details className="rounded-md border border-border bg-card p-4" open>
+        <details className="studio-montage-note rounded-md border border-border bg-card p-4">
           <summary className="cursor-pointer text-sm font-semibold">
             Montage exploré dans l'atelier magnétique
           </summary>
@@ -1165,7 +1238,13 @@ function DossierPanel({
                     {f.value ? (
                       <p className="break-words">{f.value}</p>
                     ) : (
-                      <p className="text-destructive">manquant</p>
+                      <p
+                        className={
+                          f.importance === "critique" ? "studio-missing critical" : "studio-missing"
+                        }
+                      >
+                        À préciser
+                      </p>
                     )}
                     {f.source ? (
                       <span className="text-[10px] uppercase tracking-widest text-accent">
@@ -1217,8 +1296,6 @@ function DossierPanel({
     </div>
   );
 }
-
-
 
 function ReviewForm({
   sessionId,
@@ -1392,11 +1469,7 @@ function ScenarioPanel({
           </div>
           <p className="text-xs text-muted-foreground">{scenario.expected_behavior}</p>
           <div className="grid gap-2 sm:grid-cols-2">
-            <ContractList
-              label="Éléments obligatoires"
-              items={mustInclude}
-              tone="text-success"
-            />
+            <ContractList label="Éléments obligatoires" items={mustInclude} tone="text-success" />
             <ContractList
               label="Éléments interdits"
               items={mustNotInclude}
@@ -1414,15 +1487,7 @@ function ScenarioPanel({
   );
 }
 
-function ContractList({
-  label,
-  items,
-  tone,
-}: {
-  label: string;
-  items: string[];
-  tone: string;
-}) {
+function ContractList({ label, items, tone }: { label: string; items: string[]; tone: string }) {
   return (
     <div className="rounded-sm border border-border bg-card p-2">
       <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
@@ -1442,7 +1507,6 @@ function ContractList({
     </div>
   );
 }
-
 
 const SUPABASE_URL = import.meta.env["VITE_SUPABASE_URL"] ?? "";
 
@@ -1482,11 +1546,7 @@ function ReviewPackButton({
         size="sm"
         disabled={reviewRows.length === 0}
         onClick={() =>
-          downloadText(
-            `pack-revue-qualitative-${testedAt.slice(0, 10)}.md`,
-            pack,
-            "text/markdown",
-          )
+          downloadText(`pack-revue-qualitative-${testedAt.slice(0, 10)}.md`, pack, "text/markdown")
         }
       >
         Exporter pack de revue qualitative
@@ -1499,7 +1559,6 @@ function ReviewPackButton({
     </div>
   );
 }
-
 
 function BatchPanel({
   rows,
@@ -1532,7 +1591,6 @@ function BatchPanel({
   const markdown = rows.length ? buildMarkdown(rows, meta) : "";
   const { reviewRows, pack: reviewPack } = buildPackFromBatch(rows, tester, runAt);
 
-
   const copy = async (text: string, tag: string) => {
     await navigator.clipboard.writeText(text);
     setCopied(tag);
@@ -1562,7 +1620,9 @@ function BatchPanel({
         </div>
         <div className="flex shrink-0 flex-wrap gap-2">
           <Button size="sm" variant="outline" disabled={busy} onClick={() => onRun("p0")}>
-            {busy && scope === "p0" ? `Exécution… (${rows.length}/${total})` : "Lancer les 8 scénarios"}
+            {busy && scope === "p0"
+              ? `Exécution… (${rows.length}/${total})`
+              : "Lancer les 8 scénarios"}
           </Button>
           <Button size="sm" disabled={busy || scenarioCount === 0} onClick={() => onRun("all")}>
             {busy && scope === "all"
@@ -1612,7 +1672,6 @@ function BatchPanel({
           </div>
 
           <div className="flex flex-wrap gap-2">
-
             <Button size="sm" variant="outline" onClick={() => void copy(markdown, "md")}>
               {copied === "md" ? "Copié" : "Copier la synthèse (Markdown)"}
             </Button>
@@ -1643,7 +1702,6 @@ function BatchPanel({
               Exporter la synthèse (CSV)
             </Button>
           </div>
-
 
           <div className="overflow-x-auto rounded-md border border-border">
             <table className="w-full border-collapse font-mono text-[11px]">
@@ -1694,7 +1752,9 @@ function BatchPanel({
                     <td className="px-2 py-1.5">
                       {r.evaluation ? yn(r.evaluation.presentForbidden.length === 0) : "—"}
                     </td>
-                    <td className="px-2 py-1.5">{r.evaluation ? yn(r.evaluation.cityAsked) : "—"}</td>
+                    <td className="px-2 py-1.5">
+                      {r.evaluation ? yn(r.evaluation.cityAsked) : "—"}
+                    </td>
                     <td className="px-2 py-1.5">
                       {r.evaluation ? yn(r.evaluation.twoBusinessDays) : "—"}
                     </td>
@@ -1741,9 +1801,13 @@ function BatchPanel({
                   </p>
                 ) : (
                   <ul className="mt-1 space-y-0.5 font-mono text-[11px] text-muted-foreground">
-                    <li>· Éléments obligatoires absents : {r.evaluation!.missingMust.join(" | ") || "—"}</li>
                     <li>
-                      · Éléments interdits présents : {r.evaluation!.presentForbidden.join(" | ") || "—"}
+                      · Éléments obligatoires absents :{" "}
+                      {r.evaluation!.missingMust.join(" | ") || "—"}
+                    </li>
+                    <li>
+                      · Éléments interdits présents :{" "}
+                      {r.evaluation!.presentForbidden.join(" | ") || "—"}
                     </li>
                     <li>· Garde-fous manquants : {r.evaluation!.missingFlags.join(", ") || "—"}</li>
                     <li>
@@ -1753,11 +1817,10 @@ function BatchPanel({
                         : `incorrecte (${r.outputType} vs ${r.evaluation!.expectedOutput})`}
                     </li>
                     <li>
-                      · Trace interne : {r.evaluation!.traceSufficient ? "suffisante" : "insuffisante"}
+                      · Trace interne :{" "}
+                      {r.evaluation!.traceSufficient ? "suffisante" : "insuffisante"}
                     </li>
-                    <li>
-                      · Règles en échec : {r.evaluation!.failures.join(" | ") || "—"}
-                    </li>
+                    <li>· Règles en échec : {r.evaluation!.failures.join(" | ") || "—"}</li>
                     <li>· Suggestion : {r.evaluation!.suggestion ?? "—"}</li>
                   </ul>
                 )}
