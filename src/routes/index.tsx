@@ -1,5 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from "react";
+import {
+  lastWorkshop,
+  serializeWorkshop,
+  displayWorkshopMessage,
+} from "@/lib/standex/magnetic-workshop";
+import type { WorkshopConfig } from "@/lib/standex/magnetic-workshop";
 import type { Session, User } from "@supabase/supabase-js";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -67,6 +73,8 @@ import {
   type SensorTestSession,
   type Verdict,
 } from "@/lib/standex/types";
+
+const MagneticWorkshop = lazy(() => import("@/components/standex/workshop/workshop"));
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -278,6 +286,7 @@ interface BatchRow {
 }
 
 function Bench({ user }: { user: User }) {
+  const [workshopOpen, setWorkshopOpen] = useState(false);
   const [sessions, setSessions] = useState<SensorTestSession[]>([]);
   const [scenarios, setScenarios] = useState<SensorTestScenario[]>([]);
   const [scenarioId, setScenarioId] = useState<string | null>(null);
@@ -552,6 +561,29 @@ function Bench({ user }: { user: User }) {
       await loadSession(activeId);
     });
 
+  const saveWorkshop = async (config: WorkshopConfig) => {
+    let sessionId = activeId;
+    let createdSession: SensorTestSession | null = null;
+    if (!sessionId) {
+      const session = await db.createSession(user.id);
+      createdSession = session;
+      sessionId = session.id;
+    }
+    const existing = await db.fetchMessages(sessionId);
+    const msg = await db.insertMessage({
+      session_id: sessionId,
+      role: "internal",
+      content: serializeWorkshop(config),
+      turn_index: existing.reduce((max, m) => Math.max(max, m.turn_index), -1) + 1,
+    });
+    if (createdSession) {
+      const session = createdSession;
+      setSessions((prev) => [session, ...prev]);
+      setActiveId(session.id);
+    }
+    setMessages([...existing, msg]);
+  };
+
   const exportComparisonPack = () => {
     if (!expRun || !scenario || !activeId) return;
     const md = buildComparisonPack(
@@ -570,8 +602,30 @@ function Bench({ user }: { user: User }) {
   };
 
 
+  if (workshopOpen) {
+    return (
+      <div className="fixed inset-0 z-50 overflow-auto bg-background">
+        <Suspense fallback={<p className="p-8 text-sm">Ouverture de l'atelier magnétique…</p>}>
+          <MagneticWorkshop
+            initialConfig={lastWorkshop(messages)}
+            onClose={() => setWorkshopOpen(false)}
+            onSave={saveWorkshop}
+          />
+        </Suspense>
+      </div>
+    );
+  }
+
   return (
     <>
+      <div className="flex shrink-0 flex-wrap items-center justify-between gap-4 border-b border-border bg-card px-5 py-3">
+        <p className="text-sm text-muted-foreground">
+          Construisez votre montage capteur–aimant et joignez-le au dossier.
+        </p>
+        <Button size="sm" onClick={() => setWorkshopOpen(true)}>
+          Ouvrir l'atelier magnétique
+        </Button>
+      </div>
       {error ? (
         <div className="shrink-0 border-b border-destructive/40 bg-destructive/10 px-5 py-2 font-mono text-xs text-destructive">
           {error}
@@ -711,7 +765,9 @@ function Bench({ user }: { user: User }) {
                     <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
                       #{m.turn_index} · {m.role}
                     </div>
-                    <p className="mt-1 text-sm whitespace-pre-wrap">{m.content}</p>
+                    <p className="mt-1 text-sm whitespace-pre-wrap">
+                      {m.role === "internal" ? displayWorkshopMessage(m.content) : m.content}
+                    </p>
                   </div>
                 ))
               )}
@@ -1076,6 +1132,16 @@ function DossierPanel({
         </div>
       </div>
 
+      {dossier.workshopSummary && (
+        <details className="rounded-md border border-border bg-card p-4" open>
+          <summary className="cursor-pointer text-sm font-semibold">
+            Montage exploré dans l'atelier magnétique
+          </summary>
+          <p className="mt-3 whitespace-pre-wrap text-xs leading-relaxed">
+            {dossier.workshopSummary}
+          </p>
+        </details>
+      )}
       {(Object.keys(SECTION_LABELS) as DossierSection[]).map((section) => (
         <div key={section} className="rounded-md border border-border bg-card p-4">
           <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">

@@ -1,3 +1,4 @@
+import { lastWorkshop, summarizeWorkshop } from "./magnetic-workshop";
 // Dossier d'application canonique V0.9 (24 champs).
 // Lecture seule : dérivé des tables existantes (sessions, messages, outputs,
 // traces, reviews). Aucune nouvelle table, aucun modèle génératif.
@@ -73,6 +74,8 @@ export interface DossierFieldValue extends DossierFieldDef {
 }
 
 export interface ApplicationDossier {
+  /** Montage exploré, conservé séparément des validations produit et revues humaines. */
+  workshopSummary: string | null;
   sessionId: string;
   createdAt: string;
   outputType: string | null;
@@ -319,6 +322,11 @@ export function buildApplicationDossier(input: {
     ]),
   };
 
+  const workshop = lastWorkshop(messages);
+  const workshopSummary = workshop ? summarizeWorkshop(workshop) : null;
+  // An explored example is attached context, not a declared machine requirement.
+  // Keep the prospect's fields, missing questions and confidence unchanged.
+
   const fields: DossierFieldValue[] = DOSSIER_FIELDS.map((def) => ({
     ...def,
     value: raw[def.id]?.value ?? null,
@@ -399,6 +407,7 @@ export function buildApplicationDossier(input: {
 
   return {
     sessionId: session.id,
+    workshopSummary,
     createdAt: session.created_at,
     outputType: output?.output_type ?? null,
     productConfidence,
@@ -434,6 +443,9 @@ export function buildDossierMarkdown(
   L.push("## Synthese application", "");
   L.push(d.summary ?? "_manquant_");
   L.push("");
+  if (d.workshopSummary) {
+    L.push("## Montage exploré dans l'atelier magnétique", "", d.workshopSummary, "");
+  }
 
   for (const section of Object.keys(SECTION_LABELS) as DossierSection[]) {
     L.push(`## ${SECTION_LABELS[section]}`, "");
