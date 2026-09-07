@@ -1,6 +1,6 @@
-# Atelier magnétique — version courante V0.3
+# Atelier magnétique — version courante V0.4
 
-La documentation à jour, les changements du modèle et le mode d’emploi de la machine importée sont dans [Atelier magnétique V0.3](atelier-magnetique-v03.md).
+Les langues, cartes produit, sources et vérifications sont dans [Atelier magnétique V0.4](atelier-magnetique-v04.md). Les changements du modèle et le mode d'emploi de la machine importée restent décrits dans [Atelier magnétique V0.3](atelier-magnetique-v03.md).
 
 ---
 

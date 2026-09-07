@@ -4,8 +4,10 @@
 import { createServerFn } from "@tanstack/react-start";
 
 import type { Json } from "./types";
+import { responseLanguageInstruction, responseLocale } from "./response-language";
 
 export interface ExperimentalInput {
+  locale?: string;
   accessToken: string;
   scenarioId: string;
   userPrompt: string;
@@ -16,6 +18,7 @@ export interface ExperimentalInput {
 }
 
 export interface ExperimentalPayload {
+  validation_response_fr?: string;
   customer_response: string;
   output_type: string;
   confidence: string;
@@ -46,7 +49,12 @@ const RESPONSE_TOOL = {
   input_schema: {
     type: "object",
     properties: {
-      customer_response: { type: "string", description: "Texte français destiné au prospect." },
+      customer_response: { type: "string", description: "Texte prospect dans la langue demandée." },
+      validation_response_fr: {
+        type: "string",
+        description:
+          "Version française complète et fidèle de customer_response, réservée aux contrôles internes.",
+      },
       output_type: {
         type: "string",
         enum: [
@@ -83,6 +91,7 @@ const RESPONSE_TOOL = {
     },
     required: [
       "customer_response",
+      "validation_response_fr",
       "output_type",
       "confidence",
       "routing_reason",
@@ -96,6 +105,9 @@ const RESPONSE_TOOL = {
 function normalize(obj: Record<string, unknown>): ExperimentalPayload | null {
   if (typeof obj["customer_response"] !== "string" || !obj["customer_response"].trim()) return null;
   return {
+    ...(typeof obj["validation_response_fr"] === "string"
+      ? { validation_response_fr: obj["validation_response_fr"] }
+      : {}),
     customer_response: obj["customer_response"],
     output_type: typeof obj["output_type"] === "string" ? obj["output_type"] : "S3_MISSING_INFO",
     confidence: typeof obj["confidence"] === "string" ? obj["confidence"] : "unknown",
@@ -111,7 +123,10 @@ function normalize(obj: Record<string, unknown>): ExperimentalPayload | null {
 
 /** Filet de sécurité : seulement si l'outil n'a pas été utilisé. */
 function extractJson(text: string): ExperimentalPayload | null {
-  const cleaned = text.replace(/^```(?:json)?/i, "").replace(/```$/, "").trim();
+  const cleaned = text
+    .replace(/^```(?:json)?/i, "")
+    .replace(/```$/, "")
+    .trim();
   const start = cleaned.indexOf("{");
   const end = cleaned.lastIndexOf("}");
   if (start === -1 || end <= start) return null;
@@ -119,6 +134,9 @@ function extractJson(text: string): ExperimentalPayload | null {
     const obj = JSON.parse(cleaned.slice(start, end + 1)) as Record<string, unknown>;
     if (typeof obj["customer_response"] !== "string") return null;
     return {
+      ...(typeof obj["validation_response_fr"] === "string"
+        ? { validation_response_fr: obj["validation_response_fr"] }
+        : {}),
       customer_response: obj["customer_response"],
       output_type: typeof obj["output_type"] === "string" ? obj["output_type"] : "S3_MISSING_INFO",
       confidence: typeof obj["confidence"] === "string" ? obj["confidence"] : "unknown",
@@ -163,7 +181,7 @@ export const generateExperimentalResponse = createServerFn({ method: "POST" })
     };
 
     const userContent = [
-      "Demande prospect (français) :",
+      "Demande prospect (conserver les faits et les références) :",
       data.userPrompt,
       "",
       "Signaux internes (ne jamais recopier dans customer_response) :",
@@ -181,8 +199,8 @@ export const generateExperimentalResponse = createServerFn({ method: "POST" })
         },
         body: JSON.stringify({
           model,
-          max_tokens: 1200,
-          system: EXPERIMENTAL_SYSTEM_PROMPT,
+          max_tokens: 2400,
+          system: EXPERIMENTAL_SYSTEM_PROMPT + "\n\n" + responseLanguageInstruction(data.locale),
           messages: [{ role: "user", content: userContent }],
           tools: [RESPONSE_TOOL],
           tool_choice: { type: "tool", name: RESPONSE_TOOL.name },
@@ -248,7 +266,10 @@ export const generateExperimentalResponse = createServerFn({ method: "POST" })
 
     const payload = toolPayload ?? extractJson(text);
     console.log("[experimental]", model, "tokens", JSON.stringify(usage));
-    if (!payload) {
+    if (
+      !payload ||
+      (responseLocale(data.locale) !== "fr" && !payload.validation_response_fr?.trim())
+    ) {
       return {
         ok: false,
         model,

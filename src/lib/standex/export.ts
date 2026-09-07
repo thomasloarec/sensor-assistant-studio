@@ -1,3 +1,4 @@
+import { t } from "@/lib/i18n/core";
 // Export de la synthèse de régression (CSV / Markdown). Lecture seule :
 // aucune écriture Supabase, aucune donnée sensible.
 
@@ -116,6 +117,7 @@ export function buildMarkdown(rows: ExportRow[], meta: ExportMeta): string {
 }
 
 export function downloadText(filename: string, text: string, mime: string): void {
+  if (mime.includes("markdown")) text = t(text);
   const blob = new Blob([text], { type: `${mime};charset=utf-8` });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");

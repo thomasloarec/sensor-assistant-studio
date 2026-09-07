@@ -217,7 +217,8 @@ export const SENSOR_CATALOG: readonly SensorModel[] = [
 export function sensorById(id: string): SensorModel {
   return SENSOR_CATALOG.find((s) => s.id === id) ?? SENSOR_CATALOG.find((s) => s.id === "GENERIC")!;
 }
-export const formatMm = (n: number) => n.toLocaleString("fr-FR", { maximumFractionDigits: 2 });
+export { number as formatMm } from "@/lib/i18n/core";
+import { number as formatMm } from "@/lib/i18n/core";
 export function sizeLabel(s: SensorModel): string {
   const [l, h, w] = s.body;
   if (["cylinder", "threaded", "pressfit", "glass"].includes(s.shape) && h === w)

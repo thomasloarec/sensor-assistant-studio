@@ -1,3 +1,4 @@
+import { t } from "@/lib/i18n/core";
 // Panneau « Mode assistant » : baseline gelée V1.0 + mode expérimental désactivé.
 // Aucun appel modèle, aucune écriture Supabase : préparation d'interface seulement.
 
@@ -33,9 +34,9 @@ function Card({ title, children }: { title: string; children: React.ReactNode })
   return (
     <div className="rounded-md border border-border bg-card p-4">
       <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-        {title}
+        {t(title)}
       </p>
-      <div className="mt-3">{children}</div>
+      <div className="mt-3">{t(children)}</div>
     </div>
   );
 }
@@ -45,9 +46,9 @@ export function BaselineStatusBadge() {
     <Badge
       variant="outline"
       className="border-success/50 font-mono text-[10px] uppercase text-success"
-      title={BASELINE_FACTS.join(" · ")}
+      title={BASELINE_FACTS.map((f) => t(f)).join(" · ")}
     >
-      {BASELINE_LABEL}
+      {t(BASELINE_LABEL)}
     </Badge>
   );
 }
@@ -82,23 +83,23 @@ export function BaselineModePanel({
 
   return (
     <div className="space-y-4 p-4">
-      <Card title="Statut">
+      <Card title={t("Statut")}>
         <div className="flex flex-wrap items-center gap-2">
           <BaselineStatusBadge />
           {run?.model && (
             <Badge variant="outline" className="font-mono text-[10px] uppercase">
-              {run.model}
+              {t(run.model)}
             </Badge>
           )}
         </div>
         <ul className="mt-3 space-y-1 font-mono text-xs text-muted-foreground">
           {BASELINE_FACTS.map((f) => (
-            <li key={f}>· {f}</li>
+            <li key={f}>· {t(f)}</li>
           ))}
         </ul>
       </Card>
 
-      <Card title="Mode assistant (testeur)">
+      <Card title={t("Mode assistant (testeur)")}>
         <Select value={mode} onValueChange={(v) => onModeChange(v as AssistantMode)}>
           <SelectTrigger className="h-8 font-mono text-xs">
             <SelectValue />
@@ -111,13 +112,13 @@ export function BaselineModePanel({
                 disabled={!m.available}
                 className="font-mono text-xs"
               >
-                {m.label}
+                {t(m.label)}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
         <p className="mt-3 rounded-sm border border-warning/40 bg-warning/10 p-2 font-mono text-[11px] text-warning">
-          {EXPERIMENTAL_NOTICE}
+          {t(EXPERIMENTAL_NOTICE)}
         </p>
         <div className="mt-3 flex flex-wrap gap-2">
           <Button
@@ -125,15 +126,20 @@ export function BaselineModePanel({
             disabled={!experimentalActive || !canRun || busy}
             onClick={() => onGenerate?.()}
           >
-            {busy ? "Génération…" : "Générer la réponse expérimentale"}
+            {t(busy ? "Génération…" : "Générer la réponse expérimentale")}
           </Button>
-          <Button size="sm" variant="outline" disabled={!run?.payload} onClick={() => onExportPack?.()}>
-            Exporter le pack comparatif
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={!run?.payload}
+            onClick={() => onExportPack?.()}
+          >
+            {t("Exporter le pack comparatif")}
           </Button>
         </div>
         {run?.error && (
           <div className="mt-2 rounded-sm border border-destructive/50 bg-destructive/10 p-2 text-[11px] text-destructive">
-            <p>{run.error}</p>
+            <p>{t(run.error)}</p>
             <div className="mt-2 flex flex-wrap items-center gap-2">
               <Button
                 size="sm"
@@ -141,16 +147,16 @@ export function BaselineModePanel({
                 disabled={!canRun || busy}
                 onClick={() => onGenerate?.()}
               >
-                Relancer Claude
+                {t("Relancer Claude")}
               </Button>
             </div>
             {run.rawText ? (
               <details className="mt-2">
                 <summary className="cursor-pointer text-muted-foreground">
-                  Voir le fragment brut renvoyé
+                  {t("Voir le fragment brut renvoyé")}
                 </summary>
                 <pre className="mt-1 max-h-40 overflow-auto whitespace-pre-wrap break-words font-mono text-[10px] text-muted-foreground">
-                  {run.rawText}
+                  {t(run.rawText)}
                 </pre>
               </details>
             ) : null}
@@ -158,29 +164,29 @@ export function BaselineModePanel({
         )}
         {run?.schemaWarning && (
           <p className="mt-2 rounded-sm border border-warning/40 bg-warning/10 p-2 font-mono text-[11px] text-warning">
-            {run.schemaWarning}
+            {t(run.schemaWarning)}
           </p>
         )}
       </Card>
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <Card title="Réponse baseline déterministe">
+        <Card title={t("Réponse baseline déterministe")}>
           <p className="whitespace-pre-wrap break-words text-xs">
-            {baselineResponse ?? "Aucune réponse baseline pour cette session."}
+            {t(baselineResponse ?? "Aucune réponse baseline pour cette session.")}
           </p>
         </Card>
-        <Card title="Réponse assistant expérimental">
+        <Card title={t("Réponse assistant expérimental")}>
           {experimentalResponse ? (
-            <p className="whitespace-pre-wrap break-words text-xs">{experimentalResponse}</p>
+            <p className="whitespace-pre-wrap break-words text-xs">{t(experimentalResponse)}</p>
           ) : (
-            <p className="text-xs text-muted-foreground">{EXPERIMENTAL_NOTICE}</p>
+            <p className="text-xs text-muted-foreground">{t(EXPERIMENTAL_NOTICE)}</p>
           )}
         </Card>
       </div>
 
       <Accordion type="multiple" className="w-full">
         <AccordionItem value="diff">
-          <AccordionTrigger className="text-sm">Différences ligne à ligne</AccordionTrigger>
+          <AccordionTrigger className="text-sm">{t("Différences ligne à ligne")}</AccordionTrigger>
           <AccordionContent>
             {experimentalResponse ? (
               <ul className="space-y-1 font-mono text-[11px]">
@@ -195,48 +201,52 @@ export function BaselineModePanel({
                           : "text-warning"
                     }
                   >
-                    {r.kind === "same" ? "= " : r.kind === "baseline" ? "− " : "+ "}
-                    {r.text}
+                    {t(r.kind === "same" ? "= " : r.kind === "baseline" ? "− " : "+ ")}
+                    {t(r.text)}
                   </li>
                 ))}
               </ul>
             ) : (
               <p className="text-xs text-muted-foreground">
-                Comparaison disponible après une génération expérimentale.
+                {t("Comparaison disponible après une génération expérimentale.")}
               </p>
             )}
           </AccordionContent>
         </AccordionItem>
 
         <AccordionItem value="traces">
-          <AccordionTrigger className="text-sm">Traces internes (avancé)</AccordionTrigger>
+          <AccordionTrigger className="text-sm">{t("Traces internes (avancé)")}</AccordionTrigger>
           <AccordionContent>
             <div className="grid gap-4 lg:grid-cols-2">
-              <Card title="Trace interne baseline">
+              <Card title={t("Trace interne baseline")}>
                 <pre className="max-h-56 overflow-auto whitespace-pre-wrap break-words font-mono text-[11px] text-muted-foreground">
-                  {baselineTrace ?? "—"}
+                  {t(baselineTrace ?? "—")}
                 </pre>
               </Card>
-              <Card title="Trace interne générative">
+              <Card title={t("Trace interne générative")}>
                 {run?.payload ? (
                   <pre className="max-h-56 overflow-auto whitespace-pre-wrap break-words font-mono text-[11px] text-muted-foreground">
-                    {JSON.stringify(
-                      {
-                        output_type: run.payload.output_type,
-                        confidence: run.payload.confidence,
-                        routing_reason: run.payload.routing_reason,
-                        guardrails_triggered: run.payload.guardrails_triggered,
-                        missing_questions: run.payload.missing_questions,
-                        fuites: run.leaks,
-                        ecarts: run.violations,
-                        tokens: run.usage,
-                      },
-                      null,
-                      2,
+                    {t(
+                      JSON.stringify(
+                        {
+                          output_type: run.payload.output_type,
+                          confidence: run.payload.confidence,
+                          routing_reason: run.payload.routing_reason,
+                          guardrails_triggered: run.payload.guardrails_triggered,
+                          missing_questions: run.payload.missing_questions,
+                          fuites: run.leaks,
+                          ecarts: run.violations,
+                          tokens: run.usage,
+                        },
+                        null,
+                        2,
+                      ),
                     )}
                   </pre>
                 ) : (
-                  <p className="text-xs text-muted-foreground">Aucune génération expérimentale.</p>
+                  <p className="text-xs text-muted-foreground">
+                    {t("Aucune génération expérimentale.")}
+                  </p>
                 )}
               </Card>
             </div>
@@ -244,12 +254,12 @@ export function BaselineModePanel({
         </AccordionItem>
       </Accordion>
 
-      <Card title="Verdict humain (comparaison)">
+      <Card title={t("Verdict humain (comparaison)")}>
         <Textarea
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           disabled={!run?.payload}
-          placeholder="Verdict humain sur la comparaison baseline / expérimental."
+          placeholder={t("Verdict humain sur la comparaison baseline / expérimental.")}
           className="min-h-20 font-mono text-xs"
         />
         <div className="mt-2 flex flex-wrap gap-2">
@@ -259,7 +269,7 @@ export function BaselineModePanel({
             disabled={!run?.payload}
             onClick={() => onVerdict?.("baseline", notes)}
           >
-            Préférer la baseline
+            {t("Préférer la baseline")}
           </Button>
           <Button
             size="sm"
@@ -267,7 +277,7 @@ export function BaselineModePanel({
             disabled={!run?.payload}
             onClick={() => onVerdict?.("experimental", notes)}
           >
-            Préférer l'expérimental
+            {t("Préférer l'expérimental")}
           </Button>
           <Button
             size="sm"
@@ -275,11 +285,10 @@ export function BaselineModePanel({
             disabled={!run?.payload}
             onClick={() => onVerdict?.("neither", notes)}
           >
-            Aucun des deux
+            {t("Aucun des deux")}
           </Button>
         </div>
       </Card>
     </div>
   );
 }
-

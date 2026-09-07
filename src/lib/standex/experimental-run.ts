@@ -2,10 +2,9 @@
 // appel serveur Claude, contrôles anti-fuite, persistance V0.3.
 
 import * as db from "./queries";
-import {
-  generateExperimentalResponse,
-  type ExperimentalPayload,
-} from "./experimental.functions";
+import { getLocale } from "@/lib/i18n/core";
+import { hasLocalizedFollowUp } from "./response-language";
+import { generateExperimentalResponse, type ExperimentalPayload } from "./experimental.functions";
 import { detectLeaks, safeOutputType, splitList } from "./response-contract";
 import { requireSupabase } from "./supabase";
 import type { SensorTestScenario } from "./types";
@@ -71,6 +70,7 @@ export async function runExperimental(params: {
   baselineOutputId?: string | null;
 }): Promise<ExperimentalRun> {
   const { sessionId, scenario } = params;
+  const locale = getLocale();
   const sb = requireSupabase();
   const { data: sessionData } = await sb.auth.getSession();
   const accessToken = sessionData.session?.access_token ?? "";
@@ -78,6 +78,7 @@ export async function runExperimental(params: {
   const result = await generateExperimentalResponse({
     data: {
       accessToken,
+      locale,
       scenarioId: scenario.scenario_id,
       userPrompt: scenario.user_prompt_fr,
       expectedOutputType: scenario.expected_output_type,
@@ -104,8 +105,18 @@ export async function runExperimental(params: {
   }
 
   const payload = result.payload;
-  const leaks = detectLeaks(payload.customer_response);
-  const violations = checkExperimentalText(payload.customer_response, scenario);
+  const leaks = [
+    ...new Set([
+      ...detectLeaks(payload.customer_response),
+      ...detectLeaks(payload.validation_response_fr ?? ""),
+    ]),
+  ];
+  const violations = checkExperimentalText(
+    payload.validation_response_fr ?? payload.customer_response,
+    scenario,
+  );
+  if (!hasLocalizedFollowUp(payload.customer_response, locale))
+    violations.push("reprise sous 2 jours ouvrés absente");
 
   const { row: output, warning } = await insertModeAware((extra) =>
     db.insertOutput({
@@ -239,9 +250,7 @@ export function buildComparisonPack(
       ``,
       `- fuite texte : ${r.run.leaks.length ? `oui (${r.run.leaks.join(" | ")})` : "non"}`,
       `- garde-fous : ${(r.run.payload?.guardrails_triggered ?? []).join(", ") || "—"}`,
-      `- questions manquantes : ${
-        (r.run.payload?.missing_questions ?? []).join(" | ") || "—"
-      }`,
+      `- questions manquantes : ${(r.run.payload?.missing_questions ?? []).join(" | ") || "—"}`,
       `- écarts : ${r.run.violations.join(" ; ") || "—"}`,
     );
   }

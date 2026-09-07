@@ -1,4 +1,6 @@
+import { t, msg, localeTag } from "@/lib/i18n/core";
 import "./studio.css";
+import { LanguagePicker, useLocale } from "@/lib/i18n/react";
 import { Magnet, ArrowUpRight, MessageSquare, FolderOpen } from "lucide-react";
 import { createFileRoute } from "@tanstack/react-router";
 import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from "react";
@@ -101,6 +103,7 @@ export const Route = createFileRoute("/")({
 });
 
 function TestBench() {
+  useLocale();
   const [user, setUser] = useState<User | null>(null);
   const [authReady, setAuthReady] = useState(!isSupabaseConfigured);
 
@@ -122,7 +125,7 @@ function TestBench() {
       {!isSupabaseConfigured ? (
         <NotConfigured />
       ) : !authReady ? (
-        <CenterNote>Chargement de la session…</CenterNote>
+        <CenterNote>{t("Chargement de la session…")}</CenterNote>
       ) : !user ? (
         <SignIn />
       ) : (
@@ -137,26 +140,27 @@ function Header({ user }: { user: User | null }) {
     <header className="studio-header">
       <div className="studio-brand">
         STANDEX <span>DETECT</span>
-        <small>VOTRE PROJET CAPTEUR</small>
+        <small>{t("VOTRE PROJET CAPTEUR")}</small>
       </div>
       <div className="studio-header-center">
-        <span>Conversation</span>
+        <span>{t("Conversation")}</span>
         <i />
-        <span>Dossier</span>
+        <span>{t("Dossier")}</span>
         <i />
-        <span>Atelier magnétique</span>
+        <span>{t("Atelier magnétique")}</span>
       </div>
       <div className="studio-account">
-        <span className="studio-internal">Espace de test interne</span>
+        <LanguagePicker />
+        <span className="studio-internal">{t("Espace de test interne")}</span>
         {user && (
           <details>
-            <summary>Mon espace</summary>
+            <summary>{t("Mon espace")}</summary>
             <div>
-              <p>{user.email}</p>
-              <p>{isSupabaseConfigured ? "Données connectées" : "Connexion à configurer"}</p>
+              <p>{t(user.email)}</p>
+              <p>{t(isSupabaseConfigured ? "Données connectées" : "Connexion à configurer")}</p>
               <BaselineStatusBadge />
               <Button variant="ghost" size="sm" onClick={() => supabase?.auth.signOut()}>
-                Déconnexion
+                {t("Déconnexion")}
               </Button>
             </div>
           </details>
@@ -169,7 +173,7 @@ function Header({ user }: { user: User | null }) {
 function CenterNote({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex flex-1 items-center justify-center p-8 text-sm text-muted-foreground">
-      {children}
+      {t(children)}
     </div>
   );
 }
@@ -179,17 +183,20 @@ function NotConfigured() {
     <div className="flex flex-1 items-center justify-center p-8">
       <div className="max-w-lg rounded-md border border-dashed border-border bg-card p-6">
         <h2 className="font-mono text-xs uppercase tracking-widest text-warning">
-          Backend non relié
+          {t("Backend non relié")}
         </h2>
         <p className="mt-2 text-sm text-muted-foreground">
-          Le banc pointe vers ton projet Supabase existant. Renseigne&nbsp;:
+          {t("Le banc pointe vers ton projet Supabase existant. Renseigne :")}
         </p>
         <pre className="mt-3 overflow-x-auto rounded-sm bg-secondary p-3 font-mono text-xs">
-          VITE_SUPABASE_URL=https://xxxx.supabase.co{"\n"}VITE_SUPABASE_PUBLISHABLE_KEY=…
+          {t("VITE_SUPABASE_URL=https://xxxx.supabase.co")}
+          {t("\n")}
+          {t("VITE_SUPABASE_PUBLISHABLE_KEY=…")}
         </pre>
         <p className="mt-3 text-xs text-muted-foreground">
-          Le schéma V0.2 à appliquer côté Supabase est versionné dans{" "}
-          <span className="font-mono">supabase/schema/schema_v0.2.sql</span>.
+          {t("Le schéma V0.2 à appliquer côté Supabase est versionné dans")}
+          {t(" ")}
+          <span className="font-mono">{t("supabase/schema/schema_v0.2.sql")}</span>.
         </p>
       </div>
     </div>
@@ -218,12 +225,12 @@ function SignIn() {
         className="w-full max-w-sm rounded-md border border-border bg-card p-6"
       >
         <h2 className="font-mono text-xs uppercase tracking-widest text-accent">
-          Accès testeur Standex
+          {t("Accès testeur Standex")}
         </h2>
         <div className="mt-4 space-y-3">
           <div className="space-y-1.5">
             <Label htmlFor="email" className="font-mono text-xs">
-              Email
+              {t("Email")}
             </Label>
             <Input
               id="email"
@@ -235,7 +242,7 @@ function SignIn() {
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="password" className="font-mono text-xs">
-              Mot de passe
+              {t("Mot de passe")}
             </Label>
             <Input
               id="password"
@@ -246,9 +253,9 @@ function SignIn() {
             />
           </div>
         </div>
-        {error ? <p className="mt-3 text-xs text-destructive">{error}</p> : null}
+        {error ? <p className="mt-3 text-xs text-destructive">{t(error)}</p> : null}
         <Button type="submit" className="mt-4 w-full" disabled={busy}>
-          {busy ? "Connexion…" : "Se connecter"}
+          {t(busy ? "Connexion…" : "Se connecter")}
         </Button>
       </form>
     </div>
@@ -599,7 +606,9 @@ function Bench({ user }: { user: User }) {
   if (workshopOpen) {
     return (
       <div className="fixed inset-0 z-50 overflow-auto bg-background">
-        <Suspense fallback={<p className="p-8 text-sm">Ouverture de l'atelier magnétique…</p>}>
+        <Suspense
+          fallback={<p className="p-8 text-sm">{t("Ouverture de l'atelier magnétique…")}</p>}
+        >
           <MagneticWorkshop
             initialConfig={lastWorkshop(messages)}
             onClose={() => setWorkshopOpen(false)}
@@ -614,28 +623,28 @@ function Bench({ user }: { user: User }) {
     <>
       <div className="studio-intro">
         <div>
-          <p className="studio-eyebrow">DE L'IDÉE AU BON MONTAGE</p>
-          <h1>Votre projet prend forme.</h1>
-          <p>Précisez votre besoin, rassemblez les informations et explorez le montage.</p>
+          <p className="studio-eyebrow">{t("DE L'IDÉE AU BON MONTAGE")}</p>
+          <h1>{t("Votre projet prend forme.")}</h1>
+          <p>{t("Précisez votre besoin, rassemblez les informations et explorez le montage.")}</p>
         </div>
         <button className="studio-workshop-link" onClick={() => setWorkshopOpen(true)}>
           <span className="studio-workshop-icon">
             <Magnet size={25} />
           </span>
           <span>
-            <strong>Atelier magnétique</strong>
-            <small>Choisir un capteur · visualiser son mouvement</small>
+            <strong>{t("Atelier magnétique")}</strong>
+            <small>{t("Choisir un capteur · visualiser son mouvement")}</small>
           </span>
           <ArrowUpRight size={19} />
         </button>
       </div>
       <div className="studio-mobile-sessions">
         <select
-          aria-label="Session active"
+          aria-label={t("Session active")}
           value={activeId ?? ""}
           onChange={(e) => setActiveId(e.target.value || null)}
         >
-          <option value="">Sélectionner une session</option>
+          <option value="">{t("Sélectionner une session")}</option>
           {sessions.map((s) => (
             <option key={s.id} value={s.id}>
               {s.consent_notes ?? s.prospect_company ?? s.id.slice(0, 8)}
@@ -643,23 +652,23 @@ function Bench({ user }: { user: User }) {
           ))}
         </select>
         <Button size="sm" onClick={newSession}>
-          + Nouvelle
+          {t("+ Nouvelle")}
         </Button>
       </div>
       {error ? (
         <div className="shrink-0 border-b border-destructive/40 bg-destructive/10 px-5 py-2 font-mono text-xs text-destructive">
-          {error}
+          {t(error)}
         </div>
       ) : null}
       {migration.checked && !migration.applied ? (
         <div className="shrink-0 border-b border-border bg-secondary px-5 py-3 text-xs">
           <p className="font-semibold text-primary">
-            Une mise à jour de la base est nécessaire pour comparer les deux assistants.
+            {t("Une mise à jour de la base est nécessaire pour comparer les deux assistants.")}
           </p>
           <p className="mt-1 text-muted-foreground">
-            Copiez le texte ci-dessous et collez-le dans l'éditeur SQL de votre projet Supabase,
-            puis rechargez la page. Le banc continue de fonctionner en attendant : seule la
-            comparaison reste indisponible.
+            {t(
+              "Copiez le texte ci-dessous et collez-le dans l'éditeur SQL de votre projet Supabase, puis rechargez la page. Le banc continue de fonctionner en attendant : seule la comparaison reste indisponible.",
+            )}
           </p>
           <div className="mt-2 flex flex-wrap items-center gap-2">
             <Button
@@ -669,14 +678,14 @@ function Bench({ user }: { user: User }) {
                 setSqlCopied(true);
               }}
             >
-              {sqlCopied ? "Copié" : "Copier la mise à jour"}
+              {t(sqlCopied ? "Copié" : "Copier la mise à jour")}
             </Button>
             <Button
               size="sm"
               variant="outline"
               onClick={() => void checkMigrationV03().then(setMigration)}
             >
-              Revérifier
+              {t("Revérifier")}
             </Button>
           </div>
         </div>
@@ -686,7 +695,7 @@ function Bench({ user }: { user: User }) {
         <aside className="studio-sessions hidden min-h-0 flex-col lg:flex">
           <div className="flex items-center justify-between border-b border-border px-3 py-2">
             <h2 className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
-              Sessions
+              {t("Sessions")}
             </h2>
             <Button
               size="sm"
@@ -694,13 +703,13 @@ function Bench({ user }: { user: User }) {
               className="h-7 font-mono text-xs"
               onClick={newSession}
             >
-              + Nouvelle
+              {t("+ Nouvelle")}
             </Button>
           </div>
           <ScrollArea className="min-h-0 flex-1">
             <div className="p-2">
               {sessions.length === 0 ? (
-                <p className="p-2 text-xs text-muted-foreground">Aucune session.</p>
+                <p className="p-2 text-xs text-muted-foreground">{t("Aucune session.")}</p>
               ) : (
                 sessions.map((s) => (
                   <button
@@ -716,17 +725,17 @@ function Bench({ user }: { user: User }) {
                       {s.consent_notes ?? s.prospect_company ?? s.id.slice(0, 8)}
                     </div>
                     <div className="text-[10px] opacity-70">
-                      {s.status} · {new Date(s.created_at).toLocaleDateString("fr-FR")}
+                      {t(s.status)} · {t(new Date(s.created_at).toLocaleDateString(localeTag()))}
                     </div>
                   </button>
                 ))
               )}
             </div>
             <details className="studio-scenario-list">
-              <summary>Bibliothèque de scénarios</summary>
+              <summary>{t("Bibliothèque de scénarios")}</summary>
               <div className="p-2">
                 <h3 className="px-2 py-1 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-                  Scénarios actifs
+                  {t("Scénarios actifs")}
                 </h3>
                 {scenarios.map((sc) => (
                   <button
@@ -737,13 +746,15 @@ function Bench({ user }: { user: User }) {
                         ? "bg-secondary text-foreground"
                         : "text-muted-foreground"
                     }`}
-                    title={sc.expected_behavior}
+                    title={t(sc.expected_behavior)}
                   >
-                    <span className="text-accent">{sc.priority}</span> {sc.scenario_id}
+                    <span className="text-accent">{t(sc.priority)}</span> {t(sc.scenario_id)}
                   </button>
                 ))}
                 {scenarios.length === 0 ? (
-                  <p className="px-2 text-xs text-muted-foreground">Aucun scénario chargé.</p>
+                  <p className="px-2 text-xs text-muted-foreground">
+                    {t("Aucun scénario chargé.")}
+                  </p>
                 ) : null}
               </div>
             </details>
@@ -754,14 +765,15 @@ function Bench({ user }: { user: User }) {
         <section className="studio-conversation studio-card flex min-h-0 min-w-0 flex-col overflow-hidden">
           <div className="flex items-center justify-between border-b border-border px-4 py-2">
             <h2 className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
-              <MessageSquare size={16} /> Conversation
+              <MessageSquare size={16} />
+              {t("Conversation")}
             </h2>
             <span className="font-mono text-[10px] text-muted-foreground">
-              {activeSession ? `${messages.length} tour(s)` : "aucune session"}
+              {t(activeSession ? `${messages.length} tour(s)` : "aucune session")}
             </span>
           </div>
           <details className="studio-scenario-panel">
-            <summary>Rejouer un scénario de test</summary>
+            <summary>{t("Rejouer un scénario de test")}</summary>
             <ScenarioPanel
               scenarios={scenarios}
               scenario={scenario}
@@ -775,17 +787,18 @@ function Bench({ user }: { user: User }) {
               {!activeSession ? (
                 <div className="studio-empty">
                   <MessageSquare size={29} />
-                  <h3>Commençons par votre application.</h3>
-                  <p>Créez une session pour conserver vos échanges et votre montage.</p>
-                  <Button onClick={newSession}>Créer une session</Button>
+                  <h3>{t("Commençons par votre application.")}</h3>
+                  <p>{t("Créez une session pour conserver vos échanges et votre montage.")}</p>
+                  <Button onClick={newSession}>{t("Créer une session")}</Button>
                 </div>
               ) : messages.length === 0 ? (
                 <div className="studio-empty">
                   <MessageSquare size={29} />
-                  <h3>Quel mouvement souhaitez-vous détecter ?</h3>
+                  <h3>{t("Quel mouvement souhaitez-vous détecter ?")}</h3>
                   <p>
-                    Décrivez la machine, le capteur envisagé et les contraintes connues. Les
-                    messages sont conservés dans cette session de test.
+                    {t(
+                      "Décrivez la machine, le capteur envisagé et les contraintes connues. Les messages sont conservés dans cette session de test.",
+                    )}
                   </p>
                 </div>
               ) : (
@@ -801,20 +814,22 @@ function Bench({ user }: { user: User }) {
                     }
                   >
                     <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-                      #{m.turn_index} · {m.role}
+                      #{t(m.turn_index)} · {t(m.role)}
                     </div>
                     {m.role === "internal" && parseWorkshopNote(m.content) ? (
                       <details className="studio-montage-message">
                         <summary>
                           <Magnet size={16} />
-                          Montage magnétique joint au dossier
+                          {t("Montage magnétique joint au dossier")}
                         </summary>
                         <p className="mt-2 text-xs whitespace-pre-wrap">
-                          {displayWorkshopMessage(m.content)}
+                          {t(displayWorkshopMessage(m.content))}
                         </p>
                       </details>
                     ) : (
-                      <p className="mt-1 text-sm whitespace-pre-wrap">{m.content}</p>
+                      <p className="mt-1 text-sm whitespace-pre-wrap">
+                        {m.role === "assistant" ? t(m.content) : m.content}
+                      </p>
                     )}
                   </div>
                 ))
@@ -832,7 +847,7 @@ function Bench({ user }: { user: User }) {
                 }
               }}
               disabled={!activeSession}
-              placeholder="Décrivez votre application… (Entrée pour envoyer)"
+              placeholder={t("Décrivez votre application… (Entrée pour envoyer)")}
               className="min-h-20 resize-none bg-card font-mono text-sm"
             />
             <div className="mt-2 flex items-center justify-end gap-2">
@@ -842,14 +857,14 @@ function Bench({ user }: { user: User }) {
                 disabled={!activeSession || !draft.trim()}
                 onClick={() => void send("internal")}
               >
-                Note interne
+                {t("Note interne")}
               </Button>
               <Button
                 size="sm"
                 disabled={!activeSession || !draft.trim()}
                 onClick={() => void send("prospect")}
               >
-                Envoyer
+                {t("Envoyer")}
               </Button>
             </div>
           </div>
@@ -872,7 +887,7 @@ function Bench({ user }: { user: User }) {
                   value={v}
                   className="rounded-none border-b-2 border-transparent px-4 py-2.5 font-mono text-xs data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:shadow-none"
                 >
-                  {label}
+                  {t(label)}
                 </TabsTrigger>
               ))}
             </TabsList>
@@ -882,27 +897,27 @@ function Bench({ user }: { user: User }) {
                 <ScrollArea className="h-full">
                   <div className="space-y-3 p-4">
                     {!lastOutput ? (
-                      <Empty>Aucune sortie client enregistrée pour cette session.</Empty>
+                      <Empty>{t("Aucune sortie client enregistrée pour cette session.")}</Empty>
                     ) : (
                       <div className="rounded-md border border-border bg-card p-4">
-                        <Badge className="font-mono text-[10px]">{lastOutput.output_type}</Badge>
+                        <Badge className="font-mono text-[10px]">{t(lastOutput.output_type)}</Badge>
                         <p className="mt-3 text-sm whitespace-pre-wrap">
-                          {lastOutput.customer_summary}
+                          {t(lastOutput.customer_summary)}
                         </p>
                         <dl className="mt-4 grid grid-cols-2 gap-2 font-mono text-xs">
-                          <Field k="Famille" v={lastOutput.suggested_product_family} />
-                          <Field k="Référence" v={lastOutput.suggested_reference} />
+                          <Field k={t("Famille")} v={lastOutput.suggested_product_family} />
+                          <Field k={t("Référence")} v={lastOutput.suggested_reference} />
                           <Field
-                            k="Validation Standex"
+                            k={t("Validation Standex")}
                             v={lastOutput.standex_validation_required ? "requise" : "non requise"}
                           />
                           <Field
-                            k="Voie distributeur"
+                            k={t("Voie distributeur")}
                             v={lastOutput.distributor_path_allowed ? "autorisée" : "bloquée"}
                           />
                         </dl>
                         <p className="mt-4 border-t border-border pt-3 text-xs text-muted-foreground">
-                          {lastOutput.callback_text}
+                          {t(lastOutput.callback_text)}
                         </p>
                       </div>
                     )}
@@ -910,40 +925,43 @@ function Bench({ user }: { user: User }) {
                     <Accordion type="multiple" className="w-full">
                       <AccordionItem value="trace">
                         <AccordionTrigger className="text-sm">
-                          Détails techniques — trace interne
+                          {t("Détails techniques — trace interne")}
                         </AccordionTrigger>
                         <AccordionContent>
                           {!lastTrace ? (
-                            <Empty>Aucune trace interne pour cette session.</Empty>
+                            <Empty>{t("Aucune trace interne pour cette session.")}</Empty>
                           ) : (
                             <div className="rounded-md border border-border bg-card p-4">
                               <dl className="grid grid-cols-2 gap-2 font-mono text-xs">
-                                <Field k="Application" v={lastTrace.understood_application} />
-                                <Field k="Cible détection" v={lastTrace.detection_target} />
-                                <Field k="Géométrie" v={lastTrace.mounting_geometry} />
-                                <Field k="Charge élec." v={lastTrace.electrical_load} />
-                                <Field k="Tension" v={lastTrace.voltage_value} />
-                                <Field k="Courant" v={lastTrace.current_value} />
-                                <Field k="Puissance" v={lastTrace.power_value} />
-                                <Field k="Volume" v={lastTrace.volume_signal} />
-                                <Field k="Confiance" v={lastTrace.confidence} />
-                                <Field k="Routage" v={lastTrace.routing_reason} />
+                                <Field k={t("Application")} v={lastTrace.understood_application} />
+                                <Field k={t("Cible détection")} v={lastTrace.detection_target} />
+                                <Field k={t("Géométrie")} v={lastTrace.mounting_geometry} />
+                                <Field k={t("Charge élec.")} v={lastTrace.electrical_load} />
+                                <Field k={t("Tension")} v={lastTrace.voltage_value} />
+                                <Field k={t("Courant")} v={lastTrace.current_value} />
+                                <Field k={t("Puissance")} v={lastTrace.power_value} />
+                                <Field k={t("Volume")} v={lastTrace.volume_signal} />
+                                <Field k={t("Confiance")} v={lastTrace.confidence} />
+                                <Field k={t("Routage")} v={lastTrace.routing_reason} />
                               </dl>
-                              <TagList label="Guardrails" items={lastTrace.guardrails_triggered} />
                               <TagList
-                                label="Questions manquantes"
+                                label={t("Guardrails")}
+                                items={lastTrace.guardrails_triggered}
+                              />
+                              <TagList
+                                label={t("Questions manquantes")}
                                 items={lastTrace.missing_questions}
                               />
                               <JsonBlock
-                                label="product_candidates"
+                                label={t("product_candidates")}
                                 value={lastTrace.product_candidates}
                               />
                               <JsonBlock
-                                label="datasheet_values_used"
+                                label={t("datasheet_values_used")}
                                 value={lastTrace.datasheet_values_used}
                               />
                               {lastOutput ? (
-                                <JsonBlock label="be_dossier" value={lastOutput.be_dossier} />
+                                <JsonBlock label={t("be_dossier")} value={lastOutput.be_dossier} />
                               ) : null}
                             </div>
                           )}
@@ -951,36 +969,36 @@ function Bench({ user }: { user: User }) {
                       </AccordionItem>
 
                       <AccordionItem value="lead">
-                        <AccordionTrigger className="text-sm">Données lead</AccordionTrigger>
+                        <AccordionTrigger className="text-sm">{t("Données lead")}</AccordionTrigger>
                         <AccordionContent>
                           {!activeSession ? (
-                            <Empty>Aucune session sélectionnée.</Empty>
+                            <Empty>{t("Aucune session sélectionnée.")}</Empty>
                           ) : (
                             <div className="rounded-md border border-border bg-card p-4">
                               <dl className="grid grid-cols-2 gap-2 font-mono text-xs">
-                                <Field k="Nom" v={activeSession.prospect_name} />
+                                <Field k={t("Nom")} v={activeSession.prospect_name} />
                                 <Field
-                                  k="Société"
+                                  k={t("Société")}
                                   v={
                                     isTestMetadataCompany(activeSession.prospect_company)
                                       ? null
                                       : activeSession.prospect_company
                                   }
                                 />
-                                <Field k="Email" v={activeSession.prospect_email} />
-                                <Field k="Téléphone" v={activeSession.prospect_phone} />
-                                <Field k="Ville prospect" v={activeSession.prospect_city} />
-                                <Field k="Ville Standex" v={activeSession.standex_city} />
-                                <Field k="Bande volume" v={activeSession.volume_band} />
-                                <Field k="Potentiel lead" v={activeSession.lead_potential} />
-                                <Field k="Statut" v={activeSession.status} />
-                                <Field k="Canal" v={activeSession.channel} />
-                                <Field k="Locale" v={activeSession.locale} />
-                                <Field k="Rappel" v={activeSession.callback_commitment} />
+                                <Field k={t("Email")} v={activeSession.prospect_email} />
+                                <Field k={t("Téléphone")} v={activeSession.prospect_phone} />
+                                <Field k={t("Ville prospect")} v={activeSession.prospect_city} />
+                                <Field k={t("Ville Standex")} v={activeSession.standex_city} />
+                                <Field k={t("Bande volume")} v={activeSession.volume_band} />
+                                <Field k={t("Potentiel lead")} v={activeSession.lead_potential} />
+                                <Field k={t("Statut")} v={activeSession.status} />
+                                <Field k={t("Canal")} v={activeSession.channel} />
+                                <Field k={t("Locale")} v={activeSession.locale} />
+                                <Field k={t("Rappel")} v={activeSession.callback_commitment} />
                               </dl>
                               {activeSession.consent_notes ? (
                                 <p className="mt-3 border-t border-border pt-3 text-xs text-muted-foreground">
-                                  {activeSession.consent_notes}
+                                  {t(activeSession.consent_notes)}
                                 </p>
                               ) : null}
                             </div>
@@ -996,7 +1014,7 @@ function Bench({ user }: { user: User }) {
                 <ScrollArea className="h-full">
                   <div className="p-4">
                     {!activeSession ? (
-                      <Empty>Aucune session sélectionnée.</Empty>
+                      <Empty>{t("Aucune session sélectionnée.")}</Empty>
                     ) : (
                       <DossierPanel
                         session={activeSession}
@@ -1063,21 +1081,21 @@ function Bench({ user }: { user: User }) {
                       />
                     ) : null}
                     {reviews.length === 0 ? (
-                      <Empty>Aucune revue enregistrée.</Empty>
+                      <Empty>{t("Aucune revue enregistrée.")}</Empty>
                     ) : (
                       reviews.map((r) => (
                         <div key={r.id} className="rounded-md border border-border bg-card p-3">
                           <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
                             <Badge variant="outline" className="font-mono text-[10px]">
-                              {r.verdict}
+                              {t(r.verdict)}
                             </Badge>
-                            <span>{r.reviewer_role}</span>
-                            <span>{new Date(r.created_at).toLocaleString("fr-FR")}</span>
+                            <span>{t(r.reviewer_role)}</span>
+                            <span>{t(new Date(r.created_at).toLocaleString(localeTag()))}</span>
                           </div>
-                          {r.notes ? <p className="mt-2 text-sm">{r.notes}</p> : null}
+                          {r.notes ? <p className="mt-2 text-sm">{t(r.notes)}</p> : null}
                           {r.corrected_output_type ? (
                             <p className="mt-2 font-mono text-xs text-accent">
-                              → {r.corrected_output_type}
+                              → {t(r.corrected_output_type)}
                             </p>
                           ) : null}
                         </div>
@@ -1087,7 +1105,7 @@ function Bench({ user }: { user: User }) {
                     <Accordion type="single" collapsible className="w-full">
                       <AccordionItem value="batch">
                         <AccordionTrigger className="text-sm">
-                          Régression complète et synthèse (avancé)
+                          {t("Régression complète et synthèse (avancé)")}
                         </AccordionTrigger>
                         <AccordionContent>
                           <BatchPanel
@@ -1142,18 +1160,20 @@ function DossierPanel({
           <FolderOpen size={22} />
         </span>
         <div>
-          <p className="studio-eyebrow">VOTRE DOSSIER D'APPLICATION</p>
-          <h2>Les informations de votre projet</h2>
+          <p className="studio-eyebrow">{t("VOTRE DOSSIER D'APPLICATION")}</p>
+          <h2>{t("Les informations de votre projet")}</h2>
           <p>
-            {dossier.fields.filter((f) => f.value).length} informations renseignées sur{" "}
-            {dossier.fields.length}
+            {msg("{0} informations renseignées sur {1}", [
+              dossier.fields.filter((f) => f.value).length,
+              dossier.fields.length,
+            ])}
           </p>
         </div>
       </div>
       <div
         className="studio-completion"
         role="progressbar"
-        aria-label="Informations renseignées"
+        aria-label={t("Informations renseignées")}
         aria-valuenow={dossier.fields.filter((f) => f.value).length}
         aria-valuemin={0}
         aria-valuemax={dossier.fields.length}
@@ -1166,28 +1186,31 @@ function DossierPanel({
       </div>
       <div className="flex flex-wrap items-center gap-2">
         <Badge variant="outline" className="font-mono text-[10px]">
-          {dossier.outputType ?? "sortie —"}
+          {t(dossier.outputType ?? "sortie —")}
         </Badge>
         <Badge variant="outline" className="font-mono text-[10px]">
-          confiance produit : {dossier.productConfidence ?? "—"}
+          {t("confiance produit :")}
+          {t(dossier.productConfidence ?? "—")}
         </Badge>
         <Badge variant="outline" className="font-mono text-[10px]">
-          confiance routage : {dossier.routingConfidence ?? "—"}
+          {t("confiance routage :")}
+          {t(dossier.routingConfidence ?? "—")}
         </Badge>
         <Badge variant="outline" className="font-mono text-[10px]">
-          {dossier.fields.filter((f) => f.value).length}/24 champs
+          {t(dossier.fields.filter((f) => f.value).length)}
+          {t("/24 champs")}
         </Badge>
         <div className="ml-auto flex gap-2">
           <Button
             size="sm"
             variant="outline"
             onClick={() => {
-              void navigator.clipboard.writeText(markdown);
+              void navigator.clipboard.writeText(t(markdown));
               setCopied(true);
               window.setTimeout(() => setCopied(false), 1500);
             }}
           >
-            {copied ? "Copié" : "Copier"}
+            {t(copied ? "Copié" : "Copier")}
           </Button>
           <Button
             size="sm"
@@ -1200,7 +1223,7 @@ function DossierPanel({
               )
             }
           >
-            Télécharger
+            {t("Télécharger")}
           </Button>
         </div>
       </div>
@@ -1208,17 +1231,17 @@ function DossierPanel({
       {dossier.workshopSummary && (
         <details className="studio-montage-note rounded-md border border-border bg-card p-4">
           <summary className="cursor-pointer text-sm font-semibold">
-            Montage exploré dans l'atelier magnétique
+            {t("Montage exploré dans l'atelier magnétique")}
           </summary>
           <p className="mt-3 whitespace-pre-wrap text-xs leading-relaxed">
-            {dossier.workshopSummary}
+            {t(dossier.workshopSummary)}
           </p>
         </details>
       )}
       {(Object.keys(SECTION_LABELS) as DossierSection[]).map((section) => (
         <div key={section} className="rounded-md border border-border bg-card p-4">
           <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-            {SECTION_LABELS[section]}
+            {t(SECTION_LABELS[section])}
           </p>
           <div className="mt-3 space-y-2">
             {dossier.fields
@@ -1229,26 +1252,27 @@ function DossierPanel({
                   className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] gap-3 border-b border-border/50 pb-2 font-mono text-xs last:border-0 last:pb-0"
                 >
                   <div className="min-w-0">
-                    <p className="break-words text-muted-foreground">{f.labelFr}</p>
+                    <p className="break-words text-muted-foreground">{t(f.labelFr)}</p>
                     <span className="text-[10px] uppercase tracking-widest text-muted-foreground/70">
-                      {f.importance}
+                      {t(f.importance)}
                     </span>
                   </div>
                   <div className="min-w-0">
                     {f.value ? (
-                      <p className="break-words">{f.value}</p>
+                      <p className="break-words">{t(f.value)}</p>
                     ) : (
                       <p
                         className={
                           f.importance === "critique" ? "studio-missing critical" : "studio-missing"
                         }
                       >
-                        À préciser
+                        {t("À préciser")}
                       </p>
                     )}
                     {f.source ? (
                       <span className="text-[10px] uppercase tracking-widest text-accent">
-                        source : {f.source}
+                        {t("source :")}
+                        {t(f.source)}
                       </span>
                     ) : null}
                   </div>
@@ -1260,15 +1284,17 @@ function DossierPanel({
 
       <div className="rounded-md border border-border bg-card p-4">
         <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-          Champs manquants prioritaires
+          {t("Champs manquants prioritaires")}
         </p>
         {critical.length === 0 ? (
-          <p className="mt-2 text-xs text-muted-foreground">Aucun champ critique manquant.</p>
+          <p className="mt-2 text-xs text-muted-foreground">
+            {t("Aucun champ critique manquant.")}
+          </p>
         ) : (
           <ul className="mt-2 space-y-1 font-mono text-xs">
             {critical.map((f) => (
               <li key={f.id} className="break-words">
-                · {f.labelFr}
+                · {t(f.labelFr)}
               </li>
             ))}
           </ul>
@@ -1277,22 +1303,22 @@ function DossierPanel({
 
       <div className="rounded-md border border-border bg-card p-4">
         <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-          Questions conseillées (testeur)
+          {t("Questions conseillées (testeur)")}
         </p>
         {dossier.suggestedQuestions.length === 0 ? (
-          <p className="mt-2 text-xs text-muted-foreground">Aucune question prioritaire.</p>
+          <p className="mt-2 text-xs text-muted-foreground">{t("Aucune question prioritaire.")}</p>
         ) : (
           <ol className="mt-2 space-y-1 text-xs">
             {dossier.suggestedQuestions.map((q, i) => (
               <li key={q} className="break-words">
-                {i + 1}. {q}
+                {t(i + 1)}. {t(q)}
               </li>
             ))}
           </ol>
         )}
       </div>
 
-      <TagList label="Garde-fous déclenchés" items={dossier.guardrails} />
+      <TagList label={t("Garde-fous déclenchés")} items={dossier.guardrails} />
     </div>
   );
 }
@@ -1341,7 +1367,7 @@ function ReviewForm({
           <SelectContent>
             {VERDICTS.map((v) => (
               <SelectItem key={v} value={v} className="font-mono text-xs">
-                {v}
+                {t(v)}
               </SelectItem>
             ))}
           </SelectContent>
@@ -1353,7 +1379,7 @@ function ReviewForm({
           <SelectContent>
             {REVIEWER_ROLES.map((v) => (
               <SelectItem key={v} value={v} className="font-mono text-xs">
-                {v}
+                {t(v)}
               </SelectItem>
             ))}
           </SelectContent>
@@ -1362,11 +1388,11 @@ function ReviewForm({
       <Textarea
         value={notes}
         onChange={(e) => setNotes(e.target.value)}
-        placeholder="Notes de revue…"
+        placeholder={t("Notes de revue…")}
         className="mt-2 min-h-16 resize-none font-mono text-xs"
       />
       <Button size="sm" className="mt-2 w-full" disabled={busy} onClick={() => void submit()}>
-        Enregistrer la revue
+        {t("Enregistrer la revue")}
       </Button>
     </div>
   );
@@ -1375,8 +1401,8 @@ function ReviewForm({
 function Field({ k, v }: { k: string; v: string | null | undefined }) {
   return (
     <div>
-      <dt className="text-[10px] uppercase tracking-widest text-muted-foreground">{k}</dt>
-      <dd className="truncate">{v ?? "—"}</dd>
+      <dt className="text-[10px] uppercase tracking-widest text-muted-foreground">{t(k)}</dt>
+      <dd className="truncate">{t(v ?? "—")}</dd>
     </div>
   );
 }
@@ -1386,12 +1412,12 @@ function TagList({ label, items }: { label: string; items: string[] }) {
   return (
     <div className="mt-3">
       <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-        {label}
+        {t(label)}
       </p>
       <div className="mt-1 flex flex-wrap gap-1">
         {items.map((i) => (
           <Badge key={i} variant="outline" className="font-mono text-[10px]">
-            {i}
+            {t(i)}
           </Badge>
         ))}
       </div>
@@ -1403,10 +1429,10 @@ function JsonBlock({ label, value }: { label: string; value: unknown }) {
   return (
     <div className="mt-3">
       <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-        {label}
+        {t(label)}
       </p>
       <pre className="mt-1 whitespace-pre-wrap break-words rounded-sm bg-secondary p-2 font-mono text-[11px]">
-        {JSON.stringify(value ?? null, null, 2)}
+        {t(JSON.stringify(value ?? null, null, 2))}
       </pre>
     </div>
   );
@@ -1415,7 +1441,7 @@ function JsonBlock({ label, value }: { label: string; value: unknown }) {
 function Empty({ children }: { children: React.ReactNode }) {
   return (
     <div className="rounded-md border border-dashed border-border bg-card/50 p-6 text-sm text-muted-foreground">
-      {children}
+      {t(children)}
     </div>
   );
 }
@@ -1441,46 +1467,52 @@ function ScenarioPanel({
       <div className="flex w-full min-w-0 items-center gap-2">
         <Select value={scenario?.id ?? ""} onValueChange={onSelect}>
           <SelectTrigger className="h-8 min-w-0 flex-1 font-mono text-xs">
-            <SelectValue placeholder={`Scénario de test (${scenarios.length})`} />
+            <SelectValue placeholder={t(`Scénario de test (${scenarios.length})`)} />
           </SelectTrigger>
           <SelectContent className="max-h-80">
             {scenarios.map((sc) => (
               <SelectItem key={sc.id} value={sc.id} className="font-mono text-xs">
-                {sc.priority} · {sc.scenario_id} — {sc.user_prompt_fr.slice(0, 60)}
+                {t(sc.priority)} · {t(sc.scenario_id)} — {t(sc.user_prompt_fr.slice(0, 60))}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
         <Button size="sm" disabled={!scenario || running} onClick={onRun} className="h-8 shrink-0">
-          {running ? "Exécution…" : "Lancer la réponse"}
+          {t(running ? "Exécution…" : "Lancer la réponse")}
         </Button>
       </div>
 
       {scenario ? (
         <div className="mt-3 space-y-2">
           <div className="flex flex-wrap items-center gap-1.5">
-            <Badge className="font-mono text-[10px]">{scenario.priority}</Badge>
+            <Badge className="font-mono text-[10px]">{t(scenario.priority)}</Badge>
             <Badge variant="outline" className="font-mono text-[10px]">
-              attendu · {scenario.expected_output_type}
+              {t("attendu ·")}
+              {t(scenario.expected_output_type)}
             </Badge>
             <Badge variant="outline" className="font-mono text-[10px] text-accent">
-              enregistré · {safeOutputType(scenario.expected_output_type)}
+              {t("enregistré ·")}
+              {t(safeOutputType(scenario.expected_output_type))}
             </Badge>
           </div>
-          <p className="text-xs text-muted-foreground">{scenario.expected_behavior}</p>
+          <p className="text-xs text-muted-foreground">{t(scenario.expected_behavior)}</p>
           <div className="grid gap-2 sm:grid-cols-2">
-            <ContractList label="Éléments obligatoires" items={mustInclude} tone="text-success" />
             <ContractList
-              label="Éléments interdits"
+              label={t("Éléments obligatoires")}
+              items={mustInclude}
+              tone="text-success"
+            />
+            <ContractList
+              label={t("Éléments interdits")}
               items={mustNotInclude}
               tone="text-destructive"
             />
           </div>
-          <TagList label="Garde-fous attendus" items={scenario.trace_flags ?? []} />
+          <TagList label={t("Garde-fous attendus")} items={scenario.trace_flags ?? []} />
         </div>
       ) : (
         <p className="mt-2 font-mono text-[11px] text-muted-foreground">
-          Sélectionne un scénario pour préremplir la conversation.
+          {t("Sélectionne un scénario pour préremplir la conversation.")}
         </p>
       )}
     </div>
@@ -1491,7 +1523,7 @@ function ContractList({ label, items, tone }: { label: string; items: string[]; 
   return (
     <div className="rounded-sm border border-border bg-card p-2">
       <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-        {label}
+        {t(label)}
       </p>
       {items.length === 0 ? (
         <p className="mt-1 font-mono text-[11px] text-muted-foreground">—</p>
@@ -1499,7 +1531,7 @@ function ContractList({ label, items, tone }: { label: string; items: string[]; 
         <ul className="mt-1 space-y-0.5">
           {items.map((i) => (
             <li key={i} className={`font-mono text-[11px] ${tone}`}>
-              · {i}
+              · {t(i)}
             </li>
           ))}
         </ul>
@@ -1549,12 +1581,14 @@ function ReviewPackButton({
           downloadText(`pack-revue-qualitative-${testedAt.slice(0, 10)}.md`, pack, "text/markdown")
         }
       >
-        Exporter pack de revue qualitative
+        {t("Exporter pack de revue qualitative")}
       </Button>
       <p className="font-mono text-[11px] text-muted-foreground">
-        {reviewRows.length === 0
-          ? "Lancez un lot dans l'onglet Synthèse pour activer l'export."
-          : `${reviewRows.length}/${REVIEW_PACK_SCENARIOS.length} scénarios de relecture disponibles.`}
+        {t(
+          reviewRows.length === 0
+            ? "Lancez un lot dans l'onglet Synthèse pour activer l'export."
+            : `${reviewRows.length}/${REVIEW_PACK_SCENARIOS.length} scénarios de relecture disponibles.`,
+        )}
       </p>
     </div>
   );
@@ -1592,7 +1626,7 @@ function BatchPanel({
   const { reviewRows, pack: reviewPack } = buildPackFromBatch(rows, tester, runAt);
 
   const copy = async (text: string, tag: string) => {
-    await navigator.clipboard.writeText(text);
+    await navigator.clipboard.writeText(t(text));
     setCopied(tag);
     setTimeout(() => setCopied(null), 2000);
   };
@@ -1611,23 +1645,28 @@ function BatchPanel({
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div className="min-w-0">
           <h3 className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
-            Synthèse de test
+            {t("Synthèse de test")}
           </h3>
           <p className="mt-1 text-xs text-muted-foreground">
-            Session, message prospect, réponse assistant, sortie, trace interne et revue sont
-            persistés pour chaque scénario.
+            {t(
+              "Session, message prospect, réponse assistant, sortie, trace interne et revue sont persistés pour chaque scénario.",
+            )}
           </p>
         </div>
         <div className="flex shrink-0 flex-wrap gap-2">
           <Button size="sm" variant="outline" disabled={busy} onClick={() => onRun("p0")}>
-            {busy && scope === "p0"
-              ? `Exécution… (${rows.length}/${total})`
-              : "Lancer les 8 scénarios"}
+            {t(
+              busy && scope === "p0"
+                ? `Exécution… (${rows.length}/${total})`
+                : "Lancer les 8 scénarios",
+            )}
           </Button>
           <Button size="sm" disabled={busy || scenarioCount === 0} onClick={() => onRun("all")}>
-            {busy && scope === "all"
-              ? `Exécution… (${rows.length}/${total})`
-              : `Lancer les ${scenarioCount || 22} scénarios`}
+            {t(
+              busy && scope === "all"
+                ? `Exécution… (${rows.length}/${total})`
+                : `Lancer les ${scenarioCount || 22} scénarios`,
+            )}
           </Button>
         </div>
       </div>
@@ -1644,7 +1683,7 @@ function BatchPanel({
             )
           }
         >
-          Exporter pack de revue qualitative
+          {t("Exporter pack de revue qualitative")}
         </Button>
         <Button
           size="sm"
@@ -1652,28 +1691,30 @@ function BatchPanel({
           disabled={reviewRows.length === 0}
           onClick={() => void copy(reviewPack, "pack")}
         >
-          {copied === "pack" ? "Copié" : "Copier le pack de revue"}
+          {t(copied === "pack" ? "Copié" : "Copier le pack de revue")}
         </Button>
       </div>
       <p className="font-mono text-[11px] text-muted-foreground">
-        Pack de revue : {reviewRows.length}/{REVIEW_PACK_SCENARIOS.length} scénarios de relecture
-        disponibles dans ce lot.
+        {t("Pack de revue :")}
+        {t(reviewRows.length)}/{t(REVIEW_PACK_SCENARIOS.length)}
+        {t("scénarios de relecture disponibles dans ce lot.")}
       </p>
 
       {rows.length === 0 ? (
-        <Empty>Aucun lot exécuté pour l'instant.</Empty>
+        <Empty>{t("Aucun lot exécuté pour l'instant.")}</Empty>
       ) : (
         <>
           <div className="flex flex-wrap items-center gap-3">
             <p className="font-mono text-xs text-accent">
-              {ok}/{rows.length} OK · {rows.length - ok} à corriger
+              {t(ok)}/{t(rows.length)} {t("OK ·")} {t(rows.length - ok)}
+              {t("à corriger")}
             </p>
-            <p className="font-mono text-[11px] text-muted-foreground">{readiness}</p>
+            <p className="font-mono text-[11px] text-muted-foreground">{t(readiness)}</p>
           </div>
 
           <div className="flex flex-wrap gap-2">
             <Button size="sm" variant="outline" onClick={() => void copy(markdown, "md")}>
-              {copied === "md" ? "Copié" : "Copier la synthèse (Markdown)"}
+              {t(copied === "md" ? "Copié" : "Copier la synthèse (Markdown)")}
             </Button>
             <Button
               size="sm"
@@ -1686,7 +1727,7 @@ function BatchPanel({
                 )
               }
             >
-              Exporter la synthèse (MD)
+              {t("Exporter la synthèse (MD)")}
             </Button>
             <Button
               size="sm"
@@ -1699,7 +1740,7 @@ function BatchPanel({
                 )
               }
             >
-              Exporter la synthèse (CSV)
+              {t("Exporter la synthèse (CSV)")}
             </Button>
           </div>
 
@@ -1707,19 +1748,19 @@ function BatchPanel({
             <table className="w-full border-collapse font-mono text-[11px]">
               <thead>
                 <tr className="border-b border-border bg-secondary/50 text-left">
-                  <th className="px-2 py-1.5">Scénario</th>
-                  <th className="px-2 py-1.5">Prio</th>
-                  <th className="px-2 py-1.5">Sortie attendue</th>
-                  <th className="px-2 py-1.5">Sortie obtenue</th>
-                  <th className="px-2 py-1.5">GF attendus</th>
-                  <th className="px-2 py-1.5">GF obtenus</th>
-                  <th className="px-2 py-1.5">Oblig.</th>
-                  <th className="px-2 py-1.5">Interdits</th>
-                  <th className="px-2 py-1.5">Ville</th>
+                  <th className="px-2 py-1.5">{t("Scénario")}</th>
+                  <th className="px-2 py-1.5">{t("Prio")}</th>
+                  <th className="px-2 py-1.5">{t("Sortie attendue")}</th>
+                  <th className="px-2 py-1.5">{t("Sortie obtenue")}</th>
+                  <th className="px-2 py-1.5">{t("GF attendus")}</th>
+                  <th className="px-2 py-1.5">{t("GF obtenus")}</th>
+                  <th className="px-2 py-1.5">{t("Oblig.")}</th>
+                  <th className="px-2 py-1.5">{t("Interdits")}</th>
+                  <th className="px-2 py-1.5">{t("Ville")}</th>
                   <th className="px-2 py-1.5">2 j.o.</th>
-                  <th className="px-2 py-1.5">Fuite</th>
-                  <th className="px-2 py-1.5">Questions</th>
-                  <th className="px-2 py-1.5">Verdict</th>
+                  <th className="px-2 py-1.5">{t("Fuite")}</th>
+                  <th className="px-2 py-1.5">{t("Questions")}</th>
+                  <th className="px-2 py-1.5">{t("Verdict")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -1731,47 +1772,49 @@ function BatchPanel({
                           className="text-accent underline-offset-2 hover:underline"
                           onClick={() => onOpen(r.sessionId!)}
                         >
-                          {r.code}
+                          {t(r.code)}
                         </button>
                       ) : (
                         r.code
                       )}
                     </td>
-                    <td className="px-2 py-1.5">{r.priority ?? "—"}</td>
-                    <td className="px-2 py-1.5">{r.evaluation?.expectedOutput ?? "—"}</td>
-                    <td className="px-2 py-1.5">{r.outputType ?? "—"}</td>
+                    <td className="px-2 py-1.5">{t(r.priority ?? "—")}</td>
+                    <td className="px-2 py-1.5">{t(r.evaluation?.expectedOutput ?? "—")}</td>
+                    <td className="px-2 py-1.5">{t(r.outputType ?? "—")}</td>
                     <td className="max-w-[170px] px-2 py-1.5 break-words">
-                      {r.evaluation?.expectedFlags.join(", ") || "—"}
+                      {t(r.evaluation?.expectedFlags.join(", ") || "—")}
                     </td>
                     <td className="max-w-[170px] px-2 py-1.5 break-words">
-                      {r.guardrails?.length ? r.guardrails.join(", ") : "—"}
+                      {t(r.guardrails?.length ? r.guardrails.join(", ") : "—")}
                     </td>
                     <td className="px-2 py-1.5">
-                      {r.evaluation ? yn(r.evaluation.missingMust.length === 0) : "—"}
+                      {t(r.evaluation ? yn(r.evaluation.missingMust.length === 0) : "—")}
                     </td>
                     <td className="px-2 py-1.5">
-                      {r.evaluation ? yn(r.evaluation.presentForbidden.length === 0) : "—"}
+                      {t(r.evaluation ? yn(r.evaluation.presentForbidden.length === 0) : "—")}
                     </td>
                     <td className="px-2 py-1.5">
-                      {r.evaluation ? yn(r.evaluation.cityAsked) : "—"}
+                      {t(r.evaluation ? yn(r.evaluation.cityAsked) : "—")}
                     </td>
                     <td className="px-2 py-1.5">
-                      {r.evaluation ? yn(r.evaluation.twoBusinessDays) : "—"}
+                      {t(r.evaluation ? yn(r.evaluation.twoBusinessDays) : "—")}
                     </td>
                     <td className="max-w-[150px] px-2 py-1.5 break-words">
-                      {r.evaluation
-                        ? r.evaluation.leaks.length
-                          ? `oui : ${r.evaluation.leaks.join(" | ")}`
-                          : "non"
-                        : "—"}
+                      {t(
+                        r.evaluation
+                          ? r.evaluation.leaks.length
+                            ? `oui : ${r.evaluation.leaks.join(" | ")}`
+                            : "non"
+                          : "—",
+                      )}
                     </td>
                     <td className="px-2 py-1.5">
-                      {r.evaluation ? yn(r.evaluation.realMissingQuestions) : "—"}
+                      {t(r.evaluation ? yn(r.evaluation.realMissingQuestions) : "—")}
                     </td>
                     <td className="px-2 py-1.5">
                       {r.missing ? (
                         <Badge variant="outline" className="font-mono text-[10px]">
-                          absent
+                          {t("absent")}
                         </Badge>
                       ) : (
                         <Badge
@@ -1780,7 +1823,7 @@ function BatchPanel({
                             r.evaluation?.verdict === "OK" ? "text-success" : "text-destructive"
                           }`}
                         >
-                          {r.evaluation?.verdict}
+                          {t(r.evaluation?.verdict)}
                         </Badge>
                       )}
                     </td>
@@ -1794,34 +1837,47 @@ function BatchPanel({
             .filter((r) => r.missing || (r.evaluation && r.evaluation.verdict !== "OK"))
             .map((r) => (
               <div key={`f-${r.code}`} className="rounded-md border border-border bg-card p-3">
-                <p className="font-mono text-[11px] text-destructive">{r.code}</p>
+                <p className="font-mono text-[11px] text-destructive">{t(r.code)}</p>
                 {r.missing ? (
                   <p className="mt-1 font-mono text-[11px] text-muted-foreground">
-                    · Scénario introuvable dans sensor_test_scenarios
+                    {t("· Scénario introuvable dans sensor_test_scenarios")}
                   </p>
                 ) : (
                   <ul className="mt-1 space-y-0.5 font-mono text-[11px] text-muted-foreground">
                     <li>
-                      · Éléments obligatoires absents :{" "}
-                      {r.evaluation!.missingMust.join(" | ") || "—"}
+                      {t("· Éléments obligatoires absents :")}
+                      {t(" ")}
+                      {t(r.evaluation!.missingMust.join(" | ") || "—")}
                     </li>
                     <li>
-                      · Éléments interdits présents :{" "}
-                      {r.evaluation!.presentForbidden.join(" | ") || "—"}
-                    </li>
-                    <li>· Garde-fous manquants : {r.evaluation!.missingFlags.join(", ") || "—"}</li>
-                    <li>
-                      · Sortie :{" "}
-                      {r.evaluation!.outputOk
-                        ? "conforme"
-                        : `incorrecte (${r.outputType} vs ${r.evaluation!.expectedOutput})`}
+                      {t("· Éléments interdits présents :")}
+                      {t(" ")}
+                      {t(r.evaluation!.presentForbidden.join(" | ") || "—")}
                     </li>
                     <li>
-                      · Trace interne :{" "}
-                      {r.evaluation!.traceSufficient ? "suffisante" : "insuffisante"}
+                      {t("· Garde-fous manquants :")}{" "}
+                      {t(r.evaluation!.missingFlags.join(", ") || "—")}
                     </li>
-                    <li>· Règles en échec : {r.evaluation!.failures.join(" | ") || "—"}</li>
-                    <li>· Suggestion : {r.evaluation!.suggestion ?? "—"}</li>
+                    <li>
+                      {t("· Sortie :")}
+                      {t(" ")}
+                      {t(
+                        r.evaluation!.outputOk
+                          ? "conforme"
+                          : `incorrecte (${r.outputType} vs ${r.evaluation!.expectedOutput})`,
+                      )}
+                    </li>
+                    <li>
+                      {t("· Trace interne :")}
+                      {t(" ")}
+                      {t(r.evaluation!.traceSufficient ? "suffisante" : "insuffisante")}
+                    </li>
+                    <li>
+                      {t("· Règles en échec :")} {t(r.evaluation!.failures.join(" | ") || "—")}
+                    </li>
+                    <li>
+                      {t("· Suggestion :")} {t(r.evaluation!.suggestion ?? "—")}
+                    </li>
                   </ul>
                 )}
               </div>
@@ -1829,7 +1885,7 @@ function BatchPanel({
 
           <div className="rounded-md border border-border bg-card p-3">
             <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-              Export Markdown copiable
+              {t("Export Markdown copiable")}
             </p>
             <Textarea
               readOnly

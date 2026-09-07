@@ -1,3 +1,4 @@
+import { t } from "@/lib/i18n/core";
 import { magnetSize } from "@/lib/standex/magnetic-workshop";
 import type { WorkshopConfig, CycleSample } from "@/lib/standex/magnetic-workshop";
 import { sensorById, formatMm } from "@/lib/standex/sensor-catalog";
@@ -32,7 +33,7 @@ export default function FlatScene({
     <svg
       viewBox={`${cx - extent / 2} ${cy - extent * 0.36} ${extent} ${extent * 0.72}`}
       role="img"
-      aria-label={`Vue plane à l'échelle · ${model.name}`}
+      aria-label={t(`Vue plane à l'échelle · ${model.name}`)}
       className="mw-flat"
     >
       <defs>
@@ -70,7 +71,7 @@ export default function FlatScene({
             fontSize={Math.min(3, l * 0.19)}
             fill="#254061"
           >
-            {model.name}
+            {t(model.name)}
           </text>
           {dimensions && (
             <g fill="#577287" stroke="#577287" strokeWidth=".2">
@@ -82,7 +83,8 @@ export default function FlatScene({
                 fontSize={Math.min(2.6, l * 0.2)}
                 stroke="none"
               >
-                {formatMm(l)} mm · corps
+                {t(formatMm(l))}
+                {t("mm · corps")}
               </text>
             </g>
           )}
@@ -100,7 +102,7 @@ export default function FlatScene({
                 fill={config.polarity === 1 ? "#e14242" : "#237dd0"}
               />
               <text y="0" fontSize="2.4" fill="white" textAnchor="middle">
-                {config.polarity === 1 ? "N dessus / S dessous" : "S dessus / N dessous"}
+                {t(config.polarity === 1 ? "N dessus / S dessous" : "S dessus / N dessous")}
               </text>
             </g>
           ) : (
@@ -127,14 +129,14 @@ export default function FlatScene({
                     fontWeight="800"
                     fill="white"
                   >
-                    {north ? "N" : "S"}
+                    {t(north ? "N" : "S")}
                   </text>
                 </g>
               );
             })
           )}
           <text y={mw / 2 + 4} textAnchor="middle" fontSize="2.6" fill="#536b80">
-            {config.mode === "reference" ? "M02 · pôles symboliques" : "Aimant"}
+            {t(config.mode === "reference" ? "M02 · pôles symboliques" : "Aimant")}
           </text>
         </g>
       </g>
@@ -147,7 +149,7 @@ export default function FlatScene({
             strokeWidth=".35"
           />
           <text x="5" y={extent * 0.025} textAnchor="middle" fontSize={extent * 0.016}>
-            10 mm
+            {t("10 mm")}
           </text>
         </g>
       )}

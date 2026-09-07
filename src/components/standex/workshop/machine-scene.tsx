@@ -1,3 +1,4 @@
+import { t } from "@/lib/i18n/core";
 import { useRef, useState, useMemo, useEffect } from "react";
 import type { ReactNode } from "react";
 import { Canvas } from "@react-three/fiber";
@@ -31,11 +32,11 @@ function Motion({
   children: ReactNode;
 }) {
   if (machine.motion === "translation")
-    return <group position={scale(machine.travel, u)}>{children}</group>;
+    return <group position={scale(machine.travel, u)}>{t(children)}</group>;
   return (
     <group position={machine.pivot}>
       <group rotation={movingRotation(machine, u).map((n) => (n * Math.PI) / 180) as Vec3}>
-        <group position={scale(machine.pivot, -1)}>{children}</group>
+        <group position={scale(machine.pivot, -1)}>{t(children)}</group>
       </group>
     </group>
   );
@@ -53,10 +54,10 @@ function MovingIf({
 }) {
   return moving ? (
     <Motion machine={machine} u={u}>
-      {children}
+      {t(children)}
     </Motion>
   ) : (
-    <>{children}</>
+    <>{t(children)}</>
   );
 }
 function Assembly({
@@ -157,9 +158,9 @@ function Assembly({
       ));
   return (
     <>
-      <group>{draw(false)}</group>
+      <group>{t(draw(false))}</group>
       <Motion machine={machine} u={u}>
-        {draw(true)}
+        {t(draw(true))}
       </Motion>
       <MovingIf moving={machine.sensorMount === "moving"} machine={machine} u={u}>
         <group
@@ -183,7 +184,7 @@ function Assembly({
           )}
           <Html position={[0, model.body[1] / 2 + 7, 0]} center style={{ pointerEvents: "none" }}>
             <span className="mw-scene-label">
-              {model.name} · {sizeLabel(model)}
+              {t(model.name)} · {t(sizeLabel(model))}
             </span>
           </Html>
         </group>
@@ -230,8 +231,9 @@ function Assembly({
           <Line points={points} color="#ae5b31" lineWidth={2} />
           <Html position={points[1]!}>
             <span className="mw-scene-label">
-              Mesure :{" "}
-              {new Vector3(...points[0]!).distanceTo(new Vector3(...points[1]!)).toFixed(1)} mm
+              {t("Mesure :")}
+              {t(" ")}
+              {t(new Vector3(...points[0]!).distanceTo(new Vector3(...points[1]!)).toFixed(1))} mm
             </span>
           </Html>
         </>

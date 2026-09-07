@@ -1,3 +1,4 @@
+import { t } from "@/lib/i18n/core";
 import { useMemo, useRef, useEffect } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Html, Line, OrbitControls, Grid } from "@react-three/drei";
@@ -28,7 +29,7 @@ function Label({
 }) {
   return (
     <Html position={position} center style={{ pointerEvents: "none" }}>
-      <span className={`mw-scene-label ${className}`}>{children}</span>
+      <span className={`mw-scene-label ${className}`}>{t(children)}</span>
     </Html>
   );
 }
@@ -73,7 +74,7 @@ export function Body({ model, xray }: { model: SensorModel; xray: boolean }) {
       {cylindrical ? (
         <mesh rotation={[0, 0, Math.PI / 2]} scale={[h / 2, 1, w / 2]}>
           <cylinderGeometry args={[1, 1, l, 48]} />
-          {material}
+          {t(material)}
         </mesh>
       ) : (
         <mesh position={[0, -h / 2, 0]} rotation={[-Math.PI / 2, 0, 0]}>
@@ -87,13 +88,13 @@ export function Body({ model, xray }: { model: SensorModel; xray: boolean }) {
               },
             ]}
           />
-          {material}
+          {t(material)}
         </mesh>
       )}
       {model.shape === "flange" && (
         <mesh position={[0, (model.baseThickness ?? h) / 2, -w / 2 + (model.raisedDepth ?? w) / 2]}>
           <boxGeometry args={[l, h - (model.baseThickness ?? h), model.raisedDepth ?? w]} />
-          {material}
+          {t(material)}
         </mesh>
       )}
       {model.shape === "threaded" && (
@@ -114,7 +115,7 @@ export function Body({ model, xray }: { model: SensorModel; xray: boolean }) {
                   6,
                 ]}
               />
-              {material}
+              {t(material)}
             </mesh>
           ))}
         </>
@@ -124,7 +125,7 @@ export function Body({ model, xray }: { model: SensorModel; xray: boolean }) {
           <cylinderGeometry
             args={[(model.collarDiameter ?? w) / 2, (model.collarDiameter ?? w) / 2, 1, 48]}
           />
-          {material}
+          {t(material)}
         </mesh>
       )}
       {model.shape === "smd"
@@ -236,7 +237,7 @@ export function Magnet({ config, sample }: { config: WorkshopConfig; sample: Cyc
               position={thick ? [0, sign * (h / 4 + 0.8), 0] : [0, h / 2 + 0.8, 0]}
               className={north ? "mw-pole north" : "mw-pole south"}
             >
-              {north ? "N" : "S"}
+              {t(north ? "N" : "S")}
             </Label>
           </group>
         );
@@ -332,7 +333,8 @@ function Dimensions({ model }: { model: SensorModel }) {
         lineWidth={1}
       />
       <Label position={[0, 0, z - 4]} className="mw-dimension">
-        {formatMm(l)} mm · corps
+        {t(formatMm(l))}
+        {t("mm · corps")}
       </Label>
       <Line
         points={[
@@ -354,7 +356,7 @@ function Dimensions({ model }: { model: SensorModel }) {
         />
       ))}
       <Label position={[0, -3, 46]} className="mw-dimension">
-        10 mm
+        {t("10 mm")}
       </Label>
     </group>
   );
@@ -387,7 +389,7 @@ function ReferenceMarkers({ config }: { config: WorkshopConfig }) {
               gapSize={0.8}
             />
             <Label position={d1 ? [i === 0 ? -24 : 24, 1, p] : [p, 1, i === 0 ? -17 : 17]}>
-              {i === 0 ? "Ferme" : "Ouvre"} · {d} mm
+              {t(i === 0 ? "Ferme" : "Ouvre")} · {t(d)} mm
             </Label>
           </group>
         );
@@ -503,7 +505,9 @@ export default function WorkshopScene({
         <group rotation={[0, (-config.sensorAngle * Math.PI) / 180, 0]}>
           <Body model={model} xray={xray} />
           {xray && <Contacts model={model} contact={sample.contact} reduced={reduced} />}
-          <Label position={[0, model.body[1] / 2 + 3, model.body[2] / 2 + 5]}>{model.name}</Label>
+          <Label position={[0, model.body[1] / 2 + 3, model.body[2] / 2 + 5]}>
+            {t(model.name)}
+          </Label>
           {dimensions && <Dimensions model={model} />}
         </group>
         <Magnet config={config} sample={sample} />

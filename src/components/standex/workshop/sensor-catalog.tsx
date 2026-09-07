@@ -1,6 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { Search, X, ArrowUpRight, Check } from "lucide-react";
 import { SENSOR_CATALOG, sizeLabel, sensorSource } from "@/lib/standex/sensor-catalog";
+import SensorCard from "./sensor-card";
+import { useLocale } from "@/lib/i18n/react";
+import { t } from "@/lib/i18n/core";
 import { SensorPlan } from "./sensor-plan";
 
 export default function SensorCatalog({
@@ -12,6 +15,8 @@ export default function SensorCatalog({
   onSelect: (id: string) => void;
   onClose: () => void;
 }) {
+  useLocale();
+  const [card, setCard] = useState<string | null>(null);
   const ref = useRef<HTMLDialogElement>(null),
     [query, setQuery] = useState(""),
     [category, setCategory] = useState("Tous"),
@@ -24,9 +29,9 @@ export default function SensorCatalog({
   const list = SENSOR_CATALOG.filter(
     (s) =>
       (category === "Tous" || s.category === category) &&
-      (s.name + " " + s.description + " " + s.id)
-        .toLocaleLowerCase("fr")
-        .includes(query.toLocaleLowerCase("fr")),
+      (t(s.name) + " " + t(s.description) + " " + s.id + " " + t(s.category))
+        .toLocaleLowerCase()
+        .includes(query.toLocaleLowerCase()),
   );
   return (
     <dialog
@@ -38,13 +43,24 @@ export default function SensorCatalog({
         if (e.target === e.currentTarget) onClose();
       }}
     >
+      {card && (
+        <SensorCard
+          key={card}
+          sensorId={card}
+          onClose={() => setCard(null)}
+          onSelect={(id) => {
+            setCard(null);
+            onSelect(id);
+          }}
+        />
+      )}
       <header>
         <div>
-          <p className="mw-eyebrow">CHOISIR UNE FORME ET UN FORMAT</p>
-          <h2 id="catalog-title">Le catalogue des capteurs</h2>
-          <p>21 modèles Standex cotés, et un reed pédagogique.</p>
+          <p className="mw-eyebrow">{t("CHOISIR UNE FORME ET UN FORMAT")}</p>
+          <h2 id="catalog-title">{t("Le catalogue des capteurs")}</h2>
+          <p>{t("21 modèles Standex cotés, et un reed pédagogique.")}</p>
         </div>
-        <button aria-label="Fermer le catalogue" className="mw-icon-button" onClick={onClose}>
+        <button aria-label={t("Fermer le catalogue")} className="mw-icon-button" onClick={onClose}>
           <X />
         </button>
       </header>
@@ -53,19 +69,21 @@ export default function SensorCatalog({
           <Search size={17} />
           <input
             autoFocus
-            aria-label="Rechercher un capteur"
-            placeholder="Rechercher MK24, cylindrique, miniature…"
+            aria-label={t("Rechercher un capteur")}
+            placeholder={t("Rechercher MK24, cylindrique, miniature…")}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
         </label>
         <select
-          aria-label="Filtrer les formats"
+          aria-label={t("Filtrer les formats")}
           value={category}
           onChange={(e) => setCategory(e.target.value)}
         >
           {["Tous", "Cylindrique", "À visser", "À encastrer", "CMS", "Pédagogique"].map((c) => (
-            <option key={c}>{c}</option>
+            <option key={c} value={c}>
+              {t(c)}
+            </option>
           ))}
         </select>
         <label className="mw-check">
@@ -74,7 +92,7 @@ export default function SensorCatalog({
             checked={sameScale}
             onChange={(e) => setSameScale(e.target.checked)}
           />
-          Même échelle
+          {t("Même échelle")}
         </label>
       </div>
       <div className="mw-catalog-list">
@@ -83,7 +101,7 @@ export default function SensorCatalog({
             <button
               className="mw-catalog-choice"
               onClick={() => onSelect(s.id)}
-              aria-label={`Choisir ${s.name}`}
+              aria-label={t(`Choisir ${s.name}`)}
               aria-pressed={selected === s.id}
             >
               <div className="mw-catalog-drawing">
@@ -107,41 +125,47 @@ export default function SensorCatalog({
                         fill="#667f91"
                         stroke="none"
                       >
-                        50 mm
+                        {t("50 mm")}
                       </text>
                     </g>
                   )}
                 </svg>
               </div>
               <div className="mw-catalog-name">
-                <strong>{s.name}</strong>
+                <strong>{t(s.name)}</strong>
                 {selected === s.id && <Check size={17} />}
               </div>
-              <span className="mw-catalog-size">{sizeLabel(s)}</span>
-              <p>{s.description}</p>
+              <span className="mw-catalog-size">{t(sizeLabel(s))}</span>
+              <p>{t(s.description)}</p>
               <small>
-                {s.contact === "unsupported"
-                  ? "Forme disponible · activation non modélisée"
-                  : s.id === "MK03"
-                    ? "Exemple documenté disponible"
-                    : "Contacts illustrés · réponse pédagogique"}
+                {t(
+                  s.contact === "unsupported"
+                    ? "Forme disponible · activation non modélisée"
+                    : s.id === "MK03"
+                      ? "Exemple documenté disponible"
+                      : "Contacts illustrés · réponse pédagogique",
+                )}
               </small>
+            </button>
+            <button className="mw-product-card-button" onClick={() => setCard(s.id)}>
+              {t("Découvrir ce capteur")}
             </button>
             {sensorSource(s) && (
               <a href={sensorSource(s)!} target="_blank" rel="noreferrer">
-                Consulter le plan Standex <ArrowUpRight size={13} />
+                {t("Consulter le plan Standex")}
+                <ArrowUpRight size={13} />
               </a>
             )}
           </article>
         ))}
         {!list.length && (
-          <p className="mw-catalog-empty">Aucun capteur ne correspond à cette recherche.</p>
+          <p className="mw-catalog-empty">{t("Aucun capteur ne correspond à cette recherche.")}</p>
         )}
       </div>
       <footer>
-        Les cotes décrivent le corps hors câbles, connexions et écrous. Les formes sont simplifiées
-        d'après les plans ; les contacts internes sont symboliques. Sélectionner une forme ne valide
-        pas sa portée d'activation.
+        {t(
+          "Les cotes décrivent le corps hors câbles, connexions et écrous. Les formes sont simplifiées d'après les plans ; les contacts internes sont symboliques. Sélectionner une forme ne valide pas sa portée d'activation.",
+        )}
       </footer>
     </dialog>
   );

@@ -1,3 +1,6 @@
+import { t, msg } from "@/lib/i18n/core";
+import { LanguagePicker, useLocale } from "@/lib/i18n/react";
+import SensorCard from "./sensor-card";
 import { Component, lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import {
@@ -81,14 +84,14 @@ function Range({
   return (
     <label className="mw-field">
       <span>
-        <span>{label}</span>
+        <span>{t(label)}</span>
         <output>
-          {Number(value.toFixed(1))}
-          {unit}
+          {t(Number(value.toFixed(1)))}
+          {t(unit)}
         </output>
       </span>
       <input
-        aria-label={label}
+        aria-label={t(label)}
         type="range"
         min={min}
         max={max}
@@ -100,6 +103,7 @@ function Range({
   );
 }
 function download(name: string, text: string, type: string) {
+  if (type.includes("markdown")) text = t(text);
   const url = URL.createObjectURL(new Blob([text], { type })),
     a = document.createElement("a");
   a.href = url;
@@ -119,6 +123,8 @@ export default function MagneticWorkshop({
   onSave,
   storageLabel = "la session et le dossier",
 }: WorkshopProps) {
+  useLocale();
+  const [productCard, setProductCard] = useState(false);
   const [config, setConfig] = useState<WorkshopConfig>(
     () => parseWorkshopConfig(initialConfig) ?? { ...DEFAULT_WORKSHOP },
   );
@@ -384,23 +390,32 @@ export default function MagneticWorkshop({
           : "Un enclenchement et un retour à vérifier dans votre montage réel.");
 
   return (
-    <main className="mw" aria-label="Atelier magnétique">
+    <main className="mw" aria-label={t("Atelier magnétique")}>
+      {productCard && (
+        <SensorCard
+          key={sensor.id}
+          sensorId={sensor.id}
+          contact={sample.contact}
+          onClose={() => setProductCard(false)}
+        />
+      )}
       <header className="mw-header">
         <button className="mw-back" onClick={onClose} disabled={saving}>
           <ArrowLeft size={18} />
-          <span>Retour au dossier</span>
+          <span>{t("Retour au dossier")}</span>
         </button>
         <div className="mw-brand">
           STANDEX <span>DETECT</span>
-          <small>ATELIER MAGNÉTIQUE</small>
+          <small>{t("ATELIER MAGNÉTIQUE")}</small>
         </div>
-        <span className="mw-prototype">Prototype interne · V0.3</span>
+        <LanguagePicker />
+        <span className="mw-prototype">{t("Prototype interne · V0.4")}</span>
       </header>
       <div className="mw-intro">
         <div>
-          <p className="mw-eyebrow">COMPRENDRE AVANT D'INTÉGRER</p>
-          <h1>Votre montage, en mouvement.</h1>
-          <p>Placez le capteur et l'aimant. Observez quand le contact change d'état.</p>
+          <p className="mw-eyebrow">{t("COMPRENDRE AVANT D'INTÉGRER")}</p>
+          <h1>{t("Votre montage, en mouvement.")}</h1>
+          <p>{t("Placez le capteur et l'aimant. Observez quand le contact change d'état.")}</p>
         </div>
         <div className="mw-intro-actions">
           <button
@@ -414,7 +429,7 @@ export default function MagneticWorkshop({
             }
           >
             <Download size={16} />
-            Exporter
+            {t("Exporter")}
           </button>
           <button
             className="mw-button"
@@ -422,16 +437,16 @@ export default function MagneticWorkshop({
             disabled={saving || (!dirty && saved !== null)}
           >
             {saving ? (
-              <span>Enregistrement…</span>
+              <span>{t("Enregistrement…")}</span>
             ) : !dirty && saved ? (
               <>
                 <Check size={16} />
-                Enregistré
+                {t("Enregistré")}
               </>
             ) : (
               <>
                 <Save size={16} />
-                Joindre au dossier
+                {t("Joindre au dossier")}
               </>
             )}
           </button>
@@ -439,19 +454,21 @@ export default function MagneticWorkshop({
       </div>
       {(error || importNotice) && (
         <div className={error ? "mw-alert" : "mw-notice"} role={error ? "alert" : "status"}>
-          {error ?? importNotice}
+          {t(error ?? importNotice)}
         </div>
       )}
       <div className="mw-context-card">
         <div>
-          <strong>Essayer dans un objet réel en 3D</strong>
-          <p>Une machine à café fictive, un bac mobile et des composants à placer à l'échelle.</p>
+          <strong>{t("Essayer dans un objet réel en 3D")}</strong>
+          <p>
+            {t("Une machine à café fictive, un bac mobile et des composants à placer à l'échelle.")}
+          </p>
         </div>
         <button className="mw-button mw-secondary" onClick={exampleMachine}>
-          Ouvrir la machine à café
+          {t("Ouvrir la machine à café")}
         </button>
         <a href="/models/machine-cafe-bac-mobile.glb" download>
-          Télécharger le fichier 3D
+          {t("Télécharger le fichier 3D")}
         </a>
       </div>
       <div className={machine ? "mw-layout mw-machine-layout" : "mw-layout"}>
@@ -467,27 +484,30 @@ export default function MagneticWorkshop({
               onImport={(file) => void importMachine(file)}
               onExit={() => update({ machine: null })}
               onCatalog={() => setCatalogOpen(true)}
+              onProductCard={() => setProductCard(true)}
               measure={measure}
             />
           ) : (
             <>
               <div className="mw-start">
-                <label htmlFor="mw-mode">Votre point de départ</label>
+                <label htmlFor="mw-mode">{t("Votre point de départ")}</label>
                 <select
                   id="mw-mode"
                   value={config.mode}
                   onChange={(e) => chooseMode(e.target.value as WorkshopConfig["mode"])}
                 >
-                  <option value="reference">Exemple Standex documenté</option>
-                  <option value="education">Démonstration · distances fictives</option>
+                  <option value="reference">{t("Exemple Standex documenté")}</option>
+                  <option value="education">{t("Démonstration · distances fictives")}</option>
                 </select>
                 <p>
-                  {reference
-                    ? "MK03 + M02 · distances typiques publiées"
-                    : "Forme cotée · champ et seuils fictifs"}
+                  {t(
+                    reference
+                      ? "MK03 + M02 · distances typiques publiées"
+                      : "Forme cotée · champ et seuils fictifs",
+                  )}
                 </p>
               </div>
-              <nav className="mw-steps" aria-label="Étapes du montage">
+              <nav className="mw-steps" aria-label={t("Étapes du montage")}>
                 {["Capteur", "Aimant", "Mouvement"].map((s, i) => (
                   <button
                     key={s}
@@ -495,42 +515,49 @@ export default function MagneticWorkshop({
                     aria-current={step === i ? "step" : undefined}
                     onClick={() => setStep(i)}
                   >
-                    <span>{i + 1}</span>
-                    {s}
+                    <span>{t(i + 1)}</span>
+                    {t(s)}
                   </button>
                 ))}
               </nav>
               <div className="mw-step-body">
                 {step === 0 && (
                   <>
-                    <h2>Installez le capteur</h2>
+                    <h2>{t("Installez le capteur")}</h2>
                     <p className="mw-help">
-                      Le plan quadrillé représente le repère de votre machine.
+                      {t("Le plan quadrillé représente le repère de votre machine.")}
                     </p>
                     <div className="mw-selected-sensor">
                       <svg viewBox="-38 -17 76 34" aria-hidden="true">
                         <SensorPlan model={sensor} xray={false} />
                       </svg>
                       <strong>
-                        {reference ? `MK03-1A66${config.sensitivity}-500W` : sensor.name}
+                        {t(reference ? `MK03-1A66${config.sensitivity}-500W` : sensor.name)}
                       </strong>
-                      <span>{sizeLabel(sensor)}</span>
+                      <span>{t(sizeLabel(sensor))}</span>
+                      <button
+                        className="mw-product-card-button"
+                        onClick={() => setProductCard(true)}
+                      >
+                        <Info size={16} />
+                        {t("Découvrir ce capteur")}
+                      </button>
                       <button
                         className="mw-button mw-secondary mw-wide"
                         onClick={() => setCatalogOpen(true)}
                       >
-                        Choisir dans le catalogue
+                        {t("Choisir dans le catalogue")}
                       </button>
                       {sensorSource(sensor) && (
                         <a href={sensorSource(sensor)!} target="_blank" rel="noreferrer">
-                          Voir la fiche et le plan Standex ↗
+                          {t("Voir la fiche et le plan Standex ↗")}
                         </a>
                       )}
                     </div>
-                    {sensor.note && <p className="mw-help">{sensor.note}</p>}
+                    {sensor.note && <p className="mw-help">{t(sensor.note)}</p>}
                     {reference && (
                       <label className="mw-select-label">
-                        Classe de sensibilité
+                        {t("Classe de sensibilité")}
                         <select
                           value={config.sensitivity}
                           onChange={(e) =>
@@ -539,14 +566,14 @@ export default function MagneticWorkshop({
                         >
                           {(["B", "C", "D", "E"] as const).map((x) => (
                             <option key={x} value={x}>
-                              Classe {x}
+                              {msg("Classe {0}", [x])}
                             </option>
                           ))}
                         </select>
                       </label>
                     )}
                     <Range
-                      label="Orientation sur la machine"
+                      label={t("Orientation sur la machine")}
                       value={config.mountAngle}
                       min={-180}
                       max={180}
@@ -555,9 +582,9 @@ export default function MagneticWorkshop({
                       onChange={(mountAngle) => update({ mountAngle })}
                     />
                     <details>
-                      <summary>Position et environnement</summary>
+                      <summary>{t("Position et environnement")}</summary>
                       <Range
-                        label="Position X du montage"
+                        label={t("Position X du montage")}
                         value={config.mountX}
                         min={-25}
                         max={25}
@@ -565,7 +592,7 @@ export default function MagneticWorkshop({
                         onChange={(mountX) => update({ mountX })}
                       />
                       <Range
-                        label="Position Z du montage"
+                        label={t("Position Z du montage")}
                         value={config.mountZ}
                         min={-25}
                         max={25}
@@ -573,8 +600,9 @@ export default function MagneticWorkshop({
                         onChange={(mountZ) => update({ mountZ })}
                       />
                       <p className="mw-help">
-                        Placement géométrique en millimètres. Cette rotation déplace ensemble le
-                        capteur et la trajectoire.
+                        {t(
+                          "Placement géométrique en millimètres. Cette rotation déplace ensemble le capteur et la trajectoire.",
+                        )}
                       </p>
                       <label className="mw-check">
                         <input
@@ -582,24 +610,24 @@ export default function MagneticWorkshop({
                           checked={config.ferromagnetic}
                           onChange={(e) => update({ ferromagnetic: e.target.checked })}
                         />
-                        Acier ou autre matière ferromagnétique proche
+                        {t("Acier ou autre matière ferromagnétique proche")}
                       </label>
                       <label className="mw-select-label">
-                        Température
+                        {t("Température")}
                         <select
                           value={config.temperature}
                           onChange={(e) =>
                             update({ temperature: e.target.value as WorkshopConfig["temperature"] })
                           }
                         >
-                          <option value="ambient">Ambiante · exemple de référence</option>
-                          <option value="other">Autre température</option>
+                          <option value="ambient">{t("Ambiante · exemple de référence")}</option>
+                          <option value="other">{t("Autre température")}</option>
                         </select>
                       </label>
                     </details>
                     {!reference && (
                       <Range
-                        label="Orientation propre du reed"
+                        label={t("Orientation propre du reed")}
                         value={config.sensorAngle}
                         min={-180}
                         max={180}
@@ -612,38 +640,44 @@ export default function MagneticWorkshop({
                 )}
                 {step === 1 && (
                   <>
-                    <h2>Placez l'aimant</h2>
+                    <h2>{t("Placez l'aimant")}</h2>
                     <div className="mw-product">
                       <span className="mw-product-icon">
                         <Magnet size={25} />
                       </span>
                       <div>
                         <strong>
-                          {config.magnetModel === "M02"
-                            ? "M02 · enveloppe Standex"
-                            : "Aimant fictif"}
+                          {t(
+                            config.magnetModel === "M02"
+                              ? "M02 · enveloppe Standex"
+                              : "Aimant fictif",
+                          )}
                         </strong>
                         <span>
-                          {reference
-                            ? "Actionneur de la table de référence"
-                            : "Modèle idéal de dipôle dans l'air"}
+                          {t(
+                            reference
+                              ? "Actionneur de la table de référence"
+                              : "Modèle idéal de dipôle dans l'air",
+                          )}
                         </span>
                       </div>
                     </div>
                     <label className="mw-select-label">
-                      Approche du capteur
+                      {t("Approche du capteur")}
                       <select
                         value={config.geometry}
                         onChange={(e) => update({ geometry: e.target.value as "D1" | "D3" })}
                       >
-                        <option value="D1">D1 · face au centre</option>
-                        <option value="D3">D3 · par l'extrémité</option>
+                        <option value="D1">{t("D1 · face au centre")}</option>
+                        <option value="D3">{t("D3 · par l'extrémité")}</option>
                       </select>
                     </label>
                     <p className="mw-help">
-                      {reference
-                        ? "Table Standex, axes parallèles. Modifier l'orientation passe en démonstration fictive."
-                        : "La position du boîtier et l'axe Nord–Sud sont réglables séparément. Les distances restent fictives."}
+                      {t(
+                        reference
+                          ? "Table Standex, axes parallèles. Modifier l'orientation passe en démonstration fictive."
+                          : "La position du boîtier et l'axe Nord–Sud sont réglables séparément. Les distances restent fictives.",
+                      )}
                     </p>
                     <div className="mw-orientation-presets">
                       <button
@@ -656,7 +690,7 @@ export default function MagneticWorkshop({
                           })
                         }
                       >
-                        N–S parallèle au reed
+                        {t("N–S parallèle au reed")}
                       </button>
                       <button
                         onClick={() =>
@@ -668,7 +702,7 @@ export default function MagneticWorkshop({
                           })
                         }
                       >
-                        Tourner l'aimant de 90°
+                        {t("Tourner l'aimant de 90°")}
                       </button>
                       <button
                         onClick={() =>
@@ -681,11 +715,11 @@ export default function MagneticWorkshop({
                           })
                         }
                       >
-                        Explorer un lobe décalé
+                        {t("Explorer un lobe décalé")}
                       </button>
                     </div>
                     <Range
-                      label="Rotation du boîtier aimant"
+                      label={t("Rotation du boîtier aimant")}
                       value={config.magnetAngle}
                       min={-180}
                       max={180}
@@ -694,7 +728,7 @@ export default function MagneticWorkshop({
                       onChange={(magnetAngle) => orientMagnet({ magnetAngle })}
                     />
                     <Range
-                      label="Inclinaison hors du plan"
+                      label={t("Inclinaison hors du plan")}
                       value={config.magnetTilt}
                       min={-180}
                       max={180}
@@ -703,7 +737,7 @@ export default function MagneticWorkshop({
                       onChange={(magnetTilt) => orientMagnet({ magnetTilt })}
                     />
                     <label className="mw-select-label">
-                      Axe Nord–Sud dans l'aimant
+                      {t("Axe Nord–Sud dans l'aimant")}
                       <select
                         value={config.magnetization}
                         onChange={(e) =>
@@ -712,20 +746,20 @@ export default function MagneticWorkshop({
                           })
                         }
                       >
-                        <option value="axial">Longueur · aux extrémités</option>
-                        <option value="diametral">Largeur · sur les côtés</option>
-                        <option value="thickness">Épaisseur · dessus / dessous</option>
+                        <option value="axial">{t("Longueur · aux extrémités")}</option>
+                        <option value="diametral">{t("Largeur · sur les côtés")}</option>
+                        <option value="thickness">{t("Épaisseur · dessus / dessous")}</option>
                       </select>
                     </label>
                     <button
                       className="mw-button mw-secondary mw-wide"
                       onClick={() => orientMagnet({ polarity: config.polarity === 1 ? -1 : 1 })}
                     >
-                      Inverser les pôles N / S
+                      {t("Inverser les pôles N / S")}
                     </button>
                     {!reference && (
                       <Range
-                        label="Décalage par rapport au centre"
+                        label={t("Décalage par rapport au centre")}
                         value={config.lateralShift}
                         min={-50}
                         max={50}
@@ -734,20 +768,22 @@ export default function MagneticWorkshop({
                       />
                     )}
                     <p className="mw-help">
-                      Une rotation de 90° change le couplage et les lobes. Inverser N/S seul ne
-                      change pas l'activation d'un reed Form A non polarisé. Un axe mal placé peut
-                      laisser le contact ouvert.
+                      {t(
+                        "Une rotation de 90° change le couplage et les lobes. Inverser N/S seul ne change pas l'activation d'un reed Form A non polarisé. Un axe mal placé peut laisser le contact ouvert.",
+                      )}
                     </p>
                     <a href={INTERACTION_SOURCE} target="_blank" rel="noreferrer">
-                      Comprendre avec les schémas Standex ↗
+                      {t("Comprendre avec les schémas Standex ↗")}
                     </a>
                     {reference && (
                       <div className="mw-source-values">
                         <span>
-                          Enclenchement typique<strong>{pull} mm</strong>
+                          {t("Enclenchement typique")}
+                          <strong>{t(pull)} mm</strong>
                         </span>
                         <span>
-                          Relâchement typique<strong>{drop} mm</strong>
+                          {t("Relâchement typique")}
+                          <strong>{t(drop)} mm</strong>
                         </span>
                       </div>
                     )}
@@ -755,9 +791,9 @@ export default function MagneticWorkshop({
                 )}
                 {step === 2 && (
                   <>
-                    <h2>Définissez le mouvement</h2>
+                    <h2>{t("Définissez le mouvement")}</h2>
                     <label className="mw-select-label">
-                      Trajectoire
+                      {t("Trajectoire")}
                       <select
                         value={reference ? "approach" : config.motion}
                         disabled={reference}
@@ -767,7 +803,7 @@ export default function MagneticWorkshop({
                       >
                         {Object.entries(motionLabels).map(([v, l]) => (
                           <option key={v} value={v}>
-                            {l}
+                            {t(l)}
                           </option>
                         ))}
                       </select>
@@ -775,7 +811,7 @@ export default function MagneticWorkshop({
                     {reference || config.motion === "approach" ? (
                       <>
                         <Range
-                          label="Distance au départ"
+                          label={t("Distance au départ")}
                           value={config.start}
                           min={2}
                           max={60}
@@ -784,7 +820,7 @@ export default function MagneticWorkshop({
                           onChange={(start) => update({ start })}
                         />
                         <Range
-                          label="Distance au plus proche"
+                          label={t("Distance au plus proche")}
                           value={config.end}
                           min={1}
                           max={59}
@@ -796,9 +832,9 @@ export default function MagneticWorkshop({
                     ) : (
                       <>
                         <Range
-                          label={
-                            config.motion === "slide" ? "Décalage du passage" : "Rayon du pivot"
-                          }
+                          label={t(
+                            config.motion === "slide" ? "Décalage du passage" : "Rayon du pivot",
+                          )}
                           value={config.offset}
                           min={6}
                           max={30}
@@ -808,7 +844,7 @@ export default function MagneticWorkshop({
                         />
                         {config.motion === "slide" ? (
                           <Range
-                            label="Demi-course latérale"
+                            label={t("Demi-course latérale")}
                             value={config.travel}
                             min={10}
                             max={50}
@@ -817,7 +853,7 @@ export default function MagneticWorkshop({
                           />
                         ) : (
                           <Range
-                            label="Angle du pivot"
+                            label={t("Angle du pivot")}
                             value={config.span}
                             min={30}
                             max={300}
@@ -829,13 +865,14 @@ export default function MagneticWorkshop({
                       </>
                     )}
                     <details>
-                      <summary>Comportement recherché</summary>
+                      <summary>{t("Comportement recherché")}</summary>
                       <p className="mw-help">
-                        Je souhaite que le contact soit fermé sur cette portion du cycle
-                        aller-retour.
+                        {t(
+                          "Je souhaite que le contact soit fermé sur cette portion du cycle aller-retour.",
+                        )}
                       </p>
                       <Range
-                        label="Début de la fenêtre souhaitée"
+                        label={t("Début de la fenêtre souhaitée")}
                         value={config.targetStart}
                         min={0}
                         max={config.targetEnd - 1}
@@ -843,7 +880,7 @@ export default function MagneticWorkshop({
                         onChange={(targetStart) => update({ targetStart })}
                       />
                       <Range
-                        label="Fin de la fenêtre souhaitée"
+                        label={t("Fin de la fenêtre souhaitée")}
                         value={config.targetEnd}
                         min={config.targetStart + 1}
                         max={100}
@@ -851,29 +888,32 @@ export default function MagneticWorkshop({
                         onChange={(targetEnd) => update({ targetEnd })}
                       />
                       <label className="mw-select-label">
-                        État initial du contact
+                        {t("État initial du contact")}
                         <select
                           value={config.initialContact}
                           onChange={(e) => update({ initialContact: e.target.value as Contact })}
                         >
-                          <option value="unknown">Inconnu</option>
-                          <option value="open">Ouvert</option>
-                          <option value="closed">Fermé</option>
+                          <option value="unknown">{t("Inconnu")}</option>
+                          <option value="open">{t("Ouvert")}</option>
+                          <option value="closed">{t("Fermé")}</option>
                         </select>
                       </label>
                     </details>
                     <p className="mw-help">
-                      La lecture est ralentie pour comprendre le montage. Elle ne valide ni la
-                      cadence, ni les rebonds du contact.
+                      {t(
+                        "La lecture est ralentie pour comprendre le montage. Elle ne valide ni la cadence, ni les rebonds du contact.",
+                      )}
                     </p>
                   </>
                 )}
               </div>
               <div className="mw-step-footer">
-                <span>Étape {step + 1} sur 3</span>
+                <span>
+                  {t("Étape")} {t(step + 1)} {t("sur 3")}
+                </span>
                 {step < 2 ? (
                   <button onClick={() => setStep(step + 1)}>
-                    Continuer
+                    {t("Continuer")}
                     <ArrowRight size={16} />
                   </button>
                 ) : (
@@ -883,15 +923,15 @@ export default function MagneticWorkshop({
                       setPlaying(true);
                     }}
                   >
-                    Voir le cycle
+                    {t("Voir le cycle")}
                     <Play size={15} />
                   </button>
                 )}
               </div>
               <details className="mw-file-tools">
-                <summary>Reprendre un montage</summary>
+                <summary>{t("Reprendre un montage")}</summary>
                 <button className="mw-text-button" onClick={() => fileRef.current?.click()}>
-                  Importer un fichier de montage
+                  {t("Importer un fichier de montage")}
                 </button>
                 <input
                   hidden
@@ -904,47 +944,53 @@ export default function MagneticWorkshop({
             </>
           )}
         </aside>
-        <section className="mw-visual-column" aria-label="Simulation du montage">
+        <section className="mw-visual-column" aria-label={t("Simulation du montage")}>
           <div className="mw-scene-card">
             <div className="mw-scene-toolbar">
               <span className={reference ? "mw-kind" : "mw-kind education"}>
-                {reference
-                  ? "Référence Standex · valeurs typiques"
-                  : "Démonstration · distances fictives"}
+                {t(
+                  reference
+                    ? "Référence Standex · valeurs typiques"
+                    : "Démonstration · distances fictives",
+                )}
               </span>
               <div className="mw-view-switch">
                 <button aria-pressed={view === "3d"} onClick={request3d}>
                   3D
                 </button>
                 <button aria-pressed={view === "top"} onClick={() => setView("top")}>
-                  Vue plane
+                  {t("Vue plane")}
                 </button>
               </div>
             </div>
             <div
               className="mw-canvas"
               role="img"
-              aria-label={`Montage ${machine ? machine.fileName : reference ? config.geometry : motionLabels[config.motion]}. ${contactLabel[sample.contact]}.`}
+              aria-label={t(
+                `Montage ${machine ? machine.fileName : reference ? config.geometry : motionLabels[config.motion]}. ${contactLabel[sample.contact]}.`,
+              )}
             >
               {machine ? (
                 assetError ? (
                   <div className="mw-loading" role="alert">
-                    {assetError}
+                    {t(assetError)}
                   </div>
                 ) : !machineAsset ? (
-                  <div className="mw-loading">Chargement du fichier 3D…</div>
+                  <div className="mw-loading">{t("Chargement du fichier 3D…")}</div>
                 ) : sceneError ? (
                   <div className="mw-loading">
-                    La 3D a été interrompue. Utilisez le bouton 3D pour la relancer.
+                    {t("La 3D a été interrompue. Utilisez le bouton 3D pour la relancer.")}
                   </div>
                 ) : (
                   <SceneBoundary
                     key={"machine:" + resetEpoch}
                     onError={failed3d}
-                    fallback={<div className="mw-loading">La scène 3D a été interrompue.</div>}
+                    fallback={
+                      <div className="mw-loading">{t("La scène 3D a été interrompue.")}</div>
+                    }
                   >
                     <Suspense
-                      fallback={<div className="mw-loading">Préparation de la machine…</div>}
+                      fallback={<div className="mw-loading">{t("Préparation de la machine…")}</div>}
                     >
                       <MachineScene
                         asset={machineAsset}
@@ -983,7 +1029,9 @@ export default function MagneticWorkshop({
                   onError={failed3d}
                   fallback={
                     <div className="mw-fallback">
-                      <p>La 3D n'est pas disponible. Le cycle reste consultable en vue plane.</p>
+                      <p>
+                        {t("La 3D n'est pas disponible. Le cycle reste consultable en vue plane.")}
+                      </p>
                       <FlatScene
                         config={config}
                         sample={sample}
@@ -997,7 +1045,9 @@ export default function MagneticWorkshop({
                   }
                 >
                   <Suspense
-                    fallback={<div className="mw-loading">Préparation de votre montage…</div>}
+                    fallback={
+                      <div className="mw-loading">{t("Préparation de votre montage…")}</div>
+                    }
                   >
                     <Scene
                       config={config}
@@ -1018,21 +1068,26 @@ export default function MagneticWorkshop({
               )}
               <div className={`mw-live-state ${sample.contact}`}>
                 <span />
-                {contactLabel[sample.contact]}
+                {t(contactLabel[sample.contact])}
                 <small>
-                  {progress <= 0.5 ? "Aller" : "Retour"} · {Math.round(progress * 100)} % du cycle
+                  {t(progress <= 0.5 ? "Aller" : "Retour")} · {t(Math.round(progress * 100))}
+                  {t("% du cycle")}
                 </small>
               </div>
               <p className="mw-orbit-help">
                 <Expand size={13} />
-                {view === "3d"
-                  ? "Glisser pour tourner · molette pour zoomer"
-                  : "Vue plane · même montage et même calcul"}
+                {t(
+                  view === "3d"
+                    ? "Glisser pour tourner · molette pour zoomer"
+                    : "Vue plane · même montage et même calcul",
+                )}
               </p>
             </div>
             {sceneError && !machine && (
               <p className="mw-demo-note">
-                Repli en vue plane après interruption de la 3D. Le bouton 3D permet de réessayer.
+                {t(
+                  "Repli en vue plane après interruption de la 3D. Le bouton 3D permet de réessayer.",
+                )}
               </p>
             )}
             {machine && (
@@ -1043,7 +1098,7 @@ export default function MagneticWorkshop({
                     checked={showMachine}
                     onChange={(e) => setShowMachine(e.target.checked)}
                   />
-                  Boîtier opaque
+                  {t("Boîtier opaque")}
                 </label>
                 <label>
                   <input
@@ -1051,17 +1106,17 @@ export default function MagneticWorkshop({
                     checked={showSpace}
                     onChange={(e) => setShowSpace(e.target.checked)}
                   />
-                  Gabarit disponible
+                  {t("Gabarit disponible")}
                 </label>
                 <label>
-                  Manipulation
+                  {t("Manipulation")}
                   <select
-                    aria-label="Manipulation 3D"
+                    aria-label={t("Manipulation 3D")}
                     value={transformMode}
                     onChange={(e) => setTransformMode(e.target.value as "translate" | "rotate")}
                   >
-                    <option value="translate">Déplacer</option>
-                    <option value="rotate">Tourner</option>
+                    <option value="translate">{t("Déplacer")}</option>
+                    <option value="rotate">{t("Tourner")}</option>
                   </select>
                 </label>
               </div>
@@ -1069,7 +1124,7 @@ export default function MagneticWorkshop({
             <div className="mw-layers">
               <label>
                 <input type="checkbox" checked={xray} onChange={(e) => setXray(e.target.checked)} />
-                Voir les contacts
+                {t("Voir les contacts")}
               </label>
               {!machine && (
                 <>
@@ -1079,7 +1134,7 @@ export default function MagneticWorkshop({
                       checked={dimensions}
                       onChange={(e) => setDimensions(e.target.checked)}
                     />
-                    Dimensions
+                    {t("Dimensions")}
                   </label>
                   <label>
                     <input
@@ -1087,7 +1142,7 @@ export default function MagneticWorkshop({
                       checked={zones}
                       onChange={(e) => setZones(e.target.checked)}
                     />
-                    Colorer le parcours
+                    {t("Colorer le parcours")}
                   </label>
                 </>
               )}
@@ -1099,32 +1154,36 @@ export default function MagneticWorkshop({
                     disabled={view === "top"}
                     onChange={(e) => setField(e.target.checked)}
                   />
-                  Champ idéal
+                  {t("Champ idéal")}
                 </label>
               )}
               <button
                 className="mw-focus-button"
                 onClick={() => setFocus(focus === "assembly" ? "sensor" : "assembly")}
               >
-                {focus === "assembly" ? "Zoom sur le capteur" : "Voir tout le montage"}
+                {t(focus === "assembly" ? "Zoom sur le capteur" : "Voir tout le montage")}
               </button>
               <span>
-                Quadrillage : {machine ? "10" : "5"} mm · Vert : fermé · Gris : ouvert · Contacts
-                internes symboliques
+                {t("Quadrillage :")}
+                {t(machine ? "10" : "5")}
+                {t("mm · Vert : fermé · Gris : ouvert · Contacts internes symboliques")}
               </span>
             </div>
           </div>
           {!reference && (
             <details className="mw-demo-settings" open={!machine}>
-              <summary>Distances fictives · réglages de démonstration</summary>
+              <summary>{t("Distances fictives · réglages de démonstration")}</summary>
               <p>
-                Les matériaux et la température n'interviennent pas dans ce calcul.{" "}
-                {sensor.id === "MK02"
-                  ? "Le MK02 est représenté avec un contact Form A fictif : son mécanisme ferreux réel n'est pas simulé."
-                  : ""}
+                {t("Les matériaux et la température n'interviennent pas dans ce calcul.")}
+                {t(" ")}
+                {t(
+                  sensor.id === "MK02"
+                    ? "Le MK02 est représenté avec un contact Form A fictif : son mécanisme ferreux réel n'est pas simulé."
+                    : "",
+                )}
               </p>
               <Range
-                label="Échelle du champ fictif"
+                label={t("Échelle du champ fictif")}
                 value={config.demoReach}
                 min={5}
                 max={100}
@@ -1134,23 +1193,23 @@ export default function MagneticWorkshop({
               {machine && (
                 <>
                   <label className="mw-select-label">
-                    Axe Nord–Sud de l'aimant
+                    {t("Axe Nord–Sud de l'aimant")}
                     <select
                       value={config.magnetization}
                       onChange={(e) =>
                         update({ magnetization: e.target.value as WorkshopConfig["magnetization"] })
                       }
                     >
-                      <option value="axial">Longueur X</option>
-                      <option value="diametral">Largeur Z</option>
-                      <option value="thickness">Épaisseur Y</option>
+                      <option value="axial">{t("Longueur X")}</option>
+                      <option value="diametral">{t("Largeur Z")}</option>
+                      <option value="thickness">{t("Épaisseur Y")}</option>
                     </select>
                   </label>
                   <button
                     className="mw-text-button"
                     onClick={() => update({ polarity: config.polarity === 1 ? -1 : 1 })}
                   >
-                    Inverser N / S
+                    {t("Inverser N / S")}
                   </button>
                 </>
               )}
@@ -1162,7 +1221,7 @@ export default function MagneticWorkshop({
               <button
                 className="mw-play"
                 disabled={!machineReady}
-                aria-label={playing ? "Mettre en pause" : "Lire le cycle"}
+                aria-label={t(playing ? "Mettre en pause" : "Lire le cycle")}
                 onClick={() => {
                   if (progress >= 1) setProgress(0);
                   setPlaying(!playing);
@@ -1172,7 +1231,7 @@ export default function MagneticWorkshop({
               </button>
               <button
                 className="mw-reset"
-                aria-label="Revenir au départ"
+                aria-label={t("Revenir au départ")}
                 onClick={() => {
                   setPlaying(false);
                   setProgress(0);
@@ -1181,15 +1240,17 @@ export default function MagneticWorkshop({
                 <RotateCcw size={17} />
               </button>
               <div>
-                <strong>{machine ? "Ouvrir et refermer la pièce" : "Un cycle complet"}</strong>
-                <span>Aller → retour · lecture pédagogique</span>
+                <strong>{t(machine ? "Ouvrir et refermer la pièce" : "Un cycle complet")}</strong>
+                <span>{t("Aller → retour · lecture pédagogique")}</span>
               </div>
               <output>
-                {machine
-                  ? `${Math.round((progress <= 0.5 ? progress * 2 : (1 - progress) * 2) * 100)} % ouvert`
-                  : reference
-                    ? `${sample.distance.toFixed(1)} mm`
-                    : `${Math.round(progress * 100)} %`}
+                {t(
+                  machine
+                    ? `${Math.round((progress <= 0.5 ? progress * 2 : (1 - progress) * 2) * 100)} % ouvert`
+                    : reference
+                      ? `${sample.distance.toFixed(1)} mm`
+                      : `${Math.round(progress * 100)} %`,
+                )}
               </output>
             </div>
             <div className="mw-timeline" aria-hidden="true">
@@ -1203,7 +1264,7 @@ export default function MagneticWorkshop({
             <input
               className="mw-scrubber"
               disabled={!machineReady}
-              aria-label="Position dans le cycle"
+              aria-label={t("Position dans le cycle")}
               type="range"
               min="0"
               max="100"
@@ -1217,7 +1278,9 @@ export default function MagneticWorkshop({
             {!machine && (
               <div
                 className="mw-target-track"
-                aria-label={`Contact souhaité fermé entre ${config.targetStart} et ${config.targetEnd} pour cent du cycle`}
+                aria-label={t(
+                  `Contact souhaité fermé entre ${config.targetStart} et ${config.targetEnd} pour cent du cycle`,
+                )}
               >
                 <span
                   style={{
@@ -1228,29 +1291,29 @@ export default function MagneticWorkshop({
               </div>
             )}
             <div className="mw-timeline-caption">
-              <span>{machine ? "Pièce fermée" : "Départ"}</span>
-              <span>{machine ? "Pièce ouverte" : "Point de retour"}</span>
-              <span>{machine ? "Pièce refermée" : "Arrivée"}</span>
+              <span>{t(machine ? "Pièce fermée" : "Départ")}</span>
+              <span>{t(machine ? "Pièce ouverte" : "Point de retour")}</span>
+              <span>{t(machine ? "Pièce refermée" : "Arrivée")}</span>
             </div>
             <div className="mw-legend">
               <span>
                 <i className="closed" />
-                Fermé
+                {t("Fermé")}
               </span>
               <span>
                 <i className="open" />
-                Ouvert
+                {t("Ouvert")}
               </span>
               {reference && (
                 <span>
                   <i className="unknown" />
-                  Indéterminé
+                  {t("Indéterminé")}
                 </span>
               )}
               {!machine && (
                 <span>
                   <i className="target" />
-                  Fenêtre souhaitée
+                  {t("Fenêtre souhaitée")}
                 </span>
               )}
             </div>
@@ -1261,19 +1324,21 @@ export default function MagneticWorkshop({
             </div>
             <div>
               <h2>
-                {result.reason
-                  ? "Montage à caractériser"
-                  : targetMet
-                    ? "La fenêtre souhaitée est retrouvée dans ce modèle"
-                    : "Ce que montre votre cycle"}
+                {t(
+                  result.reason
+                    ? "Montage à caractériser"
+                    : targetMet
+                      ? "La fenêtre souhaitée est retrouvée dans ce modèle"
+                      : "Ce que montre votre cycle",
+                )}
               </h2>
-              <p>{statusMessage}</p>
+              <p>{t(statusMessage)}</p>
               {unknown && (
                 <button
                   className="mw-button mw-secondary"
                   onClick={() => update({ mode: "education", initialContact: "open" })}
                 >
-                  Animer avec des distances fictives
+                  {t("Animer avec des distances fictives")}
                 </button>
               )}
               <div className="mw-event-chips">
@@ -1282,11 +1347,13 @@ export default function MagneticWorkshop({
                   .slice(0, 6)
                   .map((s, i) => (
                     <span key={i}>
-                      {s.contact === "closed" ? "Fermeture" : "Ouverture"} ·{" "}
-                      {reference
-                        ? `${s.contact === "closed" ? pull : drop} mm typ.`
-                        : `${Math.round(s.t * 100)} %`}
-                      {reference && ` · ${s.t <= 0.5 ? "aller" : "retour"}`}
+                      {t(s.contact === "closed" ? "Fermeture" : "Ouverture")} ·{t(" ")}
+                      {t(
+                        reference
+                          ? `${s.contact === "closed" ? pull : drop} mm typ.`
+                          : `${Math.round(s.t * 100)} %`,
+                      )}
+                      {t(reference && ` · ${s.t <= 0.5 ? "aller" : "retour"}`)}
                     </span>
                   ))}
               </div>
@@ -1296,19 +1363,23 @@ export default function MagneticWorkshop({
       </div>
       <footer className="mw-footer">
         <p>
-          <strong>{reference ? "Présélection documentée." : "Illustration pédagogique."}</strong>{" "}
-          {reference ? REFERENCE_NOTE : EDUCATION_NOTE}
+          <strong>{t(reference ? "Présélection documentée." : "Illustration pédagogique.")}</strong>
+          {t(" ")}
+          {t(reference ? REFERENCE_NOTE : EDUCATION_NOTE)}
         </p>
         <p>
-          {saved && !dirty
-            ? `Montage enregistré dans ${storageLabel}.`
-            : `Brouillon · utilisez « Joindre au dossier » pour enregistrer dans ${storageLabel}.`}{" "}
+          {t(
+            saved && !dirty
+              ? `Montage enregistré dans ${storageLabel}.`
+              : `Brouillon · utilisez « Joindre au dossier » pour enregistrer dans ${storageLabel}.`,
+          )}
+          {t(" ")}
           <a
             href={reference ? DISTANCE_SOURCE : INTERACTION_SOURCE}
             target="_blank"
             rel="noreferrer"
           >
-            Source Standex ↗
+            {t("Source Standex ↗")}
           </a>
         </p>
       </footer>
@@ -1339,17 +1410,18 @@ export default function MagneticWorkshop({
         />
       )}
       <details className="mw-summary">
-        <summary>Résumé du montage et hypothèses</summary>
-        <pre>{summary}</pre>
+        <summary>{t("Résumé du montage et hypothèses")}</summary>
+        <pre>{t(summary)}</pre>
         <p>
-          Version du calcul : {MODEL_VERSION}. La scène et ses résultats sont recalculés à chaque
-          modification.
+          {t("Version du calcul :")}
+          {t(MODEL_VERSION)}
+          {t(". La scène et ses résultats sont recalculés à chaque modification.")}
         </p>
         <button
           className="mw-text-button"
           onClick={() => download("dossier-montage-magnetique.md", summary, "text/markdown")}
         >
-          Télécharger le résumé
+          {t("Télécharger le résumé")}
         </button>
       </details>
     </main>
