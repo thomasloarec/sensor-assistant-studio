@@ -37,10 +37,15 @@ describe("Documented body sizes and source plans", () => {
     expect(poseAt(d1, 0.5).position[2] - approachOffset(d1)).toBe(5);
     expect(poseAt(d3, 0.5).position[0] - approachOffset(d3)).toBeCloseTo(5, 10);
   });
-  test("envelope collision respects orientation and stops the pedagogical signal", () => {
-    const c = { ...DEFAULT_WORKSHOP, mode: "education" as const, sensorId: "MK27" };
+  test("envelope collision respects orientation without blocking the fictitious signal", () => {
+    const c = {
+      ...DEFAULT_WORKSHOP,
+      mode: "education" as const,
+      sensorId: "MK27",
+      magnetModel: "generic" as const,
+    };
     expect(bodiesOverlap(c, [0, 0, 10], 0)).toBe(true);
-    expect(educationSignal(c, [0, 0, 10], 0)).toBeNull();
+    expect(Number.isFinite(educationSignal(c, [0, 0, 10], 0))).toBe(true);
     expect(bodiesOverlap(c, [0, 0, 20], 0)).toBe(false);
     expect(bodiesOverlap({ ...c, sensorAngle: 90 }, [0, 0, 20], 0)).toBe(true);
     for (const model of SENSOR_CATALOG) {
@@ -56,7 +61,7 @@ describe("Documented body sizes and source plans", () => {
     }
   });
   test("a metal target MK02 cannot reuse external-magnet switching distances", () => {
-    for (const mode of ["reference", "education"] as const) {
+    for (const mode of ["reference"] as const) {
       const result = simulateCycle({ ...DEFAULT_WORKSHOP, sensorId: "MK02", mode });
       expect(result.samples.every((s) => s.contact === "unknown")).toBe(true);
       expect(result.reason).toContain("métal ferreux");
@@ -68,7 +73,7 @@ describe("Documented body sizes and source plans", () => {
   });
 });
 describe("Existing saved assemblies remain readable", () => {
-  test("V1 reference and education snapshots migrate to explicit V2 sensor identities", () => {
+  test("V1 reference and education snapshots migrate to explicit V3 sensor identities", () => {
     const old = { ...DEFAULT_WORKSHOP, version: 1, sensorId: undefined };
     expect(parseWorkshopConfig(old)).toEqual(DEFAULT_WORKSHOP);
     expect(
@@ -77,7 +82,7 @@ describe("Existing saved assemblies remain readable", () => {
       )?.sensorId,
     ).toBe("GENERIC");
   });
-  test("V2 catalogue selection survives save and reload", () => {
+  test("V3 catalogue selection survives save and reload", () => {
     const c = { ...DEFAULT_WORKSHOP, sensorId: "MK24-A-J", mode: "education" as const };
     expect(parseWorkshopNote(serializeWorkshop(c))).toEqual(c);
     expect(parseWorkshopConfig({ ...c, sensorId: "invented" })).toBeNull();

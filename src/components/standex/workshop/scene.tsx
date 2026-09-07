@@ -1,7 +1,7 @@
-import { useMemo, useRef } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
+import { useMemo, useRef, useEffect } from "react";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Html, Line, OrbitControls, Grid } from "@react-three/drei";
-import { Shape, Path } from "three";
+import { Shape, Path, Quaternion, Vector3 } from "three";
 import type { Group } from "three";
 import {
   fieldAt,
@@ -10,6 +10,7 @@ import {
   magnetSize,
   MK03_DISTANCES,
   unavailableReason,
+  momentFor,
 } from "@/lib/standex/magnetic-workshop";
 import type { WorkshopConfig, CycleSample, Vec3, Contact } from "@/lib/standex/magnetic-workshop";
 import { sensorById, bladeLength, bladeOffsetZ, formatMm } from "@/lib/standex/sensor-catalog";
@@ -43,7 +44,7 @@ function rounded(path: Shape | Path, x: number, z: number, w: number, h: number,
   path.quadraticCurveTo(x, z, x + r, z);
   path.closePath();
 }
-function Body({ model, xray }: { model: SensorModel; xray: boolean }) {
+export function Body({ model, xray }: { model: SensorModel; xray: boolean }) {
   const [l, h, w] = model.body,
     opacity = xray ? 0.25 : 1;
   const baseShape = useMemo(() => {
@@ -170,7 +171,7 @@ function ContactFlow({ span, reduced }: { span: number; reduced: boolean }) {
     </group>
   );
 }
-function Contacts({
+export function Contacts({
   model,
   contact,
   reduced,
@@ -205,21 +206,34 @@ function Contacts({
     </group>
   );
 }
-function Magnet({ config, sample }: { config: WorkshopConfig; sample: CycleSample }) {
+export function Magnet({ config, sample }: { config: WorkshopConfig; sample: CycleSample }) {
   const [l, h, w] = magnetSize(config),
-    axial = config.magnetization === "axial" || config.mode === "reference";
+    axial = config.magnetization === "axial",
+    thick = config.magnetization === "thickness";
   return (
-    <group position={sample.position} rotation={[0, (-sample.angle * Math.PI) / 180, 0]}>
+    <group
+      position={sample.position}
+      rotation={[0, (-sample.angle * Math.PI) / 180, (config.magnetTilt * Math.PI) / 180]}
+    >
       {([-1, 1] as const).map((sign) => {
         const north = sign * config.polarity === 1;
         return (
-          <group key={sign} position={axial ? [(sign * l) / 4, 0, 0] : [0, 0, (sign * w) / 4]}>
+          <group
+            key={sign}
+            position={
+              axial
+                ? [(sign * l) / 4, 0, 0]
+                : thick
+                  ? [0, (sign * h) / 4, 0]
+                  : [0, 0, (sign * w) / 4]
+            }
+          >
             <mesh>
-              <boxGeometry args={axial ? [l / 2, h, w] : [l, h, w / 2]} />
+              <boxGeometry args={axial ? [l / 2, h, w] : thick ? [l, h / 2, w] : [l, h, w / 2]} />
               <meshStandardMaterial color={north ? "#e14242" : "#237dd0"} roughness={0.4} />
             </mesh>
             <Label
-              position={[0, h / 2 + 0.8, 0]}
+              position={thick ? [0, sign * (h / 4 + 0.8), 0] : [0, h / 2 + 0.8, 0]}
               className={north ? "mw-pole north" : "mw-pole south"}
             >
               {north ? "N" : "S"}
@@ -249,12 +263,13 @@ function FieldLines({ config, sample }: { config: WorkshopConfig; sample: CycleS
       }),
     [],
   );
-  const angle =
-    sample.angle +
-    (config.magnetization === "diametral" ? 90 : 0) +
-    (config.polarity === -1 ? 180 : 0);
+  const direction = momentFor(config, sample.angle);
+  const q = new Quaternion().setFromUnitVectors(
+    new Vector3(1, 0, 0),
+    new Vector3(...direction).normalize(),
+  );
   return (
-    <group position={sample.position} rotation={[0, (-angle * Math.PI) / 180, 0]}>
+    <group position={sample.position} quaternion={q}>
       {lines.map((p, i) => (
         <Line key={i} points={p} color="#8b9fae" transparent opacity={0.38} lineWidth={1} />
       ))}
@@ -380,6 +395,46 @@ function ReferenceMarkers({ config }: { config: WorkshopConfig }) {
     </group>
   );
 }
+export function ContextGuard({ onLost }: { onLost: () => void }) {
+  const gl = useThree((s) => s.gl);
+  useEffect(() => {
+    const canvas = gl.domElement;
+    canvas.addEventListener("webglcontextlost", onLost);
+    // R3F deliberately loses the old context on unmount. Do not flag the new scene.
+    return () => canvas.removeEventListener("webglcontextlost", onLost);
+  }, [gl, onLost]);
+  return null;
+}
+export function CameraRig({
+  target,
+  distance,
+  view = "3d",
+  resetKey,
+}: {
+  target: Vec3;
+  distance: number;
+  view?: "3d" | "top";
+  resetKey: string;
+}) {
+  const { camera, controls } = useThree();
+  useEffect(() => {
+    const c = controls as unknown as { target: Vector3; update: () => void } | undefined;
+    camera.position.set(
+      target[0] + (view === "top" ? 0 : distance * 0.7),
+      target[1] + distance * 0.75,
+      target[2] + (view === "top" ? 0.001 : distance),
+    );
+    if (view === "top") camera.position.y = target[1] + distance;
+    camera.up.set(0, view === "top" ? 0 : 1, view === "top" ? -1 : 0);
+    camera.lookAt(...target);
+    camera.updateProjectionMatrix();
+    c?.target.set(...target);
+    c?.update();
+    // Deliberately reset only on explicit view/setup changes, not every animation frame.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [resetKey, camera, controls]);
+  return null;
+}
 export default function WorkshopScene({
   config,
   sample,
@@ -390,6 +445,8 @@ export default function WorkshopScene({
   dimensions = true,
   focus = "assembly",
   reduced = false,
+  resetEpoch = 0,
+  onContextLost,
 }: {
   config: WorkshopConfig;
   sample: CycleSample;
@@ -401,6 +458,8 @@ export default function WorkshopScene({
   dimensions?: boolean;
   focus?: "assembly" | "sensor";
   reduced?: boolean;
+  resetEpoch?: number;
+  onContextLost?: () => void;
 }) {
   const model = sensorById(config.sensorId),
     reference = config.mode === "reference",
@@ -409,7 +468,6 @@ export default function WorkshopScene({
     target: Vec3 = focus === "sensor" ? [config.mountX, 0, config.mountZ] : [6, 0, 18];
   return (
     <Canvas
-      key={focus === "sensor" ? focus + config.sensorId : focus}
       camera={{
         position:
           focus === "sensor"
@@ -421,7 +479,9 @@ export default function WorkshopScene({
       }}
       dpr={[1, 1.5]}
       gl={{ antialias: true, alpha: false }}
-      onCreated={({ gl }) => gl.setClearColor("#f0f4f7")}
+      onCreated={({ gl }) => {
+        gl.setClearColor("#f0f4f7");
+      }}
     >
       <ambientLight intensity={2} />
       <directionalLight position={[30, 60, 20]} intensity={2.2} />
@@ -451,7 +511,13 @@ export default function WorkshopScene({
         {reference && available && zones && <ReferenceMarkers config={config} />}
         {!reference && available && field && <FieldLines config={config} sample={sample} />}
       </group>
-      <OrbitControls makeDefault target={target} minDistance={5} maxDistance={300} />
+      {onContextLost && <ContextGuard onLost={onContextLost} />}
+      <OrbitControls makeDefault target={target} minDistance={5} maxDistance={400} />
+      <CameraRig
+        target={target}
+        distance={focus === "sensor" ? dist : 110}
+        resetKey={[config.sensorId, config.mode, config.geometry, focus, resetEpoch].join(":")}
+      />
     </Canvas>
   );
 }

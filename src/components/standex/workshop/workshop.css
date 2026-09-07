@@ -1,3 +1,222 @@
+.mw-context-card {
+  max-width: 1372px;
+  margin: 0 auto 22px;
+  padding: 18px 22px;
+  background: #edf3f7;
+  border: 1px solid #dae4ec;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.mw-context-card > div {
+  flex: 1;
+}
+.mw-context-card p {
+  margin: 3px 0 0;
+  font-size: 12px;
+  color: #657a8a;
+}
+.mw-context-card a,
+.mw-machine-controls a {
+  font-size: 12px;
+  color: #315d80;
+  text-decoration: underline;
+}
+.mw-machine-controls {
+  padding: 22px;
+}
+.mw-machine-controls h2 {
+  font-size: 20px;
+  margin: 0 0 10px;
+}
+.mw-machine-controls details {
+  border-top: 1px solid #e3e9ed;
+  padding: 16px 0;
+}
+.mw-machine-controls summary {
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+.mw-machine-controls .mw-select-label {
+  margin: 14px 0;
+}
+.mw-file-name {
+  display: block;
+  overflow-wrap: anywhere;
+  font-size: 12px;
+}
+.mw-file-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  margin: 14px 0;
+}
+.mw-file-label input {
+  display: block;
+  width: 100%;
+  font-size: 11px;
+  margin-top: 8px;
+}
+.mw-file-label input::file-selector-button {
+  border: 1px solid #cbd7df;
+  padding: 7px;
+  border-radius: 4px;
+  background: #f5f8fa;
+  color: #315575;
+  cursor: pointer;
+}
+.mw-vector {
+  min-width: 0;
+  border: 0;
+  padding: 0;
+  margin: 12px 0;
+}
+.mw-vector legend {
+  font-size: 11px;
+  color: #657a8a;
+  margin-bottom: 6px;
+}
+.mw-vector > div {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+.mw-vector label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+}
+.mw-vector input {
+  min-width: 0;
+  width: 100%;
+  border: 1px solid #cbd7df;
+  border-radius: 5px;
+  padding: 7px 3px;
+  font-size: 12px;
+}
+.mw-machine-product {
+  display: grid;
+  gap: 10px;
+  padding: 14px 0;
+}
+.mw-placement-tools,
+.mw-orientation-presets {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 7px;
+  margin: 15px 0 10px;
+}
+.mw-placement-tools button,
+.mw-orientation-presets button {
+  border: 1px solid #cbd7df;
+  border-radius: 6px;
+  background: #f6f9fb;
+  color: #315575;
+  padding: 9px 7px;
+  font-size: 11px;
+}
+.mw-placement-tools button[aria-pressed="true"] {
+  background: #254061;
+  color: white;
+  border-color: #254061;
+}
+.mw-orientation-presets button:last-child {
+  grid-column: 1 / -1;
+}
+.mw-fit-ok,
+.mw-measure-result {
+  background: #e9f5ef;
+  color: #20674e;
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 12px;
+}
+.mw-fit-no {
+  background: #fff1e6;
+  color: #8b502b;
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 12px;
+}
+.mw-demo-settings {
+  padding: 18px 22px;
+  border: 1px solid #dfd8c7;
+  background: #fcfaf3;
+  border-radius: 10px;
+  margin: 14px 0;
+}
+.mw-demo-settings summary {
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.mw-demo-settings p,
+.mw-demo-note {
+  font-size: 12px;
+  color: #756b51;
+}
+.mw-demo-note {
+  padding: 10px 20px;
+  background: #fcfaf3;
+}
+.mw-demo-settings .mw-field {
+  margin: 14px 0 0;
+}
+.mw-machine-layout .mw-visual-column {
+  position: sticky;
+  top: 12px;
+}
+.mw-machine-layout .mw-canvas {
+  height: 510px;
+}
+.mw-machine-layout .mw-layers select {
+  border: 1px solid #d4dfe7;
+  background: white;
+  border-radius: 4px;
+  padding: 4px;
+  max-width: 100px;
+}
+@media (max-width: 1440px) {
+  .mw-context-card {
+    margin-left: 34px;
+    margin-right: 34px;
+  }
+}
+@media (max-width: 1000px) {
+  .mw-context-card {
+    margin-left: 20px;
+    margin-right: 20px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .mw-context-card > div {
+    flex-basis: 100%;
+  }
+  .mw-machine-controls {
+    padding: 18px;
+  }
+}
+@media (max-width: 740px) {
+  .mw-context-card {
+    margin-left: 16px;
+    margin-right: 16px;
+    padding: 16px;
+  }
+  .mw-machine-layout .mw-visual-column {
+    position: static;
+    order: -1;
+  }
+  .mw-machine-layout .mw-canvas {
+    height: 400px;
+  }
+  .mw-machine-controls details:not(:first-of-type) {
+    padding: 12px 0;
+  }
+}
 .mw {
   --mw-blue: #254061;
   --mw-ink: #273d50;

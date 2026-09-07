@@ -23,7 +23,7 @@ export default function FlatScene({
   const model = sensorById(config.sensorId),
     [l, , w] = model.body,
     [ml, , mw] = magnetSize(config);
-  const axial = config.mode === "reference" || config.magnetization === "axial";
+  const axial = config.magnetization === "axial";
   const extent = focus === "sensor" ? Math.max(12, l * 1.6) : 180;
   const cx = focus === "sensor" ? config.mountX : 10,
     cy = focus === "sensor" ? config.mountZ : 18;
@@ -88,36 +88,51 @@ export default function FlatScene({
           )}
         </g>
         <g
-          transform={`translate(${sample.position[0]} ${sample.position[2]}) rotate(${sample.angle})`}
+          transform={`translate(${sample.position[0]} ${sample.position[2]}) rotate(${sample.angle}) scale(${Math.max(0.08, Math.abs(Math.cos((config.magnetTilt * Math.PI) / 180)))} 1)`}
         >
-          {[-1, 1].map((sign) => {
-            const north = sign * config.polarity === 1;
-            return (
-              <g
-                key={sign}
-                transform={
-                  axial ? `translate(${(sign * ml) / 4} 0)` : `translate(0 ${(sign * mw) / 4})`
-                }
-              >
-                <rect
-                  x={axial ? -ml / 4 : -ml / 2}
-                  y={axial ? -mw / 2 : -mw / 4}
-                  width={axial ? ml / 2 : ml}
-                  height={axial ? mw : mw / 2}
-                  fill={north ? "#e14242" : "#237dd0"}
-                />
-                <text
-                  textAnchor="middle"
-                  dominantBaseline="central"
-                  fontSize={Math.min(4, mw * 0.45)}
-                  fontWeight="800"
-                  fill="white"
+          {config.magnetization === "thickness" ? (
+            <g>
+              <rect
+                x={-ml / 2}
+                y={-mw / 2}
+                width={ml}
+                height={mw}
+                fill={config.polarity === 1 ? "#e14242" : "#237dd0"}
+              />
+              <text y="0" fontSize="2.4" fill="white" textAnchor="middle">
+                {config.polarity === 1 ? "N dessus / S dessous" : "S dessus / N dessous"}
+              </text>
+            </g>
+          ) : (
+            [-1, 1].map((sign) => {
+              const north = sign * config.polarity === 1;
+              return (
+                <g
+                  key={sign}
+                  transform={
+                    axial ? `translate(${(sign * ml) / 4} 0)` : `translate(0 ${(sign * mw) / 4})`
+                  }
                 >
-                  {north ? "N" : "S"}
-                </text>
-              </g>
-            );
-          })}
+                  <rect
+                    x={axial ? -ml / 4 : -ml / 2}
+                    y={axial ? -mw / 2 : -mw / 4}
+                    width={axial ? ml / 2 : ml}
+                    height={axial ? mw : mw / 2}
+                    fill={north ? "#e14242" : "#237dd0"}
+                  />
+                  <text
+                    textAnchor="middle"
+                    dominantBaseline="central"
+                    fontSize={Math.min(4, mw * 0.45)}
+                    fontWeight="800"
+                    fill="white"
+                  >
+                    {north ? "N" : "S"}
+                  </text>
+                </g>
+              );
+            })
+          )}
           <text y={mw / 2 + 4} textAnchor="middle" fontSize="2.6" fill="#536b80">
             {config.mode === "reference" ? "M02 · pôles symboliques" : "Aimant"}
           </text>

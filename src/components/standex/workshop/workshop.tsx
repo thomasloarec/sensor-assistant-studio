@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import {
   DEFAULT_WORKSHOP,
+  INTERACTION_SOURCE,
   DISTANCE_SOURCE,
   EDUCATION_NOTE,
   REFERENCE_NOTE,
@@ -24,8 +25,13 @@ import {
   simulateCycle,
   summarizeWorkshop,
 } from "@/lib/standex/magnetic-workshop";
-import type { WorkshopConfig, Contact } from "@/lib/standex/magnetic-workshop";
+import type { WorkshopConfig, Contact, Vec3 } from "@/lib/standex/magnetic-workshop";
 import "./workshop.css";
+import { COFFEE_ASSEMBLY } from "@/lib/standex/machine-assembly";
+import type { MachineAssembly } from "@/lib/standex/machine-assembly";
+import type { MachineAsset } from "@/lib/standex/machine-assets";
+import type { MachineTool } from "./machine-scene";
+import MachineControls from "./machine-controls";
 import FlatScene from "./flat-scene";
 import SensorCatalog from "./sensor-catalog";
 import ContactIndicator from "./contact-indicator";
@@ -33,6 +39,7 @@ import { SensorPlan } from "./sensor-plan";
 import { sensorById, sizeLabel, sensorSource } from "@/lib/standex/sensor-catalog";
 
 const Scene = lazy(() => import("./scene"));
+const MachineScene = lazy(() => import("./machine-scene"));
 const contactLabel: Record<Contact, string> = {
   open: "Contact ouvert",
   closed: "Contact fermé",
@@ -40,12 +47,15 @@ const contactLabel: Record<Contact, string> = {
 };
 const motionLabels = { approach: "Approche et retrait", slide: "Passage latéral", pivot: "Pivot" };
 class SceneBoundary extends Component<
-  { children: ReactNode; fallback: ReactNode },
+  { children: ReactNode; fallback: ReactNode; onError: () => void },
   { failed: boolean }
 > {
   override state = { failed: false };
   static getDerivedStateFromError() {
     return { failed: true };
+  }
+  override componentDidCatch() {
+    this.props.onError();
   }
   override render() {
     return this.state.failed ? this.props.fallback : this.props.children;
@@ -123,6 +133,137 @@ export default function MagneticWorkshop({
     [focus, setFocus] = useState<"assembly" | "sensor">("assembly"),
     [catalogOpen, setCatalogOpen] = useState(false);
   const [reduced, setReduced] = useState(false);
+  const [resetEpoch, setResetEpoch] = useState(0),
+    [sceneError, setSceneError] = useState(false);
+  const [machineAsset, setMachineAsset] = useState<MachineAsset | null>(null),
+    [assetError, setAssetError] = useState<string | null>(null);
+  const [tool, setTool] = useState<MachineTool>("navigate"),
+    [transformMode, setTransformMode] = useState<"translate" | "rotate">("translate");
+  const [showMachine, setShowMachine] = useState(true),
+    [showSpace, setShowSpace] = useState(true),
+    [measure, setMeasure] = useState<number | null>(null);
+  const machine = config.machine;
+  useEffect(() => {
+    let cancelled = false,
+      loaded: MachineAsset | null = null;
+    setMachineAsset(null);
+    setAssetError(null);
+    if (!machine) return;
+    void import("@/lib/standex/machine-assets")
+      .then((m) => m.loadMachineAsset(machine.assetKey, machine.unitScale))
+      .then((asset) => {
+        if (cancelled) {
+          asset.dispose();
+          return;
+        }
+        loaded = asset;
+        setMachineAsset(asset);
+        if (!machine.movingNode) {
+          const tray = asset.nodes.find((n) => n.name === "Bac_mobile"),
+            first =
+              tray ??
+              asset.nodes.find((n) => /mobile|drawer|door|lid|couvercle|porte/i.test(n.name));
+          setConfig((c) =>
+            c.machine?.assetKey === machine.assetKey
+              ? {
+                  ...c,
+                  machine: {
+                    ...c.machine,
+                    movingNode: first?.path ?? "",
+                    ...(tray
+                      ? {}
+                      : {
+                          sensorPosition: [
+                            asset.center[0] + asset.size[0] / 2 + 8,
+                            asset.center[1],
+                            asset.center[2],
+                          ] as Vec3,
+                          magnetPosition: [
+                            asset.center[0] + asset.size[0] / 2 - 8,
+                            asset.center[1],
+                            asset.center[2],
+                          ] as Vec3,
+                        }),
+                  },
+                }
+              : c,
+          );
+        }
+      })
+      .catch((e) => {
+        if (!cancelled) setAssetError(e instanceof Error ? e.message : "Fichier 3D illisible.");
+      });
+    return () => {
+      cancelled = true;
+      loaded?.dispose();
+    };
+    // Positions and cycle changes reuse the loaded geometry.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [machine?.assetKey, machine?.unitScale]);
+  function machineChange(patch: Partial<MachineAssembly>) {
+    if (machine) update({ machine: { ...machine, ...patch } });
+  }
+  function chooseTool(next: MachineTool) {
+    setPlaying(false);
+    setProgress(0);
+    setTool(next);
+  }
+  function exampleMachine() {
+    update({
+      machine: structuredClone(COFFEE_ASSEMBLY),
+      demoReach: 25,
+      mode: "education",
+      sensorId: "MK24-A-J",
+      magnetModel: "generic",
+      initialContact: "open",
+      magnetization: "axial",
+      polarity: 1,
+    });
+    setView("3d");
+    setFocus("assembly");
+    setResetEpoch((v) => v + 1);
+    setSceneError(false);
+  }
+  async function importMachine(file: File | undefined) {
+    if (!file) return;
+    setError(null);
+    try {
+      const { storeMachineFile } = await import("@/lib/standex/machine-assets");
+      const assetKey = await storeMachineFile(file);
+      const same = machine?.assetKey === assetKey;
+      update({
+        mode: "education",
+        magnetModel: "generic",
+        machine: same
+          ? { ...machine! }
+          : {
+              ...structuredClone(COFFEE_ASSEMBLY),
+              assetKey,
+              fileName: file.name.slice(0, 180),
+              movingNode: "",
+            },
+      });
+      setView("3d");
+      setFocus("assembly");
+      setSceneError(false);
+      setResetEpoch((v) => v + 1);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Import impossible.");
+    }
+  }
+  function failed3d() {
+    setSceneError(true);
+    if (!machine) setView("top");
+  }
+  function request3d() {
+    setSceneError(false);
+    setView("3d");
+    setResetEpoch((v) => v + 1);
+  }
+  function orientMagnet(patch: Partial<WorkshopConfig>) {
+    update({ ...patch, mode: "education" });
+  }
+
   useEffect(() => {
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
     const sync = () => setReduced(media.matches);
@@ -150,13 +291,14 @@ export default function MagneticWorkshop({
     dirty = saved !== fingerprint;
   const [pull, drop] = MK03_DISTANCES[config.sensitivity][config.geometry];
   const unknown = result.unknown;
+  const machineReady = !machine || !!machineAsset?.nodes.some((n) => n.path === machine.movingNode);
   const mismatches = result.samples.filter(
     (s) =>
       s.contact !== "unknown" &&
       (s.contact === "closed") !==
         (s.t * 100 >= config.targetStart && s.t * 100 <= config.targetEnd),
   );
-  const targetMet = !unknown && mismatches.length <= 3;
+  const targetMet = !machine && !unknown && mismatches.length <= 3;
 
   useEffect(() => {
     if (!playing) return;
@@ -186,13 +328,17 @@ export default function MagneticWorkshop({
         ? {
             mode,
             sensorId: "MK03",
+            machine: null,
+            magnetModel: "M02",
+            magnetTilt: 0,
+            lateralShift: 0,
             motion: "approach",
             sensorAngle: 0,
             magnetAngle: 0,
             magnetization: "axial",
             polarity: 1,
           }
-        : { mode, motion: "slide" },
+        : { mode, motion: config.motion },
     );
     setField(false);
     setStep(0);
@@ -215,7 +361,7 @@ export default function MagneticWorkshop({
     try {
       if (file.size > 20000) throw new Error("Le fichier de montage est trop volumineux.");
       const parsed = parseWorkshopConfig(JSON.parse(await file.text()));
-      if (!parsed) throw new Error("Ce fichier ne contient pas un montage valide (V1 ou V2).");
+      if (!parsed) throw new Error("Ce fichier ne contient pas un montage valide (V1, V2 ou V3).");
       setPlaying(false);
       setProgress(0);
       setConfig(parsed);
@@ -248,7 +394,7 @@ export default function MagneticWorkshop({
           STANDEX <span>DETECT</span>
           <small>ATELIER MAGNÉTIQUE</small>
         </div>
-        <span className="mw-prototype">Prototype interne · V0.2</span>
+        <span className="mw-prototype">Prototype interne · V0.3</span>
       </header>
       <div className="mw-intro">
         <div>
@@ -296,381 +442,478 @@ export default function MagneticWorkshop({
           {error ?? importNotice}
         </div>
       )}
-      <div className="mw-layout">
+      <div className="mw-context-card">
+        <div>
+          <strong>Essayer dans un objet réel en 3D</strong>
+          <p>Une machine à café fictive, un bac mobile et des composants à placer à l'échelle.</p>
+        </div>
+        <button className="mw-button mw-secondary" onClick={exampleMachine}>
+          Ouvrir la machine à café
+        </button>
+        <a href="/models/machine-cafe-bac-mobile.glb" download>
+          Télécharger le fichier 3D
+        </a>
+      </div>
+      <div className={machine ? "mw-layout mw-machine-layout" : "mw-layout"}>
         <aside className="mw-controls">
-          <div className="mw-start">
-            <label htmlFor="mw-mode">Votre point de départ</label>
-            <select
-              id="mw-mode"
-              value={config.mode}
-              onChange={(e) => chooseMode(e.target.value as WorkshopConfig["mode"])}
-            >
-              <option value="reference">Exemple Standex documenté</option>
-              <option value="education">Explorer un montage pédagogique</option>
-            </select>
-            <p>
-              {reference
-                ? "MK03 + M02 · distances typiques publiées"
-                : "Forme réelle · réponse du contact non calibrée"}
-            </p>
-          </div>
-          <nav className="mw-steps" aria-label="Étapes du montage">
-            {["Capteur", "Aimant", "Mouvement"].map((s, i) => (
-              <button
-                key={s}
-                className={step === i ? "active" : ""}
-                aria-current={step === i ? "step" : undefined}
-                onClick={() => setStep(i)}
-              >
-                <span>{i + 1}</span>
-                {s}
-              </button>
-            ))}
-          </nav>
-          <div className="mw-step-body">
-            {step === 0 && (
-              <>
-                <h2>Installez le capteur</h2>
-                <p className="mw-help">Le plan quadrillé représente le repère de votre machine.</p>
-                <div className="mw-selected-sensor">
-                  <svg viewBox="-38 -17 76 34" aria-hidden="true">
-                    <SensorPlan model={sensor} xray={false} />
-                  </svg>
-                  <strong>{reference ? `MK03-1A66${config.sensitivity}-500W` : sensor.name}</strong>
-                  <span>{sizeLabel(sensor)}</span>
+          {machine ? (
+            <MachineControls
+              config={config}
+              asset={machineAsset}
+              tool={tool}
+              setTool={chooseTool}
+              onChange={machineChange}
+              onExample={exampleMachine}
+              onImport={(file) => void importMachine(file)}
+              onExit={() => update({ machine: null })}
+              onCatalog={() => setCatalogOpen(true)}
+              measure={measure}
+            />
+          ) : (
+            <>
+              <div className="mw-start">
+                <label htmlFor="mw-mode">Votre point de départ</label>
+                <select
+                  id="mw-mode"
+                  value={config.mode}
+                  onChange={(e) => chooseMode(e.target.value as WorkshopConfig["mode"])}
+                >
+                  <option value="reference">Exemple Standex documenté</option>
+                  <option value="education">Démonstration · distances fictives</option>
+                </select>
+                <p>
+                  {reference
+                    ? "MK03 + M02 · distances typiques publiées"
+                    : "Forme cotée · champ et seuils fictifs"}
+                </p>
+              </div>
+              <nav className="mw-steps" aria-label="Étapes du montage">
+                {["Capteur", "Aimant", "Mouvement"].map((s, i) => (
                   <button
-                    className="mw-button mw-secondary mw-wide"
-                    onClick={() => setCatalogOpen(true)}
+                    key={s}
+                    className={step === i ? "active" : ""}
+                    aria-current={step === i ? "step" : undefined}
+                    onClick={() => setStep(i)}
                   >
-                    Choisir dans le catalogue
+                    <span>{i + 1}</span>
+                    {s}
                   </button>
-                  {sensorSource(sensor) && (
-                    <a href={sensorSource(sensor)!} target="_blank" rel="noreferrer">
-                      Voir la fiche et le plan Standex ↗
-                    </a>
-                  )}
-                </div>
-                {sensor.note && <p className="mw-help">{sensor.note}</p>}
-                {reference && (
-                  <label className="mw-select-label">
-                    Classe de sensibilité
-                    <select
-                      value={config.sensitivity}
-                      onChange={(e) =>
-                        update({ sensitivity: e.target.value as WorkshopConfig["sensitivity"] })
-                      }
-                    >
-                      {(["B", "C", "D", "E"] as const).map((x) => (
-                        <option key={x} value={x}>
-                          Classe {x}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                )}
-                <Range
-                  label="Orientation sur la machine"
-                  value={config.mountAngle}
-                  min={-180}
-                  max={180}
-                  step={15}
-                  unit="°"
-                  onChange={(mountAngle) => update({ mountAngle })}
-                />
-                <details>
-                  <summary>Position et environnement</summary>
-                  <Range
-                    label="Position X du montage"
-                    value={config.mountX}
-                    min={-25}
-                    max={25}
-                    unit=" mm"
-                    onChange={(mountX) => update({ mountX })}
-                  />
-                  <Range
-                    label="Position Z du montage"
-                    value={config.mountZ}
-                    min={-25}
-                    max={25}
-                    unit=" mm"
-                    onChange={(mountZ) => update({ mountZ })}
-                  />
-                  <p className="mw-help">
-                    Placement géométrique en millimètres. Cette rotation déplace ensemble le capteur
-                    et la trajectoire.
-                  </p>
-                  <label className="mw-check">
-                    <input
-                      type="checkbox"
-                      checked={config.ferromagnetic}
-                      onChange={(e) => update({ ferromagnetic: e.target.checked })}
-                    />
-                    Acier ou autre matière ferromagnétique proche
-                  </label>
-                  <label className="mw-select-label">
-                    Température
-                    <select
-                      value={config.temperature}
-                      onChange={(e) =>
-                        update({ temperature: e.target.value as WorkshopConfig["temperature"] })
-                      }
-                    >
-                      <option value="ambient">Ambiante · exemple de référence</option>
-                      <option value="other">Autre température</option>
-                    </select>
-                  </label>
-                </details>
-                {!reference && (
-                  <Range
-                    label="Orientation propre du reed"
-                    value={config.sensorAngle}
-                    min={-180}
-                    max={180}
-                    step={15}
-                    unit="°"
-                    onChange={(sensorAngle) => update({ sensorAngle })}
-                  />
-                )}
-              </>
-            )}
-            {step === 1 && (
-              <>
-                <h2>Placez l'aimant</h2>
-                <div className="mw-product">
-                  <span className="mw-product-icon">
-                    <Magnet size={25} />
-                  </span>
-                  <div>
-                    <strong>{reference ? "M02 Standex" : "Aimant générique"}</strong>
-                    <span>
-                      {reference
-                        ? "Actionneur de la table de référence"
-                        : "Modèle idéal de dipôle dans l'air"}
-                    </span>
-                  </div>
-                </div>
-                {reference ? (
+                ))}
+              </nav>
+              <div className="mw-step-body">
+                {step === 0 && (
                   <>
+                    <h2>Installez le capteur</h2>
+                    <p className="mw-help">
+                      Le plan quadrillé représente le repère de votre machine.
+                    </p>
+                    <div className="mw-selected-sensor">
+                      <svg viewBox="-38 -17 76 34" aria-hidden="true">
+                        <SensorPlan model={sensor} xray={false} />
+                      </svg>
+                      <strong>
+                        {reference ? `MK03-1A66${config.sensitivity}-500W` : sensor.name}
+                      </strong>
+                      <span>{sizeLabel(sensor)}</span>
+                      <button
+                        className="mw-button mw-secondary mw-wide"
+                        onClick={() => setCatalogOpen(true)}
+                      >
+                        Choisir dans le catalogue
+                      </button>
+                      {sensorSource(sensor) && (
+                        <a href={sensorSource(sensor)!} target="_blank" rel="noreferrer">
+                          Voir la fiche et le plan Standex ↗
+                        </a>
+                      )}
+                    </div>
+                    {sensor.note && <p className="mw-help">{sensor.note}</p>}
+                    {reference && (
+                      <label className="mw-select-label">
+                        Classe de sensibilité
+                        <select
+                          value={config.sensitivity}
+                          onChange={(e) =>
+                            update({ sensitivity: e.target.value as WorkshopConfig["sensitivity"] })
+                          }
+                        >
+                          {(["B", "C", "D", "E"] as const).map((x) => (
+                            <option key={x} value={x}>
+                              Classe {x}
+                            </option>
+                          ))}
+                        </select>
+                      </label>
+                    )}
+                    <Range
+                      label="Orientation sur la machine"
+                      value={config.mountAngle}
+                      min={-180}
+                      max={180}
+                      step={15}
+                      unit="°"
+                      onChange={(mountAngle) => update({ mountAngle })}
+                    />
+                    <details>
+                      <summary>Position et environnement</summary>
+                      <Range
+                        label="Position X du montage"
+                        value={config.mountX}
+                        min={-25}
+                        max={25}
+                        unit=" mm"
+                        onChange={(mountX) => update({ mountX })}
+                      />
+                      <Range
+                        label="Position Z du montage"
+                        value={config.mountZ}
+                        min={-25}
+                        max={25}
+                        unit=" mm"
+                        onChange={(mountZ) => update({ mountZ })}
+                      />
+                      <p className="mw-help">
+                        Placement géométrique en millimètres. Cette rotation déplace ensemble le
+                        capteur et la trajectoire.
+                      </p>
+                      <label className="mw-check">
+                        <input
+                          type="checkbox"
+                          checked={config.ferromagnetic}
+                          onChange={(e) => update({ ferromagnetic: e.target.checked })}
+                        />
+                        Acier ou autre matière ferromagnétique proche
+                      </label>
+                      <label className="mw-select-label">
+                        Température
+                        <select
+                          value={config.temperature}
+                          onChange={(e) =>
+                            update({ temperature: e.target.value as WorkshopConfig["temperature"] })
+                          }
+                        >
+                          <option value="ambient">Ambiante · exemple de référence</option>
+                          <option value="other">Autre température</option>
+                        </select>
+                      </label>
+                    </details>
+                    {!reference && (
+                      <Range
+                        label="Orientation propre du reed"
+                        value={config.sensorAngle}
+                        min={-180}
+                        max={180}
+                        step={15}
+                        unit="°"
+                        onChange={(sensorAngle) => update({ sensorAngle })}
+                      />
+                    )}
+                  </>
+                )}
+                {step === 1 && (
+                  <>
+                    <h2>Placez l'aimant</h2>
+                    <div className="mw-product">
+                      <span className="mw-product-icon">
+                        <Magnet size={25} />
+                      </span>
+                      <div>
+                        <strong>
+                          {config.magnetModel === "M02"
+                            ? "M02 · enveloppe Standex"
+                            : "Aimant fictif"}
+                        </strong>
+                        <span>
+                          {reference
+                            ? "Actionneur de la table de référence"
+                            : "Modèle idéal de dipôle dans l'air"}
+                        </span>
+                      </div>
+                    </div>
                     <label className="mw-select-label">
-                      Approche documentée
+                      Approche du capteur
                       <select
                         value={config.geometry}
-                        onChange={(e) =>
-                          update({ geometry: e.target.value as WorkshopConfig["geometry"] })
-                        }
+                        onChange={(e) => update({ geometry: e.target.value as "D1" | "D3" })}
                       >
-                        <option value="D1">D1 · face au centre, axes parallèles</option>
-                        <option value="D3">D3 · par l'extrémité, axes parallèles</option>
+                        <option value="D1">D1 · face au centre</option>
+                        <option value="D3">D3 · par l'extrémité</option>
                       </select>
                     </label>
                     <p className="mw-help">
-                      L'orientation relative reste celle de la figure Standex. L'enveloppe du M02
-                      mesure 32,4 × 16,7 × 10 mm. Les couleurs N/S illustrent les pôles ; leur
-                      emplacement interne n'est pas caractérisé ici.
+                      {reference
+                        ? "Table Standex, axes parallèles. Modifier l'orientation passe en démonstration fictive."
+                        : "La position du boîtier et l'axe Nord–Sud sont réglables séparément. Les distances restent fictives."}
                     </p>
-                    <a href={DISTANCE_SOURCE} target="_blank" rel="noreferrer">
-                      Voir le montage de référence ↗
-                    </a>
-                    <div className="mw-source-values">
-                      <span>
-                        Enclenchement typique<strong>{pull} mm</strong>
-                      </span>
-                      <span>
-                        Relâchement typique<strong>{drop} mm</strong>
-                      </span>
+                    <div className="mw-orientation-presets">
+                      <button
+                        onClick={() =>
+                          orientMagnet({
+                            magnetAngle: config.sensorAngle,
+                            magnetTilt: 0,
+                            magnetization: "axial",
+                            lateralShift: 0,
+                          })
+                        }
+                      >
+                        N–S parallèle au reed
+                      </button>
+                      <button
+                        onClick={() =>
+                          orientMagnet({
+                            magnetAngle: ((config.sensorAngle + 270) % 360) - 180,
+                            magnetTilt: 0,
+                            magnetization: "axial",
+                            lateralShift: 0,
+                          })
+                        }
+                      >
+                        Tourner l'aimant de 90°
+                      </button>
+                      <button
+                        onClick={() =>
+                          orientMagnet({
+                            magnetAngle: ((config.sensorAngle + 270) % 360) - 180,
+                            lateralShift: 15,
+                            demoReach: 40,
+                            magnetTilt: 0,
+                            magnetization: "axial",
+                          })
+                        }
+                      >
+                        Explorer un lobe décalé
+                      </button>
                     </div>
-                  </>
-                ) : (
-                  <>
                     <Range
-                      label="Orientation de l'aimant"
+                      label="Rotation du boîtier aimant"
                       value={config.magnetAngle}
                       min={-180}
                       max={180}
                       step={15}
                       unit="°"
-                      onChange={(magnetAngle) => update({ magnetAngle })}
+                      onChange={(magnetAngle) => orientMagnet({ magnetAngle })}
+                    />
+                    <Range
+                      label="Inclinaison hors du plan"
+                      value={config.magnetTilt}
+                      min={-180}
+                      max={180}
+                      step={15}
+                      unit="°"
+                      onChange={(magnetTilt) => orientMagnet({ magnetTilt })}
                     />
                     <label className="mw-select-label">
-                      Direction d'aimantation
+                      Axe Nord–Sud dans l'aimant
                       <select
                         value={config.magnetization}
                         onChange={(e) =>
-                          update({
+                          orientMagnet({
                             magnetization: e.target.value as WorkshopConfig["magnetization"],
                           })
                         }
                       >
-                        <option value="axial">Axiale · pôles aux extrémités</option>
-                        <option value="diametral">Diamétrale · pôles sur les côtés</option>
+                        <option value="axial">Longueur · aux extrémités</option>
+                        <option value="diametral">Largeur · sur les côtés</option>
+                        <option value="thickness">Épaisseur · dessus / dessous</option>
                       </select>
                     </label>
                     <button
                       className="mw-button mw-secondary mw-wide"
-                      onClick={() => update({ polarity: config.polarity === 1 ? -1 : 1 })}
+                      onClick={() => orientMagnet({ polarity: config.polarity === 1 ? -1 : 1 })}
                     >
                       Inverser les pôles N / S
                     </button>
-                    <p className="mw-help">
-                      Sur ce reed normalement ouvert idéal, inverser les deux pôles ne change pas
-                      l'état calculé. Cette règle ne décrit pas les capteurs polarisés ou bistables.
-                    </p>
-                  </>
-                )}
-              </>
-            )}
-            {step === 2 && (
-              <>
-                <h2>Définissez le mouvement</h2>
-                <label className="mw-select-label">
-                  Trajectoire
-                  <select
-                    value={reference ? "approach" : config.motion}
-                    disabled={reference}
-                    onChange={(e) => update({ motion: e.target.value as WorkshopConfig["motion"] })}
-                  >
-                    {Object.entries(motionLabels).map(([v, l]) => (
-                      <option key={v} value={v}>
-                        {l}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-                {reference || config.motion === "approach" ? (
-                  <>
-                    <Range
-                      label="Distance au départ"
-                      value={config.start}
-                      min={2}
-                      max={60}
-                      step={0.5}
-                      unit={unit}
-                      onChange={(start) => update({ start })}
-                    />
-                    <Range
-                      label="Distance au plus proche"
-                      value={config.end}
-                      min={1}
-                      max={59}
-                      step={0.5}
-                      unit={unit}
-                      onChange={(end) => update({ end })}
-                    />
-                  </>
-                ) : (
-                  <>
-                    <Range
-                      label={config.motion === "slide" ? "Décalage du passage" : "Rayon du pivot"}
-                      value={config.offset}
-                      min={6}
-                      max={30}
-                      step={0.5}
-                      unit=" mm"
-                      onChange={(offset) => update({ offset })}
-                    />
-                    {config.motion === "slide" ? (
+                    {!reference && (
                       <Range
-                        label="Demi-course latérale"
-                        value={config.travel}
-                        min={10}
+                        label="Décalage par rapport au centre"
+                        value={config.lateralShift}
+                        min={-50}
                         max={50}
                         unit=" mm"
-                        onChange={(travel) => update({ travel })}
+                        onChange={(lateralShift) => update({ lateralShift })}
                       />
-                    ) : (
-                      <Range
-                        label="Angle du pivot"
-                        value={config.span}
-                        min={30}
-                        max={300}
-                        step={10}
-                        unit="°"
-                        onChange={(span) => update({ span })}
-                      />
+                    )}
+                    <p className="mw-help">
+                      Une rotation de 90° change le couplage et les lobes. Inverser N/S seul ne
+                      change pas l'activation d'un reed Form A non polarisé. Un axe mal placé peut
+                      laisser le contact ouvert.
+                    </p>
+                    <a href={INTERACTION_SOURCE} target="_blank" rel="noreferrer">
+                      Comprendre avec les schémas Standex ↗
+                    </a>
+                    {reference && (
+                      <div className="mw-source-values">
+                        <span>
+                          Enclenchement typique<strong>{pull} mm</strong>
+                        </span>
+                        <span>
+                          Relâchement typique<strong>{drop} mm</strong>
+                        </span>
+                      </div>
                     )}
                   </>
                 )}
-                <details>
-                  <summary>Comportement recherché</summary>
-                  <p className="mw-help">
-                    Je souhaite que le contact soit fermé sur cette portion du cycle aller-retour.
-                  </p>
-                  <Range
-                    label="Début de la fenêtre souhaitée"
-                    value={config.targetStart}
-                    min={0}
-                    max={config.targetEnd - 1}
-                    unit=" %"
-                    onChange={(targetStart) => update({ targetStart })}
-                  />
-                  <Range
-                    label="Fin de la fenêtre souhaitée"
-                    value={config.targetEnd}
-                    min={config.targetStart + 1}
-                    max={100}
-                    unit=" %"
-                    onChange={(targetEnd) => update({ targetEnd })}
-                  />
-                  <label className="mw-select-label">
-                    État initial du contact
-                    <select
-                      value={config.initialContact}
-                      onChange={(e) => update({ initialContact: e.target.value as Contact })}
-                    >
-                      <option value="unknown">Inconnu</option>
-                      <option value="open">Ouvert</option>
-                      <option value="closed">Fermé</option>
-                    </select>
-                  </label>
-                </details>
-                <p className="mw-help">
-                  La lecture est ralentie pour comprendre le montage. Elle ne valide ni la cadence,
-                  ni les rebonds du contact.
-                </p>
-              </>
-            )}
-          </div>
-          <div className="mw-step-footer">
-            <span>Étape {step + 1} sur 3</span>
-            {step < 2 ? (
-              <button onClick={() => setStep(step + 1)}>
-                Continuer
-                <ArrowRight size={16} />
-              </button>
-            ) : (
-              <button
-                onClick={() => {
-                  setProgress(0);
-                  setPlaying(true);
-                }}
-              >
-                Voir le cycle
-                <Play size={15} />
-              </button>
-            )}
-          </div>
-          <details className="mw-file-tools">
-            <summary>Reprendre un montage</summary>
-            <button className="mw-text-button" onClick={() => fileRef.current?.click()}>
-              Importer un fichier de montage
-            </button>
-            <input
-              hidden
-              ref={fileRef}
-              type="file"
-              accept=".json,application/json"
-              onChange={(e) => void importFile(e.target.files?.[0])}
-            />
-          </details>
+                {step === 2 && (
+                  <>
+                    <h2>Définissez le mouvement</h2>
+                    <label className="mw-select-label">
+                      Trajectoire
+                      <select
+                        value={reference ? "approach" : config.motion}
+                        disabled={reference}
+                        onChange={(e) =>
+                          update({ motion: e.target.value as WorkshopConfig["motion"] })
+                        }
+                      >
+                        {Object.entries(motionLabels).map(([v, l]) => (
+                          <option key={v} value={v}>
+                            {l}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                    {reference || config.motion === "approach" ? (
+                      <>
+                        <Range
+                          label="Distance au départ"
+                          value={config.start}
+                          min={2}
+                          max={60}
+                          step={0.5}
+                          unit={unit}
+                          onChange={(start) => update({ start })}
+                        />
+                        <Range
+                          label="Distance au plus proche"
+                          value={config.end}
+                          min={1}
+                          max={59}
+                          step={0.5}
+                          unit={unit}
+                          onChange={(end) => update({ end })}
+                        />
+                      </>
+                    ) : (
+                      <>
+                        <Range
+                          label={
+                            config.motion === "slide" ? "Décalage du passage" : "Rayon du pivot"
+                          }
+                          value={config.offset}
+                          min={6}
+                          max={30}
+                          step={0.5}
+                          unit=" mm"
+                          onChange={(offset) => update({ offset })}
+                        />
+                        {config.motion === "slide" ? (
+                          <Range
+                            label="Demi-course latérale"
+                            value={config.travel}
+                            min={10}
+                            max={50}
+                            unit=" mm"
+                            onChange={(travel) => update({ travel })}
+                          />
+                        ) : (
+                          <Range
+                            label="Angle du pivot"
+                            value={config.span}
+                            min={30}
+                            max={300}
+                            step={10}
+                            unit="°"
+                            onChange={(span) => update({ span })}
+                          />
+                        )}
+                      </>
+                    )}
+                    <details>
+                      <summary>Comportement recherché</summary>
+                      <p className="mw-help">
+                        Je souhaite que le contact soit fermé sur cette portion du cycle
+                        aller-retour.
+                      </p>
+                      <Range
+                        label="Début de la fenêtre souhaitée"
+                        value={config.targetStart}
+                        min={0}
+                        max={config.targetEnd - 1}
+                        unit=" %"
+                        onChange={(targetStart) => update({ targetStart })}
+                      />
+                      <Range
+                        label="Fin de la fenêtre souhaitée"
+                        value={config.targetEnd}
+                        min={config.targetStart + 1}
+                        max={100}
+                        unit=" %"
+                        onChange={(targetEnd) => update({ targetEnd })}
+                      />
+                      <label className="mw-select-label">
+                        État initial du contact
+                        <select
+                          value={config.initialContact}
+                          onChange={(e) => update({ initialContact: e.target.value as Contact })}
+                        >
+                          <option value="unknown">Inconnu</option>
+                          <option value="open">Ouvert</option>
+                          <option value="closed">Fermé</option>
+                        </select>
+                      </label>
+                    </details>
+                    <p className="mw-help">
+                      La lecture est ralentie pour comprendre le montage. Elle ne valide ni la
+                      cadence, ni les rebonds du contact.
+                    </p>
+                  </>
+                )}
+              </div>
+              <div className="mw-step-footer">
+                <span>Étape {step + 1} sur 3</span>
+                {step < 2 ? (
+                  <button onClick={() => setStep(step + 1)}>
+                    Continuer
+                    <ArrowRight size={16} />
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => {
+                      setProgress(0);
+                      setPlaying(true);
+                    }}
+                  >
+                    Voir le cycle
+                    <Play size={15} />
+                  </button>
+                )}
+              </div>
+              <details className="mw-file-tools">
+                <summary>Reprendre un montage</summary>
+                <button className="mw-text-button" onClick={() => fileRef.current?.click()}>
+                  Importer un fichier de montage
+                </button>
+                <input
+                  hidden
+                  ref={fileRef}
+                  type="file"
+                  accept=".json,application/json"
+                  onChange={(e) => void importFile(e.target.files?.[0])}
+                />
+              </details>
+            </>
+          )}
         </aside>
         <section className="mw-visual-column" aria-label="Simulation du montage">
           <div className="mw-scene-card">
             <div className="mw-scene-toolbar">
               <span className={reference ? "mw-kind" : "mw-kind education"}>
-                {reference ? "Référence Standex · valeurs typiques" : "Exploration pédagogique"}
+                {reference
+                  ? "Référence Standex · valeurs typiques"
+                  : "Démonstration · distances fictives"}
               </span>
               <div className="mw-view-switch">
-                <button aria-pressed={view === "3d"} onClick={() => setView("3d")}>
+                <button aria-pressed={view === "3d"} onClick={request3d}>
                   3D
                 </button>
                 <button aria-pressed={view === "top"} onClick={() => setView("top")}>
@@ -681,9 +924,50 @@ export default function MagneticWorkshop({
             <div
               className="mw-canvas"
               role="img"
-              aria-label={`Montage ${reference ? config.geometry : motionLabels[config.motion]}. ${contactLabel[sample.contact]}.`}
+              aria-label={`Montage ${machine ? machine.fileName : reference ? config.geometry : motionLabels[config.motion]}. ${contactLabel[sample.contact]}.`}
             >
-              {view === "top" ? (
+              {machine ? (
+                assetError ? (
+                  <div className="mw-loading" role="alert">
+                    {assetError}
+                  </div>
+                ) : !machineAsset ? (
+                  <div className="mw-loading">Chargement du fichier 3D…</div>
+                ) : sceneError ? (
+                  <div className="mw-loading">
+                    La 3D a été interrompue. Utilisez le bouton 3D pour la relancer.
+                  </div>
+                ) : (
+                  <SceneBoundary
+                    key={"machine:" + resetEpoch}
+                    onError={failed3d}
+                    fallback={<div className="mw-loading">La scène 3D a été interrompue.</div>}
+                  >
+                    <Suspense
+                      fallback={<div className="mw-loading">Préparation de la machine…</div>}
+                    >
+                      <MachineScene
+                        asset={machineAsset}
+                        config={config}
+                        sample={sample}
+                        view={view}
+                        focus={focus}
+                        resetEpoch={resetEpoch}
+                        tool={tool}
+                        transformMode={transformMode}
+                        showMachine={showMachine}
+                        showSpace={showSpace}
+                        xray={xray}
+                        reduced={reduced}
+                        onChange={machineChange}
+                        onMeasure={setMeasure}
+                        onPlaced={() => setTool("navigate")}
+                        onContextLost={failed3d}
+                      />
+                    </Suspense>
+                  </SceneBoundary>
+                )
+              ) : view === "top" ? (
                 <FlatScene
                   config={config}
                   sample={sample}
@@ -695,6 +979,8 @@ export default function MagneticWorkshop({
                 />
               ) : (
                 <SceneBoundary
+                  key={resetEpoch}
+                  onError={failed3d}
                   fallback={
                     <div className="mw-fallback">
                       <p>La 3D n'est pas disponible. Le cycle reste consultable en vue plane.</p>
@@ -715,6 +1001,8 @@ export default function MagneticWorkshop({
                   >
                     <Scene
                       config={config}
+                      resetEpoch={resetEpoch}
+                      onContextLost={failed3d}
                       sample={sample}
                       samples={result.samples}
                       view={view}
@@ -742,28 +1030,68 @@ export default function MagneticWorkshop({
                   : "Vue plane · même montage et même calcul"}
               </p>
             </div>
+            {sceneError && !machine && (
+              <p className="mw-demo-note">
+                Repli en vue plane après interruption de la 3D. Le bouton 3D permet de réessayer.
+              </p>
+            )}
+            {machine && (
+              <div className="mw-layers">
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={showMachine}
+                    onChange={(e) => setShowMachine(e.target.checked)}
+                  />
+                  Boîtier opaque
+                </label>
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={showSpace}
+                    onChange={(e) => setShowSpace(e.target.checked)}
+                  />
+                  Gabarit disponible
+                </label>
+                <label>
+                  Manipulation
+                  <select
+                    aria-label="Manipulation 3D"
+                    value={transformMode}
+                    onChange={(e) => setTransformMode(e.target.value as "translate" | "rotate")}
+                  >
+                    <option value="translate">Déplacer</option>
+                    <option value="rotate">Tourner</option>
+                  </select>
+                </label>
+              </div>
+            )}
             <div className="mw-layers">
               <label>
                 <input type="checkbox" checked={xray} onChange={(e) => setXray(e.target.checked)} />
                 Voir les contacts
               </label>
-              <label>
-                <input
-                  type="checkbox"
-                  checked={dimensions}
-                  onChange={(e) => setDimensions(e.target.checked)}
-                />
-                Dimensions
-              </label>
-              <label>
-                <input
-                  type="checkbox"
-                  checked={zones}
-                  onChange={(e) => setZones(e.target.checked)}
-                />
-                Colorer le parcours
-              </label>
-              {!reference && (
+              {!machine && (
+                <>
+                  <label>
+                    <input
+                      type="checkbox"
+                      checked={dimensions}
+                      onChange={(e) => setDimensions(e.target.checked)}
+                    />
+                    Dimensions
+                  </label>
+                  <label>
+                    <input
+                      type="checkbox"
+                      checked={zones}
+                      onChange={(e) => setZones(e.target.checked)}
+                    />
+                    Colorer le parcours
+                  </label>
+                </>
+              )}
+              {!reference && !machine && (
                 <label>
                   <input
                     type="checkbox"
@@ -781,16 +1109,59 @@ export default function MagneticWorkshop({
                 {focus === "assembly" ? "Zoom sur le capteur" : "Voir tout le montage"}
               </button>
               <span>
-                Quadrillage : 5 mm · Vert : fermé · Gris : ouvert · Ocre : indéterminé · Contacts
+                Quadrillage : {machine ? "10" : "5"} mm · Vert : fermé · Gris : ouvert · Contacts
                 internes symboliques
               </span>
             </div>
           </div>
+          {!reference && (
+            <details className="mw-demo-settings" open={!machine}>
+              <summary>Distances fictives · réglages de démonstration</summary>
+              <p>
+                Les matériaux et la température n'interviennent pas dans ce calcul.{" "}
+                {sensor.id === "MK02"
+                  ? "Le MK02 est représenté avec un contact Form A fictif : son mécanisme ferreux réel n'est pas simulé."
+                  : ""}
+              </p>
+              <Range
+                label="Échelle du champ fictif"
+                value={config.demoReach}
+                min={5}
+                max={100}
+                unit=" mm"
+                onChange={(demoReach) => update({ demoReach })}
+              />
+              {machine && (
+                <>
+                  <label className="mw-select-label">
+                    Axe Nord–Sud de l'aimant
+                    <select
+                      value={config.magnetization}
+                      onChange={(e) =>
+                        update({ magnetization: e.target.value as WorkshopConfig["magnetization"] })
+                      }
+                    >
+                      <option value="axial">Longueur X</option>
+                      <option value="diametral">Largeur Z</option>
+                      <option value="thickness">Épaisseur Y</option>
+                    </select>
+                  </label>
+                  <button
+                    className="mw-text-button"
+                    onClick={() => update({ polarity: config.polarity === 1 ? -1 : 1 })}
+                  >
+                    Inverser N / S
+                  </button>
+                </>
+              )}
+            </details>
+          )}
           <ContactIndicator contact={sample.contact} />
           <div className="mw-playback">
             <div className="mw-play-controls">
               <button
                 className="mw-play"
+                disabled={!machineReady}
                 aria-label={playing ? "Mettre en pause" : "Lire le cycle"}
                 onClick={() => {
                   if (progress >= 1) setProgress(0);
@@ -810,11 +1181,15 @@ export default function MagneticWorkshop({
                 <RotateCcw size={17} />
               </button>
               <div>
-                <strong>Un cycle complet</strong>
+                <strong>{machine ? "Ouvrir et refermer la pièce" : "Un cycle complet"}</strong>
                 <span>Aller → retour · lecture pédagogique</span>
               </div>
               <output>
-                {reference ? `${sample.distance.toFixed(1)} mm` : `${Math.round(progress * 100)} %`}
+                {machine
+                  ? `${Math.round((progress <= 0.5 ? progress * 2 : (1 - progress) * 2) * 100)} % ouvert`
+                  : reference
+                    ? `${sample.distance.toFixed(1)} mm`
+                    : `${Math.round(progress * 100)} %`}
               </output>
             </div>
             <div className="mw-timeline" aria-hidden="true">
@@ -827,6 +1202,7 @@ export default function MagneticWorkshop({
             </div>
             <input
               className="mw-scrubber"
+              disabled={!machineReady}
               aria-label="Position dans le cycle"
               type="range"
               min="0"
@@ -838,21 +1214,23 @@ export default function MagneticWorkshop({
                 setProgress(Number(e.target.value) / 100);
               }}
             />
-            <div
-              className="mw-target-track"
-              aria-label={`Contact souhaité fermé entre ${config.targetStart} et ${config.targetEnd} pour cent du cycle`}
-            >
-              <span
-                style={{
-                  left: `${config.targetStart}%`,
-                  width: `${config.targetEnd - config.targetStart}%`,
-                }}
-              />
-            </div>
+            {!machine && (
+              <div
+                className="mw-target-track"
+                aria-label={`Contact souhaité fermé entre ${config.targetStart} et ${config.targetEnd} pour cent du cycle`}
+              >
+                <span
+                  style={{
+                    left: `${config.targetStart}%`,
+                    width: `${config.targetEnd - config.targetStart}%`,
+                  }}
+                />
+              </div>
+            )}
             <div className="mw-timeline-caption">
-              <span>Départ</span>
-              <span>Point de retour</span>
-              <span>Arrivée</span>
+              <span>{machine ? "Pièce fermée" : "Départ"}</span>
+              <span>{machine ? "Pièce ouverte" : "Point de retour"}</span>
+              <span>{machine ? "Pièce refermée" : "Arrivée"}</span>
             </div>
             <div className="mw-legend">
               <span>
@@ -863,14 +1241,18 @@ export default function MagneticWorkshop({
                 <i className="open" />
                 Ouvert
               </span>
-              <span>
-                <i className="unknown" />
-                Indéterminé
-              </span>
-              <span>
-                <i className="target" />
-                Fenêtre souhaitée
-              </span>
+              {reference && (
+                <span>
+                  <i className="unknown" />
+                  Indéterminé
+                </span>
+              )}
+              {!machine && (
+                <span>
+                  <i className="target" />
+                  Fenêtre souhaitée
+                </span>
+              )}
             </div>
           </div>
           <div className="mw-result">
@@ -886,6 +1268,14 @@ export default function MagneticWorkshop({
                     : "Ce que montre votre cycle"}
               </h2>
               <p>{statusMessage}</p>
+              {unknown && (
+                <button
+                  className="mw-button mw-secondary"
+                  onClick={() => update({ mode: "education", initialContact: "open" })}
+                >
+                  Animer avec des distances fictives
+                </button>
+              )}
               <div className="mw-event-chips">
                 {result.transitions
                   .filter((s) => s.contact !== "unknown")
@@ -913,7 +1303,11 @@ export default function MagneticWorkshop({
           {saved && !dirty
             ? `Montage enregistré dans ${storageLabel}.`
             : `Brouillon · utilisez « Joindre au dossier » pour enregistrer dans ${storageLabel}.`}{" "}
-          <a href={DISTANCE_SOURCE} target="_blank" rel="noreferrer">
+          <a
+            href={reference ? DISTANCE_SOURCE : INTERACTION_SOURCE}
+            target="_blank"
+            rel="noreferrer"
+          >
             Source Standex ↗
           </a>
         </p>
@@ -923,10 +1317,13 @@ export default function MagneticWorkshop({
           selected={config.sensorId}
           onClose={() => setCatalogOpen(false)}
           onSelect={(sensorId) => {
-            if (sensorId === "MK03") {
+            if (sensorId === "MK03" && !machine && reference) {
               update({
                 sensorId,
                 mode: "reference",
+                magnetModel: "M02",
+                magnetTilt: 0,
+                lateralShift: 0,
                 motion: "approach",
                 sensorAngle: 0,
                 magnetAngle: 0,

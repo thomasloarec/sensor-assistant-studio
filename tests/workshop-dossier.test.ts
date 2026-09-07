@@ -66,7 +66,7 @@ test("the generic example preserves prospect requirements and exports its limita
   ]);
   expect(after.fields).toEqual(before.fields);
   expect(after.remainingQuestions).toEqual(before.remainingQuestions);
-  expect(after.workshopSummary).toContain("non calibré");
+  expect(after.workshopSummary).toContain("Démonstration fictive");
   expect(after.workshopSummary).toContain("pivot");
 });
 

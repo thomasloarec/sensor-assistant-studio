@@ -87,8 +87,10 @@ describe("Education is explicit and cannot promote itself to calibrated data", (
       educationSignal({ ...c, magnetization: "diametral" }, [0, 0, 18], 0)!,
     );
   });
-  test("near-source signal is unknown, not zero or closed", () => {
-    expect(educationSignal(config({ mode: "education" }), [0, 0, 0], 0)).toBeNull();
+  test("fictitious near-source signal remains finite; unavailable reference still stays unknown", () => {
+    expect(Number.isFinite(educationSignal(config({ mode: "education" }), [0, 0, 0], 0))).toBe(
+      true,
+    );
     expect(switchContact("closed", null, 1, 0.72, true)).toBe("unknown");
   });
 });

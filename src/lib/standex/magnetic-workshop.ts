@@ -1,4 +1,4 @@
-/** Magnetic workshop V0.2. Geometry, field illustration and switching are separate.
+/** Magnetic workshop V0.3. Geometry, field illustration and switching are separate.
  * Reference distances are typical published values; education is NOT a product model.
  */
 import {
@@ -9,11 +9,18 @@ import {
   bladeLength,
   MAGNET_REFERENCE,
 } from "./sensor-catalog";
+import { parseMachine, componentPose, openingAt, rotate } from "./machine-assembly";
+import type { MachineAssembly } from "./machine-assembly";
 export type Vec3 = [number, number, number];
 export type Contact = "open" | "closed" | "unknown";
 export type Sensitivity = "B" | "C" | "D" | "E";
 export interface WorkshopConfig {
-  version: 2;
+  version: 3;
+  demoReach: number;
+  lateralShift: number;
+  magnetTilt: number;
+  magnetModel: "M02" | "generic";
+  machine: MachineAssembly | null;
   sensorId: string;
   mode: "reference" | "education";
   sensitivity: Sensitivity;
@@ -26,7 +33,7 @@ export interface WorkshopConfig {
   span: number;
   sensorAngle: number;
   magnetAngle: number;
-  magnetization: "axial" | "diametral";
+  magnetization: "axial" | "diametral" | "thickness";
   polarity: 1 | -1;
   mountAngle: number;
   mountX: number;
@@ -38,7 +45,12 @@ export interface WorkshopConfig {
   targetEnd: number;
 }
 export const DEFAULT_WORKSHOP: WorkshopConfig = {
-  version: 2,
+  version: 3,
+  demoReach: 25,
+  lateralShift: 0,
+  magnetTilt: 0,
+  magnetModel: "M02",
+  machine: null,
   sensorId: "MK03",
   mode: "reference",
   sensitivity: "B",
@@ -66,9 +78,9 @@ export const DISTANCE_SOURCE =
   "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/";
 export const INTERACTION_SOURCE =
   "https://standexdetect.com/resources/reed-technology-academy/magnet-interaction/";
-export const MODEL_VERSION = "magnetic-workshop-0.2.0";
+export const MODEL_VERSION = "magnetic-workshop-0.3.0";
 export const EDUCATION_NOTE =
-  "Géométrie en millimètres. Réponse du contact pédagogique, non calibrée pour le produit sélectionné : aucune portée réelle n'est prédite.";
+  "Démonstration fictive : dimensions des boîtiers en mm, champ et seuils choisis pour apprendre. Aucune portée réelle du produit n'est prédite.";
 export const REFERENCE_NOTE =
   "Distances typiques Standex pour le MK03 + M02 dans la configuration représentée. Enveloppes cotées ; contacts internes et pôles symboliques. À confirmer par essais dans votre application.";
 
@@ -94,18 +106,39 @@ export const subtract = (a: Vec3, b: Vec3): Vec3 => [a[0] - b[0], a[1] - b[1], a
 export function parseWorkshopConfig(value: unknown): WorkshopConfig | null {
   if (!value || typeof value !== "object") return null;
   const raw = value as Record<string, unknown>;
-  const x =
-    raw["version"] === 1
-      ? { ...raw, version: 2, sensorId: raw["mode"] === "reference" ? "MK03" : "GENERIC" }
-      : raw;
-  if (x["version"] !== 2) return null;
+  const legacy = raw["version"] === 1 || raw["version"] === 2;
+  const x: Record<string, unknown> = legacy
+    ? {
+        ...raw,
+        version: 3,
+        sensorId:
+          raw["version"] === 1
+            ? raw["mode"] === "reference"
+              ? "MK03"
+              : "GENERIC"
+            : raw["sensorId"],
+        demoReach: 25,
+        lateralShift: 0,
+        magnetTilt: 0,
+        magnetModel: raw["mode"] === "reference" ? "M02" : "generic",
+        machine: null,
+      }
+    : { ...raw };
+  if (x["version"] !== 3) return null;
+  if (x["machine"] !== null) {
+    const machine = parseMachine(x["machine"]);
+    if (!machine) return null;
+    x["machine"] = machine;
+  }
+  if (x["machine"] !== null && x["mode"] !== "education") return null;
   if (!SENSOR_CATALOG.some((s) => s.id === x["sensorId"])) return null;
   const choices: Record<string, readonly unknown[]> = {
     mode: ["reference", "education"],
     sensitivity: ["B", "C", "D", "E"],
     geometry: ["D1", "D3"],
     motion: ["approach", "slide", "pivot"],
-    magnetization: ["axial", "diametral"],
+    magnetization: ["axial", "diametral", "thickness"],
+    magnetModel: ["M02", "generic"],
     polarity: [1, -1],
     temperature: ["ambient", "other"],
     initialContact: ["open", "closed", "unknown"],
@@ -113,6 +146,9 @@ export function parseWorkshopConfig(value: unknown): WorkshopConfig | null {
   };
   for (const [k, values] of Object.entries(choices)) if (!values.includes(x[k])) return null;
   const bounds: Record<string, readonly [number, number]> = {
+    demoReach: [5, 100],
+    lateralShift: [-50, 50],
+    magnetTilt: [-180, 180],
     start: [1, 60],
     end: [1, 60],
     offset: [6, 30],
@@ -145,6 +181,10 @@ export function referenceAllowed(c: WorkshopConfig): boolean {
   return (
     c.mode === "reference" &&
     c.sensorId === "MK03" &&
+    c.machine === null &&
+    c.magnetModel === "M02" &&
+    c.magnetTilt === 0 &&
+    c.lateralShift === 0 &&
     c.motion === "approach" &&
     c.sensorAngle === 0 &&
     c.magnetAngle === 0 &&
@@ -155,6 +195,7 @@ export function referenceAllowed(c: WorkshopConfig): boolean {
   );
 }
 export function unavailableReason(c: WorkshopConfig): string | null {
+  if (c.mode === "education") return null;
   if (sensorById(c.sensorId).contact === "unsupported")
     return "Le MK02 détecte du métal ferreux avec un aimant intégré. Son activation n'est pas modélisée dans cet atelier à aimant externe.";
   if (c.ferromagnetic)
@@ -167,7 +208,7 @@ export function unavailableReason(c: WorkshopConfig): string | null {
 }
 
 export function magnetSize(c: WorkshopConfig): Vec3 {
-  return c.mode === "reference"
+  return c.magnetModel === "M02"
     ? [MAGNET_REFERENCE.length, MAGNET_REFERENCE.height, MAGNET_REFERENCE.width]
     : [12, 4, 6];
 }
@@ -175,10 +216,17 @@ export function magnetSize(c: WorkshopConfig): Vec3 {
 export function approachOffset(c: WorkshopConfig): number {
   const [l, , w] = sensorById(c.sensorId).body,
     [ml, , mw] = magnetSize(c);
-  if (c.mode === "reference" && c.geometry === "D3") return (l + ml) / 2;
-  const a = axis(c.sensorAngle),
-    m = axis(c.magnetAngle);
-  return (Math.abs(a[2]) * l + Math.abs(a[0]) * w + Math.abs(m[2]) * ml + Math.abs(m[0]) * mw) / 2;
+  const direction: Vec3 = c.geometry === "D3" ? [1, 0, 0] : [0, 0, 1];
+  const projected = (size: Vec3, rotation: Vec3) =>
+    size.reduce((sum, n, i) => {
+      const e: Vec3 = [0, 0, 0];
+      e[i] = 1;
+      return sum + (Math.abs(dot(rotate(e, rotation), direction)) * n) / 2;
+    }, 0);
+  return (
+    projected([l, sensorById(c.sensorId).body[1], w], [0, -c.sensorAngle, 0]) +
+    projected([ml, magnetSize(c)[1], mw], [0, -c.magnetAngle, c.magnetTilt])
+  );
 }
 /** Conservative X/Z oriented envelope intersection; all parts share the same Y plane. */
 export function bodiesOverlap(c: WorkshopConfig, position: Vec3, angle: number): boolean {
@@ -206,13 +254,23 @@ export function poseAt(
   const phase = clamp(t, 0, 1),
     u = phase <= 0.5 ? phase * 2 : (1 - phase) * 2;
   const distance = c.start + (c.end - c.start) * u;
-  if (c.mode === "reference")
+  if (c.machine) {
+    const m = componentPose(c.machine, "magnet", openingAt(phase)),
+      sensor = componentPose(c.machine, "sensor", openingAt(phase));
+    return {
+      position: m.position,
+      angle: 0,
+      distance: length(subtract(m.position, sensor.position)),
+      outward: phase > 0.5,
+    };
+  }
+  if (c.motion === "approach")
     return {
       position:
         c.geometry === "D1"
-          ? [0, 0, distance + approachOffset(c)]
-          : [distance + approachOffset(c), 0, 0],
-      angle: 0,
+          ? [c.lateralShift, 0, distance + approachOffset(c)]
+          : [distance + approachOffset(c), 0, c.lateralShift],
+      angle: c.magnetAngle,
       distance,
       outward: phase > 0.5,
     };
@@ -255,31 +313,40 @@ export function fieldAt(point: Vec3, magnet: Vec3, momentAxis: Vec3): Vec3 | nul
     k * (projection * r[2] - momentAxis[2]),
   ];
 }
+export const poleAxis = (c: WorkshopConfig): Vec3 =>
+  c.magnetization === "thickness"
+    ? [0, 1, 0]
+    : c.magnetization === "diametral"
+      ? [0, 0, 1]
+      : [1, 0, 0];
 export function momentFor(c: WorkshopConfig, angle: number): Vec3 {
-  return axis(angle + (c.magnetization === "diametral" ? 90 : 0)).map(
-    (v) => v * c.polarity,
-  ) as Vec3;
+  return rotate(poleAxis(c), [0, -angle, c.magnetTilt]).map((v) => v * c.polarity) as Vec3;
 }
-/** Pedagogical response proxy: average longitudinal field, seven samples along a generic
- * reed. It does not model the ferromagnetic blades, their force or calibrated sensitivity.
- */
-export function educationSignal(c: WorkshopConfig, position: Vec3, angle: number): number | null {
-  if (bodiesOverlap(c, position, angle)) return null;
-  const a = axis(c.sensorAngle),
-    m = momentFor(c, angle);
-  const sensor = sensorById(c.sensorId),
-    z = axis(c.sensorAngle + 90),
-    offset = bladeOffsetZ(sensor),
-    step = bladeLength(sensor) / 6;
+/** Softened, finite illustrative dipole. Strength is chosen by demoReach, never fitted to a product.
+ * Its longitudinal projection retains directional nulls and off-axis lobes. */
+export function demoField(point: Vec3, magnet: Vec3, moment: Vec3, reach: number): Vec3 {
+  const r = subtract(point, magnet),
+    d2 = dot(r, r) + 16,
+    k = reach ** 3 / d2 ** 1.5,
+    projection = (3 * dot(moment, r)) / d2;
+  return r.map((v, i) => k * (projection * v - moment[i]!)) as Vec3;
+}
+export function educationSignal(c: WorkshopConfig, position: Vec3, angle: number, t = 0): number {
+  const model = sensorById(c.sensorId),
+    u = openingAt(t);
+  const sensor = c.machine
+    ? componentPose(c.machine, "sensor", u)
+    : { position: [0, 0, 0] as Vec3, transform: (v: Vec3) => rotate(v, [0, -c.sensorAngle, 0]) };
+  const magnet = c.machine ? componentPose(c.machine, "magnet", u) : null;
+  const a = sensor.transform([1, 0, 0]),
+    m = magnet
+      ? (magnet.transform(poleAxis(c)).map((v) => v * c.polarity) as Vec3)
+      : momentFor(c, angle);
   let sum = 0;
   for (let i = -3; i <= 3; i++) {
-    const b = fieldAt(
-      [a[0] * i * step + z[0] * offset, 0, a[2] * i * step + z[2] * offset],
-      position,
-      m,
-    );
-    if (!b) return null;
-    sum += dot(b, a);
+    const local = sensor.transform([(i * bladeLength(model)) / 6, 0, bladeOffsetZ(model)]);
+    const p = local.map((v, j) => v + sensor.position[j]!) as Vec3;
+    sum += dot(demoField(p, position, m, c.demoReach), a);
   }
   return Math.abs(sum / 7);
 }
@@ -325,7 +392,10 @@ export function simulateCycle(c: WorkshopConfig, steps = 600): CycleResult {
     [pull, drop] = MK03_DISTANCES[c.sensitivity][c.geometry];
   const samples: CycleSample[] = [],
     transitions: CycleResult["transitions"] = [];
-  let contact = c.initialContact,
+  let contact =
+      c.mode === "education" && c.initialContact === "unknown"
+        ? ("open" as Contact)
+        : c.initialContact,
     closures = 0,
     releases = 0;
   for (let i = 0; i <= steps; i++) {
@@ -335,7 +405,7 @@ export function simulateCycle(c: WorkshopConfig, steps = 600): CycleResult {
       ? null
       : c.mode === "reference"
         ? pose.distance
-        : educationSignal(c, pose.position, pose.angle);
+        : educationSignal(c, pose.position, pose.angle, t);
     const next = switchContact(
       contact,
       signal,
@@ -374,17 +444,37 @@ export function summarizeWorkshop(c: WorkshopConfig): string {
   const setup =
     c.mode === "reference"
       ? `MK03-1A66${c.sensitivity}-500W + M02 ; approche ${c.geometry}, axes parallèles.`
-      : `${sensorById(c.sensorId).name} · réponse pédagogique ; ${c.motion === "slide" ? "passage latéral" : c.motion === "pivot" ? "pivot" : "approche"} ; axe reed ${c.sensorAngle}°, aimant ${c.magnetAngle}°, aimantation ${c.magnetization === "axial" ? "axiale" : "diamétrale"}, polarité ${c.polarity === 1 ? "N/S" : "S/N"}.`;
+      : c.machine
+        ? `${sensorById(c.sensorId).name} · DÉMONSTRATION FICTIVE dans ${c.machine.fileName} ; axe Nord–Sud local ${c.magnetization === "axial" ? "X" : c.magnetization === "thickness" ? "Y" : "Z"}, polarité ${c.polarity === 1 ? "N/S" : "S/N"}.`
+        : `${sensorById(c.sensorId).name} · DÉMONSTRATION FICTIVE ; ${c.machine ? "intégration dans une machine" : c.motion === "slide" ? "passage latéral" : c.motion === "pivot" ? "pivot" : "approche " + c.geometry} ; axe reed ${c.sensorAngle}°, aimant ${c.magnetAngle}°, aimantation ${c.magnetization === "axial" ? "axiale" : c.magnetization === "thickness" ? "épaisseur" : "transversale"}, polarité ${c.polarity === 1 ? "N/S" : "S/N"}.`;
   return [
     "Montage de l'atelier magnétique",
     setup,
+    ...(c.mode === "education"
+      ? [
+          `Échelle de champ fictive : ${c.demoReach} mm${c.machine ? "" : ` ; inclinaison ${c.magnetTilt}° ; décalage ${c.lateralShift} mm`}. Environnement et matériaux non simulés.`,
+        ]
+      : []),
+    ...(c.machine
+      ? [
+          `Fichier 3D : ${c.machine.fileName} (${c.machine.assetKey}). Géométrie importée conservée dans le navigateur ; à réimporter sur un autre poste. Pièce mobile : ${c.machine.movingNode}.`,
+          `Capteur : ${c.machine.sensorPosition.join(", ")} mm ; rotation ${c.machine.sensorRotation.join(", ")}°. Aimant : ${c.machine.magnetPosition.join(", ")} mm ; rotation ${c.machine.magnetRotation.join(", ")}°.`,
+          `Mouvement : ${c.machine.motion}, déplacement ${c.machine.travel.join(", ")} mm, pivot ${c.machine.pivot.join(", ")} mm, axe ${c.machine.rotationAxis}, angle ${c.machine.openingAngle}°.`,
+        ]
+      : []),
     `Boîtier : ${sizeLabel(sensorById(c.sensorId))}. Contacts internes schématiques, position non caractérisée.`,
-    `Repère machine : rotation ${c.mountAngle}°, position (${c.mountX}, ${c.mountZ}) mm.`,
-    c.mode === "reference"
-      ? `Entrefer de ${c.start} à ${c.end} mm, puis retour. Seuils typiques : fermeture ${pull} mm, ouverture ${drop} mm.`
-      : `Course de ${c.start} à ${c.end}, décalage/rayon ${c.offset}, demi-course latérale ${c.travel} mm, angle de pivot ${c.span}°. Dimensions géométriques, pas de portée validée.`,
-    `Contact souhaité fermé entre ${c.targetStart} et ${c.targetEnd} % du cycle.`,
-    `État initial : ${c.initialContact === "unknown" ? "inconnu" : c.initialContact === "closed" ? "fermé" : "ouvert"}. Matière ferromagnétique : ${c.ferromagnetic ? "oui" : "non déclarée"}. Température : ${c.temperature === "ambient" ? "ambiante" : "autre"}.`,
+    ...(c.machine
+      ? []
+      : [`Repère du plan : rotation ${c.mountAngle}°, position (${c.mountX}, ${c.mountZ}) mm.`]),
+    c.machine
+      ? `Supports : capteur ${c.machine.sensorMount}, aimant ${c.machine.magnetMount}. Échelle import : ×${c.machine.unitScale} vers mm. Gabarit déclaré : ${c.machine.space.join(" × ")} mm.`
+      : c.mode === "reference"
+        ? `Entrefer de ${c.start} à ${c.end} mm, puis retour. Seuils typiques : fermeture ${pull} mm, ouverture ${drop} mm.`
+        : `Course de ${c.start} à ${c.end}, décalage/rayon ${c.offset}, demi-course latérale ${c.travel} mm, angle de pivot ${c.span}°. Dimensions géométriques, pas de portée validée.`,
+    ...(c.machine
+      ? []
+      : [`Contact souhaité fermé entre ${c.targetStart} et ${c.targetEnd} % du cycle.`]),
+    `État initial : ${c.initialContact === "unknown" ? (c.mode === "education" ? "ouvert par convention pédagogique, puis recalculé" : "inconnu") : c.initialContact === "closed" ? "fermé" : "ouvert"}. Matière ferromagnétique : ${c.ferromagnetic ? "oui" : "non déclarée"}. Température : ${c.temperature === "ambient" ? "ambiante" : "autre"}.`,
     result.reason
       ? `Calcul indisponible : ${result.reason}`
       : `Cycle indicatif : ${result.closures} enclenchement(s), ${result.releases} relâchement(s).${result.unknown ? " Une partie du parcours est indéterminée." : ""}`,
@@ -392,15 +482,13 @@ export function summarizeWorkshop(c: WorkshopConfig): string {
     `Modèle : ${MODEL_VERSION}. Source : ${c.mode === "reference" ? DISTANCE_SOURCE : INTERACTION_SOURCE}`,
   ].join("\n");
 }
-const NOTE_MARKER = "\n\n[STANDEX_MAGNETIC_WORKSHOP_V2]\n";
-const LEGACY_MARKER = "\n\n[STANDEX_MAGNETIC_WORKSHOP_V1]\n";
+const NOTE_MARKERS = [1, 2, 3].map((v) => `\n\n[STANDEX_MAGNETIC_WORKSHOP_V${v}]\n`);
 export function serializeWorkshop(c: WorkshopConfig): string {
   if (!parseWorkshopConfig(c)) throw new Error("Montage invalide");
-  return summarizeWorkshop(c) + NOTE_MARKER + JSON.stringify(c);
+  return summarizeWorkshop(c) + NOTE_MARKERS[2] + JSON.stringify(c);
 }
 export function parseWorkshopNote(text: string): WorkshopConfig | null {
-  const token =
-    text.lastIndexOf(NOTE_MARKER) > text.lastIndexOf(LEGACY_MARKER) ? NOTE_MARKER : LEGACY_MARKER;
+  const token = NOTE_MARKERS.reduce((a, b) => (text.lastIndexOf(a) > text.lastIndexOf(b) ? a : b));
   const marker = text.lastIndexOf(token);
   if (marker < 0 || text.length > 20000) return null;
   try {

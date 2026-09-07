@@ -1,4 +1,12 @@
-# Atelier magnétique V0.2
+# Atelier magnétique — version courante V0.3
+
+La documentation à jour, les changements du modèle et le mode d’emploi de la machine importée sont dans [Atelier magnétique V0.3](atelier-magnetique-v03.md).
+
+---
+
+# Archive de la V0.2
+
+Les limites et résultats ci-dessous décrivent la V0.2. La V0.3 les remplace notamment pour les distances fictives, le MK02, les mouvements 3D et les imports.
 
 Version interne du 7 septembre 2026, revue après les retours de Thomas. Dans l'espace projet, ouvrir **Atelier magnétique**, puis les étapes Capteur → Aimant → Mouvement. Le dossier est désormais l'onglet affiché par défaut ; les outils de test restent disponibles.
 
@@ -22,11 +30,11 @@ Version interne du 7 septembre 2026, revue après les retours de Thomas. Dans l'
 **Exemple documenté.** La table Standex publie des valeurs typiques : elles ne sont pas des limites garanties. D1 représente l'approche face au centre du capteur avec axes parallèles ; D3 l'approche par l'extrémité, également avec axes parallèles. Les enveloppes sont cotées : MK03 cylindrique 25,5 × Ø 5,8 mm, M02 32,4 × 16,7 × 10 mm. Le paramètre de distance correspond à l'entrefer de la figure, pas à la distance entre centres. Le modèle ne localise pas les éléments actifs ou les pôles à l'intérieur des produits. M02 figure dans la liste des actionneurs auxquels la page associe les données.
 
 | Classe MK03-1A66 | D1 fermeture / ouverture | D3 fermeture / ouverture |
-| --- | --- | --- |
-| B | 15 / 17,5 mm | 9,3 / 11,4 mm |
-| C | 13 / 16,5 mm | 7,4 / 9,9 mm |
-| D | 11 / 14,5 mm | 5,7 / 8,5 mm |
-| E | 10 / 13,5 mm | 4,5 / 8 mm |
+| ---------------- | ------------------------ | ------------------------ |
+| B                | 15 / 17,5 mm             | 9,3 / 11,4 mm            |
+| C                | 13 / 16,5 mm             | 7,4 / 9,9 mm             |
+| D                | 11 / 14,5 mm             | 5,7 / 8,5 mm             |
+| E                | 10 / 13,5 mm             | 4,5 / 8 mm               |
 
 Source consultée le 07/09/2026 : [Standex, Reed Sensor Activation Distances](https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/). D2 n'est pas reconstruit : une distance de lobe latéral ne définit pas une cartographie complète.
 
