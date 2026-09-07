@@ -38,10 +38,11 @@ L'assistant expérimental reçoit la langue choisie pour ses nouvelles réponses
 
 ## Vérifications
 
-- 65 tests automatisés : modèles magnétiques, géométrie, imports, sauvegardes, couverture et paramètres de traduction, notes multilingues, caractéristiques produit et réserves MK24/MK38/MK21.
+- 66 tests automatisés : modèles magnétiques, géométrie, imports, sauvegardes, couverture et paramètres de traduction, priorité des messages spécifiques, notes multilingues, caractéristiques produit et réserves MK24/MK38/MK21.
 - TypeScript : aucune erreur. Lint ciblé : aucune erreur ; deux avertissements de rechargement à chaud des composants de développement.
 - Construction de production réussie. Avertissements existants de taille des modules 3D et de configuration de compilation conservés.
 - Parcours navigateur : huit langues, conservation des coordonnées 99 / 73,8 / 62 mm, ouverture des cartes et options MK24, catalogue et carte imbriquée ; carte vérifiée à 390 × 844 px sans débordement horizontal.
+- Recette dans l'aperçu Lovable connecté, session dédiée `b8c3abbf` : dossier et chat dans les huit langues, réponse déterministe MVP-TS-001 traduite en conservant la citation du besoin original, carte MK24 et enregistrement de la machine à café dans le dossier.
 
 Les traductions sont une première version produit à relire avec les équipes locales avant une diffusion commerciale. Aucun appel de génération réel dans les huit langues n'est inclus dans cette recette ; la transmission et le contrat linguistique sont testés automatiquement.
 

@@ -80,6 +80,8 @@ const escape = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 // Only complete, recognized messages match. Arbitrary user prose is never sent away.
 const templates = Object.keys(dictionary)
   .filter((key) => /\{\d+\}/.test(key))
+  // Match specific messages before broader prefixes such as "Scénario {0}".
+  .sort((a, b) => b.replace(/\{\d+\}/g, "").length - a.replace(/\{\d+\}/g, "").length)
   .map((key) => ({
     key,
     pattern: new RegExp(

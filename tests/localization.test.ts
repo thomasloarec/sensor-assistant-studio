@@ -45,6 +45,7 @@ describe("Site languages", () => {
     }
   });
   test("dynamic messages, multiline paragraphs and Markdown keep their structure", () => {
+    expect(t("Scénario de test (22)", "en")).toBe("Test scenario (22)");
     expect(msg("Classe {0}", ["C"], "en")).toBe("Class C");
     expect(msg("{0} informations renseignées sur {1}", [3, 12], "en")).toContain("3");
     expect(t("# Dimensions du corps\n\n| Champ | Valeur |\n| --- | --- |", "en")).toBe(
@@ -52,6 +53,14 @@ describe("Site languages", () => {
     );
     expect(number(5.5, 2, "fr")).toBe("5,5");
     expect(number(5.5, 2, "en")).toBe("5.5");
+  });
+  test("specific templates win over generic prefixes in every language", () => {
+    for (const [source, translations] of Object.entries(messages)) {
+      if (!/\{\d+\}/.test(source)) continue;
+      const fill = (s: string) => s.replace(/\{(\d+)\}/g, (_, n) => `ZT${n}`);
+      for (const [i, { id }] of LANGUAGES.slice(1).entries())
+        expect(t(fill(source), id), `${id}: ${source}`).toBe(fill(translations[i]!));
+    }
   });
   test("experimental instructions preserve the contract in every language", () => {
     for (const { id, name } of LANGUAGES) {
