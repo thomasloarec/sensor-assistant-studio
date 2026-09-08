@@ -184,7 +184,7 @@ export function ClientFollowUp({
                       <Button
                         size="sm"
                         variant="outline"
-                        disabled={Boolean(r.variant_accepted_at)}
+                        disabled={Boolean(r.variant_accepted_at) || Boolean(r.superseded)}
                         onClick={async () => {
                           try {
                             const out = await acceptVariant(r.id);
@@ -210,7 +210,11 @@ export function ClientFollowUp({
                           }
                         }}
                       >
-                        {r.variant_accepted_at ? "Variante reprise" : "Reprendre cette variante"}
+                        {r.variant_accepted_at
+                          ? "Variante reprise"
+                          : r.superseded
+                            ? "Retour remplacé par un plus récent"
+                            : "Reprendre cette variante"}
                       </Button>
                     </div>
                   ) : null}
