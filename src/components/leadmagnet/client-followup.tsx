@@ -56,6 +56,13 @@ interface Props {
     notApplied: string[];
     refused?: string;
   }>;
+  /** Ouvre un fichier RÉELLEMENT transmis pour une version donnée. */
+  onOpenTransferredFile?: (file: {
+    path: string;
+    name: string;
+    dossierId: string;
+    revision: number;
+  }) => void;
 }
 
 const routeLabel: Record<string, string> = {
@@ -77,6 +84,7 @@ export function ClientFollowUp({
   onSelectDossier,
   onReopenSnapshot,
   onApplyVariant,
+  onOpenTransferredFile,
 }: Props) {
   const [list, setList] = useState<DossierListItem[]>([]);
   const [view, setView] = useState<DossierView | null>(null);
@@ -427,6 +435,43 @@ export function ClientFollowUp({
               </div>
             ))}
           </section>
+
+          {onOpenTransferredFile && current.revisions.some((r) => (r.transferred_files ?? []).length) ? (
+            <section className="space-y-2">
+              <h4 className="font-medium">Fichiers réellement transmis</h4>
+              {current.revisions.map((r) =>
+                (r.transferred_files ?? []).length ? (
+                  <div key={`files-${r.id}`} className="flex flex-wrap items-center gap-2">
+                    <span className="text-sm text-muted-foreground">Version {r.revision} :</span>
+                    {(r.transferred_files ?? []).map((f, i) => (
+                      <Button
+                        key={`${r.id}-${f.path ?? i}`}
+                        size="sm"
+                        variant="outline"
+                        disabled={!f.path}
+                        onClick={() =>
+                          f.path
+                            ? onOpenTransferredFile({
+                                path: f.path,
+                                name: f.file_name ?? "fichier",
+                                dossierId: current.dossier.id,
+                                revision: r.revision,
+                              })
+                            : undefined
+                        }
+                      >
+                        Lire {f.file_name ?? "ce fichier"}
+                      </Button>
+                    ))}
+                  </div>
+                ) : null,
+              )}
+              <p className="text-xs text-muted-foreground">
+                Seuls les fichiers réellement enregistrés côté Standex apparaissent ici, et leur
+                lecture dépend de vos droits.
+              </p>
+            </section>
+          ) : null}
 
           {onReopenSnapshot && current.revisions.length ? (
             <section className="space-y-2">
