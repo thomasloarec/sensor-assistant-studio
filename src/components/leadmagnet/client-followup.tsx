@@ -116,10 +116,11 @@ export function ClientFollowUp({
               size="sm"
               variant={d.id === serverDossierId ? "default" : "outline"}
               onClick={() => {
-                onSelectDossier(d.id);
+                onSelectDossier({ id: d.id, revision: d.current_revision, title: d.title });
                 void reloadView(d.id);
               }}
             >
+
               Ouvrir
             </Button>
             <span className="font-medium">{d.title}</span>
