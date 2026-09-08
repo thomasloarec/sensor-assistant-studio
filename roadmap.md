@@ -118,3 +118,8 @@
 - Parcours guidé « Mon besoin → Mon montage → Avec Standex » : une question à la fois, « Je ne sais pas encore », retour arrière ; tous les onglets détaillés restent accessibles via « Ouvrir les outils détaillés ».
 - Aucun changement SQL, Edge, rôles, NDA, moteur métier ni backend. `resetServerContext`, `contextGenRef`, `busyRef`, snapshot/sourceRevision/CAS, variantes et GLB SHA/assetKey conservés tels quels dans `design-space.tsx`.
 - Vérifs : 180 tests bun (0 échec), typecheck OK, build OK, parcours navigateur desktop+mobile sans erreur console ni débordement 320px.
+
+## Refonte visuelle — lot B/4
+- [ ] Mettre en scène l’accueil immersif sans modifier son parcours ni ses textes.
+- [ ] Moderniser la démonstration aimant sans modifier sa physique ni ses contrôles.
+- [ ] Vérifier tests, types, build, trois largeurs et réduction des animations.

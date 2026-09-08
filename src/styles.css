@@ -438,8 +438,127 @@
   }
   .material {
     background: var(--material-thin);
-    -webkit-backdrop-filter: var(--material-blur);
     backdrop-filter: var(--material-blur);
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0);
+    transition:
+      opacity var(--d-page) var(--ease-out),
+      transform var(--d-page) var(--ease-out);
+  }
+  .reveal.is-visible {
+    opacity: 1;
+    transform: none;
+  }
+  .reveal-delay-1 {
+    transition-delay: 80ms;
+  }
+  .reveal-delay-2 {
+    transition-delay: 160ms;
+  }
+  .reveal-delay-3 {
+    transition-delay: 240ms;
+  }
+
+  /* Fond de l'accueil : profondeur Detect Blue, aucune image. */
+  .hero-field {
+    position: relative;
+    isolation: isolate;
+    background:
+      radial-gradient(
+        120% 90% at 78% 12%,
+        oklch(0.3665 0.0662 254.28 / 0.85) 0%,
+        transparent 60%
+      ),
+      radial-gradient(90% 70% at 10% 90%, oklch(0.2717 0.0444 252.09) 0%, transparent 65%),
+      linear-gradient(168deg, oklch(0.2261 0.0353 251.2) 0%, oklch(0.1911 0.0303 251.2) 100%);
+  }
+  /* Grille technique très discrète, à 15° comme la géométrie Standex. */
+  .hero-field::before {
+    content: "";
+    position: absolute;
+    inset: -20%;
+    z-index: -1;
+    pointer-events: none;
+    background-image: linear-gradient(105deg, oklch(1 0 0 / 0.035) 1px, transparent 1px);
+    background-size: 68px 100%;
+    mask-image: radial-gradient(80% 70% at 50% 40%, #000 0%, transparent 75%);
+  }
+  /* Halo lumineux qui respire, très lent. */
+  .hero-glow {
+    position: absolute;
+    z-index: -1;
+    pointer-events: none;
+    border-radius: 999px;
+    filter: blur(70px);
+    background: radial-gradient(circle, oklch(0.72 0.13 205 / 0.22) 0%, transparent 70%);
+    animation: standex-pulse 9s var(--ease-in-out) infinite;
+  }
+
+  .magnet-scene {
+    background: radial-gradient(
+      100% 100% at 30% 0%,
+      oklch(0.2717 0.0444 252.09),
+      oklch(0.1911 0.0303 251.2)
+    );
+    box-shadow: 0 0 0 1px var(--hairline);
+    transition: box-shadow var(--d-base) var(--ease-spring);
+  }
+  .magnet-scene.is-detected {
+    box-shadow:
+      0 0 0 1px var(--signal-glow),
+      0 0 60px -10px var(--signal-glow);
+  }
+  .magnet-field-line {
+    stroke-dasharray: 2.5 3.5;
+    animation: magnet-field-flow 6s linear infinite;
+  }
+  .magnet-handle::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 999px;
+    background: oklch(1 0 0 / 0.1);
+    box-shadow: 0 0 0 1px oklch(1 0 0 / 0.16);
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.84);
+    transition:
+      opacity var(--d-fast) var(--ease-out),
+      transform var(--d-fast) var(--ease-spring);
+  }
+  .magnet-handle:hover::before,
+  .magnet-handle:focus-visible::before {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  .magnet-status-dot {
+    box-shadow: 0 0 14px var(--signal-glow);
+    animation: standex-pulse 2.4s var(--ease-in-out) infinite;
+  }
+
+  @keyframes magnet-field-flow {
+    to {
+      stroke-dashoffset: -24;
+    }
+  }
+
+  @keyframes home-scroll-cue {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(4px);
+    }
+  }
+
+  .home-scroll-cue {
+    animation: home-scroll-cue 2.4s var(--ease-in-out) infinite;
   }
 
   .standex-bar {
@@ -567,6 +686,15 @@
   .surface-interactive:hover,
   .press:active {
     transform: none !important;
+  }
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .magnet-field-line,
+  .magnet-status-dot,
+  .home-scroll-cue {
+    animation: none !important;
   }
 }
 
