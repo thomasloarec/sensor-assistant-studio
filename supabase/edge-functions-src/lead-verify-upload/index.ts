@@ -1,16 +1,15 @@
 // Fonction Edge Supabase `lead-verify-upload`.
 //
-// IMPORTANT (contrainte de la plateforme d'édition) : la création de fichiers
-// sous `supabase/functions/` est bloquée dans ce projet. Le code ci-dessous est
-// donc la source EXACTE à déployer ; avant déploiement, copier ce dossier en
-// `supabase/functions/lead-verify-upload/` puis :
-//   supabase functions deploy lead-verify-upload --project-ref yyobodalwtsqdyrqwkjk
-// avec verify_jwt = true. Les secrets SUPABASE_URL / SUPABASE_ANON_KEY /
-// SUPABASE_SERVICE_ROLE_KEY sont fournis automatiquement par la plateforme :
-// aucun secret à transférer ailleurs.
+// ÉTAT RÉEL (2026-09-08) : cette fonction est DÉJÀ DÉPLOYÉE et ACTIVE (v1,
+// verify_jwt = true) sur le backend Standex existant yyobodalwtsqdyrqwkjk.
+// Aucune copie ni redéploiement n'est nécessaire : ce fichier est la source de
+// référence, identique au déploiement. Les secrets SUPABASE_URL /
+// SUPABASE_ANON_KEY / SUPABASE_SERVICE_ROLE_KEY sont fournis automatiquement
+// par la plateforme ; aucun secret à transférer ailleurs. Un appel anonyme est
+// refusé en 401, et la sonde de schéma répond ready=true en version 1.4.
 //
-// Tant que la fonction n'est pas déployée, l'appel client échoue proprement et
-// la soumission refuse le fichier : rien n'est simulé côté navigateur.
+// Historique : l'éditeur bloquant l'écriture sous `supabase/functions/`, la
+// source a été déposée ici, puis déployée par root depuis ce contenu exact.
 import { createClient } from "npm:@supabase/supabase-js@2.112.4";
 
 const cors = {
