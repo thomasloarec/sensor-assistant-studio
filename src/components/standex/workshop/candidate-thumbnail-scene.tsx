@@ -7,7 +7,7 @@
  */
 import { Canvas } from "@react-three/fiber";
 import { Line, OrbitControls } from "@react-three/drei";
-import { Body, Contacts, ContextGuard } from "@/components/standex/workshop/scene";
+import { Body, Contacts, ContextGuard } from "./scene";
 import { sensorById } from "@/lib/standex/sensor-catalog";
 import type { Vec3 } from "@/lib/standex/magnetic-workshop";
 
