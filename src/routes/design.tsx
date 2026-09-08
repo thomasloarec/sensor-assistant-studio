@@ -99,7 +99,11 @@ import {
   createDossier as createServerDossier,
   createSupabaseSubmissionBackend,
   uploadDesignFile,
+  prepareNdaOnServer,
+  fetchNdaStatus,
+  type NdaStatusView,
 } from "@/lib/leadmagnet/supabase-adapter";
+import { supabase } from "@/lib/standex/supabase";
 import { ClientFollowUp } from "@/components/leadmagnet/client-followup";
 import { memoryAssetBytes } from "@/lib/standex/machine-assets";
 import {
