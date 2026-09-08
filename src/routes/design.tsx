@@ -253,6 +253,21 @@ function DesignSpace() {
    */
   const [binding, setBinding] = useState<ConsentBinding | null>(null);
   const [consentNotice, setConsentNotice] = useState<string | null>(null);
+  /** Fichier RÉELLEMENT déposé et vérifié par le serveur, pour ce dossier et
+   * cette version précise. Il est réutilisé tel quel si l'envoi doit être
+   * retenté : jamais de second dépôt du même fichier.
+   */
+  const [preparedUpload, setPreparedUpload] = useState<{
+    dossierId: string;
+    revision: number;
+    assetKey: string;
+    file: UploadedFile;
+  } | null>(null);
+  /** Verrou d'action : empêche un double clic de créer deux versions. */
+  const [busy, setBusy] = useState(false);
+  const busyRef = useRef(false);
+
+
 
 
 
