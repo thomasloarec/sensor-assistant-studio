@@ -2508,7 +2508,12 @@ export function DesignSpace({
           </div>
           <div className="flex max-w-full flex-wrap items-center gap-1 rounded-[var(--r-sm)] bg-[var(--surface-sunken)] p-1">
             <LanguagePicker />
-            <Button variant="ghost" className="min-h-11 px-3" onClick={exportDossier} aria-label="Exporter">
+            <Button
+              variant="ghost"
+              className="min-h-11 px-3"
+              onClick={exportDossier}
+              aria-label="Exporter"
+            >
               <Download className="h-4 w-4" /> <span className="hidden sm:inline">Exporter</span>
             </Button>
             <Button variant="ghost" className="min-h-11 max-w-full px-3 whitespace-normal" asChild>
@@ -2562,11 +2567,11 @@ export function DesignSpace({
                   className={`standex-bar !h-3 !w-1 transition-opacity duration-[var(--d-base)] ${stepIndex === i ? "opacity-100" : "opacity-25"}`}
                   aria-hidden="true"
                 />
-                <span>{i + 1}. {s.label}</span>
+                <span>
+                  {i + 1}. {s.label}
+                </span>
               </span>
-              <span className="mt-0.5 block pl-3 text-sm">
-                {s.hint}
-              </span>
+              <span className="mt-0.5 block pl-3 text-sm">{s.hint}</span>
             </button>
           ))}
         </nav>
