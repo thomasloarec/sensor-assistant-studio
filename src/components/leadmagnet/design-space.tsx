@@ -947,6 +947,33 @@ export function DesignSpace({ chrome = "page" }: DesignSpaceProps) {
 
           {/* ---------------- Montage ---------------- */}
           <TabsContent value="montage" className="space-y-4 pt-4">
+            {showAdvanced ? null : (
+              <div className="flex flex-wrap items-center gap-3 pb-2">
+                <span className="text-base text-muted-foreground">Outils utiles ici :</span>
+                <Button
+                  variant="outline"
+                  className="min-h-11 text-base"
+                  onClick={() => setTab("candidats")}
+                >
+                  Voir les capteurs possibles
+                </Button>
+                <Button
+                  variant="outline"
+                  className="min-h-11 text-base"
+                  onClick={() => setTab("cablage")}
+                >
+                  Câble et connecteur
+                </Button>
+                <Button
+                  variant="ghost"
+                  className="min-h-11 text-base"
+                  onClick={() => setTab("besoin")}
+                >
+                  Revenir à mon besoin
+                </Button>
+              </div>
+            )}
+
             <div className="rounded-md border p-3">
               <Label className="text-sm font-medium">Choix mécanique explicite</Label>
               <Select
