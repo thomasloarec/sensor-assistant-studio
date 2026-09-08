@@ -41,8 +41,8 @@ describe("résumé terminaison : étiquettes traduites, saisie intacte", () => {
     for (const { id } of LANGUAGES.filter((l) => l.id !== "fr")) {
       const tr = (text: string) => t(text, id);
       const lines = connectorSummaryLines(termination, tr);
-      const pinoutLine = lines.find((l) => l.includes(PINOUT));
-      const conditionsLine = lines.find((l) => l.endsWith(CONDITIONS));
+      const pinoutLine = lines[4];
+      const conditionsLine = lines[6];
 
       // La valeur saisie est recopiée telle quelle…
       expect(pinoutLine).toBeDefined();
