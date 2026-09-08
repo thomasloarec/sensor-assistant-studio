@@ -12,7 +12,17 @@ export interface ConnectorSpec {
   wireGauge: string | null;
   cable: string | null;
   conditions: string | null;
+  /** Provenance documentaire fabricant (facultative, conservée dans les exports). */
+  contactMpn?: string;
+  pitchMm?: number;
+  wireRangeHint?: string;
+  sourceUrl?: string;
+  sourcePages?: number[];
+  sourceCheckedAt?: string;
+  availability?: "unknown";
+  note?: string;
 }
+
 
 export type Termination =
   | { kind: "bare_leads" }
