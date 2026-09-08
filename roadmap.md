@@ -148,8 +148,8 @@
 
 ## Refonte visuelle — lot E
 
-- [ ] Corriger les deux contrastes de texte sans modifier le contexte immersif.
-- [ ] Transformer visuellement l’atelier 3D en banc d’essai sombre.
-- [ ] Moderniser les contrôles, l’état de contact et le catalogue sans toucher aux calculs.
-- [ ] Éliminer les couleurs d’interface codées en dur dans l’atelier.
-- [ ] Vérifier tests, types, build et parcours atelier à 1440/390 px.
+- [x] Corriger les deux contrastes de texte sans modifier le contexte immersif.
+- [x] Transformer visuellement l’atelier 3D en banc d’essai sombre.
+- [x] Moderniser les contrôles, l’état de contact et le catalogue sans toucher aux calculs.
+- [x] Éliminer les couleurs d’interface codées en dur dans l’atelier.
+- [x] Vérifier tests, types, build et parcours atelier à 1440/390 px.
