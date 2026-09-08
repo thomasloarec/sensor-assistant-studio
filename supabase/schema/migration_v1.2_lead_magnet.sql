@@ -983,8 +983,6 @@ begin
   end if;
 
 
-  server_hash := lead_priv.snapshot_hash(_snapshot);
-  next_rev := d.current_revision + 1;
   insert into lead.design_revisions (dossier_id, revision, snapshot, content_hash,
     client_declared_hash, submitted_by, consents, transferred_files, nda_status_at_submit)
   values (_dossier, next_rev, _snapshot, server_hash, lower(nullif(_content_hash,'')), u,
