@@ -86,15 +86,12 @@ function HomeRoute() {
                 </SheetHeader>
                 <div className="space-y-4 px-4 pb-6">
                   <AuthPanel backend={backend} onChanged={() => setAuthTick((n) => n + 1)} />
-                  <Button
-                    className="min-h-11 w-full text-base"
-                    onClick={() => setStarted(true)}
-                  >
+                  <Button className="min-h-11 w-full text-base" onClick={() => setStarted(true)}>
                     Ouvrir mon projet
                   </Button>
                   <p className="text-sm text-muted-foreground">
-                    Projets serveur, reprises et propositions Standex se retrouvent dans l'étape
-                    « Avec Standex » de votre projet.
+                    Projets serveur, reprises et propositions Standex se retrouvent dans l'étape «
+                    Avec Standex » de votre projet.
                   </p>
                 </div>
               </SheetContent>
@@ -120,10 +117,7 @@ function HomeRoute() {
                 que vous voulez détecter, et nous construisons la solution avec vous.
               </p>
               <div className="mt-9 flex flex-wrap items-center gap-4">
-                <Button
-                  className="min-h-14 px-7 text-lg"
-                  onClick={() => setStarted(true)}
-                >
+                <Button className="min-h-14 px-7 text-lg" onClick={() => setStarted(true)}>
                   Décrire mon besoin <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
                 <a

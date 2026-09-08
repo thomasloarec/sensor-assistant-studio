@@ -731,7 +731,10 @@ export function DesignSpace({ chrome = "page" }: DesignSpaceProps) {
       <header className={embedded ? "border-b bg-card/60" : "border-b bg-card"}>
         <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-3 px-4 py-4">
           {embedded ? null : (
-            <Link to="/internal" className="inline-flex items-center gap-2 text-base text-muted-foreground">
+            <Link
+              to="/internal"
+              className="inline-flex items-center gap-2 text-base text-muted-foreground"
+            >
               <ArrowLeft className="h-4 w-4" /> Banc de test interne
             </Link>
           )}
@@ -833,7 +836,6 @@ export function DesignSpace({ chrome = "page" }: DesignSpaceProps) {
             <TabsTrigger value="cablage">Câblage</TabsTrigger>
             <TabsTrigger value="revue">Revue Standex</TabsTrigger>
           </TabsList>
-
 
           {/* ---------------- Besoin ---------------- */}
           <TabsContent value="besoin" className="space-y-5 pt-4">
@@ -943,7 +945,6 @@ export function DesignSpace({ chrome = "page" }: DesignSpaceProps) {
               />
             </div>
           </TabsContent>
-
 
           {/* ---------------- Montage ---------------- */}
           <TabsContent value="montage" className="space-y-4 pt-4">
@@ -1111,6 +1112,15 @@ export function DesignSpace({ chrome = "page" }: DesignSpaceProps) {
 
           {/* ---------------- Candidats ---------------- */}
           <TabsContent value="candidats" className="space-y-3 pt-4">
+            {showAdvanced ? null : (
+              <Button
+                variant="outline"
+                className="min-h-11 text-base"
+                onClick={() => setTab("montage")}
+              >
+                Revenir à mon montage
+              </Button>
+            )}
             <p className="text-sm text-muted-foreground">{CANDIDATE_DISCLAIMER}</p>
             {dossier.selectedSensorId && !dossier.sensorSyncConfirmed ? (
               <div className="rounded-md border border-amber-300 bg-amber-50 p-3 text-sm">
@@ -1187,6 +1197,15 @@ export function DesignSpace({ chrome = "page" }: DesignSpaceProps) {
 
           {/* ---------------- Câblage ---------------- */}
           <TabsContent value="cablage" className="space-y-4 pt-4">
+            {showAdvanced ? null : (
+              <Button
+                variant="outline"
+                className="min-h-11 text-base"
+                onClick={() => setTab("montage")}
+              >
+                Revenir à mon montage
+              </Button>
+            )}
             <div className="rounded-md border p-3" data-testid="routing-target-panel">
               <Label className="text-sm font-medium">Tracé dans la 3D (facultatif)</Label>
               <p className="mt-1 text-xs text-muted-foreground">
