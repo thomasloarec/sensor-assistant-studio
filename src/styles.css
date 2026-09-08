@@ -470,11 +470,7 @@
     position: relative;
     isolation: isolate;
     background:
-      radial-gradient(
-        120% 90% at 78% 12%,
-        oklch(0.3665 0.0662 254.28 / 0.85) 0%,
-        transparent 60%
-      ),
+      radial-gradient(120% 90% at 78% 12%, oklch(0.3665 0.0662 254.28 / 0.85) 0%, transparent 60%),
       radial-gradient(90% 70% at 10% 90%, oklch(0.2717 0.0444 252.09) 0%, transparent 65%),
       linear-gradient(168deg, oklch(0.2261 0.0353 251.2) 0%, oklch(0.1911 0.0303 251.2) 100%);
   }

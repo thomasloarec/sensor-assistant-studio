@@ -109,8 +109,18 @@ export function MagnetPlay() {
           />
 
           {/* Fils de sortie */}
-          <path d="M2 30 H10" className="text-muted-foreground" stroke="currentColor" strokeWidth="0.9" />
-          <path d="M34 30 H44" className="text-muted-foreground" stroke="currentColor" strokeWidth="0.9" />
+          <path
+            d="M2 30 H10"
+            className="text-muted-foreground"
+            stroke="currentColor"
+            strokeWidth="0.9"
+          />
+          <path
+            d="M34 30 H44"
+            className="text-muted-foreground"
+            stroke="currentColor"
+            strokeWidth="0.9"
+          />
 
           {/* Ampoule de verre */}
           <rect

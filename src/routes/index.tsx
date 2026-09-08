@@ -56,8 +56,7 @@ function HomeRoute() {
                   <Magnet className="h-5 w-5 text-primary" aria-hidden="true" />
                 </span>
                 <span className="truncate text-base font-semibold sm:text-lg">
-                  Standex{" "}
-                  <span className="font-normal tracking-[0.12em]">DETECT</span>
+                  Standex <span className="font-normal tracking-[0.12em]">DETECT</span>
                 </span>
               </span>
               <div className="ml-auto flex shrink-0 items-center gap-2">
@@ -80,10 +79,7 @@ function HomeRoute() {
                 style={{ "--stagger": "70ms", animationDelay: "120ms" } as CSSProperties}
               >
                 <p className="t-label flex items-center gap-3">
-                  <span
-                    className="standex-bar h-[14px] w-[6px] shrink-0"
-                    aria-hidden="true"
-                  />
+                  <span className="standex-bar h-[14px] w-[6px] shrink-0" aria-hidden="true" />
                   Détection magnétique
                 </p>
                 <h1 className="t-display-xl mt-5 max-w-[11ch]">Donnez vie à votre détection.</h1>
@@ -92,11 +88,7 @@ function HomeRoute() {
                   ce que vous voulez détecter : nous construisons la solution avec vous.
                 </p>
                 <div className="mt-10 flex flex-wrap items-center gap-4">
-                  <Button
-                    size="lg"
-                    className="group"
-                    onClick={() => setStarted(true)}
-                  >
+                  <Button size="lg" className="group" onClick={() => setStarted(true)}>
                     Décrire mon besoin
                     <ArrowRight className="transition-transform duration-[var(--d-fast)] group-hover:translate-x-[3px]" />
                   </Button>
