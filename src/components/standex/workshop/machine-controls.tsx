@@ -158,7 +158,7 @@ export default function MachineControls({
         )}
       </details>
       <div className="mw-machine-product">
-          <strong className="t-title-s">{t(sensor.name)}</strong>
+        <strong className="t-title-s">{t(sensor.name)}</strong>
         <button className="mw-product-card-button" onClick={onProductCard}>
           {t("Découvrir ce capteur")}
         </button>
@@ -192,7 +192,8 @@ export default function MachineControls({
       {measure !== null && (
         <p className="mw-measure-result">
           {t("Distance mesurée :")}
-          <strong className="t-metric">{t(measure.toFixed(1))} mm</strong> ({t((measure / 10).toFixed(2))}
+          <strong className="t-metric">{t(measure.toFixed(1))} mm</strong> (
+          {t((measure / 10).toFixed(2))}
           {t(" ")}
           {t("cm)")}
         </p>

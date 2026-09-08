@@ -148,7 +148,6 @@ export default function MagneticWorkshop({
   cableRouting,
   onDraftChange,
 }: WorkshopProps) {
-
   useLocale();
   const [productCard, setProductCard] = useState(false);
   const [config, setConfig] = useState<WorkshopConfig>(
@@ -244,7 +243,6 @@ export default function MagneticWorkshop({
     // Le tracé de câble se relève DANS la pose courante : on ne remet pas le cycle à zéro.
     if (next !== "cable") setProgress(0);
     setTool(next);
-
   }
   function exampleMachine() {
     update({
@@ -1104,7 +1102,6 @@ export default function MagneticWorkshop({
                               }
                             : undefined
                         }
-
                       />
                     </Suspense>
                   </SceneBoundary>
