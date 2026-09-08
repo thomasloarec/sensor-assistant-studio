@@ -55,7 +55,17 @@ function HomeRoute() {
                 <BrandLogo tone="reversed" height={44} className="hidden sm:block" />
                 <BrandLogo variant="mark" tone="reversed" height={32} className="sm:hidden" />
               </span>
-              <div className="ml-auto flex shrink-0 items-center gap-2">
+              <div className="ml-auto flex shrink-0 flex-wrap items-center gap-2">
+                <LanguagePicker />
+                {opened ? (
+                  <Button
+                    variant="outline"
+                    className="min-h-11 text-base"
+                    onClick={() => setStarted(true)}
+                  >
+                    <ArrowRight className="h-4 w-4" /> Reprendre mon projet
+                  </Button>
+                ) : null}
                 <Button
                   variant="outline"
                   className="min-h-11 text-base"
