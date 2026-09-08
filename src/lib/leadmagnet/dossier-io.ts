@@ -168,8 +168,10 @@ const dossierSchema = z.object({
   workshop: z.unknown(),
   business: z.unknown(),
   workshopSource: z.enum(["none", "example", "user_asset"]).catch("none"),
-  selectedSensorId: z.string().nullable().catch(null),
-  workshopSensorId: z.string().nullable().catch(null),
+  // Un identifiant inconnu redevient « aucun choix » : le laisser passer
+  // ferait retomber l'affichage sur un autre capteur du catalogue.
+  selectedSensorId: knownSensorId,
+  workshopSensorId: knownSensorId,
   freeConstraints: z.string().catch(""),
   openQuestions: z.array(z.string()).catch([]),
   cabling: cabling.catch(() => EMPTY_CABLING as unknown as z.infer<typeof cabling>),
