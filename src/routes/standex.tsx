@@ -586,7 +586,7 @@ function StandexConsole() {
                               <MagneticWorkshop
                                 key={`${viewer.revision}:${viewer.sha256}`}
                                 initialConfig={viewer.config}
-                                cableRouting={viewerCable}
+                                {...(viewerCable ? { cableRouting: viewerCable } : {})}
                                 storageLabel="cette lecture, en mémoire de l'onglet"
                                 storageMode="memory"
                                 onClose={() => {
