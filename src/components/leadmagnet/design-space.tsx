@@ -229,6 +229,8 @@ export function DesignSpace({ chrome = "page" }: DesignSpaceProps) {
   const [tab, setTab] = useState("besoin");
   /** Divulgation progressive : les onglets détaillés restent accessibles à la demande. */
   const [showAdvanced, setShowAdvanced] = useState(chrome === "page");
+  /** Mode guidé : une seule question à la fois, sans rien retirer du dossier. */
+  const [focusIdx, setFocusIdx] = useState(0);
   /** Ce à quoi un accord d'envoi se rattache à cet instant : dossier serveur visé,
    * révision suivante, empreinte du contenu relu et empreintes des fichiers déjà déposés.
    * Dès qu'un de ces éléments change, l'accord précédent et la relecture tombent.
