@@ -163,6 +163,26 @@ function Fallback({
   );
 }
 
+/** Barrière d'erreur : une création de renderer refusée (WebGL2 absent du
+ * pilote, mémoire graphique saturée) lève au rendu et doit donner le repli 2D
+ * au lieu d'un trou dans la liste des candidats. */
+class ThumbnailBoundary extends Component<
+  { onFailed: () => void; children: ReactNode },
+  { failed: boolean }
+> {
+  state = { failed: false };
+  static getDerivedStateFromError() {
+    return { failed: true };
+  }
+  componentDidCatch() {
+    this.props.onFailed();
+  }
+  render() {
+    return this.state.failed ? null : this.props.children;
+  }
+}
+
+
 export function CandidateThumbnail({
   sensorId,
   cabled = false,
