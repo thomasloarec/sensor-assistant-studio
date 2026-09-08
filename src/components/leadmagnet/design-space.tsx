@@ -1,4 +1,4 @@
-import { getLocale, msg, setLocale, t } from "@/lib/i18n/core";
+import { getLocale, msg, setLocale, t, type Locale } from "@/lib/i18n/core";
 import { Link } from "@tanstack/react-router";
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -308,6 +308,7 @@ function ProjectTitle({ title, onRename }: { title: string; onRename: (next: str
 
 /** Questions du parcours guidé : une intention simple par écran, reliée à la
  * MÊME exigence du dossier que le mode détaillé (aucun second état). */
+/* i18n-canonical : libellés stockés en français, traduits au rendu par t(). */
 export const GUIDED_QUESTIONS: {
   key: string;
   prompt: string;
@@ -316,39 +317,39 @@ export const GUIDED_QUESTIONS: {
 }[] = [
   {
     key: "detection_goal",
-    prompt: t("Que voulez-vous détecter ?"),
-    example: t("savoir si une trappe est bien fermée, compter des passages, repérer une position"),
-    placeholder: t("Décrivez-le avec vos mots."),
+    prompt: "Que voulez-vous détecter ?",
+    example: "savoir si une trappe est bien fermée, compter des passages, repérer une position",
+    placeholder: "Décrivez-le avec vos mots.",
   },
   {
     key: "states_motion",
-    prompt: t("Que se passe-t-il quand la pièce bouge ?"),
-    example: t("elle coulisse de 20 mm, elle pivote, elle est retirée puis remise"),
-    placeholder: t("Décrivez le mouvement et les positions à distinguer."),
+    prompt: "Que se passe-t-il quand la pièce bouge ?",
+    example: "elle coulisse de 20 mm, elle pivote, elle est retirée puis remise",
+    placeholder: "Décrivez le mouvement et les positions à distinguer.",
   },
   {
     key: "mounting",
-    prompt: t("Où le capteur pourrait-il se placer ?"),
-    example: t("collé sous le couvercle, inséré dans un trou du bâti, vissé sur une équerre"),
-    placeholder: t("Même une idée approximative nous aide."),
+    prompt: "Où le capteur pourrait-il se placer ?",
+    example: "collé sous le couvercle, inséré dans un trou du bâti, vissé sur une équerre",
+    placeholder: "Même une idée approximative nous aide.",
   },
   {
     key: "envelope",
-    prompt: t("Quelle place avez-vous à cet endroit ?"),
-    example: t("un logement d'environ 6 mm de diamètre et 25 mm de long"),
-    placeholder: t("Dimensions disponibles, même approximatives."),
+    prompt: "Quelle place avez-vous à cet endroit ?",
+    example: "un logement d'environ 6 mm de diamètre et 25 mm de long",
+    placeholder: "Dimensions disponibles, même approximatives.",
   },
   {
     key: "electrical",
-    prompt: t("À quoi le capteur sera-t-il relié ?"),
-    example: t("une carte 5 V, un automate 24 V, un petit relais"),
-    placeholder: t("Tension, courant ou carte de destination si vous les connaissez."),
+    prompt: "À quoi le capteur sera-t-il relié ?",
+    example: "une carte 5 V, un automate 24 V, un petit relais",
+    placeholder: "Tension, courant ou carte de destination si vous les connaissez.",
   },
   {
     key: "environment",
-    prompt: t("Dans quel environnement travaille-t-il ?"),
-    example: t("humidité, huile, vibrations, températures élevées, extérieur"),
-    placeholder: t("Ce que le capteur devra supporter."),
+    prompt: "Dans quel environnement travaille-t-il ?",
+    example: "humidité, huile, vibrations, températures élevées, extérieur",
+    placeholder: "Ce que le capteur devra supporter.",
   },
 ];
 
@@ -379,6 +380,13 @@ export function DesignSpace({
   /** L'espace est monté CACHÉ dès l'accueil : la langue d'origine du projet
    * n'est capturée qu'au démarrage réel, jamais à ce montage silencieux. */
   const localeCapturedRef = useRef(false);
+  /** Langue d'origine du projet courant, suivie hors rendu pour pouvoir la
+   * rétablir quand on revient au projet depuis l'accueil. */
+  const dossierLocaleRef = useRef<Locale>("fr");
+
+  useEffect(() => {
+    dossierLocaleRef.current = dossier.sourceLocale;
+  }, [dossier.sourceLocale]);
 
   const [privacy, setPrivacy] = useState(INITIAL_PRIVACY);
   const [nda, setNda] = useState<NdaState>(INITIAL_NDA);
@@ -413,8 +421,18 @@ export function DesignSpace({
   /** Démarrage RÉEL du projet : c'est ici, et pas au montage caché de
    * l'espace, que la langue d'origine du projet est fixée. Changer ensuite la
    * langue de l'interface ne réécrit pas rétrospectivement celle du projet. */
+  const wasVisibleRef = useRef(false);
   useEffect(() => {
-    if (!visible || localeCapturedRef.current) return;
+    const becameVisible = visible && !wasVisibleRef.current;
+    wasVisibleRef.current = visible;
+    if (!visible) return;
+    if (localeCapturedRef.current) {
+      // Projet déjà démarré ou repris : le revoir depuis l'accueil rétablit SA
+      // langue d'origine, même si la langue du site a changé entre-temps.
+      if (becameVisible && dossierLocaleRef.current !== getLocale())
+        setLocale(dossierLocaleRef.current);
+      return;
+    }
     localeCapturedRef.current = true;
     const startLocale = getLocale();
     setDossier((d) => {
@@ -429,6 +447,7 @@ export function DesignSpace({
       };
     });
   }, [visible]);
+
 
 
   /** Panneau contextuel : le projet reste visible derrière, rien n'est démonté. */
@@ -1118,7 +1137,7 @@ export function DesignSpace({
             >
               <div className="mb-3 flex flex-wrap items-center gap-3">
                 <Label htmlFor={`req-${r.key}`} className="t-title-s">
-                  {r.label}
+                  {t(r.label)}
                 </Label>
                 <Badge
                   variant={
@@ -1175,19 +1194,19 @@ export function DesignSpace({
             />
           </div>
           <p className="t-label mt-5">
-            {t("Question")} {focusIdx + 1} sur {GUIDED_QUESTIONS.length}
+            {msg("Question {0} sur {1}", [focusIdx + 1, GUIDED_QUESTIONS.length])}
           </p>
-          <h2 className="t-display-m mt-3">{question.prompt}</h2>
-          <p className="t-caption mt-4 max-w-[44ch]">{t("Par exemple :")} {question.example}</p>
+          <h2 className="t-display-m mt-3">{t(question.prompt)}</h2>
+          <p className="t-caption mt-4 max-w-[44ch]">{msg("Par exemple : {0}", [t(question.example)])}</p>
           <Label htmlFor={`guide-${question.key}`} className="sr-only">
-            {question.prompt}
+            {t(question.prompt)}
           </Label>
           <Textarea
             id={`guide-${question.key}`}
             rows={4}
             className="mt-6 min-h-[8.5rem] w-full px-5 py-[1.125rem] text-lg leading-[1.6]"
             value={guidedReq?.value ?? ""}
-            placeholder={question.placeholder}
+            placeholder={t(question.placeholder)}
             onChange={(e) =>
               setDossier((d) =>
                 proposeRequirement(d, question.key, { value: e.target.value, source: "user" }),
@@ -1238,7 +1257,7 @@ export function DesignSpace({
                 else setTab("montage");
               }}
             >
-              {lastQuestion ? t("Passer à mon montage") : "Continuer"}
+              {lastQuestion ? t("Passer à mon montage") : t("Continuer")}
             </Button>
           </div>
 
@@ -1699,7 +1718,7 @@ export function DesignSpace({
                 />
                 <span
                   className={
-                    covered ? t("t-caption text-[var(--success)]") : t("t-caption text-[var(--warning)]")
+                    covered ? "t-caption text-[var(--success)]" : "t-caption text-[var(--warning)]"
                   }
                 >
                   {covered ? t("trajet renseigné") : t("trajet manquant pour cet état")}
@@ -1942,7 +1961,7 @@ export function DesignSpace({
           </AccordionTrigger>
           <AccordionContent>
             <pre className="code-block max-h-[28rem] overflow-y-auto whitespace-pre-wrap">
-              {technicalSummary(dossier)}
+              {technicalSummary(dossier, (x) => t(x))}
             </pre>
           </AccordionContent>
         </AccordionItem>
@@ -2267,7 +2286,10 @@ export function DesignSpace({
             )}
             {reopenedFrom ? (
               <p className="t-caption">
-                {t("Contenu repris de la version")} {reopenedFrom.revision}{t(". Le prochain envoi créera la version")} {serverRevision + 1} {t("de ce dossier.")}
+                {msg(
+                  "Contenu repris de la version {0}. Le prochain envoi créera la version {1} de ce dossier.",
+                  [reopenedFrom.revision, serverRevision + 1],
+                )}
               </p>
             ) : null}
             {submitMessage ? (
@@ -2384,7 +2406,7 @@ export function DesignSpace({
               id: `summary-${Date.now()}`,
               name: t("Résumé de mon projet.md"),
               kind: "markdown",
-              text: technicalSummary(dossier),
+              text: technicalSummary(dossier, (x) => t(x)),
             });
           }}
         >
@@ -2683,7 +2705,7 @@ export function DesignSpace({
   return (
     <div
       data-readable
-      className={embedded ? "text-foreground" : t("min-h-screen bg-background text-foreground")}
+      className={embedded ? "text-foreground" : "min-h-screen bg-background text-foreground"}
     >
       <header
         className={`material sticky top-0 z-20 border-b border-[var(--hairline)]${visible ? "" : " hidden"}`}

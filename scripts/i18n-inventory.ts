@@ -36,6 +36,8 @@ const EXEMPT_TEXTS = new Set([
   "noindex, nofollow",
   "mw-pole north",
   "mw-pole south",
+  "mw-kind education",
+  "studio-missing critical",
 ]);
 
 
@@ -119,6 +121,7 @@ const FRENCH_HINT =
 
 const isProse = (raw: string, loose = false) => {
   const value = raw.trim();
+  if (isTechnicalString(value)) return false;
   if (value.length < 3) return false;
   if (!HUMAN.test(value)) return false;
   if (/^[a-z0-9_.$/@-]+$/.test(value)) return false; // identifiers, paths, ids
@@ -134,8 +137,22 @@ type Finding = {
   file: string;
   line: number;
   text: string;
-  kind: "untranslated" | "missing";
+  kind: "untranslated" | "missing" | "code-translated" | "frozen";
 };
+
+/** Valeur technique : classe CSS, media query, spécificateur de module, sélecteur.
+ * Ces chaînes ne doivent JAMAIS passer par t(). */
+const CODE_CALLS = new Set(["matchMedia", "querySelector", "querySelectorAll", "getElementById", "setAttribute", "getAttribute", "require"]);
+export function isTechnicalString(value: string) {
+  const v = value.trim();
+  if (!v) return true;
+  if (/^\(\s*(prefers|min-width|max-width|hover|pointer)/.test(v)) return true;
+  if (/^(\.|@\/|node:)/.test(v)) return true;
+  const tokens = v.split(/\s+/);
+  const classish = (tok: string) =>
+    /^(?:[a-z0-9-]+:)*[a-z-]+(?:[-/[][^\s]*)+$/.test(tok) || tok.startsWith("mw-") || tok.startsWith("var(--");
+  return tokens.every(classish) && tokens.some((tok) => tok.includes("-") || tok.includes(":"));
+}
 
 /** Domain modules keep canonical French; they are translated by t() at the display site. */
 const isDomainModule = (file: string) => file.startsWith("src/lib/");
@@ -166,10 +183,20 @@ export function inventory(): Finding[] {
     );
     const at = (node: ts.Node) =>
       source.getLineAndCharacterOfPosition(node.getStart(source)).line + 1;
+    const text0 = readFileSync(file, "utf8");
+    /** Dictionnaire canonique traduit au rendu : marqué explicitement. */
+    const canonicalLines = new Set<number>();
+    text0.split("\n").forEach((l, i) => {
+      if (l.includes("i18n-canonical")) {
+        for (let n = i + 1; n <= i + 60; n += 1) canonicalLines.add(n + 1);
+      }
+    });
     const report = (node: ts.Node, text: string, kind: Finding["kind"]) => {
       const value = normalize(text);
       if (EXEMPT_TEXTS.has(value)) return;
-      findings.push({ file, line: at(node), text: value, kind });
+      const line = at(node);
+      if (kind === "untranslated" && canonicalLines.has(line)) return;
+      findings.push({ file, line, text: value, kind });
     };
 
     /** True when the node sits inside a t()/msg() call argument. */
@@ -202,7 +229,54 @@ export function inventory(): Finding[] {
       return false;
     };
 
+    /** Le littéral alimente un emplacement de code : attribut technique,
+     * appel DOM/import, ou concaténation de classes. */
+    const inCodeSlot = (node: ts.Node): boolean => {
+      let current: ts.Node | undefined = node.parent;
+      while (current) {
+        // On ne remonte jamais au-delà de l'élément JSX courant : le className
+        // du parent ne rend pas technique le texte de son enfant.
+        if (ts.isJsxElement(current) || ts.isJsxSelfClosingElement(current) || ts.isJsxFragment(current))
+          return false;
+        if (ts.isJsxAttribute(current) && CODE_ATTRS.has(current.name.getText(source))) return true;
+        if (
+          ts.isCallExpression(current) &&
+          CODE_CALLS.has(current.expression.getText(source).split(".").pop() ?? "")
+        )
+          return true;
+        if (ts.isCallExpression(current) && current.expression.kind === ts.SyntaxKind.ImportKeyword)
+          return true;
+        current = current.parent;
+      }
+      return false;
+    };
+
+    /** t()/msg() évalué une seule fois au chargement du module : le texte
+     * resterait français après un changement de langue. */
+    const atModuleLevel = (node: ts.Node): boolean => {
+      let current: ts.Node | undefined = node.parent;
+      while (current) {
+        if (
+          ts.isFunctionDeclaration(current) ||
+          ts.isFunctionExpression(current) ||
+          ts.isArrowFunction(current) ||
+          ts.isMethodDeclaration(current) ||
+          ts.isGetAccessor(current) ||
+          ts.isClassDeclaration(current)
+        )
+          return false;
+        current = current.parent;
+      }
+      return true;
+    };
+
     const visit = (node: ts.Node) => {
+      if (
+        ts.isCallExpression(node) &&
+        ["t", "msg"].includes(node.expression.getText(source)) &&
+        atModuleLevel(node)
+      )
+        report(node, node.getText(source).slice(0, 80), "frozen");
       if (ts.isJsxText(node)) {
         const text = node.getText(source);
         if (isProse(text, true)) report(node, text, isDomainModule(file) ? "missing" : "untranslated");
@@ -210,7 +284,9 @@ export function inventory(): Finding[] {
         const text = node.text;
         // Un mot isolé passé à t() doit AUSSI avoir sa traduction : « Renommer »
         // n'a ni espace ni accent et échappait au filtre de prose.
-        if (
+        if (inTranslator(node) && (isTechnicalString(text) || inCodeSlot(node))) {
+          report(node, text, "code-translated");
+        } else if (
           /\p{L}{3,}/u.test(text) &&
           inTranslator(node) &&
           !inComparison(node) &&
@@ -266,7 +342,7 @@ if (import.meta.main) {
         console.log(`  ${f.line}\t${f.kind}\t${f.text.slice(0, 110)}`);
     }
     console.log(
-      `\nTOTAL ${findings.length} — untranslated ${findings.filter((f) => f.kind === "untranslated").length}, missing ${findings.filter((f) => f.kind === "missing").length}`,
+      `\nTOTAL ${findings.length} — untranslated ${findings.filter((f) => f.kind === "untranslated").length}, missing ${findings.filter((f) => f.kind === "missing").length}, code-translated ${findings.filter((f) => f.kind === "code-translated").length}, frozen ${findings.filter((f) => f.kind === "frozen").length}`,
     );
   }
 }

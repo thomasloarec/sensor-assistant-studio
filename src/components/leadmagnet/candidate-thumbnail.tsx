@@ -110,7 +110,7 @@ export function hasWebGL(): boolean {
 
 function prefersReducedMotion(): boolean {
   if (typeof window === "undefined" || !window.matchMedia) return false;
-  return window.matchMedia(t("(prefers-reduced-motion: reduce)")).matches;
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
 /* ------------------------------------------------------------------ */
@@ -214,7 +214,7 @@ export function CandidateThumbnail({
 
   useEffect(() => {
     setReduced(prefersReducedMotion());
-    const media = window.matchMedia?.(t("(prefers-reduced-motion: reduce)"));
+    const media = window.matchMedia?.("(prefers-reduced-motion: reduce)");
     if (!media) return;
     const onChange = () => setReduced(media.matches);
     media.addEventListener("change", onChange);

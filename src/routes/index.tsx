@@ -154,7 +154,7 @@ function HomeRoute() {
                 {
                   n: "01",
                   t: t("1. Vous décrivez"),
-                  d: t("Quelques questions simples, en français : ce que vous voulez détecter, où le capteur se place, dans quelles conditions."),
+                  d: t("Quelques questions simples, dans votre langue : ce que vous voulez détecter, où le capteur se place, dans quelles conditions."),
                 },
                 {
                   n: "02",

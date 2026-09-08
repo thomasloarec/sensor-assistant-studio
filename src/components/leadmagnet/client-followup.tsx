@@ -68,16 +68,18 @@ interface Props {
   }) => void;
 }
 
+/* i18n-canonical : libellés stockés en français, traduits au rendu par t(). */
 const routeLabel: Record<string, string> = {
-  distributors: t("Distributeurs partenaires"),
-  standex_direct: t("Standex en direct, sous confirmation"),
-  manual_review: t("Revue manuelle Standex"),
+  distributors: "Distributeurs partenaires",
+  standex_direct: "Standex en direct, sous confirmation",
+  manual_review: "Revue manuelle Standex",
 };
 
+/* i18n-canonical : libellés stockés en français, traduits au rendu par t(). */
 const verdictLabel: Record<string, string> = {
-  validated: t("Validé"),
-  variant_proposed: t("Variante proposée"),
-  more_info: t("Informations complémentaires demandées"),
+  validated: "Validé",
+  variant_proposed: "Variante proposée",
+  more_info: "Informations complémentaires demandées",
 };
 
 export function ClientFollowUp({
@@ -222,7 +224,7 @@ export function ClientFollowUp({
               published.map((r) => (
                 <div key={r.id} className="surface-interactive p-5">
                   <div className="flex flex-wrap items-center gap-2">
-                    <Badge>{verdictLabel[r.verdict] ?? r.verdict}</Badge>
+                    <Badge>{t(verdictLabel[r.verdict] ?? r.verdict)}</Badge>
                     <span className="t-metric t-caption">version {r.revision}</span>
                     {r.superseded ? <Badge variant="outline">{t("remplacé")}</Badge> : null}
                     {r.exact_part_number ? (
@@ -372,7 +374,7 @@ export function ClientFollowUp({
                       });
                       setMessage(
                         `Demande enregistrée pour ${out.part_number} — traitement : ${
-                          routeLabel[out.route] ?? out.route
+                          t(routeLabel[out.route] ?? out.route)
                         }. La gratuité n'est jamais automatique.`,
                       );
                       await reloadView(current.dossier.id);
@@ -395,7 +397,7 @@ export function ClientFollowUp({
                   <span className="font-medium">
                     {s.quantity} × {s.part_number}
                   </span>
-                  <Badge variant="outline">{routeLabel[s.route] ?? s.route}</Badge>
+                  <Badge variant="outline">{t(routeLabel[s.route] ?? s.route)}</Badge>
                   <Badge variant="secondary">
                     {s.status === "superseded" ? t("conception modifiée depuis") : s.status}
                   </Badge>

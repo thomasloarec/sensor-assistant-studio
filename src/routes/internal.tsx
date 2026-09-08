@@ -729,8 +729,8 @@ function Bench({ user }: { user: User }) {
                     onClick={() => setActiveId(s.id)}
                     className={`mb-1 block min-h-11 w-full rounded-[var(--r-sm)] px-2 py-2 text-left font-mono t-caption transition-colors duration-[var(--d-fast)] ease-[var(--ease-out)] ${
                       s.id === activeId
-                        ? t("bg-secondary text-foreground")
-                        : t("text-muted-foreground hover:bg-secondary/60")
+                        ? "bg-secondary text-foreground"
+                        : "text-muted-foreground hover:bg-secondary/60"
                     }`}
                   >
                     <div className="truncate">
@@ -755,7 +755,7 @@ function Bench({ user }: { user: User }) {
                     onClick={() => selectScenario(sc.id)}
                     className={`mb-1 block min-h-11 w-full rounded-[var(--r-sm)] px-2 py-2 text-left font-mono t-caption transition-colors duration-[var(--d-fast)] ease-[var(--ease-out)] hover:bg-secondary/60 ${
                       sc.id === scenarioId
-                        ? t("bg-secondary text-foreground")
+                        ? "bg-secondary text-foreground"
                         : "text-muted-foreground"
                     }`}
                     title={t(sc.expected_behavior)}
@@ -819,10 +819,10 @@ function Bench({ user }: { user: User }) {
                     key={m.id}
                     className={
                       m.role === "prospect"
-                        ? t("max-w-[85%] self-end rounded-[var(--r-sm)] rounded-br-[var(--r-xs)] bg-[var(--surface-tint)] px-3 py-2")
+                        ? "max-w-[85%] self-end rounded-[var(--r-sm)] rounded-br-[var(--r-xs)] bg-[var(--surface-tint)] px-3 py-2"
                         : m.role === "assistant"
-                          ? t("max-w-[85%] self-start rounded-[var(--r-sm)] rounded-bl-[var(--r-xs)] bg-[var(--surface)] px-3 py-2 shadow-[var(--e-1)]")
-                          : t("w-full rounded-[var(--r-sm)] bg-[var(--surface-sunken)] px-3 py-2")
+                          ? "max-w-[85%] self-start rounded-[var(--r-sm)] rounded-bl-[var(--r-xs)] bg-[var(--surface)] px-3 py-2 shadow-[var(--e-1)]"
+                          : "w-full rounded-[var(--r-sm)] bg-[var(--surface-sunken)] px-3 py-2"
                     }
                   >
                     <div className="font-mono t-label uppercase tracking-widest text-muted-foreground">
@@ -1271,7 +1271,7 @@ function DossierPanel({
                     ) : (
                       <p
                         className={
-                          f.importance === "critique" ? t("studio-missing critical") : "studio-missing"
+                          f.importance === "critique" ? "studio-missing critical" : "studio-missing"
                         }
                       >
                         {t("À préciser")}
