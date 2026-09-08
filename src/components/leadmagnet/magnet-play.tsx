@@ -8,13 +8,13 @@ import { useCallback, useRef, useState } from "react";
 import { Slider } from "@/components/ui/slider";
 
 /** Position de l'aimant, en pourcentage de la largeur de la scène. */
-const MIN = 4;
-const MAX = 96;
+const MIN = 30;
+const MAX = 92;
 /** Seuil pédagogique : au-delà, l'aimant n'agit plus sur le capteur. */
-const THRESHOLD = 34;
+const THRESHOLD = 45;
 
 export function MagnetPlay() {
-  const [pos, setPos] = useState(78);
+  const [pos, setPos] = useState(84);
   const sceneRef = useRef<HTMLDivElement | null>(null);
   const draggingRef = useRef(false);
 
