@@ -11,7 +11,7 @@ import {
 import { SENSOR_SPECIFICATIONS } from "../src/lib/standex/sensor-specifications";
 import { evaluateCandidates } from "../src/lib/leadmagnet/candidates";
 import { createDossier } from "../src/lib/leadmagnet/dossier";
-import { exportDossier, importDossier } from "../src/lib/leadmagnet/dossier-io";
+import { buildDossierExport, parseDossierExport } from "../src/lib/leadmagnet/dossier-io";
 import {
   DEFAULT_WORKSHOP,
   parseWorkshopConfig,
@@ -69,7 +69,7 @@ describe("Schéma pédagogique sur mesure", () => {
     expect(candidate.status).toBe("to_verify"); // donc proposable, jamais « écarté »
 
     const dossier = { ...createDossier(), selectedSensorId: CUSTOM_SENSOR_ID };
-    const reprise = importDossier(exportDossier(dossier));
+    const reprise = parseDossierExport(buildDossierExport(dossier));
     expect(reprise.ok).toBe(true);
     if (!reprise.ok) throw new Error("reprise refusée");
     expect(reprise.dossier.selectedSensorId).toBe(CUSTOM_SENSOR_ID);
@@ -84,8 +84,8 @@ describe("Schéma pédagogique sur mesure", () => {
   test("un identifiant inconnu ne devient jamais un autre capteur à la reprise", () => {
     expect(isKnownSensorId("MK03-INVENTE")).toBe(false);
     expect(parseWorkshopConfig({ ...DEFAULT_WORKSHOP, sensorId: "MK03-INVENTE" })).toBeNull();
-    const reprise = importDossier(
-      exportDossier({ ...createDossier(), selectedSensorId: "MK03-INVENTE" }),
+    const reprise = parseDossierExport(
+      buildDossierExport({ ...createDossier(), selectedSensorId: "MK03-INVENTE" }),
     );
     expect(reprise.ok).toBe(true);
     if (!reprise.ok) throw new Error("reprise refusée");
