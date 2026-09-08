@@ -338,8 +338,14 @@ export function ClientFollowUp({
               variant="outline"
               onClick={() => {
                 const last = current.revisions[current.revisions.length - 1];
-                if (last) onReopenSnapshot(last.snapshot, last.revision);
+                if (last)
+                  onReopenSnapshot({
+                    dossierId: current.dossier.id,
+                    revision: last.revision,
+                    snapshot: last.snapshot,
+                  });
               }}
+
             >
               Reprendre la dernière version envoyée
             </Button>
