@@ -68,7 +68,11 @@ export function releaseThumbnailSlot(token: ThumbnailSlot) {
   if (next) {
     next.token.waiting = false;
     next.token.held = true; // la place change de mains, elle n'est pas rendue
-    next.notify();
+    // Réveil différé : on ne met jamais à jour une autre vignette pendant le
+    // nettoyage d'effet de celle qui libère sa place.
+    queueMicrotask(() => {
+      if (next.token.held) next.notify();
+    });
     return;
   }
   liveContexts = Math.max(0, liveContexts - 1);
