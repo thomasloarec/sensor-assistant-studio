@@ -516,13 +516,19 @@ begin
     if coalesce(btrim(_signed_object_path),'') = '' then
       raise exception 'NDA_PROOF_INCOMPLETE' using errcode = '22023';
     end if;
+    -- L'empreinte enregistrée est celle des octets RÉELLEMENT annoncés puis
+    -- déposés pour ce dossier : jamais un simple champ 64 hexa arbitraire.
     if not exists (
       select 1 from storage.objects o
       join lead.upload_sessions us on o.name like us.path_prefix || '/%'
       where o.bucket_id = 'lead-design-files' and o.name = btrim(_signed_object_path)
-        and us.dossier_id = _dossier and us.kind = 'nda_signed') then
+        and us.dossier_id = _dossier and us.kind = 'nda_signed'
+        and us.expected_sha256 = lower(_document_sha)) then
       raise exception 'NDA_SIGNED_FILE_NOT_FOUND' using errcode = '42501';
     end if;
+    update lead.upload_sessions set closed_at = now()
+     where dossier_id = _dossier and kind = 'nda_signed' and closed_at is null;
+
   elsif coalesce(btrim(_signed_object_path),'') <> '' then
     raise exception 'NDA_EVIDENCE_KIND_INVALID' using errcode = '22023';
   end if;
