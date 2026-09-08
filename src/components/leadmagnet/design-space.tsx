@@ -261,6 +261,9 @@ export interface DesignSpaceProps {
   accountRequest?: number;
   /** Appelé quand un projet est réellement ouvert, créé ou repris ici. */
   onWorkspaceOpen?: () => void;
+  /** Retour à l'accueil depuis le logo, SANS démonter cet espace : le brouillon
+   * en mémoire, les panneaux et l'atelier restent intacts et on peut revenir. */
+  onGoHome?: () => void;
 }
 
 export function DesignSpace({
@@ -268,6 +271,7 @@ export function DesignSpace({
   visible = true,
   accountRequest = 0,
   onWorkspaceOpen,
+  onGoHome,
 }: DesignSpaceProps) {
   const [dossier, setDossier] = useState<DesignDossier>(() => createDossier());
 
