@@ -415,6 +415,106 @@
     color: var(--ink);
   }
 
+  /* Blocs métier réutilisables de l'espace projet. */
+  .panel-block {
+    background: var(--surface);
+    border-radius: var(--r-md);
+    box-shadow: var(--e-1);
+    padding: 1.25rem;
+  }
+  .panel-block-lg {
+    background: var(--surface);
+    border-radius: var(--r-lg);
+    box-shadow: var(--e-1);
+    padding: 1.75rem;
+  }
+  .notice {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--r-md);
+    padding: 1rem 1.125rem 1rem 1.25rem;
+  }
+  .notice::before {
+    content: "";
+    position: absolute;
+    inset-block: 0;
+    left: 0;
+    width: 3px;
+  }
+  .notice-info {
+    background: var(--surface-tint);
+  }
+  .notice-info::before {
+    background: var(--primary);
+  }
+  .notice-warning {
+    background: var(--warning-soft);
+  }
+  .notice-warning::before {
+    background: var(--warning);
+  }
+  .notice-danger {
+    background: var(--destructive-soft);
+  }
+  .notice-danger::before {
+    background: var(--destructive);
+  }
+  .notice-success {
+    background: var(--success-soft);
+  }
+  .notice-success::before {
+    background: var(--success);
+  }
+  .notice-success-sweep::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    width: 42%;
+    pointer-events: none;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      color-mix(in oklab, white 48%, transparent),
+      transparent
+    );
+    transform: translateX(-150%) skewX(-15deg);
+    animation: standex-sweep 900ms var(--ease-out) 1;
+  }
+  .code-block {
+    background: var(--surface-sunken);
+    border-radius: var(--r-md);
+    padding: 1.25rem;
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    line-height: 1.65;
+    overflow-x: auto;
+    color: var(--ink);
+  }
+  .candidate-selected {
+    box-shadow:
+      var(--e-2),
+      inset 0 0 0 2px var(--primary);
+  }
+  .candidate-excluded {
+    opacity: 0.6;
+    filter: saturate(0.6);
+  }
+  .requirement-confirmed {
+    box-shadow:
+      var(--e-1),
+      inset 3px 0 0 var(--success);
+  }
+  .business-accordion-trigger > svg {
+    transition: transform var(--d-base) var(--ease-out);
+  }
+  .technical-details-chevron {
+    display: inline-block;
+    transition: transform var(--d-base) var(--ease-out);
+  }
+  details[open] > summary .technical-details-chevron {
+    transform: rotate(180deg);
+  }
+
   .surface {
     background: var(--surface);
     border-radius: var(--r-lg);
@@ -776,6 +876,15 @@
   }
   to {
     transform: none;
+  }
+}
+
+@keyframes standex-sweep {
+  from {
+    transform: translateX(-150%) skewX(-15deg);
+  }
+  to {
+    transform: translateX(350%) skewX(-15deg);
   }
 }
 

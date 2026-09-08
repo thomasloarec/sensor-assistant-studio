@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/lib/standex/supabase";
 import type { LeadBackendStatus } from "@/lib/leadmagnet/backend";
+import { Loader2 } from "lucide-react";
 
 interface Props {
   backend: LeadBackendStatus | null;
@@ -27,7 +28,7 @@ export function AuthPanel({ backend, onChanged }: Props) {
 
   if (!backend?.configured || !supabase)
     return (
-      <p className="text-base text-muted-foreground">
+      <p className="t-caption">
         La liaison avec l'équipe Standex n'est pas configurée sur cet environnement : la connexion
         n'est pas possible ici.
       </p>
@@ -36,9 +37,7 @@ export function AuthPanel({ backend, onChanged }: Props) {
   if (backend.authenticated)
     return (
       <div className="flex flex-wrap items-center gap-3 text-base">
-        <span className="text-muted-foreground">
-          Connecté{backend.role ? ` — rôle ${backend.role}` : ""}.
-        </span>
+        <span className="t-caption">Connecté{backend.role ? ` — rôle ${backend.role}` : ""}.</span>
         <Button
           variant="outline"
           className="min-h-11 text-base"
@@ -77,7 +76,7 @@ export function AuthPanel({ backend, onChanged }: Props) {
       }}
     >
       <div>
-        <Label htmlFor={emailId} className="text-base">
+        <Label htmlFor={emailId} className="t-label">
           Adresse e-mail
         </Label>
         <Input
@@ -91,7 +90,7 @@ export function AuthPanel({ backend, onChanged }: Props) {
         />
       </div>
       <div>
-        <Label htmlFor={passwordId} className="text-base">
+        <Label htmlFor={passwordId} className="t-label">
           Mot de passe
         </Label>
         <Input
@@ -104,12 +103,16 @@ export function AuthPanel({ backend, onChanged }: Props) {
           required
         />
       </div>
-      <Button type="submit" className="min-h-11 text-base" disabled={busy}>
+      <Button
+        type="submit"
+        className="min-h-11 text-base"
+        disabled={busy}
+        aria-busy={busy ? "true" : undefined}
+      >
+        {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
         {busy ? "Connexion…" : "Se connecter"}
       </Button>
-      {message ? (
-        <p className="text-base text-muted-foreground sm:col-span-3">{message}</p>
-      ) : null}
+      {message ? <p className="notice notice-info sm:col-span-3">{message}</p> : null}
     </form>
   );
 }
