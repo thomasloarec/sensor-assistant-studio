@@ -1587,16 +1587,38 @@ function DesignSpace() {
                   <ClientFollowUp
                     backend={backend}
                     serverDossierId={serverDossierId}
-                    onSelectDossier={setServerDossierId}
-                    onReopenSnapshot={(snapshot, revision) => {
-                      const parsed = snapshot as unknown as DesignDossier;
-                      setDossier({ ...parsed, storage: "memory" });
-                      setWorkshop(parsed.workshop ?? null);
-                      setServerRevision(revision);
+                    onSelectDossier={(d) => {
+                      // Changer de dossier remet TOUT le contexte serveur au même
+                      // instant : sinon le dossier A pourrait partir dans le dossier B.
+                      setServerDossierId(d.id);
+                      setServerRevision(d.current_revision ?? d.revision);
+                      setNdaServer(null);
+                      setNda(INITIAL_NDA);
+                      setPrivacy((p) => ({ ...p, consents: [] }));
+                      setAcknowledged(false);
                       setSubmitMessage(
-                        "Version reprise depuis le dossier réellement envoyé à Standex.",
+                        `Dossier « ${d.title} » sélectionné : votre accord d'envoi et la relecture sont à refaire pour ce dossier.`,
                       );
                     }}
+                    onReopenSnapshot={({ dossierId, revision, snapshot }) => {
+                      const parsed = parseServerSnapshot(snapshot);
+                      if (!parsed.ok) {
+                        setSubmitMessage(parsed.reason);
+                        return;
+                      }
+                      setDossier({ ...parsed.dossier, storage: "memory" });
+                      setWorkshop(parsed.dossier.workshop ?? null);
+                      setServerDossierId(dossierId);
+                      setServerRevision(revision);
+                      setNdaServer(null);
+                      setNda(INITIAL_NDA);
+                      setPrivacy((p) => ({ ...p, consents: [] }));
+                      setAcknowledged(false);
+                      setSubmitMessage(
+                        `Version ${revision} reprise depuis le dossier réellement envoyé. ${parsed.notices.join(" ")}`,
+                      );
+                    }}
+
                   />
                   <p className="text-xs text-muted-foreground">
                     Disponibilités, MOQ et conditionnements : inconnus tant qu'aucun fournisseur
