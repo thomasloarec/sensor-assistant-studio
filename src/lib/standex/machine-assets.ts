@@ -39,6 +39,14 @@ async function keyFor(data: ArrayBuffer): Promise<string> {
     .join("");
   return "sha256:" + hash;
 }
+export type AssetStorageMode = "memory" | "local-device";
+
+/** Provenance explicite de chaque ressource connue de cet onglet. */
+const assetProvenance = new Map<string, AssetStorageMode>();
+export function assetStorageModeOf(key: string): AssetStorageMode | null {
+  return assetProvenance.get(key) ?? null;
+}
+
 export async function storeMachineFileInMemory(file: File): Promise<string> {
   if (file.size > 30 * 1024 * 1024)
     throw new Error("Choisissez un GLB autonome de moins de 30 Mo.");
@@ -46,7 +54,16 @@ export async function storeMachineFileInMemory(file: File): Promise<string> {
   validateGlb(data);
   const key = await keyFor(data);
   memoryFiles.set(key, data);
+  assetProvenance.set(key, "memory");
   return key;
+}
+
+/** Point d'entrée unique : le mode de stockage est explicite, jamais deviné. */
+export async function storeMachineFileWithMode(
+  file: File,
+  mode: AssetStorageMode,
+): Promise<string> {
+  return mode === "memory" ? storeMachineFileInMemory(file) : storeMachineFile(file);
 }
 export function clearMemoryMachineFiles() {
   memoryFiles.clear();
@@ -72,6 +89,7 @@ export async function storeMachineFile(file: File): Promise<string> {
   } finally {
     db.close();
   }
+  assetProvenance.set(key, "local-device");
   return key;
 }
 export function validateGlb(data: ArrayBuffer) {
@@ -111,7 +129,7 @@ export function validateGlb(data: ArrayBuffer) {
   )
     throw new Error("Exportez un GLB sans compression Draco, Meshopt ou KTX2.");
 }
-async function readFile(key: string): Promise<ArrayBuffer> {
+async function readFile(key: string, mode: AssetStorageMode): Promise<ArrayBuffer> {
   if (key === COFFEE_ASSET) {
     const r = await fetch("/models/machine-cafe-bac-mobile.glb");
     if (!r.ok) throw new Error("Exemple 3D indisponible.");
@@ -119,6 +137,12 @@ async function readFile(key: string): Promise<ArrayBuffer> {
   }
   const inMemory = memoryFiles.get(key);
   if (inMemory) return inMemory;
+  // En mode mémoire, une ressource disparue ne doit JAMAIS être récupérée
+  // silencieusement sur l'appareil : on s'arrête ici, sans ouvrir IndexedDB.
+  if (mode === "memory" || assetProvenance.get(key) === "memory")
+    throw new Error(
+      "Le fichier 3D n'est plus en mémoire de cet onglet. Réimportez le même GLB pour retrouver le montage.",
+    );
   const db = await database();
 
   try {
@@ -138,8 +162,12 @@ async function readFile(key: string): Promise<ArrayBuffer> {
     db.close();
   }
 }
-export async function loadMachineAsset(key: string, unitScale: number): Promise<MachineAsset> {
-  const data = await readFile(key);
+export async function loadMachineAsset(
+  key: string,
+  unitScale: number,
+  mode: AssetStorageMode = "local-device",
+): Promise<MachineAsset> {
+  const data = await readFile(key, mode);
   validateGlb(data);
   const manager = new LoadingManager();
   manager.setURLModifier((url) => {
