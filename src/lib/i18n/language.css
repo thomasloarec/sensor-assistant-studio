@@ -80,3 +80,7 @@ html:lang(ja-JP) .mw-eyebrow {
     display: none;
   }
 }
+.language-picker select option {
+  background: var(--popover);
+  color: var(--popover-foreground);
+}

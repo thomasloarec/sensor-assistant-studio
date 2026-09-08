@@ -1812,3 +1812,10 @@
   outline: 2px solid var(--ring);
   outline-offset: 2px;
 }
+
+/* Listes natives : sous .immersive, l'ouverture d'un select doit rester lisible. */
+.mw select option,
+.mw select optgroup {
+  background: var(--popover);
+  color: var(--popover-foreground);
+}
