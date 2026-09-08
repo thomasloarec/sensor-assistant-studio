@@ -238,6 +238,13 @@ function DesignSpace() {
   const [routingTarget, setRoutingTarget] = useState<RoutingTarget>({ kind: "base" });
   const [routingSlot, setRoutingSlot] = useState<RoutingSlot>("sensor");
   const [tab, setTab] = useState("besoin");
+  /** Ce à quoi un accord d'envoi se rattache à cet instant : dossier serveur visé,
+   * révision suivante, empreinte du contenu relu et empreintes des fichiers déjà déposés.
+   * Dès qu'un de ces éléments change, l'accord précédent et la relecture tombent.
+   */
+  const [binding, setBinding] = useState<ConsentBinding | null>(null);
+  const [consentNotice, setConsentNotice] = useState<string | null>(null);
+
 
 
   /** Remplissage local du NDA : aperçu puis téléchargement, sans aucune transmission. */
