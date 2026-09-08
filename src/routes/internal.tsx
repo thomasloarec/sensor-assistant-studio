@@ -18,6 +18,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { BrandLogo } from "@/components/standex/brand-logo";
 import { Separator } from "@/components/ui/separator";
 import {
   Accordion,
@@ -142,8 +143,11 @@ function Header({ user }: { user: User | null }) {
   return (
     <header className="studio-header">
       <div className="studio-brand">
-        STANDEX <span>DETECT</span>
-        <small>{t("VOTRE PROJET CAPTEUR")}</small>
+        <BrandLogo variant="mark" tone="light" height={30} clearance={false} alt="" />
+        <div className="studio-brand-text">
+          STANDEX <span>DETECT</span>
+          <small>{t("VOTRE PROJET CAPTEUR")}</small>
+        </div>
       </div>
       <div className="studio-header-center">
         <span>{t("Conversation")}</span>

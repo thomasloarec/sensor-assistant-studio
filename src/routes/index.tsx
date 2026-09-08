@@ -7,7 +7,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import type { CSSProperties } from "react";
-import { ArrowDown, ArrowRight, ChevronDown, Magnet, UserRound } from "lucide-react";
+import { ArrowDown, ArrowRight, ChevronDown, UserRound } from "lucide-react";
+import { BrandLogo } from "@/components/standex/brand-logo";
 import { Button } from "@/components/ui/button";
 import { MagnetPlay } from "@/components/leadmagnet/magnet-play";
 import { DesignSpace, PrivateDesignError } from "@/components/leadmagnet/design-space";
@@ -50,14 +51,9 @@ function HomeRoute() {
         <div className="immersive hero-field overflow-hidden lg:min-h-[88svh]">
           <header className="material sticky top-0 z-30 shadow-[inset_0_-1px_0_var(--hairline)]">
             <div className="mx-auto flex max-w-7xl items-center gap-2 px-4 py-3 sm:gap-4 sm:px-6 lg:px-8">
-              {/* Emplacement du logo officiel SVG lorsqu'il sera fourni */}
-              <span className="flex min-w-0 items-center gap-3">
-                <span className="flex size-9 shrink-0 items-center justify-center rounded-[var(--r-xs)] bg-[oklch(1_0_0_/_0.1)]">
-                  <Magnet className="h-5 w-5 text-primary" aria-hidden="true" />
-                </span>
-                <span className="truncate text-base font-semibold sm:text-lg">
-                  Standex <span className="font-normal tracking-[0.12em]">DETECT</span>
-                </span>
+              <span className="flex min-w-0 items-center">
+                <BrandLogo tone="reversed" height={44} className="hidden sm:block" />
+                <BrandLogo variant="mark" tone="reversed" height={32} className="sm:hidden" />
               </span>
               <div className="ml-auto flex shrink-0 items-center gap-2">
                 <Button
