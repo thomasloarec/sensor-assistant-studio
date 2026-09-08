@@ -60,6 +60,7 @@ import {
   EXPORT_BINARY_NOTICE,
   buildDossierExport,
   parseDossierExport,
+  parseServerSnapshot,
 } from "@/lib/leadmagnet/dossier-io";
 import {
   INITIAL_PRIVACY,
