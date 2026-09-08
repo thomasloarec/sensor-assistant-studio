@@ -679,31 +679,34 @@ function StandexConsole() {
                               if (!file) return;
                               void run(async () => {
                                 const bytes = new Uint8Array(await file.arrayBuffer());
-                                const digest = await crypto.subtle.digest("SHA-256", bytes);
-                                const sha = Array.from(new Uint8Array(digest))
-                                  .map((b) => b.toString(16).padStart(2, "0"))
-                                  .join("");
                                 const uploaded = await uploadDesignFile(
                                   view.dossier.id,
-                                  { name: file.name, data: bytes },
+                                  {
+                                    name: file.name,
+                                    data: bytes,
+                                    mimeType: file.type || "application/pdf",
+                                  },
                                   "nda_signed",
                                   {
-                                    kind: "nda_signed",
+                                    kind: "supabase_files",
                                     statement:
                                       "Dépôt du document signé pour vérification par Standex.",
                                     accepted_at: new Date().toISOString(),
                                     content_ref: file.name,
+                                    revision: view.dossier.current_revision,
                                   },
                                 );
                                 setNda((n) => ({
                                   ...n,
-                                  documentSha256: sha,
+                                  // Empreinte des octets RÉELLEMENT déposés, calculée au dépôt.
+                                  documentSha256: uploaded.sha256,
                                   signedObjectPath: uploaded.path,
                                   signedFileName: uploaded.fileName,
                                   evidenceKind: "stored_object",
                                 }));
                                 return "Document déposé et empreinte calculée automatiquement.";
                               });
+
                             }}
                           />
                           <p className="mt-1 text-xs text-muted-foreground">

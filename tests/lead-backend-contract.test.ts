@@ -137,6 +137,7 @@ describe("migration V1.2 : invariants de sécurité", () => {
   });
 
   test("le bucket de fichiers reste privé", () => {
-    expect(SQL).toContain("values ('lead-design-files', 'lead-design-files', false)");
+    expect(SQL).toContain("values ('lead-design-files', 'lead-design-files', false,");
+    expect(SQL).toContain("set public = false");
   });
 });

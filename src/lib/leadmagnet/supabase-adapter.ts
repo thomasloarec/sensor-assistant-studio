@@ -125,13 +125,20 @@ export interface SubmittedRevision {
   client_hash_matches?: boolean;
 }
 
-/** Consentement transmis au serveur : contenu identifié, date, portée explicite. */
-function serverConsents(snapshot: SubmissionSnapshot) {
+/** Consentement transmis au serveur : contenu, dossier, révision et fichiers liés.
+ * Le serveur recalcule l'empreinte du contenu et refuse tout écart : une case
+ * cochée sur un autre contenu ne peut plus servir.
+ */
+function serverConsents(snapshot: SubmissionSnapshot, dossierId: string, revision: number) {
   return snapshot.consents.map((c) => ({
     kind: c.kind,
     statement: c.contentSummary,
     accepted_at: c.grantedAt,
-    content_ref: `${snapshot.dossierId}@r${snapshot.revision}#${snapshot.hash.slice(0, 16)}`,
+    dossier_id: dossierId,
+    revision,
+    content_hash: snapshot.hash,
+    content_ref: `${dossierId}@r${revision}#${snapshot.hash.slice(0, 16)}`,
+    file_digests: snapshot.transferredFiles.map((f) => f.sha256).sort(),
     recipients: c.recipients,
   }));
 }
@@ -147,13 +154,14 @@ export async function submitRevision(
     p_expected_revision: expectedRevision,
     p_snapshot: snapshot.dto as unknown as Record<string, unknown>,
     p_content_hash: snapshot.hash,
-    p_consents: serverConsents(snapshot),
+    p_consents: serverConsents(snapshot, dossierId, expectedRevision + 1),
     // Seuls les fichiers réellement déposés dans une session autorisée sont annoncés.
     p_transferred_files: snapshot.transferredFiles
       .filter((f) => Boolean(f.path))
-      .map((f) => ({ path: f.path, file_name: f.fileName })),
+      .map((f) => ({ path: f.path, file_name: f.fileName, sha256: f.sha256 })),
   });
 }
+
 
 export async function publishReview(input: {
   revisionId: string;
@@ -396,14 +404,23 @@ export interface UploadSession {
   bucket: string;
   path_prefix: string;
   expires_at: string;
+  expected_sha256?: string;
+  expected_revision?: number;
 }
 
-/** Consentement explicite, daté et rattaché au contenu : exigé par le serveur. */
+/** Consentement de dépôt : daté, lié au dossier, à la révision visée et à
+ * l'empreinte EXACTE du fichier relu. Le serveur refuse tout champ manquant.
+ */
 export interface FileConsent {
-  kind: string;
+  kind: "supabase_files";
   statement: string;
   accepted_at: string;
   content_ref: string;
+  dossier_id: string;
+  revision: number;
+  file_sha256: string;
+  file_bytes: number;
+  file_mime: string;
   recipients?: string[];
 }
 
@@ -419,28 +436,116 @@ export async function openUploadSession(
   });
 }
 
-/** Dépôt réel du modèle 3D : jamais avant NDA et consentement vérifiés côté serveur. */
+/** Empreinte des octets RÉELLEMENT envoyés : jamais un champ saisi à la main. */
+export async function sha256Hex(data: ArrayBuffer | Uint8Array): Promise<string> {
+  const buffer =
+    data instanceof Uint8Array
+      ? (data.slice().buffer as ArrayBuffer)
+      : (data as ArrayBuffer);
+  const digest = await crypto.subtle.digest("SHA-256", buffer);
+  return Array.from(new Uint8Array(digest))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+}
+
+export interface UploadedFile {
+  path: string;
+  fileName: string;
+  sha256: string;
+  bytes: number;
+  mimeType: string;
+}
+
+/** Dépôt réel : préflight (empreinte + taille + type annoncés) puis transfert.
+ * L'empreinte enregistrée est celle des octets envoyés, calculée ici.
+ */
 export async function uploadDesignFile(
   dossierId: string,
-  file: { name: string; data: Blob | ArrayBuffer | Uint8Array },
+  file: { name: string; data: Blob | ArrayBuffer | Uint8Array; mimeType?: string },
   kind: "design_model" | "document" | "nda_signed" = "design_model",
-  consent: FileConsent | null = null,
-): Promise<{ path: string; fileName: string }> {
+  consent: Omit<FileConsent, "dossier_id" | "file_sha256" | "file_bytes" | "file_mime">,
+): Promise<UploadedFile> {
   if (!supabase) throw new Error(humanRpcError("not configured"));
-  const session = await openUploadSession(dossierId, kind, consent);
+  const bytes =
+    file.data instanceof Blob
+      ? new Uint8Array(await file.data.arrayBuffer())
+      : file.data instanceof Uint8Array
+        ? file.data
+        : new Uint8Array(file.data);
+  const sha256 = await sha256Hex(bytes);
+  const mimeType =
+    file.mimeType ??
+    (file.name.toLowerCase().endsWith(".glb")
+      ? "model/gltf-binary"
+      : file.name.toLowerCase().endsWith(".pdf")
+        ? "application/pdf"
+        : file.name.toLowerCase().endsWith(".docx")
+          ? "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+          : "application/octet-stream");
+  const session = await openUploadSession(dossierId, kind, {
+    ...consent,
+    kind: "supabase_files",
+    dossier_id: dossierId,
+    file_sha256: sha256,
+    file_bytes: bytes.byteLength,
+    file_mime: mimeType,
+  });
   const safeName = file.name.replace(/[^A-Za-z0-9._-]/g, "_");
   const path = `${session.path_prefix}/${safeName}`;
-  const body =
-    file.data instanceof Blob
-      ? file.data
-      : new Blob([file.data as unknown as BlobPart], { type: "application/octet-stream" });
-  const { error } = await supabase.storage.from(session.bucket).upload(path, body, {
-    upsert: false,
-    contentType: "application/octet-stream",
-  });
+  const { error } = await supabase.storage
+    .from(session.bucket)
+    .upload(path, new Blob([bytes as unknown as BlobPart], { type: mimeType }), {
+      upsert: false,
+      contentType: mimeType,
+    });
   if (error) throw new Error(humanRpcError(error));
-  return { path, fileName: safeName };
+  return { path, fileName: safeName, sha256, bytes: bytes.byteLength, mimeType };
 }
+
+/** Lien de lecture temporaire d'un fichier privé (propriétaire ou staff affecté). */
+export async function signedFileUrl(path: string, seconds = 300): Promise<string | null> {
+  if (!supabase) return null;
+  const { data, error } = await supabase.storage
+    .from("lead-design-files")
+    .createSignedUrl(path, seconds);
+  if (error) throw new Error(humanRpcError(error));
+  return data?.signedUrl ?? null;
+}
+
+/** Octets réels d'un fichier privé, pour relire un modèle 3D dans l'atelier. */
+export async function downloadDesignFile(path: string): Promise<ArrayBuffer> {
+  if (!supabase) throw new Error(humanRpcError("not configured"));
+  const { data, error } = await supabase.storage.from("lead-design-files").download(path);
+  if (error || !data) throw new Error(humanRpcError(error ?? "download failed"));
+  return data.arrayBuffer();
+}
+
+export interface NdaStatusView {
+  dossier_id: string;
+  nda_required: boolean;
+  nda_status: "not_required" | "requested" | "prepared" | "awaiting_signatures" | "in_force";
+  allows_transfer: boolean;
+  proof: {
+    document_sha256: string;
+    verified_at: string;
+    proof_reference: string;
+    signed_at: string | null;
+  } | null;
+}
+
+/** Coquille NDA côté serveur : métadonnées seules, aucun contenu technique,
+ * aucune signature. Elle permet au client de déposer le document signé et à
+ * Standex de voir un dossier en attente de vérification.
+ */
+export async function prepareNdaOnServer(dossierId: string | null): Promise<NdaStatusView> {
+  return rpc<NdaStatusView>(LEAD_RPC.prepareNda, { p_dossier: dossierId });
+}
+
+/** Statut NDA faisant autorité : lu au serveur, jamais déduit d'une case cochée. */
+export async function fetchNdaStatus(dossierId: string): Promise<NdaStatusView> {
+  return rpc<NdaStatusView>(LEAD_RPC.ndaStatus, { p_dossier: dossierId });
+}
+
 
 /** Preuve NDA vérifiée : réservée à un administrateur Standex habilité. */
 export async function recordNdaProof(input: {

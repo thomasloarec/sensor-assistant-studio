@@ -23,10 +23,16 @@ import type { LeadBackendStatus } from "@/lib/leadmagnet/backend";
 interface Props {
   backend: LeadBackendStatus | null;
   serverDossierId: string | null;
-  onSelectDossier: (id: string) => void;
+  /** Changer de dossier change TOUT le contexte serveur, jamais l'identifiant seul. */
+  onSelectDossier: (dossier: { id: string; revision: number; title: string }) => void;
   /** Reprise dans l'espace de conception à partir du dossier réellement envoyé. */
-  onReopenSnapshot?: (snapshot: Record<string, unknown>, revision: number) => void;
+  onReopenSnapshot?: (input: {
+    dossierId: string;
+    revision: number;
+    snapshot: Record<string, unknown>;
+  }) => void;
 }
+
 
 const routeLabel: Record<string, string> = {
   distributors: "Distributeurs partenaires",
@@ -110,10 +116,11 @@ export function ClientFollowUp({
               size="sm"
               variant={d.id === serverDossierId ? "default" : "outline"}
               onClick={() => {
-                onSelectDossier(d.id);
+                onSelectDossier({ id: d.id, revision: d.current_revision, title: d.title });
                 void reloadView(d.id);
               }}
             >
+
               Ouvrir
             </Button>
             <span className="font-medium">{d.title}</span>
@@ -331,8 +338,14 @@ export function ClientFollowUp({
               variant="outline"
               onClick={() => {
                 const last = current.revisions[current.revisions.length - 1];
-                if (last) onReopenSnapshot(last.snapshot, last.revision);
+                if (last)
+                  onReopenSnapshot({
+                    dossierId: current.dossier.id,
+                    revision: last.revision,
+                    snapshot: last.snapshot,
+                  });
               }}
+
             >
               Reprendre la dernière version envoyée
             </Button>

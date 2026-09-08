@@ -60,6 +60,7 @@ import {
   EXPORT_BINARY_NOTICE,
   buildDossierExport,
   parseDossierExport,
+  parseServerSnapshot,
 } from "@/lib/leadmagnet/dossier-io";
 import {
   INITIAL_PRIVACY,
@@ -67,7 +68,10 @@ import {
   STORAGE_BADGE,
   LOCAL_ASSISTANT_LABEL,
   grantConsent,
-  hasConsent,
+  hasBoundConsent,
+  pruneStaleConsents,
+  sameBinding,
+  type ConsentBinding,
 } from "@/lib/leadmagnet/privacy";
 import {
   APPROVED_NDA_TEMPLATE,
@@ -85,13 +89,22 @@ import {
   type FilledNda,
 } from "@/lib/leadmagnet/nda-docx";
 
-import { checkSubmission, submit, technicalSummary } from "@/lib/leadmagnet/submission";
+import {
+  checkSubmission,
+  submissionBinding,
+  submit,
+  technicalSummary,
+} from "@/lib/leadmagnet/submission";
 import { checkLeadBackend, type LeadBackendStatus } from "@/lib/leadmagnet/backend";
 import {
   createDossier as createServerDossier,
   createSupabaseSubmissionBackend,
   uploadDesignFile,
+  prepareNdaOnServer,
+  fetchNdaStatus,
+  type NdaStatusView,
 } from "@/lib/leadmagnet/supabase-adapter";
+import { supabase } from "@/lib/standex/supabase";
 import { ClientFollowUp } from "@/components/leadmagnet/client-followup";
 import { memoryAssetBytes } from "@/lib/standex/machine-assets";
 import {
@@ -197,6 +210,8 @@ function DesignSpace() {
   const [nda, setNda] = useState<NdaState>(INITIAL_NDA);
   const [ndaPreview, setNdaPreview] = useState<FilledNda | null>(null);
   const [ndaError, setNdaError] = useState<string | null>(null);
+  /** Statut NDA faisant autorité : lu au serveur, jamais déduit d'une case cochée. */
+  const [ndaServer, setNdaServer] = useState<NdaStatusView | null>(null);
 
   // Câblage et terminaison vivent DANS le dossier : ils suivent export, résumé et révision.
   const cabling = dossier.cabling;
@@ -230,6 +245,13 @@ function DesignSpace() {
   const [routingTarget, setRoutingTarget] = useState<RoutingTarget>({ kind: "base" });
   const [routingSlot, setRoutingSlot] = useState<RoutingSlot>("sensor");
   const [tab, setTab] = useState("besoin");
+  /** Ce à quoi un accord d'envoi se rattache à cet instant : dossier serveur visé,
+   * révision suivante, empreinte du contenu relu et empreintes des fichiers déjà déposés.
+   * Dès qu'un de ces éléments change, l'accord précédent et la relecture tombent.
+   */
+  const [binding, setBinding] = useState<ConsentBinding | null>(null);
+  const [consentNotice, setConsentNotice] = useState<string | null>(null);
+
 
 
   /** Remplissage local du NDA : aperçu puis téléchargement, sans aucune transmission. */
@@ -265,6 +287,46 @@ function DesignSpace() {
     [nda],
   );
 
+  /** Statut NDA appliqué à l'état local : le serveur fait autorité, pas cet écran. */
+  const applyNdaStatus = useCallback((status: NdaStatusView) => {
+    setNdaServer(status);
+    setServerDossierId(status.dossier_id);
+    setNda((n) => ({
+      ...n,
+      required: status.nda_required,
+      status: status.nda_status,
+      proof: status.proof
+        ? {
+            documentSha256: status.proof.document_sha256,
+            verifiedAt: status.proof.verified_at,
+            verifiedBy: status.proof.proof_reference,
+          }
+        : null,
+    }));
+  }, []);
+
+  /** Crée UNIQUEMENT la fiche NDA côté Standex : aucune donnée de conception. */
+  const prepareServerNda = useCallback(async () => {
+    setNdaError(null);
+    try {
+      applyNdaStatus(await prepareNdaOnServer(serverDossierId));
+    } catch (error) {
+      setNdaError(
+        error instanceof Error ? error.message : "La préparation du NDA n'a pas abouti.",
+      );
+    }
+  }, [applyNdaStatus, serverDossierId]);
+
+  const refreshNdaStatus = useCallback(async () => {
+    if (!serverDossierId) return;
+    setNdaError(null);
+    try {
+      applyNdaStatus(await fetchNdaStatus(serverDossierId));
+    } catch (error) {
+      setNdaError(error instanceof Error ? error.message : "Statut NDA indisponible.");
+    }
+  }, [applyNdaStatus, serverDossierId]);
+
   // Tant que cet espace est monté, la télémétrie est réduite à un code anonyme.
   useEffect(() => openPrivateErrorScope(), []);
 
@@ -273,6 +335,51 @@ function DesignSpace() {
       .then(setBackend)
       .catch(() => setBackend(null));
   }, []);
+
+  // Le statut de liaison doit suivre la connexion : sans cela, un client qui vient
+  // de se connecter continue de voir « connectez-vous ».
+  useEffect(() => {
+    if (!supabase) return;
+    const { data } = supabase.auth.onAuthStateChange(() => {
+      checkLeadBackend()
+        .then(setBackend)
+        .catch(() => setBackend(null));
+    });
+    return () => data.subscription.unsubscribe();
+  }, []);
+
+  // Un accord d'envoi ne vaut que pour le contenu exact qui a été relu.
+  useEffect(() => {
+    let alive = true;
+    submissionBinding({
+      dossier,
+      nda,
+      consents: [],
+      reviewAcknowledged: false,
+      additionalConstraints: extraConstraints,
+      serverDossierId,
+      serverRevision: serverRevision + 1,
+    })
+      .then((next) => {
+        if (!alive) return;
+        setBinding((previous) => (previous && sameBinding(previous, next) ? previous : next));
+        setPrivacy((p) => {
+          const pruned = pruneStaleConsents(p, next);
+          if (pruned !== p) {
+            setAcknowledged(false);
+            setConsentNotice(
+              "Le contenu, le dossier visé ou les fichiers ont changé : relisez le résumé et confirmez à nouveau votre accord d'envoi.",
+            );
+          }
+          return pruned;
+        });
+      })
+      .catch(() => undefined);
+    return () => {
+      alive = false;
+    };
+  }, [dossier, extraConstraints, serverDossierId, serverRevision, nda]);
+
 
   useEffect(() => {
     const warn = (e: BeforeUnloadEvent) => {
@@ -371,18 +478,6 @@ function DesignSpace() {
   }, []);
 
   const onSubmit = useCallback(async () => {
-    const input = {
-      dossier,
-      nda,
-      consents: privacy.consents,
-      reviewAcknowledged: acknowledged,
-      additionalConstraints: extraConstraints,
-    };
-    const check = checkSubmission(input);
-    if (!check.ok) {
-      setSubmitMessage(check.problems.join(" "));
-      return;
-    }
     // Partage explicite du modèle 3D : dépôt réel AVANT la soumission, jamais implicite.
     let dossierId = serverDossierId;
     let submitted = dossier;
@@ -411,6 +506,7 @@ function DesignSpace() {
             statement: "Partage du modèle 3D avec l'équipe Standex en charge du dossier.",
             accepted_at: new Date().toISOString(),
             content_ref: dossier.workshopAsset.fileName,
+            revision: serverRevision + 1,
           },
         );
         submitted = {
@@ -420,9 +516,11 @@ function DesignSpace() {
             {
               id: uploaded.path,
               fileName: uploaded.fileName,
-              bytes: bytes.byteLength,
+              bytes: uploaded.bytes,
               transferred: true,
               storagePath: uploaded.path,
+              sha256: uploaded.sha256,
+              mimeType: uploaded.mimeType,
             },
           ],
         };
@@ -434,10 +532,26 @@ function DesignSpace() {
         return;
       }
     }
+    // Le consentement est vérifié APRÈS le dépôt : les fichiers réellement
+    // transmis font partie de ce que le client a accepté d'envoyer.
+    const input = {
+      dossier: submitted,
+      nda,
+      consents: privacy.consents,
+      reviewAcknowledged: acknowledged,
+      additionalConstraints: extraConstraints,
+      serverDossierId: dossierId,
+      serverRevision: serverRevision + 1,
+    };
+    const check = await checkSubmission(input);
+    if (!check.ok) {
+      setSubmitMessage(check.problems.join(" "));
+      return;
+    }
     // Envoi réel dès que l'espace serveur est disponible et la session ouverte ;
     // sinon rien n'est transmis et rien n'est simulé.
     const outcome = await submit(
-      { ...input, dossier: submitted },
+      input,
       createSupabaseSubmissionBackend({
         schemaReady: Boolean(backend?.schemaReady),
         capabilities: backend?.capabilities ?? {
@@ -471,6 +585,7 @@ function DesignSpace() {
     serverRevision,
     shareModel,
   ]);
+
 
   const volume = dossier.business.annualVolume;
   // La désignation standard/custom vient du retour R&D publié, jamais de cet écran.
@@ -1325,7 +1440,37 @@ function DesignSpace() {
                       <Download className="mr-1 h-4 w-4" />
                       Télécharger le .docx non signé
                     </Button>
+                    <Button
+                      size="sm"
+                      disabled={!backend?.ready}
+                      onClick={() => {
+                        void prepareServerNda();
+                      }}
+                    >
+                      Préparer mon NDA pour vérification
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      disabled={!backend?.ready || !serverDossierId}
+                      onClick={() => {
+                        void refreshNdaStatus();
+                      }}
+                    >
+                      Actualiser le statut
+                    </Button>
                   </div>
+                  <p className="text-xs text-muted-foreground">
+                    « Préparer mon NDA » n'envoie aucune donnée de conception : seule une fiche
+                    vide est créée côté Standex pour que vous puissiez déposer le document signé
+                    et que l'équipe puisse le vérifier.{" "}
+                    {ndaServer
+                      ? `Statut côté Standex : ${ndaServer.nda_status}${
+                          ndaServer.allows_transfer ? " — transfert autorisé" : " — transfert bloqué"
+                        }.`
+                      : "Aucune fiche NDA créée pour l'instant."}
+                  </p>
+
                   {ndaError ? (
                     <p className="flex items-start gap-2 rounded-md border border-amber-300 bg-amber-50 p-2 text-sm text-amber-900">
                       <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
@@ -1374,25 +1519,34 @@ function DesignSpace() {
                   </p>
                   <label className="flex items-center gap-2 text-sm">
                     <Checkbox
-                      checked={hasConsent(privacy, "supabase_dossier")}
-                      onCheckedChange={(v) =>
+                      checked={
+                        binding !== null && hasBoundConsent(privacy, "supabase_dossier", binding)
+                      }
+                      disabled={binding === null}
+                      onCheckedChange={(v) => {
+                        setConsentNotice(null);
                         setPrivacy((p) =>
-                          v
+                          v && binding
                             ? grantConsent(p, {
                                 kind: "supabase_dossier",
                                 contentSummary:
                                   "Exigences, montage, câblage, contraintes et contexte projet.",
                                 recipients: ["Standex R&D", "Standex commercial"],
+                                binding,
                               })
                             : {
                                 ...p,
                                 consents: p.consents.filter((c) => c.kind !== "supabase_dossier"),
                               },
-                        )
-                      }
+                        );
+                      }}
                     />
                     J'autorise l'envoi de ce contenu à Standex (R&D et commercial).
                   </label>
+                  {consentNotice ? (
+                    <p className="text-xs text-amber-600">{consentNotice}</p>
+                  ) : null}
+
                   <label className="flex items-center gap-2 text-sm">
                     <Checkbox
                       checked={shareModel}
@@ -1434,16 +1588,38 @@ function DesignSpace() {
                   <ClientFollowUp
                     backend={backend}
                     serverDossierId={serverDossierId}
-                    onSelectDossier={setServerDossierId}
-                    onReopenSnapshot={(snapshot, revision) => {
-                      const parsed = snapshot as unknown as DesignDossier;
-                      setDossier({ ...parsed, storage: "memory" });
-                      setWorkshop(parsed.workshop ?? null);
-                      setServerRevision(revision);
+                    onSelectDossier={(d) => {
+                      // Changer de dossier remet TOUT le contexte serveur au même
+                      // instant : sinon le dossier A pourrait partir dans le dossier B.
+                      setServerDossierId(d.id);
+                      setServerRevision(d.revision);
+                      setNdaServer(null);
+                      setNda(INITIAL_NDA);
+                      setPrivacy((p) => ({ ...p, consents: [] }));
+                      setAcknowledged(false);
                       setSubmitMessage(
-                        "Version reprise depuis le dossier réellement envoyé à Standex.",
+                        `Dossier « ${d.title} » sélectionné : votre accord d'envoi et la relecture sont à refaire pour ce dossier.`,
                       );
                     }}
+                    onReopenSnapshot={({ dossierId, revision, snapshot }) => {
+                      const parsed = parseServerSnapshot(snapshot);
+                      if (!parsed.ok) {
+                        setSubmitMessage(parsed.reason);
+                        return;
+                      }
+                      setDossier({ ...parsed.dossier, storage: "memory" });
+                      setWorkshop(parsed.dossier.workshop ?? null);
+                      setServerDossierId(dossierId);
+                      setServerRevision(revision);
+                      setNdaServer(null);
+                      setNda(INITIAL_NDA);
+                      setPrivacy((p) => ({ ...p, consents: [] }));
+                      setAcknowledged(false);
+                      setSubmitMessage(
+                        `Version ${revision} reprise depuis le dossier réellement envoyé. ${parsed.notices.join(" ")}`,
+                      );
+                    }}
+
                   />
                   <p className="text-xs text-muted-foreground">
                     Disponibilités, MOQ et conditionnements : inconnus tant qu'aucun fournisseur

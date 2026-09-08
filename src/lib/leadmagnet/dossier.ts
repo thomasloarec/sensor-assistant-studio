@@ -53,7 +53,12 @@ export interface Attachment {
   /** Une pièce jointe locale n'est transmise que lorsque le transfert a réussi. */
   transferred: boolean;
   storagePath: string | null;
+  /** Empreinte SHA-256 des octets réellement relus puis déposés. */
+  sha256: string | null;
+  /** Type déclaré au préflight, contrôlé par le serveur. */
+  mimeType?: string | null;
 }
+
 
 export type StorageMode = "memory" | "local-device";
 

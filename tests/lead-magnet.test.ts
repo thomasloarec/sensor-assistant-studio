@@ -19,7 +19,7 @@ import {
 import { combosForSensor, freeReference } from "../src/lib/leadmagnet/connectors";
 import { INITIAL_PRIVACY, canTransfer, grantConsent } from "../src/lib/leadmagnet/privacy";
 import { INITIAL_NDA, ndaAllowsConfidentialTransfer, prepareNda } from "../src/lib/leadmagnet/nda";
-import { buildSnapshot, checkSubmission, submit } from "../src/lib/leadmagnet/submission";
+import { buildSnapshot, checkSubmission, submissionBinding, submit } from "../src/lib/leadmagnet/submission";
 import { createOffer, invalidationFor, guardRevision, reviewForClient } from "../src/lib/leadmagnet/review";
 import { routeSamples, createSampleRequest, findExactPart } from "../src/lib/leadmagnet/samples";
 
@@ -144,16 +144,25 @@ test("NDA : un brouillon n'autorise aucun transfert", () => {
   expect(missingTemplate.ok).toBe(false);
 });
 
+const TEST_BINDING = {
+  serverDossierId: null,
+  revision: 1,
+  contentHash: "c".repeat(64),
+  fileDigests: [],
+};
+
 test("transfert : consentement puis NDA", () => {
   const consented = grantConsent(INITIAL_PRIVACY, {
     kind: "supabase_dossier",
     contentSummary: "dossier",
     recipients: ["Standex"],
+    binding: TEST_BINDING,
   });
   expect(canTransfer(INITIAL_PRIVACY, "supabase_dossier", true).allowed).toBe(false);
   expect(canTransfer(consented, "supabase_dossier", false).allowed).toBe(false);
   expect(canTransfer(consented, "supabase_dossier", true).allowed).toBe(true);
 });
+
 
 test("volume annuel : entier ou inconnu, jamais zéro implicite", () => {
   expect(parseAnnualVolume("")).toEqual({ kind: "unknown" });
@@ -177,19 +186,36 @@ test("soumission : pas de succès simulé sans backend, instantané immuable et 
     status: "in_force" as const,
     proof: { documentSha256: "b".repeat(64), verifiedAt: "2026-09-08", verifiedBy: "standex" },
   };
+  const draft = {
+    dossier: d,
+    nda,
+    consents: [],
+    reviewAcknowledged: true,
+    additionalConstraints: "",
+    serverDossierId: null,
+    serverRevision: 1,
+  };
+  const binding = await submissionBinding(draft);
   const consents = grantConsent(INITIAL_PRIVACY, {
     kind: "supabase_dossier",
     contentSummary: "dossier",
     recipients: ["Standex"],
+    binding,
   }).consents;
-  const input = {
-    dossier: d,
-    nda,
-    consents,
-    reviewAcknowledged: true,
-    additionalConstraints: "",
+  const input = { ...draft, consents };
+  expect((await checkSubmission({ ...input, reviewAcknowledged: false })).ok).toBe(false);
+  // Un accord donné sur un AUTRE contenu ne vaut pas pour celui-ci.
+  const stale = {
+    ...input,
+    consents: grantConsent(INITIAL_PRIVACY, {
+      kind: "supabase_dossier",
+      contentSummary: "dossier",
+      recipients: ["Standex"],
+      binding: { ...binding, contentHash: "d".repeat(64) },
+    }).consents,
   };
-  expect(checkSubmission({ ...input, reviewAcknowledged: false }).ok).toBe(false);
+  expect((await checkSubmission(stale)).ok).toBe(false);
+
   const snapshot = await buildSnapshot(input);
   expect(snapshot.transferredFiles).toHaveLength(0);
   expect(JSON.stringify(snapshot)).not.toContain("note privée");

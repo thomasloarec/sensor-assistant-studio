@@ -259,6 +259,13 @@ create table if not exists lead.upload_sessions (
   consent jsonb
 );
 alter table lead.upload_sessions add column if not exists consent jsonb;
+-- Un dépôt est annoncé AVANT d'exister : empreinte, taille et type exacts du
+-- fichier relu par le client, plus la révision à laquelle il se rattache.
+alter table lead.upload_sessions add column if not exists expected_sha256 text;
+alter table lead.upload_sessions add column if not exists expected_bytes bigint;
+alter table lead.upload_sessions add column if not exists expected_mime text;
+alter table lead.upload_sessions add column if not exists expected_revision integer;
+
 
 create table if not exists lead.audit_log (
   id bigserial primary key,
@@ -372,12 +379,38 @@ set search_path = lead, lead_priv, pg_temp as $$
   from lead.design_dossiers d where d.id = _dossier;
 $$;
 
--- Hash faisant autorité : recalculé serveur sur le snapshot canonique.
+-- Sérialisation canonique IDENTIQUE à celle de l'application (stableStringify) :
+-- clés triées en ordre d'octets, tableaux dans l'ordre, `updatedAt` exclu.
+-- `jsonb::text` de PostgreSQL n'a PAS cet ordre : sans cette fonction, le hash
+-- serveur et le hash client ne pourraient jamais coïncider.
+create or replace function lead_priv.canonical_json(_v jsonb)
+returns text language plpgsql immutable
+set search_path = pg_temp as $$
+declare out text;
+begin
+  if _v is null then return 'null'; end if;
+  case jsonb_typeof(_v)
+    when 'object' then
+      select coalesce(string_agg(to_jsonb(k)::text || ':' || lead_priv.canonical_json(v),
+                                 ',' order by k collate "C"), '')
+        into out from jsonb_each(_v) as e(k, v);
+      return '{' || out || '}';
+    when 'array' then
+      select coalesce(string_agg(lead_priv.canonical_json(v), ',' order by ord), '')
+        into out from jsonb_array_elements(_v) with ordinality as e(v, ord);
+      return '[' || out || ']';
+    else
+      return _v::text;
+  end case;
+end $$;
+
+-- Hash faisant autorité : recalculé serveur sur la forme canonique partagée.
 create or replace function lead_priv.snapshot_hash(_snapshot jsonb)
 returns text language sql immutable
 set search_path = pg_temp as $$
-  select encode(sha256(convert_to(jsonb_strip_nulls(_snapshot)::text, 'UTF8')), 'hex');
+  select encode(sha256(convert_to(lead_priv.canonical_json(_snapshot - 'updatedAt'), 'UTF8')), 'hex');
 $$;
+
 
 -- Un nombre JSON réellement exploitable : ni null, ni texte, ni NaN/Infinity.
 create or replace function lead_priv.json_number(_v jsonb)
@@ -483,13 +516,19 @@ begin
     if coalesce(btrim(_signed_object_path),'') = '' then
       raise exception 'NDA_PROOF_INCOMPLETE' using errcode = '22023';
     end if;
+    -- L'empreinte enregistrée est celle des octets RÉELLEMENT annoncés puis
+    -- déposés pour ce dossier : jamais un simple champ 64 hexa arbitraire.
     if not exists (
       select 1 from storage.objects o
       join lead.upload_sessions us on o.name like us.path_prefix || '/%'
       where o.bucket_id = 'lead-design-files' and o.name = btrim(_signed_object_path)
-        and us.dossier_id = _dossier and us.kind = 'nda_signed') then
+        and us.dossier_id = _dossier and us.kind = 'nda_signed'
+        and us.expected_sha256 = lower(_document_sha)) then
       raise exception 'NDA_SIGNED_FILE_NOT_FOUND' using errcode = '42501';
     end if;
+    update lead.upload_sessions set closed_at = now()
+     where dossier_id = _dossier and kind = 'nda_signed' and closed_at is null;
+
   elsif coalesce(btrim(_signed_object_path),'') <> '' then
     raise exception 'NDA_EVIDENCE_KIND_INVALID' using errcode = '22023';
   end if;
@@ -613,6 +652,67 @@ returns uuid language sql security invoker
 set search_path = public, lead_priv, pg_temp as $$
   select lead_priv.create_dossier(p_title, p_nda_required);
 $$;
+
+-- 5.3quater NDA : coquille serveur préparée AVANT tout contenu technique.
+-- Ne crée QUE les métadonnées nécessaires (aucune donnée de conception) et ne
+-- signe rien : la mise en vigueur reste conditionnée à une preuve vérifiée.
+create or replace function lead_priv.prepare_nda(_dossier uuid)
+returns jsonb language plpgsql security definer
+set search_path = lead, lead_priv, pg_temp as $$
+declare u uuid := lead_priv.require_user(); did uuid := _dossier; d lead.design_dossiers%rowtype;
+begin
+  if did is null then
+    did := lead_priv.create_dossier(null, true);
+  end if;
+  select * into d from lead.design_dossiers where id = did for update;
+  if not found then raise exception 'DOSSIER_NOT_FOUND' using errcode = '42501'; end if;
+  if not lead_priv.client_can_submit(u, did) then
+    raise exception 'NOT_ALLOWED' using errcode = '42501';
+  end if;
+  if not d.nda_required then
+    update lead.design_dossiers set nda_required = true, nda_status = 'requested', updated_at = now()
+     where id = did and nda_status = 'not_required';
+    select * into d from lead.design_dossiers where id = did;
+  end if;
+  -- Générer n'est pas signer : le statut n'avance jamais jusqu'à `in_force` ici.
+  if d.nda_status in ('requested','prepared') then
+    update lead.design_dossiers set nda_status = 'awaiting_signatures', updated_at = now()
+     where id = did;
+  end if;
+  insert into lead.audit_log (actor, action, dossier_id, detail)
+  values (u, 'nda_prepared', did, '{}'::jsonb);
+  return lead_priv.nda_status(did);
+end $$;
+
+create or replace function lead_priv.nda_status(_dossier uuid)
+returns jsonb language plpgsql stable security definer
+set search_path = lead, lead_priv, pg_temp as $$
+declare u uuid := lead_priv.require_user(); d lead.design_dossiers%rowtype; p lead.nda_proofs%rowtype;
+begin
+  select * into d from lead.design_dossiers where id = _dossier;
+  if not found then raise exception 'DOSSIER_NOT_FOUND' using errcode = '42501'; end if;
+  if not lead_priv.client_can_read(u, _dossier)
+     and not lead_priv.staff_can_read_design(u, _dossier) then
+    raise exception 'NOT_ALLOWED' using errcode = '42501';
+  end if;
+  select * into p from lead.nda_proofs where dossier_id = _dossier
+   order by verified_at desc limit 1;
+  return jsonb_build_object(
+    'dossier_id', d.id, 'nda_required', d.nda_required, 'nda_status', d.nda_status,
+    'allows_transfer', lead_priv.nda_allows_transfer(d.id),
+    'proof', case when p.id is null then null else jsonb_build_object(
+      'document_sha256', p.document_sha256, 'verified_at', p.verified_at,
+      'proof_reference', p.proof_reference, 'signed_at', p.signed_at) end);
+end $$;
+
+create or replace function public.lead_prepare_nda(p_dossier uuid default null)
+returns jsonb language sql security invoker
+set search_path = public, lead_priv, pg_temp as $$ select lead_priv.prepare_nda(p_dossier); $$;
+
+create or replace function public.lead_nda_status(p_dossier uuid)
+returns jsonb language sql stable security invoker
+set search_path = public, lead_priv, pg_temp as $$ select lead_priv.nda_status(p_dossier); $$;
+
 
 -- Renommage : possible seulement quand le transfert confidentiel est autorisé.
 create or replace function lead_priv.set_dossier_title(_dossier uuid, _title text)
@@ -743,42 +843,68 @@ drop function if exists public.lead_open_upload_session(uuid, text);
 create or replace function lead_priv.open_upload_session(_dossier uuid, _kind text, _consent jsonb)
 returns jsonb language plpgsql security definer
 set search_path = lead, lead_priv, pg_temp as $$
-declare u uuid := lead_priv.require_user(); prefix text; sid uuid; d lead.design_dossiers%rowtype;
+declare
+  u uuid := lead_priv.require_user();
+  prefix text; sid uuid; d lead.design_dossiers%rowtype;
+  digest text; bytes numeric; mime text; rev numeric; expected_rev integer;
 begin
   select * into d from lead.design_dossiers where id = _dossier for update;
   if not found then raise exception 'DOSSIER_NOT_FOUND' using errcode = '42501'; end if;
-  if not lead_priv.client_can_submit(u, _dossier) then
-    raise exception 'NOT_ALLOWED' using errcode = '42501';
-  end if;
   if _kind not in ('design_model','document','nda_signed') then
     raise exception 'BAD_KIND' using errcode = '22023';
+  end if;
+  -- Le client dépose ses fichiers ; pour le SEUL document NDA signé, un admin
+  -- Standex AFFECTÉ peut aussi déposer la pièce vérifiée du dossier client.
+  if not lead_priv.client_can_submit(u, _dossier)
+     and not (_kind = 'nda_signed'
+              and lead_priv.staff_can_act(u, _dossier, array['admin']::lead.staff_role[])) then
+    raise exception 'NOT_ALLOWED' using errcode = '42501';
   end if;
   -- Un fichier technique n'est jamais déposé avant que le NDA autorise le transfert.
   if _kind <> 'nda_signed' and not lead_priv.nda_allows_transfer(_dossier) then
     raise exception 'NDA_NOT_IN_FORCE' using errcode = '42501';
   end if;
-  -- Correctif racine 4 : consentement RÉELLEMENT contrôlé avant tout dépôt de
-  -- fichier technique, lié à ce dossier et à sa révision en cours.
-  if _kind <> 'nda_signed' then
-    if _consent is null or jsonb_typeof(_consent) <> 'object'
-       or _consent->>'kind' is distinct from 'supabase_files'
-       or coalesce(btrim(_consent->>'statement'),'') = ''
-       or coalesce(btrim(_consent->>'content_ref'),'') = ''
-       or (_consent ? 'dossier_id' and _consent->>'dossier_id' is distinct from _dossier::text)
-       or lead_priv.parse_ts(_consent->>'accepted_at') is null
-       or lead_priv.parse_ts(_consent->>'accepted_at') > now() + interval '5 minutes'
-       or lead_priv.parse_ts(_consent->>'accepted_at') < now() - interval '30 days' then
-      raise exception 'CONSENT_INCOMPLETE' using errcode = '42501';
-    end if;
+  -- Correctif racine 4 : préflight RÉEL. Le consentement est daté, lié à CE
+  -- dossier, à la révision visée, et à l'empreinte EXACTE du fichier relu.
+  -- Aucun champ n'est « optionnel » : absent = refusé (IS DISTINCT FROM).
+  expected_rev := case when _kind = 'nda_signed' then d.current_revision
+                       else d.current_revision + 1 end;
+  digest := lower(coalesce(_consent->>'file_sha256',''));
+  bytes  := lead_priv.json_number(_consent->'file_bytes');
+  mime   := btrim(coalesce(_consent->>'file_mime',''));
+  rev    := lead_priv.json_number(_consent->'revision');
+  if _consent is null or jsonb_typeof(_consent) <> 'object'
+     or _consent->>'kind' is distinct from 'supabase_files'
+     or coalesce(btrim(_consent->>'statement'),'') = ''
+     or coalesce(btrim(_consent->>'content_ref'),'') = ''
+     or _consent->>'dossier_id' is distinct from _dossier::text
+     or rev is null or rev <> expected_rev
+     or digest !~ '^[a-f0-9]{64}$'
+     or bytes is null or bytes <= 0 or bytes <> trunc(bytes) or bytes > 31457280
+     or mime = '' or mime !~ '^[a-z0-9.+-]+/[a-z0-9.+-]+$'
+     or lead_priv.parse_ts(_consent->>'accepted_at') is null
+     or lead_priv.parse_ts(_consent->>'accepted_at') > now() + interval '5 minutes'
+     or lead_priv.parse_ts(_consent->>'accepted_at') < now() - interval '1 day' then
+    raise exception 'CONSENT_INCOMPLETE' using errcode = '42501';
+  end if;
+  -- Pas de dépôts illimités sous une coquille générique.
+  if (select count(*) from lead.upload_sessions s
+       where s.dossier_id = _dossier and s.user_id = u
+         and s.closed_at is null and s.expires_at > now()) >= 5 then
+    raise exception 'TOO_MANY_UPLOAD_SESSIONS' using errcode = '42501';
   end if;
   prefix := _dossier::text || '/' || u::text || '/' || gen_random_uuid()::text;
-  insert into lead.upload_sessions (dossier_id, user_id, path_prefix, kind, expires_at, consent)
-  values (_dossier, u, prefix, _kind, now() + interval '2 hours', _consent)
+  insert into lead.upload_sessions (dossier_id, user_id, path_prefix, kind, expires_at, consent,
+                                    expected_sha256, expected_bytes, expected_mime, expected_revision)
+  values (_dossier, u, prefix, _kind, now() + interval '2 hours', _consent,
+          digest, bytes::bigint, mime, expected_rev)
   returning id into sid;
   insert into lead.audit_log (actor, action, dossier_id, detail)
-  values (u, 'upload_session_opened', _dossier, jsonb_build_object('kind', _kind));
+  values (u, 'upload_session_opened', _dossier,
+          jsonb_build_object('kind', _kind, 'sha256', digest, 'revision', expected_rev));
   return jsonb_build_object('session_id', sid, 'bucket', 'lead-design-files',
-                            'path_prefix', prefix, 'expires_at', now() + interval '2 hours');
+                            'path_prefix', prefix, 'expires_at', now() + interval '2 hours',
+                            'expected_sha256', digest, 'expected_revision', expected_rev);
 end $$;
 
 create or replace function public.lead_open_upload_session(
@@ -860,8 +986,16 @@ begin
   if not lead_priv.annual_volume_valid(_snapshot) then
     raise exception 'BAD_ANNUAL_VOLUME' using errcode = '22023';
   end if;
-  -- Correctif racine 4 : consentement explicite, daté, et lié à CE dossier,
-  -- à la révision soumise et au contenu relu.
+  -- Correctif racine 4 : le hash faisant autorité est recalculé ici, sur la
+  -- forme canonique partagée avec l'application. Le client DOIT déclarer
+  -- exactement ce hash : sans cela, rien ne prouve qu'il a relu CE contenu.
+  server_hash := lead_priv.snapshot_hash(_snapshot);
+  next_rev := d.current_revision + 1;
+  if lower(coalesce(btrim(_content_hash),'')) is distinct from server_hash then
+    raise exception 'CONTENT_HASH_MISMATCH' using errcode = '22023';
+  end if;
+  -- Consentement explicite, daté, et lié à CE dossier, à CETTE révision et à
+  -- CE contenu. Aucun champ n'est facultatif : absent = refusé.
   if jsonb_typeof(_consents) <> 'array' then
     raise exception 'CONSENT_INCOMPLETE' using errcode = '42501';
   end if;
@@ -872,35 +1006,50 @@ begin
      or coalesce(btrim(consent->>'content_ref'), '') = ''
      or lead_priv.parse_ts(consent->>'accepted_at') is null
      or lead_priv.parse_ts(consent->>'accepted_at') > now() + interval '5 minutes'
-     or lead_priv.parse_ts(consent->>'accepted_at') < now() - interval '30 days'
-     or (consent ? 'dossier_id' and consent->>'dossier_id' is distinct from _dossier::text)
-     or (consent ? 'revision'
-         and consent->>'revision' is distinct from (d.current_revision + 1)::text)
-     or (lower(coalesce(consent->>'content_ref','')) ~ '^[a-f0-9]{64}$'
-         and lower(consent->>'content_ref') is distinct from lower(coalesce(_content_hash,''))) then
+     or lead_priv.parse_ts(consent->>'accepted_at') < now() - interval '1 day'
+     or consent->>'dossier_id' is distinct from _dossier::text
+     or lead_priv.json_number(consent->'revision') is null
+     or lead_priv.json_number(consent->'revision') <> next_rev
+     or jsonb_typeof(coalesce(consent->'file_digests','[]'::jsonb)) <> 'array'
+     or lower(coalesce(consent->>'content_hash','')) is distinct from server_hash then
     raise exception 'CONSENT_INCOMPLETE' using errcode = '42501';
   end if;
   if not lead_priv.nda_allows_transfer(_dossier) then
     raise exception 'NDA_NOT_IN_FORCE' using errcode = '42501';
   end if;
-  -- Aucun identifiant de fichier arbitraire : l'objet doit exister et provenir
-  -- d'une session d'upload ouverte pour CE dossier par CET utilisateur.
+  -- Aucun identifiant de fichier arbitraire : l'objet doit exister, provenir
+  -- d'une session ouverte pour CE dossier, CET utilisateur et CETTE révision,
+  -- et porter l'empreinte EXACTE annoncée au préflight.
   if jsonb_typeof(files) <> 'array' then
     raise exception 'BAD_FILES' using errcode = '22023';
   end if;
   select count(*) into bad from jsonb_array_elements(files) f
    where coalesce(btrim(f->>'path'), '') = ''
+      or lower(coalesce(f->>'sha256','')) !~ '^[a-f0-9]{64}$'
       or not exists (
         select 1 from storage.objects o
         join lead.upload_sessions s on o.name like s.path_prefix || '/%'
         where o.bucket_id = 'lead-design-files'
           and o.name = f->>'path'
           and s.dossier_id = _dossier
-          and s.user_id = u);
+          and s.user_id = u
+          and s.kind <> 'nda_signed'
+          and s.expected_revision = next_rev
+          and s.expected_sha256 = lower(f->>'sha256'));
   if bad > 0 then raise exception 'FILE_NOT_TRANSFERRED' using errcode = '42501'; end if;
+  -- Le consentement énumère les fichiers relus : ni fichier en plus, ni en moins.
+  if (select coalesce(jsonb_agg(x order by x), '[]'::jsonb)
+        from (select distinct lower(f->>'sha256') x
+                from jsonb_array_elements(files) f) q)
+     is distinct from
+     (select coalesce(jsonb_agg(y order by y), '[]'::jsonb)
+        from (select distinct lower(e#>>'{}') y
+                from jsonb_array_elements(coalesce(consent->'file_digests','[]'::jsonb)) e) q2)
+  then
+    raise exception 'CONSENT_FILES_MISMATCH' using errcode = '42501';
+  end if;
 
-  server_hash := lead_priv.snapshot_hash(_snapshot);
-  next_rev := d.current_revision + 1;
+
   insert into lead.design_revisions (dossier_id, revision, snapshot, content_hash,
     client_declared_hash, submitted_by, consents, transferred_files, nda_status_at_submit)
   values (_dossier, next_rev, _snapshot, server_hash, lower(nullif(_content_hash,'')), u,
@@ -920,6 +1069,13 @@ begin
   update lead.sample_requests set status = 'superseded'
    where dossier_id = _dossier and revision < next_rev
      and status not in ('closed','superseded');
+
+  -- Les sessions techniques de cette révision sont FERMÉES : plus aucun dépôt
+  -- ne peut se glisser derrière un consentement déjà consommé.
+  update lead.upload_sessions set closed_at = now()
+   where dossier_id = _dossier and user_id = u and closed_at is null
+     and kind <> 'nda_signed';
+
 
   insert into lead.audit_log (actor, action, dossier_id, detail)
   values (u, 'revision_submitted', _dossier,
@@ -1437,9 +1593,14 @@ set search_path = public, lead_priv, pg_temp as $$ select lead_priv.staff_view(p
 -- ----------------------------------------------------------------------------
 -- 6. Stockage privé (correctif 7)
 -- ----------------------------------------------------------------------------
-insert into storage.buckets (id, name, public)
-values ('lead-design-files', 'lead-design-files', false)
-on conflict (id) do nothing;
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values ('lead-design-files', 'lead-design-files', false, 31457280,
+        array['model/gltf-binary','application/octet-stream','application/pdf',
+              'image/png','image/jpeg',
+              'application/vnd.openxmlformats-officedocument.wordprocessingml.document'])
+on conflict (id) do update
+  set public = false, file_size_limit = 31457280,
+      allowed_mime_types = excluded.allowed_mime_types;
 
 create or replace function lead_priv.upload_path_allowed(_name text, _user uuid)
 returns boolean language sql stable security definer
@@ -1449,7 +1610,14 @@ set search_path = lead, lead_priv, pg_temp as $$
     where s.user_id = _user
       and s.closed_at is null
       and s.expires_at > now()
-      and _name like s.path_prefix || '/%');
+      and _name like s.path_prefix || '/%'
+      -- Une session annoncée = UN fichier : pas de dépôts illimités derrière
+      -- un consentement déjà donné.
+      and not exists (select 1 from storage.objects o
+                       where o.bucket_id = 'lead-design-files'
+                         and o.name like s.path_prefix || '/%'
+                         and o.name <> _name));
+
 $$;
 
 -- Lecture : déposant, propriétaire du dossier, ou staff AFFECTÉ.
@@ -1543,6 +1711,8 @@ declare
     ['lead_priv.staff_inbox()','public.lead_staff_inbox()'],
     ['lead_priv.create_dossier(text, boolean)','public.lead_create_dossier(text, boolean)'],
     ['lead_priv.assign_dossier(uuid, uuid)','public.lead_assign_dossier(uuid, uuid)'],
+    ['lead_priv.prepare_nda(uuid)','public.lead_prepare_nda(uuid)'],
+    ['lead_priv.nda_status(uuid)','public.lead_nda_status(uuid)'],
     ['lead_priv.open_upload_session(uuid, text, jsonb)',
      'public.lead_open_upload_session(uuid, text, jsonb)'],
     ['lead_priv.set_dossier_title(uuid, text)','public.lead_set_dossier_title(uuid, text)'],
@@ -1587,7 +1757,9 @@ revoke all on function lead_priv.record_nda_proof(uuid, text, text, text, text, 
 -- ----------------------------------------------------------------------------
 -- 8. Enregistrement de la version
 -- ----------------------------------------------------------------------------
-insert into lead.schema_migrations (version) values ('1.2')
+-- 1.3 : hash canonique partagé, consentement lié au contenu/révision/fichiers,
+-- préflight de dépôt avec empreinte exacte, coquille NDA serveur.
+insert into lead.schema_migrations (version) values ('1.2'), ('1.3')
 on conflict (version) do nothing;
 
 commit;

@@ -53,24 +53,37 @@ async function expectFail(name, fn, expected) {
   catch (e) { add(name, expected ? e.message.includes(expected) : true, e.message); }
 }
 
-const consent = [{
-  kind: 'supabase_dossier',
-  statement: 'Transfert du dossier de conception à Standex pour revue R&D.',
-  accepted_at: '2026-09-08T09:00:00Z',
-  content_ref: 'dossier-v1',
-}];
 // Instantané RÉEL produit par l'application (createDossier/toClientDto).
 const snapshot = JSON.parse(readFileSync('tests/fixtures/synthetic-dossier-fixture.json', 'utf8'));
 const withVolume = (v) => ({
   ...snapshot,
   business: { ...snapshot.business, annualVolume: v },
 });
-const filesConsent = {
+// Hash canonique calculé par l'APPLICATION : le serveur doit trouver le même.
+const { dossierHash } = await import('../src/lib/leadmagnet/dossier.ts');
+const hashOf = (s) => dossierHash(s);
+
+const consentFor = (dossierId, revision, contentHash, digests = []) => [{
+  kind: 'supabase_dossier',
+  statement: 'Transfert du dossier de conception à Standex pour revue R&D.',
+  accepted_at: new Date().toISOString(),
+  content_ref: `${dossierId}@r${revision}`,
+  dossier_id: dossierId,
+  revision,
+  content_hash: contentHash,
+  file_digests: digests,
+}];
+const filesConsentFor = (dossierId, revision, sha, bytes, mime) => ({
   kind: 'supabase_files',
   statement: 'Transfert du fichier 3D à Standex.',
   accepted_at: new Date().toISOString(),
   content_ref: 'model.glb',
-};
+  dossier_id: dossierId,
+  revision,
+  file_sha256: sha,
+  file_bytes: bytes,
+  file_mime: mime,
+});
 
 // 1. Sonde de version sans la moindre réparation locale.
 try {
@@ -80,20 +93,40 @@ try {
 
 const dossier = await actor('authenticated', ids.a,
   () => value('select public.lead_create_dossier($1,false)', ['Synthetic test A']));
+const snapHash = await hashOf(snapshot);
+const consent = consentFor(dossier, 1, snapHash);
 const submitted = await actor('authenticated', ids.a,
   () => value('select public.lead_submit_revision($1,0,$2,$3,$4,$5)',
-    [dossier, snapshot, 'a'.repeat(64), consent, []]));
-add('server_recomputes_hash', submitted.content_hash !== 'a'.repeat(64) && submitted.client_hash_matches === false, submitted.content_hash);
+    [dossier, snapshot, snapHash, consent, []]));
+add('server_hash_matches_app_hash', submitted.content_hash === snapHash && submitted.client_hash_matches === true, submitted.content_hash);
 
+await expectFail('declared_hash_must_match_content', () => actor('authenticated', ids.a,
+  () => value('select public.lead_submit_revision($1,1,$2,$3,$4,$5)',
+    [dossier, snapshot, 'a'.repeat(64), consentFor(dossier, 2, 'a'.repeat(64)), []])), 'CONTENT_HASH_MISMATCH');
 await expectFail('consent_without_content_is_rejected', () => actor('authenticated', ids.a,
   () => value('select public.lead_submit_revision($1,1,$2,$3,$4,$5)',
-    [dossier, snapshot, null, [{ kind: 'supabase_dossier' }], []])), 'CONSENT_INCOMPLETE');
+    [dossier, snapshot, snapHash, [{ kind: 'supabase_dossier' }], []])), 'CONSENT_INCOMPLETE');
+// Défaut signalé : une date VALIDE avec une référence de contenu étrangère passait.
+await expectFail('consent_with_valid_date_but_wrong_content_is_rejected', () => actor('authenticated', ids.a,
+  () => value('select public.lead_submit_revision($1,1,$2,$3,$4,$5)',
+    [dossier, snapshot, snapHash,
+     [{ ...consentFor(dossier, 2, snapHash)[0], content_ref: 'wrong-design', content_hash: 'b'.repeat(64) }],
+     []])), 'CONSENT_INCOMPLETE');
+await expectFail('consent_for_another_dossier_is_rejected', () => actor('authenticated', ids.a,
+  () => value('select public.lead_submit_revision($1,1,$2,$3,$4,$5)',
+    [dossier, snapshot, snapHash, consentFor(ids.b, 2, snapHash), []])), 'CONSENT_INCOMPLETE');
+await expectFail('consent_for_another_revision_is_rejected', () => actor('authenticated', ids.a,
+  () => value('select public.lead_submit_revision($1,1,$2,$3,$4,$5)',
+    [dossier, snapshot, snapHash, consentFor(dossier, 9, snapHash), []])), 'CONSENT_INCOMPLETE');
 await expectFail('json_null_snapshot_is_rejected', () => actor('authenticated', ids.a,
   () => value('select public.lead_submit_revision($1,1,$2,$3,$4,$5)',
     [dossier, { a: null }, null, consent, []])), 'EMPTY_SNAPSHOT');
 await expectFail('unknown_file_id_is_rejected', () => actor('authenticated', ids.a,
   () => value('select public.lead_submit_revision($1,1,$2,$3,$4,$5)',
-    [dossier, snapshot, null, consent, [{ path: 'anything/forged.glb' }]])), 'FILE_NOT_TRANSFERRED');
+    [dossier, snapshot, snapHash,
+     consentFor(dossier, 2, snapHash, ['c'.repeat(64)]),
+     [{ path: 'anything/forged.glb', sha256: 'c'.repeat(64) }]])), 'FILE_NOT_TRANSFERRED');
+
 
 await expectFail('stranger_cannot_read', () => actor('authenticated', ids.b,
   () => value('select public.lead_client_view($1)', [dossier])), 'NOT_ALLOWED');
