@@ -2024,7 +2024,7 @@ export function DesignSpace({ chrome = "page" }: DesignSpaceProps) {
             Aperçu de l'accord de confidentialité
           </Button>
         ) : null}
-        <Button variant="outline" className="min-h-11 text-base" asChild>
+        <Button variant="outline" className="min-h-11 max-w-full whitespace-normal text-base" asChild>
           <label className="block max-w-full cursor-pointer">
             Ouvrir un fichier de mon appareil
             <input
@@ -2062,7 +2062,7 @@ export function DesignSpace({ chrome = "page" }: DesignSpaceProps) {
         <Button variant="outline" className="min-h-11 text-base" onClick={exportDossier}>
           <Download className="mr-1 h-4 w-4" /> Exporter mon projet
         </Button>
-        <Button variant="outline" className="min-h-11 text-base" asChild>
+        <Button variant="outline" className="min-h-11 max-w-full whitespace-normal text-base" asChild>
           <label className="block max-w-full cursor-pointer">
             Reprendre un fichier
             <input
@@ -2254,7 +2254,7 @@ export function DesignSpace({ chrome = "page" }: DesignSpaceProps) {
             <Button variant="outline" className="min-h-11" onClick={exportDossier}>
               <Download className="mr-1 h-4 w-4" /> Exporter
             </Button>
-            <Button variant="outline" className="min-h-11" asChild>
+            <Button variant="outline" className="min-h-11 max-w-full whitespace-normal" asChild>
               <label className="block max-w-full cursor-pointer">
                 Reprendre un fichier
                 <input
