@@ -2563,28 +2563,34 @@ export function DesignSpace({
       <header
         className={`material sticky top-0 z-20 border-b border-[var(--hairline)]${visible ? "" : " hidden"}`}
       >
-        <div className="mx-auto flex max-w-[76rem] flex-wrap items-end gap-4 px-4 py-4">
+        <div className="mx-auto flex max-w-[76rem] flex-wrap items-center gap-4 px-4 py-4">
           <div className="flex shrink-0 items-center gap-3 self-center">
-            <BrandLogo variant="mark" tone="light" height={32} clearance={false} alt="" />
+            {onGoHome ? (
+              <button
+                type="button"
+                onClick={onGoHome}
+                aria-label="Revenir à l'accueil Standex DETECT"
+                className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-[var(--r-sm)] transition-colors duration-[var(--d-fast)] hover:bg-[var(--surface-tint)]"
+              >
+                <BrandLogo variant="mark" tone="light" height={32} clearance={false} alt="" />
+              </button>
+            ) : (
+              <Link
+                to="/"
+                aria-label="Revenir à l'accueil Standex DETECT"
+                className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-[var(--r-sm)] transition-colors duration-[var(--d-fast)] hover:bg-[var(--surface-tint)]"
+              >
+                <BrandLogo variant="mark" tone="light" height={32} clearance={false} alt="" />
+              </Link>
+            )}
             <span aria-hidden="true" className="block h-6 w-px bg-[var(--hairline)]" />
           </div>
-          <div className="min-w-[min(100%,18rem)] flex-1">
-            <Label htmlFor="project-title" className="t-label">
-              Nom de mon projet
-            </Label>
-            <Input
-              id="project-title"
-              value={dossier.title}
-              onChange={(e) =>
-                setDossier((d) => ({
-                  ...d,
-                  title: e.target.value,
-                  updatedAt: new Date().toISOString(),
-                }))
-              }
-              className="project-title-input mt-1 h-auto min-h-11 max-w-lg border-0 bg-transparent px-0 shadow-none"
-            />
-          </div>
+          <ProjectTitle
+            title={dossier.title}
+            onRename={(next) =>
+              setDossier((d) => ({ ...d, title: next, updatedAt: new Date().toISOString() }))
+            }
+          />
           <div className="flex flex-wrap items-center gap-2">
             <Badge variant="secondary" className="gap-1 px-2.5 py-1 text-sm">
               <Lock className="h-3 w-3" /> {STORAGE_BADGE[privacy.storage]}
