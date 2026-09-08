@@ -943,6 +943,7 @@ begin
      or consent->>'dossier_id' is distinct from _dossier::text
      or lead_priv.json_number(consent->'revision') is null
      or lead_priv.json_number(consent->'revision') <> next_rev
+     or jsonb_typeof(coalesce(consent->'file_digests','[]'::jsonb)) <> 'array'
      or lower(coalesce(consent->>'content_hash','')) is distinct from server_hash then
     raise exception 'CONSENT_INCOMPLETE' using errcode = '42501';
   end if;
