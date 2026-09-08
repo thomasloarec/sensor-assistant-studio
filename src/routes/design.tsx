@@ -601,6 +601,32 @@ function DesignSpace() {
           {/* ---------------- Candidats ---------------- */}
           <TabsContent value="candidats" className="space-y-3 pt-4">
             <p className="text-sm text-muted-foreground">{CANDIDATE_DISCLAIMER}</p>
+            {dossier.selectedSensorId && !dossier.sensorSyncConfirmed ? (
+              <div className="rounded-md border border-amber-300 bg-amber-50 p-3 text-sm">
+                <p>
+                  La gamme suivie et le capteur affiché en 3D sont différents. Rien n'est changé sans
+                  votre accord.
+                </p>
+                <Button
+                  size="sm"
+                  className="mt-2"
+                  onClick={() =>
+                    setDossier((d) => {
+                      const next = d.selectedSensorId;
+                      if (!next) return d;
+                      return {
+                        ...d,
+                        workshopSensorId: next,
+                        sensorSyncConfirmed: true,
+                        workshop: d.workshop ? { ...d.workshop, sensorId: next } : d.workshop,
+                      };
+                    })
+                  }
+                >
+                  Aligner l'atelier 3D sur la gamme suivie
+                </Button>
+              </div>
+            ) : null}
             <div className="space-y-2">
               {candidates.map((c) => (
                 <div key={c.id} className="rounded-md border p-3">
@@ -626,7 +652,13 @@ function DesignSpace() {
                       <Button
                         size="sm"
                         variant="ghost"
-                        onClick={() => setDossier((d) => ({ ...d, selectedSensorId: c.id }))}
+                        onClick={() =>
+                          setDossier((d) => ({
+                            ...d,
+                            selectedSensorId: c.id,
+                            sensorSyncConfirmed: d.workshopSensorId === c.id,
+                          }))
+                        }
                       >
                         Suivre cette gamme
                       </Button>
