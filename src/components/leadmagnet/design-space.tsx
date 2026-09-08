@@ -2285,8 +2285,11 @@ export function DesignSpace({
                 e.target.value = "";
                 if (!f) return;
                 // La garde vit DANS importDossier : tous les chemins protégés.
-                void importDossier(f).then(() => {
-                  if (!busyRef.current) onWorkspaceOpen?.();
+                void importDossier(f).then((imported) => {
+                  if (imported && !busyRef.current) {
+                    setPanel(null);
+                    onWorkspaceOpen?.();
+                  }
                 });
               }}
             />

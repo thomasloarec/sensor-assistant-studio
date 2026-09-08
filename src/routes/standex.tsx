@@ -165,6 +165,7 @@ function StandexConsole() {
   const selectionRequest = useRef(0);
   const modelRequest = useRef(0);
   const docGenRef = useRef(0);
+  const documentDossierRef = useRef<string | null>(null);
   const [openDoc, setOpenDoc] = useState<ViewerDocument | null>(null);
   const [viewerTarget, setViewerTarget] = useState<RoutingTarget>({ kind: "base" });
   const [viewerSlot, setViewerSlot] = useState<RoutingSlot>("sensor");
@@ -313,6 +314,12 @@ function StandexConsole() {
 
   const loadView = useCallback(async (id: string) => {
     const request = ++selectionRequest.current;
+    if (documentDossierRef.current !== id) {
+      documentDossierRef.current = id;
+      docGenRef.current += 1;
+      setOpenDoc(null);
+      setView(null);
+    }
     modelRequest.current += 1;
     setViewer(null);
     setViewerError(null);
