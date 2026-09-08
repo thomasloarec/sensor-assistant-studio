@@ -448,10 +448,13 @@ $$;
 -- ----------------------------------------------------------------------------
 -- 4bis. Preuve NDA (correctif 8)
 -- ----------------------------------------------------------------------------
+drop function if exists lead_priv.record_nda_proof(uuid, text, text, text, text, jsonb, date, uuid, text);
+drop function if exists lead_priv.admin_record_nda_proof(uuid, text, text, text, text, jsonb, date, text);
+drop function if exists public.lead_admin_record_nda_proof(uuid, text, text, text, text, jsonb, date, text);
 create or replace function lead_priv.record_nda_proof(
   _dossier uuid, _template_sha text, _document_sha text, _signed_object_path text,
   _proof_reference text, _counterparties jsonb, _signed_at date,
-  _verified_by uuid, _source text)
+  _verified_by uuid, _source text, _evidence_kind text)
 returns uuid language plpgsql security definer
 set search_path = lead, lead_priv, pg_temp as $$
 declare pid uuid; d lead.design_dossiers%rowtype;
@@ -467,10 +470,33 @@ begin
     -- Un document « signé » identique au modèle vierge n'est pas une signature.
     raise exception 'NDA_SIGNED_DOCUMENT_INVALID' using errcode = '22023';
   end if;
-  if coalesce(btrim(_signed_object_path),'') = '' or coalesce(btrim(_proof_reference),'') = '' then
+  if coalesce(btrim(_proof_reference),'') = '' or coalesce(btrim(_source),'') = '' then
     raise exception 'NDA_PROOF_INCOMPLETE' using errcode = '22023';
   end if;
-  if jsonb_typeof(_counterparties) <> 'array' or jsonb_array_length(_counterparties) < 2 then
+  if coalesce(_evidence_kind,'') not in ('stored_object','external_archive') then
+    raise exception 'NDA_EVIDENCE_KIND_INVALID' using errcode = '22023';
+  end if;
+  -- Correctif racine 7 : soit l'artefact signé existe RÉELLEMENT dans le
+  -- stockage privé de ce dossier, soit la preuve externe est déclarée comme
+  -- telle — jamais un chemin quelconque déguisé en fichier stocké.
+  if _evidence_kind = 'stored_object' then
+    if coalesce(btrim(_signed_object_path),'') = '' then
+      raise exception 'NDA_PROOF_INCOMPLETE' using errcode = '22023';
+    end if;
+    if not exists (
+      select 1 from storage.objects o
+      join lead.upload_sessions us on o.name like us.path_prefix || '/%'
+      where o.bucket_id = 'lead-design-files' and o.name = btrim(_signed_object_path)
+        and us.dossier_id = _dossier and us.kind = 'nda_signed') then
+      raise exception 'NDA_SIGNED_FILE_NOT_FOUND' using errcode = '42501';
+    end if;
+  elsif coalesce(btrim(_signed_object_path),'') <> '' then
+    raise exception 'NDA_EVIDENCE_KIND_INVALID' using errcode = '22023';
+  end if;
+  if jsonb_typeof(_counterparties) <> 'array' or jsonb_array_length(_counterparties) < 2
+     or exists (select 1 from jsonb_array_elements(_counterparties) c
+                where jsonb_typeof(c) <> 'object'
+                   or coalesce(btrim(c->>'party'),'') = '') then
     raise exception 'NDA_COUNTERPARTIES_REQUIRED' using errcode = '22023';
   end if;
   if _signed_at is null or _signed_at > current_date then
@@ -480,9 +506,10 @@ begin
     raise exception 'NDA_VERIFIER_REQUIRED' using errcode = '42501';
   end if;
   insert into lead.nda_proofs (dossier_id, template_sha256, document_sha256, signed_object_path,
-                               proof_reference, counterparties, signed_at,
+                               evidence_kind, proof_reference, counterparties, signed_at,
                                verified_at, verified_by, verification_source)
-  values (_dossier, lower(_template_sha), lower(_document_sha), btrim(_signed_object_path),
+  values (_dossier, lower(_template_sha), lower(_document_sha),
+          nullif(btrim(coalesce(_signed_object_path,'')), ''), _evidence_kind,
           btrim(_proof_reference), _counterparties, _signed_at, now(), _verified_by, _source)
   returning id into pid;
   update lead.design_dossiers set nda_status = 'in_force', updated_at = now() where id = _dossier;
@@ -495,7 +522,8 @@ end $$;
 -- Écran habilité : un admin Standex enregistre la preuve vérifiée.
 create or replace function lead_priv.admin_record_nda_proof(
   _dossier uuid, _template_sha text, _document_sha text, _signed_object_path text,
-  _proof_reference text, _counterparties jsonb, _signed_at date, _source text)
+  _proof_reference text, _counterparties jsonb, _signed_at date, _source text,
+  _evidence_kind text)
 returns uuid language plpgsql security definer
 set search_path = lead, lead_priv, pg_temp as $$
 declare u uuid := lead_priv.require_user();
@@ -504,16 +532,19 @@ begin
     raise exception 'NOT_ALLOWED' using errcode = '42501';
   end if;
   return lead_priv.record_nda_proof(_dossier, _template_sha, _document_sha, _signed_object_path,
-                                    _proof_reference, _counterparties, _signed_at, u, _source);
+                                    _proof_reference, _counterparties, _signed_at, u, _source,
+                                    _evidence_kind);
 end $$;
 
 create or replace function public.lead_admin_record_nda_proof(
   p_dossier uuid, p_template_sha text, p_document_sha text, p_signed_object_path text,
-  p_proof_reference text, p_counterparties jsonb, p_signed_at date, p_source text)
+  p_proof_reference text, p_counterparties jsonb, p_signed_at date, p_source text,
+  p_evidence_kind text default 'stored_object')
 returns uuid language sql security invoker
 set search_path = public, lead_priv, pg_temp as $$
   select lead_priv.admin_record_nda_proof(p_dossier, p_template_sha, p_document_sha,
-    p_signed_object_path, p_proof_reference, p_counterparties, p_signed_at, p_source);
+    p_signed_object_path, p_proof_reference, p_counterparties, p_signed_at, p_source,
+    p_evidence_kind);
 $$;
 
 -- ----------------------------------------------------------------------------
@@ -1442,29 +1473,41 @@ set search_path = lead, lead_priv, pg_temp as $$
     where f->>'path' = _name);
 $$;
 
+-- Un artefact de preuve NDA est immuable une fois enregistré.
+create or replace function lead_priv.object_is_nda_proof(_name text)
+returns boolean language sql stable security definer
+set search_path = lead, lead_priv, pg_temp as $$
+  select exists (select 1 from lead.nda_proofs where signed_object_path = _name);
+$$;
+
 drop policy if exists lead_files_owner_rw on storage.objects;
 drop policy if exists lead_files_insert on storage.objects;
 drop policy if exists lead_files_select on storage.objects;
 drop policy if exists lead_files_update on storage.objects;
 drop policy if exists lead_files_delete on storage.objects;
 
+-- `owner` est hérité (legacy) ; `owner_id` est la colonne actuelle. On accepte
+-- l'une ou l'autre pour rester compatible avec le stockage réel.
 create policy lead_files_insert on storage.objects for insert to authenticated
   with check (bucket_id = 'lead-design-files'
-              and owner = auth.uid()
+              and coalesce(owner_id, owner::text) = auth.uid()::text
               and lead_priv.upload_path_allowed(name, auth.uid()));
 
 create policy lead_files_select on storage.objects for select to authenticated
   using (bucket_id = 'lead-design-files' and lead_priv.object_readable(name, auth.uid()));
 
 create policy lead_files_update on storage.objects for update to authenticated
-  using (bucket_id = 'lead-design-files' and owner = auth.uid()
-         and not lead_priv.object_submitted(name))
-  with check (bucket_id = 'lead-design-files' and owner = auth.uid()
+  using (bucket_id = 'lead-design-files'
+         and coalesce(owner_id, owner::text) = auth.uid()::text
+         and not lead_priv.object_submitted(name) and not lead_priv.object_is_nda_proof(name))
+  with check (bucket_id = 'lead-design-files'
+              and coalesce(owner_id, owner::text) = auth.uid()::text
               and lead_priv.upload_path_allowed(name, auth.uid()));
 
 create policy lead_files_delete on storage.objects for delete to authenticated
-  using (bucket_id = 'lead-design-files' and owner = auth.uid()
-         and not lead_priv.object_submitted(name));
+  using (bucket_id = 'lead-design-files'
+         and coalesce(owner_id, owner::text) = auth.uid()::text
+         and not lead_priv.object_submitted(name) and not lead_priv.object_is_nda_proof(name));
 
 -- ----------------------------------------------------------------------------
 -- 7. Grants d'exécution : PUBLIC révoqué partout, autorisations explicites
@@ -1500,7 +1543,10 @@ declare
     ['lead_priv.staff_inbox()','public.lead_staff_inbox()'],
     ['lead_priv.create_dossier(text, boolean)','public.lead_create_dossier(text, boolean)'],
     ['lead_priv.assign_dossier(uuid, uuid)','public.lead_assign_dossier(uuid, uuid)'],
-    ['lead_priv.open_upload_session(uuid, text)','public.lead_open_upload_session(uuid, text)'],
+    ['lead_priv.open_upload_session(uuid, text, jsonb)',
+     'public.lead_open_upload_session(uuid, text, jsonb)'],
+    ['lead_priv.set_dossier_title(uuid, text)','public.lead_set_dossier_title(uuid, text)'],
+    ['lead_priv.revalidate_sample(uuid, text)','public.lead_revalidate_sample(uuid, text)'],
     ['lead_priv.submit_revision(uuid, integer, jsonb, text, jsonb, jsonb)',
      'public.lead_submit_revision(uuid, integer, jsonb, text, jsonb, jsonb)'],
     ['lead_priv.publish_review(uuid, text, text, text, text, text, text, text, jsonb)',
@@ -1514,8 +1560,8 @@ declare
     ['lead_priv.update_sample(uuid, text, text)','public.lead_update_sample(uuid, text, text)'],
     ['lead_priv.client_view(uuid)','public.lead_client_view(uuid)'],
     ['lead_priv.staff_view(uuid)','public.lead_staff_view(uuid)'],
-    ['lead_priv.admin_record_nda_proof(uuid, text, text, text, text, jsonb, date, text)',
-     'public.lead_admin_record_nda_proof(uuid, text, text, text, text, jsonb, date, text)']
+    ['lead_priv.admin_record_nda_proof(uuid, text, text, text, text, jsonb, date, text, text)',
+     'public.lead_admin_record_nda_proof(uuid, text, text, text, text, jsonb, date, text, text)']
   ];
   i integer;
 begin
@@ -1529,12 +1575,13 @@ end $$;
 grant execute on function lead_priv.upload_path_allowed(text, uuid) to authenticated;
 grant execute on function lead_priv.object_readable(text, uuid) to authenticated;
 grant execute on function lead_priv.object_submitted(text) to authenticated;
+grant execute on function lead_priv.object_is_nda_proof(text) to authenticated;
 grant execute on function lead_priv.client_can_read(uuid, uuid) to authenticated;
 grant execute on function lead_priv.staff_can_read_design(uuid, uuid) to authenticated;
 
 -- Provisionnement des rôles et preuve NDA brute : service_role uniquement.
 revoke all on function lead_priv.assign_staff(uuid, lead.staff_role) from public, anon, authenticated;
-revoke all on function lead_priv.record_nda_proof(uuid, text, text, text, text, jsonb, date, uuid, text)
+revoke all on function lead_priv.record_nda_proof(uuid, text, text, text, text, jsonb, date, uuid, text, text)
   from public, anon, authenticated;
 
 -- ----------------------------------------------------------------------------
