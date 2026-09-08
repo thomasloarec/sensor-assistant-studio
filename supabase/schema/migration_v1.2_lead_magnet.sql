@@ -1693,6 +1693,8 @@ declare
     ['lead_priv.staff_inbox()','public.lead_staff_inbox()'],
     ['lead_priv.create_dossier(text, boolean)','public.lead_create_dossier(text, boolean)'],
     ['lead_priv.assign_dossier(uuid, uuid)','public.lead_assign_dossier(uuid, uuid)'],
+    ['lead_priv.prepare_nda(uuid)','public.lead_prepare_nda(uuid)'],
+    ['lead_priv.nda_status(uuid)','public.lead_nda_status(uuid)'],
     ['lead_priv.open_upload_session(uuid, text, jsonb)',
      'public.lead_open_upload_session(uuid, text, jsonb)'],
     ['lead_priv.set_dossier_title(uuid, text)','public.lead_set_dossier_title(uuid, text)'],
