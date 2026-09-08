@@ -569,10 +569,27 @@ function DesignSpace() {
                     <MagneticWorkshop
                       initialConfig={workshop ?? DEFAULT_WORKSHOP}
                       storageLabel="ce dossier, en mémoire de l'onglet"
+                      storageMode="memory"
                       onClose={() => setShowWorkshop(false)}
                       onSave={async (c: WorkshopConfig) => {
                         setWorkshop(c);
-                        setDossier((d) => ({ ...d, workshop: c, workshopIsExample: !d.workshop }));
+                        setDossier((d) => ({
+                          ...d,
+                          workshop: c,
+                          // Provenance explicite : un vrai import n'est jamais compté comme exemple.
+                          workshopSource: c.machine ? "user_asset" : "example",
+                          workshopAsset: c.machine
+                            ? {
+                                assetKey: c.machine.assetKey,
+                                fileName: c.machine.fileName,
+                                storage: "memory",
+                              }
+                            : null,
+                          workshopSensorId: c.sensorId,
+                          sensorSyncConfirmed:
+                            d.selectedSensorId === null || d.selectedSensorId === c.sensorId,
+                          updatedAt: new Date().toISOString(),
+                        }));
                       }}
                     />
                   </Suspense>
