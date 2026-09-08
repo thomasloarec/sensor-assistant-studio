@@ -67,7 +67,10 @@ import {
   STORAGE_BADGE,
   LOCAL_ASSISTANT_LABEL,
   grantConsent,
-  hasConsent,
+  hasBoundConsent,
+  pruneStaleConsents,
+  sameBinding,
+  type ConsentBinding,
 } from "@/lib/leadmagnet/privacy";
 import {
   APPROVED_NDA_TEMPLATE,
