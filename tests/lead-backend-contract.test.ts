@@ -9,7 +9,7 @@ import {
 } from "../src/lib/leadmagnet/rpc";
 import { staffActionEnabled, type LeadBackendStatus } from "../src/lib/leadmagnet/backend";
 
-const SQL = readFileSync("supabase/schema/migration_v1.1_lead_magnet.sql", "utf8");
+const SQL = readFileSync("supabase/schema/migration_v1.2_lead_magnet.sql", "utf8");
 
 const status = (over: Partial<LeadBackendStatus>): LeadBackendStatus => ({
   configured: true,
@@ -73,7 +73,7 @@ describe("activation des actions", () => {
   });
 });
 
-describe("migration V1.1 : invariants de sécurité", () => {
+describe("migration V1.2 : invariants de sécurité", () => {
   test("elle enregistre la version attendue par l'application", () => {
     expect(SQL).toContain(`insert into lead.schema_migrations (version) values ('${REQUIRED_LEAD_SCHEMA_VERSION}')`);
   });
