@@ -919,8 +919,16 @@ begin
   if not lead_priv.annual_volume_valid(_snapshot) then
     raise exception 'BAD_ANNUAL_VOLUME' using errcode = '22023';
   end if;
-  -- Correctif racine 4 : consentement explicite, daté, et lié à CE dossier,
-  -- à la révision soumise et au contenu relu.
+  -- Correctif racine 4 : le hash faisant autorité est recalculé ici, sur la
+  -- forme canonique partagée avec l'application. Le client DOIT déclarer
+  -- exactement ce hash : sans cela, rien ne prouve qu'il a relu CE contenu.
+  server_hash := lead_priv.snapshot_hash(_snapshot);
+  next_rev := d.current_revision + 1;
+  if lower(coalesce(btrim(_content_hash),'')) is distinct from server_hash then
+    raise exception 'CONTENT_HASH_MISMATCH' using errcode = '22023';
+  end if;
+  -- Consentement explicite, daté, et lié à CE dossier, à CETTE révision et à
+  -- CE contenu. Aucun champ n'est facultatif : absent = refusé.
   if jsonb_typeof(_consents) <> 'array' then
     raise exception 'CONSENT_INCOMPLETE' using errcode = '42501';
   end if;
@@ -931,32 +939,48 @@ begin
      or coalesce(btrim(consent->>'content_ref'), '') = ''
      or lead_priv.parse_ts(consent->>'accepted_at') is null
      or lead_priv.parse_ts(consent->>'accepted_at') > now() + interval '5 minutes'
-     or lead_priv.parse_ts(consent->>'accepted_at') < now() - interval '30 days'
-     or (consent ? 'dossier_id' and consent->>'dossier_id' is distinct from _dossier::text)
-     or (consent ? 'revision'
-         and consent->>'revision' is distinct from (d.current_revision + 1)::text)
-     or (lower(coalesce(consent->>'content_ref','')) ~ '^[a-f0-9]{64}$'
-         and lower(consent->>'content_ref') is distinct from lower(coalesce(_content_hash,''))) then
+     or lead_priv.parse_ts(consent->>'accepted_at') < now() - interval '1 day'
+     or consent->>'dossier_id' is distinct from _dossier::text
+     or lead_priv.json_number(consent->'revision') is null
+     or lead_priv.json_number(consent->'revision') <> next_rev
+     or lower(coalesce(consent->>'content_hash','')) is distinct from server_hash then
     raise exception 'CONSENT_INCOMPLETE' using errcode = '42501';
   end if;
   if not lead_priv.nda_allows_transfer(_dossier) then
     raise exception 'NDA_NOT_IN_FORCE' using errcode = '42501';
   end if;
-  -- Aucun identifiant de fichier arbitraire : l'objet doit exister et provenir
-  -- d'une session d'upload ouverte pour CE dossier par CET utilisateur.
+  -- Aucun identifiant de fichier arbitraire : l'objet doit exister, provenir
+  -- d'une session ouverte pour CE dossier, CET utilisateur et CETTE révision,
+  -- et porter l'empreinte EXACTE annoncée au préflight.
   if jsonb_typeof(files) <> 'array' then
     raise exception 'BAD_FILES' using errcode = '22023';
   end if;
   select count(*) into bad from jsonb_array_elements(files) f
    where coalesce(btrim(f->>'path'), '') = ''
+      or lower(coalesce(f->>'sha256','')) !~ '^[a-f0-9]{64}$'
       or not exists (
         select 1 from storage.objects o
         join lead.upload_sessions s on o.name like s.path_prefix || '/%'
         where o.bucket_id = 'lead-design-files'
           and o.name = f->>'path'
           and s.dossier_id = _dossier
-          and s.user_id = u);
+          and s.user_id = u
+          and s.kind <> 'nda_signed'
+          and s.expected_revision = next_rev
+          and s.expected_sha256 = lower(f->>'sha256'));
   if bad > 0 then raise exception 'FILE_NOT_TRANSFERRED' using errcode = '42501'; end if;
+  -- Le consentement énumère les fichiers relus : ni fichier en plus, ni en moins.
+  if (select coalesce(jsonb_agg(x order by x), '[]'::jsonb)
+        from (select distinct lower(f->>'sha256') x
+                from jsonb_array_elements(files) f) q)
+     is distinct from
+     (select coalesce(jsonb_agg(y order by y), '[]'::jsonb)
+        from (select distinct lower(e#>>'{}') y
+                from jsonb_array_elements(coalesce(consent->'file_digests','[]'::jsonb)) e) q2)
+  then
+    raise exception 'CONSENT_FILES_MISMATCH' using errcode = '42501';
+  end if;
+
 
   server_hash := lead_priv.snapshot_hash(_snapshot);
   next_rev := d.current_revision + 1;
