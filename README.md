@@ -1,5 +1,10 @@
 # Sensor Assistant Studio
 
+> **Avant toute modification du front, lire `AGENTS.md` puis `docs/design-language.md`.**
+> Le projet suit un système de design formalisé aligné sur la charte Standex
+> STA001 V3.1 ; les valeurs littérales et les couleurs Tailwind brutes y sont
+> proscrites.
+
 Construis un banc de test interne Standex pour tester un assistant capteur.
 
 Important :
