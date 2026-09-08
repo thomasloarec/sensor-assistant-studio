@@ -647,6 +647,67 @@ set search_path = public, lead_priv, pg_temp as $$
   select lead_priv.create_dossier(p_title, p_nda_required);
 $$;
 
+-- 5.3quater NDA : coquille serveur préparée AVANT tout contenu technique.
+-- Ne crée QUE les métadonnées nécessaires (aucune donnée de conception) et ne
+-- signe rien : la mise en vigueur reste conditionnée à une preuve vérifiée.
+create or replace function lead_priv.prepare_nda(_dossier uuid)
+returns jsonb language plpgsql security definer
+set search_path = lead, lead_priv, pg_temp as $$
+declare u uuid := lead_priv.require_user(); did uuid := _dossier; d lead.design_dossiers%rowtype;
+begin
+  if did is null then
+    did := lead_priv.create_dossier(null, true);
+  end if;
+  select * into d from lead.design_dossiers where id = did for update;
+  if not found then raise exception 'DOSSIER_NOT_FOUND' using errcode = '42501'; end if;
+  if not lead_priv.client_can_submit(u, did) then
+    raise exception 'NOT_ALLOWED' using errcode = '42501';
+  end if;
+  if not d.nda_required then
+    update lead.design_dossiers set nda_required = true, nda_status = 'requested', updated_at = now()
+     where id = did and nda_status = 'not_required';
+    select * into d from lead.design_dossiers where id = did;
+  end if;
+  -- Générer n'est pas signer : le statut n'avance jamais jusqu'à `in_force` ici.
+  if d.nda_status in ('requested','prepared') then
+    update lead.design_dossiers set nda_status = 'awaiting_signatures', updated_at = now()
+     where id = did;
+  end if;
+  insert into lead.audit_log (actor, action, dossier_id, detail)
+  values (u, 'nda_prepared', did, '{}'::jsonb);
+  return lead_priv.nda_status(did);
+end $$;
+
+create or replace function lead_priv.nda_status(_dossier uuid)
+returns jsonb language plpgsql stable security definer
+set search_path = lead, lead_priv, pg_temp as $$
+declare u uuid := lead_priv.require_user(); d lead.design_dossiers%rowtype; p lead.nda_proofs%rowtype;
+begin
+  select * into d from lead.design_dossiers where id = _dossier;
+  if not found then raise exception 'DOSSIER_NOT_FOUND' using errcode = '42501'; end if;
+  if not lead_priv.client_can_read(u, _dossier)
+     and not lead_priv.staff_can_read_design(u, _dossier) then
+    raise exception 'NOT_ALLOWED' using errcode = '42501';
+  end if;
+  select * into p from lead.nda_proofs where dossier_id = _dossier
+   order by verified_at desc limit 1;
+  return jsonb_build_object(
+    'dossier_id', d.id, 'nda_required', d.nda_required, 'nda_status', d.nda_status,
+    'allows_transfer', lead_priv.nda_allows_transfer(d.id),
+    'proof', case when p.id is null then null else jsonb_build_object(
+      'document_sha256', p.document_sha256, 'verified_at', p.verified_at,
+      'proof_reference', p.proof_reference, 'signed_at', p.signed_at) end);
+end $$;
+
+create or replace function public.lead_prepare_nda(p_dossier uuid default null)
+returns jsonb language sql security invoker
+set search_path = public, lead_priv, pg_temp as $$ select lead_priv.prepare_nda(p_dossier); $$;
+
+create or replace function public.lead_nda_status(p_dossier uuid)
+returns jsonb language sql stable security invoker
+set search_path = public, lead_priv, pg_temp as $$ select lead_priv.nda_status(p_dossier); $$;
+
+
 -- Renommage : possible seulement quand le transfert confidentiel est autorisé.
 create or replace function lead_priv.set_dossier_title(_dossier uuid, _title text)
 returns void language plpgsql security definer
