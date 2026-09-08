@@ -10,7 +10,17 @@ import { t } from "@/lib/i18n/core";
  * - sans WebGL, le repli 2D dessine LA silhouette du capteur concerné : il ne
  *   substitue jamais une autre référence.
  */
-import { lazy, Suspense, useCallback, useEffect, useRef, useState } from "react";
+import {
+  Component,
+  lazy,
+  Suspense,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
+
 import { sensorById, customLayout } from "@/lib/standex/sensor-catalog";
 import type { SensorModel } from "@/lib/standex/sensor-catalog";
 
