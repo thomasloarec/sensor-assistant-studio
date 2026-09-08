@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { MagnetPlay } from "@/components/leadmagnet/magnet-play";
 import { DesignSpace, PrivateDesignError } from "@/components/leadmagnet/design-space";
 import { useReveal } from "@/hooks/use-reveal";
+import { LanguagePicker, useLocale } from "@/lib/i18n/react";
 
 export const Route = createFileRoute("/")({
   ssr: false,
