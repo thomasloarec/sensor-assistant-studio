@@ -22,7 +22,7 @@ export function AuthPanel({ backend, onChanged }: Props) {
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
 
-  if (!backend?.configured)
+  if (!backend?.configured || !supabase)
     return (
       <p className="text-xs text-muted-foreground">
         La liaison avec l'équipe Standex n'est pas configurée sur cet environnement : la connexion
@@ -40,7 +40,7 @@ export function AuthPanel({ backend, onChanged }: Props) {
           size="sm"
           variant="outline"
           onClick={async () => {
-            await supabase.auth.signOut();
+            await supabase!.auth.signOut();
             onChanged?.();
           }}
         >
@@ -57,7 +57,7 @@ export function AuthPanel({ backend, onChanged }: Props) {
         e.preventDefault();
         setBusy(true);
         setMessage(null);
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        const { error } = await supabase!.auth.signInWithPassword({ email, password });
         setBusy(false);
         if (error) {
           setMessage("Connexion refusée. Vérifiez l'adresse et le mot de passe.");
