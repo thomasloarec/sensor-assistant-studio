@@ -1540,7 +1540,7 @@ export function DesignSpace({
                         className="mt-[0.62em] h-1 w-1 shrink-0 rounded-full bg-[var(--standex-blue-50)]"
                         aria-hidden="true"
                       />
-                      <span>{r}</span>
+                      <span>{t(r)}</span>
                     </li>
                   ))}
                 </ul>
