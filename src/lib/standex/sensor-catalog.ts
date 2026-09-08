@@ -3,8 +3,21 @@
  * Internal contacts, cable lengths, fillets and thread profiles are illustrative.
  */
 export type SensorShape =
-  "cylinder" | "threaded" | "flange" | "block" | "smd" | "pressfit" | "glass";
-export type SensorCategory = "Cylindrique" | "À visser" | "À encastrer" | "CMS" | "Pédagogique";
+  | "cylinder"
+  | "threaded"
+  | "flange"
+  | "block"
+  | "smd"
+  | "pressfit"
+  | "glass"
+  | "custom_pcb";
+export type SensorCategory =
+  | "Cylindrique"
+  | "À visser"
+  | "À encastrer"
+  | "CMS"
+  | "Pédagogique"
+  | "Sur mesure";
 export interface SensorModel {
   id: string;
   name: string;
@@ -25,6 +38,9 @@ export interface SensorModel {
   raisedDepth?: number;
   baseThickness?: number;
   holes?: readonly (readonly [number, number, number, number])[];
+  /** Bare glass reed envelope [length X, diameter Y, diameter Z], for board-level schematics. */
+  reed?: readonly [number, number, number];
+  pcbThickness?: number;
   note?: string;
 }
 const cylindrical = (id: string, length: number, height: number, width = height): SensorModel => ({
@@ -100,6 +116,11 @@ const pressfit = (id: string, l: number, d: number): SensorModel => ({
   contact: "A",
   note: "Diamètre de la collerette : 10,7 mm. Version sans adaptateur, contact normalement ouvert.",
 });
+/** Schéma pédagogique sur mesure : cotes d'illustration, aucune référence commandable. */
+export const CUSTOM_SENSOR_ID = "CUSTOM";
+const CUSTOM_REED_LENGTH = 20;
+const CUSTOM_REED_DIAMETER = 4;
+const CUSTOM_PCB_THICKNESS = 1.6;
 export const SENSOR_CATALOG: readonly SensorModel[] = [
   {
     id: "MK24-A-J",
@@ -213,9 +234,62 @@ export const SENSOR_CATALOG: readonly SensorModel[] = [
     contact: "A",
     note: "Dimensions choisies pour l'illustration ; aucune référence commerciale.",
   },
+  {
+    id: CUSTOM_SENSOR_ID,
+    name: "Sur mesure · schéma pédagogique",
+    category: "Sur mesure",
+    shape: "custom_pcb",
+    reed: [CUSTOM_REED_LENGTH, CUSTOM_REED_DIAMETER, CUSTOM_REED_DIAMETER],
+    pcbThickness: CUSTOM_PCB_THICKNESS,
+    body: [
+      CUSTOM_REED_LENGTH * 3,
+      CUSTOM_PCB_THICKNESS + CUSTOM_REED_DIAMETER,
+      CUSTOM_REED_DIAMETER * 5,
+    ],
+    color: "#2f6b52",
+    sourceFile: null,
+    sourcePage: 1,
+    description: "Reed nu soudé sur circuit imprimé : schéma pédagogique proportionnel",
+    contact: "A",
+    note: "Schéma pédagogique uniquement : reed nu en verre de 20 mm × Ø 4 mm posé sur un circuit imprimé de 60 × 20 × 1,6 mm (longueur = 3 × le corps du reed, largeur = 5 × son diamètre). Ce n'est pas une référence commandable, aucune distance de commutation n'est documentée et aucune caractéristique n'est validée.",
+  },
 ];
 export function sensorById(id: string): SensorModel {
   return SENSOR_CATALOG.find((s) => s.id === id) ?? SENSOR_CATALOG.find((s) => s.id === "GENERIC")!;
+}
+/** Existe-t-il réellement une entrée pour cet identifiant ? Un repli silencieux sur
+ * un autre capteur (MK03, GENERIC) ne doit jamais passer pour le choix du client. */
+export const isKnownSensorId = (id: string) => SENSOR_CATALOG.some((s) => s.id === id);
+/** Cotes pédagogiques du schéma sur mesure, dérivées du reed et jamais saisies à la main.
+ * Longueur du PCB = 3 × la longueur du corps ; largeur = 5 × son diamètre. */
+export function customLayout(s: SensorModel): {
+  reedLength: number;
+  reedDiameter: number;
+  pcbLength: number;
+  pcbWidth: number;
+  pcbThickness: number;
+  notchWidth: number;
+  notchDepth: number;
+  tabRadius: number;
+  tabInset: number;
+} | null {
+  if (s.shape !== "custom_pcb" || !s.reed) return null;
+  const reedLength = s.reed[0],
+    reedDiameter = s.reed[1],
+    pcbThickness = s.pcbThickness ?? 1.6;
+  const pcbLength = reedLength * 3,
+    pcbWidth = reedDiameter * 5;
+  return {
+    reedLength,
+    reedDiameter,
+    pcbLength,
+    pcbWidth,
+    pcbThickness,
+    notchWidth: pcbWidth * 0.3,
+    notchDepth: pcbLength * 0.12,
+    tabRadius: pcbWidth * 0.09,
+    tabInset: pcbWidth * 0.22,
+  };
 }
 export { number as formatMm } from "@/lib/i18n/core";
 import { number as formatMm } from "@/lib/i18n/core";
@@ -230,5 +304,10 @@ export const sensorSource = (s: SensorModel) =>
 /** Blade centre is illustrative, inside the raised part; this is not a CAD datum. */
 export const bladeOffsetZ = (s: SensorModel) =>
   s.shape === "flange" ? -s.body[2] / 2 + (s.raisedDepth ?? s.body[2]) / 2 : 0;
-export const bladeLength = (s: SensorModel) => s.body[0] * 0.64;
+/** Le reed du schéma sur mesure repose SUR la carte : ses lames ne sont pas au centre. */
+export const bladeOffsetY = (s: SensorModel) => {
+  const layout = customLayout(s);
+  return layout ? -s.body[1] / 2 + layout.pcbThickness + layout.reedDiameter / 2 : 0;
+};
+export const bladeLength = (s: SensorModel) => (s.reed ? s.reed[0] : s.body[0]) * 0.64;
 export const MAGNET_REFERENCE = { length: 32.4, height: 10, width: 16.7 }; // M02, Packaged Magnets V03, 18 Jun 2026.

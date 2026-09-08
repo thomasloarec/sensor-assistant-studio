@@ -19,6 +19,8 @@ import {
   X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { CandidateThumbnail } from "@/components/leadmagnet/candidate-thumbnail";
+import { CUSTOM_SENSOR_ID, sensorById } from "@/lib/standex/sensor-catalog";
 import { LanguagePicker } from "@/lib/i18n/react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -617,6 +619,11 @@ export function DesignSpace({
     () => evaluateCandidates({ mounting: dossier.mounting, envelope: dossier.envelope }),
     [dossier.mounting, dossier.envelope],
   );
+  // Le câble n'est montré sur les vignettes que s'il existe réellement un tracé.
+  const candidatesCabled =
+    cabling.sensorEndpoint !== null ||
+    cabling.connectionEndpoint !== null ||
+    cabling.waypoints.length > 0;
   const estimate = useMemo(() => estimateCableLength(cabling), [cabling]);
   const lengthVerdict = useMemo(
     () =>
@@ -1450,54 +1457,66 @@ export function DesignSpace({
               dossier.selectedSensorId === c.id ? "candidate-selected" : ""
             } ${c.status === "excluded" ? "candidate-excluded" : ""}`}
           >
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="t-title-s">{c.name}</span>
-              <Badge
-                variant={
-                  c.status === "kept"
-                    ? "default"
-                    : c.status === "to_verify"
-                      ? "warning"
-                      : "secondary"
-                }
-              >
-                {c.status === "kept"
-                  ? "Retenu à ce stade"
-                  : c.status === "to_verify"
-                    ? "À vérifier"
-                    : "Écarté"}
-              </Badge>
-              <span className="t-metric rounded-[var(--r-pill)] bg-[var(--surface-sunken)] px-2.5 py-1 t-caption">
-                {c.size}
-              </span>
-              {c.status !== "excluded" ? (
-                <Button
-                  size="sm"
-                  variant="secondary"
-                  className="sm:ml-auto"
-                  onClick={() =>
-                    setDossier((d) => ({
-                      ...d,
-                      selectedSensorId: c.id,
-                      sensorSyncConfirmed: d.workshopSensorId === c.id,
-                    }))
-                  }
-                >
-                  Suivre cette gamme
-                </Button>
-              ) : null}
+            <div className="grid gap-4 sm:grid-cols-[13rem_1fr]">
+              <div>
+                <CandidateThumbnail sensorId={c.id} cabled={candidatesCabled} />
+                <p className="t-caption mt-2">
+                  {sensorById(c.id).sourceFile
+                    ? "Aperçu 3D d'après les cotes de la fiche technique — ce n'est pas un modèle CAO de fabrication."
+                    : "Schéma pédagogique proportionnel — ni modèle CAO ni cote validée."}
+                </p>
+              </div>
+              <div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="t-title-s">{c.name}</span>
+                  <Badge
+                    variant={
+                      c.status === "kept"
+                        ? "default"
+                        : c.status === "to_verify"
+                          ? "warning"
+                          : "secondary"
+                    }
+                  >
+                    {c.status === "kept"
+                      ? "Retenu à ce stade"
+                      : c.status === "to_verify"
+                        ? "À vérifier"
+                        : "Écarté"}
+                  </Badge>
+                  <span className="t-metric rounded-[var(--r-pill)] bg-[var(--surface-sunken)] px-2.5 py-1 t-caption">
+                    {c.size}
+                  </span>
+                  {c.status !== "excluded" ? (
+                    <Button
+                      size="sm"
+                      variant="secondary"
+                      className="sm:ml-auto"
+                      onClick={() =>
+                        setDossier((d) => ({
+                          ...d,
+                          selectedSensorId: c.id,
+                          sensorSyncConfirmed: d.workshopSensorId === c.id,
+                        }))
+                      }
+                    >
+                      {c.id === CUSTOM_SENSOR_ID ? "Partir sur du sur mesure" : "Suivre cette gamme"}
+                    </Button>
+                  ) : null}
+                </div>
+                <ul className="mt-3 space-y-1.5">
+                  {c.reasons.map((r, i) => (
+                    <li key={i} className="t-caption flex gap-2 leading-[1.6]">
+                      <span
+                        className="mt-[0.62em] h-1 w-1 shrink-0 rounded-full bg-[var(--standex-blue-50)]"
+                        aria-hidden="true"
+                      />
+                      <span>{r}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
-            <ul className="mt-3 space-y-1.5">
-              {c.reasons.map((r, i) => (
-                <li key={i} className="t-caption flex gap-2 leading-[1.6]">
-                  <span
-                    className="mt-[0.62em] h-1 w-1 shrink-0 rounded-full bg-[var(--standex-blue-50)]"
-                    aria-hidden="true"
-                  />
-                  <span>{r}</span>
-                </li>
-              ))}
-            </ul>
           </div>
         ))}
       </div>
