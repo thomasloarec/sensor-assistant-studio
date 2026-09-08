@@ -204,10 +204,12 @@ export function CandidateThumbnail({
   const claim = useCallback(() => setSlot(true), []);
   useEffect(() => {
     if (!inView || !supported || lost) return;
-    const held = acquireThumbnailSlot(claim);
-    if (held) setSlot(true);
+    const token = acquireThumbnailSlot(claim);
+    if (token.held) setSlot(true);
     return () => {
-      releaseThumbnailSlot(held, claim);
+      // On rend le JETON, pas une valeur figée : si une place nous a été
+      // transmise entre-temps, elle est bien restituée.
+      releaseThumbnailSlot(token);
       setSlot(false);
     };
   }, [inView, supported, lost, claim]);
@@ -221,15 +223,20 @@ export function CandidateThumbnail({
       data-sensor={model.id}
     >
       {live ? (
-        <Suspense fallback={<Fallback model={model} reason={t("Aperçu 3D en cours")} cabled={cabled} />}>
-          <ThumbnailScene
-            sensorId={model.id}
-            cabled={cabled}
-            reduced={reduced}
-            onContextLost={() => setLost(true)}
-          />
-        </Suspense>
+        // Un renderer qui refuse de se créer doit retomber sur le dessin 2D,
+        // au même titre qu'un contexte perdu en cours de route.
+        <ThumbnailBoundary onFailed={() => setLost(true)}>
+          <Suspense fallback={<Fallback model={model} reason={t("Aperçu 3D en cours")} cabled={cabled} />}>
+            <ThumbnailScene
+              sensorId={model.id}
+              cabled={cabled}
+              reduced={reduced}
+              onContextLost={() => setLost(true)}
+            />
+          </Suspense>
+        </ThumbnailBoundary>
       ) : (
+
         <Fallback
           model={model}
           reason={
