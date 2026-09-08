@@ -58,3 +58,10 @@
 - Version de schéma exigée par l'application portée à 1.4.
 - Vérifs : `bun test` 160/160, SQL 76/76, indépendant 9/9, typecheck OK.
 - La migration Lead Magnet reste NON appliquée au backend live ; aucun rôle attribué.
+
+## 2026-09-08 — Sérialisation canonique des nombres
+- `stableStringify` développe désormais la notation exponentielle JSON exactement comme PostgreSQL rend un `jsonb` en texte (aucun arrondi, aucune valeur modifiée).
+- Cas vérifiés identiques JS/SQL sur PostgreSQL réel (PGlite) : 1e-7, 6.123233995736766e-17, 1e21, 5e-324, 0.123456789, 1000, 0, et leurs négatifs.
+- Un snapshot d'atelier avec résidus de rotation 3D n'est donc plus refusé en CONTENT_HASH_MISMATCH. Le serveur reste l'autorité et le contrôle du hash reste actif.
+- Régression : `tests/number-canonicalization.test.ts`. Suites : 163 tests / 0 échec, SQL 76/76, revue indépendante 9/9, typecheck OK.
+- Migration Lead Magnet toujours NON appliquée au backend live, projet privé, NDA original inchangé.
