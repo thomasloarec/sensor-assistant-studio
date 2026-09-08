@@ -94,3 +94,20 @@
 - Vérifs : `bun test` 174/174, SQL 76/76, indépendant 9/9, typecheck OK, build OK,
   navigateur réel `/design`, `/standex`, `/` sans erreur console.
 - Migration toujours NON appliquée, aucun rôle attribué, projet privé, NDA inchangé.
+
+## 2026-09-08 (fin de journée) — état réel du backend
+- Le SQL de `supabase/schema/migration_v1.2_lead_magnet.sql` est APPLIQUÉ sur le
+  backend Standex existant yyobodalwtsqdyrqwkjk (diff identique, seules des
+  lignes vides diffèrent). Sonde réelle : HTTP 200, `ready=true`, schéma 1.4.
+- Fonction Edge `lead-verify-upload` DÉPLOYÉE et ACTIVE (v1, verify_jwt=true) ;
+  appel anonyme refusé en 401. Aucune copie ni déploiement supplémentaire.
+- AUCUN rôle staff attribué : le contrôle automatique a refusé le
+  provisionnement admin. Ce privilège attend un accord explicite du
+  propriétaire et ne sera pas contourné.
+- Raccordements finaux : `/standex` passe réellement `cableRouting` à l'atelier
+  (sélecteur d'état, pointage, annulation, remise à zéro, longueur) sur une
+  COPIE locale du câble, et vérifie l'`assetKey` de la configuration contre le
+  binaire contrôlé ; un dossier sans contenu envoyé n'hérite plus de l'ancien
+  contenu ; `fetchClientView`, `loadView`, les actions R&D et l'ouverture du GLB
+  ignorent les réponses périmées ; le changement de contexte est bloqué pendant
+  une opération en cours.
