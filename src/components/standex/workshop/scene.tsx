@@ -313,6 +313,24 @@ function ContactFlow({ span, reduced }: { span: number; reduced: boolean }) {
     </group>
   );
 }
+/** Cotes des lames de contact.
+ *
+ * Pour un reed nu, les lames vivent DANS l'ampoule de verre : leur épaisseur et
+ * leur écartement se déduisent du rayon intérieur de cette ampoule, jamais de la
+ * largeur du boîtier — sur le schéma sur mesure, la carte fait 20 mm de large
+ * alors que le verre ne fait que 4 mm de diamètre. Les capteurs encapsulés
+ * gardent exactement leurs cotes d'origine. */
+export function contactGeometry(model: SensorModel, closed: boolean) {
+  const wide = Math.max(0.09, Math.min(0.55, model.body[1] * 0.1));
+  const openGap = Math.max(0.17, model.body[2] * 0.1);
+  if (!model.reed) return { thickness: wide, gap: closed ? 0 : openGap, inner: Infinity };
+  // Rayon utile sous la paroi de verre.
+  const inner = (model.reed[1] / 2) * 0.82;
+  const thickness = Math.max(0.05, Math.min(wide, inner * 0.5));
+  const maxGap = Math.max(0, inner * 0.92 - thickness / 2);
+  return { thickness, gap: closed ? 0 : Math.min(openGap, maxGap), inner };
+}
+
 export function Contacts({
   model,
   contact,
@@ -322,12 +340,12 @@ export function Contacts({
   contact: Contact;
   reduced: boolean;
 }) {
-  const span = bladeLength(model),
-    thickness = Math.max(0.09, Math.min(0.55, model.body[1] * 0.1));
-  const closed = contact === "closed",
-    gap = closed ? 0 : Math.max(0.17, model.body[2] * 0.1);
+  const span = bladeLength(model);
+  const closed = contact === "closed";
+  const { thickness, gap } = contactGeometry(model, closed);
   return (
     <group position={[0, bladeOffsetY(model), bladeOffsetZ(model)]}>
+
       <mesh position={[-span * 0.23, 0, -gap]}>
         <boxGeometry args={[span * 0.56, thickness, thickness]} />
         <meshStandardMaterial
@@ -645,7 +663,12 @@ export default function WorkshopScene({
       >
         <group rotation={[0, (-config.sensorAngle * Math.PI) / 180, 0]}>
           <Body model={model} xray={xray} />
-          {xray && <Contacts model={model} contact={sample.contact} reduced={reduced} />}
+          {/* Le reed nu est déjà transparent : ses lames restent visibles sans
+              passer l'atelier en radiographie, la carte imprimée reste opaque. */}
+          {(xray || model.shape === "custom_pcb") && (
+            <Contacts model={model} contact={sample.contact} reduced={reduced} />
+          )}
+
           <Label position={[0, model.body[1] / 2 + 3, model.body[2] / 2 + 5]}>
             {t(model.name)}
           </Label>

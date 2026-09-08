@@ -161,3 +161,11 @@
 - [x] Éliminer les anciens motifs visuels résiduels dans l’application.
 - [x] Vérifier clavier, mouvement réduit, contrastes et trois largeurs.
 - [x] Actualiser le langage de design et exécuter tests, types et build.
+
+## Finition langues + vignettes
+
+- [x] Confirmer dictionnaire, inventaire AST et couverture des huit langues.
+- [x] Corriger le compte de contextes 3D des vignettes (jeton d'appartenance, relais atomique, nettoyage idempotent, repli si le rendu échoue).
+- [x] Ramener les lames du reed nu à l'intérieur du verre et les rendre visibles sans radiographie.
+- [ ] Parcours navigateur réel atelier + capteurs possibles en ja/zh/ru.
+- [ ] Rapport enregistré en anglais (lot suivant, déjà autorisé).

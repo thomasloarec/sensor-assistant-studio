@@ -10,7 +10,17 @@ import { t } from "@/lib/i18n/core";
  * - sans WebGL, le repli 2D dessine LA silhouette du capteur concerné : il ne
  *   substitue jamais une autre référence.
  */
-import { lazy, Suspense, useCallback, useEffect, useRef, useState } from "react";
+import {
+  Component,
+  lazy,
+  Suspense,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
+
 import { sensorById, customLayout } from "@/lib/standex/sensor-catalog";
 import type { SensorModel } from "@/lib/standex/sensor-catalog";
 
@@ -19,48 +29,84 @@ const ThumbnailScene = lazy(() => import("@/components/standex/workshop/candidat
 /* ------------------------------------------------------------------ */
 /* Plafond de contextes WebGL simultanés                               */
 /* ------------------------------------------------------------------ */
+/** Jeton d'appartenance : c'est LUI qui dit si une vignette détient une place,
+ * jamais un booléen figé au moment de la demande. Une place transmise à une
+ * vignette en attente reste comptée, et la vignette servie la rend vraiment. */
+export type ThumbnailSlot = { held: boolean; waiting: boolean };
+
 const MAX_LIVE_CONTEXTS = 4;
 let liveContexts = 0;
-const waitingForSlot = new Set<() => void>();
+const queue: { token: ThumbnailSlot; notify: () => void }[] = [];
 
-export function acquireThumbnailSlot(notify: () => void): boolean {
+/** Demande une place. Le jeton renvoyé est mis à jour lors d'un passage de
+ * relais : il ne faut donc jamais recopier `held` dans une variable locale. */
+export function acquireThumbnailSlot(notify: () => void): ThumbnailSlot {
+  const token: ThumbnailSlot = { held: false, waiting: false };
   if (liveContexts < MAX_LIVE_CONTEXTS) {
     liveContexts += 1;
-    return true;
+    token.held = true;
+    return token;
   }
-  waitingForSlot.add(notify);
-  return false;
+  token.waiting = true;
+  queue.push({ token, notify });
+  return token;
 }
-export function releaseThumbnailSlot(held: boolean, notify: () => void) {
-  waitingForSlot.delete(notify);
-  if (!held) return;
+
+/** Rendu idempotent : une attente annulée sort de la file, une place détenue
+ * est transmise atomiquement à la vignette suivante (le compteur ne redescend
+ * pas), et un second appel ne libère rien de plus. */
+export function releaseThumbnailSlot(token: ThumbnailSlot) {
+  if (token.waiting) {
+    token.waiting = false;
+    const index = queue.findIndex((entry) => entry.token === token);
+    if (index >= 0) queue.splice(index, 1);
+    return;
+  }
+  if (!token.held) return;
+  token.held = false;
+  const next = queue.shift();
+  if (next) {
+    next.token.waiting = false;
+    next.token.held = true; // la place change de mains, elle n'est pas rendue
+    // Réveil différé : on ne met jamais à jour une autre vignette pendant le
+    // nettoyage d'effet de celle qui libère sa place.
+    queueMicrotask(() => {
+      if (next.token.held) next.notify();
+    });
+    return;
+  }
   liveContexts = Math.max(0, liveContexts - 1);
-  const next = waitingForSlot.values().next();
-  if (!next.done) {
-    waitingForSlot.delete(next.value);
-    next.value();
-  }
 }
+
 /** Uniquement pour les tests : remet le compteur à zéro. */
 export function resetThumbnailSlots() {
   liveContexts = 0;
-  waitingForSlot.clear();
+  queue.length = 0;
+}
+/** Uniquement pour les tests : nombre de contextes réellement comptés. */
+export function liveThumbnailContexts() {
+  return liveContexts;
 }
 
+
+/** Three 0.185 rend EXCLUSIVEMENT en WebGL2 : sonder « webgl » ferait croire à
+ * un rendu possible sur un appareil qui n'a que WebGL1. La sonde libère son
+ * propre contexte, sinon elle occuperait une place au détriment des vignettes. */
 let webglSupport: boolean | null = null;
 export function hasWebGL(): boolean {
   if (webglSupport !== null) return webglSupport;
   if (typeof document === "undefined") return false;
   try {
     const canvas = document.createElement("canvas");
-    webglSupport = Boolean(
-      canvas.getContext("webgl2") ?? canvas.getContext("webgl") ?? null,
-    );
+    const gl = canvas.getContext("webgl2");
+    webglSupport = Boolean(gl);
+    gl?.getExtension("WEBGL_lose_context")?.loseContext();
   } catch {
     webglSupport = false;
   }
   return webglSupport;
 }
+
 
 function prefersReducedMotion(): boolean {
   if (typeof window === "undefined" || !window.matchMedia) return false;
@@ -131,6 +177,26 @@ function Fallback({
   );
 }
 
+/** Barrière d'erreur : une création de renderer refusée (WebGL2 absent du
+ * pilote, mémoire graphique saturée) lève au rendu et doit donner le repli 2D
+ * au lieu d'un trou dans la liste des candidats. */
+class ThumbnailBoundary extends Component<
+  { onFailed: () => void; children: ReactNode },
+  { failed: boolean }
+> {
+  override state = { failed: false };
+  static getDerivedStateFromError() {
+    return { failed: true };
+  }
+  override componentDidCatch() {
+    this.props.onFailed();
+  }
+  override render() {
+    return this.state.failed ? null : this.props.children;
+  }
+}
+
+
 export function CandidateThumbnail({
   sensorId,
   cabled = false,
@@ -172,10 +238,12 @@ export function CandidateThumbnail({
   const claim = useCallback(() => setSlot(true), []);
   useEffect(() => {
     if (!inView || !supported || lost) return;
-    const held = acquireThumbnailSlot(claim);
-    if (held) setSlot(true);
+    const token = acquireThumbnailSlot(claim);
+    if (token.held) setSlot(true);
     return () => {
-      releaseThumbnailSlot(held, claim);
+      // On rend le JETON, pas une valeur figée : si une place nous a été
+      // transmise entre-temps, elle est bien restituée.
+      releaseThumbnailSlot(token);
       setSlot(false);
     };
   }, [inView, supported, lost, claim]);
@@ -189,15 +257,20 @@ export function CandidateThumbnail({
       data-sensor={model.id}
     >
       {live ? (
-        <Suspense fallback={<Fallback model={model} reason={t("Aperçu 3D en cours")} cabled={cabled} />}>
-          <ThumbnailScene
-            sensorId={model.id}
-            cabled={cabled}
-            reduced={reduced}
-            onContextLost={() => setLost(true)}
-          />
-        </Suspense>
+        // Un renderer qui refuse de se créer doit retomber sur le dessin 2D,
+        // au même titre qu'un contexte perdu en cours de route.
+        <ThumbnailBoundary onFailed={() => setLost(true)}>
+          <Suspense fallback={<Fallback model={model} reason={t("Aperçu 3D en cours")} cabled={cabled} />}>
+            <ThumbnailScene
+              sensorId={model.id}
+              cabled={cabled}
+              reduced={reduced}
+              onContextLost={() => setLost(true)}
+            />
+          </Suspense>
+        </ThumbnailBoundary>
       ) : (
+
         <Fallback
           model={model}
           reason={
