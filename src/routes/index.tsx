@@ -7,7 +7,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import type { CSSProperties } from "react";
-import { ArrowDown, ArrowRight, ChevronDown, Magnet, UserRound } from "lucide-react";
+import { ArrowDown, ArrowRight, ChevronDown, UserRound } from "lucide-react";
+import { BrandLogo } from "@/components/standex/brand-logo";
 import { Button } from "@/components/ui/button";
 import { MagnetPlay } from "@/components/leadmagnet/magnet-play";
 import { DesignSpace, PrivateDesignError } from "@/components/leadmagnet/design-space";
