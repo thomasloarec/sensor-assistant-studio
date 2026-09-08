@@ -2183,14 +2183,15 @@ export function DesignSpace({
         <Button
           variant="outline"
           className="min-h-11 text-base"
-          onClick={() =>
+          onClick={() => {
+            docGenRef.current += 1;
             setOpenDoc({
               id: `summary-${Date.now()}`,
               name: "Résumé de mon projet.md",
               kind: "markdown",
               text: technicalSummary(dossier),
-            })
-          }
+            });
+          }}
         >
           Résumé de mon projet
         </Button>
@@ -2198,14 +2199,15 @@ export function DesignSpace({
           <Button
             variant="outline"
             className="min-h-11 text-base"
-            onClick={() =>
+            onClick={() => {
+              docGenRef.current += 1;
               setOpenDoc({
                 id: `nda-${ndaPreview.fileName}`,
-                name: ndaPreview.fileName,
+                name: ndaPreview.fileName.replace(/\.docx$/i, "-apercu.txt"),
                 kind: "text",
                 text: ndaPreview.paragraphs.filter((p) => p.trim()).join("\n\n"),
-              })
-            }
+              });
+            }}
           >
             Aperçu de l'accord de confidentialité
           </Button>
