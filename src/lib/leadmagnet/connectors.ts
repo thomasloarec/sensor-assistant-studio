@@ -17,6 +17,7 @@ export interface ConnectorSpec {
 export type Termination =
   | { kind: "bare_leads" }
   | { kind: "qualified_connector"; combo: QualifiedCombo }
+  | { kind: "unqualified_connector"; spec: ConnectorSpec; status: "to_verify_by_rnd" }
   | { kind: "free_reference"; text: string; status: "to_verify_by_rnd" };
 
 export interface QualifiedCombo {
