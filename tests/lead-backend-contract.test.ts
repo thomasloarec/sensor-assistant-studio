@@ -75,7 +75,11 @@ describe("activation des actions", () => {
 
 describe("migration V1.2 : invariants de sécurité", () => {
   test("elle enregistre la version attendue par l'application", () => {
-    expect(SQL).toContain(`insert into lead.schema_migrations (version) values ('${REQUIRED_LEAD_SCHEMA_VERSION}')`);
+    const insert = SQL.split("\n").find((l) =>
+      l.startsWith("insert into lead.schema_migrations (version) values"),
+    );
+    expect(insert).toBeDefined();
+    expect(insert).toContain(`('${REQUIRED_LEAD_SCHEMA_VERSION}')`);
   });
 
   test("toutes les RPC du contrat existent dans la migration", () => {
