@@ -19,6 +19,7 @@ import {
   type DossierView,
 } from "@/lib/leadmagnet/supabase-adapter";
 import type { LeadBackendStatus } from "@/lib/leadmagnet/backend";
+import type { VariantProposal } from "@/lib/leadmagnet/variant";
 
 interface Props {
   backend: LeadBackendStatus | null;
@@ -31,6 +32,8 @@ interface Props {
     revision: number;
     snapshot: Record<string, unknown>;
   }) => void;
+  /** Reprise RÉELLE de la variante dans le dossier en cours de conception. */
+  onApplyVariant?: (variant: VariantProposal) => { applied: string[]; notApplied: string[] };
 }
 
 
@@ -51,6 +54,7 @@ export function ClientFollowUp({
   serverDossierId,
   onSelectDossier,
   onReopenSnapshot,
+  onApplyVariant,
 }: Props) {
   const [list, setList] = useState<DossierListItem[]>([]);
   const [view, setView] = useState<DossierView | null>(null);
@@ -180,12 +184,25 @@ export function ClientFollowUp({
                       <Button
                         size="sm"
                         variant="outline"
-                        disabled={Boolean(r.variant_accepted_at)}
+                        disabled={Boolean(r.variant_accepted_at) || Boolean(r.superseded)}
                         onClick={async () => {
                           try {
                             const out = await acceptVariant(r.id);
+                            const applied = onApplyVariant?.(
+                              (r.variant ?? {}) as VariantProposal,
+                            );
                             setMessage(
-                              `Variante reprise : elle alimente votre prochaine version (${out.next_revision}) et devra être renvoyée pour revue.`,
+                              [
+                                `Variante reprise dans votre version ${out.next_revision} : la version envoyée reste intacte et rien n'est approuvé tant que vous ne renvoyez pas ce dossier.`,
+                                applied?.applied.length
+                                  ? "Modifié dans votre dossier : " + applied.applied.join(" ; ")
+                                  : "Aucune valeur chiffrée à appliquer : la proposition reste descriptive.",
+                                applied?.notApplied.length
+                                  ? "À traiter vous-même : " + applied.notApplied.join(" ; ")
+                                  : "",
+                              ]
+                                .filter(Boolean)
+                                .join(" "),
                             );
                             await reloadView(current.dossier.id);
                           } catch (error) {
@@ -193,7 +210,11 @@ export function ClientFollowUp({
                           }
                         }}
                       >
-                        {r.variant_accepted_at ? "Variante reprise" : "Reprendre cette variante"}
+                        {r.variant_accepted_at
+                          ? "Variante reprise"
+                          : r.superseded
+                            ? "Retour remplacé par un plus récent"
+                            : "Reprendre cette variante"}
                       </Button>
                     </div>
                   ) : null}

@@ -54,12 +54,14 @@ async function expectFail(name, fn, expected) {
 }
 
 const snapshot=JSON.parse(readFileSync('tests/fixtures/synthetic-dossier-fixture.json','utf8'));
-const consent=[{kind:'supabase_dossier',statement:'Explicit synthetic review consent',accepted_at:new Date().toISOString(),content_ref:'fixture-revision-1'}];
+const {dossierHash}=await import('../src/lib/leadmagnet/dossier.ts');
+const consentFor=(d,rev,hash,digests=[])=>[{kind:'supabase_dossier',statement:'Explicit synthetic review consent',accepted_at:new Date().toISOString(),content_ref:`${d}@r${rev}`,dossier_id:d,revision:rev,content_hash:hash,file_digests:digests}];
+const submitReal=async(user,d,snap,expected=0,files=[])=>{const h=await dossierHash(snap);return as(user,()=>value('select public.lead_submit_revision($1,$2,$3,$4,$5,$6)',[d,expected,snap,h,consentFor(d,expected+1,h,files.map(f=>f.sha256).sort()),files]));};
 await db.query("insert into lead.staff_members(user_id,role) values($1,'rnd'),($2,'sales'),($3,'admin')",[ids.rnd,ids.sales,ids.admin]);
 const as=(id,fn)=>actor('authenticated',id,fn);
 const dossier=await as(ids.a,()=>value('select public.lead_create_dossier($1,false)',['Actual application DTO fixture']));
 await db.query('insert into lead.dossier_assignments(dossier_id,user_id) values($1,$2),($1,$3)',[dossier,ids.rnd,ids.sales]);
-const sub=await as(ids.a,()=>value('select public.lead_submit_revision($1,0,$2,$3,$4,$5)',[dossier,snapshot,'a'.repeat(64),consent,[]]));
+const sub=await submitReal(ids.a,dossier,snapshot);
 const review=await as(ids.rnd,()=>value('select public.lead_publish_review($1,$2,$3,$4,$5,$6,$7,$8,$9)',[sub.revision_id,'full','Synthetic conditions','validated','review',null,'MK03-1A66-200W','custom',{}]));
 const sample=await as(ids.a,()=>value('select public.lead_request_samples($1,$2,1,null,false)',[review,'MK03-1A66-200W']));
 add('actual_app_2000_volume_routes_direct',sample.route==='standex_direct',JSON.stringify(sample));
@@ -70,13 +72,13 @@ const offer=await as(ids.sales,()=>value('select public.lead_create_offer($1,$2,
 const ov=await as(ids.a,()=>value('select public.lead_client_view($1)',[dossier]));
 add('actual_app_volume_is_bound_to_offer',ov.offers.find(o=>o.id===offer)?.annual_volume_basis===2000,JSON.stringify(ov.offers.find(o=>o.id===offer)?.annual_volume_basis));
 const badD=await as(ids.a,()=>value('select public.lead_create_dossier($1,false)',['Malformed input test']));
-await expectFail('incomplete_nontechnical_snapshot_is_rejected',()=>as(ids.a,()=>value('select public.lead_submit_revision($1,0,$2,null,$3,$4)',[badD,{arbitrary:true},consent,[]])));
+await expectFail('incomplete_nontechnical_snapshot_is_rejected',()=>as(ids.a,()=>value('select public.lead_submit_revision($1,0,$2,null,$3,$4)',[badD,{arbitrary:true},consentFor(badD,1,'a'.repeat(64)),[]])));
 const badConsentD=await as(ids.a,()=>value('select public.lead_create_dossier($1,false)',['Consent test']));
 await expectFail('consent_date_and_content_ref_are_validated',()=>as(ids.a,()=>value('select public.lead_submit_revision($1,0,$2,null,$3,$4)',[badConsentD,snapshot,[{kind:'supabase_dossier',statement:'x',accepted_at:'not-a-date',content_ref:'wrong-design'}],[]])));
 const vr=await as(ids.rnd,()=>value('select public.lead_publish_review($1,$2,$3,$4,$5,$6,$7,$8,$9)',[sub.revision_id,'full','pending','variant_proposed','variant',null,'MK03-1A66-500W','custom',{description:'Synthetic alternative'}]));
 await as(ids.rnd,()=>value('select public.lead_publish_review($1,$2,$3,$4,$5,$6)',[sub.revision_id,'full','more info','more_info','Stop old variant',null]));
 await expectFail('superseded_variant_cannot_be_accepted',()=>as(ids.a,()=>value('select public.lead_accept_variant($1)',[vr])));
-const sub2=await as(ids.a,()=>value('select public.lead_submit_revision($1,1,$2,null,$3,$4)',[dossier,{...snapshot,freeConstraints:'Revision two'},consent,[]]));
+const sub2=await submitReal(ids.a,dossier,{...snapshot,freeConstraints:'Revision two'},1);
 const feedback=await as(ids.a,()=>value('select public.lead_update_sample($1,null,$2)',[sample.id,'Feedback about sample from design revision ONE']));
 add('feedback_stays_bound_to_tested_sample_revision',feedback.feedback_revision===1,JSON.stringify(feedback));
 await expectFail('superseded_sample_is_not_reactivated_for_shipping',()=>as(ids.sales,()=>value('select public.lead_update_sample($1,$2,null)',[sample.id,'shipped'])));
