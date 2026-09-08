@@ -219,6 +219,6 @@ export function technicalSummary(dossier: DesignDossier, tr: Tr = identity): str
     ...cablingSummary(dossier, tr),
     "",
     `## ${tr("Terminaison")}`,
-    ...connectorSummaryLines(dossier.termination).map((l) => `- ${tr(l)}`),
+    ...connectorSummaryLines(dossier.termination, tr).map((l) => `- ${l}`),
   ].join("\n");
 }

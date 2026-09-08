@@ -1877,7 +1877,7 @@ export function DesignSpace({
         <Label className="t-label">{t("Terminaison")}</Label>
         <p className="mt-1 text-sm">{terminationLabel(termination)}</p>
         <ul className="t-caption mt-1 list-disc pl-5">
-          {connectorSummaryLines(termination).map((l, i) => (
+          {connectorSummaryLines(termination, t).map((l, i) => (
             <li key={i}>{l}</li>
           ))}
         </ul>

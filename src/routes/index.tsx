@@ -60,28 +60,27 @@ function HomeRoute() {
       <main className={started ? "hidden" : undefined}>
         <div className="immersive hero-field overflow-hidden lg:min-h-[88svh]">
           <header className="material sticky top-0 z-30 shadow-[inset_0_-1px_0_var(--hairline)]">
-            <div className="mx-auto flex max-w-7xl items-center gap-2 px-4 py-3 sm:gap-4 sm:px-6 lg:px-8">
+            {/* La rangée entière peut passer à la ligne : avec « Reprendre mon
+                projet » en allemand ou en russe, trois contrôles ne tiennent pas
+                sur 320 px. On les fait descendre plutôt que les couper. */}
+            <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-2 px-4 py-3 sm:gap-4 sm:px-6 lg:px-8">
               <span className="flex min-w-0 items-center">
                 <BrandLogo tone="reversed" height={44} className="hidden sm:block" />
                 <BrandLogo variant="mark" tone="reversed" height={32} className="sm:hidden" />
               </span>
-              <div className="ml-auto flex shrink-0 flex-wrap items-center gap-2">
+              <div className="ml-auto flex min-w-0 flex-wrap items-center justify-end gap-2">
                 <LanguagePicker />
                 {opened ? (
-                  <Button
-                    variant="outline"
-                    className="min-h-11 text-base"
-                    onClick={() => setStarted(true)}
-                  >
-                    <ArrowRight className="h-4 w-4" /> {t("Reprendre mon projet")}
+                  <Button variant="outline" className="min-h-11" onClick={() => setStarted(true)}>
+                    <ArrowRight className="h-4 w-4 shrink-0" /> {t("Reprendre mon projet")}
                   </Button>
                 ) : null}
                 <Button
                   variant="outline"
-                  className="min-h-11 text-base"
+                  className="min-h-11"
                   onClick={() => setAccountRequest((n) => n + 1)}
                 >
-                  <UserRound className="h-4 w-4" /> {t("Mon espace")}
+                  <UserRound className="h-4 w-4 shrink-0" /> {t("Mon espace")}
                 </Button>
               </div>
             </div>

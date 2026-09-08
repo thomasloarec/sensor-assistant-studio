@@ -123,20 +123,31 @@ export function terminationFromDraft(draft: ConnectorDraft): ConnectorDraftResul
   };
 }
 
-export function connectorSummaryLines(t: Termination): string[] {
-  if (t.kind === "bare_leads") return ["Fils nus (par défaut)"];
-  if (t.kind === "free_reference") return [`${t.text} — à vérifier par la R&D`];
+/** Traducteur d'ÉTIQUETTES uniquement. */
+type LabelTr = (text: string) => string;
+const asIs: LabelTr = (text) => text;
+
+/** Résumé de la terminaison.
+ *
+ * Seules les étiquettes et les mentions produites par l'application passent
+ * par `tr`. Les valeurs saisies (référence, brochage, conditions, référence
+ * libre) sont recopiées telles quelles, même quand elles ressemblent à une
+ * entrée du dictionnaire : traduire la saisie d'une personne la déformerait.
+ */
+export function connectorSummaryLines(t: Termination, tr: LabelTr = asIs): string[] {
+  if (t.kind === "bare_leads") return [tr("Fils nus (par défaut)")];
+  if (t.kind === "free_reference") return [`${t.text} — ${tr("à vérifier par la R&D")}`];
   const s = t.kind === "qualified_connector" ? t.combo.connector : t.spec;
   return [
-    `Fabricant : ${s.manufacturer}`,
-    `Référence exacte : ${s.mpn}`,
-    `Contrepartie : ${s.mating ?? "inconnue"}`,
-    `Voies : ${s.positions ?? "inconnu"}`,
-    `Brochage : ${s.pinout ?? "inconnu"}`,
-    `Section / gauge : ${s.wireGauge ?? "inconnu"}`,
-    `Conditions : ${s.conditions ?? "inconnues"}`,
+    `${tr("Fabricant")} : ${s.manufacturer}`,
+    `${tr("Référence exacte")} : ${s.mpn}`,
+    `${tr("Contrepartie")} : ${s.mating ?? tr("inconnue")}`,
+    `${tr("Voies")} : ${s.positions ?? tr("inconnu")}`,
+    `${tr("Brochage")} : ${s.pinout ?? tr("inconnu")}`,
+    `${tr("Section / gauge")} : ${s.wireGauge ?? tr("inconnu")}`,
+    `${tr("Conditions")} : ${s.conditions ?? tr("inconnues")}`,
     t.kind === "qualified_connector"
-      ? `Combinaison qualifiée (${t.combo.source})`
-      : "Combinaison non qualifiée : à vérifier par la R&D.",
+      ? `${tr("Combinaison qualifiée")} (${t.combo.source})`
+      : tr("Combinaison non qualifiée : à vérifier par la R&D."),
   ];
 }
