@@ -333,9 +333,14 @@ function DesignSpace() {
   /** Crée UNIQUEMENT la fiche NDA côté Standex : aucune donnée de conception. */
   const prepareServerNda = useCallback(async () => {
     setNdaError(null);
+    const gen = contextGenRef.current;
     try {
-      applyNdaStatus(await prepareNdaOnServer(serverDossierId));
+      const status = await prepareNdaOnServer(serverDossierId);
+      // Réponse née d'un autre dossier : elle ne doit pas s'appliquer ici.
+      if (contextGenRef.current !== gen) return;
+      applyNdaStatus(status);
     } catch (error) {
+      if (contextGenRef.current !== gen) return;
       setNdaError(
         error instanceof Error ? error.message : "La préparation du NDA n'a pas abouti.",
       );
@@ -345,12 +350,17 @@ function DesignSpace() {
   const refreshNdaStatus = useCallback(async () => {
     if (!serverDossierId) return;
     setNdaError(null);
+    const gen = contextGenRef.current;
     try {
-      applyNdaStatus(await fetchNdaStatus(serverDossierId));
+      const status = await fetchNdaStatus(serverDossierId);
+      if (contextGenRef.current !== gen) return;
+      applyNdaStatus(status);
     } catch (error) {
+      if (contextGenRef.current !== gen) return;
       setNdaError(error instanceof Error ? error.message : "Statut NDA indisponible.");
     }
   }, [applyNdaStatus, serverDossierId]);
+
 
   // Tant que cet espace est monté, la télémétrie est réduite à un code anonyme.
   useEffect(() => openPrivateErrorScope(), []);
