@@ -14,6 +14,9 @@ import {
   Cpu,
   Cable,
   Loader2,
+  Pencil,
+  Check,
+  X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LanguagePicker } from "@/lib/i18n/react";
@@ -205,6 +208,101 @@ function pointFields(label: string, value: Point | null, onChange: (p: Point | n
   );
 }
 
+/** Titre du projet : UN SEUL nom affiché, renommé par une action explicite.
+ * Lecture par défaut, crayon pour renommer, Entrée valide, Échap annule, un
+ * nom vide est refusé. Le dossier n'est modifié qu'à la validation. */
+function ProjectTitle({ title, onRename }: { title: string; onRename: (next: string) => void }) {
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState(title);
+  const [error, setError] = useState<string | null>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
+
+  const start = () => {
+    setDraft(title);
+    setError(null);
+    setEditing(true);
+  };
+  const cancel = () => {
+    setError(null);
+    setEditing(false);
+  };
+  const commit = () => {
+    const next = draft.trim();
+    if (!next) {
+      setError("Le nom du projet ne peut pas être vide.");
+      inputRef.current?.focus();
+      return;
+    }
+    onRename(next);
+    setEditing(false);
+    setError(null);
+  };
+
+  useEffect(() => {
+    if (editing) inputRef.current?.focus();
+  }, [editing]);
+
+  if (!editing)
+    return (
+      <div className="flex min-w-[min(100%,20rem)] flex-1 basis-80 items-center gap-2">
+        <h1 className="t-title-l min-w-0 truncate" title={title}>
+          {title}
+        </h1>
+        <Button
+          variant="ghost"
+          className="min-h-11 min-w-11 shrink-0 px-3 text-base"
+          onClick={start}
+          aria-label={`Renommer le projet « ${title} »`}
+        >
+          <Pencil className="h-4 w-4" />
+          <span className="hidden sm:inline">Renommer</span>
+        </Button>
+      </div>
+    );
+
+  return (
+    <div className="min-w-[min(100%,18rem)] flex-1">
+      <Label htmlFor="project-title" className="t-label">
+        Nom du projet
+      </Label>
+      <div className="mt-1 flex flex-wrap items-center gap-2">
+        <Input
+          id="project-title"
+          ref={inputRef}
+          value={draft}
+          aria-invalid={error ? true : undefined}
+          aria-describedby={error ? "project-title-error" : undefined}
+          onChange={(e) => {
+            setDraft(e.target.value);
+            if (error) setError(null);
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              commit();
+            } else if (e.key === "Escape") {
+              e.preventDefault();
+              cancel();
+            }
+          }}
+          className="project-title-input h-auto min-h-11 max-w-lg"
+        />
+        <Button className="min-h-11 text-base" onClick={commit}>
+          <Check className="h-4 w-4" /> Valider
+        </Button>
+        <Button variant="ghost" className="min-h-11 text-base" onClick={cancel}>
+          <X className="h-4 w-4" /> Annuler
+        </Button>
+      </div>
+      {error ? (
+        <p id="project-title-error" className="notice notice-danger mt-2">
+          {error}
+        </p>
+      ) : null}
+    </div>
+  );
+}
+
 /** Questions du parcours guidé : une intention simple par écran, reliée à la
  * MÊME exigence du dossier que le mode détaillé (aucun second état). */
 export const GUIDED_QUESTIONS: {
@@ -261,6 +359,9 @@ export interface DesignSpaceProps {
   accountRequest?: number;
   /** Appelé quand un projet est réellement ouvert, créé ou repris ici. */
   onWorkspaceOpen?: () => void;
+  /** Retour à l'accueil depuis le logo, SANS démonter cet espace : le brouillon
+   * en mémoire, les panneaux et l'atelier restent intacts et on peut revenir. */
+  onGoHome?: () => void;
 }
 
 export function DesignSpace({
@@ -268,6 +369,7 @@ export function DesignSpace({
   visible = true,
   accountRequest = 0,
   onWorkspaceOpen,
+  onGoHome,
 }: DesignSpaceProps) {
   const [dossier, setDossier] = useState<DesignDossier>(() => createDossier());
 
@@ -2559,28 +2661,34 @@ export function DesignSpace({
       <header
         className={`material sticky top-0 z-20 border-b border-[var(--hairline)]${visible ? "" : " hidden"}`}
       >
-        <div className="mx-auto flex max-w-[76rem] flex-wrap items-end gap-4 px-4 py-4">
+        <div className="mx-auto flex max-w-[76rem] flex-wrap items-center gap-4 px-4 py-4">
           <div className="flex shrink-0 items-center gap-3 self-center">
-            <BrandLogo variant="mark" tone="light" height={32} clearance={false} alt="" />
+            {onGoHome ? (
+              <button
+                type="button"
+                onClick={onGoHome}
+                aria-label="Revenir à l'accueil Standex DETECT"
+                className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-[var(--r-sm)] transition-colors duration-[var(--d-fast)] hover:bg-[var(--surface-tint)]"
+              >
+                <BrandLogo variant="mark" tone="light" height={32} clearance={false} alt="" />
+              </button>
+            ) : (
+              <Link
+                to="/"
+                aria-label="Revenir à l'accueil Standex DETECT"
+                className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-[var(--r-sm)] transition-colors duration-[var(--d-fast)] hover:bg-[var(--surface-tint)]"
+              >
+                <BrandLogo variant="mark" tone="light" height={32} clearance={false} alt="" />
+              </Link>
+            )}
             <span aria-hidden="true" className="block h-6 w-px bg-[var(--hairline)]" />
           </div>
-          <div className="min-w-[min(100%,18rem)] flex-1">
-            <Label htmlFor="project-title" className="t-label">
-              Nom de mon projet
-            </Label>
-            <Input
-              id="project-title"
-              value={dossier.title}
-              onChange={(e) =>
-                setDossier((d) => ({
-                  ...d,
-                  title: e.target.value,
-                  updatedAt: new Date().toISOString(),
-                }))
-              }
-              className="project-title-input mt-1 h-auto min-h-11 max-w-lg border-0 bg-transparent px-0 shadow-none"
-            />
-          </div>
+          <ProjectTitle
+            title={dossier.title}
+            onRename={(next) =>
+              setDossier((d) => ({ ...d, title: next, updatedAt: new Date().toISOString() }))
+            }
+          />
           <div className="flex flex-wrap items-center gap-2">
             <Badge variant="secondary" className="gap-1 px-2.5 py-1 text-sm">
               <Lock className="h-3 w-3" /> {STORAGE_BADGE[privacy.storage]}
@@ -2776,9 +2884,16 @@ export function DesignSpace({
       </main>
 
       {/* Panneaux contextuels : le projet reste derrière, la saisie est conservée. */}
+      {/* L'atelier occupe tout l'écran : il reste MONTÉ en permanence, donc le
+          retour au projet ne perd ni réglages, ni caméra, ni fichier importé,
+          et n'applique aucun montage non validé (« Utiliser ce montage » reste
+          la seule action qui reprend le montage dans le dossier). */}
       <WorkspacePanel
         open={panel === "atelier" && workshopMounted}
         keepMounted={workshopMounted}
+        fullscreen
+        backLabel="Retour au projet"
+        onBack={() => setPanel(null)}
         onOpenChange={(o) => setPanel(o ? "atelier" : null)}
         title="Atelier 3D"
         description="Vos réglages restent en mémoire même si vous refermez ce panneau. Enregistrer reste une action explicite."

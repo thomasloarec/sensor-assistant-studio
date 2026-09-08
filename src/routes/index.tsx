@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { MagnetPlay } from "@/components/leadmagnet/magnet-play";
 import { DesignSpace, PrivateDesignError } from "@/components/leadmagnet/design-space";
 import { useReveal } from "@/hooks/use-reveal";
+import { LanguagePicker, useLocale } from "@/lib/i18n/react";
 
 export const Route = createFileRoute("/")({
   ssr: false,
@@ -40,7 +41,15 @@ export const Route = createFileRoute("/")({
 });
 
 function HomeRoute() {
+  useLocale();
   const [started, setStarted] = useState(false);
+  /** L'espace projet reste monté : une fois ouvert, revenir à l'accueil ne
+   * perd rien et « Reprendre mon projet » réaffiche le même brouillon. */
+  const [opened, setOpened] = useState(false);
+  const openWorkspace = () => {
+    setOpened(true);
+    setStarted(true);
+  };
   /** Compteur : chaque demande « Mon espace » ouvre le panneau de l'espace
    * UNIQUE monté ci-dessous. Il n'existe pas de second compte parallèle. */
   const [accountRequest, setAccountRequest] = useState(0);
@@ -55,7 +64,17 @@ function HomeRoute() {
                 <BrandLogo tone="reversed" height={44} className="hidden sm:block" />
                 <BrandLogo variant="mark" tone="reversed" height={32} className="sm:hidden" />
               </span>
-              <div className="ml-auto flex shrink-0 items-center gap-2">
+              <div className="ml-auto flex shrink-0 flex-wrap items-center gap-2">
+                <LanguagePicker />
+                {opened ? (
+                  <Button
+                    variant="outline"
+                    className="min-h-11 text-base"
+                    onClick={() => setStarted(true)}
+                  >
+                    <ArrowRight className="h-4 w-4" /> Reprendre mon projet
+                  </Button>
+                ) : null}
                 <Button
                   variant="outline"
                   className="min-h-11 text-base"
@@ -86,7 +105,7 @@ function HomeRoute() {
                   ce que vous voulez détecter : nous construisons la solution avec vous.
                 </p>
                 <div className="mt-10 flex flex-wrap items-center gap-4">
-                  <Button size="lg" className="group" onClick={() => setStarted(true)}>
+                  <Button size="lg" className="group" onClick={openWorkspace}>
                     Décrire mon besoin
                     <ArrowRight className="transition-transform duration-[var(--d-fast)] group-hover:translate-x-[3px]" />
                   </Button>
@@ -163,7 +182,8 @@ function HomeRoute() {
           chrome="embedded"
           visible={started}
           accountRequest={accountRequest}
-          onWorkspaceOpen={() => setStarted(true)}
+          onWorkspaceOpen={openWorkspace}
+          onGoHome={() => setStarted(false)}
         />
       </div>
     </div>

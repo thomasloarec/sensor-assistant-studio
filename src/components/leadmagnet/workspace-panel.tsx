@@ -21,6 +21,11 @@ export interface WorkspacePanelProps {
   description?: string;
   /** Conserve le contenu monté une fois ouvert (brouillons préservés). */
   keepMounted?: boolean;
+  /** Occupe tout l'écran disponible au lieu d'un panneau latéral.
+   * Le contenu reste le MÊME et reste monté : rien n'est réinitialisé. */
+  fullscreen?: boolean;
+  /** Libellé de l'action de retour, quand elle diffère de « Retour ». */
+  backLabel?: string;
   onBack?: () => void;
   children: ReactNode;
 }
@@ -41,6 +46,8 @@ export function WorkspacePanel({
   title,
   description,
   keepMounted = false,
+  fullscreen = false,
+  backLabel,
   onBack,
   children,
 }: WorkspacePanelProps) {
@@ -117,7 +124,9 @@ export function WorkspacePanel({
         onKeyDown={onKeyDown}
         className={
           open
-            ? "workspace-panel-shell fixed inset-y-0 right-0 z-50 flex w-full flex-col bg-background outline-none sm:max-w-3xl lg:max-w-4xl"
+            ? `workspace-panel-shell fixed z-50 flex flex-col bg-background outline-none ${
+                fullscreen ? "inset-0 w-full" : "inset-y-0 right-0 w-full sm:max-w-3xl lg:max-w-4xl"
+              }`
             : "hidden"
         }
       >
@@ -126,10 +135,11 @@ export function WorkspacePanel({
             <Button
               variant="ghost"
               className="min-h-11 text-base"
-              aria-label="Retour"
+              aria-label={backLabel ?? "Retour"}
               onClick={onBack}
             >
-              <ArrowLeft className="h-4 w-4" /> <span className="hidden sm:inline">Retour</span>
+              <ArrowLeft className="h-4 w-4" />{" "}
+              <span className="hidden sm:inline">{backLabel ?? "Retour"}</span>
             </Button>
           ) : null}
           <div className="min-w-0 flex-1">

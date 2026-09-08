@@ -121,7 +121,7 @@
 }
 .mw-placement-tools button[aria-pressed="true"] {
   background: var(--primary);
-  color: white;
+  color: var(--mw-on-accent);
   border-color: var(--primary);
 }
 .mw-orientation-presets button:last-child {
@@ -175,7 +175,7 @@
 }
 .mw-machine-layout .mw-layers select {
   border: 1px solid var(--surface-tint);
-  background: white;
+  background: var(--mw-field);
   border-radius: 4px;
   padding: 4px;
   max-width: 100px;
@@ -224,6 +224,11 @@
   --mw-border: var(--surface-tint);
   --mw-green: var(--success);
   --mw-bg: var(--surface);
+  /* Surfaces et contrôles : jetons qui suivent le contexte clair OU immersif.
+     Une valeur littérale « white » redevenait invisible sous .immersive. */
+  --mw-surface: var(--surface);
+  --mw-field: var(--popover);
+  --mw-on-accent: var(--primary-foreground);
   min-height: 100%;
   overflow: auto;
   background: var(--mw-bg);
@@ -262,7 +267,7 @@
   align-items: center;
   padding: 20px 34px;
   border-bottom: 1px solid var(--mw-border);
-  background: white;
+  background: var(--mw-surface);
   gap: 20px;
 }
 .mw-back {
@@ -334,7 +339,7 @@
 .mw-button {
   border: 1px solid var(--mw-blue);
   background: var(--mw-blue);
-  color: white;
+  color: var(--mw-on-accent);
   border-radius: 7px;
   padding: 10px 15px;
   display: inline-flex;
@@ -346,7 +351,7 @@
   min-height: 42px;
 }
 .mw-secondary {
-  background: white;
+  background: var(--mw-field);
   color: var(--mw-blue);
   border-color: var(--hairline-strong);
 }
@@ -363,7 +368,7 @@
   align-items: start;
 }
 .mw-controls {
-  background: white;
+  background: var(--mw-surface);
   border: 1px solid var(--mw-border);
   border-radius: 11px;
   overflow: hidden;
@@ -386,7 +391,7 @@
   border-radius: 6px;
   color: var(--mw-blue);
   font-size: 12px;
-  background: white;
+  background: var(--mw-field);
   min-height: 42px;
 }
 .mw-start p {
@@ -426,7 +431,7 @@
 }
 .mw-steps button.active > span {
   background: var(--mw-blue);
-  color: white;
+  color: var(--mw-on-accent);
   border-color: var(--mw-blue);
 }
 .mw-step-body {
@@ -460,7 +465,7 @@
   height: 38px;
   display: grid;
   place-content: center;
-  background: white;
+  background: var(--mw-field);
   border: 1px solid var(--surface-tint);
   border-radius: 7px;
   font-size: 9px;
@@ -643,7 +648,7 @@
   border-radius: 4px;
 }
 .mw-view-switch button[aria-pressed="true"] {
-  background: white;
+  background: var(--mw-field);
   color: var(--mw-blue);
   box-shadow: 0 1px 3px var(--standex-abyss);
 }
@@ -742,7 +747,7 @@
   border: 1px solid var(--mw-border);
   border-radius: 10px;
   padding: 17px 20px 13px;
-  background: white;
+  background: var(--mw-surface);
 }
 .mw-play-controls {
   display: flex;
@@ -755,7 +760,7 @@
   place-content: center;
   background: var(--mw-blue);
   border: 0;
-  color: white;
+  color: var(--mw-on-accent);
   border-radius: 50%;
   width: 39px;
   height: 39px;
@@ -898,7 +903,7 @@
   display: none;
 }
 .mw-event-chips > span {
-  background: white;
+  background: var(--mw-surface);
   border: 1px solid var(--surface-tint);
   padding: 4px 8px;
   border-radius: 4px;
@@ -935,7 +940,7 @@
     12px/1.8 Lato,
     system-ui,
     sans-serif;
-  background: white;
+  background: var(--mw-surface);
   border: 1px solid var(--mw-border);
   padding: 20px;
   border-radius: 8px;
@@ -1028,7 +1033,7 @@
   border-radius: 5px;
   padding: 5px 9px;
   color: var(--primary);
-  background: white;
+  background: var(--mw-field);
   margin-left: auto;
 }
 .mw-layers > span {
@@ -1044,7 +1049,7 @@
   border: 1px solid var(--surface-tint);
   border-left: 5px solid var(--muted-foreground);
   border-radius: 11px;
-  background: white;
+  background: var(--mw-surface);
   transition: background 0.15s;
 }
 .mw-contact-indicator.closed {
@@ -1195,7 +1200,7 @@
   justify-content: space-between;
   align-items: start;
   padding: 26px 28px 17px;
-  background: white;
+  background: var(--mw-surface);
 }
 .mw-catalog h2 {
   font-size: 26px;
@@ -1219,7 +1224,7 @@
   gap: 14px;
   padding: 15px 28px;
   border-bottom: 1px solid var(--surface-tint);
-  background: white;
+  background: var(--mw-surface);
 }
 .mw-catalog-search {
   flex: 1;
@@ -1253,7 +1258,7 @@
   padding: 22px 28px;
 }
 .mw-catalog-list article {
-  background: white;
+  background: var(--mw-surface);
   border: 1px solid var(--surface-tint);
   border-radius: 10px;
   overflow: hidden;
@@ -1319,7 +1324,7 @@
   font-size: 11px;
   color: var(--foreground);
   border-top: 1px solid var(--surface-tint);
-  background: white;
+  background: var(--mw-surface);
 }
 .mw-catalog-empty {
   padding: 20px;
@@ -1806,4 +1811,11 @@
 .magnetic-workshop :where(button, select, input, textarea, a):focus-visible {
   outline: 2px solid var(--ring);
   outline-offset: 2px;
+}
+
+/* Listes natives : sous .immersive, l'ouverture d'un select doit rester lisible. */
+.mw select option,
+.mw select optgroup {
+  background: var(--popover);
+  color: var(--popover-foreground);
 }
