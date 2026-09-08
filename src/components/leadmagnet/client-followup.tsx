@@ -226,24 +226,38 @@ export function ClientFollowUp({
                         variant="outline"
                         disabled={Boolean(r.variant_accepted_at) || Boolean(r.superseded)}
                         onClick={async () => {
+                          // La variante s'applique au contenu de LA version relue
+                          // par Standex, et le serveur n'enregistre la reprise que
+                          // si cette application est réellement possible.
+                          const reviewed = current.revisions.find(
+                            (rev) => rev.revision === r.revision,
+                          );
+                          if (!reviewed) {
+                            setMessage(
+                              "La version relue par Standex n'est pas disponible ici : rien n'a été repris.",
+                            );
+                            return;
+                          }
+                          if (!onApplyVariant) return;
                           try {
-                            const out = await acceptVariant(r.id);
-                            const applied = onApplyVariant?.({
+                            const applied = await onApplyVariant({
                               dossierId: current.dossier.id,
+                              revision: current.dossier.current_revision,
+                              snapshot: reviewed.snapshot,
                               variant: (r.variant ?? {}) as VariantProposal,
+                              commit: () => acceptVariant(r.id),
                             });
+                            if (applied.refused) {
+                              setMessage(applied.refused);
+                              return;
+                            }
                             setMessage(
                               [
-                                `Variante reprise dans votre version ${out.next_revision} : la version envoyée reste intacte et rien n'est approuvé tant que vous ne renvoyez pas ce dossier.`,
-                                applied?.refused ??
-                                  (applied?.applied.length
-                                    ? "Modifié dans votre dossier : " + applied.applied.join(" ; ")
-                                    : "Aucune valeur chiffrée à appliquer : la proposition reste descriptive."),
-                                applied?.refused
-                                  ? ""
-                                  : applied?.notApplied.length
-                                    ? "À traiter vous-même : " + applied.notApplied.join(" ; ")
-                                    : "",
+                                "Variante reprise dans le contenu ouvert ici : la version envoyée reste intacte et rien n'est approuvé tant que vous ne renvoyez pas ce dossier.",
+                                "Modifié dans votre dossier : " + applied.applied.join(" ; "),
+                                applied.notApplied.length
+                                  ? "À traiter vous-même : " + applied.notApplied.join(" ; ")
+                                  : "",
                               ]
                                 .filter(Boolean)
                                 .join(" "),
@@ -253,6 +267,7 @@ export function ClientFollowUp({
                             setMessage(error instanceof Error ? error.message : null);
                           }
                         }}
+
                       >
                         {r.variant_accepted_at
                           ? "Variante reprise"
