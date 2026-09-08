@@ -471,7 +471,12 @@
     inset: 0;
     width: 42%;
     pointer-events: none;
-    background: linear-gradient(90deg, transparent, color-mix(in oklab, white 48%, transparent), transparent);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      color-mix(in oklab, white 48%, transparent),
+      transparent
+    );
     transform: translateX(-150%) skewX(-15deg);
     animation: standex-sweep 900ms var(--ease-out) 1;
   }
@@ -486,14 +491,18 @@
     color: var(--ink);
   }
   .candidate-selected {
-    box-shadow: var(--e-2), inset 0 0 0 2px var(--primary);
+    box-shadow:
+      var(--e-2),
+      inset 0 0 0 2px var(--primary);
   }
   .candidate-excluded {
     opacity: 0.6;
     filter: saturate(0.6);
   }
   .requirement-confirmed {
-    box-shadow: var(--e-1), inset 3px 0 0 var(--success);
+    box-shadow:
+      var(--e-1),
+      inset 3px 0 0 var(--success);
   }
   .business-accordion-trigger > svg {
     transition: transform var(--d-base) var(--ease-out);

@@ -1269,7 +1269,9 @@ export function DesignSpace({
         <details className="panel-block">
           <summary className="t-title-s flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 py-2">
             Préciser la mécanique et la place disponible (facultatif)
-            <span className="technical-details-chevron" aria-hidden="true">⌄</span>
+            <span className="technical-details-chevron" aria-hidden="true">
+              ⌄
+            </span>
           </summary>
           <div className="mt-3 space-y-4">{mechanicalFields}</div>
         </details>
@@ -1548,7 +1550,11 @@ export function DesignSpace({
                     }))
                   }
                 />
-                <span className={covered ? "t-caption text-[var(--success)]" : "t-caption text-[var(--warning)]"}>
+                <span
+                  className={
+                    covered ? "t-caption text-[var(--success)]" : "t-caption text-[var(--warning)]"
+                  }
+                >
                   {covered ? "trajet renseigné" : "trajet manquant pour cet état"}
                 </span>
                 {!covered ? (
@@ -1824,7 +1830,9 @@ export function DesignSpace({
                   }
                 }}
               />
-              {volumeError ? <p className="notice notice-danger mt-2 w-full">{volumeError}</p> : null}
+              {volumeError ? (
+                <p className="notice notice-danger mt-2 w-full">{volumeError}</p>
+              ) : null}
             </div>
             <div>
               <Label className="t-label">Date de lancement série</Label>
@@ -2097,7 +2105,12 @@ export function DesignSpace({
                 disabled={!ndaOk || busy}
                 aria-busy={busy ? "true" : undefined}
               >
-                {busy ? <Loader2 className="mr-1 h-4 w-4 animate-spin" /> : <ShieldCheck className="mr-1 h-4 w-4" />} {busy ? "Envoi en cours…" : "Transmettre à la revue Standex"}
+                {busy ? (
+                  <Loader2 className="mr-1 h-4 w-4 animate-spin" />
+                ) : (
+                  <ShieldCheck className="mr-1 h-4 w-4" />
+                )}{" "}
+                {busy ? "Envoi en cours…" : "Transmettre à la revue Standex"}
               </Button>
             </div>
             {!backend?.ready ? (
@@ -2123,7 +2136,9 @@ export function DesignSpace({
                 version {serverRevision + 1} de ce dossier.
               </p>
             ) : null}
-            {submitMessage ? <p className="notice notice-success notice-success-sweep">{submitMessage}</p> : null}
+            {submitMessage ? (
+              <p className="notice notice-success notice-success-sweep">{submitMessage}</p>
+            ) : null}
           </AccordionContent>
         </AccordionItem>
 
@@ -2398,138 +2413,138 @@ export function DesignSpace({
       {submitMessage ? <p className="notice notice-info">{submitMessage}</p> : null}
       <div className="panel-block-lg">
         <ClientFollowUp
-        backend={backend}
-        serverDossierId={serverDossierId}
-        contextGeneration={contextGenRef.current}
-        onOpenTransferredFile={(f) => void openTransferredFile(f)}
-        onSelectDossier={({ id, revision, title, snapshot }) => {
-          if (busyRef.current) return { ok: false };
-          if (!guardReplace("ouvrir ce dossier")) return { ok: false };
-          // Le dossier CONSULTÉ ne devient le dossier ÉDITÉ que si son
-          // dernier contenu envoyé a pu être chargé : sinon l'ancien
-          // contenu resterait à l'écran sous une nouvelle étiquette.
-          const parsed = snapshot ? parseServerSnapshot(snapshot) : null;
-          if (snapshot && (!parsed || !parsed.ok)) {
+          backend={backend}
+          serverDossierId={serverDossierId}
+          contextGeneration={contextGenRef.current}
+          onOpenTransferredFile={(f) => void openTransferredFile(f)}
+          onSelectDossier={({ id, revision, title, snapshot }) => {
+            if (busyRef.current) return { ok: false };
+            if (!guardReplace("ouvrir ce dossier")) return { ok: false };
+            // Le dossier CONSULTÉ ne devient le dossier ÉDITÉ que si son
+            // dernier contenu envoyé a pu être chargé : sinon l'ancien
+            // contenu resterait à l'écran sous une nouvelle étiquette.
+            const parsed = snapshot ? parseServerSnapshot(snapshot) : null;
+            if (snapshot && (!parsed || !parsed.ok)) {
+              setSubmitMessage(
+                parsed && !parsed.ok
+                  ? parsed.reason
+                  : "Le dernier contenu envoyé de ce dossier n'a pas pu être relu : le dossier ouvert ici reste inchangé.",
+              );
+              return { ok: false };
+            }
+            if (parsed && parsed.ok) {
+              const next = { ...parsed.dossier, storage: "memory" as const };
+              setDossier(next);
+              adoptBaseline(next);
+              loadWorkshop(parsed.dossier.workshop ?? null);
+            } else {
+              // Dossier sans contenu envoyé : contenu VIDE, jamais l'ancien.
+              const next = { ...createDossier(), title };
+              setDossier(next);
+              adoptBaseline(next);
+              loadWorkshop(null);
+            }
+            setConnectorDraft(EMPTY_CONNECTOR_DRAFT);
+            setConnectorError(null);
+            resetServerContext(id, revision);
+            setPanel(null);
+            onWorkspaceOpen?.();
             setSubmitMessage(
-              parsed && !parsed.ok
-                ? parsed.reason
-                : "Le dernier contenu envoyé de ce dossier n'a pas pu être relu : le dossier ouvert ici reste inchangé.",
+              `Dossier « ${title} » ouvert à la version ${revision}${
+                parsed && parsed.ok
+                  ? ", contenu envoyé rechargé"
+                  : ", aucun contenu envoyé à recharger"
+              }. Votre accord d'envoi et la relecture sont à refaire pour ce dossier.`,
             );
-            return { ok: false };
-          }
-          if (parsed && parsed.ok) {
-            const next = { ...parsed.dossier, storage: "memory" as const };
-            setDossier(next);
-            adoptBaseline(next);
+            return { ok: true };
+          }}
+          onReopenSnapshot={({ dossierId, sourceRevision, currentRevision, snapshot }) => {
+            if (busyRef.current) return { ok: false };
+            if (!guardReplace("reprendre cette version")) return { ok: false };
+            const parsed = parseServerSnapshot(snapshot);
+            if (!parsed.ok) {
+              setSubmitMessage(parsed.reason);
+              return { ok: false };
+            }
+            // Reprise ATOMIQUE : contenu, contexte serveur, accords,
+            // relecture et partage de fichier changent d'un seul tenant.
+            // La version attendue par le serveur est la version COURANTE
+            // du dossier, pas l'ancienne version reprise.
+            const reopened = { ...parsed.dossier, storage: "memory" as const };
+            setDossier(reopened);
+            adoptBaseline(reopened);
             loadWorkshop(parsed.dossier.workshop ?? null);
-          } else {
-            // Dossier sans contenu envoyé : contenu VIDE, jamais l'ancien.
-            const next = { ...createDossier(), title };
-            setDossier(next);
-            adoptBaseline(next);
-            loadWorkshop(null);
-          }
-          setConnectorDraft(EMPTY_CONNECTOR_DRAFT);
-          setConnectorError(null);
-          resetServerContext(id, revision);
-          setPanel(null);
-          onWorkspaceOpen?.();
-          setSubmitMessage(
-            `Dossier « ${title} » ouvert à la version ${revision}${
-              parsed && parsed.ok
-                ? ", contenu envoyé rechargé"
-                : ", aucun contenu envoyé à recharger"
-            }. Votre accord d'envoi et la relecture sont à refaire pour ce dossier.`,
-          );
-          return { ok: true };
-        }}
-        onReopenSnapshot={({ dossierId, sourceRevision, currentRevision, snapshot }) => {
-          if (busyRef.current) return { ok: false };
-          if (!guardReplace("reprendre cette version")) return { ok: false };
-          const parsed = parseServerSnapshot(snapshot);
-          if (!parsed.ok) {
-            setSubmitMessage(parsed.reason);
-            return { ok: false };
-          }
-          // Reprise ATOMIQUE : contenu, contexte serveur, accords,
-          // relecture et partage de fichier changent d'un seul tenant.
-          // La version attendue par le serveur est la version COURANTE
-          // du dossier, pas l'ancienne version reprise.
-          const reopened = { ...parsed.dossier, storage: "memory" as const };
-          setDossier(reopened);
-          adoptBaseline(reopened);
-          loadWorkshop(parsed.dossier.workshop ?? null);
-          setConnectorDraft(EMPTY_CONNECTOR_DRAFT);
-          setConnectorError(null);
-          resetServerContext(dossierId, currentRevision);
-          setReopenedFrom({ dossierId, revision: sourceRevision });
-          setPanel(null);
-          onWorkspaceOpen?.();
-          setSubmitMessage(
-            `Contenu de la version ${sourceRevision} repris. Le prochain envoi créera la version ${currentRevision + 1} du dossier. ${parsed.notices.join(" ")}`,
-          );
-          return { ok: true };
-        }}
-        onApplyVariant={async ({ dossierId, revision, snapshot, variant, commit }) => {
-          if (busyRef.current)
-            return {
-              applied: [],
-              notApplied: [],
-              refused: "Une opération est en cours. Réessayez après sa fin.",
-            };
-          if (!guardReplace("reprendre cette proposition"))
-            return {
-              applied: [],
-              notApplied: [],
-              refused: "Reprise annulée : votre travail en cours est intact.",
-            };
-          // La variante s'applique au contenu de LA version relue par
-          // Standex, jamais à un contenu resté d'un autre dossier.
-          const parsed = parseServerSnapshot(snapshot);
-          if (!parsed.ok) {
-            return { applied: [], notApplied: [], refused: parsed.reason };
-          }
-          const out = applyVariant({ ...parsed.dossier, storage: "memory" }, variant);
-          if (!out.applied.length) {
-            return {
-              applied: [],
-              notApplied: out.notApplied,
-              refused:
-                "Aucune modification de cette proposition n'a pu être appliquée : rien n'a été repris.",
-            };
-          }
-          try {
-            // Le serveur enregistre la reprise AVANT que l'écran change.
-            busyRef.current = true;
-            setBusy(true);
-            await commit();
-          } catch (error) {
-            return {
-              applied: [],
-              notApplied: out.notApplied,
-              refused:
-                error instanceof Error
-                  ? error.message
-                  : "La reprise de cette proposition n'a pas été enregistrée.",
-            };
-          } finally {
-            busyRef.current = false;
-            setBusy(false);
-          }
-          setDossier(out.dossier);
-          adoptBaseline(out.dossier);
-          loadWorkshop(out.dossier.workshop ?? null);
-          setConnectorDraft(EMPTY_CONNECTOR_DRAFT);
-          setConnectorError(null);
-          resetServerContext(dossierId, revision);
-          setReopenedFrom({ dossierId, revision });
-          setPanel(null);
-          onWorkspaceOpen?.();
-          setSubmitMessage(
-            "Proposition Standex reprise dans le contenu ouvert ici. Elle n'est ni validée ni envoyée : relisez, confirmez l'accord, puis envoyez une nouvelle version.",
-          );
-          return { applied: out.applied, notApplied: out.notApplied };
-        }}
+            setConnectorDraft(EMPTY_CONNECTOR_DRAFT);
+            setConnectorError(null);
+            resetServerContext(dossierId, currentRevision);
+            setReopenedFrom({ dossierId, revision: sourceRevision });
+            setPanel(null);
+            onWorkspaceOpen?.();
+            setSubmitMessage(
+              `Contenu de la version ${sourceRevision} repris. Le prochain envoi créera la version ${currentRevision + 1} du dossier. ${parsed.notices.join(" ")}`,
+            );
+            return { ok: true };
+          }}
+          onApplyVariant={async ({ dossierId, revision, snapshot, variant, commit }) => {
+            if (busyRef.current)
+              return {
+                applied: [],
+                notApplied: [],
+                refused: "Une opération est en cours. Réessayez après sa fin.",
+              };
+            if (!guardReplace("reprendre cette proposition"))
+              return {
+                applied: [],
+                notApplied: [],
+                refused: "Reprise annulée : votre travail en cours est intact.",
+              };
+            // La variante s'applique au contenu de LA version relue par
+            // Standex, jamais à un contenu resté d'un autre dossier.
+            const parsed = parseServerSnapshot(snapshot);
+            if (!parsed.ok) {
+              return { applied: [], notApplied: [], refused: parsed.reason };
+            }
+            const out = applyVariant({ ...parsed.dossier, storage: "memory" }, variant);
+            if (!out.applied.length) {
+              return {
+                applied: [],
+                notApplied: out.notApplied,
+                refused:
+                  "Aucune modification de cette proposition n'a pu être appliquée : rien n'a été repris.",
+              };
+            }
+            try {
+              // Le serveur enregistre la reprise AVANT que l'écran change.
+              busyRef.current = true;
+              setBusy(true);
+              await commit();
+            } catch (error) {
+              return {
+                applied: [],
+                notApplied: out.notApplied,
+                refused:
+                  error instanceof Error
+                    ? error.message
+                    : "La reprise de cette proposition n'a pas été enregistrée.",
+              };
+            } finally {
+              busyRef.current = false;
+              setBusy(false);
+            }
+            setDossier(out.dossier);
+            adoptBaseline(out.dossier);
+            loadWorkshop(out.dossier.workshop ?? null);
+            setConnectorDraft(EMPTY_CONNECTOR_DRAFT);
+            setConnectorError(null);
+            resetServerContext(dossierId, revision);
+            setReopenedFrom({ dossierId, revision });
+            setPanel(null);
+            onWorkspaceOpen?.();
+            setSubmitMessage(
+              "Proposition Standex reprise dans le contenu ouvert ici. Elle n'est ni validée ni envoyée : relisez, confirmez l'accord, puis envoyez une nouvelle version.",
+            );
+            return { applied: out.applied, notApplied: out.notApplied };
+          }}
         />
       </div>
     </div>

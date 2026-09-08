@@ -188,7 +188,9 @@ export function ClientFollowUp({
               Ouvrir
             </Button>
             <span className="t-title-s">{d.title}</span>
-            <Badge variant="outline" className="t-metric">version {d.current_revision}</Badge>
+            <Badge variant="outline" className="t-metric">
+              version {d.current_revision}
+            </Badge>
             <Badge variant="secondary">
               {d.nda_required
                 ? d.nda_status === "in_force"
@@ -229,9 +231,7 @@ export function ClientFollowUp({
                   </div>
                   {r.message ? <p className="mt-2 whitespace-pre-wrap">{r.message}</p> : null}
                   {r.conditions ? (
-                    <p className="t-caption mt-1">
-                      Conditions : {r.conditions}
-                    </p>
+                    <p className="t-caption mt-1">Conditions : {r.conditions}</p>
                   ) : null}
                   {r.verdict === "variant_proposed" ? (
                     <div className="mt-2 space-y-1">
@@ -341,9 +341,7 @@ export function ClientFollowUp({
                       ? ` — base ${o.annual_volume_basis} capteurs/an`
                       : " — volume annuel non renseigné"}
                   </p>
-                  {o.void_reason ? (
-                    <p className="t-caption mt-1">{o.void_reason}</p>
-                  ) : null}
+                  {o.void_reason ? <p className="t-caption mt-1">{o.void_reason}</p> : null}
                 </div>
               ))
             )}
@@ -355,7 +353,12 @@ export function ClientFollowUp({
               <div className="flex flex-wrap items-end gap-2">
                 <div className="w-28">
                   <Label className="t-label">Quantité</Label>
-                  <Input className="t-metric text-right" inputMode="numeric" value={qty} onChange={(e) => setQty(e.target.value)} />
+                  <Input
+                    className="t-metric text-right"
+                    inputMode="numeric"
+                    value={qty}
+                    onChange={(e) => setQty(e.target.value)}
+                  />
                 </div>
                 <Button
                   size="sm"
@@ -439,13 +442,20 @@ export function ClientFollowUp({
             ))}
           </section>
 
-          {onOpenTransferredFile && current.revisions.some((r) => (r.transferred_files ?? []).length) ? (
+          {onOpenTransferredFile &&
+          current.revisions.some((r) => (r.transferred_files ?? []).length) ? (
             <section className="space-y-2">
               <h4 className="font-medium">Fichiers réellement transmis</h4>
               {current.revisions.map((r) =>
                 (r.transferred_files ?? []).length ? (
-                  <div key={`files-${r.id}`} className="surface-interactive flex flex-wrap items-center gap-3 p-5">
-                    <FileText className="h-5 w-5 shrink-0 text-[var(--primary)]" aria-hidden="true" />
+                  <div
+                    key={`files-${r.id}`}
+                    className="surface-interactive flex flex-wrap items-center gap-3 p-5"
+                  >
+                    <FileText
+                      className="h-5 w-5 shrink-0 text-[var(--primary)]"
+                      aria-hidden="true"
+                    />
                     <span className="t-caption t-metric">Version {r.revision} :</span>
                     {(r.transferred_files ?? []).map((f, i) => (
                       <Button

@@ -37,9 +37,7 @@ export function AuthPanel({ backend, onChanged }: Props) {
   if (backend.authenticated)
     return (
       <div className="flex flex-wrap items-center gap-3 text-base">
-        <span className="t-caption">
-          Connecté{backend.role ? ` — rôle ${backend.role}` : ""}.
-        </span>
+        <span className="t-caption">Connecté{backend.role ? ` — rôle ${backend.role}` : ""}.</span>
         <Button
           variant="outline"
           className="min-h-11 text-base"
@@ -114,9 +112,7 @@ export function AuthPanel({ backend, onChanged }: Props) {
         {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
         {busy ? "Connexion…" : "Se connecter"}
       </Button>
-      {message ? (
-        <p className="notice notice-info sm:col-span-3">{message}</p>
-      ) : null}
+      {message ? <p className="notice notice-info sm:col-span-3">{message}</p> : null}
     </form>
   );
 }

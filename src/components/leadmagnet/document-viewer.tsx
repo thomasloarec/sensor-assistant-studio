@@ -115,8 +115,7 @@ function inline(text: string): ReactNode[] {
   while ((m = re.exec(text))) {
     if (m.index > last) parts.push(text.slice(last, m.index));
     const token = m[0];
-    if (token.startsWith("**"))
-      parts.push(<strong key={m.index}>{token.slice(2, -2)}</strong>);
+    if (token.startsWith("**")) parts.push(<strong key={m.index}>{token.slice(2, -2)}</strong>);
     else if (token.startsWith("`"))
       parts.push(
         <code key={m.index} className="rounded bg-muted px-1">
@@ -182,16 +181,11 @@ export function DocumentViewer({
     return () => URL.revokeObjectURL(url);
   }, [doc?.id, doc?.bytes, doc?.text, doc?.kind]);
 
-
   const body = useMemo(() => {
     if (!doc) return null;
     if (doc.kind === "markdown" && doc.text != null) return <div>{renderMarkdown(doc.text)}</div>;
     if (doc.kind === "text" && doc.text != null)
-      return (
-        <pre className="code-block whitespace-pre-wrap">
-          {doc.text}
-        </pre>
-      );
+      return <pre className="code-block whitespace-pre-wrap">{doc.text}</pre>;
     if (doc.kind === "pdf" && blobUrl && !embedFailed)
       return (
         <object
@@ -233,9 +227,7 @@ export function DocumentViewer({
               />
             </label>
           </Button>
-          <span className="t-caption">
-            Lu dans cet onglet uniquement, jamais envoyé.
-          </span>
+          <span className="t-caption">Lu dans cet onglet uniquement, jamais envoyé.</span>
         </div>
       ) : null}
 
@@ -267,11 +259,7 @@ export const MAX_DOCUMENT_BYTES = 30 * 1024 * 1024;
 /** Construit un document affichable à partir d'octets réellement obtenus.
  * Le texte et le markdown sont DÉCODÉS : sans cela un .md venant du serveur
  * n'afficherait rien. Les PDF et binaires conservent leurs octets. */
-export function documentFromBytes(
-  name: string,
-  bytes: ArrayBuffer,
-  id: string,
-): ViewerDocument {
+export function documentFromBytes(name: string, bytes: ArrayBuffer, id: string): ViewerDocument {
   const kind = kindFromName(name);
   if (bytes.byteLength > MAX_DOCUMENT_BYTES)
     return {
@@ -292,4 +280,3 @@ export async function documentFromFile(file: File): Promise<ViewerDocument> {
     throw new Error("Ce fichier dépasse 30 Mio : il n'est pas lu dans cet onglet.");
   return documentFromBytes(file.name, await file.arrayBuffer(), id);
 }
-
