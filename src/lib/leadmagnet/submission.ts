@@ -120,27 +120,29 @@ export async function buildSnapshot(
   input: SubmissionInput,
   now = new Date().toISOString(),
 ): Promise<SubmissionSnapshot> {
-  const dto: ClientDossierDto = toClientDto({
-    ...input.dossier,
-    freeConstraints: [input.dossier.freeConstraints, input.additionalConstraints]
-      .filter((s) => s.trim())
-      .join("\n"),
-  });
+  const dto: ClientDossierDto = submissionDto(input);
   // Copie détachée AVANT gel : plus aucun lien avec l'état vivant du dossier.
   const detached = structuredClone(dto);
+  const binding = await submissionBinding(input);
   return deepFreeze({
     dossierId: input.dossier.id,
     revision: input.dossier.revision,
-    hash: await dossierHash(dto),
+    hash: binding.contentHash,
     createdAt: now,
     dto: detached,
-    // Seuls les fichiers réellement transférés sont listés : un ID local ne suffit pas.
+    // Seuls les fichiers réellement transférés ET empreintés sont listés.
     transferredFiles: input.dossier.attachments
-      .filter((a) => a.transferred && a.storagePath)
-      .map((a) => ({ id: a.id, fileName: a.fileName, path: a.storagePath as string })),
+      .filter((a) => a.transferred && a.storagePath && a.sha256)
+      .map((a) => ({
+        id: a.id,
+        fileName: a.fileName,
+        path: a.storagePath as string,
+        sha256: (a.sha256 as string).toLowerCase(),
+      })),
     consents: input.consents,
     ndaStatus: input.nda.status,
     reviewAcknowledged: input.reviewAcknowledged,
+    binding,
   });
 }
 
@@ -157,7 +159,7 @@ export async function submit(
   input: SubmissionInput,
   backend: SubmissionBackend,
 ): Promise<SubmissionOutcome> {
-  const check = checkSubmission(input);
+  const check = await checkSubmission(input);
   if (!check.ok) return { status: "not_submitted", reason: check.problems.join(" ") };
   if (!backend.available || !backend.submit)
     return {
