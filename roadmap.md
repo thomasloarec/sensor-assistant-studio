@@ -144,4 +144,4 @@
 - [x] Recomposer le chrome et la progression de l’espace projet sans modifier son état.
 - [x] Mettre en scène la question guidée et les outils contextuels.
 - [x] Moderniser les panneaux sans toucher au montage, au focus ni à leur masquage.
-- [ ] Vérifier tests, types, build et parcours navigateur desktop/mobile.
+- [x] Vérifier tests, types, build et parcours navigateur desktop/mobile.

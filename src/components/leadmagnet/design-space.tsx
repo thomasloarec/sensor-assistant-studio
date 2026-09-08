@@ -1075,18 +1075,8 @@ export function DesignSpace({
               Question précédente
             </Button>
             <Button
-              size="lg"
-              className="ml-auto min-h-12 px-6 text-base"
-              onClick={() => {
-                if (!lastQuestion) setFocusIdx((i) => i + 1);
-                else setTab("montage");
-              }}
-            >
-              {lastQuestion ? "Passer à mon montage" : "Continuer"}
-            </Button>
-            <Button
               variant="ghost"
-              className="min-h-12 text-base text-[var(--muted-foreground)]"
+              className="ml-auto min-h-12 text-base text-[var(--muted-foreground)]"
               onClick={() => {
                 // Ne rien effacer : passer sans réponse laisse simplement ce point inconnu.
                 if (!lastQuestion) setFocusIdx((i) => i + 1);
@@ -1094,6 +1084,16 @@ export function DesignSpace({
               }}
             >
               Je ne sais pas encore
+            </Button>
+            <Button
+              size="lg"
+              className="min-h-12 px-6 text-base"
+              onClick={() => {
+                if (!lastQuestion) setFocusIdx((i) => i + 1);
+                else setTab("montage");
+              }}
+            >
+              {lastQuestion ? "Passer à mon montage" : "Continuer"}
             </Button>
           </div>
 
@@ -2518,7 +2518,7 @@ export function DesignSpace({
             </Button>
             <Button variant="ghost" className="min-h-11 max-w-full px-3 whitespace-normal" asChild>
               <label
-                className="block w-full max-w-full cursor-pointer text-center sm:w-auto"
+                className="inline-flex w-auto max-w-full cursor-pointer text-center"
                 aria-label="Reprendre un fichier"
               >
                 <Upload className="h-4 w-4" />
