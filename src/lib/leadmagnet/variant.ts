@@ -65,7 +65,7 @@ export function applyVariant(
 
   const cabling: CablingConfig = { ...dossier.cabling };
   const c = variant.cable ?? {};
-  const numeric: [keyof VariantProposal["cable"] & string, string][] = [
+  const numeric: [string, string][] = [
     ["serviceReserveMm", "réserve de service"],
     ["terminationMm", "longueur de terminaison"],
     ["toleranceMm", "tolérance fournisseur"],
