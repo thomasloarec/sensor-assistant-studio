@@ -317,10 +317,37 @@ if (session) {
     () => db.query("insert into storage.objects(bucket_id,name,owner) values('lead-design-files',$1,$2)",
       ['forged/path/model.glb', ids.a])));
 
+  const modelPath = session.path_prefix + '/model.glb';
+  // Tant que le SERVEUR n'a pas relu les octets, le fichier n'est pas annonçable.
+  await expectFail('submit_without_server_verification_is_rejected',
+    () => submitReal(ids.a, privateDossier, withVolume({ kind: 'known', sensorsPerYear: 500 }), 0,
+      [{ path: modelPath, kind: 'glb', sha256: MODEL_SHA }]), 'FILE_NOT_TRANSFERRED');
+  // Le client ne peut pas se certifier lui-même : la fonction lui est fermée.
+  await expectFail('client_cannot_finalize_upload', () => actor('authenticated', ids.a,
+    () => value('select public.lead_finalize_upload($1,$2,$3,$4,$5)',
+      [session.session_id, modelPath, MODEL_SHA, MODEL_BYTES, 'model/gltf-binary'])));
+  await expectFail('finalize_with_wrong_digest_is_rejected', () => actor('service_role', ids.a,
+    () => value('select public.lead_finalize_upload($1,$2,$3,$4,$5)',
+      [session.session_id, modelPath, 'f'.repeat(64), MODEL_BYTES, 'model/gltf-binary'])),
+    'UPLOAD_DIGEST_MISMATCH');
+  await expectFail('finalize_with_wrong_size_is_rejected', () => actor('service_role', ids.a,
+    () => value('select public.lead_finalize_upload($1,$2,$3,$4,$5)',
+      [session.session_id, modelPath, MODEL_SHA, MODEL_BYTES + 1, 'model/gltf-binary'])),
+    'UPLOAD_SIZE_MISMATCH');
+  await expectFail('finalize_outside_session_path_is_rejected', () => actor('service_role', ids.a,
+    () => value('select public.lead_finalize_upload($1,$2,$3,$4,$5)',
+      [session.session_id, 'forged/path/model.glb', MODEL_SHA, MODEL_BYTES, 'model/gltf-binary'])),
+    'UPLOAD_PATH_MISMATCH');
+  const finalized = await actor('service_role', ids.a,
+    () => value('select public.lead_finalize_upload($1,$2,$3,$4,$5)',
+      [session.session_id, modelPath, MODEL_SHA, MODEL_BYTES, 'model/gltf-binary']));
+  add('server_can_finalize_real_upload', finalized.sha256 === MODEL_SHA);
+
   const priv = await submitReal(ids.a, privateDossier,
     withVolume({ kind: 'known', sensorsPerYear: 500 }), 0,
-    [{ path: session.path_prefix + '/model.glb', kind: 'glb', sha256: MODEL_SHA }]);
+    [{ path: modelPath, kind: 'glb', sha256: MODEL_SHA }]);
   add('real_file_can_be_attached_to_revision', priv.revision === 1);
+
   await expectFail('submitted_object_is_immutable', () => actor('authenticated', ids.a,
     () => db.query("delete from storage.objects where name = $1", [session.path_prefix + '/model.glb'])
       .then((r) => { if (r.affectedRows === 0) throw new Error('DELETE_BLOCKED'); })), 'DELETE_BLOCKED');
