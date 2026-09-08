@@ -531,17 +531,6 @@
     inline-size: 78%;
     block-size: auto;
   }
-  .candidate-thumb-size {
-    position: absolute;
-    inset-block-end: 0.375rem;
-    inset-inline-start: 0.5rem;
-    padding: 0.125rem 0.5rem;
-    border-radius: var(--r-pill);
-    background: var(--surface);
-    box-shadow: var(--e-1);
-    color: var(--muted-foreground);
-    pointer-events: none;
-  }
   .requirement-confirmed {
     box-shadow:
       var(--e-1),

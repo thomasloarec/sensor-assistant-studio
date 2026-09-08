@@ -10,7 +10,7 @@
  *   substitue jamais une autre référence.
  */
 import { lazy, Suspense, useCallback, useEffect, useRef, useState } from "react";
-import { sensorById, sizeLabel, customLayout } from "@/lib/standex/sensor-catalog";
+import { sensorById, customLayout } from "@/lib/standex/sensor-catalog";
 import type { SensorModel } from "@/lib/standex/sensor-catalog";
 
 const ThumbnailScene = lazy(() => import("@/components/standex/workshop/candidate-thumbnail-scene"));
@@ -209,7 +209,6 @@ export function CandidateThumbnail({
           cabled={cabled}
         />
       )}
-      <span className="candidate-thumb-size t-metric">{sizeLabel(model)}</span>
     </div>
   );
 }
