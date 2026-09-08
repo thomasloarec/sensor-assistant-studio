@@ -658,7 +658,9 @@ export function DesignSpace({
             "Contenu importé dans un dossier local : aucun dossier Standex n'y est rattaché, et l'accord de confidentialité comme l'accord d'envoi sont à refaire.",
           ].join(" "),
         );
+        return true;
       } catch {
+        if (request !== importRequestRef.current || context !== contextGenRef.current) return;
         setImportMessage("Ce fichier n'a pas pu être lu.");
       }
     },
@@ -683,6 +685,7 @@ export function DesignSpace({
    */
   const resetServerContext = useCallback((dossierId: string | null, revision: number) => {
     contextGenRef.current += 1;
+    importRequestRef.current += 1;
     docGenRef.current += 1;
     setServerDossierId(dossierId);
     setServerRevision(revision);
