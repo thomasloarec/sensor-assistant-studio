@@ -22,8 +22,25 @@ export const LEAD_RPC = {
   addInternalNote: "lead_add_internal_note",
   acceptVariant: "lead_accept_variant",
   updateSample: "lead_update_sample",
+  revalidateSample: "lead_revalidate_sample",
+  setDossierTitle: "lead_set_dossier_title",
   recordNdaProof: "lead_admin_record_nda_proof",
 } as const;
+
+/** Comparaison de versions « majeur.mineur » : le serveur doit être au moins à la version requise. */
+export function schemaVersionSatisfies(actual: string | null, required: string): boolean {
+  if (!actual) return false;
+  const parse = (v: string) => v.split(".").map((n) => Number.parseInt(n, 10));
+  const a = parse(actual);
+  const r = parse(required);
+  if (a.some((n) => !Number.isFinite(n))) return false;
+  for (let i = 0; i < Math.max(a.length, r.length); i += 1) {
+    const av = a[i] ?? 0;
+    const rv = r[i] ?? 0;
+    if (av !== rv) return av > rv;
+  }
+  return true;
+}
 
 /** Version de schéma minimale attendue par cette version de l'application. */
 export const REQUIRED_LEAD_SCHEMA_VERSION = "1.2";
@@ -49,22 +66,24 @@ const MESSAGES: { match: RegExp; message: string }[] = [
   },
   {
     match: /REVIEW_NOT_VALIDATED/,
-    message: "Cette étape n'est possible qu'après un retour Standex validé sur la version en cours.",
+    message:
+      "Cette étape n'est possible qu'après un retour Standex validé sur la version en cours.",
   },
   {
     match: /NOT_ALLOWED|permission denied|42501/,
     message: "Cette action est réservée à l'équipe Standex en charge de ce dossier.",
   },
   {
-    match: /BAD_TIERS|CONTRADICTORY_TIERS|TIERS_REQUIRED|BAD_VALIDITY|BAD_VERDICT|BAD_HASH|EMPTY_SNAPSHOT|BAD_CURRENCY|BAD_MOQ|BAD_NRE|BAD_INCOTERM|BAD_QUANTITY|BAD_STATUS/,
-    message: "Les informations envoyées sont incomplètes ou incohérentes : rien n'a été enregistré.",
+    match:
+      /BAD_TIERS|CONTRADICTORY_TIERS|TIERS_REQUIRED|BAD_VALIDITY|BAD_VERDICT|BAD_HASH|EMPTY_SNAPSHOT|BAD_CURRENCY|BAD_MOQ|BAD_NRE|BAD_INCOTERM|BAD_QUANTITY|BAD_STATUS/,
+    message:
+      "Les informations envoyées sont incomplètes ou incohérentes : rien n'a été enregistré.",
   },
   {
     match: /DOSSIER_NOT_FOUND|REVISION_NOT_FOUND|REVIEW_NOT_FOUND/,
     message: "Ce dossier n'est plus disponible sous cette forme.",
   },
 ];
-
 
 const EXTRA_MESSAGES: { match: RegExp; message: string }[] = [
   {
@@ -77,13 +96,40 @@ const EXTRA_MESSAGES: { match: RegExp; message: string }[] = [
     message: "Un fichier annoncé n'a pas été réellement déposé : l'envoi a été refusé.",
   },
   {
-    match: /NDA_TEMPLATE_MISMATCH|NDA_SIGNED_DOCUMENT_INVALID|NDA_PROOF_INCOMPLETE|NDA_COUNTERPARTIES_REQUIRED|NDA_SIGNED_AT_INVALID/,
+    match:
+      /NDA_TEMPLATE_MISMATCH|NDA_SIGNED_DOCUMENT_INVALID|NDA_PROOF_INCOMPLETE|NDA_COUNTERPARTIES_REQUIRED|NDA_SIGNED_AT_INVALID/,
     message:
       "La preuve d'accord de confidentialité est incomplète ou ne correspond pas au document original : rien n'a été enregistré.",
   },
   { match: /NO_VARIANT_TO_ACCEPT/, message: "Aucune variante à reprendre sur ce retour." },
   { match: /NOT_STAFF/, message: "Cette personne ne fait pas partie de l'équipe Standex." },
+  {
+    match: /CONSENT_INCOMPLETE/,
+    message:
+      "Votre accord d'envoi doit être daté et rattaché au dossier concerné : aucun fichier n'a été transmis.",
+  },
+  {
+    match: /NDA_SIGNED_FILE_NOT_FOUND/,
+    message:
+      "Le document signé annoncé n'a pas été retrouvé dans l'espace sécurisé : rien n'a été enregistré.",
+  },
+  {
+    match: /SAMPLE_SUPERSEDED/,
+    message:
+      "Cet échantillon correspond à une version dépassée du dossier : une revalidation explicite est nécessaire.",
+  },
+  {
+    match: /BAD_ANNUAL_VOLUME/,
+    message:
+      "Le volume annuel doit être un nombre entier de capteurs par an, ou déclaré inconnu : rien n'a été enregistré.",
+  },
+  {
+    match: /BAD_SNAPSHOT_SHAPE/,
+    message:
+      "Le dossier envoyé est incomplet : complétez l'objectif et le contact, puis réessayez.",
+  },
 ];
+
 MESSAGES.unshift(...EXTRA_MESSAGES);
 
 /** Jamais de message brut de base de données côté client. */
@@ -101,7 +147,10 @@ export function humanRpcError(error: unknown): string {
 
 /** Numéro de révision courant renvoyé par un conflit, pour resynchroniser l'écran. */
 export function conflictRevision(error: unknown): number | null {
-  const raw = error && typeof error === "object" && "message" in error ? String((error as { message: unknown }).message) : String(error ?? "");
+  const raw =
+    error && typeof error === "object" && "message" in error
+      ? String((error as { message: unknown }).message)
+      : String(error ?? "");
   const m = /REVISION_CONFLICT:(\d+)/.exec(raw);
   return m?.[1] ? Number(m[1]) : null;
 }

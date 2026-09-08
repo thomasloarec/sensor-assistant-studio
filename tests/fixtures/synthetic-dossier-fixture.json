@@ -1,0 +1,105 @@
+{
+  "id": "local-synthetic-dossier-a",
+  "createdAt": "2026-09-08T09:00:00.000Z",
+  "updatedAt": "2026-09-08T09:00:00.000Z",
+  "revision": 1,
+  "storage": "memory",
+  "title": "Synthetic review fixture",
+  "requirements": [
+    {
+      "key": "detection_goal",
+      "label": "Objectif de détection",
+      "value": "OWNER_A_DESIGN_SECRET",
+      "unit": null,
+      "state": "confirmed",
+      "source": "user"
+    },
+    {
+      "key": "states_motion",
+      "label": "États et mouvements à distinguer",
+      "value": "Closed and open positions",
+      "unit": null,
+      "state": "confirmed",
+      "source": "user"
+    },
+    {
+      "key": "mounting",
+      "label": "Montage mécanique",
+      "value": "Screw fastening",
+      "unit": null,
+      "state": "confirmed",
+      "source": "user"
+    },
+    {
+      "key": "envelope",
+      "label": "Encombrement disponible",
+      "value": "40 x 20 x 10 mm",
+      "unit": null,
+      "state": "confirmed",
+      "source": "user"
+    },
+    {
+      "key": "electrical",
+      "label": "Contraintes électriques",
+      "value": "Logic input 5 V 1 mA",
+      "unit": null,
+      "state": "confirmed",
+      "source": "user"
+    },
+    {
+      "key": "environment",
+      "label": "Environnement",
+      "value": "Dry indoor 0 to 50 C",
+      "unit": null,
+      "state": "confirmed",
+      "source": "user"
+    }
+  ],
+  "mounting": {
+    "kind": "screw"
+  },
+  "envelope": {
+    "lengthMm": 40,
+    "widthMm": 20,
+    "heightMm": 10
+  },
+  "workshop": null,
+  "workshopSource": "none",
+  "workshopAsset": null,
+  "selectedSensorId": "MK03",
+  "workshopSensorId": null,
+  "sensorSyncConfirmed": false,
+  "cabling": {
+    "sensorEndpoint": null,
+    "connectionEndpoint": null,
+    "waypoints": [],
+    "statePaths": [],
+    "declaredMotionStates": [],
+    "motionCoverageConfirmed": false,
+    "serviceReserveMm": 0,
+    "terminationMm": 0,
+    "toleranceMm": 0,
+    "surplusHousingMm": 0,
+    "minBendRadiusMm": null,
+    "lengthChoice": "undecided"
+  },
+  "termination": {
+    "kind": "bare_leads"
+  },
+  "freeConstraints": "No additional constraints; synthetic fixture reviewed.",
+  "openQuestions": [],
+  "attachments": [],
+  "business": {
+    "projectPhase": "prototype",
+    "seriesStartDate": "2027-03-01",
+    "samplesNeededBy": "2026-12-01",
+    "annualVolume": {
+      "kind": "known",
+      "sensorsPerYear": 2000
+    },
+    "seriesDurationYears": 5,
+    "contactName": "Synthetic User",
+    "contactEmail": "fixture@example.invalid",
+    "contactCompany": "Synthetic Example SAS"
+  }
+}

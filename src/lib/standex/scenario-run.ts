@@ -70,7 +70,6 @@ export async function runScenario(params: {
       distributor_path_allowed: composed.distributorPathAllowed,
       contract_items: composed.internalContractItems,
     } as never,
-
   });
 
   const review = await db.insertReview({
@@ -79,8 +78,7 @@ export async function runScenario(params: {
     reviewer_role: "thomas",
     verdict: params.verdict ?? "not_reviewed",
     notes:
-      params.notes ??
-      `Exécution automatique du scénario ${scenario.scenario_id} (contrat V0.2).`,
+      params.notes ?? `Exécution automatique du scénario ${scenario.scenario_id} (contrat V0.2).`,
   });
 
   return { messages: [prospectMsg, assistantMsg], output, trace, review, composed };

@@ -92,10 +92,7 @@ export async function checkLeadBackend(): Promise<LeadBackendStatus> {
 }
 
 /** Une action réservée à Standex n'est activée que sur rôle renvoyé par le serveur. */
-export function staffActionEnabled(
-  status: LeadBackendStatus | null,
-  roles: StaffRole[],
-): boolean {
+export function staffActionEnabled(status: LeadBackendStatus | null, roles: StaffRole[]): boolean {
   if (!status?.ready || !status.role) return false;
   return roles.includes(status.role);
 }

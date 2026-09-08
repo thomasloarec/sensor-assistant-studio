@@ -11,7 +11,9 @@ import {
   humanRpcError,
   isMissingRpc,
   conflictRevision,
+  schemaVersionSatisfies,
 } from "./rpc";
+
 import type { StaffRole } from "./review";
 import type { SubmissionBackend, SubmissionSnapshot } from "./submission";
 
@@ -46,14 +48,18 @@ export async function probeLeadSchema(): Promise<LeadSchemaProbe> {
     };
   const payload = (data ?? {}) as { version?: string | null; ready?: boolean };
   const version = payload.version ?? null;
-  const ready = Boolean(payload.ready) && version !== null;
+  // Comparaison réelle de version : un simple booléen serveur ne suffit pas.
+  const ready =
+    Boolean(payload.ready) && schemaVersionSatisfies(version, REQUIRED_LEAD_SCHEMA_VERSION);
   return {
     configured: true,
     schemaReady: ready,
     version,
     adminDetail: ready
       ? `Schéma lead version ${version} (attendu ≥ ${REQUIRED_LEAD_SCHEMA_VERSION}).`
-      : "Registre de migrations vide côté serveur.",
+      : version
+        ? `Schéma lead version ${version} < ${REQUIRED_LEAD_SCHEMA_VERSION} : migration à appliquer.`
+        : "Registre de migrations vide côté serveur.",
   };
 }
 
@@ -356,7 +362,13 @@ export interface StaffInbox {
     updated_at: string;
     assignees: string[];
   }[];
-  staff_directory: { user_id: string; role: StaffRole }[];
+  /** Annuaire lisible : jamais un choix par identifiant technique. */
+  staff_directory: {
+    user_id: string;
+    role: StaffRole;
+    email: string | null;
+    display_name: string | null;
+  }[];
 }
 
 export async function fetchStaffInbox(): Promise<StaffInbox> {
@@ -386,11 +398,25 @@ export interface UploadSession {
   expires_at: string;
 }
 
+/** Consentement explicite, daté et rattaché au contenu : exigé par le serveur. */
+export interface FileConsent {
+  kind: string;
+  statement: string;
+  accepted_at: string;
+  content_ref: string;
+  recipients?: string[];
+}
+
 export async function openUploadSession(
   dossierId: string,
   kind: "design_model" | "document" | "nda_signed",
+  consent: FileConsent | null,
 ): Promise<UploadSession> {
-  return rpc<UploadSession>(LEAD_RPC.openUploadSession, { p_dossier: dossierId, p_kind: kind });
+  return rpc<UploadSession>(LEAD_RPC.openUploadSession, {
+    p_dossier: dossierId,
+    p_kind: kind,
+    p_consent: consent,
+  });
 }
 
 /** Dépôt réel du modèle 3D : jamais avant NDA et consentement vérifiés côté serveur. */
@@ -398,9 +424,10 @@ export async function uploadDesignFile(
   dossierId: string,
   file: { name: string; data: Blob | ArrayBuffer | Uint8Array },
   kind: "design_model" | "document" | "nda_signed" = "design_model",
+  consent: FileConsent | null = null,
 ): Promise<{ path: string; fileName: string }> {
   if (!supabase) throw new Error(humanRpcError("not configured"));
-  const session = await openUploadSession(dossierId, kind);
+  const session = await openUploadSession(dossierId, kind, consent);
   const safeName = file.name.replace(/[^A-Za-z0-9._-]/g, "_");
   const path = `${session.path_prefix}/${safeName}`;
   const body =
@@ -425,6 +452,8 @@ export async function recordNdaProof(input: {
   counterparties: { party: string; signatory?: string }[];
   signedAt: string;
   source: string;
+  /** Un fichier réellement déposé, ou une archive externe explicitement déclarée. */
+  evidenceKind: "stored_object" | "external_archive";
 }): Promise<string> {
   return rpc<string>(LEAD_RPC.recordNdaProof, {
     p_dossier: input.dossierId,
@@ -435,7 +464,24 @@ export async function recordNdaProof(input: {
     p_counterparties: input.counterparties,
     p_signed_at: input.signedAt,
     p_source: input.source,
+    p_evidence_kind: input.evidenceKind,
   });
+}
+
+/** Réactivation d'un échantillon dépassé : acte explicite et tracé, jamais un bouton d'état. */
+export async function revalidateSample(
+  sampleId: string,
+  justification: string,
+): Promise<{ id: string; status: string }> {
+  return rpc(LEAD_RPC.revalidateSample, {
+    p_sample_id: sampleId,
+    p_justification: justification,
+  });
+}
+
+/** Titre lisible : un dossier préparé avant NDA reste volontairement générique. */
+export async function setDossierTitle(dossierId: string, title: string): Promise<void> {
+  await rpc(LEAD_RPC.setDossierTitle, { p_dossier: dossierId, p_title: title });
 }
 
 /** Backend de soumission réel : disponible seulement si migration appliquée ET session ouverte. */
@@ -449,8 +495,7 @@ export function createSupabaseSubmissionBackend(options: {
   ndaRequired: boolean;
   onDossierCreated?: (id: string) => void;
 }): SubmissionBackend {
-  const available =
-    options.schemaReady && options.capabilities.authenticated && Boolean(supabase);
+  const available = options.schemaReady && options.capabilities.authenticated && Boolean(supabase);
   if (!available) return { available: false };
   return {
     available: true,

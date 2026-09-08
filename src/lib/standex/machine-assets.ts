@@ -69,7 +69,6 @@ export function clearMemoryMachineFiles() {
   memoryFiles.clear();
 }
 export async function storeMachineFile(file: File): Promise<string> {
-
   if (file.size > 30 * 1024 * 1024)
     throw new Error("Choisissez un GLB autonome de moins de 30 Mo.");
   const data = await file.arrayBuffer();
@@ -242,4 +241,9 @@ export async function loadMachineAsset(
     min: bounds.min.toArray() as Vec3,
     dispose,
   };
+}
+
+/** Octets d'une ressource 3D présente EN MÉMOIRE de cet onglet, sans repli sur l'appareil. */
+export function memoryAssetBytes(key: string): ArrayBuffer | null {
+  return memoryFiles.get(key) ?? null;
 }

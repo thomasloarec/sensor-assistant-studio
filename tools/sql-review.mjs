@@ -59,9 +59,17 @@ const consent = [{
   accepted_at: '2026-09-08T09:00:00Z',
   content_ref: 'dossier-v1',
 }];
-const snapshot = {
-  detection_goal: 'OWNER_A_DESIGN_SECRET',
-  business: { annualVolume: { value: 2000, unit: 'pieces/an', state: 'known' } },
+// Instantané RÉEL produit par l'application (createDossier/toClientDto).
+const snapshot = JSON.parse(readFileSync('tests/fixtures/synthetic-dossier-fixture.json', 'utf8'));
+const withVolume = (v) => ({
+  ...snapshot,
+  business: { ...snapshot.business, annualVolume: v },
+});
+const filesConsent = {
+  kind: 'supabase_files',
+  statement: 'Transfert du fichier 3D à Standex.',
+  accepted_at: new Date().toISOString(),
+  content_ref: 'model.glb',
 };
 
 // 1. Sonde de version sans la moindre réparation locale.
@@ -195,9 +203,10 @@ const privateDossier = await actor('authenticated', ids.a,
   () => value('select public.lead_create_dossier($1,true)', ['Synthetic NDA request']));
 await expectFail('unsigned_nda_blocks_submission', () => actor('authenticated', ids.a,
   () => value('select public.lead_submit_revision($1,0,$2,$3,$4,$5)',
-    [privateDossier, { purpose: 'CONFIDENTIAL' }, null, consent, []])), 'NDA_NOT_IN_FORCE');
+    [privateDossier, snapshot, null, consent, []])), 'NDA_NOT_IN_FORCE');
 await expectFail('unsigned_nda_blocks_upload_session', () => actor('authenticated', ids.a,
-  () => value('select public.lead_open_upload_session($1,$2)', [privateDossier, 'design_model'])), 'NDA_NOT_IN_FORCE');
+  () => value('select public.lead_open_upload_session($1,$2,$3)',
+    [privateDossier, 'design_model', filesConsent])), 'NDA_NOT_IN_FORCE');
 await expectFail('client_cannot_declare_nda_in_force', () => actor('authenticated', ids.a,
   () => value('select public.lead_admin_record_nda_proof($1,$2,$3,$4,$5,$6,$7,$8)',
     [privateDossier, 'f'.repeat(64), 'b'.repeat(64), 'p/x.docx', 'REF-1',
@@ -211,27 +220,45 @@ await expectFail('nda_proof_rejects_wrong_template_hash', () => actor('authentic
 
 const TEMPLATE = '6e25345f1e83e92630258774d27a451d65d615cdd9f41a5331dae75c4072740b';
 await expectFail('nda_proof_requires_counterparties', () => actor('authenticated', ids.admin,
-  () => value('select public.lead_admin_record_nda_proof($1,$2,$3,$4,$5,$6,$7,$8)',
-    [privateDossier, TEMPLATE, 'b'.repeat(64), 'p/x.docx', 'REF-1', [{ party: 'Standex' }],
-      '2026-06-16', 'manual'])), 'NDA_COUNTERPARTIES_REQUIRED');
+  () => value('select public.lead_admin_record_nda_proof($1,$2,$3,$4,$5,$6,$7,$8,$9)',
+    [privateDossier, TEMPLATE, 'b'.repeat(64), null, 'REF-1', [{ party: 'Standex' }],
+      '2026-06-16', 'manual', 'external_archive'])), 'NDA_COUNTERPARTIES_REQUIRED');
 await expectFail('nda_proof_rejects_unsigned_copy_of_template', () => actor('authenticated', ids.admin,
   () => value('select public.lead_admin_record_nda_proof($1,$2,$3,$4,$5,$6,$7,$8)',
     [privateDossier, TEMPLATE, TEMPLATE, 'p/x.docx', 'REF-1',
       [{ party: 'Standex' }, { party: 'K Motor' }], '2026-06-16', 'manual'])), 'NDA_SIGNED_DOCUMENT_INVALID');
 
-const proof = await actor('authenticated', ids.admin,
-  () => value('select public.lead_admin_record_nda_proof($1,$2,$3,$4,$5,$6,$7,$8)',
+await expectFail('nda_proof_rejects_path_that_is_not_a_stored_file', () => actor('authenticated', ids.admin,
+  () => value('select public.lead_admin_record_nda_proof($1,$2,$3,$4,$5,$6,$7,$8,$9)',
     [privateDossier, TEMPLATE, 'b'.repeat(64), privateDossier + '/signed/nda.docx', 'REF-2026-001',
-      [{ party: 'Standex Electronics' }, { party: 'K Motor SAS' }], '2026-06-16', 'verification_manuelle']));
+      [{ party: 'Standex Electronics' }, { party: 'K Motor SAS' }], '2026-06-16',
+      'verification_manuelle', 'stored_object'])), 'NDA_SIGNED_FILE_NOT_FOUND');
+await expectFail('nda_proof_rejects_empty_counterparty', () => actor('authenticated', ids.admin,
+  () => value('select public.lead_admin_record_nda_proof($1,$2,$3,$4,$5,$6,$7,$8,$9)',
+    [privateDossier, TEMPLATE, 'b'.repeat(64), null, 'REF-2026-001',
+      [{ party: 'Standex Electronics' }, { party: '  ' }], '2026-06-16',
+      'verification_manuelle', 'external_archive'])), 'NDA_COUNTERPARTIES_REQUIRED');
+const proof = await actor('authenticated', ids.admin,
+  () => value('select public.lead_admin_record_nda_proof($1,$2,$3,$4,$5,$6,$7,$8,$9)',
+    [privateDossier, TEMPLATE, 'b'.repeat(64), null, 'REF-2026-001',
+      [{ party: 'Standex Electronics' }, { party: 'K Motor SAS' }], '2026-06-16',
+      'archive externe verifiee', 'external_archive']));
 add('admin_can_record_verified_nda_proof', !!proof);
 
 // Session d'upload : autorisée seulement après NDA en vigueur, chemin imposé.
 let session;
 try {
   session = await actor('authenticated', ids.a,
-    () => value('select public.lead_open_upload_session($1,$2)', [privateDossier, 'design_model']));
+    () => value('select public.lead_open_upload_session($1,$2,$3)',
+      [privateDossier, 'design_model', filesConsent]));
   add('upload_session_after_nda_in_force', session.path_prefix.startsWith(privateDossier));
 } catch (e) { add('upload_session_after_nda_in_force', false, e.message); }
+await expectFail('upload_session_without_consent_is_rejected', () => actor('authenticated', ids.a,
+  () => value('select public.lead_open_upload_session($1,$2,$3)',
+    [privateDossier, 'design_model', null])), 'CONSENT_INCOMPLETE');
+await expectFail('upload_session_with_invalid_consent_date_is_rejected', () => actor('authenticated', ids.a,
+  () => value('select public.lead_open_upload_session($1,$2,$3)',
+    [privateDossier, 'design_model', { ...filesConsent, accepted_at: 'not-a-date' }])), 'CONSENT_INCOMPLETE');
 
 if (session) {
   await actor('authenticated', ids.a, () => db.query(
@@ -244,7 +271,7 @@ if (session) {
 
   const priv = await actor('authenticated', ids.a,
     () => value('select public.lead_submit_revision($1,0,$2,$3,$4,$5)',
-      [privateDossier, { purpose: 'CONFIDENTIAL', business: { annualVolume: { value: 500 } } }, null, consent,
+      [privateDossier, withVolume({ kind: 'known', sensorsPerYear: 500 }), null, consent,
         [{ path: session.path_prefix + '/model.glb', kind: 'glb' }]]));
   add('real_file_can_be_attached_to_revision', priv.revision === 1);
   await expectFail('submitted_object_is_immutable', () => actor('authenticated', ids.a,
@@ -253,6 +280,43 @@ if (session) {
   await expectFail('outsider_cannot_read_object', () => actor('authenticated', ids.outsider,
     () => db.query('select name from storage.objects where bucket_id=$1', ['lead-design-files'])
       .then((r) => { if (r.rows.length === 0) throw new Error('NO_ROWS_VISIBLE'); })), 'NO_ROWS_VISIBLE');
+}
+
+// Volume annuel : forme réelle, routage et refus des valeurs impossibles.
+for (const [label, volume, expected] of [
+  ['fractional_annual_volume_is_rejected', { kind: 'known', sensorsPerYear: 999.5 }, 'BAD_ANNUAL_VOLUME'],
+  ['negative_annual_volume_is_rejected', { kind: 'known', sensorsPerYear: -10 }, 'BAD_ANNUAL_VOLUME'],
+  ['unknown_discriminant_is_rejected', { kind: 'maybe', sensorsPerYear: 10 }, 'BAD_ANNUAL_VOLUME'],
+  ['legacy_volume_shape_is_rejected', { value: 2000 }, 'BAD_ANNUAL_VOLUME'],
+]) {
+  const dv = await actor('authenticated', ids.a,
+    () => value('select public.lead_create_dossier($1,false)', ['Volume ' + label]));
+  await expectFail(label, () => actor('authenticated', ids.a,
+    () => value('select public.lead_submit_revision($1,0,$2,$3,$4,$5)',
+      [dv, withVolume(volume), null, consent, []])), expected);
+}
+
+for (const [label, volume, designation, expectedRoute] of [
+  ['standard_999_routes_distributors', { kind: 'known', sensorsPerYear: 999 }, 'standard', 'distributors'],
+  ['standard_1000_routes_standex_direct', { kind: 'known', sensorsPerYear: 1000 }, 'standard', 'standex_direct'],
+  ['custom_low_volume_routes_manual_review', { kind: 'known', sensorsPerYear: 200 }, 'custom', 'manual_review'],
+  ['unknown_volume_routes_manual_review', { kind: 'unknown' }, 'standard', 'manual_review'],
+]) {
+  try {
+    const dv = await actor('authenticated', ids.a,
+      () => value('select public.lead_create_dossier($1,false)', ['Routage ' + label]));
+    await actor('authenticated', ids.admin, () => value('select public.lead_assign_dossier($1,$2)', [dv, ids.rnd]));
+    const sv = await actor('authenticated', ids.a,
+      () => value('select public.lead_submit_revision($1,0,$2,$3,$4,$5)',
+        [dv, withVolume(volume), null, consent, []]));
+    const rvw = await actor('authenticated', ids.rnd,
+      () => value('select public.lead_publish_review($1,$2,$3,$4,$5,$6,$7,$8,$9)',
+        [sv.revision_id, 'full', 'ok', 'validated', 'msg', null, 'MK03-1A66-200W', designation, {}]));
+    const sq = await actor('authenticated', ids.a,
+      () => value('select public.lead_request_samples($1,$2,$3,$4,$5)',
+        [rvw, 'MK03-1A66-200W', 2, null, false]));
+    add(label, sq.route === expectedRoute, sq.route);
+  } catch (e) { add(label, false, e.message); }
 }
 
 const failed = results.filter((r) => !r.pass);

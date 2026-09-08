@@ -79,13 +79,21 @@ import {
 
 import { checkSubmission, submit, technicalSummary } from "@/lib/leadmagnet/submission";
 import { checkLeadBackend, type LeadBackendStatus } from "@/lib/leadmagnet/backend";
-import { createSupabaseSubmissionBackend } from "@/lib/leadmagnet/supabase-adapter";
 import {
-  routeSamples,
-  SEARCH_LINK_DISCLAIMER,
-  createSampleRequest,
-  type SampleRequest,
-} from "@/lib/leadmagnet/samples";
+  createDossier as createServerDossier,
+  createSupabaseSubmissionBackend,
+  uploadDesignFile,
+} from "@/lib/leadmagnet/supabase-adapter";
+import { ClientFollowUp } from "@/components/leadmagnet/client-followup";
+import { memoryAssetBytes } from "@/lib/standex/machine-assets";
+import {
+  DOCUMENTED_HOUSINGS,
+  draftFromHousing,
+  housingById,
+  housingLabel,
+  terminationFromHousing,
+} from "@/lib/leadmagnet/connector-library";
+import { routeSamples, SEARCH_LINK_DISCLAIMER } from "@/lib/leadmagnet/samples";
 import { DEFAULT_WORKSHOP } from "@/lib/standex/magnetic-workshop";
 import type { WorkshopConfig } from "@/lib/standex/magnetic-workshop";
 
@@ -149,11 +157,7 @@ const num = (raw: string): number | null => {
   return raw.trim() && Number.isFinite(v) ? v : null;
 };
 
-function pointFields(
-  label: string,
-  value: Point | null,
-  onChange: (p: Point | null) => void,
-) {
+function pointFields(label: string, value: Point | null, onChange: (p: Point | null) => void) {
   const p = value ?? [0, 0, 0];
   return (
     <div className="space-y-1">
@@ -190,13 +194,16 @@ function DesignSpace() {
   const cabling = dossier.cabling;
   const setCabling = useCallback(
     (update: (c: CablingConfig) => CablingConfig) =>
-      setDossier((d) => ({ ...d, cabling: update(d.cabling), updatedAt: new Date().toISOString() })),
+      setDossier((d) => ({
+        ...d,
+        cabling: update(d.cabling),
+        updatedAt: new Date().toISOString(),
+      })),
     [],
   );
   const termination = dossier.termination;
   const [connectorDraft, setConnectorDraft] = useState<ConnectorDraft>(EMPTY_CONNECTOR_DRAFT);
   const [connectorError, setConnectorError] = useState<string | null>(null);
-  const [sampleRequests, setSampleRequests] = useState<SampleRequest[]>([]);
   const [importMessage, setImportMessage] = useState<string | null>(null);
   const [backend, setBackend] = useState<LeadBackendStatus | null>(null);
   // Dossier serveur : créé à la première transmission réussie, puis réutilisé.
@@ -209,8 +216,8 @@ function DesignSpace() {
   const [workshop, setWorkshop] = useState<WorkshopConfig | null>(null);
   const [volumeRaw, setVolumeRaw] = useState("");
   const [volumeError, setVolumeError] = useState<string | null>(null);
-  const [sampleQty, setSampleQty] = useState("");
-  const [sampleMessage, setSampleMessage] = useState<string | null>(null);
+  /** Le modèle 3D reste en mémoire tant que ce partage n'est pas explicitement demandé. */
+  const [shareModel, setShareModel] = useState(false);
 
   /** Remplissage local du NDA : aperçu puis téléchargement, sans aucune transmission. */
   const prepareNdaDocument = useCallback(
@@ -245,12 +252,13 @@ function DesignSpace() {
     [nda],
   );
 
-
   // Tant que cet espace est monté, la télémétrie est réduite à un code anonyme.
   useEffect(() => openPrivateErrorScope(), []);
 
   useEffect(() => {
-    checkLeadBackend().then(setBackend).catch(() => setBackend(null));
+    checkLeadBackend()
+      .then(setBackend)
+      .catch(() => setBackend(null));
   }, []);
 
   useEffect(() => {
@@ -320,10 +328,61 @@ function DesignSpace() {
       setSubmitMessage(check.problems.join(" "));
       return;
     }
+    // Partage explicite du modèle 3D : dépôt réel AVANT la soumission, jamais implicite.
+    let dossierId = serverDossierId;
+    let submitted = dossier;
+    if (shareModel && dossier.workshopAsset && backend?.ready) {
+      try {
+        const bytes = memoryAssetBytes(dossier.workshopAsset.assetKey);
+        if (!bytes) {
+          setSubmitMessage(
+            "Le fichier 3D n'est plus en mémoire de cet onglet : réimportez-le avant de le partager.",
+          );
+          return;
+        }
+        if (!dossierId) {
+          dossierId = await createServerDossier(
+            nda.required ? "Préparation d'un accord de confidentialité" : dossier.title,
+            nda.required,
+          );
+          setServerDossierId(dossierId);
+        }
+        const uploaded = await uploadDesignFile(
+          dossierId,
+          { name: dossier.workshopAsset.fileName, data: new Uint8Array(bytes) },
+          "design_model",
+          {
+            kind: "supabase_files",
+            statement: "Partage du modèle 3D avec l'équipe Standex en charge du dossier.",
+            accepted_at: new Date().toISOString(),
+            content_ref: dossier.workshopAsset.fileName,
+          },
+        );
+        submitted = {
+          ...dossier,
+          attachments: [
+            ...dossier.attachments.filter((a) => a.fileName !== uploaded.fileName),
+            {
+              id: uploaded.path,
+              fileName: uploaded.fileName,
+              bytes: bytes.byteLength,
+              transferred: true,
+              storagePath: uploaded.path,
+            },
+          ],
+        };
+        setDossier(submitted);
+      } catch (error) {
+        setSubmitMessage(
+          error instanceof Error ? error.message : "Le fichier 3D n'a pas pu être partagé.",
+        );
+        return;
+      }
+    }
     // Envoi réel dès que l'espace serveur est disponible et la session ouverte ;
     // sinon rien n'est transmis et rien n'est simulé.
     const outcome = await submit(
-      input,
+      { ...input, dossier: submitted },
       createSupabaseSubmissionBackend({
         schemaReady: Boolean(backend?.schemaReady),
         capabilities: backend?.capabilities ?? {
@@ -332,7 +391,7 @@ function DesignSpace() {
           role: null,
           assignedDossiers: [],
         },
-        dossierId: serverDossierId,
+        dossierId,
         expectedRevision: serverRevision,
         ndaRequired: nda.required,
         onDossierCreated: setServerDossierId,
@@ -355,16 +414,12 @@ function DesignSpace() {
     backend,
     serverDossierId,
     serverRevision,
+    shareModel,
   ]);
 
-
   const volume = dossier.business.annualVolume;
-  // Une revue publiée est nécessaire : sans elle, ni référence exacte ni échantillon.
-  const publishedReview = null as null | { exactPart: string; isCustom: boolean };
-  const sampleRoute = routeSamples({
-    volume,
-    isCustom: publishedReview?.isCustom ?? false,
-  });
+  // La désignation standard/custom vient du retour R&D publié, jamais de cet écran.
+  const sampleRoute = routeSamples({ volume, isCustom: false });
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -453,9 +508,7 @@ function DesignSpace() {
                   >
                     Confirmer cette exigence
                   </Button>
-                  {r.note ? (
-                    <span className="text-xs text-muted-foreground">{r.note}</span>
-                  ) : null}
+                  {r.note ? <span className="text-xs text-muted-foreground">{r.note}</span> : null}
                 </div>
               </div>
             ))}
@@ -611,8 +664,8 @@ function DesignSpace() {
             {dossier.selectedSensorId && !dossier.sensorSyncConfirmed ? (
               <div className="rounded-md border border-amber-300 bg-amber-50 p-3 text-sm">
                 <p>
-                  La gamme suivie et le capteur affiché en 3D sont différents. Rien n'est changé sans
-                  votre accord.
+                  La gamme suivie et le capteur affiché en 3D sont différents. Rien n'est changé
+                  sans votre accord.
                 </p>
                 <Button
                   size="sm"
@@ -697,7 +750,9 @@ function DesignSpace() {
                 <Button
                   size="sm"
                   variant="outline"
-                  onClick={() => setCabling((c) => ({ ...c, waypoints: [...c.waypoints, [0, 0, 0]] }))}
+                  onClick={() =>
+                    setCabling((c) => ({ ...c, waypoints: [...c.waypoints, [0, 0, 0]] }))
+                  }
                 >
                   Ajouter un point
                 </Button>
@@ -772,7 +827,9 @@ function DesignSpace() {
                           }))
                         }
                       />
-                      <span className={covered ? "text-xs text-emerald-700" : "text-xs text-amber-700"}>
+                      <span
+                        className={covered ? "text-xs text-emerald-700" : "text-xs text-amber-700"}
+                      >
                         {covered ? "trajet renseigné" : "trajet manquant pour cet état"}
                       </span>
                       {!covered ? (
@@ -807,7 +864,9 @@ function DesignSpace() {
                         onClick={() =>
                           setCabling((c) => ({
                             ...c,
-                            declaredMotionStates: c.declaredMotionStates.filter((m) => m.id !== st.id),
+                            declaredMotionStates: c.declaredMotionStates.filter(
+                              (m) => m.id !== st.id,
+                            ),
                             statePaths: c.statePaths.filter((sp) => sp.stateId !== st.id),
                             motionCoverageConfirmed: false,
                           }))
@@ -926,15 +985,39 @@ function DesignSpace() {
                   <li key={i}>{l}</li>
                 ))}
               </ul>
+              <div className="mt-3">
+                <Label className="text-xs">Boîtiers documentés par le fabricant</Label>
+                <div className="mt-1 flex flex-wrap gap-2">
+                  {DOCUMENTED_HOUSINGS.map((h) => (
+                    <Button
+                      key={h.housingMpn}
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        const found = housingById(h.housingMpn);
+                        if (!found) return;
+                        setConnectorError(null);
+                        setConnectorDraft((d) => draftFromHousing(found, d));
+                        setDossier((d) => ({ ...d, termination: terminationFromHousing(found) }));
+                      }}
+                    >
+                      {housingLabel(h)}
+                    </Button>
+                  ))}
+                </div>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Quelques boîtiers documentés seulement, pas le marché entier. Boîtier, contacts à
+                  sertir et embase restent trois références distinctes ; brochage, section de fil
+                  réelle et disponibilité restent inconnus et à vérifier par la R&D.
+                </p>
+              </div>
               <div className="mt-3 grid gap-3 md:grid-cols-2">
                 {CONNECTOR_FIELD_LABELS.map(([key, label]) => (
                   <div key={key}>
                     <Label className="text-xs">{label}</Label>
                     <Input
                       value={connectorDraft[key]}
-                      onChange={(e) =>
-                        setConnectorDraft((d) => ({ ...d, [key]: e.target.value }))
-                      }
+                      onChange={(e) => setConnectorDraft((d) => ({ ...d, [key]: e.target.value }))}
                     />
                   </div>
                 ))}
@@ -971,7 +1054,8 @@ function DesignSpace() {
               </div>
               <p className="mt-1 text-xs text-muted-foreground">
                 Aucune combinaison connecteur/capteur qualifiée n'est documentée dans ce projet :
-                toute référence saisie, sa contrepartie et son brochage restent à vérifier par la R&D.
+                toute référence saisie, sa contrepartie et son brochage restent à vérifier par la
+                R&D.
               </p>
             </div>
           </TabsContent>
@@ -992,7 +1076,9 @@ function DesignSpace() {
                 <AccordionTrigger>Contexte projet</AccordionTrigger>
                 <AccordionContent className="grid gap-3 md:grid-cols-2">
                   <div>
-                    <Label className="text-xs">Volume annuel de capteurs (entier ou « inconnu »)</Label>
+                    <Label className="text-xs">
+                      Volume annuel de capteurs (entier ou « inconnu »)
+                    </Label>
                     <Input
                       value={volumeRaw}
                       placeholder="inconnu"
@@ -1081,8 +1167,8 @@ function DesignSpace() {
                   <p className="text-sm">
                     Modèle juridique approuvé : <strong>{APPROVED_NDA_TEMPLATE.fileName}</strong>{" "}
                     (SHA-256 {APPROVED_NDA_TEMPLATE.sha256.slice(0, 16)}…, vérifié avant chaque
-                    remplissage). L'original reste intact : seule une copie remplie est produite, sur
-                    cet appareil, sans transmettre le dossier.
+                    remplissage). L'original reste intact : seule une copie remplie est produite,
+                    sur cet appareil, sans transmettre le dossier.
                   </p>
                   <div className="grid gap-2 md:grid-cols-2">
                     {NDA_FIELD_LABELS.map(([key, label]) => (
@@ -1091,7 +1177,10 @@ function DesignSpace() {
                         <Input
                           value={nda.fields[key]}
                           onChange={(e) =>
-                            setNda((n) => ({ ...n, fields: { ...n.fields, [key]: e.target.value } }))
+                            setNda((n) => ({
+                              ...n,
+                              fields: { ...n.fields, [key]: e.target.value },
+                            }))
                           }
                         />
                       </div>
@@ -1128,7 +1217,8 @@ function DesignSpace() {
                   {ndaPreview ? (
                     <div className="space-y-2">
                       <p className="text-xs text-muted-foreground">
-                        Aperçu local des clauses du document rempli (non signé) — {ndaPreview.fileName}
+                        Aperçu local des clauses du document rempli (non signé) —{" "}
+                        {ndaPreview.fileName}
                       </p>
                       <pre className="max-h-80 overflow-auto whitespace-pre-wrap rounded-md bg-muted p-3 text-xs">
                         {ndaPreview.paragraphs.filter((p) => p.trim()).join("\n\n")}
@@ -1143,7 +1233,6 @@ function DesignSpace() {
                   </p>
                 </AccordionContent>
               </AccordionItem>
-
 
               <AccordionItem value="envoi">
                 <AccordionTrigger>Préparer la revue Standex</AccordionTrigger>
@@ -1177,11 +1266,24 @@ function DesignSpace() {
                                   "Exigences, montage, câblage, contraintes et contexte projet.",
                                 recipients: ["Standex R&D", "Standex commercial"],
                               })
-                            : { ...p, consents: p.consents.filter((c) => c.kind !== "supabase_dossier") },
+                            : {
+                                ...p,
+                                consents: p.consents.filter((c) => c.kind !== "supabase_dossier"),
+                              },
                         )
                       }
                     />
                     J'autorise l'envoi de ce contenu à Standex (R&D et commercial).
+                  </label>
+                  <label className="flex items-center gap-2 text-sm">
+                    <Checkbox
+                      checked={shareModel}
+                      disabled={!dossier.workshopAsset}
+                      onCheckedChange={(v) => setShareModel(Boolean(v))}
+                    />
+                    {dossier.workshopAsset
+                      ? `Je partage aussi le fichier 3D « ${dossier.workshopAsset.fileName} » avec l'équipe en charge.`
+                      : "Aucun fichier 3D importé : rien à partager."}
                   </label>
                   <label className="flex items-center gap-2 text-sm">
                     <Checkbox
@@ -1203,77 +1305,28 @@ function DesignSpace() {
               </AccordionItem>
 
               <AccordionItem value="echantillons">
-                <AccordionTrigger>Échantillons</AccordionTrigger>
-                <AccordionContent className="space-y-2">
+                <AccordionTrigger>Échantillons et suivi</AccordionTrigger>
+                <AccordionContent className="space-y-3">
                   <p className="text-sm">{sampleRoute.note}</p>
-                  {!publishedReview ? (
-                    <p className="text-sm text-amber-700">
-                      Les échantillons s'ouvrent après une revue Standex validée et publiée, qui fixe
-                      la référence exacte à commander. Une gamme ne suffit pas.
-                    </p>
-                  ) : null}
-                  {sampleRoute.kind === "distributors" && publishedReview ? (
-                    <>
-                      <ul className="list-disc pl-5 text-sm">
-                        {sampleRoute.partners.map((p) => (
-                          <li key={p.id}>
-                            <a
-                              className="underline"
-                              target="_blank"
-                              rel="noreferrer"
-                              href={p.search + encodeURIComponent(publishedReview.exactPart)}
-                            >
-                              {p.name}
-                            </a>
-                          </li>
-                        ))}
-                      </ul>
-                      <p className="text-xs text-muted-foreground">{SEARCH_LINK_DISCLAIMER}</p>
-                    </>
-                  ) : null}
-                  <div className="flex items-end gap-2">
-                    <div className="w-32">
-                      <Label className="text-xs">Quantité</Label>
-                      <Input
-                        inputMode="numeric"
-                        value={sampleQty}
-                        onChange={(e) => setSampleQty(e.target.value)}
-                      />
-                    </div>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => {
-                        const result = createSampleRequest(
-                          publishedReview?.exactPart ?? "",
-                          Number(sampleQty),
-                          sampleRoute,
-                          {
-                            reviewValidated: publishedReview !== null,
-                            exactPartConfirmed: publishedReview !== null,
-                          },
-                        );
-                        setSampleRequests((list) => (result.ok ? [...list, result.request] : list));
-                        setSampleMessage(
-                          result.ok
-                            ? "Demande conservée dans cet onglet uniquement : rien n'est envoyé et aucun stock n'est garanti."
-                            : result.reason,
-                        );
-                      }}
-                    >
-                      Enregistrer la demande
-                    </Button>
-                  </div>
-                  {sampleMessage ? <p className="text-sm">{sampleMessage}</p> : null}
-                  {sampleRequests.length ? (
-                    <ul className="list-disc pl-5 text-xs text-muted-foreground">
-                      {sampleRequests.map((r, i) => (
-                        <li key={i}>
-                          {r.quantity} × {r.partNumber} — conservé localement, non transmis.
-                        </li>
-                      ))}
-                    </ul>
-                  ) : null}
+                  <p className="text-sm text-amber-700">
+                    Les échantillons s'ouvrent après un retour Standex validé et publié, qui fixe la
+                    référence exacte à commander. Une gamme ne suffit pas.
+                  </p>
+                  <p className="text-xs text-muted-foreground">{SEARCH_LINK_DISCLAIMER}</p>
+                  <ClientFollowUp
+                    backend={backend}
+                    serverDossierId={serverDossierId}
+                    onSelectDossier={setServerDossierId}
+                    onReopenSnapshot={(snapshot, revision) => {
+                      const parsed = snapshot as unknown as DesignDossier;
+                      setDossier({ ...parsed, storage: "memory" });
+                      setWorkshop(parsed.workshop ?? null);
+                      setServerRevision(revision);
+                      setSubmitMessage(
+                        "Version reprise depuis le dossier réellement envoyé à Standex.",
+                      );
+                    }}
+                  />
                   <p className="text-xs text-muted-foreground">
                     Disponibilités, MOQ et conditionnements : inconnus tant qu'aucun fournisseur
                     réel n'est connecté.

@@ -14,11 +14,7 @@ import type {
 } from "./types";
 
 export type DossierSection =
-  | "commercial"
-  | "application"
-  | "mechanical"
-  | "electrical"
-  | "performance";
+  "commercial" | "application" | "mechanical" | "electrical" | "performance";
 
 export const SECTION_LABELS: Record<DossierSection, string> = {
   commercial: "Commercial",
@@ -42,30 +38,177 @@ export interface DossierFieldDef {
 
 /** Les 24 champs canoniques de ASSISTANT_CAPTEUR_APPLICATION_DOSSIER_FIELDS_V0.1.csv. */
 export const DOSSIER_FIELDS: readonly DossierFieldDef[] = [
-  { id: "contact_name", section: "commercial", labelFr: "Nom du contact", importance: "optionnelle", question: "Quel est le nom du contact chez vous ?" },
-  { id: "company", section: "commercial", labelFr: "Entreprise", importance: "optionnelle", question: "Quelle est votre entreprise ?" },
-  { id: "email", section: "commercial", labelFr: "E-mail", importance: "optionnelle", question: "À quelle adresse e-mail pouvons-nous vous envoyer le suivi ?" },
-  { id: "phone", section: "commercial", labelFr: "Téléphone", importance: "optionnelle", question: "Quel numéro pouvons-nous utiliser pour le rappel ?" },
-  { id: "city_based", section: "commercial", labelFr: "Ville où la personne est basée", importance: "critique", question: "Dans quelle ville êtes-vous basé ?" },
-  { id: "country", section: "commercial", labelFr: "Pays", importance: "optionnelle", question: "Dans quel pays est situé le site concerné ?" },
-  { id: "project_type", section: "commercial", labelFr: "Type de besoin", importance: "utile", question: "S'agit-il d'une nouvelle conception, d'une maintenance, d'un remplacement ou d'une équivalence ?" },
-  { id: "annual_volume", section: "commercial", labelFr: "Volume annuel estimé", importance: "optionnelle", question: "Quel volume annuel estimez-vous ?" },
-  { id: "timing", section: "commercial", labelFr: "Horizon projet", importance: "optionnelle", question: "Quel est votre horizon projet (prototype, série) ?" },
-  { id: "application_context", section: "application", labelFr: "Contexte d'application", importance: "critique", question: "Pouvez-vous décrire la machine ou le process concerné ?" },
-  { id: "detection_goal", section: "application", labelFr: "Ce qu'il faut détecter", importance: "critique", question: "Que faut-il détecter exactement (objet, état, mouvement) ?" },
-  { id: "safety_criticality", section: "application", labelFr: "Criticité / sécurité", importance: "utile", question: "Cette fonction a-t-elle un rôle de sécurité ou une conséquence critique ?" },
-  { id: "current_solution_or_reference", section: "application", labelFr: "Solution ou référence actuelle", importance: "utile", question: "Quelle solution ou référence utilisez-vous aujourd'hui ?" },
-  { id: "competitor_reference_or_datasheet", section: "application", labelFr: "Référence concurrente ou datasheet", importance: "utile", question: "Pouvez-vous transmettre la datasheet de la référence concurrente ?" },
-  { id: "mounting_type", section: "mechanical", labelFr: "Type de montage", importance: "critique", question: "Le capteur doit-il être vissé, encastré, cylindrique ou monté sur circuit imprimé ?" },
-  { id: "available_space_constraints", section: "mechanical", labelFr: "Encombrement disponible", importance: "utile", question: "De quel encombrement disposez-vous à l'emplacement du capteur ?" },
-  { id: "sensor_form_factor", section: "mechanical", labelFr: "Format capteur souhaité", importance: "utile", question: "Quel format de capteur visez-vous (cylindrique, bride, CMS, surmoulé, câble) ?" },
-  { id: "magnet_context", section: "mechanical", labelFr: "Aimant et orientation", importance: "utile", question: "Quel aimant est prévu et selon quelle orientation par rapport au capteur ?" },
-  { id: "target_distance_and_tolerance", section: "mechanical", labelFr: "Distance cible et tolérance", importance: "utile", question: "Quelle distance capteur-aimant visez-vous, et avec quelle tolérance ?" },
-  { id: "environment_ip_temp", section: "mechanical", labelFr: "Environnement, IP, température", importance: "utile", question: "Quel est l'environnement (température, humidité, poussière, IP) ?" },
-  { id: "electrical_role", section: "electrical", labelFr: "Rôle électrique du capteur", importance: "critique", question: "Le capteur envoie-t-il une information à une carte/automate, ou commute-t-il une charge ?" },
-  { id: "voltage_current_power", section: "electrical", labelFr: "Tension, courant, puissance", importance: "critique", question: "Quelles sont les valeurs de tension, de courant et de puissance réellement commutées ?" },
-  { id: "load_type_inrush", section: "electrical", labelFr: "Type de charge et appel", importance: "utile", question: "Quel type de charge est commuté, et connaissez-vous le courant d'appel ?" },
-  { id: "precision_repeatability_lifetime", section: "performance", labelFr: "Précision, répétabilité, durée de vie", importance: "utile", question: "Y a-t-il une exigence de précision, de répétabilité ou de durée de vie ?" },
+  {
+    id: "contact_name",
+    section: "commercial",
+    labelFr: "Nom du contact",
+    importance: "optionnelle",
+    question: "Quel est le nom du contact chez vous ?",
+  },
+  {
+    id: "company",
+    section: "commercial",
+    labelFr: "Entreprise",
+    importance: "optionnelle",
+    question: "Quelle est votre entreprise ?",
+  },
+  {
+    id: "email",
+    section: "commercial",
+    labelFr: "E-mail",
+    importance: "optionnelle",
+    question: "À quelle adresse e-mail pouvons-nous vous envoyer le suivi ?",
+  },
+  {
+    id: "phone",
+    section: "commercial",
+    labelFr: "Téléphone",
+    importance: "optionnelle",
+    question: "Quel numéro pouvons-nous utiliser pour le rappel ?",
+  },
+  {
+    id: "city_based",
+    section: "commercial",
+    labelFr: "Ville où la personne est basée",
+    importance: "critique",
+    question: "Dans quelle ville êtes-vous basé ?",
+  },
+  {
+    id: "country",
+    section: "commercial",
+    labelFr: "Pays",
+    importance: "optionnelle",
+    question: "Dans quel pays est situé le site concerné ?",
+  },
+  {
+    id: "project_type",
+    section: "commercial",
+    labelFr: "Type de besoin",
+    importance: "utile",
+    question:
+      "S'agit-il d'une nouvelle conception, d'une maintenance, d'un remplacement ou d'une équivalence ?",
+  },
+  {
+    id: "annual_volume",
+    section: "commercial",
+    labelFr: "Volume annuel estimé",
+    importance: "optionnelle",
+    question: "Quel volume annuel estimez-vous ?",
+  },
+  {
+    id: "timing",
+    section: "commercial",
+    labelFr: "Horizon projet",
+    importance: "optionnelle",
+    question: "Quel est votre horizon projet (prototype, série) ?",
+  },
+  {
+    id: "application_context",
+    section: "application",
+    labelFr: "Contexte d'application",
+    importance: "critique",
+    question: "Pouvez-vous décrire la machine ou le process concerné ?",
+  },
+  {
+    id: "detection_goal",
+    section: "application",
+    labelFr: "Ce qu'il faut détecter",
+    importance: "critique",
+    question: "Que faut-il détecter exactement (objet, état, mouvement) ?",
+  },
+  {
+    id: "safety_criticality",
+    section: "application",
+    labelFr: "Criticité / sécurité",
+    importance: "utile",
+    question: "Cette fonction a-t-elle un rôle de sécurité ou une conséquence critique ?",
+  },
+  {
+    id: "current_solution_or_reference",
+    section: "application",
+    labelFr: "Solution ou référence actuelle",
+    importance: "utile",
+    question: "Quelle solution ou référence utilisez-vous aujourd'hui ?",
+  },
+  {
+    id: "competitor_reference_or_datasheet",
+    section: "application",
+    labelFr: "Référence concurrente ou datasheet",
+    importance: "utile",
+    question: "Pouvez-vous transmettre la datasheet de la référence concurrente ?",
+  },
+  {
+    id: "mounting_type",
+    section: "mechanical",
+    labelFr: "Type de montage",
+    importance: "critique",
+    question: "Le capteur doit-il être vissé, encastré, cylindrique ou monté sur circuit imprimé ?",
+  },
+  {
+    id: "available_space_constraints",
+    section: "mechanical",
+    labelFr: "Encombrement disponible",
+    importance: "utile",
+    question: "De quel encombrement disposez-vous à l'emplacement du capteur ?",
+  },
+  {
+    id: "sensor_form_factor",
+    section: "mechanical",
+    labelFr: "Format capteur souhaité",
+    importance: "utile",
+    question: "Quel format de capteur visez-vous (cylindrique, bride, CMS, surmoulé, câble) ?",
+  },
+  {
+    id: "magnet_context",
+    section: "mechanical",
+    labelFr: "Aimant et orientation",
+    importance: "utile",
+    question: "Quel aimant est prévu et selon quelle orientation par rapport au capteur ?",
+  },
+  {
+    id: "target_distance_and_tolerance",
+    section: "mechanical",
+    labelFr: "Distance cible et tolérance",
+    importance: "utile",
+    question: "Quelle distance capteur-aimant visez-vous, et avec quelle tolérance ?",
+  },
+  {
+    id: "environment_ip_temp",
+    section: "mechanical",
+    labelFr: "Environnement, IP, température",
+    importance: "utile",
+    question: "Quel est l'environnement (température, humidité, poussière, IP) ?",
+  },
+  {
+    id: "electrical_role",
+    section: "electrical",
+    labelFr: "Rôle électrique du capteur",
+    importance: "critique",
+    question:
+      "Le capteur envoie-t-il une information à une carte/automate, ou commute-t-il une charge ?",
+  },
+  {
+    id: "voltage_current_power",
+    section: "electrical",
+    labelFr: "Tension, courant, puissance",
+    importance: "critique",
+    question:
+      "Quelles sont les valeurs de tension, de courant et de puissance réellement commutées ?",
+  },
+  {
+    id: "load_type_inrush",
+    section: "electrical",
+    labelFr: "Type de charge et appel",
+    importance: "utile",
+    question: "Quel type de charge est commuté, et connaissez-vous le courant d'appel ?",
+  },
+  {
+    id: "precision_repeatability_lifetime",
+    section: "performance",
+    labelFr: "Précision, répétabilité, durée de vie",
+    importance: "utile",
+    question: "Y a-t-il une exigence de précision, de répétabilité ou de durée de vie ?",
+  },
 ] as const;
 
 export interface DossierFieldValue extends DossierFieldDef {
@@ -133,9 +276,10 @@ const clean = (v: unknown): string | null => {
   return t;
 };
 
-function pick(
-  candidates: Array<[string | null, FieldSource]>,
-): { value: string | null; source: FieldSource | null } {
+function pick(candidates: Array<[string | null, FieldSource]>): {
+  value: string | null;
+  source: FieldSource | null;
+} {
   for (const [value, source] of candidates) {
     const c = clean(value);
     if (c) return { value: c, source };
@@ -152,7 +296,10 @@ function extractApplicationContext(text: string): string | null {
   const first = text.split(/[.\n!?]/)[0]?.trim() ?? "";
   if (!first) return null;
   const stripped = first
-    .replace(/^(je\s+(?:veux|voudrais|cherche à|souhaite)|nous\s+(?:voulons|souhaitons|cherchons|aurons|avons))\s+/i, "")
+    .replace(
+      /^(je\s+(?:veux|voudrais|cherche à|souhaite)|nous\s+(?:voulons|souhaitons|cherchons|aurons|avons))\s+/i,
+      "",
+    )
     .trim();
   return (stripped || first).toLowerCase().slice(0, 180);
 }
@@ -167,9 +314,7 @@ function extractDetectionGoal(text: string): string | null {
 }
 
 function extractVolume(text: string): string | null {
-  const m = text.match(
-    /(\d[\d\s\u202f.,]{2,})\s*(?:pi[èe]ces?|pcs|unit[ée]s?)\s*(?:\/|par\s+)an/i,
-  );
+  const m = text.match(/(\d[\d\s\u202f.,]{2,})\s*(?:pi[èe]ces?|pcs|unit[ée]s?)\s*(?:\/|par\s+)an/i);
   const n = m?.[1]?.trim().replace(/[.,]$/, "");
   return n ? `${n} pièces/an` : null;
 }
@@ -234,18 +379,21 @@ export function buildApplicationDossier(input: {
     project_type: pick([[projectType, "prospect"]]),
     annual_volume: pick([[volume, "prospect"]]),
     timing: pick([
-      [when(has("prototype", "urgent", "série", "serie"), "horizon projet évoqué dans la demande"), "prospect"],
+      [
+        when(has("prototype", "urgent", "série", "serie"), "horizon projet évoqué dans la demande"),
+        "prospect",
+      ],
     ]),
     application_context: pick([[appContext, "prospect"]]),
     detection_goal: pick([[detection, "prospect"]]),
     safety_criticality: pick([
-      [when(has("sécurit", "securit", "safety"), "contexte sécurité évoqué par le prospect"), "prospect"],
-    ]),
-    current_solution_or_reference: pick([
       [
-        prospectText.match(/\b(?:MK|GP|KSK|OKI|MS|HE)[- ]?\w{2,10}\b/i)?.[0] ?? null,
+        when(has("sécurit", "securit", "safety"), "contexte sécurité évoqué par le prospect"),
         "prospect",
       ],
+    ]),
+    current_solution_or_reference: pick([
+      [prospectText.match(/\b(?:MK|GP|KSK|OKI|MS|HE)[- ]?\w{2,10}\b/i)?.[0] ?? null, "prospect"],
     ]),
     competitor_reference_or_datasheet: pick([
       [
@@ -260,7 +408,9 @@ export function buildApplicationDossier(input: {
       [
         when(
           has("encastr", "vissé", "visse", "bride", "cms", "circuit imprimé", "surmoul", "cylindr"),
-          prospectText.match(/(encastr\w+|viss\w+|bride|CMS|circuit imprimé|surmoul\w+|cylindr\w+)/i)?.[0] ?? null,
+          prospectText.match(
+            /(encastr\w+|viss\w+|bride|CMS|circuit imprimé|surmoul\w+|cylindr\w+)/i,
+          )?.[0] ?? null,
         ),
         "prospect",
       ],
@@ -279,14 +429,21 @@ export function buildApplicationDossier(input: {
       ],
     ]),
     magnet_context: pick([
-      [when(has("aimant", "magnet"), "aimant évoqué dans la demande, orientation à préciser"), "prospect"],
+      [
+        when(has("aimant", "magnet"), "aimant évoqué dans la demande, orientation à préciser"),
+        "prospect",
+      ],
     ]),
     target_distance_and_tolerance: pick([
-      [prospectText.match(/(?:distance|entrefer|gap)[^.,;]{0,40}/i)?.[0]?.trim() ?? null, "prospect"],
+      [
+        prospectText.match(/(?:distance|entrefer|gap)[^.,;]{0,40}/i)?.[0]?.trim() ?? null,
+        "prospect",
+      ],
     ]),
     environment_ip_temp: pick([
       [
-        prospectText.match(/(-?\d+\s?°?\s?c\b|IP\s?\d{2}|humidit\w+|poussi\w+)/i)?.[0]?.trim() ?? null,
+        prospectText.match(/(-?\d+\s?°?\s?c\b|IP\s?\d{2}|humidit\w+|poussi\w+)/i)?.[0]?.trim() ??
+          null,
         "prospect",
       ],
     ]),
@@ -306,10 +463,7 @@ export function buildApplicationDossier(input: {
       [vcp, "trace interne"],
     ]),
     load_type_inrush: pick([
-      [
-        loadHit ? `${loadHit[1]} / charge inductive — courant d'appel à valider` : null,
-        "prospect",
-      ],
+      [loadHit ? `${loadHit[1]} / charge inductive — courant d'appel à valider` : null, "prospect"],
     ]),
     precision_repeatability_lifetime: pick([
       [
@@ -389,7 +543,8 @@ export function buildApplicationDossier(input: {
   const routing = cap(routingParts.join(" ; "));
 
   const productConfidence = trace?.confidence ?? null;
-  const routingConfidence = routingParts.length > 1 || s2 || inductive || volume ? "high" : "medium";
+  const routingConfidence =
+    routingParts.length > 1 || s2 || inductive || volume ? "high" : "medium";
 
   // --- Synthèse en français naturel ---
   const summaryParts: string[] = [];
@@ -473,10 +628,16 @@ export function buildDossierMarkdown(
   L.push(`- Routage : ${d.routing ?? "—"}`);
   L.push(`- Sortie : ${d.outputType ?? "—"}`);
   L.push(`- Confiance routage : ${d.routingConfidence ?? "—"}`);
-  L.push(`- Champs critiques manquants : ${d.missingCritical.filter((f) => f.importance === "critique").length}`);
+  L.push(
+    `- Champs critiques manquants : ${d.missingCritical.filter((f) => f.importance === "critique").length}`,
+  );
   L.push("");
   L.push("## Notes de revue", "");
-  L.push(d.reviewNotes.length ? d.reviewNotes.map((n) => `- ${n}`).join("\n") : "Revue humaine : non effectuée.");
+  L.push(
+    d.reviewNotes.length
+      ? d.reviewNotes.map((n) => `- ${n}`).join("\n")
+      : "Revue humaine : non effectuée.",
+  );
   L.push("");
   return L.join("\n");
 }

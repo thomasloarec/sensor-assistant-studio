@@ -4,11 +4,12 @@
 export const SUPABASE_URL =
   process.env["SUPABASE_URL"] ?? "https://yyobodalwtsqdyrqwkjk.supabase.co";
 export const SUPABASE_PUBLISHABLE_KEY =
-  process.env["SUPABASE_PUBLISHABLE_KEY"] ??
-  "sb_publishable__h2mt9iZvp1nuGhgVelHDg_OUiavePt";
+  process.env["SUPABASE_PUBLISHABLE_KEY"] ?? "sb_publishable__h2mt9iZvp1nuGhgVelHDg_OUiavePt";
 
 /** Vérifie le jeton porteur du testeur auprès de Supabase Auth. */
-export async function requireTester(accessToken: string): Promise<{ id: string; email: string | null }> {
+export async function requireTester(
+  accessToken: string,
+): Promise<{ id: string; email: string | null }> {
   if (!accessToken) throw new Error("Non authentifié : session testeur requise.");
   const res = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
     headers: {

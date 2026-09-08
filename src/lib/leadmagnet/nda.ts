@@ -27,11 +27,7 @@ export const EMPTY_NDA_FIELDS: NdaVariableFields = EMPTY_NDA_VALUES;
 export const NDA_FIELD_LABELS = VARIABLE_FIELDS.map((f) => [f.key, f.label] as const);
 
 export type NdaStatus =
-  | "not_required"
-  | "requested"
-  | "prepared"
-  | "awaiting_signatures"
-  | "in_force";
+  "not_required" | "requested" | "prepared" | "awaiting_signatures" | "in_force";
 
 export interface NdaProof {
   /** Preuve vérifiée côté serveur : identifiant de document signé et empreinte. */
@@ -71,8 +67,7 @@ export function prepareNda(state: NdaState): NdaPreparation {
       reason: `Le modèle approuvé « ${APPROVED_NDA_TEMPLATE.fileName} » n'est pas présent dans le projet. Aucun autre modèle ni résumé ne peut être généré.`,
     };
   const missing = missingNdaFields(state.fields);
-  if (missing.length)
-    return { ok: false, reason: `Champs à compléter : ${missing.join(", ")}.` };
+  if (missing.length) return { ok: false, reason: `Champs à compléter : ${missing.join(", ")}.` };
   return { ok: true, status: "prepared", fields: state.fields };
 }
 
@@ -92,7 +87,9 @@ export function ndaStatusLabel(state: NdaState): string {
     case "awaiting_signatures":
       return "En attente des signatures";
     case "in_force":
-      return state.proof ? "NDA en vigueur (preuve vérifiée)" : "Statut incohérent : preuve absente";
+      return state.proof
+        ? "NDA en vigueur (preuve vérifiée)"
+        : "Statut incohérent : preuve absente";
     default:
       return "NDA demandé";
   }

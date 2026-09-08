@@ -12,6 +12,15 @@ export interface ConnectorSpec {
   wireGauge: string | null;
   cable: string | null;
   conditions: string | null;
+  /** Provenance documentaire fabricant (facultative, conservée dans les exports). */
+  contactMpn?: string;
+  pitchMm?: number;
+  wireRangeHint?: string;
+  sourceUrl?: string;
+  sourcePages?: number[];
+  sourceCheckedAt?: string;
+  availability?: "unknown";
+  note?: string;
 }
 
 export type Termination =
@@ -88,8 +97,7 @@ export const CONNECTOR_FIELD_LABELS: [keyof ConnectorDraft, string][] = [
 ];
 
 export type ConnectorDraftResult =
-  | { ok: true; termination: Termination }
-  | { ok: false; missing: string[] };
+  { ok: true; termination: Termination } | { ok: false; missing: string[] };
 
 /** Le connecteur n'est retenu que si fabricant et référence exacte sont donnés. */
 export function terminationFromDraft(draft: ConnectorDraft): ConnectorDraftResult {
@@ -109,7 +117,10 @@ export function terminationFromDraft(draft: ConnectorDraft): ConnectorDraftResul
     cable: null,
     conditions: draft.conditions.trim() || null,
   };
-  return { ok: true, termination: { kind: "unqualified_connector", spec, status: "to_verify_by_rnd" } };
+  return {
+    ok: true,
+    termination: { kind: "unqualified_connector", spec, status: "to_verify_by_rnd" },
+  };
 }
 
 export function connectorSummaryLines(t: Termination): string[] {

@@ -60,43 +60,48 @@ de test interne, qui reste intact (`/`).
   recherche partenaires explicitement libellés « recherche, pas preuve de stock »,
   disponibilités « inconnu » et non zéro, aucun e-mail envoyé.
 
-## Ce qui exige une migration ou une configuration externe
+## État réel de la migration et de l'activation
 
-1. **Migration SQL versionnée** : `supabase/schema/migration_v1.0_lead_magnet.sql`.
-   Schéma `lead` séparé des tables `sensor_test_*` : `design_dossiers`,
-   `design_collaborators`, `design_revisions`, `design_reviews`, `internal_notes`, `offers`,
-   `sample_requests`, `nda_proofs`, plus `staff_members` (rôles provisionnés côté serveur,
-   aucune autoattribution), fonctions `security definer` à `search_path` figé, RLS complet,
-   grants minimaux, bucket privé `lead-design-files`. Je n'ai pas d'accès DDL au projet
-   `yyobodalwtsqdyrqwkjk` depuis cette session : la migration doit être appliquée dans le SQL
-   editor du projet. Tant qu'elle n'est pas appliquée, `checkLeadBackend()` renvoie
-   « indisponible » et les actions serveur restent désactivées.
-2. **Interface R&D authentifiée** : la logique métier (revues, publication du retour client,
-   notes internes, offres, invalidation par version, concurrence optimiste) est implémentée et
-   testée dans `src/lib/leadmagnet/review.ts`, mais l'écran R&D n'est pas branché tant que les
-   tables et les rôles staff n'existent pas côté backend.
-3. **Preuve de NDA signé** : la génération et l'aperçu fonctionnent hors ligne, mais le
-   passage au statut « en vigueur » demande une preuve vérifiée côté Standex (empreinte du
-   document signé, date, vérificateur), stockée dans `lead.nda_proofs` — donc après migration.
-4. **Longueurs standard, combinaisons connecteurs, disponibilités fournisseurs** : registres
-   volontairement vides, à remplir uniquement avec des données sourcées.
-5. **Préremplissage société** : aucun service de recherche n'est connecté
-   (`NO_COMPANY_LOOKUP_CONFIGURED`), la saisie reste manuelle.
+1. **Migration SQL versionnée, NON appliquée** :
+   `supabase/schema/migration_v1.2_lead_magnet.sql` (les brouillons V1.0 et V1.1 sont
+   supprimés et ne doivent pas être appliqués). Schéma `lead` séparé des tables
+   `sensor_test_*` : dossiers, collaborateurs, affectations staff, révisions immuables,
+   revues, notes internes, offres, échantillons, preuves NDA, sessions d'upload, journal
+   d'audit, bucket privé `lead-design-files`. Fonctions `security definer` isolées dans
+   `lead_priv` (`search_path` figé, EXECUTE de PUBLIC révoqué), wrappers publics invoker,
+   RLS complet, aucun accès `anon` hors sonde de version.
+   Le propriétaire applique cette migration lui-même après relecture ; aucune session ici
+   n'a modifié le backend `yyobodalwtsqdyrqwkjk`.
+2. **Activation** : `checkLeadBackend()` compare réellement la version de schéma renvoyée
+   par le serveur à `1.2` (et non un simple booléen), puis exige une session et un rôle
+   renvoyé par le serveur. Tant que la migration n'est pas appliquée, les écrans annoncent
+   « liaison à activer » et n'affichent aucun succès simulé.
+3. **Écrans branchés** : `/design` (client : conception, câble, connecteurs, NDA, envoi,
+   suivi réel des retours, variantes, offres, échantillons et retours d'usage) et
+   `/standex` (équipe : boîte de réception, affectation par nom, lecture du dossier envoyé,
+   retour R&D publié avec référence exacte et variante, notes internes séparées, offres,
+   suivi des échantillons, enregistrement d'une preuve NDA). Ces écrans appellent les RPC
+   réelles ; ils restent inactifs sans migration ni rôle serveur.
+4. **Preuve de NDA signé** : le document original reste immuable ; générer une copie remplie
+   ne vaut pas signature. Un administrateur habilité dépose le document signé (empreinte
+   SHA-256 calculée automatiquement) ou déclare explicitement une archive externe ; le
+   serveur exige contreparties, référence de preuve, date et vérificateur.
+5. **Modèle 3D** : il reste en mémoire de l'onglet tant que le partage n'est pas coché ; le
+   partage ouvre une session d'upload consentie et dépose le fichier réel dans le bucket
+   privé, visible par l'équipe affectée.
+6. **Connecteurs** : quatre boîtiers documentés par le fabricant (JST XHP-2/XHP-3,
+   PHR-2/PHR-3) avec contact et embase distincts et sources PDF officielles. Brochage,
+   section réelle et disponibilité restent inconnus, statut « à vérifier par la R&D ». Ce
+   n'est pas un catalogue du marché.
+7. **Restent extérieurs** : signatures électroniques, catalogues et stocks distributeurs,
+   registre des entreprises (`NO_COMPANY_LOOKUP_CONFIGURED`), longueurs de câble hors des
+   gammes réellement sourcées.
 
-## Tests exécutés
+## Recettes SQL exécutées (base PostgreSQL jetable, jamais le vrai backend)
 
-`bun test tests/` → **88 tests, 0 échec**, dont 7 dans `tests/nda-docx.test.ts` (empreinte du
-modèle, refus d'un fichier non conforme, paragraphes hors champs variables identiques, tous les
-autres fichiers du .docx identiques octet pour octet, lieu Standex et mentions Stamp/Signature
-préservés, original intact, nom de fichier non signé) et 15 dans `tests/lead-magnet.test.ts` :
-exploration sans transfert, confirmé vs hypothèse, filtrage mécanique et encombrement,
-polyligne vs distance directe, marges et géométrie incomplète, suffixes de références,
-connecteurs non inventés, NDA brouillon incapable d'autoriser un transfert, consentement puis
-NDA, volume entier / inconnu, soumission non simulée et instantané sans notes internes, prix
-refusé avant revue et hors rôle, invalidation par version et concurrence, seuils
-999 / 1000 / inconnu / spécifique, correspondance exacte des références).
-`bunx tsgo --noEmit` → aucune erreur. Les suites existantes du banc de test et de l'atelier
-sont inchangées et passent.
+- `bun tools/sql-review.mjs` → **58/58 contrôles**.
+- `bun tools/sql-independent-review.mjs` → **9/9 contrôles indépendants**, avec l'instantané
+  réel produit par `createDossier`/`toClientDto` (`tests/fixtures/synthetic-dossier-fixture.json`).
 
 ## Accès aperçu
 
@@ -108,7 +113,7 @@ Aperçu privé : `/` = banc de test interne inchangé ; `/design` = espace de co
 `src/lib/leadmagnet/` : `dossier.ts`, `candidates.ts`, `cabling.ts`, `connectors.ts`,
 `privacy.ts`, `nda.ts`, `nda-docx.ts`, `submission.ts`, `review.ts`, `samples.ts`, `backend.ts`
 (logique métier pure, sans UI ni réseau sauf `backend.ts`).
-`src/routes/design.tsx` : UI. `supabase/schema/migration_v1.0_lead_magnet.sql` : DDL.
+`src/routes/design.tsx` : UI. `supabase/schema/migration_v1.2_lead_magnet.sql` : DDL.
 
 Emplacement réservé pour une future filière « remplacement concurrent » (référence exacte,
 datasheet, montage) : non développée, aucun champ inventé.
