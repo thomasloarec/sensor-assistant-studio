@@ -14,6 +14,9 @@ import {
   Cpu,
   Cable,
   Loader2,
+  Pencil,
+  Check,
+  X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LanguagePicker } from "@/lib/i18n/react";
