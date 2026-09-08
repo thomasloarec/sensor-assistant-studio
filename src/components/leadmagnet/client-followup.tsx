@@ -2,7 +2,7 @@
  *
  * Tout vient des appels serveur : aucune réussite n'est simulée localement.
  */
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -24,6 +24,7 @@ import type { VariantProposal } from "@/lib/leadmagnet/variant";
 interface Props {
   backend: LeadBackendStatus | null;
   serverDossierId: string | null;
+  contextGeneration: number;
   /** Ouvre RÉELLEMENT un dossier : le dernier contenu envoyé accompagne le
    * changement de contexte, sinon l'ancien contenu resterait affiché. */
   onSelectDossier: (dossier: {
@@ -74,6 +75,7 @@ const verdictLabel: Record<string, string> = {
 export function ClientFollowUp({
   backend,
   serverDossierId,
+  contextGeneration,
   onSelectDossier,
   onReopenSnapshot,
   onApplyVariant,
@@ -84,6 +86,11 @@ export function ClientFollowUp({
   const [qty, setQty] = useState("5");
   const [feedback, setFeedback] = useState<Record<string, string>>({});
   const ready = Boolean(backend?.ready);
+  const viewRequest = useRef(0);
+  useEffect(() => {
+    viewRequest.current += 1;
+    setView(null);
+  }, [serverDossierId, contextGeneration]);
 
   const reloadList = useCallback(async () => {
     if (!ready) return;
@@ -95,9 +102,13 @@ export function ClientFollowUp({
   }, [ready]);
 
   const reloadView = useCallback(async (id: string) => {
+    const request = ++viewRequest.current;
     try {
-      setView(await fetchClientView(id));
+      const loaded = await fetchClientView(id);
+      if (request !== viewRequest.current) return;
+      setView(loaded);
     } catch (error) {
+      if (request !== viewRequest.current) return;
       setView(null);
       setMessage(error instanceof Error ? error.message : null);
     }
@@ -108,7 +119,7 @@ export function ClientFollowUp({
   }, [reloadList]);
   useEffect(() => {
     if (ready && serverDossierId) void reloadView(serverDossierId);
-  }, [ready, serverDossierId, reloadView]);
+  }, [ready, serverDossierId, contextGeneration, reloadView]);
 
   if (!ready)
     return (
@@ -145,10 +156,13 @@ export function ClientFollowUp({
                 // On charge le contenu réellement envoyé AVANT de changer le
                 // contexte : ouvrir un dossier ne doit jamais laisser à l'écran
                 // le contenu du dossier précédent.
+                const request = ++viewRequest.current;
                 let loaded: DossierView | null = null;
                 try {
                   loaded = await fetchClientView(d.id);
+                  if (request !== viewRequest.current) return;
                 } catch (error) {
+                  if (request !== viewRequest.current) return;
                   setMessage(error instanceof Error ? error.message : null);
                   return;
                 }

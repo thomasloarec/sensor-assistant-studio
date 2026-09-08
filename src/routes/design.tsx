@@ -497,7 +497,7 @@ function DesignSpace() {
 
   const importDossier = useCallback(
     async (file: File | undefined) => {
-      if (!file) return;
+      if (!file || busyRef.current) return;
       setImportMessage(null);
       try {
         const parsed = parseDossierExport(JSON.parse(await file.text()));
@@ -1784,7 +1784,9 @@ function DesignSpace() {
                   <ClientFollowUp
                     backend={backend}
                     serverDossierId={serverDossierId}
+                    contextGeneration={contextGenRef.current}
                     onSelectDossier={({ id, revision, title, snapshot }) => {
+                      if (busyRef.current) return { ok: false };
                       // Le dossier CONSULTÉ ne devient le dossier ÉDITÉ que si son
                       // dernier contenu envoyé a pu être chargé : sinon l'ancien
                       // contenu resterait à l'écran sous une nouvelle étiquette.
@@ -1800,6 +1802,9 @@ function DesignSpace() {
                       if (parsed && parsed.ok) {
                         setDossier({ ...parsed.dossier, storage: "memory" });
                         setWorkshop(parsed.dossier.workshop ?? null);
+                      } else {
+                        setDossier({ ...createDossier(), title });
+                        setWorkshop(null);
                       }
                       resetServerContext(id, revision);
                       setSubmitMessage(
@@ -1810,6 +1815,7 @@ function DesignSpace() {
                       return { ok: true };
                     }}
                     onReopenSnapshot={({ dossierId, sourceRevision, currentRevision, snapshot }) => {
+                      if (busyRef.current) return { ok: false };
                       const parsed = parseServerSnapshot(snapshot);
                       if (!parsed.ok) {
                         setSubmitMessage(parsed.reason);
@@ -1829,6 +1835,12 @@ function DesignSpace() {
                       return { ok: true };
                     }}
                     onApplyVariant={async ({ dossierId, revision, snapshot, variant, commit }) => {
+                      if (busyRef.current)
+                        return {
+                          applied: [],
+                          notApplied: [],
+                          refused: "Une opération est en cours. Réessayez après sa fin.",
+                        };
                       // La variante s'applique au contenu de LA version relue par
                       // Standex, jamais à un contenu resté d'un autre dossier.
                       const parsed = parseServerSnapshot(snapshot);
@@ -1846,6 +1858,8 @@ function DesignSpace() {
                       }
                       try {
                         // Le serveur enregistre la reprise AVANT que l'écran change.
+                        busyRef.current = true;
+                        setBusy(true);
                         await commit();
                       } catch (error) {
                         return {
@@ -1856,6 +1870,9 @@ function DesignSpace() {
                               ? error.message
                               : "La reprise de cette proposition n'a pas été enregistrée.",
                         };
+                      } finally {
+                        busyRef.current = false;
+                        setBusy(false);
                       }
                       setDossier(out.dossier);
                       setWorkshop(out.dossier.workshop ?? null);
