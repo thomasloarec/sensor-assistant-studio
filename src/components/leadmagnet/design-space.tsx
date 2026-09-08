@@ -628,9 +628,18 @@ export function DesignSpace({
       if (!file || busyRef.current) return;
       // Garde unique : elle protège TOUS les imports, d'où qu'ils partent.
       if (!guardReplace("reprendre ce fichier")) return;
+      const request = ++importRequestRef.current;
+      const context = contextGenRef.current;
+      const beforeRead = fingerprint(dossierRef.current);
       setImportMessage(null);
       try {
-        const parsed = parseDossierExport(JSON.parse(await file.text()));
+        const source = await file.text();
+        if (request !== importRequestRef.current || context !== contextGenRef.current || busyRef.current) return;
+        if (beforeRead !== fingerprint(dossierRef.current)) {
+          setImportMessage("Votre projet a changé pendant la lecture : relancez l'import pour remplacer ce nouveau contenu.");
+          return;
+        }
+        const parsed = parseDossierExport(JSON.parse(source));
         if (!parsed.ok) {
           setImportMessage(parsed.reason);
           return;
