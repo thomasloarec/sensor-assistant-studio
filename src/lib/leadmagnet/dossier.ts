@@ -241,8 +241,32 @@ export function toClientDto(d: DesignDossier): ClientDossierDto {
   return clone as ClientDossierDto;
 }
 
+/** Écriture décimale EXACTE d'un nombre, sans notation exponentielle.
+ *
+ * PostgreSQL développe `1e-7` en `0.0000001` quand il rend un `jsonb` en texte,
+ * alors que JavaScript écrit `1e-7`. Le hash calculé ici et celui recalculé par
+ * le serveur divergeaient donc dès qu'une coordonnée très petite (résidu normal
+ * d'une rotation 3D) ou très grande apparaissait, et la soumission d'un vrai
+ * montage d'atelier était refusée. On développe ici la même écriture que
+ * PostgreSQL : aucun arrondi, aucun chiffre ajouté ou retiré, seule la notation
+ * change. Le serveur reste l'autorité et le contrôle du hash reste actif.
+ */
+function plainNumber(n: number): string {
+  if (!Number.isFinite(n)) return "null";
+  const s = String(n);
+  const m = /^(-?)(\d+)(?:\.(\d+))?e([+-]\d+)$/i.exec(s);
+  if (!m) return s;
+  const [, sign, intPart, fracPart = "", expPart] = m;
+  const digits = (intPart as string) + fracPart;
+  const point = (intPart as string).length + Number(expPart);
+  if (point <= 0) return `${sign}0.${"0".repeat(-point)}${digits}`;
+  if (point >= digits.length) return `${sign}${digits}${"0".repeat(point - digits.length)}`;
+  return `${sign}${digits.slice(0, point)}.${digits.slice(point)}`;
+}
+
 function stableStringify(value: unknown): string {
   if (Array.isArray(value)) return `[${value.map(stableStringify).join(",")}]`;
+  if (typeof value === "number") return plainNumber(value);
   if (value && typeof value === "object") {
     const entries = Object.entries(value as Record<string, unknown>)
       .filter(([, v]) => v !== undefined)
@@ -251,6 +275,7 @@ function stableStringify(value: unknown): string {
   }
   return JSON.stringify(value ?? null);
 }
+
 
 export async function dossierHash(dto: ClientDossierDto): Promise<string> {
   const payload = stableStringify({ ...dto, updatedAt: undefined });
