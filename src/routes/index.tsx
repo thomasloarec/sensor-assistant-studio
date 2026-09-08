@@ -65,12 +65,13 @@ function HomeRoute() {
   return (
     <div data-readable className="min-h-screen bg-background text-foreground">
       <header className="border-b bg-card">
-        <div className="mx-auto flex max-w-6xl items-center gap-4 px-4 py-4">
+        <div className="mx-auto flex max-w-6xl items-center gap-2 px-4 py-4 sm:gap-4">
           <span className="flex min-w-0 items-center gap-2">
             <Magnet className="h-6 w-6 shrink-0 text-primary" aria-hidden="true" />
-            <span className="truncate text-lg font-semibold">Standex DETECT</span>
+            <span className="truncate text-base font-semibold sm:text-lg">Standex DETECT</span>
           </span>
-          <div className="ml-auto flex items-center gap-2">
+          <div className="ml-auto flex shrink-0 items-center gap-2">
+
             <Sheet open={accountOpen} onOpenChange={setAccountOpen}>
               <SheetTrigger asChild>
                 <Button variant="outline" className="min-h-11 text-base">
