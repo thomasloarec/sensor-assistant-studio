@@ -373,22 +373,31 @@ export function ClientFollowUp({
           </section>
 
           {onReopenSnapshot && current.revisions.length ? (
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => {
-                const last = current.revisions[current.revisions.length - 1];
-                if (last)
-                  onReopenSnapshot({
-                    dossierId: current.dossier.id,
-                    revision: last.revision,
-                    snapshot: last.snapshot,
-                  });
-              }}
-
-            >
-              Reprendre la dernière version envoyée
-            </Button>
+            <section className="space-y-2">
+              <h4 className="font-medium">Reprendre une version envoyée</h4>
+              <div className="flex flex-wrap gap-2">
+                {current.revisions.map((r) => (
+                  <Button
+                    key={r.id}
+                    size="sm"
+                    variant="outline"
+                    onClick={() =>
+                      onReopenSnapshot({
+                        dossierId: current.dossier.id,
+                        revision: r.revision,
+                        snapshot: r.snapshot,
+                      })
+                    }
+                  >
+                    Version {r.revision}
+                  </Button>
+                ))}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                La reprise ouvre exactement le contenu envoyé pour ce dossier. Votre accord d'envoi
+                et la relecture sont à refaire.
+              </p>
+            </section>
           ) : null}
         </>
       ) : null}
