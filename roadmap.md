@@ -1,6 +1,7 @@
 # Lead Magnet — état des travaux
 
 ## Fait
+
 - Migration `supabase/schema/migration_v1.2_lead_magnet.sql` corrigée (volume annuel réel,
   refus NaN/Infini, instantané validé, consentement daté et rattaché, variante verrouillée,
   retour d'échantillon lié à sa version, revalidation explicite, preuve NDA liée à un fichier
@@ -22,11 +23,13 @@
 - 150 tests, typecheck, build et smoke navigateur réel (162 mm mesurés) passent.
 
 ## Bloqué (hors de mon contrôle)
+
 - Application de la migration sur `yyobodalwtsqdyrqwkjk` : réservée au propriétaire.
 - Provisionnement du premier compte administrateur Standex (`service_role`).
 - Signatures électroniques, catalogues distributeurs, registre des entreprises : externes.
 
 ## Lot R&D / connexion — terminé
+
 - `/standex` : proposition de variante structurée (réserve, tolérance, choix de longueur,
   fabricant/référence/voies du connecteur) réellement reprise par `applyVariant` côté client ;
   les notes restent descriptives et un connecteur proposé reste « à vérifier ».
@@ -39,6 +42,7 @@
 - La migration Lead Magnet reste NON appliquée au backend live.
 
 ## Lot fichiers / envoi / provenance — terminé (2026-09-08)
+
 - Boucle d'envoi supprimée : le fichier 3D est déposé et vérifié AVANT l'accord
   ("1. Déposer le fichier 3D"), l'accord porte donc sur ce qui partira réellement.
   Une nouvelle tentative réutilise le dépôt existant au lieu d'en refaire un.
@@ -60,6 +64,7 @@
 - La migration Lead Magnet reste NON appliquée au backend live ; aucun rôle attribué.
 
 ## 2026-09-08 — Sérialisation canonique des nombres
+
 - `stableStringify` développe désormais la notation exponentielle JSON exactement comme PostgreSQL rend un `jsonb` en texte (aucun arrondi, aucune valeur modifiée).
 - Cas vérifiés identiques JS/SQL sur PostgreSQL réel (PGlite) : 1e-7, 6.123233995736766e-17, 1e21, 5e-324, 0.123456789, 1000, 0, et leurs négatifs.
 - Un snapshot d'atelier avec résidus de rotation 3D n'est donc plus refusé en CONTENT_HASH_MISMATCH. Le serveur reste l'autorité et le contrôle du hash reste actif.
@@ -67,6 +72,7 @@
 - Migration Lead Magnet toujours NON appliquée au backend live, projet privé, NDA original inchangé.
 
 ## 2026-09-08 — Diff serveur appliqué + branchements d'écran
+
 - Diff SQL appliqué à l'identique dans `supabase/schema/migration_v1.2_lead_magnet.sql` :
   `state`/`source` d'exigence non nulls, révision/revue d'origine immuables avec
   `revalidated_for_revision`/`revalidated_review_id` distincts, fichier déposé
@@ -96,6 +102,7 @@
 - Migration toujours NON appliquée, aucun rôle attribué, projet privé, NDA inchangé.
 
 ## 2026-09-08 (fin de journée) — état réel du backend
+
 - Le SQL de `supabase/schema/migration_v1.2_lead_magnet.sql` est APPLIQUÉ sur le
   backend Standex existant yyobodalwtsqdyrqwkjk (diff identique, seules des
   lignes vides diffèrent). Sonde réelle : HTTP 200, `ready=true`, schéma 1.4.
@@ -113,8 +120,15 @@
   une opération en cours.
 
 ## Refonte UX 2026-09-08 (état actuel)
+
 - `/` = accueil client (aimant manipulable souris/tactile/clavier + curseur) puis espace projet unifié montant `DesignSpace` (`src/components/leadmagnet/design-space.tsx`).
 - Banc de test interne déplacé INTACT vers `/internal` (`src/routes/internal.tsx`, scénarios, trace, batch, 8 langues). `/standex` inchangé. `/design` monte le même `DesignSpace`.
 - Parcours guidé « Mon besoin → Mon montage → Avec Standex » : une question à la fois, « Je ne sais pas encore », retour arrière ; tous les onglets détaillés restent accessibles via « Ouvrir les outils détaillés ».
 - Aucun changement SQL, Edge, rôles, NDA, moteur métier ni backend. `resetServerContext`, `contextGenRef`, `busyRef`, snapshot/sourceRevision/CAS, variantes et GLB SHA/assetKey conservés tels quels dans `design-space.tsx`.
 - Vérifs : 180 tests bun (0 échec), typecheck OK, build OK, parcours navigateur desktop+mobile sans erreur console ni débordement 320px.
+
+## Refonte visuelle — lot B/4
+
+- [x] Mettre en scène l’accueil immersif sans modifier son parcours ni ses textes.
+- [x] Moderniser la démonstration aimant sans modifier sa physique ni ses contrôles.
+- [x] Vérifier tests, types, build, trois largeurs et réduction des animations.
