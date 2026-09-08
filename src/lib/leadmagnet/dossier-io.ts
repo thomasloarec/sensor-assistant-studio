@@ -9,6 +9,7 @@ import { z } from "zod";
 import { createDossier, type DesignDossier } from "./dossier";
 import { EMPTY_CABLING } from "./cabling";
 import { parseWorkshopConfig } from "@/lib/standex/magnetic-workshop";
+import { isKnownSensorId } from "@/lib/standex/sensor-catalog";
 import { DEFAULT_TERMINATION } from "./connectors";
 
 export const EXPORT_FORMAT = "standex-design-dossier";
@@ -175,8 +176,6 @@ const dossierSchema = z.object({
   workshop: z.unknown(),
   business: z.unknown(),
   workshopSource: z.enum(["none", "example", "user_asset"]).catch("none"),
-  // Un identifiant inconnu redevient « aucun choix » : le laisser passer
-  // ferait retomber l'affichage sur un autre capteur du catalogue.
   selectedSensorId: knownSensorId,
   workshopSensorId: knownSensorId,
   freeConstraints: z.string().catch(""),
