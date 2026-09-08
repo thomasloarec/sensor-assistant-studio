@@ -54,8 +54,12 @@ test("candidats filtrés par montage explicite, jamais validés", () => {
     mounting: { kind: "press_fit", holeDiameterMm: 8 },
     envelope: dossier().envelope,
   });
-  expect(hole.find((c) => c.id === "MK36")!.status).toBe("excluded"); // collerette 10,7 mm
-  expect(hole.find((c) => c.id === "MK38")!.status).toBe("to_verify");
+  expect(hole.find((c) => c.id === "MK36")!.status).toBe("excluded"); // collerette 10,7 mm > 8 mm
+  const wider = evaluateCandidates({
+    mounting: { kind: "press_fit", holeDiameterMm: 11 },
+    envelope: dossier().envelope,
+  });
+  expect(wider.find((c) => c.id === "MK38")!.status).toBe("to_verify");
   expect(smd.every((c) => c.familyOnly)).toBe(true);
 });
 
@@ -84,7 +88,7 @@ test("longueur de câble : polyligne réelle, marges explicites, jamais approuv�
         points: [
           [0, 0, 0],
           [0, 60, 0],
-          [40, 60, 100],
+          [40, 60, 240],
         ] as [number, number, number][],
       },
     ],
