@@ -25,3 +25,15 @@
 - Application de la migration sur `yyobodalwtsqdyrqwkjk` : réservée au propriétaire.
 - Provisionnement du premier compte administrateur Standex (`service_role`).
 - Signatures électroniques, catalogues distributeurs, registre des entreprises : externes.
+
+## Lot R&D / connexion — terminé
+- `/standex` : proposition de variante structurée (réserve, tolérance, choix de longueur,
+  fabricant/référence/voies du connecteur) réellement reprise par `applyVariant` côté client ;
+  les notes restent descriptives et un connecteur proposé reste « à vérifier ».
+- `/standex` : résumé technique lisible de la version envoyée (brut repliable) et
+  téléchargement des fichiers réellement transférés via lien signé.
+- Connexion réelle (compte du projet Supabase existant) accessible depuis `/design` et
+  `/standex`, avec rafraîchissement du statut sur changement de session.
+- Variante déjà remplacée : bouton désactivé côté client.
+- Vérifs : `bun test` 154/154, SQL 62/62, indépendant 9/9, typecheck, build, smoke navigateur.
+- La migration Lead Magnet reste NON appliquée au backend live.
