@@ -73,7 +73,13 @@ const emptyReview = {
   exactPartNumber: "",
   designation: "standard" as "standard" | "custom",
   variantCable: "",
+  variantReserveMm: "",
+  variantToleranceMm: "",
+  variantLengthChoice: "" as "" | "standard_to_confirm" | "custom_to_confirm",
   variantConnector: "",
+  variantConnectorMaker: "",
+  variantConnectorMpn: "",
+  variantConnectorPositions: "",
   variantPcb: "",
   variantDescription: "",
 };
@@ -390,29 +396,71 @@ function StandexConsole() {
                     </div>
                     <div className="grid gap-2 sm:grid-cols-3">
                       <div>
-                        <Label className="text-xs">Variante — câble</Label>
+                        <Label className="text-xs">Variante — câble (note)</Label>
                         <Input
                           value={review.variantCable}
                           onChange={(e) => setReview({ ...review, variantCable: e.target.value })}
                         />
                       </div>
                       <div>
-                        <Label className="text-xs">Variante — connecteur</Label>
+                        <Label className="text-xs">Réserve de service proposée (mm)</Label>
                         <Input
-                          value={review.variantConnector}
+                          inputMode="decimal"
+                          value={review.variantReserveMm}
+                          onChange={(e) => setReview({ ...review, variantReserveMm: e.target.value })}
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-xs">Tolérance proposée (± mm)</Label>
+                        <Input
+                          inputMode="decimal"
+                          value={review.variantToleranceMm}
                           onChange={(e) =>
-                            setReview({ ...review, variantConnector: e.target.value })
+                            setReview({ ...review, variantToleranceMm: e.target.value })
                           }
                         />
                       </div>
                       <div>
-                        <Label className="text-xs">Variante — carte</Label>
+                        <Label className="text-xs">Connecteur — fabricant</Label>
+                        <Input
+                          value={review.variantConnectorMaker}
+                          onChange={(e) =>
+                            setReview({ ...review, variantConnectorMaker: e.target.value })
+                          }
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-xs">Connecteur — référence exacte</Label>
+                        <Input
+                          value={review.variantConnectorMpn}
+                          onChange={(e) =>
+                            setReview({ ...review, variantConnectorMpn: e.target.value })
+                          }
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-xs">Connecteur — voies</Label>
+                        <Input
+                          inputMode="numeric"
+                          value={review.variantConnectorPositions}
+                          onChange={(e) =>
+                            setReview({ ...review, variantConnectorPositions: e.target.value })
+                          }
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-xs">Variante — carte (note)</Label>
                         <Input
                           value={review.variantPcb}
                           onChange={(e) => setReview({ ...review, variantPcb: e.target.value })}
                         />
                       </div>
                     </div>
+                    <p className="text-xs text-muted-foreground">
+                      Les valeurs chiffrées et la référence exacte sont réellement reprises dans le
+                      dossier du client ; les notes restent descriptives. Un connecteur proposé
+                      reste « à vérifier » : ce n'est pas une qualification Standex.
+                    </p>
                     <div>
                       <Label className="text-xs">Variante — description</Label>
                       <Textarea
@@ -454,8 +502,34 @@ function StandexConsole() {
                             exactPartNumber: review.exactPartNumber.trim() || null,
                             designation: review.exactPartNumber.trim() ? review.designation : null,
                             variant: {
-                              cable: review.variantCable,
-                              connector: review.variantConnector,
+                              cable: {
+                                ...(review.variantReserveMm.trim()
+                                  ? { serviceReserveMm: Number(review.variantReserveMm) }
+                                  : {}),
+                                ...(review.variantToleranceMm.trim()
+                                  ? { toleranceMm: Number(review.variantToleranceMm) }
+                                  : {}),
+                                ...(review.variantLengthChoice
+                                  ? { lengthChoice: review.variantLengthChoice }
+                                  : {}),
+                                ...(review.variantCable.trim()
+                                  ? { text: review.variantCable.trim() }
+                                  : {}),
+                              },
+                              connector: {
+                                ...(review.variantConnectorMaker.trim()
+                                  ? { manufacturer: review.variantConnectorMaker.trim() }
+                                  : {}),
+                                ...(review.variantConnectorMpn.trim()
+                                  ? { mpn: review.variantConnectorMpn.trim() }
+                                  : {}),
+                                ...(review.variantConnectorPositions.trim()
+                                  ? { positions: Number(review.variantConnectorPositions) }
+                                  : {}),
+                                ...(review.variantConnector.trim()
+                                  ? { text: review.variantConnector.trim() }
+                                  : {}),
+                              },
                               pcb: review.variantPcb,
                               description: review.variantDescription,
                             },
