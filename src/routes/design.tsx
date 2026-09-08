@@ -1591,7 +1591,7 @@ function DesignSpace() {
                       // Changer de dossier remet TOUT le contexte serveur au même
                       // instant : sinon le dossier A pourrait partir dans le dossier B.
                       setServerDossierId(d.id);
-                      setServerRevision(d.current_revision ?? d.revision);
+                      setServerRevision(d.revision);
                       setNdaServer(null);
                       setNda(INITIAL_NDA);
                       setPrivacy((p) => ({ ...p, consents: [] }));
