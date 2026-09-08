@@ -195,12 +195,37 @@ Les tables applicatives sont placées dans un conteneur défilable. Les contrôl
 ont une cible minimale de 44 px, un focus visible, et le texte d'interface est
 maintenu à 14 px minimum au rendu, y compris dans l'atelier dense.
 
-## 10. Ce qui reste ouvert
+## 10. Logo
 
-- Le logo Standex officiel n'est pas encore disponible en SVG. Son emplacement
-  réservé est le bloc de marque des en-têtes dans `src/routes/index.tsx`,
-  `src/routes/internal.tsx` et l'en-tête de l'atelier ; ne pas redessiner ni
-  vectoriser un logo approximatif.
+Fichiers officiels dans `public/brand/`, référencés uniquement par
+`src/components/standex/brand-logo.tsx` :
+
+| Fichier | Usage |
+| --- | --- |
+| `logo-lockup.png` (600×141) | logo primaire sur fond clair |
+| `logo-lockup-reversed.png` | logo primaire sur fond sombre |
+| `logo-mark.png` (120×117) | bloc « S » seul, fond clair (chrome dense) |
+| `logo-mark-reversed.png` | bloc « S » seul, fond sombre |
+| `favicon-32.png` | favicon navigateur |
+| `apple-touch-icon.png` | écran d'accueil iOS (180×180) |
+| `icon-192.png`, `icon-512.png` | `site.webmanifest` |
+
+- **Taille minimale** : le lockup ne descend jamais sous 185 px de large, soit
+  44 px de haut (ratio 600/141 → 187 px). Le composant force ce plancher.
+  Lorsque la place manque (en-tête sous 640 px), on bascule sur le bloc « S ».
+- **Zone de protection** : `0,51 × H` à gauche et à droite, `0,34 × H` en haut
+  et en bas — demi-largeur du bloc « S » sur les côtés, hauteur de son plus
+  petit segment au-dessus et au-dessous.
+- **Clair / inversé** : version claire sur fond clair, version inversée sur
+  fond sombre ou photographique.
+- **Interdits** : recolorer, remodeler ou étirer, ajouter une tagline, poser le
+  logo sur un fond chargé.
+- Les fichiers livrés sont des **PNG** alors que la charte recommande le SVG
+  pour le web. Le jour où les SVG officiels arrivent, seul `brand-logo.tsx`
+  change.
+
+## 11. Ce qui reste ouvert
+
 - La console `/standex` ne peut être validée de bout en bout sans session staff
   et rôle attribué par le backend. Son écran d'authentification et son état
   protégé restent néanmoins couverts visuellement.
