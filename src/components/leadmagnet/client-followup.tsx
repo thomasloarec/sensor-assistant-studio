@@ -23,10 +23,16 @@ import type { LeadBackendStatus } from "@/lib/leadmagnet/backend";
 interface Props {
   backend: LeadBackendStatus | null;
   serverDossierId: string | null;
-  onSelectDossier: (id: string) => void;
+  /** Changer de dossier change TOUT le contexte serveur, jamais l'identifiant seul. */
+  onSelectDossier: (dossier: { id: string; revision: number; title: string }) => void;
   /** Reprise dans l'espace de conception à partir du dossier réellement envoyé. */
-  onReopenSnapshot?: (snapshot: Record<string, unknown>, revision: number) => void;
+  onReopenSnapshot?: (input: {
+    dossierId: string;
+    revision: number;
+    snapshot: Record<string, unknown>;
+  }) => void;
 }
+
 
 const routeLabel: Record<string, string> = {
   distributors: "Distributeurs partenaires",
