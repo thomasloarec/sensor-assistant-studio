@@ -244,7 +244,7 @@ function ProjectTitle({ title, onRename }: { title: string; onRename: (next: str
 
   if (!editing)
     return (
-      <div className="flex min-w-[min(100%,18rem)] flex-1 items-center gap-2">
+      <div className="flex min-w-[min(100%,20rem)] flex-1 basis-80 items-center gap-2">
         <h1 className="t-title-l min-w-0 truncate" title={title}>
           {title}
         </h1>
