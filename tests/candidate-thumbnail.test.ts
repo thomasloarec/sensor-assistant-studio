@@ -12,7 +12,7 @@ import { contactGeometry } from "../src/components/standex/workshop/scene";
 describe("Vignettes 3D des candidats", () => {
   beforeEach(() => resetThumbnailSlots());
 
-  test("une place transmise reste comptée et le plafond tient", () => {
+  test("une place transmise reste comptée et le plafond tient", async () => {
     const noop = () => {};
     const four = [1, 2, 3, 4].map(() => acquireThumbnailSlot(noop));
     expect(four.every((t) => t.held)).toBe(true);
@@ -25,6 +25,7 @@ describe("Vignettes 3D des candidats", () => {
     expect(fifth.held).toBe(false);
 
     releaseThumbnailSlot(four[0]!); // la place passe à la cinquième vignette
+    await Promise.resolve(); // le réveil est différé d'une micro-tâche
     expect(woken).toBe(1);
     expect(fifth.held).toBe(true);
     expect(liveThumbnailContexts()).toBe(4);
@@ -36,6 +37,7 @@ describe("Vignettes 3D des candidats", () => {
 
     // Le nettoyage tardif de la cinquième rend réellement sa place.
     releaseThumbnailSlot(fifth);
+    await Promise.resolve();
     expect(sixth.held).toBe(true);
     expect(liveThumbnailContexts()).toBe(4);
     releaseThumbnailSlot(sixth);
