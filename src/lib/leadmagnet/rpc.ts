@@ -22,8 +22,26 @@ export const LEAD_RPC = {
   addInternalNote: "lead_add_internal_note",
   acceptVariant: "lead_accept_variant",
   updateSample: "lead_update_sample",
+  revalidateSample: "lead_revalidate_sample",
+  setDossierTitle: "lead_set_dossier_title",
   recordNdaProof: "lead_admin_record_nda_proof",
 } as const;
+
+/** Comparaison de versions « majeur.mineur » : le serveur doit être au moins à la version requise. */
+export function schemaVersionSatisfies(actual: string | null, required: string): boolean {
+  if (!actual) return false;
+  const parse = (v: string) => v.split(".").map((n) => Number.parseInt(n, 10));
+  const a = parse(actual);
+  const r = parse(required);
+  if (a.some((n) => !Number.isFinite(n))) return false;
+  for (let i = 0; i < Math.max(a.length, r.length); i += 1) {
+    const av = a[i] ?? 0;
+    const rv = r[i] ?? 0;
+    if (av !== rv) return av > rv;
+  }
+  return true;
+}
+
 
 /** Version de schéma minimale attendue par cette version de l'application. */
 export const REQUIRED_LEAD_SCHEMA_VERSION = "1.2";
@@ -83,7 +101,32 @@ const EXTRA_MESSAGES: { match: RegExp; message: string }[] = [
   },
   { match: /NO_VARIANT_TO_ACCEPT/, message: "Aucune variante à reprendre sur ce retour." },
   { match: /NOT_STAFF/, message: "Cette personne ne fait pas partie de l'équipe Standex." },
+  {
+    match: /CONSENT_INCOMPLETE/,
+    message:
+      "Votre accord d'envoi doit être daté et rattaché au dossier concerné : aucun fichier n'a été transmis.",
+  },
+  {
+    match: /NDA_SIGNED_FILE_NOT_FOUND/,
+    message:
+      "Le document signé annoncé n'a pas été retrouvé dans l'espace sécurisé : rien n'a été enregistré.",
+  },
+  {
+    match: /SAMPLE_SUPERSEDED/,
+    message:
+      "Cet échantillon correspond à une version dépassée du dossier : une revalidation explicite est nécessaire.",
+  },
+  {
+    match: /BAD_ANNUAL_VOLUME/,
+    message:
+      "Le volume annuel doit être un nombre entier de capteurs par an, ou déclaré inconnu : rien n'a été enregistré.",
+  },
+  {
+    match: /BAD_SNAPSHOT_SHAPE/,
+    message: "Le dossier envoyé est incomplet : complétez l'objectif et le contact, puis réessayez.",
+  },
 ];
+
 MESSAGES.unshift(...EXTRA_MESSAGES);
 
 /** Jamais de message brut de base de données côté client. */
