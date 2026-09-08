@@ -46,6 +46,8 @@ export function WorkspacePanel({
   title,
   description,
   keepMounted = false,
+  fullscreen = false,
+  backLabel,
   onBack,
   children,
 }: WorkspacePanelProps) {
