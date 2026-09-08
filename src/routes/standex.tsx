@@ -57,6 +57,7 @@ import {
   type RoutingTarget,
 } from "@/lib/leadmagnet/cabling";
 import { technicalSummary } from "@/lib/leadmagnet/submission";
+import { canExportEnglish, selectEnglishReport } from "@/lib/leadmagnet/english-report";
 import { WorkspacePanel } from "@/components/leadmagnet/workspace-panel";
 import {
   DocumentViewer,
