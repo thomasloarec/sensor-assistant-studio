@@ -1,3 +1,4 @@
+import { evaluateCandidates } from "@/lib/leadmagnet/candidates";
 import { expect, test } from "bun:test";
 import {
   EMPTY_CABLING,
