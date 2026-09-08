@@ -6,10 +6,11 @@
  */
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { Magnet, ArrowRight, UserRound } from "lucide-react";
+import { ArrowDown, ArrowRight, ChevronDown, Magnet, UserRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MagnetPlay } from "@/components/leadmagnet/magnet-play";
 import { DesignSpace, PrivateDesignError } from "@/components/leadmagnet/design-space";
+import { useReveal } from "@/hooks/use-reveal";
 
 export const Route = createFileRoute("/")({
   ssr: false,
@@ -44,100 +45,159 @@ function HomeRoute() {
 
   return (
     <div data-readable className="min-h-screen bg-background text-foreground">
-      <header className={started ? "hidden" : "border-b bg-card"}>
-        <div className="mx-auto flex max-w-6xl items-center gap-2 px-4 py-4 sm:gap-4">
-          <span className="flex min-w-0 items-center gap-2">
-            <Magnet className="h-6 w-6 shrink-0 text-primary" aria-hidden="true" />
-            <span className="truncate text-base font-semibold sm:text-lg">Standex DETECT</span>
-          </span>
-          <div className="ml-auto flex shrink-0 items-center gap-2">
-            <Button
-              variant="outline"
-              className="min-h-11 text-base"
-              onClick={() => setAccountRequest((n) => n + 1)}
-            >
-              <UserRound className="mr-2 h-4 w-4" /> Mon espace
-            </Button>
-          </div>
-        </div>
-      </header>
-
-      <main className={started ? "hidden" : "mx-auto max-w-6xl px-4 py-12 sm:py-20"}>
-          <div className="grid gap-12 lg:grid-cols-[1.05fr_1fr] lg:items-center">
-            <div>
-              <p className="text-base font-semibold uppercase tracking-wide text-primary">
-                Détection magnétique
-              </p>
-              <h1 className="mt-4 text-4xl font-semibold leading-tight sm:text-5xl lg:text-6xl">
-                Donnez vie à votre détection.
-              </h1>
-              <p className="mt-6 max-w-xl text-xl leading-relaxed text-foreground">
-                Détecter un mouvement, simplement. Un aimant passe, le capteur réagit. Dites-nous ce
-                que vous voulez détecter : nous construisons la solution avec vous.
-              </p>
-              <div className="mt-9 flex flex-wrap items-center gap-4">
-                <Button className="min-h-14 px-7 text-lg" onClick={() => setStarted(true)}>
-                  Décrire mon besoin <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
+      <main className={started ? "hidden" : undefined}>
+        <div className="immersive hero-field overflow-hidden lg:min-h-[100svh]">
+          <header className="material sticky top-0 z-30 shadow-[inset_0_-1px_0_var(--hairline)]">
+            <div className="mx-auto flex max-w-7xl items-center gap-2 px-4 py-3 sm:gap-4 sm:px-6 lg:px-8">
+              {/* Emplacement du logo officiel SVG lorsqu'il sera fourni */}
+              <span className="flex min-w-0 items-center gap-3">
+                <span className="flex size-9 shrink-0 items-center justify-center rounded-[var(--r-xs)] bg-[oklch(1_0_0_/_0.1)]">
+                  <Magnet className="h-5 w-5 text-primary" aria-hidden="true" />
+                </span>
+                <span className="truncate text-base font-semibold sm:text-lg">
+                  Standex{" "}
+                  <span className="font-normal tracking-[0.12em]">DETECT</span>
+                </span>
+              </span>
+              <div className="ml-auto flex shrink-0 items-center gap-2">
                 <Button
                   variant="outline"
-                  className="min-h-14 px-6 text-lg"
+                  className="min-h-11 text-base"
                   onClick={() => setAccountRequest((n) => n + 1)}
                 >
-                  Retrouver mes projets
+                  <UserRound className="h-4 w-4" /> Mon espace
                 </Button>
-                <a
-                  href="#aimant"
-                  className="min-h-11 rounded-md px-3 py-2 text-base underline underline-offset-4"
-                >
-                  Explorer avec l'aimant
-                </a>
               </div>
-              <p className="mt-6 text-base text-muted-foreground">
-                Rien à installer, aucun formulaire pour commencer. Votre travail reste sur votre
-                appareil tant que vous ne l'envoyez pas.
-              </p>
+            </div>
+          </header>
+
+          <div className="relative mx-auto flex min-h-[calc(100svh-4.25rem)] max-w-7xl items-center px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
+            <span className="hero-glow right-[6%] top-[10%] size-[520px] max-w-[70vw]" />
+            <div className="grid w-full gap-14 lg:grid-cols-[0.92fr_1.08fr] lg:items-center lg:gap-16">
+              <div
+                className="anim-stagger relative z-10"
+                style={{ "--stagger": "70ms", animationDelay: "120ms" } as React.CSSProperties}
+              >
+                <p className="t-label flex items-center gap-3">
+                  <span
+                    className="standex-bar h-[14px] w-[6px] shrink-0"
+                    aria-hidden="true"
+                  />
+                  Détection magnétique
+                </p>
+                <h1 className="t-display-xl mt-5 max-w-[11ch]">Donnez vie à votre détection.</h1>
+                <p className="t-body-l mt-7 max-w-[34rem] text-muted-foreground">
+                  Détecter un mouvement, simplement. Un aimant passe, le capteur réagit. Dites-nous
+                  ce que vous voulez détecter : nous construisons la solution avec vous.
+                </p>
+                <div className="mt-10 flex flex-wrap items-center gap-4">
+                  <Button
+                    size="lg"
+                    className="group"
+                    onClick={() => setStarted(true)}
+                  >
+                    Décrire mon besoin
+                    <ArrowRight className="transition-transform duration-[var(--d-fast)] group-hover:translate-x-[3px]" />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    onClick={() => setAccountRequest((n) => n + 1)}
+                  >
+                    Retrouver mes projets
+                  </Button>
+                  <a
+                    href="#aimant"
+                    className="inline-flex min-h-11 items-center gap-2 rounded-[var(--r-xs)] px-3 py-2 text-base underline decoration-[var(--hairline-strong)] underline-offset-4 transition-colors duration-[var(--d-fast)] hover:text-primary"
+                  >
+                    Explorer avec l'aimant
+                    <ArrowDown className="size-4" aria-hidden="true" />
+                  </a>
+                </div>
+                <p className="t-caption mt-7 max-w-[34rem]">
+                  Rien à installer, aucun formulaire pour commencer. Votre travail reste sur votre
+                  appareil tant que vous ne l'envoyez pas.
+                </p>
+              </div>
+
+              <section
+                id="aimant"
+                aria-label="Jouer avec l'aimant et le capteur"
+                className="anim-scale-in relative z-10 rounded-[var(--r-2xl)] bg-[var(--surface)] p-3 shadow-[var(--e-4)] backdrop-blur-2xl sm:p-5 lg:[animation-delay:260ms]"
+              >
+                <MagnetPlay />
+              </section>
             </div>
 
-            <section id="aimant" aria-label="Jouer avec l'aimant et le capteur">
-              <MagnetPlay />
-            </section>
+            <ChevronDown
+              aria-hidden="true"
+              className="home-scroll-cue absolute bottom-5 left-1/2 hidden size-6 -translate-x-1/2 text-muted-foreground motion-reduce:hidden lg:block"
+            />
           </div>
+        </div>
 
-          <section aria-label="Comment ça se passe" className="mt-16 border-t pt-10">
-            <h2 className="text-2xl font-semibold">Comment ça se passe</h2>
-            <ol className="mt-6 grid gap-6 sm:grid-cols-3">
+        <section aria-label="Comment ça se passe" className="bg-background py-24">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <hr className="standex-rule mb-12" />
+            <h2 className="t-display-m">Comment ça se passe</h2>
+            <ol className="mt-10 grid gap-6 sm:grid-cols-3">
               {[
                 {
+                  n: "01",
                   t: "1. Vous décrivez",
                   d: "Quelques questions simples, en français : ce que vous voulez détecter, où le capteur se place, dans quelles conditions.",
                 },
                 {
+                  n: "02",
                   t: "2. Vous visualisez",
                   d: "Un atelier 3D facultatif pour placer capteur, aimant et câble. Rien n'est envoyé tant que vous ne le demandez pas.",
                 },
                 {
+                  n: "03",
                   t: "3. Standex relit",
                   d: "Vous pouvez faire relire votre projet par nos équipes. Une revue R&D reste toujours nécessaire avant commande.",
                 },
-              ].map((s) => (
-                <li key={s.t} className="rounded-lg border bg-card p-5">
-                  <h3 className="text-lg font-semibold">{s.t}</h3>
-                  <p className="mt-2 text-base leading-relaxed text-muted-foreground">{s.d}</p>
-                </li>
+              ].map((step, index) => (
+                <ProcessStep key={step.t} step={step} index={index} />
               ))}
             </ol>
-          </section>
+          </div>
+        </section>
       </main>
 
       {/* UN SEUL espace projet, monté en permanence : la session, la liste des
           projets et le travail en cours ne sont jamais remontés à zéro. */}
-      <DesignSpace
-        chrome="embedded"
-        visible={started}
-        accountRequest={accountRequest}
-        onWorkspaceOpen={() => setStarted(true)}
-      />
+      <div className={started ? "step-enter" : undefined}>
+        <DesignSpace
+          chrome="embedded"
+          visible={started}
+          accountRequest={accountRequest}
+          onWorkspaceOpen={() => setStarted(true)}
+        />
+      </div>
     </div>
+  );
+}
+
+function ProcessStep({
+  step,
+  index,
+}: {
+  step: { n: string; t: string; d: string };
+  index: number;
+}) {
+  const ref = useReveal<HTMLLIElement>();
+
+  return (
+    <li ref={ref} className={`surface-interactive reveal reveal-delay-${index + 1} p-8`}>
+      <span
+        aria-hidden="true"
+        className="t-metric block text-[2.5rem] leading-none text-[var(--standex-blue-25)]"
+      >
+        {step.n}
+      </span>
+      <h3 className="t-title-m mt-8">{step.t}</h3>
+      <p className="t-body mt-3 text-muted-foreground">{step.d}</p>
+    </li>
   );
 }
