@@ -776,42 +776,68 @@ drop function if exists public.lead_open_upload_session(uuid, text);
 create or replace function lead_priv.open_upload_session(_dossier uuid, _kind text, _consent jsonb)
 returns jsonb language plpgsql security definer
 set search_path = lead, lead_priv, pg_temp as $$
-declare u uuid := lead_priv.require_user(); prefix text; sid uuid; d lead.design_dossiers%rowtype;
+declare
+  u uuid := lead_priv.require_user();
+  prefix text; sid uuid; d lead.design_dossiers%rowtype;
+  digest text; bytes numeric; mime text; rev numeric; expected_rev integer;
 begin
   select * into d from lead.design_dossiers where id = _dossier for update;
   if not found then raise exception 'DOSSIER_NOT_FOUND' using errcode = '42501'; end if;
-  if not lead_priv.client_can_submit(u, _dossier) then
-    raise exception 'NOT_ALLOWED' using errcode = '42501';
-  end if;
   if _kind not in ('design_model','document','nda_signed') then
     raise exception 'BAD_KIND' using errcode = '22023';
+  end if;
+  -- Le client dépose ses fichiers ; pour le SEUL document NDA signé, un admin
+  -- Standex AFFECTÉ peut aussi déposer la pièce vérifiée du dossier client.
+  if not lead_priv.client_can_submit(u, _dossier)
+     and not (_kind = 'nda_signed'
+              and lead_priv.staff_can_act(u, _dossier, array['admin']::lead.staff_role[])) then
+    raise exception 'NOT_ALLOWED' using errcode = '42501';
   end if;
   -- Un fichier technique n'est jamais déposé avant que le NDA autorise le transfert.
   if _kind <> 'nda_signed' and not lead_priv.nda_allows_transfer(_dossier) then
     raise exception 'NDA_NOT_IN_FORCE' using errcode = '42501';
   end if;
-  -- Correctif racine 4 : consentement RÉELLEMENT contrôlé avant tout dépôt de
-  -- fichier technique, lié à ce dossier et à sa révision en cours.
-  if _kind <> 'nda_signed' then
-    if _consent is null or jsonb_typeof(_consent) <> 'object'
-       or _consent->>'kind' is distinct from 'supabase_files'
-       or coalesce(btrim(_consent->>'statement'),'') = ''
-       or coalesce(btrim(_consent->>'content_ref'),'') = ''
-       or (_consent ? 'dossier_id' and _consent->>'dossier_id' is distinct from _dossier::text)
-       or lead_priv.parse_ts(_consent->>'accepted_at') is null
-       or lead_priv.parse_ts(_consent->>'accepted_at') > now() + interval '5 minutes'
-       or lead_priv.parse_ts(_consent->>'accepted_at') < now() - interval '30 days' then
-      raise exception 'CONSENT_INCOMPLETE' using errcode = '42501';
-    end if;
+  -- Correctif racine 4 : préflight RÉEL. Le consentement est daté, lié à CE
+  -- dossier, à la révision visée, et à l'empreinte EXACTE du fichier relu.
+  -- Aucun champ n'est « optionnel » : absent = refusé (IS DISTINCT FROM).
+  expected_rev := case when _kind = 'nda_signed' then d.current_revision
+                       else d.current_revision + 1 end;
+  digest := lower(coalesce(_consent->>'file_sha256',''));
+  bytes  := lead_priv.json_number(_consent->'file_bytes');
+  mime   := btrim(coalesce(_consent->>'file_mime',''));
+  rev    := lead_priv.json_number(_consent->'revision');
+  if _consent is null or jsonb_typeof(_consent) <> 'object'
+     or _consent->>'kind' is distinct from 'supabase_files'
+     or coalesce(btrim(_consent->>'statement'),'') = ''
+     or coalesce(btrim(_consent->>'content_ref'),'') = ''
+     or _consent->>'dossier_id' is distinct from _dossier::text
+     or rev is null or rev <> expected_rev
+     or digest !~ '^[a-f0-9]{64}$'
+     or bytes is null or bytes <= 0 or bytes <> trunc(bytes) or bytes > 31457280
+     or mime = '' or mime !~ '^[a-z0-9.+-]+/[a-z0-9.+-]+$'
+     or lead_priv.parse_ts(_consent->>'accepted_at') is null
+     or lead_priv.parse_ts(_consent->>'accepted_at') > now() + interval '5 minutes'
+     or lead_priv.parse_ts(_consent->>'accepted_at') < now() - interval '1 day' then
+    raise exception 'CONSENT_INCOMPLETE' using errcode = '42501';
+  end if;
+  -- Pas de dépôts illimités sous une coquille générique.
+  if (select count(*) from lead.upload_sessions s
+       where s.dossier_id = _dossier and s.user_id = u
+         and s.closed_at is null and s.expires_at > now()) >= 5 then
+    raise exception 'TOO_MANY_UPLOAD_SESSIONS' using errcode = '42501';
   end if;
   prefix := _dossier::text || '/' || u::text || '/' || gen_random_uuid()::text;
-  insert into lead.upload_sessions (dossier_id, user_id, path_prefix, kind, expires_at, consent)
-  values (_dossier, u, prefix, _kind, now() + interval '2 hours', _consent)
+  insert into lead.upload_sessions (dossier_id, user_id, path_prefix, kind, expires_at, consent,
+                                    expected_sha256, expected_bytes, expected_mime, expected_revision)
+  values (_dossier, u, prefix, _kind, now() + interval '2 hours', _consent,
+          digest, bytes::bigint, mime, expected_rev)
   returning id into sid;
   insert into lead.audit_log (actor, action, dossier_id, detail)
-  values (u, 'upload_session_opened', _dossier, jsonb_build_object('kind', _kind));
+  values (u, 'upload_session_opened', _dossier,
+          jsonb_build_object('kind', _kind, 'sha256', digest, 'revision', expected_rev));
   return jsonb_build_object('session_id', sid, 'bucket', 'lead-design-files',
-                            'path_prefix', prefix, 'expires_at', now() + interval '2 hours');
+                            'path_prefix', prefix, 'expires_at', now() + interval '2 hours',
+                            'expected_sha256', digest, 'expected_revision', expected_rev);
 end $$;
 
 create or replace function public.lead_open_upload_session(
