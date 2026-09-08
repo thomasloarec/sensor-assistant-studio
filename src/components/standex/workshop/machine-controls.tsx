@@ -1,5 +1,5 @@
 import { useLocale } from "@/lib/i18n/react";
-import { t } from "@/lib/i18n/core";
+import { msg, t } from "@/lib/i18n/core";
 import type { MachineAsset } from "@/lib/standex/machine-assets";
 import type { MachineAssembly } from "@/lib/standex/machine-assembly";
 import type { Vec3, WorkshopConfig } from "@/lib/standex/magnetic-workshop";
@@ -35,7 +35,7 @@ function VectorInput({
               step={unit === "°" ? 5 : 0.5}
               min={min}
               max={max}
-              aria-label={t(label + " " + axis)}
+              aria-label={msg("{0} {1}", [t(label), axis])}
               key={value[i]}
               defaultValue={Math.round(value[i]! * 100) / 100}
               onKeyDown={(e) => {
@@ -195,7 +195,7 @@ export default function MachineControls({
           {t("Distance mesurée :")}
           <strong className="t-metric">{t(measure.toFixed(1))} mm</strong> (
           {t((measure / 10).toFixed(2))}
-          {t(" ")}
+          {" "}
           {t("cm)")}
         </p>
       )}

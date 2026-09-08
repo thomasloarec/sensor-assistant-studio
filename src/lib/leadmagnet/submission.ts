@@ -7,27 +7,30 @@ import { ndaAllowsConfidentialTransfer } from "./nda";
 import { estimateCableLength, uncoveredMotionStates } from "./cabling";
 import { connectorSummaryLines } from "./connectors";
 
-function cablingSummary(dossier: DesignDossier): string[] {
+type Tr = (source: string) => string;
+const identity: Tr = (source) => source;
+
+function cablingSummary(dossier: DesignDossier, tr: Tr = identity): string[] {
   const e = estimateCableLength(dossier.cabling);
   const uncovered = uncoveredMotionStates(dossier.cabling);
   return [
-    `- Longueur nécessaire : ${e.requiredMm === null ? "inconnue (trajet incomplet ou invalide)" : e.requiredMm.toFixed(1) + " mm"}`,
-    `- Plus long trajet mesuré : ${e.longestPathMm === null ? "inconnu" : e.longestPathMm.toFixed(1) + " mm"}`,
-    `- Réserve de service : ${dossier.cabling.serviceReserveMm} mm — terminaison : ${dossier.cabling.terminationMm} mm`,
-    `- Tolérance fournisseur : ±${dossier.cabling.toleranceMm} mm — surplus logeable : ${dossier.cabling.surplusHousingMm} mm`,
-    `- Rayon de courbure mini : ${dossier.cabling.minBendRadiusMm ?? "inconnu"} mm`,
-    `- États de mouvement couverts : ${dossier.cabling.declaredMotionStates.length - uncovered.length}/${dossier.cabling.declaredMotionStates.length}` +
+    `- ${tr("Longueur nécessaire")} : ${e.requiredMm === null ? tr("inconnue (trajet incomplet ou invalide)") : e.requiredMm.toFixed(1) + " mm"}`,
+    `- ${tr("Plus long trajet mesuré")} : ${e.longestPathMm === null ? tr("inconnu") : e.longestPathMm.toFixed(1) + " mm"}`,
+    `- ${tr("Réserve de service")} : ${dossier.cabling.serviceReserveMm} mm — ${tr("terminaison")} : ${dossier.cabling.terminationMm} mm`,
+    `- ${tr("Tolérance fournisseur")} : ±${dossier.cabling.toleranceMm} mm — ${tr("surplus logeable")} : ${dossier.cabling.surplusHousingMm} mm`,
+    `- ${tr("Rayon de courbure mini")} : ${dossier.cabling.minBendRadiusMm ?? tr("inconnu")} mm`,
+    `- ${tr("États de mouvement couverts")} : ${dossier.cabling.declaredMotionStates.length - uncovered.length}/${dossier.cabling.declaredMotionStates.length}` +
       (dossier.cabling.motionCoverageConfirmed
-        ? " (couverture confirmée)"
-        : " (couverture non confirmée)"),
-    `- Choix de longueur : ${
+        ? " (" + tr("couverture confirmée") + ")"
+        : " (" + tr("couverture non confirmée") + ")"),
+    `- ${tr("Choix de longueur")} : ${
       dossier.cabling.lengthChoice === "standard_to_confirm"
-        ? "longueur catalogue, à confirmer"
+        ? tr("longueur catalogue, à confirmer")
         : dossier.cabling.lengthChoice === "custom_to_confirm"
-          ? "longueur sur mesure, à confirmer"
-          : "non décidé"
+          ? tr("longueur sur mesure, à confirmer")
+          : tr("non décidé")
     }`,
-    "- Aucune longueur n'est approuvée ici : la R&D Standex vérifie.",
+    "- " + tr("Aucune longueur n'est approuvée ici : la R&D Standex vérifie."),
   ];
 }
 
@@ -179,35 +182,43 @@ export async function submit(
   }
 }
 
-export function technicalSummary(dossier: DesignDossier): string {
+/** Résumé canonique en français par défaut (snapshot, export, revue).
+ * `tr` sert UNIQUEMENT à l'affichage localisé : les valeurs saisies par la
+ * personne (valeurs d'exigence, contraintes libres, titre) ne passent jamais
+ * par la traduction. */
+export function technicalSummary(dossier: DesignDossier, tr: Tr = identity): string {
   const line = (r: { label: string; value: string; unit: string | null; state: string }) =>
-    `- ${r.label} : ${r.value || "inconnu"}${r.unit ? " " + r.unit : ""} (${
-      r.state === "confirmed" ? "confirmé" : r.state === "hypothesis" ? "hypothèse" : "inconnu"
+    `- ${tr(r.label)} : ${r.value || tr("inconnu")}${r.unit ? " " + r.unit : ""} (${
+      r.state === "confirmed"
+        ? tr("confirmé")
+        : r.state === "hypothesis"
+          ? tr("hypothèse")
+          : tr("inconnu")
     })`;
   const volume =
     dossier.business.annualVolume.kind === "known"
-      ? `${dossier.business.annualVolume.sensorsPerYear} capteurs/an`
-      : "inconnu";
+      ? `${dossier.business.annualVolume.sensorsPerYear} ${tr("capteurs/an")}`
+      : tr("inconnu");
   return [
-    `# ${dossier.title} — révision ${dossier.revision}`,
+    `# ${dossier.title} — ${tr("révision")} ${dossier.revision}`,
     "",
-    "## Exigences",
+    `## ${tr("Exigences")}`,
     ...dossier.requirements.map(line),
     "",
-    "## Contraintes libres",
+    `## ${tr("Contraintes libres")}`,
     dossier.freeConstraints || "—",
     "",
-    "## Contexte projet",
-    `- Phase : ${dossier.business.projectPhase}`,
-    `- Volume annuel : ${volume}`,
-    `- Démarrage série : ${dossier.business.seriesStartDate ?? "inconnu"}`,
-    `- Échantillons utiles avant : ${dossier.business.samplesNeededBy ?? "inconnu"}`,
-    `- Durée série : ${dossier.business.seriesDurationYears ?? "inconnu"} ans`,
+    `## ${tr("Contexte projet")}`,
+    `- ${tr("Phase")} : ${tr(dossier.business.projectPhase)}`,
+    `- ${tr("Volume annuel")} : ${volume}`,
+    `- ${tr("Démarrage série")} : ${dossier.business.seriesStartDate ?? tr("inconnu")}`,
+    `- ${tr("Échantillons utiles avant")} : ${dossier.business.samplesNeededBy ?? tr("inconnu")}`,
+    `- ${tr("Durée série")} : ${dossier.business.seriesDurationYears ?? tr("inconnu")} ${tr("ans")}`,
     "",
-    "## Câblage",
-    ...cablingSummary(dossier),
+    `## ${tr("Câblage")}`,
+    ...cablingSummary(dossier, tr),
     "",
-    "## Terminaison",
-    ...connectorSummaryLines(dossier.termination).map((l) => `- ${l}`),
+    `## ${tr("Terminaison")}`,
+    ...connectorSummaryLines(dossier.termination).map((l) => `- ${tr(l)}`),
   ].join("\n");
 }

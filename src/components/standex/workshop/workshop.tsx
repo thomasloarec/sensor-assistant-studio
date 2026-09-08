@@ -43,12 +43,13 @@ import { sensorById, sizeLabel, sensorSource } from "@/lib/standex/sensor-catalo
 
 const Scene = lazy(() => import("./scene"));
 const MachineScene = lazy(() => import("./machine-scene"));
+/* i18n-canonical : libellés stockés en français, traduits au rendu par t(). */
 const contactLabel: Record<Contact, string> = {
-  open: t("Contact ouvert"),
-  closed: t("Contact fermé"),
-  unknown: t("État indéterminé"),
+  open: "Contact ouvert",
+  closed: "Contact fermé",
+  unknown: "État indéterminé",
 };
-const motionLabels = { approach: t("Approche et retrait"), slide: t("Passage latéral"), pivot: "Pivot" };
+const motionLabels = { approach: "Approche et retrait", slide: "Passage latéral", pivot: "Pivot" };
 class SceneBoundary extends Component<
   { children: ReactNode; fallback: ReactNode; onError: () => void },
   { failed: boolean }
@@ -301,7 +302,7 @@ export default function MagneticWorkshop({
   }
 
   useEffect(() => {
-    const media = window.matchMedia(t("(prefers-reduced-motion: reduce)"));
+    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
     const sync = () => setReduced(media.matches);
     sync();
     media.addEventListener("change", sync);
@@ -501,7 +502,7 @@ export default function MagneticWorkshop({
           {t("Télécharger le fichier 3D")}
         </a>
       </div>
-      <div className={machine ? t("mw-layout mw-machine-layout") : "mw-layout"}>
+      <div className={machine ? "mw-layout mw-machine-layout" : "mw-layout"}>
         <aside className="mw-controls">
           {machine ? (
             <MachineControls
@@ -977,7 +978,7 @@ export default function MagneticWorkshop({
         <section className="mw-visual-column" aria-label={t("Simulation du montage")}>
           <div className="mw-scene-card">
             <div className="mw-scene-toolbar">
-              <span className={reference ? "mw-kind" : t("mw-kind education")}>
+              <span className={reference ? "mw-kind" : "mw-kind education"}>
                 {t(
                   reference
                     ? "Référence Standex · valeurs typiques"
@@ -1049,9 +1050,14 @@ export default function MagneticWorkshop({
             <div
               className="mw-canvas"
               role="img"
-              aria-label={t(
-                `Montage ${machine ? machine.fileName : reference ? config.geometry : motionLabels[config.motion]}. ${contactLabel[sample.contact]}.`,
-              )}
+              aria-label={msg("Montage {0}. {1}.", [
+                machine
+                  ? machine.fileName
+                  : reference
+                    ? t(config.geometry)
+                    : t(motionLabels[config.motion]),
+                t(contactLabel[sample.contact]),
+              ])}
             >
               {machine ? (
                 assetError ? (
@@ -1268,12 +1274,12 @@ export default function MagneticWorkshop({
               <summary>{t("Distances fictives · réglages de démonstration")}</summary>
               <p>
                 {t("Les matériaux et la température n'interviennent pas dans ce calcul.")}
-                {t(" ")}
-                {t(
-                  sensor.id === "MK02"
-                    ? "Le MK02 est représenté avec un contact Form A fictif : son mécanisme ferreux réel n'est pas simulé."
-                    : "",
-                )}
+                {" "}
+                {sensor.id === "MK02"
+                  ? t(
+                      "Le MK02 est représenté avec un contact Form A fictif : son mécanisme ferreux réel n'est pas simulé.",
+                    )
+                  : null}
               </p>
               <Range
                 label={t("Échelle du champ fictif")}
@@ -1440,7 +1446,7 @@ export default function MagneticWorkshop({
                   .slice(0, 6)
                   .map((s, i) => (
                     <span key={i}>
-                      {t(s.contact === "closed" ? "Fermeture" : "Ouverture")} ·{t(" ")}
+                      {t(s.contact === "closed" ? "Fermeture" : "Ouverture")} ·{" "}
                       {t(
                         reference
                           ? `${s.contact === "closed" ? pull : drop} mm typ.`
@@ -1457,7 +1463,7 @@ export default function MagneticWorkshop({
       <footer className="mw-footer">
         <p>
           <strong>{t(reference ? "Présélection documentée." : "Illustration pédagogique.")}</strong>
-          {t(" ")}
+          {" "}
           {t(reference ? REFERENCE_NOTE : EDUCATION_NOTE)}
         </p>
         <p>
@@ -1466,7 +1472,7 @@ export default function MagneticWorkshop({
               ? `Montage enregistré dans ${storageLabel}.`
               : `Brouillon · utilisez « Joindre au dossier » pour enregistrer dans ${storageLabel}.`,
           )}
-          {t(" ")}
+          {" "}
           <a
             href={reference ? DISTANCE_SOURCE : INTERACTION_SOURCE}
             target="_blank"
@@ -1506,9 +1512,10 @@ export default function MagneticWorkshop({
         <summary>{t("Résumé du montage et hypothèses")}</summary>
         <pre>{t(summary)}</pre>
         <p>
-          {t("Version du calcul :")}
-          {t(MODEL_VERSION)}
-          {t(". La scène et ses résultats sont recalculés à chaque modification.")}
+          {msg(
+            "Version du calcul : {0}. La scène et ses résultats sont recalculés à chaque modification.",
+            [MODEL_VERSION],
+          )}
         </p>
         <button
           className="mw-text-button"

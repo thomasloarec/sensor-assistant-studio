@@ -93,8 +93,9 @@ export const Route = createFileRoute("/standex")({
   }),
 });
 
+/* i18n-canonical : libellés stockés en français, traduits au rendu par t(). */
 const emptyReview = {
-  scope: t("Revue complète du dossier"),
+  scope: "Revue complète du dossier",
   conditions: "",
   verdict: "validated" as "validated" | "variant_proposed" | "more_info",
   clientMessage: "",

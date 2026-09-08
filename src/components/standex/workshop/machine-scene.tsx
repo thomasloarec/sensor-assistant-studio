@@ -34,8 +34,9 @@ export interface CableRouting {
   onPick: (point: [number, number, number]) => void;
 }
 
+/* i18n-canonical : libellés stockés en français, traduits au rendu par t(). */
 const SLOT_TEXT: Record<CableRouting["slot"], string> = {
-  sensor: t("Sortie capteur"),
+  sensor: "Sortie capteur",
   waypoint: "Passage",
   connection: "Connexion",
 };
@@ -288,7 +289,7 @@ function Assembly({
           <Html position={points[1]!}>
             <span className="mw-scene-label">
               {t("Mesure :")}
-              {t(" ")}
+              {" "}
               {t(new Vector3(...points[0]!).distanceTo(new Vector3(...points[1]!)).toFixed(1))} mm
             </span>
           </Html>

@@ -128,7 +128,7 @@ export function WorkspacePanel({
         className={
           open
             ? `workspace-panel-shell fixed z-50 flex flex-col bg-background outline-none ${
-                fullscreen ? t("inset-0 w-full") : t("inset-y-0 right-0 w-full sm:max-w-3xl lg:max-w-4xl")
+                fullscreen ? "inset-0 w-full" : "inset-y-0 right-0 w-full sm:max-w-3xl lg:max-w-4xl"
               }`
             : "hidden"
         }
