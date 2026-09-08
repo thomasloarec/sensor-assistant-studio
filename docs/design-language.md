@@ -67,7 +67,7 @@ Familles : **Source Sans 3** variable (texte), **Lato** (repli historique),
 | `--t-body-l`                   | corps par défaut (18 px)                                     |
 | `--t-body`                     | corps dense (16 px)                                          |
 | `--t-caption`                  | légendes (14 px)                                             |
-| `--t-label`                    | sur-titres capitales espacées (12 px)                        |
+| `--t-label`                    | sur-titres capitales espacées (14 px)                        |
 
 Interlettrage : `--tracking-display` (-0.022em), `--tracking-title` (-0.011em),
 `--tracking-body` (0), `--tracking-label` (0.08em).
