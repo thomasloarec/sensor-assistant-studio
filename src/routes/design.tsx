@@ -856,9 +856,9 @@ function DesignSpace() {
                 ))}
               </ul>
               <div className="mt-3 grid gap-3 md:grid-cols-2">
-                {(Object.keys(CONNECTOR_FIELD_LABELS) as (keyof ConnectorDraft)[]).map((key) => (
+                {CONNECTOR_FIELD_LABELS.map(([key, label]) => (
                   <div key={key}>
-                    <Label className="text-xs">{CONNECTOR_FIELD_LABELS[key]}</Label>
+                    <Label className="text-xs">{label}</Label>
                     <Input
                       value={connectorDraft[key]}
                       onChange={(e) =>
@@ -888,7 +888,7 @@ function DesignSpace() {
                   onClick={() => {
                     const result = terminationFromDraft(connectorDraft);
                     if (!result.ok) {
-                      setConnectorError(result.reason);
+                      setConnectorError(`Champs requis : ${result.missing.join(", ")}.`);
                       return;
                     }
                     setConnectorError(null);
