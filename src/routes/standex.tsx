@@ -44,6 +44,8 @@ import {
 import { APPROVED_NDA_TEMPLATE } from "@/lib/leadmagnet/nda";
 import { parseServerSnapshot } from "@/lib/leadmagnet/dossier-io";
 import { technicalSummary } from "@/lib/leadmagnet/submission";
+import { AuthPanel } from "@/components/leadmagnet/auth-panel";
+import { supabase } from "@/lib/standex/supabase";
 
 export const Route = createFileRoute("/standex")({
   component: StandexConsole,
@@ -136,6 +138,17 @@ function StandexConsole() {
       .catch(() => setBackend(null));
   }, []);
 
+  // Le statut de liaison suit la session : après connexion, l'accès s'ouvre sans rechargement.
+  useEffect(() => {
+    if (!supabase) return;
+    const { data } = supabase.auth.onAuthStateChange(() => {
+      checkLeadBackend()
+        .then(setBackend)
+        .catch(() => setBackend(null));
+    });
+    return () => data.subscription.unsubscribe();
+  }, []);
+
   const loadInbox = useCallback(async () => {
     try {
       setInbox(await fetchStaffInbox());
@@ -177,6 +190,14 @@ function StandexConsole() {
         </Link>
         <h1 className="text-xl font-semibold">Console Standex</h1>
         <p className="text-sm">{backend?.message ?? "Connexion en cours…"}</p>
+        <AuthPanel
+          backend={backend}
+          onChanged={() => {
+            checkLeadBackend()
+              .then(setBackend)
+              .catch(() => setBackend(null));
+          }}
+        />
       </div>
     );
 

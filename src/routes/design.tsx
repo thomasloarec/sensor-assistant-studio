@@ -106,6 +106,7 @@ import {
 } from "@/lib/leadmagnet/supabase-adapter";
 import { supabase } from "@/lib/standex/supabase";
 import { applyVariant } from "@/lib/leadmagnet/variant";
+import { AuthPanel } from "@/components/leadmagnet/auth-panel";
 import { ClientFollowUp } from "@/components/leadmagnet/client-followup";
 import { memoryAssetBytes } from "@/lib/standex/machine-assets";
 import {
@@ -1569,10 +1570,22 @@ function DesignSpace() {
                     <ShieldCheck className="mr-1 h-4 w-4" /> Transmettre à la revue Standex
                   </Button>
                   {!backend?.ready ? (
-                    <p className="text-xs text-muted-foreground">
-                      {backend?.message ?? "Vérification du backend en cours…"}
-                    </p>
-                  ) : null}
+                    <div className="space-y-2">
+                      <p className="text-xs text-muted-foreground">
+                        {backend?.message ?? "Vérification du backend en cours…"}
+                      </p>
+                      <AuthPanel
+                        backend={backend}
+                        onChanged={() => {
+                          checkLeadBackend()
+                            .then(setBackend)
+                            .catch(() => setBackend(null));
+                        }}
+                      />
+                    </div>
+                  ) : (
+                    <AuthPanel backend={backend} />
+                  )}
                   {submitMessage ? <p className="text-sm">{submitMessage}</p> : null}
                 </AccordionContent>
               </AccordionItem>
