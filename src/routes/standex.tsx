@@ -37,10 +37,13 @@ import {
   revalidateSample,
   updateSample,
   uploadDesignFile,
+  signedFileUrl,
   type DossierView,
   type StaffInbox,
 } from "@/lib/leadmagnet/supabase-adapter";
 import { APPROVED_NDA_TEMPLATE } from "@/lib/leadmagnet/nda";
+import { parseServerSnapshot } from "@/lib/leadmagnet/dossier-io";
+import { technicalSummary } from "@/lib/leadmagnet/submission";
 
 export const Route = createFileRoute("/standex")({
   component: StandexConsole,
