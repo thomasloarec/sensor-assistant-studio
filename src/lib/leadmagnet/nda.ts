@@ -1,31 +1,30 @@
 /** NDA : un seul modèle approuvé par le propriétaire, conservé à l'identique.
  * Générer un document n'est jamais une signature ; une case cochée n'est pas une preuve.
  */
+import {
+  EMPTY_NDA_VALUES,
+  NDA_TEMPLATE_FILE_NAME,
+  NDA_TEMPLATE_SHA256,
+  NDA_TEMPLATE_URL,
+  VARIABLE_FIELDS,
+  type NdaVariableValues,
+} from "./nda-docx";
+
 export const APPROVED_NDA_TEMPLATE = {
-  fileName: "NDA Standex x K Motor_16062026.docx",
-  sha256: "6e25345f1e83e92630258774d27a451d65d615cdd9f41a5331dae75c4072740b",
-  /** Chemin attendu du binaire une fois fourni par le propriétaire. */
-  repoPath: "docs/legal/NDA Standex x K Motor_16062026.docx",
+  fileName: NDA_TEMPLATE_FILE_NAME,
+  sha256: NDA_TEMPLATE_SHA256,
+  /** Binaire original livré avec l'application, lu localement. */
+  repoPath: "public/legal/nda-standex-k-motor-16062026.docx",
+  url: NDA_TEMPLATE_URL,
 } as const;
 
 /** Seuls champs variables autorisés : rien d'autre n'est modifié dans le modèle. */
-export interface NdaVariableFields {
-  clientLegalName: string;
-  clientAddress: string;
-  signatoryName: string;
-  signatoryRole: string;
-  place: string;
-  date: string;
-}
+export type NdaVariableFields = NdaVariableValues;
 
-export const EMPTY_NDA_FIELDS: NdaVariableFields = {
-  clientLegalName: "",
-  clientAddress: "",
-  signatoryName: "",
-  signatoryRole: "",
-  place: "",
-  date: "",
-};
+export const EMPTY_NDA_FIELDS: NdaVariableFields = EMPTY_NDA_VALUES;
+
+/** Libellés des champs variables, dans l'ordre du document. */
+export const NDA_FIELD_LABELS = VARIABLE_FIELDS.map((f) => [f.key, f.label] as const);
 
 export type NdaStatus =
   | "not_required"
@@ -53,7 +52,7 @@ export const INITIAL_NDA: NdaState = {
   required: true,
   status: "requested",
   fields: EMPTY_NDA_FIELDS,
-  templateAvailable: false,
+  templateAvailable: true,
   proof: null,
 };
 
