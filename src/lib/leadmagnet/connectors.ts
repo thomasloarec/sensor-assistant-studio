@@ -47,6 +47,8 @@ export function terminationLabel(t: Termination): string {
   if (t.kind === "bare_leads") return "Fils nus (par défaut)";
   if (t.kind === "qualified_connector")
     return `${t.combo.connector.manufacturer} ${t.combo.connector.mpn} — combinaison qualifiée (${t.combo.source})`;
+  if (t.kind === "unqualified_connector")
+    return `${t.spec.manufacturer} ${t.spec.mpn} — à vérifier par la R&D`;
   return `${t.text} — à vérifier par la R&D`;
 }
 
