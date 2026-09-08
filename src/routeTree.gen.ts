@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DesignRouteImport } from './routes/design'
+import { Route as InternalRouteImport } from './routes/internal'
 import { Route as StandexRouteImport } from './routes/standex'
 
 const IndexRoute = IndexRouteImport.update({
@@ -23,6 +24,11 @@ const DesignRoute = DesignRouteImport.update({
   path: '/design',
   getParentRoute: () => rootRouteImport,
 } as any)
+const InternalRoute = InternalRouteImport.update({
+  id: '/internal',
+  path: '/internal',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const StandexRoute = StandexRouteImport.update({
   id: '/standex',
   path: '/standex',
@@ -32,30 +38,34 @@ const StandexRoute = StandexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/design': typeof DesignRoute
+  '/internal': typeof InternalRoute
   '/standex': typeof StandexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/design': typeof DesignRoute
+  '/internal': typeof InternalRoute
   '/standex': typeof StandexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/design': typeof DesignRoute
+  '/internal': typeof InternalRoute
   '/standex': typeof StandexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/design' | '/standex'
+  fullPaths: '/' | '/design' | '/internal' | '/standex'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/design' | '/standex'
-  id: '__root__' | '/' | '/design' | '/standex'
+  to: '/' | '/design' | '/internal' | '/standex'
+  id: '__root__' | '/' | '/design' | '/internal' | '/standex'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DesignRoute: typeof DesignRoute
+  InternalRoute: typeof InternalRoute
   StandexRoute: typeof StandexRoute
 }
 
@@ -75,6 +85,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DesignRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/internal': {
+      id: '/internal'
+      path: '/internal'
+      fullPath: '/internal'
+      preLoaderRoute: typeof InternalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/standex': {
       id: '/standex'
       path: '/standex'
@@ -88,6 +105,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DesignRoute: DesignRoute,
+  InternalRoute: InternalRoute,
   StandexRoute: StandexRoute,
 }
 export const routeTree = rootRouteImport

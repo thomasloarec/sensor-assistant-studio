@@ -72,7 +72,7 @@
   --font-mono: "IBM Plex Mono", ui-monospace, monospace;
   /* Detect Blue #254061 · Electronics Gray #535759 et teintes 10/25/50/75 */
   --detect-blue: oklch(0.36 0.061 258);
-  --background: oklch(0.985 0 0);
+  --background: oklch(0.986 0.005 95);
   --foreground: oklch(0.42 0.005 220);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.42 0.005 220);
@@ -144,6 +144,15 @@
 }
 
 @layer base {
+  /* Lisibilité : champs, boutons et libellés ne descendent pas sous 16px. */
+  input,
+  textarea,
+  select,
+  button,
+  label {
+    font-size: max(1rem, 16px);
+  }
+
   * {
     border-color: var(--color-border);
     letter-spacing: 0;
@@ -152,8 +161,8 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
-    font-size: 15.5px;
-    line-height: 1.6;
+    font-size: 18px;
+    line-height: 1.55;
   }
 
   h1,

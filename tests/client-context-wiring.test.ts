@@ -15,7 +15,7 @@ import {
 } from "@/lib/leadmagnet/cabling";
 
 const followup = readFileSync("src/components/leadmagnet/client-followup.tsx", "utf8");
-const design = readFileSync("src/routes/design.tsx", "utf8");
+const design = readFileSync("src/components/leadmagnet/design-space.tsx", "utf8");
 const standex = readFileSync("src/routes/standex.tsx", "utf8");
 
 describe("ouverture d'un dossier", () => {
