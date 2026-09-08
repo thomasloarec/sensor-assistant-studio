@@ -662,6 +662,21 @@
   .anim-stagger > *:nth-child(n + 7) {
     animation-delay: calc(var(--stagger) * 6);
   }
+  .home-hero-copy.anim-stagger > *:nth-child(1) {
+    animation-delay: 120ms;
+  }
+  .home-hero-copy.anim-stagger > *:nth-child(2) {
+    animation-delay: calc(120ms + var(--stagger));
+  }
+  .home-hero-copy.anim-stagger > *:nth-child(3) {
+    animation-delay: calc(120ms + var(--stagger) * 2);
+  }
+  .home-hero-copy.anim-stagger > *:nth-child(4) {
+    animation-delay: calc(120ms + var(--stagger) * 3);
+  }
+  .home-hero-copy.anim-stagger > *:nth-child(5) {
+    animation-delay: calc(120ms + var(--stagger) * 4);
+  }
   .step-enter {
     animation: standex-rise var(--d-page) var(--ease-out) both;
   }
@@ -694,6 +709,13 @@
   .magnet-status-dot,
   .home-scroll-cue {
     animation: none !important;
+  }
+  .hero-field,
+  .hero-field *,
+  .hero-field *::before,
+  .hero-field *::after {
+    animation: none !important;
+    transition: none !important;
   }
 }
 

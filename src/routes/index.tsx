@@ -75,8 +75,8 @@ function HomeRoute() {
             <span className="hero-glow right-[6%] top-[10%] size-[520px] max-w-[70vw]" />
             <div className="grid w-full gap-14 lg:grid-cols-[0.92fr_1.08fr] lg:items-center lg:gap-16">
               <div
-                className="anim-stagger relative z-10"
-                style={{ "--stagger": "70ms", animationDelay: "120ms" } as CSSProperties}
+                className="home-hero-copy anim-stagger relative z-10"
+                style={{ "--stagger": "70ms" } as CSSProperties}
               >
                 <p className="t-label flex items-center gap-3">
                   <span className="standex-bar h-[14px] w-[6px] shrink-0" aria-hidden="true" />
