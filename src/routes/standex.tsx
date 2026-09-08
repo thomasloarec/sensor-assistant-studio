@@ -34,7 +34,9 @@ import {
   fetchStaffView,
   publishReview,
   recordNdaProof,
+  revalidateSample,
   updateSample,
+  uploadDesignFile,
   type DossierView,
   type StaffInbox,
 } from "@/lib/leadmagnet/supabase-adapter";
@@ -115,6 +117,8 @@ function StandexConsole() {
     partyB: "",
     signedAt: "",
     source: "Vérification manuelle du document signé",
+    evidenceKind: "stored_object" as "stored_object" | "external_archive",
+    signedFileName: "",
   });
 
   useEffect(() => {
@@ -244,7 +248,7 @@ function StandexConsole() {
                       <SelectContent>
                         {inbox.staff_directory.map((m) => (
                           <SelectItem key={m.user_id} value={m.user_id}>
-                            {m.role} — {m.user_id.slice(0, 8)}
+                            {m.display_name ?? m.email ?? "Membre Standex"} — {m.role}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -619,6 +623,24 @@ function StandexConsole() {
                               {st}
                             </Button>
                           ))}
+                          {s.status === "superseded" ? (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() =>
+                                run(async () => {
+                                  const why = window.prompt(
+                                    "Pourquoi cet échantillon reste-t-il valable malgré la nouvelle version du dossier ?",
+                                  );
+                                  if (!why?.trim()) return "Revalidation annulée.";
+                                  await revalidateSample(s.id, why.trim());
+                                  return "Échantillon revalidé explicitement.";
+                                })
+                              }
+                            >
+                              Revalider explicitement
+                            </Button>
+                          ) : null}
                           {s.feedback ? (
                             <p className="w-full text-xs text-muted-foreground">
                               Retour client (version {s.feedback_revision}) : {s.feedback}
@@ -640,19 +662,68 @@ function StandexConsole() {
                         pas signature : enregistrez ici la preuve du document réellement signé.
                       </p>
                       <div className="grid gap-2 sm:grid-cols-2">
-                        <div>
-                          <Label className="text-xs">Empreinte du document signé</Label>
+                        <div className="sm:col-span-2">
+                          <Label className="text-xs">Document signé (fichier)</Label>
                           <Input
-                            value={nda.documentSha256}
-                            onChange={(e) => setNda({ ...nda, documentSha256: e.target.value })}
+                            type="file"
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (!file) return;
+                              void run(async () => {
+                                const bytes = new Uint8Array(await file.arrayBuffer());
+                                const digest = await crypto.subtle.digest("SHA-256", bytes);
+                                const sha = Array.from(new Uint8Array(digest))
+                                  .map((b) => b.toString(16).padStart(2, "0"))
+                                  .join("");
+                                const uploaded = await uploadDesignFile(
+                                  view.dossier.id,
+                                  { name: file.name, data: bytes },
+                                  "nda_signed",
+                                  {
+                                    kind: "nda_signed",
+                                    statement:
+                                      "Dépôt du document signé pour vérification par Standex.",
+                                    accepted_at: new Date().toISOString(),
+                                    content_ref: file.name,
+                                  },
+                                );
+                                setNda((n) => ({
+                                  ...n,
+                                  documentSha256: sha,
+                                  signedObjectPath: uploaded.path,
+                                  signedFileName: uploaded.fileName,
+                                  evidenceKind: "stored_object",
+                                }));
+                                return "Document déposé et empreinte calculée automatiquement.";
+                              });
+                            }}
                           />
-                        </div>
-                        <div>
-                          <Label className="text-xs">Emplacement du document signé</Label>
-                          <Input
-                            value={nda.signedObjectPath}
-                            onChange={(e) => setNda({ ...nda, signedObjectPath: e.target.value })}
-                          />
+                          <p className="mt-1 text-xs text-muted-foreground">
+                            {nda.signedFileName
+                              ? `Déposé : ${nda.signedFileName} — empreinte ${nda.documentSha256.slice(0, 16)}…`
+                              : "Aucun document déposé. Vous pouvez aussi déclarer une preuve conservée dans une archive externe."}
+                          </p>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="mt-1"
+                            onClick={() =>
+                              setNda((n) => ({
+                                ...n,
+                                evidenceKind:
+                                  n.evidenceKind === "stored_object"
+                                    ? "external_archive"
+                                    : "stored_object",
+                                ...(n.evidenceKind === "stored_object"
+                                  ? { signedObjectPath: "", signedFileName: "" }
+                                  : {}),
+                              }))
+                            }
+                          >
+                            {nda.evidenceKind === "stored_object"
+                              ? "Preuve conservée hors de l'application"
+                              : "Revenir à un document déposé ici"}
+                          </Button>
                         </div>
                         <div>
                           <Label className="text-xs">Référence de la preuve</Label>
@@ -692,11 +763,13 @@ function StandexConsole() {
                               dossierId: view.dossier.id,
                               templateSha256: APPROVED_NDA_TEMPLATE.sha256,
                               documentSha256: nda.documentSha256.trim().toLowerCase(),
-                              signedObjectPath: nda.signedObjectPath,
+                              signedObjectPath:
+                                nda.evidenceKind === "stored_object" ? nda.signedObjectPath : "",
                               proofReference: nda.proofReference,
                               counterparties: [{ party: nda.partyA }, { party: nda.partyB }],
                               signedAt: nda.signedAt,
                               source: nda.source,
+                              evidenceKind: nda.evidenceKind,
                             });
                             return "Preuve enregistrée : les transferts confidentiels sont maintenant autorisés pour ce dossier.";
                           })
