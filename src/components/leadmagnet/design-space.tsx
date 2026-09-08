@@ -1406,9 +1406,9 @@ export function DesignSpace({
           Revenir à mon montage
         </Button>
       )}
-      <div className="rounded-md border p-3" data-testid="routing-target-panel">
-        <Label className="text-sm font-medium">Tracé dans la 3D (facultatif)</Label>
-        <p className="mt-1 text-xs text-muted-foreground">
+      <div className="panel-block" data-testid="routing-target-panel">
+        <Label className="t-label">Tracé dans la 3D (facultatif)</Label>
+        <p className="t-caption mt-1">
           Ouvrez l'atelier 3D, activez « Pointer dans la 3D », puis cliquez la sortie de câble, les
           passages et le point de connexion sur les surfaces réellement affichées. Sans modèle 3D,
           la saisie numérique ci-dessous reste la voie exacte : une valeur inconnue reste inconnue,
@@ -1447,19 +1447,19 @@ export function DesignSpace({
             Ouvrir l'atelier 3D
           </Button>
         </div>
-        <p className="mt-2 text-xs text-muted-foreground">
+        <p className="t-caption t-metric mt-2">
           Trajet visé : {activeTargetLabel} · {activePoints.length} point(s) ·{" "}
           {cableRouting.lengthLabel}
         </p>
         {activeTarget.kind === "state" ? (
-          <p className="text-xs text-muted-foreground">
+          <p className="t-caption">
             Chaque état déclaré a son propre trajet complet et sa pose de relevé. Les états non
             relevés ne sont jamais présentés comme couverts.
           </p>
         ) : null}
       </div>
 
-      <div className="grid gap-3 rounded-md border p-3 md:grid-cols-2">
+      <div className="panel-block grid gap-3 md:grid-cols-2">
         {pointFields("Point capteur", cabling.sensorEndpoint, (p) =>
           setCabling((c) => ({ ...c, sensorEndpoint: p })),
         )}
@@ -1467,9 +1467,9 @@ export function DesignSpace({
           setCabling((c) => ({ ...c, connectionEndpoint: p })),
         )}
       </div>
-      <div className="rounded-md border p-3">
+      <div className="panel-block">
         <div className="flex items-center justify-between">
-          <Label className="text-sm font-medium">Waypoints du trajet</Label>
+          <Label className="t-label">Waypoints du trajet</Label>
           <Button
             size="sm"
             variant="outline"
@@ -1508,9 +1508,9 @@ export function DesignSpace({
       </div>
 
       {/* États de mouvement : le trajet doit être couvert pour chaque état. */}
-      <div className="rounded-md border p-3">
+      <div className="panel-block">
         <div className="flex items-center justify-between">
-          <Label className="text-sm font-medium">États de mouvement</Label>
+          <Label className="t-label">États de mouvement</Label>
           <Button
             size="sm"
             variant="outline"
@@ -1548,7 +1548,7 @@ export function DesignSpace({
                     }))
                   }
                 />
-                <span className={covered ? "text-xs text-emerald-700" : "text-xs text-amber-700"}>
+                <span className={covered ? "t-caption text-[var(--success)]" : "t-caption text-[var(--warning)]"}>
                   {covered ? "trajet renseigné" : "trajet manquant pour cet état"}
                 </span>
                 {!covered ? (
@@ -1595,12 +1595,12 @@ export function DesignSpace({
             );
           })}
           {cabling.declaredMotionStates.length === 0 ? (
-            <p className="text-xs text-muted-foreground">
+            <p className="t-caption">
               Aucun état déclaré : si la machine bouge, déclarez chaque position extrême.
             </p>
           ) : null}
         </div>
-        <label className="mt-3 flex items-center gap-2 text-xs">
+        <label className="t-caption mt-3 flex items-center gap-2">
           <input
             type="checkbox"
             checked={cabling.motionCoverageConfirmed}
@@ -1615,7 +1615,7 @@ export function DesignSpace({
         </label>
       </div>
 
-      <div className="grid gap-3 rounded-md border p-3 md:grid-cols-5">
+      <div className="panel-block grid gap-3 md:grid-cols-5">
         {(
           [
             ["serviceReserveMm", "Réserve de service"],
@@ -1625,9 +1625,10 @@ export function DesignSpace({
             ["minBendRadiusMm", "Rayon de courbure mini"],
           ] as const
         ).map(([key, label]) => (
-          <div key={key}>
-            <Label className="text-xs">{label} (mm)</Label>
+          <div key={key} className="w-32">
+            <Label className="t-label">{label} (mm)</Label>
             <Input
+              className="t-metric w-32 text-right"
               inputMode="decimal"
               value={cabling[key] ?? ""}
               onChange={(e) =>
@@ -1643,14 +1644,14 @@ export function DesignSpace({
           </div>
         ))}
       </div>
-      <p className="-mt-2 px-1 text-xs text-muted-foreground">
+      <p className="t-caption -mt-2 px-1">
         La tolérance fournisseur et le volume disponible pour loger le surplus sont deux
         informations différentes.
       </p>
-      <div className="rounded-md border p-3 text-sm">
+      <div className="panel-block">
         <p>
           Plus long trajet mesuré (polyligne) :{" "}
-          <strong>
+          <strong className="t-metric">
             {estimate.longestPathMm === null
               ? "inconnu"
               : `${estimate.longestPathMm.toFixed(1)} mm`}
@@ -1658,22 +1659,22 @@ export function DesignSpace({
         </p>
         <p>
           Longueur minimale demandée, marges comprises :{" "}
-          <strong>
+          <strong className="t-metric">
             {estimate.requiredMm === null
               ? "inconnue tant que le trajet n'est pas complet"
               : `${estimate.requiredMm.toFixed(1)} mm`}
           </strong>
         </p>
-        <p className="text-xs text-muted-foreground">
+        <p className="t-caption">
           Cette longueur n'est jamais une longueur approuvée : elle est vérifiée en revue R&D.
         </p>
-        <ul className="mt-2 list-disc pl-5 text-xs text-amber-700">
+        <ul className="notice notice-warning mt-2 list-disc pl-8">
           {estimate.warnings.map((w, i) => (
             <li key={i}>{w}</li>
           ))}
         </ul>
         <Separator className="my-3" />
-        <p className="text-sm">{lengthVerdict.message}</p>
+        <p>{lengthVerdict.message}</p>
         <div className="mt-3 flex flex-wrap gap-2">
           {(
             [
@@ -1692,7 +1693,7 @@ export function DesignSpace({
             </Button>
           ))}
         </div>
-        <ul className="mt-2 list-disc pl-5 text-xs text-muted-foreground">
+        <ul className="t-caption mt-2 list-disc pl-5">
           {RANGE_CABLE_LENGTH_NOTES.map((n) => (
             <li key={n.range}>
               {n.range} : {n.lengths} (source : {n.source})
@@ -1701,16 +1702,16 @@ export function DesignSpace({
         </ul>
       </div>
 
-      <div className="rounded-md border p-3">
-        <Label className="text-sm font-medium">Terminaison</Label>
+      <div className="panel-block">
+        <Label className="t-label">Terminaison</Label>
         <p className="mt-1 text-sm">{terminationLabel(termination)}</p>
-        <ul className="mt-1 list-disc pl-5 text-xs text-muted-foreground">
+        <ul className="t-caption mt-1 list-disc pl-5">
           {connectorSummaryLines(termination).map((l, i) => (
             <li key={i}>{l}</li>
           ))}
         </ul>
         <div className="mt-3">
-          <Label className="text-xs">Boîtiers documentés par le fabricant</Label>
+          <Label className="t-label">Boîtiers documentés par le fabricant</Label>
           <div className="mt-1 flex flex-wrap gap-2">
             {DOCUMENTED_HOUSINGS.map((h) => (
               <Button
@@ -1729,7 +1730,7 @@ export function DesignSpace({
               </Button>
             ))}
           </div>
-          <p className="mt-1 text-xs text-muted-foreground">
+          <p className="t-caption mt-1">
             Quelques boîtiers documentés seulement, pas le marché entier. Boîtier, contacts à sertir
             et embase restent trois références distinctes ; brochage, section de fil réelle et
             disponibilité restent inconnus et à vérifier par la R&D.
@@ -1738,7 +1739,7 @@ export function DesignSpace({
         <div className="mt-3 grid gap-3 md:grid-cols-2">
           {CONNECTOR_FIELD_LABELS.map(([key, label]) => (
             <div key={key}>
-              <Label className="text-xs">{label}</Label>
+              <Label className="t-label">{label}</Label>
               <Input
                 value={connectorDraft[key]}
                 onChange={(e) => setConnectorDraft((d) => ({ ...d, [key]: e.target.value }))}
@@ -1746,7 +1747,7 @@ export function DesignSpace({
             </div>
           ))}
         </div>
-        {connectorError ? <p className="mt-2 text-xs text-destructive">{connectorError}</p> : null}
+        {connectorError ? <p className="notice notice-danger mt-2">{connectorError}</p> : null}
         <div className="mt-3 flex flex-wrap items-center gap-2">
           <Button
             size="sm"
@@ -1774,7 +1775,7 @@ export function DesignSpace({
             Enregistrer en « à vérifier par R&D »
           </Button>
         </div>
-        <p className="mt-1 text-xs text-muted-foreground">
+        <p className="t-caption mt-1">
           Aucune combinaison connecteur/capteur qualifiée n'est documentée dans ce projet : toute
           référence saisie, sa contrepartie et son brochage restent à vérifier par la R&D.
         </p>
@@ -1784,22 +1785,29 @@ export function DesignSpace({
 
   const revueSection = (
     <div className="space-y-4">
-      <Accordion type="multiple" defaultValue={["resume", "nda", "envoi"]}>
-        <AccordionItem value="resume">
-          <AccordionTrigger>Résumé technique et inconnues</AccordionTrigger>
+      <Accordion type="multiple" defaultValue={["resume", "nda", "envoi"]} className="space-y-3">
+        <AccordionItem value="resume" className="panel-block-lg border-0">
+          <AccordionTrigger className="business-accordion-trigger t-title-s gap-3 hover:no-underline">
+            <span className="standex-bar !h-5 !w-1" aria-hidden="true" />
+            <span className="flex-1">Résumé technique et inconnues</span>
+          </AccordionTrigger>
           <AccordionContent>
-            <pre className="whitespace-pre-wrap rounded-md bg-muted p-3 text-xs">
+            <pre className="code-block max-h-[28rem] overflow-y-auto whitespace-pre-wrap">
               {technicalSummary(dossier)}
             </pre>
           </AccordionContent>
         </AccordionItem>
 
-        <AccordionItem value="projet">
-          <AccordionTrigger>Contexte projet</AccordionTrigger>
-          <AccordionContent className="grid gap-3 md:grid-cols-2">
+        <AccordionItem value="projet" className="panel-block-lg border-0">
+          <AccordionTrigger className="business-accordion-trigger t-title-s gap-3 hover:no-underline">
+            <span className="standex-bar !h-5 !w-1" aria-hidden="true" />
+            <span className="flex-1">Contexte projet</span>
+          </AccordionTrigger>
+          <AccordionContent className="grid gap-5 md:grid-cols-2">
             <div>
-              <Label className="text-xs">Volume annuel de capteurs (entier ou « inconnu »)</Label>
+              <Label className="t-label">Volume annuel de capteurs (entier ou « inconnu »)</Label>
               <Input
+                className="t-metric mt-2 w-full text-right"
                 value={volumeRaw}
                 placeholder="inconnu"
                 onChange={(e) => {
@@ -1816,11 +1824,12 @@ export function DesignSpace({
                   }
                 }}
               />
-              {volumeError ? <p className="text-xs text-destructive">{volumeError}</p> : null}
+              {volumeError ? <p className="notice notice-danger mt-2 w-full">{volumeError}</p> : null}
             </div>
             <div>
-              <Label className="text-xs">Date de lancement série</Label>
+              <Label className="t-label">Date de lancement série</Label>
               <Input
+                className="t-metric mt-2 w-full"
                 type="date"
                 onChange={(e) =>
                   setDossier((d) => ({
@@ -1831,8 +1840,9 @@ export function DesignSpace({
               />
             </div>
             <div>
-              <Label className="text-xs">Échantillons utiles avant</Label>
+              <Label className="t-label">Échantillons utiles avant</Label>
               <Input
+                className="t-metric mt-2 w-full"
                 type="date"
                 onChange={(e) =>
                   setDossier((d) => ({
@@ -1843,8 +1853,9 @@ export function DesignSpace({
               />
             </div>
             <div>
-              <Label className="text-xs">Durée de série (années)</Label>
+              <Label className="t-label">Durée de série (années)</Label>
               <Input
+                className="t-metric mt-2 w-full text-right"
                 inputMode="numeric"
                 onChange={(e) =>
                   setDossier((d) => ({
@@ -1855,8 +1866,9 @@ export function DesignSpace({
               />
             </div>
             <div>
-              <Label className="text-xs">Contact</Label>
+              <Label className="t-label">Contact</Label>
               <Input
+                className="mt-2 w-full"
                 placeholder="Nom"
                 onChange={(e) =>
                   setDossier((d) => ({
@@ -1867,8 +1879,9 @@ export function DesignSpace({
               />
             </div>
             <div>
-              <Label className="text-xs">E-mail</Label>
+              <Label className="t-label">E-mail</Label>
               <Input
+                className="mt-2 w-full"
                 type="email"
                 onChange={(e) =>
                   setDossier((d) => ({
@@ -1881,8 +1894,11 @@ export function DesignSpace({
           </AccordionContent>
         </AccordionItem>
 
-        <AccordionItem value="nda">
-          <AccordionTrigger>Confidentialité et NDA — {ndaStatusLabel(nda)}</AccordionTrigger>
+        <AccordionItem value="nda" className="panel-block-lg border-0">
+          <AccordionTrigger className="business-accordion-trigger t-title-s gap-3 hover:no-underline">
+            <span className="standex-bar !h-5 !w-1" aria-hidden="true" />
+            <span className="flex-1">Confidentialité et NDA — {ndaStatusLabel(nda)}</span>
+          </AccordionTrigger>
           <AccordionContent className="space-y-3">
             <p className="text-sm">
               Modèle juridique approuvé : <strong>{APPROVED_NDA_TEMPLATE.fileName}</strong> (SHA-256{" "}
@@ -1893,7 +1909,7 @@ export function DesignSpace({
             <div className="grid gap-2 md:grid-cols-2">
               {NDA_FIELD_LABELS.map(([key, label]) => (
                 <div key={key}>
-                  <Label className="text-xs">{label}</Label>
+                  <Label className="t-label">{label}</Label>
                   <Input
                     value={nda.fields[key]}
                     onChange={(e) =>
@@ -1947,7 +1963,7 @@ export function DesignSpace({
                 Actualiser le statut
               </Button>
             </div>
-            <p className="text-xs text-muted-foreground">
+            <p className="t-caption">
               « Préparer mon NDA » n'envoie aucune donnée de conception : seule une fiche vide est
               créée côté Standex pour que vous puissiez déposer le document signé et que l'équipe
               puisse le vérifier.{" "}
@@ -1959,22 +1975,22 @@ export function DesignSpace({
             </p>
 
             {ndaError ? (
-              <p className="flex items-start gap-2 rounded-md border border-amber-300 bg-amber-50 p-2 text-sm text-amber-900">
+              <p className="notice notice-warning flex items-start gap-2">
                 <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
                 {ndaError}
               </p>
             ) : null}
             {ndaPreview ? (
               <div className="space-y-2">
-                <p className="text-xs text-muted-foreground">
+                <p className="t-caption">
                   Aperçu local des clauses du document rempli (non signé) — {ndaPreview.fileName}
                 </p>
-                <pre className="max-h-80 overflow-auto whitespace-pre-wrap rounded-md bg-muted p-3 text-xs">
+                <pre className="code-block max-h-80 overflow-auto whitespace-pre-wrap">
                   {ndaPreview.paragraphs.filter((p) => p.trim()).join("\n\n")}
                 </pre>
               </div>
             ) : null}
-            <p className="text-xs text-muted-foreground">
+            <p className="t-caption">
               Générer un document n'est pas une signature : aucune signature ni tampon n'est ajouté,
               le document reste non signé. Le statut « en vigueur » n'est accordé que sur preuve
               vérifiée côté Standex ; tant qu'il n'est pas atteint, aucun contenu confidentiel n'est
@@ -1983,11 +1999,14 @@ export function DesignSpace({
           </AccordionContent>
         </AccordionItem>
 
-        <AccordionItem value="envoi">
-          <AccordionTrigger>Préparer la revue Standex</AccordionTrigger>
+        <AccordionItem value="envoi" className="panel-block-lg border-0">
+          <AccordionTrigger className="business-accordion-trigger t-title-s gap-3 hover:no-underline">
+            <span className="standex-bar !h-5 !w-1" aria-hidden="true" />
+            <span className="flex-1">Préparer la revue Standex</span>
+          </AccordionTrigger>
           <AccordionContent className="space-y-3">
             <div>
-              <Label className="text-xs">Contraintes supplémentaires</Label>
+              <Label className="t-label">Contraintes supplémentaires</Label>
               <Textarea
                 rows={3}
                 value={extraConstraints}
@@ -2027,7 +2046,7 @@ export function DesignSpace({
               />
               J'autorise l'envoi de ce contenu à Standex (R&D et commercial).
             </label>
-            {consentNotice ? <p className="text-xs text-amber-600">{consentNotice}</p> : null}
+            {consentNotice ? <p className="notice notice-warning">{consentNotice}</p> : null}
 
             <label className="flex items-center gap-2 text-sm">
               <Checkbox
@@ -2054,7 +2073,7 @@ export function DesignSpace({
                     ? "Fichier 3D déposé et vérifié"
                     : "1. Déposer le fichier 3D"}
                 </Button>
-                <p className="text-xs text-muted-foreground">
+                <p className="t-caption">
                   Le dépôt a lieu avant votre accord, pour que vous confirmiez exactement ce qui
                   partira. Il n'est pas refait si l'envoi doit être retenté.
                 </p>
@@ -2067,13 +2086,22 @@ export function DesignSpace({
               />
               J'ai relu le résumé technique et les inconnues listées.
             </label>
-            <Button onClick={() => void onSubmit()} disabled={!ndaOk || busy}>
-              <ShieldCheck className="mr-1 h-4 w-4" />{" "}
-              {busy ? "Envoi en cours…" : "Transmettre à la revue Standex"}
-            </Button>
+            <hr className="standex-rule" />
+            <div className="space-y-3">
+              <p className="t-caption">J'ai relu le résumé technique et les inconnues listées.</p>
+              <Button
+                size="lg"
+                className="w-full sm:w-auto"
+                onClick={() => void onSubmit()}
+                disabled={!ndaOk || busy}
+                aria-busy={busy ? "true" : undefined}
+              >
+                {busy ? <Loader2 className="mr-1 h-4 w-4 animate-spin" /> : <ShieldCheck className="mr-1 h-4 w-4" />} {busy ? "Envoi en cours…" : "Transmettre à la revue Standex"}
+              </Button>
+            </div>
             {!backend?.ready ? (
               <div className="space-y-2">
-                <p className="text-xs text-muted-foreground">
+                <p className="t-caption">
                   {backend?.message ?? "Vérification du backend en cours…"}
                 </p>
                 <AuthPanel
@@ -2089,24 +2117,27 @@ export function DesignSpace({
               <AuthPanel backend={backend} />
             )}
             {reopenedFrom ? (
-              <p className="text-xs text-muted-foreground">
+              <p className="t-caption">
                 Contenu repris de la version {reopenedFrom.revision}. Le prochain envoi créera la
                 version {serverRevision + 1} de ce dossier.
               </p>
             ) : null}
-            {submitMessage ? <p className="text-sm">{submitMessage}</p> : null}
+            {submitMessage ? <p className="notice notice-success notice-success-sweep">{submitMessage}</p> : null}
           </AccordionContent>
         </AccordionItem>
 
-        <AccordionItem value="echantillons">
-          <AccordionTrigger>Échantillons et suivi</AccordionTrigger>
+        <AccordionItem value="echantillons" className="panel-block-lg border-0">
+          <AccordionTrigger className="business-accordion-trigger t-title-s gap-3 hover:no-underline">
+            <span className="standex-bar !h-5 !w-1" aria-hidden="true" />
+            <span className="flex-1">Échantillons et suivi</span>
+          </AccordionTrigger>
           <AccordionContent className="space-y-3">
             <p className="text-sm">{sampleRoute.note}</p>
-            <p className="text-sm text-amber-700">
+            <p className="notice notice-warning">
               Les échantillons s'ouvrent après un retour Standex validé et publié, qui fixe la
               référence exacte à commander. Une gamme ne suffit pas.
             </p>
-            <p className="text-xs text-muted-foreground">{SEARCH_LINK_DISCLAIMER}</p>
+            <p className="t-caption">{SEARCH_LINK_DISCLAIMER}</p>
             <Button
               variant="outline"
               className="min-h-11 text-base"
@@ -2115,7 +2146,7 @@ export function DesignSpace({
               Ouvrir mon espace (mes projets, suivi, variantes)
             </Button>
 
-            <p className="text-xs text-muted-foreground">
+            <p className="t-caption">
               Disponibilités, MOQ et conditionnements : inconnus tant qu'aucun fournisseur réel
               n'est connecté.
             </p>
@@ -2157,7 +2188,7 @@ export function DesignSpace({
   }, [applyWorkshopConfig]);
 
   const draftBanner = workshopDraftPending ? (
-    <div className="rounded-lg border border-amber-300 bg-amber-50 p-4">
+    <div className="notice notice-warning">
       <p className="text-base">
         Des réglages 3D ne sont pas encore repris dans votre projet : ils ne partiraient ni dans
         l'export ni dans le résumé.
