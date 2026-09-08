@@ -85,7 +85,8 @@ export async function submit(
     return {
       status: "not_submitted",
       reason:
-        "Les tables de revue ne sont pas encore créées sur le backend Standex : la soumission n'a pas été envoyée.",
+        "La liaison avec l'équipe Standex n'est pas encore activée : votre dossier n'a pas été envoyé. " +
+        "Il reste intact dans cet onglet et vous pouvez l'exporter.",
     };
   try {
     const result = await backend.submit(await buildSnapshot(input));

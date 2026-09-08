@@ -70,6 +70,12 @@ import { routeSamples, SEARCH_LINK_DISCLAIMER, createSampleRequest } from "@/lib
 import { DEFAULT_WORKSHOP } from "@/lib/standex/magnetic-workshop";
 import type { WorkshopConfig } from "@/lib/standex/magnetic-workshop";
 
+import {
+  openPrivateErrorScope,
+  reportPrivateError,
+  PRIVATE_ERROR_CODES,
+} from "@/lib/lovable-error-reporting";
+
 const MagneticWorkshop = lazy(() => import("@/components/standex/workshop/workshop"));
 
 export const Route = createFileRoute("/design")({
@@ -93,7 +99,28 @@ export const Route = createFileRoute("/design")({
     ],
   }),
   component: DesignSpace,
+  // Frontière dédiée : une erreur ici ne remonte qu'un code fixe, sans message
+  // d'origine ni pile, pour qu'aucune donnée du projet privé ne parte en télémétrie.
+  errorComponent: PrivateDesignError,
 });
+
+function PrivateDesignError({ reset }: { reset: () => void }) {
+  useEffect(() => {
+    reportPrivateError(PRIVATE_ERROR_CODES.design_workspace);
+  }, []);
+  return (
+    <div className="flex min-h-screen items-center justify-center px-4">
+      <div className="max-w-md space-y-3 text-center">
+        <h1 className="text-xl font-semibold">L'espace de conception s'est interrompu</h1>
+        <p className="text-sm text-muted-foreground">
+          Rien de ce que vous avez saisi n'a été transmis. Le détail de l'incident reste sur votre
+          appareil : seul un code d'incident anonyme a été signalé.
+        </p>
+        <Button onClick={reset}>Réessayer</Button>
+      </div>
+    </div>
+  );
+}
 
 const stateBadge = (state: string) =>
   state === "confirmed" ? "Confirmé" : state === "hypothesis" ? "Hypothèse" : "Inconnu";
@@ -187,6 +214,9 @@ function DesignSpace() {
     [nda],
   );
 
+
+  // Tant que cet espace est monté, la télémétrie est réduite à un code anonyme.
+  useEffect(() => openPrivateErrorScope(), []);
 
   useEffect(() => {
     checkLeadBackend().then(setBackend).catch(() => setBackend(null));
