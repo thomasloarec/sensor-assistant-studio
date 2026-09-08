@@ -709,23 +709,51 @@ export function DesignSpace({ chrome = "page" }: DesignSpaceProps) {
   // La désignation standard/custom vient du retour R&D publié, jamais de cet écran.
   const sampleRoute = routeSamples({ volume, isCustom: false });
 
+  const embedded = chrome === "embedded";
+  const stepIndex = tab === "besoin" ? 0 : tab === "revue" ? 2 : 1;
+  const steps = [
+    { id: "besoin", label: "Mon besoin", hint: "Ce que vous voulez détecter" },
+    { id: "montage", label: "Mon montage", hint: "Où le capteur se place" },
+    { id: "revue", label: "Avec Standex", hint: "Faire relire votre projet" },
+  ];
+
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <header className="border-b bg-card">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-3 px-4 py-3">
-          <Link to="/" className="inline-flex items-center gap-2 text-sm text-muted-foreground">
-            <ArrowLeft className="h-4 w-4" /> Banc de test interne
-          </Link>
-          <h1 className="text-lg font-semibold">Concevoir une détection</h1>
-          <Badge variant="secondary" className="gap-1">
+    <div className={embedded ? "text-foreground" : "min-h-screen bg-background text-foreground"}>
+      <header className={embedded ? "border-b bg-card/60" : "border-b bg-card"}>
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-3 px-4 py-4">
+          {embedded ? null : (
+            <Link to="/internal" className="inline-flex items-center gap-2 text-base text-muted-foreground">
+              <ArrowLeft className="h-4 w-4" /> Banc de test interne
+            </Link>
+          )}
+          <div className="min-w-0 flex-1">
+            <Label htmlFor="project-title" className="text-sm text-muted-foreground">
+              Nom de mon projet
+            </Label>
+            <Input
+              id="project-title"
+              value={dossier.title}
+              onChange={(e) =>
+                setDossier((d) => ({
+                  ...d,
+                  title: e.target.value,
+                  updatedAt: new Date().toISOString(),
+                }))
+              }
+              className="h-11 max-w-lg border-0 bg-transparent px-0 text-2xl font-semibold shadow-none focus-visible:bg-background focus-visible:px-3"
+            />
+          </div>
+          <Badge variant="secondary" className="gap-1 text-sm">
             <Lock className="h-3 w-3" /> {STORAGE_BADGE[privacy.storage]}
           </Badge>
-          <Badge variant="outline">Révision {dossier.revision}</Badge>
-          <div className="ml-auto flex items-center gap-2">
-            <Button variant="outline" size="sm" onClick={exportDossier}>
-              <Download className="mr-1 h-4 w-4" /> Exporter le dossier
+          <Badge variant="outline" className="text-sm">
+            Révision {dossier.revision}
+          </Badge>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" className="min-h-11" onClick={exportDossier}>
+              <Download className="mr-1 h-4 w-4" /> Exporter
             </Button>
-            <Button variant="outline" size="sm" asChild>
+            <Button variant="outline" className="min-h-11" asChild>
               <label className="cursor-pointer">
                 Reprendre un fichier
                 <input
@@ -741,21 +769,62 @@ export function DesignSpace({ chrome = "page" }: DesignSpaceProps) {
             </Button>
           </div>
         </div>
-        <div className="mx-auto max-w-6xl px-4 pb-3 text-xs text-muted-foreground">
+        <div className="mx-auto max-w-6xl px-4 pb-3 text-sm text-muted-foreground">
           {MEMORY_LOSS_WARNING} {EXPORT_BINARY_NOTICE}
           {importMessage ? <span className="block text-foreground">{importMessage}</span> : null}
         </div>
       </header>
 
       <main className="mx-auto max-w-6xl px-4 py-6">
+        <nav aria-label="Progression" className="mb-6 grid gap-2 sm:grid-cols-3">
+          {steps.map((s, i) => (
+            <button
+              key={s.id}
+              type="button"
+              aria-current={stepIndex === i ? "step" : undefined}
+              onClick={() => setTab(s.id)}
+              className={`min-h-11 rounded-xl border px-4 py-3 text-left transition-colors ${
+                stepIndex === i
+                  ? "border-primary bg-primary text-primary-foreground"
+                  : "bg-card hover:bg-accent"
+              }`}
+            >
+              <span className="block text-base font-semibold">
+                {i + 1}. {s.label}
+              </span>
+              <span
+                className={`block text-sm ${stepIndex === i ? "opacity-90" : "text-muted-foreground"}`}
+              >
+                {s.hint}
+              </span>
+            </button>
+          ))}
+        </nav>
+
         <Tabs value={tab} onValueChange={setTab}>
-          <TabsList className="flex-wrap">
+          <div className="mb-2 flex flex-wrap items-center gap-2">
+            <Button
+              variant="ghost"
+              className="min-h-11 text-base"
+              aria-expanded={showAdvanced}
+              onClick={() => setShowAdvanced((v) => !v)}
+            >
+              {showAdvanced ? "Masquer les outils détaillés" : "Ouvrir les outils détaillés"}
+            </Button>
+            {showAdvanced ? null : (
+              <span className="text-sm text-muted-foreground">
+                Candidats, câblage et connecteurs restent disponibles ici, sans rien perdre.
+              </span>
+            )}
+          </div>
+          <TabsList className={showAdvanced ? "flex-wrap" : "sr-only"}>
             <TabsTrigger value="besoin">Besoin</TabsTrigger>
             <TabsTrigger value="montage">Montage &amp; 3D</TabsTrigger>
             <TabsTrigger value="candidats">Candidats</TabsTrigger>
             <TabsTrigger value="cablage">Câblage</TabsTrigger>
             <TabsTrigger value="revue">Revue Standex</TabsTrigger>
           </TabsList>
+
 
           {/* ---------------- Besoin ---------------- */}
           <TabsContent value="besoin" className="space-y-4 pt-4">
