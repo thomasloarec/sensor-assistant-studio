@@ -181,6 +181,26 @@ export type DossierImport =
   { ok: true; dossier: DesignDossier; notices: string[] } | { ok: false; reason: string };
 
 /** Reprise d'un fichier exporté : aucune autorité n'est restaurée. */
+/** Reprise d'un instantané RÉELLEMENT envoyé au serveur.
+ * Le DTO serveur ne contient ni notes internes, ni rôles, ni fichiers : il est
+ * validé exactement comme un fichier importé, jamais casté aveuglément.
+ */
+export function parseServerSnapshot(
+  snapshot: unknown,
+  now = new Date().toISOString(),
+): DossierImport {
+  return parseDossierExport(
+    {
+      format: EXPORT_FORMAT,
+      version: EXPORT_VERSION,
+      exportedAt: now,
+      binariesToReimport: [],
+      dossier: snapshot,
+    },
+    now,
+  );
+}
+
 export function parseDossierExport(raw: unknown, now = new Date().toISOString()): DossierImport {
   const envelope = z
     .object({ format: z.literal(EXPORT_FORMAT), version: z.number(), dossier: z.unknown() })
