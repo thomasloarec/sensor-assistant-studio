@@ -128,7 +128,7 @@ const dossierSchema = z.object({
   freeConstraints: z.string().catch(""),
   openQuestions: z.array(z.string()).catch([]),
   cabling: cabling.catch(EMPTY_CABLING),
-  termination: termination.catch(() => DEFAULT_TERMINATION),
+  termination: termination.catch(() => DEFAULT_TERMINATION as z.infer<typeof termination>),
   business: z.unknown().catch(null),
 });
 

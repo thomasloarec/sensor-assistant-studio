@@ -54,6 +54,8 @@ export function createOffer(
   review: RndReview | null,
   actor: StaffIdentity,
   now = new Date(),
+  /** Révision courante du dossier côté serveur ; le backend reste l'autorité. */
+  currentRevision: number | null = null,
 ): OfferAttempt {
   const finite = (n: unknown): n is number => typeof n === "number" && Number.isFinite(n);
   if (actor.role !== "sales" && actor.role !== "admin")
