@@ -570,12 +570,18 @@ export function DesignSpace({
   connectorDraftRef.current = connectorDraft;
   const extraConstraintsRef = useRef(extraConstraints);
   extraConstraintsRef.current = extraConstraints;
+  const ndaDraftRef = useRef(nda);
+  ndaDraftRef.current = nda;
+  const importRequestRef = useRef(0);
   const baselineRef = useRef<string | null>(null);
   if (baselineRef.current === null) baselineRef.current = fingerprint(dossier);
 
   /** Y a-t-il un travail réellement modifié à protéger ? */
   const workDirty = useCallback(() => {
     if (draftPendingRef.current) return true;
+    if (ndaDraftRef.current.required !== INITIAL_NDA.required ||
+        JSON.stringify(ndaDraftRef.current.fields) !== JSON.stringify(INITIAL_NDA.fields))
+      return true;
     if (extraConstraintsRef.current.trim() !== "") return true;
     if (JSON.stringify(connectorDraftRef.current) !== JSON.stringify(EMPTY_CONNECTOR_DRAFT))
       return true;
