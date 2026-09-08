@@ -19,7 +19,7 @@ import {
 import { combosForSensor, freeReference } from "../src/lib/leadmagnet/connectors";
 import { INITIAL_PRIVACY, canTransfer, grantConsent } from "../src/lib/leadmagnet/privacy";
 import { INITIAL_NDA, ndaAllowsConfidentialTransfer, prepareNda } from "../src/lib/leadmagnet/nda";
-import { buildSnapshot, checkSubmission, submit } from "../src/lib/leadmagnet/submission";
+import { buildSnapshot, checkSubmission, submissionBinding, submit } from "../src/lib/leadmagnet/submission";
 import { createOffer, invalidationFor, guardRevision, reviewForClient } from "../src/lib/leadmagnet/review";
 import { routeSamples, createSampleRequest, findExactPart } from "../src/lib/leadmagnet/samples";
 
