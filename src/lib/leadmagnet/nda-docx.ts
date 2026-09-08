@@ -344,6 +344,9 @@ export async function fillNdaTemplate(
   const entries = unzipSync(bytes);
   const original = entries[DOCUMENT_ENTRY];
   if (!original) throw new Error("Le modèle NDA ne contient pas word/document.xml.");
+  const problems = validateNdaValues(values);
+  if (problems.length)
+    throw new Error(`Valeurs refusées pour le NDA : ${problems.join(" ")}`);
   const xml = new TextDecoder().decode(original);
   const filled = fillDocumentXml(xml, values);
   // Tous les autres fichiers sont réinjectés tels quels.
