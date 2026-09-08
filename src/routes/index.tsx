@@ -4,7 +4,7 @@
  * gardes serveur, mêmes handlers) : aucune seconde application, aucun envoi
  * silencieux. Le banc interne vit désormais sur /internal.
  */
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Magnet, ArrowRight, UserRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -50,6 +50,7 @@ function HomeRoute() {
   const [started, setStarted] = useState(false);
   const [backend, setBackend] = useState<LeadBackendStatus | null>(null);
   const [authTick, setAuthTick] = useState(0);
+  const [accountOpen, setAccountOpen] = useState(false);
 
   useEffect(() => {
     let alive = true;
@@ -62,7 +63,7 @@ function HomeRoute() {
   }, [authTick]);
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div data-readable className="min-h-screen bg-background text-foreground">
       <header className="border-b bg-card">
         <div className="mx-auto flex max-w-6xl items-center gap-4 px-4 py-4">
           <span className="flex min-w-0 items-center gap-2">
@@ -70,7 +71,7 @@ function HomeRoute() {
             <span className="truncate text-lg font-semibold">Standex DETECT</span>
           </span>
           <div className="ml-auto flex items-center gap-2">
-            <Sheet>
+            <Sheet open={accountOpen} onOpenChange={setAccountOpen}>
               <SheetTrigger asChild>
                 <Button variant="outline" className="min-h-11 text-base">
                   <UserRound className="mr-2 h-4 w-4" /> Mon espace
@@ -86,12 +87,18 @@ function HomeRoute() {
                 </SheetHeader>
                 <div className="space-y-4 px-4 pb-6">
                   <AuthPanel backend={backend} onChanged={() => setAuthTick((n) => n + 1)} />
-                  <Button className="min-h-11 w-full text-base" onClick={() => setStarted(true)}>
+                  <Button
+                    className="min-h-11 w-full text-base"
+                    onClick={() => {
+                      setStarted(true);
+                      setAccountOpen(false);
+                    }}
+                  >
                     Ouvrir mon projet
                   </Button>
                   <p className="text-sm text-muted-foreground">
-                    Projets serveur, reprises et propositions Standex se retrouvent dans l'étape «
-                    Avec Standex » de votre projet.
+                    Vos projets déjà envoyés, les reprises et les propositions Standex s'ouvrent
+                    ensuite dans « Mon espace », à l'intérieur de votre projet.
                   </p>
                 </div>
               </SheetContent>
@@ -110,11 +117,11 @@ function HomeRoute() {
                 Détection magnétique
               </p>
               <h1 className="mt-4 text-4xl font-semibold leading-tight sm:text-5xl lg:text-6xl">
-                Et si votre idée prenait vie&nbsp;?
+Donnez vie à votre détection.
               </h1>
               <p className="mt-6 max-w-xl text-xl leading-relaxed text-foreground">
-                Un aimant qui passe, un capteur qui réagit : c'est tout le principe. Dites-nous ce
-                que vous voulez détecter, et nous construisons la solution avec vous.
+Détecter un mouvement, simplement. Un aimant passe, le capteur réagit. Dites-nous ce
+                que vous voulez détecter : nous construisons la solution avec vous.
               </p>
               <div className="mt-9 flex flex-wrap items-center gap-4">
                 <Button className="min-h-14 px-7 text-lg" onClick={() => setStarted(true)}>
@@ -138,16 +145,7 @@ function HomeRoute() {
             </section>
           </div>
 
-          <p className="mt-16 text-base text-muted-foreground">
-            Équipe Standex :{" "}
-            <Link to="/internal" className="underline underline-offset-4">
-              banc de test interne
-            </Link>{" "}
-            ·{" "}
-            <Link to="/standex" className="underline underline-offset-4">
-              console R&amp;D
-            </Link>
-          </p>
+
         </main>
       )}
     </div>

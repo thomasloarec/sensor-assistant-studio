@@ -120,7 +120,7 @@ function TestBench() {
   }, []);
 
   return (
-    <div className="studio flex h-screen flex-col bg-background font-sans text-foreground">
+    <div data-readable className="studio flex h-screen flex-col bg-background font-sans text-foreground">
       <Header user={user} />
       {!isSupabaseConfigured ? (
         <NotConfigured />

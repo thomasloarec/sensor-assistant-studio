@@ -109,6 +109,12 @@ import { supabase } from "@/lib/standex/supabase";
 import { applyVariant } from "@/lib/leadmagnet/variant";
 import { AuthPanel } from "@/components/leadmagnet/auth-panel";
 import { ClientFollowUp } from "@/components/leadmagnet/client-followup";
+import { WorkspacePanel } from "@/components/leadmagnet/workspace-panel";
+import {
+  DocumentViewer,
+  documentFromFile,
+  type ViewerDocument,
+} from "@/components/leadmagnet/document-viewer";
 import { memoryAssetBytes } from "@/lib/standex/machine-assets";
 import {
   DOCUMENTED_HOUSINGS,
@@ -181,6 +187,53 @@ function pointFields(label: string, value: Point | null, onChange: (p: Point | n
   );
 }
 
+
+/** Questions du parcours guidé : une intention simple par écran, reliée à la
+ * MÊME exigence du dossier que le mode détaillé (aucun second état). */
+export const GUIDED_QUESTIONS: {
+  key: string;
+  prompt: string;
+  example: string;
+  placeholder: string;
+}[] = [
+  {
+    key: "detection_goal",
+    prompt: "Que voulez-vous détecter ?",
+    example: "savoir si une trappe est bien fermée, compter des passages, repérer une position",
+    placeholder: "Décrivez-le avec vos mots.",
+  },
+  {
+    key: "states_motion",
+    prompt: "Que se passe-t-il quand la pièce bouge ?",
+    example: "elle coulisse de 20 mm, elle pivote, elle est retirée puis remise",
+    placeholder: "Décrivez le mouvement et les positions à distinguer.",
+  },
+  {
+    key: "mounting",
+    prompt: "Où le capteur pourrait-il se placer ?",
+    example: "collé sous le couvercle, inséré dans un trou du bâti, vissé sur une équerre",
+    placeholder: "Même une idée approximative nous aide.",
+  },
+  {
+    key: "envelope",
+    prompt: "Quelle place avez-vous à cet endroit ?",
+    example: "un logement d'environ 6 mm de diamètre et 25 mm de long",
+    placeholder: "Dimensions disponibles, même approximatives.",
+  },
+  {
+    key: "electrical",
+    prompt: "À quoi le capteur sera-t-il relié ?",
+    example: "une carte 5 V, un automate 24 V, un petit relais",
+    placeholder: "Tension, courant ou carte de destination si vous les connaissez.",
+  },
+  {
+    key: "environment",
+    prompt: "Dans quel environnement travaille-t-il ?",
+    example: "humidité, huile, vibrations, températures élevées, extérieur",
+    placeholder: "Ce que le capteur devra supporter.",
+  },
+];
+
 export interface DesignSpaceProps {
   /** "page" : route /design autonome. "embedded" : monté dans l'espace projet de l'accueil. */
   chrome?: "page" | "embedded";
@@ -218,7 +271,20 @@ export function DesignSpace({ chrome = "page" }: DesignSpaceProps) {
   const [extraConstraints, setExtraConstraints] = useState("");
   const [submitMessage, setSubmitMessage] = useState<string | null>(null);
   const [showWorkshop, setShowWorkshop] = useState(false);
+  /** Panneau contextuel : le projet reste visible derrière, rien n'est démonté. */
+  const [panel, setPanel] = useState<
+    null | "atelier" | "candidats" | "cablage" | "documents" | "espace"
+  >(null);
+  /** Une fois l'atelier ouvert, il reste monté (masqué) : un réglage 3D non
+   * enregistré n'est jamais perdu en fermant le panneau. */
+  const [workshopMounted, setWorkshopMounted] = useState(false);
+  const [openDoc, setOpenDoc] = useState<ViewerDocument | null>(null);
   const [workshop, setWorkshop] = useState<WorkshopConfig | null>(null);
+  /** Remonté à chaque chargement d'un AUTRE contenu (import, dossier serveur,
+   * variante) : l'atelier est alors réellement remplacé, sans modèle fantôme. */
+  const [workshopEpoch, setWorkshopEpoch] = useState(0);
+  const workshopDraftRef = useRef<WorkshopConfig | null>(null);
+
   const [volumeRaw, setVolumeRaw] = useState("");
   const [volumeError, setVolumeError] = useState<string | null>(null);
   /** Le modèle 3D reste en mémoire tant que ce partage n'est pas explicitement demandé. */
@@ -228,7 +294,7 @@ export function DesignSpace({ chrome = "page" }: DesignSpaceProps) {
   const [routingSlot, setRoutingSlot] = useState<RoutingSlot>("sensor");
   const [tab, setTab] = useState("besoin");
   /** Divulgation progressive : les onglets détaillés restent accessibles à la demande. */
-  const [showAdvanced, setShowAdvanced] = useState(chrome === "page");
+  const [showAdvanced, setShowAdvanced] = useState(false);
   /** Mode guidé : une seule question à la fois, sans rien retirer du dossier. */
   const [focusIdx, setFocusIdx] = useState(0);
   /** Ce à quoi un accord d'envoi se rattache à cet instant : dossier serveur visé,
@@ -452,6 +518,21 @@ export function DesignSpace({ chrome = "page" }: DesignSpaceProps) {
     [routingSlot, activePoints, activeTargetLabel, activeTarget, estimate.requiredMm, setCabling],
   );
 
+  /** Remplacer un travail en cours exige un choix explicite de l'utilisateur. */
+  const confirmReplaceWork = useCallback(
+    (action: string) =>
+      typeof window === "undefined" ||
+      window.confirm(
+        `Le projet ouvert ici n'est enregistré nulle part. Exportez-le d'abord si vous voulez le garder.\n\nRemplacer le travail en cours pour ${action} ?`,
+      ),
+    [],
+  );
+
+  const loadWorkshop = useCallback((c: WorkshopConfig | null) => {
+    setWorkshop(c);
+    setWorkshopEpoch((e) => e + 1);
+  }, []);
+
   const exportDossier = useCallback(() => {
     const blob = new Blob([JSON.stringify(buildDossierExport(dossier), null, 2)], {
       type: "application/json",
@@ -477,7 +558,7 @@ export function DesignSpace({ chrome = "page" }: DesignSpaceProps) {
         // Un fichier importé n'est RATTACHÉ à aucun dossier Standex : tout le
         // contexte serveur, l'atelier, le NDA et les accords repartent de zéro.
         setDossier(parsed.dossier);
-        setWorkshop(parsed.dossier.workshop);
+        loadWorkshop(parsed.dossier.workshop);
         resetServerContext(null, 0);
         setImportMessage(
           [
@@ -726,228 +807,176 @@ export function DesignSpace({ chrome = "page" }: DesignSpaceProps) {
     { id: "revue", label: "Avec Standex", hint: "Faire relire votre projet" },
   ];
 
-  return (
-    <div className={embedded ? "text-foreground" : "min-h-screen bg-background text-foreground"}>
-      <header className={embedded ? "border-b bg-card/60" : "border-b bg-card"}>
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-3 px-4 py-4">
-          {embedded ? null : (
-            <Link
-              to="/internal"
-              className="inline-flex items-center gap-2 text-base text-muted-foreground"
-            >
-              <ArrowLeft className="h-4 w-4" /> Banc de test interne
-            </Link>
-          )}
-          <div className="min-w-0 flex-1">
-            <Label htmlFor="project-title" className="text-sm text-muted-foreground">
-              Nom de mon projet
-            </Label>
-            <Input
-              id="project-title"
-              value={dossier.title}
-              onChange={(e) =>
-                setDossier((d) => ({
-                  ...d,
-                  title: e.target.value,
-                  updatedAt: new Date().toISOString(),
-                }))
-              }
-              className="h-11 max-w-lg border-0 bg-transparent px-0 text-2xl font-semibold shadow-none focus-visible:bg-background focus-visible:px-3"
-            />
-          </div>
-          <Badge variant="secondary" className="gap-1 text-sm">
-            <Lock className="h-3 w-3" /> {STORAGE_BADGE[privacy.storage]}
-          </Badge>
-          <Badge variant="outline" className="text-sm">
-            Révision {dossier.revision}
-          </Badge>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" className="min-h-11" onClick={exportDossier}>
-              <Download className="mr-1 h-4 w-4" /> Exporter
-            </Button>
-            <Button variant="outline" className="min-h-11" asChild>
-              <label className="cursor-pointer">
-                Reprendre un fichier
-                <input
-                  type="file"
-                  accept="application/json"
-                  className="sr-only"
-                  onChange={(e) => {
-                    void importDossier(e.target.files?.[0]);
-                    e.target.value = "";
-                  }}
-                />
-              </label>
-            </Button>
-          </div>
-        </div>
-        <div className="mx-auto max-w-6xl px-4 pb-3 text-sm text-muted-foreground">
-          {MEMORY_LOSS_WARNING} {EXPORT_BINARY_NOTICE}
-          {importMessage ? <span className="block text-foreground">{importMessage}</span> : null}
-        </div>
-      </header>
+  const question = GUIDED_QUESTIONS[focusIdx] ?? GUIDED_QUESTIONS[0]!;
+  const guidedReq = dossier.requirements.find((r) => r.key === question.key) ?? null;
+  const lastQuestion = focusIdx >= GUIDED_QUESTIONS.length - 1;
 
-      <main className="mx-auto max-w-6xl px-4 py-6">
-        <nav aria-label="Progression" className="mb-6 grid gap-2 sm:grid-cols-3">
-          {steps.map((s, i) => (
-            <button
-              key={s.id}
-              type="button"
-              aria-current={stepIndex === i ? "step" : undefined}
-              onClick={() => setTab(s.id)}
-              className={`min-h-11 rounded-xl border px-4 py-3 text-left transition-colors ${
-                stepIndex === i
-                  ? "border-primary bg-primary text-primary-foreground"
-                  : "bg-card hover:bg-accent"
-              }`}
-            >
-              <span className="block text-base font-semibold">
-                {i + 1}. {s.label}
-              </span>
-              <span
-                className={`block text-sm ${stepIndex === i ? "opacity-90" : "text-muted-foreground"}`}
-              >
-                {s.hint}
-              </span>
-            </button>
-          ))}
-        </nav>
-
-        <Tabs value={tab} onValueChange={setTab}>
-          <div className="mb-2 flex flex-wrap items-center gap-2">
-            <Button
-              variant="ghost"
-              className="min-h-11 text-base"
-              aria-expanded={showAdvanced}
-              onClick={() => setShowAdvanced((v) => !v)}
-            >
-              {showAdvanced ? "Masquer les outils détaillés" : "Ouvrir les outils détaillés"}
-            </Button>
-            {showAdvanced ? null : (
-              <span className="text-sm text-muted-foreground">
-                Candidats, câblage et connecteurs restent disponibles ici, sans rien perdre.
-              </span>
-            )}
-          </div>
-          <TabsList className={showAdvanced ? "flex-wrap" : "sr-only"}>
-            <TabsTrigger value="besoin">Besoin</TabsTrigger>
-            <TabsTrigger value="montage">Montage &amp; 3D</TabsTrigger>
-            <TabsTrigger value="candidats">Candidats</TabsTrigger>
-            <TabsTrigger value="cablage">Câblage</TabsTrigger>
-            <TabsTrigger value="revue">Revue Standex</TabsTrigger>
-          </TabsList>
-
-          {/* ---------------- Besoin ---------------- */}
-          <TabsContent value="besoin" className="space-y-5 pt-4">
-            <p className="text-base text-muted-foreground">{LOCAL_ASSISTANT_LABEL}</p>
-            {(showAdvanced
-              ? dossier.requirements
-              : dossier.requirements.filter((_, i) => i === focusIdx)
-            ).map((r) => (
-              <div key={r.key} className="rounded-xl border p-5">
-                <div className="mb-3 flex flex-wrap items-center gap-3">
-                  <Label
-                    htmlFor={`req-${r.key}`}
-                    className={showAdvanced ? "text-base font-medium" : "text-2xl font-semibold"}
-                  >
-                    {r.label}
-                  </Label>
-                  <Badge
-                    variant={
-                      r.state === "confirmed"
-                        ? "default"
-                        : r.state === "hypothesis"
-                          ? "secondary"
-                          : "outline"
-                    }
-                  >
-                    {stateBadge(r.state)}
-                  </Badge>
-                  <span className="text-sm text-muted-foreground">source : {r.source}</span>
-                </div>
-                <Textarea
-                  id={`req-${r.key}`}
-                  rows={showAdvanced ? 2 : 4}
-                  className="text-base"
-                  value={r.value}
-                  placeholder="Décrivez ce point avec vos mots ; laissez vide s'il est inconnu."
-                  onChange={(e) =>
-                    setDossier((d) =>
-                      proposeRequirement(d, r.key, { value: e.target.value, source: "user" }),
-                    )
+  const besoinSection = (
+    <div className="space-y-5">
+      {showAdvanced ? (
+        <>
+          <p className="text-base text-muted-foreground">{LOCAL_ASSISTANT_LABEL}</p>
+          {dossier.requirements.map((r) => (
+            <div key={r.key} className="rounded-xl border p-5">
+              <div className="mb-3 flex flex-wrap items-center gap-3">
+                <Label htmlFor={`req-${r.key}`} className="text-base font-medium">
+                  {r.label}
+                </Label>
+                <Badge
+                  variant={
+                    r.state === "confirmed"
+                      ? "default"
+                      : r.state === "hypothesis"
+                        ? "secondary"
+                        : "outline"
                   }
-                />
-                <div className="mt-3 flex flex-wrap items-center gap-3">
-                  <Button
-                    variant="outline"
-                    className="min-h-11 text-base"
-                    disabled={!r.value.trim() || r.state === "confirmed"}
-                    onClick={() => setDossier((d) => confirmRequirement(d, r.key))}
-                  >
-                    Confirmer cette exigence
-                  </Button>
-                  {showAdvanced ? null : (
-                    <Button
-                      variant="ghost"
-                      className="min-h-11 text-base"
-                      onClick={() => {
-                        setDossier((d) =>
-                          proposeRequirement(d, r.key, { value: "", source: "user" }),
-                        );
-                        setFocusIdx((i) => Math.min(dossier.requirements.length - 1, i + 1));
-                      }}
-                    >
-                      Je ne sais pas encore
-                    </Button>
-                  )}
-                  {r.note ? <span className="text-sm text-muted-foreground">{r.note}</span> : null}
-                </div>
+                >
+                  {stateBadge(r.state)}
+                </Badge>
+                <span className="text-base text-muted-foreground">source : {r.source}</span>
               </div>
-            ))}
-
-            {showAdvanced ? null : (
-              <div className="flex flex-wrap items-center gap-3">
+              <Textarea
+                id={`req-${r.key}`}
+                rows={2}
+                className="text-base"
+                value={r.value}
+                placeholder="Décrivez ce point avec vos mots ; laissez vide s'il est inconnu."
+                onChange={(e) =>
+                  setDossier((d) =>
+                    proposeRequirement(d, r.key, { value: e.target.value, source: "user" }),
+                  )
+                }
+              />
+              <div className="mt-3 flex flex-wrap items-center gap-3">
                 <Button
                   variant="outline"
                   className="min-h-11 text-base"
-                  disabled={focusIdx === 0}
-                  onClick={() => setFocusIdx((i) => Math.max(0, i - 1))}
+                  disabled={!r.value.trim() || r.state === "confirmed"}
+                  onClick={() => setDossier((d) => confirmRequirement(d, r.key))}
                 >
-                  Revenir à la question précédente
+                  Confirmer cette exigence
                 </Button>
-                <Button
-                  className="min-h-11 text-base"
-                  onClick={() => {
-                    if (focusIdx < dossier.requirements.length - 1) setFocusIdx((i) => i + 1);
-                    else setTab("montage");
-                  }}
-                >
-                  {focusIdx < dossier.requirements.length - 1
-                    ? "Question suivante"
-                    : "Passer à mon montage"}
-                </Button>
-                <span className="text-base text-muted-foreground">
-                  Question {focusIdx + 1} sur {dossier.requirements.length}
-                </span>
+                {r.note ? <span className="text-base text-muted-foreground">{r.note}</span> : null}
               </div>
-            )}
-
-            <div className="rounded-xl border p-5">
-              <Label htmlFor="free-constraints" className="text-base font-medium">
-                Autre chose à nous dire ?
-              </Label>
-              <Textarea
-                id="free-constraints"
-                rows={3}
-                className="mt-2 text-base"
-                value={dossier.freeConstraints}
-                onChange={(e) => setDossier((d) => ({ ...d, freeConstraints: e.target.value }))}
-              />
             </div>
-          </TabsContent>
+          ))}
+        </>
+      ) : (
+        <div className="rounded-2xl border bg-card p-6 sm:p-8">
+          <p className="text-base text-muted-foreground">
+            Question {focusIdx + 1} sur {GUIDED_QUESTIONS.length}
+          </p>
+          <h2 className="mt-2 text-2xl font-semibold leading-snug sm:text-3xl">
+            {question.prompt}
+          </h2>
+          <p className="mt-3 text-base text-muted-foreground">Par exemple : {question.example}</p>
+          <Label htmlFor={`guide-${question.key}`} className="sr-only">
+            {question.prompt}
+          </Label>
+          <Textarea
+            id={`guide-${question.key}`}
+            rows={4}
+            className="mt-5 text-base"
+            value={guidedReq?.value ?? ""}
+            placeholder={question.placeholder}
+            onChange={(e) =>
+              setDossier((d) =>
+                proposeRequirement(d, question.key, { value: e.target.value, source: "user" }),
+              )
+            }
+          />
 
-          {/* ---------------- Montage ---------------- */}
-          <TabsContent value="montage" className="space-y-4 pt-4">
+          {guidedReq && guidedReq.state === "hypothesis" && guidedReq.value.trim() ? (
+            <div className="mt-4 rounded-lg border bg-muted/40 p-4">
+              <p className="text-base">
+                Cette réponse vient d'une reprise ou d'une déduction. Confirmez-la si elle est
+                juste.
+              </p>
+              <Button
+                variant="outline"
+                className="mt-3 min-h-11 text-base"
+                onClick={() => setDossier((d) => confirmRequirement(d, question.key))}
+              >
+                Oui, c'est bien cela
+              </Button>
+            </div>
+          ) : null}
+
+          <div className="mt-6 flex flex-wrap items-center gap-3">
+            <Button
+              variant="outline"
+              className="min-h-12 text-base"
+              disabled={focusIdx === 0}
+              onClick={() => setFocusIdx((i) => Math.max(0, i - 1))}
+            >
+              Question précédente
+            </Button>
+            <Button
+              className="min-h-12 px-6 text-base"
+              onClick={() => {
+                if (!lastQuestion) setFocusIdx((i) => i + 1);
+                else setTab("montage");
+              }}
+            >
+              {lastQuestion ? "Passer à mon montage" : "Continuer"}
+            </Button>
+            <Button
+              variant="ghost"
+              className="min-h-12 text-base"
+              onClick={() => {
+                // Ne rien effacer : passer sans réponse laisse simplement ce point inconnu.
+                if (!lastQuestion) setFocusIdx((i) => i + 1);
+                else setTab("montage");
+              }}
+            >
+              Je ne sais pas encore
+            </Button>
+          </div>
+
+          <details className="mt-6">
+            <summary className="min-h-11 cursor-pointer py-2 text-base text-muted-foreground">
+              Détails de cette réponse
+            </summary>
+            <div className="mt-2 flex flex-wrap items-center gap-3">
+              <Badge variant="outline">{stateBadge(guidedReq?.state ?? "unknown")}</Badge>
+              <span className="text-base text-muted-foreground">
+                intitulé technique : {guidedReq?.label} · source : {guidedReq?.source}
+              </span>
+              <Button
+                variant="outline"
+                className="min-h-11 text-base"
+                disabled={!guidedReq?.value.trim() || guidedReq?.state === "confirmed"}
+                onClick={() => setDossier((d) => confirmRequirement(d, question.key))}
+              >
+                Confirmer cette réponse
+              </Button>
+            </div>
+          </details>
+        </div>
+      )}
+
+      <details className="rounded-xl border p-4" open={showAdvanced}>
+        <summary className="min-h-11 cursor-pointer py-2 text-base font-medium">
+          Autre chose à nous dire ? (facultatif)
+        </summary>
+        <Label htmlFor="free-constraints" className="sr-only">
+          Autre chose à nous dire
+        </Label>
+        <Textarea
+          id="free-constraints"
+          rows={3}
+          className="mt-2 text-base"
+          value={dossier.freeConstraints}
+          onChange={(e) => setDossier((d) => ({ ...d, freeConstraints: e.target.value }))}
+        />
+      </details>
+    </div>
+  );
+
+
+
+  const montageSection = (
+    <div className="space-y-4">
             {showAdvanced ? null : (
               <div className="flex flex-wrap items-center gap-3 pb-2">
                 <span className="text-base text-muted-foreground">Outils utiles ici :</span>
@@ -1059,59 +1088,31 @@ export function DesignSpace({ chrome = "page" }: DesignSpaceProps) {
 
             <div className="rounded-md border p-3">
               <div className="flex flex-wrap items-center gap-3">
-                <Label className="text-sm font-medium">Atelier 3D (facultatif)</Label>
-                <Button size="sm" variant="outline" onClick={() => setShowWorkshop((v) => !v)}>
-                  {showWorkshop ? "Masquer l'atelier" : "Ouvrir l'atelier magnétique"}
+                <Label className="text-base font-medium">Atelier 3D (facultatif)</Label>
+                <Button
+                  variant="outline"
+                  className="min-h-11 text-base"
+                  onClick={() => {
+                    setWorkshopMounted(true);
+                    setShowWorkshop(true);
+                    setPanel("atelier");
+                  }}
+                >
+                  Ouvrir l'atelier magnétique
                 </Button>
-                <span className="text-xs text-muted-foreground">
+                <span className="text-base text-muted-foreground">
                   Formats acceptés : GLB autonome uniquement. Les fichiers STEP/IGES ne sont pas
-                  lus. Unités, échelle et pièce mobile restent à confirmer par vous.
+                  lus. Unités, échelle et pièce mobile restent à confirmer par vous. Vos réglages
+                  restent en mémoire même si vous refermez le panneau.
                 </span>
               </div>
-              {showWorkshop ? (
-                <div className="mt-3">
-                  <p className="mb-2 text-xs text-muted-foreground">
-                    Modèle physique explicitement pédagogique : aucune validation magnétique
-                    automatique. L'exemple machine à café est un exemple, il n'impose aucune
-                    référence à votre projet.
-                  </p>
-                  <Suspense fallback={<p className="text-sm">Chargement de l'atelier…</p>}>
-                    <MagneticWorkshop
-                      initialConfig={workshop ?? DEFAULT_WORKSHOP}
-                      storageLabel="ce dossier, en mémoire de l'onglet"
-                      storageMode="memory"
-                      cableRouting={cableRouting}
-
-                      onClose={() => setShowWorkshop(false)}
-                      onSave={async (c: WorkshopConfig) => {
-                        setWorkshop(c);
-                        setDossier((d) => ({
-                          ...d,
-                          workshop: c,
-                          // Provenance explicite : un vrai import n'est jamais compté comme exemple.
-                          workshopSource: c.machine ? "user_asset" : "example",
-                          workshopAsset: c.machine
-                            ? {
-                                assetKey: c.machine.assetKey,
-                                fileName: c.machine.fileName,
-                                storage: "memory",
-                              }
-                            : null,
-                          workshopSensorId: c.sensorId,
-                          sensorSyncConfirmed:
-                            d.selectedSensorId === null || d.selectedSensorId === c.sensorId,
-                          updatedAt: new Date().toISOString(),
-                        }));
-                      }}
-                    />
-                  </Suspense>
-                </div>
-              ) : null}
             </div>
-          </TabsContent>
 
-          {/* ---------------- Candidats ---------------- */}
-          <TabsContent value="candidats" className="space-y-3 pt-4">
+          </div>
+  );
+
+  const candidatsSection = (
+    <div className="space-y-4">
             {showAdvanced ? null : (
               <Button
                 variant="outline"
@@ -1193,10 +1194,11 @@ export function DesignSpace({ chrome = "page" }: DesignSpaceProps) {
                 </div>
               ))}
             </div>
-          </TabsContent>
+          </div>
+  );
 
-          {/* ---------------- Câblage ---------------- */}
-          <TabsContent value="cablage" className="space-y-4 pt-4">
+  const cablageSection = (
+    <div className="space-y-4">
             {showAdvanced ? null : (
               <Button
                 variant="outline"
@@ -1589,10 +1591,11 @@ export function DesignSpace({ chrome = "page" }: DesignSpaceProps) {
                 R&D.
               </p>
             </div>
-          </TabsContent>
+          </div>
+  );
 
-          {/* ---------------- Revue ---------------- */}
-          <TabsContent value="revue" className="space-y-4 pt-4">
+  const revueSection = (
+    <div className="space-y-4">
             <Accordion type="multiple" defaultValue={["resume", "nda", "envoi"]}>
               <AccordionItem value="resume">
                 <AccordionTrigger>Résumé technique et inconnues</AccordionTrigger>
@@ -1925,6 +1928,184 @@ export function DesignSpace({ chrome = "page" }: DesignSpaceProps) {
                     référence exacte à commander. Une gamme ne suffit pas.
                   </p>
                   <p className="text-xs text-muted-foreground">{SEARCH_LINK_DISCLAIMER}</p>
+                  <Button
+                    variant="outline"
+                    className="min-h-11 text-base"
+                    onClick={() => setPanel("espace")}
+                  >
+                    Ouvrir mon espace (mes projets, suivi, variantes)
+                  </Button>
+
+                  <p className="text-xs text-muted-foreground">
+                    Disponibilités, MOQ et conditionnements : inconnus tant qu'aucun fournisseur
+                    réel n'est connecté.
+                  </p>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          </div>
+  );
+
+  const workshopSection = (
+    <div className="space-y-3">
+      <p className="text-base text-muted-foreground">
+        Modèle physique explicitement pédagogique : aucune validation magnétique automatique.
+        L'exemple machine à café est un exemple, il n'impose aucune référence à votre projet.
+      </p>
+      <Suspense fallback={<p className="text-base">Chargement de l'atelier…</p>}>
+        <MagneticWorkshop
+          key={`workshop-${workshopEpoch}`}
+          initialConfig={workshop ?? DEFAULT_WORKSHOP}
+          storageLabel="ce dossier, en mémoire de l'onglet"
+          storageMode="memory"
+          cableRouting={cableRouting}
+          onDraftChange={(c: WorkshopConfig) => {
+            workshopDraftRef.current = c;
+          }}
+          onClose={() => {
+            setShowWorkshop(false);
+            setPanel(null);
+          }}
+          onSave={async (c: WorkshopConfig) => {
+            setWorkshop(c);
+            setDossier((d) => ({
+              ...d,
+              workshop: c,
+              // Provenance explicite : un vrai import n'est jamais compté comme exemple.
+              workshopSource: c.machine ? "user_asset" : "example",
+              workshopAsset: c.machine
+                ? {
+                    assetKey: c.machine.assetKey,
+                    fileName: c.machine.fileName,
+                    storage: "memory",
+                  }
+                : null,
+              workshopSensorId: c.sensorId,
+              sensorSyncConfirmed:
+                d.selectedSensorId === null || d.selectedSensorId === c.sensorId,
+              updatedAt: new Date().toISOString(),
+            }));
+          }}
+        />
+      </Suspense>
+    </div>
+  );
+
+  const documentsSection = (
+    <div className="space-y-5">
+      <div className="flex flex-wrap items-center gap-3">
+        <Button
+          variant="outline"
+          className="min-h-11 text-base"
+          onClick={() =>
+            setOpenDoc({
+              id: `summary-${Date.now()}`,
+              name: "Résumé de mon projet.md",
+              kind: "markdown",
+              text: technicalSummary(dossier),
+            })
+          }
+        >
+          Résumé de mon projet
+        </Button>
+        {ndaPreview ? (
+          <Button
+            variant="outline"
+            className="min-h-11 text-base"
+            onClick={() =>
+              setOpenDoc({
+                id: `nda-${ndaPreview.fileName}`,
+                name: ndaPreview.fileName,
+                kind: "text",
+                text: ndaPreview.paragraphs.filter((p) => p.trim()).join("\n\n"),
+              })
+            }
+          >
+            Aperçu de l'accord de confidentialité
+          </Button>
+        ) : null}
+        <Button variant="outline" className="min-h-11 text-base" asChild>
+          <label className="cursor-pointer">
+            Ouvrir un fichier de mon appareil
+            <input
+              type="file"
+              accept=".md,.markdown,.txt,application/pdf"
+              className="sr-only"
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                e.target.value = "";
+                if (!f) return;
+                void documentFromFile(f).then(setOpenDoc);
+              }}
+            />
+          </label>
+        </Button>
+      </div>
+      <p className="text-base text-muted-foreground">
+        Les fichiers ouverts ici restent en mémoire de cet onglet : rien n'est envoyé.
+      </p>
+      <DocumentViewer document={openDoc} />
+    </div>
+  );
+
+  const espaceSection = (
+    <div className="space-y-5">
+      <AuthPanel
+        backend={backend}
+        onChanged={() => {
+          checkLeadBackend()
+            .then(setBackend)
+            .catch(() => setBackend(null));
+        }}
+      />
+      <div className="flex flex-wrap items-center gap-3">
+        <Button variant="outline" className="min-h-11 text-base" onClick={exportDossier}>
+          <Download className="mr-1 h-4 w-4" /> Exporter mon projet
+        </Button>
+        <Button variant="outline" className="min-h-11 text-base" asChild>
+          <label className="cursor-pointer">
+            Reprendre un fichier
+            <input
+              type="file"
+              accept="application/json"
+              className="sr-only"
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                e.target.value = "";
+                if (!f) return;
+                if (!confirmReplaceWork("reprendre ce fichier")) return;
+                void importDossier(f);
+              }}
+            />
+          </label>
+        </Button>
+        <Button
+          variant="ghost"
+          className="min-h-11 text-base"
+          onClick={() => {
+            if (!confirmReplaceWork("démarrer un nouveau projet")) return;
+            setDossier(createDossier());
+            loadWorkshop(null);
+            resetServerContext(null, 0);
+            setSubmitMessage("Nouveau projet ouvert en mémoire de cet onglet.");
+          }}
+        >
+          Nouveau projet
+        </Button>
+      </div>
+      {backend?.role ? (
+        <p className="text-base text-muted-foreground">
+          Accès équipe Standex ({backend.role}) :{" "}
+          <Link to="/standex" className="underline underline-offset-4">
+            console R&amp;D
+          </Link>{" "}
+          ·{" "}
+          <Link to="/internal" className="underline underline-offset-4">
+            banc de test interne
+          </Link>
+        </p>
+      ) : null}
+      {submitMessage ? <p className="text-base">{submitMessage}</p> : null}
                   <ClientFollowUp
                     backend={backend}
                     serverDossierId={serverDossierId}
@@ -1945,10 +2126,10 @@ export function DesignSpace({ chrome = "page" }: DesignSpaceProps) {
                       }
                       if (parsed && parsed.ok) {
                         setDossier({ ...parsed.dossier, storage: "memory" });
-                        setWorkshop(parsed.dossier.workshop ?? null);
+                        loadWorkshop(parsed.dossier.workshop ?? null);
                       } else {
                         setDossier({ ...createDossier(), title });
-                        setWorkshop(null);
+                        loadWorkshop(null);
                       }
                       resetServerContext(id, revision);
                       setSubmitMessage(
@@ -1977,7 +2158,7 @@ export function DesignSpace({ chrome = "page" }: DesignSpaceProps) {
                       // La version attendue par le serveur est la version COURANTE
                       // du dossier, pas l'ancienne version reprise.
                       setDossier({ ...parsed.dossier, storage: "memory" });
-                      setWorkshop(parsed.dossier.workshop ?? null);
+                      loadWorkshop(parsed.dossier.workshop ?? null);
                       resetServerContext(dossierId, currentRevision);
                       setReopenedFrom({ dossierId, revision: sourceRevision });
                       setSubmitMessage(
@@ -2026,7 +2207,7 @@ export function DesignSpace({ chrome = "page" }: DesignSpaceProps) {
                         setBusy(false);
                       }
                       setDossier(out.dossier);
-                      setWorkshop(out.dossier.workshop ?? null);
+                      loadWorkshop(out.dossier.workshop ?? null);
                       resetServerContext(dossierId, revision);
                       setReopenedFrom({ dossierId, revision });
                       setSubmitMessage(
@@ -2035,17 +2216,235 @@ export function DesignSpace({ chrome = "page" }: DesignSpaceProps) {
                       return { applied: out.applied, notApplied: out.notApplied };
                     }}
                   />
+    </div>
+  );
 
-                  <p className="text-xs text-muted-foreground">
-                    Disponibilités, MOQ et conditionnements : inconnus tant qu'aucun fournisseur
-                    réel n'est connecté.
-                  </p>
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-          </TabsContent>
+  return (
+    <div
+      data-readable
+      className={embedded ? "text-foreground" : "min-h-screen bg-background text-foreground"}
+    >
+      <header className={embedded ? "border-b bg-card/60" : "border-b bg-card"}>
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-3 px-4 py-4">
+
+          <div className="min-w-0 flex-1">
+            <Label htmlFor="project-title" className="text-sm text-muted-foreground">
+              Nom de mon projet
+            </Label>
+            <Input
+              id="project-title"
+              value={dossier.title}
+              onChange={(e) =>
+                setDossier((d) => ({
+                  ...d,
+                  title: e.target.value,
+                  updatedAt: new Date().toISOString(),
+                }))
+              }
+              className="h-11 max-w-lg border-0 bg-transparent px-0 text-2xl font-semibold shadow-none focus-visible:bg-background focus-visible:px-3"
+            />
+          </div>
+          <Badge variant="secondary" className="gap-1 text-sm">
+            <Lock className="h-3 w-3" /> {STORAGE_BADGE[privacy.storage]}
+          </Badge>
+          <Badge variant="outline" className="text-sm">
+            Révision {dossier.revision}
+          </Badge>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" className="min-h-11" onClick={exportDossier}>
+              <Download className="mr-1 h-4 w-4" /> Exporter
+            </Button>
+            <Button variant="outline" className="min-h-11" asChild>
+              <label className="cursor-pointer">
+                Reprendre un fichier
+                <input
+                  type="file"
+                  accept="application/json"
+                  className="sr-only"
+                  onChange={(e) => {
+                    void importDossier(e.target.files?.[0]);
+                    e.target.value = "";
+                  }}
+                />
+              </label>
+            </Button>
+          </div>
+        </div>
+        <div className="mx-auto max-w-6xl px-4 pb-3 text-sm text-muted-foreground">
+          {MEMORY_LOSS_WARNING} {EXPORT_BINARY_NOTICE}
+          {importMessage ? <span className="block text-foreground">{importMessage}</span> : null}
+        </div>
+      </header>
+
+      <main className="mx-auto max-w-6xl px-4 py-6">
+        <nav aria-label="Progression" className="mb-6 grid gap-2 sm:grid-cols-3">
+          {steps.map((s, i) => (
+            <button
+              key={s.id}
+              type="button"
+              aria-current={stepIndex === i ? "step" : undefined}
+              onClick={() => setTab(s.id)}
+              className={`min-h-11 rounded-xl border px-4 py-3 text-left transition-colors ${
+                stepIndex === i
+                  ? "border-primary bg-primary text-primary-foreground"
+                  : "bg-card hover:bg-accent"
+              }`}
+            >
+              <span className="block text-base font-semibold">
+                {i + 1}. {s.label}
+              </span>
+              <span
+                className={`block text-sm ${stepIndex === i ? "opacity-90" : "text-muted-foreground"}`}
+              >
+                {s.hint}
+              </span>
+            </button>
+          ))}
+        </nav>
+
+        {/* Outils contextuels : ils apparaissent à l'étape où ils servent. */}
+        <div className="mb-4 flex flex-wrap items-center gap-2">
+          <Button
+            variant="outline"
+            className="min-h-11 text-base"
+            onClick={() => setPanel("espace")}
+          >
+            Mon espace
+          </Button>
+          <Button
+            variant="outline"
+            className="min-h-11 text-base"
+            onClick={() => setPanel("documents")}
+          >
+            Documents
+          </Button>
+          {tab !== "besoin" ? (
+            <>
+              <Button
+                variant="outline"
+                className="min-h-11 text-base"
+                onClick={() => {
+                  setWorkshopMounted(true);
+                  setShowWorkshop(true);
+                  setPanel("atelier");
+                }}
+              >
+                Atelier 3D
+              </Button>
+              <Button
+                variant="outline"
+                className="min-h-11 text-base"
+                onClick={() => (showAdvanced ? setTab("candidats") : setPanel("candidats"))}
+              >
+                Capteurs possibles
+              </Button>
+              <Button
+                variant="outline"
+                className="min-h-11 text-base"
+                onClick={() => (showAdvanced ? setTab("cablage") : setPanel("cablage"))}
+              >
+                Câble et connecteur
+              </Button>
+            </>
+          ) : null}
+        </div>
+
+        <Tabs value={tab} onValueChange={setTab}>
+          <div className="mb-2 flex flex-wrap items-center gap-2">
+            <Button
+              variant="ghost"
+              className="min-h-11 text-base"
+              aria-expanded={showAdvanced}
+              onClick={() => setShowAdvanced((v) => !v)}
+            >
+              {showAdvanced ? "Masquer les réglages détaillés" : "Ouvrir les réglages détaillés"}
+            </Button>
+            {showAdvanced ? null : (
+              <span className="text-base text-muted-foreground">
+                Tous les réglages avancés restent disponibles, sans rien perdre.
+              </span>
+            )}
+          </div>
+          <TabsList className={showAdvanced ? "flex-wrap" : "hidden"}>
+            <TabsTrigger value="besoin">Besoin</TabsTrigger>
+            <TabsTrigger value="montage">Montage &amp; 3D</TabsTrigger>
+            <TabsTrigger value="candidats">Candidats</TabsTrigger>
+            <TabsTrigger value="cablage">Câblage</TabsTrigger>
+            <TabsTrigger value="revue">Revue Standex</TabsTrigger>
+          </TabsList>
+
+          {/* ---------------- Besoin ---------------- */}
+          <TabsContent value="besoin" className="pt-4">{besoinSection}</TabsContent>
+
+          {/* ---------------- Montage ---------------- */}
+          <TabsContent value="montage" className="pt-4">{montageSection}</TabsContent>
+
+          {showAdvanced ? (
+            <>
+              {/* ---------------- Candidats ---------------- */}
+              <TabsContent value="candidats" className="pt-4">{candidatsSection}</TabsContent>
+
+              {/* ---------------- Câblage ---------------- */}
+              <TabsContent value="cablage" className="pt-4">{cablageSection}</TabsContent>
+            </>
+          ) : null}
+
+          {/* ---------------- Revue ---------------- */}
+          <TabsContent value="revue" className="pt-4">{revueSection}</TabsContent>
         </Tabs>
       </main>
+
+      {/* Panneaux contextuels : le projet reste derrière, la saisie est conservée. */}
+      <WorkspacePanel
+        open={panel === "atelier" && workshopMounted}
+        keepMounted={workshopMounted}
+        onOpenChange={(o) => setPanel(o ? "atelier" : null)}
+        title="Atelier 3D"
+        description="Vos réglages restent en mémoire même si vous refermez ce panneau. Enregistrer reste une action explicite."
+      >
+        {workshopMounted ? workshopSection : null}
+      </WorkspacePanel>
+
+      <WorkspacePanel
+        open={panel === "candidats"}
+        keepMounted
+        onOpenChange={(o) => setPanel(o ? "candidats" : null)}
+        title="Capteurs possibles"
+        description="Proposés à partir de vos contraintes et de votre montage, jamais du secteur d'activité."
+      >
+        {showAdvanced ? null : candidatsSection}
+      </WorkspacePanel>
+
+      <WorkspacePanel
+        open={panel === "cablage"}
+        keepMounted
+        onOpenChange={(o) => setPanel(o ? "cablage" : null)}
+        title="Câble et connecteur"
+        description="Longueurs, réserves et connecteurs documentés. Rien n'est perdu en fermant."
+      >
+        {showAdvanced ? null : cablageSection}
+      </WorkspacePanel>
+
+      <WorkspacePanel
+        open={panel === "documents"}
+        keepMounted
+        onOpenChange={(o) => setPanel(o ? "documents" : null)}
+        title="Documents"
+        description="Lecture sur place, en mémoire de cet onglet."
+      >
+        {documentsSection}
+      </WorkspacePanel>
+
+      <WorkspacePanel
+        open={panel === "espace"}
+        keepMounted
+        onOpenChange={(o) => setPanel(o ? "espace" : null)}
+        title="Mon espace"
+        description="Connexion, mes projets envoyés, reprise et suivi."
+      >
+        {espaceSection}
+      </WorkspacePanel>
     </div>
   );
 }
+
