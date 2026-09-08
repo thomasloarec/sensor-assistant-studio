@@ -141,8 +141,8 @@ export default function SensorCard({
             {(
               [
                 ["overview", "Essentiel"],
-                ["electrical", "Électrique"],
-                ["integration", "Intégration"],
+                ["electrical", t("Électrique")],
+                ["integration", t("Intégration")],
               ] as const
             ).map(([id, label]) => (
               <button key={id} aria-pressed={tab === id} onClick={() => setTab(id)}>

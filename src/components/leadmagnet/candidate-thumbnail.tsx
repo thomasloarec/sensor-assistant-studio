@@ -1,3 +1,4 @@
+import { t } from "@/lib/i18n/core";
 /** Vignette d'un candidat : rendu 3D réel, monté à la demande.
  *
  * Contraintes tenues ici :
@@ -63,7 +64,7 @@ export function hasWebGL(): boolean {
 
 function prefersReducedMotion(): boolean {
   if (typeof window === "undefined" || !window.matchMedia) return false;
-  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  return window.matchMedia(t("(prefers-reduced-motion: reduce)")).matches;
 }
 
 /* ------------------------------------------------------------------ */
@@ -147,7 +148,7 @@ export function CandidateThumbnail({
 
   useEffect(() => {
     setReduced(prefersReducedMotion());
-    const media = window.matchMedia?.("(prefers-reduced-motion: reduce)");
+    const media = window.matchMedia?.(t("(prefers-reduced-motion: reduce)"));
     if (!media) return;
     const onChange = () => setReduced(media.matches);
     media.addEventListener("change", onChange);
@@ -188,7 +189,7 @@ export function CandidateThumbnail({
       data-sensor={model.id}
     >
       {live ? (
-        <Suspense fallback={<Fallback model={model} reason="Aperçu 3D en cours" cabled={cabled} />}>
+        <Suspense fallback={<Fallback model={model} reason={t("Aperçu 3D en cours")} cabled={cabled} />}>
           <ThumbnailScene
             sensorId={model.id}
             cabled={cabled}
@@ -202,9 +203,9 @@ export function CandidateThumbnail({
           reason={
             supported
               ? lost
-                ? "Aperçu 3D indisponible"
-                : "Aperçu 3D à l'affichage"
-              : "3D non disponible sur cet appareil"
+                ? t("Aperçu 3D indisponible")
+                : t("Aperçu 3D à l'affichage")
+              : t("3D non disponible sur cet appareil")
           }
           cabled={cabled}
         />

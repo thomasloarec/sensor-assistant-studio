@@ -1,3 +1,5 @@
+import { useLocale } from "@/lib/i18n/react";
+import { t } from "@/lib/i18n/core";
 /** Démonstration pédagogique : un aimant déplaçable devant un capteur reed.
  *
  * Le dessin est un SVG natif (ampoule de verre, deux lamelles, fils, aimant
@@ -15,6 +17,7 @@ const MAX = 92;
 const THRESHOLD = 52;
 
 export function MagnetPlay() {
+  useLocale();
   const [pos, setPos] = useState(86);
   const [dragging, setDragging] = useState(false);
   const sceneRef = useRef<HTMLDivElement | null>(null);
@@ -57,22 +60,22 @@ export function MagnetPlay() {
         <svg
           viewBox="0 0 100 60"
           role="img"
-          aria-label="Un aimant que l'on approche d'un capteur reed sous ampoule de verre"
+          aria-label={t("Un aimant que l'on approche d'un capteur reed sous ampoule de verre")}
           className="block h-72 w-full sm:h-[22rem]"
         >
           <defs>
             <linearGradient id="mp-glass" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="oklch(1 0 0)" stopOpacity="0.05" />
-              <stop offset="50%" stopColor="oklch(1 0 0)" stopOpacity="0.14" />
-              <stop offset="100%" stopColor="oklch(1 0 0)" stopOpacity="0.05" />
+              <stop offset="0%" stopColor={t("oklch(1 0 0)")} stopOpacity="0.05" />
+              <stop offset="50%" stopColor={t("oklch(1 0 0)")} stopOpacity="0.14" />
+              <stop offset="100%" stopColor={t("oklch(1 0 0)")} stopOpacity="0.05" />
             </linearGradient>
             <linearGradient id="mp-north" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="oklch(0.62 0.19 25)" />
-              <stop offset="100%" stopColor="oklch(0.48 0.17 25)" />
+              <stop offset="0%" stopColor={t("oklch(0.62 0.19 25)")} />
+              <stop offset="100%" stopColor={t("oklch(0.48 0.17 25)")} />
             </linearGradient>
             <linearGradient id="mp-south" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="oklch(0.5 0.09 258)" />
-              <stop offset="100%" stopColor="oklch(0.34 0.07 258)" />
+              <stop offset="0%" stopColor={t("oklch(0.5 0.09 258)")} />
+              <stop offset="100%" stopColor={t("oklch(0.34 0.07 258)")} />
             </linearGradient>
             <linearGradient id="mp-bevel" x1="0" y1="0" x2="1" y2="0">
               <stop offset="0%" stopColor="white" stopOpacity="0.32" />
@@ -241,11 +244,11 @@ export function MagnetPlay() {
         <button
           type="button"
           role="slider"
-          aria-label="Position de l'aimant devant le capteur"
+          aria-label={t("Position de l'aimant devant le capteur")}
           aria-valuemin={MIN}
           aria-valuemax={MAX}
           aria-valuenow={Math.round(pos)}
-          aria-valuetext={detected ? "Détecté" : "Hors de portée"}
+          aria-valuetext={detected ? t("Détecté") : t("Hors de portée")}
           className="magnet-handle absolute top-1/2 h-24 w-14 -translate-x-1/2 -translate-y-1/2 cursor-grab touch-none rounded-xl border-2 border-transparent bg-transparent focus-visible:border-ring active:cursor-grabbing"
           style={{ left: `${pos}%` }}
           onPointerDown={(e) => {
@@ -264,41 +267,40 @@ export function MagnetPlay() {
             e.preventDefault();
           }}
         >
-          <span className="sr-only">Déplacer l'aimant</span>
+          <span className="sr-only">{t("Déplacer l'aimant")}</span>
         </button>
 
         <p
           aria-live="polite"
           className={`material absolute bottom-4 left-1/2 flex min-h-11 -translate-x-1/2 items-center gap-2 whitespace-nowrap rounded-[var(--r-pill)] px-5 py-2 text-base font-semibold shadow-[var(--e-2)] transition-[color,transform,opacity] duration-[var(--d-base)] ease-[var(--ease-spring)] ${
             detected
-              ? "scale-100 text-signal opacity-100"
-              : "scale-[0.98] text-foreground opacity-90"
+              ? t("scale-100 text-signal opacity-100")
+              : t("scale-[0.98] text-foreground opacity-90")
           }`}
         >
           {detected ? (
             <span className="magnet-status-dot size-2 rounded-full bg-signal" aria-hidden="true" />
           ) : null}
-          {detected ? "Détecté" : "Hors de portée"}
+          {detected ? t("Détecté") : t("Hors de portée")}
         </p>
       </div>
 
       <div className="px-5 pb-5 pt-5 sm:px-7 sm:pb-7">
-        <p className="t-body-l">Rapprochez l'aimant. Observez le capteur.</p>
+        <p className="t-body-l">{t("Rapprochez l'aimant. Observez le capteur.")}</p>
         <div className="mt-4 flex items-center gap-5">
-          <span className="t-label shrink-0">Distance</span>
+          <span className="t-label shrink-0">{t("Distance")}</span>
           <Slider
             className="min-w-0 flex-1"
             value={[MAX + MIN - pos]}
             min={MIN}
             max={MAX}
             step={1}
-            aria-label="Rapprocher ou éloigner l'aimant du capteur"
+            aria-label={t("Rapprocher ou éloigner l'aimant du capteur")}
             onValueChange={(v) => setPos(clamp(MAX + MIN - (v[0] ?? pos)))}
           />
         </div>
         <p className="t-caption mt-4">
-          Illustration du principe, pas une mesure : la distance réelle dépend du capteur, de
-          l'aimant et du montage.
+          {t("Illustration du principe, pas une mesure : la distance réelle dépend du capteur, de l'aimant et du montage.")}
         </p>
       </div>
     </div>

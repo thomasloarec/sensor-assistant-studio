@@ -1,33 +1,35 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { DesignSpace, PrivateDesignError } from "@/components/leadmagnet/design-space";
+import { t } from "@/lib/i18n/core";
+import { createFileRoute, redirect } from "@tanstack/react-router";
+import { PrivateDesignError } from "@/components/leadmagnet/design-space";
 
 export const Route = createFileRoute("/design")({
   ssr: false,
+  // Adresse conservée pour les anciens liens : elle amène à l'espace projet
+  // UNIQUE de l'accueil. Auparavant, elle montait un second espace en
+  // parallèle, et revenir à l'accueil depuis le logo perdait le brouillon.
+  beforeLoad: () => {
+    throw redirect({ to: "/" });
+  },
   head: () => ({
     meta: [
-      { title: "Concevoir une détection — Standex DETECT" },
+      { title: t("Concevoir une détection — Standex DETECT") },
       {
         name: "description",
-        content:
+        content: t(
           "Espace de co-conception privé : exigences, montage, candidats, câblage et préparation de la revue Standex.",
+        ),
       },
-      { property: "og:title", content: "Concevoir une détection — Standex DETECT" },
+      { property: "og:title", content: t("Concevoir une détection — Standex DETECT") },
       {
         property: "og:description",
-        content: "Co-conception privée d'une solution de détection magnétique Standex.",
+        content: t("Co-conception privée d'une solution de détection magnétique Standex."),
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),
-  component: DesignRoute,
-  // Frontière dédiée : une erreur ici ne remonte qu'un code fixe, sans message
-  // d'origine ni pile, pour qu'aucune donnée du projet privé ne parte en télémétrie.
+  component: () => null,
   errorComponent: PrivateDesignError,
 });
 
-/** /design monte exactement la même expérience que l'espace projet de l'accueil. */
-function DesignRoute() {
-  return <DesignSpace chrome="page" />;
-}

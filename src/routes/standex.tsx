@@ -1,3 +1,4 @@
+import { t } from "@/lib/i18n/core";
 /** Console interne Standex : boîte de réception, revue R&D, offre, échantillons, preuve NDA.
  *
  * Écran privé : chaque action est refusée côté serveur si le rôle et l'affectation
@@ -74,17 +75,17 @@ export const Route = createFileRoute("/standex")({
   component: StandexConsole,
   head: () => ({
     meta: [
-      { title: "Console Standex — revue et suivi des dossiers" },
+      { title: t("Console Standex — revue et suivi des dossiers") },
       {
         name: "description",
         content:
-          "Espace interne Standex : revue R&D des dossiers de conception, offres, échantillons et preuves de confidentialité.",
+          t("Espace interne Standex : revue R&D des dossiers de conception, offres, échantillons et preuves de confidentialité."),
       },
       { name: "robots", content: "noindex, nofollow" },
-      { property: "og:title", content: "Console Standex" },
+      { property: "og:title", content: t("Console Standex") },
       {
         property: "og:description",
-        content: "Espace interne de revue des dossiers de conception capteur.",
+        content: t("Espace interne de revue des dossiers de conception capteur."),
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -93,7 +94,7 @@ export const Route = createFileRoute("/standex")({
 });
 
 const emptyReview = {
-  scope: "Revue complète du dossier",
+  scope: t("Revue complète du dossier"),
   conditions: "",
   verdict: "validated" as "validated" | "variant_proposed" | "more_info",
   clientMessage: "",
@@ -147,10 +148,10 @@ function StandexConsole() {
     documentSha256: "",
     signedObjectPath: "",
     proofReference: "",
-    partyA: "Standex Electronics",
+    partyA: t("Standex Electronics"),
     partyB: "",
     signedAt: "",
-    source: "Vérification manuelle du document signé",
+    source: t("Vérification manuelle du document signé"),
     evidenceKind: "stored_object" as "stored_object" | "external_archive",
     signedFileName: "",
   });
@@ -176,7 +177,7 @@ function StandexConsole() {
         setSlot: setViewerSlot,
         points: routingPoints(viewer.cabling, viewerTarget),
         targetLabel:
-          viewerTarget.kind === "base" ? "Trajet de référence" : "Trajet de l'état sélectionné",
+          viewerTarget.kind === "base" ? t("Trajet de référence") : t("Trajet de l'état sélectionné"),
         onPick: (point: [number, number, number], cycleT: number) =>
           setViewer((v) =>
             v
@@ -184,7 +185,7 @@ function StandexConsole() {
                   ...v,
                   cabling: applyRoutingPick(v.cabling, viewerTarget, viewerSlot, point, {
                     cycleT,
-                    label: "Ajustement local de revue",
+                    label: t("Ajustement local de revue"),
                   }),
                 }
               : v,
@@ -195,7 +196,7 @@ function StandexConsole() {
           setViewer((v) => (v ? { ...v, cabling: resetRouting(v.cabling, viewerTarget) } : v)),
         lengthLabel:
           viewerEstimate?.requiredMm === null || viewerEstimate === null
-            ? "Longueur inconnue : trajet incomplet."
+            ? t("Longueur inconnue : trajet incomplet.")
             : `Longueur nécessaire : ${viewerEstimate.requiredMm?.toFixed(1)} mm. Aucune validation d'ingénierie.`,
       }
     : undefined;
@@ -216,7 +217,7 @@ function StandexConsole() {
       const revisions = view?.revisions ?? [];
       const last = [...revisions].sort((a, b) => b.revision - a.revision)[0];
       if (!last) {
-        setViewerError("Aucune version envoyée : rien à ouvrir.");
+        setViewerError(t("Aucune version envoyée : rien à ouvrir."));
         return;
       }
       const parsed = parseServerSnapshot(last.snapshot as Record<string, unknown>);
@@ -229,13 +230,13 @@ function StandexConsole() {
       const config = parseWorkshopConfig(parsed.dossier.workshop);
       if (!config || !config.machine) {
         setViewerError(
-          "Cette version ne contient pas de montage 3D exploitable : aucun montage par défaut n'est affiché à la place.",
+          t("Cette version ne contient pas de montage 3D exploitable : aucun montage par défaut n'est affiché à la place."),
         );
         return;
       }
       const path = String(file.path ?? "");
       if (!path) {
-        setViewerError("Ce fichier n'a pas de chemin de stockage : il ne peut pas être relu.");
+        setViewerError(t("Ce fichier n'a pas de chemin de stockage : il ne peut pas être relu."));
         return;
       }
       try {
@@ -250,18 +251,18 @@ function StandexConsole() {
           null;
         if (!expected) {
           setViewerError(
-            "Aucune empreinte n'a été enregistrée pour ce fichier : il n'est pas ouvert, faute de pouvoir prouver qu'il s'agit du fichier envoyé.",
+            t("Aucune empreinte n'a été enregistrée pour ce fichier : il n'est pas ouvert, faute de pouvoir prouver qu'il s'agit du fichier envoyé."),
           );
           return;
         }
         if (expected.toLowerCase() !== digest.toLowerCase()) {
           setViewerError(
-            "Le contenu téléchargé ne correspond pas à l'empreinte enregistrée à l'envoi : le fichier n'est pas ouvert.",
+            t("Le contenu téléchargé ne correspond pas à l'empreinte enregistrée à l'envoi : le fichier n'est pas ouvert."),
           );
           return;
         }
         if (config.machine.assetKey !== `sha256:${digest}`) {
-          setViewerError("Ce fichier ne correspond pas au modèle lié à cette configuration.");
+          setViewerError(t("Ce fichier ne correspond pas au modèle lié à cette configuration."));
           return;
         }
         const name = String(file.file_name ?? config.machine.fileName ?? "modele.glb");
@@ -279,7 +280,7 @@ function StandexConsole() {
       } catch (error) {
         if (stale()) return;
         setViewerError(
-          error instanceof Error ? error.message : "Le modèle 3D n'a pas pu être ouvert.",
+          error instanceof Error ? error.message : t("Le modèle 3D n'a pas pu être ouvert."),
         );
       }
     },
@@ -349,7 +350,7 @@ function StandexConsole() {
       await loadInbox();
     } catch (error) {
       if (request !== selectionRequest.current) return;
-      setMessage(error instanceof Error ? error.message : "Action refusée.");
+      setMessage(error instanceof Error ? error.message : t("Action refusée."));
     }
   };
 
@@ -360,10 +361,10 @@ function StandexConsole() {
           to="/design"
           className="inline-flex min-h-11 items-center gap-2 rounded-[var(--r-sm)] px-2 text-sm text-muted-foreground"
         >
-          <ArrowLeft className="h-4 w-4" /> Espace de conception
+          <ArrowLeft className="h-4 w-4" /> {t("Espace de conception")}
         </Link>
-        <h1 className="t-title-m">Console Standex</h1>
-        <p className="text-sm">{backend?.message ?? "Connexion en cours…"}</p>
+        <h1 className="t-title-m">{t("Console Standex")}</h1>
+        <p className="text-sm">{t(backend?.message ?? "Connexion en cours…")}</p>
         <AuthPanel
           backend={backend}
           onChanged={() => {
@@ -378,10 +379,10 @@ function StandexConsole() {
   if (!inbox)
     return (
       <div className="mx-auto max-w-3xl space-y-3 p-6">
-        <h1 className="t-title-m">Console Standex</h1>
+        <h1 className="t-title-m">{t("Console Standex")}</h1>
         <p className="text-sm">
           {message ??
-            "Cet espace est réservé aux membres de l'équipe Standex habilités. Votre compte n'y donne pas accès."}
+            t("Cet espace est réservé aux membres de l'équipe Standex habilités. Votre compte n'y donne pas accès.")}
         </p>
       </div>
     );
@@ -399,9 +400,9 @@ function StandexConsole() {
             to="/design"
             className="inline-flex min-h-11 items-center gap-2 rounded-[var(--r-sm)] px-2 text-sm text-muted-foreground"
           >
-            <ArrowLeft className="h-4 w-4" /> Espace de conception
+            <ArrowLeft className="h-4 w-4" /> {t("Espace de conception")}
           </Link>
-          <h1 className="t-title-s">Console Standex</h1>
+          <h1 className="t-title-s">{t("Console Standex")}</h1>
           <Badge variant="secondary">
             {inbox.role === "rnd" ? "R&D" : inbox.role === "sales" ? "Commerce" : "Administration"}
           </Badge>
@@ -411,9 +412,9 @@ function StandexConsole() {
       <main className="mx-auto grid max-w-6xl gap-6 p-4 lg:grid-cols-[320px_1fr]">
         <aside className="space-y-4">
           <section>
-            <h2 className="t-title-s mb-2">Dossiers qui me sont confiés</h2>
+            <h2 className="t-title-s mb-2">{t("Dossiers qui me sont confiés")}</h2>
             {inbox.assigned.length === 0 ? (
-              <p className="text-sm text-muted-foreground">Aucun dossier ne vous est confié.</p>
+              <p className="text-sm text-muted-foreground">{t("Aucun dossier ne vous est confié.")}</p>
             ) : (
               <ul className="space-y-1">
                 {inbox.assigned.map((d) => (
@@ -428,7 +429,7 @@ function StandexConsole() {
                     </Button>
                     <p className="px-1 t-caption text-muted-foreground">
                       version {d.current_revision}
-                      {d.awaiting_review ? " — en attente de retour" : " — retour publié"}
+                      {d.awaiting_review ? t(" — en attente de retour") : t(" — retour publié")}
                     </p>
                   </li>
                 ))}
@@ -438,10 +439,9 @@ function StandexConsole() {
 
           {inbox.role === "admin" ? (
             <section className="space-y-2">
-              <h2 className="t-title-s">Tri et affectation</h2>
+              <h2 className="t-title-s">{t("Tri et affectation")}</h2>
               <p className="t-caption text-muted-foreground">
-                Cette liste ne contient que des informations générales : aucun contenu technique
-                n'est visible sans affectation.
+                {t("Cette liste ne contient que des informations générales : aucun contenu technique n'est visible sans affectation.")}
               </p>
               {inbox.triage.map((d) => (
                 <div
@@ -450,17 +450,17 @@ function StandexConsole() {
                 >
                   <p className="font-medium">{d.title}</p>
                   <p className="t-caption text-muted-foreground">
-                    version {d.current_revision} — {d.assignees.length} personne(s) affectée(s)
+                    version {d.current_revision} — {d.assignees.length} {t("personne(s) affectée(s)")}
                   </p>
                   <div className="mt-1 flex gap-1">
                     <Select value={assignee} onValueChange={setAssignee}>
                       <SelectTrigger className="min-h-11 t-caption">
-                        <SelectValue placeholder="Choisir un collègue" />
+                        <SelectValue placeholder={t("Choisir un collègue")} />
                       </SelectTrigger>
                       <SelectContent>
                         {inbox.staff_directory.map((m) => (
                           <SelectItem key={m.user_id} value={m.user_id}>
-                            {m.display_name ?? m.email ?? "Membre Standex"} — {m.role}
+                            {m.display_name ?? m.email ?? t("Membre Standex")} — {m.role}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -472,11 +472,11 @@ function StandexConsole() {
                       onClick={() =>
                         run(async () => {
                           await assignDossier(d.id, assignee);
-                          return "Dossier confié à ce collègue.";
+                          return t("Dossier confié à ce collègue.");
                         })
                       }
                     >
-                      Confier
+                      {t("Confier")}
                     </Button>
                   </div>
                 </div>
@@ -493,7 +493,7 @@ function StandexConsole() {
           ) : null}
           {!view ? (
             <p className="text-sm text-muted-foreground">
-              Choisissez un dossier pour lire la conception envoyée et publier un retour.
+              {t("Choisissez un dossier pour lire la conception envoyée et publier un retour.")}
             </p>
           ) : (
             <>
@@ -502,22 +502,21 @@ function StandexConsole() {
                 <Badge variant="outline">version {view.dossier.current_revision}</Badge>
                 <Badge variant="secondary">
                   {view.dossier.nda_status === "in_force"
-                    ? "Confidentialité en vigueur"
+                    ? t("Confidentialité en vigueur")
                     : view.dossier.nda_required
-                      ? "Confidentialité en attente"
-                      : "Sans accord de confidentialité"}
+                      ? t("Confidentialité en attente")
+                      : t("Sans accord de confidentialité")}
                 </Badge>
               </div>
 
               <Accordion type="multiple" defaultValue={["design", "review"]}>
                 <AccordionItem value="design">
-                  <AccordionTrigger>Conception réellement envoyée</AccordionTrigger>
+                  <AccordionTrigger>{t("Conception réellement envoyée")}</AccordionTrigger>
                   <AccordionContent className="space-y-2">
                     {lastRevision ? (
                       <>
                         <p className="t-caption text-muted-foreground">
-                          Envoyée le {new Date(lastRevision.submitted_at).toLocaleString("fr-FR")} —
-                          empreinte {lastRevision.content_hash.slice(0, 16)}… — fichiers joints :{" "}
+                          {t("Envoyée le")} {new Date(lastRevision.submitted_at).toLocaleString("fr-FR")} {t("— empreinte")} {lastRevision.content_hash.slice(0, 16)}{t("… — fichiers joints :")}{" "}
                           {lastRevision.transferred_files.length}
                         </p>
                         {(() => {
@@ -530,14 +529,14 @@ function StandexConsole() {
                             </pre>
                           ) : (
                             <p className="t-caption text-destructive">
-                              Cette version n'est pas lisible sous forme de résumé technique :{" "}
-                              {parsed.reason} Contenu brut ci-dessous.
+                              {t("Cette version n'est pas lisible sous forme de résumé technique :")}{" "}
+                              {parsed.reason} {t("Contenu brut ci-dessous.")}
                             </p>
                           );
                         })()}
                         <details>
                           <summary className="cursor-pointer t-caption text-muted-foreground">
-                            Contenu complet envoyé (brut)
+                            {t("Contenu complet envoyé (brut)")}
                           </summary>
                           <pre className="code-block max-h-96">
                             {JSON.stringify(lastRevision.snapshot, null, 2)}
@@ -562,11 +561,11 @@ function StandexConsole() {
                                     setOpenDoc(
                                       documentFromBytes(name, bytes, `${String(f.path)}-${gen}`),
                                     );
-                                    return "Document ouvert dans le lecteur (il reste en mémoire).";
+                                    return t("Document ouvert dans le lecteur (il reste en mémoire).");
                                   })
                                 }
                               >
-                                Lire ici
+                                {t("Lire ici")}
                               </Button>
                               <Button
                                 size="sm"
@@ -574,13 +573,13 @@ function StandexConsole() {
                                 onClick={() =>
                                   run(async () => {
                                     const url = await signedFileUrl(String(f.path));
-                                    if (!url) return "Fichier indisponible pour ce compte.";
+                                    if (!url) return t("Fichier indisponible pour ce compte.");
                                     window.open(url, "_blank", "noopener");
-                                    return "Lien de téléchargement ouvert (valable quelques minutes).";
+                                    return t("Lien de téléchargement ouvert (valable quelques minutes).");
                                   })
                                 }
                               >
-                                Télécharger
+                                {t("Télécharger")}
                               </Button>
                               {/^.+\.glb$/i.test(String(f.file_name ?? f.path ?? "")) ? (
                                 <Button
@@ -588,7 +587,7 @@ function StandexConsole() {
                                   variant="outline"
                                   onClick={() => void openTransferredModel(f)}
                                 >
-                                  Ouvrir en 3D
+                                  {t("Ouvrir en 3D")}
                                 </Button>
                               ) : null}
                             </li>
@@ -600,12 +599,9 @@ function StandexConsole() {
                         {viewer ? (
                           <div className="mt-2">
                             <p className="mb-2 t-caption text-muted-foreground">
-                              Modèle ouvert en mémoire de cet onglet uniquement, avec la
-                              configuration exacte de la version {viewer.revision} et son câble.
-                              Empreinte contrôlée : {viewer.sha256.slice(0, 16)}…. Une modification
-                              faite ici ne vaut jamais retour publié.
+                              {t("Modèle ouvert en mémoire de cet onglet uniquement, avec la configuration exacte de la version")} {viewer.revision} {t("et son câble. Empreinte contrôlée :")} {viewer.sha256.slice(0, 16)}{t("…. Une modification faite ici ne vaut jamais retour publié.")}
                             </p>
-                            <Label>Trajet de câble affiché</Label>
+                            <Label>{t("Trajet de câble affiché")}</Label>
                             <select
                               className="min-h-11 rounded-[var(--r-sm)] border-0 bg-[var(--surface-sunken)] p-3 text-sm shadow-[var(--e-inset)]"
                               value={viewerTarget.kind === "base" ? "base" : viewerTarget.stateId}
@@ -617,7 +613,7 @@ function StandexConsole() {
                                 )
                               }
                             >
-                              <option value="base">Trajet de référence</option>
+                              <option value="base">{t("Trajet de référence")}</option>
                               {viewer.cabling.declaredMotionStates.map((state) => (
                                 <option key={state.id} value={state.id}>
                                   {state.label}
@@ -625,16 +621,16 @@ function StandexConsole() {
                               ))}
                             </select>
                             <p className="t-caption text-muted-foreground">
-                              Les ajustements du tracé restent dans cette copie de lecture.
+                              {t("Les ajustements du tracé restent dans cette copie de lecture.")}
                             </p>
                             <Suspense
-                              fallback={<p className="text-sm">Chargement de l'atelier…</p>}
+                              fallback={<p className="text-sm">{t("Chargement de l'atelier…")}</p>}
                             >
                               <MagneticWorkshop
                                 key={`${viewer.revision}:${viewer.sha256}`}
                                 initialConfig={viewer.config}
                                 {...(viewerCable ? { cableRouting: viewerCable } : {})}
-                                storageLabel="cette lecture, en mémoire de l'onglet"
+                                storageLabel={t("cette lecture, en mémoire de l'onglet")}
                                 storageMode="memory"
                                 onClose={() => {
                                   modelRequest.current += 1;
@@ -642,7 +638,7 @@ function StandexConsole() {
                                 }}
                                 onSave={async () => {
                                   setMessage(
-                                    "Cette modification reste locale à votre écran : publiez un retour R&D pour qu'elle compte.",
+                                    t("Cette modification reste locale à votre écran : publiez un retour R&D pour qu'elle compte."),
                                   );
                                 }}
                               />
@@ -651,24 +647,24 @@ function StandexConsole() {
                         ) : null}
                       </>
                     ) : (
-                      <p className="text-sm text-muted-foreground">Aucune version envoyée.</p>
+                      <p className="text-sm text-muted-foreground">{t("Aucune version envoyée.")}</p>
                     )}
                   </AccordionContent>
                 </AccordionItem>
 
                 <AccordionItem value="review">
-                  <AccordionTrigger>Retour R&D</AccordionTrigger>
+                  <AccordionTrigger>{t("Retour R&D")}</AccordionTrigger>
                   <AccordionContent className="space-y-3">
                     <div className="grid gap-2 sm:grid-cols-2">
                       <div>
-                        <Label className="t-caption">Portée de la revue</Label>
+                        <Label className="t-caption">{t("Portée de la revue")}</Label>
                         <Input
                           value={review.scope}
                           onChange={(e) => setReview({ ...review, scope: e.target.value })}
                         />
                       </div>
                       <div>
-                        <Label className="t-caption">Conclusion</Label>
+                        <Label className="t-caption">{t("Conclusion")}</Label>
                         <Select
                           value={review.verdict}
                           onValueChange={(v) =>
@@ -679,15 +675,15 @@ function StandexConsole() {
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="validated">Validé</SelectItem>
-                            <SelectItem value="variant_proposed">Variante proposée</SelectItem>
-                            <SelectItem value="more_info">Informations manquantes</SelectItem>
+                            <SelectItem value="validated">{t("Validé")}</SelectItem>
+                            <SelectItem value="variant_proposed">{t("Variante proposée")}</SelectItem>
+                            <SelectItem value="more_info">{t("Informations manquantes")}</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
                       <div>
                         <Label className="t-caption">
-                          Référence exacte (obligatoire si validé)
+                          {t("Référence exacte (obligatoire si validé)")}
                         </Label>
                         <Input
                           value={review.exactPartNumber}
@@ -697,7 +693,7 @@ function StandexConsole() {
                         />
                       </div>
                       <div>
-                        <Label className="t-caption">Type</Label>
+                        <Label className="t-caption">{t("Type")}</Label>
                         <Select
                           value={review.designation}
                           onValueChange={(v) =>
@@ -708,14 +704,14 @@ function StandexConsole() {
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="standard">Standard</SelectItem>
-                            <SelectItem value="custom">Spécifique</SelectItem>
+                            <SelectItem value="standard">{t("Standard")}</SelectItem>
+                            <SelectItem value="custom">{t("Spécifique")}</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
                     </div>
                     <div>
-                      <Label className="t-caption">Conditions</Label>
+                      <Label className="t-caption">{t("Conditions")}</Label>
                       <Textarea
                         rows={2}
                         value={review.conditions}
@@ -724,14 +720,14 @@ function StandexConsole() {
                     </div>
                     <div className="grid gap-2 sm:grid-cols-3">
                       <div>
-                        <Label className="t-caption">Variante — câble (note)</Label>
+                        <Label className="t-caption">{t("Variante — câble (note)")}</Label>
                         <Input
                           value={review.variantCable}
                           onChange={(e) => setReview({ ...review, variantCable: e.target.value })}
                         />
                       </div>
                       <div>
-                        <Label className="t-caption">Réserve de service proposée (mm)</Label>
+                        <Label className="t-caption">{t("Réserve de service proposée (mm)")}</Label>
                         <Input
                           inputMode="decimal"
                           value={review.variantReserveMm}
@@ -741,7 +737,7 @@ function StandexConsole() {
                         />
                       </div>
                       <div>
-                        <Label className="t-caption">Tolérance proposée (± mm)</Label>
+                        <Label className="t-caption">{t("Tolérance proposée (± mm)")}</Label>
                         <Input
                           inputMode="decimal"
                           value={review.variantToleranceMm}
@@ -751,7 +747,7 @@ function StandexConsole() {
                         />
                       </div>
                       <div>
-                        <Label className="t-caption">Connecteur — fabricant</Label>
+                        <Label className="t-caption">{t("Connecteur — fabricant")}</Label>
                         <Input
                           value={review.variantConnectorMaker}
                           onChange={(e) =>
@@ -760,7 +756,7 @@ function StandexConsole() {
                         />
                       </div>
                       <div>
-                        <Label className="t-caption">Connecteur — référence exacte</Label>
+                        <Label className="t-caption">{t("Connecteur — référence exacte")}</Label>
                         <Input
                           value={review.variantConnectorMpn}
                           onChange={(e) =>
@@ -769,7 +765,7 @@ function StandexConsole() {
                         />
                       </div>
                       <div>
-                        <Label className="t-caption">Connecteur — voies</Label>
+                        <Label className="t-caption">{t("Connecteur — voies")}</Label>
                         <Input
                           inputMode="numeric"
                           value={review.variantConnectorPositions}
@@ -779,7 +775,7 @@ function StandexConsole() {
                         />
                       </div>
                       <div>
-                        <Label className="t-caption">Variante — carte (note)</Label>
+                        <Label className="t-caption">{t("Variante — carte (note)")}</Label>
                         <Input
                           value={review.variantPcb}
                           onChange={(e) => setReview({ ...review, variantPcb: e.target.value })}
@@ -787,12 +783,10 @@ function StandexConsole() {
                       </div>
                     </div>
                     <p className="t-caption text-muted-foreground">
-                      Les valeurs chiffrées et la référence exacte sont réellement reprises dans le
-                      dossier du client ; les notes restent descriptives. Un connecteur proposé
-                      reste « à vérifier » : ce n'est pas une qualification Standex.
+                      {t("Les valeurs chiffrées et la référence exacte sont réellement reprises dans le dossier du client ; les notes restent descriptives. Un connecteur proposé reste « à vérifier » : ce n'est pas une qualification Standex.")}
                     </p>
                     <div>
-                      <Label className="t-caption">Variante — description</Label>
+                      <Label className="t-caption">{t("Variante — description")}</Label>
                       <Textarea
                         rows={2}
                         value={review.variantDescription}
@@ -802,7 +796,7 @@ function StandexConsole() {
                       />
                     </div>
                     <div>
-                      <Label className="t-caption">Message publié au client</Label>
+                      <Label className="t-caption">{t("Message publié au client")}</Label>
                       <Textarea
                         rows={3}
                         value={review.clientMessage}
@@ -810,7 +804,7 @@ function StandexConsole() {
                       />
                     </div>
                     <div>
-                      <Label className="t-caption">Note interne (jamais visible du client)</Label>
+                      <Label className="t-caption">{t("Note interne (jamais visible du client)")}</Label>
                       <Textarea
                         rows={2}
                         value={review.internalNote}
@@ -865,17 +859,17 @@ function StandexConsole() {
                             },
                           });
                           setReview(emptyReview);
-                          return "Retour publié : le client le voit, la note interne reste chez Standex.";
+                          return t("Retour publié : le client le voit, la note interne reste chez Standex.");
                         })
                       }
                     >
-                      Publier ce retour au client
+                      {t("Publier ce retour au client")}
                     </Button>
                   </AccordionContent>
                 </AccordionItem>
 
                 <AccordionItem value="notes">
-                  <AccordionTrigger>Notes internes</AccordionTrigger>
+                  <AccordionTrigger>{t("Notes internes")}</AccordionTrigger>
                   <AccordionContent className="space-y-2">
                     <ul className="space-y-1 text-sm">
                       {(view.internal_notes ?? []).map((n) => (
@@ -895,74 +889,72 @@ function StandexConsole() {
                         run(async () => {
                           await addInternalNote(view.dossier.id, note);
                           setNote("");
-                          return "Note interne enregistrée.";
+                          return t("Note interne enregistrée.");
                         })
                       }
                     >
-                      Ajouter une note interne
+                      {t("Ajouter une note interne")}
                     </Button>
                   </AccordionContent>
                 </AccordionItem>
 
                 <AccordionItem value="offer">
-                  <AccordionTrigger>Offre commerciale</AccordionTrigger>
+                  <AccordionTrigger>{t("Offre commerciale")}</AccordionTrigger>
                   <AccordionContent className="space-y-3">
                     {currentReview?.verdict === "validated" && currentReview.exact_part_number ? (
                       <p className="text-sm">
-                        Base : {currentReview.exact_part_number} (
-                        {currentReview.designation === "custom" ? "spécifique" : "standard"}),
-                        version {currentReview.revision}, volume annuel déclaré{" "}
+                        {t("Base :")} {currentReview.exact_part_number} (
+                        {currentReview.designation === "custom" ? t("spécifique") : "standard"}{t("), version")} {currentReview.revision}{t(", volume annuel déclaré")}{" "}
                         {String(
                           (lastRevision?.snapshot as Record<string, unknown> | undefined)?.[
                             "business"
                           ] ?? "",
-                        ).slice(0, 0) || "repris du dossier envoyé"}
+                        ).slice(0, 0) || t("repris du dossier envoyé")}
                         .
                       </p>
                     ) : (
                       <p className="text-sm text-muted-foreground">
-                        Aucun prix tant qu'un retour validé avec référence exacte n'est pas publié
-                        sur la version en cours.
+                        {t("Aucun prix tant qu'un retour validé avec référence exacte n'est pas publié sur la version en cours.")}
                       </p>
                     )}
                     <div className="grid gap-2 sm:grid-cols-3">
                       <div>
-                        <Label className="t-caption">Devise</Label>
+                        <Label className="t-caption">{t("Devise")}</Label>
                         <Input
                           value={offer.currency}
                           onChange={(e) => setOffer({ ...offer, currency: e.target.value })}
                         />
                       </div>
                       <div>
-                        <Label className="t-caption">Quantité minimale</Label>
+                        <Label className="t-caption">{t("Quantité minimale")}</Label>
                         <Input
                           value={offer.moq}
                           onChange={(e) => setOffer({ ...offer, moq: e.target.value })}
                         />
                       </div>
                       <div>
-                        <Label className="t-caption">Outillage / frais fixes</Label>
+                        <Label className="t-caption">{t("Outillage / frais fixes")}</Label>
                         <Input
                           value={offer.nre}
                           onChange={(e) => setOffer({ ...offer, nre: e.target.value })}
                         />
                       </div>
                       <div>
-                        <Label className="t-caption">Incoterm</Label>
+                        <Label className="t-caption">{t("Incoterm")}</Label>
                         <Input
                           value={offer.incoterm}
                           onChange={(e) => setOffer({ ...offer, incoterm: e.target.value })}
                         />
                       </div>
                       <div>
-                        <Label className="t-caption">Délai (semaines)</Label>
+                        <Label className="t-caption">{t("Délai (semaines)")}</Label>
                         <Input
                           value={offer.leadTimeWeeks}
                           onChange={(e) => setOffer({ ...offer, leadTimeWeeks: e.target.value })}
                         />
                       </div>
                       <div>
-                        <Label className="t-caption">Valable jusqu'au</Label>
+                        <Label className="t-caption">{t("Valable jusqu'au")}</Label>
                         <Input
                           type="date"
                           value={offer.validUntil}
@@ -972,7 +964,7 @@ function StandexConsole() {
                     </div>
                     <div>
                       <Label className="t-caption">
-                        Paliers « quantité:prix » (une ligne par palier)
+                        {t("Paliers « quantité:prix » (une ligne par palier)")}
                       </Label>
                       <Textarea
                         rows={3}
@@ -995,20 +987,20 @@ function StandexConsole() {
                             leadTimeWeeks: offer.leadTimeWeeks ? Number(offer.leadTimeWeeks) : null,
                             validUntil: offer.validUntil,
                           });
-                          return "Offre enregistrée et visible par le client à côté de la conception validée.";
+                          return t("Offre enregistrée et visible par le client à côté de la conception validée.");
                         })
                       }
                     >
-                      Enregistrer l'offre
+                      {t("Enregistrer l'offre")}
                     </Button>
                   </AccordionContent>
                 </AccordionItem>
 
                 <AccordionItem value="samples">
-                  <AccordionTrigger>Échantillons</AccordionTrigger>
+                  <AccordionTrigger>{t("Échantillons")}</AccordionTrigger>
                   <AccordionContent className="space-y-2">
                     {view.samples.length === 0 ? (
-                      <p className="text-sm text-muted-foreground">Aucune demande.</p>
+                      <p className="text-sm text-muted-foreground">{t("Aucune demande.")}</p>
                     ) : (
                       view.samples.map((s) => (
                         <div
@@ -1028,7 +1020,7 @@ function StandexConsole() {
                               onClick={() =>
                                 run(async () => {
                                   await updateSample({ sampleId: s.id, status: st });
-                                  return "Suivi mis à jour.";
+                                  return t("Suivi mis à jour.");
                                 })
                               }
                             >
@@ -1042,20 +1034,20 @@ function StandexConsole() {
                               onClick={() =>
                                 run(async () => {
                                   const why = window.prompt(
-                                    "Pourquoi cet échantillon reste-t-il valable malgré la nouvelle version du dossier ?",
+                                    t("Pourquoi cet échantillon reste-t-il valable malgré la nouvelle version du dossier ?"),
                                   );
-                                  if (!why?.trim()) return "Revalidation annulée.";
+                                  if (!why?.trim()) return t("Revalidation annulée.");
                                   await revalidateSample(s.id, why.trim());
-                                  return "Échantillon revalidé explicitement.";
+                                  return t("Échantillon revalidé explicitement.");
                                 })
                               }
                             >
-                              Revalider explicitement
+                              {t("Revalider explicitement")}
                             </Button>
                           ) : null}
                           {s.feedback ? (
                             <p className="w-full t-caption text-muted-foreground">
-                              Retour client (version {s.feedback_revision}) : {s.feedback}
+                              {t("Retour client (version")} {s.feedback_revision}) : {s.feedback}
                             </p>
                           ) : null}
                         </div>
@@ -1066,16 +1058,15 @@ function StandexConsole() {
 
                 {inbox.role === "admin" ? (
                   <AccordionItem value="nda">
-                    <AccordionTrigger>Preuve d'accord de confidentialité</AccordionTrigger>
+                    <AccordionTrigger>{t("Preuve d'accord de confidentialité")}</AccordionTrigger>
                     <AccordionContent className="space-y-2">
                       <p className="t-caption text-muted-foreground">
-                        Le document original de référence est vérifié automatiquement (empreinte{" "}
-                        {APPROVED_NDA_TEMPLATE.sha256.slice(0, 16)}…). Générer un document ne vaut
-                        pas signature : enregistrez ici la preuve du document réellement signé.
+                        {t("Le document original de référence est vérifié automatiquement (empreinte")}{" "}
+                        {APPROVED_NDA_TEMPLATE.sha256.slice(0, 16)}{t("…). Générer un document ne vaut pas signature : enregistrez ici la preuve du document réellement signé.")}
                       </p>
                       <div className="grid gap-2 sm:grid-cols-2">
                         <div className="sm:col-span-2">
-                          <Label className="t-caption">Document signé (fichier)</Label>
+                          <Label className="t-caption">{t("Document signé (fichier)")}</Label>
                           <Input
                             type="file"
                             onChange={(e) => {
@@ -1094,7 +1085,7 @@ function StandexConsole() {
                                   {
                                     kind: "supabase_files",
                                     statement:
-                                      "Dépôt du document signé pour vérification par Standex.",
+                                      t("Dépôt du document signé pour vérification par Standex."),
                                     accepted_at: new Date().toISOString(),
                                     content_ref: file.name,
                                     revision: view.dossier.current_revision,
@@ -1108,14 +1099,14 @@ function StandexConsole() {
                                   signedFileName: uploaded.fileName,
                                   evidenceKind: "stored_object",
                                 }));
-                                return "Document déposé et empreinte calculée automatiquement.";
+                                return t("Document déposé et empreinte calculée automatiquement.");
                               });
                             }}
                           />
                           <p className="mt-1 t-caption text-muted-foreground">
                             {nda.signedFileName
                               ? `Déposé : ${nda.signedFileName} — empreinte ${nda.documentSha256.slice(0, 16)}…`
-                              : "Aucun document déposé. Vous pouvez aussi déclarer une preuve conservée dans une archive externe."}
+                              : t("Aucun document déposé. Vous pouvez aussi déclarer une preuve conservée dans une archive externe.")}
                           </p>
                           <Button
                             size="sm"
@@ -1135,19 +1126,19 @@ function StandexConsole() {
                             }
                           >
                             {nda.evidenceKind === "stored_object"
-                              ? "Preuve conservée hors de l'application"
-                              : "Revenir à un document déposé ici"}
+                              ? t("Preuve conservée hors de l'application")
+                              : t("Revenir à un document déposé ici")}
                           </Button>
                         </div>
                         <div>
-                          <Label className="t-caption">Référence de la preuve</Label>
+                          <Label className="t-caption">{t("Référence de la preuve")}</Label>
                           <Input
                             value={nda.proofReference}
                             onChange={(e) => setNda({ ...nda, proofReference: e.target.value })}
                           />
                         </div>
                         <div>
-                          <Label className="t-caption">Date de signature</Label>
+                          <Label className="t-caption">{t("Date de signature")}</Label>
                           <Input
                             type="date"
                             value={nda.signedAt}
@@ -1155,14 +1146,14 @@ function StandexConsole() {
                           />
                         </div>
                         <div>
-                          <Label className="t-caption">Partie 1</Label>
+                          <Label className="t-caption">{t("Partie 1")}</Label>
                           <Input
                             value={nda.partyA}
                             onChange={(e) => setNda({ ...nda, partyA: e.target.value })}
                           />
                         </div>
                         <div>
-                          <Label className="t-caption">Partie 2</Label>
+                          <Label className="t-caption">{t("Partie 2")}</Label>
                           <Input
                             value={nda.partyB}
                             onChange={(e) => setNda({ ...nda, partyB: e.target.value })}
@@ -1185,11 +1176,11 @@ function StandexConsole() {
                               source: nda.source,
                               evidenceKind: nda.evidenceKind,
                             });
-                            return "Preuve enregistrée : les transferts confidentiels sont maintenant autorisés pour ce dossier.";
+                            return t("Preuve enregistrée : les transferts confidentiels sont maintenant autorisés pour ce dossier.");
                           })
                         }
                       >
-                        Enregistrer la preuve vérifiée
+                        {t("Enregistrer la preuve vérifiée")}
                       </Button>
                     </AccordionContent>
                   </AccordionItem>
@@ -1198,8 +1189,7 @@ function StandexConsole() {
 
               <Separator />
               <p className="t-caption text-muted-foreground">
-                Signatures électroniques, catalogues distributeurs et registres d'entreprises ne
-                sont pas reliés : ces vérifications restent manuelles.
+                {t("Signatures électroniques, catalogues distributeurs et registres d'entreprises ne sont pas reliés : ces vérifications restent manuelles.")}
               </p>
             </>
           )}
@@ -1215,8 +1205,8 @@ function StandexConsole() {
             setOpenDoc(null);
           }
         }}
-        title="Document transmis"
-        description="Lecture en mémoire de cet onglet, via l'accès authentifié existant."
+        title={t("Document transmis")}
+        description={t("Lecture en mémoire de cet onglet, via l'accès authentifié existant.")}
       >
         <DocumentViewer document={openDoc} />
       </WorkspacePanel>

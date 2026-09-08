@@ -1,3 +1,4 @@
+import { useLocale } from "@/lib/i18n/react";
 import { t } from "@/lib/i18n/core";
 import type { MachineAsset } from "@/lib/standex/machine-assets";
 import type { MachineAssembly } from "@/lib/standex/machine-assembly";
@@ -170,8 +171,8 @@ export default function MachineControls({
         {(
           [
             ["navigate", "Observer"],
-            ["sensor", "Placer le capteur"],
-            ["magnet", "Placer l'aimant"],
+            ["sensor", t("Placer le capteur")],
+            ["magnet", t("Placer l'aimant")],
             ["measure", "Mesurer"],
           ] as const
         ).map(([id, label]) => (

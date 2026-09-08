@@ -1,3 +1,5 @@
+import { useLocale } from "@/lib/i18n/react";
+import { msg, t } from "@/lib/i18n/core";
 /** Lecteur de documents intégré : MD, texte brut et PDF, lus SUR PLACE.
  *
  * - Aucun envoi : un fichier ouvert depuis l'appareil reste en mémoire.
@@ -145,6 +147,7 @@ export function DocumentViewer({
   /** Ouverture d'un fichier local, en mémoire : aucun envoi. */
   onOpenLocalFile?: (file: File) => void;
 }) {
+  useLocale();
   const [blobUrl, setBlobUrl] = useState<string | null>(null);
   const [embedFailed, setEmbedFailed] = useState(false);
   const genRef = useRef(0);
@@ -192,18 +195,20 @@ export function DocumentViewer({
           data={blobUrl}
           type="application/pdf"
           className="h-[70vh] w-full rounded-[var(--r-md)] shadow-[var(--e-1)]"
-          aria-label={`Aperçu de ${doc.name}`}
+          aria-label={msg("Aperçu de {0}", [doc.name])}
           onError={() => setEmbedFailed(true)}
         >
           <p className="p-4 text-base">
-            Ce navigateur n'affiche pas ce PDF ici. Utilisez le téléchargement ci-dessous.
+            {t("Ce navigateur n'affiche pas ce PDF ici. Utilisez le téléchargement ci-dessous.")}
           </p>
         </object>
       );
     return (
       <p className="t-caption">
-        {doc.note ??
-          "Ce format ne peut pas être affiché ici. Vous pouvez le télécharger pour l'ouvrir avec votre logiciel habituel."}
+        {t(
+          doc.note ??
+            "Ce format ne peut pas être affiché ici. Vous pouvez le télécharger pour l'ouvrir avec votre logiciel habituel.",
+        )}
       </p>
     );
   }, [doc, blobUrl, embedFailed]);
@@ -214,7 +219,7 @@ export function DocumentViewer({
         <div className="flex flex-wrap items-center gap-3">
           <Button variant="outline" className="min-h-11 text-base" asChild>
             <label className="cursor-pointer">
-              Ouvrir un document de mon appareil
+              {t("Ouvrir un document de mon appareil")}
               <input
                 type="file"
                 accept=".md,.markdown,.txt,.pdf,text/markdown,text/plain,application/pdf"
@@ -227,7 +232,7 @@ export function DocumentViewer({
               />
             </label>
           </Button>
-          <span className="t-caption">Lu dans cet onglet uniquement, jamais envoyé.</span>
+          <span className="t-caption">{t("Lu dans cet onglet uniquement, jamais envoyé.")}</span>
         </div>
       ) : null}
 
@@ -239,7 +244,7 @@ export function DocumentViewer({
             {blobUrl ? (
               <Button variant="outline" className="min-h-11 text-base" asChild>
                 <a href={blobUrl} download={doc.name}>
-                  <Download className="mr-1 h-4 w-4" /> Télécharger
+                  <Download className="mr-1 h-4 w-4" /> {t("Télécharger")}
                 </a>
               </Button>
             ) : null}
@@ -247,7 +252,7 @@ export function DocumentViewer({
           {body}
         </>
       ) : (
-        <p className="t-caption">Aucun document ouvert pour l'instant.</p>
+        <p className="t-caption">{t("Aucun document ouvert pour l'instant.")}</p>
       )}
     </div>
   );
@@ -266,7 +271,7 @@ export function documentFromBytes(name: string, bytes: ArrayBuffer, id: string):
       id,
       name,
       kind: "binary",
-      note: "Ce fichier dépasse 30 Mio : il n'est pas affiché ici.",
+      note: t("Ce fichier dépasse 30 Mio : il n'est pas affiché ici."),
     };
   if (kind === "markdown" || kind === "text")
     return { id, name, kind, text: new TextDecoder("utf-8").decode(bytes) };
@@ -277,6 +282,6 @@ export function documentFromBytes(name: string, bytes: ArrayBuffer, id: string):
 export async function documentFromFile(file: File): Promise<ViewerDocument> {
   const id = `${file.name}:${file.size}:${file.lastModified}`;
   if (file.size > MAX_DOCUMENT_BYTES)
-    throw new Error("Ce fichier dépasse 30 Mio : il n'est pas lu dans cet onglet.");
+    throw new Error(t("Ce fichier dépasse 30 Mio : il n'est pas lu dans cet onglet."));
   return documentFromBytes(file.name, await file.arrayBuffer(), id);
 }

@@ -44,11 +44,11 @@ import { sensorById, sizeLabel, sensorSource } from "@/lib/standex/sensor-catalo
 const Scene = lazy(() => import("./scene"));
 const MachineScene = lazy(() => import("./machine-scene"));
 const contactLabel: Record<Contact, string> = {
-  open: "Contact ouvert",
-  closed: "Contact fermé",
-  unknown: "État indéterminé",
+  open: t("Contact ouvert"),
+  closed: t("Contact fermé"),
+  unknown: t("État indéterminé"),
 };
-const motionLabels = { approach: "Approche et retrait", slide: "Passage latéral", pivot: "Pivot" };
+const motionLabels = { approach: t("Approche et retrait"), slide: t("Passage latéral"), pivot: "Pivot" };
 class SceneBoundary extends Component<
   { children: ReactNode; fallback: ReactNode; onError: () => void },
   { failed: boolean }
@@ -143,7 +143,7 @@ export default function MagneticWorkshop({
   initialConfig,
   onClose,
   onSave,
-  storageLabel = "la session et le dossier",
+  storageLabel = t("la session et le dossier"),
   storageMode = "local-device",
   cableRouting,
   onDraftChange,
@@ -226,7 +226,7 @@ export default function MagneticWorkshop({
         }
       })
       .catch((e) => {
-        if (!cancelled) setAssetError(e instanceof Error ? e.message : "Fichier 3D illisible.");
+        if (!cancelled) setAssetError(e instanceof Error ? e.message : t("Fichier 3D illisible."));
       });
     return () => {
       cancelled = true;
@@ -284,7 +284,7 @@ export default function MagneticWorkshop({
       setSceneError(false);
       setResetEpoch((v) => v + 1);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Import impossible.");
+      setError(e instanceof Error ? e.message : t("Import impossible."));
     }
   }
   function failed3d() {
@@ -301,7 +301,7 @@ export default function MagneticWorkshop({
   }
 
   useEffect(() => {
-    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const media = window.matchMedia(t("(prefers-reduced-motion: reduce)"));
     const sync = () => setReduced(media.matches);
     sync();
     media.addEventListener("change", sync);
@@ -387,7 +387,7 @@ export default function MagneticWorkshop({
       await onSave(snapshot);
       setSaved(JSON.stringify(snapshot));
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Le montage n'a pas pu être enregistré.");
+      setError(e instanceof Error ? e.message : t("Le montage n'a pas pu être enregistré."));
     } finally {
       setSaving(false);
     }
@@ -395,29 +395,29 @@ export default function MagneticWorkshop({
   async function importFile(file: File | undefined) {
     if (!file) return;
     try {
-      if (file.size > 20000) throw new Error("Le fichier de montage est trop volumineux.");
+      if (file.size > 20000) throw new Error(t("Le fichier de montage est trop volumineux."));
       const parsed = parseWorkshopConfig(JSON.parse(await file.text()));
-      if (!parsed) throw new Error("Ce fichier ne contient pas un montage valide (V1, V2 ou V3).");
+      if (!parsed) throw new Error(t("Ce fichier ne contient pas un montage valide (V1, V2 ou V3)."));
       setPlaying(false);
       setProgress(0);
       setConfig(parsed);
       setSaved(null);
       setError(null);
-      setImportNotice("Montage importé. Enregistrez-le pour le joindre au dossier.");
+      setImportNotice(t("Montage importé. Enregistrez-le pour le joindre au dossier."));
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Fichier illisible.");
+      setError(e instanceof Error ? e.message : t("Fichier illisible."));
     }
     if (fileRef.current) fileRef.current.value = "";
   }
   const statusMessage =
     result.reason ??
     (unknown
-      ? "Une partie du parcours ne peut pas être déterminée avec ces paramètres."
+      ? t("Une partie du parcours ne peut pas être déterminée avec ces paramètres.")
       : result.closures === 0
-        ? "Aucun nouvel enclenchement sur ce cycle. Essayez une autre position ou rapprochez l'aimant."
+        ? t("Aucun nouvel enclenchement sur ce cycle. Essayez une autre position ou rapprochez l'aimant.")
         : result.closures > 1
-          ? "Plusieurs enclenchements sur un aller-retour. Vérifiez s'ils correspondent au comportement recherché."
-          : "Un enclenchement et un retour à vérifier dans votre montage réel.");
+          ? t("Plusieurs enclenchements sur un aller-retour. Vérifiez s'ils correspondent au comportement recherché.")
+          : t("Un enclenchement et un retour à vérifier dans votre montage réel."));
 
   return (
     <main className="mw immersive" aria-label={t("Atelier magnétique")}>
@@ -501,7 +501,7 @@ export default function MagneticWorkshop({
           {t("Télécharger le fichier 3D")}
         </a>
       </div>
-      <div className={machine ? "mw-layout mw-machine-layout" : "mw-layout"}>
+      <div className={machine ? t("mw-layout mw-machine-layout") : "mw-layout"}>
         <aside className="mw-controls">
           {machine ? (
             <MachineControls
@@ -538,7 +538,7 @@ export default function MagneticWorkshop({
                 </p>
               </div>
               <nav className="mw-steps" aria-label={t("Étapes du montage")}>
-                {["Capteur", "Aimant", "Mouvement"].map((s, i) => (
+                {[t("Capteur"), "Aimant", "Mouvement"].map((s, i) => (
                   <button
                     key={s}
                     className={step === i ? "active" : ""}
@@ -977,7 +977,7 @@ export default function MagneticWorkshop({
         <section className="mw-visual-column" aria-label={t("Simulation du montage")}>
           <div className="mw-scene-card">
             <div className="mw-scene-toolbar">
-              <span className={reference ? "mw-kind" : "mw-kind education"}>
+              <span className={reference ? "mw-kind" : t("mw-kind education")}>
                 {t(
                   reference
                     ? "Référence Standex · valeurs typiques"
@@ -1011,9 +1011,9 @@ export default function MagneticWorkshop({
                   <div className="mw-cable-row">
                     {(
                       [
-                        ["sensor", "Sortie capteur"],
-                        ["waypoint", "Point de passage"],
-                        ["connection", "Point de connexion"],
+                        ["sensor", t("Sortie capteur")],
+                        ["waypoint", t("Point de passage")],
+                        ["connection", t("Point de connexion")],
                       ] as const
                     ).map(([slot, label]) => (
                       <button

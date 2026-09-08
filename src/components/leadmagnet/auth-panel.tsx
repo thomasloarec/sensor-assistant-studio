@@ -1,3 +1,5 @@
+import { useLocale } from "@/lib/i18n/react";
+import { t } from "@/lib/i18n/core";
 /** Entrée de connexion réelle au projet Supabase existant.
  *
  * Aucun service externe n'est ajouté : on utilise le client déjà présent.
@@ -18,6 +20,7 @@ interface Props {
 }
 
 export function AuthPanel({ backend, onChanged }: Props) {
+  useLocale();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
@@ -29,15 +32,14 @@ export function AuthPanel({ backend, onChanged }: Props) {
   if (!backend?.configured || !supabase)
     return (
       <p className="t-caption">
-        La liaison avec l'équipe Standex n'est pas configurée sur cet environnement : la connexion
-        n'est pas possible ici.
+        {t("La liaison avec l'équipe Standex n'est pas configurée sur cet environnement : la connexion n'est pas possible ici.")}
       </p>
     );
 
   if (backend.authenticated)
     return (
       <div className="flex flex-wrap items-center gap-3 text-base">
-        <span className="t-caption">Connecté{backend.role ? ` — rôle ${backend.role}` : ""}.</span>
+        <span className="t-caption">{t("Connecté")}{backend.role ? ` — rôle ${backend.role}` : ""}.</span>
         <Button
           variant="outline"
           className="min-h-11 text-base"
@@ -46,7 +48,7 @@ export function AuthPanel({ backend, onChanged }: Props) {
             onChanged?.();
           }}
         >
-          Se déconnecter
+          {t("Se déconnecter")}
         </Button>
         {message ? <span>{message}</span> : null}
       </div>
@@ -62,14 +64,14 @@ export function AuthPanel({ backend, onChanged }: Props) {
         try {
           const { error } = await supabase!.auth.signInWithPassword({ email, password });
           if (error) {
-            setMessage("Connexion refusée. Vérifiez l'adresse et le mot de passe.");
+            setMessage(t("Connexion refusée. Vérifiez l'adresse et le mot de passe."));
             return;
           }
           setPassword("");
-          setMessage("Connexion établie.");
+          setMessage(t("Connexion établie."));
           onChanged?.();
         } catch {
-          setMessage("La connexion n'a pas abouti : réseau indisponible. Réessayez.");
+          setMessage(t("La connexion n'a pas abouti : réseau indisponible. Réessayez."));
         } finally {
           setBusy(false);
         }
@@ -77,7 +79,7 @@ export function AuthPanel({ backend, onChanged }: Props) {
     >
       <div>
         <Label htmlFor={emailId} className="t-label">
-          Adresse e-mail
+          {t("Adresse e-mail")}
         </Label>
         <Input
           id={emailId}
@@ -91,7 +93,7 @@ export function AuthPanel({ backend, onChanged }: Props) {
       </div>
       <div>
         <Label htmlFor={passwordId} className="t-label">
-          Mot de passe
+          {t("Mot de passe")}
         </Label>
         <Input
           id={passwordId}
@@ -110,7 +112,7 @@ export function AuthPanel({ backend, onChanged }: Props) {
         aria-busy={busy ? "true" : undefined}
       >
         {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-        {busy ? "Connexion…" : "Se connecter"}
+        {busy ? "Connexion…" : t("Se connecter")}
       </Button>
       {message ? <p className="notice notice-info sm:col-span-3">{message}</p> : null}
     </form>

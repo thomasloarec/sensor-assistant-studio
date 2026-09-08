@@ -59,6 +59,22 @@ il atteint 5,38 : 1.
 Traits : `--hairline` (0.10) et `--hairline-strong` (0.18) — teintés bleu, jamais
 gris neutre.
 
+### Alias de l'atelier 3D
+
+L'atelier magnétique et le sélecteur de langue ont leur propre feuille CSS et ne
+peuvent pas utiliser directement les classes Tailwind. Trois alias, définis en
+tête de `src/components/standex/workshop/workshop.css`, y relaient les jetons du
+socle. Ils ne portent aucune valeur littérale : ce sont des renvois.
+
+| Alias            | Renvoie vers            | Usage                                        |
+| ---------------- | ----------------------- | -------------------------------------------- |
+| `--mw-surface`   | `--surface`             | panneaux et cartes de l'atelier               |
+| `--mw-field`     | `--popover`             | champs, listes déroulantes, options natives   |
+| `--mw-on-accent` | `--primary-foreground`  | texte posé sur une action pleine              |
+
+En contexte `.immersive`, ces trois alias suivent automatiquement les jetons
+sombres : aucun `background: white` ni `color: white` ne subsiste dans l'atelier.
+
 ### Contexte immersif
 
 `.immersive` est une **classe de section**, pas un thème global. Elle bascule les

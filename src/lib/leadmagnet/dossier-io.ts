@@ -169,6 +169,8 @@ const knownSensorId = z
   .transform((v) => (v !== null && isKnownSensorId(v) ? v : null));
 const dossierSchema = z.object({
   title: z.string().catch("Dossier repris"),
+  // Un dossier plus ancien n'a pas de langue d'origine : le français fait foi.
+  sourceLocale: z.enum(["fr", "en", "zh", "de", "es", "ru", "it", "ja"]).catch("fr"),
   requirements: z.array(requirement).catch([]),
   // Ces quatre blocs sont validés strictement plus bas, avec un avis explicite si invalides.
   mounting: z.unknown(),
@@ -260,6 +262,7 @@ export function parseDossierExport(raw: unknown, now = new Date().toISOString())
   const dossier: DesignDossier = {
     ...base,
     title: data.title,
+    sourceLocale: data.sourceLocale,
     requirements: data.requirements.length
       ? data.requirements.map((r) => ({
           key: r.key,
