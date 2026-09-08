@@ -4,7 +4,7 @@
  * ne sont pas ceux enregistrés en base. Rien n'est décidé côté navigateur.
  */
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Suspense, lazy, useCallback, useEffect, useState } from "react";
+import { Suspense, lazy, useCallback, useEffect, useRef, useState } from "react";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -45,6 +45,16 @@ import {
 } from "@/lib/leadmagnet/supabase-adapter";
 import { APPROVED_NDA_TEMPLATE } from "@/lib/leadmagnet/nda";
 import { parseServerSnapshot } from "@/lib/leadmagnet/dossier-io";
+import {
+  applyRoutingPick,
+  estimateCableLength,
+  resetRouting,
+  routingPoints,
+  undoRoutingPick,
+  type CablingConfig,
+  type RoutingSlot,
+  type RoutingTarget,
+} from "@/lib/leadmagnet/cabling";
 import { technicalSummary } from "@/lib/leadmagnet/submission";
 import { parseWorkshopConfig, type WorkshopConfig } from "@/lib/standex/magnetic-workshop";
 import { storeMachineFileInMemory } from "@/lib/standex/machine-assets";
@@ -52,7 +62,6 @@ import { AuthPanel } from "@/components/leadmagnet/auth-panel";
 import { supabase } from "@/lib/standex/supabase";
 
 const MagneticWorkshop = lazy(() => import("@/components/standex/workshop/workshop"));
-
 
 export const Route = createFileRoute("/standex")({
   component: StandexConsole,
@@ -141,10 +150,45 @@ function StandexConsole() {
   /** Lecture 3D du modèle réellement envoyé : uniquement en mémoire de l'onglet. */
   const [viewer, setViewer] = useState<{
     config: WorkshopConfig;
+    cabling: CablingConfig;
     revision: number;
     sha256: string;
   } | null>(null);
   const [viewerError, setViewerError] = useState<string | null>(null);
+  const selectionRequest = useRef(0);
+  const modelRequest = useRef(0);
+  const [viewerTarget, setViewerTarget] = useState<RoutingTarget>({ kind: "base" });
+  const [viewerSlot, setViewerSlot] = useState<RoutingSlot>("sensor");
+  const viewerEstimate = viewer ? estimateCableLength(viewer.cabling) : null;
+  const viewerCable = viewer
+    ? {
+        slot: viewerSlot,
+        setSlot: setViewerSlot,
+        points: routingPoints(viewer.cabling, viewerTarget),
+        targetLabel:
+          viewerTarget.kind === "base" ? "Trajet de référence" : "Trajet de l'état sélectionné",
+        onPick: (point: [number, number, number], cycleT: number) =>
+          setViewer((v) =>
+            v
+              ? {
+                  ...v,
+                  cabling: applyRoutingPick(v.cabling, viewerTarget, viewerSlot, point, {
+                    cycleT,
+                    label: "Ajustement local de revue",
+                  }),
+                }
+              : v,
+          ),
+        onUndo: () =>
+          setViewer((v) => (v ? { ...v, cabling: undoRoutingPick(v.cabling, viewerTarget) } : v)),
+        onReset: () =>
+          setViewer((v) => (v ? { ...v, cabling: resetRouting(v.cabling, viewerTarget) } : v)),
+        lengthLabel:
+          viewerEstimate?.requiredMm === null || viewerEstimate === null
+            ? "Longueur inconnue : trajet incomplet."
+            : `Longueur nécessaire : ${viewerEstimate.requiredMm?.toFixed(1)} mm. Aucune validation d'ingénierie.`,
+      }
+    : undefined;
 
   /** Ouvre le GLB réellement transféré, jamais un montage par défaut.
    * Le binaire est retéléchargé, son empreinte est comparée à celle annoncée à
@@ -153,6 +197,10 @@ function StandexConsole() {
    */
   const openTransferredModel = useCallback(
     async (file: { path?: string; file_name?: string; sha256?: string }) => {
+      const request = ++modelRequest.current;
+      const selection = selectionRequest.current;
+      const stale = () =>
+        request !== modelRequest.current || selection !== selectionRequest.current;
       setViewerError(null);
       setViewer(null);
       const revisions = view?.revisions ?? [];
@@ -182,6 +230,7 @@ function StandexConsole() {
       }
       try {
         const bytes = await downloadDesignFile(path);
+        if (stale()) return;
         const digest = await sha256Hex(bytes);
         const expected =
           file.sha256 ??
@@ -201,16 +250,24 @@ function StandexConsole() {
           );
           return;
         }
+        if (config.machine.assetKey !== `sha256:${digest}`) {
+          setViewerError("Ce fichier ne correspond pas au modèle lié à cette configuration.");
+          return;
+        }
         const name = String(file.file_name ?? config.machine.fileName ?? "modele.glb");
         const assetKey = await storeMachineFileInMemory(
           new File([bytes], name, { type: "model/gltf-binary" }),
         );
+        if (stale()) return;
+        setViewerTarget({ kind: "base" });
         setViewer({
+          cabling: structuredClone(parsed.dossier.cabling),
           config: { ...config, machine: { ...config.machine, assetKey, fileName: name } },
           revision: last.revision,
           sha256: digest,
         });
       } catch (error) {
+        if (stale()) return;
         setViewerError(
           error instanceof Error ? error.message : "Le modèle 3D n'a pas pu être ouvert.",
         );
@@ -218,7 +275,6 @@ function StandexConsole() {
     },
     [view],
   );
-
 
   useEffect(() => {
     checkLeadBackend()
@@ -247,10 +303,17 @@ function StandexConsole() {
   }, []);
 
   const loadView = useCallback(async (id: string) => {
+    const request = ++selectionRequest.current;
+    modelRequest.current += 1;
+    setViewer(null);
+    setViewerError(null);
     try {
-      setView(await fetchStaffView(id));
+      const loaded = await fetchStaffView(id);
+      if (request !== selectionRequest.current) return;
+      setView(loaded);
       setSelected(id);
     } catch (error) {
+      if (request !== selectionRequest.current) return;
       setView(null);
       setMessage(error instanceof Error ? error.message : null);
     }
@@ -261,11 +324,15 @@ function StandexConsole() {
   }, [backend?.ready, loadInbox]);
 
   const run = async (fn: () => Promise<string>) => {
+    const request = selectionRequest.current;
     try {
-      setMessage(await fn());
+      const outcome = await fn();
+      if (request !== selectionRequest.current) return;
+      setMessage(outcome);
       if (selected) await loadView(selected);
       await loadInbox();
     } catch (error) {
+      if (request !== selectionRequest.current) return;
       setMessage(error instanceof Error ? error.message : "Action refusée.");
     }
   };
@@ -491,12 +558,41 @@ function StandexConsole() {
                               Empreinte contrôlée : {viewer.sha256.slice(0, 16)}…. Une modification
                               faite ici ne vaut jamais retour publié.
                             </p>
-                            <Suspense fallback={<p className="text-sm">Chargement de l'atelier…</p>}>
+                            <Label>Trajet de câble affiché</Label>
+                            <select
+                              className="rounded border p-2 text-sm"
+                              value={viewerTarget.kind === "base" ? "base" : viewerTarget.stateId}
+                              onChange={(e) =>
+                                setViewerTarget(
+                                  e.target.value === "base"
+                                    ? { kind: "base" }
+                                    : { kind: "state", stateId: e.target.value },
+                                )
+                              }
+                            >
+                              <option value="base">Trajet de référence</option>
+                              {viewer.cabling.declaredMotionStates.map((state) => (
+                                <option key={state.id} value={state.id}>
+                                  {state.label}
+                                </option>
+                              ))}
+                            </select>
+                            <p className="text-xs text-muted-foreground">
+                              Les ajustements du tracé restent dans cette copie de lecture.
+                            </p>
+                            <Suspense
+                              fallback={<p className="text-sm">Chargement de l'atelier…</p>}
+                            >
                               <MagneticWorkshop
+                                key={`${viewer.revision}:${viewer.sha256}`}
                                 initialConfig={viewer.config}
+                                {...(viewerCable ? { cableRouting: viewerCable } : {})}
                                 storageLabel="cette lecture, en mémoire de l'onglet"
                                 storageMode="memory"
-                                onClose={() => setViewer(null)}
+                                onClose={() => {
+                                  modelRequest.current += 1;
+                                  setViewer(null);
+                                }}
                                 onSave={async () => {
                                   setMessage(
                                     "Cette modification reste locale à votre écran : publiez un retour R&D pour qu'elle compte.",
@@ -506,7 +602,6 @@ function StandexConsole() {
                             </Suspense>
                           </div>
                         ) : null}
-
                       </>
                     ) : (
                       <p className="text-sm text-muted-foreground">Aucune version envoyée.</p>
@@ -591,7 +686,9 @@ function StandexConsole() {
                         <Input
                           inputMode="decimal"
                           value={review.variantReserveMm}
-                          onChange={(e) => setReview({ ...review, variantReserveMm: e.target.value })}
+                          onChange={(e) =>
+                            setReview({ ...review, variantReserveMm: e.target.value })
+                          }
                         />
                       </div>
                       <div>
@@ -964,7 +1061,6 @@ function StandexConsole() {
                                 }));
                                 return "Document déposé et empreinte calculée automatiquement.";
                               });
-
                             }}
                           />
                           <p className="mt-1 text-xs text-muted-foreground">

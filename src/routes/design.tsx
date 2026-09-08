@@ -274,11 +274,6 @@ function DesignSpace() {
   const [busy, setBusy] = useState(false);
   const busyRef = useRef(false);
 
-
-
-
-
-
   /** Remplissage local du NDA : aperçu puis téléchargement, sans aucune transmission. */
   const prepareNdaDocument = useCallback(
     async (action: "preview" | "download") => {
@@ -341,9 +336,7 @@ function DesignSpace() {
       applyNdaStatus(status);
     } catch (error) {
       if (contextGenRef.current !== gen) return;
-      setNdaError(
-        error instanceof Error ? error.message : "La préparation du NDA n'a pas abouti.",
-      );
+      setNdaError(error instanceof Error ? error.message : "La préparation du NDA n'a pas abouti.");
     }
   }, [applyNdaStatus, serverDossierId]);
 
@@ -360,7 +353,6 @@ function DesignSpace() {
       setNdaError(error instanceof Error ? error.message : "Statut NDA indisponible.");
     }
   }, [applyNdaStatus, serverDossierId]);
-
 
   // Tant que cet espace est monté, la télémétrie est réduite à un code anonyme.
   useEffect(() => openPrivateErrorScope(), []);
@@ -415,7 +407,6 @@ function DesignSpace() {
     };
   }, [dossier, extraConstraints, serverDossierId, serverRevision, nda]);
 
-
   useEffect(() => {
     const warn = (e: BeforeUnloadEvent) => {
       e.preventDefault();
@@ -454,10 +445,7 @@ function DesignSpace() {
     activeTarget.kind === "base"
       ? "Trajet de référence"
       : `État : ${cabling.declaredMotionStates.find((s) => s.id === activeTarget.stateId)?.label ?? activeTarget.stateId}`;
-  const activePoints = useMemo(
-    () => routingPoints(cabling, activeTarget),
-    [cabling, activeTarget],
-  );
+  const activePoints = useMemo(() => routingPoints(cabling, activeTarget), [cabling, activeTarget]);
   const cableRouting = useMemo(
     () => ({
       slot: routingSlot,
@@ -481,8 +469,6 @@ function DesignSpace() {
     [routingSlot, activePoints, activeTargetLabel, activeTarget, estimate.requiredMm, setCabling],
   );
 
-
-
   const exportDossier = useCallback(() => {
     const blob = new Blob([JSON.stringify(buildDossierExport(dossier), null, 2)], {
       type: "application/json",
@@ -497,7 +483,7 @@ function DesignSpace() {
 
   const importDossier = useCallback(
     async (file: File | undefined) => {
-      if (!file) return;
+      if (!file || busyRef.current) return;
       setImportMessage(null);
       try {
         const parsed = parseDossierExport(JSON.parse(await file.text()));
@@ -553,7 +539,6 @@ function DesignSpace() {
     return contextGenRef.current;
   }, []);
 
-
   /** Étape 1 : préparer le partage du modèle 3D.
    * Le dépôt a lieu ICI, AVANT la relecture et l'accord, une seule fois. Le
    * dossier contient ensuite le fichier réellement déposé, donc l'accord porte
@@ -568,7 +553,8 @@ function DesignSpace() {
     }
     if (!backend?.ready) {
       setSubmitMessage(
-        backend?.message ?? "La liaison avec l'équipe Standex n'est pas active : rien n'a été déposé.",
+        backend?.message ??
+          "La liaison avec l'équipe Standex n'est pas active : rien n'a été déposé.",
       );
       return;
     }
@@ -580,7 +566,6 @@ function DesignSpace() {
     const gen = contextGenRef.current;
     const stale = () => contextGenRef.current !== gen;
     try {
-
       const bytes = memoryAssetBytes(dossier.workshopAsset.assetKey);
       if (!bytes) {
         setSubmitMessage(
@@ -611,7 +596,6 @@ function DesignSpace() {
       );
       if (stale()) return;
       if (!uploaded.verified) {
-
         // Un fichier non relu par le serveur ne peut PAS être annoncé : il
         // resterait refusé à la soumission. On le dit franchement ici.
         setPreparedUpload(null);
@@ -655,7 +639,14 @@ function DesignSpace() {
       busyRef.current = false;
       setBusy(false);
     }
-  }, [backend, dossier.workshopAsset, dossier.title, nda.required, serverDossierId, serverRevision]);
+  }, [
+    backend,
+    dossier.workshopAsset,
+    dossier.title,
+    nda.required,
+    serverDossierId,
+    serverRevision,
+  ]);
 
   /** Étape 2 : envoi. Aucun dépôt ici — ce qui est joint a déjà été déposé,
    * vérifié et relu. Le verrou empêche un double clic de créer deux versions.
@@ -739,8 +730,6 @@ function DesignSpace() {
     shareModel,
     preparedUpload,
   ]);
-
-
 
   const volume = dossier.business.annualVolume;
   // La désignation standard/custom vient du retour R&D publié, jamais de cet écran.
@@ -1616,12 +1605,14 @@ function DesignSpace() {
                     </Button>
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    « Préparer mon NDA » n'envoie aucune donnée de conception : seule une fiche
-                    vide est créée côté Standex pour que vous puissiez déposer le document signé
-                    et que l'équipe puisse le vérifier.{" "}
+                    « Préparer mon NDA » n'envoie aucune donnée de conception : seule une fiche vide
+                    est créée côté Standex pour que vous puissiez déposer le document signé et que
+                    l'équipe puisse le vérifier.{" "}
                     {ndaServer
                       ? `Statut côté Standex : ${ndaServer.nda_status}${
-                          ndaServer.allows_transfer ? " — transfert autorisé" : " — transfert bloqué"
+                          ndaServer.allows_transfer
+                            ? " — transfert autorisé"
+                            : " — transfert bloqué"
                         }.`
                       : "Aucune fiche NDA créée pour l'instant."}
                   </p>
@@ -1698,9 +1689,7 @@ function DesignSpace() {
                     />
                     J'autorise l'envoi de ce contenu à Standex (R&D et commercial).
                   </label>
-                  {consentNotice ? (
-                    <p className="text-xs text-amber-600">{consentNotice}</p>
-                  ) : null}
+                  {consentNotice ? <p className="text-xs text-amber-600">{consentNotice}</p> : null}
 
                   <label className="flex items-center gap-2 text-sm">
                     <Checkbox
@@ -1720,7 +1709,9 @@ function DesignSpace() {
                       <Button
                         variant="outline"
                         size="sm"
-                        disabled={busy || preparedUpload?.assetKey === dossier.workshopAsset.assetKey}
+                        disabled={
+                          busy || preparedUpload?.assetKey === dossier.workshopAsset.assetKey
+                        }
                         onClick={() => void prepareShare()}
                       >
                         {preparedUpload?.assetKey === dossier.workshopAsset.assetKey
@@ -1768,7 +1759,6 @@ function DesignSpace() {
                     </p>
                   ) : null}
                   {submitMessage ? <p className="text-sm">{submitMessage}</p> : null}
-
                 </AccordionContent>
               </AccordionItem>
 
@@ -1784,7 +1774,9 @@ function DesignSpace() {
                   <ClientFollowUp
                     backend={backend}
                     serverDossierId={serverDossierId}
+                    contextGeneration={contextGenRef.current}
                     onSelectDossier={({ id, revision, title, snapshot }) => {
+                      if (busyRef.current) return { ok: false };
                       // Le dossier CONSULTÉ ne devient le dossier ÉDITÉ que si son
                       // dernier contenu envoyé a pu être chargé : sinon l'ancien
                       // contenu resterait à l'écran sous une nouvelle étiquette.
@@ -1800,16 +1792,27 @@ function DesignSpace() {
                       if (parsed && parsed.ok) {
                         setDossier({ ...parsed.dossier, storage: "memory" });
                         setWorkshop(parsed.dossier.workshop ?? null);
+                      } else {
+                        setDossier({ ...createDossier(), title });
+                        setWorkshop(null);
                       }
                       resetServerContext(id, revision);
                       setSubmitMessage(
                         `Dossier « ${title} » ouvert à la version ${revision}${
-                          parsed && parsed.ok ? ", contenu envoyé rechargé" : ", aucun contenu envoyé à recharger"
+                          parsed && parsed.ok
+                            ? ", contenu envoyé rechargé"
+                            : ", aucun contenu envoyé à recharger"
                         }. Votre accord d'envoi et la relecture sont à refaire pour ce dossier.`,
                       );
                       return { ok: true };
                     }}
-                    onReopenSnapshot={({ dossierId, sourceRevision, currentRevision, snapshot }) => {
+                    onReopenSnapshot={({
+                      dossierId,
+                      sourceRevision,
+                      currentRevision,
+                      snapshot,
+                    }) => {
+                      if (busyRef.current) return { ok: false };
                       const parsed = parseServerSnapshot(snapshot);
                       if (!parsed.ok) {
                         setSubmitMessage(parsed.reason);
@@ -1829,6 +1832,12 @@ function DesignSpace() {
                       return { ok: true };
                     }}
                     onApplyVariant={async ({ dossierId, revision, snapshot, variant, commit }) => {
+                      if (busyRef.current)
+                        return {
+                          applied: [],
+                          notApplied: [],
+                          refused: "Une opération est en cours. Réessayez après sa fin.",
+                        };
                       // La variante s'applique au contenu de LA version relue par
                       // Standex, jamais à un contenu resté d'un autre dossier.
                       const parsed = parseServerSnapshot(snapshot);
@@ -1846,6 +1855,8 @@ function DesignSpace() {
                       }
                       try {
                         // Le serveur enregistre la reprise AVANT que l'écran change.
+                        busyRef.current = true;
+                        setBusy(true);
                         await commit();
                       } catch (error) {
                         return {
@@ -1856,6 +1867,9 @@ function DesignSpace() {
                               ? error.message
                               : "La reprise de cette proposition n'a pas été enregistrée.",
                         };
+                      } finally {
+                        busyRef.current = false;
+                        setBusy(false);
                       }
                       setDossier(out.dossier);
                       setWorkshop(out.dossier.workshop ?? null);
@@ -1866,7 +1880,6 @@ function DesignSpace() {
                       );
                       return { applied: out.applied, notApplied: out.notApplied };
                     }}
-
                   />
 
                   <p className="text-xs text-muted-foreground">
