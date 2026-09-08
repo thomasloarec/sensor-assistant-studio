@@ -2025,7 +2025,7 @@ export function DesignSpace({ chrome = "page" }: DesignSpaceProps) {
           </Button>
         ) : null}
         <Button variant="outline" className="min-h-11 max-w-full whitespace-normal text-base" asChild>
-          <label className="block max-w-full cursor-pointer">
+          <label className="block w-full max-w-full cursor-pointer text-center sm:w-auto">
             Ouvrir un fichier de mon appareil
             <input
               type="file"
@@ -2063,7 +2063,7 @@ export function DesignSpace({ chrome = "page" }: DesignSpaceProps) {
           <Download className="mr-1 h-4 w-4" /> Exporter mon projet
         </Button>
         <Button variant="outline" className="min-h-11 max-w-full whitespace-normal text-base" asChild>
-          <label className="block max-w-full cursor-pointer">
+          <label className="block w-full max-w-full cursor-pointer text-center sm:w-auto">
             Reprendre un fichier
             <input
               type="file"
@@ -2255,7 +2255,7 @@ export function DesignSpace({ chrome = "page" }: DesignSpaceProps) {
               <Download className="mr-1 h-4 w-4" /> Exporter
             </Button>
             <Button variant="outline" className="min-h-11 max-w-full whitespace-normal" asChild>
-              <label className="block max-w-full cursor-pointer">
+              <label className="block w-full max-w-full cursor-pointer text-center sm:w-auto">
                 Reprendre un fichier
                 <input
                   type="file"
