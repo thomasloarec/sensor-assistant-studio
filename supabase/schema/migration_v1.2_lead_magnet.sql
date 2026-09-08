@@ -1604,7 +1604,14 @@ set search_path = lead, lead_priv, pg_temp as $$
     where s.user_id = _user
       and s.closed_at is null
       and s.expires_at > now()
-      and _name like s.path_prefix || '/%');
+      and _name like s.path_prefix || '/%'
+      -- Une session annoncée = UN fichier : pas de dépôts illimités derrière
+      -- un consentement déjà donné.
+      and not exists (select 1 from storage.objects o
+                       where o.bucket_id = 'lead-design-files'
+                         and o.name like s.path_prefix || '/%'
+                         and o.name <> _name));
+
 $$;
 
 -- Lecture : déposant, propriétaire du dossier, ou staff AFFECTÉ.
