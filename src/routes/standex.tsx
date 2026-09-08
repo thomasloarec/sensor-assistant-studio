@@ -524,15 +524,101 @@ function StandexConsole() {
                           const parsed = parseServerSnapshot(
                             lastRevision.snapshot as Record<string, unknown>,
                           );
-                          return parsed.ok ? (
-                            <pre className="code-block max-h-96 whitespace-pre-wrap">
-                              {technicalSummary(parsed.dossier)}
-                            </pre>
-                          ) : (
-                            <p className="t-caption text-destructive">
-                              {t("Cette version n'est pas lisible sous forme de résumé technique :")}{" "}
-                              {parsed.reason} {t("Contenu brut ci-dessous.")}
-                            </p>
+                          // Version anglaise : LUE, jamais produite ici. Une
+                          // version absente ou liée à une autre empreinte n'est
+                          // jamais présentée comme le texte courant.
+                          const english = selectEnglishReport(
+                            view.reports_en,
+                            lastRevision,
+                          );
+                          const englishNotice =
+                            english.kind === "ready"
+                              ? null
+                              : english.kind === "pending"
+                                ? t("La version anglaise de cette version est demandée mais pas encore disponible.")
+                                : english.kind === "stale"
+                                  ? t("La version anglaise enregistrée correspond à un autre contenu que celui envoyé : elle n'est pas affichée.")
+                                  : english.kind === "invalid"
+                                    ? `${t("Version anglaise refusée :")} ${english.reason}`
+                                    : t("Aucune version anglaise n'existe pour cette version. Aucune traduction automatique n'est branchée.");
+                          return (
+                            <>
+                              <div
+                                role="group"
+                                aria-label={t("Langue de lecture du rapport")}
+                                className="flex flex-wrap items-center gap-2"
+                              >
+                                <Button
+                                  size="sm"
+                                  variant={reportView === "en" ? "default" : "outline"}
+                                  aria-pressed={reportView === "en"}
+                                  onClick={() => setReportView("en")}
+                                >
+                                  {t("Version anglaise")}
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant={reportView === "original" ? "default" : "outline"}
+                                  aria-pressed={reportView === "original"}
+                                  onClick={() => setReportView("original")}
+                                >
+                                  {t("Original du client")}
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  disabled={!canExportEnglish(english)}
+                                  title={
+                                    canExportEnglish(english)
+                                      ? undefined
+                                      : t("Export impossible : aucune version anglaise valide pour cette version.")
+                                  }
+                                  onClick={() => {
+                                    if (english.kind !== "ready") return;
+                                    const blob = new Blob([english.body], {
+                                      type: "text/markdown",
+                                    });
+                                    const url = URL.createObjectURL(blob);
+                                    const a = document.createElement("a");
+                                    a.href = url;
+                                    a.download = `report-en-${lastRevision.content_hash.slice(0, 12)}.md`;
+                                    a.click();
+                                    URL.revokeObjectURL(url);
+                                  }}
+                                >
+                                  {t("Export équipe (anglais)")}
+                                </Button>
+                              </div>
+                              {reportView === "en" ? (
+                                english.kind === "ready" ? (
+                                  <>
+                                    <p className="t-caption text-muted-foreground">
+                                      {t("Origine de cette version anglaise :")}{" "}
+                                      {english.origin === "human_translation"
+                                        ? t("traduction relue par une personne")
+                                        : english.origin === "source_is_english"
+                                          ? t("original déjà rédigé en anglais")
+                                          : t("traduction produite par un outil autorisé")}
+                                      {english.producer ? ` — ${english.producer}` : ""}
+                                    </p>
+                                    <pre className="code-block max-h-96 whitespace-pre-wrap">
+                                      {english.body}
+                                    </pre>
+                                  </>
+                                ) : (
+                                  <p className="notice-warning t-caption">{englishNotice}</p>
+                                )
+                              ) : parsed.ok ? (
+                                <pre className="code-block max-h-96 whitespace-pre-wrap">
+                                  {technicalSummary(parsed.dossier)}
+                                </pre>
+                              ) : (
+                                <p className="t-caption text-destructive">
+                                  {t("Cette version n'est pas lisible sous forme de résumé technique :")}{" "}
+                                  {parsed.reason} {t("Contenu brut ci-dessous.")}
+                                </p>
+                              )}
+                            </>
                           );
                         })()}
                         <details>
