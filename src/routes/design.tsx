@@ -1619,8 +1619,17 @@ function DesignSpace() {
                         `Version ${revision} reprise depuis le dossier réellement envoyé. ${parsed.notices.join(" ")}`,
                       );
                     }}
-
+                    onApplyVariant={(variant) => {
+                      // La variante modifie RÉELLEMENT le dossier en cours, jamais
+                      // la version déjà envoyée, et rien n'est approuvé pour autant.
+                      const out = applyVariant(dossier, variant);
+                      setDossier(out.dossier);
+                      setPrivacy((p) => ({ ...p, consents: [] }));
+                      setAcknowledged(false);
+                      return { applied: out.applied, notApplied: out.notApplied };
+                    }}
                   />
+
                   <p className="text-xs text-muted-foreground">
                     Disponibilités, MOQ et conditionnements : inconnus tant qu'aucun fournisseur
                     réel n'est connecté.
