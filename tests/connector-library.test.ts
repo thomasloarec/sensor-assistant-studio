@@ -51,9 +51,14 @@ test("un boîtier choisi survit au résumé et à l'instantané de soumission", 
 });
 
 test("une version de schéma inférieure n'active pas le parcours serveur", () => {
+  // La vérification serveur des fichiers, la provenance d'échantillon et les
+  // formes fermées n'existent qu'à partir de 1.4 : une base plus ancienne
+  // resterait acceptée à tort si ce seuil baissait.
+  expect(REQUIRED_LEAD_SCHEMA_VERSION).toBe("1.4");
   expect(schemaVersionSatisfies("1.1", REQUIRED_LEAD_SCHEMA_VERSION)).toBe(false);
   expect(schemaVersionSatisfies(null, REQUIRED_LEAD_SCHEMA_VERSION)).toBe(false);
-  expect(schemaVersionSatisfies("1.2", REQUIRED_LEAD_SCHEMA_VERSION)).toBe(true);
+  expect(schemaVersionSatisfies("1.2", REQUIRED_LEAD_SCHEMA_VERSION)).toBe(false);
+  expect(schemaVersionSatisfies("1.4", REQUIRED_LEAD_SCHEMA_VERSION)).toBe(true);
   expect(schemaVersionSatisfies("1.10", REQUIRED_LEAD_SCHEMA_VERSION)).toBe(true);
   expect(schemaVersionSatisfies("2.0", REQUIRED_LEAD_SCHEMA_VERSION)).toBe(true);
 });
