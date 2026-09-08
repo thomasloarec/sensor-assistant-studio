@@ -128,7 +128,7 @@ const dossierSchema = z.object({
   freeConstraints: z.string().catch(""),
   openQuestions: z.array(z.string()).catch([]),
   cabling: cabling.catch(EMPTY_CABLING),
-  termination: termination.catch(DEFAULT_TERMINATION),
+  termination: termination.catch(() => DEFAULT_TERMINATION),
   business: z.unknown().catch(null),
 });
 
@@ -157,7 +157,17 @@ export function parseDossierExport(raw: unknown, now = new Date().toISOString())
   const dossier: DesignDossier = {
     ...base,
     title: data.title,
-    requirements: data.requirements.length ? data.requirements : base.requirements,
+    requirements: data.requirements.length
+      ? data.requirements.map((r) => ({
+          key: r.key,
+          label: r.label,
+          value: r.value,
+          unit: r.unit,
+          state: r.state,
+          source: r.source,
+          ...(r.note !== undefined ? { note: r.note } : {}),
+        }))
+      : base.requirements,
     mounting:
       data.mounting && typeof data.mounting === "object" && "kind" in data.mounting
         ? (data.mounting as DesignDossier["mounting"])
