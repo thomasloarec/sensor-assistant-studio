@@ -172,7 +172,8 @@ export async function publishReview(input: {
   internalNote: string | null;
   exactPartNumber: string | null;
   designation: "standard" | "custom" | null;
-  variant: { cable?: string; connector?: string; pcb?: string; description?: string } | null;
+  /** Proposition structurée : valeurs chiffrées réellement applicables + notes. */
+  variant: import("./variant").VariantProposal | null;
 }): Promise<string> {
   return rpc<string>(LEAD_RPC.publishReview, {
     p_revision_id: input.revisionId,
