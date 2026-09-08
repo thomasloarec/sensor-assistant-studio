@@ -25,6 +25,8 @@ export const LEAD_RPC = {
   revalidateSample: "lead_revalidate_sample",
   setDossierTitle: "lead_set_dossier_title",
   recordNdaProof: "lead_admin_record_nda_proof",
+  prepareNda: "lead_prepare_nda",
+  ndaStatus: "lead_nda_status",
 } as const;
 
 /** Comparaison de versions « majeur.mineur » : le serveur doit être au moins à la version requise. */
