@@ -2033,6 +2033,15 @@
   "Base di progettazione del produttore. Custodia e contatti separati.",
   "メーカー設計仕様。ハウジングとコンタクトは別体。"
  ],
+ "Base de conception issue du fabricant. Boîtier et contacts distincts. Finition/conditionnement de l'embase, fil, sertissage, brochage et conditions d'usage à confirmer avant commande. Aucune qualification d'assemblage Standex présumée.": [
+  "Design base provided by the manufacturer. Housing and contacts separate. Header finish/packaging, wire, crimping, pinout, and operating conditions to be confirmed before ordering. No Standex assembly qualification assumed.",
+  "制造商提供的设计基准。外壳与触点分开。底座表面处理/包装、线缆、压接、引脚分配及使用条件需在订购前确认。不作任何Standex组装合规推定。",
+  "Konstruktionsbasis des Herstellers. Gehäuse und Kontakte getrennt. Oberflächenbehandlung/Verpackung der Stiftleiste, Litze, Crimpung, Pinbelegung und Einsatzbedingungen vor der Bestellung zu bestätigen. Keine Standex-Baugruppenqualifikation vorausgesetzt.",
+  "Base de diseño del fabricante. Carcasa y contactos independientes. Acabado/acondicionamiento de la base, cable, crimpado, distribución de pines y condiciones de uso por confirmar antes del pedido. No se asume ninguna calificación de ensamblaje de Standex.",
+  "Базовая конструкция от производителя. Корпус и контакты раздельные. Отделка/упаковка разъема, провод, обжим, распиновка и условия эксплуатации подлежат подтверждению перед заказом. Квалификация сборки Standex не предполагается.",
+  "Base di progettazione del produttore. Custodia e contatti separati. Finitura/confezionamento della base, conduttore, crimpatura, piedinatura e condizioni d'uso da confermare prima dell'ordine. Nessuna qualifica di assemblaggio Standex presunta.",
+  "メーカー提供の設計ベース。ハウジングとコンタクトは別個。ベースの表面仕上げ/梱包、電線、圧着、ピン配置および使用条件は注文前に確認が必要です。Standexのアセンブリ認定は推定されません。"
+ ],
  "Baseline déterministe": [
   "Deterministic baseline",
   "确定性基线",
@@ -6236,6 +6245,15 @@
   "Il collegamento con il team Standex è attivo: accedere per inviare il dossier.",
   "Standexチームとの接続は有効です。案件ファイルを送信するにはログインしてください。"
  ],
+ "La liaison avec l'équipe Standex est active : connectez-vous pour envoyer votre dossier. Tant que vous ne l'envoyez pas, rien ne quitte votre appareil.": [
+  "The link to the Standex team is active: log in to send your case file. As long as you do not send it, nothing leaves your device.",
+  "与Standex团队的连接已激活：请登录以发送您的案卷。在您发送之前，任何内容都不会离开您的设备。",
+  "Die Verbindung zum Standex-Team ist aktiv: Melden Sie sich an, um Ihr Dossier zu senden. Solange Sie es nicht senden, verlässt nichts Ihr Gerät.",
+  "La conexión con el equipo de Standex está activa: inicie sesión para enviar su expediente. Mientras no lo envíe, nada saldrá de su dispositivo.",
+  "Связь с командой Standex активна: войдите в систему, чтобы отправить свое досье. Пока вы его не отправите, никакие данные не покинут ваше устройство.",
+  "Il collegamento con il team Standex è attivo: accedere per inviare il fascicolo. Finché non lo si invia, nulla lascia il dispositivo.",
+  "Standexチームとの接続がアクティブです。ログインして案件ファイルを送信してください。送信するまで、端末からデータが外部に出ることはありません。"
+ ],
  "La liaison avec l'équipe Standex est active : vous pouvez envoyer votre dossier pour revue.": [
   "Connection to the Standex team is active: you can submit your case file for review.",
   "与Standex团队的连接已激活：您可以发送案卷以供审查。",
@@ -6262,6 +6280,15 @@
   "Связь с командой Standex не настроена в этой среде:",
   "Il collegamento con il team Standex non è configurato in questo ambiente:",
   "この環境ではStandexチームとの接続が設定されていません："
+ ],
+ "La liaison avec l'équipe Standex n'est pas configurée sur cet environnement : la conception et l'export restent disponibles, l'envoi non.": [
+  "The link to the Standex team is not configured in this environment: design and export remain available, sending does not.",
+  "此环境未配置与Standex团队的连接：设计与导出功能仍可使用，但无法发送。",
+  "Die Verbindung zum Standex-Team ist in dieser Umgebung nicht konfiguriert: Konstruktion und Export bleiben verfügbar, das Senden nicht.",
+  "La conexión con el equipo de Standex no está configurada en este entorno: el diseño y la exportación permanecen disponibles, el envío no.",
+  "Связь с командой Standex не настроена в этой среде: проектирование и экспорт остаются доступными, отправка — нет.",
+  "Il collegamento con il team Standex non è configurato in questo ambiente: progettazione ed esportazione rimangono disponibili, l'invio no.",
+  "この環境ではStandexチームとの接続が設定されていません。設計とエクスポートは引き続き利用可能ですが、送信はできません。"
  ],
  "La liaison avec l'équipe Standex n'est pas configurée sur cet environnement : la connexion n'est pas possible ici.": [
   "The link to the Standex team is not configured in this environment: login is not possible here.",
@@ -6290,6 +6317,15 @@
   "Il collegamento con il team Standex non è ancora attivo: la vostra pratica non è stata inviata.",
   "Standexチームとの接続がまだ有効化されていません。ケースファイルは送信されませんでした。"
  ],
+ "La liaison avec l'équipe Standex n'est pas encore activée : votre dossier n'a pas été envoyé. Il reste intact dans cet onglet et vous pouvez l'exporter.": [
+  "The link to the Standex team is not yet activated: your case file has not been sent. It remains intact in this tab and you can export it.",
+  "与Standex团队的连接尚未激活：您的案卷未发送。它在此标签页中保持完好，您可以将其导出。",
+  "Die Verbindung zum Standex-Team ist noch nicht aktiviert: Ihr Dossier wurde nicht gesendet. Es bleibt in diesem Tab erhalten und Sie können es exportieren.",
+  "La conexión con el equipo de Standex aún no está activada: su expediente no se ha enviado. Permanece intacto en esta pestaña y puede exportarlo.",
+  "Связь с командой Standex еще не активирована: ваше досье не было отправлено. Оно сохраняется на этой вкладке без изменений, и вы можете его экспортировать.",
+  "Il collegamento con il team Standex non è ancora attivo: il fascicolo non è stato inviato. Rimane intatto in questa scheda ed è possibile esportarlo.",
+  "Standexチームとの接続はまだ有効化されていません。案件ファイルは送信されていません。このタブ内にそのまま残り、エクスポートが可能です。"
+ ],
  "La liaison avec l'équipe Standex n'est pas encore activée : votre dossier ne peut pas être": [
   "Connection to the Standex team is not yet activated: your case file cannot be",
   "与Standex团队的连接尚未激活：您的案卷目前无法",
@@ -6298,6 +6334,15 @@
   "Связь с командой Standex еще не активирована: ваше дело не может быть",
   "Il collegamento con il team Standex non è ancora attivo: il dossier non può essere",
   "Standexチームとの接続がまだ有効化されていません。案件ファイルは現在"
+ ],
+ "La liaison avec l'équipe Standex n'est pas encore activée : votre dossier ne peut pas être transmis pour l'instant. Vous pouvez continuer à concevoir, préparer le NDA et exporter votre dossier ; l'envoi sera possible dès l'activation.": [
+  "The link to the Standex team is not yet activated: your case file cannot be transmitted at this time. You can continue designing, preparing the NDA, and exporting your case file; sending will be possible once activated.",
+  "与Standex团队的连接尚未激活：目前无法传输您的案卷。您可以继续设计、准备NDA并导出您的案卷；一旦激活即可发送。",
+  "Die Verbindung zum Standex-Team ist noch nicht aktiviert: Ihr Dossier kann derzeit nicht übermittelt werden. Sie können weiterhin konstruieren, die NDA vorbereiten und Ihr Dossier exportieren; der Versand wird nach der Aktivierung möglich sein.",
+  "La conexión con el equipo de Standex aún no está activada: su expediente no puede transmitirse por el momento. Puede continuar diseñando, preparando el NDA y exportando su expediente; el envío será posible en cuanto se active.",
+  "Связь с командой Standex еще не активирована: ваше досье в данный момент не может быть передано. Вы можете продолжить проектирование, подготовить NDA и экспортировать досье; отправка станет доступной после активации.",
+  "Il collegamento con il team Standex non è ancora attivo: al momento il fascicolo non può essere trasmesso. È possibile continuare a progettare, preparare l'NDA ed esportare il fascicolo; l'invio sarà possibile non appena attivato.",
+  "Standexチームとの接続はまだ有効化されていません。現在、案件ファイルを送信することはできません。設計の続行、NDAの準備、案件ファイルのエクスポートは可能です。有効化され次第、送信できるようになります。"
  ],
  "La page n'a pas pu être chargée": [
   "The page could not load",
@@ -7063,6 +7108,15 @@
   "Трассировка измеряет размещенную вами полилинию: она не гарантирует ни радиус изгиба,",
   "Il tracciato misura la polilinea posizionata: non garantisce né il raggio di curvatura,",
   "配線経路は配置されたポリラインを測定します。曲げ半径も、"
+ ],
+ "Le tracé mesure la polyligne que vous placez : il ne garantit ni rayon de courbure, ni absence de frottement, et ne vaut aucune validation. La navigation reste séparée du pointage.": [
+  "The routing measures the polyline you place: it guarantees neither bend radius nor absence of friction, and does not constitute any validation. Navigation remains separate from point placement.",
+  "布线测量您放置的折线：它既不保证弯曲半径，也不保证无摩擦，且不构成任何验证。视图导航与定点操作保持分离。",
+  "Der Verlauf misst die von Ihnen gesetzte Polylinie: Er garantiert weder Biegeradius noch Reibungsfreiheit und stellt keinerlei Validierung dar. Die Navigation bleibt vom Setzen der Punkte getrennt.",
+  "El trazado mide la polilínea que coloque: no garantiza ni el radio de curvatura ni la ausencia de fricción, y no constituye ninguna validación. La navegación se mantiene separada de la marcación de puntos.",
+  "Трассировка измеряет размещенную вами полилинию: она не гарантирует ни радиус изгиба, ни отсутствие трения, и не является подтверждением пригодности. Навигация остается отделенной от расстановки точек.",
+  "Il tracciato misura la polilinea posizionata: non garantisce né il raggio di curvatura né l'assenza di attrito e non costituisce alcuna convalida. La navigazione rimane separata dal posizionamento dei punti.",
+  "配線経路は配置されたポリラインを測定します。曲げ半径や摩擦の有無を保証するものではなく、いかなる検証にも該当しません。画面操作とポイント指定は分離されたままです。"
  ],
  "Le volume annoncé est de {0}.": [
   "The stated volume is {0}.",
@@ -13453,6 +13507,15 @@
   "длины серии: 200, 300, 500, 1000, 1500, 2000, 3000 и 5000 mm;",
   "lunghezze di gamma: 200, 300, 500, 1000, 1500, 2000, 3000 e 5000 mm;",
   "製品ファミリー標準長：200、300、500、1000、1500、2000、3000、5000 mm；"
+ ],
+ "longueurs de gamme 200, 300, 500, 1000, 1500, 2000, 3000 et 5000 mm ; suffixe W = fils dénudés/étamés ; le code de sensibilité (B/C/D/E) est distinct de la longueur. Aucune tolérance n'est publiée sur cette page : la longueur exacte et sa tolérance restent à confirmer par la R&D.": [
+  "product family lengths 200, 300, 500, 1000, 1500, 2000, 3000, and 5000 mm; suffix W = stripped/tinned leads; sensitivity code (B/C/D/E) is distinct from length. No tolerances are published on this page: exact length and its tolerance remain to be confirmed by R&D.",
+  "产品系列长度包括 200、300、500、1000、1500、2000、3000 及 5000 mm；后缀 W = 剥线/镀锡引线；灵敏度代码（B/C/D/E）与长度无关。本页面未发布公差：确切长度及其公差需由 R&D 确认。",
+  "Längen der Produktfamilie 200, 300, 500, 1000, 1500, 2000, 3000 und 5000 mm; Suffix W = abisolierte/verzinnte Litzen; der Empfindlichkeitscode (B/C/D/E) ist von der Länge unabhängig. Auf dieser Seite werden keine Toleranzen veröffentlicht: Die genaue Länge und deren Toleranz müssen von der R&D bestätigt werden.",
+  "longitudes de la familia de productos 200, 300, 500, 1000, 1500, 2000, 3000 y 5000 mm; sufijo W = hilos pelados/estañados; el código de sensibilidad (B/C/D/E) es independiente de la longitud. No se publica ninguna tolerancia en esta página: la longitud exacta y su tolerancia quedan por confirmar por R&D.",
+  "длины в линейке продукции 200, 300, 500, 1000, 1500, 2000, 3000 и 5000 mm; суффикс W = зачищенные/луженые провода; код чувствительности (B/C/D/E) не зависит от длины. На этой странице допуски не указаны: точная длина и ее допуск должны быть подтверждены R&D.",
+  "lunghezze della gamma prodotti 200, 300, 500, 1000, 1500, 2000, 3000 e 5000 mm; suffisso W = conduttori spelati/stagnati; il codice di sensibilità (B/C/D/E) è separato dalla lunghezza. Nessuna tolleranza è pubblicata in questa pagina: la lunghezza esatta e la relativa tolleranza restano da confermare da parte di R&D.",
+  "製品ファミリーの標準長 200、300、500、1000、1500、2000、3000 および 5000 mm。末尾の W = ストリップ/予備はんだ済みリード線。感度コード（B/C/D/E）は長さとは別個です。このページには公差が掲載されていません。正確な長さと公差は R&D による確認が必要です。"
  ],
  "lovable_test": [
   "Test workspace",
