@@ -32,8 +32,15 @@ interface Props {
     revision: number;
     snapshot: Record<string, unknown>;
   }) => void;
-  /** Reprise RÉELLE de la variante dans le dossier en cours de conception. */
-  onApplyVariant?: (variant: VariantProposal) => { applied: string[]; notApplied: string[] };
+  /** Reprise RÉELLE de la variante dans le dossier en cours de conception.
+   * Le dossier visé est transmis : une variante du dossier A ne peut jamais
+   * atterrir dans le dossier B ouvert à l'écran.
+   */
+  onApplyVariant?: (input: { dossierId: string; variant: VariantProposal }) => {
+    applied: string[];
+    notApplied: string[];
+    refused?: string;
+  };
 }
 
 
