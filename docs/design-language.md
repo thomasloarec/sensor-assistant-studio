@@ -1,5 +1,9 @@
 # Langage de design Standex DETECT
 
+Référence contraignante. Les règles opérationnelles condensées sont dans
+`AGENTS.md` ; ce document en est la version complète et fait autorité en cas
+d'écart.
+
 Référence unique du produit pour toute évolution visuelle. Ce document décrit la
 **forme** : couleurs, typographie, formes, élévations, mouvement, règles de
 composants. Il ne décrit aucun comportement métier.
