@@ -62,7 +62,7 @@ test("le lieu Standex et les mentions Stamp/Signature sont préservés, sans sig
     "Place/date:Welschingen, Germany – 01.10.2026Stamp/Signature:   ___________________",
   );
   expect(filled.paragraphs[86]).toBe(
-    "Place/date:Paris, 01.10.2026Stamp/Signature:   ____________________",
+    "Place/date: Paris, 01.10.2026 Stamp/Signature:   ____________________",
   );
   const joined = filled.paragraphs.join("\n");
   expect(joined).toContain("StandexMeder Electronics GmbH");
