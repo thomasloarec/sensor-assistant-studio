@@ -1777,47 +1777,89 @@ function DesignSpace() {
                   <ClientFollowUp
                     backend={backend}
                     serverDossierId={serverDossierId}
-                    onSelectDossier={(d) => {
-                      // Changer de dossier remet TOUT le contexte serveur au même
-                      // instant : sinon le dossier A pourrait partir dans le dossier B.
-                      resetServerContext(d.id, d.revision);
+                    onSelectDossier={({ id, revision, title, snapshot }) => {
+                      // Le dossier CONSULTÉ ne devient le dossier ÉDITÉ que si son
+                      // dernier contenu envoyé a pu être chargé : sinon l'ancien
+                      // contenu resterait à l'écran sous une nouvelle étiquette.
+                      const parsed = snapshot ? parseServerSnapshot(snapshot) : null;
+                      if (snapshot && (!parsed || !parsed.ok)) {
+                        setSubmitMessage(
+                          parsed && !parsed.ok
+                            ? parsed.reason
+                            : "Le dernier contenu envoyé de ce dossier n'a pas pu être relu : le dossier ouvert ici reste inchangé.",
+                        );
+                        return { ok: false };
+                      }
+                      if (parsed && parsed.ok) {
+                        setDossier({ ...parsed.dossier, storage: "memory" });
+                        setWorkshop(parsed.dossier.workshop ?? null);
+                      }
+                      resetServerContext(id, revision);
                       setSubmitMessage(
-                        `Dossier « ${d.title} » sélectionné : votre accord d'envoi et la relecture sont à refaire pour ce dossier.`,
+                        `Dossier « ${title} » ouvert à la version ${revision}${
+                          parsed && parsed.ok ? ", contenu envoyé rechargé" : ", aucun contenu envoyé à recharger"
+                        }. Votre accord d'envoi et la relecture sont à refaire pour ce dossier.`,
                       );
+                      return { ok: true };
                     }}
-                    onReopenSnapshot={({ dossierId, revision, snapshot }) => {
+                    onReopenSnapshot={({ dossierId, sourceRevision, currentRevision, snapshot }) => {
                       const parsed = parseServerSnapshot(snapshot);
                       if (!parsed.ok) {
                         setSubmitMessage(parsed.reason);
-                        return;
+                        return { ok: false };
                       }
                       // Reprise ATOMIQUE : contenu, contexte serveur, accords,
                       // relecture et partage de fichier changent d'un seul tenant.
+                      // La version attendue par le serveur est la version COURANTE
+                      // du dossier, pas l'ancienne version reprise.
                       setDossier({ ...parsed.dossier, storage: "memory" });
                       setWorkshop(parsed.dossier.workshop ?? null);
-                      resetServerContext(dossierId, revision);
+                      resetServerContext(dossierId, currentRevision);
+                      setReopenedFrom({ dossierId, revision: sourceRevision });
                       setSubmitMessage(
-                        `Version ${revision} reprise depuis le dossier « ${dossierId.slice(0, 8)} » réellement envoyé. ${parsed.notices.join(" ")}`,
+                        `Contenu de la version ${sourceRevision} repris. Le prochain envoi créera la version ${currentRevision + 1} du dossier. ${parsed.notices.join(" ")}`,
                       );
+                      return { ok: true };
                     }}
-                    onApplyVariant={({ dossierId, variant }) => {
-                      // La variante modifie RÉELLEMENT le dossier en cours, jamais
-                      // la version déjà envoyée, et rien n'est approuvé pour autant.
-                      if (dossierId !== serverDossierId) {
+                    onApplyVariant={async ({ dossierId, revision, snapshot, variant, commit }) => {
+                      // La variante s'applique au contenu de LA version relue par
+                      // Standex, jamais à un contenu resté d'un autre dossier.
+                      const parsed = parseServerSnapshot(snapshot);
+                      if (!parsed.ok) {
+                        return { applied: [], notApplied: [], refused: parsed.reason };
+                      }
+                      const out = applyVariant({ ...parsed.dossier, storage: "memory" }, variant);
+                      if (!out.applied.length) {
                         return {
                           applied: [],
-                          notApplied: [],
+                          notApplied: out.notApplied,
                           refused:
-                            "Cette proposition concerne un autre dossier que celui ouvert ici : reprenez d'abord ce dossier, puis appliquez la variante.",
+                            "Aucune modification de cette proposition n'a pu être appliquée : rien n'a été repris.",
                         };
                       }
-                      const out = applyVariant(dossier, variant);
+                      try {
+                        // Le serveur enregistre la reprise AVANT que l'écran change.
+                        await commit();
+                      } catch (error) {
+                        return {
+                          applied: [],
+                          notApplied: out.notApplied,
+                          refused:
+                            error instanceof Error
+                              ? error.message
+                              : "La reprise de cette proposition n'a pas été enregistrée.",
+                        };
+                      }
                       setDossier(out.dossier);
-                      setPrivacy((p) => ({ ...p, consents: [] }));
-                      setAcknowledged(false);
-                      setPreparedUpload(null);
+                      setWorkshop(out.dossier.workshop ?? null);
+                      resetServerContext(dossierId, revision);
+                      setReopenedFrom({ dossierId, revision });
+                      setSubmitMessage(
+                        "Proposition Standex reprise dans le contenu ouvert ici. Elle n'est ni validée ni envoyée : relisez, confirmez l'accord, puis envoyez une nouvelle version.",
+                      );
                       return { applied: out.applied, notApplied: out.notApplied };
                     }}
+
                   />
 
                   <p className="text-xs text-muted-foreground">
