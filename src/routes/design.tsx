@@ -1656,12 +1656,33 @@ function DesignSpace() {
                     <Checkbox
                       checked={shareModel}
                       disabled={!dossier.workshopAsset}
-                      onCheckedChange={(v) => setShareModel(Boolean(v))}
+                      onCheckedChange={(v) => {
+                        setShareModel(Boolean(v));
+                        if (!v) setPreparedUpload(null);
+                      }}
                     />
                     {dossier.workshopAsset
                       ? `Je partage aussi le fichier 3D « ${dossier.workshopAsset.fileName} » avec l'équipe en charge.`
                       : "Aucun fichier 3D importé : rien à partager."}
                   </label>
+                  {shareModel && dossier.workshopAsset ? (
+                    <div className="space-y-1">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        disabled={busy || preparedUpload?.assetKey === dossier.workshopAsset.assetKey}
+                        onClick={() => void prepareShare()}
+                      >
+                        {preparedUpload?.assetKey === dossier.workshopAsset.assetKey
+                          ? "Fichier 3D déposé et vérifié"
+                          : "1. Déposer le fichier 3D"}
+                      </Button>
+                      <p className="text-xs text-muted-foreground">
+                        Le dépôt a lieu avant votre accord, pour que vous confirmiez exactement ce
+                        qui partira. Il n'est pas refait si l'envoi doit être retenté.
+                      </p>
+                    </div>
+                  ) : null}
                   <label className="flex items-center gap-2 text-sm">
                     <Checkbox
                       checked={acknowledged}
@@ -1669,8 +1690,9 @@ function DesignSpace() {
                     />
                     J'ai relu le résumé technique et les inconnues listées.
                   </label>
-                  <Button onClick={onSubmit} disabled={!ndaOk}>
-                    <ShieldCheck className="mr-1 h-4 w-4" /> Transmettre à la revue Standex
+                  <Button onClick={() => void onSubmit()} disabled={!ndaOk || busy}>
+                    <ShieldCheck className="mr-1 h-4 w-4" />{" "}
+                    {busy ? "Envoi en cours…" : "Transmettre à la revue Standex"}
                   </Button>
                   {!backend?.ready ? (
                     <div className="space-y-2">
