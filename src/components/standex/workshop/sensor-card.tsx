@@ -67,7 +67,9 @@ export default function SensorCard({
             STANDEX <span>DETECT</span>
           </div>
           <span className="sc-category">{t(model.category)}</span>
-          <h2 id={titleId}>{t(model.name)}</h2>
+          <h2 id={titleId} className="t-title-s">
+            {t(model.name)}
+          </h2>
           <p>{t(model.description)}</p>
           <div className="sc-drawing">
             <svg
@@ -110,7 +112,7 @@ export default function SensorCard({
             <Ruler size={19} />
             <div>
               <small>{t("Dimensions du corps")}</small>
-              <strong>{t(sizeLabel(model))}</strong>
+              <strong className="t-metric">{t(sizeLabel(model))}</strong>
             </div>
           </div>
           {specs && (

@@ -148,7 +148,6 @@ export default function MagneticWorkshop({
   cableRouting,
   onDraftChange,
 }: WorkshopProps) {
-
   useLocale();
   const [productCard, setProductCard] = useState(false);
   const [config, setConfig] = useState<WorkshopConfig>(
@@ -244,7 +243,6 @@ export default function MagneticWorkshop({
     // Le tracé de câble se relève DANS la pose courante : on ne remet pas le cycle à zéro.
     if (next !== "cable") setProgress(0);
     setTool(next);
-
   }
   function exampleMachine() {
     update({
@@ -422,7 +420,7 @@ export default function MagneticWorkshop({
           : "Un enclenchement et un retour à vérifier dans votre montage réel.");
 
   return (
-    <main className="mw" aria-label={t("Atelier magnétique")}>
+    <main className="mw immersive" aria-label={t("Atelier magnétique")}>
       {productCard && (
         <SensorCard
           key={sensor.id}
@@ -559,14 +557,14 @@ export default function MagneticWorkshop({
                     <p className="mw-help">
                       {t("Le plan quadrillé représente le repère de votre machine.")}
                     </p>
-                    <div className="mw-selected-sensor">
+                    <div className="mw-selected-sensor surface-interactive">
                       <svg viewBox="-38 -17 76 34" aria-hidden="true">
                         <SensorPlan model={sensor} xray={false} />
                       </svg>
-                      <strong>
+                      <strong className="t-title-s">
                         {t(reference ? `MK03-1A66${config.sensitivity}-500W` : sensor.name)}
                       </strong>
-                      <span>{t(sizeLabel(sensor))}</span>
+                      <span className="t-metric">{t(sizeLabel(sensor))}</span>
                       <button
                         className="mw-product-card-button"
                         onClick={() => setProductCard(true)}
@@ -1104,7 +1102,6 @@ export default function MagneticWorkshop({
                               }
                             : undefined
                         }
-
                       />
                     </Suspense>
                   </SceneBoundary>

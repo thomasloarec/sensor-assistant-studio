@@ -133,7 +133,6 @@ function Assembly({
   onPlaced: () => void;
   routing?: CableRouting | undefined;
 }) {
-
   const machine = config.machine!,
     model = sensorById(config.sensorId),
     u = openingAt(sample.t);
@@ -220,8 +219,9 @@ function Assembly({
           ref={sensorRef}
           position={machine.sensorPosition}
           rotation={machine.sensorRotation.map((n) => (n * Math.PI) / 180) as Vec3}
-          onClick={(e) => (tool === "cable" ? place(e, machine.sensorMount === "moving") : e.stopPropagation())}
-
+          onClick={(e) =>
+            tool === "cable" ? place(e, machine.sensorMount === "moving") : e.stopPropagation()
+          }
         >
           <Body model={model} xray={xray} />
           {xray && <Contacts model={model} contact={sample.contact} reduced={reduced} />}
@@ -248,7 +248,9 @@ function Assembly({
           ref={magnetRef}
           position={machine.magnetPosition}
           rotation={machine.magnetRotation.map((n) => (n * Math.PI) / 180) as Vec3}
-          onClick={(e) => (tool === "cable" ? place(e, machine.magnetMount === "moving") : e.stopPropagation())}
+          onClick={(e) =>
+            tool === "cable" ? place(e, machine.magnetMount === "moving") : e.stopPropagation()
+          }
         >
           <Magnet
             config={{ ...config, magnetModel: "generic", magnetTilt: 0 }}
@@ -293,7 +295,6 @@ function Assembly({
         </>
       )}
       {routing && routing.points.length > 0 && <CableOverlay routing={routing} />}
-
     </>
   );
 }
@@ -315,7 +316,6 @@ export default function MachineScene({
   onPlaced,
   onContextLost,
   routing,
-
 }: {
   asset: MachineAsset;
   config: WorkshopConfig;
@@ -336,7 +336,6 @@ export default function MachineScene({
   /** Absent = comportement d'origine, aucun tracé de câble. */
   routing?: CableRouting | undefined;
 }) {
-
   const m = config.machine!,
     extent = Math.max(...asset.size),
     sensor = sensorById(config.sensorId);
@@ -348,7 +347,7 @@ export default function MachineScene({
       camera={{ position: [440, 360, 530], near: 0.1, far: 100000, fov: 43 }}
       dpr={[1, 1.5]}
       onCreated={({ gl }) => {
-        gl.setClearColor("#f0f4f7");
+        gl.setClearColor("#132439");
       }}
     >
       <ContextGuard onLost={onContextLost} />
@@ -360,8 +359,8 @@ export default function MachineScene({
         args={[extent * 5, extent * 5]}
         cellSize={10}
         sectionSize={50}
-        cellColor="#d4dfe7"
-        sectionColor="#b0c4d1"
+        cellColor="#355069"
+        sectionColor="#54728b"
         fadeDistance={extent * 5}
       />
       <Assembly

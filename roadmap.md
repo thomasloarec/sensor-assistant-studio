@@ -145,3 +145,11 @@
 - [x] Mettre en scène la question guidée et les outils contextuels.
 - [x] Moderniser les panneaux sans toucher au montage, au focus ni à leur masquage.
 - [x] Vérifier tests, types, build et parcours navigateur desktop/mobile.
+
+## Refonte visuelle — lot E
+
+- [x] Corriger les deux contrastes de texte sans modifier le contexte immersif.
+- [x] Transformer visuellement l’atelier 3D en banc d’essai sombre.
+- [x] Moderniser les contrôles, l’état de contact et le catalogue sans toucher aux calculs.
+- [x] Éliminer les couleurs d’interface codées en dur dans l’atelier.
+- [x] Vérifier tests, types, build et parcours atelier à 1440/390 px.

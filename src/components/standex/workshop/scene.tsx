@@ -482,7 +482,7 @@ export default function WorkshopScene({
       dpr={[1, 1.5]}
       gl={{ antialias: true, alpha: false }}
       onCreated={({ gl }) => {
-        gl.setClearColor("#f0f4f7");
+        gl.setClearColor("#132439");
       }}
     >
       <ambientLight intensity={2} />
@@ -492,9 +492,9 @@ export default function WorkshopScene({
         args={[220, 220]}
         cellSize={5}
         cellThickness={0.5}
-        cellColor="#d3dfe6"
+        cellColor="#355069"
         sectionSize={25}
-        sectionColor="#bdceda"
+        sectionColor="#54728b"
         sectionThickness={0.8}
         fadeDistance={250}
       />

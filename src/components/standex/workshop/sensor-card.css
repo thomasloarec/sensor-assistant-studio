@@ -4,15 +4,15 @@
   border-radius: 20px;
   width: min(960px, calc(100vw - 32px));
   max-height: calc(100dvh - 40px);
-  color: #254061;
-  background: #fff;
-  box-shadow: 0 28px 90px #102c4160;
+  color: var(--primary);
+  background: var(--surface);
+  box-shadow: 0 28px 90px var(--standex-abyss);
   font-family: Lato, system-ui, sans-serif;
   overflow: auto;
   margin: auto;
 }
 .sensor-card::backdrop {
-  background: #0b243566;
+  background: var(--standex-abyss);
   backdrop-filter: blur(7px);
 }
 .sc-shell {
@@ -21,9 +21,14 @@
   min-height: 580px;
 }
 .sc-hero {
-  background: radial-gradient(ellipse at 50% 46%, #43677b 0, #19364d 62%, #152c40 100%);
+  background: radial-gradient(
+    ellipse at 50% 46%,
+    var(--foreground) 0,
+    var(--ink) 62%,
+    var(--ink) 100%
+  );
   padding: 32px;
-  color: #eaf4f7;
+  color: var(--surface-tint);
   display: flex;
   flex-direction: column;
   position: relative;
@@ -43,7 +48,7 @@
   font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 2px;
-  color: #a4c4d1;
+  color: var(--hairline-strong);
   margin-top: 32px;
 }
 .sensor-card .sc-hero h2 {
@@ -56,7 +61,7 @@
 .sc-hero > p {
   font-size: 13px;
   line-height: 1.6;
-  color: #bad0d9;
+  color: var(--hairline-strong);
   margin: 0;
 }
 .sc-drawing {
@@ -64,14 +69,14 @@
   display: grid;
   place-items: center;
   margin: 16px -12px;
-  background-image: radial-gradient(#9bc2d126 1px, transparent 1px);
+  background-image: radial-gradient(var(--hairline-strong) 1px, transparent 1px);
   background-size: 15px 15px;
   border-radius: 12px;
 }
 .sc-drawing svg {
   width: 100%;
   height: 160px;
-  filter: drop-shadow(0 12px 10px #00101855);
+  filter: drop-shadow(0 12px 10px var(--standex-abyss));
 }
 .sc-xray {
   align-self: center;
@@ -79,36 +84,36 @@
   align-items: center;
   justify-content: center;
   gap: 9px;
-  border: 1px solid #547689;
+  border: 1px solid var(--foreground);
   border-radius: 30px;
   padding: 8px 14px;
   font-size: 11px;
-  color: #d1e5ed;
+  color: var(--surface-tint);
   cursor: pointer;
   background: transparent;
 }
 .sc-xray[aria-pressed="true"] {
-  background: #244f62;
-  color: #aaf5d9;
-  border-color: #6fabaf;
+  background: var(--primary);
+  color: var(--success);
+  border-color: var(--success);
 }
 .sc-contact-note {
   font-size: 10px;
   text-align: center;
-  color: #b4cedb;
+  color: var(--hairline-strong);
   margin-top: 7px;
 }
 .sc-hero-size {
   display: flex;
   align-items: center;
   gap: 12px;
-  border-top: 1px solid #54718488;
+  border-top: 1px solid var(--foreground);
   margin-top: 26px;
   padding-top: 20px;
 }
 .sc-hero-size small {
   font-size: 10px;
-  color: #b0c7d2;
+  color: var(--hairline-strong);
   display: block;
 }
 .sc-hero-size strong {
@@ -122,7 +127,7 @@
   gap: 10px;
   align-items: center;
   margin-top: 20px;
-  color: #aeecd9;
+  color: var(--success);
 }
 .sc-content {
   display: flex;
@@ -138,7 +143,7 @@
 }
 .sc-content header > div > span {
   font-size: 12px;
-  color: #718394;
+  color: var(--muted-foreground);
   line-height: 1.6;
 }
 .sc-content .mw-eyebrow {
@@ -146,7 +151,7 @@
 }
 .sc-tabs {
   display: flex;
-  border-bottom: 1px solid #dae5ed;
+  border-bottom: 1px solid var(--surface-tint);
   margin: 23px 0 0;
   gap: 24px;
   flex-wrap: wrap;
@@ -160,11 +165,11 @@
   font-size: 12px;
   padding: 10px 0;
   cursor: pointer;
-  color: #718394;
+  color: var(--muted-foreground);
 }
 .sc-tabs button[aria-pressed="true"] {
-  border-color: #245672;
-  color: #173d57;
+  border-color: var(--primary);
+  color: var(--primary);
   font-weight: 700;
 }
 .sc-panel {
@@ -183,11 +188,11 @@
   font-size: 12px;
   line-height: 1.75;
   margin: 9px 0;
-  color: #516a7b;
+  color: var(--foreground);
 }
 .sc-panel p.sc-note {
   font-size: 11px;
-  color: #738896;
+  color: var(--muted-foreground);
 }
 .sc-feature-grid {
   display: grid;
@@ -196,8 +201,8 @@
   margin-bottom: 26px;
 }
 .sc-feature-grid article {
-  background: #f0f5f7;
-  border: 1px solid #e3ebee;
+  background: var(--surface);
+  border: 1px solid var(--surface-tint);
   border-radius: 12px;
   padding: 16px;
   display: flex;
@@ -206,11 +211,11 @@
 }
 .sc-feature-grid svg {
   width: 20px;
-  color: #41788d;
+  color: var(--primary);
 }
 .sc-feature-grid small {
   font-size: 10px;
-  color: #667e8c;
+  color: var(--muted-foreground);
 }
 .sc-feature-grid strong {
   font-size: 22px;
@@ -223,13 +228,13 @@
 }
 .sc-feature-grid span {
   font-size: 10px;
-  color: #6a8190;
+  color: var(--muted-foreground);
 }
 .sc-content em {
   font-size: 12px;
   font-style: normal;
   font-weight: 500;
-  color: #6a8190;
+  color: var(--muted-foreground);
 }
 .sc-cable-pills {
   display: flex;
@@ -240,10 +245,10 @@
 .sc-cable-pills span {
   font-size: 11px;
   padding: 6px 10px;
-  border: 1px solid #dce7eb;
+  border: 1px solid var(--surface-tint);
   border-radius: 6px;
-  color: #3e6279;
-  background: #f8fafb;
+  color: var(--primary);
+  background: var(--surface);
 }
 .sc-more {
   background: none;
@@ -253,7 +258,7 @@
   align-items: center;
   gap: 9px;
   font-size: 12px;
-  color: #2f7685;
+  color: var(--primary);
   text-align: left;
   cursor: pointer;
 }
@@ -268,10 +273,10 @@
 .sc-variant select {
   min-width: 125px;
   padding: 8px;
-  border: 1px solid #d5e1e8;
+  border: 1px solid var(--surface-tint);
   border-radius: 7px;
-  background: #f7fafb;
-  color: #234660;
+  background: var(--surface);
+  color: var(--primary);
   font: inherit;
   max-width: 62%;
 }
@@ -283,8 +288,8 @@
 }
 .sc-ratings article {
   padding: 12px 16px;
-  border-left: 2px solid #81b4c4;
-  background: #f3f7f9;
+  border-left: 2px solid var(--muted-foreground);
+  background: var(--surface);
 }
 .sc-ratings strong {
   display: block;
@@ -293,7 +298,7 @@
 }
 .sc-ratings span {
   font-size: 10px;
-  color: #6c8090;
+  color: var(--muted-foreground);
 }
 .sc-temperatures {
   margin: 18px 0 28px;
@@ -304,11 +309,11 @@
   gap: 14px;
   font-size: 12px;
   padding: 14px 0;
-  border-bottom: 1px solid #e3ebef;
+  border-bottom: 1px solid var(--surface-tint);
 }
 .sc-temperatures strong {
   white-space: nowrap;
-  color: #2d7080;
+  color: var(--primary);
 }
 .sc-content footer {
   display: flex;
@@ -316,11 +321,11 @@
   gap: 10px;
   align-items: center;
   padding-top: 18px;
-  border-top: 1px solid #e0e8ed;
+  border-top: 1px solid var(--surface-tint);
 }
 .sc-content footer a {
   font-size: 11px;
-  color: #385f79;
+  color: var(--primary);
   display: inline-flex;
   gap: 5px;
   align-items: center;
@@ -328,7 +333,7 @@
 }
 .sc-content footer small {
   font-size: 9px;
-  color: #8b9ba5;
+  color: var(--muted-foreground);
   margin-left: auto;
 }
 .sc-content footer .sc-secondary-source {
@@ -341,7 +346,7 @@
   justify-content: center;
 }
 .sensor-card :where(button, a, select):focus-visible {
-  outline: 3px solid #71bdcc;
+  outline: 3px solid var(--muted-foreground);
   outline-offset: 3px;
 }
 .mw-product-card-button {
@@ -350,9 +355,9 @@
   justify-content: center;
   gap: 8px;
   width: 100%;
-  border: 1px solid #9dbcc9;
-  background: #eaf4f6;
-  color: #205c73;
+  border: 1px solid var(--hairline-strong);
+  background: var(--surface);
+  color: var(--primary);
   padding: 11px 15px;
   border-radius: 8px;
   font-size: 12px;
@@ -403,11 +408,50 @@
     position: absolute;
     right: 16px;
     top: 16px;
-    background: #ffffffed;
-    color: #244257;
+    background: var(--surface);
+    color: var(--primary);
     z-index: 1;
   }
   .sc-feature-grid strong {
     font-size: 19px;
   }
+}
+
+/* Lot E — carte produit alignée sur le système de matière Standex. */
+.sensor-card {
+  color: var(--foreground);
+  background: var(--background);
+  border-radius: var(--r-xl);
+  box-shadow: var(--e-4);
+  font-family: var(--font-sans);
+}
+.sensor-card::backdrop {
+  background: var(--material-thin);
+  backdrop-filter: blur(7px);
+}
+.sensor-card .sc-hero {
+  background:
+    radial-gradient(ellipse at 50% 46%, var(--surface-tint), transparent 62%),
+    linear-gradient(168deg, var(--standex-deep), var(--standex-abyss));
+  color: var(--heading);
+}
+.sensor-card .sc-drawing,
+.sensor-card .sc-feature-grid article,
+.sensor-card .sc-ratings article {
+  background: var(--surface-sunken);
+  border-color: var(--hairline);
+  border-radius: var(--r-lg);
+}
+.sensor-card .sc-content {
+  background: var(--surface);
+}
+.sensor-card :where(.sc-panel p, .sc-content span, .sc-content small, .sc-content em) {
+  color: var(--muted-foreground);
+}
+.sensor-card .sc-feature-grid strong,
+.sensor-card .sc-ratings strong,
+.sensor-card .sc-hero-size strong {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
 }
