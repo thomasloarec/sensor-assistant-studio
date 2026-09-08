@@ -286,6 +286,46 @@ function DesignSpace() {
     [nda],
   );
 
+  /** Statut NDA appliqué à l'état local : le serveur fait autorité, pas cet écran. */
+  const applyNdaStatus = useCallback((status: NdaStatusView) => {
+    setNdaServer(status);
+    setServerDossierId(status.dossier_id);
+    setNda((n) => ({
+      ...n,
+      required: status.nda_required,
+      status: status.nda_status,
+      proof: status.proof
+        ? {
+            documentSha256: status.proof.document_sha256,
+            verifiedAt: status.proof.verified_at,
+            verifiedBy: status.proof.proof_reference,
+          }
+        : null,
+    }));
+  }, []);
+
+  /** Crée UNIQUEMENT la fiche NDA côté Standex : aucune donnée de conception. */
+  const prepareServerNda = useCallback(async () => {
+    setNdaError(null);
+    try {
+      applyNdaStatus(await prepareNdaOnServer(serverDossierId));
+    } catch (error) {
+      setNdaError(
+        error instanceof Error ? error.message : "La préparation du NDA n'a pas abouti.",
+      );
+    }
+  }, [applyNdaStatus, serverDossierId]);
+
+  const refreshNdaStatus = useCallback(async () => {
+    if (!serverDossierId) return;
+    setNdaError(null);
+    try {
+      applyNdaStatus(await fetchNdaStatus(serverDossierId));
+    } catch (error) {
+      setNdaError(error instanceof Error ? error.message : "Statut NDA indisponible.");
+    }
+  }, [applyNdaStatus, serverDossierId]);
+
   // Tant que cet espace est monté, la télémétrie est réduite à un code anonyme.
   useEffect(() => openPrivateErrorScope(), []);
 
