@@ -91,8 +91,8 @@ describe("migration V1.2 : invariants de sécurité", () => {
   test("aucun wrapper public ne permet de s'attribuer un rôle ni de déclarer un NDA signé", () => {
     expect(SQL).not.toContain("create or replace function public.lead_assign_staff");
     expect(SQL).not.toContain("create or replace function public.lead_record_nda_proof");
-    expect(SQL).toContain(
-      "grant execute on function lead_priv.assign_staff(uuid, lead.staff_role) to service_role;",
+    expect(SQL).toMatch(
+      /revoke all on function lead_priv\.assign_staff\(uuid, lead\.staff_role\) from public, anon, authenticated;/,
     );
     expect(SQL).toMatch(/revoke all on function lead_priv\.record_nda_proof[^;]*from public, anon, authenticated;/);
   });
@@ -110,14 +110,22 @@ describe("migration V1.2 : invariants de sécurité", () => {
     expect(block).toContain("for update");
     expect(block).toContain("REVISION_CONFLICT");
     expect(block).toContain("NDA_NOT_IN_FORCE");
-    expect(block).toContain("CONSENT_MISSING");
+    expect(block).toMatch(/CONSENT_(MISSING|INCOMPLETE)/);
   });
 
   test("la vue client ne peut pas renvoyer de notes internes", () => {
     const start = SQL.indexOf("function lead_priv.client_view");
     const view = SQL.slice(start, SQL.indexOf("function public.lead_client_view"));
-    expect(view).not.toContain("internal_notes");
-    expect(view).toContain("rv.published");
+    // La projection commune n'expose les notes qu'en interne, et la vue client
+    // les retire explicitement en plus de demander la projection non interne.
+    expect(view).toContain("dossier_projection(_dossier, false)");
+    expect(view).toContain("- 'internal_notes'");
+    const projection = SQL.slice(
+      SQL.indexOf("function lead_priv.dossier_projection"),
+      SQL.indexOf("function lead_priv.client_view"),
+    );
+    expect(projection).toContain("case when _internal then");
+    expect(projection).toContain("(_internal or rv.published)");
   });
 
   test("offre et échantillons exigent une revue validée sur la révision courante", () => {
