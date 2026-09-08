@@ -21,6 +21,11 @@ export interface WorkspacePanelProps {
   description?: string;
   /** Conserve le contenu monté une fois ouvert (brouillons préservés). */
   keepMounted?: boolean;
+  /** Occupe tout l'écran disponible au lieu d'un panneau latéral.
+   * Le contenu reste le MÊME et reste monté : rien n'est réinitialisé. */
+  fullscreen?: boolean;
+  /** Libellé de l'action de retour, quand elle diffère de « Retour ». */
+  backLabel?: string;
   onBack?: () => void;
   children: ReactNode;
 }
