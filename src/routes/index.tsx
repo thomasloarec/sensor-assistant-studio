@@ -184,6 +184,7 @@ function HomeRoute() {
           visible={started}
           accountRequest={accountRequest}
           onWorkspaceOpen={openWorkspace}
+          onGoHome={() => setStarted(false)}
         />
       </div>
     </div>
