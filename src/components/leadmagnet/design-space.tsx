@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ArrowLeft, ShieldCheck, Lock, Download, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { LanguagePicker } from "@/lib/i18n/react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -100,6 +101,7 @@ import {
   createDossier as createServerDossier,
   createSupabaseSubmissionBackend,
   uploadDesignFile,
+  downloadDesignFile,
   prepareNdaOnServer,
   fetchNdaStatus,
   type NdaStatusView,
@@ -112,6 +114,7 @@ import { ClientFollowUp } from "@/components/leadmagnet/client-followup";
 import { WorkspacePanel } from "@/components/leadmagnet/workspace-panel";
 import {
   DocumentViewer,
+  documentFromBytes,
   documentFromFile,
   type ViewerDocument,
 } from "@/components/leadmagnet/document-viewer";
@@ -237,10 +240,23 @@ export const GUIDED_QUESTIONS: {
 export interface DesignSpaceProps {
   /** "page" : route /design autonome. "embedded" : monté dans l'espace projet de l'accueil. */
   chrome?: "page" | "embedded";
+  /** false : l'accueil est affiché devant. Les panneaux, eux, restent utilisables :
+   * il n'existe qu'UN seul espace, jamais un second compte parallèle. */
+  visible?: boolean;
+  /** Compteur incrémenté par l'accueil quand l'utilisateur demande « Mon espace ». */
+  accountRequest?: number;
+  /** Appelé quand un projet est réellement ouvert, créé ou repris ici. */
+  onWorkspaceOpen?: () => void;
 }
 
-export function DesignSpace({ chrome = "page" }: DesignSpaceProps) {
+export function DesignSpace({
+  chrome = "page",
+  visible = true,
+  accountRequest = 0,
+  onWorkspaceOpen,
+}: DesignSpaceProps) {
   const [dossier, setDossier] = useState<DesignDossier>(() => createDossier());
+
   const [privacy, setPrivacy] = useState(INITIAL_PRIVACY);
   const [nda, setNda] = useState<NdaState>(INITIAL_NDA);
   const [ndaPreview, setNdaPreview] = useState<FilledNda | null>(null);
@@ -284,6 +300,17 @@ export function DesignSpace({ chrome = "page" }: DesignSpaceProps) {
    * variante) : l'atelier est alors réellement remplacé, sans modèle fantôme. */
   const [workshopEpoch, setWorkshopEpoch] = useState(0);
   const workshopDraftRef = useRef<WorkshopConfig | null>(null);
+  /** Un réglage 3D non enregistré est un vrai travail : il compte comme
+   * modification, et il est signalé avant tout export ou remplacement. */
+  const [workshopDraftPending, setWorkshopDraftPending] = useState(false);
+  const draftPendingRef = useRef(false);
+  const onWorkshopDraft = useCallback((c: WorkshopConfig) => {
+    workshopDraftRef.current = c;
+    if (draftPendingRef.current) return; // pas de boucle de rendu
+    draftPendingRef.current = true;
+    setWorkshopDraftPending(true);
+  }, []);
+
 
   const [volumeRaw, setVolumeRaw] = useState("");
   const [volumeError, setVolumeError] = useState<string | null>(null);
@@ -405,6 +432,12 @@ export function DesignSpace({ chrome = "page" }: DesignSpaceProps) {
 
   // Tant que cet espace est monté, la télémétrie est réduite à un code anonyme.
   useEffect(() => openPrivateErrorScope(), []);
+
+  // Un SEUL espace : « Mon espace » de l'accueil ouvre ce panneau-ci, avec les
+  // mêmes états, la même session et la même liste de projets.
+  useEffect(() => {
+    if (accountRequest > 0) setPanel("espace");
+  }, [accountRequest]);
 
   useEffect(() => {
     checkLeadBackend()
@@ -528,10 +561,49 @@ export function DesignSpace({ chrome = "page" }: DesignSpaceProps) {
     [],
   );
 
+  /** Empreinte du travail courant, hors horodatage : elle sert uniquement à
+   * savoir s'il y a quelque chose à perdre avant un remplacement. */
+  const fingerprint = (d: DesignDossier) => JSON.stringify({ ...d, updatedAt: "" });
+  const dossierRef = useRef(dossier);
+  dossierRef.current = dossier;
+  const connectorDraftRef = useRef(connectorDraft);
+  connectorDraftRef.current = connectorDraft;
+  const extraConstraintsRef = useRef(extraConstraints);
+  extraConstraintsRef.current = extraConstraints;
+  const baselineRef = useRef<string | null>(null);
+  if (baselineRef.current === null) baselineRef.current = fingerprint(dossier);
+
+  /** Y a-t-il un travail réellement modifié à protéger ? */
+  const workDirty = useCallback(() => {
+    if (draftPendingRef.current) return true;
+    if (extraConstraintsRef.current.trim() !== "") return true;
+    if (JSON.stringify(connectorDraftRef.current) !== JSON.stringify(EMPTY_CONNECTOR_DRAFT))
+      return true;
+    return fingerprint(dossierRef.current) !== baselineRef.current;
+  }, []);
+
+  /** Garde unique de TOUS les chemins destructifs : elle ne demande rien quand
+   * il n'y a rien à perdre, et « Annuler » ne modifie aucun état. */
+  const guardReplace = useCallback(
+    (action: string) => !workDirty() || confirmReplaceWork(action),
+    [confirmReplaceWork, workDirty],
+  );
+
   const loadWorkshop = useCallback((c: WorkshopConfig | null) => {
     setWorkshop(c);
     setWorkshopEpoch((e) => e + 1);
+    // Un contenu remplacé ne doit JAMAIS laisser derrière lui l'ancien
+    // brouillon 3D : il serait repris à tort dans le nouveau dossier.
+    workshopDraftRef.current = null;
+    draftPendingRef.current = false;
+    setWorkshopDraftPending(false);
   }, []);
+
+  /** Adopte un nouveau contenu comme référence : plus rien n'est « modifié ». */
+  const adoptBaseline = useCallback((d: DesignDossier) => {
+    baselineRef.current = fingerprint(d);
+  }, []);
+
 
   const exportDossier = useCallback(() => {
     const blob = new Blob([JSON.stringify(buildDossierExport(dossier), null, 2)], {
@@ -548,6 +620,8 @@ export function DesignSpace({ chrome = "page" }: DesignSpaceProps) {
   const importDossier = useCallback(
     async (file: File | undefined) => {
       if (!file || busyRef.current) return;
+      // Garde unique : elle protège TOUS les imports, d'où qu'ils partent.
+      if (!guardReplace("reprendre ce fichier")) return;
       setImportMessage(null);
       try {
         const parsed = parseDossierExport(JSON.parse(await file.text()));
@@ -558,7 +632,10 @@ export function DesignSpace({ chrome = "page" }: DesignSpaceProps) {
         // Un fichier importé n'est RATTACHÉ à aucun dossier Standex : tout le
         // contexte serveur, l'atelier, le NDA et les accords repartent de zéro.
         setDossier(parsed.dossier);
+        adoptBaseline(parsed.dossier);
         loadWorkshop(parsed.dossier.workshop);
+        setConnectorDraft(EMPTY_CONNECTOR_DRAFT);
+        setConnectorError(null);
         resetServerContext(null, 0);
         setImportMessage(
           [
@@ -571,7 +648,7 @@ export function DesignSpace({ chrome = "page" }: DesignSpaceProps) {
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
+    [guardReplace, adoptBaseline, loadWorkshop],
   );
 
   /** Numéro du contexte en cours. Toute réponse asynchrone née d'un contexte
@@ -579,6 +656,9 @@ export function DesignSpace({ chrome = "page" }: DesignSpaceProps) {
    * s'écrire dans le dossier B ouvert entre-temps.
    */
   const contextGenRef = useRef(0);
+  /** Numéro de la dernière lecture de document demandée : une lecture tardive
+   * n'ouvre jamais un fichier dans un autre dossier. */
+  const docGenRef = useRef(0);
 
   /** Remise à zéro ATOMIQUE du contexte serveur.
    * Tout ce qui dépend d'un dossier serveur précis tombe en même temps : accord
@@ -588,6 +668,7 @@ export function DesignSpace({ chrome = "page" }: DesignSpaceProps) {
    */
   const resetServerContext = useCallback((dossierId: string | null, revision: number) => {
     contextGenRef.current += 1;
+    docGenRef.current += 1;
     setServerDossierId(dossierId);
     setServerRevision(revision);
     setNdaServer(null);
@@ -600,8 +681,43 @@ export function DesignSpace({ chrome = "page" }: DesignSpaceProps) {
     setExtraConstraints("");
     setShareModel(false);
     setReopenedFrom(null);
+    // Un document ouvert appartient au dossier d'où il vient : il ne doit pas
+    // rester affiché dans un dossier différent.
+    setOpenDoc(null);
+    setNdaPreview(null);
     return contextGenRef.current;
   }, []);
+
+  /** Ouvre un fichier RÉELLEMENT transmis, pour une version précise, via
+   * l'accès authentifié existant. Rien n'est inventé : sans chemin valable ou
+   * sans droit de lecture, l'erreur est affichée telle quelle. */
+  const openTransferredFile = useCallback(
+    async (input: { path: string; name: string; dossierId: string; revision: number }) => {
+      const path = input.path.trim();
+      if (!path) {
+        setSubmitMessage("Ce fichier n'a pas de chemin de stockage : il ne peut pas être relu.");
+        return;
+      }
+      const gen = ++docGenRef.current;
+      const ctx = contextGenRef.current;
+      setPanel("documents");
+      setOpenDoc(null);
+      try {
+        const bytes = await downloadDesignFile(path);
+        if (gen !== docGenRef.current || ctx !== contextGenRef.current) return;
+        setOpenDoc(
+          documentFromBytes(input.name, bytes, `${input.dossierId}:r${input.revision}:${path}`),
+        );
+      } catch (error) {
+        if (gen !== docGenRef.current || ctx !== contextGenRef.current) return;
+        setSubmitMessage(
+          error instanceof Error ? error.message : "Ce fichier n'a pas pu être relu.",
+        );
+      }
+    },
+    [],
+  );
+
 
   /** Étape 1 : préparer le partage du modèle 3D.
    * Le dépôt a lieu ICI, AVANT la relecture et l'accord, une seule fois. Le
@@ -975,35 +1091,10 @@ export function DesignSpace({ chrome = "page" }: DesignSpaceProps) {
 
 
 
-  const montageSection = (
-    <div className="space-y-4">
-            {showAdvanced ? null : (
-              <div className="flex flex-wrap items-center gap-3 pb-2">
-                <span className="text-base text-muted-foreground">Outils utiles ici :</span>
-                <Button
-                  variant="outline"
-                  className="min-h-11 text-base"
-                  onClick={() => setTab("candidats")}
-                >
-                  Voir les capteurs possibles
-                </Button>
-                <Button
-                  variant="outline"
-                  className="min-h-11 text-base"
-                  onClick={() => setTab("cablage")}
-                >
-                  Câble et connecteur
-                </Button>
-                <Button
-                  variant="ghost"
-                  className="min-h-11 text-base"
-                  onClick={() => setTab("besoin")}
-                >
-                  Revenir à mon besoin
-                </Button>
-              </div>
-            )}
-
+  /** Champs mécaniques détaillés : identiques en mode guidé et détaillé,
+   * simplement repliés tant que le client ne les demande pas. */
+  const mechanicalFields = (
+    <>
             <div className="rounded-md border p-3">
               <Label className="text-sm font-medium">Choix mécanique explicite</Label>
               <Select
@@ -1085,21 +1176,71 @@ export function DesignSpace({ chrome = "page" }: DesignSpaceProps) {
                 ))}
               </div>
             </div>
+    </>
+  );
+
+  const montageSection = (
+    <div className="space-y-4">
+            {showAdvanced ? null : (
+              <div className="rounded-2xl border bg-card p-5 sm:p-6">
+                <h2 className="text-2xl font-semibold leading-snug">
+                  Où le capteur se place-t-il ?
+                </h2>
+                <p className="mt-3 text-base text-muted-foreground">
+                  Montrez-le en 3D si c'est plus simple, ou donnez seulement les dimensions
+                  disponibles. Rien n'est obligatoire : ce qui reste inconnu reste inconnu.
+                </p>
+                <div className="mt-5 flex flex-wrap items-center gap-3">
+                  <Button
+                    className="min-h-12 px-6 text-base"
+                    onClick={() => {
+                      setWorkshopMounted(true);
+                      setShowWorkshop(true);
+                      setPanel("atelier");
+                    }}
+                  >
+                    Placer en 3D
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    className="min-h-12 text-base"
+                    onClick={() => setTab("besoin")}
+                  >
+                    Revenir à mon besoin
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {showAdvanced ? (
+              mechanicalFields
+            ) : (
+              <details className="rounded-md border p-3">
+                <summary className="min-h-11 cursor-pointer py-2 text-base font-medium">
+                  Préciser la mécanique et la place disponible (facultatif)
+                </summary>
+                <div className="mt-3 space-y-4">{mechanicalFields}</div>
+              </details>
+            )}
 
             <div className="rounded-md border p-3">
               <div className="flex flex-wrap items-center gap-3">
                 <Label className="text-base font-medium">Atelier 3D (facultatif)</Label>
-                <Button
-                  variant="outline"
-                  className="min-h-11 text-base"
-                  onClick={() => {
-                    setWorkshopMounted(true);
-                    setShowWorkshop(true);
-                    setPanel("atelier");
-                  }}
-                >
-                  Ouvrir l'atelier magnétique
-                </Button>
+                {/* En mode guidé, « Placer en 3D » ci-dessus ouvre déjà l'atelier :
+                    pas de second bouton pour la même action. */}
+                {showAdvanced ? (
+                  <Button
+                    variant="outline"
+                    className="min-h-11 text-base"
+                    onClick={() => {
+                      setWorkshopMounted(true);
+                      setShowWorkshop(true);
+                      setPanel("atelier");
+                    }}
+                  >
+                    Ouvrir l'atelier magnétique
+                  </Button>
+                ) : null}
                 <span className="text-base text-muted-foreground">
                   Formats acceptés : GLB autonome uniquement. Les fichiers STEP/IGES ne sont pas
                   lus. Unités, échelle et pièce mobile restent à confirmer par vous. Vos réglages
@@ -1946,12 +2087,56 @@ export function DesignSpace({ chrome = "page" }: DesignSpaceProps) {
           </div>
   );
 
+  /** Applique un montage 3D au dossier, avec la MÊME logique de provenance,
+   * qu'il vienne de « Enregistrer » ou de « Utiliser ce montage ».
+   * Aucun réseau, aucune écriture sur l'appareil : tout reste en mémoire. */
+  const applyWorkshopConfig = useCallback((c: WorkshopConfig) => {
+    setWorkshop(c);
+    setDossier((d) => ({
+      ...d,
+      workshop: c,
+      // Provenance explicite : un vrai import n'est jamais compté comme exemple.
+      workshopSource: c.machine ? "user_asset" : "example",
+      workshopAsset: c.machine
+        ? { assetKey: c.machine.assetKey, fileName: c.machine.fileName, storage: "memory" }
+        : null,
+      workshopSensorId: c.sensorId,
+      sensorSyncConfirmed: d.selectedSensorId === null || d.selectedSensorId === c.sensorId,
+      updatedAt: new Date().toISOString(),
+    }));
+    workshopDraftRef.current = null;
+    draftPendingRef.current = false;
+    setWorkshopDraftPending(false);
+  }, []);
+
+  const useCurrentDraft = useCallback(() => {
+    const draft = workshopDraftRef.current;
+    if (!draft) return;
+    applyWorkshopConfig(draft);
+    setSubmitMessage(
+      "Montage 3D repris dans votre projet : il suivra désormais l'export, le résumé et l'envoi.",
+    );
+  }, [applyWorkshopConfig]);
+
+  const draftBanner = workshopDraftPending ? (
+    <div className="rounded-lg border border-amber-300 bg-amber-50 p-4">
+      <p className="text-base">
+        Des réglages 3D ne sont pas encore repris dans votre projet : ils ne partiraient ni dans
+        l'export ni dans le résumé.
+      </p>
+      <Button className="mt-3 min-h-11 text-base" onClick={useCurrentDraft}>
+        Utiliser ce montage
+      </Button>
+    </div>
+  ) : null;
+
   const workshopSection = (
     <div className="space-y-3">
       <p className="text-base text-muted-foreground">
         Modèle physique explicitement pédagogique : aucune validation magnétique automatique.
         L'exemple machine à café est un exemple, il n'impose aucune référence à votre projet.
       </p>
+      {draftBanner}
       <Suspense fallback={<p className="text-base">Chargement de l'atelier…</p>}>
         <MagneticWorkshop
           key={`workshop-${workshopEpoch}`}
@@ -1959,37 +2144,19 @@ export function DesignSpace({ chrome = "page" }: DesignSpaceProps) {
           storageLabel="ce dossier, en mémoire de l'onglet"
           storageMode="memory"
           cableRouting={cableRouting}
-          onDraftChange={(c: WorkshopConfig) => {
-            workshopDraftRef.current = c;
-          }}
+          onDraftChange={onWorkshopDraft}
           onClose={() => {
             setShowWorkshop(false);
             setPanel(null);
           }}
           onSave={async (c: WorkshopConfig) => {
-            setWorkshop(c);
-            setDossier((d) => ({
-              ...d,
-              workshop: c,
-              // Provenance explicite : un vrai import n'est jamais compté comme exemple.
-              workshopSource: c.machine ? "user_asset" : "example",
-              workshopAsset: c.machine
-                ? {
-                    assetKey: c.machine.assetKey,
-                    fileName: c.machine.fileName,
-                    storage: "memory",
-                  }
-                : null,
-              workshopSensorId: c.sensorId,
-              sensorSyncConfirmed:
-                d.selectedSensorId === null || d.selectedSensorId === c.sensorId,
-              updatedAt: new Date().toISOString(),
-            }));
+            applyWorkshopConfig(c);
           }}
         />
       </Suspense>
     </div>
   );
+
 
   const documentsSection = (
     <div className="space-y-5">
@@ -2035,11 +2202,33 @@ export function DesignSpace({ chrome = "page" }: DesignSpaceProps) {
                 const f = e.target.files?.[0];
                 e.target.value = "";
                 if (!f) return;
-                void documentFromFile(f).then(setOpenDoc);
+                // Lecture locale : numérotée et rattachée au dossier courant,
+                // pour qu'un fichier lu lentement n'apparaisse pas ailleurs.
+                const gen = ++docGenRef.current;
+                const ctx = contextGenRef.current;
+                setOpenDoc(null);
+                void documentFromFile(f)
+                  .then((doc) => {
+                    if (gen !== docGenRef.current || ctx !== contextGenRef.current) return;
+                    setOpenDoc(doc);
+                  })
+                  .catch((error: unknown) => {
+                    if (gen !== docGenRef.current || ctx !== contextGenRef.current) return;
+                    setOpenDoc({
+                      id: `local-error-${gen}`,
+                      name: f.name,
+                      kind: "binary",
+                      note:
+                        error instanceof Error
+                          ? error.message
+                          : "Ce fichier n'a pas pu être lu dans cet onglet.",
+                    });
+                  });
               }}
             />
           </label>
         </Button>
+
       </div>
       <p className="text-base text-muted-foreground">
         Les fichiers ouverts ici restent en mémoire de cet onglet : rien n'est envoyé.
@@ -2058,6 +2247,7 @@ export function DesignSpace({ chrome = "page" }: DesignSpaceProps) {
             .catch(() => setBackend(null));
         }}
       />
+      {draftBanner}
       <div className="flex flex-wrap items-center gap-3">
         <Button variant="outline" className="min-h-11 text-base" onClick={exportDossier}>
           <Download className="mr-1 h-4 w-4" /> Exporter mon projet
@@ -2073,8 +2263,10 @@ export function DesignSpace({ chrome = "page" }: DesignSpaceProps) {
                 const f = e.target.files?.[0];
                 e.target.value = "";
                 if (!f) return;
-                if (!confirmReplaceWork("reprendre ce fichier")) return;
-                void importDossier(f);
+                // La garde vit DANS importDossier : tous les chemins protégés.
+                void importDossier(f).then(() => {
+                  if (!busyRef.current) onWorkspaceOpen?.();
+                });
               }}
             />
           </label>
@@ -2083,16 +2275,24 @@ export function DesignSpace({ chrome = "page" }: DesignSpaceProps) {
           variant="ghost"
           className="min-h-11 text-base"
           onClick={() => {
-            if (!confirmReplaceWork("démarrer un nouveau projet")) return;
-            setDossier(createDossier());
+            if (busyRef.current) return;
+            if (!guardReplace("démarrer un nouveau projet")) return;
+            const fresh = createDossier();
+            setDossier(fresh);
+            adoptBaseline(fresh);
+            setConnectorDraft(EMPTY_CONNECTOR_DRAFT);
+            setConnectorError(null);
             loadWorkshop(null);
             resetServerContext(null, 0);
+            setPanel(null);
+            onWorkspaceOpen?.();
             setSubmitMessage("Nouveau projet ouvert en mémoire de cet onglet.");
           }}
         >
           Nouveau projet
         </Button>
       </div>
+
       {backend?.role ? (
         <p className="text-base text-muted-foreground">
           Accès équipe Standex ({backend.role}) :{" "}
@@ -2110,8 +2310,10 @@ export function DesignSpace({ chrome = "page" }: DesignSpaceProps) {
                     backend={backend}
                     serverDossierId={serverDossierId}
                     contextGeneration={contextGenRef.current}
+                    onOpenTransferredFile={(f) => void openTransferredFile(f)}
                     onSelectDossier={({ id, revision, title, snapshot }) => {
                       if (busyRef.current) return { ok: false };
+                      if (!guardReplace("ouvrir ce dossier")) return { ok: false };
                       // Le dossier CONSULTÉ ne devient le dossier ÉDITÉ que si son
                       // dernier contenu envoyé a pu être chargé : sinon l'ancien
                       // contenu resterait à l'écran sous une nouvelle étiquette.
@@ -2125,13 +2327,22 @@ export function DesignSpace({ chrome = "page" }: DesignSpaceProps) {
                         return { ok: false };
                       }
                       if (parsed && parsed.ok) {
-                        setDossier({ ...parsed.dossier, storage: "memory" });
+                        const next = { ...parsed.dossier, storage: "memory" as const };
+                        setDossier(next);
+                        adoptBaseline(next);
                         loadWorkshop(parsed.dossier.workshop ?? null);
                       } else {
-                        setDossier({ ...createDossier(), title });
+                        // Dossier sans contenu envoyé : contenu VIDE, jamais l'ancien.
+                        const next = { ...createDossier(), title };
+                        setDossier(next);
+                        adoptBaseline(next);
                         loadWorkshop(null);
                       }
+                      setConnectorDraft(EMPTY_CONNECTOR_DRAFT);
+                      setConnectorError(null);
                       resetServerContext(id, revision);
+                      setPanel(null);
+                      onWorkspaceOpen?.();
                       setSubmitMessage(
                         `Dossier « ${title} » ouvert à la version ${revision}${
                           parsed && parsed.ok
@@ -2148,6 +2359,7 @@ export function DesignSpace({ chrome = "page" }: DesignSpaceProps) {
                       snapshot,
                     }) => {
                       if (busyRef.current) return { ok: false };
+                      if (!guardReplace("reprendre cette version")) return { ok: false };
                       const parsed = parseServerSnapshot(snapshot);
                       if (!parsed.ok) {
                         setSubmitMessage(parsed.reason);
@@ -2157,10 +2369,16 @@ export function DesignSpace({ chrome = "page" }: DesignSpaceProps) {
                       // relecture et partage de fichier changent d'un seul tenant.
                       // La version attendue par le serveur est la version COURANTE
                       // du dossier, pas l'ancienne version reprise.
-                      setDossier({ ...parsed.dossier, storage: "memory" });
+                      const reopened = { ...parsed.dossier, storage: "memory" as const };
+                      setDossier(reopened);
+                      adoptBaseline(reopened);
                       loadWorkshop(parsed.dossier.workshop ?? null);
+                      setConnectorDraft(EMPTY_CONNECTOR_DRAFT);
+                      setConnectorError(null);
                       resetServerContext(dossierId, currentRevision);
                       setReopenedFrom({ dossierId, revision: sourceRevision });
+                      setPanel(null);
+                      onWorkspaceOpen?.();
                       setSubmitMessage(
                         `Contenu de la version ${sourceRevision} repris. Le prochain envoi créera la version ${currentRevision + 1} du dossier. ${parsed.notices.join(" ")}`,
                       );
@@ -2172,6 +2390,12 @@ export function DesignSpace({ chrome = "page" }: DesignSpaceProps) {
                           applied: [],
                           notApplied: [],
                           refused: "Une opération est en cours. Réessayez après sa fin.",
+                        };
+                      if (!guardReplace("reprendre cette proposition"))
+                        return {
+                          applied: [],
+                          notApplied: [],
+                          refused: "Reprise annulée : votre travail en cours est intact.",
                         };
                       // La variante s'applique au contenu de LA version relue par
                       // Standex, jamais à un contenu resté d'un autre dossier.
@@ -2207,9 +2431,14 @@ export function DesignSpace({ chrome = "page" }: DesignSpaceProps) {
                         setBusy(false);
                       }
                       setDossier(out.dossier);
+                      adoptBaseline(out.dossier);
                       loadWorkshop(out.dossier.workshop ?? null);
+                      setConnectorDraft(EMPTY_CONNECTOR_DRAFT);
+                      setConnectorError(null);
                       resetServerContext(dossierId, revision);
                       setReopenedFrom({ dossierId, revision });
+                      setPanel(null);
+                      onWorkspaceOpen?.();
                       setSubmitMessage(
                         "Proposition Standex reprise dans le contenu ouvert ici. Elle n'est ni validée ni envoyée : relisez, confirmez l'accord, puis envoyez une nouvelle version.",
                       );
@@ -2224,7 +2453,9 @@ export function DesignSpace({ chrome = "page" }: DesignSpaceProps) {
       data-readable
       className={embedded ? "text-foreground" : "min-h-screen bg-background text-foreground"}
     >
-      <header className={embedded ? "border-b bg-card/60" : "border-b bg-card"}>
+      <header
+        className={`${embedded ? "border-b bg-card/60" : "border-b bg-card"}${visible ? "" : " hidden"}`}
+      >
         <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-3 px-4 py-4">
 
           <div className="min-w-0 flex-1">
@@ -2251,6 +2482,7 @@ export function DesignSpace({ chrome = "page" }: DesignSpaceProps) {
             Révision {dossier.revision}
           </Badge>
           <div className="flex items-center gap-2">
+            <LanguagePicker />
             <Button variant="outline" className="min-h-11" onClick={exportDossier}>
               <Download className="mr-1 h-4 w-4" /> Exporter
             </Button>
@@ -2262,6 +2494,7 @@ export function DesignSpace({ chrome = "page" }: DesignSpaceProps) {
                   accept="application/json"
                   className="sr-only"
                   onChange={(e) => {
+                    // Même garde que partout ailleurs : importDossier la porte.
                     void importDossier(e.target.files?.[0]);
                     e.target.value = "";
                   }}
@@ -2276,7 +2509,7 @@ export function DesignSpace({ chrome = "page" }: DesignSpaceProps) {
         </div>
       </header>
 
-      <main className="mx-auto max-w-6xl px-4 py-6">
+      <main className={`mx-auto max-w-6xl px-4 py-6${visible ? "" : " hidden"}`}>
         <nav aria-label="Progression" className="mb-6 grid gap-2 sm:grid-cols-3">
           {steps.map((s, i) => (
             <button

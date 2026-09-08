@@ -73,13 +73,16 @@ export function renderMarkdown(md: string): ReactNode[] {
       const level = heading[1]!.length;
       const text = heading[2]!;
       const size = ["text-3xl", "text-2xl", "text-xl", "text-lg"][level - 1]!;
+      // Titres SÉMANTIQUES : un plan de document doit rester navigable.
+      const Tag = (["h1", "h2", "h3", "h4"] as const)[level - 1]!;
       out.push(
-        <p key={`h-${out.length}`} className={`mt-5 mb-2 font-semibold ${size}`}>
+        <Tag key={`h-${out.length}`} className={`mt-5 mb-2 font-semibold ${size}`}>
           {inline(text)}
-        </p>,
+        </Tag>,
       );
       continue;
     }
+
     if (/^\s*[-*]\s+/.test(raw)) {
       list.push(raw.replace(/^\s*[-*]\s+/, ""));
       continue;
@@ -153,13 +156,26 @@ export function DocumentViewer({
   useEffect(() => {
     const gen = ++genRef.current;
     setEmbedFailed(false);
-    if (!doc?.bytes) {
+    // Un téléchargement de secours est offert AUSSI pour le texte et le
+    // markdown produits sur place : ils sont réencodés en blob local.
+    const source: BlobPart | null = doc?.bytes
+      ? (doc.bytes as unknown as BlobPart)
+      : doc?.text != null
+        ? doc.text
+        : null;
+    if (source == null) {
       setBlobUrl(null);
       return;
     }
-    const url = URL.createObjectURL(
-      new Blob([doc.bytes], { type: doc.kind === "pdf" ? "application/pdf" : "application/octet-stream" }),
-    );
+    const type =
+      doc?.kind === "pdf"
+        ? "application/pdf"
+        : doc?.kind === "markdown"
+          ? "text/markdown;charset=utf-8"
+          : doc?.kind === "text"
+            ? "text/plain;charset=utf-8"
+            : "application/octet-stream";
+    const url = URL.createObjectURL(new Blob([source], { type }));
     // Réponse périmée : un autre document a été demandé entre-temps.
     if (gen !== genRef.current) {
       URL.revokeObjectURL(url);
@@ -167,7 +183,8 @@ export function DocumentViewer({
     }
     setBlobUrl(url);
     return () => URL.revokeObjectURL(url);
-  }, [doc?.id, doc?.bytes, doc?.kind]);
+  }, [doc?.id, doc?.bytes, doc?.text, doc?.kind]);
+
 
   const body = useMemo(() => {
     if (!doc) return null;
@@ -247,10 +264,35 @@ export function DocumentViewer({
   );
 }
 
+/** Taille maximale lue sur place, alignée sur la limite du dépôt privé. */
+export const MAX_DOCUMENT_BYTES = 30 * 1024 * 1024;
+
+/** Construit un document affichable à partir d'octets réellement obtenus.
+ * Le texte et le markdown sont DÉCODÉS : sans cela un .md venant du serveur
+ * n'afficherait rien. Les PDF et binaires conservent leurs octets. */
+export function documentFromBytes(
+  name: string,
+  bytes: ArrayBuffer,
+  id: string,
+): ViewerDocument {
+  const kind = kindFromName(name);
+  if (bytes.byteLength > MAX_DOCUMENT_BYTES)
+    return {
+      id,
+      name,
+      kind: "binary",
+      note: "Ce fichier dépasse 30 Mio : il n'est pas affiché ici.",
+    };
+  if (kind === "markdown" || kind === "text")
+    return { id, name, kind, text: new TextDecoder("utf-8").decode(bytes) };
+  return { id, name, kind, bytes };
+}
+
 /** Lit un fichier local et en fait un document affichable, sans upload. */
 export async function documentFromFile(file: File): Promise<ViewerDocument> {
-  const kind = kindFromName(file.name);
-  const base = { id: `${file.name}:${file.size}:${file.lastModified}`, name: file.name, kind };
-  if (kind === "markdown" || kind === "text") return { ...base, text: await file.text() };
-  return { ...base, bytes: await file.arrayBuffer() };
+  const id = `${file.name}:${file.size}:${file.lastModified}`;
+  if (file.size > MAX_DOCUMENT_BYTES)
+    throw new Error("Ce fichier dépasse 30 Mio : il n'est pas lu dans cet onglet.");
+  return documentFromBytes(file.name, await file.arrayBuffer(), id);
 }
+

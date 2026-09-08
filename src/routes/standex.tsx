@@ -59,6 +59,7 @@ import { technicalSummary } from "@/lib/leadmagnet/submission";
 import { WorkspacePanel } from "@/components/leadmagnet/workspace-panel";
 import {
   DocumentViewer,
+  documentFromBytes,
   kindFromName,
   type ViewerDocument,
 } from "@/components/leadmagnet/document-viewer";
@@ -539,12 +540,11 @@ function StandexConsole() {
                                     const bytes = await downloadDesignFile(String(f.path));
                                     // Une réponse tardive ne doit pas écraser un autre document.
                                     if (gen !== docGenRef.current) return "";
-                                    setOpenDoc({
-                                      id: `${String(f.path)}-${gen}`,
-                                      name,
-                                      kind: kindFromName(name),
-                                      bytes,
-                                    });
+                                    // Markdown et texte sont DÉCODÉS, sinon un .md
+                                    // venu du serveur ne s'afficherait pas.
+                                    setOpenDoc(
+                                      documentFromBytes(name, bytes, `${String(f.path)}-${gen}`),
+                                    );
                                     return "Document ouvert dans le lecteur (il reste en mémoire).";
                                   })
                                 }
@@ -1190,7 +1190,11 @@ function StandexConsole() {
       <WorkspacePanel
         open={openDoc !== null}
         onOpenChange={(o) => {
-          if (!o) setOpenDoc(null);
+          if (!o) {
+            // Fermer le lecteur invalide toute lecture encore en vol.
+            docGenRef.current += 1;
+            setOpenDoc(null);
+          }
         }}
         title="Document transmis"
         description="Lecture en mémoire de cet onglet, via l'accès authentifié existant."
