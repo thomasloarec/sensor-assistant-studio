@@ -86,6 +86,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { title: "Standex DETECT — Détection magnétique" },
       { name: "description", content: "Standex DETECT — Détection magnétique" },
       { name: "author", content: "Standex Electronics" },
+      // Valeur de `--standex-blue` en dur : une meta ne peut pas lire une variable CSS. À synchroniser si le jeton change.
       { name: "theme-color", content: "#254061" },
       { property: "og:title", content: "Standex DETECT — Détection magnétique" },
       { property: "og:description", content: "Standex DETECT — Détection magnétique" },
