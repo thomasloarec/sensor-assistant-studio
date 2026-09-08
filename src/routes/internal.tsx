@@ -78,7 +78,7 @@ import {
 
 const MagneticWorkshop = lazy(() => import("@/components/standex/workshop/workshop"));
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/internal")({
   head: () => ({
     meta: [
       { title: "Banc de test assistant capteur — Standex interne" },
