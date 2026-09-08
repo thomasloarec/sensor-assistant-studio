@@ -195,18 +195,22 @@ export function ClientFollowUp({
                         onClick={async () => {
                           try {
                             const out = await acceptVariant(r.id);
-                            const applied = onApplyVariant?.(
-                              (r.variant ?? {}) as VariantProposal,
-                            );
+                            const applied = onApplyVariant?.({
+                              dossierId: current.dossier.id,
+                              variant: (r.variant ?? {}) as VariantProposal,
+                            });
                             setMessage(
                               [
                                 `Variante reprise dans votre version ${out.next_revision} : la version envoyée reste intacte et rien n'est approuvé tant que vous ne renvoyez pas ce dossier.`,
-                                applied?.applied.length
-                                  ? "Modifié dans votre dossier : " + applied.applied.join(" ; ")
-                                  : "Aucune valeur chiffrée à appliquer : la proposition reste descriptive.",
-                                applied?.notApplied.length
-                                  ? "À traiter vous-même : " + applied.notApplied.join(" ; ")
-                                  : "",
+                                applied?.refused ??
+                                  (applied?.applied.length
+                                    ? "Modifié dans votre dossier : " + applied.applied.join(" ; ")
+                                    : "Aucune valeur chiffrée à appliquer : la proposition reste descriptive."),
+                                applied?.refused
+                                  ? ""
+                                  : applied?.notApplied.length
+                                    ? "À traiter vous-même : " + applied.notApplied.join(" ; ")
+                                    : "",
                               ]
                                 .filter(Boolean)
                                 .join(" "),
