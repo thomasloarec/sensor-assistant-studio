@@ -68,4 +68,20 @@ describe("Vignettes 3D des candidats", () => {
     // et une encoche, donc nettement plus de sommets qu'un boîtier plat.
     expect(customPath.split("L").length).toBeGreaterThan(6);
   });
+
+  test("les lames du reed nu restent à l'intérieur de l'ampoule de verre", () => {
+    const custom = sensorById(CUSTOM_SENSOR_ID);
+    const inner = (custom.reed![1] / 2) * 0.82;
+    for (const closed of [false, true]) {
+      const g = contactGeometry(custom, closed);
+      expect(g.gap + g.thickness / 2).toBeLessThan(inner);
+      expect(g.thickness).toBeGreaterThan(0);
+    }
+    // Un capteur encapsulé garde exactement ses cotes d'origine.
+    const mk03 = sensorById("MK03-1A66B-500W");
+    const std = contactGeometry(mk03, false);
+    expect(std.thickness).toBe(Math.max(0.09, Math.min(0.55, mk03.body[1] * 0.1)));
+    expect(std.gap).toBe(Math.max(0.17, mk03.body[2] * 0.1));
+  });
+
 });
