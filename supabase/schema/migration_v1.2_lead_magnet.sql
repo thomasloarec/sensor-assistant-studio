@@ -1003,6 +1003,13 @@ begin
    where dossier_id = _dossier and revision < next_rev
      and status not in ('closed','superseded');
 
+  -- Les sessions techniques de cette révision sont FERMÉES : plus aucun dépôt
+  -- ne peut se glisser derrière un consentement déjà consommé.
+  update lead.upload_sessions set closed_at = now()
+   where dossier_id = _dossier and user_id = u and closed_at is null
+     and kind <> 'nda_signed';
+
+
   insert into lead.audit_log (actor, action, dossier_id, detail)
   values (u, 'revision_submitted', _dossier,
           jsonb_build_object('revision', next_rev, 'hash', server_hash,
