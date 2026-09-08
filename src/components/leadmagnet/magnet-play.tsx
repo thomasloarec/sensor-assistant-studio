@@ -169,10 +169,9 @@ export function MagnetPlay() {
 
           {/* Aimant bicolore N / S, en volume */}
           <g
-            transform={`translate(${magnetX} 30)`}
+            transform={`translate(${magnetX} 30) scale(${dragging ? 1.04 : 1})`}
             filter="url(#mp-shadow)"
             className="transition-transform duration-[var(--d-fast)] ease-[var(--ease-spring)] motion-reduce:transition-none"
-            style={{ transformOrigin: `${magnetX}px 30px`, scale: dragging ? 1.04 : 1 }}
           >
             <rect x="-4" y="-11" width="8" height="11" rx="1.4" fill="url(#mp-north)" />
             <rect x="-4" y="0" width="8" height="11" rx="1.4" fill="url(#mp-south)" />

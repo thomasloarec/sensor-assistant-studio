@@ -6,6 +6,7 @@
  */
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
+import type { CSSProperties } from "react";
 import { ArrowDown, ArrowRight, ChevronDown, Magnet, UserRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MagnetPlay } from "@/components/leadmagnet/magnet-play";
@@ -76,7 +77,7 @@ function HomeRoute() {
             <div className="grid w-full gap-14 lg:grid-cols-[0.92fr_1.08fr] lg:items-center lg:gap-16">
               <div
                 className="anim-stagger relative z-10"
-                style={{ "--stagger": "70ms", animationDelay: "120ms" } as React.CSSProperties}
+                style={{ "--stagger": "70ms", animationDelay: "120ms" } as CSSProperties}
               >
                 <p className="t-label flex items-center gap-3">
                   <span

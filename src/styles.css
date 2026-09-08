@@ -302,6 +302,9 @@
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
   }
+  html:has(.hero-field) {
+    scroll-behavior: smooth;
+  }
   body {
     background-color: var(--background);
     color: var(--foreground);
