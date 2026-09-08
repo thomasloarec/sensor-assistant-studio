@@ -79,7 +79,20 @@ import {
 
 import { checkSubmission, submit, technicalSummary } from "@/lib/leadmagnet/submission";
 import { checkLeadBackend, type LeadBackendStatus } from "@/lib/leadmagnet/backend";
-import { createSupabaseSubmissionBackend } from "@/lib/leadmagnet/supabase-adapter";
+import {
+  createDossier as createServerDossier,
+  createSupabaseSubmissionBackend,
+  uploadDesignFile,
+} from "@/lib/leadmagnet/supabase-adapter";
+import { ClientFollowUp } from "@/components/leadmagnet/client-followup";
+import { memoryAssetBytes } from "@/lib/standex/machine-assets";
+import {
+  DOCUMENTED_HOUSINGS,
+  draftFromHousing,
+  housingById,
+  housingLabel,
+  terminationFromHousing,
+} from "@/lib/leadmagnet/connector-library";
 import {
   routeSamples,
   SEARCH_LINK_DISCLAIMER,
@@ -211,6 +224,8 @@ function DesignSpace() {
   const [volumeError, setVolumeError] = useState<string | null>(null);
   const [sampleQty, setSampleQty] = useState("");
   const [sampleMessage, setSampleMessage] = useState<string | null>(null);
+  /** Le modèle 3D reste en mémoire tant que ce partage n'est pas explicitement demandé. */
+  const [shareModel, setShareModel] = useState(false);
 
   /** Remplissage local du NDA : aperçu puis téléchargement, sans aucune transmission. */
   const prepareNdaDocument = useCallback(
@@ -320,10 +335,61 @@ function DesignSpace() {
       setSubmitMessage(check.problems.join(" "));
       return;
     }
+    // Partage explicite du modèle 3D : dépôt réel AVANT la soumission, jamais implicite.
+    let dossierId = serverDossierId;
+    let submitted = dossier;
+    if (shareModel && dossier.workshopAsset && backend?.ready) {
+      try {
+        const bytes = memoryAssetBytes(dossier.workshopAsset.assetKey);
+        if (!bytes) {
+          setSubmitMessage(
+            "Le fichier 3D n'est plus en mémoire de cet onglet : réimportez-le avant de le partager.",
+          );
+          return;
+        }
+        if (!dossierId) {
+          dossierId = await createServerDossier(
+            nda.required ? "Préparation d'un accord de confidentialité" : dossier.title,
+            nda.required,
+          );
+          setServerDossierId(dossierId);
+        }
+        const uploaded = await uploadDesignFile(
+          dossierId,
+          { name: dossier.workshopAsset.fileName, data: new Uint8Array(bytes) },
+          "design_model",
+          {
+            kind: "supabase_files",
+            statement: "Partage du modèle 3D avec l'équipe Standex en charge du dossier.",
+            accepted_at: new Date().toISOString(),
+            content_ref: dossier.workshopAsset.fileName,
+          },
+        );
+        submitted = {
+          ...dossier,
+          attachments: [
+            ...dossier.attachments.filter((a) => a.fileName !== uploaded.fileName),
+            {
+              id: uploaded.path,
+              fileName: uploaded.fileName,
+              bytes: bytes.byteLength,
+              transferred: true,
+              storagePath: uploaded.path,
+            },
+          ],
+        };
+        setDossier(submitted);
+      } catch (error) {
+        setSubmitMessage(
+          error instanceof Error ? error.message : "Le fichier 3D n'a pas pu être partagé.",
+        );
+        return;
+      }
+    }
     // Envoi réel dès que l'espace serveur est disponible et la session ouverte ;
     // sinon rien n'est transmis et rien n'est simulé.
     const outcome = await submit(
-      input,
+      { ...input, dossier: submitted },
       createSupabaseSubmissionBackend({
         schemaReady: Boolean(backend?.schemaReady),
         capabilities: backend?.capabilities ?? {
@@ -332,7 +398,7 @@ function DesignSpace() {
           role: null,
           assignedDossiers: [],
         },
-        dossierId: serverDossierId,
+        dossierId,
         expectedRevision: serverRevision,
         ndaRequired: nda.required,
         onDossierCreated: setServerDossierId,
@@ -355,6 +421,7 @@ function DesignSpace() {
     backend,
     serverDossierId,
     serverRevision,
+    shareModel,
   ]);
 
 

@@ -243,3 +243,8 @@ export async function loadMachineAsset(
     dispose,
   };
 }
+
+/** Octets d'une ressource 3D présente EN MÉMOIRE de cet onglet, sans repli sur l'appareil. */
+export function memoryAssetBytes(key: string): ArrayBuffer | null {
+  return memoryFiles.get(key) ?? null;
+}
