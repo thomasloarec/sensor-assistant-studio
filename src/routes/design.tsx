@@ -371,18 +371,6 @@ function DesignSpace() {
   }, []);
 
   const onSubmit = useCallback(async () => {
-    const input = {
-      dossier,
-      nda,
-      consents: privacy.consents,
-      reviewAcknowledged: acknowledged,
-      additionalConstraints: extraConstraints,
-    };
-    const check = checkSubmission(input);
-    if (!check.ok) {
-      setSubmitMessage(check.problems.join(" "));
-      return;
-    }
     // Partage explicite du modèle 3D : dépôt réel AVANT la soumission, jamais implicite.
     let dossierId = serverDossierId;
     let submitted = dossier;
@@ -411,6 +399,7 @@ function DesignSpace() {
             statement: "Partage du modèle 3D avec l'équipe Standex en charge du dossier.",
             accepted_at: new Date().toISOString(),
             content_ref: dossier.workshopAsset.fileName,
+            revision: serverRevision + 1,
           },
         );
         submitted = {
@@ -420,9 +409,11 @@ function DesignSpace() {
             {
               id: uploaded.path,
               fileName: uploaded.fileName,
-              bytes: bytes.byteLength,
+              bytes: uploaded.bytes,
               transferred: true,
               storagePath: uploaded.path,
+              sha256: uploaded.sha256,
+              mimeType: uploaded.mimeType,
             },
           ],
         };
@@ -434,10 +425,26 @@ function DesignSpace() {
         return;
       }
     }
+    // Le consentement est vérifié APRÈS le dépôt : les fichiers réellement
+    // transmis font partie de ce que le client a accepté d'envoyer.
+    const input = {
+      dossier: submitted,
+      nda,
+      consents: privacy.consents,
+      reviewAcknowledged: acknowledged,
+      additionalConstraints: extraConstraints,
+      serverDossierId: dossierId,
+      serverRevision: serverRevision + 1,
+    };
+    const check = await checkSubmission(input);
+    if (!check.ok) {
+      setSubmitMessage(check.problems.join(" "));
+      return;
+    }
     // Envoi réel dès que l'espace serveur est disponible et la session ouverte ;
     // sinon rien n'est transmis et rien n'est simulé.
     const outcome = await submit(
-      { ...input, dossier: submitted },
+      input,
       createSupabaseSubmissionBackend({
         schemaReady: Boolean(backend?.schemaReady),
         capabilities: backend?.capabilities ?? {
@@ -471,6 +478,7 @@ function DesignSpace() {
     serverRevision,
     shareModel,
   ]);
+
 
   const volume = dossier.business.annualVolume;
   // La désignation standard/custom vient du retour R&D publié, jamais de cet écran.
