@@ -10,6 +10,7 @@ import { EMPTY_CONNECTOR_DRAFT, terminationFromDraft } from "@/lib/leadmagnet/co
 import { createDossier } from "@/lib/leadmagnet/dossier";
 import { buildDossierExport, parseDossierExport } from "@/lib/leadmagnet/dossier-io";
 import { buildSnapshot } from "@/lib/leadmagnet/submission";
+import { INITIAL_NDA } from "@/lib/leadmagnet/nda";
 import { createSampleRequest, routeSamples } from "@/lib/leadmagnet/samples";
 
 test("câble : valeurs négatives, NaN et infinies sont refusées", () => {
@@ -35,7 +36,7 @@ test("câble : un trajet incomplet reste inconnu et n'est jamais jugé suffisant
   const verdict = compareStandardLengths("MK03-1A66-200W", estimate.requiredMm, 100, [
     { mpn: "MK03-1A66-200W", nominalMm: 200, toleranceMm: 10, source: "fiche" },
   ]);
-  expect(verdict.kind).not.toBe("fits");
+  expect(verdict.kind).toBe("unknown_requirement");
 });
 
 test("câble : chaque état de mouvement déclaré doit avoir son trajet", () => {
@@ -62,9 +63,9 @@ test("câble : chaque état de mouvement déclaré doit avoir son trajet", () =>
 test("câble : la tolérance fournisseur n'est pas la capacité de logement du surplus", () => {
   const catalog = [{ mpn: "MK03-1A66-500W", nominalMm: 500, toleranceMm: 20, source: "fiche" }];
   // Surplus logeable étroit : le nominal MAX déborde.
-  expect(compareStandardLengths("MK03-1A66-500W", 400, 50, catalog).kind).toBe("surplus_risk");
+  expect(compareStandardLengths("MK03-1A66-500W", 400, 50, catalog).kind).toBe("custom_to_review");
   // Même longueur, logement suffisant.
-  expect(compareStandardLengths("MK03-1A66-500W", 400, 200, catalog).kind).toBe("fits");
+  expect(compareStandardLengths("MK03-1A66-500W", 400, 200, catalog).kind).toBe("standard_possible");
 });
 
 test("connecteur : fabricant et référence exacte obligatoires, jamais qualifié", () => {
@@ -131,7 +132,13 @@ test("reprise : aucun identifiant de fichier 3D sans le binaire", () => {
 test("instantané : indépendant des modifications ultérieures du dossier", async () => {
   const d = createDossier();
   d.cabling = { ...EMPTY_CABLING, serviceReserveMm: 10 };
-  const snapshot = await buildSnapshot(d, [], 1);
+  const snapshot = await buildSnapshot({
+    dossier: d,
+    nda: INITIAL_NDA,
+    consents: [],
+    reviewAcknowledged: true,
+    additionalConstraints: "",
+  });
   d.cabling = { ...d.cabling, serviceReserveMm: 999 };
   d.title = "modifié après coup";
   const serialized = JSON.stringify(snapshot);
