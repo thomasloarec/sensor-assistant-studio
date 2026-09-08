@@ -1446,25 +1446,34 @@ function DesignSpace() {
                   </p>
                   <label className="flex items-center gap-2 text-sm">
                     <Checkbox
-                      checked={hasConsent(privacy, "supabase_dossier")}
-                      onCheckedChange={(v) =>
+                      checked={
+                        binding !== null && hasBoundConsent(privacy, "supabase_dossier", binding)
+                      }
+                      disabled={binding === null}
+                      onCheckedChange={(v) => {
+                        setConsentNotice(null);
                         setPrivacy((p) =>
-                          v
+                          v && binding
                             ? grantConsent(p, {
                                 kind: "supabase_dossier",
                                 contentSummary:
                                   "Exigences, montage, câblage, contraintes et contexte projet.",
                                 recipients: ["Standex R&D", "Standex commercial"],
+                                binding,
                               })
                             : {
                                 ...p,
                                 consents: p.consents.filter((c) => c.kind !== "supabase_dossier"),
                               },
-                        )
-                      }
+                        );
+                      }}
                     />
                     J'autorise l'envoi de ce contenu à Standex (R&D et commercial).
                   </label>
+                  {consentNotice ? (
+                    <p className="text-xs text-amber-600">{consentNotice}</p>
+                  ) : null}
+
                   <label className="flex items-center gap-2 text-sm">
                     <Checkbox
                       checked={shareModel}
