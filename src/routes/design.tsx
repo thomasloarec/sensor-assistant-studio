@@ -637,7 +637,10 @@ function DesignSpace() {
                     {pointFields(`Point ${index + 1}`, w, (p) =>
                       setCabling((c) => ({
                         ...c,
-                        waypoints: c.waypoints.map((q, i) => (i === index ? (p ?? [0, 0, 0]) : q)),
+                        // Un point effacé rend le trajet incomplet : il n'est jamais remplacé par 0,0,0.
+                        waypoints: p
+                          ? c.waypoints.map((q, i) => (i === index ? p : q))
+                          : c.waypoints.filter((_, i) => i !== index),
                       })),
                     )}
                     <Button
@@ -656,12 +659,123 @@ function DesignSpace() {
                 ))}
               </div>
             </div>
-            <div className="grid gap-3 rounded-md border p-3 md:grid-cols-4">
+
+            {/* États de mouvement : le trajet doit être couvert pour chaque état. */}
+            <div className="rounded-md border p-3">
+              <div className="flex items-center justify-between">
+                <Label className="text-sm font-medium">États de mouvement</Label>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() =>
+                    setCabling((c) => ({
+                      ...c,
+                      declaredMotionStates: [
+                        ...c.declaredMotionStates,
+                        {
+                          id: `etat-${c.declaredMotionStates.length + 1}-${Date.now()}`,
+                          label: `État ${c.declaredMotionStates.length + 1}`,
+                        },
+                      ],
+                      motionCoverageConfirmed: false,
+                    }))
+                  }
+                >
+                  Ajouter un état
+                </Button>
+              </div>
+              <div className="mt-2 space-y-2">
+                {cabling.declaredMotionStates.map((st) => {
+                  const covered = !uncoveredMotionStates(cabling).some((u) => u.id === st.id);
+                  return (
+                    <div key={st.id} className="flex flex-wrap items-center gap-2">
+                      <Input
+                        className="max-w-xs"
+                        value={st.label}
+                        onChange={(e) =>
+                          setCabling((c) => ({
+                            ...c,
+                            declaredMotionStates: c.declaredMotionStates.map((m) =>
+                              m.id === st.id ? { ...m, label: e.target.value } : m,
+                            ),
+                          }))
+                        }
+                      />
+                      <span className={covered ? "text-xs text-emerald-700" : "text-xs text-amber-700"}>
+                        {covered ? "trajet renseigné" : "trajet manquant pour cet état"}
+                      </span>
+                      {!covered ? (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() =>
+                            setCabling((c) => ({
+                              ...c,
+                              statePaths: [
+                                ...c.statePaths,
+                                {
+                                  stateId: st.id,
+                                  label: st.label,
+                                  points: [
+                                    ...(c.sensorEndpoint ? [c.sensorEndpoint] : []),
+                                    ...c.waypoints,
+                                    ...(c.connectionEndpoint ? [c.connectionEndpoint] : []),
+                                  ],
+                                },
+                              ],
+                              motionCoverageConfirmed: false,
+                            }))
+                          }
+                        >
+                          Reprendre le trajet courant
+                        </Button>
+                      ) : null}
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() =>
+                          setCabling((c) => ({
+                            ...c,
+                            declaredMotionStates: c.declaredMotionStates.filter((m) => m.id !== st.id),
+                            statePaths: c.statePaths.filter((sp) => sp.stateId !== st.id),
+                            motionCoverageConfirmed: false,
+                          }))
+                        }
+                      >
+                        Retirer
+                      </Button>
+                    </div>
+                  );
+                })}
+                {cabling.declaredMotionStates.length === 0 ? (
+                  <p className="text-xs text-muted-foreground">
+                    Aucun état déclaré : si la machine bouge, déclarez chaque position extrême.
+                  </p>
+                ) : null}
+              </div>
+              <label className="mt-3 flex items-center gap-2 text-xs">
+                <input
+                  type="checkbox"
+                  checked={cabling.motionCoverageConfirmed}
+                  disabled={
+                    cabling.declaredMotionStates.length === 0 ||
+                    uncoveredMotionStates(cabling).length > 0
+                  }
+                  onChange={(e) =>
+                    setCabling((c) => ({ ...c, motionCoverageConfirmed: e.target.checked }))
+                  }
+                />
+                Je confirme que tous les états déclarés sont couverts par un trajet.
+              </label>
+            </div>
+
+            <div className="grid gap-3 rounded-md border p-3 md:grid-cols-5">
               {(
                 [
                   ["serviceReserveMm", "Réserve de service"],
                   ["terminationMm", "Terminaison"],
-                  ["toleranceMm", "Tolérance"],
+                  ["toleranceMm", "Tolérance fournisseur"],
+                  ["surplusHousingMm", "Surplus logeable"],
                   ["minBendRadiusMm", "Rayon de courbure mini"],
                 ] as const
               ).map(([key, label]) => (
@@ -673,13 +787,20 @@ function DesignSpace() {
                     onChange={(e) =>
                       setCabling((c) => ({
                         ...c,
-                        [key]: key === "minBendRadiusMm" ? num(e.target.value) : (num(e.target.value) ?? 0),
+                        [key]:
+                          key === "minBendRadiusMm"
+                            ? num(e.target.value)
+                            : Math.max(0, num(e.target.value) ?? 0),
                       }))
                     }
                   />
                 </div>
               ))}
             </div>
+            <p className="-mt-2 px-1 text-xs text-muted-foreground">
+              La tolérance fournisseur et le volume disponible pour loger le surplus sont deux
+              informations différentes.
+            </p>
             <div className="rounded-md border p-3 text-sm">
               <p>
                 Plus long trajet mesuré (polyligne) :{" "}
@@ -707,32 +828,79 @@ function DesignSpace() {
               </ul>
               <Separator className="my-3" />
               <p className="text-sm">{lengthVerdict.message}</p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {(
+                  [
+                    ["standard_to_confirm", "Longueur catalogue, à confirmer"],
+                    ["custom_to_confirm", "Longueur sur mesure, à confirmer"],
+                    ["undecided", "Non décidé"],
+                  ] as const
+                ).map(([value, label]) => (
+                  <Button
+                    key={value}
+                    size="sm"
+                    variant={cabling.lengthChoice === value ? "default" : "outline"}
+                    onClick={() => setCabling((c) => ({ ...c, lengthChoice: value }))}
+                  >
+                    {label}
+                  </Button>
+                ))}
+              </div>
             </div>
             <div className="rounded-md border p-3">
               <Label className="text-sm font-medium">Terminaison</Label>
               <p className="mt-1 text-sm">{terminationLabel(termination)}</p>
-              <div className="mt-2 flex flex-wrap items-center gap-2">
-                <Button size="sm" variant="outline" onClick={() => setTermination(DEFAULT_TERMINATION)}>
-                  Fils nus
-                </Button>
-                <Input
-                  className="max-w-xs"
-                  placeholder="Référence connecteur exacte fabricant"
-                  value={freeConnector}
-                  onChange={(e) => setFreeConnector(e.target.value)}
-                />
+              <ul className="mt-1 list-disc pl-5 text-xs text-muted-foreground">
+                {connectorSummaryLines(termination).map((l, i) => (
+                  <li key={i}>{l}</li>
+                ))}
+              </ul>
+              <div className="mt-3 grid gap-3 md:grid-cols-2">
+                {(Object.keys(CONNECTOR_FIELD_LABELS) as (keyof ConnectorDraft)[]).map((key) => (
+                  <div key={key}>
+                    <Label className="text-xs">{CONNECTOR_FIELD_LABELS[key]}</Label>
+                    <Input
+                      value={connectorDraft[key]}
+                      onChange={(e) =>
+                        setConnectorDraft((d) => ({ ...d, [key]: e.target.value }))
+                      }
+                    />
+                  </div>
+                ))}
+              </div>
+              {connectorError ? (
+                <p className="mt-2 text-xs text-destructive">{connectorError}</p>
+              ) : null}
+              <div className="mt-3 flex flex-wrap items-center gap-2">
                 <Button
                   size="sm"
                   variant="outline"
-                  disabled={!freeConnector.trim()}
-                  onClick={() => setTermination(freeReference(freeConnector))}
+                  onClick={() => {
+                    setConnectorError(null);
+                    setDossier((d) => ({ ...d, termination: DEFAULT_TERMINATION }));
+                  }}
                 >
-                  Ajouter en « à vérifier par R&D »
+                  Fils nus
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => {
+                    const result = terminationFromDraft(connectorDraft);
+                    if (!result.ok) {
+                      setConnectorError(result.reason);
+                      return;
+                    }
+                    setConnectorError(null);
+                    setDossier((d) => ({ ...d, termination: result.termination }));
+                  }}
+                >
+                  Enregistrer en « à vérifier par R&D »
                 </Button>
               </div>
               <p className="mt-1 text-xs text-muted-foreground">
                 Aucune combinaison connecteur/capteur qualifiée n'est documentée dans ce projet :
-                toute référence saisie reste à vérifier par la R&D.
+                toute référence saisie, sa contrepartie et son brochage restent à vérifier par la R&D.
               </p>
             </div>
           </TabsContent>
