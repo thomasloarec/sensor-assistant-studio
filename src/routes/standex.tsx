@@ -315,12 +315,48 @@ function StandexConsole() {
                           empreinte {lastRevision.content_hash.slice(0, 16)}… — fichiers joints :{" "}
                           {lastRevision.transferred_files.length}
                         </p>
-                        <pre className="max-h-96 overflow-auto rounded bg-muted p-3 text-xs">
-                          {JSON.stringify(lastRevision.snapshot, null, 2)}
-                        </pre>
+                        {(() => {
+                          const parsed = parseServerSnapshot(
+                            lastRevision.snapshot as Record<string, unknown>,
+                          );
+                          return parsed.ok ? (
+                            <pre className="max-h-96 overflow-auto rounded bg-muted p-3 text-xs whitespace-pre-wrap">
+                              {technicalSummary(parsed.dossier)}
+                            </pre>
+                          ) : (
+                            <p className="text-xs text-destructive">
+                              Cette version n'est pas lisible sous forme de résumé technique :{" "}
+                              {parsed.reason} Contenu brut ci-dessous.
+                            </p>
+                          );
+                        })()}
+                        <details>
+                          <summary className="cursor-pointer text-xs text-muted-foreground">
+                            Contenu complet envoyé (brut)
+                          </summary>
+                          <pre className="max-h-96 overflow-auto rounded bg-muted p-3 text-xs">
+                            {JSON.stringify(lastRevision.snapshot, null, 2)}
+                          </pre>
+                        </details>
                         <ul className="list-disc pl-5 text-xs">
                           {lastRevision.transferred_files.map((f, i) => (
-                            <li key={i}>{f.file_name ?? f.path}</li>
+                            <li key={i} className="flex items-center gap-2">
+                              <span>{f.file_name ?? f.path}</span>
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={() =>
+                                  run(async () => {
+                                    const url = await signedFileUrl(String(f.path));
+                                    if (!url) return "Fichier indisponible pour ce compte.";
+                                    window.open(url, "_blank", "noopener");
+                                    return "Lien de téléchargement ouvert (valable quelques minutes).";
+                                  })
+                                }
+                              >
+                                Télécharger
+                              </Button>
+                            </li>
                           ))}
                         </ul>
                       </>
