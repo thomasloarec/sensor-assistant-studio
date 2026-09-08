@@ -358,6 +358,9 @@ export interface DossierView {
   offers: OfferView[];
   samples: SampleView[];
   internal_notes?: { id: string; created_at: string; author_id: string; body: string }[];
+  /** Versions anglaises enregistrées (vue équipe, schéma 1.5). Absent tant que
+   * la migration additive n'est pas appliquée : aucune valeur n'est supposée. */
+  reports_en?: EnglishReportRow[];
 }
 
 export async function fetchMyDossiers(): Promise<DossierListItem[]> {
