@@ -1563,8 +1563,10 @@ begin
   end;
 
   insert into lead.sample_requests (dossier_id, review_id, revision, requested_by,
-    part_number, designation, annual_volume_basis, quantity, route)
-  values (d.id, rv.id, rv.revision, u, rv.exact_part_number, rv.designation, volume, _quantity, route)
+    part_number, designation, annual_volume_basis, quantity, route,
+    origin_revision, origin_review_id)
+  values (d.id, rv.id, rv.revision, u, rv.exact_part_number, rv.designation, volume, _quantity, route,
+          rv.revision, rv.id)
   returning id into sid;
 
   insert into lead.audit_log (actor, action, dossier_id, detail)
