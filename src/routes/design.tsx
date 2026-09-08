@@ -88,7 +88,12 @@ import {
   type FilledNda,
 } from "@/lib/leadmagnet/nda-docx";
 
-import { checkSubmission, submit, technicalSummary } from "@/lib/leadmagnet/submission";
+import {
+  checkSubmission,
+  submissionBinding,
+  submit,
+  technicalSummary,
+} from "@/lib/leadmagnet/submission";
 import { checkLeadBackend, type LeadBackendStatus } from "@/lib/leadmagnet/backend";
 import {
   createDossier as createServerDossier,
