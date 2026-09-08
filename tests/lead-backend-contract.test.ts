@@ -63,7 +63,9 @@ describe("activation des actions", () => {
   test("le rôle serveur ouvre uniquement les actions correspondantes", () => {
     expect(staffActionEnabled(status({ role: "sales" }), ["sales", "admin"])).toBe(true);
     expect(staffActionEnabled(status({ role: "sales" }), ["rnd"])).toBe(false);
-    expect(staffActionEnabled(status({ role: "admin" }), ["rnd"])).toBe(true);
+    // `admin` n'est pas un passe-partout côté interface : il doit figurer dans la liste attendue.
+    expect(staffActionEnabled(status({ role: "admin" }), ["rnd", "admin"])).toBe(true);
+    expect(staffActionEnabled(status({ role: "admin" }), ["rnd"])).toBe(false);
   });
 
   test("un rôle serveur sans session ouverte n'active rien", () => {
