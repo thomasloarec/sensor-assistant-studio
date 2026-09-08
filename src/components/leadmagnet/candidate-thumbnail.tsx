@@ -75,20 +75,24 @@ export function liveThumbnailContexts() {
 }
 
 
+/** Three 0.185 rend EXCLUSIVEMENT en WebGL2 : sonder « webgl » ferait croire à
+ * un rendu possible sur un appareil qui n'a que WebGL1. La sonde libère son
+ * propre contexte, sinon elle occuperait une place au détriment des vignettes. */
 let webglSupport: boolean | null = null;
 export function hasWebGL(): boolean {
   if (webglSupport !== null) return webglSupport;
   if (typeof document === "undefined") return false;
   try {
     const canvas = document.createElement("canvas");
-    webglSupport = Boolean(
-      canvas.getContext("webgl2") ?? canvas.getContext("webgl") ?? null,
-    );
+    const gl = canvas.getContext("webgl2");
+    webglSupport = Boolean(gl);
+    gl?.getExtension("WEBGL_lose_context")?.loseContext();
   } catch {
     webglSupport = false;
   }
   return webglSupport;
 }
+
 
 function prefersReducedMotion(): boolean {
   if (typeof window === "undefined" || !window.matchMedia) return false;
