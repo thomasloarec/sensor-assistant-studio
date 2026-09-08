@@ -98,7 +98,9 @@ test("longueur de câble : polyligne réelle, marges explicites, jamais approuv�
     directDistance([config.sensorEndpoint, config.connectionEndpoint]),
   );
   expect(e.longestPathState).toBe("open");
-  expect(e.requiredMm).toBeCloseTo(e.longestPathMm + 45, 6);
+  // Besoin = trajet + réserve + terminaison. La tolérance fournisseur (±5) est une
+  // incertitude de fabrication, pas une longueur à ajouter au besoin.
+  expect(e.requiredMm).toBeCloseTo((e.longestPathMm ?? 0) + 40, 6);
   expect(e.approved).toBe(false);
   const incomplete = estimateCableLength({ ...EMPTY_CABLING, waypoints: [[0, 0, 0]] });
   expect(incomplete.complete).toBe(false);

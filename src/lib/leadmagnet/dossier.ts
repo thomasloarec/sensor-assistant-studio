@@ -2,6 +2,8 @@
  * Logique métier pure : aucun accès réseau, aucun stockage, aucune UI ici.
  */
 import type { WorkshopConfig } from "@/lib/standex/magnetic-workshop";
+import { EMPTY_CABLING, type CablingConfig } from "./cabling";
+import { DEFAULT_TERMINATION, type Termination } from "./connectors";
 
 export type RequirementState = "confirmed" | "hypothesis" | "unknown";
 export type RequirementSource = "user" | "import" | "assistant" | "rnd";
@@ -66,8 +68,17 @@ export interface DesignDossier {
   mounting: MountingChoice;
   envelope: EnvelopeMm;
   workshop: WorkshopConfig | null;
-  workshopIsExample: boolean;
+  /** Provenance explicite du montage 3D : jamais déduite de la présence d'un montage. */
+  workshopSource: "none" | "example" | "user_asset";
+  /** Ressource 3D réellement rattachée (clé locale + provenance), sans fichier fantôme. */
+  workshopAsset: { assetKey: string; fileName: string; storage: StorageMode } | null;
+  /** Gamme suivie (ce n'est PAS une référence commandable). */
   selectedSensorId: string | null;
+  /** Le capteur affiché dans l'atelier ne suit la gamme choisie qu'après confirmation. */
+  workshopSensorId: string | null;
+  sensorSyncConfirmed: boolean;
+  cabling: CablingConfig;
+  termination: Termination;
   freeConstraints: string;
   openQuestions: string[];
   attachments: Attachment[];
@@ -119,8 +130,13 @@ export function createDossier(now = new Date().toISOString()): DesignDossier {
     mounting: { kind: "undecided" },
     envelope: { lengthMm: null, widthMm: null, heightMm: null },
     workshop: null,
-    workshopIsExample: false,
+    workshopSource: "none",
+    workshopAsset: null,
     selectedSensorId: null,
+    workshopSensorId: null,
+    sensorSyncConfirmed: false,
+    cabling: EMPTY_CABLING,
+    termination: DEFAULT_TERMINATION,
     freeConstraints: "",
     openQuestions: [],
     attachments: [],

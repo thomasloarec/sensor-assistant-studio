@@ -3,6 +3,30 @@ import { dossierHash, toClientDto, type ClientDossierDto, type DesignDossier } f
 import type { ConsentRecord } from "./privacy";
 import type { NdaState } from "./nda";
 import { ndaAllowsConfidentialTransfer } from "./nda";
+import { estimateCableLength, uncoveredMotionStates } from "./cabling";
+import { connectorSummaryLines } from "./connectors";
+
+function cablingSummary(dossier: DesignDossier): string[] {
+  const e = estimateCableLength(dossier.cabling);
+  const uncovered = uncoveredMotionStates(dossier.cabling);
+  return [
+    `- Longueur nécessaire : ${e.requiredMm === null ? "inconnue (trajet incomplet ou invalide)" : e.requiredMm.toFixed(1) + " mm"}`,
+    `- Plus long trajet mesuré : ${e.longestPathMm === null ? "inconnu" : e.longestPathMm.toFixed(1) + " mm"}`,
+    `- Réserve de service : ${dossier.cabling.serviceReserveMm} mm — terminaison : ${dossier.cabling.terminationMm} mm`,
+    `- Tolérance fournisseur : ±${dossier.cabling.toleranceMm} mm — surplus logeable : ${dossier.cabling.surplusHousingMm} mm`,
+    `- Rayon de courbure mini : ${dossier.cabling.minBendRadiusMm ?? "inconnu"} mm`,
+    `- États de mouvement couverts : ${dossier.cabling.declaredMotionStates.length - uncovered.length}/${dossier.cabling.declaredMotionStates.length}` +
+      (dossier.cabling.motionCoverageConfirmed ? " (couverture confirmée)" : " (couverture non confirmée)"),
+    `- Choix de longueur : ${
+      dossier.cabling.lengthChoice === "standard_to_confirm"
+        ? "longueur catalogue, à confirmer"
+        : dossier.cabling.lengthChoice === "custom_to_confirm"
+          ? "longueur sur mesure, à confirmer"
+          : "non décidé"
+    }`,
+    "- Aucune longueur n'est approuvée ici : la R&D Standex vérifie.",
+  ];
+}
 
 export interface SubmissionSnapshot {
   dossierId: string;
@@ -40,22 +64,33 @@ export function checkSubmission(input: SubmissionInput): SubmissionCheck {
   return problems.length ? { ok: false, problems } : { ok: true };
 }
 
+/** Gel PROFOND : un instantané ne doit pas suivre les modifications ultérieures. */
+export function deepFreeze<T>(value: T): T {
+  if (value && typeof value === "object" && !Object.isFrozen(value)) {
+    Object.freeze(value);
+    for (const child of Object.values(value as Record<string, unknown>)) deepFreeze(child);
+  }
+  return value;
+}
+
 export async function buildSnapshot(
   input: SubmissionInput,
   now = new Date().toISOString(),
 ): Promise<SubmissionSnapshot> {
-  const dto = toClientDto({
+  const dto: ClientDossierDto = toClientDto({
     ...input.dossier,
     freeConstraints: [input.dossier.freeConstraints, input.additionalConstraints]
       .filter((s) => s.trim())
       .join("\n"),
   });
-  return Object.freeze({
+  // Copie détachée AVANT gel : plus aucun lien avec l'état vivant du dossier.
+  const detached = structuredClone(dto);
+  return deepFreeze({
     dossierId: input.dossier.id,
     revision: input.dossier.revision,
     hash: await dossierHash(dto),
     createdAt: now,
-    dto,
+    dto: detached,
     // Seuls les fichiers réellement transférés sont listés : un ID local ne suffit pas.
     transferredFiles: input.dossier.attachments
       .filter((a) => a.transferred && a.storagePath)
@@ -123,5 +158,11 @@ export function technicalSummary(dossier: DesignDossier): string {
     `- Démarrage série : ${dossier.business.seriesStartDate ?? "inconnu"}`,
     `- Échantillons utiles avant : ${dossier.business.samplesNeededBy ?? "inconnu"}`,
     `- Durée série : ${dossier.business.seriesDurationYears ?? "inconnu"} ans`,
+    "",
+    "## Câblage",
+    ...cablingSummary(dossier),
+    "",
+    "## Terminaison",
+    ...connectorSummaryLines(dossier.termination).map((l) => `- ${l}`),
   ].join("\n");
 }

@@ -54,18 +54,51 @@ export function createOffer(
   review: RndReview | null,
   actor: StaffIdentity,
   now = new Date(),
+  /** Révision courante du dossier côté serveur ; le backend reste l'autorité. */
+  currentRevision: number | null = null,
 ): OfferAttempt {
+  const finite = (n: unknown): n is number => typeof n === "number" && Number.isFinite(n);
   if (actor.role !== "sales" && actor.role !== "admin")
     return { ok: false, reason: "Seul un commercial autorisé peut saisir une offre." };
-  if (!review || review.verdict !== "validated")
-    return { ok: false, reason: "Aucun devis avant une revue R&D validée." };
+  if (!draft.authorId || draft.authorId !== actor.userId)
+    return { ok: false, reason: "L'auteur de l'offre doit être la personne connectée." };
+  if (!review) return { ok: false, reason: "Aucun devis avant une revue R&D validée." };
+  // Association stricte dossier / revue / révision : pas d'offre montée sur la revue d'un autre dossier.
+  if (review.dossierId !== draft.dossierId || review.id !== draft.reviewId)
+    return { ok: false, reason: "Cette revue n'appartient pas à ce dossier." };
+  if (review.verdict !== "validated" || !review.published)
+    return { ok: false, reason: "Aucun devis avant une revue R&D validée et publiée." };
+  if (review.supersededBy)
+    return { ok: false, reason: "Cette revue a été remplacée : reprenez la revue en vigueur." };
   if (review.revision !== draft.revision)
     return { ok: false, reason: "La revue validée ne porte pas sur cette révision." };
-  if (!draft.tiers.length || draft.tiers.some((t) => t.unitPrice <= 0 || t.quantity <= 0))
+  if (currentRevision !== null && draft.revision !== currentRevision)
+    return { ok: false, reason: "Le dossier a changé : l'offre doit porter sur la révision courante." };
+  if (!/^[A-Z]{3}$/.test(draft.currency))
+    return { ok: false, reason: "Devise attendue au format ISO (EUR, USD…)." };
+  if (!draft.tiers.length)
     return { ok: false, reason: "Tranches de quantités et prix requis." };
+  // NaN contourne `<= 0` : on exige explicitement des nombres finis.
+  if (
+    draft.tiers.some(
+      (t) => !finite(t.unitPrice) || t.unitPrice <= 0 || !Number.isInteger(t.quantity) || t.quantity <= 0,
+    )
+  )
+    return { ok: false, reason: "Chaque tranche doit avoir une quantité entière et un prix positifs." };
+  if (!Number.isInteger(draft.moq) || draft.moq <= 0)
+    return { ok: false, reason: "Le MOQ doit être un entier positif." };
+  if (draft.nreToolingCost !== null && (!finite(draft.nreToolingCost) || draft.nreToolingCost < 0))
+    return { ok: false, reason: "Le coût d'outillage doit être un nombre positif ou nul." };
+  if (draft.leadTimeWeeks !== null && (!Number.isInteger(draft.leadTimeWeeks) || draft.leadTimeWeeks <= 0))
+    return { ok: false, reason: "Le délai doit être un nombre entier de semaines." };
+  const validUntil = new Date(draft.validUntil);
+  if (!/^\d{4}-\d{2}-\d{2}/.test(draft.validUntil) || Number.isNaN(validUntil.getTime()))
+    return { ok: false, reason: "Date de validité invalide." };
+  if (validUntil.getTime() <= now.getTime())
+    return { ok: false, reason: "La date de validité doit être postérieure à aujourd'hui." };
   return {
     ok: true,
-    offer: { ...draft, expired: new Date(draft.validUntil).getTime() < now.getTime() },
+    offer: { ...draft, expired: false },
   };
 }
 

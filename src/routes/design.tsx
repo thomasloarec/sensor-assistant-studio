@@ -33,13 +33,26 @@ import {
 } from "@/lib/leadmagnet/dossier";
 import { CANDIDATE_DISCLAIMER, evaluateCandidates } from "@/lib/leadmagnet/candidates";
 import {
-  EMPTY_CABLING,
   compareStandardLengths,
   estimateCableLength,
+  uncoveredMotionStates,
   type CablingConfig,
   type Point,
 } from "@/lib/leadmagnet/cabling";
-import { DEFAULT_TERMINATION, freeReference, terminationLabel } from "@/lib/leadmagnet/connectors";
+import {
+  CONNECTOR_FIELD_LABELS,
+  DEFAULT_TERMINATION,
+  EMPTY_CONNECTOR_DRAFT,
+  connectorSummaryLines,
+  terminationFromDraft,
+  terminationLabel,
+  type ConnectorDraft,
+} from "@/lib/leadmagnet/connectors";
+import {
+  EXPORT_BINARY_NOTICE,
+  buildDossierExport,
+  parseDossierExport,
+} from "@/lib/leadmagnet/dossier-io";
 import {
   INITIAL_PRIVACY,
   MEMORY_LOSS_WARNING,
@@ -67,7 +80,12 @@ import {
 import { checkSubmission, submit, technicalSummary } from "@/lib/leadmagnet/submission";
 import { checkLeadBackend, type LeadBackendStatus } from "@/lib/leadmagnet/backend";
 import { createSupabaseSubmissionBackend } from "@/lib/leadmagnet/supabase-adapter";
-import { routeSamples, SEARCH_LINK_DISCLAIMER, createSampleRequest } from "@/lib/leadmagnet/samples";
+import {
+  routeSamples,
+  SEARCH_LINK_DISCLAIMER,
+  createSampleRequest,
+  type SampleRequest,
+} from "@/lib/leadmagnet/samples";
 import { DEFAULT_WORKSHOP } from "@/lib/standex/magnetic-workshop";
 import type { WorkshopConfig } from "@/lib/standex/magnetic-workshop";
 
@@ -168,9 +186,18 @@ function DesignSpace() {
   const [ndaPreview, setNdaPreview] = useState<FilledNda | null>(null);
   const [ndaError, setNdaError] = useState<string | null>(null);
 
-  const [cabling, setCabling] = useState<CablingConfig>(EMPTY_CABLING);
-  const [termination, setTermination] = useState(DEFAULT_TERMINATION);
-  const [freeConnector, setFreeConnector] = useState("");
+  // Câblage et terminaison vivent DANS le dossier : ils suivent export, résumé et révision.
+  const cabling = dossier.cabling;
+  const setCabling = useCallback(
+    (update: (c: CablingConfig) => CablingConfig) =>
+      setDossier((d) => ({ ...d, cabling: update(d.cabling), updatedAt: new Date().toISOString() })),
+    [],
+  );
+  const termination = dossier.termination;
+  const [connectorDraft, setConnectorDraft] = useState<ConnectorDraft>(EMPTY_CONNECTOR_DRAFT);
+  const [connectorError, setConnectorError] = useState<string | null>(null);
+  const [sampleRequests, setSampleRequests] = useState<SampleRequest[]>([]);
+  const [importMessage, setImportMessage] = useState<string | null>(null);
   const [backend, setBackend] = useState<LeadBackendStatus | null>(null);
   // Dossier serveur : créé à la première transmission réussie, puis réutilisé.
   const [serverDossierId, setServerDossierId] = useState<string | null>(null);
@@ -245,14 +272,14 @@ function DesignSpace() {
       compareStandardLengths(
         dossier.selectedSensorId ?? "",
         estimate.requiredMm,
-        cabling.toleranceMm,
+        cabling.surplusHousingMm,
       ),
-    [dossier.selectedSensorId, estimate.requiredMm, cabling.toleranceMm],
+    [dossier.selectedSensorId, estimate.requiredMm, cabling.surplusHousingMm],
   );
   const ndaOk = ndaAllowsConfidentialTransfer(nda);
 
   const exportDossier = useCallback(() => {
-    const blob = new Blob([JSON.stringify(toClientDto(dossier), null, 2)], {
+    const blob = new Blob([JSON.stringify(buildDossierExport(dossier), null, 2)], {
       type: "application/json",
     });
     const url = URL.createObjectURL(blob);
@@ -262,6 +289,23 @@ function DesignSpace() {
     a.click();
     URL.revokeObjectURL(url);
   }, [dossier]);
+
+  const importDossier = useCallback(async (file: File | undefined) => {
+    if (!file) return;
+    setImportMessage(null);
+    try {
+      const parsed = parseDossierExport(JSON.parse(await file.text()));
+      if (!parsed.ok) {
+        setImportMessage(parsed.reason);
+        return;
+      }
+      setDossier(parsed.dossier);
+      setWorkshop(parsed.dossier.workshop);
+      setImportMessage(parsed.notices.join(" "));
+    } catch {
+      setImportMessage("Ce fichier n'a pas pu être lu.");
+    }
+  }, []);
 
   const onSubmit = useCallback(async () => {
     const input = {
@@ -314,7 +358,12 @@ function DesignSpace() {
 
 
   const volume = dossier.business.annualVolume;
-  const sampleRoute = routeSamples({ volume, isCustom: false });
+  // Une revue publiée est nécessaire : sans elle, ni référence exacte ni échantillon.
+  const publishedReview = null as null | { exactPart: string; isCustom: boolean };
+  const sampleRoute = routeSamples({
+    volume,
+    isCustom: publishedReview?.isCustom ?? false,
+  });
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -328,14 +377,29 @@ function DesignSpace() {
             <Lock className="h-3 w-3" /> {STORAGE_BADGE[privacy.storage]}
           </Badge>
           <Badge variant="outline">Révision {dossier.revision}</Badge>
-          <div className="ml-auto flex gap-2">
+          <div className="ml-auto flex items-center gap-2">
             <Button variant="outline" size="sm" onClick={exportDossier}>
               <Download className="mr-1 h-4 w-4" /> Exporter le dossier
+            </Button>
+            <Button variant="outline" size="sm" asChild>
+              <label className="cursor-pointer">
+                Reprendre un fichier
+                <input
+                  type="file"
+                  accept="application/json"
+                  className="sr-only"
+                  onChange={(e) => {
+                    void importDossier(e.target.files?.[0]);
+                    e.target.value = "";
+                  }}
+                />
+              </label>
             </Button>
           </div>
         </div>
         <div className="mx-auto max-w-6xl px-4 pb-3 text-xs text-muted-foreground">
-          {MEMORY_LOSS_WARNING}
+          {MEMORY_LOSS_WARNING} {EXPORT_BINARY_NOTICE}
+          {importMessage ? <span className="block text-foreground">{importMessage}</span> : null}
         </div>
       </header>
 
@@ -511,10 +575,27 @@ function DesignSpace() {
                     <MagneticWorkshop
                       initialConfig={workshop ?? DEFAULT_WORKSHOP}
                       storageLabel="ce dossier, en mémoire de l'onglet"
+                      storageMode="memory"
                       onClose={() => setShowWorkshop(false)}
                       onSave={async (c: WorkshopConfig) => {
                         setWorkshop(c);
-                        setDossier((d) => ({ ...d, workshop: c, workshopIsExample: !d.workshop }));
+                        setDossier((d) => ({
+                          ...d,
+                          workshop: c,
+                          // Provenance explicite : un vrai import n'est jamais compté comme exemple.
+                          workshopSource: c.machine ? "user_asset" : "example",
+                          workshopAsset: c.machine
+                            ? {
+                                assetKey: c.machine.assetKey,
+                                fileName: c.machine.fileName,
+                                storage: "memory",
+                              }
+                            : null,
+                          workshopSensorId: c.sensorId,
+                          sensorSyncConfirmed:
+                            d.selectedSensorId === null || d.selectedSensorId === c.sensorId,
+                          updatedAt: new Date().toISOString(),
+                        }));
                       }}
                     />
                   </Suspense>
@@ -526,6 +607,32 @@ function DesignSpace() {
           {/* ---------------- Candidats ---------------- */}
           <TabsContent value="candidats" className="space-y-3 pt-4">
             <p className="text-sm text-muted-foreground">{CANDIDATE_DISCLAIMER}</p>
+            {dossier.selectedSensorId && !dossier.sensorSyncConfirmed ? (
+              <div className="rounded-md border border-amber-300 bg-amber-50 p-3 text-sm">
+                <p>
+                  La gamme suivie et le capteur affiché en 3D sont différents. Rien n'est changé sans
+                  votre accord.
+                </p>
+                <Button
+                  size="sm"
+                  className="mt-2"
+                  onClick={() =>
+                    setDossier((d) => {
+                      const next = d.selectedSensorId;
+                      if (!next) return d;
+                      return {
+                        ...d,
+                        workshopSensorId: next,
+                        sensorSyncConfirmed: true,
+                        workshop: d.workshop ? { ...d.workshop, sensorId: next } : d.workshop,
+                      };
+                    })
+                  }
+                >
+                  Aligner l'atelier 3D sur la gamme suivie
+                </Button>
+              </div>
+            ) : null}
             <div className="space-y-2">
               {candidates.map((c) => (
                 <div key={c.id} className="rounded-md border p-3">
@@ -551,7 +658,13 @@ function DesignSpace() {
                       <Button
                         size="sm"
                         variant="ghost"
-                        onClick={() => setDossier((d) => ({ ...d, selectedSensorId: c.id }))}
+                        onClick={() =>
+                          setDossier((d) => ({
+                            ...d,
+                            selectedSensorId: c.id,
+                            sensorSyncConfirmed: d.workshopSensorId === c.id,
+                          }))
+                        }
                       >
                         Suivre cette gamme
                       </Button>
@@ -594,7 +707,10 @@ function DesignSpace() {
                     {pointFields(`Point ${index + 1}`, w, (p) =>
                       setCabling((c) => ({
                         ...c,
-                        waypoints: c.waypoints.map((q, i) => (i === index ? (p ?? [0, 0, 0]) : q)),
+                        // Un point effacé rend le trajet incomplet : il n'est jamais remplacé par 0,0,0.
+                        waypoints: p
+                          ? c.waypoints.map((q, i) => (i === index ? p : q))
+                          : c.waypoints.filter((_, i) => i !== index),
                       })),
                     )}
                     <Button
@@ -613,12 +729,123 @@ function DesignSpace() {
                 ))}
               </div>
             </div>
-            <div className="grid gap-3 rounded-md border p-3 md:grid-cols-4">
+
+            {/* États de mouvement : le trajet doit être couvert pour chaque état. */}
+            <div className="rounded-md border p-3">
+              <div className="flex items-center justify-between">
+                <Label className="text-sm font-medium">États de mouvement</Label>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() =>
+                    setCabling((c) => ({
+                      ...c,
+                      declaredMotionStates: [
+                        ...c.declaredMotionStates,
+                        {
+                          id: `etat-${c.declaredMotionStates.length + 1}-${Date.now()}`,
+                          label: `État ${c.declaredMotionStates.length + 1}`,
+                        },
+                      ],
+                      motionCoverageConfirmed: false,
+                    }))
+                  }
+                >
+                  Ajouter un état
+                </Button>
+              </div>
+              <div className="mt-2 space-y-2">
+                {cabling.declaredMotionStates.map((st) => {
+                  const covered = !uncoveredMotionStates(cabling).some((u) => u.id === st.id);
+                  return (
+                    <div key={st.id} className="flex flex-wrap items-center gap-2">
+                      <Input
+                        className="max-w-xs"
+                        value={st.label}
+                        onChange={(e) =>
+                          setCabling((c) => ({
+                            ...c,
+                            declaredMotionStates: c.declaredMotionStates.map((m) =>
+                              m.id === st.id ? { ...m, label: e.target.value } : m,
+                            ),
+                          }))
+                        }
+                      />
+                      <span className={covered ? "text-xs text-emerald-700" : "text-xs text-amber-700"}>
+                        {covered ? "trajet renseigné" : "trajet manquant pour cet état"}
+                      </span>
+                      {!covered ? (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() =>
+                            setCabling((c) => ({
+                              ...c,
+                              statePaths: [
+                                ...c.statePaths,
+                                {
+                                  stateId: st.id,
+                                  label: st.label,
+                                  points: [
+                                    ...(c.sensorEndpoint ? [c.sensorEndpoint] : []),
+                                    ...c.waypoints,
+                                    ...(c.connectionEndpoint ? [c.connectionEndpoint] : []),
+                                  ],
+                                },
+                              ],
+                              motionCoverageConfirmed: false,
+                            }))
+                          }
+                        >
+                          Reprendre le trajet courant
+                        </Button>
+                      ) : null}
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() =>
+                          setCabling((c) => ({
+                            ...c,
+                            declaredMotionStates: c.declaredMotionStates.filter((m) => m.id !== st.id),
+                            statePaths: c.statePaths.filter((sp) => sp.stateId !== st.id),
+                            motionCoverageConfirmed: false,
+                          }))
+                        }
+                      >
+                        Retirer
+                      </Button>
+                    </div>
+                  );
+                })}
+                {cabling.declaredMotionStates.length === 0 ? (
+                  <p className="text-xs text-muted-foreground">
+                    Aucun état déclaré : si la machine bouge, déclarez chaque position extrême.
+                  </p>
+                ) : null}
+              </div>
+              <label className="mt-3 flex items-center gap-2 text-xs">
+                <input
+                  type="checkbox"
+                  checked={cabling.motionCoverageConfirmed}
+                  disabled={
+                    cabling.declaredMotionStates.length === 0 ||
+                    uncoveredMotionStates(cabling).length > 0
+                  }
+                  onChange={(e) =>
+                    setCabling((c) => ({ ...c, motionCoverageConfirmed: e.target.checked }))
+                  }
+                />
+                Je confirme que tous les états déclarés sont couverts par un trajet.
+              </label>
+            </div>
+
+            <div className="grid gap-3 rounded-md border p-3 md:grid-cols-5">
               {(
                 [
                   ["serviceReserveMm", "Réserve de service"],
                   ["terminationMm", "Terminaison"],
-                  ["toleranceMm", "Tolérance"],
+                  ["toleranceMm", "Tolérance fournisseur"],
+                  ["surplusHousingMm", "Surplus logeable"],
                   ["minBendRadiusMm", "Rayon de courbure mini"],
                 ] as const
               ).map(([key, label]) => (
@@ -630,20 +857,36 @@ function DesignSpace() {
                     onChange={(e) =>
                       setCabling((c) => ({
                         ...c,
-                        [key]: key === "minBendRadiusMm" ? num(e.target.value) : (num(e.target.value) ?? 0),
+                        [key]:
+                          key === "minBendRadiusMm"
+                            ? num(e.target.value)
+                            : Math.max(0, num(e.target.value) ?? 0),
                       }))
                     }
                   />
                 </div>
               ))}
             </div>
+            <p className="-mt-2 px-1 text-xs text-muted-foreground">
+              La tolérance fournisseur et le volume disponible pour loger le surplus sont deux
+              informations différentes.
+            </p>
             <div className="rounded-md border p-3 text-sm">
               <p>
-                Plus long trajet mesuré (polyligne) : <strong>{estimate.longestPathMm.toFixed(1)} mm</strong>
+                Plus long trajet mesuré (polyligne) :{" "}
+                <strong>
+                  {estimate.longestPathMm === null
+                    ? "inconnu"
+                    : `${estimate.longestPathMm.toFixed(1)} mm`}
+                </strong>
               </p>
               <p>
                 Longueur minimale demandée, marges comprises :{" "}
-                <strong>{estimate.requiredMm.toFixed(1)} mm</strong>
+                <strong>
+                  {estimate.requiredMm === null
+                    ? "inconnue tant que le trajet n'est pas complet"
+                    : `${estimate.requiredMm.toFixed(1)} mm`}
+                </strong>
               </p>
               <p className="text-xs text-muted-foreground">
                 Cette longueur n'est jamais une longueur approuvée : elle est vérifiée en revue R&D.
@@ -655,32 +898,79 @@ function DesignSpace() {
               </ul>
               <Separator className="my-3" />
               <p className="text-sm">{lengthVerdict.message}</p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {(
+                  [
+                    ["standard_to_confirm", "Longueur catalogue, à confirmer"],
+                    ["custom_to_confirm", "Longueur sur mesure, à confirmer"],
+                    ["undecided", "Non décidé"],
+                  ] as const
+                ).map(([value, label]) => (
+                  <Button
+                    key={value}
+                    size="sm"
+                    variant={cabling.lengthChoice === value ? "default" : "outline"}
+                    onClick={() => setCabling((c) => ({ ...c, lengthChoice: value }))}
+                  >
+                    {label}
+                  </Button>
+                ))}
+              </div>
             </div>
             <div className="rounded-md border p-3">
               <Label className="text-sm font-medium">Terminaison</Label>
               <p className="mt-1 text-sm">{terminationLabel(termination)}</p>
-              <div className="mt-2 flex flex-wrap items-center gap-2">
-                <Button size="sm" variant="outline" onClick={() => setTermination(DEFAULT_TERMINATION)}>
-                  Fils nus
-                </Button>
-                <Input
-                  className="max-w-xs"
-                  placeholder="Référence connecteur exacte fabricant"
-                  value={freeConnector}
-                  onChange={(e) => setFreeConnector(e.target.value)}
-                />
+              <ul className="mt-1 list-disc pl-5 text-xs text-muted-foreground">
+                {connectorSummaryLines(termination).map((l, i) => (
+                  <li key={i}>{l}</li>
+                ))}
+              </ul>
+              <div className="mt-3 grid gap-3 md:grid-cols-2">
+                {CONNECTOR_FIELD_LABELS.map(([key, label]) => (
+                  <div key={key}>
+                    <Label className="text-xs">{label}</Label>
+                    <Input
+                      value={connectorDraft[key]}
+                      onChange={(e) =>
+                        setConnectorDraft((d) => ({ ...d, [key]: e.target.value }))
+                      }
+                    />
+                  </div>
+                ))}
+              </div>
+              {connectorError ? (
+                <p className="mt-2 text-xs text-destructive">{connectorError}</p>
+              ) : null}
+              <div className="mt-3 flex flex-wrap items-center gap-2">
                 <Button
                   size="sm"
                   variant="outline"
-                  disabled={!freeConnector.trim()}
-                  onClick={() => setTermination(freeReference(freeConnector))}
+                  onClick={() => {
+                    setConnectorError(null);
+                    setDossier((d) => ({ ...d, termination: DEFAULT_TERMINATION }));
+                  }}
                 >
-                  Ajouter en « à vérifier par R&D »
+                  Fils nus
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => {
+                    const result = terminationFromDraft(connectorDraft);
+                    if (!result.ok) {
+                      setConnectorError(`Champs requis : ${result.missing.join(", ")}.`);
+                      return;
+                    }
+                    setConnectorError(null);
+                    setDossier((d) => ({ ...d, termination: result.termination }));
+                  }}
+                >
+                  Enregistrer en « à vérifier par R&D »
                 </Button>
               </div>
               <p className="mt-1 text-xs text-muted-foreground">
                 Aucune combinaison connecteur/capteur qualifiée n'est documentée dans ce projet :
-                toute référence saisie reste à vérifier par la R&D.
+                toute référence saisie, sa contrepartie et son brochage restent à vérifier par la R&D.
               </p>
             </div>
           </TabsContent>
@@ -915,7 +1205,13 @@ function DesignSpace() {
                 <AccordionTrigger>Échantillons</AccordionTrigger>
                 <AccordionContent className="space-y-2">
                   <p className="text-sm">{sampleRoute.note}</p>
-                  {sampleRoute.kind === "distributors" ? (
+                  {!publishedReview ? (
+                    <p className="text-sm text-amber-700">
+                      Les échantillons s'ouvrent après une revue Standex validée et publiée, qui fixe
+                      la référence exacte à commander. Une gamme ne suffit pas.
+                    </p>
+                  ) : null}
+                  {sampleRoute.kind === "distributors" && publishedReview ? (
                     <>
                       <ul className="list-disc pl-5 text-sm">
                         {sampleRoute.partners.map((p) => (
@@ -924,7 +1220,7 @@ function DesignSpace() {
                               className="underline"
                               target="_blank"
                               rel="noreferrer"
-                              href={p.search + encodeURIComponent(dossier.selectedSensorId ?? "")}
+                              href={p.search + encodeURIComponent(publishedReview.exactPart)}
                             >
                               {p.name}
                             </a>
@@ -948,13 +1244,18 @@ function DesignSpace() {
                       variant="outline"
                       onClick={() => {
                         const result = createSampleRequest(
-                          dossier.selectedSensorId ?? "",
+                          publishedReview?.exactPart ?? "",
                           Number(sampleQty),
                           sampleRoute,
+                          {
+                            reviewValidated: publishedReview !== null,
+                            exactPartConfirmed: publishedReview !== null,
+                          },
                         );
+                        setSampleRequests((list) => (result.ok ? [...list, result.request] : list));
                         setSampleMessage(
                           result.ok
-                            ? "Demande enregistrée dans cet onglet. Aucun e-mail n'est envoyé et aucun stock n'est garanti."
+                            ? "Demande conservée dans cet onglet uniquement : rien n'est envoyé et aucun stock n'est garanti."
                             : result.reason,
                         );
                       }}
@@ -963,6 +1264,15 @@ function DesignSpace() {
                     </Button>
                   </div>
                   {sampleMessage ? <p className="text-sm">{sampleMessage}</p> : null}
+                  {sampleRequests.length ? (
+                    <ul className="list-disc pl-5 text-xs text-muted-foreground">
+                      {sampleRequests.map((r, i) => (
+                        <li key={i}>
+                          {r.quantity} × {r.partNumber} — conservé localement, non transmis.
+                        </li>
+                      ))}
+                    </ul>
+                  ) : null}
                   <p className="text-xs text-muted-foreground">
                     Disponibilités, MOQ et conditionnements : inconnus tant qu'aucun fournisseur
                     réel n'est connecté.

@@ -54,12 +54,32 @@ export interface SampleRequest {
 
 export type SampleRequestAttempt = { ok: true; request: SampleRequest } | { ok: false; reason: string };
 
+/** Conditions d'ouverture d'une demande d'échantillons. Toutes viennent du serveur. */
+export interface SampleGate {
+  /** Une revue R&D validée et publiée existe pour la révision courante. */
+  reviewValidated: boolean;
+  /** La référence est une MPN exacte confirmée, pas une gamme. */
+  exactPartConfirmed: boolean;
+}
+
 export function createSampleRequest(
   partNumber: string,
   quantity: number,
   route: SampleRoute,
+  gate: SampleGate = { reviewValidated: false, exactPartConfirmed: false },
   now = new Date().toISOString(),
 ): SampleRequestAttempt {
+  if (!gate.reviewValidated)
+    return {
+      ok: false,
+      reason: "Échantillons possibles seulement après une revue Standex validée et publiée.",
+    };
+  if (!gate.exactPartConfirmed)
+    return {
+      ok: false,
+      reason:
+        "Référence exacte requise : une gamme ne suffit pas, la revue doit d'abord fixer la référence commandable.",
+    };
   if (!Number.isInteger(quantity) || quantity <= 0)
     return { ok: false, reason: "La quantité d'échantillons doit être un entier positif." };
   if (!partNumber.trim())
