@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
-import { FolderOpen } from "lucide-react";
+import { FileText, FolderOpen } from "lucide-react";
 import {
   acceptVariant,
   fetchClientView,
@@ -199,6 +199,7 @@ export function ClientFollowUp({
             <span className="t-caption">
               {d.published_reviews} retour(s) — {d.active_offers} offre(s) valable(s)
             </span>
+            <span className="t-caption t-metric sm:ml-auto">{d.updated_at}</span>
           </li>
         ))}
       </ul>
@@ -443,7 +444,8 @@ export function ClientFollowUp({
               <h4 className="font-medium">Fichiers réellement transmis</h4>
               {current.revisions.map((r) =>
                 (r.transferred_files ?? []).length ? (
-                  <div key={`files-${r.id}`} className="flex flex-wrap items-center gap-2">
+                  <div key={`files-${r.id}`} className="surface-interactive flex flex-wrap items-center gap-3 p-5">
+                    <FileText className="h-5 w-5 shrink-0 text-[var(--primary)]" aria-hidden="true" />
                     <span className="t-caption t-metric">Version {r.revision} :</span>
                     {(r.transferred_files ?? []).map((f, i) => (
                       <Button

@@ -160,7 +160,7 @@ export function PrivateDesignError({ reset }: { reset: () => void }) {
     <div className="flex min-h-screen items-center justify-center px-4">
       <div className="max-w-md space-y-3 text-center">
         <h1 className="text-xl font-semibold">L'espace de conception s'est interrompu</h1>
-        <p className="text-sm text-muted-foreground">
+        <p className="t-caption">
           Rien de ce que vous avez saisi n'a été transmis. Le détail de l'incident reste sur votre
           appareil : seul un code d'incident anonyme a été signalé.
         </p>
@@ -2022,7 +2022,6 @@ export function DesignSpace({
                     .map((a) => a.fileName)
                     .join(", ")}
             </p>
-            <hr className="standex-rule" />
             <label className="t-caption flex items-center gap-2">
               <Checkbox
                 checked={binding !== null && hasBoundConsent(privacy, "supabase_dossier", binding)}
@@ -2049,7 +2048,7 @@ export function DesignSpace({
             </label>
             {consentNotice ? <p className="notice notice-warning">{consentNotice}</p> : null}
 
-            <label className="flex items-center gap-2 text-sm">
+            <label className="t-caption flex items-center gap-2">
               <Checkbox
                 checked={shareModel}
                 disabled={!dossier.workshopAsset}
@@ -2069,7 +2068,9 @@ export function DesignSpace({
                   size="sm"
                   disabled={busy || preparedUpload?.assetKey === dossier.workshopAsset.assetKey}
                   onClick={() => void prepareShare()}
+                  aria-busy={busy ? "true" : undefined}
                 >
+                  {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
                   {preparedUpload?.assetKey === dossier.workshopAsset.assetKey
                     ? "Fichier 3D déposé et vérifié"
                     : "1. Déposer le fichier 3D"}
@@ -2080,7 +2081,8 @@ export function DesignSpace({
                 </p>
               </div>
             ) : null}
-            <label className="flex items-center gap-2 text-sm">
+            <hr className="standex-rule" />
+            <label className="t-caption flex items-center gap-2">
               <Checkbox
                 checked={acknowledged}
                 onCheckedChange={(v) => setAcknowledged(Boolean(v))}

@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/lib/standex/supabase";
 import type { LeadBackendStatus } from "@/lib/leadmagnet/backend";
+import { Loader2 } from "lucide-react";
 
 interface Props {
   backend: LeadBackendStatus | null;
@@ -104,7 +105,13 @@ export function AuthPanel({ backend, onChanged }: Props) {
           required
         />
       </div>
-      <Button type="submit" className="min-h-11 text-base" disabled={busy}>
+      <Button
+        type="submit"
+        className="min-h-11 text-base"
+        disabled={busy}
+        aria-busy={busy ? "true" : undefined}
+      >
+        {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
         {busy ? "Connexion…" : "Se connecter"}
       </Button>
       {message ? (
