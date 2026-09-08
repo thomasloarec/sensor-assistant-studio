@@ -5,6 +5,14 @@
  */
 import { describe, expect, test } from "bun:test";
 import { readFileSync } from "node:fs";
+import {
+  EMPTY_CABLING,
+  applyRoutingPick,
+  estimateCableLength,
+  resetRouting,
+  routingPoints,
+  undoRoutingPick,
+} from "@/lib/leadmagnet/cabling";
 
 const followup = readFileSync("src/components/leadmagnet/client-followup.tsx", "utf8");
 const design = readFileSync("src/routes/design.tsx", "utf8");
@@ -85,5 +93,71 @@ describe("lecture 3D côté Standex", () => {
 
   test("une modification locale ne vaut jamais retour publié", () => {
     expect(standex).toContain("publiez un retour R&D pour qu'elle compte");
+  });
+});
+
+describe("copie de lecture du câble en revue R&D", () => {
+  const base = {
+    ...EMPTY_CABLING,
+    declaredMotionStates: [{ id: "ouvert", label: "Bac ouvert" }],
+  };
+
+  test("un ajustement de revue ne modifie jamais la configuration envoyée", () => {
+    const sent = structuredClone(base);
+    const reading = structuredClone(sent);
+    const picked = applyRoutingPick(reading, { kind: "base" }, "sensor", [0, 0, 0], {
+      cycleT: 0,
+      label: "Ajustement local de revue",
+    });
+    expect(routingPoints(picked, { kind: "base" })).toEqual([[0, 0, 0]]);
+    expect(routingPoints(sent, { kind: "base" })).toEqual([]);
+    expect(sent).toEqual(structuredClone(base));
+  });
+
+  test("le trajet suit l'état sélectionné et se remet à zéro état par état", () => {
+    let cfg = applyRoutingPick(base, { kind: "base" }, "sensor", [0, 0, 0], null);
+    cfg = applyRoutingPick(cfg, { kind: "state", stateId: "ouvert" }, "sensor", [10, 0, 0], {
+      cycleT: 0.5,
+      label: "Ajustement local de revue",
+    });
+    cfg = applyRoutingPick(cfg, { kind: "state", stateId: "ouvert" }, "connection", [10, 0, 40], {
+      cycleT: 0.5,
+      label: "Ajustement local de revue",
+    });
+    expect(routingPoints(cfg, { kind: "state", stateId: "ouvert" })).toHaveLength(2);
+    const undone = undoRoutingPick(cfg, { kind: "state", stateId: "ouvert" });
+    expect(routingPoints(undone, { kind: "state", stateId: "ouvert" })).toHaveLength(1);
+    const cleared = resetRouting(cfg, { kind: "state", stateId: "ouvert" });
+    expect(routingPoints(cleared, { kind: "state", stateId: "ouvert" })).toEqual([]);
+    // Le trajet de référence n'est pas touché par la remise à zéro d'un état.
+    expect(routingPoints(cleared, { kind: "base" })).toEqual([[0, 0, 0]]);
+  });
+
+  test("un trajet incomplet ne produit aucune longueur inventée", () => {
+    const partial = applyRoutingPick(base, { kind: "base" }, "sensor", [0, 0, 0], null);
+    expect(estimateCableLength(partial).requiredMm).toBeNull();
+  });
+});
+
+describe("garde de contexte pendant une opération", () => {
+  test("ouvrir, reprendre ou appliquer une variante est refusé pendant un commit", () => {
+    for (const guard of [
+      "if (busyRef.current) return { ok: false };",
+      "if (busyRef.current)",
+      "if (!file || busyRef.current) return;",
+    ])
+      expect(design).toContain(guard);
+  });
+
+  test("la liste de suivi oublie une réponse arrivée après changement de dossier", () => {
+    expect(followup).toContain("const request = ++viewRequest.current;");
+    expect(followup).toContain("if (request !== viewRequest.current) return;");
+    expect(followup).toContain("}, [serverDossierId, contextGeneration]);");
+  });
+
+  test("la console R&D écarte les réponses périmées et lie le GLB à la configuration", () => {
+    expect(standex).toContain("request !== modelRequest.current || selection !== selectionRequest.current");
+    expect(standex).toContain("config.machine.assetKey !== `sha256:${digest}`");
+    expect(standex).toContain("cableRouting: viewerCable");
   });
 });
