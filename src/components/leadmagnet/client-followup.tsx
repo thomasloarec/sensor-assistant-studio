@@ -330,6 +330,14 @@ export function ClientFollowUp({
                   </Badge>
                   <span className="text-xs text-muted-foreground">version {s.revision}</span>
                 </div>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Commandés sur la version {s.origin_revision ?? s.revision}
+                  {s.revalidated_from_revision !== null &&
+                  s.revalidated_from_revision !== undefined
+                    ? ` — revalidés depuis la version ${s.revalidated_from_revision}`
+                    : ""}
+                  .
+                </p>
                 {s.feedback ? (
                   <p className="mt-1 text-xs text-muted-foreground">
                     Votre retour (version {s.feedback_revision}) : {s.feedback}
