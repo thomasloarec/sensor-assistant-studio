@@ -225,7 +225,23 @@ export function bodyParagraphTexts(xml: string): string[] {
   });
 }
 
-function fillParagraph(paragraphXml: string, field: VariableField, value: string): string {
+/** Une exécution ne contenant qu'une tabulation (avec ou sans mise en forme). */
+const TAB_RUN_SOURCE = "<w:r\\b[^>]*>(?:<w:rPr>[\\s\\S]*?</w:rPr>)?<w:tab/></w:r>";
+const SINGLE_TAB_RUN = "<w:r><w:tab/></w:r>";
+
+/**
+ * Nettoie les tabulations de remplissage du champ « Place/date » client :
+ * une seule séparation entre la date et Stamp/Signature, plus de tabulations
+ * inutiles après le trait de signature. Rien d'autre n'est touché.
+ */
+function tidyTabRuns(paragraphXml: string): string {
+  return paragraphXml
+    .replace(new RegExp(`(?:${TAB_RUN_SOURCE}){2,}`, "g"), SINGLE_TAB_RUN)
+    .replace(new RegExp(`(?:${TAB_RUN_SOURCE})+(?=</w:p>)`, "g"), "");
+}
+
+function fillParagraph(paragraphXml: string, field: VariableField, rawValue: string): string {
+  const value = field.pad ? field.pad.before + rawValue + field.pad.after : rawValue;
   const nodes: { start: number; end: number; text: string }[] = [];
   for (const m of paragraphXml.matchAll(TEXT_NODE)) {
     const inner = m[1]!;
