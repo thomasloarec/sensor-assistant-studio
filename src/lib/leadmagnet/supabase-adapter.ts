@@ -315,6 +315,10 @@ export interface SampleView {
   status: string;
   annual_volume_basis: number | null;
   revision: number;
+  /** Version qui a RÉELLEMENT servi à commander ces échantillons. */
+  origin_revision: number | null;
+  /** Version quittée lors d'une revalidation, si elle a eu lieu. */
+  revalidated_from_revision: number | null;
   feedback: string | null;
   feedback_revision: number | null;
 }
