@@ -1,12 +1,16 @@
 import { describe, expect, test } from "bun:test";
-import { SENSOR_CATALOG } from "../src/lib/standex/sensor-catalog";
+import { SENSOR_CATALOG, CUSTOM_SENSOR_ID } from "../src/lib/standex/sensor-catalog";
 import { SENSOR_SPECIFICATIONS as specs } from "../src/lib/standex/sensor-specifications";
 import messages from "../src/lib/i18n/messages.json";
 
 describe("Product specifications and manufacturer qualifications", () => {
   test("all commercial catalogue entries have specifications and translated explanations", () => {
     const localized = messages as Record<string, string[]>;
-    for (const model of SENSOR_CATALOG.filter((s) => s.id !== "GENERIC")) {
+    // GENERIC et CUSTOM ne sont pas des produits : ils n'ont ni fiche ni
+    // caractéristique validée, et ne doivent surtout pas en recevoir une.
+    for (const model of SENSOR_CATALOG.filter(
+      (s) => s.id !== "GENERIC" && s.id !== CUSTOM_SENSOR_ID,
+    )) {
       const s = specs[model.id]!;
       expect(s, model.id).toBeDefined();
       expect(s.electrical.length).toBeGreaterThan(0);
@@ -15,6 +19,7 @@ describe("Product specifications and manufacturer qualifications", () => {
         expect(localized[text!]?.length, text).toBe(7);
     }
     expect(specs.GENERIC).toBeUndefined();
+    expect(specs[CUSTOM_SENSOR_ID]).toBeUndefined();
   });
   test("MK24 magnetic sensitivity A has reduced ratings distinct from Form A", () => {
     const mk24 = specs["MK24-A-J"]!;

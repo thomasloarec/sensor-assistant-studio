@@ -21,6 +21,14 @@ function mountingVerdict(
   sensor: SensorModel,
   mounting: MountingChoice,
 ): { status: CandidateStatus; reason: string } {
+  // Une conception sur mesure n'est jamais écartée par un filtre mécanique :
+  // c'est justement la géométrie qui serait définie avec la R&D.
+  if (sensor.shape === "custom_pcb")
+    return {
+      status: "to_verify",
+      reason:
+        "Conception sur mesure : la forme de la carte, l'encoche et les fixations seraient définies avec la R&D Standex.",
+    };
   switch (mounting.kind) {
     case "undecided":
       return {
@@ -146,11 +154,14 @@ export function evaluateCandidates(
   catalog: readonly SensorModel[] = SENSOR_CATALOG,
 ): CandidateResult[] {
   return catalog.map((sensor) => {
+    const custom = sensor.shape === "custom_pcb";
     const reasons: string[] = [];
     const mount = mountingVerdict(sensor, dossier.mounting);
     reasons.push(mount.reason);
     let status = mount.status;
-    const env = envelopeVerdict(sensor, dossier.envelope);
+    // Les cotes du schéma sur mesure sont proportionnelles et pédagogiques :
+    // les comparer à un volume déclaré laisserait croire à une cote figée.
+    const env = custom ? null : envelopeVerdict(sensor, dossier.envelope);
     if (env) {
       reasons.push(env.reason);
       status = worst(status, env.status);
@@ -165,12 +176,21 @@ export function evaluateCandidates(
       reasons.push("Modèle pédagogique : aucune référence commandable.");
       status = "excluded";
     }
-    reasons.push("Gamme documentée ; la référence exacte est fixée après revue R&D.");
+    if (custom) {
+      reasons.push(
+        "Schéma pédagogique proportionnel : les cotes affichées illustrent les rapports (carte 3 × la longueur du reed, 5 × son diamètre), elles ne sont pas des cotes validées.",
+      );
+      reasons.push(
+        "Aucune référence commandable et aucune distance de commutation documentée : elles restent inconnues tant que la R&D Standex n'a pas caractérisé la solution.",
+      );
+    } else {
+      reasons.push("Gamme documentée ; la référence exacte est fixée après revue R&D.");
+    }
     return {
       id: sensor.id,
       name: sensor.name,
       familyOnly: true as const,
-      size: sizeLabel(sensor),
+      size: custom ? `${sizeLabel(sensor)} · cotes pédagogiques` : sizeLabel(sensor),
       status,
       reasons,
     };

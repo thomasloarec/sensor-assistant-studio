@@ -9,6 +9,7 @@ import { z } from "zod";
 import { createDossier, type DesignDossier } from "./dossier";
 import { EMPTY_CABLING } from "./cabling";
 import { parseWorkshopConfig } from "@/lib/standex/magnetic-workshop";
+import { isKnownSensorId } from "@/lib/standex/sensor-catalog";
 import { DEFAULT_TERMINATION } from "./connectors";
 
 export const EXPORT_FORMAT = "standex-design-dossier";
@@ -159,6 +160,13 @@ const requirement = z.object({
   note: z.string().optional(),
 });
 
+/** Un identifiant inconnu redevient « aucun choix » : le laisser passer ferait
+ * retomber l'affichage sur un autre capteur du catalogue. */
+const knownSensorId = z
+  .string()
+  .nullable()
+  .catch(null)
+  .transform((v) => (v !== null && isKnownSensorId(v) ? v : null));
 const dossierSchema = z.object({
   title: z.string().catch("Dossier repris"),
   requirements: z.array(requirement).catch([]),
@@ -168,8 +176,8 @@ const dossierSchema = z.object({
   workshop: z.unknown(),
   business: z.unknown(),
   workshopSource: z.enum(["none", "example", "user_asset"]).catch("none"),
-  selectedSensorId: z.string().nullable().catch(null),
-  workshopSensorId: z.string().nullable().catch(null),
+  selectedSensorId: knownSensorId,
+  workshopSensorId: knownSensorId,
   freeConstraints: z.string().catch(""),
   openQuestions: z.array(z.string()).catch([]),
   cabling: cabling.catch(() => EMPTY_CABLING as unknown as z.infer<typeof cabling>),

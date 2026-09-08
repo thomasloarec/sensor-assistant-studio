@@ -23,10 +23,15 @@ describe("Documented body sizes and source plans", () => {
     expect(new Set(SENSOR_CATALOG.map((s) => s.id)).size).toBe(SENSOR_CATALOG.length);
     for (const model of SENSOR_CATALOG) {
       expect(model.body.every((n) => Number.isFinite(n) && n > 0)).toBe(true);
-      if (model.id !== "GENERIC")
+      if (model.id === "GENERIC" || model.shape === "custom_pcb") {
+        // Un modèle non commercial n'a pas de plan source et ne doit pas en
+        // inventer un : son fichier source est explicitement nul.
+        expect(model.sourceFile).toBeNull();
+      } else {
         expect(
           existsSync(new URL(`../public/datasheets/${model.sourceFile}`, import.meta.url)),
         ).toBe(true);
+      }
     }
   });
   test("reference gaps are between actual body envelopes", () => {

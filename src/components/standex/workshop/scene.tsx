@@ -14,7 +14,14 @@ import {
   momentFor,
 } from "@/lib/standex/magnetic-workshop";
 import type { WorkshopConfig, CycleSample, Vec3, Contact } from "@/lib/standex/magnetic-workshop";
-import { sensorById, bladeLength, bladeOffsetZ, formatMm } from "@/lib/standex/sensor-catalog";
+import {
+  sensorById,
+  bladeLength,
+  bladeOffsetZ,
+  bladeOffsetY,
+  customLayout,
+  formatMm,
+} from "@/lib/standex/sensor-catalog";
 import type { SensorModel } from "@/lib/standex/sensor-catalog";
 
 const STATUS = { closed: "#009d78", open: "#8497a6", unknown: "#c18b39" };
@@ -45,7 +52,141 @@ function rounded(path: Shape | Path, x: number, z: number, w: number, h: number,
   path.quadraticCurveTo(x, z, x + r, z);
   path.closePath();
 }
+/** Schéma pédagogique « sur mesure » : reed nu en verre soudé sur un circuit
+ * imprimé volontairement NON rectangulaire (encoche de détrompage, coins
+ * chanfreinés, pattes de fixation percées). Toutes les cotes viennent de
+ * `customLayout`, dérivées du reed : rien n'est saisi à la main ici, et rien
+ * de tout cela ne constitue une référence commandable ni une cote validée. */
+function CustomBoard({ model, xray }: { model: SensorModel; xray: boolean }) {
+  const layout = customLayout(model)!;
+  const { reedLength, reedDiameter, pcbLength, pcbWidth, pcbThickness } = layout;
+  const [, height] = model.body;
+  const L = pcbLength / 2,
+    W = pcbWidth / 2,
+    r = Math.min(2, pcbWidth * 0.1),
+    chamfer = pcbWidth * 0.25,
+    nd = layout.notchDepth,
+    nw = layout.notchWidth / 2;
+  const boardTop = -height / 2 + pcbThickness;
+  const reedY = boardTop + reedDiameter / 2;
+  const padX = reedLength / 2 + reedDiameter * 0.9;
+
+  const outline = useMemo(() => {
+    const s = new Shape();
+    s.moveTo(-L + chamfer, -W);
+    s.lineTo(L - r, -W);
+    s.quadraticCurveTo(L, -W, L, -W + r);
+    s.lineTo(L, -nw);
+    s.lineTo(L - nd, -nw);
+    s.lineTo(L - nd, nw);
+    s.lineTo(L, nw);
+    s.lineTo(L, W - r);
+    s.quadraticCurveTo(L, W, L - r, W);
+    s.lineTo(-L + chamfer, W);
+    s.lineTo(-L, W - chamfer);
+    s.lineTo(-L, -W + chamfer);
+    s.closePath();
+    for (const sign of [-1, 1]) {
+      const hole = new Path();
+      hole.absarc(
+        -L + chamfer + layout.tabRadius * 1.6,
+        sign * (W - layout.tabRadius * 1.9),
+        layout.tabRadius,
+        0,
+        Math.PI * 2,
+        false,
+      );
+      s.holes.push(hole);
+    }
+    return s;
+  }, [L, W, r, chamfer, nd, nw, layout.tabRadius]);
+
+  const opacity = xray ? 0.3 : 1;
+  return (
+    <group>
+      {/* Circuit imprimé */}
+      <mesh position={[0, -height / 2, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <extrudeGeometry args={[outline, { depth: pcbThickness, bevelEnabled: false }]} />
+        <meshStandardMaterial
+          color={model.color}
+          transparent={xray}
+          opacity={opacity}
+          depthWrite={!xray}
+          roughness={0.72}
+          metalness={0.05}
+        />
+      </mesh>
+      {/* Pistes cuivre : du pad de soudure vers la zone de raccordement */}
+      {([-1, 1] as const).map((sign) => (
+        <mesh
+          key={`trace${sign}`}
+          position={[(-L + padX * sign) / 2, boardTop + 0.06, sign * 2.2]}
+        >
+          <boxGeometry args={[Math.abs(padX * sign + L), 0.12, reedDiameter * 0.3]} />
+          <meshStandardMaterial color="#b87333" metalness={0.75} roughness={0.32} />
+        </mesh>
+      ))}
+      {/* Pastilles + soudures */}
+      {([-1, 1] as const).map((sign) => (
+        <group key={`pad${sign}`} position={[sign * padX, boardTop, sign * 2.2]}>
+          <mesh position={[0, 0.07, 0]}>
+            <cylinderGeometry args={[reedDiameter * 0.42, reedDiameter * 0.42, 0.14, 24]} />
+            <meshStandardMaterial color="#b87333" metalness={0.75} roughness={0.3} />
+          </mesh>
+          <mesh position={[0, reedDiameter * 0.18, 0]} scale={[1, 0.62, 1]}>
+            <sphereGeometry args={[reedDiameter * 0.34, 18, 14]} />
+            <meshStandardMaterial color="#9aa5ad" metalness={0.85} roughness={0.24} />
+          </mesh>
+        </group>
+      ))}
+      {/* Ampoule de verre du reed nu, transparente : les lames restent visibles */}
+      <mesh position={[0, reedY, 0]} rotation={[0, 0, Math.PI / 2]}>
+        <cylinderGeometry args={[reedDiameter / 2, reedDiameter / 2, reedLength, 32]} />
+        <meshStandardMaterial
+          color="#cfe6ec"
+          transparent
+          opacity={0.3}
+          depthWrite={false}
+          roughness={0.1}
+          metalness={0.05}
+        />
+      </mesh>
+      {/* Fils de sortie du reed, cintrés jusqu'aux pastilles */}
+      {([-1, 1] as const).map((sign) => (
+        <Line
+          key={`lead${sign}`}
+          points={[
+            [(sign * reedLength) / 2, reedY, 0],
+            [sign * (reedLength / 2 + reedDiameter * 0.5), reedY, 0],
+            [sign * padX, reedY, sign * 2.2],
+            [sign * padX, boardTop + 0.2, sign * 2.2],
+          ]}
+          color="#c9d3d9"
+          lineWidth={2}
+        />
+      ))}
+      {/* Fils de liaison vers l'extérieur */}
+      {([-1, 1] as const).map((sign) => (
+        <Line
+          key={`wire${sign}`}
+          points={[
+            [-L, boardTop + 0.12, sign * 2.2],
+            [-L - reedDiameter * 2, boardTop + 0.12, sign * 2.2],
+            [-L - reedDiameter * 3.2, boardTop + 0.12, sign * 3.4],
+          ]}
+          color="#60727d"
+          lineWidth={2}
+        />
+      ))}
+    </group>
+  );
+}
 export function Body({ model, xray }: { model: SensorModel; xray: boolean }) {
+  if (model.shape === "custom_pcb" && customLayout(model))
+    return <CustomBoard model={model} xray={xray} />;
+  return <StandardBody model={model} xray={xray} />;
+}
+function StandardBody({ model, xray }: { model: SensorModel; xray: boolean }) {
   const [l, h, w] = model.body,
     opacity = xray ? 0.25 : 1;
   const baseShape = useMemo(() => {
@@ -186,7 +327,7 @@ export function Contacts({
   const closed = contact === "closed",
     gap = closed ? 0 : Math.max(0.17, model.body[2] * 0.1);
   return (
-    <group position={[0, 0, bladeOffsetZ(model)]}>
+    <group position={[0, bladeOffsetY(model), bladeOffsetZ(model)]}>
       <mesh position={[-span * 0.23, 0, -gap]}>
         <boxGeometry args={[span * 0.56, thickness, thickness]} />
         <meshStandardMaterial

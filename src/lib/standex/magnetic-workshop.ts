@@ -3,6 +3,7 @@
  */
 import {
   SENSOR_CATALOG,
+  isKnownSensorId,
   sensorById,
   sizeLabel,
   bladeOffsetZ,
@@ -131,7 +132,7 @@ export function parseWorkshopConfig(value: unknown): WorkshopConfig | null {
     x["machine"] = machine;
   }
   if (x["machine"] !== null && x["mode"] !== "education") return null;
-  if (!SENSOR_CATALOG.some((s) => s.id === x["sensorId"])) return null;
+  if (typeof x["sensorId"] !== "string" || !isKnownSensorId(x["sensorId"])) return null;
   const choices: Record<string, readonly unknown[]> = {
     mode: ["reference", "education"],
     sensitivity: ["B", "C", "D", "E"],
@@ -198,6 +199,10 @@ export function unavailableReason(c: WorkshopConfig): string | null {
   if (c.mode === "education") return null;
   if (sensorById(c.sensorId).contact === "unsupported")
     return "Le MK02 détecte du métal ferreux avec un aimant intégré. Son activation n'est pas modélisée dans cet atelier à aimant externe.";
+  // Le schéma sur mesure n'a aucune distance de commutation documentée : hors
+  // démonstration pédagogique, elle reste inconnue et n'est jamais calculée.
+  if (sensorById(c.sensorId).shape === "custom_pcb")
+    return "Conception sur mesure : aucune distance de commutation n'est documentée pour ce schéma. Elle reste inconnue tant que la R&D Standex n'a pas caractérisé la solution.";
   if (c.ferromagnetic)
     return "Présence de matière ferromagnétique : ce modèle ne calcule pas son effet.";
   if (c.temperature !== "ambient")
