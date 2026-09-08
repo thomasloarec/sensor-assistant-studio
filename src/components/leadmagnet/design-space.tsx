@@ -834,12 +834,20 @@ export function DesignSpace({ chrome = "page" }: DesignSpaceProps) {
 
 
           {/* ---------------- Besoin ---------------- */}
-          <TabsContent value="besoin" className="space-y-4 pt-4">
-            <p className="text-sm text-muted-foreground">{LOCAL_ASSISTANT_LABEL}</p>
-            {dossier.requirements.map((r) => (
-              <div key={r.key} className="rounded-md border p-3">
-                <div className="mb-2 flex items-center gap-2">
-                  <Label className="text-sm font-medium">{r.label}</Label>
+          <TabsContent value="besoin" className="space-y-5 pt-4">
+            <p className="text-base text-muted-foreground">{LOCAL_ASSISTANT_LABEL}</p>
+            {(showAdvanced
+              ? dossier.requirements
+              : dossier.requirements.filter((_, i) => i === focusIdx)
+            ).map((r) => (
+              <div key={r.key} className="rounded-xl border p-5">
+                <div className="mb-3 flex flex-wrap items-center gap-3">
+                  <Label
+                    htmlFor={`req-${r.key}`}
+                    className={showAdvanced ? "text-base font-medium" : "text-2xl font-semibold"}
+                  >
+                    {r.label}
+                  </Label>
                   <Badge
                     variant={
                       r.state === "confirmed"
@@ -851,41 +859,89 @@ export function DesignSpace({ chrome = "page" }: DesignSpaceProps) {
                   >
                     {stateBadge(r.state)}
                   </Badge>
-                  <span className="text-xs text-muted-foreground">source : {r.source}</span>
+                  <span className="text-sm text-muted-foreground">source : {r.source}</span>
                 </div>
                 <Textarea
-                  rows={2}
+                  id={`req-${r.key}`}
+                  rows={showAdvanced ? 2 : 4}
+                  className="text-base"
                   value={r.value}
-                  placeholder="Décrivez ce point ; laissez vide s'il est inconnu."
+                  placeholder="Décrivez ce point avec vos mots ; laissez vide s'il est inconnu."
                   onChange={(e) =>
                     setDossier((d) =>
                       proposeRequirement(d, r.key, { value: e.target.value, source: "user" }),
                     )
                   }
                 />
-                <div className="mt-2 flex items-center gap-2">
+                <div className="mt-3 flex flex-wrap items-center gap-3">
                   <Button
-                    size="sm"
                     variant="outline"
+                    className="min-h-11 text-base"
                     disabled={!r.value.trim() || r.state === "confirmed"}
                     onClick={() => setDossier((d) => confirmRequirement(d, r.key))}
                   >
                     Confirmer cette exigence
                   </Button>
-                  {r.note ? <span className="text-xs text-muted-foreground">{r.note}</span> : null}
+                  {showAdvanced ? null : (
+                    <Button
+                      variant="ghost"
+                      className="min-h-11 text-base"
+                      onClick={() => {
+                        setDossier((d) =>
+                          proposeRequirement(d, r.key, { value: "", source: "user" }),
+                        );
+                        setFocusIdx((i) => Math.min(dossier.requirements.length - 1, i + 1));
+                      }}
+                    >
+                      Je ne sais pas encore
+                    </Button>
+                  )}
+                  {r.note ? <span className="text-sm text-muted-foreground">{r.note}</span> : null}
                 </div>
               </div>
             ))}
-            <div className="rounded-md border p-3">
-              <Label className="text-sm font-medium">Contraintes libres</Label>
+
+            {showAdvanced ? null : (
+              <div className="flex flex-wrap items-center gap-3">
+                <Button
+                  variant="outline"
+                  className="min-h-11 text-base"
+                  disabled={focusIdx === 0}
+                  onClick={() => setFocusIdx((i) => Math.max(0, i - 1))}
+                >
+                  Revenir à la question précédente
+                </Button>
+                <Button
+                  className="min-h-11 text-base"
+                  onClick={() => {
+                    if (focusIdx < dossier.requirements.length - 1) setFocusIdx((i) => i + 1);
+                    else setTab("montage");
+                  }}
+                >
+                  {focusIdx < dossier.requirements.length - 1
+                    ? "Question suivante"
+                    : "Passer à mon montage"}
+                </Button>
+                <span className="text-base text-muted-foreground">
+                  Question {focusIdx + 1} sur {dossier.requirements.length}
+                </span>
+              </div>
+            )}
+
+            <div className="rounded-xl border p-5">
+              <Label htmlFor="free-constraints" className="text-base font-medium">
+                Autre chose à nous dire ?
+              </Label>
               <Textarea
+                id="free-constraints"
                 rows={3}
-                className="mt-2"
+                className="mt-2 text-base"
                 value={dossier.freeConstraints}
                 onChange={(e) => setDossier((d) => ({ ...d, freeConstraints: e.target.value }))}
               />
             </div>
           </TabsContent>
+
 
           {/* ---------------- Montage ---------------- */}
           <TabsContent value="montage" className="space-y-4 pt-4">
