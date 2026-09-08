@@ -129,6 +129,6 @@
 
 ## Refonte visuelle — lot B/4
 
-- [ ] Mettre en scène l’accueil immersif sans modifier son parcours ni ses textes.
-- [ ] Moderniser la démonstration aimant sans modifier sa physique ni ses contrôles.
-- [ ] Vérifier tests, types, build, trois largeurs et réduction des animations.
+- [x] Mettre en scène l’accueil immersif sans modifier son parcours ni ses textes.
+- [x] Moderniser la démonstration aimant sans modifier sa physique ni ses contrôles.
+- [x] Vérifier tests, types, build, trois largeurs et réduction des animations.
