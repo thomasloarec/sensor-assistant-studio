@@ -1605,12 +1605,7 @@ function DesignSpace() {
                     onSelectDossier={(d) => {
                       // Changer de dossier remet TOUT le contexte serveur au même
                       // instant : sinon le dossier A pourrait partir dans le dossier B.
-                      setServerDossierId(d.id);
-                      setServerRevision(d.revision);
-                      setNdaServer(null);
-                      setNda(INITIAL_NDA);
-                      setPrivacy((p) => ({ ...p, consents: [] }));
-                      setAcknowledged(false);
+                      resetServerContext(d.id, d.revision);
                       setSubmitMessage(
                         `Dossier « ${d.title} » sélectionné : votre accord d'envoi et la relecture sont à refaire pour ce dossier.`,
                       );
@@ -1621,25 +1616,31 @@ function DesignSpace() {
                         setSubmitMessage(parsed.reason);
                         return;
                       }
+                      // Reprise ATOMIQUE : contenu, contexte serveur, accords,
+                      // relecture et partage de fichier changent d'un seul tenant.
                       setDossier({ ...parsed.dossier, storage: "memory" });
                       setWorkshop(parsed.dossier.workshop ?? null);
-                      setServerDossierId(dossierId);
-                      setServerRevision(revision);
-                      setNdaServer(null);
-                      setNda(INITIAL_NDA);
-                      setPrivacy((p) => ({ ...p, consents: [] }));
-                      setAcknowledged(false);
+                      resetServerContext(dossierId, revision);
                       setSubmitMessage(
-                        `Version ${revision} reprise depuis le dossier réellement envoyé. ${parsed.notices.join(" ")}`,
+                        `Version ${revision} reprise depuis le dossier « ${dossierId.slice(0, 8)} » réellement envoyé. ${parsed.notices.join(" ")}`,
                       );
                     }}
-                    onApplyVariant={(variant) => {
+                    onApplyVariant={({ dossierId, variant }) => {
                       // La variante modifie RÉELLEMENT le dossier en cours, jamais
                       // la version déjà envoyée, et rien n'est approuvé pour autant.
+                      if (dossierId !== serverDossierId) {
+                        return {
+                          applied: [],
+                          notApplied: [],
+                          refused:
+                            "Cette proposition concerne un autre dossier que celui ouvert ici : reprenez d'abord ce dossier, puis appliquez la variante.",
+                        };
+                      }
                       const out = applyVariant(dossier, variant);
                       setDossier(out.dossier);
                       setPrivacy((p) => ({ ...p, consents: [] }));
                       setAcknowledged(false);
+                      setPreparedUpload(null);
                       return { applied: out.applied, notApplied: out.notApplied };
                     }}
                   />
