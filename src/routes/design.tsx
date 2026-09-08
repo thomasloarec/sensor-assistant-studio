@@ -209,6 +209,8 @@ function DesignSpace() {
   const [nda, setNda] = useState<NdaState>(INITIAL_NDA);
   const [ndaPreview, setNdaPreview] = useState<FilledNda | null>(null);
   const [ndaError, setNdaError] = useState<string | null>(null);
+  /** Statut NDA faisant autorité : lu au serveur, jamais déduit d'une case cochée. */
+  const [ndaServer, setNdaServer] = useState<NdaStatusView | null>(null);
 
   // Câblage et terminaison vivent DANS le dossier : ils suivent export, résumé et révision.
   const cabling = dossier.cabling;
