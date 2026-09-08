@@ -51,11 +51,19 @@ import {
 import {
   APPROVED_NDA_TEMPLATE,
   INITIAL_NDA,
+  NDA_FIELD_LABELS,
   ndaAllowsConfidentialTransfer,
   ndaStatusLabel,
   prepareNda,
   type NdaState,
 } from "@/lib/leadmagnet/nda";
+import {
+  fillNdaTemplate,
+  loadNdaTemplate,
+  missingNdaFields,
+  type FilledNda,
+} from "@/lib/leadmagnet/nda-docx";
+
 import { checkSubmission, submit, technicalSummary } from "@/lib/leadmagnet/submission";
 import { checkLeadBackend, type LeadBackendStatus } from "@/lib/leadmagnet/backend";
 import { routeSamples, SEARCH_LINK_DISCLAIMER, createSampleRequest } from "@/lib/leadmagnet/samples";
@@ -129,6 +137,9 @@ function DesignSpace() {
   const [dossier, setDossier] = useState<DesignDossier>(() => createDossier());
   const [privacy, setPrivacy] = useState(INITIAL_PRIVACY);
   const [nda, setNda] = useState<NdaState>(INITIAL_NDA);
+  const [ndaPreview, setNdaPreview] = useState<FilledNda | null>(null);
+  const [ndaError, setNdaError] = useState<string | null>(null);
+
   const [cabling, setCabling] = useState<CablingConfig>(EMPTY_CABLING);
   const [termination, setTermination] = useState(DEFAULT_TERMINATION);
   const [freeConnector, setFreeConnector] = useState("");
@@ -142,6 +153,40 @@ function DesignSpace() {
   const [volumeError, setVolumeError] = useState<string | null>(null);
   const [sampleQty, setSampleQty] = useState("");
   const [sampleMessage, setSampleMessage] = useState<string | null>(null);
+
+  /** Remplissage local du NDA : aperçu puis téléchargement, sans aucune transmission. */
+  const prepareNdaDocument = useCallback(
+    async (action: "preview" | "download") => {
+      setNdaError(null);
+      const missing = missingNdaFields(nda.fields);
+      if (missing.length) {
+        setNdaError(`Champs à compléter avant génération : ${missing.join(", ")}.`);
+        return;
+      }
+      try {
+        const filled = await fillNdaTemplate(await loadNdaTemplate(), nda.fields);
+        setNdaPreview(filled);
+        const result = prepareNda(nda);
+        if (result.ok) setNda((n) => ({ ...n, status: "prepared" }));
+        if (action === "download") {
+          const blob = new Blob([filled.bytes as unknown as BlobPart], {
+            type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+          });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = filled.fileName;
+          a.click();
+          URL.revokeObjectURL(url);
+        }
+      } catch (error) {
+        setNdaPreview(null);
+        setNdaError(error instanceof Error ? error.message : "Génération impossible.");
+      }
+    },
+    [nda],
+  );
+
 
   useEffect(() => {
     checkLeadBackend().then(setBackend).catch(() => setBackend(null));
@@ -681,28 +726,12 @@ function DesignSpace() {
                 <AccordionContent className="space-y-3">
                   <p className="text-sm">
                     Modèle juridique approuvé : <strong>{APPROVED_NDA_TEMPLATE.fileName}</strong>{" "}
-                    (SHA-256 attendu {APPROVED_NDA_TEMPLATE.sha256.slice(0, 16)}…). Aucun autre
-                    modèle ni résumé n'est généré.
+                    (SHA-256 {APPROVED_NDA_TEMPLATE.sha256.slice(0, 16)}…, vérifié avant chaque
+                    remplissage). L'original reste intact : seule une copie remplie est produite, sur
+                    cet appareil, sans transmettre le dossier.
                   </p>
-                  {!nda.templateAvailable ? (
-                    <p className="flex items-start gap-2 rounded-md border border-amber-300 bg-amber-50 p-2 text-sm text-amber-900">
-                      <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
-                      Le binaire du modèle n'a pas encore été déposé dans le projet
-                      ({APPROVED_NDA_TEMPLATE.repoPath}) : la préparation du document est
-                      indisponible.
-                    </p>
-                  ) : null}
                   <div className="grid gap-2 md:grid-cols-2">
-                    {(
-                      [
-                        ["clientLegalName", "Raison sociale du client"],
-                        ["clientAddress", "Adresse du client"],
-                        ["signatoryName", "Nom du signataire client"],
-                        ["signatoryRole", "Fonction du signataire"],
-                        ["place", "Lieu"],
-                        ["date", "Date"],
-                      ] as const
-                    ).map(([key, label]) => (
+                    {NDA_FIELD_LABELS.map(([key, label]) => (
                       <div key={key}>
                         <Label className="text-xs">{label}</Label>
                         <Input
@@ -714,24 +743,53 @@ function DesignSpace() {
                       </div>
                     ))}
                   </div>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => {
-                      const result = prepareNda(nda);
-                      setSubmitMessage(result.ok ? "Document préparé (non signé)." : result.reason);
-                      if (result.ok) setNda((n) => ({ ...n, status: "prepared" }));
-                    }}
-                  >
-                    Préparer le document
-                  </Button>
+                  <div className="flex flex-wrap gap-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        void prepareNdaDocument("preview");
+                      }}
+                    >
+                      Aperçu du document rempli
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      disabled={!ndaPreview}
+                      onClick={() => {
+                        void prepareNdaDocument("download");
+                      }}
+                    >
+                      <Download className="mr-1 h-4 w-4" />
+                      Télécharger le .docx non signé
+                    </Button>
+                  </div>
+                  {ndaError ? (
+                    <p className="flex items-start gap-2 rounded-md border border-amber-300 bg-amber-50 p-2 text-sm text-amber-900">
+                      <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+                      {ndaError}
+                    </p>
+                  ) : null}
+                  {ndaPreview ? (
+                    <div className="space-y-2">
+                      <p className="text-xs text-muted-foreground">
+                        Aperçu local des clauses du document rempli (non signé) — {ndaPreview.fileName}
+                      </p>
+                      <pre className="max-h-80 overflow-auto whitespace-pre-wrap rounded-md bg-muted p-3 text-xs">
+                        {ndaPreview.paragraphs.filter((p) => p.trim()).join("\n\n")}
+                      </pre>
+                    </div>
+                  ) : null}
                   <p className="text-xs text-muted-foreground">
-                    Générer un document n'est pas une signature. Le statut « en vigueur » n'est
-                    accordé que sur preuve vérifiée côté Standex ; tant qu'il n'est pas atteint,
-                    aucun contenu confidentiel n'est transmis.
+                    Générer un document n'est pas une signature : aucune signature ni tampon n'est
+                    ajouté, le document reste non signé. Le statut « en vigueur » n'est accordé que
+                    sur preuve vérifiée côté Standex ; tant qu'il n'est pas atteint, aucun contenu
+                    confidentiel n'est transmis.
                   </p>
                 </AccordionContent>
               </AccordionItem>
+
 
               <AccordionItem value="envoi">
                 <AccordionTrigger>Préparer la revue Standex</AccordionTrigger>

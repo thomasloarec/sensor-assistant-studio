@@ -39,11 +39,20 @@ de test interne, qui reste intact (`/`).
 - **Terminaison** : fils nus par défaut ; connecteur uniquement par référence exacte. Le
   catalogue de combinaisons qualifiées est vide, donc toute saisie devient une référence
   libre « à vérifier par R&D ».
-- **NDA** : le modèle approuvé est le seul référencé (`NDA Standex x K Motor_16062026.docx`,
-  SHA-256 `6e25345f…740b`). Champs variables limités à identité/adresse client, nom/fonction
-  du signataire, lieu et date. Statuts demandé / préparé / en attente / en vigueur ; générer
-  n'est pas signer ; le statut « en vigueur » exige une preuve vérifiée. Sans preuve, tout
-  transfert confidentiel est bloqué.
+- **NDA** : le binaire original approuvé est livré dans l'application
+  (`public/legal/nda-standex-k-motor-16062026.docx`, SHA-256
+  `6e25345f1e83e92630258774d27a451d65d615cdd9f41a5331dae75c4072740b`, vérifié avant chaque
+  génération). Le remplissage est **local** (zip + XML via `fflate`, aucun envoi, aucune
+  dépendance au dossier de conception) : l'original reste immuable, une copie remplie est
+  produite. Champs variables, et rien d'autre, aux paragraphes `./w:body/w:p` 11 (société),
+  12 (rue), 13 (code postal/ville), 14 (pays), 78 (date Standex seule — le lieu
+  « Welschingen, Germany » est figé), 84 (Name), 85 (Position), 86 (lieu/date client). Les
+  mentions Stamp/Signature, en-têtes, pieds, clauses et autres blocs de signature sont
+  conservés ; aucune signature ni image n'est ajoutée et le fichier produit s'appelle
+  explicitement « non signe.docx ». Aperçu local des clauses puis téléchargement sont
+  possibles avant toute transmission. Statuts demandé / préparé / en attente / en vigueur ;
+  générer n'est pas signer ; le statut « en vigueur » exige une preuve vérifiée. Sans preuve,
+  tout transfert confidentiel reste bloqué.
 - **Soumission** : contrôles de complétude, instantané immuable avec révision, hash SHA-256,
   horodatage, consentements et liste des fichiers *réellement* transférés. Sans backend prêt,
   la soumission échoue proprement avec un message clair — aucun succès simulé.
@@ -66,9 +75,9 @@ de test interne, qui reste intact (`/`).
    notes internes, offres, invalidation par version, concurrence optimiste) est implémentée et
    testée dans `src/lib/leadmagnet/review.ts`, mais l'écran R&D n'est pas branché tant que les
    tables et les rôles staff n'existent pas côté backend.
-3. **Modèle NDA** : le binaire `.docx` n'a pas été fourni. Le mécanisme est prêt
-   (`templateAvailable = false` bloque la préparation) ; déposez le fichier dans
-   `docs/legal/NDA Standex x K Motor_16062026.docx` et vérifiez son SHA-256 avant activation.
+3. **Preuve de NDA signé** : la génération et l'aperçu fonctionnent hors ligne, mais le
+   passage au statut « en vigueur » demande une preuve vérifiée côté Standex (empreinte du
+   document signé, date, vérificateur), stockée dans `lead.nda_proofs` — donc après migration.
 4. **Longueurs standard, combinaisons connecteurs, disponibilités fournisseurs** : registres
    volontairement vides, à remplir uniquement avec des données sourcées.
 5. **Préremplissage société** : aucun service de recherche n'est connecté
@@ -76,7 +85,10 @@ de test interne, qui reste intact (`/`).
 
 ## Tests exécutés
 
-`bun test tests/` → **81 tests, 0 échec** (dont 15 nouveaux dans `tests/lead-magnet.test.ts` :
+`bun test tests/` → **88 tests, 0 échec**, dont 7 dans `tests/nda-docx.test.ts` (empreinte du
+modèle, refus d'un fichier non conforme, paragraphes hors champs variables identiques, tous les
+autres fichiers du .docx identiques octet pour octet, lieu Standex et mentions Stamp/Signature
+préservés, original intact, nom de fichier non signé) et 15 dans `tests/lead-magnet.test.ts` :
 exploration sans transfert, confirmé vs hypothèse, filtrage mécanique et encombrement,
 polyligne vs distance directe, marges et géométrie incomplète, suffixes de références,
 connecteurs non inventés, NDA brouillon incapable d'autoriser un transfert, consentement puis
@@ -94,7 +106,7 @@ Aperçu privé : `/` = banc de test interne inchangé ; `/design` = espace de co
 ## Emplacement du code
 
 `src/lib/leadmagnet/` : `dossier.ts`, `candidates.ts`, `cabling.ts`, `connectors.ts`,
-`privacy.ts`, `nda.ts`, `submission.ts`, `review.ts`, `samples.ts`, `backend.ts`
+`privacy.ts`, `nda.ts`, `nda-docx.ts`, `submission.ts`, `review.ts`, `samples.ts`, `backend.ts`
 (logique métier pure, sans UI ni réseau sauf `backend.ts`).
 `src/routes/design.tsx` : UI. `supabase/schema/migration_v1.0_lead_magnet.sql` : DDL.
 
