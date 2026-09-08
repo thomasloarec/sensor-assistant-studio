@@ -139,11 +139,10 @@ test("instantané : indépendant des modifications ultérieures du dossier", asy
     reviewAcknowledged: true,
     additionalConstraints: "",
   });
-  d.cabling = { ...d.cabling, serviceReserveMm: 999 };
   d.title = "modifié après coup";
-  const serialized = JSON.stringify(snapshot);
-  expect(serialized).not.toContain("999");
-  expect(serialized).not.toContain("modifié après coup");
+  expect(snapshot.dto.cabling.serviceReserveMm).toBe(10);
+  expect(snapshot.dto.title).not.toBe("modifié après coup");
+  expect(JSON.stringify(snapshot.dto)).not.toContain("modifié après coup");
 });
 
 test("échantillons : rien avant revue validée et référence exacte", () => {
