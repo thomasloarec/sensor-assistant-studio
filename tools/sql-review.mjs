@@ -85,6 +85,16 @@ const filesConsentFor = (dossierId, revision, sha, bytes, mime) => ({
   file_mime: mime,
 });
 
+// Envoi complet : hash canonique + consentement lié, comme le fait l'application.
+async function submitReal(user, dossierId, snap, expectedRevision = 0, files = []) {
+  const h = await hashOf(snap);
+  const digests = files.map((f) => f.sha256).sort();
+  return actor('authenticated', user,
+    () => value('select public.lead_submit_revision($1,$2,$3,$4,$5,$6)',
+      [dossierId, expectedRevision, snap, h,
+       consentFor(dossierId, expectedRevision + 1, h, digests), files]));
+}
+
 // 1. Sonde de version sans la moindre réparation locale.
 try {
   const v = await actor('anon', null, () => value('select public.lead_schema_version()'));
@@ -234,12 +244,12 @@ await expectFail('direct_table_access_denied', () => actor('authenticated', ids.
 // NDA demandé : aucun transfert avant preuve serveur.
 const privateDossier = await actor('authenticated', ids.a,
   () => value('select public.lead_create_dossier($1,true)', ['Synthetic NDA request']));
-await expectFail('unsigned_nda_blocks_submission', () => actor('authenticated', ids.a,
-  () => value('select public.lead_submit_revision($1,0,$2,$3,$4,$5)',
-    [privateDossier, snapshot, null, consent, []])), 'NDA_NOT_IN_FORCE');
+await expectFail('unsigned_nda_blocks_submission',
+  () => submitReal(ids.a, privateDossier, snapshot), 'NDA_NOT_IN_FORCE');
 await expectFail('unsigned_nda_blocks_upload_session', () => actor('authenticated', ids.a,
   () => value('select public.lead_open_upload_session($1,$2,$3)',
-    [privateDossier, 'design_model', filesConsent])), 'NDA_NOT_IN_FORCE');
+    [privateDossier, 'design_model',
+     filesConsentFor(privateDossier, 1, 'd'.repeat(64), 1024, 'model/gltf-binary')])), 'NDA_NOT_IN_FORCE');
 await expectFail('client_cannot_declare_nda_in_force', () => actor('authenticated', ids.a,
   () => value('select public.lead_admin_record_nda_proof($1,$2,$3,$4,$5,$6,$7,$8)',
     [privateDossier, 'f'.repeat(64), 'b'.repeat(64), 'p/x.docx', 'REF-1',
@@ -279,11 +289,14 @@ const proof = await actor('authenticated', ids.admin,
 add('admin_can_record_verified_nda_proof', !!proof);
 
 // Session d'upload : autorisée seulement après NDA en vigueur, chemin imposé.
+const MODEL_SHA = 'e'.repeat(64);
+const MODEL_BYTES = 2048;
 let session;
 try {
   session = await actor('authenticated', ids.a,
     () => value('select public.lead_open_upload_session($1,$2,$3)',
-      [privateDossier, 'design_model', filesConsent]));
+      [privateDossier, 'design_model',
+       filesConsentFor(privateDossier, 1, MODEL_SHA, MODEL_BYTES, 'model/gltf-binary')]));
   add('upload_session_after_nda_in_force', session.path_prefix.startsWith(privateDossier));
 } catch (e) { add('upload_session_after_nda_in_force', false, e.message); }
 await expectFail('upload_session_without_consent_is_rejected', () => actor('authenticated', ids.a,
@@ -291,7 +304,9 @@ await expectFail('upload_session_without_consent_is_rejected', () => actor('auth
     [privateDossier, 'design_model', null])), 'CONSENT_INCOMPLETE');
 await expectFail('upload_session_with_invalid_consent_date_is_rejected', () => actor('authenticated', ids.a,
   () => value('select public.lead_open_upload_session($1,$2,$3)',
-    [privateDossier, 'design_model', { ...filesConsent, accepted_at: 'not-a-date' }])), 'CONSENT_INCOMPLETE');
+    [privateDossier, 'design_model',
+     { ...filesConsentFor(privateDossier, 1, MODEL_SHA, MODEL_BYTES, 'model/gltf-binary'),
+       accepted_at: 'not-a-date' }])), 'CONSENT_INCOMPLETE');
 
 if (session) {
   await actor('authenticated', ids.a, () => db.query(
@@ -302,10 +317,9 @@ if (session) {
     () => db.query("insert into storage.objects(bucket_id,name,owner) values('lead-design-files',$1,$2)",
       ['forged/path/model.glb', ids.a])));
 
-  const priv = await actor('authenticated', ids.a,
-    () => value('select public.lead_submit_revision($1,0,$2,$3,$4,$5)',
-      [privateDossier, withVolume({ kind: 'known', sensorsPerYear: 500 }), null, consent,
-        [{ path: session.path_prefix + '/model.glb', kind: 'glb' }]]));
+  const priv = await submitReal(ids.a, privateDossier,
+    withVolume({ kind: 'known', sensorsPerYear: 500 }), 0,
+    [{ path: session.path_prefix + '/model.glb', kind: 'glb', sha256: MODEL_SHA }]);
   add('real_file_can_be_attached_to_revision', priv.revision === 1);
   await expectFail('submitted_object_is_immutable', () => actor('authenticated', ids.a,
     () => db.query("delete from storage.objects where name = $1", [session.path_prefix + '/model.glb'])
@@ -324,9 +338,7 @@ for (const [label, volume, expected] of [
 ]) {
   const dv = await actor('authenticated', ids.a,
     () => value('select public.lead_create_dossier($1,false)', ['Volume ' + label]));
-  await expectFail(label, () => actor('authenticated', ids.a,
-    () => value('select public.lead_submit_revision($1,0,$2,$3,$4,$5)',
-      [dv, withVolume(volume), null, consent, []])), expected);
+  await expectFail(label, () => submitReal(ids.a, dv, withVolume(volume)), expected);
 }
 
 for (const [label, volume, designation, expectedRoute] of [
@@ -339,9 +351,7 @@ for (const [label, volume, designation, expectedRoute] of [
     const dv = await actor('authenticated', ids.a,
       () => value('select public.lead_create_dossier($1,false)', ['Routage ' + label]));
     await actor('authenticated', ids.admin, () => value('select public.lead_assign_dossier($1,$2)', [dv, ids.rnd]));
-    const sv = await actor('authenticated', ids.a,
-      () => value('select public.lead_submit_revision($1,0,$2,$3,$4,$5)',
-        [dv, withVolume(volume), null, consent, []]));
+    const sv = await submitReal(ids.a, dv, withVolume(volume));
     const rvw = await actor('authenticated', ids.rnd,
       () => value('select public.lead_publish_review($1,$2,$3,$4,$5,$6,$7,$8,$9)',
         [sv.revision_id, 'full', 'ok', 'validated', 'msg', null, 'MK03-1A66-200W', designation, {}]));
