@@ -80,7 +80,12 @@ import {
 import { checkSubmission, submit, technicalSummary } from "@/lib/leadmagnet/submission";
 import { checkLeadBackend, type LeadBackendStatus } from "@/lib/leadmagnet/backend";
 import { createSupabaseSubmissionBackend } from "@/lib/leadmagnet/supabase-adapter";
-import { routeSamples, SEARCH_LINK_DISCLAIMER, createSampleRequest } from "@/lib/leadmagnet/samples";
+import {
+  routeSamples,
+  SEARCH_LINK_DISCLAIMER,
+  createSampleRequest,
+  type SampleRequest,
+} from "@/lib/leadmagnet/samples";
 import { DEFAULT_WORKSHOP } from "@/lib/standex/magnetic-workshop";
 import type { WorkshopConfig } from "@/lib/standex/magnetic-workshop";
 
@@ -191,6 +196,7 @@ function DesignSpace() {
   const termination = dossier.termination;
   const [connectorDraft, setConnectorDraft] = useState<ConnectorDraft>(EMPTY_CONNECTOR_DRAFT);
   const [connectorError, setConnectorError] = useState<string | null>(null);
+  const [sampleRequests, setSampleRequests] = useState<SampleRequest[]>([]);
   const [importMessage, setImportMessage] = useState<string | null>(null);
   const [backend, setBackend] = useState<LeadBackendStatus | null>(null);
   // Dossier serveur : créé à la première transmission réussie, puis réutilisé.
@@ -1199,7 +1205,13 @@ function DesignSpace() {
                 <AccordionTrigger>Échantillons</AccordionTrigger>
                 <AccordionContent className="space-y-2">
                   <p className="text-sm">{sampleRoute.note}</p>
-                  {sampleRoute.kind === "distributors" ? (
+                  {!publishedReview ? (
+                    <p className="text-sm text-amber-700">
+                      Les échantillons s'ouvrent après une revue Standex validée et publiée, qui fixe
+                      la référence exacte à commander. Une gamme ne suffit pas.
+                    </p>
+                  ) : null}
+                  {sampleRoute.kind === "distributors" && publishedReview ? (
                     <>
                       <ul className="list-disc pl-5 text-sm">
                         {sampleRoute.partners.map((p) => (
@@ -1208,7 +1220,7 @@ function DesignSpace() {
                               className="underline"
                               target="_blank"
                               rel="noreferrer"
-                              href={p.search + encodeURIComponent(dossier.selectedSensorId ?? "")}
+                              href={p.search + encodeURIComponent(publishedReview.exactPart)}
                             >
                               {p.name}
                             </a>
@@ -1232,13 +1244,18 @@ function DesignSpace() {
                       variant="outline"
                       onClick={() => {
                         const result = createSampleRequest(
-                          dossier.selectedSensorId ?? "",
+                          publishedReview?.exactPart ?? "",
                           Number(sampleQty),
                           sampleRoute,
+                          {
+                            reviewValidated: publishedReview !== null,
+                            exactPartConfirmed: publishedReview !== null,
+                          },
                         );
+                        setSampleRequests((list) => (result.ok ? [...list, result.request] : list));
                         setSampleMessage(
                           result.ok
-                            ? "Demande enregistrée dans cet onglet. Aucun e-mail n'est envoyé et aucun stock n'est garanti."
+                            ? "Demande conservée dans cet onglet uniquement : rien n'est envoyé et aucun stock n'est garanti."
                             : result.reason,
                         );
                       }}
@@ -1247,6 +1264,15 @@ function DesignSpace() {
                     </Button>
                   </div>
                   {sampleMessage ? <p className="text-sm">{sampleMessage}</p> : null}
+                  {sampleRequests.length ? (
+                    <ul className="list-disc pl-5 text-xs text-muted-foreground">
+                      {sampleRequests.map((r, i) => (
+                        <li key={i}>
+                          {r.quantity} × {r.partNumber} — conservé localement, non transmis.
+                        </li>
+                      ))}
+                    </ul>
+                  ) : null}
                   <p className="text-xs text-muted-foreground">
                     Disponibilités, MOQ et conditionnements : inconnus tant qu'aucun fournisseur
                     réel n'est connecté.
