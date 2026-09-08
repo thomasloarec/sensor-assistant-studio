@@ -289,6 +289,51 @@ function DesignSpace() {
       .catch(() => setBackend(null));
   }, []);
 
+  // Le statut de liaison doit suivre la connexion : sans cela, un client qui vient
+  // de se connecter continue de voir « connectez-vous ».
+  useEffect(() => {
+    if (!supabase) return;
+    const { data } = supabase.auth.onAuthStateChange(() => {
+      checkLeadBackend()
+        .then(setBackend)
+        .catch(() => setBackend(null));
+    });
+    return () => data.subscription.unsubscribe();
+  }, []);
+
+  // Un accord d'envoi ne vaut que pour le contenu exact qui a été relu.
+  useEffect(() => {
+    let alive = true;
+    submissionBinding({
+      dossier,
+      nda,
+      consents: [],
+      reviewAcknowledged: false,
+      additionalConstraints: extraConstraints,
+      serverDossierId,
+      serverRevision: serverRevision + 1,
+    })
+      .then((next) => {
+        if (!alive) return;
+        setBinding((previous) => (previous && sameBinding(previous, next) ? previous : next));
+        setPrivacy((p) => {
+          const pruned = pruneStaleConsents(p, next);
+          if (pruned !== p) {
+            setAcknowledged(false);
+            setConsentNotice(
+              "Le contenu, le dossier visé ou les fichiers ont changé : relisez le résumé et confirmez à nouveau votre accord d'envoi.",
+            );
+          }
+          return pruned;
+        });
+      })
+      .catch(() => undefined);
+    return () => {
+      alive = false;
+    };
+  }, [dossier, extraConstraints, serverDossierId, serverRevision, nda]);
+
+
   useEffect(() => {
     const warn = (e: BeforeUnloadEvent) => {
       e.preventDefault();
