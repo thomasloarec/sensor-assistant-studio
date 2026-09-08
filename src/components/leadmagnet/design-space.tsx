@@ -2559,6 +2559,13 @@ export function DesignSpace({
         className={`material sticky top-0 z-20 border-b border-[var(--hairline)]${visible ? "" : " hidden"}`}
       >
         <div className="mx-auto flex max-w-[76rem] flex-wrap items-end gap-4 px-4 py-4">
+          <div className="flex shrink-0 items-center gap-3 self-center">
+            <BrandLogo variant="mark" tone="light" height={32} clearance={false} alt="" />
+            <span
+              aria-hidden="true"
+              className="block h-6 w-px bg-[var(--hairline)]"
+            />
+          </div>
           <div className="min-w-[min(100%,18rem)] flex-1">
             <Label htmlFor="project-title" className="t-label">
               Nom de mon projet

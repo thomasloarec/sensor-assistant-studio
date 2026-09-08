@@ -142,8 +142,11 @@ function Header({ user }: { user: User | null }) {
   return (
     <header className="studio-header">
       <div className="studio-brand">
-        STANDEX <span>DETECT</span>
-        <small>{t("VOTRE PROJET CAPTEUR")}</small>
+        <BrandLogo variant="mark" tone="light" height={30} clearance={false} alt="" />
+        <div className="studio-brand-text">
+          STANDEX <span>DETECT</span>
+          <small>{t("VOTRE PROJET CAPTEUR")}</small>
+        </div>
       </div>
       <div className="studio-header-center">
         <span>{t("Conversation")}</span>

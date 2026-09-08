@@ -30,15 +30,18 @@
   backdrop-filter: var(--material-blur);
 }
 .studio-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   color: var(--heading);
   font: var(--t-title-s);
   font-weight: 800;
   line-height: 1.2;
 }
-.studio-brand > span {
+.studio-brand-text > span {
   font-size: 0.875rem;
 }
-.studio-brand > small,
+.studio-brand small,
 .studio-eyebrow,
 .studio-sessions h2,
 .studio-scenario-list > summary,
@@ -49,7 +52,7 @@
   font: var(--t-label);
   letter-spacing: var(--tracking-label);
 }
-.studio-brand > small {
+.studio-brand small {
   display: block;
   margin-top: 5px;
 }
