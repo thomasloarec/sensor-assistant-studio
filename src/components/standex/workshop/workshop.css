@@ -224,6 +224,11 @@
   --mw-border: var(--surface-tint);
   --mw-green: var(--success);
   --mw-bg: var(--surface);
+  /* Surfaces et contrôles : jetons qui suivent le contexte clair OU immersif.
+     Une valeur littérale « white » redevenait invisible sous .immersive. */
+  --mw-surface: var(--surface);
+  --mw-field: var(--popover);
+  --mw-on-accent: var(--primary-foreground);
   min-height: 100%;
   overflow: auto;
   background: var(--mw-bg);
