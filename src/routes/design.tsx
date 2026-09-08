@@ -1397,7 +1397,37 @@ function DesignSpace() {
                       <Download className="mr-1 h-4 w-4" />
                       Télécharger le .docx non signé
                     </Button>
+                    <Button
+                      size="sm"
+                      disabled={!backend?.ready}
+                      onClick={() => {
+                        void prepareServerNda();
+                      }}
+                    >
+                      Préparer mon NDA pour vérification
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      disabled={!backend?.ready || !serverDossierId}
+                      onClick={() => {
+                        void refreshNdaStatus();
+                      }}
+                    >
+                      Actualiser le statut
+                    </Button>
                   </div>
+                  <p className="text-xs text-muted-foreground">
+                    « Préparer mon NDA » n'envoie aucune donnée de conception : seule une fiche
+                    vide est créée côté Standex pour que vous puissiez déposer le document signé
+                    et que l'équipe puisse le vérifier.{" "}
+                    {ndaServer
+                      ? `Statut côté Standex : ${ndaServer.nda_status}${
+                          ndaServer.allows_transfer ? " — transfert autorisé" : " — transfert bloqué"
+                        }.`
+                      : "Aucune fiche NDA créée pour l'instant."}
+                  </p>
+
                   {ndaError ? (
                     <p className="flex items-start gap-2 rounded-md border border-amber-300 bg-amber-50 p-2 text-sm text-amber-900">
                       <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
