@@ -11,7 +11,9 @@ import {
   humanRpcError,
   isMissingRpc,
   conflictRevision,
+  schemaVersionSatisfies,
 } from "./rpc";
+
 import type { StaffRole } from "./review";
 import type { SubmissionBackend, SubmissionSnapshot } from "./submission";
 
@@ -46,16 +48,20 @@ export async function probeLeadSchema(): Promise<LeadSchemaProbe> {
     };
   const payload = (data ?? {}) as { version?: string | null; ready?: boolean };
   const version = payload.version ?? null;
-  const ready = Boolean(payload.ready) && version !== null;
+  // Comparaison réelle de version : un simple booléen serveur ne suffit pas.
+  const ready = Boolean(payload.ready) && schemaVersionSatisfies(version, REQUIRED_LEAD_SCHEMA_VERSION);
   return {
     configured: true,
     schemaReady: ready,
     version,
     adminDetail: ready
       ? `Schéma lead version ${version} (attendu ≥ ${REQUIRED_LEAD_SCHEMA_VERSION}).`
-      : "Registre de migrations vide côté serveur.",
+      : version
+        ? `Schéma lead version ${version} < ${REQUIRED_LEAD_SCHEMA_VERSION} : migration à appliquer.`
+        : "Registre de migrations vide côté serveur.",
   };
 }
+
 
 export interface LeadCapabilities {
   authenticated: boolean;
