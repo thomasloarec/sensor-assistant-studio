@@ -135,6 +135,6 @@
 
 ## Réglage fin de l’accueil — lot B.2
 
-- [ ] Resserrer le rythme du héros et équilibrer le titre sur deux lignes.
-- [ ] Clarifier le champ magnétique, l’ampoule et les lamelles du capteur.
-- [ ] Fusionner la démonstration en une carte et vérifier les trois largeurs.
+- [x] Resserrer le rythme du héros et équilibrer le titre sur deux lignes.
+- [x] Clarifier le champ magnétique, l’ampoule et les lamelles du capteur.
+- [x] Fusionner la démonstration en une carte et vérifier les trois largeurs.
