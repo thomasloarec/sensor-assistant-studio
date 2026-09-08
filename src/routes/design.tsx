@@ -401,8 +401,10 @@ function DesignSpace() {
                   </p>
                   <Suspense fallback={<p className="text-sm">Chargement de l'atelier…</p>}>
                     <MagneticWorkshop
-                      config={workshop ?? DEFAULT_WORKSHOP}
-                      onChange={(c: WorkshopConfig) => {
+                      initialConfig={workshop ?? DEFAULT_WORKSHOP}
+                      storageLabel="ce dossier, en mémoire de l'onglet"
+                      onClose={() => setShowWorkshop(false)}
+                      onSave={async (c: WorkshopConfig) => {
                         setWorkshop(c);
                         setDossier((d) => ({ ...d, workshop: c, workshopIsExample: !d.workshop }));
                       }}
