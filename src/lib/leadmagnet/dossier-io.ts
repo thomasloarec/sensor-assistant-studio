@@ -8,6 +8,7 @@
 import { z } from "zod";
 import { createDossier, type DesignDossier } from "./dossier";
 import { EMPTY_CABLING } from "./cabling";
+import { parseWorkshopConfig } from "@/lib/standex/magnetic-workshop";
 import { DEFAULT_TERMINATION } from "./connectors";
 
 export const EXPORT_FORMAT = "standex-design-dossier";
@@ -54,13 +55,23 @@ export const EXPORT_BINARY_NOTICE =
   "Après reprise, réimportez le même GLB pour retrouver le montage.";
 
 const point = z.tuple([z.number().finite(), z.number().finite(), z.number().finite()]);
+const pose = z
+  .object({ cycleT: z.number().finite().min(0).max(1), label: z.string() })
+  .nullable();
 
 const cabling = z.object({
   sensorEndpoint: point.nullable().catch(null),
   connectionEndpoint: point.nullable().catch(null),
   waypoints: z.array(point).catch([]),
   statePaths: z
-    .array(z.object({ stateId: z.string(), label: z.string(), points: z.array(point) }))
+    .array(
+      z.object({
+        stateId: z.string(),
+        label: z.string(),
+        points: z.array(point),
+        pose: pose.catch(null).default(null),
+      }),
+    )
     .catch([]),
   declaredMotionStates: z.array(z.object({ id: z.string(), label: z.string() })).catch([]),
   motionCoverageConfirmed: z.boolean().catch(false),
@@ -73,6 +84,44 @@ const cabling = z.object({
     .enum(["undecided", "standard_to_confirm", "custom_to_confirm"])
     .catch("undecided"),
 });
+
+/** Montage : les seules formes connues sont acceptées. Toute autre forme est refusée. */
+const mountingSchema = z.union([
+  z.object({ kind: z.literal("pcb_smd") }),
+  z.object({ kind: z.literal("pcb_through_hole") }),
+  z.object({ kind: z.literal("screw") }),
+  z.object({ kind: z.literal("press_fit"), holeDiameterMm: z.number().finite().positive() }),
+  z.object({ kind: z.literal("other"), description: z.string() }),
+  z.object({ kind: z.literal("undecided") }),
+]);
+
+/** Volume annuel : discriminant explicite, entier sûr non négatif, jamais arrondi. */
+const annualVolumeSchema = z.union([
+  z.object({
+    kind: z.literal("known"),
+    sensorsPerYear: z.number().int().nonnegative().max(Number.MAX_SAFE_INTEGER),
+  }),
+  z.object({ kind: z.literal("unknown") }),
+]);
+
+const businessSchema = z.object({
+  projectPhase: z.enum(["exploration", "design", "prototype", "industrialisation", "unknown"]),
+  seriesStartDate: z.string().nullable(),
+  samplesNeededBy: z.string().nullable(),
+  annualVolume: annualVolumeSchema,
+  seriesDurationYears: z.number().finite().nonnegative().nullable(),
+  contactName: z.string().nullable(),
+  contactEmail: z.string().nullable(),
+  contactCompany: z.string().nullable(),
+});
+
+/** Encombrement : une dimension négative ou non finie n'est pas une donnée exploitable. */
+const envelopeSchema = z.object({
+  lengthMm: z.number().finite().nonnegative().nullable(),
+  widthMm: z.number().finite().nonnegative().nullable(),
+  heightMm: z.number().finite().nonnegative().nullable(),
+});
+
 
 const connectorSpec = z.object({
   manufacturer: z.string(),
@@ -113,24 +162,20 @@ const requirement = z.object({
 const dossierSchema = z.object({
   title: z.string().catch("Dossier repris"),
   requirements: z.array(requirement).catch([]),
-  mounting: z.unknown().catch(null),
-  envelope: z
-    .object({
-      lengthMm: z.number().finite().nullable().catch(null),
-      widthMm: z.number().finite().nullable().catch(null),
-      heightMm: z.number().finite().nullable().catch(null),
-    })
-    .catch({ lengthMm: null, widthMm: null, heightMm: null }),
-  workshop: z.unknown().catch(null),
+  // Ces quatre blocs sont validés strictement plus bas, avec un avis explicite si invalides.
+  mounting: z.unknown(),
+  envelope: z.unknown(),
+  workshop: z.unknown(),
+  business: z.unknown(),
   workshopSource: z.enum(["none", "example", "user_asset"]).catch("none"),
   selectedSensorId: z.string().nullable().catch(null),
   workshopSensorId: z.string().nullable().catch(null),
   freeConstraints: z.string().catch(""),
   openQuestions: z.array(z.string()).catch([]),
-  cabling: cabling.catch(EMPTY_CABLING),
+  cabling: cabling.catch(() => EMPTY_CABLING as unknown as z.infer<typeof cabling>),
   termination: termination.catch(() => DEFAULT_TERMINATION as z.infer<typeof termination>),
-  business: z.unknown().catch(null),
 });
+
 
 export type DossierImport =
   { ok: true; dossier: DesignDossier; notices: string[] } | { ok: false; reason: string };
@@ -142,6 +187,12 @@ export function parseDossierExport(raw: unknown, now = new Date().toISOString())
     .safeParse(raw);
   if (!envelope.success)
     return { ok: false, reason: "Ce fichier n'est pas un export de dossier de conception." };
+  if (!Number.isInteger(envelope.data.version) || envelope.data.version > EXPORT_VERSION)
+    return {
+      ok: false,
+      reason:
+        "Ce fichier vient d'une version plus récente de l'outil : il n'est pas repris, pour ne rien inventer.",
+    };
   const parsed = dossierSchema.safeParse(envelope.data.dossier);
   if (!parsed.success) return { ok: false, reason: "Le contenu de ce fichier est illisible." };
   const data = parsed.data;
@@ -149,10 +200,35 @@ export function parseDossierExport(raw: unknown, now = new Date().toISOString())
   const notices: string[] = [
     "Reprise locale : ni NDA en vigueur, ni rôle Standex, ni revue, ni offre, ni notes internes ne sont rétablis.",
   ];
-  if (data.workshopSource === "user_asset")
+
+  // Montage : forme inconnue = remise à « à décider », jamais une donnée inventée.
+  const mounting = mountingSchema.safeParse(data.mounting);
+  if (!mounting.success)
+    notices.push(
+      "Le montage mécanique du fichier n'est pas exploitable : il est remis à « à décider ».",
+    );
+
+  const env = envelopeSchema.safeParse(data.envelope);
+  if (!env.success)
+    notices.push(
+      "L'encombrement du fichier est invalide (valeur négative ou non numérique) : il est remis à inconnu.",
+    );
+
+  const business = businessSchema.safeParse(data.business);
+  if (!business.success)
+    notices.push(
+      "Les informations projet du fichier sont invalides : elles sont remises à inconnu, et un volume inconnu n'est pas zéro.",
+    );
+
+  const workshop =
+    data.workshop === null || data.workshop === undefined
+      ? null
+      : parseWorkshopConfig(data.workshop);
+  if (data.workshop && !workshop)
+    notices.push("Le montage 3D du fichier est invalide : il n'est pas repris.");
+  if (workshop && data.workshopSource === "user_asset")
     notices.push("Réimportez le fichier GLB d'origine pour retrouver le montage 3D.");
 
-  const mounting = base.mounting;
   const dossier: DesignDossier = {
     ...base,
     title: data.title,
@@ -167,13 +243,10 @@ export function parseDossierExport(raw: unknown, now = new Date().toISOString())
           ...(r.note !== undefined ? { note: r.note } : {}),
         }))
       : base.requirements,
-    mounting:
-      data.mounting && typeof data.mounting === "object" && "kind" in data.mounting
-        ? (data.mounting as DesignDossier["mounting"])
-        : mounting,
-    envelope: data.envelope,
-    workshop: (data.workshop as DesignDossier["workshop"]) ?? null,
-    workshopSource: data.workshop ? data.workshopSource : "none",
+    mounting: mounting.success ? mounting.data : base.mounting,
+    envelope: env.success ? env.data : base.envelope,
+    workshop,
+    workshopSource: workshop ? data.workshopSource : "none",
     // Le binaire n'est pas dans le JSON : pas d'ID sans fichier.
     workshopAsset: null,
     selectedSensorId: data.selectedSensorId,
@@ -183,13 +256,11 @@ export function parseDossierExport(raw: unknown, now = new Date().toISOString())
     termination: data.termination,
     freeConstraints: data.freeConstraints,
     openQuestions: data.openQuestions,
-    business:
-      data.business && typeof data.business === "object"
-        ? { ...base.business, ...(data.business as Partial<DesignDossier["business"]>) }
-        : base.business,
+    business: business.success ? business.data : base.business,
     // Autorités volontairement remises à zéro.
     attachments: [],
     internalNotes: [],
   };
   return { ok: true, dossier, notices };
+
 }

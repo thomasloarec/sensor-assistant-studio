@@ -33,12 +33,20 @@ import {
 } from "@/lib/leadmagnet/dossier";
 import { CANDIDATE_DISCLAIMER, evaluateCandidates } from "@/lib/leadmagnet/candidates";
 import {
+  applyRoutingPick,
   compareStandardLengths,
   estimateCableLength,
+  resetRouting,
+  routingPoints,
+  RANGE_CABLE_LENGTH_NOTES,
   uncoveredMotionStates,
+  undoRoutingPick,
   type CablingConfig,
   type Point,
+  type RoutingSlot,
+  type RoutingTarget,
 } from "@/lib/leadmagnet/cabling";
+
 import {
   CONNECTOR_FIELD_LABELS,
   DEFAULT_TERMINATION,
@@ -218,6 +226,10 @@ function DesignSpace() {
   const [volumeError, setVolumeError] = useState<string | null>(null);
   /** Le modèle 3D reste en mémoire tant que ce partage n'est pas explicitement demandé. */
   const [shareModel, setShareModel] = useState(false);
+  /** Pointage du câble dans la 3D : trajet visé et rôle du prochain point. */
+  const [routingTarget, setRoutingTarget] = useState<RoutingTarget>({ kind: "base" });
+  const [routingSlot, setRoutingSlot] = useState<RoutingSlot>("sensor");
+
 
   /** Remplissage local du NDA : aperçu puis téléchargement, sans aucune transmission. */
   const prepareNdaDocument = useCallback(
@@ -285,6 +297,48 @@ function DesignSpace() {
     [dossier.selectedSensorId, estimate.requiredMm, cabling.surplusHousingMm],
   );
   const ndaOk = ndaAllowsConfidentialTransfer(nda);
+
+  // Le trajet visé retombe sur le trajet de référence si l'état déclaré a disparu.
+  const activeTarget: RoutingTarget = useMemo(
+    () =>
+      routingTarget.kind === "state" &&
+      !cabling.declaredMotionStates.some((s) => s.id === routingTarget.stateId)
+        ? { kind: "base" }
+        : routingTarget,
+    [routingTarget, cabling.declaredMotionStates],
+  );
+  const activeTargetLabel =
+    activeTarget.kind === "base"
+      ? "Trajet de référence"
+      : `État : ${cabling.declaredMotionStates.find((s) => s.id === activeTarget.stateId)?.label ?? activeTarget.stateId}`;
+  const activePoints = useMemo(
+    () => routingPoints(cabling, activeTarget),
+    [cabling, activeTarget],
+  );
+  const cableRouting = useMemo(
+    () => ({
+      slot: routingSlot,
+      setSlot: setRoutingSlot,
+      points: activePoints as [number, number, number][],
+      targetLabel: activeTargetLabel,
+      onPick: (point: [number, number, number], cycleT: number) =>
+        setCabling((c) =>
+          applyRoutingPick(c, activeTarget, routingSlot, point, {
+            cycleT,
+            label: `Pose relevée à ${(cycleT * 100).toFixed(0)} % du cycle`,
+          }),
+        ),
+      onUndo: () => setCabling((c) => undoRoutingPick(c, activeTarget)),
+      onReset: () => setCabling((c) => resetRouting(c, activeTarget)),
+      lengthLabel:
+        estimate.requiredMm === null
+          ? "Longueur mesurée : inconnue tant que le trajet est incomplet (inconnu n'est pas zéro)."
+          : `Longueur mesurée du tracé : ${estimate.requiredMm.toFixed(0)} mm. Aucune validation d'ingénierie n'en découle.`,
+    }),
+    [routingSlot, activePoints, activeTargetLabel, activeTarget, estimate.requiredMm, setCabling],
+  );
+
+
 
   const exportDossier = useCallback(() => {
     const blob = new Blob([JSON.stringify(buildDossierExport(dossier), null, 2)], {
@@ -630,6 +684,8 @@ function DesignSpace() {
                       initialConfig={workshop ?? DEFAULT_WORKSHOP}
                       storageLabel="ce dossier, en mémoire de l'onglet"
                       storageMode="memory"
+                      cableRouting={cableRouting}
+
                       onClose={() => setShowWorkshop(false)}
                       onSave={async (c: WorkshopConfig) => {
                         setWorkshop(c);
@@ -736,6 +792,52 @@ function DesignSpace() {
 
           {/* ---------------- Câblage ---------------- */}
           <TabsContent value="cablage" className="space-y-4 pt-4">
+            <div className="rounded-md border p-3" data-testid="routing-target-panel">
+              <Label className="text-sm font-medium">Tracé dans la 3D (facultatif)</Label>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Ouvrez l'atelier 3D, activez « Pointer dans la 3D », puis cliquez la sortie de
+                câble, les passages et le point de connexion sur les surfaces réellement affichées.
+                Sans modèle 3D, la saisie numérique ci-dessous reste la voie exacte : une valeur
+                inconnue reste inconnue, elle ne vaut pas zéro.
+              </p>
+              <div className="mt-2 flex flex-wrap items-center gap-2">
+                <Button
+                  size="sm"
+                  variant={activeTarget.kind === "base" ? "default" : "outline"}
+                  onClick={() => setRoutingTarget({ kind: "base" })}
+                >
+                  Trajet de référence
+                </Button>
+                {cabling.declaredMotionStates.map((st) => (
+                  <Button
+                    key={st.id}
+                    size="sm"
+                    variant={
+                      activeTarget.kind === "state" && activeTarget.stateId === st.id
+                        ? "default"
+                        : "outline"
+                    }
+                    onClick={() => setRoutingTarget({ kind: "state", stateId: st.id })}
+                  >
+                    {st.label || st.id}
+                  </Button>
+                ))}
+                <Button size="sm" variant="outline" onClick={() => setShowWorkshop(true)}>
+                  Ouvrir l'atelier 3D
+                </Button>
+              </div>
+              <p className="mt-2 text-xs text-muted-foreground">
+                Trajet visé : {activeTargetLabel} · {activePoints.length} point(s) ·{" "}
+                {cableRouting.lengthLabel}
+              </p>
+              {activeTarget.kind === "state" ? (
+                <p className="text-xs text-muted-foreground">
+                  Chaque état déclaré a son propre trajet complet et sa pose de relevé. Les états
+                  non relevés ne sont jamais présentés comme couverts.
+                </p>
+              ) : null}
+            </div>
+
             <div className="grid gap-3 rounded-md border p-3 md:grid-cols-2">
               {pointFields("Point capteur", cabling.sensorEndpoint, (p) =>
                 setCabling((c) => ({ ...c, sensorEndpoint: p })),
@@ -976,7 +1078,15 @@ function DesignSpace() {
                   </Button>
                 ))}
               </div>
+              <ul className="mt-2 list-disc pl-5 text-xs text-muted-foreground">
+                {RANGE_CABLE_LENGTH_NOTES.map((n) => (
+                  <li key={n.range}>
+                    {n.range} : {n.lengths} (source : {n.source})
+                  </li>
+                ))}
+              </ul>
             </div>
+
             <div className="rounded-md border p-3">
               <Label className="text-sm font-medium">Terminaison</Label>
               <p className="mt-1 text-sm">{terminationLabel(termination)}</p>
