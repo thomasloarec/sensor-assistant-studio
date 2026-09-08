@@ -25,6 +25,16 @@ correction d'une ligne. En cas de doute, la règle gagne contre l'habitude.
    composant, une couleur Tailwind brute (`amber-500`, `slate-200`, `gray-400`),
    une durée ou une courbe écrite à la main. Seules exceptions : les matériaux
    Three.js de l'atelier et les dégradés de scène volontaires.
+
+   Deux exceptions documentées, et seulement celles-là :
+
+   - `src/routes/__root.tsx` — la balise `<meta name="theme-color">` ne peut pas
+     lire une variable CSS : la valeur `#254061` y est écrite en dur. C'est la
+     valeur exacte de `--standex-blue` ; si le jeton change, cette balise change
+     dans le même commit.
+   - `src/styles.css` — les commentaires des jetons de marque rappellent l'hex
+     d'origine (`/* #254061 Detect Blue */`). Ce sont des repères de lecture, pas
+     des valeurs utilisées.
 2. **La lumière remplace le trait.** On hiérarchise par élévation (`--e-1` à
    `--e-4`) et par surface (`--surface`, `--surface-sunken`, `--surface-tint`).
    La bordure grise 1 px n'est pas un moyen de séparation : c'est le défaut
@@ -56,17 +66,34 @@ correction d'une ligne. En cas de doute, la règle gagne contre l'habitude.
    visible partout. Si une consigne visuelle entre en conflit avec l'une de ces
    règles, l'accessibilité gagne et tu le signales.
 
+9. **Primitives shadcn non migrées.** Les composants de `src/components/ui/`
+   qui n'apparaissent sur aucun écran monté n'ont pas été refondus : ils
+   utilisent encore `border`, `bg-background`, `shadow-lg`, `duration-200`,
+   `text-sm`. C'est un état connu et accepté. **Mais** dès qu'un écran adopte
+   l'un d'eux, il est migré sur le socle dans le même commit, avant d'être
+   monté — jamais après. Monter une primitive non migrée est une régression
+   visuelle, pas un raccourci.
+
 ### Vérifier avant de livrer
 
 ```bash
 bun test tests/        # 189 tests, 16 412 assertions — doivent rester verts
 bunx tsgo --noEmit
 bun run build
-# Aucune couleur brute ni ancien motif ne doit réapparaître :
-rg -n "amber-|red-[0-9]|green-[0-9]|blue-[0-9]|slate-|gray-[0-9]|zinc-" src/ \
-  --glob '!src/components/ui/chart.tsx'
-rg -n "#[0-9a-fA-F]{6}" src/routes/ src/components/leadmagnet/
-rg -n "rounded-md border|border border-input|text-xs" src/ --glob '!src/components/ui/**'
+
+# 1. Couleurs Tailwind brutes (préfixe d'utilitaire + palette + graduation)
+rg -n "\b(?:bg|text|border|ring|fill|stroke|from|via|to|shadow|outline|decoration|accent|caret|divide|placeholder)-(?:slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-\d{2,3}\b" src/
+
+# 2. Hexadécimaux en dur dans le code applicatif (les commentaires de styles.css
+#    et les matériaux Three.js sont hors périmètre)
+rg -n "#[0-9a-fA-F]{6}\b" src/routes/ src/components/leadmagnet/ --glob '*.tsx'
+
+# 3. Durées et courbes écrites à la main
+rg -n "\b(?:duration|delay)-\d+\b|cubic-bezier\(" src/ --glob '!src/styles.css'
+
+# 4. Anciens motifs de séparation et de typographie
+rg -n "\brounded-md border\b|\bborder border-input\b|\btext-xs\b" src/ \
+  --glob '!src/components/ui/**' --glob '!src/styles.css'
 ```
 
 ### Faire évoluer le système

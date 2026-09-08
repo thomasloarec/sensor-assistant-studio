@@ -239,3 +239,10 @@ Fichiers officiels dans `public/brand/`, référencés uniquement par
 - Les primitives shadcn non montées dans les parcours actuels conservent leur
   structure amont. Elles seront migrées lorsqu'un écran produit les adoptera,
   plutôt que modifiées sans recette réelle.
+- Primitives shadcn encore en dette de migration, nominativement :
+  `accordion.tsx`, `alert-dialog.tsx` (migrée au lot I), `alert.tsx` (migrée au lot I),
+  `calendar.tsx`, `chart.tsx`, `context-menu.tsx`, `drawer.tsx`, `hover-card.tsx`,
+  `menubar.tsx`, `navigation-menu.tsx`, `sidebar.tsx`, `sonner.tsx`, `switch.tsx`,
+  `tabs.tsx`, `toggle.tsx`. Elles utilisent encore `border`, `bg-background`,
+  `shadow-lg`, `duration-200` ou `text-sm`. Chacune doit être migrée sur le socle
+  dans le commit qui la monte sur un écran, jamais après.
