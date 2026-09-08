@@ -33,13 +33,26 @@ import {
 } from "@/lib/leadmagnet/dossier";
 import { CANDIDATE_DISCLAIMER, evaluateCandidates } from "@/lib/leadmagnet/candidates";
 import {
-  EMPTY_CABLING,
   compareStandardLengths,
   estimateCableLength,
+  uncoveredMotionStates,
   type CablingConfig,
   type Point,
 } from "@/lib/leadmagnet/cabling";
-import { DEFAULT_TERMINATION, freeReference, terminationLabel } from "@/lib/leadmagnet/connectors";
+import {
+  CONNECTOR_FIELD_LABELS,
+  DEFAULT_TERMINATION,
+  EMPTY_CONNECTOR_DRAFT,
+  connectorSummaryLines,
+  terminationFromDraft,
+  terminationLabel,
+  type ConnectorDraft,
+} from "@/lib/leadmagnet/connectors";
+import {
+  EXPORT_BINARY_NOTICE,
+  buildDossierExport,
+  parseDossierExport,
+} from "@/lib/leadmagnet/dossier-io";
 import {
   INITIAL_PRIVACY,
   MEMORY_LOSS_WARNING,
@@ -168,9 +181,17 @@ function DesignSpace() {
   const [ndaPreview, setNdaPreview] = useState<FilledNda | null>(null);
   const [ndaError, setNdaError] = useState<string | null>(null);
 
-  const [cabling, setCabling] = useState<CablingConfig>(EMPTY_CABLING);
-  const [termination, setTermination] = useState(DEFAULT_TERMINATION);
-  const [freeConnector, setFreeConnector] = useState("");
+  // Câblage et terminaison vivent DANS le dossier : ils suivent export, résumé et révision.
+  const cabling = dossier.cabling;
+  const setCabling = useCallback(
+    (update: (c: CablingConfig) => CablingConfig) =>
+      setDossier((d) => ({ ...d, cabling: update(d.cabling), updatedAt: new Date().toISOString() })),
+    [],
+  );
+  const termination = dossier.termination;
+  const [connectorDraft, setConnectorDraft] = useState<ConnectorDraft>(EMPTY_CONNECTOR_DRAFT);
+  const [connectorError, setConnectorError] = useState<string | null>(null);
+  const [importMessage, setImportMessage] = useState<string | null>(null);
   const [backend, setBackend] = useState<LeadBackendStatus | null>(null);
   // Dossier serveur : créé à la première transmission réussie, puis réutilisé.
   const [serverDossierId, setServerDossierId] = useState<string | null>(null);
@@ -245,14 +266,14 @@ function DesignSpace() {
       compareStandardLengths(
         dossier.selectedSensorId ?? "",
         estimate.requiredMm,
-        cabling.toleranceMm,
+        cabling.surplusHousingMm,
       ),
-    [dossier.selectedSensorId, estimate.requiredMm, cabling.toleranceMm],
+    [dossier.selectedSensorId, estimate.requiredMm, cabling.surplusHousingMm],
   );
   const ndaOk = ndaAllowsConfidentialTransfer(nda);
 
   const exportDossier = useCallback(() => {
-    const blob = new Blob([JSON.stringify(toClientDto(dossier), null, 2)], {
+    const blob = new Blob([JSON.stringify(buildDossierExport(dossier), null, 2)], {
       type: "application/json",
     });
     const url = URL.createObjectURL(blob);
@@ -262,6 +283,23 @@ function DesignSpace() {
     a.click();
     URL.revokeObjectURL(url);
   }, [dossier]);
+
+  const importDossier = useCallback(async (file: File | undefined) => {
+    if (!file) return;
+    setImportMessage(null);
+    try {
+      const parsed = parseDossierExport(JSON.parse(await file.text()));
+      if (!parsed.ok) {
+        setImportMessage(parsed.reason);
+        return;
+      }
+      setDossier(parsed.dossier);
+      setWorkshop(parsed.dossier.workshop);
+      setImportMessage(parsed.notices.join(" "));
+    } catch {
+      setImportMessage("Ce fichier n'a pas pu être lu.");
+    }
+  }, []);
 
   const onSubmit = useCallback(async () => {
     const input = {
@@ -314,7 +352,12 @@ function DesignSpace() {
 
 
   const volume = dossier.business.annualVolume;
-  const sampleRoute = routeSamples({ volume, isCustom: false });
+  // Une revue publiée est nécessaire : sans elle, ni référence exacte ni échantillon.
+  const publishedReview = null as null | { exactPart: string; isCustom: boolean };
+  const sampleRoute = routeSamples({
+    volume,
+    isCustom: publishedReview?.isCustom ?? false,
+  });
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -639,11 +682,20 @@ function DesignSpace() {
             </div>
             <div className="rounded-md border p-3 text-sm">
               <p>
-                Plus long trajet mesuré (polyligne) : <strong>{estimate.longestPathMm.toFixed(1)} mm</strong>
+                Plus long trajet mesuré (polyligne) :{" "}
+                <strong>
+                  {estimate.longestPathMm === null
+                    ? "inconnu"
+                    : `${estimate.longestPathMm.toFixed(1)} mm`}
+                </strong>
               </p>
               <p>
                 Longueur minimale demandée, marges comprises :{" "}
-                <strong>{estimate.requiredMm.toFixed(1)} mm</strong>
+                <strong>
+                  {estimate.requiredMm === null
+                    ? "inconnue tant que le trajet n'est pas complet"
+                    : `${estimate.requiredMm.toFixed(1)} mm`}
+                </strong>
               </p>
               <p className="text-xs text-muted-foreground">
                 Cette longueur n'est jamais une longueur approuvée : elle est vérifiée en revue R&D.
