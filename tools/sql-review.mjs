@@ -220,9 +220,9 @@ await expectFail('nda_proof_rejects_wrong_template_hash', () => actor('authentic
 
 const TEMPLATE = '6e25345f1e83e92630258774d27a451d65d615cdd9f41a5331dae75c4072740b';
 await expectFail('nda_proof_requires_counterparties', () => actor('authenticated', ids.admin,
-  () => value('select public.lead_admin_record_nda_proof($1,$2,$3,$4,$5,$6,$7,$8)',
-    [privateDossier, TEMPLATE, 'b'.repeat(64), 'p/x.docx', 'REF-1', [{ party: 'Standex' }],
-      '2026-06-16', 'manual'])), 'NDA_COUNTERPARTIES_REQUIRED');
+  () => value('select public.lead_admin_record_nda_proof($1,$2,$3,$4,$5,$6,$7,$8,$9)',
+    [privateDossier, TEMPLATE, 'b'.repeat(64), null, 'REF-1', [{ party: 'Standex' }],
+      '2026-06-16', 'manual', 'external_archive'])), 'NDA_COUNTERPARTIES_REQUIRED');
 await expectFail('nda_proof_rejects_unsigned_copy_of_template', () => actor('authenticated', ids.admin,
   () => value('select public.lead_admin_record_nda_proof($1,$2,$3,$4,$5,$6,$7,$8)',
     [privateDossier, TEMPLATE, TEMPLATE, 'p/x.docx', 'REF-1',
