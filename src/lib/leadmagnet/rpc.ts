@@ -2,7 +2,7 @@
  *
  * Le schéma `lead` n'est pas exposé à l'API REST : aucune écriture directe depuis
  * le navigateur n'est possible. Toutes les actions passent par les fonctions
- * transactionnelles listées ici (voir supabase/schema/migration_v1.1_lead_magnet.sql).
+ * transactionnelles listées ici (voir supabase/schema/migration_v1.2_lead_magnet.sql).
  * Les noms sont centralisés pour qu'une RPC absente soit détectée, pas devinée.
  */
 export const LEAD_RPC = {
@@ -15,10 +15,18 @@ export const LEAD_RPC = {
   requestSamples: "lead_request_samples",
   clientView: "lead_client_view",
   staffView: "lead_staff_view",
+  myDossiers: "lead_my_dossiers",
+  staffInbox: "lead_staff_inbox",
+  assignDossier: "lead_assign_dossier",
+  openUploadSession: "lead_open_upload_session",
+  addInternalNote: "lead_add_internal_note",
+  acceptVariant: "lead_accept_variant",
+  updateSample: "lead_update_sample",
+  recordNdaProof: "lead_admin_record_nda_proof",
 } as const;
 
 /** Version de schéma minimale attendue par cette version de l'application. */
-export const REQUIRED_LEAD_SCHEMA_VERSION = "1.1";
+export const REQUIRED_LEAD_SCHEMA_VERSION = "1.2";
 
 export type LeadRpcName = (typeof LEAD_RPC)[keyof typeof LEAD_RPC];
 
@@ -48,7 +56,7 @@ const MESSAGES: { match: RegExp; message: string }[] = [
     message: "Cette action est réservée à l'équipe Standex en charge de ce dossier.",
   },
   {
-    match: /BAD_TIERS|TIERS_REQUIRED|BAD_VALIDITY|BAD_VERDICT|BAD_HASH|EMPTY_SNAPSHOT/,
+    match: /BAD_TIERS|CONTRADICTORY_TIERS|TIERS_REQUIRED|BAD_VALIDITY|BAD_VERDICT|BAD_HASH|EMPTY_SNAPSHOT|BAD_CURRENCY|BAD_MOQ|BAD_NRE|BAD_INCOTERM|BAD_QUANTITY|BAD_STATUS/,
     message: "Les informations envoyées sont incomplètes ou incohérentes : rien n'a été enregistré.",
   },
   {
@@ -56,6 +64,27 @@ const MESSAGES: { match: RegExp; message: string }[] = [
     message: "Ce dossier n'est plus disponible sous cette forme.",
   },
 ];
+
+
+const EXTRA_MESSAGES: { match: RegExp; message: string }[] = [
+  {
+    match: /PART_NUMBER_MISMATCH|EXACT_PART_NUMBER_REQUIRED/,
+    message:
+      "La référence exacte doit être celle confirmée par la revue Standex : rien n'a été enregistré.",
+  },
+  {
+    match: /FILE_NOT_TRANSFERRED/,
+    message: "Un fichier annoncé n'a pas été réellement déposé : l'envoi a été refusé.",
+  },
+  {
+    match: /NDA_TEMPLATE_MISMATCH|NDA_SIGNED_DOCUMENT_INVALID|NDA_PROOF_INCOMPLETE|NDA_COUNTERPARTIES_REQUIRED|NDA_SIGNED_AT_INVALID/,
+    message:
+      "La preuve d'accord de confidentialité est incomplète ou ne correspond pas au document original : rien n'a été enregistré.",
+  },
+  { match: /NO_VARIANT_TO_ACCEPT/, message: "Aucune variante à reprendre sur ce retour." },
+  { match: /NOT_STAFF/, message: "Cette personne ne fait pas partie de l'équipe Standex." },
+];
+MESSAGES.unshift(...EXTRA_MESSAGES);
 
 /** Jamais de message brut de base de données côté client. */
 export function humanRpcError(error: unknown): string {

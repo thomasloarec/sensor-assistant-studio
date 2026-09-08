@@ -34,7 +34,7 @@ export interface SubmissionSnapshot {
   hash: string;
   createdAt: string;
   dto: ClientDossierDto;
-  transferredFiles: { id: string; fileName: string }[];
+  transferredFiles: { id: string; fileName: string; path: string }[];
   consents: ConsentRecord[];
   ndaStatus: NdaState["status"];
   reviewAcknowledged: boolean;
@@ -94,7 +94,7 @@ export async function buildSnapshot(
     // Seuls les fichiers réellement transférés sont listés : un ID local ne suffit pas.
     transferredFiles: input.dossier.attachments
       .filter((a) => a.transferred && a.storagePath)
-      .map((a) => ({ id: a.id, fileName: a.fileName })),
+      .map((a) => ({ id: a.id, fileName: a.fileName, path: a.storagePath as string })),
     consents: input.consents,
     ndaStatus: input.nda.status,
     reviewAcknowledged: input.reviewAcknowledged,

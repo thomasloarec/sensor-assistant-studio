@@ -11,7 +11,7 @@ import { REQUIRED_LEAD_SCHEMA_VERSION } from "./rpc";
 import type { StaffRole } from "./review";
 
 /** Détail technique : réservé au panneau administrateur, jamais montré au client. */
-export const LEAD_MIGRATION_FILE = "supabase/schema/migration_v1.1_lead_magnet.sql";
+export const LEAD_MIGRATION_FILE = "supabase/schema/migration_v1.2_lead_magnet.sql";
 
 export interface LeadBackendStatus {
   configured: boolean;

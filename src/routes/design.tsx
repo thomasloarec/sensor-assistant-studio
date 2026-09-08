@@ -334,6 +334,7 @@ function DesignSpace() {
         },
         dossierId: serverDossierId,
         expectedRevision: serverRevision,
+        ndaRequired: nda.required,
         onDossierCreated: setServerDossierId,
       }),
     );
