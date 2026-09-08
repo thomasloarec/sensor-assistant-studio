@@ -116,12 +116,15 @@ export interface WorkshopProps {
   onClose: () => void;
   onSave: (config: WorkshopConfig) => Promise<void>;
   storageLabel?: string;
+  /** "memory" : le GLB ne quitte jamais la mémoire de l'onglet (aucune écriture appareil). */
+  storageMode?: "memory" | "local-device";
 }
 export default function MagneticWorkshop({
   initialConfig,
   onClose,
   onSave,
   storageLabel = "la session et le dossier",
+  storageMode = "local-device",
 }: WorkshopProps) {
   useLocale();
   const [productCard, setProductCard] = useState(false);
@@ -156,7 +159,7 @@ export default function MagneticWorkshop({
     setAssetError(null);
     if (!machine) return;
     void import("@/lib/standex/machine-assets")
-      .then((m) => m.loadMachineAsset(machine.assetKey, machine.unitScale))
+      .then((m) => m.loadMachineAsset(machine.assetKey, machine.unitScale, storageMode))
       .then((asset) => {
         if (cancelled) {
           asset.dispose();
@@ -205,7 +208,7 @@ export default function MagneticWorkshop({
     };
     // Positions and cycle changes reuse the loaded geometry.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [machine?.assetKey, machine?.unitScale]);
+  }, [machine?.assetKey, machine?.unitScale, storageMode]);
   function machineChange(patch: Partial<MachineAssembly>) {
     if (machine) update({ machine: { ...machine, ...patch } });
   }
@@ -234,8 +237,8 @@ export default function MagneticWorkshop({
     if (!file) return;
     setError(null);
     try {
-      const { storeMachineFile } = await import("@/lib/standex/machine-assets");
-      const assetKey = await storeMachineFile(file);
+      const { storeMachineFileWithMode } = await import("@/lib/standex/machine-assets");
+      const assetKey = await storeMachineFileWithMode(file, storageMode);
       const same = machine?.assetKey === assetKey;
       update({
         mode: "education",
