@@ -40,7 +40,12 @@ const verdictLabel: Record<string, string> = {
   more_info: "Informations complémentaires demandées",
 };
 
-export function ClientFollowUp({ backend, serverDossierId, onSelectDossier, onReopenSnapshot }: Props) {
+export function ClientFollowUp({
+  backend,
+  serverDossierId,
+  onSelectDossier,
+  onReopenSnapshot,
+}: Props) {
   const [list, setList] = useState<DossierListItem[]>([]);
   const [view, setView] = useState<DossierView | null>(null);
   const [message, setMessage] = useState<string | null>(null);
@@ -145,13 +150,16 @@ export function ClientFollowUp({ backend, serverDossierId, onSelectDossier, onRe
                     {r.superseded ? <Badge variant="outline">remplacé</Badge> : null}
                     {r.exact_part_number ? (
                       <Badge variant="secondary">
-                        {r.exact_part_number} ({r.designation === "custom" ? "spécifique" : "standard"})
+                        {r.exact_part_number} (
+                        {r.designation === "custom" ? "spécifique" : "standard"})
                       </Badge>
                     ) : null}
                   </div>
                   {r.message ? <p className="mt-2 whitespace-pre-wrap">{r.message}</p> : null}
                   {r.conditions ? (
-                    <p className="mt-1 text-xs text-muted-foreground">Conditions : {r.conditions}</p>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      Conditions : {r.conditions}
+                    </p>
                   ) : null}
                   {r.verdict === "variant_proposed" ? (
                     <div className="mt-2 space-y-1">
@@ -191,7 +199,8 @@ export function ClientFollowUp({ backend, serverDossierId, onSelectDossier, onRe
             <h4 className="font-medium">Offres</h4>
             {current.offers.length === 0 ? (
               <p className="text-sm text-muted-foreground">
-                Aucune offre : un prix n'est établi qu'après un retour validé sur la version en cours.
+                Aucune offre : un prix n'est établi qu'après un retour validé sur la version en
+                cours.
               </p>
             ) : (
               current.offers.map((o) => (
@@ -205,7 +214,8 @@ export function ClientFollowUp({ backend, serverDossierId, onSelectDossier, onRe
                     </Badge>
                     <span className="font-medium">{o.part_number}</span>
                     <span className="text-xs text-muted-foreground">
-                      version {o.revision} — {o.designation === "custom" ? "spécifique" : "standard"}
+                      version {o.revision} —{" "}
+                      {o.designation === "custom" ? "spécifique" : "standard"}
                     </span>
                   </div>
                   <ul className="mt-1 list-disc pl-5 text-xs">
@@ -265,7 +275,8 @@ export function ClientFollowUp({ backend, serverDossierId, onSelectDossier, onRe
               </div>
             ) : (
               <p className="text-sm text-muted-foreground">
-                Les échantillons sont possibles après un retour validé indiquant la référence exacte.
+                Les échantillons sont possibles après un retour validé indiquant la référence
+                exacte.
               </p>
             )}
             {current.samples.map((s) => (
@@ -275,7 +286,9 @@ export function ClientFollowUp({ backend, serverDossierId, onSelectDossier, onRe
                     {s.quantity} × {s.part_number}
                   </span>
                   <Badge variant="outline">{routeLabel[s.route] ?? s.route}</Badge>
-                  <Badge variant="secondary">{s.status === "superseded" ? "conception modifiée depuis" : s.status}</Badge>
+                  <Badge variant="secondary">
+                    {s.status === "superseded" ? "conception modifiée depuis" : s.status}
+                  </Badge>
                   <span className="text-xs text-muted-foreground">version {s.revision}</span>
                 </div>
                 {s.feedback ? (
@@ -296,7 +309,9 @@ export function ClientFollowUp({ backend, serverDossierId, onSelectDossier, onRe
                     onClick={async () => {
                       try {
                         await updateSample({ sampleId: s.id, feedback: feedback[s.id] ?? "" });
-                        setMessage("Retour d'essai enregistré et conservé avec la version concernée.");
+                        setMessage(
+                          "Retour d'essai enregistré et conservé avec la version concernée.",
+                        );
                         await reloadView(current.dossier.id);
                       } catch (error) {
                         setMessage(error instanceof Error ? error.message : null);

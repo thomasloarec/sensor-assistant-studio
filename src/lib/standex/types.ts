@@ -34,13 +34,7 @@ export type Priority = "P0" | "P1" | "P2";
 export type SessionStatus = "draft" | "in_review" | "closed" | "archived";
 export type Locale = "fr" | "en";
 export type Channel = "lovable_test" | "manual_import" | "internal_review";
-export type VolumeBand =
-  | "maintenance"
-  | "very_low"
-  | "small"
-  | "medium"
-  | "high"
-  | "unknown";
+export type VolumeBand = "maintenance" | "very_low" | "small" | "medium" | "high" | "unknown";
 export type LeadPotential = "low" | "medium" | "high" | "unknown";
 export type MessageRole = "prospect" | "assistant" | "internal";
 export type Confidence = "low" | "medium" | "high" | "unknown";

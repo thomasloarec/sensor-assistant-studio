@@ -16,7 +16,9 @@ function cablingSummary(dossier: DesignDossier): string[] {
     `- Tolérance fournisseur : ±${dossier.cabling.toleranceMm} mm — surplus logeable : ${dossier.cabling.surplusHousingMm} mm`,
     `- Rayon de courbure mini : ${dossier.cabling.minBendRadiusMm ?? "inconnu"} mm`,
     `- États de mouvement couverts : ${dossier.cabling.declaredMotionStates.length - uncovered.length}/${dossier.cabling.declaredMotionStates.length}` +
-      (dossier.cabling.motionCoverageConfirmed ? " (couverture confirmée)" : " (couverture non confirmée)"),
+      (dossier.cabling.motionCoverageConfirmed
+        ? " (couverture confirmée)"
+        : " (couverture non confirmée)"),
     `- Choix de longueur : ${
       dossier.cabling.lengthChoice === "standard_to_confirm"
         ? "longueur catalogue, à confirmer"

@@ -133,8 +133,7 @@ const dossierSchema = z.object({
 });
 
 export type DossierImport =
-  | { ok: true; dossier: DesignDossier; notices: string[] }
-  | { ok: false; reason: string };
+  { ok: true; dossier: DesignDossier; notices: string[] } | { ok: false; reason: string };
 
 /** Reprise d'un fichier exporté : aucune autorité n'est restaurée. */
 export function parseDossierExport(raw: unknown, now = new Date().toISOString()): DossierImport {

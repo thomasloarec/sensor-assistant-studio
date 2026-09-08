@@ -74,7 +74,10 @@ export function validateCabling(config: CablingConfig): string[] {
   for (const [label, value] of margins)
     if (!finite(value) || value < 0) errors.push(`${label} : valeur positive ou nulle attendue.`);
 
-  if (config.minBendRadiusMm !== null && (!finite(config.minBendRadiusMm) || config.minBendRadiusMm <= 0))
+  if (
+    config.minBendRadiusMm !== null &&
+    (!finite(config.minBendRadiusMm) || config.minBendRadiusMm <= 0)
+  )
     errors.push("Rayon de courbure minimal : valeur strictement positive attendue.");
 
   const seen = new Set<string>();
@@ -84,7 +87,9 @@ export function validateCabling(config: CablingConfig): string[] {
       errors.push(`État « ${path.label || path.stateId} » : identifiant en double.`);
     seen.add(path.stateId);
     if (path.points.length < 2)
-      errors.push(`État « ${path.label || path.stateId} » : au moins deux points sont nécessaires.`);
+      errors.push(
+        `État « ${path.label || path.stateId} » : au moins deux points sont nécessaires.`,
+      );
     if (!path.points.every(validPoint))
       errors.push(`État « ${path.label || path.stateId} » : coordonnées invalides.`);
   }
@@ -144,7 +149,8 @@ export function estimateCableLength(config: CablingConfig): CableLengthEstimate 
     warnings.push(
       "Trajet incomplet : la longueur reste inconnue tant que le point capteur et le point de connexion ne sont pas placés.",
     );
-  if (errors.length) warnings.push("Des valeurs saisies sont invalides : la longueur reste inconnue.");
+  if (errors.length)
+    warnings.push("Des valeurs saisies sont invalides : la longueur reste inconnue.");
 
   const perState = complete
     ? [
@@ -156,7 +162,9 @@ export function estimateCableLength(config: CablingConfig): CableLengthEstimate 
         })),
       ]
     : [];
-  const longest = perState.length ? perState.reduce((a, b) => (b.lengthMm > a.lengthMm ? b : a)) : null;
+  const longest = perState.length
+    ? perState.reduce((a, b) => (b.lengthMm > a.lengthMm ? b : a))
+    : null;
 
   const uncovered = uncoveredMotionStates(config);
   if (uncovered.length)

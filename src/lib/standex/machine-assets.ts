@@ -69,7 +69,6 @@ export function clearMemoryMachineFiles() {
   memoryFiles.clear();
 }
 export async function storeMachineFile(file: File): Promise<string> {
-
   if (file.size > 30 * 1024 * 1024)
     throw new Error("Choisissez un GLB autonome de moins de 30 Mo.");
   const data = await file.arrayBuffer();

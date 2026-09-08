@@ -40,7 +40,6 @@ export const REVIEW_PACK_LABELS: Record<string, string> = {
   "MVP-TS-022": "équivalence concurrente",
 };
 
-
 const CHECKLIST: readonly string[] = [
   "La réponse aide-t-elle vraiment le prospect ?",
   "Le ton est-il clair et professionnel ?",
@@ -66,7 +65,6 @@ export interface ReviewPackRow {
   session?: SensorTestSession | undefined;
   sessionId?: string | undefined;
   dossierMarkdown?: string | undefined;
-
 }
 
 export interface ReviewPackMeta {
@@ -76,8 +74,7 @@ export interface ReviewPackMeta {
   regressionScore: string;
 }
 
-const dash = (v: unknown) =>
-  v === null || v === undefined || v === "" ? "—" : String(v);
+const dash = (v: unknown) => (v === null || v === undefined || v === "" ? "—" : String(v));
 
 /** Métadonnées de test interdites dans les champs métier lead. */
 const TEST_METADATA = /(MVP-TS-|R[ée]gression|Lot prioritaire|Sc[ée]nario\s+MVP)/i;
@@ -168,7 +165,9 @@ export function buildReviewPack(rows: ReviewPackRow[], meta: ReviewPackMeta): st
       return;
     }
 
-    out.push(`- Sortie attendue : \`${dash(e?.expectedOutput ?? r.scenario.expected_output_type)}\``);
+    out.push(
+      `- Sortie attendue : \`${dash(e?.expectedOutput ?? r.scenario.expected_output_type)}\``,
+    );
     out.push(`- Sortie obtenue : \`${dash(r.outputType)}\``);
     out.push(`- Garde-fous attendus : ${(e?.expectedFlags ?? []).join(", ") || "—"}`);
     out.push(`- Garde-fous obtenus : ${(r.guardrails ?? []).join(", ") || "—"}`);

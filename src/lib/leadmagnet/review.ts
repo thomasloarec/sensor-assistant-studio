@@ -73,23 +73,35 @@ export function createOffer(
   if (review.revision !== draft.revision)
     return { ok: false, reason: "La revue validée ne porte pas sur cette révision." };
   if (currentRevision !== null && draft.revision !== currentRevision)
-    return { ok: false, reason: "Le dossier a changé : l'offre doit porter sur la révision courante." };
+    return {
+      ok: false,
+      reason: "Le dossier a changé : l'offre doit porter sur la révision courante.",
+    };
   if (!/^[A-Z]{3}$/.test(draft.currency))
     return { ok: false, reason: "Devise attendue au format ISO (EUR, USD…)." };
-  if (!draft.tiers.length)
-    return { ok: false, reason: "Tranches de quantités et prix requis." };
+  if (!draft.tiers.length) return { ok: false, reason: "Tranches de quantités et prix requis." };
   // NaN contourne `<= 0` : on exige explicitement des nombres finis.
   if (
     draft.tiers.some(
-      (t) => !finite(t.unitPrice) || t.unitPrice <= 0 || !Number.isInteger(t.quantity) || t.quantity <= 0,
+      (t) =>
+        !finite(t.unitPrice) ||
+        t.unitPrice <= 0 ||
+        !Number.isInteger(t.quantity) ||
+        t.quantity <= 0,
     )
   )
-    return { ok: false, reason: "Chaque tranche doit avoir une quantité entière et un prix positifs." };
+    return {
+      ok: false,
+      reason: "Chaque tranche doit avoir une quantité entière et un prix positifs.",
+    };
   if (!Number.isInteger(draft.moq) || draft.moq <= 0)
     return { ok: false, reason: "Le MOQ doit être un entier positif." };
   if (draft.nreToolingCost !== null && (!finite(draft.nreToolingCost) || draft.nreToolingCost < 0))
     return { ok: false, reason: "Le coût d'outillage doit être un nombre positif ou nul." };
-  if (draft.leadTimeWeeks !== null && (!Number.isInteger(draft.leadTimeWeeks) || draft.leadTimeWeeks <= 0))
+  if (
+    draft.leadTimeWeeks !== null &&
+    (!Number.isInteger(draft.leadTimeWeeks) || draft.leadTimeWeeks <= 0)
+  )
     return { ok: false, reason: "Le délai doit être un nombre entier de semaines." };
   const validUntil = new Date(draft.validUntil);
   if (!/^\d{4}-\d{2}-\d{2}/.test(draft.validUntil) || Number.isNaN(validUntil.getTime()))
@@ -145,8 +157,7 @@ export function invalidationFor(change: ChangeKind): InvalidationResult {
 
 /** Concurrence optimiste : on écrit contre la version attendue, jamais en écrasant. */
 export type ConcurrencyResult<T> =
-  | { ok: true; value: T }
-  | { ok: false; reason: string; currentRevision: number };
+  { ok: true; value: T } | { ok: false; reason: string; currentRevision: number };
 
 export function guardRevision<T>(
   expectedRevision: number,
@@ -190,7 +201,9 @@ export interface TrustedClaims {
 
 const STAFF_ROLES: readonly StaffRole[] = ["rnd", "sales", "admin"];
 
-export function staffIdentityFromClaims(claims: TrustedClaims | null | undefined): StaffIdentity | null {
+export function staffIdentityFromClaims(
+  claims: TrustedClaims | null | undefined,
+): StaffIdentity | null {
   const userId = typeof claims?.sub === "string" ? claims.sub : null;
   if (!userId) return null;
   const raw = claims?.app_metadata?.standex_role;

@@ -93,12 +93,7 @@ import {
   housingLabel,
   terminationFromHousing,
 } from "@/lib/leadmagnet/connector-library";
-import {
-  routeSamples,
-  SEARCH_LINK_DISCLAIMER,
-  createSampleRequest,
-  type SampleRequest,
-} from "@/lib/leadmagnet/samples";
+import { routeSamples, SEARCH_LINK_DISCLAIMER } from "@/lib/leadmagnet/samples";
 import { DEFAULT_WORKSHOP } from "@/lib/standex/magnetic-workshop";
 import type { WorkshopConfig } from "@/lib/standex/magnetic-workshop";
 
@@ -162,11 +157,7 @@ const num = (raw: string): number | null => {
   return raw.trim() && Number.isFinite(v) ? v : null;
 };
 
-function pointFields(
-  label: string,
-  value: Point | null,
-  onChange: (p: Point | null) => void,
-) {
+function pointFields(label: string, value: Point | null, onChange: (p: Point | null) => void) {
   const p = value ?? [0, 0, 0];
   return (
     <div className="space-y-1">
@@ -203,7 +194,11 @@ function DesignSpace() {
   const cabling = dossier.cabling;
   const setCabling = useCallback(
     (update: (c: CablingConfig) => CablingConfig) =>
-      setDossier((d) => ({ ...d, cabling: update(d.cabling), updatedAt: new Date().toISOString() })),
+      setDossier((d) => ({
+        ...d,
+        cabling: update(d.cabling),
+        updatedAt: new Date().toISOString(),
+      })),
     [],
   );
   const termination = dossier.termination;
@@ -257,12 +252,13 @@ function DesignSpace() {
     [nda],
   );
 
-
   // Tant que cet espace est monté, la télémétrie est réduite à un code anonyme.
   useEffect(() => openPrivateErrorScope(), []);
 
   useEffect(() => {
-    checkLeadBackend().then(setBackend).catch(() => setBackend(null));
+    checkLeadBackend()
+      .then(setBackend)
+      .catch(() => setBackend(null));
   }, []);
 
   useEffect(() => {
@@ -421,7 +417,6 @@ function DesignSpace() {
     shareModel,
   ]);
 
-
   const volume = dossier.business.annualVolume;
   // La désignation standard/custom vient du retour R&D publié, jamais de cet écran.
   const sampleRoute = routeSamples({ volume, isCustom: false });
@@ -513,9 +508,7 @@ function DesignSpace() {
                   >
                     Confirmer cette exigence
                   </Button>
-                  {r.note ? (
-                    <span className="text-xs text-muted-foreground">{r.note}</span>
-                  ) : null}
+                  {r.note ? <span className="text-xs text-muted-foreground">{r.note}</span> : null}
                 </div>
               </div>
             ))}
@@ -671,8 +664,8 @@ function DesignSpace() {
             {dossier.selectedSensorId && !dossier.sensorSyncConfirmed ? (
               <div className="rounded-md border border-amber-300 bg-amber-50 p-3 text-sm">
                 <p>
-                  La gamme suivie et le capteur affiché en 3D sont différents. Rien n'est changé sans
-                  votre accord.
+                  La gamme suivie et le capteur affiché en 3D sont différents. Rien n'est changé
+                  sans votre accord.
                 </p>
                 <Button
                   size="sm"
@@ -757,7 +750,9 @@ function DesignSpace() {
                 <Button
                   size="sm"
                   variant="outline"
-                  onClick={() => setCabling((c) => ({ ...c, waypoints: [...c.waypoints, [0, 0, 0]] }))}
+                  onClick={() =>
+                    setCabling((c) => ({ ...c, waypoints: [...c.waypoints, [0, 0, 0]] }))
+                  }
                 >
                   Ajouter un point
                 </Button>
@@ -832,7 +827,9 @@ function DesignSpace() {
                           }))
                         }
                       />
-                      <span className={covered ? "text-xs text-emerald-700" : "text-xs text-amber-700"}>
+                      <span
+                        className={covered ? "text-xs text-emerald-700" : "text-xs text-amber-700"}
+                      >
                         {covered ? "trajet renseigné" : "trajet manquant pour cet état"}
                       </span>
                       {!covered ? (
@@ -867,7 +864,9 @@ function DesignSpace() {
                         onClick={() =>
                           setCabling((c) => ({
                             ...c,
-                            declaredMotionStates: c.declaredMotionStates.filter((m) => m.id !== st.id),
+                            declaredMotionStates: c.declaredMotionStates.filter(
+                              (m) => m.id !== st.id,
+                            ),
                             statePaths: c.statePaths.filter((sp) => sp.stateId !== st.id),
                             motionCoverageConfirmed: false,
                           }))
@@ -1018,9 +1017,7 @@ function DesignSpace() {
                     <Label className="text-xs">{label}</Label>
                     <Input
                       value={connectorDraft[key]}
-                      onChange={(e) =>
-                        setConnectorDraft((d) => ({ ...d, [key]: e.target.value }))
-                      }
+                      onChange={(e) => setConnectorDraft((d) => ({ ...d, [key]: e.target.value }))}
                     />
                   </div>
                 ))}
@@ -1057,7 +1054,8 @@ function DesignSpace() {
               </div>
               <p className="mt-1 text-xs text-muted-foreground">
                 Aucune combinaison connecteur/capteur qualifiée n'est documentée dans ce projet :
-                toute référence saisie, sa contrepartie et son brochage restent à vérifier par la R&D.
+                toute référence saisie, sa contrepartie et son brochage restent à vérifier par la
+                R&D.
               </p>
             </div>
           </TabsContent>
@@ -1078,7 +1076,9 @@ function DesignSpace() {
                 <AccordionTrigger>Contexte projet</AccordionTrigger>
                 <AccordionContent className="grid gap-3 md:grid-cols-2">
                   <div>
-                    <Label className="text-xs">Volume annuel de capteurs (entier ou « inconnu »)</Label>
+                    <Label className="text-xs">
+                      Volume annuel de capteurs (entier ou « inconnu »)
+                    </Label>
                     <Input
                       value={volumeRaw}
                       placeholder="inconnu"
@@ -1167,8 +1167,8 @@ function DesignSpace() {
                   <p className="text-sm">
                     Modèle juridique approuvé : <strong>{APPROVED_NDA_TEMPLATE.fileName}</strong>{" "}
                     (SHA-256 {APPROVED_NDA_TEMPLATE.sha256.slice(0, 16)}…, vérifié avant chaque
-                    remplissage). L'original reste intact : seule une copie remplie est produite, sur
-                    cet appareil, sans transmettre le dossier.
+                    remplissage). L'original reste intact : seule une copie remplie est produite,
+                    sur cet appareil, sans transmettre le dossier.
                   </p>
                   <div className="grid gap-2 md:grid-cols-2">
                     {NDA_FIELD_LABELS.map(([key, label]) => (
@@ -1177,7 +1177,10 @@ function DesignSpace() {
                         <Input
                           value={nda.fields[key]}
                           onChange={(e) =>
-                            setNda((n) => ({ ...n, fields: { ...n.fields, [key]: e.target.value } }))
+                            setNda((n) => ({
+                              ...n,
+                              fields: { ...n.fields, [key]: e.target.value },
+                            }))
                           }
                         />
                       </div>
@@ -1214,7 +1217,8 @@ function DesignSpace() {
                   {ndaPreview ? (
                     <div className="space-y-2">
                       <p className="text-xs text-muted-foreground">
-                        Aperçu local des clauses du document rempli (non signé) — {ndaPreview.fileName}
+                        Aperçu local des clauses du document rempli (non signé) —{" "}
+                        {ndaPreview.fileName}
                       </p>
                       <pre className="max-h-80 overflow-auto whitespace-pre-wrap rounded-md bg-muted p-3 text-xs">
                         {ndaPreview.paragraphs.filter((p) => p.trim()).join("\n\n")}
@@ -1229,7 +1233,6 @@ function DesignSpace() {
                   </p>
                 </AccordionContent>
               </AccordionItem>
-
 
               <AccordionItem value="envoi">
                 <AccordionTrigger>Préparer la revue Standex</AccordionTrigger>
@@ -1263,7 +1266,10 @@ function DesignSpace() {
                                   "Exigences, montage, câblage, contraintes et contexte projet.",
                                 recipients: ["Standex R&D", "Standex commercial"],
                               })
-                            : { ...p, consents: p.consents.filter((c) => c.kind !== "supabase_dossier") },
+                            : {
+                                ...p,
+                                consents: p.consents.filter((c) => c.kind !== "supabase_dossier"),
+                              },
                         )
                       }
                     />

@@ -174,10 +174,8 @@ export function evaluateRun(
     .map((c) => (c.detail ? `${c.label} (${c.detail})` : c.label));
 
   const suggestions: string[] = [];
-  if (composed.outputType !== expected)
-    suggestions.push(`aligner la sortie sur ${expected}`);
-  if (missingFlags.length)
-    suggestions.push(`déclencher les garde-fous ${missingFlags.join(", ")}`);
+  if (composed.outputType !== expected) suggestions.push(`aligner la sortie sur ${expected}`);
+  if (missingFlags.length) suggestions.push(`déclencher les garde-fous ${missingFlags.join(", ")}`);
   if (missingMust.length)
     suggestions.push(
       `citer explicitement ${missingMust.join(" / ")} dans la réponse client ou la trace`,

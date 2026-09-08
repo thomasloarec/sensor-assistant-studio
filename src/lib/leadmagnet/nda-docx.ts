@@ -151,8 +151,7 @@ export function validateNdaValues(values: NdaVariableValues): string[] {
       problems.push(`${field.label} : ${value.length} caractères, maximum ${MAX_FIELD_LENGTH}.`);
     if (FORBIDDEN_CHARS.test(value))
       problems.push(`${field.label} : contient un caractère que le document ne peut pas afficher.`);
-    if (LINE_BREAKS.test(value))
-      problems.push(`${field.label} : doit tenir sur une seule ligne.`);
+    if (LINE_BREAKS.test(value)) problems.push(`${field.label} : doit tenir sur une seule ligne.`);
   }
   return problems;
 }
@@ -181,7 +180,8 @@ export function bodyParagraphRanges(xml: string): Range[] {
   while ((m = tag.exec(xml)) && m.index < bodyEnd) {
     const [full, closing, name, , selfClose] = m;
     if (selfClose === "/") {
-      if (depth === 0 && name === "w:p") ranges.push({ start: m.index, end: m.index + full.length });
+      if (depth === 0 && name === "w:p")
+        ranges.push({ start: m.index, end: m.index + full.length });
       continue;
     }
     if (closing === "/") {
@@ -280,8 +280,7 @@ function fillParagraph(paragraphXml: string, field: VariableField, rawValue: str
     out += paragraphXml.slice(cursor, node.start) + encode(replacement);
     cursor = node.end;
   }
-  if (!written)
-    throw new Error(`Le modèle NDA a changé : champ « ${field.label} » introuvable.`);
+  if (!written) throw new Error(`Le modèle NDA a changé : champ « ${field.label} » introuvable.`);
   out += paragraphXml.slice(cursor);
   if (field.tidyTabs) out = tidyTabRuns(out);
   // Les espaces significatifs doivent survivre à Word.
@@ -298,7 +297,9 @@ export function fillDocumentXml(xml: string, values: NdaVariableValues): string 
     if (!range) throw new Error(`Le modèle NDA a changé : paragraphe ${field.paragraph} absent.`);
     const value = values[field.key].trim();
     if (!value) continue;
-    out += xml.slice(cursor, range.start) + fillParagraph(xml.slice(range.start, range.end), field, value);
+    out +=
+      xml.slice(cursor, range.start) +
+      fillParagraph(xml.slice(range.start, range.end), field, value);
     cursor = range.end;
   }
   return out + xml.slice(cursor);
@@ -345,8 +346,7 @@ export async function fillNdaTemplate(
   const original = entries[DOCUMENT_ENTRY];
   if (!original) throw new Error("Le modèle NDA ne contient pas word/document.xml.");
   const problems = validateNdaValues(values);
-  if (problems.length)
-    throw new Error(`Valeurs refusées pour le NDA : ${problems.join(" ")}`);
+  if (problems.length) throw new Error(`Valeurs refusées pour le NDA : ${problems.join(" ")}`);
   const xml = new TextDecoder().decode(original);
   const filled = fillDocumentXml(xml, values);
   // Tous les autres fichiers sont réinjectés tels quels.
@@ -365,7 +365,10 @@ export async function fillNdaTemplate(
 }
 
 export function ndaFileName(values: NdaVariableValues): string {
-  const company = values.companyName.trim().replace(/[^\p{L}\p{N}]+/gu, "_").replace(/^_|_$/g, "");
+  const company = values.companyName
+    .trim()
+    .replace(/[^\p{L}\p{N}]+/gu, "_")
+    .replace(/^_|_$/g, "");
   return `NDA Standex${company ? " x " + company : ""} - non signe.docx`;
 }
 

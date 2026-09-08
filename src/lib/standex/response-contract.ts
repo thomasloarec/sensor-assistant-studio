@@ -38,8 +38,7 @@ const GUARDRAIL_TEXTS: Record<string, string> = {
     "Sur un reed switch brut, il ne faut pas couper, plier ni modifier les pattes sans process validé : cela peut changer la sensibilité ou endommager le produit.",
   distance:
     "La distance d'activation dépend de l'aimant, du montage et des matériaux autour : elle se valide sur le montage réel.",
-  ip67:
-    "L'étanchéité annoncée dépend du montage et du passage de câble : elle se vérifie sur l'intégration réelle.",
+  ip67: "L'étanchéité annoncée dépend du montage et du passage de câble : elle se vérifie sur l'intégration réelle.",
   severe_environment:
     "L'environnement (température, vibrations, produits agressifs) doit être confirmé avant de figer une référence.",
   cable_modification:
@@ -123,7 +122,6 @@ interface ScenarioOverride {
   /** Vraies questions manquantes (français), pour la trace interne. */
   missingQuestions?: string[];
 }
-
 
 const SCENARIO_OVERRIDES: Record<string, ScenarioOverride> = {
   "MVP-TS-004": {
@@ -343,7 +341,6 @@ const GUARDRAIL_QUESTIONS: Record<string, string> = {
 /** Phrase client dédiée par garde-fou, en français, sans tag interne. */
 const GUARDRAIL_DECISION: Record<string, string> = GUARDRAIL_TEXTS;
 
-
 export function composeResponse(scenario: SensorTestScenario): ComposedResponse {
   const outputType = safeOutputType(scenario.expected_output_type);
   const must = splitList(scenario.must_include);
@@ -373,10 +370,12 @@ export function composeResponse(scenario: SensorTestScenario): ComposedResponse 
   lines.push(`Ce que je comprends de votre besoin : ${scenario.user_prompt_fr}`);
   lines.push("");
 
-  const clientQuestions = override?.missingQuestions ?? [
-    ...flags.map((f) => GUARDRAIL_QUESTIONS[f]).filter(Boolean),
-    "Dans quelle ville êtes-vous basé ?",
-  ].filter(Boolean) as string[];
+  const clientQuestions =
+    override?.missingQuestions ??
+    ([
+      ...flags.map((f) => GUARDRAIL_QUESTIONS[f]).filter(Boolean),
+      "Dans quelle ville êtes-vous basé ?",
+    ].filter(Boolean) as string[]);
 
   if (override?.customerText) {
     lines.push(override.customerText);
@@ -414,7 +413,11 @@ export function composeResponse(scenario: SensorTestScenario): ComposedResponse 
   if (guardrailTexts.length) {
     const already = lines.join("\n").toLowerCase();
     const kept = guardrailTexts.filter((t) => {
-      const topic = t.toLowerCase().split(/[ ,:;]+/).filter((w) => w.length > 6).slice(0, 3);
+      const topic = t
+        .toLowerCase()
+        .split(/[ ,:;]+/)
+        .filter((w) => w.length > 6)
+        .slice(0, 3);
       return !(topic.length > 0 && topic.every((w) => already.includes(w)));
     });
     if (kept.length) {

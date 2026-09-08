@@ -42,7 +42,6 @@ export function schemaVersionSatisfies(actual: string | null, required: string):
   return true;
 }
 
-
 /** Version de schéma minimale attendue par cette version de l'application. */
 export const REQUIRED_LEAD_SCHEMA_VERSION = "1.2";
 
@@ -67,22 +66,24 @@ const MESSAGES: { match: RegExp; message: string }[] = [
   },
   {
     match: /REVIEW_NOT_VALIDATED/,
-    message: "Cette étape n'est possible qu'après un retour Standex validé sur la version en cours.",
+    message:
+      "Cette étape n'est possible qu'après un retour Standex validé sur la version en cours.",
   },
   {
     match: /NOT_ALLOWED|permission denied|42501/,
     message: "Cette action est réservée à l'équipe Standex en charge de ce dossier.",
   },
   {
-    match: /BAD_TIERS|CONTRADICTORY_TIERS|TIERS_REQUIRED|BAD_VALIDITY|BAD_VERDICT|BAD_HASH|EMPTY_SNAPSHOT|BAD_CURRENCY|BAD_MOQ|BAD_NRE|BAD_INCOTERM|BAD_QUANTITY|BAD_STATUS/,
-    message: "Les informations envoyées sont incomplètes ou incohérentes : rien n'a été enregistré.",
+    match:
+      /BAD_TIERS|CONTRADICTORY_TIERS|TIERS_REQUIRED|BAD_VALIDITY|BAD_VERDICT|BAD_HASH|EMPTY_SNAPSHOT|BAD_CURRENCY|BAD_MOQ|BAD_NRE|BAD_INCOTERM|BAD_QUANTITY|BAD_STATUS/,
+    message:
+      "Les informations envoyées sont incomplètes ou incohérentes : rien n'a été enregistré.",
   },
   {
     match: /DOSSIER_NOT_FOUND|REVISION_NOT_FOUND|REVIEW_NOT_FOUND/,
     message: "Ce dossier n'est plus disponible sous cette forme.",
   },
 ];
-
 
 const EXTRA_MESSAGES: { match: RegExp; message: string }[] = [
   {
@@ -95,7 +96,8 @@ const EXTRA_MESSAGES: { match: RegExp; message: string }[] = [
     message: "Un fichier annoncé n'a pas été réellement déposé : l'envoi a été refusé.",
   },
   {
-    match: /NDA_TEMPLATE_MISMATCH|NDA_SIGNED_DOCUMENT_INVALID|NDA_PROOF_INCOMPLETE|NDA_COUNTERPARTIES_REQUIRED|NDA_SIGNED_AT_INVALID/,
+    match:
+      /NDA_TEMPLATE_MISMATCH|NDA_SIGNED_DOCUMENT_INVALID|NDA_PROOF_INCOMPLETE|NDA_COUNTERPARTIES_REQUIRED|NDA_SIGNED_AT_INVALID/,
     message:
       "La preuve d'accord de confidentialité est incomplète ou ne correspond pas au document original : rien n'a été enregistré.",
   },
@@ -123,7 +125,8 @@ const EXTRA_MESSAGES: { match: RegExp; message: string }[] = [
   },
   {
     match: /BAD_SNAPSHOT_SHAPE/,
-    message: "Le dossier envoyé est incomplet : complétez l'objectif et le contact, puis réessayez.",
+    message:
+      "Le dossier envoyé est incomplet : complétez l'objectif et le contact, puis réessayez.",
   },
 ];
 
@@ -144,7 +147,10 @@ export function humanRpcError(error: unknown): string {
 
 /** Numéro de révision courant renvoyé par un conflit, pour resynchroniser l'écran. */
 export function conflictRevision(error: unknown): number | null {
-  const raw = error && typeof error === "object" && "message" in error ? String((error as { message: unknown }).message) : String(error ?? "");
+  const raw =
+    error && typeof error === "object" && "message" in error
+      ? String((error as { message: unknown }).message)
+      : String(error ?? "");
   const m = /REVISION_CONFLICT:(\d+)/.exec(raw);
   return m?.[1] ? Number(m[1]) : null;
 }

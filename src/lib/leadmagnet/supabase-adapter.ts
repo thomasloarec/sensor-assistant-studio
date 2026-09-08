@@ -49,7 +49,8 @@ export async function probeLeadSchema(): Promise<LeadSchemaProbe> {
   const payload = (data ?? {}) as { version?: string | null; ready?: boolean };
   const version = payload.version ?? null;
   // Comparaison réelle de version : un simple booléen serveur ne suffit pas.
-  const ready = Boolean(payload.ready) && schemaVersionSatisfies(version, REQUIRED_LEAD_SCHEMA_VERSION);
+  const ready =
+    Boolean(payload.ready) && schemaVersionSatisfies(version, REQUIRED_LEAD_SCHEMA_VERSION);
   return {
     configured: true,
     schemaReady: ready,
@@ -61,7 +62,6 @@ export async function probeLeadSchema(): Promise<LeadSchemaProbe> {
         : "Registre de migrations vide côté serveur.",
   };
 }
-
 
 export interface LeadCapabilities {
   authenticated: boolean;
@@ -363,7 +363,12 @@ export interface StaffInbox {
     assignees: string[];
   }[];
   /** Annuaire lisible : jamais un choix par identifiant technique. */
-  staff_directory: { user_id: string; role: StaffRole; email: string | null; display_name: string | null }[];
+  staff_directory: {
+    user_id: string;
+    role: StaffRole;
+    email: string | null;
+    display_name: string | null;
+  }[];
 }
 
 export async function fetchStaffInbox(): Promise<StaffInbox> {
@@ -490,8 +495,7 @@ export function createSupabaseSubmissionBackend(options: {
   ndaRequired: boolean;
   onDossierCreated?: (id: string) => void;
 }): SubmissionBackend {
-  const available =
-    options.schemaReady && options.capabilities.authenticated && Boolean(supabase);
+  const available = options.schemaReady && options.capabilities.authenticated && Boolean(supabase);
   if (!available) return { available: false };
   return {
     available: true,

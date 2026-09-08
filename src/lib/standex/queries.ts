@@ -29,10 +29,7 @@ export async function fetchScenarios(): Promise<SensorTestScenario[]> {
 export async function fetchSessions(): Promise<SensorTestSession[]> {
   const sb = requireSupabase();
   return unwrap(
-    await sb
-      .from("sensor_test_sessions")
-      .select("*")
-      .order("created_at", { ascending: false }),
+    await sb.from("sensor_test_sessions").select("*").order("created_at", { ascending: false }),
   );
 }
 
@@ -127,7 +124,11 @@ export async function insertReview(
 }
 
 export async function insertOutput(
-  input: Partial<SensorTestOutput> & { session_id: string; output_type: string; customer_summary: string },
+  input: Partial<SensorTestOutput> & {
+    session_id: string;
+    output_type: string;
+    customer_summary: string;
+  },
 ): Promise<SensorTestOutput> {
   const sb = requireSupabase();
   return unwrap(await sb.from("sensor_test_outputs").insert(input).select("*").single());

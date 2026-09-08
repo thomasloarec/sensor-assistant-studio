@@ -2,8 +2,16 @@
 import type { AnnualVolume } from "./dossier";
 
 export const PARTNER_DISTRIBUTORS = [
-  { id: "tti", name: "TTI Europe", search: "https://www.ttiinc.com/content/ttiinc/en/search.html?q=" },
-  { id: "digikey", name: "DigiKey FR", search: "https://www.digikey.fr/fr/products/result?keywords=" },
+  {
+    id: "tti",
+    name: "TTI Europe",
+    search: "https://www.ttiinc.com/content/ttiinc/en/search.html?q=",
+  },
+  {
+    id: "digikey",
+    name: "DigiKey FR",
+    search: "https://www.digikey.fr/fr/products/result?keywords=",
+  },
   { id: "mouser", name: "Mouser FR", search: "https://www.mouser.fr/c/?q=" },
   { id: "rs", name: "RS FR", search: "https://fr.rs-online.com/web/c/?searchTerm=" },
   { id: "farnell", name: "Farnell", search: "https://fr.farnell.com/search?st=" },
@@ -17,10 +25,7 @@ export type SampleRoute =
   | { kind: "standex_direct"; note: string }
   | { kind: "manual_review"; note: string };
 
-export function routeSamples(input: {
-  volume: AnnualVolume;
-  isCustom: boolean;
-}): SampleRoute {
+export function routeSamples(input: { volume: AnnualVolume; isCustom: boolean }): SampleRoute {
   if (input.volume.kind === "unknown")
     return {
       kind: "manual_review",
@@ -52,7 +57,8 @@ export interface SampleRequest {
   transmitted: false;
 }
 
-export type SampleRequestAttempt = { ok: true; request: SampleRequest } | { ok: false; reason: string };
+export type SampleRequestAttempt =
+  { ok: true; request: SampleRequest } | { ok: false; reason: string };
 
 /** Conditions d'ouverture d'une demande d'échantillons. Toutes viennent du serveur. */
 export interface SampleGate {
@@ -86,7 +92,13 @@ export function createSampleRequest(
     return { ok: false, reason: "Référence exacte requise (aucune correspondance approchée)." };
   return {
     ok: true,
-    request: { partNumber: partNumber.trim(), quantity, route: route.kind, requestedAt: now, transmitted: false },
+    request: {
+      partNumber: partNumber.trim(),
+      quantity,
+      route: route.kind,
+      requestedAt: now,
+      transmitted: false,
+    },
   };
 }
 

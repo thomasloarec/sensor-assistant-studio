@@ -122,7 +122,9 @@ function StandexConsole() {
   });
 
   useEffect(() => {
-    checkLeadBackend().then(setBackend).catch(() => setBackend(null));
+    checkLeadBackend()
+      .then(setBackend)
+      .catch(() => setBackend(null));
   }, []);
 
   const loadInbox = useCallback(async () => {
@@ -189,7 +191,10 @@ function StandexConsole() {
     <div className="min-h-screen bg-background text-foreground">
       <header className="border-b bg-card">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-3 px-4 py-3">
-          <Link to="/design" className="inline-flex items-center gap-2 text-sm text-muted-foreground">
+          <Link
+            to="/design"
+            className="inline-flex items-center gap-2 text-sm text-muted-foreground"
+          >
             <ArrowLeft className="h-4 w-4" /> Espace de conception
           </Link>
           <h1 className="text-lg font-semibold">Console Standex</h1>
@@ -562,7 +567,9 @@ function StandexConsole() {
                       </div>
                     </div>
                     <div>
-                      <Label className="text-xs">Paliers « quantité:prix » (une ligne par palier)</Label>
+                      <Label className="text-xs">
+                        Paliers « quantité:prix » (une ligne par palier)
+                      </Label>
                       <Textarea
                         rows={3}
                         value={offer.tiers}
@@ -581,9 +588,7 @@ function StandexConsole() {
                             moq: Number(offer.moq),
                             nreToolingCost: offer.nre ? Number(offer.nre) : null,
                             incoterm: offer.incoterm,
-                            leadTimeWeeks: offer.leadTimeWeeks
-                              ? Number(offer.leadTimeWeeks)
-                              : null,
+                            leadTimeWeeks: offer.leadTimeWeeks ? Number(offer.leadTimeWeeks) : null,
                             validUntil: offer.validUntil,
                           });
                           return "Offre enregistrée et visible par le client à côté de la conception validée.";
@@ -602,7 +607,10 @@ function StandexConsole() {
                       <p className="text-sm text-muted-foreground">Aucune demande.</p>
                     ) : (
                       view.samples.map((s) => (
-                        <div key={s.id} className="flex flex-wrap items-center gap-2 rounded border p-2 text-sm">
+                        <div
+                          key={s.id}
+                          className="flex flex-wrap items-center gap-2 rounded border p-2 text-sm"
+                        >
                           <span className="font-medium">
                             {s.quantity} × {s.part_number}
                           </span>
