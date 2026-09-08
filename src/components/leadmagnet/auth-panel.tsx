@@ -3,7 +3,7 @@
  * Aucun service externe n'est ajouté : on utilise le client déjà présent.
  * Aucun compte n'est créé ici ; les rôles restent provisionnés côté serveur.
  */
-import { useState } from "react";
+import { useId, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -21,10 +21,13 @@ export function AuthPanel({ backend, onChanged }: Props) {
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  const uid = useId();
+  const emailId = `auth-email-${uid}`;
+  const passwordId = `auth-password-${uid}`;
 
   if (!backend?.configured || !supabase)
     return (
-      <p className="text-xs text-muted-foreground">
+      <p className="text-base text-muted-foreground">
         La liaison avec l'équipe Standex n'est pas configurée sur cet environnement : la connexion
         n'est pas possible ici.
       </p>
@@ -32,13 +35,13 @@ export function AuthPanel({ backend, onChanged }: Props) {
 
   if (backend.authenticated)
     return (
-      <div className="flex flex-wrap items-center gap-2 text-xs">
+      <div className="flex flex-wrap items-center gap-3 text-base">
         <span className="text-muted-foreground">
           Connecté{backend.role ? ` — rôle ${backend.role}` : ""}.
         </span>
         <Button
-          size="sm"
           variant="outline"
+          className="min-h-11 text-base"
           onClick={async () => {
             await supabase!.auth.signOut();
             onChanged?.();
@@ -57,20 +60,29 @@ export function AuthPanel({ backend, onChanged }: Props) {
         e.preventDefault();
         setBusy(true);
         setMessage(null);
-        const { error } = await supabase!.auth.signInWithPassword({ email, password });
-        setBusy(false);
-        if (error) {
-          setMessage("Connexion refusée. Vérifiez l'adresse et le mot de passe.");
-          return;
+        try {
+          const { error } = await supabase!.auth.signInWithPassword({ email, password });
+          if (error) {
+            setMessage("Connexion refusée. Vérifiez l'adresse et le mot de passe.");
+            return;
+          }
+          setPassword("");
+          setMessage("Connexion établie.");
+          onChanged?.();
+        } catch {
+          setMessage("La connexion n'a pas abouti : réseau indisponible. Réessayez.");
+        } finally {
+          setBusy(false);
         }
-        setPassword("");
-        setMessage("Connexion établie.");
-        onChanged?.();
       }}
     >
       <div>
-        <Label className="text-xs">Adresse e-mail</Label>
+        <Label htmlFor={emailId} className="text-base">
+          Adresse e-mail
+        </Label>
         <Input
+          id={emailId}
+          className="min-h-11 text-base"
           type="email"
           autoComplete="username"
           value={email}
@@ -79,8 +91,12 @@ export function AuthPanel({ backend, onChanged }: Props) {
         />
       </div>
       <div>
-        <Label className="text-xs">Mot de passe</Label>
+        <Label htmlFor={passwordId} className="text-base">
+          Mot de passe
+        </Label>
         <Input
+          id={passwordId}
+          className="min-h-11 text-base"
           type="password"
           autoComplete="current-password"
           value={password}
@@ -88,11 +104,11 @@ export function AuthPanel({ backend, onChanged }: Props) {
           required
         />
       </div>
-      <Button size="sm" type="submit" disabled={busy}>
+      <Button type="submit" className="min-h-11 text-base" disabled={busy}>
         {busy ? "Connexion…" : "Se connecter"}
       </Button>
       {message ? (
-        <p className="text-xs text-muted-foreground sm:col-span-3">{message}</p>
+        <p className="text-base text-muted-foreground sm:col-span-3">{message}</p>
       ) : null}
     </form>
   );

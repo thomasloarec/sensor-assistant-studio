@@ -171,3 +171,57 @@
     color: var(--detect-blue);
   }
 }
+
+/* Lisibilité effective des espaces client et internes.
+ * Ces règles sont scopées à [data-readable] et écrasent réellement les
+ * utilitaires text-xs/text-sm, contrairement à une base annulée par Tailwind. */
+[data-readable],
+[data-readable] p,
+[data-readable] li,
+[data-readable] span,
+[data-readable] div {
+  min-width: 0;
+}
+
+[data-readable] .text-xs,
+[data-readable] .text-xs * {
+  font-size: 0.875rem; /* 14px minimum utile */
+  line-height: 1.5;
+}
+
+[data-readable] .text-sm {
+  font-size: 1rem; /* 16px */
+  line-height: 1.55;
+}
+
+[data-readable] .text-muted-foreground {
+  color: color-mix(in oklab, var(--color-muted-foreground) 88%, var(--color-foreground));
+}
+
+[data-readable] button,
+[data-readable] [role="tab"],
+[data-readable] a[role="button"] {
+  min-height: 2.75rem; /* 44px */
+}
+
+[data-readable] input,
+[data-readable] textarea,
+[data-readable] select,
+[data-readable] label,
+[data-readable] button {
+  font-size: max(1rem, 16px);
+}
+
+[data-readable] :focus-visible {
+  outline: 3px solid var(--color-ring);
+  outline-offset: 2px;
+}
+
+[data-readable] table {
+  font-size: 1rem;
+}
+
+/* Les tableaux denses restent lisibles sans casser la mise en page. */
+[data-readable] .overflow-x-auto {
+  max-width: 100%;
+}

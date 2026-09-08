@@ -56,6 +56,12 @@ import {
   type RoutingTarget,
 } from "@/lib/leadmagnet/cabling";
 import { technicalSummary } from "@/lib/leadmagnet/submission";
+import { WorkspacePanel } from "@/components/leadmagnet/workspace-panel";
+import {
+  DocumentViewer,
+  kindFromName,
+  type ViewerDocument,
+} from "@/components/leadmagnet/document-viewer";
 import { parseWorkshopConfig, type WorkshopConfig } from "@/lib/standex/magnetic-workshop";
 import { storeMachineFileInMemory } from "@/lib/standex/machine-assets";
 import { AuthPanel } from "@/components/leadmagnet/auth-panel";
@@ -157,6 +163,8 @@ function StandexConsole() {
   const [viewerError, setViewerError] = useState<string | null>(null);
   const selectionRequest = useRef(0);
   const modelRequest = useRef(0);
+  const docGenRef = useRef(0);
+  const [openDoc, setOpenDoc] = useState<ViewerDocument | null>(null);
   const [viewerTarget, setViewerTarget] = useState<RoutingTarget>({ kind: "base" });
   const [viewerSlot, setViewerSlot] = useState<RoutingSlot>("sensor");
   const viewerEstimate = viewer ? estimateCableLength(viewer.cabling) : null;
@@ -373,7 +381,7 @@ function StandexConsole() {
     (view?.reviews ?? []).filter((r) => r.published && !r.superseded).slice(-1)[0] ?? null;
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div data-readable className="min-h-screen bg-background text-foreground">
       <header className="border-b bg-card">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-3 px-4 py-3">
           <Link
@@ -521,6 +529,28 @@ function StandexConsole() {
                           {lastRevision.transferred_files.map((f, i) => (
                             <li key={i} className="flex flex-wrap items-center gap-2">
                               <span>{f.file_name ?? f.path}</span>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() =>
+                                  run(async () => {
+                                    const name = String(f.file_name ?? f.path);
+                                    const gen = ++docGenRef.current;
+                                    const bytes = await downloadDesignFile(String(f.path));
+                                    // Une réponse tardive ne doit pas écraser un autre document.
+                                    if (gen !== docGenRef.current) return "";
+                                    setOpenDoc({
+                                      id: `${String(f.path)}-${gen}`,
+                                      name,
+                                      kind: kindFromName(name),
+                                      bytes,
+                                    });
+                                    return "Document ouvert dans le lecteur (il reste en mémoire).";
+                                  })
+                                }
+                              >
+                                Lire ici
+                              </Button>
                               <Button
                                 size="sm"
                                 variant="ghost"
@@ -1156,6 +1186,17 @@ function StandexConsole() {
           )}
         </section>
       </main>
+
+      <WorkspacePanel
+        open={openDoc !== null}
+        onOpenChange={(o) => {
+          if (!o) setOpenDoc(null);
+        }}
+        title="Document transmis"
+        description="Lecture en mémoire de cet onglet, via l'accès authentifié existant."
+      >
+        <DocumentViewer document={openDoc} />
+      </WorkspacePanel>
     </div>
   );
 }

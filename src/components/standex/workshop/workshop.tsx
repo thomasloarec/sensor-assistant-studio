@@ -134,6 +134,10 @@ export interface WorkshopProps {
   /** "memory" : le GLB ne quitte jamais la mémoire de l'onglet (aucune écriture appareil). */
   storageMode?: "memory" | "local-device";
   cableRouting?: WorkshopCableRouting;
+  /** Remontée du brouillon en cours (mémoire de l'onglet uniquement).
+   * Sauvegarder reste une action explicite : ceci sert seulement à ne pas
+   * perdre une modification quand l'atelier est fermé ou masqué. */
+  onDraftChange?: (config: WorkshopConfig) => void;
 }
 export default function MagneticWorkshop({
   initialConfig,
@@ -142,6 +146,7 @@ export default function MagneticWorkshop({
   storageLabel = "la session et le dossier",
   storageMode = "local-device",
   cableRouting,
+  onDraftChange,
 }: WorkshopProps) {
 
   useLocale();
@@ -149,6 +154,10 @@ export default function MagneticWorkshop({
   const [config, setConfig] = useState<WorkshopConfig>(
     () => parseWorkshopConfig(initialConfig) ?? { ...DEFAULT_WORKSHOP },
   );
+  useEffect(() => {
+    onDraftChange?.(config);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [config]);
   const [step, setStep] = useState(0),
     [progress, setProgress] = useState(0),
     [playing, setPlaying] = useState(false);
