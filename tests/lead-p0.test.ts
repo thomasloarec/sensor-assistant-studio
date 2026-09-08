@@ -139,6 +139,7 @@ test("instantané : indépendant des modifications ultérieures du dossier", asy
     reviewAcknowledged: true,
     additionalConstraints: "",
   });
+  d.cabling = { ...d.cabling, serviceReserveMm: 999 };
   d.title = "modifié après coup";
   expect(snapshot.dto.cabling.serviceReserveMm).toBe(10);
   expect(snapshot.dto.title).not.toBe("modifié après coup");
