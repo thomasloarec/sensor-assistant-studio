@@ -171,6 +171,10 @@ export function estimateCableLength(config: CablingConfig): CableLengthEstimate 
     warnings.push("Tolérance fournisseur non renseignée : elle est distincte du surplus logeable.");
   if (config.minBendRadiusMm === null)
     warnings.push("Rayon de courbure minimal non renseigné : risques de pincement non contrôlés.");
+  // Rappel systématique : cette estimation n'est jamais une longueur approuvée.
+  warnings.push(
+    "Estimation d'aide à la conception : ce n'est pas une longueur approuvée, la R&D Standex vérifie.",
+  );
 
   return {
     complete,
