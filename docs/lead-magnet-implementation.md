@@ -112,3 +112,39 @@ Aperçu privé : `/` = banc de test interne inchangé ; `/design` = espace de co
 
 Emplacement réservé pour une future filière « remplacement concurrent » (référence exacte,
 datasheet, montage) : non développée, aucun champ inventé.
+
+## Recette navigateur (exécutée dans l'environnement de développement)
+
+Smoke UI réel joué avec Playwright sur `http://localhost:8080/design`, données entièrement
+fictives (Fictif Motion SAS, Claire Fontaine), aucune transmission à un tiers :
+
+| Étape | Preuve observée |
+| --- | --- |
+| Entrée « Concevoir une détection » | URL `/design`, titre « Concevoir une détection » |
+| But + états + électrique + environnement | 4 exigences passées à « Confirmé » |
+| Montage | choix explicite « PCB — report CMS », enveloppe 40 × 18 × 12 mm |
+| Candidat non commandable | « MK24 · Form A · J — Retenu à ce stade … la référence exacte est fixée après revue R&D » |
+| Câblage avec un waypoint | « Plus long trajet mesuré (polyligne) : 327.9 mm » |
+| Informations projet tardives | volume annuel, dates, contact saisis en fin de parcours seulement |
+| NDA original rempli | aperçu des clauses + téléchargement `NDA Standex x Fictif_Motion_SAS - non signe.docx` (144 073 octets) |
+| Envoi | bouton désactivé sans NDA en vigueur ; message « liaison … pas encore activée », aucun faux succès, aucun terme technique |
+| Atelier 3D puis retour | « Retour au dossier » ; objectif et cotes conservés |
+
+Console : 0 erreur applicative, seulement 2 réponses `406` attendues (sondage de la liaison
+serveur absente). Vérifications automatiques : `bun test tests/` → 96 tests, 0 échec ;
+`bunx tsgo --noEmit` et `bun run build` OK.
+
+## Audit confidentialité et rôles
+
+- `src/lib/lovable-error-reporting.ts` : une portée privée (`openPrivateErrorScope`) est ouverte
+  tant que l'espace de conception est monté. Dans cette portée, la télémétrie ne reçoit qu'un code
+  fixe (`design_workspace_error`), sans message d'origine, sans pile et sans contexte applicatif.
+  `src/routes/design.tsx` possède sa propre frontière d'erreur qui n'émet que ce code.
+- `src/lib/standex/machine-assets.ts` : l'échec d'analyse du JSON interne d'un GLB ne remonte plus
+  le message natif (qui cite un extrait du fichier) mais un message fixe.
+- `src/lib/leadmagnet/review.ts` : `staffIdentityFromClaims` ne lit que `app_metadata.standex_role`
+  (écrit par le serveur, signé dans le jeton). `user_metadata`, un champ `role` libre ou un choix
+  d'interface sont ignorés ; `assertServerTrustedIdentity` refuse toute identité sans rôle fiable.
+- `src/lib/leadmagnet/backend.ts` / `submission.ts` : messages client sans nom de table, de schéma
+  ni de fichier de migration ; le détail technique vit dans `adminDetail`, réservé à un panneau
+  administrateur.
