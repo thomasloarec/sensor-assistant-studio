@@ -2,6 +2,8 @@
  * Logique métier pure : aucun accès réseau, aucun stockage, aucune UI ici.
  */
 import type { WorkshopConfig } from "@/lib/standex/magnetic-workshop";
+import { EMPTY_CABLING, type CablingConfig } from "./cabling";
+import { DEFAULT_TERMINATION, type Termination } from "./connectors";
 
 export type RequirementState = "confirmed" | "hypothesis" | "unknown";
 export type RequirementSource = "user" | "import" | "assistant" | "rnd";
@@ -128,8 +130,13 @@ export function createDossier(now = new Date().toISOString()): DesignDossier {
     mounting: { kind: "undecided" },
     envelope: { lengthMm: null, widthMm: null, heightMm: null },
     workshop: null,
-    workshopIsExample: false,
+    workshopSource: "none",
+    workshopAsset: null,
     selectedSensorId: null,
+    workshopSensorId: null,
+    sensorSyncConfirmed: false,
+    cabling: EMPTY_CABLING,
+    termination: DEFAULT_TERMINATION,
     freeConstraints: "",
     openQuestions: [],
     attachments: [],
