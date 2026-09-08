@@ -1757,7 +1757,9 @@ revoke all on function lead_priv.record_nda_proof(uuid, text, text, text, text, 
 -- ----------------------------------------------------------------------------
 -- 8. Enregistrement de la version
 -- ----------------------------------------------------------------------------
-insert into lead.schema_migrations (version) values ('1.2')
+-- 1.3 : hash canonique partagé, consentement lié au contenu/révision/fichiers,
+-- préflight de dépôt avec empreinte exacte, coquille NDA serveur.
+insert into lead.schema_migrations (version) values ('1.2'), ('1.3')
 on conflict (version) do nothing;
 
 commit;
