@@ -9,6 +9,8 @@ import {
   missingNdaFields,
   ndaFileName,
   sha256Hex,
+  validateNdaValues,
+  bodyParagraphRanges,
   type NdaVariableValues,
 } from "../src/lib/leadmagnet/nda-docx";
 
@@ -95,9 +97,8 @@ test("champs manquants signalés et nom de fichier explicitement non signé", ()
 });
 
 test("champ lieu/date client : une seule séparation, plus de tabulations de remplissage", async () => {
-  const template = new Uint8Array(readFileSync(TEMPLATE_PATH));
   const filled = await fillNdaTemplate(template, {
-    ...FULL_VALUES,
+    ...values,
     clientPlaceDate: "Caen, France — 08.09.2026",
   });
   const xml = new TextDecoder().decode(unzipSync(filled.bytes)["word/document.xml"]!);
@@ -113,16 +114,15 @@ test("champ lieu/date client : une seule séparation, plus de tabulations de rem
 });
 
 test("valeurs refusées : caractère interdit, saut de ligne, longueur excessive", async () => {
-  const template = new Uint8Array(readFileSync(TEMPLATE_PATH));
   for (const bad of ["A\u0000B", "ligne1\nligne2", "x".repeat(201)]) {
-    expect(validateNdaValues({ ...FULL_VALUES, clientPlaceDate: bad }).length).toBeGreaterThan(0);
+    expect(validateNdaValues({ ...values, clientPlaceDate: bad }).length).toBeGreaterThan(0);
     let refused = false;
     try {
-      await fillNdaTemplate(template, { ...FULL_VALUES, clientPlaceDate: bad });
+      await fillNdaTemplate(template, { ...values, clientPlaceDate: bad });
     } catch {
       refused = true;
     }
     expect(refused).toBe(true);
   }
-  expect(validateNdaValues(FULL_VALUES)).toEqual([]);
+  expect(validateNdaValues(values)).toEqual([]);
 });
