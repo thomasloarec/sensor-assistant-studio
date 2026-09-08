@@ -106,7 +106,7 @@ function HomeRoute() {
                   ce que vous voulez détecter : nous construisons la solution avec vous.
                 </p>
                 <div className="mt-10 flex flex-wrap items-center gap-4">
-                  <Button size="lg" className="group" onClick={() => setStarted(true)}>
+                  <Button size="lg" className="group" onClick={openWorkspace}>
                     Décrire mon besoin
                     <ArrowRight className="transition-transform duration-[var(--d-fast)] group-hover:translate-x-[3px]" />
                   </Button>
@@ -183,7 +183,7 @@ function HomeRoute() {
           chrome="embedded"
           visible={started}
           accountRequest={accountRequest}
-          onWorkspaceOpen={() => setStarted(true)}
+          onWorkspaceOpen={openWorkspace}
         />
       </div>
     </div>
