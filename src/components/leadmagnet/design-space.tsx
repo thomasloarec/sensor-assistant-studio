@@ -181,6 +181,11 @@ function pointFields(label: string, value: Point | null, onChange: (p: Point | n
   );
 }
 
+export interface DesignSpaceProps {
+  /** "page" : route /design autonome. "embedded" : monté dans l'espace projet de l'accueil. */
+  chrome?: "page" | "embedded";
+}
+
 export function DesignSpace({ chrome = "page" }: DesignSpaceProps) {
   const [dossier, setDossier] = useState<DesignDossier>(() => createDossier());
   const [privacy, setPrivacy] = useState(INITIAL_PRIVACY);
