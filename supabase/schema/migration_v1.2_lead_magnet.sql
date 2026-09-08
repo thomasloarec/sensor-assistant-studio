@@ -222,6 +222,17 @@ alter table lead.sample_requests add column if not exists feedback_revision inte
 alter table lead.sample_requests add column if not exists feedback_context_revision integer;
 alter table lead.sample_requests add column if not exists revalidated_at timestamptz;
 alter table lead.sample_requests add column if not exists revalidated_by uuid references auth.users(id);
+-- Correctif provenance : la conception RÉELLEMENT commandée reste lisible même
+-- après revalidation. `revision`/`review_id` suivent la conception en vigueur,
+-- `origin_*` ne bougent jamais.
+alter table lead.sample_requests add column if not exists origin_revision integer;
+alter table lead.sample_requests add column if not exists origin_review_id uuid
+  references lead.design_reviews(id) on delete set null;
+alter table lead.sample_requests add column if not exists revalidated_from_revision integer;
+update lead.sample_requests
+   set origin_revision = coalesce(origin_revision, revision),
+       origin_review_id = coalesce(origin_review_id, review_id)
+ where origin_revision is null or origin_review_id is null;
 
 -- Preuve NDA : écrite exclusivement après vérification humaine habilitée.
 create table if not exists lead.nda_proofs (
@@ -265,6 +276,14 @@ alter table lead.upload_sessions add column if not exists expected_sha256 text;
 alter table lead.upload_sessions add column if not exists expected_bytes bigint;
 alter table lead.upload_sessions add column if not exists expected_mime text;
 alter table lead.upload_sessions add column if not exists expected_revision integer;
+-- Correctif fichiers : l'empreinte annoncée par le client ne prouve rien sur
+-- les octets stockés. Ces colonnes ne sont écrites que par la finalisation
+-- serveur (service_role), après relecture réelle de l'objet.
+alter table lead.upload_sessions add column if not exists verified_sha256 text;
+alter table lead.upload_sessions add column if not exists verified_bytes bigint;
+alter table lead.upload_sessions add column if not exists verified_mime text;
+alter table lead.upload_sessions add column if not exists verified_object_path text;
+alter table lead.upload_sessions add column if not exists verified_at timestamptz;
 
 
 create table if not exists lead.audit_log (
@@ -470,6 +489,103 @@ set search_path = pg_temp as $$
     else false end;
 $$;
 
+-- Nombre JSON exploitable : fini, et éventuellement borné. `null` JSON est
+-- accepté seulement quand la valeur est explicitement facultative.
+create or replace function lead_priv.json_num_ok(_v jsonb, _nullable boolean,
+                                                 _min numeric default null,
+                                                 _max numeric default null)
+returns boolean language plpgsql immutable
+set search_path = pg_temp as $$
+declare n numeric;
+begin
+  if _v is null or jsonb_typeof(_v) = 'null' then return _nullable; end if;
+  n := lead_priv.json_number(_v);
+  if n is null or not lead_priv.finite_num(n) then return false; end if;
+  if _min is not null and n < _min then return false; end if;
+  if _max is not null and n > _max then return false; end if;
+  return true;
+end $$;
+
+-- Un point 3D est un triplet de nombres FINIS, jamais une chaîne ni un trou.
+create or replace function lead_priv.json_point_ok(_v jsonb, _nullable boolean)
+returns boolean language sql immutable
+set search_path = pg_temp as $$
+  select case
+    when _v is null or jsonb_typeof(_v) = 'null' then _nullable
+    when jsonb_typeof(_v) <> 'array' or jsonb_array_length(_v) <> 3 then false
+    else not exists (select 1 from jsonb_array_elements(_v) e
+                     where not lead_priv.json_num_ok(e, false))
+  end;
+$$;
+
+-- Forme RÉELLE des blocs techniques. Un champ absent vaut refus : les
+-- comparaisons ci-dessous sont volontairement fermées (IS DISTINCT FROM).
+create or replace function lead_priv.mounting_ok(_v jsonb)
+returns boolean language sql immutable
+set search_path = pg_temp as $$
+  select case
+    when _v is null or jsonb_typeof(_v) is distinct from 'object' then false
+    when _v->>'kind' in ('pcb_smd','pcb_through_hole','screw','undecided') then true
+    when _v->>'kind' = 'press_fit'
+      then lead_priv.json_num_ok(_v->'holeDiameterMm', false, 0.0000001)
+    when _v->>'kind' = 'other' then jsonb_typeof(_v->'description') = 'string'
+    else false end;
+$$;
+
+create or replace function lead_priv.envelope_ok(_v jsonb)
+returns boolean language sql immutable
+set search_path = pg_temp as $$
+  select _v is not null and jsonb_typeof(_v) is not distinct from 'object'
+     and lead_priv.json_num_ok(_v->'lengthMm', true, 0)
+     and lead_priv.json_num_ok(_v->'widthMm', true, 0)
+     and lead_priv.json_num_ok(_v->'heightMm', true, 0);
+$$;
+
+create or replace function lead_priv.termination_ok(_v jsonb)
+returns boolean language sql immutable
+set search_path = pg_temp as $$
+  select case
+    when _v is null or jsonb_typeof(_v) is distinct from 'object' then false
+    when _v->>'kind' = 'bare_leads' then true
+    when _v->>'kind' = 'free_reference'
+      then jsonb_typeof(_v->'text') = 'string' and _v->>'status' = 'to_verify_by_rnd'
+    when _v->>'kind' = 'unqualified_connector'
+      then jsonb_typeof(_v->'spec') = 'object'
+       and coalesce(btrim(_v#>>'{spec,manufacturer}'),'') <> ''
+       and coalesce(btrim(_v#>>'{spec,mpn}'),'') <> ''
+       and _v->>'status' = 'to_verify_by_rnd'
+    else false end;
+$$;
+
+-- Câblage : géométrie et réserves réellement exploitables. Une valeur non
+-- finie, négative ou d'un autre type n'est pas une donnée : elle est refusée.
+create or replace function lead_priv.cabling_ok(_v jsonb)
+returns boolean language sql immutable
+set search_path = pg_temp as $$
+  select _v is not null and jsonb_typeof(_v) is not distinct from 'object'
+     and lead_priv.json_point_ok(_v->'sensorEndpoint', true)
+     and lead_priv.json_point_ok(_v->'connectionEndpoint', true)
+     and jsonb_typeof(_v->'waypoints') = 'array'
+     and not exists (select 1 from jsonb_array_elements(_v->'waypoints') w
+                     where not lead_priv.json_point_ok(w, false))
+     and jsonb_typeof(_v->'statePaths') = 'array'
+     and not exists (
+       select 1 from jsonb_array_elements(_v->'statePaths') sp
+        where jsonb_typeof(sp) <> 'object'
+           or coalesce(btrim(sp->>'stateId'),'') = ''
+           or jsonb_typeof(sp->'points') <> 'array'
+           or exists (select 1 from jsonb_array_elements(sp->'points') pt
+                      where not lead_priv.json_point_ok(pt, false)))
+     and jsonb_typeof(_v->'declaredMotionStates') = 'array'
+     and jsonb_typeof(_v->'motionCoverageConfirmed') = 'boolean'
+     and lead_priv.json_num_ok(_v->'serviceReserveMm', false, 0)
+     and lead_priv.json_num_ok(_v->'terminationMm', false, 0)
+     and lead_priv.json_num_ok(_v->'toleranceMm', false, 0)
+     and lead_priv.json_num_ok(_v->'surplusHousingMm', false, 0)
+     and lead_priv.json_num_ok(_v->'minBendRadiusMm', true, 0.0000001)
+     and (_v->>'lengthChoice') in ('undecided','standard_to_confirm','custom_to_confirm');
+$$;
+
 create or replace function lead_priv.assign_staff(_user uuid, _role lead.staff_role)
 returns void language sql security definer
 set search_path = lead, lead_priv, pg_temp as $$
@@ -523,7 +639,9 @@ begin
       join lead.upload_sessions us on o.name like us.path_prefix || '/%'
       where o.bucket_id = 'lead-design-files' and o.name = btrim(_signed_object_path)
         and us.dossier_id = _dossier and us.kind = 'nda_signed'
-        and us.expected_sha256 = lower(_document_sha)) then
+        and us.expected_sha256 = lower(_document_sha)
+        and us.verified_sha256 = lower(_document_sha)
+        and us.verified_object_path = btrim(_signed_object_path)) then
       raise exception 'NDA_SIGNED_FILE_NOT_FOUND' using errcode = '42501';
     end if;
     update lead.upload_sessions set closed_at = now()
@@ -907,6 +1025,56 @@ begin
                             'expected_sha256', digest, 'expected_revision', expected_rev);
 end $$;
 
+-- Finalisation d'un dépôt : RÉSERVÉE au service_role (fonction serveur de
+-- confiance). Elle enregistre l'empreinte des octets RÉELLEMENT relus dans le
+-- bucket privé. Sans elle, aucun fichier ne peut être annoncé à la soumission
+-- ni servir de preuve NDA : un client ne peut donc pas certifier lui-même.
+create or replace function lead_priv.finalize_upload(
+  _session uuid, _path text, _sha text, _bytes bigint, _mime text)
+returns jsonb language plpgsql security definer
+set search_path = lead, lead_priv, pg_temp as $$
+declare s lead.upload_sessions%rowtype;
+begin
+  select * into s from lead.upload_sessions where id = _session for update;
+  if not found then raise exception 'UPLOAD_SESSION_NOT_FOUND' using errcode = '42501'; end if;
+  if s.closed_at is not null or s.expires_at <= now() then
+    raise exception 'UPLOAD_SESSION_CLOSED' using errcode = '42501';
+  end if;
+  if coalesce(btrim(_path),'') = '' or _path not like s.path_prefix || '/%' then
+    raise exception 'UPLOAD_PATH_MISMATCH' using errcode = '42501';
+  end if;
+  if lower(coalesce(_sha,'')) !~ '^[a-f0-9]{64}$'
+     or lower(_sha) is distinct from s.expected_sha256 then
+    raise exception 'UPLOAD_DIGEST_MISMATCH' using errcode = '42501';
+  end if;
+  if _bytes is null or _bytes <> s.expected_bytes then
+    raise exception 'UPLOAD_SIZE_MISMATCH' using errcode = '42501';
+  end if;
+  if btrim(coalesce(_mime,'')) is distinct from s.expected_mime then
+    raise exception 'UPLOAD_MIME_MISMATCH' using errcode = '42501';
+  end if;
+  if not exists (select 1 from storage.objects o
+                  where o.bucket_id = 'lead-design-files' and o.name = _path) then
+    raise exception 'UPLOAD_OBJECT_MISSING' using errcode = '42501';
+  end if;
+  update lead.upload_sessions
+     set verified_sha256 = lower(_sha), verified_bytes = _bytes,
+         verified_mime = btrim(_mime), verified_object_path = _path, verified_at = now()
+   where id = _session;
+  insert into lead.audit_log (actor, action, dossier_id, detail)
+  values (s.user_id, 'upload_verified', s.dossier_id,
+          jsonb_build_object('session_id', _session, 'sha256', lower(_sha), 'bytes', _bytes));
+  return jsonb_build_object('session_id', _session, 'path', _path,
+                            'sha256', lower(_sha), 'bytes', _bytes, 'verified_at', now());
+end $$;
+
+create or replace function public.lead_finalize_upload(
+  p_session uuid, p_path text, p_sha text, p_bytes bigint, p_mime text)
+returns jsonb language sql security invoker
+set search_path = public, lead_priv, pg_temp as $$
+  select lead_priv.finalize_upload(p_session, p_path, p_sha, p_bytes, p_mime);
+$$;
+
 create or replace function public.lead_open_upload_session(
   p_dossier uuid, p_kind text, p_consent jsonb default null)
 returns jsonb language sql security invoker
@@ -950,17 +1118,19 @@ begin
      or coalesce(btrim(_snapshot->>'title'),'') = ''
      or jsonb_typeof(_snapshot->'requirements') <> 'array'
      or jsonb_array_length(_snapshot->'requirements') = 0
-     or jsonb_typeof(_snapshot->'business') <> 'object'
-     or jsonb_typeof(_snapshot->'mounting') <> 'object'
-     or jsonb_typeof(_snapshot->'envelope') <> 'object'
-     or jsonb_typeof(_snapshot->'cabling') <> 'object'
-     or jsonb_typeof(_snapshot->'termination') <> 'object'
-     or jsonb_typeof(_snapshot->'attachments') <> 'array'
-     or _snapshot ? 'internalNotes' then
+     or jsonb_typeof(_snapshot->'business') is distinct from 'object'
+     or jsonb_typeof(_snapshot->'attachments') is distinct from 'array'
+     or _snapshot ? 'internalNotes'
+     -- Un bloc ABSENT vaut refus : `jsonb_typeof(null)` est NULL, donc les
+     -- comparaisons ouvertes laissaient passer un dossier amputé.
+     or not lead_priv.mounting_ok(_snapshot->'mounting')
+     or not lead_priv.envelope_ok(_snapshot->'envelope')
+     or not lead_priv.cabling_ok(_snapshot->'cabling')
+     or not lead_priv.termination_ok(_snapshot->'termination') then
     raise exception 'BAD_SNAPSHOT_SHAPE' using errcode = '22023';
   end if;
   if exists (select 1 from jsonb_array_elements(_snapshot->'requirements') r
-             where jsonb_typeof(r) <> 'object'
+             where jsonb_typeof(r) is distinct from 'object'
                 or coalesce(btrim(r->>'key'),'') = ''
                 or (r->>'state') not in ('confirmed','hypothesis','unknown')
                 or (r->>'source') not in ('user','import','assistant','rnd')) then
@@ -1035,7 +1205,10 @@ begin
           and s.user_id = u
           and s.kind <> 'nda_signed'
           and s.expected_revision = next_rev
-          and s.expected_sha256 = lower(f->>'sha256'));
+          and s.expected_sha256 = lower(f->>'sha256')
+          -- L'empreinte retenue est celle RELUE côté serveur, pas celle annoncée.
+          and s.verified_sha256 = lower(f->>'sha256')
+          and s.verified_object_path = f->>'path');
   if bad > 0 then raise exception 'FILE_NOT_TRANSFERRED' using errcode = '42501'; end if;
   -- Le consentement énumère les fichiers relus : ni fichier en plus, ni en moins.
   if (select coalesce(jsonb_agg(x order by x), '[]'::jsonb)
@@ -1390,8 +1563,10 @@ begin
   end;
 
   insert into lead.sample_requests (dossier_id, review_id, revision, requested_by,
-    part_number, designation, annual_volume_basis, quantity, route)
-  values (d.id, rv.id, rv.revision, u, rv.exact_part_number, rv.designation, volume, _quantity, route)
+    part_number, designation, annual_volume_basis, quantity, route,
+    origin_revision, origin_review_id)
+  values (d.id, rv.id, rv.revision, u, rv.exact_part_number, rv.designation, volume, _quantity, route,
+          rv.revision, rv.id)
   returning id into sid;
 
   insert into lead.audit_log (actor, action, dossier_id, detail)
@@ -1485,14 +1660,25 @@ begin
     raise exception 'REVALIDATION_NOT_SUPPORTED' using errcode = '42501';
   end if;
   update lead.sample_requests
-     set status = 'confirmed', revision = d.current_revision, review_id = rv.id,
+     set status = 'confirmed',
+         -- La conception d'ORIGINE reste lisible : elle n'est jamais écrasée.
+         origin_revision = coalesce(origin_revision, revision),
+         origin_review_id = coalesce(origin_review_id, review_id),
+         revalidated_from_revision = revision,
+         revision = d.current_revision, review_id = rv.id,
          revalidated_at = now(), revalidated_by = u
    where id = _sample_id;
+  select * into s from lead.sample_requests where id = _sample_id;
   insert into lead.audit_log (actor, action, dossier_id, detail)
   values (u, 'sample_revalidated', d.id,
-          jsonb_build_object('sample_id', _sample_id, 'justification', _justification));
+          jsonb_build_object('sample_id', _sample_id, 'justification', _justification,
+                             'origin_revision', s.origin_revision,
+                             'revalidated_from_revision', s.revalidated_from_revision,
+                             'design_revision', d.current_revision));
   return jsonb_build_object('id', _sample_id, 'status', 'confirmed',
-                            'design_revision', d.current_revision);
+                            'design_revision', d.current_revision,
+                            'origin_revision', s.origin_revision,
+                            'revalidated_from_revision', s.revalidated_from_revision);
 end $$;
 
 create or replace function public.lead_revalidate_sample(p_sample_id uuid, p_justification text)
@@ -1550,7 +1736,11 @@ set search_path = lead, lead_priv, pg_temp as $$
         'id', s.id, 'part_number', s.part_number, 'designation', s.designation,
         'quantity', s.quantity, 'route', s.route, 'status', s.status,
         'annual_volume_basis', s.annual_volume_basis, 'revision', s.revision,
-        'feedback', s.feedback, 'feedback_revision', s.feedback_revision)
+        'origin_revision', coalesce(s.origin_revision, s.revision),
+        'revalidated_from_revision', s.revalidated_from_revision,
+        'revalidated_at', s.revalidated_at,
+        'feedback', s.feedback, 'feedback_revision', s.feedback_revision,
+        'feedback_context_revision', s.feedback_context_revision)
         order by s.created_at)
       from lead.sample_requests s where s.dossier_id = _dossier), '[]'::jsonb),
     'internal_notes', case when _internal then coalesce((select jsonb_agg(jsonb_build_object(
@@ -1753,13 +1943,23 @@ grant execute on function lead_priv.staff_can_read_design(uuid, uuid) to authent
 revoke all on function lead_priv.assign_staff(uuid, lead.staff_role) from public, anon, authenticated;
 revoke all on function lead_priv.record_nda_proof(uuid, text, text, text, text, jsonb, date, uuid, text, text)
   from public, anon, authenticated;
+-- La vérification des octets stockés est un acte SERVEUR : ni le client ni le
+-- staff ne peuvent déclarer eux-mêmes qu'un fichier est conforme.
+revoke all on function lead_priv.finalize_upload(uuid, text, text, bigint, text)
+  from public, anon, authenticated;
+revoke all on function public.lead_finalize_upload(uuid, text, text, bigint, text)
+  from public, anon, authenticated;
+grant execute on function lead_priv.finalize_upload(uuid, text, text, bigint, text) to service_role;
+grant execute on function public.lead_finalize_upload(uuid, text, text, bigint, text) to service_role;
 
 -- ----------------------------------------------------------------------------
 -- 8. Enregistrement de la version
 -- ----------------------------------------------------------------------------
 -- 1.3 : hash canonique partagé, consentement lié au contenu/révision/fichiers,
 -- préflight de dépôt avec empreinte exacte, coquille NDA serveur.
-insert into lead.schema_migrations (version) values ('1.2'), ('1.3')
+-- 1.4 : formes imbriquées fermées (montage/encombrement/câblage/terminaison),
+-- finalisation serveur des dépôts, provenance d'échantillon conservée.
+insert into lead.schema_migrations (version) values ('1.2'), ('1.3'), ('1.4')
 on conflict (version) do nothing;
 
 commit;

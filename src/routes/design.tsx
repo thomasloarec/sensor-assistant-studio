@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from "react";
+import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ArrowLeft, ShieldCheck, Lock, Download, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -103,6 +103,7 @@ import {
   prepareNdaOnServer,
   fetchNdaStatus,
   type NdaStatusView,
+  type UploadedFile,
 } from "@/lib/leadmagnet/supabase-adapter";
 import { supabase } from "@/lib/standex/supabase";
 import { applyVariant } from "@/lib/leadmagnet/variant";
@@ -253,6 +254,21 @@ function DesignSpace() {
    */
   const [binding, setBinding] = useState<ConsentBinding | null>(null);
   const [consentNotice, setConsentNotice] = useState<string | null>(null);
+  /** Fichier RÉELLEMENT déposé et vérifié par le serveur, pour ce dossier et
+   * cette version précise. Il est réutilisé tel quel si l'envoi doit être
+   * retenté : jamais de second dépôt du même fichier.
+   */
+  const [preparedUpload, setPreparedUpload] = useState<{
+    dossierId: string;
+    revision: number;
+    assetKey: string;
+    file: UploadedFile;
+  } | null>(null);
+  /** Verrou d'action : empêche un double clic de créer deux versions. */
+  const [busy, setBusy] = useState(false);
+  const busyRef = useRef(false);
+
+
 
 
 
@@ -479,102 +495,187 @@ function DesignSpace() {
     }
   }, []);
 
-  const onSubmit = useCallback(async () => {
-    // Partage explicite du modèle 3D : dépôt réel AVANT la soumission, jamais implicite.
-    let dossierId = serverDossierId;
-    let submitted = dossier;
-    if (shareModel && dossier.workshopAsset && backend?.ready) {
-      try {
-        const bytes = memoryAssetBytes(dossier.workshopAsset.assetKey);
-        if (!bytes) {
-          setSubmitMessage(
-            "Le fichier 3D n'est plus en mémoire de cet onglet : réimportez-le avant de le partager.",
-          );
-          return;
-        }
-        if (!dossierId) {
-          dossierId = await createServerDossier(
-            nda.required ? "Préparation d'un accord de confidentialité" : dossier.title,
-            nda.required,
-          );
-          setServerDossierId(dossierId);
-        }
-        const uploaded = await uploadDesignFile(
-          dossierId,
-          { name: dossier.workshopAsset.fileName, data: new Uint8Array(bytes) },
-          "design_model",
-          {
-            kind: "supabase_files",
-            statement: "Partage du modèle 3D avec l'équipe Standex en charge du dossier.",
-            accepted_at: new Date().toISOString(),
-            content_ref: dossier.workshopAsset.fileName,
-            revision: serverRevision + 1,
-          },
-        );
-        submitted = {
-          ...dossier,
-          attachments: [
-            ...dossier.attachments.filter((a) => a.fileName !== uploaded.fileName),
-            {
-              id: uploaded.path,
-              fileName: uploaded.fileName,
-              bytes: uploaded.bytes,
-              transferred: true,
-              storagePath: uploaded.path,
-              sha256: uploaded.sha256,
-              mimeType: uploaded.mimeType,
-            },
-          ],
-        };
-        setDossier(submitted);
-      } catch (error) {
+  /** Remise à zéro ATOMIQUE du contexte serveur.
+   * Tout ce qui dépend d'un dossier serveur précis tombe en même temps : accord
+   * d'envoi, relecture, statut NDA, fichier déjà préparé. Sans cela, un accord
+   * donné pour le dossier A pourrait servir au dossier B.
+   */
+  const resetServerContext = useCallback((dossierId: string | null, revision: number) => {
+    setServerDossierId(dossierId);
+    setServerRevision(revision);
+    setNdaServer(null);
+    setNda(INITIAL_NDA);
+    setPrivacy((p) => ({ ...p, consents: [] }));
+    setAcknowledged(false);
+    setPreparedUpload(null);
+    setBinding(null);
+    setConsentNotice(null);
+  }, []);
+
+  /** Étape 1 : préparer le partage du modèle 3D.
+   * Le dépôt a lieu ICI, AVANT la relecture et l'accord, une seule fois. Le
+   * dossier contient ensuite le fichier réellement déposé, donc l'accord porte
+   * sur ce qui partira vraiment — c'est ce qui supprime la boucle « accord
+   * périmé » constatée quand le dépôt avait lieu après la case à cocher.
+   */
+  const prepareShare = useCallback(async () => {
+    if (busyRef.current) return;
+    if (!dossier.workshopAsset) {
+      setSubmitMessage("Aucun modèle 3D à partager dans cet onglet.");
+      return;
+    }
+    if (!backend?.ready) {
+      setSubmitMessage(
+        backend?.message ?? "La liaison avec l'équipe Standex n'est pas active : rien n'a été déposé.",
+      );
+      return;
+    }
+    busyRef.current = true;
+    setBusy(true);
+    setSubmitMessage(null);
+    try {
+      const bytes = memoryAssetBytes(dossier.workshopAsset.assetKey);
+      if (!bytes) {
         setSubmitMessage(
-          error instanceof Error ? error.message : "Le fichier 3D n'a pas pu être partagé.",
+          "Le fichier 3D n'est plus en mémoire de cet onglet : réimportez-le avant de le partager.",
         );
         return;
       }
+      let dossierId = serverDossierId;
+      if (!dossierId) {
+        dossierId = await createServerDossier(
+          nda.required ? "Préparation d'un accord de confidentialité" : dossier.title,
+          nda.required,
+        );
+        setServerDossierId(dossierId);
+      }
+      const uploaded = await uploadDesignFile(
+        dossierId,
+        { name: dossier.workshopAsset.fileName, data: new Uint8Array(bytes) },
+        "design_model",
+        {
+          kind: "supabase_files",
+          statement: "Partage du modèle 3D avec l'équipe Standex en charge du dossier.",
+          accepted_at: new Date().toISOString(),
+          content_ref: dossier.workshopAsset.fileName,
+          revision: serverRevision + 1,
+        },
+      );
+      if (!uploaded.verified) {
+        // Un fichier non relu par le serveur ne peut PAS être annoncé : il
+        // resterait refusé à la soumission. On le dit franchement ici.
+        setPreparedUpload(null);
+        setSubmitMessage(
+          `Le fichier a été déposé mais le serveur n'a pas pu en vérifier le contenu (${
+            uploaded.verificationError ?? "raison inconnue"
+          }). Il n'est donc pas joint à votre envoi.`,
+        );
+        return;
+      }
+      setPreparedUpload({
+        dossierId,
+        revision: serverRevision + 1,
+        assetKey: dossier.workshopAsset.assetKey,
+        file: uploaded,
+      });
+      setDossier((d) => ({
+        ...d,
+        attachments: [
+          ...d.attachments.filter((a) => a.fileName !== uploaded.fileName),
+          {
+            id: uploaded.path,
+            fileName: uploaded.fileName,
+            bytes: uploaded.bytes,
+            transferred: true,
+            storagePath: uploaded.path,
+            sha256: uploaded.sha256,
+            mimeType: uploaded.mimeType,
+          },
+        ],
+        updatedAt: new Date().toISOString(),
+      }));
+      setSubmitMessage(
+        "Modèle 3D déposé et vérifié par le serveur. Relisez le résumé, confirmez votre accord, puis envoyez : le fichier ne sera pas déposé une seconde fois.",
+      );
+    } catch (error) {
+      setSubmitMessage(
+        error instanceof Error ? error.message : "Le fichier 3D n'a pas pu être partagé.",
+      );
+    } finally {
+      busyRef.current = false;
+      setBusy(false);
     }
-    // Le consentement est vérifié APRÈS le dépôt : les fichiers réellement
-    // transmis font partie de ce que le client a accepté d'envoyer.
+  }, [backend, dossier.workshopAsset, dossier.title, nda.required, serverDossierId, serverRevision]);
+
+  /** Étape 2 : envoi. Aucun dépôt ici — ce qui est joint a déjà été déposé,
+   * vérifié et relu. Le verrou empêche un double clic de créer deux versions.
+   */
+  const onSubmit = useCallback(async () => {
+    if (busyRef.current) return;
+    if (shareModel && dossier.workshopAsset && !preparedUpload) {
+      setSubmitMessage(
+        "Préparez d'abord le partage du modèle 3D : il doit être déposé et vérifié avant votre accord d'envoi.",
+      );
+      return;
+    }
+    if (
+      preparedUpload &&
+      (preparedUpload.dossierId !== serverDossierId ||
+        preparedUpload.revision !== serverRevision + 1)
+    ) {
+      setPreparedUpload(null);
+      setSubmitMessage(
+        "Le dossier ou la version visée a changé depuis le dépôt du fichier : préparez à nouveau le partage.",
+      );
+      return;
+    }
     const input = {
-      dossier: submitted,
+      dossier,
       nda,
       consents: privacy.consents,
       reviewAcknowledged: acknowledged,
       additionalConstraints: extraConstraints,
-      serverDossierId: dossierId,
+      serverDossierId,
       serverRevision: serverRevision + 1,
     };
-    const check = await checkSubmission(input);
-    if (!check.ok) {
-      setSubmitMessage(check.problems.join(" "));
-      return;
-    }
-    // Envoi réel dès que l'espace serveur est disponible et la session ouverte ;
-    // sinon rien n'est transmis et rien n'est simulé.
-    const outcome = await submit(
-      input,
-      createSupabaseSubmissionBackend({
-        schemaReady: Boolean(backend?.schemaReady),
-        capabilities: backend?.capabilities ?? {
-          authenticated: false,
-          userId: null,
-          role: null,
-          assignedDossiers: [],
-        },
-        dossierId,
-        expectedRevision: serverRevision,
-        ndaRequired: nda.required,
-        onDossierCreated: setServerDossierId,
-      }),
-    );
-    if (outcome.status === "submitted") {
-      setServerRevision((r) => r + 1);
-      setSubmitMessage(
-        "Dossier transmis à la revue Standex. Vous serez informé dès qu'un retour est publié.",
+    busyRef.current = true;
+    setBusy(true);
+    try {
+      const check = await checkSubmission(input);
+      if (!check.ok) {
+        setSubmitMessage(check.problems.join(" "));
+        return;
+      }
+      // Envoi réel dès que l'espace serveur est disponible et la session ouverte ;
+      // sinon rien n'est transmis et rien n'est simulé.
+      const outcome = await submit(
+        input,
+        createSupabaseSubmissionBackend({
+          schemaReady: Boolean(backend?.schemaReady),
+          capabilities: backend?.capabilities ?? {
+            authenticated: false,
+            userId: null,
+            role: null,
+            assignedDossiers: [],
+          },
+          dossierId: serverDossierId,
+          expectedRevision: serverRevision,
+          ndaRequired: nda.required,
+          onDossierCreated: setServerDossierId,
+        }),
       );
-    } else {
-      setSubmitMessage(outcome.reason);
+      if (outcome.status === "submitted") {
+        setServerRevision((r) => r + 1);
+        setPreparedUpload(null);
+        setSubmitMessage(
+          "Dossier transmis à la revue Standex. Vous serez informé dès qu'un retour est publié.",
+        );
+      } else {
+        setSubmitMessage(outcome.reason);
+      }
+    } finally {
+      busyRef.current = false;
+      setBusy(false);
     }
   }, [
     dossier,
@@ -586,7 +687,9 @@ function DesignSpace() {
     serverDossierId,
     serverRevision,
     shareModel,
+    preparedUpload,
   ]);
+
 
 
   const volume = dossier.business.annualVolume;
@@ -1553,12 +1656,33 @@ function DesignSpace() {
                     <Checkbox
                       checked={shareModel}
                       disabled={!dossier.workshopAsset}
-                      onCheckedChange={(v) => setShareModel(Boolean(v))}
+                      onCheckedChange={(v) => {
+                        setShareModel(Boolean(v));
+                        if (!v) setPreparedUpload(null);
+                      }}
                     />
                     {dossier.workshopAsset
                       ? `Je partage aussi le fichier 3D « ${dossier.workshopAsset.fileName} » avec l'équipe en charge.`
                       : "Aucun fichier 3D importé : rien à partager."}
                   </label>
+                  {shareModel && dossier.workshopAsset ? (
+                    <div className="space-y-1">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        disabled={busy || preparedUpload?.assetKey === dossier.workshopAsset.assetKey}
+                        onClick={() => void prepareShare()}
+                      >
+                        {preparedUpload?.assetKey === dossier.workshopAsset.assetKey
+                          ? "Fichier 3D déposé et vérifié"
+                          : "1. Déposer le fichier 3D"}
+                      </Button>
+                      <p className="text-xs text-muted-foreground">
+                        Le dépôt a lieu avant votre accord, pour que vous confirmiez exactement ce
+                        qui partira. Il n'est pas refait si l'envoi doit être retenté.
+                      </p>
+                    </div>
+                  ) : null}
                   <label className="flex items-center gap-2 text-sm">
                     <Checkbox
                       checked={acknowledged}
@@ -1566,8 +1690,9 @@ function DesignSpace() {
                     />
                     J'ai relu le résumé technique et les inconnues listées.
                   </label>
-                  <Button onClick={onSubmit} disabled={!ndaOk}>
-                    <ShieldCheck className="mr-1 h-4 w-4" /> Transmettre à la revue Standex
+                  <Button onClick={() => void onSubmit()} disabled={!ndaOk || busy}>
+                    <ShieldCheck className="mr-1 h-4 w-4" />{" "}
+                    {busy ? "Envoi en cours…" : "Transmettre à la revue Standex"}
                   </Button>
                   {!backend?.ready ? (
                     <div className="space-y-2">
@@ -1605,12 +1730,7 @@ function DesignSpace() {
                     onSelectDossier={(d) => {
                       // Changer de dossier remet TOUT le contexte serveur au même
                       // instant : sinon le dossier A pourrait partir dans le dossier B.
-                      setServerDossierId(d.id);
-                      setServerRevision(d.revision);
-                      setNdaServer(null);
-                      setNda(INITIAL_NDA);
-                      setPrivacy((p) => ({ ...p, consents: [] }));
-                      setAcknowledged(false);
+                      resetServerContext(d.id, d.revision);
                       setSubmitMessage(
                         `Dossier « ${d.title} » sélectionné : votre accord d'envoi et la relecture sont à refaire pour ce dossier.`,
                       );
@@ -1621,25 +1741,31 @@ function DesignSpace() {
                         setSubmitMessage(parsed.reason);
                         return;
                       }
+                      // Reprise ATOMIQUE : contenu, contexte serveur, accords,
+                      // relecture et partage de fichier changent d'un seul tenant.
                       setDossier({ ...parsed.dossier, storage: "memory" });
                       setWorkshop(parsed.dossier.workshop ?? null);
-                      setServerDossierId(dossierId);
-                      setServerRevision(revision);
-                      setNdaServer(null);
-                      setNda(INITIAL_NDA);
-                      setPrivacy((p) => ({ ...p, consents: [] }));
-                      setAcknowledged(false);
+                      resetServerContext(dossierId, revision);
                       setSubmitMessage(
-                        `Version ${revision} reprise depuis le dossier réellement envoyé. ${parsed.notices.join(" ")}`,
+                        `Version ${revision} reprise depuis le dossier « ${dossierId.slice(0, 8)} » réellement envoyé. ${parsed.notices.join(" ")}`,
                       );
                     }}
-                    onApplyVariant={(variant) => {
+                    onApplyVariant={({ dossierId, variant }) => {
                       // La variante modifie RÉELLEMENT le dossier en cours, jamais
                       // la version déjà envoyée, et rien n'est approuvé pour autant.
+                      if (dossierId !== serverDossierId) {
+                        return {
+                          applied: [],
+                          notApplied: [],
+                          refused:
+                            "Cette proposition concerne un autre dossier que celui ouvert ici : reprenez d'abord ce dossier, puis appliquez la variante.",
+                        };
+                      }
                       const out = applyVariant(dossier, variant);
                       setDossier(out.dossier);
                       setPrivacy((p) => ({ ...p, consents: [] }));
                       setAcknowledged(false);
+                      setPreparedUpload(null);
                       return { applied: out.applied, notApplied: out.notApplied };
                     }}
                   />

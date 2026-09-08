@@ -45,7 +45,7 @@ export function schemaVersionSatisfies(actual: string | null, required: string):
 }
 
 /** Version de schéma minimale attendue par cette version de l'application. */
-export const REQUIRED_LEAD_SCHEMA_VERSION = "1.2";
+export const REQUIRED_LEAD_SCHEMA_VERSION = "1.4";
 
 export type LeadRpcName = (typeof LEAD_RPC)[keyof typeof LEAD_RPC];
 

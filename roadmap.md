@@ -37,3 +37,24 @@
 - Variante déjà remplacée : bouton désactivé côté client.
 - Vérifs : `bun test` 154/154, SQL 62/62, indépendant 9/9, typecheck, build, smoke navigateur.
 - La migration Lead Magnet reste NON appliquée au backend live.
+
+## Lot fichiers / envoi / provenance — terminé (2026-09-08)
+- Boucle d'envoi supprimée : le fichier 3D est déposé et vérifié AVANT l'accord
+  ("1. Déposer le fichier 3D"), l'accord porte donc sur ce qui partira réellement.
+  Une nouvelle tentative réutilise le dépôt existant au lieu d'en refaire un.
+- Verrou d'action : double clic impossible, aucun envoi concurrent, contexte
+  serveur (dossier + version) revérifié juste avant l'envoi.
+- Vérification serveur réelle des octets : route `/api/lead/verify-upload`
+  (lecture sous les droits de l'appelant, empreinte recalculée) puis
+  `lead_finalize_upload` réservée au `service_role`. Sans clé de service :
+  réponse 503 honnête, fichier NON joint, rien de simulé.
+- SQL 1.4 : un fichier n'est annonçable qu'après relecture serveur ; formes
+  imbriquées fermées (montage, encombrement, câblage, terminaison) ;
+  provenance d'échantillon conservée (`origin_revision`, `revalidated_from_revision`).
+- Reprise atomique : contenu, dossier serveur, version, NDA, accords, relecture et
+  dépôt préparé changent d'un seul tenant ; n'importe quelle version envoyée peut
+  être reprise, pas seulement la dernière.
+- Variante : refusée si elle vient d'un autre dossier que celui ouvert.
+- Version de schéma exigée par l'application portée à 1.4.
+- Vérifs : `bun test` 160/160, SQL 76/76, indépendant 9/9, typecheck OK.
+- La migration Lead Magnet reste NON appliquée au backend live ; aucun rôle attribué.

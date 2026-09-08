@@ -317,10 +317,37 @@ if (session) {
     () => db.query("insert into storage.objects(bucket_id,name,owner) values('lead-design-files',$1,$2)",
       ['forged/path/model.glb', ids.a])));
 
+  const modelPath = session.path_prefix + '/model.glb';
+  // Tant que le SERVEUR n'a pas relu les octets, le fichier n'est pas annonçable.
+  await expectFail('submit_without_server_verification_is_rejected',
+    () => submitReal(ids.a, privateDossier, withVolume({ kind: 'known', sensorsPerYear: 500 }), 0,
+      [{ path: modelPath, kind: 'glb', sha256: MODEL_SHA }]), 'FILE_NOT_TRANSFERRED');
+  // Le client ne peut pas se certifier lui-même : la fonction lui est fermée.
+  await expectFail('client_cannot_finalize_upload', () => actor('authenticated', ids.a,
+    () => value('select public.lead_finalize_upload($1,$2,$3,$4,$5)',
+      [session.session_id, modelPath, MODEL_SHA, MODEL_BYTES, 'model/gltf-binary'])));
+  await expectFail('finalize_with_wrong_digest_is_rejected', () => actor('service_role', ids.a,
+    () => value('select public.lead_finalize_upload($1,$2,$3,$4,$5)',
+      [session.session_id, modelPath, 'f'.repeat(64), MODEL_BYTES, 'model/gltf-binary'])),
+    'UPLOAD_DIGEST_MISMATCH');
+  await expectFail('finalize_with_wrong_size_is_rejected', () => actor('service_role', ids.a,
+    () => value('select public.lead_finalize_upload($1,$2,$3,$4,$5)',
+      [session.session_id, modelPath, MODEL_SHA, MODEL_BYTES + 1, 'model/gltf-binary'])),
+    'UPLOAD_SIZE_MISMATCH');
+  await expectFail('finalize_outside_session_path_is_rejected', () => actor('service_role', ids.a,
+    () => value('select public.lead_finalize_upload($1,$2,$3,$4,$5)',
+      [session.session_id, 'forged/path/model.glb', MODEL_SHA, MODEL_BYTES, 'model/gltf-binary'])),
+    'UPLOAD_PATH_MISMATCH');
+  const finalized = await actor('service_role', ids.a,
+    () => value('select public.lead_finalize_upload($1,$2,$3,$4,$5)',
+      [session.session_id, modelPath, MODEL_SHA, MODEL_BYTES, 'model/gltf-binary']));
+  add('server_can_finalize_real_upload', finalized.sha256 === MODEL_SHA);
+
   const priv = await submitReal(ids.a, privateDossier,
     withVolume({ kind: 'known', sensorsPerYear: 500 }), 0,
-    [{ path: session.path_prefix + '/model.glb', kind: 'glb', sha256: MODEL_SHA }]);
+    [{ path: modelPath, kind: 'glb', sha256: MODEL_SHA }]);
   add('real_file_can_be_attached_to_revision', priv.revision === 1);
+
   await expectFail('submitted_object_is_immutable', () => actor('authenticated', ids.a,
     () => db.query("delete from storage.objects where name = $1", [session.path_prefix + '/model.glb'])
       .then((r) => { if (r.affectedRows === 0) throw new Error('DELETE_BLOCKED'); })), 'DELETE_BLOCKED');
@@ -362,7 +389,28 @@ for (const [label, volume, designation, expectedRoute] of [
   } catch (e) { add(label, false, e.message); }
 }
 
+// Formes imbriquées : un bloc ABSENT ou une valeur impossible ne passe plus.
+for (const [label, mutate] of [
+  ['missing_mounting_is_rejected', (s) => { const c = { ...s }; delete c.mounting; return c; }],
+  ['null_cabling_is_rejected', (s) => ({ ...s, cabling: null })],
+  ['unknown_mounting_kind_is_rejected', (s) => ({ ...s, mounting: { kind: 'glue' } })],
+  ['press_fit_without_diameter_is_rejected', (s) => ({ ...s, mounting: { kind: 'press_fit' } })],
+  ['string_envelope_dimension_is_rejected',
+   (s) => ({ ...s, envelope: { ...s.envelope, lengthMm: '12' } })],
+  ['negative_service_reserve_is_rejected',
+   (s) => ({ ...s, cabling: { ...s.cabling, serviceReserveMm: -5 } })],
+  ['non_numeric_cable_point_is_rejected',
+   (s) => ({ ...s, cabling: { ...s.cabling, waypoints: [[0, 'x', 1]] } })],
+  ['unknown_termination_kind_is_rejected',
+   (s) => ({ ...s, termination: { kind: 'soldered' } })],
+]) {
+  const dm = await actor('authenticated', ids.a,
+    () => value('select public.lead_create_dossier($1,false)', ['Forme ' + label]));
+  await expectFail(label, () => submitReal(ids.a, dm, mutate(snapshot)), 'BAD_SNAPSHOT_SHAPE');
+}
+
 const failed = results.filter((r) => !r.pass);
+
 console.log(`\n${results.length - failed.length}/${results.length} contrôles OK`);
 writeFileSync('/tmp/sql-review-v1.2.json', JSON.stringify(results, null, 2));
 await db.close();

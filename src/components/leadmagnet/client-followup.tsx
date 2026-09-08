@@ -32,8 +32,15 @@ interface Props {
     revision: number;
     snapshot: Record<string, unknown>;
   }) => void;
-  /** Reprise RÉELLE de la variante dans le dossier en cours de conception. */
-  onApplyVariant?: (variant: VariantProposal) => { applied: string[]; notApplied: string[] };
+  /** Reprise RÉELLE de la variante dans le dossier en cours de conception.
+   * Le dossier visé est transmis : une variante du dossier A ne peut jamais
+   * atterrir dans le dossier B ouvert à l'écran.
+   */
+  onApplyVariant?: (input: { dossierId: string; variant: VariantProposal }) => {
+    applied: string[];
+    notApplied: string[];
+    refused?: string;
+  };
 }
 
 
@@ -188,18 +195,22 @@ export function ClientFollowUp({
                         onClick={async () => {
                           try {
                             const out = await acceptVariant(r.id);
-                            const applied = onApplyVariant?.(
-                              (r.variant ?? {}) as VariantProposal,
-                            );
+                            const applied = onApplyVariant?.({
+                              dossierId: current.dossier.id,
+                              variant: (r.variant ?? {}) as VariantProposal,
+                            });
                             setMessage(
                               [
                                 `Variante reprise dans votre version ${out.next_revision} : la version envoyée reste intacte et rien n'est approuvé tant que vous ne renvoyez pas ce dossier.`,
-                                applied?.applied.length
-                                  ? "Modifié dans votre dossier : " + applied.applied.join(" ; ")
-                                  : "Aucune valeur chiffrée à appliquer : la proposition reste descriptive.",
-                                applied?.notApplied.length
-                                  ? "À traiter vous-même : " + applied.notApplied.join(" ; ")
-                                  : "",
+                                applied?.refused ??
+                                  (applied?.applied.length
+                                    ? "Modifié dans votre dossier : " + applied.applied.join(" ; ")
+                                    : "Aucune valeur chiffrée à appliquer : la proposition reste descriptive."),
+                                applied?.refused
+                                  ? ""
+                                  : applied?.notApplied.length
+                                    ? "À traiter vous-même : " + applied.notApplied.join(" ; ")
+                                    : "",
                               ]
                                 .filter(Boolean)
                                 .join(" "),
@@ -319,6 +330,14 @@ export function ClientFollowUp({
                   </Badge>
                   <span className="text-xs text-muted-foreground">version {s.revision}</span>
                 </div>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Commandés sur la version {s.origin_revision ?? s.revision}
+                  {s.revalidated_from_revision !== null &&
+                  s.revalidated_from_revision !== undefined
+                    ? ` — revalidés depuis la version ${s.revalidated_from_revision}`
+                    : ""}
+                  .
+                </p>
                 {s.feedback ? (
                   <p className="mt-1 text-xs text-muted-foreground">
                     Votre retour (version {s.feedback_revision}) : {s.feedback}
@@ -354,22 +373,31 @@ export function ClientFollowUp({
           </section>
 
           {onReopenSnapshot && current.revisions.length ? (
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => {
-                const last = current.revisions[current.revisions.length - 1];
-                if (last)
-                  onReopenSnapshot({
-                    dossierId: current.dossier.id,
-                    revision: last.revision,
-                    snapshot: last.snapshot,
-                  });
-              }}
-
-            >
-              Reprendre la dernière version envoyée
-            </Button>
+            <section className="space-y-2">
+              <h4 className="font-medium">Reprendre une version envoyée</h4>
+              <div className="flex flex-wrap gap-2">
+                {current.revisions.map((r) => (
+                  <Button
+                    key={r.id}
+                    size="sm"
+                    variant="outline"
+                    onClick={() =>
+                      onReopenSnapshot({
+                        dossierId: current.dossier.id,
+                        revision: r.revision,
+                        snapshot: r.snapshot,
+                      })
+                    }
+                  >
+                    Version {r.revision}
+                  </Button>
+                ))}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                La reprise ouvre exactement le contenu envoyé pour ce dossier. Votre accord d'envoi
+                et la relecture sont à refaire.
+              </p>
+            </section>
           ) : null}
         </>
       ) : null}
