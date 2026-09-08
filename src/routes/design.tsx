@@ -229,6 +229,7 @@ function DesignSpace() {
   /** Pointage du câble dans la 3D : trajet visé et rôle du prochain point. */
   const [routingTarget, setRoutingTarget] = useState<RoutingTarget>({ kind: "base" });
   const [routingSlot, setRoutingSlot] = useState<RoutingSlot>("sensor");
+  const [tab, setTab] = useState("besoin");
 
 
   /** Remplissage local du NDA : aperçu puis téléchargement, sans aucune transmission. */
@@ -514,7 +515,7 @@ function DesignSpace() {
       </header>
 
       <main className="mx-auto max-w-6xl px-4 py-6">
-        <Tabs defaultValue="besoin">
+        <Tabs value={tab} onValueChange={setTab}>
           <TabsList className="flex-wrap">
             <TabsTrigger value="besoin">Besoin</TabsTrigger>
             <TabsTrigger value="montage">Montage &amp; 3D</TabsTrigger>
@@ -822,7 +823,14 @@ function DesignSpace() {
                     {st.label || st.id}
                   </Button>
                 ))}
-                <Button size="sm" variant="outline" onClick={() => setShowWorkshop(true)}>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => {
+                    setShowWorkshop(true);
+                    setTab("montage");
+                  }}
+                >
                   Ouvrir l'atelier 3D
                 </Button>
               </div>
