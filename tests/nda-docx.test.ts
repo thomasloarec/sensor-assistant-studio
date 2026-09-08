@@ -9,6 +9,8 @@ import {
   missingNdaFields,
   ndaFileName,
   sha256Hex,
+  validateNdaValues,
+  bodyParagraphRanges,
   type NdaVariableValues,
 } from "../src/lib/leadmagnet/nda-docx";
 
@@ -60,7 +62,7 @@ test("le lieu Standex et les mentions Stamp/Signature sont préservés, sans sig
     "Place/date:Welschingen, Germany – 01.10.2026Stamp/Signature:   ___________________",
   );
   expect(filled.paragraphs[86]).toBe(
-    "Place/date:Paris, 01.10.2026Stamp/Signature:   ____________________",
+    "Place/date: Paris, 01.10.2026 Stamp/Signature:   ____________________",
   );
   const joined = filled.paragraphs.join("\n");
   expect(joined).toContain("StandexMeder Electronics GmbH");
@@ -92,4 +94,35 @@ test("champs manquants signalés et nom de fichier explicitement non signé", ()
   ]);
   expect(missingNdaFields(values)).toEqual([]);
   expect(ndaFileName(values)).toBe("NDA Standex x Acme_Co_SARL - non signe.docx");
+});
+
+test("champ lieu/date client : une seule séparation, plus de tabulations de remplissage", async () => {
+  const filled = await fillNdaTemplate(template, {
+    ...values,
+    clientPlaceDate: "Caen, France — 08.09.2026",
+  });
+  const xml = new TextDecoder().decode(unzipSync(filled.bytes)["word/document.xml"]!);
+  const p86 = (() => {
+    const r = bodyParagraphRanges(xml)[86]!;
+    return xml.slice(r.start, r.end);
+  })();
+  expect(filled.paragraphs[86]).toBe(
+    "Place/date: Caen, France — 08.09.2026 Stamp/Signature:   ____________________",
+  );
+  expect((p86.match(/<w:tab\/>/g) ?? []).length).toBe(1);
+  expect(p86.endsWith("____________________</w:t></w:r></w:p>")).toBe(true);
+});
+
+test("valeurs refusées : caractère interdit, saut de ligne, longueur excessive", async () => {
+  for (const bad of ["A\u0000B", "ligne1\nligne2", "x".repeat(201)]) {
+    expect(validateNdaValues({ ...values, clientPlaceDate: bad }).length).toBeGreaterThan(0);
+    let refused = false;
+    try {
+      await fillNdaTemplate(template, { ...values, clientPlaceDate: bad });
+    } catch {
+      refused = true;
+    }
+    expect(refused).toBe(true);
+  }
+  expect(validateNdaValues(values)).toEqual([]);
 });
