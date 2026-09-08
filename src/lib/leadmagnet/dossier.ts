@@ -66,8 +66,17 @@ export interface DesignDossier {
   mounting: MountingChoice;
   envelope: EnvelopeMm;
   workshop: WorkshopConfig | null;
-  workshopIsExample: boolean;
+  /** Provenance explicite du montage 3D : jamais déduite de la présence d'un montage. */
+  workshopSource: "none" | "example" | "user_asset";
+  /** Ressource 3D réellement rattachée (clé locale + provenance), sans fichier fantôme. */
+  workshopAsset: { assetKey: string; fileName: string; storage: StorageMode } | null;
+  /** Gamme suivie (ce n'est PAS une référence commandable). */
   selectedSensorId: string | null;
+  /** Le capteur affiché dans l'atelier ne suit la gamme choisie qu'après confirmation. */
+  workshopSensorId: string | null;
+  sensorSyncConfirmed: boolean;
+  cabling: CablingConfig;
+  termination: Termination;
   freeConstraints: string;
   openQuestions: string[];
   attachments: Attachment[];
