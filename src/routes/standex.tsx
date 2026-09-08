@@ -364,7 +364,7 @@ function StandexConsole() {
                         </details>
                         <ul className="list-disc pl-5 text-xs">
                           {lastRevision.transferred_files.map((f, i) => (
-                            <li key={i} className="flex items-center gap-2">
+                            <li key={i} className="flex flex-wrap items-center gap-2">
                               <span>{f.file_name ?? f.path}</span>
                               <Button
                                 size="sm"
@@ -380,9 +380,45 @@ function StandexConsole() {
                               >
                                 Télécharger
                               </Button>
+                              {/^.+\.glb$/i.test(String(f.file_name ?? f.path ?? "")) ? (
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => void openTransferredModel(f)}
+                                >
+                                  Ouvrir en 3D
+                                </Button>
+                              ) : null}
                             </li>
                           ))}
                         </ul>
+                        {viewerError ? (
+                          <p className="text-xs text-destructive">{viewerError}</p>
+                        ) : null}
+                        {viewer ? (
+                          <div className="mt-2">
+                            <p className="mb-2 text-xs text-muted-foreground">
+                              Modèle ouvert en mémoire de cet onglet uniquement, avec la
+                              configuration exacte de la version {viewer.revision} et son câble.
+                              Empreinte contrôlée : {viewer.sha256.slice(0, 16)}…. Une modification
+                              faite ici ne vaut jamais retour publié.
+                            </p>
+                            <Suspense fallback={<p className="text-sm">Chargement de l'atelier…</p>}>
+                              <MagneticWorkshop
+                                initialConfig={viewer.config}
+                                storageLabel="cette lecture, en mémoire de l'onglet"
+                                storageMode="memory"
+                                onClose={() => setViewer(null)}
+                                onSave={async () => {
+                                  setMessage(
+                                    "Cette modification reste locale à votre écran : publiez un retour R&D pour qu'elle compte.",
+                                  );
+                                }}
+                              />
+                            </Suspense>
+                          </div>
+                        ) : null}
+
                       </>
                     ) : (
                       <p className="text-sm text-muted-foreground">Aucune version envoyée.</p>
