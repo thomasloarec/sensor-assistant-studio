@@ -209,7 +209,6 @@ function DesignSpace() {
   const termination = dossier.termination;
   const [connectorDraft, setConnectorDraft] = useState<ConnectorDraft>(EMPTY_CONNECTOR_DRAFT);
   const [connectorError, setConnectorError] = useState<string | null>(null);
-  const [sampleRequests, setSampleRequests] = useState<SampleRequest[]>([]);
   const [importMessage, setImportMessage] = useState<string | null>(null);
   const [backend, setBackend] = useState<LeadBackendStatus | null>(null);
   // Dossier serveur : créé à la première transmission réussie, puis réutilisé.
@@ -222,8 +221,6 @@ function DesignSpace() {
   const [workshop, setWorkshop] = useState<WorkshopConfig | null>(null);
   const [volumeRaw, setVolumeRaw] = useState("");
   const [volumeError, setVolumeError] = useState<string | null>(null);
-  const [sampleQty, setSampleQty] = useState("");
-  const [sampleMessage, setSampleMessage] = useState<string | null>(null);
   /** Le modèle 3D reste en mémoire tant que ce partage n'est pas explicitement demandé. */
   const [shareModel, setShareModel] = useState(false);
 
@@ -426,12 +423,8 @@ function DesignSpace() {
 
 
   const volume = dossier.business.annualVolume;
-  // Une revue publiée est nécessaire : sans elle, ni référence exacte ni échantillon.
-  const publishedReview = null as null | { exactPart: string; isCustom: boolean };
-  const sampleRoute = routeSamples({
-    volume,
-    isCustom: publishedReview?.isCustom ?? false,
-  });
+  // La désignation standard/custom vient du retour R&D publié, jamais de cet écran.
+  const sampleRoute = routeSamples({ volume, isCustom: false });
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -993,6 +986,32 @@ function DesignSpace() {
                   <li key={i}>{l}</li>
                 ))}
               </ul>
+              <div className="mt-3">
+                <Label className="text-xs">Boîtiers documentés par le fabricant</Label>
+                <div className="mt-1 flex flex-wrap gap-2">
+                  {DOCUMENTED_HOUSINGS.map((h) => (
+                    <Button
+                      key={h.housingMpn}
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        const found = housingById(h.housingMpn);
+                        if (!found) return;
+                        setConnectorError(null);
+                        setConnectorDraft((d) => draftFromHousing(found, d));
+                        setDossier((d) => ({ ...d, termination: terminationFromHousing(found) }));
+                      }}
+                    >
+                      {housingLabel(h)}
+                    </Button>
+                  ))}
+                </div>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Quelques boîtiers documentés seulement, pas le marché entier. Boîtier, contacts à
+                  sertir et embase restent trois références distinctes ; brochage, section de fil
+                  réelle et disponibilité restent inconnus et à vérifier par la R&D.
+                </p>
+              </div>
               <div className="mt-3 grid gap-3 md:grid-cols-2">
                 {CONNECTOR_FIELD_LABELS.map(([key, label]) => (
                   <div key={key}>
@@ -1252,6 +1271,16 @@ function DesignSpace() {
                   </label>
                   <label className="flex items-center gap-2 text-sm">
                     <Checkbox
+                      checked={shareModel}
+                      disabled={!dossier.workshopAsset}
+                      onCheckedChange={(v) => setShareModel(Boolean(v))}
+                    />
+                    {dossier.workshopAsset
+                      ? `Je partage aussi le fichier 3D « ${dossier.workshopAsset.fileName} » avec l'équipe en charge.`
+                      : "Aucun fichier 3D importé : rien à partager."}
+                  </label>
+                  <label className="flex items-center gap-2 text-sm">
+                    <Checkbox
                       checked={acknowledged}
                       onCheckedChange={(v) => setAcknowledged(Boolean(v))}
                     />
@@ -1270,77 +1299,28 @@ function DesignSpace() {
               </AccordionItem>
 
               <AccordionItem value="echantillons">
-                <AccordionTrigger>Échantillons</AccordionTrigger>
-                <AccordionContent className="space-y-2">
+                <AccordionTrigger>Échantillons et suivi</AccordionTrigger>
+                <AccordionContent className="space-y-3">
                   <p className="text-sm">{sampleRoute.note}</p>
-                  {!publishedReview ? (
-                    <p className="text-sm text-amber-700">
-                      Les échantillons s'ouvrent après une revue Standex validée et publiée, qui fixe
-                      la référence exacte à commander. Une gamme ne suffit pas.
-                    </p>
-                  ) : null}
-                  {sampleRoute.kind === "distributors" && publishedReview ? (
-                    <>
-                      <ul className="list-disc pl-5 text-sm">
-                        {sampleRoute.partners.map((p) => (
-                          <li key={p.id}>
-                            <a
-                              className="underline"
-                              target="_blank"
-                              rel="noreferrer"
-                              href={p.search + encodeURIComponent(publishedReview.exactPart)}
-                            >
-                              {p.name}
-                            </a>
-                          </li>
-                        ))}
-                      </ul>
-                      <p className="text-xs text-muted-foreground">{SEARCH_LINK_DISCLAIMER}</p>
-                    </>
-                  ) : null}
-                  <div className="flex items-end gap-2">
-                    <div className="w-32">
-                      <Label className="text-xs">Quantité</Label>
-                      <Input
-                        inputMode="numeric"
-                        value={sampleQty}
-                        onChange={(e) => setSampleQty(e.target.value)}
-                      />
-                    </div>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => {
-                        const result = createSampleRequest(
-                          publishedReview?.exactPart ?? "",
-                          Number(sampleQty),
-                          sampleRoute,
-                          {
-                            reviewValidated: publishedReview !== null,
-                            exactPartConfirmed: publishedReview !== null,
-                          },
-                        );
-                        setSampleRequests((list) => (result.ok ? [...list, result.request] : list));
-                        setSampleMessage(
-                          result.ok
-                            ? "Demande conservée dans cet onglet uniquement : rien n'est envoyé et aucun stock n'est garanti."
-                            : result.reason,
-                        );
-                      }}
-                    >
-                      Enregistrer la demande
-                    </Button>
-                  </div>
-                  {sampleMessage ? <p className="text-sm">{sampleMessage}</p> : null}
-                  {sampleRequests.length ? (
-                    <ul className="list-disc pl-5 text-xs text-muted-foreground">
-                      {sampleRequests.map((r, i) => (
-                        <li key={i}>
-                          {r.quantity} × {r.partNumber} — conservé localement, non transmis.
-                        </li>
-                      ))}
-                    </ul>
-                  ) : null}
+                  <p className="text-sm text-amber-700">
+                    Les échantillons s'ouvrent après un retour Standex validé et publié, qui fixe la
+                    référence exacte à commander. Une gamme ne suffit pas.
+                  </p>
+                  <p className="text-xs text-muted-foreground">{SEARCH_LINK_DISCLAIMER}</p>
+                  <ClientFollowUp
+                    backend={backend}
+                    serverDossierId={serverDossierId}
+                    onSelectDossier={setServerDossierId}
+                    onReopenSnapshot={(snapshot, revision) => {
+                      const parsed = snapshot as unknown as DesignDossier;
+                      setDossier({ ...parsed, storage: "memory" });
+                      setWorkshop(parsed.workshop ?? null);
+                      setServerRevision(revision);
+                      setSubmitMessage(
+                        "Version reprise depuis le dossier réellement envoyé à Standex.",
+                      );
+                    }}
+                  />
                   <p className="text-xs text-muted-foreground">
                     Disponibilités, MOQ et conditionnements : inconnus tant qu'aucun fournisseur
                     réel n'est connecté.
