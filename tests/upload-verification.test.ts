@@ -48,7 +48,7 @@ test("une variante n'écrase jamais la version d'origine du dossier", () => {
   const before = JSON.stringify(base);
   const out = applyVariant(base, {
     summary: "Réserve allongée",
-    cabling: { serviceReserveMm: 40 },
+    cable: { serviceReserveMm: 40 },
   } as never);
   expect(JSON.stringify(base)).toBe(before);
   expect(out.dossier.cabling.serviceReserveMm).toBe(40);
@@ -58,7 +58,7 @@ test("une variante aux valeurs impossibles n'est pas appliquée", () => {
   const base = createDossier("2026-09-08T00:00:00.000Z");
   const out = applyVariant(base, {
     summary: "Réserve absurde",
-    cabling: { serviceReserveMm: -5 },
+    cable: { serviceReserveMm: -5 },
   } as never);
   expect(out.dossier.cabling.serviceReserveMm).toBe(base.cabling.serviceReserveMm);
   expect(out.notApplied.length).toBeGreaterThan(0);
