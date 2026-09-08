@@ -663,7 +663,12 @@ export default function WorkshopScene({
       >
         <group rotation={[0, (-config.sensorAngle * Math.PI) / 180, 0]}>
           <Body model={model} xray={xray} />
-          {xray && <Contacts model={model} contact={sample.contact} reduced={reduced} />}
+          {/* Le reed nu est déjà transparent : ses lames restent visibles sans
+              passer l'atelier en radiographie, la carte imprimée reste opaque. */}
+          {(xray || model.shape === "custom_pcb") && (
+            <Contacts model={model} contact={sample.contact} reduced={reduced} />
+          )}
+
           <Label position={[0, model.body[1] / 2 + 3, model.body[2] / 2 + 5]}>
             {t(model.name)}
           </Label>
