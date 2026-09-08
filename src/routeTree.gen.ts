@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DesignRouteImport } from './routes/design'
 import { Route as StandexRouteImport } from './routes/standex'
+import { Route as ApiLeadVerifyUploadRouteImport } from './routes/api/lead/verify-upload'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -28,35 +29,44 @@ const StandexRoute = StandexRouteImport.update({
   path: '/standex',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiLeadVerifyUploadRoute = ApiLeadVerifyUploadRouteImport.update({
+  id: '/api/lead/verify-upload',
+  path: '/api/lead/verify-upload',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/design': typeof DesignRoute
   '/standex': typeof StandexRoute
+  '/api/lead/verify-upload': typeof ApiLeadVerifyUploadRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/design': typeof DesignRoute
   '/standex': typeof StandexRoute
+  '/api/lead/verify-upload': typeof ApiLeadVerifyUploadRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/design': typeof DesignRoute
   '/standex': typeof StandexRoute
+  '/api/lead/verify-upload': typeof ApiLeadVerifyUploadRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/design' | '/standex'
+  fullPaths: '/' | '/design' | '/standex' | '/api/lead/verify-upload'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/design' | '/standex'
-  id: '__root__' | '/' | '/design' | '/standex'
+  to: '/' | '/design' | '/standex' | '/api/lead/verify-upload'
+  id: '__root__' | '/' | '/design' | '/standex' | '/api/lead/verify-upload'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DesignRoute: typeof DesignRoute
   StandexRoute: typeof StandexRoute
+  ApiLeadVerifyUploadRoute: typeof ApiLeadVerifyUploadRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -82,6 +92,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StandexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/lead/verify-upload': {
+      id: '/api/lead/verify-upload'
+      path: '/api/lead/verify-upload'
+      fullPath: '/api/lead/verify-upload'
+      preLoaderRoute: typeof ApiLeadVerifyUploadRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -89,6 +106,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DesignRoute: DesignRoute,
   StandexRoute: StandexRoute,
+  ApiLeadVerifyUploadRoute: ApiLeadVerifyUploadRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
