@@ -41,10 +41,19 @@ export const Route = createFileRoute("/")({
 });
 
 function HomeRoute() {
+  useLocale();
   const [started, setStarted] = useState(false);
+  /** L'espace projet reste monté : une fois ouvert, revenir à l'accueil ne
+   * perd rien et « Reprendre mon projet » réaffiche le même brouillon. */
+  const [opened, setOpened] = useState(false);
+  const openWorkspace = () => {
+    setOpened(true);
+    setStarted(true);
+  };
   /** Compteur : chaque demande « Mon espace » ouvre le panneau de l'espace
    * UNIQUE monté ci-dessous. Il n'existe pas de second compte parallèle. */
   const [accountRequest, setAccountRequest] = useState(0);
+
 
   return (
     <div data-readable className="min-h-screen bg-background text-foreground">
