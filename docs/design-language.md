@@ -40,8 +40,17 @@ Surfaces et encre : `--background`, `--surface`, `--surface-sunken`,
 
 Les deux valeurs de texte les plus sensibles sont figées à
 `--muted-foreground: oklch(0.54 0.0102 252)` et
-`--warning: oklch(0.55 0.098 72)` afin de rester au-dessus de 4,5:1 sur la toile
+`--warning: oklch(0.53 0.098 72)` afin de rester au-dessus de 4,5:1 sur la toile
 claire. Les valeurs locales de `.immersive` ne sont pas remplacées.
+
+| Couleur d'état sur sa teinte claire | Contraste |
+| ----------------------------------- | --------- |
+| Succès sur `--success-soft`         | 5,07 : 1  |
+| Danger sur `--destructive-soft`     | 5,23 : 1  |
+| Avertissement sur `--warning-soft`  | 4,81 : 1  |
+
+Sur la toile claire `--background`, `--warning` atteint 5,02 : 1 ; sur blanc pur,
+il atteint 5,38 : 1.
 
 Traits : `--hairline` (0.10) et `--hairline-strong` (0.18) — teintés bleu, jamais
 gris neutre.
