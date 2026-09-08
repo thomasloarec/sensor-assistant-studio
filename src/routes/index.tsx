@@ -145,8 +145,32 @@ Détecter un mouvement, simplement. Un aimant passe, le capteur réagit. Dites-n
             </section>
           </div>
 
-
+          <section aria-label="Comment ça se passe" className="mt-16 border-t pt-10">
+            <h2 className="text-2xl font-semibold">Comment ça se passe</h2>
+            <ol className="mt-6 grid gap-6 sm:grid-cols-3">
+              {[
+                {
+                  t: "1. Vous décrivez",
+                  d: "Quelques questions simples, en français : ce que vous voulez détecter, où le capteur se place, dans quelles conditions.",
+                },
+                {
+                  t: "2. Vous visualisez",
+                  d: "Un atelier 3D facultatif pour placer capteur, aimant et câble. Rien n'est envoyé tant que vous ne le demandez pas.",
+                },
+                {
+                  t: "3. Standex relit",
+                  d: "Vous pouvez faire relire votre projet par nos équipes. Une revue R&D reste toujours nécessaire avant commande.",
+                },
+              ].map((s) => (
+                <li key={s.t} className="rounded-lg border bg-card p-5">
+                  <h3 className="text-lg font-semibold">{s.t}</h3>
+                  <p className="mt-2 text-base leading-relaxed text-muted-foreground">{s.d}</p>
+                </li>
+              ))}
+            </ol>
+          </section>
         </main>
+
       )}
     </div>
   );
