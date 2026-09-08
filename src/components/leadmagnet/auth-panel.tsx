@@ -27,7 +27,7 @@ export function AuthPanel({ backend, onChanged }: Props) {
 
   if (!backend?.configured || !supabase)
     return (
-      <p className="text-base text-muted-foreground">
+      <p className="t-caption">
         La liaison avec l'équipe Standex n'est pas configurée sur cet environnement : la connexion
         n'est pas possible ici.
       </p>
@@ -36,7 +36,7 @@ export function AuthPanel({ backend, onChanged }: Props) {
   if (backend.authenticated)
     return (
       <div className="flex flex-wrap items-center gap-3 text-base">
-        <span className="text-muted-foreground">
+        <span className="t-caption">
           Connecté{backend.role ? ` — rôle ${backend.role}` : ""}.
         </span>
         <Button
@@ -77,7 +77,7 @@ export function AuthPanel({ backend, onChanged }: Props) {
       }}
     >
       <div>
-        <Label htmlFor={emailId} className="text-base">
+        <Label htmlFor={emailId} className="t-label">
           Adresse e-mail
         </Label>
         <Input
@@ -91,7 +91,7 @@ export function AuthPanel({ backend, onChanged }: Props) {
         />
       </div>
       <div>
-        <Label htmlFor={passwordId} className="text-base">
+        <Label htmlFor={passwordId} className="t-label">
           Mot de passe
         </Label>
         <Input
@@ -108,7 +108,7 @@ export function AuthPanel({ backend, onChanged }: Props) {
         {busy ? "Connexion…" : "Se connecter"}
       </Button>
       {message ? (
-        <p className="text-base text-muted-foreground sm:col-span-3">{message}</p>
+        <p className="notice notice-info sm:col-span-3">{message}</p>
       ) : null}
     </form>
   );

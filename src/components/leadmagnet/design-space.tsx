@@ -2022,7 +2022,8 @@ export function DesignSpace({
                     .map((a) => a.fileName)
                     .join(", ")}
             </p>
-            <label className="flex items-center gap-2 text-sm">
+            <hr className="standex-rule" />
+            <label className="t-caption flex items-center gap-2">
               <Checkbox
                 checked={binding !== null && hasBoundConsent(privacy, "supabase_dossier", binding)}
                 disabled={binding === null}
@@ -2086,9 +2087,7 @@ export function DesignSpace({
               />
               J'ai relu le résumé technique et les inconnues listées.
             </label>
-            <hr className="standex-rule" />
             <div className="space-y-3">
-              <p className="t-caption">J'ai relu le résumé technique et les inconnues listées.</p>
               <Button
                 size="lg"
                 className="w-full sm:w-auto"
@@ -2228,10 +2227,10 @@ export function DesignSpace({
 
   const documentsSection = (
     <div className="space-y-5">
-      <div className="flex flex-wrap items-center gap-3">
+      <div className="space-y-3">
         <Button
           variant="outline"
-          className="min-h-11 text-base"
+          className="surface-interactive min-h-11 w-full justify-start gap-3 p-5 text-left text-base"
           onClick={() => {
             docGenRef.current += 1;
             setOpenDoc({
@@ -2242,12 +2241,13 @@ export function DesignSpace({
             });
           }}
         >
+          <FileText className="h-5 w-5 shrink-0 text-[var(--primary)]" aria-hidden="true" />
           Résumé de mon projet
         </Button>
         {ndaPreview ? (
           <Button
             variant="outline"
-            className="min-h-11 text-base"
+            className="surface-interactive min-h-11 w-full justify-start gap-3 p-5 text-left text-base"
             onClick={() => {
               docGenRef.current += 1;
               setOpenDoc({
@@ -2258,16 +2258,20 @@ export function DesignSpace({
               });
             }}
           >
+            <FileText className="h-5 w-5 shrink-0 text-[var(--primary)]" aria-hidden="true" />
             Aperçu de l'accord de confidentialité
           </Button>
         ) : null}
         <Button
           variant="outline"
-          className="min-h-11 max-w-full whitespace-normal text-base"
+          className="surface-interactive min-h-11 max-w-full justify-start whitespace-normal p-5 text-base"
           asChild
         >
           <label className="block w-full max-w-full cursor-pointer text-center sm:w-auto">
-            Ouvrir un fichier de mon appareil
+            <span className="flex items-center gap-3">
+              <Upload className="h-5 w-5 shrink-0 text-[var(--primary)]" aria-hidden="true" />
+              Ouvrir un fichier de mon appareil
+            </span>
             <input
               type="file"
               accept=".md,.markdown,.txt,application/pdf"
@@ -2303,23 +2307,27 @@ export function DesignSpace({
           </label>
         </Button>
       </div>
-      <p className="text-base text-muted-foreground">
+      <p className="t-caption">
         Les fichiers ouverts ici restent en mémoire de cet onglet : rien n'est envoyé.
       </p>
-      <DocumentViewer document={openDoc} />
+      <div className="panel-block">
+        <DocumentViewer document={openDoc} />
+      </div>
     </div>
   );
 
   const espaceSection = (
     <div className="space-y-5">
-      <AuthPanel
-        backend={backend}
-        onChanged={() => {
-          checkLeadBackend()
-            .then(setBackend)
-            .catch(() => setBackend(null));
-        }}
-      />
+      <div className="panel-block-lg">
+        <AuthPanel
+          backend={backend}
+          onChanged={() => {
+            checkLeadBackend()
+              .then(setBackend)
+              .catch(() => setBackend(null));
+          }}
+        />
+      </div>
       {draftBanner}
       <div className="flex flex-wrap items-center gap-3">
         <Button variant="outline" className="min-h-11 text-base" onClick={exportDossier}>
@@ -2385,8 +2393,9 @@ export function DesignSpace({
           </Link>
         </p>
       ) : null}
-      {submitMessage ? <p className="text-base">{submitMessage}</p> : null}
-      <ClientFollowUp
+      {submitMessage ? <p className="notice notice-info">{submitMessage}</p> : null}
+      <div className="panel-block-lg">
+        <ClientFollowUp
         backend={backend}
         serverDossierId={serverDossierId}
         contextGeneration={contextGenRef.current}
@@ -2519,7 +2528,8 @@ export function DesignSpace({
           );
           return { applied: out.applied, notApplied: out.notApplied };
         }}
-      />
+        />
+      </div>
     </div>
   );
 

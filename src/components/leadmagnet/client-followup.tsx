@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
+import { FolderOpen } from "lucide-react";
 import {
   acceptVariant,
   fetchClientView,
@@ -129,7 +130,7 @@ export function ClientFollowUp({
 
   if (!ready)
     return (
-      <p className="text-sm text-muted-foreground">
+      <p className="t-caption">
         {backend?.message ??
           "La liaison avec l'équipe Standex n'est pas encore active : rien n'a été envoyé."}
       </p>
@@ -146,15 +147,16 @@ export function ClientFollowUp({
           Actualiser mes dossiers
         </Button>
         {list.length === 0 ? (
-          <span className="text-sm text-muted-foreground">
-            Aucun dossier envoyé pour l'instant.
-          </span>
+          <div className="flex w-full flex-col items-center px-4 py-12 text-center">
+            <FolderOpen className="mb-3 h-8 w-8 text-[var(--standex-blue-25)]" aria-hidden="true" />
+            <span className="t-title-s">Aucun dossier envoyé pour l'instant.</span>
+          </div>
         ) : null}
       </div>
 
-      <ul className="space-y-1">
+      <ul className="space-y-3">
         {list.map((d) => (
-          <li key={d.id} className="flex flex-wrap items-center gap-2 text-sm">
+          <li key={d.id} className="surface-interactive flex flex-wrap items-center gap-3 p-5">
             <Button
               size="sm"
               variant={d.id === serverDossierId ? "default" : "outline"}
@@ -185,8 +187,8 @@ export function ClientFollowUp({
             >
               Ouvrir
             </Button>
-            <span className="font-medium">{d.title}</span>
-            <Badge variant="outline">version {d.current_revision}</Badge>
+            <span className="t-title-s">{d.title}</span>
+            <Badge variant="outline" className="t-metric">version {d.current_revision}</Badge>
             <Badge variant="secondary">
               {d.nda_required
                 ? d.nda_status === "in_force"
@@ -194,7 +196,7 @@ export function ClientFollowUp({
                   : "Confidentialité en attente"
                 : "Sans accord de confidentialité"}
             </Badge>
-            <span className="text-xs text-muted-foreground">
+            <span className="t-caption">
               {d.published_reviews} retour(s) — {d.active_offers} offre(s) valable(s)
             </span>
           </li>
@@ -207,15 +209,15 @@ export function ClientFollowUp({
           <section className="space-y-2">
             <h4 className="font-medium">Retours Standex publiés</h4>
             {published.length === 0 ? (
-              <p className="text-sm text-muted-foreground">
+              <p className="t-caption">
                 Votre version {current.dossier.current_revision} est en cours de revue.
               </p>
             ) : (
               published.map((r) => (
-                <div key={r.id} className="rounded border p-3 text-sm">
+                <div key={r.id} className="surface-interactive p-5">
                   <div className="flex flex-wrap items-center gap-2">
                     <Badge>{verdictLabel[r.verdict] ?? r.verdict}</Badge>
-                    <span className="text-xs text-muted-foreground">version {r.revision}</span>
+                    <span className="t-metric text-[0.8125rem]">version {r.revision}</span>
                     {r.superseded ? <Badge variant="outline">remplacé</Badge> : null}
                     {r.exact_part_number ? (
                       <Badge variant="secondary">
@@ -226,7 +228,7 @@ export function ClientFollowUp({
                   </div>
                   {r.message ? <p className="mt-2 whitespace-pre-wrap">{r.message}</p> : null}
                   {r.conditions ? (
-                    <p className="mt-1 text-xs text-muted-foreground">
+                    <p className="t-caption mt-1">
                       Conditions : {r.conditions}
                     </p>
                   ) : null}
@@ -302,7 +304,7 @@ export function ClientFollowUp({
           <section className="space-y-2">
             <h4 className="font-medium">Offres</h4>
             {current.offers.length === 0 ? (
-              <p className="text-sm text-muted-foreground">
+              <p className="t-caption">
                 Aucune offre : un prix n'est établi qu'après un retour validé sur la version en
                 cours.
               </p>
@@ -310,26 +312,26 @@ export function ClientFollowUp({
               current.offers.map((o) => (
                 <div
                   key={o.id}
-                  className={`rounded border p-3 text-sm ${o.active ? "" : "opacity-60"}`}
+                  className={`surface-interactive p-5 ${o.active ? "" : "opacity-60"}`}
                 >
                   <div className="flex flex-wrap items-center gap-2">
                     <Badge variant={o.active ? "default" : "outline"}>
                       {o.active ? "Valable" : o.voided ? "Périmée" : "Échue"}
                     </Badge>
                     <span className="font-medium">{o.part_number}</span>
-                    <span className="text-xs text-muted-foreground">
+                    <span className="t-metric text-[0.8125rem]">
                       version {o.revision} —{" "}
                       {o.designation === "custom" ? "spécifique" : "standard"}
                     </span>
                   </div>
-                  <ul className="mt-1 list-disc pl-5 text-xs">
+                  <ul className="t-metric mt-1 list-disc pl-5 text-[0.8125rem]">
                     {(o.tiers ?? []).map((t, i) => (
                       <li key={i}>
                         {t.quantity} pièces : {t.unit_price} {o.currency}
                       </li>
                     ))}
                   </ul>
-                  <p className="mt-1 text-xs text-muted-foreground">
+                  <p className="t-caption t-metric mt-1">
                     Minimum {o.moq} — {o.incoterm} — délai{" "}
                     {o.lead_time_weeks ? `${o.lead_time_weeks} semaines` : "à confirmer"} — valable
                     jusqu'au {o.valid_until}
@@ -339,7 +341,7 @@ export function ClientFollowUp({
                       : " — volume annuel non renseigné"}
                   </p>
                   {o.void_reason ? (
-                    <p className="mt-1 text-xs text-muted-foreground">{o.void_reason}</p>
+                    <p className="t-caption mt-1">{o.void_reason}</p>
                   ) : null}
                 </div>
               ))
@@ -351,8 +353,8 @@ export function ClientFollowUp({
             {active && active.verdict === "validated" && active.exact_part_number ? (
               <div className="flex flex-wrap items-end gap-2">
                 <div className="w-28">
-                  <Label className="text-xs">Quantité</Label>
-                  <Input inputMode="numeric" value={qty} onChange={(e) => setQty(e.target.value)} />
+                  <Label className="t-label">Quantité</Label>
+                  <Input className="t-metric text-right" inputMode="numeric" value={qty} onChange={(e) => setQty(e.target.value)} />
                 </div>
                 <Button
                   size="sm"
@@ -378,13 +380,13 @@ export function ClientFollowUp({
                 </Button>
               </div>
             ) : (
-              <p className="text-sm text-muted-foreground">
+              <p className="t-caption">
                 Les échantillons sont possibles après un retour validé indiquant la référence
                 exacte.
               </p>
             )}
             {current.samples.map((s) => (
-              <div key={s.id} className="rounded border p-3 text-sm">
+              <div key={s.id} className="surface-interactive p-5">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="font-medium">
                     {s.quantity} × {s.part_number}
@@ -393,9 +395,9 @@ export function ClientFollowUp({
                   <Badge variant="secondary">
                     {s.status === "superseded" ? "conception modifiée depuis" : s.status}
                   </Badge>
-                  <span className="text-xs text-muted-foreground">version {s.revision}</span>
+                  <span className="t-metric text-[0.8125rem]">version {s.revision}</span>
                 </div>
-                <p className="mt-1 text-xs text-muted-foreground">
+                <p className="t-caption t-metric mt-1">
                   Commandés sur la version {s.origin_revision ?? s.revision}
                   {s.revalidated_from_revision !== null && s.revalidated_from_revision !== undefined
                     ? ` — revalidés depuis la version ${s.revalidated_from_revision}`
@@ -403,7 +405,7 @@ export function ClientFollowUp({
                   .
                 </p>
                 {s.feedback ? (
-                  <p className="mt-1 text-xs text-muted-foreground">
+                  <p className="t-caption t-metric mt-1">
                     Votre retour (version {s.feedback_revision}) : {s.feedback}
                   </p>
                 ) : null}
@@ -442,7 +444,7 @@ export function ClientFollowUp({
               {current.revisions.map((r) =>
                 (r.transferred_files ?? []).length ? (
                   <div key={`files-${r.id}`} className="flex flex-wrap items-center gap-2">
-                    <span className="text-sm text-muted-foreground">Version {r.revision} :</span>
+                    <span className="t-caption t-metric">Version {r.revision} :</span>
                     {(r.transferred_files ?? []).map((f, i) => (
                       <Button
                         key={`${r.id}-${f.path ?? i}`}
@@ -466,7 +468,7 @@ export function ClientFollowUp({
                   </div>
                 ) : null,
               )}
-              <p className="text-xs text-muted-foreground">
+              <p className="t-caption">
                 Seuls les fichiers réellement enregistrés côté Standex apparaissent ici, et leur
                 lecture dépend de vos droits.
               </p>
@@ -495,7 +497,7 @@ export function ClientFollowUp({
                   </Button>
                 ))}
               </div>
-              <p className="text-xs text-muted-foreground">
+              <p className="t-caption">
                 La reprise ouvre exactement le contenu envoyé pour ce dossier. Votre accord d'envoi
                 et la relecture sont à refaire.
               </p>
@@ -504,8 +506,8 @@ export function ClientFollowUp({
         </>
       ) : null}
 
-      {message ? <p className="text-sm">{message}</p> : null}
-      <p className="text-xs text-muted-foreground">
+      {message ? <p className="notice notice-info">{message}</p> : null}
+      <p className="t-caption">
         Rien n'est décidé ici : une référence, un prix ou une livraison ne valent qu'après
         confirmation écrite de Standex.
       </p>

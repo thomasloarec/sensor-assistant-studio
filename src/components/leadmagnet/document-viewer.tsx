@@ -49,10 +49,7 @@ export function renderMarkdown(md: string): ReactNode[] {
     if (raw.trim().startsWith("```")) {
       if (code) {
         out.push(
-          <pre
-            key={`pre-${out.length}`}
-            className="my-3 overflow-x-auto rounded-md bg-muted p-3 text-base"
-          >
+          <pre key={`pre-${out.length}`} className="code-block my-3">
             {code.join("\n")}
           </pre>,
         );
@@ -101,7 +98,7 @@ export function renderMarkdown(md: string): ReactNode[] {
   flushList();
   if (code) {
     out.push(
-      <pre key={`pre-${out.length}`} className="my-3 overflow-x-auto rounded-md bg-muted p-3">
+      <pre key={`pre-${out.length}`} className="code-block my-3">
         {code.join("\n")}
       </pre>,
     );
@@ -191,7 +188,7 @@ export function DocumentViewer({
     if (doc.kind === "markdown" && doc.text != null) return <div>{renderMarkdown(doc.text)}</div>;
     if (doc.kind === "text" && doc.text != null)
       return (
-        <pre className="overflow-x-auto whitespace-pre-wrap rounded-md bg-muted p-4 text-base">
+        <pre className="code-block whitespace-pre-wrap">
           {doc.text}
         </pre>
       );
@@ -200,7 +197,7 @@ export function DocumentViewer({
         <object
           data={blobUrl}
           type="application/pdf"
-          className="h-[70vh] w-full rounded-md border"
+          className="h-[70vh] w-full rounded-[var(--r-md)] shadow-[var(--e-1)]"
           aria-label={`Aperçu de ${doc.name}`}
           onError={() => setEmbedFailed(true)}
         >
@@ -210,7 +207,7 @@ export function DocumentViewer({
         </object>
       );
     return (
-      <p className="text-base text-muted-foreground">
+      <p className="t-caption">
         {doc.note ??
           "Ce format ne peut pas être affiché ici. Vous pouvez le télécharger pour l'ouvrir avec votre logiciel habituel."}
       </p>
@@ -218,7 +215,7 @@ export function DocumentViewer({
   }, [doc, blobUrl, embedFailed]);
 
   return (
-    <div className="space-y-4">
+    <div className="mx-auto max-w-[68ch] space-y-4 leading-relaxed">
       {onOpenLocalFile ? (
         <div className="flex flex-wrap items-center gap-3">
           <Button variant="outline" className="min-h-11 text-base" asChild>
@@ -236,7 +233,7 @@ export function DocumentViewer({
               />
             </label>
           </Button>
-          <span className="text-base text-muted-foreground">
+          <span className="t-caption">
             Lu dans cet onglet uniquement, jamais envoyé.
           </span>
         </div>
@@ -244,9 +241,9 @@ export function DocumentViewer({
 
       {doc ? (
         <>
-          <div className="flex flex-wrap items-center gap-3 border-b pb-3">
+          <div className="surface-interactive flex flex-wrap items-center gap-3 p-5">
             <FileText className="h-5 w-5 shrink-0 text-primary" aria-hidden="true" />
-            <span className="min-w-0 flex-1 truncate text-lg font-medium">{doc.name}</span>
+            <span className="t-title-s min-w-0 flex-1 truncate">{doc.name}</span>
             {blobUrl ? (
               <Button variant="outline" className="min-h-11 text-base" asChild>
                 <a href={blobUrl} download={doc.name}>
@@ -258,7 +255,7 @@ export function DocumentViewer({
           {body}
         </>
       ) : (
-        <p className="text-base text-muted-foreground">Aucun document ouvert pour l'instant.</p>
+        <p className="t-caption">Aucun document ouvert pour l'instant.</p>
       )}
     </div>
   );
