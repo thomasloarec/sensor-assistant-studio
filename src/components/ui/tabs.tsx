@@ -12,7 +12,7 @@ const TabsList = React.forwardRef<
   <TabsPrimitive.List
     ref={ref}
     className={cn(
-      "inline-flex h-9 items-center justify-center rounded-lg bg-muted p-1 text-muted-foreground",
+      "inline-flex items-center justify-center rounded-[var(--r-sm)] bg-[var(--surface-sunken)] p-1 text-[var(--muted-foreground)]",
       className,
     )}
     {...props}
@@ -27,7 +27,11 @@ const TabsTrigger = React.forwardRef<
   <TabsPrimitive.Trigger
     ref={ref}
     className={cn(
-      "inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-sm font-medium ring-offset-background cursor-pointer transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow",
+      "inline-flex items-center justify-center whitespace-nowrap rounded-[calc(var(--r-sm)-3px)] border-0 px-4 py-2 text-sm font-semibold text-[var(--muted-foreground)] cursor-pointer",
+      "transition-[background-color,box-shadow,color] duration-200 ease-[var(--ease-out)]",
+      "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ring)]",
+      "disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed",
+      "data-[state=active]:bg-[var(--surface)] data-[state=active]:text-[var(--heading)] data-[state=active]:shadow-[var(--e-1)]",
       className,
     )}
     {...props}
@@ -42,7 +46,7 @@ const TabsContent = React.forwardRef<
   <TabsPrimitive.Content
     ref={ref}
     className={cn(
-      "mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+      "mt-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ring)]",
       className,
     )}
     {...props}
