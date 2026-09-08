@@ -144,16 +144,25 @@ test("NDA : un brouillon n'autorise aucun transfert", () => {
   expect(missingTemplate.ok).toBe(false);
 });
 
+const TEST_BINDING = {
+  serverDossierId: null,
+  revision: 1,
+  contentHash: "c".repeat(64),
+  fileDigests: [],
+};
+
 test("transfert : consentement puis NDA", () => {
   const consented = grantConsent(INITIAL_PRIVACY, {
     kind: "supabase_dossier",
     contentSummary: "dossier",
     recipients: ["Standex"],
+    binding: TEST_BINDING,
   });
   expect(canTransfer(INITIAL_PRIVACY, "supabase_dossier", true).allowed).toBe(false);
   expect(canTransfer(consented, "supabase_dossier", false).allowed).toBe(false);
   expect(canTransfer(consented, "supabase_dossier", true).allowed).toBe(true);
 });
+
 
 test("volume annuel : entier ou inconnu, jamais zéro implicite", () => {
   expect(parseAnnualVolume("")).toEqual({ kind: "unknown" });
