@@ -1494,7 +1494,10 @@ export function DesignSpace({
               </div>
               <div>
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="t-title-s">{c.name}</span>
+                  {/* Les références (MK03…) traversent t() inchangées ; seul un
+                      libellé descriptif comme « Sur mesure » est traduit. */}
+                  <span className="t-title-s">{t(c.name)}</span>
+
                   <Badge
                     variant={
                       c.status === "kept"
