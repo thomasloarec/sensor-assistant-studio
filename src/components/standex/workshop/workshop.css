@@ -1793,3 +1793,17 @@
     height: 22rem;
   }
 }
+
+/* Lot F — garde-fous finaux de lisibilité et de cible, sans modifier la géométrie métier. */
+.magnetic-workshop
+  :where(p, span, small, strong, label, legend, summary, button, input, select, textarea, a) {
+  font-size: max(0.875rem, 1em);
+}
+.magnetic-workshop
+  :where(button, select, input:not([type="checkbox"]):not([type="range"]), a.mw-button) {
+  min-height: 44px;
+}
+.magnetic-workshop :where(button, select, input, textarea, a):focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}

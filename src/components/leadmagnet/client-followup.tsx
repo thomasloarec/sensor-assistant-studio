@@ -220,7 +220,7 @@ export function ClientFollowUp({
                 <div key={r.id} className="surface-interactive p-5">
                   <div className="flex flex-wrap items-center gap-2">
                     <Badge>{verdictLabel[r.verdict] ?? r.verdict}</Badge>
-                    <span className="t-metric text-[0.8125rem]">version {r.revision}</span>
+                    <span className="t-metric t-caption">version {r.revision}</span>
                     {r.superseded ? <Badge variant="outline">remplacé</Badge> : null}
                     {r.exact_part_number ? (
                       <Badge variant="secondary">
@@ -235,7 +235,7 @@ export function ClientFollowUp({
                   ) : null}
                   {r.verdict === "variant_proposed" ? (
                     <div className="mt-2 space-y-1">
-                      <ul className="list-disc pl-5 text-xs">
+                      <ul className="list-disc pl-5 t-caption">
                         {Object.entries(r.variant ?? {}).map(([k, v]) => (
                           <li key={k}>
                             {k} : {String(v)}
@@ -320,12 +320,12 @@ export function ClientFollowUp({
                       {o.active ? "Valable" : o.voided ? "Périmée" : "Échue"}
                     </Badge>
                     <span className="font-medium">{o.part_number}</span>
-                    <span className="t-metric text-[0.8125rem]">
+                    <span className="t-metric t-caption">
                       version {o.revision} —{" "}
                       {o.designation === "custom" ? "spécifique" : "standard"}
                     </span>
                   </div>
-                  <ul className="t-metric mt-1 list-disc pl-5 text-[0.8125rem]">
+                  <ul className="t-metric mt-1 list-disc pl-5 t-caption">
                     {(o.tiers ?? []).map((t, i) => (
                       <li key={i}>
                         {t.quantity} pièces : {t.unit_price} {o.currency}
@@ -399,7 +399,7 @@ export function ClientFollowUp({
                   <Badge variant="secondary">
                     {s.status === "superseded" ? "conception modifiée depuis" : s.status}
                   </Badge>
-                  <span className="t-metric text-[0.8125rem]">version {s.revision}</span>
+                  <span className="t-metric t-caption">version {s.revision}</span>
                 </div>
                 <p className="t-caption t-metric mt-1">
                   Commandés sur la version {s.origin_revision ?? s.revision}

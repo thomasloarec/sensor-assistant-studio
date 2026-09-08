@@ -1364,7 +1364,7 @@ export function DesignSpace({
                     ? "À vérifier"
                     : "Écarté"}
               </Badge>
-              <span className="t-metric rounded-[var(--r-pill)] bg-[var(--surface-sunken)] px-2.5 py-1 text-[0.8125rem]">
+              <span className="t-metric rounded-[var(--r-pill)] bg-[var(--surface-sunken)] px-2.5 py-1 t-caption">
                 {c.size}
               </span>
               {c.status !== "excluded" ? (
