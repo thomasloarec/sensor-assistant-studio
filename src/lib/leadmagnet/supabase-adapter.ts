@@ -455,10 +455,45 @@ export interface UploadedFile {
   sha256: string;
   bytes: number;
   mimeType: string;
+  /** Vrai seulement si le SERVEUR a relu les octets stockés et validé l'empreinte. */
+  verified: boolean;
+  /** Raison exacte quand la vérification serveur n'a pas eu lieu. */
+  verificationError: string | null;
 }
 
-/** Dépôt réel : préflight (empreinte + taille + type annoncés) puis transfert.
- * L'empreinte enregistrée est celle des octets envoyés, calculée ici.
+/** Relecture serveur des octets réellement stockés.
+ * Le navigateur ne peut pas se certifier lui-même : cette route lit le fichier
+ * sous les droits de l'appelant puis appelle la fonction de finalisation
+ * réservée au service_role. Sans elle, la soumission refuse le fichier.
+ */
+export async function verifyUploadedFile(
+  sessionId: string,
+  path: string,
+): Promise<{ verified: boolean; error: string | null }> {
+  if (!supabase) return { verified: false, error: humanRpcError("not configured") };
+  const { data } = await supabase.auth.getSession();
+  const token = data.session?.access_token;
+  if (!token) return { verified: false, error: "Session expirée : reconnectez-vous." };
+  try {
+    const response = await fetch("/api/lead/verify-upload", {
+      method: "POST",
+      headers: { "content-type": "application/json", Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ session_id: sessionId, path }),
+    });
+    if (response.ok) return { verified: true, error: null };
+    const payload = (await response.json().catch(() => ({}))) as {
+      error?: string;
+      message?: string;
+    };
+    return { verified: false, error: payload.message ?? payload.error ?? "UPLOAD_NOT_VERIFIED" };
+  } catch (error) {
+    return { verified: false, error: error instanceof Error ? error.message : "network error" };
+  }
+}
+
+/** Dépôt réel : préflight (empreinte + taille + type annoncés), transfert, puis
+ * vérification serveur des octets stockés. Les trois étapes sont enchaînées ici
+ * pour qu'aucun appelant ne puisse « oublier » la dernière.
  */
 export async function uploadDesignFile(
   dossierId: string,
@@ -500,8 +535,18 @@ export async function uploadDesignFile(
       contentType: mimeType,
     });
   if (error) throw new Error(humanRpcError(error));
-  return { path, fileName: safeName, sha256, bytes: bytes.byteLength, mimeType };
+  const check = await verifyUploadedFile(session.session_id, path);
+  return {
+    path,
+    fileName: safeName,
+    sha256,
+    bytes: bytes.byteLength,
+    mimeType,
+    verified: check.verified,
+    verificationError: check.error,
+  };
 }
+
 
 /** Lien de lecture temporaire d'un fichier privé (propriétaire ou staff affecté). */
 export async function signedFileUrl(path: string, seconds = 300): Promise<string | null> {
