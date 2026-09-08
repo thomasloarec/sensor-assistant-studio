@@ -180,14 +180,14 @@ class ThumbnailBoundary extends Component<
   { onFailed: () => void; children: ReactNode },
   { failed: boolean }
 > {
-  state = { failed: false };
+  override state = { failed: false };
   static getDerivedStateFromError() {
     return { failed: true };
   }
-  componentDidCatch() {
+  override componentDidCatch() {
     this.props.onFailed();
   }
-  render() {
+  override render() {
     return this.state.failed ? null : this.props.children;
   }
 }
