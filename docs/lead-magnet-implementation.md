@@ -32,10 +32,32 @@ de test interne, qui reste intact (`/`).
   (jamais la distance directe), trajets par état de mouvement et plus long trajet, réserve de
   service / terminaison / tolérance ajoutées explicitement, alerte rayon de courbure. Une
   géométrie incomplète ne produit jamais une longueur approuvée.
+- **Pointage du câble dans la 3D (vérifié en navigateur)** : dans `/design`, l'onglet Câblage
+  offre un trajet visé (référence ou état de mouvement déclaré) et ouvre l'atelier ; l'atelier
+  propose « Pointer dans la 3D » avec les rôles Sortie capteur / Point de passage / Point de
+  connexion, annuler, effacer, et dessine la polyligne + repères dans la scène. Les clics
+  utilisent le point de lancer de rayon déjà exprimé en millimètres (aucune remise à l'échelle),
+  le capteur et l'aimant deviennent cliquables uniquement en mode câble, la navigation reste
+  séparée et le cycle n'est pas remis à zéro pour permettre le relevé dans la pose voulue.
+  Chaque trajet d'état enregistre la pose (position du cycle) ; un trajet sans pose est signalé
+  et aucun état non relevé n'est présenté comme couvert. Un point non fini est refusé. La
+  saisie numérique exacte reste disponible, y compris sans modèle 3D. Smoke navigateur réel
+  (géométrie d'exemple) : 3 clics → « Longueur mesurée du tracé : 162 mm », valeur conservée au
+  retour dans l'onglet Câblage et dans l'export.
+- **Reprise stricte d'un fichier** : `dossier-io.ts` valide réellement montage (types connus
+  seulement), encombrement (pas de valeur négative), informations projet (volume annuel avec
+  discriminant `known`/`unknown` et entier sûr) et configuration atelier via le parseur
+  existant. Une forme invalide est refusée ou remise à inconnu avec un avis explicite, jamais
+  acceptée en donnée confirmée ; une version d'export non supportée est refusée.
+
 - **Longueurs standard** comparées seulement pour une référence exacte sourcée. Le registre
   est vide : aucune longueur n'a été sourcée dans ce repo, donc la réponse est « longueur à
   vérifier par la R&D ». Aucun MPN n'est fabriqué par collage de longueur ;
-  `MK03-1A66-200W`, `MK03-1A66-500W` et `MK03-1A90` sont distincts.
+  `MK03-1A66-200W`, `MK03-1A66-500W` et `MK03-1A90` sont distincts. Une note de GAMME MK03
+  sourcée (fiche officielle Standex Detect 02/2019, p. 1 : 200/300/500/1000/1500/2000/3000/
+  5000 mm, suffixe W = fils dénudés/étamés) est affichée à titre indicatif : elle ne crée ni
+  MPN exact, ni tolérance, la longueur exacte restant à confirmer par la R&D.
+
 - **Terminaison** : fils nus par défaut ; connecteur uniquement par référence exacte. Le
   catalogue de combinaisons qualifiées est vide, donc toute saisie devient une référence
   libre « à vérifier par R&D ».

@@ -111,6 +111,21 @@ function download(name: string, text: string, type: string) {
   a.click();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
+/** Tracé de câble : entièrement optionnel. Sans cette prop, l'atelier est inchangé. */
+export interface WorkshopCableRouting {
+  slot: "sensor" | "waypoint" | "connection";
+  setSlot: (slot: "sensor" | "waypoint" | "connection") => void;
+  /** Trajet courant en millimètres, tel qu'il est enregistré dans le dossier. */
+  points: [number, number, number][];
+  targetLabel: string;
+  /** `cycleT` documente la pose de la scène au moment du relevé. */
+  onPick: (point: [number, number, number], cycleT: number) => void;
+  onUndo: () => void;
+  onReset: () => void;
+  /** Longueur mesurée calculée par le dossier, ou message d'inconnu. */
+  lengthLabel: string;
+}
+
 export interface WorkshopProps {
   initialConfig?: WorkshopConfig | null;
   onClose: () => void;
@@ -118,6 +133,7 @@ export interface WorkshopProps {
   storageLabel?: string;
   /** "memory" : le GLB ne quitte jamais la mémoire de l'onglet (aucune écriture appareil). */
   storageMode?: "memory" | "local-device";
+  cableRouting?: WorkshopCableRouting;
 }
 export default function MagneticWorkshop({
   initialConfig,
@@ -125,7 +141,9 @@ export default function MagneticWorkshop({
   onSave,
   storageLabel = "la session et le dossier",
   storageMode = "local-device",
+  cableRouting,
 }: WorkshopProps) {
+
   useLocale();
   const [productCard, setProductCard] = useState(false);
   const [config, setConfig] = useState<WorkshopConfig>(
@@ -214,8 +232,10 @@ export default function MagneticWorkshop({
   }
   function chooseTool(next: MachineTool) {
     setPlaying(false);
-    setProgress(0);
+    // Le tracé de câble se relève DANS la pose courante : on ne remet pas le cycle à zéro.
+    if (next !== "cable") setProgress(0);
     setTool(next);
+
   }
   function exampleMachine() {
     update({
@@ -966,6 +986,59 @@ export default function MagneticWorkshop({
                 </button>
               </div>
             </div>
+            {cableRouting ? (
+              <div className="mw-cable-panel" data-testid="cable-routing-panel">
+                <div className="mw-cable-row">
+                  <strong>{t("Tracé du câble")}</strong>
+                  <span>{t(cableRouting.targetLabel)}</span>
+                  <button
+                    className="mw-text-button"
+                    aria-pressed={tool === "cable"}
+                    data-testid="cable-tool-toggle"
+                    onClick={() => chooseTool(tool === "cable" ? "navigate" : "cable")}
+                  >
+                    {t(tool === "cable" ? "Arrêter le pointage" : "Pointer dans la 3D")}
+                  </button>
+                </div>
+                {tool === "cable" ? (
+                  <div className="mw-cable-row">
+                    {(
+                      [
+                        ["sensor", "Sortie capteur"],
+                        ["waypoint", "Point de passage"],
+                        ["connection", "Point de connexion"],
+                      ] as const
+                    ).map(([slot, label]) => (
+                      <button
+                        key={slot}
+                        className="mw-text-button"
+                        aria-pressed={cableRouting.slot === slot}
+                        data-testid={`cable-slot-${slot}`}
+                        onClick={() => cableRouting.setSlot(slot)}
+                      >
+                        {t(label)}
+                      </button>
+                    ))}
+                    <button className="mw-text-button" onClick={cableRouting.onUndo}>
+                      {t("Annuler le dernier point")}
+                    </button>
+                    <button className="mw-text-button" onClick={cableRouting.onReset}>
+                      {t("Effacer le trajet")}
+                    </button>
+                  </div>
+                ) : null}
+                <p className="mw-cable-note" data-testid="cable-length">
+                  {t(cableRouting.lengthLabel)}
+                </p>
+                <p className="mw-cable-note">
+                  {t(
+                    "Le tracé mesure la polyligne que vous placez : il ne garantit ni rayon de courbure, " +
+                      "ni absence de frottement, et ne vaut aucune validation. La navigation reste séparée du pointage.",
+                  )}
+                </p>
+              </div>
+            ) : null}
+
             <div
               className="mw-canvas"
               role="img"
@@ -1012,6 +1085,17 @@ export default function MagneticWorkshop({
                         onMeasure={setMeasure}
                         onPlaced={() => setTool("navigate")}
                         onContextLost={failed3d}
+                        routing={
+                          cableRouting
+                            ? {
+                                slot: cableRouting.slot,
+                                points: cableRouting.points,
+                                targetLabel: cableRouting.targetLabel,
+                                onPick: (point) => cableRouting.onPick(point, sample.t),
+                              }
+                            : undefined
+                        }
+
                       />
                     </Suspense>
                   </SceneBoundary>

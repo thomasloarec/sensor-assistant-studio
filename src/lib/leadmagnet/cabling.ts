@@ -4,12 +4,23 @@
  */
 export type Point = [number, number, number];
 
+/** Pose de la scène au moment où le trajet a été relevé (position du cycle, 0 → 1). */
+export interface ScenePose {
+  /** Position du cycle machine au moment du relevé. */
+  cycleT: number;
+  /** Libellé lisible de la pose, saisi ou déduit de l'atelier. */
+  label: string;
+}
+
 export interface CablePath {
   stateId: string;
   label: string;
   /** Trajet complet : capteur → waypoints → point de connexion. */
   points: Point[];
+  /** Pose réellement relevée. `null` = trajet saisi hors scène, pose inconnue. */
+  pose?: ScenePose | null;
 }
+
 
 export interface CablingConfig {
   sensorEndpoint: Point | null;
@@ -96,11 +107,117 @@ export function validateCabling(config: CablingConfig): string[] {
   return errors;
 }
 
+/* ------------------------------------------------------------------ *
+ * Pointage dans la scène 3D.
+ * Ces fonctions sont PURES : elles reçoivent un point déjà exprimé en
+ * millimètres (le lancer de rayon rend déjà des millimètres, aucune mise
+ * à l'échelle supplémentaire ici) et ne modifient QUE les points du câble.
+ * Marges, tolérances, états déclarés et confirmations restent intacts.
+ * ------------------------------------------------------------------ */
+
+/** Trajet visé : trajet de référence, ou trajet propre à un état de mouvement. */
+export type RoutingTarget = { kind: "base" } | { kind: "state"; stateId: string };
+
+/** Rôle du point placé. Le rôle est toujours choisi explicitement, jamais deviné. */
+export type RoutingSlot = "sensor" | "waypoint" | "connection";
+
+export const ROUTING_SLOT_LABELS: Record<RoutingSlot, string> = {
+  sensor: "Sortie de câble du capteur",
+  waypoint: "Point de passage",
+  connection: "Point de connexion",
+};
+
+/** Trajet complet actuellement visé, dans l'ordre capteur → passages → connexion. */
+export function routingPoints(config: CablingConfig, target: RoutingTarget): Point[] {
+  if (target.kind === "state")
+    return config.statePaths.find((p) => p.stateId === target.stateId)?.points ?? [];
+  return [
+    ...(config.sensorEndpoint ? [config.sensorEndpoint] : []),
+    ...config.waypoints,
+    ...(config.connectionEndpoint ? [config.connectionEndpoint] : []),
+  ];
+}
+
+function withStatePath(
+  config: CablingConfig,
+  stateId: string,
+  change: (points: Point[]) => Point[],
+  pose: ScenePose | null,
+): CablingConfig {
+  const declared = config.declaredMotionStates.find((s) => s.id === stateId);
+  if (!declared) return config;
+  const existing = config.statePaths.find((p) => p.stateId === stateId);
+  const points = change(existing ? [...existing.points] : []);
+  const path: CablePath = { stateId, label: declared.label, points, pose };
+  return {
+    ...config,
+    statePaths: existing
+      ? config.statePaths.map((p) => (p.stateId === stateId ? path : p))
+      : [...config.statePaths, path],
+    // Un trajet qui change invalide toujours la confirmation de couverture.
+    motionCoverageConfirmed: false,
+  };
+}
+
+/** Ajoute ou remplace un point relevé dans la scène. Un point non fini est refusé. */
+export function applyRoutingPick(
+  config: CablingConfig,
+  target: RoutingTarget,
+  slot: RoutingSlot,
+  point: Point,
+  pose: ScenePose | null = null,
+): CablingConfig {
+  if (!validPoint(point)) return config;
+  if (target.kind === "base") {
+    if (slot === "sensor") return { ...config, sensorEndpoint: point };
+    if (slot === "connection") return { ...config, connectionEndpoint: point };
+    return { ...config, waypoints: [...config.waypoints, point] };
+  }
+  return withStatePath(
+    config,
+    target.stateId,
+    (points) => {
+      if (slot === "sensor") return points.length ? [point, ...points.slice(1)] : [point];
+      if (slot === "connection") return points.length >= 2 ? [...points.slice(0, -1), point] : [...points, point];
+      // Un passage s'insère avant le point de connexion quand celui-ci existe déjà.
+      return points.length >= 2 ? [...points.slice(0, -1), point, points[points.length - 1]!] : [...points, point];
+    },
+    pose,
+  );
+}
+
+/** Retire le dernier point placé du trajet visé, sans toucher aux marges. */
+export function undoRoutingPick(config: CablingConfig, target: RoutingTarget): CablingConfig {
+  if (target.kind === "base") {
+    if (config.connectionEndpoint) return { ...config, connectionEndpoint: null };
+    if (config.waypoints.length) return { ...config, waypoints: config.waypoints.slice(0, -1) };
+    if (config.sensorEndpoint) return { ...config, sensorEndpoint: null };
+    return config;
+  }
+  const existing = config.statePaths.find((p) => p.stateId === target.stateId);
+  if (!existing || !existing.points.length) return config;
+  return withStatePath(config, target.stateId, (points) => points.slice(0, -1), existing.pose ?? null);
+}
+
+/** Efface UNIQUEMENT les points du trajet visé : réserves, tolérances et états restent. */
+export function resetRouting(config: CablingConfig, target: RoutingTarget): CablingConfig {
+  if (target.kind === "base")
+    return { ...config, sensorEndpoint: null, connectionEndpoint: null, waypoints: [] };
+  return {
+    ...config,
+    statePaths: config.statePaths.filter((p) => p.stateId !== target.stateId),
+    motionCoverageConfirmed: false,
+  };
+}
+
 /** États déclarés qui n'ont encore aucun trajet dessiné. */
 export function uncoveredMotionStates(config: CablingConfig): { id: string; label: string }[] {
-  const covered = new Set(config.statePaths.map((p) => p.stateId));
+  const covered = new Set(
+    config.statePaths.filter((p) => p.points.length >= 2).map((p) => p.stateId),
+  );
   return config.declaredMotionStates.filter((s) => !covered.has(s.id));
 }
+
 
 export function polylineLength(points: Point[]): number {
   let total = 0;
@@ -173,6 +290,13 @@ export function estimateCableLength(config: CablingConfig): CableLengthEstimate 
     );
   if (!config.motionCoverageConfirmed)
     warnings.push("Couverture des mouvements non confirmée par vous.");
+  const withoutPose = config.statePaths.filter((p) => p.points.length >= 2 && !p.pose);
+  if (withoutPose.length)
+    warnings.push(
+      `Trajets relevés sans pose de scène enregistrée : ${withoutPose.map((p) => p.label || p.stateId).join(", ")}. ` +
+        "La position réelle de la machine au moment du relevé n'est pas documentée.",
+    );
+
   if (config.serviceReserveMm + config.terminationMm === 0)
     warnings.push("Aucune réserve de service ni terminaison n'a été ajoutée.");
   if (config.toleranceMm === 0)
@@ -223,6 +347,18 @@ export interface RangeCableLengthNote {
 
 export const RANGE_CABLE_LENGTH_NOTES: readonly RangeCableLengthNote[] = [
   {
+    // Fiche fabricant consultée le 2026-09-08, version 02/2019, page 1.
+    // Donnée de GAMME : aucune référence exacte ni tolérance n'en est déduite.
+    range: "MK03",
+    lengths:
+      "longueurs de gamme 200, 300, 500, 1000, 1500, 2000, 3000 et 5000 mm ; " +
+      "suffixe W = fils dénudés/étamés ; le code de sensibilité (B/C/D/E) est distinct de la longueur. " +
+      "Aucune tolérance n'est publiée sur cette page : la longueur exacte et sa tolérance restent à confirmer par la R&D.",
+    source:
+      "https://standexdetect.com/wp-content/uploads/sites/2/2025/09/datasheet-reed-sensor-series-mk03.pdf (02/2019, p. 1)",
+  },
+  {
+
     range: "MK36",
     lengths: "300 mm UL1569 et 2 m VdS (températures différentes selon la version)",
     source: "docs/atelier-magnetique-v04.md",

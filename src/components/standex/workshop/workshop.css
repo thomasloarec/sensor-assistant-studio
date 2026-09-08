@@ -1510,3 +1510,27 @@
     padding: 8px 11px;
   }
 }
+
+/* Tracé de câble (mode facultatif du parcours de conception). */
+.mw-cable-panel {
+  border-top: 1px solid var(--mw-line, #d7e0e7);
+  padding: 0.5rem 0.75rem 0.75rem;
+  display: grid;
+  gap: 0.35rem;
+}
+.mw-cable-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.82rem;
+}
+.mw-cable-row [aria-pressed="true"] {
+  font-weight: 700;
+  text-decoration: underline;
+}
+.mw-cable-note {
+  margin: 0;
+  font-size: 0.75rem;
+  color: #4d5f6b;
+}

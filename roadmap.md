@@ -13,7 +13,13 @@
   boîtiers documentés.
 - Console `/standex` : affectation par nom, dépôt du document signé avec empreinte calculée,
   revalidation explicite d'un échantillon dépassé.
-- 138 tests, typecheck, build et smoke navigateur passent.
+- Pointage réel du câble dans la 3D (`/design` + atelier) : rôles capteur/passage/connexion,
+  annuler/effacer, polyligne et repères dessinés, pose de scène enregistrée par état, points en
+  millimètres sans double mise à l'échelle, saisie numérique conservée sans modèle.
+- Reprise de fichier durcie : montage, encombrement, volume annuel et atelier réellement
+  validés, version d'export non supportée refusée, avis explicites au lieu de données inventées.
+- Note de longueurs de GAMME MK03 sourcée (fiche officielle 02/2019), sans MPN ni tolérance.
+- 150 tests, typecheck, build et smoke navigateur réel (162 mm mesurés) passent.
 
 ## Bloqué (hors de mon contrôle)
 - Application de la migration sur `yyobodalwtsqdyrqwkjk` : réservée au propriétaire.

@@ -21,7 +21,51 @@ import type { CycleSample, WorkshopConfig, Vec3 } from "@/lib/standex/magnetic-w
 import { sensorById, sizeLabel } from "@/lib/standex/sensor-catalog";
 import { Body, Contacts, Magnet, CameraRig, ContextGuard } from "./scene";
 
-export type MachineTool = "navigate" | "sensor" | "magnet" | "measure";
+export type MachineTool = "navigate" | "sensor" | "magnet" | "measure" | "cable";
+
+/** Tracé de câble : entièrement optionnel. Sans cette prop, la scène est inchangée. */
+export interface CableRouting {
+  /** Rôle du prochain point cliqué, choisi explicitement par l'utilisateur. */
+  slot: "sensor" | "waypoint" | "connection";
+  /** Trajet courant, déjà en millimètres. */
+  points: [number, number, number][];
+  targetLabel: string;
+  /** Le point reçu est déjà en millimètres : aucune remise à l'échelle ici. */
+  onPick: (point: [number, number, number]) => void;
+}
+
+const SLOT_TEXT: Record<CableRouting["slot"], string> = {
+  sensor: "Sortie capteur",
+  waypoint: "Passage",
+  connection: "Connexion",
+};
+
+function CableOverlay({ routing }: { routing: CableRouting }) {
+  const points = routing.points;
+  return (
+    <group>
+      {points.length >= 2 && <Line points={points} color="#1d6fa5" lineWidth={3} />}
+      {points.map((p, i) => {
+        const first = i === 0,
+          last = i === points.length - 1 && points.length > 1;
+        return (
+          <group key={`${i}-${p.join(",")}`} position={p}>
+            <mesh>
+              <sphereGeometry args={[1.6, 12, 12]} />
+              <meshBasicMaterial color={first ? "#159776" : last ? "#ae5b31" : "#1d6fa5"} />
+            </mesh>
+            <Html position={[0, 5, 0]} center style={{ pointerEvents: "none" }}>
+              <span className="mw-scene-label">
+                {t(first ? "Capteur" : last ? "Connexion" : `Passage ${i}`)}
+              </span>
+            </Html>
+          </group>
+        );
+      })}
+    </group>
+  );
+}
+
 function Motion({
   machine,
   u,
@@ -73,6 +117,7 @@ function Assembly({
   onChange,
   onMeasure,
   onPlaced,
+  routing,
 }: {
   asset: MachineAsset;
   config: WorkshopConfig;
@@ -86,7 +131,9 @@ function Assembly({
   onChange: (patch: Partial<MachineAssembly>) => void;
   onMeasure: (distance: number | null) => void;
   onPlaced: () => void;
+  routing?: CableRouting | undefined;
 }) {
+
   const machine = config.machine!,
     model = sensorById(config.sensorId),
     u = openingAt(sample.t);
@@ -114,6 +161,11 @@ function Assembly({
   const place = (event: ThreeEvent<MouseEvent>, moving: boolean) => {
     if (tool === "navigate") return;
     event.stopPropagation();
+    if (tool === "cable") {
+      // event.point est déjà en millimètres après unitScale : aucune remise à l'échelle.
+      if (routing) routing.onPick(event.point.toArray() as [number, number, number]);
+      return;
+    }
     if (tool === "measure") {
       const p = event.point.toArray() as Vec3,
         next = points.length === 1 ? [points[0]!, p] : [p];
@@ -121,6 +173,7 @@ function Assembly({
       onMeasure(next.length === 2 ? new Vector3(...next[0]!).distanceTo(new Vector3(...p)) : null);
       return;
     }
+
     if (!editable || !event.face) return;
     const normal = event.face.normal
       .clone()
@@ -167,7 +220,8 @@ function Assembly({
           ref={sensorRef}
           position={machine.sensorPosition}
           rotation={machine.sensorRotation.map((n) => (n * Math.PI) / 180) as Vec3}
-          onClick={(e) => e.stopPropagation()}
+          onClick={(e) => (tool === "cable" ? place(e, machine.sensorMount === "moving") : e.stopPropagation())}
+
         >
           <Body model={model} xray={xray} />
           {xray && <Contacts model={model} contact={sample.contact} reduced={reduced} />}
@@ -194,7 +248,7 @@ function Assembly({
           ref={magnetRef}
           position={machine.magnetPosition}
           rotation={machine.magnetRotation.map((n) => (n * Math.PI) / 180) as Vec3}
-          onClick={(e) => e.stopPropagation()}
+          onClick={(e) => (tool === "cable" ? place(e, machine.magnetMount === "moving") : e.stopPropagation())}
         >
           <Magnet
             config={{ ...config, magnetModel: "generic", magnetTilt: 0 }}
@@ -238,6 +292,8 @@ function Assembly({
           </Html>
         </>
       )}
+      {routing && routing.points.length > 0 && <CableOverlay routing={routing} />}
+
     </>
   );
 }
@@ -258,6 +314,8 @@ export default function MachineScene({
   onMeasure,
   onPlaced,
   onContextLost,
+  routing,
+
 }: {
   asset: MachineAsset;
   config: WorkshopConfig;
@@ -275,7 +333,10 @@ export default function MachineScene({
   onMeasure: (distance: number | null) => void;
   onPlaced: () => void;
   onContextLost: () => void;
+  /** Absent = comportement d'origine, aucun tracé de câble. */
+  routing?: CableRouting | undefined;
 }) {
+
   const m = config.machine!,
     extent = Math.max(...asset.size),
     sensor = sensorById(config.sensorId);
@@ -316,7 +377,9 @@ export default function MachineScene({
         onChange={onChange}
         onMeasure={onMeasure}
         onPlaced={onPlaced}
+        routing={routing}
       />
+
       <OrbitControls
         makeDefault
         enableRotate={view === "3d"}
