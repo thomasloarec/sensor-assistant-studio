@@ -66,6 +66,7 @@ import {
 
 import { checkSubmission, submit, technicalSummary } from "@/lib/leadmagnet/submission";
 import { checkLeadBackend, type LeadBackendStatus } from "@/lib/leadmagnet/backend";
+import { createSupabaseSubmissionBackend } from "@/lib/leadmagnet/supabase-adapter";
 import { routeSamples, SEARCH_LINK_DISCLAIMER, createSampleRequest } from "@/lib/leadmagnet/samples";
 import { DEFAULT_WORKSHOP } from "@/lib/standex/magnetic-workshop";
 import type { WorkshopConfig } from "@/lib/standex/magnetic-workshop";
@@ -171,6 +172,9 @@ function DesignSpace() {
   const [termination, setTermination] = useState(DEFAULT_TERMINATION);
   const [freeConnector, setFreeConnector] = useState("");
   const [backend, setBackend] = useState<LeadBackendStatus | null>(null);
+  // Dossier serveur : créé à la première transmission réussie, puis réutilisé.
+  const [serverDossierId, setServerDossierId] = useState<string | null>(null);
+  const [serverRevision, setServerRevision] = useState(0);
   const [acknowledged, setAcknowledged] = useState(false);
   const [extraConstraints, setExtraConstraints] = useState("");
   const [submitMessage, setSubmitMessage] = useState<string | null>(null);
@@ -272,13 +276,42 @@ function DesignSpace() {
       setSubmitMessage(check.problems.join(" "));
       return;
     }
-    const outcome = await submit(input, { available: Boolean(backend?.ready) });
-    setSubmitMessage(
-      outcome.status === "submitted"
-        ? `Dossier transmis (${outcome.submissionId}).`
-        : outcome.reason,
+    // Envoi réel dès que l'espace serveur est disponible et la session ouverte ;
+    // sinon rien n'est transmis et rien n'est simulé.
+    const outcome = await submit(
+      input,
+      createSupabaseSubmissionBackend({
+        schemaReady: Boolean(backend?.schemaReady),
+        capabilities: backend?.capabilities ?? {
+          authenticated: false,
+          userId: null,
+          role: null,
+          assignedDossiers: [],
+        },
+        dossierId: serverDossierId,
+        expectedRevision: serverRevision,
+        onDossierCreated: setServerDossierId,
+      }),
     );
-  }, [dossier, nda, privacy.consents, acknowledged, extraConstraints, backend]);
+    if (outcome.status === "submitted") {
+      setServerRevision((r) => r + 1);
+      setSubmitMessage(
+        "Dossier transmis à la revue Standex. Vous serez informé dès qu'un retour est publié.",
+      );
+    } else {
+      setSubmitMessage(outcome.reason);
+    }
+  }, [
+    dossier,
+    nda,
+    privacy.consents,
+    acknowledged,
+    extraConstraints,
+    backend,
+    serverDossierId,
+    serverRevision,
+  ]);
+
 
   const volume = dossier.business.annualVolume;
   const sampleRoute = routeSamples({ volume, isCustom: false });
