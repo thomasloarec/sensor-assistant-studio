@@ -141,10 +141,28 @@ export function ClientFollowUp({
             <Button
               size="sm"
               variant={d.id === serverDossierId ? "default" : "outline"}
-              onClick={() => {
-                onSelectDossier({ id: d.id, revision: d.current_revision, title: d.title });
-                void reloadView(d.id);
+              onClick={async () => {
+                // On charge le contenu réellement envoyé AVANT de changer le
+                // contexte : ouvrir un dossier ne doit jamais laisser à l'écran
+                // le contenu du dossier précédent.
+                let loaded: DossierView | null = null;
+                try {
+                  loaded = await fetchClientView(d.id);
+                } catch (error) {
+                  setMessage(error instanceof Error ? error.message : null);
+                  return;
+                }
+                const latest = [...loaded.revisions].sort((a, b) => b.revision - a.revision)[0];
+                const out = onSelectDossier({
+                  id: d.id,
+                  revision: loaded.dossier.current_revision,
+                  title: loaded.dossier.title,
+                  snapshot: latest ? latest.snapshot : null,
+                });
+                if (!out.ok) return;
+                setView(loaded);
               }}
+
             >
 
               Ouvrir
