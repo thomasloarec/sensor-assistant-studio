@@ -1,3 +1,4 @@
+import type { EnglishReportRow } from "@/lib/leadmagnet/english-report";
 /** Adaptateur Supabase réel du parcours Lead Magnet.
  *
  * Backend unique : le projet Supabase existant du client (jamais Lovable Cloud).

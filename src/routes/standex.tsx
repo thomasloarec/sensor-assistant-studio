@@ -165,6 +165,8 @@ function StandexConsole() {
     sha256: string;
   } | null>(null);
   const [viewerError, setViewerError] = useState<string | null>(null);
+  /** Lecture équipe : anglais par défaut, original toujours accessible. */
+  const [reportView, setReportView] = useState<"en" | "original">("en");
   const selectionRequest = useRef(0);
   const modelRequest = useRef(0);
   const docGenRef = useRef(0);
