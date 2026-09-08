@@ -663,6 +663,7 @@ export function DesignSpace({
         if (request !== importRequestRef.current || context !== contextGenRef.current) return;
         setImportMessage("Ce fichier n'a pas pu être lu.");
       }
+      return false;
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [guardReplace, adoptBaseline, loadWorkshop],
