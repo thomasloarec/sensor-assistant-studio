@@ -389,7 +389,28 @@ for (const [label, volume, designation, expectedRoute] of [
   } catch (e) { add(label, false, e.message); }
 }
 
+// Formes imbriquées : un bloc ABSENT ou une valeur impossible ne passe plus.
+for (const [label, mutate] of [
+  ['missing_mounting_is_rejected', (s) => { const c = { ...s }; delete c.mounting; return c; }],
+  ['null_cabling_is_rejected', (s) => ({ ...s, cabling: null })],
+  ['unknown_mounting_kind_is_rejected', (s) => ({ ...s, mounting: { kind: 'glue' } })],
+  ['press_fit_without_diameter_is_rejected', (s) => ({ ...s, mounting: { kind: 'press_fit' } })],
+  ['string_envelope_dimension_is_rejected',
+   (s) => ({ ...s, envelope: { ...s.envelope, lengthMm: '12' } })],
+  ['negative_service_reserve_is_rejected',
+   (s) => ({ ...s, cabling: { ...s.cabling, serviceReserveMm: -5 } })],
+  ['non_numeric_cable_point_is_rejected',
+   (s) => ({ ...s, cabling: { ...s.cabling, waypoints: [[0, 'x', 1]] } })],
+  ['unknown_termination_kind_is_rejected',
+   (s) => ({ ...s, termination: { kind: 'soldered' } })],
+]) {
+  const dm = await actor('authenticated', ids.a,
+    () => value('select public.lead_create_dossier($1,false)', ['Forme ' + label]));
+  await expectFail(label, () => submitReal(ids.a, dm, mutate(snapshot)), 'BAD_SNAPSHOT_SHAPE');
+}
+
 const failed = results.filter((r) => !r.pass);
+
 console.log(`\n${results.length - failed.length}/${results.length} contrôles OK`);
 writeFileSync('/tmp/sql-review-v1.2.json', JSON.stringify(results, null, 2));
 await db.close();
