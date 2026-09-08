@@ -46,8 +46,12 @@ describe("variante Standex", () => {
     expect(followup).toContain("snapshot: reviewed.snapshot");
     expect(followup).toContain("commit: () => acceptVariant(r.id)");
     const handler = design.slice(design.indexOf("onApplyVariant={async"));
-    expect(handler.indexOf("refused: parsed.reason")).toBeLessThan(handler.indexOf("await commit()"));
-    expect(handler.indexOf("await commit()")).toBeLessThan(handler.indexOf("setDossier(out.dossier)"));
+    expect(handler.indexOf("refused: parsed.reason")).toBeLessThan(
+      handler.indexOf("await commit()"),
+    );
+    expect(handler.indexOf("await commit()")).toBeLessThan(
+      handler.indexOf("setDossier(out.dossier)"),
+    );
   });
 });
 
@@ -86,9 +90,7 @@ describe("lecture 3D côté Standex", () => {
 
   test("aucun montage par défaut ne remplace un modèle manquant", () => {
     expect(standex).not.toContain("DEFAULT_WORKSHOP");
-    expect(standex).toContain(
-      "aucun montage par défaut n'est affiché à la place",
-    );
+    expect(standex).toContain("aucun montage par défaut n'est affiché à la place");
   });
 
   test("une modification locale ne vaut jamais retour publié", () => {
@@ -156,7 +158,9 @@ describe("garde de contexte pendant une opération", () => {
   });
 
   test("la console R&D écarte les réponses périmées et lie le GLB à la configuration", () => {
-    expect(standex).toContain("request !== modelRequest.current || selection !== selectionRequest.current");
+    expect(standex).toContain(
+      "request !== modelRequest.current || selection !== selectionRequest.current",
+    );
     expect(standex).toContain("config.machine.assetKey !== `sha256:${digest}`");
     expect(standex).toContain("cableRouting: viewerCable");
   });

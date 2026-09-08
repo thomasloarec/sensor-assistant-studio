@@ -63,7 +63,6 @@ import { supabase } from "@/lib/standex/supabase";
 
 const MagneticWorkshop = lazy(() => import("@/components/standex/workshop/workshop"));
 
-
 export const Route = createFileRoute("/standex")({
   component: StandexConsole,
   head: () => ({
@@ -276,7 +275,6 @@ function StandexConsole() {
     },
     [view],
   );
-
 
   useEffect(() => {
     checkLeadBackend()
@@ -582,7 +580,9 @@ function StandexConsole() {
                             <p className="text-xs text-muted-foreground">
                               Les ajustements du tracé restent dans cette copie de lecture.
                             </p>
-                            <Suspense fallback={<p className="text-sm">Chargement de l'atelier…</p>}>
+                            <Suspense
+                              fallback={<p className="text-sm">Chargement de l'atelier…</p>}
+                            >
                               <MagneticWorkshop
                                 key={`${viewer.revision}:${viewer.sha256}`}
                                 initialConfig={viewer.config}
@@ -602,7 +602,6 @@ function StandexConsole() {
                             </Suspense>
                           </div>
                         ) : null}
-
                       </>
                     ) : (
                       <p className="text-sm text-muted-foreground">Aucune version envoyée.</p>
@@ -687,7 +686,9 @@ function StandexConsole() {
                         <Input
                           inputMode="decimal"
                           value={review.variantReserveMm}
-                          onChange={(e) => setReview({ ...review, variantReserveMm: e.target.value })}
+                          onChange={(e) =>
+                            setReview({ ...review, variantReserveMm: e.target.value })
+                          }
                         />
                       </div>
                       <div>
@@ -1060,7 +1061,6 @@ function StandexConsole() {
                                 }));
                                 return "Document déposé et empreinte calculée automatiquement.";
                               });
-
                             }}
                           />
                           <p className="mt-1 text-xs text-muted-foreground">

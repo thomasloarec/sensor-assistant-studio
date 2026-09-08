@@ -58,8 +58,6 @@ interface Props {
   }>;
 }
 
-
-
 const routeLabel: Record<string, string> = {
   distributors: "Distributeurs partenaires",
   standex_direct: "Standex en direct, sous confirmation",
@@ -176,9 +174,7 @@ export function ClientFollowUp({
                 if (!out.ok) return;
                 setView(loaded);
               }}
-
             >
-
               Ouvrir
             </Button>
             <span className="font-medium">{d.title}</span>
@@ -281,7 +277,6 @@ export function ClientFollowUp({
                             setMessage(error instanceof Error ? error.message : null);
                           }
                         }}
-
                       >
                         {r.variant_accepted_at
                           ? "Variante reprise"
@@ -394,8 +389,7 @@ export function ClientFollowUp({
                 </div>
                 <p className="mt-1 text-xs text-muted-foreground">
                   Commandés sur la version {s.origin_revision ?? s.revision}
-                  {s.revalidated_from_revision !== null &&
-                  s.revalidated_from_revision !== undefined
+                  {s.revalidated_from_revision !== null && s.revalidated_from_revision !== undefined
                     ? ` — revalidés depuis la version ${s.revalidated_from_revision}`
                     : ""}
                   .
@@ -451,7 +445,6 @@ export function ClientFollowUp({
                         snapshot: r.snapshot,
                       })
                     }
-
                   >
                     Version {r.revision}
                   </Button>
