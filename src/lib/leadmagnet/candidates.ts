@@ -52,17 +52,28 @@ function mountingVerdict(
     case "press_fit": {
       if (sensor.shape !== "pressfit")
         return { status: "excluded", reason: "Pas d'emboîtement dans un trou documenté." };
-      const collar = sensor.collarDiameter ?? sensor.body[1];
       if (!Number.isFinite(mounting.holeDiameterMm) || mounting.holeDiameterMm <= 0)
         return { status: "to_verify", reason: "Diamètre du trou non renseigné." };
-      if (mounting.holeDiameterMm + 0.001 < collar)
+      // La portion INSÉRÉE est le corps. La collerette est une butée : plus large que
+      // le trou, c'est son rôle, ce n'est jamais un motif d'exclusion à elle seule.
+      const insertion = Math.max(sensor.body[1], sensor.body[2]);
+      const collar = sensor.collarDiameter ?? null;
+      if (mounting.holeDiameterMm + 0.001 < insertion)
         return {
           status: "excluded",
-          reason: `Collerette ${collar} mm supérieure au trou ${mounting.holeDiameterMm} mm.`,
+          reason: `Portion insérée ${insertion} mm supérieure au trou ${mounting.holeDiameterMm} mm : le corps n'entre pas.`,
         };
+      const collarNote =
+        collar === null
+          ? ""
+          : collar > mounting.holeDiameterMm
+            ? ` Collerette ${collar} mm : elle sert de butée en appui autour du trou ; prévoir cette surface d'appui et le volume qu'elle occupe côté visible.`
+            : ` Collerette ${collar} mm : plus étroite que le trou, l'appui en butée n'est pas assuré, à vérifier.`;
       return {
         status: "to_verify",
-        reason: `Collerette ${collar} mm dans un trou ${mounting.holeDiameterMm} mm : ajustement et maintien à vérifier.`,
+        reason:
+          `Portion insérée ${insertion} mm dans un trou ${mounting.holeDiameterMm} mm : ajustement (serrage, jeu, maintien) à vérifier par la R&D.` +
+          collarNote,
       };
     }
     case "other":
@@ -73,6 +84,25 @@ function mountingVerdict(
   }
 }
 
+/** Encombrement réellement occupé : corps + portée des terminaisons quand elle est documentée. */
+function footprint(sensor: SensorModel): { dims: number[]; note: string | null } {
+  const dims = [...sensor.body];
+  const notes: string[] = [];
+  if (sensor.terminalSpan !== undefined && sensor.terminalSpan > dims[0]!) {
+    notes.push(
+      `Encombrement compté avec la portée des terminaisons (${sensor.terminalSpan} mm), pas seulement le corps (${sensor.body[0]} mm).`,
+    );
+    dims[0] = sensor.terminalSpan;
+  }
+  if (sensor.nutWidth !== undefined)
+    notes.push(
+      `Écrous et pièces de fixation (${sensor.nutWidth} mm sur plats) à loger en plus du corps.`,
+    );
+  if (sensor.collarDiameter !== undefined)
+    notes.push(`Collerette ${sensor.collarDiameter} mm à loger côté appui, hors du trou.`);
+  return { dims, note: notes.length ? notes.join(" ") : null };
+}
+
 function envelopeVerdict(
   sensor: SensorModel,
   envelope: EnvelopeMm,
@@ -81,12 +111,27 @@ function envelopeVerdict(
   if (limits.every((v) => v === null)) return null;
   if (limits.some((v) => v === null))
     return { status: "to_verify", reason: "Encombrement partiellement renseigné." };
-  const need = [...sensor.body].sort((a, b) => a - b);
+  const { dims, note } = footprint(sensor);
+  const need = dims.slice().sort((a, b) => a - b);
   const have = (limits as number[]).slice().sort((a, b) => a - b);
+  // Le tri compare la meilleure orientation possible : l'orientation retenue reste à décider.
   const fits = need.every((n, i) => n <= have[i]! + 0.001);
+  const orientation =
+    " Comparaison faite dans l'orientation la plus favorable ; l'orientation réelle reste à confirmer.";
   return fits
-    ? { status: "kept", reason: `Enveloppe ${sizeLabel(sensor)} compatible du volume déclaré.` }
-    : { status: "excluded", reason: `Enveloppe ${sizeLabel(sensor)} supérieure au volume déclaré.` };
+    ? {
+        status: "to_verify",
+        reason:
+          `Encombrement ${sizeLabel(sensor)} compatible du volume déclaré.` +
+          (note ? ` ${note}` : "") +
+          orientation,
+      }
+    : {
+        status: "excluded",
+        reason:
+          `Encombrement ${need.join(" × ")} mm supérieur au volume déclaré.` +
+          (note ? ` ${note}` : ""),
+      };
 }
 
 const worst = (a: CandidateStatus, b: CandidateStatus): CandidateStatus =>

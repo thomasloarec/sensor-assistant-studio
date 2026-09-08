@@ -1,3 +1,4 @@
+import { evaluateCandidates } from "@/lib/leadmagnet/candidates";
 import { expect, test } from "bun:test";
 import {
   EMPTY_CABLING,
@@ -141,9 +142,9 @@ test("instantané : indépendant des modifications ultérieures du dossier", asy
   });
   d.cabling = { ...d.cabling, serviceReserveMm: 999 };
   d.title = "modifié après coup";
-  const serialized = JSON.stringify(snapshot);
-  expect(serialized).not.toContain("999");
-  expect(serialized).not.toContain("modifié après coup");
+  expect(snapshot.dto.cabling.serviceReserveMm).toBe(10);
+  expect(snapshot.dto.title).not.toBe("modifié après coup");
+  expect(JSON.stringify(snapshot.dto)).not.toContain("modifié après coup");
 });
 
 test("échantillons : rien avant revue validée et référence exacte", () => {
@@ -160,4 +161,18 @@ test("échantillons : rien avant revue validée et référence exacte", () => {
     exactPartConfirmed: true,
   });
   expect(accepted.ok).toBe(true);
+});
+
+test("encombrement : la portée des terminaisons MK24-A-J (5,5 mm) prime sur le corps (5 mm)", () => {
+  const tight = evaluateCandidates({
+    mounting: { kind: "pcb_smd" },
+    envelope: { lengthMm: 5.2, widthMm: 4, heightMm: 4 },
+  }).find((c) => c.id === "MK24-A-J");
+  expect(tight?.status).toBe("excluded");
+  const roomy = evaluateCandidates({
+    mounting: { kind: "pcb_smd" },
+    envelope: { lengthMm: 6, widthMm: 4, heightMm: 4 },
+  }).find((c) => c.id === "MK24-A-J");
+  expect(roomy?.status).not.toBe("excluded");
+  expect(roomy?.reasons.join(" ")).toContain("orientation");
 });
