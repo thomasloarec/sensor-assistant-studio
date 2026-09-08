@@ -22,14 +22,14 @@ composants. Il ne décrit aucun comportement métier.
 
 Valeurs de charte, jamais altérées :
 
-| Jeton | Valeur | Usage |
-| --- | --- | --- |
-| `--standex-blue` | `#254061` Detect Blue | actions, titres, structure |
-| `--standex-blue-75/50/25/10` | déclinaisons | états, teintes, pilules |
-| `--standex-gray` | `#535759` Electronics Gray | encre courante |
-| `--standex-gray-75/50/25/10` | déclinaisons | textes secondaires, fonds |
-| `--standex-abyss` | `#0f1d2c` | fond des sections immersives |
-| `--standex-deep` | `#16283c` | popovers immersifs |
+| Jeton                        | Valeur                     | Usage                        |
+| ---------------------------- | -------------------------- | ---------------------------- |
+| `--standex-blue`             | `#254061` Detect Blue      | actions, titres, structure   |
+| `--standex-blue-75/50/25/10` | déclinaisons               | états, teintes, pilules      |
+| `--standex-gray`             | `#535759` Electronics Gray | encre courante               |
+| `--standex-gray-75/50/25/10` | déclinaisons               | textes secondaires, fonds    |
+| `--standex-abyss`            | `#0f1d2c`                  | fond des sections immersives |
+| `--standex-deep`             | `#16283c`                  | popovers immersifs           |
 
 Surfaces et encre : `--background`, `--surface`, `--surface-sunken`,
 `--surface-tint`, `--foreground`, `--heading`, `--ink`, `--muted-foreground`.
@@ -55,14 +55,14 @@ Familles : **Source Sans 3** variable (texte), **Lato** (repli historique),
 
 Échelle, en jetons composés `font` :
 
-| Jeton | Rôle |
-| --- | --- |
+| Jeton                          | Rôle                                                         |
+| ------------------------------ | ------------------------------------------------------------ |
 | `--t-display-xl` / `-l` / `-m` | titres d'accueil, graisse 300 (Light), fluides via `clamp()` |
-| `--t-title-l` / `-m` / `-s` | titres de section, cartes, panneaux (600) |
-| `--t-body-l` | corps par défaut (18 px) |
-| `--t-body` | corps dense (16 px) |
-| `--t-caption` | légendes (14 px) |
-| `--t-label` | sur-titres capitales espacées (12 px) |
+| `--t-title-l` / `-m` / `-s`    | titres de section, cartes, panneaux (600)                    |
+| `--t-body-l`                   | corps par défaut (18 px)                                     |
+| `--t-body`                     | corps dense (16 px)                                          |
+| `--t-caption`                  | légendes (14 px)                                             |
+| `--t-label`                    | sur-titres capitales espacées (12 px)                        |
 
 Interlettrage : `--tracking-display` (-0.022em), `--tracking-title` (-0.011em),
 `--tracking-body` (0), `--tracking-label` (0.08em).

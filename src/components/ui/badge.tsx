@@ -10,7 +10,8 @@ const badgeVariants = cva(
       variant: {
         default: "bg-[var(--surface-tint)] text-[var(--standex-blue)]",
         secondary: "bg-[var(--muted)] text-[var(--muted-foreground)]",
-        outline: "bg-transparent text-[var(--foreground)] shadow-[inset_0_0_0_1px_var(--hairline-strong)]",
+        outline:
+          "bg-transparent text-[var(--foreground)] shadow-[inset_0_0_0_1px_var(--hairline-strong)]",
         destructive: "bg-[var(--destructive-soft)] text-[var(--destructive)]",
         success: "bg-[var(--success-soft)] text-[var(--success)]",
         warning: "bg-[var(--warning-soft)] text-[var(--warning)]",
