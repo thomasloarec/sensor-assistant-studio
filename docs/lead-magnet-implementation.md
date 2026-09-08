@@ -53,7 +53,11 @@ de test interne, qui reste intact (`/`).
 - **Longueurs standard** comparées seulement pour une référence exacte sourcée. Le registre
   est vide : aucune longueur n'a été sourcée dans ce repo, donc la réponse est « longueur à
   vérifier par la R&D ». Aucun MPN n'est fabriqué par collage de longueur ;
-  `MK03-1A66-200W`, `MK03-1A66-500W` et `MK03-1A90` sont distincts.
+  `MK03-1A66-200W`, `MK03-1A66-500W` et `MK03-1A90` sont distincts. Une note de GAMME MK03
+  sourcée (fiche officielle Standex Detect 02/2019, p. 1 : 200/300/500/1000/1500/2000/3000/
+  5000 mm, suffixe W = fils dénudés/étamés) est affichée à titre indicatif : elle ne crée ni
+  MPN exact, ni tolérance, la longueur exacte restant à confirmer par la R&D.
+
 - **Terminaison** : fils nus par défaut ; connecteur uniquement par référence exacte. Le
   catalogue de combinaisons qualifiées est vide, donc toute saisie devient une référence
   libre « à vérifier par R&D ».
