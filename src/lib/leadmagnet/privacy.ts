@@ -52,7 +52,9 @@ export const MEMORY_LOSS_WARNING =
 export const LOCAL_ASSISTANT_LABEL =
   "Qualification guidée locale — aucune IA distante n'est reliée. Vos réponses restent dans cet onglet.";
 
-export function sameBinding(a: ConsentBinding, b: ConsentBinding): boolean {
+export function sameBinding(a: ConsentBinding | undefined, b: ConsentBinding | undefined): boolean {
+  // Un accord sans rattachement (ancienne forme) ne vaut rien : fail-closed.
+  if (!a || !b) return false;
   return (
     a.serverDossierId === b.serverDossierId &&
     a.revision === b.revision &&
