@@ -13,6 +13,7 @@ import {
   Box,
   Cpu,
   Cable,
+  Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LanguagePicker } from "@/lib/i18n/react";
@@ -181,12 +182,12 @@ function pointFields(label: string, value: Point | null, onChange: (p: Point | n
   const p = value ?? [0, 0, 0];
   return (
     <div className="space-y-1">
-      <Label className="text-xs">{label} (mm)</Label>
+      <Label className="t-label">{label} (mm)</Label>
       <div className="flex gap-2">
         {[0, 1, 2].map((i) => (
           <Input
             key={i}
-            className="h-8"
+            className="t-metric h-11 w-32 text-right"
             inputMode="decimal"
             value={value ? String(p[i]) : ""}
             placeholder={["X", "Y", "Z"][i]!}
@@ -970,9 +971,12 @@ export function DesignSpace({
         <>
           <p className="text-base text-muted-foreground">{LOCAL_ASSISTANT_LABEL}</p>
           {dossier.requirements.map((r) => (
-            <div key={r.key} className="rounded-xl border p-5">
+            <div
+              key={r.key}
+              className={`panel-block-lg ${r.state === "confirmed" ? "requirement-confirmed" : ""}`}
+            >
               <div className="mb-3 flex flex-wrap items-center gap-3">
-                <Label htmlFor={`req-${r.key}`} className="text-base font-medium">
+                <Label htmlFor={`req-${r.key}`} className="t-title-s">
                   {r.label}
                 </Label>
                 <Badge
@@ -986,7 +990,7 @@ export function DesignSpace({
                 >
                   {stateBadge(r.state)}
                 </Badge>
-                <span className="text-base text-muted-foreground">source : {r.source}</span>
+                <span className="t-caption">source : {r.source}</span>
               </div>
               <Textarea
                 id={`req-${r.key}`}
@@ -1002,14 +1006,15 @@ export function DesignSpace({
               />
               <div className="mt-3 flex flex-wrap items-center gap-3">
                 <Button
-                  variant="outline"
+                  variant="secondary"
+                  size="sm"
                   className="min-h-11 text-base"
                   disabled={!r.value.trim() || r.state === "confirmed"}
                   onClick={() => setDossier((d) => confirmRequirement(d, r.key))}
                 >
                   Confirmer cette exigence
                 </Button>
-                {r.note ? <span className="text-base text-muted-foreground">{r.note}</span> : null}
+                {r.note ? <span className="t-caption">{r.note}</span> : null}
               </div>
             </div>
           ))}
@@ -1144,8 +1149,8 @@ export function DesignSpace({
    * simplement repliés tant que le client ne les demande pas. */
   const mechanicalFields = (
     <>
-      <div className="rounded-md border p-3">
-        <Label className="text-sm font-medium">Choix mécanique explicite</Label>
+      <div className="panel-block">
+        <Label className="t-label">Choix mécanique explicite</Label>
         <Select
           value={dossier.mounting.kind}
           onValueChange={(kind) =>
@@ -1174,8 +1179,9 @@ export function DesignSpace({
         </Select>
         {dossier.mounting.kind === "press_fit" ? (
           <div className="mt-2 max-w-xs">
-            <Label className="text-xs">Diamètre du trou (mm)</Label>
+            <Label className="t-label">Diamètre du trou (mm)</Label>
             <Input
+              className="t-metric w-32 text-right"
               inputMode="decimal"
               value={dossier.mounting.holeDiameterMm || ""}
               onChange={(e) =>
@@ -1203,15 +1209,16 @@ export function DesignSpace({
         ) : null}
       </div>
 
-      <div className="rounded-md border p-3">
-        <Label className="text-sm font-medium">Encombrement disponible</Label>
+      <div className="panel-block">
+        <Label className="t-label">Encombrement disponible</Label>
         <div className="mt-2 flex flex-wrap gap-3">
           {(["lengthMm", "widthMm", "heightMm"] as const).map((k) => (
             <div key={k} className="w-32">
-              <Label className="text-xs">
+              <Label className="t-label">
                 {{ lengthMm: "Longueur", widthMm: "Largeur", heightMm: "Hauteur" }[k]} (mm)
               </Label>
               <Input
+                className="t-metric w-32 text-right"
                 inputMode="decimal"
                 value={dossier.envelope[k] ?? ""}
                 onChange={(e) =>
@@ -1231,14 +1238,15 @@ export function DesignSpace({
   const montageSection = (
     <div className="space-y-4">
       {showAdvanced ? null : (
-        <div className="rounded-2xl border bg-card p-5 sm:p-6">
-          <h2 className="text-2xl font-semibold leading-snug">Où le capteur se place-t-il ?</h2>
-          <p className="mt-3 text-base text-muted-foreground">
+        <div className="panel-block-lg">
+          <h2 className="t-title-m">Où le capteur se place-t-il ?</h2>
+          <p className="t-caption mt-3">
             Montrez-le en 3D si c'est plus simple, ou donnez seulement les dimensions disponibles.
             Rien n'est obligatoire : ce qui reste inconnu reste inconnu.
           </p>
           <div className="mt-5 flex flex-wrap items-center gap-3">
             <Button
+              size="lg"
               className="min-h-12 px-6 text-base"
               onClick={() => {
                 setWorkshopMounted(true);
@@ -1258,15 +1266,16 @@ export function DesignSpace({
       {showAdvanced ? (
         mechanicalFields
       ) : (
-        <details className="rounded-md border p-3">
-          <summary className="min-h-11 cursor-pointer py-2 text-base font-medium">
+        <details className="panel-block">
+          <summary className="t-title-s flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 py-2">
             Préciser la mécanique et la place disponible (facultatif)
+            <span className="technical-details-chevron" aria-hidden="true">⌄</span>
           </summary>
           <div className="mt-3 space-y-4">{mechanicalFields}</div>
         </details>
       )}
 
-      <div className="rounded-md border p-3">
+      <div className="panel-block">
         <div className="flex flex-wrap items-center gap-3">
           <Label className="text-base font-medium">Atelier 3D (facultatif)</Label>
           {/* En mode guidé, « Placer en 3D » ci-dessus ouvre déjà l'atelier :
@@ -1284,7 +1293,7 @@ export function DesignSpace({
               Ouvrir l'atelier magnétique
             </Button>
           ) : null}
-          <span className="text-base text-muted-foreground">
+          <span className="t-caption">
             Formats acceptés : GLB autonome uniquement. Les fichiers STEP/IGES ne sont pas lus.
             Unités, échelle et pièce mobile restent à confirmer par vous. Vos réglages restent en
             mémoire même si vous refermez le panneau.
@@ -1301,9 +1310,9 @@ export function DesignSpace({
           Revenir à mon montage
         </Button>
       )}
-      <p className="text-sm text-muted-foreground">{CANDIDATE_DISCLAIMER}</p>
+      <p className="t-caption">{CANDIDATE_DISCLAIMER}</p>
       {dossier.selectedSensorId && !dossier.sensorSyncConfirmed ? (
-        <div className="rounded-md border border-amber-300 bg-amber-50 p-3 text-sm">
+        <div className="notice notice-warning">
           <p>
             La gamme suivie et le capteur affiché en 3D sont différents. Rien n'est changé sans
             votre accord.
@@ -1328,18 +1337,23 @@ export function DesignSpace({
           </Button>
         </div>
       ) : null}
-      <div className="space-y-2">
+      <div className="space-y-3">
         {candidates.map((c) => (
-          <div key={c.id} className="rounded-md border p-3">
+          <div
+            key={c.id}
+            className={`surface-interactive p-5 ${
+              dossier.selectedSensorId === c.id ? "candidate-selected" : ""
+            } ${c.status === "excluded" ? "candidate-excluded" : ""}`}
+          >
             <div className="flex flex-wrap items-center gap-2">
-              <span className="font-medium">{c.name}</span>
+              <span className="t-title-s">{c.name}</span>
               <Badge
                 variant={
                   c.status === "kept"
                     ? "default"
                     : c.status === "to_verify"
-                      ? "secondary"
-                      : "outline"
+                      ? "warning"
+                      : "secondary"
                 }
               >
                 {c.status === "kept"
@@ -1348,11 +1362,14 @@ export function DesignSpace({
                     ? "À vérifier"
                     : "Écarté"}
               </Badge>
-              <span className="text-xs text-muted-foreground">{c.size}</span>
+              <span className="t-metric rounded-[var(--r-pill)] bg-[var(--surface-sunken)] px-2.5 py-1 text-[0.8125rem]">
+                {c.size}
+              </span>
               {c.status !== "excluded" ? (
                 <Button
                   size="sm"
-                  variant="ghost"
+                  variant="secondary"
+                  className="sm:ml-auto"
                   onClick={() =>
                     setDossier((d) => ({
                       ...d,
@@ -1365,9 +1382,15 @@ export function DesignSpace({
                 </Button>
               ) : null}
             </div>
-            <ul className="mt-1 list-disc pl-5 text-xs text-muted-foreground">
+            <ul className="mt-3 space-y-1.5">
               {c.reasons.map((r, i) => (
-                <li key={i}>{r}</li>
+                <li key={i} className="t-caption flex gap-2 leading-[1.6]">
+                  <span
+                    className="mt-[0.62em] h-1 w-1 shrink-0 rounded-full bg-[var(--standex-blue-50)]"
+                    aria-hidden="true"
+                  />
+                  <span>{r}</span>
+                </li>
               ))}
             </ul>
           </div>
