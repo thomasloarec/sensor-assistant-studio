@@ -31,7 +31,28 @@ async function database(): Promise<IDBDatabase> {
     r.onerror = () => reject(r.error);
   });
 }
+/** Mode mémoire : rien n'est écrit sur l'appareil, le GLB vit dans l'onglet seulement. */
+const memoryFiles = new Map<string, ArrayBuffer>();
+async function keyFor(data: ArrayBuffer): Promise<string> {
+  const hash = Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256", data)))
+    .map((x) => x.toString(16).padStart(2, "0"))
+    .join("");
+  return "sha256:" + hash;
+}
+export async function storeMachineFileInMemory(file: File): Promise<string> {
+  if (file.size > 30 * 1024 * 1024)
+    throw new Error("Choisissez un GLB autonome de moins de 30 Mo.");
+  const data = await file.arrayBuffer();
+  validateGlb(data);
+  const key = await keyFor(data);
+  memoryFiles.set(key, data);
+  return key;
+}
+export function clearMemoryMachineFiles() {
+  memoryFiles.clear();
+}
 export async function storeMachineFile(file: File): Promise<string> {
+
   if (file.size > 30 * 1024 * 1024)
     throw new Error("Choisissez un GLB autonome de moins de 30 Mo.");
   const data = await file.arrayBuffer();
@@ -85,7 +106,10 @@ async function readFile(key: string): Promise<ArrayBuffer> {
     if (!r.ok) throw new Error("Exemple 3D indisponible.");
     return r.arrayBuffer();
   }
+  const inMemory = memoryFiles.get(key);
+  if (inMemory) return inMemory;
   const db = await database();
+
   try {
     return await new Promise<ArrayBuffer>((resolve, reject) => {
       const r = db.transaction("files").objectStore("files").get(key);

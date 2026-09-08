@@ -2,7 +2,7 @@ import { t, msg, localeTag } from "@/lib/i18n/core";
 import "./studio.css";
 import { LanguagePicker, useLocale } from "@/lib/i18n/react";
 import { Magnet, ArrowUpRight, MessageSquare, FolderOpen } from "lucide-react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import {
   lastWorkshop,
@@ -151,7 +151,11 @@ function Header({ user }: { user: User | null }) {
       </div>
       <div className="studio-account">
         <LanguagePicker />
+        <Link to="/design" className="studio-internal" style={{ textDecoration: "underline" }}>
+          {t("Concevoir une détection")}
+        </Link>
         <span className="studio-internal">{t("Espace de test interne")}</span>
+
         {user && (
           <details>
             <summary>{t("Mon espace")}</summary>
