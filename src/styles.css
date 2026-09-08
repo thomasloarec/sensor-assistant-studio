@@ -124,7 +124,7 @@
   /* --- 3. États ---------------------------------------------------------- */
   --success: oklch(0.5 0.084 168);
   --success-soft: oklch(0.955 0.022 168);
-  --warning: oklch(0.55 0.098 72);
+  --warning: oklch(0.53 0.098 72);
   --warning-soft: oklch(0.962 0.032 82);
   --destructive: oklch(0.52 0.17 25);
   --destructive-soft: oklch(0.955 0.028 25);
