@@ -190,7 +190,6 @@ function pointFields(label: string, value: Point | null, onChange: (p: Point | n
   );
 }
 
-
 /** Questions du parcours guidé : une intention simple par écran, reliée à la
  * MÊME exigence du dossier que le mode détaillé (aucun second état). */
 export const GUIDED_QUESTIONS: {
@@ -310,7 +309,6 @@ export function DesignSpace({
     draftPendingRef.current = true;
     setWorkshopDraftPending(true);
   }, []);
-
 
   const [volumeRaw, setVolumeRaw] = useState("");
   const [volumeError, setVolumeError] = useState<string | null>(null);
@@ -570,12 +568,20 @@ export function DesignSpace({
   connectorDraftRef.current = connectorDraft;
   const extraConstraintsRef = useRef(extraConstraints);
   extraConstraintsRef.current = extraConstraints;
+  const ndaDraftRef = useRef(nda);
+  ndaDraftRef.current = nda;
+  const importRequestRef = useRef(0);
   const baselineRef = useRef<string | null>(null);
   if (baselineRef.current === null) baselineRef.current = fingerprint(dossier);
 
   /** Y a-t-il un travail réellement modifié à protéger ? */
   const workDirty = useCallback(() => {
     if (draftPendingRef.current) return true;
+    if (
+      ndaDraftRef.current.required !== INITIAL_NDA.required ||
+      JSON.stringify(ndaDraftRef.current.fields) !== JSON.stringify(INITIAL_NDA.fields)
+    )
+      return true;
     if (extraConstraintsRef.current.trim() !== "") return true;
     if (JSON.stringify(connectorDraftRef.current) !== JSON.stringify(EMPTY_CONNECTOR_DRAFT))
       return true;
@@ -604,7 +610,6 @@ export function DesignSpace({
     baselineRef.current = fingerprint(d);
   }, []);
 
-
   const exportDossier = useCallback(() => {
     const blob = new Blob([JSON.stringify(buildDossierExport(dossier), null, 2)], {
       type: "application/json",
@@ -622,9 +627,25 @@ export function DesignSpace({
       if (!file || busyRef.current) return;
       // Garde unique : elle protège TOUS les imports, d'où qu'ils partent.
       if (!guardReplace("reprendre ce fichier")) return;
+      const request = ++importRequestRef.current;
+      const context = contextGenRef.current;
+      const beforeRead = fingerprint(dossierRef.current);
       setImportMessage(null);
       try {
-        const parsed = parseDossierExport(JSON.parse(await file.text()));
+        const source = await file.text();
+        if (
+          request !== importRequestRef.current ||
+          context !== contextGenRef.current ||
+          busyRef.current
+        )
+          return;
+        if (beforeRead !== fingerprint(dossierRef.current)) {
+          setImportMessage(
+            "Votre projet a changé pendant la lecture : relancez l'import pour remplacer ce nouveau contenu.",
+          );
+          return;
+        }
+        const parsed = parseDossierExport(JSON.parse(source));
         if (!parsed.ok) {
           setImportMessage(parsed.reason);
           return;
@@ -643,9 +664,12 @@ export function DesignSpace({
             "Contenu importé dans un dossier local : aucun dossier Standex n'y est rattaché, et l'accord de confidentialité comme l'accord d'envoi sont à refaire.",
           ].join(" "),
         );
+        return true;
       } catch {
+        if (request !== importRequestRef.current || context !== contextGenRef.current) return;
         setImportMessage("Ce fichier n'a pas pu être lu.");
       }
+      return false;
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [guardReplace, adoptBaseline, loadWorkshop],
@@ -668,6 +692,7 @@ export function DesignSpace({
    */
   const resetServerContext = useCallback((dossierId: string | null, revision: number) => {
     contextGenRef.current += 1;
+    importRequestRef.current += 1;
     docGenRef.current += 1;
     setServerDossierId(dossierId);
     setServerRevision(revision);
@@ -717,7 +742,6 @@ export function DesignSpace({
     },
     [],
   );
-
 
   /** Étape 1 : préparer le partage du modèle 3D.
    * Le dépôt a lieu ICI, AVANT la relecture et l'accord, une seule fois. Le
@@ -1089,1002 +1113,966 @@ export function DesignSpace({
     </div>
   );
 
-
-
   /** Champs mécaniques détaillés : identiques en mode guidé et détaillé,
    * simplement repliés tant que le client ne les demande pas. */
   const mechanicalFields = (
     <>
-            <div className="rounded-md border p-3">
-              <Label className="text-sm font-medium">Choix mécanique explicite</Label>
-              <Select
-                value={dossier.mounting.kind}
-                onValueChange={(kind) =>
+      <div className="rounded-md border p-3">
+        <Label className="text-sm font-medium">Choix mécanique explicite</Label>
+        <Select
+          value={dossier.mounting.kind}
+          onValueChange={(kind) =>
+            setDossier((d) => ({
+              ...d,
+              mounting:
+                kind === "press_fit"
+                  ? { kind: "press_fit", holeDiameterMm: 0 }
+                  : kind === "other"
+                    ? { kind: "other", description: "" }
+                    : ({ kind } as MountingChoice),
+            }))
+          }
+        >
+          <SelectTrigger className="mt-2 w-full max-w-md">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="undecided">Non décidé</SelectItem>
+            <SelectItem value="pcb_smd">PCB — report CMS</SelectItem>
+            <SelectItem value="pcb_through_hole">PCB — traversant</SelectItem>
+            <SelectItem value="screw">Fixation vissée</SelectItem>
+            <SelectItem value="press_fit">Emboîtement dans un trou</SelectItem>
+            <SelectItem value="other">Autre montage</SelectItem>
+          </SelectContent>
+        </Select>
+        {dossier.mounting.kind === "press_fit" ? (
+          <div className="mt-2 max-w-xs">
+            <Label className="text-xs">Diamètre du trou (mm)</Label>
+            <Input
+              inputMode="decimal"
+              value={dossier.mounting.holeDiameterMm || ""}
+              onChange={(e) =>
+                setDossier((d) => ({
+                  ...d,
+                  mounting: { kind: "press_fit", holeDiameterMm: num(e.target.value) ?? 0 },
+                }))
+              }
+            />
+          </div>
+        ) : null}
+        {dossier.mounting.kind === "other" ? (
+          <Textarea
+            className="mt-2"
+            rows={2}
+            placeholder="Décrivez le montage"
+            value={dossier.mounting.description}
+            onChange={(e) =>
+              setDossier((d) => ({
+                ...d,
+                mounting: { kind: "other", description: e.target.value },
+              }))
+            }
+          />
+        ) : null}
+      </div>
+
+      <div className="rounded-md border p-3">
+        <Label className="text-sm font-medium">Encombrement disponible</Label>
+        <div className="mt-2 flex flex-wrap gap-3">
+          {(["lengthMm", "widthMm", "heightMm"] as const).map((k) => (
+            <div key={k} className="w-32">
+              <Label className="text-xs">
+                {{ lengthMm: "Longueur", widthMm: "Largeur", heightMm: "Hauteur" }[k]} (mm)
+              </Label>
+              <Input
+                inputMode="decimal"
+                value={dossier.envelope[k] ?? ""}
+                onChange={(e) =>
                   setDossier((d) => ({
                     ...d,
-                    mounting:
-                      kind === "press_fit"
-                        ? { kind: "press_fit", holeDiameterMm: 0 }
-                        : kind === "other"
-                          ? { kind: "other", description: "" }
-                          : ({ kind } as MountingChoice),
+                    envelope: { ...d.envelope, [k]: num(e.target.value) },
                   }))
                 }
-              >
-                <SelectTrigger className="mt-2 w-full max-w-md">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="undecided">Non décidé</SelectItem>
-                  <SelectItem value="pcb_smd">PCB — report CMS</SelectItem>
-                  <SelectItem value="pcb_through_hole">PCB — traversant</SelectItem>
-                  <SelectItem value="screw">Fixation vissée</SelectItem>
-                  <SelectItem value="press_fit">Emboîtement dans un trou</SelectItem>
-                  <SelectItem value="other">Autre montage</SelectItem>
-                </SelectContent>
-              </Select>
-              {dossier.mounting.kind === "press_fit" ? (
-                <div className="mt-2 max-w-xs">
-                  <Label className="text-xs">Diamètre du trou (mm)</Label>
-                  <Input
-                    inputMode="decimal"
-                    value={dossier.mounting.holeDiameterMm || ""}
-                    onChange={(e) =>
-                      setDossier((d) => ({
-                        ...d,
-                        mounting: { kind: "press_fit", holeDiameterMm: num(e.target.value) ?? 0 },
-                      }))
-                    }
-                  />
-                </div>
-              ) : null}
-              {dossier.mounting.kind === "other" ? (
-                <Textarea
-                  className="mt-2"
-                  rows={2}
-                  placeholder="Décrivez le montage"
-                  value={dossier.mounting.description}
-                  onChange={(e) =>
-                    setDossier((d) => ({
-                      ...d,
-                      mounting: { kind: "other", description: e.target.value },
-                    }))
-                  }
-                />
-              ) : null}
+              />
             </div>
-
-            <div className="rounded-md border p-3">
-              <Label className="text-sm font-medium">Encombrement disponible</Label>
-              <div className="mt-2 flex flex-wrap gap-3">
-                {(["lengthMm", "widthMm", "heightMm"] as const).map((k) => (
-                  <div key={k} className="w-32">
-                    <Label className="text-xs">
-                      {{ lengthMm: "Longueur", widthMm: "Largeur", heightMm: "Hauteur" }[k]} (mm)
-                    </Label>
-                    <Input
-                      inputMode="decimal"
-                      value={dossier.envelope[k] ?? ""}
-                      onChange={(e) =>
-                        setDossier((d) => ({
-                          ...d,
-                          envelope: { ...d.envelope, [k]: num(e.target.value) },
-                        }))
-                      }
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
+          ))}
+        </div>
+      </div>
     </>
   );
 
   const montageSection = (
     <div className="space-y-4">
-            {showAdvanced ? null : (
-              <div className="rounded-2xl border bg-card p-5 sm:p-6">
-                <h2 className="text-2xl font-semibold leading-snug">
-                  Où le capteur se place-t-il ?
-                </h2>
-                <p className="mt-3 text-base text-muted-foreground">
-                  Montrez-le en 3D si c'est plus simple, ou donnez seulement les dimensions
-                  disponibles. Rien n'est obligatoire : ce qui reste inconnu reste inconnu.
-                </p>
-                <div className="mt-5 flex flex-wrap items-center gap-3">
-                  <Button
-                    className="min-h-12 px-6 text-base"
-                    onClick={() => {
-                      setWorkshopMounted(true);
-                      setShowWorkshop(true);
-                      setPanel("atelier");
-                    }}
-                  >
-                    Placer en 3D
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    className="min-h-12 text-base"
-                    onClick={() => setTab("besoin")}
-                  >
-                    Revenir à mon besoin
-                  </Button>
-                </div>
-              </div>
-            )}
-
-            {showAdvanced ? (
-              mechanicalFields
-            ) : (
-              <details className="rounded-md border p-3">
-                <summary className="min-h-11 cursor-pointer py-2 text-base font-medium">
-                  Préciser la mécanique et la place disponible (facultatif)
-                </summary>
-                <div className="mt-3 space-y-4">{mechanicalFields}</div>
-              </details>
-            )}
-
-            <div className="rounded-md border p-3">
-              <div className="flex flex-wrap items-center gap-3">
-                <Label className="text-base font-medium">Atelier 3D (facultatif)</Label>
-                {/* En mode guidé, « Placer en 3D » ci-dessus ouvre déjà l'atelier :
-                    pas de second bouton pour la même action. */}
-                {showAdvanced ? (
-                  <Button
-                    variant="outline"
-                    className="min-h-11 text-base"
-                    onClick={() => {
-                      setWorkshopMounted(true);
-                      setShowWorkshop(true);
-                      setPanel("atelier");
-                    }}
-                  >
-                    Ouvrir l'atelier magnétique
-                  </Button>
-                ) : null}
-                <span className="text-base text-muted-foreground">
-                  Formats acceptés : GLB autonome uniquement. Les fichiers STEP/IGES ne sont pas
-                  lus. Unités, échelle et pièce mobile restent à confirmer par vous. Vos réglages
-                  restent en mémoire même si vous refermez le panneau.
-                </span>
-              </div>
-            </div>
-
+      {showAdvanced ? null : (
+        <div className="rounded-2xl border bg-card p-5 sm:p-6">
+          <h2 className="text-2xl font-semibold leading-snug">Où le capteur se place-t-il ?</h2>
+          <p className="mt-3 text-base text-muted-foreground">
+            Montrez-le en 3D si c'est plus simple, ou donnez seulement les dimensions disponibles.
+            Rien n'est obligatoire : ce qui reste inconnu reste inconnu.
+          </p>
+          <div className="mt-5 flex flex-wrap items-center gap-3">
+            <Button
+              className="min-h-12 px-6 text-base"
+              onClick={() => {
+                setWorkshopMounted(true);
+                setShowWorkshop(true);
+                setPanel("atelier");
+              }}
+            >
+              Placer en 3D
+            </Button>
+            <Button variant="ghost" className="min-h-12 text-base" onClick={() => setTab("besoin")}>
+              Revenir à mon besoin
+            </Button>
           </div>
+        </div>
+      )}
+
+      {showAdvanced ? (
+        mechanicalFields
+      ) : (
+        <details className="rounded-md border p-3">
+          <summary className="min-h-11 cursor-pointer py-2 text-base font-medium">
+            Préciser la mécanique et la place disponible (facultatif)
+          </summary>
+          <div className="mt-3 space-y-4">{mechanicalFields}</div>
+        </details>
+      )}
+
+      <div className="rounded-md border p-3">
+        <div className="flex flex-wrap items-center gap-3">
+          <Label className="text-base font-medium">Atelier 3D (facultatif)</Label>
+          {/* En mode guidé, « Placer en 3D » ci-dessus ouvre déjà l'atelier :
+                    pas de second bouton pour la même action. */}
+          {showAdvanced ? (
+            <Button
+              variant="outline"
+              className="min-h-11 text-base"
+              onClick={() => {
+                setWorkshopMounted(true);
+                setShowWorkshop(true);
+                setPanel("atelier");
+              }}
+            >
+              Ouvrir l'atelier magnétique
+            </Button>
+          ) : null}
+          <span className="text-base text-muted-foreground">
+            Formats acceptés : GLB autonome uniquement. Les fichiers STEP/IGES ne sont pas lus.
+            Unités, échelle et pièce mobile restent à confirmer par vous. Vos réglages restent en
+            mémoire même si vous refermez le panneau.
+          </span>
+        </div>
+      </div>
+    </div>
   );
 
   const candidatsSection = (
     <div className="space-y-4">
-            {showAdvanced ? null : (
-              <Button
-                variant="outline"
-                className="min-h-11 text-base"
-                onClick={() => setTab("montage")}
+      {showAdvanced ? null : (
+        <Button variant="outline" className="min-h-11 text-base" onClick={() => setTab("montage")}>
+          Revenir à mon montage
+        </Button>
+      )}
+      <p className="text-sm text-muted-foreground">{CANDIDATE_DISCLAIMER}</p>
+      {dossier.selectedSensorId && !dossier.sensorSyncConfirmed ? (
+        <div className="rounded-md border border-amber-300 bg-amber-50 p-3 text-sm">
+          <p>
+            La gamme suivie et le capteur affiché en 3D sont différents. Rien n'est changé sans
+            votre accord.
+          </p>
+          <Button
+            size="sm"
+            className="mt-2"
+            onClick={() =>
+              setDossier((d) => {
+                const next = d.selectedSensorId;
+                if (!next) return d;
+                return {
+                  ...d,
+                  workshopSensorId: next,
+                  sensorSyncConfirmed: true,
+                  workshop: d.workshop ? { ...d.workshop, sensorId: next } : d.workshop,
+                };
+              })
+            }
+          >
+            Aligner l'atelier 3D sur la gamme suivie
+          </Button>
+        </div>
+      ) : null}
+      <div className="space-y-2">
+        {candidates.map((c) => (
+          <div key={c.id} className="rounded-md border p-3">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="font-medium">{c.name}</span>
+              <Badge
+                variant={
+                  c.status === "kept"
+                    ? "default"
+                    : c.status === "to_verify"
+                      ? "secondary"
+                      : "outline"
+                }
               >
-                Revenir à mon montage
-              </Button>
-            )}
-            <p className="text-sm text-muted-foreground">{CANDIDATE_DISCLAIMER}</p>
-            {dossier.selectedSensorId && !dossier.sensorSyncConfirmed ? (
-              <div className="rounded-md border border-amber-300 bg-amber-50 p-3 text-sm">
-                <p>
-                  La gamme suivie et le capteur affiché en 3D sont différents. Rien n'est changé
-                  sans votre accord.
-                </p>
+                {c.status === "kept"
+                  ? "Retenu à ce stade"
+                  : c.status === "to_verify"
+                    ? "À vérifier"
+                    : "Écarté"}
+              </Badge>
+              <span className="text-xs text-muted-foreground">{c.size}</span>
+              {c.status !== "excluded" ? (
                 <Button
                   size="sm"
-                  className="mt-2"
+                  variant="ghost"
                   onClick={() =>
-                    setDossier((d) => {
-                      const next = d.selectedSensorId;
-                      if (!next) return d;
-                      return {
-                        ...d,
-                        workshopSensorId: next,
-                        sensorSyncConfirmed: true,
-                        workshop: d.workshop ? { ...d.workshop, sensorId: next } : d.workshop,
-                      };
-                    })
+                    setDossier((d) => ({
+                      ...d,
+                      selectedSensorId: c.id,
+                      sensorSyncConfirmed: d.workshopSensorId === c.id,
+                    }))
                   }
                 >
-                  Aligner l'atelier 3D sur la gamme suivie
+                  Suivre cette gamme
                 </Button>
-              </div>
-            ) : null}
-            <div className="space-y-2">
-              {candidates.map((c) => (
-                <div key={c.id} className="rounded-md border p-3">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="font-medium">{c.name}</span>
-                    <Badge
-                      variant={
-                        c.status === "kept"
-                          ? "default"
-                          : c.status === "to_verify"
-                            ? "secondary"
-                            : "outline"
-                      }
-                    >
-                      {c.status === "kept"
-                        ? "Retenu à ce stade"
-                        : c.status === "to_verify"
-                          ? "À vérifier"
-                          : "Écarté"}
-                    </Badge>
-                    <span className="text-xs text-muted-foreground">{c.size}</span>
-                    {c.status !== "excluded" ? (
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() =>
-                          setDossier((d) => ({
-                            ...d,
-                            selectedSensorId: c.id,
-                            sensorSyncConfirmed: d.workshopSensorId === c.id,
-                          }))
-                        }
-                      >
-                        Suivre cette gamme
-                      </Button>
-                    ) : null}
-                  </div>
-                  <ul className="mt-1 list-disc pl-5 text-xs text-muted-foreground">
-                    {c.reasons.map((r, i) => (
-                      <li key={i}>{r}</li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
+              ) : null}
             </div>
+            <ul className="mt-1 list-disc pl-5 text-xs text-muted-foreground">
+              {c.reasons.map((r, i) => (
+                <li key={i}>{r}</li>
+              ))}
+            </ul>
           </div>
+        ))}
+      </div>
+    </div>
   );
 
   const cablageSection = (
     <div className="space-y-4">
-            {showAdvanced ? null : (
-              <Button
-                variant="outline"
-                className="min-h-11 text-base"
-                onClick={() => setTab("montage")}
-              >
-                Revenir à mon montage
-              </Button>
-            )}
-            <div className="rounded-md border p-3" data-testid="routing-target-panel">
-              <Label className="text-sm font-medium">Tracé dans la 3D (facultatif)</Label>
-              <p className="mt-1 text-xs text-muted-foreground">
-                Ouvrez l'atelier 3D, activez « Pointer dans la 3D », puis cliquez la sortie de
-                câble, les passages et le point de connexion sur les surfaces réellement affichées.
-                Sans modèle 3D, la saisie numérique ci-dessous reste la voie exacte : une valeur
-                inconnue reste inconnue, elle ne vaut pas zéro.
-              </p>
-              <div className="mt-2 flex flex-wrap items-center gap-2">
-                <Button
-                  size="sm"
-                  variant={activeTarget.kind === "base" ? "default" : "outline"}
-                  onClick={() => setRoutingTarget({ kind: "base" })}
-                >
-                  Trajet de référence
-                </Button>
-                {cabling.declaredMotionStates.map((st) => (
-                  <Button
-                    key={st.id}
-                    size="sm"
-                    variant={
-                      activeTarget.kind === "state" && activeTarget.stateId === st.id
-                        ? "default"
-                        : "outline"
-                    }
-                    onClick={() => setRoutingTarget({ kind: "state", stateId: st.id })}
-                  >
-                    {st.label || st.id}
-                  </Button>
-                ))}
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => {
-                    setShowWorkshop(true);
-                    setTab("montage");
-                  }}
-                >
-                  Ouvrir l'atelier 3D
-                </Button>
-              </div>
-              <p className="mt-2 text-xs text-muted-foreground">
-                Trajet visé : {activeTargetLabel} · {activePoints.length} point(s) ·{" "}
-                {cableRouting.lengthLabel}
-              </p>
-              {activeTarget.kind === "state" ? (
-                <p className="text-xs text-muted-foreground">
-                  Chaque état déclaré a son propre trajet complet et sa pose de relevé. Les états
-                  non relevés ne sont jamais présentés comme couverts.
-                </p>
-              ) : null}
-            </div>
+      {showAdvanced ? null : (
+        <Button variant="outline" className="min-h-11 text-base" onClick={() => setTab("montage")}>
+          Revenir à mon montage
+        </Button>
+      )}
+      <div className="rounded-md border p-3" data-testid="routing-target-panel">
+        <Label className="text-sm font-medium">Tracé dans la 3D (facultatif)</Label>
+        <p className="mt-1 text-xs text-muted-foreground">
+          Ouvrez l'atelier 3D, activez « Pointer dans la 3D », puis cliquez la sortie de câble, les
+          passages et le point de connexion sur les surfaces réellement affichées. Sans modèle 3D,
+          la saisie numérique ci-dessous reste la voie exacte : une valeur inconnue reste inconnue,
+          elle ne vaut pas zéro.
+        </p>
+        <div className="mt-2 flex flex-wrap items-center gap-2">
+          <Button
+            size="sm"
+            variant={activeTarget.kind === "base" ? "default" : "outline"}
+            onClick={() => setRoutingTarget({ kind: "base" })}
+          >
+            Trajet de référence
+          </Button>
+          {cabling.declaredMotionStates.map((st) => (
+            <Button
+              key={st.id}
+              size="sm"
+              variant={
+                activeTarget.kind === "state" && activeTarget.stateId === st.id
+                  ? "default"
+                  : "outline"
+              }
+              onClick={() => setRoutingTarget({ kind: "state", stateId: st.id })}
+            >
+              {st.label || st.id}
+            </Button>
+          ))}
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => {
+              setShowWorkshop(true);
+              setTab("montage");
+            }}
+          >
+            Ouvrir l'atelier 3D
+          </Button>
+        </div>
+        <p className="mt-2 text-xs text-muted-foreground">
+          Trajet visé : {activeTargetLabel} · {activePoints.length} point(s) ·{" "}
+          {cableRouting.lengthLabel}
+        </p>
+        {activeTarget.kind === "state" ? (
+          <p className="text-xs text-muted-foreground">
+            Chaque état déclaré a son propre trajet complet et sa pose de relevé. Les états non
+            relevés ne sont jamais présentés comme couverts.
+          </p>
+        ) : null}
+      </div>
 
-            <div className="grid gap-3 rounded-md border p-3 md:grid-cols-2">
-              {pointFields("Point capteur", cabling.sensorEndpoint, (p) =>
-                setCabling((c) => ({ ...c, sensorEndpoint: p })),
+      <div className="grid gap-3 rounded-md border p-3 md:grid-cols-2">
+        {pointFields("Point capteur", cabling.sensorEndpoint, (p) =>
+          setCabling((c) => ({ ...c, sensorEndpoint: p })),
+        )}
+        {pointFields("Point de connexion", cabling.connectionEndpoint, (p) =>
+          setCabling((c) => ({ ...c, connectionEndpoint: p })),
+        )}
+      </div>
+      <div className="rounded-md border p-3">
+        <div className="flex items-center justify-between">
+          <Label className="text-sm font-medium">Waypoints du trajet</Label>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => setCabling((c) => ({ ...c, waypoints: [...c.waypoints, [0, 0, 0]] }))}
+          >
+            Ajouter un point
+          </Button>
+        </div>
+        <div className="mt-2 space-y-2">
+          {cabling.waypoints.map((w, index) => (
+            <div key={index} className="flex items-end gap-2">
+              {pointFields(`Point ${index + 1}`, w, (p) =>
+                setCabling((c) => ({
+                  ...c,
+                  // Un point effacé rend le trajet incomplet : il n'est jamais remplacé par 0,0,0.
+                  waypoints: p
+                    ? c.waypoints.map((q, i) => (i === index ? p : q))
+                    : c.waypoints.filter((_, i) => i !== index),
+                })),
               )}
-              {pointFields("Point de connexion", cabling.connectionEndpoint, (p) =>
-                setCabling((c) => ({ ...c, connectionEndpoint: p })),
-              )}
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() =>
+                  setCabling((c) => ({
+                    ...c,
+                    waypoints: c.waypoints.filter((_, i) => i !== index),
+                  }))
+                }
+              >
+                Retirer
+              </Button>
             </div>
-            <div className="rounded-md border p-3">
-              <div className="flex items-center justify-between">
-                <Label className="text-sm font-medium">Waypoints du trajet</Label>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() =>
-                    setCabling((c) => ({ ...c, waypoints: [...c.waypoints, [0, 0, 0]] }))
+          ))}
+        </div>
+      </div>
+
+      {/* États de mouvement : le trajet doit être couvert pour chaque état. */}
+      <div className="rounded-md border p-3">
+        <div className="flex items-center justify-between">
+          <Label className="text-sm font-medium">États de mouvement</Label>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() =>
+              setCabling((c) => ({
+                ...c,
+                declaredMotionStates: [
+                  ...c.declaredMotionStates,
+                  {
+                    id: `etat-${c.declaredMotionStates.length + 1}-${Date.now()}`,
+                    label: `État ${c.declaredMotionStates.length + 1}`,
+                  },
+                ],
+                motionCoverageConfirmed: false,
+              }))
+            }
+          >
+            Ajouter un état
+          </Button>
+        </div>
+        <div className="mt-2 space-y-2">
+          {cabling.declaredMotionStates.map((st) => {
+            const covered = !uncoveredMotionStates(cabling).some((u) => u.id === st.id);
+            return (
+              <div key={st.id} className="flex flex-wrap items-center gap-2">
+                <Input
+                  className="max-w-xs"
+                  value={st.label}
+                  onChange={(e) =>
+                    setCabling((c) => ({
+                      ...c,
+                      declaredMotionStates: c.declaredMotionStates.map((m) =>
+                        m.id === st.id ? { ...m, label: e.target.value } : m,
+                      ),
+                    }))
                   }
-                >
-                  Ajouter un point
-                </Button>
-              </div>
-              <div className="mt-2 space-y-2">
-                {cabling.waypoints.map((w, index) => (
-                  <div key={index} className="flex items-end gap-2">
-                    {pointFields(`Point ${index + 1}`, w, (p) =>
+                />
+                <span className={covered ? "text-xs text-emerald-700" : "text-xs text-amber-700"}>
+                  {covered ? "trajet renseigné" : "trajet manquant pour cet état"}
+                </span>
+                {!covered ? (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() =>
                       setCabling((c) => ({
                         ...c,
-                        // Un point effacé rend le trajet incomplet : il n'est jamais remplacé par 0,0,0.
-                        waypoints: p
-                          ? c.waypoints.map((q, i) => (i === index ? p : q))
-                          : c.waypoints.filter((_, i) => i !== index),
-                      })),
-                    )}
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() =>
-                        setCabling((c) => ({
-                          ...c,
-                          waypoints: c.waypoints.filter((_, i) => i !== index),
-                        }))
-                      }
-                    >
-                      Retirer
-                    </Button>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* États de mouvement : le trajet doit être couvert pour chaque état. */}
-            <div className="rounded-md border p-3">
-              <div className="flex items-center justify-between">
-                <Label className="text-sm font-medium">États de mouvement</Label>
+                        statePaths: [
+                          ...c.statePaths,
+                          {
+                            stateId: st.id,
+                            label: st.label,
+                            points: [
+                              ...(c.sensorEndpoint ? [c.sensorEndpoint] : []),
+                              ...c.waypoints,
+                              ...(c.connectionEndpoint ? [c.connectionEndpoint] : []),
+                            ],
+                          },
+                        ],
+                        motionCoverageConfirmed: false,
+                      }))
+                    }
+                  >
+                    Reprendre le trajet courant
+                  </Button>
+                ) : null}
                 <Button
                   size="sm"
-                  variant="outline"
+                  variant="ghost"
                   onClick={() =>
                     setCabling((c) => ({
                       ...c,
-                      declaredMotionStates: [
-                        ...c.declaredMotionStates,
-                        {
-                          id: `etat-${c.declaredMotionStates.length + 1}-${Date.now()}`,
-                          label: `État ${c.declaredMotionStates.length + 1}`,
-                        },
-                      ],
+                      declaredMotionStates: c.declaredMotionStates.filter((m) => m.id !== st.id),
+                      statePaths: c.statePaths.filter((sp) => sp.stateId !== st.id),
                       motionCoverageConfirmed: false,
                     }))
                   }
                 >
-                  Ajouter un état
+                  Retirer
                 </Button>
               </div>
-              <div className="mt-2 space-y-2">
-                {cabling.declaredMotionStates.map((st) => {
-                  const covered = !uncoveredMotionStates(cabling).some((u) => u.id === st.id);
-                  return (
-                    <div key={st.id} className="flex flex-wrap items-center gap-2">
-                      <Input
-                        className="max-w-xs"
-                        value={st.label}
-                        onChange={(e) =>
-                          setCabling((c) => ({
-                            ...c,
-                            declaredMotionStates: c.declaredMotionStates.map((m) =>
-                              m.id === st.id ? { ...m, label: e.target.value } : m,
-                            ),
-                          }))
-                        }
-                      />
-                      <span
-                        className={covered ? "text-xs text-emerald-700" : "text-xs text-amber-700"}
-                      >
-                        {covered ? "trajet renseigné" : "trajet manquant pour cet état"}
-                      </span>
-                      {!covered ? (
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() =>
-                            setCabling((c) => ({
-                              ...c,
-                              statePaths: [
-                                ...c.statePaths,
-                                {
-                                  stateId: st.id,
-                                  label: st.label,
-                                  points: [
-                                    ...(c.sensorEndpoint ? [c.sensorEndpoint] : []),
-                                    ...c.waypoints,
-                                    ...(c.connectionEndpoint ? [c.connectionEndpoint] : []),
-                                  ],
-                                },
-                              ],
-                              motionCoverageConfirmed: false,
-                            }))
-                          }
-                        >
-                          Reprendre le trajet courant
-                        </Button>
-                      ) : null}
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() =>
-                          setCabling((c) => ({
-                            ...c,
-                            declaredMotionStates: c.declaredMotionStates.filter(
-                              (m) => m.id !== st.id,
-                            ),
-                            statePaths: c.statePaths.filter((sp) => sp.stateId !== st.id),
-                            motionCoverageConfirmed: false,
-                          }))
-                        }
-                      >
-                        Retirer
-                      </Button>
-                    </div>
-                  );
-                })}
-                {cabling.declaredMotionStates.length === 0 ? (
-                  <p className="text-xs text-muted-foreground">
-                    Aucun état déclaré : si la machine bouge, déclarez chaque position extrême.
-                  </p>
-                ) : null}
-              </div>
-              <label className="mt-3 flex items-center gap-2 text-xs">
-                <input
-                  type="checkbox"
-                  checked={cabling.motionCoverageConfirmed}
-                  disabled={
-                    cabling.declaredMotionStates.length === 0 ||
-                    uncoveredMotionStates(cabling).length > 0
-                  }
-                  onChange={(e) =>
-                    setCabling((c) => ({ ...c, motionCoverageConfirmed: e.target.checked }))
-                  }
-                />
-                Je confirme que tous les états déclarés sont couverts par un trajet.
-              </label>
-            </div>
+            );
+          })}
+          {cabling.declaredMotionStates.length === 0 ? (
+            <p className="text-xs text-muted-foreground">
+              Aucun état déclaré : si la machine bouge, déclarez chaque position extrême.
+            </p>
+          ) : null}
+        </div>
+        <label className="mt-3 flex items-center gap-2 text-xs">
+          <input
+            type="checkbox"
+            checked={cabling.motionCoverageConfirmed}
+            disabled={
+              cabling.declaredMotionStates.length === 0 || uncoveredMotionStates(cabling).length > 0
+            }
+            onChange={(e) =>
+              setCabling((c) => ({ ...c, motionCoverageConfirmed: e.target.checked }))
+            }
+          />
+          Je confirme que tous les états déclarés sont couverts par un trajet.
+        </label>
+      </div>
 
-            <div className="grid gap-3 rounded-md border p-3 md:grid-cols-5">
-              {(
-                [
-                  ["serviceReserveMm", "Réserve de service"],
-                  ["terminationMm", "Terminaison"],
-                  ["toleranceMm", "Tolérance fournisseur"],
-                  ["surplusHousingMm", "Surplus logeable"],
-                  ["minBendRadiusMm", "Rayon de courbure mini"],
-                ] as const
-              ).map(([key, label]) => (
+      <div className="grid gap-3 rounded-md border p-3 md:grid-cols-5">
+        {(
+          [
+            ["serviceReserveMm", "Réserve de service"],
+            ["terminationMm", "Terminaison"],
+            ["toleranceMm", "Tolérance fournisseur"],
+            ["surplusHousingMm", "Surplus logeable"],
+            ["minBendRadiusMm", "Rayon de courbure mini"],
+          ] as const
+        ).map(([key, label]) => (
+          <div key={key}>
+            <Label className="text-xs">{label} (mm)</Label>
+            <Input
+              inputMode="decimal"
+              value={cabling[key] ?? ""}
+              onChange={(e) =>
+                setCabling((c) => ({
+                  ...c,
+                  [key]:
+                    key === "minBendRadiusMm"
+                      ? num(e.target.value)
+                      : Math.max(0, num(e.target.value) ?? 0),
+                }))
+              }
+            />
+          </div>
+        ))}
+      </div>
+      <p className="-mt-2 px-1 text-xs text-muted-foreground">
+        La tolérance fournisseur et le volume disponible pour loger le surplus sont deux
+        informations différentes.
+      </p>
+      <div className="rounded-md border p-3 text-sm">
+        <p>
+          Plus long trajet mesuré (polyligne) :{" "}
+          <strong>
+            {estimate.longestPathMm === null
+              ? "inconnu"
+              : `${estimate.longestPathMm.toFixed(1)} mm`}
+          </strong>
+        </p>
+        <p>
+          Longueur minimale demandée, marges comprises :{" "}
+          <strong>
+            {estimate.requiredMm === null
+              ? "inconnue tant que le trajet n'est pas complet"
+              : `${estimate.requiredMm.toFixed(1)} mm`}
+          </strong>
+        </p>
+        <p className="text-xs text-muted-foreground">
+          Cette longueur n'est jamais une longueur approuvée : elle est vérifiée en revue R&D.
+        </p>
+        <ul className="mt-2 list-disc pl-5 text-xs text-amber-700">
+          {estimate.warnings.map((w, i) => (
+            <li key={i}>{w}</li>
+          ))}
+        </ul>
+        <Separator className="my-3" />
+        <p className="text-sm">{lengthVerdict.message}</p>
+        <div className="mt-3 flex flex-wrap gap-2">
+          {(
+            [
+              ["standard_to_confirm", "Longueur catalogue, à confirmer"],
+              ["custom_to_confirm", "Longueur sur mesure, à confirmer"],
+              ["undecided", "Non décidé"],
+            ] as const
+          ).map(([value, label]) => (
+            <Button
+              key={value}
+              size="sm"
+              variant={cabling.lengthChoice === value ? "default" : "outline"}
+              onClick={() => setCabling((c) => ({ ...c, lengthChoice: value }))}
+            >
+              {label}
+            </Button>
+          ))}
+        </div>
+        <ul className="mt-2 list-disc pl-5 text-xs text-muted-foreground">
+          {RANGE_CABLE_LENGTH_NOTES.map((n) => (
+            <li key={n.range}>
+              {n.range} : {n.lengths} (source : {n.source})
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div className="rounded-md border p-3">
+        <Label className="text-sm font-medium">Terminaison</Label>
+        <p className="mt-1 text-sm">{terminationLabel(termination)}</p>
+        <ul className="mt-1 list-disc pl-5 text-xs text-muted-foreground">
+          {connectorSummaryLines(termination).map((l, i) => (
+            <li key={i}>{l}</li>
+          ))}
+        </ul>
+        <div className="mt-3">
+          <Label className="text-xs">Boîtiers documentés par le fabricant</Label>
+          <div className="mt-1 flex flex-wrap gap-2">
+            {DOCUMENTED_HOUSINGS.map((h) => (
+              <Button
+                key={h.housingMpn}
+                size="sm"
+                variant="outline"
+                onClick={() => {
+                  const found = housingById(h.housingMpn);
+                  if (!found) return;
+                  setConnectorError(null);
+                  setConnectorDraft((d) => draftFromHousing(found, d));
+                  setDossier((d) => ({ ...d, termination: terminationFromHousing(found) }));
+                }}
+              >
+                {housingLabel(h)}
+              </Button>
+            ))}
+          </div>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Quelques boîtiers documentés seulement, pas le marché entier. Boîtier, contacts à sertir
+            et embase restent trois références distinctes ; brochage, section de fil réelle et
+            disponibilité restent inconnus et à vérifier par la R&D.
+          </p>
+        </div>
+        <div className="mt-3 grid gap-3 md:grid-cols-2">
+          {CONNECTOR_FIELD_LABELS.map(([key, label]) => (
+            <div key={key}>
+              <Label className="text-xs">{label}</Label>
+              <Input
+                value={connectorDraft[key]}
+                onChange={(e) => setConnectorDraft((d) => ({ ...d, [key]: e.target.value }))}
+              />
+            </div>
+          ))}
+        </div>
+        {connectorError ? <p className="mt-2 text-xs text-destructive">{connectorError}</p> : null}
+        <div className="mt-3 flex flex-wrap items-center gap-2">
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => {
+              setConnectorError(null);
+              setDossier((d) => ({ ...d, termination: DEFAULT_TERMINATION }));
+            }}
+          >
+            Fils nus
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => {
+              const result = terminationFromDraft(connectorDraft);
+              if (!result.ok) {
+                setConnectorError(`Champs requis : ${result.missing.join(", ")}.`);
+                return;
+              }
+              setConnectorError(null);
+              setDossier((d) => ({ ...d, termination: result.termination }));
+            }}
+          >
+            Enregistrer en « à vérifier par R&D »
+          </Button>
+        </div>
+        <p className="mt-1 text-xs text-muted-foreground">
+          Aucune combinaison connecteur/capteur qualifiée n'est documentée dans ce projet : toute
+          référence saisie, sa contrepartie et son brochage restent à vérifier par la R&D.
+        </p>
+      </div>
+    </div>
+  );
+
+  const revueSection = (
+    <div className="space-y-4">
+      <Accordion type="multiple" defaultValue={["resume", "nda", "envoi"]}>
+        <AccordionItem value="resume">
+          <AccordionTrigger>Résumé technique et inconnues</AccordionTrigger>
+          <AccordionContent>
+            <pre className="whitespace-pre-wrap rounded-md bg-muted p-3 text-xs">
+              {technicalSummary(dossier)}
+            </pre>
+          </AccordionContent>
+        </AccordionItem>
+
+        <AccordionItem value="projet">
+          <AccordionTrigger>Contexte projet</AccordionTrigger>
+          <AccordionContent className="grid gap-3 md:grid-cols-2">
+            <div>
+              <Label className="text-xs">Volume annuel de capteurs (entier ou « inconnu »)</Label>
+              <Input
+                value={volumeRaw}
+                placeholder="inconnu"
+                onChange={(e) => {
+                  setVolumeRaw(e.target.value);
+                  const parsed = parseAnnualVolume(e.target.value);
+                  if ("error" in parsed) {
+                    setVolumeError(parsed.error);
+                  } else {
+                    setVolumeError(null);
+                    setDossier((d) => ({
+                      ...d,
+                      business: { ...d.business, annualVolume: parsed },
+                    }));
+                  }
+                }}
+              />
+              {volumeError ? <p className="text-xs text-destructive">{volumeError}</p> : null}
+            </div>
+            <div>
+              <Label className="text-xs">Date de lancement série</Label>
+              <Input
+                type="date"
+                onChange={(e) =>
+                  setDossier((d) => ({
+                    ...d,
+                    business: { ...d.business, seriesStartDate: e.target.value || null },
+                  }))
+                }
+              />
+            </div>
+            <div>
+              <Label className="text-xs">Échantillons utiles avant</Label>
+              <Input
+                type="date"
+                onChange={(e) =>
+                  setDossier((d) => ({
+                    ...d,
+                    business: { ...d.business, samplesNeededBy: e.target.value || null },
+                  }))
+                }
+              />
+            </div>
+            <div>
+              <Label className="text-xs">Durée de série (années)</Label>
+              <Input
+                inputMode="numeric"
+                onChange={(e) =>
+                  setDossier((d) => ({
+                    ...d,
+                    business: { ...d.business, seriesDurationYears: num(e.target.value) },
+                  }))
+                }
+              />
+            </div>
+            <div>
+              <Label className="text-xs">Contact</Label>
+              <Input
+                placeholder="Nom"
+                onChange={(e) =>
+                  setDossier((d) => ({
+                    ...d,
+                    business: { ...d.business, contactName: e.target.value || null },
+                  }))
+                }
+              />
+            </div>
+            <div>
+              <Label className="text-xs">E-mail</Label>
+              <Input
+                type="email"
+                onChange={(e) =>
+                  setDossier((d) => ({
+                    ...d,
+                    business: { ...d.business, contactEmail: e.target.value || null },
+                  }))
+                }
+              />
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+
+        <AccordionItem value="nda">
+          <AccordionTrigger>Confidentialité et NDA — {ndaStatusLabel(nda)}</AccordionTrigger>
+          <AccordionContent className="space-y-3">
+            <p className="text-sm">
+              Modèle juridique approuvé : <strong>{APPROVED_NDA_TEMPLATE.fileName}</strong> (SHA-256{" "}
+              {APPROVED_NDA_TEMPLATE.sha256.slice(0, 16)}…, vérifié avant chaque remplissage).
+              L'original reste intact : seule une copie remplie est produite, sur cet appareil, sans
+              transmettre le dossier.
+            </p>
+            <div className="grid gap-2 md:grid-cols-2">
+              {NDA_FIELD_LABELS.map(([key, label]) => (
                 <div key={key}>
-                  <Label className="text-xs">{label} (mm)</Label>
+                  <Label className="text-xs">{label}</Label>
                   <Input
-                    inputMode="decimal"
-                    value={cabling[key] ?? ""}
+                    value={nda.fields[key]}
                     onChange={(e) =>
-                      setCabling((c) => ({
-                        ...c,
-                        [key]:
-                          key === "minBendRadiusMm"
-                            ? num(e.target.value)
-                            : Math.max(0, num(e.target.value) ?? 0),
+                      setNda((n) => ({
+                        ...n,
+                        fields: { ...n.fields, [key]: e.target.value },
                       }))
                     }
                   />
                 </div>
               ))}
             </div>
-            <p className="-mt-2 px-1 text-xs text-muted-foreground">
-              La tolérance fournisseur et le volume disponible pour loger le surplus sont deux
-              informations différentes.
-            </p>
-            <div className="rounded-md border p-3 text-sm">
-              <p>
-                Plus long trajet mesuré (polyligne) :{" "}
-                <strong>
-                  {estimate.longestPathMm === null
-                    ? "inconnu"
-                    : `${estimate.longestPathMm.toFixed(1)} mm`}
-                </strong>
-              </p>
-              <p>
-                Longueur minimale demandée, marges comprises :{" "}
-                <strong>
-                  {estimate.requiredMm === null
-                    ? "inconnue tant que le trajet n'est pas complet"
-                    : `${estimate.requiredMm.toFixed(1)} mm`}
-                </strong>
-              </p>
-              <p className="text-xs text-muted-foreground">
-                Cette longueur n'est jamais une longueur approuvée : elle est vérifiée en revue R&D.
-              </p>
-              <ul className="mt-2 list-disc pl-5 text-xs text-amber-700">
-                {estimate.warnings.map((w, i) => (
-                  <li key={i}>{w}</li>
-                ))}
-              </ul>
-              <Separator className="my-3" />
-              <p className="text-sm">{lengthVerdict.message}</p>
-              <div className="mt-3 flex flex-wrap gap-2">
-                {(
-                  [
-                    ["standard_to_confirm", "Longueur catalogue, à confirmer"],
-                    ["custom_to_confirm", "Longueur sur mesure, à confirmer"],
-                    ["undecided", "Non décidé"],
-                  ] as const
-                ).map(([value, label]) => (
-                  <Button
-                    key={value}
-                    size="sm"
-                    variant={cabling.lengthChoice === value ? "default" : "outline"}
-                    onClick={() => setCabling((c) => ({ ...c, lengthChoice: value }))}
-                  >
-                    {label}
-                  </Button>
-                ))}
-              </div>
-              <ul className="mt-2 list-disc pl-5 text-xs text-muted-foreground">
-                {RANGE_CABLE_LENGTH_NOTES.map((n) => (
-                  <li key={n.range}>
-                    {n.range} : {n.lengths} (source : {n.source})
-                  </li>
-                ))}
-              </ul>
+            <div className="flex flex-wrap gap-2">
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => {
+                  void prepareNdaDocument("preview");
+                }}
+              >
+                Aperçu du document rempli
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                disabled={!ndaPreview}
+                onClick={() => {
+                  void prepareNdaDocument("download");
+                }}
+              >
+                <Download className="mr-1 h-4 w-4" />
+                Télécharger le .docx non signé
+              </Button>
+              <Button
+                size="sm"
+                disabled={!backend?.ready}
+                onClick={() => {
+                  void prepareServerNda();
+                }}
+              >
+                Préparer mon NDA pour vérification
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                disabled={!backend?.ready || !serverDossierId}
+                onClick={() => {
+                  void refreshNdaStatus();
+                }}
+              >
+                Actualiser le statut
+              </Button>
             </div>
+            <p className="text-xs text-muted-foreground">
+              « Préparer mon NDA » n'envoie aucune donnée de conception : seule une fiche vide est
+              créée côté Standex pour que vous puissiez déposer le document signé et que l'équipe
+              puisse le vérifier.{" "}
+              {ndaServer
+                ? `Statut côté Standex : ${ndaServer.nda_status}${
+                    ndaServer.allows_transfer ? " — transfert autorisé" : " — transfert bloqué"
+                  }.`
+                : "Aucune fiche NDA créée pour l'instant."}
+            </p>
 
-            <div className="rounded-md border p-3">
-              <Label className="text-sm font-medium">Terminaison</Label>
-              <p className="mt-1 text-sm">{terminationLabel(termination)}</p>
-              <ul className="mt-1 list-disc pl-5 text-xs text-muted-foreground">
-                {connectorSummaryLines(termination).map((l, i) => (
-                  <li key={i}>{l}</li>
-                ))}
-              </ul>
-              <div className="mt-3">
-                <Label className="text-xs">Boîtiers documentés par le fabricant</Label>
-                <div className="mt-1 flex flex-wrap gap-2">
-                  {DOCUMENTED_HOUSINGS.map((h) => (
-                    <Button
-                      key={h.housingMpn}
-                      size="sm"
-                      variant="outline"
-                      onClick={() => {
-                        const found = housingById(h.housingMpn);
-                        if (!found) return;
-                        setConnectorError(null);
-                        setConnectorDraft((d) => draftFromHousing(found, d));
-                        setDossier((d) => ({ ...d, termination: terminationFromHousing(found) }));
-                      }}
-                    >
-                      {housingLabel(h)}
-                    </Button>
-                  ))}
-                </div>
-                <p className="mt-1 text-xs text-muted-foreground">
-                  Quelques boîtiers documentés seulement, pas le marché entier. Boîtier, contacts à
-                  sertir et embase restent trois références distinctes ; brochage, section de fil
-                  réelle et disponibilité restent inconnus et à vérifier par la R&D.
+            {ndaError ? (
+              <p className="flex items-start gap-2 rounded-md border border-amber-300 bg-amber-50 p-2 text-sm text-amber-900">
+                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+                {ndaError}
+              </p>
+            ) : null}
+            {ndaPreview ? (
+              <div className="space-y-2">
+                <p className="text-xs text-muted-foreground">
+                  Aperçu local des clauses du document rempli (non signé) — {ndaPreview.fileName}
+                </p>
+                <pre className="max-h-80 overflow-auto whitespace-pre-wrap rounded-md bg-muted p-3 text-xs">
+                  {ndaPreview.paragraphs.filter((p) => p.trim()).join("\n\n")}
+                </pre>
+              </div>
+            ) : null}
+            <p className="text-xs text-muted-foreground">
+              Générer un document n'est pas une signature : aucune signature ni tampon n'est ajouté,
+              le document reste non signé. Le statut « en vigueur » n'est accordé que sur preuve
+              vérifiée côté Standex ; tant qu'il n'est pas atteint, aucun contenu confidentiel n'est
+              transmis.
+            </p>
+          </AccordionContent>
+        </AccordionItem>
+
+        <AccordionItem value="envoi">
+          <AccordionTrigger>Préparer la revue Standex</AccordionTrigger>
+          <AccordionContent className="space-y-3">
+            <div>
+              <Label className="text-xs">Contraintes supplémentaires</Label>
+              <Textarea
+                rows={3}
+                value={extraConstraints}
+                onChange={(e) => setExtraConstraints(e.target.value)}
+              />
+            </div>
+            <p className="text-sm">
+              Fichiers réellement transmis :{" "}
+              {dossier.attachments.filter((a) => a.transferred).length === 0
+                ? "aucun"
+                : dossier.attachments
+                    .filter((a) => a.transferred)
+                    .map((a) => a.fileName)
+                    .join(", ")}
+            </p>
+            <label className="flex items-center gap-2 text-sm">
+              <Checkbox
+                checked={binding !== null && hasBoundConsent(privacy, "supabase_dossier", binding)}
+                disabled={binding === null}
+                onCheckedChange={(v) => {
+                  setConsentNotice(null);
+                  setPrivacy((p) =>
+                    v && binding
+                      ? grantConsent(p, {
+                          kind: "supabase_dossier",
+                          contentSummary:
+                            "Exigences, montage, câblage, contraintes et contexte projet.",
+                          recipients: ["Standex R&D", "Standex commercial"],
+                          binding,
+                        })
+                      : {
+                          ...p,
+                          consents: p.consents.filter((c) => c.kind !== "supabase_dossier"),
+                        },
+                  );
+                }}
+              />
+              J'autorise l'envoi de ce contenu à Standex (R&D et commercial).
+            </label>
+            {consentNotice ? <p className="text-xs text-amber-600">{consentNotice}</p> : null}
+
+            <label className="flex items-center gap-2 text-sm">
+              <Checkbox
+                checked={shareModel}
+                disabled={!dossier.workshopAsset}
+                onCheckedChange={(v) => {
+                  setShareModel(Boolean(v));
+                  if (!v) setPreparedUpload(null);
+                }}
+              />
+              {dossier.workshopAsset
+                ? `Je partage aussi le fichier 3D « ${dossier.workshopAsset.fileName} » avec l'équipe en charge.`
+                : "Aucun fichier 3D importé : rien à partager."}
+            </label>
+            {shareModel && dossier.workshopAsset ? (
+              <div className="space-y-1">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={busy || preparedUpload?.assetKey === dossier.workshopAsset.assetKey}
+                  onClick={() => void prepareShare()}
+                >
+                  {preparedUpload?.assetKey === dossier.workshopAsset.assetKey
+                    ? "Fichier 3D déposé et vérifié"
+                    : "1. Déposer le fichier 3D"}
+                </Button>
+                <p className="text-xs text-muted-foreground">
+                  Le dépôt a lieu avant votre accord, pour que vous confirmiez exactement ce qui
+                  partira. Il n'est pas refait si l'envoi doit être retenté.
                 </p>
               </div>
-              <div className="mt-3 grid gap-3 md:grid-cols-2">
-                {CONNECTOR_FIELD_LABELS.map(([key, label]) => (
-                  <div key={key}>
-                    <Label className="text-xs">{label}</Label>
-                    <Input
-                      value={connectorDraft[key]}
-                      onChange={(e) => setConnectorDraft((d) => ({ ...d, [key]: e.target.value }))}
-                    />
-                  </div>
-                ))}
-              </div>
-              {connectorError ? (
-                <p className="mt-2 text-xs text-destructive">{connectorError}</p>
-              ) : null}
-              <div className="mt-3 flex flex-wrap items-center gap-2">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => {
-                    setConnectorError(null);
-                    setDossier((d) => ({ ...d, termination: DEFAULT_TERMINATION }));
+            ) : null}
+            <label className="flex items-center gap-2 text-sm">
+              <Checkbox
+                checked={acknowledged}
+                onCheckedChange={(v) => setAcknowledged(Boolean(v))}
+              />
+              J'ai relu le résumé technique et les inconnues listées.
+            </label>
+            <Button onClick={() => void onSubmit()} disabled={!ndaOk || busy}>
+              <ShieldCheck className="mr-1 h-4 w-4" />{" "}
+              {busy ? "Envoi en cours…" : "Transmettre à la revue Standex"}
+            </Button>
+            {!backend?.ready ? (
+              <div className="space-y-2">
+                <p className="text-xs text-muted-foreground">
+                  {backend?.message ?? "Vérification du backend en cours…"}
+                </p>
+                <AuthPanel
+                  backend={backend}
+                  onChanged={() => {
+                    checkLeadBackend()
+                      .then(setBackend)
+                      .catch(() => setBackend(null));
                   }}
-                >
-                  Fils nus
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => {
-                    const result = terminationFromDraft(connectorDraft);
-                    if (!result.ok) {
-                      setConnectorError(`Champs requis : ${result.missing.join(", ")}.`);
-                      return;
-                    }
-                    setConnectorError(null);
-                    setDossier((d) => ({ ...d, termination: result.termination }));
-                  }}
-                >
-                  Enregistrer en « à vérifier par R&D »
-                </Button>
+                />
               </div>
-              <p className="mt-1 text-xs text-muted-foreground">
-                Aucune combinaison connecteur/capteur qualifiée n'est documentée dans ce projet :
-                toute référence saisie, sa contrepartie et son brochage restent à vérifier par la
-                R&D.
+            ) : (
+              <AuthPanel backend={backend} />
+            )}
+            {reopenedFrom ? (
+              <p className="text-xs text-muted-foreground">
+                Contenu repris de la version {reopenedFrom.revision}. Le prochain envoi créera la
+                version {serverRevision + 1} de ce dossier.
               </p>
-            </div>
-          </div>
-  );
+            ) : null}
+            {submitMessage ? <p className="text-sm">{submitMessage}</p> : null}
+          </AccordionContent>
+        </AccordionItem>
 
-  const revueSection = (
-    <div className="space-y-4">
-            <Accordion type="multiple" defaultValue={["resume", "nda", "envoi"]}>
-              <AccordionItem value="resume">
-                <AccordionTrigger>Résumé technique et inconnues</AccordionTrigger>
-                <AccordionContent>
-                  <pre className="whitespace-pre-wrap rounded-md bg-muted p-3 text-xs">
-                    {technicalSummary(dossier)}
-                  </pre>
-                </AccordionContent>
-              </AccordionItem>
+        <AccordionItem value="echantillons">
+          <AccordionTrigger>Échantillons et suivi</AccordionTrigger>
+          <AccordionContent className="space-y-3">
+            <p className="text-sm">{sampleRoute.note}</p>
+            <p className="text-sm text-amber-700">
+              Les échantillons s'ouvrent après un retour Standex validé et publié, qui fixe la
+              référence exacte à commander. Une gamme ne suffit pas.
+            </p>
+            <p className="text-xs text-muted-foreground">{SEARCH_LINK_DISCLAIMER}</p>
+            <Button
+              variant="outline"
+              className="min-h-11 text-base"
+              onClick={() => setPanel("espace")}
+            >
+              Ouvrir mon espace (mes projets, suivi, variantes)
+            </Button>
 
-              <AccordionItem value="projet">
-                <AccordionTrigger>Contexte projet</AccordionTrigger>
-                <AccordionContent className="grid gap-3 md:grid-cols-2">
-                  <div>
-                    <Label className="text-xs">
-                      Volume annuel de capteurs (entier ou « inconnu »)
-                    </Label>
-                    <Input
-                      value={volumeRaw}
-                      placeholder="inconnu"
-                      onChange={(e) => {
-                        setVolumeRaw(e.target.value);
-                        const parsed = parseAnnualVolume(e.target.value);
-                        if ("error" in parsed) {
-                          setVolumeError(parsed.error);
-                        } else {
-                          setVolumeError(null);
-                          setDossier((d) => ({
-                            ...d,
-                            business: { ...d.business, annualVolume: parsed },
-                          }));
-                        }
-                      }}
-                    />
-                    {volumeError ? <p className="text-xs text-destructive">{volumeError}</p> : null}
-                  </div>
-                  <div>
-                    <Label className="text-xs">Date de lancement série</Label>
-                    <Input
-                      type="date"
-                      onChange={(e) =>
-                        setDossier((d) => ({
-                          ...d,
-                          business: { ...d.business, seriesStartDate: e.target.value || null },
-                        }))
-                      }
-                    />
-                  </div>
-                  <div>
-                    <Label className="text-xs">Échantillons utiles avant</Label>
-                    <Input
-                      type="date"
-                      onChange={(e) =>
-                        setDossier((d) => ({
-                          ...d,
-                          business: { ...d.business, samplesNeededBy: e.target.value || null },
-                        }))
-                      }
-                    />
-                  </div>
-                  <div>
-                    <Label className="text-xs">Durée de série (années)</Label>
-                    <Input
-                      inputMode="numeric"
-                      onChange={(e) =>
-                        setDossier((d) => ({
-                          ...d,
-                          business: { ...d.business, seriesDurationYears: num(e.target.value) },
-                        }))
-                      }
-                    />
-                  </div>
-                  <div>
-                    <Label className="text-xs">Contact</Label>
-                    <Input
-                      placeholder="Nom"
-                      onChange={(e) =>
-                        setDossier((d) => ({
-                          ...d,
-                          business: { ...d.business, contactName: e.target.value || null },
-                        }))
-                      }
-                    />
-                  </div>
-                  <div>
-                    <Label className="text-xs">E-mail</Label>
-                    <Input
-                      type="email"
-                      onChange={(e) =>
-                        setDossier((d) => ({
-                          ...d,
-                          business: { ...d.business, contactEmail: e.target.value || null },
-                        }))
-                      }
-                    />
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="nda">
-                <AccordionTrigger>Confidentialité et NDA — {ndaStatusLabel(nda)}</AccordionTrigger>
-                <AccordionContent className="space-y-3">
-                  <p className="text-sm">
-                    Modèle juridique approuvé : <strong>{APPROVED_NDA_TEMPLATE.fileName}</strong>{" "}
-                    (SHA-256 {APPROVED_NDA_TEMPLATE.sha256.slice(0, 16)}…, vérifié avant chaque
-                    remplissage). L'original reste intact : seule une copie remplie est produite,
-                    sur cet appareil, sans transmettre le dossier.
-                  </p>
-                  <div className="grid gap-2 md:grid-cols-2">
-                    {NDA_FIELD_LABELS.map(([key, label]) => (
-                      <div key={key}>
-                        <Label className="text-xs">{label}</Label>
-                        <Input
-                          value={nda.fields[key]}
-                          onChange={(e) =>
-                            setNda((n) => ({
-                              ...n,
-                              fields: { ...n.fields, [key]: e.target.value },
-                            }))
-                          }
-                        />
-                      </div>
-                    ))}
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => {
-                        void prepareNdaDocument("preview");
-                      }}
-                    >
-                      Aperçu du document rempli
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      disabled={!ndaPreview}
-                      onClick={() => {
-                        void prepareNdaDocument("download");
-                      }}
-                    >
-                      <Download className="mr-1 h-4 w-4" />
-                      Télécharger le .docx non signé
-                    </Button>
-                    <Button
-                      size="sm"
-                      disabled={!backend?.ready}
-                      onClick={() => {
-                        void prepareServerNda();
-                      }}
-                    >
-                      Préparer mon NDA pour vérification
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      disabled={!backend?.ready || !serverDossierId}
-                      onClick={() => {
-                        void refreshNdaStatus();
-                      }}
-                    >
-                      Actualiser le statut
-                    </Button>
-                  </div>
-                  <p className="text-xs text-muted-foreground">
-                    « Préparer mon NDA » n'envoie aucune donnée de conception : seule une fiche vide
-                    est créée côté Standex pour que vous puissiez déposer le document signé et que
-                    l'équipe puisse le vérifier.{" "}
-                    {ndaServer
-                      ? `Statut côté Standex : ${ndaServer.nda_status}${
-                          ndaServer.allows_transfer
-                            ? " — transfert autorisé"
-                            : " — transfert bloqué"
-                        }.`
-                      : "Aucune fiche NDA créée pour l'instant."}
-                  </p>
-
-                  {ndaError ? (
-                    <p className="flex items-start gap-2 rounded-md border border-amber-300 bg-amber-50 p-2 text-sm text-amber-900">
-                      <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
-                      {ndaError}
-                    </p>
-                  ) : null}
-                  {ndaPreview ? (
-                    <div className="space-y-2">
-                      <p className="text-xs text-muted-foreground">
-                        Aperçu local des clauses du document rempli (non signé) —{" "}
-                        {ndaPreview.fileName}
-                      </p>
-                      <pre className="max-h-80 overflow-auto whitespace-pre-wrap rounded-md bg-muted p-3 text-xs">
-                        {ndaPreview.paragraphs.filter((p) => p.trim()).join("\n\n")}
-                      </pre>
-                    </div>
-                  ) : null}
-                  <p className="text-xs text-muted-foreground">
-                    Générer un document n'est pas une signature : aucune signature ni tampon n'est
-                    ajouté, le document reste non signé. Le statut « en vigueur » n'est accordé que
-                    sur preuve vérifiée côté Standex ; tant qu'il n'est pas atteint, aucun contenu
-                    confidentiel n'est transmis.
-                  </p>
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="envoi">
-                <AccordionTrigger>Préparer la revue Standex</AccordionTrigger>
-                <AccordionContent className="space-y-3">
-                  <div>
-                    <Label className="text-xs">Contraintes supplémentaires</Label>
-                    <Textarea
-                      rows={3}
-                      value={extraConstraints}
-                      onChange={(e) => setExtraConstraints(e.target.value)}
-                    />
-                  </div>
-                  <p className="text-sm">
-                    Fichiers réellement transmis :{" "}
-                    {dossier.attachments.filter((a) => a.transferred).length === 0
-                      ? "aucun"
-                      : dossier.attachments
-                          .filter((a) => a.transferred)
-                          .map((a) => a.fileName)
-                          .join(", ")}
-                  </p>
-                  <label className="flex items-center gap-2 text-sm">
-                    <Checkbox
-                      checked={
-                        binding !== null && hasBoundConsent(privacy, "supabase_dossier", binding)
-                      }
-                      disabled={binding === null}
-                      onCheckedChange={(v) => {
-                        setConsentNotice(null);
-                        setPrivacy((p) =>
-                          v && binding
-                            ? grantConsent(p, {
-                                kind: "supabase_dossier",
-                                contentSummary:
-                                  "Exigences, montage, câblage, contraintes et contexte projet.",
-                                recipients: ["Standex R&D", "Standex commercial"],
-                                binding,
-                              })
-                            : {
-                                ...p,
-                                consents: p.consents.filter((c) => c.kind !== "supabase_dossier"),
-                              },
-                        );
-                      }}
-                    />
-                    J'autorise l'envoi de ce contenu à Standex (R&D et commercial).
-                  </label>
-                  {consentNotice ? <p className="text-xs text-amber-600">{consentNotice}</p> : null}
-
-                  <label className="flex items-center gap-2 text-sm">
-                    <Checkbox
-                      checked={shareModel}
-                      disabled={!dossier.workshopAsset}
-                      onCheckedChange={(v) => {
-                        setShareModel(Boolean(v));
-                        if (!v) setPreparedUpload(null);
-                      }}
-                    />
-                    {dossier.workshopAsset
-                      ? `Je partage aussi le fichier 3D « ${dossier.workshopAsset.fileName} » avec l'équipe en charge.`
-                      : "Aucun fichier 3D importé : rien à partager."}
-                  </label>
-                  {shareModel && dossier.workshopAsset ? (
-                    <div className="space-y-1">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        disabled={
-                          busy || preparedUpload?.assetKey === dossier.workshopAsset.assetKey
-                        }
-                        onClick={() => void prepareShare()}
-                      >
-                        {preparedUpload?.assetKey === dossier.workshopAsset.assetKey
-                          ? "Fichier 3D déposé et vérifié"
-                          : "1. Déposer le fichier 3D"}
-                      </Button>
-                      <p className="text-xs text-muted-foreground">
-                        Le dépôt a lieu avant votre accord, pour que vous confirmiez exactement ce
-                        qui partira. Il n'est pas refait si l'envoi doit être retenté.
-                      </p>
-                    </div>
-                  ) : null}
-                  <label className="flex items-center gap-2 text-sm">
-                    <Checkbox
-                      checked={acknowledged}
-                      onCheckedChange={(v) => setAcknowledged(Boolean(v))}
-                    />
-                    J'ai relu le résumé technique et les inconnues listées.
-                  </label>
-                  <Button onClick={() => void onSubmit()} disabled={!ndaOk || busy}>
-                    <ShieldCheck className="mr-1 h-4 w-4" />{" "}
-                    {busy ? "Envoi en cours…" : "Transmettre à la revue Standex"}
-                  </Button>
-                  {!backend?.ready ? (
-                    <div className="space-y-2">
-                      <p className="text-xs text-muted-foreground">
-                        {backend?.message ?? "Vérification du backend en cours…"}
-                      </p>
-                      <AuthPanel
-                        backend={backend}
-                        onChanged={() => {
-                          checkLeadBackend()
-                            .then(setBackend)
-                            .catch(() => setBackend(null));
-                        }}
-                      />
-                    </div>
-                  ) : (
-                    <AuthPanel backend={backend} />
-                  )}
-                  {reopenedFrom ? (
-                    <p className="text-xs text-muted-foreground">
-                      Contenu repris de la version {reopenedFrom.revision}. Le prochain envoi créera
-                      la version {serverRevision + 1} de ce dossier.
-                    </p>
-                  ) : null}
-                  {submitMessage ? <p className="text-sm">{submitMessage}</p> : null}
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="echantillons">
-                <AccordionTrigger>Échantillons et suivi</AccordionTrigger>
-                <AccordionContent className="space-y-3">
-                  <p className="text-sm">{sampleRoute.note}</p>
-                  <p className="text-sm text-amber-700">
-                    Les échantillons s'ouvrent après un retour Standex validé et publié, qui fixe la
-                    référence exacte à commander. Une gamme ne suffit pas.
-                  </p>
-                  <p className="text-xs text-muted-foreground">{SEARCH_LINK_DISCLAIMER}</p>
-                  <Button
-                    variant="outline"
-                    className="min-h-11 text-base"
-                    onClick={() => setPanel("espace")}
-                  >
-                    Ouvrir mon espace (mes projets, suivi, variantes)
-                  </Button>
-
-                  <p className="text-xs text-muted-foreground">
-                    Disponibilités, MOQ et conditionnements : inconnus tant qu'aucun fournisseur
-                    réel n'est connecté.
-                  </p>
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-          </div>
+            <p className="text-xs text-muted-foreground">
+              Disponibilités, MOQ et conditionnements : inconnus tant qu'aucun fournisseur réel
+              n'est connecté.
+            </p>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
+    </div>
   );
 
   /** Applique un montage 3D au dossier, avec la MÊME logique de provenance,
@@ -2157,21 +2145,21 @@ export function DesignSpace({
     </div>
   );
 
-
   const documentsSection = (
     <div className="space-y-5">
       <div className="flex flex-wrap items-center gap-3">
         <Button
           variant="outline"
           className="min-h-11 text-base"
-          onClick={() =>
+          onClick={() => {
+            docGenRef.current += 1;
             setOpenDoc({
               id: `summary-${Date.now()}`,
               name: "Résumé de mon projet.md",
               kind: "markdown",
               text: technicalSummary(dossier),
-            })
-          }
+            });
+          }}
         >
           Résumé de mon projet
         </Button>
@@ -2179,19 +2167,24 @@ export function DesignSpace({
           <Button
             variant="outline"
             className="min-h-11 text-base"
-            onClick={() =>
+            onClick={() => {
+              docGenRef.current += 1;
               setOpenDoc({
                 id: `nda-${ndaPreview.fileName}`,
-                name: ndaPreview.fileName,
+                name: ndaPreview.fileName.replace(/\.docx$/i, "-apercu.txt"),
                 kind: "text",
                 text: ndaPreview.paragraphs.filter((p) => p.trim()).join("\n\n"),
-              })
-            }
+              });
+            }}
           >
             Aperçu de l'accord de confidentialité
           </Button>
         ) : null}
-        <Button variant="outline" className="min-h-11 max-w-full whitespace-normal text-base" asChild>
+        <Button
+          variant="outline"
+          className="min-h-11 max-w-full whitespace-normal text-base"
+          asChild
+        >
           <label className="block w-full max-w-full cursor-pointer text-center sm:w-auto">
             Ouvrir un fichier de mon appareil
             <input
@@ -2228,7 +2221,6 @@ export function DesignSpace({
             />
           </label>
         </Button>
-
       </div>
       <p className="text-base text-muted-foreground">
         Les fichiers ouverts ici restent en mémoire de cet onglet : rien n'est envoyé.
@@ -2252,7 +2244,11 @@ export function DesignSpace({
         <Button variant="outline" className="min-h-11 text-base" onClick={exportDossier}>
           <Download className="mr-1 h-4 w-4" /> Exporter mon projet
         </Button>
-        <Button variant="outline" className="min-h-11 max-w-full whitespace-normal text-base" asChild>
+        <Button
+          variant="outline"
+          className="min-h-11 max-w-full whitespace-normal text-base"
+          asChild
+        >
           <label className="block w-full max-w-full cursor-pointer text-center sm:w-auto">
             Reprendre un fichier
             <input
@@ -2264,8 +2260,11 @@ export function DesignSpace({
                 e.target.value = "";
                 if (!f) return;
                 // La garde vit DANS importDossier : tous les chemins protégés.
-                void importDossier(f).then(() => {
-                  if (!busyRef.current) onWorkspaceOpen?.();
+                void importDossier(f).then((imported) => {
+                  if (imported && !busyRef.current) {
+                    setPanel(null);
+                    onWorkspaceOpen?.();
+                  }
                 });
               }}
             />
@@ -2306,145 +2305,140 @@ export function DesignSpace({
         </p>
       ) : null}
       {submitMessage ? <p className="text-base">{submitMessage}</p> : null}
-                  <ClientFollowUp
-                    backend={backend}
-                    serverDossierId={serverDossierId}
-                    contextGeneration={contextGenRef.current}
-                    onOpenTransferredFile={(f) => void openTransferredFile(f)}
-                    onSelectDossier={({ id, revision, title, snapshot }) => {
-                      if (busyRef.current) return { ok: false };
-                      if (!guardReplace("ouvrir ce dossier")) return { ok: false };
-                      // Le dossier CONSULTÉ ne devient le dossier ÉDITÉ que si son
-                      // dernier contenu envoyé a pu être chargé : sinon l'ancien
-                      // contenu resterait à l'écran sous une nouvelle étiquette.
-                      const parsed = snapshot ? parseServerSnapshot(snapshot) : null;
-                      if (snapshot && (!parsed || !parsed.ok)) {
-                        setSubmitMessage(
-                          parsed && !parsed.ok
-                            ? parsed.reason
-                            : "Le dernier contenu envoyé de ce dossier n'a pas pu être relu : le dossier ouvert ici reste inchangé.",
-                        );
-                        return { ok: false };
-                      }
-                      if (parsed && parsed.ok) {
-                        const next = { ...parsed.dossier, storage: "memory" as const };
-                        setDossier(next);
-                        adoptBaseline(next);
-                        loadWorkshop(parsed.dossier.workshop ?? null);
-                      } else {
-                        // Dossier sans contenu envoyé : contenu VIDE, jamais l'ancien.
-                        const next = { ...createDossier(), title };
-                        setDossier(next);
-                        adoptBaseline(next);
-                        loadWorkshop(null);
-                      }
-                      setConnectorDraft(EMPTY_CONNECTOR_DRAFT);
-                      setConnectorError(null);
-                      resetServerContext(id, revision);
-                      setPanel(null);
-                      onWorkspaceOpen?.();
-                      setSubmitMessage(
-                        `Dossier « ${title} » ouvert à la version ${revision}${
-                          parsed && parsed.ok
-                            ? ", contenu envoyé rechargé"
-                            : ", aucun contenu envoyé à recharger"
-                        }. Votre accord d'envoi et la relecture sont à refaire pour ce dossier.`,
-                      );
-                      return { ok: true };
-                    }}
-                    onReopenSnapshot={({
-                      dossierId,
-                      sourceRevision,
-                      currentRevision,
-                      snapshot,
-                    }) => {
-                      if (busyRef.current) return { ok: false };
-                      if (!guardReplace("reprendre cette version")) return { ok: false };
-                      const parsed = parseServerSnapshot(snapshot);
-                      if (!parsed.ok) {
-                        setSubmitMessage(parsed.reason);
-                        return { ok: false };
-                      }
-                      // Reprise ATOMIQUE : contenu, contexte serveur, accords,
-                      // relecture et partage de fichier changent d'un seul tenant.
-                      // La version attendue par le serveur est la version COURANTE
-                      // du dossier, pas l'ancienne version reprise.
-                      const reopened = { ...parsed.dossier, storage: "memory" as const };
-                      setDossier(reopened);
-                      adoptBaseline(reopened);
-                      loadWorkshop(parsed.dossier.workshop ?? null);
-                      setConnectorDraft(EMPTY_CONNECTOR_DRAFT);
-                      setConnectorError(null);
-                      resetServerContext(dossierId, currentRevision);
-                      setReopenedFrom({ dossierId, revision: sourceRevision });
-                      setPanel(null);
-                      onWorkspaceOpen?.();
-                      setSubmitMessage(
-                        `Contenu de la version ${sourceRevision} repris. Le prochain envoi créera la version ${currentRevision + 1} du dossier. ${parsed.notices.join(" ")}`,
-                      );
-                      return { ok: true };
-                    }}
-                    onApplyVariant={async ({ dossierId, revision, snapshot, variant, commit }) => {
-                      if (busyRef.current)
-                        return {
-                          applied: [],
-                          notApplied: [],
-                          refused: "Une opération est en cours. Réessayez après sa fin.",
-                        };
-                      if (!guardReplace("reprendre cette proposition"))
-                        return {
-                          applied: [],
-                          notApplied: [],
-                          refused: "Reprise annulée : votre travail en cours est intact.",
-                        };
-                      // La variante s'applique au contenu de LA version relue par
-                      // Standex, jamais à un contenu resté d'un autre dossier.
-                      const parsed = parseServerSnapshot(snapshot);
-                      if (!parsed.ok) {
-                        return { applied: [], notApplied: [], refused: parsed.reason };
-                      }
-                      const out = applyVariant({ ...parsed.dossier, storage: "memory" }, variant);
-                      if (!out.applied.length) {
-                        return {
-                          applied: [],
-                          notApplied: out.notApplied,
-                          refused:
-                            "Aucune modification de cette proposition n'a pu être appliquée : rien n'a été repris.",
-                        };
-                      }
-                      try {
-                        // Le serveur enregistre la reprise AVANT que l'écran change.
-                        busyRef.current = true;
-                        setBusy(true);
-                        await commit();
-                      } catch (error) {
-                        return {
-                          applied: [],
-                          notApplied: out.notApplied,
-                          refused:
-                            error instanceof Error
-                              ? error.message
-                              : "La reprise de cette proposition n'a pas été enregistrée.",
-                        };
-                      } finally {
-                        busyRef.current = false;
-                        setBusy(false);
-                      }
-                      setDossier(out.dossier);
-                      adoptBaseline(out.dossier);
-                      loadWorkshop(out.dossier.workshop ?? null);
-                      setConnectorDraft(EMPTY_CONNECTOR_DRAFT);
-                      setConnectorError(null);
-                      resetServerContext(dossierId, revision);
-                      setReopenedFrom({ dossierId, revision });
-                      setPanel(null);
-                      onWorkspaceOpen?.();
-                      setSubmitMessage(
-                        "Proposition Standex reprise dans le contenu ouvert ici. Elle n'est ni validée ni envoyée : relisez, confirmez l'accord, puis envoyez une nouvelle version.",
-                      );
-                      return { applied: out.applied, notApplied: out.notApplied };
-                    }}
-                  />
+      <ClientFollowUp
+        backend={backend}
+        serverDossierId={serverDossierId}
+        contextGeneration={contextGenRef.current}
+        onOpenTransferredFile={(f) => void openTransferredFile(f)}
+        onSelectDossier={({ id, revision, title, snapshot }) => {
+          if (busyRef.current) return { ok: false };
+          if (!guardReplace("ouvrir ce dossier")) return { ok: false };
+          // Le dossier CONSULTÉ ne devient le dossier ÉDITÉ que si son
+          // dernier contenu envoyé a pu être chargé : sinon l'ancien
+          // contenu resterait à l'écran sous une nouvelle étiquette.
+          const parsed = snapshot ? parseServerSnapshot(snapshot) : null;
+          if (snapshot && (!parsed || !parsed.ok)) {
+            setSubmitMessage(
+              parsed && !parsed.ok
+                ? parsed.reason
+                : "Le dernier contenu envoyé de ce dossier n'a pas pu être relu : le dossier ouvert ici reste inchangé.",
+            );
+            return { ok: false };
+          }
+          if (parsed && parsed.ok) {
+            const next = { ...parsed.dossier, storage: "memory" as const };
+            setDossier(next);
+            adoptBaseline(next);
+            loadWorkshop(parsed.dossier.workshop ?? null);
+          } else {
+            // Dossier sans contenu envoyé : contenu VIDE, jamais l'ancien.
+            const next = { ...createDossier(), title };
+            setDossier(next);
+            adoptBaseline(next);
+            loadWorkshop(null);
+          }
+          setConnectorDraft(EMPTY_CONNECTOR_DRAFT);
+          setConnectorError(null);
+          resetServerContext(id, revision);
+          setPanel(null);
+          onWorkspaceOpen?.();
+          setSubmitMessage(
+            `Dossier « ${title} » ouvert à la version ${revision}${
+              parsed && parsed.ok
+                ? ", contenu envoyé rechargé"
+                : ", aucun contenu envoyé à recharger"
+            }. Votre accord d'envoi et la relecture sont à refaire pour ce dossier.`,
+          );
+          return { ok: true };
+        }}
+        onReopenSnapshot={({ dossierId, sourceRevision, currentRevision, snapshot }) => {
+          if (busyRef.current) return { ok: false };
+          if (!guardReplace("reprendre cette version")) return { ok: false };
+          const parsed = parseServerSnapshot(snapshot);
+          if (!parsed.ok) {
+            setSubmitMessage(parsed.reason);
+            return { ok: false };
+          }
+          // Reprise ATOMIQUE : contenu, contexte serveur, accords,
+          // relecture et partage de fichier changent d'un seul tenant.
+          // La version attendue par le serveur est la version COURANTE
+          // du dossier, pas l'ancienne version reprise.
+          const reopened = { ...parsed.dossier, storage: "memory" as const };
+          setDossier(reopened);
+          adoptBaseline(reopened);
+          loadWorkshop(parsed.dossier.workshop ?? null);
+          setConnectorDraft(EMPTY_CONNECTOR_DRAFT);
+          setConnectorError(null);
+          resetServerContext(dossierId, currentRevision);
+          setReopenedFrom({ dossierId, revision: sourceRevision });
+          setPanel(null);
+          onWorkspaceOpen?.();
+          setSubmitMessage(
+            `Contenu de la version ${sourceRevision} repris. Le prochain envoi créera la version ${currentRevision + 1} du dossier. ${parsed.notices.join(" ")}`,
+          );
+          return { ok: true };
+        }}
+        onApplyVariant={async ({ dossierId, revision, snapshot, variant, commit }) => {
+          if (busyRef.current)
+            return {
+              applied: [],
+              notApplied: [],
+              refused: "Une opération est en cours. Réessayez après sa fin.",
+            };
+          if (!guardReplace("reprendre cette proposition"))
+            return {
+              applied: [],
+              notApplied: [],
+              refused: "Reprise annulée : votre travail en cours est intact.",
+            };
+          // La variante s'applique au contenu de LA version relue par
+          // Standex, jamais à un contenu resté d'un autre dossier.
+          const parsed = parseServerSnapshot(snapshot);
+          if (!parsed.ok) {
+            return { applied: [], notApplied: [], refused: parsed.reason };
+          }
+          const out = applyVariant({ ...parsed.dossier, storage: "memory" }, variant);
+          if (!out.applied.length) {
+            return {
+              applied: [],
+              notApplied: out.notApplied,
+              refused:
+                "Aucune modification de cette proposition n'a pu être appliquée : rien n'a été repris.",
+            };
+          }
+          try {
+            // Le serveur enregistre la reprise AVANT que l'écran change.
+            busyRef.current = true;
+            setBusy(true);
+            await commit();
+          } catch (error) {
+            return {
+              applied: [],
+              notApplied: out.notApplied,
+              refused:
+                error instanceof Error
+                  ? error.message
+                  : "La reprise de cette proposition n'a pas été enregistrée.",
+            };
+          } finally {
+            busyRef.current = false;
+            setBusy(false);
+          }
+          setDossier(out.dossier);
+          adoptBaseline(out.dossier);
+          loadWorkshop(out.dossier.workshop ?? null);
+          setConnectorDraft(EMPTY_CONNECTOR_DRAFT);
+          setConnectorError(null);
+          resetServerContext(dossierId, revision);
+          setReopenedFrom({ dossierId, revision });
+          setPanel(null);
+          onWorkspaceOpen?.();
+          setSubmitMessage(
+            "Proposition Standex reprise dans le contenu ouvert ici. Elle n'est ni validée ni envoyée : relisez, confirmez l'accord, puis envoyez une nouvelle version.",
+          );
+          return { applied: out.applied, notApplied: out.notApplied };
+        }}
+      />
     </div>
   );
 
@@ -2457,7 +2451,6 @@ export function DesignSpace({
         className={`${embedded ? "border-b bg-card/60" : "border-b bg-card"}${visible ? "" : " hidden"}`}
       >
         <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-3 px-4 py-4">
-
           <div className="min-w-0 flex-1">
             <Label htmlFor="project-title" className="text-sm text-muted-foreground">
               Nom de mon projet
@@ -2607,23 +2600,33 @@ export function DesignSpace({
           </TabsList>
 
           {/* ---------------- Besoin ---------------- */}
-          <TabsContent value="besoin" className="pt-4">{besoinSection}</TabsContent>
+          <TabsContent value="besoin" className="pt-4">
+            {besoinSection}
+          </TabsContent>
 
           {/* ---------------- Montage ---------------- */}
-          <TabsContent value="montage" className="pt-4">{montageSection}</TabsContent>
+          <TabsContent value="montage" className="pt-4">
+            {montageSection}
+          </TabsContent>
 
           {showAdvanced ? (
             <>
               {/* ---------------- Candidats ---------------- */}
-              <TabsContent value="candidats" className="pt-4">{candidatsSection}</TabsContent>
+              <TabsContent value="candidats" className="pt-4">
+                {candidatsSection}
+              </TabsContent>
 
               {/* ---------------- Câblage ---------------- */}
-              <TabsContent value="cablage" className="pt-4">{cablageSection}</TabsContent>
+              <TabsContent value="cablage" className="pt-4">
+                {cablageSection}
+              </TabsContent>
             </>
           ) : null}
 
           {/* ---------------- Revue ---------------- */}
-          <TabsContent value="revue" className="pt-4">{revueSection}</TabsContent>
+          <TabsContent value="revue" className="pt-4">
+            {revueSection}
+          </TabsContent>
         </Tabs>
       </main>
 
@@ -2680,4 +2683,3 @@ export function DesignSpace({
     </div>
   );
 }
-
