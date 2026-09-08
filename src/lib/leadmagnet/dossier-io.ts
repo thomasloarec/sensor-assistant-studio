@@ -159,6 +159,13 @@ const requirement = z.object({
   note: z.string().optional(),
 });
 
+/** Un identifiant inconnu redevient « aucun choix » : le laisser passer ferait
+ * retomber l'affichage sur un autre capteur du catalogue. */
+const knownSensorId = z
+  .string()
+  .nullable()
+  .catch(null)
+  .transform((v) => (v !== null && isKnownSensorId(v) ? v : null));
 const dossierSchema = z.object({
   title: z.string().catch("Dossier repris"),
   requirements: z.array(requirement).catch([]),
