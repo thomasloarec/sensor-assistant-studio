@@ -5,17 +5,11 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
- * Design system definition.
+ * Design system definition — voir docs/design-language.md.
  *
- * The @theme inline block maps CSS custom properties to Tailwind utility
- * classes (e.g. --color-primary -> bg-primary, text-primary).
- *
- * The :root and .dark blocks define the actual color values using oklch.
- * All colors MUST use oklch format.
- *
- * To add a new semantic color:
- * 1. Add the variable to :root (light value) and .dark (dark value)
- * 2. Register it in @theme inline as --color-<name>: var(--<name>)
+ * Le bloc @theme inline mappe les propriétés CSS vers les utilitaires Tailwind.
+ * Les valeurs réelles vivent dans :root (clair) et .immersive (sections sombres).
+ * Toutes les couleurs sont en oklch.
  */
 
 @theme inline {
@@ -23,6 +17,23 @@
   --font-mono: var(--font-mono);
   --color-success: var(--success);
   --color-warning: var(--warning);
+  --color-heading: var(--heading);
+  --color-ink: var(--ink);
+  --color-surface: var(--surface);
+  --color-surface-sunken: var(--surface-sunken);
+  --color-surface-tint: var(--surface-tint);
+  --color-signal: var(--signal);
+  --color-hairline: var(--hairline);
+  --color-success-soft: var(--success-soft);
+  --color-warning-soft: var(--warning-soft);
+  --color-destructive-soft: var(--destructive-soft);
+  --shadow-e1: var(--e-1);
+  --shadow-e2: var(--e-2);
+  --shadow-e3: var(--e-3);
+  --shadow-e4: var(--e-4);
+  --ease-out-standex: var(--ease-out);
+  --ease-spring: var(--ease-spring);
+  --ease-glide: var(--ease-glide);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -66,33 +77,129 @@
 }
 
 :root {
-  /* Charte Standex DETECT — interface claire, sobre, sans effets. */
-  --radius: 0.25rem;
-  --font-sans: "Lato", "Source Sans 3", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
-  /* Detect Blue #254061 · Electronics Gray #535759 et teintes 10/25/50/75 */
-  --detect-blue: oklch(0.36 0.061 258);
-  --background: oklch(0.986 0.005 95);
-  --foreground: oklch(0.42 0.005 220);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.42 0.005 220);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.42 0.005 220);
-  --primary: oklch(0.36 0.061 258);
-  --primary-foreground: oklch(0.99 0 0);
-  --secondary: oklch(0.947 0.005 258);
-  --secondary-foreground: oklch(0.36 0.061 258);
-  --muted: oklch(0.947 0 0);
-  --muted-foreground: oklch(0.58 0.004 220);
-  --accent: oklch(0.926 0.011 258);
-  --accent-foreground: oklch(0.36 0.061 258);
+  color-scheme: light;
+
+  /* --- 1. Couleurs de marque (valeurs charte, ne jamais altérer) --------- */
+  --standex-blue: oklch(0.3665 0.0662 254.28); /* #254061 Detect Blue */
+  --standex-blue-75: oklch(0.5385 0.0461 254.21); /* #5c7089 */
+  --standex-blue-50: oklch(0.6999 0.0284 251.75); /* #92a0b0 */
+  --standex-blue-25: oklch(0.8525 0.0141 258.35); /* #c9cfd8 */
+  --standex-blue-10: oklch(0.9417 0.0052 247.88); /* #e9ecef */
+  --standex-gray: oklch(0.4539 0.0061 228.93); /* #535759 Electronics Gray */
+  --standex-gray-75: oklch(0.6013 0.0047 236.55);
+  --standex-gray-50: oklch(0.7399 0.0027 228.8);
+  --standex-gray-25: oklch(0.8725 0.0018 247.84);
+  --standex-gray-10: oklch(0.9491 0 0);
+  --standex-abyss: oklch(0.2261 0.0353 251.2); /* #0f1d2c */
+  --standex-deep: oklch(0.2717 0.0444 252.09); /* #16283c */
+
+  /* --- 2. Surfaces & encre ---------------------------------------------- */
+  --background: oklch(0.9759 0.0029 264.54);
+  --surface: oklch(1 0 0);
+  --surface-sunken: oklch(0.9625 0.0035 258);
+  --surface-tint: oklch(0.9417 0.0052 247.88);
+  --card: var(--surface);
+  --card-foreground: var(--standex-gray);
+  --popover: var(--surface);
+  --popover-foreground: var(--standex-gray);
+  --foreground: var(--standex-gray);
+  --heading: oklch(0.3665 0.0662 254.28);
+  --ink: oklch(0.2806 0.0392 253.56);
+  --muted: oklch(0.9625 0.0035 258);
+  --muted-foreground: oklch(0.5518 0.0102 252);
+  --primary: var(--standex-blue);
+  --primary-hover: oklch(0.4185 0.0688 254);
+  --primary-active: oklch(0.3245 0.0602 254);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: var(--standex-blue-10);
+  --secondary-foreground: var(--standex-blue);
+  --accent: oklch(0.9235 0.0111 252);
+  --accent-foreground: var(--standex-blue);
+  --hairline: oklch(0.3665 0.0662 254.28 / 0.1);
+  --hairline-strong: oklch(0.3665 0.0662 254.28 / 0.18);
+  --border: var(--hairline);
+  --input: oklch(0.3665 0.0662 254.28 / 0.14);
+  --ring: var(--standex-blue);
+
+  /* --- 3. États ---------------------------------------------------------- */
+  --success: oklch(0.5 0.084 168);
+  --success-soft: oklch(0.955 0.022 168);
+  --warning: oklch(0.58 0.098 72);
+  --warning-soft: oklch(0.962 0.032 82);
   --destructive: oklch(0.52 0.17 25);
-  --destructive-foreground: oklch(0.99 0 0);
-  --success: oklch(0.5 0.1 150);
-  --warning: oklch(0.56 0.1 70);
-  --border: oklch(0.87 0.006 258);
-  --input: oklch(0.87 0.006 258);
-  --ring: oklch(0.36 0.061 258);
+  --destructive-soft: oklch(0.955 0.028 25);
+  --destructive-foreground: oklch(1 0 0);
+  --signal: oklch(0.72 0.13 205);
+  --signal-glow: oklch(0.82 0.11 205 / 0.55);
+
+  /* --- 4. Typographie ---------------------------------------------------- */
+  --font-sans: "Source Sans 3", "Lato", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
+  --t-display-xl: 300 clamp(2.75rem, 1.6rem + 4.6vw, 4.5rem) / 1.04 var(--font-sans);
+  --t-display-l: 300 clamp(2.25rem, 1.5rem + 3vw, 3.5rem) / 1.06 var(--font-sans);
+  --t-display-m: 300 clamp(1.875rem, 1.4rem + 1.9vw, 2.5rem) / 1.1 var(--font-sans);
+  --t-title-l: 600 1.75rem / 1.2 var(--font-sans);
+  --t-title-m: 600 1.375rem / 1.28 var(--font-sans);
+  --t-title-s: 600 1.125rem / 1.35 var(--font-sans);
+  --t-body-l: 400 1.125rem / 1.55 var(--font-sans);
+  --t-body: 400 1rem / 1.55 var(--font-sans);
+  --t-caption: 400 0.875rem / 1.45 var(--font-sans);
+  --t-label: 600 0.75rem / 1.2 var(--font-sans);
+  --tracking-display: -0.022em;
+  --tracking-title: -0.011em;
+  --tracking-body: 0;
+  --tracking-label: 0.08em;
+
+  /* --- 5. Forme ---------------------------------------------------------- */
+  --radius: 1rem;
+  --r-xs: 0.5rem;
+  --r-sm: 0.75rem;
+  --r-md: 1rem;
+  --r-lg: 1.25rem;
+  --r-xl: 1.75rem;
+  --r-2xl: 2rem;
+  --r-pill: 999px;
+
+  /* --- 6. Élévation : de la lumière, pas des bordures -------------------- */
+  --e-0: none;
+  --e-1:
+    0 1px 2px oklch(0.3665 0.0662 254.28 / 0.05), 0 0 0 1px oklch(0.3665 0.0662 254.28 / 0.055);
+  --e-2:
+    0 1px 2px oklch(0.3665 0.0662 254.28 / 0.04),
+    0 8px 20px -10px oklch(0.3665 0.0662 254.28 / 0.16),
+    0 0 0 1px oklch(0.3665 0.0662 254.28 / 0.05);
+  --e-3:
+    0 2px 6px oklch(0.3665 0.0662 254.28 / 0.05),
+    0 18px 40px -16px oklch(0.3665 0.0662 254.28 / 0.22),
+    0 0 0 1px oklch(0.3665 0.0662 254.28 / 0.05);
+  --e-4:
+    0 32px 80px -24px oklch(0.2261 0.0353 251.2 / 0.34),
+    0 0 0 1px oklch(0.3665 0.0662 254.28 / 0.07);
+  --e-inset: inset 0 1px 0 oklch(1 0 0 / 0.6);
+
+  /* --- 7. Matières ------------------------------------------------------- */
+  --material-thin: oklch(1 0 0 / 0.72);
+  --material-regular: oklch(1 0 0 / 0.86);
+  --material-blur: saturate(180%) blur(24px);
+
+  /* --- 8. Mouvement ------------------------------------------------------ */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+  --ease-glide: cubic-bezier(0.32, 0.72, 0, 1);
+  --d-instant: 90ms;
+  --d-fast: 160ms;
+  --d-base: 260ms;
+  --d-slow: 420ms;
+  --d-page: 620ms;
+  --d-hero: 900ms;
+  --stagger: 55ms;
+
+  /* --- 9. Géométrie de marque : la barre Standex à 15° ------------------- */
+  --standex-slant: -15deg;
+  --standex-skew: skewX(var(--standex-slant));
+
+  /* --- 10. Graphiques et barre latérale (conservés) ---------------------- */
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
@@ -106,6 +213,52 @@
   --sidebar-accent-foreground: oklch(0.208 0.042 265.755);
   --sidebar-border: oklch(0.929 0.013 255.508);
   --sidebar-ring: oklch(0.704 0.04 256.788);
+
+  /* Alias historique conservé pour les feuilles de style existantes. */
+  --detect-blue: var(--standex-blue);
+}
+
+/* Contexte immersif : classe posée sur une SECTION, pas un thème global. */
+.immersive {
+  color-scheme: dark;
+  --background: var(--standex-abyss);
+  --surface: oklch(1 0 0 / 0.055);
+  --surface-sunken: oklch(0 0 0 / 0.22);
+  --surface-tint: oklch(1 0 0 / 0.09);
+  --card: var(--surface);
+  --card-foreground: oklch(0.9 0.008 250);
+  --popover: oklch(0.2717 0.0444 252.09);
+  --popover-foreground: oklch(0.95 0.006 250);
+  --foreground: oklch(0.912 0.0095 250);
+  --heading: oklch(0.985 0.004 250);
+  --ink: oklch(0.985 0.004 250);
+  --muted: oklch(1 0 0 / 0.08);
+  --muted-foreground: oklch(0.745 0.0203 250);
+  --primary: oklch(1 0 0);
+  --primary-hover: oklch(0.95 0.004 250);
+  --primary-active: oklch(0.88 0.006 250);
+  --primary-foreground: var(--standex-blue);
+  --secondary: oklch(1 0 0 / 0.1);
+  --secondary-foreground: oklch(0.96 0.005 250);
+  --accent: oklch(1 0 0 / 0.14);
+  --accent-foreground: oklch(0.98 0.004 250);
+  --hairline: oklch(1 0 0 / 0.12);
+  --hairline-strong: oklch(1 0 0 / 0.2);
+  --border: var(--hairline);
+  --input: oklch(1 0 0 / 0.16);
+  --ring: oklch(0.86 0.03 240);
+  --material-thin: oklch(0.2261 0.0353 251.2 / 0.66);
+  --material-regular: oklch(0.2261 0.0353 251.2 / 0.86);
+  --e-1: 0 0 0 1px oklch(1 0 0 / 0.09);
+  --e-2: 0 12px 32px -14px oklch(0 0 0 / 0.6), 0 0 0 1px oklch(1 0 0 / 0.1);
+  --e-3: 0 24px 60px -20px oklch(0 0 0 / 0.7), 0 0 0 1px oklch(1 0 0 / 0.12);
+  --e-4: 0 40px 100px -28px oklch(0 0 0 / 0.8), 0 0 0 1px oklch(1 0 0 / 0.14);
+  --e-inset: inset 0 1px 0 oklch(1 0 0 / 0.1);
+  --success-soft: oklch(0.5 0.084 168 / 0.22);
+  --warning-soft: oklch(0.58 0.098 72 / 0.24);
+  --destructive-soft: oklch(0.52 0.17 25 / 0.24);
+  background-color: var(--background);
+  color: var(--foreground);
 }
 
 .dark {
@@ -144,37 +297,283 @@
 }
 
 @layer base {
-  /* Lisibilité : champs, boutons et libellés ne descendent pas sous 16px. */
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font: var(--t-body-l);
+    letter-spacing: var(--tracking-body);
+    font-variant-numeric: tabular-nums;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    color: var(--heading);
+    text-wrap: balance;
+  }
+  h1 {
+    font: var(--t-display-m);
+    letter-spacing: var(--tracking-display);
+  }
+  h2 {
+    font: var(--t-title-l);
+    letter-spacing: var(--tracking-title);
+  }
+  h3 {
+    font: var(--t-title-m);
+    letter-spacing: var(--tracking-title);
+  }
+  h4 {
+    font: var(--t-title-s);
+  }
+  p {
+    text-wrap: pretty;
+  }
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+    border-radius: var(--r-xs);
+  }
+  ::selection {
+    background: var(--standex-blue-25);
+    color: var(--standex-blue);
+  }
   input,
   textarea,
   select,
   button,
   label {
     font-size: max(1rem, 16px);
+    font-family: inherit;
   }
-
   * {
     border-color: var(--color-border);
     letter-spacing: 0;
   }
+}
 
-  body {
-    background-color: var(--color-background);
-    color: var(--color-foreground);
-    font-size: 18px;
-    line-height: 1.55;
+@layer components {
+  .t-display-xl {
+    font: var(--t-display-xl);
+    letter-spacing: var(--tracking-display);
+    color: var(--heading);
+  }
+  .t-display-l {
+    font: var(--t-display-l);
+    letter-spacing: var(--tracking-display);
+    color: var(--heading);
+  }
+  .t-display-m {
+    font: var(--t-display-m);
+    letter-spacing: var(--tracking-display);
+    color: var(--heading);
+  }
+  .t-title-l {
+    font: var(--t-title-l);
+    letter-spacing: var(--tracking-title);
+    color: var(--heading);
+  }
+  .t-title-m {
+    font: var(--t-title-m);
+    letter-spacing: var(--tracking-title);
+    color: var(--heading);
+  }
+  .t-title-s {
+    font: var(--t-title-s);
+    color: var(--heading);
+  }
+  .t-body-l {
+    font: var(--t-body-l);
+  }
+  .t-body {
+    font: var(--t-body);
+  }
+  .t-caption {
+    font: var(--t-caption);
+    color: var(--muted-foreground);
+  }
+  .t-label {
+    font: var(--t-label);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+  }
+  .t-metric {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+    color: var(--ink);
   }
 
-  h1,
-  h2,
-  h3 {
-    color: var(--detect-blue);
+  .surface {
+    background: var(--surface);
+    border-radius: var(--r-lg);
+    box-shadow: var(--e-1);
+  }
+  .surface-raised {
+    background: var(--surface);
+    border-radius: var(--r-lg);
+    box-shadow: var(--e-2);
+  }
+  .surface-interactive {
+    background: var(--surface);
+    border-radius: var(--r-lg);
+    box-shadow: var(--e-1);
+    transition:
+      box-shadow var(--d-base) var(--ease-out),
+      transform var(--d-base) var(--ease-out);
+  }
+  .surface-interactive:hover {
+    box-shadow: var(--e-2);
+    transform: translateY(-2px);
+  }
+  .surface-interactive:active {
+    transform: translateY(0);
+    transition-duration: var(--d-instant);
+  }
+  .material {
+    background: var(--material-thin);
+    -webkit-backdrop-filter: var(--material-blur);
+    backdrop-filter: var(--material-blur);
+  }
+
+  .standex-bar {
+    display: inline-block;
+    width: 0.5rem;
+    height: 1.5rem;
+    background: var(--standex-blue);
+    transform: var(--standex-skew);
+    border-radius: 2px;
+  }
+  .standex-rule {
+    height: 2px;
+    background: linear-gradient(90deg, var(--standex-blue) 0%, transparent 65%);
+    border: 0;
+    opacity: 0.35;
+  }
+
+  @keyframes standex-rise {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 14px, 0);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes standex-fade {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes standex-scale-in {
+    from {
+      opacity: 0;
+      transform: scale(0.97);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes standex-sweep {
+    from {
+      transform: translateX(-120%) var(--standex-skew);
+    }
+    to {
+      transform: translateX(320%) var(--standex-skew);
+    }
+  }
+  @keyframes standex-drift {
+    from {
+      transform: translate3d(0, 0, 0);
+    }
+    to {
+      transform: translate3d(-60px, 0, 0);
+    }
+  }
+  @keyframes standex-pulse {
+    0%,
+    100% {
+      opacity: 0.55;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+
+  .anim-rise {
+    animation: standex-rise var(--d-slow) var(--ease-out) both;
+  }
+  .anim-fade {
+    animation: standex-fade var(--d-base) var(--ease-out) both;
+  }
+  .anim-scale-in {
+    animation: standex-scale-in var(--d-base) var(--ease-spring) both;
+  }
+  .anim-stagger > * {
+    animation: standex-rise var(--d-slow) var(--ease-out) both;
+  }
+  .anim-stagger > *:nth-child(1) {
+    animation-delay: 0ms;
+  }
+  .anim-stagger > *:nth-child(2) {
+    animation-delay: calc(var(--stagger) * 1);
+  }
+  .anim-stagger > *:nth-child(3) {
+    animation-delay: calc(var(--stagger) * 2);
+  }
+  .anim-stagger > *:nth-child(4) {
+    animation-delay: calc(var(--stagger) * 3);
+  }
+  .anim-stagger > *:nth-child(5) {
+    animation-delay: calc(var(--stagger) * 4);
+  }
+  .anim-stagger > *:nth-child(6) {
+    animation-delay: calc(var(--stagger) * 5);
+  }
+  .anim-stagger > *:nth-child(n + 7) {
+    animation-delay: calc(var(--stagger) * 6);
+  }
+  .step-enter {
+    animation: standex-rise var(--d-page) var(--ease-out) both;
+  }
+  .press {
+    transition: transform var(--d-instant) var(--ease-out);
+  }
+  .press:active {
+    transform: scale(0.975);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+  .surface-interactive:hover,
+  .press:active {
+    transform: none !important;
   }
 }
 
 /* Lisibilité effective des espaces client et internes.
  * Ces règles sont scopées à [data-readable] et écrasent réellement les
- * utilitaires text-xs/text-sm, contrairement à une base annulée par Tailwind. */
+ * utilitaires text-xs/text-sm. Elles n'imposent ni rayon ni couleur de
+ * composant : seulement tailles minimales, cibles 44 px et focus. */
 [data-readable],
 [data-readable] p,
 [data-readable] li,
