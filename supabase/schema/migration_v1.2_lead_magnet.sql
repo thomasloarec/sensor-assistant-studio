@@ -1587,9 +1587,14 @@ set search_path = public, lead_priv, pg_temp as $$ select lead_priv.staff_view(p
 -- ----------------------------------------------------------------------------
 -- 6. Stockage privé (correctif 7)
 -- ----------------------------------------------------------------------------
-insert into storage.buckets (id, name, public)
-values ('lead-design-files', 'lead-design-files', false)
-on conflict (id) do nothing;
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values ('lead-design-files', 'lead-design-files', false, 31457280,
+        array['model/gltf-binary','application/octet-stream','application/pdf',
+              'image/png','image/jpeg',
+              'application/vnd.openxmlformats-officedocument.wordprocessingml.document'])
+on conflict (id) do update
+  set public = false, file_size_limit = 31457280,
+      allowed_mime_types = excluded.allowed_mime_types;
 
 create or replace function lead_priv.upload_path_allowed(_name text, _user uuid)
 returns boolean language sql stable security definer
