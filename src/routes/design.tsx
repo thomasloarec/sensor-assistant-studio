@@ -1761,7 +1761,14 @@ function DesignSpace() {
                   ) : (
                     <AuthPanel backend={backend} />
                   )}
+                  {reopenedFrom ? (
+                    <p className="text-xs text-muted-foreground">
+                      Contenu repris de la version {reopenedFrom.revision}. Le prochain envoi créera
+                      la version {serverRevision + 1} de ce dossier.
+                    </p>
+                  ) : null}
                   {submitMessage ? <p className="text-sm">{submitMessage}</p> : null}
+
                 </AccordionContent>
               </AccordionItem>
 
