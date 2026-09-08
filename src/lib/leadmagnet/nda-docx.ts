@@ -60,6 +60,10 @@ interface VariableField {
   expectedParagraph: string;
   /** Portion variable du paragraphe : tout le paragraphe si absent. */
   span?: { prefix: string; current: string };
+  /** Espaces ajoutés autour de la valeur, dans ce champ uniquement. */
+  pad?: { before: string; after: string };
+  /** Normalise les tabulations de remplissage de ce paragraphe une fois rempli. */
+  tidyTabs?: boolean;
 }
 
 /** Les seuls emplacements que le remplissage a le droit de toucher. */
