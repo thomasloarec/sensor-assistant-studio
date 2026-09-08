@@ -73,7 +73,7 @@ function HomeRoute() {
 
           <div className="relative mx-auto flex max-w-7xl items-center px-4 py-12 sm:px-6 sm:py-16 lg:min-h-[calc(88svh-4.25rem)] lg:px-8 lg:pb-[12svh] lg:pt-[8svh]">
             <span className="hero-glow right-[6%] top-[10%] size-[520px] max-w-[70vw]" />
-            <div className="grid w-full gap-14 lg:grid-cols-[0.92fr_1.08fr] lg:items-center lg:gap-16">
+            <div className="grid w-full gap-14 lg:grid-cols-[1.08fr_0.92fr] lg:items-center lg:gap-10">
               <div
                 className="home-hero-copy anim-stagger relative z-10"
                 style={{ "--stagger": "70ms" } as CSSProperties}
