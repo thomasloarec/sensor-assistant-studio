@@ -15217,5 +15217,77 @@
     "Содержимое взято из ревизии {0}. Следующая отправка создаст ревизию {1} этого дела.",
     "Contenuto ripreso dalla revisione {0}. Il prossimo invio creerà la revisione {1} di questo dossier.",
     "リビジョン {0} の内容を再開しました。次回の送信でこの案件のリビジョン {1} が作成されます。"
+  ],
+  "Fabricant": [
+    "Manufacturer",
+    "制造商",
+    "Hersteller",
+    "Fabricante",
+    "Производитель",
+    "Produttore",
+    "メーカー"
+  ],
+  "Contrepartie": [
+    "Mating part",
+    "对接件",
+    "Gegenstück",
+    "Contraparte",
+    "Ответная часть",
+    "Controparte",
+    "相手側コネクター"
+  ],
+  "Voies": [
+    "Positions",
+    "极数",
+    "Polzahl",
+    "Vías",
+    "Число контактов",
+    "Vie",
+    "極数"
+  ],
+  "Brochage": [
+    "Pinout",
+    "引脚定义",
+    "Pinbelegung",
+    "Asignación de pines",
+    "Распиновка",
+    "Piedinatura",
+    "ピン配列"
+  ],
+  "Section / gauge": [
+    "Wire gauge",
+    "线规",
+    "Leiterquerschnitt",
+    "Sección / calibre",
+    "Сечение / калибр",
+    "Sezione / gauge",
+    "電線サイズ"
+  ],
+  "inconnues": [
+    "unknown",
+    "未知",
+    "unbekannt",
+    "desconocidas",
+    "неизвестны",
+    "sconosciute",
+    "不明"
+  ],
+  "Combinaison qualifiée": [
+    "Qualified combination",
+    "已限定组合",
+    "Qualifizierte Kombination",
+    "Combinación cualificada",
+    "Квалифицированная комбинация",
+    "Combinazione qualificata",
+    "認定済みの組み合わせ"
+  ],
+  "à vérifier par la R&D": [
+    "to be checked by R&D",
+    "待 R&D 验证",
+    "von der Entwicklung zu prüfen",
+    "a verificar por I+D",
+    "требует проверки R&D",
+    "da verificare dalla R&S",
+    "R&D による確認が必要"
   ]
 }
