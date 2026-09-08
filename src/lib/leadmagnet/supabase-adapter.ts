@@ -41,7 +41,7 @@ export async function probeLeadSchema(): Promise<LeadSchemaProbe> {
       schemaReady: false,
       version: null,
       adminDetail: isMissingRpc(error)
-        ? "RPC lead_schema_version absente : migration_v1.1_lead_magnet.sql non appliquée."
+        ? "RPC lead_schema_version absente : migration_v1.2_lead_magnet.sql non appliquée."
         : `Sonde de version en échec : ${error.message}`,
     };
   const payload = (data ?? {}) as { version?: string | null; ready?: boolean };
@@ -115,6 +115,19 @@ export interface SubmittedRevision {
   revision: number;
   submitted_at: string;
   content_hash: string;
+  /** Le serveur recalcule l'empreinte : ce drapeau signale une divergence locale. */
+  client_hash_matches?: boolean;
+}
+
+/** Consentement transmis au serveur : contenu identifié, date, portée explicite. */
+function serverConsents(snapshot: SubmissionSnapshot) {
+  return snapshot.consents.map((c) => ({
+    kind: c.kind,
+    statement: c.contentSummary,
+    accepted_at: c.grantedAt,
+    content_ref: `${snapshot.dossierId}@r${snapshot.revision}#${snapshot.hash.slice(0, 16)}`,
+    recipients: c.recipients,
+  }));
 }
 
 /** Soumission : le serveur refuse tout décalage de révision (compare-and-swap). */
@@ -128,8 +141,11 @@ export async function submitRevision(
     p_expected_revision: expectedRevision,
     p_snapshot: snapshot.dto as unknown as Record<string, unknown>,
     p_content_hash: snapshot.hash,
-    p_consents: snapshot.consents,
-    p_transferred_files: snapshot.transferredFiles,
+    p_consents: serverConsents(snapshot),
+    // Seuls les fichiers réellement déposés dans une session autorisée sont annoncés.
+    p_transferred_files: snapshot.transferredFiles
+      .filter((f) => Boolean(f.path))
+      .map((f) => ({ path: f.path, file_name: f.fileName })),
   });
 }
 
@@ -140,6 +156,9 @@ export async function publishReview(input: {
   verdict: "validated" | "variant_proposed" | "more_info";
   clientMessage: string | null;
   internalNote: string | null;
+  exactPartNumber: string | null;
+  designation: "standard" | "custom" | null;
+  variant: { cable?: string; connector?: string; pcb?: string; description?: string } | null;
 }): Promise<string> {
   return rpc<string>(LEAD_RPC.publishReview, {
     p_revision_id: input.revisionId,
@@ -148,7 +167,22 @@ export async function publishReview(input: {
     p_verdict: input.verdict,
     p_client_message: input.clientMessage,
     p_internal_note: input.internalNote,
+    p_exact_part_number: input.exactPartNumber,
+    p_designation: input.designation,
+    p_variant: input.variant ?? {},
   });
+}
+
+export async function addInternalNote(dossierId: string, body: string): Promise<string> {
+  return rpc<string>(LEAD_RPC.addInternalNote, { p_dossier: dossierId, p_body: body });
+}
+
+export async function acceptVariant(reviewId: string): Promise<{
+  review_id: string;
+  variant: Record<string, unknown>;
+  next_revision: number;
+}> {
+  return rpc(LEAD_RPC.acceptVariant, { p_review_id: reviewId });
 }
 
 export async function createOffer(input: {
@@ -173,28 +207,235 @@ export async function createOffer(input: {
   });
 }
 
+/** La référence n'est qu'une CONFIRMATION : le serveur impose celle de la revue. */
 export async function requestSamples(input: {
   reviewId: string;
   partNumber: string;
   quantity: number;
-  annualVolume: number | null;
-  isStandard: boolean;
-}): Promise<{ id: string; route: string; status: string }> {
+}): Promise<{
+  id: string;
+  route: string;
+  status: string;
+  part_number: string;
+  designation: string;
+  annual_volume_basis: number | null;
+}> {
   return rpc(LEAD_RPC.requestSamples, {
     p_review_id: input.reviewId,
     p_part_number: input.partNumber,
     p_quantity: input.quantity,
-    p_annual_volume: input.annualVolume,
-    p_is_standard: input.isStandard,
   });
 }
 
-export async function fetchClientView(dossierId: string): Promise<unknown> {
-  return rpc(LEAD_RPC.clientView, { p_dossier: dossierId });
+export async function updateSample(input: {
+  sampleId: string;
+  status?: string | null;
+  feedback?: string | null;
+}): Promise<{ id: string; status: string; feedback: string | null }> {
+  return rpc(LEAD_RPC.updateSample, {
+    p_sample_id: input.sampleId,
+    p_status: input.status ?? null,
+    p_feedback: input.feedback ?? null,
+  });
 }
 
-export async function fetchStaffView(dossierId: string): Promise<unknown> {
-  return rpc(LEAD_RPC.staffView, { p_dossier: dossierId });
+/* ------------------------------------------------------------------ */
+/* Vues                                                                */
+/* ------------------------------------------------------------------ */
+
+export interface DossierListItem {
+  id: string;
+  title: string;
+  current_revision: number;
+  nda_required: boolean;
+  nda_status: string;
+  updated_at: string;
+  role: "owner" | "collaborator";
+  published_reviews: number;
+  active_offers: number;
+}
+
+export interface ReviewView {
+  id: string;
+  revision: number;
+  created_at: string;
+  scope: string;
+  conditions: string;
+  verdict: "validated" | "variant_proposed" | "more_info";
+  message: string | null;
+  exact_part_number: string | null;
+  designation: "standard" | "custom" | null;
+  variant: Record<string, unknown>;
+  variant_accepted_at: string | null;
+  published: boolean;
+  superseded: boolean;
+}
+
+export interface OfferView {
+  id: string;
+  revision: number;
+  review_id: string;
+  currency: string;
+  tiers: { quantity: number; unit_price: number }[];
+  moq: number;
+  nre_tooling_cost: number | null;
+  incoterm: string;
+  lead_time_weeks: number | null;
+  valid_until: string;
+  part_number: string;
+  designation: string;
+  annual_volume_basis: number | null;
+  voided: boolean;
+  void_reason: string | null;
+  expired: boolean;
+  active: boolean;
+}
+
+export interface SampleView {
+  id: string;
+  part_number: string;
+  designation: string;
+  quantity: number;
+  route: string;
+  status: string;
+  annual_volume_basis: number | null;
+  revision: number;
+  feedback: string | null;
+  feedback_revision: number | null;
+}
+
+export interface RevisionView {
+  id: string;
+  revision: number;
+  content_hash: string;
+  submitted_at: string;
+  snapshot: Record<string, unknown>;
+  consents: unknown[];
+  transferred_files: { path?: string; file_name?: string }[];
+  nda_status_at_submit: string;
+}
+
+export interface DossierView {
+  dossier: {
+    id: string;
+    title: string;
+    current_revision: number;
+    nda_status: string;
+    nda_required: boolean;
+    updated_at: string;
+    owner_id: string | null;
+  };
+  revisions: RevisionView[];
+  reviews: ReviewView[];
+  offers: OfferView[];
+  samples: SampleView[];
+  internal_notes?: { id: string; created_at: string; author_id: string; body: string }[];
+}
+
+export async function fetchMyDossiers(): Promise<DossierListItem[]> {
+  const data = await rpc<DossierListItem[]>(LEAD_RPC.myDossiers, {});
+  return Array.isArray(data) ? data : [];
+}
+
+export interface StaffInbox {
+  role: StaffRole;
+  assigned: {
+    id: string;
+    title: string;
+    current_revision: number;
+    nda_status: string;
+    updated_at: string;
+    awaiting_review: boolean;
+  }[];
+  triage: {
+    id: string;
+    title: string;
+    current_revision: number;
+    nda_required: boolean;
+    nda_status: string;
+    updated_at: string;
+    assignees: string[];
+  }[];
+  staff_directory: { user_id: string; role: StaffRole }[];
+}
+
+export async function fetchStaffInbox(): Promise<StaffInbox> {
+  return rpc<StaffInbox>(LEAD_RPC.staffInbox, {});
+}
+
+export async function assignDossier(dossierId: string, userId: string): Promise<void> {
+  await rpc(LEAD_RPC.assignDossier, { p_dossier: dossierId, p_user: userId });
+}
+
+export async function fetchClientView(dossierId: string): Promise<DossierView> {
+  return rpc<DossierView>(LEAD_RPC.clientView, { p_dossier: dossierId });
+}
+
+export async function fetchStaffView(dossierId: string): Promise<DossierView> {
+  return rpc<DossierView>(LEAD_RPC.staffView, { p_dossier: dossierId });
+}
+
+/* ------------------------------------------------------------------ */
+/* Fichiers : session autorisée puis dépôt réel dans le bucket privé    */
+/* ------------------------------------------------------------------ */
+
+export interface UploadSession {
+  session_id: string;
+  bucket: string;
+  path_prefix: string;
+  expires_at: string;
+}
+
+export async function openUploadSession(
+  dossierId: string,
+  kind: "design_model" | "document" | "nda_signed",
+): Promise<UploadSession> {
+  return rpc<UploadSession>(LEAD_RPC.openUploadSession, { p_dossier: dossierId, p_kind: kind });
+}
+
+/** Dépôt réel du modèle 3D : jamais avant NDA et consentement vérifiés côté serveur. */
+export async function uploadDesignFile(
+  dossierId: string,
+  file: { name: string; data: Blob | ArrayBuffer | Uint8Array },
+  kind: "design_model" | "document" | "nda_signed" = "design_model",
+): Promise<{ path: string; fileName: string }> {
+  if (!supabase) throw new Error(humanRpcError("not configured"));
+  const session = await openUploadSession(dossierId, kind);
+  const safeName = file.name.replace(/[^A-Za-z0-9._-]/g, "_");
+  const path = `${session.path_prefix}/${safeName}`;
+  const body =
+    file.data instanceof Blob
+      ? file.data
+      : new Blob([file.data as unknown as BlobPart], { type: "application/octet-stream" });
+  const { error } = await supabase.storage.from(session.bucket).upload(path, body, {
+    upsert: false,
+    contentType: "application/octet-stream",
+  });
+  if (error) throw new Error(humanRpcError(error));
+  return { path, fileName: safeName };
+}
+
+/** Preuve NDA vérifiée : réservée à un administrateur Standex habilité. */
+export async function recordNdaProof(input: {
+  dossierId: string;
+  templateSha256: string;
+  documentSha256: string;
+  signedObjectPath: string;
+  proofReference: string;
+  counterparties: { party: string; signatory?: string }[];
+  signedAt: string;
+  source: string;
+}): Promise<string> {
+  return rpc<string>(LEAD_RPC.recordNdaProof, {
+    p_dossier: input.dossierId,
+    p_template_sha: input.templateSha256,
+    p_document_sha: input.documentSha256,
+    p_signed_object_path: input.signedObjectPath,
+    p_proof_reference: input.proofReference,
+    p_counterparties: input.counterparties,
+    p_signed_at: input.signedAt,
+    p_source: input.source,
+  });
 }
 
 /** Backend de soumission réel : disponible seulement si migration appliquée ET session ouverte. */
@@ -204,6 +445,8 @@ export function createSupabaseSubmissionBackend(options: {
   /** Dossier serveur déjà créé, sinon il est créé à la première soumission. */
   dossierId: string | null;
   expectedRevision: number;
+  /** Le NDA est facultatif : ce choix vient du client, jamais d'une valeur figée. */
+  ndaRequired: boolean;
   onDossierCreated?: (id: string) => void;
 }): SubmissionBackend {
   const available =
@@ -213,7 +456,8 @@ export function createSupabaseSubmissionBackend(options: {
     available: true,
     submit: async (snapshot) => {
       const dossierId =
-        options.dossierId ?? (await createDossier(snapshot.dto.title ?? "Dossier", true));
+        options.dossierId ??
+        (await createDossier(snapshot.dto.title ?? "Dossier", options.ndaRequired));
       if (!options.dossierId) options.onDossierCreated?.(dossierId);
       const result = await submitRevision(dossierId, options.expectedRevision, snapshot);
       return { id: result.revision_id, at: result.submitted_at };
