@@ -36,10 +36,12 @@ export interface SubmissionSnapshot {
   hash: string;
   createdAt: string;
   dto: ClientDossierDto;
-  transferredFiles: { id: string; fileName: string; path: string }[];
+  transferredFiles: { id: string; fileName: string; path: string; sha256: string }[];
   consents: ConsentRecord[];
   ndaStatus: NdaState["status"];
   reviewAcknowledged: boolean;
+  /** Contexte serveur réellement visé par cet envoi. */
+  binding: ConsentBinding;
 }
 
 export interface SubmissionInput {
@@ -48,11 +50,43 @@ export interface SubmissionInput {
   consents: ConsentRecord[];
   reviewAcknowledged: boolean;
   additionalConstraints: string;
+  /** Dossier serveur visé (null tant qu'aucun n'existe). */
+  serverDossierId?: string | null;
+  /** Révision serveur visée : celle que le serveur créera. */
+  serverRevision?: number;
+}
+
+/** DTO réellement envoyé : contraintes complémentaires incluses. */
+export function submissionDto(input: SubmissionInput): ClientDossierDto {
+  return toClientDto({
+    ...input.dossier,
+    freeConstraints: [input.dossier.freeConstraints, input.additionalConstraints]
+      .filter((s) => s.trim())
+      .join("\n"),
+  });
+}
+
+/** Empreintes des fichiers réellement transférés, triées : ni plus, ni moins. */
+export function transferredDigests(dossier: DesignDossier): string[] {
+  return dossier.attachments
+    .filter((a) => a.transferred && a.storagePath && a.sha256)
+    .map((a) => (a.sha256 as string).toLowerCase())
+    .sort();
+}
+
+/** Ce à quoi le consentement doit être lié pour être valable MAINTENANT. */
+export async function submissionBinding(input: SubmissionInput): Promise<ConsentBinding> {
+  return {
+    serverDossierId: input.serverDossierId ?? null,
+    revision: input.serverRevision ?? input.dossier.revision,
+    contentHash: await dossierHash(submissionDto(input)),
+    fileDigests: transferredDigests(input.dossier),
+  };
 }
 
 export type SubmissionCheck = { ok: true } | { ok: false; problems: string[] };
 
-export function checkSubmission(input: SubmissionInput): SubmissionCheck {
+export async function checkSubmission(input: SubmissionInput): Promise<SubmissionCheck> {
   const problems: string[] = [];
   if (!input.reviewAcknowledged) problems.push("Confirmez la relecture du résumé technique.");
   if (!input.dossier.business.contactEmail?.trim())
@@ -61,10 +95,16 @@ export function checkSubmission(input: SubmissionInput): SubmissionCheck {
     problems.push(
       "NDA requis : aucun transfert confidentiel n'est possible sans preuve vérifiée d'un NDA en vigueur.",
     );
+  const binding = await submissionBinding(input);
   if (!input.consents.some((c) => c.kind === "supabase_dossier"))
     problems.push("Consentement d'envoi du dossier non recueilli.");
+  else if (!hasBoundConsent({ ...INITIAL_PRIVACY, consents: input.consents }, "supabase_dossier", binding))
+    problems.push(
+      "Le contenu, le dossier visé ou les fichiers ont changé depuis votre accord : relisez le résumé et confirmez à nouveau.",
+    );
   return problems.length ? { ok: false, problems } : { ok: true };
 }
+
 
 /** Gel PROFOND : un instantané ne doit pas suivre les modifications ultérieures. */
 export function deepFreeze<T>(value: T): T {
