@@ -19,33 +19,61 @@ const ThumbnailScene = lazy(() => import("@/components/standex/workshop/candidat
 /* ------------------------------------------------------------------ */
 /* Plafond de contextes WebGL simultanés                               */
 /* ------------------------------------------------------------------ */
+/** Jeton d'appartenance : c'est LUI qui dit si une vignette détient une place,
+ * jamais un booléen figé au moment de la demande. Une place transmise à une
+ * vignette en attente reste comptée, et la vignette servie la rend vraiment. */
+export type ThumbnailSlot = { held: boolean; waiting: boolean };
+
 const MAX_LIVE_CONTEXTS = 4;
 let liveContexts = 0;
-const waitingForSlot = new Set<() => void>();
+const queue: { token: ThumbnailSlot; notify: () => void }[] = [];
 
-export function acquireThumbnailSlot(notify: () => void): boolean {
+/** Demande une place. Le jeton renvoyé est mis à jour lors d'un passage de
+ * relais : il ne faut donc jamais recopier `held` dans une variable locale. */
+export function acquireThumbnailSlot(notify: () => void): ThumbnailSlot {
+  const token: ThumbnailSlot = { held: false, waiting: false };
   if (liveContexts < MAX_LIVE_CONTEXTS) {
     liveContexts += 1;
-    return true;
+    token.held = true;
+    return token;
   }
-  waitingForSlot.add(notify);
-  return false;
+  token.waiting = true;
+  queue.push({ token, notify });
+  return token;
 }
-export function releaseThumbnailSlot(held: boolean, notify: () => void) {
-  waitingForSlot.delete(notify);
-  if (!held) return;
+
+/** Rendu idempotent : une attente annulée sort de la file, une place détenue
+ * est transmise atomiquement à la vignette suivante (le compteur ne redescend
+ * pas), et un second appel ne libère rien de plus. */
+export function releaseThumbnailSlot(token: ThumbnailSlot) {
+  if (token.waiting) {
+    token.waiting = false;
+    const index = queue.findIndex((entry) => entry.token === token);
+    if (index >= 0) queue.splice(index, 1);
+    return;
+  }
+  if (!token.held) return;
+  token.held = false;
+  const next = queue.shift();
+  if (next) {
+    next.token.waiting = false;
+    next.token.held = true; // la place change de mains, elle n'est pas rendue
+    next.notify();
+    return;
+  }
   liveContexts = Math.max(0, liveContexts - 1);
-  const next = waitingForSlot.values().next();
-  if (!next.done) {
-    waitingForSlot.delete(next.value);
-    next.value();
-  }
 }
+
 /** Uniquement pour les tests : remet le compteur à zéro. */
 export function resetThumbnailSlots() {
   liveContexts = 0;
-  waitingForSlot.clear();
+  queue.length = 0;
 }
+/** Uniquement pour les tests : nombre de contextes réellement comptés. */
+export function liveThumbnailContexts() {
+  return liveContexts;
+}
+
 
 let webglSupport: boolean | null = null;
 export function hasWebGL(): boolean {
