@@ -283,6 +283,7 @@ function fillParagraph(paragraphXml: string, field: VariableField, rawValue: str
   if (!written)
     throw new Error(`Le modèle NDA a changé : champ « ${field.label} » introuvable.`);
   out += paragraphXml.slice(cursor);
+  if (field.tidyTabs) out = tidyTabRuns(out);
   // Les espaces significatifs doivent survivre à Word.
   return out.replace(/<w:t>/g, '<w:t xml:space="preserve">');
 }
