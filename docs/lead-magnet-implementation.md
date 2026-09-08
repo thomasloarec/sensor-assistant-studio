@@ -84,7 +84,17 @@ de test interne, qui reste intact (`/`).
 
 ## État réel de la migration et de l'activation
 
-1. **Migration SQL versionnée, NON appliquée** :
+> État au 2026-09-08 : la migration EST APPLIQUÉE sur `yyobodalwtsqdyrqwkjk` par
+> root (diff identique à `supabase/schema/migration_v1.2_lead_magnet.sql`, seules
+> des lignes vides diffèrent). Sonde réelle : HTTP 200, `ready=true`, schéma
+> **1.4**. La fonction Edge `lead-verify-upload` est DÉPLOYÉE et ACTIVE (v1,
+> `verify_jwt=true`) ; un appel anonyme est refusé en 401, aucune copie ni
+> déploiement supplémentaire n'est requis. **Aucun rôle staff n'est attribué** :
+> le contrôle automatique a refusé le provisionnement admin, qui attend un accord
+> explicite du propriétaire et ne sera pas contourné. Les paragraphes historiques
+> ci-dessous sont conservés tels quels.
+
+1. **Migration SQL versionnée** (historique : non appliquée à la rédaction) :
    `supabase/schema/migration_v1.2_lead_magnet.sql` (les brouillons V1.0 et V1.1 sont
    supprimés et ne doivent pas être appliqués). Schéma `lead` séparé des tables
    `sensor_test_*` : dossiers, collaborateurs, affectations staff, révisions immuables,
@@ -92,12 +102,11 @@ de test interne, qui reste intact (`/`).
    d'audit, bucket privé `lead-design-files`. Fonctions `security definer` isolées dans
    `lead_priv` (`search_path` figé, EXECUTE de PUBLIC révoqué), wrappers publics invoker,
    RLS complet, aucun accès `anon` hors sonde de version.
-   Le propriétaire applique cette migration lui-même après relecture ; aucune session ici
-   n'a modifié le backend `yyobodalwtsqdyrqwkjk`.
 2. **Activation** : `checkLeadBackend()` compare réellement la version de schéma renvoyée
-   par le serveur à `1.2` (et non un simple booléen), puis exige une session et un rôle
-   renvoyé par le serveur. Tant que la migration n'est pas appliquée, les écrans annoncent
-   « liaison à activer » et n'affichent aucun succès simulé.
+   par le serveur à la version attendue (aujourd'hui `1.4`), puis exige une session et un
+   rôle renvoyé par le serveur. Sans rôle attribué, les écrans équipe restent fermés et
+   n'affichent aucun succès simulé.
+
 3. **Écrans branchés** : `/design` (client : conception, câble, connecteurs, NDA, envoi,
    suivi réel des retours, variantes, offres, échantillons et retours d'usage) et
    `/standex` (équipe : boîte de réception, affectation par nom, lecture du dossier envoyé,
