@@ -82,7 +82,6 @@ export function ClientFollowUp({ backend, serverDossierId, onSelectDossier, onRe
     );
 
   const current = view;
-  const lastRevision = current?.revision_ready();
   const published = (current?.reviews ?? []).filter((r) => r.published);
   const active = published.find((r) => !r.superseded) ?? null;
 
@@ -331,7 +330,6 @@ export function ClientFollowUp({ backend, serverDossierId, onSelectDossier, onRe
         Rien n'est décidé ici : une référence, un prix ou une livraison ne valent qu'après
         confirmation écrite de Standex.
       </p>
-      {lastRevision}
     </div>
   );
 }
