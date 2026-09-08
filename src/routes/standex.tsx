@@ -37,6 +37,8 @@ import {
   revalidateSample,
   updateSample,
   uploadDesignFile,
+  downloadDesignFile,
+  sha256Hex,
   signedFileUrl,
   type DossierView,
   type StaffInbox,
@@ -44,8 +46,13 @@ import {
 import { APPROVED_NDA_TEMPLATE } from "@/lib/leadmagnet/nda";
 import { parseServerSnapshot } from "@/lib/leadmagnet/dossier-io";
 import { technicalSummary } from "@/lib/leadmagnet/submission";
+import { parseWorkshopConfig, type WorkshopConfig } from "@/lib/standex/magnetic-workshop";
+import { storeMachineFileInMemory } from "@/lib/standex/machine-assets";
 import { AuthPanel } from "@/components/leadmagnet/auth-panel";
 import { supabase } from "@/lib/standex/supabase";
+
+const MagneticWorkshop = lazy(() => import("@/components/standex/workshop/workshop"));
+
 
 export const Route = createFileRoute("/standex")({
   component: StandexConsole,
