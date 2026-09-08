@@ -125,13 +125,20 @@ export interface SubmittedRevision {
   client_hash_matches?: boolean;
 }
 
-/** Consentement transmis au serveur : contenu identifié, date, portée explicite. */
-function serverConsents(snapshot: SubmissionSnapshot) {
+/** Consentement transmis au serveur : contenu, dossier, révision et fichiers liés.
+ * Le serveur recalcule l'empreinte du contenu et refuse tout écart : une case
+ * cochée sur un autre contenu ne peut plus servir.
+ */
+function serverConsents(snapshot: SubmissionSnapshot, dossierId: string, revision: number) {
   return snapshot.consents.map((c) => ({
     kind: c.kind,
     statement: c.contentSummary,
     accepted_at: c.grantedAt,
-    content_ref: `${snapshot.dossierId}@r${snapshot.revision}#${snapshot.hash.slice(0, 16)}`,
+    dossier_id: dossierId,
+    revision,
+    content_hash: snapshot.hash,
+    content_ref: `${dossierId}@r${revision}#${snapshot.hash.slice(0, 16)}`,
+    file_digests: snapshot.transferredFiles.map((f) => f.sha256).sort(),
     recipients: c.recipients,
   }));
 }
@@ -147,13 +154,14 @@ export async function submitRevision(
     p_expected_revision: expectedRevision,
     p_snapshot: snapshot.dto as unknown as Record<string, unknown>,
     p_content_hash: snapshot.hash,
-    p_consents: serverConsents(snapshot),
+    p_consents: serverConsents(snapshot, dossierId, expectedRevision + 1),
     // Seuls les fichiers réellement déposés dans une session autorisée sont annoncés.
     p_transferred_files: snapshot.transferredFiles
       .filter((f) => Boolean(f.path))
-      .map((f) => ({ path: f.path, file_name: f.fileName })),
+      .map((f) => ({ path: f.path, file_name: f.fileName, sha256: f.sha256 })),
   });
 }
+
 
 export async function publishReview(input: {
   revisionId: string;
