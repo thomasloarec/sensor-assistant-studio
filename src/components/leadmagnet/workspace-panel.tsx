@@ -104,7 +104,7 @@ export function WorkspacePanel({
           type="button"
           aria-label="Fermer le panneau"
           tabIndex={-1}
-          className="fixed inset-0 z-40 cursor-default bg-foreground/20"
+          className="workspace-panel-backdrop fixed inset-0 z-40 cursor-default"
           onClick={() => changeRef.current(false)}
         />
       ) : null}
@@ -117,31 +117,37 @@ export function WorkspacePanel({
         onKeyDown={onKeyDown}
         className={
           open
-            ? "fixed inset-y-0 right-0 z-50 flex w-full flex-col border-l bg-background shadow-2xl outline-none sm:max-w-3xl lg:max-w-4xl"
+            ? "workspace-panel-shell fixed inset-y-0 right-0 z-50 flex w-full flex-col bg-background outline-none sm:max-w-3xl lg:max-w-4xl"
             : "hidden"
         }
       >
-        <div className="flex items-start gap-3 border-b px-4 py-4 sm:px-6">
+        <div className="material sticky top-0 z-10 flex items-start gap-3 border-b border-[var(--hairline)] px-4 py-4 sm:px-6">
           {onBack ? (
-            <Button variant="ghost" className="min-h-11 text-base" onClick={onBack}>
-              <ArrowLeft className="mr-1 h-4 w-4" /> Retour
+            <Button
+              variant="ghost"
+              className="min-h-11 text-base"
+              aria-label="Retour"
+              onClick={onBack}
+            >
+              <ArrowLeft className="h-4 w-4" /> <span className="hidden sm:inline">Retour</span>
             </Button>
           ) : null}
           <div className="min-w-0 flex-1">
-            <h2 className="text-2xl font-semibold leading-tight">{title}</h2>
-            {description ? (
-              <p className="mt-1 text-base text-muted-foreground">{description}</p>
-            ) : null}
+            <h2 className="t-title-l">{title}</h2>
+            {description ? <p className="t-caption mt-1">{description}</p> : null}
           </div>
           <Button
-            variant="outline"
+            variant="ghost"
             className="min-h-11 text-base"
+            aria-label="Fermer"
             onClick={() => changeRef.current(false)}
           >
-            <X className="mr-1 h-4 w-4" /> Fermer
+            <X className="h-4 w-4" /> <span className="hidden sm:inline">Fermer</span>
           </Button>
         </div>
-        <div className="min-w-0 flex-1 overflow-y-auto px-4 py-5 sm:px-6">{children}</div>
+        <div className="min-w-0 flex-1 scroll-smooth overflow-y-auto px-4 py-7 sm:px-6">
+          {children}
+        </div>
       </div>
     </div>
   );

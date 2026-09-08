@@ -1,6 +1,19 @@
 import { Link } from "@tanstack/react-router";
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ArrowLeft, ShieldCheck, Lock, Download, AlertTriangle } from "lucide-react";
+import {
+  ArrowLeft,
+  ShieldCheck,
+  Lock,
+  Download,
+  Upload,
+  AlertTriangle,
+  Info,
+  UserRound,
+  FileText,
+  Box,
+  Cpu,
+  Cable,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LanguagePicker } from "@/lib/i18n/react";
 import { Input } from "@/components/ui/input";
@@ -1002,21 +1015,31 @@ export function DesignSpace({
           ))}
         </>
       ) : (
-        <div className="rounded-2xl border bg-card p-6 sm:p-8">
-          <p className="text-base text-muted-foreground">
+        <div
+          key={question.key}
+          className="step-enter mx-auto max-w-[46rem] rounded-[var(--r-xl)] bg-[var(--surface)] p-10 shadow-[var(--e-2)] sm:p-14"
+        >
+          <div
+            className="h-[3px] w-full overflow-hidden rounded-[var(--r-pill)] bg-[var(--surface-sunken)]"
+            aria-hidden="true"
+          >
+            <div
+              className="h-full rounded-[var(--r-pill)] bg-[var(--primary)] transition-[width] duration-[var(--d-page)] ease-[var(--ease-out)]"
+              style={{ width: `${((focusIdx + 1) / GUIDED_QUESTIONS.length) * 100}%` }}
+            />
+          </div>
+          <p className="t-label mt-5">
             Question {focusIdx + 1} sur {GUIDED_QUESTIONS.length}
           </p>
-          <h2 className="mt-2 text-2xl font-semibold leading-snug sm:text-3xl">
-            {question.prompt}
-          </h2>
-          <p className="mt-3 text-base text-muted-foreground">Par exemple : {question.example}</p>
+          <h2 className="t-display-m mt-3">{question.prompt}</h2>
+          <p className="t-caption mt-4 max-w-[44ch]">Par exemple : {question.example}</p>
           <Label htmlFor={`guide-${question.key}`} className="sr-only">
             {question.prompt}
           </Label>
           <Textarea
             id={`guide-${question.key}`}
             rows={4}
-            className="mt-5 text-base"
+            className="mt-6 min-h-[8.5rem] w-full px-5 py-[1.125rem] text-lg leading-[1.6]"
             value={guidedReq?.value ?? ""}
             placeholder={question.placeholder}
             onChange={(e) =>
@@ -1027,7 +1050,7 @@ export function DesignSpace({
           />
 
           {guidedReq && guidedReq.state === "hypothesis" && guidedReq.value.trim() ? (
-            <div className="mt-4 rounded-lg border bg-muted/40 p-4">
+            <div className="relative mt-5 overflow-hidden rounded-[var(--r-md)] bg-[var(--warning-soft)] p-4 pl-5 before:absolute before:inset-y-0 before:left-0 before:w-[3px] before:bg-[var(--warning)]">
               <p className="text-base">
                 Cette réponse vient d'une reprise ou d'une déduction. Confirmez-la si elle est
                 juste.
@@ -1042,9 +1065,9 @@ export function DesignSpace({
             </div>
           ) : null}
 
-          <div className="mt-6 flex flex-wrap items-center gap-3">
+          <div className="mt-7 flex flex-wrap items-center gap-3">
             <Button
-              variant="outline"
+              variant="ghost"
               className="min-h-12 text-base"
               disabled={focusIdx === 0}
               onClick={() => setFocusIdx((i) => Math.max(0, i - 1))}
@@ -1052,7 +1075,8 @@ export function DesignSpace({
               Question précédente
             </Button>
             <Button
-              className="min-h-12 px-6 text-base"
+              size="lg"
+              className="ml-auto min-h-12 px-6 text-base"
               onClick={() => {
                 if (!lastQuestion) setFocusIdx((i) => i + 1);
                 else setTab("montage");
@@ -1062,7 +1086,7 @@ export function DesignSpace({
             </Button>
             <Button
               variant="ghost"
-              className="min-h-12 text-base"
+              className="min-h-12 text-base text-[var(--muted-foreground)]"
               onClick={() => {
                 // Ne rien effacer : passer sans réponse laisse simplement ce point inconnu.
                 if (!lastQuestion) setFocusIdx((i) => i + 1);
@@ -1073,11 +1097,14 @@ export function DesignSpace({
             </Button>
           </div>
 
-          <details className="mt-6">
-            <summary className="min-h-11 cursor-pointer py-2 text-base text-muted-foreground">
+          <details className="project-answer-details mt-7">
+            <summary className="t-caption flex min-h-11 cursor-pointer list-none items-center gap-2 py-2">
               Détails de cette réponse
+              <span className="project-answer-chevron" aria-hidden="true">
+                ↓
+              </span>
             </summary>
-            <div className="mt-2 flex flex-wrap items-center gap-3">
+            <div className="mt-2 ml-4 flex flex-wrap items-center gap-3">
               <Badge variant="outline">{stateBadge(guidedReq?.state ?? "unknown")}</Badge>
               <span className="text-base text-muted-foreground">
                 intitulé technique : {guidedReq?.label} · source : {guidedReq?.source}
@@ -2448,11 +2475,11 @@ export function DesignSpace({
       className={embedded ? "text-foreground" : "min-h-screen bg-background text-foreground"}
     >
       <header
-        className={`${embedded ? "border-b bg-card/60" : "border-b bg-card"}${visible ? "" : " hidden"}`}
+        className={`material sticky top-0 z-20 border-b border-[var(--hairline)]${visible ? "" : " hidden"}`}
       >
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-3 px-4 py-4">
-          <div className="min-w-0 flex-1">
-            <Label htmlFor="project-title" className="text-sm text-muted-foreground">
+        <div className="mx-auto flex max-w-[76rem] flex-wrap items-end gap-4 px-4 py-4">
+          <div className="min-w-[min(100%,18rem)] flex-1">
+            <Label htmlFor="project-title" className="t-label">
               Nom de mon projet
             </Label>
             <Input
@@ -2465,23 +2492,32 @@ export function DesignSpace({
                   updatedAt: new Date().toISOString(),
                 }))
               }
-              className="h-11 max-w-lg border-0 bg-transparent px-0 text-2xl font-semibold shadow-none focus-visible:bg-background focus-visible:px-3"
+              className="project-title-input mt-1 h-auto min-h-11 max-w-lg border-0 bg-transparent px-0 shadow-none"
             />
           </div>
-          <Badge variant="secondary" className="gap-1 text-sm">
-            <Lock className="h-3 w-3" /> {STORAGE_BADGE[privacy.storage]}
-          </Badge>
-          <Badge variant="outline" className="text-sm">
-            Révision {dossier.revision}
-          </Badge>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge variant="secondary" className="gap-1 px-2.5 py-1 text-sm">
+              <Lock className="h-3 w-3" /> {STORAGE_BADGE[privacy.storage]}
+            </Badge>
+            <span className="text-muted-foreground" aria-hidden="true">
+              ·
+            </span>
+            <Badge variant="secondary" className="px-2.5 py-1 text-sm">
+              Révision {dossier.revision}
+            </Badge>
+          </div>
+          <div className="flex max-w-full flex-wrap items-center gap-1 rounded-[var(--r-sm)] bg-[var(--surface-sunken)] p-1">
             <LanguagePicker />
-            <Button variant="outline" className="min-h-11" onClick={exportDossier}>
-              <Download className="mr-1 h-4 w-4" /> Exporter
+            <Button variant="ghost" className="min-h-11 px-3" onClick={exportDossier} aria-label="Exporter">
+              <Download className="h-4 w-4" /> <span className="hidden sm:inline">Exporter</span>
             </Button>
-            <Button variant="outline" className="min-h-11 max-w-full whitespace-normal" asChild>
-              <label className="block w-full max-w-full cursor-pointer text-center sm:w-auto">
-                Reprendre un fichier
+            <Button variant="ghost" className="min-h-11 max-w-full px-3 whitespace-normal" asChild>
+              <label
+                className="block w-full max-w-full cursor-pointer text-center sm:w-auto"
+                aria-label="Reprendre un fichier"
+              >
+                <Upload className="h-4 w-4" />
+                <span className="hidden sm:inline">Reprendre un fichier</span>
                 <input
                   type="file"
                   accept="application/json"
@@ -2496,32 +2532,39 @@ export function DesignSpace({
             </Button>
           </div>
         </div>
-        <div className="mx-auto max-w-6xl px-4 pb-3 text-sm text-muted-foreground">
-          {MEMORY_LOSS_WARNING} {EXPORT_BINARY_NOTICE}
-          {importMessage ? <span className="block text-foreground">{importMessage}</span> : null}
+        <div className="mx-auto max-w-[76rem] px-4 pb-4">
+          <div className="flex items-start gap-3 rounded-[var(--r-md)] bg-[var(--surface-tint)] px-[1.125rem] py-[0.875rem]">
+            <Info className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+            <div className="t-caption !text-[var(--foreground)]">
+              {MEMORY_LOSS_WARNING} {EXPORT_BINARY_NOTICE}
+              {importMessage ? <span className="block font-semibold">{importMessage}</span> : null}
+            </div>
+          </div>
         </div>
       </header>
 
-      <main className={`mx-auto max-w-6xl px-4 py-6${visible ? "" : " hidden"}`}>
-        <nav aria-label="Progression" className="mb-6 grid gap-2 sm:grid-cols-3">
+      <main className={`mx-auto max-w-[76rem] px-4 py-6${visible ? "" : " hidden"}`}>
+        <nav
+          aria-label="Progression"
+          className={`project-stepper project-stepper-${stepIndex} mb-6`}
+        >
+          <span className="project-stepper-thumb" aria-hidden="true" />
           {steps.map((s, i) => (
             <button
               key={s.id}
               type="button"
               aria-current={stepIndex === i ? "step" : undefined}
               onClick={() => setTab(s.id)}
-              className={`min-h-11 rounded-xl border px-4 py-3 text-left transition-colors ${
-                stepIndex === i
-                  ? "border-primary bg-primary text-primary-foreground"
-                  : "bg-card hover:bg-accent"
-              }`}
+              className={`relative z-10 min-h-11 bg-transparent px-4 py-3 text-left transition-colors duration-[var(--d-base)] ${stepIndex === i ? "text-[var(--heading)]" : "text-[var(--muted-foreground)]"}`}
             >
-              <span className="block text-base font-semibold">
-                {i + 1}. {s.label}
+              <span className="flex items-center gap-2 text-base font-semibold">
+                <span
+                  className={`standex-bar !h-3 !w-1 transition-opacity duration-[var(--d-base)] ${stepIndex === i ? "opacity-100" : "opacity-25"}`}
+                  aria-hidden="true"
+                />
+                <span>{i + 1}. {s.label}</span>
               </span>
-              <span
-                className={`block text-sm ${stepIndex === i ? "opacity-90" : "text-muted-foreground"}`}
-              >
+              <span className="mt-0.5 block pl-3 text-sm">
                 {s.hint}
               </span>
             </button>
@@ -2529,49 +2572,60 @@ export function DesignSpace({
         </nav>
 
         {/* Outils contextuels : ils apparaissent à l'étape où ils servent. */}
+        <hr className="standex-rule mb-4" />
         <div className="mb-4 flex flex-wrap items-center gap-2">
           <Button
-            variant="outline"
-            className="min-h-11 text-base"
+            variant="ghost"
+            size="sm"
+            className="min-h-11 rounded-[var(--r-pill)] text-base hover:bg-[var(--surface-tint)]"
             onClick={() => setPanel("espace")}
           >
+            <UserRound />
             Mon espace
           </Button>
           <Button
-            variant="outline"
-            className="min-h-11 text-base"
+            variant="ghost"
+            size="sm"
+            className="min-h-11 rounded-[var(--r-pill)] text-base hover:bg-[var(--surface-tint)]"
             onClick={() => setPanel("documents")}
           >
+            <FileText />
             Documents
           </Button>
           {tab !== "besoin" ? (
-            <>
+            <div className="anim-fade contents">
               <Button
-                variant="outline"
-                className="min-h-11 text-base"
+                variant="ghost"
+                size="sm"
+                className="min-h-11 rounded-[var(--r-pill)] text-base hover:bg-[var(--surface-tint)]"
                 onClick={() => {
                   setWorkshopMounted(true);
                   setShowWorkshop(true);
                   setPanel("atelier");
                 }}
               >
+                <Box />
                 Atelier 3D
               </Button>
               <Button
-                variant="outline"
-                className="min-h-11 text-base"
+                variant="ghost"
+                size="sm"
+                className="min-h-11 rounded-[var(--r-pill)] text-base hover:bg-[var(--surface-tint)]"
                 onClick={() => (showAdvanced ? setTab("candidats") : setPanel("candidats"))}
               >
+                <Cpu />
                 Capteurs possibles
               </Button>
               <Button
-                variant="outline"
-                className="min-h-11 text-base"
+                variant="ghost"
+                size="sm"
+                className="min-h-11 rounded-[var(--r-pill)] text-base hover:bg-[var(--surface-tint)]"
                 onClick={() => (showAdvanced ? setTab("cablage") : setPanel("cablage"))}
               >
+                <Cable />
                 Câble et connecteur
               </Button>
-            </>
+            </div>
           ) : null}
         </div>
 

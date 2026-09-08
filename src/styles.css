@@ -131,6 +131,7 @@
   --destructive-foreground: oklch(1 0 0);
   --signal: oklch(0.72 0.13 205);
   --signal-glow: oklch(0.82 0.11 205 / 0.55);
+  --standex-bar-color: var(--standex-blue);
 
   /* --- 4. Typographie ---------------------------------------------------- */
   --font-sans: "Source Sans 3", "Lato", ui-sans-serif, system-ui, -apple-system, sans-serif;
@@ -257,6 +258,7 @@
   --success-soft: oklch(0.5 0.084 168 / 0.22);
   --warning-soft: oklch(0.58 0.098 72 / 0.24);
   --destructive-soft: oklch(0.52 0.17 25 / 0.24);
+  --standex-bar-color: oklch(0.72 0.13 205);
   background-color: var(--background);
   color: var(--foreground);
 }
@@ -564,13 +566,13 @@
     display: inline-block;
     width: 0.5rem;
     height: 1.5rem;
-    background: var(--standex-blue);
+    background: var(--standex-bar-color);
     transform: var(--standex-skew);
     border-radius: 2px;
   }
   .standex-rule {
     height: 2px;
-    background: linear-gradient(90deg, var(--standex-blue) 0%, transparent 65%);
+    background: linear-gradient(90deg, var(--standex-bar-color) 0%, transparent 65%);
     border: 0;
     opacity: 0.35;
   }
@@ -685,6 +687,95 @@
   }
   .press:active {
     transform: scale(0.975);
+  }
+
+  .project-title-input {
+    font: var(--t-title-l);
+    letter-spacing: var(--tracking-title);
+    color: var(--heading);
+    transition:
+      background-color var(--d-fast) var(--ease-out),
+      padding-inline var(--d-fast) var(--ease-out);
+  }
+  .project-title-input:hover,
+  .project-title-input:focus-visible {
+    background: var(--surface-sunken);
+    padding-inline: 0.75rem;
+  }
+
+  .project-stepper {
+    --step: 0;
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    padding: 5px;
+    overflow: hidden;
+    border-radius: var(--r-md);
+    background: var(--surface-sunken);
+  }
+  .project-stepper-1 {
+    --step: 1;
+  }
+  .project-stepper-2 {
+    --step: 2;
+  }
+  .project-stepper-thumb {
+    position: absolute;
+    inset-block: 5px;
+    left: 5px;
+    width: calc((100% - 10px) / 3);
+    border-radius: calc(var(--r-md) - 5px);
+    background: var(--surface);
+    box-shadow: var(--e-2);
+    transform: translateX(calc(var(--step) * 100%));
+    transition: transform var(--d-page) var(--ease-glide);
+  }
+
+  .project-answer-chevron {
+    display: inline-block;
+    transition: transform var(--d-base) var(--ease-out);
+  }
+  .project-answer-details[open] .project-answer-chevron {
+    transform: rotate(180deg);
+  }
+
+  .workspace-panel-backdrop {
+    background: oklch(0.2261 0.0353 251.2 / 0.34);
+    backdrop-filter: blur(4px);
+    animation: standex-fade 200ms var(--ease-out) both;
+  }
+  .workspace-panel-shell {
+    box-shadow: var(--e-4);
+    animation: standex-panel-in 420ms var(--ease-glide) both;
+  }
+
+  @media (max-width: 639px) {
+    .project-stepper {
+      grid-template-columns: 1fr;
+      grid-template-rows: repeat(3, minmax(0, 1fr));
+    }
+    .project-stepper-thumb {
+      inset-inline: 5px;
+      top: 5px;
+      width: auto;
+      height: calc((100% - 10px) / 3);
+      transform: translateY(calc(var(--step) * 100%));
+    }
+  }
+
+  @media (min-width: 640px) {
+    .workspace-panel-shell {
+      border-radius: var(--r-2xl) 0 0 var(--r-2xl);
+    }
+  }
+}
+
+@keyframes standex-panel-in {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: none;
   }
 }
 

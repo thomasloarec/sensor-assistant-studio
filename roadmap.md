@@ -138,3 +138,10 @@
 - [x] Resserrer le rythme du héros et équilibrer le titre sur deux lignes.
 - [x] Clarifier le champ magnétique, l’ampoule et les lamelles du capteur.
 - [x] Fusionner la démonstration en une carte et vérifier les trois largeurs.
+
+## Refonte visuelle — lot C/4
+
+- [x] Recomposer le chrome et la progression de l’espace projet sans modifier son état.
+- [x] Mettre en scène la question guidée et les outils contextuels.
+- [x] Moderniser les panneaux sans toucher au montage, au focus ni à leur masquage.
+- [ ] Vérifier tests, types, build et parcours navigateur desktop/mobile.
