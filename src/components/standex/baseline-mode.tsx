@@ -32,10 +32,8 @@ import {
 
 function Card({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="rounded-md border border-border bg-card p-4">
-      <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-        {t(title)}
-      </p>
+    <div className="panel-block">
+      <p className="t-label font-mono">{t(title)}</p>
       <div className="mt-3">{t(children)}</div>
     </div>
   );
@@ -45,7 +43,7 @@ export function BaselineStatusBadge() {
   return (
     <Badge
       variant="outline"
-      className="border-success/50 font-mono text-[10px] uppercase text-success"
+      className="font-mono t-label text-success"
       title={BASELINE_FACTS.map((f) => t(f)).join(" · ")}
     >
       {t(BASELINE_LABEL)}
@@ -87,12 +85,12 @@ export function BaselineModePanel({
         <div className="flex flex-wrap items-center gap-2">
           <BaselineStatusBadge />
           {run?.model && (
-            <Badge variant="outline" className="font-mono text-[10px] uppercase">
+            <Badge variant="outline" className="t-label font-mono">
               {t(run.model)}
             </Badge>
           )}
         </div>
-        <ul className="mt-3 space-y-1 font-mono text-xs text-muted-foreground">
+        <ul className="mt-3 space-y-1 font-mono t-caption text-muted-foreground">
           {BASELINE_FACTS.map((f) => (
             <li key={f}>· {t(f)}</li>
           ))}
@@ -101,7 +99,7 @@ export function BaselineModePanel({
 
       <Card title={t("Mode assistant (testeur)")}>
         <Select value={mode} onValueChange={(v) => onModeChange(v as AssistantMode)}>
-          <SelectTrigger className="h-8 font-mono text-xs">
+          <SelectTrigger className="min-h-11 font-mono t-caption">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -110,14 +108,14 @@ export function BaselineModePanel({
                 key={m.id}
                 value={m.id}
                 disabled={!m.available}
-                className="font-mono text-xs"
+                className="font-mono t-caption"
               >
                 {t(m.label)}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
-        <p className="mt-3 rounded-sm border border-warning/40 bg-warning/10 p-2 font-mono text-[11px] text-warning">
+        <p className="notice notice-warning mt-3 font-mono t-caption text-warning">
           {t(EXPERIMENTAL_NOTICE)}
         </p>
         <div className="mt-3 flex flex-wrap gap-2">
@@ -138,7 +136,7 @@ export function BaselineModePanel({
           </Button>
         </div>
         {run?.error && (
-          <div className="mt-2 rounded-sm border border-destructive/50 bg-destructive/10 p-2 text-[11px] text-destructive">
+          <div className="notice notice-danger mt-2 t-caption text-destructive">
             <p>{t(run.error)}</p>
             <div className="mt-2 flex flex-wrap items-center gap-2">
               <Button
@@ -155,7 +153,7 @@ export function BaselineModePanel({
                 <summary className="cursor-pointer text-muted-foreground">
                   {t("Voir le fragment brut renvoyé")}
                 </summary>
-                <pre className="mt-1 max-h-40 overflow-auto whitespace-pre-wrap break-words font-mono text-[10px] text-muted-foreground">
+                <pre className="code-block mt-1 max-h-40 whitespace-pre-wrap break-words text-muted-foreground">
                   {t(run.rawText)}
                 </pre>
               </details>
@@ -163,7 +161,7 @@ export function BaselineModePanel({
           </div>
         )}
         {run?.schemaWarning && (
-          <p className="mt-2 rounded-sm border border-warning/40 bg-warning/10 p-2 font-mono text-[11px] text-warning">
+          <p className="notice notice-warning mt-2 font-mono t-caption text-warning">
             {t(run.schemaWarning)}
           </p>
         )}
@@ -171,15 +169,15 @@ export function BaselineModePanel({
 
       <div className="grid gap-4 lg:grid-cols-2">
         <Card title={t("Réponse baseline déterministe")}>
-          <p className="whitespace-pre-wrap break-words text-xs">
+          <p className="whitespace-pre-wrap break-words t-caption">
             {t(baselineResponse ?? "Aucune réponse baseline pour cette session.")}
           </p>
         </Card>
         <Card title={t("Réponse assistant expérimental")}>
           {experimentalResponse ? (
-            <p className="whitespace-pre-wrap break-words text-xs">{t(experimentalResponse)}</p>
+            <p className="whitespace-pre-wrap break-words t-caption">{t(experimentalResponse)}</p>
           ) : (
-            <p className="text-xs text-muted-foreground">{t(EXPERIMENTAL_NOTICE)}</p>
+            <p className="t-caption text-muted-foreground">{t(EXPERIMENTAL_NOTICE)}</p>
           )}
         </Card>
       </div>
@@ -189,7 +187,7 @@ export function BaselineModePanel({
           <AccordionTrigger className="text-sm">{t("Différences ligne à ligne")}</AccordionTrigger>
           <AccordionContent>
             {experimentalResponse ? (
-              <ul className="space-y-1 font-mono text-[11px]">
+              <ul className="space-y-1 font-mono t-caption">
                 {rows.map((r, i) => (
                   <li
                     key={`${r.kind}-${i}`}
@@ -207,7 +205,7 @@ export function BaselineModePanel({
                 ))}
               </ul>
             ) : (
-              <p className="text-xs text-muted-foreground">
+              <p className="t-caption text-muted-foreground">
                 {t("Comparaison disponible après une génération expérimentale.")}
               </p>
             )}
@@ -219,13 +217,13 @@ export function BaselineModePanel({
           <AccordionContent>
             <div className="grid gap-4 lg:grid-cols-2">
               <Card title={t("Trace interne baseline")}>
-                <pre className="max-h-56 overflow-auto whitespace-pre-wrap break-words font-mono text-[11px] text-muted-foreground">
+                <pre className="code-block max-h-56 whitespace-pre-wrap break-words text-muted-foreground">
                   {t(baselineTrace ?? "—")}
                 </pre>
               </Card>
               <Card title={t("Trace interne générative")}>
                 {run?.payload ? (
-                  <pre className="max-h-56 overflow-auto whitespace-pre-wrap break-words font-mono text-[11px] text-muted-foreground">
+                  <pre className="code-block max-h-56 whitespace-pre-wrap break-words text-muted-foreground">
                     {t(
                       JSON.stringify(
                         {
@@ -244,7 +242,7 @@ export function BaselineModePanel({
                     )}
                   </pre>
                 ) : (
-                  <p className="text-xs text-muted-foreground">
+                  <p className="t-caption text-muted-foreground">
                     {t("Aucune génération expérimentale.")}
                   </p>
                 )}
@@ -260,7 +258,7 @@ export function BaselineModePanel({
           onChange={(e) => setNotes(e.target.value)}
           disabled={!run?.payload}
           placeholder={t("Verdict humain sur la comparaison baseline / expérimental.")}
-          className="min-h-20 font-mono text-xs"
+          className="min-h-20 font-mono t-caption"
         />
         <div className="mt-2 flex flex-wrap gap-2">
           <Button

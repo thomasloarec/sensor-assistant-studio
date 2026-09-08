@@ -356,10 +356,13 @@ function StandexConsole() {
   if (!backend?.ready)
     return (
       <div className="mx-auto max-w-3xl space-y-3 p-6">
-        <Link to="/design" className="inline-flex items-center gap-2 text-sm text-muted-foreground">
+        <Link
+          to="/design"
+          className="inline-flex min-h-11 items-center gap-2 rounded-[var(--r-sm)] px-2 text-sm text-muted-foreground"
+        >
           <ArrowLeft className="h-4 w-4" /> Espace de conception
         </Link>
-        <h1 className="text-xl font-semibold">Console Standex</h1>
+        <h1 className="t-title-m">Console Standex</h1>
         <p className="text-sm">{backend?.message ?? "Connexion en cours…"}</p>
         <AuthPanel
           backend={backend}
@@ -375,7 +378,7 @@ function StandexConsole() {
   if (!inbox)
     return (
       <div className="mx-auto max-w-3xl space-y-3 p-6">
-        <h1 className="text-xl font-semibold">Console Standex</h1>
+        <h1 className="t-title-m">Console Standex</h1>
         <p className="text-sm">
           {message ??
             "Cet espace est réservé aux membres de l'équipe Standex habilités. Votre compte n'y donne pas accès."}
@@ -390,15 +393,15 @@ function StandexConsole() {
 
   return (
     <div data-readable className="min-h-screen bg-background text-foreground">
-      <header className="border-b bg-card">
+      <header className="material sticky top-0 z-30 shadow-[var(--e-1)]">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-3 px-4 py-3">
           <Link
             to="/design"
-            className="inline-flex items-center gap-2 text-sm text-muted-foreground"
+            className="inline-flex min-h-11 items-center gap-2 rounded-[var(--r-sm)] px-2 text-sm text-muted-foreground"
           >
             <ArrowLeft className="h-4 w-4" /> Espace de conception
           </Link>
-          <h1 className="text-lg font-semibold">Console Standex</h1>
+          <h1 className="t-title-s">Console Standex</h1>
           <Badge variant="secondary">
             {inbox.role === "rnd" ? "R&D" : inbox.role === "sales" ? "Commerce" : "Administration"}
           </Badge>
@@ -408,7 +411,7 @@ function StandexConsole() {
       <main className="mx-auto grid max-w-6xl gap-6 p-4 lg:grid-cols-[320px_1fr]">
         <aside className="space-y-4">
           <section>
-            <h2 className="mb-2 font-medium">Dossiers qui me sont confiés</h2>
+            <h2 className="t-title-s mb-2">Dossiers qui me sont confiés</h2>
             {inbox.assigned.length === 0 ? (
               <p className="text-sm text-muted-foreground">Aucun dossier ne vous est confié.</p>
             ) : (
@@ -423,7 +426,7 @@ function StandexConsole() {
                     >
                       <span className="truncate">{d.title}</span>
                     </Button>
-                    <p className="px-1 text-xs text-muted-foreground">
+                    <p className="px-1 t-caption text-muted-foreground">
                       version {d.current_revision}
                       {d.awaiting_review ? " — en attente de retour" : " — retour publié"}
                     </p>
@@ -435,20 +438,23 @@ function StandexConsole() {
 
           {inbox.role === "admin" ? (
             <section className="space-y-2">
-              <h2 className="font-medium">Tri et affectation</h2>
-              <p className="text-xs text-muted-foreground">
+              <h2 className="t-title-s">Tri et affectation</h2>
+              <p className="t-caption text-muted-foreground">
                 Cette liste ne contient que des informations générales : aucun contenu technique
                 n'est visible sans affectation.
               </p>
               {inbox.triage.map((d) => (
-                <div key={d.id} className="rounded border p-2 text-sm">
+                <div
+                  key={d.id}
+                  className="min-h-11 rounded-[var(--r-sm)] border-0 bg-[var(--surface-sunken)] p-3 text-sm shadow-[var(--e-inset)]"
+                >
                   <p className="font-medium">{d.title}</p>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="t-caption text-muted-foreground">
                     version {d.current_revision} — {d.assignees.length} personne(s) affectée(s)
                   </p>
                   <div className="mt-1 flex gap-1">
                     <Select value={assignee} onValueChange={setAssignee}>
-                      <SelectTrigger className="h-8 text-xs">
+                      <SelectTrigger className="min-h-11 t-caption">
                         <SelectValue placeholder="Choisir un collègue" />
                       </SelectTrigger>
                       <SelectContent>
@@ -480,7 +486,11 @@ function StandexConsole() {
         </aside>
 
         <section className="space-y-4">
-          {message ? <p className="rounded border p-2 text-sm">{message}</p> : null}
+          {message ? (
+            <p className="min-h-11 rounded-[var(--r-sm)] border-0 bg-[var(--surface-sunken)] p-3 text-sm shadow-[var(--e-inset)]">
+              {message}
+            </p>
+          ) : null}
           {!view ? (
             <p className="text-sm text-muted-foreground">
               Choisissez un dossier pour lire la conception envoyée et publier un retour.
@@ -488,7 +498,7 @@ function StandexConsole() {
           ) : (
             <>
               <div className="flex flex-wrap items-center gap-2">
-                <h2 className="text-lg font-semibold">{view.dossier.title}</h2>
+                <h2 className="t-title-m">{view.dossier.title}</h2>
                 <Badge variant="outline">version {view.dossier.current_revision}</Badge>
                 <Badge variant="secondary">
                   {view.dossier.nda_status === "in_force"
@@ -505,7 +515,7 @@ function StandexConsole() {
                   <AccordionContent className="space-y-2">
                     {lastRevision ? (
                       <>
-                        <p className="text-xs text-muted-foreground">
+                        <p className="t-caption text-muted-foreground">
                           Envoyée le {new Date(lastRevision.submitted_at).toLocaleString("fr-FR")} —
                           empreinte {lastRevision.content_hash.slice(0, 16)}… — fichiers joints :{" "}
                           {lastRevision.transferred_files.length}
@@ -515,25 +525,25 @@ function StandexConsole() {
                             lastRevision.snapshot as Record<string, unknown>,
                           );
                           return parsed.ok ? (
-                            <pre className="max-h-96 overflow-auto rounded bg-muted p-3 text-xs whitespace-pre-wrap">
+                            <pre className="code-block max-h-96 whitespace-pre-wrap">
                               {technicalSummary(parsed.dossier)}
                             </pre>
                           ) : (
-                            <p className="text-xs text-destructive">
+                            <p className="t-caption text-destructive">
                               Cette version n'est pas lisible sous forme de résumé technique :{" "}
                               {parsed.reason} Contenu brut ci-dessous.
                             </p>
                           );
                         })()}
                         <details>
-                          <summary className="cursor-pointer text-xs text-muted-foreground">
+                          <summary className="cursor-pointer t-caption text-muted-foreground">
                             Contenu complet envoyé (brut)
                           </summary>
-                          <pre className="max-h-96 overflow-auto rounded bg-muted p-3 text-xs">
+                          <pre className="code-block max-h-96">
                             {JSON.stringify(lastRevision.snapshot, null, 2)}
                           </pre>
                         </details>
-                        <ul className="list-disc pl-5 text-xs">
+                        <ul className="list-disc pl-5 t-caption">
                           {lastRevision.transferred_files.map((f, i) => (
                             <li key={i} className="flex flex-wrap items-center gap-2">
                               <span>{f.file_name ?? f.path}</span>
@@ -585,11 +595,11 @@ function StandexConsole() {
                           ))}
                         </ul>
                         {viewerError ? (
-                          <p className="text-xs text-destructive">{viewerError}</p>
+                          <p className="t-caption text-destructive">{viewerError}</p>
                         ) : null}
                         {viewer ? (
                           <div className="mt-2">
-                            <p className="mb-2 text-xs text-muted-foreground">
+                            <p className="mb-2 t-caption text-muted-foreground">
                               Modèle ouvert en mémoire de cet onglet uniquement, avec la
                               configuration exacte de la version {viewer.revision} et son câble.
                               Empreinte contrôlée : {viewer.sha256.slice(0, 16)}…. Une modification
@@ -597,7 +607,7 @@ function StandexConsole() {
                             </p>
                             <Label>Trajet de câble affiché</Label>
                             <select
-                              className="rounded border p-2 text-sm"
+                              className="min-h-11 rounded-[var(--r-sm)] border-0 bg-[var(--surface-sunken)] p-3 text-sm shadow-[var(--e-inset)]"
                               value={viewerTarget.kind === "base" ? "base" : viewerTarget.stateId}
                               onChange={(e) =>
                                 setViewerTarget(
@@ -614,7 +624,7 @@ function StandexConsole() {
                                 </option>
                               ))}
                             </select>
-                            <p className="text-xs text-muted-foreground">
+                            <p className="t-caption text-muted-foreground">
                               Les ajustements du tracé restent dans cette copie de lecture.
                             </p>
                             <Suspense
@@ -651,14 +661,14 @@ function StandexConsole() {
                   <AccordionContent className="space-y-3">
                     <div className="grid gap-2 sm:grid-cols-2">
                       <div>
-                        <Label className="text-xs">Portée de la revue</Label>
+                        <Label className="t-caption">Portée de la revue</Label>
                         <Input
                           value={review.scope}
                           onChange={(e) => setReview({ ...review, scope: e.target.value })}
                         />
                       </div>
                       <div>
-                        <Label className="text-xs">Conclusion</Label>
+                        <Label className="t-caption">Conclusion</Label>
                         <Select
                           value={review.verdict}
                           onValueChange={(v) =>
@@ -676,7 +686,9 @@ function StandexConsole() {
                         </Select>
                       </div>
                       <div>
-                        <Label className="text-xs">Référence exacte (obligatoire si validé)</Label>
+                        <Label className="t-caption">
+                          Référence exacte (obligatoire si validé)
+                        </Label>
                         <Input
                           value={review.exactPartNumber}
                           onChange={(e) =>
@@ -685,7 +697,7 @@ function StandexConsole() {
                         />
                       </div>
                       <div>
-                        <Label className="text-xs">Type</Label>
+                        <Label className="t-caption">Type</Label>
                         <Select
                           value={review.designation}
                           onValueChange={(v) =>
@@ -703,7 +715,7 @@ function StandexConsole() {
                       </div>
                     </div>
                     <div>
-                      <Label className="text-xs">Conditions</Label>
+                      <Label className="t-caption">Conditions</Label>
                       <Textarea
                         rows={2}
                         value={review.conditions}
@@ -712,14 +724,14 @@ function StandexConsole() {
                     </div>
                     <div className="grid gap-2 sm:grid-cols-3">
                       <div>
-                        <Label className="text-xs">Variante — câble (note)</Label>
+                        <Label className="t-caption">Variante — câble (note)</Label>
                         <Input
                           value={review.variantCable}
                           onChange={(e) => setReview({ ...review, variantCable: e.target.value })}
                         />
                       </div>
                       <div>
-                        <Label className="text-xs">Réserve de service proposée (mm)</Label>
+                        <Label className="t-caption">Réserve de service proposée (mm)</Label>
                         <Input
                           inputMode="decimal"
                           value={review.variantReserveMm}
@@ -729,7 +741,7 @@ function StandexConsole() {
                         />
                       </div>
                       <div>
-                        <Label className="text-xs">Tolérance proposée (± mm)</Label>
+                        <Label className="t-caption">Tolérance proposée (± mm)</Label>
                         <Input
                           inputMode="decimal"
                           value={review.variantToleranceMm}
@@ -739,7 +751,7 @@ function StandexConsole() {
                         />
                       </div>
                       <div>
-                        <Label className="text-xs">Connecteur — fabricant</Label>
+                        <Label className="t-caption">Connecteur — fabricant</Label>
                         <Input
                           value={review.variantConnectorMaker}
                           onChange={(e) =>
@@ -748,7 +760,7 @@ function StandexConsole() {
                         />
                       </div>
                       <div>
-                        <Label className="text-xs">Connecteur — référence exacte</Label>
+                        <Label className="t-caption">Connecteur — référence exacte</Label>
                         <Input
                           value={review.variantConnectorMpn}
                           onChange={(e) =>
@@ -757,7 +769,7 @@ function StandexConsole() {
                         />
                       </div>
                       <div>
-                        <Label className="text-xs">Connecteur — voies</Label>
+                        <Label className="t-caption">Connecteur — voies</Label>
                         <Input
                           inputMode="numeric"
                           value={review.variantConnectorPositions}
@@ -767,20 +779,20 @@ function StandexConsole() {
                         />
                       </div>
                       <div>
-                        <Label className="text-xs">Variante — carte (note)</Label>
+                        <Label className="t-caption">Variante — carte (note)</Label>
                         <Input
                           value={review.variantPcb}
                           onChange={(e) => setReview({ ...review, variantPcb: e.target.value })}
                         />
                       </div>
                     </div>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="t-caption text-muted-foreground">
                       Les valeurs chiffrées et la référence exacte sont réellement reprises dans le
                       dossier du client ; les notes restent descriptives. Un connecteur proposé
                       reste « à vérifier » : ce n'est pas une qualification Standex.
                     </p>
                     <div>
-                      <Label className="text-xs">Variante — description</Label>
+                      <Label className="t-caption">Variante — description</Label>
                       <Textarea
                         rows={2}
                         value={review.variantDescription}
@@ -790,7 +802,7 @@ function StandexConsole() {
                       />
                     </div>
                     <div>
-                      <Label className="text-xs">Message publié au client</Label>
+                      <Label className="t-caption">Message publié au client</Label>
                       <Textarea
                         rows={3}
                         value={review.clientMessage}
@@ -798,7 +810,7 @@ function StandexConsole() {
                       />
                     </div>
                     <div>
-                      <Label className="text-xs">Note interne (jamais visible du client)</Label>
+                      <Label className="t-caption">Note interne (jamais visible du client)</Label>
                       <Textarea
                         rows={2}
                         value={review.internalNote}
@@ -867,8 +879,8 @@ function StandexConsole() {
                   <AccordionContent className="space-y-2">
                     <ul className="space-y-1 text-sm">
                       {(view.internal_notes ?? []).map((n) => (
-                        <li key={n.id} className="rounded border p-2">
-                          <span className="text-xs text-muted-foreground">
+                        <li key={n.id} className="panel-block">
+                          <span className="t-caption text-muted-foreground">
                             {new Date(n.created_at).toLocaleString("fr-FR")}
                           </span>
                           <p className="whitespace-pre-wrap">{n.body}</p>
@@ -915,42 +927,42 @@ function StandexConsole() {
                     )}
                     <div className="grid gap-2 sm:grid-cols-3">
                       <div>
-                        <Label className="text-xs">Devise</Label>
+                        <Label className="t-caption">Devise</Label>
                         <Input
                           value={offer.currency}
                           onChange={(e) => setOffer({ ...offer, currency: e.target.value })}
                         />
                       </div>
                       <div>
-                        <Label className="text-xs">Quantité minimale</Label>
+                        <Label className="t-caption">Quantité minimale</Label>
                         <Input
                           value={offer.moq}
                           onChange={(e) => setOffer({ ...offer, moq: e.target.value })}
                         />
                       </div>
                       <div>
-                        <Label className="text-xs">Outillage / frais fixes</Label>
+                        <Label className="t-caption">Outillage / frais fixes</Label>
                         <Input
                           value={offer.nre}
                           onChange={(e) => setOffer({ ...offer, nre: e.target.value })}
                         />
                       </div>
                       <div>
-                        <Label className="text-xs">Incoterm</Label>
+                        <Label className="t-caption">Incoterm</Label>
                         <Input
                           value={offer.incoterm}
                           onChange={(e) => setOffer({ ...offer, incoterm: e.target.value })}
                         />
                       </div>
                       <div>
-                        <Label className="text-xs">Délai (semaines)</Label>
+                        <Label className="t-caption">Délai (semaines)</Label>
                         <Input
                           value={offer.leadTimeWeeks}
                           onChange={(e) => setOffer({ ...offer, leadTimeWeeks: e.target.value })}
                         />
                       </div>
                       <div>
-                        <Label className="text-xs">Valable jusqu'au</Label>
+                        <Label className="t-caption">Valable jusqu'au</Label>
                         <Input
                           type="date"
                           value={offer.validUntil}
@@ -959,7 +971,7 @@ function StandexConsole() {
                       </div>
                     </div>
                     <div>
-                      <Label className="text-xs">
+                      <Label className="t-caption">
                         Paliers « quantité:prix » (une ligne par palier)
                       </Label>
                       <Textarea
@@ -1001,7 +1013,7 @@ function StandexConsole() {
                       view.samples.map((s) => (
                         <div
                           key={s.id}
-                          className="flex flex-wrap items-center gap-2 rounded border p-2 text-sm"
+                          className="panel-block flex flex-wrap items-center gap-2 text-sm"
                         >
                           <span className="font-medium">
                             {s.quantity} × {s.part_number}
@@ -1042,7 +1054,7 @@ function StandexConsole() {
                             </Button>
                           ) : null}
                           {s.feedback ? (
-                            <p className="w-full text-xs text-muted-foreground">
+                            <p className="w-full t-caption text-muted-foreground">
                               Retour client (version {s.feedback_revision}) : {s.feedback}
                             </p>
                           ) : null}
@@ -1056,14 +1068,14 @@ function StandexConsole() {
                   <AccordionItem value="nda">
                     <AccordionTrigger>Preuve d'accord de confidentialité</AccordionTrigger>
                     <AccordionContent className="space-y-2">
-                      <p className="text-xs text-muted-foreground">
+                      <p className="t-caption text-muted-foreground">
                         Le document original de référence est vérifié automatiquement (empreinte{" "}
                         {APPROVED_NDA_TEMPLATE.sha256.slice(0, 16)}…). Générer un document ne vaut
                         pas signature : enregistrez ici la preuve du document réellement signé.
                       </p>
                       <div className="grid gap-2 sm:grid-cols-2">
                         <div className="sm:col-span-2">
-                          <Label className="text-xs">Document signé (fichier)</Label>
+                          <Label className="t-caption">Document signé (fichier)</Label>
                           <Input
                             type="file"
                             onChange={(e) => {
@@ -1100,7 +1112,7 @@ function StandexConsole() {
                               });
                             }}
                           />
-                          <p className="mt-1 text-xs text-muted-foreground">
+                          <p className="mt-1 t-caption text-muted-foreground">
                             {nda.signedFileName
                               ? `Déposé : ${nda.signedFileName} — empreinte ${nda.documentSha256.slice(0, 16)}…`
                               : "Aucun document déposé. Vous pouvez aussi déclarer une preuve conservée dans une archive externe."}
@@ -1128,14 +1140,14 @@ function StandexConsole() {
                           </Button>
                         </div>
                         <div>
-                          <Label className="text-xs">Référence de la preuve</Label>
+                          <Label className="t-caption">Référence de la preuve</Label>
                           <Input
                             value={nda.proofReference}
                             onChange={(e) => setNda({ ...nda, proofReference: e.target.value })}
                           />
                         </div>
                         <div>
-                          <Label className="text-xs">Date de signature</Label>
+                          <Label className="t-caption">Date de signature</Label>
                           <Input
                             type="date"
                             value={nda.signedAt}
@@ -1143,14 +1155,14 @@ function StandexConsole() {
                           />
                         </div>
                         <div>
-                          <Label className="text-xs">Partie 1</Label>
+                          <Label className="t-caption">Partie 1</Label>
                           <Input
                             value={nda.partyA}
                             onChange={(e) => setNda({ ...nda, partyA: e.target.value })}
                           />
                         </div>
                         <div>
-                          <Label className="text-xs">Partie 2</Label>
+                          <Label className="t-caption">Partie 2</Label>
                           <Input
                             value={nda.partyB}
                             onChange={(e) => setNda({ ...nda, partyB: e.target.value })}
@@ -1185,7 +1197,7 @@ function StandexConsole() {
               </Accordion>
 
               <Separator />
-              <p className="text-xs text-muted-foreground">
+              <p className="t-caption text-muted-foreground">
                 Signatures électroniques, catalogues distributeurs et registres d'entreprises ne
                 sont pas reliés : ces vérifications restent manuelles.
               </p>

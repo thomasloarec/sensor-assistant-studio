@@ -120,7 +120,10 @@ function TestBench() {
   }, []);
 
   return (
-    <div data-readable className="studio flex h-screen flex-col bg-background font-sans text-foreground">
+    <div
+      data-readable
+      className="studio flex h-screen flex-col bg-background font-sans text-foreground"
+    >
       <Header user={user} />
       {!isSupabaseConfigured ? (
         <NotConfigured />
@@ -151,7 +154,11 @@ function Header({ user }: { user: User | null }) {
       </div>
       <div className="studio-account">
         <LanguagePicker />
-        <Link to="/design" className="studio-internal" style={{ textDecoration: "underline" }}>
+        <Link
+          to="/design"
+          className="studio-internal min-h-11 items-center py-2"
+          style={{ textDecoration: "underline" }}
+        >
           {t("Concevoir une détection")}
         </Link>
         <span className="studio-internal">{t("Espace de test interne")}</span>
@@ -185,19 +192,19 @@ function CenterNote({ children }: { children: React.ReactNode }) {
 function NotConfigured() {
   return (
     <div className="flex flex-1 items-center justify-center p-8">
-      <div className="max-w-lg rounded-md border border-dashed border-border bg-card p-6">
-        <h2 className="font-mono text-xs uppercase tracking-widest text-warning">
+      <div className="max-w-lg notice notice-warning">
+        <h2 className="font-mono t-caption uppercase tracking-widest text-warning">
           {t("Backend non relié")}
         </h2>
         <p className="mt-2 text-sm text-muted-foreground">
           {t("Le banc pointe vers ton projet Supabase existant. Renseigne :")}
         </p>
-        <pre className="mt-3 overflow-x-auto rounded-sm bg-secondary p-3 font-mono text-xs">
+        <pre className="code-block mt-3">
           {t("VITE_SUPABASE_URL=https://xxxx.supabase.co")}
           {t("\n")}
           {t("VITE_SUPABASE_PUBLISHABLE_KEY=…")}
         </pre>
-        <p className="mt-3 text-xs text-muted-foreground">
+        <p className="mt-3 t-caption text-muted-foreground">
           {t("Le schéma V0.2 à appliquer côté Supabase est versionné dans")}
           {t(" ")}
           <span className="font-mono">{t("supabase/schema/schema_v0.2.sql")}</span>.
@@ -224,16 +231,13 @@ function SignIn() {
 
   return (
     <div className="flex flex-1 items-center justify-center p-8">
-      <form
-        onSubmit={submit}
-        className="w-full max-w-sm rounded-md border border-border bg-card p-6"
-      >
-        <h2 className="font-mono text-xs uppercase tracking-widest text-accent">
+      <form onSubmit={submit} className="panel-block-lg w-full max-w-sm">
+        <h2 className="font-mono t-caption uppercase tracking-widest text-accent">
           {t("Accès testeur Standex")}
         </h2>
         <div className="mt-4 space-y-3">
           <div className="space-y-1.5">
-            <Label htmlFor="email" className="font-mono text-xs">
+            <Label htmlFor="email" className="font-mono t-caption">
               {t("Email")}
             </Label>
             <Input
@@ -245,7 +249,7 @@ function SignIn() {
             />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="password" className="font-mono text-xs">
+            <Label htmlFor="password" className="font-mono t-caption">
               {t("Mot de passe")}
             </Label>
             <Input
@@ -257,7 +261,7 @@ function SignIn() {
             />
           </div>
         </div>
-        {error ? <p className="mt-3 text-xs text-destructive">{t(error)}</p> : null}
+        {error ? <p className="mt-3 t-caption text-destructive">{t(error)}</p> : null}
         <Button type="submit" className="mt-4 w-full" disabled={busy}>
           {t(busy ? "Connexion…" : "Se connecter")}
         </Button>
@@ -660,12 +664,12 @@ function Bench({ user }: { user: User }) {
         </Button>
       </div>
       {error ? (
-        <div className="shrink-0 border-b border-destructive/40 bg-destructive/10 px-5 py-2 font-mono text-xs text-destructive">
+        <div className="notice notice-danger mx-5 mb-2 shrink-0 font-mono t-caption text-destructive">
           {t(error)}
         </div>
       ) : null}
       {migration.checked && !migration.applied ? (
-        <div className="shrink-0 border-b border-border bg-secondary px-5 py-3 text-xs">
+        <div className="notice notice-warning mx-5 mb-2 shrink-0 t-caption">
           <p className="font-semibold text-primary">
             {t("Une mise à jour de la base est nécessaire pour comparer les deux assistants.")}
           </p>
@@ -697,14 +701,14 @@ function Bench({ user }: { user: User }) {
       <main className="studio-grid">
         {/* Sessions + scénarios */}
         <aside className="studio-sessions hidden min-h-0 flex-col lg:flex">
-          <div className="flex items-center justify-between border-b border-border px-3 py-2">
-            <h2 className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
+          <div className="flex items-center justify-between px-3 py-2 shadow-[inset_0_-1px_0_var(--hairline)]">
+            <h2 className="font-mono t-caption uppercase tracking-widest text-muted-foreground">
               {t("Sessions")}
             </h2>
             <Button
               size="sm"
               variant="ghost"
-              className="h-7 font-mono text-xs"
+              className="min-h-11 font-mono t-caption"
               onClick={newSession}
             >
               {t("+ Nouvelle")}
@@ -713,13 +717,13 @@ function Bench({ user }: { user: User }) {
           <ScrollArea className="min-h-0 flex-1">
             <div className="p-2">
               {sessions.length === 0 ? (
-                <p className="p-2 text-xs text-muted-foreground">{t("Aucune session.")}</p>
+                <p className="p-2 t-caption text-muted-foreground">{t("Aucune session.")}</p>
               ) : (
                 sessions.map((s) => (
                   <button
                     key={s.id}
                     onClick={() => setActiveId(s.id)}
-                    className={`mb-1 block w-full rounded-sm px-2 py-1.5 text-left font-mono text-xs transition-colors ${
+                    className={`mb-1 block min-h-11 w-full rounded-[var(--r-sm)] px-2 py-2 text-left font-mono t-caption transition-colors duration-[var(--d-fast)] ease-[var(--ease-out)] ${
                       s.id === activeId
                         ? "bg-secondary text-foreground"
                         : "text-muted-foreground hover:bg-secondary/60"
@@ -728,7 +732,7 @@ function Bench({ user }: { user: User }) {
                     <div className="truncate">
                       {s.consent_notes ?? s.prospect_company ?? s.id.slice(0, 8)}
                     </div>
-                    <div className="text-[10px] opacity-70">
+                    <div className="t-label opacity-70">
                       {t(s.status)} · {t(new Date(s.created_at).toLocaleDateString(localeTag()))}
                     </div>
                   </button>
@@ -738,14 +742,14 @@ function Bench({ user }: { user: User }) {
             <details className="studio-scenario-list">
               <summary>{t("Bibliothèque de scénarios")}</summary>
               <div className="p-2">
-                <h3 className="px-2 py-1 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+                <h3 className="px-2 py-1 font-mono t-label uppercase tracking-widest text-muted-foreground">
                   {t("Scénarios actifs")}
                 </h3>
                 {scenarios.map((sc) => (
                   <button
                     key={sc.id}
                     onClick={() => selectScenario(sc.id)}
-                    className={`mb-1 block w-full rounded-sm px-2 py-1.5 text-left font-mono text-[11px] transition-colors hover:bg-secondary/60 ${
+                    className={`mb-1 block min-h-11 w-full rounded-[var(--r-sm)] px-2 py-2 text-left font-mono t-caption transition-colors duration-[var(--d-fast)] ease-[var(--ease-out)] hover:bg-secondary/60 ${
                       sc.id === scenarioId
                         ? "bg-secondary text-foreground"
                         : "text-muted-foreground"
@@ -756,7 +760,7 @@ function Bench({ user }: { user: User }) {
                   </button>
                 ))}
                 {scenarios.length === 0 ? (
-                  <p className="px-2 text-xs text-muted-foreground">
+                  <p className="px-2 t-caption text-muted-foreground">
                     {t("Aucun scénario chargé.")}
                   </p>
                 ) : null}
@@ -767,12 +771,12 @@ function Bench({ user }: { user: User }) {
 
         {/* Conversation */}
         <section className="studio-conversation studio-card flex min-h-0 min-w-0 flex-col overflow-hidden">
-          <div className="flex items-center justify-between border-b border-border px-4 py-2">
-            <h2 className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
+          <div className="flex items-center justify-between px-4 py-2 shadow-[inset_0_-1px_0_var(--hairline)]">
+            <h2 className="font-mono t-caption uppercase tracking-widest text-muted-foreground">
               <MessageSquare size={16} />
               {t("Conversation")}
             </h2>
-            <span className="font-mono text-[10px] text-muted-foreground">
+            <span className="font-mono t-label text-muted-foreground">
               {t(activeSession ? `${messages.length} tour(s)` : "aucune session")}
             </span>
           </div>
@@ -811,13 +815,13 @@ function Bench({ user }: { user: User }) {
                     key={m.id}
                     className={
                       m.role === "prospect"
-                        ? "max-w-[85%] self-end rounded-md rounded-br-sm bg-secondary px-3 py-2"
+                        ? "max-w-[85%] self-end rounded-[var(--r-sm)] rounded-br-[var(--r-xs)] bg-[var(--surface-tint)] px-3 py-2"
                         : m.role === "assistant"
-                          ? "max-w-[85%] self-start rounded-md rounded-bl-sm border border-border bg-card px-3 py-2"
-                          : "w-full rounded-md border border-dashed border-border px-3 py-2"
+                          ? "max-w-[85%] self-start rounded-[var(--r-sm)] rounded-bl-[var(--r-xs)] bg-[var(--surface)] px-3 py-2 shadow-[var(--e-1)]"
+                          : "w-full rounded-[var(--r-sm)] bg-[var(--surface-sunken)] px-3 py-2"
                     }
                   >
-                    <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+                    <div className="font-mono t-label uppercase tracking-widest text-muted-foreground">
                       #{t(m.turn_index)} · {t(m.role)}
                     </div>
                     {m.role === "internal" && parseWorkshopNote(m.content) ? (
@@ -826,7 +830,7 @@ function Bench({ user }: { user: User }) {
                           <Magnet size={16} />
                           {t("Montage magnétique joint au dossier")}
                         </summary>
-                        <p className="mt-2 text-xs whitespace-pre-wrap">
+                        <p className="mt-2 t-caption whitespace-pre-wrap">
                           {t(displayWorkshopMessage(m.content))}
                         </p>
                       </details>
@@ -840,7 +844,7 @@ function Bench({ user }: { user: User }) {
               )}
             </div>
           </ScrollArea>
-          <div className="shrink-0 border-t border-border p-3">
+          <div className="shrink-0 p-3 shadow-[inset_0_1px_0_var(--hairline)]">
             <Textarea
               value={draft}
               onChange={(e) => setDraft(e.target.value)}
@@ -852,7 +856,7 @@ function Bench({ user }: { user: User }) {
               }}
               disabled={!activeSession}
               placeholder={t("Décrivez votre application… (Entrée pour envoyer)")}
-              className="min-h-20 resize-none bg-card font-mono text-sm"
+              className="min-h-20 resize-none bg-[var(--surface-sunken)] font-mono text-sm"
             />
             <div className="mt-2 flex items-center justify-end gap-2">
               <Button
@@ -877,7 +881,7 @@ function Bench({ user }: { user: User }) {
         {/* Inspecteur */}
         <section className="studio-inspector studio-card flex min-h-0 min-w-0 flex-col overflow-hidden">
           <Tabs defaultValue="dossier" className="flex min-h-0 flex-1 flex-col gap-0">
-            <TabsList className="h-auto w-full flex-wrap justify-start rounded-none border-b border-border bg-transparent p-0">
+            <TabsList className="h-auto w-full flex-wrap justify-start">
               {(
                 [
                   { v: "dossier", label: "Dossier" },
@@ -886,11 +890,7 @@ function Bench({ user }: { user: User }) {
                   { v: "revue", label: "Revue" },
                 ] as const
               ).map(({ v, label }) => (
-                <TabsTrigger
-                  key={v}
-                  value={v}
-                  className="rounded-none border-b-2 border-transparent px-4 py-2.5 font-mono text-xs data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:shadow-none"
-                >
+                <TabsTrigger key={v} value={v} className="px-4 py-2.5 font-mono t-caption">
                   {t(label)}
                 </TabsTrigger>
               ))}
@@ -903,12 +903,12 @@ function Bench({ user }: { user: User }) {
                     {!lastOutput ? (
                       <Empty>{t("Aucune sortie client enregistrée pour cette session.")}</Empty>
                     ) : (
-                      <div className="rounded-md border border-border bg-card p-4">
-                        <Badge className="font-mono text-[10px]">{t(lastOutput.output_type)}</Badge>
+                      <div className="panel-block">
+                        <Badge className="font-mono t-label">{t(lastOutput.output_type)}</Badge>
                         <p className="mt-3 text-sm whitespace-pre-wrap">
                           {t(lastOutput.customer_summary)}
                         </p>
-                        <dl className="mt-4 grid grid-cols-2 gap-2 font-mono text-xs">
+                        <dl className="mt-4 grid grid-cols-2 gap-2 font-mono t-caption">
                           <Field k={t("Famille")} v={lastOutput.suggested_product_family} />
                           <Field k={t("Référence")} v={lastOutput.suggested_reference} />
                           <Field
@@ -920,7 +920,7 @@ function Bench({ user }: { user: User }) {
                             v={lastOutput.distributor_path_allowed ? "autorisée" : "bloquée"}
                           />
                         </dl>
-                        <p className="mt-4 border-t border-border pt-3 text-xs text-muted-foreground">
+                        <p className="mt-4 border-t border-border pt-3 t-caption text-muted-foreground">
                           {t(lastOutput.callback_text)}
                         </p>
                       </div>
@@ -935,8 +935,8 @@ function Bench({ user }: { user: User }) {
                           {!lastTrace ? (
                             <Empty>{t("Aucune trace interne pour cette session.")}</Empty>
                           ) : (
-                            <div className="rounded-md border border-border bg-card p-4">
-                              <dl className="grid grid-cols-2 gap-2 font-mono text-xs">
+                            <div className="panel-block">
+                              <dl className="grid grid-cols-2 gap-2 font-mono t-caption">
                                 <Field k={t("Application")} v={lastTrace.understood_application} />
                                 <Field k={t("Cible détection")} v={lastTrace.detection_target} />
                                 <Field k={t("Géométrie")} v={lastTrace.mounting_geometry} />
@@ -978,8 +978,8 @@ function Bench({ user }: { user: User }) {
                           {!activeSession ? (
                             <Empty>{t("Aucune session sélectionnée.")}</Empty>
                           ) : (
-                            <div className="rounded-md border border-border bg-card p-4">
-                              <dl className="grid grid-cols-2 gap-2 font-mono text-xs">
+                            <div className="panel-block">
+                              <dl className="grid grid-cols-2 gap-2 font-mono t-caption">
                                 <Field k={t("Nom")} v={activeSession.prospect_name} />
                                 <Field
                                   k={t("Société")}
@@ -1001,7 +1001,7 @@ function Bench({ user }: { user: User }) {
                                 <Field k={t("Rappel")} v={activeSession.callback_commitment} />
                               </dl>
                               {activeSession.consent_notes ? (
-                                <p className="mt-3 border-t border-border pt-3 text-xs text-muted-foreground">
+                                <p className="mt-3 border-t border-border pt-3 t-caption text-muted-foreground">
                                   {t(activeSession.consent_notes)}
                                 </p>
                               ) : null}
@@ -1068,7 +1068,7 @@ function Bench({ user }: { user: User }) {
               <TabsContent value="revue" className="m-0 h-full">
                 <ScrollArea className="h-full">
                   <div className="space-y-3 p-4">
-                    <div className="rounded-md border border-border bg-card p-3">
+                    <div className="panel-block">
                       <ReviewPackButton
                         rows={batch}
                         tester={user.email ?? "—"}
@@ -1088,9 +1088,9 @@ function Bench({ user }: { user: User }) {
                       <Empty>{t("Aucune revue enregistrée.")}</Empty>
                     ) : (
                       reviews.map((r) => (
-                        <div key={r.id} className="rounded-md border border-border bg-card p-3">
-                          <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-                            <Badge variant="outline" className="font-mono text-[10px]">
+                        <div key={r.id} className="panel-block">
+                          <div className="flex items-center gap-2 font-mono t-label uppercase tracking-widest text-muted-foreground">
+                            <Badge variant="outline" className="font-mono t-label">
                               {t(r.verdict)}
                             </Badge>
                             <span>{t(r.reviewer_role)}</span>
@@ -1098,7 +1098,7 @@ function Bench({ user }: { user: User }) {
                           </div>
                           {r.notes ? <p className="mt-2 text-sm">{t(r.notes)}</p> : null}
                           {r.corrected_output_type ? (
-                            <p className="mt-2 font-mono text-xs text-accent">
+                            <p className="mt-2 font-mono t-caption text-accent">
                               → {t(r.corrected_output_type)}
                             </p>
                           ) : null}
@@ -1189,18 +1189,18 @@ function DossierPanel({
         />
       </div>
       <div className="flex flex-wrap items-center gap-2">
-        <Badge variant="outline" className="font-mono text-[10px]">
+        <Badge variant="outline" className="font-mono t-label">
           {t(dossier.outputType ?? "sortie —")}
         </Badge>
-        <Badge variant="outline" className="font-mono text-[10px]">
+        <Badge variant="outline" className="font-mono t-label">
           {t("confiance produit :")}
           {t(dossier.productConfidence ?? "—")}
         </Badge>
-        <Badge variant="outline" className="font-mono text-[10px]">
+        <Badge variant="outline" className="font-mono t-label">
           {t("confiance routage :")}
           {t(dossier.routingConfidence ?? "—")}
         </Badge>
-        <Badge variant="outline" className="font-mono text-[10px]">
+        <Badge variant="outline" className="font-mono t-label">
           {t(dossier.fields.filter((f) => f.value).length)}
           {t("/24 champs")}
         </Badge>
@@ -1233,18 +1233,18 @@ function DossierPanel({
       </div>
 
       {dossier.workshopSummary && (
-        <details className="studio-montage-note rounded-md border border-border bg-card p-4">
+        <details className="studio-montage-note panel-block">
           <summary className="cursor-pointer text-sm font-semibold">
             {t("Montage exploré dans l'atelier magnétique")}
           </summary>
-          <p className="mt-3 whitespace-pre-wrap text-xs leading-relaxed">
+          <p className="mt-3 whitespace-pre-wrap t-caption leading-relaxed">
             {t(dossier.workshopSummary)}
           </p>
         </details>
       )}
       {(Object.keys(SECTION_LABELS) as DossierSection[]).map((section) => (
-        <div key={section} className="rounded-md border border-border bg-card p-4">
-          <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+        <div key={section} className="panel-block">
+          <p className="font-mono t-label uppercase tracking-widest text-muted-foreground">
             {t(SECTION_LABELS[section])}
           </p>
           <div className="mt-3 space-y-2">
@@ -1253,11 +1253,11 @@ function DossierPanel({
               .map((f) => (
                 <div
                   key={f.id}
-                  className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] gap-3 border-b border-border/50 pb-2 font-mono text-xs last:border-0 last:pb-0"
+                  className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] gap-3 border-b border-border/50 pb-2 font-mono t-caption last:border-0 last:pb-0"
                 >
                   <div className="min-w-0">
                     <p className="break-words text-muted-foreground">{t(f.labelFr)}</p>
-                    <span className="text-[10px] uppercase tracking-widest text-muted-foreground/70">
+                    <span className="t-label uppercase tracking-widest text-muted-foreground/70">
                       {t(f.importance)}
                     </span>
                   </div>
@@ -1274,7 +1274,7 @@ function DossierPanel({
                       </p>
                     )}
                     {f.source ? (
-                      <span className="text-[10px] uppercase tracking-widest text-accent">
+                      <span className="t-label uppercase tracking-widest text-accent">
                         {t("source :")}
                         {t(f.source)}
                       </span>
@@ -1286,16 +1286,16 @@ function DossierPanel({
         </div>
       ))}
 
-      <div className="rounded-md border border-border bg-card p-4">
-        <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+      <div className="panel-block">
+        <p className="font-mono t-label uppercase tracking-widest text-muted-foreground">
           {t("Champs manquants prioritaires")}
         </p>
         {critical.length === 0 ? (
-          <p className="mt-2 text-xs text-muted-foreground">
+          <p className="mt-2 t-caption text-muted-foreground">
             {t("Aucun champ critique manquant.")}
           </p>
         ) : (
-          <ul className="mt-2 space-y-1 font-mono text-xs">
+          <ul className="mt-2 space-y-1 font-mono t-caption">
             {critical.map((f) => (
               <li key={f.id} className="break-words">
                 · {t(f.labelFr)}
@@ -1305,14 +1305,16 @@ function DossierPanel({
         )}
       </div>
 
-      <div className="rounded-md border border-border bg-card p-4">
-        <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+      <div className="panel-block">
+        <p className="font-mono t-label uppercase tracking-widest text-muted-foreground">
           {t("Questions conseillées (testeur)")}
         </p>
         {dossier.suggestedQuestions.length === 0 ? (
-          <p className="mt-2 text-xs text-muted-foreground">{t("Aucune question prioritaire.")}</p>
+          <p className="mt-2 t-caption text-muted-foreground">
+            {t("Aucune question prioritaire.")}
+          </p>
         ) : (
-          <ol className="mt-2 space-y-1 text-xs">
+          <ol className="mt-2 space-y-1 t-caption">
             {dossier.suggestedQuestions.map((q, i) => (
               <li key={q} className="break-words">
                 {t(i + 1)}. {t(q)}
@@ -1362,27 +1364,27 @@ function ReviewForm({
   };
 
   return (
-    <div className="rounded-md border border-border bg-card p-3">
+    <div className="panel-block">
       <div className="flex gap-2">
         <Select value={verdict} onValueChange={(v) => setVerdict(v as Verdict)}>
-          <SelectTrigger className="h-8 font-mono text-xs">
+          <SelectTrigger className="min-h-11 font-mono t-caption">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
             {VERDICTS.map((v) => (
-              <SelectItem key={v} value={v} className="font-mono text-xs">
+              <SelectItem key={v} value={v} className="font-mono t-caption">
                 {t(v)}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
         <Select value={role} onValueChange={(v) => setRole(v as ReviewerRole)}>
-          <SelectTrigger className="h-8 font-mono text-xs">
+          <SelectTrigger className="min-h-11 font-mono t-caption">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
             {REVIEWER_ROLES.map((v) => (
-              <SelectItem key={v} value={v} className="font-mono text-xs">
+              <SelectItem key={v} value={v} className="font-mono t-caption">
                 {t(v)}
               </SelectItem>
             ))}
@@ -1393,7 +1395,7 @@ function ReviewForm({
         value={notes}
         onChange={(e) => setNotes(e.target.value)}
         placeholder={t("Notes de revue…")}
-        className="mt-2 min-h-16 resize-none font-mono text-xs"
+        className="mt-2 min-h-16 resize-none font-mono t-caption"
       />
       <Button size="sm" className="mt-2 w-full" disabled={busy} onClick={() => void submit()}>
         {t("Enregistrer la revue")}
@@ -1405,7 +1407,7 @@ function ReviewForm({
 function Field({ k, v }: { k: string; v: string | null | undefined }) {
   return (
     <div>
-      <dt className="text-[10px] uppercase tracking-widest text-muted-foreground">{t(k)}</dt>
+      <dt className="t-label uppercase tracking-widest text-muted-foreground">{t(k)}</dt>
       <dd className="truncate">{t(v ?? "—")}</dd>
     </div>
   );
@@ -1415,12 +1417,12 @@ function TagList({ label, items }: { label: string; items: string[] }) {
   if (!items?.length) return null;
   return (
     <div className="mt-3">
-      <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+      <p className="font-mono t-label uppercase tracking-widest text-muted-foreground">
         {t(label)}
       </p>
       <div className="mt-1 flex flex-wrap gap-1">
         {items.map((i) => (
-          <Badge key={i} variant="outline" className="font-mono text-[10px]">
+          <Badge key={i} variant="outline" className="font-mono t-label">
             {t(i)}
           </Badge>
         ))}
@@ -1432,10 +1434,10 @@ function TagList({ label, items }: { label: string; items: string[] }) {
 function JsonBlock({ label, value }: { label: string; value: unknown }) {
   return (
     <div className="mt-3">
-      <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+      <p className="font-mono t-label uppercase tracking-widest text-muted-foreground">
         {t(label)}
       </p>
-      <pre className="mt-1 whitespace-pre-wrap break-words rounded-sm bg-secondary p-2 font-mono text-[11px]">
+      <pre className="code-block mt-1 whitespace-pre-wrap break-words">
         {t(JSON.stringify(value ?? null, null, 2))}
       </pre>
     </div>
@@ -1443,11 +1445,7 @@ function JsonBlock({ label, value }: { label: string; value: unknown }) {
 }
 
 function Empty({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="rounded-md border border-dashed border-border bg-card/50 p-6 text-sm text-muted-foreground">
-      {t(children)}
-    </div>
-  );
+  return <div className="studio-empty text-sm text-muted-foreground">{t(children)}</div>;
 }
 
 function ScenarioPanel({
@@ -1467,21 +1465,26 @@ function ScenarioPanel({
   const mustNotInclude = splitList(scenario?.must_not_include ?? null);
 
   return (
-    <div className="w-full shrink-0 overflow-hidden border-b border-border bg-card/40 px-4 py-3">
+    <div className="w-full shrink-0 overflow-hidden bg-[var(--surface-sunken)] px-4 py-3 shadow-[inset_0_-1px_0_var(--hairline)]">
       <div className="flex w-full min-w-0 items-center gap-2">
         <Select value={scenario?.id ?? ""} onValueChange={onSelect}>
-          <SelectTrigger className="h-8 min-w-0 flex-1 font-mono text-xs">
+          <SelectTrigger className="min-h-11 min-w-0 flex-1 font-mono t-caption">
             <SelectValue placeholder={t(`Scénario de test (${scenarios.length})`)} />
           </SelectTrigger>
           <SelectContent className="max-h-80">
             {scenarios.map((sc) => (
-              <SelectItem key={sc.id} value={sc.id} className="font-mono text-xs">
+              <SelectItem key={sc.id} value={sc.id} className="font-mono t-caption">
                 {t(sc.priority)} · {t(sc.scenario_id)} — {t(sc.user_prompt_fr.slice(0, 60))}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
-        <Button size="sm" disabled={!scenario || running} onClick={onRun} className="h-8 shrink-0">
+        <Button
+          size="sm"
+          disabled={!scenario || running}
+          onClick={onRun}
+          className="min-h-11 shrink-0"
+        >
           {t(running ? "Exécution…" : "Lancer la réponse")}
         </Button>
       </div>
@@ -1489,17 +1492,17 @@ function ScenarioPanel({
       {scenario ? (
         <div className="mt-3 space-y-2">
           <div className="flex flex-wrap items-center gap-1.5">
-            <Badge className="font-mono text-[10px]">{t(scenario.priority)}</Badge>
-            <Badge variant="outline" className="font-mono text-[10px]">
+            <Badge className="font-mono t-label">{t(scenario.priority)}</Badge>
+            <Badge variant="outline" className="font-mono t-label">
               {t("attendu ·")}
               {t(scenario.expected_output_type)}
             </Badge>
-            <Badge variant="outline" className="font-mono text-[10px] text-accent">
+            <Badge variant="outline" className="font-mono t-label text-accent">
               {t("enregistré ·")}
               {t(safeOutputType(scenario.expected_output_type))}
             </Badge>
           </div>
-          <p className="text-xs text-muted-foreground">{t(scenario.expected_behavior)}</p>
+          <p className="t-caption text-muted-foreground">{t(scenario.expected_behavior)}</p>
           <div className="grid gap-2 sm:grid-cols-2">
             <ContractList
               label={t("Éléments obligatoires")}
@@ -1515,7 +1518,7 @@ function ScenarioPanel({
           <TagList label={t("Garde-fous attendus")} items={scenario.trace_flags ?? []} />
         </div>
       ) : (
-        <p className="mt-2 font-mono text-[11px] text-muted-foreground">
+        <p className="mt-2 font-mono t-caption text-muted-foreground">
           {t("Sélectionne un scénario pour préremplir la conversation.")}
         </p>
       )}
@@ -1525,16 +1528,16 @@ function ScenarioPanel({
 
 function ContractList({ label, items, tone }: { label: string; items: string[]; tone: string }) {
   return (
-    <div className="rounded-sm border border-border bg-card p-2">
-      <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+    <div className="panel-block">
+      <p className="font-mono t-label uppercase tracking-widest text-muted-foreground">
         {t(label)}
       </p>
       {items.length === 0 ? (
-        <p className="mt-1 font-mono text-[11px] text-muted-foreground">—</p>
+        <p className="mt-1 font-mono t-caption text-muted-foreground">—</p>
       ) : (
         <ul className="mt-1 space-y-0.5">
           {items.map((i) => (
-            <li key={i} className={`font-mono text-[11px] ${tone}`}>
+            <li key={i} className={`font-mono t-caption ${tone}`}>
               · {t(i)}
             </li>
           ))}
@@ -1587,7 +1590,7 @@ function ReviewPackButton({
       >
         {t("Exporter pack de revue qualitative")}
       </Button>
-      <p className="font-mono text-[11px] text-muted-foreground">
+      <p className="font-mono t-caption text-muted-foreground">
         {t(
           reviewRows.length === 0
             ? "Lancez un lot dans l'onglet Synthèse pour activer l'export."
@@ -1648,10 +1651,10 @@ function BatchPanel({
     <div className="space-y-3 p-4">
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div className="min-w-0">
-          <h3 className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
+          <h3 className="font-mono t-caption uppercase tracking-widest text-muted-foreground">
             {t("Synthèse de test")}
           </h3>
-          <p className="mt-1 text-xs text-muted-foreground">
+          <p className="mt-1 t-caption text-muted-foreground">
             {t(
               "Session, message prospect, réponse assistant, sortie, trace interne et revue sont persistés pour chaque scénario.",
             )}
@@ -1698,7 +1701,7 @@ function BatchPanel({
           {t(copied === "pack" ? "Copié" : "Copier le pack de revue")}
         </Button>
       </div>
-      <p className="font-mono text-[11px] text-muted-foreground">
+      <p className="font-mono t-caption text-muted-foreground">
         {t("Pack de revue :")}
         {t(reviewRows.length)}/{t(REVIEW_PACK_SCENARIOS.length)}
         {t("scénarios de relecture disponibles dans ce lot.")}
@@ -1709,11 +1712,11 @@ function BatchPanel({
       ) : (
         <>
           <div className="flex flex-wrap items-center gap-3">
-            <p className="font-mono text-xs text-accent">
+            <p className="font-mono t-caption text-accent">
               {t(ok)}/{t(rows.length)} {t("OK ·")} {t(rows.length - ok)}
               {t("à corriger")}
             </p>
-            <p className="font-mono text-[11px] text-muted-foreground">{t(readiness)}</p>
+            <p className="font-mono t-caption text-muted-foreground">{t(readiness)}</p>
           </div>
 
           <div className="flex flex-wrap gap-2">
@@ -1748,8 +1751,8 @@ function BatchPanel({
             </Button>
           </div>
 
-          <div className="overflow-x-auto rounded-md border border-border">
-            <table className="w-full border-collapse font-mono text-[11px]">
+          <div className="surface overflow-x-auto">
+            <table className="w-full border-collapse font-mono t-caption">
               <thead>
                 <tr className="border-b border-border bg-secondary/50 text-left">
                   <th className="px-2 py-1.5">{t("Scénario")}</th>
@@ -1817,13 +1820,13 @@ function BatchPanel({
                     </td>
                     <td className="px-2 py-1.5">
                       {r.missing ? (
-                        <Badge variant="outline" className="font-mono text-[10px]">
+                        <Badge variant="outline" className="font-mono t-label">
                           {t("absent")}
                         </Badge>
                       ) : (
                         <Badge
                           variant="outline"
-                          className={`font-mono text-[10px] ${
+                          className={`font-mono t-label ${
                             r.evaluation?.verdict === "OK" ? "text-success" : "text-destructive"
                           }`}
                         >
@@ -1840,14 +1843,14 @@ function BatchPanel({
           {rows
             .filter((r) => r.missing || (r.evaluation && r.evaluation.verdict !== "OK"))
             .map((r) => (
-              <div key={`f-${r.code}`} className="rounded-md border border-border bg-card p-3">
-                <p className="font-mono text-[11px] text-destructive">{t(r.code)}</p>
+              <div key={`f-${r.code}`} className="panel-block">
+                <p className="font-mono t-caption text-destructive">{t(r.code)}</p>
                 {r.missing ? (
-                  <p className="mt-1 font-mono text-[11px] text-muted-foreground">
+                  <p className="mt-1 font-mono t-caption text-muted-foreground">
                     {t("· Scénario introuvable dans sensor_test_scenarios")}
                   </p>
                 ) : (
-                  <ul className="mt-1 space-y-0.5 font-mono text-[11px] text-muted-foreground">
+                  <ul className="mt-1 space-y-0.5 font-mono t-caption text-muted-foreground">
                     <li>
                       {t("· Éléments obligatoires absents :")}
                       {t(" ")}
@@ -1887,14 +1890,14 @@ function BatchPanel({
               </div>
             ))}
 
-          <div className="rounded-md border border-border bg-card p-3">
-            <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+          <div className="panel-block">
+            <p className="font-mono t-label uppercase tracking-widest text-muted-foreground">
               {t("Export Markdown copiable")}
             </p>
             <Textarea
               readOnly
               value={markdown}
-              className="mt-2 h-48 font-mono text-[11px]"
+              className="mt-2 h-48 font-mono t-caption"
               onFocus={(e) => e.currentTarget.select()}
             />
           </div>

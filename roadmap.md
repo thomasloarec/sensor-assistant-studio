@@ -153,3 +153,11 @@
 - [x] Moderniser les contrôles, l’état de contact et le catalogue sans toucher aux calculs.
 - [x] Éliminer les couleurs d’interface codées en dur dans l’atelier.
 - [x] Vérifier tests, types, build et parcours atelier à 1440/390 px.
+
+## Refonte visuelle — lot F
+
+- [x] Migrer le banc interne sur le socle visuel commun.
+- [x] Harmoniser les écrans design et R&D sans modifier leur structure.
+- [x] Éliminer les anciens motifs visuels résiduels dans l’application.
+- [x] Vérifier clavier, mouvement réduit, contrastes et trois largeurs.
+- [x] Actualiser le langage de design et exécuter tests, types et build.
