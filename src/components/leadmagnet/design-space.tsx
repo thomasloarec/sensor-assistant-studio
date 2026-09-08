@@ -2776,9 +2776,16 @@ export function DesignSpace({
       </main>
 
       {/* Panneaux contextuels : le projet reste derrière, la saisie est conservée. */}
+      {/* L'atelier occupe tout l'écran : il reste MONTÉ en permanence, donc le
+          retour au projet ne perd ni réglages, ni caméra, ni fichier importé,
+          et n'applique aucun montage non validé (« Utiliser ce montage » reste
+          la seule action qui reprend le montage dans le dossier). */}
       <WorkspacePanel
         open={panel === "atelier" && workshopMounted}
         keepMounted={workshopMounted}
+        fullscreen
+        backLabel="Retour au projet"
+        onBack={() => setPanel(null)}
         onOpenChange={(o) => setPanel(o ? "atelier" : null)}
         title="Atelier 3D"
         description="Vos réglages restent en mémoire même si vous refermez ce panneau. Enregistrer reste une action explicite."
