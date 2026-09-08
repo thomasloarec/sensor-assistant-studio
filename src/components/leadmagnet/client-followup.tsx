@@ -432,10 +432,12 @@ export function ClientFollowUp({
                     onClick={() =>
                       onReopenSnapshot({
                         dossierId: current.dossier.id,
-                        revision: r.revision,
+                        sourceRevision: r.revision,
+                        currentRevision: current.dossier.current_revision,
                         snapshot: r.snapshot,
                       })
                     }
+
                   >
                     Version {r.revision}
                   </Button>
