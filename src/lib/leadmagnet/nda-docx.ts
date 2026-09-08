@@ -115,9 +115,43 @@ export const VARIABLE_FIELDS: readonly VariableField[] = [
     label: "Lieu et date de signature du client",
     paragraph: 86,
     expectedParagraph: "Place/date:Stamp/Signature:   ____________________",
+    // Un espace après le libellé, un espace de séparation après la valeur.
     span: { prefix: "Place/date:", current: "" },
+    pad: { before: " ", after: " " },
+    tidyTabs: true,
   },
 ];
+
+/* ------------------------------------------------------------------ */
+/* Validation des valeurs saisies                                      */
+/* ------------------------------------------------------------------ */
+
+const MAX_FIELD_LENGTH = 200;
+/** Caractères interdits en XML 1.0 (NUL et autres commandes), plus les sauts de ligne. */
+// eslint-disable-next-line no-control-regex
+const FORBIDDEN_CHARS = /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F-\u009F\uFFFE\uFFFF]/;
+const LINE_BREAKS = /[\r\n\t]/;
+
+/** Renvoie la liste des problèmes ; vide si toutes les valeurs sont acceptables. */
+export function validateNdaValues(values: NdaVariableValues): string[] {
+  const problems: string[] = [];
+  for (const field of VARIABLE_FIELDS) {
+    const raw = values[field.key];
+    if (typeof raw !== "string") {
+      problems.push(`${field.label} : valeur illisible.`);
+      continue;
+    }
+    const value = raw.trim();
+    if (!value) continue;
+    if (value.length > MAX_FIELD_LENGTH)
+      problems.push(`${field.label} : ${value.length} caractères, maximum ${MAX_FIELD_LENGTH}.`);
+    if (FORBIDDEN_CHARS.test(value))
+      problems.push(`${field.label} : contient un caractère que le document ne peut pas afficher.`);
+    if (LINE_BREAKS.test(value))
+      problems.push(`${field.label} : doit tenir sur une seule ligne.`);
+  }
+  return problems;
+}
 
 /* ------------------------------------------------------------------ */
 /* Lecture XML minimale, sans DOM : fonctionne au navigateur et en test */
