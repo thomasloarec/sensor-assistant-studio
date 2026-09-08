@@ -1,6 +1,7 @@
 /** Soumission : instantané immuable, statut réel uniquement après succès backend. */
 import { dossierHash, toClientDto, type ClientDossierDto, type DesignDossier } from "./dossier";
-import type { ConsentRecord } from "./privacy";
+import type { ConsentBinding, ConsentRecord } from "./privacy";
+import { INITIAL_PRIVACY, hasBoundConsent } from "./privacy";
 import type { NdaState } from "./nda";
 import { ndaAllowsConfidentialTransfer } from "./nda";
 import { estimateCableLength, uncoveredMotionStates } from "./cabling";
