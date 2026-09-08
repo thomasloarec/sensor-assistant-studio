@@ -54,7 +54,6 @@ function HomeRoute() {
    * UNIQUE monté ci-dessous. Il n'existe pas de second compte parallèle. */
   const [accountRequest, setAccountRequest] = useState(0);
 
-
   return (
     <div data-readable className="min-h-screen bg-background text-foreground">
       <main className={started ? "hidden" : undefined}>

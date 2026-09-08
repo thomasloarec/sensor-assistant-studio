@@ -211,13 +211,7 @@ function pointFields(label: string, value: Point | null, onChange: (p: Point | n
 /** Titre du projet : UN SEUL nom affiché, renommé par une action explicite.
  * Lecture par défaut, crayon pour renommer, Entrée valide, Échap annule, un
  * nom vide est refusé. Le dossier n'est modifié qu'à la validation. */
-function ProjectTitle({
-  title,
-  onRename,
-}: {
-  title: string;
-  onRename: (next: string) => void;
-}) {
+function ProjectTitle({ title, onRename }: { title: string; onRename: (next: string) => void }) {
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(title);
   const [error, setError] = useState<string | null>(null);
@@ -308,8 +302,6 @@ function ProjectTitle({
     </div>
   );
 }
-
-
 
 /** Questions du parcours guidé : une intention simple par écran, reliée à la
  * MÊME exigence du dossier que le mode détaillé (aucun second état). */
