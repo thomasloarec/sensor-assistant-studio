@@ -124,7 +124,11 @@ export function WorkspacePanel({
         onKeyDown={onKeyDown}
         className={
           open
-            ? "workspace-panel-shell fixed inset-y-0 right-0 z-50 flex w-full flex-col bg-background outline-none sm:max-w-3xl lg:max-w-4xl"
+            ? `workspace-panel-shell fixed z-50 flex flex-col bg-background outline-none ${
+                fullscreen
+                  ? "inset-0 w-full"
+                  : "inset-y-0 right-0 w-full sm:max-w-3xl lg:max-w-4xl"
+              }`
             : "hidden"
         }
       >
@@ -133,10 +137,11 @@ export function WorkspacePanel({
             <Button
               variant="ghost"
               className="min-h-11 text-base"
-              aria-label="Retour"
+              aria-label={backLabel ?? "Retour"}
               onClick={onBack}
             >
-              <ArrowLeft className="h-4 w-4" /> <span className="hidden sm:inline">Retour</span>
+              <ArrowLeft className="h-4 w-4" />{" "}
+              <span className="hidden sm:inline">{backLabel ?? "Retour"}</span>
             </Button>
           ) : null}
           <div className="min-w-0 flex-1">
