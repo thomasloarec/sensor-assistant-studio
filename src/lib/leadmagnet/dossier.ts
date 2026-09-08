@@ -1,6 +1,7 @@
 /** Lead Magnet — dossier vivant partagé entre conversation, atelier 3D et revue.
  * Logique métier pure : aucun accès réseau, aucun stockage, aucune UI ici.
  */
+import { isLocale, type Locale, t } from "@/lib/i18n/core";
 import type { WorkshopConfig } from "@/lib/standex/magnetic-workshop";
 import { EMPTY_CABLING, type CablingConfig } from "./cabling";
 import { DEFAULT_TERMINATION, type Termination } from "./connectors";
@@ -69,6 +70,12 @@ export interface DesignDossier {
   revision: number;
   storage: StorageMode;
   title: string;
+  /** Langue dans laquelle le projet a réellement démarré.
+   * Elle est capturée au démarrage effectif du projet, jamais au montage caché
+   * de l'espace, et n'est plus modifiée si l'utilisateur change la langue de
+   * l'interface ensuite. Les textes saisis restent dans leur langue d'origine.
+   */
+  sourceLocale: Locale;
   requirements: Requirement[];
   mounting: MountingChoice;
   envelope: EnvelopeMm;
@@ -116,14 +123,19 @@ const newId = (prefix: string) =>
     .toString(36)
     .slice(2, 8)}`;
 
-export function createDossier(now = new Date().toISOString()): DesignDossier {
+export function createDossier(
+  now = new Date().toISOString(),
+  sourceLocale: Locale = "fr",
+): DesignDossier {
   return {
     id: newId("dossier"),
     createdAt: now,
     updatedAt: now,
     revision: 1,
     storage: "memory",
-    title: "Nouveau projet d'exploration",
+    // Le titre par défaut est rédigé dans la langue de départ du projet.
+    title: t("Nouveau projet d'exploration", isLocale(sourceLocale) ? sourceLocale : "fr"),
+    sourceLocale: isLocale(sourceLocale) ? sourceLocale : "fr",
     requirements: REQUIREMENT_ORDER.map((key) => ({
       key,
       label: REQUIREMENT_LABELS[key]!,

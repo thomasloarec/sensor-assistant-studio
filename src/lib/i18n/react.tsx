@@ -10,7 +10,6 @@ export function LanguagePicker() {
   const locale = useLocale(),
     id = useId();
   useEffect(() => {
-    document.documentElement.lang = LANGUAGES.find((l) => l.id === locale)!.tag;
     document.title = t("Votre projet capteur · Standex Detect", locale);
     const changed = (e: StorageEvent) => {
       if (e.key === LOCALE_KEY && isLocale(e.newValue) && e.newValue !== getLocale())

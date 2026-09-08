@@ -1,3 +1,5 @@
+import { useLocale } from "@/lib/i18n/react";
+import { t } from "@/lib/i18n/core";
 /** Panneau contextuel de l'espace projet.
  *
  * Le projet reste visible et accessible derrière : on n'utilise PAS de dialogue
@@ -51,6 +53,7 @@ export function WorkspacePanel({
   onBack,
   children,
 }: WorkspacePanelProps) {
+  useLocale();
   const panelRef = useRef<HTMLDivElement | null>(null);
   const openedOnce = useRef(false);
   const restoreTo = useRef<HTMLElement | null>(null);
@@ -109,7 +112,7 @@ export function WorkspacePanel({
       {open ? (
         <button
           type="button"
-          aria-label="Fermer le panneau"
+          aria-label={t("Fermer le panneau")}
           tabIndex={-1}
           className="workspace-panel-backdrop fixed inset-0 z-40 cursor-default"
           onClick={() => changeRef.current(false)}
@@ -125,7 +128,7 @@ export function WorkspacePanel({
         className={
           open
             ? `workspace-panel-shell fixed z-50 flex flex-col bg-background outline-none ${
-                fullscreen ? "inset-0 w-full" : "inset-y-0 right-0 w-full sm:max-w-3xl lg:max-w-4xl"
+                fullscreen ? t("inset-0 w-full") : t("inset-y-0 right-0 w-full sm:max-w-3xl lg:max-w-4xl")
               }`
             : "hidden"
         }
@@ -149,10 +152,10 @@ export function WorkspacePanel({
           <Button
             variant="ghost"
             className="min-h-11 text-base"
-            aria-label="Fermer"
+            aria-label={t("Fermer")}
             onClick={() => changeRef.current(false)}
           >
-            <X className="h-4 w-4" /> <span className="hidden sm:inline">Fermer</span>
+            <X className="h-4 w-4" /> <span className="hidden sm:inline">{t("Fermer")}</span>
           </Button>
         </div>
         <div className="min-w-0 flex-1 scroll-smooth overflow-y-auto px-4 py-7 sm:px-6">

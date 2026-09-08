@@ -1,3 +1,5 @@
+import { useLocale } from "@/lib/i18n/react";
+import { t } from "@/lib/i18n/core";
 /** Suivi client réel : dossiers envoyés, retours Standex publiés, offres, échantillons.
  *
  * Tout vient des appels serveur : aucune réussite n'est simulée localement.
@@ -67,15 +69,15 @@ interface Props {
 }
 
 const routeLabel: Record<string, string> = {
-  distributors: "Distributeurs partenaires",
-  standex_direct: "Standex en direct, sous confirmation",
-  manual_review: "Revue manuelle Standex",
+  distributors: t("Distributeurs partenaires"),
+  standex_direct: t("Standex en direct, sous confirmation"),
+  manual_review: t("Revue manuelle Standex"),
 };
 
 const verdictLabel: Record<string, string> = {
-  validated: "Validé",
-  variant_proposed: "Variante proposée",
-  more_info: "Informations complémentaires demandées",
+  validated: t("Validé"),
+  variant_proposed: t("Variante proposée"),
+  more_info: t("Informations complémentaires demandées"),
 };
 
 export function ClientFollowUp({
@@ -87,6 +89,7 @@ export function ClientFollowUp({
   onApplyVariant,
   onOpenTransferredFile,
 }: Props) {
+  useLocale();
   const [list, setList] = useState<DossierListItem[]>([]);
   const [view, setView] = useState<DossierView | null>(null);
   const [message, setMessage] = useState<string | null>(null);
@@ -132,7 +135,7 @@ export function ClientFollowUp({
     return (
       <p className="t-caption">
         {backend?.message ??
-          "La liaison avec l'équipe Standex n'est pas encore active : rien n'a été envoyé."}
+          t("La liaison avec l'équipe Standex n'est pas encore active : rien n'a été envoyé.")}
       </p>
     );
 
@@ -144,12 +147,12 @@ export function ClientFollowUp({
     <div className="space-y-4">
       <div className="flex flex-wrap items-center gap-2">
         <Button size="sm" variant="outline" onClick={() => void reloadList()}>
-          Actualiser mes dossiers
+          {t("Actualiser mes dossiers")}
         </Button>
         {list.length === 0 ? (
           <div className="flex w-full flex-col items-center px-4 py-12 text-center">
             <FolderOpen className="mb-3 h-8 w-8 text-[var(--standex-blue-25)]" aria-hidden="true" />
-            <span className="t-title-s">Aucun dossier envoyé pour l'instant.</span>
+            <span className="t-title-s">{t("Aucun dossier envoyé pour l'instant.")}</span>
           </div>
         ) : null}
       </div>
@@ -185,7 +188,7 @@ export function ClientFollowUp({
                 setView(loaded);
               }}
             >
-              Ouvrir
+              {t("Ouvrir")}
             </Button>
             <span className="t-title-s">{d.title}</span>
             <Badge variant="outline" className="t-metric">
@@ -194,12 +197,12 @@ export function ClientFollowUp({
             <Badge variant="secondary">
               {d.nda_required
                 ? d.nda_status === "in_force"
-                  ? "Confidentialité en vigueur"
-                  : "Confidentialité en attente"
-                : "Sans accord de confidentialité"}
+                  ? t("Confidentialité en vigueur")
+                  : t("Confidentialité en attente")
+                : t("Sans accord de confidentialité")}
             </Badge>
             <span className="t-caption">
-              {d.published_reviews} retour(s) — {d.active_offers} offre(s) valable(s)
+              {d.published_reviews} {t("retour(s) —")} {d.active_offers} {t("offre(s) valable(s)")}
             </span>
             <span className="t-caption t-metric sm:ml-auto">{d.updated_at}</span>
           </li>
@@ -210,10 +213,10 @@ export function ClientFollowUp({
         <>
           <Separator />
           <section className="space-y-2">
-            <h4 className="font-medium">Retours Standex publiés</h4>
+            <h4 className="font-medium">{t("Retours Standex publiés")}</h4>
             {published.length === 0 ? (
               <p className="t-caption">
-                Votre version {current.dossier.current_revision} est en cours de revue.
+                {t("Votre version")} {current.dossier.current_revision} {t("est en cours de revue.")}
               </p>
             ) : (
               published.map((r) => (
@@ -221,17 +224,17 @@ export function ClientFollowUp({
                   <div className="flex flex-wrap items-center gap-2">
                     <Badge>{verdictLabel[r.verdict] ?? r.verdict}</Badge>
                     <span className="t-metric t-caption">version {r.revision}</span>
-                    {r.superseded ? <Badge variant="outline">remplacé</Badge> : null}
+                    {r.superseded ? <Badge variant="outline">{t("remplacé")}</Badge> : null}
                     {r.exact_part_number ? (
                       <Badge variant="secondary">
                         {r.exact_part_number} (
-                        {r.designation === "custom" ? "spécifique" : "standard"})
+                        {r.designation === "custom" ? t("spécifique") : "standard"})
                       </Badge>
                     ) : null}
                   </div>
                   {r.message ? <p className="mt-2 whitespace-pre-wrap">{r.message}</p> : null}
                   {r.conditions ? (
-                    <p className="t-caption mt-1">Conditions : {r.conditions}</p>
+                    <p className="t-caption mt-1">{t("Conditions :")} {r.conditions}</p>
                   ) : null}
                   {r.verdict === "variant_proposed" ? (
                     <div className="mt-2 space-y-1">
@@ -255,7 +258,7 @@ export function ClientFollowUp({
                           );
                           if (!reviewed) {
                             setMessage(
-                              "La version relue par Standex n'est pas disponible ici : rien n'a été repris.",
+                              t("La version relue par Standex n'est pas disponible ici : rien n'a été repris."),
                             );
                             return;
                           }
@@ -274,10 +277,10 @@ export function ClientFollowUp({
                             }
                             setMessage(
                               [
-                                "Variante reprise dans le contenu ouvert ici : la version envoyée reste intacte et rien n'est approuvé tant que vous ne renvoyez pas ce dossier.",
-                                "Modifié dans votre dossier : " + applied.applied.join(" ; "),
+                                t("Variante reprise dans le contenu ouvert ici : la version envoyée reste intacte et rien n'est approuvé tant que vous ne renvoyez pas ce dossier."),
+                                t("Modifié dans votre dossier :") + " " + applied.applied.join(" ; "),
                                 applied.notApplied.length
-                                  ? "À traiter vous-même : " + applied.notApplied.join(" ; ")
+                                  ? t("À traiter vous-même :") + " " + applied.notApplied.join(" ; ")
                                   : "",
                               ]
                                 .filter(Boolean)
@@ -290,10 +293,10 @@ export function ClientFollowUp({
                         }}
                       >
                         {r.variant_accepted_at
-                          ? "Variante reprise"
+                          ? t("Variante reprise")
                           : r.superseded
-                            ? "Retour remplacé par un plus récent"
-                            : "Reprendre cette variante"}
+                            ? t("Retour remplacé par un plus récent")
+                            : t("Reprendre cette variante")}
                       </Button>
                     </div>
                   ) : null}
@@ -303,11 +306,10 @@ export function ClientFollowUp({
           </section>
 
           <section className="space-y-2">
-            <h4 className="font-medium">Offres</h4>
+            <h4 className="font-medium">{t("Offres")}</h4>
             {current.offers.length === 0 ? (
               <p className="t-caption">
-                Aucune offre : un prix n'est établi qu'après un retour validé sur la version en
-                cours.
+                {t("Aucune offre : un prix n'est établi qu'après un retour validé sur la version en cours.")}
               </p>
             ) : (
               current.offers.map((o) => (
@@ -317,29 +319,28 @@ export function ClientFollowUp({
                 >
                   <div className="flex flex-wrap items-center gap-2">
                     <Badge variant={o.active ? "default" : "outline"}>
-                      {o.active ? "Valable" : o.voided ? "Périmée" : "Échue"}
+                      {o.active ? "Valable" : o.voided ? t("Périmée") : t("Échue")}
                     </Badge>
                     <span className="font-medium">{o.part_number}</span>
                     <span className="t-metric t-caption">
                       version {o.revision} —{" "}
-                      {o.designation === "custom" ? "spécifique" : "standard"}
+                      {o.designation === "custom" ? t("spécifique") : "standard"}
                     </span>
                   </div>
                   <ul className="t-metric mt-1 list-disc pl-5 t-caption">
-                    {(o.tiers ?? []).map((t, i) => (
+                    {(o.tiers ?? []).map((tier, i) => (
                       <li key={i}>
-                        {t.quantity} pièces : {t.unit_price} {o.currency}
+                        {tier.quantity} {t("pièces :")} {tier.unit_price} {o.currency}
                       </li>
                     ))}
                   </ul>
                   <p className="t-caption t-metric mt-1">
-                    Minimum {o.moq} — {o.incoterm} — délai{" "}
-                    {o.lead_time_weeks ? `${o.lead_time_weeks} semaines` : "à confirmer"} — valable
-                    jusqu'au {o.valid_until}
+                    {t("Minimum")} {o.moq} — {o.incoterm} {t("— délai")}{" "}
+                    {o.lead_time_weeks ? `${o.lead_time_weeks} semaines` : t("à confirmer")} {t("— valable jusqu'au")} {o.valid_until}
                     {o.nre_tooling_cost ? ` — outillage ${o.nre_tooling_cost} ${o.currency}` : ""}
                     {o.annual_volume_basis
                       ? ` — base ${o.annual_volume_basis} capteurs/an`
-                      : " — volume annuel non renseigné"}
+                      : t(" — volume annuel non renseigné")}
                   </p>
                   {o.void_reason ? <p className="t-caption mt-1">{o.void_reason}</p> : null}
                 </div>
@@ -348,11 +349,11 @@ export function ClientFollowUp({
           </section>
 
           <section className="space-y-2">
-            <h4 className="font-medium">Échantillons</h4>
+            <h4 className="font-medium">{t("Échantillons")}</h4>
             {active && active.verdict === "validated" && active.exact_part_number ? (
               <div className="flex flex-wrap items-end gap-2">
                 <div className="w-28">
-                  <Label className="t-label">Quantité</Label>
+                  <Label className="t-label">{t("Quantité")}</Label>
                   <Input
                     className="t-metric text-right"
                     inputMode="numeric"
@@ -380,13 +381,12 @@ export function ClientFollowUp({
                     }
                   }}
                 >
-                  Demander des échantillons
+                  {t("Demander des échantillons")}
                 </Button>
               </div>
             ) : (
               <p className="t-caption">
-                Les échantillons sont possibles après un retour validé indiquant la référence
-                exacte.
+                {t("Les échantillons sont possibles après un retour validé indiquant la référence exacte.")}
               </p>
             )}
             {current.samples.map((s) => (
@@ -397,12 +397,12 @@ export function ClientFollowUp({
                   </span>
                   <Badge variant="outline">{routeLabel[s.route] ?? s.route}</Badge>
                   <Badge variant="secondary">
-                    {s.status === "superseded" ? "conception modifiée depuis" : s.status}
+                    {s.status === "superseded" ? t("conception modifiée depuis") : s.status}
                   </Badge>
                   <span className="t-metric t-caption">version {s.revision}</span>
                 </div>
                 <p className="t-caption t-metric mt-1">
-                  Commandés sur la version {s.origin_revision ?? s.revision}
+                  {t("Commandés sur la version")} {s.origin_revision ?? s.revision}
                   {s.revalidated_from_revision !== null && s.revalidated_from_revision !== undefined
                     ? ` — revalidés depuis la version ${s.revalidated_from_revision}`
                     : ""}
@@ -410,13 +410,13 @@ export function ClientFollowUp({
                 </p>
                 {s.feedback ? (
                   <p className="t-caption t-metric mt-1">
-                    Votre retour (version {s.feedback_revision}) : {s.feedback}
+                    {t("Votre retour (version")} {s.feedback_revision}) : {s.feedback}
                   </p>
                 ) : null}
                 <div className="mt-2 flex items-end gap-2">
                   <Textarea
                     rows={2}
-                    placeholder="Retour d'essai sur ces échantillons"
+                    placeholder={t("Retour d'essai sur ces échantillons")}
                     value={feedback[s.id] ?? ""}
                     onChange={(e) => setFeedback((f) => ({ ...f, [s.id]: e.target.value }))}
                   />
@@ -427,7 +427,7 @@ export function ClientFollowUp({
                       try {
                         await updateSample({ sampleId: s.id, feedback: feedback[s.id] ?? "" });
                         setMessage(
-                          "Retour d'essai enregistré et conservé avec la version concernée.",
+                          t("Retour d'essai enregistré et conservé avec la version concernée."),
                         );
                         await reloadView(current.dossier.id);
                       } catch (error) {
@@ -435,7 +435,7 @@ export function ClientFollowUp({
                       }
                     }}
                   >
-                    Envoyer
+                    {t("Envoyer")}
                   </Button>
                 </div>
               </div>
@@ -445,7 +445,7 @@ export function ClientFollowUp({
           {onOpenTransferredFile &&
           current.revisions.some((r) => (r.transferred_files ?? []).length) ? (
             <section className="space-y-2">
-              <h4 className="font-medium">Fichiers réellement transmis</h4>
+              <h4 className="font-medium">{t("Fichiers réellement transmis")}</h4>
               {current.revisions.map((r) =>
                 (r.transferred_files ?? []).length ? (
                   <div
@@ -456,7 +456,7 @@ export function ClientFollowUp({
                       className="h-5 w-5 shrink-0 text-[var(--primary)]"
                       aria-hidden="true"
                     />
-                    <span className="t-caption t-metric">Version {r.revision} :</span>
+                    <span className="t-caption t-metric">{t("Version")} {r.revision} :</span>
                     {(r.transferred_files ?? []).map((f, i) => (
                       <Button
                         key={`${r.id}-${f.path ?? i}`}
@@ -474,22 +474,21 @@ export function ClientFollowUp({
                             : undefined
                         }
                       >
-                        Lire {f.file_name ?? "ce fichier"}
+                        {t("Lire")} {f.file_name ?? t("ce fichier")}
                       </Button>
                     ))}
                   </div>
                 ) : null,
               )}
               <p className="t-caption">
-                Seuls les fichiers réellement enregistrés côté Standex apparaissent ici, et leur
-                lecture dépend de vos droits.
+                {t("Seuls les fichiers réellement enregistrés côté Standex apparaissent ici, et leur lecture dépend de vos droits.")}
               </p>
             </section>
           ) : null}
 
           {onReopenSnapshot && current.revisions.length ? (
             <section className="space-y-2">
-              <h4 className="font-medium">Reprendre une version envoyée</h4>
+              <h4 className="font-medium">{t("Reprendre une version envoyée")}</h4>
               <div className="flex flex-wrap gap-2">
                 {current.revisions.map((r) => (
                   <Button
@@ -505,13 +504,12 @@ export function ClientFollowUp({
                       })
                     }
                   >
-                    Version {r.revision}
+                    {t("Version")} {r.revision}
                   </Button>
                 ))}
               </div>
               <p className="t-caption">
-                La reprise ouvre exactement le contenu envoyé pour ce dossier. Votre accord d'envoi
-                et la relecture sont à refaire.
+                {t("La reprise ouvre exactement le contenu envoyé pour ce dossier. Votre accord d'envoi et la relecture sont à refaire.")}
               </p>
             </section>
           ) : null}
@@ -520,8 +518,7 @@ export function ClientFollowUp({
 
       {message ? <p className="notice notice-info">{message}</p> : null}
       <p className="t-caption">
-        Rien n'est décidé ici : une référence, un prix ou une livraison ne valent qu'après
-        confirmation écrite de Standex.
+        {t("Rien n'est décidé ici : une référence, un prix ou une livraison ne valent qu'après confirmation écrite de Standex.")}
       </p>
     </div>
   );

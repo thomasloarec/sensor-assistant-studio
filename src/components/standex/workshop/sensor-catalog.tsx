@@ -19,7 +19,7 @@ export default function SensorCatalog({
   const [card, setCard] = useState<string | null>(null);
   const ref = useRef<HTMLDialogElement>(null),
     [query, setQuery] = useState(""),
-    [category, setCategory] = useState("Tous"),
+    [category, setCategory] = useState(t("Tous")),
     [sameScale, setSameScale] = useState(true);
   useEffect(() => {
     const dialog = ref.current;
@@ -80,7 +80,7 @@ export default function SensorCatalog({
           value={category}
           onChange={(e) => setCategory(e.target.value)}
         >
-          {["Tous", "Cylindrique", "À visser", "À encastrer", "CMS", "Pédagogique"].map((c) => (
+          {[t("Tous"), "Cylindrique", t("À visser"), t("À encastrer"), "CMS", t("Pédagogique")].map((c) => (
             <option key={c} value={c}>
               {t(c)}
             </option>

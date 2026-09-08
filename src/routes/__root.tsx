@@ -1,4 +1,4 @@
-import { t } from "@/lib/i18n/core";
+import { t, localeTag } from "@/lib/i18n/core";
 import { LanguagePicker, useLocale } from "@/lib/i18n/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
@@ -83,13 +83,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Standex DETECT — Détection magnétique" },
-      { name: "description", content: "Standex DETECT — Détection magnétique" },
+      { title: t("Standex DETECT — Détection magnétique") },
+      { name: "description", content: t("Standex DETECT — Détection magnétique") },
       { name: "author", content: "Standex Electronics" },
       // Valeur de `--standex-blue` en dur : une meta ne peut pas lire une variable CSS. À synchroniser si le jeton change.
       { name: "theme-color", content: "#254061" },
-      { property: "og:title", content: "Standex DETECT — Détection magnétique" },
-      { property: "og:description", content: "Standex DETECT — Détection magnétique" },
+      { property: "og:title", content: t("Standex DETECT — Détection magnétique") },
+      { property: "og:description", content: t("Standex DETECT — Détection magnétique") },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -123,7 +123,7 @@ function RootShell({ children }: { children: ReactNode }) {
         <HeadContent />
       </head>
       <body>
-        {t(children)}
+        {children}
         <Scripts />
       </body>
     </html>
@@ -132,6 +132,11 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const locale = useLocale();
+  // Every page, not only the ones that mount a picker, announces the reading language.
+  useEffect(() => {
+    document.documentElement.lang = localeTag(locale);
+  }, [locale]);
 
   return (
     <QueryClientProvider client={queryClient}>

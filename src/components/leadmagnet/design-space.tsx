@@ -1,3 +1,4 @@
+import { getLocale, msg, setLocale, t } from "@/lib/i18n/core";
 import { Link } from "@tanstack/react-router";
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -21,7 +22,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { CandidateThumbnail } from "@/components/leadmagnet/candidate-thumbnail";
 import { CUSTOM_SENSOR_ID, sensorById } from "@/lib/standex/sensor-catalog";
-import { LanguagePicker } from "@/lib/i18n/react";
+import { LanguagePicker, useLocale } from "@/lib/i18n/react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -159,25 +160,25 @@ import {
 const MagneticWorkshop = lazy(() => import("@/components/standex/workshop/workshop"));
 
 export function PrivateDesignError({ reset }: { reset: () => void }) {
+  useLocale();
   useEffect(() => {
     reportPrivateError(PRIVATE_ERROR_CODES.design_workspace);
   }, []);
   return (
     <div className="flex min-h-screen items-center justify-center px-4">
       <div className="max-w-md space-y-3 text-center">
-        <h1 className="text-xl font-semibold">L'espace de conception s'est interrompu</h1>
+        <h1 className="text-xl font-semibold">{t("L'espace de conception s'est interrompu")}</h1>
         <p className="t-caption">
-          Rien de ce que vous avez saisi n'a été transmis. Le détail de l'incident reste sur votre
-          appareil : seul un code d'incident anonyme a été signalé.
+          {t("Rien de ce que vous avez saisi n'a été transmis. Le détail de l'incident reste sur votre appareil : seul un code d'incident anonyme a été signalé.")}
         </p>
-        <Button onClick={reset}>Réessayer</Button>
+        <Button onClick={reset}>{t("Réessayer")}</Button>
       </div>
     </div>
   );
 }
 
 const stateBadge = (state: string) =>
-  state === "confirmed" ? "Confirmé" : state === "hypothesis" ? "Hypothèse" : "Inconnu";
+  state === "confirmed" ? t("Confirmé") : state === "hypothesis" ? t("Hypothèse") : "Inconnu";
 
 const num = (raw: string): number | null => {
   const v = Number(raw.replace(",", "."));
@@ -231,7 +232,7 @@ function ProjectTitle({ title, onRename }: { title: string; onRename: (next: str
   const commit = () => {
     const next = draft.trim();
     if (!next) {
-      setError("Le nom du projet ne peut pas être vide.");
+      setError(t("Le nom du projet ne peut pas être vide."));
       inputRef.current?.focus();
       return;
     }
@@ -254,10 +255,10 @@ function ProjectTitle({ title, onRename }: { title: string; onRename: (next: str
           variant="ghost"
           className="min-h-11 min-w-11 shrink-0 px-3 text-base"
           onClick={start}
-          aria-label={`Renommer le projet « ${title} »`}
+          aria-label={msg("Renommer le projet « {0} »", [title])}
         >
           <Pencil className="h-4 w-4" />
-          <span className="hidden sm:inline">Renommer</span>
+          <span className="hidden sm:inline">{t("Renommer")}</span>
         </Button>
       </div>
     );
@@ -265,7 +266,7 @@ function ProjectTitle({ title, onRename }: { title: string; onRename: (next: str
   return (
     <div className="min-w-[min(100%,18rem)] flex-1">
       <Label htmlFor="project-title" className="t-label">
-        Nom du projet
+        {t("Nom du projet")}
       </Label>
       <div className="mt-1 flex flex-wrap items-center gap-2">
         <Input
@@ -290,10 +291,10 @@ function ProjectTitle({ title, onRename }: { title: string; onRename: (next: str
           className="project-title-input h-auto min-h-11 max-w-lg"
         />
         <Button className="min-h-11 text-base" onClick={commit}>
-          <Check className="h-4 w-4" /> Valider
+          <Check className="h-4 w-4" /> {t("Valider")}
         </Button>
         <Button variant="ghost" className="min-h-11 text-base" onClick={cancel}>
-          <X className="h-4 w-4" /> Annuler
+          <X className="h-4 w-4" /> {t("Annuler")}
         </Button>
       </div>
       {error ? (
@@ -315,39 +316,39 @@ export const GUIDED_QUESTIONS: {
 }[] = [
   {
     key: "detection_goal",
-    prompt: "Que voulez-vous détecter ?",
-    example: "savoir si une trappe est bien fermée, compter des passages, repérer une position",
-    placeholder: "Décrivez-le avec vos mots.",
+    prompt: t("Que voulez-vous détecter ?"),
+    example: t("savoir si une trappe est bien fermée, compter des passages, repérer une position"),
+    placeholder: t("Décrivez-le avec vos mots."),
   },
   {
     key: "states_motion",
-    prompt: "Que se passe-t-il quand la pièce bouge ?",
-    example: "elle coulisse de 20 mm, elle pivote, elle est retirée puis remise",
-    placeholder: "Décrivez le mouvement et les positions à distinguer.",
+    prompt: t("Que se passe-t-il quand la pièce bouge ?"),
+    example: t("elle coulisse de 20 mm, elle pivote, elle est retirée puis remise"),
+    placeholder: t("Décrivez le mouvement et les positions à distinguer."),
   },
   {
     key: "mounting",
-    prompt: "Où le capteur pourrait-il se placer ?",
-    example: "collé sous le couvercle, inséré dans un trou du bâti, vissé sur une équerre",
-    placeholder: "Même une idée approximative nous aide.",
+    prompt: t("Où le capteur pourrait-il se placer ?"),
+    example: t("collé sous le couvercle, inséré dans un trou du bâti, vissé sur une équerre"),
+    placeholder: t("Même une idée approximative nous aide."),
   },
   {
     key: "envelope",
-    prompt: "Quelle place avez-vous à cet endroit ?",
-    example: "un logement d'environ 6 mm de diamètre et 25 mm de long",
-    placeholder: "Dimensions disponibles, même approximatives.",
+    prompt: t("Quelle place avez-vous à cet endroit ?"),
+    example: t("un logement d'environ 6 mm de diamètre et 25 mm de long"),
+    placeholder: t("Dimensions disponibles, même approximatives."),
   },
   {
     key: "electrical",
-    prompt: "À quoi le capteur sera-t-il relié ?",
-    example: "une carte 5 V, un automate 24 V, un petit relais",
-    placeholder: "Tension, courant ou carte de destination si vous les connaissez.",
+    prompt: t("À quoi le capteur sera-t-il relié ?"),
+    example: t("une carte 5 V, un automate 24 V, un petit relais"),
+    placeholder: t("Tension, courant ou carte de destination si vous les connaissez."),
   },
   {
     key: "environment",
-    prompt: "Dans quel environnement travaille-t-il ?",
-    example: "humidité, huile, vibrations, températures élevées, extérieur",
-    placeholder: "Ce que le capteur devra supporter.",
+    prompt: t("Dans quel environnement travaille-t-il ?"),
+    example: t("humidité, huile, vibrations, températures élevées, extérieur"),
+    placeholder: t("Ce que le capteur devra supporter."),
   },
 ];
 
@@ -373,7 +374,11 @@ export function DesignSpace({
   onWorkspaceOpen,
   onGoHome,
 }: DesignSpaceProps) {
+  useLocale();
   const [dossier, setDossier] = useState<DesignDossier>(() => createDossier());
+  /** L'espace est monté CACHÉ dès l'accueil : la langue d'origine du projet
+   * n'est capturée qu'au démarrage réel, jamais à ce montage silencieux. */
+  const localeCapturedRef = useRef(false);
 
   const [privacy, setPrivacy] = useState(INITIAL_PRIVACY);
   const [nda, setNda] = useState<NdaState>(INITIAL_NDA);
@@ -405,6 +410,27 @@ export function DesignSpace({
   const [extraConstraints, setExtraConstraints] = useState("");
   const [submitMessage, setSubmitMessage] = useState<string | null>(null);
   const [showWorkshop, setShowWorkshop] = useState(false);
+  /** Démarrage RÉEL du projet : c'est ici, et pas au montage caché de
+   * l'espace, que la langue d'origine du projet est fixée. Changer ensuite la
+   * langue de l'interface ne réécrit pas rétrospectivement celle du projet. */
+  useEffect(() => {
+    if (!visible || localeCapturedRef.current) return;
+    localeCapturedRef.current = true;
+    const startLocale = getLocale();
+    setDossier((d) => {
+      if (d.sourceLocale === startLocale) return d;
+      // Le titre par défaut, écrit au montage caché, suit la langue de départ ;
+      // un titre déjà saisi par l'utilisateur n'est jamais réécrit.
+      const untouched = d.title === t("Nouveau projet d'exploration", d.sourceLocale);
+      return {
+        ...d,
+        sourceLocale: startLocale,
+        title: untouched ? t("Nouveau projet d'exploration", startLocale) : d.title,
+      };
+    });
+  }, [visible]);
+
+
   /** Panneau contextuel : le projet reste visible derrière, rien n'est démonté. */
   const [panel, setPanel] = useState<
     null | "atelier" | "candidats" | "cablage" | "documents" | "espace"
@@ -494,7 +520,7 @@ export function DesignSpace({
         }
       } catch (error) {
         setNdaPreview(null);
-        setNdaError(error instanceof Error ? error.message : "Génération impossible.");
+        setNdaError(error instanceof Error ? error.message : t("Génération impossible."));
       }
     },
     [nda],
@@ -529,7 +555,7 @@ export function DesignSpace({
       applyNdaStatus(status);
     } catch (error) {
       if (contextGenRef.current !== gen) return;
-      setNdaError(error instanceof Error ? error.message : "La préparation du NDA n'a pas abouti.");
+      setNdaError(error instanceof Error ? error.message : t("La préparation du NDA n'a pas abouti."));
     }
   }, [applyNdaStatus, serverDossierId]);
 
@@ -543,7 +569,7 @@ export function DesignSpace({
       applyNdaStatus(status);
     } catch (error) {
       if (contextGenRef.current !== gen) return;
-      setNdaError(error instanceof Error ? error.message : "Statut NDA indisponible.");
+      setNdaError(error instanceof Error ? error.message : t("Statut NDA indisponible."));
     }
   }, [applyNdaStatus, serverDossierId]);
 
@@ -594,7 +620,7 @@ export function DesignSpace({
           if (pruned !== p) {
             setAcknowledged(false);
             setConsentNotice(
-              "Le contenu, le dossier visé ou les fichiers ont changé : relisez le résumé et confirmez à nouveau votre accord d'envoi.",
+              t("Le contenu, le dossier visé ou les fichiers ont changé : relisez le résumé et confirmez à nouveau votre accord d'envoi."),
             );
           }
           return pruned;
@@ -647,7 +673,7 @@ export function DesignSpace({
   );
   const activeTargetLabel =
     activeTarget.kind === "base"
-      ? "Trajet de référence"
+      ? t("Trajet de référence")
       : `État : ${cabling.declaredMotionStates.find((s) => s.id === activeTarget.stateId)?.label ?? activeTarget.stateId}`;
   const activePoints = useMemo(() => routingPoints(cabling, activeTarget), [cabling, activeTarget]);
   const cableRouting = useMemo(
@@ -667,7 +693,7 @@ export function DesignSpace({
       onReset: () => setCabling((c) => resetRouting(c, activeTarget)),
       lengthLabel:
         estimate.requiredMm === null
-          ? "Longueur mesurée : inconnue tant que le trajet est incomplet (inconnu n'est pas zéro)."
+          ? t("Longueur mesurée : inconnue tant que le trajet est incomplet (inconnu n'est pas zéro).")
           : `Longueur mesurée du tracé : ${estimate.requiredMm.toFixed(0)} mm. Aucune validation d'ingénierie n'en découle.`,
     }),
     [routingSlot, activePoints, activeTargetLabel, activeTarget, estimate.requiredMm, setCabling],
@@ -729,10 +755,15 @@ export function DesignSpace({
     setWorkshopDraftPending(false);
   }, []);
 
-  /** Adopte un nouveau contenu comme référence : plus rien n'est « modifié ». */
+  /** Adopte un nouveau contenu comme référence : plus rien n'est « modifié ».
+   * Ouvrir ou reprendre un projet rétablit AUSSI la langue dans laquelle il a
+   * démarré : les textes déjà saisis restent lisibles dans leur contexte. */
   const adoptBaseline = useCallback((d: DesignDossier) => {
     baselineRef.current = fingerprint(d);
+    localeCapturedRef.current = true;
+    if (d.sourceLocale !== getLocale()) setLocale(d.sourceLocale);
   }, []);
+
 
   const exportDossier = useCallback(() => {
     const blob = new Blob([JSON.stringify(buildDossierExport(dossier), null, 2)], {
@@ -750,7 +781,7 @@ export function DesignSpace({
     async (file: File | undefined) => {
       if (!file || busyRef.current) return;
       // Garde unique : elle protège TOUS les imports, d'où qu'ils partent.
-      if (!guardReplace("reprendre ce fichier")) return;
+      if (!guardReplace(t("reprendre ce fichier"))) return;
       const request = ++importRequestRef.current;
       const context = contextGenRef.current;
       const beforeRead = fingerprint(dossierRef.current);
@@ -765,7 +796,7 @@ export function DesignSpace({
           return;
         if (beforeRead !== fingerprint(dossierRef.current)) {
           setImportMessage(
-            "Votre projet a changé pendant la lecture : relancez l'import pour remplacer ce nouveau contenu.",
+            t("Votre projet a changé pendant la lecture : relancez l'import pour remplacer ce nouveau contenu."),
           );
           return;
         }
@@ -785,13 +816,13 @@ export function DesignSpace({
         setImportMessage(
           [
             ...parsed.notices,
-            "Contenu importé dans un dossier local : aucun dossier Standex n'y est rattaché, et l'accord de confidentialité comme l'accord d'envoi sont à refaire.",
+            t("Contenu importé dans un dossier local : aucun dossier Standex n'y est rattaché, et l'accord de confidentialité comme l'accord d'envoi sont à refaire."),
           ].join(" "),
         );
         return true;
       } catch {
         if (request !== importRequestRef.current || context !== contextGenRef.current) return;
-        setImportMessage("Ce fichier n'a pas pu être lu.");
+        setImportMessage(t("Ce fichier n'a pas pu être lu."));
       }
       return false;
     },
@@ -844,7 +875,7 @@ export function DesignSpace({
     async (input: { path: string; name: string; dossierId: string; revision: number }) => {
       const path = input.path.trim();
       if (!path) {
-        setSubmitMessage("Ce fichier n'a pas de chemin de stockage : il ne peut pas être relu.");
+        setSubmitMessage(t("Ce fichier n'a pas de chemin de stockage : il ne peut pas être relu."));
         return;
       }
       const gen = ++docGenRef.current;
@@ -860,7 +891,7 @@ export function DesignSpace({
       } catch (error) {
         if (gen !== docGenRef.current || ctx !== contextGenRef.current) return;
         setSubmitMessage(
-          error instanceof Error ? error.message : "Ce fichier n'a pas pu être relu.",
+          error instanceof Error ? error.message : t("Ce fichier n'a pas pu être relu."),
         );
       }
     },
@@ -876,13 +907,13 @@ export function DesignSpace({
   const prepareShare = useCallback(async () => {
     if (busyRef.current) return;
     if (!dossier.workshopAsset) {
-      setSubmitMessage("Aucun modèle 3D à partager dans cet onglet.");
+      setSubmitMessage(t("Aucun modèle 3D à partager dans cet onglet."));
       return;
     }
     if (!backend?.ready) {
       setSubmitMessage(
         backend?.message ??
-          "La liaison avec l'équipe Standex n'est pas active : rien n'a été déposé.",
+          t("La liaison avec l'équipe Standex n'est pas active : rien n'a été déposé."),
       );
       return;
     }
@@ -897,14 +928,14 @@ export function DesignSpace({
       const bytes = memoryAssetBytes(dossier.workshopAsset.assetKey);
       if (!bytes) {
         setSubmitMessage(
-          "Le fichier 3D n'est plus en mémoire de cet onglet : réimportez-le avant de le partager.",
+          t("Le fichier 3D n'est plus en mémoire de cet onglet : réimportez-le avant de le partager."),
         );
         return;
       }
       let dossierId = serverDossierId;
       if (!dossierId) {
         dossierId = await createServerDossier(
-          nda.required ? "Préparation d'un accord de confidentialité" : dossier.title,
+          nda.required ? t("Préparation d'un accord de confidentialité") : dossier.title,
           nda.required,
         );
         if (stale()) return;
@@ -916,7 +947,7 @@ export function DesignSpace({
         "design_model",
         {
           kind: "supabase_files",
-          statement: "Partage du modèle 3D avec l'équipe Standex en charge du dossier.",
+          statement: t("Partage du modèle 3D avec l'équipe Standex en charge du dossier."),
           accepted_at: new Date().toISOString(),
           content_ref: dossier.workshopAsset.fileName,
           revision: serverRevision + 1,
@@ -929,7 +960,7 @@ export function DesignSpace({
         setPreparedUpload(null);
         setSubmitMessage(
           `Le fichier a été déposé mais le serveur n'a pas pu en vérifier le contenu (${
-            uploaded.verificationError ?? "raison inconnue"
+            uploaded.verificationError ?? t("raison inconnue")
           }). Il n'est donc pas joint à votre envoi.`,
         );
         return;
@@ -957,11 +988,11 @@ export function DesignSpace({
         updatedAt: new Date().toISOString(),
       }));
       setSubmitMessage(
-        "Modèle 3D déposé et vérifié par le serveur. Relisez le résumé, confirmez votre accord, puis envoyez : le fichier ne sera pas déposé une seconde fois.",
+        t("Modèle 3D déposé et vérifié par le serveur. Relisez le résumé, confirmez votre accord, puis envoyez : le fichier ne sera pas déposé une seconde fois."),
       );
     } catch (error) {
       setSubmitMessage(
-        error instanceof Error ? error.message : "Le fichier 3D n'a pas pu être partagé.",
+        error instanceof Error ? error.message : t("Le fichier 3D n'a pas pu être partagé."),
       );
     } finally {
       busyRef.current = false;
@@ -983,7 +1014,7 @@ export function DesignSpace({
     if (busyRef.current) return;
     if (shareModel && dossier.workshopAsset && !preparedUpload) {
       setSubmitMessage(
-        "Préparez d'abord le partage du modèle 3D : il doit être déposé et vérifié avant votre accord d'envoi.",
+        t("Préparez d'abord le partage du modèle 3D : il doit être déposé et vérifié avant votre accord d'envoi."),
       );
       return;
     }
@@ -994,7 +1025,7 @@ export function DesignSpace({
     ) {
       setPreparedUpload(null);
       setSubmitMessage(
-        "Le dossier ou la version visée a changé depuis le dépôt du fichier : préparez à nouveau le partage.",
+        t("Le dossier ou la version visée a changé depuis le dépôt du fichier : préparez à nouveau le partage."),
       );
       return;
     }
@@ -1037,7 +1068,7 @@ export function DesignSpace({
         setServerRevision((r) => r + 1);
         setPreparedUpload(null);
         setSubmitMessage(
-          "Dossier transmis à la revue Standex. Vous serez informé dès qu'un retour est publié.",
+          t("Dossier transmis à la revue Standex. Vous serez informé dès qu'un retour est publié."),
         );
       } else {
         setSubmitMessage(outcome.reason);
@@ -1066,9 +1097,9 @@ export function DesignSpace({
   const embedded = chrome === "embedded";
   const stepIndex = tab === "besoin" ? 0 : tab === "revue" ? 2 : 1;
   const steps = [
-    { id: "besoin", label: "Mon besoin", hint: "Ce que vous voulez détecter" },
-    { id: "montage", label: "Mon montage", hint: "Où le capteur se place" },
-    { id: "revue", label: "Avec Standex", hint: "Faire relire votre projet" },
+    { id: "besoin", label: t("Mon besoin"), hint: t("Ce que vous voulez détecter") },
+    { id: "montage", label: t("Mon montage"), hint: t("Où le capteur se place") },
+    { id: "revue", label: t("Avec Standex"), hint: t("Faire relire votre projet") },
   ];
 
   const question = GUIDED_QUESTIONS[focusIdx] ?? GUIDED_QUESTIONS[0]!;
@@ -1079,7 +1110,7 @@ export function DesignSpace({
     <div className="space-y-5">
       {showAdvanced ? (
         <>
-          <p className="text-base text-muted-foreground">{LOCAL_ASSISTANT_LABEL}</p>
+          <p className="text-base text-muted-foreground">{t(LOCAL_ASSISTANT_LABEL)}</p>
           {dossier.requirements.map((r) => (
             <div
               key={r.key}
@@ -1100,14 +1131,14 @@ export function DesignSpace({
                 >
                   {stateBadge(r.state)}
                 </Badge>
-                <span className="t-caption">source : {r.source}</span>
+                <span className="t-caption">{t("source :")} {r.source}</span>
               </div>
               <Textarea
                 id={`req-${r.key}`}
                 rows={2}
                 className="text-base"
                 value={r.value}
-                placeholder="Décrivez ce point avec vos mots ; laissez vide s'il est inconnu."
+                placeholder={t("Décrivez ce point avec vos mots ; laissez vide s'il est inconnu.")}
                 onChange={(e) =>
                   setDossier((d) =>
                     proposeRequirement(d, r.key, { value: e.target.value, source: "user" }),
@@ -1122,7 +1153,7 @@ export function DesignSpace({
                   disabled={!r.value.trim() || r.state === "confirmed"}
                   onClick={() => setDossier((d) => confirmRequirement(d, r.key))}
                 >
-                  Confirmer cette exigence
+                  {t("Confirmer cette exigence")}
                 </Button>
                 {r.note ? <span className="t-caption">{r.note}</span> : null}
               </div>
@@ -1144,10 +1175,10 @@ export function DesignSpace({
             />
           </div>
           <p className="t-label mt-5">
-            Question {focusIdx + 1} sur {GUIDED_QUESTIONS.length}
+            {t("Question")} {focusIdx + 1} sur {GUIDED_QUESTIONS.length}
           </p>
           <h2 className="t-display-m mt-3">{question.prompt}</h2>
-          <p className="t-caption mt-4 max-w-[44ch]">Par exemple : {question.example}</p>
+          <p className="t-caption mt-4 max-w-[44ch]">{t("Par exemple :")} {question.example}</p>
           <Label htmlFor={`guide-${question.key}`} className="sr-only">
             {question.prompt}
           </Label>
@@ -1167,15 +1198,14 @@ export function DesignSpace({
           {guidedReq && guidedReq.state === "hypothesis" && guidedReq.value.trim() ? (
             <div className="relative mt-5 overflow-hidden rounded-[var(--r-md)] bg-[var(--warning-soft)] p-4 pl-5 before:absolute before:inset-y-0 before:left-0 before:w-[3px] before:bg-[var(--warning)]">
               <p className="text-base">
-                Cette réponse vient d'une reprise ou d'une déduction. Confirmez-la si elle est
-                juste.
+                {t("Cette réponse vient d'une reprise ou d'une déduction. Confirmez-la si elle est juste.")}
               </p>
               <Button
                 variant="outline"
                 className="mt-3 min-h-11 text-base"
                 onClick={() => setDossier((d) => confirmRequirement(d, question.key))}
               >
-                Oui, c'est bien cela
+                {t("Oui, c'est bien cela")}
               </Button>
             </div>
           ) : null}
@@ -1187,7 +1217,7 @@ export function DesignSpace({
               disabled={focusIdx === 0}
               onClick={() => setFocusIdx((i) => Math.max(0, i - 1))}
             >
-              Question précédente
+              {t("Question précédente")}
             </Button>
             <Button
               variant="ghost"
@@ -1198,7 +1228,7 @@ export function DesignSpace({
                 else setTab("montage");
               }}
             >
-              Je ne sais pas encore
+              {t("Je ne sais pas encore")}
             </Button>
             <Button
               size="lg"
@@ -1208,13 +1238,13 @@ export function DesignSpace({
                 else setTab("montage");
               }}
             >
-              {lastQuestion ? "Passer à mon montage" : "Continuer"}
+              {lastQuestion ? t("Passer à mon montage") : "Continuer"}
             </Button>
           </div>
 
           <details className="project-answer-details mt-7">
             <summary className="t-caption flex min-h-11 cursor-pointer list-none items-center gap-2 py-2">
-              Détails de cette réponse
+              {t("Détails de cette réponse")}
               <span className="project-answer-chevron" aria-hidden="true">
                 ↓
               </span>
@@ -1222,7 +1252,7 @@ export function DesignSpace({
             <div className="mt-2 ml-4 flex flex-wrap items-center gap-3">
               <Badge variant="outline">{stateBadge(guidedReq?.state ?? "unknown")}</Badge>
               <span className="text-base text-muted-foreground">
-                intitulé technique : {guidedReq?.label} · source : {guidedReq?.source}
+                {t("intitulé technique :")} {guidedReq?.label} {t("· source :")} {guidedReq?.source}
               </span>
               <Button
                 variant="outline"
@@ -1230,7 +1260,7 @@ export function DesignSpace({
                 disabled={!guidedReq?.value.trim() || guidedReq?.state === "confirmed"}
                 onClick={() => setDossier((d) => confirmRequirement(d, question.key))}
               >
-                Confirmer cette réponse
+                {t("Confirmer cette réponse")}
               </Button>
             </div>
           </details>
@@ -1239,10 +1269,10 @@ export function DesignSpace({
 
       <details className="rounded-xl border p-4" open={showAdvanced}>
         <summary className="min-h-11 cursor-pointer py-2 text-base font-medium">
-          Autre chose à nous dire ? (facultatif)
+          {t("Autre chose à nous dire ? (facultatif)")}
         </summary>
         <Label htmlFor="free-constraints" className="sr-only">
-          Autre chose à nous dire
+          {t("Autre chose à nous dire")}
         </Label>
         <Textarea
           id="free-constraints"
@@ -1260,7 +1290,7 @@ export function DesignSpace({
   const mechanicalFields = (
     <>
       <div className="panel-block">
-        <Label className="t-label">Choix mécanique explicite</Label>
+        <Label className="t-label">{t("Choix mécanique explicite")}</Label>
         <Select
           value={dossier.mounting.kind}
           onValueChange={(kind) =>
@@ -1279,17 +1309,17 @@ export function DesignSpace({
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="undecided">Non décidé</SelectItem>
-            <SelectItem value="pcb_smd">PCB — report CMS</SelectItem>
-            <SelectItem value="pcb_through_hole">PCB — traversant</SelectItem>
-            <SelectItem value="screw">Fixation vissée</SelectItem>
-            <SelectItem value="press_fit">Emboîtement dans un trou</SelectItem>
-            <SelectItem value="other">Autre montage</SelectItem>
+            <SelectItem value="undecided">{t("Non décidé")}</SelectItem>
+            <SelectItem value="pcb_smd">{t("PCB — report CMS")}</SelectItem>
+            <SelectItem value="pcb_through_hole">{t("PCB — traversant")}</SelectItem>
+            <SelectItem value="screw">{t("Fixation vissée")}</SelectItem>
+            <SelectItem value="press_fit">{t("Emboîtement dans un trou")}</SelectItem>
+            <SelectItem value="other">{t("Autre montage")}</SelectItem>
           </SelectContent>
         </Select>
         {dossier.mounting.kind === "press_fit" ? (
           <div className="mt-2 max-w-xs">
-            <Label className="t-label">Diamètre du trou (mm)</Label>
+            <Label className="t-label">{t("Diamètre du trou (mm)")}</Label>
             <Input
               className="t-metric w-32 text-right"
               inputMode="decimal"
@@ -1307,7 +1337,7 @@ export function DesignSpace({
           <Textarea
             className="mt-2"
             rows={2}
-            placeholder="Décrivez le montage"
+            placeholder={t("Décrivez le montage")}
             value={dossier.mounting.description}
             onChange={(e) =>
               setDossier((d) => ({
@@ -1320,7 +1350,7 @@ export function DesignSpace({
       </div>
 
       <div className="panel-block">
-        <Label className="t-label">Encombrement disponible</Label>
+        <Label className="t-label">{t("Encombrement disponible")}</Label>
         <div className="mt-2 flex flex-wrap gap-3">
           {(["lengthMm", "widthMm", "heightMm"] as const).map((k) => (
             <div key={k} className="w-32">
@@ -1349,10 +1379,9 @@ export function DesignSpace({
     <div className="space-y-4">
       {showAdvanced ? null : (
         <div className="panel-block-lg">
-          <h2 className="t-title-m">Où le capteur se place-t-il ?</h2>
+          <h2 className="t-title-m">{t("Où le capteur se place-t-il ?")}</h2>
           <p className="t-caption mt-3">
-            Montrez-le en 3D si c'est plus simple, ou donnez seulement les dimensions disponibles.
-            Rien n'est obligatoire : ce qui reste inconnu reste inconnu.
+            {t("Montrez-le en 3D si c'est plus simple, ou donnez seulement les dimensions disponibles. Rien n'est obligatoire : ce qui reste inconnu reste inconnu.")}
           </p>
           <div className="mt-5 flex flex-wrap items-center gap-3">
             <Button
@@ -1364,10 +1393,10 @@ export function DesignSpace({
                 setPanel("atelier");
               }}
             >
-              Placer en 3D
+              {t("Placer en 3D")}
             </Button>
             <Button variant="ghost" className="min-h-12 text-base" onClick={() => setTab("besoin")}>
-              Revenir à mon besoin
+              {t("Revenir à mon besoin")}
             </Button>
           </div>
         </div>
@@ -1378,7 +1407,7 @@ export function DesignSpace({
       ) : (
         <details className="panel-block">
           <summary className="t-title-s flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 py-2">
-            Préciser la mécanique et la place disponible (facultatif)
+            {t("Préciser la mécanique et la place disponible (facultatif)")}
             <span className="technical-details-chevron" aria-hidden="true">
               ⌄
             </span>
@@ -1389,7 +1418,7 @@ export function DesignSpace({
 
       <div className="panel-block">
         <div className="flex flex-wrap items-center gap-3">
-          <Label className="text-base font-medium">Atelier 3D (facultatif)</Label>
+          <Label className="text-base font-medium">{t("Atelier 3D (facultatif)")}</Label>
           {/* En mode guidé, « Placer en 3D » ci-dessus ouvre déjà l'atelier :
                     pas de second bouton pour la même action. */}
           {showAdvanced ? (
@@ -1402,13 +1431,11 @@ export function DesignSpace({
                 setPanel("atelier");
               }}
             >
-              Ouvrir l'atelier magnétique
+              {t("Ouvrir l'atelier magnétique")}
             </Button>
           ) : null}
           <span className="t-caption">
-            Formats acceptés : GLB autonome uniquement. Les fichiers STEP/IGES ne sont pas lus.
-            Unités, échelle et pièce mobile restent à confirmer par vous. Vos réglages restent en
-            mémoire même si vous refermez le panneau.
+            {t("Formats acceptés : GLB autonome uniquement. Les fichiers STEP/IGES ne sont pas lus. Unités, échelle et pièce mobile restent à confirmer par vous. Vos réglages restent en mémoire même si vous refermez le panneau.")}
           </span>
         </div>
       </div>
@@ -1419,15 +1446,14 @@ export function DesignSpace({
     <div className="space-y-4">
       {showAdvanced ? null : (
         <Button variant="outline" className="min-h-11 text-base" onClick={() => setTab("montage")}>
-          Revenir à mon montage
+          {t("Revenir à mon montage")}
         </Button>
       )}
-      <p className="t-caption">{CANDIDATE_DISCLAIMER}</p>
+      <p className="t-caption">{t(CANDIDATE_DISCLAIMER)}</p>
       {dossier.selectedSensorId && !dossier.sensorSyncConfirmed ? (
         <div className="notice notice-warning">
           <p>
-            La gamme suivie et le capteur affiché en 3D sont différents. Rien n'est changé sans
-            votre accord.
+            {t("La gamme suivie et le capteur affiché en 3D sont différents. Rien n'est changé sans votre accord.")}
           </p>
           <Button
             size="sm"
@@ -1445,7 +1471,7 @@ export function DesignSpace({
               })
             }
           >
-            Aligner l'atelier 3D sur la gamme suivie
+            {t("Aligner l'atelier 3D sur la gamme suivie")}
           </Button>
         </div>
       ) : null}
@@ -1462,8 +1488,8 @@ export function DesignSpace({
                 <CandidateThumbnail sensorId={c.id} cabled={candidatesCabled} />
                 <p className="t-caption mt-2">
                   {sensorById(c.id).sourceFile
-                    ? "Aperçu 3D d'après les cotes de la fiche technique — ce n'est pas un modèle CAO de fabrication."
-                    : "Schéma pédagogique proportionnel — ni modèle CAO ni cote validée."}
+                    ? t("Aperçu 3D d'après les cotes de la fiche technique — ce n'est pas un modèle CAO de fabrication.")
+                    : t("Schéma pédagogique proportionnel — ni modèle CAO ni cote validée.")}
                 </p>
               </div>
               <div>
@@ -1479,10 +1505,10 @@ export function DesignSpace({
                     }
                   >
                     {c.status === "kept"
-                      ? "Retenu à ce stade"
+                      ? t("Retenu à ce stade")
                       : c.status === "to_verify"
-                        ? "À vérifier"
-                        : "Écarté"}
+                        ? t("À vérifier")
+                        : t("Écarté")}
                   </Badge>
                   <span className="t-metric rounded-[var(--r-pill)] bg-[var(--surface-sunken)] px-2.5 py-1 t-caption">
                     {c.size}
@@ -1500,7 +1526,7 @@ export function DesignSpace({
                         }))
                       }
                     >
-                      {c.id === CUSTOM_SENSOR_ID ? "Partir sur du sur mesure" : "Suivre cette gamme"}
+                      {c.id === CUSTOM_SENSOR_ID ? t("Partir sur du sur mesure") : t("Suivre cette gamme")}
                     </Button>
                   ) : null}
                 </div>
@@ -1527,16 +1553,13 @@ export function DesignSpace({
     <div className="space-y-4">
       {showAdvanced ? null : (
         <Button variant="outline" className="min-h-11 text-base" onClick={() => setTab("montage")}>
-          Revenir à mon montage
+          {t("Revenir à mon montage")}
         </Button>
       )}
       <div className="panel-block" data-testid="routing-target-panel">
-        <Label className="t-label">Tracé dans la 3D (facultatif)</Label>
+        <Label className="t-label">{t("Tracé dans la 3D (facultatif)")}</Label>
         <p className="t-caption mt-1">
-          Ouvrez l'atelier 3D, activez « Pointer dans la 3D », puis cliquez la sortie de câble, les
-          passages et le point de connexion sur les surfaces réellement affichées. Sans modèle 3D,
-          la saisie numérique ci-dessous reste la voie exacte : une valeur inconnue reste inconnue,
-          elle ne vaut pas zéro.
+          {t("Ouvrez l'atelier 3D, activez « Pointer dans la 3D », puis cliquez la sortie de câble, les passages et le point de connexion sur les surfaces réellement affichées. Sans modèle 3D, la saisie numérique ci-dessous reste la voie exacte : une valeur inconnue reste inconnue, elle ne vaut pas zéro.")}
         </p>
         <div className="mt-2 flex flex-wrap items-center gap-2">
           <Button
@@ -1544,7 +1567,7 @@ export function DesignSpace({
             variant={activeTarget.kind === "base" ? "default" : "outline"}
             onClick={() => setRoutingTarget({ kind: "base" })}
           >
-            Trajet de référence
+            {t("Trajet de référence")}
           </Button>
           {cabling.declaredMotionStates.map((st) => (
             <Button
@@ -1568,38 +1591,37 @@ export function DesignSpace({
               setTab("montage");
             }}
           >
-            Ouvrir l'atelier 3D
+            {t("Ouvrir l'atelier 3D")}
           </Button>
         </div>
         <p className="t-caption t-metric mt-2">
-          Trajet visé : {activeTargetLabel} · {activePoints.length} point(s) ·{" "}
+          {t("Trajet visé :")} {activeTargetLabel} · {activePoints.length} {t("point(s) ·")}{" "}
           {cableRouting.lengthLabel}
         </p>
         {activeTarget.kind === "state" ? (
           <p className="t-caption">
-            Chaque état déclaré a son propre trajet complet et sa pose de relevé. Les états non
-            relevés ne sont jamais présentés comme couverts.
+            {t("Chaque état déclaré a son propre trajet complet et sa pose de relevé. Les états non relevés ne sont jamais présentés comme couverts.")}
           </p>
         ) : null}
       </div>
 
       <div className="panel-block grid gap-3 md:grid-cols-2">
-        {pointFields("Point capteur", cabling.sensorEndpoint, (p) =>
+        {pointFields(t("Point capteur"), cabling.sensorEndpoint, (p) =>
           setCabling((c) => ({ ...c, sensorEndpoint: p })),
         )}
-        {pointFields("Point de connexion", cabling.connectionEndpoint, (p) =>
+        {pointFields(t("Point de connexion"), cabling.connectionEndpoint, (p) =>
           setCabling((c) => ({ ...c, connectionEndpoint: p })),
         )}
       </div>
       <div className="panel-block">
         <div className="flex items-center justify-between">
-          <Label className="t-label">Waypoints du trajet</Label>
+          <Label className="t-label">{t("Waypoints du trajet")}</Label>
           <Button
             size="sm"
             variant="outline"
             onClick={() => setCabling((c) => ({ ...c, waypoints: [...c.waypoints, [0, 0, 0]] }))}
           >
-            Ajouter un point
+            {t("Ajouter un point")}
           </Button>
         </div>
         <div className="mt-2 space-y-2">
@@ -1624,7 +1646,7 @@ export function DesignSpace({
                   }))
                 }
               >
-                Retirer
+                {t("Retirer")}
               </Button>
             </div>
           ))}
@@ -1634,7 +1656,7 @@ export function DesignSpace({
       {/* États de mouvement : le trajet doit être couvert pour chaque état. */}
       <div className="panel-block">
         <div className="flex items-center justify-between">
-          <Label className="t-label">États de mouvement</Label>
+          <Label className="t-label">{t("États de mouvement")}</Label>
           <Button
             size="sm"
             variant="outline"
@@ -1652,7 +1674,7 @@ export function DesignSpace({
               }))
             }
           >
-            Ajouter un état
+            {t("Ajouter un état")}
           </Button>
         </div>
         <div className="mt-2 space-y-2">
@@ -1674,10 +1696,10 @@ export function DesignSpace({
                 />
                 <span
                   className={
-                    covered ? "t-caption text-[var(--success)]" : "t-caption text-[var(--warning)]"
+                    covered ? t("t-caption text-[var(--success)]") : t("t-caption text-[var(--warning)]")
                   }
                 >
-                  {covered ? "trajet renseigné" : "trajet manquant pour cet état"}
+                  {covered ? t("trajet renseigné") : t("trajet manquant pour cet état")}
                 </span>
                 {!covered ? (
                   <Button
@@ -1702,7 +1724,7 @@ export function DesignSpace({
                       }))
                     }
                   >
-                    Reprendre le trajet courant
+                    {t("Reprendre le trajet courant")}
                   </Button>
                 ) : null}
                 <Button
@@ -1717,14 +1739,14 @@ export function DesignSpace({
                     }))
                   }
                 >
-                  Retirer
+                  {t("Retirer")}
                 </Button>
               </div>
             );
           })}
           {cabling.declaredMotionStates.length === 0 ? (
             <p className="t-caption">
-              Aucun état déclaré : si la machine bouge, déclarez chaque position extrême.
+              {t("Aucun état déclaré : si la machine bouge, déclarez chaque position extrême.")}
             </p>
           ) : null}
         </div>
@@ -1739,18 +1761,18 @@ export function DesignSpace({
               setCabling((c) => ({ ...c, motionCoverageConfirmed: e.target.checked }))
             }
           />
-          Je confirme que tous les états déclarés sont couverts par un trajet.
+          {t("Je confirme que tous les états déclarés sont couverts par un trajet.")}
         </label>
       </div>
 
       <div className="panel-block grid gap-3 md:grid-cols-5">
         {(
           [
-            ["serviceReserveMm", "Réserve de service"],
+            ["serviceReserveMm", t("Réserve de service")],
             ["terminationMm", "Terminaison"],
-            ["toleranceMm", "Tolérance fournisseur"],
-            ["surplusHousingMm", "Surplus logeable"],
-            ["minBendRadiusMm", "Rayon de courbure mini"],
+            ["toleranceMm", t("Tolérance fournisseur")],
+            ["surplusHousingMm", t("Surplus logeable")],
+            ["minBendRadiusMm", t("Rayon de courbure mini")],
           ] as const
         ).map(([key, label]) => (
           <div key={key} className="w-32">
@@ -1773,12 +1795,11 @@ export function DesignSpace({
         ))}
       </div>
       <p className="t-caption -mt-2 px-1">
-        La tolérance fournisseur et le volume disponible pour loger le surplus sont deux
-        informations différentes.
+        {t("La tolérance fournisseur et le volume disponible pour loger le surplus sont deux informations différentes.")}
       </p>
       <div className="panel-block">
         <p>
-          Plus long trajet mesuré (polyligne) :{" "}
+          {t("Plus long trajet mesuré (polyligne) :")}{" "}
           <strong className="t-metric">
             {estimate.longestPathMm === null
               ? "inconnu"
@@ -1786,15 +1807,15 @@ export function DesignSpace({
           </strong>
         </p>
         <p>
-          Longueur minimale demandée, marges comprises :{" "}
+          {t("Longueur minimale demandée, marges comprises :")}{" "}
           <strong className="t-metric">
             {estimate.requiredMm === null
-              ? "inconnue tant que le trajet n'est pas complet"
+              ? t("inconnue tant que le trajet n'est pas complet")
               : `${estimate.requiredMm.toFixed(1)} mm`}
           </strong>
         </p>
         <p className="t-caption">
-          Cette longueur n'est jamais une longueur approuvée : elle est vérifiée en revue R&D.
+          {t("Cette longueur n'est jamais une longueur approuvée : elle est vérifiée en revue R&D.")}
         </p>
         <ul className="notice notice-warning mt-2 list-disc pl-8">
           {estimate.warnings.map((w, i) => (
@@ -1806,9 +1827,9 @@ export function DesignSpace({
         <div className="mt-3 flex flex-wrap gap-2">
           {(
             [
-              ["standard_to_confirm", "Longueur catalogue, à confirmer"],
-              ["custom_to_confirm", "Longueur sur mesure, à confirmer"],
-              ["undecided", "Non décidé"],
+              ["standard_to_confirm", t("Longueur catalogue, à confirmer")],
+              ["custom_to_confirm", t("Longueur sur mesure, à confirmer")],
+              ["undecided", t("Non décidé")],
             ] as const
           ).map(([value, label]) => (
             <Button
@@ -1824,14 +1845,14 @@ export function DesignSpace({
         <ul className="t-caption mt-2 list-disc pl-5">
           {RANGE_CABLE_LENGTH_NOTES.map((n) => (
             <li key={n.range}>
-              {n.range} : {n.lengths} (source : {n.source})
+              {n.range} : {n.lengths} {t("(source :")} {n.source})
             </li>
           ))}
         </ul>
       </div>
 
       <div className="panel-block">
-        <Label className="t-label">Terminaison</Label>
+        <Label className="t-label">{t("Terminaison")}</Label>
         <p className="mt-1 text-sm">{terminationLabel(termination)}</p>
         <ul className="t-caption mt-1 list-disc pl-5">
           {connectorSummaryLines(termination).map((l, i) => (
@@ -1839,7 +1860,7 @@ export function DesignSpace({
           ))}
         </ul>
         <div className="mt-3">
-          <Label className="t-label">Boîtiers documentés par le fabricant</Label>
+          <Label className="t-label">{t("Boîtiers documentés par le fabricant")}</Label>
           <div className="mt-1 flex flex-wrap gap-2">
             {DOCUMENTED_HOUSINGS.map((h) => (
               <Button
@@ -1859,9 +1880,7 @@ export function DesignSpace({
             ))}
           </div>
           <p className="t-caption mt-1">
-            Quelques boîtiers documentés seulement, pas le marché entier. Boîtier, contacts à sertir
-            et embase restent trois références distinctes ; brochage, section de fil réelle et
-            disponibilité restent inconnus et à vérifier par la R&D.
+            {t("Quelques boîtiers documentés seulement, pas le marché entier. Boîtier, contacts à sertir et embase restent trois références distinctes ; brochage, section de fil réelle et disponibilité restent inconnus et à vérifier par la R&D.")}
           </p>
         </div>
         <div className="mt-3 grid gap-3 md:grid-cols-2">
@@ -1885,7 +1904,7 @@ export function DesignSpace({
               setDossier((d) => ({ ...d, termination: DEFAULT_TERMINATION }));
             }}
           >
-            Fils nus
+            {t("Fils nus")}
           </Button>
           <Button
             size="sm"
@@ -1900,12 +1919,11 @@ export function DesignSpace({
               setDossier((d) => ({ ...d, termination: result.termination }));
             }}
           >
-            Enregistrer en « à vérifier par R&D »
+            {t("Enregistrer en « à vérifier par R&D »")}
           </Button>
         </div>
         <p className="t-caption mt-1">
-          Aucune combinaison connecteur/capteur qualifiée n'est documentée dans ce projet : toute
-          référence saisie, sa contrepartie et son brochage restent à vérifier par la R&D.
+          {t("Aucune combinaison connecteur/capteur qualifiée n'est documentée dans ce projet : toute référence saisie, sa contrepartie et son brochage restent à vérifier par la R&D.")}
         </p>
       </div>
     </div>
@@ -1917,7 +1935,7 @@ export function DesignSpace({
         <AccordionItem value="resume" className="panel-block-lg border-0">
           <AccordionTrigger className="business-accordion-trigger t-title-s gap-3 hover:no-underline">
             <span className="standex-bar !h-5 !w-1" aria-hidden="true" />
-            <span className="flex-1">Résumé technique et inconnues</span>
+            <span className="flex-1">{t("Résumé technique et inconnues")}</span>
           </AccordionTrigger>
           <AccordionContent>
             <pre className="code-block max-h-[28rem] overflow-y-auto whitespace-pre-wrap">
@@ -1929,11 +1947,11 @@ export function DesignSpace({
         <AccordionItem value="projet" className="panel-block-lg border-0">
           <AccordionTrigger className="business-accordion-trigger t-title-s gap-3 hover:no-underline">
             <span className="standex-bar !h-5 !w-1" aria-hidden="true" />
-            <span className="flex-1">Contexte projet</span>
+            <span className="flex-1">{t("Contexte projet")}</span>
           </AccordionTrigger>
           <AccordionContent className="grid gap-5 md:grid-cols-2">
             <div>
-              <Label className="t-label">Volume annuel de capteurs (entier ou « inconnu »)</Label>
+              <Label className="t-label">{t("Volume annuel de capteurs (entier ou « inconnu »)")}</Label>
               <Input
                 className="t-metric mt-2 w-full text-right"
                 value={volumeRaw}
@@ -1957,7 +1975,7 @@ export function DesignSpace({
               ) : null}
             </div>
             <div>
-              <Label className="t-label">Date de lancement série</Label>
+              <Label className="t-label">{t("Date de lancement série")}</Label>
               <Input
                 className="t-metric mt-2 w-full"
                 type="date"
@@ -1970,7 +1988,7 @@ export function DesignSpace({
               />
             </div>
             <div>
-              <Label className="t-label">Échantillons utiles avant</Label>
+              <Label className="t-label">{t("Échantillons utiles avant")}</Label>
               <Input
                 className="t-metric mt-2 w-full"
                 type="date"
@@ -1983,7 +2001,7 @@ export function DesignSpace({
               />
             </div>
             <div>
-              <Label className="t-label">Durée de série (années)</Label>
+              <Label className="t-label">{t("Durée de série (années)")}</Label>
               <Input
                 className="t-metric mt-2 w-full text-right"
                 inputMode="numeric"
@@ -1996,7 +2014,7 @@ export function DesignSpace({
               />
             </div>
             <div>
-              <Label className="t-label">Contact</Label>
+              <Label className="t-label">{t("Contact")}</Label>
               <Input
                 className="mt-2 w-full"
                 placeholder="Nom"
@@ -2009,7 +2027,7 @@ export function DesignSpace({
               />
             </div>
             <div>
-              <Label className="t-label">E-mail</Label>
+              <Label className="t-label">{t("E-mail")}</Label>
               <Input
                 className="mt-2 w-full"
                 type="email"
@@ -2027,14 +2045,12 @@ export function DesignSpace({
         <AccordionItem value="nda" className="panel-block-lg border-0">
           <AccordionTrigger className="business-accordion-trigger t-title-s gap-3 hover:no-underline">
             <span className="standex-bar !h-5 !w-1" aria-hidden="true" />
-            <span className="flex-1">Confidentialité et NDA — {ndaStatusLabel(nda)}</span>
+            <span className="flex-1">{t("Confidentialité et NDA —")} {ndaStatusLabel(nda)}</span>
           </AccordionTrigger>
           <AccordionContent className="space-y-3">
             <p className="text-sm">
-              Modèle juridique approuvé : <strong>{APPROVED_NDA_TEMPLATE.fileName}</strong> (SHA-256{" "}
-              {APPROVED_NDA_TEMPLATE.sha256.slice(0, 16)}…, vérifié avant chaque remplissage).
-              L'original reste intact : seule une copie remplie est produite, sur cet appareil, sans
-              transmettre le dossier.
+              {t("Modèle juridique approuvé :")} <strong>{APPROVED_NDA_TEMPLATE.fileName}</strong> (SHA-256{" "}
+              {APPROVED_NDA_TEMPLATE.sha256.slice(0, 16)}{t("…, vérifié avant chaque remplissage). L'original reste intact : seule une copie remplie est produite, sur cet appareil, sans transmettre le dossier.")}
             </p>
             <div className="grid gap-2 md:grid-cols-2">
               {NDA_FIELD_LABELS.map(([key, label]) => (
@@ -2060,7 +2076,7 @@ export function DesignSpace({
                   void prepareNdaDocument("preview");
                 }}
               >
-                Aperçu du document rempli
+                {t("Aperçu du document rempli")}
               </Button>
               <Button
                 size="sm"
@@ -2071,7 +2087,7 @@ export function DesignSpace({
                 }}
               >
                 <Download className="mr-1 h-4 w-4" />
-                Télécharger le .docx non signé
+                {t("Télécharger le .docx non signé")}
               </Button>
               <Button
                 size="sm"
@@ -2080,7 +2096,7 @@ export function DesignSpace({
                   void prepareServerNda();
                 }}
               >
-                Préparer mon NDA pour vérification
+                {t("Préparer mon NDA pour vérification")}
               </Button>
               <Button
                 size="sm"
@@ -2090,18 +2106,16 @@ export function DesignSpace({
                   void refreshNdaStatus();
                 }}
               >
-                Actualiser le statut
+                {t("Actualiser le statut")}
               </Button>
             </div>
             <p className="t-caption">
-              « Préparer mon NDA » n'envoie aucune donnée de conception : seule une fiche vide est
-              créée côté Standex pour que vous puissiez déposer le document signé et que l'équipe
-              puisse le vérifier.{" "}
+              {t("« Préparer mon NDA » n'envoie aucune donnée de conception : seule une fiche vide est créée côté Standex pour que vous puissiez déposer le document signé et que l'équipe puisse le vérifier.")}{" "}
               {ndaServer
                 ? `Statut côté Standex : ${ndaServer.nda_status}${
-                    ndaServer.allows_transfer ? " — transfert autorisé" : " — transfert bloqué"
+                    ndaServer.allows_transfer ? t(" — transfert autorisé") : t(" — transfert bloqué")
                   }.`
-                : "Aucune fiche NDA créée pour l'instant."}
+                : t("Aucune fiche NDA créée pour l'instant.")}
             </p>
 
             {ndaError ? (
@@ -2113,7 +2127,7 @@ export function DesignSpace({
             {ndaPreview ? (
               <div className="space-y-2">
                 <p className="t-caption">
-                  Aperçu local des clauses du document rempli (non signé) — {ndaPreview.fileName}
+                  {t("Aperçu local des clauses du document rempli (non signé) —")} {ndaPreview.fileName}
                 </p>
                 <pre className="code-block max-h-80 overflow-auto whitespace-pre-wrap">
                   {ndaPreview.paragraphs.filter((p) => p.trim()).join("\n\n")}
@@ -2121,10 +2135,7 @@ export function DesignSpace({
               </div>
             ) : null}
             <p className="t-caption">
-              Générer un document n'est pas une signature : aucune signature ni tampon n'est ajouté,
-              le document reste non signé. Le statut « en vigueur » n'est accordé que sur preuve
-              vérifiée côté Standex ; tant qu'il n'est pas atteint, aucun contenu confidentiel n'est
-              transmis.
+              {t("Générer un document n'est pas une signature : aucune signature ni tampon n'est ajouté, le document reste non signé. Le statut « en vigueur » n'est accordé que sur preuve vérifiée côté Standex ; tant qu'il n'est pas atteint, aucun contenu confidentiel n'est transmis.")}
             </p>
           </AccordionContent>
         </AccordionItem>
@@ -2132,11 +2143,11 @@ export function DesignSpace({
         <AccordionItem value="envoi" className="panel-block-lg border-0">
           <AccordionTrigger className="business-accordion-trigger t-title-s gap-3 hover:no-underline">
             <span className="standex-bar !h-5 !w-1" aria-hidden="true" />
-            <span className="flex-1">Préparer la revue Standex</span>
+            <span className="flex-1">{t("Préparer la revue Standex")}</span>
           </AccordionTrigger>
           <AccordionContent className="space-y-3">
             <div>
-              <Label className="t-label">Contraintes supplémentaires</Label>
+              <Label className="t-label">{t("Contraintes supplémentaires")}</Label>
               <Textarea
                 rows={3}
                 value={extraConstraints}
@@ -2144,7 +2155,7 @@ export function DesignSpace({
               />
             </div>
             <p className="text-sm">
-              Fichiers réellement transmis :{" "}
+              {t("Fichiers réellement transmis :")}{" "}
               {dossier.attachments.filter((a) => a.transferred).length === 0
                 ? "aucun"
                 : dossier.attachments
@@ -2163,8 +2174,8 @@ export function DesignSpace({
                       ? grantConsent(p, {
                           kind: "supabase_dossier",
                           contentSummary:
-                            "Exigences, montage, câblage, contraintes et contexte projet.",
-                          recipients: ["Standex R&D", "Standex commercial"],
+                            t("Exigences, montage, câblage, contraintes et contexte projet."),
+                          recipients: [t("Standex R&D"), t("Standex commercial")],
                           binding,
                         })
                       : {
@@ -2174,7 +2185,7 @@ export function DesignSpace({
                   );
                 }}
               />
-              J'autorise l'envoi de ce contenu à Standex (R&D et commercial).
+              {t("J'autorise l'envoi de ce contenu à Standex (R&D et commercial).")}
             </label>
             {consentNotice ? <p className="notice notice-warning">{consentNotice}</p> : null}
 
@@ -2189,7 +2200,7 @@ export function DesignSpace({
               />
               {dossier.workshopAsset
                 ? `Je partage aussi le fichier 3D « ${dossier.workshopAsset.fileName} » avec l'équipe en charge.`
-                : "Aucun fichier 3D importé : rien à partager."}
+                : t("Aucun fichier 3D importé : rien à partager.")}
             </label>
             {shareModel && dossier.workshopAsset ? (
               <div className="space-y-1">
@@ -2202,12 +2213,11 @@ export function DesignSpace({
                 >
                   {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
                   {preparedUpload?.assetKey === dossier.workshopAsset.assetKey
-                    ? "Fichier 3D déposé et vérifié"
-                    : "1. Déposer le fichier 3D"}
+                    ? t("Fichier 3D déposé et vérifié")
+                    : t("1. Déposer le fichier 3D")}
                 </Button>
                 <p className="t-caption">
-                  Le dépôt a lieu avant votre accord, pour que vous confirmiez exactement ce qui
-                  partira. Il n'est pas refait si l'envoi doit être retenté.
+                  {t("Le dépôt a lieu avant votre accord, pour que vous confirmiez exactement ce qui partira. Il n'est pas refait si l'envoi doit être retenté.")}
                 </p>
               </div>
             ) : null}
@@ -2217,7 +2227,7 @@ export function DesignSpace({
                 checked={acknowledged}
                 onCheckedChange={(v) => setAcknowledged(Boolean(v))}
               />
-              J'ai relu le résumé technique et les inconnues listées.
+              {t("J'ai relu le résumé technique et les inconnues listées.")}
             </label>
             <div className="space-y-3">
               <Button
@@ -2232,13 +2242,13 @@ export function DesignSpace({
                 ) : (
                   <ShieldCheck className="mr-1 h-4 w-4" />
                 )}{" "}
-                {busy ? "Envoi en cours…" : "Transmettre à la revue Standex"}
+                {busy ? t("Envoi en cours…") : t("Transmettre à la revue Standex")}
               </Button>
             </div>
             {!backend?.ready ? (
               <div className="space-y-2">
                 <p className="t-caption">
-                  {backend?.message ?? "Vérification du backend en cours…"}
+                  {t(backend?.message ?? "Vérification du backend en cours…")}
                 </p>
                 <AuthPanel
                   backend={backend}
@@ -2254,8 +2264,7 @@ export function DesignSpace({
             )}
             {reopenedFrom ? (
               <p className="t-caption">
-                Contenu repris de la version {reopenedFrom.revision}. Le prochain envoi créera la
-                version {serverRevision + 1} de ce dossier.
+                {t("Contenu repris de la version")} {reopenedFrom.revision}{t(". Le prochain envoi créera la version")} {serverRevision + 1} {t("de ce dossier.")}
               </p>
             ) : null}
             {submitMessage ? (
@@ -2267,26 +2276,24 @@ export function DesignSpace({
         <AccordionItem value="echantillons" className="panel-block-lg border-0">
           <AccordionTrigger className="business-accordion-trigger t-title-s gap-3 hover:no-underline">
             <span className="standex-bar !h-5 !w-1" aria-hidden="true" />
-            <span className="flex-1">Échantillons et suivi</span>
+            <span className="flex-1">{t("Échantillons et suivi")}</span>
           </AccordionTrigger>
           <AccordionContent className="space-y-3">
             <p className="text-sm">{sampleRoute.note}</p>
             <p className="notice notice-warning">
-              Les échantillons s'ouvrent après un retour Standex validé et publié, qui fixe la
-              référence exacte à commander. Une gamme ne suffit pas.
+              {t("Les échantillons s'ouvrent après un retour Standex validé et publié, qui fixe la référence exacte à commander. Une gamme ne suffit pas.")}
             </p>
-            <p className="t-caption">{SEARCH_LINK_DISCLAIMER}</p>
+            <p className="t-caption">{t(SEARCH_LINK_DISCLAIMER)}</p>
             <Button
               variant="outline"
               className="min-h-11 text-base"
               onClick={() => setPanel("espace")}
             >
-              Ouvrir mon espace (mes projets, suivi, variantes)
+              {t("Ouvrir mon espace (mes projets, suivi, variantes)")}
             </Button>
 
             <p className="t-caption">
-              Disponibilités, MOQ et conditionnements : inconnus tant qu'aucun fournisseur réel
-              n'est connecté.
+              {t("Disponibilités, MOQ et conditionnements : inconnus tant qu'aucun fournisseur réel n'est connecté.")}
             </p>
           </AccordionContent>
         </AccordionItem>
@@ -2321,18 +2328,17 @@ export function DesignSpace({
     if (!draft) return;
     applyWorkshopConfig(draft);
     setSubmitMessage(
-      "Montage 3D repris dans votre projet : il suivra désormais l'export, le résumé et l'envoi.",
+      t("Montage 3D repris dans votre projet : il suivra désormais l'export, le résumé et l'envoi."),
     );
   }, [applyWorkshopConfig]);
 
   const draftBanner = workshopDraftPending ? (
     <div className="notice notice-warning">
       <p className="text-base">
-        Des réglages 3D ne sont pas encore repris dans votre projet : ils ne partiraient ni dans
-        l'export ni dans le résumé.
+        {t("Des réglages 3D ne sont pas encore repris dans votre projet : ils ne partiraient ni dans l'export ni dans le résumé.")}
       </p>
       <Button className="mt-3 min-h-11 text-base" onClick={useCurrentDraft}>
-        Utiliser ce montage
+        {t("Utiliser ce montage")}
       </Button>
     </div>
   ) : null;
@@ -2340,15 +2346,14 @@ export function DesignSpace({
   const workshopSection = (
     <div className="space-y-3">
       <p className="text-base text-muted-foreground">
-        Modèle physique explicitement pédagogique : aucune validation magnétique automatique.
-        L'exemple machine à café est un exemple, il n'impose aucune référence à votre projet.
+        {t("Modèle physique explicitement pédagogique : aucune validation magnétique automatique. L'exemple machine à café est un exemple, il n'impose aucune référence à votre projet.")}
       </p>
       {draftBanner}
-      <Suspense fallback={<p className="text-base">Chargement de l'atelier…</p>}>
+      <Suspense fallback={<p className="text-base">{t("Chargement de l'atelier…")}</p>}>
         <MagneticWorkshop
           key={`workshop-${workshopEpoch}`}
           initialConfig={workshop ?? DEFAULT_WORKSHOP}
-          storageLabel="ce dossier, en mémoire de l'onglet"
+          storageLabel={t("ce dossier, en mémoire de l'onglet")}
           storageMode="memory"
           cableRouting={cableRouting}
           onDraftChange={onWorkshopDraft}
@@ -2374,14 +2379,14 @@ export function DesignSpace({
             docGenRef.current += 1;
             setOpenDoc({
               id: `summary-${Date.now()}`,
-              name: "Résumé de mon projet.md",
+              name: t("Résumé de mon projet.md"),
               kind: "markdown",
               text: technicalSummary(dossier),
             });
           }}
         >
           <FileText className="h-5 w-5 shrink-0 text-[var(--primary)]" aria-hidden="true" />
-          Résumé de mon projet
+          {t("Résumé de mon projet")}
         </Button>
         {ndaPreview ? (
           <Button
@@ -2398,7 +2403,7 @@ export function DesignSpace({
             }}
           >
             <FileText className="h-5 w-5 shrink-0 text-[var(--primary)]" aria-hidden="true" />
-            Aperçu de l'accord de confidentialité
+            {t("Aperçu de l'accord de confidentialité")}
           </Button>
         ) : null}
         <Button
@@ -2409,7 +2414,7 @@ export function DesignSpace({
           <label className="block w-full max-w-full cursor-pointer text-center sm:w-auto">
             <span className="flex items-center gap-3">
               <Upload className="h-5 w-5 shrink-0 text-[var(--primary)]" aria-hidden="true" />
-              Ouvrir un fichier de mon appareil
+              {t("Ouvrir un fichier de mon appareil")}
             </span>
             <input
               type="file"
@@ -2438,7 +2443,7 @@ export function DesignSpace({
                       note:
                         error instanceof Error
                           ? error.message
-                          : "Ce fichier n'a pas pu être lu dans cet onglet.",
+                          : t("Ce fichier n'a pas pu être lu dans cet onglet."),
                     });
                   });
               }}
@@ -2447,7 +2452,7 @@ export function DesignSpace({
         </Button>
       </div>
       <p className="t-caption">
-        Les fichiers ouverts ici restent en mémoire de cet onglet : rien n'est envoyé.
+        {t("Les fichiers ouverts ici restent en mémoire de cet onglet : rien n'est envoyé.")}
       </p>
       <div className="panel-block">
         <DocumentViewer document={openDoc} />
@@ -2470,7 +2475,7 @@ export function DesignSpace({
       {draftBanner}
       <div className="flex flex-wrap items-center gap-3">
         <Button variant="outline" className="min-h-11 text-base" onClick={exportDossier}>
-          <Download className="mr-1 h-4 w-4" /> Exporter mon projet
+          <Download className="mr-1 h-4 w-4" /> {t("Exporter mon projet")}
         </Button>
         <Button
           variant="outline"
@@ -2478,7 +2483,7 @@ export function DesignSpace({
           asChild
         >
           <label className="block w-full max-w-full cursor-pointer text-center sm:w-auto">
-            Reprendre un fichier
+            {t("Reprendre un fichier")}
             <input
               type="file"
               accept="application/json"
@@ -2503,8 +2508,8 @@ export function DesignSpace({
           className="min-h-11 text-base"
           onClick={() => {
             if (busyRef.current) return;
-            if (!guardReplace("démarrer un nouveau projet")) return;
-            const fresh = createDossier();
+            if (!guardReplace(t("démarrer un nouveau projet"))) return;
+            const fresh = createDossier(undefined, getLocale());
             setDossier(fresh);
             adoptBaseline(fresh);
             setConnectorDraft(EMPTY_CONNECTOR_DRAFT);
@@ -2513,22 +2518,22 @@ export function DesignSpace({
             resetServerContext(null, 0);
             setPanel(null);
             onWorkspaceOpen?.();
-            setSubmitMessage("Nouveau projet ouvert en mémoire de cet onglet.");
+            setSubmitMessage(t("Nouveau projet ouvert en mémoire de cet onglet."));
           }}
         >
-          Nouveau projet
+          {t("Nouveau projet")}
         </Button>
       </div>
 
       {backend?.role ? (
         <p className="text-base text-muted-foreground">
-          Accès équipe Standex ({backend.role}) :{" "}
+          {t("Accès équipe Standex (")}{backend.role}) :{" "}
           <Link to="/standex" className="underline underline-offset-4">
-            console R&amp;D
+            {t("console R&amp;D")}
           </Link>{" "}
           ·{" "}
           <Link to="/internal" className="underline underline-offset-4">
-            banc de test interne
+            {t("banc de test interne")}
           </Link>
         </p>
       ) : null}
@@ -2541,7 +2546,7 @@ export function DesignSpace({
           onOpenTransferredFile={(f) => void openTransferredFile(f)}
           onSelectDossier={({ id, revision, title, snapshot }) => {
             if (busyRef.current) return { ok: false };
-            if (!guardReplace("ouvrir ce dossier")) return { ok: false };
+            if (!guardReplace(t("ouvrir ce dossier"))) return { ok: false };
             // Le dossier CONSULTÉ ne devient le dossier ÉDITÉ que si son
             // dernier contenu envoyé a pu être chargé : sinon l'ancien
             // contenu resterait à l'écran sous une nouvelle étiquette.
@@ -2550,7 +2555,7 @@ export function DesignSpace({
               setSubmitMessage(
                 parsed && !parsed.ok
                   ? parsed.reason
-                  : "Le dernier contenu envoyé de ce dossier n'a pas pu être relu : le dossier ouvert ici reste inchangé.",
+                  : t("Le dernier contenu envoyé de ce dossier n'a pas pu être relu : le dossier ouvert ici reste inchangé."),
               );
               return { ok: false };
             }
@@ -2561,7 +2566,7 @@ export function DesignSpace({
               loadWorkshop(parsed.dossier.workshop ?? null);
             } else {
               // Dossier sans contenu envoyé : contenu VIDE, jamais l'ancien.
-              const next = { ...createDossier(), title };
+              const next = { ...createDossier(undefined, getLocale()), title };
               setDossier(next);
               adoptBaseline(next);
               loadWorkshop(null);
@@ -2574,15 +2579,15 @@ export function DesignSpace({
             setSubmitMessage(
               `Dossier « ${title} » ouvert à la version ${revision}${
                 parsed && parsed.ok
-                  ? ", contenu envoyé rechargé"
-                  : ", aucun contenu envoyé à recharger"
+                  ? t(", contenu envoyé rechargé")
+                  : t(", aucun contenu envoyé à recharger")
               }. Votre accord d'envoi et la relecture sont à refaire pour ce dossier.`,
             );
             return { ok: true };
           }}
           onReopenSnapshot={({ dossierId, sourceRevision, currentRevision, snapshot }) => {
             if (busyRef.current) return { ok: false };
-            if (!guardReplace("reprendre cette version")) return { ok: false };
+            if (!guardReplace(t("reprendre cette version"))) return { ok: false };
             const parsed = parseServerSnapshot(snapshot);
             if (!parsed.ok) {
               setSubmitMessage(parsed.reason);
@@ -2612,13 +2617,13 @@ export function DesignSpace({
               return {
                 applied: [],
                 notApplied: [],
-                refused: "Une opération est en cours. Réessayez après sa fin.",
+                refused: t("Une opération est en cours. Réessayez après sa fin."),
               };
-            if (!guardReplace("reprendre cette proposition"))
+            if (!guardReplace(t("reprendre cette proposition")))
               return {
                 applied: [],
                 notApplied: [],
-                refused: "Reprise annulée : votre travail en cours est intact.",
+                refused: t("Reprise annulée : votre travail en cours est intact."),
               };
             // La variante s'applique au contenu de LA version relue par
             // Standex, jamais à un contenu resté d'un autre dossier.
@@ -2632,7 +2637,7 @@ export function DesignSpace({
                 applied: [],
                 notApplied: out.notApplied,
                 refused:
-                  "Aucune modification de cette proposition n'a pu être appliquée : rien n'a été repris.",
+                  t("Aucune modification de cette proposition n'a pu être appliquée : rien n'a été repris."),
               };
             }
             try {
@@ -2647,7 +2652,7 @@ export function DesignSpace({
                 refused:
                   error instanceof Error
                     ? error.message
-                    : "La reprise de cette proposition n'a pas été enregistrée.",
+                    : t("La reprise de cette proposition n'a pas été enregistrée."),
               };
             } finally {
               busyRef.current = false;
@@ -2663,7 +2668,7 @@ export function DesignSpace({
             setPanel(null);
             onWorkspaceOpen?.();
             setSubmitMessage(
-              "Proposition Standex reprise dans le contenu ouvert ici. Elle n'est ni validée ni envoyée : relisez, confirmez l'accord, puis envoyez une nouvelle version.",
+              t("Proposition Standex reprise dans le contenu ouvert ici. Elle n'est ni validée ni envoyée : relisez, confirmez l'accord, puis envoyez une nouvelle version."),
             );
             return { applied: out.applied, notApplied: out.notApplied };
           }}
@@ -2675,7 +2680,7 @@ export function DesignSpace({
   return (
     <div
       data-readable
-      className={embedded ? "text-foreground" : "min-h-screen bg-background text-foreground"}
+      className={embedded ? "text-foreground" : t("min-h-screen bg-background text-foreground")}
     >
       <header
         className={`material sticky top-0 z-20 border-b border-[var(--hairline)]${visible ? "" : " hidden"}`}
@@ -2686,7 +2691,7 @@ export function DesignSpace({
               <button
                 type="button"
                 onClick={onGoHome}
-                aria-label="Revenir à l'accueil Standex DETECT"
+                aria-label={t("Revenir à l'accueil Standex DETECT")}
                 className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-[var(--r-sm)] transition-colors duration-[var(--d-fast)] hover:bg-[var(--surface-tint)]"
               >
                 <BrandLogo variant="mark" tone="light" height={32} clearance={false} alt="" />
@@ -2694,7 +2699,7 @@ export function DesignSpace({
             ) : (
               <Link
                 to="/"
-                aria-label="Revenir à l'accueil Standex DETECT"
+                aria-label={t("Revenir à l'accueil Standex DETECT")}
                 className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-[var(--r-sm)] transition-colors duration-[var(--d-fast)] hover:bg-[var(--surface-tint)]"
               >
                 <BrandLogo variant="mark" tone="light" height={32} clearance={false} alt="" />
@@ -2703,6 +2708,9 @@ export function DesignSpace({
             <span aria-hidden="true" className="block h-6 w-px bg-[var(--hairline)]" />
           </div>
           <ProjectTitle
+            // Changer de dossier pendant un renommage abandonne le brouillon de
+            // nom de l'ancien dossier : il ne doit jamais renommer le nouveau.
+            key={dossier.id}
             title={dossier.title}
             onRename={(next) =>
               setDossier((d) => ({ ...d, title: next, updatedAt: new Date().toISOString() }))
@@ -2710,13 +2718,13 @@ export function DesignSpace({
           />
           <div className="flex flex-wrap items-center gap-2">
             <Badge variant="secondary" className="gap-1 px-2.5 py-1 text-sm">
-              <Lock className="h-3 w-3" /> {STORAGE_BADGE[privacy.storage]}
+              <Lock className="h-3 w-3" /> {t(STORAGE_BADGE[privacy.storage])}
             </Badge>
             <span className="text-muted-foreground" aria-hidden="true">
               ·
             </span>
             <Badge variant="secondary" className="px-2.5 py-1 text-sm">
-              Révision {dossier.revision}
+              {t("Révision")} {dossier.revision}
             </Badge>
           </div>
           <div className="flex max-w-full flex-wrap items-center gap-1 rounded-[var(--r-sm)] bg-[var(--surface-sunken)] p-1">
@@ -2725,17 +2733,17 @@ export function DesignSpace({
               variant="ghost"
               className="min-h-11 px-3"
               onClick={exportDossier}
-              aria-label="Exporter"
+              aria-label={t("Exporter")}
             >
-              <Download className="h-4 w-4" /> <span className="hidden sm:inline">Exporter</span>
+              <Download className="h-4 w-4" /> <span className="hidden sm:inline">{t("Exporter")}</span>
             </Button>
             <Button variant="ghost" className="min-h-11 max-w-full px-3 whitespace-normal" asChild>
               <label
                 className="inline-flex w-auto max-w-full cursor-pointer text-center"
-                aria-label="Reprendre un fichier"
+                aria-label={t("Reprendre un fichier")}
               >
                 <Upload className="h-4 w-4" />
-                <span className="hidden sm:inline">Reprendre un fichier</span>
+                <span className="hidden sm:inline">{t("Reprendre un fichier")}</span>
                 <input
                   type="file"
                   accept="application/json"
@@ -2754,7 +2762,7 @@ export function DesignSpace({
           <div className="flex items-start gap-3 rounded-[var(--r-md)] bg-[var(--surface-tint)] px-[1.125rem] py-[0.875rem]">
             <Info className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
             <div className="t-caption !text-[var(--foreground)]">
-              {MEMORY_LOSS_WARNING} {EXPORT_BINARY_NOTICE}
+              {t(MEMORY_LOSS_WARNING)} {t(EXPORT_BINARY_NOTICE)}
               {importMessage ? <span className="block font-semibold">{importMessage}</span> : null}
             </div>
           </div>
@@ -2799,7 +2807,7 @@ export function DesignSpace({
             onClick={() => setPanel("espace")}
           >
             <UserRound />
-            Mon espace
+            {t("Mon espace")}
           </Button>
           <Button
             variant="ghost"
@@ -2808,7 +2816,7 @@ export function DesignSpace({
             onClick={() => setPanel("documents")}
           >
             <FileText />
-            Documents
+            {t("Documents")}
           </Button>
           {tab !== "besoin" ? (
             <div className="anim-fade contents">
@@ -2823,7 +2831,7 @@ export function DesignSpace({
                 }}
               >
                 <Box />
-                Atelier 3D
+                {t("Atelier 3D")}
               </Button>
               <Button
                 variant="ghost"
@@ -2832,7 +2840,7 @@ export function DesignSpace({
                 onClick={() => (showAdvanced ? setTab("candidats") : setPanel("candidats"))}
               >
                 <Cpu />
-                Capteurs possibles
+                {t("Capteurs possibles")}
               </Button>
               <Button
                 variant="ghost"
@@ -2841,7 +2849,7 @@ export function DesignSpace({
                 onClick={() => (showAdvanced ? setTab("cablage") : setPanel("cablage"))}
               >
                 <Cable />
-                Câble et connecteur
+                {t("Câble et connecteur")}
               </Button>
             </div>
           ) : null}
@@ -2855,20 +2863,20 @@ export function DesignSpace({
               aria-expanded={showAdvanced}
               onClick={() => setShowAdvanced((v) => !v)}
             >
-              {showAdvanced ? "Masquer les réglages détaillés" : "Ouvrir les réglages détaillés"}
+              {showAdvanced ? t("Masquer les réglages détaillés") : t("Ouvrir les réglages détaillés")}
             </Button>
             {showAdvanced ? null : (
               <span className="text-base text-muted-foreground">
-                Tous les réglages avancés restent disponibles, sans rien perdre.
+                {t("Tous les réglages avancés restent disponibles, sans rien perdre.")}
               </span>
             )}
           </div>
           <TabsList className={showAdvanced ? "flex-wrap" : "hidden"}>
-            <TabsTrigger value="besoin">Besoin</TabsTrigger>
-            <TabsTrigger value="montage">Montage &amp; 3D</TabsTrigger>
-            <TabsTrigger value="candidats">Candidats</TabsTrigger>
-            <TabsTrigger value="cablage">Câblage</TabsTrigger>
-            <TabsTrigger value="revue">Revue Standex</TabsTrigger>
+            <TabsTrigger value="besoin">{t("Besoin")}</TabsTrigger>
+            <TabsTrigger value="montage">{t("Montage &amp; 3D")}</TabsTrigger>
+            <TabsTrigger value="candidats">{t("Candidats")}</TabsTrigger>
+            <TabsTrigger value="cablage">{t("Câblage")}</TabsTrigger>
+            <TabsTrigger value="revue">{t("Revue Standex")}</TabsTrigger>
           </TabsList>
 
           {/* ---------------- Besoin ---------------- */}
@@ -2911,11 +2919,11 @@ export function DesignSpace({
         open={panel === "atelier" && workshopMounted}
         keepMounted={workshopMounted}
         fullscreen
-        backLabel="Retour au projet"
+        backLabel={t("Retour au projet")}
         onBack={() => setPanel(null)}
         onOpenChange={(o) => setPanel(o ? "atelier" : null)}
-        title="Atelier 3D"
-        description="Vos réglages restent en mémoire même si vous refermez ce panneau. Enregistrer reste une action explicite."
+        title={t("Atelier 3D")}
+        description={t("Vos réglages restent en mémoire même si vous refermez ce panneau. Enregistrer reste une action explicite.")}
       >
         {workshopMounted ? workshopSection : null}
       </WorkspacePanel>
@@ -2924,8 +2932,8 @@ export function DesignSpace({
         open={panel === "candidats"}
         keepMounted
         onOpenChange={(o) => setPanel(o ? "candidats" : null)}
-        title="Capteurs possibles"
-        description="Proposés à partir de vos contraintes et de votre montage, jamais du secteur d'activité."
+        title={t("Capteurs possibles")}
+        description={t("Proposés à partir de vos contraintes et de votre montage, jamais du secteur d'activité.")}
       >
         {showAdvanced ? null : candidatsSection}
       </WorkspacePanel>
@@ -2934,8 +2942,8 @@ export function DesignSpace({
         open={panel === "cablage"}
         keepMounted
         onOpenChange={(o) => setPanel(o ? "cablage" : null)}
-        title="Câble et connecteur"
-        description="Longueurs, réserves et connecteurs documentés. Rien n'est perdu en fermant."
+        title={t("Câble et connecteur")}
+        description={t("Longueurs, réserves et connecteurs documentés. Rien n'est perdu en fermant.")}
       >
         {showAdvanced ? null : cablageSection}
       </WorkspacePanel>
@@ -2945,7 +2953,7 @@ export function DesignSpace({
         keepMounted
         onOpenChange={(o) => setPanel(o ? "documents" : null)}
         title="Documents"
-        description="Lecture sur place, en mémoire de cet onglet."
+        description={t("Lecture sur place, en mémoire de cet onglet.")}
       >
         {documentsSection}
       </WorkspacePanel>
@@ -2954,8 +2962,8 @@ export function DesignSpace({
         open={panel === "espace"}
         keepMounted
         onOpenChange={(o) => setPanel(o ? "espace" : null)}
-        title="Mon espace"
-        description="Connexion, mes projets envoyés, reprise et suivi."
+        title={t("Mon espace")}
+        description={t("Connexion, mes projets envoyés, reprise et suivi.")}
       >
         {espaceSection}
       </WorkspacePanel>

@@ -82,17 +82,17 @@ const MagneticWorkshop = lazy(() => import("@/components/standex/workshop/worksh
 export const Route = createFileRoute("/internal")({
   head: () => ({
     meta: [
-      { title: "Banc de test assistant capteur — Standex interne" },
+      { title: t("Banc de test assistant capteur — Standex interne") },
       {
         name: "description",
         content:
-          "Outil interne Standex : rejouer des scénarios de test sur l'assistant capteur, inspecter la sortie client, la trace interne, la revue et les données lead.",
+          t("Outil interne Standex : rejouer des scénarios de test sur l'assistant capteur, inspecter la sortie client, la trace interne, la revue et les données lead."),
       },
-      { property: "og:title", content: "Banc de test assistant capteur — Standex interne" },
+      { property: "og:title", content: t("Banc de test assistant capteur — Standex interne") },
       {
         property: "og:description",
         content:
-          "Outil interne de test : conversation, sortie client, trace interne, revue et données lead.",
+          t("Outil interne de test : conversation, sortie client, trace interne, revue et données lead."),
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -204,14 +204,14 @@ function NotConfigured() {
           {t("Le banc pointe vers ton projet Supabase existant. Renseigne :")}
         </p>
         <pre className="code-block mt-3">
-          {t("VITE_SUPABASE_URL=https://xxxx.supabase.co")}
-          {t("\n")}
-          {t("VITE_SUPABASE_PUBLISHABLE_KEY=…")}
+          {"VITE_SUPABASE_URL=https://xxxx.supabase.co"}
+          {"\n"}
+          {"VITE_SUPABASE_PUBLISHABLE_KEY=…"}
         </pre>
         <p className="mt-3 t-caption text-muted-foreground">
           {t("Le schéma V0.2 à appliquer côté Supabase est versionné dans")}
-          {t(" ")}
-          <span className="font-mono">{t("supabase/schema/schema_v0.2.sql")}</span>.
+          {" "}
+          <span className="font-mono">{"supabase/schema/schema_v0.2.sql"}</span>.
         </p>
       </div>
     </div>
@@ -457,7 +457,7 @@ function Bench({ user }: { user: User }) {
       setBatchTotal(codes.length);
       setBatch([]);
       setBatchRunAt(new Date().toISOString());
-      const label = scope === "p0" ? "Lot prioritaire" : "Régression 22";
+      const label = scope === "p0" ? t("Lot prioritaire") : t("Régression 22");
       try {
         for (const code of codes) {
           const sc = scenarios.find((s) => s.scenario_id === code);
@@ -729,8 +729,8 @@ function Bench({ user }: { user: User }) {
                     onClick={() => setActiveId(s.id)}
                     className={`mb-1 block min-h-11 w-full rounded-[var(--r-sm)] px-2 py-2 text-left font-mono t-caption transition-colors duration-[var(--d-fast)] ease-[var(--ease-out)] ${
                       s.id === activeId
-                        ? "bg-secondary text-foreground"
-                        : "text-muted-foreground hover:bg-secondary/60"
+                        ? t("bg-secondary text-foreground")
+                        : t("text-muted-foreground hover:bg-secondary/60")
                     }`}
                   >
                     <div className="truncate">
@@ -755,7 +755,7 @@ function Bench({ user }: { user: User }) {
                     onClick={() => selectScenario(sc.id)}
                     className={`mb-1 block min-h-11 w-full rounded-[var(--r-sm)] px-2 py-2 text-left font-mono t-caption transition-colors duration-[var(--d-fast)] ease-[var(--ease-out)] hover:bg-secondary/60 ${
                       sc.id === scenarioId
-                        ? "bg-secondary text-foreground"
+                        ? t("bg-secondary text-foreground")
                         : "text-muted-foreground"
                     }`}
                     title={t(sc.expected_behavior)}
@@ -819,10 +819,10 @@ function Bench({ user }: { user: User }) {
                     key={m.id}
                     className={
                       m.role === "prospect"
-                        ? "max-w-[85%] self-end rounded-[var(--r-sm)] rounded-br-[var(--r-xs)] bg-[var(--surface-tint)] px-3 py-2"
+                        ? t("max-w-[85%] self-end rounded-[var(--r-sm)] rounded-br-[var(--r-xs)] bg-[var(--surface-tint)] px-3 py-2")
                         : m.role === "assistant"
-                          ? "max-w-[85%] self-start rounded-[var(--r-sm)] rounded-bl-[var(--r-xs)] bg-[var(--surface)] px-3 py-2 shadow-[var(--e-1)]"
-                          : "w-full rounded-[var(--r-sm)] bg-[var(--surface-sunken)] px-3 py-2"
+                          ? t("max-w-[85%] self-start rounded-[var(--r-sm)] rounded-bl-[var(--r-xs)] bg-[var(--surface)] px-3 py-2 shadow-[var(--e-1)]")
+                          : t("w-full rounded-[var(--r-sm)] bg-[var(--surface-sunken)] px-3 py-2")
                     }
                   >
                     <div className="font-mono t-label uppercase tracking-widest text-muted-foreground">
@@ -888,10 +888,10 @@ function Bench({ user }: { user: User }) {
             <TabsList className="h-auto w-full flex-wrap justify-start">
               {(
                 [
-                  { v: "dossier", label: "Dossier" },
+                  { v: "dossier", label: t("Dossier") },
                   { v: "client", label: "Tester" },
                   { v: "mode", label: "Comparer" },
-                  { v: "revue", label: "Revue" },
+                  { v: "revue", label: t("Revue") },
                 ] as const
               ).map(({ v, label }) => (
                 <TabsTrigger key={v} value={v} className="px-4 py-2.5 font-mono t-caption">
@@ -917,11 +917,11 @@ function Bench({ user }: { user: User }) {
                           <Field k={t("Référence")} v={lastOutput.suggested_reference} />
                           <Field
                             k={t("Validation Standex")}
-                            v={lastOutput.standex_validation_required ? "requise" : "non requise"}
+                            v={lastOutput.standex_validation_required ? "requise" : t("non requise")}
                           />
                           <Field
                             k={t("Voie distributeur")}
-                            v={lastOutput.distributor_path_allowed ? "autorisée" : "bloquée"}
+                            v={lastOutput.distributor_path_allowed ? t("autorisée") : t("bloquée")}
                           />
                         </dl>
                         <p className="mt-4 border-t border-border pt-3 t-caption text-muted-foreground">
@@ -961,15 +961,15 @@ function Bench({ user }: { user: User }) {
                                 items={lastTrace.missing_questions}
                               />
                               <JsonBlock
-                                label={t("product_candidates")}
+                                label={"product_candidates"}
                                 value={lastTrace.product_candidates}
                               />
                               <JsonBlock
-                                label={t("datasheet_values_used")}
+                                label={"datasheet_values_used"}
                                 value={lastTrace.datasheet_values_used}
                               />
                               {lastOutput ? (
-                                <JsonBlock label={t("be_dossier")} value={lastOutput.be_dossier} />
+                                <JsonBlock label={"be_dossier"} value={lastOutput.be_dossier} />
                               ) : null}
                             </div>
                           )}
@@ -1271,7 +1271,7 @@ function DossierPanel({
                     ) : (
                       <p
                         className={
-                          f.importance === "critique" ? "studio-missing critical" : "studio-missing"
+                          f.importance === "critique" ? t("studio-missing critical") : "studio-missing"
                         }
                       >
                         {t("À préciser")}
@@ -1566,7 +1566,7 @@ function buildPackFromBatch(rows: BatchRow[], tester: string, runAt: string | nu
     ? buildReviewPack(reviewRows, {
         testedAt,
         tester,
-        contractVersion: "Contrat de réponse V0.2 (moteur déterministe, sans modèle génératif)",
+        contractVersion: t("Contrat de réponse V0.2 (moteur déterministe, sans modèle génératif)"),
         regressionScore: `${ok}/${rows.length} OK`,
       })
     : "";
@@ -1646,10 +1646,10 @@ function BatchPanel({
     rows.length === 0
       ? null
       : ok === rows.length
-        ? "Prêt pour revue qualitative Thomas / Claude / BE."
+        ? t("Prêt pour revue qualitative Thomas / Claude / BE.")
         : ok >= Math.ceil(rows.length * (18 / 22))
-          ? "Corriger les écarts listés puis relancer le lot."
-          : "Revoir le moteur déterministe avant de brancher un vrai assistant.";
+          ? t("Corriger les écarts listés puis relancer le lot.")
+          : t("Revoir le moteur déterministe avant de brancher un vrai assistant.");
 
   return (
     <div className="space-y-3 p-4">
@@ -1857,12 +1857,12 @@ function BatchPanel({
                   <ul className="mt-1 space-y-0.5 font-mono t-caption text-muted-foreground">
                     <li>
                       {t("· Éléments obligatoires absents :")}
-                      {t(" ")}
+                      {" "}
                       {t(r.evaluation!.missingMust.join(" | ") || "—")}
                     </li>
                     <li>
                       {t("· Éléments interdits présents :")}
-                      {t(" ")}
+                      {" "}
                       {t(r.evaluation!.presentForbidden.join(" | ") || "—")}
                     </li>
                     <li>
@@ -1871,7 +1871,7 @@ function BatchPanel({
                     </li>
                     <li>
                       {t("· Sortie :")}
-                      {t(" ")}
+                      {" "}
                       {t(
                         r.evaluation!.outputOk
                           ? "conforme"
@@ -1880,7 +1880,7 @@ function BatchPanel({
                     </li>
                     <li>
                       {t("· Trace interne :")}
-                      {t(" ")}
+                      {" "}
                       {t(r.evaluation!.traceSufficient ? "suffisante" : "insuffisante")}
                     </li>
                     <li>

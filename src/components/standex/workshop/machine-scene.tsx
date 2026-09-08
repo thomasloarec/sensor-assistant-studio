@@ -35,7 +35,7 @@ export interface CableRouting {
 }
 
 const SLOT_TEXT: Record<CableRouting["slot"], string> = {
-  sensor: "Sortie capteur",
+  sensor: t("Sortie capteur"),
   waypoint: "Passage",
   connection: "Connexion",
 };

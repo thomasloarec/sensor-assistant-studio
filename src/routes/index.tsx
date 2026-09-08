@@ -1,3 +1,4 @@
+import { t } from "@/lib/i18n/core";
 /** Accueil client : découverte interactive, puis espace projet unifié à la même URL.
  *
  * L'espace projet est le composant DesignSpace existant (même dossier, mêmes
@@ -19,17 +20,17 @@ export const Route = createFileRoute("/")({
   ssr: false,
   head: () => ({
     meta: [
-      { title: "Faire détecter votre idée — Standex DETECT" },
+      { title: t("Faire détecter votre idée — Standex DETECT") },
       {
         name: "description",
         content:
-          "Décrivez ce que vous voulez détecter, jouez avec un aimant et un capteur, et préparez votre projet de détection magnétique avec les ingénieurs Standex.",
+          t("Décrivez ce que vous voulez détecter, jouez avec un aimant et un capteur, et préparez votre projet de détection magnétique avec les ingénieurs Standex."),
       },
-      { property: "og:title", content: "Faire détecter votre idée — Standex DETECT" },
+      { property: "og:title", content: t("Faire détecter votre idée — Standex DETECT") },
       {
         property: "og:description",
         content:
-          "Découverte interactive de la détection magnétique et espace de projet privé Standex DETECT.",
+          t("Découverte interactive de la détection magnétique et espace de projet privé Standex DETECT."),
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -72,7 +73,7 @@ function HomeRoute() {
                     className="min-h-11 text-base"
                     onClick={() => setStarted(true)}
                   >
-                    <ArrowRight className="h-4 w-4" /> Reprendre mon projet
+                    <ArrowRight className="h-4 w-4" /> {t("Reprendre mon projet")}
                   </Button>
                 ) : null}
                 <Button
@@ -80,7 +81,7 @@ function HomeRoute() {
                   className="min-h-11 text-base"
                   onClick={() => setAccountRequest((n) => n + 1)}
                 >
-                  <UserRound className="h-4 w-4" /> Mon espace
+                  <UserRound className="h-4 w-4" /> {t("Mon espace")}
                 </Button>
               </div>
             </div>
@@ -95,18 +96,17 @@ function HomeRoute() {
               >
                 <p className="t-label flex items-center gap-3">
                   <span className="standex-bar h-[14px] w-[6px] shrink-0" aria-hidden="true" />
-                  Détection magnétique
+                  {t("Détection magnétique")}
                 </p>
                 <h1 className="t-display-xl mt-5 max-w-[16ch] text-balance">
-                  Donnez vie à votre détection.
+                  {t("Donnez vie à votre détection.")}
                 </h1>
                 <p className="t-body-l mt-7 max-w-[34rem] text-muted-foreground">
-                  Détecter un mouvement, simplement. Un aimant passe, le capteur réagit. Dites-nous
-                  ce que vous voulez détecter : nous construisons la solution avec vous.
+                  {t("Détecter un mouvement, simplement. Un aimant passe, le capteur réagit. Dites-nous ce que vous voulez détecter : nous construisons la solution avec vous.")}
                 </p>
                 <div className="mt-10 flex flex-wrap items-center gap-4">
                   <Button size="lg" className="group" onClick={openWorkspace}>
-                    Décrire mon besoin
+                    {t("Décrire mon besoin")}
                     <ArrowRight className="transition-transform duration-[var(--d-fast)] group-hover:translate-x-[3px]" />
                   </Button>
                   <Button
@@ -114,25 +114,24 @@ function HomeRoute() {
                     size="lg"
                     onClick={() => setAccountRequest((n) => n + 1)}
                   >
-                    Retrouver mes projets
+                    {t("Retrouver mes projets")}
                   </Button>
                   <a
                     href="#aimant"
                     className="inline-flex min-h-11 items-center gap-2 rounded-[var(--r-xs)] px-3 py-2 text-base underline decoration-[var(--hairline-strong)] underline-offset-4 transition-colors duration-[var(--d-fast)] hover:text-primary"
                   >
-                    Explorer avec l'aimant
+                    {t("Explorer avec l'aimant")}
                     <ArrowDown className="size-4" aria-hidden="true" />
                   </a>
                 </div>
                 <p className="t-caption mt-7 max-w-[34rem]">
-                  Rien à installer, aucun formulaire pour commencer. Votre travail reste sur votre
-                  appareil tant que vous ne l'envoyez pas.
+                  {t("Rien à installer, aucun formulaire pour commencer. Votre travail reste sur votre appareil tant que vous ne l'envoyez pas.")}
                 </p>
               </div>
 
               <section
                 id="aimant"
-                aria-label="Jouer avec l'aimant et le capteur"
+                aria-label={t("Jouer avec l'aimant et le capteur")}
                 className="anim-scale-in relative z-10 overflow-hidden rounded-[var(--r-2xl)] bg-[var(--surface)] shadow-[var(--e-4)] backdrop-blur-2xl lg:[animation-delay:260ms]"
               >
                 <MagnetPlay />
@@ -146,26 +145,26 @@ function HomeRoute() {
           </div>
         </div>
 
-        <section aria-label="Comment ça se passe" className="bg-background py-24">
+        <section aria-label={t("Comment ça se passe")} className="bg-background py-24">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <hr className="standex-rule mb-12" />
-            <h2 className="t-display-m">Comment ça se passe</h2>
+            <h2 className="t-display-m">{t("Comment ça se passe")}</h2>
             <ol className="mt-10 grid gap-6 sm:grid-cols-3">
               {[
                 {
                   n: "01",
-                  t: "1. Vous décrivez",
-                  d: "Quelques questions simples, en français : ce que vous voulez détecter, où le capteur se place, dans quelles conditions.",
+                  t: t("1. Vous décrivez"),
+                  d: t("Quelques questions simples, en français : ce que vous voulez détecter, où le capteur se place, dans quelles conditions."),
                 },
                 {
                   n: "02",
-                  t: "2. Vous visualisez",
-                  d: "Un atelier 3D facultatif pour placer capteur, aimant et câble. Rien n'est envoyé tant que vous ne le demandez pas.",
+                  t: t("2. Vous visualisez"),
+                  d: t("Un atelier 3D facultatif pour placer capteur, aimant et câble. Rien n'est envoyé tant que vous ne le demandez pas."),
                 },
                 {
                   n: "03",
-                  t: "3. Standex relit",
-                  d: "Vous pouvez faire relire votre projet par nos équipes. Une revue R&D reste toujours nécessaire avant commande.",
+                  t: t("3. Standex relit"),
+                  d: t("Vous pouvez faire relire votre projet par nos équipes. Une revue R&D reste toujours nécessaire avant commande."),
                 },
               ].map((step, index) => (
                 <ProcessStep key={step.t} step={step} index={index} />
