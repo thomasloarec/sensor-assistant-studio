@@ -131,6 +131,87 @@ function StandexConsole() {
     evidenceKind: "stored_object" as "stored_object" | "external_archive",
     signedFileName: "",
   });
+  /** Lecture 3D du modèle réellement envoyé : uniquement en mémoire de l'onglet. */
+  const [viewer, setViewer] = useState<{
+    config: WorkshopConfig;
+    revision: number;
+    sha256: string;
+  } | null>(null);
+  const [viewerError, setViewerError] = useState<string | null>(null);
+
+  /** Ouvre le GLB réellement transféré, jamais un montage par défaut.
+   * Le binaire est retéléchargé, son empreinte est comparée à celle annoncée à
+   * la soumission, puis il est chargé en mémoire avec la configuration exacte
+   * de la version envoyée. Si quoi que ce soit manque, on refuse et on le dit.
+   */
+  const openTransferredModel = useCallback(
+    async (file: { path?: string; file_name?: string; sha256?: string }) => {
+      setViewerError(null);
+      setViewer(null);
+      const revisions = view?.revisions ?? [];
+      const last = [...revisions].sort((a, b) => b.revision - a.revision)[0];
+      if (!last) {
+        setViewerError("Aucune version envoyée : rien à ouvrir.");
+        return;
+      }
+      const parsed = parseServerSnapshot(last.snapshot as Record<string, unknown>);
+      if (!parsed.ok) {
+        setViewerError(
+          `La configuration envoyée n'est pas lisible (${parsed.reason}) : le modèle n'est pas ouvert.`,
+        );
+        return;
+      }
+      const config = parseWorkshopConfig(parsed.dossier.workshop);
+      if (!config || !config.machine) {
+        setViewerError(
+          "Cette version ne contient pas de montage 3D exploitable : aucun montage par défaut n'est affiché à la place.",
+        );
+        return;
+      }
+      const path = String(file.path ?? "");
+      if (!path) {
+        setViewerError("Ce fichier n'a pas de chemin de stockage : il ne peut pas être relu.");
+        return;
+      }
+      try {
+        const bytes = await downloadDesignFile(path);
+        const digest = await sha256Hex(bytes);
+        const expected =
+          file.sha256 ??
+          parsed.dossier.attachments.find(
+            (a) => a.storagePath === path || a.fileName === file.file_name,
+          )?.sha256 ??
+          null;
+        if (!expected) {
+          setViewerError(
+            "Aucune empreinte n'a été enregistrée pour ce fichier : il n'est pas ouvert, faute de pouvoir prouver qu'il s'agit du fichier envoyé.",
+          );
+          return;
+        }
+        if (expected.toLowerCase() !== digest.toLowerCase()) {
+          setViewerError(
+            "Le contenu téléchargé ne correspond pas à l'empreinte enregistrée à l'envoi : le fichier n'est pas ouvert.",
+          );
+          return;
+        }
+        const name = String(file.file_name ?? config.machine.fileName ?? "modele.glb");
+        const assetKey = await storeMachineFileInMemory(
+          new File([bytes], name, { type: "model/gltf-binary" }),
+        );
+        setViewer({
+          config: { ...config, machine: { ...config.machine, assetKey, fileName: name } },
+          revision: last.revision,
+          sha256: digest,
+        });
+      } catch (error) {
+        setViewerError(
+          error instanceof Error ? error.message : "Le modèle 3D n'a pas pu être ouvert.",
+        );
+      }
+    },
+    [view],
+  );
+
 
   useEffect(() => {
     checkLeadBackend()
