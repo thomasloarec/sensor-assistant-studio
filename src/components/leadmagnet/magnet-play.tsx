@@ -269,7 +269,7 @@ export function MagnetPlay() {
 
         <p
           aria-live="polite"
-          className={`material absolute bottom-4 left-1/2 flex min-h-11 -translate-x-1/2 items-center gap-2 whitespace-nowrap rounded-[var(--r-pill)] px-5 py-2 text-base font-semibold shadow-[var(--e-2)] transition-[color,transform,opacity] duration-200 ease-[var(--ease-spring)] ${
+          className={`material absolute bottom-4 left-1/2 flex min-h-11 -translate-x-1/2 items-center gap-2 whitespace-nowrap rounded-[var(--r-pill)] px-5 py-2 text-base font-semibold shadow-[var(--e-2)] transition-[color,transform,opacity] duration-[var(--d-base)] ease-[var(--ease-spring)] ${
             detected
               ? "scale-100 text-signal opacity-100"
               : "scale-[0.98] text-foreground opacity-90"
