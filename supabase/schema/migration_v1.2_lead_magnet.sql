@@ -229,6 +229,9 @@ alter table lead.sample_requests add column if not exists origin_revision intege
 alter table lead.sample_requests add column if not exists origin_review_id uuid
   references lead.design_reviews(id) on delete set null;
 alter table lead.sample_requests add column if not exists revalidated_from_revision integer;
+alter table lead.sample_requests add column if not exists revalidated_for_revision integer;
+alter table lead.sample_requests add column if not exists revalidated_review_id uuid references lead.design_reviews(id);
+
 update lead.sample_requests
    set origin_revision = coalesce(origin_revision, revision),
        origin_review_id = coalesce(origin_review_id, review_id)
@@ -1059,7 +1062,7 @@ begin
   end if;
   update lead.upload_sessions
      set verified_sha256 = lower(_sha), verified_bytes = _bytes,
-         verified_mime = btrim(_mime), verified_object_path = _path, verified_at = now()
+         verified_mime = btrim(_mime), verified_object_path = _path, verified_at = now(), closed_at = now()
    where id = _session;
   insert into lead.audit_log (actor, action, dossier_id, detail)
   values (s.user_id, 'upload_verified', s.dossier_id,
@@ -1132,8 +1135,9 @@ begin
   if exists (select 1 from jsonb_array_elements(_snapshot->'requirements') r
              where jsonb_typeof(r) is distinct from 'object'
                 or coalesce(btrim(r->>'key'),'') = ''
-                or (r->>'state') not in ('confirmed','hypothesis','unknown')
-                or (r->>'source') not in ('user','import','assistant','rnd')) then
+                or r->>'state' is null or (r->>'state') not in ('confirmed','hypothesis','unknown')
+                or r->>'source' is null or (r->>'source') not in ('user','import','assistant','rnd')) then
+
     raise exception 'BAD_SNAPSHOT_SHAPE' using errcode = '22023';
   end if;
   -- But technique réellement renseigné : sans objectif de détection, rien à réviser.
@@ -1650,13 +1654,15 @@ begin
   if not lead_priv.staff_can_act(u, s.dossier_id, array['rnd','admin']::lead.staff_role[]) then
     raise exception 'NOT_ALLOWED' using errcode = '42501';
   end if;
+  if s.status <> 'superseded' then raise exception 'SAMPLE_NOT_SUPERSEDED' using errcode = '42501'; end if;
   if coalesce(btrim(_justification),'') = '' then
     raise exception 'JUSTIFICATION_REQUIRED' using errcode = '22023';
   end if;
   select * into rv from lead.design_reviews
    where dossier_id = d.id and revision = d.current_revision and published
      and superseded_by is null and verdict = 'validated';
-  if not found or upper(rv.exact_part_number) is distinct from upper(s.part_number) then
+  if not found or upper(rv.exact_part_number) is distinct from upper(s.part_number)
+     or rv.designation is distinct from s.designation then
     raise exception 'REVALIDATION_NOT_SUPPORTED' using errcode = '42501';
   end if;
   update lead.sample_requests
@@ -1665,7 +1671,7 @@ begin
          origin_revision = coalesce(origin_revision, revision),
          origin_review_id = coalesce(origin_review_id, review_id),
          revalidated_from_revision = revision,
-         revision = d.current_revision, review_id = rv.id,
+         revalidated_for_revision = d.current_revision, revalidated_review_id = rv.id,
          revalidated_at = now(), revalidated_by = u
    where id = _sample_id;
   select * into s from lead.sample_requests where id = _sample_id;
@@ -1674,11 +1680,14 @@ begin
           jsonb_build_object('sample_id', _sample_id, 'justification', _justification,
                              'origin_revision', s.origin_revision,
                              'revalidated_from_revision', s.revalidated_from_revision,
-                             'design_revision', d.current_revision));
+                             'design_revision', s.revision, 'revalidated_for_revision', d.current_revision,
+                             'origin_review_id', s.review_id, 'revalidated_review_id', rv.id));
   return jsonb_build_object('id', _sample_id, 'status', 'confirmed',
-                            'design_revision', d.current_revision,
+                            'design_revision', s.revision,
+                            'revalidated_for_revision', d.current_revision,
                             'origin_revision', s.origin_revision,
                             'revalidated_from_revision', s.revalidated_from_revision);
+
 end $$;
 
 create or replace function public.lead_revalidate_sample(p_sample_id uuid, p_justification text)
@@ -1738,7 +1747,10 @@ set search_path = lead, lead_priv, pg_temp as $$
         'annual_volume_basis', s.annual_volume_basis, 'revision', s.revision,
         'origin_revision', coalesce(s.origin_revision, s.revision),
         'revalidated_from_revision', s.revalidated_from_revision,
+        'revalidated_for_revision', s.revalidated_for_revision,
+        'revalidated_review_id', s.revalidated_review_id,
         'revalidated_at', s.revalidated_at,
+
         'feedback', s.feedback, 'feedback_revision', s.feedback_revision,
         'feedback_context_revision', s.feedback_context_revision)
         order by s.created_at)
@@ -1799,6 +1811,7 @@ set search_path = lead, lead_priv, pg_temp as $$
     select 1 from lead.upload_sessions s
     where s.user_id = _user
       and s.closed_at is null
+      and s.verified_at is null
       and s.expires_at > now()
       and _name like s.path_prefix || '/%'
       -- Une session annoncée = UN fichier : pas de dépôts illimités derrière
@@ -1806,7 +1819,8 @@ set search_path = lead, lead_priv, pg_temp as $$
       and not exists (select 1 from storage.objects o
                        where o.bucket_id = 'lead-design-files'
                          and o.name like s.path_prefix || '/%'
-                         and o.name <> _name));
+));
+
 
 $$;
 
@@ -1854,18 +1868,9 @@ create policy lead_files_insert on storage.objects for insert to authenticated
 create policy lead_files_select on storage.objects for select to authenticated
   using (bucket_id = 'lead-design-files' and lead_priv.object_readable(name, auth.uid()));
 
-create policy lead_files_update on storage.objects for update to authenticated
-  using (bucket_id = 'lead-design-files'
-         and coalesce(owner_id, owner::text) = auth.uid()::text
-         and not lead_priv.object_submitted(name) and not lead_priv.object_is_nda_proof(name))
-  with check (bucket_id = 'lead-design-files'
-              and coalesce(owner_id, owner::text) = auth.uid()::text
-              and lead_priv.upload_path_allowed(name, auth.uid()));
+-- Deposited files are immutable to callers, including before verification.
+-- No UPDATE/DELETE policy: prevents races during server re-read and invalidating verified bytes.
 
-create policy lead_files_delete on storage.objects for delete to authenticated
-  using (bucket_id = 'lead-design-files'
-         and coalesce(owner_id, owner::text) = auth.uid()::text
-         and not lead_priv.object_submitted(name) and not lead_priv.object_is_nda_proof(name));
 
 -- ----------------------------------------------------------------------------
 -- 7. Grants d'exécution : PUBLIC révoqué partout, autorisations explicites

@@ -264,9 +264,16 @@ function DesignSpace() {
     assetKey: string;
     file: UploadedFile;
   } | null>(null);
+  /** Version d'origine d'un contenu repris, conservée à part : elle sert à
+   * l'affichage, jamais de numéro de version attendu par le serveur. */
+  const [reopenedFrom, setReopenedFrom] = useState<{
+    dossierId: string;
+    revision: number;
+  } | null>(null);
   /** Verrou d'action : empêche un double clic de créer deux versions. */
   const [busy, setBusy] = useState(false);
   const busyRef = useRef(false);
+
 
 
 
@@ -478,29 +485,49 @@ function DesignSpace() {
     URL.revokeObjectURL(url);
   }, [dossier]);
 
-  const importDossier = useCallback(async (file: File | undefined) => {
-    if (!file) return;
-    setImportMessage(null);
-    try {
-      const parsed = parseDossierExport(JSON.parse(await file.text()));
-      if (!parsed.ok) {
-        setImportMessage(parsed.reason);
-        return;
+  const importDossier = useCallback(
+    async (file: File | undefined) => {
+      if (!file) return;
+      setImportMessage(null);
+      try {
+        const parsed = parseDossierExport(JSON.parse(await file.text()));
+        if (!parsed.ok) {
+          setImportMessage(parsed.reason);
+          return;
+        }
+        // Un fichier importé n'est RATTACHÉ à aucun dossier Standex : tout le
+        // contexte serveur, l'atelier, le NDA et les accords repartent de zéro.
+        setDossier(parsed.dossier);
+        setWorkshop(parsed.dossier.workshop);
+        resetServerContext(null, 0);
+        setImportMessage(
+          [
+            ...parsed.notices,
+            "Contenu importé dans un dossier local : aucun dossier Standex n'y est rattaché, et l'accord de confidentialité comme l'accord d'envoi sont à refaire.",
+          ].join(" "),
+        );
+      } catch {
+        setImportMessage("Ce fichier n'a pas pu être lu.");
       }
-      setDossier(parsed.dossier);
-      setWorkshop(parsed.dossier.workshop);
-      setImportMessage(parsed.notices.join(" "));
-    } catch {
-      setImportMessage("Ce fichier n'a pas pu être lu.");
-    }
-  }, []);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  );
+
+  /** Numéro du contexte en cours. Toute réponse asynchrone née d'un contexte
+   * précédent est ignorée : sans cela, le résultat du dossier A pourrait
+   * s'écrire dans le dossier B ouvert entre-temps.
+   */
+  const contextGenRef = useRef(0);
 
   /** Remise à zéro ATOMIQUE du contexte serveur.
    * Tout ce qui dépend d'un dossier serveur précis tombe en même temps : accord
-   * d'envoi, relecture, statut NDA, fichier déjà préparé. Sans cela, un accord
-   * donné pour le dossier A pourrait servir au dossier B.
+   * d'envoi, relecture, statut NDA, fichier déjà préparé, contraintes ajoutées
+   * et partage du modèle. Sans cela, un accord donné pour le dossier A pourrait
+   * servir au dossier B.
    */
   const resetServerContext = useCallback((dossierId: string | null, revision: number) => {
+    contextGenRef.current += 1;
     setServerDossierId(dossierId);
     setServerRevision(revision);
     setNdaServer(null);
@@ -510,7 +537,12 @@ function DesignSpace() {
     setPreparedUpload(null);
     setBinding(null);
     setConsentNotice(null);
+    setExtraConstraints("");
+    setShareModel(false);
+    setReopenedFrom(null);
+    return contextGenRef.current;
   }, []);
+
 
   /** Étape 1 : préparer le partage du modèle 3D.
    * Le dépôt a lieu ICI, AVANT la relecture et l'accord, une seule fois. Le
@@ -533,7 +565,12 @@ function DesignSpace() {
     busyRef.current = true;
     setBusy(true);
     setSubmitMessage(null);
+    // Contexte visé au moment du dépôt : si le dossier change entre-temps,
+    // ce résultat ne doit surtout pas s'écrire dans le nouveau dossier.
+    const gen = contextGenRef.current;
+    const stale = () => contextGenRef.current !== gen;
     try {
+
       const bytes = memoryAssetBytes(dossier.workshopAsset.assetKey);
       if (!bytes) {
         setSubmitMessage(
@@ -547,6 +584,7 @@ function DesignSpace() {
           nda.required ? "Préparation d'un accord de confidentialité" : dossier.title,
           nda.required,
         );
+        if (stale()) return;
         setServerDossierId(dossierId);
       }
       const uploaded = await uploadDesignFile(
@@ -561,7 +599,9 @@ function DesignSpace() {
           revision: serverRevision + 1,
         },
       );
+      if (stale()) return;
       if (!uploaded.verified) {
+
         // Un fichier non relu par le serveur ne peut PAS être annoncé : il
         // resterait refusé à la soumission. On le dit franchement ici.
         setPreparedUpload(null);

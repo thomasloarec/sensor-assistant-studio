@@ -466,9 +466,10 @@ export interface UploadedFile {
 }
 
 /** Relecture serveur des octets réellement stockés.
- * Le navigateur ne peut pas se certifier lui-même : cette route lit le fichier
- * sous les droits de l'appelant puis appelle la fonction de finalisation
- * réservée au service_role. Sans elle, la soumission refuse le fichier.
+ * Le navigateur ne peut pas se certifier lui-même : la fonction Edge
+ * `lead-verify-upload` lit le fichier sous les droits de l'appelant puis appelle
+ * la finalisation réservée au service_role. Sans elle, la soumission refuse le
+ * fichier.
  */
 export async function verifyUploadedFile(
   sessionId: string,
@@ -479,21 +480,21 @@ export async function verifyUploadedFile(
   const token = data.session?.access_token;
   if (!token) return { verified: false, error: "Session expirée : reconnectez-vous." };
   try {
-    const response = await fetch("/api/lead/verify-upload", {
-      method: "POST",
-      headers: { "content-type": "application/json", Authorization: `Bearer ${token}` },
-      body: JSON.stringify({ session_id: sessionId, path }),
+    const { data: result, error } = await supabase.functions.invoke("lead-verify-upload", {
+      body: { session_id: sessionId, path },
     });
-    if (response.ok) return { verified: true, error: null };
-    const payload = (await response.json().catch(() => ({}))) as {
-      error?: string;
-      message?: string;
-    };
-    return { verified: false, error: payload.message ?? payload.error ?? "UPLOAD_NOT_VERIFIED" };
+    if (error || !(result as { verified_at?: string } | null)?.verified_at) {
+      return {
+        verified: false,
+        error: "Le serveur n'a pas confirmé le contenu du fichier. Réessayez.",
+      };
+    }
+    return { verified: true, error: null };
   } catch (error) {
     return { verified: false, error: error instanceof Error ? error.message : "network error" };
   }
 }
+
 
 /** Dépôt réel : préflight (empreinte + taille + type annoncés), transfert, puis
  * vérification serveur des octets stockés. Les trois étapes sont enchaînées ici
