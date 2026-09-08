@@ -47,7 +47,7 @@ function HomeRoute() {
   return (
     <div data-readable className="min-h-screen bg-background text-foreground">
       <main className={started ? "hidden" : undefined}>
-        <div className="immersive hero-field overflow-hidden lg:min-h-[100svh]">
+        <div className="immersive hero-field overflow-hidden lg:min-h-[88svh]">
           <header className="material sticky top-0 z-30 shadow-[inset_0_-1px_0_var(--hairline)]">
             <div className="mx-auto flex max-w-7xl items-center gap-2 px-4 py-3 sm:gap-4 sm:px-6 lg:px-8">
               {/* Emplacement du logo officiel SVG lorsqu'il sera fourni */}
@@ -71,7 +71,7 @@ function HomeRoute() {
             </div>
           </header>
 
-          <div className="relative mx-auto flex min-h-[calc(100svh-4.25rem)] max-w-7xl items-center px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
+          <div className="relative mx-auto flex max-w-7xl items-center px-4 py-12 sm:px-6 sm:py-16 lg:min-h-[calc(88svh-4.25rem)] lg:px-8 lg:pb-[12svh] lg:pt-[8svh]">
             <span className="hero-glow right-[6%] top-[10%] size-[520px] max-w-[70vw]" />
             <div className="grid w-full gap-14 lg:grid-cols-[0.92fr_1.08fr] lg:items-center lg:gap-16">
               <div
@@ -82,7 +82,9 @@ function HomeRoute() {
                   <span className="standex-bar h-[14px] w-[6px] shrink-0" aria-hidden="true" />
                   Détection magnétique
                 </p>
-                <h1 className="t-display-xl mt-5 max-w-[11ch]">Donnez vie à votre détection.</h1>
+                <h1 className="t-display-xl mt-5 max-w-[16ch] text-balance">
+                  Donnez vie à votre détection.
+                </h1>
                 <p className="t-body-l mt-7 max-w-[34rem] text-muted-foreground">
                   Détecter un mouvement, simplement. Un aimant passe, le capteur réagit. Dites-nous
                   ce que vous voulez détecter : nous construisons la solution avec vous.
@@ -116,7 +118,7 @@ function HomeRoute() {
               <section
                 id="aimant"
                 aria-label="Jouer avec l'aimant et le capteur"
-                className="anim-scale-in relative z-10 rounded-[var(--r-2xl)] bg-[var(--surface)] p-3 shadow-[var(--e-4)] backdrop-blur-2xl sm:p-5 lg:[animation-delay:260ms]"
+                className="anim-scale-in relative z-10 overflow-hidden rounded-[var(--r-2xl)] bg-[var(--surface)] shadow-[var(--e-4)] backdrop-blur-2xl lg:[animation-delay:260ms]"
               >
                 <MagnetPlay />
               </section>
@@ -124,7 +126,7 @@ function HomeRoute() {
 
             <ChevronDown
               aria-hidden="true"
-              className="home-scroll-cue absolute bottom-5 left-1/2 hidden size-6 -translate-x-1/2 text-muted-foreground motion-reduce:hidden lg:block"
+              className="home-scroll-cue absolute bottom-10 left-1/2 hidden size-6 -translate-x-1/2 text-muted-foreground/45 motion-reduce:hidden lg:block"
             />
           </div>
         </div>
