@@ -24,24 +24,39 @@ import type { VariantProposal } from "@/lib/leadmagnet/variant";
 interface Props {
   backend: LeadBackendStatus | null;
   serverDossierId: string | null;
-  /** Changer de dossier change TOUT le contexte serveur, jamais l'identifiant seul. */
-  onSelectDossier: (dossier: { id: string; revision: number; title: string }) => void;
-  /** Reprise dans l'espace de conception à partir du dossier réellement envoyé. */
+  /** Ouvre RÉELLEMENT un dossier : le dernier contenu envoyé accompagne le
+   * changement de contexte, sinon l'ancien contenu resterait affiché. */
+  onSelectDossier: (dossier: {
+    id: string;
+    revision: number;
+    title: string;
+    snapshot: Record<string, unknown> | null;
+  }) => { ok: boolean };
+  /** Reprise dans l'espace de conception à partir du dossier réellement envoyé.
+   * La version d'origine et la version courante du serveur sont distinctes. */
   onReopenSnapshot?: (input: {
+    dossierId: string;
+    sourceRevision: number;
+    currentRevision: number;
+    snapshot: Record<string, unknown>;
+  }) => { ok: boolean };
+  /** Reprise RÉELLE de la variante, appliquée au contenu de la version relue.
+   * `commit` enregistre la reprise côté serveur : il n'est appelé que si la
+   * variante peut vraiment être appliquée.
+   */
+  onApplyVariant?: (input: {
     dossierId: string;
     revision: number;
     snapshot: Record<string, unknown>;
-  }) => void;
-  /** Reprise RÉELLE de la variante dans le dossier en cours de conception.
-   * Le dossier visé est transmis : une variante du dossier A ne peut jamais
-   * atterrir dans le dossier B ouvert à l'écran.
-   */
-  onApplyVariant?: (input: { dossierId: string; variant: VariantProposal }) => {
+    variant: VariantProposal;
+    commit: () => Promise<unknown>;
+  }) => Promise<{
     applied: string[];
     notApplied: string[];
     refused?: string;
-  };
+  }>;
 }
+
 
 
 const routeLabel: Record<string, string> = {
