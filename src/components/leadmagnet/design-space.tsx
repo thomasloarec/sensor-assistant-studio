@@ -143,6 +143,7 @@ import {
 import { routeSamples, SEARCH_LINK_DISCLAIMER } from "@/lib/leadmagnet/samples";
 import { DEFAULT_WORKSHOP } from "@/lib/standex/magnetic-workshop";
 import type { WorkshopConfig } from "@/lib/standex/magnetic-workshop";
+import { BrandLogo } from "@/components/standex/brand-logo";
 
 import {
   openPrivateErrorScope,
