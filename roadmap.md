@@ -132,3 +132,9 @@
 - [x] Mettre en scène l’accueil immersif sans modifier son parcours ni ses textes.
 - [x] Moderniser la démonstration aimant sans modifier sa physique ni ses contrôles.
 - [x] Vérifier tests, types, build, trois largeurs et réduction des animations.
+
+## Réglage fin de l’accueil — lot B.2
+
+- [x] Resserrer le rythme du héros et équilibrer le titre sur deux lignes.
+- [x] Clarifier le champ magnétique, l’ampoule et les lamelles du capteur.
+- [x] Fusionner la démonstration en une carte et vérifier les trois largeurs.

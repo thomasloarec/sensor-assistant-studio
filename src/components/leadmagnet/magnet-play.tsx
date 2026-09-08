@@ -36,10 +36,10 @@ export function MagnetPlay() {
   const magnetX = pos;
 
   return (
-    <div className="w-full">
+    <div className="w-full overflow-hidden rounded-[var(--r-2xl)]">
       <div
         ref={sceneRef}
-        className={`magnet-scene relative w-full touch-none overflow-hidden rounded-[var(--r-xl)] ${
+        className={`magnet-scene relative w-full touch-none overflow-hidden rounded-t-[var(--r-2xl)] ${
           detected ? "is-detected" : ""
         }`}
         onPointerMove={(e) => {
@@ -62,9 +62,9 @@ export function MagnetPlay() {
         >
           <defs>
             <linearGradient id="mp-glass" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="currentColor" stopOpacity="0.06" />
-              <stop offset="50%" stopColor="currentColor" stopOpacity="0.14" />
-              <stop offset="100%" stopColor="currentColor" stopOpacity="0.06" />
+              <stop offset="0%" stopColor="oklch(1 0 0)" stopOpacity="0.05" />
+              <stop offset="50%" stopColor="oklch(1 0 0)" stopOpacity="0.14" />
+              <stop offset="100%" stopColor="oklch(1 0 0)" stopOpacity="0.05" />
             </linearGradient>
             <linearGradient id="mp-north" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor="oklch(0.62 0.19 25)" />
@@ -130,34 +130,44 @@ export function MagnetPlay() {
             height="18"
             rx="9"
             fill="url(#mp-glass)"
-            className="text-foreground"
-            stroke="currentColor"
-            strokeOpacity="0.35"
+            stroke="oklch(1 0 0 / 0.35)"
             strokeWidth="0.5"
+          />
+          <path
+            d="M13 26 Q22 21.5 31 26"
+            fill="none"
+            stroke="oklch(1 0 0 / 0.45)"
+            strokeLinecap="round"
+            strokeWidth="0.45"
           />
 
           {/* Deux lamelles ferromagnétiques qui se rapprochent */}
           <path
-            d={`M10 30 H20 L23 ${30 - gap} H26`}
-            className={`${detected ? "text-signal" : "text-foreground"} transition-all duration-[var(--d-base)] ease-[var(--ease-spring)] motion-reduce:transition-none`}
-            filter={detected ? "url(#mp-signal-glow)" : undefined}
-            stroke="currentColor"
+            d={`M10 30 H16 L25 ${30 - gap}`}
+            className="transition-all duration-[var(--d-base)] ease-[var(--ease-spring)] motion-reduce:transition-none"
+            stroke="oklch(0.82 0.01 250)"
             strokeWidth="1.2"
             fill="none"
             strokeLinecap="round"
           />
           <path
-            d={`M34 30 H26 L23 ${30 + gap} H20`}
-            className={`${detected ? "text-signal" : "text-foreground"} transition-all duration-[var(--d-base)] ease-[var(--ease-spring)] motion-reduce:transition-none`}
-            filter={detected ? "url(#mp-signal-glow)" : undefined}
-            stroke="currentColor"
+            d={`M34 30 H30 L22 ${30 + gap}`}
+            className="transition-all duration-[var(--d-base)] ease-[var(--ease-spring)] motion-reduce:transition-none"
+            stroke="oklch(0.82 0.01 250)"
             strokeWidth="1.2"
             fill="none"
             strokeLinecap="round"
           />
 
           {detected ? (
-            <circle cx="23" cy="30" r="1.6" fill="var(--signal)" filter="url(#mp-signal-glow)" />
+            <path
+              d="M22 30 H25"
+              fill="none"
+              stroke="var(--signal)"
+              strokeLinecap="round"
+              strokeWidth="1.5"
+              filter="url(#mp-signal-glow)"
+            />
           ) : null}
 
           {/* Lignes de champ entre l'aimant et le capteur */}
@@ -166,15 +176,47 @@ export function MagnetPlay() {
             fill="none"
             opacity={0.16 + 0.66 * near}
           >
-            {[5, 8, 11, 14, 17, 20, 23].map((r, index) => (
-              <path
-                key={r}
-                className="magnet-field-line"
-                stroke="currentColor"
-                strokeWidth={0.28 + index * 0.045}
-                d={`M${magnetX - 4} ${30 - r} Q ${23 + (magnetX - 23) * (0.38 + near * 0.12)} 30 ${magnetX - 4} ${30 + r}`}
-              />
-            ))}
+            {[4, 8, 12].flatMap((r, index) => {
+              const controlX = 22 + (magnetX - 22) * (0.46 + near * 0.08);
+              const bow = 11 + r * (0.65 + near * 0.25);
+              const width = 0.45 - index * 0.125;
+              return [
+                <path
+                  key={`upper-${r}`}
+                  stroke="currentColor"
+                  strokeLinecap="round"
+                  strokeWidth={width}
+                  d={`M${magnetX} 19 Q${controlX} ${30 - bow} 22 ${30 - r}`}
+                />,
+                <path
+                  key={`lower-${r}`}
+                  stroke="currentColor"
+                  strokeLinecap="round"
+                  strokeWidth={width}
+                  d={`M${magnetX} 41 Q${controlX} ${30 + bow} 22 ${30 + r}`}
+                />,
+              ];
+            })}
+          </g>
+          <g
+            className="text-signal transition-opacity duration-[var(--d-base)] motion-reduce:transition-none"
+            fill="none"
+            opacity={0.05 + 0.2 * near}
+          >
+            <path
+              className="magnet-flux-line"
+              stroke="currentColor"
+              strokeLinecap="round"
+              strokeWidth="0.35"
+              d={`M${magnetX} 19 Q${22 + (magnetX - 22) * (0.46 + near * 0.08)} ${18 - near * 3} 22 24`}
+            />
+            <path
+              className="magnet-flux-line"
+              stroke="currentColor"
+              strokeLinecap="round"
+              strokeWidth="0.35"
+              d={`M${magnetX} 41 Q${22 + (magnetX - 22) * (0.46 + near * 0.08)} ${42 + near * 3} 22 36`}
+            />
           </g>
 
           {/* Aimant bicolore N / S, en volume */}
@@ -240,23 +282,25 @@ export function MagnetPlay() {
         </p>
       </div>
 
-      <p className="t-body-l mt-5">Rapprochez l'aimant. Observez le capteur.</p>
-      <div className="mt-4 flex items-center gap-5">
-        <span className="t-label shrink-0">Distance</span>
-        <Slider
-          className="min-w-0 flex-1"
-          value={[MAX + MIN - pos]}
-          min={MIN}
-          max={MAX}
-          step={1}
-          aria-label="Rapprocher ou éloigner l'aimant du capteur"
-          onValueChange={(v) => setPos(clamp(MAX + MIN - (v[0] ?? pos)))}
-        />
+      <div className="px-5 pb-5 pt-5 sm:px-7 sm:pb-7">
+        <p className="t-body-l">Rapprochez l'aimant. Observez le capteur.</p>
+        <div className="mt-4 flex items-center gap-5">
+          <span className="t-label shrink-0">Distance</span>
+          <Slider
+            className="min-w-0 flex-1"
+            value={[MAX + MIN - pos]}
+            min={MIN}
+            max={MAX}
+            step={1}
+            aria-label="Rapprocher ou éloigner l'aimant du capteur"
+            onValueChange={(v) => setPos(clamp(MAX + MIN - (v[0] ?? pos)))}
+          />
+        </div>
+        <p className="t-caption mt-4">
+          Illustration du principe, pas une mesure : la distance réelle dépend du capteur, de
+          l'aimant et du montage.
+        </p>
       </div>
-      <p className="t-caption mt-4">
-        Illustration du principe, pas une mesure : la distance réelle dépend du capteur, de l'aimant
-        et du montage.
-      </p>
     </div>
   );
 }

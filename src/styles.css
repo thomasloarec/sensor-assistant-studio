@@ -510,7 +510,7 @@
       0 0 0 1px var(--signal-glow),
       0 0 60px -10px var(--signal-glow);
   }
-  .magnet-field-line {
+  .magnet-flux-line {
     stroke-dasharray: 2.5 3.5;
     animation: magnet-field-flow 6s linear infinite;
   }
@@ -705,7 +705,7 @@
     opacity: 1 !important;
     transform: none !important;
   }
-  .magnet-field-line,
+  .magnet-flux-line,
   .magnet-status-dot,
   .home-scroll-cue {
     animation: none !important;
