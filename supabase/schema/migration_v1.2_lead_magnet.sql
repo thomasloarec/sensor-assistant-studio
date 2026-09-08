@@ -372,12 +372,38 @@ set search_path = lead, lead_priv, pg_temp as $$
   from lead.design_dossiers d where d.id = _dossier;
 $$;
 
--- Hash faisant autorité : recalculé serveur sur le snapshot canonique.
+-- Sérialisation canonique IDENTIQUE à celle de l'application (stableStringify) :
+-- clés triées en ordre d'octets, tableaux dans l'ordre, `updatedAt` exclu.
+-- `jsonb::text` de PostgreSQL n'a PAS cet ordre : sans cette fonction, le hash
+-- serveur et le hash client ne pourraient jamais coïncider.
+create or replace function lead_priv.canonical_json(_v jsonb)
+returns text language plpgsql immutable
+set search_path = pg_temp as $$
+declare out text;
+begin
+  if _v is null then return 'null'; end if;
+  case jsonb_typeof(_v)
+    when 'object' then
+      select coalesce(string_agg(to_jsonb(k)::text || ':' || lead_priv.canonical_json(v),
+                                 ',' order by k collate "C"), '')
+        into out from jsonb_each(_v) as e(k, v);
+      return '{' || out || '}';
+    when 'array' then
+      select coalesce(string_agg(lead_priv.canonical_json(v), ',' order by ord), '')
+        into out from jsonb_array_elements(_v) with ordinality as e(v, ord);
+      return '[' || out || ']';
+    else
+      return _v::text;
+  end case;
+end $$;
+
+-- Hash faisant autorité : recalculé serveur sur la forme canonique partagée.
 create or replace function lead_priv.snapshot_hash(_snapshot jsonb)
 returns text language sql immutable
 set search_path = pg_temp as $$
-  select encode(sha256(convert_to(jsonb_strip_nulls(_snapshot)::text, 'UTF8')), 'hex');
+  select encode(sha256(convert_to(lead_priv.canonical_json(_snapshot - 'updatedAt'), 'UTF8')), 'hex');
 $$;
+
 
 -- Un nombre JSON réellement exploitable : ni null, ni texte, ni NaN/Infinity.
 create or replace function lead_priv.json_number(_v jsonb)
