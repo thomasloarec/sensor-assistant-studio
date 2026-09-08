@@ -259,6 +259,13 @@ create table if not exists lead.upload_sessions (
   consent jsonb
 );
 alter table lead.upload_sessions add column if not exists consent jsonb;
+-- Un dépôt est annoncé AVANT d'exister : empreinte, taille et type exacts du
+-- fichier relu par le client, plus la révision à laquelle il se rattache.
+alter table lead.upload_sessions add column if not exists expected_sha256 text;
+alter table lead.upload_sessions add column if not exists expected_bytes bigint;
+alter table lead.upload_sessions add column if not exists expected_mime text;
+alter table lead.upload_sessions add column if not exists expected_revision integer;
+
 
 create table if not exists lead.audit_log (
   id bigserial primary key,
