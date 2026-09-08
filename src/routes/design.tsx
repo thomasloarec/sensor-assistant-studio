@@ -103,6 +103,7 @@ import {
   prepareNdaOnServer,
   fetchNdaStatus,
   type NdaStatusView,
+  type UploadedFile,
 } from "@/lib/leadmagnet/supabase-adapter";
 import { supabase } from "@/lib/standex/supabase";
 import { applyVariant } from "@/lib/leadmagnet/variant";
