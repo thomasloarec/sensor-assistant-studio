@@ -24,24 +24,39 @@ import type { VariantProposal } from "@/lib/leadmagnet/variant";
 interface Props {
   backend: LeadBackendStatus | null;
   serverDossierId: string | null;
-  /** Changer de dossier change TOUT le contexte serveur, jamais l'identifiant seul. */
-  onSelectDossier: (dossier: { id: string; revision: number; title: string }) => void;
-  /** Reprise dans l'espace de conception à partir du dossier réellement envoyé. */
+  /** Ouvre RÉELLEMENT un dossier : le dernier contenu envoyé accompagne le
+   * changement de contexte, sinon l'ancien contenu resterait affiché. */
+  onSelectDossier: (dossier: {
+    id: string;
+    revision: number;
+    title: string;
+    snapshot: Record<string, unknown> | null;
+  }) => { ok: boolean };
+  /** Reprise dans l'espace de conception à partir du dossier réellement envoyé.
+   * La version d'origine et la version courante du serveur sont distinctes. */
   onReopenSnapshot?: (input: {
+    dossierId: string;
+    sourceRevision: number;
+    currentRevision: number;
+    snapshot: Record<string, unknown>;
+  }) => { ok: boolean };
+  /** Reprise RÉELLE de la variante, appliquée au contenu de la version relue.
+   * `commit` enregistre la reprise côté serveur : il n'est appelé que si la
+   * variante peut vraiment être appliquée.
+   */
+  onApplyVariant?: (input: {
     dossierId: string;
     revision: number;
     snapshot: Record<string, unknown>;
-  }) => void;
-  /** Reprise RÉELLE de la variante dans le dossier en cours de conception.
-   * Le dossier visé est transmis : une variante du dossier A ne peut jamais
-   * atterrir dans le dossier B ouvert à l'écran.
-   */
-  onApplyVariant?: (input: { dossierId: string; variant: VariantProposal }) => {
+    variant: VariantProposal;
+    commit: () => Promise<unknown>;
+  }) => Promise<{
     applied: string[];
     notApplied: string[];
     refused?: string;
-  };
+  }>;
 }
+
 
 
 const routeLabel: Record<string, string> = {
@@ -126,10 +141,28 @@ export function ClientFollowUp({
             <Button
               size="sm"
               variant={d.id === serverDossierId ? "default" : "outline"}
-              onClick={() => {
-                onSelectDossier({ id: d.id, revision: d.current_revision, title: d.title });
-                void reloadView(d.id);
+              onClick={async () => {
+                // On charge le contenu réellement envoyé AVANT de changer le
+                // contexte : ouvrir un dossier ne doit jamais laisser à l'écran
+                // le contenu du dossier précédent.
+                let loaded: DossierView | null = null;
+                try {
+                  loaded = await fetchClientView(d.id);
+                } catch (error) {
+                  setMessage(error instanceof Error ? error.message : null);
+                  return;
+                }
+                const latest = [...loaded.revisions].sort((a, b) => b.revision - a.revision)[0];
+                const out = onSelectDossier({
+                  id: d.id,
+                  revision: loaded.dossier.current_revision,
+                  title: loaded.dossier.title,
+                  snapshot: latest ? latest.snapshot : null,
+                });
+                if (!out.ok) return;
+                setView(loaded);
               }}
+
             >
 
               Ouvrir
@@ -193,24 +226,38 @@ export function ClientFollowUp({
                         variant="outline"
                         disabled={Boolean(r.variant_accepted_at) || Boolean(r.superseded)}
                         onClick={async () => {
+                          // La variante s'applique au contenu de LA version relue
+                          // par Standex, et le serveur n'enregistre la reprise que
+                          // si cette application est réellement possible.
+                          const reviewed = current.revisions.find(
+                            (rev) => rev.revision === r.revision,
+                          );
+                          if (!reviewed) {
+                            setMessage(
+                              "La version relue par Standex n'est pas disponible ici : rien n'a été repris.",
+                            );
+                            return;
+                          }
+                          if (!onApplyVariant) return;
                           try {
-                            const out = await acceptVariant(r.id);
-                            const applied = onApplyVariant?.({
+                            const applied = await onApplyVariant({
                               dossierId: current.dossier.id,
+                              revision: current.dossier.current_revision,
+                              snapshot: reviewed.snapshot,
                               variant: (r.variant ?? {}) as VariantProposal,
+                              commit: () => acceptVariant(r.id),
                             });
+                            if (applied.refused) {
+                              setMessage(applied.refused);
+                              return;
+                            }
                             setMessage(
                               [
-                                `Variante reprise dans votre version ${out.next_revision} : la version envoyée reste intacte et rien n'est approuvé tant que vous ne renvoyez pas ce dossier.`,
-                                applied?.refused ??
-                                  (applied?.applied.length
-                                    ? "Modifié dans votre dossier : " + applied.applied.join(" ; ")
-                                    : "Aucune valeur chiffrée à appliquer : la proposition reste descriptive."),
-                                applied?.refused
-                                  ? ""
-                                  : applied?.notApplied.length
-                                    ? "À traiter vous-même : " + applied.notApplied.join(" ; ")
-                                    : "",
+                                "Variante reprise dans le contenu ouvert ici : la version envoyée reste intacte et rien n'est approuvé tant que vous ne renvoyez pas ce dossier.",
+                                "Modifié dans votre dossier : " + applied.applied.join(" ; "),
+                                applied.notApplied.length
+                                  ? "À traiter vous-même : " + applied.notApplied.join(" ; ")
+                                  : "",
                               ]
                                 .filter(Boolean)
                                 .join(" "),
@@ -220,6 +267,7 @@ export function ClientFollowUp({
                             setMessage(error instanceof Error ? error.message : null);
                           }
                         }}
+
                       >
                         {r.variant_accepted_at
                           ? "Variante reprise"
@@ -384,10 +432,12 @@ export function ClientFollowUp({
                     onClick={() =>
                       onReopenSnapshot({
                         dossierId: current.dossier.id,
-                        revision: r.revision,
+                        sourceRevision: r.revision,
+                        currentRevision: current.dossier.current_revision,
                         snapshot: r.snapshot,
                       })
                     }
+
                   >
                     Version {r.revision}
                   </Button>

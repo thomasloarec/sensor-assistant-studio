@@ -65,3 +65,32 @@
 - Un snapshot d'atelier avec résidus de rotation 3D n'est donc plus refusé en CONTENT_HASH_MISMATCH. Le serveur reste l'autorité et le contrôle du hash reste actif.
 - Régression : `tests/number-canonicalization.test.ts`. Suites : 163 tests / 0 échec, SQL 76/76, revue indépendante 9/9, typecheck OK.
 - Migration Lead Magnet toujours NON appliquée au backend live, projet privé, NDA original inchangé.
+
+## 2026-09-08 — Diff serveur appliqué + branchements d'écran
+- Diff SQL appliqué à l'identique dans `supabase/schema/migration_v1.2_lead_magnet.sql` :
+  `state`/`source` d'exigence non nulls, révision/revue d'origine immuables avec
+  `revalidated_for_revision`/`revalidated_review_id` distincts, fichier déposé
+  insert-only (aucune policy UPDATE/DELETE client), session fermée à finalisation.
+- Vérification des octets déplacée vers la VRAIE fonction Edge Supabase
+  (`getUser` JWT + lecture RLS + finalisation `service_role`) ; l'adaptateur passe
+  par `supabase.functions.invoke("lead-verify-upload")` et la route applicative
+  `/api/lead/verify-upload` est supprimée. La plateforme d'édition refusant
+  d'écrire dans `supabase/functions/`, la source exacte est déposée dans
+  `supabase/edge-functions-src/lead-verify-upload/index.ts`, à copier vers
+  `supabase/functions/lead-verify-upload/` avant déploiement (`verify_jwt=true`).
+- Ouvrir un dossier charge d'abord son dernier contenu envoyé (`fetchClientView`)
+  puis change le contexte édité ; en cas d'échec, rien ne change à l'écran.
+- Reprise : `sourceRevision` (contenu repris) et `currentRevision` (version
+  attendue par le serveur) sont distincts et affichés.
+- Variante : appliquée à la snapshot de la version relue, refus/échec AVANT
+  `acceptVariant`, donc aucune variante n'est marquée reprise sans l'être.
+- Import JSON et changement de contexte remettent à zéro contraintes ajoutées,
+  partage du modèle, atelier, NDA et accords ; les réponses asynchrones d'un
+  contexte périmé (dépôt, NDA) sont ignorées par un compteur de génération.
+- `/standex` ouvre le VRAI GLB envoyé dans MagneticWorkshop en mémoire, avec la
+  configuration exacte de la version et son câble, après contrôle SHA-256 contre
+  les fichiers transférés ; aucun montage par défaut de remplacement, et un
+  enregistrement local ne vaut jamais retour publié.
+- Vérifs : `bun test` 174/174, SQL 76/76, indépendant 9/9, typecheck OK, build OK,
+  navigateur réel `/design`, `/standex`, `/` sans erreur console.
+- Migration toujours NON appliquée, aucun rôle attribué, projet privé, NDA inchangé.

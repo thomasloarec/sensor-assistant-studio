@@ -4,7 +4,7 @@
  * ne sont pas ceux enregistrés en base. Rien n'est décidé côté navigateur.
  */
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useCallback, useEffect, useState } from "react";
+import { Suspense, lazy, useCallback, useEffect, useState } from "react";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -37,6 +37,8 @@ import {
   revalidateSample,
   updateSample,
   uploadDesignFile,
+  downloadDesignFile,
+  sha256Hex,
   signedFileUrl,
   type DossierView,
   type StaffInbox,
@@ -44,8 +46,13 @@ import {
 import { APPROVED_NDA_TEMPLATE } from "@/lib/leadmagnet/nda";
 import { parseServerSnapshot } from "@/lib/leadmagnet/dossier-io";
 import { technicalSummary } from "@/lib/leadmagnet/submission";
+import { parseWorkshopConfig, type WorkshopConfig } from "@/lib/standex/magnetic-workshop";
+import { storeMachineFileInMemory } from "@/lib/standex/machine-assets";
 import { AuthPanel } from "@/components/leadmagnet/auth-panel";
 import { supabase } from "@/lib/standex/supabase";
+
+const MagneticWorkshop = lazy(() => import("@/components/standex/workshop/workshop"));
+
 
 export const Route = createFileRoute("/standex")({
   component: StandexConsole,
@@ -131,6 +138,87 @@ function StandexConsole() {
     evidenceKind: "stored_object" as "stored_object" | "external_archive",
     signedFileName: "",
   });
+  /** Lecture 3D du modèle réellement envoyé : uniquement en mémoire de l'onglet. */
+  const [viewer, setViewer] = useState<{
+    config: WorkshopConfig;
+    revision: number;
+    sha256: string;
+  } | null>(null);
+  const [viewerError, setViewerError] = useState<string | null>(null);
+
+  /** Ouvre le GLB réellement transféré, jamais un montage par défaut.
+   * Le binaire est retéléchargé, son empreinte est comparée à celle annoncée à
+   * la soumission, puis il est chargé en mémoire avec la configuration exacte
+   * de la version envoyée. Si quoi que ce soit manque, on refuse et on le dit.
+   */
+  const openTransferredModel = useCallback(
+    async (file: { path?: string; file_name?: string; sha256?: string }) => {
+      setViewerError(null);
+      setViewer(null);
+      const revisions = view?.revisions ?? [];
+      const last = [...revisions].sort((a, b) => b.revision - a.revision)[0];
+      if (!last) {
+        setViewerError("Aucune version envoyée : rien à ouvrir.");
+        return;
+      }
+      const parsed = parseServerSnapshot(last.snapshot as Record<string, unknown>);
+      if (!parsed.ok) {
+        setViewerError(
+          `La configuration envoyée n'est pas lisible (${parsed.reason}) : le modèle n'est pas ouvert.`,
+        );
+        return;
+      }
+      const config = parseWorkshopConfig(parsed.dossier.workshop);
+      if (!config || !config.machine) {
+        setViewerError(
+          "Cette version ne contient pas de montage 3D exploitable : aucun montage par défaut n'est affiché à la place.",
+        );
+        return;
+      }
+      const path = String(file.path ?? "");
+      if (!path) {
+        setViewerError("Ce fichier n'a pas de chemin de stockage : il ne peut pas être relu.");
+        return;
+      }
+      try {
+        const bytes = await downloadDesignFile(path);
+        const digest = await sha256Hex(bytes);
+        const expected =
+          file.sha256 ??
+          parsed.dossier.attachments.find(
+            (a) => a.storagePath === path || a.fileName === file.file_name,
+          )?.sha256 ??
+          null;
+        if (!expected) {
+          setViewerError(
+            "Aucune empreinte n'a été enregistrée pour ce fichier : il n'est pas ouvert, faute de pouvoir prouver qu'il s'agit du fichier envoyé.",
+          );
+          return;
+        }
+        if (expected.toLowerCase() !== digest.toLowerCase()) {
+          setViewerError(
+            "Le contenu téléchargé ne correspond pas à l'empreinte enregistrée à l'envoi : le fichier n'est pas ouvert.",
+          );
+          return;
+        }
+        const name = String(file.file_name ?? config.machine.fileName ?? "modele.glb");
+        const assetKey = await storeMachineFileInMemory(
+          new File([bytes], name, { type: "model/gltf-binary" }),
+        );
+        setViewer({
+          config: { ...config, machine: { ...config.machine, assetKey, fileName: name } },
+          revision: last.revision,
+          sha256: digest,
+        });
+      } catch (error) {
+        setViewerError(
+          error instanceof Error ? error.message : "Le modèle 3D n'a pas pu être ouvert.",
+        );
+      }
+    },
+    [view],
+  );
+
 
   useEffect(() => {
     checkLeadBackend()
@@ -364,7 +452,7 @@ function StandexConsole() {
                         </details>
                         <ul className="list-disc pl-5 text-xs">
                           {lastRevision.transferred_files.map((f, i) => (
-                            <li key={i} className="flex items-center gap-2">
+                            <li key={i} className="flex flex-wrap items-center gap-2">
                               <span>{f.file_name ?? f.path}</span>
                               <Button
                                 size="sm"
@@ -380,9 +468,45 @@ function StandexConsole() {
                               >
                                 Télécharger
                               </Button>
+                              {/^.+\.glb$/i.test(String(f.file_name ?? f.path ?? "")) ? (
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => void openTransferredModel(f)}
+                                >
+                                  Ouvrir en 3D
+                                </Button>
+                              ) : null}
                             </li>
                           ))}
                         </ul>
+                        {viewerError ? (
+                          <p className="text-xs text-destructive">{viewerError}</p>
+                        ) : null}
+                        {viewer ? (
+                          <div className="mt-2">
+                            <p className="mb-2 text-xs text-muted-foreground">
+                              Modèle ouvert en mémoire de cet onglet uniquement, avec la
+                              configuration exacte de la version {viewer.revision} et son câble.
+                              Empreinte contrôlée : {viewer.sha256.slice(0, 16)}…. Une modification
+                              faite ici ne vaut jamais retour publié.
+                            </p>
+                            <Suspense fallback={<p className="text-sm">Chargement de l'atelier…</p>}>
+                              <MagneticWorkshop
+                                initialConfig={viewer.config}
+                                storageLabel="cette lecture, en mémoire de l'onglet"
+                                storageMode="memory"
+                                onClose={() => setViewer(null)}
+                                onSave={async () => {
+                                  setMessage(
+                                    "Cette modification reste locale à votre écran : publiez un retour R&D pour qu'elle compte.",
+                                  );
+                                }}
+                              />
+                            </Suspense>
+                          </div>
+                        ) : null}
+
                       </>
                     ) : (
                       <p className="text-sm text-muted-foreground">Aucune version envoyée.</p>
