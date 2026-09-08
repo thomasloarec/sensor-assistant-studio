@@ -371,14 +371,29 @@ function DesignSpace() {
             <Lock className="h-3 w-3" /> {STORAGE_BADGE[privacy.storage]}
           </Badge>
           <Badge variant="outline">Révision {dossier.revision}</Badge>
-          <div className="ml-auto flex gap-2">
+          <div className="ml-auto flex items-center gap-2">
             <Button variant="outline" size="sm" onClick={exportDossier}>
               <Download className="mr-1 h-4 w-4" /> Exporter le dossier
+            </Button>
+            <Button variant="outline" size="sm" asChild>
+              <label className="cursor-pointer">
+                Reprendre un fichier
+                <input
+                  type="file"
+                  accept="application/json"
+                  className="sr-only"
+                  onChange={(e) => {
+                    void importDossier(e.target.files?.[0]);
+                    e.target.value = "";
+                  }}
+                />
+              </label>
             </Button>
           </div>
         </div>
         <div className="mx-auto max-w-6xl px-4 pb-3 text-xs text-muted-foreground">
-          {MEMORY_LOSS_WARNING}
+          {MEMORY_LOSS_WARNING} {EXPORT_BINARY_NOTICE}
+          {importMessage ? <span className="block text-foreground">{importMessage}</span> : null}
         </div>
       </header>
 
