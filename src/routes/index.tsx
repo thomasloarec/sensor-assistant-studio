@@ -151,7 +151,11 @@ function Header({ user }: { user: User | null }) {
       </div>
       <div className="studio-account">
         <LanguagePicker />
+        <Link to="/design" className="studio-internal" style={{ textDecoration: "underline" }}>
+          {t("Concevoir une détection")}
+        </Link>
         <span className="studio-internal">{t("Espace de test interne")}</span>
+
         {user && (
           <details>
             <summary>{t("Mon espace")}</summary>
