@@ -97,7 +97,10 @@ export default function SensorCatalog({
       </div>
       <div className="mw-catalog-list">
         {list.map((s) => (
-          <article key={s.id} className={selected === s.id ? "selected" : ""}>
+          <article
+            key={s.id}
+            className={`surface-interactive ${selected === s.id ? "selected" : ""}`}
+          >
             <button
               className="mw-catalog-choice"
               onClick={() => onSelect(s.id)}
@@ -132,10 +135,10 @@ export default function SensorCatalog({
                 </svg>
               </div>
               <div className="mw-catalog-name">
-                <strong>{t(s.name)}</strong>
+                <strong className="t-title-s">{t(s.name)}</strong>
                 {selected === s.id && <Check size={17} />}
               </div>
-              <span className="mw-catalog-size">{t(sizeLabel(s))}</span>
+              <span className="mw-catalog-size t-metric">{t(sizeLabel(s))}</span>
               <p>{t(s.description)}</p>
               <small>
                 {t(

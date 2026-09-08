@@ -22,13 +22,13 @@ function VectorInput({
 }) {
   return (
     <fieldset className="mw-vector">
-      <legend>
+      <legend className="t-label">
         {t(label)} · {t(unit)}
       </legend>
       <div>
         {["X", "Y", "Z"].map((axis, i) => (
           <label key={axis}>
-            <span>{t(axis)}</span>
+            <span className="t-label">{t(axis)}</span>
             <input
               type="number"
               step={unit === "°" ? 5 : 0.5}
@@ -96,7 +96,7 @@ export default function MachineControls({
       </p>
       <details open>
         <summary>{t("Objet 3D et pièce mobile")}</summary>
-        <strong className="mw-file-name">{t(m.fileName)}</strong>
+        <strong className="mw-file-name t-metric">{t(m.fileName)}</strong>
         <label className="mw-file-label">
           {t("Importer mon fichier GLB")}
           <input
@@ -158,7 +158,7 @@ export default function MachineControls({
         )}
       </details>
       <div className="mw-machine-product">
-        <strong>{t(sensor.name)}</strong>
+          <strong className="t-title-s">{t(sensor.name)}</strong>
         <button className="mw-product-card-button" onClick={onProductCard}>
           {t("Découvrir ce capteur")}
         </button>
@@ -192,7 +192,7 @@ export default function MachineControls({
       {measure !== null && (
         <p className="mw-measure-result">
           {t("Distance mesurée :")}
-          <strong>{t(measure.toFixed(1))} mm</strong> ({t((measure / 10).toFixed(2))}
+          <strong className="t-metric">{t(measure.toFixed(1))} mm</strong> ({t((measure / 10).toFixed(2))}
           {t(" ")}
           {t("cm)")}
         </p>

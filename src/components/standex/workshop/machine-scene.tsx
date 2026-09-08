@@ -348,7 +348,7 @@ export default function MachineScene({
       camera={{ position: [440, 360, 530], near: 0.1, far: 100000, fov: 43 }}
       dpr={[1, 1.5]}
       onCreated={({ gl }) => {
-        gl.setClearColor("#f0f4f7");
+        gl.setClearColor("#132439");
       }}
     >
       <ContextGuard onLost={onContextLost} />
@@ -360,8 +360,8 @@ export default function MachineScene({
         args={[extent * 5, extent * 5]}
         cellSize={10}
         sectionSize={50}
-        cellColor="#d4dfe7"
-        sectionColor="#b0c4d1"
+        cellColor="#355069"
+        sectionColor="#54728b"
         fadeDistance={extent * 5}
       />
       <Assembly
