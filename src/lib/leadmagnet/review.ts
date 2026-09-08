@@ -142,3 +142,32 @@ export function reviewForClient(review: RndReview) {
     message: review.clientMessage,
   };
 }
+
+/** Résolution des rôles : uniquement à partir de revendications signées par le serveur.
+ * Un rôle choisi dans l'interface, passé en paramètre d'URL ou stocké dans le navigateur
+ * n'est jamais accepté : `app_metadata` est écrit par le backend et signé dans le JWT,
+ * `user_metadata` est modifiable par l'utilisateur lui-même et doit être ignoré.
+ */
+export interface TrustedClaims {
+  sub?: unknown;
+  app_metadata?: { standex_role?: unknown } | null;
+  user_metadata?: unknown;
+  [key: string]: unknown;
+}
+
+const STAFF_ROLES: readonly StaffRole[] = ["rnd", "sales", "admin"];
+
+export function staffIdentityFromClaims(claims: TrustedClaims | null | undefined): StaffIdentity | null {
+  const userId = typeof claims?.sub === "string" ? claims.sub : null;
+  if (!userId) return null;
+  const raw = claims?.app_metadata?.standex_role;
+  const role = STAFF_ROLES.find((r) => r === raw) ?? null;
+  return { userId, role };
+}
+
+/** Garde-fou explicite : refuse toute identité fabriquée côté navigateur. */
+export function assertServerTrustedIdentity(identity: StaffIdentity | null): StaffIdentity {
+  if (!identity || !identity.role)
+    throw new Error("Rôle Standex non reconnu : cette action est réservée à l'équipe Standex.");
+  return identity;
+}

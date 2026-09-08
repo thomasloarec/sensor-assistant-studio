@@ -87,7 +87,18 @@ export function validateGlb(data: ArrayBuffer) {
   const len = view.getUint32(12, true);
   if (view.getUint32(16, true) !== 0x4e4f534a || 20 + len > data.byteLength)
     throw new Error("En-tête GLB illisible.");
-  const json = JSON.parse(new TextDecoder().decode(data.slice(20, 20 + len)));
+  // Le message natif de JSON.parse cite un extrait du fichier : on le remplace par
+  // un message fixe pour qu'aucun contenu de la pièce du client ne circule.
+  let json: {
+    buffers?: { uri?: string }[];
+    images?: { uri?: string }[];
+    extensionsRequired?: string[];
+  };
+  try {
+    json = JSON.parse(new TextDecoder().decode(data.slice(20, 20 + len)));
+  } catch {
+    throw new Error("La description interne de ce GLB est illisible. Réexportez le fichier.");
+  }
   for (const item of [...(json.buffers ?? []), ...(json.images ?? [])])
     if (item.uri && !String(item.uri).startsWith("data:"))
       throw new Error(
