@@ -20,7 +20,7 @@ export interface DocumentedHousing {
   matingHeaderModel: string;
   wireRangeHint: string;
   sourceUrl: string;
-  sourcePages: number[];
+  sourcePages: readonly number[];
   checkedAt: string;
   qualification: "to_verify_by_rnd";
   pinout: null;
