@@ -330,7 +330,16 @@ export interface RevisionView {
   submitted_at: string;
   snapshot: Record<string, unknown>;
   consents: unknown[];
-  transferred_files: { path?: string; file_name?: string }[];
+  /** Empreinte et type déclarés à la soumission : ils permettent de contrôler
+   * qu'un fichier rouvert est bien celui qui a été envoyé. */
+  transferred_files: {
+    path?: string;
+    file_name?: string;
+    sha256?: string;
+    mime_type?: string;
+    bytes?: number;
+  }[];
+
   nda_status_at_submit: string;
 }
 
