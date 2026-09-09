@@ -78,7 +78,7 @@ export function AppHeader({
       <div className="app-header-row">
         {back ? (
           back.to ? (
-            <Link to={back.to} className="app-header-back">
+            <Link to={back.to as "/"} className="app-header-back">
               <ArrowLeft size={18} aria-hidden="true" />
               <span>{back.label}</span>
             </Link>

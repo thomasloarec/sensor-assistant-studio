@@ -141,25 +141,21 @@ function TestBench() {
 
 function Header({ user }: { user: User | null }) {
   return (
-    <header className="studio-header">
-      <div className="studio-brand">
-        <BrandLogo variant="mark" tone="light" height={30} clearance={false} alt="" />
-        <div className="studio-brand-text">
-          STANDEX <span>DETECT</span>
-          <small>{t("Votre projet capteur")}</small>
-        </div>
-      </div>
-      <div className="studio-header-center">
-        <span>{t("Conversation")}</span>
-        <i />
-        <span>{t("Dossier")}</span>
-        <i />
-        <span>{t("Atelier magnétique")}</span>
-      </div>
+    <AppHeader
+      context={t("Votre projet capteur")}
+      center={
+        <>
+          <span>{t("Conversation")}</span>
+          <i />
+          <span>{t("Dossier")}</span>
+          <i />
+          <span>{t("Atelier magnétique")}</span>
+        </>
+      }
+    >
       <div className="studio-account">
-        <LanguagePicker />
         <Link
-          to="/design"
+          to="/"
           className="studio-internal min-h-11 items-center py-2"
           style={{ textDecoration: "underline" }}
         >

@@ -430,18 +430,12 @@ export default function MagneticWorkshop({
           onClose={() => setProductCard(false)}
         />
       )}
-      <header className="mw-header">
-        <button className="mw-back" onClick={onClose} disabled={saving}>
-          <ArrowLeft size={18} />
-          <span>{t("Retour au dossier")}</span>
-        </button>
-        <div className="mw-brand">
-          STANDEX <span>DETECT</span>
-          <small>{t("Atelier magnétique")}</small>
-        </div>
-        <LanguagePicker />
+      <AppHeader
+        context={t("Atelier magnétique")}
+        back={{ label: t("Retour au dossier"), onClick: onClose, disabled: saving }}
+      >
         <span className="mw-prototype">{t("Prototype interne · V0.4")}</span>
-      </header>
+      </AppHeader>
       <div className="mw-intro">
         <div>
           <p className="mw-eyebrow">{t("Comprendre avant d'intégrer")}</p>
