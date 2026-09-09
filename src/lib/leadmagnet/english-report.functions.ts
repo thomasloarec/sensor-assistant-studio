@@ -34,21 +34,21 @@ export const requestEnglishReport = createServerFn({ method: "POST" })
         missingConfig: () => (admin ? missingServerConfig() : ["SUPABASE_SERVICE_ROLE_KEY"]),
         userFromAccessToken,
         provider: () => anthropicProvider(),
-        authorize: (a) =>
-          admin!.rpc("lead_report_en_authorize", {
+        authorize: async (a) =>
+          await admin!.rpc("lead_report_en_authorize", {
             p_user: a.userId,
             p_dossier: a.dossierId,
             p_revision_id: a.revisionId,
             p_content_hash: a.contentHash,
           }),
-        begin: (a) =>
-          admin!.rpc("lead_report_en_begin", {
+        begin: async (a) =>
+          await admin!.rpc("lead_report_en_begin", {
             p_dossier: a.dossierId,
             p_revision_id: a.revisionId,
             p_content_hash: a.contentHash,
           }),
-        finalize: (a) =>
-          admin!.rpc("lead_report_en_finalize", {
+        finalize: async (a) =>
+          await admin!.rpc("lead_report_en_finalize", {
             p_dossier: a.dossierId,
             p_revision_id: a.revisionId,
             p_content_hash: a.contentHash,
