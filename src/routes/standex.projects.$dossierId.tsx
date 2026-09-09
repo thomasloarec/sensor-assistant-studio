@@ -738,8 +738,9 @@ function TrackingTab({
         <p className="t-caption text-muted-foreground">
           {t("Ces montants restent internes : ils ne partent jamais au client, ni dans un export, ni dans un message.")}
         </p>
-        <div className="grid gap-2 sm:grid-cols-2">
-          <div>
+        <div className="field-row">
+          <div className="field">
+
             <Label className="t-caption">{t("Prix de vente unitaire")}</Label>
             <Input
               inputMode="decimal"
