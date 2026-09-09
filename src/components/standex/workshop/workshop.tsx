@@ -1,5 +1,6 @@
 import { t, msg } from "@/lib/i18n/core";
-import { LanguagePicker, useLocale } from "@/lib/i18n/react";
+import { useLocale } from "@/lib/i18n/react";
+import { AppHeader } from "@/components/standex/app-header";
 import SensorCard from "./sensor-card";
 import { Component, lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
