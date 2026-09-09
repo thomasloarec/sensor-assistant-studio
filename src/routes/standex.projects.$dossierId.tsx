@@ -606,9 +606,11 @@ function TrackingTab({
 
       <section className="space-y-2">
         <h3 className="t-title-s">{t("Identité du projet")}</h3>
-        {local ? <p className="notice-warning t-caption">{local}</p> : null}
-        <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-          <div>
+        {local ? <p className="notice-warning t-caption anim-nudge">{local}</p> : null}
+        {/* Trois rangées alignées : libellé, champ, aide. Un libellé long ne
+            décale plus son voisin. */}
+        <div className="field-row">
+          <div className="field">
             <Label className="t-caption">{t("Société")}</Label>
             <Input
               value={fields.company}
@@ -619,24 +621,28 @@ function TrackingTab({
               <p className="t-caption text-muted-foreground">
                 {t("Déclaré par le client :")} {p.companySubmitted}
               </p>
-            ) : null}
+            ) : (
+              <span />
+            )}
           </div>
-          <div>
+          <div className="field">
             <Label className="t-caption">{t("Nom du projet")}</Label>
             <Input
               value={fields.projectName}
               onChange={(e) => setField("projectName", e.target.value)}
             />
+            <span />
           </div>
-          <div>
+          <div className="field">
             <Label className="t-caption">{t("Pays (code à deux lettres)")}</Label>
             <Input
               value={fields.countryCode}
               maxLength={2}
               onChange={(e) => setField("countryCode", e.target.value)}
             />
+            <span />
           </div>
-          <div>
+          <div className="field">
             <Label className="t-caption">{t("Devise (code à trois lettres)")}</Label>
             <Input
               value={fields.currency}
@@ -648,17 +654,20 @@ function TrackingTab({
               <p className="t-caption text-muted-foreground">
                 {t("Devise verrouillée : des montants sont déjà enregistrés. Effacez-les d'abord si la devise doit changer.")}
               </p>
-            ) : null}
+            ) : (
+              <span />
+            )}
           </div>
-          <div>
+          <div className="field">
             <Label className="t-caption">{t("Lancement série")}</Label>
             <Input
               type="date"
               value={fields.seriesLaunch}
               onChange={(e) => setField("seriesLaunch", e.target.value)}
             />
+            <span />
           </div>
-          <div>
+          <div className="field">
             <Label className="t-caption">{t("Volume annuel corrigé (capteurs)")}</Label>
             <Input
               inputMode="numeric"
@@ -669,7 +678,7 @@ function TrackingTab({
               {t("Vide : le volume de la dernière version envoyée est utilisé.")}
             </p>
           </div>
-          <div>
+          <div className="field">
             <Label className="t-caption">{t("Estimation de chiffre d'affaires annuel")}</Label>
             <Input
               inputMode="decimal"
@@ -681,6 +690,7 @@ function TrackingTab({
             </p>
           </div>
         </div>
+
         <Button
           size="sm"
           disabled={busy || dirty.size === 0}
