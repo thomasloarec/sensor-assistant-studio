@@ -82,6 +82,7 @@ export function CrmProvider({ children }: { children: React.ReactNode }) {
   // reconfirmation, mise à jour du profil) : dans ce cas les brouillons en
   // cours sont conservés, seuls les droits sont resondés.
   useEffect(() => {
+    console.log("DBGCTX subscribe effect", Boolean(supabase));
     if (!supabase) return;
     const { data } = supabase.auth.onAuthStateChange((event, session) => {
       const id = session?.user?.id ?? null;
