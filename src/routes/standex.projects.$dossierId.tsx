@@ -1000,7 +1000,14 @@ function SapTab({ detail }: { detail: CrmProjectDetail }) {
 
   const copy = async (value: string, okMessage: string) => {
     try {
-      if (!navigator.clipboard?.writeText) throw new Error("no clipboard");
+      const write = navigator.clipboard?.writeText;
+      if (!write) {
+        setCopyState({
+          ok: false,
+          text: t("Copie impossible depuis ce navigateur : sélectionnez le texte et copiez-le à la main."),
+        });
+        return;
+      }
       await navigator.clipboard.writeText(value);
       setCopyState({ ok: true, text: okMessage });
     } catch {
