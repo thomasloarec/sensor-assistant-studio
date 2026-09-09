@@ -22,7 +22,7 @@ export const Route = createFileRoute("/")({
   ssr: false,
   validateSearch: (search: Record<string, unknown>) => {
     const raw = typeof search["dossier"] === "string" ? search["dossier"] : "";
-    return { dossier: UUID_RE.test(raw) ? raw : "" };
+    return UUID_RE.test(raw) ? { dossier: raw } : {};
   },
   head: () => ({
     meta: [
@@ -51,7 +51,7 @@ function HomeRoute() {
   useLocale();
   /** Lien reçu par message : le projet n'est ouvert qu'après connexion et
    * seulement s'il appartient réellement au compte. */
-  const { dossier: requestedDossierId } = Route.useSearch();
+  const requestedDossierId = Route.useSearch().dossier ?? "";
   const [started, setStarted] = useState(Boolean(requestedDossierId));
   /** L'espace projet reste monté : une fois ouvert, revenir à l'accueil ne
    * perd rien et « Reprendre mon projet » réaffiche le même brouillon. */
