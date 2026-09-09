@@ -15703,5 +15703,65 @@
     "Я также передаю 3D-файл «{0}» ответственной команде.",
     "Condivido anche il file 3D «{0}» con il team responsabile.",
     "担当チームに 3D ファイル「{0}」も共有します。"
+  ],
+  "Le NDA est demandé, mais aucune preuve signée n'a encore été vérifiée par Standex. Votre accord d'envoi ne remplace pas cette preuve.": [
+    "The NDA has been requested, but Standex has not yet verified signed proof. Your submission consent does not replace that proof.",
+    "已请求 NDA，但 Standex 尚未验证已签署的证明。您的发送同意不能替代该证明。",
+    "Das NDA wurde angefordert, aber Standex hat noch keinen unterzeichneten Nachweis geprüft. Ihre Versandfreigabe ersetzt diesen Nachweis nicht.",
+    "El NDA se ha solicitado, pero Standex aún no ha verificado una prueba firmada. Su consentimiento de envío no sustituye esa prueba.",
+    "NDA запрошено, но Standex ещё не проверила подписанное подтверждение. Ваше согласие на отправку не заменяет это подтверждение.",
+    "L'NDA è stato richiesto, ma Standex non ha ancora verificato una prova firmata. Il consenso all'invio non sostituisce tale prova.",
+    "NDA は申請済みですが、署名済みの証明はまだ Standex によって確認されていません。送信への同意はこの証明の代わりにはなりません。"
+  ],
+  "Le NDA est préparé mais non signé. Faites signer le document, puis demandez sa vérification par Standex avant de transmettre le dossier.": [
+    "The NDA is prepared but unsigned. Have the document signed, then ask Standex to verify it before submitting the file.",
+    "NDA 已准备但尚未签署。请先签署文件，然后在提交资料前请求 Standex 验证。",
+    "Das NDA ist vorbereitet, aber nicht unterzeichnet. Lassen Sie das Dokument unterzeichnen und vor der Übermittlung von Standex prüfen.",
+    "El NDA está preparado pero no firmado. Haga firmar el documento y solicite su verificación por Standex antes de enviar el expediente.",
+    "NDA подготовлено, но не подписано. Подпишите документ и запросите его проверку Standex перед отправкой досье.",
+    "L'NDA è preparato ma non firmato. Faccia firmare il documento e ne chieda la verifica a Standex prima dell'invio del fascicolo.",
+    "NDA は準備済みですが未署名です。文書に署名し、資料を送信する前に Standex へ確認を依頼してください。"
+  ],
+  "Le NDA attend encore les signatures ou leur vérification par Standex. Actualisez le statut après confirmation de l'équipe.": [
+    "The NDA is still awaiting signatures or their verification by Standex. Refresh the status after the team confirms.",
+    "NDA 仍在等待签署或 Standex 验证。团队确认后请刷新状态。",
+    "Das NDA wartet noch auf Unterschriften oder deren Prüfung durch Standex. Aktualisieren Sie den Status nach der Bestätigung des Teams.",
+    "El NDA aún espera las firmas o su verificación por Standex. Actualice el estado tras la confirmación del equipo.",
+    "NDA всё ещё ожидает подписей или их проверки Standex. Обновите статус после подтверждения команды.",
+    "L'NDA è ancora in attesa delle firme o della loro verifica da parte di Standex. Aggiorni lo stato dopo la conferma del team.",
+    "NDA は署名または Standex による確認を待っています。チームの確認後にステータスを更新してください。"
+  ],
+  "Le statut indique « en vigueur », mais la preuve vérifiée manque. Actualisez le statut ; aucun transfert n'est autorisé dans cet état incohérent.": [
+    "The status says “in effect,” but verified proof is missing. Refresh the status; no transfer is allowed while it is inconsistent.",
+    "状态显示“已生效”，但缺少已验证的证明。请刷新状态；在此不一致状态下不允许传输。",
+    "Der Status lautet „in Kraft“, aber der geprüfte Nachweis fehlt. Aktualisieren Sie den Status; in diesem widersprüchlichen Zustand ist keine Übertragung zulässig.",
+    "El estado indica «en vigor», pero falta la prueba verificada. Actualice el estado; no se permite ninguna transferencia mientras sea incoherente.",
+    "Статус указывает «действует», но проверенное подтверждение отсутствует. Обновите статус; передача в таком несогласованном состоянии запрещена.",
+    "Lo stato indica «in vigore», ma manca la prova verificata. Aggiorni lo stato; in questa condizione incoerente non è consentito alcun trasferimento.",
+    "ステータスは「有効」ですが、確認済みの証明がありません。ステータスを更新してください。この不整合な状態では送信できません。"
+  ],
+  "Dépôt et vérification du fichier 3D en cours…": [
+    "Uploading and verifying the 3D file…", "正在上传并验证 3D 文件…", "3D-Datei wird hochgeladen und geprüft…", "Cargando y verificando el archivo 3D…", "3D-файл загружается и проверяется…", "Caricamento e verifica del file 3D…", "3D ファイルをアップロードして確認しています…"
+  ],
+  "Transmission à la revue Standex en cours…": [
+    "Submitting for Standex review…", "正在提交 Standex 评审…", "Übermittlung zur Standex-Review läuft…", "Enviando a la revisión de Standex…", "Идёт отправка на рассмотрение Standex…", "Invio alla review Standex in corso…", "Standex のレビューに送信しています…"
+  ],
+  "Reprise de la proposition Standex en cours…": [
+    "Applying the Standex proposal…", "正在应用 Standex 建议…", "Standex-Vorschlag wird übernommen…", "Aplicando la propuesta de Standex…", "Применяется предложение Standex…", "Applicazione della proposta Standex…", "Standex の提案を反映しています…"
+  ],
+  "Une opération est en cours…": [
+    "An operation is in progress…", "操作正在进行中…", "Ein Vorgang läuft…", "Hay una operación en curso…", "Выполняется операция…", "Operazione in corso…", "処理中です…"
+  ],
+  "Ouvrir Confidentialité et NDA": [
+    "Open Privacy and NDA", "打开隐私与 NDA", "Datenschutz und NDA öffnen", "Abrir Privacidad y NDA", "Открыть раздел конфиденциальности и NDA", "Apri Privacy e NDA", "機密保持と NDA を開く"
+  ],
+  "Actualiser le statut NDA": [
+    "Refresh NDA status", "刷新 NDA 状态", "NDA-Status aktualisieren", "Actualizar el estado del NDA", "Обновить статус NDA", "Aggiorna lo stato NDA", "NDA ステータスを更新"
+  ],
+  "Connectez-vous ci-dessous pour préparer ou actualiser la vérification du NDA.": [
+    "Sign in below to prepare or refresh NDA verification.", "请在下方登录以准备或刷新 NDA 验证。", "Melden Sie sich unten an, um die NDA-Prüfung vorzubereiten oder zu aktualisieren.", "Inicie sesión abajo para preparar o actualizar la verificación del NDA.", "Войдите ниже, чтобы подготовить или обновить проверку NDA.", "Acceda qui sotto per preparare o aggiornare la verifica dell'NDA.", "NDA の確認を準備または更新するには、下からログインしてください。"
+  ],
+  "La transmission n'a pas abouti. Rien n'a été envoyé ; réessayez.": [
+    "Submission failed. Nothing was sent; try again.", "提交未完成。未发送任何内容；请重试。", "Die Übermittlung ist fehlgeschlagen. Es wurde nichts gesendet; versuchen Sie es erneut.", "El envío no se completó. No se envió nada; inténtelo de nuevo.", "Отправка не выполнена. Ничего не отправлено; повторите попытку.", "L'invio non è riuscito. Non è stato inviato nulla; riprovi.", "送信できませんでした。何も送信されていません。もう一度お試しください。"
   ]
 }
