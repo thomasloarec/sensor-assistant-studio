@@ -1600,3 +1600,80 @@
     }
   }
 }
+
+@layer components {
+  /* Bandeau de tête unique — voir src/components/standex/app-header.tsx.
+     Même matière, même élévation et même ordre partout ; aucune bordure basse. */
+  .app-header {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    background: var(--material-regular);
+    backdrop-filter: var(--material-blur);
+    box-shadow: var(--e-1);
+  }
+  .app-header-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 0.75rem;
+    max-width: 80rem;
+    margin-inline: auto;
+    padding: 0.75rem 1rem;
+  }
+  .app-header-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 44px;
+    padding-inline: 0.25rem;
+    border: 0;
+    background: none;
+    color: var(--muted-foreground);
+    font: var(--t-body);
+  }
+  .app-header-back:disabled {
+    opacity: 0.6;
+  }
+  .app-header-context {
+    margin: 0;
+    color: var(--muted-foreground);
+    font: var(--t-label);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+  }
+  .app-header-center {
+    display: flex;
+    align-items: center;
+    gap: 0.9375rem;
+    color: var(--muted-foreground);
+    font: var(--t-caption);
+  }
+  .app-header-center i {
+    width: 4px;
+    height: 4px;
+    border-radius: var(--r-pill);
+    background: var(--hairline-strong);
+  }
+  .app-header-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-left: auto;
+  }
+  .app-header[data-tone="reversed"] .app-header-back,
+  .app-header[data-tone="reversed"] .app-header-context,
+  .app-header[data-tone="reversed"] .app-header-center {
+    color: var(--foreground);
+  }
+  /* Sous 640 px, le contexte et le centre s'effacent avant la marque et la
+     langue : jamais de troncature, on retire le moins nécessaire. */
+  @media (max-width: 639px) {
+    .app-header-context,
+    .app-header-center {
+      display: none;
+    }
+  }
+}

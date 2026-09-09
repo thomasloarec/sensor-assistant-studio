@@ -1,6 +1,6 @@
 import { t, msg, localeTag } from "@/lib/i18n/core";
 import "./studio.css";
-import { LanguagePicker, useLocale } from "@/lib/i18n/react";
+import { useLocale } from "@/lib/i18n/react";
 import { Magnet, ArrowUpRight, MessageSquare, FolderOpen } from "lucide-react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from "react";
@@ -18,7 +18,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { BrandLogo } from "@/components/standex/brand-logo";
+import { AppHeader } from "@/components/standex/app-header";
 import { Separator } from "@/components/ui/separator";
 import {
   Accordion,
@@ -141,25 +141,21 @@ function TestBench() {
 
 function Header({ user }: { user: User | null }) {
   return (
-    <header className="studio-header">
-      <div className="studio-brand">
-        <BrandLogo variant="mark" tone="light" height={30} clearance={false} alt="" />
-        <div className="studio-brand-text">
-          STANDEX <span>DETECT</span>
-          <small>{t("Votre projet capteur")}</small>
-        </div>
-      </div>
-      <div className="studio-header-center">
-        <span>{t("Conversation")}</span>
-        <i />
-        <span>{t("Dossier")}</span>
-        <i />
-        <span>{t("Atelier magnétique")}</span>
-      </div>
+    <AppHeader
+      context={t("Votre projet capteur")}
+      center={
+        <>
+          <span>{t("Conversation")}</span>
+          <i />
+          <span>{t("Dossier")}</span>
+          <i />
+          <span>{t("Atelier magnétique")}</span>
+        </>
+      }
+    >
       <div className="studio-account">
-        <LanguagePicker />
         <Link
-          to="/design"
+          to="/"
           className="studio-internal min-h-11 items-center py-2"
           style={{ textDecoration: "underline" }}
         >
@@ -171,7 +167,7 @@ function Header({ user }: { user: User | null }) {
           <details>
             <summary>{t("Mon espace")}</summary>
             <div>
-              <p>{t(user.email)}</p>
+              <p>{user.email}</p>
               <p>{t(isSupabaseConfigured ? "Données connectées" : "Connexion à configurer")}</p>
               <BaselineStatusBadge />
               <Button variant="ghost" size="sm" onClick={() => supabase?.auth.signOut()}>
@@ -181,7 +177,7 @@ function Header({ user }: { user: User | null }) {
           </details>
         )}
       </div>
-    </header>
+    </AppHeader>
   );
 }
 
