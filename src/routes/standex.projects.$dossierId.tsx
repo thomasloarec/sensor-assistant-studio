@@ -29,6 +29,8 @@ import {
   personName,
   stageLabel,
   CrmUnavailableNotice,
+  InternalEnglishHint,
+  ClientLocaleHint,
 } from "@/components/standex/dashboard/crm-shared";
 import {
   applyCrmTemplate,
@@ -913,6 +915,7 @@ function TasksTab({
                   value={naReason[task.id] ?? ""}
                   onChange={(e) => setNaReason((m) => ({ ...m, [task.id]: e.target.value }))}
                 />
+                <InternalEnglishHint />
               </div>
             </div>
           </li>
@@ -923,6 +926,7 @@ function TasksTab({
         <div className="sm:col-span-2">
           <Label className="t-caption">{t("Nouvelle tâche")}</Label>
           <Input value={draft.label} onChange={(e) => setDraft({ ...draft, label: e.target.value })} />
+          <InternalEnglishHint />
         </div>
         <div>
           <Label className="t-caption">{t("Étape")}</Label>
@@ -1066,6 +1070,17 @@ function SapTab({ detail }: { detail: CrmProjectDetail }) {
 
 /* ------------------------------------------------- Information du client */
 
+/** Langue enregistrée du projet, lue dans la dernière version soumise.
+ *  Rien n'est deviné : sans version envoyée, la langue reste inconnue. */
+export function submittedSourceLocale(view: DossierView | null): string | null {
+  const revisions = view?.revisions ?? [];
+  for (let i = revisions.length - 1; i >= 0; i -= 1) {
+    const value = (revisions[i]?.snapshot as { sourceLocale?: unknown } | undefined)?.sourceLocale;
+    if (typeof value === "string" && value.trim()) return value.trim();
+  }
+  return null;
+}
+
 function NotifyTab({
   detail,
   busy,
@@ -1107,8 +1122,10 @@ function NotifyTab({
         message: chosen.message,
       }
     : null;
-  /** Langue déjà utilisée pour ce dossier, sinon celle du dernier message préparé. */
-  const clientLocale = detail.notifications[0]?.locale ?? "fr";
+  /** Langue enregistrée du projet : celle de la dernière version RÉELLEMENT
+   *  envoyée par le client. À défaut seulement, celle du dernier message
+   *  préparé. Jamais la langue de l'écran interne. */
+  const clientLocale = submittedSourceLocale(view) ?? detail.notifications[0]?.locale ?? "fr";
   const origin = typeof window === "undefined" ? "" : window.location.origin;
   const absoluteLink = `${origin}/?dossier=${p.dossierId}`;
 
@@ -1143,10 +1160,12 @@ function NotifyTab({
       <div>
         <Label className="t-caption">{t("Objet")}</Label>
         <Input value={subject} onChange={(e) => setSubject(e.target.value)} />
+        <ClientLocaleHint locale={clientLocale} />
       </div>
       <div>
         <Label className="t-caption">{t("Message (contenu client uniquement)")}</Label>
         <Textarea rows={4} value={summary} onChange={(e) => setSummary(e.target.value)} />
+        <ClientLocaleHint locale={clientLocale} />
         <p className="t-caption text-muted-foreground">
           {t("N'écrivez ici que ce que le client peut lire : ni prix interne, ni coût, ni note interne.")}
         </p>

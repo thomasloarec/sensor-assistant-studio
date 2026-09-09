@@ -18,6 +18,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { InternalEnglishHint } from "@/components/standex/dashboard/crm-shared";
 import {
   Select,
   SelectContent,
@@ -800,6 +801,7 @@ export function DossierConsole(props: DossierConsoleProps) {
                           value={review.scope}
                           onChange={(e) => setReview({ ...review, scope: e.target.value })}
                         />
+                        <InternalEnglishHint />
                       </div>
                       <div>
                         <Label className="t-caption">{t("Conclusion")}</Label>
@@ -948,6 +950,7 @@ export function DossierConsole(props: DossierConsoleProps) {
                         value={review.internalNote}
                         onChange={(e) => setReview({ ...review, internalNote: e.target.value })}
                       />
+                      <InternalEnglishHint />
                     </div>
                     <Button
                       size="sm"
