@@ -1089,13 +1089,7 @@ function SapTab({ detail }: { detail: CrmProjectDetail }) {
   const text = useMemo(() => sapNotesToText(detail.sapNotes), [detail.sapNotes]);
   // Le backend renvoie l'historique du plus récent au plus ancien : « Copier la
   // dernière » doit choisir le max de createdAt, jamais la dernière ligne du tableau.
-  const latest = useMemo(() => {
-    if (detail.sapNotes.length === 0) return "";
-    const newest = detail.sapNotes.reduce((best, note) =>
-      Date.parse(note.createdAt) > Date.parse(best.createdAt) ? note : best,
-    );
-    return sapNotesToText([newest]);
-  }, [detail.sapNotes]);
+  const latest = useMemo(() => latestSapNoteText(detail.sapNotes), [detail.sapNotes]);
   const [copyState, setCopyState] = useState<{ ok: boolean; text: string } | null>(null);
 
   const copy = async (value: string, okMessage: string) => {
