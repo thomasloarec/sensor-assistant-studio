@@ -767,14 +767,20 @@ begin
     raise exception 'BAD_CURRENCY' using errcode = '22023';
   end if;
   row := lead_priv.crm_bump(_dossier, _expected);
+  -- Un changement de devise ne peut pas rebaptiser en silence un coût FAE déjà
+  -- saisi : sans conversion réelle, la marge deviendrait fausse.
+  perform lead_priv.crm_currency_guard(row, cur);
   update lead.dossier_crm
      set unit_price = _price, currency = coalesce(cur, currency),
          updated_at = now(), version = version + 1
    where dossier_id = _dossier;
-  perform lead_priv.sap_note(_dossier, u, 'price:' || row.version::text,
-    array[case when _price is null then 'Unit sales price cleared.'
-          else 'Unit sales price set to ' || trim(to_char(_price,'FM999999999990.0000'))
-               || coalesce(' ' || coalesce(cur, row.currency), '') || '.' end]);
+  if _price is distinct from row.unit_price
+     or coalesce(cur, row.currency) is distinct from row.currency then
+    perform lead_priv.sap_note(_dossier, u, 'price:' || row.version::text,
+      array[case when _price is null then 'Unit sales price cleared.'
+            else 'Unit sales price set to ' || trim(to_char(_price,'FM999999999990.0000'))
+                 || coalesce(' ' || coalesce(cur, row.currency), '') || '.' end]);
+  end if;
   insert into lead.audit_log (actor, action, dossier_id, detail)
   values (u, 'crm_price_set', _dossier, jsonb_build_object('currency', coalesce(cur, row.currency)));
   return lead_priv.crm_project(_dossier);
