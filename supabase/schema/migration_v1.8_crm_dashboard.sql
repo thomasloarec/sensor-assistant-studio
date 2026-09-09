@@ -875,7 +875,7 @@ begin
       from lead.crm_directory p where p.id = _fae), 'unassigned') || '.');
   end if;
   if array_length(bullets, 1) is not null and not is_admin then
-    bullets := bullets || 'Technical access unchanged: assignments are granted by an administrator.';
+    bullets := bullets || array['Technical access unchanged: assignments are granted by an administrator.'];
   end if;
   perform lead_priv.sap_note(_dossier, u, 'owners:' || row.version::text, bullets);
   insert into lead.audit_log (actor, action, dossier_id, detail)
