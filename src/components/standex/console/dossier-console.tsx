@@ -400,24 +400,39 @@ export function DossierConsole({ initialDossierId, embedded = false }: DossierCo
     (view?.reviews ?? []).filter((r) => r.published && !r.superseded).slice(-1)[0] ?? null;
 
   return (
-    <div data-readable className="min-h-screen bg-background text-foreground">
-      <header className="material sticky top-0 z-30 shadow-[var(--e-1)]">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-3 px-4 py-3">
-          <Link
-            to="/design"
-            className="inline-flex min-h-11 items-center gap-2 rounded-[var(--r-sm)] px-2 text-sm text-muted-foreground"
-          >
-            <ArrowLeft className="h-4 w-4" /> {t("Espace de conception")}
-          </Link>
-          <h1 className="t-title-s">{t("Console Standex")}</h1>
-          <Badge variant="secondary">
-            {inbox.role === "rnd" ? "R&D" : inbox.role === "sales" ? "Commerce" : "Administration"}
-          </Badge>
-        </div>
-      </header>
+    <div
+      data-readable
+      className={
+        embedded ? "text-foreground" : "min-h-screen bg-background text-foreground"
+      }
+    >
+      {embedded ? null : (
+        <header className="material sticky top-0 z-30 shadow-[var(--e-1)]">
+          <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-3 px-4 py-3">
+            <Link
+              to="/design"
+              className="inline-flex min-h-11 items-center gap-2 rounded-[var(--r-sm)] px-2 text-sm text-muted-foreground"
+            >
+              <ArrowLeft className="h-4 w-4" /> {t("Espace de conception")}
+            </Link>
+            <h1 className="t-title-s">{t("Console Standex")}</h1>
+            <Badge variant="secondary">
+              {inbox.role === "rnd" ? "R&D" : inbox.role === "sales" ? "Commerce" : "Administration"}
+            </Badge>
+          </div>
+        </header>
+      )}
 
-      <main className="mx-auto grid max-w-6xl gap-6 p-4 lg:grid-cols-[320px_1fr]">
+      <main
+        className={
+          embedded
+            ? "grid gap-6"
+            : "mx-auto grid max-w-6xl gap-6 p-4 lg:grid-cols-[320px_1fr]"
+        }
+      >
+        {embedded ? null : (
         <aside className="space-y-4">
+
           <section>
             <h2 className="t-title-s mb-2">{t("Dossiers qui me sont confiés")}</h2>
             {inbox.assigned.length === 0 ? (
