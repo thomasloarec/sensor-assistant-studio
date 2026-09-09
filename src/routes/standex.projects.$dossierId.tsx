@@ -313,28 +313,48 @@ export function ProjectDetail({ dossierId }: { dossierId: string }) {
       {detail && project ? (
         <>
           {tab === "tracking" ? (
-            <TrackingTab
-              detail={detail}
-              locale={tag}
-              busy={busy}
-              onRun={run}
-              directoryFallback={capabilities.person?.id ?? null}
-            />
+            <div role="tabpanel" id="panel-tracking" aria-labelledby="tab-tracking">
+              <TrackingTab
+                detail={detail}
+                locale={tag}
+                busy={busy}
+                onRun={run}
+                directoryFallback={capabilities.person?.id ?? null}
+              />
+            </div>
           ) : null}
-          {tab === "tasks" ? <TasksTab detail={detail} busy={busy} onRun={run} /> : null}
-          {tab === "sap" ? <SapTab detail={detail} /> : null}
-          {tab === "notify" ? <NotifyTab detail={detail} busy={busy} onRun={run} /> : null}
+          {tab === "tasks" ? (
+            <div role="tabpanel" id="panel-tasks" aria-labelledby="tab-tasks">
+              <TasksTab detail={detail} busy={busy} onRun={run} directory={pageDirectory} />
+            </div>
+          ) : null}
+          {tab === "sap" ? (
+            <div role="tabpanel" id="panel-sap" aria-labelledby="tab-sap">
+              <SapTab detail={detail} />
+            </div>
+          ) : null}
+          {tab === "notify" ? (
+            <div role="tabpanel" id="panel-notify" aria-labelledby="tab-notify">
+              <NotifyTab detail={detail} busy={busy} onRun={run} />
+            </div>
+          ) : null}
         </>
       ) : null}
 
       {tab === "review" ? (
-        <section aria-label={t("Revue, documents et 3D")}>
+        <section
+          role="tabpanel"
+          id="panel-review"
+          aria-labelledby="tab-review"
+          aria-label={t("Revue, documents et 3D")}
+        >
           <p className="t-caption text-muted-foreground">
             {t("Revue technique et décisions envoyées au client : offres, échantillons, retours R&D et documents.")}
           </p>
           <DossierConsole initialDossierId={dossierId} embedded />
         </section>
       ) : null}
+
     </div>
   );
 }
