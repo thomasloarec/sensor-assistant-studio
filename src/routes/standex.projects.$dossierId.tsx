@@ -726,7 +726,7 @@ function TrackingTab({
             void onRun(() => setCrmFields(p.dossierId, patch, p.version), t("Fiche enregistrée."));
           }}
         >
-          {busy ? <Loader2 className="anim-spin size-4" aria-hidden="true" /> : null}
+          {busy ? <Loader2 className="mr-1 h-4 w-4 animate-spin" aria-hidden="true" /> : null}
           {t("Enregistrer")}
         </Button>
         </div>
