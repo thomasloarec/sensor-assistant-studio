@@ -10,7 +10,7 @@ GlobalRegistrator.register({ url: "https://exemple.invalid/standex" });
 
 import { afterEach, describe, expect, mock, test } from "bun:test";
 import * as React from "react";
-import { act, cleanup, render, screen } from "@testing-library/react";
+import { act, cleanup, render } from "@testing-library/react";
 
 // --- Réponses serveur pilotées par le test ---------------------------------
 let projectDeferred: { resolve: (v: unknown) => void } | null = null;
@@ -106,6 +106,6 @@ describe("la fiche projet appartient au compte connecté", () => {
     await act(async () => {
       projectDeferred!.resolve(projectFor("Société B"));
     });
-    expect(screen.getByText(/Société B/)).toBeDefined();
+    expect(document.body.textContent).toContain("Société B");
   });
 });
