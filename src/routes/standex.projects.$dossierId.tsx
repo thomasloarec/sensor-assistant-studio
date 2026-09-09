@@ -43,10 +43,10 @@ import {
   setCrmPrice,
   setCrmStage,
   upsertCrmTask,
-  type CrmPerson,
   type CrmProjectDetail,
 } from "@/lib/leadmagnet/dashboard-adapter";
 import { requestKeyFor, releaseRequestKey } from "@/lib/leadmagnet/request-key";
+import type { CrmPerson } from "@/lib/leadmagnet/crm";
 import { fetchStaffView, type DossierView } from "@/lib/leadmagnet/supabase-adapter";
 
 import {
