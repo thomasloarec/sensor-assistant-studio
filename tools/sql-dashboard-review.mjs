@@ -4,6 +4,7 @@
 //   bun tools/sql-dashboard-review.mjs
 import { PGlite } from '@electric-sql/pglite';
 import { readFileSync, writeFileSync } from 'node:fs';
+import { nextAction, actionAgeDays } from '../src/lib/leadmagnet/crm.ts';
 
 const db = new PGlite();
 const results = [];
@@ -272,6 +273,32 @@ const reopened = await actor('authenticated', ids.sales,
 add('reopening_moves_the_activation_back_to_that_task',
   reopened.tasks.find((t) => t.id === firstOpen.id).activated_at !== null
   && reopened.tasks.find((t) => t.id === nextOpen.id).activated_at === null);
+
+// 7bis L'écran et le serveur désignent LA MÊME action courante, y compris
+//      lorsque le projet avance alors que des actions d'une étape antérieure
+//      restent ouvertes. Sinon l'écran afficherait une action que le serveur
+//      n'a pas activée, donc sans âge.
+const stagedForNext = await actor('authenticated', ids.sales,
+  () => value('select public.lead_crm_set_stage($1,$2,$3)',
+    [dossier, 'solution_quote', reopened.project.version]));
+const uiTasks = stagedForNext.tasks.map((t) => ({
+  id: t.id, stage: t.stage, label: t.label, stakeholder: t.stakeholder,
+  personId: t.person_id ?? null, status: t.status, naReason: t.na_reason ?? null,
+  dueOn: t.due_on ?? null, sortOrder: t.sort_order, activatedAt: t.activated_at ?? null,
+  doneAt: t.done_at ?? null, doneByName: t.done_by_name ?? null,
+  createdAt: t.created_at, version: t.version,
+}));
+const uiNext = nextAction({ stage: stagedForNext.project.stage }, uiTasks);
+const serverActivated = uiTasks.filter((t) => t.activatedAt
+  && t.status !== 'done' && t.status !== 'not_applicable');
+add('stage_change_leaves_an_older_open_task_current',
+  stagedForNext.project.stage === 'solution_quote'
+  && serverActivated.length === 1 && serverActivated[0].stage !== 'solution_quote',
+  JSON.stringify({ stage: stagedForNext.project.stage, task: serverActivated[0]?.stage }));
+add('ui_next_action_matches_the_server_activated_task',
+  !!uiNext && serverActivated.length === 1 && uiNext.id === serverActivated[0].id,
+  JSON.stringify({ ui: uiNext && uiNext.stage, server: serverActivated[0]?.stage }));
+add('ui_next_action_has_a_known_age', !!uiNext && actionAgeDays(uiNext) !== null);
 
 // 8. Closed Won n'est jamais automatique : terminer les tâches ne bouge rien.
 add('closed_won_is_never_automatic', naDone.project.stage === 'qualification', naDone.project.stage);
