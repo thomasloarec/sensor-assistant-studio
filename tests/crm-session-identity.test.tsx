@@ -40,9 +40,16 @@ mock.module("@/lib/leadmagnet/supabase-adapter", () => ({
   fetchStaffInbox: () => Promise.resolve({ role: "admin", dossiers: [] }),
 }));
 
-const { CrmProvider, useCrm } = await import(
-  "../src/components/standex/dashboard/crm-context.tsx"
-);
+// Import PARESSEUX : un autre fichier de test remplace temporairement ce
+// module ; on le charge donc au moment du test, pas au chargement du fichier.
+type Ctx = typeof import("../src/components/standex/dashboard/crm-context");
+let CrmProvider!: Ctx["CrmProvider"];
+let useCrm!: Ctx["useCrm"];
+async function loadContext() {
+  const mod = (await import("../src/components/standex/dashboard/crm-context")) as Ctx;
+  CrmProvider = mod.CrmProvider;
+  useCrm = mod.useCrm;
+}
 
 /** Écran interne fictif avec un brouillon en cours, remonté à chaque
  *  changement de session via la clé `sessionGeneration`. */
@@ -77,6 +84,7 @@ afterEach(() => {
 
 describe("identité de session interne", () => {
   test("SIGNED_IN répété pour le même compte conserve le brouillon", async () => {
+    await loadContext();
     const view = render(
       <CrmProvider>
         <DraftScreen />
@@ -99,6 +107,7 @@ describe("identité de session interne", () => {
   });
 
   test("un compte réellement différent efface le brouillon", async () => {
+    await loadContext();
     const view = render(
       <CrmProvider>
         <DraftScreen />
@@ -120,6 +129,7 @@ describe("identité de session interne", () => {
   });
 
   test("la déconnexion efface le brouillon", async () => {
+    await loadContext();
     const view = render(
       <CrmProvider>
         <DraftScreen />
