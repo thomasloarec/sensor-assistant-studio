@@ -323,20 +323,27 @@ export function stageAgeDays(project: CrmProject, now: Date = new Date()): numbe
 
 
 /**
- * Prochaine action réellement en attente : la première tâche ni terminée ni
- * sans objet, de l'étape en cours si elle en a une, sinon la suivante dans
- * l'ordre du plan. Aucune tâche en attente : rien à afficher, pas « 0 ».
+ * Prochaine action réellement en attente : la PREMIÈRE tâche du plan ni
+ * terminée ni sans objet, dans l'ordre étape puis rang puis date de création.
+ * Une seule et même définition que celle du serveur (`crm_refresh_activation`) :
+ * une action ouverte d'une étape antérieure reste la courante même après un
+ * changement d'étape, sinon l'écran afficherait une action que le serveur n'a
+ * pas activée, donc sans âge. Aucune tâche en attente : rien à afficher,
+ * pas « 0 ». Le paramètre `project` reste accepté pour la compatibilité des
+ * appels, mais l'étape ne réordonne plus rien.
  */
 export function nextAction(
-  project: Pick<CrmProject, "stage">,
+  _project: Pick<CrmProject, "stage">,
   tasks: readonly CrmTask[],
 ): CrmTask | null {
   const open = tasks.filter((x) => x.status !== "done" && x.status !== "not_applicable");
   if (open.length === 0) return null;
   const order = (x: CrmTask) => (CRM_STAGES as readonly string[]).indexOf(x.stage);
-  const current = open.filter((x) => x.stage === project.stage);
-  const pool = current.length > 0 ? current : open;
-  return [...pool].sort((a, b) => order(a) - order(b) || a.sortOrder - b.sortOrder)[0] ?? null;
+  return [...open].sort((a, b) =>
+    order(a) - order(b)
+    || a.sortOrder - b.sortOrder
+    || a.createdAt.localeCompare(b.createdAt)
+    || a.id.localeCompare(b.id))[0] ?? null;
 }
 
 /** Âge, en jours, de la prochaine action en attente depuis son activation réelle.
