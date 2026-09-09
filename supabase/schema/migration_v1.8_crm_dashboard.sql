@@ -941,28 +941,37 @@ returns jsonb language sql security invoker
 set search_path = public, lead_priv, pg_temp as $$
   select lead_priv.crm_apply_template(p_dossier, p_expected_version); $$;
 
+-- Clé d'idempotence de création : un même envoi rejoué (double-clic, reprise
+-- réseau) ne doit pas créer deux fois la même action.
+alter table lead.dossier_tasks add column if not exists client_key text;
+create unique index if not exists dossier_tasks_client_key_uq
+  on lead.dossier_tasks (dossier_id, client_key) where client_key is not null;
+
 create or replace function lead_priv.crm_upsert_task(_dossier uuid, _task jsonb)
 returns jsonb language plpgsql security definer
 set search_path = lead, lead_priv, pg_temp as $$
 declare u uuid := lead_priv.require_user(); tid uuid; cur lead.dossier_tasks%rowtype;
         st lead.crm_task_status; sh lead.crm_stakeholder; sg lead.crm_stage;
-        lbl text; due date; na text; pid uuid; expected integer;
+        lbl text; due date; na text; pid uuid; expected integer; ckey text;
 begin
   perform lead_priv.crm_require_write(u, _dossier, array['sales','rnd']::lead.staff_role[]);
   if _task is null or jsonb_typeof(_task) <> 'object' then
     raise exception 'BAD_TASK' using errcode = '22023';
   end if;
-  lbl := nullif(btrim(coalesce(_task->>'label','')), '');
+  lbl := lead_priv.crm_patch_text(_task, 'label');
   if lbl is null then raise exception 'BAD_TASK' using errcode = '22023'; end if;
   begin sg := coalesce(_task->>'stage','lead')::lead.crm_stage;
         sh := coalesce(_task->>'stakeholder','sales')::lead.crm_stakeholder;
         st := coalesce(_task->>'status','todo')::lead.crm_task_status;
   exception when others then raise exception 'BAD_TASK' using errcode = '22023'; end;
-  na := nullif(btrim(coalesce(_task->>'na_reason','')), '');
+  na := lead_priv.crm_patch_text(_task, 'na_reason');
   if st = 'not_applicable' and na is null then
     raise exception 'NA_REASON_REQUIRED' using errcode = '22023';
   end if;
   if nullif(_task->>'due_on','') is null then due := null; else
+    if _task->>'due_on' !~ '^\d{4}-\d{2}-\d{2}$' then
+      raise exception 'BAD_DATE' using errcode = '22023';
+    end if;
     begin due := (_task->>'due_on')::date; exception when others then
       raise exception 'BAD_DATE' using errcode = '22023'; end;
   end if;
@@ -972,21 +981,35 @@ begin
   end if;
   tid := nullif(_task->>'id','')::uuid;
   expected := nullif(_task->>'expected_version','')::integer;
+  ckey := lead_priv.crm_patch_text(_task, 'client_key');
 
   if tid is null then
+    if ckey is not null then
+      select * into cur from lead.dossier_tasks
+       where dossier_id = _dossier and client_key = ckey for update;
+      if found then
+        -- Rejeu exact : on rend l'état existant, sans second item ni seconde note.
+        return lead_priv.crm_project(_dossier);
+      end if;
+    end if;
     insert into lead.dossier_tasks (dossier_id, stage, label, stakeholder, person_id,
       status, na_reason, due_on, sort_order, activated_at,
-      done_at, done_by)
+      done_at, done_by, client_key)
     values (_dossier, sg, lbl, sh, pid, st, na, due,
       coalesce(nullif(_task->>'sort_order','')::integer, 100), now(),
-      case when st = 'done' then now() end, case when st = 'done' then u end)
+      case when st = 'done' then now() end, case when st = 'done' then u end, ckey)
     returning id into tid;
     perform lead_priv.sap_note(_dossier, u, 'task_new:' || tid::text,
       array['Action added: ' || lbl || '.']);
   else
+    -- Modifier un item existant sans version attendue serait une écriture à
+    -- l'aveugle : elle est refusée.
+    if expected is null then
+      raise exception 'VERSION_REQUIRED' using errcode = '22023';
+    end if;
     select * into cur from lead.dossier_tasks where id = tid and dossier_id = _dossier for update;
     if not found then raise exception 'TASK_NOT_FOUND' using errcode = '42501'; end if;
-    if expected is not null and cur.version <> expected then
+    if cur.version <> expected then
       raise exception 'CRM_CONFLICT:%', cur.version using errcode = '40001';
     end if;
     update lead.dossier_tasks
