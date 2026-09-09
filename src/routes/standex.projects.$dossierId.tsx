@@ -1097,7 +1097,7 @@ function NotifyTab({
       }
     : null;
   /** Langue déjà utilisée pour ce dossier, sinon celle du dernier message préparé. */
-  const clientLocale = detail.notifications[0]?.locale ?? p.sourceLocale ?? "fr";
+  const clientLocale = detail.notifications[0]?.locale ?? "fr";
   const origin = typeof window === "undefined" ? "" : window.location.origin;
   const absoluteLink = `${origin}/?dossier=${p.dossierId}`;
 
