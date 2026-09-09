@@ -428,9 +428,23 @@ export function DesignSpace({
     revisionId: string;
     contentHash: string;
   } | null>(null);
-  /** Demande de version anglaise en cours : verrou et anti-réponse périmée. */
-  const englishRunRef = useRef<string | null>(null);
+  /** Demande de version anglaise en cours : verrou par génération unique, pour
+   * qu'une réponse tardive n'écrive jamais dans un autre projet ni dans une
+   * demande plus récente, et ne libère pas le verrou de cette dernière. */
+  const englishLockRef = useRef(new EnglishRunLock());
   const [englishBusy, setEnglishBusy] = useState(false);
+  /** Abandon SYNCHRONE de toute demande en cours + remise à zéro de l'affichage. */
+  const resetEnglishReport = useCallback(() => {
+    englishLockRef.current.invalidate();
+    setEnglishBusy(false);
+    setEnglishMessage(null);
+    setEnglishRetry(null);
+  }, []);
+  // Écran démonté : plus aucune réponse ne doit écrire quoi que ce soit.
+  useEffect(() => {
+    const lock = englishLockRef.current;
+    return () => lock.invalidate();
+  }, []);
 
   const [showWorkshop, setShowWorkshop] = useState(false);
   /** Démarrage RÉEL du projet : c'est ici, et pas au montage caché de
@@ -792,11 +806,17 @@ export function DesignSpace({
   /** Adopte un nouveau contenu comme référence : plus rien n'est « modifié ».
    * Ouvrir ou reprendre un projet rétablit AUSSI la langue dans laquelle il a
    * démarré : les textes déjà saisis restent lisibles dans leur contexte. */
-  const adoptBaseline = useCallback((d: DesignDossier) => {
-    baselineRef.current = fingerprint(d);
-    localeCapturedRef.current = true;
-    if (d.sourceLocale !== getLocale()) setLocale(d.sourceLocale);
-  }, []);
+  const adoptBaseline = useCallback(
+    (d: DesignDossier) => {
+      // Changement de contexte (création, import, reprise, réouverture) :
+      // toute demande de version anglaise en cours cesse d'être la nôtre.
+      resetEnglishReport();
+      baselineRef.current = fingerprint(d);
+      localeCapturedRef.current = true;
+      if (d.sourceLocale !== getLocale()) setLocale(d.sourceLocale);
+    },
+    [resetEnglishReport],
+  );
 
 
   const exportDossier = useCallback(() => {
@@ -1047,14 +1067,13 @@ export function DesignSpace({
   const runEnglishReport = useCallback(
     async (target: { dossierId: string; revisionId: string; contentHash: string }) => {
       if (!supabase) return;
-      const key = `${target.dossierId}|${target.revisionId}|${target.contentHash}`;
       // Verrou : un double clic, ou une relance pendant qu'une autre est en
       // cours, ne déclenche pas une seconde demande au traducteur.
-      if (englishRunRef.current) return;
-      englishRunRef.current = key;
+      const run = englishLockRef.current.start();
+      if (!run) return;
       setEnglishBusy(true);
-      /** Une réponse n'écrit que si elle concerne toujours la demande en cours. */
-      const current = () => englishRunRef.current === key;
+      /** Une réponse n'écrit que si elle est TOUJOURS l'exécution courante. */
+      const current = () => run.isCurrent();
       try {
         const { data } = await supabase.auth.getSession();
         const accessToken = data.session?.access_token;
@@ -1084,8 +1103,9 @@ export function DesignSpace({
             t("La version anglaise n'a pas pu être produite. Votre dossier d'origine est bien arrivé ; vous pouvez relancer."),
           );
       } finally {
-        if (englishRunRef.current === key) {
-          englishRunRef.current = null;
+        // Ne libère QUE son propre verrou : un abandon a déjà pu en ouvrir un autre.
+        if (current()) {
+          run.release();
           setEnglishBusy(false);
         }
       }
