@@ -9,19 +9,20 @@
   height: 44px;
   min-height: 44px;
   padding: 7px 10px;
-  font:
-    14px var(--font-sans),
-    system-ui,
-    sans-serif;
+  font: var(--t-caption);
   flex-shrink: 0;
   max-width: 100%;
 }
+/* Aucun plafond en pixels : un nom de langue tronqué est le pire défaut
+   possible sur le contrôle que cherche justement qui ne comprend pas la langue
+   affichée. Le contrôle prend la largeur de son contenu ; la rangée du bandeau
+   passe à la ligne, ce qu'elle sait déjà faire. */
 .language-picker select {
   background: transparent;
   color: inherit;
   border: 0;
   font: inherit;
-  max-width: 140px;
+  max-width: 100%;
   padding: 0 2px;
   cursor: pointer;
   min-height: 44px;
@@ -54,10 +55,7 @@ html:lang(ja-JP) .mw-eyebrow {
 @media (max-width: 600px) {
   .language-picker {
     padding: 7px;
-    font-size: 14px;
-  }
-  .language-picker select {
-    max-width: 100px;
+    font: var(--t-caption);
   }
   /* Sur très petit écran, la pastille de prototype cède la place à la marque
      et au sélecteur de langue. */

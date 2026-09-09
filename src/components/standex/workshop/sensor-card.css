@@ -1,18 +1,32 @@
+/* Fiche capteur en surimpression.
+   Même socle typographique que l'atelier : on réutilise les renvois `--mw-t-*`
+   par rôle (titre, sous-titre, corps, légende, valeur mesurée). La fiche est un
+   <dialog> promu dans le top layer ; l'héritage suit l'arbre DOM, mais on
+   redéclare ici les renvois pour que la fiche reste juste même montée hors du
+   sous-arbre `.mw`. */
 .sensor-card {
+  --mw-t-body: var(--t-body);
+  --mw-t-dense: var(--t-caption);
+  --mw-t-label: var(--t-label);
+  --mw-t-title-s: var(--t-title-s);
+  --mw-t-title-m: var(--t-title-m);
+  --mw-t-title-l: var(--t-title-l);
+
   border: 0;
   padding: 0;
-  border-radius: var(--r-lg);
+  border-radius: var(--r-xl);
   width: min(960px, calc(100vw - 32px));
   max-height: calc(100dvh - 40px);
-  color: var(--primary);
-  background: var(--surface);
+  color: var(--foreground);
+  background: var(--background);
   box-shadow: var(--e-4);
-  font-family: Lato, system-ui, sans-serif;
+  font: var(--mw-t-body);
+  font-family: var(--font-sans);
   overflow: auto;
   margin: auto;
 }
 .sensor-card::backdrop {
-  background: var(--standex-abyss);
+  background: var(--material-thin);
   backdrop-filter: blur(7px);
 }
 .sc-shell {
@@ -21,46 +35,36 @@
   min-height: 580px;
 }
 .sc-hero {
-  background: radial-gradient(
-    ellipse at 50% 46%,
-    var(--foreground) 0,
-    var(--ink) 62%,
-    var(--ink) 100%
-  );
+  background:
+    radial-gradient(ellipse at 50% 46%, var(--surface-tint), transparent 62%),
+    linear-gradient(168deg, var(--standex-deep), var(--standex-abyss));
   padding: 32px;
-  color: var(--surface-tint);
+  color: var(--heading);
   display: flex;
   flex-direction: column;
   position: relative;
   overflow: hidden;
 }
 .sc-brand {
-  font-size: 16px;
-  font-weight: 800;
-  letter-spacing: -0.3px;
-}
-.sc-brand span {
-  font-size: 11px;
-  letter-spacing: 1px;
-  margin-left: 4px;
+  display: flex;
+  align-items: center;
+  margin: calc(-0.34 * 44px) calc(-0.51 * 44px);
 }
 .sc-category {
-  font-size: 10px;
+  font: var(--mw-t-label);
   text-transform: uppercase;
-  letter-spacing: 2px;
+  letter-spacing: var(--tracking-label);
   color: var(--hairline-strong);
   margin-top: 32px;
 }
 .sensor-card .sc-hero h2 {
-  font-size: 32px;
-  line-height: 1.1;
+  font: var(--mw-t-title-l);
+  letter-spacing: var(--tracking-title);
   margin: 12px 0;
-  font-weight: 700;
   overflow-wrap: anywhere;
 }
 .sc-hero > p {
-  font-size: 13px;
-  line-height: 1.6;
+  font: var(--mw-t-dense);
   color: var(--hairline-strong);
   margin: 0;
 }
@@ -71,24 +75,29 @@
   margin: 16px -12px;
   background-image: radial-gradient(var(--hairline-strong) 1px, transparent 1px);
   background-size: 15px 15px;
-  border-radius: var(--r-md);
+  background-color: var(--surface-sunken);
+  border-color: var(--hairline);
+  border-radius: var(--r-lg);
 }
 .sc-drawing svg {
   width: 100%;
   height: 160px;
   filter: drop-shadow(0 12px 10px var(--standex-abyss));
 }
+/* Le texte de cote vit DANS le viewBox du plan : sa taille est exprimée en
+   unités utilisateur (attribut `fontSize` du SVG) pour se mettre à l'échelle
+   avec le dessin. Aucune règle CSS ne doit la fixer en pixels. */
 .sc-xray {
   align-self: center;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 9px;
-  border: 1px solid var(--foreground);
+  border: 1px solid var(--hairline);
   border-radius: var(--r-pill);
   padding: 8px 14px;
-  font-size: 11px;
-  color: var(--surface-tint);
+  font: var(--mw-t-dense);
+  color: var(--heading);
   cursor: pointer;
   background: transparent;
 }
@@ -98,7 +107,7 @@
   border-color: var(--success);
 }
 .sc-contact-note {
-  font-size: 10px;
+  font: var(--mw-t-dense);
   text-align: center;
   color: var(--hairline-strong);
   margin-top: 7px;
@@ -107,22 +116,24 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  border-top: 1px solid var(--foreground);
+  border-top: 1px solid var(--hairline);
   margin-top: 26px;
   padding-top: 20px;
 }
 .sc-hero-size small {
-  font-size: 10px;
+  font: var(--mw-t-dense);
   color: var(--hairline-strong);
   display: block;
 }
 .sc-hero-size strong {
-  font-size: 15px;
+  font: var(--mw-t-body);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
   display: block;
   margin-top: 5px;
 }
 .sc-strength {
-  font-size: 12px;
+  font: var(--mw-t-dense);
   display: flex;
   gap: 10px;
   align-items: center;
@@ -134,6 +145,7 @@
   flex-direction: column;
   min-width: 0;
   padding: 28px 30px;
+  background: var(--surface);
 }
 .sc-content header {
   display: flex;
@@ -142,9 +154,8 @@
   align-items: flex-start;
 }
 .sc-content header > div > span {
-  font-size: 12px;
+  font: var(--mw-t-dense);
   color: var(--muted-foreground);
-  line-height: 1.6;
 }
 .sc-content .mw-eyebrow {
   margin: 0 0 7px;
@@ -161,8 +172,7 @@
   border-bottom: 2px solid transparent;
   border-radius: 0;
   background: none;
-  font: inherit;
-  font-size: 12px;
+  font: var(--mw-t-dense);
   padding: 10px 0;
   cursor: pointer;
   color: var(--muted-foreground);
@@ -180,18 +190,17 @@
   display: flex;
   align-items: center;
   gap: 9px;
-  font-size: 14px;
-  font-weight: 700;
+  font: var(--mw-t-title-s);
+  letter-spacing: var(--tracking-title);
   margin: 0 0 12px;
 }
 .sc-panel p {
-  font-size: 12px;
-  line-height: 1.75;
+  font: var(--mw-t-dense);
   margin: 9px 0;
-  color: var(--foreground);
+  color: var(--muted-foreground);
 }
 .sc-panel p.sc-note {
-  font-size: 11px;
+  font: var(--mw-t-dense);
   color: var(--muted-foreground);
 }
 .sc-feature-grid {
@@ -201,9 +210,9 @@
   margin-bottom: 26px;
 }
 .sc-feature-grid article {
-  background: var(--surface);
+  background: var(--surface-sunken);
   border: 1px solid var(--hairline);
-  border-radius: var(--r-md);
+  border-radius: var(--r-lg);
   padding: 16px;
   display: flex;
   flex-direction: column;
@@ -214,26 +223,28 @@
   color: var(--primary);
 }
 .sc-feature-grid small {
-  font-size: 10px;
+  font: var(--mw-t-dense);
   color: var(--muted-foreground);
 }
 .sc-feature-grid strong {
-  font-size: 22px;
-  letter-spacing: -0.6px;
-  line-height: 1.2;
+  font: var(--mw-t-title-m);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--tracking-title);
+  color: var(--ink);
 }
 .sc-feature-grid strong.sc-material {
-  font-size: 15px;
-  letter-spacing: 0;
+  font: var(--mw-t-title-s);
+  letter-spacing: var(--tracking-title);
+  color: var(--ink);
 }
 .sc-feature-grid span {
-  font-size: 10px;
+  font: var(--mw-t-dense);
   color: var(--muted-foreground);
 }
 .sc-content em {
-  font-size: 12px;
+  font: var(--mw-t-dense);
   font-style: normal;
-  font-weight: 500;
   color: var(--muted-foreground);
 }
 .sc-cable-pills {
@@ -243,12 +254,11 @@
   margin: 12px 0;
 }
 .sc-cable-pills span {
-  font-size: 11px;
+  font: var(--mw-t-dense);
   padding: 6px 10px;
-  border: 1px solid var(--hairline);
-  border-radius: var(--r-sm);
+  border-radius: var(--r-pill);
   color: var(--primary);
-  background: var(--surface);
+  background: var(--surface-tint);
 }
 .sc-more {
   background: none;
@@ -257,13 +267,13 @@
   display: flex;
   align-items: center;
   gap: 9px;
-  font-size: 12px;
+  font: var(--mw-t-dense);
   color: var(--primary);
   text-align: left;
   cursor: pointer;
 }
 .sc-variant {
-  font-size: 11px;
+  font: var(--mw-t-dense);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -273,11 +283,11 @@
 .sc-variant select {
   min-width: 125px;
   padding: 8px;
-  border: 1px solid var(--hairline);
+  border: 0;
   border-radius: var(--r-sm);
-  background: var(--surface);
+  background: var(--surface-sunken);
   color: var(--primary);
-  font: inherit;
+  font: var(--mw-t-dense);
   max-width: 62%;
 }
 .sc-ratings {
@@ -288,16 +298,18 @@
 }
 .sc-ratings article {
   padding: 12px 16px;
-  border-left: 2px solid var(--muted-foreground);
-  background: var(--surface);
+  background: var(--surface-sunken);
+  border-radius: var(--r-lg);
 }
 .sc-ratings strong {
   display: block;
-  font-size: 25px;
-  line-height: 1.5;
+  font: var(--mw-t-title-m);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
 }
 .sc-ratings span {
-  font-size: 10px;
+  font: var(--mw-t-dense);
   color: var(--muted-foreground);
 }
 .sc-temperatures {
@@ -307,12 +319,14 @@
   display: flex;
   justify-content: space-between;
   gap: 14px;
-  font-size: 12px;
+  font: var(--mw-t-dense);
   padding: 14px 0;
   border-bottom: 1px solid var(--hairline);
 }
 .sc-temperatures strong {
   white-space: nowrap;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
   color: var(--primary);
 }
 .sc-content footer {
@@ -324,7 +338,7 @@
   border-top: 1px solid var(--hairline);
 }
 .sc-content footer a {
-  font-size: 11px;
+  font: var(--mw-t-dense);
   color: var(--primary);
   display: inline-flex;
   gap: 5px;
@@ -332,12 +346,12 @@
   text-decoration: none;
 }
 .sc-content footer small {
-  font-size: 9px;
+  font: var(--mw-t-dense);
   color: var(--muted-foreground);
   margin-left: auto;
 }
 .sc-content footer .sc-secondary-source {
-  font-size: 10px;
+  font: var(--mw-t-dense);
   flex-basis: 100%;
 }
 .sc-content footer button {
@@ -346,7 +360,7 @@
   justify-content: center;
 }
 .sensor-card :where(button, a, select):focus-visible {
-  outline: 3px solid var(--muted-foreground);
+  outline: 3px solid var(--ring);
   outline-offset: 3px;
 }
 .mw-product-card-button {
@@ -360,7 +374,7 @@
   color: var(--primary);
   padding: 11px 15px;
   border-radius: var(--r-md);
-  font-size: 12px;
+  font: var(--mw-t-dense);
   font-weight: 700;
   cursor: pointer;
   margin: 10px 0;
@@ -373,7 +387,7 @@
   .sensor-card {
     width: calc(100vw - 20px);
     max-height: calc(100dvh - 20px);
-    border-radius: var(--r-md);
+    border-radius: var(--r-lg);
   }
   .sc-shell {
     grid-template-columns: 1fr;
@@ -385,7 +399,8 @@
     margin-top: 18px;
   }
   .sensor-card .sc-hero h2 {
-    font-size: 28px;
+    font: var(--mw-t-title-m);
+    letter-spacing: var(--tracking-title);
   }
   .sc-drawing {
     min-height: 105px;
@@ -412,46 +427,4 @@
     color: var(--primary);
     z-index: 1;
   }
-  .sc-feature-grid strong {
-    font-size: 19px;
-  }
-}
-
-/* Lot E — carte produit alignée sur le système de matière Standex. */
-.sensor-card {
-  color: var(--foreground);
-  background: var(--background);
-  border-radius: var(--r-xl);
-  box-shadow: var(--e-4);
-  font-family: var(--font-sans);
-}
-.sensor-card::backdrop {
-  background: var(--material-thin);
-  backdrop-filter: blur(7px);
-}
-.sensor-card .sc-hero {
-  background:
-    radial-gradient(ellipse at 50% 46%, var(--surface-tint), transparent 62%),
-    linear-gradient(168deg, var(--standex-deep), var(--standex-abyss));
-  color: var(--heading);
-}
-.sensor-card .sc-drawing,
-.sensor-card .sc-feature-grid article,
-.sensor-card .sc-ratings article {
-  background: var(--surface-sunken);
-  border-color: var(--hairline);
-  border-radius: var(--r-lg);
-}
-.sensor-card .sc-content {
-  background: var(--surface);
-}
-.sensor-card :where(.sc-panel p, .sc-content span, .sc-content small, .sc-content em) {
-  color: var(--muted-foreground);
-}
-.sensor-card .sc-feature-grid strong,
-.sensor-card .sc-ratings strong,
-.sensor-card .sc-hero-size strong {
-  font-family: var(--font-mono);
-  font-variant-numeric: tabular-nums;
-  color: var(--ink);
 }

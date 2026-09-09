@@ -359,6 +359,17 @@ cibles de 44 px conformes).
   ramenait à 16 px tout ce qui devait rester en `--mw-t-dense` et élargissait la
   colonne de réglages. Les deux garde-fous réels du même bloc restent en place :
   `min-height: 44px` sur les contrôles et le `:focus-visible`.
+- La fiche capteur en surimpression (`sensor-card.css`) suit le même socle : ses
+  32 tailles écrites à la main sont remplacées par les renvois `--mw-t-*`
+  choisis par rôle (titre de fiche, sous-titres, corps, légendes), les valeurs
+  mesurées passent en `var(--font-mono)` tabulaire, et les renvois sont
+  redéclarés sur `.sensor-card` parce qu'un `<dialog>` peut être monté hors du
+  sous-arbre `.mw`. Le verrou de marque du bandeau de la fiche est rendu par
+  `<BrandLogo tone="reversed">`, jamais recomposé en texte.
+- Le sélecteur de langue n'a plus de plafond de largeur en pixels : un nom de
+  langue tronqué est le pire défaut possible sur le contrôle que cherche
+  justement qui ne comprend pas la langue affichée. La rangée du bandeau passe à
+  la ligne. Vérifié en 390 px et 320 px dans les huit langues.
 - Exceptions assumées et documentées :
   - `--mw-flow-duration` (jeton local) — la boucle continue du courant du schéma
     n'a pas d'équivalent parmi les six durées du socle.

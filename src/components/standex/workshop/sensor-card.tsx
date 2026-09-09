@@ -16,6 +16,7 @@ import {
 import { sensorById, sizeLabel, formatMm, sensorSource } from "@/lib/standex/sensor-catalog";
 import { SENSOR_SPECIFICATIONS } from "@/lib/standex/sensor-specifications";
 import type { Contact } from "@/lib/standex/magnetic-workshop";
+import { BrandLogo } from "@/components/standex/brand-logo";
 import { SensorPlan } from "./sensor-plan";
 import "./sensor-card.css";
 
@@ -64,7 +65,9 @@ export default function SensorCard({
       <div className="sc-shell">
         <div className="sc-hero">
           <div className="sc-brand">
-            STANDEX <span>DETECT</span>
+            {/* §10 : la marque n'est jamais recomposée en texte. Fond sombre →
+                version inversée, zone de protection conservée. */}
+            <BrandLogo tone="reversed" height={44} />
           </div>
           <span className="sc-category">{t(model.category)}</span>
           <h2 id={titleId} className="t-title-s">
