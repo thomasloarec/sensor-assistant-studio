@@ -307,6 +307,7 @@ await db.query(
 await actor('authenticated', ids.admin,
   () => value('select public.lead_crm_set_owners($1,$2,$3,$4)',
     [dossier, franke.id, null, replaced.project.version]));
+console.log('DBG assignments', JSON.stringify((await db.query('select user_id,source from lead.dossier_assignments where dossier_id=$1',[dossier])).rows));
 add('derived_owner_access_is_revoked', await value(
   'select count(*)::int from lead.dossier_assignments where dossier_id=$1 and user_id=$2',
   [dossier, ids.rnd]) === 0);
