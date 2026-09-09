@@ -60,10 +60,14 @@ const NAV = [
   { to: "/standex/console", label: "Dossiers", exact: false },
 ] as const;
 
+/** Index de l'onglet de travail actif, ou -1 quand l'écran affiché n'en est
+ *  aucun (l'administration, par exemple) : aucun onglet ne doit alors
+ *  s'allumer. */
 function activeIndex(pathname: string): number {
   if (pathname.startsWith("/standex/tasks")) return 1;
   if (pathname.startsWith("/standex/console")) return 2;
-  return 0;
+  if (pathname === "/standex" || pathname === "/standex/") return 0;
+  return -1;
 }
 
 function AccountMenu() {
