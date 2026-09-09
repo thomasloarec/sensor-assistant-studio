@@ -1,8 +1,8 @@
 /**
  * Version anglaise du rapport — LECTURE SEULE.
  *
- * Ce module ne traduit rien et n'appelle rien : aucun fournisseur externe
- * n'est autorisé dans ce lot. Il se contente de décider, à partir des lignes
+ * Ce module ne traduit rien et n'appelle aucun fournisseur : la traduction est
+ * produite côté serveur. Il se contente de décider, à partir des lignes
  * renvoyées par le serveur, si une version anglaise EXISTE réellement pour la
  * révision exacte qu'on regarde. L'original du client n'est jamais remplacé.
  */
