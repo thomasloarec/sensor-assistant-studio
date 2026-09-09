@@ -299,14 +299,29 @@ export function taskOverdueDays(task: Pick<CrmTask, "dueOn" | "status">, now: Da
   return diff > 0 ? diff : null;
 }
 
+/** Âge du projet : depuis la création du dossier, valeur immuable. */
+export function projectAgeDays(project: CrmProject, now: Date = new Date()): number | null {
+  return ageInDays(project.dossierCreatedAt || null, now);
+}
+
+/**
+ * Âge de l'étape EN COURS : depuis l'activation réelle des actions de cette
+ * étape, jamais depuis la plus ancienne action inachevée d'une étape future.
+ */
+export function stageAgeDays(project: CrmProject, now: Date = new Date()): number | null {
+  return ageInDays(project.stageActivatedAt ?? project.stageSince, now);
+}
+
 /** Repères d'attention d'un projet, sans jamais inventer une échéance absente. */
 export function projectAlerts(project: CrmProject, tasks: readonly CrmTask[], now: Date = new Date()):
-  { blocked: number; overdue: number; stageAgeDays: number | null; idleDays: number | null } {
+  { blocked: number; overdue: number; stageAgeDays: number | null; idleDays: number | null;
+    projectAgeDays: number | null } {
   return {
     blocked: tasks.filter((t) => t.status === "blocked").length,
     overdue: tasks.filter((t) => taskOverdueDays(t, now) !== null).length,
-    stageAgeDays: ageInDays(project.stageSince, now),
+    stageAgeDays: stageAgeDays(project, now),
     idleDays: ageInDays(project.updatedAt, now),
+    projectAgeDays: projectAgeDays(project, now),
   };
 }
 
