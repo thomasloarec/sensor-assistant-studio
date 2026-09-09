@@ -10,7 +10,7 @@ import { t } from "@/lib/i18n/core";
 import { useEffect, useRef, useState } from "react";
 import { createFileRoute, Link, Outlet, useRouterState } from "@tanstack/react-router";
 import { ChevronDown } from "lucide-react";
-import { BrandLogo } from "@/components/standex/brand-logo";
+import { AppHeader } from "@/components/standex/app-header";
 import { CrmProvider, useCrm } from "@/components/standex/dashboard/crm-context";
 import { FlashProvider } from "@/components/standex/dashboard/flash";
 import { AvatarInitials } from "@/components/standex/dashboard/avatar-initials";
@@ -18,7 +18,6 @@ import { CrmUnavailableNotice } from "@/components/standex/dashboard/crm-shared"
 import { AuthPanel } from "@/components/leadmagnet/auth-panel";
 import { checkLeadBackend, type LeadBackendStatus } from "@/lib/leadmagnet/backend";
 import { supabase } from "@/lib/standex/supabase";
-import { LanguagePicker } from "@/lib/i18n/react";
 import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
