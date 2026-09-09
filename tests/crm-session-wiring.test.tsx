@@ -31,24 +31,14 @@ const projectFor = (company: string) => ({
   notifications: [],
 });
 
+const realAdapter = await import("../src/lib/leadmagnet/dashboard-adapter");
 mock.module("@/lib/leadmagnet/dashboard-adapter", () => ({
+  ...realAdapter,
   fetchCrmProject: () =>
     new Promise((resolve) => {
       projectDeferred = { resolve };
     }),
   fetchCrmBoard: () => Promise.resolve({ projects: [], directory: [] }),
-  fetchCrmAdminOverview: () => Promise.resolve({ staff: [], directory: [], accounts: [] }),
-  applyCrmTemplate: () => Promise.resolve(null),
-  queueReviewNotification: () => Promise.resolve(null),
-  setCrmCost: () => Promise.resolve(null),
-  setCrmFields: () => Promise.resolve(null),
-  setCrmOwners: () => Promise.resolve(null),
-  setCrmPrice: () => Promise.resolve(null),
-  setCrmStage: () => Promise.resolve(null),
-  upsertCrmTask: () => Promise.resolve(null),
-  linkCrmAccount: () => Promise.resolve(null),
-  setCrmStaff: () => Promise.resolve(null),
-  upsertCrmPerson: () => Promise.resolve(null),
 }));
 
 // --- Contexte compte piloté par le test ------------------------------------
