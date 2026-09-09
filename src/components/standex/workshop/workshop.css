@@ -100,6 +100,7 @@
   border: 1px solid var(--hairline);
   border-radius: var(--r-sm);
   padding: 7px 3px;
+  font: var(--mw-t-dense);
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
 }
@@ -228,7 +229,7 @@
   --mw-blue: var(--primary);
   --mw-ink: var(--ink);
   --mw-gray: var(--foreground);
-  --mw-border: var(--surface-tint);
+  --mw-border: var(--hairline);
   --mw-green: var(--success);
   --mw-bg: var(--surface);
   /* Surfaces et contrôles : jetons qui suivent le contexte clair OU immersif.
@@ -250,6 +251,10 @@
      sans équivalent parmi les six durées du socle (90 → 900 ms). Jeton local,
      documenté, plutôt qu'une durée écrite au milieu d'une déclaration. */
   --mw-flow-duration: 1.2s;
+  /* Exception assumée : la puce de légende est un carré de 7 px. Le plus petit
+     rayon du socle (8 px) la transformerait en rond et effacerait la
+     distinction entre puce carrée et pastille ronde. Jeton local documenté. */
+  --mw-legend-dot-radius: 2px;
   min-height: 100%;
   overflow: auto;
   background: var(--mw-bg);
@@ -307,9 +312,9 @@
   text-transform: uppercase;
 }
 .mw h1 {
-  font-size: clamp(24px, 2.7vw, 35px);
+  font: var(--mw-t-display);
   font-weight: 600;
-  letter-spacing: -1px;
+  letter-spacing: var(--tracking-display);
   margin: 0 0 6px;
   line-height: 1.2;
 }
@@ -333,8 +338,8 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  font-weight: 600;
   font: var(--mw-t-body);
+  font-weight: 600;
   min-height: 42px;
 }
 .mw-secondary {
@@ -571,11 +576,11 @@
   border: 0;
   background: none;
   color: var(--mw-blue);
-  font-weight: 700;
   display: flex;
   align-items: center;
   gap: 8px;
   font: var(--mw-t-body);
+  font-weight: 700;
 }
 .mw-file-tools {
   padding: 0 20px;
@@ -635,7 +640,7 @@
   padding: 5px 9px;
   color: var(--muted-foreground);
   font: var(--mw-t-dense);
-  border-radius: var(--r-sm);
+  border-radius: var(--r-xs);
 }
 .mw-view-switch button[aria-pressed="true"] {
   background: var(--mw-field);
@@ -696,8 +701,8 @@
 .mw-live-state small {
   display: block;
   color: var(--muted-foreground);
-  font-weight: 400;
   font: var(--mw-t-dense);
+  font-weight: 400;
   padding-top: 3px;
   padding-left: 14px;
 }
@@ -777,7 +782,6 @@
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
   font-weight: 700;
-  font-variant-numeric: tabular-nums;
 }
 .mw-timeline {
   height: 12px;
@@ -793,7 +797,7 @@
   border-radius: var(--r-sm) 0 0 var(--r-sm);
 }
 .mw-timeline > span:last-of-type {
-  border-radius: 0 4px 4px 0;
+  border-radius: 0 var(--r-sm) var(--r-sm) 0;
 }
 .mw .closed {
   --status-color: var(--success);
@@ -856,7 +860,7 @@
 .mw-legend i {
   width: 7px;
   height: 7px;
-  border-radius: var(--r-xs);
+  border-radius: var(--mw-legend-dot-radius);
   display: inline-block;
 }
 .mw-legend .target {
@@ -927,11 +931,10 @@
 }
 .mw-summary pre {
   white-space: pre-wrap;
-  font:
-    12px/1.8 Lato,
-    system-ui,
-    sans-serif;
-  background: var(--mw-surface);
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  line-height: 1.65;
+  background: var(--surface-sunken);
   border: 1px solid var(--mw-border);
   padding: 20px;
   border-radius: var(--r-md);
@@ -1002,7 +1005,7 @@
 .mw-pole {
   border: 0;
   font: var(--mw-t-body);
-  font-weight: 900;
+  font-weight: 700;
   color: var(--primary-foreground);
   min-width: 23px;
   text-align: center;
@@ -1370,8 +1373,6 @@
   .mw-catalog-search {
     flex-basis: 100%;
   }
-  .mw-catalog h2 {
-  }
   .mw-catalog-list {
     gap: 9px;
   }
@@ -1381,8 +1382,6 @@
   .mw-catalog-drawing {
     height: 90px;
     margin: 0 -10px 9px;
-  }
-  .mw-catalog-choice p {
   }
   .mw-contact-indicator {
     padding: 16px;
@@ -1494,8 +1493,6 @@
   }
   .mw-steps {
     padding-top: 10px;
-  }
-  .mw-orbit-help {
   }
   .mw-layers {
     gap: 12px;
@@ -1781,10 +1778,6 @@
 }
 
 /* Lot F — garde-fous finaux de lisibilité et de cible, sans modifier la géométrie métier. */
-.magnetic-workshop
-  :where(p, span, small, strong, label, legend, summary, button, input, select, textarea, a) {
-  font-size: max(0.875rem, 1em);
-}
 .magnetic-workshop
   :where(button, select, input:not([type="checkbox"]):not([type="range"]), a.mw-button) {
   min-height: 44px;

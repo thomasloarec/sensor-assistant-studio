@@ -354,15 +354,24 @@ cibles de 44 px conformes).
   `--mw-t-body`, `--mw-t-dense`, `--mw-t-label`, `--mw-t-title`, `--mw-t-title-m`,
   `--mw-t-title-l`, `--mw-t-display`, définis dans `.mw` comme de simples renvois
   vers `--t-*`. Aucune taille écrite à la main.
+- Le plancher aveugle `font-size: max(0.875rem, 1em)` posé sur tous les éléments
+  de l'atelier a été retiré : `1em` se résolvant contre `.mw` (16 px), il
+  ramenait à 16 px tout ce qui devait rester en `--mw-t-dense` et élargissait la
+  colonne de réglages. Les deux garde-fous réels du même bloc restent en place :
+  `min-height: 44px` sur les contrôles et le `:focus-visible`.
 - Exceptions assumées et documentées :
   - `--mw-flow-duration` (jeton local) — la boucle continue du courant du schéma
     n'a pas d'équivalent parmi les six durées du socle.
+  - `--mw-legend-dot-radius` (jeton local, 2 px) — la puce de légende est un
+    carré de 7 px ; le plus petit rayon du socle (8 px) la transformerait en
+    rond et effacerait la distinction entre puce carrée et pastille ronde.
   - Les textes des schémas SVG sont dimensionnés en unités utilisateur du
     `viewBox` : ils suivent l'échelle du dessin, pas l'échelle typographique CSS.
   - Les matériaux Three.js, les dégradés de scène et les couleurs de rendu du
     catalogue capteur restent des données techniques, jamais des jetons.
   - Les filets de séparation encore présents dans l'atelier sont des séparateurs
     de scène interne, pas la bordure grise 1 px proscrite par la règle 2.
+
 
 
 
