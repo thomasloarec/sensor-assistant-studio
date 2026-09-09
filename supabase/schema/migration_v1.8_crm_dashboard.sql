@@ -726,11 +726,15 @@ begin
      set unit_cost = c, cost_in_sap = coalesce(_in_sap, false),
          updated_at = now(), version = version + 1
    where dossier_id = _dossier;
-  perform lead_priv.sap_note(_dossier, u, 'cost:' || row.version::text,
-    array[case when coalesce(_in_sap,false) then 'Unit cost: see cost in SAP (standard part).'
-          when c is null then 'Unit cost cleared.'
-          else 'Unit cost set to ' || trim(to_char(c,'FM999999999990.0000'))
-               || coalesce(' ' || row.currency, '') || '.' end]);
+  -- Réécrire exactement la même valeur n'est pas un « progrès » : pas de note.
+  if c is distinct from row.unit_cost
+     or coalesce(_in_sap,false) is distinct from row.cost_in_sap then
+    perform lead_priv.sap_note(_dossier, u, 'cost:' || row.version::text,
+      array[case when coalesce(_in_sap,false) then 'Unit cost: see cost in SAP (standard part).'
+            when c is null then 'Unit cost cleared.'
+            else 'Unit cost set to ' || trim(to_char(c,'FM999999999990.0000'))
+                 || coalesce(' ' || row.currency, '') || '.' end]);
+  end if;
   insert into lead.audit_log (actor, action, dossier_id, detail)
   values (u, 'crm_cost_set', _dossier, jsonb_build_object('in_sap', coalesce(_in_sap,false)));
   return lead_priv.crm_project(_dossier);
