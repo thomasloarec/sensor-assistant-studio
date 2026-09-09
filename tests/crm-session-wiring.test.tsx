@@ -232,7 +232,10 @@ async function renderDraft() {
   return view;
 }
 
-function dbg(){ console.log("DBG handler", authHandler !== null); }
+function dbg(){
+  console.log("DBG handler", authHandler !== null);
+  void import("@/lib/standex/supabase").then((m) => console.log("DBG sb", Boolean(m.supabase), typeof (m as any).supabase?.auth?.onAuthStateChange));
+}
 async function emitAuth(event: string, session: unknown) {
   await act(async () => {
     authHandler?.(event, session);
