@@ -577,7 +577,7 @@ export default function MagneticWorkshop({
                         className="mw-button mw-secondary mw-wide"
                         onClick={() => setCatalogOpen(true)}
                       >
-                        {t("Choisir dans le catalogue")}
+                        {t("Voir les capteurs")}
                       </button>
                       {sensorSource(sensor) && (
                         <a href={sensorSource(sensor)!} target="_blank" rel="noreferrer">
@@ -985,6 +985,21 @@ export default function MagneticWorkshop({
                     : "Démonstration · distances fictives",
                 )}
               </span>
+              {/* Même cycle que la lecture détaillée ci-dessous : même état,
+                  même progression, aucune animation parallèle. */}
+              <button
+                type="button"
+                className="mw-scene-play"
+                disabled={!machineReady}
+                aria-pressed={playing}
+                onClick={() => {
+                  if (progress >= 1) setProgress(0);
+                  setPlaying(!playing);
+                }}
+              >
+                {playing ? <Pause size={17} /> : <Play size={17} />}
+                {t(playing ? "Mettre en pause" : "Animer l'aimant")}
+              </button>
               <div className="mw-view-switch">
                 <button aria-pressed={view === "3d"} onClick={request3d}>
                   3D

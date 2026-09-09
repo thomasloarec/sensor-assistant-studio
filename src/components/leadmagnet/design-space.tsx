@@ -122,6 +122,14 @@ import {
   submit,
   technicalSummary,
 } from "@/lib/leadmagnet/submission";
+import {
+  sentHistory,
+  statusDetail,
+  statusHeadline,
+  submissionStatusKind,
+  submitButtonLabel,
+  type SentRevisionRecord,
+} from "@/lib/leadmagnet/submission-status";
 import { checkLeadBackend, type LeadBackendStatus } from "@/lib/leadmagnet/backend";
 import { requestEnglishReport } from "@/lib/leadmagnet/english-report.functions";
 import { englishReportMessage } from "@/lib/leadmagnet/english-report-messages";
@@ -435,6 +443,10 @@ export function DesignSpace({
   const [extraConstraints, setExtraConstraints] = useState("");
   const [submitMessage, setSubmitMessage] = useState<string | null>(null);
   const [submitMessageTone, setSubmitMessageTone] = useState<"info" | "danger" | "success">("info");
+  /** Dernière révision RÉELLEMENT confirmée par le serveur. Elle décrit un
+   * envoi passé, jamais le brouillon ouvert à l'écran. */
+  const [lastSent, setLastSent] = useState<SentRevisionRecord | null>(null);
+
   /** État FACTUEL de la version anglaise du rapport : jamais « envoyé en anglais »
    * tant que le serveur n'a pas publié une version prête pour cette révision. */
   const [englishMessage, setEnglishMessage] = useState<string | null>(null);
@@ -559,7 +571,7 @@ export function DesignSpace({
   // Verrou dédié au choix NDA : une seule bascule à la fois, relectures inhibées.
   const ndaToggleRef = useRef(false);
   const ndaSectionRef = useRef<HTMLButtonElement | null>(null);
-  const [reviewSections, setReviewSections] = useState<string[]>(["resume", "nda", "envoi"]);
+  const [reviewSections, setReviewSections] = useState<string[]>(["resume", "projet", "envoi"]);
 
   /** Remplissage local du NDA : aperçu puis téléchargement, sans aucune transmission. */
   const prepareNdaDocument = useCallback(
@@ -1059,6 +1071,8 @@ export function DesignSpace({
     setExtraConstraints("");
     setShareModel(false);
     setReopenedFrom(null);
+    // Changement de dossier : l'historique d'envoi appartient au dossier quitté.
+    setLastSent(null);
     // Un document ouvert appartient au dossier d'où il vient : il ne doit pas
     // rester affiché dans un dossier différent.
     setOpenDoc(null);
@@ -1301,6 +1315,9 @@ export function DesignSpace({
       serverDossierId,
       serverRevision: serverRevision + 1,
     };
+    // Contexte figé à l'entrée : une réponse tardive, arrivée après un
+    // changement de dossier, n'écrit plus jamais un succès ici.
+    const gen = contextGenRef.current;
     setBusy(true);
     const outcomeKind = await runGuardedSubmit({
       lock: busyRef,
@@ -1336,16 +1353,26 @@ export function DesignSpace({
             onDossierCreated: setServerDossierId,
           }),
         );
+        if (contextGenRef.current !== gen) return;
         if (outcome.status === "submitted") {
+          const bound = await submissionBinding(input);
+          if (contextGenRef.current !== gen) return;
           setServerRevision((r) => r + 1);
           setPreparedUpload(null);
-          setSubmitMessage(
-            t("Dossier transmis à la revue Standex. Vous serez informé dès qu'un retour est publié."),
-          );
-          setSubmitMessageTone("success");
+          // Le succès n'est PAS un message libre : il décrit la révision
+          // exactement confirmée par le serveur. Dès que le brouillon change,
+          // l'écran repasse de lui-même en « Modifications non envoyées ».
+          setLastSent({
+            dossierId: serverDossierId,
+            revisionId: outcome.submissionId,
+            revisionNumber: serverRevision + 1,
+            submittedAt: outcome.at,
+            binding: bound,
+          });
+          setSubmitMessage(null);
+          setSubmitMessageTone("info");
           // Version anglaise : demandée UNIQUEMENT si l'accord de traduction a été
           // donné pour ce contenu exact. Sans accord, rien n'est transmis et on le dit.
-          const bound = await submissionBinding(input);
           const target = {
             dossierId: serverDossierId ?? "",
             revisionId: outcome.submissionId,
@@ -1368,6 +1395,7 @@ export function DesignSpace({
     });
     void outcomeKind;
     setBusy(false);
+
   }, [
     dossier,
     nda,
@@ -1670,81 +1698,40 @@ export function DesignSpace({
     </>
   );
 
-  const montageSection = (
-    <div className="space-y-4">
-      {showAdvanced ? null : (
-        <div className="panel-block-lg">
-          <h2 className="t-title-m">{t("Où le capteur se place-t-il ?")}</h2>
-          <p className="t-caption mt-3">
-            {t("Montrez-le en 3D si c'est plus simple, ou donnez seulement les dimensions disponibles. Rien n'est obligatoire : ce qui reste inconnu reste inconnu.")}
-          </p>
-          <div className="mt-5 flex flex-wrap items-center gap-3">
-            <Button
-              size="lg"
-              className="min-h-12 px-6 text-base"
-              onClick={() => {
-                setWorkshopMounted(true);
-                setShowWorkshop(true);
-                setPanel("atelier");
-              }}
-            >
-              {t("Placer en 3D")}
-            </Button>
-            <Button variant="ghost" className="min-h-12 text-base" onClick={() => setTab("besoin")}>
-              {t("Revenir à mon besoin")}
-            </Button>
-          </div>
-        </div>
-      )}
-
-      {showAdvanced ? (
-        mechanicalFields
-      ) : (
-        <details className="panel-block">
-          <summary className="t-title-s flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 py-2">
-            {t("Préciser la mécanique et la place disponible (facultatif)")}
-            <span className="technical-details-chevron" aria-hidden="true">
-              ⌄
-            </span>
-          </summary>
-          <div className="mt-3 space-y-4">{mechanicalFields}</div>
-        </details>
-      )}
-
-      <div className="panel-block">
-        <div className="flex flex-wrap items-center gap-3">
-          <Label className="text-base font-medium">{t("Atelier 3D (facultatif)")}</Label>
-          {/* En mode guidé, « Placer en 3D » ci-dessus ouvre déjà l'atelier :
-                    pas de second bouton pour la même action. */}
-          {showAdvanced ? (
-            <Button
-              variant="outline"
-              className="min-h-11 text-base"
-              onClick={() => {
-                setWorkshopMounted(true);
-                setShowWorkshop(true);
-                setPanel("atelier");
-              }}
-            >
-              {t("Ouvrir l'atelier magnétique")}
-            </Button>
-          ) : null}
-          <span className="t-caption">
-            {t("Formats acceptés : GLB autonome uniquement. Les fichiers STEP/IGES ne sont pas lus. Unités, échelle et pièce mobile restent à confirmer par vous. Vos réglages restent en mémoire même si vous refermez le panneau.")}
-          </span>
-        </div>
-      </div>
-    </div>
+  /** Classement par plausibilité RÉELLE (contraintes explicites), jamais par
+   * secteur : les candidats retenus puis à vérifier d'abord, le sur mesure
+   * toujours visible, les exclusions techniques conservées et consultables. */
+  const plausibleCandidates = useMemo(
+    () =>
+      candidates
+        .filter((c) => c.status !== "excluded" || c.id === CUSTOM_SENSOR_ID)
+        .sort((a, b) => (a.status === "kept" ? 0 : 1) - (b.status === "kept" ? 0 : 1)),
+    [candidates],
+  );
+  const otherCandidates = useMemo(
+    () => candidates.filter((c) => c.status === "excluded" && c.id !== CUSTOM_SENSOR_ID),
+    [candidates],
   );
 
   const candidatsSection = (
     <div className="space-y-4">
-      {showAdvanced ? null : (
-        <Button variant="outline" className="min-h-11 text-base" onClick={() => setTab("montage")}>
-          {t("Revenir à mon montage")}
-        </Button>
-      )}
+      <p className="notice notice-info">
+        {t("Ces capteurs sont des exemples à explorer. Le bureau d'études Standex vérifiera leur adaptation à votre projet après l'envoi du dossier.")}
+      </p>
       <p className="t-caption">{t(CANDIDATE_DISCLAIMER)}</p>
+      <div className="panel-block flex flex-wrap items-center gap-3">
+        <span className="t-body">{t("Vous n'êtes pas obligé de choisir une référence.")}</span>
+        <Button
+          variant={dossier.selectedSensorId === null ? "default" : "outline"}
+          className="min-h-11 text-base"
+          aria-pressed={dossier.selectedSensorId === null}
+          onClick={() =>
+            setDossier((d) => ({ ...d, selectedSensorId: null, sensorSyncConfirmed: true }))
+          }
+        >
+          {t("Je ne sais pas encore — à définir avec Standex")}
+        </Button>
+      </div>
       {dossier.selectedSensorId && !dossier.sensorSyncConfirmed ? (
         <div className="notice notice-warning">
           <p>
@@ -1771,7 +1758,7 @@ export function DesignSpace({
         </div>
       ) : null}
       <div className="space-y-3">
-        {candidates.map((c) => (
+        {plausibleCandidates.map((c) => (
           <div
             key={c.id}
             className={`surface-interactive p-5 ${
@@ -1844,16 +1831,64 @@ export function DesignSpace({
           </div>
         ))}
       </div>
+      {otherCandidates.length ? (
+        <details className="panel-block">
+          <summary className="t-title-s flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 py-2">
+            {msg("Voir les autres capteurs ({0}) — écartés par une contrainte technique", [
+              String(otherCandidates.length),
+            ])}
+            <span className="technical-details-chevron" aria-hidden="true">
+              ⌄
+            </span>
+          </summary>
+          <ul className="mt-3 space-y-2">
+            {otherCandidates.map((c) => (
+              <li key={c.id} className="panel-block">
+                <p className="t-title-s">{t(c.name)}</p>
+                <p className="t-caption t-metric">{c.size}</p>
+                <ul className="mt-2 space-y-1">
+                  {c.reasons.map((r, i) => (
+                    <li key={i} className="t-caption">
+                      {t(r)}
+                    </li>
+                  ))}
+                </ul>
+              </li>
+            ))}
+          </ul>
+        </details>
+      ) : null}
     </div>
   );
 
   const cablageSection = (
     <div className="space-y-4">
-      {showAdvanced ? null : (
-        <Button variant="outline" className="min-h-11 text-base" onClick={() => setTab("montage")}>
-          {t("Revenir à mon montage")}
-        </Button>
-      )}
+      <div className="panel-block">
+        <Label className="t-label">{t("Longueur et connecteur")}</Label>
+        <p className="t-caption mt-1">
+          {t("Un choix non décidé reste inconnu : il ne vaut ni zéro, ni « sans câble ». Vous pouvez continuer sans le fixer.")}
+        </p>
+        <div className="mt-3 flex flex-wrap gap-2">
+          {/* i18n-canonical : libellés traduits par t() au rendu. */}
+          {(
+            [
+              ["undecided", "Non décidé — à définir avec Standex"],
+              ["standard_to_confirm", "Longueur catalogue, à confirmer"],
+              ["custom_to_confirm", "Longueur sur mesure, à confirmer"],
+            ] as const
+          ).map(([value, label]) => (
+            <Button
+              key={value}
+              variant={cabling.lengthChoice === value ? "default" : "outline"}
+              className="min-h-11 text-base"
+              aria-pressed={cabling.lengthChoice === value}
+              onClick={() => setCabling((c) => ({ ...c, lengthChoice: value }))}
+            >
+              {t(label)}
+            </Button>
+          ))}
+        </div>
+      </div>
       <div className="panel-block" data-testid="routing-target-panel">
         <Label className="t-label">{t("Tracé dans la 3D (facultatif)")}</Label>
         <p className="t-caption mt-1">
@@ -2223,6 +2258,104 @@ export function DesignSpace({
         <p className="t-caption mt-1">
           {t("Aucune combinaison connecteur/capteur qualifiée n'est documentée dans ce projet : toute référence saisie, sa contrepartie et son brochage restent à vérifier par la R&D.")}
         </p>
+      </div>
+    </div>
+  );
+
+  /** Parcours guidé : les capteurs possibles et le câble sont DANS la page
+   * « Mon montage ». L'outil contextuel y conduit au lieu d'ouvrir un panneau,
+   * donc aucune saisie n'est masquée et il n'y a pas de cul-de-sac. */
+  const goToInlineSection = (id: string) => {
+    setTab("montage");
+    requestAnimationFrame(() => {
+      document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  };
+
+  const montageSection = (
+    <div className="space-y-4">
+      {showAdvanced ? null : (
+        <div className="panel-block-lg">
+          <h2 className="t-title-m">{t("Où le capteur se place-t-il ?")}</h2>
+          <p className="t-caption mt-3">
+            {t("Montrez-le en 3D si c'est plus simple, ou donnez seulement les dimensions disponibles. Rien n'est obligatoire : ce qui reste inconnu reste inconnu.")}
+          </p>
+          <div className="mt-5 flex flex-wrap items-center gap-3">
+            <Button
+              size="lg"
+              className="min-h-12 px-6 text-base"
+              onClick={() => {
+                setWorkshopMounted(true);
+                setShowWorkshop(true);
+                setPanel("atelier");
+              }}
+            >
+              {t("Placer en 3D")}
+            </Button>
+            <Button variant="ghost" className="min-h-12 text-base" onClick={() => setTab("besoin")}>
+              {t("Revenir à mon besoin")}
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {showAdvanced ? (
+        mechanicalFields
+      ) : (
+        <details className="panel-block">
+          <summary className="t-title-s flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 py-2">
+            {t("Préciser la mécanique et la place disponible (facultatif)")}
+            <span className="technical-details-chevron" aria-hidden="true">
+              ⌄
+            </span>
+          </summary>
+          <div className="mt-3 space-y-4">{mechanicalFields}</div>
+        </details>
+      )}
+
+      {showAdvanced ? null : (
+        <>
+          <section id="section-candidats" className="space-y-4 scroll-mt-24">
+            <h2 className="t-title-m">{t("Capteurs possibles")}</h2>
+            {candidatsSection}
+          </section>
+          <section id="section-cablage" className="space-y-4 scroll-mt-24">
+            <h2 className="t-title-m">{t("Câble et connecteur")}</h2>
+            {cablageSection}
+          </section>
+          <div className="panel-block-lg flex flex-wrap items-center gap-3">
+            <Button size="lg" className="min-h-12 px-6 text-base" onClick={() => setTab("revue")}>
+              {t("Continuer vers Avec Standex")}
+            </Button>
+            <Button variant="ghost" className="min-h-12 text-base" onClick={() => setTab("besoin")}>
+              {t("Revenir à mon besoin")}
+            </Button>
+          </div>
+        </>
+      )}
+
+      <div className="panel-block">
+        <div className="flex flex-wrap items-center gap-3">
+          <Label className="text-base font-medium">{t("Atelier 3D (facultatif)")}</Label>
+          {/* En mode guidé, « Placer en 3D » ci-dessus ouvre déjà l'atelier :
+                    pas de second bouton pour la même action. */}
+          {showAdvanced ? (
+            <Button
+              variant="outline"
+              className="min-h-11 text-base"
+              onClick={() => {
+                setWorkshopMounted(true);
+                setShowWorkshop(true);
+                setPanel("atelier");
+              }}
+            >
+              {t("Ouvrir l'atelier magnétique")}
+            </Button>
+          ) : null}
+          <span className="t-caption">
+            {t("Formats acceptés : GLB autonome uniquement. Les fichiers STEP/IGES ne sont pas lus. Unités, échelle et pièce mobile restent à confirmer par vous. Vos réglages restent en mémoire même si vous refermez le panneau.")}
+          </span>
+        </div>
       </div>
     </div>
   );
@@ -2628,6 +2761,9 @@ export function DesignSpace({
               authenticated={Boolean(backend?.authenticated)}
               message={submitMessage}
               messageTone={submitMessageTone}
+              status={submissionStatusKind(lastSent, binding)}
+              lastSent={lastSent}
+
               onSubmit={() => void onSubmit()}
               onOpenNda={focusNdaSection}
               onRefreshNda={() => void refreshNdaStatus()}
@@ -2660,10 +2796,14 @@ export function DesignSpace({
           </AccordionContent>
         </AccordionItem>
 
+        {/* Après envoi confirmé UNIQUEMENT : avant l'envoi, le formulaire se
+            termine sur le résumé, les accords et l'action. Rien n'est supprimé,
+            le suivi complet reste dans « Mon espace ». */}
+        {lastSent ? (
         <AccordionItem value="echantillons" className="panel-block-lg border-0">
           <AccordionTrigger className="business-accordion-trigger t-title-s gap-3 hover:no-underline">
             <span className="standex-bar !h-5 !w-1" aria-hidden="true" />
-            <span className="flex-1">{t("Échantillons et suivi")}</span>
+            <span className="flex-1">{t("Suivi de mon dossier")}</span>
           </AccordionTrigger>
           <AccordionContent className="space-y-3">
             <p className="text-sm">{sampleRoute.note}</p>
@@ -2684,6 +2824,7 @@ export function DesignSpace({
             </p>
           </AccordionContent>
         </AccordionItem>
+        ) : null}
       </Accordion>
     </div>
   );
@@ -3226,7 +3367,9 @@ export function DesignSpace({
                 variant="ghost"
                 size="sm"
                 className="min-h-11 rounded-[var(--r-pill)] text-base hover:bg-[var(--surface-tint)]"
-                onClick={() => (showAdvanced ? setTab("candidats") : setPanel("candidats"))}
+                onClick={() =>
+                  showAdvanced ? setTab("candidats") : goToInlineSection("section-candidats")
+                }
               >
                 <Cpu />
                 {t("Capteurs possibles")}
@@ -3235,7 +3378,9 @@ export function DesignSpace({
                 variant="ghost"
                 size="sm"
                 className="min-h-11 rounded-[var(--r-pill)] text-base hover:bg-[var(--surface-tint)]"
-                onClick={() => (showAdvanced ? setTab("cablage") : setPanel("cablage"))}
+                onClick={() =>
+                  showAdvanced ? setTab("cablage") : goToInlineSection("section-cablage")
+                }
               >
                 <Cable />
                 {t("Câble et connecteur")}
@@ -3315,26 +3460,6 @@ export function DesignSpace({
         description={t("Vos réglages restent en mémoire même si vous refermez ce panneau. Enregistrer reste une action explicite.")}
       >
         {workshopMounted ? workshopSection : null}
-      </WorkspacePanel>
-
-      <WorkspacePanel
-        open={panel === "candidats"}
-        keepMounted
-        onOpenChange={(o) => setPanel(o ? "candidats" : null)}
-        title={t("Capteurs possibles")}
-        description={t("Proposés à partir de vos contraintes et de votre montage, jamais du secteur d'activité.")}
-      >
-        {showAdvanced ? null : candidatsSection}
-      </WorkspacePanel>
-
-      <WorkspacePanel
-        open={panel === "cablage"}
-        keepMounted
-        onOpenChange={(o) => setPanel(o ? "cablage" : null)}
-        title={t("Câble et connecteur")}
-        description={t("Longueurs, réserves et connecteurs documentés. Rien n'est perdu en fermant.")}
-      >
-        {showAdvanced ? null : cablageSection}
       </WorkspacePanel>
 
       <WorkspacePanel

@@ -8,7 +8,7 @@ import { t } from "@/lib/i18n/core";
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import type { CSSProperties } from "react";
-import { ArrowDown, ArrowRight, ChevronDown, UserRound } from "lucide-react";
+import { ArrowRight, ChevronDown, UserRound } from "lucide-react";
 import { BrandLogo } from "@/components/standex/brand-logo";
 import { Button } from "@/components/ui/button";
 import { MagnetPlay } from "@/components/leadmagnet/magnet-play";
@@ -115,13 +115,6 @@ function HomeRoute() {
                   >
                     {t("Retrouver mes projets")}
                   </Button>
-                  <a
-                    href="#aimant"
-                    className="inline-flex min-h-11 items-center gap-2 rounded-[var(--r-xs)] px-3 py-2 text-base underline decoration-[var(--hairline-strong)] underline-offset-4 transition-colors duration-[var(--d-fast)] hover:text-primary"
-                  >
-                    {t("Explorer avec l'aimant")}
-                    <ArrowDown className="size-4" aria-hidden="true" />
-                  </a>
                 </div>
                 <p className="t-caption mt-7 max-w-[34rem]">
                   {t("Rien à installer, aucun formulaire pour commencer. Votre travail reste sur votre appareil tant que vous ne l'envoyez pas.")}
