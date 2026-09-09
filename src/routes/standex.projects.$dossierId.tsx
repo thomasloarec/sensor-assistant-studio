@@ -140,7 +140,8 @@ export function ProjectDetail({ dossierId }: { dossierId: string }) {
 
     setDetail(null);
     setError(null);
-    setMessage(null);
+
+
     setBusy(false);
     setPageDirectory([]);
   }, [dossierId, sessionGeneration]);
@@ -200,14 +201,14 @@ export function ProjectDetail({ dossierId }: { dossierId: string }) {
     genRef.current = gen;
 
     setBusy(true);
-    setMessage(null);
+    
     setError(null);
     try {
       const next = await fn();
       if (dossierRef.current !== asked || genRef.current !== gen) return;
       if (sessionRef.current !== session) return;
       setDetail(next);
-      setMessage(ok);
+      flash.success(ok);
     } catch (e: unknown) {
       if (dossierRef.current !== asked || genRef.current !== gen) return;
       if (sessionRef.current !== session) return;
