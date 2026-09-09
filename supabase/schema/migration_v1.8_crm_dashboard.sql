@@ -1176,6 +1176,9 @@ begin
   if _person is null then raise exception 'BAD_PERSON' using errcode = '22023'; end if;
   if e is null then
     update lead.crm_directory set user_id = null, updated_at = now() where id = _person;
+    perform lead_priv.crm_reconcile_owner_access(d, u)
+       from (select c.dossier_id as d from lead.dossier_crm c
+              where c.sales_person = _person or c.fae_person = _person) s(d);
     insert into lead.audit_log (actor, action, detail)
     values (u, 'crm_person_unlinked', jsonb_build_object('person', _person));
     return lead_priv.crm_admin_overview();
