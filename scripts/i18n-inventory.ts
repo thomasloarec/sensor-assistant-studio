@@ -44,6 +44,7 @@ const EXEMPT_TEXTS = new Set([
   // ce sont des classes CSS, jamais du texte lu par une personne.
   "grid gap-6",
   "mx-auto grid max-w-6xl gap-6 p-4 lg:grid-cols-[320px_1fr]",
+  "grid gap-6 lg:grid-cols-[320px_1fr]",
 ]);
 
 

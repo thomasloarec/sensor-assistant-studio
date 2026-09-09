@@ -437,8 +437,11 @@ export function DossierConsole({
 
       <main
         className={
-          (embedded ? "grid gap-6" : "mx-auto grid max-w-6xl gap-6 p-4") +
-          (noSidebar ? "" : " lg:grid-cols-[320px_1fr]")
+          embedded
+            ? noSidebar
+              ? "grid gap-6"
+              : "grid gap-6 lg:grid-cols-[320px_1fr]"
+            : "mx-auto grid max-w-6xl gap-6 p-4 lg:grid-cols-[320px_1fr]"
         }
       >
         {noSidebar ? null : (
