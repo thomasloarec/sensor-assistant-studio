@@ -18574,5 +18574,68 @@
     "Диагностика (администрирование):",
     "Diagnostica (amministrazione):",
     "診断情報（管理）:"
+  ],
+  "Ce compte est rattaché mais n'a encore aucun droit Standex. Choisissez le droit à lui accorder.": [
+    "This account is linked but has no Standex right yet. Choose the right to grant it.",
+    "该账号已关联，但尚无 Standex 权限。请选择要授予的权限。",
+    "Dieses Konto ist verknüpft, hat aber noch kein Standex-Recht. Wählen Sie das zu erteilende Recht.",
+    "Esta cuenta está vinculada pero aún no tiene ningún derecho Standex. Elija el derecho que desea concederle.",
+    "Учётная запись привязана, но прав Standex пока нет. Выберите право для предоставления.",
+    "Questo account è collegato ma non ha ancora alcun diritto Standex. Scegliere il diritto da concedere.",
+    "このアカウントは紐づけ済みですが、Standex の権限はまだありません。付与する権限を選んでください。"
+  ],
+  "Droit Standex accordé à ce compte.": [
+    "Standex right granted to this account.",
+    "已向该账号授予 Standex 权限。",
+    "Standex-Recht diesem Konto erteilt.",
+    "Derecho Standex concedido a esta cuenta.",
+    "Право Standex предоставлено этой учётной записи.",
+    "Diritto Standex concesso a questo account.",
+    "このアカウントに Standex の権限を付与しました。"
+  ],
+  "Accorder ce droit": [
+    "Grant this right",
+    "授予该权限",
+    "Dieses Recht erteilen",
+    "Conceder este derecho",
+    "Предоставить это право",
+    "Concedi questo diritto",
+    "この権限を付与"
+  ],
+  "Fiche annuaire mise à jour.": [
+    "Directory entry updated.",
+    "通讯录条目已更新。",
+    "Verzeichniseintrag aktualisiert.",
+    "Ficha del directorio actualizada.",
+    "Запись справочника обновлена.",
+    "Scheda della rubrica aggiornata.",
+    "名簿の情報を更新しました。"
+  ],
+  "Enregistrer la fiche": [
+    "Save entry",
+    "保存条目",
+    "Eintrag speichern",
+    "Guardar ficha",
+    "Сохранить запись",
+    "Salva scheda",
+    "情報を保存"
+  ],
+  "Interne — à rédiger en anglais": [
+    "Internal — write in English",
+    "内部 — 请用英语填写",
+    "Intern — auf Englisch verfassen",
+    "Interno — redactar en inglés",
+    "Внутреннее — писать по-английски",
+    "Interno — scrivere in inglese",
+    "社内用 — 英語で記入"
+  ],
+  "Vu par le client — langue enregistrée du projet :": [
+    "Seen by the customer — saved project language:",
+    "客户可见 — 项目已保存语言：",
+    "Für den Kunden sichtbar — gespeicherte Projektsprache:",
+    "Visible para el cliente — idioma guardado del proyecto:",
+    "Видно клиенту — сохранённый язык проекта:",
+    "Visibile al cliente — lingua registrata del progetto:",
+    "顧客が閲覧 — 保存されたプロジェクト言語:"
   ]
 }
