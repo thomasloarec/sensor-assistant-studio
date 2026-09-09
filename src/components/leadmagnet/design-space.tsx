@@ -988,6 +988,7 @@ export function DesignSpace({
     if (busyRef.current) return;
     if (!dossier.workshopAsset) {
       setSubmitMessage(t("Aucun modèle 3D à partager dans cet onglet."));
+      setSubmitMessageTone("danger");
       return;
     }
     if (!backend?.ready) {
@@ -995,12 +996,14 @@ export function DesignSpace({
         backend?.message ??
           t("La liaison avec l'équipe Standex n'est pas active : rien n'a été déposé."),
       );
+      setSubmitMessageTone("danger");
       return;
     }
     busyRef.current = true;
     setBusy(true);
     setBusyOperation("upload");
     setSubmitMessage(null);
+    setSubmitMessageTone("info");
     // Contexte visé au moment du dépôt : si le dossier change entre-temps,
     // ce résultat ne doit surtout pas s'écrire dans le nouveau dossier.
     const gen = contextGenRef.current;
@@ -1011,6 +1014,7 @@ export function DesignSpace({
         setSubmitMessage(
           t("Le fichier 3D n'est plus en mémoire de cet onglet : réimportez-le avant de le partager."),
         );
+        setSubmitMessageTone("danger");
         return;
       }
       let dossierId = serverDossierId;
@@ -1044,6 +1048,7 @@ export function DesignSpace({
             uploaded.verificationError ?? t("raison inconnue")
           }). Il n'est donc pas joint à votre envoi.`,
         );
+        setSubmitMessageTone("danger");
         return;
       }
       setPreparedUpload({
@@ -1071,10 +1076,12 @@ export function DesignSpace({
       setSubmitMessage(
         t("Modèle 3D déposé et vérifié par le serveur. Relisez le résumé, confirmez votre accord, puis envoyez : le fichier ne sera pas déposé une seconde fois."),
       );
+      setSubmitMessageTone("success");
     } catch (error) {
       setSubmitMessage(
         error instanceof Error ? error.message : t("Le fichier 3D n'a pas pu être partagé."),
       );
+      setSubmitMessageTone("danger");
     } finally {
       busyRef.current = false;
       setBusy(false);

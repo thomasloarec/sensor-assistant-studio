@@ -222,3 +222,18 @@
   - wiring UI non testé en navigateur authentifié : la chaîne serveur a été exercée
     directement (mêmes dépendances réelles que la fonction serveur), pas via l'interface.
 - Gates : 277 tests / 42 567 assertions, typecheck OK, build OK, scans de design conformes.
+
+## 2026-09-09 — Diagnostic de transmission et NDA
+
+- Cause du blocage muet : le CTA était désactivé par `!ndaOk` alors que l'état initial exige
+  un NDA et commence à `requested`; les consentements cochés ne constituent pas la preuve
+  serveur requise (`in_force` avec preuve vérifiée).
+- Le CTA reste maintenant utilisable pour lancer les validations locales sans transfert. Un
+  diagnostic distinct couvre `requested`, `prepared`, `awaiting_signatures` et l'état
+  incohérent `in_force` sans preuve, avec accès direct à Confidentialité/NDA et actualisation
+  du statut serveur. Aucun contrôle NDA, document, droit ou workflow n'a été assoupli.
+- Les vraies opérations restent seules bloquantes et portent un libellé contextualisé (dépôt
+  3D, transmission, reprise). Leur verrou est libéré en `finally`; les erreurs utilisent
+  `notice-danger`, jamais le style succès.
+- Couverture rendue : NDA requis non vérifié, NDA vérifié/non requis, opération active et
+  message d'échec. Les nouvelles phrases sont présentes dans les huit langues.
