@@ -137,6 +137,8 @@ import { EnglishRunLock } from "@/lib/leadmagnet/english-run-lock";
 import {
   ndaTransferGuidance,
   runGuardedSubmit,
+  submitFailureMessage,
+  type SubmitPhase,
   type ReviewOperation,
 } from "@/lib/leadmagnet/review-submit-state";
 
@@ -786,16 +788,25 @@ export function DesignSpace({
       .then((next) => {
         if (!alive) return;
         setBinding((previous) => (previous && sameBinding(previous, next) ? previous : next));
+        // Après un envoi réussi, le compteur passe à la version suivante : les
+        // accords donnés pour la version envoyée sont consommés, mais rien n'a
+        // été modifié. On le dit ainsi au lieu d'accuser une édition.
+        const afterCommit = committedRevisionRef.current === serverRevision;
         setPrivacy((p) => {
           const pruned = pruneStaleConsents(p, next);
           if (pruned !== p) {
             setAcknowledged(false);
             setConsentNotice(
-              t("Le contenu, le dossier visé ou les fichiers ont changé : relisez le résumé et confirmez à nouveau votre accord d'envoi."),
+              t(
+                afterCommit
+                  ? "Votre envoi est confirmé. Pour transmettre de nouvelles modifications, relisez le résumé et confirmez à nouveau votre accord d'envoi."
+                  : "Le contenu, le dossier visé ou les fichiers ont changé : relisez le résumé et confirmez à nouveau votre accord d'envoi.",
+              ),
             );
           }
           return pruned;
         });
+        committedRevisionRef.current = null;
       })
       .catch(() => undefined);
     return () => {
@@ -1042,6 +1053,9 @@ export function DesignSpace({
    * s'écrire dans le dossier B ouvert entre-temps.
    */
   const contextGenRef = useRef(0);
+  /** Version que NOUS venons de faire confirmer. Le compteur serveur qui avance
+   * de 1 après un envoi réussi est une progression normale, pas une édition. */
+  const committedRevisionRef = useRef<number | null>(null);
   /** Numéro de la dernière lecture de document demandée : une lecture tardive
    * n'ouvre jamais un fichier dans un autre dossier. */
   const docGenRef = useRef(0);
