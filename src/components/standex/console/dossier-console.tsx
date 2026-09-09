@@ -77,27 +77,14 @@ import { supabase } from "@/lib/standex/supabase";
 
 const MagneticWorkshop = lazy(() => import("@/components/standex/workshop/workshop"));
 
-export const Route = createFileRoute("/standex")({
-  component: StandexConsole,
-  head: () => ({
-    meta: [
-      { title: t("Console Standex — revue et suivi des dossiers") },
-      {
-        name: "description",
-        content:
-          t("Espace interne Standex : revue R&D des dossiers de conception, offres, échantillons et preuves de confidentialité."),
-      },
-      { name: "robots", content: "noindex, nofollow" },
-      { property: "og:title", content: t("Console Standex") },
-      {
-        property: "og:description",
-        content: t("Espace interne de revue des dossiers de conception capteur."),
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-    ],
-  }),
-});
+export interface DossierConsoleProps {
+  /** Dossier à ouvrir d'emblée : la fiche projet impose le sien. */
+  initialDossierId?: string;
+  /** Intégrée dans une fiche projet : l'en-tête et la liste latérale, déjà
+   *  fournis par l'espace de travail, ne sont pas répétés. */
+  embedded?: boolean;
+}
+
 
 /* i18n-canonical : libellés stockés en français, traduits au rendu par t(). */
 const emptyReview = {
