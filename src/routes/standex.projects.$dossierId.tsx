@@ -69,7 +69,7 @@ import {
 import { sapNotesToText } from "@/lib/leadmagnet/sap-note";
 
 export const Route = createFileRoute("/standex/projects/$dossierId")({
-  component: ProjectDetail,
+  component: ProjectDetailRoute,
 });
 
 type Tab = "tracking" | "tasks" | "sap" | "review" | "notify";
@@ -83,9 +83,15 @@ const TABS: { id: Tab; label: string }[] = [
   { id: "notify", label: "Information du client" },
 ];
 
-function ProjectDetail() {
+/** La route lit l'identifiant dans l'URL ; l'écran, lui, le reçoit en propriété :
+ *  il peut donc être monté et vérifié sans routeur. */
+function ProjectDetailRoute() {
   const { dossierId } = Route.useParams();
-  const { capabilities, legacyRole } = useCrm();
+  return <ProjectDetail dossierId={dossierId} />;
+}
+
+export function ProjectDetail({ dossierId }: { dossierId: string }) {
+  const { capabilities, legacyRole, sessionGeneration } = useCrm();
   const locale = useLocale();
   const tag = localeTag(locale);
   const [tab, setTab] = useState<Tab>("tracking");
@@ -94,6 +100,10 @@ function ProjectDetail() {
   const [message, setMessage] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const dossierRef = useRef(dossierId);
+  /** Compte réellement connecté : un changement de compte périme tout ce qui est
+   *  affiché et tout ce qui est encore en vol. Rien de l'ancien compte ne doit
+   *  réapparaître pendant que la nouvelle lecture est en cours. */
+  const sessionRef = useRef(sessionGeneration);
   /** Numéro de la dernière demande émise : une réponse plus ancienne est ignorée,
    *  même si elle revient après une plus récente (A → B → A). */
   const genRef = useRef(0);
@@ -101,9 +111,10 @@ function ProjectDetail() {
    *  jamais libérer le verrou d'une écriture plus récente (A → B → A). */
   const pendingRef = useRef(createOwnedLock());
 
-  // Changer de projet invalide toute réponse encore en vol.
+  // Changer de projet OU de compte invalide toute réponse encore en vol.
   useEffect(() => {
     dossierRef.current = dossierId;
+    sessionRef.current = sessionGeneration;
     genRef.current += 1;
     pendingRef.current.reset();
 
@@ -111,26 +122,30 @@ function ProjectDetail() {
     setError(null);
     setMessage(null);
     setBusy(false);
-  }, [dossierId]);
+    setPageDirectory([]);
+  }, [dossierId, sessionGeneration]);
 
   /** Relit l'état serveur. `keepError` conserve un message de conflit déjà affiché :
    *  la relecture ne doit jamais effacer l'explication de l'échec précédent. */
   const reload = useCallback((keepError = false) => {
     const asked = dossierId;
+    const session = sessionGeneration;
     const gen = ++genRef.current;
     if (!keepError) setError(null);
     fetchCrmProject(asked)
       .then((d) => {
         if (dossierRef.current !== asked || genRef.current !== gen) return;
+        if (sessionRef.current !== session) return;
         setDetail(d);
       })
       .catch((e: unknown) => {
         if (dossierRef.current !== asked || genRef.current !== gen) return;
+        if (sessionRef.current !== session) return;
         if (keepError) return;
         setDetail(null);
         setError(e instanceof Error ? e.message : t("Lecture refusée."));
       });
-  }, [dossierId]);
+  }, [dossierId, sessionGeneration]);
 
   const load = useCallback(() => reload(false), [reload]);
 
@@ -139,25 +154,27 @@ function ProjectDetail() {
   useEffect(() => {
     let alive = true;
     if (!capabilities?.available) return;
+    const session = sessionGeneration;
     fetchCrmBoard()
       .then((b) => {
-        if (alive) setPageDirectory(b.directory);
+        if (alive && sessionRef.current === session) setPageDirectory(b.directory);
       })
       .catch(() => {
-        if (alive) setPageDirectory([]);
+        if (alive && sessionRef.current === session) setPageDirectory([]);
       });
     return () => {
       alive = false;
     };
-  }, [capabilities?.available]);
+  }, [capabilities?.available, sessionGeneration]);
 
 
   useEffect(() => {
     if (capabilities?.available) load();
-  }, [capabilities?.available, load]);
+  }, [capabilities?.available, sessionGeneration, load]);
 
   const run = async (fn: () => Promise<CrmProjectDetail>, ok: string) => {
     const asked = dossierId;
+    const session = sessionGeneration;
     const gen = genRef.current + 1;
     if (!pendingRef.current.acquire(gen)) return;
     genRef.current = gen;
@@ -168,10 +185,12 @@ function ProjectDetail() {
     try {
       const next = await fn();
       if (dossierRef.current !== asked || genRef.current !== gen) return;
+      if (sessionRef.current !== session) return;
       setDetail(next);
       setMessage(ok);
     } catch (e: unknown) {
       if (dossierRef.current !== asked || genRef.current !== gen) return;
+      if (sessionRef.current !== session) return;
       setError(e instanceof Error ? e.message : t("Action refusée."));
       // Un conflit de version se résout en relisant l'état réel du serveur,
       // sans effacer le message qui explique pourquoi l'écriture a échoué.
@@ -179,11 +198,18 @@ function ProjectDetail() {
     } finally {
       // Seule l'écriture propriétaire du verrou peut le rendre : une réponse
       // périmée ne débloque ni la suivante ni son indicateur d'occupation.
-      if (pendingRef.current.release(gen) && dossierRef.current === asked) setBusy(false);
+      if (
+        pendingRef.current.release(gen)
+        && dossierRef.current === asked
+        && sessionRef.current === session
+      ) setBusy(false);
     }
 
   };
 
+  // La session affichée doit être la session courante : entre une déconnexion
+  // et la première lecture du nouveau compte, on n'affiche pas l'ancien projet.
+  if (sessionRef.current !== sessionGeneration) return <LoadingBlock />;
   if (capabilities === null) return <LoadingBlock />;
   if (!capabilities.available)
     return (
