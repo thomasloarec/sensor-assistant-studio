@@ -9,10 +9,7 @@
   height: 44px;
   min-height: 44px;
   padding: 7px 10px;
-  font:
-    14px var(--font-sans),
-    system-ui,
-    sans-serif;
+  font: var(--t-caption);
   flex-shrink: 0;
   max-width: 100%;
 }
@@ -58,10 +55,7 @@ html:lang(ja-JP) .mw-eyebrow {
 @media (max-width: 600px) {
   .language-picker {
     padding: 7px;
-    font-size: 14px;
-  }
-  .language-picker select {
-    max-width: 100px;
+    font: var(--t-caption);
   }
   /* Sur très petit écran, la pastille de prototype cède la place à la marque
      et au sélecteur de langue. */
