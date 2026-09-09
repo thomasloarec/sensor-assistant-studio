@@ -339,11 +339,14 @@ export function nextAction(
   return [...pool].sort((a, b) => order(a) - order(b) || a.sortOrder - b.sortOrder)[0] ?? null;
 }
 
-/** Âge, en jours, de la prochaine action en attente depuis son activation réelle. */
+/** Âge, en jours, de la prochaine action en attente depuis son activation réelle.
+ *  Une action pas encore devenue courante n'a pas de date d'activation : son
+ *  âge est inconnu, jamais celui de la création du plan d'actions. */
 export function actionAgeDays(task: CrmTask | null, now: Date = new Date()): number | null {
-  if (!task) return null;
-  return ageInDays(task.activatedAt ?? task.createdAt, now);
+  if (!task || !task.activatedAt) return null;
+  return ageInDays(task.activatedAt, now);
 }
+
 
 /** Repères d'attention d'un projet, sans jamais inventer une échéance absente. */
 export function projectAlerts(project: CrmProject, tasks: readonly CrmTask[], now: Date = new Date()):

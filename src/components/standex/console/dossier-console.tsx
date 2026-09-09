@@ -35,6 +35,8 @@ import {
 import { checkLeadBackend, type LeadBackendStatus } from "@/lib/leadmagnet/backend";
 import { publishReviewAndNotify } from "@/lib/leadmagnet/dashboard-adapter";
 import { requestKeyFor, releaseRequestKey } from "@/lib/leadmagnet/request-key";
+import { publishDecision, notificationPreview } from "@/lib/leadmagnet/publish-notification";
+import { useCrm } from "@/components/standex/dashboard/crm-context";
 import {
 
   addInternalNote,
@@ -167,6 +169,12 @@ export function DossierConsole(props: DossierConsoleProps) {
   const [backend, setBackend] = useState<LeadBackendStatus | null>(null);
   const [inbox, setInbox] = useState<StaffInbox | null>(null);
   const [selected, setSelected] = useState<string | null>(null);
+  /** Espace de travail interne réellement activé sur ce serveur : sans lui, la
+   *  publication atomique avec message préparé n'existe pas. */
+  const crmCapabilities = useCrm().capabilities;
+  const crmAvailable = crmCapabilities?.available === true;
+  const crmAccountId = crmCapabilities?.userId ?? null;
+
   const [view, setView] = useState<DossierView | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [review, setReview] = useState(emptyReview);
@@ -431,6 +439,42 @@ export function DossierConsole(props: DossierConsoleProps) {
 
   const revisions = view?.revisions ?? [];
   const lastRevision = revisions[revisions.length - 1] ?? null;
+
+  /** Message client facultatif : décision et aperçu calculés AVANT publication,
+   *  pour qu'aucun contenu saisi ne disparaisse sans le dire. */
+  const publishChoice = publishDecision(
+    review.notifySubject,
+    review.notifySummary,
+    crmAvailable,
+  );
+  const publishNotice =
+    publishChoice.kind === "incomplete"
+      ? publishChoice.missing === "subject"
+        ? t("Message client commencé : l'objet manque. Complétez-le, ou videz les deux champs pour publier le retour seul.")
+        : t("Message client commencé : le texte manque. Complétez-le, ou videz les deux champs pour publier le retour seul.")
+      : publishChoice.kind === "unavailable"
+        ? t("Espace de travail interne indisponible : un message préparé ne peut pas être mis en attente d'envoi ici.")
+        : null;
+  /** Langue enregistrée du client : celle de la dernière version réellement
+   *  envoyée par le client, jamais celle de l'écran interne. */
+  const clientLocale = (() => {
+    for (let i = revisions.length - 1; i >= 0; i -= 1) {
+      const value = (revisions[i]?.snapshot as { sourceLocale?: unknown } | undefined)?.sourceLocale;
+      if (typeof value === "string" && value.trim()) return value.trim();
+    }
+    return "fr";
+  })();
+  const publishPreview =
+    publishChoice.kind === "atomic" && view
+      ? notificationPreview({
+          subject: publishChoice.subject,
+          summary: publishChoice.summary,
+          locale: clientLocale,
+          dossierId: view.dossier.id,
+          origin: typeof window === "undefined" ? "" : window.location.origin,
+        })
+      : null;
+
   const currentReview =
     (view?.reviews ?? []).filter((r) => r.published && !r.superseded).slice(-1)[0] ?? null;
 
@@ -979,9 +1023,26 @@ export function DossierConsole(props: DossierConsoleProps) {
                         onChange={(e) => setReview({ ...review, notifySummary: e.target.value })}
                       />
                       <p className="t-caption text-muted-foreground">
-                        {t("Rempli, il est mis en attente d'envoi dans la même opération que la publication : il ne peut pas exister de retour publié sans message préparé. Aucun envoi n'est effectué.")}
+                        {t("Ces deux champs sont facultatifs : laissés vides, le retour est publié seul. Remplis tous les deux, le message est mis en attente d'envoi dans la même opération que la publication. Aucun envoi n'est effectué.")}
                       </p>
                     </div>
+                    {publishNotice ? (
+                      <p className="notice-warning t-caption">{publishNotice}</p>
+                    ) : null}
+                    {publishPreview ? (
+                      <div className="panel-block space-y-1">
+                        <p className="t-label">{t("Aperçu du message client, avant publication")}</p>
+                        <p className="t-caption text-muted-foreground">
+                          {t("Langue enregistrée du client")} : {publishPreview.locale}
+                        </p>
+                        <p className="t-body font-medium">{publishPreview.subject}</p>
+                        <p className="t-body whitespace-pre-wrap">{publishPreview.body}</p>
+                        <a className="t-caption underline" href={publishPreview.link}>
+                          {publishPreview.link}
+                        </a>
+                      </div>
+                    ) : null}
+
                     <Button
                       size="sm"
                       disabled={!lastRevision}
@@ -1030,21 +1091,35 @@ export function DossierConsole(props: DossierConsoleProps) {
                             designation: review.exactPartNumber.trim() ? review.designation : null,
                             variant,
                           };
-                          const subject = review.notifySubject.trim();
-                          const summary = review.notifySummary.trim();
-                          if (subject && summary) {
+                          // Un message client commencé mais incomplet ne peut
+                          // pas être abandonné en silence : rien n'est publié.
+                          if (publishChoice.kind === "incomplete") {
+                            throw new Error(
+                              publishChoice.missing === "subject"
+                                ? t("Message client incomplet : l'objet manque. Rien n'a été publié.")
+                                : t("Message client incomplet : le texte manque. Rien n'a été publié."),
+                            );
+                          }
+                          if (publishChoice.kind === "unavailable") {
+                            throw new Error(
+                              t("Espace de travail interne indisponible : le message préparé ne peut pas être mis en attente. Rien n'a été publié."),
+                            );
+                          }
+                          if (publishChoice.kind === "atomic") {
+                            const { subject, summary } = publishChoice;
+
                             // Publication + mise en file dans UNE transaction, avec une
                             // clé de demande conservée tant que le serveur n'a pas
                             // confirmé : une reprise ne publie pas une seconde fois.
                             const scopeKey = `publish:${lastRevision?.id ?? ""}`;
-                            const requestKey = requestKeyFor(scopeKey);
+                            const requestKey = requestKeyFor(scopeKey, crmAccountId);
                             await publishReviewAndNotify({
                               requestKey,
                               ...common,
                               subject,
                               summary,
                             });
-                            releaseRequestKey(scopeKey);
+                            releaseRequestKey(scopeKey, crmAccountId);
                             setReview(emptyReview);
                             return t("Retour publié et message client mis en attente d'envoi.");
                           }

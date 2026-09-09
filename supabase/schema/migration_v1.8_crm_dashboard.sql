@@ -394,13 +394,11 @@ set search_path = lead, lead_priv, pg_temp as $$
     -- plus ancien item inachevé, qui pouvait appartenir à une étape future.
     -- Un plan d'actions créé d'un coup date TOUS ses items du même instant :
     -- une étape ne peut donc pas être « en cours » avant que le projet y entre.
-    'stage_activated_at', greatest(
-      coalesce(
-        (select min(coalesce(t.activated_at, t.created_at))
-           from lead.dossier_tasks t
-          where t.dossier_id = d.id and t.stage = coalesce(c.stage, 'lead')
-            and t.status not in ('done','not_applicable')),
-        c.stage_since),
+    'stage_activated_at', coalesce(
+      (select t.activated_at from lead.dossier_tasks t
+        where t.dossier_id = d.id and t.status not in ('done','not_applicable')
+          and t.activated_at is not null
+        order by t.stage, t.sort_order, t.created_at limit 1),
       c.stage_since))
 
   from lead.design_dossiers d
@@ -544,6 +542,9 @@ begin
   update lead.dossier_crm
      set stage = s, stage_since = now(), updated_at = now(), version = version + 1
    where dossier_id = _dossier;
+  -- L'étape change : la prochaine action de la nouvelle étape démarre son
+  -- compteur maintenant, pas à la création du plan.
+  perform lead_priv.crm_refresh_activation(_dossier);
   perform lead_priv.sap_note(_dossier, u,
     'stage:' || row.version::text || ':' || s::text,
     array['Stage changed from ' || replace(row.stage::text,'_',' ')
@@ -917,6 +918,33 @@ language sql immutable set search_path = pg_temp as $$
   ) as v(stage, label, stakeholder, sort_order);
 $$;
 
+-- Activation réelle de la prochaine action : l'âge d'une action commence
+-- quand elle DEVIENT courante, pas quand le plan a été créé. Appelée après
+-- toute création, tout changement de statut et tout changement d'étape.
+create or replace function lead_priv.crm_refresh_activation(_dossier uuid)
+returns void language plpgsql security definer
+set search_path = lead, lead_priv, pg_temp as $$
+declare cur uuid;
+begin
+  select t.id into cur from lead.dossier_tasks t
+   where t.dossier_id = _dossier and t.status not in ('done','not_applicable')
+   order by t.stage, t.sort_order, t.created_at limit 1;
+
+  -- Les actions encore à venir perdent toute date d'activation héritée.
+  update lead.dossier_tasks
+     set activated_at = null
+   where dossier_id = _dossier and activated_at is not null
+     and status not in ('done','not_applicable')
+     and (cur is null or id <> cur);
+
+  -- L'action courante est datée du moment où elle l'est devenue, une seule
+  -- fois : un enregistrement sans changement ne remet pas le compteur à zéro.
+  if cur is not null then
+    update lead.dossier_tasks set activated_at = now()
+     where id = cur and activated_at is null;
+  end if;
+end $$;
+
 create or replace function lead_priv.crm_apply_template(_dossier uuid, _expected integer)
 returns jsonb language plpgsql security definer
 set search_path = lead, lead_priv, pg_temp as $$
@@ -927,11 +955,14 @@ begin
   for r in select * from lead_priv.crm_template() loop
     if not exists (select 1 from lead.dossier_tasks t
                    where t.dossier_id = _dossier and t.stage = r.stage and t.label = r.label) then
+      -- Une action FUTURE n'est pas « en cours » : elle n'a pas de date
+      -- d'activation tant qu'elle n'est pas la prochaine action réelle.
       insert into lead.dossier_tasks (dossier_id, stage, label, stakeholder, sort_order, activated_at)
-      values (_dossier, r.stage, r.label, r.stakeholder, r.sort_order, now());
+      values (_dossier, r.stage, r.label, r.stakeholder, r.sort_order, null);
       added := added + 1;
     end if;
   end loop;
+  perform lead_priv.crm_refresh_activation(_dossier);
   update lead.dossier_crm set updated_at = now(), version = version + 1 where dossier_id = _dossier;
   if added > 0 then
     perform lead_priv.sap_note(_dossier, u, 'template:' || row.version::text,
@@ -1000,7 +1031,7 @@ begin
       status, na_reason, due_on, sort_order, activated_at,
       done_at, done_by, client_key)
     values (_dossier, sg, lbl, sh, pid, st, na, due,
-      coalesce(nullif(_task->>'sort_order','')::integer, 100), now(),
+      coalesce(nullif(_task->>'sort_order','')::integer, 100), null,
       case when st = 'done' then now() end, case when st = 'done' then u end, ckey)
     returning id into tid;
     perform lead_priv.sap_note(_dossier, u, 'task_new:' || tid::text,
@@ -1021,9 +1052,6 @@ begin
            status = st, na_reason = case when st = 'not_applicable' then na else na end,
            due_on = due,
            sort_order = coalesce(nullif(_task->>'sort_order','')::integer, cur.sort_order),
-           activated_at = case when cur.status in ('done','not_applicable')
-                                and st not in ('done','not_applicable')
-                               then now() else cur.activated_at end,
            done_at = case when st = 'done' then coalesce(cur.done_at, now()) else null end,
            done_by = case when st = 'done' then coalesce(cur.done_by, u) else null end,
            updated_at = now(), version = version + 1
@@ -1035,6 +1063,7 @@ begin
               || case when st = 'not_applicable' then ' (' || coalesce(na,'') || ')' else '' end || '.']);
     end if;
   end if;
+  perform lead_priv.crm_refresh_activation(_dossier);
   update lead.dossier_crm set updated_at = now() where dossier_id = _dossier;
   insert into lead.audit_log (actor, action, dossier_id, detail)
   values (u, 'crm_task_upsert', _dossier, jsonb_build_object('task', tid, 'status', st));
@@ -1426,12 +1455,24 @@ declare u uuid := lead_priv.require_user(); rid uuid; d uuid;
 begin
   k := nullif(btrim(coalesce(_request_key, '')), '');
   if k is null then raise exception 'REQUEST_KEY_REQUIRED' using errcode = '22023'; end if;
-  h := md5(coalesce(_revision::text,'') || E'\n' || coalesce(_scope,'') || E'\n'
-        || coalesce(_conditions,'') || E'\n' || coalesce(_verdict,'') || E'\n'
-        || coalesce(_client_message,'') || E'\n' || coalesce(_internal_note,'') || E'\n'
-        || coalesce(_exact_part_number,'') || E'\n' || coalesce(_designation,'') || E'\n'
-        || coalesce(_variant, '{}'::jsonb)::text || E'\n'
-        || coalesce(_subject,'') || E'\n' || coalesce(_summary,''));
+  -- Empreinte du contenu : sérialisation JSON sans ambiguïté. Une simple
+  -- concaténation séparée par des sauts de ligne laissait deux contenus
+  -- DIFFÉRENTS produire la même empreinte (un « \n » déplacé d'un champ à
+  -- l'autre) ; jsonb distingue les frontières de champs.
+  h := md5(jsonb_build_object(
+        'author', u::text,
+        'revision', coalesce(_revision::text, ''),
+        'scope', coalesce(_scope, ''),
+        'conditions', coalesce(_conditions, ''),
+        'verdict', coalesce(_verdict, ''),
+        'client_message', coalesce(_client_message, ''),
+        'internal_note', coalesce(_internal_note, ''),
+        'exact_part_number', coalesce(_exact_part_number, ''),
+        'designation', coalesce(_designation, ''),
+        'variant', coalesce(_variant, '{}'::jsonb),
+        'subject', coalesce(_subject, ''),
+        'summary', coalesce(_summary, '')
+      )::text);
 
   -- La réservation est prise AVANT de publier : deux tentatives simultanées ne
   -- peuvent donc pas publier chacune une revue avant que l'une échoue.
@@ -1441,10 +1482,15 @@ begin
   exception when unique_violation then
     select * into ex from lead.crm_requests where request_key = k for update;
     if not found then raise exception 'REQUEST_IN_PROGRESS' using errcode = '40001'; end if;
+    -- Une clé appartient à son auteur : personne d'autre ne reprend sa demande.
+    if ex.created_by <> u then
+      raise exception 'REQUEST_KEY_CONFLICT' using errcode = '22023';
+    end if;
     -- Même clé, autre contenu : on refuse plutôt que d'écraser une décision.
     if ex.operation <> 'publish_review_and_notify' or ex.payload_hash <> h then
       raise exception 'REQUEST_KEY_CONFLICT' using errcode = '22023';
     end if;
+
     -- Même clé, même contenu : on rend l'état déjà obtenu, sans rien recréer.
     if ex.review_id is null then
       raise exception 'REQUEST_IN_PROGRESS' using errcode = '40001';

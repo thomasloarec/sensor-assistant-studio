@@ -28,9 +28,15 @@ function newKey(): string {
   return `k-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 12)}`;
 }
 
+/** Une clé appartient au compte qui l'a créée : le serveur refuse qu'un autre
+ *  compte reprenne la même clé, la portée locale doit donc en tenir compte. */
+function scopeName(scope: string, account?: string | null): string {
+  return `${PREFIX}${account ?? "anon"}.${scope}`;
+}
+
 /** Clé de la portée demandée : identique tant qu'elle n'a pas été relâchée. */
-export function requestKeyFor(scope: string): string {
-  const name = PREFIX + scope;
+export function requestKeyFor(scope: string, account?: string | null): string {
+  const name = scopeName(scope, account);
   const s = store();
   const existing = s?.getItem(name) ?? memory.get(name);
   if (existing) return existing;
@@ -45,8 +51,8 @@ export function requestKeyFor(scope: string): string {
 }
 
 /** Après confirmation serveur : la prochaine demande sera une vraie nouvelle demande. */
-export function releaseRequestKey(scope: string): void {
-  const name = PREFIX + scope;
+export function releaseRequestKey(scope: string, account?: string | null): void {
+  const name = scopeName(scope, account);
   memory.delete(name);
   try {
     store()?.removeItem(name);

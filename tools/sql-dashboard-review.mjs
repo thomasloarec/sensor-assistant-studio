@@ -206,6 +206,7 @@ const templatedAgain = await actor('authenticated', ids.sales,
   () => value('select public.lead_crm_apply_template($1,$2)', [dossier, templated.project.version]));
 add('template_is_idempotent', templatedAgain.tasks.length === templated.tasks.length);
 
+
 const firstTask = templatedAgain.tasks[0];
 await expectFail('not_applicable_requires_a_reason', () => actor('authenticated', ids.sales,
   () => value('select public.lead_crm_upsert_task($1,$2)',
@@ -230,6 +231,47 @@ const naDone = await actor('authenticated', ids.sales,
     [dossier, { id: na.id, label: na.label, stage: na.stage, stakeholder: na.stakeholder,
       status: 'not_applicable', na_reason: 'Customer validated by phone', expected_version: na.version }]));
 add('not_applicable_leaves_the_progress_base', naDone.project.tasks_total === 12);
+
+// 7b. Activation réelle de l'action courante : une action FUTURE n'a pas de
+// date d'activation ; elle démarre quand elle devient la prochaine action.
+const activatedAtCreation = templatedAgain.tasks.filter((t) => t.activated_at);
+add('only_the_current_task_is_activated_at_creation', activatedAtCreation.length === 1,
+  String(activatedAtCreation.length));
+// Le plan a 30 jours : l'action courante aussi, les suivantes n'existent pas
+// encore en tant qu'actions en cours.
+await db.exec(`update lead.dossier_tasks
+   set created_at = now() - interval '30 days',
+       activated_at = case when activated_at is null then null
+                           else now() - interval '30 days' end
+ where dossier_id = '${dossier}'`);
+const aged = await actor('authenticated', ids.sales,
+  () => value('select public.lead_crm_project($1)', [dossier]));
+const agedCurrent = aged.tasks.find((t) => t.activated_at);
+add('current_task_keeps_its_real_age',
+  Math.round((Date.now() - Date.parse(agedCurrent.activated_at)) / 86400000) === 30);
+const firstOpen = aged.tasks.find((t) => t.status !== 'done' && t.status !== 'not_applicable');
+const advanced = await actor('authenticated', ids.sales,
+  () => value('select public.lead_crm_upsert_task($1,$2)',
+    [dossier, { id: firstOpen.id, label: firstOpen.label, stage: firstOpen.stage,
+      stakeholder: firstOpen.stakeholder, status: 'done', expected_version: firstOpen.version }]));
+const nextOpen = advanced.tasks.find((t) => t.status !== 'done' && t.status !== 'not_applicable');
+add('next_task_age_starts_when_it_becomes_current',
+  nextOpen.activated_at !== null
+  && Math.abs(Date.now() - Date.parse(nextOpen.activated_at)) < 60000,
+  String(nextOpen.activated_at));
+add('future_tasks_stay_without_activation',
+  advanced.tasks.filter((t) => t.activated_at
+    && t.status !== 'done' && t.status !== 'not_applicable').length === 1);
+// Réouvrir l'action terminée la rend de nouveau courante : son compteur repart
+// de cet instant, et la suivante redevient une action future.
+const reopened = await actor('authenticated', ids.sales,
+  () => value('select public.lead_crm_upsert_task($1,$2)',
+    [dossier, { id: firstOpen.id, label: firstOpen.label, stage: firstOpen.stage,
+      stakeholder: firstOpen.stakeholder, status: 'todo',
+      expected_version: advanced.tasks.find((t) => t.id === firstOpen.id).version }]));
+add('reopening_moves_the_activation_back_to_that_task',
+  reopened.tasks.find((t) => t.id === firstOpen.id).activated_at !== null
+  && reopened.tasks.find((t) => t.id === nextOpen.id).activated_at === null);
 
 // 8. Closed Won n'est jamais automatique : terminer les tâches ne bouge rien.
 add('closed_won_is_never_automatic', naDone.project.stage === 'qualification', naDone.project.stage);
@@ -530,6 +572,24 @@ await expectFail('atomic_publish_rejects_a_changed_payload', () => actor('authen
 await expectFail('atomic_publish_requires_a_request_key', () => actor('authenticated', ids.rnd,
   () => value('select public.lead_crm_publish_review_and_notify($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)',
     [null, ...pubArgs.slice(1)])), 'REQUEST_KEY_REQUIRED');
+
+// Frontière des champs : deux contenus DIFFÉRENTS où un saut de ligne passe
+// d'un champ au suivant doivent donner deux empreintes différentes.
+const ambiguous = ['req-key-amb', submitted.revision_id, 'full', 'conditions', 'validated',
+  'Message\nPartie', 'Note', 'MK03-1A66-200W', 'custom',
+  { cable: '300 mm PVC' }, 'Standex feedback', 'Résumé'];
+await actor('authenticated', ids.rnd,
+  () => value('select public.lead_crm_publish_review_and_notify($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)',
+    ambiguous));
+await expectFail('newline_shifted_between_fields_is_a_different_payload',
+  () => actor('authenticated', ids.rnd,
+    () => value('select public.lead_crm_publish_review_and_notify($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)',
+      [...ambiguous.slice(0, 5), 'Message', 'Partie\nNote', ...ambiguous.slice(7)])),
+  'REQUEST_KEY_CONFLICT');
+// Une clé appartient à son auteur : un autre compte ne peut pas la reprendre.
+await expectFail('a_request_key_belongs_to_its_author', () => actor('authenticated', ids.sales,
+  () => value('select public.lead_crm_publish_review_and_notify($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)',
+    ambiguous)), 'REQUEST_KEY_CONFLICT');
 
 
 // 14.11 Échantillons : `lead_update_sample` n'écrit aucune ligne d'audit.

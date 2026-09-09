@@ -789,6 +789,8 @@ function TasksTab({
   onRun: (fn: () => Promise<CrmProjectDetail>, ok: string) => Promise<void>;
 }) {
   const p = detail.project;
+  // Une clé de demande appartient au compte qui l'a créée.
+  const accountId = useCrm().capabilities?.userId ?? null;
   const progress = taskProgress(detail.tasks);
   const [draft, setDraft] = useState({
     label: "",
@@ -1032,7 +1034,7 @@ function TasksTab({
               // Clé de création stable : un même ajout rejoué (double-clic,
               // reprise réseau) rend l'action déjà créée, pas un doublon.
               const scope = `task:${p.dossierId}:${draft.stage}:${draft.label.trim()}`;
-              const clientKey = requestKeyFor(scope);
+              const clientKey = requestKeyFor(scope, accountId);
               const next = await upsertCrmTask(p.dossierId, {
                 stage: draft.stage,
                 label: draft.label.trim(),
@@ -1041,7 +1043,7 @@ function TasksTab({
                 dueOn: draft.dueOn || null,
                 clientKey,
               });
-              releaseRequestKey(scope);
+              releaseRequestKey(scope, accountId);
               setDraft({ label: "", stage: p.stage, stakeholder: "sales", dueOn: "" });
               return next;
             }, t("Tâche ajoutée."))
