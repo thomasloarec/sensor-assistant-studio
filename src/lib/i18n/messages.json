@@ -6605,6 +6605,15 @@
     "Scegli una versione confezionata o terminali già adatti, senza modifiche successive.",
     "後加工ではなく、適したパッケージや端子形状を選んでください。"
   ],
+  "La confirmation d'envoi n'a pas été obtenue : votre dossier est peut-être arrivé malgré tout. Vérifiez le suivi de votre dossier avant de le renvoyer.": [
+    "No send confirmation was obtained: your case file may still have arrived. Check the tracking of your case file before sending it again.",
+    "未获得发送确认：您的资料仍可能已送达。重新发送前请先查看案件进度。",
+    "Es wurde keine Versandbestätigung erhalten: Ihr Dossier kann dennoch angekommen sein. Prüfen Sie die Verfolgung Ihres Dossiers, bevor Sie erneut senden.",
+    "No se obtuvo confirmación de envío: es posible que su expediente haya llegado igualmente. Consulte el seguimiento antes de volver a enviarlo.",
+    "Подтверждение отправки не получено: возможно, дело всё же дошло. Проверьте отслеживание дела, прежде чем отправлять повторно.",
+    "Non è stata ottenuta la conferma di invio: il fascicolo potrebbe comunque essere arrivato. Verificate il monitoraggio prima di inviarlo di nuovo.",
+    "送信の確認が取れませんでした。案件は届いている可能性があります。再送の前に進捗を確認してください。"
+  ],
   "La connexion n'a pas abouti : réseau indisponible. Réessayez.": [
     "Connection failed: network unavailable. Try again.",
     "连接未成功：网络不可用。请重试。",
@@ -13453,6 +13462,24 @@
     "Ваши материалы изменились с момента открытия этого экрана. Обновите страницу: рассмотрение и предложение всегда соответствуют последней отправленной версии.",
     "Il fascicolo è cambiato dall'apertura di questa schermata. Ricaricalo: la revisione e l'offerta seguono sempre l'ultima versione inviata.",
     "この画面を開いてからケースファイルが更新されました。再読み込みしてください。レビューおよび見積は常に最後に送信されたバージョンに基づきます。"
+  ],
+  "Votre dossier est bien arrivé chez Standex. Seule une étape complémentaire a échoué : consultez le suivi de votre dossier, ne renvoyez pas le dossier pour autant.": [
+    "Your case file did reach Standex. Only an extra step failed: check the tracking of your case file, and do not send it again.",
+    "您的资料已送达 Standex。仅有一个附加步骤失败：请查看案件进度，不要重复发送。",
+    "Ihr Dossier ist bei Standex eingegangen. Nur ein zusätzlicher Schritt ist fehlgeschlagen: Sehen Sie in der Verfolgung Ihres Dossiers nach und senden Sie es nicht erneut.",
+    "Su expediente sí llegó a Standex. Solo falló un paso adicional: consulte el seguimiento de su expediente y no lo envíe de nuevo.",
+    "Ваше дело действительно получено Standex. Не удался только дополнительный шаг: посмотрите отслеживание дела и не отправляйте его повторно.",
+    "Il vostro fascicolo è arrivato a Standex. È fallito solo un passaggio aggiuntivo: consultate il monitoraggio del fascicolo e non inviatelo di nuovo.",
+    "案件は Standex に届いています。失敗したのは追加の処理のみです。案件の進捗を確認し、再送はしないでください。"
+  ],
+  "Votre envoi est confirmé. Pour transmettre de nouvelles modifications, relisez le résumé et confirmez à nouveau votre accord d'envoi.": [
+    "Your send is confirmed. To submit further changes, re-read the summary and confirm your agreement to send again.",
+    "发送已确认。若要提交新的修改，请重读摘要并再次确认发送同意。",
+    "Ihr Versand ist bestätigt. Um weitere Änderungen zu übermitteln, lesen Sie die Zusammenfassung erneut und bestätigen Sie Ihre Zustimmung zum Versand erneut.",
+    "Su envío está confirmado. Para transmitir nuevos cambios, relea el resumen y vuelva a confirmar su acuerdo de envío.",
+    "Отправка подтверждена. Чтобы передать новые изменения, перечитайте сводку и снова подтвердите согласие на отправку.",
+    "Il vostro invio è confermato. Per trasmettere nuove modifiche, rileggete il riepilogo e confermate di nuovo il consenso all'invio.",
+    "送信が確認されました。さらに変更を送るには、要約を読み直し、送信の同意を改めて確認してください。"
   ],
   "Votre montage, en mouvement.": [
     "Your assembly, in motion.",
