@@ -268,6 +268,28 @@ leurs valeurs viennent des jetons.
   `.field-actions` colle le bouton à la ligne des champs.
 - `.num` — valeurs numériques alignées à droite en chiffres tabulaires.
 
+### Socle du tableau Projets
+
+- `.workbar` — barre de travail compacte, collante sous l'en-tête grâce à
+  `--standex-header-h`, publiée par l'en-tête de `/standex`. Matière
+  translucide, une seule ligne : recherche, tiroir de filtres, tri, affichage.
+- `.workbar-progress` — filet de rechargement. Une actualisation ne vide jamais
+  un tableau déjà lisible : elle pose ce filet et `aria-busy` sur le résultat.
+- `.chip` et `.filter-count` — un filtre actif est une pilule teintée, retirable
+  là où elle se lit ; le compteur du tiroir dit combien de filtres agissent.
+- `.stage-pill` — étape du projet, teintée par `data-tone`
+  (`success`, `warning`, `muted`, défaut bleu). Le libellé anglais reste
+  l'information ; la couleur n'est qu'un repère de balayage.
+- `.stage-gauge` — quatre barres inclinées de la marque, décoratives
+  (`aria-hidden`), qui situent l'étape dans le cycle.
+- `.progress-mini` — avancement des tâches ; la valeur chiffrée reste affichée
+  à côté, la barre ne porte jamais seule l'information.
+- `.data-table` — lignes-objets : chaque ligne est une carte posée (`--e-1`),
+  séparée par l'espace, repérée par un liseré `--row-accent`, sans bordure de
+  grille. En-têtes collants en `.t-label`, colonnes de valeurs en `.num`.
+- `.pipeline-rail` et `.pipeline-card` — pipeline en rail horizontal défilable
+  avec accroche, jamais deux rangées de quatre colonnes.
+
 Les primitives montées par ces écrans sont migrées dans le même commit :
 `dropdown-menu.tsx` l'a été pour le menu de compte (rayons, tailles de texte et
 cibles de 44 px conformes).

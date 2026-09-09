@@ -1191,3 +1191,249 @@
     font-variant-numeric: tabular-nums;
   }
 }
+
+/* Tableau Projets : barre de travail compacte, pastilles de filtres actifs,
+   lignes-objets et jauges. Aucune valeur littérale de couleur, de durée ni de
+   courbe : uniquement les jetons du socle. */
+@layer components {
+  .workbar {
+    position: sticky;
+    top: var(--standex-header-h, 0px);
+    z-index: 20;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 0.75rem;
+    border-radius: var(--r-md);
+    background: var(--material-regular);
+    backdrop-filter: var(--material-blur);
+    box-shadow: var(--e-1);
+  }
+  /* Rechargement alors que des données sont déjà lisibles : un filet, pas un
+     écran vidé. */
+  .workbar-progress {
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    height: 2px;
+    overflow: hidden;
+    border-start-start-radius: var(--r-md);
+    border-start-end-radius: var(--r-md);
+    background: var(--surface-sunken);
+  }
+  .workbar-progress::after {
+    content: "";
+    position: absolute;
+    inset-block: 0;
+    width: 35%;
+    background: var(--primary);
+    animation: standex-indeterminate var(--d-page) var(--ease-in-out) infinite alternate;
+  }
+
+  @keyframes standex-indeterminate {
+    from {
+      transform: translateX(-15%);
+    }
+    to {
+      transform: translateX(200%);
+    }
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    min-height: 2rem;
+    padding: 0.25rem 0.5rem 0.25rem 0.75rem;
+    border-radius: var(--r-pill);
+    background: var(--surface-tint);
+    color: var(--standex-blue);
+    font: var(--t-caption);
+    animation: standex-scale-in var(--d-fast) var(--ease-spring) both;
+  }
+  .chip button {
+    display: inline-grid;
+    place-items: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: var(--r-pill);
+    transition: background var(--d-fast) var(--ease-out);
+  }
+  .chip button:hover {
+    background: var(--accent);
+  }
+  .filter-count {
+    min-width: 1.25rem;
+    height: 1.25rem;
+    border-radius: var(--r-pill);
+    background: var(--primary);
+    color: var(--primary-foreground);
+    font: var(--t-caption);
+    display: inline-grid;
+    place-items: center;
+  }
+
+  /* Pastille d'étape : le fond porte le code visuel, le texte porte le sens. */
+  .stage-pill {
+    display: inline-flex;
+    align-items: center;
+    height: 1.5rem;
+    padding-inline: 0.625rem;
+    border-radius: var(--r-pill);
+    font: var(--t-caption);
+    font-weight: 600;
+    background: var(--standex-blue-10);
+    color: var(--standex-blue);
+    white-space: nowrap;
+  }
+  .stage-pill[data-tone="success"] {
+    background: var(--success-soft);
+    color: var(--success);
+  }
+  .stage-pill[data-tone="warning"] {
+    background: var(--warning-soft);
+    color: var(--warning);
+  }
+  .stage-pill[data-tone="muted"] {
+    background: var(--surface-sunken);
+    color: var(--muted-foreground);
+  }
+
+  /* Jauge de cycle : la barre inclinée de la marque, repère de balayage. */
+  .stage-gauge {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+  }
+  .stage-gauge i {
+    display: block;
+    width: 3px;
+    height: 12px;
+    transform: var(--standex-skew);
+    background: var(--standex-blue-25);
+  }
+  .stage-gauge i[data-on="true"] {
+    background: var(--standex-blue);
+  }
+  .stage-gauge[data-tone="success"] i[data-on="true"] {
+    background: var(--success);
+  }
+
+  .progress-mini {
+    display: block;
+    width: 100%;
+    max-width: 7rem;
+    height: 6px;
+    overflow: hidden;
+    border-radius: var(--r-pill);
+    background: var(--surface-sunken);
+  }
+  .progress-mini > span {
+    display: block;
+    height: 100%;
+    border-radius: var(--r-pill);
+    background: var(--primary);
+    transition: width var(--d-base) var(--ease-out);
+  }
+  .progress-mini[data-complete="true"] > span {
+    background: var(--success);
+  }
+
+  /* Lignes-objets : chaque ligne est une carte posée, repérable par son liseré. */
+  .data-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 0.375rem;
+  }
+  .data-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: var(--background);
+    padding: 0.5rem 0.75rem;
+    font: var(--t-label);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+    text-align: left;
+  }
+  .data-table thead th.num {
+    text-align: right;
+  }
+  .data-table tbody tr {
+    box-shadow: var(--e-1);
+    border-radius: var(--r-sm);
+    transition:
+      box-shadow var(--d-fast) var(--ease-out),
+      transform var(--d-fast) var(--ease-out);
+  }
+  .data-table tbody tr:hover {
+    box-shadow: var(--e-2);
+    transform: translateY(-1px);
+  }
+  .data-table tbody td {
+    background: var(--surface);
+    padding: 0.75rem;
+    vertical-align: top;
+  }
+  .data-table tbody td:first-child {
+    border-start-start-radius: var(--r-sm);
+    border-end-start-radius: var(--r-sm);
+    box-shadow: inset 3px 0 0 var(--row-accent, var(--standex-blue-25));
+  }
+  .data-table tbody td:last-child {
+    border-start-end-radius: var(--r-sm);
+    border-end-end-radius: var(--r-sm);
+  }
+  .data-table tfoot td {
+    background: var(--surface-sunken);
+    padding: 0.75rem;
+  }
+  .data-table tfoot td:first-child {
+    border-start-start-radius: var(--r-sm);
+    border-end-start-radius: var(--r-sm);
+  }
+  .data-table tfoot td:last-child {
+    border-start-end-radius: var(--r-sm);
+    border-end-end-radius: var(--r-sm);
+  }
+
+  /* Pipeline : un rail horizontal, jamais deux rangées de quatre colonnes. */
+  .pipeline-rail {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(17rem, 1fr);
+    gap: 0.75rem;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    padding-bottom: 0.5rem;
+  }
+  .pipeline-rail > * {
+    scroll-snap-align: start;
+  }
+  .pipeline-card {
+    display: block;
+    padding: 0.75rem;
+    border-radius: var(--r-sm);
+    box-shadow:
+      var(--e-1),
+      inset 3px 0 0 var(--row-accent, var(--standex-blue-25));
+  }
+  .pipeline-card:hover,
+  .pipeline-card:focus-visible {
+    box-shadow:
+      var(--e-2),
+      inset 3px 0 0 var(--row-accent, var(--standex-blue-25));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .workbar-progress::after,
+  .chip {
+    animation: none;
+  }
+  .data-table tbody tr:hover {
+    transform: none;
+  }
+}

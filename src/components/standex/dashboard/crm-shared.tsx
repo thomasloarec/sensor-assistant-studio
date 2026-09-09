@@ -5,7 +5,6 @@
  *  socle de design.
  */
 import { t } from "@/lib/i18n/core";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   CRM_STAGES,
@@ -102,8 +101,45 @@ export function personName(directory: readonly CrmPerson[], id: string | null): 
   return person ? personFullName(person) : t("personne retirée de l'annuaire");
 }
 
-export function StageBadge({ stage }: { stage: CrmStage }) {
-  return <Badge variant="secondary">{stageLabel(stage)}</Badge>;
+/** Teinte d'une étape : trois couleurs d'état seulement, jamais une de plus. */
+function stageTone(stage: CrmStage): "blue" | "success" | "warning" | "muted" {
+  if (stage === "closed_won") return "success";
+  if (stage === "on_hold") return "warning";
+  if (stage === "closed_lost" || stage === "dead") return "muted";
+  return "blue";
+}
+
+/** Pastille d'étape : le libellé anglais reste aligné sur SAP, la teinte
+ *  n'ajoute qu'un repère de balayage. */
+export function StagePill({ stage }: { stage: CrmStage }) {
+  return (
+    <span className="stage-pill" data-tone={stageTone(stage)}>
+      {stageLabel(stage)}
+    </span>
+  );
+}
+
+const CYCLE_STEP: Partial<Record<CrmStage, number>> = {
+  lead: 1,
+  qualification: 2,
+  solution_quote: 3,
+  negotiate: 4,
+  closed_won: 4,
+};
+
+/** Jauge de cycle : quatre barres inclinées de la marque. Décorative
+ *  (`aria-hidden`) — le sens est porté par la pastille. */
+export function StageGauge({ stage }: { stage: CrmStage }) {
+  const filled = CYCLE_STEP[stage];
+  if (!filled) return null;
+  const tone = stage === "closed_won" ? "success" : "blue";
+  return (
+    <span className="stage-gauge" aria-hidden="true" data-tone={tone}>
+      {[0, 1, 2, 3].map((i) => (
+        <i key={i} data-on={i < filled ? "true" : "false"} />
+      ))}
+    </span>
+  );
 }
 
 /** Nom du pays dans la langue de lecture ; à défaut, le code tel quel. */
