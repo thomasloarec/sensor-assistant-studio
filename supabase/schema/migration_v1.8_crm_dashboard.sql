@@ -1379,28 +1379,32 @@ begin
         || coalesce(_variant, '{}'::jsonb)::text || E'\n'
         || coalesce(_subject,'') || E'\n' || coalesce(_summary,''));
 
-  select * into ex from lead.crm_requests where request_key = k for update;
-  if found then
-    -- Même clé, même contenu : on rend l'état déjà obtenu, sans rien recréer.
+  -- La réservation est prise AVANT de publier : deux tentatives simultanées ne
+  -- peuvent donc pas publier chacune une revue avant que l'une échoue.
+  begin
+    insert into lead.crm_requests (request_key, created_by, operation, payload_hash)
+    values (k, u, 'publish_review_and_notify', h);
+  exception when unique_violation then
+    select * into ex from lead.crm_requests where request_key = k for update;
+    if not found then raise exception 'REQUEST_IN_PROGRESS' using errcode = '40001'; end if;
+    -- Même clé, autre contenu : on refuse plutôt que d'écraser une décision.
     if ex.operation <> 'publish_review_and_notify' or ex.payload_hash <> h then
       raise exception 'REQUEST_KEY_CONFLICT' using errcode = '22023';
     end if;
+    -- Même clé, même contenu : on rend l'état déjà obtenu, sans rien recréer.
+    if ex.review_id is null then
+      raise exception 'REQUEST_IN_PROGRESS' using errcode = '40001';
+    end if;
     return lead_priv.crm_project(ex.dossier_id);
-  end if;
+  end;
 
   rid := public.lead_publish_review(_revision, _scope, _conditions, _verdict,
            _client_message, _internal_note, _exact_part_number, _designation,
            coalesce(_variant, '{}'::jsonb));
   select r.dossier_id into d from lead.design_reviews r where r.id = rid;
-  begin
-    insert into lead.crm_requests (request_key, created_by, operation, payload_hash,
-      dossier_id, review_id)
-    values (k, u, 'publish_review_and_notify', h, d, rid);
-  exception when unique_violation then
-    -- Deux tentatives strictement simultanées : une seule aboutit.
-    raise exception 'REQUEST_IN_PROGRESS' using errcode = '40001';
-  end;
+  update lead.crm_requests set dossier_id = d, review_id = rid where request_key = k;
   return lead_priv.crm_queue_review_notification(rid, _subject, _summary);
+
 end $$;
 
 create or replace function public.lead_crm_publish_review_and_notify(
