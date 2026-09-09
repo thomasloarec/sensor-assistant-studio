@@ -5,7 +5,6 @@ import SensorCard from "./sensor-card";
 import { Component, lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import {
-  ArrowLeft,
   ArrowRight,
   Check,
   Download,
