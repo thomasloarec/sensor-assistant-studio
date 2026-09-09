@@ -69,7 +69,9 @@ function ProjectsBoard() {
   const [loading, setLoading] = useState(false);
   const [display, setDisplay] = useState<"table" | "pipeline">("table");
   const [search, setSearch] = useState("");
-  const [stage, setStage] = useState<CrmStage | "all">("all");
+  /* Plusieurs étapes peuvent être suivies en même temps : une liste vide veut
+     dire « toutes », jamais « aucune ». */
+  const [stages, setStages] = useState<CrmStage[]>([]);
   const [salesId, setSalesId] = useState<string>("all");
   const [faeId, setFaeId] = useState<string>("all");
   const [country, setCountry] = useState("all");
