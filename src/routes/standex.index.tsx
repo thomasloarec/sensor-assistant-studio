@@ -363,7 +363,7 @@ function ProjectsBoard() {
                     params={{ dossierId: p.dossierId }}
                     className="block min-h-11 rounded-[var(--r-sm)] bg-[var(--surface-sunken)] p-3 shadow-[var(--e-inset)]"
                   >
-                    <span className="block font-medium">{p.company ?? p.title}</span>
+                    <span className="block font-medium">{p.companyEffective ?? p.title}</span>
                     <span className="block t-caption text-muted-foreground">
                       {p.projectName ?? t("projet sans nom")}
                     </span>
