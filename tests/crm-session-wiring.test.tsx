@@ -252,10 +252,8 @@ describe("l'administration appartient au compte connecté", () => {
       (view.container.querySelector("#link-p1") as HTMLInputElement).value,
     ).toBe("marie@exemple.invalid");
     const probe = view.container.querySelector("#probe") as HTMLInputElement;
-    const tracker = (probe as unknown as { _valueTracker?: unknown })._valueTracker;
-    console.log("tracker?", Boolean(tracker));
-    const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value")!.set!;
-    setter.call(probe, "zz");
+    delete (probe as unknown as { _valueTracker?: unknown })._valueTracker;
+    probe.value = "zz";
     fireEvent.input(probe);
     await settle();
     console.log("probe state", view.container.querySelector("#probe-state")?.textContent);
