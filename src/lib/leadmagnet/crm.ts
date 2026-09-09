@@ -106,8 +106,18 @@ export interface CrmProject {
   annualVolumeOverride: number | null;
   estimatedAnnualRevenue: number | null;
   seriesLaunch: string | null;
+  /** Valeur réellement déclarée par le client dans la dernière soumission. */
+  companySubmitted: string | null;
+  seriesLaunchSubmitted: string | null;
+  /** Valeur affichée : correction interne si elle existe, sinon la soumission. */
+  companyEffective: string | null;
+  seriesLaunchEffective: string | null;
+  companySource: CrmValueSource;
+  seriesLaunchSource: CrmValueSource;
   updatedAt: string;
   dossierUpdatedAt: string;
+  /** Date de création du dossier : sert à l'âge du projet, jamais à l'âge d'étape. */
+  dossierCreatedAt: string;
   version: number;
   tasksTotal: number;
   tasksDone: number;
