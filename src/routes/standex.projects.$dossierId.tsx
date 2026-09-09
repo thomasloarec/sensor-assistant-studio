@@ -361,7 +361,8 @@ export function ProjectDetail({ dossierId }: { dossierId: string }) {
 
 /* --------------------------------------------------------------- Résumé */
 
-/** Âges réels et prochaine action : trois repères, jamais inventés. */
+/** Âges réels, responsables et prochaine action : quatre repères posés, jamais
+ *  inventés. Une donnée manquante reste écrite « inconnu » en clair. */
 function ProjectSummary({
   detail,
   directory,
@@ -375,39 +376,47 @@ function ProjectSummary({
   const next = nextAction(p, detail.tasks);
   const nextAge = actionAgeDays(next);
   const unknown = t("inconnu");
+  const sales = personName(directory, p.salesPersonId ?? null);
+  const fae = personName(directory, p.faePersonId ?? null);
 
   return (
-    <dl className="panel-block grid gap-3 text-sm sm:grid-cols-3">
-      <div>
-        <dt className="t-caption text-muted-foreground">{t("Âge total du projet")}</dt>
-        <dd className="t-metric">
-          {age === null ? unknown : `${age} ${t("jour(s)")}`}
-        </dd>
+    <dl className="kpi-row">
+      <div className="kpi">
+        <dt>{t("Âge total du projet")}</dt>
+        <dd className="t-metric">{age === null ? unknown : `${age} ${t("jour(s)")}`}</dd>
       </div>
-      <div>
-        <dt className="t-caption text-muted-foreground">{t("Âge de l'étape en cours")}</dt>
+      <div className="kpi">
+        <dt>{t("Âge de l'étape en cours")}</dt>
         <dd className="t-metric">
           {stageAge === null ? unknown : `${stageAge} ${t("jour(s)")}`}
         </dd>
       </div>
-      <div>
-        <dt className="t-caption text-muted-foreground">{t("Responsables")}</dt>
-        <dd>
-          {t("Commercial")} : {personName(directory, p.salesPersonId ?? null)}
-          {" · "}
-          {t("FAE")} : {personName(directory, p.faePersonId ?? null)}
+      <div className="kpi">
+        <dt>{t("Responsables")}</dt>
+        <dd className="t-body space-y-1">
+          <span className="flex items-center gap-2">
+            <AvatarInitials name={sales} />
+            <span>
+              {t("Commercial")} : {sales}
+            </span>
+          </span>
+          <span className="flex items-center gap-2">
+            <AvatarInitials name={fae} />
+            <span>
+              {t("FAE")} : {fae}
+            </span>
+          </span>
         </dd>
       </div>
-      <div>
-        <dt className="t-caption text-muted-foreground">{t("Prochaine action")}</dt>
-        <dd>
+      <div className="kpi">
+        <dt>{t("Prochaine action")}</dt>
+        <dd className="t-body">
           {next === null ? (
             <span className="text-muted-foreground">{t("aucune action en attente")}</span>
           ) : (
             <>
               {next.label}
-              <span className="t-caption text-muted-foreground">
-                {" — "}
+              <span className="t-caption block text-muted-foreground">
                 {t(STAKEHOLDER_LABEL[next.stakeholder] ?? next.stakeholder)}
                 {nextAge === null ? "" : ` · ${nextAge} ${t("jour(s)")}`}
               </span>
@@ -418,6 +427,7 @@ function ProjectSummary({
     </dl>
   );
 }
+
 
 
 /* ------------------------------------------------------------------ Suivi */
