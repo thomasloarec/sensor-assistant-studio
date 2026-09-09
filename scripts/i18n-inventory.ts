@@ -21,6 +21,7 @@ const SKIP_FILES = [
   "src/lib/leadmagnet/nda-docx.ts", // NDA original immuable (juridique)
   "src/lib/standex/response-contract.ts", // contrat/prompt serveur
   "src/lib/standex/experimental.server.ts", // prompt serveur
+  "src/lib/leadmagnet/english-report.server.ts", // prompt serveur de traduction
   "src/lib/standex/migration-status.ts", // SQL et noms de colonnes
   "src/lib/error-page.ts", // page de secours statique hors React
 ];

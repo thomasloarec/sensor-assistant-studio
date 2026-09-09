@@ -1058,9 +1058,9 @@ export function DesignSpace({
             t("Version anglaise prête pour cette version : l'équipe Standex la lit en anglais, votre original reste consultable."),
           );
         } else if (outcome.state === "unavailable") {
-          setEnglishMessage(outcome.reason);
+          setEnglishMessage(t(outcome.reason));
         } else {
-          setEnglishMessage(outcome.reason);
+          setEnglishMessage(t(outcome.reason));
           if (!outcome.retryable) setEnglishRetry(null);
         }
       } catch {
