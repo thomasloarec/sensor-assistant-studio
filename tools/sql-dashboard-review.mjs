@@ -303,16 +303,17 @@ add('manual_assignment_survives_owner_change',
 // En revanche, un accès DÉRIVÉ du rôle de responsable disparaît avec le rôle.
 await db.query(
   "insert into lead.dossier_assignments(dossier_id,user_id,assigned_by,source) values($1,$2,$3,'crm_owner')"
-  + ' on conflict (dossier_id,user_id) do nothing', [dossier, ids.rnd, ids.admin]);
+  + ' on conflict (dossier_id,user_id) do nothing', [dossier, ids.admin2, ids.admin]);
 await actor('authenticated', ids.admin,
   () => value('select public.lead_crm_set_owners($1,$2,$3,$4)',
     [dossier, franke.id, null, replaced.project.version]));
-console.log('DBG assignments', JSON.stringify((await db.query('select user_id,source from lead.dossier_assignments where dossier_id=$1',[dossier])).rows));
 add('derived_owner_access_is_revoked', await value(
   'select count(*)::int from lead.dossier_assignments where dossier_id=$1 and user_id=$2',
-  [dossier, ids.rnd]) === 0);
+  [dossier, ids.admin2]) === 0);
+// Restent exactement les deux affectations accordées explicitement au départ.
 add('unlinked_owner_gets_no_implicit_access', await value(
-  'select count(*)::int from lead.dossier_assignments where dossier_id=$1', [dossier]) === 1);
+  "select count(*)::int from lead.dossier_assignments where dossier_id=$1 and source='manual'",
+  [dossier]) === 2);
 
 await actor('authenticated', ids.admin,
   () => value('select public.lead_crm_admin_set_staff($1,$2,$3)', [ids.admin2, 'sales', true]));
