@@ -49,7 +49,6 @@ import {
   parseAmountInput,
   parseVolumeInput,
   personFullName,
-  sapNoteLikeSort,
   taskProgress,
   type CrmStage,
   type TaskStakeholder,
