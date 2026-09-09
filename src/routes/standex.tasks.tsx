@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { t } from "@/lib/i18n/core";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -50,7 +50,7 @@ interface Row {
 }
 
 function TasksScreen() {
-  const { capabilities, legacyRole } = useCrm();
+  const { capabilities, legacyRole, sessionGeneration } = useCrm();
   const [board, setBoard] = useState<CrmBoard | null>(null);
   const [rows, setRows] = useState<Row[] | null>(null);
   const [truncated, setTruncated] = useState(false);
@@ -60,11 +60,23 @@ function TasksScreen() {
   const [stakeholder, setStakeholder] = useState<TaskStakeholder | "all">("all");
   const [mine, setMine] = useState(false);
 
+  /** Numéro de session : une lecture lancée pour le compte précédent ne doit
+   *  jamais peupler l'écran après un changement de connexion. */
+  const sessionRef = useRef(sessionGeneration);
+  useEffect(() => {
+    sessionRef.current = sessionGeneration;
+    setBoard(null);
+    setRows(null);
+    setError(null);
+  }, [sessionGeneration]);
+
   const load = useCallback(async () => {
+    const gen = sessionRef.current;
     setLoading(true);
     setError(null);
     try {
       const b = await fetchCrmBoard();
+      if (sessionRef.current !== gen) return;
       setBoard(b);
       const slice = b.projects.slice(0, MAX_PROJECTS);
       setTruncated(b.projects.length > slice.length);
@@ -83,18 +95,20 @@ function TasksScreen() {
           }
         }),
       );
+      if (sessionRef.current !== gen) return;
       setRows(details.flat());
     } catch (e: unknown) {
+      if (sessionRef.current !== gen) return;
       setRows(null);
       setError(e instanceof Error ? e.message : t("Lecture refusée."));
     } finally {
-      setLoading(false);
+      if (sessionRef.current === gen) setLoading(false);
     }
   }, []);
 
   useEffect(() => {
     if (capabilities?.available) void load();
-  }, [capabilities?.available, load]);
+  }, [capabilities?.available, sessionGeneration, load]);
 
   const visible = useMemo(() => {
     const personId = capabilities?.person?.id ?? null;
