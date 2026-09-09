@@ -78,6 +78,10 @@ mock.module("@/lib/leadmagnet/dashboard-adapter", () => ({
     new Promise((resolve) => {
       mutationDeferred = { resolve };
     }),
+  linkCrmPerson: () =>
+    new Promise((resolve) => {
+      mutationDeferred = { resolve };
+    }),
 }));
 
 const realSupabaseAdapter = await import("../src/lib/leadmagnet/supabase-adapter");
@@ -85,6 +89,11 @@ mock.module("@/lib/leadmagnet/supabase-adapter", () => ({
   ...realSupabaseAdapter,
   fetchStaffInbox: () => Promise.resolve({ role: "admin", dossiers: [] }),
 }));
+
+// La langue de lecture est globale au processus de test : on la fixe pour que
+// les libellés recherchés ici soient ceux du français.
+const { setLocale } = await import("../src/lib/i18n/core");
+setLocale("fr");
 
 const { CrmProvider, useCrm } = await import(
   "../src/components/standex/dashboard/crm-context"
@@ -177,6 +186,16 @@ describe("la fiche projet appartient au compte connecté", () => {
   });
 });
 
+/** Onglet « Comptes et droits » des réglages. */
+function openAccountsTab() {
+  const tab = document.querySelectorAll('[role="tab"]')[1] as HTMLButtonElement;
+  act(() => {
+    tab.click();
+  });
+}
+
+
+
 const adminOverview = {
   staff: [
     {
@@ -205,6 +224,7 @@ describe("l'administration appartient au compte connecté", () => {
     await act(async () => {
       first.resolve(adminOverview);
     });
+    openAccountsTab();
     expect(document.body.textContent).toContain("Ancien");
 
     const late = adminDeferred!;
@@ -219,20 +239,6 @@ describe("l'administration appartient au compte connecté", () => {
   });
 
   test("une écriture en vol puis un changement de compte libère l'écran et vide les saisies", async () => {
-    const overviewWithPerson = {
-      ...adminOverview,
-      directory: [
-        {
-          id: "p1",
-          firstName: "Marie",
-          lastName: "Durand",
-          role: "sales",
-          active: true,
-          userId: null,
-          email: null,
-        },
-      ],
-    };
     const view = render(
       <Screen>
         <AdminScreen />
@@ -240,52 +246,61 @@ describe("l'administration appartient au compte connecté", () => {
     );
     await settle();
     await act(async () => {
-      adminDeferred!.resolve(overviewWithPerson);
+      adminDeferred!.resolve(adminOverview);
     });
 
-    // Saisie en cours puis écriture lancée : l'écran est occupé.
-    const emailInput = view.container.querySelector("#link-p1") as HTMLInputElement;
+    const byId = <T extends HTMLElement>(id: string) =>
+      view.container.querySelector(`#${id}`) as T | null;
+
+    // Saisie en cours dans le formulaire d'ajout.
     await act(async () => {
-      typeInto(emailInput, "marie@exemple.invalid");
+      byId<HTMLButtonElement>("add-person-toggle")!.click();
     });
-    expect(
-      (view.container.querySelector("#link-p1") as HTMLInputElement).value,
-    ).toBe("marie@exemple.invalid");
-    const deactivate = () =>
-      Array.from(view.container.querySelectorAll("button")).find(
-        (b) => b.textContent === "Désactiver",
-      ) as HTMLButtonElement;
-    const disableButton = deactivate();
     await act(async () => {
-      disableButton.click();
+      typeInto(byId<HTMLInputElement>("new-first")!, "Marie");
+    });
+    await act(async () => {
+      typeInto(byId<HTMLInputElement>("new-last")!, "Durand");
+    });
+    expect(byId<HTMLInputElement>("new-first")!.value).toBe("Marie");
+
+    // Écriture lancée : l'écran est occupé.
+    await act(async () => {
+      byId<HTMLButtonElement>("new-person-submit")!.click();
     });
     expect(mutationDeferred).not.toBeNull();
-    expect(deactivate().disabled).toBe(true);
+    expect(byId<HTMLButtonElement>("new-person-submit")!.disabled).toBe(true);
 
     // Même compte : la saisie et l'écriture en cours sont conservées.
     await emitAuth("SIGNED_IN", { user: { id: "u1" } });
-    expect(
-      (view.container.querySelector("#link-p1") as HTMLInputElement).value,
-    ).toBe("marie@exemple.invalid");
-    expect(deactivate().disabled).toBe(true);
+    expect(byId<HTMLInputElement>("new-first")!.value).toBe("Marie");
+    expect(byId<HTMLButtonElement>("new-person-submit")!.disabled).toBe(true);
 
-    // Compte réellement différent : écran remis à zéro.
+    // Compte réellement différent : écran libéré, saisies effacées.
     const inFlight = mutationDeferred!;
     await emitAuth("SIGNED_IN", { user: { id: "u2" } });
     await settle();
     await act(async () => {
-      adminDeferred!.resolve(overviewWithPerson);
+      adminDeferred!.resolve(adminOverview);
     });
-    expect(
-      (view.container.querySelector("#link-p1") as HTMLInputElement).value,
-    ).toBe("");
-    expect(deactivate().disabled).toBe(false);
+    expect(byId("new-first")).toBeNull();
+    await act(async () => {
+      byId<HTMLButtonElement>("add-person-toggle")!.click();
+    });
+    expect(byId<HTMLInputElement>("new-first")!.value).toBe("");
 
     // L'écriture de l'ancien compte revient en retard : sans effet.
     await act(async () => {
-      inFlight.resolve(overviewWithPerson);
+      inFlight.resolve(adminOverview);
     });
-    expect(deactivate().disabled).toBe(false);
+    expect(byId<HTMLInputElement>("new-first")!.value).toBe("");
+    await act(async () => {
+      typeInto(byId<HTMLInputElement>("new-first")!, "Paul");
+    });
+    await act(async () => {
+      typeInto(byId<HTMLInputElement>("new-last")!, "Martin");
+    });
+    expect(byId<HTMLButtonElement>("new-person-submit")!.disabled).toBe(false);
   });
 });
 

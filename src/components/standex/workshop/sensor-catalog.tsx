@@ -120,7 +120,7 @@ export default function SensorCatalog({
       )}
       <header>
         <div>
-          <p className="mw-eyebrow">{t("CHOISIR UNE FORME ET UN FORMAT")}</p>
+          <p className="mw-eyebrow">{t("Choisir une forme et un format")}</p>
           <h2 id="catalog-title">{t("Le catalogue des capteurs")}</h2>
           <p>{t("21 modèles Standex cotés, et un reed pédagogique.")}</p>
         </div>

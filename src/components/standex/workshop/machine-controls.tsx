@@ -88,7 +88,7 @@ export default function MachineControls({
     fits = sensor.body.every((v, i) => v <= m.space[i]!);
   return (
     <div className="mw-machine-controls">
-      <p className="mw-eyebrow">{t("DANS VOTRE MACHINE")}</p>
+      <p className="mw-eyebrow">{t("Dans votre machine")}</p>
       <h2>{t("Installer et essayer")}</h2>
       <p className="mw-help">
         {t(

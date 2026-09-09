@@ -58,7 +58,7 @@ export default function ContactIndicator({ contact }: { contact: Contact }) {
         <circle className="mw-lamp" cx="294" cy="56" r="12" />
         <path className="mw-lamp-filament" d="M288 50 L300 62 M300 50 L288 62" />
         <text x="163" y="63" textAnchor="middle">
-          {t(closed ? "PASSAGE DU COURANT" : unknown ? "NON DÉTERMINÉ" : "CIRCUIT INTERROMPU")}
+          {t(closed ? "Passage du courant" : unknown ? "Non déterminé" : "Circuit interrompu")}
         </text>
       </svg>
       <p className="mw-circuit-note">

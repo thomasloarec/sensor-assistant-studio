@@ -295,6 +295,7 @@
   letter-spacing: 2.2px;
   font-weight: 600;
   margin-top: 5px;
+  text-transform: uppercase;
 }
 .mw-prototype {
   font-size: 11px;
@@ -318,6 +319,7 @@
   color: var(--muted-foreground);
   font-weight: 700;
   margin: 0 0 6px;
+  text-transform: uppercase;
 }
 .mw h1 {
   font-size: clamp(24px, 2.7vw, 35px);
@@ -1138,6 +1140,7 @@
     sans-serif;
   fill: var(--muted-foreground);
   letter-spacing: 1px;
+  text-transform: uppercase;
 }
 .closed .mw-wire,
 .closed .mw-blade {
