@@ -30,7 +30,7 @@ import {
 } from "@/components/standex/dashboard/crm-shared";
 import { fetchCrmBoard, type CrmBoard } from "@/lib/leadmagnet/dashboard-adapter";
 import {
-  ageInDays,
+  stageAgeDays,
   filterProjects,
   groupByStage,
   pipelineTotals,
