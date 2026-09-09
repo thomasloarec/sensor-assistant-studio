@@ -639,10 +639,6 @@ export function DesignSpace({
   const prepareServerNda = useCallback(async () => {
     setNdaError(null);
     const gen = contextGenRef.current;
-    // Dossier serveur RÉELLEMENT visé par cet envoi : sur un premier envoi il
-    // n'existe qu'à partir du rappel de création. Le garder à null puis le
-    // comparer au nouvel identifiant ferait passer l'envoi pour périmé.
-    let targetDossierId = serverDossierId;
     try {
       const status = await prepareNdaOnServer(serverDossierId);
       // Réponse née d'un autre dossier : elle ne doit pas s'appliquer ici.
@@ -1347,6 +1343,10 @@ export function DesignSpace({
     const gen = contextGenRef.current;
     // Phase réellement atteinte : elle interdit d'annoncer « rien n'a été
     // envoyé » après une révision déjà confirmée par le serveur.
+    // Dossier serveur RÉELLEMENT visé par cet envoi : sur un premier envoi il
+    // n'existe qu'à partir du rappel de création. Le garder à null puis le
+    // comparer au nouvel identifiant ferait passer l'envoi pour périmé.
+    let targetDossierId = serverDossierId;
     let phase: SubmitPhase = "before_send";
     setBusy(true);
     const outcomeKind = await runGuardedSubmit({
