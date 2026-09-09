@@ -54,7 +54,8 @@
   font: var(--mw-t-label);
   text-transform: uppercase;
   letter-spacing: var(--tracking-label);
-  color: var(--hairline-strong);
+  /* §8 : un jeton de trait ne sert jamais de couleur de texte. */
+  color: var(--muted-foreground);
   margin-top: 32px;
 }
 .sensor-card .sc-hero h2 {
@@ -65,7 +66,7 @@
 }
 .sc-hero > p {
   font: var(--mw-t-dense);
-  color: var(--hairline-strong);
+  color: var(--muted-foreground);
   margin: 0;
 }
 .sc-drawing {
@@ -109,7 +110,7 @@
 .sc-contact-note {
   font: var(--mw-t-dense);
   text-align: center;
-  color: var(--hairline-strong);
+  color: var(--muted-foreground);
   margin-top: 7px;
 }
 .sc-hero-size {
@@ -122,7 +123,7 @@
 }
 .sc-hero-size small {
   font: var(--mw-t-dense);
-  color: var(--hairline-strong);
+  color: var(--muted-foreground);
   display: block;
 }
 .sc-hero-size strong {
