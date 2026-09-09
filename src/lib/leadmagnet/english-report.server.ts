@@ -13,10 +13,10 @@ const PROJECT_URL = "https://yyobodalwtsqdyrqwkjk.supabase.co";
 
 /**
  * Nom applicatif de la clé privée serveur. Le préfixe `SUPABASE_` est réservé
- * par la plateforme : le nom retenu est donc `STANDEX_SUPABASE_SECRET_KEY`,
+ * par la plateforme : le nom retenu est donc `standex_supabase_secret_key`,
  * avec repli sur l'ancien nom `SUPABASE_SERVICE_ROLE_KEY` s'il existe déjà.
  */
-export const SERVICE_KEY_NAME = "STANDEX_SUPABASE_SECRET_KEY";
+export const SERVICE_KEY_NAME = "standex_supabase_secret_key";
 export const SERVICE_KEY_FALLBACK_NAME = "SUPABASE_SERVICE_ROLE_KEY";
 
 /** Ne retourne JAMAIS la valeur ailleurs qu'au client privilégié serveur. */

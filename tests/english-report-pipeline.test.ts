@@ -97,12 +97,12 @@ describe("aucun appel fournisseur sans autorisation", () => {
     });
     expect(bad.calls.provider).toBe(0);
 
-    const unconf = deps({ missingConfig: () => ["STANDEX_SUPABASE_SECRET_KEY"] });
+    const unconf = deps({ missingConfig: () => ["standex_supabase_secret_key"] });
     const out = await runEnglishReport(unconf, REQ);
     expect(out).toEqual({
       state: "unavailable",
       code: "NOT_CONFIGURED",
-      missingConfig: ["STANDEX_SUPABASE_SECRET_KEY"],
+      missingConfig: ["standex_supabase_secret_key"],
     });
     expect(unconf.calls).toEqual({ provider: 0, begin: 0, finalize: 0 });
   });

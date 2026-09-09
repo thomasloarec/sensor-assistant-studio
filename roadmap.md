@@ -181,9 +181,12 @@
 
 - Migration 1.6 APPLIQUÉE par root sur yyobodalwtsqdyrqwkjk (6 fonctions, EXECUTE refusé à
   anon/authenticated, accordé à service_role). Ne pas réappliquer.
-- Nom applicatif de la clé privée serveur : `STANDEX_SUPABASE_SECRET_KEY` (le préfixe
+- Nom applicatif de la clé privée serveur : `standex_supabase_secret_key` (le préfixe
   `SUPABASE_` est réservé par la plateforme), avec repli sur `SUPABASE_SERVICE_ROLE_KEY`.
   URL serveur optionnelle : `STANDEX_SUPABASE_URL` (défaut : projet Standex).
-- Configuration présente : `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL`. MANQUANT :
-  `STANDEX_SUPABASE_SECRET_KEY` — à ajouter par le propriétaire dans Project Settings → Secrets.
-  Tant qu'elle est absente, la demande répond « non configuré » et rien n'est transmis.
+- Configuration enregistrée : `standex_supabase_secret_key`, `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL`.
+- Test réel minimal effectué : `scripts/test-secret-real.ts` appelle `lead_report_en_authorize`
+  avec des UUIDs synthétiques ; la réponse `{"reason":"DOSSIER_NOT_FOUND","allowed":false}`
+  confirme que la clé serveur est active et que les RPC V1.6 sont atteignables.
+- Vérifications : 274 tests / 42 561 assertions, typecheck OK, build OK, scans de design
+  conformes (seule exception documentée `#254061` dans `theme-color`).
