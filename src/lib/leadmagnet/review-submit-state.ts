@@ -17,8 +17,48 @@ export function ndaTransferGuidance(nda: NdaState): string | null {
 }
 
 export function reviewOperationLabel(operation: ReviewOperation): string | null {
+  if (operation === "validation") return "Vérification du dossier…";
   if (operation === "upload") return "Dépôt et vérification du fichier 3D en cours…";
   if (operation === "submission") return "Transmission à la revue Standex en cours…";
   if (operation === "variant") return "Reprise de la proposition Standex en cours…";
   return null;
+}
+
+export type SubmitGuardOutcome = "skipped" | "invalid" | "stale" | "failed" | "done";
+
+/**
+ * Verrou synchrone dès l'entrée : le second clic ne franchit jamais la validation.
+ * La validation ET l'envoi sont couverts par le même try/catch/finally, donc
+ * toute sortie anticipée ou tout rejet libère le verrou et l'état contextuel.
+ */
+export async function runGuardedSubmit(deps: {
+  lock: { current: boolean };
+  generation: () => number;
+  setOperation: (operation: ReviewOperation) => void;
+  validate: () => Promise<{ ok: boolean; problems?: string[] }>;
+  onInvalid: (problems: string[]) => void;
+  submit: () => Promise<void>;
+  onError: (error: unknown) => void;
+}): Promise<SubmitGuardOutcome> {
+  if (deps.lock.current) return "skipped";
+  deps.lock.current = true;
+  const gen = deps.generation();
+  deps.setOperation("validation");
+  try {
+    const check = await deps.validate();
+    if (deps.generation() !== gen) return "stale";
+    if (!check.ok) {
+      deps.onInvalid(check.problems ?? []);
+      return "invalid";
+    }
+    deps.setOperation("submission");
+    await deps.submit();
+    return "done";
+  } catch (error) {
+    if (deps.generation() === gen) deps.onError(error);
+    return "failed";
+  } finally {
+    deps.lock.current = false;
+    deps.setOperation(null);
+  }
 }
