@@ -1,12 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { t } from "@/lib/i18n/core";
+import { X } from "lucide-react";
+import { msg, t } from "@/lib/i18n/core";
 import { useLocale } from "@/lib/i18n/react";
 import { localeTag } from "@/lib/i18n/core";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
   Select,
   SelectContent,
@@ -15,6 +16,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useCrm } from "@/components/standex/dashboard/crm-context";
+import { AvatarInitials } from "@/components/standex/dashboard/avatar-initials";
 import {
   ALL_STAGES,
   CountryCell,
@@ -23,7 +25,8 @@ import {
   LoadingBlock,
   MarginCell,
   RevenueCell,
-  StageBadge,
+  StageGauge,
+  StagePill,
   UnknownValue,
   VolumeCell,
   countryName,
