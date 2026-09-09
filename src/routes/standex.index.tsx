@@ -4,6 +4,7 @@ import { X } from "lucide-react";
 import { msg, t } from "@/lib/i18n/core";
 import { useLocale } from "@/lib/i18n/react";
 import { localeTag } from "@/lib/i18n/core";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -44,6 +45,7 @@ import {
   formatAmount,
   personFullName,
   type BoardSort,
+  type CrmProject,
   type CrmStage,
 } from "@/lib/leadmagnet/crm";
 
@@ -238,6 +240,10 @@ function ProjectsBoard() {
     launchFrom, launchTo, onlyLate, board, tag]);
 
   const activeFilterCount = chips.length;
+  /* Deux déclencheurs distincts : l'étape se filtre là où on la lit, le reste
+     vit dans le tiroir. Le compte de chacun ne mélange pas les deux. */
+  const stageFilterCount = stages.length;
+  const otherFilterCount = activeFilterCount - stageFilterCount - (onlyLate ? 1 : 0);
 
   if (capabilities === null) return <LoadingBlock />;
 
@@ -272,7 +278,10 @@ function ProjectsBoard() {
 
       {/* Barre de travail : une seule ligne collante. Les commandes rares
           vivent dans le tiroir de filtres, le résultat reste au-dessus du pli. */}
-      <section className="workbar relative" aria-label={t("Barre de travail")}>
+      {/* `relative` est volontairement absent : l'utilitaire écraserait le
+          `position: sticky` du socle et la barre repasserait sous l'en-tête. */}
+      <section className="workbar" aria-label={t("Barre de travail")}>
+
         {loading ? (
           <span className="workbar-progress" aria-hidden="true" />
         ) : null}
@@ -290,36 +299,55 @@ function ProjectsBoard() {
         <Popover>
           <PopoverTrigger asChild>
             <Button variant="outline" className="gap-2">
+              {t("Étape")}
+              {stageFilterCount > 0 ? (
+                <span className="filter-count">{stageFilterCount}</span>
+              ) : null}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent align="start" className="w-[20rem]">
+            <fieldset className="space-y-2">
+              <legend className="t-label">{t("Filtrer par étape")}</legend>
+              <div className="grid grid-cols-2 gap-1">
+                {ALL_STAGES.map((s) => (
+                  <label key={s} className="flex min-h-11 items-center gap-2 text-base">
+                    <input
+                      type="checkbox"
+                      className="h-5 w-5"
+                      checked={stages.includes(s)}
+                      onChange={(e) =>
+                        setStages((current) =>
+                          e.target.checked ? [...current, s] : current.filter((x) => x !== s),
+                        )
+                      }
+                    />
+                    {stageLabel(s)}
+                  </label>
+                ))}
+              </div>
+              <Button
+                variant="outline"
+                onClick={() => setStages([])}
+                disabled={stageFilterCount === 0}
+              >
+                {t("Tout effacer")}
+              </Button>
+            </fieldset>
+          </PopoverContent>
+        </Popover>
+
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="outline" className="gap-2">
               {t("Filtres")}
-              {activeFilterCount > 0 ? (
-                <span className="filter-count">{activeFilterCount}</span>
+              {otherFilterCount > 0 ? (
+                <span className="filter-count">{otherFilterCount}</span>
               ) : null}
             </Button>
           </PopoverTrigger>
           <PopoverContent align="start" className="max-h-[70vh] w-[22rem] overflow-y-auto">
             <div className="space-y-4">
-              <fieldset className="space-y-2">
-                <legend className="t-label">{t("Étape")}</legend>
-                <div className="grid grid-cols-2 gap-1">
-                  {ALL_STAGES.map((s) => (
-                    <label key={s} className="flex min-h-11 items-center gap-2 text-base">
-                      <input
-                        type="checkbox"
-                        className="h-5 w-5"
-                        checked={stages.includes(s)}
-                        onChange={(e) =>
-                          setStages((current) =>
-                            e.target.checked
-                              ? [...current, s]
-                              : current.filter((x) => x !== s),
-                          )
-                        }
-                      />
-                      {stageLabel(s)}
-                    </label>
-                  ))}
-                </div>
-              </fieldset>
+
 
               <div className="field-row">
                 <div className="field">
@@ -452,15 +480,6 @@ function ProjectsBoard() {
                 </div>
               </div>
 
-              <label className="flex min-h-11 items-center gap-2 text-base">
-                <input
-                  type="checkbox"
-                  className="h-5 w-5"
-                  checked={onlyLate}
-                  onChange={(e) => setOnlyLate(e.target.checked)}
-                />
-                {t("Seulement les projets en retard ou bloqués")}
-              </label>
 
               {revenueMin || revenueMax ? (
                 <p className="t-caption text-muted-foreground">
@@ -480,6 +499,17 @@ function ProjectsBoard() {
           </PopoverContent>
         </Popover>
 
+        {/* Filtre d'alerte : il se voit et se bascule sans ouvrir de tiroir. */}
+        <Button
+          variant={onlyLate ? "default" : "outline"}
+          aria-pressed={onlyLate}
+          title={t("Seulement les projets en retard ou bloqués")}
+          onClick={() => setOnlyLate((v) => !v)}
+        >
+          {t("En retard")}
+          <span className="sr-only"> — {t("Seulement les projets en retard ou bloqués")}</span>
+        </Button>
+
         <Label className="sr-only" htmlFor="crm-sort">
           {t("Trier par")}
         </Label>
@@ -496,27 +526,39 @@ function ProjectsBoard() {
           </SelectContent>
         </Select>
 
-        <div role="group" aria-label={t("Affichage")} className="ml-auto flex gap-1">
-          <Button
-            size="sm"
-            variant={display === "table" ? "default" : "outline"}
-            aria-pressed={display === "table"}
+        {/* Même geste, même vocabulaire que la navigation : contrôle segmenté. */}
+        <div
+          role="tablist"
+          aria-label={t("Affichage")}
+          className="segmented ml-auto"
+          style={{ ["--seg-count" as string]: 2, ["--seg" as string]: display === "table" ? 0 : 1 }}
+        >
+          <span className="segmented-thumb" aria-hidden="true" />
+          <button
+            type="button"
+            role="tab"
+            aria-selected={display === "table"}
+            data-active={display === "table" ? "true" : undefined}
+            className="segmented-item"
             onClick={() => setDisplay("table")}
           >
             {t("Tableau")}
-          </Button>
-          <Button
-            size="sm"
-            variant={display === "pipeline" ? "default" : "outline"}
-            aria-pressed={display === "pipeline"}
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={display === "pipeline"}
+            data-active={display === "pipeline" ? "true" : undefined}
+            className="segmented-item"
             onClick={() => setDisplay("pipeline")}
           >
             {t("Pipeline")}
-          </Button>
-          <Button size="sm" variant="ghost" onClick={load}>
-            {t("Actualiser")}
-          </Button>
+          </button>
         </div>
+        <Button size="sm" variant="ghost" onClick={load}>
+          {t("Actualiser")}
+        </Button>
+
       </section>
 
       {/* Filtres actifs : chacun est retirable là où il se lit. */}
@@ -540,24 +582,8 @@ function ProjectsBoard() {
         </div>
       ) : null}
 
-      {/* Résultat : le total lu par devise, jamais deux devises additionnées. */}
-      <div className="flex flex-wrap items-center gap-2 t-caption text-muted-foreground">
-        {totals.byCurrency.map((c) => (
-          <span key={c.currency} className="stage-pill" data-tone="muted">
-            {formatAmount(c.amount, c.currency, tag)} — {c.projects} {t("projet(s)")}
-          </span>
-        ))}
-        {totals.unknownAmount > 0 ? (
-          <span>
-            {totals.unknownAmount} {t("sans chiffre d'affaires estimable")}
-          </span>
-        ) : null}
-        {totals.unknownCurrency > 0 ? (
-          <span>
-            {totals.unknownCurrency} {t("sans devise renseignée")}
-          </span>
-        ) : null}
-      </div>
+
+
 
       {error ? <ErrorBlock text={error} onRetry={load} /> : null}
       {loading && !board ? <LoadingBlock rows={6} /> : null}
@@ -595,24 +621,35 @@ function ProjectsBoard() {
             </thead>
             <tbody>
               {projects.map((p) => (
-                <tr key={p.dossierId} style={rowAccent(p.stage)}>
+                <tr key={p.dossierId} style={rowAccent(p)}>
                   <td>
-                    <Link
-                      to="/standex/projects/$dossierId"
-                      params={{ dossierId: p.dossierId }}
-                      className="inline-flex min-h-11 items-center t-title-s underline-offset-2 hover:underline"
-                    >
-                      {p.companyEffective ?? p.title}
-                    </Link>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <Link
+                        to="/standex/projects/$dossierId"
+                        params={{ dossierId: p.dossierId }}
+                        className="inline-flex min-h-11 items-center t-title-s underline-offset-2 hover:underline"
+                      >
+                        {p.companyEffective ?? p.title}
+                      </Link>
+                      {p.filed ? null : (
+                        <Badge
+                          variant="outline"
+                          title={t("Aucun suivi interne renseigné pour l'instant.")}
+                        >
+                          {t("Non suivi")}
+                          <span className="sr-only">
+                            {" "}
+                            — {t("Aucun suivi interne renseigné pour l'instant.")}
+                          </span>
+                        </Badge>
+                      )}
+                    </div>
+
                     <p className="t-caption text-muted-foreground">
                       {p.projectName ?? p.title} — {t("version")} {p.currentRevision}
                     </p>
-                    {p.filed ? null : (
-                      <p className="t-caption text-muted-foreground">
-                        {t("Aucun suivi interne renseigné pour l'instant.")}
-                      </p>
-                    )}
                   </td>
+
                   <td>
                     <span className="inline-flex items-center gap-2">
                       <StagePill stage={p.stage} />
@@ -626,11 +663,18 @@ function ProjectsBoard() {
                   </td>
                   <td><CountryCell code={p.countryCode} locale={tag} /></td>
                   <td>
-                    <PersonCell name={personName(board.directory, p.salesPersonId)} />
+                    <PersonCell
+                      name={personName(board.directory, p.salesPersonId)}
+                      assigned={Boolean(p.salesPersonId)}
+                    />
                   </td>
                   <td>
-                    <PersonCell name={personName(board.directory, p.faePersonId)} />
+                    <PersonCell
+                      name={personName(board.directory, p.faePersonId)}
+                      assigned={Boolean(p.faePersonId)}
+                    />
                   </td>
+
                   <td className="num"><VolumeCell project={p} /></td>
                   <td className="num"><RevenueCell project={p} locale={tag} /></td>
                   <td className="num"><MarginCell project={p} locale={tag} /></td>
@@ -667,17 +711,56 @@ function ProjectsBoard() {
                 </tr>
               ))}
             </tbody>
+            {/* Pied de tableau : le résultat se lit sous la colonne qu'il
+                totalise, une ligne par devise, jamais deux devises ajoutées. */}
+            <tfoot>
+              <tr>
+                <td colSpan={6}>
+                  <span className="t-caption text-muted-foreground">
+                    {projects.length} {t("projet(s) affiché(s)")}
+                  </span>
+                  {totals.unknownAmount > 0 ? (
+                    <span className="t-caption block text-muted-foreground">
+                      {totals.unknownAmount} {t("sans chiffre d'affaires estimable")}
+                    </span>
+                  ) : null}
+                  {totals.unknownCurrency > 0 ? (
+                    <span className="t-caption block text-muted-foreground">
+                      {totals.unknownCurrency} {t("sans devise renseignée")}
+                    </span>
+                  ) : null}
+                </td>
+                <td className="num">
+                  {totals.byCurrency.map((c) => (
+                    <span key={c.currency} className="t-metric block">
+                      {formatAmount(c.amount, c.currency, tag)}
+                    </span>
+                  ))}
+                </td>
+                <td colSpan={2} />
+              </tr>
+            </tfoot>
+
           </table>
         </div>
       ) : null}
 
       {board && projects.length > 0 && display === "pipeline" ? (
         <div className="pipeline-rail" aria-busy={loading ? "true" : undefined}>
-          {groupByStage(projects).map((column) => (
+          {groupByStage(projects).map((column) => {
+            /* Poids de la colonne : une ligne par devise, jamais une somme
+               mélangée, et rien du tout quand aucun montant n'est connu. */
+            const columnTotals = pipelineTotals(column.projects);
+            return (
             <section key={column.stage} className="panel-block space-y-2">
               <h3 className="t-title-s flex flex-wrap items-center gap-2">
                 <StagePill stage={column.stage} />
                 <span className="t-caption text-muted-foreground">({column.projects.length})</span>
+                {columnTotals.byCurrency.map((c) => (
+                  <span key={c.currency} className="t-metric">
+                    {formatAmount(c.amount, c.currency, tag)}
+                  </span>
+                ))}
               </h3>
               {column.projects.length === 0 ? (
                 <p className="t-caption text-muted-foreground">{t("Aucun projet.")}</p>
@@ -688,8 +771,9 @@ function ProjectsBoard() {
                     to="/standex/projects/$dossierId"
                     params={{ dossierId: p.dossierId }}
                     className="surface-interactive pipeline-card min-h-11"
-                    style={rowAccent(p.stage)}
+                    style={rowAccent(p)}
                   >
+
                     <span className="block t-title-s">{p.companyEffective ?? p.title}</span>
                     <span className="block t-caption text-muted-foreground">
                       {p.projectName ?? t("projet sans nom")}
@@ -708,32 +792,43 @@ function ProjectsBoard() {
                 ))
               )}
             </section>
-          ))}
+            );
+          })}
+
         </div>
       ) : null}
     </div>
   );
 }
 
-/** Personne responsable : pastille décorative + nom lisible, jamais l'inverse. */
-function PersonCell({ name }: { name: string }) {
+/** Personne responsable : en colonne étroite, la pastille suffit et le nom
+ *  reste lisible au survol comme au lecteur d'écran. Une absence
+ *  d'attribution, elle, reste écrite en toutes lettres à toutes les tailles. */
+function PersonCell({ name, assigned }: { name: string; assigned: boolean }) {
+  if (!assigned)
+    return <span className="t-caption text-muted-foreground">{name}</span>;
   return (
-    <span className="inline-flex items-center gap-2">
+    <span className="inline-flex items-center gap-2" title={name}>
       <AvatarInitials name={name} />
-      <span>{name}</span>
+      <span className="hidden xl:inline">{name}</span>
+      <span className="sr-only xl:hidden">{name}</span>
     </span>
   );
 }
 
-/** Liseré de ligne : rappel de l'étape, jamais porteur seul de l'information. */
-function rowAccent(stage: CrmStage): React.CSSProperties {
+/** Liseré de ligne : il signale ce qui demande une action avant de rappeler
+ *  l'étape, déjà portée par la pastille voisine. */
+function rowAccent(project: CrmProject): React.CSSProperties {
   const token =
-    stage === "closed_won"
-      ? "var(--success)"
-      : stage === "on_hold"
-        ? "var(--warning)"
-        : stage === "closed_lost" || stage === "dead"
-          ? "var(--standex-gray-25)"
-          : "var(--standex-blue)";
+    project.tasksOverdue > 0 || project.tasksBlocked > 0
+      ? "var(--destructive)"
+      : project.stage === "closed_won"
+        ? "var(--success)"
+        : project.stage === "on_hold"
+          ? "var(--warning)"
+          : project.stage === "closed_lost" || project.stage === "dead"
+            ? "var(--standex-gray-25)"
+            : "var(--standex-blue-25)";
   return { ["--row-accent" as string]: token };
 }
+
