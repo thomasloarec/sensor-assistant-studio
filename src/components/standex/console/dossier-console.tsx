@@ -128,7 +128,7 @@ function parseTiers(raw: string): { quantity: number; unit_price: number }[] {
     });
 }
 
-function StandexConsole() {
+export function DossierConsole({ initialDossierId, embedded = false }: DossierConsoleProps) {
   const [backend, setBackend] = useState<LeadBackendStatus | null>(null);
   const [inbox, setInbox] = useState<StaffInbox | null>(null);
   const [selected, setSelected] = useState<string | null>(null);
