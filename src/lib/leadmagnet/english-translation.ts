@@ -335,7 +335,29 @@ export function englishReportBody(dto: ClientDossierDto, meta: { revision: numbe
     `- Mounting: ${mounting}`,
     `- Available envelope: ${env.lengthMm ?? "unknown"} × ${env.widthMm ?? "unknown"} × ${env.heightMm ?? "unknown"} mm`,
     "",
+    "## Sensor selection and 3D layout",
+    `- Followed range (not an orderable part number): ${dto.selectedSensorId ?? "none"}`,
+    `- Sensor shown in the workshop: ${dto.workshopSensorId ?? "none"}`,
+    `- Workshop sensor matches the followed range: ${dto.sensorSyncConfirmed ? "confirmed by the customer" : "not confirmed"}`,
+    `- 3D layout provenance: ${WORKSHOP_SOURCE_EN[dto.workshopSource] ?? dto.workshopSource}`,
+    `- 3D asset: ${dto.workshopAsset ? `${dto.workshopAsset.fileName} (${dto.workshopAsset.storage})` : "none"}`,
+    `- Workshop configuration recorded: ${dto.workshop ? "yes" : "no"}`,
+    "",
     "## Cabling",
+    `- Required length: ${estimate.requiredMm === null ? "unknown (incomplete or invalid path)" : estimate.requiredMm.toFixed(1) + " mm"}`,
+    `- Longest measured path: ${estimate.longestPathMm === null ? "unknown" : estimate.longestPathMm.toFixed(1) + " mm"}`,
+    `- Sensor point: ${pointEn(dto.cabling.sensorEndpoint)} — connection point: ${pointEn(dto.cabling.connectionEndpoint)}`,
+    `- Intermediate waypoints (${dto.cabling.waypoints.length}): ${
+      dto.cabling.waypoints.length ? dto.cabling.waypoints.map(pointEn).join(" → ") : "none"
+    }`,
+    ...(dto.cabling.statePaths.length
+      ? dto.cabling.statePaths.map(
+          (p) =>
+            `- Path "${p.label}" (state ${p.stateId}, ${p.points.length} points${
+              p.pose ? `, pose "${p.pose.label}" at cycle ${p.pose.cycleT}` : ", pose unknown"
+            }): ${p.points.map(pointEn).join(" → ")}`,
+        )
+      : ["- Recorded paths: none"]),
     `- Service reserve: ${dto.cabling.serviceReserveMm} mm — termination: ${dto.cabling.terminationMm} mm`,
     `- Supplier tolerance: ±${dto.cabling.toleranceMm} mm — housed surplus: ${dto.cabling.surplusHousingMm} mm`,
     `- Minimum bend radius: ${dto.cabling.minBendRadiusMm ?? "unknown"} mm`,
@@ -344,6 +366,7 @@ export function englishReportBody(dto: ClientDossierDto, meta: { revision: numbe
         ? dto.cabling.declaredMotionStates.map((s) => s.label).join(", ")
         : "none"
     }`,
+    `- Motion states without a recorded path: ${uncovered.length ? uncovered.map((s) => s.label).join(", ") : "none"}`,
     `- Motion coverage confirmed: ${dto.cabling.motionCoverageConfirmed ? "yes" : "no"}`,
     `- Length choice: ${
       dto.cabling.lengthChoice === "standard_to_confirm"
@@ -353,6 +376,7 @@ export function englishReportBody(dto: ClientDossierDto, meta: { revision: numbe
           : "not decided"
     }`,
     "- No length is approved here: Standex R&D checks it.",
+
     "",
     "## Termination",
     ...terminationEnglish(dto),
