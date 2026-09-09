@@ -328,6 +328,9 @@ function StandexConsole() {
     modelRequest.current += 1;
     setViewer(null);
     setViewerError(null);
+    // Chaque ouverture de dossier repart en anglais : la bascule vers
+    // l'original ne vaut que pour la consultation en cours.
+    setReportView("en");
     try {
       const loaded = await fetchStaffView(id);
       if (request !== selectionRequest.current) return;

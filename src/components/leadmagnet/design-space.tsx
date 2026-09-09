@@ -428,6 +428,9 @@ export function DesignSpace({
     revisionId: string;
     contentHash: string;
   } | null>(null);
+  /** Demande de version anglaise en cours : verrou et anti-réponse périmée. */
+  const englishRunRef = useRef<string | null>(null);
+  const [englishBusy, setEnglishBusy] = useState(false);
 
   const [showWorkshop, setShowWorkshop] = useState(false);
   /** Démarrage RÉEL du projet : c'est ici, et pas au montage caché de
@@ -1044,15 +1047,28 @@ export function DesignSpace({
   const runEnglishReport = useCallback(
     async (target: { dossierId: string; revisionId: string; contentHash: string }) => {
       if (!supabase) return;
-      const { data } = await supabase.auth.getSession();
-      const accessToken = data.session?.access_token;
-      if (!accessToken) {
-        setEnglishMessage(t("Session expirée : reconnectez-vous pour relancer la version anglaise."));
-        return;
-      }
-      setEnglishMessage(t("Version anglaise en cours de préparation pour cette version envoyée."));
+      const key = `${target.dossierId}|${target.revisionId}|${target.contentHash}`;
+      // Verrou : un double clic, ou une relance pendant qu'une autre est en
+      // cours, ne déclenche pas une seconde demande au traducteur.
+      if (englishRunRef.current) return;
+      englishRunRef.current = key;
+      setEnglishBusy(true);
+      /** Une réponse n'écrit que si elle concerne toujours la demande en cours. */
+      const current = () => englishRunRef.current === key;
       try {
+        const { data } = await supabase.auth.getSession();
+        const accessToken = data.session?.access_token;
+        if (!accessToken) {
+          if (current())
+            setEnglishMessage(
+              t("Session expirée : reconnectez-vous pour relancer la version anglaise."),
+            );
+          return;
+        }
+        if (!current()) return;
+        setEnglishMessage(t("Version anglaise en cours de préparation pour cette version envoyée."));
         const outcome = await requestEnglishReport({ data: { accessToken, ...target } });
+        if (!current()) return;
         if (outcome.state === "ready") {
           setEnglishRetry(null);
           setEnglishMessage(
@@ -1062,15 +1078,21 @@ export function DesignSpace({
           setEnglishMessage(englishReportMessage(outcome.code, t));
           if (outcome.state === "pending" && !outcome.retryable) setEnglishRetry(null);
         }
-
       } catch {
-        setEnglishMessage(
-          t("La version anglaise n'a pas pu être produite. Votre dossier d'origine est bien arrivé ; vous pouvez relancer."),
-        );
+        if (current())
+          setEnglishMessage(
+            t("La version anglaise n'a pas pu être produite. Votre dossier d'origine est bien arrivé ; vous pouvez relancer."),
+          );
+      } finally {
+        if (englishRunRef.current === key) {
+          englishRunRef.current = null;
+          setEnglishBusy(false);
+        }
       }
     },
     [],
   );
+
 
 
   /** Étape 2 : envoi. Aucun dépôt ici — ce qui est joint a déjà été déposé,
@@ -2307,10 +2329,10 @@ export function DesignSpace({
               <Button
                 variant="outline"
                 size="sm"
-                disabled={busy}
+                disabled={busy || englishBusy}
                 onClick={() => void runEnglishReport(englishRetry)}
               >
-                {t("Relancer la version anglaise")}
+                {englishBusy ? t("Version anglaise en cours…") : t("Relancer la version anglaise")}
               </Button>
             ) : null}
 
@@ -2326,7 +2348,9 @@ export function DesignSpace({
                 }}
               />
               {dossier.workshopAsset
-                ? `Je partage aussi le fichier 3D « ${dossier.workshopAsset.fileName} » avec l'équipe en charge.`
+                ? msg("Je partage aussi le fichier 3D « {0} » avec l'équipe en charge.", [
+                    dossier.workshopAsset.fileName,
+                  ])
                 : t("Aucun fichier 3D importé : rien à partager.")}
             </label>
             {shareModel && dossier.workshopAsset ? (
