@@ -12,7 +12,7 @@ GlobalRegistrator.register({ url: "https://exemple.invalid/standex" });
 
 import { afterEach, describe, expect, mock, test } from "bun:test";
 import * as React from "react";
-import { act, cleanup, render } from "@testing-library/react";
+import { act, cleanup, fireEvent, render } from "@testing-library/react";
 import {
   RouterContextProvider,
   createMemoryHistory,
@@ -42,6 +42,7 @@ mock.module("@/lib/standex/supabase", () => ({
 // --- Réponses serveur pilotées par le test ---------------------------------
 let projectDeferred: { resolve: (v: unknown) => void } | null = null;
 let adminDeferred: { resolve: (v: unknown) => void } | null = null;
+let mutationDeferred: { resolve: (v: unknown) => void } | null = null;
 const projectFor = (company: string) => ({
   project: {
     id: "d1",
@@ -73,6 +74,10 @@ mock.module("@/lib/leadmagnet/dashboard-adapter", () => ({
     new Promise((resolve) => {
       adminDeferred = { resolve };
     }),
+  upsertCrmPerson: () =>
+    new Promise((resolve) => {
+      mutationDeferred = { resolve };
+    }),
 }));
 
 const realSupabaseAdapter = await import("../src/lib/leadmagnet/supabase-adapter");
@@ -91,6 +96,7 @@ afterEach(() => {
   cleanup();
   projectDeferred = null;
   adminDeferred = null;
+  mutationDeferred = null;
 });
 
 /** Routeur minimal : les liens de navigation de l'écran ont besoin d'un contexte,
@@ -106,6 +112,16 @@ function Screen({ children }: { children: React.ReactNode }) {
       <RouterContextProvider router={router}>{children}</RouterContextProvider>
     </CrmProvider>
   );
+}
+
+/** Saisie dans un champ contrôlé : dans cet environnement de test, les
+ *  événements de saisie simulés n'atteignent pas React, on appelle donc
+ *  directement le gestionnaire réellement monté sur le champ. */
+function typeInto(el: HTMLInputElement, value: string) {
+  const key = Object.keys(el).find((k) => k.startsWith("__reactProps$"));
+  const props = (el as unknown as Record<string, { onChange?: (e: unknown) => void }>)[key!];
+  el.value = value;
+  props.onChange?.({ target: el, currentTarget: el });
 }
 
 async function settle() {
@@ -200,6 +216,76 @@ describe("l'administration appartient au compte connecté", () => {
       late?.resolve(adminOverview);
     });
     expect(document.body.textContent).not.toContain("Ancien");
+  });
+
+  test("une écriture en vol puis un changement de compte libère l'écran et vide les saisies", async () => {
+    const overviewWithPerson = {
+      ...adminOverview,
+      directory: [
+        {
+          id: "p1",
+          firstName: "Marie",
+          lastName: "Durand",
+          role: "sales",
+          active: true,
+          userId: null,
+          email: null,
+        },
+      ],
+    };
+    const view = render(
+      <Screen>
+        <AdminScreen />
+      </Screen>,
+    );
+    await settle();
+    await act(async () => {
+      adminDeferred!.resolve(overviewWithPerson);
+    });
+
+    // Saisie en cours puis écriture lancée : l'écran est occupé.
+    const emailInput = view.container.querySelector("#link-p1") as HTMLInputElement;
+    await act(async () => {
+      typeInto(emailInput, "marie@exemple.invalid");
+    });
+    expect(
+      (view.container.querySelector("#link-p1") as HTMLInputElement).value,
+    ).toBe("marie@exemple.invalid");
+    const deactivate = () =>
+      Array.from(view.container.querySelectorAll("button")).find(
+        (b) => b.textContent === "Désactiver",
+      ) as HTMLButtonElement;
+    const disableButton = deactivate();
+    await act(async () => {
+      disableButton.click();
+    });
+    expect(mutationDeferred).not.toBeNull();
+    expect(deactivate().disabled).toBe(true);
+
+    // Même compte : la saisie et l'écriture en cours sont conservées.
+    await emitAuth("SIGNED_IN", { user: { id: "u1" } });
+    expect(
+      (view.container.querySelector("#link-p1") as HTMLInputElement).value,
+    ).toBe("marie@exemple.invalid");
+    expect(deactivate().disabled).toBe(true);
+
+    // Compte réellement différent : écran remis à zéro.
+    const inFlight = mutationDeferred!;
+    await emitAuth("SIGNED_IN", { user: { id: "u2" } });
+    await settle();
+    await act(async () => {
+      adminDeferred!.resolve(overviewWithPerson);
+    });
+    expect(
+      (view.container.querySelector("#link-p1") as HTMLInputElement).value,
+    ).toBe("");
+    expect(deactivate().disabled).toBe(false);
+
+    // L'écriture de l'ancien compte revient en retard : sans effet.
+    await act(async () => {
+      inFlight.resolve(overviewWithPerson);
+    });
+    expect(deactivate().disabled).toBe(false);
   });
 });
 
