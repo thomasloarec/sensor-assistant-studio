@@ -8,7 +8,7 @@
 import { GlobalRegistrator } from "@happy-dom/global-registrator";
 GlobalRegistrator.register({ url: "https://exemple.invalid/standex" });
 
-import { afterEach, describe, expect, mock, test } from "bun:test";
+import { afterAll, afterEach, describe, expect, mock, test } from "bun:test";
 import * as React from "react";
 import { act, cleanup, render } from "@testing-library/react";
 import {
@@ -59,10 +59,15 @@ let crmState = {
   sessionGeneration: 0,
   refresh: () => undefined,
 };
+const realCrmContext = await import("../src/components/standex/dashboard/crm-context");
 mock.module("@/components/standex/dashboard/crm-context", () => ({
   useCrm: () => crmState,
   CrmProvider: ({ children }: { children: React.ReactNode }) => children,
 }));
+// Le mock ne doit pas déborder sur les autres fichiers de test.
+afterAll(() => {
+  mock.module("@/components/standex/dashboard/crm-context", () => realCrmContext);
+});
 
 const { ProjectDetail } = await import("../src/routes/standex.projects.$dossierId");
 const { AdminScreen } = await import("../src/routes/standex.admin");
