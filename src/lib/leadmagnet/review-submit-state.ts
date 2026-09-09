@@ -1,6 +1,6 @@
 import type { NdaState } from "./nda";
 
-export type ReviewOperation = "upload" | "submission" | "variant" | null;
+export type ReviewOperation = "validation" | "upload" | "submission" | "variant" | null;
 
 /** Diagnostic affichable avant toute tentative. La preuve reste exclusivement serveur. */
 export function ndaTransferGuidance(nda: NdaState): string | null {
