@@ -7,7 +7,7 @@ import { t } from "@/lib/i18n/core";
  * variantes, offres, échantillons, confidentialité, documents, 3D) reste
  * accessible et est réutilisée telle quelle dans la fiche projet.
  */
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createFileRoute, Link, Outlet, useRouterState } from "@tanstack/react-router";
 import { ChevronDown } from "lucide-react";
 import { BrandLogo } from "@/components/standex/brand-logo";

@@ -3100,8 +3100,9 @@ export function DesignSpace({
       {backend?.role ? (
         <section className="surface-interactive space-y-2 rounded-[var(--r-lg)] p-4">
           <h3 className="t-title-s">{t("Espace de travail Standex")}</h3>
-          <p className="t-caption">{msg("Accès équipe Standex ({0})", [backend.role])}</p>
-          <p className="t-caption">{t("Projets, tâches et revues de l'équipe")}</p>
+          <p className="t-caption">
+            {msg("Projets, tâches et revues de l'équipe — accès {0}", [backend.role])}
+          </p>
           <div className="flex flex-wrap gap-2">
             <Button variant="outline" asChild>
               <Link to="/standex">{t("Ouvrir l'espace de travail")}</Link>
