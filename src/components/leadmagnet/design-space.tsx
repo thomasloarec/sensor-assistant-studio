@@ -97,8 +97,11 @@ import {
   APPROVED_NDA_TEMPLATE,
   INITIAL_NDA,
   NDA_FIELD_LABELS,
+  NDA_DISABLE_CONFIRMATION,
   disableNda,
   enableNda,
+  ndaDisableNeedsConfirmation,
+  planNdaToggle,
   ndaAllowsConfidentialTransfer,
   ndaDisableBlockedReason,
   ndaStatusLabel,
@@ -552,6 +555,8 @@ export function DesignSpace({
   const [busy, setBusy] = useState(false);
   const busyRef = useRef(false);
   const [busyOperation, setBusyOperation] = useState<ReviewOperation>(null);
+  // Verrou dédié au choix NDA : une seule bascule à la fois, relectures inhibées.
+  const ndaToggleRef = useRef(false);
   const ndaSectionRef = useRef<HTMLButtonElement | null>(null);
   const [reviewSections, setReviewSections] = useState<string[]>(["resume", "nda", "envoi"]);
 
