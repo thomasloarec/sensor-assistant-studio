@@ -121,6 +121,10 @@ import {
 import {
   checkSubmission,
   submissionBinding,
+} from "@/lib/leadmagnet/submission";
+import {
+  applyBindingCycle,
+  consentNoticeFor,
   submit,
   technicalSummary,
 } from "@/lib/leadmagnet/submission";
@@ -418,6 +422,10 @@ export function DesignSpace({
   }, [dossier.sourceLocale]);
 
   const [privacy, setPrivacy] = useState(INITIAL_PRIVACY);
+  /** Miroir synchrone de l'état des accords : l'effet de liaison est asynchrone
+   * et ne doit pas relire une valeur capturée trop tôt. */
+  const privacyRef = useRef(privacy);
+  privacyRef.current = privacy;
   const [nda, setNda] = useState<NdaState>(INITIAL_NDA);
   const [ndaPreview, setNdaPreview] = useState<FilledNda | null>(null);
   const [ndaError, setNdaError] = useState<string | null>(null);
