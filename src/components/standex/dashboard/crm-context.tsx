@@ -7,21 +7,33 @@
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { CRM_UNAVAILABLE, probeCrm, type CrmCapabilities } from "@/lib/leadmagnet/dashboard-adapter";
 import { supabase } from "@/lib/standex/supabase";
+import { fetchStaffInbox } from "@/lib/leadmagnet/supabase-adapter";
 
 interface CrmContextValue {
   capabilities: CrmCapabilities | null;
+  /** Rôle interne hérité : sert uniquement à réserver les diagnostics
+   *  techniques aux administrateurs. */
+  legacyRole: "rnd" | "sales" | "admin" | null;
   refresh: () => void;
 }
 
-const CrmContext = createContext<CrmContextValue>({ capabilities: null, refresh: () => {} });
+const CrmContext = createContext<CrmContextValue>({
+  capabilities: null,
+  legacyRole: null,
+  refresh: () => {},
+});
 
 export function CrmProvider({ children }: { children: React.ReactNode }) {
   const [capabilities, setCapabilities] = useState<CrmCapabilities | null>(null);
+  const [legacyRole, setLegacyRole] = useState<"rnd" | "sales" | "admin" | null>(null);
 
   const refresh = useCallback(() => {
     probeCrm()
       .then(setCapabilities)
       .catch(() => setCapabilities(CRM_UNAVAILABLE));
+    fetchStaffInbox()
+      .then((inbox) => setLegacyRole(inbox.role ?? null))
+      .catch(() => setLegacyRole(null));
   }, []);
 
   useEffect(() => {
@@ -35,7 +47,7 @@ export function CrmProvider({ children }: { children: React.ReactNode }) {
     return () => data.subscription.unsubscribe();
   }, [refresh]);
 
-  return <CrmContext.Provider value={{ capabilities, refresh }}>{children}</CrmContext.Provider>;
+  return <CrmContext.Provider value={{ capabilities, legacyRole, refresh }}>{children}</CrmContext.Provider>;
 }
 
 export function useCrm() {
