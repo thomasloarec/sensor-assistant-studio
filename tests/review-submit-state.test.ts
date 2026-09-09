@@ -5,7 +5,13 @@ import {
   reviewOperationLabel,
 } from "../src/lib/leadmagnet/review-submit-state";
 
-const nda = (patch: Partial<NdaState>): NdaState => ({ ...INITIAL_NDA, ...patch });
+// Le NDA est optionnel par défaut : ces cas partent d'un NDA explicitement demandé.
+const nda = (patch: Partial<NdaState>): NdaState => ({
+  ...INITIAL_NDA,
+  required: true,
+  status: "requested",
+  ...patch,
+});
 
 describe("retour de transmission à la revue", () => {
   test("explique chaque blocage NDA sans confondre accord et preuve", () => {

@@ -237,3 +237,29 @@
   `notice-danger`, jamais le style succès.
 - Couverture rendue : NDA requis non vérifié, NDA vérifié/non requis, opération active et
   message d'échec. Les nouvelles phrases sont présentes dans les huit langues.
+
+## 2026-09-09 — NDA optionnel (choix explicite du client)
+
+- Nouveau défaut applicatif : `INITIAL_NDA` = `{ required: false, status: "not_required",
+  proof: null }`. Un nouveau dossier peut donc être rempli, déposé, traduit et transmis
+  sans NDA. Les consentements de partage restent distincts et inchangés.
+- Case explicite « Je souhaite un accord de confidentialité (NDA) » dans Confidentialité et
+  NDA. Décochée : champs, aperçu, téléchargement, préparation et statut serveur sont masqués,
+  une notice explique que rien n'est demandé. Cochée : les gardes précédentes s'appliquent
+  intégralement (preuve serveur `in_force` obligatoire avant tout transfert confidentiel).
+  Les champs déjà saisis survivent aux deux sens du basculement.
+- Helpers : `enableNda`, `disableNda`, `canDisableNda`, `ndaDisableBlockedReason`
+  (`src/lib/leadmagnet/nda.ts`). La désactivation est refusée dès qu'il y a un engagement :
+  `awaiting_signatures`, `in_force`, ou une preuve vérifiée.
+- Serveur : `supabase/schema/migration_v1.7_optional_nda.sql` (additive, NON APPLIQUÉE)
+  ajoute `lead_priv.set_nda_requirement` + wrapper `public.lead_set_nda_requirement`,
+  réservé au propriétaire du dossier, sans mise à jour en masse et sans toucher un NDA
+  engagé ou en vigueur. Tant qu'elle n'est pas appliquée par root, l'appel échoue
+  proprement (`PGRST202`) et l'écran relit l'état serveur : aucun contournement frontend,
+  le SQL reste l'autorité (`lead_submit_revision` refuse toujours `NDA_NOT_IN_FORCE`).
+- Dossiers existants : aucun n'est modifié automatiquement. Un dossier déjà créé avec NDA
+  requis reste requis jusqu'à ce que son propriétaire décoche la case, une fois V1.7
+  appliquée.
+- Gates : 291 tests / 43 108 assertions, typecheck OK, build OK, revues SQL 76/76 et 9/9,
+  inventaire i18n `TOTAL 0`. Smoke navigateur : case décochée par défaut, champs masqués,
+  activation → champs + gardes NDA, désactivation → plus de blocage, zéro erreur console.

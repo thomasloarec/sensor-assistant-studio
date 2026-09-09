@@ -27,6 +27,8 @@ export const LEAD_RPC = {
   recordNdaProof: "lead_admin_record_nda_proof",
   prepareNda: "lead_prepare_nda",
   ndaStatus: "lead_nda_status",
+  // NDA optionnel (migration 1.7) : choix explicite du propriétaire du dossier.
+  setNdaRequirement: "lead_set_nda_requirement",
   // Version anglaise du rapport (migration 1.6) : appelées UNIQUEMENT par le
   // serveur avec le rôle de service, jamais par le navigateur.
   reportEnAuthorize: "lead_report_en_authorize",
@@ -75,6 +77,16 @@ const MESSAGES: { match: RegExp; message: string }[] = [
     match: /REVIEW_NOT_VALIDATED/,
     message:
       "Cette étape n'est possible qu'après un retour Standex validé sur la version en cours.",
+  },
+  {
+    match: /NDA_ENGAGEMENT_IN_PROGRESS/,
+    message:
+      "Un accord de confidentialité est déjà engagé sur ce dossier : il ne peut plus être retiré depuis cet écran.",
+  },
+  {
+    match: /PGRST202|Could not find the function/,
+    message:
+      "Cette action n'est pas encore disponible côté Standex : votre choix reste enregistré localement.",
   },
   {
     match: /NOT_ALLOWED|permission denied|42501/,

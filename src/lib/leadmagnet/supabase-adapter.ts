@@ -610,6 +610,19 @@ export async function fetchNdaStatus(dossierId: string): Promise<NdaStatusView> 
   return rpc<NdaStatusView>(LEAD_RPC.ndaStatus, { p_dossier: dossierId });
 }
 
+/** Choix explicite du propriétaire : NDA requis ou non pour CE dossier.
+ * Le serveur refuse tout retrait dès qu'un engagement réel existe (signatures
+ * en attente, NDA en vigueur, preuve vérifiée) : cet écran ne contourne rien. */
+export async function setNdaRequirement(
+  dossierId: string,
+  required: boolean,
+): Promise<NdaStatusView> {
+  return rpc<NdaStatusView>(LEAD_RPC.setNdaRequirement, {
+    p_dossier: dossierId,
+    p_required: required,
+  });
+}
+
 
 /** Preuve NDA vérifiée : réservée à un administrateur Standex habilité. */
 export async function recordNdaProof(input: {

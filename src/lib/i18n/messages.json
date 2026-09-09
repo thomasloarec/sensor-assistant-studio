@@ -15820,5 +15820,77 @@
     "Отправка не выполнена. Ничего не отправлено; повторите попытку.",
     "L'invio non è riuscito. Non è stato inviato nulla; riprovi.",
     "送信できませんでした。何も送信されていません。もう一度お試しください。"
+  ],
+  "Le choix n'a pas pu être enregistré côté Standex.": [
+    "Your choice could not be saved on the Standex side.",
+    "您的选择未能保存到 Standex 一侧。",
+    "Die Auswahl konnte auf Standex-Seite nicht gespeichert werden.",
+    "No se pudo guardar su elección en el lado de Standex.",
+    "Не удалось сохранить ваш выбор на стороне Standex.",
+    "Non è stato possibile salvare la scelta sul lato Standex.",
+    "選択内容を Standex 側に保存できませんでした。"
+  ],
+  "Je souhaite un accord de confidentialité (NDA)": [
+    "I want a non-disclosure agreement (NDA)",
+    "我需要一份保密协议（NDA）",
+    "Ich möchte eine Geheimhaltungsvereinbarung (NDA)",
+    "Deseo un acuerdo de confidencialidad (NDA)",
+    "Мне нужно соглашение о неразглашении (NDA)",
+    "Desidero un accordo di riservatezza (NDA)",
+    "秘密保持契約（NDA）を希望します"
+  ],
+  "Uniquement si votre entreprise en a besoin. Sans NDA, vous pouvez remplir et transmettre votre dossier normalement : les accords de partage restent séparés et inchangés.": [
+    "Only if your company needs one. Without an NDA you can still complete and send your case file normally: the sharing agreements remain separate and unchanged.",
+    "仅在贵公司需要时使用。没有 NDA，您仍可正常填写并提交文件：共享同意事项保持独立且不变。",
+    "Nur wenn Ihr Unternehmen sie benötigt. Ohne NDA können Sie Ihr Dossier ganz normal ausfüllen und senden: Die Freigabe-Einwilligungen bleiben getrennt und unverändert.",
+    "Solo si su empresa lo necesita. Sin NDA puede completar y enviar su expediente con normalidad: los consentimientos de intercambio siguen separados y sin cambios.",
+    "Только если это нужно вашей компании. Без NDA вы можете обычным образом заполнить и отправить дело: согласия на передачу остаются отдельными и неизменными.",
+    "Solo se la vostra azienda ne ha bisogno. Senza NDA potete comunque compilare e inviare il fascicolo normalmente: i consensi di condivisione restano separati e invariati.",
+    "貴社が必要とする場合のみです。NDA がなくてもカルテを通常どおり作成し送信できます。共有の同意は別個で変更されません。"
+  ],
+  "Aucun accord de confidentialité n'est demandé pour ce projet. Cochez la case ci-dessus si vous en voulez un.": [
+    "No non-disclosure agreement is requested for this project. Tick the box above if you want one.",
+    "本项目未申请保密协议。如需签署，请勾选上方选项。",
+    "Für dieses Projekt wird keine Geheimhaltungsvereinbarung angefordert. Aktivieren Sie oben das Kästchen, wenn Sie eine wünschen.",
+    "No se solicita ningún acuerdo de confidencialidad para este proyecto. Marque la casilla anterior si desea uno.",
+    "Для этого проекта соглашение о неразглашении не запрашивается. Отметьте поле выше, если оно вам нужно.",
+    "Per questo progetto non è richiesto alcun accordo di riservatezza. Selezionate la casella qui sopra se ne desiderate uno.",
+    "このプロジェクトでは秘密保持契約は要求されていません。必要な場合は上のチェックボックスを選択してください。"
+  ],
+  "Un accord de confidentialité vérifié est en vigueur sur ce dossier : il ne peut pas être retiré depuis cet écran.": [
+    "A verified non-disclosure agreement is in force on this case file: it cannot be removed from this screen.",
+    "本文件已有经核实的生效保密协议：无法在此页面撤销。",
+    "Für dieses Dossier gilt eine geprüfte Geheimhaltungsvereinbarung: Sie kann auf diesem Bildschirm nicht entfernt werden.",
+    "Hay un acuerdo de confidencialidad verificado en vigor en este expediente: no puede retirarse desde esta pantalla.",
+    "По этому делу действует проверенное соглашение о неразглашении: его нельзя отменить на этом экране.",
+    "Su questo fascicolo è in vigore un accordo di riservatezza verificato: non può essere rimosso da questa schermata.",
+    "この案件には検証済みの秘密保持契約が有効です。この画面からは解除できません。"
+  ],
+  "Le document est déjà en attente de signatures : contactez l'équipe Standex pour annuler cette demande.": [
+    "The document is already awaiting signatures: contact the Standex team to cancel this request.",
+    "文件已在等待签署：请联系 Standex 团队取消该申请。",
+    "Das Dokument wartet bereits auf Unterschriften: Wenden Sie sich an das Standex-Team, um diese Anfrage zu stornieren.",
+    "El documento ya está a la espera de firmas: contacte al equipo Standex para cancelar esta solicitud.",
+    "Документ уже ожидает подписей: обратитесь к команде Standex, чтобы отменить запрос.",
+    "Il documento è già in attesa di firme: contattate il team Standex per annullare questa richiesta.",
+    "書類はすでに署名待ちです。この依頼を取り消すには Standex チームにご連絡ください。"
+  ],
+  "Un accord de confidentialité est déjà engagé sur ce dossier : il ne peut plus être retiré depuis cet écran.": [
+    "A non-disclosure agreement is already under way on this case file: it can no longer be removed from this screen.",
+    "本文件的保密协议已在进行中：无法再从此页面撤销。",
+    "Für dieses Dossier läuft bereits eine Geheimhaltungsvereinbarung: Sie kann auf diesem Bildschirm nicht mehr entfernt werden.",
+    "Ya hay un acuerdo de confidencialidad en curso en este expediente: ya no puede retirarse desde esta pantalla.",
+    "По этому делу соглашение о неразглашении уже в процессе: его больше нельзя отменить на этом экране.",
+    "Su questo fascicolo è già avviato un accordo di riservatezza: non può più essere rimosso da questa schermata.",
+    "この案件では秘密保持契約がすでに進行中です。この画面からは解除できません。"
+  ],
+  "Cette action n'est pas encore disponible côté Standex : votre choix reste enregistré localement.": [
+    "This action is not available on the Standex side yet: your choice stays saved locally.",
+    "该操作在 Standex 一侧尚不可用：您的选择仅在本地保存。",
+    "Diese Aktion ist auf Standex-Seite noch nicht verfügbar: Ihre Auswahl bleibt lokal gespeichert.",
+    "Esta acción todavía no está disponible en el lado de Standex: su elección queda guardada localmente.",
+    "Это действие пока недоступно на стороне Standex: ваш выбор сохранён локально.",
+    "Questa azione non è ancora disponibile sul lato Standex: la vostra scelta resta salvata localmente.",
+    "この操作は Standex 側でまだ利用できません。選択内容はローカルに保存されます。"
   ]
 }
