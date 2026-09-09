@@ -311,3 +311,10 @@ export const bladeOffsetY = (s: SensorModel) => {
 };
 export const bladeLength = (s: SensorModel) => (s.reed ? s.reed[0] : s.body[0]) * 0.64;
 export const MAGNET_REFERENCE = { length: 32.4, height: 10, width: 16.7 }; // M02, Packaged Magnets V03, 18 Jun 2026.
+/** Encombrement réellement occupé [longueur, hauteur, largeur] : la longueur
+ * inclut les terminaisons quand elles sont documentées (MK24-A-J : 5,5 mm avec
+ * connexions J, et non les 5 mm du seul corps). Aucune valeur n'est inventée :
+ * sans terminaison documentée, c'est le corps qui fait foi. */
+export function overallEnvelope(s: SensorModel): readonly [number, number, number] {
+  return [Math.max(s.body[0], s.terminalSpan ?? 0), s.body[1], s.body[2]];
+}

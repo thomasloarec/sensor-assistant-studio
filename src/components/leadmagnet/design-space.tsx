@@ -17,11 +17,13 @@ import {
   Loader2,
   Pencil,
   Check,
+  Search,
   X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CandidateThumbnail } from "@/components/leadmagnet/candidate-thumbnail";
 import { CUSTOM_SENSOR_ID, sensorById } from "@/lib/standex/sensor-catalog";
+import SensorCatalog from "@/components/standex/workshop/sensor-catalog";
 import { LanguagePicker, useLocale } from "@/lib/i18n/react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -119,9 +121,9 @@ import {
 import {
   checkSubmission,
   submissionBinding,
-  submit,
-  technicalSummary,
 } from "@/lib/leadmagnet/submission";
+import { submit, technicalSummary } from "@/lib/leadmagnet/submission";
+import { applyBindingCycle, consentNoticeFor } from "@/lib/leadmagnet/submission-cycle";
 import {
   sentHistory,
   statusDetail,
@@ -416,6 +418,10 @@ export function DesignSpace({
   }, [dossier.sourceLocale]);
 
   const [privacy, setPrivacy] = useState(INITIAL_PRIVACY);
+  /** Miroir synchrone de l'état des accords : l'effet de liaison est asynchrone
+   * et ne doit pas relire une valeur capturée trop tôt. */
+  const privacyRef = useRef(privacy);
+  privacyRef.current = privacy;
   const [nda, setNda] = useState<NdaState>(INITIAL_NDA);
   const [ndaPreview, setNdaPreview] = useState<FilledNda | null>(null);
   const [ndaError, setNdaError] = useState<string | null>(null);
@@ -476,6 +482,9 @@ export function DesignSpace({
   }, []);
 
   const [showWorkshop, setShowWorkshop] = useState(false);
+  /** Catalogue filtrable ouvert DIRECTEMENT depuis le sous-menu : il ne dépend
+   * pas de l'atelier 3D et sa fermeture ne touche à rien du travail en cours. */
+  const [catalogOpen, setCatalogOpen] = useState(false);
   /** Démarrage RÉEL du projet : c'est ici, et pas au montage caché de
    * l'espace, que la langue d'origine du projet est fixée. Changer ensuite la
    * langue de l'interface ne réécrit pas rétrospectivement celle du projet. */
@@ -774,35 +783,33 @@ export function DesignSpace({
   }, []);
 
   // Un accord d'envoi ne vaut que pour le contenu exact qui a été relu.
+  // La décision (liaison, accords consommés, message) vit dans
+  // `applyBindingCycle` : elle est testée sur l'enchaînement réel envoi →
+  // incrément de version → recalcul.
   useEffect(() => {
     let alive = true;
-    submissionBinding({
-      dossier,
-      nda,
-      consents: [],
-      reviewAcknowledged: false,
-      additionalConstraints: extraConstraints,
-      serverDossierId,
-      serverRevision: serverRevision + 1,
+    applyBindingCycle({
+      input: {
+        dossier,
+        nda,
+        consents: [],
+        reviewAcknowledged: false,
+        additionalConstraints: extraConstraints,
+        serverDossierId,
+      },
+      serverRevision,
+      committedRevision: committedRevisionRef.current,
+      privacy: privacyRef.current,
     })
-      .then((next) => {
+      .then((cycle) => {
         if (!alive) return;
+        const next = cycle.binding;
         setBinding((previous) => (previous && sameBinding(previous, next) ? previous : next));
-        // Après un envoi réussi, le compteur passe à la version suivante : les
-        // accords donnés pour la version envoyée sont consommés, mais rien n'a
-        // été modifié. On le dit ainsi au lieu d'accuser une édition.
-        const afterCommit = committedRevisionRef.current === serverRevision;
         setPrivacy((p) => {
           const pruned = pruneStaleConsents(p, next);
           if (pruned !== p) {
             setAcknowledged(false);
-            setConsentNotice(
-              t(
-                afterCommit
-                  ? "Votre envoi est confirmé. Pour transmettre de nouvelles modifications, relisez le résumé et confirmez à nouveau votre accord d'envoi."
-                  : "Le contenu, le dossier visé ou les fichiers ont changé : relisez le résumé et confirmez à nouveau votre accord d'envoi.",
-              ),
-            );
+            setConsentNotice(consentNoticeFor(cycle.afterCommit));
           }
           return pruned;
         });
@@ -813,6 +820,7 @@ export function DesignSpace({
       alive = false;
     };
   }, [dossier, extraConstraints, serverDossierId, serverRevision, nda]);
+
 
   useEffect(() => {
     const warn = (e: BeforeUnloadEvent) => {
@@ -3391,6 +3399,15 @@ export function DesignSpace({
                 variant="ghost"
                 size="sm"
                 className="min-h-11 rounded-[var(--r-pill)] text-base hover:bg-[var(--surface-tint)]"
+                onClick={() => setCatalogOpen(true)}
+              >
+                <Search />
+                {t("Voir les capteurs")}
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="min-h-11 rounded-[var(--r-pill)] text-base hover:bg-[var(--surface-tint)]"
                 onClick={() =>
                   showAdvanced ? setTab("candidats") : goToInlineSection("section-candidats")
                 }
@@ -3398,6 +3415,7 @@ export function DesignSpace({
                 <Cpu />
                 {t("Capteurs possibles")}
               </Button>
+
               <Button
                 variant="ghost"
                 size="sm"
@@ -3505,6 +3523,21 @@ export function DesignSpace({
       >
         {espaceSection}
       </WorkspacePanel>
+
+      {catalogOpen ? (
+        <SensorCatalog
+          selected={dossier.selectedSensorId ?? dossier.workshopSensorId ?? ""}
+          onClose={() => setCatalogOpen(false)}
+          onSelect={(id) => {
+            setDossier((d) => ({
+              ...d,
+              selectedSensorId: id,
+              sensorSyncConfirmed: d.workshopSensorId === id,
+            }));
+            setCatalogOpen(false);
+          }}
+        />
+      ) : null}
     </div>
   );
 }
