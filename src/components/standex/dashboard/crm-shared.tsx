@@ -5,7 +5,6 @@
  *  socle de design.
  */
 import { t } from "@/lib/i18n/core";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   CRM_STAGES,
