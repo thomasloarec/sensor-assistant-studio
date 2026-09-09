@@ -121,6 +121,7 @@ import { englishReportMessage } from "@/lib/leadmagnet/english-report-messages";
 import { EnglishRunLock } from "@/lib/leadmagnet/english-run-lock";
 import {
   ndaTransferGuidance,
+  runGuardedSubmit,
   type ReviewOperation,
 } from "@/lib/leadmagnet/review-submit-state";
 
