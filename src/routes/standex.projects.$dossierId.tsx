@@ -691,9 +691,11 @@ function TrackingTab({
           </div>
         </div>
 
+        <div className="field-actions">
         <Button
           size="sm"
           disabled={busy || dirty.size === 0}
+
           onClick={() => {
             const volume = parseVolumeInput(fields.volumeOverride);
             const estimate = parseAmountInput(fields.estimate);
