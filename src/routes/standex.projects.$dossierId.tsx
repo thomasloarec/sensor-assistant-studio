@@ -917,10 +917,12 @@ function TasksTab({
   detail,
   busy,
   onRun,
+  directory,
 }: {
   detail: CrmProjectDetail;
   busy: boolean;
   onRun: (fn: () => Promise<CrmProjectDetail>, ok: string) => Promise<void>;
+  directory: readonly CrmPerson[];
 }) {
   const p = detail.project;
   // Une clé de demande appartient au compte qui l'a créée.
@@ -933,263 +935,307 @@ function TasksTab({
     dueOn: "",
   });
   const [naReason, setNaReason] = useState<Record<string, string>>({});
+  const [open, setOpen] = useState<Record<string, boolean>>({});
   const [local, setLocal] = useState<string | null>(null);
+  // Une tâche dont le motif « sans objet » manque : on ouvre son bloc et on
+  // pose le curseur dans le champ, plutôt que d'afficher un reproche lointain.
+  const [focusNa, setFocusNa] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!focusNa) return;
+    const el = document.getElementById(`na-${focusNa}`);
+    if (el instanceof HTMLInputElement) el.focus();
+    setFocusNa(null);
+  }, [focusNa]);
+
+  /** Une tâche est écrite telle quelle, seul le champ touché change : aucune
+   *  autre valeur n'est réécrite par un rendu. */
+  const write = (task: CrmTask, patch: Partial<TaskInput>, ok: string) =>
+    void onRun(
+      () =>
+        upsertCrmTask(p.dossierId, {
+          id: task.id,
+          stage: task.stage,
+          label: task.label,
+          stakeholder: task.stakeholder,
+          status: task.status,
+          personId: task.personId,
+          naReason: task.naReason,
+          dueOn: task.dueOn,
+          expectedVersion: task.version,
+          ...patch,
+        }),
+      ok,
+    );
+
+  // Les tâches se lisent par étape, dans l'ordre du parcours ; à l'intérieur
+  // d'une étape, l'urgence décide. Aucune tâche n'est masquée.
+  const groups = ALL_STAGES.map((stage) => ({
+    stage,
+    tasks: sortByUrgency(
+      detail.tasks.filter((task) => task.stage === stage),
+      (task) => task,
+    ),
+  })).filter((group) => group.tasks.length > 0);
 
   return (
     <div className="space-y-4">
-      <p className="text-sm">
-        {progress.percent === null
-          ? t("Aucune tâche : l'avancement est inconnu, il ne vaut pas 0 %.")
-          : `${progress.done}/${progress.total} — ${progress.percent} %`}
-        {progress.blocked > 0 ? ` — ${progress.blocked} ${t("bloquée(s)")}` : ""}
-      </p>
+      {/* L'avancement se voit avant de se lire. */}
+      <div className="panel-block flex flex-wrap items-center gap-3">
+        <span className="t-body">
+          {progress.percent === null
+            ? t("Aucune tâche : l'avancement est inconnu, il ne vaut pas 0 %.")
+            : `${progress.done}/${progress.total} — ${progress.percent} %`}
+          {progress.blocked > 0 ? ` — ${progress.blocked} ${t("bloquée(s)")}` : ""}
+        </span>
+        {progress.percent === null ? null : (
+          <span className="progress-mini" style={{ ["--p" as string]: `${progress.percent}%` }} />
+        )}
+      </div>
 
       {detail.tasks.length === 0 ? (
-        <Button
-          size="sm"
-          variant="outline"
-          disabled={busy}
-          onClick={() =>
-            void onRun(
-              () => applyCrmTemplate(p.dossierId, p.version),
-              t("Liste de tâches type ajoutée."),
-            )
-          }
-        >
-          {t("Ajouter la liste de tâches type")}
-        </Button>
+        <EmptyBlock text={t("Aucune tâche pour ce projet.")}>
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={busy}
+            onClick={() =>
+              void onRun(
+                () => applyCrmTemplate(p.dossierId, p.version),
+                t("Liste de tâches type ajoutée."),
+              )
+            }
+          >
+            {busy ? <Loader2 className="mr-1 h-4 w-4 animate-spin" aria-hidden="true" /> : null}
+            {t("Ajouter la liste de tâches type")}
+          </Button>
+        </EmptyBlock>
       ) : null}
 
-      {local ? <p className="notice-warning t-caption">{local}</p> : null}
+      {local ? <p className="notice-warning t-caption anim-nudge">{local}</p> : null}
 
-      <ul className="space-y-2">
-        {detail.tasks.map((task) => (
-          <li key={task.id} className="panel-block space-y-2 text-sm">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="font-medium">{task.label}</span>
-              <Badge variant="outline">{stageLabel(task.stage)}</Badge>
-              <span className="t-caption text-muted-foreground">
-                {t(STAKEHOLDER_LABEL[task.stakeholder] ?? task.stakeholder)}
-              </span>
-              {task.dueOn ? (
-                <span className="t-caption t-metric">
-                  {t("échéance")} {task.dueOn}
-                </span>
-              ) : (
-                <span className="t-caption text-muted-foreground">{t("sans échéance")}</span>
-              )}
-              {task.status === "done" && task.doneByName ? (
-                <span className="t-caption text-muted-foreground">
-                  {t("terminée par")} {task.doneByName}
-                </span>
-              ) : null}
-            </div>
-            {task.status === "not_applicable" && task.naReason ? (
-              <p className="t-caption text-muted-foreground">
-                {t("Sans objet :")} {task.naReason}
-              </p>
-            ) : null}
-            <div className="flex flex-wrap items-end gap-2">
-              <Select
-                value={task.status}
-                onValueChange={(v) => {
-                  const status = v as TaskStatus;
-                  if (status === "not_applicable" && !(naReason[task.id] ?? "").trim()) {
-                    setLocal(t("Un item « sans objet » demande une justification."));
-                    return;
-                  }
-                  setLocal(null);
-                  void onRun(
-                    () =>
-                      upsertCrmTask(p.dossierId, {
-                        id: task.id,
-                        stage: task.stage,
-                        label: task.label,
-                        stakeholder: task.stakeholder,
-                        status,
-                        personId: task.personId,
-                        naReason: status === "not_applicable" ? (naReason[task.id] ?? "").trim() : null,
-                        dueOn: task.dueOn,
-                        expectedVersion: task.version,
-                      }),
-                    t("Tâche mise à jour."),
-                  );
-                }}
+      {groups.map((group) => (
+        <section key={group.stage} className="space-y-2">
+          <h3 className="t-title-s flex items-center gap-2">
+            {stageLabel(group.stage)}
+            <span className="t-caption text-muted-foreground">
+              {group.tasks.length} {t("tâche(s)")}
+            </span>
+          </h3>
+          <ul className="space-y-2">
+            {group.tasks.map((task) => (
+              <TaskRow
+                key={task.id}
+                task={task}
+                person={personName(directory, task.personId ?? null)}
+                status={
+                  <Select
+                    value={task.status}
+                    onValueChange={(v) => {
+                      const status = v as TaskStatus;
+                      if (status === "not_applicable" && !(naReason[task.id] ?? "").trim()) {
+                        setLocal(t("Un item « sans objet » demande une justification."));
+                        setOpen((m) => ({ ...m, [task.id]: true }));
+                        setFocusNa(task.id);
+                        return;
+                      }
+                      setLocal(null);
+                      write(
+                        task,
+                        {
+                          status,
+                          naReason:
+                            status === "not_applicable" ? (naReason[task.id] ?? "").trim() : null,
+                        },
+                        t("Tâche mise à jour."),
+                      );
+                    }}
+                  >
+                    <SelectTrigger className="status-pill w-44" data-status={task.status}>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {TASK_STATUSES.map((s) => (
+                        <SelectItem key={s} value={s}>
+                          {t(TASK_STATUS_LABEL[s])}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                }
+                toggle={
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    aria-expanded={open[task.id] === true}
+                    aria-controls={`more-${task.id}`}
+                    onClick={() => setOpen((m) => ({ ...m, [task.id]: !m[task.id] }))}
+                  >
+                    <ChevronDown className="h-4 w-4" aria-hidden="true" />
+                    <span className="sr-only">{t("Ouvrir les champs de la tâche")}</span>
+                  </Button>
+                }
               >
-                <SelectTrigger className="min-h-11 w-48">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {TASK_STATUSES.map((s) => (
-                    <SelectItem key={s} value={s}>
-                      {t(TASK_STATUS_LABEL[s])}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <div>
-                <Label className="t-caption" htmlFor={`due-${task.id}`}>
-                  {t("Échéance")}
-                </Label>
-                <Input
-                  id={`due-${task.id}`}
-                  type="date"
-                  value={task.dueOn ?? ""}
-                  onChange={(e) => {
-                    const dueOn = e.target.value || null;
-                    if (dueOn === (task.dueOn ?? null)) return;
-                    setLocal(null);
-                    void onRun(
-                      () =>
-                        upsertCrmTask(p.dossierId, {
-                          id: task.id,
-                          stage: task.stage,
-                          label: task.label,
-                          stakeholder: task.stakeholder,
-                          status: task.status,
-                          personId: task.personId,
-                          naReason: task.naReason,
-                          dueOn,
-                          expectedVersion: task.version,
-                        }),
-                      t("Échéance mise à jour."),
-                    );
-                  }}
-                />
-              </div>
-              <div>
-                <Label className="t-caption">{t("Rôle concerné")}</Label>
-                <Select
-                  value={task.stakeholder}
-                  onValueChange={(v) => {
-                    const stakeholder = v as TaskStakeholder;
-                    if (stakeholder === task.stakeholder) return;
-                    setLocal(null);
-                    void onRun(
-                      () =>
-                        upsertCrmTask(p.dossierId, {
-                          id: task.id,
-                          stage: task.stage,
-                          label: task.label,
-                          stakeholder,
-                          status: task.status,
-                          personId: task.personId,
-                          naReason: task.naReason,
-                          dueOn: task.dueOn,
-                          expectedVersion: task.version,
-                        }),
-                      t("Rôle mis à jour."),
-                    );
-                  }}
-                >
-                  <SelectTrigger className="min-h-11 w-40">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {(["sales", "fae", "client"] as const).map((s) => (
-                      <SelectItem key={s} value={s}>
-                        {t(STAKEHOLDER_LABEL[s] ?? s)}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label className="t-caption" htmlFor={`na-${task.id}`}>
-                  {t("Motif si « sans objet »")}
-                </Label>
-                <Input
-                  id={`na-${task.id}`}
-                  value={naReason[task.id] ?? ""}
-                  onChange={(e) => setNaReason((m) => ({ ...m, [task.id]: e.target.value }))}
-                />
-                <InternalEnglishHint />
-              </div>
-            </div>
-          </li>
-        ))}
-      </ul>
+                {/* Échéance, rôle et motif ne se touchent presque jamais : ils
+                    se déplient, ils n'encombrent pas la ligne. */}
+                <div className="task-more" data-open={open[task.id] === true} id={`more-${task.id}`}>
+                  <div>
+                    <div className="field-row pt-2">
+                      <div className="field">
+                        <Label className="t-caption" htmlFor={`due-${task.id}`}>
+                          {t("Échéance")}
+                        </Label>
+                        <Input
+                          id={`due-${task.id}`}
+                          type="date"
+                          value={task.dueOn ?? ""}
+                          onChange={(e) => {
+                            const dueOn = e.target.value || null;
+                            if (dueOn === (task.dueOn ?? null)) return;
+                            setLocal(null);
+                            write(task, { dueOn }, t("Échéance mise à jour."));
+                          }}
+                        />
+                        <span />
+                      </div>
+                      <div className="field">
+                        <Label className="t-caption">{t("Rôle concerné")}</Label>
+                        <Select
+                          value={task.stakeholder}
+                          onValueChange={(v) => {
+                            const stakeholder = v as TaskStakeholder;
+                            if (stakeholder === task.stakeholder) return;
+                            setLocal(null);
+                            write(task, { stakeholder }, t("Rôle mis à jour."));
+                          }}
+                        >
+                          <SelectTrigger className="min-h-11">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {(["sales", "fae", "client"] as const).map((s) => (
+                              <SelectItem key={s} value={s}>
+                                {t(STAKEHOLDER_LABEL[s] ?? s)}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <span />
+                      </div>
+                      <div className="field">
+                        <Label className="t-caption" htmlFor={`na-${task.id}`}>
+                          {t("Motif si « sans objet »")}
+                        </Label>
+                        <Input
+                          id={`na-${task.id}`}
+                          value={naReason[task.id] ?? ""}
+                          onChange={(e) =>
+                            setNaReason((m) => ({ ...m, [task.id]: e.target.value }))
+                          }
+                        />
+                        <InternalEnglishHint />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </TaskRow>
+            ))}
+          </ul>
+        </section>
+      ))}
 
-      <section className="panel-block grid gap-2 sm:grid-cols-4">
-        <div className="sm:col-span-2">
-          <Label className="t-caption">{t("Nouvelle tâche")}</Label>
-          <Input value={draft.label} onChange={(e) => setDraft({ ...draft, label: e.target.value })} />
-          <InternalEnglishHint />
+      <section className="panel-block space-y-2">
+        <h3 className="t-title-s">{t("Nouvelle tâche")}</h3>
+        <div className="field-row">
+          <div className="field">
+            <Label className="t-caption">{t("Nouvelle tâche")}</Label>
+            <Input
+              value={draft.label}
+              onChange={(e) => setDraft({ ...draft, label: e.target.value })}
+            />
+            <InternalEnglishHint />
+          </div>
+          <div className="field">
+            <Label className="t-caption">{t("Étape")}</Label>
+            <Select
+              value={draft.stage}
+              onValueChange={(v) => setDraft({ ...draft, stage: v as CrmStage })}
+            >
+              <SelectTrigger className="min-h-11">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {ALL_STAGES.map((s) => (
+                  <SelectItem key={s} value={s}>
+                    {stageLabel(s)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <span />
+          </div>
+          <div className="field">
+            <Label className="t-caption">{t("Rôle concerné")}</Label>
+            <Select
+              value={draft.stakeholder}
+              onValueChange={(v) => setDraft({ ...draft, stakeholder: v as TaskStakeholder })}
+            >
+              <SelectTrigger className="min-h-11">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {(["sales", "fae", "client"] as const).map((s) => (
+                  <SelectItem key={s} value={s}>
+                    {t(STAKEHOLDER_LABEL[s] ?? s)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <span />
+          </div>
+          <div className="field">
+            <Label className="t-caption">{t("Échéance (facultative)")}</Label>
+            <Input
+              type="date"
+              value={draft.dueOn}
+              onChange={(e) => setDraft({ ...draft, dueOn: e.target.value })}
+            />
+            <span />
+          </div>
         </div>
-        <div>
-          <Label className="t-caption">{t("Étape")}</Label>
-          <Select
-            value={draft.stage}
-            onValueChange={(v) => setDraft({ ...draft, stage: v as CrmStage })}
+        <div className="field-actions">
+          <Button
+            size="sm"
+            disabled={busy || !draft.label.trim()}
+            onClick={() =>
+              void onRun(async () => {
+                // Clé de création stable : un même ajout rejoué (double-clic,
+                // reprise réseau) rend l'action déjà créée, pas un doublon.
+                const scope = `task:${p.dossierId}:${draft.stage}:${draft.label.trim()}`;
+                const clientKey = requestKeyFor(scope, accountId);
+                const next = await upsertCrmTask(p.dossierId, {
+                  stage: draft.stage,
+                  label: draft.label.trim(),
+                  stakeholder: draft.stakeholder,
+                  status: "todo",
+                  dueOn: draft.dueOn || null,
+                  clientKey,
+                });
+                releaseRequestKey(scope, accountId);
+                setDraft({ label: "", stage: p.stage, stakeholder: "sales", dueOn: "" });
+                return next;
+              }, t("Tâche ajoutée."))
+            }
           >
-            <SelectTrigger className="min-h-11">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {ALL_STAGES.map((s) => (
-                <SelectItem key={s} value={s}>
-                  {stageLabel(s)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+            {busy ? <Loader2 className="mr-1 h-4 w-4 animate-spin" aria-hidden="true" /> : null}
+            {t("Ajouter")}
+          </Button>
         </div>
-        <div>
-          <Label className="t-caption">{t("Rôle concerné")}</Label>
-          <Select
-            value={draft.stakeholder}
-            onValueChange={(v) => setDraft({ ...draft, stakeholder: v as TaskStakeholder })}
-          >
-            <SelectTrigger className="min-h-11">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {(["sales", "fae", "client"] as const).map((s) => (
-                <SelectItem key={s} value={s}>
-                  {t(STAKEHOLDER_LABEL[s] ?? s)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        <div>
-          <Label className="t-caption">{t("Échéance (facultative)")}</Label>
-          <Input
-            type="date"
-            value={draft.dueOn}
-            onChange={(e) => setDraft({ ...draft, dueOn: e.target.value })}
-          />
-        </div>
-        <Button
-          size="sm"
-          disabled={busy || !draft.label.trim()}
-          onClick={() =>
-            void onRun(async () => {
-              // Clé de création stable : un même ajout rejoué (double-clic,
-              // reprise réseau) rend l'action déjà créée, pas un doublon.
-              const scope = `task:${p.dossierId}:${draft.stage}:${draft.label.trim()}`;
-              const clientKey = requestKeyFor(scope, accountId);
-              const next = await upsertCrmTask(p.dossierId, {
-                stage: draft.stage,
-                label: draft.label.trim(),
-                stakeholder: draft.stakeholder,
-                status: "todo",
-                dueOn: draft.dueOn || null,
-                clientKey,
-              });
-              releaseRequestKey(scope, accountId);
-              setDraft({ label: "", stage: p.stage, stakeholder: "sales", dueOn: "" });
-              return next;
-            }, t("Tâche ajoutée."))
-          }
-        >
-
-          {t("Ajouter")}
-        </Button>
       </section>
     </div>
   );
 }
+
 
 /* -------------------------------------------------------------- Notes SAP */
 
