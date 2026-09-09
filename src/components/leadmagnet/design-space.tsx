@@ -121,7 +121,6 @@ import { englishReportMessage } from "@/lib/leadmagnet/english-report-messages";
 import { EnglishRunLock } from "@/lib/leadmagnet/english-run-lock";
 import {
   ndaTransferGuidance,
-  reviewOperationLabel,
   type ReviewOperation,
 } from "@/lib/leadmagnet/review-submit-state";
 
@@ -1153,6 +1152,7 @@ export function DesignSpace({
       setSubmitMessage(
         t("Préparez d'abord le partage du modèle 3D : il doit être déposé et vérifié avant votre accord d'envoi."),
       );
+      setSubmitMessageTone("danger");
       return;
     }
     if (
@@ -1164,6 +1164,7 @@ export function DesignSpace({
       setSubmitMessage(
         t("Le dossier ou la version visée a changé depuis le dépôt du fichier : préparez à nouveau le partage."),
       );
+      setSubmitMessageTone("danger");
       return;
     }
     const input = {
@@ -1233,6 +1234,9 @@ export function DesignSpace({
         setSubmitMessage(outcome.reason);
         setSubmitMessageTone("danger");
       }
+    } catch {
+      setSubmitMessage(t("La transmission n'a pas abouti. Rien n'a été envoyé ; réessayez."));
+      setSubmitMessageTone("danger");
     } finally {
       busyRef.current = false;
       setBusy(false);
