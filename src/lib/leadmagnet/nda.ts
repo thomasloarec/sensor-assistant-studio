@@ -44,13 +44,42 @@ export interface NdaState {
   proof: NdaProof | null;
 }
 
+/** Le NDA est OPTIONNEL : un nouveau dossier démarre sans accord de confidentialité.
+ * Le client l'active explicitement s'il en a besoin ; sinon il soumet directement. */
 export const INITIAL_NDA: NdaState = {
-  required: true,
-  status: "requested",
+  required: false,
+  status: "not_required",
   fields: EMPTY_NDA_FIELDS,
   templateAvailable: true,
   proof: null,
 };
+
+/** Activation explicite : les champs déjà saisis sont conservés, rien n'est signé. */
+export function enableNda(state: NdaState): NdaState {
+  if (state.required) return state;
+  return { ...state, required: true, status: "requested", proof: null };
+}
+
+/** Désactivation possible uniquement tant qu'aucun engagement réel n'existe :
+ * un NDA en attente de signatures, en vigueur, ou avec preuve vérifiée reste en place. */
+export function canDisableNda(state: NdaState): boolean {
+  if (!state.required) return true;
+  if (state.proof) return false;
+  return state.status === "requested" || state.status === "prepared";
+}
+
+export function disableNda(state: NdaState): NdaState {
+  if (!canDisableNda(state)) return state;
+  return { ...state, required: false, status: "not_required", proof: null };
+}
+
+/** Raison lisible d'un refus de désactivation, à afficher près de la case. */
+export function ndaDisableBlockedReason(state: NdaState): string | null {
+  if (canDisableNda(state)) return null;
+  if (state.proof || state.status === "in_force")
+    return "Un accord de confidentialité vérifié est en vigueur sur ce dossier : il ne peut pas être retiré depuis cet écran.";
+  return "Le document est déjà en attente de signatures : contactez l'équipe Standex pour annuler cette demande.";
+}
 
 export function missingNdaFields(f: NdaVariableFields): (keyof NdaVariableFields)[] {
   return (Object.keys(f) as (keyof NdaVariableFields)[]).filter((k) => !f[k].trim());

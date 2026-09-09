@@ -97,7 +97,10 @@ import {
   APPROVED_NDA_TEMPLATE,
   INITIAL_NDA,
   NDA_FIELD_LABELS,
+  disableNda,
+  enableNda,
   ndaAllowsConfidentialTransfer,
+  ndaDisableBlockedReason,
   ndaStatusLabel,
   prepareNda,
   type NdaState,
@@ -132,6 +135,7 @@ import {
   downloadDesignFile,
   prepareNdaOnServer,
   fetchNdaStatus,
+  setNdaRequirement,
   type NdaStatusView,
   type UploadedFile,
 } from "@/lib/leadmagnet/supabase-adapter";
@@ -630,6 +634,37 @@ export function DesignSpace({
       setNdaError(error instanceof Error ? error.message : t("Statut NDA indisponible."));
     }
   }, [applyNdaStatus, serverDossierId]);
+
+  /** Le NDA est optionnel : cette case porte le choix explicite du client.
+   * Les champs déjà saisis sont conservés dans les deux sens ; le serveur reste
+   * l'autorité dès qu'un dossier existe et refuse tout retrait déjà engagé. */
+  const toggleNdaRequirement = useCallback(
+    async (next: boolean) => {
+      setNdaError(null);
+      const blocked = !next ? ndaDisableBlockedReason(nda) : null;
+      if (blocked) {
+        setNdaError(t(blocked));
+        return;
+      }
+      setNda((n) => (next ? enableNda(n) : disableNda(n)));
+      if (!next) setNdaPreview(null);
+      if (!serverDossierId || !backend?.ready) return;
+      const gen = contextGenRef.current;
+      try {
+        const status = await setNdaRequirement(serverDossierId, next);
+        if (contextGenRef.current !== gen) return;
+        applyNdaStatus(status);
+      } catch (error) {
+        if (contextGenRef.current !== gen) return;
+        setNdaError(
+          error instanceof Error ? error.message : t("Le choix n'a pas pu être enregistré côté Standex."),
+        );
+        // Le serveur fait autorité : on relit plutôt que de garder un état inventé.
+        void refreshNdaStatus();
+      }
+    },
+    [applyNdaStatus, backend?.ready, nda, refreshNdaStatus, serverDossierId],
+  );
 
   /** À la reprise, le statut local est volontairement remis à zéro puis relu au
    * serveur. Une panne reste visible et ne fabrique jamais de preuve locale. */
@@ -2237,6 +2272,33 @@ export function DesignSpace({
             <span className="flex-1">{t("Confidentialité et NDA —")} {ndaStatusLabel(nda)}</span>
           </AccordionTrigger>
           <AccordionContent className="space-y-3">
+            <label className="flex min-h-11 cursor-pointer items-start gap-3">
+              <Checkbox
+                className="mt-1"
+                checked={nda.required}
+                onCheckedChange={(v) => {
+                  void toggleNdaRequirement(v === true);
+                }}
+                aria-describedby="nda-optional-help"
+              />
+              <span className="space-y-1">
+                <span className="t-body block font-medium">
+                  {t("Je souhaite un accord de confidentialité (NDA)")}
+                </span>
+                <span id="nda-optional-help" className="t-caption block">
+                  {t("Uniquement si votre entreprise en a besoin. Sans NDA, vous pouvez remplir et transmettre votre dossier normalement : les accords de partage restent séparés et inchangés.")}
+                </span>
+              </span>
+            </label>
+
+            {!nda.required ? (
+              <p className="notice notice-info" role="status">
+                {t("Aucun accord de confidentialité n'est demandé pour ce projet. Cochez la case ci-dessus si vous en voulez un.")}
+              </p>
+            ) : null}
+
+            {nda.required ? (
+              <>
             <p className="text-sm">
               {t("Modèle juridique approuvé :")} <strong>{APPROVED_NDA_TEMPLATE.fileName}</strong> (SHA-256{" "}
               {APPROVED_NDA_TEMPLATE.sha256.slice(0, 16)}{t("…, vérifié avant chaque remplissage). L'original reste intact : seule une copie remplie est produite, sur cet appareil, sans transmettre le dossier.")}
@@ -2326,6 +2388,8 @@ export function DesignSpace({
             <p className="t-caption">
               {t("Générer un document n'est pas une signature : aucune signature ni tampon n'est ajouté, le document reste non signé. Le statut « en vigueur » n'est accordé que sur preuve vérifiée côté Standex ; tant qu'il n'est pas atteint, aucun contenu confidentiel n'est transmis.")}
             </p>
+              </>
+            ) : null}
           </AccordionContent>
         </AccordionItem>
 

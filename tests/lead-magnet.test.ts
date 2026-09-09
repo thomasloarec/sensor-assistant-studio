@@ -18,7 +18,15 @@ import {
 } from "../src/lib/leadmagnet/cabling";
 import { combosForSensor, freeReference } from "../src/lib/leadmagnet/connectors";
 import { INITIAL_PRIVACY, canTransfer, grantConsent } from "../src/lib/leadmagnet/privacy";
-import { INITIAL_NDA, ndaAllowsConfidentialTransfer, prepareNda } from "../src/lib/leadmagnet/nda";
+import {
+  INITIAL_NDA,
+  canDisableNda,
+  disableNda,
+  enableNda,
+  ndaAllowsConfidentialTransfer,
+  ndaDisableBlockedReason,
+  prepareNda,
+} from "../src/lib/leadmagnet/nda";
 import { buildSnapshot, checkSubmission, submissionBinding, submit } from "../src/lib/leadmagnet/submission";
 import { createOffer, invalidationFor, guardRevision, reviewForClient } from "../src/lib/leadmagnet/review";
 import { routeSamples, createSampleRequest, findExactPart } from "../src/lib/leadmagnet/samples";
@@ -129,19 +137,50 @@ test("connecteurs : aucune combinaison inventée", () => {
   });
 });
 
-test("NDA : un brouillon n'autorise aucun transfert", () => {
-  expect(ndaAllowsConfidentialTransfer(INITIAL_NDA)).toBe(false);
-  expect(ndaAllowsConfidentialTransfer({ ...INITIAL_NDA, status: "prepared" })).toBe(false);
-  expect(ndaAllowsConfidentialTransfer({ ...INITIAL_NDA, status: "in_force" })).toBe(false);
+test("NDA : optionnel par défaut, et un brouillon activé n'autorise aucun transfert", () => {
+  // Nouveau défaut : aucun NDA demandé, donc aucun blocage de transfert.
+  expect(INITIAL_NDA.required).toBe(false);
+  expect(INITIAL_NDA.status).toBe("not_required");
+  expect(INITIAL_NDA.proof).toBeNull();
+  expect(ndaAllowsConfidentialTransfer(INITIAL_NDA)).toBe(true);
+  const asked = enableNda(INITIAL_NDA);
+  expect(asked).toMatchObject({ required: true, status: "requested" });
+  expect(ndaAllowsConfidentialTransfer(asked)).toBe(false);
+  expect(ndaAllowsConfidentialTransfer({ ...asked, status: "prepared" })).toBe(false);
+  expect(ndaAllowsConfidentialTransfer({ ...asked, status: "in_force" })).toBe(false);
   expect(
     ndaAllowsConfidentialTransfer({
-      ...INITIAL_NDA,
+      ...asked,
       status: "in_force",
       proof: { documentSha256: "a".repeat(64), verifiedAt: "2026-09-08", verifiedBy: "standex" },
     }),
   ).toBe(true);
   const missingTemplate = prepareNda(INITIAL_NDA);
   expect(missingTemplate.ok).toBe(false);
+});
+
+test("NDA optionnel : retrait possible sans engagement, refusé dès qu'il y en a un", () => {
+  const asked = enableNda(INITIAL_NDA);
+  expect(canDisableNda(asked)).toBe(true);
+  expect(disableNda(asked)).toMatchObject({ required: false, status: "not_required", proof: null });
+  // Les champs déjà saisis survivent au va-et-vient de la case.
+  const filled = { ...asked, fields: { ...asked.fields, companyName: "K Motor" } };
+  expect(disableNda(filled).fields.companyName).toBe("K Motor");
+  expect(enableNda(disableNda(filled)).fields.companyName).toBe("K Motor");
+
+  const awaiting = { ...asked, status: "awaiting_signatures" as const };
+  expect(canDisableNda(awaiting)).toBe(false);
+  expect(disableNda(awaiting)).toEqual(awaiting);
+  expect(ndaDisableBlockedReason(awaiting)).toContain("attente de signatures");
+
+  const inForce = {
+    ...asked,
+    status: "in_force" as const,
+    proof: { documentSha256: "a".repeat(64), verifiedAt: "2026-09-09", verifiedBy: "standex" },
+  };
+  expect(canDisableNda(inForce)).toBe(false);
+  expect(disableNda(inForce)).toEqual(inForce);
+  expect(ndaDisableBlockedReason(inForce)).toContain("en vigueur");
 });
 
 const TEST_BINDING = {

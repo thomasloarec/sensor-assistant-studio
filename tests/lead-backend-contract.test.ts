@@ -88,7 +88,8 @@ describe("migration V1.2 : invariants de sécurité", () => {
     const ALL_SQL =
       SQL +
       readFileSync("supabase/schema/migration_v1.5_english_report.sql", "utf8") +
-      readFileSync("supabase/schema/migration_v1.6_english_report_pipeline.sql", "utf8");
+      readFileSync("supabase/schema/migration_v1.6_english_report_pipeline.sql", "utf8") +
+      readFileSync("supabase/schema/migration_v1.7_optional_nda.sql", "utf8");
     for (const name of Object.values(LEAD_RPC))
       expect(ALL_SQL).toContain(`create or replace function public.${name}`);
   });
