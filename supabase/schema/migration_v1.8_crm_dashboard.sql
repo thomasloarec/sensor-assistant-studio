@@ -1361,17 +1361,43 @@ insert into lead.crm_directory (first_name, last_name, role) values
 on conflict do nothing;
 
 -- ----------------------------------------------------------------------------
--- 15. Permissions : rien n'est exécutable par défaut ni par anon.
+-- 15. Permissions.
+--
+-- Règle : un utilisateur connecté n'exécute JAMAIS un utilitaire interne.
+-- L'ancienne boucle « grant à tout ce qui s'appelle crm_% » laissait par exemple
+-- `crm_row_json` (données internes d'un dossier étranger) et `sap_note`
+-- (fabrication d'une note d'administrateur) accessibles à n'importe quel compte
+-- authentifié. Tout est donc révoqué, y compris pour `authenticated`, puis
+-- SEULS les points d'entrée réellement contrôlés sont rouverts.
 -- ----------------------------------------------------------------------------
 do $$
 declare f text;
 begin
   for f in select 'lead_priv.' || p.proname || '(' || pg_get_function_identity_arguments(p.oid) || ')'
              from pg_proc p join pg_namespace n on n.oid = p.pronamespace
-            where n.nspname = 'lead_priv' and p.proname like 'crm\_%' escape '\'
-               or (n.nspname = 'lead_priv' and p.proname in ('sap_note','sap_notes_append_only'))
+            where n.nspname = 'lead_priv'
+              and (p.proname like 'crm\_%' escape '\'
+                   or p.proname in ('sap_note','sap_notes_append_only'))
   loop
-    execute format('revoke all on function %s from public, anon', f);
+    execute format('revoke all on function %s from public, anon, authenticated', f);
+  end loop;
+end $$;
+
+revoke all on function lead_priv.role_of(uuid) from public, anon, authenticated;
+
+-- Points d'entrée contrôlés : chacun vérifie l'identité (`require_user`), le
+-- rôle staff actif et l'affectation au dossier avant toute lecture ou écriture.
+do $$
+declare f text;
+  entrypoints text[] := array['crm_capabilities','crm_board','crm_project','crm_set_stage',
+    'crm_set_fields','crm_set_cost','crm_set_price','crm_set_owners','crm_apply_template',
+    'crm_upsert_task','crm_queue_review_notification','crm_publish_review_and_notify',
+    'crm_admin_overview','crm_admin_upsert_person','crm_admin_link_person','crm_admin_set_staff'];
+begin
+  for f in select 'lead_priv.' || p.proname || '(' || pg_get_function_identity_arguments(p.oid) || ')'
+             from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+            where n.nspname = 'lead_priv' and p.proname = any(entrypoints)
+  loop
     execute format('grant execute on function %s to authenticated', f);
   end loop;
   for f in select 'public.' || p.proname || '(' || pg_get_function_identity_arguments(p.oid) || ')'
@@ -1382,9 +1408,6 @@ begin
     execute format('grant execute on function %s to authenticated', f);
   end loop;
 end $$;
-
-revoke all on function lead_priv.role_of(uuid) from public, anon;
-grant execute on function lead_priv.role_of(uuid) to authenticated;
 
 -- Les tables restent inaccessibles directement : tout passe par les fonctions.
 revoke all on lead.crm_directory, lead.dossier_crm, lead.dossier_tasks,
