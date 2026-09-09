@@ -483,7 +483,11 @@ export function sortProjects(projects: readonly CrmProject[], sort: BoardSort): 
         return rb.value.amount - ra.value.amount;
       });
     case "stage_age_desc":
-      return copy.sort((a, b) => time(a.stageSince) - time(b.stageSince));
+      // Tri sur l'âge réellement affiché de l'étape en cours.
+      return copy.sort((a, b) =>
+        Math.max(time(a.stageActivatedAt), time(a.stageSince))
+        - Math.max(time(b.stageActivatedAt), time(b.stageSince)));
+
     case "company_asc":
       return copy.sort((a, b) =>
         norm(a.companyEffective ?? a.company ?? a.title)
