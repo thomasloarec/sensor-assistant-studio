@@ -167,7 +167,7 @@ function Header({ user }: { user: User | null }) {
           <details>
             <summary>{t("Mon espace")}</summary>
             <div>
-              <p>{t(user.email)}</p>
+              <p>{user.email}</p>
               <p>{t(isSupabaseConfigured ? "Données connectées" : "Connexion à configurer")}</p>
               <BaselineStatusBadge />
               <Button variant="ghost" size="sm" onClick={() => supabase?.auth.signOut()}>
@@ -177,7 +177,7 @@ function Header({ user }: { user: User | null }) {
           </details>
         )}
       </div>
-    </header>
+    </AppHeader>
   );
 }
 
