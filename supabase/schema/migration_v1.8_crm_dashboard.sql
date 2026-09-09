@@ -1274,6 +1274,11 @@ returns text language sql immutable set search_path = pg_temp as $$
     when 'sample_revalidated' then 'Sample request revalidated.'
     when 'variant_accepted'   then 'Design variant accepted.'
     when 'nda_prepared'       then 'NDA document prepared.'
+    when 'nda_proof_recorded' then 'Signed NDA proof verified and recorded.'
+    when 'nda_requirement_set' then case
+        when coalesce((_detail->>'nda_required')::boolean, false)
+          then 'NDA set as required for this project.'
+        else 'NDA set as not required for this project.' end
     when 'dossier_assigned'   then 'Team member assigned to the project.'
     else null end;
 $$;
@@ -1340,6 +1345,55 @@ begin
     perform lead_priv.crm_audit_note(l.id, l.at, l.actor, l.dossier_id, l.action, l.detail);
   end loop;
 end $$;
+
+-- `lead_update_sample` d'origine n'écrit AUCUNE ligne d'audit : l'expédition,
+-- la réception et le retour d'essais client échappaient donc au suivi SAP.
+-- Intégration additive minimale : un déclencheur gardé sur les CHANGEMENTS
+-- réels de `lead.sample_requests`. L'RPC d'origine et la provenance de
+-- révision restent inchangées. Aucun texte client (langue d'origine) n'est
+-- recopié dans une note interne censée être en anglais.
+create or replace function lead_priv.crm_sample_note_trg()
+returns trigger language plpgsql security definer
+set search_path = lead, lead_priv, pg_temp as $$
+declare u uuid; part text; qty text;
+begin
+  begin
+    u := auth.uid();
+    if u is not null and not exists (select 1 from auth.users a where a.id = u) then
+      u := null;
+    end if;
+    part := coalesce(nullif(btrim(new.part_number), ''), 'unspecified part');
+    qty  := coalesce(new.quantity::text, '?');
+    -- Statut : uniquement sur transition réelle (même valeur = aucune note).
+    if new.status is distinct from old.status then
+      perform lead_priv.sap_note(new.dossier_id, u,
+        'sample_status:' || new.id::text || ':' || new.status,
+        array['Sample request ' || new.status || ' (' || part || ', '
+              || qty || ' units, design revision ' || new.revision::text || ').']);
+    end if;
+    -- Retour d'essais : on enregistre l'événement, jamais le texte du client.
+    if coalesce(btrim(new.feedback), '') <> ''
+       and new.feedback is distinct from old.feedback then
+      perform lead_priv.sap_note(new.dossier_id, u,
+        'sample_feedback:' || new.id::text || ':' || md5(new.feedback),
+        array['Customer test feedback recorded for ' || part || ' samples ('
+              || qty || ' units, design revision '
+              || coalesce(new.feedback_revision, new.revision)::text
+              || '). See customer record for the original wording.']);
+    end if;
+  exception when others then
+    null; -- Le suivi interne ne fait jamais échouer l'écriture d'origine.
+  end;
+  return null;
+end $$;
+
+drop trigger if exists crm_sample_note on lead.sample_requests;
+create trigger crm_sample_note after update on lead.sample_requests
+  for each row execute function lead_priv.crm_sample_note_trg();
+
+revoke all on function lead_priv.crm_sample_note_trg() from public, anon, authenticated;
+
+
 
 
 -- Rejeu d'une même demande : un double-clic ou une reprise réseau renvoyait

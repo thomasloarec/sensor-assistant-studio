@@ -531,6 +531,77 @@ await expectFail('atomic_publish_requires_a_request_key', () => actor('authentic
   () => value('select public.lead_crm_publish_review_and_notify($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)',
     [null, ...pubArgs.slice(1)])), 'REQUEST_KEY_REQUIRED');
 
+
+// 14.11 Échantillons : `lead_update_sample` n'écrit aucune ligne d'audit.
+//       Le suivi SAP passe donc par le déclencheur gardé sur les changements
+//       réels de `lead.sample_requests` (expédition, réception, retour client).
+const validReview = await value(
+  `select id from lead.design_reviews where dossier_id=$1 and published
+     and verdict='validated' and superseded_by is null order by revision desc limit 1`, [dossier]);
+let sampleId = null;
+if (validReview) {
+  const req = await actor('authenticated', ids.client,
+    () => value('select public.lead_request_samples($1,$2,$3,$4,$5)',
+      [validReview, 'MK03-1A66-200W', 24, 2000, false]));
+  sampleId = req && (req.id || req.sample_id);
+}
+add('sample_request_created_for_tracking', !!sampleId, String(sampleId));
+const notesBeforeSample = await value(
+  'select count(*)::int from lead.sap_notes where dossier_id=$1', [dossier]);
+if (sampleId) {
+  await actor('authenticated', ids.sales,
+    () => value('select public.lead_update_sample($1,$2,$3)', [sampleId, 'shipped', null]));
+}
+const shippedNote = await value(
+  'select body_en from lead.sap_notes where dossier_id=$1 and event_key=$2',
+  [dossier, 'sample_status:' + sampleId + ':shipped']);
+add('sample_shipping_creates_an_english_note',
+  !!shippedNote && shippedNote.includes('shipped') && shippedNote.includes('MK03-1A66-200W')
+    && shippedNote.includes('24 units'), String(shippedNote));
+if (sampleId) {
+  await actor('authenticated', ids.sales,
+    () => value('select public.lead_update_sample($1,$2,$3)', [sampleId, 'shipped', null]));
+}
+add('sample_same_status_creates_no_duplicate', await value(
+  'select count(*)::int from lead.sap_notes where dossier_id=$1 and event_key=$2',
+  [dossier, 'sample_status:' + sampleId + ':shipped']) === 1);
+if (sampleId) {
+  await actor('authenticated', ids.client,
+    () => value('select public.lead_update_sample($1,$2,$3)',
+      [sampleId, null, 'Essais positifs, détection stable à 3 mm.']));
+  await actor('authenticated', ids.client,
+    () => value('select public.lead_update_sample($1,$2,$3)',
+      [sampleId, null, 'Essais positifs, détection stable à 3 mm.']));
+}
+const fbNotes = await db.query(
+  `select body_en from lead.sap_notes where dossier_id=$1 and event_key like 'sample_feedback:%'`,
+  [dossier]);
+add('sample_feedback_creates_one_english_note', fbNotes.rows.length === 1,
+  String(fbNotes.rows.length));
+add('sample_feedback_note_copies_no_client_text',
+  fbNotes.rows.length === 1 && !fbNotes.rows[0].body_en.includes('Essais positifs')
+    && fbNotes.rows[0].body_en.includes('Customer test feedback recorded'),
+  String(fbNotes.rows[0] && fbNotes.rows[0].body_en));
+add('sample_notes_were_added_beyond_previous_state', await value(
+  'select count(*)::int from lead.sap_notes where dossier_id=$1', [dossier]) > notesBeforeSample);
+const sampleRow = await value('select to_jsonb(s) from lead.sample_requests s where s.id=$1', [sampleId]);
+add('sample_revision_provenance_unchanged',
+  !!sampleRow && sampleRow.status === 'shipped' && sampleRow.revision >= 1
+    && sampleRow.feedback_revision === sampleRow.revision,
+  JSON.stringify(sampleRow && { r: sampleRow.revision, fr: sampleRow.feedback_revision }));
+
+// 14.12 NDA : preuve vérifiée et exigence explicite méritent un événement.
+add('nda_proof_sentence_is_english', await value(
+  "select lead_priv.crm_audit_sentence('nda_proof_recorded','{}'::jsonb)")
+  === 'Signed NDA proof verified and recorded.');
+add('nda_requirement_sentence_reflects_the_choice',
+  (await value("select lead_priv.crm_audit_sentence('nda_requirement_set','{\"nda_required\":true}'::jsonb)"))
+    === 'NDA set as required for this project.'
+  && (await value("select lead_priv.crm_audit_sentence('nda_requirement_set','{\"nda_required\":false}'::jsonb)"))
+    === 'NDA set as not required for this project.');
+add('no_noise_for_file_events',
+  (await value("select lead_priv.crm_audit_sentence('file_uploaded','{}'::jsonb)")) === null);
+
 const failedBefore = results.filter((r) => !r.pass).length;
 add('regression_block_ran', results.length > 65, String(failedBefore));
 
