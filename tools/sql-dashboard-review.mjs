@@ -118,7 +118,14 @@ await expectFail('unassigned_staff_cannot_read_crm', () => actor('authenticated'
 //    comme « à classer » sans jamais transporter le contenu technique.
 try {
   const board = await actor('authenticated', ids.sales, () => value('select public.lead_crm_board()'));
-  add('board_lists_unfiled_dossier', board.unfiled.some((d) => d.dossier_id === dossier));
+  // Un dossier sans fiche de suivi apparaît dans la liste normale, avec des
+  // valeurs par défaut honnêtes : étape « lead », version 0, aucun historique
+  // d'étape inventé, et aucune section annexe à ouvrir à la main.
+  const legacy = board.projects.find((d) => d.dossier_id === dossier);
+  add('board_lists_unfiled_dossier',
+    Boolean(legacy) && legacy.stage === 'lead' && Number(legacy.version) === 0
+    && !legacy.stage_since && board.unfiled.length === 0,
+    JSON.stringify(legacy));
   add('board_carries_no_design_payload', !JSON.stringify(board).includes('OWNER_A_DESIGN_SECRET'));
   add('board_exposes_directory', board.directory.length === 12
     && board.directory.some((p) => p.last_name === 'Knoblauch' && p.role === 'fae'));
