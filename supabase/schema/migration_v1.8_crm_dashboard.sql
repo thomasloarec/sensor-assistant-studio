@@ -1186,6 +1186,12 @@ begin
     raise exception 'ACCOUNT_ALREADY_LINKED' using errcode = '42501';
   end if;
   update lead.crm_directory set user_id = target, updated_at = now() where id = _person;
+  -- Rebrancher une personne sur un autre compte change qui « suit » les dossiers
+  -- où elle est responsable : les accès dérivés sont recalculés tout de suite,
+  -- sinon l'ancien compte gardait un accès que plus rien ne justifie.
+  perform lead_priv.crm_reconcile_owner_access(d, u)
+     from (select c.dossier_id as d from lead.dossier_crm c
+            where c.sales_person = _person or c.fae_person = _person) s(d);
   insert into lead.audit_log (actor, action, detail)
   values (u, 'crm_person_linked', jsonb_build_object('person', _person, 'user_id', target));
   return lead_priv.crm_admin_overview();
