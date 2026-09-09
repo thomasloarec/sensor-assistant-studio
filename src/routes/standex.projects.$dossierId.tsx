@@ -184,7 +184,15 @@ function ProjectDetail() {
         >
           ← {t("Projets")}
         </Link>
-        <h2 className="t-title-m">{project?.company ?? project?.title ?? t("Fiche projet")}</h2>
+        <h2 className="t-title-m">
+          {/* Société réellement affichée : celle déclarée par le client, sauf
+              correction interne explicite. Puis le nom du projet. */}
+          {project?.companyEffective ?? project?.company ?? project?.title ?? t("Fiche projet")}
+        </h2>
+        {project?.projectName ? (
+          <span className="t-body text-muted-foreground">{project.projectName}</span>
+        ) : null}
+
         {project ? <Badge variant="outline">{stageLabel(project.stage)}</Badge> : null}
       </div>
 
