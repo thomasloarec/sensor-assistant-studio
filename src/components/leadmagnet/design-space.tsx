@@ -1064,7 +1064,7 @@ export function DesignSpace({
     setOpenDoc(null);
     setNdaPreview(null);
     return contextGenRef.current;
-  }, []);
+  }, [ndaSync]);
 
   /** Ouvre un fichier RÉELLEMENT transmis, pour une version précise, via
    * l'accès authentifié existant. Rien n'est inventé : sans chemin valable ou
