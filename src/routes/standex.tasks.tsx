@@ -110,9 +110,11 @@ function TasksScreen() {
   if (capabilities === null) return <LoadingBlock />;
   if (!capabilities.available)
     return (
-      <p className="notice-warning text-sm">
-        {t("Le suivi des tâches n'est pas installé sur ce serveur :")} {t(capabilities.detail)}
-      </p>
+      <CrmUnavailableNotice
+        plain={t("Le suivi des tâches n'est pas encore activé sur ce serveur.")}
+        detail={capabilities.detail}
+        isAdmin={legacyRole === "admin"}
+      />
     );
 
   return (

@@ -76,10 +76,11 @@ function AdminScreen() {
   if (capabilities === null) return <LoadingBlock />;
   if (!capabilities.available)
     return (
-      <p className="notice-warning text-sm">
-        {t("L'administration de l'espace de travail n'est pas installée sur ce serveur :")}{" "}
-        {t(capabilities.detail)}
-      </p>
+      <CrmUnavailableNotice
+        plain={t("L'administration de l'espace de travail n'est pas encore activée sur ce serveur.")}
+        detail={capabilities.detail}
+        isAdmin={legacyRole === "admin"}
+      />
     );
   if (capabilities.role !== "admin")
     return (
