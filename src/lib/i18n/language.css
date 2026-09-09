@@ -41,19 +41,8 @@
   white-space: nowrap;
   border: 0;
 }
-.studio-header,
-.mw-header {
-  flex-wrap: wrap;
-}
-.studio-account {
-  flex-wrap: wrap;
-}
-.mw-prototype {
-  font-size: 14px;
-}
-.mw-header .language-picker {
-  margin-left: auto;
-}
+/* Le bandeau de tête est un composant unique (<AppHeader>) : il porte lui-même
+   son retour à la ligne et la place du sélecteur de langue. */
 html:lang(zh-CN),
 html:lang(ja-JP) {
   font-family: system-ui, "Microsoft YaHei", "Yu Gothic", sans-serif;
@@ -70,13 +59,9 @@ html:lang(ja-JP) .mw-eyebrow {
   .language-picker select {
     max-width: 100px;
   }
-  .studio-header {
-    gap: 12px;
-  }
-  .mw-header {
-    gap: 12px;
-  }
-  .mw-header .mw-prototype {
+  /* Sur très petit écran, la pastille de prototype cède la place à la marque
+     et au sélecteur de langue. */
+  .mw-prototype {
     display: none;
   }
 }

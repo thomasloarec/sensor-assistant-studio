@@ -15,33 +15,9 @@
   outline: 3px solid var(--ring);
   outline-offset: 2px;
 }
-.studio-header {
-  position: sticky;
-  top: 0;
-  z-index: 30;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-  padding: 20px 30px;
-  flex-shrink: 0;
-  background: var(--material-regular);
-  box-shadow: var(--e-1);
-  backdrop-filter: var(--material-blur);
-}
-.studio-brand {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: var(--heading);
-  font: var(--t-title-s);
-  font-weight: 800;
-  line-height: 1.2;
-}
-.studio-brand-text > span {
-  font-size: 0.875rem;
-}
-.studio-brand small,
+/* Le bandeau de tête du banc est désormais <AppHeader> : les anciennes règles
+   .studio-header, .studio-brand et .studio-header-center ont été retirées.
+   Seule la zone de compte, montée dans les actions du bandeau, subsiste. */
 .studio-eyebrow,
 .studio-sessions h2,
 .studio-scenario-list > summary,
@@ -52,29 +28,13 @@
   font: var(--t-label);
   letter-spacing: var(--tracking-label);
 }
-.studio-brand small {
-  display: block;
-  margin-top: 5px;
-  text-transform: uppercase;
-}
-.studio-header-center,
 .studio-account {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
   color: var(--muted-foreground);
   font: var(--t-caption);
-}
-.studio-header-center {
-  gap: 15px;
-}
-.studio-header-center i {
-  width: 4px;
-  height: 4px;
-  border-radius: var(--r-pill);
-  background: var(--hairline-strong);
-}
-.studio-account {
-  gap: 12px;
 }
 .studio-internal {
   padding: 7px 12px;
@@ -369,16 +329,12 @@
     gap: 26px;
     padding: 0 40px 30px;
   }
-  .studio-intro,
-  .studio-header {
+  .studio-intro {
     padding-right: 40px;
     padding-left: 40px;
   }
 }
 @media (max-width: 1100px) {
-  .studio-header-center {
-    display: none;
-  }
   .studio-grid {
     grid-template-columns: 150px minmax(0, 1fr) minmax(0, 1.1fr);
     gap: 13px;
@@ -428,18 +384,8 @@
   }
 }
 @media (max-width: 700px) {
-  .studio-header {
-    gap: 10px;
-    padding: 16px;
-  }
   .studio-internal {
     display: none;
-  }
-  .studio-brand {
-    font-size: 1rem;
-  }
-  .studio-brand small {
-    font: var(--t-label);
   }
   .studio-intro {
     display: block;
