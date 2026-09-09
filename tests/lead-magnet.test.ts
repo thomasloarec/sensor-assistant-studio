@@ -168,10 +168,14 @@ test("NDA optionnel : retrait possible sans engagement, refusé dès qu'il y en 
   expect(disableNda(filled).fields.companyName).toBe("K Motor");
   expect(enableNda(disableNda(filled)).fields.companyName).toBe("K Motor");
 
+  // V1.7 : une demande non signée reste annulable, même en attente de signatures.
+  // Le serveur applique la même règle et refuse dès qu'une preuve existe.
   const awaiting = { ...asked, status: "awaiting_signatures" as const };
-  expect(canDisableNda(awaiting)).toBe(false);
-  expect(disableNda(awaiting)).toEqual(awaiting);
-  expect(ndaDisableBlockedReason(awaiting)).toContain("attente de signatures");
+  expect(canDisableNda(awaiting)).toBe(true);
+  expect(disableNda(awaiting)).toMatchObject({ required: false, status: "not_required" });
+  expect(ndaDisableNeedsConfirmation(awaiting)).toBe(true);
+  expect(ndaDisableBlockedReason(awaiting)).toBeNull();
+
 
   const inForce = {
     ...asked,
