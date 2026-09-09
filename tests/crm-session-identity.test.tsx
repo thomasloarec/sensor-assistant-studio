@@ -4,7 +4,9 @@
  * doivent survivre. Un VRAI changement de compte, lui, remet tout à zéro.
  */
 import { GlobalRegistrator } from "@happy-dom/global-registrator";
-GlobalRegistrator.register({ url: "https://exemple.invalid/standex" });
+if (!GlobalRegistrator.isRegistered) {
+  GlobalRegistrator.register({ url: "https://exemple.invalid/standex" });
+}
 
 import { afterEach, describe, expect, mock, test } from "bun:test";
 import * as React from "react";
