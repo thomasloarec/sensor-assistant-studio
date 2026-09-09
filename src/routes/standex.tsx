@@ -37,6 +37,7 @@ export const Route = createFileRoute("/standex")({
   }),
 });
 
+/* i18n-canonical : libellés canoniques traduits par t() au rendu. */
 const NAV = [
   { to: "/standex", label: "Projets", exact: true },
   { to: "/standex/tasks", label: "Tâches", exact: false },
