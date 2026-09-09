@@ -27,6 +27,7 @@ import {
 import {
   composeSapNote,
   dedupeSapNotes,
+  latestSapNoteText,
   sapDate,
   sapNoteHeader,
   sapNotesToText,
@@ -436,6 +437,32 @@ describe("notes SAP", () => {
     ];
     expect(dedupeSapNotes(notes).map((n) => n.id)).toEqual(["1", "3"]);
     expect(sapNotesToText(notes).split("\n\n")).toHaveLength(3);
+  });
+
+  test("« Copier la dernière » choisit le max de createdAt, quel que soit l'ordre reçu", () => {
+    // Ordre réel du backend : la plus récente en premier. Un slice(-1)
+    // copierait « Customer project created », la plus ancienne.
+    const created = "09/09/2026 - A :\n- Customer project created";
+    const rev1 = "09/09/2026 - A :\n- Customer submitted design revision 1";
+    const rev2 = "09/09/2026 - A :\n- Customer submitted design revision 2";
+    const newestFirst: SapNote[] = [
+      { id: "3", createdAt: "2026-09-09T12:00:00Z", authorName: "A", eventKey: "rev:2", bodyEn: rev2 },
+      { id: "2", createdAt: "2026-09-09T11:00:00Z", authorName: "A", eventKey: "rev:1", bodyEn: rev1 },
+      { id: "1", createdAt: "2026-09-09T10:00:00Z", authorName: "A", eventKey: "created", bodyEn: created },
+    ];
+    const oldestFirst = [...newestFirst].reverse();
+
+    // La note copiée est celle affichée en tête de l'historique complet.
+    const firstDisplayed = sapNotesToText(newestFirst).split("\n\n")[0];
+    expect(firstDisplayed).toBe(rev2);
+    for (const input of [newestFirst, oldestFirst]) {
+      expect(latestSapNoteText(input)).toBe(rev2);
+      expect(latestSapNoteText(input)).toBe(firstDisplayed);
+    }
+    // L'entrée n'est jamais mutée.
+    expect(newestFirst.map((n) => n.id)).toEqual(["3", "2", "1"]);
+    expect(oldestFirst.map((n) => n.id)).toEqual(["1", "2", "3"]);
+    expect(latestSapNoteText([])).toBe("");
   });
 
   test("nom complet lisible", () => {
