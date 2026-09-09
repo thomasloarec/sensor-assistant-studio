@@ -1340,8 +1340,12 @@ begin
       (select nullif(btrim(m.display_name), '') from lead.staff_members m where m.user_id = _actor),
       'Former Standex user')
   end;
-  insert into lead.sap_notes (dossier_id, author_id, author_name, event_key, body_en)
-  values (_dossier, case when known then _actor end, nm, 'audit:' || _id::text,
+  -- La note porte la date de l'événement, pas celle de la migration : sinon
+  -- tout l'historique repris partagerait le même instant et le tri « plus
+  -- récent d'abord » contredirait la date écrite dans le corps de la note.
+  -- Les avancements réellement nouveaux passent ici avec `at = now()`.
+  insert into lead.sap_notes (dossier_id, created_at, author_id, author_name, event_key, body_en)
+  values (_dossier, _at, case when known then _actor end, nm, 'audit:' || _id::text,
           to_char(_at at time zone 'UTC', 'DD/MM/YYYY') || ' - '
           || nm || ' :' || E'\n- ' || s)
   on conflict (dossier_id, event_key) do nothing;
