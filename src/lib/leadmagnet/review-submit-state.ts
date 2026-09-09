@@ -1,6 +1,6 @@
 import type { NdaState } from "./nda";
 
-export type ReviewOperation = "validation" | "upload" | "submission" | "variant" | null;
+export type ReviewOperation = "validation" | "upload" | "submission" | "variant" | "nda" | null;
 
 /** Diagnostic affichable avant toute tentative. La preuve reste exclusivement serveur. */
 export function ndaTransferGuidance(nda: NdaState): string | null {
@@ -21,6 +21,7 @@ export function reviewOperationLabel(operation: ReviewOperation): string | null 
   if (operation === "upload") return "Dépôt et vérification du fichier 3D en cours…";
   if (operation === "submission") return "Transmission à la revue Standex en cours…";
   if (operation === "variant") return "Reprise de la proposition Standex en cours…";
+  if (operation === "nda") return "Enregistrement de votre choix de NDA…";
   return null;
 }
 

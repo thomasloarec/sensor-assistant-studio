@@ -60,12 +60,19 @@ export function enableNda(state: NdaState): NdaState {
   return { ...state, required: true, status: "requested", proof: null };
 }
 
-/** Désactivation possible uniquement tant qu'aucun engagement réel n'existe :
- * un NDA en attente de signatures, en vigueur, ou avec preuve vérifiée reste en place. */
+/** Désactivation refusée uniquement en présence d'un engagement RÉEL :
+ * une preuve vérifiée, ou un NDA en vigueur. Vérifié côté serveur :
+ * `prepare_nda` passe le dossier en `awaiting_signatures` dès la préparation
+ * d'un document vide, sans preuve ni envoi en signature — ce statut n'est donc
+ * qu'une demande en cours, et le client garde le droit d'y renoncer. */
 export function canDisableNda(state: NdaState): boolean {
   if (!state.required) return true;
   if (state.proof) return false;
-  return state.status === "requested" || state.status === "prepared";
+  return (
+    state.status === "requested" ||
+    state.status === "prepared" ||
+    state.status === "awaiting_signatures"
+  );
 }
 
 export function disableNda(state: NdaState): NdaState {
@@ -73,13 +80,52 @@ export function disableNda(state: NdaState): NdaState {
   return { ...state, required: false, status: "not_required", proof: null };
 }
 
+/** Une demande déjà préparée peut être abandonnée, mais on le dit clairement. */
+export function ndaDisableNeedsConfirmation(state: NdaState): boolean {
+  return (
+    state.required &&
+    canDisableNda(state) &&
+    (state.status === "prepared" || state.status === "awaiting_signatures")
+  );
+}
+
+export const NDA_DISABLE_CONFIRMATION =
+  "Une demande de NDA est déjà ouverte sur ce dossier. La retirer abandonne cette demande ; le document non signé reste sur votre appareil. Continuer ?";
+
 /** Raison lisible d'un refus de désactivation, à afficher près de la case. */
 export function ndaDisableBlockedReason(state: NdaState): string | null {
   if (canDisableNda(state)) return null;
-  if (state.proof || state.status === "in_force")
-    return "Un accord de confidentialité vérifié est en vigueur sur ce dossier : il ne peut pas être retiré depuis cet écran.";
-  return "Le document est déjà en attente de signatures : contactez l'équipe Standex pour annuler cette demande.";
+  return "Un accord de confidentialité vérifié est en vigueur sur ce dossier : il ne peut pas être retiré depuis cet écran.";
 }
+
+/** Décision de basculement, séparée de l'écran pour être réellement testable.
+ * `optimistic` n'est appliqué avant la réponse serveur que lorsqu'il RESTREINT
+ * (activation) : un retrait n'est affiché qu'après confirmation du serveur. */
+export type NdaTogglePlan =
+  | { kind: "blocked"; reason: string }
+  | { kind: "offline"; reason: string }
+  | { kind: "local"; next: NdaState }
+  | { kind: "server"; optimistic: NdaState | null };
+
+export function planNdaToggle(
+  state: NdaState,
+  next: boolean,
+  ctx: { serverDossier: boolean; backendReady: boolean },
+): NdaTogglePlan {
+  if (!next) {
+    const blocked = ndaDisableBlockedReason(state);
+    if (blocked) return { kind: "blocked", reason: blocked };
+  }
+  if (!ctx.serverDossier) return { kind: "local", next: next ? enableNda(state) : disableNda(state) };
+  if (!ctx.backendReady)
+    return {
+      kind: "offline",
+      reason:
+        "Ce dossier est enregistré chez Standex : connectez-vous pour modifier le choix de NDA. Rien n'a été changé.",
+    };
+  return { kind: "server", optimistic: next ? enableNda(state) : null };
+}
+
 
 export function missingNdaFields(f: NdaVariableFields): (keyof NdaVariableFields)[] {
   return (Object.keys(f) as (keyof NdaVariableFields)[]).filter((k) => !f[k].trim());
