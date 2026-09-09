@@ -211,9 +211,14 @@ const RE_EMAIL = /[\w.+-]+@[\w-]+\.[\w.]+/g;
 const RE_REF = /\b[A-Z][A-Z0-9]*\d[A-Z0-9]*(?:-[A-Z0-9]+)*\b/g;
 const RE_FILE = /\b[\w-]+\.(?:glb|pdf|step|stp|iges|igs|docx|png|jpg|jpeg|csv|json)\b/gi;
 const RE_HEX = /\b[0-9a-f]{16,}\b/gi;
-/** Nombre SIGNÉ, jamais collé à un autre chiffre ni à une lettre : 5 ≠ 50. */
+/**
+ * Nombre SIGNÉ, suivi le cas échéant de son unité, avec OU SANS espace :
+ * `0.35A`, `0,35 A` et `300mm` sont tous reconnus. Le nombre ne peut pas être
+ * tronqué (`5` ≠ `50`), mais une virgule ou un point de ponctuation qui suit
+ * ne le fait pas disparaître.
+ */
 const RE_NUMBER = new RegExp(
-  String.raw`(?<![\w.,])([-+]?\d+(?:[.,]\d+)?)(?![\w.,]*\d)\s?(` + UNIT_ALT + String.raw`)?(?![\w])`,
+  String.raw`(?<![\w.,])([-+]?\d+(?:[.,]\d+)?)(?!\d)[  ]?(` + UNIT_ALT + String.raw`)?(?![\w])`,
   "gu",
 );
 
@@ -243,15 +248,14 @@ function multiset(tokens: string[]): Map<string, number> {
   return counts;
 }
 
-const isNumeric = (tok: string) => /^[-+]?\d+(?:[.,]\d+)?$/.test(tok);
-
 export type TranslationCheck = { ok: true } | { ok: false; reason: string };
 
 /**
- * Contrôle strict par multiensembles : chaque jeton de la source doit se
- * retrouver AU MOINS autant de fois dans la traduction, et les nombres nus
- * doivent s'y retrouver EXACTEMENT autant de fois — ni ajoutés, ni supprimés,
- * ni dédoublonnés. Aucun `includes` : `5` ne peut plus être satisfait par `50`.
+ * Contrôle strict par multiensembles : chaque jeton invariant de la source doit
+ * se retrouver EXACTEMENT autant de fois dans la traduction — ni perdu, ni
+ * ajouté, ni dupliqué, ni dédoublonné. Aucun `includes` : `5` ne peut plus être
+ * satisfait par `50`, ni `0.35 A` par `0.35 mA`.
+ * Ce contrôle est LEXICAL : il ne prétend pas juger le sens de la phrase.
  */
 export function checkTranslation(
   source: Segment[],
@@ -268,15 +272,17 @@ export function checkTranslation(
     if (src.length > MAX_TOKENS_PER_SEGMENT || dst.length > MAX_TOKENS_PER_SEGMENT)
       return { ok: false, reason: `TOKEN_BUDGET:${s.id}` };
 
+    // Égalité EXACTE des multiensembles : un nombre, une référence, un e-mail
+    // ou un nom de fichier ne peut être ni perdu, ni ajouté, ni dupliqué.
     const a = multiset(src);
     const b = multiset(dst);
     for (const [tok, n] of a) {
       const m = b.get(tok) ?? 0;
       if (m < n) return { ok: false, reason: `TOKEN_LOST:${s.id}` };
-      if (isNumeric(tok) && m !== n) return { ok: false, reason: `TOKEN_COUNT:${s.id}` };
+      if (m !== n) return { ok: false, reason: `TOKEN_COUNT:${s.id}` };
     }
     for (const [tok, m] of b) {
-      if (isNumeric(tok) && !a.has(tok) && m > 0) return { ok: false, reason: `TOKEN_ADDED:${s.id}` };
+      if (!a.has(tok) && m > 0) return { ok: false, reason: `TOKEN_ADDED:${s.id}` };
     }
   }
   const unknown = Object.keys(translated).filter((id) => !source.some((s) => s.id === id));
