@@ -228,6 +228,7 @@ describe("l'administration appartient au compte connecté", () => {
       return (
         <>
           <input id="probe" value={v} onChange={(e) => setV(e.target.value)} />
+          <button type="button" id="probe-btn" onClick={() => setV("via-click")}>b</button>
           <span id="probe-state">{v}</span>
         </>
       );
@@ -252,9 +253,7 @@ describe("l'administration appartient au compte connecté", () => {
       (view.container.querySelector("#link-p1") as HTMLInputElement).value,
     ).toBe("marie@exemple.invalid");
     const probe = view.container.querySelector("#probe") as HTMLInputElement;
-    delete (probe as unknown as { _valueTracker?: unknown })._valueTracker;
-    probe.value = "zz";
-    fireEvent.input(probe);
+    (view.container.querySelector("#probe-btn") as HTMLButtonElement).click();
     await settle();
     console.log("probe state", view.container.querySelector("#probe-state")?.textContent);
     console.log("after settle val", (view.container.querySelector("#link-p1") as HTMLInputElement).value);
