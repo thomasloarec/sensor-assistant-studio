@@ -392,6 +392,9 @@ export interface DesignSpaceProps {
   accountRequest?: number;
   /** Appelé quand un projet est réellement ouvert, créé ou repris ici. */
   onWorkspaceOpen?: () => void;
+  /** Projet demandé par un lien « /?dossier=… » : ouvert seulement s'il
+   * appartient au compte connecté, avec la garde du brouillon en cours. */
+  requestedDossierId?: string | null;
   /** Retour à l'accueil depuis le logo, SANS démonter cet espace : le brouillon
    * en mémoire, les panneaux et l'atelier restent intacts et on peut revenir. */
   onGoHome?: () => void;
@@ -403,6 +406,7 @@ export function DesignSpace({
   accountRequest = 0,
   onWorkspaceOpen,
   onGoHome,
+  requestedDossierId = null,
 }: DesignSpaceProps) {
   useLocale();
   const [dossier, setDossier] = useState<DesignDossier>(() => createDossier());
@@ -3112,6 +3116,7 @@ export function DesignSpace({
           serverDossierId={serverDossierId}
           contextGeneration={contextGenRef.current}
           onOpenTransferredFile={(f) => void openTransferredFile(f)}
+          requestedDossierId={requestedDossierId}
           onSelectDossier={({ id, revision, title, snapshot }) => {
             if (busyRef.current) return { ok: false };
             if (!guardReplace(t("ouvrir ce dossier"))) return { ok: false };

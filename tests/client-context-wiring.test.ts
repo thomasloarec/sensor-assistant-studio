@@ -20,11 +20,19 @@ const standex = readFileSync("src/components/standex/console/dossier-console.tsx
 
 describe("ouverture d'un dossier", () => {
   test("le contenu envoyé est chargé AVANT le changement de contexte", () => {
-    const click = followup.slice(followup.indexOf("onClick={async () => {"));
-    expect(click.indexOf("await fetchClientView(d.id)")).toBeLessThan(
-      click.indexOf("onSelectDossier({"),
+    const open = followup.slice(followup.indexOf("const openDossier = useCallback("));
+    expect(open.indexOf("await fetchClientView(id)")).toBeGreaterThan(-1);
+    expect(open.indexOf("await fetchClientView(id)")).toBeLessThan(
+      open.indexOf("onSelectDossier({"),
     );
     expect(followup).toContain("if (!out.ok) return;");
+  });
+
+  test("un lien projet n'ouvre qu'un dossier réellement possédé", () => {
+    expect(followup).toContain("if (!list.some((d) => d.id === requestedDossierId))");
+    expect(followup).toContain("Ce lien ne correspond à aucun de vos projets");
+    // La garde du brouillon en cours reste celle de l'espace de conception.
+    expect(design).toContain('guardReplace(t("ouvrir ce dossier"))');
   });
 
   test("l'écran de conception refuse d'ouvrir un dossier dont le contenu est illisible", () => {

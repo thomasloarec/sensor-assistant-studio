@@ -76,6 +76,7 @@ function toProject(raw: unknown): CrmProject | null {
     ndaStatus: str(r["nda_status"]),
     stage,
     stageSince: str(r["stage_since"]),
+    filed: r["filed"] !== false && int(r["version"]) > 0,
     company: str(r["company"]),
     projectName: str(r["project_name"]),
     countryCode: str(r["country_code"]),
@@ -286,23 +287,41 @@ export async function fetchCrmBoard(): Promise<CrmBoard> {
   const role = ["rnd", "sales", "admin"].includes(String(raw["role"]))
     ? (raw["role"] as StaffRole)
     : null;
+  const projects = list(raw["projects"]).map(toProject).filter((p): p is CrmProject => p !== null);
+  const seen = new Set(projects.map((p) => p.dossierId));
+  const unfiled = list(raw["unfiled"])
+    .map((v) => {
+      const r = (v ?? {}) as Record<string, unknown>;
+      const id = str(r["dossier_id"]);
+      return id
+        ? {
+            dossierId: id,
+            title: str(r["title"]) ?? "",
+            currentRevision: int(r["current_revision"]),
+            updatedAt: str(r["updated_at"]) ?? "",
+          }
+        : null;
+    })
+    .filter((d): d is UnfiledDossier => d !== null)
+    .filter((d) => !seen.has(d.dossierId));
+  // Un serveur antérieur renvoyait ces dossiers à part : ils rejoignent la
+  // liste normale avec des valeurs vides et aucune date d'étape inventée.
+  for (const d of unfiled) {
+    const placeholder = toProject({
+      dossier_id: d.dossierId,
+      title: d.title,
+      current_revision: d.currentRevision,
+      updated_at: d.updatedAt,
+      dossier_updated_at: d.updatedAt,
+      filed: false,
+      version: 0,
+    });
+    if (placeholder) projects.push(placeholder);
+  }
   return {
     role,
-    projects: list(raw["projects"]).map(toProject).filter((p): p is CrmProject => p !== null),
-    unfiled: list(raw["unfiled"])
-      .map((v) => {
-        const r = (v ?? {}) as Record<string, unknown>;
-        const id = str(r["dossier_id"]);
-        return id
-          ? {
-              dossierId: id,
-              title: str(r["title"]) ?? "",
-              currentRevision: int(r["current_revision"]),
-              updatedAt: str(r["updated_at"]) ?? "",
-            }
-          : null;
-      })
-      .filter((d): d is UnfiledDossier => d !== null),
+    projects,
+    unfiled: [],
     directory: list(raw["directory"]).map(toPerson).filter((p): p is CrmPerson => p !== null),
   };
 }

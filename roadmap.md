@@ -313,3 +313,23 @@
 - Gates : 402 tests / 49 178 assertions, typecheck OK, build OK, inventaire i18n
   `TOTAL 0` (2 014 clés, huit langues), scans design conformes, QA navigateur 1280 et
   390 px sur `/`, `/internal`, `/standex` et ses sous-écrans.
+
+## 2026-09-09 — Revue UI f3855732 : reste à faire (tableau de bord V1.8)
+
+- [ ] Filtres tableau : chiffre d'affaires min/max + devise, plage de dates (lancement série),
+      société ; pays affiché en drapeau + NOM accessible ; en-tête = société, projet, responsables.
+- [ ] Première activation : tous les dossiers soumis existants visibles dans le tableau ET le
+      pipeline avec valeurs par défaut honnêtes, sans section « non classés » ni faux historique.
+- [ ] Fiche projet : âge total (dossier_created_at) + âge de l'étape en cours et prochaine action.
+- [ ] Onglet SAP : « Copier la dernière note » en plus de « Tout copier », avec retour succès/échec.
+- [ ] Tâches : échéance et rôle modifiables après création ; vues personnelles conservées.
+- [ ] BUG `canCost` : réserver le coût à rnd/admin ; éditeur de responsables aligné sur le serveur.
+- [ ] BUG resynchronisation : correctifs par champ modifié, brouillons conservés en erreur,
+      remise à l'état serveur confirmé, message de conflit non écrasé par le rechargement,
+      verrou synchrone + garde de génération A→B→A, sonde CrmProvider sur changement de session.
+- [ ] `/?dossier=UUID` : réouverture réelle après connexion, propriétaire vérifié, protection du
+      brouillon non envoyé, refus des identifiants invalides/non possédés.
+- [ ] Aperçu client AVANT mise en file : revue publiée éligible, choix/questions clés, lien
+      absolu cliquable, wrapper atomique publication+file.
+- [ ] Retirer le texte « Cette section est la console … inchangée » et donner des libellés d'usage.
+- [ ] Vérifs : régressions existantes, 8 langues, navigateur desktop/mobile sur fixtures synthétiques.

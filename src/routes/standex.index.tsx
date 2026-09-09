@@ -17,6 +17,7 @@ import {
 import { useCrm } from "@/components/standex/dashboard/crm-context";
 import {
   ALL_STAGES,
+  CountryCell,
   EmptyBlock,
   ErrorBlock,
   LoadingBlock,
@@ -25,6 +26,7 @@ import {
   StageBadge,
   UnknownValue,
   VolumeCell,
+  countryName,
   personName,
   stageLabel,
 } from "@/components/standex/dashboard/crm-shared";
@@ -66,7 +68,13 @@ function ProjectsBoard() {
   const [stage, setStage] = useState<CrmStage | "all">("all");
   const [salesId, setSalesId] = useState<string>("all");
   const [faeId, setFaeId] = useState<string>("all");
-  const [country, setCountry] = useState("");
+  const [country, setCountry] = useState("all");
+  const [company, setCompany] = useState("");
+  const [revenueMin, setRevenueMin] = useState("");
+  const [revenueMax, setRevenueMax] = useState("");
+  const [revenueCurrency, setRevenueCurrency] = useState("");
+  const [launchFrom, setLaunchFrom] = useState("");
+  const [launchTo, setLaunchTo] = useState("");
   const [onlyLate, setOnlyLate] = useState(false);
   const [sort, setSort] = useState<BoardSort>("updated_desc");
 
@@ -86,18 +94,40 @@ function ProjectsBoard() {
     if (capabilities?.available) load();
   }, [capabilities?.available, load]);
 
+  /** Pays réellement présents dans les projets : la liste n'invente rien. */
+  const countries = useMemo(() => {
+    const codes = new Set<string>();
+    for (const p of board?.projects ?? []) {
+      const c = (p.countryCode ?? "").trim().toUpperCase();
+      if (c) codes.add(c);
+    }
+    return [...codes].sort((a, b) =>
+      (countryName(a, tag) ?? a).localeCompare(countryName(b, tag) ?? b));
+  }, [board, tag]);
+
   const projects = useMemo(() => {
     if (!board) return [];
+    const bound = (v: string) => {
+      const n = Number(v.replace(",", "."));
+      return v.trim() !== "" && Number.isFinite(n) ? n : null;
+    };
     const filtered = filterProjects(board.projects, {
       search,
       ...(stage === "all" ? {} : { stages: [stage] }),
       salesPersonId: salesId === "all" ? null : salesId,
       faePersonId: faeId === "all" ? null : faeId,
-      countryCode: country.trim() ? country.trim() : null,
+      countryCode: country === "all" ? null : country,
+      company: company.trim() ? company.trim() : null,
+      revenueMin: bound(revenueMin),
+      revenueMax: bound(revenueMax),
+      revenueCurrency: revenueCurrency.trim() ? revenueCurrency.trim() : null,
+      seriesLaunchFrom: launchFrom || null,
+      seriesLaunchTo: launchTo || null,
       onlyLate,
     });
     return sortProjects(filtered, sort);
-  }, [board, search, stage, salesId, faeId, country, onlyLate, sort]);
+  }, [board, search, stage, salesId, faeId, country, company, revenueMin, revenueMax,
+    revenueCurrency, launchFrom, launchTo, onlyLate, sort]);
 
   const totals = useMemo(() => pipelineTotals(projects), [projects]);
 
@@ -173,13 +203,83 @@ function ProjectsBoard() {
           </Select>
         </div>
         <div>
-          <Label className="t-caption">{t("Pays (code à deux lettres)")}</Label>
+          <Label className="t-caption">{t("Pays")}</Label>
+          <Select value={country} onValueChange={setCountry}>
+            <SelectTrigger className="min-h-11">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">{t("Tous les pays")}</SelectItem>
+              {countries.map((c) => (
+                <SelectItem key={c} value={c}>
+                  {countryName(c, tag) ?? c}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <Label className="t-caption" htmlFor="crm-company">{t("Société")}</Label>
           <Input
-            value={country}
-            onChange={(e) => setCountry(e.target.value)}
-            maxLength={2}
-            placeholder="FR"
+            id="crm-company"
+            value={company}
+            onChange={(e) => setCompany(e.target.value)}
+            placeholder={t("Nom de société")}
           />
+        </div>
+        <div className="grid grid-cols-3 gap-2">
+          <div>
+            <Label className="t-caption" htmlFor="crm-rev-min">{t("CA min.")}</Label>
+            <Input
+              id="crm-rev-min"
+              inputMode="decimal"
+              value={revenueMin}
+              onChange={(e) => setRevenueMin(e.target.value)}
+            />
+          </div>
+          <div>
+            <Label className="t-caption" htmlFor="crm-rev-max">{t("CA max.")}</Label>
+            <Input
+              id="crm-rev-max"
+              inputMode="decimal"
+              value={revenueMax}
+              onChange={(e) => setRevenueMax(e.target.value)}
+            />
+          </div>
+          <div>
+            <Label className="t-caption" htmlFor="crm-rev-cur">{t("Devise")}</Label>
+            <Input
+              id="crm-rev-cur"
+              value={revenueCurrency}
+              onChange={(e) => setRevenueCurrency(e.target.value.toUpperCase())}
+              maxLength={3}
+              placeholder="EUR"
+            />
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-2">
+          <div>
+            <Label className="t-caption" htmlFor="crm-launch-from">
+              {t("Lancement série du")}
+            </Label>
+            <Input
+              id="crm-launch-from"
+              type="date"
+              value={launchFrom}
+              onChange={(e) => setLaunchFrom(e.target.value)}
+            />
+          </div>
+          <div>
+            <Label className="t-caption" htmlFor="crm-launch-to">
+              {t("Lancement série au")}
+            </Label>
+            <Input
+              id="crm-launch-to"
+              type="date"
+              value={launchTo}
+              onChange={(e) => setLaunchTo(e.target.value)}
+            />
+          </div>
         </div>
         <div>
           <Label className="t-caption">{t("Commercial")}</Label>
@@ -260,6 +360,12 @@ function ProjectsBoard() {
               {totals.unknownCurrency} {t("sans devise renseignée")}
             </span>
           ) : null}
+          {revenueMin || revenueMax ? (
+            <span>{t("Les projets sans chiffre d'affaires estimable sont exclus par ce filtre.")}</span>
+          ) : null}
+          {launchFrom || launchTo ? (
+            <span>{t("Les projets sans date de lancement série sont exclus par ce filtre.")}</span>
+          ) : null}
           <Button size="sm" variant="ghost" onClick={load}>
             {t("Actualiser")}
           </Button>
@@ -304,6 +410,11 @@ function ProjectsBoard() {
                     <p className="t-caption text-muted-foreground">
                       {p.projectName ?? p.title} — {t("version")} {p.currentRevision}
                     </p>
+                    {p.filed ? null : (
+                      <p className="t-caption text-muted-foreground">
+                        {t("Aucun suivi interne renseigné pour l'instant.")}
+                      </p>
+                    )}
                   </td>
                   <td className="p-2">
                     <StageBadge stage={p.stage} />
@@ -313,7 +424,7 @@ function ProjectsBoard() {
                         : `${stageAgeDays(p)} ${t("jour(s)")}`}
                     </p>
                   </td>
-                  <td className="p-2">{p.countryCode ?? <UnknownValue />}</td>
+                  <td className="p-2"><CountryCell code={p.countryCode} locale={tag} /></td>
                   <td className="p-2">{personName(board.directory, p.salesPersonId)}</td>
                   <td className="p-2">{personName(board.directory, p.faePersonId)}</td>
                   <td className="p-2"><VolumeCell project={p} /></td>
@@ -367,6 +478,13 @@ function ProjectsBoard() {
                     <span className="block t-caption text-muted-foreground">
                       {p.projectName ?? t("projet sans nom")}
                     </span>
+                    <span className="block t-caption text-muted-foreground">
+                      {t("Commercial")} : {personName(board.directory, p.salesPersonId)} — {t("FAE")}{" "}
+                      : {personName(board.directory, p.faePersonId)}
+                    </span>
+                    <span className="block t-caption">
+                      <CountryCell code={p.countryCode} locale={tag} />
+                    </span>
                     <span className="block t-caption">
                       <RevenueCell project={p} locale={tag} />
                     </span>
@@ -378,27 +496,6 @@ function ProjectsBoard() {
         </div>
       ) : null}
 
-      {board && board.unfiled.length > 0 ? (
-        <section className="space-y-2">
-          <h3 className="t-title-s">{t("Dossiers pas encore suivis ici")}</h3>
-          <p className="t-caption text-muted-foreground">
-            {t("Ces dossiers vous sont visibles mais n'ont pas encore de fiche de suivi. L'ouvrir crée la fiche.")}
-          </p>
-          <ul className="space-y-1">
-            {board.unfiled.map((d) => (
-              <li key={d.dossierId}>
-                <Link
-                  to="/standex/projects/$dossierId"
-                  params={{ dossierId: d.dossierId }}
-                  className="inline-flex min-h-11 items-center text-sm underline-offset-2 hover:underline"
-                >
-                  {d.title} — {t("version")} {d.currentRevision}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </section>
-      ) : null}
     </div>
   );
 }

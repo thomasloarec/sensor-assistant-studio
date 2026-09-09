@@ -3,6 +3,8 @@ import {
   CRM_STAGES,
   CRM_STAGE_LABEL,
   ageInDays,
+  stageAgeDays,
+  projectAgeDays,
   annualRevenue,
   annualVolume,
   filterProjects,

@@ -98,6 +98,9 @@ export interface CrmProject {
   ndaStatus: string | null;
   stage: CrmStage;
   stageSince: string | null;
+  /** false = aucune fiche de suivi enregistrée : les valeurs internes sont vides,
+   *  l'étape affichée est le point de départ et aucun historique n'est inventé. */
+  filed: boolean;
   company: string | null;
   projectName: string | null;
   countryCode: string | null;
@@ -312,6 +315,29 @@ export function stageAgeDays(project: CrmProject, now: Date = new Date()): numbe
   return ageInDays(project.stageActivatedAt ?? project.stageSince, now);
 }
 
+/**
+ * Prochaine action réellement en attente : la première tâche ni terminée ni
+ * sans objet, de l'étape en cours si elle en a une, sinon la suivante dans
+ * l'ordre du plan. Aucune tâche en attente : rien à afficher, pas « 0 ».
+ */
+export function nextAction(
+  project: Pick<CrmProject, "stage">,
+  tasks: readonly CrmTask[],
+): CrmTask | null {
+  const open = tasks.filter((x) => x.status !== "done" && x.status !== "not_applicable");
+  if (open.length === 0) return null;
+  const order = (x: CrmTask) => (CRM_STAGES as readonly string[]).indexOf(x.stage);
+  const current = open.filter((x) => x.stage === project.stage);
+  const pool = current.length > 0 ? current : open;
+  return [...pool].sort((a, b) => order(a) - order(b) || a.sortOrder - b.sortOrder)[0] ?? null;
+}
+
+/** Âge, en jours, de la prochaine action en attente depuis son activation réelle. */
+export function actionAgeDays(task: CrmTask | null, now: Date = new Date()): number | null {
+  if (!task) return null;
+  return ageInDays(task.activatedAt ?? task.createdAt, now);
+}
+
 /** Repères d'attention d'un projet, sans jamais inventer une échéance absente. */
 export function projectAlerts(project: CrmProject, tasks: readonly CrmTask[], now: Date = new Date()):
   { blocked: number; overdue: number; stageAgeDays: number | null; idleDays: number | null;
@@ -336,7 +362,19 @@ export interface BoardFilters {
   faePersonId?: string | null;
   countryCode?: string | null;
   onlyLate?: boolean;
+  /** Société : sous-chaîne, insensible à la casse et aux accents. */
+  company?: string | null;
+  /** Chiffre d'affaires annuel, dans la devise demandée. Un montant inconnu
+   *  n'est jamais assimilé à zéro : il sort du résultat dès qu'une borne existe. */
+  revenueMin?: number | null;
+  revenueMax?: number | null;
+  /** Aucune conversion de devise n'est faite : le filtre ne compare que la même. */
+  revenueCurrency?: string | null;
+  /** Plage sur la DATE DE LANCEMENT SÉRIE (bornes incluses, format ISO AAAA-MM-JJ). */
+  seriesLaunchFrom?: string | null;
+  seriesLaunchTo?: string | null;
 }
+
 
 export type BoardSort =
   | "updated_desc"
@@ -358,6 +396,7 @@ export function matchesSearch(project: CrmProject, search: string): boolean {
   if (!q) return true;
   const haystack = [
     project.company,
+    project.companySubmitted,
     project.projectName,
     project.title,
     project.countryCode,
@@ -374,6 +413,8 @@ export function filterProjects(
   tasksByDossier: Readonly<Record<string, readonly CrmTask[]>> = {},
   now: Date = new Date(),
 ): CrmProject[] {
+  const companyQuery = norm(filters.company ?? "").trim();
+  const hasRevenueBound = filters.revenueMin != null || filters.revenueMax != null;
   return projects.filter((p) => {
     if (!matchesSearch(p, filters.search ?? "")) return false;
     if (filters.stages && filters.stages.length > 0 && !filters.stages.includes(p.stage)) return false;
@@ -383,6 +424,27 @@ export function filterProjects(
       && p.faePersonId !== filters.faePersonId) return false;
     if (filters.countryCode) {
       if ((p.countryCode ?? "").toUpperCase() !== filters.countryCode.toUpperCase()) return false;
+    }
+    if (companyQuery) {
+      const name = norm(p.companyEffective ?? p.company ?? p.companySubmitted);
+      if (!name.includes(companyQuery)) return false;
+    }
+    if (hasRevenueBound) {
+      const revenue = annualRevenue(p);
+      // Un chiffre d'affaires inconnu ne vaut pas zéro : il ne peut pas
+      // satisfaire une borne, donc il sort du résultat filtré.
+      if (!revenue.known) return false;
+      const wanted = (filters.revenueCurrency ?? "").trim().toUpperCase();
+      if (wanted && (revenue.value.currency ?? "").toUpperCase() !== wanted) return false;
+      if (filters.revenueMin != null && revenue.value.amount < filters.revenueMin) return false;
+      if (filters.revenueMax != null && revenue.value.amount > filters.revenueMax) return false;
+    }
+    if (filters.seriesLaunchFrom || filters.seriesLaunchTo) {
+      const launch = (p.seriesLaunchEffective ?? p.seriesLaunch ?? "").slice(0, 10);
+      // Une date de lancement inconnue n'est ni « avant » ni « après » : elle est écartée.
+      if (!launch) return false;
+      if (filters.seriesLaunchFrom && launch < filters.seriesLaunchFrom) return false;
+      if (filters.seriesLaunchTo && launch > filters.seriesLaunchTo) return false;
     }
     if (filters.onlyLate) {
       const tasks = tasksByDossier[p.dossierId] ?? [];
@@ -413,7 +475,8 @@ export function sortProjects(projects: readonly CrmProject[], sort: BoardSort): 
       return copy.sort((a, b) => time(a.stageSince) - time(b.stageSince));
     case "company_asc":
       return copy.sort((a, b) =>
-        norm(a.company ?? a.title).localeCompare(norm(b.company ?? b.title)));
+        norm(a.companyEffective ?? a.company ?? a.title)
+          .localeCompare(norm(b.companyEffective ?? b.company ?? b.title)));
     case "updated_desc":
     default:
       return copy.sort((a, b) => time(b.updatedAt) - time(a.updatedAt));

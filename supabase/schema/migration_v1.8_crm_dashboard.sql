@@ -342,6 +342,10 @@ begin
 exception when others then return null;
 end $$;
 
+-- Un dossier sans fiche de suivi est projeté avec des valeurs HONNÊTES :
+-- étape « lead » par défaut, aucune date d'entrée d'étape inventée, version 0.
+-- Il apparaît ainsi naturellement dans le tableau et le pipeline, sans qu'un
+-- humain doive ouvrir chaque dossier un par un pour le faire exister.
 create or replace function lead_priv.crm_row_json(_dossier uuid)
 returns jsonb language sql stable security definer
 set search_path = lead, lead_priv, pg_temp as $$
@@ -352,7 +356,8 @@ set search_path = lead, lead_priv, pg_temp as $$
     'nda_status', d.nda_status,
     'dossier_created_at', d.created_at,
     'dossier_updated_at', d.updated_at,
-    'stage', c.stage, 'stage_since', c.stage_since,
+    'filed', c.dossier_id is not null,
+    'stage', coalesce(c.stage, 'lead'), 'stage_since', c.stage_since,
     'company', c.company, 'project_name', c.project_name, 'country_code', c.country_code,
     'sales_person', c.sales_person, 'fae_person', c.fae_person,
     'currency', c.currency, 'unit_price', c.unit_price, 'unit_cost', c.unit_cost,
@@ -374,7 +379,7 @@ set search_path = lead, lead_priv, pg_temp as $$
     'series_launch_source', case when c.series_launch is not null then 'override'
                                  when lead_priv.crm_submitted_series_launch(d.id) is not null
                                    then 'submitted' else 'unknown' end,
-    'updated_at', c.updated_at, 'version', c.version,
+    'updated_at', coalesce(c.updated_at, d.updated_at), 'version', coalesce(c.version, 0),
     'tasks_total', (select count(*) from lead.dossier_tasks t
                      where t.dossier_id = d.id and t.status <> 'not_applicable'),
     'tasks_done', (select count(*) from lead.dossier_tasks t
@@ -390,11 +395,11 @@ set search_path = lead, lead_priv, pg_temp as $$
     'stage_activated_at', coalesce(
       (select min(coalesce(t.activated_at, t.created_at))
          from lead.dossier_tasks t
-        where t.dossier_id = d.id and t.stage = c.stage
+        where t.dossier_id = d.id and t.stage = coalesce(c.stage, 'lead')
           and t.status not in ('done','not_applicable')),
       c.stage_since))
   from lead.design_dossiers d
-  join lead.dossier_crm c on c.dossier_id = d.id
+  left join lead.dossier_crm c on c.dossier_id = d.id
   where d.id = _dossier;
 $$;
 
@@ -426,22 +431,16 @@ begin
   if r is null then raise exception 'NOT_ALLOWED' using errcode = '42501'; end if;
   return jsonb_build_object(
     'role', r,
+    -- Tous les dossiers visibles, fiche de suivi ou non : à la première
+    -- activation, rien n'est caché derrière une liste annexe à ouvrir à la main.
     'projects', coalesce((
       select jsonb_agg(lead_priv.crm_row_json(d.id) order by d.updated_at desc)
         from lead.design_dossiers d
-        join lead.dossier_crm c on c.dossier_id = d.id
        where r = 'admin'
           or exists (select 1 from lead.dossier_assignments a
                      where a.dossier_id = d.id and a.user_id = u)), '[]'::jsonb),
-    'unfiled', coalesce((
-      select jsonb_agg(jsonb_build_object('dossier_id', d.id, 'title', d.title,
-               'current_revision', d.current_revision, 'updated_at', d.updated_at)
-             order by d.updated_at desc)
-        from lead.design_dossiers d
-       where not exists (select 1 from lead.dossier_crm c where c.dossier_id = d.id)
-         and (r = 'admin'
-              or exists (select 1 from lead.dossier_assignments a
-                         where a.dossier_id = d.id and a.user_id = u))), '[]'::jsonb),
+    -- Conservé vide pour compatibilité : plus aucune section annexe.
+    'unfiled', '[]'::jsonb,
     'directory', coalesce((
       select jsonb_agg(jsonb_build_object('id', p.id, 'first_name', p.first_name,
                'last_name', p.last_name, 'role', p.role, 'active', p.active,

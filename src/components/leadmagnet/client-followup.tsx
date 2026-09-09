@@ -66,6 +66,10 @@ interface Props {
     dossierId: string;
     revision: number;
   }) => void;
+  /** Projet demandé par un lien « /?dossier=… ». Il n'est ouvert que s'il
+   *  appartient réellement au compte connecté, et jamais sans la garde qui
+   *  protège un brouillon non envoyé. */
+  requestedDossierId?: string | null;
 }
 
 /* i18n-canonical : libellés stockés en français, traduits au rendu par t(). */
@@ -90,6 +94,7 @@ export function ClientFollowUp({
   onReopenSnapshot,
   onApplyVariant,
   onOpenTransferredFile,
+  requestedDossierId = null,
 }: Props) {
   useLocale();
   const [list, setList] = useState<DossierListItem[]>([]);
@@ -113,6 +118,9 @@ export function ClientFollowUp({
     }
   }, [ready]);
 
+  /** Vrai tant que le lien demandé n'a pas encore été traité. */
+  const linkHandled = useRef<string | null>(null);
+
   const reloadView = useCallback(async (id: string) => {
     const request = ++viewRequest.current;
     try {
@@ -126,9 +134,50 @@ export function ClientFollowUp({
     }
   }, []);
 
+  /** Ouvre un dossier possédé : le contenu réellement envoyé est chargé AVANT
+   *  de changer de contexte, et la garde du brouillon en cours s'applique. */
+  const openDossier = useCallback(
+    async (id: string) => {
+      const request = ++viewRequest.current;
+      let loaded: DossierView | null = null;
+      try {
+        loaded = await fetchClientView(id);
+        if (request !== viewRequest.current) return;
+      } catch (error) {
+        if (request !== viewRequest.current) return;
+        setMessage(error instanceof Error ? error.message : null);
+        return;
+      }
+      const latest = [...loaded.revisions].sort((a, b) => b.revision - a.revision)[0];
+      const out = onSelectDossier({
+        id,
+        revision: loaded.dossier.current_revision,
+        title: loaded.dossier.title,
+        snapshot: latest ? latest.snapshot : null,
+      });
+      if (!out.ok) return;
+      setView(loaded);
+    },
+    [onSelectDossier],
+  );
+
   useEffect(() => {
     void reloadList();
   }, [reloadList]);
+
+  // Lien « /?dossier=… » : le projet n'est ouvert que s'il figure vraiment
+  // dans la liste des dossiers du compte connecté. Sinon, refus explicite.
+  useEffect(() => {
+    if (!ready || !requestedDossierId) return;
+    if (linkHandled.current === requestedDossierId) return;
+    if (list.length === 0) return;
+    linkHandled.current = requestedDossierId;
+    if (!list.some((d) => d.id === requestedDossierId)) {
+      setMessage(t("Ce lien ne correspond à aucun de vos projets : rien n'a été ouvert."));
+      return;
+    }
+    void openDossier(requestedDossierId);
+  }, [ready, requestedDossierId, list, openDossier]);
   useEffect(() => {
     if (ready && serverDossierId) void reloadView(serverDossierId);
   }, [ready, serverDossierId, contextGeneration, reloadView]);
@@ -165,30 +214,7 @@ export function ClientFollowUp({
             <Button
               size="sm"
               variant={d.id === serverDossierId ? "default" : "outline"}
-              onClick={async () => {
-                // On charge le contenu réellement envoyé AVANT de changer le
-                // contexte : ouvrir un dossier ne doit jamais laisser à l'écran
-                // le contenu du dossier précédent.
-                const request = ++viewRequest.current;
-                let loaded: DossierView | null = null;
-                try {
-                  loaded = await fetchClientView(d.id);
-                  if (request !== viewRequest.current) return;
-                } catch (error) {
-                  if (request !== viewRequest.current) return;
-                  setMessage(error instanceof Error ? error.message : null);
-                  return;
-                }
-                const latest = [...loaded.revisions].sort((a, b) => b.revision - a.revision)[0];
-                const out = onSelectDossier({
-                  id: d.id,
-                  revision: loaded.dossier.current_revision,
-                  title: loaded.dossier.title,
-                  snapshot: latest ? latest.snapshot : null,
-                });
-                if (!out.ok) return;
-                setView(loaded);
-              }}
+              onClick={() => void openDossier(d.id)}
             >
               {t("Ouvrir")}
             </Button>

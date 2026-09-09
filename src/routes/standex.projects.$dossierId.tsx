@@ -44,6 +44,10 @@ import {
 import { fetchStaffView, type DossierView } from "@/lib/leadmagnet/supabase-adapter";
 import {
   TASK_STATUSES,
+  actionAgeDays,
+  nextAction,
+  projectAgeDays,
+  stageAgeDays,
   isCountryCode,
   isCurrencyCode,
   parseAmountInput,
@@ -82,52 +86,70 @@ function ProjectDetail() {
   const [message, setMessage] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const dossierRef = useRef(dossierId);
+  /** Numéro de la dernière demande émise : une réponse plus ancienne est ignorée,
+   *  même si elle revient après une plus récente (A → B → A). */
+  const genRef = useRef(0);
+  /** Verrou synchrone : deux clics rapides ne déclenchent qu'une seule écriture. */
+  const pendingRef = useRef(false);
 
   // Changer de projet invalide toute réponse encore en vol.
   useEffect(() => {
     dossierRef.current = dossierId;
+    genRef.current += 1;
+    pendingRef.current = false;
     setDetail(null);
     setError(null);
     setMessage(null);
+    setBusy(false);
   }, [dossierId]);
 
-  const load = useCallback(() => {
+  /** Relit l'état serveur. `keepError` conserve un message de conflit déjà affiché :
+   *  la relecture ne doit jamais effacer l'explication de l'échec précédent. */
+  const reload = useCallback((keepError = false) => {
     const asked = dossierId;
-    setError(null);
+    const gen = ++genRef.current;
+    if (!keepError) setError(null);
     fetchCrmProject(asked)
       .then((d) => {
-        if (dossierRef.current !== asked) return;
+        if (dossierRef.current !== asked || genRef.current !== gen) return;
         setDetail(d);
       })
       .catch((e: unknown) => {
-        if (dossierRef.current !== asked) return;
+        if (dossierRef.current !== asked || genRef.current !== gen) return;
+        if (keepError) return;
         setDetail(null);
         setError(e instanceof Error ? e.message : t("Lecture refusée."));
       });
   }, [dossierId]);
+
+  const load = useCallback(() => reload(false), [reload]);
 
   useEffect(() => {
     if (capabilities?.available) load();
   }, [capabilities?.available, load]);
 
   const run = async (fn: () => Promise<CrmProjectDetail>, ok: string) => {
-    if (busy) return;
+    if (pendingRef.current) return;
+    pendingRef.current = true;
     const asked = dossierId;
+    const gen = ++genRef.current;
     setBusy(true);
     setMessage(null);
     setError(null);
     try {
       const next = await fn();
-      if (dossierRef.current !== asked) return;
+      if (dossierRef.current !== asked || genRef.current !== gen) return;
       setDetail(next);
       setMessage(ok);
     } catch (e: unknown) {
-      if (dossierRef.current !== asked) return;
+      if (dossierRef.current !== asked || genRef.current !== gen) return;
       setError(e instanceof Error ? e.message : t("Action refusée."));
-      // Un conflit de version se résout en relisant l'état réel du serveur.
-      load();
+      // Un conflit de version se résout en relisant l'état réel du serveur,
+      // sans effacer le message qui explique pourquoi l'écriture a échoué.
+      reload(true);
     } finally {
-      setBusy(false);
+      pendingRef.current = false;
+      if (dossierRef.current === asked) setBusy(false);
     }
   };
 
@@ -157,6 +179,9 @@ function ProjectDetail() {
         <h2 className="t-title-m">{project?.company ?? project?.title ?? t("Fiche projet")}</h2>
         {project ? <Badge variant="outline">{stageLabel(project.stage)}</Badge> : null}
       </div>
+
+      {detail && project ? <ProjectSummary detail={detail} /> : null}
+
 
       <div role="tablist" aria-label={t("Sections de la fiche projet")} className="flex flex-wrap gap-1">
         {TABS.map((item) => (
@@ -197,12 +222,57 @@ function ProjectDetail() {
       {tab === "review" ? (
         <section aria-label={t("Revue, documents et 3D")}>
           <p className="t-caption text-muted-foreground">
-            {t("Cette section est la console de revue existante, inchangée : elle décide seule de ce que le client voit.")}
+            {t("Revue technique et décisions envoyées au client : offres, échantillons, retours R&D et documents.")}
           </p>
           <DossierConsole initialDossierId={dossierId} embedded />
         </section>
       ) : null}
     </div>
+  );
+}
+
+/* --------------------------------------------------------------- Résumé */
+
+/** Âges réels et prochaine action : trois repères, jamais inventés. */
+function ProjectSummary({ detail }: { detail: CrmProjectDetail }) {
+  const p = detail.project;
+  const age = projectAgeDays(p);
+  const stageAge = stageAgeDays(p);
+  const next = nextAction(p, detail.tasks);
+  const nextAge = actionAgeDays(next);
+  const unknown = t("inconnu");
+  return (
+    <dl className="panel-block grid gap-3 text-sm sm:grid-cols-3">
+      <div>
+        <dt className="t-caption text-muted-foreground">{t("Âge total du projet")}</dt>
+        <dd className="t-metric">
+          {age === null ? unknown : `${age} ${t("jour(s)")}`}
+        </dd>
+      </div>
+      <div>
+        <dt className="t-caption text-muted-foreground">{t("Âge de l'étape en cours")}</dt>
+        <dd className="t-metric">
+          {stageAge === null ? unknown : `${stageAge} ${t("jour(s)")}`}
+        </dd>
+      </div>
+      <div>
+        <dt className="t-caption text-muted-foreground">{t("Prochaine action")}</dt>
+        <dd>
+          {next === null ? (
+            <span className="text-muted-foreground">{t("aucune action en attente")}</span>
+          ) : (
+            <>
+              {next.label}
+              <span className="t-caption text-muted-foreground">
+                {" — "}
+                {t(STAKEHOLDER_LABEL[next.stakeholder] ?? next.stakeholder)}
+                {nextAge === null ? "" : ` · ${nextAge} ${t("jour(s)")}`}
+              </span>
+            </>
+          )}
+        </dd>
+      </div>
+    </dl>
   );
 }
 
@@ -222,15 +292,22 @@ function TrackingTab({
 }) {
   const p = detail.project;
   const { capabilities } = useCrm();
-  const [fields, setFields] = useState({
-    company: p.company ?? "",
-    projectName: p.projectName ?? "",
-    countryCode: p.countryCode ?? "",
-    currency: p.currency ?? "",
-    seriesLaunch: p.seriesLaunch ?? "",
-    volumeOverride: p.annualVolumeOverride === null ? "" : String(p.annualVolumeOverride),
-    estimate: p.estimatedAnnualRevenue === null ? "" : String(p.estimatedAnnualRevenue),
-  });
+  /** Valeurs telles qu'elles sont côté serveur : point de remise à zéro. */
+  const serverFields = useMemo(
+    () => ({
+      company: p.company ?? "",
+      projectName: p.projectName ?? "",
+      countryCode: p.countryCode ?? "",
+      currency: p.currency ?? "",
+      seriesLaunch: p.seriesLaunch ?? "",
+      volumeOverride: p.annualVolumeOverride === null ? "" : String(p.annualVolumeOverride),
+      estimate: p.estimatedAnnualRevenue === null ? "" : String(p.estimatedAnnualRevenue),
+    }),
+    [p],
+  );
+  const [fields, setFieldsState] = useState(serverFields);
+  /** Champs réellement modifiés à la main : seuls ceux-là sont envoyés. */
+  const [dirty, setDirty] = useState<Set<string>>(new Set());
   const [price, setPrice] = useState(p.unitPrice === null ? "" : String(p.unitPrice));
   const [cost, setCost] = useState(p.unitCost === null ? "" : String(p.unitCost));
   const [costInSap, setCostInSap] = useState(p.costInSap);
@@ -240,23 +317,57 @@ function TrackingTab({
   );
   const [board, setBoard] = useState<{ id: string; name: string; role: string }[]>([]);
 
+  const setField = (key: keyof typeof serverFields, value: string) => {
+    setFieldsState((f) => ({ ...f, [key]: value }));
+    setDirty((d) => new Set(d).add(key));
+  };
+
+  // Une écriture confirmée fait changer la version : on repart alors de l'état
+  // réellement enregistré. En cas d'échec la version ne bouge pas, donc la
+  // saisie en cours est conservée telle quelle.
+  const syncKey = `${p.dossierId}:${p.version}`;
+  const syncedRef = useRef(syncKey);
   useEffect(() => {
+    if (syncedRef.current === syncKey) return;
+    syncedRef.current = syncKey;
+    setFieldsState(serverFields);
+    setDirty(new Set());
+    setPrice(p.unitPrice === null ? "" : String(p.unitPrice));
+    setCost(p.unitCost === null ? "" : String(p.unitCost));
+    setCostInSap(p.costInSap);
+    setDirectory({ sales: p.salesPersonId ?? "none", fae: p.faePersonId ?? "none" });
+    setLocal(null);
+  }, [syncKey, serverFields, p]);
+
+  useEffect(() => {
+    let alive = true;
     import("@/lib/leadmagnet/dashboard-adapter").then(async (m) => {
       try {
         const b = await m.fetchCrmBoard();
+        if (!alive) return;
         setBoard(
           b.directory
             .filter((d) => d.active)
             .map((d) => ({ id: d.id, name: personFullName(d), role: d.role })),
         );
       } catch {
-        setBoard([]);
+        if (alive) setBoard([]);
       }
     });
+    return () => {
+      alive = false;
+    };
   }, []);
 
   const canPrice = capabilities?.role === "sales" || capabilities?.role === "admin";
-  const canCost = capabilities?.role !== null;
+  // Le coût est réservé à la R&D et à l'administration : le serveur le refuse
+  // au commerce, l'écran ne doit donc pas laisser croire le contraire.
+  const canCost = capabilities?.role === "rnd" || capabilities?.role === "admin";
+  const canOwners = capabilities?.role === "sales" || capabilities?.role === "admin";
+  /** Un montant déjà renseigné verrouille la devise côté serveur. */
+  const currencyLocked =
+    p.currency !== null &&
+    (p.unitPrice !== null || p.unitCost !== null || p.estimatedAnnualRevenue !== null);
 
   return (
     <div className="space-y-4">
@@ -335,7 +446,7 @@ function TrackingTab({
             <Input
               value={fields.company}
               placeholder={p.companySubmitted ?? ""}
-              onChange={(e) => setFields({ ...fields, company: e.target.value })}
+              onChange={(e) => setField("company", e.target.value)}
             />
             {p.companySubmitted ? (
               <p className="t-caption text-muted-foreground">
@@ -347,7 +458,7 @@ function TrackingTab({
             <Label className="t-caption">{t("Nom du projet")}</Label>
             <Input
               value={fields.projectName}
-              onChange={(e) => setFields({ ...fields, projectName: e.target.value })}
+              onChange={(e) => setField("projectName", e.target.value)}
             />
           </div>
           <div>
@@ -355,7 +466,7 @@ function TrackingTab({
             <Input
               value={fields.countryCode}
               maxLength={2}
-              onChange={(e) => setFields({ ...fields, countryCode: e.target.value })}
+              onChange={(e) => setField("countryCode", e.target.value)}
             />
           </div>
           <div>
@@ -363,15 +474,21 @@ function TrackingTab({
             <Input
               value={fields.currency}
               maxLength={3}
-              onChange={(e) => setFields({ ...fields, currency: e.target.value })}
+              disabled={currencyLocked}
+              onChange={(e) => setField("currency", e.target.value)}
             />
+            {currencyLocked ? (
+              <p className="t-caption text-muted-foreground">
+                {t("Devise verrouillée : des montants sont déjà enregistrés. Effacez-les d'abord si la devise doit changer.")}
+              </p>
+            ) : null}
           </div>
           <div>
             <Label className="t-caption">{t("Lancement série")}</Label>
             <Input
               type="date"
               value={fields.seriesLaunch}
-              onChange={(e) => setFields({ ...fields, seriesLaunch: e.target.value })}
+              onChange={(e) => setField("seriesLaunch", e.target.value)}
             />
           </div>
           <div>
@@ -379,7 +496,7 @@ function TrackingTab({
             <Input
               inputMode="numeric"
               value={fields.volumeOverride}
-              onChange={(e) => setFields({ ...fields, volumeOverride: e.target.value })}
+              onChange={(e) => setField("volumeOverride", e.target.value)}
             />
             <p className="t-caption text-muted-foreground">
               {t("Vide : le volume de la dernière version envoyée est utilisé.")}
@@ -390,7 +507,7 @@ function TrackingTab({
             <Input
               inputMode="decimal"
               value={fields.estimate}
-              onChange={(e) => setFields({ ...fields, estimate: e.target.value })}
+              onChange={(e) => setField("estimate", e.target.value)}
             />
             <p className="t-caption text-muted-foreground">
               {t("Utilisée tant que volume et prix ne permettent pas le calcul ; elle n'est jamais effacée.")}
@@ -399,7 +516,7 @@ function TrackingTab({
         </div>
         <Button
           size="sm"
-          disabled={busy}
+          disabled={busy || dirty.size === 0}
           onClick={() => {
             const volume = parseVolumeInput(fields.volumeOverride);
             const estimate = parseAmountInput(fields.estimate);
@@ -409,24 +526,25 @@ function TrackingTab({
               return setLocal(t("Pays : code à deux lettres attendu."));
             if (fields.currency.trim() && !isCurrencyCode(fields.currency))
               return setLocal(t("Devise : code à trois lettres attendu."));
+            if (dirty.has("currency") && currencyLocked)
+              return setLocal(
+                t("La devise ne peut plus changer : des montants sont déjà enregistrés dans la devise actuelle."),
+              );
+            // Seuls les champs réellement modifiés partent : enregistrer ici
+            // ne doit jamais écraser une valeur changée entre-temps ailleurs.
+            const patch: Record<string, unknown> = {};
+            if (dirty.has("company")) patch["company"] = fields.company.trim() || null;
+            if (dirty.has("projectName")) patch["project_name"] = fields.projectName.trim() || null;
+            if (dirty.has("countryCode"))
+              patch["country_code"] = fields.countryCode.trim().toUpperCase() || null;
+            if (dirty.has("currency"))
+              patch["currency"] = fields.currency.trim().toUpperCase() || null;
+            if (dirty.has("seriesLaunch")) patch["series_launch"] = fields.seriesLaunch || null;
+            if (dirty.has("volumeOverride")) patch["annual_volume_override"] = volume.value;
+            if (dirty.has("estimate")) patch["estimated_annual_revenue"] = estimate.value;
+            if (Object.keys(patch).length === 0) return setLocal(t("Aucune modification à enregistrer."));
             setLocal(null);
-            void onRun(
-              () =>
-                setCrmFields(
-                  p.dossierId,
-                  {
-                    company: fields.company.trim() || null,
-                    project_name: fields.projectName.trim() || null,
-                    country_code: fields.countryCode.trim().toUpperCase() || null,
-                    currency: fields.currency.trim().toUpperCase() || null,
-                    series_launch: fields.seriesLaunch || null,
-                    annual_volume_override: volume.value,
-                    estimated_annual_revenue: estimate.value,
-                  },
-                  p.version,
-                ),
-              t("Fiche enregistrée."),
-            );
+            void onRun(() => setCrmFields(p.dossierId, patch, p.version), t("Fiche enregistrée."));
           }}
         >
           {t("Enregistrer")}
@@ -465,7 +583,9 @@ function TrackingTab({
                     setCrmPrice(
                       p.dossierId,
                       parsed.value,
-                      fields.currency.trim().toUpperCase() || p.currency,
+                      currencyLocked
+                        ? p.currency
+                        : fields.currency.trim().toUpperCase() || p.currency,
                       p.version,
                     ),
                   t("Prix enregistré."),
@@ -530,6 +650,7 @@ function TrackingTab({
             <Label className="t-caption">{t("Commercial")}</Label>
             <Select
               value={directory.sales}
+              disabled={!canOwners}
               onValueChange={(v) => setDirectory({ ...directory, sales: v })}
             >
               <SelectTrigger className="min-h-11">
@@ -551,6 +672,7 @@ function TrackingTab({
             <Label className="t-caption">FAE</Label>
             <Select
               value={directory.fae}
+              disabled={!canOwners}
               onValueChange={(v) => setDirectory({ ...directory, fae: v })}
             >
               <SelectTrigger className="min-h-11">
@@ -569,9 +691,14 @@ function TrackingTab({
             </Select>
           </div>
         </div>
+        {canOwners ? null : (
+          <p className="t-caption text-muted-foreground">
+            {t("Seul le commerce ou l'administration désigne les responsables.")}
+          </p>
+        )}
         <Button
           size="sm"
-          disabled={busy}
+          disabled={busy || !canOwners}
           onClick={() =>
             void onRun(
               () =>
@@ -707,6 +834,73 @@ function TasksTab({
                 </SelectContent>
               </Select>
               <div>
+                <Label className="t-caption" htmlFor={`due-${task.id}`}>
+                  {t("Échéance")}
+                </Label>
+                <Input
+                  id={`due-${task.id}`}
+                  type="date"
+                  value={task.dueOn ?? ""}
+                  onChange={(e) => {
+                    const dueOn = e.target.value || null;
+                    if (dueOn === (task.dueOn ?? null)) return;
+                    setLocal(null);
+                    void onRun(
+                      () =>
+                        upsertCrmTask(p.dossierId, {
+                          id: task.id,
+                          stage: task.stage,
+                          label: task.label,
+                          stakeholder: task.stakeholder,
+                          status: task.status,
+                          personId: task.personId,
+                          naReason: task.naReason,
+                          dueOn,
+                          expectedVersion: task.version,
+                        }),
+                      t("Échéance mise à jour."),
+                    );
+                  }}
+                />
+              </div>
+              <div>
+                <Label className="t-caption">{t("Rôle concerné")}</Label>
+                <Select
+                  value={task.stakeholder}
+                  onValueChange={(v) => {
+                    const stakeholder = v as TaskStakeholder;
+                    if (stakeholder === task.stakeholder) return;
+                    setLocal(null);
+                    void onRun(
+                      () =>
+                        upsertCrmTask(p.dossierId, {
+                          id: task.id,
+                          stage: task.stage,
+                          label: task.label,
+                          stakeholder,
+                          status: task.status,
+                          personId: task.personId,
+                          naReason: task.naReason,
+                          dueOn: task.dueOn,
+                          expectedVersion: task.version,
+                        }),
+                      t("Rôle mis à jour."),
+                    );
+                  }}
+                >
+                  <SelectTrigger className="min-h-11 w-40">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {(["sales", "fae", "client"] as const).map((s) => (
+                      <SelectItem key={s} value={s}>
+                        {t(STAKEHOLDER_LABEL[s] ?? s)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
                 <Label className="t-caption" htmlFor={`na-${task.id}`}>
                   {t("Motif si « sans objet »")}
                 </Label>
@@ -798,6 +992,32 @@ function TasksTab({
 
 function SapTab({ detail }: { detail: CrmProjectDetail }) {
   const text = useMemo(() => sapNotesToText(detail.sapNotes), [detail.sapNotes]);
+  const latest = useMemo(
+    () => (detail.sapNotes.length ? sapNotesToText(detail.sapNotes.slice(-1)) : ""),
+    [detail.sapNotes],
+  );
+  const [copyState, setCopyState] = useState<{ ok: boolean; text: string } | null>(null);
+
+  const copy = async (value: string, okMessage: string) => {
+    try {
+      const write = navigator.clipboard?.writeText;
+      if (!write) {
+        setCopyState({
+          ok: false,
+          text: t("Copie impossible depuis ce navigateur : sélectionnez le texte et copiez-le à la main."),
+        });
+        return;
+      }
+      await navigator.clipboard.writeText(value);
+      setCopyState({ ok: true, text: okMessage });
+    } catch {
+      setCopyState({
+        ok: false,
+        text: t("Copie impossible depuis ce navigateur : sélectionnez le texte et copiez-le à la main."),
+      });
+    }
+  };
+
   return (
     <div className="space-y-2">
       <p className="t-caption text-muted-foreground">
@@ -810,13 +1030,30 @@ function SapTab({ detail }: { detail: CrmProjectDetail }) {
       ) : (
         <>
           <pre className="code-block max-h-96 whitespace-pre-wrap">{text}</pre>
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={() => void navigator.clipboard?.writeText(text)}
-          >
-            {t("Copier")}
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => void copy(text, t("Toutes les notes ont été copiées."))}
+            >
+              {t("Copier tout")}
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => void copy(latest, t("La dernière note a été copiée."))}
+            >
+              {t("Copier la dernière")}
+            </Button>
+          </div>
+          {copyState ? (
+            <p
+              role="status"
+              className={copyState.ok ? "notice-success t-caption" : "notice-warning t-caption"}
+            >
+              {copyState.text}
+            </p>
+          ) : null}
         </>
       )}
     </div>
@@ -856,6 +1093,20 @@ function NotifyTab({
   }, [p.dossierId]);
 
   const published = (view?.reviews ?? []).filter((r) => r.published && !r.superseded);
+  const chosen = published.find((r) => r.id === reviewId) ?? null;
+  /** Contenu client de l'aperçu : rien d'interne n'y entre. */
+  const selected = chosen
+    ? {
+        verdict: chosen.verdict,
+        exactPartNumber: chosen.exact_part_number,
+        conditions: chosen.conditions,
+        message: chosen.message,
+      }
+    : null;
+  /** Langue déjà utilisée pour ce dossier, sinon celle du dernier message préparé. */
+  const clientLocale = detail.notifications[0]?.locale ?? "fr";
+  const origin = typeof window === "undefined" ? "" : window.location.origin;
+  const absoluteLink = `${origin}/?dossier=${p.dossierId}`;
 
   return (
     <div className="space-y-3">
@@ -897,6 +1148,38 @@ function NotifyTab({
         </p>
       </div>
 
+      {selected ? (
+        <section className="panel-block space-y-2" aria-label={t("Aperçu du message client")}>
+          <h3 className="t-title-s">{t("Aperçu tel que le client le lira")}</h3>
+          <p className="t-caption text-muted-foreground">
+            {t("Langue du client :")} {clientLocale} · {t("envoi non configuré")}
+          </p>
+          <p className="text-sm font-medium">{subject.trim() || t("(objet vide)")}</p>
+          <p className="whitespace-pre-wrap text-sm">{summary.trim() || t("(message vide)")}</p>
+          <ul className="t-caption space-y-1 text-muted-foreground">
+            <li>
+              {t("Décision publiée :")} {selected.verdict}
+              {selected.exactPartNumber ? ` · ${selected.exactPartNumber}` : ""}
+            </li>
+            {selected.conditions ? (
+              <li>
+                {t("Conditions :")} {selected.conditions}
+              </li>
+            ) : null}
+            {selected.message ? (
+              <li>
+                {t("Questions ouvertes :")} {selected.message}
+              </li>
+            ) : null}
+          </ul>
+          <p className="text-sm">
+            <a className="underline" href={absoluteLink} target="_blank" rel="noreferrer">
+              {absoluteLink}
+            </a>
+          </p>
+        </section>
+      ) : null}
+
       <Button
         size="sm"
         disabled={busy || !reviewId || !subject.trim() || !summary.trim()}
@@ -933,7 +1216,15 @@ function NotifyTab({
                 </div>
                 <p className="whitespace-pre-wrap">{n.summary}</p>
                 <p className="t-caption text-muted-foreground">
-                  {t("lien :")} {n.linkPath}
+                  {t("lien :")}{" "}
+                  <a
+                    className="underline"
+                    href={`${origin}${n.linkPath}`}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {`${origin}${n.linkPath}`}
+                  </a>
                 </p>
               </li>
             ))}

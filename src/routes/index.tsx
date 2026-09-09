@@ -16,8 +16,14 @@ import { DesignSpace, PrivateDesignError } from "@/components/leadmagnet/design-
 import { useReveal } from "@/hooks/use-reveal";
 import { LanguagePicker, useLocale } from "@/lib/i18n/react";
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 export const Route = createFileRoute("/")({
   ssr: false,
+  validateSearch: (search: Record<string, unknown>) => {
+    const raw = typeof search["dossier"] === "string" ? search["dossier"] : "";
+    return UUID_RE.test(raw) ? { dossier: raw } : {};
+  },
   head: () => ({
     meta: [
       { title: t("Faire détecter votre idée — Standex DETECT") },
@@ -43,10 +49,13 @@ export const Route = createFileRoute("/")({
 
 function HomeRoute() {
   useLocale();
-  const [started, setStarted] = useState(false);
+  /** Lien reçu par message : le projet n'est ouvert qu'après connexion et
+   * seulement s'il appartient réellement au compte. */
+  const requestedDossierId = Route.useSearch().dossier ?? "";
+  const [started, setStarted] = useState(Boolean(requestedDossierId));
   /** L'espace projet reste monté : une fois ouvert, revenir à l'accueil ne
    * perd rien et « Reprendre mon projet » réaffiche le même brouillon. */
-  const [opened, setOpened] = useState(false);
+  const [opened, setOpened] = useState(Boolean(requestedDossierId));
   const openWorkspace = () => {
     setOpened(true);
     setStarted(true);
@@ -175,6 +184,7 @@ function HomeRoute() {
           accountRequest={accountRequest}
           onWorkspaceOpen={openWorkspace}
           onGoHome={() => setStarted(false)}
+          requestedDossierId={requestedDossierId || null}
         />
       </div>
     </div>
