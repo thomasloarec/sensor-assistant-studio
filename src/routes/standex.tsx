@@ -194,7 +194,9 @@ function WorkspaceGate() {
     };
   }, [capabilities?.userId]);
 
-  const unavailable = capabilities?.available === false;
+  /* Un serveur qui répond « non autorisé » à un visiteur déconnecté n'est pas
+     un serveur non activé : dans ce cas on propose la connexion. */
+  const unavailable = capabilities?.available === false && backend?.authenticated === true;
 
   return (
     <div className="mx-auto w-full max-w-[30rem] space-y-4 panel-block-lg anim-rise">
