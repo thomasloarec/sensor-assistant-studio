@@ -278,7 +278,27 @@ describe("avancement, âges et retards", () => {
       [task({ status: "blocked" }), task({ id: "t2", dueOn: "2026-09-05" })],
       now,
     );
-    expect(alerts).toEqual({ blocked: 1, overdue: 1, stageAgeDays: 9, idleDays: 5 });
+    expect(alerts).toEqual({
+      blocked: 1, overdue: 1, stageAgeDays: 9, idleDays: 5, projectAgeDays: 40,
+    });
+  });
+
+  test("l'âge de l'étape part de son activation réelle, pas de la création du dossier", () => {
+    const p = project({
+      stageSince: "2026-09-01T00:00:00.000Z",
+      stageActivatedAt: "2026-09-08T00:00:00.000Z",
+    });
+    expect(stageAgeDays(p, now)).toBe(2);
+    expect(projectAgeDays(p, now)).toBe(40);
+  });
+
+  test("sans activation connue, l'étape retombe sur sa date d'entrée, jamais sur zéro", () => {
+    const p = project({ stageSince: "2026-09-01T00:00:00.000Z", stageActivatedAt: null });
+    expect(stageAgeDays(p, now)).toBe(9);
+  });
+
+  test("un dossier sans date de création n'a pas d'âge inventé", () => {
+    expect(projectAgeDays(project({ dossierCreatedAt: "" }), now)).toBeNull();
   });
 });
 
