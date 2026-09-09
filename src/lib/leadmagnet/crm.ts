@@ -402,6 +402,9 @@ export function matchesSearch(project: CrmProject, search: string): boolean {
   const q = norm(search).trim();
   if (!q) return true;
   const haystack = [
+    // La valeur RÉELLEMENT affichée (déclarée par le client, sauf correction
+    // interne explicite) doit être trouvable, pas seulement la correction.
+    project.companyEffective,
     project.company,
     project.companySubmitted,
     project.projectName,
@@ -413,6 +416,7 @@ export function matchesSearch(project: CrmProject, search: string): boolean {
     .join(" ");
   return q.split(/\s+/).every((token) => haystack.includes(token));
 }
+
 
 export function filterProjects(
   projects: readonly CrmProject[],
