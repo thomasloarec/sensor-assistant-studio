@@ -1,4 +1,5 @@
 import { getLocale, msg, setLocale, t, type Locale } from "@/lib/i18n/core";
+import { createNdaSync, StaleContextError } from "@/lib/leadmagnet/nda-sync";
 import { Link } from "@tanstack/react-router";
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -626,22 +627,43 @@ export function DesignSpace({
     }
   }, [applyNdaStatus, serverDossierId]);
 
+  /** Contrôleur d'écriture/lecture du choix NDA : verrou unique, époques,
+   * réponses périmées ignorées. La logique est isolée dans `nda-sync`. */
+  const ndaSync = useMemo(
+    () =>
+      createNdaSync<NdaStatusView>({
+        setError: (m) => setNdaError(m),
+        setBusy: (b) => {
+          busyRef.current = b;
+          setBusy(b);
+          setBusyOperation(b ? "nda" : null);
+          ndaToggleRef.current = b;
+        },
+        apply: (status) => applyNdaStatus(status),
+      }),
+    [applyNdaStatus],
+  );
+  // Démontage : plus rien de ce qui est en vol ne doit s'appliquer.
+  useEffect(() => () => ndaSync.invalidate(), [ndaSync]);
+
   const refreshNdaStatus = useCallback(async () => {
     if (!serverDossierId) return;
-    // Un choix en cours d'enregistrement fait autorité tant qu'il n'a pas répondu :
-    // une relecture retardée ne doit pas réafficher l'ancien régime.
-    if (ndaToggleRef.current) return;
-    setNdaError(null);
     const gen = contextGenRef.current;
-    try {
-      const status = await fetchNdaStatus(serverDossierId);
-      if (contextGenRef.current !== gen || ndaToggleRef.current) return;
-      applyNdaStatus(status);
-    } catch (error) {
-      if (contextGenRef.current !== gen) return;
-      setNdaError(error instanceof Error ? error.message : t("Statut NDA indisponible."));
-    }
-  }, [applyNdaStatus, serverDossierId]);
+    await ndaSync.refresh(
+      async () => {
+        const status = await fetchNdaStatus(serverDossierId);
+        // Réponse née d'un autre dossier : elle ne doit pas s'appliquer ici.
+        if (contextGenRef.current !== gen) throw new StaleContextError();
+        return status;
+      },
+      (error) =>
+        error instanceof StaleContextError
+          ? ""
+          : error instanceof Error
+            ? error.message
+            : t("Statut NDA indisponible."),
+    );
+  }, [ndaSync, serverDossierId]);
 
   /** Le NDA est optionnel : cette case porte le choix explicite du client.
    * Pour un dossier enregistré, le serveur fait autorité — l'écran garde le
@@ -651,7 +673,7 @@ export function DesignSpace({
    * inhibés par le même verrou. */
   const toggleNdaRequirement = useCallback(
     async (next: boolean) => {
-      if (ndaToggleRef.current || busyRef.current) return;
+      if (ndaSync.busy || busyRef.current) return;
       setNdaError(null);
       const plan = planNdaToggle(nda, next, {
         serverDossier: Boolean(serverDossierId),
@@ -672,33 +694,36 @@ export function DesignSpace({
         if (!next) setNdaPreview(null);
         return;
       }
-      // Verrou synchrone avant tout await : pas de double bascule concurrente.
-      ndaToggleRef.current = true;
-      busyRef.current = true;
-      setBusyOperation("nda");
-      if (plan.optimistic) setNda(plan.optimistic);
       const gen = contextGenRef.current;
-      try {
-        const status = await setNdaRequirement(serverDossierId!, next);
-        if (contextGenRef.current !== gen) return;
-        applyNdaStatus(status);
-        if (!status.nda_required) setNdaPreview(null);
-      } catch (error) {
-        if (contextGenRef.current !== gen) return;
-        setNdaError(
-          error instanceof Error ? error.message : t("Le choix n'a pas pu être enregistré côté Standex."),
-        );
-        // Le serveur fait autorité : on relit plutôt que de garder un état inventé.
-        ndaToggleRef.current = false;
-        void refreshNdaStatus();
-      } finally {
-        ndaToggleRef.current = false;
-        busyRef.current = false;
-        setBusyOperation(null);
-      }
+      const ok = await ndaSync.save(
+        async () => {
+          const status = await setNdaRequirement(serverDossierId!, next);
+          if (contextGenRef.current !== gen) throw new StaleContextError();
+          return status;
+        },
+        {
+          optimistic: () => {
+            if (plan.optimistic) setNda(plan.optimistic);
+          },
+          onSaved: (status) => {
+            if (!status.nda_required) setNdaPreview(null);
+          },
+          errText: (error) =>
+            error instanceof StaleContextError
+              ? ""
+              : error instanceof Error
+                ? error.message
+                : t("Le choix n'a pas pu être enregistré côté Standex."),
+        },
+      );
+      // Le serveur fait autorité : après un échec, on relit plutôt que de
+      // garder un état inventé.
+      if (!ok && contextGenRef.current === gen) void refreshNdaStatus();
     },
-    [applyNdaStatus, backend?.ready, nda, refreshNdaStatus, serverDossierId],
+    [backend?.ready, nda, ndaSync, refreshNdaStatus, serverDossierId],
   );
+
+
 
 
   /** À la reprise, le statut local est volontairement remis à zéro puis relu au
@@ -917,16 +942,28 @@ export function DesignSpace({
 
 
   const exportDossier = useCallback(() => {
-    const blob = new Blob([JSON.stringify(buildDossierExport(dossier), null, 2)], {
-      type: "application/json",
-    });
+    const blob = new Blob(
+      [
+        JSON.stringify(
+          // Seul le CHOIX « je veux un NDA » voyage. Aucune preuve, aucun statut
+          // vérifié, aucun document signé ne sort dans un fichier.
+          buildDossierExport(dossier, undefined, { ndaRequested: nda.required }),
+          null,
+          2,
+        ),
+      ],
+      {
+        type: "application/json",
+      },
+    );
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
     a.download = `dossier-conception-r${dossier.revision}.json`;
     a.click();
     URL.revokeObjectURL(url);
-  }, [dossier]);
+  }, [dossier, nda.required]);
+
 
   const importDossier = useCallback(
     async (file: File | undefined) => {
@@ -964,12 +1001,19 @@ export function DesignSpace({
         setConnectorDraft(EMPTY_CONNECTOR_DRAFT);
         setConnectorError(null);
         resetServerContext(null, 0);
+        // Le CHOIX de NDA du fichier est repris : c'est une demande, pas une
+        // preuve. Le statut vérifié, lui, n'est jamais rétabli depuis un fichier.
+        if (parsed.ndaRequested === true) setNda((n) => enableNda(n));
         setImportMessage(
           [
             ...parsed.notices,
+            parsed.ndaRequested === true
+              ? t("La demande d'accord de confidentialité du fichier est reprise : elle devra être vérifiée à nouveau côté Standex.")
+              : t("Aucun accord de confidentialité n'est demandé dans ce fichier."),
             t("Contenu importé dans un dossier local : aucun dossier Standex n'y est rattaché, et l'accord de confidentialité comme l'accord d'envoi sont à refaire."),
           ].join(" "),
         );
+
         return true;
       } catch {
         if (request !== importRequestRef.current || context !== contextGenRef.current) return;
@@ -998,6 +1042,9 @@ export function DesignSpace({
    */
   const resetServerContext = useCallback((dossierId: string | null, revision: number) => {
     contextGenRef.current += 1;
+    // Changement de dossier : une lecture ou une bascule NDA en vol devient périmée.
+    ndaSync.invalidate();
+    setNdaError(null);
     importRequestRef.current += 1;
     docGenRef.current += 1;
     setServerDossierId(dossierId);
@@ -2311,6 +2358,9 @@ export function DesignSpace({
               <Checkbox
                 className="mt-1"
                 checked={nda.required}
+                // Pendant un envoi, un dépôt ou l'enregistrement du choix,
+                // la case ne bouge plus : une seule opération à la fois.
+                disabled={busy}
                 onCheckedChange={(v) => {
                   void toggleNdaRequirement(v === true);
                 }}
@@ -2326,11 +2376,28 @@ export function DesignSpace({
               </span>
             </label>
 
+            {/* Une erreur de choix reste visible même quand les champs NDA sont
+                masqués : sans cela, un refus serveur passerait inaperçu. */}
+            {ndaError ? (
+              <p className="notice notice-warning flex items-start gap-2" role="alert">
+                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+                {ndaError}
+              </p>
+            ) : null}
+
+            {busyOperation === "nda" ? (
+              <p className="notice notice-info" role="status">
+                {t("Enregistrement de votre choix de confidentialité en cours…")}
+              </p>
+            ) : null}
+
             {!nda.required ? (
               <p className="notice notice-info" role="status">
                 {t("Aucun accord de confidentialité n'est demandé pour ce projet. Cochez la case ci-dessus si vous en voulez un.")}
               </p>
             ) : null}
+
+
 
             {nda.required ? (
               <>
@@ -2358,6 +2425,7 @@ export function DesignSpace({
               <Button
                 size="sm"
                 variant="outline"
+                disabled={busy}
                 onClick={() => {
                   void prepareNdaDocument("preview");
                 }}
@@ -2367,7 +2435,7 @@ export function DesignSpace({
               <Button
                 size="sm"
                 variant="outline"
-                disabled={!ndaPreview}
+                disabled={!ndaPreview || busy}
                 onClick={() => {
                   void prepareNdaDocument("download");
                 }}
@@ -2377,7 +2445,7 @@ export function DesignSpace({
               </Button>
               <Button
                 size="sm"
-                disabled={!backend?.ready}
+                disabled={!backend?.ready || busy}
                 onClick={() => {
                   void prepareServerNda();
                 }}
@@ -2387,7 +2455,7 @@ export function DesignSpace({
               <Button
                 size="sm"
                 variant="outline"
-                disabled={!backend?.ready || !serverDossierId}
+                disabled={!backend?.ready || !serverDossierId || busy}
                 onClick={() => {
                   void refreshNdaStatus();
                 }}
@@ -2404,12 +2472,6 @@ export function DesignSpace({
                 : t("Aucune fiche NDA créée pour l'instant.")}
             </p>
 
-            {ndaError ? (
-              <p className="notice notice-warning flex items-start gap-2">
-                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
-                {ndaError}
-              </p>
-            ) : null}
             {ndaPreview ? (
               <div className="space-y-2">
                 <p className="t-caption">
