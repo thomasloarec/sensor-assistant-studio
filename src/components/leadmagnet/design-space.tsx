@@ -121,6 +121,7 @@ import { englishReportMessage } from "@/lib/leadmagnet/english-report-messages";
 import { EnglishRunLock } from "@/lib/leadmagnet/english-run-lock";
 import {
   ndaTransferGuidance,
+  runGuardedSubmit,
   type ReviewOperation,
 } from "@/lib/leadmagnet/review-submit-state";
 
@@ -1183,72 +1184,73 @@ export function DesignSpace({
       serverDossierId,
       serverRevision: serverRevision + 1,
     };
-    const check = await checkSubmission(input);
-    if (!check.ok) {
-      setSubmitMessage(check.problems.map((problem) => t(problem)).join(" "));
-      setSubmitMessageTone("danger");
-      if (!ndaOk) focusNdaSection();
-      return;
-    }
-    busyRef.current = true;
     setBusy(true);
-    setBusyOperation("submission");
-    setSubmitMessage(null);
-    try {
-      // Envoi réel dès que l'espace serveur est disponible et la session ouverte ;
-      // sinon rien n'est transmis et rien n'est simulé.
-      const outcome = await submit(
-        input,
-        createSupabaseSubmissionBackend({
-          schemaReady: Boolean(backend?.schemaReady),
-          capabilities: backend?.capabilities ?? {
-            authenticated: false,
-            userId: null,
-            role: null,
-            assignedDossiers: [],
-          },
-          dossierId: serverDossierId,
-          expectedRevision: serverRevision,
-          ndaRequired: nda.required,
-          onDossierCreated: setServerDossierId,
-        }),
-      );
-      if (outcome.status === "submitted") {
-        setServerRevision((r) => r + 1);
-        setPreparedUpload(null);
-        setSubmitMessage(
-          t("Dossier transmis à la revue Standex. Vous serez informé dès qu'un retour est publié."),
-        );
-        setSubmitMessageTone("success");
-        // Version anglaise : demandée UNIQUEMENT si l'accord de traduction a été
-        // donné pour ce contenu exact. Sans accord, rien n'est transmis et on le dit.
-        const bound = await submissionBinding(input);
-        const target = {
-          dossierId: serverDossierId ?? "",
-          revisionId: outcome.submissionId,
-          contentHash: bound.contentHash,
-        };
-        if (hasBoundConsent(privacy, "ai_assistant", bound) && target.dossierId) {
-          setEnglishRetry(target);
-          await runEnglishReport(target);
-        } else {
-          setEnglishRetry(null);
-          setEnglishMessage(
-            t("Version anglaise non demandée : votre accord de traduction n'a pas été donné pour cette version. Le dossier d'origine est bien arrivé."),
-          );
-        }
-      } else {
-        setSubmitMessage(outcome.reason);
+    const outcomeKind = await runGuardedSubmit({
+      lock: busyRef,
+      generation: () => contextGenRef.current,
+      setOperation: setBusyOperation,
+      validate: () => checkSubmission(input),
+      onInvalid: (problems) => {
+        setSubmitMessage(problems.map((problem) => t(problem)).join(" "));
         setSubmitMessageTone("danger");
-      }
-    } catch {
-      setSubmitMessage(t("La transmission n'a pas abouti. Rien n'a été envoyé ; réessayez."));
-      setSubmitMessageTone("danger");
-    } finally {
-      busyRef.current = false;
-      setBusy(false);
-      setBusyOperation(null);
-    }
+        if (!ndaOk) focusNdaSection();
+      },
+      onError: () => {
+        setSubmitMessage(t("La transmission n'a pas abouti. Rien n'a été envoyé ; réessayez."));
+        setSubmitMessageTone("danger");
+      },
+      submit: async () => {
+        setSubmitMessage(null);
+        // Envoi réel dès que l'espace serveur est disponible et la session ouverte ;
+        // sinon rien n'est transmis et rien n'est simulé.
+        const outcome = await submit(
+          input,
+          createSupabaseSubmissionBackend({
+            schemaReady: Boolean(backend?.schemaReady),
+            capabilities: backend?.capabilities ?? {
+              authenticated: false,
+              userId: null,
+              role: null,
+              assignedDossiers: [],
+            },
+            dossierId: serverDossierId,
+            expectedRevision: serverRevision,
+            ndaRequired: nda.required,
+            onDossierCreated: setServerDossierId,
+          }),
+        );
+        if (outcome.status === "submitted") {
+          setServerRevision((r) => r + 1);
+          setPreparedUpload(null);
+          setSubmitMessage(
+            t("Dossier transmis à la revue Standex. Vous serez informé dès qu'un retour est publié."),
+          );
+          setSubmitMessageTone("success");
+          // Version anglaise : demandée UNIQUEMENT si l'accord de traduction a été
+          // donné pour ce contenu exact. Sans accord, rien n'est transmis et on le dit.
+          const bound = await submissionBinding(input);
+          const target = {
+            dossierId: serverDossierId ?? "",
+            revisionId: outcome.submissionId,
+            contentHash: bound.contentHash,
+          };
+          if (hasBoundConsent(privacy, "ai_assistant", bound) && target.dossierId) {
+            setEnglishRetry(target);
+            await runEnglishReport(target);
+          } else {
+            setEnglishRetry(null);
+            setEnglishMessage(
+              t("Version anglaise non demandée : votre accord de traduction n'a pas été donné pour cette version. Le dossier d'origine est bien arrivé."),
+            );
+          }
+        } else {
+          setSubmitMessage(outcome.reason);
+          setSubmitMessageTone("danger");
+        }
+      },
+    });
+    void outcomeKind;
+    setBusy(false);
   }, [
     dossier,
     nda,
