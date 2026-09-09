@@ -781,7 +781,7 @@ function TrackingTab({
               {t("Enregistrer le prix")}
             </Button>
           </div>
-          <div>
+          <div className="field">
             <Label className="t-caption">{t("Coût unitaire")}</Label>
             <Input
               inputMode="decimal"
@@ -789,7 +789,7 @@ function TrackingTab({
               disabled={!canCost || costInSap}
               onChange={(e) => setCost(e.target.value)}
             />
-            <label className="mt-1 flex min-h-11 items-center gap-2 text-sm">
+            <label className="t-body flex min-h-11 items-center gap-2">
               <input
                 type="checkbox"
                 className="h-5 w-5"
@@ -802,8 +802,9 @@ function TrackingTab({
             <Button
               size="sm"
               variant="outline"
-              className="mt-1"
+              className="field-actions"
               disabled={busy || !canCost}
+
               onClick={() => {
                 const parsed = parseAmountInput(cost);
                 if (!costInSap && !parsed.ok)
