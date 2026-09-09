@@ -439,6 +439,36 @@ add('unknown_audit_action_creates_no_note', await value(
   "select count(*)::int from lead.sap_notes where event_key like 'audit:%' and dossier_id=$1",
   [dossier]) === auditNoteCount);
 
+// 14.8 Rattachement d'annuaire puis attribution EXPLICITE du premier droit.
+//      Le rattachement seul n'ouvre rien ; le droit est une action distincte.
+const newbie = '20000000-0000-4000-8000-000000000007';
+await db.query('insert into auth.users(id,email) values($1,$2)', [newbie, 'newbie@example.invalid']);
+const dirOverview = await actor('authenticated', ids.admin,
+  () => value("select public.lead_crm_admin_upsert_person(null,'New','Bie','sales',true)"));
+const newPerson = dirOverview.directory.find((p) => p.last_name === 'Bie');
+const linkedNewbie = await actor('authenticated', ids.admin,
+  () => value('select public.lead_crm_admin_link_person($1,$2)', [newPerson.id, 'newbie@example.invalid']));
+add('directory_link_records_the_account',
+  linkedNewbie.directory.some((p) => p.id === newPerson.id && p.user_id === newbie));
+add('directory_link_grants_no_staff_right',
+  !linkedNewbie.staff.some((s) => s.user_id === newbie));
+await expectFail('linked_account_without_right_cannot_read_board', () => actor('authenticated', newbie,
+  () => value('select public.lead_crm_board()')), 'NOT_ALLOWED');
+const grantedNewbie = await actor('authenticated', ids.admin,
+  () => value("select public.lead_crm_admin_set_staff($1,'sales',true)", [newbie]));
+add('explicit_grant_creates_the_staff_right',
+  grantedNewbie.staff.some((s) => s.user_id === newbie && s.role === 'sales' && s.active !== false));
+add('granted_account_can_read_board', Array.isArray(
+  (await actor('authenticated', newbie, () => value('select public.lead_crm_board()'))).projects));
+const revokedNewbie = await actor('authenticated', ids.admin,
+  () => value("select public.lead_crm_admin_set_staff($1,'sales',false)", [newbie]));
+add('disabling_marks_the_right_inactive',
+  revokedNewbie.staff.some((s) => s.user_id === newbie && s.active === false));
+await expectFail('disabled_account_loses_crm_access', () => actor('authenticated', newbie,
+  () => value('select public.lead_crm_board()')), 'NOT_ALLOWED');
+await expectFail('disabled_account_loses_legacy_staff_access', () => actor('authenticated', newbie,
+  () => value('select public.lead_staff_view($1)', [dossier])));
+
 const failedBefore = results.filter((r) => !r.pass).length;
 add('regression_block_ran', results.length > 65, String(failedBefore));
 

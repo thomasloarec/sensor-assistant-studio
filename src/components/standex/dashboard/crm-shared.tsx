@@ -187,3 +187,22 @@ export function CrmUnavailableNotice({
     </p>
   );
 }
+
+/** Champ interne : il n'est jamais montré au client et se rédige en anglais,
+ *  langue commune de l'équipe et de SAP. */
+export function InternalEnglishHint() {
+  return (
+    <span className="t-caption block text-muted-foreground">
+      {t("Interne — à rédiger en anglais")}
+    </span>
+  );
+}
+
+/** Champ destiné au client : il se rédige dans la langue enregistrée du projet. */
+export function ClientLocaleHint({ locale }: { locale: string }) {
+  return (
+    <span className="t-caption block text-muted-foreground">
+      {t("Vu par le client — langue enregistrée du projet :")} {locale}
+    </span>
+  );
+}
