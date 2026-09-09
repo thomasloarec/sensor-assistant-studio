@@ -3,7 +3,6 @@ import { Link } from "@tanstack/react-router";
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowLeft,
-  ShieldCheck,
   Lock,
   Download,
   Upload,
@@ -141,6 +140,7 @@ import { applyVariant } from "@/lib/leadmagnet/variant";
 import { AuthPanel } from "@/components/leadmagnet/auth-panel";
 import { ClientFollowUp } from "@/components/leadmagnet/client-followup";
 import { WorkspacePanel } from "@/components/leadmagnet/workspace-panel";
+import { ReviewSubmitControl } from "@/components/leadmagnet/review-submit-control";
 import {
   DocumentViewer,
   documentFromBytes,
@@ -726,7 +726,6 @@ export function DesignSpace({
   );
   const ndaOk = ndaAllowsConfidentialTransfer(nda);
   const ndaGuidance = ndaTransferGuidance(nda);
-  const busyLabel = reviewOperationLabel(busyOperation);
   const focusNdaSection = useCallback(() => {
     setTab("revue");
     setReviewSections((sections) =>
@@ -2447,56 +2446,18 @@ export function DesignSpace({
               />
               {t("J'ai relu le résumé technique et les inconnues listées.")}
             </label>
-            <div className="space-y-3">
-              <Button
-                size="lg"
-                className="w-full sm:w-auto"
-                onClick={() => void onSubmit()}
-                disabled={busy}
-                aria-busy={busy ? "true" : undefined}
-                aria-describedby={ndaGuidance ? "review-submit-guidance" : submitMessage ? "review-submit-message" : undefined}
-              >
-                {busy ? (
-                  <Loader2 className="mr-1 h-4 w-4 animate-spin" />
-                ) : (
-                  <ShieldCheck className="mr-1 h-4 w-4" />
-                )}{" "}
-                {busy
-                  ? t(busyLabel ?? "Une opération est en cours…")
-                  : t("Transmettre à la revue Standex")}
-              </Button>
-              {ndaGuidance ? (
-                <div id="review-submit-guidance" className="notice notice-warning space-y-3" role="status">
-                  <p>{t(ndaGuidance)}</p>
-                  <div className="flex flex-wrap gap-2">
-                    <Button type="button" size="sm" variant="outline" onClick={focusNdaSection}>
-                      {t("Ouvrir Confidentialité et NDA")}
-                    </Button>
-                    {serverDossierId ? (
-                      <Button
-                        type="button"
-                        size="sm"
-                        variant="outline"
-                        disabled={!backend?.ready}
-                        onClick={() => void refreshNdaStatus()}
-                      >
-                        {t("Actualiser le statut NDA")}
-                      </Button>
-                    ) : null}
-                  </div>
-                  {!backend?.authenticated ? (
-                    <p className="t-caption">
-                      {t("Connectez-vous ci-dessous pour préparer ou actualiser la vérification du NDA.")}
-                    </p>
-                  ) : null}
-                </div>
-              ) : null}
-              {busy && busyLabel ? (
-                <p className="notice notice-info" role="status" aria-live="polite">
-                  {t(busyLabel)}
-                </p>
-              ) : null}
-            </div>
+            <ReviewSubmitControl
+              busy={busy}
+              operation={busyOperation}
+              ndaGuidance={ndaGuidance}
+              canRefreshNda={Boolean(serverDossierId && backend?.ready)}
+              authenticated={Boolean(backend?.authenticated)}
+              message={submitMessage}
+              messageTone={submitMessageTone}
+              onSubmit={() => void onSubmit()}
+              onOpenNda={focusNdaSection}
+              onRefreshNda={() => void refreshNdaStatus()}
+            />
             {!backend?.ready ? (
               <div className="space-y-2">
                 <p className="t-caption">
@@ -2520,22 +2481,6 @@ export function DesignSpace({
                   "Contenu repris de la version {0}. Le prochain envoi créera la version {1} de ce dossier.",
                   [reopenedFrom.revision, serverRevision + 1],
                 )}
-              </p>
-            ) : null}
-            {submitMessage ? (
-              <p
-                id="review-submit-message"
-                className={`notice ${
-                  submitMessageTone === "success"
-                    ? "notice-success notice-success-sweep"
-                    : submitMessageTone === "danger"
-                      ? "notice-danger"
-                      : "notice-info"
-                }`}
-                role={submitMessageTone === "danger" ? "alert" : "status"}
-                aria-live="polite"
-              >
-                {submitMessage}
               </p>
             ) : null}
           </AccordionContent>
