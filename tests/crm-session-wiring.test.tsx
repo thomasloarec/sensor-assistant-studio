@@ -260,3 +260,5 @@ describe("identité du compte connecté", () => {
     expect(view.getByTestId("draft").textContent).toBe("");
   });
 });
+
+test("debug handler", () => { console.log("HANDLER", authHandler === null); });
