@@ -294,6 +294,35 @@ Les primitives montées par ces écrans sont migrées dans le même commit :
 `dropdown-menu.tsx` l'a été pour le menu de compte (rayons, tailles de texte et
 cibles de 44 px conformes).
 
+### Socle de la fiche projet et de l'écran Tâches
+
+- `.kpi-row` / `.kpi` — bande de repères : quatre tuiles posées (`--e-1`),
+  libellé en `.t-label` majuscule, valeur en `.t-title-s`, chiffres mesurés en
+  `.t-metric`. Jamais un tableau de définitions serré. Une valeur absente reste
+  écrite « inconnu » en clair, elle n'est jamais remplacée par un zéro.
+- `.status-pill` — état d'une tâche : pilule teintée sans bordure, teinte par
+  `data-status` (`in_progress` bleu de marque, `blocked` danger, `done` succès,
+  le reste posé sur `--surface-sunken`). Le libellé traduit porte seul le sens ;
+  montée comme déclencheur de sélection, elle garde ses 44 px de haut.
+- `.task-row` — une tâche tient sur une ligne : état, contenu, rôle et personne,
+  échéance et retard, bouton d'ouverture. Sous 48 rem, la ligne se replie sur
+  trois colonnes sans rien masquer.
+- `.task-more` — les champs rarement touchés (échéance, rôle, motif « sans
+  objet ») se déplient sous la ligne via `grid-template-rows: 0fr → 1fr` ; ils
+  ne s'empilent plus en permanence. Transition neutralisée sous
+  `prefers-reduced-motion: reduce`.
+- `TaskRow`, `StatusPill` et `sortByUrgency` vivent dans `crm-shared.tsx` : la
+  fiche projet et l'écran Tâches partagent une seule définition, pour que les
+  deux lectures ne divergent jamais. L'ordre d'urgence est le même des deux
+  côtés : retard décroissant, puis bloquées, puis échéance la plus proche, puis
+  sans échéance. Aucune tâche n'est masquée, seul l'ordre change.
+- Les onglets de la fiche sont un contrôle segmenté (`.segmented`) avec
+  `role="tablist"`, `aria-controls` et panneaux `role="tabpanel"`.
+- Les formulaires de la fiche utilisent `.field-row` / `.field` /
+  `.field-actions` : libellé, champ et aide alignés sur la même grille, actions
+  d'enregistrement en fin de bloc, indicateur d'attente dans le bouton.
+
+
 ## 11. Ce qui reste ouvert
 
 - La console `/standex` ne peut être validée de bout en bout sans session staff
