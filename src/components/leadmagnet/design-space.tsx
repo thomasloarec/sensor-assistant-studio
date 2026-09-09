@@ -1341,12 +1341,12 @@ export function DesignSpace({
     // Contexte figé à l'entrée : une réponse tardive, arrivée après un
     // changement de dossier, n'écrit plus jamais un succès ici.
     const gen = contextGenRef.current;
-    // Phase réellement atteinte : elle interdit d'annoncer « rien n'a été
-    // envoyé » après une révision déjà confirmée par le serveur.
     // Dossier serveur RÉELLEMENT visé par cet envoi : sur un premier envoi il
     // n'existe qu'à partir du rappel de création. Le garder à null puis le
     // comparer au nouvel identifiant ferait passer l'envoi pour périmé.
     let targetDossierId = serverDossierId;
+    // Phase réellement atteinte : elle interdit d'annoncer « rien n'a été
+    // envoyé » après une révision déjà confirmée par le serveur.
     let phase: SubmitPhase = "before_send";
     setBusy(true);
     const outcomeKind = await runGuardedSubmit({
@@ -1393,9 +1393,9 @@ export function DesignSpace({
         if (outcome.status === "submitted") {
           phase = "committed";
           committedRevisionRef.current = serverRevision + 1;
-          const bound = {
-            ...(await submissionBinding({ ...input, serverDossierId: targetDossierId })),
-          };
+          // Liaison du contenu réellement confirmé, rattachée au dossier
+          // serveur exact (créé par cet envoi le cas échéant).
+          const bound = await submissionBinding({ ...input, serverDossierId: targetDossierId });
           if (contextGenRef.current !== gen) return;
           setServerRevision((r) => r + 1);
           setPreparedUpload(null);
