@@ -278,7 +278,10 @@ function ProjectsBoard() {
 
       {/* Barre de travail : une seule ligne collante. Les commandes rares
           vivent dans le tiroir de filtres, le résultat reste au-dessus du pli. */}
-      <section className="workbar relative" aria-label={t("Barre de travail")}>
+      {/* `relative` est volontairement absent : l'utilitaire écraserait le
+          `position: sticky` du socle et la barre repasserait sous l'en-tête. */}
+      <section className="workbar" aria-label={t("Barre de travail")}>
+
         {loading ? (
           <span className="workbar-progress" aria-hidden="true" />
         ) : null}
