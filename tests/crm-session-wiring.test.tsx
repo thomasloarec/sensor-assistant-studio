@@ -8,7 +8,7 @@
 import { GlobalRegistrator } from "@happy-dom/global-registrator";
 GlobalRegistrator.register({ url: "https://exemple.invalid/standex" });
 
-import { afterAll, afterEach, describe, expect, mock, test } from "bun:test";
+import { afterEach, describe, expect, mock, test } from "bun:test";
 import * as React from "react";
 import { act, cleanup, render } from "@testing-library/react";
 import {
@@ -59,15 +59,36 @@ let crmState = {
   sessionGeneration: 0,
   refresh: () => undefined,
 };
+// --- Session Supabase pilotée par le test ----------------------------------
+type AuthHandler = (event: string, session: unknown) => void;
+let authHandler: AuthHandler | null = null;
+mock.module("@/lib/standex/supabase", () => ({
+  isSupabaseConfigured: true,
+  requireSupabase: () => ({}),
+  supabase: {
+    auth: {
+      getSession: () => Promise.resolve({ data: { session: { user: { id: "u1" } } } }),
+      onAuthStateChange: (cb: AuthHandler) => {
+        authHandler = cb;
+        return {
+          data: { subscription: { unsubscribe: () => { authHandler = null; } } },
+        };
+      },
+    },
+  },
+}));
+const realSupabaseAdapter = await import("../src/lib/leadmagnet/supabase-adapter");
+mock.module("@/lib/leadmagnet/supabase-adapter", () => ({
+  ...realSupabaseAdapter,
+  fetchStaffInbox: () => Promise.resolve({ role: "admin", dossiers: [] }),
+}));
+
 const realCrmContext = await import("../src/components/standex/dashboard/crm-context");
 mock.module("@/components/standex/dashboard/crm-context", () => ({
   useCrm: () => crmState,
   CrmProvider: ({ children }: { children: React.ReactNode }) => children,
 }));
-// Le mock ne doit pas déborder sur les autres fichiers de test.
-afterAll(() => {
-  mock.module("@/components/standex/dashboard/crm-context", () => realCrmContext);
-});
+
 
 const { ProjectDetail } = await import("../src/routes/standex.projects.$dossierId");
 const { AdminScreen } = await import("../src/routes/standex.admin");
@@ -171,5 +192,71 @@ describe("l'administration appartient au compte connecté", () => {
       });
     });
     expect(document.body.textContent).not.toContain("Ancien");
+  });
+});
+
+
+/** Écran interne fictif portant un brouillon en cours, remonté quand le
+ *  contexte signale un changement de compte. */
+function DraftScreen() {
+  const { sessionGeneration } = realCrmContext.useCrm();
+  return <Draft key={sessionGeneration} />;
+}
+function Draft() {
+  const [text, setText] = React.useState("");
+  return (
+    <div>
+      <span data-testid="draft">{text}</span>
+      <button type="button" onClick={() => setText("note interne en cours")}>
+        écrire
+      </button>
+    </div>
+  );
+}
+
+async function renderDraft() {
+  const { CrmProvider } = realCrmContext;
+  const view = render(
+    <CrmProvider>
+      <DraftScreen />
+    </CrmProvider>,
+  );
+  await act(async () => {
+    await Promise.resolve();
+    await Promise.resolve();
+  });
+  act(() => {
+    view.getByText("écrire").click();
+  });
+  expect(view.getByTestId("draft").textContent).toBe("note interne en cours");
+  return view;
+}
+
+async function emitAuth(event: string, session: unknown) {
+  await act(async () => {
+    authHandler?.(event, session);
+    await Promise.resolve();
+    await Promise.resolve();
+  });
+}
+
+describe("identité du compte connecté", () => {
+  test("SIGNED_IN réémis pour le MÊME compte conserve le brouillon en cours", async () => {
+    const view = await renderDraft();
+    await emitAuth("SIGNED_IN", { user: { id: "u1" } });
+    await emitAuth("USER_UPDATED", { user: { id: "u1" } });
+    expect(view.getByTestId("draft").textContent).toBe("note interne en cours");
+  });
+
+  test("un compte réellement différent efface le brouillon", async () => {
+    const view = await renderDraft();
+    await emitAuth("SIGNED_IN", { user: { id: "u2" } });
+    expect(view.getByTestId("draft").textContent).toBe("");
+  });
+
+  test("la déconnexion efface le brouillon", async () => {
+    const view = await renderDraft();
+    await emitAuth("SIGNED_OUT", null);
+    expect(view.getByTestId("draft").textContent).toBe("");
   });
 });
