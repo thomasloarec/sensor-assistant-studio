@@ -75,10 +75,6 @@ import { storeMachineFileInMemory } from "@/lib/standex/machine-assets";
 import { AuthPanel } from "@/components/leadmagnet/auth-panel";
 import { supabase } from "@/lib/standex/supabase";
 
-const MAIN_EMBEDDED = "grid gap-6";
-const MAIN_STANDALONE = "mx-auto grid max-w-6xl gap-6 p-4";
-const MAIN_WITH_SIDEBAR = " lg:grid-cols-[320px_1fr]";
-
 const MagneticWorkshop = lazy(() => import("@/components/standex/workshop/workshop"));
 
 export interface DossierConsoleProps {
@@ -415,10 +411,6 @@ export function DossierConsole({
   const currentReview =
     (view?.reviews ?? []).filter((r) => r.published && !r.superseded).slice(-1)[0] ?? null;
 
-  const mainClassName = `${embedded ? MAIN_EMBEDDED : MAIN_STANDALONE}${
-    noSidebar ? "" : MAIN_WITH_SIDEBAR
-  }`;
-
   return (
     <div
       data-readable
@@ -443,7 +435,12 @@ export function DossierConsole({
         </header>
       )}
 
-      <main className={mainClassName}>
+      <main
+        className={
+          (embedded ? "grid gap-6" : "mx-auto grid max-w-6xl gap-6 p-4") +
+          (noSidebar ? "" : " lg:grid-cols-[320px_1fr]")
+        }
+      >
         {noSidebar ? null : (
         <aside className="space-y-4">
 
