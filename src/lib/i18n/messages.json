@@ -15289,5 +15289,383 @@
     "требует проверки R&D",
     "da verificare dalla R&S",
     "R&D による確認が必要"
+  ],
+  "La version anglaise de cette version est demandée mais pas encore disponible.": [
+    "The English version of this revision has been requested but is not available yet.",
+    "该版本的英文版本已请求，但尚不可用。",
+    "Die englische Fassung dieser Version wurde angefordert, ist aber noch nicht verfügbar.",
+    "La versión en inglés de esta revisión se ha solicitado, pero aún no está disponible.",
+    "Английская версия этой ревизии запрошена, но пока недоступна.",
+    "La versione inglese di questa revisione è stata richiesta ma non è ancora disponibile.",
+    "このバージョンの英語版は依頼済みですが、まだ利用できません。"
+  ],
+  "La version anglaise enregistrée correspond à un autre contenu que celui envoyé : elle n'est pas affichée.": [
+    "The stored English version matches different content than the one submitted: it is not displayed.",
+    "已保存的英文版本与所提交的内容不一致：不予显示。",
+    "Die gespeicherte englische Fassung gehört zu einem anderen Inhalt als dem eingereichten: sie wird nicht angezeigt.",
+    "La versión en inglés guardada corresponde a un contenido distinto del enviado: no se muestra.",
+    "Сохранённая английская версия относится к другому содержимому, чем отправленное: она не показывается.",
+    "La versione inglese salvata corrisponde a un contenuto diverso da quello inviato: non viene mostrata.",
+    "保存された英語版は送信された内容と一致しないため、表示されません。"
+  ],
+  "Version anglaise refusée :": [
+    "English version rejected:",
+    "英文版本被拒绝：",
+    "Englische Fassung abgelehnt:",
+    "Versión en inglés rechazada:",
+    "Английская версия отклонена:",
+    "Versione inglese rifiutata:",
+    "英語版は却下されました:"
+  ],
+  "Aucune version anglaise n'existe pour cette version. Aucune traduction automatique n'est branchée.": [
+    "No English version exists for this revision. No automatic translation is connected.",
+    "该版本没有英文版本。未接入任何自动翻译。",
+    "Für diese Version gibt es keine englische Fassung. Es ist keine automatische Übersetzung angebunden.",
+    "No existe versión en inglés para esta revisión. No hay traducción automática conectada.",
+    "Для этой ревизии английской версии нет. Автоматический перевод не подключён.",
+    "Per questa revisione non esiste una versione inglese. Nessuna traduzione automatica è collegata.",
+    "このバージョンに英語版はありません。自動翻訳は接続されていません。"
+  ],
+  "Langue de lecture du rapport": [
+    "Report reading language",
+    "报告阅读语言",
+    "Lesesprache des Berichts",
+    "Idioma de lectura del informe",
+    "Язык чтения отчёта",
+    "Lingua di lettura del rapporto",
+    "レポートの表示言語"
+  ],
+  "Version anglaise": [
+    "English version",
+    "英文版本",
+    "Englische Fassung",
+    "Versión en inglés",
+    "Английская версия",
+    "Versione inglese",
+    "英語版"
+  ],
+  "Original du client": [
+    "Customer original",
+    "客户原件",
+    "Original des Kunden",
+    "Original del cliente",
+    "Оригинал клиента",
+    "Originale del cliente",
+    "お客様の原文"
+  ],
+  "Export impossible : aucune version anglaise valide pour cette version.": [
+    "Export not possible: no valid English version for this revision.",
+    "无法导出：该版本没有有效的英文版本。",
+    "Export nicht möglich: keine gültige englische Fassung für diese Version.",
+    "No se puede exportar: no hay versión en inglés válida para esta revisión.",
+    "Экспорт невозможен: для этой ревизии нет действительной английской версии.",
+    "Esportazione impossibile: nessuna versione inglese valida per questa revisione.",
+    "エクスポートできません: このバージョンに有効な英語版がありません。"
+  ],
+  "Export équipe (anglais)": [
+    "Team export (English)",
+    "团队导出（英文）",
+    "Team-Export (Englisch)",
+    "Exportación para el equipo (inglés)",
+    "Экспорт для команды (английский)",
+    "Esportazione team (inglese)",
+    "チーム向けエクスポート（英語）"
+  ],
+  "Origine de cette version anglaise :": [
+    "Origin of this English version:",
+    "此英文版本的来源：",
+    "Herkunft dieser englischen Fassung:",
+    "Origen de esta versión en inglés:",
+    "Происхождение этой английской версии:",
+    "Origine di questa versione inglese:",
+    "この英語版の出所:"
+  ],
+  "traduction relue par une personne": [
+    "translation reviewed by a person",
+    "由人工校对的翻译",
+    "von einer Person geprüfte Übersetzung",
+    "traducción revisada por una persona",
+    "перевод, проверенный человеком",
+    "traduzione rivista da una persona",
+    "人によって校閲された翻訳"
+  ],
+  "original déjà rédigé en anglais": [
+    "original already written in English",
+    "原件本身即为英文",
+    "Original bereits auf Englisch verfasst",
+    "original ya redactado en inglés",
+    "оригинал изначально на английском",
+    "originale già redatto in inglese",
+    "原文がもともと英語"
+  ],
+  "traduction produite par un outil autorisé": [
+    "translation produced by an authorised tool",
+    "由授权工具生成的翻译",
+    "von einem zugelassenen Werkzeug erzeugte Übersetzung",
+    "traducción producida por una herramienta autorizada",
+    "перевод, выполненный разрешённым инструментом",
+    "traduzione prodotta da uno strumento autorizzato",
+    "許可されたツールによる翻訳"
+  ],
+  "Session expirée : reconnectez-vous pour relancer la version anglaise.": [
+    "Session expired: sign in again to restart the English version.",
+    "会话已过期：请重新登录以重新启动英文版本。",
+    "Sitzung abgelaufen: Melden Sie sich erneut an, um die englische Fassung neu zu starten.",
+    "Sesión caducada: vuelva a iniciar sesión para relanzar la versión en inglés.",
+    "Сеанс истёк: войдите снова, чтобы перезапустить английскую версию.",
+    "Sessione scaduta: accedi di nuovo per rilanciare la versione inglese.",
+    "セッションが切れました。再度サインインして英語版をやり直してください。"
+  ],
+  "Version anglaise en cours de préparation pour cette version envoyée.": [
+    "English version being prepared for the revision you submitted.",
+    "正在为您提交的版本准备英文版本。",
+    "Die englische Fassung der eingereichten Version wird vorbereitet.",
+    "Se está preparando la versión en inglés de la revisión enviada.",
+    "Готовится английская версия отправленной ревизии.",
+    "È in preparazione la versione inglese della revisione inviata.",
+    "送信されたバージョンの英語版を準備しています。"
+  ],
+  "Version anglaise prête pour cette version : l'équipe Standex la lit en anglais, votre original reste consultable.": [
+    "English version ready for this revision: the Standex team reads it in English and your original stays available.",
+    "该版本的英文版本已就绪：Standex 团队以英文阅读，您的原件仍可查阅。",
+    "Englische Fassung für diese Version bereit: Das Standex-Team liest sie auf Englisch, Ihr Original bleibt einsehbar.",
+    "Versión en inglés lista para esta revisión: el equipo de Standex la lee en inglés y su original sigue disponible.",
+    "Английская версия этой ревизии готова: команда Standex читает её на английском, ваш оригинал остаётся доступен.",
+    "Versione inglese pronta per questa revisione: il team Standex la legge in inglese e il tuo originale resta consultabile.",
+    "このバージョンの英語版が準備できました。Standex チームは英語で読み、原文もそのまま参照できます。"
+  ],
+  "La version anglaise n'a pas pu être produite. Votre dossier d'origine est bien arrivé ; vous pouvez relancer.": [
+    "The English version could not be produced. Your original file did arrive; you can try again.",
+    "英文版本未能生成。您的原始资料已送达；您可以重试。",
+    "Die englische Fassung konnte nicht erstellt werden. Ihre Originalunterlage ist angekommen; Sie können es erneut versuchen.",
+    "No se pudo producir la versión en inglés. Su expediente original sí llegó; puede reintentarlo.",
+    "Английскую версию создать не удалось. Ваш оригинал получен; можно повторить попытку.",
+    "Non è stato possibile produrre la versione inglese. Il tuo fascicolo originale è arrivato; puoi riprovare.",
+    "英語版を作成できませんでした。原本は届いています。もう一度お試しいただけます。"
+  ],
+  "Version anglaise non demandée : votre accord de traduction n'a pas été donné pour cette version. Le dossier d'origine est bien arrivé.": [
+    "English version not requested: your translation consent was not given for this revision. The original file did arrive.",
+    "未请求英文版本：您未对该版本给予翻译许可。原始资料已送达。",
+    "Englische Fassung nicht angefordert: Ihre Einwilligung zur Übersetzung liegt für diese Version nicht vor. Die Originalunterlage ist angekommen.",
+    "Versión en inglés no solicitada: no dio su consentimiento de traducción para esta revisión. El expediente original sí llegó.",
+    "Английская версия не запрошена: вы не дали согласия на перевод этой ревизии. Оригинал получен.",
+    "Versione inglese non richiesta: non hai dato il consenso alla traduzione per questa revisione. Il fascicolo originale è arrivato.",
+    "英語版は依頼されていません。このバージョンについて翻訳の同意がありません。原本は届いています。"
+  ],
+  "Textes de ce dossier (exigences, notes, questions, contraintes) traduits en anglais.": [
+    "Texts of this file (requirements, notes, questions, constraints) translated into English.",
+    "本资料中的文字（要求、备注、问题、约束）译为英文。",
+    "Texte dieser Unterlage (Anforderungen, Notizen, Fragen, Randbedingungen) ins Englische übersetzt.",
+    "Textos de este expediente (requisitos, notas, preguntas, restricciones) traducidos al inglés.",
+    "Тексты этого дела (требования, заметки, вопросы, ограничения), переведённые на английский.",
+    "Testi di questo fascicolo (requisiti, note, domande, vincoli) tradotti in inglese.",
+    "この資料の文章（要件・メモ・質問・制約）を英語に翻訳します。"
+  ],
+  "Anthropic (service de traduction)": [
+    "Anthropic (translation service)",
+    "Anthropic（翻译服务）",
+    "Anthropic (Übersetzungsdienst)",
+    "Anthropic (servicio de traducción)",
+    "Anthropic (служба перевода)",
+    "Anthropic (servizio di traduzione)",
+    "Anthropic（翻訳サービス）"
+  ],
+  "J'autorise en plus la traduction en anglais des textes de ce dossier par un service externe (Anthropic), afin que l'équipe Standex les lise en anglais. Références, valeurs, unités, noms et fichiers restent inchangés, et mon dossier d'origine est conservé tel quel. Sans cette case, aucun texte n'est transmis à ce service.": [
+    "I also authorise an external service (Anthropic) to translate the texts of this file into English so the Standex team can read them in English. References, values, units, names and files stay unchanged, and my original file is kept as it is. Without this box, no text is sent to that service.",
+    "我另外授权外部服务（Anthropic）将本资料的文字翻译成英文，以便 Standex 团队用英文阅读。型号、数值、单位、姓名和文件保持不变，我的原始资料原样保留。不勾选此项，任何文字都不会发送给该服务。",
+    "Ich erlaube zusätzlich einem externen Dienst (Anthropic), die Texte dieser Unterlage ins Englische zu übersetzen, damit das Standex-Team sie auf Englisch lesen kann. Referenzen, Werte, Einheiten, Namen und Dateien bleiben unverändert, und meine Originalunterlage bleibt erhalten. Ohne dieses Häkchen wird kein Text an diesen Dienst gesendet.",
+    "Autorizo además a un servicio externo (Anthropic) a traducir al inglés los textos de este expediente para que el equipo de Standex los lea en inglés. Referencias, valores, unidades, nombres y archivos permanecen sin cambios, y mi expediente original se conserva tal cual. Sin esta casilla, no se envía ningún texto a ese servicio.",
+    "Я также разрешаю внешней службе (Anthropic) перевести тексты этого дела на английский, чтобы команда Standex читала их по-английски. Обозначения, значения, единицы, имена и файлы остаются без изменений, а мой оригинал сохраняется как есть. Без этой отметки ни один текст в эту службу не передаётся.",
+    "Autorizzo inoltre un servizio esterno (Anthropic) a tradurre in inglese i testi di questo fascicolo, affinché il team Standex li legga in inglese. Riferimenti, valori, unità, nomi e file restano invariati e il mio fascicolo originale è conservato tale e quale. Senza questa casella, nessun testo viene inviato a quel servizio.",
+    "Standex チームが英語で読めるよう、この資料の文章を外部サービス（Anthropic）が英語に翻訳することにも同意します。型番・数値・単位・氏名・ファイルはそのまま保持され、原本もそのまま保存されます。このチェックがない場合、文章は一切このサービスに送信されません。"
+  ],
+  "Relancer la version anglaise": [
+    "Restart the English version",
+    "重新生成英文版本",
+    "Englische Fassung neu starten",
+    "Relanzar la versión en inglés",
+    "Перезапустить английскую версию",
+    "Rilancia la versione inglese",
+    "英語版をやり直す"
+  ],
+  "version annoncée prête mais sans texte anglais": [
+    "version reported ready but with no English text",
+    "版本标记为就绪但没有英文内容",
+    "Fassung als bereit gemeldet, aber ohne englischen Text",
+    "versión marcada como lista pero sin texto en inglés",
+    "версия отмечена готовой, но без английского текста",
+    "versione dichiarata pronta ma senza testo inglese",
+    "準備完了とされていますが英語の本文がありません"
+  ],
+  "origine de la version anglaise non déclarée": [
+    "origin of the English version not declared",
+    "未声明英文版本的来源",
+    "Herkunft der englischen Fassung nicht angegeben",
+    "origen de la versión en inglés no declarado",
+    "происхождение английской версии не указано",
+    "origine della versione inglese non dichiarata",
+    "英語版の出所が明示されていません"
+  ],
+  "Dossier trop volumineux pour une traduction fiable.": [
+    "File too large for a reliable translation.",
+    "资料过大，无法可靠翻译。",
+    "Unterlage zu umfangreich für eine verlässliche Übersetzung.",
+    "Expediente demasiado extenso para una traducción fiable.",
+    "Дело слишком объёмное для надёжного перевода.",
+    "Fascicolo troppo voluminoso per una traduzione affidabile.",
+    "資料が大きすぎて確実に翻訳できません。"
+  ],
+  "Un texte dépasse la taille maximale traduisible.": [
+    "One text exceeds the maximum translatable size.",
+    "有一段文字超过可翻译的最大长度。",
+    "Ein Text überschreitet die maximal übersetzbare Größe.",
+    "Un texto supera el tamaño máximo traducible.",
+    "Один из текстов превышает максимальный переводимый объём.",
+    "Un testo supera la dimensione massima traducibile.",
+    "ある文章が翻訳可能な最大長を超えています。"
+  ],
+  "Traduction indisponible.": [
+    "Translation unavailable.",
+    "翻译不可用。",
+    "Übersetzung nicht verfügbar.",
+    "Traducción no disponible.",
+    "Перевод недоступен.",
+    "Traduzione non disponibile.",
+    "翻訳を利用できません。"
+  ],
+  "Réponse de traduction invalide ou tronquée.": [
+    "Invalid or truncated translation response.",
+    "翻译响应无效或被截断。",
+    "Ungültige oder abgeschnittene Übersetzungsantwort.",
+    "Respuesta de traducción no válida o truncada.",
+    "Недопустимый или усечённый ответ перевода.",
+    "Risposta di traduzione non valida o troncata.",
+    "翻訳の応答が不正または途中で切れています。"
+  ],
+  "Ce dossier n'est pas accessible avec ce compte.": [
+    "This file is not accessible with this account.",
+    "此账户无法访问该资料。",
+    "Diese Unterlage ist mit diesem Konto nicht zugänglich.",
+    "Este expediente no es accesible con esta cuenta.",
+    "Это дело недоступно для данной учётной записи.",
+    "Questo fascicolo non è accessibile con questo account.",
+    "このアカウントではこの資料にアクセスできません。"
+  ],
+  "Ce dossier n'existe plus sous cette forme.": [
+    "This file no longer exists in this form.",
+    "该资料已不再以此形式存在。",
+    "Diese Unterlage existiert in dieser Form nicht mehr.",
+    "Este expediente ya no existe con esta forma.",
+    "Это дело больше не существует в таком виде.",
+    "Questo fascicolo non esiste più in questa forma.",
+    "この資料はこの形では存在しません。"
+  ],
+  "Cette version du dossier est introuvable.": [
+    "This revision of the file cannot be found.",
+    "找不到该资料的此版本。",
+    "Diese Version der Unterlage wurde nicht gefunden.",
+    "No se encuentra esta revisión del expediente.",
+    "Эта ревизия дела не найдена.",
+    "Questa revisione del fascicolo non è stata trovata.",
+    "この資料のこのバージョンが見つかりません。"
+  ],
+  "Le contenu a changé depuis cette version : la version anglaise suit la version envoyée.": [
+    "The content has changed since this revision: the English version follows the submitted revision.",
+    "内容自该版本以来已更改：英文版本对应已提交的版本。",
+    "Der Inhalt hat sich seit dieser Version geändert: Die englische Fassung folgt der eingereichten Version.",
+    "El contenido ha cambiado desde esta revisión: la versión en inglés sigue a la revisión enviada.",
+    "Содержимое изменилось с этой ревизии: английская версия соответствует отправленной ревизии.",
+    "Il contenuto è cambiato da questa revisione: la versione inglese segue la revisione inviata.",
+    "このバージョン以降に内容が変わりました。英語版は送信されたバージョンに対応します。"
+  ],
+  "L'accord de confidentialité n'est pas en vigueur : aucun texte n'a été transmis.": [
+    "The confidentiality agreement is not in force: no text was transmitted.",
+    "保密协议未生效：未传输任何文字。",
+    "Die Vertraulichkeitsvereinbarung ist nicht in Kraft: Es wurde kein Text übermittelt.",
+    "El acuerdo de confidencialidad no está en vigor: no se transmitió ningún texto.",
+    "Соглашение о конфиденциальности не действует: текст не передавался.",
+    "L'accordo di riservatezza non è in vigore: nessun testo è stato trasmesso.",
+    "秘密保持契約が有効ではありません。文章は一切送信されていません。"
+  ],
+  "Votre accord explicite de traduction n'a pas été enregistré pour cette version : aucun texte n'a été transmis.": [
+    "Your explicit translation consent was not recorded for this revision: no text was transmitted.",
+    "该版本未记录您的明确翻译同意：未传输任何文字。",
+    "Ihre ausdrückliche Einwilligung zur Übersetzung wurde für diese Version nicht erfasst: Es wurde kein Text übermittelt.",
+    "No se registró su consentimiento explícito de traducción para esta revisión: no se transmitió ningún texto.",
+    "Ваше явное согласие на перевод для этой ревизии не зафиксировано: текст не передавался.",
+    "Il tuo consenso esplicito alla traduzione non è stato registrato per questa revisione: nessun testo è stato trasmesso.",
+    "このバージョンについて翻訳の明示的な同意が記録されていません。文章は一切送信されていません。"
+  ],
+  "La production de la version anglaise n'est pas configurée sur le serveur : rien n'a été transmis.": [
+    "English version production is not configured on the server: nothing was transmitted.",
+    "服务器未配置英文版本生成：未传输任何内容。",
+    "Die Erstellung der englischen Fassung ist auf dem Server nicht eingerichtet: Es wurde nichts übermittelt.",
+    "La producción de la versión en inglés no está configurada en el servidor: no se transmitió nada.",
+    "Создание английской версии не настроено на сервере: ничего не передавалось.",
+    "La produzione della versione inglese non è configurata sul server: non è stato trasmesso nulla.",
+    "英語版の作成がサーバー側で設定されていません。何も送信されていません。"
+  ],
+  "Accès serveur indisponible : rien n'a été transmis.": [
+    "Server access unavailable: nothing was transmitted.",
+    "服务器访问不可用：未传输任何内容。",
+    "Serverzugriff nicht verfügbar: Es wurde nichts übermittelt.",
+    "Acceso al servidor no disponible: no se transmitió nada.",
+    "Доступ к серверу недоступен: ничего не передавалось.",
+    "Accesso al server non disponibile: non è stato trasmesso nulla.",
+    "サーバーにアクセスできません。何も送信されていません。"
+  ],
+  "La vérification des droits n'a pas abouti : rien n'a été transmis.": [
+    "The rights check did not complete: nothing was transmitted.",
+    "权限校验未完成：未传输任何内容。",
+    "Die Rechteprüfung wurde nicht abgeschlossen: Es wurde nichts übermittelt.",
+    "La verificación de derechos no se completó: no se transmitió nada.",
+    "Проверка прав не завершилась: ничего не передавалось.",
+    "La verifica dei diritti non è andata a buon fine: non è stato trasmesso nulla.",
+    "権限の確認が完了しませんでした。何も送信されていません。"
+  ],
+  "Traduction non autorisée : rien n'a été transmis.": [
+    "Translation not authorised: nothing was transmitted.",
+    "翻译未获授权：未传输任何内容。",
+    "Übersetzung nicht zulässig: Es wurde nichts übermittelt.",
+    "Traducción no autorizada: no se transmitió nada.",
+    "Перевод не разрешён: ничего не передавалось.",
+    "Traduzione non autorizzata: non è stato trasmesso nulla.",
+    "翻訳は許可されていません。何も送信されていません。"
+  ],
+  "La version anglaise n'a pas pu être réservée. Réessayez.": [
+    "The English version could not be reserved. Try again.",
+    "无法预留英文版本。请重试。",
+    "Die englische Fassung konnte nicht reserviert werden. Bitte erneut versuchen.",
+    "No se pudo reservar la versión en inglés. Inténtelo de nuevo.",
+    "Не удалось зарезервировать английскую версию. Повторите попытку.",
+    "Non è stato possibile riservare la versione inglese. Riprova.",
+    "英語版を確保できませんでした。もう一度お試しください。"
+  ],
+  "Traducteur non configuré côté serveur : rien n'a été transmis.": [
+    "Translator not configured on the server: nothing was transmitted.",
+    "服务器端未配置翻译器：未传输任何内容。",
+    "Übersetzer serverseitig nicht eingerichtet: Es wurde nichts übermittelt.",
+    "Traductor no configurado en el servidor: no se transmitió nada.",
+    "Переводчик не настроен на сервере: ничего не передавалось.",
+    "Traduttore non configurato lato server: non è stato trasmesso nulla.",
+    "翻訳機能がサーバー側で設定されていません。何も送信されていません。"
+  ],
+  "Contenu de la version envoyée illisible : rien n'a été traduit.": [
+    "Submitted revision content unreadable: nothing was translated.",
+    "已提交版本的内容无法读取：未进行任何翻译。",
+    "Inhalt der eingereichten Version nicht lesbar: Es wurde nichts übersetzt.",
+    "Contenido de la revisión enviada ilegible: no se tradujo nada.",
+    "Содержимое отправленной ревизии нечитаемо: ничего не переведено.",
+    "Contenuto della revisione inviata illeggibile: non è stato tradotto nulla.",
+    "送信されたバージョンの内容を読み取れません。翻訳は行われていません。"
+  ],
+  "La version anglaise n'a pas pu être enregistrée. Réessayez.": [
+    "The English version could not be saved. Try again.",
+    "无法保存英文版本。请重试。",
+    "Die englische Fassung konnte nicht gespeichert werden. Bitte erneut versuchen.",
+    "No se pudo guardar la versión en inglés. Inténtelo de nuevo.",
+    "Не удалось сохранить английскую версию. Повторите попытку.",
+    "Non è stato possibile salvare la versione inglese. Riprova.",
+    "英語版を保存できませんでした。もう一度お試しください。"
   ]
 }
