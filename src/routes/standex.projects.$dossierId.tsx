@@ -525,47 +525,60 @@ function TrackingTab({
 
   return (
     <div className="space-y-4">
-      <section className="panel-block grid gap-3 sm:grid-cols-2 lg:grid-cols-3 text-sm">
-        <div>
-          <p className="t-caption text-muted-foreground">{t("Volume annuel de capteurs")}</p>
-          <VolumeCell project={p} />
+      {/* Sur une fiche unique, la provenance d'une valeur est une information de
+          premier plan : elle reste visible, contrairement au tableau. */}
+      <dl className="kpi-row">
+        <div className="kpi">
+          <dt>{t("Volume annuel de capteurs")}</dt>
+          <dd className="num">
+            <VolumeCell project={p} />
+          </dd>
         </div>
-        <div>
-          <p className="t-caption text-muted-foreground">{t("Chiffre d'affaires annuel")}</p>
-          <RevenueCell project={p} locale={locale} />
+        <div className="kpi">
+          <dt>{t("Chiffre d'affaires annuel")}</dt>
+          <dd className="num">
+            <RevenueCell project={p} locale={locale} />
+          </dd>
         </div>
-        <div>
-          <p className="t-caption text-muted-foreground">{t("Marge")}</p>
-          <MarginCell project={p} locale={locale} />
+        <div className="kpi">
+          <dt>{t("Marge")}</dt>
+          <dd className="num">
+            <MarginCell project={p} locale={locale} />
+          </dd>
         </div>
-        <div>
-          <p className="t-caption text-muted-foreground">{t("Lancement série")}</p>
-          {p.seriesLaunchEffective ? (
-            <>
-              <span className="t-metric">{p.seriesLaunchEffective}</span>
-              <span className="t-caption block text-muted-foreground">
-                {p.seriesLaunchSource === "override"
-                  ? t("corrigé en interne")
-                  : t("déclaré par le client")}
-              </span>
-            </>
-          ) : (
-            <UnknownValue />
-          )}
+        <div className="kpi">
+          <dt>{t("Lancement série")}</dt>
+          <dd className="num">
+            {p.seriesLaunchEffective ? (
+              <>
+                <span className="t-metric">{p.seriesLaunchEffective}</span>
+                <span className="t-caption block text-muted-foreground">
+                  {p.seriesLaunchSource === "override"
+                    ? t("corrigé en interne")
+                    : t("déclaré par le client")}
+                </span>
+              </>
+            ) : (
+              <UnknownValue />
+            )}
+          </dd>
         </div>
-        <div>
-          <p className="t-caption text-muted-foreground">{t("Avancement")}</p>
-          {taskProgress(detail.tasks).percent === null ? (
-            <UnknownValue reason={t("aucune tâche")} />
-          ) : (
-            <span className="t-metric">{taskProgress(detail.tasks).percent} %</span>
-          )}
+        <div className="kpi">
+          <dt>{t("Avancement")}</dt>
+          <dd className="num">
+            {taskProgress(detail.tasks).percent === null ? (
+              <UnknownValue reason={t("aucune tâche")} />
+            ) : (
+              <span className="t-metric">{taskProgress(detail.tasks).percent} %</span>
+            )}
+          </dd>
         </div>
-        <div>
-          <p className="t-caption text-muted-foreground">{t("Dernière version envoyée")}</p>
-          <span className="t-metric">{p.currentRevision}</span>
+        <div className="kpi">
+          <dt>{t("Dernière version envoyée")}</dt>
+          <dd className="t-metric num">{p.currentRevision}</dd>
         </div>
-      </section>
+      </dl>
+
 
       <section className="space-y-2">
         <h3 className="t-title-s">{t("Étape")}</h3>
