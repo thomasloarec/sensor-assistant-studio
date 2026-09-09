@@ -1,3 +1,4 @@
+import "./styles.css";
 import { t } from "@/lib/i18n/core";
 import { useLocale } from "./lib/i18n/react";
 import { createRoot } from "react-dom/client";
