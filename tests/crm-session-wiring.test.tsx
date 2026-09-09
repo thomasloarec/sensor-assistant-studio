@@ -18,6 +18,24 @@ import {
   createRouter,
 } from "@tanstack/react-router";
 
+// --- Session Supabase pilotée par le test ----------------------------------
+type AuthHandler = (event: string, session: unknown) => void;
+let authHandler: AuthHandler | null = null;
+mock.module("@/lib/standex/supabase", () => ({
+  isSupabaseConfigured: true,
+  requireSupabase: () => ({}),
+  supabase: {
+    auth: {
+      getSession: () => Promise.resolve({ data: { session: { user: { id: "u1" } } } }),
+      onAuthStateChange: (cb: AuthHandler) => {
+        authHandler = cb;
+        return {
+          data: { subscription: { unsubscribe: () => { authHandler = null; } } },
+        };
+      },
+    },
+  },
+}));
 // --- Réponses serveur pilotées par le test ---------------------------------
 let projectDeferred: { resolve: (v: unknown) => void } | null = null;
 let adminDeferred: { resolve: (v: unknown) => void } | null = null;
@@ -59,24 +77,6 @@ let crmState = {
   sessionGeneration: 0,
   refresh: () => undefined,
 };
-// --- Session Supabase pilotée par le test ----------------------------------
-type AuthHandler = (event: string, session: unknown) => void;
-let authHandler: AuthHandler | null = null;
-mock.module("@/lib/standex/supabase", () => ({
-  isSupabaseConfigured: true,
-  requireSupabase: () => ({}),
-  supabase: {
-    auth: {
-      getSession: () => Promise.resolve({ data: { session: { user: { id: "u1" } } } }),
-      onAuthStateChange: (cb: AuthHandler) => {
-        authHandler = cb;
-        return {
-          data: { subscription: { unsubscribe: () => { authHandler = null; } } },
-        };
-      },
-    },
-  },
-}));
 const realSupabaseAdapter = await import("../src/lib/leadmagnet/supabase-adapter");
 mock.module("@/lib/leadmagnet/supabase-adapter", () => ({
   ...realSupabaseAdapter,
@@ -225,7 +225,6 @@ async function renderDraft() {
     await Promise.resolve();
     await Promise.resolve();
   });
-  console.log("DBG handler set?", authHandler !== null);
   act(() => {
     view.getByText("écrire").click();
   });
