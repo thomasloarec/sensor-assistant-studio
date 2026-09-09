@@ -96,14 +96,16 @@ function ProjectDetail() {
   /** Numéro de la dernière demande émise : une réponse plus ancienne est ignorée,
    *  même si elle revient après une plus récente (A → B → A). */
   const genRef = useRef(0);
-  /** Verrou synchrone : deux clics rapides ne déclenchent qu'une seule écriture. */
-  const pendingRef = useRef(false);
+  /** Verrou synchrone attaché à SA génération : une réponse ancienne ne peut
+   *  jamais libérer le verrou d'une écriture plus récente (A → B → A). */
+  const pendingRef = useRef<number | null>(null);
 
   // Changer de projet invalide toute réponse encore en vol.
   useEffect(() => {
     dossierRef.current = dossierId;
     genRef.current += 1;
-    pendingRef.current = false;
+    pendingRef.current = null;
+
     setDetail(null);
     setError(null);
     setMessage(null);
