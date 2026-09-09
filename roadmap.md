@@ -190,3 +190,35 @@
   confirme que la clé serveur est active et que les RPC V1.6 sont atteignables.
 - Vérifications : 274 tests / 42 561 assertions, typecheck OK, build OK, scans de design
   conformes (seule exception documentée `#254061` dans `theme-color`).
+
+## 2026-09-09 — Recette RÉELLE bout en bout (fixtures synthétiques)
+
+- Clé privée serveur : `standex_supabase_secret_key` (Lovable, minuscules). Audit du dépôt :
+  seul consommateur applicatif = `src/lib/leadmagnet/english-report.server.ts`
+  (repli `SUPABASE_SERVICE_ROLE_KEY` conservé) ; `english-report.functions.ts` importe
+  `SERVICE_KEY_NAME`. `supabase/edge-functions-src/lead-verify-upload` lit
+  `SUPABASE_SERVICE_ROLE_KEY` fourni automatiquement par Supabase à l'Edge (hors périmètre
+  Lovable, inchangé). Clés publiques inchangées. Aucune valeur de secret lue ni affichée.
+- Script de recette : `scripts/e2e-english-report.ts` (isolé par `runId`, e-mails
+  `@example.invalid`, comptes créés par l'API admin serveur, dossier + soumission par les
+  RPC normales avec empreinte et consentement `ai_assistant` exacts).
+- Résultats (run réel, provider Anthropic réellement appelé 3 fois) :
+  FR/JA/RU → `ready` ; retry → `ready` sans nouvel appel fournisseur ni doublon ;
+  état stocké `ready` confirmé en base ; original client et `sourceLocale` intacts ;
+  vue client sans version anglaise ; refus `NOT_ALLOWED` (autre utilisateur),
+  `CONTENT_HASH_MISMATCH`, `AI_CONSENT_MISSING`, aucun appel fournisseur sur les refus.
+- NDA : un dossier `nda_required` sans preuve vérifiée est refusé DÈS `lead_submit_revision`
+  (`NDA_NOT_IN_FORCE`), donc avant toute traduction possible. Le NDA original est inchangé.
+- Correctif réel découvert par cette recette : le service renvoyait parfois l'entrée telle
+  quelle (champ `text` au lieu de `en`), ce qui faisait échouer JA/RU. `anthropicProvider`
+  précise désormais le schéma de l'outil et effectue UNE relance corrective ; la validation
+  aval n'est pas assouplie (un écho reste refusé). Tests : `tests/anthropic-provider.test.ts`.
+- Limites factuelles :
+  - projection staff NON vérifiée : aucun rôle staff ne peut être attribué sans SQL
+    privilégié ; seul le refus `NOT_ALLOWED` d'un non-staff a été vérifié ;
+  - nettoyage partiel : `auth.admin.deleteUser` échoue (« Database error deleting user »,
+    dépendances lead) et aucune RPC de suppression de dossier n'existe ; les dossiers
+    synthétiques créés restent en base, identifiés par leur titre `E2E <runId>` ;
+  - wiring UI non testé en navigateur authentifié : la chaîne serveur a été exercée
+    directement (mêmes dépendances réelles que la fonction serveur), pas via l'interface.
+- Gates : 277 tests / 42 567 assertions, typecheck OK, build OK, scans de design conformes.
