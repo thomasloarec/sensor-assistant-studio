@@ -34,6 +34,7 @@ import {
 } from "@/components/standex/dashboard/crm-shared";
 import {
   applyCrmTemplate,
+  fetchCrmBoard,
   fetchCrmProject,
   queueReviewNotification,
   setCrmCost,
@@ -44,7 +45,10 @@ import {
   upsertCrmTask,
   type CrmProjectDetail,
 } from "@/lib/leadmagnet/dashboard-adapter";
+import { requestKeyFor, releaseRequestKey } from "@/lib/leadmagnet/request-key";
+import type { CrmPerson } from "@/lib/leadmagnet/crm";
 import { fetchStaffView, type DossierView } from "@/lib/leadmagnet/supabase-adapter";
+
 import {
   TASK_STATUSES,
   actionAgeDays,
@@ -127,6 +131,24 @@ function ProjectDetail() {
 
   const load = useCallback(() => reload(false), [reload]);
 
+  // Annuaire métier, lu une fois : il sert à nommer les responsables du projet.
+  const [pageDirectory, setPageDirectory] = useState<CrmPerson[]>([]);
+  useEffect(() => {
+    let alive = true;
+    if (!capabilities?.available) return;
+    fetchCrmBoard()
+      .then((b) => {
+        if (alive) setPageDirectory(b.directory);
+      })
+      .catch(() => {
+        if (alive) setPageDirectory([]);
+      });
+    return () => {
+      alive = false;
+    };
+  }, [capabilities?.available]);
+
+
   useEffect(() => {
     if (capabilities?.available) load();
   }, [capabilities?.available, load]);
@@ -182,11 +204,19 @@ function ProjectDetail() {
         >
           ← {t("Projets")}
         </Link>
-        <h2 className="t-title-m">{project?.company ?? project?.title ?? t("Fiche projet")}</h2>
+        <h2 className="t-title-m">
+          {/* Société réellement affichée : celle déclarée par le client, sauf
+              correction interne explicite. Puis le nom du projet. */}
+          {project?.companyEffective ?? project?.company ?? project?.title ?? t("Fiche projet")}
+        </h2>
+        {project?.projectName ? (
+          <span className="t-body text-muted-foreground">{project.projectName}</span>
+        ) : null}
+
         {project ? <Badge variant="outline">{stageLabel(project.stage)}</Badge> : null}
       </div>
 
-      {detail && project ? <ProjectSummary detail={detail} /> : null}
+      {detail && project ? <ProjectSummary detail={detail} directory={pageDirectory} /> : null}
 
 
       <div role="tablist" aria-label={t("Sections de la fiche projet")} className="flex flex-wrap gap-1">
@@ -240,13 +270,20 @@ function ProjectDetail() {
 /* --------------------------------------------------------------- Résumé */
 
 /** Âges réels et prochaine action : trois repères, jamais inventés. */
-function ProjectSummary({ detail }: { detail: CrmProjectDetail }) {
+function ProjectSummary({
+  detail,
+  directory,
+}: {
+  detail: CrmProjectDetail;
+  directory: readonly CrmPerson[];
+}) {
   const p = detail.project;
   const age = projectAgeDays(p);
   const stageAge = stageAgeDays(p);
   const next = nextAction(p, detail.tasks);
   const nextAge = actionAgeDays(next);
   const unknown = t("inconnu");
+
   return (
     <dl className="panel-block grid gap-3 text-sm sm:grid-cols-3">
       <div>
@@ -259,6 +296,14 @@ function ProjectSummary({ detail }: { detail: CrmProjectDetail }) {
         <dt className="t-caption text-muted-foreground">{t("Âge de l'étape en cours")}</dt>
         <dd className="t-metric">
           {stageAge === null ? unknown : `${stageAge} ${t("jour(s)")}`}
+        </dd>
+      </div>
+      <div>
+        <dt className="t-caption text-muted-foreground">{t("Responsables")}</dt>
+        <dd>
+          {t("Commercial")} : {personName(directory, p.salesPersonId ?? null)}
+          {" · "}
+          {t("FAE")} : {personName(directory, p.faePersonId ?? null)}
         </dd>
       </div>
       <div>
@@ -281,6 +326,7 @@ function ProjectSummary({ detail }: { detail: CrmProjectDetail }) {
     </dl>
   );
 }
+
 
 /* ------------------------------------------------------------------ Suivi */
 
@@ -977,18 +1023,25 @@ function TasksTab({
           disabled={busy || !draft.label.trim()}
           onClick={() =>
             void onRun(async () => {
+              // Clé de création stable : un même ajout rejoué (double-clic,
+              // reprise réseau) rend l'action déjà créée, pas un doublon.
+              const scope = `task:${p.dossierId}:${draft.stage}:${draft.label.trim()}`;
+              const clientKey = requestKeyFor(scope);
               const next = await upsertCrmTask(p.dossierId, {
                 stage: draft.stage,
                 label: draft.label.trim(),
                 stakeholder: draft.stakeholder,
                 status: "todo",
                 dueOn: draft.dueOn || null,
+                clientKey,
               });
+              releaseRequestKey(scope);
               setDraft({ label: "", stage: p.stage, stakeholder: "sales", dueOn: "" });
               return next;
             }, t("Tâche ajoutée."))
           }
         >
+
           {t("Ajouter")}
         </Button>
       </section>

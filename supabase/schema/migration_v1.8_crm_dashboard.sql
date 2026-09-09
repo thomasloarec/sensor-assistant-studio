@@ -392,12 +392,17 @@ set search_path = lead, lead_priv, pg_temp as $$
                          and t.status not in ('done','not_applicable')),
     -- Âge de l'étape EN COURS : activation des items de CETTE étape, et non le
     -- plus ancien item inachevé, qui pouvait appartenir à une étape future.
-    'stage_activated_at', coalesce(
-      (select min(coalesce(t.activated_at, t.created_at))
-         from lead.dossier_tasks t
-        where t.dossier_id = d.id and t.stage = coalesce(c.stage, 'lead')
-          and t.status not in ('done','not_applicable')),
+    -- Un plan d'actions créé d'un coup date TOUS ses items du même instant :
+    -- une étape ne peut donc pas être « en cours » avant que le projet y entre.
+    'stage_activated_at', greatest(
+      coalesce(
+        (select min(coalesce(t.activated_at, t.created_at))
+           from lead.dossier_tasks t
+          where t.dossier_id = d.id and t.stage = coalesce(c.stage, 'lead')
+            and t.status not in ('done','not_applicable')),
+        c.stage_since),
       c.stage_since))
+
   from lead.design_dossiers d
   left join lead.dossier_crm c on c.dossier_id = d.id
   where d.id = _dossier;
@@ -1273,19 +1278,38 @@ returns text language sql immutable set search_path = pg_temp as $$
     else null end;
 $$;
 
+-- `lead.audit_log` n'a AUCUNE clé étrangère : il conserve légitimement des
+-- lignes dont le dossier a été supprimé et dont le compte auteur n'existe plus.
+-- La reprise doit donc ignorer ces dossiers disparus et accepter un auteur
+-- absent (référence vide, attribution conservée en texte), sans jamais modifier
+-- l'historique, ressusciter un enregistrement ni désactiver une contrainte.
 create or replace function lead_priv.crm_audit_note(_id bigint, _at timestamptz, _actor uuid,
                                                     _dossier uuid, _action text, _detail jsonb)
 returns void language plpgsql security definer
 set search_path = lead, lead_priv, pg_temp as $$
-declare s text;
+declare s text; nm text; known boolean;
 begin
   if _dossier is null then return; end if;
+  -- Dossier supprimé : rien à suivre, et surtout aucune référence à fabriquer.
+  if not exists (select 1 from lead.design_dossiers d where d.id = _dossier) then return; end if;
   s := lead_priv.crm_audit_sentence(_action, _detail);
   if s is null then return; end if;
+  known := _actor is not null and exists (select 1 from auth.users a where a.id = _actor);
+  nm := case
+    when _actor is null then 'Standex'
+    when known then lead_priv.crm_actor_name(_actor)
+    -- Compte supprimé : le nom connu est préservé s'il existe encore ailleurs,
+    -- sinon l'attribution reste explicitement anonyme. On n'invente personne.
+    else coalesce(
+      (select nullif(btrim(p.first_name || ' ' || p.last_name), '')
+         from lead.crm_directory p where p.user_id = _actor),
+      (select nullif(btrim(m.display_name), '') from lead.staff_members m where m.user_id = _actor),
+      'Former Standex user')
+  end;
   insert into lead.sap_notes (dossier_id, author_id, author_name, event_key, body_en)
-  values (_dossier, _actor, lead_priv.crm_actor_name(_actor), 'audit:' || _id::text,
+  values (_dossier, case when known then _actor end, nm, 'audit:' || _id::text,
           to_char(_at at time zone 'UTC', 'DD/MM/YYYY') || ' - '
-          || lead_priv.crm_actor_name(_actor) || ' :' || E'\n- ' || s)
+          || nm || ' :' || E'\n- ' || s)
   on conflict (dossier_id, event_key) do nothing;
 end $$;
 
@@ -1293,8 +1317,13 @@ create or replace function lead_priv.crm_audit_note_trg()
 returns trigger language plpgsql security definer
 set search_path = lead, lead_priv, pg_temp as $$
 begin
-  perform lead_priv.crm_audit_note(new.id, new.at, new.actor, new.dossier_id,
-                                   new.action, new.detail);
+  -- Le suivi interne ne doit jamais faire échouer l'écriture d'origine.
+  begin
+    perform lead_priv.crm_audit_note(new.id, new.at, new.actor, new.dossier_id,
+                                     new.action, new.detail);
+  exception when others then
+    null;
+  end;
   return null;
 end $$;
 
@@ -1312,33 +1341,90 @@ begin
   end loop;
 end $$;
 
+
+-- Rejeu d'une même demande : un double-clic ou une reprise réseau renvoyait
+-- deux revues publiées et deux notifications. La clé de demande, produite par
+-- l'écran et conservée pendant ses tentatives, rend l'opération unique.
+create table if not exists lead.crm_requests (
+  request_key text primary key,
+  created_at timestamptz not null default now(),
+  created_by uuid not null references auth.users(id),
+  operation text not null,
+  payload_hash text not null,
+  dossier_id uuid references lead.design_dossiers(id) on delete cascade,
+  review_id uuid references lead.design_reviews(id) on delete set null
+);
+alter table lead.crm_requests enable row level security;
+
 -- Publication de revue + mise en file de notification, dans UNE transaction.
 -- La publication passe par la fonction d'origine, avec ses gardes inchangées ;
 -- si la mise en file échoue, la publication est annulée avec elle. Il ne peut
 -- donc plus exister de revue publiée sans notification en attente.
 create or replace function lead_priv.crm_publish_review_and_notify(
+  _request_key text,
   _revision uuid, _scope text, _conditions text, _verdict text,
   _client_message text, _internal_note text, _exact_part_number text,
   _designation text, _variant jsonb, _subject text, _summary text)
 returns jsonb language plpgsql security definer
 set search_path = lead, lead_priv, pg_temp as $$
-declare rid uuid;
+declare u uuid := lead_priv.require_user(); rid uuid; d uuid;
+        k text; h text; ex lead.crm_requests%rowtype;
 begin
+  k := nullif(btrim(coalesce(_request_key, '')), '');
+  if k is null then raise exception 'REQUEST_KEY_REQUIRED' using errcode = '22023'; end if;
+  h := md5(coalesce(_revision::text,'') || E'\n' || coalesce(_scope,'') || E'\n'
+        || coalesce(_conditions,'') || E'\n' || coalesce(_verdict,'') || E'\n'
+        || coalesce(_client_message,'') || E'\n' || coalesce(_internal_note,'') || E'\n'
+        || coalesce(_exact_part_number,'') || E'\n' || coalesce(_designation,'') || E'\n'
+        || coalesce(_variant, '{}'::jsonb)::text || E'\n'
+        || coalesce(_subject,'') || E'\n' || coalesce(_summary,''));
+
+  -- La réservation est prise AVANT de publier : deux tentatives simultanées ne
+  -- peuvent donc pas publier chacune une revue avant que l'une échoue.
+  begin
+    insert into lead.crm_requests (request_key, created_by, operation, payload_hash)
+    values (k, u, 'publish_review_and_notify', h);
+  exception when unique_violation then
+    select * into ex from lead.crm_requests where request_key = k for update;
+    if not found then raise exception 'REQUEST_IN_PROGRESS' using errcode = '40001'; end if;
+    -- Même clé, autre contenu : on refuse plutôt que d'écraser une décision.
+    if ex.operation <> 'publish_review_and_notify' or ex.payload_hash <> h then
+      raise exception 'REQUEST_KEY_CONFLICT' using errcode = '22023';
+    end if;
+    -- Même clé, même contenu : on rend l'état déjà obtenu, sans rien recréer.
+    if ex.review_id is null then
+      raise exception 'REQUEST_IN_PROGRESS' using errcode = '40001';
+    end if;
+    return lead_priv.crm_project(ex.dossier_id);
+  end;
+
   rid := public.lead_publish_review(_revision, _scope, _conditions, _verdict,
            _client_message, _internal_note, _exact_part_number, _designation,
            coalesce(_variant, '{}'::jsonb));
+  select r.dossier_id into d from lead.design_reviews r where r.id = rid;
+  update lead.crm_requests set dossier_id = d, review_id = rid where request_key = k;
   return lead_priv.crm_queue_review_notification(rid, _subject, _summary);
+
 end $$;
 
 create or replace function public.lead_crm_publish_review_and_notify(
+  p_request_key text,
   p_revision_id uuid, p_scope text, p_conditions text, p_verdict text,
   p_client_message text, p_internal_note text, p_exact_part_number text,
   p_designation text, p_variant jsonb, p_subject text, p_summary text)
 returns jsonb language sql security invoker
 set search_path = public, lead_priv, pg_temp as $$
-  select lead_priv.crm_publish_review_and_notify(p_revision_id, p_scope, p_conditions,
-    p_verdict, p_client_message, p_internal_note, p_exact_part_number, p_designation,
-    p_variant, p_subject, p_summary); $$;
+  select lead_priv.crm_publish_review_and_notify(p_request_key, p_revision_id, p_scope,
+    p_conditions, p_verdict, p_client_message, p_internal_note, p_exact_part_number,
+    p_designation, p_variant, p_subject, p_summary); $$;
+
+-- L'ancienne signature sans clé de demande ne doit plus exister : elle
+-- permettait exactement le doublon que cette version corrige.
+drop function if exists public.lead_crm_publish_review_and_notify(
+  uuid, text, text, text, text, text, text, text, jsonb, text, text);
+drop function if exists lead_priv.crm_publish_review_and_notify(
+  uuid, text, text, text, text, text, text, text, jsonb, text, text);
+
 
 
 -- ----------------------------------------------------------------------------
@@ -1410,7 +1496,8 @@ end $$;
 
 -- Les tables restent inaccessibles directement : tout passe par les fonctions.
 revoke all on lead.crm_directory, lead.dossier_crm, lead.dossier_tasks,
-              lead.sap_notes, lead.client_notifications from public, anon, authenticated;
+              lead.sap_notes, lead.client_notifications, lead.crm_requests
+         from public, anon, authenticated;
 
 insert into lead.schema_migrations (version) values ('1.8')
 on conflict (version) do nothing;
@@ -1430,6 +1517,10 @@ commit;
 --   public.lead_crm_apply_template(dossier, expected int) -> jsonb
 --   public.lead_crm_upsert_task(dossier, task jsonb) -> jsonb
 --   public.lead_crm_queue_review_notification(review uuid, subject, summary) -> jsonb
+--   public.lead_crm_publish_review_and_notify(request_key text, revision uuid,
+--       scope, conditions, verdict, client_message, internal_note,
+--       exact_part_number, designation, variant jsonb, subject, summary) -> jsonb
+--       [publication + mise en file dans UNE transaction, rejouable sans doublon]
 --   public.lead_crm_admin_overview() -> jsonb
 --   public.lead_crm_admin_upsert_person(id, first, last, role, active) -> jsonb
 --   public.lead_crm_admin_link_person(person uuid, email text) -> jsonb
@@ -1439,5 +1530,6 @@ commit;
 --   BAD_PATCH, BAD_COUNTRY, BAD_CURRENCY, BAD_DATE, BAD_COST, BAD_PRICE,
 --   BAD_PERSON, BAD_ROLE, BAD_TASK, BAD_ESTIMATE, BAD_ANNUAL_VOLUME,
 --   NA_REASON_REQUIRED, NOTIFICATION_INCOMPLETE, ACCOUNT_NOT_FOUND,
+--   REQUEST_KEY_REQUIRED, REQUEST_KEY_CONFLICT, REQUEST_IN_PROGRESS,
 --   ACCOUNT_ALREADY_LINKED, LAST_ADMIN_PROTECTED, SAP_NOTES_APPEND_ONLY
 -- ============================================================================

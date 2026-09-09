@@ -439,12 +439,16 @@ export interface TaskInput {
   dueOn?: string | null;
   sortOrder?: number;
   expectedVersion?: number;
+  /** Clé de création stable : un même ajout rejoué (double-clic, reprise réseau)
+   *  ne crée pas deux actions. Elle n'est utile qu'à la création. */
+  clientKey?: string | null;
 }
 
 export async function upsertCrmTask(
   dossierId: string,
   task: TaskInput,
 ): Promise<CrmProjectDetail> {
+  const clientKey = task.id ? null : (task.clientKey ?? "").trim() || null;
   return toDetail(
     await rpc(LEAD_CRM_RPC.upsertTask, {
       p_dossier: dossierId,
@@ -457,6 +461,7 @@ export async function upsertCrmTask(
         person_id: task.personId ?? null,
         na_reason: task.naReason ?? null,
         due_on: task.dueOn ?? null,
+        ...(clientKey ? { client_key: clientKey } : {}),
         ...(task.sortOrder === undefined ? {} : { sort_order: task.sortOrder }),
         ...(task.expectedVersion === undefined ? {} : { expected_version: task.expectedVersion }),
       },
@@ -479,6 +484,48 @@ export async function queueReviewNotification(
     }),
   );
 }
+
+export interface PublishAndNotifyInput {
+  /** Clé de la demande, conservée par l'écran pendant toutes ses tentatives. */
+  requestKey: string;
+  revisionId: string;
+  scope: string;
+  conditions: string;
+  verdict: "validated" | "variant_proposed" | "more_info";
+  clientMessage: string | null;
+  internalNote: string | null;
+  exactPartNumber: string | null;
+  designation: "standard" | "custom" | null;
+  variant: Record<string, unknown> | null;
+  subject: string;
+  summary: string;
+}
+
+/** Publie la revue ET met la notification en file dans la MÊME transaction.
+ *  Rejouée avec la même clé et le même contenu, la demande ne produit ni
+ *  seconde revue ni seconde notification ; avec un contenu différent, elle est
+ *  refusée côté serveur. */
+export async function publishReviewAndNotify(
+  input: PublishAndNotifyInput,
+): Promise<CrmProjectDetail> {
+  return toDetail(
+    await rpc(LEAD_CRM_RPC.publishAndNotify, {
+      p_request_key: input.requestKey,
+      p_revision_id: input.revisionId,
+      p_scope: input.scope,
+      p_conditions: input.conditions,
+      p_verdict: input.verdict,
+      p_client_message: input.clientMessage,
+      p_internal_note: input.internalNote,
+      p_exact_part_number: input.exactPartNumber,
+      p_designation: input.designation,
+      p_variant: input.variant ?? {},
+      p_subject: input.subject,
+      p_summary: input.summary,
+    }),
+  );
+}
+
 
 export interface CrmAdminOverview {
   crmVersion: string | null;

@@ -16,6 +16,8 @@ export const LEAD_CRM_RPC = {
   applyTemplate: "lead_crm_apply_template",
   upsertTask: "lead_crm_upsert_task",
   queueNotification: "lead_crm_queue_review_notification",
+  publishAndNotify: "lead_crm_publish_review_and_notify",
+
   adminOverview: "lead_crm_admin_overview",
   adminUpsertPerson: "lead_crm_admin_upsert_person",
   adminLinkPerson: "lead_crm_admin_link_person",
@@ -56,7 +58,19 @@ const MESSAGES: { match: RegExp; message: string }[] = [
     match: /NOTIFICATION_INCOMPLETE/,
     message: "L'objet et le résumé de la notification sont nécessaires.",
   },
+  {
+    match: /REQUEST_KEY_CONFLICT/,
+    message:
+      "Cette même demande a déjà été envoyée avec un contenu différent. "
+      + "Rechargez le projet : le retour publié et sa notification y figurent déjà.",
+  },
+  {
+    match: /REQUEST_IN_PROGRESS/,
+    message: "Cette publication est déjà en cours d'enregistrement. Patientez, puis rechargez.",
+  },
+  { match: /REQUEST_KEY_REQUIRED/, message: "Demande incomplète : rien n'a été publié." },
   { match: /NA_REASON_REQUIRED/, message: "Indiquez pourquoi cette étape est sans objet." },
+
   {
     match: /SAP_NOTES_APPEND_ONLY/,
     message: "L'historique SAP ne peut être ni modifié ni supprimé.",

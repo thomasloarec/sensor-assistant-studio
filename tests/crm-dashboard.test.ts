@@ -299,6 +299,16 @@ describe("avancement, âges et retards", () => {
     expect(stageAgeDays(p, now)).toBe(9);
   });
 
+  test("une étape ne peut pas être en cours avant que le projet y entre", () => {
+    // Un plan d'actions créé d'un coup date toutes ses actions du même instant :
+    // l'étape atteinte plus tard ne doit pas hériter de cette date ancienne.
+    const p = project({
+      stageSince: "2026-10-05T00:00:00.000Z",
+      stageActivatedAt: "2026-09-01T00:00:00.000Z",
+    });
+    expect(stageAgeDays(p, new Date("2026-10-10T00:00:00.000Z"))).toBe(5);
+  });
+
   test("un dossier sans date de création n'a pas d'âge inventé", () => {
     expect(projectAgeDays(project({ dossierCreatedAt: "" }), now)).toBeNull();
   });
@@ -327,6 +337,17 @@ describe("recherche, filtres et tri", () => {
     expect(matchesSearch(alpha, "k motor")).toBe(true);
     expect(matchesSearch(alpha, "porte verrou")).toBe(true);
     expect(matchesSearch(alpha, "inconnu")).toBe(false);
+  });
+
+  test("la recherche trouve la société réellement affichée", () => {
+    // Société déclarée par le client, sans correction interne.
+    const submittedOnly = project({
+      dossierId: "c",
+      company: null,
+      companySubmitted: "Synthetic Example SAS",
+      companyEffective: "Synthetic Example SAS",
+    });
+    expect(matchesSearch(submittedOnly, "synthetic example")).toBe(true);
   });
 
   test("la recherche porte sur les données saisies : elle ne dépend pas de la langue", () => {
