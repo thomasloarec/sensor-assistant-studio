@@ -1496,7 +1496,8 @@ end $$;
 
 -- Les tables restent inaccessibles directement : tout passe par les fonctions.
 revoke all on lead.crm_directory, lead.dossier_crm, lead.dossier_tasks,
-              lead.sap_notes, lead.client_notifications from public, anon, authenticated;
+              lead.sap_notes, lead.client_notifications, lead.crm_requests
+         from public, anon, authenticated;
 
 insert into lead.schema_migrations (version) values ('1.8')
 on conflict (version) do nothing;
@@ -1516,6 +1517,10 @@ commit;
 --   public.lead_crm_apply_template(dossier, expected int) -> jsonb
 --   public.lead_crm_upsert_task(dossier, task jsonb) -> jsonb
 --   public.lead_crm_queue_review_notification(review uuid, subject, summary) -> jsonb
+--   public.lead_crm_publish_review_and_notify(request_key text, revision uuid,
+--       scope, conditions, verdict, client_message, internal_note,
+--       exact_part_number, designation, variant jsonb, subject, summary) -> jsonb
+--       [publication + mise en file dans UNE transaction, rejouable sans doublon]
 --   public.lead_crm_admin_overview() -> jsonb
 --   public.lead_crm_admin_upsert_person(id, first, last, role, active) -> jsonb
 --   public.lead_crm_admin_link_person(person uuid, email text) -> jsonb
@@ -1525,5 +1530,6 @@ commit;
 --   BAD_PATCH, BAD_COUNTRY, BAD_CURRENCY, BAD_DATE, BAD_COST, BAD_PRICE,
 --   BAD_PERSON, BAD_ROLE, BAD_TASK, BAD_ESTIMATE, BAD_ANNUAL_VOLUME,
 --   NA_REASON_REQUIRED, NOTIFICATION_INCOMPLETE, ACCOUNT_NOT_FOUND,
+--   REQUEST_KEY_REQUIRED, REQUEST_KEY_CONFLICT, REQUEST_IN_PROGRESS,
 --   ACCOUNT_ALREADY_LINKED, LAST_ADMIN_PROTECTED, SAP_NOTES_APPEND_ONLY
 -- ============================================================================
