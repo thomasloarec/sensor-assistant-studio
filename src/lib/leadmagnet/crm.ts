@@ -309,11 +309,18 @@ export function projectAgeDays(project: CrmProject, now: Date = new Date()): num
 
 /**
  * Âge de l'étape EN COURS : depuis l'activation réelle des actions de cette
- * étape, jamais depuis la plus ancienne action inachevée d'une étape future.
+ * étape, jamais depuis la plus ancienne action inachevée d'une étape future ni
+ * depuis la création d'un plan d'actions rédigé à l'avance. Une étape ne peut
+ * pas être en cours avant que le projet y entre.
  */
 export function stageAgeDays(project: CrmProject, now: Date = new Date()): number | null {
-  return ageInDays(project.stageActivatedAt ?? project.stageSince, now);
+  const activated = parseTime(project.stageActivatedAt);
+  const since = parseTime(project.stageSince);
+  if (activated === null && since === null) return null;
+  const start = Math.max(activated ?? Number.NEGATIVE_INFINITY, since ?? Number.NEGATIVE_INFINITY);
+  return Math.max(0, Math.floor((now.getTime() - start) / DAY_MS));
 }
+
 
 /**
  * Prochaine action réellement en attente : la première tâche ni terminée ni
