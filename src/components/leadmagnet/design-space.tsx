@@ -1073,6 +1073,7 @@ export function DesignSpace({
     setNdaError(null);
     importRequestRef.current += 1;
     docGenRef.current += 1;
+    committedRevisionRef.current = null;
     setServerDossierId(dossierId);
     setServerRevision(revision);
     setNdaServer(null);
