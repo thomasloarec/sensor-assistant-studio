@@ -16,6 +16,11 @@
  *    espéré. Un écart rend la traduction NON prête.
  *  - le texte utilisateur est une DONNÉE, jamais une instruction.
  */
+import {
+  estimateCableLength,
+  uncoveredMotionStates,
+  type Point,
+} from "./cabling";
 import type { ClientDossierDto } from "./dossier";
 
 export interface Segment {
