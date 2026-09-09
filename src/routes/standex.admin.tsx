@@ -80,19 +80,26 @@ function AdminScreen() {
 
   const run = async (fn: () => Promise<CrmAdminOverview>, ok: string) => {
     if (busy) return;
+    // Une écriture appartient à la session qui l'a lancée : si le compte change
+    // entre-temps, son résultat ne repeuple ni l'écran ni l'indicateur.
+    const session = sessionRef.current;
     setBusy(true);
     setMessage(null);
     setError(null);
     try {
-      setOverview(await fn());
+      const next = await fn();
+      if (sessionRef.current !== session) return;
+      setOverview(next);
       setMessage(ok);
     } catch (e: unknown) {
+      if (sessionRef.current !== session) return;
       setError(e instanceof Error ? e.message : t("Action refusée."));
     } finally {
-      setBusy(false);
+      if (sessionRef.current === session) setBusy(false);
     }
   };
 
+  if (sessionRef.current !== sessionGeneration) return <LoadingBlock />;
   if (capabilities === null) return <LoadingBlock />;
   if (!capabilities.available)
     return (
