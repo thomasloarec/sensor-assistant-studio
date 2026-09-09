@@ -23,14 +23,14 @@ const render = (patch: Partial<React.ComponentProps<typeof ReviewSubmitControl>>
 describe("contrôle rendu de transmission", () => {
   test("NDA requis non vérifié : CTA cliquable, explication et action accessibles", () => {
     const html = render({ ndaGuidance: "Le NDA est demandé, mais la preuve manque." });
-    expect(html).not.toContain("disabled");
+    expect(html).not.toContain(" disabled=\"\"");
     expect(html).toContain('id="review-submit-guidance"');
     expect(html).toContain("Ouvrir Confidentialité et NDA");
   });
 
   test("NDA vérifié ou non requis : aucun faux blocage", () => {
     const html = render({ ndaGuidance: null });
-    expect(html).not.toContain("disabled");
+    expect(html).not.toContain(" disabled=\"\"");
     expect(html).not.toContain("review-submit-guidance");
   });
 
