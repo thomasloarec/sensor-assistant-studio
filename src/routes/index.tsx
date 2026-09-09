@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import type { CSSProperties } from "react";
 import { ArrowRight, ChevronDown, UserRound } from "lucide-react";
 import { BrandLogo } from "@/components/standex/brand-logo";
+import { usePublishedHeaderHeight } from "@/components/standex/app-header";
 import { Button } from "@/components/ui/button";
 import { MagnetPlay } from "@/components/leadmagnet/magnet-play";
 import { DesignSpace, PrivateDesignError } from "@/components/leadmagnet/design-space";
@@ -74,11 +75,18 @@ function HomeRoute() {
   }, [requestedDossierId]);
 
 
+  /* Le héros garde sa mise en page propre, mais il publie la même hauteur de
+     bandeau que le composant partagé : tout élément collant se cale pareil. */
+  const headerRef = usePublishedHeaderHeight<HTMLElement>();
+
   return (
     <div data-readable className="min-h-screen bg-background text-foreground">
       <main className={started ? "hidden" : undefined}>
         <div className="immersive hero-field overflow-hidden lg:min-h-[88svh]">
-          <header className="material sticky top-0 z-30 shadow-[inset_0_-1px_0_var(--hairline)]">
+          <header
+            ref={headerRef}
+            className="material sticky top-0 z-30 shadow-[inset_0_-1px_0_var(--hairline)]"
+          >
             {/* La rangée entière peut passer à la ligne : avec « Reprendre mon
                 projet » en allemand ou en russe, trois contrôles ne tiennent pas
                 sur 320 px. On les fait descendre plutôt que les couper. */}
