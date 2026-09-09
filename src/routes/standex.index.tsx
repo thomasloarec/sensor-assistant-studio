@@ -299,7 +299,7 @@ function ProjectsBoard() {
                       params={{ dossierId: p.dossierId }}
                       className="inline-flex min-h-11 items-center font-medium underline-offset-2 hover:underline"
                     >
-                      {p.company ?? p.title}
+                      {p.companyEffective ?? p.title}
                     </Link>
                     <p className="t-caption text-muted-foreground">
                       {p.projectName ?? p.title} — {t("version")} {p.currentRevision}
@@ -308,9 +308,9 @@ function ProjectsBoard() {
                   <td className="p-2">
                     <StageBadge stage={p.stage} />
                     <p className="t-caption text-muted-foreground">
-                      {ageInDays(p.stageSince) === null
+                      {stageAgeDays(p) === null
                         ? t("depuis une date inconnue")
-                        : `${ageInDays(p.stageSince)} ${t("jour(s)")}`}
+                        : `${stageAgeDays(p)} ${t("jour(s)")}`}
                     </p>
                   </td>
                   <td className="p-2">{p.countryCode ?? <UnknownValue />}</td>
