@@ -106,6 +106,26 @@ function fields(dto: ClientDossierDto): Field[] {
       },
     });
   });
+  (dto.cabling.statePaths ?? []).forEach((_, i) => {
+    list.push(
+      {
+        id: `path.${i}.label`,
+        get: (d) => d.cabling.statePaths[i]?.label,
+        set: (d, v) => {
+          const p = d.cabling.statePaths[i];
+          if (p) p.label = v;
+        },
+      },
+      {
+        id: `path.${i}.pose`,
+        get: (d) => d.cabling.statePaths[i]?.pose?.label,
+        set: (d, v) => {
+          const p = d.cabling.statePaths[i];
+          if (p?.pose) p.pose.label = v;
+        },
+      },
+    );
+  });
   const term = dto.termination;
   if (term.kind === "free_reference") {
     list.push({
