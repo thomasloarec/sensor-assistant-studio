@@ -18952,5 +18952,32 @@
     "Проекты, задачи и ревью команды — доступ {0}",
     "Progetti, attività e revisioni del team — accesso {0}",
     "チームのプロジェクト・タスク・レビュー — {0} アクセス"
+  ],
+  "Non suivi": [
+    "Not tracked",
+    "未跟进",
+    "Nicht verfolgt",
+    "Sin seguimiento",
+    "Не отслеживается",
+    "Non seguito",
+    "未追跡"
+  ],
+  "En retard": [
+    "Overdue",
+    "逾期",
+    "Überfällig",
+    "Con retraso",
+    "Просрочено",
+    "In ritardo",
+    "遅延"
+  ],
+  "Filtrer par étape": [
+    "Filter by stage",
+    "按阶段筛选",
+    "Nach Phase filtern",
+    "Filtrar por etapa",
+    "Фильтр по этапу",
+    "Filtra per fase",
+    "ステージで絞り込む"
   ]
 }

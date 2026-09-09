@@ -68,14 +68,22 @@ export function MarginCell({ project, locale }: { project: CrmProject; locale: s
   return <span className="t-metric">{formatPercent(margin.value, locale)}</span>;
 }
 
+/** La provenance n'occupe le premier plan que lorsqu'elle signale une
+ *  exception. Le cas ordinaire reste lisible au survol et pour les lecteurs
+ *  d'écran : rien n'est perdu, seule la répétition disparaît. */
 export function RevenueCell({ project, locale }: { project: CrmProject; locale: string }) {
   const revenue = annualRevenue(project);
   if (!revenue.known) return <UnknownValue />;
+  const notes: string[] = [];
+  if (revenue.value.source === "manual_estimate") notes.push(t("estimation saisie"));
+  if (!revenue.value.currency) notes.push(t("devise non renseignée"));
+  const amount = formatAmount(revenue.value.amount, revenue.value.currency, locale);
   return (
-    <span className="t-metric">
-      {formatAmount(revenue.value.amount, revenue.value.currency, locale)}
-      {revenue.value.source === "manual_estimate" ? ` (${t("estimation saisie")})` : ""}
-      {revenue.value.currency ? "" : ` — ${t("devise non renseignée")}`}
+    <span className="t-metric" title={notes.length > 0 ? notes.join(" — ") : undefined}>
+      {amount}
+      {notes.length > 0 ? (
+        <span className="t-caption text-muted-foreground"> — {notes.join(" — ")}</span>
+      ) : null}
     </span>
   );
 }
@@ -83,14 +91,18 @@ export function RevenueCell({ project, locale }: { project: CrmProject; locale: 
 export function VolumeCell({ project }: { project: CrmProject }) {
   const volume = annualVolume(project);
   if (!volume.known) return <UnknownValue />;
+  const exception = volume.value.source === "override";
+  const note = exception
+    ? t("capteurs/an — corrigé à la main")
+    : t("capteurs/an — dernière version envoyée");
   return (
-    <span className="t-metric">
+    <span className="t-metric" title={note}>
       {volume.value.sensorsPerYear}{" "}
-      <span className="t-caption text-muted-foreground">
-        {volume.value.source === "override"
-          ? t("capteurs/an — corrigé à la main")
-          : t("capteurs/an — dernière version envoyée")}
-      </span>
+      {exception ? (
+        <span className="t-caption text-muted-foreground">{note}</span>
+      ) : (
+        <span className="sr-only">{note}</span>
+      )}
     </span>
   );
 }

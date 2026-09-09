@@ -148,13 +148,16 @@ function WorkspaceHeader() {
   const index = activeIndex(pathname);
   const headerRef = useRef<HTMLElement | null>(null);
 
-  /* La hauteur réelle de l'en-tête est publiée aux écrans : leur barre de
-     travail collante se pose juste dessous, quelle que soit la langue. */
+  /* La hauteur réelle de l'en-tête est publiée sur le conteneur lisible : la
+     barre de travail collante des écrans se pose juste dessous, quelle que soit
+     la langue et quel que soit le retour à la ligne de la navigation. */
   useEffect(() => {
     const node = headerRef.current;
     if (!node || typeof ResizeObserver === "undefined") return;
+    const host =
+      (node.closest("[data-readable]") as HTMLElement | null) ?? document.documentElement;
     const publish = () => {
-      document.documentElement.style.setProperty(
+      host.style.setProperty(
         "--standex-header-h",
         `${Math.round(node.getBoundingClientRect().height)}px`,
       );
