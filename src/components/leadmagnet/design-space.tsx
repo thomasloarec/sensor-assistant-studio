@@ -1318,6 +1318,9 @@ export function DesignSpace({
     // Contexte figé à l'entrée : une réponse tardive, arrivée après un
     // changement de dossier, n'écrit plus jamais un succès ici.
     const gen = contextGenRef.current;
+    // Phase réellement atteinte : elle interdit d'annoncer « rien n'a été
+    // envoyé » après une révision déjà confirmée par le serveur.
+    let phase: SubmitPhase = "before_send";
     setBusy(true);
     const outcomeKind = await runGuardedSubmit({
       lock: busyRef,
@@ -1330,11 +1333,12 @@ export function DesignSpace({
         if (!ndaOk) focusNdaSection();
       },
       onError: () => {
-        setSubmitMessage(t("La transmission n'a pas abouti. Rien n'a été envoyé ; réessayez."));
+        setSubmitMessage(t(submitFailureMessage(phase)));
         setSubmitMessageTone("danger");
       },
       submit: async () => {
         setSubmitMessage(null);
+        phase = "awaiting_confirmation";
         // Envoi réel dès que l'espace serveur est disponible et la session ouverte ;
         // sinon rien n'est transmis et rien n'est simulé.
         const outcome = await submit(
@@ -1350,11 +1354,16 @@ export function DesignSpace({
             dossierId: serverDossierId,
             expectedRevision: serverRevision,
             ndaRequired: nda.required,
-            onDossierCreated: setServerDossierId,
+            // Un rappel tardif ne doit plus écrire dans un autre dossier ouvert.
+            onDossierCreated: (id: string) => {
+              if (contextGenRef.current === gen) setServerDossierId(id);
+            },
           }),
         );
         if (contextGenRef.current !== gen) return;
         if (outcome.status === "submitted") {
+          phase = "committed";
+          committedRevisionRef.current = serverRevision + 1;
           const bound = await submissionBinding(input);
           if (contextGenRef.current !== gen) return;
           setServerRevision((r) => r + 1);
