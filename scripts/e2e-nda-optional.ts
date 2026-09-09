@@ -64,7 +64,14 @@ async function submitRevision(c: Client, dossier: string) {
         ? { ...r, value: "Détecter la position d'un volet", state: "confirmed" as const, source: "user" as const }
         : r,
     ),
-    business: { ...base.business, projectPhase: "design", annualVolume: { kind: "known", sensorsPerYear: 2000 } },
+    business: {
+      ...base.business,
+      projectPhase: "design",
+      annualVolume: { kind: "known", sensorsPerYear: 2000 },
+      contactName: "Test Fixture",
+      contactEmail: `e2e-nda-${runId}@example.invalid`,
+      contactCompany: "Fixture",
+    },
   });
   const hash = await dossierHash(dto);
   const now = new Date().toISOString();
