@@ -550,6 +550,61 @@ try {
   add('migration_backfill_replay_survives_broken_history', true);
 } catch (e) { add('migration_backfill_replay_survives_broken_history', false, String(e.message)); }
 
+// 14.9bis La note SAP porte la DATE DE L'ÉVÉNEMENT, pas celle de la migration.
+//         Sans cela, tout l'historique repris partagerait le même instant : le
+//         tri « plus récent d'abord » et « copier la dernière note » seraient
+//         faux, alors même que le corps de la note affiche la bonne date.
+await db.query(
+  "insert into lead.audit_log(at,actor,action,dossier_id,detail) " +
+  "values('2026-08-01T09:00:00Z',$1,'revision_submitted',$2,'{\"revision\":41}')",
+  [ids.admin, dossier]);
+const oldAuditId = await value(
+  "select id from lead.audit_log where dossier_id=$1 and detail->>'revision'='41'", [dossier]);
+const oldNote = await value("select to_jsonb(n) from lead.sap_notes n where dossier_id=$1 and event_key=$2",
+  [dossier, 'audit:' + oldAuditId]);
+add('historical_note_keeps_the_event_date',
+  !!oldNote && new Date(oldNote.created_at).toISOString() === '2026-08-01T09:00:00.000Z',
+  JSON.stringify(oldNote && oldNote.created_at));
+add('historical_note_body_matches_its_timestamp',
+  !!oldNote && oldNote.body_en.startsWith('01/08/2026 - '), oldNote && oldNote.body_en);
+
+await db.query(
+  "insert into lead.audit_log(at,actor,action,dossier_id,detail) " +
+  "values('2026-09-05T09:00:00Z',$1,'revision_submitted',$2,'{\"revision\":42}')",
+  [ids.admin, dossier]);
+const newAuditId = await value(
+  "select id from lead.audit_log where dossier_id=$1 and detail->>'revision'='42'", [dossier]);
+const ordered = await value(
+  "select jsonb_agg(event_key order by created_at desc) from lead.sap_notes " +
+  "where dossier_id=$1 and event_key = any($2)",
+  [dossier, ['audit:' + oldAuditId, 'audit:' + newAuditId]]);
+add('notes_sort_by_real_event_date',
+  Array.isArray(ordered) && ordered[0] === 'audit:' + newAuditId && ordered[1] === 'audit:' + oldAuditId,
+  JSON.stringify(ordered));
+
+// Un avancement RÉELLEMENT nouveau garde l'heure du serveur.
+await db.query(
+  "insert into lead.audit_log(actor,action,dossier_id,detail) " +
+  "values($1,'revision_submitted',$2,'{\"revision\":43}')", [ids.admin, dossier]);
+const freshNote = await value(
+  "select to_jsonb(n) from lead.sap_notes n where dossier_id=$1 and event_key='audit:' || " +
+  "(select id::text from lead.audit_log where dossier_id=$1 and detail->>'revision'='43')", [dossier]);
+add('new_progress_keeps_server_time',
+  !!freshNote && Math.abs(Date.now() - new Date(freshNote.created_at).getTime()) < 5 * 60_000,
+  JSON.stringify(freshNote && freshNote.created_at));
+
+// Rejouer la reprise de migration ne décale aucune date déjà écrite.
+await db.exec(`do $$ declare l record; begin
+  for l in select id, at, actor, dossier_id, action, detail from lead.audit_log
+           where dossier_id is not null order by id loop
+    perform lead_priv.crm_audit_note(l.id, l.at, l.actor, l.dossier_id, l.action, l.detail);
+  end loop; end $$;`);
+const oldAfterReplay = await value(
+  'select created_at from lead.sap_notes where dossier_id=$1 and event_key=$2',
+  [dossier, 'audit:' + oldAuditId]);
+add('migration_replay_does_not_move_note_dates',
+  new Date(oldAfterReplay).toISOString() === '2026-08-01T09:00:00.000Z', String(oldAfterReplay));
+
 // 14.10 Publication + notification : une seule opération, rejouable sans doublon.
 const beforeReviews = await value(
   'select count(*)::int from lead.design_reviews where dossier_id=$1', [dossier]);
