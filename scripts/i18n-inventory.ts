@@ -22,6 +22,7 @@ const SKIP_FILES = [
   "src/lib/standex/response-contract.ts", // contrat/prompt serveur
   "src/lib/standex/experimental.server.ts", // prompt serveur
   "src/lib/leadmagnet/english-report.server.ts", // prompt serveur de traduction
+  "src/lib/leadmagnet/english-translation.ts", // corps du rapport, en anglais par construction
   "src/lib/standex/migration-status.ts", // SQL et noms de colonnes
   "src/lib/error-page.ts", // page de secours statique hors React
 ];
