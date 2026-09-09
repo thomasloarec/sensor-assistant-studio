@@ -69,7 +69,7 @@ import {
 import { sapNotesToText } from "@/lib/leadmagnet/sap-note";
 
 export const Route = createFileRoute("/standex/projects/$dossierId")({
-  component: ProjectDetail,
+  component: ProjectDetailRoute,
 });
 
 type Tab = "tracking" | "tasks" | "sap" | "review" | "notify";
@@ -83,8 +83,14 @@ const TABS: { id: Tab; label: string }[] = [
   { id: "notify", label: "Information du client" },
 ];
 
-function ProjectDetail() {
+/** La route lit l'identifiant dans l'URL ; l'écran, lui, le reçoit en propriété :
+ *  il peut donc être monté et vérifié sans routeur. */
+function ProjectDetailRoute() {
   const { dossierId } = Route.useParams();
+  return <ProjectDetail dossierId={dossierId} />;
+}
+
+export function ProjectDetail({ dossierId }: { dossierId: string }) {
   const { capabilities, legacyRole, sessionGeneration } = useCrm();
   const locale = useLocale();
   const tag = localeTag(locale);

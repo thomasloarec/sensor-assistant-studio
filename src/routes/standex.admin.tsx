@@ -39,7 +39,7 @@ const ROLE_LABEL: Record<StaffRole, string> = {
   admin: "Administration",
 };
 
-function AdminScreen() {
+export function AdminScreen() {
   const { capabilities, legacyRole, sessionGeneration } = useCrm();
   const [overview, setOverview] = useState<CrmAdminOverview | null>(null);
   const [error, setError] = useState<string | null>(null);

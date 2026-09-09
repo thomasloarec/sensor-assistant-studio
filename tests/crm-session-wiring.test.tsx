@@ -58,27 +58,8 @@ mock.module("@/components/standex/dashboard/crm-context", () => ({
   CrmProvider: ({ children }: { children: React.ReactNode }) => children,
 }));
 
-// --- Routeur minimal --------------------------------------------------------
-let currentDossier = "d1";
-mock.module("@tanstack/react-router", () => ({
-  createFileRoute: () => (options: Record<string, unknown>) => ({
-    ...options,
-    useParams: () => ({ dossierId: currentDossier }),
-  }),
-  Link: ({ children }: { children: React.ReactNode }) =>
-    React.createElement("span", null, children),
-}));
-
-const { Route: ProjectRoute } = await import("../src/routes/standex.projects.$dossierId");
-const { Route: AdminRoute } = await import("../src/routes/standex.admin");
-
-/** Le composant de la route, quel que soit l'emplacement où le routeur le range. */
-function routeComponent(route: unknown): React.ComponentType {
-  const r = route as { component?: React.ComponentType; options?: { component?: React.ComponentType } };
-  const c = r.component ?? r.options?.component;
-  if (!c) throw new Error("composant de route introuvable");
-  return c;
-}
+const { ProjectDetail } = await import("../src/routes/standex.projects.$dossierId");
+const { AdminScreen } = await import("../src/routes/standex.admin");
 
 afterEach(() => {
   cleanup();
@@ -86,15 +67,14 @@ afterEach(() => {
   adminDeferred = null;
 });
 
-function Screen({ Component }: { Component: React.ComponentType }) {
-  return React.createElement(Component, null);
+function Screen({ children }: { children: React.ReactNode }) {
+  return <>{children}</>;
 }
 
 describe("la fiche projet appartient au compte connecté", () => {
   test("une réponse partie avant le changement de compte ne repeuple pas l'écran", async () => {
     crmState = { ...crmState, sessionGeneration: 0 };
-    const Component = routeComponent(ProjectRoute);
-    const view = render(<Screen Component={Component} />);
+    const view = render(<Screen><ProjectDetail dossierId="d1" /></Screen>);
 
     // Réponse du PREMIER compte : elle arrive normalement.
     const first = projectDeferred!;
@@ -107,7 +87,7 @@ describe("la fiche projet appartient au compte connecté", () => {
     const late = projectDeferred!;
     crmState = { ...crmState, sessionGeneration: 1 };
     await act(async () => {
-      view.rerender(<Screen Component={Component} />);
+      view.rerender(<Screen><ProjectDetail dossierId="d1" /></Screen>);
     });
     expect(document.body.textContent).not.toContain("Société A");
 
@@ -128,8 +108,7 @@ describe("la fiche projet appartient au compte connecté", () => {
 describe("l'administration appartient au compte connecté", () => {
   test("l'annuaire de l'ancien compte disparaît et ne revient pas", async () => {
     crmState = { ...crmState, sessionGeneration: 10 };
-    const Component = routeComponent(AdminRoute);
-    const view = render(<Screen Component={Component} />);
+    const view = render(<Screen><ProjectDetail dossierId="d1" /></Screen>);
 
     const first = adminDeferred!;
     await act(async () => {
@@ -153,7 +132,7 @@ describe("l'administration appartient au compte connecté", () => {
     const late = adminDeferred!;
     crmState = { ...crmState, sessionGeneration: 11 };
     await act(async () => {
-      view.rerender(<Screen Component={Component} />);
+      view.rerender(<Screen><ProjectDetail dossierId="d1" /></Screen>);
     });
     expect(document.body.textContent).not.toContain("Ancien");
 
