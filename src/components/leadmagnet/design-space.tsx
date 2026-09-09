@@ -1057,12 +1057,11 @@ export function DesignSpace({
           setEnglishMessage(
             t("Version anglaise prête pour cette version : l'équipe Standex la lit en anglais, votre original reste consultable."),
           );
-        } else if (outcome.state === "unavailable") {
-          setEnglishMessage(t(outcome.reason));
         } else {
-          setEnglishMessage(t(outcome.reason));
-          if (!outcome.retryable) setEnglishRetry(null);
+          setEnglishMessage(englishReportMessage(outcome.code, t));
+          if (outcome.state === "pending" && !outcome.retryable) setEnglishRetry(null);
         }
+
       } catch {
         setEnglishMessage(
           t("La version anglaise n'a pas pu être produite. Votre dossier d'origine est bien arrivé ; vous pouvez relancer."),
