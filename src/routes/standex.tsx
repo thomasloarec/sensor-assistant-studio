@@ -146,8 +146,27 @@ function AccountMenu() {
 function WorkspaceHeader() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const index = activeIndex(pathname);
+  const headerRef = useRef<HTMLElement | null>(null);
+
+  /* La hauteur réelle de l'en-tête est publiée aux écrans : leur barre de
+     travail collante se pose juste dessous, quelle que soit la langue. */
+  useEffect(() => {
+    const node = headerRef.current;
+    if (!node || typeof ResizeObserver === "undefined") return;
+    const publish = () => {
+      document.documentElement.style.setProperty(
+        "--standex-header-h",
+        `${Math.round(node.getBoundingClientRect().height)}px`,
+      );
+    };
+    publish();
+    const observer = new ResizeObserver(publish);
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <header className="material sticky top-0 z-30 shadow-[var(--e-1)]">
+    <header ref={headerRef} className="material sticky top-0 z-30 shadow-[var(--e-1)]">
       <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-3 px-4 py-3">
         <BrandLogo height={44} />
         <h1 className="t-title-s">{t("Espace de travail Standex")}</h1>
@@ -160,8 +179,13 @@ function WorkspaceHeader() {
         aria-label={t("Sections de l'espace de travail")}
         className="mx-auto max-w-6xl px-4 pb-3"
       >
-        <div className="segmented" style={{ ["--seg" as string]: index }}>
-          <span className="segmented-thumb" aria-hidden="true" />
+        <div className="segmented" style={{ ["--seg" as string]: Math.max(index, 0) }}>
+          <span
+            className="segmented-thumb"
+            aria-hidden="true"
+            hidden={index < 0}
+            style={index < 0 ? { opacity: 0 } : undefined}
+          />
           {NAV.map((item, i) => (
             <Link
               key={item.to}
