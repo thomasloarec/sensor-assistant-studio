@@ -1313,30 +1313,33 @@ begin
   end loop;
 end $$;
 
--- Publication de revue + mise en file de notification, dans UNE transaction :
--- il ne peut plus exister de revue publiée sans notification en attente.
-create or replace function lead_priv.crm_publish_review_and_notify(_review uuid, _subject text,
-                                                                   _summary text)
+-- Publication de revue + mise en file de notification, dans UNE transaction.
+-- La publication passe par la fonction d'origine, avec ses gardes inchangées ;
+-- si la mise en file échoue, la publication est annulée avec elle. Il ne peut
+-- donc plus exister de revue publiée sans notification en attente.
+create or replace function lead_priv.crm_publish_review_and_notify(
+  _revision uuid, _scope text, _conditions text, _verdict text,
+  _client_message text, _internal_note text, _exact_part_number text,
+  _designation text, _variant jsonb, _subject text, _summary text)
 returns jsonb language plpgsql security definer
 set search_path = lead, lead_priv, pg_temp as $$
-declare u uuid := lead_priv.require_user(); rv lead.design_reviews%rowtype;
+declare rid uuid;
 begin
-  select * into rv from lead.design_reviews where id = _review for update;
-  if not found then raise exception 'REVIEW_NOT_FOUND' using errcode = '42501'; end if;
-  perform lead_priv.crm_require_write(u, rv.dossier_id, array['sales','rnd']::lead.staff_role[]);
-  if not rv.published then
-    -- Publication par le chemin d'origine : mêmes gardes, même sémantique.
-    perform public.lead_publish_review(_review);
-    select * into rv from lead.design_reviews where id = _review;
-  end if;
-  return lead_priv.crm_queue_review_notification(_review, _subject, _summary);
+  rid := public.lead_publish_review(_revision, _scope, _conditions, _verdict,
+           _client_message, _internal_note, _exact_part_number, _designation,
+           coalesce(_variant, '{}'::jsonb));
+  return lead_priv.crm_queue_review_notification(rid, _subject, _summary);
 end $$;
 
-create or replace function public.lead_crm_publish_review_and_notify(p_review uuid,
-  p_subject text, p_summary text)
+create or replace function public.lead_crm_publish_review_and_notify(
+  p_revision_id uuid, p_scope text, p_conditions text, p_verdict text,
+  p_client_message text, p_internal_note text, p_exact_part_number text,
+  p_designation text, p_variant jsonb, p_subject text, p_summary text)
 returns jsonb language sql security invoker
 set search_path = public, lead_priv, pg_temp as $$
-  select lead_priv.crm_publish_review_and_notify(p_review, p_subject, p_summary); $$;
+  select lead_priv.crm_publish_review_and_notify(p_revision_id, p_scope, p_conditions,
+    p_verdict, p_client_message, p_internal_note, p_exact_part_number, p_designation,
+    p_variant, p_subject, p_summary); $$;
 
 
 -- ----------------------------------------------------------------------------
