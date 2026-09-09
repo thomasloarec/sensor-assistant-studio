@@ -111,11 +111,11 @@ function fields(dto: ClientDossierDto): Field[] {
       },
     });
   }
-  if (term.kind === "qualified_connector" || term.kind === "explicit_connector") {
+  if (term.kind === "qualified_connector" || term.kind === "unqualified_connector") {
     const spec = (d: ClientDossierDto) =>
       d.termination.kind === "qualified_connector"
         ? d.termination.combo.connector
-        : d.termination.kind === "explicit_connector"
+        : d.termination.kind === "unqualified_connector"
           ? d.termination.spec
           : null;
     list.push(
