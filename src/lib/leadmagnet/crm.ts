@@ -326,7 +326,7 @@ export function nextAction(
 ): CrmTask | null {
   const open = tasks.filter((x) => x.status !== "done" && x.status !== "not_applicable");
   if (open.length === 0) return null;
-  const order = (x: CrmTask) => ALL_STAGES.indexOf(x.stage);
+  const order = (x: CrmTask) => (CRM_STAGES as readonly string[]).indexOf(x.stage);
   const current = open.filter((x) => x.stage === project.stage);
   const pool = current.length > 0 ? current : open;
   return [...pool].sort((a, b) => order(a) - order(b) || a.sortOrder - b.sortOrder)[0] ?? null;
