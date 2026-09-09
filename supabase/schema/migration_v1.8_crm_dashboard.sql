@@ -185,6 +185,44 @@ set search_path = lead, lead_priv, pg_temp as $$
   select role from lead.staff_members where user_id = _user and active;
 $$;
 
+-- Révocation RÉELLEMENT effective : les gardes historiques interrogeaient
+-- `staff_members` SANS tenir compte de `active`. Un membre désactivé gardait
+-- donc l'accès hérité (lead_staff_view, notes internes, revue, fichiers de
+-- storage). Ces deux redéfinitions sont volontaires et documentées : la porte
+-- d'origine (rôle exigé ET affectation explicite) est conservée à l'identique,
+-- on y ajoute seulement la condition d'activité.
+create or replace function lead_priv.staff_can_act(_user uuid, _dossier uuid, _roles lead.staff_role[])
+returns boolean language sql stable security definer
+set search_path = lead, lead_priv, pg_temp as $$
+  select exists (
+    select 1 from lead.staff_members m
+    where m.user_id = _user
+      and m.active
+      and m.role = any(_roles)
+      and exists (select 1 from lead.dossier_assignments a
+                  where a.dossier_id = _dossier and a.user_id = _user)
+  );
+$$;
+
+create or replace function lead_priv.staff_can_read_design(_user uuid, _dossier uuid)
+returns boolean language sql stable security definer
+set search_path = lead, lead_priv, pg_temp as $$
+  select exists (
+    select 1 from lead.staff_members m
+    join lead.dossier_assignments a on a.user_id = m.user_id
+    where m.user_id = _user and m.active and a.dossier_id = _dossier
+  );
+$$;
+
+-- Provenance d'une affectation : une affectation posée à la main par un
+-- administrateur ne doit JAMAIS être effacée par un changement de responsable.
+alter table lead.dossier_assignments
+  add column if not exists source text not null default 'manual';
+do $$ begin
+  alter table lead.dossier_assignments
+    add constraint dossier_assignments_source_chk check (source in ('manual','crm_owner'));
+exception when duplicate_object then null; end $$;
+
 -- ----------------------------------------------------------------------------
 -- 8. Accès CRM : rôle staff + affectation explicite ; l'admin trie sans lire
 --    le contenu technique (celui-ci reste gardé par staff_can_read_design).
