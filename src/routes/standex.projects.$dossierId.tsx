@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { createOwnedLock } from "@/lib/leadmagnet/session-guard";
 import { t, localeTag } from "@/lib/i18n/core";
 import { useLocale } from "@/lib/i18n/react";
 import { Badge } from "@/components/ui/badge";
@@ -98,13 +99,13 @@ function ProjectDetail() {
   const genRef = useRef(0);
   /** Verrou synchrone attaché à SA génération : une réponse ancienne ne peut
    *  jamais libérer le verrou d'une écriture plus récente (A → B → A). */
-  const pendingRef = useRef<number | null>(null);
+  const pendingRef = useRef(createOwnedLock());
 
   // Changer de projet invalide toute réponse encore en vol.
   useEffect(() => {
     dossierRef.current = dossierId;
     genRef.current += 1;
-    pendingRef.current = null;
+    pendingRef.current.reset();
 
     setDetail(null);
     setError(null);
@@ -156,10 +157,10 @@ function ProjectDetail() {
   }, [capabilities?.available, load]);
 
   const run = async (fn: () => Promise<CrmProjectDetail>, ok: string) => {
-    if (pendingRef.current !== null) return;
     const asked = dossierId;
-    const gen = ++genRef.current;
-    pendingRef.current = gen;
+    const gen = genRef.current + 1;
+    if (!pendingRef.current.acquire(gen)) return;
+    genRef.current = gen;
 
     setBusy(true);
     setMessage(null);
@@ -178,10 +179,7 @@ function ProjectDetail() {
     } finally {
       // Seule l'écriture propriétaire du verrou peut le rendre : une réponse
       // périmée ne débloque ni la suivante ni son indicateur d'occupation.
-      if (pendingRef.current === gen) {
-        pendingRef.current = null;
-        if (dossierRef.current === asked) setBusy(false);
-      }
+      if (pendingRef.current.release(gen) && dossierRef.current === asked) setBusy(false);
     }
 
   };
