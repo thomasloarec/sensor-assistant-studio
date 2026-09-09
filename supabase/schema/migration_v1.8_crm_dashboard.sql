@@ -500,12 +500,31 @@ returns lead.dossier_crm language plpgsql security definer
 set search_path = lead, lead_priv, pg_temp as $$
 declare row lead.dossier_crm%rowtype;
 begin
+  -- Une version attendue ABSENTE n'est pas « pas de conflit » : c'est une
+  -- écriture à l'aveugle. Elle est refusée, jamais tolérée.
+  if _expected is null then
+    raise exception 'VERSION_REQUIRED' using errcode = '22023';
+  end if;
   row := lead_priv.crm_ensure(_dossier);
   select * into row from lead.dossier_crm where dossier_id = _dossier for update;
-  if _expected is not null and row.version <> _expected then
+  if row.version <> _expected then
     raise exception 'CRM_CONFLICT:%', row.version using errcode = '40001';
   end if;
   return row;
+end $$;
+
+-- Une devise ne se change pas « en silence » quand des montants existent déjà :
+-- relabelliser 10 EUR en 10 USD fabriquerait une marge fausse. Aucune conversion
+-- automatique n'est faite ; il faut d'abord effacer les montants.
+create or replace function lead_priv.crm_currency_guard(_row lead.dossier_crm, _cur text)
+returns void language plpgsql immutable
+set search_path = pg_temp as $$
+begin
+  if _cur is null or _row.currency is null or _cur = _row.currency then return; end if;
+  if _row.unit_price is not null or _row.unit_cost is not null
+     or _row.estimated_annual_revenue is not null then
+    raise exception 'CURRENCY_LOCKED' using errcode = '22023';
+  end if;
 end $$;
 
 create or replace function lead_priv.crm_set_stage(_dossier uuid, _stage text, _expected integer)
