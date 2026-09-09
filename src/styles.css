@@ -1013,3 +1013,181 @@
 [data-readable] .overflow-x-auto {
   max-width: 100%;
 }
+
+/* Socle partagé de l'espace de travail interne : navigation segmentée,
+   squelettes d'attente, pastilles flottantes et alignement des champs. */
+@layer components {
+  .segmented {
+    --seg: 0;
+    --seg-count: 3;
+    position: relative;
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
+    gap: 0;
+    padding: 5px;
+    overflow: hidden;
+    border-radius: var(--r-md);
+    background: var(--surface-sunken);
+  }
+  .segmented-item {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.75rem;
+    padding-inline: 1rem;
+    border-radius: var(--r-sm);
+    color: var(--muted-foreground);
+    white-space: nowrap;
+    transition: color var(--d-fast) var(--ease-out);
+  }
+  .segmented-item[aria-current="page"],
+  .segmented-item[data-active="true"] {
+    color: var(--heading);
+    font-weight: 600;
+  }
+  .segmented-thumb {
+    position: absolute;
+    inset-block: 5px;
+    left: 5px;
+    z-index: 0;
+    width: calc((100% - 10px) / var(--seg-count));
+    border-radius: var(--r-sm);
+    background: var(--surface);
+    box-shadow: var(--e-2);
+    transform: translateX(calc(var(--seg) * 100%));
+    transition:
+      transform var(--d-base) var(--ease-glide),
+      width var(--d-base) var(--ease-glide);
+  }
+  @media (max-width: 639px) {
+    .segmented {
+      display: flex;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .segmented::-webkit-scrollbar {
+      display: none;
+    }
+    .segmented-item {
+      flex: 0 0 auto;
+    }
+    .segmented-item[aria-current="page"],
+    .segmented-item[data-active="true"] {
+      background: var(--surface);
+      box-shadow: var(--e-2);
+    }
+    .segmented-thumb {
+      display: none;
+    }
+  }
+
+  /* Attente : une forme qui annonce le contenu, pas un mot. */
+  .skeleton {
+    position: relative;
+    overflow: hidden;
+    background: var(--surface-sunken);
+    border-radius: var(--r-sm);
+  }
+  .skeleton::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    width: 42%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      color-mix(in oklab, var(--surface) 70%, transparent),
+      transparent
+    );
+    transform: translateX(-150%) skewX(-15deg);
+    animation: standex-sweep 1200ms var(--ease-in-out) infinite;
+  }
+
+  /* Retour transitoire : le succès flotte, l'erreur reste en place. */
+  .toast-region {
+    position: fixed;
+    right: 1rem;
+    bottom: 1rem;
+    z-index: 60;
+    display: grid;
+    gap: 0.5rem;
+    justify-items: end;
+    pointer-events: none;
+  }
+  @media (max-width: 639px) {
+    .toast-region {
+      left: 1rem;
+      right: 1rem;
+      justify-items: stretch;
+    }
+  }
+  .toast {
+    position: relative;
+    overflow: hidden;
+    pointer-events: auto;
+    max-width: 24rem;
+    padding: 0.875rem 1rem;
+    border-radius: var(--r-md);
+    background: var(--surface);
+    box-shadow: var(--e-3);
+    animation: standex-scale-in var(--d-base) var(--ease-spring) both;
+  }
+  .toast-leaving {
+    animation: standex-fade var(--d-fast) var(--ease-out) reverse both;
+  }
+
+  @keyframes standex-nudge {
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+    25% {
+      transform: translateX(-4px);
+    }
+    50% {
+      transform: translateX(4px);
+    }
+    75% {
+      transform: translateX(-4px);
+    }
+  }
+  .anim-nudge {
+    animation: standex-nudge var(--d-fast) var(--ease-out) 2;
+  }
+
+  /* Alignement des rangées « libellé / champ / aide ». */
+  .field-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+    gap: 0.75rem 1rem;
+    align-items: start;
+  }
+  .field {
+    display: grid;
+    grid-row: span 3;
+    grid-template-rows: subgrid;
+    gap: 0.375rem;
+    min-width: 0;
+  }
+  @supports not (grid-template-rows: subgrid) {
+    .field {
+      display: flex;
+      flex-direction: column;
+    }
+    .field > :first-child {
+      min-block-size: 2.6em;
+      display: flex;
+      align-items: flex-end;
+    }
+  }
+  .field-actions {
+    align-self: end;
+  }
+  .num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+}

@@ -134,17 +134,48 @@ export function CountryCell({ code, locale }: { code: string | null; locale: str
   );
 }
 
-export function LoadingBlock() {
-  return <p className="text-sm text-muted-foreground">{t("Chargement…")}</p>;
+/** Attente : des formes qui annoncent le contenu, et une phrase pour les
+ *  lecteurs d'écran. Les appels sans propriété gardent leur comportement. */
+export function LoadingBlock({ rows = 3 }: { rows?: number }) {
+  const heights = ["h-5", "h-4", "h-4", "h-3"];
+  return (
+    <div className="space-y-2" aria-busy="true">
+      <span className="sr-only">{t("Chargement…")}</span>
+      {Array.from({ length: Math.max(1, rows) }, (_, i) => (
+        <div
+          key={i}
+          aria-hidden="true"
+          className={`skeleton ${heights[i % heights.length]} ${i % 2 === 0 ? "w-full" : "w-4/5"}`}
+        />
+      ))}
+    </div>
+  );
 }
 
-export function EmptyBlock({ text }: { text: string }) {
-  return <p className="panel-block text-sm text-muted-foreground">{text}</p>;
+export function EmptyBlock({
+  text,
+  title,
+  action,
+}: {
+  text: string;
+  title?: string;
+  action?: React.ReactNode;
+}) {
+  if (!title && !action)
+    return <p className="panel-block text-sm text-muted-foreground">{text}</p>;
+  return (
+    <div className="panel-block flex flex-col items-center gap-2 text-center">
+      <span className="standex-bar" aria-hidden="true" />
+      {title ? <p className="t-title-s">{title}</p> : null}
+      <p className="t-body text-muted-foreground">{text}</p>
+      {action ? <div>{action}</div> : null}
+    </div>
+  );
 }
 
 export function ErrorBlock({ text, onRetry }: { text: string; onRetry?: () => void }) {
   return (
-    <div className="notice-danger space-y-2 text-sm" role="alert">
+    <div className="notice-danger anim-rise space-y-2 text-sm" role="alert">
       <p>{text}</p>
       {onRetry ? (
         <Button size="sm" variant="outline" onClick={onRetry}>

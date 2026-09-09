@@ -13,6 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useCrm } from "@/components/standex/dashboard/crm-context";
+import { useFlash } from "@/components/standex/dashboard/flash";
 import {
   CrmUnavailableNotice,
   ErrorBlock,
@@ -41,9 +42,9 @@ const ROLE_LABEL: Record<StaffRole, string> = {
 
 export function AdminScreen() {
   const { capabilities, legacyRole, sessionGeneration } = useCrm();
+  const flash = useFlash();
   const [overview, setOverview] = useState<CrmAdminOverview | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [message, setMessage] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [person, setPerson] = useState({ firstName: "", lastName: "", role: "sales" as "sales" | "fae" });
   const [linkEmail, setLinkEmail] = useState<Record<string, string>>({});
@@ -57,7 +58,6 @@ export function AdminScreen() {
     sessionRef.current = sessionGeneration;
     setOverview(null);
     setError(null);
-    setMessage(null);
     // Un changement de compte annule aussi les saisies en cours : sans cela une
     // écriture partie avant la bascule laisserait l'écran occupé pour toujours
     // (son `finally` refuse, à juste titre, de débloquer la NOUVELLE session),
@@ -94,13 +94,13 @@ export function AdminScreen() {
     // entre-temps, son résultat ne repeuple ni l'écran ni l'indicateur.
     const session = sessionRef.current;
     setBusy(true);
-    setMessage(null);
     setError(null);
     try {
       const next = await fn();
       if (sessionRef.current !== session) return;
       setOverview(next);
-      setMessage(ok);
+      // Succès d'écriture : pastille flottante. Les refus restent en place.
+      flash.success(ok);
     } catch (e: unknown) {
       if (sessionRef.current !== session) return;
       setError(e instanceof Error ? e.message : t("Action refusée."));
@@ -134,7 +134,7 @@ export function AdminScreen() {
   return (
     <div className="space-y-5">
       <h2 className="t-title-m">{t("Administration")}</h2>
-      {message ? <p className="notice-success text-sm">{message}</p> : null}
+      
       {error ? <ErrorBlock text={error} onRetry={load} /> : null}
       {overview === null ? <LoadingBlock /> : null}
 

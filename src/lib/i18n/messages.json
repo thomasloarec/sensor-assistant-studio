@@ -18790,5 +18790,104 @@
     "…. Изменение, внесенное здесь, ни в коем случае не считается опубликованным отзывом.",
     "…. Una modifica apportata qui non vale mai come riscontro pubblicato.",
     "…。ここで行われた変更は公開されたフィードバックとはみなされません。"
+  ],
+  "Dossiers": [
+    "Case files",
+    "案卷",
+    "Dossiers",
+    "Expedientes",
+    "Дела",
+    "Fascicoli",
+    "案件"
+  ],
+  "Compte Standex": [
+    "Standex account",
+    "Standex 账户",
+    "Standex-Konto",
+    "Cuenta Standex",
+    "Учётная запись Standex",
+    "Account Standex",
+    "Standex アカウント"
+  ],
+  "Fermer ce message": [
+    "Close this message",
+    "关闭此消息",
+    "Diese Meldung schließen",
+    "Cerrar este mensaje",
+    "Закрыть это сообщение",
+    "Chiudi questo messaggio",
+    "このメッセージを閉じる"
+  ],
+  "Revue R&D des dossiers de conception : offres, échantillons, documents et 3D. Accessible aussi depuis l'onglet Revue de chaque projet.": [
+    "R&D review of design case files: quotes, samples, documents and 3D. Also available from the Review tab of each project.",
+    "设计案卷的研发评审：报价、样品、文档和三维。也可从每个项目的评审选项卡进入。",
+    "F&E-Prüfung der Entwurfsdossiers: Angebote, Muster, Dokumente und 3D. Auch über den Reiter Prüfung jedes Projekts erreichbar.",
+    "Revisión de I+D de los expedientes de diseño: ofertas, muestras, documentos y 3D. También accesible desde la pestaña Revisión de cada proyecto.",
+    "Проверка НИОКР конструкторских дел: предложения, образцы, документы и 3D. Также доступно на вкладке «Проверка» каждого проекта.",
+    "Revisione R&S dei fascicoli di progettazione: offerte, campioni, documenti e 3D. Accessibile anche dalla scheda Revisione di ogni progetto.",
+    "設計案件の研究開発レビュー：見積、サンプル、文書、3D。各プロジェクトのレビュータブからも利用できます。"
+  ],
+  "Cet espace est réservé aux équipes Standex. Connectez-vous avec votre compte professionnel.": [
+    "This space is reserved for Standex teams. Sign in with your work account.",
+    "此空间仅供 Standex 团队使用。请使用您的工作账户登录。",
+    "Dieser Bereich ist den Standex-Teams vorbehalten. Melden Sie sich mit Ihrem Arbeitskonto an.",
+    "Este espacio está reservado a los equipos Standex. Inicie sesión con su cuenta profesional.",
+    "Это пространство предназначено для команд Standex. Войдите с рабочей учётной записью.",
+    "Questo spazio è riservato ai team Standex. Accedi con il tuo account aziendale.",
+    "このスペースは Standex のチーム専用です。業務用アカウントでログインしてください。"
+  ],
+  "Vous avez un compte mais aucun droit sur cet espace ? Un administrateur Standex doit vous l'accorder.": [
+    "You have an account but no rights on this space? A Standex administrator must grant them.",
+    "已有账户但没有此空间的权限？需要由 Standex 管理员授予。",
+    "Sie haben ein Konto, aber keine Rechte für diesen Bereich? Ein Standex-Administrator muss sie erteilen.",
+    "¿Tiene una cuenta pero ningún derecho en este espacio? Un administrador de Standex debe concedérselo.",
+    "Есть учётная запись, но нет прав в этом пространстве? Их должен предоставить администратор Standex.",
+    "Hai un account ma nessun diritto su questo spazio? Deve concederlo un amministratore Standex.",
+    "アカウントはあるがこのスペースの権限がありませんか？ Standex の管理者が付与する必要があります。"
+  ],
+  "Revenir à l'espace de conception": [
+    "Back to the design space",
+    "返回设计空间",
+    "Zurück zum Entwurfsbereich",
+    "Volver al espacio de diseño",
+    "Вернуться в пространство проектирования",
+    "Torna allo spazio di progettazione",
+    "設計スペースに戻る"
+  ],
+  "Ouvrir l'espace de travail": [
+    "Open the workspace",
+    "打开工作空间",
+    "Arbeitsbereich öffnen",
+    "Abrir el espacio de trabajo",
+    "Открыть рабочее пространство",
+    "Apri lo spazio di lavoro",
+    "ワークスペースを開く"
+  ],
+  "Banc de test interne": [
+    "Internal test bench",
+    "内部测试台",
+    "Interner Prüfstand",
+    "Banco de pruebas interno",
+    "Внутренний испытательный стенд",
+    "Banco di prova interno",
+    "内部テストベンチ"
+  ],
+  "Projets, tâches et revues de l'équipe": [
+    "Team projects, tasks and reviews",
+    "团队的项目、任务和评审",
+    "Projekte, Aufgaben und Prüfungen des Teams",
+    "Proyectos, tareas y revisiones del equipo",
+    "Проекты, задачи и проверки команды",
+    "Progetti, attività e revisioni del team",
+    "チームのプロジェクト、タスク、レビュー"
+  ],
+  "Accès équipe Standex ({0})": [
+    "Standex team access ({0})",
+    "Standex 团队访问权限（{0}）",
+    "Standex-Teamzugang ({0})",
+    "Acceso del equipo Standex ({0})",
+    "Доступ команды Standex ({0})",
+    "Accesso team Standex ({0})",
+    "Standex チームアクセス（{0}）"
   ]
 }

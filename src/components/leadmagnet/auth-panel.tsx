@@ -56,7 +56,7 @@ export function AuthPanel({ backend, onChanged }: Props) {
 
   return (
     <form
-      className="grid gap-2 sm:grid-cols-[1fr_1fr_auto] sm:items-end"
+      className="field-row"
       onSubmit={async (e) => {
         e.preventDefault();
         setBusy(true);
@@ -77,7 +77,7 @@ export function AuthPanel({ backend, onChanged }: Props) {
         }
       }}
     >
-      <div>
+      <div className="field">
         <Label htmlFor={emailId} className="t-label">
           {t("Adresse e-mail")}
         </Label>
@@ -90,8 +90,9 @@ export function AuthPanel({ backend, onChanged }: Props) {
           onChange={(ev) => setEmail(ev.target.value)}
           required
         />
+        <span />
       </div>
-      <div>
+      <div className="field">
         <Label htmlFor={passwordId} className="t-label">
           {t("Mot de passe")}
         </Label>
@@ -104,17 +105,18 @@ export function AuthPanel({ backend, onChanged }: Props) {
           onChange={(ev) => setPassword(ev.target.value)}
           required
         />
+        <span />
       </div>
       <Button
         type="submit"
-        className="min-h-11 text-base"
+        className="field-actions min-h-11 text-base"
         disabled={busy}
         aria-busy={busy ? "true" : undefined}
       >
         {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-        {busy ? "Connexion…" : t("Se connecter")}
+        {busy ? t("Connexion…") : t("Se connecter")}
       </Button>
-      {message ? <p className="notice notice-info sm:col-span-3">{message}</p> : null}
+      {message ? <p className="notice notice-info sm:col-span-full">{message}</p> : null}
     </form>
   );
 }

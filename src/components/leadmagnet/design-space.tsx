@@ -3098,16 +3098,19 @@ export function DesignSpace({
       </div>
 
       {backend?.role ? (
-        <p className="text-base text-muted-foreground">
-          {t("Accès équipe Standex (")}{backend.role}) :{" "}
-          <Link to="/standex" className="underline underline-offset-4">
-            {t("console R&amp;D")}
-          </Link>{" "}
-          ·{" "}
-          <Link to="/internal" className="underline underline-offset-4">
-            {t("banc de test interne")}
-          </Link>
-        </p>
+        <section className="surface-interactive space-y-2 rounded-[var(--r-lg)] p-4">
+          <h3 className="t-title-s">{t("Espace de travail Standex")}</h3>
+          <p className="t-caption">{msg("Accès équipe Standex ({0})", [backend.role])}</p>
+          <p className="t-caption">{t("Projets, tâches et revues de l'équipe")}</p>
+          <div className="flex flex-wrap gap-2">
+            <Button variant="outline" asChild>
+              <Link to="/standex">{t("Ouvrir l'espace de travail")}</Link>
+            </Button>
+            <Button variant="outline" asChild>
+              <Link to="/internal">{t("Banc de test interne")}</Link>
+            </Button>
+          </div>
+        </section>
       ) : null}
       {submitMessage ? <p className="notice notice-info">{submitMessage}</p> : null}
       <div className="panel-block-lg">
