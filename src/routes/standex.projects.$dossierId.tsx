@@ -334,8 +334,14 @@ function TrackingTab({
             <Label className="t-caption">{t("Société")}</Label>
             <Input
               value={fields.company}
+              placeholder={p.companySubmitted ?? ""}
               onChange={(e) => setFields({ ...fields, company: e.target.value })}
             />
+            {p.companySubmitted ? (
+              <p className="t-caption text-muted-foreground">
+                {t("Déclaré par le client :")} {p.companySubmitted}
+              </p>
+            ) : null}
           </div>
           <div>
             <Label className="t-caption">{t("Nom du projet")}</Label>
