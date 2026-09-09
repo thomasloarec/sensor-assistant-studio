@@ -251,6 +251,24 @@
     "(copertura non confermata)",
     "（カバー範囲未確認）"
   ],
+  "(message vide)": [
+    "(empty message)",
+    "（空消息）",
+    "(leere Nachricht)",
+    "(mensaje vacío)",
+    "(пустое сообщение)",
+    "(messaggio vuoto)",
+    "（空のメッセージ）"
+  ],
+  "(objet vide)": [
+    "(empty subject)",
+    "（空主题）",
+    "(leerer Betreff)",
+    "(asunto vacío)",
+    "(пустая тема)",
+    "(oggetto vuoto)",
+    "（件名なし）"
+  ],
   "(source :": [
     "(source:",
     "（来源：",
@@ -1043,6 +1061,15 @@
     "AWG 30–24; isolamento Ø0,8–1,5 mm",
     "AWG 30–24、被覆外径 Ø0.8–1.5 mm"
   ],
+  "Accorder ce droit": [
+    "Grant this right",
+    "授予该权限",
+    "Dieses Recht erteilen",
+    "Conceder este derecho",
+    "Предоставить это право",
+    "Concedi questo diritto",
+    "この権限を付与"
+  ],
   "Accès serveur indisponible : rien n'a été transmis.": [
     "Server access unavailable: nothing was transmitted.",
     "服务器访问不可用：未传输任何内容。",
@@ -1484,6 +1511,24 @@
     "Anteprima del documento compilato",
     "記入済み文書のプレビュー"
   ],
+  "Aperçu du message client": [
+    "Client message preview",
+    "客户消息预览",
+    "Vorschau der Kundennachricht",
+    "Vista previa del mensaje al cliente",
+    "Предпросмотр сообщения клиенту",
+    "Anteprima del messaggio al cliente",
+    "顧客メッセージのプレビュー"
+  ],
+  "Aperçu du message client, avant publication": [
+    "Preview of the client message, before publication",
+    "发布前的客户消息预览",
+    "Vorschau der Kundennachricht, vor der Veröffentlichung",
+    "Vista previa del mensaje al cliente, antes de publicar",
+    "Предпросмотр сообщения клиенту до публикации",
+    "Anteprima del messaggio al cliente, prima della pubblicazione",
+    "公開前の顧客向けメッセージのプレビュー"
+  ],
   "Aperçu local des clauses du document rempli (non signé) —": [
     "Local preview of completed document clauses (unsigned) —",
     "已填写文档条款本地预览（未签名）—",
@@ -1501,6 +1546,15 @@
     "Локальный просмотр · демо сохраняется в этом браузере.",
     "Anteprima locale · i salvataggi restano in questo browser.",
     "ローカルプレビュー · デモの保存先はこのブラウザー内です。"
+  ],
+  "Aperçu tel que le client le lira": [
+    "Preview as the client will read it",
+    "客户看到的效果预览",
+    "Vorschau, wie der Kunde sie liest",
+    "Vista previa tal como la leerá el cliente",
+    "Предпросмотр так, как это увидит клиент",
+    "Anteprima come la leggerà il cliente",
+    "顧客が読む形でのプレビュー"
   ],
   "Application": [
     "Application",
@@ -1844,6 +1898,15 @@
     "Nessun servizio di invio è collegato a questo progetto: un messaggio preparato qui resta «in attesa di invio» e non viene mai presentato come inviato.",
     "この案件には送信サービスが接続されていません。ここで用意したメッセージは「送信待ち」のままで、送信済みとは表示されません。"
   ],
+  "Aucun suivi interne renseigné pour l'instant.": [
+    "No internal tracking recorded yet.",
+    "尚未记录内部跟踪。",
+    "Noch keine interne Nachverfolgung erfasst.",
+    "Aún no hay seguimiento interno registrado.",
+    "Внутреннее сопровождение пока не заполнено.",
+    "Nessun monitoraggio interno registrato per ora.",
+    "内部トラッキングはまだ登録されていません。"
+  ],
   "Aucun écart.": [
     "No differences.",
     "无差异。",
@@ -1942,6 +2005,15 @@
     "Никакие изменения из этого предложения не удалось применить: ничего не возобновлено.",
     "Nessuna modifica di questa proposta è stata applicata: nulla è stato ripreso.",
     "この提案の変更を適用できませんでした。何も復元されていません。"
+  ],
+  "Aucune modification à enregistrer.": [
+    "Nothing to save.",
+    "没有需要保存的修改。",
+    "Nichts zu speichern.",
+    "No hay cambios que guardar.",
+    "Нет изменений для сохранения.",
+    "Nessuna modifica da salvare.",
+    "保存する変更はありません。"
   ],
   "Aucune note pour l'instant : elles apparaissent au fil des étapes et des tâches terminées.": [
     "No note yet: they appear as stages and tasks are completed.",
@@ -2483,6 +2555,24 @@
     "Bozza · usa «Aggiungi al dossier» per salvare in {0}.",
     "下書き · 「資料に追加」で{0}に保存します。"
   ],
+  "CA max.": [
+    "Max revenue",
+    "最高营收",
+    "Max. Umsatz",
+    "Ingresos máx.",
+    "Макс. выручка",
+    "Ricavi max",
+    "最大売上"
+  ],
+  "CA min.": [
+    "Min revenue",
+    "最低营收",
+    "Min. Umsatz",
+    "Ingresos mín.",
+    "Мин. выручка",
+    "Ricavi min",
+    "最小売上"
+  ],
   "CHOISIR UNE FORME ET UN FORMAT": [
     "CHOOSE A SHAPE AND SIZE",
     "选择形状和尺寸",
@@ -2599,6 +2689,15 @@
     "Эта учётная запись — последний активный администратор: сначала назначьте другого администратора.",
     "Questo account è l'ultimo amministratore attivo: nomina prima un altro amministratore.",
     "このアカウントは最後の有効な管理者です。先に別の管理者を任命してください。"
+  ],
+  "Ce compte est rattaché mais n'a encore aucun droit Standex. Choisissez le droit à lui accorder.": [
+    "This account is linked but has no Standex right yet. Choose the right to grant it.",
+    "该账号已关联，但尚无 Standex 权限。请选择要授予的权限。",
+    "Dieses Konto ist verknüpft, hat aber noch kein Standex-Recht. Wählen Sie das zu erteilende Recht.",
+    "Esta cuenta está vinculada pero aún no tiene ningún derecho Standex. Elija el derecho que desea concederle.",
+    "Учётная запись привязана, но прав Standex пока нет. Выберите право для предоставления.",
+    "Questo account è collegato ma non ha ancora alcun diritto Standex. Scegliere il diritto da concedere.",
+    "このアカウントは紐づけ済みですが、Standex の権限はまだありません。付与する権限を選んでください。"
   ],
   "Ce dossier est enregistré chez Standex : connectez-vous pour modifier le choix de NDA. Rien n'a été changé.": [
     "This project is registered with Standex: sign in to change the NDA choice. Nothing has been changed.",
@@ -2744,6 +2843,15 @@
     "Questo formato non può essere visualizzato qui. È possibile scaricarlo per aprirlo con il software consueto.",
     "この形式はここでは表示できません。ダウンロードしてお使いのソフトウェアで開くことができます。"
   ],
+  "Ce lien ne correspond à aucun de vos projets : rien n'a été ouvert.": [
+    "This link matches none of your projects: nothing was opened.",
+    "此链接与您的任何项目都不匹配：未打开任何内容。",
+    "Dieser Link gehört zu keinem Ihrer Projekte: Es wurde nichts geöffnet.",
+    "Este enlace no corresponde a ninguno de sus proyectos: no se abrió nada.",
+    "Эта ссылка не соответствует ни одному вашему проекту: ничего не открыто.",
+    "Questo collegamento non corrisponde a nessuno dei tuoi progetti: non è stato aperto nulla.",
+    "このリンクはお客様のどのプロジェクトにも一致しません。何も開かれていません。"
+  ],
   "Ce modèle est fictif. Ses dimensions servent à l'illustration ; il n'a pas de caractéristiques électriques commerciales.": [
     "This model is fictitious. Its dimensions are illustrative; it has no commercial electrical specifications.",
     "此模型为虚构，尺寸仅作示意，没有商业电气规格。",
@@ -2843,6 +2951,15 @@
     "Questi sensori sono esempi da esplorare. L'ufficio tecnico Standex ne verificherà l'idoneità al vostro progetto dopo l'invio del fascicolo.",
     "これらのセンサーは検討用の例です。書類送付後、Standex の技術部門が案件への適合性を確認します。"
   ],
+  "Ces deux champs sont facultatifs : laissés vides, le retour est publié seul. Remplis tous les deux, le message est mis en attente d'envoi dans la même opération que la publication. Aucun envoi n'est effectué.": [
+    "Both fields are optional: left empty, the feedback is published alone. Filled in together, the message is queued for sending in the same operation as the publication. Nothing is sent.",
+    "这两个字段均为可选：留空则仅发布反馈；两者都填写时，消息会在发布的同一操作中进入发送队列。不会实际发送。",
+    "Beide Felder sind optional: Bleiben sie leer, wird nur die Rückmeldung veröffentlicht. Werden beide ausgefüllt, wird die Nachricht im selben Vorgang zum Versand eingereiht. Es wird nichts versendet.",
+    "Ambos campos son opcionales: vacíos, se publica solo la respuesta. Rellenados los dos, el mensaje se pone en cola de envío en la misma operación que la publicación. No se envía nada.",
+    "Оба поля необязательны: если они пусты, публикуется только заключение. Если заполнены оба, сообщение ставится в очередь на отправку в той же операции. Ничего не отправляется.",
+    "Entrambi i campi sono facoltativi: lasciati vuoti, viene pubblicato solo il riscontro. Compilati entrambi, il messaggio viene messo in coda per l'invio nella stessa operazione della pubblicazione. Nulla viene inviato.",
+    "どちらの項目も任意です：空のままなら回答のみを公開します。両方を入力すると、公開と同じ操作でメッセージが送信待ちになります。実際の送信は行われません。"
+  ],
   "Ces dossiers vous sont visibles mais n'ont pas encore de fiche de suivi. L'ouvrir crée la fiche.": [
     "You can see these case files but they have no tracking record yet. Opening one creates the record.",
     "这些档案对您可见，但尚无跟踪记录。打开即会创建记录。",
@@ -2896,6 +3013,15 @@
     "Этот образец относится к устаревшей версии дела: требуется явная повторная валидация.",
     "Questo campione corrisponde a una versione obsoleta della pratica: è necessaria una riconvalida esplicita.",
     "このサンプルは案件の古いバージョンに対応しています。明示的な再検証が必要です。"
+  ],
+  "Cet écran n'était plus synchronisé. Rechargez le projet, puis refaites la modification.": [
+    "This screen was out of sync. Reload the project, then redo the change.",
+    "此界面已不同步。请重新加载项目后再修改。",
+    "Diese Ansicht war nicht mehr synchron. Laden Sie das Projekt neu und wiederholen Sie die Änderung.",
+    "Esta pantalla estaba desincronizada. Recargue el proyecto y repita el cambio.",
+    "Этот экран рассинхронизирован. Перезагрузите проект и повторите изменение.",
+    "Questa schermata non era più sincronizzata. Ricarica il progetto e ripeti la modifica.",
+    "この画面は同期が外れていました。プロジェクトを再読み込みしてから変更し直してください。"
   ],
   "Cet élément n'existe plus sous cette forme.": [
     "This item no longer exists in this form.",
@@ -2987,6 +3113,15 @@
     "Questa modifica rimane locale sul vostro schermo: pubblicate un riscontro R&D affinché sia effettivo.",
     "この変更は画面上でのみ保持されています。反映させるにはR&Dフィードバックを公開してください。"
   ],
+  "Cette même demande a déjà été envoyée avec un contenu différent.": [
+    "This same request was already sent with different content.",
+    "同一请求此前已用不同内容提交。",
+    "Dieselbe Anfrage wurde bereits mit anderem Inhalt gesendet.",
+    "Esta misma solicitud ya se envió con un contenido diferente.",
+    "Этот же запрос уже был отправлен с другим содержимым.",
+    "La stessa richiesta è già stata inviata con un contenuto diverso.",
+    "同じ依頼が、異なる内容ですでに送信されています。"
+  ],
   "Cette orientation ou ce mouvement sort de la configuration documentée.": [
     "This orientation or motion is outside the documented configuration.",
     "此方向或运动不在文档配置范围内。",
@@ -3023,6 +3158,15 @@
     "Questa persona non fa parte del team Standex.",
     "この担当者は Standex チームのメンバーではありません。"
   ],
+  "Cette publication est déjà en cours d'enregistrement. Patientez, puis rechargez.": [
+    "This publication is already being saved. Wait, then reload.",
+    "该发布正在保存中。请稍候后重新加载。",
+    "Diese Veröffentlichung wird bereits gespeichert. Bitte warten und dann neu laden.",
+    "Esta publicación ya se está guardando. Espere y vuelva a cargar.",
+    "Эта публикация уже сохраняется. Подождите и обновите.",
+    "Questa pubblicazione è già in corso di salvataggio. Attendi, poi ricarica.",
+    "この公開は保存処理中です。しばらく待ってから再読み込みしてください。"
+  ],
   "Cette revue a été remplacée : reprenez la revue en vigueur.": [
     "This review has been superseded: use the review currently in effect.",
     "该审查已被替换：请使用当前生效的审查。",
@@ -3058,6 +3202,15 @@
     "Этот раздел — существующая консоль обзора, без изменений: только она решает, что видит клиент.",
     "Questa sezione è la console di revisione esistente, invariata: decide da sola ciò che il cliente vede.",
     "このセクションは既存のレビューコンソールそのままです。顧客が見る内容はここだけが決めます。"
+  ],
+  "Cette valeur n'a pas le format attendu : elle a été refusée, et rien n'a été effacé.": [
+    "This value does not have the expected format: it was rejected and nothing was cleared.",
+    "该值格式不符合要求：已被拒绝，未清除任何内容。",
+    "Dieser Wert hat nicht das erwartete Format: Er wurde abgelehnt, es wurde nichts gelöscht.",
+    "Este valor no tiene el formato esperado: fue rechazado y no se borró nada.",
+    "Значение не соответствует ожидаемому формату: оно отклонено, ничего не удалено.",
+    "Questo valore non ha il formato previsto: è stato rifiutato e nulla è stato cancellato.",
+    "この値は想定した形式ではありません。拒否され、何も消去されていません。"
   ],
   "Cette valeur n'est pas exploitable : rien n'a été enregistré.": [
     "This value cannot be used: nothing has been saved.",
@@ -4292,6 +4445,15 @@
     "Conversazione",
     "会話"
   ],
+  "Copie impossible depuis ce navigateur : sélectionnez le texte et copiez-le à la main.": [
+    "Copying failed in this browser: select the text and copy it manually.",
+    "此浏览器无法复制：请手动选择并复制文本。",
+    "Kopieren in diesem Browser nicht möglich: Text bitte manuell markieren und kopieren.",
+    "No se pudo copiar en este navegador: seleccione el texto y cópielo manualmente.",
+    "Копирование в этом браузере не удалось: выделите текст и скопируйте вручную.",
+    "Copia non riuscita in questo browser: seleziona il testo e copialo manualmente.",
+    "このブラウザではコピーできません。テキストを選択して手動でコピーしてください。"
+  ],
   "Copier": [
     "Copy",
     "复制",
@@ -4300,6 +4462,15 @@
     "Копировать",
     "Copia",
     "コピー"
+  ],
+  "Copier la dernière": [
+    "Copy latest",
+    "复制最新一条",
+    "Letzte kopieren",
+    "Copiar la última",
+    "Копировать последнюю",
+    "Copia l'ultima",
+    "最新をコピー"
   ],
   "Copier la mise à jour": [
     "Copy update",
@@ -4327,6 +4498,15 @@
     "Копировать пакет проверки",
     "Copia pacchetto revisione",
     "レビューパックをコピー"
+  ],
+  "Copier tout": [
+    "Copy all",
+    "全部复制",
+    "Alles kopieren",
+    "Copiar todo",
+    "Копировать всё",
+    "Copia tutto",
+    "すべてコピー"
   ],
   "Copiez le texte ci-dessous et collez-le dans l'éditeur SQL de votre projet Supabase, puis rechargez la page. Le banc continue de fonctionner en attendant : seule la comparaison reste indisponible.": [
     "Copy the text below into your Supabase SQL editor, then reload. The bench still works; only comparison is unavailable.",
@@ -4733,6 +4913,15 @@
     "Richiesta di versione inglese non valida: non è stato trasmesso nulla.",
     "英語版のリクエストが無効です。何も送信されていません。"
   ],
+  "Demande incomplète : rien n'a été publié.": [
+    "Incomplete request: nothing was published.",
+    "请求不完整：没有发布任何内容。",
+    "Unvollständige Anfrage: Es wurde nichts veröffentlicht.",
+    "Solicitud incompleta: no se publicó nada.",
+    "Неполный запрос: ничего не опубликовано.",
+    "Richiesta incompleta: non è stato pubblicato nulla.",
+    "依頼が不完全です。何も公開されていません。"
+  ],
   "Demande prospect (conserver les faits et les références) :": [
     "Prospect request (retain facts and references):",
     "潜在客户需求（保留事实与型号）：",
@@ -4840,6 +5029,24 @@
     "Ожидается валюта в формате ISO (EUR, USD…).",
     "Valuta prevista in formato ISO (EUR, USD…).",
     "ISO形式（EUR、USD…）の通貨が必要です。"
+  ],
+  "Devise verrouillée : des montants sont déjà enregistrés. Effacez-les d'abord si la devise doit changer.": [
+    "Currency locked: amounts are already recorded. Clear them first if the currency must change.",
+    "货币已锁定：已记录金额。若需更改货币，请先清除金额。",
+    "Währung gesperrt: Es sind bereits Beträge erfasst. Löschen Sie diese zuerst, wenn die Währung wechseln soll.",
+    "Moneda bloqueada: ya hay importes registrados. Bórrelos primero si debe cambiar la moneda.",
+    "Валюта заблокирована: суммы уже сохранены. Сначала удалите их, если валюта должна измениться.",
+    "Valuta bloccata: sono già registrati degli importi. Cancellali prima se la valuta deve cambiare.",
+    "通貨はロックされています。金額が既に登録済みです。通貨を変更する場合は先に金額を消してください。"
+  ],
+  "Diagnostic (administration) :": [
+    "Diagnostics (administration):",
+    "诊断信息（管理员）：",
+    "Diagnose (Administration):",
+    "Diagnóstico (administración):",
+    "Диагностика (администрирование):",
+    "Diagnostica (amministrazione):",
+    "診断情報（管理）:"
   ],
   "Diamètre de la collerette : 10,7 mm. Version sans adaptateur, contact normalement ouvert.": [
     "Collar diameter: 10.7 mm. No-adapter version, normally open contact.",
@@ -5183,6 +5390,15 @@
     "Dossier a me assegnati",
     "担当ケースファイル"
   ],
+  "Droit Standex accordé à ce compte.": [
+    "Standex right granted to this account.",
+    "已向该账号授予 Standex 权限。",
+    "Standex-Recht diesem Konto erteilt.",
+    "Derecho Standex concedido a esta cuenta.",
+    "Право Standex предоставлено этой учётной записи.",
+    "Diritto Standex concesso a questo account.",
+    "このアカウントに Standex の権限を付与しました。"
+  ],
   "Droit mis à jour.": [
     "Right updated.",
     "权限已更新。",
@@ -5236,6 +5452,24 @@
     "Смещение от центра",
     "Scostamento dal centro",
     "中心からのずれ"
+  ],
+  "Décision publiée :": [
+    "Published decision:",
+    "已发布的决定：",
+    "Veröffentlichte Entscheidung:",
+    "Decisión publicada:",
+    "Опубликованное решение:",
+    "Decisione pubblicata:",
+    "公開された判断："
+  ],
+  "Déclaré par le client :": [
+    "Declared by the client:",
+    "客户申报：",
+    "Vom Kunden angegeben:",
+    "Declarado por el cliente:",
+    "Заявлено клиентом:",
+    "Dichiarato dal cliente:",
+    "顧客の申告："
   ],
   "Déconnexion": [
     "Sign out",
@@ -5696,6 +5930,15 @@
     "Salva offerta",
     "見積を保存"
   ],
+  "Enregistrer la fiche": [
+    "Save entry",
+    "保存条目",
+    "Eintrag speichern",
+    "Guardar ficha",
+    "Сохранить запись",
+    "Salva scheda",
+    "情報を保存"
+  ],
   "Enregistrer la preuve vérifiée": [
     "Record verified evidence",
     "记录已验证证据",
@@ -5893,6 +6136,24 @@
     "Рабочее пространство Standex — проекты, обзоры и отслеживание",
     "Spazio di lavoro Standex — progetti, revisioni e monitoraggio",
     "Standex ワークスペース — 案件、レビュー、追跡"
+  ],
+  "Espace de travail interne indisponible : le message préparé ne peut pas être mis en attente. Rien n'a été publié.": [
+    "Internal workspace unavailable: the prepared message cannot be queued. Nothing was published.",
+    "内部工作区不可用：已准备的消息无法排队。未发布任何内容。",
+    "Interner Arbeitsbereich nicht verfügbar: Die vorbereitete Nachricht kann nicht eingereiht werden. Es wurde nichts veröffentlicht.",
+    "Espacio de trabajo interno no disponible: el mensaje preparado no se puede poner en cola. No se ha publicado nada.",
+    "Внутреннее рабочее пространство недоступно: подготовленное сообщение нельзя поставить в очередь. Ничего не опубликовано.",
+    "Spazio di lavoro interno non disponibile: il messaggio preparato non può essere messo in coda. Non è stato pubblicato nulla.",
+    "内部ワークスペースが利用できません：準備したメッセージを待機列に入れられません。何も公開されていません。"
+  ],
+  "Espace de travail interne indisponible : un message préparé ne peut pas être mis en attente d'envoi ici.": [
+    "Internal workspace unavailable: a prepared message cannot be queued for sending here.",
+    "内部工作区不可用：此处无法将已准备的消息排入发送队列。",
+    "Interner Arbeitsbereich nicht verfügbar: Eine vorbereitete Nachricht kann hier nicht zum Versand eingereiht werden.",
+    "Espacio de trabajo interno no disponible: aquí no se puede poner en cola un mensaje preparado.",
+    "Внутреннее рабочее пространство недоступно: подготовленное сообщение нельзя поставить в очередь на отправку.",
+    "Spazio di lavoro interno non disponibile: qui un messaggio preparato non può essere messo in coda per l'invio.",
+    "内部ワークスペースが利用できません：準備したメッセージをここで送信待ちにはできません。"
   ],
   "Espace de travail interne non activé sur ce serveur.": [
     "Internal workspace not enabled on this server.",
@@ -6289,6 +6550,15 @@
     "Замкнут",
     "Chiuso",
     "閉"
+  ],
+  "Fiche annuaire mise à jour.": [
+    "Directory entry updated.",
+    "通讯录条目已更新。",
+    "Verzeichniseintrag aktualisiert.",
+    "Ficha del directorio actualizada.",
+    "Запись справочника обновлена.",
+    "Scheda della rubrica aggiornata.",
+    "名簿の情報を更新しました。"
   ],
   "Fiche de série ·": [
     "Series datasheet ·",
@@ -7010,6 +7280,15 @@
     "Vietati",
     "禁止"
   ],
+  "Interne — à rédiger en anglais": [
+    "Internal — write in English",
+    "内部 — 请用英语填写",
+    "Intern — auf Englisch verfassen",
+    "Interno — redactar en inglés",
+    "Внутреннее — писать по-английски",
+    "Interno — scrivere in inglese",
+    "社内用 — 英語で記入"
+  ],
   "Intégration": [
     "Integration",
     "集成",
@@ -7208,6 +7487,15 @@
     "L'accordo di riservatezza non è in vigore: nessun testo è stato trasmesso.",
     "秘密保持契約が有効ではありません。文章は一切送信されていません。"
   ],
+  "L'administration de l'espace de travail n'est pas encore activée sur ce serveur.": [
+    "The internal workspace administration is not activated on this server yet.",
+    "本服务器上的内部工作区管理尚未启用。",
+    "Die Verwaltung des internen Arbeitsbereichs ist auf diesem Server noch nicht aktiviert.",
+    "La administración del espacio de trabajo interno aún no está activada en este servidor.",
+    "Администрирование внутреннего рабочего пространства ещё не активировано на этом сервере.",
+    "L'amministrazione dello spazio di lavoro interno non è ancora attivata su questo server.",
+    "このサーバーでは社内ワークスペースの管理はまだ有効化されていません。"
+  ],
   "L'administration de l'espace de travail n'est pas installée sur ce serveur :": [
     "Workspace administration is not installed on this server:",
     "此服务器未安装工作区管理：",
@@ -7361,6 +7649,15 @@
     "Non è stata ottenuta la conferma di invio: il fascicolo potrebbe comunque essere arrivato. Verificate il monitoraggio prima di inviarlo di nuovo.",
     "送信の確認が取れませんでした。案件は届いている可能性があります。再送の前に進捗を確認してください。"
   ],
+  "La confirmation de Standex n'a pas été reçue : la modification a peut-être été": [
+    "Standex's confirmation was not received: the change may have been",
+    "未收到 Standex 的确认：修改可能已",
+    "Die Bestätigung von Standex ist nicht eingegangen: Die Änderung wurde möglicherweise",
+    "No se recibió la confirmación de Standex: el cambio puede haberse",
+    "Подтверждение от Standex не получено: изменение могло быть",
+    "La conferma di Standex non è stata ricevuta: la modifica potrebbe essere stata",
+    "Standex からの確認が届きませんでした。変更は"
+  ],
   "La connexion n'a pas abouti : réseau indisponible. Réessayez.": [
     "Connection failed: network unavailable. Try again.",
     "连接未成功：网络不可用。请重试。",
@@ -7397,6 +7694,15 @@
     "La richiesta di accordo di riservatezza presente nel file viene ripresa: dovrà essere verificata nuovamente da Standex.",
     "ファイルに含まれる秘密保持契約の要望は復元されます。Standex 側で改めて検証が必要です。"
   ],
+  "La dernière note a été copiée.": [
+    "The latest note was copied.",
+    "已复制最新一条备注。",
+    "Die letzte Notiz wurde kopiert.",
+    "Se copió la última nota.",
+    "Последняя заметка скопирована.",
+    "L'ultima nota è stata copiata.",
+    "最新のメモをコピーしました。"
+  ],
   "La description interne de ce GLB est illisible. Réexportez le fichier.": [
     "The internal description of this GLB is unreadable. Re-export the file.",
     "此 GLB 的内部描述无法读取。请重新导出该文件。",
@@ -7405,6 +7711,24 @@
     "Внутреннее описание этого GLB не читается. Экспортируйте файл повторно.",
     "La descrizione interna di questo GLB è illeggibile. Esportare nuovamente il file.",
     "この GLB の内部記述を読み取れません。ファイルを再エクスポートしてください。"
+  ],
+  "La devise ne peut pas changer tant qu'un prix, un coût ou une estimation": [
+    "The currency cannot change while a price, a cost or an estimate",
+    "只要存在价格、成本或估算，货币就不能更改",
+    "Die Währung kann nicht geändert werden, solange ein Preis, Kosten oder eine Schätzung",
+    "La moneda no puede cambiar mientras haya un precio, un coste o una estimación",
+    "Валюту нельзя изменить, пока указаны цена, стоимость или оценка",
+    "La valuta non può cambiare finché un prezzo, un costo o una stima",
+    "価格・コスト・見積のいずれかが"
+  ],
+  "La devise ne peut plus changer : des montants sont déjà enregistrés dans la devise actuelle.": [
+    "The currency can no longer change: amounts are already recorded in the current currency.",
+    "货币不能再更改：已按当前货币记录金额。",
+    "Die Währung kann nicht mehr geändert werden: Beträge sind bereits in der aktuellen Währung erfasst.",
+    "La moneda ya no puede cambiar: hay importes registrados en la moneda actual.",
+    "Валюту больше нельзя изменить: суммы уже сохранены в текущей валюте.",
+    "La valuta non può più cambiare: gli importi sono già registrati nella valuta attuale.",
+    "通貨は変更できません。現在の通貨で金額が登録済みです。"
   ],
   "La distance d'activation dépend de l'aimant, du montage et des matériaux autour : elle se valide sur le montage réel.": [
     "Activation distance depends on magnet, assembly and surrounding materials. Validate it on the real assembly.",
@@ -7847,6 +8171,24 @@
     "Avvio serie",
     "量産開始"
   ],
+  "Lancement série au": [
+    "Series launch until",
+    "量产启动截至",
+    "Serienstart bis",
+    "Lanzamiento de serie hasta",
+    "Запуск серии до",
+    "Avvio serie fino al",
+    "量産開始（終了日）"
+  ],
+  "Lancement série du": [
+    "Series launch from",
+    "量产启动自",
+    "Serienstart ab",
+    "Lanzamiento de serie desde",
+    "Запуск серии с",
+    "Avvio serie dal",
+    "量産開始（開始日）"
+  ],
   "Lancer la réponse": [
     "Generate response",
     "生成回复",
@@ -7892,6 +8234,15 @@
     "Lingua di lettura del rapporto",
     "レポートの表示言語"
   ],
+  "Langue du client :": [
+    "Client language:",
+    "客户语言：",
+    "Sprache des Kunden:",
+    "Idioma del cliente:",
+    "Язык клиента:",
+    "Lingua del cliente:",
+    "顧客の言語："
+  ],
   "Langue du site": [
     "Site language",
     "网站语言",
@@ -7900,6 +8251,15 @@
     "Язык сайта",
     "Lingua del sito",
     "サイトの言語"
+  ],
+  "Langue enregistrée du client": [
+    "Client's recorded language",
+    "客户记录的语言",
+    "Erfasste Sprache des Kunden",
+    "Idioma registrado del cliente",
+    "Зафиксированный язык клиента",
+    "Lingua registrata del cliente",
+    "顧客の登録言語"
   ],
   "Largeur": [
     "Width",
@@ -8495,6 +8855,15 @@
     "Lo stato indica «in vigore», ma manca la prova verificata. Aggiorni lo stato; in questa condizione incoerente non è consentito alcun trasferimento.",
     "ステータスは「有効」ですが、確認済みの証明がありません。ステータスを更新してください。この不整合な状態では送信できません。"
   ],
+  "Le suivi de projet n'est pas encore activé sur ce serveur.": [
+    "Project tracking is not activated on this server yet.",
+    "本服务器上的该项目跟踪尚未启用。",
+    "Die Projektverfolgung ist auf diesem Server noch nicht aktiviert.",
+    "El seguimiento del proyecto aún no está activado en este servidor.",
+    "Отслеживание проекта ещё не активировано на этом сервере.",
+    "Il monitoraggio del progetto non è ancora attivato su questo server.",
+    "このサーバーではこのプロジェクトの追跡はまだ有効化されていません。"
+  ],
   "Le suivi de projet n'est pas installé sur ce serveur :": [
     "Project tracking is not installed on this server:",
     "此服务器未安装项目跟踪：",
@@ -8504,6 +8873,15 @@
     "Il monitoraggio del progetto non è installato su questo server:",
     "このサーバーには案件追跡が導入されていません："
   ],
+  "Le suivi des projets n'est pas encore activé sur ce serveur.": [
+    "Project tracking is not activated on this server yet.",
+    "本服务器上的项目跟踪尚未启用。",
+    "Die Projektverfolgung ist auf diesem Server noch nicht aktiviert.",
+    "El seguimiento de proyectos aún no está activado en este servidor.",
+    "Отслеживание проектов ещё не активировано на этом сервере.",
+    "Il monitoraggio dei progetti non è ancora attivato su questo server.",
+    "このサーバーではプロジェクト追跡はまだ有効化されていません。"
+  ],
   "Le suivi des projets n'est pas installé sur ce serveur :": [
     "Project tracking is not installed on this server:",
     "此服务器未安装项目跟踪：",
@@ -8512,6 +8890,15 @@
     "Отслеживание проектов не установлено на этом сервере:",
     "Il monitoraggio dei progetti non è installato su questo server:",
     "このサーバーには案件追跡が導入されていません："
+  ],
+  "Le suivi des tâches n'est pas encore activé sur ce serveur.": [
+    "Task tracking is not activated on this server yet.",
+    "本服务器上的任务跟踪尚未启用。",
+    "Die Aufgabenverfolgung ist auf diesem Server noch nicht aktiviert.",
+    "El seguimiento de tareas aún no está activado en este servidor.",
+    "Отслеживание задач ещё не активировано на этом сервере.",
+    "Il monitoraggio delle attività non è ancora attivato su questo server.",
+    "このサーバーではタスク追跡はまだ有効化されていません。"
   ],
   "Le suivi des tâches n'est pas installé sur ce serveur :": [
     "Task tracking is not installed on this server:",
@@ -8710,6 +9097,24 @@
     "Материалы и температура в расчёте не учитываются.",
     "Materiali e temperatura non intervengono nel calcolo.",
     "この計算は材料と温度を考慮しません。"
+  ],
+  "Les projets sans chiffre d'affaires estimable sont exclus par ce filtre.": [
+    "Projects with no estimable revenue are excluded by this filter.",
+    "无法估算营收的项目将被此筛选排除。",
+    "Projekte ohne schätzbaren Umsatz werden durch diesen Filter ausgeschlossen.",
+    "Este filtro excluye los proyectos sin ingresos estimables.",
+    "Проекты без оцениваемой выручки исключаются этим фильтром.",
+    "I progetti senza ricavi stimabili sono esclusi da questo filtro.",
+    "売上を見積もれないプロジェクトはこのフィルターで除外されます。"
+  ],
+  "Les projets sans date de lancement série sont exclus par ce filtre.": [
+    "Projects with no series launch date are excluded by this filter.",
+    "没有量产启动日期的项目将被此筛选排除。",
+    "Projekte ohne Serienstarttermin werden durch diesen Filter ausgeschlossen.",
+    "Este filtro excluye los proyectos sin fecha de lanzamiento de serie.",
+    "Проекты без даты запуска серии исключаются этим фильтром.",
+    "I progetti senza data di avvio serie sono esclusi da questo filtro.",
+    "量産開始日のないプロジェクトはこのフィルターで除外されます。"
   ],
   "Les revues et documents restent accessibles ci-dessous.": [
     "Reviews and documents remain accessible below.",
@@ -9097,6 +9502,51 @@
     "Сообщение (только клиентское содержимое)",
     "Messaggio (solo contenuto per il cliente)",
     "メッセージ（顧客向け内容のみ）"
+  ],
+  "Message client commencé : l'objet manque. Complétez-le, ou videz les deux champs pour publier le retour seul.": [
+    "Client message started: the subject is missing. Complete it, or clear both fields to publish the feedback alone.",
+    "客户消息已开始撰写：缺少主题。请补全，或清空两个字段以仅发布反馈。",
+    "Kundennachricht begonnen: Der Betreff fehlt. Ergänzen Sie ihn, oder leeren Sie beide Felder, um nur die Rückmeldung zu veröffentlichen.",
+    "Mensaje al cliente iniciado: falta el asunto. Complételo o vacíe ambos campos para publicar solo la respuesta.",
+    "Сообщение клиенту начато: отсутствует тема. Дополните её или очистите оба поля, чтобы опубликовать только заключение.",
+    "Messaggio al cliente iniziato: manca l'oggetto. Completatelo, oppure svuotate entrambi i campi per pubblicare solo il riscontro.",
+    "顧客向けメッセージが未完成です：件名がありません。補完するか、両方の項目を空にして回答のみを公開してください。"
+  ],
+  "Message client commencé : le texte manque. Complétez-le, ou videz les deux champs pour publier le retour seul.": [
+    "Client message started: the text is missing. Complete it, or clear both fields to publish the feedback alone.",
+    "客户消息已开始撰写：缺少正文。请补全，或清空两个字段以仅发布反馈。",
+    "Kundennachricht begonnen: Der Text fehlt. Ergänzen Sie ihn, oder leeren Sie beide Felder, um nur die Rückmeldung zu veröffentlichen.",
+    "Mensaje al cliente iniciado: falta el texto. Complételo o vacíe ambos campos para publicar solo la respuesta.",
+    "Сообщение клиенту начато: отсутствует текст. Дополните его или очистите оба поля, чтобы опубликовать только заключение.",
+    "Messaggio al cliente iniziato: manca il testo. Completatelo, oppure svuotate entrambi i campi per pubblicare solo il riscontro.",
+    "顧客向けメッセージが未完成です：本文がありません。補完するか、両方の項目を空にして回答のみを公開してください。"
+  ],
+  "Message client incomplet : l'objet manque. Rien n'a été publié.": [
+    "Client message incomplete: the subject is missing. Nothing was published.",
+    "客户消息不完整：缺少主题。未发布任何内容。",
+    "Kundennachricht unvollständig: Der Betreff fehlt. Es wurde nichts veröffentlicht.",
+    "Mensaje al cliente incompleto: falta el asunto. No se ha publicado nada.",
+    "Сообщение клиенту неполное: отсутствует тема. Ничего не опубликовано.",
+    "Messaggio al cliente incompleto: manca l'oggetto. Non è stato pubblicato nulla.",
+    "顧客向けメッセージが不完全です：件名がありません。何も公開されていません。"
+  ],
+  "Message client incomplet : le texte manque. Rien n'a été publié.": [
+    "Client message incomplete: the text is missing. Nothing was published.",
+    "客户消息不完整：缺少正文。未发布任何内容。",
+    "Kundennachricht unvollständig: Der Text fehlt. Es wurde nichts veröffentlicht.",
+    "Mensaje al cliente incompleto: falta el texto. No se ha publicado nada.",
+    "Сообщение клиенту неполное: отсутствует текст. Ничего не опубликовано.",
+    "Messaggio al cliente incompleto: manca il testo. Non è stato pubblicato nulla.",
+    "顧客向けメッセージが不完全です：本文がありません。何も公開されていません。"
+  ],
+  "Message client à préparer avec la publication (facultatif)": [
+    "Client message prepared with publication (optional)",
+    "随发布一同准备的客户消息（可选）",
+    "Kundennachricht, die mit der Veröffentlichung vorbereitet wird (optional)",
+    "Mensaje al cliente preparado con la publicación (opcional)",
+    "Сообщение клиенту, подготовленное вместе с публикацией (необязательно)",
+    "Messaggio al cliente preparato con la pubblicazione (facoltativo)",
+    "公開と同時に準備する顧客向けメッセージ（任意）"
   ],
   "Message préparé et mis en attente d'envoi.": [
     "Message prepared and set to await sending.",
@@ -9647,6 +10097,15 @@
     "Nome",
     "名前"
   ],
+  "Nom de société": [
+    "Company name",
+    "公司名称",
+    "Firmenname",
+    "Nombre de la empresa",
+    "Название компании",
+    "Nome dell'azienda",
+    "会社名"
+  ],
   "Nom du contact": [
     "Contact name",
     "联系人姓名",
@@ -9889,6 +10348,15 @@
     "Объект:",
     "Oggetto:",
     "オブジェクト："
+  ],
+  "Objet du message client (facultatif)": [
+    "Client message subject (optional)",
+    "客户消息主题（可选）",
+    "Betreff der Kundennachricht (optional)",
+    "Asunto del mensaje al cliente (opcional)",
+    "Тема сообщения клиенту (необязательно)",
+    "Oggetto del messaggio al cliente (facoltativo)",
+    "顧客向けメッセージの件名（任意）"
   ],
   "Oblig.": [
     "Required",
@@ -10997,6 +11465,15 @@
     "Prezzo e costo",
     "価格と原価"
   ],
+  "Prochaine action": [
+    "Next action",
+    "下一步行动",
+    "Nächste Aktion",
+    "Próxima acción",
+    "Следующее действие",
+    "Prossima azione",
+    "次のアクション"
+  ],
   "Produit spécifique en faible volume : revue manuelle Standex.": [
     "Low-volume custom product: manual Standex review.",
     "低用量定制产品：需经 Standex 人工审核。",
@@ -11717,6 +12194,15 @@
     "Domande reali sui dati mancanti",
     "不足情報への具体的質問"
   ],
+  "Questions ouvertes :": [
+    "Open questions:",
+    "待解决问题：",
+    "Offene Fragen:",
+    "Preguntas abiertas:",
+    "Открытые вопросы:",
+    "Domande aperte:",
+    "未解決の質問："
+  ],
   "Questions restantes": [
     "Remaining questions",
     "剩余问题",
@@ -11843,6 +12329,15 @@
     "Ricarica esempio macchina da caffè",
     "コーヒーマシン例を再読み込み"
   ],
+  "Rechargez le projet : le retour publié et sa notification y figurent déjà.": [
+    "Reload the project: the published feedback and its notification are already there.",
+    "请重新加载该项目：已发布的反馈及其通知已存在。",
+    "Laden Sie das Projekt neu: Die veröffentlichte Rückmeldung und ihre Benachrichtigung sind bereits vorhanden.",
+    "Recargue el proyecto: la respuesta publicada y su notificación ya están ahí.",
+    "Перезагрузите проект: опубликованный ответ и уведомление уже есть.",
+    "Ricarica il progetto: il riscontro pubblicato e la sua notifica sono già presenti.",
+    "プロジェクトを再読み込みしてください。公開済みの回答と通知はすでにあります。"
+  ],
   "Rechercher (société, projet, pays)": [
     "Search (company, project, country)",
     "搜索（公司、项目、国家）",
@@ -11950,6 +12445,15 @@
     "Типовое расстояние отпускания",
     "Distanza tipica di rilascio",
     "代表復帰距離"
+  ],
+  "Rempli, il est mis en attente d'envoi dans la même opération que la publication : il ne peut pas exister de retour publié sans message préparé. Aucun envoi n'est effectué.": [
+    "If filled in, it is queued for sending in the same operation as the publication: there can be no published feedback without a prepared message. Nothing is sent.",
+    "如果填写，它将与发布在同一操作中进入待发送队列：不会出现已发布反馈却没有准备好的消息。系统不会发送任何内容。",
+    "Wenn ausgefüllt, wird sie im selben Vorgang wie die Veröffentlichung zum Versand eingereiht: Es kann keine veröffentlichte Rückmeldung ohne vorbereitete Nachricht geben. Es wird nichts versendet.",
+    "Si se rellena, queda en espera de envío en la misma operación que la publicación: no puede existir una respuesta publicada sin mensaje preparado. No se envía nada.",
+    "Если оно заполнено, оно ставится в очередь на отправку в той же операции, что и публикация: опубликованного ответа без подготовленного сообщения быть не может. Ничего не отправляется.",
+    "Se compilato, viene messo in attesa di invio nella stessa operazione della pubblicazione: non può esistere un riscontro pubblicato senza messaggio preparato. Non viene inviato nulla.",
+    "入力すると、公開と同じ操作で送信待ちに入ります。準備済みメッセージのない公開回答は存在しません。送信は行われません。"
   ],
   "Renommer": [
     "Rename",
@@ -12248,6 +12752,15 @@
     "Riscontro pubblicato interessato",
     "対象となる公開済みの回答"
   ],
+  "Retour publié et message client mis en attente d'envoi.": [
+    "Feedback published and client message queued for sending.",
+    "反馈已发布，客户消息已进入待发送队列。",
+    "Rückmeldung veröffentlicht und Kundennachricht zum Versand eingereiht.",
+    "Respuesta publicada y mensaje al cliente en espera de envío.",
+    "Ответ опубликован, сообщение клиенту поставлено в очередь на отправку.",
+    "Riscontro pubblicato e messaggio al cliente in attesa di invio.",
+    "回答を公開し、顧客向けメッセージを送信待ちにしました。"
+  ],
   "Retour remplacé par un plus récent": [
     "Feedback superseded by a newer one",
     "反馈已被更新的反馈替代",
@@ -12427,6 +12940,15 @@
     "Ручная проверка Standex",
     "Revisione manuale Standex",
     "Standex 手動レビュー"
+  ],
+  "Revue technique et décisions envoyées au client : offres, échantillons, retours R&D et documents.": [
+    "Technical review and decisions sent to the client: offers, samples, R&D feedback and documents.",
+    "技术评审及发送给客户的决定：报价、样品、研发反馈和文件。",
+    "Technische Prüfung und an den Kunden gesendete Entscheidungen: Angebote, Muster, R&D-Rückmeldungen und Dokumente.",
+    "Revisión técnica y decisiones enviadas al cliente: ofertas, muestras, respuestas de I+D y documentos.",
+    "Технический анализ и решения, отправленные клиенту: предложения, образцы, ответы R&D и документы.",
+    "Revisione tecnica e decisioni inviate al cliente: offerte, campioni, riscontri R&D e documenti.",
+    "技術レビューと顧客に送る決定：見積、サンプル、R&Dの回答、文書。"
   ],
   "Revue, documents et 3D": [
     "Review, documents and 3D",
@@ -12824,6 +13346,15 @@
     "Ruolo interessato",
     "対象の役割"
   ],
+  "Rôle mis à jour.": [
+    "Role updated.",
+    "角色已更新。",
+    "Rolle aktualisiert.",
+    "Rol actualizado.",
+    "Роль обновлена.",
+    "Ruolo aggiornato.",
+    "役割を更新しました。"
+  ],
   "Rôle électrique du capteur": [
     "Sensor electrical role",
     "传感器电气作用",
@@ -13075,6 +13606,15 @@
     "Сеансы",
     "Sessioni",
     "セッション"
+  ],
+  "Seul le commerce ou l'administration désigne les responsables.": [
+    "Only sales or administration assigns owners.",
+    "仅销售或管理员可指定负责人。",
+    "Nur Vertrieb oder Administration legt die Verantwortlichen fest.",
+    "Solo ventas o administración designa a los responsables.",
+    "Ответственных назначают только продажи или администрация.",
+    "Solo il commerciale o l'amministrazione designa i responsabili.",
+    "担当者を指定できるのは営業または管理者のみです。"
   ],
   "Seul le commerce ou l'administration renseigne le prix.": [
     "Only sales or administration fills in the price.",
@@ -13778,6 +14318,15 @@
     "Tutti",
     "すべて"
   ],
+  "Tous les pays": [
+    "All countries",
+    "所有国家",
+    "Alle Länder",
+    "Todos los países",
+    "Все страны",
+    "Tutti i paesi",
+    "すべての国"
+  ],
   "Tous les raccordements": [
     "All connections",
     "所有连接方式",
@@ -13813,6 +14362,15 @@
     "Все виды крепления",
     "Tutti i fissaggi",
     "すべての取付方式"
+  ],
+  "Toutes les notes ont été copiées.": [
+    "All notes were copied.",
+    "已复制全部备注。",
+    "Alle Notizen wurden kopiert.",
+    "Se copiaron todas las notas.",
+    "Все заметки скопированы.",
+    "Tutte le note sono state copiate.",
+    "すべてのメモをコピーしました。"
   ],
   "Toutes les étapes": [
     "All stages",
@@ -15047,6 +15605,15 @@
     "È possibile far verificare il progetto dai nostri team. Una revisione R&D è sempre necessaria prima dell'ordine.",
     "当社チームによるプロジェクトの確認を依頼できます。発注前には必ずR&Dレビューが必要となります。"
   ],
+  "Vu par le client — langue enregistrée du projet :": [
+    "Seen by the customer — saved project language:",
+    "客户可见 — 项目已保存语言：",
+    "Für den Kunden sichtbar — gespeicherte Projektsprache:",
+    "Visible para el cliente — idioma guardado del proyecto:",
+    "Видно клиенту — сохранённый язык проекта:",
+    "Visibile al cliente — lingua registrata del progetto:",
+    "顧客が閲覧 — 保存されたプロジェクト言語:"
+  ],
   "Vue plane": [
     "Plan view",
     "平面视图",
@@ -15316,6 +15883,15 @@
     "учётная запись не привязана",
     "nessun account collegato",
     "アカウント未紐づけ"
+  ],
+  "aucune action en attente": [
+    "no pending action",
+    "无待办行动",
+    "keine offene Aktion",
+    "ninguna acción pendiente",
+    "нет ожидающих действий",
+    "nessuna azione in sospeso",
+    "保留中のアクションなし"
   ],
   "aucune session": [
     "no session",
@@ -15596,6 +16172,15 @@
     "cliente indica un contesto di sicurezza",
     "顧客から安全に関する説明あり"
   ],
+  "corrigé en interne": [
+    "corrected internally",
+    "内部更正",
+    "intern korrigiert",
+    "corregido internamente",
+    "исправлено внутри",
+    "corretto internamente",
+    "社内で修正済み"
+  ],
   "couverture confirmée": [
     "coverage confirmed",
     "覆盖已确认",
@@ -15713,6 +16298,15 @@
     "durata",
     "寿命"
   ],
+  "déclaré par le client": [
+    "declared by the client",
+    "由客户申报",
+    "vom Kunden angegeben",
+    "declarado por el cliente",
+    "заявлено клиентом",
+    "dichiarato dal cliente",
+    "顧客の申告"
+  ],
   "déclencher les garde-fous {0}": [
     "trigger guardrails {0}",
     "触发限制条件 {0}",
@@ -15803,6 +16397,15 @@
     "salvato ·",
     "保存済み ·"
   ],
+  "enregistrée. Rechargez le projet pour voir l'état réel avant de réessayer.": [
+    "saved. Reload the project to see the real state before trying again.",
+    "已保存。请重新加载项目查看真实状态后再重试。",
+    "gespeichert. Laden Sie das Projekt neu, um den tatsächlichen Stand zu sehen, bevor Sie es erneut versuchen.",
+    "guardado. Recargue el proyecto para ver el estado real antes de reintentar.",
+    "сохранено. Перезагрузите проект, чтобы увидеть реальное состояние, прежде чем повторять.",
+    "salvata. Ricarica il progetto per vedere lo stato reale prima di riprovare.",
+    "保存された可能性があります。再試行の前にプロジェクトを再読み込みして実際の状態を確認してください。"
+  ],
   "enrichir la trace interne (garde-fous, questions, valeurs datasheet)": [
     "expand the internal trace (guardrails, questions, datasheet values)",
     "补充内部记录（限制条件、问题、数据表值）",
@@ -15829,6 +16432,15 @@
     "вход ПЛК 24 V",
     "ingresso PLC 24 V",
     "24 V PLC入力"
+  ],
+  "envoi non configuré": [
+    "sending not configured",
+    "未配置发送",
+    "Versand nicht konfiguriert",
+    "envío no configurado",
+    "отправка не настроена",
+    "invio non configurato",
+    "送信は未設定"
   ],
   "est en cours de revue.": [
     "is under review.",
@@ -16568,6 +17180,15 @@
     "passaggio laterale",
     "横方向の通過"
   ],
+  "pays non renseigné": [
+    "country not provided",
+    "未填写国家",
+    "Land nicht angegeben",
+    "país no indicado",
+    "страна не указана",
+    "paese non indicato",
+    "国が未入力"
+  ],
   "personne retirée de l'annuaire": [
     "person removed from the directory",
     "已从名录中移除的人员",
@@ -16999,6 +17620,15 @@
     "Малый",
     "Piccolo",
     "小"
+  ],
+  "sont saisis : aucune conversion n'est faite ici. Effacez d'abord ces montants.": [
+    "are recorded: no conversion happens here. Clear those amounts first.",
+    "：此处不做任何换算。请先清除这些金额。",
+    "erfasst sind: Hier findet keine Umrechnung statt. Löschen Sie zuerst diese Beträge.",
+    "registrados: aquí no se realiza ninguna conversión. Borre primero esos importes.",
+    ": здесь конвертация не выполняется. Сначала удалите эти суммы.",
+    "sono registrati: qui non avviene alcuna conversione. Cancella prima questi importi.",
+    "入力されている間は変更できません。ここでは換算しません。先に金額を消してください。"
   ],
   "sortie assistant": [
     "assistant output",
@@ -17639,6 +18269,24 @@
     "Da verificare",
     "要確認"
   ],
+  "Âge de l'étape en cours": [
+    "Current stage age",
+    "当前阶段时长",
+    "Alter der aktuellen Phase",
+    "Antigüedad de la etapa actual",
+    "Возраст текущего этапа",
+    "Età della fase attuale",
+    "現在ステージの経過日数"
+  ],
+  "Âge total du projet": [
+    "Total project age",
+    "项目总时长",
+    "Gesamtalter des Projekts",
+    "Antigüedad total del proyecto",
+    "Общий возраст проекта",
+    "Età totale del progetto",
+    "プロジェクト全体の経過日数"
+  ],
   "Écarts": [
     "Differences",
     "差异",
@@ -17738,6 +18386,15 @@
     "Scaduta",
     "期限切れ"
   ],
+  "Échéance": [
+    "Due date",
+    "截止日期",
+    "Fälligkeit",
+    "Fecha límite",
+    "Срок",
+    "Scadenza",
+    "期限"
+  ],
   "Échéance (facultative)": [
     "Due date (optional)",
     "截止日期（可选）",
@@ -17746,6 +18403,15 @@
     "Срок (необязательно)",
     "Scadenza (facoltativa)",
     "期限（任意）"
+  ],
+  "Échéance mise à jour.": [
+    "Due date updated.",
+    "截止日期已更新。",
+    "Fälligkeitsdatum aktualisiert.",
+    "Fecha límite actualizada.",
+    "Срок обновлён.",
+    "Scadenza aggiornata.",
+    "期限を更新しました。"
   ],
   "Électrique": [
     "Electrical",
@@ -18124,590 +18790,5 @@
     "…. Изменение, внесенное здесь, ни в коем случае не считается опубликованным отзывом.",
     "…. Una modifica apportata qui non vale mai come riscontro pubblicato.",
     "…。ここで行われた変更は公開されたフィードバックとはみなされません。"
-  ],
-  "(message vide)": [
-    "(empty message)",
-    "（空消息）",
-    "(leere Nachricht)",
-    "(mensaje vacío)",
-    "(пустое сообщение)",
-    "(messaggio vuoto)",
-    "（空のメッセージ）"
-  ],
-  "(objet vide)": [
-    "(empty subject)",
-    "（空主题）",
-    "(leerer Betreff)",
-    "(asunto vacío)",
-    "(пустая тема)",
-    "(oggetto vuoto)",
-    "（件名なし）"
-  ],
-  "Aperçu du message client": [
-    "Client message preview",
-    "客户消息预览",
-    "Vorschau der Kundennachricht",
-    "Vista previa del mensaje al cliente",
-    "Предпросмотр сообщения клиенту",
-    "Anteprima del messaggio al cliente",
-    "顧客メッセージのプレビュー"
-  ],
-  "Aperçu tel que le client le lira": [
-    "Preview as the client will read it",
-    "客户看到的效果预览",
-    "Vorschau, wie der Kunde sie liest",
-    "Vista previa tal como la leerá el cliente",
-    "Предпросмотр так, как это увидит клиент",
-    "Anteprima come la leggerà il cliente",
-    "顧客が読む形でのプレビュー"
-  ],
-  "Aucun suivi interne renseigné pour l'instant.": [
-    "No internal tracking recorded yet.",
-    "尚未记录内部跟踪。",
-    "Noch keine interne Nachverfolgung erfasst.",
-    "Aún no hay seguimiento interno registrado.",
-    "Внутреннее сопровождение пока не заполнено.",
-    "Nessun monitoraggio interno registrato per ora.",
-    "内部トラッキングはまだ登録されていません。"
-  ],
-  "Aucune modification à enregistrer.": [
-    "Nothing to save.",
-    "没有需要保存的修改。",
-    "Nichts zu speichern.",
-    "No hay cambios que guardar.",
-    "Нет изменений для сохранения.",
-    "Nessuna modifica da salvare.",
-    "保存する変更はありません。"
-  ],
-  "CA max.": [
-    "Max revenue",
-    "最高营收",
-    "Max. Umsatz",
-    "Ingresos máx.",
-    "Макс. выручка",
-    "Ricavi max",
-    "最大売上"
-  ],
-  "CA min.": [
-    "Min revenue",
-    "最低营收",
-    "Min. Umsatz",
-    "Ingresos mín.",
-    "Мин. выручка",
-    "Ricavi min",
-    "最小売上"
-  ],
-  "Ce lien ne correspond à aucun de vos projets : rien n'a été ouvert.": [
-    "This link matches none of your projects: nothing was opened.",
-    "此链接与您的任何项目都不匹配：未打开任何内容。",
-    "Dieser Link gehört zu keinem Ihrer Projekte: Es wurde nichts geöffnet.",
-    "Este enlace no corresponde a ninguno de sus proyectos: no se abrió nada.",
-    "Эта ссылка не соответствует ни одному вашему проекту: ничего не открыто.",
-    "Questo collegamento non corrisponde a nessuno dei tuoi progetti: non è stato aperto nulla.",
-    "このリンクはお客様のどのプロジェクトにも一致しません。何も開かれていません。"
-  ],
-  "Copie impossible depuis ce navigateur : sélectionnez le texte et copiez-le à la main.": [
-    "Copying failed in this browser: select the text and copy it manually.",
-    "此浏览器无法复制：请手动选择并复制文本。",
-    "Kopieren in diesem Browser nicht möglich: Text bitte manuell markieren und kopieren.",
-    "No se pudo copiar en este navegador: seleccione el texto y cópielo manualmente.",
-    "Копирование в этом браузере не удалось: выделите текст и скопируйте вручную.",
-    "Copia non riuscita in questo browser: seleziona il testo e copialo manualmente.",
-    "このブラウザではコピーできません。テキストを選択して手動でコピーしてください。"
-  ],
-  "Copier la dernière": [
-    "Copy latest",
-    "复制最新一条",
-    "Letzte kopieren",
-    "Copiar la última",
-    "Копировать последнюю",
-    "Copia l'ultima",
-    "最新をコピー"
-  ],
-  "Copier tout": [
-    "Copy all",
-    "全部复制",
-    "Alles kopieren",
-    "Copiar todo",
-    "Копировать всё",
-    "Copia tutto",
-    "すべてコピー"
-  ],
-  "Devise verrouillée : des montants sont déjà enregistrés. Effacez-les d'abord si la devise doit changer.": [
-    "Currency locked: amounts are already recorded. Clear them first if the currency must change.",
-    "货币已锁定：已记录金额。若需更改货币，请先清除金额。",
-    "Währung gesperrt: Es sind bereits Beträge erfasst. Löschen Sie diese zuerst, wenn die Währung wechseln soll.",
-    "Moneda bloqueada: ya hay importes registrados. Bórrelos primero si debe cambiar la moneda.",
-    "Валюта заблокирована: суммы уже сохранены. Сначала удалите их, если валюта должна измениться.",
-    "Valuta bloccata: sono già registrati degli importi. Cancellali prima se la valuta deve cambiare.",
-    "通貨はロックされています。金額が既に登録済みです。通貨を変更する場合は先に金額を消してください。"
-  ],
-  "Décision publiée :": [
-    "Published decision:",
-    "已发布的决定：",
-    "Veröffentlichte Entscheidung:",
-    "Decisión publicada:",
-    "Опубликованное решение:",
-    "Decisione pubblicata:",
-    "公開された判断："
-  ],
-  "La dernière note a été copiée.": [
-    "The latest note was copied.",
-    "已复制最新一条备注。",
-    "Die letzte Notiz wurde kopiert.",
-    "Se copió la última nota.",
-    "Последняя заметка скопирована.",
-    "L'ultima nota è stata copiata.",
-    "最新のメモをコピーしました。"
-  ],
-  "La devise ne peut plus changer : des montants sont déjà enregistrés dans la devise actuelle.": [
-    "The currency can no longer change: amounts are already recorded in the current currency.",
-    "货币不能再更改：已按当前货币记录金额。",
-    "Die Währung kann nicht mehr geändert werden: Beträge sind bereits in der aktuellen Währung erfasst.",
-    "La moneda ya no puede cambiar: hay importes registrados en la moneda actual.",
-    "Валюту больше нельзя изменить: суммы уже сохранены в текущей валюте.",
-    "La valuta non può più cambiare: gli importi sono già registrati nella valuta attuale.",
-    "通貨は変更できません。現在の通貨で金額が登録済みです。"
-  ],
-  "Lancement série au": [
-    "Series launch until",
-    "量产启动截至",
-    "Serienstart bis",
-    "Lanzamiento de serie hasta",
-    "Запуск серии до",
-    "Avvio serie fino al",
-    "量産開始（終了日）"
-  ],
-  "Lancement série du": [
-    "Series launch from",
-    "量产启动自",
-    "Serienstart ab",
-    "Lanzamiento de serie desde",
-    "Запуск серии с",
-    "Avvio serie dal",
-    "量産開始（開始日）"
-  ],
-  "Langue du client :": [
-    "Client language:",
-    "客户语言：",
-    "Sprache des Kunden:",
-    "Idioma del cliente:",
-    "Язык клиента:",
-    "Lingua del cliente:",
-    "顧客の言語："
-  ],
-  "Les projets sans chiffre d'affaires estimable sont exclus par ce filtre.": [
-    "Projects with no estimable revenue are excluded by this filter.",
-    "无法估算营收的项目将被此筛选排除。",
-    "Projekte ohne schätzbaren Umsatz werden durch diesen Filter ausgeschlossen.",
-    "Este filtro excluye los proyectos sin ingresos estimables.",
-    "Проекты без оцениваемой выручки исключаются этим фильтром.",
-    "I progetti senza ricavi stimabili sono esclusi da questo filtro.",
-    "売上を見積もれないプロジェクトはこのフィルターで除外されます。"
-  ],
-  "Les projets sans date de lancement série sont exclus par ce filtre.": [
-    "Projects with no series launch date are excluded by this filter.",
-    "没有量产启动日期的项目将被此筛选排除。",
-    "Projekte ohne Serienstarttermin werden durch diesen Filter ausgeschlossen.",
-    "Este filtro excluye los proyectos sin fecha de lanzamiento de serie.",
-    "Проекты без даты запуска серии исключаются этим фильтром.",
-    "I progetti senza data di avvio serie sono esclusi da questo filtro.",
-    "量産開始日のないプロジェクトはこのフィルターで除外されます。"
-  ],
-  "Nom de société": [
-    "Company name",
-    "公司名称",
-    "Firmenname",
-    "Nombre de la empresa",
-    "Название компании",
-    "Nome dell'azienda",
-    "会社名"
-  ],
-  "Prochaine action": [
-    "Next action",
-    "下一步行动",
-    "Nächste Aktion",
-    "Próxima acción",
-    "Следующее действие",
-    "Prossima azione",
-    "次のアクション"
-  ],
-  "Questions ouvertes :": [
-    "Open questions:",
-    "待解决问题：",
-    "Offene Fragen:",
-    "Preguntas abiertas:",
-    "Открытые вопросы:",
-    "Domande aperte:",
-    "未解決の質問："
-  ],
-  "Revue technique et décisions envoyées au client : offres, échantillons, retours R&D et documents.": [
-    "Technical review and decisions sent to the client: offers, samples, R&D feedback and documents.",
-    "技术评审及发送给客户的决定：报价、样品、研发反馈和文件。",
-    "Technische Prüfung und an den Kunden gesendete Entscheidungen: Angebote, Muster, R&D-Rückmeldungen und Dokumente.",
-    "Revisión técnica y decisiones enviadas al cliente: ofertas, muestras, respuestas de I+D y documentos.",
-    "Технический анализ и решения, отправленные клиенту: предложения, образцы, ответы R&D и документы.",
-    "Revisione tecnica e decisioni inviate al cliente: offerte, campioni, riscontri R&D e documenti.",
-    "技術レビューと顧客に送る決定：見積、サンプル、R&Dの回答、文書。"
-  ],
-  "Rôle mis à jour.": [
-    "Role updated.",
-    "角色已更新。",
-    "Rolle aktualisiert.",
-    "Rol actualizado.",
-    "Роль обновлена.",
-    "Ruolo aggiornato.",
-    "役割を更新しました。"
-  ],
-  "Seul le commerce ou l'administration désigne les responsables.": [
-    "Only sales or administration assigns owners.",
-    "仅销售或管理员可指定负责人。",
-    "Nur Vertrieb oder Administration legt die Verantwortlichen fest.",
-    "Solo ventas o administración designa a los responsables.",
-    "Ответственных назначают только продажи или администрация.",
-    "Solo il commerciale o l'amministrazione designa i responsabili.",
-    "担当者を指定できるのは営業または管理者のみです。"
-  ],
-  "Tous les pays": [
-    "All countries",
-    "所有国家",
-    "Alle Länder",
-    "Todos los países",
-    "Все страны",
-    "Tutti i paesi",
-    "すべての国"
-  ],
-  "Toutes les notes ont été copiées.": [
-    "All notes were copied.",
-    "已复制全部备注。",
-    "Alle Notizen wurden kopiert.",
-    "Se copiaron todas las notas.",
-    "Все заметки скопированы.",
-    "Tutte le note sono state copiate.",
-    "すべてのメモをコピーしました。"
-  ],
-  "aucune action en attente": [
-    "no pending action",
-    "无待办行动",
-    "keine offene Aktion",
-    "ninguna acción pendiente",
-    "нет ожидающих действий",
-    "nessuna azione in sospeso",
-    "保留中のアクションなし"
-  ],
-  "envoi non configuré": [
-    "sending not configured",
-    "未配置发送",
-    "Versand nicht konfiguriert",
-    "envío no configurado",
-    "отправка не настроена",
-    "invio non configurato",
-    "送信は未設定"
-  ],
-  "pays non renseigné": [
-    "country not provided",
-    "未填写国家",
-    "Land nicht angegeben",
-    "país no indicado",
-    "страна не указана",
-    "paese non indicato",
-    "国が未入力"
-  ],
-  "Âge de l'étape en cours": [
-    "Current stage age",
-    "当前阶段时长",
-    "Alter der aktuellen Phase",
-    "Antigüedad de la etapa actual",
-    "Возраст текущего этапа",
-    "Età della fase attuale",
-    "現在ステージの経過日数"
-  ],
-  "Âge total du projet": [
-    "Total project age",
-    "项目总时长",
-    "Gesamtalter des Projekts",
-    "Antigüedad total del proyecto",
-    "Общий возраст проекта",
-    "Età totale del progetto",
-    "プロジェクト全体の経過日数"
-  ],
-  "Échéance mise à jour.": [
-    "Due date updated.",
-    "截止日期已更新。",
-    "Fälligkeitsdatum aktualisiert.",
-    "Fecha límite actualizada.",
-    "Срок обновлён.",
-    "Scadenza aggiornata.",
-    "期限を更新しました。"
-  ],
-  "Échéance": [
-    "Due date",
-    "截止日期",
-    "Fälligkeit",
-    "Fecha límite",
-    "Срок",
-    "Scadenza",
-    "期限"
-  ],
-  "corrigé en interne": [
-    "corrected internally",
-    "内部更正",
-    "intern korrigiert",
-    "corregido internamente",
-    "исправлено внутри",
-    "corretto internamente",
-    "社内で修正済み"
-  ],
-  "déclaré par le client": [
-    "declared by the client",
-    "由客户申报",
-    "vom Kunden angegeben",
-    "declarado por el cliente",
-    "заявлено клиентом",
-    "dichiarato dal cliente",
-    "顧客の申告"
-  ],
-  "Déclaré par le client :": [
-    "Declared by the client:",
-    "客户申报：",
-    "Vom Kunden angegeben:",
-    "Declarado por el cliente:",
-    "Заявлено клиентом:",
-    "Dichiarato dal cliente:",
-    "顧客の申告："
-  ],
-  "Cet écran n'était plus synchronisé. Rechargez le projet, puis refaites la modification.": [
-    "This screen was out of sync. Reload the project, then redo the change.",
-    "此界面已不同步。请重新加载项目后再修改。",
-    "Diese Ansicht war nicht mehr synchron. Laden Sie das Projekt neu und wiederholen Sie die Änderung.",
-    "Esta pantalla estaba desincronizada. Recargue el proyecto y repita el cambio.",
-    "Этот экран рассинхронизирован. Перезагрузите проект и повторите изменение.",
-    "Questa schermata non era più sincronizzata. Ricarica il progetto e ripeti la modifica.",
-    "この画面は同期が外れていました。プロジェクトを再読み込みしてから変更し直してください。"
-  ],
-  "Cette valeur n'a pas le format attendu : elle a été refusée, et rien n'a été effacé.": [
-    "This value does not have the expected format: it was rejected and nothing was cleared.",
-    "该值格式不符合要求：已被拒绝，未清除任何内容。",
-    "Dieser Wert hat nicht das erwartete Format: Er wurde abgelehnt, es wurde nichts gelöscht.",
-    "Este valor no tiene el formato esperado: fue rechazado y no se borró nada.",
-    "Значение не соответствует ожидаемому формату: оно отклонено, ничего не удалено.",
-    "Questo valore non ha il formato previsto: è stato rifiutato e nulla è stato cancellato.",
-    "この値は想定した形式ではありません。拒否され、何も消去されていません。"
-  ],
-  "La confirmation de Standex n'a pas été reçue : la modification a peut-être été": [
-    "Standex's confirmation was not received: the change may have been",
-    "未收到 Standex 的确认：修改可能已",
-    "Die Bestätigung von Standex ist nicht eingegangen: Die Änderung wurde möglicherweise",
-    "No se recibió la confirmación de Standex: el cambio puede haberse",
-    "Подтверждение от Standex не получено: изменение могло быть",
-    "La conferma di Standex non è stata ricevuta: la modifica potrebbe essere stata",
-    "Standex からの確認が届きませんでした。変更は"
-  ],
-  "enregistrée. Rechargez le projet pour voir l'état réel avant de réessayer.": [
-    "saved. Reload the project to see the real state before trying again.",
-    "已保存。请重新加载项目查看真实状态后再重试。",
-    "gespeichert. Laden Sie das Projekt neu, um den tatsächlichen Stand zu sehen, bevor Sie es erneut versuchen.",
-    "guardado. Recargue el proyecto para ver el estado real antes de reintentar.",
-    "сохранено. Перезагрузите проект, чтобы увидеть реальное состояние, прежде чем повторять.",
-    "salvata. Ricarica il progetto per vedere lo stato reale prima di riprovare.",
-    "保存された可能性があります。再試行の前にプロジェクトを再読み込みして実際の状態を確認してください。"
-  ],
-  "La devise ne peut pas changer tant qu'un prix, un coût ou une estimation": [
-    "The currency cannot change while a price, a cost or an estimate",
-    "只要存在价格、成本或估算，货币就不能更改",
-    "Die Währung kann nicht geändert werden, solange ein Preis, Kosten oder eine Schätzung",
-    "La moneda no puede cambiar mientras haya un precio, un coste o una estimación",
-    "Валюту нельзя изменить, пока указаны цена, стоимость или оценка",
-    "La valuta non può cambiare finché un prezzo, un costo o una stima",
-    "価格・コスト・見積のいずれかが"
-  ],
-  "sont saisis : aucune conversion n'est faite ici. Effacez d'abord ces montants.": [
-    "are recorded: no conversion happens here. Clear those amounts first.",
-    "：此处不做任何换算。请先清除这些金额。",
-    "erfasst sind: Hier findet keine Umrechnung statt. Löschen Sie zuerst diese Beträge.",
-    "registrados: aquí no se realiza ninguna conversión. Borre primero esos importes.",
-    ": здесь конвертация не выполняется. Сначала удалите эти суммы.",
-    "sono registrati: qui non avviene alcuna conversione. Cancella prima questi importi.",
-    "入力されている間は変更できません。ここでは換算しません。先に金額を消してください。"
-  ],
-  "L'administration de l'espace de travail n'est pas encore activée sur ce serveur.": [
-    "The internal workspace administration is not activated on this server yet.",
-    "本服务器上的内部工作区管理尚未启用。",
-    "Die Verwaltung des internen Arbeitsbereichs ist auf diesem Server noch nicht aktiviert.",
-    "La administración del espacio de trabajo interno aún no está activada en este servidor.",
-    "Администрирование внутреннего рабочего пространства ещё не активировано на этом сервере.",
-    "L'amministrazione dello spazio di lavoro interno non è ancora attivata su questo server.",
-    "このサーバーでは社内ワークスペースの管理はまだ有効化されていません。"
-  ],
-  "Le suivi des projets n'est pas encore activé sur ce serveur.": [
-    "Project tracking is not activated on this server yet.",
-    "本服务器上的项目跟踪尚未启用。",
-    "Die Projektverfolgung ist auf diesem Server noch nicht aktiviert.",
-    "El seguimiento de proyectos aún no está activado en este servidor.",
-    "Отслеживание проектов ещё не активировано на этом сервере.",
-    "Il monitoraggio dei progetti non è ancora attivato su questo server.",
-    "このサーバーではプロジェクト追跡はまだ有効化されていません。"
-  ],
-  "Le suivi de projet n'est pas encore activé sur ce serveur.": [
-    "Project tracking is not activated on this server yet.",
-    "本服务器上的该项目跟踪尚未启用。",
-    "Die Projektverfolgung ist auf diesem Server noch nicht aktiviert.",
-    "El seguimiento del proyecto aún no está activado en este servidor.",
-    "Отслеживание проекта ещё не активировано на этом сервере.",
-    "Il monitoraggio del progetto non è ancora attivato su questo server.",
-    "このサーバーではこのプロジェクトの追跡はまだ有効化されていません。"
-  ],
-  "Le suivi des tâches n'est pas encore activé sur ce serveur.": [
-    "Task tracking is not activated on this server yet.",
-    "本服务器上的任务跟踪尚未启用。",
-    "Die Aufgabenverfolgung ist auf diesem Server noch nicht aktiviert.",
-    "El seguimiento de tareas aún no está activado en este servidor.",
-    "Отслеживание задач ещё не активировано на этом сервере.",
-    "Il monitoraggio delle attività non è ancora attivato su questo server.",
-    "このサーバーではタスク追跡はまだ有効化されていません。"
-  ],
-  "Diagnostic (administration) :": [
-    "Diagnostics (administration):",
-    "诊断信息（管理员）：",
-    "Diagnose (Administration):",
-    "Diagnóstico (administración):",
-    "Диагностика (администрирование):",
-    "Diagnostica (amministrazione):",
-    "診断情報（管理）:"
-  ],
-  "Ce compte est rattaché mais n'a encore aucun droit Standex. Choisissez le droit à lui accorder.": [
-    "This account is linked but has no Standex right yet. Choose the right to grant it.",
-    "该账号已关联，但尚无 Standex 权限。请选择要授予的权限。",
-    "Dieses Konto ist verknüpft, hat aber noch kein Standex-Recht. Wählen Sie das zu erteilende Recht.",
-    "Esta cuenta está vinculada pero aún no tiene ningún derecho Standex. Elija el derecho que desea concederle.",
-    "Учётная запись привязана, но прав Standex пока нет. Выберите право для предоставления.",
-    "Questo account è collegato ma non ha ancora alcun diritto Standex. Scegliere il diritto da concedere.",
-    "このアカウントは紐づけ済みですが、Standex の権限はまだありません。付与する権限を選んでください。"
-  ],
-  "Droit Standex accordé à ce compte.": [
-    "Standex right granted to this account.",
-    "已向该账号授予 Standex 权限。",
-    "Standex-Recht diesem Konto erteilt.",
-    "Derecho Standex concedido a esta cuenta.",
-    "Право Standex предоставлено этой учётной записи.",
-    "Diritto Standex concesso a questo account.",
-    "このアカウントに Standex の権限を付与しました。"
-  ],
-  "Accorder ce droit": [
-    "Grant this right",
-    "授予该权限",
-    "Dieses Recht erteilen",
-    "Conceder este derecho",
-    "Предоставить это право",
-    "Concedi questo diritto",
-    "この権限を付与"
-  ],
-  "Fiche annuaire mise à jour.": [
-    "Directory entry updated.",
-    "通讯录条目已更新。",
-    "Verzeichniseintrag aktualisiert.",
-    "Ficha del directorio actualizada.",
-    "Запись справочника обновлена.",
-    "Scheda della rubrica aggiornata.",
-    "名簿の情報を更新しました。"
-  ],
-  "Enregistrer la fiche": [
-    "Save entry",
-    "保存条目",
-    "Eintrag speichern",
-    "Guardar ficha",
-    "Сохранить запись",
-    "Salva scheda",
-    "情報を保存"
-  ],
-  "Interne — à rédiger en anglais": [
-    "Internal — write in English",
-    "内部 — 请用英语填写",
-    "Intern — auf Englisch verfassen",
-    "Interno — redactar en inglés",
-    "Внутреннее — писать по-английски",
-    "Interno — scrivere in inglese",
-    "社内用 — 英語で記入"
-  ],
-  "Vu par le client — langue enregistrée du projet :": [
-    "Seen by the customer — saved project language:",
-    "客户可见 — 项目已保存语言：",
-    "Für den Kunden sichtbar — gespeicherte Projektsprache:",
-    "Visible para el cliente — idioma guardado del proyecto:",
-    "Видно клиенту — сохранённый язык проекта:",
-    "Visibile al cliente — lingua registrata del progetto:",
-    "顧客が閲覧 — 保存されたプロジェクト言語:"
-  ],
-  "Objet du message client (facultatif)": [
-    "Client message subject (optional)",
-    "客户消息主题（可选）",
-    "Betreff der Kundennachricht (optional)",
-    "Asunto del mensaje al cliente (opcional)",
-    "Тема сообщения клиенту (необязательно)",
-    "Oggetto del messaggio al cliente (facoltativo)",
-    "顧客向けメッセージの件名（任意）"
-  ],
-  "Message client à préparer avec la publication (facultatif)": [
-    "Client message prepared with publication (optional)",
-    "随发布一同准备的客户消息（可选）",
-    "Kundennachricht, die mit der Veröffentlichung vorbereitet wird (optional)",
-    "Mensaje al cliente preparado con la publicación (opcional)",
-    "Сообщение клиенту, подготовленное вместе с публикацией (необязательно)",
-    "Messaggio al cliente preparato con la pubblicazione (facoltativo)",
-    "公開と同時に準備する顧客向けメッセージ（任意）"
-  ],
-  "Rempli, il est mis en attente d'envoi dans la même opération que la publication : il ne peut pas exister de retour publié sans message préparé. Aucun envoi n'est effectué.": [
-    "If filled in, it is queued for sending in the same operation as the publication: there can be no published feedback without a prepared message. Nothing is sent.",
-    "如果填写，它将与发布在同一操作中进入待发送队列：不会出现已发布反馈却没有准备好的消息。系统不会发送任何内容。",
-    "Wenn ausgefüllt, wird sie im selben Vorgang wie die Veröffentlichung zum Versand eingereiht: Es kann keine veröffentlichte Rückmeldung ohne vorbereitete Nachricht geben. Es wird nichts versendet.",
-    "Si se rellena, queda en espera de envío en la misma operación que la publicación: no puede existir una respuesta publicada sin mensaje preparado. No se envía nada.",
-    "Если оно заполнено, оно ставится в очередь на отправку в той же операции, что и публикация: опубликованного ответа без подготовленного сообщения быть не может. Ничего не отправляется.",
-    "Se compilato, viene messo in attesa di invio nella stessa operazione della pubblicazione: non può esistere un riscontro pubblicato senza messaggio preparato. Non viene inviato nulla.",
-    "入力すると、公開と同じ操作で送信待ちに入ります。準備済みメッセージのない公開回答は存在しません。送信は行われません。"
-  ],
-  "Retour publié et message client mis en attente d'envoi.": [
-    "Feedback published and client message queued for sending.",
-    "反馈已发布，客户消息已进入待发送队列。",
-    "Rückmeldung veröffentlicht und Kundennachricht zum Versand eingereiht.",
-    "Respuesta publicada y mensaje al cliente en espera de envío.",
-    "Ответ опубликован, сообщение клиенту поставлено в очередь на отправку.",
-    "Riscontro pubblicato e messaggio al cliente in attesa di invio.",
-    "回答を公開し、顧客向けメッセージを送信待ちにしました。"
-  ],
-  "Cette même demande a déjà été envoyée avec un contenu différent.": [
-    "This same request was already sent with different content.",
-    "同一请求此前已用不同内容提交。",
-    "Dieselbe Anfrage wurde bereits mit anderem Inhalt gesendet.",
-    "Esta misma solicitud ya se envió con un contenido diferente.",
-    "Этот же запрос уже был отправлен с другим содержимым.",
-    "La stessa richiesta è già stata inviata con un contenuto diverso.",
-    "同じ依頼が、異なる内容ですでに送信されています。"
-  ],
-  "Rechargez le projet : le retour publié et sa notification y figurent déjà.": [
-    "Reload the project: the published feedback and its notification are already there.",
-    "请重新加载该项目：已发布的反馈及其通知已存在。",
-    "Laden Sie das Projekt neu: Die veröffentlichte Rückmeldung und ihre Benachrichtigung sind bereits vorhanden.",
-    "Recargue el proyecto: la respuesta publicada y su notificación ya están ahí.",
-    "Перезагрузите проект: опубликованный ответ и уведомление уже есть.",
-    "Ricarica il progetto: il riscontro pubblicato e la sua notifica sono già presenti.",
-    "プロジェクトを再読み込みしてください。公開済みの回答と通知はすでにあります。"
-  ],
-  "Cette publication est déjà en cours d'enregistrement. Patientez, puis rechargez.": [
-    "This publication is already being saved. Wait, then reload.",
-    "该发布正在保存中。请稍候后重新加载。",
-    "Diese Veröffentlichung wird bereits gespeichert. Bitte warten und dann neu laden.",
-    "Esta publicación ya se está guardando. Espere y vuelva a cargar.",
-    "Эта публикация уже сохраняется. Подождите и обновите.",
-    "Questa pubblicazione è già in corso di salvataggio. Attendi, poi ricarica.",
-    "この公開は保存処理中です。しばらく待ってから再読み込みしてください。"
-  ],
-  "Demande incomplète : rien n'a été publié.": [
-    "Incomplete request: nothing was published.",
-    "请求不完整：没有发布任何内容。",
-    "Unvollständige Anfrage: Es wurde nichts veröffentlicht.",
-    "Solicitud incompleta: no se publicó nada.",
-    "Неполный запрос: ничего не опубликовано.",
-    "Richiesta incompleta: non è stato pubblicato nulla.",
-    "依頼が不完全です。何も公開されていません。"
   ]
 }
