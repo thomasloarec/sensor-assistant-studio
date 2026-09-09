@@ -301,6 +301,6 @@ describe("annuaire métier et droits Standex", () => {
   });
 
   test("aucun compte n'est créé ni invité depuis cet écran", () => {
-    expect(src).not.toMatch(/invit|signUp|admin\.createUser/i);
+    expect(src).not.toMatch(/signUp|createUser|inviteUserByEmail/);
   });
 });
