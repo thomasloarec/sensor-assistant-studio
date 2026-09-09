@@ -35,6 +35,10 @@ export function CrmProvider({ children }: { children: React.ReactNode }) {
   /** Génération de la dernière sonde émise : une réponse plus ancienne, même
    *  arrivée en retard, ne peut jamais rétablir les droits d'un autre compte. */
   const probeGen = useRef(createGenerationGuard());
+  /** Identité du compte observée en dernier. `undefined` = pas encore connue.
+   *  Sert à distinguer un VRAI changement de compte d'une simple
+   *  reconfirmation de la session du MÊME compte. */
+  const lastUserId = useRef<string | null | undefined>(undefined);
 
   const refresh = useCallback(() => {
     const gen = probeGen.current.next();
@@ -58,12 +62,41 @@ export function CrmProvider({ children }: { children: React.ReactNode }) {
     refresh();
   }, [refresh]);
 
-  // La connexion ou la déconnexion change les droits : l'état précédent est
-  // effacé IMMÉDIATEMENT, puis la sonde est refaite pour le nouveau compte.
+  // Identité de départ : connue avant tout événement, pour qu'une simple
+  // reconfirmation de session au chargement ne passe pas pour une bascule
+  // de compte. Ne remplace jamais une identité déjà observée.
   useEffect(() => {
     if (!supabase) return;
-    const { data } = supabase.auth.onAuthStateChange((event) => {
-      if (event === "TOKEN_REFRESHED" || event === "INITIAL_SESSION") return;
+    let alive = true;
+    void supabase.auth.getSession().then(({ data }) => {
+      if (alive && lastUserId.current === undefined) {
+        lastUserId.current = data.session?.user?.id ?? null;
+      }
+    }).catch(() => {});
+    return () => { alive = false; };
+  }, []);
+
+  // Un CHANGEMENT DE COMPTE (ou une déconnexion) change les droits : l'état
+  // précédent est effacé IMMÉDIATEMENT, puis la sonde est refaite. En revanche
+  // Supabase réémet `SIGNED_IN` pour un compte DÉJÀ connecté (retour d'onglet,
+  // reconfirmation, mise à jour du profil) : dans ce cas les brouillons en
+  // cours sont conservés, seuls les droits sont resondés.
+  useEffect(() => {
+    if (!supabase) return;
+    const { data } = supabase.auth.onAuthStateChange((event, session) => {
+      const id = session?.user?.id ?? null;
+      if (event === "TOKEN_REFRESHED" || event === "INITIAL_SESSION") {
+        if (lastUserId.current === undefined) lastUserId.current = id;
+        return;
+      }
+      const known = lastUserId.current;
+      lastUserId.current = id;
+      const sameAccount = known !== undefined && known !== null && id === known;
+      if (sameAccount) {
+        // Même compte : aucune remise à zéro, aucun remontage d'écran.
+        refresh();
+        return;
+      }
       probeGen.current.invalidate();
       setCapabilities(null);
       setLegacyRole(null);
