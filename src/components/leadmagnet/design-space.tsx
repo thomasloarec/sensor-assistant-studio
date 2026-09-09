@@ -117,6 +117,8 @@ import {
   technicalSummary,
 } from "@/lib/leadmagnet/submission";
 import { checkLeadBackend, type LeadBackendStatus } from "@/lib/leadmagnet/backend";
+import { requestEnglishReport } from "@/lib/leadmagnet/english-report.functions";
+
 import {
   createDossier as createServerDossier,
   createSupabaseSubmissionBackend,
@@ -417,6 +419,15 @@ export function DesignSpace({
   const [acknowledged, setAcknowledged] = useState(false);
   const [extraConstraints, setExtraConstraints] = useState("");
   const [submitMessage, setSubmitMessage] = useState<string | null>(null);
+  /** État FACTUEL de la version anglaise du rapport : jamais « envoyé en anglais »
+   * tant que le serveur n'a pas publié une version prête pour cette révision. */
+  const [englishMessage, setEnglishMessage] = useState<string | null>(null);
+  const [englishRetry, setEnglishRetry] = useState<{
+    dossierId: string;
+    revisionId: string;
+    contentHash: string;
+  } | null>(null);
+
   const [showWorkshop, setShowWorkshop] = useState(false);
   /** Démarrage RÉEL du projet : c'est ici, et pas au montage caché de
    * l'espace, que la langue d'origine du projet est fixée. Changer ensuite la
