@@ -13,6 +13,11 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as DesignRouteImport } from './routes/design'
 import { Route as InternalRouteImport } from './routes/internal'
 import { Route as StandexRouteImport } from './routes/standex'
+import { Route as StandexIndexRouteImport } from './routes/standex.index'
+import { Route as StandexAdminRouteImport } from './routes/standex.admin'
+import { Route as StandexConsoleRouteImport } from './routes/standex.console'
+import { Route as StandexTasksRouteImport } from './routes/standex.tasks'
+import { Route as StandexProjectsDossierIdRouteImport } from './routes/standex.projects.$dossierId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -34,39 +39,106 @@ const StandexRoute = StandexRouteImport.update({
   path: '/standex',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StandexIndexRoute = StandexIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => StandexRoute,
+} as any)
+const StandexAdminRoute = StandexAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => StandexRoute,
+} as any)
+const StandexConsoleRoute = StandexConsoleRouteImport.update({
+  id: '/console',
+  path: '/console',
+  getParentRoute: () => StandexRoute,
+} as any)
+const StandexTasksRoute = StandexTasksRouteImport.update({
+  id: '/tasks',
+  path: '/tasks',
+  getParentRoute: () => StandexRoute,
+} as any)
+const StandexProjectsDossierIdRoute =
+  StandexProjectsDossierIdRouteImport.update({
+    id: '/projects/$dossierId',
+    path: '/projects/$dossierId',
+    getParentRoute: () => StandexRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/design': typeof DesignRoute
   '/internal': typeof InternalRoute
-  '/standex': typeof StandexRoute
+  '/standex': typeof StandexRouteWithChildren
+  '/standex/admin': typeof StandexAdminRoute
+  '/standex/console': typeof StandexConsoleRoute
+  '/standex/tasks': typeof StandexTasksRoute
+  '/standex/': typeof StandexIndexRoute
+  '/standex/projects/$dossierId': typeof StandexProjectsDossierIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/design': typeof DesignRoute
   '/internal': typeof InternalRoute
-  '/standex': typeof StandexRoute
+  '/standex/admin': typeof StandexAdminRoute
+  '/standex/console': typeof StandexConsoleRoute
+  '/standex/tasks': typeof StandexTasksRoute
+  '/standex': typeof StandexIndexRoute
+  '/standex/projects/$dossierId': typeof StandexProjectsDossierIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/design': typeof DesignRoute
   '/internal': typeof InternalRoute
-  '/standex': typeof StandexRoute
+  '/standex': typeof StandexRouteWithChildren
+  '/standex/admin': typeof StandexAdminRoute
+  '/standex/console': typeof StandexConsoleRoute
+  '/standex/tasks': typeof StandexTasksRoute
+  '/standex/': typeof StandexIndexRoute
+  '/standex/projects/$dossierId': typeof StandexProjectsDossierIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/design' | '/internal' | '/standex'
+  fullPaths:
+    | '/'
+    | '/design'
+    | '/internal'
+    | '/standex'
+    | '/standex/admin'
+    | '/standex/console'
+    | '/standex/tasks'
+    | '/standex/'
+    | '/standex/projects/$dossierId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/design' | '/internal' | '/standex'
-  id: '__root__' | '/' | '/design' | '/internal' | '/standex'
+  to:
+    | '/'
+    | '/design'
+    | '/internal'
+    | '/standex/admin'
+    | '/standex/console'
+    | '/standex/tasks'
+    | '/standex'
+    | '/standex/projects/$dossierId'
+  id:
+    | '__root__'
+    | '/'
+    | '/design'
+    | '/internal'
+    | '/standex'
+    | '/standex/admin'
+    | '/standex/console'
+    | '/standex/tasks'
+    | '/standex/'
+    | '/standex/projects/$dossierId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DesignRoute: typeof DesignRoute
   InternalRoute: typeof InternalRoute
-  StandexRoute: typeof StandexRoute
+  StandexRoute: typeof StandexRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -99,14 +171,68 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StandexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/standex/': {
+      id: '/standex/'
+      path: '/'
+      fullPath: '/standex/'
+      preLoaderRoute: typeof StandexIndexRouteImport
+      parentRoute: typeof StandexRoute
+    }
+    '/standex/admin': {
+      id: '/standex/admin'
+      path: '/admin'
+      fullPath: '/standex/admin'
+      preLoaderRoute: typeof StandexAdminRouteImport
+      parentRoute: typeof StandexRoute
+    }
+    '/standex/console': {
+      id: '/standex/console'
+      path: '/console'
+      fullPath: '/standex/console'
+      preLoaderRoute: typeof StandexConsoleRouteImport
+      parentRoute: typeof StandexRoute
+    }
+    '/standex/tasks': {
+      id: '/standex/tasks'
+      path: '/tasks'
+      fullPath: '/standex/tasks'
+      preLoaderRoute: typeof StandexTasksRouteImport
+      parentRoute: typeof StandexRoute
+    }
+    '/standex/projects/$dossierId': {
+      id: '/standex/projects/$dossierId'
+      path: '/projects/$dossierId'
+      fullPath: '/standex/projects/$dossierId'
+      preLoaderRoute: typeof StandexProjectsDossierIdRouteImport
+      parentRoute: typeof StandexRoute
+    }
   }
 }
+
+interface StandexRouteChildren {
+  StandexAdminRoute: typeof StandexAdminRoute
+  StandexConsoleRoute: typeof StandexConsoleRoute
+  StandexTasksRoute: typeof StandexTasksRoute
+  StandexIndexRoute: typeof StandexIndexRoute
+  StandexProjectsDossierIdRoute: typeof StandexProjectsDossierIdRoute
+}
+
+const StandexRouteChildren: StandexRouteChildren = {
+  StandexAdminRoute: StandexAdminRoute,
+  StandexConsoleRoute: StandexConsoleRoute,
+  StandexTasksRoute: StandexTasksRoute,
+  StandexIndexRoute: StandexIndexRoute,
+  StandexProjectsDossierIdRoute: StandexProjectsDossierIdRoute,
+}
+
+const StandexRouteWithChildren =
+  StandexRoute._addFileChildren(StandexRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DesignRoute: DesignRoute,
   InternalRoute: InternalRoute,
-  StandexRoute: StandexRoute,
+  StandexRoute: StandexRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
