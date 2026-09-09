@@ -3,7 +3,6 @@ import { Link } from "@tanstack/react-router";
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowLeft,
-  ShieldCheck,
   Lock,
   Download,
   Upload,
@@ -120,6 +119,10 @@ import { checkLeadBackend, type LeadBackendStatus } from "@/lib/leadmagnet/backe
 import { requestEnglishReport } from "@/lib/leadmagnet/english-report.functions";
 import { englishReportMessage } from "@/lib/leadmagnet/english-report-messages";
 import { EnglishRunLock } from "@/lib/leadmagnet/english-run-lock";
+import {
+  ndaTransferGuidance,
+  type ReviewOperation,
+} from "@/lib/leadmagnet/review-submit-state";
 
 import {
   createDossier as createServerDossier,
@@ -136,6 +139,7 @@ import { applyVariant } from "@/lib/leadmagnet/variant";
 import { AuthPanel } from "@/components/leadmagnet/auth-panel";
 import { ClientFollowUp } from "@/components/leadmagnet/client-followup";
 import { WorkspacePanel } from "@/components/leadmagnet/workspace-panel";
+import { ReviewSubmitControl } from "@/components/leadmagnet/review-submit-control";
 import {
   DocumentViewer,
   documentFromBytes,
@@ -421,6 +425,7 @@ export function DesignSpace({
   const [acknowledged, setAcknowledged] = useState(false);
   const [extraConstraints, setExtraConstraints] = useState("");
   const [submitMessage, setSubmitMessage] = useState<string | null>(null);
+  const [submitMessageTone, setSubmitMessageTone] = useState<"info" | "danger" | "success">("info");
   /** État FACTUEL de la version anglaise du rapport : jamais « envoyé en anglais »
    * tant que le serveur n'a pas publié une version prête pour cette révision. */
   const [englishMessage, setEnglishMessage] = useState<string | null>(null);
@@ -541,6 +546,9 @@ export function DesignSpace({
   /** Verrou d'action : empêche un double clic de créer deux versions. */
   const [busy, setBusy] = useState(false);
   const busyRef = useRef(false);
+  const [busyOperation, setBusyOperation] = useState<ReviewOperation>(null);
+  const ndaSectionRef = useRef<HTMLButtonElement | null>(null);
+  const [reviewSections, setReviewSections] = useState<string[]>(["resume", "nda", "envoi"]);
 
   /** Remplissage local du NDA : aperçu puis téléchargement, sans aucune transmission. */
   const prepareNdaDocument = useCallback(
@@ -621,6 +629,12 @@ export function DesignSpace({
       setNdaError(error instanceof Error ? error.message : t("Statut NDA indisponible."));
     }
   }, [applyNdaStatus, serverDossierId]);
+
+  /** À la reprise, le statut local est volontairement remis à zéro puis relu au
+   * serveur. Une panne reste visible et ne fabrique jamais de preuve locale. */
+  useEffect(() => {
+    if (backend?.ready && serverDossierId) void refreshNdaStatus();
+  }, [backend?.ready, serverDossierId, refreshNdaStatus]);
 
   // Tant que cet espace est monté, la télémétrie est réduite à un code anonyme.
   useEffect(() => openPrivateErrorScope(), []);
@@ -710,6 +724,17 @@ export function DesignSpace({
     [dossier.selectedSensorId, estimate.requiredMm, cabling.surplusHousingMm],
   );
   const ndaOk = ndaAllowsConfidentialTransfer(nda);
+  const ndaGuidance = ndaTransferGuidance(nda);
+  const focusNdaSection = useCallback(() => {
+    setTab("revue");
+    setReviewSections((sections) =>
+      sections.includes("nda") ? sections : [...sections, "nda"],
+    );
+    requestAnimationFrame(() => {
+      ndaSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+      ndaSectionRef.current?.focus();
+    });
+  }, []);
 
   // Le trajet visé retombe sur le trajet de référence si l'état déclaré a disparu.
   const activeTarget: RoutingTarget = useMemo(
@@ -963,6 +988,7 @@ export function DesignSpace({
     if (busyRef.current) return;
     if (!dossier.workshopAsset) {
       setSubmitMessage(t("Aucun modèle 3D à partager dans cet onglet."));
+      setSubmitMessageTone("danger");
       return;
     }
     if (!backend?.ready) {
@@ -970,11 +996,14 @@ export function DesignSpace({
         backend?.message ??
           t("La liaison avec l'équipe Standex n'est pas active : rien n'a été déposé."),
       );
+      setSubmitMessageTone("danger");
       return;
     }
     busyRef.current = true;
     setBusy(true);
+    setBusyOperation("upload");
     setSubmitMessage(null);
+    setSubmitMessageTone("info");
     // Contexte visé au moment du dépôt : si le dossier change entre-temps,
     // ce résultat ne doit surtout pas s'écrire dans le nouveau dossier.
     const gen = contextGenRef.current;
@@ -985,6 +1014,7 @@ export function DesignSpace({
         setSubmitMessage(
           t("Le fichier 3D n'est plus en mémoire de cet onglet : réimportez-le avant de le partager."),
         );
+        setSubmitMessageTone("danger");
         return;
       }
       let dossierId = serverDossierId;
@@ -1018,6 +1048,7 @@ export function DesignSpace({
             uploaded.verificationError ?? t("raison inconnue")
           }). Il n'est donc pas joint à votre envoi.`,
         );
+        setSubmitMessageTone("danger");
         return;
       }
       setPreparedUpload({
@@ -1045,13 +1076,16 @@ export function DesignSpace({
       setSubmitMessage(
         t("Modèle 3D déposé et vérifié par le serveur. Relisez le résumé, confirmez votre accord, puis envoyez : le fichier ne sera pas déposé une seconde fois."),
       );
+      setSubmitMessageTone("success");
     } catch (error) {
       setSubmitMessage(
         error instanceof Error ? error.message : t("Le fichier 3D n'a pas pu être partagé."),
       );
+      setSubmitMessageTone("danger");
     } finally {
       busyRef.current = false;
       setBusy(false);
+      setBusyOperation(null);
     }
   }, [
     backend,
@@ -1125,6 +1159,7 @@ export function DesignSpace({
       setSubmitMessage(
         t("Préparez d'abord le partage du modèle 3D : il doit être déposé et vérifié avant votre accord d'envoi."),
       );
+      setSubmitMessageTone("danger");
       return;
     }
     if (
@@ -1136,6 +1171,7 @@ export function DesignSpace({
       setSubmitMessage(
         t("Le dossier ou la version visée a changé depuis le dépôt du fichier : préparez à nouveau le partage."),
       );
+      setSubmitMessageTone("danger");
       return;
     }
     const input = {
@@ -1147,14 +1183,18 @@ export function DesignSpace({
       serverDossierId,
       serverRevision: serverRevision + 1,
     };
+    const check = await checkSubmission(input);
+    if (!check.ok) {
+      setSubmitMessage(check.problems.map((problem) => t(problem)).join(" "));
+      setSubmitMessageTone("danger");
+      if (!ndaOk) focusNdaSection();
+      return;
+    }
     busyRef.current = true;
     setBusy(true);
+    setBusyOperation("submission");
+    setSubmitMessage(null);
     try {
-      const check = await checkSubmission(input);
-      if (!check.ok) {
-        setSubmitMessage(check.problems.join(" "));
-        return;
-      }
       // Envoi réel dès que l'espace serveur est disponible et la session ouverte ;
       // sinon rien n'est transmis et rien n'est simulé.
       const outcome = await submit(
@@ -1179,6 +1219,7 @@ export function DesignSpace({
         setSubmitMessage(
           t("Dossier transmis à la revue Standex. Vous serez informé dès qu'un retour est publié."),
         );
+        setSubmitMessageTone("success");
         // Version anglaise : demandée UNIQUEMENT si l'accord de traduction a été
         // donné pour ce contenu exact. Sans accord, rien n'est transmis et on le dit.
         const bound = await submissionBinding(input);
@@ -1198,10 +1239,15 @@ export function DesignSpace({
         }
       } else {
         setSubmitMessage(outcome.reason);
+        setSubmitMessageTone("danger");
       }
+    } catch {
+      setSubmitMessage(t("La transmission n'a pas abouti. Rien n'a été envoyé ; réessayez."));
+      setSubmitMessageTone("danger");
     } finally {
       busyRef.current = false;
       setBusy(false);
+      setBusyOperation(null);
     }
   }, [
     dossier,
@@ -1215,6 +1261,8 @@ export function DesignSpace({
     shareModel,
     preparedUpload,
     runEnglishReport,
+    ndaOk,
+    focusNdaSection,
   ]);
 
 
@@ -2062,9 +2110,17 @@ export function DesignSpace({
 
   const revueSection = (
     <div className="space-y-4">
-      <Accordion type="multiple" defaultValue={["resume", "nda", "envoi"]} className="space-y-3">
+      <Accordion
+        type="multiple"
+        value={reviewSections}
+        onValueChange={setReviewSections}
+        className="space-y-3"
+      >
         <AccordionItem value="resume" className="panel-block-lg border-0">
-          <AccordionTrigger className="business-accordion-trigger t-title-s gap-3 hover:no-underline">
+          <AccordionTrigger
+            ref={ndaSectionRef}
+            className="business-accordion-trigger t-title-s gap-3 hover:no-underline"
+          >
             <span className="standex-bar !h-5 !w-1" aria-hidden="true" />
             <span className="flex-1">{t("Résumé technique et inconnues")}</span>
           </AccordionTrigger>
@@ -2401,22 +2457,18 @@ export function DesignSpace({
               />
               {t("J'ai relu le résumé technique et les inconnues listées.")}
             </label>
-            <div className="space-y-3">
-              <Button
-                size="lg"
-                className="w-full sm:w-auto"
-                onClick={() => void onSubmit()}
-                disabled={!ndaOk || busy}
-                aria-busy={busy ? "true" : undefined}
-              >
-                {busy ? (
-                  <Loader2 className="mr-1 h-4 w-4 animate-spin" />
-                ) : (
-                  <ShieldCheck className="mr-1 h-4 w-4" />
-                )}{" "}
-                {busy ? t("Envoi en cours…") : t("Transmettre à la revue Standex")}
-              </Button>
-            </div>
+            <ReviewSubmitControl
+              busy={busy}
+              operation={busyOperation}
+              ndaGuidance={ndaGuidance}
+              canRefreshNda={Boolean(serverDossierId && backend?.ready)}
+              authenticated={Boolean(backend?.authenticated)}
+              message={submitMessage}
+              messageTone={submitMessageTone}
+              onSubmit={() => void onSubmit()}
+              onOpenNda={focusNdaSection}
+              onRefreshNda={() => void refreshNdaStatus()}
+            />
             {!backend?.ready ? (
               <div className="space-y-2">
                 <p className="t-caption">
@@ -2441,9 +2493,6 @@ export function DesignSpace({
                   [reopenedFrom.revision, serverRevision + 1],
                 )}
               </p>
-            ) : null}
-            {submitMessage ? (
-              <p className="notice notice-success notice-success-sweep">{submitMessage}</p>
             ) : null}
           </AccordionContent>
         </AccordionItem>
@@ -2819,6 +2868,7 @@ export function DesignSpace({
               // Le serveur enregistre la reprise AVANT que l'écran change.
               busyRef.current = true;
               setBusy(true);
+              setBusyOperation("variant");
               await commit();
             } catch (error) {
               return {
@@ -2832,6 +2882,7 @@ export function DesignSpace({
             } finally {
               busyRef.current = false;
               setBusy(false);
+              setBusyOperation(null);
             }
             setDossier(out.dossier);
             adoptBaseline(out.dossier);
