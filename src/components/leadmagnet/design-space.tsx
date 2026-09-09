@@ -623,11 +623,14 @@ export function DesignSpace({
 
   const refreshNdaStatus = useCallback(async () => {
     if (!serverDossierId) return;
+    // Un choix en cours d'enregistrement fait autorité tant qu'il n'a pas répondu :
+    // une relecture retardée ne doit pas réafficher l'ancien régime.
+    if (ndaToggleRef.current) return;
     setNdaError(null);
     const gen = contextGenRef.current;
     try {
       const status = await fetchNdaStatus(serverDossierId);
-      if (contextGenRef.current !== gen) return;
+      if (contextGenRef.current !== gen || ndaToggleRef.current) return;
       applyNdaStatus(status);
     } catch (error) {
       if (contextGenRef.current !== gen) return;
@@ -636,35 +639,62 @@ export function DesignSpace({
   }, [applyNdaStatus, serverDossierId]);
 
   /** Le NDA est optionnel : cette case porte le choix explicite du client.
-   * Les champs déjà saisis sont conservés dans les deux sens ; le serveur reste
-   * l'autorité dès qu'un dossier existe et refuse tout retrait déjà engagé. */
+   * Pour un dossier enregistré, le serveur fait autorité — l'écran garde le
+   * dernier état connu jusqu'au succès, sauf pour une ACTIVATION, appliquée
+   * immédiatement puisqu'elle ne fait que bloquer davantage. Un seul
+   * changement à la fois ; pendant ce temps, envoi, dépôt et préparation sont
+   * inhibés par le même verrou. */
   const toggleNdaRequirement = useCallback(
     async (next: boolean) => {
+      if (ndaToggleRef.current || busyRef.current) return;
       setNdaError(null);
-      const blocked = !next ? ndaDisableBlockedReason(nda) : null;
-      if (blocked) {
-        setNdaError(t(blocked));
+      const plan = planNdaToggle(nda, next, {
+        serverDossier: Boolean(serverDossierId),
+        backendReady: Boolean(backend?.ready),
+      });
+      if (plan.kind === "blocked" || plan.kind === "offline") {
+        setNdaError(t(plan.reason));
         return;
       }
-      setNda((n) => (next ? enableNda(n) : disableNda(n)));
-      if (!next) setNdaPreview(null);
-      if (!serverDossierId || !backend?.ready) return;
+      if (
+        !next &&
+        ndaDisableNeedsConfirmation(nda) &&
+        !window.confirm(t(NDA_DISABLE_CONFIRMATION))
+      )
+        return;
+      if (plan.kind === "local") {
+        setNda(plan.next);
+        if (!next) setNdaPreview(null);
+        return;
+      }
+      // Verrou synchrone avant tout await : pas de double bascule concurrente.
+      ndaToggleRef.current = true;
+      busyRef.current = true;
+      setBusyOperation("nda");
+      if (plan.optimistic) setNda(plan.optimistic);
       const gen = contextGenRef.current;
       try {
-        const status = await setNdaRequirement(serverDossierId, next);
+        const status = await setNdaRequirement(serverDossierId!, next);
         if (contextGenRef.current !== gen) return;
         applyNdaStatus(status);
+        if (!status.nda_required) setNdaPreview(null);
       } catch (error) {
         if (contextGenRef.current !== gen) return;
         setNdaError(
           error instanceof Error ? error.message : t("Le choix n'a pas pu être enregistré côté Standex."),
         );
         // Le serveur fait autorité : on relit plutôt que de garder un état inventé.
+        ndaToggleRef.current = false;
         void refreshNdaStatus();
+      } finally {
+        ndaToggleRef.current = false;
+        busyRef.current = false;
+        setBusyOperation(null);
       }
     },
     [applyNdaStatus, backend?.ready, nda, refreshNdaStatus, serverDossierId],
   );
+
 
   /** À la reprise, le statut local est volontairement remis à zéro puis relu au
    * serveur. Une panne reste visible et ne fabrique jamais de preuve locale. */
