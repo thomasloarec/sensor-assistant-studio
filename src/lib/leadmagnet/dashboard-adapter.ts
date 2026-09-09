@@ -9,7 +9,8 @@
  */
 import { supabase, isSupabaseConfigured } from "@/lib/standex/supabase";
 import { LEAD_CRM_RPC, humanCrmError, crmConflictVersion, isMissingRpc } from "./dashboard-rpc";
-import type { CrmPerson, CrmProject, CrmStage, CrmTask, TaskStakeholder, TaskStatus } from "./crm";
+import type { CrmPerson, CrmProject, CrmStage, CrmTask, CrmValueSource,
+  TaskStakeholder, TaskStatus } from "./crm";
 import { isCrmStage, isTaskStatus } from "./crm";
 import type { SapNote } from "./sap-note";
 import type { StaffRole } from "./review";
