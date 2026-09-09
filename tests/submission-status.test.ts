@@ -48,8 +48,15 @@ describe("état de soumission : envoi confirmé vs brouillon courant", () => {
   test("changement de dossier visé ou de fichiers : succès invalidé aussi", () => {
     expect(submissionStatusKind(sent(), binding({ serverDossierId: "d2" }))).toBe("modified");
     expect(submissionStatusKind(sent(), binding({ fileDigests: ["f1", "f2"] }))).toBe("modified");
-    expect(submissionStatusKind(sent(), binding({ revision: 4 }))).toBe("modified");
+    expect(submissionStatusKind(sent(), binding({ contentHash: "b".repeat(64) }))).toBe("modified");
   });
+
+  test("la seule avancée du compteur serveur n'est PAS une modification", () => {
+    // Après un envoi confirmé, la liaison courante vise la révision suivante
+    // alors que rien n'a bougé : le bandeau doit rester « transmis ».
+    expect(submissionStatusKind(sent(), binding({ revision: 4 }))).toBe("sent");
+  });
+
 
   test("empreinte courante indisponible : jamais de faux succès", () => {
     expect(submissionStatusKind(sent(), null)).toBe("modified");
