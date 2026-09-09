@@ -232,6 +232,7 @@ async function renderDraft() {
   return view;
 }
 
+function dbg(){ console.log("DBG handler", authHandler !== null); }
 async function emitAuth(event: string, session: unknown) {
   await act(async () => {
     authHandler?.(event, session);
@@ -256,7 +257,8 @@ describe("identité du compte connecté", () => {
 
   test("la déconnexion efface le brouillon", async () => {
     const view = await renderDraft();
-    await emitAuth("SIGNED_OUT", null);
+    dbg();
+  await emitAuth("SIGNED_OUT", null);
     expect(view.getByTestId("draft").textContent).toBe("");
   });
 });
