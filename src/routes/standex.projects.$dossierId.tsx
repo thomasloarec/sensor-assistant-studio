@@ -977,18 +977,25 @@ function TasksTab({
           disabled={busy || !draft.label.trim()}
           onClick={() =>
             void onRun(async () => {
+              // Clé de création stable : un même ajout rejoué (double-clic,
+              // reprise réseau) rend l'action déjà créée, pas un doublon.
+              const scope = `task:${p.dossierId}:${draft.stage}:${draft.label.trim()}`;
+              const clientKey = requestKeyFor(scope);
               const next = await upsertCrmTask(p.dossierId, {
                 stage: draft.stage,
                 label: draft.label.trim(),
                 stakeholder: draft.stakeholder,
                 status: "todo",
                 dueOn: draft.dueOn || null,
+                clientKey,
               });
+              releaseRequestKey(scope);
               setDraft({ label: "", stage: p.stage, stakeholder: "sales", dueOn: "" });
               return next;
             }, t("Tâche ajoutée."))
           }
         >
+
           {t("Ajouter")}
         </Button>
       </section>
