@@ -135,7 +135,7 @@ function ProjectsBoard() {
     };
     const filtered = filterProjects(board.projects, {
       search,
-      ...(stage === "all" ? {} : { stages: [stage] }),
+      ...(stages.length === 0 ? {} : { stages }),
       salesPersonId: salesId === "all" ? null : salesId,
       faePersonId: faeId === "all" ? null : faeId,
       countryCode: country === "all" ? null : country,
@@ -148,7 +148,7 @@ function ProjectsBoard() {
       onlyLate,
     });
     return sortProjects(filtered, sort);
-  }, [board, search, stage, salesId, faeId, country, company, revenueMin, revenueMax,
+  }, [board, search, stages, salesId, faeId, country, company, revenueMin, revenueMax,
     revenueCurrency, launchFrom, launchTo, onlyLate, sort]);
 
   const totals = useMemo(() => pipelineTotals(projects), [projects]);
