@@ -446,24 +446,24 @@ await db.query('insert into auth.users(id,email) values($1,$2)', [newbie, 'newbi
 const dirOverview = await actor('authenticated', ids.admin,
   () => value("select public.lead_crm_admin_upsert_person(null,'New','Bie','sales',true)"));
 const newPerson = dirOverview.directory.find((p) => p.last_name === 'Bie');
-const linked = await actor('authenticated', ids.admin,
+const linkedNewbie = await actor('authenticated', ids.admin,
   () => value('select public.lead_crm_admin_link_person($1,$2)', [newPerson.id, 'newbie@example.invalid']));
 add('directory_link_records_the_account',
-  linked.directory.some((p) => p.id === newPerson.id && p.user_id === newbie));
+  linkedNewbie.directory.some((p) => p.id === newPerson.id && p.user_id === newbie));
 add('directory_link_grants_no_staff_right',
-  !linked.staff.some((s) => s.user_id === newbie));
+  !linkedNewbie.staff.some((s) => s.user_id === newbie));
 await expectFail('linked_account_without_right_cannot_read_board', () => actor('authenticated', newbie,
   () => value('select public.lead_crm_board()')), 'NOT_ALLOWED');
-const granted = await actor('authenticated', ids.admin,
+const grantedNewbie = await actor('authenticated', ids.admin,
   () => value("select public.lead_crm_admin_set_staff($1,'sales',true)", [newbie]));
 add('explicit_grant_creates_the_staff_right',
-  granted.staff.some((s) => s.user_id === newbie && s.role === 'sales' && s.active !== false));
+  grantedNewbie.staff.some((s) => s.user_id === newbie && s.role === 'sales' && s.active !== false));
 add('granted_account_can_read_board', Array.isArray(
   (await actor('authenticated', newbie, () => value('select public.lead_crm_board()'))).projects));
-const revoked = await actor('authenticated', ids.admin,
+const revokedNewbie = await actor('authenticated', ids.admin,
   () => value("select public.lead_crm_admin_set_staff($1,'sales',false)", [newbie]));
 add('disabling_marks_the_right_inactive',
-  revoked.staff.some((s) => s.user_id === newbie && s.active === false));
+  revokedNewbie.staff.some((s) => s.user_id === newbie && s.active === false));
 await expectFail('disabled_account_loses_crm_access', () => actor('authenticated', newbie,
   () => value('select public.lead_crm_board()')), 'NOT_ALLOWED');
 await expectFail('disabled_account_loses_legacy_staff_access', () => actor('authenticated', newbie,
