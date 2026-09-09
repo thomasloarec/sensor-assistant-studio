@@ -39,6 +39,7 @@ const project = (patch: Partial<CrmProject> = {}): CrmProject =>
     version: 1,
     taskCounts: { total: 0, done: 0, blocked: 0, late: 0 },
     ndaStatus: "not_required",
+    ...patch,
   }) as CrmProject;
 
 describe("affichage des valeurs inconnues", () => {
