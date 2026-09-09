@@ -1037,6 +1037,42 @@ export function DesignSpace({
     serverRevision,
   ]);
 
+  /** Version anglaise du rapport : produite côté serveur, jamais dans ce navigateur.
+   * Un nouvel appel sur la même version ne crée ni doublon ni second envoi.
+   */
+  const runEnglishReport = useCallback(
+    async (target: { dossierId: string; revisionId: string; contentHash: string }) => {
+      if (!supabase) return;
+      const { data } = await supabase.auth.getSession();
+      const accessToken = data.session?.access_token;
+      if (!accessToken) {
+        setEnglishMessage(t("Session expirée : reconnectez-vous pour relancer la version anglaise."));
+        return;
+      }
+      setEnglishMessage(t("Version anglaise en cours de préparation pour cette version envoyée."));
+      try {
+        const outcome = await requestEnglishReport({ data: { accessToken, ...target } });
+        if (outcome.state === "ready") {
+          setEnglishRetry(null);
+          setEnglishMessage(
+            t("Version anglaise prête pour cette version : l'équipe Standex la lit en anglais, votre original reste consultable."),
+          );
+        } else if (outcome.state === "unavailable") {
+          setEnglishMessage(outcome.reason);
+        } else {
+          setEnglishMessage(outcome.reason);
+          if (!outcome.retryable) setEnglishRetry(null);
+        }
+      } catch {
+        setEnglishMessage(
+          t("La version anglaise n'a pas pu être produite. Votre dossier d'origine est bien arrivé ; vous pouvez relancer."),
+        );
+      }
+    },
+    [],
+  );
+
+
   /** Étape 2 : envoi. Aucun dépôt ici — ce qui est joint a déjà été déposé,
    * vérifié et relu. Le verrou empêche un double clic de créer deux versions.
    */
