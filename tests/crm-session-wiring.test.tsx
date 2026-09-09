@@ -11,6 +11,12 @@ GlobalRegistrator.register({ url: "https://exemple.invalid/standex" });
 import { afterEach, describe, expect, mock, test } from "bun:test";
 import * as React from "react";
 import { act, cleanup, render } from "@testing-library/react";
+import {
+  RouterContextProvider,
+  createMemoryHistory,
+  createRootRoute,
+  createRouter,
+} from "@tanstack/react-router";
 
 // --- Réponses serveur pilotées par le test ---------------------------------
 let projectDeferred: { resolve: (v: unknown) => void } | null = null;
@@ -67,8 +73,15 @@ afterEach(() => {
   adminDeferred = null;
 });
 
+/** Routeur minimal : les liens de navigation de l'écran ont besoin d'un contexte,
+ *  mais aucun test ici ne navigue. */
+const router = createRouter({
+  routeTree: createRootRoute({ component: () => null }),
+  history: createMemoryHistory({ initialEntries: ["/standex/projects/d1"] }),
+});
+
 function Screen({ children }: { children: React.ReactNode }) {
-  return <>{children}</>;
+  return <RouterContextProvider router={router}>{children}</RouterContextProvider>;
 }
 
 describe("la fiche projet appartient au compte connecté", () => {
