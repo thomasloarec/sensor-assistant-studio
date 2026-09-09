@@ -411,6 +411,13 @@ export function DossierConsole({
   const currentReview =
     (view?.reviews ?? []).filter((r) => r.published && !r.superseded).slice(-1)[0] ?? null;
 
+  const mainClassName = [
+    embedded ? "grid gap-6" : "mx-auto grid max-w-6xl gap-6 p-4",
+    noSidebar ? "" : "lg:grid-cols-[320px_1fr]",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
   return (
     <div
       data-readable
@@ -435,15 +442,7 @@ export function DossierConsole({
         </header>
       )}
 
-      <main
-        className={
-          embedded
-            ? noSidebar
-              ? "grid gap-6"
-              : "grid gap-6 lg:grid-cols-[320px_1fr]"
-            : "mx-auto grid max-w-6xl gap-6 p-4 lg:grid-cols-[320px_1fr]"
-        }
-      >
+      <main className={mainClassName}>
         {noSidebar ? null : (
         <aside className="space-y-4">
 
