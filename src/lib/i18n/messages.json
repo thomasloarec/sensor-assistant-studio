@@ -15667,5 +15667,23 @@
     "Не удалось сохранить английскую версию. Повторите попытку.",
     "Non è stato possibile salvare la versione inglese. Riprova.",
     "英語版を保存できませんでした。もう一度お試しください。"
+  ],
+  "Version anglaise non produite. Vous pouvez relancer.": [
+    "The English version was not produced. You can start it again.",
+    "未能生成英文版本。您可以重新启动。",
+    "Die englische Fassung wurde nicht erstellt. Sie können sie erneut starten.",
+    "No se ha generado la versión en inglés. Puede volver a lanzarla.",
+    "Английская версия не была создана. Вы можете запустить её снова.",
+    "La versione inglese non è stata prodotta. Puoi rilanciarla.",
+    "英語版は作成されませんでした。もう一度実行できます。"
+  ],
+  "Demande de version anglaise invalide : rien n'a été transmis.": [
+    "Invalid English version request: nothing was transmitted.",
+    "英文版本请求无效：未传输任何内容。",
+    "Ungültige Anfrage für die englische Fassung: Es wurde nichts übermittelt.",
+    "Solicitud de versión en inglés no válida: no se ha transmitido nada.",
+    "Некорректный запрос английской версии: ничего не передано.",
+    "Richiesta di versione inglese non valida: non è stato trasmesso nulla.",
+    "英語版のリクエストが無効です。何も送信されていません。"
   ]
 }

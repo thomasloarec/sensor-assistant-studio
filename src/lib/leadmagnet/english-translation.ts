@@ -16,6 +16,11 @@
  *    espéré. Un écart rend la traduction NON prête.
  *  - le texte utilisateur est une DONNÉE, jamais une instruction.
  */
+import {
+  estimateCableLength,
+  uncoveredMotionStates,
+  type Point,
+} from "./cabling";
 import type { ClientDossierDto } from "./dossier";
 
 export interface Segment {
@@ -101,6 +106,26 @@ function fields(dto: ClientDossierDto): Field[] {
       },
     });
   });
+  (dto.cabling.statePaths ?? []).forEach((_, i) => {
+    list.push(
+      {
+        id: `path.${i}.label`,
+        get: (d) => d.cabling.statePaths[i]?.label,
+        set: (d, v) => {
+          const p = d.cabling.statePaths[i];
+          if (p) p.label = v;
+        },
+      },
+      {
+        id: `path.${i}.pose`,
+        get: (d) => d.cabling.statePaths[i]?.pose?.label,
+        set: (d, v) => {
+          const p = d.cabling.statePaths[i];
+          if (p?.pose) p.pose.label = v;
+        },
+      },
+    );
+  });
   const term = dto.termination;
   if (term.kind === "free_reference") {
     list.push({
@@ -168,58 +193,120 @@ export function applySegments(
   return copy;
 }
 
-/** Jetons qui doivent survivre à la traduction : nombres, références, e-mails, fichiers. */
+/** Nombre maximal de jetons contrôlés par segment : au-delà, on refuse. */
+export const MAX_TOKENS_PER_SEGMENT = 300;
+/** Taille maximale cumulée de la sortie fournisseur acceptée. */
+export const MAX_OUTPUT_CHARS = MAX_TOTAL_CHARS * 2;
+
+/** Unités reconnues, comparées telles quelles : mm ne devient jamais cm. */
+const UNITS = [
+  "mm²","mm2","cm²","cm2","mm","cm","dm","µm","um","m","km",
+  "°C","°F","K","kV","mV","V","mA","µA","uA","A","kΩ","Ω","ohm","mW","kW","W",
+  "kHz","MHz","Hz","mT","µT","uT","T","G","N·m","Nm","N","AWG","%",
+  "ms","µs","us","s","min","h","kg","mg","g","bar","Pa","kPa","VA","Ah","mAh",
+];
+const UNIT_ALT = UNITS.map((u) => u.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|");
+
+const RE_EMAIL = /[\w.+-]+@[\w-]+\.[\w.]+/g;
+const RE_REF = /\b[A-Z][A-Z0-9]*\d[A-Z0-9]*(?:-[A-Z0-9]+)*\b/g;
+const RE_FILE = /\b[\w-]+\.(?:glb|pdf|step|stp|iges|igs|docx|png|jpg|jpeg|csv|json)\b/gi;
+const RE_HEX = /\b[0-9a-f]{16,}\b/gi;
+/** Nombre SIGNÉ, jamais collé à un autre chiffre ni à une lettre : 5 ≠ 50. */
+const RE_NUMBER = new RegExp(
+  String.raw`(?<![\w.,])([-+]?\d+(?:[.,]\d+)?)(?![\w.,]*\d)\s?(` + UNIT_ALT + String.raw`)?(?![\w])`,
+  "gu",
+);
+
+/**
+ * Jetons qui doivent survivre à la traduction, AVEC leur multiplicité.
+ * Un nombre est capturé signé (`-40`, `+85`) et, si une unité le suit, le
+ * couple « nombre unité » devient un jeton supplémentaire : ainsi `2,5 mm`
+ * traduit en `2,5 cm` est refusé, et `-40` transformé en `+40` aussi.
+ * Ce contrôle est LEXICAL : il ne prétend pas détecter une erreur de sens.
+ */
 export function invariantTokens(text: string): string[] {
   const out: string[] = [];
-  const patterns = [
-    /[\w.+-]+@[\w-]+\.[\w.]+/g, // e-mails
-    /\b[A-Z][A-Z0-9]*\d[A-Z0-9]*(?:-[A-Z0-9]+)*\b/g, // références type MK24-A-J
-    /\b[\w-]+\.(?:glb|pdf|step|stp|iges|igs|docx|png|jpg|csv|json)\b/gi, // fichiers
-    /\d+(?:[.,]\d+)?/g, // nombres
-  ];
-  for (const p of patterns) {
+  for (const p of [RE_EMAIL, RE_REF, RE_FILE, RE_HEX]) {
     for (const m of text.matchAll(p)) out.push(m[0]);
+  }
+  for (const m of text.matchAll(RE_NUMBER)) {
+    const num = m[1]!;
+    out.push(num);
+    if (m[2]) out.push(`${num} ${m[2]}`);
   }
   return out;
 }
 
+function multiset(tokens: string[]): Map<string, number> {
+  const counts = new Map<string, number>();
+  for (const tok of tokens) counts.set(tok, (counts.get(tok) ?? 0) + 1);
+  return counts;
+}
+
+const isNumeric = (tok: string) => /^[-+]?\d+(?:[.,]\d+)?$/.test(tok);
+
 export type TranslationCheck = { ok: true } | { ok: false; reason: string };
 
-/** Contrôle strict : rien de tronqué, rien d'inventé, aucun chiffre perdu. */
-export function checkTranslation(source: Segment[], translated: Record<string, string>): TranslationCheck {
+/**
+ * Contrôle strict par multiensembles : chaque jeton de la source doit se
+ * retrouver AU MOINS autant de fois dans la traduction, et les nombres nus
+ * doivent s'y retrouver EXACTEMENT autant de fois — ni ajoutés, ni supprimés,
+ * ni dédoublonnés. Aucun `includes` : `5` ne peut plus être satisfait par `50`.
+ */
+export function checkTranslation(
+  source: Segment[],
+  translated: Record<string, string>,
+): TranslationCheck {
   for (const s of source) {
     const value = translated[s.id];
     if (typeof value !== "string" || value.trim().length === 0)
-      return { ok: false, reason: `segment manquant ou vide : ${s.id}` };
-    if (value.length > MAX_SEGMENT_CHARS)
-      return { ok: false, reason: `segment hors limite : ${s.id}` };
-    const missing = invariantTokens(s.text).filter((tok) => !value.includes(tok));
-    if (missing.length > 0)
-      return {
-        ok: false,
-        reason: `valeurs non préservées dans ${s.id} : ${missing.slice(0, 3).join(", ")}`,
-      };
+      return { ok: false, reason: `SEGMENT_MISSING:${s.id}` };
+    if (value.length > MAX_SEGMENT_CHARS) return { ok: false, reason: `SEGMENT_TOO_LARGE:${s.id}` };
+
+    const src = invariantTokens(s.text);
+    const dst = invariantTokens(value);
+    if (src.length > MAX_TOKENS_PER_SEGMENT || dst.length > MAX_TOKENS_PER_SEGMENT)
+      return { ok: false, reason: `TOKEN_BUDGET:${s.id}` };
+
+    const a = multiset(src);
+    const b = multiset(dst);
+    for (const [tok, n] of a) {
+      const m = b.get(tok) ?? 0;
+      if (m < n) return { ok: false, reason: `TOKEN_LOST:${s.id}` };
+      if (isNumeric(tok) && m !== n) return { ok: false, reason: `TOKEN_COUNT:${s.id}` };
+    }
+    for (const [tok, m] of b) {
+      if (isNumeric(tok) && !a.has(tok) && m > 0) return { ok: false, reason: `TOKEN_ADDED:${s.id}` };
+    }
   }
   const unknown = Object.keys(translated).filter((id) => !source.some((s) => s.id === id));
-  if (unknown.length > 0) return { ok: false, reason: `segments inattendus : ${unknown[0]}` };
+  if (unknown.length > 0) return { ok: false, reason: "SEGMENT_UNEXPECTED" };
   return { ok: true };
 }
 
-/** Sortie du fournisseur : structure imposée, validée avant tout usage. */
+const FORBIDDEN_KEYS = new Set(["__proto__", "prototype", "constructor"]);
+
+/** Sortie du fournisseur : structure imposée, ids uniques, taille bornée. */
 export function parseProviderOutput(raw: unknown): Record<string, string> | null {
   if (!raw || typeof raw !== "object") return null;
   const segments = (raw as { segments?: unknown }).segments;
   if (!Array.isArray(segments)) return null;
-  const out: Record<string, string> = {};
+  const out: Record<string, string> = Object.create(null) as Record<string, string>;
+  let total = 0;
   for (const item of segments) {
     if (!item || typeof item !== "object") return null;
     const id = (item as { id?: unknown }).id;
     const en = (item as { en?: unknown }).en;
     if (typeof id !== "string" || typeof en !== "string") return null;
+    if (id.length === 0 || id.length > 200 || FORBIDDEN_KEYS.has(id)) return null;
+    if (Object.prototype.hasOwnProperty.call(out, id)) return null; // id dupliqué
+    total += en.length;
+    if (total > MAX_OUTPUT_CHARS) return null;
     out[id] = en;
   }
   return out;
 }
+
 
 const PHASE_EN: Record<string, string> = {
   exploration: "exploration",
@@ -238,6 +325,15 @@ const MOUNTING_EN: Record<string, string> = {
   undecided: "not decided",
 };
 
+const WORKSHOP_SOURCE_EN: Record<string, string> = {
+  none: "none",
+  example: "example scene supplied by Standex",
+  user_asset: "3D file supplied by the customer",
+};
+
+/** Coordonnées : valeurs conservées telles quelles, jamais arrondies. */
+const pointEn = (p: Point | null): string => (p ? `(${p[0]}, ${p[1]}, ${p[2]}) mm` : "unknown");
+
 /** Rapport anglais complet : étiquettes anglaises + segments traduits. */
 export function englishReportBody(dto: ClientDossierDto, meta: { revision: number }): string {
   const req = (r: { label: string; value: string; unit: string | null; state: string }) =>
@@ -255,6 +351,9 @@ export function englishReportBody(dto: ClientDossierDto, meta: { revision: numbe
         ? dto.mounting.description
         : (MOUNTING_EN[dto.mounting.kind] ?? dto.mounting.kind);
   const env = dto.envelope;
+  const estimate = estimateCableLength(dto.cabling);
+  const uncovered = uncoveredMotionStates(dto.cabling);
+
   const lines = [
     `# ${dto.title} — revision ${meta.revision}`,
     "",
@@ -273,7 +372,29 @@ export function englishReportBody(dto: ClientDossierDto, meta: { revision: numbe
     `- Mounting: ${mounting}`,
     `- Available envelope: ${env.lengthMm ?? "unknown"} × ${env.widthMm ?? "unknown"} × ${env.heightMm ?? "unknown"} mm`,
     "",
+    "## Sensor selection and 3D layout",
+    `- Followed range (not an orderable part number): ${dto.selectedSensorId ?? "none"}`,
+    `- Sensor shown in the workshop: ${dto.workshopSensorId ?? "none"}`,
+    `- Workshop sensor matches the followed range: ${dto.sensorSyncConfirmed ? "confirmed by the customer" : "not confirmed"}`,
+    `- 3D layout provenance: ${WORKSHOP_SOURCE_EN[dto.workshopSource] ?? dto.workshopSource}`,
+    `- 3D asset: ${dto.workshopAsset ? `${dto.workshopAsset.fileName} (${dto.workshopAsset.storage})` : "none"}`,
+    `- Workshop configuration recorded: ${dto.workshop ? "yes" : "no"}`,
+    "",
     "## Cabling",
+    `- Required length: ${estimate.requiredMm === null ? "unknown (incomplete or invalid path)" : estimate.requiredMm.toFixed(1) + " mm"}`,
+    `- Longest measured path: ${estimate.longestPathMm === null ? "unknown" : estimate.longestPathMm.toFixed(1) + " mm"}`,
+    `- Sensor point: ${pointEn(dto.cabling.sensorEndpoint)} — connection point: ${pointEn(dto.cabling.connectionEndpoint)}`,
+    `- Intermediate waypoints (${dto.cabling.waypoints.length}): ${
+      dto.cabling.waypoints.length ? dto.cabling.waypoints.map(pointEn).join(" → ") : "none"
+    }`,
+    ...(dto.cabling.statePaths.length
+      ? dto.cabling.statePaths.map(
+          (p) =>
+            `- Path "${p.label}" (state ${p.stateId}, ${p.points.length} points${
+              p.pose ? `, pose "${p.pose.label}" at cycle ${p.pose.cycleT}` : ", pose unknown"
+            }): ${p.points.map(pointEn).join(" → ")}`,
+        )
+      : ["- Recorded paths: none"]),
     `- Service reserve: ${dto.cabling.serviceReserveMm} mm — termination: ${dto.cabling.terminationMm} mm`,
     `- Supplier tolerance: ±${dto.cabling.toleranceMm} mm — housed surplus: ${dto.cabling.surplusHousingMm} mm`,
     `- Minimum bend radius: ${dto.cabling.minBendRadiusMm ?? "unknown"} mm`,
@@ -282,6 +403,7 @@ export function englishReportBody(dto: ClientDossierDto, meta: { revision: numbe
         ? dto.cabling.declaredMotionStates.map((s) => s.label).join(", ")
         : "none"
     }`,
+    `- Motion states without a recorded path: ${uncovered.length ? uncovered.map((s) => s.label).join(", ") : "none"}`,
     `- Motion coverage confirmed: ${dto.cabling.motionCoverageConfirmed ? "yes" : "no"}`,
     `- Length choice: ${
       dto.cabling.lengthChoice === "standard_to_confirm"
@@ -291,6 +413,7 @@ export function englishReportBody(dto: ClientDossierDto, meta: { revision: numbe
           : "not decided"
     }`,
     "- No length is approved here: Standex R&D checks it.",
+
     "",
     "## Termination",
     ...terminationEnglish(dto),

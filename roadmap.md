@@ -174,3 +174,5 @@
 - Migration 1.5 appliquée (stockage). Migration 1.6 `supabase/schema/migration_v1.6_english_report_pipeline.sql` ÉCRITE, NON appliquée : à appliquer sur yyobodalwtsqdyrqwkjk.
 - Chaîne serveur : autorisation en base (droits, empreinte, NDA, consentement `ai_assistant` exact) → réservation `pending` → traduction Anthropic → publication `ready`.
 - Configuration manquante côté serveur : `SUPABASE_SERVICE_ROLE_KEY` (sans elle, la demande répond « non configuré » et rien n'est transmis).
+
+- Rapport anglais : logique isolée dans `src/lib/leadmagnet/english-report.pipeline.ts` (dépendances injectées, testée), codes d'erreur stables traduits dans les huit langues, validation d'entrée à l'exécution (jeton/UUID/SHA-256) et succès annoncé uniquement si le serveur confirme `ready`. Migration 1.6 toujours refusée/non appliquée, `SUPABASE_SERVICE_ROLE_KEY` toujours absent.
