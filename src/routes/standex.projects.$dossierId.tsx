@@ -129,6 +129,24 @@ function ProjectDetail() {
 
   const load = useCallback(() => reload(false), [reload]);
 
+  // Annuaire métier, lu une fois : il sert à nommer les responsables du projet.
+  const [pageDirectory, setPageDirectory] = useState<CrmPerson[]>([]);
+  useEffect(() => {
+    let alive = true;
+    if (!capabilities?.available) return;
+    fetchCrmBoard()
+      .then((b) => {
+        if (alive) setPageDirectory(b.directory);
+      })
+      .catch(() => {
+        if (alive) setPageDirectory([]);
+      });
+    return () => {
+      alive = false;
+    };
+  }, [capabilities?.available]);
+
+
   useEffect(() => {
     if (capabilities?.available) load();
   }, [capabilities?.available, load]);
