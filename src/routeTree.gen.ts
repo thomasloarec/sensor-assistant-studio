@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as DesignRouteImport } from './routes/design'
 import { Route as InternalRouteImport } from './routes/internal'
 import { Route as StandexRouteImport } from './routes/standex'
+import { Route as StandexIndexRouteImport } from './routes/standex.index'
 import { Route as StandexConsoleRouteImport } from './routes/standex.console'
 
 const IndexRoute = IndexRouteImport.update({
@@ -35,6 +36,11 @@ const StandexRoute = StandexRouteImport.update({
   path: '/standex',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StandexIndexRoute = StandexIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => StandexRoute,
+} as any)
 const StandexConsoleRoute = StandexConsoleRouteImport.update({
   id: '/console',
   path: '/console',
@@ -47,13 +53,14 @@ export interface FileRoutesByFullPath {
   '/internal': typeof InternalRoute
   '/standex': typeof StandexRouteWithChildren
   '/standex/console': typeof StandexConsoleRoute
+  '/standex/': typeof StandexIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/design': typeof DesignRoute
   '/internal': typeof InternalRoute
-  '/standex': typeof StandexRouteWithChildren
   '/standex/console': typeof StandexConsoleRoute
+  '/standex': typeof StandexIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -62,14 +69,27 @@ export interface FileRoutesById {
   '/internal': typeof InternalRoute
   '/standex': typeof StandexRouteWithChildren
   '/standex/console': typeof StandexConsoleRoute
+  '/standex/': typeof StandexIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/design' | '/internal' | '/standex' | '/standex/console'
+  fullPaths:
+    | '/'
+    | '/design'
+    | '/internal'
+    | '/standex'
+    | '/standex/console'
+    | '/standex/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/design' | '/internal' | '/standex' | '/standex/console'
+  to: '/' | '/design' | '/internal' | '/standex/console' | '/standex'
   id:
-    '__root__' | '/' | '/design' | '/internal' | '/standex' | '/standex/console'
+    | '__root__'
+    | '/'
+    | '/design'
+    | '/internal'
+    | '/standex'
+    | '/standex/console'
+    | '/standex/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -109,6 +129,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StandexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/standex/': {
+      id: '/standex/'
+      path: '/'
+      fullPath: '/standex/'
+      preLoaderRoute: typeof StandexIndexRouteImport
+      parentRoute: typeof StandexRoute
+    }
     '/standex/console': {
       id: '/standex/console'
       path: '/console'
@@ -121,10 +148,12 @@ declare module '@tanstack/react-router' {
 
 interface StandexRouteChildren {
   StandexConsoleRoute: typeof StandexConsoleRoute
+  StandexIndexRoute: typeof StandexIndexRoute
 }
 
 const StandexRouteChildren: StandexRouteChildren = {
   StandexConsoleRoute: StandexConsoleRoute,
+  StandexIndexRoute: StandexIndexRoute,
 }
 
 const StandexRouteWithChildren =
