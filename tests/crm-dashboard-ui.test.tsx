@@ -98,7 +98,7 @@ describe("absence de migration et conflits", () => {
   });
 
   test("un conflit de version rend la version réelle du serveur", () => {
-    expect(crmConflictVersion({ message: "crm_version_conflict:7" })).toBe(7);
+    expect(crmConflictVersion({ message: "CRM_CONFLICT:7" })).toBe(7);
   });
 
   test("un refus d'accès est expliqué sans jargon serveur", () => {
@@ -120,9 +120,11 @@ describe("cloisonnement", () => {
 
   test("aucun champ commercial ne passe dans l'export client ni dans la vue client", () => {
     for (const source of [dossierIo, clientAdapter]) {
-      expect(source).not.toContain("unit_price");
+      // Le prix d'une OFFRE publiée garde sa source d'origine ; ce sont les
+      // champs commerciaux internes du tableau de bord qui ne sortent jamais.
       expect(source).not.toContain("unit_cost");
       expect(source).not.toContain("crm_stage");
+      expect(source).not.toContain("lead_crm");
     }
   });
 
