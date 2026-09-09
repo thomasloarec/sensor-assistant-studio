@@ -1,8 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { X } from "lucide-react";
 import { t } from "@/lib/i18n/core";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -18,7 +19,9 @@ import {
   LoadingBlock,
   STAKEHOLDER_LABEL,
   TASK_STATUS_LABEL,
+  TaskRow,
   personName,
+  sortByUrgency,
   stageLabel,
   CrmUnavailableNotice,
 } from "@/components/standex/dashboard/crm-shared";
@@ -29,7 +32,6 @@ import {
 } from "@/lib/leadmagnet/dashboard-adapter";
 import {
   TASK_STATUSES,
-  taskOverdueDays,
   type CrmTask,
   type TaskStakeholder,
   type TaskStatus,
@@ -122,6 +124,44 @@ function TasksScreen() {
     });
   }, [rows, status, stakeholder, mine, capabilities?.person?.id]);
 
+  /** Regroupement par projet, ordre d'urgence à l'intérieur de chaque groupe :
+   *  le premier groupe est celui qui porte la tâche la plus urgente. */
+  const groups = useMemo(() => {
+    const byProject = new Map<string, Row[]>();
+    for (const row of sortByUrgency(visible, (r) => r.task)) {
+      const list = byProject.get(row.dossierId);
+      if (list) list.push(row);
+      else byProject.set(row.dossierId, [row]);
+    }
+    return [...byProject.entries()].map(([dossierId, list]) => ({
+      dossierId,
+      label: list[0]!.projectLabel,
+      rows: list,
+    }));
+  }, [visible]);
+
+  /* Pastilles des filtres actifs : ce qui filtre la liste se voit et se retire
+     d'un geste, exactement comme sur l'écran Projets. */
+  const chips: { key: string; text: string; clear: () => void }[] = [];
+  if (status !== "open")
+    chips.push({
+      key: "status",
+      text: `${t("État")} : ${t(TASK_STATUS_LABEL[status])}`,
+      clear: () => setStatus("open"),
+    });
+  if (stakeholder !== "all")
+    chips.push({
+      key: "stakeholder",
+      text: `${t("Rôle concerné")} : ${t(STAKEHOLDER_LABEL[stakeholder] ?? stakeholder)}`,
+      clear: () => setStakeholder("all"),
+    });
+  if (mine)
+    chips.push({
+      key: "mine",
+      text: t("Seulement les tâches qui me sont attribuées"),
+      clear: () => setMine(false),
+    });
+
   if (capabilities === null) return <LoadingBlock />;
   if (!capabilities.available)
     return (
@@ -135,58 +175,84 @@ function TasksScreen() {
   return (
     <div className="space-y-4">
       <h2 className="t-title-m">{t("Tâches")}</h2>
-      <section className="panel-block grid gap-3 sm:grid-cols-3">
-        <div>
-          <Label className="t-caption">{t("État")}</Label>
-          <Select value={status} onValueChange={(v) => setStatus(v as TaskStatus | "open")}>
-            <SelectTrigger className="min-h-11">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="open">{t("À traiter")}</SelectItem>
-              {TASK_STATUSES.map((s) => (
-                <SelectItem key={s} value={s}>
-                  {t(TASK_STATUS_LABEL[s])}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        <div>
-          <Label className="t-caption">{t("Rôle concerné")}</Label>
-          <Select
-            value={stakeholder}
-            onValueChange={(v) => setStakeholder(v as TaskStakeholder | "all")}
-          >
-            <SelectTrigger className="min-h-11">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">{t("Tous")}</SelectItem>
-              {(["sales", "fae", "client"] as const).map((s) => (
-                <SelectItem key={s} value={s}>
-                  {t(STAKEHOLDER_LABEL[s] ?? s)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        <label className="flex min-h-11 items-center gap-2 text-sm">
-          <input
-            type="checkbox"
-            className="h-5 w-5"
-            checked={mine}
-            onChange={(e) => setMine(e.target.checked)}
-            disabled={!capabilities.person}
-          />
-          {capabilities.person
-            ? t("Seulement les tâches qui me sont attribuées")
-            : t("Votre compte n'est rattaché à aucune personne de l'annuaire.")}
-        </label>
+
+      <section className="workbar" aria-label={t("Barre de travail")}>
+        <Label className="sr-only" htmlFor="task-status">
+          {t("État")}
+        </Label>
+        <Select value={status} onValueChange={(v) => setStatus(v as TaskStatus | "open")}>
+          <SelectTrigger id="task-status" className="min-h-11 w-auto min-w-[11rem]">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="open">{t("À traiter")}</SelectItem>
+            {TASK_STATUSES.map((s) => (
+              <SelectItem key={s} value={s}>
+                {t(TASK_STATUS_LABEL[s])}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        <Label className="sr-only" htmlFor="task-stakeholder">
+          {t("Rôle concerné")}
+        </Label>
+        <Select
+          value={stakeholder}
+          onValueChange={(v) => setStakeholder(v as TaskStakeholder | "all")}
+        >
+          <SelectTrigger id="task-stakeholder" className="min-h-11 w-auto min-w-[11rem]">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">{t("Tous")}</SelectItem>
+            {(["sales", "fae", "client"] as const).map((s) => (
+              <SelectItem key={s} value={s}>
+                {t(STAKEHOLDER_LABEL[s] ?? s)}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        <Button
+          variant={mine ? "default" : "outline"}
+          aria-pressed={mine}
+          disabled={!capabilities.person}
+          title={t("Seulement les tâches qui me sont attribuées")}
+          onClick={() => setMine((v) => !v)}
+        >
+          {t("Mes tâches")}
+          <span className="sr-only"> — {t("Seulement les tâches qui me sont attribuées")}</span>
+        </Button>
+
+        <Button size="sm" variant="ghost" className="ml-auto" onClick={() => void load()}>
+          {t("Actualiser")}
+        </Button>
       </section>
 
+      {capabilities.person ? null : (
+        <p className="t-caption text-muted-foreground">
+          {t("Votre compte n'est rattaché à aucune personne de l'annuaire.")}
+        </p>
+      )}
+
+      {chips.length > 0 ? (
+        <div className="flex flex-wrap gap-2">
+          {chips.map((chip) => (
+            <span key={chip.key} className="chip">
+              {chip.text}
+              <button type="button" onClick={chip.clear} aria-label={`${t("Retirer")} : ${chip.text}`}>
+                <X className="h-4 w-4" aria-hidden="true" />
+              </button>
+            </span>
+          ))}
+        </div>
+      ) : null}
+
+      <p className="t-caption text-muted-foreground">{t("Triées par urgence.")}</p>
+
       {error ? <ErrorBlock text={error} onRetry={() => void load()} /> : null}
-      {loading && rows === null ? <LoadingBlock /> : null}
+      {loading && rows === null ? <LoadingBlock rows={6} /> : null}
       {truncated ? (
         <p className="notice-info t-caption">
           {t("Seuls les 25 projets les plus récents sont lus ici : ouvrez une fiche projet pour voir toutes ses tâches.")}
@@ -194,48 +260,40 @@ function TasksScreen() {
       ) : null}
 
       {rows !== null && visible.length === 0 && !loading ? (
-        <EmptyBlock text={t("Aucune tâche ne correspond à ce filtre.")} />
+        <EmptyBlock
+          title={t("Aucune tâche")}
+          text={t("Aucune tâche ne correspond à ce filtre.")}
+        />
       ) : null}
 
-      <ul className="space-y-2">
-        {visible.map((row) => {
-          const late = taskOverdueDays(row.task);
-          return (
-            <li key={row.task.id} className="panel-block flex flex-wrap items-center gap-2 text-sm">
-              <Link
-                to="/standex/projects/$dossierId"
-                params={{ dossierId: row.dossierId }}
-                className="min-h-11 font-medium underline-offset-2 hover:underline"
-              >
-                {row.projectLabel}
-              </Link>
-              <span>{row.task.label}</span>
-              <Badge variant="outline">{stageLabel(row.task.stage)}</Badge>
-              <Badge variant="secondary">{t(TASK_STATUS_LABEL[row.task.status])}</Badge>
-              <span className="t-caption text-muted-foreground">
-                {t(STAKEHOLDER_LABEL[row.task.stakeholder] ?? row.task.stakeholder)} —{" "}
-                {personName(board?.directory ?? [], row.task.personId)}
-              </span>
-              {row.task.dueOn ? (
-                <span className="t-caption t-metric">
-                  {t("échéance")} {row.task.dueOn}
-                </span>
-              ) : (
-                <span className="t-caption text-muted-foreground">{t("sans échéance")}</span>
-              )}
-              {late !== null ? (
-                <span className="t-caption text-destructive">
-                  {late} {t("jour(s) de retard")}
-                </span>
-              ) : null}
-            </li>
-          );
-        })}
-      </ul>
-
-      <Button size="sm" variant="ghost" onClick={() => void load()}>
-        {t("Actualiser")}
-      </Button>
+      {groups.map((group) => (
+        <section key={group.dossierId} className="space-y-2">
+          <h3 className="flex flex-wrap items-center gap-2">
+            <Link
+              to="/standex/projects/$dossierId"
+              params={{ dossierId: group.dossierId }}
+              className="t-title-s inline-flex min-h-11 items-center underline-offset-2 hover:underline"
+            >
+              {group.label}
+            </Link>
+            <span className="t-caption text-muted-foreground">({group.rows.length})</span>
+          </h3>
+          <ul className="space-y-2">
+            {group.rows.map((row) => (
+              <TaskRow
+                key={row.task.id}
+                task={row.task}
+                person={personName(board?.directory ?? [], row.task.personId)}
+                extra={
+                  <p>
+                    <Badge variant="outline">{stageLabel(row.task.stage)}</Badge>
+                  </p>
+                }
+              />
+            ))}
+          </ul>
+        </section>
+      ))}
     </div>
   );
 }

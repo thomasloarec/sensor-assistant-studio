@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { ChevronDown, Loader2 } from "lucide-react";
 import { createOwnedLock } from "@/lib/leadmagnet/session-guard";
 import { t, localeTag } from "@/lib/i18n/core";
 import { useLocale } from "@/lib/i18n/react";
@@ -15,16 +16,30 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { DossierConsole } from "@/components/standex/console/dossier-console";
 import { useCrm } from "@/components/standex/dashboard/crm-context";
+import { useFlash } from "@/components/standex/dashboard/flash";
+import { AvatarInitials } from "@/components/standex/dashboard/avatar-initials";
 import {
   ALL_STAGES,
+  EmptyBlock,
   ErrorBlock,
   LoadingBlock,
   MarginCell,
   RevenueCell,
   STAKEHOLDER_LABEL,
+  StageGauge,
+  StagePill,
   TASK_STATUS_LABEL,
+  TaskRow,
+  sortByUrgency,
+
   UnknownValue,
   VolumeCell,
   personName,
@@ -45,12 +60,16 @@ import {
   setCrmStage,
   upsertCrmTask,
   type CrmProjectDetail,
+  type TaskInput,
 } from "@/lib/leadmagnet/dashboard-adapter";
+
 import { requestKeyFor, releaseRequestKey } from "@/lib/leadmagnet/request-key";
 import type { CrmPerson } from "@/lib/leadmagnet/crm";
 import { fetchStaffView, type DossierView } from "@/lib/leadmagnet/supabase-adapter";
 
+
 import {
+  CRM_STAGES,
   TASK_STATUSES,
   actionAgeDays,
   nextAction,
@@ -63,9 +82,11 @@ import {
   personFullName,
   taskProgress,
   type CrmStage,
+  type CrmTask,
   type TaskStakeholder,
   type TaskStatus,
 } from "@/lib/leadmagnet/crm";
+
 import { latestSapNoteText, sapNotesToText } from "@/lib/leadmagnet/sap-note";
 
 export const Route = createFileRoute("/standex/projects/$dossierId")({
@@ -97,8 +118,11 @@ export function ProjectDetail({ dossierId }: { dossierId: string }) {
   const [tab, setTab] = useState<Tab>("tracking");
   const [detail, setDetail] = useState<CrmProjectDetail | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [message, setMessage] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  /* Le succès d'une écriture part en pastille flottante ; un refus, lui, reste
+     en place à côté de l'action refusée. */
+  const flash = useFlash();
+
   const dossierRef = useRef(dossierId);
   /** Compte réellement connecté : un changement de compte périme tout ce qui est
    *  affiché et tout ce qui est encore en vol. Rien de l'ancien compte ne doit
@@ -120,7 +144,8 @@ export function ProjectDetail({ dossierId }: { dossierId: string }) {
 
     setDetail(null);
     setError(null);
-    setMessage(null);
+
+
     setBusy(false);
     setPageDirectory([]);
   }, [dossierId, sessionGeneration]);
@@ -180,14 +205,14 @@ export function ProjectDetail({ dossierId }: { dossierId: string }) {
     genRef.current = gen;
 
     setBusy(true);
-    setMessage(null);
+    
     setError(null);
     try {
       const next = await fn();
       if (dossierRef.current !== asked || genRef.current !== gen) return;
       if (sessionRef.current !== session) return;
       setDetail(next);
-      setMessage(ok);
+      flash.success(ok);
     } catch (e: unknown) {
       if (dossierRef.current !== asked || genRef.current !== gen) return;
       if (sessionRef.current !== session) return;
@@ -229,79 +254,119 @@ export function ProjectDetail({ dossierId }: { dossierId: string }) {
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap items-center gap-2">
+      {/* Identité du projet : d'où l'on vient, de qui il s'agit, où il en est. */}
+      <div className="space-y-1">
         <Link
           to="/standex"
-          className="inline-flex min-h-11 items-center text-sm text-muted-foreground"
+          className="t-caption inline-flex min-h-11 items-center text-muted-foreground"
         >
           ← {t("Projets")}
         </Link>
-        <h2 className="t-title-m">
-          {/* Société réellement affichée : celle déclarée par le client, sauf
-              correction interne explicite. Puis le nom du projet. */}
-          {project?.companyEffective ?? project?.company ?? project?.title ?? t("Fiche projet")}
-        </h2>
-        {project?.projectName ? (
-          <span className="t-body text-muted-foreground">{project.projectName}</span>
-        ) : null}
-
-        {project ? <Badge variant="outline">{stageLabel(project.stage)}</Badge> : null}
+        <div className="flex flex-wrap items-center gap-3">
+          <h2 className="t-title-l">
+            {/* Société réellement affichée : celle déclarée par le client, sauf
+                correction interne explicite. Puis le nom du projet. */}
+            {project?.companyEffective ?? project?.company ?? project?.title ?? t("Fiche projet")}
+          </h2>
+          {project?.projectName ? (
+            <span className="t-body text-muted-foreground">{project.projectName}</span>
+          ) : null}
+          {project ? (
+            <span className="inline-flex items-center gap-2">
+              <StagePill stage={project.stage} />
+              <StageGauge stage={project.stage} />
+            </span>
+          ) : null}
+        </div>
       </div>
 
       {detail && project ? <ProjectSummary detail={detail} directory={pageDirectory} /> : null}
 
-
-      <div role="tablist" aria-label={t("Sections de la fiche projet")} className="flex flex-wrap gap-1">
+      {/* Onglets : même vocabulaire que la navigation de l'espace de travail. */}
+      <div
+        role="tablist"
+        aria-label={t("Sections de la fiche projet")}
+        className="segmented"
+        style={{
+          ["--seg-count" as string]: TABS.length,
+          ["--seg" as string]: TABS.findIndex((item) => item.id === tab),
+        }}
+      >
+        <span className="segmented-thumb" aria-hidden="true" />
         {TABS.map((item) => (
-          <Button
+          <button
             key={item.id}
+            type="button"
             role="tab"
+            id={`tab-${item.id}`}
             aria-selected={tab === item.id}
-            size="sm"
-            variant={tab === item.id ? "default" : "outline"}
+            aria-controls={`panel-${item.id}`}
+            data-active={tab === item.id ? "true" : undefined}
+            className="segmented-item"
             onClick={() => setTab(item.id)}
           >
             {t(item.label)}
-          </Button>
+          </button>
         ))}
       </div>
 
-      {message ? <p className="notice-success text-sm">{message}</p> : null}
       {error ? <ErrorBlock text={error} onRetry={load} /> : null}
       {detail === null && !error ? <LoadingBlock /> : null}
+
 
       {detail && project ? (
         <>
           {tab === "tracking" ? (
-            <TrackingTab
-              detail={detail}
-              locale={tag}
-              busy={busy}
-              onRun={run}
-              directoryFallback={capabilities.person?.id ?? null}
-            />
+            <div role="tabpanel" id="panel-tracking" aria-labelledby="tab-tracking">
+              <TrackingTab
+                detail={detail}
+                locale={tag}
+                busy={busy}
+                onRun={run}
+                directoryFallback={capabilities.person?.id ?? null}
+              />
+            </div>
           ) : null}
-          {tab === "tasks" ? <TasksTab detail={detail} busy={busy} onRun={run} /> : null}
-          {tab === "sap" ? <SapTab detail={detail} /> : null}
-          {tab === "notify" ? <NotifyTab detail={detail} busy={busy} onRun={run} /> : null}
+          {tab === "tasks" ? (
+            <div role="tabpanel" id="panel-tasks" aria-labelledby="tab-tasks">
+              <TasksTab detail={detail} busy={busy} onRun={run} directory={pageDirectory} />
+            </div>
+          ) : null}
+          {tab === "sap" ? (
+            <div role="tabpanel" id="panel-sap" aria-labelledby="tab-sap">
+              <SapTab detail={detail} />
+            </div>
+          ) : null}
+          {tab === "notify" ? (
+            <div role="tabpanel" id="panel-notify" aria-labelledby="tab-notify">
+              <NotifyTab detail={detail} busy={busy} onRun={run} />
+            </div>
+          ) : null}
         </>
       ) : null}
 
       {tab === "review" ? (
-        <section aria-label={t("Revue, documents et 3D")}>
+        <section
+          role="tabpanel"
+          id="panel-review"
+          aria-labelledby="tab-review"
+          aria-label={t("Revue, documents et 3D")}
+        >
           <p className="t-caption text-muted-foreground">
             {t("Revue technique et décisions envoyées au client : offres, échantillons, retours R&D et documents.")}
           </p>
           <DossierConsole initialDossierId={dossierId} embedded />
         </section>
       ) : null}
+
     </div>
   );
 }
 
 /* --------------------------------------------------------------- Résumé */
 
-/** Âges réels et prochaine action : trois repères, jamais inventés. */
+/** Âges réels, responsables et prochaine action : quatre repères posés, jamais
+ *  inventés. Une donnée manquante reste écrite « inconnu » en clair. */
 function ProjectSummary({
   detail,
   directory,
@@ -315,39 +380,47 @@ function ProjectSummary({
   const next = nextAction(p, detail.tasks);
   const nextAge = actionAgeDays(next);
   const unknown = t("inconnu");
+  const sales = personName(directory, p.salesPersonId ?? null);
+  const fae = personName(directory, p.faePersonId ?? null);
 
   return (
-    <dl className="panel-block grid gap-3 text-sm sm:grid-cols-3">
-      <div>
-        <dt className="t-caption text-muted-foreground">{t("Âge total du projet")}</dt>
-        <dd className="t-metric">
-          {age === null ? unknown : `${age} ${t("jour(s)")}`}
-        </dd>
+    <dl className="kpi-row">
+      <div className="kpi">
+        <dt>{t("Âge total du projet")}</dt>
+        <dd className="t-metric">{age === null ? unknown : `${age} ${t("jour(s)")}`}</dd>
       </div>
-      <div>
-        <dt className="t-caption text-muted-foreground">{t("Âge de l'étape en cours")}</dt>
+      <div className="kpi">
+        <dt>{t("Âge de l'étape en cours")}</dt>
         <dd className="t-metric">
           {stageAge === null ? unknown : `${stageAge} ${t("jour(s)")}`}
         </dd>
       </div>
-      <div>
-        <dt className="t-caption text-muted-foreground">{t("Responsables")}</dt>
-        <dd>
-          {t("Commercial")} : {personName(directory, p.salesPersonId ?? null)}
-          {" · "}
-          {t("FAE")} : {personName(directory, p.faePersonId ?? null)}
+      <div className="kpi">
+        <dt>{t("Responsables")}</dt>
+        <dd className="t-body space-y-1">
+          <span className="flex items-center gap-2">
+            <AvatarInitials name={sales} />
+            <span>
+              {t("Commercial")} : {sales}
+            </span>
+          </span>
+          <span className="flex items-center gap-2">
+            <AvatarInitials name={fae} />
+            <span>
+              {t("FAE")} : {fae}
+            </span>
+          </span>
         </dd>
       </div>
-      <div>
-        <dt className="t-caption text-muted-foreground">{t("Prochaine action")}</dt>
-        <dd>
+      <div className="kpi">
+        <dt>{t("Prochaine action")}</dt>
+        <dd className="t-body">
           {next === null ? (
             <span className="text-muted-foreground">{t("aucune action en attente")}</span>
           ) : (
             <>
               {next.label}
-              <span className="t-caption text-muted-foreground">
-                {" — "}
+              <span className="t-caption block text-muted-foreground">
                 {t(STAKEHOLDER_LABEL[next.stakeholder] ?? next.stakeholder)}
                 {nextAge === null ? "" : ` · ${nextAge} ${t("jour(s)")}`}
               </span>
@@ -358,6 +431,7 @@ function ProjectSummary({
     </dl>
   );
 }
+
 
 
 /* ------------------------------------------------------------------ Suivi */
@@ -455,47 +529,60 @@ function TrackingTab({
 
   return (
     <div className="space-y-4">
-      <section className="panel-block grid gap-3 sm:grid-cols-2 lg:grid-cols-3 text-sm">
-        <div>
-          <p className="t-caption text-muted-foreground">{t("Volume annuel de capteurs")}</p>
-          <VolumeCell project={p} />
+      {/* Sur une fiche unique, la provenance d'une valeur est une information de
+          premier plan : elle reste visible, contrairement au tableau. */}
+      <dl className="kpi-row">
+        <div className="kpi">
+          <dt>{t("Volume annuel de capteurs")}</dt>
+          <dd className="num">
+            <VolumeCell project={p} />
+          </dd>
         </div>
-        <div>
-          <p className="t-caption text-muted-foreground">{t("Chiffre d'affaires annuel")}</p>
-          <RevenueCell project={p} locale={locale} />
+        <div className="kpi">
+          <dt>{t("Chiffre d'affaires annuel")}</dt>
+          <dd className="num">
+            <RevenueCell project={p} locale={locale} />
+          </dd>
         </div>
-        <div>
-          <p className="t-caption text-muted-foreground">{t("Marge")}</p>
-          <MarginCell project={p} locale={locale} />
+        <div className="kpi">
+          <dt>{t("Marge")}</dt>
+          <dd className="num">
+            <MarginCell project={p} locale={locale} />
+          </dd>
         </div>
-        <div>
-          <p className="t-caption text-muted-foreground">{t("Lancement série")}</p>
-          {p.seriesLaunchEffective ? (
-            <>
-              <span className="t-metric">{p.seriesLaunchEffective}</span>
-              <span className="t-caption block text-muted-foreground">
-                {p.seriesLaunchSource === "override"
-                  ? t("corrigé en interne")
-                  : t("déclaré par le client")}
-              </span>
-            </>
-          ) : (
-            <UnknownValue />
-          )}
+        <div className="kpi">
+          <dt>{t("Lancement série")}</dt>
+          <dd className="num">
+            {p.seriesLaunchEffective ? (
+              <>
+                <span className="t-metric">{p.seriesLaunchEffective}</span>
+                <span className="t-caption block text-muted-foreground">
+                  {p.seriesLaunchSource === "override"
+                    ? t("corrigé en interne")
+                    : t("déclaré par le client")}
+                </span>
+              </>
+            ) : (
+              <UnknownValue />
+            )}
+          </dd>
         </div>
-        <div>
-          <p className="t-caption text-muted-foreground">{t("Avancement")}</p>
-          {taskProgress(detail.tasks).percent === null ? (
-            <UnknownValue reason={t("aucune tâche")} />
-          ) : (
-            <span className="t-metric">{taskProgress(detail.tasks).percent} %</span>
-          )}
+        <div className="kpi">
+          <dt>{t("Avancement")}</dt>
+          <dd className="num">
+            {taskProgress(detail.tasks).percent === null ? (
+              <UnknownValue reason={t("aucune tâche")} />
+            ) : (
+              <span className="t-metric">{taskProgress(detail.tasks).percent} %</span>
+            )}
+          </dd>
         </div>
-        <div>
-          <p className="t-caption text-muted-foreground">{t("Dernière version envoyée")}</p>
-          <span className="t-metric">{p.currentRevision}</span>
+        <div className="kpi">
+          <dt>{t("Dernière version envoyée")}</dt>
+          <dd className="t-metric num">{p.currentRevision}</dd>
         </div>
-      </section>
+      </dl>
+
 
       <section className="space-y-2">
         <h3 className="t-title-s">{t("Étape")}</h3>
@@ -523,9 +610,11 @@ function TrackingTab({
 
       <section className="space-y-2">
         <h3 className="t-title-s">{t("Identité du projet")}</h3>
-        {local ? <p className="notice-warning t-caption">{local}</p> : null}
-        <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-          <div>
+        {local ? <p className="notice-warning t-caption anim-nudge">{local}</p> : null}
+        {/* Trois rangées alignées : libellé, champ, aide. Un libellé long ne
+            décale plus son voisin. */}
+        <div className="field-row">
+          <div className="field">
             <Label className="t-caption">{t("Société")}</Label>
             <Input
               value={fields.company}
@@ -536,24 +625,28 @@ function TrackingTab({
               <p className="t-caption text-muted-foreground">
                 {t("Déclaré par le client :")} {p.companySubmitted}
               </p>
-            ) : null}
+            ) : (
+              <span />
+            )}
           </div>
-          <div>
+          <div className="field">
             <Label className="t-caption">{t("Nom du projet")}</Label>
             <Input
               value={fields.projectName}
               onChange={(e) => setField("projectName", e.target.value)}
             />
+            <span />
           </div>
-          <div>
+          <div className="field">
             <Label className="t-caption">{t("Pays (code à deux lettres)")}</Label>
             <Input
               value={fields.countryCode}
               maxLength={2}
               onChange={(e) => setField("countryCode", e.target.value)}
             />
+            <span />
           </div>
-          <div>
+          <div className="field">
             <Label className="t-caption">{t("Devise (code à trois lettres)")}</Label>
             <Input
               value={fields.currency}
@@ -565,17 +658,20 @@ function TrackingTab({
               <p className="t-caption text-muted-foreground">
                 {t("Devise verrouillée : des montants sont déjà enregistrés. Effacez-les d'abord si la devise doit changer.")}
               </p>
-            ) : null}
+            ) : (
+              <span />
+            )}
           </div>
-          <div>
+          <div className="field">
             <Label className="t-caption">{t("Lancement série")}</Label>
             <Input
               type="date"
               value={fields.seriesLaunch}
               onChange={(e) => setField("seriesLaunch", e.target.value)}
             />
+            <span />
           </div>
-          <div>
+          <div className="field">
             <Label className="t-caption">{t("Volume annuel corrigé (capteurs)")}</Label>
             <Input
               inputMode="numeric"
@@ -586,7 +682,7 @@ function TrackingTab({
               {t("Vide : le volume de la dernière version envoyée est utilisé.")}
             </p>
           </div>
-          <div>
+          <div className="field">
             <Label className="t-caption">{t("Estimation de chiffre d'affaires annuel")}</Label>
             <Input
               inputMode="decimal"
@@ -598,9 +694,12 @@ function TrackingTab({
             </p>
           </div>
         </div>
+
+        <div className="field-actions">
         <Button
           size="sm"
           disabled={busy || dirty.size === 0}
+
           onClick={() => {
             const volume = parseVolumeInput(fields.volumeOverride);
             const estimate = parseAmountInput(fields.estimate);
@@ -631,17 +730,21 @@ function TrackingTab({
             void onRun(() => setCrmFields(p.dossierId, patch, p.version), t("Fiche enregistrée."));
           }}
         >
+          {busy ? <Loader2 className="mr-1 h-4 w-4 animate-spin" aria-hidden="true" /> : null}
           {t("Enregistrer")}
         </Button>
+        </div>
       </section>
+
 
       <section className="space-y-2">
         <h3 className="t-title-s">{t("Prix et coût")}</h3>
         <p className="t-caption text-muted-foreground">
           {t("Ces montants restent internes : ils ne partent jamais au client, ni dans un export, ni dans un message.")}
         </p>
-        <div className="grid gap-2 sm:grid-cols-2">
-          <div>
+        <div className="field-row">
+          <div className="field">
+
             <Label className="t-caption">{t("Prix de vente unitaire")}</Label>
             <Input
               inputMode="decimal"
@@ -649,7 +752,9 @@ function TrackingTab({
               disabled={!canPrice}
               onChange={(e) => setPrice(e.target.value)}
             />
-            {canPrice ? null : (
+            {canPrice ? (
+              <span />
+            ) : (
               <p className="t-caption text-muted-foreground">
                 {t("Seul le commerce ou l'administration renseigne le prix.")}
               </p>
@@ -657,8 +762,9 @@ function TrackingTab({
             <Button
               size="sm"
               variant="outline"
-              className="mt-1"
+              className="field-actions"
               disabled={busy || !canPrice}
+
               onClick={() => {
                 const parsed = parseAmountInput(price);
                 if (!parsed.ok) return setLocal(t("Prix : montant positif attendu."));
@@ -679,7 +785,7 @@ function TrackingTab({
               {t("Enregistrer le prix")}
             </Button>
           </div>
-          <div>
+          <div className="field">
             <Label className="t-caption">{t("Coût unitaire")}</Label>
             <Input
               inputMode="decimal"
@@ -687,7 +793,7 @@ function TrackingTab({
               disabled={!canCost || costInSap}
               onChange={(e) => setCost(e.target.value)}
             />
-            <label className="mt-1 flex min-h-11 items-center gap-2 text-sm">
+            <label className="t-body flex min-h-11 items-center gap-2">
               <input
                 type="checkbox"
                 className="h-5 w-5"
@@ -700,8 +806,9 @@ function TrackingTab({
             <Button
               size="sm"
               variant="outline"
-              className="mt-1"
+              className="field-actions"
               disabled={busy || !canCost}
+
               onClick={() => {
                 const parsed = parseAmountInput(cost);
                 if (!costInSap && !parsed.ok)
@@ -729,8 +836,9 @@ function TrackingTab({
         <p className="t-caption text-muted-foreground">
           {t("Désigner une personne ici n'ouvre aucun accès : l'accès dépend du compte rattaché et de l'affectation au dossier.")}
         </p>
-        <div className="grid gap-2 sm:grid-cols-2">
-          <div>
+        <div className="field-row">
+          <div className="field">
+
             <Label className="t-caption">{t("Commercial")}</Label>
             <Select
               value={directory.sales}
@@ -752,7 +860,7 @@ function TrackingTab({
               </SelectContent>
             </Select>
           </div>
-          <div>
+          <div className="field">
             <Label className="t-caption">FAE</Label>
             <Select
               value={directory.fae}
@@ -780,24 +888,28 @@ function TrackingTab({
             {t("Seul le commerce ou l'administration désigne les responsables.")}
           </p>
         )}
-        <Button
-          size="sm"
-          disabled={busy || !canOwners}
-          onClick={() =>
-            void onRun(
-              () =>
-                setCrmOwners(
-                  p.dossierId,
-                  directory.sales === "none" ? null : directory.sales,
-                  directory.fae === "none" ? null : directory.fae,
-                  p.version,
-                ),
-              t("Responsables enregistrés."),
-            )
-          }
-        >
-          {t("Enregistrer les responsables")}
-        </Button>
+        <div className="field-actions">
+          <Button
+            size="sm"
+            disabled={busy || !canOwners}
+            onClick={() =>
+              void onRun(
+                () =>
+                  setCrmOwners(
+                    p.dossierId,
+                    directory.sales === "none" ? null : directory.sales,
+                    directory.fae === "none" ? null : directory.fae,
+                    p.version,
+                  ),
+                t("Responsables enregistrés."),
+              )
+            }
+          >
+            {busy ? <Loader2 className="mr-1 h-4 w-4 animate-spin" aria-hidden="true" /> : null}
+            {t("Enregistrer les responsables")}
+          </Button>
+        </div>
+
       </section>
     </div>
   );
@@ -809,10 +921,12 @@ function TasksTab({
   detail,
   busy,
   onRun,
+  directory,
 }: {
   detail: CrmProjectDetail;
   busy: boolean;
   onRun: (fn: () => Promise<CrmProjectDetail>, ok: string) => Promise<void>;
+  directory: readonly CrmPerson[];
 }) {
   const p = detail.project;
   // Une clé de demande appartient au compte qui l'a créée.
@@ -825,263 +939,311 @@ function TasksTab({
     dueOn: "",
   });
   const [naReason, setNaReason] = useState<Record<string, string>>({});
+  const [open, setOpen] = useState<Record<string, boolean>>({});
   const [local, setLocal] = useState<string | null>(null);
+  // Une tâche dont le motif « sans objet » manque : on ouvre son bloc et on
+  // pose le curseur dans le champ, plutôt que d'afficher un reproche lointain.
+  const [focusNa, setFocusNa] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!focusNa) return;
+    const el = document.getElementById(`na-${focusNa}`);
+    if (el instanceof HTMLInputElement) el.focus();
+    setFocusNa(null);
+  }, [focusNa]);
+
+  /** Une tâche est écrite telle quelle, seul le champ touché change : aucune
+   *  autre valeur n'est réécrite par un rendu. */
+  const write = (task: CrmTask, patch: Partial<TaskInput>, ok: string) =>
+    void onRun(
+      () =>
+        upsertCrmTask(p.dossierId, {
+          id: task.id,
+          stage: task.stage,
+          label: task.label,
+          stakeholder: task.stakeholder,
+          status: task.status,
+          personId: task.personId,
+          naReason: task.naReason,
+          dueOn: task.dueOn,
+          expectedVersion: task.version,
+          ...patch,
+        }),
+      ok,
+    );
+
+  // Les tâches se lisent par étape, dans l'ordre du parcours ; à l'intérieur
+  // d'une étape, l'urgence décide. Aucune tâche n'est masquée.
+  const groups = ALL_STAGES.map((stage) => ({
+    stage,
+    tasks: sortByUrgency(
+      detail.tasks.filter((task) => task.stage === stage),
+      (task) => task,
+    ),
+  })).filter((group) => group.tasks.length > 0);
 
   return (
     <div className="space-y-4">
-      <p className="text-sm">
-        {progress.percent === null
-          ? t("Aucune tâche : l'avancement est inconnu, il ne vaut pas 0 %.")
-          : `${progress.done}/${progress.total} — ${progress.percent} %`}
-        {progress.blocked > 0 ? ` — ${progress.blocked} ${t("bloquée(s)")}` : ""}
-      </p>
+      {/* L'avancement se voit avant de se lire. */}
+      <div className="panel-block flex flex-wrap items-center gap-3">
+        <span className="t-body">
+          {progress.percent === null
+            ? t("Aucune tâche : l'avancement est inconnu, il ne vaut pas 0 %.")
+            : `${progress.done}/${progress.total} — ${progress.percent} %`}
+          {progress.blocked > 0 ? ` — ${progress.blocked} ${t("bloquée(s)")}` : ""}
+        </span>
+        {progress.percent === null ? null : (
+          <span className="progress-mini" style={{ ["--p" as string]: `${progress.percent}%` }} />
+        )}
+      </div>
 
       {detail.tasks.length === 0 ? (
-        <Button
-          size="sm"
-          variant="outline"
-          disabled={busy}
-          onClick={() =>
-            void onRun(
-              () => applyCrmTemplate(p.dossierId, p.version),
-              t("Liste de tâches type ajoutée."),
-            )
+        <EmptyBlock
+          text={t("Aucune tâche pour ce projet.")}
+          action={
+            <Button
+              size="sm"
+              variant="outline"
+              disabled={busy}
+              onClick={() =>
+                void onRun(
+                  () => applyCrmTemplate(p.dossierId, p.version),
+                  t("Liste de tâches type ajoutée."),
+                )
+              }
+            >
+              {busy ? <Loader2 className="mr-1 h-4 w-4 animate-spin" aria-hidden="true" /> : null}
+              {t("Ajouter la liste de tâches type")}
+            </Button>
           }
-        >
-          {t("Ajouter la liste de tâches type")}
-        </Button>
+        />
+
       ) : null}
 
-      {local ? <p className="notice-warning t-caption">{local}</p> : null}
+      {local ? <p className="notice-warning t-caption anim-nudge">{local}</p> : null}
 
-      <ul className="space-y-2">
-        {detail.tasks.map((task) => (
-          <li key={task.id} className="panel-block space-y-2 text-sm">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="font-medium">{task.label}</span>
-              <Badge variant="outline">{stageLabel(task.stage)}</Badge>
-              <span className="t-caption text-muted-foreground">
-                {t(STAKEHOLDER_LABEL[task.stakeholder] ?? task.stakeholder)}
-              </span>
-              {task.dueOn ? (
-                <span className="t-caption t-metric">
-                  {t("échéance")} {task.dueOn}
-                </span>
-              ) : (
-                <span className="t-caption text-muted-foreground">{t("sans échéance")}</span>
-              )}
-              {task.status === "done" && task.doneByName ? (
-                <span className="t-caption text-muted-foreground">
-                  {t("terminée par")} {task.doneByName}
-                </span>
-              ) : null}
-            </div>
-            {task.status === "not_applicable" && task.naReason ? (
-              <p className="t-caption text-muted-foreground">
-                {t("Sans objet :")} {task.naReason}
-              </p>
-            ) : null}
-            <div className="flex flex-wrap items-end gap-2">
-              <Select
-                value={task.status}
-                onValueChange={(v) => {
-                  const status = v as TaskStatus;
-                  if (status === "not_applicable" && !(naReason[task.id] ?? "").trim()) {
-                    setLocal(t("Un item « sans objet » demande une justification."));
-                    return;
-                  }
-                  setLocal(null);
-                  void onRun(
-                    () =>
-                      upsertCrmTask(p.dossierId, {
-                        id: task.id,
-                        stage: task.stage,
-                        label: task.label,
-                        stakeholder: task.stakeholder,
-                        status,
-                        personId: task.personId,
-                        naReason: status === "not_applicable" ? (naReason[task.id] ?? "").trim() : null,
-                        dueOn: task.dueOn,
-                        expectedVersion: task.version,
-                      }),
-                    t("Tâche mise à jour."),
-                  );
-                }}
+      {groups.map((group) => (
+        <section key={group.stage} className="space-y-2">
+          <h3 className="t-title-s flex items-center gap-2">
+            {stageLabel(group.stage)}
+            <span className="t-caption text-muted-foreground">
+              {group.tasks.length} {t("tâche(s)")}
+            </span>
+          </h3>
+          <ul className="space-y-2">
+            {group.tasks.map((task) => (
+              <TaskRow
+                key={task.id}
+                task={task}
+                person={personName(directory, task.personId ?? null)}
+                status={
+                  <Select
+                    value={task.status}
+                    onValueChange={(v) => {
+                      const status = v as TaskStatus;
+                      if (status === "not_applicable" && !(naReason[task.id] ?? "").trim()) {
+                        setLocal(t("Un item « sans objet » demande une justification."));
+                        setOpen((m) => ({ ...m, [task.id]: true }));
+                        setFocusNa(task.id);
+                        return;
+                      }
+                      setLocal(null);
+                      write(
+                        task,
+                        {
+                          status,
+                          naReason:
+                            status === "not_applicable" ? (naReason[task.id] ?? "").trim() : null,
+                        },
+                        t("Tâche mise à jour."),
+                      );
+                    }}
+                  >
+                    <SelectTrigger className="status-pill w-44" data-status={task.status}>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {TASK_STATUSES.map((s) => (
+                        <SelectItem key={s} value={s}>
+                          {t(TASK_STATUS_LABEL[s])}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                }
+                toggle={
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    aria-expanded={open[task.id] === true}
+                    aria-controls={`more-${task.id}`}
+                    onClick={() => setOpen((m) => ({ ...m, [task.id]: !m[task.id] }))}
+                  >
+                    <ChevronDown className="h-4 w-4" aria-hidden="true" />
+                    <span className="sr-only">{t("Ouvrir les champs de la tâche")}</span>
+                  </Button>
+                }
               >
-                <SelectTrigger className="min-h-11 w-48">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {TASK_STATUSES.map((s) => (
-                    <SelectItem key={s} value={s}>
-                      {t(TASK_STATUS_LABEL[s])}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <div>
-                <Label className="t-caption" htmlFor={`due-${task.id}`}>
-                  {t("Échéance")}
-                </Label>
-                <Input
-                  id={`due-${task.id}`}
-                  type="date"
-                  value={task.dueOn ?? ""}
-                  onChange={(e) => {
-                    const dueOn = e.target.value || null;
-                    if (dueOn === (task.dueOn ?? null)) return;
-                    setLocal(null);
-                    void onRun(
-                      () =>
-                        upsertCrmTask(p.dossierId, {
-                          id: task.id,
-                          stage: task.stage,
-                          label: task.label,
-                          stakeholder: task.stakeholder,
-                          status: task.status,
-                          personId: task.personId,
-                          naReason: task.naReason,
-                          dueOn,
-                          expectedVersion: task.version,
-                        }),
-                      t("Échéance mise à jour."),
-                    );
-                  }}
-                />
-              </div>
-              <div>
-                <Label className="t-caption">{t("Rôle concerné")}</Label>
-                <Select
-                  value={task.stakeholder}
-                  onValueChange={(v) => {
-                    const stakeholder = v as TaskStakeholder;
-                    if (stakeholder === task.stakeholder) return;
-                    setLocal(null);
-                    void onRun(
-                      () =>
-                        upsertCrmTask(p.dossierId, {
-                          id: task.id,
-                          stage: task.stage,
-                          label: task.label,
-                          stakeholder,
-                          status: task.status,
-                          personId: task.personId,
-                          naReason: task.naReason,
-                          dueOn: task.dueOn,
-                          expectedVersion: task.version,
-                        }),
-                      t("Rôle mis à jour."),
-                    );
-                  }}
-                >
-                  <SelectTrigger className="min-h-11 w-40">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {(["sales", "fae", "client"] as const).map((s) => (
-                      <SelectItem key={s} value={s}>
-                        {t(STAKEHOLDER_LABEL[s] ?? s)}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label className="t-caption" htmlFor={`na-${task.id}`}>
-                  {t("Motif si « sans objet »")}
-                </Label>
-                <Input
-                  id={`na-${task.id}`}
-                  value={naReason[task.id] ?? ""}
-                  onChange={(e) => setNaReason((m) => ({ ...m, [task.id]: e.target.value }))}
-                />
-                <InternalEnglishHint />
-              </div>
-            </div>
-          </li>
-        ))}
-      </ul>
+                {/* Échéance, rôle et motif ne se touchent presque jamais : ils
+                    se déplient, ils n'encombrent pas la ligne. */}
+                <div className="task-more" data-open={open[task.id] === true} id={`more-${task.id}`}>
+                  <div>
+                    <div className="field-row pt-2">
+                      <div className="field">
+                        <Label className="t-caption" htmlFor={`due-${task.id}`}>
+                          {t("Échéance")}
+                        </Label>
+                        <Input
+                          id={`due-${task.id}`}
+                          type="date"
+                          value={task.dueOn ?? ""}
+                          onChange={(e) => {
+                            const dueOn = e.target.value || null;
+                            if (dueOn === (task.dueOn ?? null)) return;
+                            setLocal(null);
+                            write(task, { dueOn }, t("Échéance mise à jour."));
+                          }}
+                        />
+                        <span />
+                      </div>
+                      <div className="field">
+                        <Label className="t-caption">{t("Rôle concerné")}</Label>
+                        <Select
+                          value={task.stakeholder}
+                          onValueChange={(v) => {
+                            const stakeholder = v as TaskStakeholder;
+                            if (stakeholder === task.stakeholder) return;
+                            setLocal(null);
+                            write(task, { stakeholder }, t("Rôle mis à jour."));
+                          }}
+                        >
+                          <SelectTrigger className="min-h-11">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {(["sales", "fae", "client"] as const).map((s) => (
+                              <SelectItem key={s} value={s}>
+                                {t(STAKEHOLDER_LABEL[s] ?? s)}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <span />
+                      </div>
+                      <div className="field">
+                        <Label className="t-caption" htmlFor={`na-${task.id}`}>
+                          {t("Motif si « sans objet »")}
+                        </Label>
+                        <Input
+                          id={`na-${task.id}`}
+                          value={naReason[task.id] ?? ""}
+                          onChange={(e) =>
+                            setNaReason((m) => ({ ...m, [task.id]: e.target.value }))
+                          }
+                        />
+                        <InternalEnglishHint />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </TaskRow>
+            ))}
+          </ul>
+        </section>
+      ))}
 
-      <section className="panel-block grid gap-2 sm:grid-cols-4">
-        <div className="sm:col-span-2">
-          <Label className="t-caption">{t("Nouvelle tâche")}</Label>
-          <Input value={draft.label} onChange={(e) => setDraft({ ...draft, label: e.target.value })} />
-          <InternalEnglishHint />
+      <section className="panel-block space-y-2">
+        <h3 className="t-title-s">{t("Nouvelle tâche")}</h3>
+        <div className="field-row">
+          <div className="field">
+            <Label className="t-caption">{t("Nouvelle tâche")}</Label>
+            <Input
+              value={draft.label}
+              onChange={(e) => setDraft({ ...draft, label: e.target.value })}
+            />
+            <InternalEnglishHint />
+          </div>
+          <div className="field">
+            <Label className="t-caption">{t("Étape")}</Label>
+            <Select
+              value={draft.stage}
+              onValueChange={(v) => setDraft({ ...draft, stage: v as CrmStage })}
+            >
+              <SelectTrigger className="min-h-11">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {ALL_STAGES.map((s) => (
+                  <SelectItem key={s} value={s}>
+                    {stageLabel(s)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <span />
+          </div>
+          <div className="field">
+            <Label className="t-caption">{t("Rôle concerné")}</Label>
+            <Select
+              value={draft.stakeholder}
+              onValueChange={(v) => setDraft({ ...draft, stakeholder: v as TaskStakeholder })}
+            >
+              <SelectTrigger className="min-h-11">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {(["sales", "fae", "client"] as const).map((s) => (
+                  <SelectItem key={s} value={s}>
+                    {t(STAKEHOLDER_LABEL[s] ?? s)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <span />
+          </div>
+          <div className="field">
+            <Label className="t-caption">{t("Échéance (facultative)")}</Label>
+            <Input
+              type="date"
+              value={draft.dueOn}
+              onChange={(e) => setDraft({ ...draft, dueOn: e.target.value })}
+            />
+            <span />
+          </div>
         </div>
-        <div>
-          <Label className="t-caption">{t("Étape")}</Label>
-          <Select
-            value={draft.stage}
-            onValueChange={(v) => setDraft({ ...draft, stage: v as CrmStage })}
+        <div className="field-actions">
+          <Button
+            size="sm"
+            disabled={busy || !draft.label.trim()}
+            onClick={() =>
+              void onRun(async () => {
+                // Clé de création stable : un même ajout rejoué (double-clic,
+                // reprise réseau) rend l'action déjà créée, pas un doublon.
+                const scope = `task:${p.dossierId}:${draft.stage}:${draft.label.trim()}`;
+                const clientKey = requestKeyFor(scope, accountId);
+                const next = await upsertCrmTask(p.dossierId, {
+                  stage: draft.stage,
+                  label: draft.label.trim(),
+                  stakeholder: draft.stakeholder,
+                  status: "todo",
+                  dueOn: draft.dueOn || null,
+                  clientKey,
+                });
+                releaseRequestKey(scope, accountId);
+                setDraft({ label: "", stage: p.stage, stakeholder: "sales", dueOn: "" });
+                return next;
+              }, t("Tâche ajoutée."))
+            }
           >
-            <SelectTrigger className="min-h-11">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {ALL_STAGES.map((s) => (
-                <SelectItem key={s} value={s}>
-                  {stageLabel(s)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+            {busy ? <Loader2 className="mr-1 h-4 w-4 animate-spin" aria-hidden="true" /> : null}
+            {t("Ajouter")}
+          </Button>
         </div>
-        <div>
-          <Label className="t-caption">{t("Rôle concerné")}</Label>
-          <Select
-            value={draft.stakeholder}
-            onValueChange={(v) => setDraft({ ...draft, stakeholder: v as TaskStakeholder })}
-          >
-            <SelectTrigger className="min-h-11">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {(["sales", "fae", "client"] as const).map((s) => (
-                <SelectItem key={s} value={s}>
-                  {t(STAKEHOLDER_LABEL[s] ?? s)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        <div>
-          <Label className="t-caption">{t("Échéance (facultative)")}</Label>
-          <Input
-            type="date"
-            value={draft.dueOn}
-            onChange={(e) => setDraft({ ...draft, dueOn: e.target.value })}
-          />
-        </div>
-        <Button
-          size="sm"
-          disabled={busy || !draft.label.trim()}
-          onClick={() =>
-            void onRun(async () => {
-              // Clé de création stable : un même ajout rejoué (double-clic,
-              // reprise réseau) rend l'action déjà créée, pas un doublon.
-              const scope = `task:${p.dossierId}:${draft.stage}:${draft.label.trim()}`;
-              const clientKey = requestKeyFor(scope, accountId);
-              const next = await upsertCrmTask(p.dossierId, {
-                stage: draft.stage,
-                label: draft.label.trim(),
-                stakeholder: draft.stakeholder,
-                status: "todo",
-                dueOn: draft.dueOn || null,
-                clientKey,
-              });
-              releaseRequestKey(scope, accountId);
-              setDraft({ label: "", stage: p.stage, stakeholder: "sales", dueOn: "" });
-              return next;
-            }, t("Tâche ajoutée."))
-          }
-        >
-
-          {t("Ajouter")}
-        </Button>
       </section>
     </div>
   );
 }
+
 
 /* -------------------------------------------------------------- Notes SAP */
 

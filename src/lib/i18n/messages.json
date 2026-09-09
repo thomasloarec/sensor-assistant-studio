@@ -18979,5 +18979,59 @@
     "Фильтр по этапу",
     "Filtra per fase",
     "ステージで絞り込む"
+  ],
+  "Aucune tâche pour ce projet.": [
+    "No task for this project.",
+    "此项目暂无任务。",
+    "Keine Aufgabe für dieses Projekt.",
+    "Ninguna tarea para este proyecto.",
+    "Для этого проекта нет задач.",
+    "Nessuna attività per questo progetto.",
+    "このプロジェクトにタスクはありません。"
+  ],
+  "tâche(s)": [
+    "task(s)",
+    "个任务",
+    "Aufgabe(n)",
+    "tarea(s)",
+    "задач(и)",
+    "attività",
+    "件のタスク"
+  ],
+  "Ouvrir les champs de la tâche": [
+    "Open the task fields",
+    "打开任务字段",
+    "Felder der Aufgabe öffnen",
+    "Abrir los campos de la tarea",
+    "Открыть поля задачи",
+    "Apri i campi dell'attività",
+    "タスクの項目を開く"
+  ],
+  "Mes tâches": [
+    "My tasks",
+    "我的任务",
+    "Meine Aufgaben",
+    "Mis tareas",
+    "Мои задачи",
+    "Le mie attività",
+    "自分のタスク"
+  ],
+  "Triées par urgence.": [
+    "Sorted by urgency.",
+    "按紧急程度排序。",
+    "Nach Dringlichkeit sortiert.",
+    "Ordenadas por urgencia.",
+    "Отсортировано по срочности.",
+    "Ordinate per urgenza.",
+    "緊急度順に並んでいます。"
+  ],
+  "Aucune tâche": [
+    "No task",
+    "无任务",
+    "Keine Aufgabe",
+    "Ninguna tarea",
+    "Нет задач",
+    "Nessuna attività",
+    "タスクなし"
   ]
 }
