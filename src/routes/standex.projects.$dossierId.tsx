@@ -176,9 +176,14 @@ function ProjectDetail() {
       // sans effacer le message qui explique pourquoi l'écriture a échoué.
       reload(true);
     } finally {
-      pendingRef.current = false;
-      if (dossierRef.current === asked) setBusy(false);
+      // Seule l'écriture propriétaire du verrou peut le rendre : une réponse
+      // périmée ne débloque ni la suivante ni son indicateur d'occupation.
+      if (pendingRef.current === gen) {
+        pendingRef.current = null;
+        if (dossierRef.current === asked) setBusy(false);
+      }
     }
+
   };
 
   if (capabilities === null) return <LoadingBlock />;
