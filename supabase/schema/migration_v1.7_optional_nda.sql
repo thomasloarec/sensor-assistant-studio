@@ -1,15 +1,26 @@
--- Lead Magnet — migration additive V1.7 : NDA OPTIONNEL
+-- ============================================================================
+-- Lead Magnet — migration ADDITIVE 1.7 : NDA OPTIONNEL
 -- Date : 2026-09-09
+--
 -- Portée : AUCUNE table modifiée, AUCUNE donnée existante mise à jour en masse.
 -- Objet unique : permettre au PROPRIÉTAIRE d'un dossier de déclarer explicitement
--- si un accord de confidentialité est nécessaire, dans les deux sens, et seulement
--- tant qu'aucun engagement réel n'existe.
+-- si un accord de confidentialité est nécessaire, dans les deux sens, et
+-- seulement tant qu'aucune signature n'existe réellement.
 --
 -- Règles serveur conservées telles quelles :
 --   * `lead_priv.nda_allows_transfer` reste l'autorité du transfert ;
 --   * une preuve vérifiée ne peut JAMAIS être annulée depuis le client ;
---   * `awaiting_signatures` et `in_force` ne sont pas rétrogradables ici ;
+--   * `in_force` n'est pas rétrogradable ici ;
 --   * aucun dossier existant n'est modifié par l'application de ce fichier.
+--
+-- Note vérifiée sur l'existant : `lead_priv.prepare_nda` place le dossier en
+-- `awaiting_signatures` DÈS la préparation d'un document vide, sans preuve et
+-- sans envoi en signature. Ce statut ne constitue donc pas, à lui seul, un
+-- engagement contractuel : le retrait explicite du propriétaire y reste permis
+-- tant qu'aucune preuve n'est enregistrée et que le statut n'est pas `in_force`.
+-- ============================================================================
+
+begin;
 
 create or replace function lead_priv.set_nda_requirement(_dossier uuid, _required boolean)
 returns jsonb language plpgsql security definer
@@ -31,15 +42,18 @@ begin
        where id = d.id and nda_required = false and nda_status = 'not_required';
     end if;
   else
-    -- Retrait : uniquement sans preuve et sans engagement en cours.
+    -- Retrait : refusé dès qu'une preuve existe ou que le NDA est en vigueur.
+    -- `requested`, `prepared` et `awaiting_signatures` sans preuve ne sont que
+    -- des étapes de demande : le client garde le droit de renoncer au NDA.
     if d.nda_required then
-      if exists (select 1 from lead.nda_proofs p where p.dossier_id = d.id)
-         or d.nda_status not in ('requested', 'prepared') then
+      if d.nda_status = 'in_force'
+         or exists (select 1 from lead.nda_proofs p where p.dossier_id = d.id) then
         raise exception 'NDA_ENGAGEMENT_IN_PROGRESS' using errcode = '42501';
       end if;
       update lead.design_dossiers
          set nda_required = false, nda_status = 'not_required', updated_at = now()
-       where id = d.id and nda_status in ('requested', 'prepared')
+       where id = d.id
+         and nda_status in ('requested', 'prepared', 'awaiting_signatures')
          and not exists (select 1 from lead.nda_proofs p where p.dossier_id = d.id);
     end if;
   end if;
@@ -55,9 +69,25 @@ set search_path = public, lead_priv, pg_temp as $$
   select lead_priv.set_nda_requirement(p_dossier, p_required);
 $$;
 
+-- ----------------------------------------------------------------------------
+-- Permissions : EXECUTE public par défaut retiré des DEUX fonctions.
+-- La fonction privée security definer n'est atteignable que par le wrapper
+-- invoker, appelé par un utilisateur authentifié.
+-- ----------------------------------------------------------------------------
+revoke all on function lead_priv.set_nda_requirement(uuid, boolean) from public, anon;
 revoke all on function public.lead_set_nda_requirement(uuid, boolean) from public, anon;
+
+grant execute on function lead_priv.set_nda_requirement(uuid, boolean) to authenticated;
 grant execute on function public.lead_set_nda_requirement(uuid, boolean) to authenticated;
 
--- Contrat :
---   public.lead_set_nda_requirement(dossier uuid, required boolean) -> jsonb  [auth, propriétaire]
+insert into lead.schema_migrations (version) values ('1.7')
+on conflict (version) do nothing;
+
+commit;
+
+-- ============================================================================
+-- CONTRAT AJOUTÉ
+--   public.lead_set_nda_requirement(dossier uuid, required boolean) -> jsonb
+--     [authentifié, propriétaire du dossier uniquement]
 --   Erreurs : DOSSIER_NOT_FOUND, NOT_ALLOWED, NDA_ENGAGEMENT_IN_PROGRESS
+-- ============================================================================
