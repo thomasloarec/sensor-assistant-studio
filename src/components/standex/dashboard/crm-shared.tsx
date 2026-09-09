@@ -6,6 +6,7 @@
  */
 import { t } from "@/lib/i18n/core";
 import { Button } from "@/components/ui/button";
+import { AvatarInitials } from "@/components/standex/dashboard/avatar-initials";
 import {
   CRM_STAGES,
   CRM_STAGE_LABEL,
@@ -15,14 +16,17 @@ import {
   formatPercent,
   marginPercent,
   personFullName,
+  taskOverdueDays,
   type CrmPerson,
   type CrmProject,
   type CrmStage,
+  type CrmTask,
   type TaskStatus,
 } from "@/lib/leadmagnet/crm";
 
 export const stageLabel = (stage: CrmStage) => t(CRM_STAGE_LABEL[stage]);
 export const ALL_STAGES = CRM_STAGES;
+
 
 /* i18n-canonical : libellés canoniques traduits par t() au rendu. */
 export const TASK_STATUS_LABEL: Record<TaskStatus, string> = {
