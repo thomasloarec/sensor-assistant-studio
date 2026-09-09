@@ -307,7 +307,11 @@ export function AdminScreen() {
                         id="new-person-submit"
                         size="sm"
                         disabled={busy || !person.firstName.trim() || !person.lastName.trim()}
-                        onClick={() =>
+                        onClick={() => {
+                          // Le vidage du formulaire n'appartient qu'à la session
+                          // qui a lancé l'écriture : une réponse revenue après
+                          // un changement de compte ne touche plus l'écran.
+                          const gen = sessionRef.current;
                           void run(async () => {
                             const next = await upsertCrmPerson(
                               null,
@@ -316,11 +320,13 @@ export function AdminScreen() {
                               person.role,
                               true,
                             );
-                            setPerson({ firstName: "", lastName: "", role: "sales" });
-                            setAddOpen(false);
+                            if (sessionRef.current === gen) {
+                              setPerson({ firstName: "", lastName: "", role: "sales" });
+                              setAddOpen(false);
+                            }
                             return next;
-                          }, t("Personne ajoutée à l'annuaire."))
-                        }
+                          }, t("Personne ajoutée à l'annuaire."));
+                        }}
                       >
                         {busy ? <Loader2 className="mr-2 size-4 animate-spin" aria-hidden="true" /> : null}
                         {t("Ajouter à l'annuaire")}
