@@ -66,7 +66,7 @@ import {
   type TaskStakeholder,
   type TaskStatus,
 } from "@/lib/leadmagnet/crm";
-import { sapNotesToText } from "@/lib/leadmagnet/sap-note";
+import { latestSapNoteText, sapNotesToText } from "@/lib/leadmagnet/sap-note";
 
 export const Route = createFileRoute("/standex/projects/$dossierId")({
   component: ProjectDetailRoute,
