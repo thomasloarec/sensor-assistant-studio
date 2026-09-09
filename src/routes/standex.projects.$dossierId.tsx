@@ -34,6 +34,7 @@ import {
 } from "@/components/standex/dashboard/crm-shared";
 import {
   applyCrmTemplate,
+  fetchCrmBoard,
   fetchCrmProject,
   queueReviewNotification,
   setCrmCost,
@@ -42,6 +43,7 @@ import {
   setCrmPrice,
   setCrmStage,
   upsertCrmTask,
+  type CrmPerson,
   type CrmProjectDetail,
 } from "@/lib/leadmagnet/dashboard-adapter";
 import { requestKeyFor, releaseRequestKey } from "@/lib/leadmagnet/request-key";
@@ -214,7 +216,7 @@ function ProjectDetail() {
         {project ? <Badge variant="outline">{stageLabel(project.stage)}</Badge> : null}
       </div>
 
-      {detail && project ? <ProjectSummary detail={detail} /> : null}
+      {detail && project ? <ProjectSummary detail={detail} directory={pageDirectory} /> : null}
 
 
       <div role="tablist" aria-label={t("Sections de la fiche projet")} className="flex flex-wrap gap-1">
@@ -299,9 +301,9 @@ function ProjectSummary({
       <div>
         <dt className="t-caption text-muted-foreground">{t("Responsables")}</dt>
         <dd>
-          {t("Commercial")} : {personName(detail.directory, p.salesPersonId ?? null)}
+          {t("Commercial")} : {personName(directory, p.salesPersonId ?? null)}
           {" · "}
-          {t("FAE")} : {personName(detail.directory, p.faePersonId ?? null)}
+          {t("FAE")} : {personName(directory, p.faePersonId ?? null)}
         </dd>
       </div>
       <div>
