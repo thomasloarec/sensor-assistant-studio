@@ -117,6 +117,8 @@ import {
   technicalSummary,
 } from "@/lib/leadmagnet/submission";
 import { checkLeadBackend, type LeadBackendStatus } from "@/lib/leadmagnet/backend";
+import { requestEnglishReport } from "@/lib/leadmagnet/english-report.functions";
+
 import {
   createDossier as createServerDossier,
   createSupabaseSubmissionBackend,
@@ -417,6 +419,15 @@ export function DesignSpace({
   const [acknowledged, setAcknowledged] = useState(false);
   const [extraConstraints, setExtraConstraints] = useState("");
   const [submitMessage, setSubmitMessage] = useState<string | null>(null);
+  /** État FACTUEL de la version anglaise du rapport : jamais « envoyé en anglais »
+   * tant que le serveur n'a pas publié une version prête pour cette révision. */
+  const [englishMessage, setEnglishMessage] = useState<string | null>(null);
+  const [englishRetry, setEnglishRetry] = useState<{
+    dossierId: string;
+    revisionId: string;
+    contentHash: string;
+  } | null>(null);
+
   const [showWorkshop, setShowWorkshop] = useState(false);
   /** Démarrage RÉEL du projet : c'est ici, et pas au montage caché de
    * l'espace, que la langue d'origine du projet est fixée. Changer ensuite la
@@ -1026,6 +1037,42 @@ export function DesignSpace({
     serverRevision,
   ]);
 
+  /** Version anglaise du rapport : produite côté serveur, jamais dans ce navigateur.
+   * Un nouvel appel sur la même version ne crée ni doublon ni second envoi.
+   */
+  const runEnglishReport = useCallback(
+    async (target: { dossierId: string; revisionId: string; contentHash: string }) => {
+      if (!supabase) return;
+      const { data } = await supabase.auth.getSession();
+      const accessToken = data.session?.access_token;
+      if (!accessToken) {
+        setEnglishMessage(t("Session expirée : reconnectez-vous pour relancer la version anglaise."));
+        return;
+      }
+      setEnglishMessage(t("Version anglaise en cours de préparation pour cette version envoyée."));
+      try {
+        const outcome = await requestEnglishReport({ data: { accessToken, ...target } });
+        if (outcome.state === "ready") {
+          setEnglishRetry(null);
+          setEnglishMessage(
+            t("Version anglaise prête pour cette version : l'équipe Standex la lit en anglais, votre original reste consultable."),
+          );
+        } else if (outcome.state === "unavailable") {
+          setEnglishMessage(t(outcome.reason));
+        } else {
+          setEnglishMessage(t(outcome.reason));
+          if (!outcome.retryable) setEnglishRetry(null);
+        }
+      } catch {
+        setEnglishMessage(
+          t("La version anglaise n'a pas pu être produite. Votre dossier d'origine est bien arrivé ; vous pouvez relancer."),
+        );
+      }
+    },
+    [],
+  );
+
+
   /** Étape 2 : envoi. Aucun dépôt ici — ce qui est joint a déjà été déposé,
    * vérifié et relu. Le verrou empêche un double clic de créer deux versions.
    */
@@ -1089,6 +1136,23 @@ export function DesignSpace({
         setSubmitMessage(
           t("Dossier transmis à la revue Standex. Vous serez informé dès qu'un retour est publié."),
         );
+        // Version anglaise : demandée UNIQUEMENT si l'accord de traduction a été
+        // donné pour ce contenu exact. Sans accord, rien n'est transmis et on le dit.
+        const bound = await submissionBinding(input);
+        const target = {
+          dossierId: serverDossierId ?? "",
+          revisionId: outcome.submissionId,
+          contentHash: bound.contentHash,
+        };
+        if (hasBoundConsent(privacy, "ai_assistant", bound) && target.dossierId) {
+          setEnglishRetry(target);
+          await runEnglishReport(target);
+        } else {
+          setEnglishRetry(null);
+          setEnglishMessage(
+            t("Version anglaise non demandée : votre accord de traduction n'a pas été donné pour cette version. Le dossier d'origine est bien arrivé."),
+          );
+        }
       } else {
         setSubmitMessage(outcome.reason);
       }
@@ -1099,7 +1163,7 @@ export function DesignSpace({
   }, [
     dossier,
     nda,
-    privacy.consents,
+    privacy,
     acknowledged,
     extraConstraints,
     backend,
@@ -1107,7 +1171,9 @@ export function DesignSpace({
     serverRevision,
     shareModel,
     preparedUpload,
+    runEnglishReport,
   ]);
+
 
   const volume = dossier.business.annualVolume;
   // La désignation standard/custom vient du retour R&D publié, jamais de cet écran.
@@ -2210,6 +2276,45 @@ export function DesignSpace({
               {t("J'autorise l'envoi de ce contenu à Standex (R&D et commercial).")}
             </label>
             {consentNotice ? <p className="notice notice-warning">{consentNotice}</p> : null}
+
+            <label className="t-caption flex items-start gap-2">
+              <Checkbox
+                checked={binding !== null && hasBoundConsent(privacy, "ai_assistant", binding)}
+                disabled={binding === null}
+                onCheckedChange={(v) => {
+                  setPrivacy((p) =>
+                    v && binding
+                      ? grantConsent(p, {
+                          kind: "ai_assistant",
+                          contentSummary: t(
+                            "Textes de ce dossier (exigences, notes, questions, contraintes) traduits en anglais.",
+                          ),
+                          recipients: [t("Anthropic (service de traduction)")],
+                          binding,
+                        })
+                      : { ...p, consents: p.consents.filter((c) => c.kind !== "ai_assistant") },
+                  );
+                }}
+              />
+              <span>
+                {t(
+                  "J'autorise en plus la traduction en anglais des textes de ce dossier par un service externe (Anthropic), afin que l'équipe Standex les lise en anglais. Références, valeurs, unités, noms et fichiers restent inchangés, et mon dossier d'origine est conservé tel quel. Sans cette case, aucun texte n'est transmis à ce service.",
+                )}
+              </span>
+            </label>
+            {englishMessage ? <p className="notice notice-info">{englishMessage}</p> : null}
+            {englishRetry ? (
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={busy}
+                onClick={() => void runEnglishReport(englishRetry)}
+              >
+                {t("Relancer la version anglaise")}
+              </Button>
+            ) : null}
+
+
 
             <label className="t-caption flex items-center gap-2">
               <Checkbox

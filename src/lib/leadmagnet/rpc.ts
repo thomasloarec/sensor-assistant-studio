@@ -27,6 +27,11 @@ export const LEAD_RPC = {
   recordNdaProof: "lead_admin_record_nda_proof",
   prepareNda: "lead_prepare_nda",
   ndaStatus: "lead_nda_status",
+  // Version anglaise du rapport (migration 1.6) : appelées UNIQUEMENT par le
+  // serveur avec le rôle de service, jamais par le navigateur.
+  reportEnAuthorize: "lead_report_en_authorize",
+  reportEnBegin: "lead_report_en_begin",
+  reportEnFinalize: "lead_report_en_finalize",
 } as const;
 
 /** Comparaison de versions « majeur.mineur » : le serveur doit être au moins à la version requise. */

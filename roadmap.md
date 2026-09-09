@@ -169,3 +169,8 @@
 - [x] Ramener les lames du reed nu à l'intérieur du verre et les rendre visibles sans radiographie.
 - [ ] Parcours navigateur réel atelier + capteurs possibles en ja/zh/ru.
 - [ ] Rapport enregistré en anglais (lot suivant, déjà autorisé).
+
+## Version anglaise du rapport (2026-09-08)
+- Migration 1.5 appliquée (stockage). Migration 1.6 `supabase/schema/migration_v1.6_english_report_pipeline.sql` ÉCRITE, NON appliquée : à appliquer sur yyobodalwtsqdyrqwkjk.
+- Chaîne serveur : autorisation en base (droits, empreinte, NDA, consentement `ai_assistant` exact) → réservation `pending` → traduction Anthropic → publication `ready`.
+- Configuration manquante côté serveur : `SUPABASE_SERVICE_ROLE_KEY` (sans elle, la demande répond « non configuré » et rien n'est transmis).

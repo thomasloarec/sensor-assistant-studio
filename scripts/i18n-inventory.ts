@@ -21,6 +21,8 @@ const SKIP_FILES = [
   "src/lib/leadmagnet/nda-docx.ts", // NDA original immuable (juridique)
   "src/lib/standex/response-contract.ts", // contrat/prompt serveur
   "src/lib/standex/experimental.server.ts", // prompt serveur
+  "src/lib/leadmagnet/english-report.server.ts", // prompt serveur de traduction
+  "src/lib/leadmagnet/english-translation.ts", // corps du rapport, en anglais par construction
   "src/lib/standex/migration-status.ts", // SQL et noms de colonnes
   "src/lib/error-page.ts", // page de secours statique hors React
 ];
@@ -164,7 +166,11 @@ const normalize = (v: string) => v.replace(/\s+/g, " ").trim();
 const dictKeys = new Set(Object.keys(dictionary).map(normalize));
 const templates = Object.keys(dictionary)
   .filter((k) => /\{\d+\}/.test(k))
+  // Une clé sans texte fixe (« {0} {1} ») accepterait N'IMPORTE quelle phrase et
+  // rendrait l'inventaire aveugle : elle n'est pas utilisable comme gabarit.
+  .filter((k) => /\p{L}{3,}/u.test(k.replace(/\{\d+\}/g, " ")))
   .map((k) => new RegExp("^" + k.split(/\{\d+\}/).map((p) => p.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("(.*?)") + "$"));
+
 const known = (text: string) => {
   const key = normalize(text);
   return dictKeys.has(key) || templates.some((r) => r.test(key));
