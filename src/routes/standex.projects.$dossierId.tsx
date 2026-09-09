@@ -65,6 +65,7 @@ import { fetchStaffView, type DossierView } from "@/lib/leadmagnet/supabase-adap
 
 
 import {
+  CRM_STAGES,
   TASK_STATUSES,
   actionAgeDays,
   nextAction,
@@ -77,9 +78,11 @@ import {
   personFullName,
   taskProgress,
   type CrmStage,
+  type CrmTask,
   type TaskStakeholder,
   type TaskStatus,
 } from "@/lib/leadmagnet/crm";
+
 import { latestSapNoteText, sapNotesToText } from "@/lib/leadmagnet/sap-note";
 
 export const Route = createFileRoute("/standex/projects/$dossierId")({
