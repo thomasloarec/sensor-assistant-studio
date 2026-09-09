@@ -250,46 +250,65 @@ export function ProjectDetail({ dossierId }: { dossierId: string }) {
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap items-center gap-2">
+      {/* Identité du projet : d'où l'on vient, de qui il s'agit, où il en est. */}
+      <div className="space-y-1">
         <Link
           to="/standex"
-          className="inline-flex min-h-11 items-center text-sm text-muted-foreground"
+          className="t-caption inline-flex min-h-11 items-center text-muted-foreground"
         >
           ← {t("Projets")}
         </Link>
-        <h2 className="t-title-m">
-          {/* Société réellement affichée : celle déclarée par le client, sauf
-              correction interne explicite. Puis le nom du projet. */}
-          {project?.companyEffective ?? project?.company ?? project?.title ?? t("Fiche projet")}
-        </h2>
-        {project?.projectName ? (
-          <span className="t-body text-muted-foreground">{project.projectName}</span>
-        ) : null}
-
-        {project ? <Badge variant="outline">{stageLabel(project.stage)}</Badge> : null}
+        <div className="flex flex-wrap items-center gap-3">
+          <h2 className="t-title-l">
+            {/* Société réellement affichée : celle déclarée par le client, sauf
+                correction interne explicite. Puis le nom du projet. */}
+            {project?.companyEffective ?? project?.company ?? project?.title ?? t("Fiche projet")}
+          </h2>
+          {project?.projectName ? (
+            <span className="t-body text-muted-foreground">{project.projectName}</span>
+          ) : null}
+          {project ? (
+            <span className="inline-flex items-center gap-2">
+              <StagePill stage={project.stage} />
+              <StageGauge stage={project.stage} />
+            </span>
+          ) : null}
+        </div>
       </div>
 
       {detail && project ? <ProjectSummary detail={detail} directory={pageDirectory} /> : null}
 
-
-      <div role="tablist" aria-label={t("Sections de la fiche projet")} className="flex flex-wrap gap-1">
+      {/* Onglets : même vocabulaire que la navigation de l'espace de travail. */}
+      <div
+        role="tablist"
+        aria-label={t("Sections de la fiche projet")}
+        className="segmented"
+        style={{
+          ["--seg-count" as string]: TABS.length,
+          ["--seg" as string]: TABS.findIndex((item) => item.id === tab),
+        }}
+      >
+        <span className="segmented-thumb" aria-hidden="true" />
         {TABS.map((item) => (
-          <Button
+          <button
             key={item.id}
+            type="button"
             role="tab"
+            id={`tab-${item.id}`}
             aria-selected={tab === item.id}
-            size="sm"
-            variant={tab === item.id ? "default" : "outline"}
+            aria-controls={`panel-${item.id}`}
+            data-active={tab === item.id ? "true" : undefined}
+            className="segmented-item"
             onClick={() => setTab(item.id)}
           >
             {t(item.label)}
-          </Button>
+          </button>
         ))}
       </div>
 
-      {message ? <p className="notice-success text-sm">{message}</p> : null}
       {error ? <ErrorBlock text={error} onRetry={load} /> : null}
       {detail === null && !error ? <LoadingBlock /> : null}
+
 
       {detail && project ? (
         <>
