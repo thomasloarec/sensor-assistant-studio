@@ -83,9 +83,16 @@ describe("migration V1.2 : invariants de sécurité", () => {
   });
 
   test("toutes les RPC du contrat existent dans la migration", () => {
+    // Le contrat s'étend sur les migrations additives : une RPC déclarée doit
+    // exister dans l'une d'elles, jamais nulle part.
+    const ALL_SQL =
+      SQL +
+      readFileSync("supabase/schema/migration_v1.5_english_report.sql", "utf8") +
+      readFileSync("supabase/schema/migration_v1.6_english_report_pipeline.sql", "utf8");
     for (const name of Object.values(LEAD_RPC))
-      expect(SQL).toContain(`create or replace function public.${name}`);
+      expect(ALL_SQL).toContain(`create or replace function public.${name}`);
   });
+
 
   test("le schéma lead n'est jamais ouvert en écriture à authenticated ou anon", () => {
     expect(SQL).not.toMatch(/grant\s+(select|insert|update|delete|all)[^;]*on\s+lead\.[^;]*to[^;]*anon/i);
