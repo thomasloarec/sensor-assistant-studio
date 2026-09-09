@@ -18637,5 +18637,77 @@
     "Видно клиенту — сохранённый язык проекта:",
     "Visibile al cliente — lingua registrata del progetto:",
     "顧客が閲覧 — 保存されたプロジェクト言語:"
+  ],
+  "Objet du message client (facultatif)": [
+    "Client message subject (optional)",
+    "客户消息主题（可选）",
+    "Betreff der Kundennachricht (optional)",
+    "Asunto del mensaje al cliente (opcional)",
+    "Тема сообщения клиенту (необязательно)",
+    "Oggetto del messaggio al cliente (facoltativo)",
+    "顧客向けメッセージの件名（任意）"
+  ],
+  "Message client à préparer avec la publication (facultatif)": [
+    "Client message prepared with publication (optional)",
+    "随发布一同准备的客户消息（可选）",
+    "Kundennachricht, die mit der Veröffentlichung vorbereitet wird (optional)",
+    "Mensaje al cliente preparado con la publicación (opcional)",
+    "Сообщение клиенту, подготовленное вместе с публикацией (необязательно)",
+    "Messaggio al cliente preparato con la pubblicazione (facoltativo)",
+    "公開と同時に準備する顧客向けメッセージ（任意）"
+  ],
+  "Rempli, il est mis en attente d'envoi dans la même opération que la publication : il ne peut pas exister de retour publié sans message préparé. Aucun envoi n'est effectué.": [
+    "If filled in, it is queued for sending in the same operation as the publication: there can be no published feedback without a prepared message. Nothing is sent.",
+    "如果填写，它将与发布在同一操作中进入待发送队列：不会出现已发布反馈却没有准备好的消息。系统不会发送任何内容。",
+    "Wenn ausgefüllt, wird sie im selben Vorgang wie die Veröffentlichung zum Versand eingereiht: Es kann keine veröffentlichte Rückmeldung ohne vorbereitete Nachricht geben. Es wird nichts versendet.",
+    "Si se rellena, queda en espera de envío en la misma operación que la publicación: no puede existir una respuesta publicada sin mensaje preparado. No se envía nada.",
+    "Если оно заполнено, оно ставится в очередь на отправку в той же операции, что и публикация: опубликованного ответа без подготовленного сообщения быть не может. Ничего не отправляется.",
+    "Se compilato, viene messo in attesa di invio nella stessa operazione della pubblicazione: non può esistere un riscontro pubblicato senza messaggio preparato. Non viene inviato nulla.",
+    "入力すると、公開と同じ操作で送信待ちに入ります。準備済みメッセージのない公開回答は存在しません。送信は行われません。"
+  ],
+  "Retour publié et message client mis en attente d'envoi.": [
+    "Feedback published and client message queued for sending.",
+    "反馈已发布，客户消息已进入待发送队列。",
+    "Rückmeldung veröffentlicht und Kundennachricht zum Versand eingereiht.",
+    "Respuesta publicada y mensaje al cliente en espera de envío.",
+    "Ответ опубликован, сообщение клиенту поставлено в очередь на отправку.",
+    "Riscontro pubblicato e messaggio al cliente in attesa di invio.",
+    "回答を公開し、顧客向けメッセージを送信待ちにしました。"
+  ],
+  "Cette même demande a déjà été envoyée avec un contenu différent.": [
+    "This same request was already sent with different content.",
+    "同一请求此前已用不同内容提交。",
+    "Dieselbe Anfrage wurde bereits mit anderem Inhalt gesendet.",
+    "Esta misma solicitud ya se envió con un contenido diferente.",
+    "Этот же запрос уже был отправлен с другим содержимым.",
+    "La stessa richiesta è già stata inviata con un contenuto diverso.",
+    "同じ依頼が、異なる内容ですでに送信されています。"
+  ],
+  "Rechargez le projet : le retour publié et sa notification y figurent déjà.": [
+    "Reload the project: the published feedback and its notification are already there.",
+    "请重新加载该项目：已发布的反馈及其通知已存在。",
+    "Laden Sie das Projekt neu: Die veröffentlichte Rückmeldung und ihre Benachrichtigung sind bereits vorhanden.",
+    "Recargue el proyecto: la respuesta publicada y su notificación ya están ahí.",
+    "Перезагрузите проект: опубликованный ответ и уведомление уже есть.",
+    "Ricarica il progetto: il riscontro pubblicato e la sua notifica sono già presenti.",
+    "プロジェクトを再読み込みしてください。公開済みの回答と通知はすでにあります。"
+  ],
+  "Cette publication est déjà en cours d'enregistrement. Patientez, puis rechargez.": [
+    "This publication is already being saved. Wait, then reload.",
+    "该发布正在保存中。请稍候后重新加载。",
+    "Diese Veröffentlichung wird bereits gespeichert. Bitte warten und dann neu laden.",
+    "Esta publicación ya se está guardando. Espere y vuelva a cargar.",
+    "Эта публикация уже сохраняется. Подождите и обновите.",
+    "Questa pubblicazione è già in corso di salvataggio. Attendi, poi ricarica.",
+    "この公開は保存処理中です。しばらく待ってから再読み込みしてください。"
+  ],
+  "Demande incomplète : rien n'a été publié.": [
+    "Incomplete request: nothing was published.",
+    "请求不完整：没有发布任何内容。",
+    "Unvollständige Anfrage: Es wurde nichts veröffentlicht.",
+    "Solicitud incompleta: no se publicó nada.",
+    "Неполный запрос: ничего не опубликовано.",
+    "Richiesta incompleta: non è stato pubblicato nulla.",
+    "依頼が不完全です。何も公開されていません。"
   ]
 }
