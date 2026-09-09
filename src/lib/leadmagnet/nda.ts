@@ -23,8 +23,15 @@ export type NdaVariableFields = NdaVariableValues;
 
 export const EMPTY_NDA_FIELDS: NdaVariableFields = EMPTY_NDA_VALUES;
 
-/** Libellés des champs variables, dans l'ordre du document. */
-export const NDA_FIELD_LABELS = VARIABLE_FIELDS.map((f) => [f.key, f.label] as const);
+/** Champs variables réservés à l'équipe Standex : le client ne les saisit pas.
+ * La date côté Standex accompagne la signature de Standex ; la laisser au
+ * client reviendrait à faire écrire une date qui n'engage pas Standex. */
+export const STANDEX_ONLY_NDA_FIELDS = ["standexDate"] as const;
+
+/** Libellés des champs variables saisis par le client, dans l'ordre du document. */
+export const NDA_FIELD_LABELS = VARIABLE_FIELDS.filter(
+  (f) => !(STANDEX_ONLY_NDA_FIELDS as readonly string[]).includes(f.key),
+).map((f) => [f.key, f.label] as const);
 
 export type NdaStatus =
   "not_required" | "requested" | "prepared" | "awaiting_signatures" | "in_force";

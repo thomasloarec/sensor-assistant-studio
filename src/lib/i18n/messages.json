@@ -1295,6 +1295,15 @@
     "Anima con distanze fittizie",
     "仮の距離で再生"
   ],
+  "Animer l'aimant": [
+    "Animate the magnet",
+    "让磁铁动起来",
+    "Magnet animieren",
+    "Animar el imán",
+    "Запустить движение магнита",
+    "Anima il magnete",
+    "マグネットを動かす"
+  ],
   "Annuler": [
     "Cancel",
     "取消",
@@ -1537,6 +1546,15 @@
     "Ни один вариант здесь не подтвержден: окончательный выбор и артикул для заказа определяются в ходе проверки R&D Standex.",
     "Nessun candidato è convalidato qui: la selezione definitiva e il codice ordinabile sono stabiliti dalla revisione R&D Standex.",
     "ここでは候補は検証されていません：最終的な選定および発注可能な型番は、Standex の R&D レビューによって決定されます。"
+  ],
+  "Aucun capteur documenté ne correspond à ces filtres. L'option sur mesure reste ouverte.": [
+    "No documented sensor matches these filters. The custom option remains open.",
+    "没有符合这些筛选条件的有资料传感器。定制选项仍然可行。",
+    "Kein dokumentierter Sensor entspricht diesen Filtern. Die Sonderlösung bleibt möglich.",
+    "Ningún sensor documentado coincide con estos filtros. La opción a medida sigue abierta.",
+    "Ни один задокументированный датчик не подходит под эти фильтры. Индивидуальное решение остаётся возможным.",
+    "Nessun sensore documentato corrisponde a questi filtri. L'opzione su misura resta aperta.",
+    "これらの条件に合う資料済みセンサーはありません。カスタム対応は引き続き可能です。"
   ],
   "Aucun capteur ne correspond à cette recherche.": [
     "No sensors match your search.",
@@ -2258,6 +2276,15 @@
     "Piedinatura",
     "ピン配列"
   ],
+  "Broches CMS": [
+    "SMD pins",
+    "SMD 引脚",
+    "SMD-Anschlüsse",
+    "Pines SMD",
+    "SMD-выводы",
+    "Pin SMD",
+    "SMD ピン"
+  ],
   "Brouillon": [
     "Draft",
     "草稿",
@@ -2600,6 +2627,15 @@
     "Centimetri",
     "センチメートル"
   ],
+  "Ces capteurs sont des exemples à explorer. Le bureau d'études Standex vérifiera leur adaptation à votre projet après l'envoi du dossier.": [
+    "These sensors are examples to explore. The Standex engineering office will check whether they suit your project once the case file is sent.",
+    "这些传感器只是可供探索的示例。资料提交后，Standex 研发部门将核实其是否适合您的项目。",
+    "Diese Sensoren sind Beispiele zum Erkunden. Das Standex-Entwicklungsbüro prüft ihre Eignung für Ihr Projekt nach dem Versand des Dossiers.",
+    "Estos sensores son ejemplos para explorar. La oficina técnica de Standex verificará su adecuación a su proyecto tras el envío del expediente.",
+    "Эти датчики — примеры для изучения. Конструкторское бюро Standex проверит их пригодность для вашего проекта после отправки дела.",
+    "Questi sensori sono esempi da esplorare. L'ufficio tecnico Standex ne verificherà l'idoneità al vostro progetto dopo l'invio del fascicolo.",
+    "これらのセンサーは検討用の例です。書類送付後、Standex の技術部門が案件への適合性を確認します。"
+  ],
   "Ces valeurs sont celles du contact 87 lui-même : la différence entre les deux références se joue sur le packaging et le montage, pas sur cette baseline électrique.": [
     "These are the 87 contact's values. The two parts differ in packaging and mounting, not this electrical baseline.",
     "这些是 87 触点参数。两型号区别在封装和安装，不在此电气基线。",
@@ -2761,6 +2797,15 @@
     "Эта ревизия дела не найдена.",
     "Questa revisione del fascicolo non è stata trovata.",
     "この資料のこのバージョンが見つかりません。"
+  ],
+  "Cette version exacte est arrivée chez Standex. Vous serez informé dès qu'un retour est publié.": [
+    "This exact version reached Standex. You will be told as soon as feedback is published.",
+    "此版本已送达 Standex。一旦有反馈发布，我们会通知您。",
+    "Genau diese Fassung ist bei Standex eingegangen. Sie werden informiert, sobald eine Rückmeldung veröffentlicht wird.",
+    "Esta versión exacta llegó a Standex. Se le avisará en cuanto se publique una respuesta.",
+    "Именно эта версия получена Standex. Вы получите уведомление, как только будет опубликован ответ.",
+    "Questa versione esatta è arrivata a Standex. Sarete avvisati appena verrà pubblicato un riscontro.",
+    "このバージョンが Standex に届きました。回答が公開され次第お知らせします。"
   ],
   "Cette version n'est pas lisible sous forme de résumé technique :": [
     "This version cannot be read as a technical summary:",
@@ -3761,6 +3806,15 @@
     "Continua",
     "次へ"
   ],
+  "Continuer vers Avec Standex": [
+    "Continue to With Standex",
+    "继续前往「与 Standex 一起」",
+    "Weiter zu „Mit Standex“",
+    "Continuar a Con Standex",
+    "Перейти к разделу «Со Standex»",
+    "Continua verso Con Standex",
+    "「Standex とともに」へ進む"
+  ],
   "Contraintes libres": [
     "Free-form constraints",
     "自由填写的约束",
@@ -3922,6 +3976,15 @@
     "Корпус 5 мм, с J-выводами 5,5 мм. Монтаж на плату. Пайка до 260 °C не более 5 секунд.",
     "Corpo 5 mm, 5,5 mm con terminali J. Montaggio PCB. Saldatura max. 260 °C per max. 5 secondi.",
     "本体5 mm、J端子込み5.5 mm。基板実装。はんだ付け最高260 °C、最長5秒。"
+  ],
+  "Corps fileté": [
+    "Threaded body",
+    "螺纹本体",
+    "Gewindekörper",
+    "Cuerpo roscado",
+    "Резьбовой корпус",
+    "Corpo filettato",
+    "ねじ付き本体"
   ],
   "Corps fileté avec écrous de montage": [
     "Threaded body with mounting nuts",
@@ -4274,6 +4337,15 @@
     "Semicorsa laterale",
     "横方向の半ストローク"
   ],
+  "Dernier envoi confirmé : version {0}, le {1}.": [
+    "Last confirmed send: version {0}, on {1}.",
+    "最近一次确认发送：版本 {0}，日期 {1}。",
+    "Letzter bestätigter Versand: Fassung {0}, am {1}.",
+    "Último envío confirmado: versión {0}, el {1}.",
+    "Последняя подтверждённая отправка: версия {0}, {1}.",
+    "Ultimo invio confermato: versione {0}, il {1}.",
+    "確認済みの最終送信：バージョン {0}、{1}。"
+  ],
   "Des réglages 3D ne sont pas encore repris dans votre projet : ils ne partiraient ni dans l'export ni dans le résumé.": [
     "Some 3D settings are not yet incorporated into your project: they would not be included in the export or the summary.",
     "部分 3D 设置尚未包含在您的项目中：将不会包含在导出或摘要中。",
@@ -4606,6 +4678,15 @@
     "Файл дела восстановлен",
     "Fascicolo ripreso",
     "復元されたケースファイル"
+  ],
+  "Dossier transmis à la revue Standex.": [
+    "Case file sent to the Standex review.",
+    "资料已提交 Standex 评审。",
+    "Dossier an die Standex-Prüfung übermittelt.",
+    "Expediente enviado a la revisión de Standex.",
+    "Дело передано на рассмотрение Standex.",
+    "Fascicolo trasmesso alla revisione Standex.",
+    "案件を Standex レビューに送信しました。"
   ],
   "Dossier transmis à la revue Standex. Vous serez informé dès qu'un retour est publié.": [
     "Case file submitted to the Standex review. You will be informed as soon as feedback is published.",
@@ -5021,6 +5102,24 @@
     "Ingombro disponibile",
     "利用可能な寸法"
   ],
+  "Encombrement max (mm)": [
+    "Max size (mm)",
+    "最大尺寸（mm）",
+    "Max. Baugröße (mm)",
+    "Tamaño máx. (mm)",
+    "Макс. габарит (мм)",
+    "Ingombro max (mm)",
+    "最大寸法 (mm)"
+  ],
+  "Encombrement maximal en millimètres": [
+    "Maximum size in millimetres",
+    "最大尺寸（毫米）",
+    "Maximale Baugröße in Millimetern",
+    "Tamaño máximo en milímetros",
+    "Максимальный габарит в миллиметрах",
+    "Ingombro massimo in millimetri",
+    "最大寸法（ミリメートル）"
+  ],
   "Encombrement partiellement renseigné.": [
     "Dimensions partially specified.",
     "外形尺寸部分已填写。",
@@ -5173,6 +5272,24 @@
     "Отправить",
     "Invia",
     "送信"
+  ],
+  "Envoyer mes modifications": [
+    "Send my changes",
+    "发送我的修改",
+    "Meine Änderungen senden",
+    "Enviar mis cambios",
+    "Отправить мои изменения",
+    "Inviare le mie modifiche",
+    "変更を送信"
+  ],
+  "Envoyer mon dossier": [
+    "Send my case file",
+    "发送我的资料",
+    "Mein Dossier senden",
+    "Enviar mi expediente",
+    "Отправить моё дело",
+    "Inviare il mio fascicolo",
+    "案件を送信"
   ],
   "Envoyée le": [
     "Submitted on",
@@ -5660,6 +5777,24 @@
     "Filtra formati",
     "形状で絞り込む"
   ],
+  "Filtrer par fixation": [
+    "Filter by mounting",
+    "按固定方式筛选",
+    "Nach Befestigung filtern",
+    "Filtrar por fijación",
+    "Фильтр по креплению",
+    "Filtra per fissaggio",
+    "取付方式で絞り込む"
+  ],
+  "Filtrer par raccordement": [
+    "Filter by connection",
+    "按连接方式筛选",
+    "Nach Anschluss filtern",
+    "Filtrar por conexión",
+    "Фильтр по подключению",
+    "Filtra per collegamento",
+    "接続方式で絞り込む"
+  ],
   "Fin de la fenêtre souhaitée": [
     "Desired window end",
     "期望区间终点",
@@ -5687,6 +5822,15 @@
     "Fissaggio regolabile",
     "調整可能な固定"
   ],
+  "Fixation non documentée": [
+    "Mounting not documented",
+    "固定方式无资料",
+    "Befestigung nicht dokumentiert",
+    "Fijación no documentada",
+    "Крепление не задокументировано",
+    "Fissaggio non documentato",
+    "取付方式は資料なし"
+  ],
   "Fixation par deux vis": [
     "Two-screw mounting",
     "双螺钉固定",
@@ -5695,6 +5839,15 @@
     "Крепление двумя винтами",
     "Fissaggio con due viti",
     "2本ねじ固定"
+  ],
+  "Fixation par vis": [
+    "Screw mounting",
+    "螺钉固定",
+    "Schraubbefestigung",
+    "Fijación por tornillo",
+    "Крепление винтами",
+    "Fissaggio a vite",
+    "ねじ固定"
   ],
   "Fixation vissée": [
     "Screw mounting",
@@ -6262,6 +6415,15 @@
     "Пока не знаю",
     "Non lo so ancora",
     "まだ分かりません"
+  ],
+  "Je ne sais pas encore — à définir avec Standex": [
+    "I don't know yet — to be defined with Standex",
+    "我还不确定 — 与 Standex 共同确定",
+    "Noch offen – gemeinsam mit Standex festzulegen",
+    "Todavía no lo sé: se definirá con Standex",
+    "Пока не знаю — определим со Standex",
+    "Non lo so ancora — da definire con Standex",
+    "まだ未定 — Standex と決める"
   ],
   "Je partage aussi le fichier 3D « {0} » avec l'équipe en charge.": [
     "I also share the 3D file “{0}” with the team in charge.",
@@ -7163,6 +7325,15 @@
     "Il contenuto di questo file non è leggibile.",
     "このファイルの内容は読み取れません。"
   ],
+  "Le contenu ouvert ici diffère de la dernière version envoyée. Rien de ces changements n'est encore parti : relisez le résumé, confirmez votre accord, puis envoyez.": [
+    "What is open here differs from the last version sent. None of these changes has left yet: re-read the summary, confirm your agreement, then send.",
+    "此处打开的内容与上次发送的版本不同。这些修改尚未发出：请重读摘要，确认同意后再发送。",
+    "Der hier geöffnete Inhalt weicht von der zuletzt gesendeten Fassung ab. Nichts davon wurde bereits übermittelt: Zusammenfassung erneut lesen, Zustimmung bestätigen, dann senden.",
+    "Lo que está abierto aquí difiere de la última versión enviada. Ninguno de estos cambios ha salido todavía: relea el resumen, confirme su acuerdo y envíe.",
+    "Открытое здесь содержимое отличается от последней отправленной версии. Ни одно из этих изменений ещё не отправлено: перечитайте сводку, подтвердите согласие и отправьте.",
+    "Il contenuto aperto qui differisce dall'ultima versione inviata. Nessuna di queste modifiche è ancora partita: rileggete il riepilogo, confermate il consenso, poi inviate.",
+    "ここで開いている内容は、最後に送信したバージョンと異なります。これらの変更はまだ送信されていません。要約を読み直し、同意を確認してから送信してください。"
+  ],
   "Le contenu téléchargé ne correspond pas à l'empreinte enregistrée à l'envoi : le fichier n'est pas ouvert.": [
     "The downloaded content does not match the fingerprint recorded upon submission: the file is not opened.",
     "下载的内容与提交时记录的指纹不匹配：文件未打开。",
@@ -7809,7 +7980,16 @@
     "Longitud de catálogo, por confirmar",
     "Каталожная длина, требует подтверждения",
     "Lunghezza a catalogo, da confermare",
-    "カタログ長、要確認"
+    "カタログ長さ、要確認"
+  ],
+  "Longueur et connecteur": [
+    "Length and connector",
+    "长度与连接器",
+    "Länge und Steckverbinder",
+    "Longitud y conector",
+    "Длина и разъём",
+    "Lunghezza e connettore",
+    "長さとコネクター"
   ],
   "Longueur inconnue : trajet incomplet.": [
     "Unknown length: incomplete path.",
@@ -7859,11 +8039,11 @@
   "Longueur sur mesure, à confirmer": [
     "Custom length, to be confirmed",
     "定制长度，待确认",
-    "Kundenspezifische Länge, zu bestätigen",
+    "Sonderlänge, zu bestätigen",
     "Longitud a medida, por confirmar",
-    "Длина под заказ, требует подтверждения",
-    "Lunghezza personalizzata, da confermare",
-    "カスタム長、要確認"
+    "Индивидуальная длина, требует подтверждения",
+    "Lunghezza su misura, da confermare",
+    "特注長さ、要確認"
   ],
   "Longueur · aux extrémités": [
     "Length · at the ends",
@@ -8116,6 +8296,15 @@
     "Техническое изменение: новая ревизия; предыдущие рассмотрение, предложение и изготовление образцов устарели.",
     "Modifica tecnica: nuova revisione; revisione, offerta e campionatura precedenti sono obsolete.",
     "技術的変更：新規リビジョン。以前のレビュー、見積およびサンプル作成は無効になります。"
+  ],
+  "Modifications non envoyées": [
+    "Changes not sent",
+    "修改尚未发送",
+    "Änderungen nicht gesendet",
+    "Cambios no enviados",
+    "Изменения не отправлены",
+    "Modifiche non inviate",
+    "未送信の変更"
   ],
   "Modifié dans votre dossier :": [
     "Modified in your case file:",
@@ -8584,6 +8773,15 @@
     "Не определено",
     "Non deciso",
     "未定"
+  ],
+  "Non décidé — à définir avec Standex": [
+    "Undecided — to be defined with Standex",
+    "未决定 — 与 Standex 共同确定",
+    "Offen – gemeinsam mit Standex festzulegen",
+    "Sin decidir: se definirá con Standex",
+    "Не решено — определим со Standex",
+    "Non deciso — da definire con Standex",
+    "未決定 — Standex と決める"
   ],
   "Non, je ne retiendrais pas 1000 V pour un MK38 1A85C. Cette valeur vient du reed switch 85 nu dans un autre contexte et ne doit pas être importée automatiquement sur la référence packagée MK38.": [
     "I would not use 1000 V for MK38 1A85C. That value belongs to a bare 85 reed in a different context and cannot automatically transfer to packaged MK38.",
@@ -9232,6 +9430,15 @@
     "Перейти к монтажу",
     "Passa al mio montaggio",
     "取り付け設定に進む"
+  ],
+  "Pattes nues": [
+    "Bare leads",
+    "裸引线",
+    "Blanke Anschlussdrähte",
+    "Terminales desnudos",
+    "Оголённые выводы",
+    "Terminali nudi",
+    "裸リード"
   ],
   "Pays": [
     "Country",
@@ -10385,6 +10592,15 @@
     "RPC lead_schema_version assente: migration_v1.2_lead_magnet.sql non applicata.",
     "RPC lead_schema_version が見つかりません: migration_v1.2_lead_magnet.sql が適用されていません。"
   ],
+  "Raccordement non documenté": [
+    "Connection not documented",
+    "连接方式无资料",
+    "Anschluss nicht dokumentiert",
+    "Conexión no documentada",
+    "Подключение не задокументировано",
+    "Collegamento non documentato",
+    "接続方式は資料なし"
+  ],
   "Rappel": [
     "Follow-up",
     "跟进",
@@ -10600,6 +10816,15 @@
     "После прерывания 3D включён вид в плане. Нажмите 3D для повтора.",
     "Vista piana dopo interruzione 3D. Premi 3D per riprovare.",
     "3D中断のため平面図に切り替えました。3Dボタンで再試行できます。"
+  ],
+  "Report sur circuit imprimé": [
+    "Mounted on a printed circuit board",
+    "贴装于印制电路板",
+    "Bestückung auf Leiterplatte",
+    "Montaje en circuito impreso",
+    "Монтаж на печатной плате",
+    "Montaggio su circuito stampato",
+    "プリント基板実装"
   ],
   "Reprendre cette variante": [
     "Import this variant",
@@ -11213,6 +11438,15 @@
     "Reimportare il file GLB originale per recuperare il montaggio 3D.",
     "3D取り付けを復元するには、元のGLBファイルを再インポートしてください。"
   ],
+  "Réinitialiser les filtres": [
+    "Reset filters",
+    "重置筛选",
+    "Filter zurücksetzen",
+    "Restablecer filtros",
+    "Сбросить фильтры",
+    "Reimposta i filtri",
+    "フィルターをリセット"
+  ],
   "Réponse Claude illisible (corps non JSON).": [
     "Unreadable Claude response (not JSON).",
     "Claude 回复无法读取（非 JSON）。",
@@ -11654,6 +11888,15 @@
     "Uscita sensore",
     "センサー引き出し口"
   ],
+  "Sortie câble": [
+    "Cable outlet",
+    "引出电缆",
+    "Kabelabgang",
+    "Salida de cable",
+    "Кабельный вывод",
+    "Uscita cavo",
+    "ケーブル出し"
+  ],
   "Sortie de câble du capteur": [
     "Sensor cable exit",
     "传感器电缆引出口",
@@ -11797,6 +12040,15 @@
     "Несогласованный статус: отсутствует подтверждение",
     "Stato incoerente: prova assente",
     "ステータス不整合：証明がありません"
+  ],
+  "Suivi de mon dossier": [
+    "Tracking my case file",
+    "我的资料进度",
+    "Verfolgung meines Dossiers",
+    "Seguimiento de mi expediente",
+    "Отслеживание моего дела",
+    "Monitoraggio del mio fascicolo",
+    "案件の進捗"
   ],
   "Suivi mis à jour.": [
     "Tracking updated.",
@@ -12158,6 +12410,15 @@
     "Tutti",
     "すべて"
   ],
+  "Tous les raccordements": [
+    "All connections",
+    "所有连接方式",
+    "Alle Anschlüsse",
+    "Todas las conexiones",
+    "Все виды подключения",
+    "Tutti i collegamenti",
+    "すべての接続方式"
+  ],
   "Tous les réglages avancés restent disponibles, sans rien perdre.": [
     "All advanced settings remain available, without losing anything.",
     "所有高级设置均保持可用，不会丢失任何内容。",
@@ -12175,6 +12436,15 @@
     "Изменения кабеля, разъёма, выводов или заливки согласуются со Standex: это нестандартное изделие.",
     "Modifiche a cavo, connettore, terminali o sovrastampaggio richiedono Standex: fuori standard.",
     "ケーブル・コネクター・端子・成形の変更は標準品の範囲外となるため、Standexの確認が必要です。"
+  ],
+  "Toutes les fixations": [
+    "All mountings",
+    "所有固定方式",
+    "Alle Befestigungen",
+    "Todas las fijaciones",
+    "Все виды крепления",
+    "Tutti i fissaggi",
+    "すべての取付方式"
   ],
   "Trace interne baseline": [
     "Baseline internal trace",
@@ -12517,6 +12787,15 @@
     "Дополнительное 3D-пространство для размещения датчика, магнита и кабеля. Ничего не отправляется, пока вы сами этого не запросите.",
     "Uno spazio 3D opzionale per posizionare sensore, magnete e cavo. Non viene inviato nulla finché non viene esplicitamente richiesto.",
     "センサー、磁石、ケーブルを配置できる任意の3Dワークスペース。リクエストするまで何も送信されません。"
+  ],
+  "Un choix non décidé reste inconnu : il ne vaut ni zéro, ni « sans câble ». Vous pouvez continuer sans le fixer.": [
+    "An undecided choice stays unknown: it does not mean zero, nor \"no cable\". You can carry on without settling it.",
+    "未决定的选项仍属未知：它既不等于零，也不等于“无电缆”。您可以先不确定并继续。",
+    "Eine offene Entscheidung bleibt unbekannt: Sie bedeutet weder null noch „ohne Kabel“. Sie können ohne Festlegung fortfahren.",
+    "Una elección no decidida sigue siendo desconocida: no equivale a cero ni a «sin cable». Puede continuar sin fijarla.",
+    "Нерешённый выбор остаётся неизвестным: это не ноль и не «без кабеля». Можно продолжить, не фиксируя его.",
+    "Una scelta non decisa resta sconosciuta: non vale zero né «senza cavo». Potete proseguire senza fissarla.",
+    "未決定の選択は不明のままです。ゼロでも「ケーブルなし」でもありません。決めずに進められます。"
   ],
   "Un cycle complet": [
     "A complete cycle",
@@ -13031,6 +13310,24 @@
     "Mostra frammento risposta originale",
     "生の回答断片を表示"
   ],
+  "Voir les autres capteurs ({0}) — écartés par une contrainte technique": [
+    "See the other sensors ({0}) — ruled out by a technical constraint",
+    "查看其他传感器（{0}）— 因技术限制被排除",
+    "Weitere Sensoren ansehen ({0}) – durch eine technische Randbedingung ausgeschlossen",
+    "Ver los demás sensores ({0}): descartados por una restricción técnica",
+    "Другие датчики ({0}) — исключены по техническому ограничению",
+    "Vedere gli altri sensori ({0}) — esclusi da un vincolo tecnico",
+    "その他のセンサーを見る（{0}）— 技術的制約により除外"
+  ],
+  "Voir les capteurs": [
+    "See the sensors",
+    "查看传感器",
+    "Sensoren ansehen",
+    "Ver los sensores",
+    "Посмотреть датчики",
+    "Vedere i sensori",
+    "センサーを見る"
+  ],
   "Voir les contacts": [
     "See the contacts",
     "查看触点",
@@ -13219,6 +13516,15 @@
     "Ваша версия",
     "La vostra versione",
     "お客様のバージョン"
+  ],
+  "Vous n'êtes pas obligé de choisir une référence.": [
+    "You do not have to pick a reference.",
+    "您不必选择具体型号。",
+    "Sie müssen keine Referenz auswählen.",
+    "No tiene que elegir una referencia.",
+    "Выбирать конкретную позицию необязательно.",
+    "Non siete obbligati a scegliere un codice.",
+    "型番を選ぶ必要はありません。"
   ],
   "Vous pouvez faire relire votre projet par nos équipes. Une revue R&D reste toujours nécessaire avant commande.": [
     "You can have your project reviewed by our teams. An R&D review is always required before ordering.",
@@ -15227,6 +15533,15 @@
     "{0} / carico induttivo — verificare corrente di spunto",
     "{0} / 誘導性負荷 — 突入電流を確認"
   ],
+  "{0} capteur(s) documenté(s) affiché(s), plus l'option sur mesure.": [
+    "{0} documented sensor(s) shown, plus the custom option.",
+    "显示 {0} 个有资料的传感器，另加定制选项。",
+    "{0} dokumentierte Sensoren angezeigt, dazu die Sonderlösung.",
+    "{0} sensor(es) documentado(s) mostrado(s), más la opción a medida.",
+    "Показано датчиков с документацией: {0}, плюс индивидуальное решение.",
+    "{0} sensore/i documentato/i mostrato/i, più l'opzione su misura.",
+    "資料のあるセンサー {0} 件を表示、加えてカスタム対応。"
+  ],
   "{0} informations renseignées sur {1}": [
     "{0} of {1} fields completed",
     "已填写 {0}/{1} 项",
@@ -15433,6 +15748,15 @@
     "ВНУТРИ ДАТЧИКА",
     "DENTRO IL SENSORE",
     "センサー内部"
+  ],
+  "À emmancher": [
+    "Press-fit",
+    "压入式",
+    "Einpressbar",
+    "De encaje a presión",
+    "Запрессовка",
+    "A pressione",
+    "圧入式"
   ],
   "À encastrer": [
     "Recessed",

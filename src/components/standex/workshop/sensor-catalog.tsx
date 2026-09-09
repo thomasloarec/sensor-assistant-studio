@@ -1,10 +1,53 @@
 import { useEffect, useRef, useState } from "react";
 import { Search, X, ArrowUpRight, Check } from "lucide-react";
-import { SENSOR_CATALOG, sizeLabel, sensorSource } from "@/lib/standex/sensor-catalog";
+import {
+  CUSTOM_SENSOR_ID,
+  SENSOR_CATALOG,
+  sizeLabel,
+  sensorSource,
+  type SensorModel,
+} from "@/lib/standex/sensor-catalog";
 import SensorCard from "./sensor-card";
 import { useLocale } from "@/lib/i18n/react";
-import { t } from "@/lib/i18n/core";
+import { msg, t } from "@/lib/i18n/core";
 import { SensorPlan } from "./sensor-plan";
+
+/** Filtres construits UNIQUEMENT sur des données réellement présentes dans le
+ * catalogue. Une donnée absente reste « inconnu » : elle n'est jamais comptée
+ * comme compatible. Aucun critère électrique, thermique ou d'étanchéité n'est
+ * proposé ici : ces valeurs ne sont pas documentées modèle par modèle. */
+/* i18n-canonical : dictionnaire de libellés, traduits par t() au rendu. */
+const FIXING_OPTIONS = [
+  ["all", "Toutes les fixations"],
+  ["screw", "Fixation par vis"],
+  ["threaded", "Corps fileté"],
+  ["pressfit", "À emmancher"],
+  ["pcb", "Report sur circuit imprimé"],
+  ["unknown", "Fixation non documentée"],
+] as const;
+
+const WIRING_OPTIONS = [
+  ["all", "Tous les raccordements"],
+  ["cable", "Sortie câble"],
+  ["smd", "Broches CMS"],
+  ["leads", "Pattes nues"],
+  ["unknown", "Raccordement non documenté"],
+] as const;
+
+function fixingGroup(model: SensorModel): string {
+  if (model.shape === "flange" || model.shape === "block") return "screw";
+  if (model.shape === "threaded") return "threaded";
+  if (model.shape === "pressfit") return "pressfit";
+  if (model.shape === "smd" || model.shape === "custom_pcb") return "pcb";
+  return "unknown";
+}
+
+function wiringGroup(model: SensorModel): string {
+  if (model.shape === "smd") return "smd";
+  if (model.shape === "glass" || model.shape === "custom_pcb") return "leads";
+  if (model.cableSide !== undefined || model.category === "Cylindrique") return "cable";
+  return "unknown";
+}
 
 export default function SensorCatalog({
   selected,
@@ -20,19 +63,37 @@ export default function SensorCatalog({
   const ref = useRef<HTMLDialogElement>(null),
     [query, setQuery] = useState(""),
     [category, setCategory] = useState(t("Tous")),
+    [fixing, setFixing] = useState("all"),
+    [wiring, setWiring] = useState("all"),
+    [maxLength, setMaxLength] = useState(""),
     [sameScale, setSameScale] = useState(true);
   useEffect(() => {
     const dialog = ref.current;
     dialog?.showModal();
     return () => dialog?.close();
   }, []);
+  const limit = Number.parseFloat(maxLength.replace(",", "."));
   const list = SENSOR_CATALOG.filter(
     (s) =>
-      (category === "Tous" || s.category === category) &&
-      (t(s.name) + " " + t(s.description) + " " + s.id + " " + t(s.category))
-        .toLocaleLowerCase()
-        .includes(query.toLocaleLowerCase()),
+      // Le sur mesure reste TOUJOURS proposé, même si les filtres ne laissent
+      // passer aucune référence documentée.
+      s.id === CUSTOM_SENSOR_ID ||
+      ((category === "Tous" || s.category === category) &&
+        (fixing === "all" || fixingGroup(s) === fixing) &&
+        (wiring === "all" || wiringGroup(s) === wiring) &&
+        (!Number.isFinite(limit) || Math.max(...s.body) <= limit) &&
+        (t(s.name) + " " + t(s.description) + " " + s.id + " " + t(s.category))
+          .toLocaleLowerCase()
+          .includes(query.toLocaleLowerCase())),
   );
+  const documented = list.filter((s) => s.id !== CUSTOM_SENSOR_ID).length;
+  const resetFilters = () => {
+    setQuery("");
+    setCategory(t("Tous"));
+    setFixing("all");
+    setWiring("all");
+    setMaxLength("");
+  };
   return (
     <dialog
       ref={ref}
@@ -86,6 +147,38 @@ export default function SensorCatalog({
             </option>
           ))}
         </select>
+        <select
+          aria-label={t("Filtrer par fixation")}
+          value={fixing}
+          onChange={(e) => setFixing(e.target.value)}
+        >
+          {FIXING_OPTIONS.map(([value, label]) => (
+            <option key={value} value={value}>
+              {t(label)}
+            </option>
+          ))}
+        </select>
+        <select
+          aria-label={t("Filtrer par raccordement")}
+          value={wiring}
+          onChange={(e) => setWiring(e.target.value)}
+        >
+          {WIRING_OPTIONS.map(([value, label]) => (
+            <option key={value} value={value}>
+              {t(label)}
+            </option>
+          ))}
+        </select>
+        <label className="mw-catalog-size-filter">
+          {t("Encombrement max (mm)")}
+          <input
+            inputMode="decimal"
+            aria-label={t("Encombrement maximal en millimètres")}
+            value={maxLength}
+            onChange={(e) => setMaxLength(e.target.value)}
+            placeholder="—"
+          />
+        </label>
         <label className="mw-check">
           <input
             type="checkbox"
@@ -94,7 +187,15 @@ export default function SensorCatalog({
           />
           {t("Même échelle")}
         </label>
+        <button type="button" className="mw-secondary" onClick={resetFilters}>
+          {t("Réinitialiser les filtres")}
+        </button>
       </div>
+      <p className="mw-catalog-count" role="status" aria-live="polite">
+        {msg("{0} capteur(s) documenté(s) affiché(s), plus l'option sur mesure.", [
+          String(documented),
+        ])}
+      </p>
       <div className="mw-catalog-list">
         {list.map((s) => (
           <article
@@ -161,8 +262,10 @@ export default function SensorCatalog({
             )}
           </article>
         ))}
-        {!list.length && (
-          <p className="mw-catalog-empty">{t("Aucun capteur ne correspond à cette recherche.")}</p>
+        {!documented && (
+          <p className="mw-catalog-empty">
+            {t("Aucun capteur documenté ne correspond à ces filtres. L'option sur mesure reste ouverte.")}
+          </p>
         )}
       </div>
       <footer>

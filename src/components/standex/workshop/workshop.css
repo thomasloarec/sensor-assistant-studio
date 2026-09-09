@@ -1247,6 +1247,29 @@
 .mw-catalog-tools select {
   width: 155px;
 }
+.mw-catalog-tools {
+  flex-wrap: wrap;
+}
+.mw-catalog-size-filter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+.mw-catalog-size-filter input {
+  width: 80px;
+  min-height: 44px;
+  padding: 0 10px;
+  border-radius: var(--r-xs);
+  border: 0;
+  background: var(--mw-field);
+  color: var(--mw-ink);
+}
+.mw-catalog-count {
+  margin: 0;
+  padding: 10px 28px 0;
+  color: var(--muted-foreground);
+}
 .mw-catalog-tools .mw-check {
   white-space: nowrap;
   margin: 0;
@@ -1577,23 +1600,18 @@
 .mw .mw-controls {
   box-shadow: var(--e-1);
 }
+/* Fond bleu clair de SCÈNE : il s'arrête au canevas. Les barres d'outils, les
+   calques et les réglages gardent le contexte sombre de l'atelier. */
 .mw .mw-scene-card {
   position: relative;
   overflow: hidden;
   border: 0;
   border-radius: var(--r-xl);
-  background:
-    radial-gradient(120% 90% at 70% 10%, oklch(0.3665 0.0662 254.28 / 0.7) 0%, transparent 60%),
-    linear-gradient(168deg, oklch(0.2261 0.0353 251.2), oklch(0.1911 0.0303 251.2));
+  background: transparent;
   box-shadow: var(--e-3);
 }
-.mw .mw-scene-card::after {
-  content: "";
-  position: absolute;
-  inset: 3.5rem 0 auto;
-  height: 58%;
-  pointer-events: none;
-  background: radial-gradient(ellipse at 58% 78%, oklch(0.72 0.13 205 / 0.1), transparent 62%);
+.mw .mw-canvas {
+  background: linear-gradient(168deg, oklch(0.95 0.023 240), oklch(0.89 0.037 236));
 }
 .mw .mw-scene-toolbar,
 .mw .mw-layers,
@@ -1738,30 +1756,32 @@
   padding: 1.25rem;
 }
 @media (min-width: 1024px) {
+  /* Vraie mise en page en deux colonnes : les réglages ne passent plus
+     par-dessus la scène ni par-dessus le texte situé sous l'atelier. */
   .mw .mw-layout {
     position: relative;
     display: grid;
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: minmax(0, 20rem) minmax(0, 1fr);
+    align-items: start;
+    gap: 1.5rem;
   }
   .mw .mw-controls {
-    position: absolute;
-    z-index: 6;
+    position: sticky;
     top: 1.25rem;
-    left: 3.25rem;
-    width: 20rem;
-    max-height: min(46rem, calc(100dvh - 8rem));
+    grid-column: 1;
+    width: 100%;
+    min-width: 0;
+    max-height: calc(100dvh - 6rem);
     overflow-y: auto;
+    overscroll-behavior: contain;
     background: var(--material-thin);
     border: 1px solid var(--hairline);
     box-shadow: var(--e-3);
     backdrop-filter: var(--material-blur);
   }
   .mw .mw-visual-column {
-    grid-column: 1;
+    grid-column: 2;
     min-width: 0;
-  }
-  .mw .mw-scene-toolbar {
-    padding-left: 23rem;
   }
 }
 @media (max-width: 1023px) {
@@ -1818,4 +1838,25 @@
 .mw select optgroup {
   background: var(--popover);
   color: var(--popover-foreground);
+}
+
+/* Lecture du cycle depuis le haut de la fenêtre 3D : même état que la lecture
+   détaillée située sous la scène. */
+.mw-scene-play {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: var(--r-pill);
+  background: var(--mw-blue);
+  color: var(--mw-on-accent);
+  font-weight: 700;
+}
+.mw-scene-play[disabled] {
+  opacity: 0.5;
+}
+.mw-scene-toolbar {
+  flex-wrap: wrap;
 }
