@@ -1209,7 +1209,15 @@ function NotifyTab({
                 </div>
                 <p className="whitespace-pre-wrap">{n.summary}</p>
                 <p className="t-caption text-muted-foreground">
-                  {t("lien :")} {n.linkPath}
+                  {t("lien :")}{" "}
+                  <a
+                    className="underline"
+                    href={`${origin}${n.linkPath}`}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {`${origin}${n.linkPath}`}
+                  </a>
                 </p>
               </li>
             ))}
