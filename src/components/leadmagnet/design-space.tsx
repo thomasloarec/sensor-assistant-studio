@@ -779,35 +779,33 @@ export function DesignSpace({
   }, []);
 
   // Un accord d'envoi ne vaut que pour le contenu exact qui a été relu.
+  // La décision (liaison, accords consommés, message) vit dans
+  // `applyBindingCycle` : elle est testée sur l'enchaînement réel envoi →
+  // incrément de version → recalcul.
   useEffect(() => {
     let alive = true;
-    submissionBinding({
-      dossier,
-      nda,
-      consents: [],
-      reviewAcknowledged: false,
-      additionalConstraints: extraConstraints,
-      serverDossierId,
-      serverRevision: serverRevision + 1,
+    applyBindingCycle({
+      input: {
+        dossier,
+        nda,
+        consents: [],
+        reviewAcknowledged: false,
+        additionalConstraints: extraConstraints,
+        serverDossierId,
+      },
+      serverRevision,
+      committedRevision: committedRevisionRef.current,
+      privacy: privacyRef.current,
     })
-      .then((next) => {
+      .then((cycle) => {
         if (!alive) return;
+        const next = cycle.binding;
         setBinding((previous) => (previous && sameBinding(previous, next) ? previous : next));
-        // Après un envoi réussi, le compteur passe à la version suivante : les
-        // accords donnés pour la version envoyée sont consommés, mais rien n'a
-        // été modifié. On le dit ainsi au lieu d'accuser une édition.
-        const afterCommit = committedRevisionRef.current === serverRevision;
         setPrivacy((p) => {
           const pruned = pruneStaleConsents(p, next);
           if (pruned !== p) {
             setAcknowledged(false);
-            setConsentNotice(
-              t(
-                afterCommit
-                  ? "Votre envoi est confirmé. Pour transmettre de nouvelles modifications, relisez le résumé et confirmez à nouveau votre accord d'envoi."
-                  : "Le contenu, le dossier visé ou les fichiers ont changé : relisez le résumé et confirmez à nouveau votre accord d'envoi.",
-              ),
-            );
+            setConsentNotice(consentNoticeFor(cycle.afterCommit));
           }
           return pruned;
         });
@@ -818,6 +816,7 @@ export function DesignSpace({
       alive = false;
     };
   }, [dossier, extraConstraints, serverDossierId, serverRevision, nda]);
+
 
   useEffect(() => {
     const warn = (e: BeforeUnloadEvent) => {
