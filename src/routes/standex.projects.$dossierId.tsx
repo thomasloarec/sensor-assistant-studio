@@ -275,7 +275,18 @@ function TrackingTab({
         </div>
         <div>
           <p className="t-caption text-muted-foreground">{t("Lancement série")}</p>
-          {p.seriesLaunch ? <span className="t-metric">{p.seriesLaunch}</span> : <UnknownValue />}
+          {p.seriesLaunchEffective ? (
+            <>
+              <span className="t-metric">{p.seriesLaunchEffective}</span>
+              <span className="t-caption block text-muted-foreground">
+                {p.seriesLaunchSource === "override"
+                  ? t("corrigé en interne")
+                  : t("déclaré par le client")}
+              </span>
+            </>
+          ) : (
+            <UnknownValue />
+          )}
         </div>
         <div>
           <p className="t-caption text-muted-foreground">{t("Avancement")}</p>
@@ -323,8 +334,14 @@ function TrackingTab({
             <Label className="t-caption">{t("Société")}</Label>
             <Input
               value={fields.company}
+              placeholder={p.companySubmitted ?? ""}
               onChange={(e) => setFields({ ...fields, company: e.target.value })}
             />
+            {p.companySubmitted ? (
+              <p className="t-caption text-muted-foreground">
+                {t("Déclaré par le client :")} {p.companySubmitted}
+              </p>
+            ) : null}
           </div>
           <div>
             <Label className="t-caption">{t("Nom du projet")}</Label>

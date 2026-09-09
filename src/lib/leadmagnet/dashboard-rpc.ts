@@ -77,9 +77,31 @@ const MESSAGES: { match: RegExp; message: string }[] = [
     match: /DOSSIER_NOT_FOUND|TASK_NOT_FOUND|REVIEW_NOT_FOUND/,
     message: "Cet élément n'existe plus sous cette forme.",
   },
+  {
+    match: /CURRENCY_LOCKED/,
+    message:
+      "La devise ne peut pas changer tant qu'un prix, un coût ou une estimation "
+      + "sont saisis : aucune conversion n'est faite ici. Effacez d'abord ces montants.",
+  },
+  {
+    match: /VERSION_REQUIRED/,
+    message:
+      "Cet écran n'était plus synchronisé. Rechargez le projet, puis refaites la modification.",
+  },
+  {
+    match: /BAD_FIELD_TYPE|UNKNOWN_FIELD|BAD_PATCH/,
+    message:
+      "Cette valeur n'a pas le format attendu : elle a été refusée, et rien n'a été effacé.",
+  },
 ];
 
-/** Jamais de message brut de base de données à l'écran. */
+/**
+ * Jamais de message brut de base de données à l'écran.
+ *
+ * Le message par défaut ne prétend PAS que rien n'a changé : une coupure réseau
+ * peut survenir APRÈS l'enregistrement côté serveur. On dit donc l'état réel :
+ * le résultat est inconnu, et l'écran doit être rechargé avant de réessayer.
+ */
 export function humanCrmError(error: unknown): string {
   const raw =
     typeof error === "string"
@@ -89,7 +111,8 @@ export function humanCrmError(error: unknown): string {
         : "";
   return (
     MESSAGES.find((m) => m.match.test(raw))?.message ??
-    "L'enregistrement n'a pas abouti. Rien n'a été modifié côté Standex."
+    "La confirmation de Standex n'a pas été reçue : la modification a peut-être été "
+      + "enregistrée. Rechargez le projet pour voir l'état réel avant de réessayer."
   );
 }
 

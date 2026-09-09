@@ -185,6 +185,44 @@ set search_path = lead, lead_priv, pg_temp as $$
   select role from lead.staff_members where user_id = _user and active;
 $$;
 
+-- Révocation RÉELLEMENT effective : les gardes historiques interrogeaient
+-- `staff_members` SANS tenir compte de `active`. Un membre désactivé gardait
+-- donc l'accès hérité (lead_staff_view, notes internes, revue, fichiers de
+-- storage). Ces deux redéfinitions sont volontaires et documentées : la porte
+-- d'origine (rôle exigé ET affectation explicite) est conservée à l'identique,
+-- on y ajoute seulement la condition d'activité.
+create or replace function lead_priv.staff_can_act(_user uuid, _dossier uuid, _roles lead.staff_role[])
+returns boolean language sql stable security definer
+set search_path = lead, lead_priv, pg_temp as $$
+  select exists (
+    select 1 from lead.staff_members m
+    where m.user_id = _user
+      and m.active
+      and m.role = any(_roles)
+      and exists (select 1 from lead.dossier_assignments a
+                  where a.dossier_id = _dossier and a.user_id = _user)
+  );
+$$;
+
+create or replace function lead_priv.staff_can_read_design(_user uuid, _dossier uuid)
+returns boolean language sql stable security definer
+set search_path = lead, lead_priv, pg_temp as $$
+  select exists (
+    select 1 from lead.staff_members m
+    join lead.dossier_assignments a on a.user_id = m.user_id
+    where m.user_id = _user and m.active and a.dossier_id = _dossier
+  );
+$$;
+
+-- Provenance d'une affectation : une affectation posée à la main par un
+-- administrateur ne doit JAMAIS être effacée par un changement de responsable.
+alter table lead.dossier_assignments
+  add column if not exists source text not null default 'manual';
+do $$ begin
+  alter table lead.dossier_assignments
+    add constraint dossier_assignments_source_chk check (source in ('manual','crm_owner'));
+exception when duplicate_object then null; end $$;
+
 -- ----------------------------------------------------------------------------
 -- 8. Accès CRM : rôle staff + affectation explicite ; l'admin trie sans lire
 --    le contenu technique (celui-ci reste gardé par staff_can_read_design).
@@ -276,6 +314,34 @@ set search_path = lead, lead_priv, pg_temp as $$
    order by r.revision desc limit 1;
 $$;
 
+-- Bloc « business » de la dernière révision RÉELLEMENT soumise. Lecture seule :
+-- une soumission est immuable et n'est jamais réécrite depuis le tableau de bord.
+create or replace function lead_priv.crm_submitted_business(_dossier uuid)
+returns jsonb language sql stable security definer
+set search_path = lead, lead_priv, pg_temp as $$
+  select coalesce(r.snapshot->'business', '{}'::jsonb)
+    from lead.design_revisions r
+   where r.dossier_id = _dossier
+   order by r.revision desc limit 1;
+$$;
+
+create or replace function lead_priv.crm_submitted_company(_dossier uuid)
+returns text language sql stable security definer
+set search_path = lead, lead_priv, pg_temp as $$
+  select nullif(btrim(coalesce(lead_priv.crm_submitted_business(_dossier)->>'contactCompany','')), '');
+$$;
+
+create or replace function lead_priv.crm_submitted_series_launch(_dossier uuid)
+returns date language plpgsql stable security definer
+set search_path = lead, lead_priv, pg_temp as $$
+declare v text := nullif(btrim(coalesce(
+  lead_priv.crm_submitted_business(_dossier)->>'seriesStartDate','')), '');
+begin
+  if v is null then return null; end if;
+  return v::date;
+exception when others then return null;
+end $$;
+
 create or replace function lead_priv.crm_row_json(_dossier uuid)
 returns jsonb language sql stable security definer
 set search_path = lead, lead_priv, pg_temp as $$
@@ -295,6 +361,19 @@ set search_path = lead, lead_priv, pg_temp as $$
     'annual_volume_submitted', lead_priv.crm_submitted_volume(d.id),
     'estimated_annual_revenue', c.estimated_annual_revenue,
     'series_launch', c.series_launch,
+    -- Ce que le client a réellement déclaré : sert d'affichage par défaut, sans
+    -- jamais écraser ni la soumission ni une correction interne explicite.
+    'company_submitted', lead_priv.crm_submitted_company(d.id),
+    'series_launch_submitted', lead_priv.crm_submitted_series_launch(d.id),
+    'company_effective', coalesce(c.company, lead_priv.crm_submitted_company(d.id)),
+    'series_launch_effective', coalesce(c.series_launch,
+                                        lead_priv.crm_submitted_series_launch(d.id)),
+    'company_source', case when c.company is not null then 'override'
+                           when lead_priv.crm_submitted_company(d.id) is not null then 'submitted'
+                           else 'unknown' end,
+    'series_launch_source', case when c.series_launch is not null then 'override'
+                                 when lead_priv.crm_submitted_series_launch(d.id) is not null
+                                   then 'submitted' else 'unknown' end,
     'updated_at', c.updated_at, 'version', c.version,
     'tasks_total', (select count(*) from lead.dossier_tasks t
                      where t.dossier_id = d.id and t.status <> 'not_applicable'),
@@ -306,10 +385,14 @@ set search_path = lead, lead_priv, pg_temp as $$
                        where t.dossier_id = d.id and t.due_on is not null
                          and t.due_on < current_date
                          and t.status not in ('done','not_applicable')),
-    'stage_activated_at', (select min(coalesce(t.activated_at, t.created_at))
-                             from lead.dossier_tasks t
-                            where t.dossier_id = d.id
-                              and t.status not in ('done','not_applicable')))
+    -- Âge de l'étape EN COURS : activation des items de CETTE étape, et non le
+    -- plus ancien item inachevé, qui pouvait appartenir à une étape future.
+    'stage_activated_at', coalesce(
+      (select min(coalesce(t.activated_at, t.created_at))
+         from lead.dossier_tasks t
+        where t.dossier_id = d.id and t.stage = c.stage
+          and t.status not in ('done','not_applicable')),
+      c.stage_since))
   from lead.design_dossiers d
   join lead.dossier_crm c on c.dossier_id = d.id
   where d.id = _dossier;
@@ -417,12 +500,31 @@ returns lead.dossier_crm language plpgsql security definer
 set search_path = lead, lead_priv, pg_temp as $$
 declare row lead.dossier_crm%rowtype;
 begin
+  -- Une version attendue ABSENTE n'est pas « pas de conflit » : c'est une
+  -- écriture à l'aveugle. Elle est refusée, jamais tolérée.
+  if _expected is null then
+    raise exception 'VERSION_REQUIRED' using errcode = '22023';
+  end if;
   row := lead_priv.crm_ensure(_dossier);
   select * into row from lead.dossier_crm where dossier_id = _dossier for update;
-  if _expected is not null and row.version <> _expected then
+  if row.version <> _expected then
     raise exception 'CRM_CONFLICT:%', row.version using errcode = '40001';
   end if;
   return row;
+end $$;
+
+-- Une devise ne se change pas « en silence » quand des montants existent déjà :
+-- relabelliser 10 EUR en 10 USD fabriquerait une marge fausse. Aucune conversion
+-- automatique n'est faite ; il faut d'abord effacer les montants.
+create or replace function lead_priv.crm_currency_guard(_row lead.dossier_crm, _cur text)
+returns void language plpgsql immutable
+set search_path = pg_temp as $$
+begin
+  if _cur is null or _row.currency is null or _cur = _row.currency then return; end if;
+  if _row.unit_price is not null or _row.unit_cost is not null
+     or _row.estimated_annual_revenue is not null then
+    raise exception 'CURRENCY_LOCKED' using errcode = '22023';
+  end if;
 end $$;
 
 create or replace function lead_priv.crm_set_stage(_dossier uuid, _stage text, _expected integer)
@@ -453,36 +555,76 @@ returns jsonb language sql security invoker
 set search_path = public, lead_priv, pg_temp as $$
   select lead_priv.crm_set_stage(p_dossier, p_stage, p_expected_version); $$;
 
+-- Lecture STRICTEMENT typée d'un champ du correctif. Une valeur du mauvais type
+-- est REFUSÉE, jamais silencieusement convertie en « vide » : « not a number »
+-- effaçait le montant au lieu d'échouer.
+create or replace function lead_priv.crm_patch_text(_patch jsonb, _key text)
+returns text language plpgsql immutable
+set search_path = pg_temp as $$
+declare v jsonb := _patch -> _key;
+begin
+  if v is null or jsonb_typeof(v) = 'null' then return null; end if;
+  if jsonb_typeof(v) <> 'string' then
+    raise exception 'BAD_FIELD_TYPE:%', _key using errcode = '22023';
+  end if;
+  return nullif(btrim(v #>> '{}'), '');
+end $$;
+
+create or replace function lead_priv.crm_patch_number(_patch jsonb, _key text)
+returns numeric language plpgsql immutable
+set search_path = pg_temp as $$
+declare v jsonb := _patch -> _key; n numeric;
+begin
+  if v is null or jsonb_typeof(v) = 'null' then return null; end if;
+  if jsonb_typeof(v) <> 'number' then
+    raise exception 'BAD_FIELD_TYPE:%', _key using errcode = '22023';
+  end if;
+  n := lead_priv.json_number(v);
+  if n is null or not lead_priv.finite_num(n) then
+    raise exception 'BAD_FIELD_TYPE:%', _key using errcode = '22023';
+  end if;
+  return n;
+end $$;
+
 -- Identité du projet : société, nom de projet, pays, date de lancement série,
 -- estimation manuelle du CA, volume retenu.
 create or replace function lead_priv.crm_set_fields(_dossier uuid, _patch jsonb, _expected integer)
 returns jsonb language plpgsql security definer
 set search_path = lead, lead_priv, pg_temp as $$
 declare u uuid := lead_priv.require_user(); row lead.dossier_crm%rowtype;
-        bullets text[] := '{}'; v text; n numeric; d date;
+        bullets text[] := '{}'; v text; n numeric; d date; k text;
+        allowed text[] := array['company','project_name','country_code','currency',
+                                'series_launch','annual_volume_override',
+                                'estimated_annual_revenue'];
 begin
   perform lead_priv.crm_require_write(u, _dossier, array['sales','rnd']::lead.staff_role[]);
   if _patch is null or jsonb_typeof(_patch) <> 'object' then
     raise exception 'BAD_PATCH' using errcode = '22023';
   end if;
+  -- Liste blanche : une clé inconnue est une erreur, pas un champ ignoré.
+  for k in select jsonb_object_keys(_patch) loop
+    if not (k = any(allowed)) then
+      raise exception 'UNKNOWN_FIELD:%', k using errcode = '22023';
+    end if;
+  end loop;
   row := lead_priv.crm_bump(_dossier, _expected);
 
   if _patch ? 'company' then
-    v := nullif(btrim(coalesce(_patch->>'company','')), '');
+    v := lead_priv.crm_patch_text(_patch, 'company');
     update lead.dossier_crm set company = v where dossier_id = _dossier;
     if v is distinct from row.company then
       bullets := bullets || ('Company set to ' || coalesce(v,'unknown') || '.');
     end if;
   end if;
   if _patch ? 'project_name' then
-    v := nullif(btrim(coalesce(_patch->>'project_name','')), '');
+    v := lead_priv.crm_patch_text(_patch, 'project_name');
     update lead.dossier_crm set project_name = v where dossier_id = _dossier;
     if v is distinct from row.project_name then
       bullets := bullets || ('Project name set to ' || coalesce(v,'unknown') || '.');
     end if;
   end if;
   if _patch ? 'country_code' then
-    v := nullif(upper(btrim(coalesce(_patch->>'country_code',''))), '');
+    v := upper(lead_priv.crm_patch_text(_patch, 'country_code'));
     if v is not null and v !~ '^[A-Z]{2}$' then
       raise exception 'BAD_COUNTRY' using errcode = '22023';
     end if;
@@ -492,9 +634,15 @@ begin
     end if;
   end if;
   if _patch ? 'currency' then
-    v := nullif(upper(btrim(coalesce(_patch->>'currency',''))), '');
+    v := upper(lead_priv.crm_patch_text(_patch, 'currency'));
     if v is not null and v !~ '^[A-Z]{3}$' then
       raise exception 'BAD_CURRENCY' using errcode = '22023';
+    end if;
+    -- Même verrou que sur le prix : pas de relabellisation d'un montant existant.
+    perform lead_priv.crm_currency_guard(row, v);
+    if v is null and (row.unit_price is not null or row.unit_cost is not null
+                      or row.estimated_annual_revenue is not null) then
+      raise exception 'CURRENCY_LOCKED' using errcode = '22023';
     end if;
     update lead.dossier_crm set currency = v where dossier_id = _dossier;
     if v is distinct from row.currency then
@@ -502,8 +650,11 @@ begin
     end if;
   end if;
   if _patch ? 'series_launch' then
-    v := nullif(btrim(coalesce(_patch->>'series_launch','')), '');
+    v := lead_priv.crm_patch_text(_patch, 'series_launch');
     if v is null then d := null; else
+      if v !~ '^\d{4}-\d{2}-\d{2}$' then
+        raise exception 'BAD_DATE' using errcode = '22023';
+      end if;
       begin d := v::date; exception when others then
         raise exception 'BAD_DATE' using errcode = '22023'; end;
     end if;
@@ -514,8 +665,7 @@ begin
     end if;
   end if;
   if _patch ? 'annual_volume_override' then
-    n := lead_priv.json_number(_patch->'annual_volume_override');
-    if _patch->'annual_volume_override' = 'null'::jsonb then n := null; end if;
+    n := lead_priv.crm_patch_number(_patch, 'annual_volume_override');
     if n is not null and (n <= 0 or n <> trunc(n) or n > 2147483647) then
       raise exception 'BAD_ANNUAL_VOLUME' using errcode = '22023';
     end if;
@@ -526,8 +676,7 @@ begin
     end if;
   end if;
   if _patch ? 'estimated_annual_revenue' then
-    n := lead_priv.json_number(_patch->'estimated_annual_revenue');
-    if _patch->'estimated_annual_revenue' = 'null'::jsonb then n := null; end if;
+    n := lead_priv.crm_patch_number(_patch, 'estimated_annual_revenue');
     if n is not null and (n < 0 or n >= 1e15) then
       raise exception 'BAD_ESTIMATE' using errcode = '22023';
     end if;
@@ -541,10 +690,12 @@ begin
 
   update lead.dossier_crm set updated_at = now(), version = version + 1
    where dossier_id = _dossier;
+  -- Réécrire la même valeur ne fabrique aucune note : `bullets` reste vide et
+  -- `sap_note` sort immédiatement.
   perform lead_priv.sap_note(_dossier, u, 'fields:' || row.version::text, bullets);
   insert into lead.audit_log (actor, action, dossier_id, detail)
   values (u, 'crm_fields_set', _dossier, jsonb_build_object('keys',
-          (select jsonb_agg(k) from jsonb_object_keys(_patch) k)));
+          (select jsonb_agg(k2) from jsonb_object_keys(_patch) k2)));
   return lead_priv.crm_project(_dossier);
 end $$;
 
@@ -575,11 +726,15 @@ begin
      set unit_cost = c, cost_in_sap = coalesce(_in_sap, false),
          updated_at = now(), version = version + 1
    where dossier_id = _dossier;
-  perform lead_priv.sap_note(_dossier, u, 'cost:' || row.version::text,
-    array[case when coalesce(_in_sap,false) then 'Unit cost: see cost in SAP (standard part).'
-          when c is null then 'Unit cost cleared.'
-          else 'Unit cost set to ' || trim(to_char(c,'FM999999999990.0000'))
-               || coalesce(' ' || row.currency, '') || '.' end]);
+  -- Réécrire exactement la même valeur n'est pas un « progrès » : pas de note.
+  if c is distinct from row.unit_cost
+     or coalesce(_in_sap,false) is distinct from row.cost_in_sap then
+    perform lead_priv.sap_note(_dossier, u, 'cost:' || row.version::text,
+      array[case when coalesce(_in_sap,false) then 'Unit cost: see cost in SAP (standard part).'
+            when c is null then 'Unit cost cleared.'
+            else 'Unit cost set to ' || trim(to_char(c,'FM999999999990.0000'))
+                 || coalesce(' ' || row.currency, '') || '.' end]);
+  end if;
   insert into lead.audit_log (actor, action, dossier_id, detail)
   values (u, 'crm_cost_set', _dossier, jsonb_build_object('in_sap', coalesce(_in_sap,false)));
   return lead_priv.crm_project(_dossier);
@@ -612,14 +767,20 @@ begin
     raise exception 'BAD_CURRENCY' using errcode = '22023';
   end if;
   row := lead_priv.crm_bump(_dossier, _expected);
+  -- Un changement de devise ne peut pas rebaptiser en silence un coût FAE déjà
+  -- saisi : sans conversion réelle, la marge deviendrait fausse.
+  perform lead_priv.crm_currency_guard(row, cur);
   update lead.dossier_crm
      set unit_price = _price, currency = coalesce(cur, currency),
          updated_at = now(), version = version + 1
    where dossier_id = _dossier;
-  perform lead_priv.sap_note(_dossier, u, 'price:' || row.version::text,
-    array[case when _price is null then 'Unit sales price cleared.'
-          else 'Unit sales price set to ' || trim(to_char(_price,'FM999999999990.0000'))
-               || coalesce(' ' || coalesce(cur, row.currency), '') || '.' end]);
+  if _price is distinct from row.unit_price
+     or coalesce(cur, row.currency) is distinct from row.currency then
+    perform lead_priv.sap_note(_dossier, u, 'price:' || row.version::text,
+      array[case when _price is null then 'Unit sales price cleared.'
+            else 'Unit sales price set to ' || trim(to_char(_price,'FM999999999990.0000'))
+                 || coalesce(' ' || coalesce(cur, row.currency), '') || '.' end]);
+  end if;
   insert into lead.audit_log (actor, action, dossier_id, detail)
   values (u, 'crm_price_set', _dossier, jsonb_build_object('currency', coalesce(cur, row.currency)));
   return lead_priv.crm_project(_dossier);
@@ -632,17 +793,60 @@ returns jsonb language sql security invoker
 set search_path = public, lead_priv, pg_temp as $$
   select lead_priv.crm_set_price(p_dossier, p_price, p_currency, p_expected_version); $$;
 
--- Responsables : nommer une personne n'accorde AUCUN accès. Si la personne est
--- rattachée à un compte, l'affectation existante (`dossier_assignments`) suit,
--- et l'accès du responsable remplacé est retiré s'il ne vient que de ce rôle.
+-- Réconciliation des accès dérivés d'un rôle de responsable.
+--
+-- Deux règles fermes :
+--   * une affectation posée à la main (`source = 'manual'`) n'est JAMAIS
+--     supprimée ici : elle a été accordée explicitement par un administrateur ;
+--   * seules les affectations créées par ce mécanisme (`source = 'crm_owner'`)
+--     sont retirées quand la personne n'est plus responsable.
+create or replace function lead_priv.crm_reconcile_owner_access(_dossier uuid, _actor uuid)
+returns void language plpgsql security definer
+set search_path = lead, lead_priv, pg_temp as $$
+declare owners uuid[]; x uuid; r record;
+begin
+  select coalesce(array_agg(p.user_id), '{}') into owners
+    from lead.crm_directory p
+    join lead.dossier_crm c on c.dossier_id = _dossier
+   where p.user_id is not null and p.active
+     and p.id in (c.sales_person, c.fae_person);
+
+  for r in select a.user_id from lead.dossier_assignments a
+            where a.dossier_id = _dossier and a.source = 'crm_owner'
+              and not (a.user_id = any(owners)) loop
+    delete from lead.dossier_assignments a
+     where a.dossier_id = _dossier and a.user_id = r.user_id and a.source = 'crm_owner';
+    insert into lead.audit_log (actor, action, dossier_id, detail)
+    values (_actor, 'crm_assignment_revoked', _dossier,
+            jsonb_build_object('user_id', r.user_id, 'source', 'crm_owner'));
+  end loop;
+
+  foreach x in array owners loop
+    -- Un nom d'annuaire n'accorde rien : il faut un rôle staff actif.
+    if lead_priv.role_of(x) is not null then
+      insert into lead.dossier_assignments (dossier_id, user_id, assigned_by, source)
+      values (_dossier, x, _actor, 'crm_owner')
+      on conflict (dossier_id, user_id) do nothing; -- une affectation manuelle reste manuelle
+      insert into lead.audit_log (actor, action, dossier_id, detail)
+      values (_actor, 'crm_assignment_granted', _dossier,
+              jsonb_build_object('user_id', x, 'source', 'crm_owner'));
+    end if;
+  end loop;
+end $$;
+
+-- Responsables : nommer une personne n'accorde AUCUN accès par elle-même.
+-- L'affectation technique reste un acte d'ADMINISTRATION : un commercial peut
+-- renseigner qui suit le projet, mais il ne peut pas s'en servir pour ouvrir
+-- l'accès technique d'un tiers.
 create or replace function lead_priv.crm_set_owners(_dossier uuid, _sales uuid, _fae uuid,
                                                     _expected integer)
 returns jsonb language plpgsql security definer
 set search_path = lead, lead_priv, pg_temp as $$
 declare u uuid := lead_priv.require_user(); row lead.dossier_crm%rowtype;
-        old_users uuid[]; new_users uuid[]; x uuid; bullets text[] := '{}';
+        bullets text[] := '{}'; is_admin boolean;
 begin
   perform lead_priv.crm_require_write(u, _dossier, array['sales']::lead.staff_role[]);
+  is_admin := coalesce(lead_priv.role_of(u) = 'admin', false);
   if _sales is not null and not exists (select 1 from lead.crm_directory p
       where p.id = _sales and p.role = 'sales' and p.active) then
     raise exception 'BAD_PERSON' using errcode = '22023';
@@ -653,33 +857,14 @@ begin
   end if;
   row := lead_priv.crm_bump(_dossier, _expected);
 
-  select coalesce(array_agg(p.user_id), '{}') into old_users
-    from lead.crm_directory p
-   where p.user_id is not null and p.id in (row.sales_person, row.fae_person);
-  select coalesce(array_agg(p.user_id), '{}') into new_users
-    from lead.crm_directory p
-   where p.user_id is not null and p.id in (_sales, _fae);
-
   update lead.dossier_crm
      set sales_person = _sales, fae_person = _fae,
          updated_at = now(), version = version + 1
    where dossier_id = _dossier;
 
-  -- Retrait des accès résiduels du responsable remplacé.
-  foreach x in array old_users loop
-    if not (x = any(new_users)) then
-      delete from lead.dossier_assignments a where a.dossier_id = _dossier and a.user_id = x;
-      insert into lead.audit_log (actor, action, dossier_id, detail)
-      values (u, 'crm_assignment_revoked', _dossier, jsonb_build_object('user_id', x));
-    end if;
-  end loop;
-  -- Ajout de l'accès du nouveau responsable, uniquement s'il est staff.
-  foreach x in array new_users loop
-    if lead_priv.role_of(x) is not null then
-      insert into lead.dossier_assignments (dossier_id, user_id, assigned_by)
-      values (_dossier, x, u) on conflict (dossier_id, user_id) do nothing;
-    end if;
-  end loop;
+  if is_admin then
+    perform lead_priv.crm_reconcile_owner_access(_dossier, u);
+  end if;
 
   if row.sales_person is distinct from _sales then
     bullets := bullets || ('Sales owner: ' || coalesce((select p.first_name || ' ' || p.last_name
@@ -689,10 +874,13 @@ begin
     bullets := bullets || ('FAE owner: ' || coalesce((select p.first_name || ' ' || p.last_name
       from lead.crm_directory p where p.id = _fae), 'unassigned') || '.');
   end if;
+  if array_length(bullets, 1) is not null and not is_admin then
+    bullets := bullets || array['Technical access unchanged: assignments are granted by an administrator.'];
+  end if;
   perform lead_priv.sap_note(_dossier, u, 'owners:' || row.version::text, bullets);
   insert into lead.audit_log (actor, action, dossier_id, detail)
   values (u, 'crm_owners_set', _dossier,
-          jsonb_build_object('sales', _sales, 'fae', _fae));
+          jsonb_build_object('sales', _sales, 'fae', _fae, 'access_reconciled', is_admin));
   return lead_priv.crm_project(_dossier);
 end $$;
 
@@ -753,28 +941,37 @@ returns jsonb language sql security invoker
 set search_path = public, lead_priv, pg_temp as $$
   select lead_priv.crm_apply_template(p_dossier, p_expected_version); $$;
 
+-- Clé d'idempotence de création : un même envoi rejoué (double-clic, reprise
+-- réseau) ne doit pas créer deux fois la même action.
+alter table lead.dossier_tasks add column if not exists client_key text;
+create unique index if not exists dossier_tasks_client_key_uq
+  on lead.dossier_tasks (dossier_id, client_key) where client_key is not null;
+
 create or replace function lead_priv.crm_upsert_task(_dossier uuid, _task jsonb)
 returns jsonb language plpgsql security definer
 set search_path = lead, lead_priv, pg_temp as $$
 declare u uuid := lead_priv.require_user(); tid uuid; cur lead.dossier_tasks%rowtype;
         st lead.crm_task_status; sh lead.crm_stakeholder; sg lead.crm_stage;
-        lbl text; due date; na text; pid uuid; expected integer;
+        lbl text; due date; na text; pid uuid; expected integer; ckey text;
 begin
   perform lead_priv.crm_require_write(u, _dossier, array['sales','rnd']::lead.staff_role[]);
   if _task is null or jsonb_typeof(_task) <> 'object' then
     raise exception 'BAD_TASK' using errcode = '22023';
   end if;
-  lbl := nullif(btrim(coalesce(_task->>'label','')), '');
+  lbl := lead_priv.crm_patch_text(_task, 'label');
   if lbl is null then raise exception 'BAD_TASK' using errcode = '22023'; end if;
   begin sg := coalesce(_task->>'stage','lead')::lead.crm_stage;
         sh := coalesce(_task->>'stakeholder','sales')::lead.crm_stakeholder;
         st := coalesce(_task->>'status','todo')::lead.crm_task_status;
   exception when others then raise exception 'BAD_TASK' using errcode = '22023'; end;
-  na := nullif(btrim(coalesce(_task->>'na_reason','')), '');
+  na := lead_priv.crm_patch_text(_task, 'na_reason');
   if st = 'not_applicable' and na is null then
     raise exception 'NA_REASON_REQUIRED' using errcode = '22023';
   end if;
   if nullif(_task->>'due_on','') is null then due := null; else
+    if _task->>'due_on' !~ '^\d{4}-\d{2}-\d{2}$' then
+      raise exception 'BAD_DATE' using errcode = '22023';
+    end if;
     begin due := (_task->>'due_on')::date; exception when others then
       raise exception 'BAD_DATE' using errcode = '22023'; end;
   end if;
@@ -784,21 +981,35 @@ begin
   end if;
   tid := nullif(_task->>'id','')::uuid;
   expected := nullif(_task->>'expected_version','')::integer;
+  ckey := lead_priv.crm_patch_text(_task, 'client_key');
 
   if tid is null then
+    if ckey is not null then
+      select * into cur from lead.dossier_tasks
+       where dossier_id = _dossier and client_key = ckey for update;
+      if found then
+        -- Rejeu exact : on rend l'état existant, sans second item ni seconde note.
+        return lead_priv.crm_project(_dossier);
+      end if;
+    end if;
     insert into lead.dossier_tasks (dossier_id, stage, label, stakeholder, person_id,
       status, na_reason, due_on, sort_order, activated_at,
-      done_at, done_by)
+      done_at, done_by, client_key)
     values (_dossier, sg, lbl, sh, pid, st, na, due,
       coalesce(nullif(_task->>'sort_order','')::integer, 100), now(),
-      case when st = 'done' then now() end, case when st = 'done' then u end)
+      case when st = 'done' then now() end, case when st = 'done' then u end, ckey)
     returning id into tid;
     perform lead_priv.sap_note(_dossier, u, 'task_new:' || tid::text,
       array['Action added: ' || lbl || '.']);
   else
+    -- Modifier un item existant sans version attendue serait une écriture à
+    -- l'aveugle : elle est refusée.
+    if expected is null then
+      raise exception 'VERSION_REQUIRED' using errcode = '22023';
+    end if;
     select * into cur from lead.dossier_tasks where id = tid and dossier_id = _dossier for update;
     if not found then raise exception 'TASK_NOT_FOUND' using errcode = '42501'; end if;
-    if expected is not null and cur.version <> expected then
+    if cur.version <> expected then
       raise exception 'CRM_CONFLICT:%', cur.version using errcode = '40001';
     end if;
     update lead.dossier_tasks
@@ -965,6 +1176,9 @@ begin
   if _person is null then raise exception 'BAD_PERSON' using errcode = '22023'; end if;
   if e is null then
     update lead.crm_directory set user_id = null, updated_at = now() where id = _person;
+    perform lead_priv.crm_reconcile_owner_access(d, u)
+       from (select c.dossier_id as d from lead.dossier_crm c
+              where c.sales_person = _person or c.fae_person = _person) s(d);
     insert into lead.audit_log (actor, action, detail)
     values (u, 'crm_person_unlinked', jsonb_build_object('person', _person));
     return lead_priv.crm_admin_overview();
@@ -975,6 +1189,12 @@ begin
     raise exception 'ACCOUNT_ALREADY_LINKED' using errcode = '42501';
   end if;
   update lead.crm_directory set user_id = target, updated_at = now() where id = _person;
+  -- Rebrancher une personne sur un autre compte change qui « suit » les dossiers
+  -- où elle est responsable : les accès dérivés sont recalculés tout de suite,
+  -- sinon l'ancien compte gardait un accès que plus rien ne justifie.
+  perform lead_priv.crm_reconcile_owner_access(d, u)
+     from (select c.dossier_id as d from lead.dossier_crm c
+            where c.sales_person = _person or c.fae_person = _person) s(d);
   insert into lead.audit_log (actor, action, detail)
   values (u, 'crm_person_linked', jsonb_build_object('person', _person, 'user_id', target));
   return lead_priv.crm_admin_overview();
@@ -998,7 +1218,14 @@ begin
   begin r := _role::lead.staff_role; exception when others then
     raise exception 'BAD_ROLE' using errcode = '22023'; end;
 
-  select count(*) into admins from lead.staff_members m where m.role = 'admin' and m.active;
+  -- Deux rétrogradations simultanées pouvaient chacune voir « 2 admins » et
+  -- supprimer le dernier. Le décompte se fait donc sur des lignes verrouillées.
+  select count(*) into admins from (
+    select 1 from lead.staff_members m
+     where m.role = 'admin' and m.active
+     order by m.user_id
+     for update
+  ) locked;
   if admins <= 1 and exists (select 1 from lead.staff_members m
       where m.user_id = _user and m.role = 'admin' and m.active)
      and (r <> 'admin' or not act) then
@@ -1020,6 +1247,102 @@ set search_path = public, lead_priv, pg_temp as $$
   select lead_priv.crm_admin_set_staff(p_user, p_role, p_active); $$;
 
 -- ----------------------------------------------------------------------------
+-- 13 bis. Historique réel du dossier dans les notes SAP
+--
+-- Les étapes existantes (révision soumise, revue publiée, offre, échantillons…)
+-- écrivaient déjà dans `lead.audit_log` mais ne laissaient aucune trace dans le
+-- suivi interne. On les reprend ici SANS toucher aux fonctions d'origine :
+-- un déclencheur traduit l'ÉVÉNEMENT (jamais le texte libre français saisi par
+-- le client ou par l'équipe) en une phrase anglaise structurée, avec une clé
+-- d'événement unique par ligne d'audit — donc idempotente et rejouable.
+-- ----------------------------------------------------------------------------
+create or replace function lead_priv.crm_audit_sentence(_action text, _detail jsonb)
+returns text language sql immutable set search_path = pg_temp as $$
+  select case _action
+    when 'dossier_created'    then 'Customer project created.'
+    when 'revision_submitted' then 'Customer submitted design revision '
+                                   || coalesce(_detail->>'revision','?') || '.'
+    when 'review_published'   then 'Engineering feedback published for revision '
+                                   || coalesce(_detail->>'revision','?') || '.'
+    when 'offer_created'      then 'Commercial offer recorded for revision '
+                                   || coalesce(_detail->>'revision','?') || '.'
+    when 'samples_requested'  then 'Samples requested.'
+    when 'sample_revalidated' then 'Sample request revalidated.'
+    when 'variant_accepted'   then 'Design variant accepted.'
+    when 'nda_prepared'       then 'NDA document prepared.'
+    when 'dossier_assigned'   then 'Team member assigned to the project.'
+    else null end;
+$$;
+
+create or replace function lead_priv.crm_audit_note(_id bigint, _at timestamptz, _actor uuid,
+                                                    _dossier uuid, _action text, _detail jsonb)
+returns void language plpgsql security definer
+set search_path = lead, lead_priv, pg_temp as $$
+declare s text;
+begin
+  if _dossier is null then return; end if;
+  s := lead_priv.crm_audit_sentence(_action, _detail);
+  if s is null then return; end if;
+  insert into lead.sap_notes (dossier_id, author_id, author_name, event_key, body_en)
+  values (_dossier, _actor, lead_priv.crm_actor_name(_actor), 'audit:' || _id::text,
+          to_char(_at at time zone 'UTC', 'DD/MM/YYYY') || ' - '
+          || lead_priv.crm_actor_name(_actor) || ' :' || E'\n- ' || s)
+  on conflict (dossier_id, event_key) do nothing;
+end $$;
+
+create or replace function lead_priv.crm_audit_note_trg()
+returns trigger language plpgsql security definer
+set search_path = lead, lead_priv, pg_temp as $$
+begin
+  perform lead_priv.crm_audit_note(new.id, new.at, new.actor, new.dossier_id,
+                                   new.action, new.detail);
+  return null;
+end $$;
+
+drop trigger if exists crm_audit_note on lead.audit_log;
+create trigger crm_audit_note after insert on lead.audit_log
+  for each row execute function lead_priv.crm_audit_note_trg();
+
+-- Reprise de l'historique déjà existant, à l'identique et sans doublon.
+do $$
+declare l record;
+begin
+  for l in select id, at, actor, dossier_id, action, detail from lead.audit_log
+            where dossier_id is not null order by id loop
+    perform lead_priv.crm_audit_note(l.id, l.at, l.actor, l.dossier_id, l.action, l.detail);
+  end loop;
+end $$;
+
+-- Publication de revue + mise en file de notification, dans UNE transaction.
+-- La publication passe par la fonction d'origine, avec ses gardes inchangées ;
+-- si la mise en file échoue, la publication est annulée avec elle. Il ne peut
+-- donc plus exister de revue publiée sans notification en attente.
+create or replace function lead_priv.crm_publish_review_and_notify(
+  _revision uuid, _scope text, _conditions text, _verdict text,
+  _client_message text, _internal_note text, _exact_part_number text,
+  _designation text, _variant jsonb, _subject text, _summary text)
+returns jsonb language plpgsql security definer
+set search_path = lead, lead_priv, pg_temp as $$
+declare rid uuid;
+begin
+  rid := public.lead_publish_review(_revision, _scope, _conditions, _verdict,
+           _client_message, _internal_note, _exact_part_number, _designation,
+           coalesce(_variant, '{}'::jsonb));
+  return lead_priv.crm_queue_review_notification(rid, _subject, _summary);
+end $$;
+
+create or replace function public.lead_crm_publish_review_and_notify(
+  p_revision_id uuid, p_scope text, p_conditions text, p_verdict text,
+  p_client_message text, p_internal_note text, p_exact_part_number text,
+  p_designation text, p_variant jsonb, p_subject text, p_summary text)
+returns jsonb language sql security invoker
+set search_path = public, lead_priv, pg_temp as $$
+  select lead_priv.crm_publish_review_and_notify(p_revision_id, p_scope, p_conditions,
+    p_verdict, p_client_message, p_internal_note, p_exact_part_number, p_designation,
+    p_variant, p_subject, p_summary); $$;
+
+
+-- ----------------------------------------------------------------------------
 -- 14. Annuaire prérempli — CHOIX MÉTIER, aucun compte, aucun e-mail inventé
 -- ----------------------------------------------------------------------------
 insert into lead.crm_directory (first_name, last_name, role) values
@@ -1038,17 +1361,43 @@ insert into lead.crm_directory (first_name, last_name, role) values
 on conflict do nothing;
 
 -- ----------------------------------------------------------------------------
--- 15. Permissions : rien n'est exécutable par défaut ni par anon.
+-- 15. Permissions.
+--
+-- Règle : un utilisateur connecté n'exécute JAMAIS un utilitaire interne.
+-- L'ancienne boucle « grant à tout ce qui s'appelle crm_% » laissait par exemple
+-- `crm_row_json` (données internes d'un dossier étranger) et `sap_note`
+-- (fabrication d'une note d'administrateur) accessibles à n'importe quel compte
+-- authentifié. Tout est donc révoqué, y compris pour `authenticated`, puis
+-- SEULS les points d'entrée réellement contrôlés sont rouverts.
 -- ----------------------------------------------------------------------------
 do $$
 declare f text;
 begin
   for f in select 'lead_priv.' || p.proname || '(' || pg_get_function_identity_arguments(p.oid) || ')'
              from pg_proc p join pg_namespace n on n.oid = p.pronamespace
-            where n.nspname = 'lead_priv' and p.proname like 'crm\_%' escape '\'
-               or (n.nspname = 'lead_priv' and p.proname in ('sap_note','sap_notes_append_only'))
+            where n.nspname = 'lead_priv'
+              and (p.proname like 'crm\_%' escape '\'
+                   or p.proname in ('sap_note','sap_notes_append_only'))
   loop
-    execute format('revoke all on function %s from public, anon', f);
+    execute format('revoke all on function %s from public, anon, authenticated', f);
+  end loop;
+end $$;
+
+revoke all on function lead_priv.role_of(uuid) from public, anon, authenticated;
+
+-- Points d'entrée contrôlés : chacun vérifie l'identité (`require_user`), le
+-- rôle staff actif et l'affectation au dossier avant toute lecture ou écriture.
+do $$
+declare f text;
+  entrypoints text[] := array['crm_capabilities','crm_board','crm_project','crm_set_stage',
+    'crm_set_fields','crm_set_cost','crm_set_price','crm_set_owners','crm_apply_template',
+    'crm_upsert_task','crm_queue_review_notification','crm_publish_review_and_notify',
+    'crm_admin_overview','crm_admin_upsert_person','crm_admin_link_person','crm_admin_set_staff'];
+begin
+  for f in select 'lead_priv.' || p.proname || '(' || pg_get_function_identity_arguments(p.oid) || ')'
+             from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+            where n.nspname = 'lead_priv' and p.proname = any(entrypoints)
+  loop
     execute format('grant execute on function %s to authenticated', f);
   end loop;
   for f in select 'public.' || p.proname || '(' || pg_get_function_identity_arguments(p.oid) || ')'
@@ -1059,9 +1408,6 @@ begin
     execute format('grant execute on function %s to authenticated', f);
   end loop;
 end $$;
-
-revoke all on function lead_priv.role_of(uuid) from public, anon;
-grant execute on function lead_priv.role_of(uuid) to authenticated;
 
 -- Les tables restent inaccessibles directement : tout passe par les fonctions.
 revoke all on lead.crm_directory, lead.dossier_crm, lead.dossier_tasks,

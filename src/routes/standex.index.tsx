@@ -30,7 +30,7 @@ import {
 } from "@/components/standex/dashboard/crm-shared";
 import { fetchCrmBoard, type CrmBoard } from "@/lib/leadmagnet/dashboard-adapter";
 import {
-  ageInDays,
+  stageAgeDays,
   filterProjects,
   groupByStage,
   pipelineTotals,
@@ -299,7 +299,7 @@ function ProjectsBoard() {
                       params={{ dossierId: p.dossierId }}
                       className="inline-flex min-h-11 items-center font-medium underline-offset-2 hover:underline"
                     >
-                      {p.company ?? p.title}
+                      {p.companyEffective ?? p.title}
                     </Link>
                     <p className="t-caption text-muted-foreground">
                       {p.projectName ?? p.title} — {t("version")} {p.currentRevision}
@@ -308,9 +308,9 @@ function ProjectsBoard() {
                   <td className="p-2">
                     <StageBadge stage={p.stage} />
                     <p className="t-caption text-muted-foreground">
-                      {ageInDays(p.stageSince) === null
+                      {stageAgeDays(p) === null
                         ? t("depuis une date inconnue")
-                        : `${ageInDays(p.stageSince)} ${t("jour(s)")}`}
+                        : `${stageAgeDays(p)} ${t("jour(s)")}`}
                     </p>
                   </td>
                   <td className="p-2">{p.countryCode ?? <UnknownValue />}</td>
@@ -363,7 +363,7 @@ function ProjectsBoard() {
                     params={{ dossierId: p.dossierId }}
                     className="block min-h-11 rounded-[var(--r-sm)] bg-[var(--surface-sunken)] p-3 shadow-[var(--e-inset)]"
                   >
-                    <span className="block font-medium">{p.company ?? p.title}</span>
+                    <span className="block font-medium">{p.companyEffective ?? p.title}</span>
                     <span className="block t-caption text-muted-foreground">
                       {p.projectName ?? t("projet sans nom")}
                     </span>

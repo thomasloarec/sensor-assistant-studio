@@ -85,6 +85,12 @@ export interface CrmTask {
   version: number;
 }
 
+/**
+ * D'où vient la valeur affichée : correction interne explicite, déclaration du
+ * client dans la soumission, ou rien du tout. Jamais deviné.
+ */
+export type CrmValueSource = "override" | "submitted" | "unknown";
+
 export interface CrmProject {
   dossierId: string;
   title: string;
@@ -106,8 +112,18 @@ export interface CrmProject {
   annualVolumeOverride: number | null;
   estimatedAnnualRevenue: number | null;
   seriesLaunch: string | null;
+  /** Valeur réellement déclarée par le client dans la dernière soumission. */
+  companySubmitted: string | null;
+  seriesLaunchSubmitted: string | null;
+  /** Valeur affichée : correction interne si elle existe, sinon la soumission. */
+  companyEffective: string | null;
+  seriesLaunchEffective: string | null;
+  companySource: CrmValueSource;
+  seriesLaunchSource: CrmValueSource;
   updatedAt: string;
   dossierUpdatedAt: string;
+  /** Date de création du dossier : sert à l'âge du projet, jamais à l'âge d'étape. */
+  dossierCreatedAt: string;
   version: number;
   tasksTotal: number;
   tasksDone: number;
@@ -283,14 +299,29 @@ export function taskOverdueDays(task: Pick<CrmTask, "dueOn" | "status">, now: Da
   return diff > 0 ? diff : null;
 }
 
+/** Âge du projet : depuis la création du dossier, valeur immuable. */
+export function projectAgeDays(project: CrmProject, now: Date = new Date()): number | null {
+  return ageInDays(project.dossierCreatedAt || null, now);
+}
+
+/**
+ * Âge de l'étape EN COURS : depuis l'activation réelle des actions de cette
+ * étape, jamais depuis la plus ancienne action inachevée d'une étape future.
+ */
+export function stageAgeDays(project: CrmProject, now: Date = new Date()): number | null {
+  return ageInDays(project.stageActivatedAt ?? project.stageSince, now);
+}
+
 /** Repères d'attention d'un projet, sans jamais inventer une échéance absente. */
 export function projectAlerts(project: CrmProject, tasks: readonly CrmTask[], now: Date = new Date()):
-  { blocked: number; overdue: number; stageAgeDays: number | null; idleDays: number | null } {
+  { blocked: number; overdue: number; stageAgeDays: number | null; idleDays: number | null;
+    projectAgeDays: number | null } {
   return {
     blocked: tasks.filter((t) => t.status === "blocked").length,
     overdue: tasks.filter((t) => taskOverdueDays(t, now) !== null).length,
-    stageAgeDays: ageInDays(project.stageSince, now),
+    stageAgeDays: stageAgeDays(project, now),
     idleDays: ageInDays(project.updatedAt, now),
+    projectAgeDays: projectAgeDays(project, now),
   };
 }
 

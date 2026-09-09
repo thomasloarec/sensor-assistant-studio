@@ -293,11 +293,27 @@ const franke = overview.directory.find((p) => p.last_name === 'Franke');
 const replaced = await actor('authenticated', ids.admin,
   () => value('select public.lead_crm_set_owners($1,$2,$3,$4)',
     [dossier, franke.id, null, owned.project.version]));
-const revoked = await value(
-  'select count(*)::int from lead.dossier_assignments where dossier_id=$1 and user_id=$2', [dossier, ids.sales]);
-add('replaced_owner_loses_access', revoked === 0 && replaced.project.sales_person === franke.id);
+// L'affectation du commercial a été posée à la main par un administrateur :
+// changer de responsable ne doit PAS l'effacer.
+const manualKept = await value(
+  "select count(*)::int from lead.dossier_assignments where dossier_id=$1 and user_id=$2 and source='manual'",
+  [dossier, ids.sales]);
+add('manual_assignment_survives_owner_change',
+  manualKept === 1 && replaced.project.sales_person === franke.id);
+// En revanche, un accès DÉRIVÉ du rôle de responsable disparaît avec le rôle.
+await db.query(
+  "insert into lead.dossier_assignments(dossier_id,user_id,assigned_by,source) values($1,$2,$3,'crm_owner')"
+  + ' on conflict (dossier_id,user_id) do nothing', [dossier, ids.admin2, ids.admin]);
+await actor('authenticated', ids.admin,
+  () => value('select public.lead_crm_set_owners($1,$2,$3,$4)',
+    [dossier, franke.id, null, replaced.project.version]));
+add('derived_owner_access_is_revoked', await value(
+  'select count(*)::int from lead.dossier_assignments where dossier_id=$1 and user_id=$2',
+  [dossier, ids.admin2]) === 0);
+// Restent exactement les deux affectations accordées explicitement au départ.
 add('unlinked_owner_gets_no_implicit_access', await value(
-  'select count(*)::int from lead.dossier_assignments where dossier_id=$1', [dossier]) === 1);
+  "select count(*)::int from lead.dossier_assignments where dossier_id=$1 and source='manual'",
+  [dossier]) === 2);
 
 await actor('authenticated', ids.admin,
   () => value('select public.lead_crm_admin_set_staff($1,$2,$3)', [ids.admin2, 'sales', true]));
@@ -317,6 +333,107 @@ await expectFail('crm_tables_are_not_directly_readable', () => actor('authentica
   () => value('select count(*) from lead.dossier_crm')), 'permission denied');
 await expectFail('anon_cannot_execute_crm_wrappers', () => actor('anon', null,
   () => value('select public.lead_crm_admin_overview()')), 'permission denied');
+
+// ---------------------------------------------------------------------------
+// 14. Régressions issues de la revue indépendante (checkpoint a0fd94a6)
+// ---------------------------------------------------------------------------
+
+// 14.1 Les utilitaires internes ne sont exécutables par AUCUN compte connecté.
+await expectFail('authenticated_cannot_read_internal_row_helper', () => actor('authenticated', ids.outsider,
+  () => value('select lead_priv.crm_row_json($1)', [dossier])), 'permission denied');
+await expectFail('client_cannot_forge_a_sap_note', () => actor('authenticated', ids.client,
+  () => value("select lead_priv.sap_note($1,$2,'forged',array['Forged internal event'])",
+    [dossier, ids.admin])), 'permission denied');
+await expectFail('authenticated_cannot_read_role_helper', () => actor('authenticated', ids.outsider,
+  () => value('select lead_priv.role_of($1)', [ids.admin])), 'permission denied');
+add('no_forged_note_was_written', await value(
+  "select count(*)::int from lead.sap_notes where body_en like '%Forged internal event%'") === 0);
+
+// 14.2 Désactiver un membre lui retire AUSSI les accès historiques.
+await actor('authenticated', ids.admin,
+  () => value('select public.lead_crm_admin_set_staff($1,$2,$3)', [ids.rnd, 'rnd', false]));
+await expectFail('deactivated_staff_loses_legacy_design_access', () => actor('authenticated', ids.rnd,
+  () => value('select public.lead_staff_view($1)', [dossier])), 'NOT_ALLOWED');
+add('deactivated_staff_loses_storage_access', await value(
+  'select lead_priv.staff_can_read_design($1,$2)', [ids.rnd, dossier]) === false);
+await actor('authenticated', ids.admin,
+  () => value('select public.lead_crm_admin_set_staff($1,$2,$3)', [ids.rnd, 'rnd', true]));
+
+const cur1 = await actor('authenticated', ids.sales, () => value('select public.lead_crm_project($1)', [dossier]));
+
+// 14.3 Devise verrouillée quand des montants existent : aucune marge fabriquée.
+await expectFail('currency_change_is_blocked_when_amounts_exist', () => actor('authenticated', ids.sales,
+  () => value('select public.lead_crm_set_price($1,$2,$3,$4)',
+    [dossier, 10, 'USD', cur1.project.version])), 'CURRENCY_LOCKED');
+await expectFail('currency_change_is_blocked_through_set_fields', () => actor('authenticated', ids.sales,
+  () => value('select public.lead_crm_set_fields($1,$2,$3)',
+    [dossier, { currency: 'USD' }, cur1.project.version])), 'CURRENCY_LOCKED');
+add('currency_and_cost_are_unchanged',
+  cur1.project.currency === 'EUR' && Number(cur1.project.unit_cost) === 0);
+
+// 14.4 Types stricts, liste blanche, version obligatoire.
+await expectFail('non_numeric_amount_is_rejected', () => actor('authenticated', ids.sales,
+  () => value('select public.lead_crm_set_fields($1,$2,$3)',
+    [dossier, { estimated_annual_revenue: 'not a number' }, cur1.project.version])), 'BAD_FIELD_TYPE');
+add('rejected_amount_was_not_cleared', Number((await actor('authenticated', ids.sales,
+  () => value('select public.lead_crm_project($1)', [dossier]))).project.estimated_annual_revenue) === 12000);
+await expectFail('unknown_field_is_rejected', () => actor('authenticated', ids.sales,
+  () => value('select public.lead_crm_set_fields($1,$2,$3)',
+    [dossier, { unit_price: 99 }, cur1.project.version])), 'UNKNOWN_FIELD');
+await expectFail('missing_version_is_rejected', () => actor('authenticated', ids.sales,
+  () => value('select public.lead_crm_set_fields($1,$2,$3)',
+    [dossier, { project_name: 'Blind write' }, null])), 'VERSION_REQUIRED');
+
+// 14.5 Rejeu de création de tâche : une seule action, une seule note.
+const beforeTasks = (await actor('authenticated', ids.sales,
+  () => value('select public.lead_crm_project($1)', [dossier]))).tasks.length;
+const newTask = { label: 'Call the customer back', stage: 'qualification',
+  stakeholder: 'sales', client_key: 'replay-1' };
+await actor('authenticated', ids.sales,
+  () => value('select public.lead_crm_upsert_task($1,$2)', [dossier, newTask]));
+const replayed = await actor('authenticated', ids.sales,
+  () => value('select public.lead_crm_upsert_task($1,$2)', [dossier, newTask]));
+add('task_creation_replay_is_idempotent', replayed.tasks.length === beforeTasks + 1,
+  String(replayed.tasks.length));
+add('task_replay_writes_one_note_only', replayed.sap_notes
+  .filter((n) => n.body_en.includes('Call the customer back')).length === 1);
+const someTask = replayed.tasks.find((t) => t.label === 'Call the customer back');
+await expectFail('task_edit_without_version_is_rejected', () => actor('authenticated', ids.sales,
+  () => value('select public.lead_crm_upsert_task($1,$2)',
+    [dossier, { id: someTask.id, label: 'Renamed', stage: someTask.stage,
+                stakeholder: someTask.stakeholder, status: someTask.status }])), 'VERSION_REQUIRED');
+
+// 14.6 Société et lancement série : valeur soumise affichée par défaut.
+add('submitted_company_is_exposed',
+  cur1.project.company_submitted === 'Synthetic Example SAS', String(cur1.project.company_submitted));
+add('submitted_series_launch_is_exposed',
+  String(cur1.project.series_launch_submitted).startsWith('2027-03-01'),
+  String(cur1.project.series_launch_submitted));
+add('override_provenance_is_explicit',
+  cur1.project.company_source === 'override' && cur1.project.company_effective === 'K Motor');
+const unfiledProject = await actor('authenticated', ids.admin,
+  () => value('select public.lead_crm_project($1)', [dossier]));
+add('submission_snapshot_is_never_mutated', await value(
+  "select (snapshot->'business'->>'contactCompany') from lead.design_revisions where dossier_id=$1"
+  + ' order by revision desc limit 1', [dossier]) === 'Synthetic Example SAS');
+add('effective_values_do_not_touch_stored_override',
+  unfiledProject.project.company === 'K Motor');
+
+// 14.7 Les étapes réelles du dossier apparaissent dans les notes SAP.
+add('submitted_revision_creates_a_sap_note', cur1.sap_notes
+  .some((n) => /Customer submitted design revision \d+\./.test(n.body_en)));
+add('legacy_notes_are_english_only',
+  cur1.sap_notes.every((n) => !/révision|Votre revue/i.test(n.body_en)));
+const auditNoteCount = await value(
+  "select count(*)::int from lead.sap_notes where event_key like 'audit:%' and dossier_id=$1", [dossier]);
+await db.query("insert into lead.audit_log(actor,action,dossier_id,detail) values($1,'unknown_action',$2,'{}')",
+  [ids.admin, dossier]);
+add('unknown_audit_action_creates_no_note', await value(
+  "select count(*)::int from lead.sap_notes where event_key like 'audit:%' and dossier_id=$1",
+  [dossier]) === auditNoteCount);
+
+const failedBefore = results.filter((r) => !r.pass).length;
+add('regression_block_ran', results.length > 65, String(failedBefore));
 
 const failed = results.filter((r) => !r.pass);
 console.log(`\n${results.length - failed.length}/${results.length} contrôles OK`);

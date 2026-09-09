@@ -9,7 +9,8 @@
  */
 import { supabase, isSupabaseConfigured } from "@/lib/standex/supabase";
 import { LEAD_CRM_RPC, humanCrmError, crmConflictVersion, isMissingRpc } from "./dashboard-rpc";
-import type { CrmPerson, CrmProject, CrmStage, CrmTask, TaskStakeholder, TaskStatus } from "./crm";
+import type { CrmPerson, CrmProject, CrmStage, CrmTask, CrmValueSource,
+  TaskStakeholder, TaskStatus } from "./crm";
 import { isCrmStage, isTaskStatus } from "./crm";
 import type { SapNote } from "./sap-note";
 import type { StaffRole } from "./review";
@@ -58,6 +59,9 @@ const num = (v: unknown): number | null => {
   return null;
 };
 const int = (v: unknown): number => Math.trunc(num(v) ?? 0);
+/** Provenance d'une valeur affichée ; toute valeur inattendue vaut « inconnue ». */
+const source = (v: unknown): CrmValueSource =>
+  v === "override" || v === "submitted" ? v : "unknown";
 
 function toProject(raw: unknown): CrmProject | null {
   if (!raw || typeof raw !== "object") return null;
@@ -85,8 +89,16 @@ function toProject(raw: unknown): CrmProject | null {
     annualVolumeOverride: num(r["annual_volume_override"]),
     estimatedAnnualRevenue: num(r["estimated_annual_revenue"]),
     seriesLaunch: str(r["series_launch"]),
+    // Ce que le client a réellement déclaré, et ce qui s'affiche par défaut.
+    companySubmitted: str(r["company_submitted"]),
+    seriesLaunchSubmitted: str(r["series_launch_submitted"]),
+    companyEffective: str(r["company_effective"]) ?? str(r["company"]),
+    seriesLaunchEffective: str(r["series_launch_effective"]) ?? str(r["series_launch"]),
+    companySource: source(r["company_source"]),
+    seriesLaunchSource: source(r["series_launch_source"]),
     updatedAt: str(r["updated_at"]) ?? str(r["dossier_updated_at"]) ?? "",
     dossierUpdatedAt: str(r["dossier_updated_at"]) ?? "",
+    dossierCreatedAt: str(r["dossier_created_at"]) ?? "",
     version: Math.max(1, int(r["version"])),
     tasksTotal: int(r["tasks_total"]),
     tasksDone: int(r["tasks_done"]),
