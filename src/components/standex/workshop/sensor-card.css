@@ -1,12 +1,12 @@
 .sensor-card {
   border: 0;
   padding: 0;
-  border-radius: 20px;
+  border-radius: var(--r-lg);
   width: min(960px, calc(100vw - 32px));
   max-height: calc(100dvh - 40px);
   color: var(--primary);
   background: var(--surface);
-  box-shadow: 0 28px 90px var(--standex-abyss);
+  box-shadow: var(--e-4);
   font-family: Lato, system-ui, sans-serif;
   overflow: auto;
   margin: auto;
@@ -71,7 +71,7 @@
   margin: 16px -12px;
   background-image: radial-gradient(var(--hairline-strong) 1px, transparent 1px);
   background-size: 15px 15px;
-  border-radius: 12px;
+  border-radius: var(--r-md);
 }
 .sc-drawing svg {
   width: 100%;
@@ -85,7 +85,7 @@
   justify-content: center;
   gap: 9px;
   border: 1px solid var(--foreground);
-  border-radius: 30px;
+  border-radius: var(--r-pill);
   padding: 8px 14px;
   font-size: 11px;
   color: var(--surface-tint);
@@ -151,7 +151,7 @@
 }
 .sc-tabs {
   display: flex;
-  border-bottom: 1px solid var(--surface-tint);
+  border-bottom: 1px solid var(--hairline);
   margin: 23px 0 0;
   gap: 24px;
   flex-wrap: wrap;
@@ -202,8 +202,8 @@
 }
 .sc-feature-grid article {
   background: var(--surface);
-  border: 1px solid var(--surface-tint);
-  border-radius: 12px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-md);
   padding: 16px;
   display: flex;
   flex-direction: column;
@@ -245,8 +245,8 @@
 .sc-cable-pills span {
   font-size: 11px;
   padding: 6px 10px;
-  border: 1px solid var(--surface-tint);
-  border-radius: 6px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-sm);
   color: var(--primary);
   background: var(--surface);
 }
@@ -273,8 +273,8 @@
 .sc-variant select {
   min-width: 125px;
   padding: 8px;
-  border: 1px solid var(--surface-tint);
-  border-radius: 7px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-sm);
   background: var(--surface);
   color: var(--primary);
   font: inherit;
@@ -309,7 +309,7 @@
   gap: 14px;
   font-size: 12px;
   padding: 14px 0;
-  border-bottom: 1px solid var(--surface-tint);
+  border-bottom: 1px solid var(--hairline);
 }
 .sc-temperatures strong {
   white-space: nowrap;
@@ -321,7 +321,7 @@
   gap: 10px;
   align-items: center;
   padding-top: 18px;
-  border-top: 1px solid var(--surface-tint);
+  border-top: 1px solid var(--hairline);
 }
 .sc-content footer a {
   font-size: 11px;
@@ -355,11 +355,11 @@
   justify-content: center;
   gap: 8px;
   width: 100%;
-  border: 1px solid var(--hairline-strong);
+  border: 1px solid var(--hairline);
   background: var(--surface);
   color: var(--primary);
   padding: 11px 15px;
-  border-radius: 8px;
+  border-radius: var(--r-md);
   font-size: 12px;
   font-weight: 700;
   cursor: pointer;
@@ -373,7 +373,7 @@
   .sensor-card {
     width: calc(100vw - 20px);
     max-height: calc(100dvh - 20px);
-    border-radius: 14px;
+    border-radius: var(--r-md);
   }
   .sc-shell {
     grid-template-columns: 1fr;
