@@ -269,7 +269,13 @@
   Double bascule, relecture périmée, changement de dossier, démontage et erreur réseau
   sont couverts ; pendant l'enregistrement, préparation, génération, dépôt et envoi sont
   inhibés, et l'erreur reste visible même quand les champs NDA sont masqués.
-- Gates : 306 tests / 43 153 assertions, typecheck OK, build OK, inventaire i18n `TOTAL 0`.
+- Recette réelle (`scripts/e2e-nda-optional.ts`, fixtures synthétiques) : 9/9 PASS sur
+  `yyobodalwtsqdyrqwkjk` — dossier neuf sans NDA soumis, dossier avec NDA préparé
+  (`awaiting_signatures`) retiré par son propriétaire puis soumis, autre utilisateur
+  refusé (`NOT_ALLOWED`) sans effet. Mises au point : 3 exécutions, donc 6 dossiers
+  `E2E NDA <runId>` et quelques comptes `@example.invalid` subsistent — la suppression
+  des comptes échoue toujours (`Database error deleting user`), limitation connue.
+- Gates : 306 tests / 43 292 assertions, typecheck OK, build OK, inventaire i18n `TOTAL 0`.
   Smoke navigateur : case décochée par défaut, champs masqués, activation → champs +
   gardes NDA, désactivation → plus de blocage, zéro erreur console.
 
