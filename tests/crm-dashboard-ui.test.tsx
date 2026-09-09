@@ -4,7 +4,9 @@
 import { describe, expect, test } from "bun:test";
 import { readFileSync } from "node:fs";
 import { renderToStaticMarkup } from "react-dom/server";
+import { consoleLayout } from "../src/components/standex/console/dossier-console";
 import {
+  CrmUnavailableNotice,
   MarginCell,
   RevenueCell,
   VolumeCell,
@@ -172,5 +174,62 @@ describe("garde-fous du serveur", () => {
   test("la migration reste additive : aucune table existante n'est supprimée", () => {
     expect(sql).not.toMatch(/drop table/i);
     expect(sql).not.toMatch(/alter table lead\.dossiers\s+drop/i);
+  });
+});
+
+describe("console des dossiers : en-tête et liste de dossiers", () => {
+  test("intégrée sans dossier imposé, la liste de sélection reste affichée", () => {
+    expect(consoleLayout({ embedded: true })).toEqual({ header: false, sidebar: true });
+  });
+
+  test("un dossier imposé masque la liste, pas les autres écrans", () => {
+    expect(consoleLayout({ embedded: true, initialDossierId: "d1" })).toEqual({
+      header: false,
+      sidebar: false,
+    });
+  });
+
+  test("la console autonome garde en-tête et liste", () => {
+    expect(consoleLayout({})).toEqual({ header: true, sidebar: true });
+  });
+
+  test("les deux masquages restent réglables séparément", () => {
+    expect(consoleLayout({ hideHeader: true, hideSidebar: false, initialDossierId: "d1" })).toEqual({
+      header: false,
+      sidebar: true,
+    });
+  });
+
+  test("la route directe /standex/console n'impose aucun dossier et garde la sélection", () => {
+    const route = readFileSync("src/routes/standex.console.tsx", "utf8");
+    expect(route).not.toContain("initialDossierId");
+    expect(route).not.toContain("hideSidebar");
+  });
+});
+
+describe("indisponibilité de l'espace interne", () => {
+  test("un visiteur ordinaire lit une phrase simple, sans détail technique", () => {
+    const html = renderToStaticMarkup(
+      <CrmUnavailableNotice
+        plain="Le suivi des projets n'est pas encore activé sur ce serveur."
+        detail="RPC lead_crm_capabilities absente : migration_v1.8_crm_dashboard.sql non appliquée."
+        isAdmin={false}
+      />,
+    );
+    expect(html).toContain("pas encore activé");
+    expect(html).not.toContain("migration_v1.8");
+    expect(html).not.toContain("lead_crm_capabilities");
+    expect(html).not.toContain(".sql");
+  });
+
+  test("un administrateur voit le diagnostic technique", () => {
+    const html = renderToStaticMarkup(
+      <CrmUnavailableNotice
+        plain="Le suivi des projets n'est pas encore activé sur ce serveur."
+        detail="RPC lead_crm_capabilities absente : migration_v1.8_crm_dashboard.sql non appliquée."
+        isAdmin
+      />,
+    );
+    expect(html).toContain("migration_v1.8_crm_dashboard.sql");
   });
 });

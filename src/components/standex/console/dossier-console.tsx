@@ -133,14 +133,28 @@ function parseTiers(raw: string): { quantity: number; unit_price: number }[] {
     });
 }
 
-export function DossierConsole({
-  initialDossierId,
-  embedded = false,
-  hideHeader,
-  hideSidebar,
-}: DossierConsoleProps) {
-  const noHeader = hideHeader ?? embedded;
-  const noSidebar = hideSidebar ?? Boolean(initialDossierId);
+/** Décide ce que la console affiche.
+ *
+ *  La liste des dossiers (tri et dossiers confiés) n'est masquée que lorsqu'un
+ *  dossier précis est imposé : sinon l'écran n'offrirait aucun moyen d'en
+ *  choisir un. L'en-tête, lui, disparaît dès que la console est intégrée dans
+ *  un écran qui en fournit déjà un.
+ */
+export function consoleLayout(props: DossierConsoleProps): {
+  header: boolean;
+  sidebar: boolean;
+} {
+  return {
+    header: !(props.hideHeader ?? props.embedded ?? false),
+    sidebar: !(props.hideSidebar ?? Boolean(props.initialDossierId)),
+  };
+}
+
+export function DossierConsole(props: DossierConsoleProps) {
+  const { initialDossierId, embedded = false } = props;
+  const layout = consoleLayout(props);
+  const noHeader = !layout.header;
+  const noSidebar = !layout.sidebar;
   const [backend, setBackend] = useState<LeadBackendStatus | null>(null);
   const [inbox, setInbox] = useState<StaffInbox | null>(null);
   const [selected, setSelected] = useState<string | null>(null);
