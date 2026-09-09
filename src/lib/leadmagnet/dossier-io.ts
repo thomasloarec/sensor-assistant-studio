@@ -21,12 +21,16 @@ export interface DossierExport {
   exportedAt: string;
   /** Binaires non inclus : à réimporter à la main sur le poste qui reprend le dossier. */
   binariesToReimport: { kind: "glb"; fileName: string; assetKey: string }[];
+  /** Choix explicite « je veux un NDA ». C'est une DEMANDE, jamais une preuve :
+   * aucun statut vérifié ni document signé ne voyage dans un fichier. */
+  ndaRequested?: boolean;
   dossier: unknown;
 }
 
 export function buildDossierExport(
   d: DesignDossier,
   now = new Date().toISOString(),
+  opts: { ndaRequested?: boolean } = {},
 ): DossierExport {
   const { internalNotes: _internal, ...rest } = d;
   void _internal;
@@ -43,6 +47,7 @@ export function buildDossierExport(
           },
         ]
       : [],
+    ndaRequested: opts.ndaRequested === true,
     dossier: {
       ...rest,
       // Une pièce jointe n'est jamais réputée transmise après un aller-retour fichier.
@@ -50,6 +55,7 @@ export function buildDossierExport(
     },
   };
 }
+
 
 export const EXPORT_BINARY_NOTICE =
   "Le fichier 3D n'est pas inclus dans ce JSON : il reste sur le poste d'origine. " +
@@ -188,7 +194,16 @@ const dossierSchema = z.object({
 
 
 export type DossierImport =
-  { ok: true; dossier: DesignDossier; notices: string[] } | { ok: false; reason: string };
+  | {
+      ok: true;
+      dossier: DesignDossier;
+      notices: string[];
+      /** Choix NDA lu dans le fichier : `null` pour un export ancien qui ne le
+       * portait pas. Une demande n'est jamais une preuve, et le serveur reste
+       * l'autorité dès qu'un dossier enregistré est rouvert. */
+      ndaRequested: boolean | null;
+    }
+  | { ok: false; reason: string };
 
 /** Reprise d'un fichier exporté : aucune autorité n'est restaurée. */
 /** Reprise d'un instantané RÉELLEMENT envoyé au serveur.
@@ -213,7 +228,14 @@ export function parseServerSnapshot(
 
 export function parseDossierExport(raw: unknown, now = new Date().toISOString()): DossierImport {
   const envelope = z
-    .object({ format: z.literal(EXPORT_FORMAT), version: z.number(), dossier: z.unknown() })
+    .object({
+      format: z.literal(EXPORT_FORMAT),
+      version: z.number(),
+      // Un ancien export n'a pas ce champ, et une valeur non booléenne n'est
+      // pas un choix : dans les deux cas, aucune demande n'est reconstituée.
+      ndaRequested: z.boolean().nullable().catch(null).default(null),
+      dossier: z.unknown(),
+    })
     .safeParse(raw);
   if (!envelope.success)
     return { ok: false, reason: "Ce fichier n'est pas un export de dossier de conception." };
@@ -225,6 +247,7 @@ export function parseDossierExport(raw: unknown, now = new Date().toISOString())
     };
   const parsed = dossierSchema.safeParse(envelope.data.dossier);
   if (!parsed.success) return { ok: false, reason: "Le contenu de ce fichier est illisible." };
+
   const data = parsed.data;
   const base = createDossier(now);
   const notices: string[] = [
@@ -292,6 +315,6 @@ export function parseDossierExport(raw: unknown, now = new Date().toISOString())
     attachments: [],
     internalNotes: [],
   };
-  return { ok: true, dossier, notices };
+  return { ok: true, dossier, notices, ndaRequested: envelope.data.ndaRequested };
 
 }

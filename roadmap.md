@@ -251,15 +251,31 @@
 - Helpers : `enableNda`, `disableNda`, `canDisableNda`, `ndaDisableBlockedReason`
   (`src/lib/leadmagnet/nda.ts`). La désactivation est refusée dès qu'il y a un engagement :
   `awaiting_signatures`, `in_force`, ou une preuve vérifiée.
-- Serveur : `supabase/schema/migration_v1.7_optional_nda.sql` (additive, NON APPLIQUÉE)
-  ajoute `lead_priv.set_nda_requirement` + wrapper `public.lead_set_nda_requirement`,
-  réservé au propriétaire du dossier, sans mise à jour en masse et sans toucher un NDA
-  engagé ou en vigueur. Tant qu'elle n'est pas appliquée par root, l'appel échoue
-  proprement (`PGRST202`) et l'écran relit l'état serveur : aucun contournement frontend,
-  le SQL reste l'autorité (`lead_submit_revision` refuse toujours `NDA_NOT_IN_FORCE`).
+- Serveur : `supabase/schema/migration_v1.7_optional_nda.sql` **APPLIQUÉE** sur
+  `yyobodalwtsqdyrqwkjk` (grants vérifiés : `anon = false`, `authenticated = true`).
+  NE PAS réappliquer. Elle ajoute `lead_priv.set_nda_requirement` + wrapper
+  `public.lead_set_nda_requirement`, réservé au propriétaire du dossier, sans mise à jour
+  en masse. Le retrait est permis tant que la demande n'est pas signée
+  (`requested`, `prepared`, `awaiting_signatures` sans preuve) ; `in_force` ou toute
+  preuve enregistrée le refusent (`NDA_ENGAGEMENT_IN_PROGRESS`). Le SQL reste l'autorité
+  (`lead_submit_revision` refuse toujours `NDA_NOT_IN_FORCE`).
 - Dossiers existants : aucun n'est modifié automatiquement. Un dossier déjà créé avec NDA
-  requis reste requis jusqu'à ce que son propriétaire décoche la case, une fois V1.7
-  appliquée.
-- Gates : 291 tests / 43 108 assertions, typecheck OK, build OK, revues SQL 76/76 et 9/9,
-  inventaire i18n `TOTAL 0`. Smoke navigateur : case décochée par défaut, champs masqués,
-  activation → champs + gardes NDA, désactivation → plus de blocage, zéro erreur console.
+  requis reste requis jusqu'à ce que son propriétaire décoche la case.
+- Export / reprise : le fichier client transporte seulement la métadonnée booléenne
+  `ndaRequested` (la DEMANDE). Aucune preuve, aucun statut vérifié, aucun document signé
+  n'est exportable ; un ancien export sans le champ ne reconstitue aucun choix, et à la
+  réouverture d'un dossier enregistré c'est le serveur qui fait autorité.
+- Synchronisation : `src/lib/leadmagnet/nda-sync.ts` isole verrou unique + époques.
+  Double bascule, relecture périmée, changement de dossier, démontage et erreur réseau
+  sont couverts ; pendant l'enregistrement, préparation, génération, dépôt et envoi sont
+  inhibés, et l'erreur reste visible même quand les champs NDA sont masqués.
+- Recette réelle (`scripts/e2e-nda-optional.ts`, fixtures synthétiques) : 9/9 PASS sur
+  `yyobodalwtsqdyrqwkjk` — dossier neuf sans NDA soumis, dossier avec NDA préparé
+  (`awaiting_signatures`) retiré par son propriétaire puis soumis, autre utilisateur
+  refusé (`NOT_ALLOWED`) sans effet. Mises au point : 3 exécutions, donc 6 dossiers
+  `E2E NDA <runId>` et quelques comptes `@example.invalid` subsistent — la suppression
+  des comptes échoue toujours (`Database error deleting user`), limitation connue.
+- Gates : 306 tests / 43 292 assertions, typecheck OK, build OK, inventaire i18n `TOTAL 0`.
+  Smoke navigateur : case décochée par défaut, champs masqués, activation → champs +
+  gardes NDA, désactivation → plus de blocage, zéro erreur console.
+
