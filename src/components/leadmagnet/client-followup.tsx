@@ -109,14 +109,21 @@ export function ClientFollowUp({
     setView(null);
   }, [serverDossierId, contextGeneration]);
 
+  /** Distingue « liste pas encore lue » de « liste lue et vide » : sans cela,
+   *  un compte sans aucun projet n'obtiendrait jamais de réponse au lien. */
+  const [listLoaded, setListLoaded] = useState(false);
+
   const reloadList = useCallback(async () => {
     if (!ready) return;
     try {
       setList(await fetchMyDossiers());
     } catch (error) {
       setMessage(error instanceof Error ? error.message : null);
+    } finally {
+      setListLoaded(true);
     }
   }, [ready]);
+
 
   /** Vrai tant que le lien demandé n'a pas encore été traité. */
   const linkHandled = useRef<string | null>(null);
