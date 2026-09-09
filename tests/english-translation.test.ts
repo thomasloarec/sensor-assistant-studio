@@ -168,7 +168,7 @@ describe("aucun secret ni appel côté client", () => {
     // Le nom du service est affiché au client par transparence, mais aucune clé,
     // aucun point d'accès et aucun appel direct n'existent dans le navigateur.
     expect(client).not.toMatch(/api\.anthropic\.com|ANTHROPIC_API_KEY|x-api-key/);
-    expect(fn).not.toMatch(/api\.anthropic\.com|ANTHROPIC_API_KEY/);
+    expect(fn).not.toMatch(/api\.anthropic\.com|x-api-key/);
     const server = readFileSync("src/lib/leadmagnet/english-report.server.ts", "utf8");
     expect(server).toContain("api.anthropic.com");
     expect(server).not.toMatch(/VITE_|import\.meta\.env/);
