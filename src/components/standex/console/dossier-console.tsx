@@ -339,6 +339,14 @@ export function DossierConsole({ initialDossierId, embedded = false }: DossierCo
     if (backend?.ready) void loadInbox();
   }, [backend?.ready, loadInbox]);
 
+  // Fiche projet : le dossier de l'adresse est ouvert, et lui seul. Un
+  // changement de projet recharge, sans conserver la lecture précédente.
+  useEffect(() => {
+    if (!backend?.ready || !initialDossierId) return;
+    void loadView(initialDossierId);
+  }, [backend?.ready, initialDossierId, loadView]);
+
+
   const run = async (fn: () => Promise<string>) => {
     const request = selectionRequest.current;
     try {
