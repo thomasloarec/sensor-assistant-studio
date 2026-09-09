@@ -15685,5 +15685,23 @@
     "Некорректный запрос английской версии: ничего не передано.",
     "Richiesta di versione inglese non valida: non è stato trasmesso nulla.",
     "英語版のリクエストが無効です。何も送信されていません。"
+  ],
+  "Version anglaise en cours…": [
+    "English version in progress…",
+    "正在生成英文版本…",
+    "Englische Fassung wird erstellt…",
+    "Versión en inglés en curso…",
+    "Английская версия готовится…",
+    "Versione inglese in corso…",
+    "英語版を作成中…"
+  ],
+  "Je partage aussi le fichier 3D « {0} » avec l'équipe en charge.": [
+    "I also share the 3D file “{0}” with the team in charge.",
+    "我同时向负责团队共享 3D 文件“{0}”。",
+    "Ich teile außerdem die 3D-Datei „{0}“ mit dem zuständigen Team.",
+    "También comparto el archivo 3D «{0}» con el equipo responsable.",
+    "Я также передаю 3D-файл «{0}» ответственной команде.",
+    "Condivido anche il file 3D «{0}» con il team responsabile.",
+    "担当チームに 3D ファイル「{0}」も共有します。"
   ]
 }
