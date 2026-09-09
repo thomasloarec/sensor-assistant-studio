@@ -164,9 +164,14 @@ describe("aucun secret ni appel côté client", () => {
   const client = readFileSync("src/components/leadmagnet/design-space.tsx", "utf8");
   const fn = readFileSync("src/lib/leadmagnet/english-report.functions.ts", "utf8");
 
-  it("le navigateur n'appelle jamais le fournisseur directement", () => {
-    expect(client).not.toMatch(/anthropic/i);
-    expect(fn).not.toMatch(/api\.anthropic\.com/);
+  it("le navigateur n'appelle jamais le fournisseur ni ne porte de clé", () => {
+    // Le nom du service est affiché au client par transparence, mais aucune clé,
+    // aucun point d'accès et aucun appel direct n'existent dans le navigateur.
+    expect(client).not.toMatch(/api\.anthropic\.com|ANTHROPIC_API_KEY|x-api-key/);
+    expect(fn).not.toMatch(/api\.anthropic\.com|ANTHROPIC_API_KEY/);
+    const server = readFileSync("src/lib/leadmagnet/english-report.server.ts", "utf8");
+    expect(server).toContain("api.anthropic.com");
+    expect(server).not.toMatch(/VITE_|import\.meta\.env/);
   });
 
   it("la traduction n'est demandée qu'avec l'accord explicite lié à cette version", () => {
