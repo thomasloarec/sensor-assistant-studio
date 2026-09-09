@@ -85,6 +85,12 @@ export interface CrmTask {
   version: number;
 }
 
+/**
+ * D'où vient la valeur affichée : correction interne explicite, déclaration du
+ * client dans la soumission, ou rien du tout. Jamais deviné.
+ */
+export type CrmValueSource = "override" | "submitted" | "unknown";
+
 export interface CrmProject {
   dossierId: string;
   title: string;
