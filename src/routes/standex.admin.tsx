@@ -22,7 +22,7 @@ import {
   type CrmAdminOverview,
 } from "@/lib/leadmagnet/dashboard-adapter";
 import { personFullName } from "@/lib/leadmagnet/crm";
-import type { StaffRole } from "@/lib/leadmagnet/rpc";
+import type { StaffRole } from "@/lib/leadmagnet/review";
 
 export const Route = createFileRoute("/standex/admin")({
   component: AdminScreen,
