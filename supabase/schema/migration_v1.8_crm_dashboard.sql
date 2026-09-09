@@ -1273,19 +1273,38 @@ returns text language sql immutable set search_path = pg_temp as $$
     else null end;
 $$;
 
+-- `lead.audit_log` n'a AUCUNE clé étrangère : il conserve légitimement des
+-- lignes dont le dossier a été supprimé et dont le compte auteur n'existe plus.
+-- La reprise doit donc ignorer ces dossiers disparus et accepter un auteur
+-- absent (référence vide, attribution conservée en texte), sans jamais modifier
+-- l'historique, ressusciter un enregistrement ni désactiver une contrainte.
 create or replace function lead_priv.crm_audit_note(_id bigint, _at timestamptz, _actor uuid,
                                                     _dossier uuid, _action text, _detail jsonb)
 returns void language plpgsql security definer
 set search_path = lead, lead_priv, pg_temp as $$
-declare s text;
+declare s text; nm text; known boolean;
 begin
   if _dossier is null then return; end if;
+  -- Dossier supprimé : rien à suivre, et surtout aucune référence à fabriquer.
+  if not exists (select 1 from lead.design_dossiers d where d.id = _dossier) then return; end if;
   s := lead_priv.crm_audit_sentence(_action, _detail);
   if s is null then return; end if;
+  known := _actor is not null and exists (select 1 from auth.users a where a.id = _actor);
+  nm := case
+    when _actor is null then 'Standex'
+    when known then lead_priv.crm_actor_name(_actor)
+    -- Compte supprimé : le nom connu est préservé s'il existe encore ailleurs,
+    -- sinon l'attribution reste explicitement anonyme. On n'invente personne.
+    else coalesce(
+      (select nullif(btrim(p.first_name || ' ' || p.last_name), '')
+         from lead.crm_directory p where p.user_id = _actor),
+      (select nullif(btrim(m.display_name), '') from lead.staff_members m where m.user_id = _actor),
+      'Former Standex user')
+  end;
   insert into lead.sap_notes (dossier_id, author_id, author_name, event_key, body_en)
-  values (_dossier, _actor, lead_priv.crm_actor_name(_actor), 'audit:' || _id::text,
+  values (_dossier, case when known then _actor end, nm, 'audit:' || _id::text,
           to_char(_at at time zone 'UTC', 'DD/MM/YYYY') || ' - '
-          || lead_priv.crm_actor_name(_actor) || ' :' || E'\n- ' || s)
+          || nm || ' :' || E'\n- ' || s)
   on conflict (dossier_id, event_key) do nothing;
 end $$;
 
@@ -1293,8 +1312,13 @@ create or replace function lead_priv.crm_audit_note_trg()
 returns trigger language plpgsql security definer
 set search_path = lead, lead_priv, pg_temp as $$
 begin
-  perform lead_priv.crm_audit_note(new.id, new.at, new.actor, new.dossier_id,
-                                   new.action, new.detail);
+  -- Le suivi interne ne doit jamais faire échouer l'écriture d'origine.
+  begin
+    perform lead_priv.crm_audit_note(new.id, new.at, new.actor, new.dossier_id,
+                                     new.action, new.detail);
+  exception when others then
+    null;
+  end;
   return null;
 end $$;
 
@@ -1311,6 +1335,7 @@ begin
     perform lead_priv.crm_audit_note(l.id, l.at, l.actor, l.dossier_id, l.action, l.detail);
   end loop;
 end $$;
+
 
 -- Publication de revue + mise en file de notification, dans UNE transaction.
 -- La publication passe par la fonction d'origine, avec ses gardes inchangées ;
