@@ -112,10 +112,14 @@ describe("lecture équipe et verrou de relance", () => {
     expect(staff).toContain('setReportView("original")');
   });
 
-  it("une relance ne peut pas partir deux fois ni écraser un autre dossier", () => {
-    expect(client).toContain("if (englishRunRef.current) return;");
-    expect(client).toContain("const current = () => englishRunRef.current === key;");
+  it("la relance passe par le verrou par génération, invalidé aux changements de contexte", () => {
+    // Le comportement réel est prouvé dans tests/english-run-lock.test.ts ;
+    // ici on vérifie seulement que l'écran utilise bien ce verrou.
+    expect(client).toContain("englishLockRef.current.start()");
+    expect(client).toContain("resetEnglishReport();");
+    expect(client).toContain("return () => lock.invalidate();");
     expect(client).toContain("disabled={busy || englishBusy}");
+    expect(client).not.toContain("englishRunRef");
   });
 
   it("le partage du fichier 3D passe par le dictionnaire", () => {
