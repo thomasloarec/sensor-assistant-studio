@@ -72,6 +72,14 @@ mock.module("@tanstack/react-router", () => ({
 const { Route: ProjectRoute } = await import("../src/routes/standex.projects.$dossierId");
 const { Route: AdminRoute } = await import("../src/routes/standex.admin");
 
+/** Le composant de la route, quel que soit l'emplacement où le routeur le range. */
+function routeComponent(route: unknown): React.ComponentType {
+  const r = route as { component?: React.ComponentType; options?: { component?: React.ComponentType } };
+  const c = r.component ?? r.options?.component;
+  if (!c) throw new Error("composant de route introuvable");
+  return c;
+}
+
 afterEach(() => {
   cleanup();
   projectDeferred = null;
@@ -85,7 +93,7 @@ function Screen({ Component }: { Component: React.ComponentType }) {
 describe("la fiche projet appartient au compte connecté", () => {
   test("une réponse partie avant le changement de compte ne repeuple pas l'écran", async () => {
     crmState = { ...crmState, sessionGeneration: 0 };
-    const Component = ProjectRoute.component as React.ComponentType;
+    const Component = routeComponent(ProjectRoute);
     const view = render(<Screen Component={Component} />);
 
     // Réponse du PREMIER compte : elle arrive normalement.
@@ -120,7 +128,7 @@ describe("la fiche projet appartient au compte connecté", () => {
 describe("l'administration appartient au compte connecté", () => {
   test("l'annuaire de l'ancien compte disparaît et ne revient pas", async () => {
     crmState = { ...crmState, sessionGeneration: 10 };
-    const Component = AdminRoute.component as React.ComponentType;
+    const Component = routeComponent(AdminRoute);
     const view = render(<Screen Component={Component} />);
 
     const first = adminDeferred!;
