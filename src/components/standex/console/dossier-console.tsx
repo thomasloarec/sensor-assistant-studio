@@ -426,8 +426,8 @@ export function DossierConsole({ initialDossierId, embedded = false }: DossierCo
       <main
         className={
           embedded
-            ? "grid-cols-1 gap-6 grid"
-            : "mx-auto max-w-6xl gap-6 p-4 grid-cols-1 lg:grid-cols-[320px_1fr] grid"
+            ? "grid gap-6"
+            : "mx-auto grid max-w-6xl gap-6 p-4 lg:grid-cols-[320px_1fr]"
         }
       >
         {embedded ? null : (
