@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { t } from "@/lib/i18n/core";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -40,7 +40,7 @@ const ROLE_LABEL: Record<StaffRole, string> = {
 };
 
 function AdminScreen() {
-  const { capabilities, legacyRole } = useCrm();
+  const { capabilities, legacyRole, sessionGeneration } = useCrm();
   const [overview, setOverview] = useState<CrmAdminOverview | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
@@ -50,11 +50,25 @@ function AdminScreen() {
   const [edit, setEdit] = useState<Record<string, { firstName: string; lastName: string; role: "sales" | "fae" }>>({});
   const [grantRole, setGrantRole] = useState<Record<string, StaffRole>>({});
 
+  /** Numéro de session : une lecture lancée pour le compte précédent ne doit
+   *  jamais peupler l'écran après un changement de connexion. */
+  const sessionRef = useRef(sessionGeneration);
+  useEffect(() => {
+    sessionRef.current = sessionGeneration;
+    setOverview(null);
+    setError(null);
+    setMessage(null);
+  }, [sessionGeneration]);
+
   const load = useCallback(() => {
+    const gen = sessionRef.current;
     setError(null);
     fetchCrmAdminOverview()
-      .then(setOverview)
+      .then((o) => {
+        if (sessionRef.current === gen) setOverview(o);
+      })
       .catch((e: unknown) => {
+        if (sessionRef.current !== gen) return;
         setOverview(null);
         setError(e instanceof Error ? e.message : t("Lecture refusée."));
       });
@@ -62,7 +76,7 @@ function AdminScreen() {
 
   useEffect(() => {
     if (capabilities?.available && capabilities.role === "admin") load();
-  }, [capabilities?.available, capabilities?.role, load]);
+  }, [capabilities?.available, capabilities?.role, sessionGeneration, load]);
 
   const run = async (fn: () => Promise<CrmAdminOverview>, ok: string) => {
     if (busy) return;

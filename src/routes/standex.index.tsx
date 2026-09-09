@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { t } from "@/lib/i18n/core";
 import { useLocale } from "@/lib/i18n/react";
 import { localeTag } from "@/lib/i18n/core";
@@ -58,7 +58,7 @@ const SORTS: { id: BoardSort; label: string }[] = [
 ];
 
 function ProjectsBoard() {
-  const { capabilities, legacyRole } = useCrm();
+  const { capabilities, legacyRole, sessionGeneration } = useCrm();
   const locale = useLocale();
   const tag = localeTag(locale);
   const [board, setBoard] = useState<CrmBoard | null>(null);
@@ -79,21 +79,37 @@ function ProjectsBoard() {
   const [onlyLate, setOnlyLate] = useState(false);
   const [sort, setSort] = useState<BoardSort>("updated_desc");
 
+  /** Numéro de session : une lecture lancée pour le compte précédent ne doit
+   *  jamais peupler l'écran après un changement de connexion. */
+  const sessionRef = useRef(sessionGeneration);
+  useEffect(() => {
+    sessionRef.current = sessionGeneration;
+    setBoard(null);
+    setError(null);
+  }, [sessionGeneration]);
+
   const load = useCallback(() => {
+    const gen = sessionRef.current;
     setLoading(true);
     setError(null);
     fetchCrmBoard()
-      .then((b) => setBoard(b))
+      .then((b) => {
+        if (sessionRef.current !== gen) return;
+        setBoard(b);
+      })
       .catch((e: unknown) => {
+        if (sessionRef.current !== gen) return;
         setBoard(null);
         setError(e instanceof Error ? e.message : t("Lecture refusée."));
       })
-      .finally(() => setLoading(false));
+      .finally(() => {
+        if (sessionRef.current === gen) setLoading(false);
+      });
   }, []);
 
   useEffect(() => {
     if (capabilities?.available) load();
-  }, [capabilities?.available, load]);
+  }, [capabilities?.available, sessionGeneration, load]);
 
   /** Pays réellement présents dans les projets : la liste n'invente rien. */
   const countries = useMemo(() => {

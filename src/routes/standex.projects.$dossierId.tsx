@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { createOwnedLock } from "@/lib/leadmagnet/session-guard";
 import { t, localeTag } from "@/lib/i18n/core";
 import { useLocale } from "@/lib/i18n/react";
 import { Badge } from "@/components/ui/badge";
@@ -96,14 +97,16 @@ function ProjectDetail() {
   /** Numéro de la dernière demande émise : une réponse plus ancienne est ignorée,
    *  même si elle revient après une plus récente (A → B → A). */
   const genRef = useRef(0);
-  /** Verrou synchrone : deux clics rapides ne déclenchent qu'une seule écriture. */
-  const pendingRef = useRef(false);
+  /** Verrou synchrone attaché à SA génération : une réponse ancienne ne peut
+   *  jamais libérer le verrou d'une écriture plus récente (A → B → A). */
+  const pendingRef = useRef(createOwnedLock());
 
   // Changer de projet invalide toute réponse encore en vol.
   useEffect(() => {
     dossierRef.current = dossierId;
     genRef.current += 1;
-    pendingRef.current = false;
+    pendingRef.current.reset();
+
     setDetail(null);
     setError(null);
     setMessage(null);
@@ -154,10 +157,11 @@ function ProjectDetail() {
   }, [capabilities?.available, load]);
 
   const run = async (fn: () => Promise<CrmProjectDetail>, ok: string) => {
-    if (pendingRef.current) return;
-    pendingRef.current = true;
     const asked = dossierId;
-    const gen = ++genRef.current;
+    const gen = genRef.current + 1;
+    if (!pendingRef.current.acquire(gen)) return;
+    genRef.current = gen;
+
     setBusy(true);
     setMessage(null);
     setError(null);
@@ -173,9 +177,11 @@ function ProjectDetail() {
       // sans effacer le message qui explique pourquoi l'écriture a échoué.
       reload(true);
     } finally {
-      pendingRef.current = false;
-      if (dossierRef.current === asked) setBusy(false);
+      // Seule l'écriture propriétaire du verrou peut le rendre : une réponse
+      // périmée ne débloque ni la suivante ni son indicateur d'occupation.
+      if (pendingRef.current.release(gen) && dossierRef.current === asked) setBusy(false);
     }
+
   };
 
   if (capabilities === null) return <LoadingBlock />;
