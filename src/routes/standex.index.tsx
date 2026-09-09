@@ -29,6 +29,7 @@ import {
   countryName,
   personName,
   stageLabel,
+  CrmUnavailableNotice,
 } from "@/components/standex/dashboard/crm-shared";
 import { fetchCrmBoard, type CrmBoard } from "@/lib/leadmagnet/dashboard-adapter";
 import {
@@ -57,7 +58,7 @@ const SORTS: { id: BoardSort; label: string }[] = [
 ];
 
 function ProjectsBoard() {
-  const { capabilities } = useCrm();
+  const { capabilities, legacyRole } = useCrm();
   const locale = useLocale();
   const tag = localeTag(locale);
   const [board, setBoard] = useState<CrmBoard | null>(null);
@@ -137,10 +138,13 @@ function ProjectsBoard() {
     return (
       <div className="space-y-3">
         <h2 className="t-title-m">{t("Projets")}</h2>
-        <p className="notice-warning text-sm">
-          {t("Le suivi des projets n'est pas installé sur ce serveur :")} {t(capabilities.detail)}{" "}
+        <CrmUnavailableNotice
+          plain={t("Le suivi des projets n'est pas encore activé sur ce serveur.")}
+          detail={capabilities.detail}
+          isAdmin={legacyRole === "admin"}
+        >
           {t("La console des dossiers reste utilisable.")}
-        </p>
+        </CrmUnavailableNotice>
         <Link
           to="/standex/console"
           className="inline-flex min-h-11 items-center rounded-[var(--r-sm)] bg-[var(--surface-tint)] px-3 text-sm"

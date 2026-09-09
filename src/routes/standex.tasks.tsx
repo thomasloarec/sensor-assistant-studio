@@ -20,6 +20,7 @@ import {
   TASK_STATUS_LABEL,
   personName,
   stageLabel,
+  CrmUnavailableNotice,
 } from "@/components/standex/dashboard/crm-shared";
 import {
   fetchCrmBoard,
@@ -49,7 +50,7 @@ interface Row {
 }
 
 function TasksScreen() {
-  const { capabilities } = useCrm();
+  const { capabilities, legacyRole } = useCrm();
   const [board, setBoard] = useState<CrmBoard | null>(null);
   const [rows, setRows] = useState<Row[] | null>(null);
   const [truncated, setTruncated] = useState(false);
@@ -110,9 +111,11 @@ function TasksScreen() {
   if (capabilities === null) return <LoadingBlock />;
   if (!capabilities.available)
     return (
-      <p className="notice-warning text-sm">
-        {t("Le suivi des tâches n'est pas installé sur ce serveur :")} {t(capabilities.detail)}
-      </p>
+      <CrmUnavailableNotice
+        plain={t("Le suivi des tâches n'est pas encore activé sur ce serveur.")}
+        detail={capabilities.detail}
+        isAdmin={legacyRole === "admin"}
+      />
     );
 
   return (

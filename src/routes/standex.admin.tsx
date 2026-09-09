@@ -13,7 +13,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useCrm } from "@/components/standex/dashboard/crm-context";
-import { ErrorBlock, LoadingBlock } from "@/components/standex/dashboard/crm-shared";
+import {
+  CrmUnavailableNotice,
+  ErrorBlock,
+  LoadingBlock,
+} from "@/components/standex/dashboard/crm-shared";
 import {
   fetchCrmAdminOverview,
   linkCrmPerson,
@@ -36,7 +40,7 @@ const ROLE_LABEL: Record<StaffRole, string> = {
 };
 
 function AdminScreen() {
-  const { capabilities } = useCrm();
+  const { capabilities, legacyRole } = useCrm();
   const [overview, setOverview] = useState<CrmAdminOverview | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
@@ -76,10 +80,11 @@ function AdminScreen() {
   if (capabilities === null) return <LoadingBlock />;
   if (!capabilities.available)
     return (
-      <p className="notice-warning text-sm">
-        {t("L'administration de l'espace de travail n'est pas installée sur ce serveur :")}{" "}
-        {t(capabilities.detail)}
-      </p>
+      <CrmUnavailableNotice
+        plain={t("L'administration de l'espace de travail n'est pas encore activée sur ce serveur.")}
+        detail={capabilities.detail}
+        isAdmin={legacyRole === "admin"}
+      />
     );
   if (capabilities.role !== "admin")
     return (

@@ -154,3 +154,36 @@ export function ErrorBlock({ text, onRetry }: { text: string; onRetry?: () => vo
     </div>
   );
 }
+
+/** Message d'indisponibilité de l'espace de travail interne.
+ *
+ *  Le visiteur ordinaire lit une phrase simple. Le diagnostic technique
+ *  (nom de fichier de migration, procédure serveur, message d'erreur brut)
+ *  n'est affiché qu'aux administrateurs.
+ */
+export function CrmUnavailableNotice({
+  plain,
+  detail,
+  isAdmin,
+  children,
+}: {
+  plain: string;
+  detail?: string | null;
+  isAdmin: boolean;
+  children?: React.ReactNode;
+}) {
+  return (
+    <p className="notice-warning text-sm">
+      {plain}
+      {children ? <> {children}</> : null}
+      {isAdmin && detail ? (
+        <>
+          {" "}
+          <span className="t-caption block">
+            {t("Diagnostic (administration) :")} {t(detail)}
+          </span>
+        </>
+      ) : null}
+    </p>
+  );
+}

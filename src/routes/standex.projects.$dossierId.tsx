@@ -28,6 +28,7 @@ import {
   VolumeCell,
   personName,
   stageLabel,
+  CrmUnavailableNotice,
 } from "@/components/standex/dashboard/crm-shared";
 import {
   applyCrmTemplate,
@@ -77,7 +78,7 @@ const TABS: { id: Tab; label: string }[] = [
 
 function ProjectDetail() {
   const { dossierId } = Route.useParams();
-  const { capabilities } = useCrm();
+  const { capabilities, legacyRole } = useCrm();
   const locale = useLocale();
   const tag = localeTag(locale);
   const [tab, setTab] = useState<Tab>("tracking");
@@ -157,10 +158,13 @@ function ProjectDetail() {
   if (!capabilities.available)
     return (
       <div className="space-y-3">
-        <p className="notice-warning text-sm">
-          {t("Le suivi de projet n'est pas installé sur ce serveur :")} {t(capabilities.detail)}{" "}
+        <CrmUnavailableNotice
+          plain={t("Le suivi de projet n'est pas encore activé sur ce serveur.")}
+          detail={capabilities.detail}
+          isAdmin={legacyRole === "admin"}
+        >
           {t("Les revues et documents restent accessibles ci-dessous.")}
-        </p>
+        </CrmUnavailableNotice>
         <DossierConsole initialDossierId={dossierId} embedded />
       </div>
     );
