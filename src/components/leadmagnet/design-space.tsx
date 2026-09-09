@@ -2329,10 +2329,10 @@ export function DesignSpace({
               <Button
                 variant="outline"
                 size="sm"
-                disabled={busy}
+                disabled={busy || englishBusy}
                 onClick={() => void runEnglishReport(englishRetry)}
               >
-                {t("Relancer la version anglaise")}
+                {englishBusy ? t("Version anglaise en cours…") : t("Relancer la version anglaise")}
               </Button>
             ) : null}
 
