@@ -392,12 +392,17 @@ set search_path = lead, lead_priv, pg_temp as $$
                          and t.status not in ('done','not_applicable')),
     -- Âge de l'étape EN COURS : activation des items de CETTE étape, et non le
     -- plus ancien item inachevé, qui pouvait appartenir à une étape future.
-    'stage_activated_at', coalesce(
-      (select min(coalesce(t.activated_at, t.created_at))
-         from lead.dossier_tasks t
-        where t.dossier_id = d.id and t.stage = coalesce(c.stage, 'lead')
-          and t.status not in ('done','not_applicable')),
+    -- Un plan d'actions créé d'un coup date TOUS ses items du même instant :
+    -- une étape ne peut donc pas être « en cours » avant que le projet y entre.
+    'stage_activated_at', greatest(
+      coalesce(
+        (select min(coalesce(t.activated_at, t.created_at))
+           from lead.dossier_tasks t
+          where t.dossier_id = d.id and t.stage = coalesce(c.stage, 'lead')
+            and t.status not in ('done','not_applicable')),
+        c.stage_since),
       c.stage_since))
+
   from lead.design_dossiers d
   left join lead.dossier_crm c on c.dossier_id = d.id
   where d.id = _dossier;
