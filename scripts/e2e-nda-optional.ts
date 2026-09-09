@@ -59,6 +59,11 @@ async function submitRevision(c: Client, dossier: string) {
   const dto = toClientDto({
     ...base,
     title: `E2E NDA ${runId}`,
+    requirements: base.requirements.map((r) =>
+      r.key === "detection_goal"
+        ? { ...r, value: "Détecter la position d'un volet", state: "confirmed" as const, source: "user" as const }
+        : r,
+    ),
     business: { ...base.business, projectPhase: "design", annualVolume: { kind: "known", sensorsPerYear: 2000 } },
   });
   const hash = await dossierHash(dto);
