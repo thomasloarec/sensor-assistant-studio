@@ -450,8 +450,8 @@ export function summarizeWorkshop(c: WorkshopConfig): string {
     c.mode === "reference"
       ? `MK03-1A66${c.sensitivity}-500W + M02 ; approche ${c.geometry}, axes parallèles.`
       : c.machine
-        ? `${sensorById(c.sensorId).name} · DÉMONSTRATION FICTIVE dans ${c.machine.fileName} ; axe Nord–Sud local ${c.magnetization === "axial" ? "X" : c.magnetization === "thickness" ? "Y" : "Z"}, polarité ${c.polarity === 1 ? "N/S" : "S/N"}.`
-        : `${sensorById(c.sensorId).name} · DÉMONSTRATION FICTIVE ; ${c.machine ? "intégration dans une machine" : c.motion === "slide" ? "passage latéral" : c.motion === "pivot" ? "pivot" : "approche " + c.geometry} ; axe reed ${c.sensorAngle}°, aimant ${c.magnetAngle}°, aimantation ${c.magnetization === "axial" ? "axiale" : c.magnetization === "thickness" ? "épaisseur" : "transversale"}, polarité ${c.polarity === 1 ? "N/S" : "S/N"}.`;
+        ? `${sensorById(c.sensorId).name} · Démonstration fictive dans ${c.machine.fileName} ; axe Nord–Sud local ${c.magnetization === "axial" ? "X" : c.magnetization === "thickness" ? "Y" : "Z"}, polarité ${c.polarity === 1 ? "N/S" : "S/N"}.`
+        : `${sensorById(c.sensorId).name} · Démonstration fictive ; ${c.machine ? "intégration dans une machine" : c.motion === "slide" ? "passage latéral" : c.motion === "pivot" ? "pivot" : "approche " + c.geometry} ; axe reed ${c.sensorAngle}°, aimant ${c.magnetAngle}°, aimantation ${c.magnetization === "axial" ? "axiale" : c.magnetization === "thickness" ? "épaisseur" : "transversale"}, polarité ${c.polarity === 1 ? "N/S" : "S/N"}.`;
   return [
     "Montage de l'atelier magnétique",
     setup,

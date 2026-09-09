@@ -321,6 +321,15 @@ cibles de 44 px conformes).
 - Les formulaires de la fiche utilisent `.field-row` / `.field` /
   `.field-actions` : libellé, champ et aide alignés sur la même grille, actions
   d'enregistrement en fin de bloc, indicateur d'attente dans le bouton.
+- `.person-row` — ligne-personne des réglages : initiales, identité, fonction,
+  état de compte, puis menu d'actions. Une personne désactivée est atténuée,
+  jamais masquée. Un seul formulaire d'une ligne est déplié à la fois.
+- `.account-pill` — état de rattachement d'un compte : neutre, en attente ou
+  rattaché. Teinte de fond seulement, aucune bordure.
+- `.timeline`, `.timeline-entry` — journal des actions groupé par jour, lu du
+  plus récent au plus ancien, paginé côté écran par tranches de 20.
+- Les capitales viennent du CSS (`text-transform`), jamais de la chaîne. Aucune
+  capitale d'insistance au milieu d'une phrase.
 
 
 ## 11. Ce qui reste ouvert

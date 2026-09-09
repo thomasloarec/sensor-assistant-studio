@@ -146,7 +146,7 @@ function Header({ user }: { user: User | null }) {
         <BrandLogo variant="mark" tone="light" height={30} clearance={false} alt="" />
         <div className="studio-brand-text">
           STANDEX <span>DETECT</span>
-          <small>{t("VOTRE PROJET CAPTEUR")}</small>
+          <small>{t("Votre projet capteur")}</small>
         </div>
       </div>
       <div className="studio-header-center">
@@ -635,7 +635,7 @@ function Bench({ user }: { user: User }) {
     <>
       <div className="studio-intro">
         <div>
-          <p className="studio-eyebrow">{t("DE L'IDÉE AU BON MONTAGE")}</p>
+          <p className="studio-eyebrow">{t("De l'idée au bon montage")}</p>
           <h1>{t("Votre projet prend forme.")}</h1>
           <p>{t("Précisez votre besoin, rassemblez les informations et explorez le montage.")}</p>
         </div>

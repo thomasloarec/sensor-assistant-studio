@@ -1034,13 +1034,13 @@
     "> Motore deterministico V0.2 senza modello generativo. Obiettivo: decidere se la base è adatta come riferimento.",
     "> 決定論的エンジンV0.2、生成モデル未接続。本番アシスタント接続前の基準として使えるかを判断します。"
   ],
-  "ATELIER MAGNÉTIQUE": [
-    "MAGNETIC WORKSHOP",
+  "Atelier magnétique": [
+    "Magnetic workshop",
     "磁场工作室",
-    "MAGNETWERKSTATT",
-    "TALLER MAGNÉTICO",
-    "МАГНИТНАЯ МАСТЕРСКАЯ",
-    "LABORATORIO MAGNETICO",
+    "Magnetwerkstatt",
+    "Taller magnético",
+    "Магнитная мастерская",
+    "Laboratorio magnetico",
     "磁気ワークショップ"
   ],
   "AWG 28–22; isolant Ø0,9–1,9 mm": [
@@ -1187,14 +1187,14 @@
     "Amministrazione",
     "管理"
   ],
-  "Adresse d'un compte DÉJÀ inscrit": [
-    "Address of an ALREADY registered account",
-    "已注册账户的邮箱地址",
-    "Adresse eines BEREITS registrierten Kontos",
-    "Dirección de una cuenta YA registrada",
-    "Адрес УЖЕ зарегистрированной учётной записи",
-    "Indirizzo di un account GIÀ registrato",
-    "登録済みアカウントのアドレス"
+  "Adresse d'un compte existant": [
+    "Address of an existing account",
+    "现有账户的邮箱地址",
+    "Adresse eines bestehenden Kontos",
+    "Dirección de una cuenta existente",
+    "Адрес существующей учётной записи",
+    "Indirizzo di un account esistente",
+    "既存アカウントのアドレス"
   ],
   "Adresse e-mail": [
     "Email address",
@@ -1636,15 +1636,6 @@
     "3D-мастерская (необязательно)",
     "Studio 3D (facoltativo)",
     "3Dスタジオ（任意）"
-  ],
-  "Atelier magnétique": [
-    "Magnetic workshop",
-    "磁场工作室",
-    "Magnetwerkstatt",
-    "Taller magnético",
-    "Магнитная мастерская",
-    "Laboratorio magnetico",
-    "磁気ワークショップ"
   ],
   "Attention toutefois : GP501 est un reed switch brut. Il ne faut pas couper, plier ou modifier les pattes sauf si votre entreprise a déjà un process validé.": [
     "GP501 is a bare reed. Do not cut, bend or modify its leads unless your company already has a validated process.",
@@ -2573,22 +2564,22 @@
     "Ricavi min",
     "最小売上"
   ],
-  "CHOISIR UNE FORME ET UN FORMAT": [
-    "CHOOSE A SHAPE AND SIZE",
+  "Choisir une forme et un format": [
+    "Choose a shape and size",
     "选择形状和尺寸",
-    "FORM UND GRÖSSE WÄHLEN",
-    "ELEGIR FORMA Y TAMAÑO",
-    "ВЫБЕРИТЕ ФОРМУ И РАЗМЕР",
-    "SCEGLI FORMA E FORMATO",
+    "Form und Größe wählen",
+    "Elegir forma y tamaño",
+    "Выберите форму и размер",
+    "Scegli forma e formato",
     "形状とサイズを選ぶ"
   ],
-  "CIRCUIT INTERROMPU": [
-    "CIRCUIT INTERRUPTED",
+  "Circuit interrompu": [
+    "Circuit interrupted",
     "电路断开",
-    "STROMKREIS UNTERBROCHEN",
-    "CIRCUITO INTERRUMPIDO",
-    "ЦЕПЬ РАЗОМКНУТА",
-    "CIRCUITO INTERROTTO",
+    "Stromkreis unterbrochen",
+    "Circuito interrumpido",
+    "Цепь разомкнута",
+    "Circuito interrotto",
     "回路遮断"
   ],
   "CMS": [
@@ -2600,13 +2591,13 @@
     "SMD",
     "SMD"
   ],
-  "COMPRENDRE AVANT D'INTÉGRER": [
-    "UNDERSTAND BEFORE INTEGRATING",
+  "Comprendre avant d'intégrer": [
+    "Understand before integrating",
     "先理解，再集成",
-    "VOR DEM EINBAU VERSTEHEN",
-    "COMPRENDER ANTES DE INTEGRAR",
-    "ПОНЯТЬ ПЕРЕД ИНТЕГРАЦИЕЙ",
-    "COMPRENDERE PRIMA DI INTEGRARE",
+    "Vor dem Einbau verstehen",
+    "Comprender antes de integrar",
+    "Понять перед интеграцией",
+    "Comprendere prima di integrare",
     "理解してから組み込む"
   ],
   "Calcul indisponible : {0}": [
@@ -4823,22 +4814,22 @@
     "D3 · dall'estremità",
     "D3 · 端部から"
   ],
-  "DANS VOTRE MACHINE": [
-    "IN YOUR MACHINE",
+  "Dans votre machine": [
+    "In your machine",
     "在您的机器中",
-    "IN IHRER MASCHINE",
-    "EN SU MÁQUINA",
-    "В ВАШЕЙ МАШИНЕ",
-    "NELLA TUA MACCHINA",
+    "In Ihrer Maschine",
+    "En su máquina",
+    "В вашей машине",
+    "Nella tua macchina",
     "機械への取り付け"
   ],
-  "DE L'IDÉE AU BON MONTAGE": [
-    "FROM IDEA TO ASSEMBLY",
+  "De l'idée au bon montage": [
+    "From idea to assembly",
     "从构想到装配",
-    "VON DER IDEE ZUM AUFBAU",
-    "DE LA IDEA AL MONTAJE",
-    "ОТ ИДЕИ К МОНТАЖУ",
-    "DALL'IDEA AL MONTAGGIO",
+    "Von der Idee zum Aufbau",
+    "De la idea al montaje",
+    "От идеи к монтажу",
+    "Dall'idea al montaggio",
     "アイデアから組み立てへ"
   ],
   "Dans quel environnement travaille-t-il ?": [
@@ -7604,13 +7595,13 @@
     "La tenuta dipende da montaggio e passaggio cavo; verificarla nell'integrazione reale.",
     "密閉性は取り付けとケーブル引き込みに依存します。実際の組み込みで確認してください。"
   ],
-  "LE PRODUIT EN DÉTAIL": [
-    "PRODUCT IN DETAIL",
+  "Le produit en détail": [
+    "Product in detail",
     "产品详情",
-    "DAS PRODUKT IM DETAIL",
-    "EL PRODUCTO EN DETALLE",
-    "ПОДРОБНО О ПРОДУКТЕ",
-    "IL PRODOTTO NEL DETTAGLIO",
+    "Das Produkt im Detail",
+    "El producto en detalle",
+    "Подробно о продукте",
+    "Il prodotto nel dettaglio",
     "製品詳細"
   ],
   "La 3D a été interrompue. Utilisez le bouton 3D pour la relancer.": [
@@ -10079,13 +10070,13 @@
     "NDA richiesto: nessun trasferimento confidenziale è possibile senza prova verificata di un NDA in vigore.",
     "NDAが必要です。有効なNDAの確認済み証明がない場合、機密情報の転送はできません。"
   ],
-  "NON DÉTERMINÉ": [
-    "UNDETERMINED",
+  "Non déterminé": [
+    "Undetermined",
     "未确定",
-    "UNBESTIMMT",
-    "SIN DETERMINAR",
-    "НЕ ОПРЕДЕЛЕНО",
-    "NON DETERMINATO",
+    "Unbestimmt",
+    "Sin determinar",
+    "Не определено",
+    "Non determinato",
     "未確定"
   ],
   "Nom": [
@@ -10691,13 +10682,13 @@
     "Dove si posiziona il sensore?",
     "センサーの配置場所"
   ],
-  "PASSAGE DU COURANT": [
-    "CURRENT FLOWING",
+  "Passage du courant": [
+    "Current flowing",
     "电流流通",
-    "STROM FLIESST",
-    "CIRCULA CORRIENTE",
-    "ТОК ПРОХОДИТ",
-    "PASSAGGIO DI CORRENTE",
+    "Strom fließt",
+    "Circula corriente",
+    "Ток проходит",
+    "Passaggio di corrente",
     "通電中"
   ],
   "PBT 30 % fibres de verre": [
@@ -14975,13 +14966,13 @@
     "IL TUO DOSSIER APPLICATIVO",
     "用途別資料"
   ],
-  "VOTRE PROJET CAPTEUR": [
-    "YOUR SENSOR PROJECT",
+  "Votre projet capteur": [
+    "Your sensor project",
     "您的传感器项目",
-    "IHR SENSORPROJEKT",
-    "SU PROYECTO DE SENSOR",
-    "ВАШ ПРОЕКТ ДАТЧИКА",
-    "IL TUO PROGETTO SENSORE",
+    "Ihr Sensorprojekt",
+    "Su proyecto de sensor",
+    "Ваш проект датчика",
+    "Il tuo progetto sensore",
     "センサープロジェクト"
   ],
   "Valable jusqu'au": [
@@ -18008,22 +17999,22 @@
     "{0} {1}",
     "{0} {1}"
   ],
-  "{0} · DÉMONSTRATION FICTIVE ; {1} ; axe reed {2}°, aimant {3}°, aimantation {4}, polarité {5}.": [
-    "{0} · FICTITIOUS DEMO; {1}; reed axis {2}°, magnet {3}°, magnetization {4}, polarity {5}.",
+  "{0} · Démonstration fictive ; {1} ; axe reed {2}°, aimant {3}°, aimantation {4}, polarité {5}.": [
+    "{0} · Fictitious demo; {1}; reed axis {2}°, magnet {3}°, magnetization {4}, polarity {5}.",
     "{0} · 虚拟演示；{1}；干簧管轴 {2}°，磁铁 {3}°，磁化 {4}，极性 {5}。",
-    "{0} · FIKTIVE DEMO; {1}; Reedachse {2}°, Magnet {3}°, Magnetisierung {4}, Polarität {5}.",
-    "{0} · DEMO FICTICIA; {1}; eje reed {2}°, imán {3}°, magnetización {4}, polaridad {5}.",
-    "{0} · УСЛОВНОЕ ДЕМО; {1}; ось геркона {2}°, магнит {3}°, намагниченность {4}, полярность {5}.",
-    "{0} · DEMO FITTIZIA; {1}; asse reed {2}°, magnete {3}°, magnetizzazione {4}, polarità {5}.",
+    "{0} · Fiktive Demo; {1}; Reedachse {2}°, Magnet {3}°, Magnetisierung {4}, Polarität {5}.",
+    "{0} · Demo ficticia; {1}; eje reed {2}°, imán {3}°, magnetización {4}, polaridad {5}.",
+    "{0} · Условное демо; {1}; ось геркона {2}°, магнит {3}°, намагниченность {4}, полярность {5}.",
+    "{0} · Demo fittizia; {1}; asse reed {2}°, magnete {3}°, magnetizzazione {4}, polarità {5}.",
     "{0} · 仮デモ、{1}、リード軸 {2}°、磁石 {3}°、磁化 {4}、極性 {5}。"
   ],
-  "{0} · DÉMONSTRATION FICTIVE dans {1} ; axe Nord–Sud local {2}, polarité {3}.": [
-    "{0} · FICTITIOUS DEMO in {1}; local N–S axis {2}, polarity {3}.",
+  "{0} · Démonstration fictive dans {1} ; axe Nord–Sud local {2}, polarité {3}.": [
+    "{0} · Fictitious demo in {1}; local N–S axis {2}, polarity {3}.",
     "{0} · 在 {1} 中虚拟演示；局部 N–S 轴 {2}，极性 {3}。",
-    "{0} · FIKTIVE DEMO in {1}; lokale N–S-Achse {2}, Polarität {3}.",
-    "{0} · DEMO FICTICIA en {1}; eje N–S local {2}, polaridad {3}.",
-    "{0} · УСЛОВНОЕ ДЕМО в {1}; локальная ось N–S {2}, полярность {3}.",
-    "{0} · DEMO FITTIZIA in {1}; asse N–S locale {2}, polarità {3}.",
+    "{0} · Fiktive Demo in {1}; lokale N–S-Achse {2}, Polarität {3}.",
+    "{0} · Demo ficticia en {1}; eje N–S local {2}, polaridad {3}.",
+    "{0} · Условное демо в {1}; локальная ось N–S {2}, полярность {3}.",
+    "{0} · Demo fittizia in {1}; asse N–S locale {2}, polarità {3}.",
     "{0} · {1}での仮デモ、ローカルN–S軸 {2}、極性 {3}。"
   ],
   "{0} · sans adaptateur": [
@@ -19033,5 +19024,257 @@
     "Нет задач",
     "Nessuna attività",
     "タスクなし"
+  ],
+  "Réglages de la plateforme": [
+    "Platform settings",
+    "平台设置",
+    "Plattformeinstellungen",
+    "Ajustes de la plataforma",
+    "Настройки платформы",
+    "Impostazioni della piattaforma",
+    "プラットフォーム設定"
+  ],
+  "Annuaire des commerciaux et des FAE, comptes et droits d'accès, journal des actions.": [
+    "Directory of sales and FAE staff, accounts and access rights, action log.",
+    "销售与 FAE 名录、账户与访问权限、操作日志。",
+    "Verzeichnis von Vertrieb und FAE, Konten und Zugriffsrechte, Aktionsprotokoll.",
+    "Directorio de comerciales y FAE, cuentas y derechos de acceso, registro de acciones.",
+    "Справочник продаж и FAE, учётные записи и права доступа, журнал действий.",
+    "Rubrica di commerciali e FAE, account e diritti di accesso, registro delle azioni.",
+    "営業とFAEの名簿、アカウントとアクセス権、操作ログ。"
+  ],
+  "Espace de travail": [
+    "Workspace",
+    "工作区",
+    "Arbeitsbereich",
+    "Espacio de trabajo",
+    "Рабочее пространство",
+    "Spazio di lavoro",
+    "ワークスペース"
+  ],
+  "Sections des réglages": [
+    "Settings sections",
+    "设置分区",
+    "Abschnitte der Einstellungen",
+    "Secciones de ajustes",
+    "Разделы настроек",
+    "Sezioni delle impostazioni",
+    "設定のセクション"
+  ],
+  "Annuaire": [
+    "Directory",
+    "名录",
+    "Verzeichnis",
+    "Directorio",
+    "Справочник",
+    "Rubrica",
+    "名簿"
+  ],
+  "Comptes et droits": [
+    "Accounts and rights",
+    "账户与权限",
+    "Konten und Rechte",
+    "Cuentas y derechos",
+    "Учётные записи и права",
+    "Account e diritti",
+    "アカウントと権限"
+  ],
+  "Journal": [
+    "Log",
+    "日志",
+    "Protokoll",
+    "Registro",
+    "Журнал",
+    "Registro",
+    "ログ"
+  ],
+  "Personnes actives": [
+    "Active people",
+    "在册人员",
+    "Aktive Personen",
+    "Personas activas",
+    "Активные сотрудники",
+    "Persone attive",
+    "有効な担当者"
+  ],
+  "Comptes rattachés": [
+    "Linked accounts",
+    "已关联账户",
+    "Verknüpfte Konten",
+    "Cuentas vinculadas",
+    "Привязанные учётные записи",
+    "Account collegati",
+    "連携済みアカウント"
+  ],
+  "Administrateurs actifs": [
+    "Active administrators",
+    "在册管理员",
+    "Aktive Administratoren",
+    "Administradores activos",
+    "Активные администраторы",
+    "Amministratori attivi",
+    "有効な管理者"
+  ],
+  "Version de l'espace de travail": [
+    "Workspace version",
+    "工作区版本",
+    "Version des Arbeitsbereichs",
+    "Versión del espacio de trabajo",
+    "Версия рабочего пространства",
+    "Versione dello spazio di lavoro",
+    "ワークスペースのバージョン"
+  ],
+  "rattaché, sans droit": [
+    "linked, no right",
+    "已关联，无权限",
+    "verknüpft, ohne Recht",
+    "vinculada, sin derecho",
+    "привязана, без прав",
+    "collegato, senza diritto",
+    "連携済み・権限なし"
+  ],
+  "rattaché": [
+    "linked",
+    "已关联",
+    "verknüpft",
+    "vinculada",
+    "привязана",
+    "collegato",
+    "連携済み"
+  ],
+  "Actions sur cette personne": [
+    "Actions for this person",
+    "对此人员的操作",
+    "Aktionen für diese Person",
+    "Acciones sobre esta persona",
+    "Действия с этим сотрудником",
+    "Azioni su questa persona",
+    "この担当者への操作"
+  ],
+  "Modifier la fiche": [
+    "Edit the record",
+    "编辑资料",
+    "Eintrag bearbeiten",
+    "Editar la ficha",
+    "Изменить карточку",
+    "Modifica la scheda",
+    "情報を編集"
+  ],
+  "Rattacher un compte": [
+    "Link an account",
+    "关联账户",
+    "Konto verknüpfen",
+    "Vincular una cuenta",
+    "Привязать учётную запись",
+    "Collega un account",
+    "アカウントを連携"
+  ],
+  "Accorder un droit Standex": [
+    "Grant a Standex right",
+    "授予 Standex 权限",
+    "Standex-Recht erteilen",
+    "Conceder un derecho Standex",
+    "Предоставить право Standex",
+    "Concedi un diritto Standex",
+    "Standex 権限を付与"
+  ],
+  "Ajouter une personne": [
+    "Add a person",
+    "添加人员",
+    "Person hinzufügen",
+    "Añadir una persona",
+    "Добавить сотрудника",
+    "Aggiungi una persona",
+    "担当者を追加"
+  ],
+  "Aucune personne dans l'annuaire.": [
+    "No one in the directory.",
+    "名录中暂无人员。",
+    "Keine Person im Verzeichnis.",
+    "No hay personas en el directorio.",
+    "В справочнике нет сотрудников.",
+    "Nessuna persona in rubrica.",
+    "名簿に担当者がいません。"
+  ],
+  "Aucune action enregistrée.": [
+    "No action recorded.",
+    "暂无操作记录。",
+    "Keine Aktion aufgezeichnet.",
+    "Ninguna acción registrada.",
+    "Действия не зарегистрированы.",
+    "Nessuna azione registrata.",
+    "記録された操作はありません。"
+  ],
+  "Ce champ ne crée aucun compte : le compte doit déjà être inscrit.": [
+    "This field creates no account: the account must already be registered.",
+    "此字段不会创建账户：该账户必须已注册。",
+    "Dieses Feld erstellt kein Konto: Das Konto muss bereits registriert sein.",
+    "Este campo no crea ninguna cuenta: la cuenta ya debe estar registrada.",
+    "Это поле не создаёт учётную запись: она должна быть уже зарегистрирована.",
+    "Questo campo non crea alcun account: l'account deve essere già registrato.",
+    "この項目はアカウントを作成しません。既に登録済みである必要があります。"
+  ],
+  "Personne": [
+    "Person",
+    "人员",
+    "Person",
+    "Persona",
+    "Сотрудник",
+    "Persona",
+    "担当者"
+  ],
+  "Adresse": [
+    "Address",
+    "邮箱地址",
+    "Adresse",
+    "Dirección",
+    "Адрес",
+    "Indirizzo",
+    "アドレス"
+  ],
+  "Droit": [
+    "Right",
+    "权限",
+    "Recht",
+    "Derecho",
+    "Право",
+    "Diritto",
+    "権限"
+  ],
+  "Action": [
+    "Action",
+    "操作",
+    "Aktion",
+    "Acción",
+    "Действие",
+    "Azione",
+    "操作"
+  ],
+  "Afficher plus": [
+    "Show more",
+    "显示更多",
+    "Mehr anzeigen",
+    "Mostrar más",
+    "Показать ещё",
+    "Mostra altro",
+    "さらに表示"
+  ],
+  "Aucun compte Standex.": [
+    "No Standex account.",
+    "暂无 Standex 账户。",
+    "Kein Standex-Konto.",
+    "Ninguna cuenta Standex.",
+    "Нет учётных записей Standex.",
+    "Nessun account Standex.",
+    "Standex アカウントがありません。"
+  ],
+  "Actif": [
+    "Active",
+    "有效",
+    "Aktiv",
+    "Activa",
+    "Активна",
+    "Attivo",
+    "有効"
   ]
 }

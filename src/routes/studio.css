@@ -55,6 +55,7 @@
 .studio-brand small {
   display: block;
   margin-top: 5px;
+  text-transform: uppercase;
 }
 .studio-header-center,
 .studio-account {
@@ -110,6 +111,7 @@
 .studio-eyebrow {
   margin-bottom: 7px;
   color: var(--muted-foreground);
+  text-transform: uppercase;
 }
 .studio-intro h1 {
   color: var(--heading);

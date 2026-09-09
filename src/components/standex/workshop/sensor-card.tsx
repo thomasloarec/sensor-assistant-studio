@@ -125,7 +125,7 @@ export default function SensorCard({
         <div className="sc-content">
           <header>
             <div>
-              <p className="mw-eyebrow">{t("LE PRODUIT EN DÉTAIL")}</p>
+              <p className="mw-eyebrow">{t("Le produit en détail")}</p>
               <span>{t("Comprendre ses atouts. Préparer son intégration.")}</span>
             </div>
             <button

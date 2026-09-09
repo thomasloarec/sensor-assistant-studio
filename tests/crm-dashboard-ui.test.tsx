@@ -291,13 +291,14 @@ describe("annuaire métier et droits Standex", () => {
   test("un compte rattaché sans droit reçoit une action d'attribution explicite", () => {
     expect(src).toContain("staffByUser");
     expect(src).toContain("Accorder ce droit");
-    expect(src).toContain("!staffByUser.has(p.userId)");
+    expect(src).toContain("staffByUser.has(p.userId)");
+    expect(src).toContain('open === "grant" && p.userId && !granted');
   });
 
   test("la fiche annuaire est modifiable (nom et fonction)", () => {
     expect(src).toContain("Enregistrer la fiche");
-    expect(src).toContain("edit[p.id]?.firstName");
-    expect(src).toContain("edit[p.id]?.role");
+    expect(src).toContain("edit?.firstName ?? p.firstName");
+    expect(src).toContain("edit?.role ?? p.role");
   });
 
   test("aucun compte n'est créé ni invité depuis cet écran", () => {

@@ -437,14 +437,14 @@ export default function MagneticWorkshop({
         </button>
         <div className="mw-brand">
           STANDEX <span>DETECT</span>
-          <small>{t("ATELIER MAGNÉTIQUE")}</small>
+          <small>{t("Atelier magnétique")}</small>
         </div>
         <LanguagePicker />
         <span className="mw-prototype">{t("Prototype interne · V0.4")}</span>
       </header>
       <div className="mw-intro">
         <div>
-          <p className="mw-eyebrow">{t("COMPRENDRE AVANT D'INTÉGRER")}</p>
+          <p className="mw-eyebrow">{t("Comprendre avant d'intégrer")}</p>
           <h1>{t("Votre montage, en mouvement.")}</h1>
           <p>{t("Placez le capteur et l'aimant. Observez quand le contact change d'état.")}</p>
         </div>
