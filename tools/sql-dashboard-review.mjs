@@ -469,6 +469,68 @@ await expectFail('disabled_account_loses_crm_access', () => actor('authenticated
 await expectFail('disabled_account_loses_legacy_staff_access', () => actor('authenticated', newbie,
   () => value('select public.lead_staff_view($1)', [dossier])));
 
+// 14.9 Historique d'audit incomplet : dossier disparu, auteur disparu.
+//      `lead.audit_log` n'a aucune clé étrangère et conserve légitimement ces
+//      lignes. Ni le déclencheur ni la reprise ne doivent échouer, et rien ni
+//      personne ne doit être inventé.
+const ghostDossier = '30000000-0000-4000-8000-00000000dead';
+const ghostAuthor = '20000000-0000-4000-8000-0000000000de';
+let ghostRow = null;
+try {
+  await db.query(
+    "insert into lead.audit_log(actor,action,dossier_id,detail) values($1,'revision_submitted',$2,'{\"revision\":1}')",
+    [ids.admin, ghostDossier]);
+  add('audit_event_on_missing_dossier_is_accepted', true);
+} catch (e) { add('audit_event_on_missing_dossier_is_accepted', false, String(e.message)); }
+add('audit_event_on_missing_dossier_creates_no_note', await value(
+  'select count(*)::int from lead.sap_notes where dossier_id=$1', [ghostDossier]) === 0);
+try {
+  await db.query(
+    "insert into lead.audit_log(actor,action,dossier_id,detail) values($1,'revision_submitted',$2,'{\"revision\":9}')",
+    [ghostAuthor, dossier]);
+  ghostRow = await value(
+    "select id from lead.audit_log where actor=$1 order by id desc limit 1", [ghostAuthor]);
+  add('audit_event_with_missing_author_is_accepted', true);
+} catch (e) { add('audit_event_with_missing_author_is_accepted', false, String(e.message)); }
+const ghostNote = await value(
+  "select to_jsonb(n) from lead.sap_notes n where dossier_id=$1 and event_key=$2",
+  [dossier, 'audit:' + ghostRow]);
+add('missing_author_note_exists_without_author_reference',
+  !!ghostNote && ghostNote.author_id === null && !!ghostNote.author_name,
+  JSON.stringify(ghostNote));
+// Reprise de la migration rejouée sur cet historique : elle ne doit pas échouer.
+try {
+  await db.exec(`do $$ declare l record; begin
+    for l in select id, at, actor, dossier_id, action, detail from lead.audit_log
+             where dossier_id is not null order by id loop
+      perform lead_priv.crm_audit_note(l.id, l.at, l.actor, l.dossier_id, l.action, l.detail);
+    end loop; end $$;`);
+  add('migration_backfill_replay_survives_broken_history', true);
+} catch (e) { add('migration_backfill_replay_survives_broken_history', false, String(e.message)); }
+
+// 14.10 Publication + notification : une seule opération, rejouable sans doublon.
+const beforeReviews = await value(
+  'select count(*)::int from lead.design_reviews where dossier_id=$1', [dossier]);
+const pubArgs = ['req-key-1', submitted.revision_id, 'full', 'conditions', 'validated',
+  'Réponse technique atomique', 'INTERNAL_ONLY_SECRET', 'MK03-1A66-200W', 'custom',
+  { cable: '300 mm PVC' }, 'Standex feedback', 'Votre revue est disponible.'];
+const pub1 = await actor('authenticated', ids.rnd,
+  () => value('select public.lead_crm_publish_review_and_notify($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)', pubArgs));
+const pub2 = await actor('authenticated', ids.rnd,
+  () => value('select public.lead_crm_publish_review_and_notify($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)', pubArgs));
+add('atomic_publish_replay_creates_one_review', await value(
+  'select count(*)::int from lead.design_reviews where dossier_id=$1', [dossier]) === beforeReviews + 1,
+  String(beforeReviews));
+add('atomic_publish_replay_returns_same_state', !!pub1.project && !!pub2.project);
+add('atomic_publish_leaks_no_internal_note',
+  !JSON.stringify(pub2.notifications).includes('INTERNAL_ONLY_SECRET'));
+await expectFail('atomic_publish_rejects_a_changed_payload', () => actor('authenticated', ids.rnd,
+  () => value('select public.lead_crm_publish_review_and_notify($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)',
+    [...pubArgs.slice(0, 10), 'Autre sujet', 'Autre résumé'])), 'REQUEST_KEY_CONFLICT');
+await expectFail('atomic_publish_requires_a_request_key', () => actor('authenticated', ids.rnd,
+  () => value('select public.lead_crm_publish_review_and_notify($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)',
+    [null, ...pubArgs.slice(1)])), 'REQUEST_KEY_REQUIRED');
+
 const failedBefore = results.filter((r) => !r.pass).length;
 add('regression_block_ran', results.length > 65, String(failedBefore));
 
