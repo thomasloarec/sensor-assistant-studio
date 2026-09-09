@@ -1228,7 +1228,16 @@
     inset-block: 0;
     width: 35%;
     background: var(--primary);
-    animation: standex-drift var(--d-page) var(--ease-in-out) infinite alternate;
+    animation: standex-indeterminate var(--d-page) var(--ease-in-out) infinite alternate;
+  }
+
+  @keyframes standex-indeterminate {
+    from {
+      transform: translateX(-15%);
+    }
+    to {
+      transform: translateX(200%);
+    }
   }
 
   .chip {
@@ -1409,6 +1418,12 @@
     border-radius: var(--r-sm);
     box-shadow:
       var(--e-1),
+      inset 3px 0 0 var(--row-accent, var(--standex-blue-25));
+  }
+  .pipeline-card:hover,
+  .pipeline-card:focus-visible {
+    box-shadow:
+      var(--e-2),
       inset 3px 0 0 var(--row-accent, var(--standex-blue-25));
   }
 }
