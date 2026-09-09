@@ -66,7 +66,7 @@ import {
   type TaskStakeholder,
   type TaskStatus,
 } from "@/lib/leadmagnet/crm";
-import { sapNotesToText } from "@/lib/leadmagnet/sap-note";
+import { latestSapNoteText, sapNotesToText } from "@/lib/leadmagnet/sap-note";
 
 export const Route = createFileRoute("/standex/projects/$dossierId")({
   component: ProjectDetailRoute,
@@ -1087,10 +1087,9 @@ function TasksTab({
 
 function SapTab({ detail }: { detail: CrmProjectDetail }) {
   const text = useMemo(() => sapNotesToText(detail.sapNotes), [detail.sapNotes]);
-  const latest = useMemo(
-    () => (detail.sapNotes.length ? sapNotesToText(detail.sapNotes.slice(-1)) : ""),
-    [detail.sapNotes],
-  );
+  // Le backend renvoie l'historique du plus récent au plus ancien : « Copier la
+  // dernière » doit choisir le max de createdAt, jamais la dernière ligne du tableau.
+  const latest = useMemo(() => latestSapNoteText(detail.sapNotes), [detail.sapNotes]);
   const [copyState, setCopyState] = useState<{ ok: boolean; text: string } | null>(null);
 
   const copy = async (value: string, okMessage: string) => {

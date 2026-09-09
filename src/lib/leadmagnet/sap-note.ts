@@ -52,6 +52,18 @@ export function sapNotesToText(notes: readonly SapNote[]): string {
     .join("\n\n");
 }
 
+/**
+ * Texte de la note réellement la plus récente (max de createdAt), quel que soit
+ * l'ordre d'entrée. Le backend renvoie l'historique du plus récent au plus
+ * ancien : un `slice(-1)` copierait la note la plus ancienne. Ne mute pas
+ * l'entrée.
+ */
+export function latestSapNoteText(notes: readonly SapNote[]): string {
+  if (notes.length === 0) return "";
+  const newest = [...notes].sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt))[0]!;
+  return newest.bodyEn.trimEnd();
+}
+
 /** Deux notes de même clé d'événement sont la même note : le serveur n'en garde qu'une. */
 export function dedupeSapNotes(notes: readonly SapNote[]): SapNote[] {
   const seen = new Set<string>();
