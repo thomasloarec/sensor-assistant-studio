@@ -244,6 +244,34 @@ Fichiers officiels dans `public/brand/`, référencés uniquement par
   pour le web. Le jour où les SVG officiels arrivent, seul `brand-logo.tsx`
   change.
 
+## 10 bis. Socle de l'espace de travail interne
+
+Classes introduites pour `/standex` et réutilisables partout ailleurs. Toutes
+leurs valeurs viennent des jetons.
+
+- `.segmented`, `.segmented-item`, `.segmented-thumb` — navigation en contrôle
+  segmenté. Le pouce glisse via `--seg` (index actif) et `--seg-count`. Sous
+  640 px, la barre défile horizontalement et l'onglet actif est marqué par sa
+  surface, sans pouce animé. Chaque onglet fait au moins 44 px de haut.
+- `.skeleton` — attente : une forme qui annonce le contenu, balayée par
+  `standex-sweep`. Le mot « Chargement… » reste présent pour les lecteurs
+  d'écran, jamais seul à l'écran.
+- `.toast-region`, `.toast`, `.toast-leaving` — pastilles flottantes en bas à
+  droite, pleine largeur sur mobile. **Règle d'emploi : le succès d'une écriture
+  part en pastille ; une erreur ou un refus reste en place, à côté de l'action
+  refusée.** Le chronomètre se suspend au survol et au focus.
+- `.anim-nudge` — deux oscillations courtes pour attirer l'œil sur un bloc
+  d'erreur déjà visible. Jamais utilisé pour signaler un succès.
+- `.field-row`, `.field`, `.field-actions` — rangées de formulaire alignées :
+  libellés, champs et textes d'aide se posent sur les mêmes lignes grâce à
+  `grid-template-rows: subgrid`, avec repli en colonne quand `subgrid` manque.
+  `.field-actions` colle le bouton à la ligne des champs.
+- `.num` — valeurs numériques alignées à droite en chiffres tabulaires.
+
+Les primitives montées par ces écrans sont migrées dans le même commit :
+`dropdown-menu.tsx` l'a été pour le menu de compte (rayons, tailles de texte et
+cibles de 44 px conformes).
+
 ## 11. Ce qui reste ouvert
 
 - La console `/standex` ne peut être validée de bout en bout sans session staff
