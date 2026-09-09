@@ -272,6 +272,14 @@ function ProjectSummary({ detail }: { detail: CrmProjectDetail }) {
         </dd>
       </div>
       <div>
+        <dt className="t-caption text-muted-foreground">{t("Responsables")}</dt>
+        <dd>
+          {t("Commercial")} : {personName(detail.directory, p.salesPersonId ?? null)}
+          {" · "}
+          {t("FAE")} : {personName(detail.directory, p.faePersonId ?? null)}
+        </dd>
+      </div>
+      <div>
         <dt className="t-caption text-muted-foreground">{t("Prochaine action")}</dt>
         <dd>
           {next === null ? (
@@ -291,6 +299,7 @@ function ProjectSummary({ detail }: { detail: CrmProjectDetail }) {
     </dl>
   );
 }
+
 
 /* ------------------------------------------------------------------ Suivi */
 
