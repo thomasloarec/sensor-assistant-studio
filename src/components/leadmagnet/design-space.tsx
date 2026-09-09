@@ -2326,7 +2326,9 @@ export function DesignSpace({
                 }}
               />
               {dossier.workshopAsset
-                ? `Je partage aussi le fichier 3D « ${dossier.workshopAsset.fileName} » avec l'équipe en charge.`
+                ? msg("Je partage aussi le fichier 3D « {0} » avec l'équipe en charge.", [
+                    dossier.workshopAsset.fileName,
+                  ])
                 : t("Aucun fichier 3D importé : rien à partager.")}
             </label>
             {shareModel && dossier.workshopAsset ? (
