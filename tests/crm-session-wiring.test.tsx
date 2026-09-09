@@ -14,6 +14,7 @@ import { act, cleanup, render } from "@testing-library/react";
 
 // --- Réponses serveur pilotées par le test ---------------------------------
 let projectDeferred: { resolve: (v: unknown) => void } | null = null;
+let adminDeferred: { resolve: (v: unknown) => void } | null = null;
 const projectFor = (company: string) => ({
   project: {
     id: "d1",
@@ -39,6 +40,10 @@ mock.module("@/lib/leadmagnet/dashboard-adapter", () => ({
       projectDeferred = { resolve };
     }),
   fetchCrmBoard: () => Promise.resolve({ projects: [], directory: [] }),
+  fetchCrmAdminOverview: () =>
+    new Promise((resolve) => {
+      adminDeferred = { resolve };
+    }),
 }));
 
 // --- Contexte compte piloté par le test ------------------------------------
@@ -65,10 +70,12 @@ mock.module("@tanstack/react-router", () => ({
 }));
 
 const { Route: ProjectRoute } = await import("../src/routes/standex.projects.$dossierId");
+const { Route: AdminRoute } = await import("../src/routes/standex.admin");
 
 afterEach(() => {
   cleanup();
   projectDeferred = null;
+  adminDeferred = null;
 });
 
 function Screen({ Component }: { Component: React.ComponentType }) {
@@ -107,5 +114,57 @@ describe("la fiche projet appartient au compte connecté", () => {
       projectDeferred!.resolve(projectFor("Société B"));
     });
     expect(document.body.textContent).toContain("Société B");
+  });
+});
+
+describe("l'administration appartient au compte connecté", () => {
+  test("l'annuaire de l'ancien compte disparaît et ne revient pas", async () => {
+    crmState = { ...crmState, sessionGeneration: 10 };
+    const Component = AdminRoute.component as React.ComponentType;
+    const view = render(<Screen Component={Component} />);
+
+    const first = adminDeferred!;
+    await act(async () => {
+      first.resolve({
+        staff: [
+          {
+            userId: "u1",
+            role: "admin",
+            active: true,
+            firstName: "Ancien",
+            lastName: "Compte",
+            email: null,
+          },
+        ],
+        directory: [],
+        accounts: [],
+      });
+    });
+    expect(document.body.textContent).toContain("Ancien");
+
+    const late = adminDeferred!;
+    crmState = { ...crmState, sessionGeneration: 11 };
+    await act(async () => {
+      view.rerender(<Screen Component={Component} />);
+    });
+    expect(document.body.textContent).not.toContain("Ancien");
+
+    await act(async () => {
+      late?.resolve({
+        staff: [
+          {
+            userId: "u1",
+            role: "admin",
+            active: true,
+            firstName: "Ancien",
+            lastName: "Compte",
+            email: null,
+          },
+        ],
+        directory: [],
+        accounts: [],
+      });
+    });
+    expect(document.body.textContent).not.toContain("Ancien");
   });
 });
