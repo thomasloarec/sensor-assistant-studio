@@ -258,6 +258,8 @@ describe("l'administration appartient au compte connecté", () => {
     });
     await act(async () => {
       typeInto(byId<HTMLInputElement>("new-first")!, "Marie");
+    });
+    await act(async () => {
       typeInto(byId<HTMLInputElement>("new-last")!, "Durand");
     });
     expect(byId<HTMLInputElement>("new-first")!.value).toBe("Marie");
@@ -294,6 +296,8 @@ describe("l'administration appartient au compte connecté", () => {
     expect(byId<HTMLInputElement>("new-first")!.value).toBe("");
     await act(async () => {
       typeInto(byId<HTMLInputElement>("new-first")!, "Paul");
+    });
+    await act(async () => {
       typeInto(byId<HTMLInputElement>("new-last")!, "Martin");
     });
     expect(byId<HTMLButtonElement>("new-person-submit")!.disabled).toBe(false);
