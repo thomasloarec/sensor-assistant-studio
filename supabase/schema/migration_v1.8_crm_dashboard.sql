@@ -793,17 +793,60 @@ returns jsonb language sql security invoker
 set search_path = public, lead_priv, pg_temp as $$
   select lead_priv.crm_set_price(p_dossier, p_price, p_currency, p_expected_version); $$;
 
--- Responsables : nommer une personne n'accorde AUCUN accès. Si la personne est
--- rattachée à un compte, l'affectation existante (`dossier_assignments`) suit,
--- et l'accès du responsable remplacé est retiré s'il ne vient que de ce rôle.
+-- Réconciliation des accès dérivés d'un rôle de responsable.
+--
+-- Deux règles fermes :
+--   * une affectation posée à la main (`source = 'manual'`) n'est JAMAIS
+--     supprimée ici : elle a été accordée explicitement par un administrateur ;
+--   * seules les affectations créées par ce mécanisme (`source = 'crm_owner'`)
+--     sont retirées quand la personne n'est plus responsable.
+create or replace function lead_priv.crm_reconcile_owner_access(_dossier uuid, _actor uuid)
+returns void language plpgsql security definer
+set search_path = lead, lead_priv, pg_temp as $$
+declare owners uuid[]; x uuid; r record;
+begin
+  select coalesce(array_agg(p.user_id), '{}') into owners
+    from lead.crm_directory p
+    join lead.dossier_crm c on c.dossier_id = _dossier
+   where p.user_id is not null and p.active
+     and p.id in (c.sales_person, c.fae_person);
+
+  for r in select a.user_id from lead.dossier_assignments a
+            where a.dossier_id = _dossier and a.source = 'crm_owner'
+              and not (a.user_id = any(owners)) loop
+    delete from lead.dossier_assignments a
+     where a.dossier_id = _dossier and a.user_id = r.user_id and a.source = 'crm_owner';
+    insert into lead.audit_log (actor, action, dossier_id, detail)
+    values (_actor, 'crm_assignment_revoked', _dossier,
+            jsonb_build_object('user_id', r.user_id, 'source', 'crm_owner'));
+  end loop;
+
+  foreach x in array owners loop
+    -- Un nom d'annuaire n'accorde rien : il faut un rôle staff actif.
+    if lead_priv.role_of(x) is not null then
+      insert into lead.dossier_assignments (dossier_id, user_id, assigned_by, source)
+      values (_dossier, x, _actor, 'crm_owner')
+      on conflict (dossier_id, user_id) do nothing; -- une affectation manuelle reste manuelle
+      insert into lead.audit_log (actor, action, dossier_id, detail)
+      values (_actor, 'crm_assignment_granted', _dossier,
+              jsonb_build_object('user_id', x, 'source', 'crm_owner'));
+    end if;
+  end loop;
+end $$;
+
+-- Responsables : nommer une personne n'accorde AUCUN accès par elle-même.
+-- L'affectation technique reste un acte d'ADMINISTRATION : un commercial peut
+-- renseigner qui suit le projet, mais il ne peut pas s'en servir pour ouvrir
+-- l'accès technique d'un tiers.
 create or replace function lead_priv.crm_set_owners(_dossier uuid, _sales uuid, _fae uuid,
                                                     _expected integer)
 returns jsonb language plpgsql security definer
 set search_path = lead, lead_priv, pg_temp as $$
 declare u uuid := lead_priv.require_user(); row lead.dossier_crm%rowtype;
-        old_users uuid[]; new_users uuid[]; x uuid; bullets text[] := '{}';
+        bullets text[] := '{}'; is_admin boolean;
 begin
   perform lead_priv.crm_require_write(u, _dossier, array['sales']::lead.staff_role[]);
+  is_admin := coalesce(lead_priv.role_of(u) = 'admin', false);
   if _sales is not null and not exists (select 1 from lead.crm_directory p
       where p.id = _sales and p.role = 'sales' and p.active) then
     raise exception 'BAD_PERSON' using errcode = '22023';
@@ -814,33 +857,14 @@ begin
   end if;
   row := lead_priv.crm_bump(_dossier, _expected);
 
-  select coalesce(array_agg(p.user_id), '{}') into old_users
-    from lead.crm_directory p
-   where p.user_id is not null and p.id in (row.sales_person, row.fae_person);
-  select coalesce(array_agg(p.user_id), '{}') into new_users
-    from lead.crm_directory p
-   where p.user_id is not null and p.id in (_sales, _fae);
-
   update lead.dossier_crm
      set sales_person = _sales, fae_person = _fae,
          updated_at = now(), version = version + 1
    where dossier_id = _dossier;
 
-  -- Retrait des accès résiduels du responsable remplacé.
-  foreach x in array old_users loop
-    if not (x = any(new_users)) then
-      delete from lead.dossier_assignments a where a.dossier_id = _dossier and a.user_id = x;
-      insert into lead.audit_log (actor, action, dossier_id, detail)
-      values (u, 'crm_assignment_revoked', _dossier, jsonb_build_object('user_id', x));
-    end if;
-  end loop;
-  -- Ajout de l'accès du nouveau responsable, uniquement s'il est staff.
-  foreach x in array new_users loop
-    if lead_priv.role_of(x) is not null then
-      insert into lead.dossier_assignments (dossier_id, user_id, assigned_by)
-      values (_dossier, x, u) on conflict (dossier_id, user_id) do nothing;
-    end if;
-  end loop;
+  if is_admin then
+    perform lead_priv.crm_reconcile_owner_access(_dossier, u);
+  end if;
 
   if row.sales_person is distinct from _sales then
     bullets := bullets || ('Sales owner: ' || coalesce((select p.first_name || ' ' || p.last_name
@@ -850,10 +874,13 @@ begin
     bullets := bullets || ('FAE owner: ' || coalesce((select p.first_name || ' ' || p.last_name
       from lead.crm_directory p where p.id = _fae), 'unassigned') || '.');
   end if;
+  if array_length(bullets, 1) is not null and not is_admin then
+    bullets := bullets || 'Technical access unchanged: assignments are granted by an administrator.';
+  end if;
   perform lead_priv.sap_note(_dossier, u, 'owners:' || row.version::text, bullets);
   insert into lead.audit_log (actor, action, dossier_id, detail)
   values (u, 'crm_owners_set', _dossier,
-          jsonb_build_object('sales', _sales, 'fae', _fae));
+          jsonb_build_object('sales', _sales, 'fae', _fae, 'access_reconciled', is_admin));
   return lead_priv.crm_project(_dossier);
 end $$;
 
