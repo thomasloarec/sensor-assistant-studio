@@ -51,10 +51,6 @@ mock.module("@/lib/leadmagnet/dashboard-adapter", () => ({
   upsertCrmPerson: () => Promise.resolve(null),
 }));
 
-mock.module("@/lib/leadmagnet/supabase-adapter", () => ({
-  fetchStaffView: () => Promise.resolve(null),
-}));
-
 // --- Contexte compte piloté par le test ------------------------------------
 let crmState = {
   capabilities: { available: true, role: "admin", userId: "u1", detail: null } as unknown,
