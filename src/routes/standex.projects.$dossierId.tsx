@@ -176,6 +176,9 @@ function ProjectDetail() {
         {project ? <Badge variant="outline">{stageLabel(project.stage)}</Badge> : null}
       </div>
 
+      {detail && project ? <ProjectSummary detail={detail} /> : null}
+
+
       <div role="tablist" aria-label={t("Sections de la fiche projet")} className="flex flex-wrap gap-1">
         {TABS.map((item) => (
           <Button
