@@ -119,6 +119,7 @@ import {
 import { checkLeadBackend, type LeadBackendStatus } from "@/lib/leadmagnet/backend";
 import { requestEnglishReport } from "@/lib/leadmagnet/english-report.functions";
 import { englishReportMessage } from "@/lib/leadmagnet/english-report-messages";
+import { EnglishRunLock } from "@/lib/leadmagnet/english-run-lock";
 
 import {
   createDossier as createServerDossier,
