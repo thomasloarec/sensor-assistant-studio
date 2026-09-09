@@ -16,6 +16,8 @@ export const LEAD_CRM_RPC = {
   applyTemplate: "lead_crm_apply_template",
   upsertTask: "lead_crm_upsert_task",
   queueNotification: "lead_crm_queue_review_notification",
+  publishAndNotify: "lead_crm_publish_review_and_notify",
+
   adminOverview: "lead_crm_admin_overview",
   adminUpsertPerson: "lead_crm_admin_upsert_person",
   adminLinkPerson: "lead_crm_admin_link_person",
