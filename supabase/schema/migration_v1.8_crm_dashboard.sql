@@ -1274,6 +1274,11 @@ returns text language sql immutable set search_path = pg_temp as $$
     when 'sample_revalidated' then 'Sample request revalidated.'
     when 'variant_accepted'   then 'Design variant accepted.'
     when 'nda_prepared'       then 'NDA document prepared.'
+    when 'nda_proof_recorded' then 'Signed NDA proof verified and recorded.'
+    when 'nda_requirement_set' then case
+        when coalesce((_detail->>'nda_required')::boolean, false)
+          then 'NDA set as required for this project.'
+        else 'NDA set as not required for this project.' end
     when 'dossier_assigned'   then 'Team member assigned to the project.'
     else null end;
 $$;
