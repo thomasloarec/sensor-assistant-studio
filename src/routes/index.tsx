@@ -6,7 +6,7 @@ import { t } from "@/lib/i18n/core";
  * silencieux. Le banc interne vit désormais sur /internal.
  */
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { CSSProperties } from "react";
 import { ArrowRight, ChevronDown, UserRound } from "lucide-react";
 import { BrandLogo } from "@/components/standex/brand-logo";
@@ -52,17 +52,27 @@ function HomeRoute() {
   /** Lien reçu par message : le projet n'est ouvert qu'après connexion et
    * seulement s'il appartient réellement au compte. */
   const requestedDossierId = Route.useSearch().dossier ?? "";
-  const [started, setStarted] = useState(Boolean(requestedDossierId));
+  const [started, setStarted] = useState(false);
   /** L'espace projet reste monté : une fois ouvert, revenir à l'accueil ne
    * perd rien et « Reprendre mon projet » réaffiche le même brouillon. */
-  const [opened, setOpened] = useState(Boolean(requestedDossierId));
+  const [opened, setOpened] = useState(false);
   const openWorkspace = () => {
     setOpened(true);
     setStarted(true);
   };
-  /** Compteur : chaque demande « Mon espace » ouvre le panneau de l'espace
-   * UNIQUE monté ci-dessous. Il n'existe pas de second compte parallèle. */
+  // Lien « /?dossier=… » : on ouvre l'espace projet après le montage, comme un
+  // clic réel, pour que l'écran suive exactement le parcours habituel.
   const [accountRequest, setAccountRequest] = useState(0);
+
+  useEffect(() => {
+    if (!requestedDossierId) return;
+    setOpened(true);
+    setStarted(true);
+    // Le projet demandé appartient à un compte : on présente tout de suite
+    // l'espace de connexion, sans rien ouvrir avant vérification.
+    setAccountRequest((n) => n + 1);
+  }, [requestedDossierId]);
+
 
   return (
     <div data-readable className="min-h-screen bg-background text-foreground">
