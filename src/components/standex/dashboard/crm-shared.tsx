@@ -106,6 +106,34 @@ export function StageBadge({ stage }: { stage: CrmStage }) {
   return <Badge variant="secondary">{stageLabel(stage)}</Badge>;
 }
 
+/** Nom du pays dans la langue de lecture ; à défaut, le code tel quel. */
+export function countryName(code: string | null | undefined, locale: string): string | null {
+  const raw = (code ?? "").trim().toUpperCase();
+  if (!/^[A-Z]{2}$/.test(raw)) return raw || null;
+  try {
+    const names = new Intl.DisplayNames([locale], { type: "region" });
+    return names.of(raw) ?? raw;
+  } catch {
+    return raw;
+  }
+}
+
+/** Drapeau décoratif + NOM du pays lisible : le drapeau seul n'est pas une information. */
+export function CountryCell({ code, locale }: { code: string | null; locale: string }) {
+  const raw = (code ?? "").trim().toUpperCase();
+  const name = countryName(raw, locale);
+  if (!name) return <UnknownValue reason={t("pays non renseigné")} />;
+  const flag = /^[A-Z]{2}$/.test(raw)
+    ? String.fromCodePoint(...[...raw].map((c) => 0x1f1e6 + c.charCodeAt(0) - 65))
+    : null;
+  return (
+    <span className="inline-flex items-center gap-2">
+      {flag ? <span aria-hidden="true">{flag}</span> : null}
+      <span>{name}</span>
+    </span>
+  );
+}
+
 export function LoadingBlock() {
   return <p className="text-sm text-muted-foreground">{t("Chargement…")}</p>;
 }
