@@ -506,6 +506,8 @@ export function DossierConsole({ initialDossierId, embedded = false }: DossierCo
             </section>
           ) : null}
         </aside>
+        )}
+
 
         <section className="space-y-4">
           {message ? (
