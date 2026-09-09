@@ -111,7 +111,12 @@ const emptyReview = {
   variantConnectorPositions: "",
   variantPcb: "",
   variantDescription: "",
+  // Message client préparé EN MÊME TEMPS que la publication : les deux tiennent
+  // dans une seule transaction, donc jamais de retour publié sans message en file.
+  notifySubject: "",
+  notifySummary: "",
 };
+
 
 const emptyOffer = {
   currency: "EUR",
