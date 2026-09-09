@@ -58,6 +58,16 @@ export function AdminScreen() {
     setOverview(null);
     setError(null);
     setMessage(null);
+    // Un changement de compte annule aussi les saisies en cours : sans cela une
+    // écriture partie avant la bascule laisserait l'écran occupé pour toujours
+    // (son `finally` refuse, à juste titre, de débloquer la NOUVELLE session),
+    // et les noms, adresses et choix de droit du compte précédent resteraient
+    // affichés. Une simple reconfirmation de la MÊME session ne passe pas ici.
+    setBusy(false);
+    setPerson({ firstName: "", lastName: "", role: "sales" });
+    setLinkEmail({});
+    setEdit({});
+    setGrantRole({});
   }, [sessionGeneration]);
 
   const load = useCallback(() => {

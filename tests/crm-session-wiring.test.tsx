@@ -12,7 +12,7 @@ GlobalRegistrator.register({ url: "https://exemple.invalid/standex" });
 
 import { afterEach, describe, expect, mock, test } from "bun:test";
 import * as React from "react";
-import { act, cleanup, render } from "@testing-library/react";
+import { act, cleanup, fireEvent, render } from "@testing-library/react";
 import {
   RouterContextProvider,
   createMemoryHistory,
@@ -42,6 +42,7 @@ mock.module("@/lib/standex/supabase", () => ({
 // --- Réponses serveur pilotées par le test ---------------------------------
 let projectDeferred: { resolve: (v: unknown) => void } | null = null;
 let adminDeferred: { resolve: (v: unknown) => void } | null = null;
+let mutationDeferred: { resolve: (v: unknown) => void } | null = null;
 const projectFor = (company: string) => ({
   project: {
     id: "d1",
@@ -73,6 +74,10 @@ mock.module("@/lib/leadmagnet/dashboard-adapter", () => ({
     new Promise((resolve) => {
       adminDeferred = { resolve };
     }),
+  upsertCrmPerson: () =>
+    new Promise((resolve) => {
+      mutationDeferred = { resolve };
+    }),
 }));
 
 const realSupabaseAdapter = await import("../src/lib/leadmagnet/supabase-adapter");
@@ -91,6 +96,7 @@ afterEach(() => {
   cleanup();
   projectDeferred = null;
   adminDeferred = null;
+  mutationDeferred = null;
 });
 
 /** Routeur minimal : les liens de navigation de l'écran ont besoin d'un contexte,
@@ -200,6 +206,98 @@ describe("l'administration appartient au compte connecté", () => {
       late?.resolve(adminOverview);
     });
     expect(document.body.textContent).not.toContain("Ancien");
+  });
+
+  test("une écriture en vol puis un changement de compte libère l'écran et vide les saisies", async () => {
+    const overviewWithPerson = {
+      ...adminOverview,
+      directory: [
+        {
+          id: "p1",
+          firstName: "Marie",
+          lastName: "Durand",
+          role: "sales",
+          active: true,
+          userId: null,
+          email: null,
+        },
+      ],
+    };
+    function Probe() {
+      const [v, setV] = React.useState("");
+      return (
+        <>
+          <input id="probe" value={v} onChange={(e) => setV(e.target.value)} />
+          <span id="probe-state">{v}</span>
+        </>
+      );
+    }
+    const view = render(
+      <Screen>
+        <Probe />
+        <AdminScreen />
+      </Screen>,
+    );
+    await settle();
+    await act(async () => {
+      adminDeferred!.resolve(overviewWithPerson);
+    });
+
+    // Saisie en cours puis écriture lancée : l'écran est occupé.
+    const emailInput = view.container.querySelector("#link-p1") as HTMLInputElement;
+    await act(async () => {
+      fireEvent.change(emailInput, { target: { value: "marie@exemple.invalid" } });
+    });
+    expect(
+      (view.container.querySelector("#link-p1") as HTMLInputElement).value,
+    ).toBe("marie@exemple.invalid");
+    const probe = view.container.querySelector("#probe") as HTMLInputElement;
+    const tracker = (probe as unknown as { _valueTracker?: unknown })._valueTracker;
+    console.log("tracker?", Boolean(tracker));
+    const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value")!.set!;
+    setter.call(probe, "zz");
+    fireEvent.input(probe);
+    await settle();
+    console.log("probe state", view.container.querySelector("#probe-state")?.textContent);
+    console.log("after settle val", (view.container.querySelector("#link-p1") as HTMLInputElement).value);
+    console.log("count", view.container.querySelectorAll("#link-p1").length, "docCount", document.querySelectorAll("#link-p1").length, "val", (view.container.querySelector("#link-p1") as HTMLInputElement).value);
+    console.log(Array.from(view.container.querySelectorAll("button")).map((b)=>[b.textContent,b.disabled]));
+    console.log("attach disabled?", Array.from(view.container.querySelectorAll("button")).find((b)=>b.textContent==="Rattacher")?.disabled);
+    const deactivate = () =>
+      Array.from(view.container.querySelectorAll("button")).find(
+        (b) => b.textContent === "Désactiver",
+      ) as HTMLButtonElement;
+    const disableButton = deactivate();
+    await act(async () => {
+      disableButton.click();
+    });
+    expect(mutationDeferred).not.toBeNull();
+    expect(deactivate().disabled).toBe(true);
+
+    // Même compte : la saisie et l'écriture en cours sont conservées.
+    await emitAuth("SIGNED_IN", { user: { id: "u1" } });
+    expect(
+      (view.container.querySelector("#link-p1") as HTMLInputElement).value,
+    ).toBe("marie@exemple.invalid");
+    expect(deactivate().disabled).toBe(true);
+
+    // Compte réellement différent : écran remis à zéro.
+    const inFlight = mutationDeferred!;
+    await emitAuth("SIGNED_IN", { user: { id: "u2" } });
+    await settle();
+    await act(async () => {
+      adminDeferred!.resolve(overviewWithPerson);
+    });
+    expect(
+      (view.container.querySelector("#link-p1") as HTMLInputElement).value,
+    ).toBe("");
+    expect(deactivate().disabled).toBe(false);
+
+    // L'écriture de l'ancien compte revient en retard : sans effet.
+    await act(async () => {
+      inFlight.resolve(overviewWithPerson);
+    });
+    expect(deactivate().disabled).toBe(false);
   });
 });
 
