@@ -27,6 +27,18 @@ export function reviewOperationLabel(operation: ReviewOperation): string | null 
 
 export type SubmitGuardOutcome = "skipped" | "invalid" | "stale" | "failed" | "done";
 
+/** Phase atteinte au moment de l'échec. Elle décide de ce qu'on a le droit
+ * d'affirmer : « rien n'est parti » est FAUX après une révision confirmée. */
+export type SubmitPhase = "before_send" | "awaiting_confirmation" | "committed";
+
+export function submitFailureMessage(phase: SubmitPhase): string {
+  if (phase === "committed")
+    return "Votre dossier est bien arrivé chez Standex. Seule une étape complémentaire a échoué : consultez le suivi de votre dossier, ne renvoyez pas le dossier pour autant.";
+  if (phase === "awaiting_confirmation")
+    return "La confirmation d'envoi n'a pas été obtenue : votre dossier est peut-être arrivé malgré tout. Vérifiez le suivi de votre dossier avant de le renvoyer.";
+  return "La transmission n'a pas abouti. Rien n'a été envoyé ; réessayez.";
+}
+
 /**
  * Verrou synchrone dès l'entrée : le second clic ne franchit jamais la validation.
  * La validation ET l'envoi sont couverts par le même try/catch/finally, donc
@@ -54,6 +66,9 @@ export async function runGuardedSubmit(deps: {
     }
     deps.setOperation("submission");
     await deps.submit();
+    // Le contexte peut avoir changé PENDANT l'envoi : les écritures d'écran
+    // faites après coup par l'appelant doivent être considérées périmées.
+    if (deps.generation() !== gen) return "stale";
     return "done";
   } catch (error) {
     if (deps.generation() === gen) deps.onError(error);

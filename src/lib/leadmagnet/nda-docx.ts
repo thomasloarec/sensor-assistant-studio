@@ -64,6 +64,12 @@ interface VariableField {
   pad?: { before: string; after: string };
   /** Normalise les tabulations de remplissage de ce paragraphe une fois rempli. */
   tidyTabs?: boolean;
+  /** Champ réservé à l'équipe Standex : le client ne le saisit pas et il n'est
+   * jamais compté comme manquant côté client. */
+  standexOnly?: boolean;
+  /** Vidé explicitement quand aucune valeur n'est fournie : sans cela la valeur
+   * d'origine du modèle resterait dans la copie remise au client. */
+  blankWhenEmpty?: boolean;
 }
 
 /** Les seuls emplacements que le remplissage a le droit de toucher. */
@@ -99,6 +105,8 @@ export const VARIABLE_FIELDS: readonly VariableField[] = [
     expectedParagraph:
       "Place/date:Welschingen, Germany – 16.06.2026Stamp/Signature:   ___________________",
     span: { prefix: "Place/date:Welschingen, Germany – ", current: "16.06.2026" },
+    standexOnly: true,
+    blankWhenEmpty: true,
   },
   {
     key: "signatoryName",
@@ -296,7 +304,10 @@ export function fillDocumentXml(xml: string, values: NdaVariableValues): string 
     const range = ranges[field.paragraph];
     if (!range) throw new Error(`Le modèle NDA a changé : paragraphe ${field.paragraph} absent.`);
     const value = values[field.key].trim();
-    if (!value) continue;
+    // Valeur absente : on ne touche à rien, SAUF pour les champs qui doivent
+    // partir vides. Les laisser tels quels laisserait la date d'origine du
+    // modèle dans la copie du client.
+    if (!value && !field.blankWhenEmpty) continue;
     out +=
       xml.slice(cursor, range.start) +
       fillParagraph(xml.slice(range.start, range.end), field, value);
@@ -327,8 +338,10 @@ export interface FilledNda {
   filledFields: { label: string; value: string }[];
 }
 
+/** Champs manquants réellement demandés au client : la date côté Standex
+ * n'en fait pas partie, elle est apposée par Standex à la signature. */
 export function missingNdaFields(values: NdaVariableValues): string[] {
-  return VARIABLE_FIELDS.filter((f) => !values[f.key].trim()).map((f) => f.label);
+  return VARIABLE_FIELDS.filter((f) => !f.standexOnly && !values[f.key].trim()).map((f) => f.label);
 }
 
 /** Vérifie l'empreinte du modèle puis produit une copie remplie et non signée. */
