@@ -146,63 +146,41 @@ function AccountMenu() {
 function WorkspaceHeader() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const index = activeIndex(pathname);
-  const headerRef = useRef<HTMLElement | null>(null);
 
-  /* La hauteur réelle de l'en-tête est publiée sur le conteneur lisible : la
-     barre de travail collante des écrans se pose juste dessous, quelle que soit
-     la langue et quel que soit le retour à la ligne de la navigation. */
-  useEffect(() => {
-    const node = headerRef.current;
-    if (!node || typeof ResizeObserver === "undefined") return;
-    const host =
-      (node.closest("[data-readable]") as HTMLElement | null) ?? document.documentElement;
-    const publish = () => {
-      host.style.setProperty(
-        "--standex-header-h",
-        `${Math.round(node.getBoundingClientRect().height)}px`,
-      );
-    };
-    publish();
-    const observer = new ResizeObserver(publish);
-    observer.observe(node);
-    return () => observer.disconnect();
-  }, []);
-
+  /* La navigation segmentée reste sous la rangée principale : c'est le bandeau
+     partagé qui publie sa hauteur pour la barre de travail collante. */
   return (
-    <header ref={headerRef} className="material sticky top-0 z-30 shadow-[var(--e-1)]">
-      <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-3 px-4 py-3">
-        <BrandLogo height={44} />
-        <h1 className="t-title-s">{t("Espace de travail Standex")}</h1>
-        <div className="ml-auto flex flex-wrap items-center gap-2">
-          <LanguagePicker />
-          <AccountMenu />
-        </div>
-      </div>
-      <nav
-        aria-label={t("Sections de l'espace de travail")}
-        className="mx-auto max-w-6xl px-4 pb-3"
-      >
-        <div className="segmented" style={{ ["--seg" as string]: Math.max(index, 0) }}>
-          <span
-            className="segmented-thumb"
-            aria-hidden="true"
-            hidden={index < 0}
-            style={index < 0 ? { opacity: 0 } : undefined}
-          />
-          {NAV.map((item, i) => (
-            <Link
-              key={item.to}
-              to={item.to}
-              activeOptions={{ exact: item.exact }}
-              data-active={i === index ? "true" : undefined}
-              className="segmented-item"
-            >
-              {t(item.label)}
-            </Link>
-          ))}
-        </div>
-      </nav>
-    </header>
+    <AppHeader
+      context={t("Espace de travail Standex")}
+      below={
+        <nav
+          aria-label={t("Sections de l'espace de travail")}
+          className="mx-auto max-w-6xl px-4 pb-3"
+        >
+          <div className="segmented" style={{ ["--seg" as string]: Math.max(index, 0) }}>
+            <span
+              className="segmented-thumb"
+              aria-hidden="true"
+              hidden={index < 0}
+              style={index < 0 ? { opacity: 0 } : undefined}
+            />
+            {NAV.map((item, i) => (
+              <Link
+                key={item.to}
+                to={item.to}
+                activeOptions={{ exact: item.exact }}
+                data-active={i === index ? "true" : undefined}
+                className="segmented-item"
+              >
+                {t(item.label)}
+              </Link>
+            ))}
+          </div>
+        </nav>
+      }
+    >
+      <AccountMenu />
+    </AppHeader>
   );
 }
 
