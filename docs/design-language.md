@@ -331,6 +331,40 @@ cibles de 44 px conformes).
 - Les capitales viennent du CSS (`text-transform`), jamais de la chaîne. Aucune
   capitale d'insistance au milieu d'une phrase.
 
+### Bandeau de tête unique
+
+- `<AppHeader>` (`src/components/standex/app-header.tsx`) est le seul bandeau du
+  produit : espace client, banc interne `/internal`, espace `/standex` et atelier
+  magnétique. Même matière, même élévation, même ordre de lecture — retour, logo,
+  contexte, centre, puis zone de droite dont le **premier** élément est toujours
+  `LanguagePicker`. Un écran n'écrit plus son propre en-tête.
+- Il publie sa hauteur réelle dans `--standex-header-h` (via `ResizeObserver`) sur
+  `document.documentElement` et sur un éventuel conteneur `[data-readable]` : tout
+  élément collant (`.workbar`) se cale dessous sans valeur écrite à la main. Le
+  hook `usePublishedHeaderHeight()` sert aux écrans qui gardent une mise en page
+  propre, comme l'accueil immersif.
+- `tone="reversed"` bascule le verrou de marque en version inversée sur fond
+  sombre. Les anciennes règles `.mw-header`, `.mw-brand`, `.mw-back`,
+  `.studio-header`, `.studio-brand` et leurs variantes responsives ont été
+  supprimées avec l'adoption ; il ne reste aucun chrome de tête dupliqué.
+
+### Atelier magnétique
+
+- L'atelier utilise l'échelle typographique unique par des alias locaux
+  `--mw-t-body`, `--mw-t-dense`, `--mw-t-label`, `--mw-t-title`, `--mw-t-title-m`,
+  `--mw-t-title-l`, `--mw-t-display`, définis dans `.mw` comme de simples renvois
+  vers `--t-*`. Aucune taille écrite à la main.
+- Exceptions assumées et documentées :
+  - `--mw-flow-duration` (jeton local) — la boucle continue du courant du schéma
+    n'a pas d'équivalent parmi les six durées du socle.
+  - Les textes des schémas SVG sont dimensionnés en unités utilisateur du
+    `viewBox` : ils suivent l'échelle du dessin, pas l'échelle typographique CSS.
+  - Les matériaux Three.js, les dégradés de scène et les couleurs de rendu du
+    catalogue capteur restent des données techniques, jamais des jetons.
+  - Les filets de séparation encore présents dans l'atelier sont des séparateurs
+    de scène interne, pas la bordure grise 1 px proscrite par la règle 2.
+
+
 
 ## 11. Ce qui reste ouvert
 
@@ -346,6 +380,6 @@ cibles de 44 px conformes).
 - Primitives shadcn encore en dette de migration, nominativement :
   `accordion.tsx`, `calendar.tsx`, `chart.tsx`, `context-menu.tsx`, `drawer.tsx`, `hover-card.tsx`,
   `menubar.tsx`, `navigation-menu.tsx`, `sidebar.tsx`, `sonner.tsx`, `switch.tsx`,
-  `tabs.tsx`, `toggle.tsx`. Elles utilisent encore `border`, `bg-background`,
+  `toggle.tsx`. Elles utilisent encore `border`, `bg-background`,
   `shadow-lg`, `duration-200` ou `text-sm`. Chacune doit être migrée sur le socle
   dans le commit qui la monte sur un écran, jamais après.
