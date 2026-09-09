@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { ChevronDown, Loader2 } from "lucide-react";
 import { createOwnedLock } from "@/lib/leadmagnet/session-guard";
 import { t, localeTag } from "@/lib/i18n/core";
 import { useLocale } from "@/lib/i18n/react";
@@ -15,16 +16,28 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { DossierConsole } from "@/components/standex/console/dossier-console";
 import { useCrm } from "@/components/standex/dashboard/crm-context";
+import { useFlash } from "@/components/standex/dashboard/flash";
+import { AvatarInitials } from "@/components/standex/dashboard/avatar-initials";
 import {
   ALL_STAGES,
+  EmptyBlock,
   ErrorBlock,
   LoadingBlock,
   MarginCell,
   RevenueCell,
   STAKEHOLDER_LABEL,
+  StageGauge,
+  StagePill,
   TASK_STATUS_LABEL,
+  TaskRow,
   UnknownValue,
   VolumeCell,
   personName,
@@ -49,6 +62,7 @@ import {
 import { requestKeyFor, releaseRequestKey } from "@/lib/leadmagnet/request-key";
 import type { CrmPerson } from "@/lib/leadmagnet/crm";
 import { fetchStaffView, type DossierView } from "@/lib/leadmagnet/supabase-adapter";
+
 
 import {
   TASK_STATUSES,
