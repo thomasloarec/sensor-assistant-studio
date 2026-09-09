@@ -250,13 +250,20 @@ function ProjectDetail() {
 /* --------------------------------------------------------------- Résumé */
 
 /** Âges réels et prochaine action : trois repères, jamais inventés. */
-function ProjectSummary({ detail }: { detail: CrmProjectDetail }) {
+function ProjectSummary({
+  detail,
+  directory,
+}: {
+  detail: CrmProjectDetail;
+  directory: readonly CrmPerson[];
+}) {
   const p = detail.project;
   const age = projectAgeDays(p);
   const stageAge = stageAgeDays(p);
   const next = nextAction(p, detail.tasks);
   const nextAge = actionAgeDays(next);
   const unknown = t("inconnu");
+
   return (
     <dl className="panel-block grid gap-3 text-sm sm:grid-cols-3">
       <div>
