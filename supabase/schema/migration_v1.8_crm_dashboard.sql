@@ -1337,33 +1337,85 @@ begin
 end $$;
 
 
+-- Rejeu d'une même demande : un double-clic ou une reprise réseau renvoyait
+-- deux revues publiées et deux notifications. La clé de demande, produite par
+-- l'écran et conservée pendant ses tentatives, rend l'opération unique.
+create table if not exists lead.crm_requests (
+  request_key text primary key,
+  created_at timestamptz not null default now(),
+  created_by uuid not null references auth.users(id),
+  operation text not null,
+  payload_hash text not null,
+  dossier_id uuid references lead.design_dossiers(id) on delete cascade,
+  review_id uuid references lead.design_reviews(id) on delete set null
+);
+alter table lead.crm_requests enable row level security;
+
 -- Publication de revue + mise en file de notification, dans UNE transaction.
 -- La publication passe par la fonction d'origine, avec ses gardes inchangées ;
 -- si la mise en file échoue, la publication est annulée avec elle. Il ne peut
 -- donc plus exister de revue publiée sans notification en attente.
 create or replace function lead_priv.crm_publish_review_and_notify(
+  _request_key text,
   _revision uuid, _scope text, _conditions text, _verdict text,
   _client_message text, _internal_note text, _exact_part_number text,
   _designation text, _variant jsonb, _subject text, _summary text)
 returns jsonb language plpgsql security definer
 set search_path = lead, lead_priv, pg_temp as $$
-declare rid uuid;
+declare u uuid := lead_priv.require_user(); rid uuid; d uuid;
+        k text; h text; ex lead.crm_requests%rowtype;
 begin
+  k := nullif(btrim(coalesce(_request_key, '')), '');
+  if k is null then raise exception 'REQUEST_KEY_REQUIRED' using errcode = '22023'; end if;
+  h := md5(coalesce(_revision::text,'') || E'\n' || coalesce(_scope,'') || E'\n'
+        || coalesce(_conditions,'') || E'\n' || coalesce(_verdict,'') || E'\n'
+        || coalesce(_client_message,'') || E'\n' || coalesce(_internal_note,'') || E'\n'
+        || coalesce(_exact_part_number,'') || E'\n' || coalesce(_designation,'') || E'\n'
+        || coalesce(_variant, '{}'::jsonb)::text || E'\n'
+        || coalesce(_subject,'') || E'\n' || coalesce(_summary,''));
+
+  select * into ex from lead.crm_requests where request_key = k for update;
+  if found then
+    -- Même clé, même contenu : on rend l'état déjà obtenu, sans rien recréer.
+    if ex.operation <> 'publish_review_and_notify' or ex.payload_hash <> h then
+      raise exception 'REQUEST_KEY_CONFLICT' using errcode = '22023';
+    end if;
+    return lead_priv.crm_project(ex.dossier_id);
+  end if;
+
   rid := public.lead_publish_review(_revision, _scope, _conditions, _verdict,
            _client_message, _internal_note, _exact_part_number, _designation,
            coalesce(_variant, '{}'::jsonb));
+  select r.dossier_id into d from lead.design_reviews r where r.id = rid;
+  begin
+    insert into lead.crm_requests (request_key, created_by, operation, payload_hash,
+      dossier_id, review_id)
+    values (k, u, 'publish_review_and_notify', h, d, rid);
+  exception when unique_violation then
+    -- Deux tentatives strictement simultanées : une seule aboutit.
+    raise exception 'REQUEST_IN_PROGRESS' using errcode = '40001';
+  end;
   return lead_priv.crm_queue_review_notification(rid, _subject, _summary);
 end $$;
 
 create or replace function public.lead_crm_publish_review_and_notify(
+  p_request_key text,
   p_revision_id uuid, p_scope text, p_conditions text, p_verdict text,
   p_client_message text, p_internal_note text, p_exact_part_number text,
   p_designation text, p_variant jsonb, p_subject text, p_summary text)
 returns jsonb language sql security invoker
 set search_path = public, lead_priv, pg_temp as $$
-  select lead_priv.crm_publish_review_and_notify(p_revision_id, p_scope, p_conditions,
-    p_verdict, p_client_message, p_internal_note, p_exact_part_number, p_designation,
-    p_variant, p_subject, p_summary); $$;
+  select lead_priv.crm_publish_review_and_notify(p_request_key, p_revision_id, p_scope,
+    p_conditions, p_verdict, p_client_message, p_internal_note, p_exact_part_number,
+    p_designation, p_variant, p_subject, p_summary); $$;
+
+-- L'ancienne signature sans clé de demande ne doit plus exister : elle
+-- permettait exactement le doublon que cette version corrige.
+drop function if exists public.lead_crm_publish_review_and_notify(
+  uuid, text, text, text, text, text, text, text, jsonb, text, text);
+drop function if exists lead_priv.crm_publish_review_and_notify(
+  uuid, text, text, text, text, text, text, text, jsonb, text, text);
+
 
 
 -- ----------------------------------------------------------------------------
