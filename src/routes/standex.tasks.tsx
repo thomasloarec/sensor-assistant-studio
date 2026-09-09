@@ -20,6 +20,7 @@ import {
   TASK_STATUS_LABEL,
   personName,
   stageLabel,
+  CrmUnavailableNotice,
 } from "@/components/standex/dashboard/crm-shared";
 import {
   fetchCrmBoard,
@@ -49,7 +50,7 @@ interface Row {
 }
 
 function TasksScreen() {
-  const { capabilities } = useCrm();
+  const { capabilities, legacyRole } = useCrm();
   const [board, setBoard] = useState<CrmBoard | null>(null);
   const [rows, setRows] = useState<Row[] | null>(null);
   const [truncated, setTruncated] = useState(false);

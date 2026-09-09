@@ -28,6 +28,7 @@ import {
   VolumeCell,
   personName,
   stageLabel,
+  CrmUnavailableNotice,
 } from "@/components/standex/dashboard/crm-shared";
 import {
   applyCrmTemplate,
@@ -77,7 +78,7 @@ const TABS: { id: Tab; label: string }[] = [
 
 function ProjectDetail() {
   const { dossierId } = Route.useParams();
-  const { capabilities } = useCrm();
+  const { capabilities, legacyRole } = useCrm();
   const locale = useLocale();
   const tag = localeTag(locale);
   const [tab, setTab] = useState<Tab>("tracking");

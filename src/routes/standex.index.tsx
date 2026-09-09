@@ -29,6 +29,7 @@ import {
   countryName,
   personName,
   stageLabel,
+  CrmUnavailableNotice,
 } from "@/components/standex/dashboard/crm-shared";
 import { fetchCrmBoard, type CrmBoard } from "@/lib/leadmagnet/dashboard-adapter";
 import {
@@ -57,7 +58,7 @@ const SORTS: { id: BoardSort; label: string }[] = [
 ];
 
 function ProjectsBoard() {
-  const { capabilities } = useCrm();
+  const { capabilities, legacyRole } = useCrm();
   const locale = useLocale();
   const tag = localeTag(locale);
   const [board, setBoard] = useState<CrmBoard | null>(null);

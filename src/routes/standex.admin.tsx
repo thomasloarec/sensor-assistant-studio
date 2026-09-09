@@ -13,7 +13,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useCrm } from "@/components/standex/dashboard/crm-context";
-import { ErrorBlock, LoadingBlock } from "@/components/standex/dashboard/crm-shared";
+import {
+  CrmUnavailableNotice,
+  ErrorBlock,
+  LoadingBlock,
+} from "@/components/standex/dashboard/crm-shared";
 import {
   fetchCrmAdminOverview,
   linkCrmPerson,
@@ -36,7 +40,7 @@ const ROLE_LABEL: Record<StaffRole, string> = {
 };
 
 function AdminScreen() {
-  const { capabilities } = useCrm();
+  const { capabilities, legacyRole } = useCrm();
   const [overview, setOverview] = useState<CrmAdminOverview | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
