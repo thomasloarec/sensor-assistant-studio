@@ -832,8 +832,9 @@ function TrackingTab({
         <p className="t-caption text-muted-foreground">
           {t("Désigner une personne ici n'ouvre aucun accès : l'accès dépend du compte rattaché et de l'affectation au dossier.")}
         </p>
-        <div className="grid gap-2 sm:grid-cols-2">
-          <div>
+        <div className="field-row">
+          <div className="field">
+
             <Label className="t-caption">{t("Commercial")}</Label>
             <Select
               value={directory.sales}
