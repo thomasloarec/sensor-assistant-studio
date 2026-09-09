@@ -8,6 +8,7 @@ import { createContext, useCallback, useContext, useEffect, useRef, useState } f
 import { CRM_UNAVAILABLE, probeCrm, type CrmCapabilities } from "@/lib/leadmagnet/dashboard-adapter";
 import { supabase } from "@/lib/standex/supabase";
 import { fetchStaffInbox } from "@/lib/leadmagnet/supabase-adapter";
+import { createGenerationGuard } from "@/lib/leadmagnet/session-guard";
 
 interface CrmContextValue {
   capabilities: CrmCapabilities | null;
@@ -33,23 +34,23 @@ export function CrmProvider({ children }: { children: React.ReactNode }) {
   const [sessionGeneration, setSessionGeneration] = useState(0);
   /** Génération de la dernière sonde émise : une réponse plus ancienne, même
    *  arrivée en retard, ne peut jamais rétablir les droits d'un autre compte. */
-  const probeGen = useRef(0);
+  const probeGen = useRef(createGenerationGuard());
 
   const refresh = useCallback(() => {
-    const gen = ++probeGen.current;
+    const gen = probeGen.current.next();
     probeCrm()
       .then((c) => {
-        if (probeGen.current === gen) setCapabilities(c);
+        if (probeGen.current.accepts(gen)) setCapabilities(c);
       })
       .catch(() => {
-        if (probeGen.current === gen) setCapabilities(CRM_UNAVAILABLE);
+        if (probeGen.current.accepts(gen)) setCapabilities(CRM_UNAVAILABLE);
       });
     fetchStaffInbox()
       .then((inbox) => {
-        if (probeGen.current === gen) setLegacyRole(inbox.role ?? null);
+        if (probeGen.current.accepts(gen)) setLegacyRole(inbox.role ?? null);
       })
       .catch(() => {
-        if (probeGen.current === gen) setLegacyRole(null);
+        if (probeGen.current.accepts(gen)) setLegacyRole(null);
       });
   }, []);
 
@@ -63,7 +64,7 @@ export function CrmProvider({ children }: { children: React.ReactNode }) {
     if (!supabase) return;
     const { data } = supabase.auth.onAuthStateChange((event) => {
       if (event === "TOKEN_REFRESHED" || event === "INITIAL_SESSION") return;
-      probeGen.current += 1;
+      probeGen.current.invalidate();
       setCapabilities(null);
       setLegacyRole(null);
       setSessionGeneration((n) => n + 1);
