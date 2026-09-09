@@ -314,6 +314,34 @@ set search_path = lead, lead_priv, pg_temp as $$
    order by r.revision desc limit 1;
 $$;
 
+-- Bloc « business » de la dernière révision RÉELLEMENT soumise. Lecture seule :
+-- une soumission est immuable et n'est jamais réécrite depuis le tableau de bord.
+create or replace function lead_priv.crm_submitted_business(_dossier uuid)
+returns jsonb language sql stable security definer
+set search_path = lead, lead_priv, pg_temp as $$
+  select coalesce(r.snapshot->'business', '{}'::jsonb)
+    from lead.design_revisions r
+   where r.dossier_id = _dossier
+   order by r.revision desc limit 1;
+$$;
+
+create or replace function lead_priv.crm_submitted_company(_dossier uuid)
+returns text language sql stable security definer
+set search_path = lead, lead_priv, pg_temp as $$
+  select nullif(btrim(coalesce(lead_priv.crm_submitted_business(_dossier)->>'contactCompany','')), '');
+$$;
+
+create or replace function lead_priv.crm_submitted_series_launch(_dossier uuid)
+returns date language plpgsql stable security definer
+set search_path = lead, lead_priv, pg_temp as $$
+declare v text := nullif(btrim(coalesce(
+  lead_priv.crm_submitted_business(_dossier)->>'seriesStartDate','')), '');
+begin
+  if v is null then return null; end if;
+  return v::date;
+exception when others then return null;
+end $$;
+
 create or replace function lead_priv.crm_row_json(_dossier uuid)
 returns jsonb language sql stable security definer
 set search_path = lead, lead_priv, pg_temp as $$
@@ -333,6 +361,19 @@ set search_path = lead, lead_priv, pg_temp as $$
     'annual_volume_submitted', lead_priv.crm_submitted_volume(d.id),
     'estimated_annual_revenue', c.estimated_annual_revenue,
     'series_launch', c.series_launch,
+    -- Ce que le client a réellement déclaré : sert d'affichage par défaut, sans
+    -- jamais écraser ni la soumission ni une correction interne explicite.
+    'company_submitted', lead_priv.crm_submitted_company(d.id),
+    'series_launch_submitted', lead_priv.crm_submitted_series_launch(d.id),
+    'company_effective', coalesce(c.company, lead_priv.crm_submitted_company(d.id)),
+    'series_launch_effective', coalesce(c.series_launch,
+                                        lead_priv.crm_submitted_series_launch(d.id)),
+    'company_source', case when c.company is not null then 'override'
+                           when lead_priv.crm_submitted_company(d.id) is not null then 'submitted'
+                           else 'unknown' end,
+    'series_launch_source', case when c.series_launch is not null then 'override'
+                                 when lead_priv.crm_submitted_series_launch(d.id) is not null
+                                   then 'submitted' else 'unknown' end,
     'updated_at', c.updated_at, 'version', c.version,
     'tasks_total', (select count(*) from lead.dossier_tasks t
                      where t.dossier_id = d.id and t.status <> 'not_applicable'),
@@ -344,10 +385,14 @@ set search_path = lead, lead_priv, pg_temp as $$
                        where t.dossier_id = d.id and t.due_on is not null
                          and t.due_on < current_date
                          and t.status not in ('done','not_applicable')),
-    'stage_activated_at', (select min(coalesce(t.activated_at, t.created_at))
-                             from lead.dossier_tasks t
-                            where t.dossier_id = d.id
-                              and t.status not in ('done','not_applicable')))
+    -- Âge de l'étape EN COURS : activation des items de CETTE étape, et non le
+    -- plus ancien item inachevé, qui pouvait appartenir à une étape future.
+    'stage_activated_at', coalesce(
+      (select min(coalesce(t.activated_at, t.created_at))
+         from lead.dossier_tasks t
+        where t.dossier_id = d.id and t.stage = c.stage
+          and t.status not in ('done','not_applicable')),
+      c.stage_since))
   from lead.design_dossiers d
   join lead.dossier_crm c on c.dossier_id = d.id
   where d.id = _dossier;
