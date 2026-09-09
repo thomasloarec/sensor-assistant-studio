@@ -1127,6 +1127,38 @@ function NotifyTab({
         </p>
       </div>
 
+      {selected ? (
+        <section className="panel-block space-y-2" aria-label={t("Aperçu du message client")}>
+          <h3 className="t-title-s">{t("Aperçu tel que le client le lira")}</h3>
+          <p className="t-caption text-muted-foreground">
+            {t("Langue du client :")} {clientLocale} · {t("envoi non configuré")}
+          </p>
+          <p className="text-sm font-medium">{subject.trim() || t("(objet vide)")}</p>
+          <p className="whitespace-pre-wrap text-sm">{summary.trim() || t("(message vide)")}</p>
+          <ul className="t-caption space-y-1 text-muted-foreground">
+            <li>
+              {t("Décision publiée :")} {selected.verdict}
+              {selected.exactPartNumber ? ` · ${selected.exactPartNumber}` : ""}
+            </li>
+            {selected.conditions ? (
+              <li>
+                {t("Conditions :")} {selected.conditions}
+              </li>
+            ) : null}
+            {selected.message ? (
+              <li>
+                {t("Questions ouvertes :")} {selected.message}
+              </li>
+            ) : null}
+          </ul>
+          <p className="text-sm">
+            <a className="underline" href={absoluteLink} target="_blank" rel="noreferrer">
+              {absoluteLink}
+            </a>
+          </p>
+        </section>
+      ) : null}
+
       <Button
         size="sm"
         disabled={busy || !reviewId || !subject.trim() || !summary.trim()}
