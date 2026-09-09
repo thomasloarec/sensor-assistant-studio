@@ -584,7 +584,7 @@ add('sample_feedback_note_copies_no_client_text',
   String(fbNotes.rows[0] && fbNotes.rows[0].body_en));
 add('sample_notes_were_added_beyond_previous_state', await value(
   'select count(*)::int from lead.sap_notes where dossier_id=$1', [dossier]) > notesBeforeSample);
-const sampleRow = await value('select to_jsonb(s) from lead.sample_requests where id=$1', [sampleId]);
+const sampleRow = await value('select to_jsonb(s) from lead.sample_requests s where s.id=$1', [sampleId]);
 add('sample_revision_provenance_unchanged',
   !!sampleRow && sampleRow.status === 'shipped' && sampleRow.revision >= 1
     && sampleRow.feedback_revision === sampleRow.revision,
