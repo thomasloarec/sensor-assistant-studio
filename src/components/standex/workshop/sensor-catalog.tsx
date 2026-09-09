@@ -89,9 +89,9 @@ export default function SensorCatalog({
 
   const resetFilters = () => {
     setQuery("");
-    setCategory("all");
-    setFixing("all");
-    setWiring("all");
+    setCategory(CATALOG_ALL);
+    setFixing(CATALOG_ALL);
+    setWiring(CATALOG_ALL);
     setMaxLength("");
     setMaxWidth("");
     setMaxHeight("");
