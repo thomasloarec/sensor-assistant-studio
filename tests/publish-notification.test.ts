@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it } from "bun:test";
 import { publishDecision, notificationPreview } from "@/lib/leadmagnet/publish-notification";
 import { actionAgeDays } from "@/lib/leadmagnet/crm";
 import { requestKeyFor, releaseRequestKey } from "@/lib/leadmagnet/request-key";
