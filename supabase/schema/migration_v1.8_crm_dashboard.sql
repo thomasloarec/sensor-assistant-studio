@@ -1218,7 +1218,14 @@ begin
   begin r := _role::lead.staff_role; exception when others then
     raise exception 'BAD_ROLE' using errcode = '22023'; end;
 
-  select count(*) into admins from lead.staff_members m where m.role = 'admin' and m.active;
+  -- Deux rétrogradations simultanées pouvaient chacune voir « 2 admins » et
+  -- supprimer le dernier. Le décompte se fait donc sur des lignes verrouillées.
+  select count(*) into admins from (
+    select 1 from lead.staff_members m
+     where m.role = 'admin' and m.active
+     order by m.user_id
+     for update
+  ) locked;
   if admins <= 1 and exists (select 1 from lead.staff_members m
       where m.user_id = _user and m.role = 'admin' and m.active)
      and (r <> 'admin' or not act) then
