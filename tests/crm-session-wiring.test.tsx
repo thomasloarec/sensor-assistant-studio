@@ -108,7 +108,7 @@ describe("la fiche projet appartient au compte connecté", () => {
 describe("l'administration appartient au compte connecté", () => {
   test("l'annuaire de l'ancien compte disparaît et ne revient pas", async () => {
     crmState = { ...crmState, sessionGeneration: 10 };
-    const view = render(<Screen><ProjectDetail dossierId="d1" /></Screen>);
+    const view = render(<Screen><AdminScreen /></Screen>);
 
     const first = adminDeferred!;
     await act(async () => {
@@ -132,7 +132,7 @@ describe("l'administration appartient au compte connecté", () => {
     const late = adminDeferred!;
     crmState = { ...crmState, sessionGeneration: 11 };
     await act(async () => {
-      view.rerender(<Screen><ProjectDetail dossierId="d1" /></Screen>);
+      view.rerender(<Screen><AdminScreen /></Screen>);
     });
     expect(document.body.textContent).not.toContain("Ancien");
 
