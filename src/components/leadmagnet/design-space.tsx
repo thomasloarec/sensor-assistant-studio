@@ -1100,6 +1100,23 @@ export function DesignSpace({
         setSubmitMessage(
           t("Dossier transmis à la revue Standex. Vous serez informé dès qu'un retour est publié."),
         );
+        // Version anglaise : demandée UNIQUEMENT si l'accord de traduction a été
+        // donné pour ce contenu exact. Sans accord, rien n'est transmis et on le dit.
+        const bound = await submissionBinding(input);
+        const target = {
+          dossierId: serverDossierId ?? "",
+          revisionId: outcome.submissionId,
+          contentHash: bound.contentHash,
+        };
+        if (hasBoundConsent(privacy, "ai_assistant", bound) && target.dossierId) {
+          setEnglishRetry(target);
+          await runEnglishReport(target);
+        } else {
+          setEnglishRetry(null);
+          setEnglishMessage(
+            t("Version anglaise non demandée : votre accord de traduction n'a pas été donné pour cette version. Le dossier d'origine est bien arrivé."),
+          );
+        }
       } else {
         setSubmitMessage(outcome.reason);
       }
@@ -1110,7 +1127,7 @@ export function DesignSpace({
   }, [
     dossier,
     nda,
-    privacy.consents,
+    privacy,
     acknowledged,
     extraConstraints,
     backend,
@@ -1118,7 +1135,9 @@ export function DesignSpace({
     serverRevision,
     shareModel,
     preparedUpload,
+    runEnglishReport,
   ]);
+
 
   const volume = dossier.business.annualVolume;
   // La désignation standard/custom vient du retour R&D publié, jamais de cet écran.
