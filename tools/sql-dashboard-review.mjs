@@ -299,6 +299,12 @@ add('ui_next_action_matches_the_server_activated_task',
   !!uiNext && serverActivated.length === 1 && uiNext.id === serverActivated[0].id,
   JSON.stringify({ ui: uiNext && uiNext.stage, server: serverActivated[0]?.stage }));
 add('ui_next_action_has_a_known_age', !!uiNext && actionAgeDays(uiNext) !== null);
+// La suite de la recette repart de l'étape précédente : ce contrôle ne doit
+// laisser aucune trace d'étape derrière lui.
+const restoredStage = await actor('authenticated', ids.sales,
+  () => value('select public.lead_crm_set_stage($1,$2,$3)',
+    [dossier, 'qualification', stagedForNext.project.version]));
+add('stage_probe_is_restored', restoredStage.project.stage === 'qualification');
 
 // 8. Closed Won n'est jamais automatique : terminer les tâches ne bouge rien.
 add('closed_won_is_never_automatic', naDone.project.stage === 'qualification', naDone.project.stage);
@@ -360,7 +366,7 @@ await expectFail('an_account_cannot_be_linked_twice', () => actor('authenticated
 const owned = await actor('authenticated', ids.sales,
   () => value('select public.lead_crm_set_owners($1,$2,$3,$4)',
     [dossier, gilles.id, overview.directory.find((p) => p.last_name === 'Rudolf').id,
-     naDone.project.version]));
+     restoredStage.project.version]));
 add('owners_are_recorded', owned.project.sales_person === gilles.id);
 const stillAssigned = await value(
   'select count(*)::int from lead.dossier_assignments where dossier_id=$1 and user_id=$2', [dossier, ids.sales]);
