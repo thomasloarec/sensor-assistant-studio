@@ -2,6 +2,7 @@ import { describe, expect, test } from "bun:test";
 import {
   runGuardedSubmit,
   reviewOperationLabel,
+  submitFailureMessage,
   type ReviewOperation,
 } from "../src/lib/leadmagnet/review-submit-state";
 
@@ -140,5 +141,43 @@ describe("verrou de transmission", () => {
 
   test("libellé contextuel de vérification", () => {
     expect(reviewOperationLabel("validation")).toBe("Vérification du dossier…");
+  });
+});
+
+describe("ce qu'on a le droit d'affirmer après un échec", () => {
+  test("échec avant tout envoi : rien n'est parti", () => {
+    expect(submitFailureMessage("before_send")).toContain("Rien n'a été envoyé");
+  });
+
+  test("panne réseau avant confirmation : ne jamais affirmer que rien n'est parti", () => {
+    const message = submitFailureMessage("awaiting_confirmation");
+    expect(message).not.toContain("Rien n'a été envoyé");
+    expect(message).toContain("confirmation d'envoi n'a pas été obtenue");
+    expect(message).toContain("suivi");
+  });
+
+  test("échec APRÈS révision confirmée (ex. version anglaise) : l'envoi reste acquis", () => {
+    const message = submitFailureMessage("committed");
+    expect(message).not.toContain("Rien n'a été envoyé");
+    expect(message).toContain("bien arrivé");
+    expect(message).toContain("ne renvoyez pas");
+  });
+
+  test("changement de contexte PENDANT l'envoi : le résultat est périmé", async () => {
+    const lock = { current: false };
+    let generation = 1;
+    const outcome = await runGuardedSubmit({
+      lock,
+      generation: () => generation,
+      setOperation: () => undefined,
+      validate: async () => ({ ok: true }),
+      onInvalid: () => undefined,
+      onError: () => undefined,
+      submit: async () => {
+        generation = 2;
+      },
+    });
+    expect(outcome).toBe("stale");
+    expect(lock.current).toBe(false);
   });
 });
