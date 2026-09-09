@@ -18889,5 +18889,68 @@
     "Доступ команды Standex ({0})",
     "Accesso team Standex ({0})",
     "Standex チームアクセス（{0}）"
+  ],
+  "Barre de travail": [
+    "Work bar",
+    "工作栏",
+    "Arbeitsleiste",
+    "Barra de trabajo",
+    "Панель работы",
+    "Barra di lavoro",
+    "作業バー"
+  ],
+  "Filtres": [
+    "Filters",
+    "筛选",
+    "Filter",
+    "Filtros",
+    "Фильтры",
+    "Filtri",
+    "フィルター"
+  ],
+  "Tout effacer": [
+    "Clear all",
+    "全部清除",
+    "Alle löschen",
+    "Borrar todo",
+    "Очистить всё",
+    "Cancella tutto",
+    "すべて解除"
+  ],
+  "Filtres actifs": [
+    "Active filters",
+    "已启用的筛选",
+    "Aktive Filter",
+    "Filtros activos",
+    "Активные фильтры",
+    "Filtri attivi",
+    "有効なフィルター"
+  ],
+  "Retirer le filtre {0}": [
+    "Remove filter {0}",
+    "移除筛选 {0}",
+    "Filter {0} entfernen",
+    "Quitar el filtro {0}",
+    "Убрать фильтр {0}",
+    "Rimuovi il filtro {0}",
+    "フィルター {0} を解除"
+  ],
+  "Retirez un filtre pour élargir la recherche.": [
+    "Remove a filter to widen the search.",
+    "移除一个筛选以扩大搜索范围。",
+    "Entfernen Sie einen Filter, um die Suche zu erweitern.",
+    "Quite un filtro para ampliar la búsqueda.",
+    "Уберите фильтр, чтобы расширить поиск.",
+    "Rimuovi un filtro per ampliare la ricerca.",
+    "検索範囲を広げるにはフィルターを解除してください。"
+  ],
+  "Projets, tâches et revues de l'équipe — accès {0}": [
+    "Team projects, tasks and reviews — {0} access",
+    "团队项目、任务与评审 — {0} 权限",
+    "Projekte, Aufgaben und Reviews des Teams – Zugang {0}",
+    "Proyectos, tareas y revisiones del equipo — acceso {0}",
+    "Проекты, задачи и ревью команды — доступ {0}",
+    "Progetti, attività e revisioni del team — accesso {0}",
+    "チームのプロジェクト・タスク・レビュー — {0} アクセス"
   ]
 }
