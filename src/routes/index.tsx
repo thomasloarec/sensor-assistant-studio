@@ -62,15 +62,17 @@ function HomeRoute() {
   };
   // Lien « /?dossier=… » : on ouvre l'espace projet après le montage, comme un
   // clic réel, pour que l'écran suive exactement le parcours habituel.
+  const [accountRequest, setAccountRequest] = useState(0);
+
   useEffect(() => {
     if (!requestedDossierId) return;
     setOpened(true);
     setStarted(true);
+    // Le projet demandé appartient à un compte : on présente tout de suite
+    // l'espace de connexion, sans rien ouvrir avant vérification.
+    setAccountRequest((n) => n + 1);
   }, [requestedDossierId]);
 
-  /** Compteur : chaque demande « Mon espace » ouvre le panneau de l'espace
-   * UNIQUE monté ci-dessous. Il n'existe pas de second compte parallèle. */
-  const [accountRequest, setAccountRequest] = useState(0);
 
   return (
     <div data-readable className="min-h-screen bg-background text-foreground">
