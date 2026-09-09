@@ -289,3 +289,106 @@ export function ClientLocaleHint({ locale }: { locale: string }) {
     </span>
   );
 }
+
+/* ------------------------------------------------------------------ Tâches */
+
+/** Pastille d'état d'une tâche : la teinte n'est qu'un repère de balayage,
+ *  le libellé traduit porte seul le sens. */
+export function StatusPill({ status }: { status: TaskStatus }) {
+  return (
+    <span className="status-pill" data-status={status}>
+      {t(TASK_STATUS_LABEL[status])}
+    </span>
+  );
+}
+
+/** Ordre d'urgence : en retard d'abord (du plus en retard au moins), puis
+ *  bloquées, puis échéance la plus proche, puis les tâches sans échéance.
+ *  Aucune tâche n'est masquée : seul l'ordre de lecture change. */
+export function taskUrgencyRank(task: CrmTask, now: Date = new Date()): [number, number] {
+  const late = taskOverdueDays(task, now);
+  if (late !== null) return [0, -late];
+  if (task.status === "blocked") return [1, 0];
+  if (task.dueOn) return [2, new Date(`${task.dueOn}T00:00:00Z`).getTime()];
+  return [3, 0];
+}
+
+export function sortByUrgency<T>(items: readonly T[], pick: (item: T) => CrmTask): T[] {
+  const now = new Date();
+  return [...items].sort((a, b) => {
+    const ra = taskUrgencyRank(pick(a), now);
+    const rb = taskUrgencyRank(pick(b), now);
+    return ra[0] - rb[0] || ra[1] - rb[1];
+  });
+}
+
+/** Ligne de tâche partagée par la fiche projet et l'écran Tâches : une seule
+ *  définition, pour que les deux écrans ne divergent jamais.
+ *
+ *  `status` permet de monter un contrôle d'édition à la place de la pastille
+ *  de lecture ; `children` reçoit le bloc dépliable des champs rarement
+ *  touchés. L'écran Tâches n'en monte aucun : il reste en lecture. */
+export function TaskRow({
+  task,
+  person,
+  status,
+  lead,
+  extra,
+  toggle,
+  children,
+}: {
+  task: CrmTask;
+  person: string;
+  status?: React.ReactNode;
+  lead?: React.ReactNode;
+  extra?: React.ReactNode;
+  toggle?: React.ReactNode;
+  children?: React.ReactNode;
+}) {
+  const late = taskOverdueDays(task);
+  return (
+    <li className="panel-block space-y-2">
+      <div className="task-row">
+        <div>{status ?? <StatusPill status={task.status} />}</div>
+        <div className="min-w-0 space-y-1">
+          {lead}
+          <p className="t-body text-[var(--ink)]">{task.label}</p>
+          {extra}
+          {task.status === "not_applicable" && task.naReason ? (
+            <p className="t-caption text-muted-foreground">
+              {t("Sans objet :")} {task.naReason}
+            </p>
+          ) : null}
+          {task.status === "done" && task.doneByName ? (
+            <p className="t-caption text-muted-foreground">
+              {t("terminée par")} {task.doneByName}
+            </p>
+          ) : null}
+        </div>
+        <div className="inline-flex items-center gap-2">
+          <AvatarInitials name={person} />
+          <span className="t-caption text-muted-foreground">
+            {t(STAKEHOLDER_LABEL[task.stakeholder] ?? task.stakeholder)}
+            <span className="sr-only"> — {person}</span>
+          </span>
+        </div>
+        <div className="min-w-0">
+          {task.dueOn ? (
+            <span className={late === null ? "t-metric" : "t-metric text-destructive"}>
+              {task.dueOn}
+            </span>
+          ) : (
+            <span className="t-caption text-muted-foreground">{t("sans échéance")}</span>
+          )}
+          {late !== null ? (
+            <span className="t-caption block text-destructive">
+              {late} {t("jour(s) de retard")}
+            </span>
+          ) : null}
+        </div>
+        <div>{toggle}</div>
+      </div>
+      {children}
+    </li>
+  );
+}
