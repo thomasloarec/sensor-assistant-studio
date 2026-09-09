@@ -1090,7 +1090,7 @@
 }
 .mw-contact-copy div > span {
   display: block;
-  font-size: 12px;
+  font: var(--mw-t-dense);
   line-height: 1.6;
   color: var(--foreground);
 }
