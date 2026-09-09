@@ -748,7 +748,9 @@ function TrackingTab({
               disabled={!canPrice}
               onChange={(e) => setPrice(e.target.value)}
             />
-            {canPrice ? null : (
+            {canPrice ? (
+              <span />
+            ) : (
               <p className="t-caption text-muted-foreground">
                 {t("Seul le commerce ou l'administration renseigne le prix.")}
               </p>
@@ -756,8 +758,9 @@ function TrackingTab({
             <Button
               size="sm"
               variant="outline"
-              className="mt-1"
+              className="field-actions"
               disabled={busy || !canPrice}
+
               onClick={() => {
                 const parsed = parseAmountInput(price);
                 if (!parsed.ok) return setLocal(t("Prix : montant positif attendu."));
