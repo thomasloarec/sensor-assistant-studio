@@ -98,3 +98,28 @@ describe("console équipe", () => {
     expect(ui).toContain("disabled={!canExportEnglish(english)}");
   });
 });
+
+describe("lecture équipe et verrou de relance", () => {
+  const staff = readFileSync("src/routes/standex.tsx", "utf8");
+  const client = readFileSync("src/components/leadmagnet/design-space.tsx", "utf8");
+
+  it("chaque ouverture de dossier repart en anglais", () => {
+    const select = staff.slice(staff.indexOf("modelRequest.current += 1;"));
+    expect(select.slice(0, 400)).toContain('setReportView("en")');
+  });
+
+  it("la bascule vers l'original reste disponible pendant la consultation", () => {
+    expect(staff).toContain('setReportView("original")');
+  });
+
+  it("une relance ne peut pas partir deux fois ni écraser un autre dossier", () => {
+    expect(client).toContain("if (englishRunRef.current) return;");
+    expect(client).toContain("const current = () => englishRunRef.current === key;");
+    expect(client).toContain("disabled={busy || englishBusy}");
+  });
+
+  it("le partage du fichier 3D passe par le dictionnaire", () => {
+    expect(client).not.toContain("Je partage aussi le fichier 3D « ${");
+    expect(client).toContain('msg("Je partage aussi le fichier 3D « {0} » avec l\'équipe en charge."');
+  });
+});
