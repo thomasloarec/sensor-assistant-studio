@@ -143,15 +143,8 @@ function fields(dto: ClientDossierDto): Field[] {
         : d.termination.kind === "unqualified_connector"
           ? d.termination.spec
           : null;
+    // `mating` est une référence fabricant exacte : elle n'est PAS traduite.
     list.push(
-      {
-        id: "termination.mating",
-        get: (d) => spec(d)?.mating ?? "",
-        set: (d, v) => {
-          const s = spec(d);
-          if (s) s.mating = v;
-        },
-      },
       {
         id: "termination.pinout",
         get: (d) => spec(d)?.pinout ?? "",
@@ -166,6 +159,38 @@ function fields(dto: ClientDossierDto): Field[] {
         set: (d, v) => {
           const s = spec(d);
           if (s) s.conditions = v;
+        },
+      },
+      {
+        id: "termination.wireGauge",
+        get: (d) => spec(d)?.wireGauge ?? "",
+        set: (d, v) => {
+          const s = spec(d);
+          if (s) s.wireGauge = v;
+        },
+      },
+      {
+        id: "termination.cable",
+        get: (d) => spec(d)?.cable ?? "",
+        set: (d, v) => {
+          const s = spec(d);
+          if (s) s.cable = v;
+        },
+      },
+      {
+        id: "termination.note",
+        get: (d) => spec(d)?.note ?? "",
+        set: (d, v) => {
+          const s = spec(d);
+          if (s) s.note = v;
+        },
+      },
+      {
+        id: "termination.wireRangeHint",
+        get: (d) => spec(d)?.wireRangeHint ?? "",
+        set: (d, v) => {
+          const s = spec(d);
+          if (s) s.wireRangeHint = v;
         },
       },
     );
@@ -385,6 +410,7 @@ export function englishReportBody(dto: ClientDossierDto, meta: { revision: numbe
     `- 3D layout provenance: ${WORKSHOP_SOURCE_EN[dto.workshopSource] ?? dto.workshopSource}`,
     `- 3D asset: ${dto.workshopAsset ? `${dto.workshopAsset.fileName} (${dto.workshopAsset.storage})` : "none"}`,
     `- Workshop configuration recorded: ${dto.workshop ? "yes" : "no"}`,
+    ...workshopEnglish(dto),
     "",
     "## Cabling",
     `- Required length: ${estimate.requiredMm === null ? "unknown (incomplete or invalid path)" : estimate.requiredMm.toFixed(1) + " mm"}`,
@@ -444,23 +470,101 @@ export function englishReportBody(dto: ClientDossierDto, meta: { revision: numbe
   return lines.join("\n");
 }
 
+const MOTION_EN: Record<string, string> = {
+  approach: "head-on approach",
+  slide: "lateral slide",
+  pivot: "pivot",
+};
+const MAGNETIZATION_EN: Record<string, string> = {
+  axial: "axial",
+  diametral: "diametral",
+  thickness: "through thickness",
+};
+const CONTACT_EN: Record<string, string> = {
+  open: "open",
+  closed: "closed",
+  unknown: "unknown",
+};
+const vecEn = (v: readonly number[] | null | undefined): string =>
+  v ? `(${v[0]}, ${v[1]}, ${v[2]})` : "unknown";
+
+/**
+ * Paramètres RÉELLEMENT enregistrés du montage 3D, en anglais.
+ * Rien n'est inventé : sans configuration, la section le dit et s'arrête.
+ * Ce montage est un modèle PÉDAGOGIQUE, pas une validation physique.
+ */
+function workshopEnglish(dto: ClientDossierDto): string[] {
+  const w = dto.workshop;
+  if (!w) return ["- Recorded 3D parameters: none"];
+  const lines = [
+    "- Recorded 3D parameters (educational model, not a physical validation):",
+    `  - Sensor in the layout: ${w.sensorId} — mode: ${w.mode === "reference" ? "reference" : "education"}`,
+    `  - Sensitivity: ${w.sensitivity} — activation geometry: ${w.geometry}`,
+    `  - Movement: ${MOTION_EN[w.motion] ?? w.motion} — travel: ${w.travel} mm — span: ${w.span}°`,
+    `  - Movement start: ${w.start} mm — end: ${w.end} mm — offset: ${w.offset} mm`,
+    `  - Demonstration reach: ${w.demoReach} mm — lateral shift: ${w.lateralShift} mm`,
+    `  - Sensor angle: ${w.sensorAngle}° — mounting angle: ${w.mountAngle}° — mounting X/Z: ${w.mountX} mm / ${w.mountZ} mm`,
+    `  - Magnet: ${w.magnetModel} — angle: ${w.magnetAngle}° — tilt: ${w.magnetTilt}°`,
+    `  - Magnetization: ${MAGNETIZATION_EN[w.magnetization] ?? w.magnetization} — polarity: ${w.polarity > 0 ? "N towards the sensor" : "S towards the sensor"}`,
+    `  - Ferromagnetic environment: ${w.ferromagnetic ? "yes" : "no"} — temperature: ${w.temperature === "ambient" ? "ambient" : "other"}`,
+    `  - Initial contact state: ${CONTACT_EN[w.initialContact] ?? w.initialContact}`,
+    `  - Target detection window: ${w.targetStart}% to ${w.targetEnd}% of the cycle`,
+  ];
+  const m = w.machine;
+  if (m) {
+    lines.push(
+      `  - Machine assembly: ${m.fileName} (asset ${m.assetKey}, scale ${m.unitScale})`,
+      `  - Moving node: ${m.movingNode} — motion: ${m.motion === "rotation" ? "rotation" : "translation"}`,
+      `  - Sensor position/rotation: ${vecEn(m.sensorPosition)} / ${vecEn(m.sensorRotation)} — mounted on the ${m.sensorMount === "moving" ? "moving part" : "fixed part"}`,
+      `  - Magnet position/rotation: ${vecEn(m.magnetPosition)} / ${vecEn(m.magnetRotation)} — mounted on the ${m.magnetMount === "moving" ? "moving part" : "fixed part"}`,
+      `  - Travel vector: ${vecEn(m.travel)} — pivot: ${vecEn(m.pivot)} — rotation axis: ${m.rotationAxis} — opening angle: ${m.openingAngle}°`,
+      `  - Available space: ${vecEn(m.space)}`,
+    );
+  } else {
+    lines.push("  - Machine assembly: none recorded");
+  }
+  return lines;
+}
+
 function terminationEnglish(dto: ClientDossierDto): string[] {
   const t = dto.termination;
   if (t.kind === "bare_leads") return ["- Bare leads (default)"];
   if (t.kind === "free_reference") return [`- ${t.text} — to be checked by R&D`];
   const s = t.kind === "qualified_connector" ? t.combo.connector : t.spec;
-  return [
+  const GENDER_EN: Record<string, string> = {
+    male: "male",
+    female: "female",
+    unknown: "unknown",
+  };
+  const lines = [
     `- Manufacturer: ${s.manufacturer}`,
     `- Exact part number: ${s.mpn}`,
-    `- Mating part: ${s.mating ?? "unknown"}`,
+    `- Mating part (exact reference, not translated): ${s.mating ?? "unknown"}`,
+    `- Gender: ${GENDER_EN[s.gender] ?? s.gender}`,
     `- Positions: ${s.positions ?? "unknown"}`,
+    `- Pitch: ${s.pitchMm === undefined ? "unknown" : `${s.pitchMm} mm`}`,
+    `- Contact part number: ${s.contactMpn ?? "unknown"}`,
     `- Pinout: ${s.pinout ?? "unknown"}`,
     `- Wire gauge: ${s.wireGauge ?? "unknown"}`,
+    `- Wire range: ${s.wireRangeHint ?? "unknown"}`,
+    `- Cable: ${s.cable ?? "unknown"}`,
     `- Conditions: ${s.conditions ?? "unknown"}`,
-    t.kind === "qualified_connector"
-      ? `- Qualified combination (${t.combo.source})`
-      : "- Combination not qualified: to be checked by R&D.",
+    `- Note: ${s.note ?? "—"}`,
+    `- Availability: ${s.availability ?? "unknown"}`,
+    `- Documentary source: ${s.sourceUrl ?? "unknown"}${
+      s.sourcePages?.length ? ` (pages ${s.sourcePages.join(", ")})` : ""
+    }${s.sourceCheckedAt ? ` — checked on ${s.sourceCheckedAt}` : ""}`,
   ];
+  if (t.kind === "qualified_connector") {
+    lines.push(
+      `- Qualified combination: ${t.combo.id}`,
+      `- Sensor part number of the combination: ${t.combo.sensorMpn}`,
+      `- Combination source: ${t.combo.source}`,
+    );
+  } else {
+    lines.push("- Combination not qualified: to be checked by R&D.");
+  }
+  return lines;
 }
 
 export interface TranslationProvider {
