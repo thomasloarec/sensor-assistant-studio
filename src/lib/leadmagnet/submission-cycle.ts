@@ -41,12 +41,16 @@ export async function applyBindingCycle(params: {
     privacy: pruned,
     afterCommit,
     resetAcknowledged: changed,
-    consentNotice: changed
-      ? t(
-          afterCommit
-            ? "Votre envoi est confirmé. Pour transmettre de nouvelles modifications, relisez le résumé et confirmez à nouveau votre accord d'envoi."
-            : "Le contenu, le dossier visé ou les fichiers ont changé : relisez le résumé et confirmez à nouveau votre accord d'envoi.",
-        )
-      : null,
+    consentNotice: changed ? consentNoticeFor(afterCommit) : null,
   };
+}
+
+/** Message affiché quand des accords sont consommés : jamais une accusation
+ * d'édition après un envoi confirmé. */
+export function consentNoticeFor(afterCommit: boolean): string {
+  return t(
+    afterCommit
+      ? "Votre envoi est confirmé. Pour transmettre de nouvelles modifications, relisez le résumé et confirmez à nouveau votre accord d'envoi."
+      : "Le contenu, le dossier visé ou les fichiers ont changé : relisez le résumé et confirmez à nouveau votre accord d'envoi.",
+  );
 }
