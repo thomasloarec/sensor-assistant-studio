@@ -1247,6 +1247,99 @@ set search_path = public, lead_priv, pg_temp as $$
   select lead_priv.crm_admin_set_staff(p_user, p_role, p_active); $$;
 
 -- ----------------------------------------------------------------------------
+-- 13 bis. Historique réel du dossier dans les notes SAP
+--
+-- Les étapes existantes (révision soumise, revue publiée, offre, échantillons…)
+-- écrivaient déjà dans `lead.audit_log` mais ne laissaient aucune trace dans le
+-- suivi interne. On les reprend ici SANS toucher aux fonctions d'origine :
+-- un déclencheur traduit l'ÉVÉNEMENT (jamais le texte libre français saisi par
+-- le client ou par l'équipe) en une phrase anglaise structurée, avec une clé
+-- d'événement unique par ligne d'audit — donc idempotente et rejouable.
+-- ----------------------------------------------------------------------------
+create or replace function lead_priv.crm_audit_sentence(_action text, _detail jsonb)
+returns text language sql immutable set search_path = pg_temp as $$
+  select case _action
+    when 'dossier_created'    then 'Customer project created.'
+    when 'revision_submitted' then 'Customer submitted design revision '
+                                   || coalesce(_detail->>'revision','?') || '.'
+    when 'review_published'   then 'Engineering feedback published for revision '
+                                   || coalesce(_detail->>'revision','?') || '.'
+    when 'offer_created'      then 'Commercial offer recorded for revision '
+                                   || coalesce(_detail->>'revision','?') || '.'
+    when 'samples_requested'  then 'Samples requested.'
+    when 'sample_revalidated' then 'Sample request revalidated.'
+    when 'variant_accepted'   then 'Design variant accepted.'
+    when 'nda_prepared'       then 'NDA document prepared.'
+    when 'dossier_assigned'   then 'Team member assigned to the project.'
+    else null end;
+$$;
+
+create or replace function lead_priv.crm_audit_note(_id bigint, _at timestamptz, _actor uuid,
+                                                    _dossier uuid, _action text, _detail jsonb)
+returns void language plpgsql security definer
+set search_path = lead, lead_priv, pg_temp as $$
+declare s text;
+begin
+  if _dossier is null then return; end if;
+  s := lead_priv.crm_audit_sentence(_action, _detail);
+  if s is null then return; end if;
+  insert into lead.sap_notes (dossier_id, author_id, author_name, event_key, body_en)
+  values (_dossier, _actor, lead_priv.crm_actor_name(_actor), 'audit:' || _id::text,
+          to_char(_at at time zone 'UTC', 'DD/MM/YYYY') || ' - '
+          || lead_priv.crm_actor_name(_actor) || ' :' || E'\n- ' || s)
+  on conflict (dossier_id, event_key) do nothing;
+end $$;
+
+create or replace function lead_priv.crm_audit_note_trg()
+returns trigger language plpgsql security definer
+set search_path = lead, lead_priv, pg_temp as $$
+begin
+  perform lead_priv.crm_audit_note(new.id, new.at, new.actor, new.dossier_id,
+                                   new.action, new.detail);
+  return null;
+end $$;
+
+drop trigger if exists crm_audit_note on lead.audit_log;
+create trigger crm_audit_note after insert on lead.audit_log
+  for each row execute function lead_priv.crm_audit_note_trg();
+
+-- Reprise de l'historique déjà existant, à l'identique et sans doublon.
+do $$
+declare l record;
+begin
+  for l in select id, at, actor, dossier_id, action, detail from lead.audit_log
+            where dossier_id is not null order by id loop
+    perform lead_priv.crm_audit_note(l.id, l.at, l.actor, l.dossier_id, l.action, l.detail);
+  end loop;
+end $$;
+
+-- Publication de revue + mise en file de notification, dans UNE transaction :
+-- il ne peut plus exister de revue publiée sans notification en attente.
+create or replace function lead_priv.crm_publish_review_and_notify(_review uuid, _subject text,
+                                                                   _summary text)
+returns jsonb language plpgsql security definer
+set search_path = lead, lead_priv, pg_temp as $$
+declare u uuid := lead_priv.require_user(); rv lead.design_reviews%rowtype;
+begin
+  select * into rv from lead.design_reviews where id = _review for update;
+  if not found then raise exception 'REVIEW_NOT_FOUND' using errcode = '42501'; end if;
+  perform lead_priv.crm_require_write(u, rv.dossier_id, array['sales','rnd']::lead.staff_role[]);
+  if not rv.published then
+    -- Publication par le chemin d'origine : mêmes gardes, même sémantique.
+    perform public.lead_publish_review(_review);
+    select * into rv from lead.design_reviews where id = _review;
+  end if;
+  return lead_priv.crm_queue_review_notification(_review, _subject, _summary);
+end $$;
+
+create or replace function public.lead_crm_publish_review_and_notify(p_review uuid,
+  p_subject text, p_summary text)
+returns jsonb language sql security invoker
+set search_path = public, lead_priv, pg_temp as $$
+  select lead_priv.crm_publish_review_and_notify(p_review, p_subject, p_summary); $$;
+
+
+-- ----------------------------------------------------------------------------
 -- 14. Annuaire prérempli — CHOIX MÉTIER, aucun compte, aucun e-mail inventé
 -- ----------------------------------------------------------------------------
 insert into lead.crm_directory (first_name, last_name, role) values
