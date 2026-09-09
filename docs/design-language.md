@@ -366,6 +366,13 @@ cibles de 44 px conformes).
   redéclarés sur `.sensor-card` parce qu'un `<dialog>` peut être monté hors du
   sous-arbre `.mw`. Le verrou de marque du bandeau de la fiche est rendu par
   `<BrandLogo tone="reversed">`, jamais recomposé en texte.
+- Contraste du bandeau de la fiche (§8, mesuré) : le bandeau est toujours peint
+  sur le dégradé sombre, il porte donc la classe `immersive`. Le sous-titre, la
+  catégorie, la note de contacts et le libellé « Dimensions du corps »
+  utilisaient `--hairline-strong` — un jeton de trait, 1,9:1 sur le dégradé. Ils
+  passent à `--muted-foreground` (5,0 à 7,5:1). Un jeton de trait ne sert jamais
+  de couleur de texte. En contexte sombre, `--success` est éclairci
+  (`oklch(0.78 0.11 168)`, 7,8:1) : la valeur claire tombait à 2,6:1.
 - Le sélecteur de langue n'a plus de plafond de largeur en pixels : un nom de
   langue tronqué est le pire défaut possible sur le contrôle que cherche
   justement qui ne comprend pas la langue affichée. La rangée du bandeau passe à

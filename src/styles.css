@@ -255,6 +255,9 @@
   --e-3: 0 24px 60px -20px oklch(0 0 0 / 0.7), 0 0 0 1px oklch(1 0 0 / 0.12);
   --e-4: 0 40px 100px -28px oklch(0 0 0 / 0.8), 0 0 0 1px oklch(1 0 0 / 0.14);
   --e-inset: inset 0 1px 0 oklch(1 0 0 / 0.1);
+  /* §8 : le vert clair de :root tombe à 2,6:1 sur le fond sombre. En contexte
+     sombre le jeton est éclairci (7,8:1 sur --standex-deep). */
+  --success: oklch(0.78 0.11 168);
   --success-soft: oklch(0.5 0.084 168 / 0.22);
   --warning-soft: oklch(0.58 0.098 72 / 0.24);
   --destructive-soft: oklch(0.52 0.17 25 / 0.24);

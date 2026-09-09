@@ -63,7 +63,10 @@ export default function SensorCard({
       }}
     >
       <div className="sc-shell">
-        <div className="sc-hero">
+        {/* Le bandeau de la fiche est toujours peint sur le dégradé sombre :
+            il porte donc `immersive` pour que les jetons de texte y soient
+            ceux du contexte sombre (§6, §8). */}
+        <div className="sc-hero immersive">
           <div className="sc-brand">
             {/* §10 : la marque n'est jamais recomposée en texte. Fond sombre →
                 version inversée, zone de protection conservée. */}
