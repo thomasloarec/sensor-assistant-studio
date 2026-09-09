@@ -87,7 +87,7 @@ describe("migration additive 1.5", () => {
 });
 
 describe("console équipe", () => {
-  const ui = readFileSync("src/routes/standex.tsx", "utf8");
+  const ui = readFileSync("src/components/standex/console/dossier-console.tsx", "utf8");
 
   it("ouvre en anglais et garde l'accès à l'original", () => {
     expect(ui).toContain('useState<"en" | "original">("en")');
@@ -100,7 +100,7 @@ describe("console équipe", () => {
 });
 
 describe("lecture équipe et verrou de relance", () => {
-  const staff = readFileSync("src/routes/standex.tsx", "utf8");
+  const staff = readFileSync("src/components/standex/console/dossier-console.tsx", "utf8");
   const client = readFileSync("src/components/leadmagnet/design-space.tsx", "utf8");
 
   it("chaque ouverture de dossier repart en anglais", () => {

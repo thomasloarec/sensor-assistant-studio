@@ -16,7 +16,7 @@ import {
 
 const followup = readFileSync("src/components/leadmagnet/client-followup.tsx", "utf8");
 const design = readFileSync("src/components/leadmagnet/design-space.tsx", "utf8");
-const standex = readFileSync("src/routes/standex.tsx", "utf8");
+const standex = readFileSync("src/components/standex/console/dossier-console.tsx", "utf8");
 
 describe("ouverture d'un dossier", () => {
   test("le contenu envoyé est chargé AVANT le changement de contexte", () => {
