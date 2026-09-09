@@ -179,3 +179,35 @@ describe("aucun secret ni appel côté client", () => {
     expect(client).toContain('kind: "ai_assistant"');
   });
 });
+
+describe("contrôle lexical strict des jetons", () => {
+  const src = (text: string): Segment[] => [{ id: "a", text }];
+  const bad = (text: string, en: string) => expect(checkTranslation(src(text), { a: en }).ok).toBe(false);
+  const good = (text: string, en: string) => expect(checkTranslation(src(text), { a: en }).ok).toBe(true);
+
+  it("refuse un signe inversé, une unité changée ou un chiffre allongé", () => {
+    bad("Plage -40/+85 °C", "Range +40/+85 °C");
+    bad("Entrefer 2,5 mm", "Air gap 2,5 cm");
+    bad("Course 5 mm", "Travel 50 mm");
+  });
+
+  it("refuse un nombre ajouté, supprimé ou dédoublonné", () => {
+    bad("2 capteurs", "2 sensors over 3 years");
+    bad("2 capteurs et 2 aimants", "2 sensors and magnets");
+    bad("Longueur 300 mm", "Length");
+  });
+
+  it("accepte une vraie traduction fr/ja/ru conservant les valeurs", () => {
+    good("Entrefer 2,5 mm sur MK24-A-J", "Air gap 2,5 mm on MK24-A-J");
+    good("検出は MK24-A-J で 2,5 mm", "Detection with MK24-A-J at 2,5 mm");
+    good("Зазор 2,5 mm, -40/+85 °C", "Gap 2,5 mm, -40/+85 °C");
+  });
+
+  it("refuse ids dupliqués, clés de prototype et sortie démesurée", () => {
+    expect(parseProviderOutput({ segments: [{ id: "a", en: "x" }, { id: "a", en: "y" }] })).toBeNull();
+    expect(parseProviderOutput({ segments: [{ id: "__proto__", en: "x" }] })).toBeNull();
+    expect(
+      parseProviderOutput({ segments: [{ id: "a", en: "x".repeat(200_000) }] }),
+    ).toBeNull();
+  });
+});
