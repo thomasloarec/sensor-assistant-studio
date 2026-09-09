@@ -957,12 +957,66 @@ export function DossierConsole(props: DossierConsoleProps) {
                       />
                       <InternalEnglishHint />
                     </div>
+                    <div>
+                      <Label className="t-caption">
+                        {t("Objet du message client (facultatif)")}
+                      </Label>
+                      <Input
+                        value={review.notifySubject}
+                        onChange={(e) => setReview({ ...review, notifySubject: e.target.value })}
+                      />
+                    </div>
+                    <div>
+                      <Label className="t-caption">
+                        {t("Message client à préparer avec la publication (facultatif)")}
+                      </Label>
+                      <Textarea
+                        rows={2}
+                        value={review.notifySummary}
+                        onChange={(e) => setReview({ ...review, notifySummary: e.target.value })}
+                      />
+                      <p className="t-caption text-muted-foreground">
+                        {t("Rempli, il est mis en attente d'envoi dans la même opération que la publication : il ne peut pas exister de retour publié sans message préparé. Aucun envoi n'est effectué.")}
+                      </p>
+                    </div>
                     <Button
                       size="sm"
                       disabled={!lastRevision}
                       onClick={() =>
                         run(async () => {
-                          await publishReview({
+                          const variant = {
+                            cable: {
+                              ...(review.variantReserveMm.trim()
+                                ? { serviceReserveMm: Number(review.variantReserveMm) }
+                                : {}),
+                              ...(review.variantToleranceMm.trim()
+                                ? { toleranceMm: Number(review.variantToleranceMm) }
+                                : {}),
+                              ...(review.variantLengthChoice
+                                ? { lengthChoice: review.variantLengthChoice }
+                                : {}),
+                              ...(review.variantCable.trim()
+                                ? { text: review.variantCable.trim() }
+                                : {}),
+                            },
+                            connector: {
+                              ...(review.variantConnectorMaker.trim()
+                                ? { manufacturer: review.variantConnectorMaker.trim() }
+                                : {}),
+                              ...(review.variantConnectorMpn.trim()
+                                ? { mpn: review.variantConnectorMpn.trim() }
+                                : {}),
+                              ...(review.variantConnectorPositions.trim()
+                                ? { positions: Number(review.variantConnectorPositions) }
+                                : {}),
+                              ...(review.variantConnector.trim()
+                                ? { text: review.variantConnector.trim() }
+                                : {}),
+                            },
+                            pcb: review.variantPcb,
+                            description: review.variantDescription,
+                          };
+                          const common = {
                             revisionId: lastRevision?.id as string,
                             scope: review.scope,
                             conditions: review.conditions,
@@ -971,39 +1025,27 @@ export function DossierConsole(props: DossierConsoleProps) {
                             internalNote: review.internalNote || null,
                             exactPartNumber: review.exactPartNumber.trim() || null,
                             designation: review.exactPartNumber.trim() ? review.designation : null,
-                            variant: {
-                              cable: {
-                                ...(review.variantReserveMm.trim()
-                                  ? { serviceReserveMm: Number(review.variantReserveMm) }
-                                  : {}),
-                                ...(review.variantToleranceMm.trim()
-                                  ? { toleranceMm: Number(review.variantToleranceMm) }
-                                  : {}),
-                                ...(review.variantLengthChoice
-                                  ? { lengthChoice: review.variantLengthChoice }
-                                  : {}),
-                                ...(review.variantCable.trim()
-                                  ? { text: review.variantCable.trim() }
-                                  : {}),
-                              },
-                              connector: {
-                                ...(review.variantConnectorMaker.trim()
-                                  ? { manufacturer: review.variantConnectorMaker.trim() }
-                                  : {}),
-                                ...(review.variantConnectorMpn.trim()
-                                  ? { mpn: review.variantConnectorMpn.trim() }
-                                  : {}),
-                                ...(review.variantConnectorPositions.trim()
-                                  ? { positions: Number(review.variantConnectorPositions) }
-                                  : {}),
-                                ...(review.variantConnector.trim()
-                                  ? { text: review.variantConnector.trim() }
-                                  : {}),
-                              },
-                              pcb: review.variantPcb,
-                              description: review.variantDescription,
-                            },
-                          });
+                            variant,
+                          };
+                          const subject = review.notifySubject.trim();
+                          const summary = review.notifySummary.trim();
+                          if (subject && summary) {
+                            // Publication + mise en file dans UNE transaction, avec une
+                            // clé de demande conservée tant que le serveur n'a pas
+                            // confirmé : une reprise ne publie pas une seconde fois.
+                            const scopeKey = `publish:${lastRevision?.id ?? ""}`;
+                            const requestKey = requestKeyFor(scopeKey);
+                            await publishReviewAndNotify({
+                              requestKey,
+                              ...common,
+                              subject,
+                              summary,
+                            });
+                            releaseRequestKey(scopeKey);
+                            setReview(emptyReview);
+                            return t("Retour publié et message client mis en attente d'envoi.");
+                          }
+                          await publishReview(common);
                           setReview(emptyReview);
                           return t("Retour publié : le client le voit, la note interne reste chez Standex.");
                         })
@@ -1011,6 +1053,7 @@ export function DossierConsole(props: DossierConsoleProps) {
                     >
                       {t("Publier ce retour au client")}
                     </Button>
+
                   </AccordionContent>
                 </AccordionItem>
 
