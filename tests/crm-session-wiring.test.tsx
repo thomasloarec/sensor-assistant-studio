@@ -114,6 +114,16 @@ function Screen({ children }: { children: React.ReactNode }) {
   );
 }
 
+/** Saisie dans un champ contrôlé : dans cet environnement de test, les
+ *  événements de saisie simulés n'atteignent pas React, on appelle donc
+ *  directement le gestionnaire réellement monté sur le champ. */
+function typeInto(el: HTMLInputElement, value: string) {
+  const key = Object.keys(el).find((k) => k.startsWith("__reactProps$"));
+  const props = (el as unknown as Record<string, { onChange?: (e: unknown) => void }>)[key!];
+  el.value = value;
+  props.onChange?.({ target: el, currentTarget: el });
+}
+
 async function settle() {
   await act(async () => {
     await Promise.resolve();
@@ -223,19 +233,8 @@ describe("l'administration appartient au compte connecté", () => {
         },
       ],
     };
-    function Probe() {
-      const [v, setV] = React.useState("");
-      return (
-        <>
-          <input id="probe" value={v} onChange={(e) => setV(e.target.value)} />
-          <button type="button" id="probe-btn" onClick={() => setV("via-click")}>b</button>
-          <span id="probe-state">{v}</span>
-        </>
-      );
-    }
     const view = render(
       <Screen>
-        <Probe />
         <AdminScreen />
       </Screen>,
     );
@@ -247,19 +246,11 @@ describe("l'administration appartient au compte connecté", () => {
     // Saisie en cours puis écriture lancée : l'écran est occupé.
     const emailInput = view.container.querySelector("#link-p1") as HTMLInputElement;
     await act(async () => {
-      fireEvent.change(emailInput, { target: { value: "marie@exemple.invalid" } });
+      typeInto(emailInput, "marie@exemple.invalid");
     });
     expect(
       (view.container.querySelector("#link-p1") as HTMLInputElement).value,
     ).toBe("marie@exemple.invalid");
-    const probe = view.container.querySelector("#probe") as HTMLInputElement;
-    (view.container.querySelector("#probe-btn") as HTMLButtonElement).click();
-    await settle();
-    console.log("probe state", view.container.querySelector("#probe-state")?.textContent);
-    console.log("after settle val", (view.container.querySelector("#link-p1") as HTMLInputElement).value);
-    console.log("count", view.container.querySelectorAll("#link-p1").length, "docCount", document.querySelectorAll("#link-p1").length, "val", (view.container.querySelector("#link-p1") as HTMLInputElement).value);
-    console.log(Array.from(view.container.querySelectorAll("button")).map((b)=>[b.textContent,b.disabled]));
-    console.log("attach disabled?", Array.from(view.container.querySelectorAll("button")).find((b)=>b.textContent==="Rattacher")?.disabled);
     const deactivate = () =>
       Array.from(view.container.querySelectorAll("button")).find(
         (b) => b.textContent === "Désactiver",
