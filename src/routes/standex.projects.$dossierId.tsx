@@ -114,8 +114,11 @@ export function ProjectDetail({ dossierId }: { dossierId: string }) {
   const [tab, setTab] = useState<Tab>("tracking");
   const [detail, setDetail] = useState<CrmProjectDetail | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [message, setMessage] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  /* Le succès d'une écriture part en pastille flottante ; un refus, lui, reste
+     en place à côté de l'action refusée. */
+  const flash = useFlash();
+
   const dossierRef = useRef(dossierId);
   /** Compte réellement connecté : un changement de compte périme tout ce qui est
    *  affiché et tout ce qui est encore en vol. Rien de l'ancien compte ne doit
