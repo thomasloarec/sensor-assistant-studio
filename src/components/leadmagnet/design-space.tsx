@@ -17,11 +17,13 @@ import {
   Loader2,
   Pencil,
   Check,
+  Search,
   X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CandidateThumbnail } from "@/components/leadmagnet/candidate-thumbnail";
 import { CUSTOM_SENSOR_ID, sensorById } from "@/lib/standex/sensor-catalog";
+import SensorCatalog from "@/components/standex/workshop/sensor-catalog";
 import { LanguagePicker, useLocale } from "@/lib/i18n/react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -476,6 +478,9 @@ export function DesignSpace({
   }, []);
 
   const [showWorkshop, setShowWorkshop] = useState(false);
+  /** Catalogue filtrable ouvert DIRECTEMENT depuis le sous-menu : il ne dépend
+   * pas de l'atelier 3D et sa fermeture ne touche à rien du travail en cours. */
+  const [catalogOpen, setCatalogOpen] = useState(false);
   /** Démarrage RÉEL du projet : c'est ici, et pas au montage caché de
    * l'espace, que la langue d'origine du projet est fixée. Changer ensuite la
    * langue de l'interface ne réécrit pas rétrospectivement celle du projet. */
@@ -3391,6 +3396,15 @@ export function DesignSpace({
                 variant="ghost"
                 size="sm"
                 className="min-h-11 rounded-[var(--r-pill)] text-base hover:bg-[var(--surface-tint)]"
+                onClick={() => setCatalogOpen(true)}
+              >
+                <Search />
+                {t("Voir les capteurs")}
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="min-h-11 rounded-[var(--r-pill)] text-base hover:bg-[var(--surface-tint)]"
                 onClick={() =>
                   showAdvanced ? setTab("candidats") : goToInlineSection("section-candidats")
                 }
@@ -3398,6 +3412,7 @@ export function DesignSpace({
                 <Cpu />
                 {t("Capteurs possibles")}
               </Button>
+
               <Button
                 variant="ghost"
                 size="sm"
@@ -3505,6 +3520,21 @@ export function DesignSpace({
       >
         {espaceSection}
       </WorkspacePanel>
+
+      {catalogOpen ? (
+        <SensorCatalog
+          selected={dossier.selectedSensorId ?? dossier.workshopSensorId ?? ""}
+          onClose={() => setCatalogOpen(false)}
+          onSelect={(id) => {
+            setDossier((d) => ({
+              ...d,
+              selectedSensorId: id,
+              sensorSyncConfirmed: d.workshopSensorId === id,
+            }));
+            setCatalogOpen(false);
+          }}
+        />
+      ) : null}
     </div>
   );
 }

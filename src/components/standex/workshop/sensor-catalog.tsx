@@ -1,24 +1,40 @@
 import { useEffect, useRef, useState } from "react";
 import { Search, X, ArrowUpRight, Check } from "lucide-react";
+import { sizeLabel, sensorSource } from "@/lib/standex/sensor-catalog";
 import {
-  CUSTOM_SENSOR_ID,
-  SENSOR_CATALOG,
-  sizeLabel,
-  sensorSource,
-  type SensorModel,
-} from "@/lib/standex/sensor-catalog";
+  CATALOG_ALL,
+  documentedCount,
+  filterCatalog,
+} from "@/lib/standex/catalog-filters";
 import SensorCard from "./sensor-card";
 import { useLocale } from "@/lib/i18n/react";
 import { msg, t } from "@/lib/i18n/core";
 import { SensorPlan } from "./sensor-plan";
+import "./workshop.css";
 
 /** Filtres construits UNIQUEMENT sur des données réellement présentes dans le
  * catalogue. Une donnée absente reste « inconnu » : elle n'est jamais comptée
  * comme compatible. Aucun critère électrique, thermique ou d'étanchéité n'est
- * proposé ici : ces valeurs ne sont pas documentées modèle par modèle. */
+ * proposé ici : ces valeurs ne sont pas documentées modèle par modèle.
+ *
+ * IMPORTANT : la VALEUR de chaque option est canonique et stable (identifiant
+ * ou catégorie brute du catalogue). Seul le libellé passe par t() au rendu :
+ * sinon le filtre ne correspond plus à rien hors français, et changer de langue
+ * viderait la liste. */
+/* i18n-canonical : dictionnaire de libellés, traduits par t() au rendu. */
+const CATEGORY_OPTIONS = [
+  [CATALOG_ALL, "Tous"],
+  ["Cylindrique", "Cylindrique"],
+  ["À visser", "À visser"],
+  ["À encastrer", "À encastrer"],
+  ["CMS", "CMS"],
+  ["Pédagogique", "Pédagogique"],
+  ["Sur mesure", "Sur mesure"],
+] as const;
+
 /* i18n-canonical : dictionnaire de libellés, traduits par t() au rendu. */
 const FIXING_OPTIONS = [
-  ["all", "Toutes les fixations"],
+  [CATALOG_ALL, "Toutes les fixations"],
   ["screw", "Fixation par vis"],
   ["threaded", "Corps fileté"],
   ["pressfit", "À emmancher"],
@@ -26,28 +42,14 @@ const FIXING_OPTIONS = [
   ["unknown", "Fixation non documentée"],
 ] as const;
 
+/* i18n-canonical : dictionnaire de libellés, traduits par t() au rendu. */
 const WIRING_OPTIONS = [
-  ["all", "Tous les raccordements"],
+  [CATALOG_ALL, "Tous les raccordements"],
   ["cable", "Sortie câble"],
   ["smd", "Broches CMS"],
   ["leads", "Pattes nues"],
   ["unknown", "Raccordement non documenté"],
 ] as const;
-
-function fixingGroup(model: SensorModel): string {
-  if (model.shape === "flange" || model.shape === "block") return "screw";
-  if (model.shape === "threaded") return "threaded";
-  if (model.shape === "pressfit") return "pressfit";
-  if (model.shape === "smd" || model.shape === "custom_pcb") return "pcb";
-  return "unknown";
-}
-
-function wiringGroup(model: SensorModel): string {
-  if (model.shape === "smd") return "smd";
-  if (model.shape === "glass" || model.shape === "custom_pcb") return "leads";
-  if (model.cableSide !== undefined || model.category === "Cylindrique") return "cable";
-  return "unknown";
-}
 
 export default function SensorCatalog({
   selected,
@@ -62,38 +64,39 @@ export default function SensorCatalog({
   const [card, setCard] = useState<string | null>(null);
   const ref = useRef<HTMLDialogElement>(null),
     [query, setQuery] = useState(""),
-    [category, setCategory] = useState(t("Tous")),
-    [fixing, setFixing] = useState("all"),
-    [wiring, setWiring] = useState("all"),
+    [category, setCategory] = useState(CATALOG_ALL),
+    [fixing, setFixing] = useState(CATALOG_ALL),
+    [wiring, setWiring] = useState(CATALOG_ALL),
     [maxLength, setMaxLength] = useState(""),
+    [maxWidth, setMaxWidth] = useState(""),
+    [maxHeight, setMaxHeight] = useState(""),
     [sameScale, setSameScale] = useState(true);
   useEffect(() => {
     const dialog = ref.current;
     dialog?.showModal();
     return () => dialog?.close();
   }, []);
-  const limit = Number.parseFloat(maxLength.replace(",", "."));
-  const list = SENSOR_CATALOG.filter(
-    (s) =>
-      // Le sur mesure reste TOUJOURS proposé, même si les filtres ne laissent
-      // passer aucune référence documentée.
-      s.id === CUSTOM_SENSOR_ID ||
-      ((category === "Tous" || s.category === category) &&
-        (fixing === "all" || fixingGroup(s) === fixing) &&
-        (wiring === "all" || wiringGroup(s) === wiring) &&
-        (!Number.isFinite(limit) || Math.max(...s.body) <= limit) &&
-        (t(s.name) + " " + t(s.description) + " " + s.id + " " + t(s.category))
-          .toLocaleLowerCase()
-          .includes(query.toLocaleLowerCase())),
-  );
-  const documented = list.filter((s) => s.id !== CUSTOM_SENSOR_ID).length;
+  const list = filterCatalog({
+    query,
+    category,
+    fixing,
+    wiring,
+    maxLength,
+    maxWidth,
+    maxHeight,
+  });
+  const documented = documentedCount(list);
+
   const resetFilters = () => {
     setQuery("");
-    setCategory(t("Tous"));
+    setCategory("all");
     setFixing("all");
     setWiring("all");
     setMaxLength("");
+    setMaxWidth("");
+    setMaxHeight("");
   };
+
   return (
     <dialog
       ref={ref}
@@ -141,11 +144,12 @@ export default function SensorCatalog({
           value={category}
           onChange={(e) => setCategory(e.target.value)}
         >
-          {[t("Tous"), "Cylindrique", t("À visser"), t("À encastrer"), "CMS", t("Pédagogique")].map((c) => (
-            <option key={c} value={c}>
-              {t(c)}
+          {CATEGORY_OPTIONS.map(([value, label]) => (
+            <option key={value} value={value}>
+              {t(label)}
             </option>
           ))}
+
         </select>
         <select
           aria-label={t("Filtrer par fixation")}
@@ -170,15 +174,36 @@ export default function SensorCatalog({
           ))}
         </select>
         <label className="mw-catalog-size-filter">
-          {t("Encombrement max (mm)")}
+          {t("Longueur max (mm)")}
           <input
             inputMode="decimal"
-            aria-label={t("Encombrement maximal en millimètres")}
+            aria-label={t("Longueur maximale en millimètres, terminaisons comprises")}
             value={maxLength}
             onChange={(e) => setMaxLength(e.target.value)}
             placeholder="—"
           />
         </label>
+        <label className="mw-catalog-size-filter">
+          {t("Largeur max (mm)")}
+          <input
+            inputMode="decimal"
+            aria-label={t("Largeur maximale du corps en millimètres")}
+            value={maxWidth}
+            onChange={(e) => setMaxWidth(e.target.value)}
+            placeholder="—"
+          />
+        </label>
+        <label className="mw-catalog-size-filter">
+          {t("Hauteur max (mm)")}
+          <input
+            inputMode="decimal"
+            aria-label={t("Hauteur maximale du corps en millimètres")}
+            value={maxHeight}
+            onChange={(e) => setMaxHeight(e.target.value)}
+            placeholder="—"
+          />
+        </label>
+
         <label className="mw-check">
           <input
             type="checkbox"
@@ -196,6 +221,10 @@ export default function SensorCatalog({
           String(documented),
         ])}
       </p>
+      <p className="mw-catalog-count">
+        {t("La longueur comparée inclut les terminaisons quand la fiche les cote (MK24-A-J : 5,5 mm avec ses connexions, et non 5 mm). Un champ laissé vide ne filtre rien : une cote non documentée n'est jamais ramenée à zéro.")}
+      </p>
+
       <div className="mw-catalog-list">
         {list.map((s) => (
           <article

@@ -6119,6 +6119,24 @@
     "Geometria vuota, troppo dettagliata o fuori scala. Controlla unità; massimo 1,5 milioni di vertici / 20 m.",
     "空・過密・縮尺外の形状です。単位を確認し、150万頂点 / 20 m以下にしてください。"
   ],
+  "Hauteur max (mm)": [
+    "Max height (mm)",
+    "最大高度 (mm)",
+    "Max. Höhe (mm)",
+    "Altura máx. (mm)",
+    "Макс. высота (мм)",
+    "Altezza max (mm)",
+    "最大高さ (mm)"
+  ],
+  "Hauteur maximale du corps en millimètres": [
+    "Maximum body height in millimetres",
+    "外壳最大高度（毫米）",
+    "Maximale Gehäusehöhe in Millimetern",
+    "Altura máxima del cuerpo en milímetros",
+    "Максимальная высота корпуса в миллиметрах",
+    "Altezza massima del corpo in millimetri",
+    "本体の最大高さ（ミリメートル）"
+  ],
   "Horizon projet": [
     "Project timeline",
     "项目时间表",
@@ -6794,6 +6812,15 @@
     "Il collegamento con il team Standex non è ancora attivo: al momento il fascicolo non può essere trasmesso. È possibile continuare a progettare, preparare l'NDA ed esportare il fascicolo; l'invio sarà possibile non appena attivato.",
     "Standexチームとの接続はまだ有効化されていません。現在、案件ファイルを送信することはできません。設計の続行、NDAの準備、案件ファイルのエクスポートは可能です。有効化され次第、送信できるようになります。"
   ],
+  "La longueur comparée inclut les terminaisons quand la fiche les cote (MK24-A-J : 5,5 mm avec ses connexions, et non 5 mm). Un champ laissé vide ne filtre rien : une cote non documentée n'est jamais ramenée à zéro.": [
+    "The compared length includes terminations when the datasheet dimensions them (MK24-A-J: 5.5 mm with its connections, not 5 mm). An empty field filters nothing: an undocumented dimension is never treated as zero.",
+    "比较的长度在数据手册标注端子时包含端子（MK24-A-J：含连接为 5.5 mm，而非 5 mm）。留空的字段不作筛选：未记载的尺寸绝不当作零。",
+    "Die verglichene Länge schließt die Anschlüsse ein, wenn das Datenblatt sie bemaßt (MK24-A-J: 5,5 mm mit Anschlüssen, nicht 5 mm). Ein leeres Feld filtert nichts: ein nicht dokumentiertes Maß wird nie als null behandelt.",
+    "La longitud comparada incluye las terminaciones cuando la ficha las acota (MK24-A-J: 5,5 mm con sus conexiones, no 5 mm). Un campo vacío no filtra nada: una cota no documentada nunca se considera cero.",
+    "Сравниваемая длина включает выводы, если они указаны в паспорте (MK24-A-J: 5,5 мм с подключением, а не 5 мм). Пустое поле ничего не фильтрует: недокументированный размер никогда не считается нулём.",
+    "La lunghezza confrontata include le terminazioni quando la scheda le quota (MK24-A-J: 5,5 mm con le connessioni, non 5 mm). Un campo vuoto non filtra nulla: una quota non documentata non viene mai considerata zero.",
+    "比較する長さは、データシートに寸法がある場合は端子を含みます（MK24-A-J：接続を含めて 5.5 mm、5 mm ではありません）。空欄の項目は絞り込みを行いません。記載のない寸法をゼロとみなすことはありません。"
+  ],
   "La page n'a pas pu être chargée": [
     "The page could not load",
     "页面加载失败",
@@ -7144,6 +7171,24 @@
     "Ширина Z",
     "Larghezza Z",
     "幅 Z"
+  ],
+  "Largeur max (mm)": [
+    "Max width (mm)",
+    "最大宽度 (mm)",
+    "Max. Breite (mm)",
+    "Anchura máx. (mm)",
+    "Макс. ширина (мм)",
+    "Larghezza max (mm)",
+    "最大幅 (mm)"
+  ],
+  "Largeur maximale du corps en millimètres": [
+    "Maximum body width in millimetres",
+    "外壳最大宽度（毫米）",
+    "Maximale Gehäusebreite in Millimetern",
+    "Anchura máxima del cuerpo en milímetros",
+    "Максимальная ширина корпуса в миллиметрах",
+    "Larghezza massima del corpo in millimetri",
+    "本体の最大幅（ミリメートル）"
   ],
   "Largeur · sur les côtés": [
     "Width · at the sides",
@@ -8008,6 +8053,24 @@
     "Неизвестная длина: неполная траектория.",
     "Lunghezza sconosciuta: percorso incompleto.",
     "長さ不明：不完全な経路。"
+  ],
+  "Longueur max (mm)": [
+    "Max length (mm)",
+    "最大长度 (mm)",
+    "Max. Länge (mm)",
+    "Longitud máx. (mm)",
+    "Макс. длина (мм)",
+    "Lunghezza max (mm)",
+    "最大長さ (mm)"
+  ],
+  "Longueur maximale en millimètres, terminaisons comprises": [
+    "Maximum length in millimetres, terminations included",
+    "最大长度（毫米），含端子",
+    "Maximale Länge in Millimetern, Anschlüsse inbegriffen",
+    "Longitud máxima en milímetros, terminaciones incluidas",
+    "Максимальная длина в миллиметрах, включая выводы",
+    "Lunghezza massima in millimetri, terminazioni incluse",
+    "端子を含む最大長さ（ミリメートル）"
   ],
   "Longueur mesurée : inconnue tant que le trajet est incomplet (inconnu n'est pas zéro).": [
     "Measured length: unknown while the path is incomplete (unknown is not zero).",
