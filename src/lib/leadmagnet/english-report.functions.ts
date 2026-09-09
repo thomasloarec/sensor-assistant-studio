@@ -26,12 +26,14 @@ export const requestEnglishReport = createServerFn({ method: "POST" })
       userFromAccessToken,
       anthropicProvider,
       missingServerConfig,
+      SERVICE_KEY_NAME,
     } = await import("./english-report.server");
 
     const admin = serviceClient();
     return runEnglishReport(
       {
-        missingConfig: () => (admin ? missingServerConfig() : ["SUPABASE_SERVICE_ROLE_KEY"]),
+        missingConfig: () => (admin ? missingServerConfig() : [SERVICE_KEY_NAME]),
+
         userFromAccessToken,
         provider: () => anthropicProvider(),
         authorize: async (a) =>
