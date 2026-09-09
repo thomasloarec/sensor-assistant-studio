@@ -176,3 +176,14 @@
 - Configuration manquante côté serveur : `SUPABASE_SERVICE_ROLE_KEY` (sans elle, la demande répond « non configuré » et rien n'est transmis).
 
 - Rapport anglais : logique isolée dans `src/lib/leadmagnet/english-report.pipeline.ts` (dépendances injectées, testée), codes d'erreur stables traduits dans les huit langues, validation d'entrée à l'exécution (jeton/UUID/SHA-256) et succès annoncé uniquement si le serveur confirme `ready`. Migration 1.6 toujours refusée/non appliquée, `SUPABASE_SERVICE_ROLE_KEY` toujours absent.
+
+## 2026-09-09 — Activation serveur du rapport anglais
+
+- Migration 1.6 APPLIQUÉE par root sur yyobodalwtsqdyrqwkjk (6 fonctions, EXECUTE refusé à
+  anon/authenticated, accordé à service_role). Ne pas réappliquer.
+- Nom applicatif de la clé privée serveur : `STANDEX_SUPABASE_SECRET_KEY` (le préfixe
+  `SUPABASE_` est réservé par la plateforme), avec repli sur `SUPABASE_SERVICE_ROLE_KEY`.
+  URL serveur optionnelle : `STANDEX_SUPABASE_URL` (défaut : projet Standex).
+- Configuration présente : `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL`. MANQUANT :
+  `STANDEX_SUPABASE_SECRET_KEY` — à ajouter par le propriétaire dans Project Settings → Secrets.
+  Tant qu'elle est absente, la demande répond « non configuré » et rien n'est transmis.
