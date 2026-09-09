@@ -293,9 +293,23 @@ const franke = overview.directory.find((p) => p.last_name === 'Franke');
 const replaced = await actor('authenticated', ids.admin,
   () => value('select public.lead_crm_set_owners($1,$2,$3,$4)',
     [dossier, franke.id, null, owned.project.version]));
-const revoked = await value(
-  'select count(*)::int from lead.dossier_assignments where dossier_id=$1 and user_id=$2', [dossier, ids.sales]);
-add('replaced_owner_loses_access', revoked === 0 && replaced.project.sales_person === franke.id);
+// L'affectation du commercial a été posée à la main par un administrateur :
+// changer de responsable ne doit PAS l'effacer.
+const manualKept = await value(
+  "select count(*)::int from lead.dossier_assignments where dossier_id=$1 and user_id=$2 and source='manual'",
+  [dossier, ids.sales]);
+add('manual_assignment_survives_owner_change',
+  manualKept === 1 && replaced.project.sales_person === franke.id);
+// En revanche, un accès DÉRIVÉ du rôle de responsable disparaît avec le rôle.
+await db.query(
+  "insert into lead.dossier_assignments(dossier_id,user_id,assigned_by,source) values($1,$2,$3,'crm_owner')"
+  + ' on conflict (dossier_id,user_id) do nothing', [dossier, ids.rnd, ids.admin]);
+await actor('authenticated', ids.admin,
+  () => value('select public.lead_crm_set_owners($1,$2,$3,$4)',
+    [dossier, franke.id, null, replaced.project.version]));
+add('derived_owner_access_is_revoked', await value(
+  'select count(*)::int from lead.dossier_assignments where dossier_id=$1 and user_id=$2',
+  [dossier, ids.rnd]) === 0);
 add('unlinked_owner_gets_no_implicit_access', await value(
   'select count(*)::int from lead.dossier_assignments where dossier_id=$1', [dossier]) === 1);
 
