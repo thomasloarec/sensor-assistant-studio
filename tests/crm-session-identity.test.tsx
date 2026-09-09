@@ -41,7 +41,7 @@ mock.module("@/lib/leadmagnet/supabase-adapter", () => ({
 }));
 
 const { CrmProvider, useCrm } = await import(
-  "../src/components/standex/dashboard/crm-context"
+  "../src/components/standex/dashboard/crm-context.tsx"
 );
 
 /** Écran interne fictif avec un brouillon en cours, remonté à chaque
