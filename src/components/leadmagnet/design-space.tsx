@@ -639,6 +639,10 @@ export function DesignSpace({
   const prepareServerNda = useCallback(async () => {
     setNdaError(null);
     const gen = contextGenRef.current;
+    // Dossier serveur RÉELLEMENT visé par cet envoi : sur un premier envoi il
+    // n'existe qu'à partir du rappel de création. Le garder à null puis le
+    // comparer au nouvel identifiant ferait passer l'envoi pour périmé.
+    let targetDossierId = serverDossierId;
     try {
       const status = await prepareNdaOnServer(serverDossierId);
       // Réponse née d'un autre dossier : elle ne doit pas s'appliquer ici.
@@ -1379,7 +1383,9 @@ export function DesignSpace({
             ndaRequired: nda.required,
             // Un rappel tardif ne doit plus écrire dans un autre dossier ouvert.
             onDossierCreated: (id: string) => {
-              if (contextGenRef.current === gen) setServerDossierId(id);
+              if (contextGenRef.current !== gen) return;
+              targetDossierId = id;
+              setServerDossierId(id);
             },
           }),
         );
@@ -1387,7 +1393,9 @@ export function DesignSpace({
         if (outcome.status === "submitted") {
           phase = "committed";
           committedRevisionRef.current = serverRevision + 1;
-          const bound = await submissionBinding(input);
+          const bound = {
+            ...(await submissionBinding({ ...input, serverDossierId: targetDossierId })),
+          };
           if (contextGenRef.current !== gen) return;
           setServerRevision((r) => r + 1);
           setPreparedUpload(null);
@@ -1395,7 +1403,7 @@ export function DesignSpace({
           // exactement confirmée par le serveur. Dès que le brouillon change,
           // l'écran repasse de lui-même en « Modifications non envoyées ».
           setLastSent({
-            dossierId: serverDossierId,
+            dossierId: targetDossierId,
             revisionId: outcome.submissionId,
             revisionNumber: serverRevision + 1,
             submittedAt: outcome.at,
@@ -1406,7 +1414,7 @@ export function DesignSpace({
           // Version anglaise : demandée UNIQUEMENT si l'accord de traduction a été
           // donné pour ce contenu exact. Sans accord, rien n'est transmis et on le dit.
           const target = {
-            dossierId: serverDossierId ?? "",
+            dossierId: targetDossierId ?? "",
             revisionId: outcome.submissionId,
             contentHash: bound.contentHash,
           };

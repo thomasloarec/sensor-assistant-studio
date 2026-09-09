@@ -8,7 +8,7 @@
  * Aucun hash, aucun consentement et aucun contrôle de révision n'est affaibli
  * pour obtenir ce résultat : c'est uniquement l'affichage qui est corrigé.
  */
-import { sameBinding, type ConsentBinding } from "./privacy";
+import type { ConsentBinding } from "./privacy";
 
 /** Révision RÉELLEMENT transmise et confirmée par le serveur. */
 export interface SentRevisionRecord {
@@ -26,6 +26,30 @@ export interface SentRevisionRecord {
 
 export type SubmissionStatusKind = "draft" | "sent" | "modified";
 
+/** Identité du CONTENU ENVOYÉ, pour le bandeau d'état uniquement : dossier
+ * serveur visé, empreinte de contenu et fichiers réellement transférés.
+ *
+ * Le numéro de révision en est volontairement absent. Après un envoi réussi le
+ * compteur serveur passe à la version suivante alors que RIEN n'a été modifié :
+ * comparer la révision ferait dire « Modifications non envoyées » juste après
+ * une confirmation d'envoi.
+ *
+ * Ceci ne remplace jamais `sameBinding`, qui reste STRICT (révision comprise)
+ * pour les autorisations : un accord donné pour la révision n ne vaut jamais
+ * pour la révision n+1. */
+export function sameSentContent(
+  a: ConsentBinding | null | undefined,
+  b: ConsentBinding | null | undefined,
+): boolean {
+  if (!a || !b) return false;
+  return (
+    a.serverDossierId === b.serverDossierId &&
+    a.contentHash === b.contentHash &&
+    a.fileDigests.length === b.fileDigests.length &&
+    a.fileDigests.every((d, i) => d === b.fileDigests[i])
+  );
+}
+
 /** `modified` est le repli sûr : sans empreinte courante calculable, on
  * n'affiche jamais un succès qui pourrait décrire autre chose. */
 export function submissionStatusKind(
@@ -34,7 +58,7 @@ export function submissionStatusKind(
 ): SubmissionStatusKind {
   if (!last) return "draft";
   if (!current) return "modified";
-  return sameBinding(last.binding, current) ? "sent" : "modified";
+  return sameSentContent(last.binding, current) ? "sent" : "modified";
 }
 
 /** Le libellé ne promet « mes modifications » que si la version envoyée est
