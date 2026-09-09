@@ -1086,6 +1086,20 @@ function NotifyTab({
   }, [p.dossierId]);
 
   const published = (view?.reviews ?? []).filter((r) => r.published && !r.superseded);
+  const chosen = published.find((r) => r.id === reviewId) ?? null;
+  /** Contenu client de l'aperçu : rien d'interne n'y entre. */
+  const selected = chosen
+    ? {
+        verdict: chosen.verdict,
+        exactPartNumber: chosen.exact_part_number,
+        conditions: chosen.conditions,
+        message: chosen.message,
+      }
+    : null;
+  /** Langue déjà utilisée pour ce dossier, sinon celle du dernier message préparé. */
+  const clientLocale = detail.notifications[0]?.locale ?? p.sourceLocale ?? "fr";
+  const origin = typeof window === "undefined" ? "" : window.location.origin;
+  const absoluteLink = `${origin}/?dossier=${p.dossierId}`;
 
   return (
     <div className="space-y-3">
