@@ -122,12 +122,8 @@ import {
   checkSubmission,
   submissionBinding,
 } from "@/lib/leadmagnet/submission";
-import {
-  applyBindingCycle,
-  consentNoticeFor,
-  submit,
-  technicalSummary,
-} from "@/lib/leadmagnet/submission";
+import { submit, technicalSummary } from "@/lib/leadmagnet/submission";
+import { applyBindingCycle, consentNoticeFor } from "@/lib/leadmagnet/submission-cycle";
 import {
   sentHistory,
   statusDetail,
