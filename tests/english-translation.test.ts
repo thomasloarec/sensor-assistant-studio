@@ -2,6 +2,8 @@ import { describe, expect, it } from "bun:test";
 import { readFileSync } from "node:fs";
 
 import { createDossier, toClientDto } from "../src/lib/leadmagnet/dossier";
+import { DEFAULT_WORKSHOP } from "../src/lib/standex/magnetic-workshop";
+import { COFFEE_ASSEMBLY } from "../src/lib/standex/machine-assembly";
 import {
   checkTranslation,
   collectSegments,
@@ -209,5 +211,171 @@ describe("contrôle lexical strict des jetons", () => {
     expect(
       parseProviderOutput({ segments: [{ id: "a", en: "x".repeat(200_000) }] }),
     ).toBeNull();
+  });
+});
+
+/**
+ * Fixture ciblée : montage 3D RÉELLEMENT enregistré + connecteur non qualifié
+ * complètement décrit. On vérifie que le rapport anglais rend ces paramètres et
+ * ces descriptions, et que l'original du client n'est pas modifié.
+ */
+describe("parité 3D et connecteur dans le rapport anglais", () => {
+  function dtoWorkshopConnector() {
+    const d = createDossier("2026-09-08T08:00:00Z");
+    d.title = "Banc de détection";
+    d.workshop = {
+      ...DEFAULT_WORKSHOP,
+      sensorId: "MK24-A-J",
+      motion: "slide",
+      travel: 42,
+      span: 120,
+      magnetization: "diametral",
+      polarity: -1,
+      ferromagnetic: true,
+      machine: { ...COFFEE_ASSEMBLY },
+    };
+    d.workshopSource = "example";
+    d.termination = {
+      kind: "unqualified_connector",
+      status: "to_verify_by_rnd",
+      spec: {
+        manufacturer: "JST",
+        mpn: "XHP-2",
+        mating: "B2B-XH-A",
+        gender: "female",
+        positions: 2,
+        pinout: "Broche 1 : signal, broche 2 : retour",
+        wireGauge: "Fil souple торон 26 AWG",
+        cable: "Câble blindé 2 conducteurs",
+        conditions: "Sertissage à valider par le BE",
+        note: "Base documentée, jamais qualifiée Standex",
+        wireRangeHint: "Plage de fils admissible 22 à 30 AWG",
+        contactMpn: "SXH-001T-P0.6",
+        pitchMm: 2.5,
+        sourceUrl: "https://www.jst-mfg.com/product/pdf/eng/eXH.pdf",
+        sourcePages: [1],
+      },
+    } as never;
+    return toClientDto(d);
+  }
+
+  it("les paramètres du montage enregistré sortent en anglais", () => {
+    const body = englishReportBody(dtoWorkshopConnector(), { revision: 3 });
+    expect(body).toContain("Recorded 3D parameters");
+    expect(body).toContain("educational model, not a physical validation");
+    expect(body).toContain("lateral slide");
+    expect(body).toContain("travel: 42 mm");
+    expect(body).toContain("span: 120°");
+    expect(body).toContain("Magnetization: diametral");
+    expect(body).toContain("S towards the sensor");
+    expect(body).toContain("Ferromagnetic environment: yes");
+    expect(body).toContain(COFFEE_ASSEMBLY.fileName);
+    expect(body).toContain(COFFEE_ASSEMBLY.movingNode);
+    expect(body).not.toContain("undefined");
+  });
+
+  it("aucun paramètre fabriqué quand rien n'est enregistré", () => {
+    const body = englishReportBody(dto(), { revision: 1 });
+    expect(body).toContain("Recorded 3D parameters: none");
+  });
+
+  it("les champs descriptifs du connecteur sont traduits, les références intactes", async () => {
+    const source = dtoWorkshopConnector();
+    const segments = collectSegments(source);
+    const ids = segments.map((s) => s.id);
+    expect(ids).toContain("termination.wireGauge");
+    expect(ids).toContain("termination.cable");
+    expect(ids).toContain("termination.note");
+    expect(ids).toContain("termination.wireRangeHint");
+    // `mating` est une référence exacte : jamais envoyée à la traduction.
+    expect(ids).not.toContain("termination.mating");
+
+    const provider: TranslationProvider = {
+      producer: "test",
+      translate: async (segs) => ({
+        segments: segs.map((s) => ({ id: s.id, en: "EN " + s.text })),
+      }),
+    };
+    const out = await translateDossier(source, { revision: 3 }, provider);
+    expect(out.ok).toBe(true);
+    if (!out.ok) return;
+    expect(out.body).toContain("Wire gauge: EN Fil souple торон 26 AWG");
+    expect(out.body).toContain("Cable: EN Câble blindé 2 conducteurs");
+    expect(out.body).toContain("Wire range: EN Plage de fils admissible 22 à 30 AWG");
+    expect(out.body).toContain("Note: EN Base documentée");
+    expect(out.body).toContain("Mating part (exact reference, not translated): B2B-XH-A");
+    expect(out.body).toContain("Contact part number: SXH-001T-P0.6");
+    expect(out.body).toContain("Pitch: 2.5 mm");
+    expect(out.body).toContain("Gender: female");
+    // Original inchangé.
+    expect(source.termination.kind).toBe("unqualified_connector");
+    if (source.termination.kind === "unqualified_connector") {
+      expect(source.termination.spec.wireGauge).toBe("Fil souple торон 26 AWG");
+      expect(source.termination.spec.mating).toBe("B2B-XH-A");
+    }
+  });
+
+  it("combinaison qualifiée : MPN capteur et source rendus", () => {
+    const d = createDossier("2026-09-08T08:00:00Z");
+    d.termination = {
+      kind: "qualified_connector",
+      combo: {
+        id: "combo-1",
+        sensorMpn: "MK24-A-J",
+        source: "Standex datasheet 02/2019",
+        connector: {
+          manufacturer: "JST",
+          mpn: "PHR-2",
+          mating: "B2B-PH-K-S",
+          gender: "female",
+          positions: 2,
+          pinout: null,
+          wireGauge: null,
+          cable: null,
+          conditions: null,
+        },
+      },
+    } as never;
+    const body = englishReportBody(toClientDto(d), { revision: 1 });
+    expect(body).toContain("Sensor part number of the combination: MK24-A-J");
+    expect(body).toContain("Combination source: Standex datasheet 02/2019");
+    expect(body).toContain("Qualified combination: combo-1");
+  });
+});
+
+describe("jetons invariants : unités collées, ajouts refusés", () => {
+  it("0.35A → 0.35mA est refusé", () => {
+    const seg: Segment[] = [{ id: "a", text: "Courant de commutation 0.35A maximum." }];
+    expect(checkTranslation(seg, { a: "Switching current 0.35mA maximum." }).ok).toBe(false);
+    expect(checkTranslation(seg, { a: "Switching current 0.35A maximum." }).ok).toBe(true);
+  });
+
+  it("unités sans espace reconnues, ponctuation finale sans effet", () => {
+    expect(invariantTokens("Longueur 300mm.")).toContain("300 mm");
+    expect(invariantTokens("Entrefer 2,5 mm,")).toContain("2,5 mm");
+    expect(invariantTokens("Course 42mm, puis 5 mm.")).toEqual([
+      "42",
+      "42 mm",
+      "5",
+      "5 mm",
+    ]);
+  });
+
+  it("référence, e-mail ou fichier AJOUTÉ ou dupliqué est refusé", () => {
+    const ref: Segment[] = [{ id: "a", text: "Utiliser MK24-A-J." }];
+    expect(checkTranslation(ref, { a: "Use MK24-A-J." }).ok).toBe(true);
+    expect(checkTranslation(ref, { a: "Use MK24-A-J (MK24-A-J)." }).ok).toBe(false);
+    expect(checkTranslation(ref, { a: "Use MK24-A-J and MK03." }).ok).toBe(false);
+
+    const mail: Segment[] = [{ id: "a", text: "Écrire à thomas@standexelectronics.com." }];
+    expect(
+      checkTranslation(mail, {
+        a: "Write to thomas@standexelectronics.com or sales@standexelectronics.com.",
+      }).ok,
+    ).toBe(false);
+
+    const file: Segment[] = [{ id: "a", text: "Voir plan.pdf." }];
+    expect(checkTranslation(file, { a: "See plan.pdf and plan.step." }).ok).toBe(false);
+    expect(checkTranslation(file, { a: "See plan.pdf." }).ok).toBe(true);
   });
 });
