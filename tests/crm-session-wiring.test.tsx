@@ -138,6 +138,7 @@ describe("l'administration appartient au compte connecté", () => {
         ],
         directory: [],
         accounts: [],
+        audit: [],
       });
     });
     expect(document.body.textContent).toContain("Ancien");
@@ -163,6 +164,7 @@ describe("l'administration appartient au compte connecté", () => {
         ],
         directory: [],
         accounts: [],
+        audit: [],
       });
     });
     expect(document.body.textContent).not.toContain("Ancien");
