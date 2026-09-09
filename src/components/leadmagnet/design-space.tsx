@@ -2277,6 +2277,45 @@ export function DesignSpace({
             </label>
             {consentNotice ? <p className="notice notice-warning">{consentNotice}</p> : null}
 
+            <label className="t-caption flex items-start gap-2">
+              <Checkbox
+                checked={binding !== null && hasBoundConsent(privacy, "ai_assistant", binding)}
+                disabled={binding === null}
+                onCheckedChange={(v) => {
+                  setPrivacy((p) =>
+                    v && binding
+                      ? grantConsent(p, {
+                          kind: "ai_assistant",
+                          contentSummary: t(
+                            "Textes de ce dossier (exigences, notes, questions, contraintes) traduits en anglais.",
+                          ),
+                          recipients: [t("Anthropic (service de traduction)")],
+                          binding,
+                        })
+                      : { ...p, consents: p.consents.filter((c) => c.kind !== "ai_assistant") },
+                  );
+                }}
+              />
+              <span>
+                {t(
+                  "J'autorise en plus la traduction en anglais des textes de ce dossier par un service externe (Anthropic), afin que l'équipe Standex les lise en anglais. Références, valeurs, unités, noms et fichiers restent inchangés, et mon dossier d'origine est conservé tel quel. Sans cette case, aucun texte n'est transmis à ce service.",
+                )}
+              </span>
+            </label>
+            {englishMessage ? <p className="notice notice-info">{englishMessage}</p> : null}
+            {englishRetry ? (
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={busy}
+                onClick={() => void runEnglishReport(englishRetry)}
+              >
+                {t("Relancer la version anglaise")}
+              </Button>
+            ) : null}
+
+
+
             <label className="t-caption flex items-center gap-2">
               <Checkbox
                 checked={shareModel}
