@@ -120,6 +120,11 @@ import { checkLeadBackend, type LeadBackendStatus } from "@/lib/leadmagnet/backe
 import { requestEnglishReport } from "@/lib/leadmagnet/english-report.functions";
 import { englishReportMessage } from "@/lib/leadmagnet/english-report-messages";
 import { EnglishRunLock } from "@/lib/leadmagnet/english-run-lock";
+import {
+  ndaTransferGuidance,
+  reviewOperationLabel,
+  type ReviewOperation,
+} from "@/lib/leadmagnet/review-submit-state";
 
 import {
   createDossier as createServerDossier,
@@ -421,6 +426,7 @@ export function DesignSpace({
   const [acknowledged, setAcknowledged] = useState(false);
   const [extraConstraints, setExtraConstraints] = useState("");
   const [submitMessage, setSubmitMessage] = useState<string | null>(null);
+  const [submitMessageTone, setSubmitMessageTone] = useState<"info" | "danger" | "success">("info");
   /** État FACTUEL de la version anglaise du rapport : jamais « envoyé en anglais »
    * tant que le serveur n'a pas publié une version prête pour cette révision. */
   const [englishMessage, setEnglishMessage] = useState<string | null>(null);
@@ -541,6 +547,9 @@ export function DesignSpace({
   /** Verrou d'action : empêche un double clic de créer deux versions. */
   const [busy, setBusy] = useState(false);
   const busyRef = useRef(false);
+  const [busyOperation, setBusyOperation] = useState<ReviewOperation>(null);
+  const ndaSectionRef = useRef<HTMLButtonElement | null>(null);
+  const [reviewSections, setReviewSections] = useState<string[]>(["resume", "nda", "envoi"]);
 
   /** Remplissage local du NDA : aperçu puis téléchargement, sans aucune transmission. */
   const prepareNdaDocument = useCallback(
@@ -621,6 +630,12 @@ export function DesignSpace({
       setNdaError(error instanceof Error ? error.message : t("Statut NDA indisponible."));
     }
   }, [applyNdaStatus, serverDossierId]);
+
+  /** À la reprise, le statut local est volontairement remis à zéro puis relu au
+   * serveur. Une panne reste visible et ne fabrique jamais de preuve locale. */
+  useEffect(() => {
+    if (backend?.ready && serverDossierId) void refreshNdaStatus();
+  }, [backend?.ready, serverDossierId, refreshNdaStatus]);
 
   // Tant que cet espace est monté, la télémétrie est réduite à un code anonyme.
   useEffect(() => openPrivateErrorScope(), []);
@@ -710,6 +725,18 @@ export function DesignSpace({
     [dossier.selectedSensorId, estimate.requiredMm, cabling.surplusHousingMm],
   );
   const ndaOk = ndaAllowsConfidentialTransfer(nda);
+  const ndaGuidance = ndaTransferGuidance(nda);
+  const busyLabel = reviewOperationLabel(busyOperation);
+  const focusNdaSection = useCallback(() => {
+    setTab("revue");
+    setReviewSections((sections) =>
+      sections.includes("nda") ? sections : [...sections, "nda"],
+    );
+    requestAnimationFrame(() => {
+      ndaSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+      ndaSectionRef.current?.focus();
+    });
+  }, []);
 
   // Le trajet visé retombe sur le trajet de référence si l'état déclaré a disparu.
   const activeTarget: RoutingTarget = useMemo(
@@ -974,6 +1001,7 @@ export function DesignSpace({
     }
     busyRef.current = true;
     setBusy(true);
+    setBusyOperation("upload");
     setSubmitMessage(null);
     // Contexte visé au moment du dépôt : si le dossier change entre-temps,
     // ce résultat ne doit surtout pas s'écrire dans le nouveau dossier.
@@ -1052,6 +1080,7 @@ export function DesignSpace({
     } finally {
       busyRef.current = false;
       setBusy(false);
+      setBusyOperation(null);
     }
   }, [
     backend,
@@ -1147,14 +1176,18 @@ export function DesignSpace({
       serverDossierId,
       serverRevision: serverRevision + 1,
     };
+    const check = await checkSubmission(input);
+    if (!check.ok) {
+      setSubmitMessage(check.problems.map((problem) => t(problem)).join(" "));
+      setSubmitMessageTone("danger");
+      if (!ndaOk) focusNdaSection();
+      return;
+    }
     busyRef.current = true;
     setBusy(true);
+    setBusyOperation("submission");
+    setSubmitMessage(null);
     try {
-      const check = await checkSubmission(input);
-      if (!check.ok) {
-        setSubmitMessage(check.problems.join(" "));
-        return;
-      }
       // Envoi réel dès que l'espace serveur est disponible et la session ouverte ;
       // sinon rien n'est transmis et rien n'est simulé.
       const outcome = await submit(
@@ -1179,6 +1212,7 @@ export function DesignSpace({
         setSubmitMessage(
           t("Dossier transmis à la revue Standex. Vous serez informé dès qu'un retour est publié."),
         );
+        setSubmitMessageTone("success");
         // Version anglaise : demandée UNIQUEMENT si l'accord de traduction a été
         // donné pour ce contenu exact. Sans accord, rien n'est transmis et on le dit.
         const bound = await submissionBinding(input);
@@ -1198,10 +1232,12 @@ export function DesignSpace({
         }
       } else {
         setSubmitMessage(outcome.reason);
+        setSubmitMessageTone("danger");
       }
     } finally {
       busyRef.current = false;
       setBusy(false);
+      setBusyOperation(null);
     }
   }, [
     dossier,
@@ -1215,6 +1251,8 @@ export function DesignSpace({
     shareModel,
     preparedUpload,
     runEnglishReport,
+    ndaOk,
+    focusNdaSection,
   ]);
 
 
@@ -2062,9 +2100,17 @@ export function DesignSpace({
 
   const revueSection = (
     <div className="space-y-4">
-      <Accordion type="multiple" defaultValue={["resume", "nda", "envoi"]} className="space-y-3">
+      <Accordion
+        type="multiple"
+        value={reviewSections}
+        onValueChange={setReviewSections}
+        className="space-y-3"
+      >
         <AccordionItem value="resume" className="panel-block-lg border-0">
-          <AccordionTrigger className="business-accordion-trigger t-title-s gap-3 hover:no-underline">
+          <AccordionTrigger
+            ref={ndaSectionRef}
+            className="business-accordion-trigger t-title-s gap-3 hover:no-underline"
+          >
             <span className="standex-bar !h-5 !w-1" aria-hidden="true" />
             <span className="flex-1">{t("Résumé technique et inconnues")}</span>
           </AccordionTrigger>
@@ -2406,16 +2452,50 @@ export function DesignSpace({
                 size="lg"
                 className="w-full sm:w-auto"
                 onClick={() => void onSubmit()}
-                disabled={!ndaOk || busy}
+                disabled={busy}
                 aria-busy={busy ? "true" : undefined}
+                aria-describedby={ndaGuidance ? "review-submit-guidance" : submitMessage ? "review-submit-message" : undefined}
               >
                 {busy ? (
                   <Loader2 className="mr-1 h-4 w-4 animate-spin" />
                 ) : (
                   <ShieldCheck className="mr-1 h-4 w-4" />
                 )}{" "}
-                {busy ? t("Envoi en cours…") : t("Transmettre à la revue Standex")}
+                {busy
+                  ? t(busyLabel ?? "Une opération est en cours…")
+                  : t("Transmettre à la revue Standex")}
               </Button>
+              {ndaGuidance ? (
+                <div id="review-submit-guidance" className="notice notice-warning space-y-3" role="status">
+                  <p>{t(ndaGuidance)}</p>
+                  <div className="flex flex-wrap gap-2">
+                    <Button type="button" size="sm" variant="outline" onClick={focusNdaSection}>
+                      {t("Ouvrir Confidentialité et NDA")}
+                    </Button>
+                    {serverDossierId ? (
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        disabled={!backend?.ready}
+                        onClick={() => void refreshNdaStatus()}
+                      >
+                        {t("Actualiser le statut NDA")}
+                      </Button>
+                    ) : null}
+                  </div>
+                  {!backend?.authenticated ? (
+                    <p className="t-caption">
+                      {t("Connectez-vous ci-dessous pour préparer ou actualiser la vérification du NDA.")}
+                    </p>
+                  ) : null}
+                </div>
+              ) : null}
+              {busy && busyLabel ? (
+                <p className="notice notice-info" role="status" aria-live="polite">
+                  {t(busyLabel)}
+                </p>
+              ) : null}
             </div>
             {!backend?.ready ? (
               <div className="space-y-2">
@@ -2443,7 +2523,20 @@ export function DesignSpace({
               </p>
             ) : null}
             {submitMessage ? (
-              <p className="notice notice-success notice-success-sweep">{submitMessage}</p>
+              <p
+                id="review-submit-message"
+                className={`notice ${
+                  submitMessageTone === "success"
+                    ? "notice-success notice-success-sweep"
+                    : submitMessageTone === "danger"
+                      ? "notice-danger"
+                      : "notice-info"
+                }`}
+                role={submitMessageTone === "danger" ? "alert" : "status"}
+                aria-live="polite"
+              >
+                {submitMessage}
+              </p>
             ) : null}
           </AccordionContent>
         </AccordionItem>
@@ -2819,6 +2912,7 @@ export function DesignSpace({
               // Le serveur enregistre la reprise AVANT que l'écran change.
               busyRef.current = true;
               setBusy(true);
+              setBusyOperation("variant");
               await commit();
             } catch (error) {
               return {
@@ -2832,6 +2926,7 @@ export function DesignSpace({
             } finally {
               busyRef.current = false;
               setBusy(false);
+              setBusyOperation(null);
             }
             setDossier(out.dossier);
             adoptBaseline(out.dossier);
