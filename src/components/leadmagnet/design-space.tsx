@@ -428,6 +428,9 @@ export function DesignSpace({
     revisionId: string;
     contentHash: string;
   } | null>(null);
+  /** Demande de version anglaise en cours : verrou et anti-réponse périmée. */
+  const englishRunRef = useRef<string | null>(null);
+  const [englishBusy, setEnglishBusy] = useState(false);
 
   const [showWorkshop, setShowWorkshop] = useState(false);
   /** Démarrage RÉEL du projet : c'est ici, et pas au montage caché de
