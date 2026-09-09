@@ -227,6 +227,51 @@ function ProjectDetail() {
   );
 }
 
+/* --------------------------------------------------------------- Résumé */
+
+/** Âges réels et prochaine action : trois repères, jamais inventés. */
+function ProjectSummary({ detail }: { detail: CrmProjectDetail }) {
+  const p = detail.project;
+  const age = projectAgeDays(p);
+  const stageAge = stageAgeDays(p);
+  const next = nextAction(p, detail.tasks);
+  const nextAge = actionAgeDays(next);
+  const unknown = t("inconnu");
+  return (
+    <dl className="panel-block grid gap-3 text-sm sm:grid-cols-3">
+      <div>
+        <dt className="t-caption text-muted-foreground">{t("Âge total du projet")}</dt>
+        <dd className="t-metric">
+          {age === null ? unknown : `${age} ${t("jour(s)")}`}
+        </dd>
+      </div>
+      <div>
+        <dt className="t-caption text-muted-foreground">{t("Âge de l'étape en cours")}</dt>
+        <dd className="t-metric">
+          {stageAge === null ? unknown : `${stageAge} ${t("jour(s)")}`}
+        </dd>
+      </div>
+      <div>
+        <dt className="t-caption text-muted-foreground">{t("Prochaine action")}</dt>
+        <dd>
+          {next === null ? (
+            <span className="text-muted-foreground">{t("aucune action en attente")}</span>
+          ) : (
+            <>
+              {next.label}
+              <span className="t-caption text-muted-foreground">
+                {" — "}
+                {t(STAKEHOLDER_LABEL[next.stakeholder] ?? next.stakeholder)}
+                {nextAge === null ? "" : ` · ${nextAge} ${t("jour(s)")}`}
+              </span>
+            </>
+          )}
+        </dd>
+      </div>
+    </dl>
+  );
+}
+
 /* ------------------------------------------------------------------ Suivi */
 
 function TrackingTab({
