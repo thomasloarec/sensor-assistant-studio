@@ -856,7 +856,7 @@ function TrackingTab({
               </SelectContent>
             </Select>
           </div>
-          <div>
+          <div className="field">
             <Label className="t-caption">FAE</Label>
             <Select
               value={directory.fae}
@@ -884,24 +884,28 @@ function TrackingTab({
             {t("Seul le commerce ou l'administration désigne les responsables.")}
           </p>
         )}
-        <Button
-          size="sm"
-          disabled={busy || !canOwners}
-          onClick={() =>
-            void onRun(
-              () =>
-                setCrmOwners(
-                  p.dossierId,
-                  directory.sales === "none" ? null : directory.sales,
-                  directory.fae === "none" ? null : directory.fae,
-                  p.version,
-                ),
-              t("Responsables enregistrés."),
-            )
-          }
-        >
-          {t("Enregistrer les responsables")}
-        </Button>
+        <div className="field-actions">
+          <Button
+            size="sm"
+            disabled={busy || !canOwners}
+            onClick={() =>
+              void onRun(
+                () =>
+                  setCrmOwners(
+                    p.dossierId,
+                    directory.sales === "none" ? null : directory.sales,
+                    directory.fae === "none" ? null : directory.fae,
+                    p.version,
+                  ),
+                t("Responsables enregistrés."),
+              )
+            }
+          >
+            {busy ? <Loader2 className="mr-1 h-4 w-4 animate-spin" aria-hidden="true" /> : null}
+            {t("Enregistrer les responsables")}
+          </Button>
+        </div>
+
       </section>
     </div>
   );
