@@ -6,12 +6,15 @@ import { readFileSync } from "node:fs";
 import { renderToStaticMarkup } from "react-dom/server";
 import { consoleLayout } from "../src/components/standex/console/dossier-console";
 import {
+  ClientLocaleHint,
   CrmUnavailableNotice,
+  InternalEnglishHint,
   MarginCell,
   RevenueCell,
   VolumeCell,
   personName,
 } from "../src/components/standex/dashboard/crm-shared";
+import { submittedSourceLocale } from "../src/routes/standex.projects.$dossierId";
 import { isMissingRpc, humanCrmError, crmConflictVersion, REQUIRED_CRM_VERSION } from "../src/lib/leadmagnet/dashboard-rpc";
 import { REQUIRED_LEAD_SCHEMA_VERSION } from "../src/lib/leadmagnet/rpc";
 import type { CrmProject } from "../src/lib/leadmagnet/dashboard-adapter";
@@ -231,5 +234,73 @@ describe("indisponibilité de l'espace interne", () => {
       />,
     );
     expect(html).toContain("migration_v1.8_crm_dashboard.sql");
+  });
+});
+
+describe("langue de rédaction des champs", () => {
+  test("un champ interne indique explicitement l'anglais", () => {
+    const html = renderToStaticMarkup(<InternalEnglishHint />);
+    expect(html).toContain("Interne");
+    expect(html).toContain("anglais");
+  });
+
+  test("un champ client affiche la langue enregistrée du projet", () => {
+    const html = renderToStaticMarkup(<ClientLocaleHint locale="de" />);
+    expect(html).toContain("de");
+    expect(html).toContain("client");
+  });
+
+  test("la langue client vient de la dernière version réellement envoyée", () => {
+    expect(
+      submittedSourceLocale({
+        revisions: [{ snapshot: { sourceLocale: "fr" } }, { snapshot: { sourceLocale: "de" } }],
+      } as never),
+    ).toBe("de");
+    expect(submittedSourceLocale(null)).toBeNull();
+    expect(submittedSourceLocale({ revisions: [{ snapshot: {} }] } as never)).toBeNull();
+  });
+
+  test("le libellé de tâche et le motif « sans objet » portent la mention interne", () => {
+    const src = readFileSync("src/routes/standex.projects.$dossierId.tsx", "utf8");
+    expect(src).toContain("<InternalEnglishHint />");
+    expect(src.match(/<InternalEnglishHint \/>/g)?.length).toBeGreaterThanOrEqual(2);
+    expect(src).toContain("<ClientLocaleHint locale={clientLocale} />");
+  });
+
+  test("la portée de revue et la note interne de la console portent la mention interne", () => {
+    const src = readFileSync("src/components/standex/console/dossier-console.tsx", "utf8");
+    expect(src.match(/<InternalEnglishHint \/>/g)?.length).toBeGreaterThanOrEqual(2);
+  });
+
+  test("les notes SAP automatiques restent des phrases anglaises modèles", () => {
+    const sql = readFileSync("supabase/schema/migration_v1.8_crm_dashboard.sql", "utf8");
+    const fn = sql.slice(
+      sql.indexOf("function lead_priv.crm_audit_sentence"),
+      sql.indexOf("$$;", sql.indexOf("function lead_priv.crm_audit_sentence")),
+    );
+    expect(fn).toContain("Customer submitted design revision");
+    // Aucun texte libre du client ou de l'équipe n'est recopié dans la note.
+    for (const free of ["'message'", "'note'", "'internal_note'", "'client_message'", "'scope'"])
+      expect(fn).not.toContain(free);
+  });
+});
+
+describe("annuaire métier et droits Standex", () => {
+  const src = readFileSync("src/routes/standex.admin.tsx", "utf8");
+
+  test("un compte rattaché sans droit reçoit une action d'attribution explicite", () => {
+    expect(src).toContain("staffByUser");
+    expect(src).toContain("Accorder ce droit");
+    expect(src).toContain("!staffByUser.has(p.userId)");
+  });
+
+  test("la fiche annuaire est modifiable (nom et fonction)", () => {
+    expect(src).toContain("Enregistrer la fiche");
+    expect(src).toContain("edit[p.id]?.firstName");
+    expect(src).toContain("edit[p.id]?.role");
+  });
+
+  test("aucun compte n'est créé ni invité depuis cet écran", () => {
+    expect(src).not.toMatch(/invit|signUp|admin\.createUser/i);
   });
 });
