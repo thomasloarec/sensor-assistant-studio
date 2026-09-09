@@ -47,6 +47,8 @@ function AdminScreen() {
   const [busy, setBusy] = useState(false);
   const [person, setPerson] = useState({ firstName: "", lastName: "", role: "sales" as "sales" | "fae" });
   const [linkEmail, setLinkEmail] = useState<Record<string, string>>({});
+  const [edit, setEdit] = useState<Record<string, { firstName: string; lastName: string; role: "sales" | "fae" }>>({});
+  const [grantRole, setGrantRole] = useState<Record<string, StaffRole>>({});
 
   const load = useCallback(() => {
     setError(null);
@@ -94,6 +96,9 @@ function AdminScreen() {
     );
 
   const admins = (overview?.staff ?? []).filter((s) => s.role === "admin" && s.active);
+  /** Comptes déjà porteurs d'un droit Standex : servent à distinguer un simple
+   *  rattachement d'annuaire d'un droit réellement accordé. */
+  const staffByUser = new Map((overview?.staff ?? []).map((s) => [s.userId, s]));
 
   return (
     <div className="space-y-5">
@@ -179,6 +184,140 @@ function AdminScreen() {
                         {t("Détacher")}
                       </Button>
                     ) : null}
+                  </div>
+
+                  {/* Rattacher un compte n'ouvre AUCUN droit : l'attribution du
+                      premier droit Standex est une action distincte, explicite,
+                      qui ne crée ni compte ni invitation. */}
+                  {p.userId && !staffByUser.has(p.userId) ? (
+                    <div className="flex flex-wrap items-end gap-2">
+                      <p className="t-caption text-muted-foreground w-full">
+                        {t("Ce compte est rattaché mais n'a encore aucun droit Standex. Choisissez le droit à lui accorder.")}
+                      </p>
+                      <Select
+                        value={grantRole[p.id] ?? (p.role === "fae" ? "rnd" : "sales")}
+                        onValueChange={(v) =>
+                          setGrantRole((m) => ({ ...m, [p.id]: v as StaffRole }))
+                        }
+                      >
+                        <SelectTrigger className="min-h-11 w-48">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {ROLES.map((r) => (
+                            <SelectItem key={r} value={r}>
+                              {t(ROLE_LABEL[r])}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <Button
+                        size="sm"
+                        disabled={busy}
+                        onClick={() =>
+                          void run(
+                            () =>
+                              setStaffRole(
+                                p.userId as string,
+                                grantRole[p.id] ?? (p.role === "fae" ? "rnd" : "sales"),
+                                true,
+                              ),
+                            t("Droit Standex accordé à ce compte."),
+                          )
+                        }
+                      >
+                        {t("Accorder ce droit")}
+                      </Button>
+                    </div>
+                  ) : null}
+
+                  <div className="flex flex-wrap items-end gap-2">
+                    <div>
+                      <Label className="t-caption" htmlFor={`first-${p.id}`}>
+                        {t("Prénom")}
+                      </Label>
+                      <Input
+                        id={`first-${p.id}`}
+                        value={edit[p.id]?.firstName ?? p.firstName}
+                        onChange={(e) =>
+                          setEdit((m) => ({
+                            ...m,
+                            [p.id]: {
+                              firstName: e.target.value,
+                              lastName: m[p.id]?.lastName ?? p.lastName,
+                              role: m[p.id]?.role ?? p.role,
+                            },
+                          }))
+                        }
+                      />
+                    </div>
+                    <div>
+                      <Label className="t-caption" htmlFor={`last-${p.id}`}>
+                        {t("Nom")}
+                      </Label>
+                      <Input
+                        id={`last-${p.id}`}
+                        value={edit[p.id]?.lastName ?? p.lastName}
+                        onChange={(e) =>
+                          setEdit((m) => ({
+                            ...m,
+                            [p.id]: {
+                              firstName: m[p.id]?.firstName ?? p.firstName,
+                              lastName: e.target.value,
+                              role: m[p.id]?.role ?? p.role,
+                            },
+                          }))
+                        }
+                      />
+                    </div>
+                    <Select
+                      value={edit[p.id]?.role ?? p.role}
+                      onValueChange={(v) =>
+                        setEdit((m) => ({
+                          ...m,
+                          [p.id]: {
+                            firstName: m[p.id]?.firstName ?? p.firstName,
+                            lastName: m[p.id]?.lastName ?? p.lastName,
+                            role: v as "sales" | "fae",
+                          },
+                        }))
+                      }
+                    >
+                      <SelectTrigger className="min-h-11 w-40">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="sales">{t("Commercial")}</SelectItem>
+                        <SelectItem value="fae">FAE</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      disabled={
+                        busy ||
+                        !(edit[p.id]?.firstName ?? p.firstName).trim() ||
+                        !(edit[p.id]?.lastName ?? p.lastName).trim()
+                      }
+                      onClick={() =>
+                        void run(async () => {
+                          const next = await upsertCrmPerson(
+                            p.id,
+                            (edit[p.id]?.firstName ?? p.firstName).trim(),
+                            (edit[p.id]?.lastName ?? p.lastName).trim(),
+                            edit[p.id]?.role ?? p.role,
+                            p.active,
+                          );
+                          setEdit((m) => {
+                            const { [p.id]: _removed, ...rest } = m;
+                            return rest;
+                          });
+                          return next;
+                        }, t("Fiche annuaire mise à jour."))
+                      }
+                    >
+                      {t("Enregistrer la fiche")}
+                    </Button>
                   </div>
                 </li>
               ))}
