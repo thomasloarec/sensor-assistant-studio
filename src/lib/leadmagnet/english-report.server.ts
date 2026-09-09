@@ -11,22 +11,36 @@ import type { Segment, TranslationProvider } from "./english-translation";
 
 const PROJECT_URL = "https://yyobodalwtsqdyrqwkjk.supabase.co";
 
+/**
+ * Nom applicatif de la clé privée serveur. Le préfixe `SUPABASE_` est réservé
+ * par la plateforme : le nom retenu est donc `STANDEX_SUPABASE_SECRET_KEY`,
+ * avec repli sur l'ancien nom `SUPABASE_SERVICE_ROLE_KEY` s'il existe déjà.
+ */
+export const SERVICE_KEY_NAME = "STANDEX_SUPABASE_SECRET_KEY";
+export const SERVICE_KEY_FALLBACK_NAME = "SUPABASE_SERVICE_ROLE_KEY";
+
+/** Ne retourne JAMAIS la valeur ailleurs qu'au client privilégié serveur. */
+function serviceKey(): string | undefined {
+  return process.env[SERVICE_KEY_NAME] ?? process.env[SERVICE_KEY_FALLBACK_NAME];
+}
+
 export function supabaseUrl(): string {
-  return process.env["SUPABASE_URL"] ?? PROJECT_URL;
+  return process.env["STANDEX_SUPABASE_URL"] ?? process.env["SUPABASE_URL"] ?? PROJECT_URL;
 }
 
 /** Noms EXACTS des configurations manquantes : on les signale, on ne contourne pas. */
 export function missingServerConfig(): string[] {
   const missing: string[] = [];
-  if (!process.env["SUPABASE_SERVICE_ROLE_KEY"]) missing.push("SUPABASE_SERVICE_ROLE_KEY");
+  if (!serviceKey()) missing.push(SERVICE_KEY_NAME);
   if (!process.env["ANTHROPIC_API_KEY"]) missing.push("ANTHROPIC_API_KEY");
   return missing;
 }
 
 /** Client privilégié : jamais exposé, jamais construit côté navigateur. */
 export function serviceClient(): SupabaseClient | null {
-  const key = process.env["SUPABASE_SERVICE_ROLE_KEY"];
+  const key = serviceKey();
   if (!key) return null;
+
   return createClient(supabaseUrl(), key, {
     auth: { persistSession: false, autoRefreshToken: false },
     global: {
