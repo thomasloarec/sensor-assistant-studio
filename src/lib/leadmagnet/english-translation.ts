@@ -300,6 +300,15 @@ const MOUNTING_EN: Record<string, string> = {
   undecided: "not decided",
 };
 
+const WORKSHOP_SOURCE_EN: Record<string, string> = {
+  none: "none",
+  example: "example scene supplied by Standex",
+  user_asset: "3D file supplied by the customer",
+};
+
+/** Coordonnées : valeurs conservées telles quelles, jamais arrondies. */
+const pointEn = (p: Point | null): string => (p ? `(${p[0]}, ${p[1]}, ${p[2]}) mm` : "unknown");
+
 /** Rapport anglais complet : étiquettes anglaises + segments traduits. */
 export function englishReportBody(dto: ClientDossierDto, meta: { revision: number }): string {
   const req = (r: { label: string; value: string; unit: string | null; state: string }) =>
@@ -317,6 +326,9 @@ export function englishReportBody(dto: ClientDossierDto, meta: { revision: numbe
         ? dto.mounting.description
         : (MOUNTING_EN[dto.mounting.kind] ?? dto.mounting.kind);
   const env = dto.envelope;
+  const estimate = estimateCableLength(dto.cabling);
+  const uncovered = uncoveredMotionStates(dto.cabling);
+
   const lines = [
     `# ${dto.title} — revision ${meta.revision}`,
     "",
