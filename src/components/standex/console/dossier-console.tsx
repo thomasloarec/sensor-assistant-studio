@@ -3,8 +3,13 @@ import { t } from "@/lib/i18n/core";
  *
  * Écran privé : chaque action est refusée côté serveur si le rôle et l'affectation
  * ne sont pas ceux enregistrés en base. Rien n'est décidé côté navigateur.
+ *
+ * Ce composant était la route `/standex` ; il est désormais réutilisé tel quel
+ * dans la fiche projet de l'espace de travail. Aucun de ses flux (revue,
+ * variantes, offres, échantillons, NDA, documents, 3D) n'a été retiré.
  */
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
+
 import { Suspense, lazy, useCallback, useEffect, useRef, useState } from "react";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
