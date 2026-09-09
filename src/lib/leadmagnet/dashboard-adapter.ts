@@ -58,6 +58,9 @@ const num = (v: unknown): number | null => {
   return null;
 };
 const int = (v: unknown): number => Math.trunc(num(v) ?? 0);
+/** Provenance d'une valeur affichée ; toute valeur inattendue vaut « inconnue ». */
+const source = (v: unknown): CrmValueSource =>
+  v === "override" || v === "submitted" ? v : "unknown";
 
 function toProject(raw: unknown): CrmProject | null {
   if (!raw || typeof raw !== "object") return null;
