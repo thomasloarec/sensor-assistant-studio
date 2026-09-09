@@ -153,6 +153,92 @@ function ProjectsBoard() {
 
   const totals = useMemo(() => pipelineTotals(projects), [projects]);
 
+  /** Remise à zéro des filtres. La recherche, le tri et l'affichage choisis ne
+   *  sont pas des filtres : ils sont conservés. */
+  const resetFilters = useCallback(() => {
+    setStages([]);
+    setSalesId("all");
+    setFaeId("all");
+    setCountry("all");
+    setCompany("");
+    setRevenueMin("");
+    setRevenueMax("");
+    setRevenueCurrency("");
+    setLaunchFrom("");
+    setLaunchTo("");
+    setOnlyLate(false);
+  }, []);
+
+  /** Chaque filtre actif est lisible et retirable là où il se lit. */
+  const chips = useMemo(() => {
+    const list: { id: string; label: string; clear: () => void }[] = [];
+    for (const s of stages)
+      list.push({
+        id: `stage:${s}`,
+        label: stageLabel(s),
+        clear: () => setStages((current) => current.filter((x) => x !== s)),
+      });
+    const person = (id: string) => {
+      const found = (board?.directory ?? []).find((p) => p.id === id);
+      return found ? personFullName(found) : id;
+    };
+    if (salesId !== "all")
+      list.push({
+        id: "sales",
+        label: `${t("Commercial")} : ${person(salesId)}`,
+        clear: () => setSalesId("all"),
+      });
+    if (faeId !== "all")
+      list.push({
+        id: "fae",
+        label: `${t("FAE")} : ${person(faeId)}`,
+        clear: () => setFaeId("all"),
+      });
+    if (country !== "all")
+      list.push({
+        id: "country",
+        label: `${t("Pays")} : ${countryName(country, tag) ?? country}`,
+        clear: () => setCountry("all"),
+      });
+    if (company.trim())
+      list.push({
+        id: "company",
+        label: `${t("Société")} : ${company.trim()}`,
+        clear: () => setCompany(""),
+      });
+    if (revenueMin.trim() || revenueMax.trim() || revenueCurrency.trim())
+      list.push({
+        id: "revenue",
+        label: `${t("Chiffre d'affaires")} : ${revenueMin.trim() || "…"} – ${
+          revenueMax.trim() || "…"
+        } ${revenueCurrency.trim()}`.trim(),
+        clear: () => {
+          setRevenueMin("");
+          setRevenueMax("");
+          setRevenueCurrency("");
+        },
+      });
+    if (launchFrom || launchTo)
+      list.push({
+        id: "launch",
+        label: `${t("Lancement série")} : ${launchFrom || "…"} – ${launchTo || "…"}`,
+        clear: () => {
+          setLaunchFrom("");
+          setLaunchTo("");
+        },
+      });
+    if (onlyLate)
+      list.push({
+        id: "late",
+        label: t("Seulement les projets en retard ou bloqués"),
+        clear: () => setOnlyLate(false),
+      });
+    return list;
+  }, [stages, salesId, faeId, country, company, revenueMin, revenueMax, revenueCurrency,
+    launchFrom, launchTo, onlyLate, board, tag]);
+
+  const activeFilterCount = chips.length;
+
   if (capabilities === null) return <LoadingBlock />;
 
   if (!capabilities.available)
