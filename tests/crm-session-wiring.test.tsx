@@ -225,6 +225,7 @@ async function renderDraft() {
     await Promise.resolve();
     await Promise.resolve();
   });
+  console.log("DBG handler set?", authHandler !== null);
   act(() => {
     view.getByText("écrire").click();
   });
@@ -261,4 +262,4 @@ describe("identité du compte connecté", () => {
   });
 });
 
-test("debug handler", () => { console.log("HANDLER", authHandler === null); });
+
