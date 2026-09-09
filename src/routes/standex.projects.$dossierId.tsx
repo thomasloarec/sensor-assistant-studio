@@ -998,22 +998,26 @@ function TasksTab({
       </div>
 
       {detail.tasks.length === 0 ? (
-        <EmptyBlock text={t("Aucune tâche pour ce projet.")}>
-          <Button
-            size="sm"
-            variant="outline"
-            disabled={busy}
-            onClick={() =>
-              void onRun(
-                () => applyCrmTemplate(p.dossierId, p.version),
-                t("Liste de tâches type ajoutée."),
-              )
-            }
-          >
-            {busy ? <Loader2 className="mr-1 h-4 w-4 animate-spin" aria-hidden="true" /> : null}
-            {t("Ajouter la liste de tâches type")}
-          </Button>
-        </EmptyBlock>
+        <EmptyBlock
+          text={t("Aucune tâche pour ce projet.")}
+          action={
+            <Button
+              size="sm"
+              variant="outline"
+              disabled={busy}
+              onClick={() =>
+                void onRun(
+                  () => applyCrmTemplate(p.dossierId, p.version),
+                  t("Liste de tâches type ajoutée."),
+                )
+              }
+            >
+              {busy ? <Loader2 className="mr-1 h-4 w-4 animate-spin" aria-hidden="true" /> : null}
+              {t("Ajouter la liste de tâches type")}
+            </Button>
+          }
+        />
+
       ) : null}
 
       {local ? <p className="notice-warning t-caption anim-nudge">{local}</p> : null}
