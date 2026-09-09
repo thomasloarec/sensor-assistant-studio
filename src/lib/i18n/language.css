@@ -16,12 +16,16 @@
   flex-shrink: 0;
   max-width: 100%;
 }
+/* Aucun plafond en pixels : un nom de langue tronqué est le pire défaut
+   possible sur le contrôle que cherche justement qui ne comprend pas la langue
+   affichée. Le contrôle prend la largeur de son contenu ; la rangée du bandeau
+   passe à la ligne, ce qu'elle sait déjà faire. */
 .language-picker select {
   background: transparent;
   color: inherit;
   border: 0;
   font: inherit;
-  max-width: 140px;
+  max-width: 100%;
   padding: 0 2px;
   cursor: pointer;
   min-height: 44px;
