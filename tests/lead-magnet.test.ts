@@ -25,6 +25,7 @@ import {
   enableNda,
   ndaAllowsConfidentialTransfer,
   ndaDisableBlockedReason,
+  ndaDisableNeedsConfirmation,
   prepareNda,
 } from "../src/lib/leadmagnet/nda";
 import { buildSnapshot, checkSubmission, submissionBinding, submit } from "../src/lib/leadmagnet/submission";
