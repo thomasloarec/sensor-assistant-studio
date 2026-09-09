@@ -156,10 +156,11 @@ function ProjectDetail() {
   }, [capabilities?.available, load]);
 
   const run = async (fn: () => Promise<CrmProjectDetail>, ok: string) => {
-    if (pendingRef.current) return;
-    pendingRef.current = true;
+    if (pendingRef.current !== null) return;
     const asked = dossierId;
     const gen = ++genRef.current;
+    pendingRef.current = gen;
+
     setBusy(true);
     setMessage(null);
     setError(null);
