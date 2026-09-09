@@ -236,13 +236,25 @@
   --mw-surface: var(--surface);
   --mw-field: var(--popover);
   --mw-on-accent: var(--primary-foreground);
+  /* Renvois typographiques : l'atelier a sa propre feuille et ne peut pas
+     utiliser les classes du socle. Ces alias ne portent aucune valeur
+     littérale, ce sont des renvois vers l'échelle unique du produit. */
+  --mw-t-body: var(--t-body); /* 16px : texte courant de l'atelier */
+  --mw-t-dense: var(--t-caption); /* 14px : contrôles denses, légendes, aides */
+  --mw-t-label: var(--t-label); /* sur-titres et libellés de champ */
+  --mw-t-title: var(--t-title-s); /* titres de panneau */
+  --mw-t-title-m: var(--t-title-m); /* état de contact, titres de section */
+  --mw-t-title-l: var(--t-title-l); /* titre du catalogue */
+  --mw-t-display: var(--t-display-m); /* h1 de l'atelier */
+  /* Exception assumée : le flux de courant du schéma est une boucle continue,
+     sans équivalent parmi les six durées du socle (90 → 900 ms). Jeton local,
+     documenté, plutôt qu'une durée écrite au milieu d'une déclaration. */
+  --mw-flow-duration: 1.2s;
   min-height: 100%;
   overflow: auto;
   background: var(--mw-bg);
   color: var(--mw-ink);
-  font-family: Lato, "Source Sans 3", system-ui, sans-serif;
-  font-size: 14px;
-  line-height: 1.5;
+  font: var(--mw-t-body);
   padding-bottom: 28px;
 }
 .mw * {
