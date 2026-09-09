@@ -40,6 +40,10 @@ const EXEMPT_TEXTS = new Set([
   "mw-pole south",
   "mw-kind education",
   "studio-missing critical",
+  // Listes de classes utilitaires posées par une expression conditionnelle :
+  // ce sont des classes CSS, jamais du texte lu par une personne.
+  "grid gap-6",
+  "mx-auto grid max-w-6xl gap-6 p-4 lg:grid-cols-[320px_1fr]",
 ]);
 
 

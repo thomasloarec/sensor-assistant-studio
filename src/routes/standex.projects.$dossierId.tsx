@@ -62,6 +62,7 @@ export const Route = createFileRoute("/standex/projects/$dossierId")({
 
 type Tab = "tracking" | "tasks" | "sap" | "review" | "notify";
 
+/* i18n-canonical : libellés canoniques traduits par t() au rendu. */
 const TABS: { id: Tab; label: string }[] = [
   { id: "tracking", label: "Suivi" },
   { id: "tasks", label: "Tâches" },

@@ -45,6 +45,7 @@ export const Route = createFileRoute("/standex/")({
   component: ProjectsBoard,
 });
 
+/* i18n-canonical : libellés canoniques traduits par t() au rendu. */
 const SORTS: { id: BoardSort; label: string }[] = [
   { id: "updated_desc", label: "Activité la plus récente" },
   { id: "updated_asc", label: "Sans activité depuis longtemps" },

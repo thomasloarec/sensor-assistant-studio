@@ -25,6 +25,7 @@ import {
 export const stageLabel = (stage: CrmStage) => t(CRM_STAGE_LABEL[stage]);
 export const ALL_STAGES = CRM_STAGES;
 
+/* i18n-canonical : libellés canoniques traduits par t() au rendu. */
 export const TASK_STATUS_LABEL: Record<TaskStatus, string> = {
   todo: "À faire",
   in_progress: "En cours",

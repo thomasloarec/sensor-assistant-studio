@@ -279,3 +279,37 @@
   Smoke navigateur : case décochée par défaut, champs masqués, activation → champs +
   gardes NDA, désactivation → plus de blocage, zéro erreur console.
 
+
+## V1.8 — Tableau de bord interne Standex (livré, migration NON appliquée)
+
+- Espace `/standex` recomposé : `standex.tsx` (layout + `CrmProvider`), `standex.index.tsx`
+  (Projets : tableau + pipeline, recherche/filtres/tri indépendants de la langue),
+  `standex.tasks.tsx` (Tâches par rôle), `standex.admin.tsx` (Administration),
+  `standex.projects.$dossierId.tsx` (fiche projet persistante par ID, onglets Suivi /
+  Tâches / Notes SAP / Revue-documents-3D / Information du client).
+- L'ancienne console de 1 308 lignes n'est PAS supprimée : elle est extraite dans
+  `src/components/standex/console/dossier-console.tsx` (`DossierConsole`), montée sur
+  `/standex/console` et embarquée dans l'onglet Revue de la fiche projet. Revue R&D,
+  variantes, offres, échantillons, NDA, documents, rapport anglais et atelier 3D
+  fonctionnent comme avant.
+- Purs : `src/lib/leadmagnet/crm.ts` (8 stades exacts, marge
+  `(prix − coût) / prix × 100`, prix absent ou nul ⇒ marge inconnue, coût zéro explicite
+  accepté, marge négative permise, aucune conversion de devise, volume et provenance,
+  chiffre d'affaires calculé ou estimé, tâches/progression/retards) et
+  `sap-note.ts` (anglais déterministe, en-tête `DD/MM/YYYY - Full Name :`, idempotent).
+- Serveur : `supabase/schema/migration_v1.8_crm_dashboard.sql`, **ADDITIVE et NON
+  APPLIQUÉE**. Contrôle : `tools/sql-dashboard-review.mjs` — 65/65 OK sur PGlite avec les
+  migrations cumulées V1.2→V1.8. RLS, security definer + `search_path` sûr, wrappers
+  invoker, grants minimaux, CAS par `version`, notes SAP en ajout seul, protection du
+  dernier administrateur, annuaire métier sans création de compte ni permission implicite.
+- Sonde séparée : `REQUIRED_LEAD_SCHEMA_VERSION` reste `1.4` ; le tableau de bord a sa
+  propre sonde `REQUIRED_CRM_VERSION = 1.8`. Tant que la migration n'est pas appliquée,
+  les écrans affichent « suivi non installé » et renvoient vers la console — vérifié en
+  navigateur (404 `lead_crm_capabilities`, aucune erreur JS).
+- Aucun e-mail : la notification de revue est mise en file d'attente en `pending` avec
+  aperçu ; l'état « envoi non configuré » est affiché et rien n'est jamais marqué `sent`.
+- Aucun champ commercial (stade, prix, coût, marge, propriétaires) ne sort dans le DTO
+  client, l'export ou l'aperçu de message.
+- Gates : 402 tests / 49 178 assertions, typecheck OK, build OK, inventaire i18n
+  `TOTAL 0` (2 014 clés, huit langues), scans design conformes, QA navigateur 1280 et
+  390 px sur `/`, `/internal`, `/standex` et ses sous-écrans.
