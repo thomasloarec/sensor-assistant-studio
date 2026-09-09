@@ -555,36 +555,76 @@ returns jsonb language sql security invoker
 set search_path = public, lead_priv, pg_temp as $$
   select lead_priv.crm_set_stage(p_dossier, p_stage, p_expected_version); $$;
 
+-- Lecture STRICTEMENT typée d'un champ du correctif. Une valeur du mauvais type
+-- est REFUSÉE, jamais silencieusement convertie en « vide » : « not a number »
+-- effaçait le montant au lieu d'échouer.
+create or replace function lead_priv.crm_patch_text(_patch jsonb, _key text)
+returns text language plpgsql immutable
+set search_path = pg_temp as $$
+declare v jsonb := _patch -> _key;
+begin
+  if v is null or jsonb_typeof(v) = 'null' then return null; end if;
+  if jsonb_typeof(v) <> 'string' then
+    raise exception 'BAD_FIELD_TYPE:%', _key using errcode = '22023';
+  end if;
+  return nullif(btrim(v #>> '{}'), '');
+end $$;
+
+create or replace function lead_priv.crm_patch_number(_patch jsonb, _key text)
+returns numeric language plpgsql immutable
+set search_path = pg_temp as $$
+declare v jsonb := _patch -> _key; n numeric;
+begin
+  if v is null or jsonb_typeof(v) = 'null' then return null; end if;
+  if jsonb_typeof(v) <> 'number' then
+    raise exception 'BAD_FIELD_TYPE:%', _key using errcode = '22023';
+  end if;
+  n := lead_priv.json_number(v);
+  if n is null or not lead_priv.finite_num(n) then
+    raise exception 'BAD_FIELD_TYPE:%', _key using errcode = '22023';
+  end if;
+  return n;
+end $$;
+
 -- Identité du projet : société, nom de projet, pays, date de lancement série,
 -- estimation manuelle du CA, volume retenu.
 create or replace function lead_priv.crm_set_fields(_dossier uuid, _patch jsonb, _expected integer)
 returns jsonb language plpgsql security definer
 set search_path = lead, lead_priv, pg_temp as $$
 declare u uuid := lead_priv.require_user(); row lead.dossier_crm%rowtype;
-        bullets text[] := '{}'; v text; n numeric; d date;
+        bullets text[] := '{}'; v text; n numeric; d date; k text;
+        allowed text[] := array['company','project_name','country_code','currency',
+                                'series_launch','annual_volume_override',
+                                'estimated_annual_revenue'];
 begin
   perform lead_priv.crm_require_write(u, _dossier, array['sales','rnd']::lead.staff_role[]);
   if _patch is null or jsonb_typeof(_patch) <> 'object' then
     raise exception 'BAD_PATCH' using errcode = '22023';
   end if;
+  -- Liste blanche : une clé inconnue est une erreur, pas un champ ignoré.
+  for k in select jsonb_object_keys(_patch) loop
+    if not (k = any(allowed)) then
+      raise exception 'UNKNOWN_FIELD:%', k using errcode = '22023';
+    end if;
+  end loop;
   row := lead_priv.crm_bump(_dossier, _expected);
 
   if _patch ? 'company' then
-    v := nullif(btrim(coalesce(_patch->>'company','')), '');
+    v := lead_priv.crm_patch_text(_patch, 'company');
     update lead.dossier_crm set company = v where dossier_id = _dossier;
     if v is distinct from row.company then
       bullets := bullets || ('Company set to ' || coalesce(v,'unknown') || '.');
     end if;
   end if;
   if _patch ? 'project_name' then
-    v := nullif(btrim(coalesce(_patch->>'project_name','')), '');
+    v := lead_priv.crm_patch_text(_patch, 'project_name');
     update lead.dossier_crm set project_name = v where dossier_id = _dossier;
     if v is distinct from row.project_name then
       bullets := bullets || ('Project name set to ' || coalesce(v,'unknown') || '.');
     end if;
   end if;
   if _patch ? 'country_code' then
-    v := nullif(upper(btrim(coalesce(_patch->>'country_code',''))), '');
+    v := upper(lead_priv.crm_patch_text(_patch, 'country_code'));
     if v is not null and v !~ '^[A-Z]{2}$' then
       raise exception 'BAD_COUNTRY' using errcode = '22023';
     end if;
@@ -594,9 +634,15 @@ begin
     end if;
   end if;
   if _patch ? 'currency' then
-    v := nullif(upper(btrim(coalesce(_patch->>'currency',''))), '');
+    v := upper(lead_priv.crm_patch_text(_patch, 'currency'));
     if v is not null and v !~ '^[A-Z]{3}$' then
       raise exception 'BAD_CURRENCY' using errcode = '22023';
+    end if;
+    -- Même verrou que sur le prix : pas de relabellisation d'un montant existant.
+    perform lead_priv.crm_currency_guard(row, v);
+    if v is null and (row.unit_price is not null or row.unit_cost is not null
+                      or row.estimated_annual_revenue is not null) then
+      raise exception 'CURRENCY_LOCKED' using errcode = '22023';
     end if;
     update lead.dossier_crm set currency = v where dossier_id = _dossier;
     if v is distinct from row.currency then
@@ -604,8 +650,11 @@ begin
     end if;
   end if;
   if _patch ? 'series_launch' then
-    v := nullif(btrim(coalesce(_patch->>'series_launch','')), '');
+    v := lead_priv.crm_patch_text(_patch, 'series_launch');
     if v is null then d := null; else
+      if v !~ '^\d{4}-\d{2}-\d{2}$' then
+        raise exception 'BAD_DATE' using errcode = '22023';
+      end if;
       begin d := v::date; exception when others then
         raise exception 'BAD_DATE' using errcode = '22023'; end;
     end if;
@@ -616,8 +665,7 @@ begin
     end if;
   end if;
   if _patch ? 'annual_volume_override' then
-    n := lead_priv.json_number(_patch->'annual_volume_override');
-    if _patch->'annual_volume_override' = 'null'::jsonb then n := null; end if;
+    n := lead_priv.crm_patch_number(_patch, 'annual_volume_override');
     if n is not null and (n <= 0 or n <> trunc(n) or n > 2147483647) then
       raise exception 'BAD_ANNUAL_VOLUME' using errcode = '22023';
     end if;
@@ -628,8 +676,7 @@ begin
     end if;
   end if;
   if _patch ? 'estimated_annual_revenue' then
-    n := lead_priv.json_number(_patch->'estimated_annual_revenue');
-    if _patch->'estimated_annual_revenue' = 'null'::jsonb then n := null; end if;
+    n := lead_priv.crm_patch_number(_patch, 'estimated_annual_revenue');
     if n is not null and (n < 0 or n >= 1e15) then
       raise exception 'BAD_ESTIMATE' using errcode = '22023';
     end if;
@@ -643,10 +690,12 @@ begin
 
   update lead.dossier_crm set updated_at = now(), version = version + 1
    where dossier_id = _dossier;
+  -- Réécrire la même valeur ne fabrique aucune note : `bullets` reste vide et
+  -- `sap_note` sort immédiatement.
   perform lead_priv.sap_note(_dossier, u, 'fields:' || row.version::text, bullets);
   insert into lead.audit_log (actor, action, dossier_id, detail)
   values (u, 'crm_fields_set', _dossier, jsonb_build_object('keys',
-          (select jsonb_agg(k) from jsonb_object_keys(_patch) k)));
+          (select jsonb_agg(k2) from jsonb_object_keys(_patch) k2)));
   return lead_priv.crm_project(_dossier);
 end $$;
 
