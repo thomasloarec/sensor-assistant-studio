@@ -35,3 +35,7 @@ dist-ssr
 
 # Local source review and visual QA intermediates
 /tmp/
+
+# Studio V2 : table privee, jamais versionnee ni transmise
+R3c_clients_prives.csv
+R3c_clients_prives*.csv

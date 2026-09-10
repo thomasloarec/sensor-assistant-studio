@@ -2,6 +2,10 @@ import { t, msg } from "@/lib/i18n/core";
 import { useLocale } from "@/lib/i18n/react";
 import { AppHeader } from "@/components/standex/app-header";
 import SensorCard from "./sensor-card";
+import StudioV2 from "./studio-v2";
+import type { StudioStudy } from "@/lib/standex/studio-dossier";
+import type { DesignFreeze } from "@/lib/standex/design-freeze";
+import { publishedPair } from "@/lib/standex/magnetics/registries";
 import { Component, lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import {
@@ -22,7 +26,6 @@ import {
   DISTANCE_SOURCE,
   EDUCATION_NOTE,
   REFERENCE_NOTE,
-  MK03_DISTANCES,
   MODEL_VERSION,
   parseWorkshopConfig,
   simulateCycle,
@@ -128,6 +131,10 @@ export interface WorkshopCableRouting {
 }
 
 export interface WorkshopProps {
+  initialStudy?: StudioStudy | null | undefined;
+  onStudyChange?: ((study: StudioStudy, freeze: DesignFreeze | null) => void) | undefined;
+  dossierId?: string | undefined;
+  revision?: number | undefined;
   initialConfig?: WorkshopConfig | null;
   onClose: () => void;
   onSave: (config: WorkshopConfig) => Promise<void>;
@@ -141,6 +148,7 @@ export interface WorkshopProps {
   onDraftChange?: (config: WorkshopConfig) => void;
 }
 export default function MagneticWorkshop({
+  initialStudy, onStudyChange, dossierId, revision,
   initialConfig,
   onClose,
   onSave,
@@ -326,7 +334,8 @@ export default function MagneticWorkshop({
   const summary = useMemo(() => summarizeWorkshop(config), [config]);
   const fingerprint = JSON.stringify(config),
     dirty = saved !== fingerprint;
-  const [pull, drop] = MK03_DISTANCES[config.sensitivity][config.geometry];
+  const referencePair = publishedPair(config.sensitivity, config.geometry);
+  const pull = referencePair?.[0] ?? "—", drop = referencePair?.[1] ?? "—";
   const unknown = result.unknown;
   const machineReady = !machine || !!machineAsset?.nodes.some((n) => n.path === machine.movingNode);
   const mismatches = result.samples.filter(
@@ -1469,6 +1478,7 @@ export default function MagneticWorkshop({
           </div>
         </section>
       </div>
+      <StudioV2 config={config} onApply={update} initialStudy={initialStudy} onStudyChange={onStudyChange} dossierId={dossierId} revision={revision} />
       <footer className="mw-footer">
         <p>
           <strong>{t(reference ? "Présélection documentée." : "Illustration pédagogique.")}</strong>

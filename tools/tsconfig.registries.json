@@ -1,0 +1,5 @@
+{
+  "extends": "../tsconfig.json",
+  "include": ["registry-schema.ts", "registry-validate.ts"],
+  "compilerOptions": { "types": ["node"] }
+}

@@ -5,6 +5,7 @@ import { isLocale, type Locale, t } from "@/lib/i18n/core";
 import type { WorkshopConfig } from "@/lib/standex/magnetic-workshop";
 import { EMPTY_CABLING, type CablingConfig } from "./cabling";
 import { DEFAULT_TERMINATION, type Termination } from "./connectors";
+import { freezeContextKey } from "../standex/design-freeze";
 
 export type RequirementState = "confirmed" | "hypothesis" | "unknown";
 export type RequirementSource = "user" | "import" | "assistant" | "rnd";
@@ -64,6 +65,9 @@ export interface Attachment {
 export type StorageMode = "memory" | "local-device";
 
 export interface DesignDossier {
+  /** Local technical study travels inside the existing revision DTO. No signature authority. */
+  studioV2?: import("../standex/studio-dossier").StudioStudy | null;
+  designFreeze?: import("../standex/design-freeze").DesignFreeze | null;
   id: string;
   createdAt: string;
   updatedAt: string;
@@ -249,6 +253,7 @@ export function parseAnnualVolume(raw: string): AnnualVolume | { error: string }
 export type ClientDossierDto = Omit<DesignDossier, "internalNotes">;
 export function toClientDto(d: DesignDossier): ClientDossierDto {
   const clone = { ...d };
+  if (clone.designFreeze && clone.designFreeze.contextKey !== freezeContextKey(clone.workshop, clone.studioV2)) clone.designFreeze = null;
   delete (clone as Partial<DesignDossier>).internalNotes;
   return clone as ClientDossierDto;
 }

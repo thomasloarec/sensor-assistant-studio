@@ -1,0 +1,305 @@
+.studio-v2 {
+  max-width: 1372px;
+  margin: 32px auto;
+  padding: 28px;
+  background: var(--surface);
+  color: var(--foreground);
+  box-shadow: var(--e-2);
+  border-radius: var(--r-lg);
+  min-width: 0;
+  font: var(--t-body-l);
+}
+.studio-head,
+.studio-table-head,
+.studio-counts,
+.studio-actions {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+.studio-head > div {
+  flex: 1;
+  min-width: 240px;
+}
+.studio-v2 h2 {
+  font: var(--t-title-m);
+  margin: 10px 0;
+}
+.studio-v2 h3,
+.studio-v2 h4 {
+  color: var(--heading);
+  margin: 18px 0 10px;
+  font-weight: 700;
+}
+.studio-v2 p {
+  margin: 12px 0;
+}
+.studio-eyebrow {
+  color: var(--primary);
+  font-weight: 700;
+}
+.studio-example,
+.studio-limit {
+  padding: 14px;
+  border-left: 4px solid var(--primary);
+  background: var(--muted);
+}
+.studio-counts {
+  justify-content: flex-start;
+  padding: 16px 0;
+  font: var(--t-body);
+}
+.studio-counts span {
+  border: 0;
+  box-shadow: var(--e-1);
+  padding: 8px 12px;
+  border-radius: var(--r-sm);
+}
+.studio-inputs,
+.studio-fields {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  padding: 20px 0;
+}
+.studio-v2 label {
+  display: block;
+  font-weight: 600;
+}
+.studio-v2 input,
+.studio-v2 select {
+  display: block;
+  width: 100%;
+  min-height: 44px;
+  padding: 9px;
+  border: 0;
+  box-shadow: var(--e-1);
+  border-radius: var(--r-sm);
+  background: var(--surface-sunken);
+  color: var(--foreground);
+  font: var(--t-body);
+  margin-top: 5px;
+  min-width: 0;
+}
+.studio-v2 button {
+  cursor: pointer;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 0;
+  box-shadow: var(--e-1);
+  border-radius: var(--r-sm);
+  background: var(--background);
+  color: var(--foreground);
+}
+.studio-v2 button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.studio-v2 :focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 3px;
+}
+.studio-v2 details {
+  padding: 20px 0;
+}
+.studio-v2 summary {
+  cursor: pointer;
+  font-weight: 700;
+}
+.studio-table-scroll {
+  overflow: auto;
+  max-width: 100%;
+  max-height: 480px;
+  margin: 14px 0;
+}
+.studio-v2 thead {
+  position: sticky;
+  top: 0;
+  background: var(--surface);
+  z-index: 1;
+}
+.studio-v2 table {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 1000px;
+  font-variant-numeric: tabular-nums;
+  font: var(--t-caption);
+}
+.studio-v2 caption {
+  text-align: left;
+  padding: 10px 0;
+  font-weight: 700;
+}
+.studio-v2 th,
+.studio-v2 td {
+  text-align: left;
+  padding: 12px 8px;
+}
+.studio-v2 tr[data-selected="true"] {
+  background: var(--muted);
+  outline: 2px solid var(--primary);
+  outline-offset: -2px;
+}
+.studio-verdict {
+  display: inline-block;
+  border: 0;
+  box-shadow: var(--e-1);
+  padding: 4px 7px;
+  white-space: nowrap;
+}
+.studio-verdict[data-verdict="tight"] {
+  outline: 1px dashed var(--warning);
+  background: var(--warning-soft);
+  border-radius: var(--r-pill);
+}
+.studio-verdict[data-verdict="failed"] {
+  outline: 3px double var(--destructive);
+  background: var(--destructive-soft);
+  border-radius: var(--r-pill);
+}
+.studio-v2 svg {
+  display: block;
+  min-width: 830px;
+  width: 100%;
+  fill: var(--foreground);
+  font: var(--t-caption);
+}
+.studio-grid {
+  stroke: var(--hairline);
+}
+.studio-band-rect {
+  fill: var(--muted);
+  stroke: var(--primary);
+  stroke-dasharray: 3 2;
+}
+.studio-band-rect[data-selected="true"] {
+  stroke-width: 3;
+}
+.studio-gap-closed,
+.studio-gap-open {
+  stroke: var(--foreground);
+  stroke-width: 2;
+}
+.studio-gap-open {
+  stroke-dasharray: 5 4;
+}
+.studio-selection {
+  padding: 18px;
+  background: var(--muted);
+  border-radius: var(--r-sm);
+}
+.studio-v2 ul,
+.studio-v2 ol {
+  padding-left: 24px;
+}
+.studio-v2 li {
+  margin: 5px 0;
+}
+.studio-v2 a {
+  color: var(--primary);
+  text-decoration: underline;
+}
+.studio-fields {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.studio-fields small {
+  display: block;
+  margin: 6px 0;
+}
+.studio-import {
+  max-width: 360px;
+}
+.studio-freeze {
+  margin-top: 28px;
+  border: 0;
+  box-shadow: var(--e-1);
+  padding: 22px;
+}
+.studio-freeze dl > div {
+  display: grid;
+  grid-template-columns: minmax(140px, 1fr) 2fr;
+  gap: 16px;
+  padding: 8px 0;
+}
+.studio-freeze dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.studio-freeze dd small {
+  display: block;
+}
+.studio-hash {
+  overflow-wrap: anywhere;
+  font-family: monospace;
+}
+.studio-print-status {
+  display: none;
+}
+@media (max-width: 700px) {
+  .studio-v2 {
+    padding: 16px;
+    margin: 20px 10px;
+  }
+  .studio-inputs,
+  .studio-fields {
+    grid-template-columns: 1fr;
+  }
+  .studio-freeze dl > div {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+}
+@media print {
+  body.studio-print *:has(.studio-freeze),
+  body.studio-print .studio-freeze,
+  body.studio-print .studio-freeze * {
+    background: none !important;
+    color: var(--standex-gray) !important;
+  }
+  @page {
+    size: A4;
+    margin: 20mm 15mm;
+  }
+  body.studio-print *:not(:has(.studio-freeze)):not(.studio-freeze):not(.studio-freeze *) {
+    display: none !important;
+  }
+  body.studio-print *:has(.studio-freeze) {
+    display: block !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    position: static !important;
+  }
+  body.studio-print .studio-freeze {
+    position: static;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    border: 0;
+    box-shadow: none;
+  }
+  body.studio-print .studio-no-print {
+    display: none;
+  }
+  body.studio-print .studio-print-status {
+    display: block;
+    position: fixed;
+    top: -14mm;
+    left: 0;
+    font-weight: 700;
+  }
+  body.studio-print .studio-freeze section {
+    break-inside: avoid;
+  }
+}
+
+.studio-v2 tbody tr:nth-child(even) {
+  background: var(--surface-sunken);
+}
+.studio-v2 small {
+  font: var(--t-caption);
+}

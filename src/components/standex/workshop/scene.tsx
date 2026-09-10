@@ -1,3 +1,4 @@
+import { publishedPair } from "@/lib/standex/magnetics/registries";
 import { t } from "@/lib/i18n/core";
 import { useMemo, useRef, useEffect } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
@@ -9,7 +10,6 @@ import {
   length,
   approachOffset,
   magnetSize,
-  MK03_DISTANCES,
   unavailableReason,
   momentFor,
 } from "@/lib/standex/magnetic-workshop";
@@ -521,8 +521,9 @@ function Dimensions({ model }: { model: SensorModel }) {
   );
 }
 function ReferenceMarkers({ config }: { config: WorkshopConfig }) {
-  const [pull, drop] = MK03_DISTANCES[config.sensitivity][config.geometry],
-    d1 = config.geometry === "D1";
+  const pair = publishedPair(config.sensitivity, config.geometry);
+  if (!pair) return null;
+  const [pull, drop] = pair, d1 = config.geometry === "D1";
   return (
     <group>
       {[pull, drop].map((d, i) => {

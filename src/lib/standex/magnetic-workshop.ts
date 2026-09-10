@@ -12,6 +12,7 @@ import {
 } from "./sensor-catalog";
 import { parseMachine, componentPose, openingAt, rotate } from "./machine-assembly";
 import type { MachineAssembly } from "./machine-assembly";
+import { publishedPair } from "./magnetics/registries";
 export type Vec3 = [number, number, number];
 export type Contact = "open" | "closed" | "unknown";
 export type Sensitivity = "B" | "C" | "D" | "E";
@@ -87,12 +88,8 @@ export const REFERENCE_NOTE =
 
 // MK03 table, checked 2026-09-07. [pull-in, drop-out], mm; D2 deliberately omitted:
 // one distance at a side lobe does not locate the lobe in a full 3D map.
-export const MK03_DISTANCES: Record<Sensitivity, Record<"D1" | "D3", readonly [number, number]>> = {
-  B: { D1: [15, 17.5], D3: [9.3, 11.4] },
-  C: { D1: [13, 16.5], D3: [7.4, 9.9] },
-  D: { D1: [11, 14.5], D3: [5.7, 8.5] },
-  E: { D1: [10, 13.5], D3: [4.5, 8] },
-};
+/** @deprecated Compatibility export only; no product values live in this module. */
+export const MK03_DISTANCES = Object.fromEntries((["B", "C", "D", "E"] as const).map(cls => [cls, Object.fromEntries((["D1", "D3"] as const).map(approach => [approach, publishedPair(cls, approach)]))])) as Record<Sensitivity, Record<"D1" | "D3", readonly [number, number] | null>>;
 export const clamp = (v: number, low: number, high: number) => Math.max(low, Math.min(high, v));
 export const axis = (degrees: number): Vec3 => [
   Math.cos((degrees * Math.PI) / 180),
@@ -182,6 +179,7 @@ export function referenceAllowed(c: WorkshopConfig): boolean {
   return (
     c.mode === "reference" &&
     c.sensorId === "MK03" &&
+    publishedPair(c.sensitivity, c.geometry) !== null &&
     c.machine === null &&
     c.magnetModel === "M02" &&
     c.magnetTilt === 0 &&
@@ -393,8 +391,7 @@ export function simulateCycle(c: WorkshopConfig, steps = 600): CycleResult {
   if (!parseWorkshopConfig(c)) throw new Error("Montage invalide");
   if (!Number.isInteger(steps) || steps < 10 || steps > 10000)
     throw new Error("Résolution invalide");
-  const reason = unavailableReason(c),
-    [pull, drop] = MK03_DISTANCES[c.sensitivity][c.geometry];
+  const reason = unavailableReason(c), pair = publishedPair(c.sensitivity, c.geometry);
   const samples: CycleSample[] = [],
     transitions: CycleResult["transitions"] = [];
   let contact =
@@ -411,11 +408,11 @@ export function simulateCycle(c: WorkshopConfig, steps = 600): CycleResult {
       : c.mode === "reference"
         ? pose.distance
         : educationSignal(c, pose.position, pose.angle, t);
-    const next = switchContact(
+    const next = c.mode === "reference" && !pair ? "unknown" : switchContact(
       contact,
       signal,
-      c.mode === "reference" ? pull : 1,
-      c.mode === "reference" ? drop : 0.72,
+      c.mode === "reference" ? pair![0] : 1,
+      c.mode === "reference" ? pair![1] : 0.72,
       c.mode === "education",
     );
     if (next !== contact && i > 0) {
@@ -444,8 +441,7 @@ export function simulateCycle(c: WorkshopConfig, steps = 600): CycleResult {
 }
 
 export function summarizeWorkshop(c: WorkshopConfig): string {
-  const result = simulateCycle(c),
-    [pull, drop] = MK03_DISTANCES[c.sensitivity][c.geometry];
+  const result = simulateCycle(c), pair = publishedPair(c.sensitivity, c.geometry), pull = pair?.[0] ?? "?", drop = pair?.[1] ?? "?";
   const setup =
     c.mode === "reference"
       ? `MK03-1A66${c.sensitivity}-500W + M02 ; approche ${c.geometry}, axes parallèles.`

@@ -6,11 +6,12 @@
  * - le binaire 3D n'est pas dans le JSON : il est listé pour réimport explicite.
  */
 import { z } from "zod";
-import { createDossier, type DesignDossier } from "./dossier";
+import { createDossier, toClientDto, type DesignDossier } from "./dossier";
 import { EMPTY_CABLING } from "./cabling";
 import { parseWorkshopConfig } from "@/lib/standex/magnetic-workshop";
 import { isKnownSensorId } from "@/lib/standex/sensor-catalog";
 import { DEFAULT_TERMINATION } from "./connectors";
+import { parseStudioStudy } from "../standex/studio-dossier";
 
 export const EXPORT_FORMAT = "standex-design-dossier";
 export const EXPORT_VERSION = 2;
@@ -32,8 +33,7 @@ export function buildDossierExport(
   now = new Date().toISOString(),
   opts: { ndaRequested?: boolean } = {},
 ): DossierExport {
-  const { internalNotes: _internal, ...rest } = d;
-  void _internal;
+  const rest = toClientDto(d);
   return {
     format: EXPORT_FORMAT,
     version: EXPORT_VERSION,
@@ -174,6 +174,7 @@ const knownSensorId = z
   .catch(null)
   .transform((v) => (v !== null && isKnownSensorId(v) ? v : null));
 const dossierSchema = z.object({
+  studioV2: z.unknown().optional(),
   title: z.string().catch("Dossier repris"),
   // Un dossier plus ancien n'a pas de langue d'origine : le français fait foi.
   sourceLocale: z.enum(["fr", "en", "zh", "de", "es", "ru", "it", "ja"]).catch("fr"),
@@ -284,6 +285,7 @@ export function parseDossierExport(raw: unknown, now = new Date().toISOString())
 
   const dossier: DesignDossier = {
     ...base,
+    ...(data.studioV2 ? { studioV2: parseStudioStudy(data.studioV2), designFreeze: null } : {}),
     title: data.title,
     sourceLocale: data.sourceLocale,
     requirements: data.requirements.length

@@ -1,4 +1,5 @@
 import { t } from "@/lib/i18n/core";
+import FreezeReview from "./freeze-review";
 /** Console interne Standex : boîte de réception, revue R&D, offre, échantillons, preuve NDA.
  *
  * Écran privé : chaque action est refusée côté serveur si le rôle et l'affectation
@@ -725,6 +726,7 @@ export function DossierConsole(props: DossierConsoleProps) {
                             </>
                           );
                         })()}
+                        <FreezeReview raw={lastRevision.snapshot["designFreeze"]} dossierId={view.dossier.id} revisionId={lastRevision.id} refreshKey={view.reviews.map(r => r.id + r.superseded).join("/")} />
                         <details>
                           <summary className="cursor-pointer t-caption text-muted-foreground">
                             {t("Contenu complet envoyé (brut)")}

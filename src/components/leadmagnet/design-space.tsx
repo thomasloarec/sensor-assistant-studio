@@ -2923,6 +2923,10 @@ export function DesignSpace({
       {draftBanner}
       <Suspense fallback={<p className="text-base">{t("Chargement de l'atelier…")}</p>}>
         <MagneticWorkshop
+          initialStudy={dossier.studioV2}
+          dossierId={dossier.id}
+          revision={dossier.revision}
+          onStudyChange={(studioV2, designFreeze) => setDossier(d => ({ ...d, studioV2, designFreeze }))}
           key={`workshop-${workshopEpoch}`}
           initialConfig={workshop ?? DEFAULT_WORKSHOP}
           storageLabel={t("ce dossier, en mémoire de l'onglet")}

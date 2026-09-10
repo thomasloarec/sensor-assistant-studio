@@ -1,0 +1,4 @@
+case_id;product_reference;product_family;role;quantity_per_unit;note_fr
+# EXEMPLE SYNTHETIQUE NON IMPORTABLE ; CAS-2026-0001;MK03-1A66C-500W;MK03;capteur retenu;1;
+# EXEMPLE SYNTHETIQUE NON IMPORTABLE ; CAS-2026-0001;M02;;aimant;1;Colle sur la face plastique du bac
+# EXEMPLE SYNTHETIQUE NON IMPORTABLE ; CAS-2026-0001;MK24-A-J;MK24;capteur ecarte;;Ecarte faute de place pour le report CMS

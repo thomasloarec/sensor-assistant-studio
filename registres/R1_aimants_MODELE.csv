@@ -1,0 +1,2 @@
+magnet_id;designation;standex_reference;shape;dim_a_mm;dim_b_mm;dim_c_mm;inner_diameter_mm;magnetization_axis;material_family;grade;br_mt_20c;br_tolerance_pct;temp_coeff_br_pct_per_k;max_service_temp_c;max_service_temp_source;source_type;source_ref;entered_by;entered_on;confidence
+# EXEMPLE SYNTHETIQUE NON IMPORTABLE ; EXEMPLE-A-SUPPRIMER;Aimant bloc de demonstration;;block;20;10;5;;c;NdFeB;N35;1180;2.5;-0.12;80;Fiche fournisseur exemple p.2;datasheet;EXEMPLE - remplacer par une vraie source;Thomas LOAREC;2026-09-10;high

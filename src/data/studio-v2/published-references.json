@@ -1,0 +1,190 @@
+{
+  "version": "published-reference-1.0.0",
+  "sourceSha256": "201b382fb771934823f189b2c4dc84da83f7e1f35c64e43a71293972dca3467e",
+  "rows": [
+    {
+      "id": "CAL-0001",
+      "sensorFamily": "MK03",
+      "sensorReference": "MK03-1A66B-500W",
+      "sensitivityClass": "B",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D1",
+      "pullInMm": 15,
+      "dropOutMm": 17.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published_table",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK03 Series, consulte le 2026-09-10 ; controle PDF p.2 (imprimee 87) ; temperature 20 C convention CDC 1.0, non publiee",
+        "enteredOn": "2026-09-10",
+        "fields": [
+          "pullInMm",
+          "dropOutMm",
+          "hysteresisMm"
+        ]
+      }
+    },
+    {
+      "id": "CAL-0002",
+      "sensorFamily": "MK03",
+      "sensorReference": "MK03-1A66C-500W",
+      "sensitivityClass": "C",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D1",
+      "pullInMm": 13,
+      "dropOutMm": 16.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0002",
+        "sourceType": "published_table",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK03 Series, consulte le 2026-09-10 ; controle PDF p.2 (imprimee 87) ; temperature 20 C convention CDC 1.0, non publiee",
+        "enteredOn": "2026-09-10",
+        "fields": [
+          "pullInMm",
+          "dropOutMm",
+          "hysteresisMm"
+        ]
+      }
+    },
+    {
+      "id": "CAL-0003",
+      "sensorFamily": "MK03",
+      "sensorReference": "MK03-1A66D-500W",
+      "sensitivityClass": "D",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D1",
+      "pullInMm": 11,
+      "dropOutMm": 14.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0003",
+        "sourceType": "published_table",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK03 Series, consulte le 2026-09-10 ; controle PDF p.2 (imprimee 87) ; temperature 20 C convention CDC 1.0, non publiee",
+        "enteredOn": "2026-09-10",
+        "fields": [
+          "pullInMm",
+          "dropOutMm",
+          "hysteresisMm"
+        ]
+      }
+    },
+    {
+      "id": "CAL-0004",
+      "sensorFamily": "MK03",
+      "sensorReference": "MK03-1A66E-500W",
+      "sensitivityClass": "E",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D1",
+      "pullInMm": 10,
+      "dropOutMm": 13.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0004",
+        "sourceType": "published_table",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK03 Series, consulte le 2026-09-10 ; controle PDF p.2 (imprimee 87) ; temperature 20 C convention CDC 1.0, non publiee",
+        "enteredOn": "2026-09-10",
+        "fields": [
+          "pullInMm",
+          "dropOutMm",
+          "hysteresisMm"
+        ]
+      }
+    },
+    {
+      "id": "CAL-0005",
+      "sensorFamily": "MK03",
+      "sensorReference": "MK03-1A66B-500W",
+      "sensitivityClass": "B",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D3",
+      "pullInMm": 9.3,
+      "dropOutMm": 11.4,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0005",
+        "sourceType": "published_table",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK03 Series, consulte le 2026-09-10 ; controle PDF p.2 (imprimee 87) ; temperature 20 C convention CDC 1.0, non publiee",
+        "enteredOn": "2026-09-10",
+        "fields": [
+          "pullInMm",
+          "dropOutMm",
+          "hysteresisMm"
+        ]
+      }
+    },
+    {
+      "id": "CAL-0006",
+      "sensorFamily": "MK03",
+      "sensorReference": "MK03-1A66C-500W",
+      "sensitivityClass": "C",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D3",
+      "pullInMm": 7.4,
+      "dropOutMm": 9.9,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0006",
+        "sourceType": "published_table",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK03 Series, consulte le 2026-09-10 ; controle PDF p.2 (imprimee 87) ; temperature 20 C convention CDC 1.0, non publiee",
+        "enteredOn": "2026-09-10",
+        "fields": [
+          "pullInMm",
+          "dropOutMm",
+          "hysteresisMm"
+        ]
+      }
+    },
+    {
+      "id": "CAL-0007",
+      "sensorFamily": "MK03",
+      "sensorReference": "MK03-1A66D-500W",
+      "sensitivityClass": "D",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D3",
+      "pullInMm": 5.7,
+      "dropOutMm": 8.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0007",
+        "sourceType": "published_table",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK03 Series, consulte le 2026-09-10 ; controle PDF p.2 (imprimee 87) ; temperature 20 C convention CDC 1.0, non publiee",
+        "enteredOn": "2026-09-10",
+        "fields": [
+          "pullInMm",
+          "dropOutMm",
+          "hysteresisMm"
+        ]
+      }
+    },
+    {
+      "id": "CAL-0008",
+      "sensorFamily": "MK03",
+      "sensorReference": "MK03-1A66E-500W",
+      "sensitivityClass": "E",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D3",
+      "pullInMm": 4.5,
+      "dropOutMm": 8,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0008",
+        "sourceType": "published_table",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK03 Series, consulte le 2026-09-10 ; controle PDF p.2 (imprimee 87) ; temperature 20 C convention CDC 1.0, non publiee",
+        "enteredOn": "2026-09-10",
+        "fields": [
+          "pullInMm",
+          "dropOutMm",
+          "hysteresisMm"
+        ]
+      }
+    }
+  ]
+}

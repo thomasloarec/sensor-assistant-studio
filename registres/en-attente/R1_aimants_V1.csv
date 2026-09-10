@@ -1,0 +1,2 @@
+magnet_id;designation;standex_reference;shape;dim_a_mm;dim_b_mm;dim_c_mm;inner_diameter_mm;magnetization_axis;material_family;grade;br_mt_20c;br_tolerance_pct;temp_coeff_br_pct_per_k;max_service_temp_c;max_service_temp_source;source_type;source_ref;entered_by;entered_on;confidence
+M02;"M02 AlNiCo en boitier ; enveloppe publiee, geometrie active non documentee";M02;block;32.4;16.7;10;;;AlNiCo;;;;;;;datasheet;"Packaged-Magnets.pdf V03 18 Jun 2026 p.1 ; dimensions hors tout, pas de Br ni axe publies";ChatGPT - transcription documentaire;2026-09-10;medium

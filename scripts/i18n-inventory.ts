@@ -113,7 +113,8 @@ const CODE_ATTRS = new Set([
 const listFiles = (dir: string): string[] => {
   const out: string[] = [];
   for (const entry of readdirSync(dir)) {
-    const path = join(dir, entry);
+    // Classification below uses repository paths on both Windows and POSIX.
+    const path = join(dir, entry).replaceAll("\\", "/");
     if (SKIP_DIRS.some((d) => path.startsWith(d))) continue;
     if (statSync(path).isDirectory()) out.push(...listFiles(path));
     else if (/\.tsx?$/.test(path) && !SKIP_FILES.includes(path)) out.push(path);

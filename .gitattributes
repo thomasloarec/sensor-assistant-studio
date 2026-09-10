@@ -1,0 +1,3 @@
+# Registry byte hashes and CSV validation must survive Windows checkouts.
+registres/** text eol=lf
+src/data/registries/** text eol=lf
