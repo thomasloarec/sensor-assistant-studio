@@ -223,7 +223,7 @@ function pointFields(label: string, value: Point | null, onChange: (p: Point | n
         {[0, 1, 2].map((i) => (
           <Input
             key={i}
-            className="t-metric h-11 w-32 text-right"
+            className="t-metric h-11 min-w-0 w-32 text-right"
             inputMode="decimal"
             value={value ? String(p[i]) : ""}
             placeholder={["X", "Y", "Z"][i]!}
@@ -3470,7 +3470,7 @@ export function DesignSpace({
           </div>
           <TabsList className={showAdvanced ? "flex-wrap" : "hidden"}>
             <TabsTrigger value="besoin">{t("Besoin")}</TabsTrigger>
-            <TabsTrigger value="montage">{t("Montage &amp; 3D")}</TabsTrigger>
+            <TabsTrigger value="montage">{t("Montage & 3D")}</TabsTrigger>
             <TabsTrigger value="candidats">{t("Candidats")}</TabsTrigger>
             <TabsTrigger value="cablage">{t("Câblage")}</TabsTrigger>
             <TabsTrigger value="revue">{t("Revue Standex")}</TabsTrigger>
