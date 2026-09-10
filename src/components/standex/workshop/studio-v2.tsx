@@ -77,6 +77,7 @@ export default function StudioV2({
 }: StudioProps) {
   useLocale();
   const [study, setStudy] = useState<StudioStudy>(() => initialStudy ?? newStudy());
+  const [demoRun, setDemoRun] = useState(0);
   const [selectedId, setSelectedId] = useState<string | null>(null),
     [sort, setSort] = useState<"margin" | "sensor">("margin"),
     [freeze, setFreeze] = useState<DesignFreeze | null>(null),
@@ -124,6 +125,8 @@ export default function StudioV2({
   const x = (v: number) => 190 + (v / maximum) * 590;
   const confirmed = Object.values(study.fields).filter((f) => f.state === "confirmed").length;
   function demo() {
+    // Reopening the dossier after a reset is a new, explicit consultation.
+    setDemoRun((run) => run + 1);
     setStudy({
       ...newStudy(),
       example: true,
@@ -424,6 +427,7 @@ export default function StudioV2({
         )}
       </details>
       <details
+        key={`dossier-${demoRun}`}
         onToggle={(e) => {
           if (e.currentTarget.open && !study.consulted)
             setStudy((s) => deriveStudioFields({ ...s, consulted: true }, config));
