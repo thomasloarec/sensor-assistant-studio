@@ -531,6 +531,8 @@ function workshopEnglish(dto: ClientDossierDto): string[] {
  * Aucun code brut ne sort dans le rapport client. */
 const MOUNTING_REASON_EN: Record<string, string> = {
   NO_PROFILE: "no published reference profile for this sensor/magnet pair",
+  APPROACH_NOT_LOCATED:
+    "distances are documented for this approach, but no trajectory or pose is defined",
   SOURCE_NOT_QUALIFIED: "the available source is not a qualified Standex reference",
   CLASS_NOT_PUBLISHED: "this sensitivity class is not published for this pair",
   CUSTOM_MODEL_NOT_CHARACTERISED: "the imported assembly is not characterised (no datum, no measured pose)",

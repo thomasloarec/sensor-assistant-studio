@@ -22,6 +22,17 @@ export const QUALIFIED_APPROACHES: Readonly<Record<string, readonly string[]>> =
 export const approachQualified = (sensorFamily: string, approachId: string): boolean =>
   (QUALIFIED_APPROACHES[sensorFamily] ?? []).includes(approachId);
 
+/**
+ * Localisation géométrique de l'approche dans le repère capteur.
+ * `axis_documented` : la source publiée donne un axe d'approche exploitable
+ * comme gabarit SCHÉMATIQUE (datums non caractérisés).
+ * `not_located` : l'approche existe dans le registre et ses DISTANCES sont
+ * documentées, mais aucune trajectoire ni pose n'est définie (D2 et lobes
+ * latéraux notamment). Ces lignes ne produisent jamais de volume de détection
+ * ni de verdict géométrique ; elles restent lisibles comme documentation.
+ */
+export type Localisation = "axis_documented" | "not_located";
+
 export interface MountingProfile {
   id: string;
   sensorFamily: string;
@@ -29,10 +40,13 @@ export interface MountingProfile {
   magnetId: string;
   approachId: string;
   classes: string[];
-  /** Axe d'approche dans le repère capteur, unitaire. */
-  axis: Vec3;
-  /** Plan de référence du gabarit, pour l'affichage. */
-  referencePlane: "XZ" | "YZ";
+  /** Axe d'approche dans le repère capteur, unitaire, ou null si non localisé. */
+  axis: Vec3 | null;
+  /** Plan de référence du gabarit, pour l'affichage, ou null si non localisé. */
+  referencePlane: "XZ" | "YZ" | null;
+  localisation: Localisation;
+  /** Les distances publiées existent pour toute ligne présente au registre. */
+  distancesDocumented: true;
   evidence: Evidence;
   /** Le gabarit reste schématique tant que les datums ne sont pas caractérisés. */
   geometry: "schematic" | "characterised";
@@ -40,6 +54,11 @@ export interface MountingProfile {
   revision: string;
   provenance: Provenance;
 }
+/** Profil dont l'axe est défini : seul cas où une géométrie 3D est calculable. */
+export type LocatedProfile = MountingProfile & { axis: Vec3; referencePlane: "XZ" | "YZ" };
+export const locatedProfile = (p: MountingProfile | null): LocatedProfile | null =>
+  p && p.axis && p.referencePlane ? (p as LocatedProfile) : null;
+
 const AXES: Record<string, { axis: Vec3; plane: "XZ" | "YZ" }> = {
   D1: { axis: [0, 0, 1], plane: "XZ" },
   D3: { axis: [1, 0, 0], plane: "YZ" },
@@ -47,8 +66,10 @@ const AXES: Record<string, { axis: Vec3; plane: "XZ" | "YZ" }> = {
 export function mountingProfiles(registry: PublishedRegistry = PUBLISHED_REGISTRY) {
   const byKey = new Map<string, MountingProfile>();
   for (const row of registry.rows) {
-    const geo = AXES[row.approachId];
-    if (!geo) continue;
+    // Toutes les lignes du registre sont représentées : familles, classes et
+    // approches. L'absence d'axe documenté ne supprime pas la ligne, elle la
+    // marque comme non localisée.
+    const geo = AXES[row.approachId] ?? null;
     const id = [row.sensorFamily, row.magnetId, row.approachId].join("/");
     const existing = byKey.get(id);
     if (existing) {
@@ -62,11 +83,14 @@ export function mountingProfiles(registry: PublishedRegistry = PUBLISHED_REGISTR
       magnetId: row.magnetId,
       approachId: row.approachId,
       classes: [row.sensitivityClass],
-      axis: geo.axis,
-      referencePlane: geo.plane,
-      evidence: approachQualified(row.sensorFamily, row.approachId)
-        ? "published_typical"
-        : "uncharacterised",
+      axis: geo ? geo.axis : null,
+      referencePlane: geo ? geo.plane : null,
+      localisation: geo ? "axis_documented" : "not_located",
+      distancesDocumented: true,
+      evidence:
+        geo && approachQualified(row.sensorFamily, row.approachId)
+          ? "published_typical"
+          : "uncharacterised",
       geometry: "schematic",
       datumCharacterised: false,
       revision: registry.version,
@@ -99,6 +123,9 @@ export function thresholdsFor(
   sensitivityClass: string,
   registry?: PublishedRegistry,
 ): readonly [number, number] | null {
+  // Deux conditions distinctes : la lecture up/to doit être qualifiée ET
+  // l'approche doit être localisée pour alimenter un calcul géométrique.
+  if (profile.localisation !== "axis_documented") return null;
   if (!approachQualified(profile.sensorFamily, profile.approachId)) return null;
   const row = publishedReference(
     profile.sensorFamily,
@@ -135,4 +162,87 @@ export function sensitivityComparison(
     })
     .filter((x): x is NonNullable<typeof x> => x !== null)
     .sort((a, b) => b.pullInMm - a.pullInMm);
+}
+
+export interface DocumentedDistance {
+  sensitivityClass: string;
+  pullInMm: number;
+  dropOutMm: number;
+  sourceRef: string;
+  /** Vrai seulement si l'approche est localisée ET la lecture up/to qualifiée. */
+  usableForGeometry: boolean;
+  localisation: Localisation;
+}
+/**
+ * Lecture DOCUMENTAIRE du registre : toutes les classes publiées d'un profil,
+ * quelles que soient la famille et l'approche (D1 à D5, lobes compris). Ces
+ * valeurs sont des distances lues dans la source ; elles ne constituent ni une
+ * trajectoire, ni une pose, ni un volume de détection quand l'approche n'est
+ * pas localisée. Le calcul géométrique passe par `thresholdsFor`, jamais ici.
+ */
+export function documentedDistances(
+  profile: MountingProfile,
+  registry?: PublishedRegistry,
+): DocumentedDistance[] {
+  const usable =
+    profile.localisation === "axis_documented" &&
+    approachQualified(profile.sensorFamily, profile.approachId);
+  return profile.classes
+    .map((sensitivityClass) => {
+      const row = publishedReference(
+        profile.sensorFamily,
+        sensitivityClass,
+        profile.magnetId,
+        profile.approachId,
+        registry,
+      );
+      return row
+        ? {
+            sensitivityClass,
+            pullInMm: row.pullInMm,
+            dropOutMm: row.dropOutMm,
+            sourceRef: row.provenance.sourceRef,
+            usableForGeometry: usable,
+            localisation: profile.localisation,
+          }
+        : null;
+    })
+    .filter((x): x is DocumentedDistance => x !== null)
+    .sort((a, b) => b.pullInMm - a.pullInMm);
+}
+export interface RegistryCoverage {
+  revision: string;
+  rows: number;
+  families: string[];
+  approaches: string[];
+  magnets: string[];
+  classes: string[];
+  profiles: number;
+  /** Profils dont l'axe d'approche est documenté (gabarit schématique). */
+  locatedProfiles: number;
+  /** Profils documentaires sans trajectoire ni pose définie. */
+  unlocatedProfiles: number;
+  /** Profils alimentant réellement le calcul géométrique. */
+  calculableProfiles: number;
+}
+/** État réel de la couverture du registre : aucune restriction aux exemples MK03. */
+export function registryCoverage(
+  registry: PublishedRegistry = PUBLISHED_REGISTRY,
+  profiles: MountingProfile[] = mountingProfiles(registry),
+): RegistryCoverage {
+  const uniq = (v: string[]) => [...new Set(v)].sort();
+  return {
+    revision: registry.version,
+    rows: registry.rows.length,
+    families: uniq(registry.rows.map((r) => r.sensorFamily)),
+    approaches: uniq(registry.rows.map((r) => r.approachId)),
+    magnets: uniq(registry.rows.map((r) => r.magnetId)),
+    classes: uniq(registry.rows.map((r) => r.sensitivityClass)),
+    profiles: profiles.length,
+    locatedProfiles: profiles.filter((p) => p.localisation === "axis_documented").length,
+    unlocatedProfiles: profiles.filter((p) => p.localisation === "not_located").length,
+    calculableProfiles: profiles.filter(
+      (p) => p.localisation === "axis_documented" && p.evidence === "published_typical",
+    ).length,
+  };
 }

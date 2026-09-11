@@ -1,4 +1,4 @@
-import { profileFor, thresholdsFor } from "./profiles";
+import { locatedProfile, profileFor, thresholdsFor } from "./profiles";
 import type { MountingProfile } from "./profiles";
 import type { GuidedMounting } from "./contract";
 import { withComputed } from "./simulate";
@@ -19,7 +19,7 @@ export interface MountingSuggestion {
   offsetsMm: Vec3;
   rotationDeg: Vec3;
   axis: Vec3;
-  referencePlane: MountingProfile["referencePlane"];
+  referencePlane: "XZ" | "YZ";
   /** Le gabarit reste schématique : aucun datum caractérisé. */
   schematic: true;
   sourceRef: string;
@@ -33,8 +33,11 @@ export function suggestPose(
   m: GuidedMounting,
   profiles?: MountingProfile[],
 ): SuggestionResult {
-  const profile = profileFor(m.couple.sensorId, m.couple.magnetId, m.couple.approachId, profiles);
-  if (!profile) return { ok: false, reason: "NO_PROFILE" };
+  const found = profileFor(m.couple.sensorId, m.couple.magnetId, m.couple.approachId, profiles);
+  if (!found) return { ok: false, reason: "NO_PROFILE" };
+  // Distances documentées sans trajectoire : aucune pose ne peut être proposée.
+  const profile = locatedProfile(found);
+  if (!profile) return { ok: false, reason: "APPROACH_NOT_LOCATED" };
   const pair = thresholdsFor(profile, m.couple.sensitivityClass);
   if (!pair) return { ok: false, reason: "CLASS_NOT_PUBLISHED" };
   const aligned: Pose = { positionMm: [0, 0, 0], rotationDeg: [0, 0, 0] };
