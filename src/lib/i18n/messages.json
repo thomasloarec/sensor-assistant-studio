@@ -21679,5 +21679,203 @@
     "С этими типовыми расстояниями обнаружение не ожидается",
     "Rilevamento non previsto con queste distanze tipiche",
     "これらの代表距離では検出が見込まれません"
+  ],
+  "Détection prévue dans le modèle de référence": [
+    "Detection expected in the reference model",
+    "参考模型中预期可检测",
+    "Erkennung im Referenzmodell erwartet",
+    "Detección prevista en el modelo de referencia",
+    "Обнаружение ожидается в эталонной модели",
+    "Rilevamento previsto nel modello di riferimento",
+    "参照モデルでは検出が見込まれます"
+  ],
+  "Détection non prévue dans le modèle de référence": [
+    "Detection not expected in the reference model",
+    "参考模型中预期不可检测",
+    "Keine Erkennung im Referenzmodell erwartet",
+    "Detección no prevista en el modelo de referencia",
+    "Обнаружение в эталонной модели не ожидается",
+    "Rilevamento non previsto nel modello di riferimento",
+    "参照モデルでは検出は見込まれません"
+  ],
+  "L'aimantation déclarée n'est pas celle du gabarit.": [
+    "The declared magnetisation is not the template one.",
+    "所声明的磁化方向与样板不同。",
+    "Die angegebene Magnetisierung entspricht nicht der Vorlage.",
+    "La magnetización declarada no es la de la plantilla.",
+    "Заявленное намагничивание не совпадает с шаблоном.",
+    "La magnetizzazione dichiarata non è quella del modello.",
+    "申告された着磁は基準テンプレートと異なります。"
+  ],
+  "La cadence de commutation n'est pas couverte.": [
+    "The switching rate is not covered.",
+    "开关频率未涵盖。",
+    "Die Schaltfrequenz ist nicht abgedeckt.",
+    "La cadencia de conmutación no está cubierta.",
+    "Частота переключений не учитывается.",
+    "La frequenza di commutazione non è coperta.",
+    "開閉頻度は対象外です。"
+  ],
+  "La dispersion de sensibilité entre pièces n'est pas couverte.": [
+    "Part-to-part sensitivity spread is not covered.",
+    "零件间灵敏度离散未涵盖。",
+    "Die Empfindlichkeitsstreuung zwischen Teilen ist nicht abgedeckt.",
+    "La dispersión de sensibilidad entre piezas no está cubierta.",
+    "Разброс чувствительности между изделиями не учитывается.",
+    "La dispersione di sensibilità tra i pezzi non è coperta.",
+    "個体間の感度ばらつきは対象外です。"
+  ],
+  "La dispersion des aimants n'est pas couverte.": [
+    "Magnet spread is not covered.",
+    "磁铁离散未涵盖。",
+    "Die Streuung der Magnete ist nicht abgedeckt.",
+    "La dispersión de los imanes no está cubierta.",
+    "Разброс параметров магнитов не учитывается.",
+    "La dispersione dei magneti non è coperta.",
+    "磁石のばらつきは対象外です。"
+  ],
+  "La dérive en température n'est pas couverte.": [
+    "Temperature drift is not covered.",
+    "温度漂移未涵盖。",
+    "Die Temperaturdrift ist nicht abgedeckt.",
+    "La deriva térmica no está cubierta.",
+    "Температурный дрейф не учитывается.",
+    "La deriva termica non è coperta.",
+    "温度ドリフトは対象外です。"
+  ],
+  "La perméabilité des matériaux voisins n'est pas couverte.": [
+    "The permeability of nearby materials is not covered.",
+    "邻近材料的磁导率未涵盖。",
+    "Die Permeabilität benachbarter Werkstoffe ist nicht abgedeckt.",
+    "La permeabilidad de los materiales cercanos no está cubierta.",
+    "Магнитная проницаемость соседних материалов не учитывается.",
+    "La permeabilità dei materiali vicini non è coperta.",
+    "近傍材料の透磁率は対象外です。"
+  ],
+  "La polarité déclarée n'est pas celle du gabarit.": [
+    "The declared polarity is not the template one.",
+    "所声明的极性与样板不同。",
+    "Die angegebene Polarität entspricht nicht der Vorlage.",
+    "La polaridad declarada no es la de la plantilla.",
+    "Заявленная полярность не совпадает с шаблоном.",
+    "La polarità dichiarata non è quella del modello.",
+    "申告された極性は基準テンプレートと異なります。"
+  ],
+  "La source de ce couple n'est pas encore qualifiée pour le calcul.": [
+    "The source for this pair is not yet qualified for calculation.",
+    "该组合的数据源尚未通过计算认定。",
+    "Die Quelle dieser Paarung ist für die Berechnung noch nicht qualifiziert.",
+    "La fuente de esta pareja aún no está cualificada para el cálculo.",
+    "Источник для этой пары пока не квалифицирован для расчёта.",
+    "La fonte di questa coppia non è ancora qualificata per il calcolo.",
+    "この組み合わせの出典は計算用に未認定です。"
+  ],
+  "La température déclarée sort du cas de référence.": [
+    "The declared temperature is outside the reference case.",
+    "所声明的温度超出参考工况。",
+    "Die angegebene Temperatur liegt außerhalb des Referenzfalls.",
+    "La temperatura declarada sale del caso de referencia.",
+    "Заявленная температура выходит за эталонный случай.",
+    "La temperatura dichiarata esce dal caso di riferimento.",
+    "申告温度は参照条件の範囲外です。"
+  ],
+  "Le capteur est incliné par rapport au gabarit.": [
+    "The sensor is tilted relative to the template.",
+    "传感器相对于样板存在倾斜。",
+    "Der Sensor ist gegenüber der Vorlage geneigt.",
+    "El sensor está inclinado respecto a la plantilla.",
+    "Датчик наклонён относительно шаблона.",
+    "Il sensore è inclinato rispetto al modello.",
+    "センサーが基準テンプレートに対して傾いています。"
+  ],
+  "Le mouvement déclaré n'est pas l'approche du gabarit.": [
+    "The declared motion is not the template approach.",
+    "所声明的运动不是样板的接近方式。",
+    "Die angegebene Bewegung ist nicht die Annäherung der Vorlage.",
+    "El movimiento declarado no es la aproximación de la plantilla.",
+    "Заявленное движение не соответствует подходу шаблона.",
+    "Il movimento dichiarato non è l'avvicinamento del modello.",
+    "申告された動きは基準テンプレートの接近ではありません。"
+  ],
+  "Le vieillissement de l'aimant n'est pas couvert.": [
+    "Magnet ageing is not covered.",
+    "磁铁老化未涵盖。",
+    "Die Alterung des Magneten ist nicht abgedeckt.",
+    "El envejecimiento del imán no está cubierto.",
+    "Старение магнита не учитывается.",
+    "L'invecchiamento del magnete non è coperto.",
+    "磁石の経年変化は対象外です。"
+  ],
+  "Les défauts d'alignement de montage ne sont pas couverts.": [
+    "Assembly misalignment is not covered.",
+    "装配对中偏差未涵盖。",
+    "Montagefehlausrichtungen sind nicht abgedeckt.",
+    "Los defectos de alineación de montaje no están cubiertos.",
+    "Погрешности выравнивания при монтаже не учитываются.",
+    "I disallineamenti di montaggio non sono coperti.",
+    "取付けのずれは対象外です。"
+  ],
+  "Les rebonds du contact ne sont pas couverts.": [
+    "Contact bounce is not covered.",
+    "触点抖动未涵盖。",
+    "Kontaktprellen ist nicht abgedeckt.",
+    "Los rebotes del contacto no están cubiertos.",
+    "Дребезг контакта не учитывается.",
+    "I rimbalzi del contatto non sono coperti.",
+    "接点のバウンスは対象外です。"
+  ],
+  "Replacer l'aimant sur le gabarit de référence": [
+    "Put the magnet back on the reference template",
+    "将磁铁放回参考样板位置",
+    "Magnet wieder auf die Referenzvorlage setzen",
+    "Volver a colocar el imán en la plantilla de referencia",
+    "Вернуть магнит на эталонный шаблон",
+    "Riportare il magnete sul modello di riferimento",
+    "磁石を参照テンプレート位置に戻す"
+  ],
+  "Explorer la course du gabarit": [
+    "Explore the template travel",
+    "查看样板行程",
+    "Verfahrweg der Vorlage erkunden",
+    "Explorar el recorrido de la plantilla",
+    "Изучить ход шаблона",
+    "Esplorare la corsa del modello",
+    "基準テンプレートのストロークを確認"
+  ],
+  "Action distincte : elle remplace votre course déclarée par celle du gabarit publié. Votre besoin et vos contraintes restent inchangés.": [
+    "Separate action: it replaces your declared travel with the published template travel. Your requirement and constraints stay unchanged.",
+    "独立操作：将您声明的行程替换为已发布样板的行程。您的需求与约束保持不变。",
+    "Eigenständige Aktion: Sie ersetzt Ihren angegebenen Verfahrweg durch den der veröffentlichten Vorlage. Bedarf und Randbedingungen bleiben unverändert.",
+    "Acción distinta: sustituye su recorrido declarado por el de la plantilla publicada. Su necesidad y sus restricciones no cambian.",
+    "Отдельное действие: заменяет заявленный ход на ход опубликованного шаблона. Ваша потребность и ограничения не меняются.",
+    "Azione distinta: sostituisce la corsa dichiarata con quella del modello pubblicato. Esigenza e vincoli restano invariati.",
+    "独立した操作です。申告したストロークを公開テンプレートの値に置き換えます。要件と制約は変わりません。"
+  ],
+  "Reprendre la course du gabarit": [
+    "Use the template travel",
+    "采用样板行程",
+    "Verfahrweg der Vorlage übernehmen",
+    "Adoptar el recorrido de la plantilla",
+    "Принять ход шаблона",
+    "Adottare la corsa del modello",
+    "テンプレートのストロークを採用"
+  ],
+  "Position suggérée": [
+    "Suggested position",
+    "建议位置",
+    "Vorgeschlagene Position",
+    "Posición sugerida",
+    "Предлагаемое положение",
+    "Posizione suggerita",
+    "推奨位置"
+  ],
+  "De {0} mm à {1} mm": [
+    "From {0} mm to {1} mm",
+    "从 {0} mm 到 {1} mm",
+    "Von {0} mm bis {1} mm",
+    "De {0} mm a {1} mm",
+    "От {0} мм до {1} мм",
+    "Da {0} mm a {1} mm",
+    "{0} mm から {1} mm まで"
   ]
 }

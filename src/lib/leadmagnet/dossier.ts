@@ -6,6 +6,8 @@ import type { WorkshopConfig } from "@/lib/standex/magnetic-workshop";
 import { EMPTY_CABLING, type CablingConfig } from "./cabling";
 import { DEFAULT_TERMINATION, type Termination } from "./connectors";
 import { freezeContextKey } from "../standex/design-freeze";
+import { mountingFromWorkshop, withComputed } from "../standex/mounting";
+import { estimateCableLength } from "./cabling";
 
 export type RequirementState = "confirmed" | "hypothesis" | "unknown";
 export type RequirementSource = "user" | "import" | "assistant" | "rnd";
@@ -254,8 +256,27 @@ export function parseAnnualVolume(raw: string): AnnualVolume | { error: string }
 
 /** DTO client : les notes internes Standex ne sortent jamais d'ici. */
 export type ClientDossierDto = Omit<DesignDossier, "internalNotes">;
+/** Montage guidé RECALCULÉ à partir de l'état courant du dossier.
+ * Un contrat importé n'est jamais recopié tel quel : le verdict, la couverture
+ * et les limites sont recalculés ici, et le câble relevé du dossier (trajet réel
+ * et longueur, inconnue si la géométrie est incomplète) y est joint. */
+export function currentMounting(d: DesignDossier) {
+  if (!d.workshop) return null;
+  const base = mountingFromWorkshop(d.workshop);
+  const c = d.cabling;
+  const points = [
+    ...(c.sensorEndpoint ? [c.sensorEndpoint] : []),
+    ...c.waypoints,
+    ...(c.connectionEndpoint ? [c.connectionEndpoint] : []),
+  ];
+  const cable = points.length
+    ? { points: points.map((p) => [...p] as [number, number, number]), lengthMm: estimateCableLength(c).requiredMm }
+    : null;
+  return withComputed({ ...base, cable });
+}
+
 export function toClientDto(d: DesignDossier): ClientDossierDto {
-  const clone = { ...d };
+  const clone = { ...d, guidedMounting: currentMounting(d) };
   if (clone.designFreeze && clone.designFreeze.contextKey !== freezeContextKey(clone.workshop, clone.studioV2)) clone.designFreeze = null;
   delete (clone as Partial<DesignDossier>).internalNotes;
   return clone as ClientDossierDto;

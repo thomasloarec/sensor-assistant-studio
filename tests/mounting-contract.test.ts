@@ -22,15 +22,20 @@ import {
   toWorldPoint,
   withComputed,
   workshopPatchFromMounting,
+  referenceTravelExploration,
 } from "@/lib/standex/mounting";
 import type { GuidedMounting } from "@/lib/standex/mounting";
+import { COFFEE_ASSEMBLY } from "@/lib/standex/machine-assembly";
 import { DEFAULT_WORKSHOP, parseWorkshopConfig } from "@/lib/standex/magnetic-workshop";
 
 const base = () => mountingFromWorkshop({ ...DEFAULT_WORKSHOP });
 
 describe("profils de montage", () => {
-  it("n'expose que les couples réellement publiés, alias contrôlé", () => {
-    expect(profileFor("MK03", "4003004003", "D1")?.magnetId).toBe("M02");
+  it("n'expose que les couples réellement publiés, sans alias d'identité", () => {
+    // 4003004003 (cylindre) et M02 (boîtier) sont deux lignes distinctes du
+    // registre : aucun repli de l'un sur l'autre.
+    expect(profileFor("MK03", "4003004003", "D1")?.magnetId).toBe("4003004003");
+    expect(profileFor("MK03", "M02", "D1")?.magnetId).toBe("M02");
     expect(profileFor("MK03", "M02", "D3")?.approachId).toBe("D3");
     expect(profileFor("MK03", "aimant-inventé", "D1")).toBeNull();
     expect(profileFor("MK24-A-J", "4003004003", "D1")).toBeNull();
@@ -322,6 +327,8 @@ describe("pont avec l'atelier existant", () => {
       magnetId: "4003004003",
       sensitivityClass: "B",
       approachId: "D1",
+      magnetization: DEFAULT_WORKSHOP.magnetization,
+      polarity: DEFAULT_WORKSHOP.polarity,
     });
     expect(m.travel).toEqual({ startGapMm: DEFAULT_WORKSHOP.start, endGapMm: DEFAULT_WORKSHOP.end });
     expect(m.attachment.frame).toBe("template");
@@ -335,8 +342,95 @@ describe("pont avec l'atelier existant", () => {
     const patch = workshopPatchFromMounting(applied.mounting, DEFAULT_WORKSHOP);
     const next = parseWorkshopConfig({ ...DEFAULT_WORKSHOP, ...patch });
     expect(next).not.toBeNull();
-    expect(next!.start).toBe(17.5);
-    expect(next!.end).toBe(15);
+    // La course déclarée est PRÉSERVÉE : appliquer une pose ne fabrique pas un cycle.
+    expect(next!.start).toBe(DEFAULT_WORKSHOP.start);
+    expect(next!.end).toBe(DEFAULT_WORKSHOP.end);
     expect(next!.magnetTilt).toBe(0);
+  });
+  it("ne reprend la course du gabarit que par une action séparée et explicite", () => {
+    const m = base();
+    const s = suggestPose(m);
+    if (!s.ok) throw new Error("suggestion attendue");
+    const explored = referenceTravelExploration(m, s.suggestion);
+    expect(explored.travel).toEqual({
+      startGapMm: s.suggestion.startGapMm,
+      endGapMm: s.suggestion.endGapMm,
+    });
+    // Besoin, environnement et mouvement restent ceux de l'utilisateur.
+    expect(explored.need).toEqual(m.need);
+    expect(explored.environment).toEqual(m.environment);
+    expect(explored.motion).toEqual(m.motion);
+  });
+});
+
+describe("pont avec un montage importé réel", () => {
+  /** Montage volontairement difficile : rotation trois axes, attaches différentes,
+   * pivot non nul et lecture à un point de cycle non nul. */
+  const assembly = () => ({
+    ...COFFEE_ASSEMBLY,
+    sensorPosition: [40, 12, -7] as [number, number, number],
+    sensorRotation: [12, -25, 8] as [number, number, number],
+    magnetPosition: [55, 18, 3] as [number, number, number],
+    magnetRotation: [-5, 40, 17] as [number, number, number],
+    sensorMount: "moving" as const,
+    magnetMount: "fixed" as const,
+    motion: "rotation" as const,
+    pivot: [10, 0, 5] as [number, number, number],
+    rotationAxis: "y" as const,
+    openingAngle: 65,
+  });
+  const near = (a: number[], b: number[]) =>
+    a.forEach((v, i) => expect(v).toBeCloseTo(b[i]!, 6));
+
+  it("relit la pose réelle du modèle, capteur et aimant, à un point de cycle non nul", () => {
+    const machine = assembly();
+    const config = { ...DEFAULT_WORKSHOP, machine };
+    const m = mountingFromWorkshop(config, 0.37);
+    // La pose relative correspond exactement à la géométrie du modèle, pas au gabarit.
+    const back = workshopPatchFromMounting(m, config, 0.37);
+    expect(back.machine).toBeDefined();
+    near(back.machine!.magnetPosition, machine.magnetPosition);
+    near(back.machine!.magnetRotation, machine.magnetRotation);
+    // Le modèle, ses attaches et sa course sont conservés à l'identique.
+    expect(back.machine!.assetKey).toBe(machine.assetKey);
+    expect(back.machine!.movingNode).toBe(machine.movingNode);
+    expect(back.machine!.sensorPosition).toEqual(machine.sensorPosition);
+    expect(back.machine!.sensorRotation).toEqual(machine.sensorRotation);
+    expect(back.machine!.travel).toEqual(machine.travel);
+    expect(back.machine!.pivot).toEqual(machine.pivot);
+  });
+
+  it("applique réellement la pose suggérée dans le modèle importé", () => {
+    const machine = { ...assembly(), magnetMount: "moving" as const };
+    const config = { ...DEFAULT_WORKSHOP, machine };
+    const m = mountingFromWorkshop(config, 0.22);
+    const s = suggestPose(m);
+    if (!s.ok) throw new Error("suggestion attendue");
+    const applied = applySuggestion(m, s.suggestion);
+    if (!applied.ok) throw new Error("application attendue");
+    const patch = workshopPatchFromMounting(applied.mounting, config, 0.22);
+    // La pose de l'aimant CHANGE réellement dans le montage importé…
+    expect(patch.machine!.magnetPosition).not.toEqual(machine.magnetPosition);
+    // …et la relecture retrouve exactement la pose relative demandée.
+    const relu = mountingFromWorkshop({ ...config, ...patch }, 0.22);
+    near(relu.relative.positionMm, applied.mounting.relative.positionMm);
+    near(relu.relative.rotationDeg, applied.mounting.relative.rotationDeg);
+  });
+
+  it("déplacer le couple entier ne change pas la pose relative dans le modèle", () => {
+    const machine = { ...assembly(), magnetMount: "moving" as const };
+    const config = { ...DEFAULT_WORKSHOP, machine };
+    const m = mountingFromWorkshop(config, 0.4);
+    const moved = moveCouple(m, { translationMm: [3, -2, 6], rotationDeg: [0, 20, 0] });
+    near(moved.relative.positionMm, m.relative.positionMm);
+    near(moved.relative.rotationDeg, m.relative.rotationDeg);
+  });
+
+  it("un montage importé ne donne jamais un vert : il n'est pas caractérisé", () => {
+    const config = { ...DEFAULT_WORKSHOP, machine: assembly() };
+    const m = mountingFromWorkshop(config, 0.1);
+    expect(m.computed!.reasons).toContain("CUSTOM_MODEL_NOT_CHARACTERISED");
+    expect(m.computed!.verdict).toBe("undetermined");
+    expect(m.computed!.mainMessage).toBe(REAL_WORLD_TEST_MESSAGE);
   });
 });

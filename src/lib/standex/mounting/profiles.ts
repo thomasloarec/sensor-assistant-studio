@@ -8,9 +8,19 @@ import type { Vec3 } from "./geometry";
  * donc ce n'est jamais une validation d'un montage importé. */
 export type Evidence = "published_typical" | "schematic" | "uncharacterised";
 
-/** Alias contrôlés : identifiant catalogue appairé ↔ identifiant de la table publiée. */
-export const MAGNET_ALIASES: Record<string, string> = { "4003004003": "M02", M02: "M02" };
-export const magnetAlias = (id: string): string | null => MAGNET_ALIASES[id] ?? null;
+/**
+ * Couples (famille, approche) dont la lecture des colonnes « up / to » de la
+ * source publiée est confirmée par docs/studio-v2/RAPPORT_CALIBRATION_MK03_2026-09-10.md.
+ * Toute autre ligne du registre reste représentable mais ne fournit AUCUN seuil
+ * au calcul : la qualification Standex des tables up/to est encore ouverte
+ * (docs/STUDIO_V2_FEEDBACK_V2.md). Aucun alias entre identifiants d'aimants :
+ * 4003004003 (cylindre Ø 4 × 19) et M02 (boîtier) sont deux lignes distinctes.
+ */
+export const QUALIFIED_APPROACHES: Readonly<Record<string, readonly string[]>> = {
+  MK03: ["D1", "D3"],
+};
+export const approachQualified = (sensorFamily: string, approachId: string): boolean =>
+  (QUALIFIED_APPROACHES[sensorFamily] ?? []).includes(approachId);
 
 export interface MountingProfile {
   id: string;
@@ -54,7 +64,9 @@ export function mountingProfiles(registry: PublishedRegistry = PUBLISHED_REGISTR
       classes: [row.sensitivityClass],
       axis: geo.axis,
       referencePlane: geo.plane,
-      evidence: "published_typical",
+      evidence: approachQualified(row.sensorFamily, row.approachId)
+        ? "published_typical"
+        : "uncharacterised",
       geometry: "schematic",
       datumCharacterised: false,
       revision: registry.version,
@@ -72,21 +84,22 @@ export function profileFor(
   approachId: string,
   profiles: MountingProfile[] = PROFILES,
 ): MountingProfile | null {
-  const magnetId = magnetAlias(magnetModel);
-  if (!magnetId) return null;
+  // Identité exacte : aucun repli d'un identifiant d'aimant vers un autre.
   return (
     profiles.find(
       (p) =>
-        p.sensorFamily === sensorId && p.magnetId === magnetId && p.approachId === approachId,
+        p.sensorFamily === sensorId && p.magnetId === magnetModel && p.approachId === approachId,
     ) ?? null
   );
 }
-/** Distances publiées [enclenchement, relâchement] en mm, ou null. Jamais extrapolées. */
+/** Distances publiées [enclenchement, relâchement] en mm, ou null. Jamais extrapolées.
+ * Refus net tant que la lecture up/to de la table n'est pas qualifiée. */
 export function thresholdsFor(
   profile: MountingProfile,
   sensitivityClass: string,
   registry?: PublishedRegistry,
 ): readonly [number, number] | null {
+  if (!approachQualified(profile.sensorFamily, profile.approachId)) return null;
   const row = publishedReference(
     profile.sensorFamily,
     sensitivityClass,
@@ -101,6 +114,7 @@ export function sensitivityComparison(
   profile: MountingProfile,
   registry?: PublishedRegistry,
 ): { sensitivityClass: string; pullInMm: number; dropOutMm: number; sourceRef: string }[] {
+  if (!approachQualified(profile.sensorFamily, profile.approachId)) return [];
   return profile.classes
     .map((sensitivityClass) => {
       const row = publishedReference(

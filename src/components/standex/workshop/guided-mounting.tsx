@@ -1,12 +1,14 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { t, msg } from "@/lib/i18n/core";
 import { CircleCheck, CircleHelp, CircleX, Move3d, Wand2 } from "lucide-react";
 import type { WorkshopConfig } from "@/lib/standex/magnetic-workshop";
 import {
   applySuggestion,
   mountingFromWorkshop,
+  mountingHash,
   moveCouple,
   profileFor,
+  referenceTravelExploration,
   sensitivityComparison,
   suggestPose,
   withComputed,
@@ -16,8 +18,8 @@ import type { GuidedMounting } from "@/lib/standex/mounting";
 
 /* i18n-canonical : libellés stockés en français, traduits au rendu par t(). */
 const VERDICT_TITLE = {
-  expected: "Détection prévue dans ce montage",
-  not_expected: "Détection non prévue dans ce montage",
+  expected: "Détection prévue dans le modèle de référence",
+  not_expected: "Détection non prévue dans le modèle de référence",
   undetermined: "Comportement indéterminé",
 } as const;
 const COVERAGE_LABEL = {
@@ -30,21 +32,35 @@ const EVIDENCE_LABEL = {
   schematic: "Gabarit géométrique schématique, non caractérisé",
   uncharacterised: "Aucune source applicable à cette pose",
 } as const;
+/** Chaque code émis par le moteur a ici une phrase lisible : aucun code brut à l'écran. */
 const REASON_LABEL: Record<string, string> = {
   NO_PROFILE: "Ce couple capteur–aimant n'a pas de table publiée.",
+  SOURCE_NOT_QUALIFIED: "La source de ce couple n'est pas encore qualifiée pour le calcul.",
   CLASS_NOT_PUBLISHED: "Cette classe de sensibilité n'est pas publiée.",
+  CUSTOM_MODEL_NOT_CHARACTERISED: "Votre modèle importé n'est pas caractérisé.",
+  FERROUS_DECLARED: "Une matière ferromagnétique proche est déclarée.",
+  TEMPERATURE_NOT_AMBIENT: "La température déclarée sort du cas de référence.",
+  EDUCATION_MODE: "La démonstration pédagogique n'utilise pas de distances réelles.",
+  MOTION_NOT_ON_APPROACH_AXIS: "Le mouvement déclaré n'est pas l'approche du gabarit.",
+  MAGNETIZATION_NOT_TEMPLATE: "L'aimantation déclarée n'est pas celle du gabarit.",
+  POLARITY_NOT_TEMPLATE: "La polarité déclarée n'est pas celle du gabarit.",
+  SENSOR_ANGLE_OFF_TEMPLATE: "Le capteur est incliné par rapport au gabarit.",
   ORIENTATION_OFF_TEMPLATE: "L'aimant n'est plus parallèle au gabarit de référence.",
   LATERAL_OFFSET: "L'aimant est décalé hors du plan de référence.",
-  FERROUS_DECLARED: "Une matière ferromagnétique proche est déclarée.",
-  TEMPERATURE_OFF_TEMPLATE: "La température sort du cas de référence.",
-  CUSTOM_MODEL_NOT_CHARACTERISED: "Votre modèle importé n'est pas caractérisé.",
   COLLISION_OR_CONTACT: "Les deux corps se touchent sur une partie de la course.",
-  EDUCATION_MODE: "La démonstration pédagogique n'utilise pas de distances réelles.",
 };
 const LIMIT_LABEL: Record<string, string> = {
-  datum_not_characterised: "Les repères de mesure des plans ne sont pas caractérisés.",
   typical_not_guaranteed: "Une valeur typique n'est pas une valeur garantie.",
-  schematic_template: "Le gabarit affiché est explicitement schématique.",
+  datum_not_characterised: "Les repères de mesure des plans ne sont pas caractérisés.",
+  schematic_template_only: "Le gabarit affiché est explicitement schématique.",
+  sensitivity_spread: "La dispersion de sensibilité entre pièces n'est pas couverte.",
+  magnet_spread: "La dispersion des aimants n'est pas couverte.",
+  temperature_drift: "La dérive en température n'est pas couverte.",
+  magnet_aging: "Le vieillissement de l'aimant n'est pas couvert.",
+  material_permeability: "La perméabilité des matériaux voisins n'est pas couverte.",
+  assembly_misalignment: "Les défauts d'alignement de montage ne sont pas couverts.",
+  contact_bounce: "Les rebonds du contact ne sont pas couverts.",
+  switching_rate: "La cadence de commutation n'est pas couverte.",
 };
 
 export function useGuidedMounting(config: WorkshopConfig): GuidedMounting {
@@ -89,7 +105,7 @@ export function GuidedVerdict({
       )}
       {c.verdict !== "expected" && onFixCoverage && (
         <button className="mw-button mw-secondary mw-wide" onClick={onFixCoverage}>
-          {t("Revenir au gabarit de référence")}
+          {t("Replacer l'aimant sur le gabarit de référence")}
         </button>
       )}
       <details>
@@ -104,27 +120,28 @@ export function GuidedVerdict({
   );
 }
 
-/** Guidage de position : proposer, prévisualiser dans la scène, appliquer ou annuler. */
+/**
+ * Guidage de position. La prévisualisation vit dans l'état du parent : elle
+ * n'écrit RIEN dans la configuration tant que l'utilisateur n'applique pas.
+ * Si les entrées changent, la proposition affichée est recalculée et une
+ * prévisualisation devenue obsolète est abandonnée par le parent.
+ */
 export function GuidedSuggestion({
   config,
   update,
-  replace,
+  preview,
+  onPreview,
 }: {
   config: WorkshopConfig;
   update: (patch: Partial<WorkshopConfig>) => void;
-  replace: (next: WorkshopConfig) => void;
+  /** Pose prévisualisée, jamais enregistrée. */
+  preview: GuidedMounting | null;
+  onPreview: (next: GuidedMounting | null) => void;
 }) {
-  const [snapshot, setSnapshot] = useState<WorkshopConfig | null>(null);
   const mounting = useGuidedMounting(config);
   const proposal = useMemo(() => suggestPose(mounting), [mounting]);
+  const previewing = preview !== null && mountingHash(preview) !== mountingHash(mounting);
 
-  const preview = () => {
-    if (!proposal.ok) return;
-    const applied = applySuggestion(mounting, proposal.suggestion);
-    if (!applied.ok) return;
-    setSnapshot(config);
-    update(workshopPatchFromMounting(applied.mounting, config));
-  };
   return (
     <div className="mw-guide panel-block" data-testid="guided-suggestion">
       <p className="mw-guide-head">
@@ -149,10 +166,6 @@ export function GuidedSuggestion({
               <dd className="t-metric">{msg("{0} mm", [proposal.suggestion.gapMm])}</dd>
             </div>
             <div>
-              <dt>{t("Départ conseillé")}</dt>
-              <dd className="t-metric">{msg("{0} mm", [proposal.suggestion.startGapMm])}</dd>
-            </div>
-            <div>
               <dt>{t("Décalage et orientation")}</dt>
               <dd className="t-metric">{t("0 mm · 0°")}</dd>
             </div>
@@ -163,27 +176,62 @@ export function GuidedSuggestion({
             )}
           </p>
           <div className="mw-guide-actions">
-            {snapshot ? (
+            {previewing ? (
               <>
-                <button className="mw-button" onClick={() => setSnapshot(null)}>
-                  {t("Appliquer cette position")}
-                </button>
                 <button
-                  className="mw-button mw-secondary"
+                  className="mw-button"
                   onClick={() => {
-                    replace(snapshot);
-                    setSnapshot(null);
+                    update(workshopPatchFromMounting(preview, config));
+                    onPreview(null);
                   }}
                 >
+                  {t("Appliquer cette position")}
+                </button>
+                <button className="mw-button mw-secondary" onClick={() => onPreview(null)}>
                   {t("Annuler la prévisualisation")}
                 </button>
               </>
             ) : (
-              <button className="mw-button" onClick={preview}>
+              <button
+                className="mw-button"
+                onClick={() => {
+                  if (!proposal.ok) return;
+                  const applied = applySuggestion(mounting, proposal.suggestion);
+                  if (applied.ok) onPreview(applied.mounting);
+                }}
+              >
                 {t("Prévisualiser la position suggérée")}
               </button>
             )}
           </div>
+          <details>
+            <summary>{t("Explorer la course du gabarit")}</summary>
+            <p className="mw-help">
+              {t(
+                "Action distincte : elle remplace votre course déclarée par celle du gabarit publié. Votre besoin et vos contraintes restent inchangés.",
+              )}
+            </p>
+            <p className="mw-help t-metric">
+              {msg("De {0} mm à {1} mm", [
+                proposal.suggestion.startGapMm,
+                proposal.suggestion.endGapMm,
+              ])}
+            </p>
+            <button
+              className="mw-button mw-secondary"
+              onClick={() => {
+                if (!proposal.ok) return;
+                update(
+                  workshopPatchFromMounting(
+                    referenceTravelExploration(mounting, proposal.suggestion),
+                    config,
+                  ),
+                );
+              }}
+            >
+              {t("Reprendre la course du gabarit")}
+            </button>
+          </details>
         </>
       ) : (
         <p className="mw-help">

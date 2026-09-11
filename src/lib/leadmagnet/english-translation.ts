@@ -411,6 +411,7 @@ export function englishReportBody(dto: ClientDossierDto, meta: { revision: numbe
     `- 3D asset: ${dto.workshopAsset ? `${dto.workshopAsset.fileName} (${dto.workshopAsset.storage})` : "none"}`,
     `- Workshop configuration recorded: ${dto.workshop ? "yes" : "no"}`,
     ...workshopEnglish(dto),
+    ...mountingEnglish(dto),
     "",
     "## Cabling",
     `- Required length: ${estimate.requiredMm === null ? "unknown (incomplete or invalid path)" : estimate.requiredMm.toFixed(1) + " mm"}`,
@@ -523,6 +524,58 @@ function workshopEnglish(dto: ClientDossierDto): string[] {
   } else {
     lines.push("  - Machine assembly: none recorded");
   }
+  return lines;
+}
+
+/** Codes de limite du montage guidé, rendus en anglais pour la revue R&D.
+ * Aucun code brut ne sort dans le rapport client. */
+const MOUNTING_REASON_EN: Record<string, string> = {
+  NO_PROFILE: "no published reference profile for this sensor/magnet pair",
+  SOURCE_NOT_QUALIFIED: "the available source is not a qualified Standex reference",
+  CLASS_NOT_PUBLISHED: "this sensitivity class is not published for this pair",
+  CUSTOM_MODEL_NOT_CHARACTERISED: "the imported assembly is not characterised (no datum, no measured pose)",
+  FERROUS_DECLARED: "ferromagnetic material declared nearby",
+  TEMPERATURE_NOT_AMBIENT: "operating temperature is not ambient",
+  EDUCATION_MODE: "educational mode: distances are illustrative, not published values",
+  MOTION_NOT_ON_APPROACH_AXIS: "movement is not along the published approach axis",
+  MAGNETIZATION_NOT_TEMPLATE: "magnetisation differs from the published arrangement",
+  POLARITY_NOT_TEMPLATE: "polarity differs from the published arrangement",
+  SENSOR_ANGLE_OFF_TEMPLATE: "sensor angle differs from the published arrangement",
+  ORIENTATION_OFF_TEMPLATE: "magnet orientation differs from the published arrangement",
+  LATERAL_OFFSET: "lateral offset is outside the published arrangement",
+  COLLISION_OR_CONTACT: "part of the travel is outside the published arrangement (contact or interference)",
+};
+const MOUNTING_VERDICT_EN: Record<string, string> = {
+  expected: "detection expected in the reference model",
+  not_expected: "detection NOT expected in the reference model",
+  undetermined: "undetermined: outside the published reference model",
+};
+const MOUNTING_COVERAGE_EN: Record<string, string> = {
+  covered: "the whole travel is covered by the published reference model",
+  partial: "only part of the travel is covered",
+  none: "no part of the travel is covered",
+};
+
+function mountingEnglish(dto: ClientDossierDto): string[] {
+  const m = dto.guidedMounting;
+  const c = m?.computed;
+  if (!m || !c) return ["- Guided mounting study: none recorded"];
+  const lines = [
+    "- Guided mounting study (model result, never a physical validation):",
+    `  - Result: ${MOUNTING_VERDICT_EN[c.verdict] ?? c.verdict}`,
+    `  - Coverage: ${MOUNTING_COVERAGE_EN[c.coverage] ?? c.coverage}`,
+    `  - Statement given to the customer: ${c.mainMessage}`,
+    `  - Reference profile: ${m.profileId ?? "none"} — source: ${m.profileSource ?? "none"}`,
+  ];
+  if (m.need)
+    lines.push(
+      `  - Requested detection window: ${m.need.closedFromPct}% to ${m.need.closedToPct}% of the cycle`,
+    );
+  if (m.cable)
+    lines.push(
+      `  - Recorded cable route: ${m.cable.points.length} points — required length: ${m.cable.lengthMm === null ? "unknown" : `${m.cable.lengthMm} mm`}`,
+    );
+  for (const r of c.reasons) lines.push(`  - Limit: ${MOUNTING_REASON_EN[r] ?? r}`);
   return lines;
 }
 

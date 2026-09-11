@@ -622,6 +622,48 @@ function ReferenceMarkers({ config }: { config: WorkshopConfig }) {
     </group>
   );
 }
+/** Pose fantôme proposée : jamais la pose réelle, uniquement une prévisualisation. */
+export interface GhostPose {
+  /** Position dans le repère de la scène affichée, en millimètres. */
+  positionMm: Vec3;
+  rotationDeg: Vec3;
+  /** Axe de référence du gabarit, unitaire, dans le même repère. */
+  axis: Vec3;
+  sizeMm: Vec3;
+  /** Cote lisible affichée à côté du fantôme. */
+  gapMm: number;
+  /** Origine de l'axe de référence : le capteur. */
+  originMm: Vec3;
+}
+/** Aimant fantôme, axe de référence et cote. Aucun effet sur la configuration. */
+export function GhostMagnet({ ghost }: { ghost: GhostPose }) {
+  const end: Vec3 = [
+    ghost.originMm[0] + ghost.axis[0] * ghost.gapMm,
+    ghost.originMm[1] + ghost.axis[1] * ghost.gapMm,
+    ghost.originMm[2] + ghost.axis[2] * ghost.gapMm,
+  ];
+  return (
+    <group>
+      <Line points={[ghost.originMm, end]} color="#7a5cc4" lineWidth={2} dashed dashSize={1.2} gapSize={0.9} />
+      <group
+        position={ghost.positionMm}
+        rotation={[
+          (ghost.rotationDeg[0] * Math.PI) / 180,
+          (ghost.rotationDeg[1] * Math.PI) / 180,
+          (ghost.rotationDeg[2] * Math.PI) / 180,
+        ]}
+      >
+        <mesh>
+          <boxGeometry args={ghost.sizeMm} />
+          <meshStandardMaterial color="#7a5cc4" transparent opacity={0.35} depthWrite={false} />
+        </mesh>
+        <Label position={[0, ghost.sizeMm[1] / 2 + 3, 0]} className="mw-ghost-label">
+          {t("Position suggérée")} · {t(String(Math.round(ghost.gapMm * 10) / 10))} mm
+        </Label>
+      </group>
+    </group>
+  );
+}
 export function ContextGuard({ onLost }: { onLost: () => void }) {
   const gl = useThree((s) => s.gl);
   useEffect(() => {
@@ -674,6 +716,7 @@ export default function WorkshopScene({
   reduced = false,
   resetEpoch = 0,
   onContextLost,
+  ghost,
 }: {
   config: WorkshopConfig;
   sample: CycleSample;
@@ -687,6 +730,8 @@ export default function WorkshopScene({
   reduced?: boolean;
   resetEpoch?: number;
   onContextLost?: () => void;
+  /** Prévisualisation seule : le fantôme n'écrit rien dans la configuration. */
+  ghost?: GhostPose | null | undefined;
 }) {
   const model = sensorById(config.sensorId),
     reference = config.mode === "reference",
@@ -741,6 +786,7 @@ export default function WorkshopScene({
           {dimensions && <Dimensions model={model} />}
         </group>
         <Magnet config={config} sample={sample} />
+        {ghost && <GhostMagnet ghost={ghost} />}
         <Trajectory samples={samples} returning={sample.t > 0.5} colored={zones} />
         {reference && available && zones && <ReferenceMarkers config={config} />}
         {!reference && available && field && <FieldLines config={config} sample={sample} />}
