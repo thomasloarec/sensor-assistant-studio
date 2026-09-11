@@ -150,7 +150,7 @@ function HomeRoute() {
 
               <section
                 id="aimant"
-                aria-label={t("Jouer avec l'aimant et le capteur")}
+                aria-label={t("Comprendre le principe de détection")}
                 className="anim-scale-in relative z-10 overflow-hidden rounded-[var(--r-2xl)] bg-[var(--surface)] shadow-[var(--e-4)] backdrop-blur-2xl lg:[animation-delay:260ms]"
               >
                 <MagnetPlay />
@@ -177,8 +177,8 @@ function HomeRoute() {
                 },
                 {
                   n: "02",
-                  t: t("2. Vous visualisez"),
-                  d: t("Un atelier 3D facultatif pour placer capteur, aimant et câble. Rien n'est envoyé tant que vous ne le demandez pas."),
+                  t: t("2. Vous vérifiez votre montage"),
+                  d: t("Une position vous est suggérée, le mouvement est simulé, les limites sont dites clairement, puis vous choisissez le câble. Rien n'est envoyé tant que vous ne le demandez pas."),
                 },
                 {
                   n: "03",
