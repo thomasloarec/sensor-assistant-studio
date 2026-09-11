@@ -19305,5 +19305,136 @@
     "80 · размер 4",
     "80 · misura 4",
     "80 · サイズ4"
+  ],
+  "Vue 3D": ["3D view", "3D 视图", "3D-Ansicht", "Vista 3D", "Вид 3D", "Vista 3D", "3D 表示"],
+  "Vue 2D": ["2D view", "2D 视图", "2D-Ansicht", "Vista 2D", "Вид 2D", "Vista 2D", "2D 表示"],
+  "{0} filtre(s) actif(s)": [
+    "{0} active filter(s)",
+    "{0} 个筛选条件已启用",
+    "{0} aktive Filter",
+    "{0} filtro(s) activo(s)",
+    "Активных фильтров: {0}",
+    "{0} filtri attivi",
+    "有効なフィルター：{0}"
+  ],
+  "Catalogue des aimants": [
+    "Magnet catalogue",
+    "磁铁目录",
+    "Magnetkatalog",
+    "Catálogo de imanes",
+    "Каталог магнитов",
+    "Catalogo magneti",
+    "磁石カタログ"
+  ],
+  "Catalogue": ["Catalogue", "目录", "Katalog", "Catálogo", "Каталог", "Catalogo", "カタログ"],
+  "Capteurs": ["Sensors", "传感器", "Sensoren", "Sensores", "Датчики", "Sensori", "センサー"],
+  "Aimants": ["Magnets", "磁铁", "Magnete", "Imanes", "Магниты", "Magneti", "磁石"],
+  "Matériau de l’aimant": [
+    "Magnet material",
+    "磁铁材料",
+    "Magnetwerkstoff",
+    "Material del imán",
+    "Материал магнита",
+    "Materiale del magnete",
+    "磁石の材質"
+  ],
+  "Tous les matériaux": [
+    "All materials",
+    "所有材料",
+    "Alle Werkstoffe",
+    "Todos los materiales",
+    "Все материалы",
+    "Tutti i materiali",
+    "すべての材質"
+  ],
+  "Matériau non précisé : consulter la fiche de la référence.": [
+    "Material unspecified: consult the reference datasheet.",
+    "材料未说明：请查阅对应型号的数据表。",
+    "Werkstoff nicht angegeben: Datenblatt der Referenz prüfen.",
+    "Material sin especificar: consultar la ficha de la referencia.",
+    "Материал не указан: см. паспорт изделия.",
+    "Materiale non specificato: consultare la scheda del modello.",
+    "材質未記載：該当品のデータシートを参照してください。"
+  ],
+  "Ferrite : économique et résistante à la corrosion, mais moins puissante à volume égal et cassante.": [
+    "Ferrite: economical and corrosion resistant, but weaker at equal volume and brittle.",
+    "铁氧体：经济耐腐蚀，但同体积下磁力较弱且易碎。",
+    "Ferrit: preiswert und korrosionsbeständig, aber bei gleichem Volumen schwächer und spröde.",
+    "Ferrita: económica y resistente a la corrosión, pero menos potente a igual volumen y quebradiza.",
+    "Феррит: экономичен и устойчив к коррозии, но слабее при равном объёме и хрупок.",
+    "Ferrite: economica e resistente alla corrosione, ma meno potente a pari volume e fragile.",
+    "フェライト：安価で耐食性がありますが、同体積では磁力が弱く、割れやすい材質です。"
+  ],
+  "AlNiCo : bonne stabilité en température ; sensible aux champs opposés. Le cylindre Ø 4 × 19 mm est un format courant.": [
+    "AlNiCo: good temperature stability; sensitive to opposing fields. The Ø 4 × 19 mm cylinder is a common size.",
+    "铝镍钴：温度稳定性好，但对反向磁场敏感。Ø 4 × 19 mm 圆柱为常用规格。",
+    "AlNiCo: gute Temperaturstabilität, empfindlich gegenüber Gegenfeldern. Ø 4 × 19 mm ist ein gängiges Zylinderformat.",
+    "AlNiCo: buena estabilidad térmica; sensible a campos opuestos. El cilindro Ø 4 × 19 mm es habitual.",
+    "AlNiCo: стабилен при изменении температуры, чувствителен к встречным полям. Цилиндр Ø 4 × 19 мм — распространённый размер.",
+    "AlNiCo: buona stabilità termica; sensibile ai campi opposti. Il cilindro Ø 4 × 19 mm è un formato comune.",
+    "アルニコ：温度安定性が高く、逆磁界に敏感です。Ø 4 × 19 mm の円柱は一般的な寸法です。"
+  ],
+  "Néodyme : forte puissance dans un petit volume ; protection contre la corrosion et tenue en température à vérifier selon la nuance.": [
+    "Neodymium: strong in a small volume; check corrosion protection and temperature rating for the grade.",
+    "钕铁硼：小体积高磁力；需按牌号确认防腐措施和耐温性能。",
+    "Neodym: hohe Magnetkraft bei kleinem Volumen; Korrosionsschutz und Temperaturfestigkeit je nach Güte prüfen.",
+    "Neodimio: gran potencia en poco volumen; comprobar protección anticorrosión y temperatura según el grado.",
+    "Неодим: высокая сила при малом объёме; защита от коррозии и температурный предел зависят от марки.",
+    "Neodimio: elevata potenza in poco volume; verificare protezione anticorrosione e temperatura per il grado scelto.",
+    "ネオジム：小型でも強い磁力。耐食処理と耐熱性はグレードごとに確認が必要です。"
+  ],
+  "Samarium-cobalt : adapté aux températures élevées, mais plus coûteux et fragile.": [
+    "Samarium-cobalt: suited to high temperatures, but more expensive and brittle.",
+    "钐钴：适用于高温，但成本较高且易碎。",
+    "Samarium-Kobalt: für hohe Temperaturen geeignet, aber teurer und spröde.",
+    "Samario-cobalto: apto para altas temperaturas, pero más caro y frágil.",
+    "Самарий-кобальт: подходит для высоких температур, но дороже и хрупок.",
+    "Samario-cobalto: adatto ad alte temperature, ma più costoso e fragile.",
+    "サマリウムコバルト：高温向けですが、高価で割れやすい材質です。"
+  ],
+  "Le matériau seul ne détermine pas la distance : la nuance, les dimensions, l’aimantation et le capteur doivent correspondre à la même référence.": [
+    "Material alone does not determine distance: grade, dimensions, magnetization and sensor must match the same reference.",
+    "材料本身不能决定距离：牌号、尺寸、磁化方向和传感器必须与同一参考配置一致。",
+    "Der Werkstoff allein bestimmt keinen Abstand: Güte, Maße, Magnetisierung und Sensor müssen zur selben Referenz passen.",
+    "El material por sí solo no determina la distancia: grado, dimensiones, magnetización y sensor deben coincidir con la misma referencia.",
+    "Материал сам по себе не определяет расстояние: марка, размеры, намагниченность и датчик должны соответствовать одной эталонной конфигурации.",
+    "Il materiale da solo non determina la distanza: grado, dimensioni, magnetizzazione e sensore devono corrispondere allo stesso riferimento.",
+    "材質だけでは距離は決まりません。グレード、寸法、着磁、センサーが同じ基準構成と一致する必要があります。"
+  ],
+  "Les valeurs « up / to » de la nouvelle brochure restent à qualifier. Elles ne servent pas encore à calculer une marge ou une zone de détection.": [
+    "The new brochure’s “up / to” values still need clarification. They are not yet used to calculate margins or detection zones.",
+    "新手册中“up / to”数值的含义仍待确认，目前不用于计算裕量或检测区域。",
+    "Die „up / to“-Werte der neuen Broschüre müssen noch geklärt werden. Sie dienen noch nicht zur Berechnung von Reserven oder Erfassungsbereichen.",
+    "Los valores «up / to» del nuevo folleto requieren aclaración. Aún no se usan para calcular márgenes ni zonas de detección.",
+    "Значение столбцов «up / to» новой брошюры требует уточнения. Они пока не используются для расчёта запаса или зон обнаружения.",
+    "I valori «up / to» del nuovo opuscolo vanno chiariti. Non sono ancora usati per calcolare margini o zone di rilevamento.",
+    "新しい冊子の「up / to」の意味は確認中です。余裕や検出領域の計算にはまだ使用しません。"
+  ],
+  "Distances typiques Standex pour le MK03 et l’aimant de référence dans la configuration représentée. Enveloppes cotées ; contacts internes et pôles symboliques. À confirmer par essais dans votre application.": [
+    "Typical Standex distances for MK03 and the reference magnet in the illustrated configuration. Dimensioned housings; symbolic internal contacts and poles. Confirm by testing in your application.",
+    "所示配置下 MK03 与参考磁铁的 Standex 典型距离。外壳标有尺寸；内部触点和磁极为示意。需在实际应用中试验确认。",
+    "Typische Standex-Abstände für MK03 und Referenzmagnet in der dargestellten Konfiguration. Bemaßte Gehäuse; Kontakte und Pole symbolisch. Durch Anwendungstests bestätigen.",
+    "Distancias típicas Standex para MK03 y el imán de referencia en la configuración mostrada. Envolventes acotadas; contactos internos y polos simbólicos. Confirmar mediante ensayos.",
+    "Типовые расстояния Standex для MK03 и эталонного магнита в показанной конфигурации. Размеры корпусов указаны; контакты и полюса условные. Подтвердить испытаниями.",
+    "Distanze tipiche Standex per MK03 e magnete di riferimento nella configurazione illustrata. Involucri quotati; contatti interni e poli simbolici. Confermare con prove applicative.",
+    "図示構成の MK03 と基準磁石の Standex 代表距離です。筐体寸法を表示し、内部接点と磁極は模式的です。実用途で試験確認してください。"
+  ],
+  "MK03 · distances typiques publiées pour l’aimant sélectionné": [
+    "MK03 · published typical distances for the selected magnet",
+    "MK03 · 所选磁铁的已公布典型距离",
+    "MK03 · veröffentlichte typische Abstände für den gewählten Magneten",
+    "MK03 · distancias típicas publicadas para el imán seleccionado",
+    "MK03 · опубликованные типовые расстояния для выбранного магнита",
+    "MK03 · distanze tipiche pubblicate per il magnete selezionato",
+    "MK03 · 選択した磁石の公表代表距離"
+  ],
+  "Cet aimant ne dispose pas de distances qualifiées pour ce calcul. Le contact reste indéterminé ; choisir un autre matériau ne permet pas de déduire sa portée.": [
+    "This magnet has no qualified distances for this calculation. Contact remains undetermined; changing material cannot establish its range.",
+    "此磁铁没有可用于此计算的已确认距离。触点状态保持未定；不能通过更换材料推断其作用距离。",
+    "Für diesen Magneten fehlen qualifizierte Abstände für diese Berechnung. Der Kontakt bleibt unbestimmt; ein Werkstoffwechsel erlaubt keine Reichweitenableitung.",
+    "Este imán no tiene distancias verificadas para este cálculo. El contacto queda indeterminado; cambiar el material no permite deducir su alcance.",
+    "Для этого магнита нет подтверждённых расстояний для расчёта. Состояние контакта не определено; смена материала не позволяет вывести дальность.",
+    "Questo magnete non ha distanze qualificate per il calcolo. Il contatto resta indeterminato; cambiare materiale non consente di dedurne la portata.",
+    "この磁石には計算に使える確認済み距離がありません。接点状態は未定です。材質の変更から検出距離を推定することはできません。"
   ]
 }

@@ -1,3 +1,5 @@
+import { BARE_MAGNETS, PACKAGED_MAGNET_IDS } from "./magnet-catalog";
+import { pairedMagnetModel } from "./paired-magnets";
 /** Magnetic workshop V0.3. Geometry, field illustration and switching are separate.
  * Reference distances are typical published values; education is NOT a product model.
  */
@@ -21,7 +23,7 @@ export interface WorkshopConfig {
   demoReach: number;
   lateralShift: number;
   magnetTilt: number;
-  magnetModel: "M02" | "generic";
+  magnetModel: string;
   machine: MachineAssembly | null;
   sensorId: string;
   mode: "reference" | "education";
@@ -51,7 +53,7 @@ export const DEFAULT_WORKSHOP: WorkshopConfig = {
   demoReach: 25,
   lateralShift: 0,
   magnetTilt: 0,
-  magnetModel: "M02",
+  magnetModel: "4003004003",
   machine: null,
   sensorId: "MK03",
   mode: "reference",
@@ -84,12 +86,19 @@ export const MODEL_VERSION = "magnetic-workshop-0.3.0";
 export const EDUCATION_NOTE =
   "Démonstration fictive : dimensions des boîtiers en mm, champ et seuils choisis pour apprendre. Aucune portée réelle du produit n'est prédite.";
 export const REFERENCE_NOTE =
-  "Distances typiques Standex pour le MK03 + M02 dans la configuration représentée. Enveloppes cotées ; contacts internes et pôles symboliques. À confirmer par essais dans votre application.";
+  "Distances typiques Standex pour le MK03 et l’aimant de référence dans la configuration représentée. Enveloppes cotées ; contacts internes et pôles symboliques. À confirmer par essais dans votre application.";
 
 // MK03 table, checked 2026-09-07. [pull-in, drop-out], mm; D2 deliberately omitted:
 // one distance at a side lobe does not locate the lobe in a full 3D map.
 /** @deprecated Compatibility export only; no product values live in this module. */
-export const MK03_DISTANCES = Object.fromEntries((["B", "C", "D", "E"] as const).map(cls => [cls, Object.fromEntries((["D1", "D3"] as const).map(approach => [approach, publishedPair(cls, approach)]))])) as Record<Sensitivity, Record<"D1" | "D3", readonly [number, number] | null>>;
+export const MK03_DISTANCES = Object.fromEntries(
+  (["B", "C", "D", "E"] as const).map((cls) => [
+    cls,
+    Object.fromEntries(
+      (["D1", "D3"] as const).map((approach) => [approach, publishedPair(cls, approach)]),
+    ),
+  ]),
+) as Record<Sensitivity, Record<"D1" | "D3", readonly [number, number] | null>>;
 export const clamp = (v: number, low: number, high: number) => Math.max(low, Math.min(high, v));
 export const axis = (degrees: number): Vec3 => [
   Math.cos((degrees * Math.PI) / 180),
@@ -136,7 +145,7 @@ export function parseWorkshopConfig(value: unknown): WorkshopConfig | null {
     geometry: ["D1", "D3"],
     motion: ["approach", "slide", "pivot"],
     magnetization: ["axial", "diametral", "thickness"],
-    magnetModel: ["M02", "generic"],
+    magnetModel: [...PACKAGED_MAGNET_IDS, ...BARE_MAGNETS.map((m) => m.id), "generic"],
     polarity: [1, -1],
     temperature: ["ambient", "other"],
     initialContact: ["open", "closed", "unknown"],
@@ -179,9 +188,9 @@ export function referenceAllowed(c: WorkshopConfig): boolean {
   return (
     c.mode === "reference" &&
     c.sensorId === "MK03" &&
-    publishedPair(c.sensitivity, c.geometry) !== null &&
+    publishedPair(c.sensitivity, c.geometry, undefined, c.magnetModel) !== null &&
     c.machine === null &&
-    c.magnetModel === "M02" &&
+    ["M02", "4003004003"].includes(c.magnetModel) &&
     c.magnetTilt === 0 &&
     c.lateralShift === 0 &&
     c.motion === "approach" &&
@@ -205,15 +214,16 @@ export function unavailableReason(c: WorkshopConfig): string | null {
     return "Présence de matière ferromagnétique : ce modèle ne calcule pas son effet.";
   if (c.temperature !== "ambient")
     return "Température différente des conditions de référence : caractérisation nécessaire.";
+  if (c.mode === "reference" && !publishedPair(c.sensitivity, c.geometry, undefined, c.magnetModel))
+    return "Cet aimant ne dispose pas de distances qualifiées pour ce calcul. Le contact reste indéterminé ; choisir un autre matériau ne permet pas de déduire sa portée.";
   if (c.mode === "reference" && !referenceAllowed(c))
     return "Cette orientation ou ce mouvement sort de la configuration documentée.";
   return null;
 }
 
 export function magnetSize(c: WorkshopConfig): Vec3 {
-  return c.magnetModel === "M02"
-    ? [MAGNET_REFERENCE.length, MAGNET_REFERENCE.height, MAGNET_REFERENCE.width]
-    : [12, 4, 6];
+  const model = pairedMagnetModel(c.magnetModel);
+  return model ? [...model.body] : [12, 4, 6];
 }
 /** Offset from surface gap to centres, in mm, with projected extents for rotated objects. */
 export function approachOffset(c: WorkshopConfig): number {
@@ -391,7 +401,8 @@ export function simulateCycle(c: WorkshopConfig, steps = 600): CycleResult {
   if (!parseWorkshopConfig(c)) throw new Error("Montage invalide");
   if (!Number.isInteger(steps) || steps < 10 || steps > 10000)
     throw new Error("Résolution invalide");
-  const reason = unavailableReason(c), pair = publishedPair(c.sensitivity, c.geometry);
+  const reason = unavailableReason(c),
+    pair = publishedPair(c.sensitivity, c.geometry, undefined, c.magnetModel);
   const samples: CycleSample[] = [],
     transitions: CycleResult["transitions"] = [];
   let contact =
@@ -408,13 +419,16 @@ export function simulateCycle(c: WorkshopConfig, steps = 600): CycleResult {
       : c.mode === "reference"
         ? pose.distance
         : educationSignal(c, pose.position, pose.angle, t);
-    const next = c.mode === "reference" && !pair ? "unknown" : switchContact(
-      contact,
-      signal,
-      c.mode === "reference" ? pair![0] : 1,
-      c.mode === "reference" ? pair![1] : 0.72,
-      c.mode === "education",
-    );
+    const next =
+      c.mode === "reference" && !pair
+        ? "unknown"
+        : switchContact(
+            contact,
+            signal,
+            c.mode === "reference" ? pair![0] : 1,
+            c.mode === "reference" ? pair![1] : 0.72,
+            c.mode === "education",
+          );
     if (next !== contact && i > 0) {
       transitions.push({ t, contact: next, distance: pose.distance });
       if (contact === "open" && next === "closed") closures++;
@@ -441,10 +455,13 @@ export function simulateCycle(c: WorkshopConfig, steps = 600): CycleResult {
 }
 
 export function summarizeWorkshop(c: WorkshopConfig): string {
-  const result = simulateCycle(c), pair = publishedPair(c.sensitivity, c.geometry), pull = pair?.[0] ?? "?", drop = pair?.[1] ?? "?";
+  const result = simulateCycle(c),
+    pair = publishedPair(c.sensitivity, c.geometry, undefined, c.magnetModel),
+    pull = pair?.[0] ?? "?",
+    drop = pair?.[1] ?? "?";
   const setup =
     c.mode === "reference"
-      ? `MK03-1A66${c.sensitivity}-500W + M02 ; approche ${c.geometry}, axes parallèles.`
+      ? `MK03-1A66${c.sensitivity}-500W + ${c.magnetModel} ; approche ${c.geometry}, axes parallèles.`
       : c.machine
         ? `${sensorById(c.sensorId).name} · Démonstration fictive dans ${c.machine.fileName} ; axe Nord–Sud local ${c.magnetization === "axial" ? "X" : c.magnetization === "thickness" ? "Y" : "Z"}, polarité ${c.polarity === 1 ? "N/S" : "S/N"}.`
         : `${sensorById(c.sensorId).name} · Démonstration fictive ; ${c.machine ? "intégration dans une machine" : c.motion === "slide" ? "passage latéral" : c.motion === "pivot" ? "pivot" : "approche " + c.geometry} ; axe reed ${c.sensorAngle}°, aimant ${c.magnetAngle}°, aimantation ${c.magnetization === "axial" ? "axiale" : c.magnetization === "thickness" ? "épaisseur" : "transversale"}, polarité ${c.polarity === 1 ? "N/S" : "S/N"}.`;

@@ -1,3 +1,4 @@
+import { preferredMagnet } from "../magnet-catalog";
 import { SENSOR_CATALOG } from "../sensor-catalog";
 import { PUBLISHED_REGISTRY, PHYSICS_REGISTRY } from "./registries";
 import type { PublishedRegistry, PhysicsRegistry, PublishedApproach } from "./registries";
@@ -37,7 +38,7 @@ export function exploreSolutions(
         ]),
       ];
       return (classes.length ? classes : [""]).flatMap((sensitivityClass) =>
-        (magnets.length ? magnets : [""]).map((magnetId) => {
+        (magnets.length ? magnets : [preferredMagnet(sensor)]).map((magnetId) => {
           const key = { sensorFamily: sensor.id, sensitivityClass, magnetId, approachId };
           return {
             ...key,

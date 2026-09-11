@@ -198,7 +198,8 @@ export function publishedPair(
   sensitivityClass: string,
   approachId: string,
   registry = PUBLISHED_REGISTRY,
+  magnetId = "M02",
 ): readonly [number, number] | null {
-  const row = publishedReference("MK03", sensitivityClass, "M02", approachId, registry);
+  const row = publishedReference("MK03", sensitivityClass, magnetId, approachId, registry);
   return row ? [row.pullInMm, row.dropOutMm] : null;
 }

@@ -1,3 +1,5 @@
+import { preferredMagnet } from "@/lib/standex/magnet-catalog";
+import { sensorById } from "@/lib/standex/sensor-catalog";
 import { documentLogoSource } from "@/components/standex/brand-logo";
 import { studioExportSheets, workbookBytes, downloadBinary } from "@/lib/standex/studio-exports";
 import { CandidateThumbnail } from "@/components/leadmagnet/candidate-thumbnail";
@@ -119,8 +121,18 @@ export default function StudioV2({
       }),
     [study.need, config, approach],
   );
+  const displaySolutions = solutions.filter((row) => {
+    const familyRows = solutions.filter((other) => other.sensorFamily === row.sensorFamily);
+    const preferred = preferredMagnet(sensorById(row.sensorFamily));
+    const defaultMagnet = familyRows.some((other) => other.magnetId === preferred)
+      ? preferred
+      : (familyRows.find((other) => other.magnetId === "M02")?.magnetId ?? familyRows[0]?.magnetId);
+    return row.id === study.selectedSolutionId || row.magnetId === defaultMagnet;
+  });
   const rows =
-    sort === "sensor" ? [...solutions].sort((a, b) => a.id.localeCompare(b.id)) : solutions;
+    sort === "sensor"
+      ? [...displaySolutions].sort((a, b) => a.id.localeCompare(b.id))
+      : displaySolutions;
   const selected = solutions.find((s) => s.id === selectedId) ?? null;
   const documented = new Set(PUBLISHED_REGISTRY.rows.map((r) => r.sensorFamily)).size;
   const families = new Set(rows.map((r) => r.sensorFamily)).size;
@@ -575,13 +587,18 @@ export default function StudioV2({
                     onApply({
                       sensorId: selected.sensorFamily,
                       sensitivity: selected.sensitivityClass as WorkshopConfig["sensitivity"],
-                      ...(selected.magnetId === "M02" && ["D1", "D3"].includes(selected.approachId)
-                        ? {
-                            magnetModel: "M02" as const,
-                            geometry:
-                              selected.approachId === "D3" ? ("D3" as const) : ("D1" as const),
-                          }
-                        : {}),
+                      magnetModel: selected.magnetId,
+                      geometry: ["D3", "D5"].includes(selected.approachId) ? "D3" : "D1",
+                      sensorAngle:
+                        !["D3", "D5"].includes(selected.approachId) &&
+                        sensorById(selected.sensorFamily).shape === "flange"
+                          ? 180
+                          : 0,
+                      magnetAngle: ["D4", "D5"].includes(selected.approachId) ? -90 : 0,
+                      magnetTilt: 0,
+                      lateralShift: ["D2", "D4"].includes(selected.approachId)
+                        ? sensorById(selected.sensorFamily).body[0] / 2
+                        : 0,
                     });
                   }}
                 >

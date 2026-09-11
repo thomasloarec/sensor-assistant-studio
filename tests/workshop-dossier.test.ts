@@ -47,7 +47,7 @@ test("the example adds documented context without filling real-machine requireme
   expect(after.productConfidence).toEqual(before.productConfidence);
   expect(after.routingConfidence).toEqual(before.routingConfidence);
   expect(after.reviewNotes).toEqual(before.reviewNotes);
-  expect(after.workshopSummary).toContain("MK03-1A66B-500W + M02");
+  expect(after.workshopSummary).toContain("MK03-1A66B-500W + 4003004003");
   const md = buildDossierMarkdown(after, { tester: "test" });
   expect(md).toContain("Montage exploré dans l'atelier magnétique");
   expect(md).toContain("Distances typiques");

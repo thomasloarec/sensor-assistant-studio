@@ -414,3 +414,7 @@ cibles de 44 px conformes).
 ### Fond des visuels produit
 
 `--surface-product` reste clair dans les sections immersives, pour détacher les boîtiers sombres. Les vignettes 3D utilisent une caméra commune pour comparer les tailles.
+
+### Catalogue et navigation — retour utilisateur V2
+
+Le sélecteur de langue et le menu restent groupés à droite dans les en-têtes de projet et de panneau. Les filtres actifs associent un anneau primaire, une graisse renforcée et un compteur textuel. Le repère de 50 mm est un texte HTML de légende, indépendant du redimensionnement du dessin SVG. La vue 3D est proposée par défaut ; la même échelle et le cadrage individuel restent contrôlables. Les petites références peuvent ainsi être agrandies sans changer leurs dimensions. Les vignettes conservent la limite de quatre contextes WebGL et le respect du mouvement réduit.

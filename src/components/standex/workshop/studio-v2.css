@@ -407,3 +407,34 @@
   box-shadow: var(--e-3);
   border-radius: var(--r-sm);
 }
+
+/* Keep the help disclosure independent from the workshop separators. */
+.mw .studio-v2 details.technical-help {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  margin: 0;
+}
+.mw .studio-v2 .technical-help > summary {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  color: var(--primary);
+  margin: 0;
+  font: var(--t-title-m);
+}
+.technical-help > summary::marker,
+.technical-help > summary::-webkit-details-marker {
+  display: none;
+}
+.studio-label-help {
+  position: relative;
+}
+.studio-v2 .studio-label-help .technical-help {
+  position: static;
+}
+.studio-label-help .technical-help[open] > div {
+  left: 0;
+  right: auto;
+  max-width: min(340px, 100%);
+}

@@ -442,7 +442,7 @@
 .studio-navigation nav {
   position: absolute;
   top: 100%;
-  left: 0;
+  right: 0;
   z-index: 100;
   width: min(300px, 80vw);
   display: flex;
@@ -472,4 +472,25 @@
   margin: 0;
   border: 0;
   box-shadow: none;
+}
+
+.studio-header-navigation {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+@media (max-width: 480px) {
+  .workspace-panel-shell > .material {
+    flex-wrap: wrap;
+  }
+  .workspace-panel-shell > .material > .studio-header-navigation {
+    order: 2;
+    flex-basis: 100%;
+    justify-content: flex-end;
+  }
+  .workspace-panel-shell > .material > button:last-child {
+    order: 1;
+  }
 }

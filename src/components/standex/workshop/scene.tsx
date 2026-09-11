@@ -1,3 +1,4 @@
+import { pairedMagnetModel } from "@/lib/standex/paired-magnets";
 import { publishedPair } from "@/lib/standex/magnetics/registries";
 import { t } from "@/lib/i18n/core";
 import { useMemo, useRef, useEffect } from "react";
@@ -425,6 +426,7 @@ export function Contacts({
   );
 }
 export function Magnet({ config, sample }: { config: WorkshopConfig; sample: CycleSample }) {
+  const actualModel = pairedMagnetModel(config.magnetModel);
   const [l, h, w] = magnetSize(config),
     axial = config.magnetization === "axial",
     thick = config.magnetization === "thickness";
@@ -433,32 +435,36 @@ export function Magnet({ config, sample }: { config: WorkshopConfig; sample: Cyc
       position={sample.position}
       rotation={[0, (-sample.angle * Math.PI) / 180, (config.magnetTilt * Math.PI) / 180]}
     >
-      {([-1, 1] as const).map((sign) => {
-        const north = sign * config.polarity === 1;
-        return (
-          <group
-            key={sign}
-            position={
-              axial
-                ? [(sign * l) / 4, 0, 0]
-                : thick
-                  ? [0, (sign * h) / 4, 0]
-                  : [0, 0, (sign * w) / 4]
-            }
-          >
-            <mesh>
-              <boxGeometry args={axial ? [l / 2, h, w] : thick ? [l, h / 2, w] : [l, h, w / 2]} />
-              <meshStandardMaterial color={north ? "#e14242" : "#237dd0"} roughness={0.4} />
-            </mesh>
-            <Label
-              position={thick ? [0, sign * (h / 4 + 0.8), 0] : [0, h / 2 + 0.8, 0]}
-              className={north ? "mw-pole north" : "mw-pole south"}
+      {actualModel ? (
+        <Body model={actualModel} xray={false} showCable={false} />
+      ) : (
+        ([-1, 1] as const).map((sign) => {
+          const north = sign * config.polarity === 1;
+          return (
+            <group
+              key={sign}
+              position={
+                axial
+                  ? [(sign * l) / 4, 0, 0]
+                  : thick
+                    ? [0, (sign * h) / 4, 0]
+                    : [0, 0, (sign * w) / 4]
+              }
             >
-              {t(north ? "N" : "S")}
-            </Label>
-          </group>
-        );
-      })}
+              <mesh>
+                <boxGeometry args={axial ? [l / 2, h, w] : thick ? [l, h / 2, w] : [l, h, w / 2]} />
+                <meshStandardMaterial color={north ? "#e14242" : "#237dd0"} roughness={0.4} />
+              </mesh>
+              <Label
+                position={thick ? [0, sign * (h / 4 + 0.8), 0] : [0, h / 2 + 0.8, 0]}
+                className={north ? "mw-pole north" : "mw-pole south"}
+              >
+                {t(north ? "N" : "S")}
+              </Label>
+            </group>
+          );
+        })
+      )}
     </group>
   );
 }

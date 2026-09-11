@@ -1,3 +1,4 @@
+import { pairLayout } from "@/lib/standex/pair-layout";
 import { pairedMagnetModel } from "@/lib/standex/paired-magnets";
 /** Rendu 3D réel d'une vignette de candidat.
  *
@@ -16,6 +17,7 @@ export default function CandidateThumbnailScene({
   sensorId,
   cabled,
   pair,
+  fitToView = false,
   reduced,
   onContextLost,
 }: {
@@ -23,19 +25,17 @@ export default function CandidateThumbnailScene({
   cabled: boolean;
   pair?: { magnetId: string; approach: string };
   reduced: boolean;
+  fitToView?: boolean;
   onContextLost: () => void;
 }) {
-  const model = sensorById(sensorId);
+  const model = pairedMagnetModel(sensorId) ?? sensorById(sensorId);
   const [l, h, w] = model.body;
   const span = Math.max(l, h, w);
   const dist = pair ? 155 : 100; // Fixed camera: every catalogue thumbnail uses the same mm scale.
   const side = model.cableSide ?? -1;
   const magnet = pair ? pairedMagnetModel(pair.magnetId) : null;
-  const perpendicular = pair?.approach === "D4" || pair?.approach === "D5";
-  const endOn = pair?.approach === "D3" || pair?.approach === "D5";
-  const offset: Vec3 = endOn
-    ? [l / 2 + (magnet?.body[0] ?? 20) / 2 + 6, 0, 0]
-    : [pair?.approach === "D2" ? l / 2 : 0, 0, w / 2 + (magnet?.body[2] ?? 8) / 2 + 6];
+  const layout = magnet ? pairLayout(model, magnet, pair!.approach) : null;
+  const offset: Vec3 = layout?.offset ?? [0, 0, 0];
 
   // Le contact interne n'est lisible que sur les corps transparents.
   const showContacts = model.shape === "glass" || model.shape === "custom_pcb";
@@ -51,7 +51,7 @@ export default function CandidateThumbnailScene({
     <Canvas
       orthographic
       camera={{
-        zoom: pair ? 1.4 : 2,
+        zoom: pair ? 1.4 : fitToView ? 80 / span : 2,
         position: [dist * 0.68, dist * 0.55, dist * 0.86],
         fov: 38,
         near: 0.1,
@@ -65,15 +65,22 @@ export default function CandidateThumbnailScene({
       <ambientLight intensity={2.1} />
       <directionalLight position={[span * 2, span * 3, span * 1.8]} intensity={2.2} />
       <directionalLight position={[-span * 2, span, -span * 2]} intensity={0.8} />
-      <Body model={model} xray={showContacts} showCable={!cabled} />
-      {showContacts ? <Contacts model={model} contact="open" reduced /> : null}
-      {cabled && !["smd", "glass", "custom_pcb"].includes(model.shape)
-        ? wires.map((points, i) => (
-            <Line key={i} points={points} color={i === 0 ? "#3c4853" : "#a55038"} lineWidth={2.5} />
-          ))
-        : null}
+      <group rotation={[0, layout?.sensorYaw ?? 0, 0]}>
+        <Body model={model} xray={showContacts} showCable={false} />
+        {showContacts ? <Contacts model={model} contact="open" reduced /> : null}
+        {cabled && !["smd", "glass", "custom_pcb"].includes(model.shape)
+          ? wires.map((points, i) => (
+              <Line
+                key={i}
+                points={points}
+                color={i === 0 ? "#3c4853" : "#a55038"}
+                lineWidth={2.5}
+              />
+            ))
+          : null}
+      </group>
       {pair && magnet && (
-        <group position={offset} rotation={[0, perpendicular ? Math.PI / 2 : 0, 0]}>
+        <group position={offset} rotation={[0, layout?.magnetYaw ?? 0, 0]}>
           {magnet ? (
             <Body model={magnet} xray={false} showCable={false} />
           ) : (

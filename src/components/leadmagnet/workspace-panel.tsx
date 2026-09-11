@@ -136,7 +136,6 @@ export function WorkspacePanel({
         }
       >
         <div className="material sticky top-0 z-10 flex items-start gap-3 border-b border-[var(--hairline)] px-4 py-4 sm:px-6">
-          {navigation}
           {onBack ? (
             <Button
               variant="ghost"
@@ -152,6 +151,7 @@ export function WorkspacePanel({
             <h2 className="t-title-l">{title}</h2>
             {description ? <p className="t-caption mt-1 hidden sm:block">{description}</p> : null}
           </div>
+          {navigation}
           <Button
             variant="ghost"
             className="min-h-11 text-base"

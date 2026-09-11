@@ -255,7 +255,7 @@ function Assembly({
           }
         >
           <Magnet
-            config={{ ...config, magnetModel: "generic", magnetTilt: 0 }}
+            config={{ ...config, magnetTilt: 0 }}
             sample={{ ...sample, position: [0, 0, 0], angle: 0 }}
           />
         </group>

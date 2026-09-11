@@ -1881,3 +1881,65 @@
 .candidate-thumb-fallback {
   color: var(--standex-gray);
 }
+
+.mw-catalog-drawing {
+  position: relative;
+}
+.mw-catalog-drawing .candidate-thumb {
+  height: 100%;
+  width: 100%;
+}
+.mw-catalog-scale {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--foreground);
+  background: var(--surface-product);
+  padding: 0 6px;
+}
+.mw-catalog-tools [data-active="true"] {
+  background: var(--surface-tint);
+  color: var(--heading);
+  box-shadow: 0 0 0 2px var(--primary);
+  font-weight: 600;
+}
+.mw-active-filter-count {
+  color: var(--heading);
+}
+.mw-catalog-view {
+  display: flex;
+  gap: 4px;
+}
+.mw-catalog-view button {
+  min-height: 44px;
+  padding: 8px 14px;
+  border-radius: var(--r-sm);
+  background: var(--surface-sunken);
+  color: var(--foreground);
+  font: var(--t-caption);
+}
+.mw-catalog-view button[aria-pressed="true"] {
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+.mw-catalog-page .mw-catalog-choice {
+  cursor: default;
+}
+
+.mw-catalog-material {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 16px 0;
+  font: var(--t-body);
+}
+.mw-catalog-material select {
+  min-height: 44px;
+  font: var(--t-body);
+  background: var(--surface-sunken);
+  color: var(--foreground);
+  border-radius: var(--r-sm);
+  padding: 8px 12px;
+}

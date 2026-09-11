@@ -230,6 +230,9 @@ export function inventory(): Finding[] {
     const report = (node: ts.Node, text: string, kind: Finding["kind"]) => {
       const value = normalize(text);
       if (EXEMPT_TEXTS.has(value)) return;
+      // Magnet grades and dimension symbols are technical identifiers, not prose.
+      if (/^(?:SmCo5|NdFeB(?: N\d+H?| 250\/175H)?|AlNiCo(?:500)?) · [Ø\d][\d., ×Ømm]*$/.test(value))
+        return;
       const line = at(node);
       if (kind === "untranslated" && canonicalLines.has(line)) return;
       findings.push({ file, line, text: value, kind });

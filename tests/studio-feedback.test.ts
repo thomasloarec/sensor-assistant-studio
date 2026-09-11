@@ -24,7 +24,7 @@ const key = {
   approachId: "D1" as const,
 };
 test("R04 published references cover thirteen families and all five paths, with auditable sources", () => {
-  expect(PUBLISHED_REGISTRY.rows).toHaveLength(258);
+  expect(PUBLISHED_REGISTRY.rows).toHaveLength(438);
   expect(new Set(PUBLISHED_REGISTRY.rows.map((r) => r.sensorFamily)).size).toBe(13);
   expect([...new Set(PUBLISHED_REGISTRY.rows.map((r) => r.approachId))].sort()).toEqual([
     "D1",

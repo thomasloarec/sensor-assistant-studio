@@ -99,10 +99,12 @@ test("T2.4/T6.5 removing actual published data removes all product results inclu
 });
 test("T6 expanded catalogue retains four MK03 classes and refuses physical predictions", () => {
   const rows = exploreSolutions(need, "D1", domain);
-  expect(rows).toHaveLength(69);
-  expect(new Set(rows.map((r) => r.id)).size).toBe(69);
+  expect(rows).toHaveLength(106);
+  expect(new Set(rows.map((r) => r.id)).size).toBe(106);
   expect(new Set(rows.map((r) => r.sensorFamily)).size).toBe(29);
-  expect(rows.filter((r) => r.sensorFamily === "MK03")).toHaveLength(4);
+  expect(
+    new Set(rows.filter((r) => r.sensorFamily === "MK03").map((r) => r.sensitivityClass)).size,
+  ).toBe(4);
   expect(
     new Set(rows.filter((r) => r.reference.provenance.length).map((r) => r.sensorFamily)).size,
   ).toBe(13);

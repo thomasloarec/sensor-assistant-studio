@@ -1,3 +1,4 @@
+import { pairedMagnetModel } from "@/lib/standex/paired-magnets";
 import { t } from "@/lib/i18n/core";
 import { magnetSize } from "@/lib/standex/magnetic-workshop";
 import type { WorkshopConfig, CycleSample } from "@/lib/standex/magnetic-workshop";
@@ -24,6 +25,7 @@ export default function FlatScene({
   const model = sensorById(config.sensorId),
     [l, , w] = model.body,
     [ml, , mw] = magnetSize(config);
+  const actualMagnet = pairedMagnetModel(config.magnetModel);
   const axial = config.magnetization === "axial";
   const extent = focus === "sensor" ? Math.max(12, l * 1.6) : 180;
   const cx = focus === "sensor" ? config.mountX : 10,
@@ -92,7 +94,9 @@ export default function FlatScene({
         <g
           transform={`translate(${sample.position[0]} ${sample.position[2]}) rotate(${sample.angle}) scale(${Math.max(0.08, Math.abs(Math.cos((config.magnetTilt * Math.PI) / 180)))} 1)`}
         >
-          {config.magnetization === "thickness" ? (
+          {actualMagnet ? (
+            <SensorPlan model={actualMagnet} xray={false} showCable={false} />
+          ) : config.magnetization === "thickness" ? (
             <g>
               <rect
                 x={-ml / 2}
@@ -136,7 +140,7 @@ export default function FlatScene({
             })
           )}
           <text y={mw / 2 + 4} textAnchor="middle" fontSize="2.6" fill="#536b80">
-            {t(config.mode === "reference" ? "M02 · pôles symboliques" : "Aimant")}
+            {actualMagnet?.id ?? t("Aimant")}
           </text>
         </g>
       </g>

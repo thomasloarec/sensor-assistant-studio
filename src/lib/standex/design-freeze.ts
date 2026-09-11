@@ -156,10 +156,10 @@ export async function createDesignFreeze(input: FreezeInput): Promise<DesignFree
     ? evaluateReference(chosen, s.need, { referencePose: true, ferrous: c.ferromagnetic })
     : emptyMargin("published_typical", "NO_SELECTION");
   const physical = solveSwitching({
-    sensorFamily: c.sensorId,
-    sensitivityClass: c.sensitivity,
-    magnetId: c.magnetModel,
-    approachId: c.geometry,
+    sensorFamily: chosen?.sensorFamily ?? "",
+    sensitivityClass: chosen?.sensitivityClass ?? "",
+    magnetId: chosen?.magnetId ?? "",
+    approachId: chosen?.approachId ?? "",
     temperatureC: 20,
     ferrousBodies: { declared: c.ferromagnetic, nearestDistanceMm: null },
   });

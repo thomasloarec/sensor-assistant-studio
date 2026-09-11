@@ -2993,6 +2993,7 @@ export function DesignSpace({
       {draftBanner}
       <Suspense fallback={<p className="text-base">{t("Chargement de l'atelier…")}</p>}>
         <MagneticWorkshop
+          embedded
           initialStudy={dossier.studioV2}
           dossierId={dossier.id}
           revision={dossier.revision}
@@ -3338,62 +3339,65 @@ export function DesignSpace({
   );
 
   const navigation = (
-    <details className="studio-navigation">
-      <summary>{t("Menu")}</summary>
-      <nav aria-label={t("Navigation principale")}>
-        {[
-          [
-            t("Mon projet en cours"),
-            () => {
-              setCatalogOpen(false);
-              setPanel(null);
-            },
-          ],
-          [
-            t("Mes projets et mon compte"),
-            () => {
-              setCatalogOpen(false);
-              setPanel("espace");
-            },
-          ],
-          [
-            t("Atelier 3D"),
-            () => {
-              setCatalogOpen(false);
-              setWorkshopMounted(true);
-              setShowWorkshop(true);
-              setPanel("atelier");
-            },
-          ],
-          [
-            t("Catalogue des capteurs"),
-            () => {
-              setPanel(null);
-              setCatalogOpen(true);
-            },
-          ],
-          [
-            t("Documents"),
-            () => {
-              setCatalogOpen(false);
-              setPanel("documents");
-            },
-          ],
-        ].map(([label, action]) => (
-          <button
-            key={String(label)}
-            type="button"
-            onClick={(e) => {
-              const d = e.currentTarget.closest("details");
-              if (d) d.open = false;
-              (action as () => void)();
-            }}
-          >
-            {String(label)}
-          </button>
-        ))}
-      </nav>
-    </details>
+    <div className="studio-header-navigation">
+      <LanguagePicker />
+      <details className="studio-navigation">
+        <summary>{t("Menu")}</summary>
+        <nav aria-label={t("Navigation principale")}>
+          {[
+            [
+              t("Mon projet en cours"),
+              () => {
+                setCatalogOpen(false);
+                setPanel(null);
+              },
+            ],
+            [
+              t("Mes projets et mon compte"),
+              () => {
+                setCatalogOpen(false);
+                setPanel("espace");
+              },
+            ],
+            [
+              t("Atelier 3D"),
+              () => {
+                setCatalogOpen(false);
+                setWorkshopMounted(true);
+                setShowWorkshop(true);
+                setPanel("atelier");
+              },
+            ],
+            [
+              t("Catalogue des capteurs"),
+              () => {
+                setPanel(null);
+                setCatalogOpen(true);
+              },
+            ],
+            [
+              t("Documents"),
+              () => {
+                setCatalogOpen(false);
+                setPanel("documents");
+              },
+            ],
+          ].map(([label, action]) => (
+            <button
+              key={String(label)}
+              type="button"
+              onClick={(e) => {
+                const d = e.currentTarget.closest("details");
+                if (d) d.open = false;
+                (action as () => void)();
+              }}
+            >
+              {String(label)}
+            </button>
+          ))}
+        </nav>
+      </details>
+    </div>
   );
   return (
     <div
@@ -3425,7 +3429,6 @@ export function DesignSpace({
             )}
             <span aria-hidden="true" className="block h-6 w-px bg-[var(--hairline)]" />
           </div>
-          {navigation}
           <ProjectTitle
             // Changer de dossier pendant un renommage abandonne le brouillon de
             // nom de l'ancien dossier : il ne doit jamais renommer le nouveau.
@@ -3447,7 +3450,6 @@ export function DesignSpace({
             </Badge>
           </div>
           <div className="flex max-w-full flex-wrap items-center gap-1 rounded-[var(--r-sm)] bg-[var(--surface-sunken)] p-1">
-            <LanguagePicker />
             <Button
               variant="ghost"
               className="min-h-11 px-3"
@@ -3477,6 +3479,7 @@ export function DesignSpace({
               </label>
             </Button>
           </div>
+          {navigation}
         </div>
         <div className="mx-auto max-w-[76rem] px-4 pb-4">
           <details className="rounded-[var(--r-md)] bg-[var(--surface-tint)] px-4 py-2">

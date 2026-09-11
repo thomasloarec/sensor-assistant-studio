@@ -1,3 +1,4 @@
+import { pairLayout } from "@/lib/standex/pair-layout";
 import { SensorPlan } from "@/components/standex/workshop/sensor-plan";
 import { pairedMagnetModel } from "@/lib/standex/paired-magnets";
 import { t } from "@/lib/i18n/core";
@@ -150,21 +151,35 @@ function Fallback({
   reason,
   cabled,
   pair,
+  fitToView = false,
 }: {
   model: SensorModel;
   reason: string;
   cabled: boolean;
   pair?: { magnetId: string; approach: string };
+  fitToView?: boolean;
 }) {
   const magnet = pair ? pairedMagnetModel(pair.magnetId) : null;
+  const span = Math.max(...model.body, model.terminalSpan ?? 0);
+  const layout = magnet ? pairLayout(model, magnet, pair!.approach) : null;
   return (
     <div className="candidate-thumb-fallback" role="img" aria-label={`${model.name} — ${reason}`}>
-      <svg viewBox="-64 -34 128 68" aria-hidden="true" focusable="false">
-        <g transform={magnet ? "translate(-20 0)" : undefined}>
-          <SensorPlan model={model} xray={false} showCable={cabled} />
-          {magnet && (
+      <svg
+        viewBox={fitToView ? `${-span} ${-span * 0.6} ${span * 2} ${span * 1.2}` : "-64 -34 128 68"}
+        aria-hidden="true"
+        focusable="false"
+      >
+        <g
+          transform={
+            layout ? `translate(${-layout.offset[0] / 2} ${-layout.offset[2] / 2})` : undefined
+          }
+        >
+          <g transform={layout ? `rotate(${(-layout.sensorYaw * 180) / Math.PI})` : undefined}>
+            <SensorPlan model={model} xray={false} showCable={cabled} />
+          </g>
+          {magnet && layout && (
             <g
-              transform={`translate(42 0) rotate(${["D4", "D5"].includes(pair!.approach) ? 90 : 0})`}
+              transform={`translate(${layout.offset[0]} ${layout.offset[2]}) rotate(${(-layout.magnetYaw * 180) / Math.PI})`}
             >
               <SensorPlan model={magnet} xray={false} showCable={false} />
             </g>
@@ -200,13 +215,15 @@ export function CandidateThumbnail({
   livePreview = true,
   cabled = false,
   pair,
+  fitToView = false,
 }: {
   sensorId: string;
   livePreview?: boolean;
   cabled?: boolean;
   pair?: { magnetId: string; approach: string };
+  fitToView?: boolean;
 }) {
-  const model = sensorById(sensorId);
+  const model = pairedMagnetModel(sensorId) ?? sensorById(sensorId);
   const host = useRef<HTMLDivElement>(null);
   const [inView, setInView] = useState(false);
   const [slot, setSlot] = useState(false);
@@ -268,6 +285,7 @@ export function CandidateThumbnail({
                 model={model}
                 reason={t("Aperçu 3D en cours")}
                 cabled={cabled}
+                fitToView={fitToView}
                 {...(pair ? { pair } : {})}
               />
             }
@@ -275,6 +293,7 @@ export function CandidateThumbnail({
             <ThumbnailScene
               sensorId={model.id}
               cabled={cabled}
+              fitToView={fitToView}
               {...(pair ? { pair } : {})}
               reduced={reduced}
               onContextLost={() => setLost(true)}
@@ -294,6 +313,7 @@ export function CandidateThumbnail({
                 : t("3D non disponible sur cet appareil")
           }
           cabled={cabled}
+          fitToView={fitToView}
           {...(pair ? { pair } : {})}
         />
       )}

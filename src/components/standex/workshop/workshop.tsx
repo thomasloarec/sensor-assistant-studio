@@ -1,3 +1,5 @@
+import { BARE_MAGNETS, PACKAGED_MAGNET_IDS } from "@/lib/standex/magnet-catalog";
+import { pairedMagnetModel } from "@/lib/standex/paired-magnets";
 import { t, msg } from "@/lib/i18n/core";
 import { useLocale } from "@/lib/i18n/react";
 import { AppHeader } from "@/components/standex/app-header";
@@ -131,6 +133,7 @@ export interface WorkshopCableRouting {
 }
 
 export interface WorkshopProps {
+  embedded?: boolean;
   initialStudy?: StudioStudy | null | undefined;
   onStudyChange?: ((study: StudioStudy, freeze: DesignFreeze | null) => void) | undefined;
   dossierId?: string | undefined;
@@ -148,6 +151,7 @@ export interface WorkshopProps {
   onDraftChange?: (config: WorkshopConfig) => void;
 }
 export default function MagneticWorkshop({
+  embedded = false,
   initialStudy,
   onStudyChange,
   dossierId,
@@ -337,7 +341,12 @@ export default function MagneticWorkshop({
   const summary = useMemo(() => summarizeWorkshop(config), [config]);
   const fingerprint = JSON.stringify(config),
     dirty = saved !== fingerprint;
-  const referencePair = publishedPair(config.sensitivity, config.geometry);
+  const referencePair = publishedPair(
+    config.sensitivity,
+    config.geometry,
+    undefined,
+    config.magnetModel,
+  );
   const pull = referencePair?.[0] ?? "—",
     drop = referencePair?.[1] ?? "—";
   const unknown = result.unknown;
@@ -379,7 +388,7 @@ export default function MagneticWorkshop({
             mode,
             sensorId: "MK03",
             machine: null,
-            magnetModel: "M02",
+            magnetModel: "4003004003",
             magnetTilt: 0,
             lateralShift: 0,
             motion: "approach",
@@ -448,12 +457,14 @@ export default function MagneticWorkshop({
           onClose={() => setProductCard(false)}
         />
       )}
-      <AppHeader
-        context={t("Atelier magnétique")}
-        back={{ label: t("Retour au dossier"), onClick: onClose, disabled: saving }}
-      >
-        <span className="mw-prototype">{t("Prototype interne · V0.4")}</span>
-      </AppHeader>
+      {!embedded && (
+        <AppHeader
+          context={t("Atelier magnétique")}
+          back={{ label: t("Retour au dossier"), onClick: onClose, disabled: saving }}
+        >
+          <span className="mw-prototype">{t("Prototype interne · V0.4")}</span>
+        </AppHeader>
+      )}
       <div className="mw-intro">
         <div>
           <p className="mw-eyebrow">{t("Comprendre avant d'intégrer")}</p>
@@ -562,7 +573,9 @@ export default function MagneticWorkshop({
                 <p>
                   {t(
                     reference
-                      ? "MK03 + M02 · distances typiques publiées"
+                      ? result.reason
+                        ? "Montage à caractériser"
+                        : "MK03 · distances typiques publiées pour l’aimant sélectionné"
                       : "Forme cotée · champ et seuils fictifs",
                   )}
                 </p>
@@ -707,21 +720,33 @@ export default function MagneticWorkshop({
                       </span>
                       <div>
                         <strong>
-                          {t(
-                            config.magnetModel === "M02"
-                              ? "M02 · enveloppe Standex"
-                              : "Aimant fictif",
-                          )}
+                          {pairedMagnetModel(config.magnetModel)?.name ?? t("Aimant fictif")}
                         </strong>
                         <span>
                           {t(
                             reference
-                              ? "Actionneur de la table de référence"
+                              ? result.reason
+                                ? "Montage à caractériser"
+                                : "Actionneur de la table de référence"
                               : "Modèle idéal de dipôle dans l'air",
                           )}
                         </span>
                       </div>
                     </div>
+                    <label className="mw-select-label">
+                      {t("Aimant")}
+                      <select
+                        value={config.magnetModel}
+                        onChange={(e) => update({ magnetModel: e.target.value })}
+                      >
+                        <option value="generic">{t("Aimant fictif")}</option>
+                        {[...PACKAGED_MAGNET_IDS, ...BARE_MAGNETS.map((m) => m.id)].map((id) => (
+                          <option key={id} value={id}>
+                            {pairedMagnetModel(id)?.name}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
                     <label className="mw-select-label">
                       {t("Approche du capteur")}
                       <select
@@ -1010,7 +1035,9 @@ export default function MagneticWorkshop({
               <span className={reference ? "mw-kind" : "mw-kind education"}>
                 {t(
                   reference
-                    ? "Référence Standex · valeurs typiques"
+                    ? result.reason
+                      ? "Montage à caractériser"
+                      : "Référence Standex · valeurs typiques"
                     : "Démonstration · distances fictives",
                 )}
               </span>
@@ -1544,7 +1571,7 @@ export default function MagneticWorkshop({
               update({
                 sensorId,
                 mode: "reference",
-                magnetModel: "M02",
+                magnetModel: "4003004003",
                 magnetTilt: 0,
                 lateralShift: 0,
                 motion: "approach",

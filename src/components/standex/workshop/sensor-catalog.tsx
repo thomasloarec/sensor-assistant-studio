@@ -1,3 +1,4 @@
+import MagnetCatalog from "./magnet-catalog";
 import { useEffect, useRef, useState } from "react";
 import { Search, X, ArrowUpRight, Check } from "lucide-react";
 import { sizeLabel, sensorSource } from "@/lib/standex/sensor-catalog";
@@ -5,6 +6,7 @@ import { CATALOG_ALL, documentedCount, filterCatalog } from "@/lib/standex/catal
 import SensorCard from "./sensor-card";
 import { useLocale } from "@/lib/i18n/react";
 import { msg, t } from "@/lib/i18n/core";
+import { CandidateThumbnail } from "@/components/leadmagnet/candidate-thumbnail";
 import { SensorPlan } from "./sensor-plan";
 import "./workshop.css";
 
@@ -60,6 +62,9 @@ export default function SensorCatalog({
   onClose: () => void;
 }) {
   useLocale();
+  const [productType, setProductType] = useState<"sensors" | "magnets">("sensors");
+  const [view, setView] = useState<"2d" | "3d">("3d");
+  const Choice = inline ? "div" : "button";
   const [card, setCard] = useState<string | null>(null);
   const ref = useRef<HTMLDialogElement>(null),
     [query, setQuery] = useState(""),
@@ -86,6 +91,15 @@ export default function SensorCatalog({
     maxHeight,
   });
   const documented = documentedCount(list);
+  const activeCount = [
+    query.trim(),
+    category !== CATALOG_ALL,
+    fixing !== CATALOG_ALL,
+    wiring !== CATALOG_ALL,
+    maxLength,
+    maxWidth,
+    maxHeight,
+  ].filter(Boolean).length;
 
   const resetFilters = () => {
     setQuery("");
@@ -129,178 +143,243 @@ export default function SensorCatalog({
           <X />
         </button>
       </header>
-      <div className="mw-catalog-tools">
-        <label className="mw-catalog-search">
-          <Search size={17} />
-          <input
-            autoFocus
-            aria-label={t("Rechercher un capteur")}
-            placeholder={t("Rechercher MK24, cylindrique, miniature…")}
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-          />
-        </label>
-        <select
-          aria-label={t("Filtrer les formats")}
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
+      <div className="mw-catalog-view" role="group" aria-label={t("Catalogue")}>
+        <button
+          type="button"
+          aria-pressed={productType === "sensors"}
+          onClick={() => setProductType("sensors")}
         >
-          {CATEGORY_OPTIONS.map(([value, label]) => (
-            <option key={value} value={value}>
-              {t(label)}
-            </option>
-          ))}
-        </select>
-        <select
-          aria-label={t("Filtrer par fixation")}
-          value={fixing}
-          onChange={(e) => setFixing(e.target.value)}
+          {t("Capteurs")}
+        </button>
+        <button
+          type="button"
+          aria-pressed={productType === "magnets"}
+          onClick={() => setProductType("magnets")}
         >
-          {FIXING_OPTIONS.map(([value, label]) => (
-            <option key={value} value={value}>
-              {t(label)}
-            </option>
-          ))}
-        </select>
-        <select
-          aria-label={t("Filtrer par raccordement")}
-          value={wiring}
-          onChange={(e) => setWiring(e.target.value)}
-        >
-          {WIRING_OPTIONS.map(([value, label]) => (
-            <option key={value} value={value}>
-              {t(label)}
-            </option>
-          ))}
-        </select>
-        <label className="mw-catalog-size-filter">
-          {t("Longueur max (mm)")}
-          <input
-            inputMode="decimal"
-            aria-label={t("Longueur maximale en millimètres, terminaisons comprises")}
-            value={maxLength}
-            onChange={(e) => setMaxLength(e.target.value)}
-            placeholder="—"
-          />
-        </label>
-        <label className="mw-catalog-size-filter">
-          {t("Largeur max (mm)")}
-          <input
-            inputMode="decimal"
-            aria-label={t("Largeur maximale du corps en millimètres")}
-            value={maxWidth}
-            onChange={(e) => setMaxWidth(e.target.value)}
-            placeholder="—"
-          />
-        </label>
-        <label className="mw-catalog-size-filter">
-          {t("Hauteur max (mm)")}
-          <input
-            inputMode="decimal"
-            aria-label={t("Hauteur maximale du corps en millimètres")}
-            value={maxHeight}
-            onChange={(e) => setMaxHeight(e.target.value)}
-            placeholder="—"
-          />
-        </label>
-
-        <label className="mw-check">
-          <input
-            type="checkbox"
-            checked={sameScale}
-            onChange={(e) => setSameScale(e.target.checked)}
-          />
-          {t("Même échelle")}
-        </label>
-        <button type="button" className="mw-secondary" onClick={resetFilters}>
-          {t("Réinitialiser les filtres")}
+          {t("Aimants")}
         </button>
       </div>
-      <p className="mw-catalog-count" role="status" aria-live="polite">
-        {msg("{0} capteur(s) documenté(s) affiché(s), plus l'option sur mesure.", [
-          String(documented),
-        ])}
-      </p>
-      <p className="mw-catalog-count">
-        {t(
-          "La longueur comparée inclut les terminaisons quand la fiche les cote (MK24-A-J : 5,5 mm avec ses connexions, et non 5 mm). Un champ laissé vide ne filtre rien : une cote non documentée n'est jamais ramenée à zéro.",
-        )}
-      </p>
-
-      <div className="mw-catalog-list">
-        {list.map((s) => (
-          <article
-            key={s.id}
-            className={`surface-interactive ${selected === s.id ? "selected" : ""}`}
-          >
-            <button
-              className="mw-catalog-choice"
-              onClick={() => onSelect(s.id)}
-              aria-label={t(`Choisir ${s.name}`)}
-              aria-pressed={selected === s.id}
+      {productType === "magnets" ? (
+        <>
+          <div className="mw-catalog-view" role="group" aria-label={t("Affichage")}>
+            <button type="button" aria-pressed={view === "3d"} onClick={() => setView("3d")}>
+              {t("Vue 3D")}
+            </button>
+            <button type="button" aria-pressed={view === "2d"} onClick={() => setView("2d")}>
+              {t("Vue 2D")}
+            </button>
+          </div>
+          <label className="mw-check">
+            <input
+              type="checkbox"
+              checked={sameScale}
+              onChange={(e) => setSameScale(e.target.checked)}
+            />
+            {t("Même échelle")}
+          </label>
+          <MagnetCatalog view={view} sameScale={sameScale} />
+        </>
+      ) : (
+        <>
+          <div className="mw-catalog-tools">
+            <label className="mw-catalog-search">
+              <Search size={17} />
+              <input
+                autoFocus
+                aria-label={t("Rechercher un capteur")}
+                placeholder={t("Rechercher MK24, cylindrique, miniature…")}
+                data-active={Boolean(query)}
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+              />
+            </label>
+            <select
+              aria-label={t("Filtrer les formats")}
+              data-active={category !== CATALOG_ALL}
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
             >
-              <div className="mw-catalog-drawing">
-                <svg
-                  viewBox={
-                    sameScale
-                      ? "-34 -19 68 38"
-                      : `${-s.body[0] / 2 - 9} ${-Math.max(s.body[2], s.nutWidth ?? 0) / 2 - 5} ${s.body[0] + 18} ${Math.max(s.body[2], s.nutWidth ?? 0) + 10}`
-                  }
-                  aria-hidden="true"
-                >
-                  <SensorPlan model={s} xray={false} />
-                  {sameScale && (
-                    <g stroke="#a3b2bd" strokeWidth={0.25}>
-                      <path d="M-25 14 H25 M-25 13 V15 M25 13 V15" />
-                      <text
-                        x="0"
-                        y="17.5"
-                        fontSize="2.3"
-                        textAnchor="middle"
-                        fill="#667f91"
-                        stroke="none"
-                      >
-                        {t("50 mm")}
-                      </text>
-                    </g>
-                  )}
-                </svg>
-              </div>
-              <div className="mw-catalog-name">
-                <strong className="t-title-s">{t(s.name)}</strong>
-                {selected === s.id && <Check size={17} />}
-              </div>
-              <span className="mw-catalog-size t-metric">{t(sizeLabel(s))}</span>
-              <p>{t(s.description)}</p>
-              <small>
-                {t(
-                  s.contact === "unsupported"
-                    ? "Forme disponible · activation non modélisée"
-                    : s.id === "MK03"
-                      ? "Exemple documenté disponible"
-                      : "Contacts illustrés · réponse pédagogique",
-                )}
-              </small>
+              {CATEGORY_OPTIONS.map(([value, label]) => (
+                <option key={value} value={value}>
+                  {t(label)}
+                </option>
+              ))}
+            </select>
+            <select
+              aria-label={t("Filtrer par fixation")}
+              data-active={fixing !== CATALOG_ALL}
+              value={fixing}
+              onChange={(e) => setFixing(e.target.value)}
+            >
+              {FIXING_OPTIONS.map(([value, label]) => (
+                <option key={value} value={value}>
+                  {t(label)}
+                </option>
+              ))}
+            </select>
+            <select
+              aria-label={t("Filtrer par raccordement")}
+              data-active={wiring !== CATALOG_ALL}
+              value={wiring}
+              onChange={(e) => setWiring(e.target.value)}
+            >
+              {WIRING_OPTIONS.map(([value, label]) => (
+                <option key={value} value={value}>
+                  {t(label)}
+                </option>
+              ))}
+            </select>
+            <label className="mw-catalog-size-filter">
+              {t("Longueur max (mm)")}
+              <input
+                inputMode="decimal"
+                aria-label={t("Longueur maximale en millimètres, terminaisons comprises")}
+                data-active={Boolean(maxLength)}
+                value={maxLength}
+                onChange={(e) => setMaxLength(e.target.value)}
+                placeholder="—"
+              />
+            </label>
+            <label className="mw-catalog-size-filter">
+              {t("Largeur max (mm)")}
+              <input
+                inputMode="decimal"
+                aria-label={t("Largeur maximale du corps en millimètres")}
+                data-active={Boolean(maxWidth)}
+                value={maxWidth}
+                onChange={(e) => setMaxWidth(e.target.value)}
+                placeholder="—"
+              />
+            </label>
+            <label className="mw-catalog-size-filter">
+              {t("Hauteur max (mm)")}
+              <input
+                inputMode="decimal"
+                aria-label={t("Hauteur maximale du corps en millimètres")}
+                data-active={Boolean(maxHeight)}
+                value={maxHeight}
+                onChange={(e) => setMaxHeight(e.target.value)}
+                placeholder="—"
+              />
+            </label>
+
+            <div className="mw-catalog-view" role="group" aria-label={t("Affichage")}>
+              <button type="button" aria-pressed={view === "3d"} onClick={() => setView("3d")}>
+                {t("Vue 3D")}
+              </button>
+              <button type="button" aria-pressed={view === "2d"} onClick={() => setView("2d")}>
+                {t("Vue 2D")}
+              </button>
+            </div>
+            <label className="mw-check">
+              <input
+                type="checkbox"
+                checked={sameScale}
+                onChange={(e) => setSameScale(e.target.checked)}
+              />
+              {t("Même échelle")}
+            </label>
+            <button type="button" className="mw-secondary" onClick={resetFilters}>
+              {t("Réinitialiser les filtres")}
             </button>
-            <button className="mw-product-card-button" onClick={() => setCard(s.id)}>
-              {t("Découvrir ce capteur")}
-            </button>
-            {sensorSource(s) && (
-              <a href={sensorSource(s)!} target="_blank" rel="noreferrer">
-                {t("Consulter le plan Standex")}
-                <ArrowUpRight size={13} />
-              </a>
+          </div>
+          <p className="mw-catalog-count" role="status" aria-live="polite">
+            {activeCount > 0 && (
+              <strong className="mw-active-filter-count">
+                {msg("{0} filtre(s) actif(s)", [String(activeCount)])} ·{" "}
+              </strong>
             )}
-          </article>
-        ))}
-        {!documented && (
-          <p className="mw-catalog-empty">
+            {msg("{0} capteur(s) documenté(s) affiché(s), plus l'option sur mesure.", [
+              String(documented),
+            ])}
+          </p>
+          <p className="mw-catalog-count">
             {t(
-              "Aucun capteur documenté ne correspond à ces filtres. L'option sur mesure reste ouverte.",
+              "La longueur comparée inclut les terminaisons quand la fiche les cote (MK24-A-J : 5,5 mm avec ses connexions, et non 5 mm). Un champ laissé vide ne filtre rien : une cote non documentée n'est jamais ramenée à zéro.",
             )}
           </p>
-        )}
-      </div>
+
+          <div className="mw-catalog-list">
+            {list.map((s) => (
+              <article
+                key={s.id}
+                className={`${inline ? "surface" : "surface-interactive"} ${!inline && selected === s.id ? "selected" : ""}`}
+              >
+                <Choice
+                  className="mw-catalog-choice"
+                  {...(!inline
+                    ? {
+                        onClick: () => onSelect(s.id),
+                        "aria-label": t(`Choisir ${s.name}`),
+                        "aria-pressed": selected === s.id,
+                      }
+                    : {})}
+                >
+                  <div className="mw-catalog-drawing">
+                    {view === "3d" ? (
+                      <CandidateThumbnail
+                        sensorId={s.id}
+                        livePreview={card === null}
+                        fitToView={!sameScale}
+                      />
+                    ) : (
+                      <svg
+                        viewBox={
+                          sameScale
+                            ? "-34 -19 68 38"
+                            : `${-s.body[0] / 2 - 9} ${-Math.max(s.body[2], s.nutWidth ?? 0) / 2 - 5} ${s.body[0] + 18} ${Math.max(s.body[2], s.nutWidth ?? 0) + 10}`
+                        }
+                        aria-hidden="true"
+                      >
+                        <SensorPlan model={s} xray={false} />
+                        {sameScale && (
+                          <g stroke="#a3b2bd" strokeWidth={0.25}>
+                            <path d="M-25 14 H25 M-25 13 V15 M25 13 V15" />
+                          </g>
+                        )}
+                      </svg>
+                    )}
+                    {view === "2d" && sameScale && (
+                      <span className="mw-catalog-scale t-caption">{t("50 mm")}</span>
+                    )}
+                  </div>
+                  <div className="mw-catalog-name">
+                    <strong className="t-title-s">{t(s.name)}</strong>
+                    {!inline && selected === s.id && <Check size={17} />}
+                  </div>
+                  <span className="mw-catalog-size t-metric">{t(sizeLabel(s))}</span>
+                  <p>{t(s.description)}</p>
+                  <small>
+                    {t(
+                      s.contact === "unsupported"
+                        ? "Forme disponible · activation non modélisée"
+                        : s.id === "MK03"
+                          ? "Exemple documenté disponible"
+                          : "Contacts illustrés · réponse pédagogique",
+                    )}
+                  </small>
+                </Choice>
+                <button className="mw-product-card-button" onClick={() => setCard(s.id)}>
+                  {t("Découvrir ce capteur")}
+                </button>
+                {sensorSource(s) && (
+                  <a href={sensorSource(s)!} target="_blank" rel="noreferrer">
+                    {t("Consulter le plan Standex")}
+                    <ArrowUpRight size={13} />
+                  </a>
+                )}
+              </article>
+            ))}
+            {!documented && (
+              <p className="mw-catalog-empty">
+                {t(
+                  "Aucun capteur documenté ne correspond à ces filtres. L'option sur mesure reste ouverte.",
+                )}
+              </p>
+            )}
+          </div>
+        </>
+      )}
       <footer>
         {t(
           "Les cotes décrivent le corps hors câbles, connexions et écrous. Les formes sont simplifiées d'après les plans ; les contacts internes sont symboliques. Sélectionner une forme ne valide pas sa portée d'activation.",
