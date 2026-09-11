@@ -528,18 +528,10 @@ describe("le pont applique réellement la pose aux deux composants", () => {
       m.relative.rotationDeg.forEach((v, i) =>
         expect(relu.relative.rotationDeg[i]).toBeCloseTo(v, 6),
       );
-      // Un déplacement RIGIDE emmène la trajectoire : ici il y a une rotation
-      // de 15°, la course tourne donc du même angle. Ce qui doit rester
-      // invariant, c'est sa longueur (une translation pure, elle, la laisse
-      // strictement identique — voir le cas précédent).
-      const norm = (v: readonly number[]) => Math.hypot(v[0]!, v[1]!, v[2]!);
-      expect(norm(n.machine!.travel)).toBeCloseTo(norm(COFFEE_ASSEMBLY.travel), 6);
-      const rotated = [
-        COFFEE_ASSEMBLY.travel[2] * Math.sin((15 * Math.PI) / 180),
-        0,
-        COFFEE_ASSEMBLY.travel[2] * Math.cos((15 * Math.PI) / 180),
-      ];
-      n.machine!.travel.forEach((v, i) => expect(v).toBeCloseTo(rotated[i]!, 6));
+      // La trajectoire appartient à la machine de l'utilisateur : déplacer le
+      // couple ne la touche jamais.
+      expect(n.machine!.travel).toEqual(COFFEE_ASSEMBLY.travel);
+      expect(n.machine!.pivot).toEqual(COFFEE_ASSEMBLY.pivot);
     }
   });
   it("lit l'entrefer aux deux extrémités réelles du cycle, pas à la moitié", () => {

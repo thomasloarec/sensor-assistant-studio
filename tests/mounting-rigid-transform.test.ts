@@ -27,47 +27,38 @@ const moves = [
   },
 ];
 
-describe("un déplacement rigide du montage emmène sa trajectoire", () => {
+describe("déplacer le couple ne touche jamais la trajectoire de la machine", () => {
   for (const u of [0, 0.37]) {
     for (const move of moves) {
-      it(`modèle importé, u=${u}, ${JSON.stringify(move)} : course et couverture inchangées`, () => {
+      it(`modèle importé, u=${u}, ${JSON.stringify(move)} : course, pivot et axe intacts`, () => {
         const c = machineConfig();
         const before = mountingFromWorkshop(c, u);
         const moved = moveCouple(before, move);
-        const after = mountingFromWorkshop(
-          { ...c, ...workshopPatchFromMounting(moved, c, u) },
-          u,
-        );
-        near(after.travel.startGapMm, before.travel.startGapMm);
-        near(after.travel.endGapMm, before.travel.endGapMm);
-        expect(computeMounting(after).coverage).toBe(computeMounting(before).coverage);
-        // La pose relative du couple est l'invariant : elle ne bouge pas.
-        after.relative.positionMm.forEach((v, i) => near(v, before.relative.positionMm[i]!));
+        const n = { ...c, ...workshopPatchFromMounting(moved, c, u) };
+        // La trajectoire est une contrainte de l'application de l'utilisateur.
+        expect(n.machine!.travel).toEqual(COFFEE_ASSEMBLY.travel);
+        expect(n.machine!.pivot).toEqual(COFFEE_ASSEMBLY.pivot);
+        expect(n.machine!.rotationAxis).toBe(COFFEE_ASSEMBLY.rotationAxis);
+        expect(n.machine!.openingAngle).toBe(COFFEE_ASSEMBLY.openingAngle);
+        expect(n.machine!.movingNode).toBe(COFFEE_ASSEMBLY.movingNode);
+        expect(n.machine!.magnetMount).toBe(COFFEE_ASSEMBLY.magnetMount);
+        expect(n.machine!.sensorMount).toBe(COFFEE_ASSEMBLY.sensorMount);
+        // Mais la pose demandée est réellement appliquée aux deux composants.
+        const after = mountingFromWorkshop(n, u);
+        after.anchor.positionMm.forEach((v, i) => near(v, moved.anchor.positionMm[i]!));
+        after.anchor.rotationDeg.forEach((v, i) => near(v, moved.anchor.rotationDeg[i]!));
+        after.relative.positionMm.forEach((v, i) => near(v, moved.relative.positionMm[i]!));
+        after.relative.rotationDeg.forEach((v, i) => near(v, moved.relative.rotationDeg[i]!));
       });
     }
   }
 
-  it("modèle importé : la pose demandée est réellement appliquée aux deux composants", () => {
+  it("modèle importé : la translation demandée arrive bien sur le capteur", () => {
     const c = machineConfig();
     const moved = moveCouple(mountingFromWorkshop(c), { translationMm: [5, 0, 0] });
     const n = { ...c, ...workshopPatchFromMounting(moved, c) };
     expect(n.machine!.sensorPosition[0]).toBeCloseTo(104, 6);
-    // Le nœud mobile, la nature des attaches et l'amplitude du mouvement sont conservés.
-    expect(n.machine!.movingNode).toBe(c.machine!.movingNode);
-    expect(n.machine!.magnetMount).toBe(c.machine!.magnetMount);
-    expect(n.machine!.sensorMount).toBe(c.machine!.sensorMount);
-    const norm = (v: readonly number[]) => Math.hypot(v[0]!, v[1]!, v[2]!);
-    near(norm(n.machine!.travel), norm(c.machine!.travel));
-  });
-
-  it("une rotation non représentable sur un axe machine laisse la trajectoire inchangée", () => {
-    const c = machineConfig();
-    c.machine!.motion = "rotation";
-    c.machine!.rotationAxis = "y";
-    const moved = moveCouple(mountingFromWorkshop(c), { rotationDeg: [37, 0, 0] });
-    const n = { ...c, ...workshopPatchFromMounting(moved, c) };
-    expect(n.machine!.pivot).toEqual(c.machine!.pivot);
-    expect(n.machine!.rotationAxis).toBe("y");
+    expect(n.machine!.travel).toEqual(COFFEE_ASSEMBLY.travel);
   });
 });
 
