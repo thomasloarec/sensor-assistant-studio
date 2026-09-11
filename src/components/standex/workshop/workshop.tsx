@@ -605,7 +605,22 @@ export default function MagneticWorkshop({
       <div className={machine ? "mw-layout mw-machine-layout" : "mw-layout"}>
         <aside className="mw-controls">
           {machine ? (
-            <MachineControls
+            <>
+              {/* Montage importé : la même question, la même suggestion et le même
+                  verdict que dans l'espace vide. Les réglages du modèle importé
+                  (attaches, course, nœud mobile) restent intégralement disponibles
+                  en dessous. */}
+              <div className="mw-step-body">
+                <h2>{t("Est-ce que la détection va se faire dans mon montage ?")}</h2>
+                <GuidedSuggestion
+                  config={config}
+                  update={update}
+                  preview={preview}
+                  onPreview={setPreview}
+                />
+                <GuidedVerdict mounting={guided} />
+              </div>
+              <MachineControls
               config={config}
               asset={machineAsset}
               tool={tool}
@@ -617,6 +632,7 @@ export default function MagneticWorkshop({
               onProductCard={() => setProductCard(true)}
               measure={measure}
             />
+            </>
           ) : (
             <>
               <div className="mw-start">
