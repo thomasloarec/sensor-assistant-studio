@@ -21949,5 +21949,23 @@
     "Эти расстояния не используются в расчёте: траектория этого подхода не определена.",
     "Queste distanze non sono usate nel calcolo: la traiettoria di questo avvicinamento non è definita.",
     "これらの距離は計算に使用されません。このアプローチの軌道は定義されていません。"
+  ],
+  "Cet atelier répond à une seule question : est-ce que la détection va se faire dans votre montage ? Seules les distances publiées sont utilisées, et l'exemple machine à café n'impose aucune référence à votre projet.": [
+    "This workshop answers a single question: will detection happen in your assembly? Only published distances are used, and the coffee machine example imposes no part number on your project.",
+    "本工作台只回答一个问题：在您的装配中会发生检测吗？仅使用已公布的距离，咖啡机示例不会为您的项目指定任何型号。",
+    "Diese Werkstatt beantwortet eine einzige Frage: Findet die Erkennung in Ihrem Aufbau statt? Es werden nur veröffentlichte Abstände verwendet, und das Kaffeemaschinen-Beispiel schreibt Ihrem Projekt keine Referenz vor.",
+    "Este taller responde a una sola pregunta: ¿se producirá la detección en su montaje? Solo se usan distancias publicadas y el ejemplo de la cafetera no impone ninguna referencia a su proyecto.",
+    "Эта мастерская отвечает на один вопрос: произойдёт ли срабатывание в вашей сборке? Используются только опубликованные расстояния, а пример кофемашины не навязывает вашему проекту никакой артикул.",
+    "Questo laboratorio risponde a una sola domanda: il rilevamento avverrà nel suo montaggio? Sono usate solo le distanze pubblicate e l'esempio della macchina da caffè non impone alcun codice al suo progetto.",
+    "このワークショップが答えるのは一つの問いだけです。あなたの取り付けで検出は行われるか。使用するのは公表された距離のみで、コーヒーマシンの例はプロジェクトに型番を押し付けません。"
+  ],
+  "Quatre étapes : le couple capteur-aimant, la position, la simulation du mouvement, le câble. Vos réglages restent en mémoire même si vous refermez ce panneau.": [
+    "Four steps: the sensor-magnet pair, the position, the motion simulation, the cable. Your settings stay in memory even if you close this panel.",
+    "四个步骤：传感器与磁体配对、位置、运动仿真、线缆。即使关闭此面板，您的设置也会保留。",
+    "Vier Schritte: Sensor-Magnet-Paar, Position, Bewegungssimulation, Kabel. Ihre Einstellungen bleiben erhalten, auch wenn Sie dieses Panel schließen.",
+    "Cuatro pasos: el par sensor-imán, la posición, la simulación del movimiento, el cable. Sus ajustes se conservan aunque cierre este panel.",
+    "Четыре шага: пара «датчик — магнит», положение, моделирование движения, кабель. Ваши настройки сохраняются, даже если вы закроете эту панель.",
+    "Quattro passaggi: la coppia sensore-magnete, la posizione, la simulazione del movimento, il cavo. Le impostazioni restano in memoria anche chiudendo questo pannello.",
+    "4つのステップ：センサーと磁石の組み合わせ、位置、動作シミュレーション、ケーブル。このパネルを閉じても設定は保持されます。"
   ]
 }

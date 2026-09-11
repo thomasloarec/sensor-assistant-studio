@@ -10,6 +10,7 @@ import {
   applyMat,
   composeRotations,
   matFromEuler,
+  matMul,
   matTranspose,
   relativeRotation,
   sub,
@@ -171,6 +172,48 @@ function machineTravelGaps(
 }
 
 /**
+ * Trajectoire du modèle importé emportée par un déplacement RIGIDE du montage.
+ *
+ * Le déplacement est lu sur la pose monde du capteur : rotation `R` entre son
+ * orientation actuelle et la nouvelle, point d'appui déplacé de `c` vers `c'`.
+ * Une translation pure ne change rien à la trajectoire. Une rotation tourne le
+ * vecteur de course, et déplace réellement le pivot d'un mouvement rotatif.
+ *
+ * Un axe de rotation machine ne peut s'écrire que sur x, y ou z : si la
+ * rotation ne renvoie pas l'axe sur lui-même, la trajectoire n'est pas
+ * représentable dans ce modèle et elle est laissée INCHANGÉE plutôt que
+ * réécrite approximativement.
+ */
+export function rigidlyMovedMotion(
+  machine: MachineAssembly,
+  u: number,
+  sensorWorld: Pose,
+): Partial<MachineAssembly> {
+  const before = machineComponentPose(machine, "sensor", u);
+  const rot = matMul(
+    matFromEuler(sensorWorld.rotationDeg),
+    matTranspose(matFromEuler(before.rotationDeg)),
+  );
+  const unchanged = rot.every((row, i) =>
+    row.every((v, j) => Math.abs(v - (i === j ? 1 : 0)) <= ROTATION_EPSILON),
+  );
+  if (unchanged) return {};
+  if (machine.motion === "translation") return { travel: applyMat(rot, machine.travel as Vec3) };
+  const index = { x: 0, y: 1, z: 2 }[machine.rotationAxis];
+  const axis: Vec3 = [0, 0, 0];
+  axis[index] = 1;
+  const turned = applyMat(rot, axis);
+  const parallel = turned.every((v, i) => Math.abs(Math.abs(v) - (i === index ? 1 : 0)) <= ROTATION_EPSILON);
+  if (!parallel) return {};
+  const pivot = addV(
+    sensorWorld.positionMm as Vec3,
+    applyMat(rot, sub(machine.pivot as Vec3, before.positionMm)),
+  );
+  return { pivot };
+}
+const ROTATION_EPSILON = 1e-9;
+
+/**
  * Retour vers l'atelier. La suggestion aligne UNIQUEMENT la pose : la course,
  * le besoin, le mouvement, l'environnement, le modèle importé et ses attaches
  * ne sont jamais réécrits, et aucune distance n'est arrondie.
@@ -201,12 +244,18 @@ export function workshopPatchFromMounting(
       positionMm: toWorldPoint(sensorWorld, m.relative.positionMm),
       rotationDeg: composeRotations(sensorWorld.rotationDeg, m.relative.rotationDeg),
     };
-    const s = componentBaseFromWorldPose(current.machine, "sensor", sensorWorld, u);
-    const g = componentBaseFromWorldPose(current.machine, "magnet", magnetWorld, u);
+    // Un déplacement RIGIDE du montage emmène aussi sa trajectoire : sans cela,
+    // faire pivoter le couple de 45° dans un modèle importé changeait les
+    // entrefers de course et faisait basculer un montage couvert en « hors
+    // domaine » alors que la géométrie relative était inchangée.
+    const moved = rigidlyMovedMotion(current.machine, u, sensorWorld);
+    const machine = { ...current.machine, ...moved };
+    const s = componentBaseFromWorldPose(machine, "sensor", sensorWorld, u);
+    const g = componentBaseFromWorldPose(machine, "magnet", magnetWorld, u);
     return {
       ...couple,
       machine: {
-        ...current.machine,
+        ...machine,
         sensorPosition: s.position,
         sensorRotation: s.rotation,
         magnetPosition: g.position,
