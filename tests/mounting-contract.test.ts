@@ -1,6 +1,10 @@
 import { describe, expect, it } from "bun:test";
 import {
   MOUNTING_CONTRACT_VERSION,
+  documentedDistances,
+  registryCoverage,
+  thresholdsFor,
+  PROFILES,
   simulateMounting,
   moveCouple,
   parseGuidedMounting,
