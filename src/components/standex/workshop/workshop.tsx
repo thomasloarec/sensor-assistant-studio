@@ -632,7 +632,7 @@ export default function MagneticWorkshop({
                   les mêmes pour l'espace vide et pour un modèle importé. */}
               <nav className="mw-steps" aria-label={t("Étapes du montage")}>
                 {[
-                  t("Choisir le capteur"),
+                  t("Choisir le couple"),
                   t("Positionner l'aimant"),
                   t("Simuler le mouvement"),
                   t("Définir le câble"),
@@ -651,7 +651,7 @@ export default function MagneticWorkshop({
               <div className="mw-step-body">
                 {step === 0 && (
                   <>
-                    <h2>{t("Installez le capteur")}</h2>
+                    <h2>{t("Choisissez le capteur et l’aimant")}</h2>
                     <p className="mw-help">
                       {t("Le plan quadrillé représente le repère de votre machine.")}
                     </p>
@@ -700,6 +700,39 @@ export default function MagneticWorkshop({
                         </select>
                       </label>
                     )}
+                    <div className="mw-product">
+                      <span className="mw-product-icon">
+                        <Magnet size={25} />
+                      </span>
+                      <div>
+                        <strong>
+                          {pairedMagnetModel(config.magnetModel)?.name ?? t("Aimant fictif")}
+                        </strong>
+                        <span>
+                          {t(
+                            reference
+                              ? result.reason
+                                ? "Montage à caractériser"
+                                : "Actionneur de la table de référence"
+                              : "Modèle idéal de dipôle dans l'air",
+                          )}
+                        </span>
+                      </div>
+                    </div>
+                    <label className="mw-select-label">
+                      {t("Aimant")}
+                      <select
+                        value={config.magnetModel}
+                        onChange={(e) => update({ magnetModel: e.target.value })}
+                      >
+                        <option value="generic">{t("Aimant fictif")}</option>
+                        {[...PACKAGED_MAGNET_IDS, ...BARE_MAGNETS.map((m) => m.id)].map((id) => (
+                          <option key={id} value={id}>
+                            {pairedMagnetModel(id)?.name}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
                     <Range
                       label={t("Orientation sur la machine")}
                       value={config.mountAngle}
@@ -776,6 +809,7 @@ export default function MagneticWorkshop({
                       preview={preview}
                       onPreview={setPreview}
                     />
+                    {/* L'aimant se choisit à l'étape 1 : ici il est rappelé en lecture. */}
                     <div className="mw-product">
                       <span className="mw-product-icon">
                         <Magnet size={25} />
@@ -795,20 +829,9 @@ export default function MagneticWorkshop({
                         </span>
                       </div>
                     </div>
-                    <label className="mw-select-label">
-                      {t("Aimant")}
-                      <select
-                        value={config.magnetModel}
-                        onChange={(e) => update({ magnetModel: e.target.value })}
-                      >
-                        <option value="generic">{t("Aimant fictif")}</option>
-                        {[...PACKAGED_MAGNET_IDS, ...BARE_MAGNETS.map((m) => m.id)].map((id) => (
-                          <option key={id} value={id}>
-                            {pairedMagnetModel(id)?.name}
-                          </option>
-                        ))}
-                      </select>
-                    </label>
+                    <p className="mw-help">
+                      {t("Aimant choisi à l'étape « Choisir le couple ». Revenez-y pour en changer.")}
+                    </p>
                     <label className="mw-select-label">
                       {t("Approche du capteur")}
                       <select
