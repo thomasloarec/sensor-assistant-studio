@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
 import { createDossier, currentMounting, toClientDto } from "@/lib/leadmagnet/dossier";
-import { exportDossier, parseDossierExport, parseServerSnapshot } from "@/lib/leadmagnet/dossier-io";
+import { buildDossierExport, parseDossierExport, parseServerSnapshot } from "@/lib/leadmagnet/dossier-io";
 import { mountingHash, parseGuidedMounting } from "@/lib/standex/mounting/contract";
 import { DEFAULT_WORKSHOP } from "@/lib/standex/magnetic-workshop";
 import { mountingFromWorkshop, withComputed } from "@/lib/standex/mounting";
@@ -29,7 +29,7 @@ describe("le champ de montage mécanique existant et le montage guidé sont deux
 
   it("le choix mécanique survit à l'aller-retour export/reprise et au snapshot serveur", () => {
     const d = dossierWithWorkshop();
-    const file = exportDossier(d);
+    const file = buildDossierExport(d);
     const back = parseDossierExport(JSON.parse(JSON.stringify(file)));
     expect(back.ok).toBe(true);
     if (!back.ok) return;
@@ -45,7 +45,7 @@ describe("le champ de montage mécanique existant et le montage guidé sont deux
 
   it("une ancienne reprise sans montage guidé garde son choix mécanique", () => {
     const d = dossierWithWorkshop();
-    const file = exportDossier(d) as { dossier: Record<string, unknown> };
+    const file = buildDossierExport(d) as { dossier: Record<string, unknown> };
     const legacy = JSON.parse(JSON.stringify(file)) as { dossier: Record<string, unknown> };
     delete legacy.dossier["guidedMounting"];
     const back = parseDossierExport(legacy);
@@ -84,7 +84,7 @@ describe("un résultat importé n'est jamais accepté sur la foi de son empreint
 
   it("un fichier importé avec un verdict falsifié et une empreinte valide ne le conserve pas", () => {
     const d = dossierWithWorkshop();
-    const file = exportDossier(d) as { dossier: Record<string, unknown> };
+    const file = buildDossierExport(d) as { dossier: Record<string, unknown> };
     const tampered = JSON.parse(JSON.stringify(file)) as { dossier: Record<string, unknown> };
     const gm = tampered.dossier["guidedMounting"] as Record<string, unknown>;
     const computed = gm["computed"] as Record<string, unknown>;
