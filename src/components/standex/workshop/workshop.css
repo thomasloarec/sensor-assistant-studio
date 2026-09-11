@@ -1943,3 +1943,81 @@
   border-radius: var(--r-sm);
   padding: 8px 12px;
 }
+
+/* Montage guidé : verdict, guidage de position et comparaison des sensibilités.
+   Aucun trait gris de séparation : la hiérarchie vient de la surface et de l'élévation. */
+.mw-verdict {
+  display: grid;
+  gap: var(--sp-2, 0.5rem);
+  padding: var(--sp-3, 0.75rem);
+  border-radius: var(--r-md);
+  background: var(--surface-sunken);
+  box-shadow: var(--e-1);
+}
+.mw-verdict-head {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2, 0.5rem);
+  color: var(--muted-foreground);
+}
+.mw-verdict-expected .mw-verdict-head {
+  color: var(--success);
+}
+.mw-verdict-not_expected .mw-verdict-head {
+  color: var(--destructive);
+}
+.mw-verdict-main {
+  font-size: var(--mw-t-body);
+  color: var(--foreground);
+}
+.mw-verdict-grid {
+  display: grid;
+  gap: var(--sp-2, 0.5rem);
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+}
+.mw-verdict-grid dt {
+  font-size: var(--mw-t-label);
+  color: var(--muted-foreground);
+}
+.mw-verdict-grid dd {
+  margin: 0;
+  font-size: var(--mw-t-body);
+  color: var(--foreground);
+}
+.mw-verdict-reasons {
+  display: grid;
+  gap: var(--sp-1, 0.25rem);
+  margin: 0;
+  padding-inline-start: var(--sp-4, 1rem);
+  font-size: var(--mw-t-dense);
+  color: var(--muted-foreground);
+}
+.mw-guide {
+  display: grid;
+  gap: var(--sp-2, 0.5rem);
+}
+.mw-guide-head {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2, 0.5rem);
+  color: var(--standex-blue);
+}
+.mw-guide-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2, 0.5rem);
+}
+.mw-compare table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--mw-t-dense);
+}
+.mw-compare th,
+.mw-compare td {
+  padding: var(--sp-1, 0.25rem) var(--sp-2, 0.5rem);
+  text-align: start;
+}
+.mw-compare tbody tr[aria-current="true"] {
+  background: var(--surface-tint);
+  border-radius: var(--r-sm);
+}

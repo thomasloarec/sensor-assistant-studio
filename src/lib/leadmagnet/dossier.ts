@@ -67,6 +67,9 @@ export type StorageMode = "memory" | "local-device";
 export interface DesignDossier {
   /** Local technical study travels inside the existing revision DTO. No signature authority. */
   studioV2?: import("../standex/studio-dossier").StudioStudy | null;
+  /** Montage guidé versionné (contrat explicite). Absent des dossiers antérieurs :
+   * son absence n'est jamais une erreur et ne change rien à leur reprise. */
+  guidedMounting?: import("../standex/mounting/contract").GuidedMounting | null;
   designFreeze?: import("../standex/design-freeze").DesignFreeze | null;
   id: string;
   createdAt: string;
