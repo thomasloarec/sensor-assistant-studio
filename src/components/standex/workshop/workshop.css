@@ -364,6 +364,10 @@
   border: 1px solid var(--mw-border);
   border-radius: var(--r-lg);
   overflow: hidden;
+  /* La colonne des réglages peut être étroite sur un grand écran : les étapes
+     s'adaptent à SA largeur, pas à celle de la fenêtre. */
+  container-type: inline-size;
+  container-name: mw-controls;
 }
 .mw-start {
   padding: 22px 21px 18px;
