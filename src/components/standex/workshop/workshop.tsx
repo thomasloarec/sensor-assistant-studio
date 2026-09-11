@@ -592,9 +592,9 @@ export default function MagneticWorkshop({
               <nav className="mw-steps" aria-label={t("Étapes du montage")}>
                 {[
                   t("Choisir le capteur"),
-                  "Positionner l'aimant",
-                  "Simuler le mouvement",
-                  "Définir le câble",
+                  t("Positionner l'aimant"),
+                  t("Simuler le mouvement"),
+                  t("Définir le câble"),
                 ].map((s, i) => (
                   <button
                     key={s}
