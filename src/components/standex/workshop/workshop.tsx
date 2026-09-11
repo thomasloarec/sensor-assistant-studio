@@ -651,7 +651,7 @@ export default function MagneticWorkshop({
               <div className="mw-step-body">
                 {step === 0 && (
                   <>
-                    <h2>{t("Installez le capteur")}</h2>
+                    <h2>{t("Choisissez le capteur et l’aimant")}</h2>
                     <p className="mw-help">
                       {t("Le plan quadrillé représente le repère de votre machine.")}
                     </p>
