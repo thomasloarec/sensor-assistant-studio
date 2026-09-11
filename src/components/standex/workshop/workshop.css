@@ -432,6 +432,36 @@
   color: var(--mw-on-accent);
   border-color: var(--mw-blue);
 }
+/* Colonne étroite (elle peut l'être sur un écran large) : les quatre libellés
+   ne tiennent plus côte à côte et se chevauchaient. Ils passent en liste
+   verticale compacte, chaque étape gardant son numéro, son titre entier et une
+   cible d'au moins 44 px. */
+@container mw-controls (max-width: 460px) {
+  .mw-steps {
+    display: grid;
+    gap: 2px;
+    padding: 12px 12px 4px;
+  }
+  .mw-steps button {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    text-align: left;
+    white-space: normal;
+    min-height: 44px;
+    padding: 6px 10px;
+    border-bottom: 0;
+    border-left: 2px solid transparent;
+    border-radius: var(--r-sm);
+  }
+  .mw-steps button.active {
+    background: var(--surface-tint);
+    border-left-color: var(--mw-blue);
+  }
+  .mw-steps button > span {
+    flex: none;
+  }
+}
 .mw-step-body {
   padding: 22px 21px 16px;
   min-height: 340px;
