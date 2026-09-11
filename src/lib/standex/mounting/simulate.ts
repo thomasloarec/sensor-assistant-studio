@@ -70,7 +70,8 @@ export function globalReasons(m: GuidedMounting, profile: MountingProfile | null
   if (m.attachment.frame === "custom_model") reasons.push("CUSTOM_MODEL_NOT_CHARACTERISED");
   if (m.environment.ferrousNearby) reasons.push("FERROUS_DECLARED");
   if (m.environment.temperature !== "ambient") reasons.push("TEMPERATURE_NOT_AMBIENT");
-  if (m.relative.rotationDeg.some((a) => Math.abs(((a % 360) + 540) % 360 - 180) < 179.5))
+  const normalise = (a: number) => (((a % 360) + 540) % 360) - 180;
+  if (m.relative.rotationDeg.some((a) => Math.abs(normalise(a)) > 0.5))
     reasons.push("ORIENTATION_OFF_TEMPLATE");
   if (profile && lateralOffsetMm(m.relative, profile.axis) > 0.5) reasons.push("LATERAL_OFFSET");
   return reasons;
@@ -124,7 +125,7 @@ export function simulateMounting(
     coveredFraction,
     reasons: [
       ...reasons,
-      ...(samples.some((s) => !s.covered && reasons.length === 0) ? ["COLLISION_OR_CONTACT"] : []),
+      ...(reasons.length === 0 && samples.some((s) => !s.covered) ? ["COLLISION_OR_CONTACT"] : []),
     ],
     pullInMm: pair?.[0] ?? null,
     dropOutMm: pair?.[1] ?? null,
