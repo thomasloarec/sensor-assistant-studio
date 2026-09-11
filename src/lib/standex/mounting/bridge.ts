@@ -206,12 +206,7 @@ export function workshopPatchFromMounting(
       positionMm: toWorldPoint(sensorWorld, m.relative.positionMm),
       rotationDeg: composeRotations(sensorWorld.rotationDeg, m.relative.rotationDeg),
     };
-    // Un déplacement RIGIDE du montage emmène aussi sa trajectoire : sans cela,
-    // faire pivoter le couple de 45° dans un modèle importé changeait les
-    // entrefers de course et faisait basculer un montage couvert en « hors
-    // domaine » alors que la géométrie relative était inchangée.
-    const moved = rigidlyMovedMotion(current.machine, u, sensorWorld);
-    const machine = { ...current.machine, ...moved };
+    const machine = current.machine;
     const s = componentBaseFromWorldPose(machine, "sensor", sensorWorld, u);
     const g = componentBaseFromWorldPose(machine, "magnet", magnetWorld, u);
     return {
