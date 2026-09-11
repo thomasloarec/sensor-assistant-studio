@@ -1,0 +1,11 @@
+import { DEFAULT_WORKSHOP } from "@/lib/standex/magnetic-workshop";
+import { mountingFromWorkshop, computeMounting, moveCouple, workshopPatchFromMounting } from "@/lib/standex/mounting";
+const base = mountingFromWorkshop({...DEFAULT_WORKSHOP});
+console.log("base", computeMounting(base).coverage, computeMounting(base).verdict);
+const m45 = mountingFromWorkshop({...DEFAULT_WORKSHOP, mountAngle:45});
+const c45 = computeMounting(m45);
+console.log("mountAngle45", c45.coverage, c45.reasons, JSON.stringify(m45.anchor), m45.motion);
+const rot = moveCouple(base, { rotationDeg:[0,30,0] });
+console.log("rigid rot", computeMounting(rot).coverage, JSON.stringify(rot.anchor), rot.motion.sensorYawDeg, JSON.stringify(rot.relative));
+const tr = moveCouple(base, { translationMm:[7,0,3] });
+console.log("rigid tr", computeMounting(tr).coverage);
