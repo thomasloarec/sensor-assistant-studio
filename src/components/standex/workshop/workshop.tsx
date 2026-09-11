@@ -374,15 +374,14 @@ export default function MagneticWorkshop({
     [error, setError] = useState<string | null>(null);
   const [importNotice, setImportNotice] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
-  /** Résultat affiché : en mode référence, l'état de contact vient du MÊME moteur
-   * de couverture que le verdict. Hors couverture, la scène, la chronologie et
-   * l'indicateur affichent « inconnu » : jamais de vert par une autre source.
-   * En mode pédagogique, les distances sont explicitement fictives et le verdict
-   * reste indéterminé : la scène garde alors son animation d'illustration. */
+  /** Résultat affiché : l'état de contact vient TOUJOURS du même moteur de
+   * couverture que le verdict, quel que soit le mode. Hors couverture, la
+   * scène, la chronologie et l'indicateur affichent « inconnu » : jamais de
+   * vert par une autre source. Les positions issues de `simulateCycle` sont
+   * conservées pour l'animation du modèle importé. */
   const guidedSim = useMemo(() => simulateMounting(guided), [guided]);
   const result = useMemo(() => {
     const raw = simulateCycle(config);
-    if (config.mode !== "reference") return raw;
     const last = guidedSim.samples.length - 1;
     const samples = raw.samples.map((s) => {
       const g = guidedSim.samples[Math.min(last, Math.round(s.t * last))]!;
@@ -1523,12 +1522,12 @@ export default function MagneticWorkshop({
                     <i className="open" />
                     {t("Ouvert")}
                   </span>
-                  {reference && (
-                    <span>
-                      <i className="unknown" />
-                      {t("Indéterminé")}
-                    </span>
-                  )}
+                  {/* L'état inconnu existe dans tous les modes, y compris avec un
+                      modèle importé : la légende doit toujours le nommer. */}
+                  <span>
+                    <i className="unknown" />
+                    {t("Indéterminé")}
+                  </span>
                   {!machine && (
                     <span>
                       <i className="target" />
