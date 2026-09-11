@@ -10,7 +10,6 @@ import {
   applyMat,
   composeRotations,
   matFromEuler,
-  matMul,
   matTranspose,
   relativeRotation,
   sub,
