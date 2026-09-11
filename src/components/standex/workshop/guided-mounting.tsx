@@ -10,6 +10,7 @@ import {
   profileFor,
   referenceTravelExploration,
   sensitivityComparison,
+  documentedDistances,
   suggestPose,
   withComputed,
   workshopPatchFromMounting,
@@ -277,7 +278,40 @@ export function SensitivityComparison({ config }: { config: WorkshopConfig }) {
   const profile = profileFor(config.sensorId, config.magnetModel, config.geometry);
   if (!profile) return null;
   const rows = sensitivityComparison(profile);
-  if (rows.length === 0) return null;
+  // Lignes documentaires : toute famille, toute classe, toute approche du
+  // registre. Elles ne sont jamais présentées comme un volume de détection.
+  const documented = rows.length === 0 ? documentedDistances(profile) : [];
+  if (rows.length === 0 && documented.length === 0) return null;
+  if (rows.length === 0)
+    return (
+      <details className="mw-compare" data-testid="documented-distances">
+        <summary>{t("Distances publiées (documentation)")}</summary>
+        <p className="mw-help">
+          {t(
+            "Ces distances ne sont pas utilisées par le calcul : la trajectoire de cette approche n'est pas définie.",
+          )}
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">{t("Classe")}</th>
+              <th scope="col">{t("Enclenchement")}</th>
+              <th scope="col">{t("Relâchement")}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {documented.map((r) => (
+              <tr key={r.sensitivityClass}>
+                <th scope="row">{msg("Classe {0}", [r.sensitivityClass])}</th>
+                <td className="t-metric">{msg("{0} mm", [r.pullInMm])}</td>
+                <td className="t-metric">{msg("{0} mm", [r.dropOutMm])}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <p className="mw-help">{t(documented[0]!.sourceRef)}</p>
+      </details>
+    );
   return (
     <details className="mw-compare" data-testid="sensitivity-comparison">
       <summary>{t("Comparer les sensibilités")}</summary>
