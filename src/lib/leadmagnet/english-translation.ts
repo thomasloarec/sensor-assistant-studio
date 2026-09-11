@@ -569,7 +569,7 @@ function mountingEnglish(dto: ClientDossierDto): string[] {
   ];
   if (m.need)
     lines.push(
-      `  - Requested detection window: ${m.need.startPercent}% to ${m.need.endPercent}% of the cycle`,
+      `  - Requested detection window: ${m.need.closedFromPct}% to ${m.need.closedToPct}% of the cycle`,
     );
   if (m.cable)
     lines.push(
