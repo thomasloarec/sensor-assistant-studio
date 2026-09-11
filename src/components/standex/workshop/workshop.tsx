@@ -604,37 +604,9 @@ export default function MagneticWorkshop({
       </div>
       <div className={machine ? "mw-layout mw-machine-layout" : "mw-layout"}>
         <aside className="mw-controls">
-          {machine ? (
-            <>
-              {/* Montage importé : la même question, la même suggestion et le même
-                  verdict que dans l'espace vide. Les réglages du modèle importé
-                  (attaches, course, nœud mobile) restent intégralement disponibles
-                  en dessous. */}
-              <div className="mw-step-body">
-                <h2>{t("Est-ce que la détection va se faire dans mon montage ?")}</h2>
-                <GuidedSuggestion
-                  config={config}
-                  update={update}
-                  preview={preview}
-                  onPreview={setPreview}
-                />
-                <GuidedVerdict mounting={guided} />
-              </div>
-              <MachineControls
-              config={config}
-              asset={machineAsset}
-              tool={tool}
-              setTool={chooseTool}
-              onChange={machineChange}
-              onExample={exampleMachine}
-              onExit={() => update({ machine: null })}
-              onCatalog={() => setCatalogOpen(true)}
-              onProductCard={() => setProductCard(true)}
-              measure={measure}
-            />
-            </>
-          ) : (
-            <>
+              {/* Point de départ documentaire : propre à l'espace vide. Avec un
+                  modèle importé, le montage vient du fichier. */}
+              {!machine && (
               <div className="mw-start">
                 <label htmlFor="mw-mode">{t("Votre point de départ")}</label>
                 <select
@@ -655,6 +627,9 @@ export default function MagneticWorkshop({
                   )}
                 </p>
               </div>
+              )}
+              {/* Parcours COMMUN : les quatre étapes, leur corps et le pied sont
+                  les mêmes pour l'espace vide et pour un modèle importé. */}
               <nav className="mw-steps" aria-label={t("Étapes du montage")}>
                 {[
                   t("Choisir le capteur"),
@@ -1174,8 +1149,6 @@ export default function MagneticWorkshop({
                   onChange={(e) => void importFile(e.target.files?.[0])}
                 />
               </details>
-            </>
-          )}
         </aside>
         <section className="mw-visual-column" aria-label={t("Simulation du montage")}>
           <div className="mw-scene-card">
