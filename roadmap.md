@@ -31,6 +31,6 @@ Revue indépendante des commits 9ad1e2b puis 5dd93f6. État réel au dernier pas
       cibles de 44 px, aucun chevauchement, aucune erreur console.
 - [x] 13. Rédaction : titre de l'atelier, bandeau et description du panneau alignés sur la question de détection,
       sept traductions chacun.
-- [x] Vérifications : 573 tests / 60 210 assertions, types, build, scans AGENTS, inventaire i18n. Aucune migration,
+- [x] Vérifications : 573 tests / 60 256 assertions, types, build, scans AGENTS, inventaire i18n. Aucune migration,
       aucune donnée réelle, aucune publication.
 - [ ] QA navigateur authentifiée : impossible dans ce bac à sable (aucune session disponible).
