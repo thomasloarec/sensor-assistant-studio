@@ -23,11 +23,12 @@ const VERDICT_TITLE = {
 const COVERAGE_LABEL = {
   covered: "Toute la course est couverte par le gabarit",
   partial: "Une partie de la course sort du gabarit",
-  uncovered: "La course sort du gabarit de référence",
+  outside: "La course sort du gabarit de référence",
 } as const;
 const EVIDENCE_LABEL = {
   published_typical: "Valeurs typiques publiées Standex",
-  none: "Aucune source applicable à cette pose",
+  schematic: "Gabarit géométrique schématique, non caractérisé",
+  uncharacterised: "Aucune source applicable à cette pose",
 } as const;
 const REASON_LABEL: Record<string, string> = {
   NO_PROFILE: "Ce couple capteur–aimant n'a pas de table publiée.",
@@ -135,7 +136,13 @@ export function GuidedSuggestion({
           <dl className="mw-verdict-grid">
             <div>
               <dt>{t("Plan et axe de référence")}</dt>
-              <dd>{t(proposal.suggestion.axisLabel)}</dd>
+              <dd>
+                {t(
+                  proposal.suggestion.approachId === "D3"
+                    ? "D3 · approche par l'extrémité, axe X du capteur"
+                    : "D1 · approche face au centre, axe Z du capteur",
+                )}
+              </dd>
             </div>
             <div>
               <dt>{t("Entrefer visé")}</dt>
