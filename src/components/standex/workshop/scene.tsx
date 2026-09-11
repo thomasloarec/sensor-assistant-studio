@@ -663,7 +663,7 @@ export function GhostMagnet({ ghost }: { ghost: GhostPose }) {
           <meshStandardMaterial color="#7a5cc4" transparent opacity={0.35} depthWrite={false} />
         </mesh>
         <Label position={[0, ghost.sizeMm[1] / 2 + 3, 0]} className="mw-ghost-label">
-          {t("Position suggérée")} · {t(String(Math.round(ghost.gapMm * 10) / 10))} mm
+          {t("Distance entre centres")} · {t(String(Math.round(ghost.gapMm * 10) / 10))} mm
         </Label>
       </group>
     </group>
