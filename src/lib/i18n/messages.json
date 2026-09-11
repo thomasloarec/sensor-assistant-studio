@@ -21967,5 +21967,23 @@
     "Четыре шага: пара «датчик — магнит», положение, моделирование движения, кабель. Ваши настройки сохраняются, даже если вы закроете эту панель.",
     "Quattro passaggi: la coppia sensore-magnete, la posizione, la simulazione del movimento, il cavo. Le impostazioni restano in memoria anche chiudendo questo pannello.",
     "4つのステップ：センサーと磁石の組み合わせ、位置、動作シミュレーション、ケーブル。このパネルを閉じても設定は保持されます。"
+  ],
+  "Données et outils avancés": [
+    "Data and advanced tools",
+    "数据与高级工具",
+    "Daten und erweiterte Werkzeuge",
+    "Datos y herramientas avanzadas",
+    "Данные и расширенные инструменты",
+    "Dati e strumenti avanzati",
+    "データと高度なツール"
+  ],
+  "Le mouvement vient de votre fichier : il se règle à l'étape précédente, avec les attaches, le nœud mobile et la course.": [
+    "The motion comes from your file: set it in the previous step, along with the mounts, the moving node and the travel.",
+    "运动来自您的文件：请在上一步与安装方式、运动节点和行程一起设置。",
+    "Die Bewegung stammt aus Ihrer Datei: Sie wird im vorherigen Schritt zusammen mit Befestigungen, bewegtem Knoten und Hub eingestellt.",
+    "El movimiento proviene de su archivo: se ajusta en el paso anterior, junto con las fijaciones, el nodo móvil y el recorrido.",
+    "Движение задаётся вашим файлом: настройте его на предыдущем шаге вместе с креплениями, подвижным узлом и ходом.",
+    "Il movimento proviene dal suo file: si imposta nel passaggio precedente, insieme ai fissaggi, al nodo mobile e alla corsa.",
+    "動きはファイルから来ます。前のステップで、取り付け・可動ノード・ストロークとあわせて設定します。"
   ]
 }

@@ -604,37 +604,9 @@ export default function MagneticWorkshop({
       </div>
       <div className={machine ? "mw-layout mw-machine-layout" : "mw-layout"}>
         <aside className="mw-controls">
-          {machine ? (
-            <>
-              {/* Montage importé : la même question, la même suggestion et le même
-                  verdict que dans l'espace vide. Les réglages du modèle importé
-                  (attaches, course, nœud mobile) restent intégralement disponibles
-                  en dessous. */}
-              <div className="mw-step-body">
-                <h2>{t("Est-ce que la détection va se faire dans mon montage ?")}</h2>
-                <GuidedSuggestion
-                  config={config}
-                  update={update}
-                  preview={preview}
-                  onPreview={setPreview}
-                />
-                <GuidedVerdict mounting={guided} />
-              </div>
-              <MachineControls
-              config={config}
-              asset={machineAsset}
-              tool={tool}
-              setTool={chooseTool}
-              onChange={machineChange}
-              onExample={exampleMachine}
-              onExit={() => update({ machine: null })}
-              onCatalog={() => setCatalogOpen(true)}
-              onProductCard={() => setProductCard(true)}
-              measure={measure}
-            />
-            </>
-          ) : (
-            <>
+              {/* Point de départ documentaire : propre à l'espace vide. Avec un
+                  modèle importé, le montage vient du fichier. */}
+              {!machine && (
               <div className="mw-start">
                 <label htmlFor="mw-mode">{t("Votre point de départ")}</label>
                 <select
@@ -655,6 +627,9 @@ export default function MagneticWorkshop({
                   )}
                 </p>
               </div>
+              )}
+              {/* Parcours COMMUN : les quatre étapes, leur corps et le pied sont
+                  les mêmes pour l'espace vide et pour un modèle importé. */}
               <nav className="mw-steps" aria-label={t("Étapes du montage")}>
                 {[
                   t("Choisir le capteur"),
@@ -959,11 +934,36 @@ export default function MagneticWorkshop({
                         </span>
                       </div>
                     )}
+                    {/* Modèle importé : les outils du fichier (attaches, nœud mobile,
+                        course, mesure, transformation) restent intégralement
+                        disponibles, à l'étape où l'on place le couple. */}
+                    {machine && (
+                      <MachineControls
+                        config={config}
+                        asset={machineAsset}
+                        tool={tool}
+                        setTool={chooseTool}
+                        onChange={machineChange}
+                        onExample={exampleMachine}
+                        onExit={() => update({ machine: null })}
+                        onCatalog={() => setCatalogOpen(true)}
+                        onProductCard={() => setProductCard(true)}
+                        measure={measure}
+                      />
+                    )}
                   </>
                 )}
                 {step === 2 && (
                   <>
                     <h2>{t("Définissez le mouvement")}</h2>
+                    {machine ? (
+                      <p className="mw-help">
+                        {t(
+                          "Le mouvement vient de votre fichier : il se règle à l'étape précédente, avec les attaches, le nœud mobile et la course.",
+                        )}
+                      </p>
+                    ) : (
+                      <>
                     <label className="mw-select-label">
                       {t("Trajectoire")}
                       <select
@@ -1034,6 +1034,8 @@ export default function MagneticWorkshop({
                             onChange={(span) => update({ span })}
                           />
                         )}
+                      </>
+                    )}
                       </>
                     )}
                     <details>
@@ -1174,8 +1176,6 @@ export default function MagneticWorkshop({
                   onChange={(e) => void importFile(e.target.files?.[0])}
                 />
               </details>
-            </>
-          )}
         </aside>
         <section className="mw-visual-column" aria-label={t("Simulation du montage")}>
           <div className="mw-scene-card">
@@ -1684,14 +1684,20 @@ export default function MagneticWorkshop({
           </div>
         </section>
       </div>
-      <StudioV2
-        config={config}
-        onApply={update}
-        initialStudy={initialStudy}
-        onStudyChange={onStudyChange}
-        dossierId={dossierId}
-        revision={revision}
-      />
+      {/* Registres, comparaison publiée, marges, hypothèses et gel de conception :
+          toutes les actions restent là, simplement repliées par défaut pour que le
+          parcours de montage reste au premier plan. */}
+      <details className="mw-advanced">
+        <summary>{t("Données et outils avancés")}</summary>
+        <StudioV2
+          config={config}
+          onApply={update}
+          initialStudy={initialStudy}
+          onStudyChange={onStudyChange}
+          dossierId={dossierId}
+          revision={revision}
+        />
+      </details>
       <footer className="mw-footer">
         <p>
           <strong>{t(reference ? "Présélection documentée." : "Illustration pédagogique.")}</strong>{" "}

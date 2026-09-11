@@ -12,11 +12,14 @@ Revue indépendante des commits 9ad1e2b puis 5dd93f6. État réel au dernier pas
 - [x] 6. Prévisualisation : état séparé, fantôme dans les deux scènes, appliquer/annuler explicites, invalidation.
 - [x] 7. Scène, panneau et chronologie dérivent du même moteur ; hors couverture = inconnu.
       Rotation GLOBALE du couple sans effet sur la couverture, orientation PROPRE du capteur hors gabarit : testées.
-- [~] 8. Parcours réel pour l'espace vide ET le modèle importé : les quatre étapes, la suggestion et le verdict sont
-      les mêmes dans les deux cas, la longueur de câble est réellement modifiable et enregistrée, les entrées
-      principales posent la question « Vérifier la détection dans mon montage ».
-      RESTE : le catalogue et Studio V2 restent atteignables au même niveau qu'avant, ils n'ont pas encore été
-      regroupés dans une section « outils avancés » unique.
+- [x] 8. Parcours réellement COMMUN : la navigation des quatre étapes, le corps des étapes et le pied sont sortis du
+      ternaire `machine ?`. Étape 1 identique (capteur, sensibilité, contraintes), étape 2 identique plus
+      MachineControls pour un modèle importé (attaches, nœud mobile, course, mesure, transformation conservés),
+      étape 3 identique (comportement recherché + verdict ; la trajectoire écrite à la main reste propre à l'espace
+      vide, celle du fichier se règle à l'étape 2), étape 4 identique : longueur de câble saisissable et enregistrée
+      aussi avec un modèle importé (500 mm vérifié en navigateur, conservé après « Joindre au dossier »).
+      Studio V2 est regroupé dans un dépliant « Données et outils avancés » fermé par défaut, toutes actions
+      conservées.
 - [x] 9. Propagation : le montage guidé est reconstruit sur la configuration, le besoin et le câble COURANTS à
       l'enregistrement, à l'import et dans le DTO client ; le rapport anglais porte verdict, couverture, limites,
       besoin et câble. Aucun verdict importé n'est cru.
@@ -28,6 +31,6 @@ Revue indépendante des commits 9ad1e2b puis 5dd93f6. État réel au dernier pas
       cibles de 44 px, aucun chevauchement, aucune erreur console.
 - [x] 13. Rédaction : titre de l'atelier, bandeau et description du panneau alignés sur la question de détection,
       sept traductions chacun.
-- [x] Vérifications : 573 tests / 60 210 assertions, types, build, scans AGENTS, inventaire i18n. Aucune migration,
+- [x] Vérifications : 573 tests / 60 256 assertions, types, build, scans AGENTS, inventaire i18n. Aucune migration,
       aucune donnée réelle, aucune publication.
 - [ ] QA navigateur authentifiée : impossible dans ce bac à sable (aucune session disponible).
