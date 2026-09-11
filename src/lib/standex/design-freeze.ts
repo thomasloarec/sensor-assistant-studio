@@ -4,7 +4,7 @@ import { parseWorkshopConfig } from "./magnetic-workshop";
 import type { WorkshopConfig } from "./magnetic-workshop";
 import { parseStudioStudy } from "./studio-dossier";
 import type { StudioStudy } from "./studio-dossier";
-import { evaluateReference } from "./magnetics/margin";
+import { evaluateReference, emptyMargin } from "./magnetics/margin";
 import { referenceAllowed } from "./magnetic-workshop";
 import { solveSwitching } from "./magnetics/solve";
 import { ENGINE_VERSION } from "./magnetics/types";
@@ -55,7 +55,29 @@ export const STUDIO_NOTICES = {
   verified: "Empreinte cohérente. Cela ne constitue pas une contre-signature.",
   badHash: "Empreinte invalide ou format incompatible.",
 };
-export const SOLUTION_COLUMNS = ["Capteur", "Classe", "Aimant", "Fermeture typique", "Ouverture typique", "Écart de fermeture", "Écart d'ouverture", "Verdict", "Prédiction physique"];
+export const SOLUTION_COLUMNS = [
+  "Capteur",
+  "Classe",
+  "Aimant",
+  "Fermeture typique",
+  "Ouverture typique",
+  "Écart de fermeture",
+  "Écart d'ouverture",
+  "Verdict",
+  "Prédiction physique",
+];
+export const REFERENCE_REASON_LABELS: Record<string, string> = {
+  INVALID_INPUT: "Corrigez les champs signalés avant de comparer.",
+  GAPS_REQUIRED:
+    "Renseignez les deux distances pour calculer les écarts. Une valeur absente n’est pas zéro.",
+  NO_PUBLISHED_REFERENCE: "Aucune paire de distances publiée pour cette combinaison.",
+  SOURCE_CONFLICT:
+    "Les sources Standex divergent pour cette combinaison. Les valeurs sont suspendues jusqu’à confirmation.",
+  FERROUS_BODY_DECLARED:
+    "Présence de matière ferromagnétique : les distances publiées ne permettent pas cette comparaison.",
+  APPROACH_AMBIGUOUS: "La pose ne correspond pas au trajet de référence publié.",
+  NO_SELECTION: "Aucune solution retenue.",
+};
 export const MISSING_LABELS: Record<string, string> = {
   typical_not_guaranteed: "Valeurs typiques, sans garantie au pire cas",
   sensitivity_spread: "Dispersion du seuil du contact",
@@ -125,16 +147,14 @@ export async function createDesignFreeze(input: FreezeInput): Promise<DesignFree
   )
     throw new Error("INVALID_INPUT");
   const { config: c, study: s } = input;
-  const result = evaluateReference(
-    {
-      sensorFamily: c.sensorId,
-      sensitivityClass: c.sensitivity,
-      magnetId: c.magnetModel,
-      approachId: c.geometry,
-    },
-    s.need,
-    { referencePose: referenceAllowed(c), ferrous: c.ferromagnetic },
+  const chosen = PUBLISHED_REGISTRY.rows.find(
+    (r) =>
+      [r.sensorFamily, r.sensitivityClass, r.magnetId, r.approachId].join("/") ===
+        s.selectedSolutionId && r.approachId === (s.comparisonApproach ?? "D1"),
   );
+  const result = chosen
+    ? evaluateReference(chosen, s.need, { referencePose: true, ferrous: c.ferromagnetic })
+    : emptyMargin("published_typical", "NO_SELECTION");
   const physical = solveSwitching({
     sensorFamily: c.sensorId,
     sensitivityClass: c.sensitivity,
@@ -148,7 +168,10 @@ export async function createDesignFreeze(input: FreezeInput): Promise<DesignFree
   const fieldEntries = technical
     .filter((f) => s.fields[f.id])
     .map((f) => ({ label: f.labelFr, value: s.fields[f.id]!.value }));
-  const spec = c.sensorId === "MK03" ? SENSOR_SPECIFICATIONS[c.sensorId] : null;
+  const spec =
+    chosen?.sensorFamily === "MK03" && c.sensorId === "MK03"
+      ? SENSOR_SPECIFICATIONS[c.sensorId]
+      : null;
   const electrical = spec?.electrical.find((e) => e.model === "66");
   const entries: FreezeSection["entries"][] = [
     [
@@ -165,10 +188,10 @@ export async function createDesignFreeze(input: FreezeInput): Promise<DesignFree
     ],
     fieldEntries.length ? fieldEntries : [{ label: "Application", value: "Non renseigné" }],
     [
-      { label: "Capteur", value: c.sensorId },
-      { label: "Classe", value: c.sensitivity },
-      { label: "Aimant", value: c.magnetModel },
-      { label: "Approche", value: c.geometry },
+      { label: "Capteur", value: chosen?.sensorFamily ?? "Non renseigné" },
+      { label: "Classe", value: chosen?.sensitivityClass ?? "Non renseigné" },
+      { label: "Aimant", value: chosen?.magnetId ?? "Non renseigné" },
+      { label: "Approche", value: s.comparisonApproach ?? "D1" },
       { label: "Entrefer fermé", value: val(s.need.gapClosedMm) },
       { label: "Entrefer ouvert", value: val(s.need.gapOpenMm) },
       { label: "Tolérance de montage", value: val(s.need.gapToleranceMm) },
@@ -181,7 +204,13 @@ export async function createDesignFreeze(input: FreezeInput): Promise<DesignFree
       { label: "Ouverture typique", value: val(result.dropMm) },
       { label: "Écart de fermeture", value: val(result.closingMm) },
       { label: "Écart d'ouverture", value: val(result.openingMm) },
-      { label: "Prédiction physique", value: physical.reasonCode },
+      {
+        label: "Prédiction physique",
+        value:
+          physical.reasonCode === "NO_CALIBRATION_FOR_FAMILY"
+            ? "Données manquantes pour la prédiction physique : géométrie active, repères et validation indépendante."
+            : physical.reasonCode,
+      },
       { label: "Pire cas garanti", value: "NON ÉVALUABLE" },
       ...result.provenance.map((p) => ({
         label: "Source",

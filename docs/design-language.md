@@ -410,3 +410,7 @@ cibles de 44 px conformes).
   `toggle.tsx`. Elles utilisent encore `border`, `bg-background`,
   `shadow-lg`, `duration-200` ou `text-sm`. Chacune doit être migrée sur le socle
   dans le commit qui la monte sur un écran, jamais après.
+
+### Fond des visuels produit
+
+`--surface-product` reste clair dans les sections immersives, pour détacher les boîtiers sombres. Les vignettes 3D utilisent une caméra commune pour comparer les tailles.

@@ -1,11 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Search, X, ArrowUpRight, Check } from "lucide-react";
 import { sizeLabel, sensorSource } from "@/lib/standex/sensor-catalog";
-import {
-  CATALOG_ALL,
-  documentedCount,
-  filterCatalog,
-} from "@/lib/standex/catalog-filters";
+import { CATALOG_ALL, documentedCount, filterCatalog } from "@/lib/standex/catalog-filters";
 import SensorCard from "./sensor-card";
 import { useLocale } from "@/lib/i18n/react";
 import { msg, t } from "@/lib/i18n/core";
@@ -28,6 +24,7 @@ const CATEGORY_OPTIONS = [
   ["À visser", "À visser"],
   ["À encastrer", "À encastrer"],
   ["CMS", "CMS"],
+  ["THT", "THT"],
   ["Pédagogique", "Pédagogique"],
   ["Sur mesure", "Sur mesure"],
 ] as const;
@@ -53,10 +50,12 @@ const WIRING_OPTIONS = [
 
 export default function SensorCatalog({
   selected,
+  inline = false,
   onSelect,
   onClose,
 }: {
   selected: string;
+  inline?: boolean;
   onSelect: (id: string) => void;
   onClose: () => void;
 }) {
@@ -72,10 +71,11 @@ export default function SensorCatalog({
     [maxHeight, setMaxHeight] = useState(""),
     [sameScale, setSameScale] = useState(true);
   useEffect(() => {
+    if (inline) return;
     const dialog = ref.current;
     dialog?.showModal();
     return () => dialog?.close();
-  }, []);
+  }, [inline]);
   const list = filterCatalog({
     query,
     category,
@@ -100,11 +100,12 @@ export default function SensorCatalog({
   return (
     <dialog
       ref={ref}
-      className="mw-catalog"
+      open={inline || undefined}
+      className={inline ? "mw-catalog mw-catalog-page" : "mw-catalog"}
       aria-labelledby="catalog-title"
       onCancel={onClose}
       onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
+        if (!inline && e.target === e.currentTarget) onClose();
       }}
     >
       {card && (
@@ -122,7 +123,7 @@ export default function SensorCatalog({
         <div>
           <p className="mw-eyebrow">{t("Choisir une forme et un format")}</p>
           <h2 id="catalog-title">{t("Le catalogue des capteurs")}</h2>
-          <p>{t("21 modèles Standex cotés, et un reed pédagogique.")}</p>
+          <p>{t("Capteurs Standex cotés et reed pédagogique, à échelle commune.")}</p>
         </div>
         <button aria-label={t("Fermer le catalogue")} className="mw-icon-button" onClick={onClose}>
           <X />
@@ -149,7 +150,6 @@ export default function SensorCatalog({
               {t(label)}
             </option>
           ))}
-
         </select>
         <select
           aria-label={t("Filtrer par fixation")}
@@ -222,7 +222,9 @@ export default function SensorCatalog({
         ])}
       </p>
       <p className="mw-catalog-count">
-        {t("La longueur comparée inclut les terminaisons quand la fiche les cote (MK24-A-J : 5,5 mm avec ses connexions, et non 5 mm). Un champ laissé vide ne filtre rien : une cote non documentée n'est jamais ramenée à zéro.")}
+        {t(
+          "La longueur comparée inclut les terminaisons quand la fiche les cote (MK24-A-J : 5,5 mm avec ses connexions, et non 5 mm). Un champ laissé vide ne filtre rien : une cote non documentée n'est jamais ramenée à zéro.",
+        )}
       </p>
 
       <div className="mw-catalog-list">
@@ -293,7 +295,9 @@ export default function SensorCatalog({
         ))}
         {!documented && (
           <p className="mw-catalog-empty">
-            {t("Aucun capteur documenté ne correspond à ces filtres. L'option sur mesure reste ouverte.")}
+            {t(
+              "Aucun capteur documenté ne correspond à ces filtres. L'option sur mesure reste ouverte.",
+            )}
           </p>
         )}
       </div>

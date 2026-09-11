@@ -27,6 +27,7 @@ export function fixingGroup(model: SensorModel): string {
  * mesure par pattes ; le CMS par broches. Les boîtiers à emmancher restent
  * « non documenté » : leur sortie n'est pas décrite dans les sources reprises. */
 export function wiringGroup(model: SensorModel): string {
+  if (model.category === "THT") return "leads";
   if (model.shape === "smd") return "smd";
   if (model.shape === "glass" || model.shape === "custom_pcb") return "leads";
   if (
@@ -72,8 +73,15 @@ export function filterCatalog(f: CatalogFilters): SensorModel[] {
   return SENSOR_CATALOG.filter((s) => {
     if (s.id === CUSTOM_SENSOR_ID) return true;
     const [length, height, width] = overallEnvelope(s);
-    const haystack = (t(s.name) + " " + t(s.description) + " " + s.id + " " + t(s.category))
-      .toLocaleLowerCase();
+    const haystack = (
+      t(s.name) +
+      " " +
+      t(s.description) +
+      " " +
+      s.id +
+      " " +
+      t(s.category)
+    ).toLocaleLowerCase();
     return (
       (f.category === CATALOG_ALL || s.category === f.category) &&
       (f.fixing === CATALOG_ALL || fixingGroup(s) === f.fixing) &&

@@ -419,3 +419,57 @@
     font-size: 1rem;
   }
 }
+
+.candidate-thumbnail {
+  background: var(--surface-product);
+}
+
+.studio-navigation {
+  position: relative;
+  flex-shrink: 0;
+  font: var(--t-body);
+}
+.studio-navigation summary {
+  cursor: pointer;
+  list-style: none;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  border-radius: var(--r-sm);
+  background: var(--surface-sunken);
+}
+.studio-navigation nav {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 100;
+  width: min(300px, 80vw);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px;
+  background: var(--background);
+  box-shadow: var(--e-4);
+  border-radius: var(--r-md);
+}
+.studio-navigation button {
+  text-align: left;
+  min-height: 44px;
+  padding: 12px;
+  border-radius: var(--r-sm);
+  color: var(--foreground);
+}
+.studio-navigation button:hover {
+  background: var(--surface-tint);
+}
+.mw-catalog.mw-catalog-page {
+  position: relative;
+  inset: auto;
+  width: 100%;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  border: 0;
+  box-shadow: none;
+}

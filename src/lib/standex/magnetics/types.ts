@@ -11,7 +11,7 @@ export interface Provenance {
   enteredOn: string;
   fields: string[];
 }
-export const ENGINE_VERSION = "studio-v2-1.0.0";
+export const ENGINE_VERSION = "studio-v2-1.1.0";
 export const NOT_MODELLED = [
   "ferrous_bodies",
   "magnet_temperature_drift",

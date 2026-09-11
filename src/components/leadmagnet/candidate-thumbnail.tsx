@@ -1,3 +1,5 @@
+import { SensorPlan } from "@/components/standex/workshop/sensor-plan";
+import { pairedMagnetModel } from "@/lib/standex/paired-magnets";
 import { t } from "@/lib/i18n/core";
 /** Vignette d'un candidat : rendu 3D réel, monté à la demande.
  *
@@ -24,7 +26,9 @@ import {
 import { sensorById, customLayout } from "@/lib/standex/sensor-catalog";
 import type { SensorModel } from "@/lib/standex/sensor-catalog";
 
-const ThumbnailScene = lazy(() => import("@/components/standex/workshop/candidate-thumbnail-scene"));
+const ThumbnailScene = lazy(
+  () => import("@/components/standex/workshop/candidate-thumbnail-scene"),
+);
 
 /* ------------------------------------------------------------------ */
 /* Plafond de contextes WebGL simultanés                               */
@@ -88,7 +92,6 @@ export function liveThumbnailContexts() {
   return liveContexts;
 }
 
-
 /** Three 0.185 rend EXCLUSIVEMENT en WebGL2 : sonder « webgl » ferait croire à
  * un rendu possible sur un appareil qui n'a que WebGL1. La sonde libère son
  * propre contexte, sinon elle occuperait une place au détriment des vignettes. */
@@ -106,7 +109,6 @@ export function hasWebGL(): boolean {
   }
   return webglSupport;
 }
-
 
 function prefersReducedMotion(): boolean {
   if (typeof window === "undefined" || !window.matchMedia) return false;
@@ -147,30 +149,27 @@ function Fallback({
   model,
   reason,
   cabled,
+  pair,
 }: {
   model: SensorModel;
   reason: string;
   cabled: boolean;
+  pair?: { magnetId: string; approach: string };
 }) {
+  const magnet = pair ? pairedMagnetModel(pair.magnetId) : null;
   return (
     <div className="candidate-thumb-fallback" role="img" aria-label={`${model.name} — ${reason}`}>
       <svg viewBox="-64 -34 128 68" aria-hidden="true" focusable="false">
-        {cabled ? (
-          <path
-            d={`M ${-56} 0 h 12`}
-            fill="none"
-            stroke="var(--muted-foreground)"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-          />
-        ) : null}
-        <path
-          d={thumbnailSilhouette(model)}
-          fill="var(--surface-tint)"
-          stroke="var(--standex-blue-50)"
-          strokeWidth="1.6"
-          strokeLinejoin="round"
-        />
+        <g transform={magnet ? "translate(-20 0)" : undefined}>
+          <SensorPlan model={model} xray={false} showCable={cabled} />
+          {magnet && (
+            <g
+              transform={`translate(42 0) rotate(${["D4", "D5"].includes(pair!.approach) ? 90 : 0})`}
+            >
+              <SensorPlan model={magnet} xray={false} showCable={false} />
+            </g>
+          )}
+        </g>
       </svg>
       <span className="t-caption">{reason}</span>
     </div>
@@ -196,13 +195,16 @@ class ThumbnailBoundary extends Component<
   }
 }
 
-
 export function CandidateThumbnail({
   sensorId,
+  livePreview = true,
   cabled = false,
+  pair,
 }: {
   sensorId: string;
+  livePreview?: boolean;
   cabled?: boolean;
+  pair?: { magnetId: string; approach: string };
 }) {
   const model = sensorById(sensorId);
   const host = useRef<HTMLDivElement>(null);
@@ -237,7 +239,7 @@ export function CandidateThumbnail({
 
   const claim = useCallback(() => setSlot(true), []);
   useEffect(() => {
-    if (!inView || !supported || lost) return;
+    if (!inView || !supported || lost || !livePreview) return;
     const token = acquireThumbnailSlot(claim);
     if (token.held) setSlot(true);
     return () => {
@@ -246,9 +248,9 @@ export function CandidateThumbnail({
       releaseThumbnailSlot(token);
       setSlot(false);
     };
-  }, [inView, supported, lost, claim]);
+  }, [inView, supported, lost, claim, livePreview]);
 
-  const live = inView && slot && supported && !lost;
+  const live = livePreview && inView && slot && supported && !lost;
   return (
     <div
       ref={host}
@@ -260,27 +262,39 @@ export function CandidateThumbnail({
         // Un renderer qui refuse de se créer doit retomber sur le dessin 2D,
         // au même titre qu'un contexte perdu en cours de route.
         <ThumbnailBoundary onFailed={() => setLost(true)}>
-          <Suspense fallback={<Fallback model={model} reason={t("Aperçu 3D en cours")} cabled={cabled} />}>
+          <Suspense
+            fallback={
+              <Fallback
+                model={model}
+                reason={t("Aperçu 3D en cours")}
+                cabled={cabled}
+                {...(pair ? { pair } : {})}
+              />
+            }
+          >
             <ThumbnailScene
               sensorId={model.id}
               cabled={cabled}
+              {...(pair ? { pair } : {})}
               reduced={reduced}
               onContextLost={() => setLost(true)}
             />
           </Suspense>
         </ThumbnailBoundary>
       ) : (
-
         <Fallback
           model={model}
           reason={
-            supported
-              ? lost
-                ? t("Aperçu 3D indisponible")
-                : t("Aperçu 3D à l'affichage")
-              : t("3D non disponible sur cet appareil")
+            !livePreview
+              ? t("Vue plane")
+              : supported
+                ? lost
+                  ? t("Aperçu 3D indisponible")
+                  : t("Aperçu 3D à l'affichage")
+                : t("3D non disponible sur cet appareil")
           }
           cabled={cabled}
+          {...(pair ? { pair } : {})}
         />
       )}
     </div>

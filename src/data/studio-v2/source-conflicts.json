@@ -1,0 +1,37 @@
+[
+  {
+    "sensor": "MK06-4",
+    "class": "A",
+    "approach": "D1",
+    "webValues": ["18.0", "19.5"],
+    "reason": "Web/PDF divergence; withheld pending source confirmation"
+  },
+  {
+    "sensor": "MK18",
+    "class": "B",
+    "approach": "D1",
+    "webValues": ["16.5", "17.5"],
+    "reason": "Web/PDF divergence; withheld pending source confirmation"
+  },
+  {
+    "sensor": "MK16",
+    "class": "E",
+    "approach": "D5",
+    "webValues": ["7.0", "8.5"],
+    "reason": "Web/PDF divergence; withheld pending source confirmation"
+  },
+  {
+    "sensor": "MK18",
+    "class": "D",
+    "approach": "D5",
+    "webValues": ["8.0", "10.0"],
+    "reason": "Web/PDF divergence; withheld pending source confirmation"
+  },
+  {
+    "sensor": "MK18",
+    "class": "E",
+    "approach": "D5",
+    "webValues": ["7.0", "9.5"],
+    "reason": "Web/PDF divergence; withheld pending source confirmation"
+  }
+]

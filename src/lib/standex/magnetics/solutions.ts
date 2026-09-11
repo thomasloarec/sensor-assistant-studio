@@ -1,6 +1,6 @@
 import { SENSOR_CATALOG } from "../sensor-catalog";
 import { PUBLISHED_REGISTRY, PHYSICS_REGISTRY } from "./registries";
-import type { PublishedRegistry, PhysicsRegistry } from "./registries";
+import type { PublishedRegistry, PhysicsRegistry, PublishedApproach } from "./registries";
 import { evaluateReference, evaluateMargin } from "./margin";
 import type { MarginResult, Need } from "./margin";
 export interface Solution {
@@ -8,13 +8,13 @@ export interface Solution {
   sensorFamily: string;
   sensitivityClass: string;
   magnetId: string;
-  approachId: "D1" | "D3";
+  approachId: PublishedApproach;
   reference: MarginResult;
   physical: MarginResult;
 }
 export function exploreSolutions(
   need: Need,
-  approachId: "D1" | "D3",
+  approachId: PublishedApproach,
   domain: { referencePose: boolean; ferrous: boolean },
   published: PublishedRegistry = PUBLISHED_REGISTRY,
   physics: PhysicsRegistry = PHYSICS_REGISTRY,

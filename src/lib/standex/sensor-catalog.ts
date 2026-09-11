@@ -3,21 +3,9 @@
  * Internal contacts, cable lengths, fillets and thread profiles are illustrative.
  */
 export type SensorShape =
-  | "cylinder"
-  | "threaded"
-  | "flange"
-  | "block"
-  | "smd"
-  | "pressfit"
-  | "glass"
-  | "custom_pcb";
+  "cylinder" | "threaded" | "flange" | "block" | "smd" | "pressfit" | "glass" | "custom_pcb";
 export type SensorCategory =
-  | "Cylindrique"
-  | "À visser"
-  | "À encastrer"
-  | "CMS"
-  | "Pédagogique"
-  | "Sur mesure";
+  "Cylindrique" | "À visser" | "À encastrer" | "CMS" | "THT" | "Pédagogique" | "Sur mesure";
 export interface SensorModel {
   id: string;
   name: string;
@@ -121,7 +109,42 @@ export const CUSTOM_SENSOR_ID = "CUSTOM";
 const CUSTOM_REED_LENGTH = 20;
 const CUSTOM_REED_DIAMETER = 4;
 const CUSTOM_PCB_THICKNESS = 1.6;
+const surfaceMounted = (
+  id: string,
+  l: number,
+  h: number,
+  w: number,
+  terminalSpan: number,
+): SensorModel => ({
+  id,
+  name: id,
+  category: "CMS",
+  shape: "smd",
+  body: [l, h, w],
+  terminalSpan,
+  color: "#333c44",
+  sourceFile: id + ".pdf",
+  sourcePage: 1,
+  description: "Reed surmoulé pour circuit imprimé",
+  contact: "A",
+  note: "Enveloppe de la variante dessinée dans la fiche source ; connexions représentées de manière simplifiée. Vérifier la variante avant conception du circuit.",
+});
 export const SENSOR_CATALOG: readonly SensorModel[] = [
+  { ...surfaceMounted("MK01", 18, 3.4, 3.7, 18.8), name: "MK01 · Form C", contact: "unsupported" },
+  surfaceMounted("MK15", 16, 2.5, 2.5, 19.5),
+  surfaceMounted("MK16", 11.6, 2.3, 2.3, 15.6),
+  surfaceMounted("MK17", 8.5, 2.1, 2.1, 12.3),
+  surfaceMounted("MK22", 11.6, 2.3, 2.95, 15.6),
+  surfaceMounted("MK30", 22.5, 3.5, 3.5, 28.6),
+  surfaceMounted("MK31", 6.4, 1.95, 2.2, 6.9),
+  {
+    ...surfaceMounted("MK06-4", 12.06, 3.3, 3.3, 12.06),
+    sourceFile: "MK06.pdf",
+    name: "MK06 · taille 4",
+    category: "THT",
+    note: "Version à broches traversantes ; modèle visuel simplifié. Consulter la fiche pour les autres tailles.",
+  },
+
   {
     id: "MK24-A-J",
     name: "MK24 · Form A · J",
@@ -226,7 +249,8 @@ export const SENSOR_CATALOG: readonly SensorModel[] = [
     name: "Reed pédagogique",
     category: "Pédagogique",
     shape: "glass",
-    body: [20, 4, 4],
+    body: [20, 2.5, 2.5],
+    reed: [20, 2.5, 2.5],
     color: "#b3d4db",
     sourceFile: null,
     sourcePage: 1,

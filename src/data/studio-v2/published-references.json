@@ -1,101 +1,47 @@
 {
-  "version": "published-reference-1.0.0",
-  "sourceSha256": "201b382fb771934823f189b2c4dc84da83f7e1f35c64e43a71293972dca3467e",
+  "version": "published-2026-09-11",
+  "sourceSha256": "b1a234d22d8012b2857307d802ec4b9dce8be9f52190c9dd0b59c243ee9500d6",
   "rows": [
     {
-      "id": "CAL-0001",
+      "id": "MK03-B-M02-D1",
       "sensorFamily": "MK03",
       "sensorReference": "MK03-1A66B-500W",
       "sensitivityClass": "B",
       "contactForm": "1A",
       "magnetId": "M02",
       "approachId": "D1",
-      "pullInMm": 15,
+      "pullInMm": 15.0,
       "dropOutMm": 17.5,
       "temperatureC": null,
       "provenance": {
         "registryId": "CAL-0001",
-        "sourceType": "published_table",
-        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK03 Series, consulte le 2026-09-10 ; controle PDF p.2 (imprimee 87) ; temperature 20 C convention CDC 1.0, non publiee",
-        "enteredOn": "2026-09-10",
-        "fields": [
-          "pullInMm",
-          "dropOutMm",
-          "hysteresisMm"
-        ]
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK03-1A66B-500W ; D1 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
       }
     },
     {
-      "id": "CAL-0002",
+      "id": "MK03-B-M02-D2",
       "sensorFamily": "MK03",
-      "sensorReference": "MK03-1A66C-500W",
-      "sensitivityClass": "C",
+      "sensorReference": "MK03-1A66B-500W",
+      "sensitivityClass": "B",
       "contactForm": "1A",
       "magnetId": "M02",
-      "approachId": "D1",
-      "pullInMm": 13,
-      "dropOutMm": 16.5,
+      "approachId": "D2",
+      "pullInMm": 6.5,
+      "dropOutMm": 8.0,
       "temperatureC": null,
       "provenance": {
-        "registryId": "CAL-0002",
-        "sourceType": "published_table",
-        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK03 Series, consulte le 2026-09-10 ; controle PDF p.2 (imprimee 87) ; temperature 20 C convention CDC 1.0, non publiee",
-        "enteredOn": "2026-09-10",
-        "fields": [
-          "pullInMm",
-          "dropOutMm",
-          "hysteresisMm"
-        ]
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK03-1A66B-500W ; D2 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
       }
     },
     {
-      "id": "CAL-0003",
-      "sensorFamily": "MK03",
-      "sensorReference": "MK03-1A66D-500W",
-      "sensitivityClass": "D",
-      "contactForm": "1A",
-      "magnetId": "M02",
-      "approachId": "D1",
-      "pullInMm": 11,
-      "dropOutMm": 14.5,
-      "temperatureC": null,
-      "provenance": {
-        "registryId": "CAL-0003",
-        "sourceType": "published_table",
-        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK03 Series, consulte le 2026-09-10 ; controle PDF p.2 (imprimee 87) ; temperature 20 C convention CDC 1.0, non publiee",
-        "enteredOn": "2026-09-10",
-        "fields": [
-          "pullInMm",
-          "dropOutMm",
-          "hysteresisMm"
-        ]
-      }
-    },
-    {
-      "id": "CAL-0004",
-      "sensorFamily": "MK03",
-      "sensorReference": "MK03-1A66E-500W",
-      "sensitivityClass": "E",
-      "contactForm": "1A",
-      "magnetId": "M02",
-      "approachId": "D1",
-      "pullInMm": 10,
-      "dropOutMm": 13.5,
-      "temperatureC": null,
-      "provenance": {
-        "registryId": "CAL-0004",
-        "sourceType": "published_table",
-        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK03 Series, consulte le 2026-09-10 ; controle PDF p.2 (imprimee 87) ; temperature 20 C convention CDC 1.0, non publiee",
-        "enteredOn": "2026-09-10",
-        "fields": [
-          "pullInMm",
-          "dropOutMm",
-          "hysteresisMm"
-        ]
-      }
-    },
-    {
-      "id": "CAL-0005",
+      "id": "MK03-B-M02-D3",
       "sensorFamily": "MK03",
       "sensorReference": "MK03-1A66B-500W",
       "sensitivityClass": "B",
@@ -106,19 +52,53 @@
       "dropOutMm": 11.4,
       "temperatureC": null,
       "provenance": {
-        "registryId": "CAL-0005",
-        "sourceType": "published_table",
-        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK03 Series, consulte le 2026-09-10 ; controle PDF p.2 (imprimee 87) ; temperature 20 C convention CDC 1.0, non publiee",
-        "enteredOn": "2026-09-10",
-        "fields": [
-          "pullInMm",
-          "dropOutMm",
-          "hysteresisMm"
-        ]
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK03-1A66B-500W ; D3 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
       }
     },
     {
-      "id": "CAL-0006",
+      "id": "MK03-C-M02-D1",
+      "sensorFamily": "MK03",
+      "sensorReference": "MK03-1A66C-500W",
+      "sensitivityClass": "C",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D1",
+      "pullInMm": 13.0,
+      "dropOutMm": 16.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK03-1A66C-500W ; D1 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK03-C-M02-D2",
+      "sensorFamily": "MK03",
+      "sensorReference": "MK03-1A66C-500W",
+      "sensitivityClass": "C",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D2",
+      "pullInMm": 4.4,
+      "dropOutMm": 6.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK03-1A66C-500W ; D2 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK03-C-M02-D3",
       "sensorFamily": "MK03",
       "sensorReference": "MK03-1A66C-500W",
       "sensitivityClass": "C",
@@ -129,19 +109,53 @@
       "dropOutMm": 9.9,
       "temperatureC": null,
       "provenance": {
-        "registryId": "CAL-0006",
-        "sourceType": "published_table",
-        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK03 Series, consulte le 2026-09-10 ; controle PDF p.2 (imprimee 87) ; temperature 20 C convention CDC 1.0, non publiee",
-        "enteredOn": "2026-09-10",
-        "fields": [
-          "pullInMm",
-          "dropOutMm",
-          "hysteresisMm"
-        ]
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK03-1A66C-500W ; D3 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
       }
     },
     {
-      "id": "CAL-0007",
+      "id": "MK03-D-M02-D1",
+      "sensorFamily": "MK03",
+      "sensorReference": "MK03-1A66D-500W",
+      "sensitivityClass": "D",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D1",
+      "pullInMm": 11.0,
+      "dropOutMm": 14.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK03-1A66D-500W ; D1 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK03-D-M02-D2",
+      "sensorFamily": "MK03",
+      "sensorReference": "MK03-1A66D-500W",
+      "sensitivityClass": "D",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D2",
+      "pullInMm": 4.0,
+      "dropOutMm": 5.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK03-1A66D-500W ; D2 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK03-D-M02-D3",
       "sensorFamily": "MK03",
       "sensorReference": "MK03-1A66D-500W",
       "sensitivityClass": "D",
@@ -152,19 +166,53 @@
       "dropOutMm": 8.5,
       "temperatureC": null,
       "provenance": {
-        "registryId": "CAL-0007",
-        "sourceType": "published_table",
-        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK03 Series, consulte le 2026-09-10 ; controle PDF p.2 (imprimee 87) ; temperature 20 C convention CDC 1.0, non publiee",
-        "enteredOn": "2026-09-10",
-        "fields": [
-          "pullInMm",
-          "dropOutMm",
-          "hysteresisMm"
-        ]
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK03-1A66D-500W ; D3 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
       }
     },
     {
-      "id": "CAL-0008",
+      "id": "MK03-E-M02-D1",
+      "sensorFamily": "MK03",
+      "sensorReference": "MK03-1A66E-500W",
+      "sensitivityClass": "E",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D1",
+      "pullInMm": 10.0,
+      "dropOutMm": 13.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK03-1A66E-500W ; D1 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK03-E-M02-D2",
+      "sensorFamily": "MK03",
+      "sensorReference": "MK03-1A66E-500W",
+      "sensitivityClass": "E",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D2",
+      "pullInMm": 3.5,
+      "dropOutMm": 5.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK03-1A66E-500W ; D2 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK03-E-M02-D3",
       "sensorFamily": "MK03",
       "sensorReference": "MK03-1A66E-500W",
       "sensitivityClass": "E",
@@ -172,18 +220,4688 @@
       "magnetId": "M02",
       "approachId": "D3",
       "pullInMm": 4.5,
-      "dropOutMm": 8,
+      "dropOutMm": 8.0,
       "temperatureC": null,
       "provenance": {
-        "registryId": "CAL-0008",
-        "sourceType": "published_table",
-        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK03 Series, consulte le 2026-09-10 ; controle PDF p.2 (imprimee 87) ; temperature 20 C convention CDC 1.0, non publiee",
-        "enteredOn": "2026-09-10",
-        "fields": [
-          "pullInMm",
-          "dropOutMm",
-          "hysteresisMm"
-        ]
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK03-1A66E-500W ; D3 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK04-B-M04-D1",
+      "sensorFamily": "MK04",
+      "sensorReference": "MK04-1A66B-500W",
+      "sensitivityClass": "B",
+      "contactForm": "1A",
+      "magnetId": "M04",
+      "approachId": "D1",
+      "pullInMm": 15.0,
+      "dropOutMm": 17.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK04-1A66B-500W ; D1 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK04-B-M04-D2",
+      "sensorFamily": "MK04",
+      "sensorReference": "MK04-1A66B-500W",
+      "sensitivityClass": "B",
+      "contactForm": "1A",
+      "magnetId": "M04",
+      "approachId": "D2",
+      "pullInMm": 6.5,
+      "dropOutMm": 8.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK04-1A66B-500W ; D2 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK04-B-M04-D3",
+      "sensorFamily": "MK04",
+      "sensorReference": "MK04-1A66B-500W",
+      "sensitivityClass": "B",
+      "contactForm": "1A",
+      "magnetId": "M04",
+      "approachId": "D3",
+      "pullInMm": 9.3,
+      "dropOutMm": 11.4,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK04-1A66B-500W ; D3 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK04-C-M04-D1",
+      "sensorFamily": "MK04",
+      "sensorReference": "MK04-1A66C-500W",
+      "sensitivityClass": "C",
+      "contactForm": "1A",
+      "magnetId": "M04",
+      "approachId": "D1",
+      "pullInMm": 13.0,
+      "dropOutMm": 16.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK04-1A66C-500W ; D1 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK04-C-M04-D2",
+      "sensorFamily": "MK04",
+      "sensorReference": "MK04-1A66C-500W",
+      "sensitivityClass": "C",
+      "contactForm": "1A",
+      "magnetId": "M04",
+      "approachId": "D2",
+      "pullInMm": 4.4,
+      "dropOutMm": 6.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK04-1A66C-500W ; D2 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK04-C-M04-D3",
+      "sensorFamily": "MK04",
+      "sensorReference": "MK04-1A66C-500W",
+      "sensitivityClass": "C",
+      "contactForm": "1A",
+      "magnetId": "M04",
+      "approachId": "D3",
+      "pullInMm": 7.4,
+      "dropOutMm": 9.9,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK04-1A66C-500W ; D3 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK04-D-M04-D1",
+      "sensorFamily": "MK04",
+      "sensorReference": "MK04-1A66D-500W",
+      "sensitivityClass": "D",
+      "contactForm": "1A",
+      "magnetId": "M04",
+      "approachId": "D1",
+      "pullInMm": 11.0,
+      "dropOutMm": 14.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK04-1A66D-500W ; D1 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK04-D-M04-D2",
+      "sensorFamily": "MK04",
+      "sensorReference": "MK04-1A66D-500W",
+      "sensitivityClass": "D",
+      "contactForm": "1A",
+      "magnetId": "M04",
+      "approachId": "D2",
+      "pullInMm": 4.0,
+      "dropOutMm": 5.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK04-1A66D-500W ; D2 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK04-D-M04-D3",
+      "sensorFamily": "MK04",
+      "sensorReference": "MK04-1A66D-500W",
+      "sensitivityClass": "D",
+      "contactForm": "1A",
+      "magnetId": "M04",
+      "approachId": "D3",
+      "pullInMm": 5.7,
+      "dropOutMm": 8.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK04-1A66D-500W ; D3 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK04-E-M04-D1",
+      "sensorFamily": "MK04",
+      "sensorReference": "MK04-1A66E-500W",
+      "sensitivityClass": "E",
+      "contactForm": "1A",
+      "magnetId": "M04",
+      "approachId": "D1",
+      "pullInMm": 10.0,
+      "dropOutMm": 13.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK04-1A66E-500W ; D1 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK04-E-M04-D2",
+      "sensorFamily": "MK04",
+      "sensorReference": "MK04-1A66E-500W",
+      "sensitivityClass": "E",
+      "contactForm": "1A",
+      "magnetId": "M04",
+      "approachId": "D2",
+      "pullInMm": 3.5,
+      "dropOutMm": 5.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK04-1A66E-500W ; D2 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK04-E-M04-D3",
+      "sensorFamily": "MK04",
+      "sensorReference": "MK04-1A66E-500W",
+      "sensitivityClass": "E",
+      "contactForm": "1A",
+      "magnetId": "M04",
+      "approachId": "D3",
+      "pullInMm": 4.5,
+      "dropOutMm": 8.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK04-1A66E-500W ; D3 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK05-B-M05-D1",
+      "sensorFamily": "MK05",
+      "sensorReference": "MK05-1A66B-500W",
+      "sensitivityClass": "B",
+      "contactForm": "1A",
+      "magnetId": "M05",
+      "approachId": "D1",
+      "pullInMm": 15.0,
+      "dropOutMm": 17.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK05-1A66B-500W ; D1 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK05-B-M05-D2",
+      "sensorFamily": "MK05",
+      "sensorReference": "MK05-1A66B-500W",
+      "sensitivityClass": "B",
+      "contactForm": "1A",
+      "magnetId": "M05",
+      "approachId": "D2",
+      "pullInMm": 6.5,
+      "dropOutMm": 8.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK05-1A66B-500W ; D2 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK05-B-M05-D3",
+      "sensorFamily": "MK05",
+      "sensorReference": "MK05-1A66B-500W",
+      "sensitivityClass": "B",
+      "contactForm": "1A",
+      "magnetId": "M05",
+      "approachId": "D3",
+      "pullInMm": 9.3,
+      "dropOutMm": 11.4,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK05-1A66B-500W ; D3 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK05-C-M05-D1",
+      "sensorFamily": "MK05",
+      "sensorReference": "MK05-1A66C-500W",
+      "sensitivityClass": "C",
+      "contactForm": "1A",
+      "magnetId": "M05",
+      "approachId": "D1",
+      "pullInMm": 13.0,
+      "dropOutMm": 16.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK05-1A66C-500W ; D1 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK05-C-M05-D2",
+      "sensorFamily": "MK05",
+      "sensorReference": "MK05-1A66C-500W",
+      "sensitivityClass": "C",
+      "contactForm": "1A",
+      "magnetId": "M05",
+      "approachId": "D2",
+      "pullInMm": 4.4,
+      "dropOutMm": 6.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK05-1A66C-500W ; D2 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK05-C-M05-D3",
+      "sensorFamily": "MK05",
+      "sensorReference": "MK05-1A66C-500W",
+      "sensitivityClass": "C",
+      "contactForm": "1A",
+      "magnetId": "M05",
+      "approachId": "D3",
+      "pullInMm": 7.4,
+      "dropOutMm": 9.9,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK05-1A66C-500W ; D3 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK05-D-M05-D1",
+      "sensorFamily": "MK05",
+      "sensorReference": "MK05-1A66D-500W",
+      "sensitivityClass": "D",
+      "contactForm": "1A",
+      "magnetId": "M05",
+      "approachId": "D1",
+      "pullInMm": 11.0,
+      "dropOutMm": 14.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK05-1A66D-500W ; D1 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK05-D-M05-D2",
+      "sensorFamily": "MK05",
+      "sensorReference": "MK05-1A66D-500W",
+      "sensitivityClass": "D",
+      "contactForm": "1A",
+      "magnetId": "M05",
+      "approachId": "D2",
+      "pullInMm": 4.0,
+      "dropOutMm": 5.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK05-1A66D-500W ; D2 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK05-D-M05-D3",
+      "sensorFamily": "MK05",
+      "sensorReference": "MK05-1A66D-500W",
+      "sensitivityClass": "D",
+      "contactForm": "1A",
+      "magnetId": "M05",
+      "approachId": "D3",
+      "pullInMm": 5.7,
+      "dropOutMm": 8.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK05-1A66D-500W ; D3 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK05-E-M05-D1",
+      "sensorFamily": "MK05",
+      "sensorReference": "MK05-1A66E-500W",
+      "sensitivityClass": "E",
+      "contactForm": "1A",
+      "magnetId": "M05",
+      "approachId": "D1",
+      "pullInMm": 10.0,
+      "dropOutMm": 13.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK05-1A66E-500W ; D1 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK05-E-M05-D2",
+      "sensorFamily": "MK05",
+      "sensorReference": "MK05-1A66E-500W",
+      "sensitivityClass": "E",
+      "contactForm": "1A",
+      "magnetId": "M05",
+      "approachId": "D2",
+      "pullInMm": 3.5,
+      "dropOutMm": 5.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK05-1A66E-500W ; D2 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK05-E-M05-D3",
+      "sensorFamily": "MK05",
+      "sensorReference": "MK05-1A66E-500W",
+      "sensitivityClass": "E",
+      "contactForm": "1A",
+      "magnetId": "M05",
+      "approachId": "D3",
+      "pullInMm": 4.5,
+      "dropOutMm": 8.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK05-1A66E-500W ; D3 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK06-4-A-M02-D2",
+      "sensorFamily": "MK06-4",
+      "sensorReference": "MK06-4-A",
+      "sensitivityClass": "A",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D2",
+      "pullInMm": 8.5,
+      "dropOutMm": 9.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK06-4-A ; D2 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK06-4-A-M02-D3",
+      "sensorFamily": "MK06-4",
+      "sensorReference": "MK06-4-A",
+      "sensitivityClass": "A",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D3",
+      "pullInMm": 15.0,
+      "dropOutMm": 16.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK06-4-A ; D3 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK06-4-B-M02-D1",
+      "sensorFamily": "MK06-4",
+      "sensorReference": "MK06-4-B",
+      "sensitivityClass": "B",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D1",
+      "pullInMm": 16.0,
+      "dropOutMm": 17.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK06-4-B ; D1 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK06-4-B-M02-D2",
+      "sensorFamily": "MK06-4",
+      "sensorReference": "MK06-4-B",
+      "sensitivityClass": "B",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D2",
+      "pullInMm": 7.5,
+      "dropOutMm": 8.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK06-4-B ; D2 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK06-4-B-M02-D3",
+      "sensorFamily": "MK06-4",
+      "sensorReference": "MK06-4-B",
+      "sensitivityClass": "B",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D3",
+      "pullInMm": 12.5,
+      "dropOutMm": 13.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK06-4-B ; D3 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK06-4-C-M02-D1",
+      "sensorFamily": "MK06-4",
+      "sensorReference": "MK06-4-C",
+      "sensitivityClass": "C",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D1",
+      "pullInMm": 14.0,
+      "dropOutMm": 16.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK06-4-C ; D1 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK06-4-C-M02-D2",
+      "sensorFamily": "MK06-4",
+      "sensorReference": "MK06-4-C",
+      "sensitivityClass": "C",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D2",
+      "pullInMm": 7.0,
+      "dropOutMm": 7.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK06-4-C ; D2 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK06-4-C-M02-D3",
+      "sensorFamily": "MK06-4",
+      "sensorReference": "MK06-4-C",
+      "sensitivityClass": "C",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D3",
+      "pullInMm": 10.5,
+      "dropOutMm": 13.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK06-4-C ; D3 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK06-4-D-M02-D1",
+      "sensorFamily": "MK06-4",
+      "sensorReference": "MK06-4-D",
+      "sensitivityClass": "D",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D1",
+      "pullInMm": 13.0,
+      "dropOutMm": 15.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK06-4-D ; D1 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK06-4-D-M02-D2",
+      "sensorFamily": "MK06-4",
+      "sensorReference": "MK06-4-D",
+      "sensitivityClass": "D",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D2",
+      "pullInMm": 6.5,
+      "dropOutMm": 7.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK06-4-D ; D2 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK06-4-D-M02-D3",
+      "sensorFamily": "MK06-4",
+      "sensorReference": "MK06-4-D",
+      "sensitivityClass": "D",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D3",
+      "pullInMm": 10.0,
+      "dropOutMm": 11.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK06-4-D ; D3 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK06-4-E-M02-D1",
+      "sensorFamily": "MK06-4",
+      "sensorReference": "MK06-4-E",
+      "sensitivityClass": "E",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D1",
+      "pullInMm": 12.0,
+      "dropOutMm": 13.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK06-4-E ; D1 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK06-4-E-M02-D2",
+      "sensorFamily": "MK06-4",
+      "sensorReference": "MK06-4-E",
+      "sensitivityClass": "E",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D2",
+      "pullInMm": 5.5,
+      "dropOutMm": 6.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK06-4-E ; D2 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK06-4-E-M02-D3",
+      "sensorFamily": "MK06-4",
+      "sensorReference": "MK06-4-E",
+      "sensitivityClass": "E",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D3",
+      "pullInMm": 8.5,
+      "dropOutMm": 9.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK06-4-E ; D3 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK11-M8-B-M02-D1",
+      "sensorFamily": "MK11-M8",
+      "sensorReference": "MK11/M8-1A66B-500W",
+      "sensitivityClass": "B",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D1",
+      "pullInMm": 15.0,
+      "dropOutMm": 17.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK11/M8-1A66B-500W ; D1 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK11-M8-B-M02-D2",
+      "sensorFamily": "MK11-M8",
+      "sensorReference": "MK11/M8-1A66B-500W",
+      "sensitivityClass": "B",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D2",
+      "pullInMm": 6.5,
+      "dropOutMm": 8.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK11/M8-1A66B-500W ; D2 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK11-M8-B-M02-D3",
+      "sensorFamily": "MK11-M8",
+      "sensorReference": "MK11/M8-1A66B-500W",
+      "sensitivityClass": "B",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D3",
+      "pullInMm": 9.3,
+      "dropOutMm": 11.4,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK11/M8-1A66B-500W ; D3 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK11-M8-C-M02-D1",
+      "sensorFamily": "MK11-M8",
+      "sensorReference": "MK11/M8-1A66C-500W",
+      "sensitivityClass": "C",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D1",
+      "pullInMm": 13.0,
+      "dropOutMm": 16.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK11/M8-1A66C-500W ; D1 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK11-M8-C-M02-D2",
+      "sensorFamily": "MK11-M8",
+      "sensorReference": "MK11/M8-1A66C-500W",
+      "sensitivityClass": "C",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D2",
+      "pullInMm": 4.4,
+      "dropOutMm": 6.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK11/M8-1A66C-500W ; D2 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK11-M8-C-M02-D3",
+      "sensorFamily": "MK11-M8",
+      "sensorReference": "MK11/M8-1A66C-500W",
+      "sensitivityClass": "C",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D3",
+      "pullInMm": 7.4,
+      "dropOutMm": 9.9,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK11/M8-1A66C-500W ; D3 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK11-M8-D-M02-D1",
+      "sensorFamily": "MK11-M8",
+      "sensorReference": "MK11/M8-1A66D-500W",
+      "sensitivityClass": "D",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D1",
+      "pullInMm": 11.0,
+      "dropOutMm": 14.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK11/M8-1A66D-500W ; D1 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK11-M8-D-M02-D2",
+      "sensorFamily": "MK11-M8",
+      "sensorReference": "MK11/M8-1A66D-500W",
+      "sensitivityClass": "D",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D2",
+      "pullInMm": 4.0,
+      "dropOutMm": 5.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK11/M8-1A66D-500W ; D2 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK11-M8-D-M02-D3",
+      "sensorFamily": "MK11-M8",
+      "sensorReference": "MK11/M8-1A66D-500W",
+      "sensitivityClass": "D",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D3",
+      "pullInMm": 5.7,
+      "dropOutMm": 8.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK11/M8-1A66D-500W ; D3 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK11-M8-E-M02-D1",
+      "sensorFamily": "MK11-M8",
+      "sensorReference": "MK11/M8-1A66E-500W",
+      "sensitivityClass": "E",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D1",
+      "pullInMm": 10.0,
+      "dropOutMm": 13.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK11/M8-1A66E-500W ; D1 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK11-M8-E-M02-D2",
+      "sensorFamily": "MK11-M8",
+      "sensorReference": "MK11/M8-1A66E-500W",
+      "sensitivityClass": "E",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D2",
+      "pullInMm": 3.5,
+      "dropOutMm": 5.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK11/M8-1A66E-500W ; D2 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK11-M8-E-M02-D3",
+      "sensorFamily": "MK11-M8",
+      "sensorReference": "MK11/M8-1A66E-500W",
+      "sensitivityClass": "E",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D3",
+      "pullInMm": 4.5,
+      "dropOutMm": 8.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK11/M8-1A66E-500W ; D3 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK13-B-M13-D1",
+      "sensorFamily": "MK13",
+      "sensorReference": "MK13-1A66B-500W",
+      "sensitivityClass": "B",
+      "contactForm": "1A",
+      "magnetId": "M13",
+      "approachId": "D1",
+      "pullInMm": 15.0,
+      "dropOutMm": 17.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK13-1A66B-500W ; D1 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK13-B-M13-D2",
+      "sensorFamily": "MK13",
+      "sensorReference": "MK13-1A66B-500W",
+      "sensitivityClass": "B",
+      "contactForm": "1A",
+      "magnetId": "M13",
+      "approachId": "D2",
+      "pullInMm": 6.5,
+      "dropOutMm": 8.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK13-1A66B-500W ; D2 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK13-B-M13-D3",
+      "sensorFamily": "MK13",
+      "sensorReference": "MK13-1A66B-500W",
+      "sensitivityClass": "B",
+      "contactForm": "1A",
+      "magnetId": "M13",
+      "approachId": "D3",
+      "pullInMm": 9.3,
+      "dropOutMm": 11.4,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK13-1A66B-500W ; D3 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK13-C-M13-D1",
+      "sensorFamily": "MK13",
+      "sensorReference": "MK13-1A66C-500W",
+      "sensitivityClass": "C",
+      "contactForm": "1A",
+      "magnetId": "M13",
+      "approachId": "D1",
+      "pullInMm": 13.0,
+      "dropOutMm": 16.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK13-1A66C-500W ; D1 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK13-C-M13-D2",
+      "sensorFamily": "MK13",
+      "sensorReference": "MK13-1A66C-500W",
+      "sensitivityClass": "C",
+      "contactForm": "1A",
+      "magnetId": "M13",
+      "approachId": "D2",
+      "pullInMm": 4.4,
+      "dropOutMm": 6.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK13-1A66C-500W ; D2 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK13-C-M13-D3",
+      "sensorFamily": "MK13",
+      "sensorReference": "MK13-1A66C-500W",
+      "sensitivityClass": "C",
+      "contactForm": "1A",
+      "magnetId": "M13",
+      "approachId": "D3",
+      "pullInMm": 7.4,
+      "dropOutMm": 9.9,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK13-1A66C-500W ; D3 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK13-D-M13-D1",
+      "sensorFamily": "MK13",
+      "sensorReference": "MK13-1A66D-500W",
+      "sensitivityClass": "D",
+      "contactForm": "1A",
+      "magnetId": "M13",
+      "approachId": "D1",
+      "pullInMm": 11.0,
+      "dropOutMm": 14.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK13-1A66D-500W ; D1 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK13-D-M13-D2",
+      "sensorFamily": "MK13",
+      "sensorReference": "MK13-1A66D-500W",
+      "sensitivityClass": "D",
+      "contactForm": "1A",
+      "magnetId": "M13",
+      "approachId": "D2",
+      "pullInMm": 4.0,
+      "dropOutMm": 5.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK13-1A66D-500W ; D2 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK13-D-M13-D3",
+      "sensorFamily": "MK13",
+      "sensorReference": "MK13-1A66D-500W",
+      "sensitivityClass": "D",
+      "contactForm": "1A",
+      "magnetId": "M13",
+      "approachId": "D3",
+      "pullInMm": 5.7,
+      "dropOutMm": 8.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK13-1A66D-500W ; D3 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK13-E-M13-D1",
+      "sensorFamily": "MK13",
+      "sensorReference": "MK13-1A66E-500W",
+      "sensitivityClass": "E",
+      "contactForm": "1A",
+      "magnetId": "M13",
+      "approachId": "D1",
+      "pullInMm": 10.0,
+      "dropOutMm": 13.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK13-1A66E-500W ; D1 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK13-E-M13-D2",
+      "sensorFamily": "MK13",
+      "sensorReference": "MK13-1A66E-500W",
+      "sensitivityClass": "E",
+      "contactForm": "1A",
+      "magnetId": "M13",
+      "approachId": "D2",
+      "pullInMm": 3.5,
+      "dropOutMm": 5.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK13-1A66E-500W ; D2 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK13-E-M13-D3",
+      "sensorFamily": "MK13",
+      "sensorReference": "MK13-1A66E-500W",
+      "sensitivityClass": "E",
+      "contactForm": "1A",
+      "magnetId": "M13",
+      "approachId": "D3",
+      "pullInMm": 4.5,
+      "dropOutMm": 8.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK13-1A66E-500W ; D3 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK14-B-M02-D1",
+      "sensorFamily": "MK14",
+      "sensorReference": "MK14-1A66B-100W",
+      "sensitivityClass": "B",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D1",
+      "pullInMm": 15.0,
+      "dropOutMm": 16.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK14-1A66B-100W ; D1 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK14-B-M02-D2",
+      "sensorFamily": "MK14",
+      "sensorReference": "MK14-1A66B-100W",
+      "sensitivityClass": "B",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D2",
+      "pullInMm": 7.0,
+      "dropOutMm": 8.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK14-1A66B-100W ; D2 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK14-B-M02-D3",
+      "sensorFamily": "MK14",
+      "sensorReference": "MK14-1A66B-100W",
+      "sensitivityClass": "B",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D3",
+      "pullInMm": 11.0,
+      "dropOutMm": 12.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK14-1A66B-100W ; D3 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK14-C-M02-D1",
+      "sensorFamily": "MK14",
+      "sensorReference": "MK14-1A66C-100W",
+      "sensitivityClass": "C",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D1",
+      "pullInMm": 11.0,
+      "dropOutMm": 13.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK14-1A66C-100W ; D1 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK14-C-M02-D2",
+      "sensorFamily": "MK14",
+      "sensorReference": "MK14-1A66C-100W",
+      "sensitivityClass": "C",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D2",
+      "pullInMm": 5.0,
+      "dropOutMm": 6.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK14-1A66C-100W ; D2 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK14-C-M02-D3",
+      "sensorFamily": "MK14",
+      "sensorReference": "MK14-1A66C-100W",
+      "sensitivityClass": "C",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D3",
+      "pullInMm": 8.0,
+      "dropOutMm": 10.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK14-1A66C-100W ; D3 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK14-D-M02-D1",
+      "sensorFamily": "MK14",
+      "sensorReference": "MK14-1A66D-100W",
+      "sensitivityClass": "D",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D1",
+      "pullInMm": 10.0,
+      "dropOutMm": 12.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK14-1A66D-100W ; D1 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK14-D-M02-D2",
+      "sensorFamily": "MK14",
+      "sensorReference": "MK14-1A66D-100W",
+      "sensitivityClass": "D",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D2",
+      "pullInMm": 4.0,
+      "dropOutMm": 5.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK14-1A66D-100W ; D2 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK14-D-M02-D3",
+      "sensorFamily": "MK14",
+      "sensorReference": "MK14-1A66D-100W",
+      "sensitivityClass": "D",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D3",
+      "pullInMm": 6.0,
+      "dropOutMm": 8.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK14-1A66D-100W ; D3 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK14-E-M02-D1",
+      "sensorFamily": "MK14",
+      "sensorReference": "MK14-1A66E-100W",
+      "sensitivityClass": "E",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D1",
+      "pullInMm": 9.0,
+      "dropOutMm": 11.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK14-1A66E-100W ; D1 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK14-E-M02-D2",
+      "sensorFamily": "MK14",
+      "sensorReference": "MK14-1A66E-100W",
+      "sensitivityClass": "E",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D2",
+      "pullInMm": 3.0,
+      "dropOutMm": 4.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK14-1A66E-100W ; D2 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK14-E-M02-D3",
+      "sensorFamily": "MK14",
+      "sensorReference": "MK14-1A66E-100W",
+      "sensitivityClass": "E",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D3",
+      "pullInMm": 4.0,
+      "dropOutMm": 7.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK14-1A66E-100W ; D3 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK15-B-M02-D1",
+      "sensorFamily": "MK15",
+      "sensorReference": "MK15-B-2",
+      "sensitivityClass": "B",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D1",
+      "pullInMm": 14.0,
+      "dropOutMm": 16.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK15-B-2 ; D1 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK15-B-M02-D2",
+      "sensorFamily": "MK15",
+      "sensorReference": "MK15-B-2",
+      "sensitivityClass": "B",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D2",
+      "pullInMm": 6.5,
+      "dropOutMm": 8.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK15-B-2 ; D2 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK15-B-M02-D3",
+      "sensorFamily": "MK15",
+      "sensorReference": "MK15-B-2",
+      "sensitivityClass": "B",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D3",
+      "pullInMm": 7.0,
+      "dropOutMm": 9.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK15-B-2 ; D3 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK15-C-M02-D1",
+      "sensorFamily": "MK15",
+      "sensorReference": "MK15-C-2",
+      "sensitivityClass": "C",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D1",
+      "pullInMm": 13.0,
+      "dropOutMm": 15.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK15-C-2 ; D1 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK15-C-M02-D2",
+      "sensorFamily": "MK15",
+      "sensorReference": "MK15-C-2",
+      "sensitivityClass": "C",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D2",
+      "pullInMm": 6.0,
+      "dropOutMm": 7.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK15-C-2 ; D2 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK15-C-M02-D3",
+      "sensorFamily": "MK15",
+      "sensorReference": "MK15-C-2",
+      "sensitivityClass": "C",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D3",
+      "pullInMm": 6.5,
+      "dropOutMm": 8.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK15-C-2 ; D3 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK15-D-M02-D1",
+      "sensorFamily": "MK15",
+      "sensorReference": "MK15-D-3",
+      "sensitivityClass": "D",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D1",
+      "pullInMm": 12.0,
+      "dropOutMm": 14.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK15-D-3 ; D1 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK15-D-M02-D2",
+      "sensorFamily": "MK15",
+      "sensorReference": "MK15-D-3",
+      "sensitivityClass": "D",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D2",
+      "pullInMm": 5.5,
+      "dropOutMm": 7.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK15-D-3 ; D2 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK15-D-M02-D3",
+      "sensorFamily": "MK15",
+      "sensorReference": "MK15-D-3",
+      "sensitivityClass": "D",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D3",
+      "pullInMm": 6.0,
+      "dropOutMm": 8.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK15-D-3 ; D3 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK15-E-M02-D1",
+      "sensorFamily": "MK15",
+      "sensorReference": "MK15-E-3",
+      "sensitivityClass": "E",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D1",
+      "pullInMm": 11.0,
+      "dropOutMm": 13.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK15-E-3 ; D1 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK15-E-M02-D2",
+      "sensorFamily": "MK15",
+      "sensorReference": "MK15-E-3",
+      "sensitivityClass": "E",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D2",
+      "pullInMm": 5.0,
+      "dropOutMm": 6.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK15-E-3 ; D2 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK15-E-M02-D3",
+      "sensorFamily": "MK15",
+      "sensorReference": "MK15-E-3",
+      "sensitivityClass": "E",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D3",
+      "pullInMm": 4.5,
+      "dropOutMm": 7.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK15-E-3 ; D3 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK16-B-M02-D1",
+      "sensorFamily": "MK16",
+      "sensorReference": "MK16-B-2",
+      "sensitivityClass": "B",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D1",
+      "pullInMm": 15.0,
+      "dropOutMm": 16.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK16-B-2 ; D1 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK16-B-M02-D2",
+      "sensorFamily": "MK16",
+      "sensorReference": "MK16-B-2",
+      "sensitivityClass": "B",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D2",
+      "pullInMm": 7.0,
+      "dropOutMm": 8.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK16-B-2 ; D2 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK16-B-M02-D3",
+      "sensorFamily": "MK16",
+      "sensorReference": "MK16-B-2",
+      "sensitivityClass": "B",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D3",
+      "pullInMm": 11.0,
+      "dropOutMm": 12.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK16-B-2 ; D3 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK16-C-M02-D1",
+      "sensorFamily": "MK16",
+      "sensorReference": "MK16-C-2",
+      "sensitivityClass": "C",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D1",
+      "pullInMm": 13.0,
+      "dropOutMm": 14.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK16-C-2 ; D1 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK16-C-M02-D2",
+      "sensorFamily": "MK16",
+      "sensorReference": "MK16-C-2",
+      "sensitivityClass": "C",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D2",
+      "pullInMm": 6.0,
+      "dropOutMm": 7.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK16-C-2 ; D2 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK16-C-M02-D3",
+      "sensorFamily": "MK16",
+      "sensorReference": "MK16-C-2",
+      "sensitivityClass": "C",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D3",
+      "pullInMm": 8.0,
+      "dropOutMm": 10.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK16-C-2 ; D3 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK16-D-M02-D1",
+      "sensorFamily": "MK16",
+      "sensorReference": "MK16-D-2",
+      "sensitivityClass": "D",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D1",
+      "pullInMm": 12.0,
+      "dropOutMm": 14.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK16-D-2 ; D1 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK16-D-M02-D2",
+      "sensorFamily": "MK16",
+      "sensorReference": "MK16-D-2",
+      "sensitivityClass": "D",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D2",
+      "pullInMm": 5.5,
+      "dropOutMm": 6.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK16-D-2 ; D2 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK16-D-M02-D3",
+      "sensorFamily": "MK16",
+      "sensorReference": "MK16-D-2",
+      "sensitivityClass": "D",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D3",
+      "pullInMm": 7.0,
+      "dropOutMm": 9.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK16-D-2 ; D3 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK16-E-M02-D1",
+      "sensorFamily": "MK16",
+      "sensorReference": "MK16-E-2",
+      "sensitivityClass": "E",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D1",
+      "pullInMm": 11.0,
+      "dropOutMm": 13.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK16-E-2 ; D1 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK16-E-M02-D2",
+      "sensorFamily": "MK16",
+      "sensorReference": "MK16-E-2",
+      "sensitivityClass": "E",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D2",
+      "pullInMm": 5.0,
+      "dropOutMm": 6.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK16-E-2 ; D2 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK16-E-M02-D3",
+      "sensorFamily": "MK16",
+      "sensorReference": "MK16-E-2",
+      "sensitivityClass": "E",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D3",
+      "pullInMm": 6.0,
+      "dropOutMm": 9.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK16-E-2 ; D3 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK17-B-M02-D1",
+      "sensorFamily": "MK17",
+      "sensorReference": "MK17-B-2",
+      "sensitivityClass": "B",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D1",
+      "pullInMm": 15.0,
+      "dropOutMm": 16.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK17-B-2 ; D1 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK17-B-M02-D2",
+      "sensorFamily": "MK17",
+      "sensorReference": "MK17-B-2",
+      "sensitivityClass": "B",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D2",
+      "pullInMm": 7.5,
+      "dropOutMm": 8.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK17-B-2 ; D2 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK17-B-M02-D3",
+      "sensorFamily": "MK17",
+      "sensorReference": "MK17-B-2",
+      "sensitivityClass": "B",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D3",
+      "pullInMm": 12.5,
+      "dropOutMm": 13.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK17-B-2 ; D3 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK17-C-M02-D1",
+      "sensorFamily": "MK17",
+      "sensorReference": "MK17-C-2",
+      "sensitivityClass": "C",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D1",
+      "pullInMm": 14.5,
+      "dropOutMm": 15.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK17-C-2 ; D1 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK17-C-M02-D2",
+      "sensorFamily": "MK17",
+      "sensorReference": "MK17-C-2",
+      "sensitivityClass": "C",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D2",
+      "pullInMm": 7.0,
+      "dropOutMm": 7.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK17-C-2 ; D2 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK17-C-M02-D3",
+      "sensorFamily": "MK17",
+      "sensorReference": "MK17-C-2",
+      "sensitivityClass": "C",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D3",
+      "pullInMm": 10.0,
+      "dropOutMm": 11.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK17-C-2 ; D3 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK17-D-M02-D1",
+      "sensorFamily": "MK17",
+      "sensorReference": "MK17-D-2",
+      "sensitivityClass": "D",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D1",
+      "pullInMm": 12.5,
+      "dropOutMm": 14.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK17-D-2 ; D1 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK17-D-M02-D2",
+      "sensorFamily": "MK17",
+      "sensorReference": "MK17-D-2",
+      "sensitivityClass": "D",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D2",
+      "pullInMm": 6.0,
+      "dropOutMm": 7.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK17-D-2 ; D2 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK17-D-M02-D3",
+      "sensorFamily": "MK17",
+      "sensorReference": "MK17-D-2",
+      "sensitivityClass": "D",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D3",
+      "pullInMm": 9.5,
+      "dropOutMm": 11.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK17-D-2 ; D3 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK17-E-M02-D1",
+      "sensorFamily": "MK17",
+      "sensorReference": "MK17-E-2",
+      "sensitivityClass": "E",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D1",
+      "pullInMm": 12.0,
+      "dropOutMm": 13.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK17-E-2 ; D1 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK17-E-M02-D2",
+      "sensorFamily": "MK17",
+      "sensorReference": "MK17-E-2",
+      "sensitivityClass": "E",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D2",
+      "pullInMm": 5.5,
+      "dropOutMm": 6.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK17-E-2 ; D2 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK17-E-M02-D3",
+      "sensorFamily": "MK17",
+      "sensorReference": "MK17-E-2",
+      "sensitivityClass": "E",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D3",
+      "pullInMm": 8.5,
+      "dropOutMm": 10.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK17-E-2 ; D3 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK18-B-M02-D2",
+      "sensorFamily": "MK18",
+      "sensorReference": "MK18-B-300W",
+      "sensitivityClass": "B",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D2",
+      "pullInMm": 8.0,
+      "dropOutMm": 9.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK18-B-300W ; D2 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK18-B-M02-D3",
+      "sensorFamily": "MK18",
+      "sensorReference": "MK18-B-300W",
+      "sensitivityClass": "B",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D3",
+      "pullInMm": 14.5,
+      "dropOutMm": 16.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK18-B-300W ; D3 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK18-C-M02-D1",
+      "sensorFamily": "MK18",
+      "sensorReference": "MK18-C-300W",
+      "sensitivityClass": "C",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D1",
+      "pullInMm": 14.0,
+      "dropOutMm": 15.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK18-C-300W ; D1 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK18-C-M02-D2",
+      "sensorFamily": "MK18",
+      "sensorReference": "MK18-C-300W",
+      "sensitivityClass": "C",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D2",
+      "pullInMm": 7.0,
+      "dropOutMm": 8.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK18-C-300W ; D2 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK18-C-M02-D3",
+      "sensorFamily": "MK18",
+      "sensorReference": "MK18-C-300W",
+      "sensitivityClass": "C",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D3",
+      "pullInMm": 11.0,
+      "dropOutMm": 12.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK18-C-300W ; D3 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK18-D-M02-D1",
+      "sensorFamily": "MK18",
+      "sensorReference": "MK18-D-300W",
+      "sensitivityClass": "D",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D1",
+      "pullInMm": 12.0,
+      "dropOutMm": 14.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK18-D-300W ; D1 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK18-D-M02-D2",
+      "sensorFamily": "MK18",
+      "sensorReference": "MK18-D-300W",
+      "sensitivityClass": "D",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D2",
+      "pullInMm": 5.5,
+      "dropOutMm": 7.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK18-D-300W ; D2 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK18-D-M02-D3",
+      "sensorFamily": "MK18",
+      "sensorReference": "MK18-D-300W",
+      "sensitivityClass": "D",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D3",
+      "pullInMm": 9.0,
+      "dropOutMm": 11.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK18-D-300W ; D3 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK18-E-M02-D1",
+      "sensorFamily": "MK18",
+      "sensorReference": "MK18-E-300W",
+      "sensitivityClass": "E",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D1",
+      "pullInMm": 11.0,
+      "dropOutMm": 13.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK18-E-300W ; D1 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK18-E-M02-D2",
+      "sensorFamily": "MK18",
+      "sensorReference": "MK18-E-300W",
+      "sensitivityClass": "E",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D2",
+      "pullInMm": 5.0,
+      "dropOutMm": 7.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK18-E-300W ; D2 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK18-E-M02-D3",
+      "sensorFamily": "MK18",
+      "sensorReference": "MK18-E-300W",
+      "sensitivityClass": "E",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D3",
+      "pullInMm": 7.0,
+      "dropOutMm": 10.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK18-E-300W ; D3 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK20_1-B-M02-D1",
+      "sensorFamily": "MK20_1",
+      "sensorReference": "MK20/1-B-100W",
+      "sensitivityClass": "B",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D1",
+      "pullInMm": 11.0,
+      "dropOutMm": 11.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK20/1-B-100W ; D1 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK20_1-B-M02-D2",
+      "sensorFamily": "MK20_1",
+      "sensorReference": "MK20/1-B-100W",
+      "sensitivityClass": "B",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D2",
+      "pullInMm": 5.5,
+      "dropOutMm": 6.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK20/1-B-100W ; D2 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK20_1-B-M02-D3",
+      "sensorFamily": "MK20_1",
+      "sensorReference": "MK20/1-B-100W",
+      "sensitivityClass": "B",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D3",
+      "pullInMm": 9.0,
+      "dropOutMm": 10.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK20/1-B-100W ; D3 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK20_1-C-M02-D1",
+      "sensorFamily": "MK20_1",
+      "sensorReference": "MK20/1-C-100W",
+      "sensitivityClass": "C",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D1",
+      "pullInMm": 10.5,
+      "dropOutMm": 11.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK20/1-C-100W ; D1 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK20_1-C-M02-D2",
+      "sensorFamily": "MK20_1",
+      "sensorReference": "MK20/1-C-100W",
+      "sensitivityClass": "C",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D2",
+      "pullInMm": 5.0,
+      "dropOutMm": 5.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK20/1-C-100W ; D2 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK20_1-C-M02-D3",
+      "sensorFamily": "MK20_1",
+      "sensorReference": "MK20/1-C-100W",
+      "sensitivityClass": "C",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D3",
+      "pullInMm": 8.0,
+      "dropOutMm": 9.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK20/1-C-100W ; D3 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK20_1-D-M02-D1",
+      "sensorFamily": "MK20_1",
+      "sensorReference": "MK20/1-D-100W",
+      "sensitivityClass": "D",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D1",
+      "pullInMm": 10.0,
+      "dropOutMm": 10.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK20/1-D-100W ; D1 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK20_1-D-M02-D2",
+      "sensorFamily": "MK20_1",
+      "sensorReference": "MK20/1-D-100W",
+      "sensitivityClass": "D",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D2",
+      "pullInMm": 4.5,
+      "dropOutMm": 5.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK20/1-D-100W ; D2 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK20_1-D-M02-D3",
+      "sensorFamily": "MK20_1",
+      "sensorReference": "MK20/1-D-100W",
+      "sensitivityClass": "D",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D3",
+      "pullInMm": 7.0,
+      "dropOutMm": 8.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK20/1-D-100W ; D3 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK20_1-E-M02-D1",
+      "sensorFamily": "MK20_1",
+      "sensorReference": "MK20/1-E-100W",
+      "sensitivityClass": "E",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D1",
+      "pullInMm": 9.5,
+      "dropOutMm": 10.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK20/1-E-100W ; D1 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK20_1-E-M02-D2",
+      "sensorFamily": "MK20_1",
+      "sensorReference": "MK20/1-E-100W",
+      "sensitivityClass": "E",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D2",
+      "pullInMm": 4.0,
+      "dropOutMm": 4.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK20/1-E-100W ; D2 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK20_1-E-M02-D3",
+      "sensorFamily": "MK20_1",
+      "sensorReference": "MK20/1-E-100W",
+      "sensitivityClass": "E",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D3",
+      "pullInMm": 6.0,
+      "dropOutMm": 7.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK20/1-E-100W ; D3 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK21-B-M21-D1",
+      "sensorFamily": "MK21",
+      "sensorReference": "MK21M/1A66B-500W",
+      "sensitivityClass": "B",
+      "contactForm": "1A",
+      "magnetId": "M21",
+      "approachId": "D1",
+      "pullInMm": 13.0,
+      "dropOutMm": 14.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK21M/1A66B-500W ; D1 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK21-B-M21-D2",
+      "sensorFamily": "MK21",
+      "sensorReference": "MK21M/1A66B-500W",
+      "sensitivityClass": "B",
+      "contactForm": "1A",
+      "magnetId": "M21",
+      "approachId": "D2",
+      "pullInMm": 5.5,
+      "dropOutMm": 6.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK21M/1A66B-500W ; D2 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK21-B-M21-D3",
+      "sensorFamily": "MK21",
+      "sensorReference": "MK21M/1A66B-500W",
+      "sensitivityClass": "B",
+      "contactForm": "1A",
+      "magnetId": "M21",
+      "approachId": "D3",
+      "pullInMm": 4.5,
+      "dropOutMm": 5.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK21M/1A66B-500W ; D3 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK21-C-M21-D1",
+      "sensorFamily": "MK21",
+      "sensorReference": "MK21M/1A66C-500W",
+      "sensitivityClass": "C",
+      "contactForm": "1A",
+      "magnetId": "M21",
+      "approachId": "D1",
+      "pullInMm": 11.0,
+      "dropOutMm": 13.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK21M/1A66C-500W ; D1 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK21-C-M21-D2",
+      "sensorFamily": "MK21",
+      "sensorReference": "MK21M/1A66C-500W",
+      "sensitivityClass": "C",
+      "contactForm": "1A",
+      "magnetId": "M21",
+      "approachId": "D2",
+      "pullInMm": 4.0,
+      "dropOutMm": 6.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK21M/1A66C-500W ; D2 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK21-C-M21-D3",
+      "sensorFamily": "MK21",
+      "sensorReference": "MK21M/1A66C-500W",
+      "sensitivityClass": "C",
+      "contactForm": "1A",
+      "magnetId": "M21",
+      "approachId": "D3",
+      "pullInMm": 2.5,
+      "dropOutMm": 4.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK21M/1A66C-500W ; D3 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK21-D-M21-D1",
+      "sensorFamily": "MK21",
+      "sensorReference": "MK21M/1A66D-500W",
+      "sensitivityClass": "D",
+      "contactForm": "1A",
+      "magnetId": "M21",
+      "approachId": "D1",
+      "pullInMm": 9.5,
+      "dropOutMm": 11.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK21M/1A66D-500W ; D1 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK21-D-M21-D2",
+      "sensorFamily": "MK21",
+      "sensorReference": "MK21M/1A66D-500W",
+      "sensitivityClass": "D",
+      "contactForm": "1A",
+      "magnetId": "M21",
+      "approachId": "D2",
+      "pullInMm": 3.5,
+      "dropOutMm": 5.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK21M/1A66D-500W ; D2 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK21-D-M21-D3",
+      "sensorFamily": "MK21",
+      "sensorReference": "MK21M/1A66D-500W",
+      "sensitivityClass": "D",
+      "contactForm": "1A",
+      "magnetId": "M21",
+      "approachId": "D3",
+      "pullInMm": 1.0,
+      "dropOutMm": 2.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK21M/1A66D-500W ; D3 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK21-E-M21-D1",
+      "sensorFamily": "MK21",
+      "sensorReference": "MK21M/1A66E-500W",
+      "sensitivityClass": "E",
+      "contactForm": "1A",
+      "magnetId": "M21",
+      "approachId": "D1",
+      "pullInMm": 8.0,
+      "dropOutMm": 10.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK21M/1A66E-500W ; D1 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK21-E-M21-D2",
+      "sensorFamily": "MK21",
+      "sensorReference": "MK21M/1A66E-500W",
+      "sensitivityClass": "E",
+      "contactForm": "1A",
+      "magnetId": "M21",
+      "approachId": "D2",
+      "pullInMm": 2.5,
+      "dropOutMm": 3.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK21M/1A66E-500W ; D2 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK03-B-M02-D4",
+      "sensorFamily": "MK03",
+      "sensorReference": "MK03-1A66B-500W",
+      "sensitivityClass": "B",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D4",
+      "pullInMm": 8.5,
+      "dropOutMm": 10.1,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK03-1A66B-500W ; D4 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK03-B-M02-D5",
+      "sensorFamily": "MK03",
+      "sensorReference": "MK03-1A66B-500W",
+      "sensitivityClass": "B",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D5",
+      "pullInMm": 8.5,
+      "dropOutMm": 10.1,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK03-1A66B-500W ; D5 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK03-C-M02-D4",
+      "sensorFamily": "MK03",
+      "sensorReference": "MK03-1A66C-500W",
+      "sensitivityClass": "C",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D4",
+      "pullInMm": 7.2,
+      "dropOutMm": 9.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK03-1A66C-500W ; D4 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK03-C-M02-D5",
+      "sensorFamily": "MK03",
+      "sensorReference": "MK03-1A66C-500W",
+      "sensitivityClass": "C",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D5",
+      "pullInMm": 7.2,
+      "dropOutMm": 9.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK03-1A66C-500W ; D5 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK03-D-M02-D4",
+      "sensorFamily": "MK03",
+      "sensorReference": "MK03-1A66D-500W",
+      "sensitivityClass": "D",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D4",
+      "pullInMm": 6.5,
+      "dropOutMm": 9.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK03-1A66D-500W ; D4 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK03-D-M02-D5",
+      "sensorFamily": "MK03",
+      "sensorReference": "MK03-1A66D-500W",
+      "sensitivityClass": "D",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D5",
+      "pullInMm": 6.5,
+      "dropOutMm": 9.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK03-1A66D-500W ; D5 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK03-E-M02-D4",
+      "sensorFamily": "MK03",
+      "sensorReference": "MK03-1A66E-500W",
+      "sensitivityClass": "E",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D4",
+      "pullInMm": 5.7,
+      "dropOutMm": 8.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK03-1A66E-500W ; D4 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK03-E-M02-D5",
+      "sensorFamily": "MK03",
+      "sensorReference": "MK03-1A66E-500W",
+      "sensitivityClass": "E",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D5",
+      "pullInMm": 5.7,
+      "dropOutMm": 8.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK03-1A66E-500W ; D5 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK04-B-M04-D4",
+      "sensorFamily": "MK04",
+      "sensorReference": "MK04-1A66B-500W",
+      "sensitivityClass": "B",
+      "contactForm": "1A",
+      "magnetId": "M04",
+      "approachId": "D4",
+      "pullInMm": 8.5,
+      "dropOutMm": 10.1,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK04-1A66B-500W ; D4 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK04-B-M04-D5",
+      "sensorFamily": "MK04",
+      "sensorReference": "MK04-1A66B-500W",
+      "sensitivityClass": "B",
+      "contactForm": "1A",
+      "magnetId": "M04",
+      "approachId": "D5",
+      "pullInMm": 8.5,
+      "dropOutMm": 10.1,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK04-1A66B-500W ; D5 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK04-C-M04-D4",
+      "sensorFamily": "MK04",
+      "sensorReference": "MK04-1A66C-500W",
+      "sensitivityClass": "C",
+      "contactForm": "1A",
+      "magnetId": "M04",
+      "approachId": "D4",
+      "pullInMm": 7.2,
+      "dropOutMm": 9.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK04-1A66C-500W ; D4 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK04-C-M04-D5",
+      "sensorFamily": "MK04",
+      "sensorReference": "MK04-1A66C-500W",
+      "sensitivityClass": "C",
+      "contactForm": "1A",
+      "magnetId": "M04",
+      "approachId": "D5",
+      "pullInMm": 7.2,
+      "dropOutMm": 9.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK04-1A66C-500W ; D5 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK04-D-M04-D4",
+      "sensorFamily": "MK04",
+      "sensorReference": "MK04-1A66D-500W",
+      "sensitivityClass": "D",
+      "contactForm": "1A",
+      "magnetId": "M04",
+      "approachId": "D4",
+      "pullInMm": 6.5,
+      "dropOutMm": 9.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK04-1A66D-500W ; D4 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK04-D-M04-D5",
+      "sensorFamily": "MK04",
+      "sensorReference": "MK04-1A66D-500W",
+      "sensitivityClass": "D",
+      "contactForm": "1A",
+      "magnetId": "M04",
+      "approachId": "D5",
+      "pullInMm": 6.5,
+      "dropOutMm": 9.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK04-1A66D-500W ; D5 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK04-E-M04-D4",
+      "sensorFamily": "MK04",
+      "sensorReference": "MK04-1A66E-500W",
+      "sensitivityClass": "E",
+      "contactForm": "1A",
+      "magnetId": "M04",
+      "approachId": "D4",
+      "pullInMm": 5.7,
+      "dropOutMm": 8.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK04-1A66E-500W ; D4 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK04-E-M04-D5",
+      "sensorFamily": "MK04",
+      "sensorReference": "MK04-1A66E-500W",
+      "sensitivityClass": "E",
+      "contactForm": "1A",
+      "magnetId": "M04",
+      "approachId": "D5",
+      "pullInMm": 5.7,
+      "dropOutMm": 8.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK04-1A66E-500W ; D5 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK05-B-M05-D4",
+      "sensorFamily": "MK05",
+      "sensorReference": "MK05-1A66B-500W",
+      "sensitivityClass": "B",
+      "contactForm": "1A",
+      "magnetId": "M05",
+      "approachId": "D4",
+      "pullInMm": 8.5,
+      "dropOutMm": 10.1,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK05-1A66B-500W ; D4 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK05-B-M05-D5",
+      "sensorFamily": "MK05",
+      "sensorReference": "MK05-1A66B-500W",
+      "sensitivityClass": "B",
+      "contactForm": "1A",
+      "magnetId": "M05",
+      "approachId": "D5",
+      "pullInMm": 8.5,
+      "dropOutMm": 10.1,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK05-1A66B-500W ; D5 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK05-C-M05-D4",
+      "sensorFamily": "MK05",
+      "sensorReference": "MK05-1A66C-500W",
+      "sensitivityClass": "C",
+      "contactForm": "1A",
+      "magnetId": "M05",
+      "approachId": "D4",
+      "pullInMm": 7.2,
+      "dropOutMm": 9.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK05-1A66C-500W ; D4 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK05-C-M05-D5",
+      "sensorFamily": "MK05",
+      "sensorReference": "MK05-1A66C-500W",
+      "sensitivityClass": "C",
+      "contactForm": "1A",
+      "magnetId": "M05",
+      "approachId": "D5",
+      "pullInMm": 7.2,
+      "dropOutMm": 9.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK05-1A66C-500W ; D5 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK05-D-M05-D4",
+      "sensorFamily": "MK05",
+      "sensorReference": "MK05-1A66D-500W",
+      "sensitivityClass": "D",
+      "contactForm": "1A",
+      "magnetId": "M05",
+      "approachId": "D4",
+      "pullInMm": 6.5,
+      "dropOutMm": 9.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK05-1A66D-500W ; D4 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK05-D-M05-D5",
+      "sensorFamily": "MK05",
+      "sensorReference": "MK05-1A66D-500W",
+      "sensitivityClass": "D",
+      "contactForm": "1A",
+      "magnetId": "M05",
+      "approachId": "D5",
+      "pullInMm": 6.5,
+      "dropOutMm": 9.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK05-1A66D-500W ; D5 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK05-E-M05-D4",
+      "sensorFamily": "MK05",
+      "sensorReference": "MK05-1A66E-500W",
+      "sensitivityClass": "E",
+      "contactForm": "1A",
+      "magnetId": "M05",
+      "approachId": "D4",
+      "pullInMm": 5.7,
+      "dropOutMm": 8.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK05-1A66E-500W ; D4 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK05-E-M05-D5",
+      "sensorFamily": "MK05",
+      "sensorReference": "MK05-1A66E-500W",
+      "sensitivityClass": "E",
+      "contactForm": "1A",
+      "magnetId": "M05",
+      "approachId": "D5",
+      "pullInMm": 5.7,
+      "dropOutMm": 8.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK05-1A66E-500W ; D5 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK06-4-A-M02-D4",
+      "sensorFamily": "MK06-4",
+      "sensorReference": "MK06-4-A",
+      "sensitivityClass": "A",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D4",
+      "pullInMm": 12.0,
+      "dropOutMm": 13.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK06-4-A ; D4 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK06-4-A-M02-D5",
+      "sensorFamily": "MK06-4",
+      "sensorReference": "MK06-4-A",
+      "sensitivityClass": "A",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D5",
+      "pullInMm": 13.5,
+      "dropOutMm": 15.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK06-4-A ; D5 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK06-4-B-M02-D4",
+      "sensorFamily": "MK06-4",
+      "sensorReference": "MK06-4-B",
+      "sensitivityClass": "B",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D4",
+      "pullInMm": 10.5,
+      "dropOutMm": 11.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK06-4-B ; D4 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK06-4-B-M02-D5",
+      "sensorFamily": "MK06-4",
+      "sensorReference": "MK06-4-B",
+      "sensitivityClass": "B",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D5",
+      "pullInMm": 11.0,
+      "dropOutMm": 12.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK06-4-B ; D5 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK06-4-C-M02-D4",
+      "sensorFamily": "MK06-4",
+      "sensorReference": "MK06-4-C",
+      "sensitivityClass": "C",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D4",
+      "pullInMm": 9.5,
+      "dropOutMm": 11.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK06-4-C ; D4 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK06-4-C-M02-D5",
+      "sensorFamily": "MK06-4",
+      "sensorReference": "MK06-4-C",
+      "sensitivityClass": "C",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D5",
+      "pullInMm": 9.5,
+      "dropOutMm": 12.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK06-4-C ; D5 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK06-4-D-M02-D4",
+      "sensorFamily": "MK06-4",
+      "sensorReference": "MK06-4-D",
+      "sensitivityClass": "D",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D4",
+      "pullInMm": 9.0,
+      "dropOutMm": 10.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK06-4-D ; D4 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK06-4-D-M02-D5",
+      "sensorFamily": "MK06-4",
+      "sensorReference": "MK06-4-D",
+      "sensitivityClass": "D",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D5",
+      "pullInMm": 9.0,
+      "dropOutMm": 10.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK06-4-D ; D5 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK06-4-E-M02-D4",
+      "sensorFamily": "MK06-4",
+      "sensorReference": "MK06-4-E",
+      "sensitivityClass": "E",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D4",
+      "pullInMm": 8.0,
+      "dropOutMm": 9.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK06-4-E ; D4 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK06-4-E-M02-D5",
+      "sensorFamily": "MK06-4",
+      "sensorReference": "MK06-4-E",
+      "sensitivityClass": "E",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D5",
+      "pullInMm": 8.0,
+      "dropOutMm": 9.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK06-4-E ; D5 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK11-M8-B-M02-D4",
+      "sensorFamily": "MK11-M8",
+      "sensorReference": "MK11/M8-1A66B-500W",
+      "sensitivityClass": "B",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D4",
+      "pullInMm": 8.5,
+      "dropOutMm": 10.1,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK11/M8-1A66B-500W ; D4 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK11-M8-B-M02-D5",
+      "sensorFamily": "MK11-M8",
+      "sensorReference": "MK11/M8-1A66B-500W",
+      "sensitivityClass": "B",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D5",
+      "pullInMm": 8.5,
+      "dropOutMm": 10.1,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK11/M8-1A66B-500W ; D5 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK11-M8-C-M02-D4",
+      "sensorFamily": "MK11-M8",
+      "sensorReference": "MK11/M8-1A66C-500W",
+      "sensitivityClass": "C",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D4",
+      "pullInMm": 7.2,
+      "dropOutMm": 9.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK11/M8-1A66C-500W ; D4 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK11-M8-C-M02-D5",
+      "sensorFamily": "MK11-M8",
+      "sensorReference": "MK11/M8-1A66C-500W",
+      "sensitivityClass": "C",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D5",
+      "pullInMm": 7.2,
+      "dropOutMm": 9.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK11/M8-1A66C-500W ; D5 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK11-M8-D-M02-D4",
+      "sensorFamily": "MK11-M8",
+      "sensorReference": "MK11/M8-1A66D-500W",
+      "sensitivityClass": "D",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D4",
+      "pullInMm": 6.5,
+      "dropOutMm": 9.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK11/M8-1A66D-500W ; D4 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK11-M8-D-M02-D5",
+      "sensorFamily": "MK11-M8",
+      "sensorReference": "MK11/M8-1A66D-500W",
+      "sensitivityClass": "D",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D5",
+      "pullInMm": 6.5,
+      "dropOutMm": 9.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK11/M8-1A66D-500W ; D5 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK11-M8-E-M02-D4",
+      "sensorFamily": "MK11-M8",
+      "sensorReference": "MK11/M8-1A66E-500W",
+      "sensitivityClass": "E",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D4",
+      "pullInMm": 5.7,
+      "dropOutMm": 8.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK11/M8-1A66E-500W ; D4 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK11-M8-E-M02-D5",
+      "sensorFamily": "MK11-M8",
+      "sensorReference": "MK11/M8-1A66E-500W",
+      "sensitivityClass": "E",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D5",
+      "pullInMm": 5.7,
+      "dropOutMm": 8.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK11/M8-1A66E-500W ; D5 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK13-B-M13-D4",
+      "sensorFamily": "MK13",
+      "sensorReference": "MK13-1A66B-500W",
+      "sensitivityClass": "B",
+      "contactForm": "1A",
+      "magnetId": "M13",
+      "approachId": "D4",
+      "pullInMm": 8.5,
+      "dropOutMm": 10.1,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK13-1A66B-500W ; D4 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK13-B-M13-D5",
+      "sensorFamily": "MK13",
+      "sensorReference": "MK13-1A66B-500W",
+      "sensitivityClass": "B",
+      "contactForm": "1A",
+      "magnetId": "M13",
+      "approachId": "D5",
+      "pullInMm": 8.5,
+      "dropOutMm": 10.1,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK13-1A66B-500W ; D5 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK13-C-M13-D4",
+      "sensorFamily": "MK13",
+      "sensorReference": "MK13-1A66C-500W",
+      "sensitivityClass": "C",
+      "contactForm": "1A",
+      "magnetId": "M13",
+      "approachId": "D4",
+      "pullInMm": 7.2,
+      "dropOutMm": 9.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK13-1A66C-500W ; D4 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK13-C-M13-D5",
+      "sensorFamily": "MK13",
+      "sensorReference": "MK13-1A66C-500W",
+      "sensitivityClass": "C",
+      "contactForm": "1A",
+      "magnetId": "M13",
+      "approachId": "D5",
+      "pullInMm": 7.2,
+      "dropOutMm": 9.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK13-1A66C-500W ; D5 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK13-D-M13-D4",
+      "sensorFamily": "MK13",
+      "sensorReference": "MK13-1A66D-500W",
+      "sensitivityClass": "D",
+      "contactForm": "1A",
+      "magnetId": "M13",
+      "approachId": "D4",
+      "pullInMm": 6.5,
+      "dropOutMm": 9.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK13-1A66D-500W ; D4 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK13-D-M13-D5",
+      "sensorFamily": "MK13",
+      "sensorReference": "MK13-1A66D-500W",
+      "sensitivityClass": "D",
+      "contactForm": "1A",
+      "magnetId": "M13",
+      "approachId": "D5",
+      "pullInMm": 6.5,
+      "dropOutMm": 9.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK13-1A66D-500W ; D5 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK13-E-M13-D4",
+      "sensorFamily": "MK13",
+      "sensorReference": "MK13-1A66E-500W",
+      "sensitivityClass": "E",
+      "contactForm": "1A",
+      "magnetId": "M13",
+      "approachId": "D4",
+      "pullInMm": 5.7,
+      "dropOutMm": 8.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK13-1A66E-500W ; D4 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK13-E-M13-D5",
+      "sensorFamily": "MK13",
+      "sensorReference": "MK13-1A66E-500W",
+      "sensitivityClass": "E",
+      "contactForm": "1A",
+      "magnetId": "M13",
+      "approachId": "D5",
+      "pullInMm": 5.7,
+      "dropOutMm": 8.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK13-1A66E-500W ; D5 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK14-B-M02-D4",
+      "sensorFamily": "MK14",
+      "sensorReference": "MK14-1A66B-100W",
+      "sensitivityClass": "B",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D4",
+      "pullInMm": 10.0,
+      "dropOutMm": 12.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK14-1A66B-100W ; D4 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK14-B-M02-D5",
+      "sensorFamily": "MK14",
+      "sensorReference": "MK14-1A66B-100W",
+      "sensitivityClass": "B",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D5",
+      "pullInMm": 8.0,
+      "dropOutMm": 9.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK14-1A66B-100W ; D5 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK14-C-M02-D4",
+      "sensorFamily": "MK14",
+      "sensorReference": "MK14-1A66C-100W",
+      "sensitivityClass": "C",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D4",
+      "pullInMm": 9.0,
+      "dropOutMm": 11.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK14-1A66C-100W ; D4 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK14-C-M02-D5",
+      "sensorFamily": "MK14",
+      "sensorReference": "MK14-1A66C-100W",
+      "sensitivityClass": "C",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D5",
+      "pullInMm": 6.0,
+      "dropOutMm": 7.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK14-1A66C-100W ; D5 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK14-D-M02-D4",
+      "sensorFamily": "MK14",
+      "sensorReference": "MK14-1A66D-100W",
+      "sensitivityClass": "D",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D4",
+      "pullInMm": 6.0,
+      "dropOutMm": 8.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK14-1A66D-100W ; D4 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK14-D-M02-D5",
+      "sensorFamily": "MK14",
+      "sensorReference": "MK14-1A66D-100W",
+      "sensitivityClass": "D",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D5",
+      "pullInMm": 4.5,
+      "dropOutMm": 6.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK14-1A66D-100W ; D5 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK14-E-M02-D4",
+      "sensorFamily": "MK14",
+      "sensorReference": "MK14-1A66E-100W",
+      "sensitivityClass": "E",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D4",
+      "pullInMm": 4.0,
+      "dropOutMm": 6.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK14-1A66E-100W ; D4 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK14-E-M02-D5",
+      "sensorFamily": "MK14",
+      "sensorReference": "MK14-1A66E-100W",
+      "sensitivityClass": "E",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D5",
+      "pullInMm": 2.5,
+      "dropOutMm": 5.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK14-1A66E-100W ; D5 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK15-B-M02-D4",
+      "sensorFamily": "MK15",
+      "sensorReference": "MK15-B-2",
+      "sensitivityClass": "B",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D4",
+      "pullInMm": 9.0,
+      "dropOutMm": 9.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK15-B-2 ; D4 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK15-B-M02-D5",
+      "sensorFamily": "MK15",
+      "sensorReference": "MK15-B-2",
+      "sensitivityClass": "B",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D5",
+      "pullInMm": 7.0,
+      "dropOutMm": 8.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK15-B-2 ; D5 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK15-C-M02-D4",
+      "sensorFamily": "MK15",
+      "sensorReference": "MK15-C-2",
+      "sensitivityClass": "C",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D4",
+      "pullInMm": 8.5,
+      "dropOutMm": 9.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK15-C-2 ; D4 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK15-C-M02-D5",
+      "sensorFamily": "MK15",
+      "sensorReference": "MK15-C-2",
+      "sensitivityClass": "C",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D5",
+      "pullInMm": 6.5,
+      "dropOutMm": 7.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK15-C-2 ; D5 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK15-D-M02-D4",
+      "sensorFamily": "MK15",
+      "sensorReference": "MK15-D-3",
+      "sensitivityClass": "D",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D4",
+      "pullInMm": 7.5,
+      "dropOutMm": 8.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK15-D-3 ; D4 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK15-D-M02-D5",
+      "sensorFamily": "MK15",
+      "sensorReference": "MK15-D-3",
+      "sensitivityClass": "D",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D5",
+      "pullInMm": 5.5,
+      "dropOutMm": 7.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK15-D-3 ; D5 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK15-E-M02-D4",
+      "sensorFamily": "MK15",
+      "sensorReference": "MK15-E-3",
+      "sensitivityClass": "E",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D4",
+      "pullInMm": 7.0,
+      "dropOutMm": 8.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK15-E-3 ; D4 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK15-E-M02-D5",
+      "sensorFamily": "MK15",
+      "sensorReference": "MK15-E-3",
+      "sensitivityClass": "E",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D5",
+      "pullInMm": 3.5,
+      "dropOutMm": 6.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK15-E-3 ; D5 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK16-B-M02-D4",
+      "sensorFamily": "MK16",
+      "sensorReference": "MK16-B-2",
+      "sensitivityClass": "B",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D4",
+      "pullInMm": 10.0,
+      "dropOutMm": 11.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK16-B-2 ; D4 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK16-B-M02-D5",
+      "sensorFamily": "MK16",
+      "sensorReference": "MK16-B-2",
+      "sensitivityClass": "B",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D5",
+      "pullInMm": 9.5,
+      "dropOutMm": 11.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK16-B-2 ; D5 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK16-C-M02-D4",
+      "sensorFamily": "MK16",
+      "sensorReference": "MK16-C-2",
+      "sensitivityClass": "C",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D4",
+      "pullInMm": 8.0,
+      "dropOutMm": 10.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK16-C-2 ; D4 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK16-C-M02-D5",
+      "sensorFamily": "MK16",
+      "sensorReference": "MK16-C-2",
+      "sensitivityClass": "C",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D5",
+      "pullInMm": 8.0,
+      "dropOutMm": 9.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK16-C-2 ; D5 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK16-D-M02-D4",
+      "sensorFamily": "MK16",
+      "sensorReference": "MK16-D-2",
+      "sensitivityClass": "D",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D4",
+      "pullInMm": 7.5,
+      "dropOutMm": 9.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK16-D-2 ; D4 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK16-D-M02-D5",
+      "sensorFamily": "MK16",
+      "sensorReference": "MK16-D-2",
+      "sensitivityClass": "D",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D5",
+      "pullInMm": 7.0,
+      "dropOutMm": 9.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK16-D-2 ; D5 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK16-E-M02-D4",
+      "sensorFamily": "MK16",
+      "sensorReference": "MK16-E-2",
+      "sensitivityClass": "E",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D4",
+      "pullInMm": 7.0,
+      "dropOutMm": 9.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK16-E-2 ; D4 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK17-B-M02-D4",
+      "sensorFamily": "MK17",
+      "sensorReference": "MK17-B-2",
+      "sensitivityClass": "B",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D4",
+      "pullInMm": 10.0,
+      "dropOutMm": 11.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK17-B-2 ; D4 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK17-B-M02-D5",
+      "sensorFamily": "MK17",
+      "sensorReference": "MK17-B-2",
+      "sensitivityClass": "B",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D5",
+      "pullInMm": 11.0,
+      "dropOutMm": 12.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK17-B-2 ; D5 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK17-C-M02-D4",
+      "sensorFamily": "MK17",
+      "sensorReference": "MK17-C-2",
+      "sensitivityClass": "C",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D4",
+      "pullInMm": 9.0,
+      "dropOutMm": 10.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK17-C-2 ; D4 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK17-C-M02-D5",
+      "sensorFamily": "MK17",
+      "sensorReference": "MK17-C-2",
+      "sensitivityClass": "C",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D5",
+      "pullInMm": 9.5,
+      "dropOutMm": 10.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK17-C-2 ; D5 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK17-D-M02-D4",
+      "sensorFamily": "MK17",
+      "sensorReference": "MK17-D-2",
+      "sensitivityClass": "D",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D4",
+      "pullInMm": 8.0,
+      "dropOutMm": 9.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK17-D-2 ; D4 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK17-D-M02-D5",
+      "sensorFamily": "MK17",
+      "sensorReference": "MK17-D-2",
+      "sensitivityClass": "D",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D5",
+      "pullInMm": 8.0,
+      "dropOutMm": 9.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK17-D-2 ; D5 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK17-E-M02-D4",
+      "sensorFamily": "MK17",
+      "sensorReference": "MK17-E-2",
+      "sensitivityClass": "E",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D4",
+      "pullInMm": 7.5,
+      "dropOutMm": 8.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK17-E-2 ; D4 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK17-E-M02-D5",
+      "sensorFamily": "MK17",
+      "sensorReference": "MK17-E-2",
+      "sensitivityClass": "E",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D5",
+      "pullInMm": 7.5,
+      "dropOutMm": 9.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK17-E-2 ; D5 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK18-B-M02-D4",
+      "sensorFamily": "MK18",
+      "sensorReference": "MK18-B-300W",
+      "sensitivityClass": "B",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D4",
+      "pullInMm": 10.0,
+      "dropOutMm": 10.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK18-B-300W ; D4 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK18-B-M02-D5",
+      "sensorFamily": "MK18",
+      "sensorReference": "MK18-B-300W",
+      "sensitivityClass": "B",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D5",
+      "pullInMm": 12.0,
+      "dropOutMm": 14.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK18-B-300W ; D5 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK18-C-M02-D4",
+      "sensorFamily": "MK18",
+      "sensorReference": "MK18-C-300W",
+      "sensitivityClass": "C",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D4",
+      "pullInMm": 9.0,
+      "dropOutMm": 10.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK18-C-300W ; D4 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK18-C-M02-D5",
+      "sensorFamily": "MK18",
+      "sensorReference": "MK18-C-300W",
+      "sensitivityClass": "C",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D5",
+      "pullInMm": 9.5,
+      "dropOutMm": 11.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK18-C-300W ; D5 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK18-D-M02-D4",
+      "sensorFamily": "MK18",
+      "sensorReference": "MK18-D-300W",
+      "sensitivityClass": "D",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D4",
+      "pullInMm": 8.0,
+      "dropOutMm": 9.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK18-D-300W ; D4 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK18-E-M02-D4",
+      "sensorFamily": "MK18",
+      "sensorReference": "MK18-E-300W",
+      "sensitivityClass": "E",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D4",
+      "pullInMm": 7.0,
+      "dropOutMm": 9.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK18-E-300W ; D4 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK20_1-B-M02-D4",
+      "sensorFamily": "MK20_1",
+      "sensorReference": "MK20/1-B-100W",
+      "sensitivityClass": "B",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D4",
+      "pullInMm": 6.5,
+      "dropOutMm": 7.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK20/1-B-100W ; D4 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK20_1-B-M02-D5",
+      "sensorFamily": "MK20_1",
+      "sensorReference": "MK20/1-B-100W",
+      "sensitivityClass": "B",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D5",
+      "pullInMm": 7.5,
+      "dropOutMm": 8.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK20/1-B-100W ; D5 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK20_1-C-M02-D4",
+      "sensorFamily": "MK20_1",
+      "sensorReference": "MK20/1-C-100W",
+      "sensitivityClass": "C",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D4",
+      "pullInMm": 6.0,
+      "dropOutMm": 6.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK20/1-C-100W ; D4 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK20_1-C-M02-D5",
+      "sensorFamily": "MK20_1",
+      "sensorReference": "MK20/1-C-100W",
+      "sensitivityClass": "C",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D5",
+      "pullInMm": 7.0,
+      "dropOutMm": 7.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK20/1-C-100W ; D5 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK20_1-D-M02-D4",
+      "sensorFamily": "MK20_1",
+      "sensorReference": "MK20/1-D-100W",
+      "sensitivityClass": "D",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D4",
+      "pullInMm": 5.5,
+      "dropOutMm": 6.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK20/1-D-100W ; D4 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK20_1-D-M02-D5",
+      "sensorFamily": "MK20_1",
+      "sensorReference": "MK20/1-D-100W",
+      "sensitivityClass": "D",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D5",
+      "pullInMm": 6.5,
+      "dropOutMm": 7.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK20/1-D-100W ; D5 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK20_1-E-M02-D4",
+      "sensorFamily": "MK20_1",
+      "sensorReference": "MK20/1-E-100W",
+      "sensitivityClass": "E",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D4",
+      "pullInMm": 5.0,
+      "dropOutMm": 5.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK20/1-E-100W ; D4 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK20_1-E-M02-D5",
+      "sensorFamily": "MK20_1",
+      "sensorReference": "MK20/1-E-100W",
+      "sensitivityClass": "E",
+      "contactForm": "1A",
+      "magnetId": "M02",
+      "approachId": "D5",
+      "pullInMm": 6.0,
+      "dropOutMm": 6.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK20/1-E-100W ; D5 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK21-B-M21-D4",
+      "sensorFamily": "MK21",
+      "sensorReference": "MK21M/1A66B-500W",
+      "sensitivityClass": "B",
+      "contactForm": "1A",
+      "magnetId": "M21",
+      "approachId": "D4",
+      "pullInMm": 8.0,
+      "dropOutMm": 9.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK21M/1A66B-500W ; D4 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK21-B-M21-D5",
+      "sensorFamily": "MK21",
+      "sensorReference": "MK21M/1A66B-500W",
+      "sensitivityClass": "B",
+      "contactForm": "1A",
+      "magnetId": "M21",
+      "approachId": "D5",
+      "pullInMm": 3.0,
+      "dropOutMm": 4.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK21M/1A66B-500W ; D5 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK21-C-M21-D4",
+      "sensorFamily": "MK21",
+      "sensorReference": "MK21M/1A66C-500W",
+      "sensitivityClass": "C",
+      "contactForm": "1A",
+      "magnetId": "M21",
+      "approachId": "D4",
+      "pullInMm": 6.5,
+      "dropOutMm": 8.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK21M/1A66C-500W ; D4 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK21-C-M21-D5",
+      "sensorFamily": "MK21",
+      "sensorReference": "MK21M/1A66C-500W",
+      "sensitivityClass": "C",
+      "contactForm": "1A",
+      "magnetId": "M21",
+      "approachId": "D5",
+      "pullInMm": 1.5,
+      "dropOutMm": 3.5,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK21M/1A66C-500W ; D5 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK21-D-M21-D4",
+      "sensorFamily": "MK21",
+      "sensorReference": "MK21M/1A66D-500W",
+      "sensitivityClass": "D",
+      "contactForm": "1A",
+      "magnetId": "M21",
+      "approachId": "D4",
+      "pullInMm": 5.0,
+      "dropOutMm": 7.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK21M/1A66D-500W ; D4 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK21-D-M21-D5",
+      "sensorFamily": "MK21",
+      "sensorReference": "MK21M/1A66D-500W",
+      "sensitivityClass": "D",
+      "contactForm": "1A",
+      "magnetId": "M21",
+      "approachId": "D5",
+      "pullInMm": 1.0,
+      "dropOutMm": 2.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK21M/1A66D-500W ; D5 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
+      }
+    },
+    {
+      "id": "MK21-E-M21-D4",
+      "sensorFamily": "MK21",
+      "sensorReference": "MK21M/1A66E-500W",
+      "sensitivityClass": "E",
+      "contactForm": "1A",
+      "magnetId": "M21",
+      "approachId": "D4",
+      "pullInMm": 4.0,
+      "dropOutMm": 6.0,
+      "temperatureC": null,
+      "provenance": {
+        "registryId": "CAL-0001",
+        "sourceType": "published",
+        "sourceRef": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; MK21M/1A66E-500W ; D4 ; magnet list: Activate-Distance-Guide-for-Reed-Sensors.pdf p.3",
+        "enteredOn": "2026-09-11",
+        "fields": ["pullInMm", "dropOutMm", "sensorReference", "magnetId", "approachId"]
       }
     }
   ]

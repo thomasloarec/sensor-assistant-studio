@@ -84,7 +84,11 @@ export default function SensorCard({
               aria-label={t(`Illustration du capteur ${model.name}`)}
             >
               <SensorPlan model={model} xray={xray} contact={contact ?? "open"} />
-              <g stroke="#80b6cd" strokeWidth={0.15 * drawingUnit} fill="#c2e5f1">
+              <g
+                stroke="var(--standex-blue)"
+                strokeWidth={0.15 * drawingUnit}
+                fill="var(--standex-blue)"
+              >
                 <path
                   d={`M${-model.body[0] / 2} ${height / 2 + 2 * drawingUnit} v${3 * drawingUnit} h${model.body[0]} v${-3 * drawingUnit}`}
                   fill="none"

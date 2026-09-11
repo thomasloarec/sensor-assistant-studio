@@ -7,10 +7,12 @@ export function SensorPlan({
   model,
   contact = "open",
   xray = true,
+  showCable = true,
 }: {
   model: SensorModel;
   contact?: Contact;
   xray?: boolean;
+  showCable?: boolean;
 }) {
   const [l, , w] = model.body,
     length = bladeLength(model),
@@ -18,6 +20,42 @@ export function SensorPlan({
   const closed = contact === "closed",
     color = closed ? "#009d78" : contact === "unknown" ? "#b78035" : "#79909e";
   const cableSide = model.cableSide ?? -1;
+  if (model.shape === "glass")
+    return (
+      <g>
+        <path
+          d={`M${-l / 2 - 8} 0 H${-l / 2 + 1} M${l / 2 - 1} 0 H${l / 2 + 8}`}
+          stroke="#8b999e"
+          strokeWidth="0.35"
+        />
+        <rect
+          x={-l / 2}
+          y={-w / 2}
+          width={l}
+          height={w}
+          rx={w / 2}
+          fill="#d4e7e0"
+          fillOpacity="0.6"
+          stroke="#72998b"
+          strokeWidth="0.15"
+        />
+        <path
+          d={`M${-l / 2} 0 L1 ${closed ? 0 : -0.22} M${l / 2} 0 L-1 ${closed ? 0 : 0.22}`}
+          stroke={color}
+          strokeWidth="0.3"
+        />
+        {[-1, 1].map((sign) => (
+          <ellipse
+            key={sign}
+            cx={sign * (l / 2 - 0.45)}
+            cy="0"
+            rx="0.5"
+            ry={w * 0.4}
+            fill="#81a596"
+          />
+        ))}
+      </g>
+    );
   return (
     <g>
       {model.shape === "smd" ? (
@@ -26,19 +64,19 @@ export function SensorPlan({
             key={sign}
             x={sign < 0 ? -(model.terminalSpan ?? l) / 2 : l / 2 - 0.4}
             y={-w * 0.32}
-            width={0.65}
+            width={Math.max(0.65, ((model.terminalSpan ?? l) - l) / 2 + 0.4)}
             height={w * 0.64}
             rx={0.08}
             fill="#aab5be"
           />
         ))
-      ) : (
+      ) : showCable ? (
         <path
           d={`M${(cableSide * l) / 2} ${-w * 0.17} h${cableSide * 7} M${(cableSide * l) / 2} ${w * 0.17} h${cableSide * 7}`}
           stroke="#8394a1"
           strokeWidth={Math.min(0.65, w * 0.12)}
         />
-      )}
+      ) : null}
       <rect
         x={-l / 2}
         y={-w / 2}

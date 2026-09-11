@@ -1,3 +1,4 @@
+import { PUBLISHED_REGISTRY, type PublishedApproach } from "./magnetics/registries";
 import { DOSSIER_FIELDS } from "./application-dossier";
 import { sensorById, MAGNET_REFERENCE } from "./sensor-catalog";
 import type { WorkshopConfig } from "./magnetic-workshop";
@@ -11,6 +12,8 @@ export interface StudioField {
 }
 export interface StudioStudy {
   version: 1;
+  selectedSolutionId?: string | null;
+  comparisonApproach?: PublishedApproach;
   example: boolean;
   consulted: boolean;
   need: Need;
@@ -21,6 +24,8 @@ export interface StudioStudy {
 export const newStudy = (): StudioStudy => ({
   version: 1,
   example: false,
+  selectedSolutionId: null,
+  comparisonApproach: "D1",
   consulted: false,
   need: { ...EMPTY_NEED },
   fields: {},
@@ -42,16 +47,19 @@ export function deriveStudioFields(study: StudioStudy, config: WorkshopConfig | 
     n = study.need;
   if (config) {
     const sensor = sensorById(config.sensorId);
-    if (sensor.sourceFile) {
+    const chosen = PUBLISHED_REGISTRY.rows.find(
+      (r) =>
+        [r.sensorFamily, r.sensitivityClass, r.magnetId, r.approachId].join("/") ===
+          study.selectedSolutionId && r.approachId === (study.comparisonApproach ?? "D1"),
+    );
+    if (sensor.sourceFile && chosen?.sensorFamily === sensor.id) {
       proposed["mounting_type"] = sensor.category;
       proposed["sensor_form_factor"] = `${sensor.id} (${sensor.category})`;
     }
     if (study.envelopeMm)
       proposed["available_space_constraints"] =
         [...study.envelopeMm].sort((a, b) => b - a).join(" × ") + " mm";
-    if (config.magnetModel === "M02")
-      proposed["magnet_context"] =
-        `M02 ; ${[MAGNET_REFERENCE.length, MAGNET_REFERENCE.width, MAGNET_REFERENCE.height].join(" × ")} mm ; ${config.machine ? config.machine.magnetRotation.join("/") : [0, config.magnetAngle, config.magnetTilt].join("/")}° ; ${config.geometry}`;
+    if (chosen) proposed["magnet_context"] = `${chosen.magnetId} ; ${chosen.approachId}`;
     if (n.gapClosedMm !== null && n.gapOpenMm !== null)
       proposed["target_distance_and_tolerance"] =
         `${n.gapClosedMm} mm / ${n.gapOpenMm} mm ; ±${n.gapToleranceMm === null ? "?" : n.gapToleranceMm} mm`;
@@ -120,6 +128,13 @@ export function parseStudioStudy(raw: unknown): StudioStudy | null {
   }
   return {
     version: 1,
+    selectedSolutionId:
+      typeof x.selectedSolutionId === "string" && x.selectedSolutionId.length < 200
+        ? x.selectedSolutionId
+        : null,
+    comparisonApproach: ["D1", "D2", "D3", "D4", "D5"].includes(x.comparisonApproach ?? "")
+      ? x.comparisonApproach!
+      : "D1",
     example: x.example,
     consulted: x.consulted,
     need: Object.fromEntries(

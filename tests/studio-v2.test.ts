@@ -87,7 +87,7 @@ test("T2.4/T6.5 removing actual published data removes all product results inclu
       true,
     );
     const solutions = exploreSolutions(need, "D1", domain);
-    expect(solutions).toHaveLength(21);
+    expect(solutions).toHaveLength(29);
     expect(
       solutions.every(
         (s) => s.reference.verdict === "unavailable" && s.physical.verdict === "unavailable",
@@ -97,12 +97,15 @@ test("T2.4/T6.5 removing actual published data removes all product results inclu
     PUBLISHED_REGISTRY.rows = rows;
   }
 });
-test("T6 catalog has 21 families, 4 MK03 classes, no duplicate or default selection", () => {
+test("T6 expanded catalogue retains four MK03 classes and refuses physical predictions", () => {
   const rows = exploreSolutions(need, "D1", domain);
-  expect(rows).toHaveLength(24);
-  expect(new Set(rows.map((r) => r.id)).size).toBe(24);
-  expect(new Set(rows.map((r) => r.sensorFamily)).size).toBe(21);
-  expect(rows.filter((r) => r.reference.provenance.length)).toHaveLength(4);
+  expect(rows).toHaveLength(69);
+  expect(new Set(rows.map((r) => r.id)).size).toBe(69);
+  expect(new Set(rows.map((r) => r.sensorFamily)).size).toBe(29);
+  expect(rows.filter((r) => r.sensorFamily === "MK03")).toHaveLength(4);
+  expect(
+    new Set(rows.filter((r) => r.reference.provenance.length).map((r) => r.sensorFamily)).size,
+  ).toBe(13);
   expect(rows.every((r) => r.physical.verdict === "unavailable")).toBe(true);
 });
 test("T5 consultation gate, exact derived fields, confirmations, conflict and removal", () => {
@@ -111,6 +114,7 @@ test("T5 consultation gate, exact derived fields, confirmations, conflict and re
     need,
     envelopeMm: [45, 25, 15] as [number, number, number],
     cycles: 2000000,
+    selectedSolutionId: "MK03/B/M02/D1",
   };
   expect(deriveStudioFields(s, DEFAULT_WORKSHOP).fields).toEqual({});
   s = deriveStudioFields({ ...s, consulted: true }, DEFAULT_WORKSHOP) as typeof s;

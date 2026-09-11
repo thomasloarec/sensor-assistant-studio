@@ -65,7 +65,6 @@ export default function MachineControls({
   setTool,
   onChange,
   onExample,
-  onImport,
   onExit,
   onCatalog,
   onProductCard,
@@ -77,7 +76,6 @@ export default function MachineControls({
   setTool: (v: MachineTool) => void;
   onChange: (patch: Partial<MachineAssembly>) => void;
   onExample: () => void;
-  onImport: (file: File | undefined) => void;
   onExit: () => void;
   onCatalog: () => void;
   onProductCard: () => void;
@@ -98,23 +96,6 @@ export default function MachineControls({
       <details open>
         <summary>{t("Objet 3D et pièce mobile")}</summary>
         <strong className="mw-file-name t-metric">{t(m.fileName)}</strong>
-        <label className="mw-file-label">
-          {t("Importer mon fichier GLB")}
-          <input
-            type="file"
-            accept=".glb,model/gltf-binary"
-            aria-label={t("Importer mon fichier GLB")}
-            onChange={(e) => {
-              onImport(e.target.files?.[0]);
-              e.target.value = "";
-            }}
-          />
-        </label>
-        <p className="mw-help">
-          {t(
-            "GLB autonome, 30 Mo maximum. Le fichier reste dans ce navigateur ; les réglages sont joints au dossier.",
-          )}
-        </p>
         <label className="mw-select-label">
           {t("Unités du fichier")}
           <select
@@ -167,6 +148,19 @@ export default function MachineControls({
           {t("Choisir dans le catalogue")}
         </button>
       </div>
+      <details>
+        <summary>{t("Aide au placement")}</summary>
+        <p>
+          {t(
+            "Choisissez d’abord la pièce mobile dans la liste. Un groupe déplace toutes ses sous-pièces. Au début du cycle, activez Placer le capteur ou Placer l’aimant, puis cliquez sur une face : le composant s’aligne sur cette surface. Les coordonnées permettent un réglage précis.",
+          )}
+        </p>
+        <p>
+          {t(
+            "Pour un capteur cylindrique à insérer dans un trou, utilisez les rotations et coordonnées. Le modèle ne perce pas la pièce et ne vérifie pas les collisions.",
+          )}
+        </p>
+      </details>
       <div className="mw-placement-tools" aria-label={t("Outils de placement")}>
         {(
           [
@@ -194,9 +188,7 @@ export default function MachineControls({
         <p className="mw-measure-result">
           {t("Distance mesurée :")}
           <strong className="t-metric">{t(measure.toFixed(1))} mm</strong> (
-          {t((measure / 10).toFixed(2))}
-          {" "}
-          {t("cm)")}
+          {t((measure / 10).toFixed(2))} {t("cm)")}
         </p>
       )}
       <details open>

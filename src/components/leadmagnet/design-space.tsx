@@ -118,10 +118,7 @@ import {
   type FilledNda,
 } from "@/lib/leadmagnet/nda-docx";
 
-import {
-  checkSubmission,
-  submissionBinding,
-} from "@/lib/leadmagnet/submission";
+import { checkSubmission, submissionBinding } from "@/lib/leadmagnet/submission";
 import { submit, technicalSummary } from "@/lib/leadmagnet/submission";
 import { applyBindingCycle, consentNoticeFor } from "@/lib/leadmagnet/submission-cycle";
 import {
@@ -198,7 +195,9 @@ export function PrivateDesignError({ reset }: { reset: () => void }) {
       <div className="max-w-md space-y-3 text-center">
         <h1 className="text-xl font-semibold">{t("L'espace de conception s'est interrompu")}</h1>
         <p className="t-caption">
-          {t("Rien de ce que vous avez saisi n'a été transmis. Le détail de l'incident reste sur votre appareil : seul un code d'incident anonyme a été signalé.")}
+          {t(
+            "Rien de ce que vous avez saisi n'a été transmis. Le détail de l'incident reste sur votre appareil : seul un code d'incident anonyme a été signalé.",
+          )}
         </p>
         <Button onClick={reset}>{t("Réessayer")}</Button>
       </div>
@@ -519,8 +518,6 @@ export function DesignSpace({
     });
   }, [visible]);
 
-
-
   /** Panneau contextuel : le projet reste visible derrière, rien n'est démonté. */
   const [panel, setPanel] = useState<
     null | "atelier" | "candidats" | "cablage" | "documents" | "espace"
@@ -650,7 +647,9 @@ export function DesignSpace({
       applyNdaStatus(status);
     } catch (error) {
       if (contextGenRef.current !== gen) return;
-      setNdaError(error instanceof Error ? error.message : t("La préparation du NDA n'a pas abouti."));
+      setNdaError(
+        error instanceof Error ? error.message : t("La préparation du NDA n'a pas abouti."),
+      );
     }
   }, [applyNdaStatus, serverDossierId]);
 
@@ -710,11 +709,7 @@ export function DesignSpace({
         setNdaError(t(plan.reason));
         return;
       }
-      if (
-        !next &&
-        ndaDisableNeedsConfirmation(nda) &&
-        !window.confirm(t(NDA_DISABLE_CONFIRMATION))
-      )
+      if (!next && ndaDisableNeedsConfirmation(nda) && !window.confirm(t(NDA_DISABLE_CONFIRMATION)))
         return;
       if (plan.kind === "local") {
         setNda(plan.next);
@@ -749,9 +744,6 @@ export function DesignSpace({
     },
     [backend?.ready, nda, ndaSync, refreshNdaStatus, serverDossierId],
   );
-
-
-
 
   /** À la reprise, le statut local est volontairement remis à zéro puis relu au
    * serveur. Une panne reste visible et ne fabrique jamais de preuve locale. */
@@ -825,7 +817,6 @@ export function DesignSpace({
     };
   }, [dossier, extraConstraints, serverDossierId, serverRevision, nda]);
 
-
   useEffect(() => {
     const warn = (e: BeforeUnloadEvent) => {
       e.preventDefault();
@@ -858,9 +849,7 @@ export function DesignSpace({
   const ndaGuidance = ndaTransferGuidance(nda);
   const focusNdaSection = useCallback(() => {
     setTab("revue");
-    setReviewSections((sections) =>
-      sections.includes("nda") ? sections : [...sections, "nda"],
-    );
+    setReviewSections((sections) => (sections.includes("nda") ? sections : [...sections, "nda"]));
     requestAnimationFrame(() => {
       ndaSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
       ndaSectionRef.current?.focus();
@@ -898,7 +887,9 @@ export function DesignSpace({
       onReset: () => setCabling((c) => resetRouting(c, activeTarget)),
       lengthLabel:
         estimate.requiredMm === null
-          ? t("Longueur mesurée : inconnue tant que le trajet est incomplet (inconnu n'est pas zéro).")
+          ? t(
+              "Longueur mesurée : inconnue tant que le trajet est incomplet (inconnu n'est pas zéro).",
+            )
           : `Longueur mesurée du tracé : ${estimate.requiredMm.toFixed(0)} mm. Aucune validation d'ingénierie n'en découle.`,
     }),
     [routingSlot, activePoints, activeTargetLabel, activeTarget, estimate.requiredMm, setCabling],
@@ -975,7 +966,6 @@ export function DesignSpace({
     [resetEnglishReport],
   );
 
-
   const exportDossier = useCallback(() => {
     const blob = new Blob(
       [
@@ -999,7 +989,6 @@ export function DesignSpace({
     URL.revokeObjectURL(url);
   }, [dossier, nda.required]);
 
-
   const importDossier = useCallback(
     async (file: File | undefined) => {
       if (!file || busyRef.current) return;
@@ -1019,7 +1008,9 @@ export function DesignSpace({
           return;
         if (beforeRead !== fingerprint(dossierRef.current)) {
           setImportMessage(
-            t("Votre projet a changé pendant la lecture : relancez l'import pour remplacer ce nouveau contenu."),
+            t(
+              "Votre projet a changé pendant la lecture : relancez l'import pour remplacer ce nouveau contenu.",
+            ),
           );
           return;
         }
@@ -1043,9 +1034,13 @@ export function DesignSpace({
           [
             ...parsed.notices,
             parsed.ndaRequested === true
-              ? t("La demande d'accord de confidentialité du fichier est reprise : elle devra être vérifiée à nouveau côté Standex.")
+              ? t(
+                  "La demande d'accord de confidentialité du fichier est reprise : elle devra être vérifiée à nouveau côté Standex.",
+                )
               : t("Aucun accord de confidentialité n'est demandé dans ce fichier."),
-            t("Contenu importé dans un dossier local : aucun dossier Standex n'y est rattaché, et l'accord de confidentialité comme l'accord d'envoi sont à refaire."),
+            t(
+              "Contenu importé dans un dossier local : aucun dossier Standex n'y est rattaché, et l'accord de confidentialité comme l'accord d'envoi sont à refaire.",
+            ),
           ].join(" "),
         );
 
@@ -1078,34 +1073,37 @@ export function DesignSpace({
    * et partage du modèle. Sans cela, un accord donné pour le dossier A pourrait
    * servir au dossier B.
    */
-  const resetServerContext = useCallback((dossierId: string | null, revision: number) => {
-    contextGenRef.current += 1;
-    // Changement de dossier : une lecture ou une bascule NDA en vol devient périmée.
-    ndaSync.invalidate();
-    setNdaError(null);
-    importRequestRef.current += 1;
-    docGenRef.current += 1;
-    committedRevisionRef.current = null;
-    setServerDossierId(dossierId);
-    setServerRevision(revision);
-    setNdaServer(null);
-    setNda(INITIAL_NDA);
-    setPrivacy((p) => ({ ...p, consents: [] }));
-    setAcknowledged(false);
-    setPreparedUpload(null);
-    setBinding(null);
-    setConsentNotice(null);
-    setExtraConstraints("");
-    setShareModel(false);
-    setReopenedFrom(null);
-    // Changement de dossier : l'historique d'envoi appartient au dossier quitté.
-    setLastSent(null);
-    // Un document ouvert appartient au dossier d'où il vient : il ne doit pas
-    // rester affiché dans un dossier différent.
-    setOpenDoc(null);
-    setNdaPreview(null);
-    return contextGenRef.current;
-  }, [ndaSync]);
+  const resetServerContext = useCallback(
+    (dossierId: string | null, revision: number) => {
+      contextGenRef.current += 1;
+      // Changement de dossier : une lecture ou une bascule NDA en vol devient périmée.
+      ndaSync.invalidate();
+      setNdaError(null);
+      importRequestRef.current += 1;
+      docGenRef.current += 1;
+      committedRevisionRef.current = null;
+      setServerDossierId(dossierId);
+      setServerRevision(revision);
+      setNdaServer(null);
+      setNda(INITIAL_NDA);
+      setPrivacy((p) => ({ ...p, consents: [] }));
+      setAcknowledged(false);
+      setPreparedUpload(null);
+      setBinding(null);
+      setConsentNotice(null);
+      setExtraConstraints("");
+      setShareModel(false);
+      setReopenedFrom(null);
+      // Changement de dossier : l'historique d'envoi appartient au dossier quitté.
+      setLastSent(null);
+      // Un document ouvert appartient au dossier d'où il vient : il ne doit pas
+      // rester affiché dans un dossier différent.
+      setOpenDoc(null);
+      setNdaPreview(null);
+      return contextGenRef.current;
+    },
+    [ndaSync],
+  );
 
   /** Ouvre un fichier RÉELLEMENT transmis, pour une version précise, via
    * l'accès authentifié existant. Rien n'est inventé : sans chemin valable ou
@@ -1171,7 +1169,9 @@ export function DesignSpace({
       const bytes = memoryAssetBytes(dossier.workshopAsset.assetKey);
       if (!bytes) {
         setSubmitMessage(
-          t("Le fichier 3D n'est plus en mémoire de cet onglet : réimportez-le avant de le partager."),
+          t(
+            "Le fichier 3D n'est plus en mémoire de cet onglet : réimportez-le avant de le partager.",
+          ),
         );
         setSubmitMessageTone("danger");
         return;
@@ -1233,7 +1233,9 @@ export function DesignSpace({
         updatedAt: new Date().toISOString(),
       }));
       setSubmitMessage(
-        t("Modèle 3D déposé et vérifié par le serveur. Relisez le résumé, confirmez votre accord, puis envoyez : le fichier ne sera pas déposé une seconde fois."),
+        t(
+          "Modèle 3D déposé et vérifié par le serveur. Relisez le résumé, confirmez votre accord, puis envoyez : le fichier ne sera pas déposé une seconde fois.",
+        ),
       );
       setSubmitMessageTone("success");
     } catch (error) {
@@ -1279,13 +1281,17 @@ export function DesignSpace({
           return;
         }
         if (!current()) return;
-        setEnglishMessage(t("Version anglaise en cours de préparation pour cette version envoyée."));
+        setEnglishMessage(
+          t("Version anglaise en cours de préparation pour cette version envoyée."),
+        );
         const outcome = await requestEnglishReport({ data: { accessToken, ...target } });
         if (!current()) return;
         if (outcome.state === "ready") {
           setEnglishRetry(null);
           setEnglishMessage(
-            t("Version anglaise prête pour cette version : l'équipe Standex la lit en anglais, votre original reste consultable."),
+            t(
+              "Version anglaise prête pour cette version : l'équipe Standex la lit en anglais, votre original reste consultable.",
+            ),
           );
         } else {
           setEnglishMessage(englishReportMessage(outcome.code, t));
@@ -1294,7 +1300,9 @@ export function DesignSpace({
       } catch {
         if (current())
           setEnglishMessage(
-            t("La version anglaise n'a pas pu être produite. Votre dossier d'origine est bien arrivé ; vous pouvez relancer."),
+            t(
+              "La version anglaise n'a pas pu être produite. Votre dossier d'origine est bien arrivé ; vous pouvez relancer.",
+            ),
           );
       } finally {
         // Ne libère QUE son propre verrou : un abandon a déjà pu en ouvrir un autre.
@@ -1307,8 +1315,6 @@ export function DesignSpace({
     [],
   );
 
-
-
   /** Étape 2 : envoi. Aucun dépôt ici — ce qui est joint a déjà été déposé,
    * vérifié et relu. Le verrou empêche un double clic de créer deux versions.
    */
@@ -1316,7 +1322,9 @@ export function DesignSpace({
     if (busyRef.current) return;
     if (shareModel && dossier.workshopAsset && !preparedUpload) {
       setSubmitMessage(
-        t("Préparez d'abord le partage du modèle 3D : il doit être déposé et vérifié avant votre accord d'envoi."),
+        t(
+          "Préparez d'abord le partage du modèle 3D : il doit être déposé et vérifié avant votre accord d'envoi.",
+        ),
       );
       setSubmitMessageTone("danger");
       return;
@@ -1328,7 +1336,9 @@ export function DesignSpace({
     ) {
       setPreparedUpload(null);
       setSubmitMessage(
-        t("Le dossier ou la version visée a changé depuis le dépôt du fichier : préparez à nouveau le partage."),
+        t(
+          "Le dossier ou la version visée a changé depuis le dépôt du fichier : préparez à nouveau le partage.",
+        ),
       );
       setSubmitMessageTone("danger");
       return;
@@ -1428,7 +1438,9 @@ export function DesignSpace({
           } else {
             setEnglishRetry(null);
             setEnglishMessage(
-              t("Version anglaise non demandée : votre accord de traduction n'a pas été donné pour cette version. Le dossier d'origine est bien arrivé."),
+              t(
+                "Version anglaise non demandée : votre accord de traduction n'a pas été donné pour cette version. Le dossier d'origine est bien arrivé.",
+              ),
             );
           }
         } else {
@@ -1439,7 +1451,6 @@ export function DesignSpace({
     });
     void outcomeKind;
     setBusy(false);
-
   }, [
     dossier,
     nda,
@@ -1455,7 +1466,6 @@ export function DesignSpace({
     ndaOk,
     focusNdaSection,
   ]);
-
 
   const volume = dossier.business.annualVolume;
   // La désignation standard/custom vient du retour R&D publié, jamais de cet écran.
@@ -1498,7 +1508,9 @@ export function DesignSpace({
                 >
                   {stateBadge(r.state)}
                 </Badge>
-                <span className="t-caption">{t("source :")} {r.source}</span>
+                <span className="t-caption">
+                  {t("source :")} {r.source}
+                </span>
               </div>
               <Textarea
                 id={`req-${r.key}`}
@@ -1545,7 +1557,9 @@ export function DesignSpace({
             {msg("Question {0} sur {1}", [focusIdx + 1, GUIDED_QUESTIONS.length])}
           </p>
           <h2 className="t-display-m mt-3">{t(question.prompt)}</h2>
-          <p className="t-caption mt-4 max-w-[44ch]">{msg("Par exemple : {0}", [t(question.example)])}</p>
+          <p className="t-caption mt-4 max-w-[44ch]">
+            {msg("Par exemple : {0}", [t(question.example)])}
+          </p>
           <Label htmlFor={`guide-${question.key}`} className="sr-only">
             {t(question.prompt)}
           </Label>
@@ -1565,7 +1579,9 @@ export function DesignSpace({
           {guidedReq && guidedReq.state === "hypothesis" && guidedReq.value.trim() ? (
             <div className="relative mt-5 overflow-hidden rounded-[var(--r-md)] bg-[var(--warning-soft)] p-4 pl-5 before:absolute before:inset-y-0 before:left-0 before:w-[3px] before:bg-[var(--warning)]">
               <p className="text-base">
-                {t("Cette réponse vient d'une reprise ou d'une déduction. Confirmez-la si elle est juste.")}
+                {t(
+                  "Cette réponse vient d'une reprise ou d'une déduction. Confirmez-la si elle est juste.",
+                )}
               </p>
               <Button
                 variant="outline"
@@ -1760,7 +1776,9 @@ export function DesignSpace({
   const candidatsSection = (
     <div className="space-y-4">
       <p className="notice notice-info">
-        {t("Ces capteurs sont des exemples à explorer. Le bureau d'études Standex vérifiera leur adaptation à votre projet après l'envoi du dossier.")}
+        {t(
+          "Ces capteurs sont des exemples à explorer. Le bureau d'études Standex vérifiera leur adaptation à votre projet après l'envoi du dossier.",
+        )}
       </p>
       <p className="t-caption">{t(CANDIDATE_DISCLAIMER)}</p>
       <div className="panel-block flex flex-wrap items-center gap-3">
@@ -1779,7 +1797,9 @@ export function DesignSpace({
       {dossier.selectedSensorId && !dossier.sensorSyncConfirmed ? (
         <div className="notice notice-warning">
           <p>
-            {t("La gamme suivie et le capteur affiché en 3D sont différents. Rien n'est changé sans votre accord.")}
+            {t(
+              "La gamme suivie et le capteur affiché en 3D sont différents. Rien n'est changé sans votre accord.",
+            )}
           </p>
           <Button
             size="sm"
@@ -1814,7 +1834,9 @@ export function DesignSpace({
                 <CandidateThumbnail sensorId={c.id} cabled={candidatesCabled} />
                 <p className="t-caption mt-2">
                   {sensorById(c.id).sourceFile
-                    ? t("Aperçu 3D d'après les cotes de la fiche technique — ce n'est pas un modèle CAO de fabrication.")
+                    ? t(
+                        "Aperçu 3D d'après les cotes de la fiche technique — ce n'est pas un modèle CAO de fabrication.",
+                      )
                     : t("Schéma pédagogique proportionnel — ni modèle CAO ni cote validée.")}
                 </p>
               </div>
@@ -1855,7 +1877,9 @@ export function DesignSpace({
                         }))
                       }
                     >
-                      {c.id === CUSTOM_SENSOR_ID ? t("Partir sur du sur mesure") : t("Suivre cette gamme")}
+                      {c.id === CUSTOM_SENSOR_ID
+                        ? t("Partir sur du sur mesure")
+                        : t("Suivre cette gamme")}
                     </Button>
                   ) : null}
                 </div>
@@ -1910,7 +1934,9 @@ export function DesignSpace({
       <div className="panel-block">
         <Label className="t-label">{t("Longueur et connecteur")}</Label>
         <p className="t-caption mt-1">
-          {t("Un choix non décidé reste inconnu : il ne vaut ni zéro, ni « sans câble ». Vous pouvez continuer sans le fixer.")}
+          {t(
+            "Un choix non décidé reste inconnu : il ne vaut ni zéro, ni « sans câble ». Vous pouvez continuer sans le fixer.",
+          )}
         </p>
         <div className="mt-3 flex flex-wrap gap-2">
           {/* i18n-canonical : libellés traduits par t() au rendu. */}
@@ -1936,7 +1962,9 @@ export function DesignSpace({
       <div className="panel-block" data-testid="routing-target-panel">
         <Label className="t-label">{t("Tracé dans la 3D (facultatif)")}</Label>
         <p className="t-caption mt-1">
-          {t("Ouvrez l'atelier 3D, activez « Pointer dans la 3D », puis cliquez la sortie de câble, les passages et le point de connexion sur les surfaces réellement affichées. Sans modèle 3D, la saisie numérique ci-dessous reste la voie exacte : une valeur inconnue reste inconnue, elle ne vaut pas zéro.")}
+          {t(
+            "Ouvrez l'atelier 3D, activez « Pointer dans la 3D », puis cliquez la sortie de câble, les passages et le point de connexion sur les surfaces réellement affichées. Sans modèle 3D, la saisie numérique ci-dessous reste la voie exacte : une valeur inconnue reste inconnue, elle ne vaut pas zéro.",
+          )}
         </p>
         <div className="mt-2 flex flex-wrap items-center gap-2">
           <Button
@@ -1977,7 +2005,9 @@ export function DesignSpace({
         </p>
         {activeTarget.kind === "state" ? (
           <p className="t-caption">
-            {t("Chaque état déclaré a son propre trajet complet et sa pose de relevé. Les états non relevés ne sont jamais présentés comme couverts.")}
+            {t(
+              "Chaque état déclaré a son propre trajet complet et sa pose de relevé. Les états non relevés ne sont jamais présentés comme couverts.",
+            )}
           </p>
         ) : null}
       </div>
@@ -2172,7 +2202,9 @@ export function DesignSpace({
         ))}
       </div>
       <p className="t-caption -mt-2 px-1">
-        {t("La tolérance fournisseur et le volume disponible pour loger le surplus sont deux informations différentes.")}
+        {t(
+          "La tolérance fournisseur et le volume disponible pour loger le surplus sont deux informations différentes.",
+        )}
       </p>
       <div className="panel-block">
         <p>
@@ -2192,7 +2224,9 @@ export function DesignSpace({
           </strong>
         </p>
         <p className="t-caption">
-          {t("Cette longueur n'est jamais une longueur approuvée : elle est vérifiée en revue R&D.")}
+          {t(
+            "Cette longueur n'est jamais une longueur approuvée : elle est vérifiée en revue R&D.",
+          )}
         </p>
         <ul className="notice notice-warning mt-2 list-disc pl-8">
           {estimate.warnings.map((w, i) => (
@@ -2257,7 +2291,9 @@ export function DesignSpace({
             ))}
           </div>
           <p className="t-caption mt-1">
-            {t("Quelques boîtiers documentés seulement, pas le marché entier. Boîtier, contacts à sertir et embase restent trois références distinctes ; brochage, section de fil réelle et disponibilité restent inconnus et à vérifier par la R&D.")}
+            {t(
+              "Quelques boîtiers documentés seulement, pas le marché entier. Boîtier, contacts à sertir et embase restent trois références distinctes ; brochage, section de fil réelle et disponibilité restent inconnus et à vérifier par la R&D.",
+            )}
           </p>
         </div>
         <div className="mt-3 grid gap-3 md:grid-cols-2">
@@ -2300,7 +2336,9 @@ export function DesignSpace({
           </Button>
         </div>
         <p className="t-caption mt-1">
-          {t("Aucune combinaison connecteur/capteur qualifiée n'est documentée dans ce projet : toute référence saisie, sa contrepartie et son brochage restent à vérifier par la R&D.")}
+          {t(
+            "Aucune combinaison connecteur/capteur qualifiée n'est documentée dans ce projet : toute référence saisie, sa contrepartie et son brochage restent à vérifier par la R&D.",
+          )}
         </p>
       </div>
     </div>
@@ -2322,7 +2360,9 @@ export function DesignSpace({
         <div className="panel-block-lg">
           <h2 className="t-title-m">{t("Où le capteur se place-t-il ?")}</h2>
           <p className="t-caption mt-3">
-            {t("Montrez-le en 3D si c'est plus simple, ou donnez seulement les dimensions disponibles. Rien n'est obligatoire : ce qui reste inconnu reste inconnu.")}
+            {t(
+              "Montrez-le en 3D si c'est plus simple, ou donnez seulement les dimensions disponibles. Rien n'est obligatoire : ce qui reste inconnu reste inconnu.",
+            )}
           </p>
           <div className="mt-5 flex flex-wrap items-center gap-3">
             <Button
@@ -2397,7 +2437,9 @@ export function DesignSpace({
             </Button>
           ) : null}
           <span className="t-caption">
-            {t("Formats acceptés : GLB autonome uniquement. Les fichiers STEP/IGES ne sont pas lus. Unités, échelle et pièce mobile restent à confirmer par vous. Vos réglages restent en mémoire même si vous refermez le panneau.")}
+            {t(
+              "Formats acceptés : GLB autonome uniquement. Les fichiers STEP/IGES ne sont pas lus. Unités, échelle et pièce mobile restent à confirmer par vous. Vos réglages restent en mémoire même si vous refermez le panneau.",
+            )}
           </span>
         </div>
       </div>
@@ -2434,7 +2476,9 @@ export function DesignSpace({
           </AccordionTrigger>
           <AccordionContent className="grid gap-5 md:grid-cols-2">
             <div>
-              <Label className="t-label">{t("Volume annuel de capteurs (entier ou « inconnu »)")}</Label>
+              <Label className="t-label">
+                {t("Volume annuel de capteurs (entier ou « inconnu »)")}
+              </Label>
               <Input
                 className="t-metric mt-2 w-full text-right"
                 value={volumeRaw}
@@ -2528,7 +2572,9 @@ export function DesignSpace({
         <AccordionItem value="nda" className="panel-block-lg border-0">
           <AccordionTrigger className="business-accordion-trigger t-title-s gap-3 hover:no-underline">
             <span className="standex-bar !h-5 !w-1" aria-hidden="true" />
-            <span className="flex-1">{t("Confidentialité et NDA —")} {ndaStatusLabel(nda)}</span>
+            <span className="flex-1">
+              {t("Confidentialité et NDA —")} {ndaStatusLabel(nda)}
+            </span>
           </AccordionTrigger>
           <AccordionContent className="space-y-3">
             <label className="flex min-h-11 cursor-pointer items-start gap-3">
@@ -2548,7 +2594,9 @@ export function DesignSpace({
                   {t("Je souhaite un accord de confidentialité (NDA)")}
                 </span>
                 <span id="nda-optional-help" className="t-caption block">
-                  {t("Uniquement si votre entreprise en a besoin. Sans NDA, vous pouvez remplir et transmettre votre dossier normalement : les accords de partage restent séparés et inchangés.")}
+                  {t(
+                    "Uniquement si votre entreprise en a besoin. Sans NDA, vous pouvez remplir et transmettre votre dossier normalement : les accords de partage restent séparés et inchangés.",
+                  )}
                 </span>
               </span>
             </label>
@@ -2570,98 +2618,109 @@ export function DesignSpace({
 
             {!nda.required ? (
               <p className="notice notice-info" role="status">
-                {t("Aucun accord de confidentialité n'est demandé pour ce projet. Cochez la case ci-dessus si vous en voulez un.")}
+                {t(
+                  "Aucun accord de confidentialité n'est demandé pour ce projet. Cochez la case ci-dessus si vous en voulez un.",
+                )}
               </p>
             ) : null}
 
-
-
             {nda.required ? (
               <>
-            <p className="text-sm">
-              {t("Modèle juridique approuvé :")} <strong>{APPROVED_NDA_TEMPLATE.fileName}</strong> (SHA-256{" "}
-              {APPROVED_NDA_TEMPLATE.sha256.slice(0, 16)}{t("…, vérifié avant chaque remplissage). L'original reste intact : seule une copie remplie est produite, sur cet appareil, sans transmettre le dossier.")}
-            </p>
-            <div className="grid gap-2 md:grid-cols-2">
-              {NDA_FIELD_LABELS.map(([key, label]) => (
-                <div key={key}>
-                  <Label className="t-label">{label}</Label>
-                  <Input
-                    value={nda.fields[key]}
-                    onChange={(e) =>
-                      setNda((n) => ({
-                        ...n,
-                        fields: { ...n.fields, [key]: e.target.value },
-                      }))
-                    }
-                  />
-                </div>
-              ))}
-            </div>
-            <div className="flex flex-wrap gap-2">
-              <Button
-                size="sm"
-                variant="outline"
-                disabled={busy}
-                onClick={() => {
-                  void prepareNdaDocument("preview");
-                }}
-              >
-                {t("Aperçu du document rempli")}
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                disabled={!ndaPreview || busy}
-                onClick={() => {
-                  void prepareNdaDocument("download");
-                }}
-              >
-                <Download className="mr-1 h-4 w-4" />
-                {t("Télécharger le .docx non signé")}
-              </Button>
-              <Button
-                size="sm"
-                disabled={!backend?.ready || busy}
-                onClick={() => {
-                  void prepareServerNda();
-                }}
-              >
-                {t("Préparer mon NDA pour vérification")}
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                disabled={!backend?.ready || !serverDossierId || busy}
-                onClick={() => {
-                  void refreshNdaStatus();
-                }}
-              >
-                {t("Actualiser le statut")}
-              </Button>
-            </div>
-            <p className="t-caption">
-              {t("« Préparer mon NDA » n'envoie aucune donnée de conception : seule une fiche vide est créée côté Standex pour que vous puissiez déposer le document signé et que l'équipe puisse le vérifier.")}{" "}
-              {ndaServer
-                ? `Statut côté Standex : ${ndaServer.nda_status}${
-                    ndaServer.allows_transfer ? t(" — transfert autorisé") : t(" — transfert bloqué")
-                  }.`
-                : t("Aucune fiche NDA créée pour l'instant.")}
-            </p>
-
-            {ndaPreview ? (
-              <div className="space-y-2">
-                <p className="t-caption">
-                  {t("Aperçu local des clauses du document rempli (non signé) —")} {ndaPreview.fileName}
+                <p className="text-sm">
+                  {t("Modèle juridique approuvé :")}{" "}
+                  <strong>{APPROVED_NDA_TEMPLATE.fileName}</strong> (SHA-256{" "}
+                  {APPROVED_NDA_TEMPLATE.sha256.slice(0, 16)}
+                  {t(
+                    "…, vérifié avant chaque remplissage). L'original reste intact : seule une copie remplie est produite, sur cet appareil, sans transmettre le dossier.",
+                  )}
                 </p>
-                <pre className="code-block max-h-80 overflow-auto whitespace-pre-wrap">
-                  {ndaPreview.paragraphs.filter((p) => p.trim()).join("\n\n")}
-                </pre>
-              </div>
-            ) : null}
-            <p className="t-caption">
-              {t("Générer un document n'est pas une signature : aucune signature ni tampon n'est ajouté, le document reste non signé. Le statut « en vigueur » n'est accordé que sur preuve vérifiée côté Standex ; tant qu'il n'est pas atteint, aucun contenu confidentiel n'est transmis.")}
-            </p>
+                <div className="grid gap-2 md:grid-cols-2">
+                  {NDA_FIELD_LABELS.map(([key, label]) => (
+                    <div key={key}>
+                      <Label className="t-label">{label}</Label>
+                      <Input
+                        value={nda.fields[key]}
+                        onChange={(e) =>
+                          setNda((n) => ({
+                            ...n,
+                            fields: { ...n.fields, [key]: e.target.value },
+                          }))
+                        }
+                      />
+                    </div>
+                  ))}
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    disabled={busy}
+                    onClick={() => {
+                      void prepareNdaDocument("preview");
+                    }}
+                  >
+                    {t("Aperçu du document rempli")}
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    disabled={!ndaPreview || busy}
+                    onClick={() => {
+                      void prepareNdaDocument("download");
+                    }}
+                  >
+                    <Download className="mr-1 h-4 w-4" />
+                    {t("Télécharger le .docx non signé")}
+                  </Button>
+                  <Button
+                    size="sm"
+                    disabled={!backend?.ready || busy}
+                    onClick={() => {
+                      void prepareServerNda();
+                    }}
+                  >
+                    {t("Préparer mon NDA pour vérification")}
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    disabled={!backend?.ready || !serverDossierId || busy}
+                    onClick={() => {
+                      void refreshNdaStatus();
+                    }}
+                  >
+                    {t("Actualiser le statut")}
+                  </Button>
+                </div>
+                <p className="t-caption">
+                  {t(
+                    "« Préparer mon NDA » n'envoie aucune donnée de conception : seule une fiche vide est créée côté Standex pour que vous puissiez déposer le document signé et que l'équipe puisse le vérifier.",
+                  )}{" "}
+                  {ndaServer
+                    ? `Statut côté Standex : ${ndaServer.nda_status}${
+                        ndaServer.allows_transfer
+                          ? t(" — transfert autorisé")
+                          : t(" — transfert bloqué")
+                      }.`
+                    : t("Aucune fiche NDA créée pour l'instant.")}
+                </p>
+
+                {ndaPreview ? (
+                  <div className="space-y-2">
+                    <p className="t-caption">
+                      {t("Aperçu local des clauses du document rempli (non signé) —")}{" "}
+                      {ndaPreview.fileName}
+                    </p>
+                    <pre className="code-block max-h-80 overflow-auto whitespace-pre-wrap">
+                      {ndaPreview.paragraphs.filter((p) => p.trim()).join("\n\n")}
+                    </pre>
+                  </div>
+                ) : null}
+                <p className="t-caption">
+                  {t(
+                    "Générer un document n'est pas une signature : aucune signature ni tampon n'est ajouté, le document reste non signé. Le statut « en vigueur » n'est accordé que sur preuve vérifiée côté Standex ; tant qu'il n'est pas atteint, aucun contenu confidentiel n'est transmis.",
+                  )}
+                </p>
               </>
             ) : null}
           </AccordionContent>
@@ -2700,8 +2759,9 @@ export function DesignSpace({
                     v && binding
                       ? grantConsent(p, {
                           kind: "supabase_dossier",
-                          contentSummary:
-                            t("Exigences, montage, câblage, contraintes et contexte projet."),
+                          contentSummary: t(
+                            "Exigences, montage, câblage, contraintes et contexte projet.",
+                          ),
                           recipients: [t("Standex R&D"), t("Standex commercial")],
                           binding,
                         })
@@ -2753,8 +2813,6 @@ export function DesignSpace({
               </Button>
             ) : null}
 
-
-
             <label className="t-caption flex items-center gap-2">
               <Checkbox
                 checked={shareModel}
@@ -2785,7 +2843,9 @@ export function DesignSpace({
                     : t("1. Déposer le fichier 3D")}
                 </Button>
                 <p className="t-caption">
-                  {t("Le dépôt a lieu avant votre accord, pour que vous confirmiez exactement ce qui partira. Il n'est pas refait si l'envoi doit être retenté.")}
+                  {t(
+                    "Le dépôt a lieu avant votre accord, pour que vous confirmiez exactement ce qui partira. Il n'est pas refait si l'envoi doit être retenté.",
+                  )}
                 </p>
               </div>
             ) : null}
@@ -2844,30 +2904,34 @@ export function DesignSpace({
             termine sur le résumé, les accords et l'action. Rien n'est supprimé,
             le suivi complet reste dans « Mon espace ». */}
         {lastSent ? (
-        <AccordionItem value="echantillons" className="panel-block-lg border-0">
-          <AccordionTrigger className="business-accordion-trigger t-title-s gap-3 hover:no-underline">
-            <span className="standex-bar !h-5 !w-1" aria-hidden="true" />
-            <span className="flex-1">{t("Suivi de mon dossier")}</span>
-          </AccordionTrigger>
-          <AccordionContent className="space-y-3">
-            <p className="text-sm">{sampleRoute.note}</p>
-            <p className="notice notice-warning">
-              {t("Les échantillons s'ouvrent après un retour Standex validé et publié, qui fixe la référence exacte à commander. Une gamme ne suffit pas.")}
-            </p>
-            <p className="t-caption">{t(SEARCH_LINK_DISCLAIMER)}</p>
-            <Button
-              variant="outline"
-              className="min-h-11 text-base"
-              onClick={() => setPanel("espace")}
-            >
-              {t("Ouvrir mon espace (mes projets, suivi, variantes)")}
-            </Button>
+          <AccordionItem value="echantillons" className="panel-block-lg border-0">
+            <AccordionTrigger className="business-accordion-trigger t-title-s gap-3 hover:no-underline">
+              <span className="standex-bar !h-5 !w-1" aria-hidden="true" />
+              <span className="flex-1">{t("Suivi de mon dossier")}</span>
+            </AccordionTrigger>
+            <AccordionContent className="space-y-3">
+              <p className="text-sm">{sampleRoute.note}</p>
+              <p className="notice notice-warning">
+                {t(
+                  "Les échantillons s'ouvrent après un retour Standex validé et publié, qui fixe la référence exacte à commander. Une gamme ne suffit pas.",
+                )}
+              </p>
+              <p className="t-caption">{t(SEARCH_LINK_DISCLAIMER)}</p>
+              <Button
+                variant="outline"
+                className="min-h-11 text-base"
+                onClick={() => setPanel("espace")}
+              >
+                {t("Ouvrir mon espace (mes projets, suivi, variantes)")}
+              </Button>
 
-            <p className="t-caption">
-              {t("Disponibilités, MOQ et conditionnements : inconnus tant qu'aucun fournisseur réel n'est connecté.")}
-            </p>
-          </AccordionContent>
-        </AccordionItem>
+              <p className="t-caption">
+                {t(
+                  "Disponibilités, MOQ et conditionnements : inconnus tant qu'aucun fournisseur réel n'est connecté.",
+                )}
+              </p>
+            </AccordionContent>
+          </AccordionItem>
         ) : null}
       </Accordion>
     </div>
@@ -2900,14 +2964,18 @@ export function DesignSpace({
     if (!draft) return;
     applyWorkshopConfig(draft);
     setSubmitMessage(
-      t("Montage 3D repris dans votre projet : il suivra désormais l'export, le résumé et l'envoi."),
+      t(
+        "Montage 3D repris dans votre projet : il suivra désormais l'export, le résumé et l'envoi.",
+      ),
     );
   }, [applyWorkshopConfig]);
 
   const draftBanner = workshopDraftPending ? (
     <div className="notice notice-warning">
       <p className="text-base">
-        {t("Des réglages 3D ne sont pas encore repris dans votre projet : ils ne partiraient ni dans l'export ni dans le résumé.")}
+        {t(
+          "Des réglages 3D ne sont pas encore repris dans votre projet : ils ne partiraient ni dans l'export ni dans le résumé.",
+        )}
       </p>
       <Button className="mt-3 min-h-11 text-base" onClick={useCurrentDraft}>
         {t("Utiliser ce montage")}
@@ -2918,7 +2986,9 @@ export function DesignSpace({
   const workshopSection = (
     <div className="space-y-3">
       <p className="text-base text-muted-foreground">
-        {t("Modèle physique explicitement pédagogique : aucune validation magnétique automatique. L'exemple machine à café est un exemple, il n'impose aucune référence à votre projet.")}
+        {t(
+          "Modèle physique explicitement pédagogique : aucune validation magnétique automatique. L'exemple machine à café est un exemple, il n'impose aucune référence à votre projet.",
+        )}
       </p>
       {draftBanner}
       <Suspense fallback={<p className="text-base">{t("Chargement de l'atelier…")}</p>}>
@@ -2926,7 +2996,9 @@ export function DesignSpace({
           initialStudy={dossier.studioV2}
           dossierId={dossier.id}
           revision={dossier.revision}
-          onStudyChange={(studioV2, designFreeze) => setDossier(d => ({ ...d, studioV2, designFreeze }))}
+          onStudyChange={(studioV2, designFreeze) =>
+            setDossier((d) => ({ ...d, studioV2, designFreeze }))
+          }
           key={`workshop-${workshopEpoch}`}
           initialConfig={workshop ?? DEFAULT_WORKSHOP}
           storageLabel={t("ce dossier, en mémoire de l'onglet")}
@@ -3136,7 +3208,9 @@ export function DesignSpace({
               setSubmitMessage(
                 parsed && !parsed.ok
                   ? parsed.reason
-                  : t("Le dernier contenu envoyé de ce dossier n'a pas pu être relu : le dossier ouvert ici reste inchangé."),
+                  : t(
+                      "Le dernier contenu envoyé de ce dossier n'a pas pu être relu : le dossier ouvert ici reste inchangé.",
+                    ),
               );
               return { ok: false };
             }
@@ -3217,8 +3291,9 @@ export function DesignSpace({
               return {
                 applied: [],
                 notApplied: out.notApplied,
-                refused:
-                  t("Aucune modification de cette proposition n'a pu être appliquée : rien n'a été repris."),
+                refused: t(
+                  "Aucune modification de cette proposition n'a pu être appliquée : rien n'a été repris.",
+                ),
               };
             }
             try {
@@ -3251,7 +3326,9 @@ export function DesignSpace({
             setPanel(null);
             onWorkspaceOpen?.();
             setSubmitMessage(
-              t("Proposition Standex reprise dans le contenu ouvert ici. Elle n'est ni validée ni envoyée : relisez, confirmez l'accord, puis envoyez une nouvelle version."),
+              t(
+                "Proposition Standex reprise dans le contenu ouvert ici. Elle n'est ni validée ni envoyée : relisez, confirmez l'accord, puis envoyez une nouvelle version.",
+              ),
             );
             return { applied: out.applied, notApplied: out.notApplied };
           }}
@@ -3260,6 +3337,64 @@ export function DesignSpace({
     </div>
   );
 
+  const navigation = (
+    <details className="studio-navigation">
+      <summary>{t("Menu")}</summary>
+      <nav aria-label={t("Navigation principale")}>
+        {[
+          [
+            t("Mon projet en cours"),
+            () => {
+              setCatalogOpen(false);
+              setPanel(null);
+            },
+          ],
+          [
+            t("Mes projets et mon compte"),
+            () => {
+              setCatalogOpen(false);
+              setPanel("espace");
+            },
+          ],
+          [
+            t("Atelier 3D"),
+            () => {
+              setCatalogOpen(false);
+              setWorkshopMounted(true);
+              setShowWorkshop(true);
+              setPanel("atelier");
+            },
+          ],
+          [
+            t("Catalogue des capteurs"),
+            () => {
+              setPanel(null);
+              setCatalogOpen(true);
+            },
+          ],
+          [
+            t("Documents"),
+            () => {
+              setCatalogOpen(false);
+              setPanel("documents");
+            },
+          ],
+        ].map(([label, action]) => (
+          <button
+            key={String(label)}
+            type="button"
+            onClick={(e) => {
+              const d = e.currentTarget.closest("details");
+              if (d) d.open = false;
+              (action as () => void)();
+            }}
+          >
+            {String(label)}
+          </button>
+        ))}
+      </nav>
+    </details>
+  );
   return (
     <div
       data-readable
@@ -3290,6 +3425,7 @@ export function DesignSpace({
             )}
             <span aria-hidden="true" className="block h-6 w-px bg-[var(--hairline)]" />
           </div>
+          {navigation}
           <ProjectTitle
             // Changer de dossier pendant un renommage abandonne le brouillon de
             // nom de l'ancien dossier : il ne doit jamais renommer le nouveau.
@@ -3318,7 +3454,8 @@ export function DesignSpace({
               onClick={exportDossier}
               aria-label={t("Exporter")}
             >
-              <Download className="h-4 w-4" /> <span className="hidden sm:inline">{t("Exporter")}</span>
+              <Download className="h-4 w-4" />{" "}
+              <span className="hidden sm:inline">{t("Exporter")}</span>
             </Button>
             <Button variant="ghost" className="min-h-11 max-w-full px-3 whitespace-normal" asChild>
               <label
@@ -3342,13 +3479,16 @@ export function DesignSpace({
           </div>
         </div>
         <div className="mx-auto max-w-[76rem] px-4 pb-4">
-          <div className="flex items-start gap-3 rounded-[var(--r-md)] bg-[var(--surface-tint)] px-[1.125rem] py-[0.875rem]">
+          <details className="rounded-[var(--r-md)] bg-[var(--surface-tint)] px-4 py-2">
+            <summary className="min-h-11 cursor-pointer t-body">
+              {t("Conservation et reprise de ce projet")}
+            </summary>
             <Info className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
             <div className="t-caption !text-[var(--foreground)]">
               {t(MEMORY_LOSS_WARNING)} {t(EXPORT_BINARY_NOTICE)}
               {importMessage ? <span className="block font-semibold">{importMessage}</span> : null}
             </div>
-          </div>
+          </details>
         </div>
       </header>
 
@@ -3380,78 +3520,6 @@ export function DesignSpace({
           ))}
         </nav>
 
-        {/* Outils contextuels : ils apparaissent à l'étape où ils servent. */}
-        <hr className="standex-rule mb-4" />
-        <div className="mb-4 flex flex-wrap items-center gap-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="min-h-11 rounded-[var(--r-pill)] text-base hover:bg-[var(--surface-tint)]"
-            onClick={() => setPanel("espace")}
-          >
-            <UserRound />
-            {t("Mon espace")}
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="min-h-11 rounded-[var(--r-pill)] text-base hover:bg-[var(--surface-tint)]"
-            onClick={() => setPanel("documents")}
-          >
-            <FileText />
-            {t("Documents")}
-          </Button>
-          {tab !== "besoin" ? (
-            <div className="anim-fade contents">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="min-h-11 rounded-[var(--r-pill)] text-base hover:bg-[var(--surface-tint)]"
-                onClick={() => {
-                  setWorkshopMounted(true);
-                  setShowWorkshop(true);
-                  setPanel("atelier");
-                }}
-              >
-                <Box />
-                {t("Atelier 3D")}
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="min-h-11 rounded-[var(--r-pill)] text-base hover:bg-[var(--surface-tint)]"
-                onClick={() => setCatalogOpen(true)}
-              >
-                <Search />
-                {t("Voir les capteurs")}
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="min-h-11 rounded-[var(--r-pill)] text-base hover:bg-[var(--surface-tint)]"
-                onClick={() =>
-                  showAdvanced ? setTab("candidats") : goToInlineSection("section-candidats")
-                }
-              >
-                <Cpu />
-                {t("Capteurs possibles")}
-              </Button>
-
-              <Button
-                variant="ghost"
-                size="sm"
-                className="min-h-11 rounded-[var(--r-pill)] text-base hover:bg-[var(--surface-tint)]"
-                onClick={() =>
-                  showAdvanced ? setTab("cablage") : goToInlineSection("section-cablage")
-                }
-              >
-                <Cable />
-                {t("Câble et connecteur")}
-              </Button>
-            </div>
-          ) : null}
-        </div>
-
         <Tabs value={tab} onValueChange={setTab}>
           <div className="mb-2 flex flex-wrap items-center gap-2">
             <Button
@@ -3460,7 +3528,9 @@ export function DesignSpace({
               aria-expanded={showAdvanced}
               onClick={() => setShowAdvanced((v) => !v)}
             >
-              {showAdvanced ? t("Masquer les réglages détaillés") : t("Ouvrir les réglages détaillés")}
+              {showAdvanced
+                ? t("Masquer les réglages détaillés")
+                : t("Ouvrir les réglages détaillés")}
             </Button>
             {showAdvanced ? null : (
               <span className="text-base text-muted-foreground">
@@ -3513,6 +3583,7 @@ export function DesignSpace({
           et n'applique aucun montage non validé (« Utiliser ce montage » reste
           la seule action qui reprend le montage dans le dossier). */}
       <WorkspacePanel
+        navigation={navigation}
         open={panel === "atelier" && workshopMounted}
         keepMounted={workshopMounted}
         fullscreen
@@ -3520,12 +3591,15 @@ export function DesignSpace({
         onBack={() => setPanel(null)}
         onOpenChange={(o) => setPanel(o ? "atelier" : null)}
         title={t("Atelier 3D")}
-        description={t("Vos réglages restent en mémoire même si vous refermez ce panneau. Enregistrer reste une action explicite.")}
+        description={t(
+          "Vos réglages restent en mémoire même si vous refermez ce panneau. Enregistrer reste une action explicite.",
+        )}
       >
         {workshopMounted ? workshopSection : null}
       </WorkspacePanel>
 
       <WorkspacePanel
+        navigation={navigation}
         open={panel === "documents"}
         keepMounted
         onOpenChange={(o) => setPanel(o ? "documents" : null)}
@@ -3536,28 +3610,39 @@ export function DesignSpace({
       </WorkspacePanel>
 
       <WorkspacePanel
+        navigation={navigation}
         open={panel === "espace"}
         keepMounted
         onOpenChange={(o) => setPanel(o ? "espace" : null)}
         title={t("Mon espace")}
+        fullscreen
         description={t("Connexion, mes projets envoyés, reprise et suivi.")}
       >
         {espaceSection}
       </WorkspacePanel>
 
       {catalogOpen ? (
-        <SensorCatalog
-          selected={dossier.selectedSensorId ?? dossier.workshopSensorId ?? ""}
-          onClose={() => setCatalogOpen(false)}
-          onSelect={(id) => {
-            setDossier((d) => ({
-              ...d,
-              selectedSensorId: id,
-              sensorSyncConfirmed: d.workshopSensorId === id,
-            }));
-            setCatalogOpen(false);
-          }}
-        />
+        <WorkspacePanel
+          open
+          fullscreen
+          navigation={navigation}
+          title={t("Catalogue des capteurs")}
+          onOpenChange={() => setCatalogOpen(false)}
+        >
+          <SensorCatalog
+            inline
+            selected={dossier.selectedSensorId ?? dossier.workshopSensorId ?? ""}
+            onClose={() => setCatalogOpen(false)}
+            onSelect={(id) => {
+              setDossier((d) => ({
+                ...d,
+                selectedSensorId: id,
+                sensorSyncConfirmed: d.workshopSensorId === id,
+              }));
+              setCatalogOpen(false);
+            }}
+          />
+        </WorkspacePanel>
       ) : null}
     </div>
   );

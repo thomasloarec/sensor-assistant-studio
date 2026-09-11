@@ -429,3 +429,7 @@
     z-index: 1;
   }
 }
+
+.sc-drawing {
+  background-color: var(--surface-product);
+}

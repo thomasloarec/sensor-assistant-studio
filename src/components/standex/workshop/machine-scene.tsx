@@ -1,3 +1,4 @@
+import { magnetSize } from "@/lib/standex/magnetic-workshop";
 import { t } from "@/lib/i18n/core";
 import { useRef, useState, useMemo, useEffect } from "react";
 import type { ReactNode } from "react";
@@ -181,7 +182,7 @@ function Assembly({
       .normalize();
     const q = new Quaternion().setFromUnitVectors(new Vector3(0, 1, 0), normal),
       e = new Euler().setFromQuaternion(q);
-    const height = tool === "sensor" ? model.body[1] : 4;
+    const height = tool === "sensor" ? model.body[1] : magnetSize(config)[1];
     const p = event.point
       .clone()
       .addScaledVector(normal, height / 2 + 0.25)
@@ -224,7 +225,7 @@ function Assembly({
             tool === "cable" ? place(e, machine.sensorMount === "moving") : e.stopPropagation()
           }
         >
-          <Body model={model} xray={xray} />
+          <Body model={model} xray={xray} showCable={!routing?.points.length} />
           {xray && <Contacts model={model} contact={sample.contact} reduced={reduced} />}
           {showSpace && (
             <mesh>
@@ -288,8 +289,7 @@ function Assembly({
           <Line points={points} color="#ae5b31" lineWidth={2} />
           <Html position={points[1]!}>
             <span className="mw-scene-label">
-              {t("Mesure :")}
-              {" "}
+              {t("Mesure :")}{" "}
               {t(new Vector3(...points[0]!).distanceTo(new Vector3(...points[1]!)).toFixed(1))} mm
             </span>
           </Html>

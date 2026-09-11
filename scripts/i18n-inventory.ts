@@ -13,6 +13,8 @@ import { join } from "node:path";
 
 const ROOTS = ["src/routes", "src/components", "src/lib"];
 const SKIP_FILES = [
+  "src/lib/standex/studio-exports.ts", // Bilingual FR/EN workbook and OOXML protocol, independent of UI locale
+  "src/lib/standex/studio-pdf.ts", // Canonical review artifact and PDF protocol, not UI
   "src/lib/i18n/core.ts",
   "src/lib/i18n/react.tsx",
   "src/routeTree.gen.ts",
@@ -47,7 +49,6 @@ const EXEMPT_TEXTS = new Set([
   "grid gap-6 lg:grid-cols-[320px_1fr]",
 ]);
 
-
 /** Attributes whose string value reaches a human. */
 const TEXT_ATTRS = new Set([
   "aria-label",
@@ -65,6 +66,7 @@ const TEXT_ATTRS = new Set([
 ]);
 /** Attributes that never reach a human. */
 const CODE_ATTRS = new Set([
+  "transform",
   "className",
   "class",
   "id",
@@ -136,7 +138,8 @@ const isProse = (raw: string, loose = false) => {
   if (/^[A-Z0-9_]+$/.test(value)) return false; // constants
   if (/^#[0-9a-fA-F]{3,8}$/.test(value)) return false;
   if (/^https?:\/\//.test(value)) return false;
-  if (/^[\w.-]+\.(png|jpg|jpeg|svg|glb|json|md|pdf|docx|css|ts|tsx)$/i.test(value)) return false;
+  if (/^[\w.-]+\.(xlsx|png|jpg|jpeg|svg|glb|json|md|pdf|docx|css|ts|tsx)$/i.test(value))
+    return false;
   if (!loose && !/\s/.test(value) && !FRENCH_HINT.test(value)) return false;
   return loose || FRENCH_HINT.test(value) || /\s/.test(value);
 };
@@ -150,15 +153,26 @@ type Finding = {
 
 /** Valeur technique : classe CSS, media query, spécificateur de module, sélecteur.
  * Ces chaînes ne doivent JAMAIS passer par t(). */
-const CODE_CALLS = new Set(["matchMedia", "querySelector", "querySelectorAll", "getElementById", "setAttribute", "getAttribute", "require"]);
+const CODE_CALLS = new Set([
+  "matchMedia",
+  "querySelector",
+  "querySelectorAll",
+  "getElementById",
+  "setAttribute",
+  "getAttribute",
+  "require",
+]);
 export function isTechnicalString(value: string) {
   const v = value.trim();
   if (!v) return true;
+  if (/^(?:translate|rotate|scale|matrix)\([-+\d.,\s]+\)$/.test(v)) return true;
   if (/^\(\s*(prefers|min-width|max-width|hover|pointer)/.test(v)) return true;
   if (/^(\.|@\/|node:)/.test(v)) return true;
   const tokens = v.split(/\s+/);
   const classish = (tok: string) =>
-    /^(?:[a-z0-9-]+:)*[a-z-]+(?:[-/[][^\s]*)+$/.test(tok) || tok.startsWith("mw-") || tok.startsWith("var(--");
+    /^(?:[a-z0-9-]+:)*[a-z-]+(?:[-/[][^\s]*)+$/.test(tok) ||
+    tok.startsWith("mw-") ||
+    tok.startsWith("var(--");
   return tokens.every(classish) && tokens.some((tok) => tok.includes("-") || tok.includes(":"));
 }
 
@@ -175,7 +189,17 @@ const templates = Object.keys(dictionary)
   // Une clé sans texte fixe (« {0} {1} ») accepterait N'IMPORTE quelle phrase et
   // rendrait l'inventaire aveugle : elle n'est pas utilisable comme gabarit.
   .filter((k) => /\p{L}{3,}/u.test(k.replace(/\{\d+\}/g, " ")))
-  .map((k) => new RegExp("^" + k.split(/\{\d+\}/).map((p) => p.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("(.*?)") + "$"));
+  .map(
+    (k) =>
+      new RegExp(
+        "^" +
+          k
+            .split(/\{\d+\}/)
+            .map((p) => p.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
+            .join("(.*?)") +
+          "$",
+      ),
+  );
 
 const known = (text: string) => {
   const key = normalize(text);
@@ -248,7 +272,11 @@ export function inventory(): Finding[] {
       while (current) {
         // On ne remonte jamais au-delà de l'élément JSX courant : le className
         // du parent ne rend pas technique le texte de son enfant.
-        if (ts.isJsxElement(current) || ts.isJsxSelfClosingElement(current) || ts.isJsxFragment(current))
+        if (
+          ts.isJsxElement(current) ||
+          ts.isJsxSelfClosingElement(current) ||
+          ts.isJsxFragment(current)
+        )
           return false;
         if (ts.isJsxAttribute(current) && CODE_ATTRS.has(current.name.getText(source))) return true;
         if (
@@ -291,7 +319,8 @@ export function inventory(): Finding[] {
         report(node, node.getText(source).slice(0, 80), "frozen");
       if (ts.isJsxText(node)) {
         const text = node.getText(source);
-        if (isProse(text, true)) report(node, text, isDomainModule(file) ? "missing" : "untranslated");
+        if (isProse(text, true))
+          report(node, text, isDomainModule(file) ? "missing" : "untranslated");
       } else if (ts.isStringLiteral(node) || ts.isNoSubstitutionTemplateLiteral(node)) {
         const text = node.text;
         // Un mot isolé passé à t() doit AUSSI avoir sa traduction : « Renommer »

@@ -1,3 +1,6 @@
+import { documentLogoSource } from "@/components/standex/brand-logo";
+import { studioExportSheets, workbookBytes, downloadBinary } from "@/lib/standex/studio-exports";
+import { CandidateThumbnail } from "@/components/leadmagnet/candidate-thumbnail";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { t, msg, number } from "@/lib/i18n/core";
 import { useLocale } from "@/lib/i18n/react";
@@ -20,9 +23,14 @@ import {
   VERDICT_LABELS,
   INVALIDANT_LABELS,
   MISSING_LABELS,
+  REFERENCE_REASON_LABELS,
 } from "@/lib/standex/design-freeze";
 import type { DesignFreeze } from "@/lib/standex/design-freeze";
 import "./studio-v2.css";
+import { TechnicalHelp, NEED_HELP } from "./technical-help";
+import { needIssues } from "@/lib/standex/magnetics/need-issues";
+import type { PublishedApproach } from "@/lib/standex/magnetics/registries";
+import SensorCard from "./sensor-card";
 export interface StudioProps {
   config: WorkshopConfig;
   onApply: (patch: Partial<WorkshopConfig>) => void;
@@ -83,6 +91,9 @@ export default function StudioV2({
     [freeze, setFreeze] = useState<DesignFreeze | null>(null),
     [busy, setBusy] = useState(false),
     [notice, setNotice] = useState("");
+  const [productCard, setProductCard] = useState<string | null>(null);
+  const issues = needIssues(study.need);
+  const approach = study.comparisonApproach ?? "D1";
   const callback = useRef(onStudyChange);
   callback.current = onStudyChange;
   const request = useRef(0);
@@ -102,11 +113,11 @@ export default function StudioV2({
   }, [study, freeze]);
   const solutions = useMemo(
     () =>
-      exploreSolutions(study.need, config.geometry, {
-        referencePose: referenceAllowed({ ...config, sensorId: "MK03" }),
+      exploreSolutions(study.need, approach, {
+        referencePose: true,
         ferrous: config.ferromagnetic,
       }),
-    [study.need, config],
+    [study.need, config, approach],
   );
   const rows =
     sort === "sensor" ? [...solutions].sort((a, b) => a.id.localeCompare(b.id)) : solutions;
@@ -165,15 +176,25 @@ export default function StudioV2({
       setBusy(false);
     }
   }
-  function print() {
-    document.body.classList.add("studio-print");
-    const done = () => document.body.classList.remove("studio-print");
-    window.addEventListener("afterprint", done, { once: true });
-    window.print();
-    done();
+  async function exportPdf() {
+    if (!freeze) return;
+    setBusy(true);
+    try {
+      const { reviewPdf } = await import("@/lib/standex/studio-pdf");
+      downloadBinary(
+        "STANDEX-fiche-revue.pdf",
+        await reviewPdf(freeze, documentLogoSource(), t),
+        "application/pdf",
+      );
+    } catch {
+      setNotice(t("Export impossible. Réessayez après le chargement de la page."));
+    } finally {
+      setBusy(false);
+    }
   }
   return (
     <section className="studio-v2" aria-labelledby="studio-v2-title">
+      {productCard && <SensorCard sensorId={productCard} onClose={() => setProductCard(null)} />}
       <header className="studio-head">
         <div>
           <p className="studio-eyebrow">{t("Sensor Studio · Revue de conception")}</p>
@@ -192,47 +213,133 @@ export default function StudioV2({
         <p className="studio-example" role="status">
           {t("Données d'exemple")} ·{" "}
           {t(
-            "1. Jouez le cycle. 2. Comparez les écarts. 3. Changez la tolérance. 4. Confirmez les hypothèses. 5. Exportez la fiche.",
+            "1. Comparez les écarts. 2. Retenez une solution. 3. Confirmez les hypothèses. 4. Générez et exportez la fiche.",
           )}
         </p>
       )}
-      <div className="studio-counts">
-        <span>{msg("{0} famille(s) documentée(s) sur {1}", [documented, families])}</span>
-        <span>
-          {msg("{0} famille(s) physiquement calibrée(s) sur {1}", [calibrated, families])}
-        </span>
-        <span>{t("4 classes de sensibilité ne sont pas 4 capteurs")}</span>
-      </div>
-      <p className="studio-limit">
-        {t(
-          "Les distances publiées sont typiques. Les écarts affichés ne garantissent ni le pire cas, ni le comportement en température, ni une pose différente.",
-        )}
-      </p>
+      <details className="studio-method">
+        <summary>{t("Comprendre les résultats et leurs limites")}</summary>
+        <div className="studio-counts">
+          <span>{msg("{0} famille(s) documentée(s) sur {1}", [documented, families])}</span>
+          <span>
+            {msg("{0} famille(s) physiquement calibrée(s) sur {1}", [calibrated, families])}
+          </span>
+        </div>
+        <p>
+          {t(
+            "SERRÉ : comparaison typique à confirmer par des essais. NON TENU : marge inférieure à 10 %. NON ÉVALUABLE : une donnée ou une condition manque.",
+          )}
+        </p>
+        <p>
+          {t(
+            "Les distances publiées sont typiques. Les écarts affichés ne garantissent ni le pire cas, ni le comportement en température, ni une pose différente.",
+          )}
+        </p>
+      </details>
+      <h3>{t("1. Décrivez vos distances")}</h3>
       <div className="studio-inputs">
-        {(Object.keys(NEED_LABELS) as (keyof Need)[]).map((key) => (
-          <label key={key}>
-            {t(NEED_LABELS[key])}{" "}
-            <small>
-              {key.startsWith("temperature") ? "°C" : key === "agingAllowancePct" ? "%" : "mm"}
-            </small>
-            <input
-              type="number"
-              step="any"
-              value={study.need[key] ?? ""}
-              placeholder={t("Non renseigné")}
-              onChange={(e) => {
-                const value = e.target.value === "" ? null : e.target.valueAsNumber;
-                setStudy((s) => ({ ...s, need: { ...s.need, [key]: value } }));
-              }}
-            />
-          </label>
-        ))}
+        {(Object.keys(NEED_LABELS) as (keyof Need)[])
+          .filter((key) => key !== "agingAllowancePct")
+          .map((key) => (
+            <div key={key}>
+              <div className="studio-label-help">
+                <label htmlFor={`need-${key}`}>
+                  {t(NEED_LABELS[key])} {key.startsWith("temperature") ? "°C" : "mm"}
+                </label>
+                <TechnicalHelp term={NEED_LABELS[key]}>{NEED_HELP[key]!}</TechnicalHelp>
+              </div>
+              <input
+                id={`need-${key}`}
+                type="number"
+                step="any"
+                aria-invalid={issues.some((i) => i.field === key)}
+                aria-describedby={issues.some((i) => i.field === key) ? `issue-${key}` : undefined}
+                value={study.need[key] ?? ""}
+                placeholder={t("Non renseigné")}
+                onChange={(e) => {
+                  const value = e.target.value === "" ? null : e.target.valueAsNumber;
+                  setStudy((s) => ({ ...s, need: { ...s.need, [key]: value } }));
+                }}
+              />
+              {issues.some((i) => i.field === key) && (
+                <p id={`issue-${key}`} className="studio-field-error">
+                  {issues
+                    .filter((i) => i.field === key)
+                    .map((i) => t(i.message))
+                    .join(" ")}
+                </p>
+              )}
+            </div>
+          ))}
       </div>
       {!validNeed(study.need) && (
-        <p role="alert">{t("Saisie invalide : vérifiez les valeurs et leur ordre.")}</p>
+        <div className="notice-danger studio-validation" role="alert">
+          <strong>{t("Corrigez les champs signalés avant de comparer.")}</strong>
+        </div>
+      )}
+      {(study.need.gapClosedMm === null || study.need.gapOpenMm === null) && (
+        <p className="notice-info" role="status">
+          {t(
+            "Renseignez les deux distances pour calculer les écarts. Une valeur absente n’est pas zéro.",
+          )}
+        </p>
+      )}
+      {study.need.gapToleranceMm === null && (
+        <p className="notice-warning">
+          {t("Tolérance inconnue : écarts nominaux sans tolérance, comparaison conditionnelle.")}
+        </p>
+      )}
+      {(study.need.temperatureMinC !== null || study.need.temperatureMaxC !== null) && (
+        <p className="t-caption">
+          {t(
+            "Température : besoin enregistré. Les distances typiques restent inchangées, faute de caractérisation thermique.",
+          )}
+        </p>
       )}
       <details open>
         <summary>{t("Espace des solutions")}</summary>
+        <div className="studio-orientation">
+          <label>
+            {t("Orientation de l’aimant")}
+            <select
+              value={["D4", "D5"].includes(approach) ? "perpendicular" : "parallel"}
+              onChange={(e) => {
+                setSelectedId(null);
+                setStudy((s) => ({
+                  ...s,
+                  comparisonApproach: e.target.value === "parallel" ? "D1" : "D4",
+                  selectedSolutionId: null,
+                }));
+              }}
+            >
+              <option value="parallel">{t("Aimant parallèle au capteur")}</option>
+              <option value="perpendicular">{t("Aimant perpendiculaire au capteur")}</option>
+            </select>
+          </label>
+          <label>
+            {t("Position de comparaison")}
+            <select
+              value={approach}
+              onChange={(e) => {
+                setSelectedId(null);
+                setStudy((s) => ({
+                  ...s,
+                  comparisonApproach: e.target.value as PublishedApproach,
+                  selectedSolutionId: null,
+                }));
+              }}
+            >
+              {(["D4", "D5"].includes(approach) ? ["D4", "D5"] : ["D1", "D2", "D3"]).map((d) => (
+                <option key={d}>{d}</option>
+              ))}
+            </select>
+          </label>
+          <TechnicalHelp term={t("Position de comparaison")}>
+            {t(
+              "D1 à D5 désignent des trajets distincts dans la documentation Standex. L’orientation seule ne suffit pas : mesurez la distance selon le trajet représenté. La vue du duo est indicative, sans calibration physique.",
+            )}
+          </TechnicalHelp>
+        </div>
         <div className="studio-table-head">
           <p>{t("Tri par écart de fermeture décroissant, sans recommandation automatique.")}</p>
           <label>
@@ -248,6 +355,7 @@ export default function StudioV2({
             <caption>{t("Comparaison aux valeurs typiques")}</caption>
             <thead>
               <tr>
+                <th scope="col">{t("Duo capteur et aimant")}</th>
                 {SOLUTION_COLUMNS.map((label) => (
                   <th key={label} scope="col">
                     {t(label)}
@@ -258,6 +366,18 @@ export default function StudioV2({
             <tbody>
               {rows.map((row) => (
                 <tr key={row.id} data-selected={selectedId === row.id}>
+                  <td className="studio-duo">
+                    <button
+                      aria-label={msg("Voir le duo : {0}", [row.sensorFamily])}
+                      onClick={() => setSelectedId(row.id)}
+                    >
+                      <CandidateThumbnail
+                        sensorId={row.sensorFamily}
+                        livePreview={selectedId === null}
+                        pair={{ magnetId: row.magnetId, approach }}
+                      />
+                    </button>
+                  </td>
                   <th scope="row">
                     <button
                       className="studio-row-button"
@@ -265,6 +385,12 @@ export default function StudioV2({
                       onClick={() => setSelectedId(row.id)}
                     >
                       {row.sensorFamily}
+                    </button>
+                    <button
+                      onClick={() => setProductCard(row.sensorFamily)}
+                      aria-label={msg("Découvrir : {0}", [row.sensorFamily])}
+                    >
+                      {t("Fiche produit")}
                     </button>
                   </th>
                   <td>{row.sensitivityClass || "—"}</td>
@@ -381,6 +507,34 @@ export default function StudioV2({
                 "Données manquantes pour la prédiction physique : géométrie active, repères et validation indépendante.",
               )}
             </p>
+            <div className="studio-duo-detail">
+              <CandidateThumbnail
+                sensorId={selected.sensorFamily}
+                pair={{ magnetId: selected.magnetId, approach }}
+              />
+            </div>
+            <p>
+              {t(
+                "Vue indicative des boîtiers. Les dimensions de l’aimant standard viennent de sa fiche ; son axe magnétique interne reste à confirmer.",
+              )}
+            </p>
+            <a
+              href="https://standexdetect.com/wp-content/uploads/sites/2/2025/12/Activate-Distance-Guide-for-Reed-Sensors.pdf"
+              target="_blank"
+              rel="noreferrer"
+            >
+              {t("Voir le schéma officiel D1 à D5")}
+            </a>
+            <p>
+              {t(
+                "Le choix retenu documente cette comparaison. La pose et l’aimant de l’atelier 3D restent à régler séparément.",
+              )}
+            </p>
+            {selected.reference.verdict === "unavailable" && (
+              <p className="notice-warning">
+                {t(REFERENCE_REASON_LABELS[selected.reference.reason] ?? selected.reference.reason)}
+              </p>
+            )}
             {selected.reference.provenance.map((p) => (
               <p key={p.registryId}>
                 {t("Source")} : {p.registryId} ·{" "}
@@ -391,13 +545,20 @@ export default function StudioV2({
             ))}
             {selected.reference.verdict !== "unavailable" && (
               <>
-                <h4>{t("Contributions inconnues")}</h4>
-                <ul>
-                  {selected.reference.unknown.map((code) => (
-                    <li key={code}>{t(MISSING_LABELS[code] ?? code)}</li>
-                  ))}
-                </ul>
-                <h4>{t("Où votre conception casse")}</h4>
+                <details>
+                  <summary>{t("Données à caractériser avec Standex")}</summary>
+                  <p>
+                    {t(
+                      "Cette liste décrit les limites du modèle. Ce ne sont pas des champs supplémentaires à remplir : Standex doit fournir les mesures, avec votre contexte de montage.",
+                    )}
+                  </p>
+                  <ul>
+                    {selected.reference.unknown.map((code) => (
+                      <li key={code}>{t(MISSING_LABELS[code] ?? code)}</li>
+                    ))}
+                  </ul>
+                </details>
+                <h4>{t("Limites de distance à surveiller")}</h4>
                 <ul>
                   {selected.reference.invalidants.map((i) => (
                     <li key={i.code}>
@@ -408,16 +569,23 @@ export default function StudioV2({
                 </ul>
                 <button
                   className="mw-button"
-                  onClick={() =>
+                  aria-pressed={study.selectedSolutionId === selected.id}
+                  onClick={() => {
+                    setStudy((s) => ({ ...s, selectedSolutionId: selected.id }));
                     onApply({
                       sensorId: selected.sensorFamily,
                       sensitivity: selected.sensitivityClass as WorkshopConfig["sensitivity"],
-                      magnetModel: "M02",
-                      geometry: selected.approachId,
-                    })
-                  }
+                      ...(selected.magnetId === "M02" && ["D1", "D3"].includes(selected.approachId)
+                        ? {
+                            magnetModel: "M02" as const,
+                            geometry:
+                              selected.approachId === "D3" ? ("D3" as const) : ("D1" as const),
+                          }
+                        : {}),
+                    });
+                  }}
                 >
-                  {t("Appliquer au montage")}
+                  {t("Retenir cette solution")}
                 </button>
               </>
             )}
@@ -577,26 +745,48 @@ export default function StudioV2({
             {t("Non contre-signée")} ·{" "}
             {t("Une modification du montage ou des déclarations impose une nouvelle fiche.")}
           </p>
-          <div className="studio-actions studio-no-print">
-            <button
-              onClick={() =>
-                download("STANDEX-fiche-revue.json", stableStringify(freeze), "application/json")
-              }
-            >
-              {t("Exporter JSON")}
-            </button>
-            <button
-              onClick={() =>
-                download(
-                  "STANDEX-fiche-revue.md",
-                  freezeMarkdown(freeze, (s) => t(s)),
-                  "text/markdown;charset=utf-8",
-                )
-              }
-            >
-              {t("Exporter Markdown")}
-            </button>
-            <button onClick={print}>{t("Imprimer")}</button>
+          <div className="studio-actions studio-no-print studio-export-bar">
+            <details className="studio-export-menu">
+              <summary>{t("Exporter la fiche")}</summary>
+              <div>
+                <button disabled={busy} onClick={() => void exportPdf()}>
+                  {t("PDF Standex")}
+                </button>
+                <button
+                  onClick={() =>
+                    downloadBinary(
+                      "STANDEX-revue-bilingue.xlsx",
+                      workbookBytes(studioExportSheets(freeze, study, config)),
+                      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    )
+                  }
+                >
+                  {t("Excel bilingue FR / EN")}
+                </button>
+                <button
+                  onClick={() =>
+                    download(
+                      "STANDEX-fiche-revue.json",
+                      stableStringify(freeze),
+                      "application/json",
+                    )
+                  }
+                >
+                  {t("Exporter JSON")}
+                </button>
+                <button
+                  onClick={() =>
+                    download(
+                      "STANDEX-fiche-revue.md",
+                      freezeMarkdown(freeze, (s) => t(s)),
+                      "text/markdown;charset=utf-8",
+                    )
+                  }
+                >
+                  {t("Exporter Markdown")}
+                </button>
+              </div>
+            </details>
           </div>
           {freeze.sections.map((section) => (
             <section key={section.id}>
@@ -618,7 +808,9 @@ export default function StudioV2({
               </dl>
             </section>
           ))}
-          <p className="studio-hash">{"SHA-256"} : {freeze.hash}</p>
+          <p className="studio-hash">
+            {"SHA-256"} : {freeze.hash}
+          </p>
         </div>
       )}
     </section>

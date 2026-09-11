@@ -3,6 +3,7 @@ import rawPhysics from "@/data/studio-v2/physics.json";
 import type { Provenance, MagneticBody, Vec3 } from "./types";
 import type { Observation } from "./calibration";
 import { z } from "zod";
+export type PublishedApproach = "D1" | "D2" | "D3" | "D4" | "D5";
 export interface PublishedRow {
   id: string;
   sensorFamily: string;
@@ -10,7 +11,7 @@ export interface PublishedRow {
   sensitivityClass: string;
   contactForm: "1A";
   magnetId: string;
-  approachId: "D1" | "D3";
+  approachId: PublishedApproach;
   pullInMm: number;
   dropOutMm: number;
   temperatureC: number | null;
@@ -78,7 +79,7 @@ export function readPublishedRegistry(raw: unknown): PublishedRegistry {
       !r.sensitivityClass ||
       !r.sensorReference ||
       r.contactForm !== "1A" ||
-      !["D1", "D3"].includes(r.approachId) ||
+      !["D1", "D2", "D3", "D4", "D5"].includes(r.approachId) ||
       !Number.isFinite(r.pullInMm) ||
       r.pullInMm <= 0 ||
       !Number.isFinite(r.dropOutMm) ||

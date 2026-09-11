@@ -1,3 +1,4 @@
+import { pairedMagnetModel } from "@/lib/standex/paired-magnets";
 /** Rendu 3D réel d'une vignette de candidat.
  *
  * Réutilise EXACTEMENT les mêmes composants et les mêmes cotes que l'atelier
@@ -14,19 +15,28 @@ import type { Vec3 } from "@/lib/standex/magnetic-workshop";
 export default function CandidateThumbnailScene({
   sensorId,
   cabled,
+  pair,
   reduced,
   onContextLost,
 }: {
   sensorId: string;
   cabled: boolean;
+  pair?: { magnetId: string; approach: string };
   reduced: boolean;
   onContextLost: () => void;
 }) {
   const model = sensorById(sensorId);
   const [l, h, w] = model.body;
   const span = Math.max(l, h, w);
-  const dist = span * 1.75 + 6;
+  const dist = pair ? 155 : 100; // Fixed camera: every catalogue thumbnail uses the same mm scale.
   const side = model.cableSide ?? -1;
+  const magnet = pair ? pairedMagnetModel(pair.magnetId) : null;
+  const perpendicular = pair?.approach === "D4" || pair?.approach === "D5";
+  const endOn = pair?.approach === "D3" || pair?.approach === "D5";
+  const offset: Vec3 = endOn
+    ? [l / 2 + (magnet?.body[0] ?? 20) / 2 + 6, 0, 0]
+    : [pair?.approach === "D2" ? l / 2 : 0, 0, w / 2 + (magnet?.body[2] ?? 8) / 2 + 6];
+
   // Le contact interne n'est lisible que sur les corps transparents.
   const showContacts = model.shape === "glass" || model.shape === "custom_pcb";
   const wireZ = Math.min(1.4, w * 0.16);
@@ -39,7 +49,9 @@ export default function CandidateThumbnailScene({
 
   return (
     <Canvas
+      orthographic
       camera={{
+        zoom: pair ? 1.4 : 2,
         position: [dist * 0.68, dist * 0.55, dist * 0.86],
         fov: 38,
         near: 0.1,
@@ -53,20 +65,34 @@ export default function CandidateThumbnailScene({
       <ambientLight intensity={2.1} />
       <directionalLight position={[span * 2, span * 3, span * 1.8]} intensity={2.2} />
       <directionalLight position={[-span * 2, span, -span * 2]} intensity={0.8} />
-      <Body model={model} xray={showContacts} />
+      <Body model={model} xray={showContacts} showCable={!cabled} />
       {showContacts ? <Contacts model={model} contact="open" reduced /> : null}
-      {cabled
+      {cabled && !["smd", "glass", "custom_pcb"].includes(model.shape)
         ? wires.map((points, i) => (
-            <Line key={i} points={points} color="#7d8f9b" lineWidth={2.5} />
+            <Line key={i} points={points} color={i === 0 ? "#3c4853" : "#a55038"} lineWidth={2.5} />
           ))
         : null}
+      {pair && magnet && (
+        <group position={offset} rotation={[0, perpendicular ? Math.PI / 2 : 0, 0]}>
+          {magnet ? (
+            <Body model={magnet} xray={false} showCable={false} />
+          ) : (
+            [-1, 1].map((sign) => (
+              <mesh key={sign} position={[sign * 5, 0, 0]}>
+                <boxGeometry args={[10, 5, 5]} />
+                <meshStandardMaterial color={sign === 1 ? "#d34f43" : "#347db8"} />
+              </mesh>
+            ))
+          )}
+        </group>
+      )}
       <OrbitControls
         makeDefault
         enablePan={false}
         enableZoom={false}
         autoRotate={!reduced}
         autoRotateSpeed={0.8}
-        target={[0, 0, 0]}
+        target={pair ? [offset[0] / 2, 0, offset[2] / 2] : [0, 0, 0]}
       />
     </Canvas>
   );

@@ -118,10 +118,7 @@ function CustomBoard({ model, xray }: { model: SensorModel; xray: boolean }) {
       </mesh>
       {/* Pistes cuivre : du pad de soudure vers la zone de raccordement */}
       {([-1, 1] as const).map((sign) => (
-        <mesh
-          key={`trace${sign}`}
-          position={[(-L + padX * sign) / 2, boardTop + 0.06, sign * 2.2]}
-        >
+        <mesh key={`trace${sign}`} position={[(-L + padX * sign) / 2, boardTop + 0.06, sign * 2.2]}>
           <boxGeometry args={[Math.abs(padX * sign + L), 0.12, reedDiameter * 0.3]} />
           <meshStandardMaterial color="#b87333" metalness={0.75} roughness={0.32} />
         </mesh>
@@ -181,12 +178,59 @@ function CustomBoard({ model, xray }: { model: SensorModel; xray: boolean }) {
     </group>
   );
 }
-export function Body({ model, xray }: { model: SensorModel; xray: boolean }) {
+export function Body({
+  model,
+  xray,
+  showCable = true,
+}: {
+  model: SensorModel;
+  xray: boolean;
+  showCable?: boolean;
+}) {
   if (model.shape === "custom_pcb" && customLayout(model))
     return <CustomBoard model={model} xray={xray} />;
-  return <StandardBody model={model} xray={xray} />;
+  if (model.shape === "glass") return <BareReedBody model={model} />;
+  return <StandardBody model={model} xray={xray} showCable={showCable} />;
 }
-function StandardBody({ model, xray }: { model: SensorModel; xray: boolean }) {
+function BareReedBody({ model }: { model: SensorModel }) {
+  const [l, d] = model.body;
+  return (
+    <group>
+      <mesh rotation={[0, 0, Math.PI / 2]}>
+        <capsuleGeometry args={[d / 2, l - d, 8, 32]} />
+        <meshPhysicalMaterial
+          color="#c5e0d8"
+          transparent
+          opacity={0.3}
+          roughness={0.12}
+          metalness={0}
+          depthWrite={false}
+        />
+      </mesh>
+      {[-1, 1].map((sign) => (
+        <group key={sign}>
+          <mesh position={[(sign * l) / 2, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
+            <cylinderGeometry args={[d * 0.28, d * 0.4, d * 0.6, 20]} />
+            <meshStandardMaterial color="#749c91" transparent opacity={0.55} />
+          </mesh>
+          <mesh position={[sign * (l / 2 + 4), 0, 0]} rotation={[0, 0, Math.PI / 2]}>
+            <cylinderGeometry args={[0.18, 0.18, 8, 12]} />
+            <meshStandardMaterial color="#9ca7a9" metalness={0.8} roughness={0.3} />
+          </mesh>
+        </group>
+      ))}
+    </group>
+  );
+}
+function StandardBody({
+  model,
+  xray,
+  showCable,
+}: {
+  model: SensorModel;
+  xray: boolean;
+  showCable: boolean;
+}) {
   const [l, h, w] = model.body,
     opacity = xray ? 0.25 : 1;
   const baseShape = useMemo(() => {
@@ -269,29 +313,44 @@ function StandardBody({ model, xray }: { model: SensorModel; xray: boolean }) {
           {t(material)}
         </mesh>
       )}
-      {model.shape === "smd"
+      {model.id === "MK06-4"
         ? [-1, 1].map((sign) => (
-            <mesh key={sign} position={[sign * (l / 2 - 0.1), -h / 2 + 0.18, 0]}>
-              <boxGeometry args={[((model.terminalSpan ?? l) - l) / 2 + 0.45, 0.28, w * 0.65]} />
+            <mesh key={sign} position={[sign * 5.08, -h / 2 - 1.65, 0]}>
+              <boxGeometry args={[0.5, 3.3, 0.5]} />
               <meshStandardMaterial color="#a7b5bd" metalness={0.8} roughness={0.25} />
             </mesh>
           ))
-        : [-1, 1].map((sign) => {
-            const side = model.cableSide ?? -1,
-              z = bladeOffsetZ(model) + sign * Math.min(0.65, w * 0.15);
-            return (
-              <Line
+        : model.shape === "smd"
+          ? [-1, 1].map((sign) => (
+              <mesh
                 key={sign}
-                points={[
-                  [(side * l) / 2, 0, z],
-                  [side * (l / 2 + 8), 0, z],
-                  [side * (l / 2 + 10), 0, z],
+                position={[
+                  sign * (l / 2 + ((model.terminalSpan ?? l) - l) / 4 - 0.2),
+                  -h / 2 + 0.18,
+                  0,
                 ]}
-                color="#60727d"
-                lineWidth={2}
-              />
-            );
-          })}
+              >
+                <boxGeometry args={[((model.terminalSpan ?? l) - l) / 2 + 0.4, 0.28, w * 0.65]} />
+                <meshStandardMaterial color="#a7b5bd" metalness={0.8} roughness={0.25} />
+              </mesh>
+            ))
+          : showCable &&
+            [-1, 1].map((sign) => {
+              const side = model.cableSide ?? -1,
+                z = bladeOffsetZ(model) + sign * Math.min(0.65, w * 0.15);
+              return (
+                <Line
+                  key={sign}
+                  points={[
+                    [(side * l) / 2, 0, z],
+                    [side * (l / 2 + 8), 0, z],
+                    [side * (l / 2 + 10), 0, z],
+                  ]}
+                  color="#60727d"
+                  lineWidth={2}
+                />
+              );
+            })}
     </group>
   );
 }
@@ -345,7 +404,6 @@ export function Contacts({
   const { thickness, gap } = contactGeometry(model, closed);
   return (
     <group position={[0, bladeOffsetY(model), bladeOffsetZ(model)]}>
-
       <mesh position={[-span * 0.23, 0, -gap]}>
         <boxGeometry args={[span * 0.56, thickness, thickness]} />
         <meshStandardMaterial
@@ -523,7 +581,8 @@ function Dimensions({ model }: { model: SensorModel }) {
 function ReferenceMarkers({ config }: { config: WorkshopConfig }) {
   const pair = publishedPair(config.sensitivity, config.geometry);
   if (!pair) return null;
-  const [pull, drop] = pair, d1 = config.geometry === "D1";
+  const [pull, drop] = pair,
+    d1 = config.geometry === "D1";
   return (
     <group>
       {[pull, drop].map((d, i) => {

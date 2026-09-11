@@ -70,7 +70,41 @@ const threaded: SensorSpecifications = {
   integration:
     "Choisissez le filetage et le contact ensemble. La fiche de série ne garantit pas toutes les combinaisons de boîtier et de contact.",
 };
+// Local manufacturer datasheets MK01/MK06/MK15/MK16/MK17/MK22/MK30/MK31, pp.1–2.
+const pcb: SensorSpecifications = {
+  material: "Époxy chargée de minéraux",
+  cableMaterial: "Sans câble",
+  cableLengths: [],
+  temperatures: [{ condition: "Température de fonctionnement", min: -40, max: 130 }],
+  electrical: [],
+  strength: "Reed surmoulé pour circuit imprimé",
+  integration:
+    "Enveloppe de la variante dessinée dans la fiche source ; connexions représentées de manière simplifiée. Vérifier la variante avant conception du circuit.",
+  revision: "2019-02-28",
+};
 export const SENSOR_SPECIFICATIONS: Readonly<Record<string, SensorSpecifications>> = {
+  MK01: {
+    ...pcb,
+    electrical: [option("66", 10, 180, 0.5, 1), v90],
+    temperatures: [{ condition: "Température de fonctionnement", min: -20, max: 130 }],
+  },
+  "MK06-4": {
+    ...pcb,
+    material: "PBT renforcé de fibres de verre",
+    electrical: [option("80 · size 4", 10, 170, 0.5, 0.5)],
+    temperatures: [{ condition: "Température de fonctionnement", min: -20, max: 130 }],
+  },
+  MK15: { ...pcb, electrical: [option("66", 10, 180, 0.5, 1)] },
+  MK16: { ...pcb, electrical: [option("87", 10, 200, 0.4, 0.5)] },
+  MK17: { ...pcb, electrical: [option("80", 10, 170, 0.5, 0.5)] },
+  MK22: { ...pcb, electrical: [option("35", 20, 200, 1, 1.25)] },
+  MK30: { ...pcb, electrical: [v85] },
+  MK31: {
+    ...pcb,
+    electrical: [option("04", 3, 30, 0.3, 0.5)],
+    temperatures: [{ condition: "Température de fonctionnement", min: -40, max: 115 }],
+    revision: "2019-02-27",
+  },
   "MK24-A-J": {
     ...standard,
     material: "Époxy chargée de minéraux",

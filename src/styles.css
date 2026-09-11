@@ -1539,7 +1539,6 @@
   }
 }
 
-
 /* Réglages de la plateforme : lignes-personnes, pastille d'état de compte et
    frise du journal. Jetons uniquement, aucune valeur littérale. */
 @layer components {
@@ -1679,4 +1678,8 @@
       display: none;
     }
   }
+}
+
+:root {
+  --surface-product: oklch(0.97 0.006 250);
 }

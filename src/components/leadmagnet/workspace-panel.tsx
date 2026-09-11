@@ -30,6 +30,7 @@ export interface WorkspacePanelProps {
   backLabel?: string;
   onBack?: () => void;
   children: ReactNode;
+  navigation?: ReactNode;
 }
 
 const FOCUSABLE =
@@ -52,6 +53,7 @@ export function WorkspacePanel({
   backLabel,
   onBack,
   children,
+  navigation,
 }: WorkspacePanelProps) {
   useLocale();
   const panelRef = useRef<HTMLDivElement | null>(null);
@@ -134,6 +136,7 @@ export function WorkspacePanel({
         }
       >
         <div className="material sticky top-0 z-10 flex items-start gap-3 border-b border-[var(--hairline)] px-4 py-4 sm:px-6">
+          {navigation}
           {onBack ? (
             <Button
               variant="ghost"

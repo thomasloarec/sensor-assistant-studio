@@ -1,3 +1,4 @@
+import conflicts from "@/data/studio-v2/source-conflicts.json";
 import { publishedReference, PHYSICS_REGISTRY } from "./registries";
 import type { PublishedRegistry, PublishedRow, PhysicsRegistry } from "./registries";
 import { solveSwitching } from "./solve";
@@ -96,7 +97,13 @@ export function marginsFromDistances(
   )
     return emptyMargin(basis, "INVALID_INPUT");
   if (need.gapClosedMm === null || need.gapOpenMm === null)
-    return emptyMargin(basis, "GAPS_REQUIRED");
+    return {
+      ...emptyMargin(basis, "GAPS_REQUIRED"),
+      pullMm: pull,
+      dropMm: drop,
+      provenance,
+      unknown,
+    };
   const missing = [
     ...new Set([...unknown, ...(need.gapToleranceMm === null ? ["assembly_tolerance"] : [])]),
   ];
@@ -142,7 +149,18 @@ export function evaluateReference(
     key.approachId,
     registry,
   );
-  if (!row) return emptyMargin("published_typical", "NO_PUBLISHED_REFERENCE");
+  if (!row)
+    return emptyMargin(
+      "published_typical",
+      conflicts.some(
+        (c) =>
+          c.sensor === key.sensorFamily &&
+          c.class === key.sensitivityClass &&
+          c.approach === key.approachId,
+      )
+        ? "SOURCE_CONFLICT"
+        : "NO_PUBLISHED_REFERENCE",
+    );
   if (!domain.referencePose || domain.ferrous)
     return emptyMargin(
       "published_typical",

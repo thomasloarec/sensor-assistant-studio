@@ -159,7 +159,7 @@
   background: var(--destructive-soft);
   border-radius: var(--r-pill);
 }
-.studio-v2 svg {
+.studio-band svg {
   display: block;
   min-width: 830px;
   width: 100%;
@@ -302,4 +302,108 @@
 }
 .studio-v2 small {
   font: var(--t-caption);
+}
+
+/* Opaque base under translucent immersive tokens: scrolling text cannot bleed through. */
+.studio-v2 thead {
+  background: var(--standex-abyss);
+  color: var(--surface-product);
+}
+.studio-v2 thead th {
+  background: inherit;
+  color: inherit;
+}
+.studio-label-help {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.studio-v2 .technical-help {
+  position: relative;
+  display: inline-block;
+  padding: 0;
+}
+.technical-help summary {
+  list-style: none;
+  min-height: 44px;
+  min-width: 44px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  background: var(--surface-sunken);
+  border-radius: var(--r-pill);
+}
+.technical-help[open] > div {
+  position: absolute;
+  z-index: 6;
+  top: 100%;
+  right: 0;
+  width: min(340px, 80vw);
+  padding: 18px;
+  border-radius: var(--r-md);
+  box-shadow: var(--e-4);
+  background: var(--standex-abyss);
+  color: var(--surface-product);
+  font: var(--t-body);
+}
+.studio-validation,
+.studio-v2 .studio-field-error {
+  color: var(--destructive);
+  background: var(--destructive-soft);
+  padding: 12px;
+  border-radius: var(--r-sm);
+  font: var(--t-body);
+}
+.studio-v2 input[aria-invalid="true"] {
+  outline: 2px solid var(--destructive);
+}
+.studio-orientation {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+.studio-v2 .studio-method {
+  padding: 10px 0;
+}
+
+.studio-duo {
+  width: 150px;
+  min-width: 150px;
+}
+.studio-duo .candidate-thumb {
+  height: 100px;
+  width: 130px;
+}
+.studio-duo button {
+  padding: 0;
+}
+.studio-duo-detail {
+  width: 320px;
+  max-width: 100%;
+}
+.studio-duo-detail .candidate-thumb {
+  height: 200px;
+}
+.studio-export-bar {
+  justify-content: flex-end;
+}
+.studio-v2 .studio-export-menu {
+  padding: 0;
+  position: relative;
+}
+.studio-export-menu summary {
+  background: var(--surface-sunken);
+  padding: 12px 18px;
+  border-radius: var(--r-sm);
+  min-height: 44px;
+}
+.studio-export-menu > div {
+  display: grid;
+  gap: 8px;
+  min-width: 230px;
+  padding: 12px;
+  background: var(--standex-abyss);
+  box-shadow: var(--e-3);
+  border-radius: var(--r-sm);
 }

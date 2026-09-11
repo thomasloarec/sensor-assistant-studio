@@ -148,7 +148,10 @@ export interface WorkshopProps {
   onDraftChange?: (config: WorkshopConfig) => void;
 }
 export default function MagneticWorkshop({
-  initialStudy, onStudyChange, dossierId, revision,
+  initialStudy,
+  onStudyChange,
+  dossierId,
+  revision,
   initialConfig,
   onClose,
   onSave,
@@ -335,7 +338,8 @@ export default function MagneticWorkshop({
   const fingerprint = JSON.stringify(config),
     dirty = saved !== fingerprint;
   const referencePair = publishedPair(config.sensitivity, config.geometry);
-  const pull = referencePair?.[0] ?? "—", drop = referencePair?.[1] ?? "—";
+  const pull = referencePair?.[0] ?? "—",
+    drop = referencePair?.[1] ?? "—";
   const unknown = result.unknown;
   const machineReady = !machine || !!machineAsset?.nodes.some((n) => n.path === machine.movingNode);
   const mismatches = result.samples.filter(
@@ -407,7 +411,8 @@ export default function MagneticWorkshop({
     try {
       if (file.size > 20000) throw new Error(t("Le fichier de montage est trop volumineux."));
       const parsed = parseWorkshopConfig(JSON.parse(await file.text()));
-      if (!parsed) throw new Error(t("Ce fichier ne contient pas un montage valide (V1, V2 ou V3)."));
+      if (!parsed)
+        throw new Error(t("Ce fichier ne contient pas un montage valide (V1, V2 ou V3)."));
       setPlaying(false);
       setProgress(0);
       setConfig(parsed);
@@ -424,9 +429,13 @@ export default function MagneticWorkshop({
     (unknown
       ? t("Une partie du parcours ne peut pas être déterminée avec ces paramètres.")
       : result.closures === 0
-        ? t("Aucun nouvel enclenchement sur ce cycle. Essayez une autre position ou rapprochez l'aimant.")
+        ? t(
+            "Aucun nouvel enclenchement sur ce cycle. Essayez une autre position ou rapprochez l'aimant.",
+          )
         : result.closures > 1
-          ? t("Plusieurs enclenchements sur un aller-retour. Vérifiez s'ils correspondent au comportement recherché.")
+          ? t(
+              "Plusieurs enclenchements sur un aller-retour. Vérifiez s'ils correspondent au comportement recherché.",
+            )
           : t("Un enclenchement et un retour à vérifier dans votre montage réel."));
 
   return (
@@ -493,17 +502,35 @@ export default function MagneticWorkshop({
       )}
       <div className="mw-context-card">
         <div>
-          <strong>{t("Essayer dans un objet réel en 3D")}</strong>
+          <strong>{t(machine ? "Objet 3D actif" : "Importer un objet 3D")}</strong>
           <p>
-            {t("Une machine à café fictive, un bac mobile et des composants à placer à l'échelle.")}
+            {machine
+              ? machine.fileName
+              : t(
+                  "GLB autonome, 30 Mo maximum. Le fichier reste dans ce navigateur ; les réglages sont joints au dossier.",
+                )}
           </p>
         </div>
-        <button className="mw-button mw-secondary" onClick={exampleMachine}>
-          {t("Ouvrir la machine à café")}
-        </button>
-        <a href="/models/machine-cafe-bac-mobile.glb" download>
-          {t("Télécharger le fichier 3D")}
-        </a>
+        <label className="mw-file-label">
+          {t("Importer mon fichier GLB")}
+          <input
+            type="file"
+            accept=".glb,model/gltf-binary"
+            onChange={(e) => {
+              void importMachine(e.target.files?.[0]);
+              e.target.value = "";
+            }}
+          />
+        </label>
+        <details>
+          <summary>{t("Exemple : machine à café")}</summary>
+          <button className="mw-button mw-secondary" onClick={exampleMachine}>
+            {t("Ouvrir la machine à café")}
+          </button>
+          <a href="/models/machine-cafe-bac-mobile.glb" download>
+            {t("Télécharger le fichier 3D")}
+          </a>
+        </details>
       </div>
       <div className={machine ? "mw-layout mw-machine-layout" : "mw-layout"}>
         <aside className="mw-controls">
@@ -515,7 +542,6 @@ export default function MagneticWorkshop({
               setTool={chooseTool}
               onChange={machineChange}
               onExample={exampleMachine}
-              onImport={(file) => void importMachine(file)}
               onExit={() => update({ machine: null })}
               onCatalog={() => setCatalogOpen(true)}
               onProductCard={() => setProductCard(true)}
@@ -1200,6 +1226,113 @@ export default function MagneticWorkshop({
                 )}
               </p>
             </div>
+            <div className="mw-live-console">
+              <ContactIndicator contact={sample.contact} />
+              <div className="mw-playback">
+                <div className="mw-play-controls">
+                  <button
+                    className="mw-play"
+                    disabled={!machineReady}
+                    aria-label={t(playing ? "Mettre en pause" : "Lire le cycle")}
+                    onClick={() => {
+                      if (progress >= 1) setProgress(0);
+                      setPlaying(!playing);
+                    }}
+                  >
+                    {playing ? <Pause size={19} /> : <Play size={19} />}
+                  </button>
+                  <button
+                    className="mw-reset"
+                    aria-label={t("Revenir au départ")}
+                    onClick={() => {
+                      setPlaying(false);
+                      setProgress(0);
+                    }}
+                  >
+                    <RotateCcw size={17} />
+                  </button>
+                  <div>
+                    <strong>
+                      {t(machine ? "Ouvrir et refermer la pièce" : "Un cycle complet")}
+                    </strong>
+                    <span>{t("Aller → retour · lecture pédagogique")}</span>
+                  </div>
+                  <output>
+                    {t(
+                      machine
+                        ? `${Math.round((progress <= 0.5 ? progress * 2 : (1 - progress) * 2) * 100)} % ouvert`
+                        : reference
+                          ? `${sample.distance.toFixed(1)} mm`
+                          : `${Math.round(progress * 100)} %`,
+                    )}
+                  </output>
+                </div>
+                <div className="mw-timeline" aria-hidden="true">
+                  {result.samples
+                    .filter((_, i) => i % 3 === 0)
+                    .map((s, i) => (
+                      <span key={i} className={s.contact} />
+                    ))}
+                  <i style={{ left: `${progress * 100}%` }} />
+                </div>
+                <input
+                  className="mw-scrubber"
+                  disabled={!machineReady}
+                  aria-label={t("Position dans le cycle")}
+                  type="range"
+                  min="0"
+                  max="100"
+                  step="0.1"
+                  value={progress * 100}
+                  onChange={(e) => {
+                    setPlaying(false);
+                    setProgress(Number(e.target.value) / 100);
+                  }}
+                />
+                {!machine && (
+                  <div
+                    className="mw-target-track"
+                    aria-label={t(
+                      `Contact souhaité fermé entre ${config.targetStart} et ${config.targetEnd} pour cent du cycle`,
+                    )}
+                  >
+                    <span
+                      style={{
+                        left: `${config.targetStart}%`,
+                        width: `${config.targetEnd - config.targetStart}%`,
+                      }}
+                    />
+                  </div>
+                )}
+                <div className="mw-timeline-caption">
+                  <span>{t(machine ? "Pièce fermée" : "Départ")}</span>
+                  <span>{t(machine ? "Pièce ouverte" : "Point de retour")}</span>
+                  <span>{t(machine ? "Pièce refermée" : "Arrivée")}</span>
+                </div>
+                <div className="mw-legend">
+                  <span>
+                    <i className="closed" />
+                    {t("Fermé")}
+                  </span>
+                  <span>
+                    <i className="open" />
+                    {t("Ouvert")}
+                  </span>
+                  {reference && (
+                    <span>
+                      <i className="unknown" />
+                      {t("Indéterminé")}
+                    </span>
+                  )}
+                  {!machine && (
+                    <span>
+                      <i className="target" />
+                      {t("Fenêtre souhaitée")}
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
             {sceneError && !machine && (
               <p className="mw-demo-note">
                 {t(
@@ -1291,8 +1424,7 @@ export default function MagneticWorkshop({
             <details className="mw-demo-settings" open={!machine}>
               <summary>{t("Distances fictives · réglages de démonstration")}</summary>
               <p>
-                {t("Les matériaux et la température n'interviennent pas dans ce calcul.")}
-                {" "}
+                {t("Les matériaux et la température n'interviennent pas dans ce calcul.")}{" "}
                 {sensor.id === "MK02"
                   ? t(
                       "Le MK02 est représenté avec un contact Form A fictif : son mécanisme ferreux réel n'est pas simulé.",
@@ -1332,109 +1464,6 @@ export default function MagneticWorkshop({
               )}
             </details>
           )}
-          <ContactIndicator contact={sample.contact} />
-          <div className="mw-playback">
-            <div className="mw-play-controls">
-              <button
-                className="mw-play"
-                disabled={!machineReady}
-                aria-label={t(playing ? "Mettre en pause" : "Lire le cycle")}
-                onClick={() => {
-                  if (progress >= 1) setProgress(0);
-                  setPlaying(!playing);
-                }}
-              >
-                {playing ? <Pause size={19} /> : <Play size={19} />}
-              </button>
-              <button
-                className="mw-reset"
-                aria-label={t("Revenir au départ")}
-                onClick={() => {
-                  setPlaying(false);
-                  setProgress(0);
-                }}
-              >
-                <RotateCcw size={17} />
-              </button>
-              <div>
-                <strong>{t(machine ? "Ouvrir et refermer la pièce" : "Un cycle complet")}</strong>
-                <span>{t("Aller → retour · lecture pédagogique")}</span>
-              </div>
-              <output>
-                {t(
-                  machine
-                    ? `${Math.round((progress <= 0.5 ? progress * 2 : (1 - progress) * 2) * 100)} % ouvert`
-                    : reference
-                      ? `${sample.distance.toFixed(1)} mm`
-                      : `${Math.round(progress * 100)} %`,
-                )}
-              </output>
-            </div>
-            <div className="mw-timeline" aria-hidden="true">
-              {result.samples
-                .filter((_, i) => i % 3 === 0)
-                .map((s, i) => (
-                  <span key={i} className={s.contact} />
-                ))}
-              <i style={{ left: `${progress * 100}%` }} />
-            </div>
-            <input
-              className="mw-scrubber"
-              disabled={!machineReady}
-              aria-label={t("Position dans le cycle")}
-              type="range"
-              min="0"
-              max="100"
-              step="0.1"
-              value={progress * 100}
-              onChange={(e) => {
-                setPlaying(false);
-                setProgress(Number(e.target.value) / 100);
-              }}
-            />
-            {!machine && (
-              <div
-                className="mw-target-track"
-                aria-label={t(
-                  `Contact souhaité fermé entre ${config.targetStart} et ${config.targetEnd} pour cent du cycle`,
-                )}
-              >
-                <span
-                  style={{
-                    left: `${config.targetStart}%`,
-                    width: `${config.targetEnd - config.targetStart}%`,
-                  }}
-                />
-              </div>
-            )}
-            <div className="mw-timeline-caption">
-              <span>{t(machine ? "Pièce fermée" : "Départ")}</span>
-              <span>{t(machine ? "Pièce ouverte" : "Point de retour")}</span>
-              <span>{t(machine ? "Pièce refermée" : "Arrivée")}</span>
-            </div>
-            <div className="mw-legend">
-              <span>
-                <i className="closed" />
-                {t("Fermé")}
-              </span>
-              <span>
-                <i className="open" />
-                {t("Ouvert")}
-              </span>
-              {reference && (
-                <span>
-                  <i className="unknown" />
-                  {t("Indéterminé")}
-                </span>
-              )}
-              {!machine && (
-                <span>
-                  <i className="target" />
-                  {t("Fenêtre souhaitée")}
-                </span>
-              )}
-            </div>
-          </div>
           <div className="mw-result">
             <div className="mw-result-icon">
               <Info size={22} />
@@ -1478,11 +1507,17 @@ export default function MagneticWorkshop({
           </div>
         </section>
       </div>
-      <StudioV2 config={config} onApply={update} initialStudy={initialStudy} onStudyChange={onStudyChange} dossierId={dossierId} revision={revision} />
+      <StudioV2
+        config={config}
+        onApply={update}
+        initialStudy={initialStudy}
+        onStudyChange={onStudyChange}
+        dossierId={dossierId}
+        revision={revision}
+      />
       <footer className="mw-footer">
         <p>
-          <strong>{t(reference ? "Présélection documentée." : "Illustration pédagogique.")}</strong>
-          {" "}
+          <strong>{t(reference ? "Présélection documentée." : "Illustration pédagogique.")}</strong>{" "}
           {t(reference ? REFERENCE_NOTE : EDUCATION_NOTE)}
         </p>
         <p>
@@ -1490,8 +1525,7 @@ export default function MagneticWorkshop({
             saved && !dirty
               ? `Montage enregistré dans ${storageLabel}.`
               : `Brouillon · utilisez « Joindre au dossier » pour enregistrer dans ${storageLabel}.`,
-          )}
-          {" "}
+          )}{" "}
           <a
             href={reference ? DISTANCE_SOURCE : INTERACTION_SOURCE}
             target="_blank"

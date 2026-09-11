@@ -66,3 +66,6 @@ export function BrandLogo({
     />
   );
 }
+
+/** Export documents share the exact approved logo. */
+export const documentLogoSource = () => SOURCES.lockup.light;
