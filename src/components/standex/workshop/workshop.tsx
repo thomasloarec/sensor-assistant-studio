@@ -934,11 +934,36 @@ export default function MagneticWorkshop({
                         </span>
                       </div>
                     )}
+                    {/* Modèle importé : les outils du fichier (attaches, nœud mobile,
+                        course, mesure, transformation) restent intégralement
+                        disponibles, à l'étape où l'on place le couple. */}
+                    {machine && (
+                      <MachineControls
+                        config={config}
+                        asset={machineAsset}
+                        tool={tool}
+                        setTool={chooseTool}
+                        onChange={machineChange}
+                        onExample={exampleMachine}
+                        onExit={() => update({ machine: null })}
+                        onCatalog={() => setCatalogOpen(true)}
+                        onProductCard={() => setProductCard(true)}
+                        measure={measure}
+                      />
+                    )}
                   </>
                 )}
                 {step === 2 && (
                   <>
                     <h2>{t("Définissez le mouvement")}</h2>
+                    {machine ? (
+                      <p className="mw-help">
+                        {t(
+                          "Le mouvement vient de votre fichier : il se règle à l'étape précédente, avec les attaches, le nœud mobile et la course.",
+                        )}
+                      </p>
+                    ) : (
+                      <>
                     <label className="mw-select-label">
                       {t("Trajectoire")}
                       <select
@@ -1009,6 +1034,8 @@ export default function MagneticWorkshop({
                             onChange={(span) => update({ span })}
                           />
                         )}
+                      </>
+                    )}
                       </>
                     )}
                     <details>
