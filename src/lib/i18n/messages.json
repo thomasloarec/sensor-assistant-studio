@@ -21652,5 +21652,32 @@
     "Показанный шаблон явно схематичен.",
     "La sagoma mostrata è esplicitamente schematica.",
     "表示されるテンプレートは明示的に概略です。"
+  ],
+  "Le comportement du capteur nécessite des tests en environnement réel": [
+    "The sensor behaviour requires testing in a real environment",
+    "传感器的行为需要在真实环境中测试",
+    "Das Sensorverhalten erfordert Tests in realer Umgebung",
+    "El comportamiento del sensor requiere pruebas en entorno real",
+    "Поведение датчика требует испытаний в реальных условиях",
+    "Il comportamento del sensore richiede prove in ambiente reale",
+    "センサーの挙動は実環境での試験が必要です"
+  ],
+  "Détection prévue dans le modèle de référence, à confirmer par essais": [
+    "Detection expected in the reference model, to be confirmed by testing",
+    "参考模型中预计可检测，需通过试验确认",
+    "Erkennung im Referenzmodell erwartet, durch Versuche zu bestätigen",
+    "Detección prevista en el modelo de referencia, a confirmar mediante ensayos",
+    "Обнаружение ожидается в эталонной модели, требует подтверждения испытаниями",
+    "Rilevamento previsto nel modello di riferimento, da confermare con prove",
+    "基準モデルでは検出が見込まれます。試験による確認が必要です"
+  ],
+  "Détection non prévue avec ces distances typiques": [
+    "Detection not expected with these typical distances",
+    "按这些典型距离预计无法检测",
+    "Mit diesen Typabständen keine Erkennung erwartet",
+    "Detección no prevista con estas distancias típicas",
+    "С этими типовыми расстояниями обнаружение не ожидается",
+    "Rilevamento non previsto con queste distanze tipiche",
+    "これらの代表距離では検出が見込まれません"
   ]
 }
