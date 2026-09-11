@@ -1,127 +1,114 @@
-# Audit lecture seule — extension « dashboard interne » Standex
+# Refonte de l'Atelier 3D — « Est-ce que la détection va se faire dans mon montage ? »
 
-Rien n'a été modifié. Backend inspecté uniquement par le code du dépôt : l'outil SQL
-n'est pas branché sur `yyobodalwtsqdyrqwkjk`, donc l'état réel des lignes (rôle de
-Thomas Loarec, dossiers existants) n'est pas vérifiable depuis ici — il est connu
-seulement par l'historique projet, pas confirmé par une requête ce jour.
+L'atelier cesse d'être un catalogue-jeu et devient une étape de sélection en
+4 temps, avec un verdict honnête et traçable. Rien n'est retiré : catalogue,
+pédagogie, import GLB, machine, gel de conception et câble restent, mais
+deviennent secondaires ou sont réemployés dans le parcours.
 
-## 1. Ce qui existe déjà et sera réutilisé
+## Le parcours en 4 étapes
 
-**Routes**
-- `src/routes/index.tsx` (205 l.) — accueil client.
-- `src/routes/design.tsx` — redirection vers `/`.
-- `src/routes/internal.tsx` (1 912 l.) — banc de test assistant (scénarios, trace,
-  revue, données lead) sur les tables `sensor_test_*` du schéma V0.2. Sans rapport
-  avec le CRM ; à ne pas mélanger.
-- `src/routes/standex.tsx` (1 308 l.) — **console interne** existante : boîte de
-  réception, affectation, revue R&D, notes internes, offre, échantillons, preuve NDA,
-  rapport anglais, visionneuse documents. C'est la base du dashboard.
+1. **Couple & sensibilité** — choisir capteur + aimant + classe à partir des
+   contraintes saisies (entrefer souhaité fermé/ouvert, encombrement,
+   environnement), ou démarrer en espace vide. Comparaison des sensibilités
+   côte à côte avec les 8 références publiées MK03/M02 (D1 : B 15/17.5,
+   C 13/16.5, D 11/14.5, E 10/13.5 ; D3 : B 9.3/11.4, C 7.4/9.9, D 5.7/8.5,
+   E 4.5/8). Aucune donnée A. Le tableau montre que B porte le plus loin, D/E
+   le moins. Si aucune combinaison documentée ne satisfait les contraintes,
+   l'écran le dit explicitement au lieu de proposer un compromis muet.
+2. **Positionner** — placer le couple dans le montage, ou importer son modèle
+   (GLB, chemin existant conservé). Guidage : fantôme de l'aimant à la pose
+   suggérée, axe et plan de référence, cote d'entrefer, décalages et
+   orientation lisibles ; *Prévisualiser* → *Appliquer* → *Annuler*. Le capteur
+   garde son ancrage, seul l'aimant se déplace vers la suggestion. Un mode
+   « déplacer le couple » translate/pivote l'ensemble sans changer la pose
+   relative, y compris sur modèle personnalisé (conversion local ↔ monde).
+   Collision et encombrement sont détectés : une suggestion qui traverse la
+   matière est refusée et expliquée, jamais appliquée.
+3. **Simuler** — aller-retour avec vraie hystérésis (enclenchement ≠
+   relâchement), état initial « inconnu » quand il l'est, chronologie lisible
+   et curseur déterministe (même t → même état). L'entrefer est mesuré comme
+   distance de surfaces, jamais distance de centres. Les segments hors domaine
+   sont marqués « non couverts » : aucune détection n'y est affirmée, et le
+   capteur ne reste pas vert par héritage en quittant le domaine.
+4. **Câble** — réutilise le configurateur de câblage et la sauvegarde
+   existants, alimentés par le couple et la pose retenus.
 
-**Serveur (schéma `lead`, non exposé à REST — tout passe par RPC)**
-- Tables : `staff_members` (role rnd/sales/admin, display_name), `design_dossiers`
-  (owner_id, title, current_revision, nda_required, nda_status),
-  `design_collaborators`, `dossier_assignments`, `design_revisions` (snapshot,
-  content_hash, consents, transferred_files), `design_reviews` (verdict, published,
-  exact_part_number, variant), `internal_notes`, `offers` (tiers, moq, currency,
-  incoterm, valid_until, part_number, annual_volume_basis), `sample_requests`,
-  `nda_proofs`, `upload_sessions`, `audit_log`, `revision_reports_en` (V1.5).
-- RPC recensées dans `src/lib/leadmagnet/rpc.ts` (`LEAD_RPC`) : `lead_staff_inbox`,
-  `lead_staff_view`, `lead_assign_dossier`, `lead_publish_review`,
-  `lead_add_internal_note`, `lead_create_offer`, `lead_request_samples`,
-  `lead_update_sample`, `lead_revalidate_sample`, `lead_set_dossier_title`,
-  `lead_my_capabilities`, `lead_schema_version`, `lead_set_nda_requirement`,
-  `lead_report_en_*`. Version serveur exigée : `1.4` (`REQUIRED_LEAD_SCHEMA_VERSION`),
-  base réellement à 1.7.
-- `lead_priv.staff_inbox()` renvoie déjà `assigned`, `triage` (admin), `staff_directory`
-  avec e-mails et noms : socle direct des vues tableau/pipeline.
+## Le verdict, en trois axes séparés
 
-**Côté application**
-- `src/lib/leadmagnet/supabase-adapter.ts` — `fetchStaffInbox`, `fetchStaffView`,
-  `assignDossier`, `publishReview`, `addInternalNote`, `createOffer`, `updateSample`,
-  `recordNdaProof`, `uploadDesignFile`, `signedFileUrl`, types `StaffInbox`,
-  `DossierView`, `OfferView`, `SampleView`.
-- `src/lib/leadmagnet/backend.ts` — `checkLeadBackend`, `staffActionEnabled(status, roles)`.
-- `src/lib/leadmagnet/review.ts` — `createOffer`, invariants revue/offre/rôle.
-- `src/lib/leadmagnet/english-report.ts` — `selectEnglishReport`, `canExportEnglish`
-  (états missing/pending/ready) ; pipeline `english-report.pipeline.ts` + serveur.
-- `src/lib/leadmagnet/dossier-io.ts` — `parseServerSnapshot` (original client).
-- 3D réelle : `src/components/standex/workshop/workshop.tsx`,
-  `candidate-thumbnail-scene.tsx`, `src/components/leadmagnet/candidate-thumbnail.tsx`
-  (`CandidateThumbnail`, plafond de contextes WebGL, fallback 2D). Déjà utilisée dans
-  `standex.tsx` : à réutiliser telle quelle, pas de nouveau viewer.
-- UI : `WorkspacePanel`, `DocumentViewer`, `BrandLogo`, jetons de `src/styles.css`.
+Jamais un seul feu vert. L'écran affiche toujours :
 
-## 2. Ce qui manque réellement pour la V1 demandée
+- **Couverture de la pose** : la pose simulée reste-t-elle dans le gabarit
+  documenté (approche, orientation, plan) ? Couverte / partielle / hors
+  gabarit, avec les segments concernés.
+- **Source et niveau de preuve** : « typique publié » (8 références MK03/M02),
+  « schématique » (gabarit géométrique explicite), « non caractérisé ».
+- **Verdict** : détection prévue / non prévue / indéterminée.
 
-Aucune de ces données n'existe aujourd'hui, ni en table ni dans le snapshot client
-(le snapshot n'a que `contactName`, `contactEmail`, `contactCompany`, `annualVolume`) :
+Hors domaine ou source insuffisante : contact **inconnu** et message principal
+exact « Le comportement du capteur nécessite des tests en environnement réel »,
+avec la raison et une action utile (revenir au gabarit, documenter la mesure
+manquante). L'explication se lit sans quitter son montage.
 
-- statut pipeline (Lead → … → Dead) ;
-- société / projet / **pays** normalisés côté Standex ;
-- responsables **commercial** et **FAE** distincts (aujourd'hui `dossier_assignments`
-  est une simple appartenance sans rôle sur le dossier) ;
-- prix unitaire retenu, revenu annuel estimé, coût FAE, marge ;
-- checklist par rôle avec échéance, âge du projet et âge de l'étape ;
-- notes SAP anglaises générées à chaque avancement ;
-- envoi e-mail de la revue au client avec lien retour.
+Ce qui reste interdit et le reste : aucune calibration physique inventée,
+aucune tolérance angulaire, aucun centre magnétique, aucune température ni
+enveloppe volumique fabriquée, aucune coupe généralisée en sphère. Un résultat
+typique peut montrer un franchissement ON/OFF dans son modèle de référence,
+il n'est jamais annoncé « fiable » ou « validé terrain ». Le gabarit
+géométrique est étiqueté schématique tant que les datums ne sont pas
+caractérisés — ce n'est pas une validation du montage importé.
 
-## 3. Delta minimal proposé
+## Détails techniques
 
-**Base (une seule migration additive V1.8, à appliquer par vous, jamais depuis ici)**
-- `lead.dossier_crm` (1 ligne / dossier) : `stage` (enum 8 valeurs),
-  `stage_since`, `company`, `project_name`, `country`, `sales_owner`, `fae_owner`,
-  `unit_price`, `currency`, `annual_volume_override`, `fae_cost`, `notes_lang`.
-  Revenu et marge **calculés**, jamais stockés en double.
-- `lead.dossier_tasks` : `dossier_id`, `role` (rnd/sales/admin/fae), `label`, `due_on`,
-  `done_at`, `done_by`.
-- `lead.sap_notes` : `dossier_id`, `revision`, `stage_from`, `stage_to`, `body_en`,
-  `created_at`, `author_id` — insert-only.
-- RPC nouvelles, mêmes conventions (definer privé + wrapper invoker, `search_path`
-  sûr, `NOT_ALLOWED`, CAS sur `updated_at`/révision) : `lead_crm_board`,
-  `lead_set_stage`, `lead_set_crm_fields`, `lead_set_owners`, `lead_upsert_task`,
-  `lead_complete_task`, `lead_add_sap_note`, `lead_admin_overview`.
-- `REQUIRED_LEAD_SCHEMA_VERSION` passe à `1.8` seulement après application réelle,
-  sinon le dashboard s'affiche en lecture dégradée (le mécanisme existe déjà).
+**Nouveau module `src/lib/standex/mounting/`** (métier pur, testé) :
 
-**Application**
-- `src/lib/leadmagnet/crm.ts` : enum des 8 statuts, transitions autorisées, calcul
-  `revenuAnnuel = volume × prixUnitaire`, `marge = revenu − coûtFAE`, inconnus
-  explicites (jamais 0 implicite), âge projet/étape.
-- `src/lib/leadmagnet/sap-note.ts` : génération déterministe anglaise, concise,
-  à partir des données réellement présentes — pas d'appel fournisseur.
-- Adaptateur : ajout des appels ci-dessus dans `supabase-adapter.ts`.
-- `/standex` : trois vues (Tableau, Pipeline par statut, Tâches) au-dessus de la
-  console actuelle, qui reste intacte. Page `/standex/admin` (rôle admin) : staff,
-  affectations commercial/FAE, seuils, diagnostic de version.
-- Revue : la langue client vient de `sourceLocale` déjà conservé ; original client et
-  rapport anglais restent deux objets distincts (`revision_reports_en`).
+- `contract.ts` — `GuidedMounting` versionné (`version: 1`) : profil de montage
+  (id, source, révision), couple capteur/aimant/classe, pose relative
+  (position + rotation en repère capteur) et attaches (parent, repère local),
+  course, environnement, besoins, câble, plus `computed` (couverture, preuve,
+  verdict, limites) et une empreinte `inputsHash` des entrées.
+- `profiles.ts` — profils de gabarit dérivés des approches documentées
+  (MK03/M02 D1 et D3, identifiant appairé `4003004003` et alias contrôlés),
+  chacun marqué `evidence: "published_typical"` + `geometry: "schematic"`.
+  L'interface accepte de futurs profils réellement caractérisés sans changement
+  de code appelant.
+- `suggest.ts` — pose suggérée, prévisualisation, application, annulation,
+  détection de collision/encombrement (réutilise `bodiesOverlap`), et
+  transformation commune du couple (invariance de la pose relative prouvée par
+  test).
+- `evaluate.ts` — couverture par pose et par segment, niveau de preuve,
+  verdict, raisons machine + libellés `t()`.
+- `simulate.ts` — reprise de la simulation existante avec hystérésis réelle,
+  entrefer de surfaces, échantillonnage déterministe et marquage des segments
+  non couverts.
 
-## 4. Limites réelles à acter avant de coder
+**Invalidation** : tout changement de capteur, aimant, sensibilité, pose,
+course, environnement ou profil recalcule `computed`. Un `computed` importé
+dont l'empreinte ne correspond pas est jeté et recalculé — un verdict importé
+n'est jamais cru.
 
-- **E-mail : aucun fournisseur.** Vérifié : aucun `resend/sendgrid/smtp/sendEmail`
-  dans le dépôt, et aucun domaine d'envoi configuré pour ce projet. Sans domaine
-  vous possédant, aucun e-mail ne peut partir. V1 livrera donc un **lien de revue
-  copiable** et une file « à notifier » ; l'envoi réel sera branché après mise en
-  place d'un domaine d'envoi.
-- **Activation base obligatoire** : sans V1.8 appliquée, statuts, tâches, marges et
-  notes SAP n'existent pas côté serveur. Aucun stockage local de substitution.
-- **Rôle admin** : le code lit le rôle via `lead_my_capabilities` ; l'attribution
-  admin de Thomas Loarec est connue par l'historique projet mais n'a pas pu être
-  reconfirmée par une requête ce jour.
-- **FAE** n'est pas un rôle serveur existant (`rnd`/`sales`/`admin`) : il faudra soit
-  étendre l'enum, soit porter le FAE dans `dossier_crm.fae_owner`. Proposition :
-  `fae_owner` référence un `staff_members` de rôle `rnd`, sans nouvelle permission.
-- Aucune donnée client, société, pays ou compte ne sera inventé : champs vides tant
-  que la personne ne les saisit pas.
+**Persistance** : réutilise le JSON dossier existant, champ additif
+`dossier.mounting` (absent = ancien dossier, lu sans erreur). Aucune migration
+SQL appliquée. Si une colonne dédiée s'avère nécessaire, la migration est
+écrite et testée en brouillon sous `supabase/schema/` et je signale exactement
+ce qu'il faut activer — sans y toucher.
 
-## 5. Ordre d'exécution proposé
+**Propagation** : résumé fidèle (couple, pose, couverture, preuve, verdict,
+limites, câble) dans l'enregistrement, les exports et la revue interne.
 
-1. Migration V1.8 rédigée, relue, appliquée par vous.
-2. Modèle `crm.ts` + `sap-note.ts` + tests unitaires (statuts, marges, inconnus, âges).
-3. Adaptateur + vues Tableau / Pipeline / Tâches dans `/standex`.
-4. Page admin + lien de revue et file de notification.
-5. Gates : `bun test tests/`, `bunx tsgo --noEmit`, `bun run build`, inventaire i18n,
-   les quatre scans `rg` d'AGENTS.md, QA navigateur 1280/390.
+**UI** : refonte de `workshop.tsx` en coquille à 4 étapes réutilisant les
+scènes, le catalogue et Studio V2 comme panneaux secondaires ; textes, CTA et
+parcours amont/aval dans `design-space.tsx` adaptés. Jetons uniquement,
+`t()` + sept traductions pour chaque libellé neuf.
 
-Projet privé, non publié ; NDA original inchangé ; backend inchangé tant que vous
-n'appliquez pas la migration.
+**Tests ajoutés** (`tests/mounting-*.test.ts`) : source manquante ; hors
+plan/orientation ; rotation et translation communes ; transformations parent
+sur pièce mobile ; hystérésis aller/retour + scrub ; invariants
+prévisualiser/appliquer/annuler ; absence de faux vert sur import personnalisé ;
+verdict périmé et relecture d'un dossier ancien ; sensibilités distinctes ;
+câble. Puis `bun test tests/`, `bunx tsgo --noEmit`, `bun run build` et les
+quatre scans AGENTS.
+
+## Hors périmètre
+
+Backend Supabase inchangé, pas de Lovable Cloud, aucun email, aucune
+publication, aucune donnée client réelle écrite.
