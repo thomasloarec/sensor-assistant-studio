@@ -123,6 +123,9 @@ export function thresholdsFor(
   sensitivityClass: string,
   registry?: PublishedRegistry,
 ): readonly [number, number] | null {
+  // Deux conditions distinctes : la lecture up/to doit être qualifiée ET
+  // l'approche doit être localisée pour alimenter un calcul géométrique.
+  if (profile.localisation !== "axis_documented") return null;
   if (!approachQualified(profile.sensorFamily, profile.approachId)) return null;
   const row = publishedReference(
     profile.sensorFamily,

@@ -1,5 +1,5 @@
-import { profileFor, thresholdsFor } from "./profiles";
-import type { MountingProfile } from "./profiles";
+import { locatedProfile, profileFor, thresholdsFor } from "./profiles";
+import type { LocatedProfile, MountingProfile } from "./profiles";
 import { REAL_WORLD_TEST_MESSAGE } from "./contract";
 import type {
   ContactState,
@@ -15,7 +15,7 @@ import type { Pose, Vec3 } from "./geometry";
 
 export const SAMPLE_STEPS = 600;
 /** Décalage entre entrefer de surface et distance de centres, sur l'axe d'approche. */
-export function centreOffsetMm(m: GuidedMounting, profile: MountingProfile): number {
+export function centreOffsetMm(m: GuidedMounting, profile: LocatedProfile): number {
   return (
     halfExtent(bodyOf(m.couple.sensorId, m.couple.magnetId, "sensor"), [0, 0, 0], profile.axis) +
     halfExtent(
@@ -26,7 +26,7 @@ export function centreOffsetMm(m: GuidedMounting, profile: MountingProfile): num
   );
 }
 /** Composante latérale conservée pendant la course : l'aller-retour ne bouge que l'axe. */
-export function lateralComponent(m: GuidedMounting, profile: MountingProfile): Vec3 {
+export function lateralComponent(m: GuidedMounting, profile: LocatedProfile): Vec3 {
   const along = scale(profile.axis, dotAxis(m.relative.positionMm, profile.axis));
   return sub(m.relative.positionMm, along);
 }
@@ -38,7 +38,7 @@ export const gapAt = (m: GuidedMounting, t: number) => {
   return m.travel.startGapMm + (m.travel.endGapMm - m.travel.startGapMm) * u;
 };
 /** Pose relative de l'aimant à l'instant t. Déterministe : même t, même pose. */
-export function relativePoseAt(m: GuidedMounting, profile: MountingProfile, t: number): Pose {
+export function relativePoseAt(m: GuidedMounting, profile: LocatedProfile, t: number): Pose {
   const gap = gapAt(m, t);
   return {
     positionMm: add(lateralComponent(m, profile), scale(profile.axis, gap + centreOffsetMm(m, profile))),
@@ -72,7 +72,9 @@ export const NUMERIC_EPSILON = 1e-9;
 /** Raisons globales : elles ne dépendent pas de l'instant du cycle. */
 export function globalReasons(m: GuidedMounting, profile: MountingProfile | null): string[] {
   const reasons: string[] = [];
+  const located = locatedProfile(profile);
   if (!profile) reasons.push("NO_PROFILE");
+  else if (profile.localisation !== "axis_documented") reasons.push("APPROACH_NOT_LOCATED");
   else if (profile.evidence !== "published_typical") reasons.push("SOURCE_NOT_QUALIFIED");
   else if (!profile.classes.includes(m.couple.sensitivityClass)) reasons.push("CLASS_NOT_PUBLISHED");
   if (m.attachment.frame === "custom_model") reasons.push("CUSTOM_MODEL_NOT_CHARACTERISED");
@@ -91,7 +93,7 @@ export function globalReasons(m: GuidedMounting, profile: MountingProfile | null
     reasons.push("SENSOR_ANGLE_OFF_TEMPLATE");
   if (m.relative.rotationDeg.some((a) => Math.abs(normalise(a)) > NUMERIC_EPSILON))
     reasons.push("ORIENTATION_OFF_TEMPLATE");
-  if (profile && lateralOffsetMm(m.relative, profile.axis) > NUMERIC_EPSILON)
+  if (located && lateralOffsetMm(m.relative, located.axis) > NUMERIC_EPSILON)
     reasons.push("LATERAL_OFFSET");
   return reasons;
 }
@@ -108,9 +110,10 @@ export function simulateMounting(
     m.couple.approachId,
     profiles,
   );
+  const located = locatedProfile(profile);
   const reasons = globalReasons(m, profile);
   const pair = profile ? thresholdsFor(profile, m.couple.sensitivityClass) : null;
-  const blocked = reasons.length > 0 || !pair || !profile;
+  const blocked = reasons.length > 0 || !pair || !located;
   const samples: MountingSample[] = [],
     transitions: MountingTransition[] = [];
   let contact: ContactState = "unknown",
@@ -118,11 +121,11 @@ export function simulateMounting(
   for (let i = 0; i <= steps; i++) {
     const t = i / steps,
       gap = gapAt(m, t);
-    const relative = profile
-      ? relativePoseAt(m, profile, t)
+    const relative = located
+      ? relativePoseAt(m, located, t)
       : { positionMm: [0, 0, 0] as Vec3, rotationDeg: [...m.relative.rotationDeg] as Vec3 };
     const collides =
-      profile !== null && bodiesCollide(m.couple.sensorId, m.couple.magnetId, relative);
+      located !== null && bodiesCollide(m.couple.sensorId, m.couple.magnetId, relative);
     const sampleCovered = !blocked && !collides && gap > 0;
     if (sampleCovered) covered++;
     let next: ContactState = "unknown";
