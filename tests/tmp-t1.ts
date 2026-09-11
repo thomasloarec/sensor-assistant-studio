@@ -18,3 +18,11 @@ for (const mv of [{rotationDeg:[0,45,0] as [number,number,number]}, {translation
   const back = mountingFromWorkshop(n);
   console.log("empty", JSON.stringify(mv), JSON.stringify(back.travel), JSON.stringify(moved.travel), computeMounting(back).coverage, back.motion.sensorYawDeg, JSON.stringify(back.anchor));
 }
+const mv = {rotationDeg:[0,30,0] as [number,number,number]};
+const moved = moveCouple(m, mv as never);
+const patch = workshopPatchFromMounting(moved, c);
+const n = {...c, ...patch};
+console.log("orig sensor", c.machine!.sensorPosition, c.machine!.magnetPosition, c.machine!.sensorRotation, c.machine!.magnetRotation);
+console.log("new  sensor", n.machine!.sensorPosition, n.machine!.magnetPosition, n.machine!.sensorRotation, n.machine!.magnetRotation);
+console.log("moved anchor", moved.anchor, "rel", moved.relative);
+console.log("back", mountingFromWorkshop(n).anchor, mountingFromWorkshop(n).relative);
