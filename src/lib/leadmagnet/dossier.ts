@@ -269,9 +269,18 @@ export function currentMounting(d: DesignDossier) {
     ...c.waypoints,
     ...(c.connectionEndpoint ? [c.connectionEndpoint] : []),
   ];
+  // Longueur choisie par l'utilisateur dans l'atelier : elle prime sur toute
+  // estimation, et elle est reportée même sans polyligne relevée. Sans choix ni
+  // tracé, la longueur reste inconnue : jamais une valeur supposée.
+  const chosen = d.workshop.cableLengthMm;
   const cable = points.length
-    ? { points: points.map((p) => [...p] as [number, number, number]), lengthMm: estimateCableLength(c).requiredMm }
-    : null;
+    ? {
+        points: points.map((p) => [...p] as [number, number, number]),
+        lengthMm: chosen ?? estimateCableLength(c).requiredMm,
+      }
+    : chosen !== null
+      ? { points: [] as [number, number, number][], lengthMm: chosen }
+      : null;
   return withComputed({ ...base, cable });
 }
 

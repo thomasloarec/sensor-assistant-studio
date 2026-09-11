@@ -1110,6 +1110,34 @@ export default function MagneticWorkshop({
                         <p className="mw-help t-metric">{t(cableRouting.lengthLabel)}</p>
                       </>
                     )}
+                    {/* Longueur retenue : réellement modifiable et enregistrée avec le
+                        montage. Vide = pas encore choisie, jamais une valeur supposée. */}
+                    <label className="mw-select-label">
+                      {t("Longueur de câble retenue")}
+                      <input
+                        type="number"
+                        min={1}
+                        step={10}
+                        inputMode="numeric"
+                        className="t-metric"
+                        placeholder={t("Non choisie")}
+                        value={config.cableLengthMm ?? ""}
+                        onChange={(e) => {
+                          const v = e.target.value.trim();
+                          if (v === "") return update({ cableLengthMm: null });
+                          const n = Number(v);
+                          if (Number.isFinite(n) && n > 0 && n <= 100000)
+                            update({ cableLengthMm: n });
+                        }}
+                      />
+                    </label>
+                    <p className="mw-help">
+                      {t(
+                        config.cableLengthMm === null
+                          ? "Tant qu'aucune longueur n'est retenue, la longueur reste inconnue dans le dossier."
+                          : "Cette longueur est enregistrée avec le montage et reprise dans le dossier.",
+                      )}
+                    </p>
                     <GuidedVerdict mounting={guided} />
                   </>
                 )}

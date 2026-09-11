@@ -1,15 +1,26 @@
 # Feuille de route — refonte du montage guidé
 
-Revue indépendante du commit 9ad1e2b. Aucun plan supplémentaire demandé.
+Revue indépendante des commits 9ad1e2b puis 5dd93f6. État réel au dernier passage.
 
-- [ ] 1. `profiles.ts` : supprimer l'alias 4003004003 → M02, identité exacte, ouvrir aux autres aimants du registre, aucune table up/to non qualifiée.
-- [ ] 2. `simulate.ts` : supprimer les tolérances 0,5 mm / 0,5° ; seul un epsilon numérique d'égalité exacte, documenté comme non qualifié.
-- [ ] 3. `suggest.ts` / `bridge.ts` : ne plus réécrire course, besoin, mouvement, environnement ni la précision ; exploration de référence en action séparée.
-- [ ] 4. `GuidedVerdict.onFixCoverage` : ne modifier que la géométrie de la pose, jamais les contraintes déclarées.
-- [ ] 5. Pont ↔ `MachineAssembly` : vrais repères (componentPose, inversion, composition), pose réellement appliquée, tests de roundtrip sur un montage réel.
-- [ ] 6. Prévisualisation : état séparé, fantôme + axe + cote dans les deux scènes, appliquer/annuler explicites, proposition invalidée si les entrées changent.
-- [ ] 7. Unifier scène, indicateur, chronologie et résumé sur le moteur de couverture ; couvrir education, slide/pivot, aimantation, polarité, état initial, angle propre.
-- [ ] 8. Parcours réel couple + contraintes → montage guidé → simuler → câble, pour espace vide ET machine ; catalogue et pédagogie secondaires.
-- [ ] 9. Propagation : recalcul dans `toClientDto`, cohérence au parsing, besoin et câble réels, résultat/limites/sources dans revue et exports.
-- [ ] 10. Libellés : traduire tous les codes réellement émis, titres qualifiés « modèle de référence », couverture stricte, fenêtre vide non satisfaite par défaut.
-- [ ] Vérifications : `bun test tests/`, types, build, scans AGENTS, inventaire i18n, QA navigateur. Aucune migration, aucune publication.
+- [x] 1. `profiles.ts` : alias 4003004003 → M02 supprimé, identité exacte, tables up/to non qualifiées exclues.
+- [x] 2. `simulate.ts` : tolérances physiques arbitraires supprimées ; seul un epsilon numérique documenté subsiste.
+- [x] 3. `suggest.ts` / `bridge.ts` : la suggestion ne réécrit plus course, besoin, mouvement, environnement ni précision.
+- [x] 4. `GuidedVerdict.onFixCoverage` : ne touche que la géométrie de la pose, jamais les contraintes déclarées.
+- [x] 5. Pont ↔ `MachineAssembly` : repères réels, inversion/composition, pose appliquée au capteur ET à l'aimant,
+      entrefer lu aux extrémités réelles du cycle (u = 0 et u = 1). Tests de roundtrip à u = 0,37, pièces fixes et
+      mobiles, translations et rotations, course inchangée.
+- [x] 6. Prévisualisation : état séparé, fantôme dans les deux scènes, appliquer/annuler explicites, invalidation.
+- [x] 7. Scène, panneau et chronologie dérivent du même moteur ; hors couverture = inconnu.
+      Rotation GLOBALE du couple sans effet sur la couverture, orientation PROPRE du capteur hors gabarit : testées.
+- [~] 8. Parcours réel pour l'espace vide ET le modèle importé : les quatre étapes, la suggestion et le verdict sont
+      les mêmes dans les deux cas, la longueur de câble est réellement modifiable et enregistrée, les entrées
+      principales posent la question « Vérifier la détection dans mon montage ».
+      RESTE : le catalogue et Studio V2 restent atteignables au même niveau qu'avant, ils n'ont pas encore été
+      regroupés dans une section « outils avancés » unique.
+- [x] 9. Propagation : le montage guidé est reconstruit sur la configuration, le besoin et le câble COURANTS à
+      l'enregistrement, à l'import et dans le DTO client ; le rapport anglais porte verdict, couverture, limites,
+      besoin et câble. Aucun verdict importé n'est cru.
+- [x] 10. Libellés : codes traduits, couverture stricte, fenêtres exactes.
+- [x] Vérifications : 546 tests / 59 971 assertions, types, build, scans AGENTS, inventaire i18n. Aucune migration,
+      aucune donnée réelle, aucune publication.
+- [ ] QA navigateur authentifiée : impossible dans ce bac à sable (aucune session disponible).

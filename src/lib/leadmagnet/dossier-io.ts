@@ -6,7 +6,7 @@
  * - le binaire 3D n'est pas dans le JSON : il est listé pour réimport explicite.
  */
 import { z } from "zod";
-import { createDossier, toClientDto, type DesignDossier } from "./dossier";
+import { createDossier, currentMounting, toClientDto, type DesignDossier } from "./dossier";
 import { EMPTY_CABLING } from "./cabling";
 import { parseWorkshopConfig } from "@/lib/standex/magnetic-workshop";
 import { isKnownSensorId } from "@/lib/standex/sensor-catalog";
@@ -324,6 +324,14 @@ export function parseDossierExport(raw: unknown, now = new Date().toISOString())
     attachments: [],
     internalNotes: [],
   };
-  return { ok: true, dossier, notices, ndaRequested: envelope.data.ndaRequested };
+  // Le montage guidé d'un fichier importé est INTÉGRALEMENT reconstruit à partir
+  // de la configuration d'atelier, du besoin et du câble réellement repris :
+  // aucun verdict, aucune couverture et aucune limite importés ne sont crus.
+  return {
+    ok: true,
+    dossier: { ...dossier, guidedMounting: currentMounting(dossier) },
+    notices,
+    ndaRequested: envelope.data.ndaRequested,
+  };
 
 }

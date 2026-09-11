@@ -21877,5 +21877,59 @@
     "От {0} мм до {1} мм",
     "Da {0} mm a {1} mm",
     "{0} mm から {1} mm まで"
+  ],
+  "Est-ce que la détection va se faire dans mon montage ?": [
+    "Will detection actually happen in my assembly?",
+    "在我的装配中真的会发生检测吗？",
+    "Findet die Erkennung in meinem Aufbau wirklich statt?",
+    "¿La detección se producirá realmente en mi montaje?",
+    "Произойдёт ли срабатывание в моей сборке?",
+    "Il rilevamento avverrà davvero nel mio montaggio?",
+    "私の取り付けで検出は実際に行われますか？"
+  ],
+  "Longueur de câble retenue": [
+    "Selected cable length",
+    "选定的电缆长度",
+    "Gewählte Kabellänge",
+    "Longitud de cable seleccionada",
+    "Выбранная длина кабеля",
+    "Lunghezza del cavo scelta",
+    "選択したケーブル長"
+  ],
+  "Non choisie": [
+    "Not chosen",
+    "未选择",
+    "Nicht gewählt",
+    "Sin elegir",
+    "Не выбрано",
+    "Non scelta",
+    "未選択"
+  ],
+  "Tant qu'aucune longueur n'est retenue, la longueur reste inconnue dans le dossier.": [
+    "As long as no length is selected, the length stays unknown in the file.",
+    "只要未选择长度，档案中的长度就保持未知。",
+    "Solange keine Länge gewählt ist, bleibt die Länge im Dossier unbekannt.",
+    "Mientras no se elija una longitud, la longitud permanece desconocida en el expediente.",
+    "Пока длина не выбрана, в досье она остаётся неизвестной.",
+    "Finché non si sceglie una lunghezza, la lunghezza resta sconosciuta nel dossier.",
+    "長さを選択しないかぎり、ファイル内の長さは不明のままです。"
+  ],
+  "Cette longueur est enregistrée avec le montage et reprise dans le dossier.": [
+    "This length is saved with the assembly and carried into the file.",
+    "此长度与装配一起保存，并带入档案。",
+    "Diese Länge wird mit dem Aufbau gespeichert und ins Dossier übernommen.",
+    "Esta longitud se guarda con el montaje y se traslada al expediente.",
+    "Эта длина сохраняется вместе со сборкой и переносится в досье.",
+    "Questa lunghezza è salvata con il montaggio e riportata nel dossier.",
+    "この長さは取り付けとともに保存され、ファイルに引き継がれます。"
+  ],
+  "Vérifier la détection dans mon montage": [
+    "Check detection in my assembly",
+    "检查我的装配中的检测",
+    "Erkennung in meinem Aufbau prüfen",
+    "Comprobar la detección en mi montaje",
+    "Проверить срабатывание в моей сборке",
+    "Verificare il rilevamento nel mio montaggio",
+    "自分の取り付けでの検出を確認する"
   ]
 }

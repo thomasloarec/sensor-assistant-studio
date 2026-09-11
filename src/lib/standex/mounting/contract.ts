@@ -25,6 +25,11 @@ export interface MountingMotion {
   kind: MotionKind;
   /** État de contact au départ, inconnu par défaut : jamais supposé ouvert. */
   initialContact: ContactState;
+  /** Orientation PROPRE du capteur par rapport à l'axe réel du mouvement.
+   * À distinguer de `anchor.rotationDeg`, qui est la rotation GLOBALE du couple :
+   * tourner l'ensemble capteur + aimant + trajectoire ne change rien au gabarit,
+   * tourner le capteur seul en sort. Absent des contrats antérieurs : lu comme 0. */
+  sensorYawDeg: number;
 }
 export interface MountingAttachment {
   /** `custom_model` : montage importé par l'utilisateur, datums non caractérisés. */
@@ -142,6 +147,7 @@ export function parseGuidedMounting(raw: unknown): GuidedMounting | null {
     !mo ||
     !["approach", "slide", "pivot"].includes(mo.kind) ||
     !["open", "closed", "unknown"].includes(mo.initialContact) ||
+    (mo.sensorYawDeg !== undefined && !Number.isFinite(mo.sensorYawDeg)) ||
     !["reference", "education"].includes(x.mode)
   )
     return null;
@@ -193,7 +199,11 @@ export function parseGuidedMounting(raw: unknown): GuidedMounting | null {
   return {
     version: MOUNTING_CONTRACT_VERSION,
     mode: x.mode,
-    motion: { kind: mo.kind, initialContact: mo.initialContact },
+    motion: {
+      kind: mo.kind,
+      initialContact: mo.initialContact,
+      sensorYawDeg: mo.sensorYawDeg ?? 0,
+    },
     profileId: typeof x.profileId === "string" && x.profileId.length <= 120 ? x.profileId : null,
     profileRevision:
       typeof x.profileRevision === "string" && x.profileRevision.length <= 120
