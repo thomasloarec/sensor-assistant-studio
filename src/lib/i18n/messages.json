@@ -22057,5 +22057,14 @@
     "Магнит выбирается на шаге «Выбрать пару». Вернитесь туда, чтобы изменить его.",
     "Il magnete si sceglie nel passaggio «Scegliere la coppia». Tornaci per cambiarlo.",
     "磁石は「組み合わせを選ぶ」ステップで選択します。変更するにはそのステップに戻ってください。"
+  ],
+  "Distance entre centres": [
+    "Centre-to-centre distance",
+    "中心间距",
+    "Abstand Mitte zu Mitte",
+    "Distancia entre centros",
+    "Расстояние между центрами",
+    "Distanza tra i centri",
+    "中心間距離"
   ]
 }
