@@ -348,7 +348,7 @@
 }
 .studio-validation,
 .studio-v2 .studio-field-error {
-  color: var(--destructive);
+  color: var(--foreground);
   background: var(--destructive-soft);
   padding: 12px;
   border-radius: var(--r-sm);

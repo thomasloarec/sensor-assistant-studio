@@ -150,7 +150,7 @@ export function WorkspacePanel({
           ) : null}
           <div className="min-w-0 flex-1">
             <h2 className="t-title-l">{title}</h2>
-            {description ? <p className="t-caption mt-1">{description}</p> : null}
+            {description ? <p className="t-caption mt-1 hidden sm:block">{description}</p> : null}
           </div>
           <Button
             variant="ghost"
