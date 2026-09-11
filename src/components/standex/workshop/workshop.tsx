@@ -387,7 +387,29 @@ export default function MagneticWorkshop({
       const g = guidedSim.samples[Math.min(last, Math.round(s.t * last))]!;
       return { ...s, contact: (g.covered ? g.contact : "unknown") as Contact };
     });
-    return { ...raw, samples, unknown: raw.unknown || guidedSim.coverage !== "covered" };
+    // Les transitions et les comptages doivent découler des MÊMES échantillons
+    // que la scène et le verdict : sinon la chronologie affiche des
+    // ouvertures/fermetures issues du modèle pédagogique alors que le contact
+    // réel est indéterminé.
+    const transitions: typeof raw.transitions = [];
+    let closures = 0,
+      releases = 0;
+    for (let i = 1; i < samples.length; i++) {
+      const prev = samples[i - 1]!,
+        cur = samples[i]!;
+      if (cur.contact === prev.contact) continue;
+      transitions.push({ t: cur.t, contact: cur.contact, distance: cur.distance });
+      if (prev.contact === "open" && cur.contact === "closed") closures++;
+      if (prev.contact === "closed" && cur.contact === "open") releases++;
+    }
+    return {
+      ...raw,
+      samples,
+      transitions,
+      closures,
+      releases,
+      unknown: raw.unknown || guidedSim.coverage !== "covered",
+    };
   }, [config, guidedSim]);
   const sample =
     result.samples[
@@ -491,19 +513,23 @@ export default function MagneticWorkshop({
     }
     if (fileRef.current) fileRef.current.value = "";
   }
+  // Hors couverture, le résumé reprend mot pour mot le message du moteur :
+  // aucune reformulation locale ne doit s'y substituer.
   const statusMessage =
-    result.reason ??
-    (unknown
-      ? t("Une partie du parcours ne peut pas être déterminée avec ces paramètres.")
-      : result.closures === 0
-        ? t(
-            "Aucun nouvel enclenchement sur ce cycle. Essayez une autre position ou rapprochez l'aimant.",
-          )
-        : result.closures > 1
-          ? t(
-              "Plusieurs enclenchements sur un aller-retour. Vérifiez s'ils correspondent au comportement recherché.",
-            )
-          : t("Un enclenchement et un retour à vérifier dans votre montage réel."));
+    guidedSim.coverage !== "covered" && guided.computed
+      ? t(guided.computed.mainMessage)
+      : (result.reason ??
+        (unknown
+          ? t("Une partie du parcours ne peut pas être déterminée avec ces paramètres.")
+          : result.closures === 0
+            ? t(
+                "Aucun nouvel enclenchement sur ce cycle. Essayez une autre position ou rapprochez l'aimant.",
+              )
+            : result.closures > 1
+              ? t(
+                  "Plusieurs enclenchements sur un aller-retour. Vérifiez s'ils correspondent au comportement recherché.",
+                )
+              : t("Un enclenchement et un retour à vérifier dans votre montage réel.")));
 
   return (
     <main className="mw immersive" aria-label={t("Atelier magnétique")}>
@@ -1683,16 +1709,11 @@ export default function MagneticWorkshop({
                 )}
               </h2>
               <p>{t(statusMessage)}</p>
-              {unknown && (
-                <button
-                  className="mw-button mw-secondary"
-                  onClick={() => update({ mode: "education", initialContact: "open" })}
-                >
-                  {t("Animer avec des distances fictives")}
-                </button>
-              )}
+              {/* Aucune pastille d'activation quand le contact reste
+                  indéterminé sur tout le parcours : les transitions viennent
+                  des mêmes échantillons que la scène. */}
               <div className="mw-event-chips">
-                {result.transitions
+                {(result.samples.every((s) => s.contact === "unknown") ? [] : result.transitions)
                   .filter((s) => s.contact !== "unknown")
                   .slice(0, 6)
                   .map((s, i) => (
