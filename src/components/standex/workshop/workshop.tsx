@@ -527,7 +527,7 @@ export default function MagneticWorkshop({
       <div className="mw-intro">
         <div>
           <p className="mw-eyebrow">{t("Comprendre avant d'intégrer")}</p>
-          <h1>{t("Votre montage, en mouvement.")}</h1>
+          <h1>{t("Est-ce que la détection va se faire dans mon montage ?")}</h1>
           <p>{t("Placez le capteur et l'aimant. Observez quand le contact change d'état.")}</p>
         </div>
         <div className="mw-intro-actions">

@@ -2992,7 +2992,7 @@ export function DesignSpace({
     <div className="space-y-3">
       <p className="text-base text-muted-foreground">
         {t(
-          "Modèle physique explicitement pédagogique : aucune validation magnétique automatique. L'exemple machine à café est un exemple, il n'impose aucune référence à votre projet.",
+          "Cet atelier répond à une seule question : est-ce que la détection va se faire dans votre montage ? Seules les distances publiées sont utilisées, et l'exemple machine à café n'impose aucune référence à votre projet.",
         )}
       </p>
       {draftBanner}
@@ -3600,7 +3600,7 @@ export function DesignSpace({
         onOpenChange={(o) => setPanel(o ? "atelier" : null)}
         title={t("Atelier 3D")}
         description={t(
-          "Vos réglages restent en mémoire même si vous refermez ce panneau. Enregistrer reste une action explicite.",
+          "Quatre étapes : le couple capteur-aimant, la position, la simulation du mouvement, le câble. Vos réglages restent en mémoire même si vous refermez ce panneau.",
         )}
       >
         {workshopMounted ? workshopSection : null}
