@@ -29,8 +29,11 @@ import { DEFAULT_WORKSHOP, parseWorkshopConfig } from "@/lib/standex/magnetic-wo
 const base = () => mountingFromWorkshop({ ...DEFAULT_WORKSHOP });
 
 describe("profils de montage", () => {
-  it("n'expose que les couples réellement publiés, alias contrôlé", () => {
-    expect(profileFor("MK03", "4003004003", "D1")?.magnetId).toBe("M02");
+  it("n'expose que les couples réellement publiés, sans alias d'identité", () => {
+    // 4003004003 (cylindre) et M02 (boîtier) sont deux lignes distinctes du
+    // registre : aucun repli de l'un sur l'autre.
+    expect(profileFor("MK03", "4003004003", "D1")?.magnetId).toBe("4003004003");
+    expect(profileFor("MK03", "M02", "D1")?.magnetId).toBe("M02");
     expect(profileFor("MK03", "M02", "D3")?.approachId).toBe("D3");
     expect(profileFor("MK03", "aimant-inventé", "D1")).toBeNull();
     expect(profileFor("MK24-A-J", "4003004003", "D1")).toBeNull();
@@ -322,6 +325,8 @@ describe("pont avec l'atelier existant", () => {
       magnetId: "4003004003",
       sensitivityClass: "B",
       approachId: "D1",
+      magnetization: DEFAULT_WORKSHOP.magnetization,
+      polarity: DEFAULT_WORKSHOP.polarity,
     });
     expect(m.travel).toEqual({ startGapMm: DEFAULT_WORKSHOP.start, endGapMm: DEFAULT_WORKSHOP.end });
     expect(m.attachment.frame).toBe("template");
@@ -335,8 +340,23 @@ describe("pont avec l'atelier existant", () => {
     const patch = workshopPatchFromMounting(applied.mounting, DEFAULT_WORKSHOP);
     const next = parseWorkshopConfig({ ...DEFAULT_WORKSHOP, ...patch });
     expect(next).not.toBeNull();
-    expect(next!.start).toBe(17.5);
-    expect(next!.end).toBe(15);
+    // La course déclarée est PRÉSERVÉE : appliquer une pose ne fabrique pas un cycle.
+    expect(next!.start).toBe(DEFAULT_WORKSHOP.start);
+    expect(next!.end).toBe(DEFAULT_WORKSHOP.end);
     expect(next!.magnetTilt).toBe(0);
+  });
+  it("ne reprend la course du gabarit que par une action séparée et explicite", () => {
+    const m = base();
+    const s = suggestPose(m);
+    if (!s.ok) throw new Error("suggestion attendue");
+    const explored = referenceTravelExploration(m, s.suggestion);
+    expect(explored.travel).toEqual({
+      startGapMm: s.suggestion.startGapMm,
+      endGapMm: s.suggestion.endGapMm,
+    });
+    // Besoin, environnement et mouvement restent ceux de l'utilisateur.
+    expect(explored.need).toEqual(m.need);
+    expect(explored.environment).toEqual(m.environment);
+    expect(explored.motion).toEqual(m.motion);
   });
 });
