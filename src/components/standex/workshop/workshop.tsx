@@ -1709,16 +1709,11 @@ export default function MagneticWorkshop({
                 )}
               </h2>
               <p>{t(statusMessage)}</p>
-              {unknown && (
-                <button
-                  className="mw-button mw-secondary"
-                  onClick={() => update({ mode: "education", initialContact: "open" })}
-                >
-                  {t("Animer avec des distances fictives")}
-                </button>
-              )}
+              {/* Aucune pastille d'activation quand le contact reste
+                  indéterminé sur tout le parcours : les transitions viennent
+                  des mêmes échantillons que la scène. */}
               <div className="mw-event-chips">
-                {result.transitions
+                {(result.samples.every((s) => s.contact === "unknown") ? [] : result.transitions)
                   .filter((s) => s.contact !== "unknown")
                   .slice(0, 6)
                   .map((s, i) => (
