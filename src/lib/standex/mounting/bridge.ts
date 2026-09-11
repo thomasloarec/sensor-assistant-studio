@@ -171,6 +171,9 @@ export function workshopPatchFromMounting(
   return {
     ...couple,
     lateralShift: shift,
+    // Fidèle au contrat : la course déclarée est recopiée telle quelle, jamais arrondie.
+    start: m.travel.startGapMm,
+    end: m.travel.endGapMm,
     magnetAngle: current.sensorAngle - m.relative.rotationDeg[1],
     magnetTilt: m.relative.rotationDeg[2],
     mountX: m.anchor.positionMm[0],
