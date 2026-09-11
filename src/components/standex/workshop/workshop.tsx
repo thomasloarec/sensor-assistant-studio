@@ -203,6 +203,37 @@ export default function MagneticWorkshop({
   /** Lecture « montage guidé » recalculée à chaque changement d'entrée : un verdict
    * n'est jamais conservé ni importé, il est toujours recalculé ici. */
   const guided = useGuidedMounting(config);
+  /** Prévisualisation de pose : état séparé, jamais écrit dans la configuration.
+   * Une proposition devenue obsolète (autres entrées modifiées) est abandonnée. */
+  const [preview, setPreview] = useState<GuidedMounting | null>(null);
+  const ghost = useMemo(() => {
+    if (!preview) return null;
+    const size = magnetSize(config);
+    const axis = preview.relative.positionMm.map((v) =>
+      Math.abs(v) > 0 ? Math.sign(v) : 0,
+    ) as Vec3;
+    return machine
+      ? {
+          positionMm: magnetWorldPosition(preview, preview.relative),
+          rotationDeg: composeRotations(preview.anchor.rotationDeg, preview.relative.rotationDeg),
+          axis,
+          sizeMm: size,
+          gapMm: Math.hypot(...preview.relative.positionMm),
+          originMm: preview.anchor.positionMm,
+        }
+      : {
+          positionMm: preview.relative.positionMm,
+          rotationDeg: preview.relative.rotationDeg,
+          axis,
+          sizeMm: size,
+          gapMm: Math.hypot(...preview.relative.positionMm),
+          originMm: [0, 0, 0] as Vec3,
+        };
+  }, [preview, config, machine]);
+  useEffect(() => {
+    // La proposition ne survit pas à un changement d'entrée ni de contexte.
+    setPreview(null);
+  }, [config.sensorId, config.magnetModel, config.sensitivity, config.geometry, config.mode, step]);
   useEffect(() => {
     let cancelled = false,
       loaded: MachineAsset | null = null;
@@ -729,7 +760,12 @@ export default function MagneticWorkshop({
                 {step === 1 && (
                   <>
                     <h2>{t("Positionnez l'aimant dans votre montage")}</h2>
-                    <GuidedSuggestion config={config} update={update} replace={setConfig} />
+                    <GuidedSuggestion
+                      config={config}
+                      update={update}
+                      preview={preview}
+                      onPreview={setPreview}
+                    />
                     <div className="mw-product">
                       <span className="mw-product-icon">
                         <Magnet size={25} />
@@ -1007,8 +1043,6 @@ export default function MagneticWorkshop({
                           magnetAngle: config.sensorAngle,
                           magnetTilt: 0,
                           lateralShift: 0,
-                          ferromagnetic: false,
-                          temperature: "ambient",
                         })
                       }
                     />
@@ -1220,6 +1254,7 @@ export default function MagneticWorkshop({
                         onMeasure={setMeasure}
                         onPlaced={() => setTool("navigate")}
                         onContextLost={failed3d}
+                        ghost={ghost}
                         routing={
                           cableRouting
                             ? {
@@ -1283,6 +1318,7 @@ export default function MagneticWorkshop({
                       dimensions={dimensions}
                       focus={focus}
                       reduced={reduced}
+                      ghost={ghost}
                     />
                   </Suspense>
                 </SceneBoundary>
