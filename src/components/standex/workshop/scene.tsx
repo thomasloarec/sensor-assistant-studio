@@ -637,14 +637,19 @@ export interface GhostPose {
 }
 /** Aimant fantôme, axe de référence et cote. Aucun effet sur la configuration. */
 export function GhostMagnet({ ghost }: { ghost: GhostPose }) {
-  const end: Vec3 = [
-    ghost.originMm[0] + ghost.axis[0] * ghost.gapMm,
-    ghost.originMm[1] + ghost.axis[1] * ghost.gapMm,
-    ghost.originMm[2] + ghost.axis[2] * ghost.gapMm,
-  ];
+  // Les deux points sont déjà exprimés dans le repère monde : on relie
+  // directement l'origine à la pose fantôme, sans reconstruire un axe qui
+  // n'est pas tourné par l'ancrage en mode importé.
   return (
     <group>
-      <Line points={[ghost.originMm, end]} color="#7a5cc4" lineWidth={2} dashed dashSize={1.2} gapSize={0.9} />
+      <Line
+        points={[ghost.originMm, ghost.positionMm]}
+        color="#7a5cc4"
+        lineWidth={2}
+        dashed
+        dashSize={1.2}
+        gapSize={0.9}
+      />
       <group
         position={ghost.positionMm}
         rotation={[
@@ -658,7 +663,7 @@ export function GhostMagnet({ ghost }: { ghost: GhostPose }) {
           <meshStandardMaterial color="#7a5cc4" transparent opacity={0.35} depthWrite={false} />
         </mesh>
         <Label position={[0, ghost.sizeMm[1] / 2 + 3, 0]} className="mw-ghost-label">
-          {t("Position suggérée")} · {t(String(Math.round(ghost.gapMm * 10) / 10))} mm
+          {t("Distance entre centres")} · {t(String(Math.round(ghost.gapMm * 10) / 10))} mm
         </Label>
       </group>
     </group>
