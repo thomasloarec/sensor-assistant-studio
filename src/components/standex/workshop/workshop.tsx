@@ -700,6 +700,39 @@ export default function MagneticWorkshop({
                         </select>
                       </label>
                     )}
+                    <div className="mw-product">
+                      <span className="mw-product-icon">
+                        <Magnet size={25} />
+                      </span>
+                      <div>
+                        <strong>
+                          {pairedMagnetModel(config.magnetModel)?.name ?? t("Aimant fictif")}
+                        </strong>
+                        <span>
+                          {t(
+                            reference
+                              ? result.reason
+                                ? "Montage à caractériser"
+                                : "Actionneur de la table de référence"
+                              : "Modèle idéal de dipôle dans l'air",
+                          )}
+                        </span>
+                      </div>
+                    </div>
+                    <label className="mw-select-label">
+                      {t("Aimant")}
+                      <select
+                        value={config.magnetModel}
+                        onChange={(e) => update({ magnetModel: e.target.value })}
+                      >
+                        <option value="generic">{t("Aimant fictif")}</option>
+                        {[...PACKAGED_MAGNET_IDS, ...BARE_MAGNETS.map((m) => m.id)].map((id) => (
+                          <option key={id} value={id}>
+                            {pairedMagnetModel(id)?.name}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
                     <Range
                       label={t("Orientation sur la machine")}
                       value={config.mountAngle}
