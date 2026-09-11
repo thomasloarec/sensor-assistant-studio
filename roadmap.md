@@ -21,6 +21,13 @@ Revue indépendante des commits 9ad1e2b puis 5dd93f6. État réel au dernier pas
       l'enregistrement, à l'import et dans le DTO client ; le rapport anglais porte verdict, couverture, limites,
       besoin et câble. Aucun verdict importé n'est cru.
 - [x] 10. Libellés : codes traduits, couverture stricte, fenêtres exactes.
-- [x] Vérifications : 546 tests / 59 971 assertions, types, build, scans AGENTS, inventaire i18n. Aucune migration,
+- [x] 11. Déplacement RIGIDE : une rotation du couple emmène la trajectoire du modèle importé (course tournée,
+      pivot déplacé, axe non représentable laissé inchangé) ; entrefers et verdict invariants à u=0 et u=0.37.
+- [x] 12. Navigation des quatre étapes : liste verticale compacte dès que la colonne des réglages passe sous 460 px
+      (requête de conteneur, pas de largeur de fenêtre). Vérifié à 1905 px (colonne 320 px) et 390 px : quatre
+      cibles de 44 px, aucun chevauchement, aucune erreur console.
+- [x] 13. Rédaction : titre de l'atelier, bandeau et description du panneau alignés sur la question de détection,
+      sept traductions chacun.
+- [x] Vérifications : 573 tests / 60 210 assertions, types, build, scans AGENTS, inventaire i18n. Aucune migration,
       aucune donnée réelle, aucune publication.
 - [ ] QA navigateur authentifiée : impossible dans ce bac à sable (aucune session disponible).
