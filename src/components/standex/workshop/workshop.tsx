@@ -387,7 +387,29 @@ export default function MagneticWorkshop({
       const g = guidedSim.samples[Math.min(last, Math.round(s.t * last))]!;
       return { ...s, contact: (g.covered ? g.contact : "unknown") as Contact };
     });
-    return { ...raw, samples, unknown: raw.unknown || guidedSim.coverage !== "covered" };
+    // Les transitions et les comptages doivent découler des MÊMES échantillons
+    // que la scène et le verdict : sinon la chronologie affiche des
+    // ouvertures/fermetures issues du modèle pédagogique alors que le contact
+    // réel est indéterminé.
+    const transitions: typeof raw.transitions = [];
+    let closures = 0,
+      releases = 0;
+    for (let i = 1; i < samples.length; i++) {
+      const prev = samples[i - 1]!,
+        cur = samples[i]!;
+      if (cur.contact === prev.contact) continue;
+      transitions.push({ t: cur.t, contact: cur.contact, distance: cur.distance });
+      if (prev.contact === "open" && cur.contact === "closed") closures++;
+      if (prev.contact === "closed" && cur.contact === "open") releases++;
+    }
+    return {
+      ...raw,
+      samples,
+      transitions,
+      closures,
+      releases,
+      unknown: raw.unknown || guidedSim.coverage !== "covered",
+    };
   }, [config, guidedSim]);
   const sample =
     result.samples[
