@@ -35,6 +35,8 @@ const EVIDENCE_LABEL = {
 /** Chaque code émis par le moteur a ici une phrase lisible : aucun code brut à l'écran. */
 const REASON_LABEL: Record<string, string> = {
   NO_PROFILE: "Ce couple capteur–aimant n'a pas de table publiée.",
+  APPROACH_NOT_LOCATED:
+    "Cette approche est documentée en distances, mais sa trajectoire n'est pas définie.",
   SOURCE_NOT_QUALIFIED: "La source de ce couple n'est pas encore qualifiée pour le calcul.",
   CLASS_NOT_PUBLISHED: "Cette classe de sensibilité n'est pas publiée.",
   CUSTOM_MODEL_NOT_CHARACTERISED: "Votre modèle importé n'est pas caractérisé.",
