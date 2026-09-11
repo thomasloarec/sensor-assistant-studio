@@ -776,6 +776,7 @@ export default function MagneticWorkshop({
                       preview={preview}
                       onPreview={setPreview}
                     />
+                    {/* L'aimant se choisit à l'étape 1 : ici il est rappelé en lecture. */}
                     <div className="mw-product">
                       <span className="mw-product-icon">
                         <Magnet size={25} />
@@ -795,20 +796,9 @@ export default function MagneticWorkshop({
                         </span>
                       </div>
                     </div>
-                    <label className="mw-select-label">
-                      {t("Aimant")}
-                      <select
-                        value={config.magnetModel}
-                        onChange={(e) => update({ magnetModel: e.target.value })}
-                      >
-                        <option value="generic">{t("Aimant fictif")}</option>
-                        {[...PACKAGED_MAGNET_IDS, ...BARE_MAGNETS.map((m) => m.id)].map((id) => (
-                          <option key={id} value={id}>
-                            {pairedMagnetModel(id)?.name}
-                          </option>
-                        ))}
-                      </select>
-                    </label>
+                    <p className="mw-help">
+                      {t("Aimant choisi à l'étape « Choisir le couple ». Revenez-y pour en changer.")}
+                    </p>
                     <label className="mw-select-label">
                       {t("Approche du capteur")}
                       <select
