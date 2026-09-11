@@ -632,7 +632,7 @@ export default function MagneticWorkshop({
                   les mêmes pour l'espace vide et pour un modèle importé. */}
               <nav className="mw-steps" aria-label={t("Étapes du montage")}>
                 {[
-                  t("Choisir le capteur"),
+                  t("Choisir le couple"),
                   t("Positionner l'aimant"),
                   t("Simuler le mouvement"),
                   t("Définir le câble"),
