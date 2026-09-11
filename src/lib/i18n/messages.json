@@ -21985,5 +21985,50 @@
     "Движение задаётся вашим файлом: настройте его на предыдущем шаге вместе с креплениями, подвижным узлом и ходом.",
     "Il movimento proviene dal suo file: si imposta nel passaggio precedente, insieme ai fissaggi, al nodo mobile e alla corsa.",
     "動きはファイルから来ます。前のステップで、取り付け・可動ノード・ストロークとあわせて設定します。"
+  ],
+  "Vérifiez la détection dans votre montage.": [
+    "Check detection in your assembly.",
+    "验证您装配中的检测。",
+    "Prüfen Sie die Erkennung in Ihrem Aufbau.",
+    "Compruebe la detección en su montaje.",
+    "Проверьте срабатывание в вашей сборке.",
+    "Verifichi il rilevamento nel suo montaggio.",
+    "ご自身の取り付けで検出を確認しましょう。"
+  ],
+  "Choisissez un couple capteur–aimant, placez-le comme dans votre machine, observez le comportement à partir des distances publiées. Ce que le registre ne documente pas est signalé comme tel.": [
+    "Choose a sensor–magnet pair, position it as in your machine, and observe the behaviour based on published distances. Anything the registry does not document is flagged as such.",
+    "选择一组传感器与磁体，按您机器中的方式放置，并依据已发布距离观察其行为。登记表未记载的内容会被明确标示。",
+    "Wählen Sie ein Sensor-Magnet-Paar, positionieren Sie es wie in Ihrer Maschine und beobachten Sie das Verhalten anhand veröffentlichter Abstände. Was das Register nicht dokumentiert, wird als solches gekennzeichnet.",
+    "Elija un par sensor–imán, colóquelo como en su máquina y observe el comportamiento a partir de las distancias publicadas. Lo que el registro no documenta se señala como tal.",
+    "Выберите пару датчик–магнит, разместите её как в вашей машине и наблюдайте поведение на основе опубликованных расстояний. То, что не задокументировано в реестре, отмечается явно.",
+    "Scelga una coppia sensore–magnete, la posizioni come nella sua macchina e osservi il comportamento in base alle distanze pubblicate. Ciò che il registro non documenta viene segnalato come tale.",
+    "センサーと磁石の組み合わせを選び、実機と同じように配置し、公表された距離に基づいて挙動を確認します。登録簿に記載のない事項は明示されます。"
+  ],
+  "Comprendre le principe de détection": [
+    "Understanding the detection principle",
+    "了解检测原理",
+    "Das Erkennungsprinzip verstehen",
+    "Comprender el principio de detección",
+    "Понять принцип обнаружения",
+    "Comprendere il principio di rilevamento",
+    "検出の原理を理解する"
+  ],
+  "2. Vous vérifiez votre montage": [
+    "2. You check your assembly",
+    "2. 您验证装配",
+    "2. Sie prüfen Ihren Aufbau",
+    "2. Usted comprueba su montaje",
+    "2. Вы проверяете сборку",
+    "2. Lei verifica il suo montaggio",
+    "2. 取り付けを確認します"
+  ],
+  "Une position vous est suggérée, le mouvement est simulé, les limites sont dites clairement, puis vous choisissez le câble. Rien n'est envoyé tant que vous ne le demandez pas.": [
+    "A position is suggested, the motion is simulated, the limits are stated plainly, then you choose the cable. Nothing is sent until you ask for it.",
+    "系统会建议一个位置，模拟运动，明确说明限制，然后由您选择线缆。在您提出要求之前不会发送任何内容。",
+    "Eine Position wird vorgeschlagen, die Bewegung simuliert, die Grenzen klar benannt, danach wählen Sie das Kabel. Es wird nichts gesendet, solange Sie es nicht verlangen.",
+    "Se le sugiere una posición, se simula el movimiento, se indican con claridad los límites y después elige el cable. No se envía nada hasta que usted lo pida.",
+    "Предлагается положение, движение моделируется, ограничения названы прямо, затем вы выбираете кабель. Ничего не отправляется, пока вы не попросите.",
+    "Le viene suggerita una posizione, il movimento è simulato, i limiti sono indicati chiaramente, poi sceglie il cavo. Nulla viene inviato finché non lo chiede.",
+    "位置が提案され、動きがシミュレートされ、限界が明確に示され、その後ケーブルを選びます。ご依頼があるまで何も送信されません。"
   ]
 }

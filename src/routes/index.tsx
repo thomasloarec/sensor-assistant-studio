@@ -124,11 +124,11 @@ function HomeRoute() {
                   <span className="standex-bar h-[14px] w-[6px] shrink-0" aria-hidden="true" />
                   {t("Détection magnétique")}
                 </p>
-                <h1 className="t-display-xl mt-5 max-w-[16ch] text-balance">
-                  {t("Donnez vie à votre détection.")}
+                <h1 className="t-display-xl mt-5 max-w-[18ch] text-balance">
+                  {t("Vérifiez la détection dans votre montage.")}
                 </h1>
                 <p className="t-body-l mt-7 max-w-[34rem] text-muted-foreground">
-                  {t("Détecter un mouvement, simplement. Un aimant passe, le capteur réagit. Dites-nous ce que vous voulez détecter : nous construisons la solution avec vous.")}
+                  {t("Choisissez un couple capteur–aimant, placez-le comme dans votre machine, observez le comportement à partir des distances publiées. Ce que le registre ne documente pas est signalé comme tel.")}
                 </p>
                 <div className="mt-10 flex flex-wrap items-center gap-4">
                   <Button size="lg" className="group" onClick={openWorkspace}>
@@ -150,7 +150,7 @@ function HomeRoute() {
 
               <section
                 id="aimant"
-                aria-label={t("Jouer avec l'aimant et le capteur")}
+                aria-label={t("Comprendre le principe de détection")}
                 className="anim-scale-in relative z-10 overflow-hidden rounded-[var(--r-2xl)] bg-[var(--surface)] shadow-[var(--e-4)] backdrop-blur-2xl lg:[animation-delay:260ms]"
               >
                 <MagnetPlay />
@@ -177,8 +177,8 @@ function HomeRoute() {
                 },
                 {
                   n: "02",
-                  t: t("2. Vous visualisez"),
-                  d: t("Un atelier 3D facultatif pour placer capteur, aimant et câble. Rien n'est envoyé tant que vous ne le demandez pas."),
+                  t: t("2. Vous vérifiez votre montage"),
+                  d: t("Une position vous est suggérée, le mouvement est simulé, les limites sont dites clairement, puis vous choisissez le câble. Rien n'est envoyé tant que vous ne le demandez pas."),
                 },
                 {
                   n: "03",
