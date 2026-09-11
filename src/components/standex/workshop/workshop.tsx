@@ -522,14 +522,14 @@ export default function MagneticWorkshop({
         (unknown
           ? t("Une partie du parcours ne peut pas être déterminée avec ces paramètres.")
           : result.closures === 0
-        ? t(
-            "Aucun nouvel enclenchement sur ce cycle. Essayez une autre position ou rapprochez l'aimant.",
-          )
-        : result.closures > 1
-          ? t(
-              "Plusieurs enclenchements sur un aller-retour. Vérifiez s'ils correspondent au comportement recherché.",
-            )
-          : t("Un enclenchement et un retour à vérifier dans votre montage réel."));
+            ? t(
+                "Aucun nouvel enclenchement sur ce cycle. Essayez une autre position ou rapprochez l'aimant.",
+              )
+            : result.closures > 1
+              ? t(
+                  "Plusieurs enclenchements sur un aller-retour. Vérifiez s'ils correspondent au comportement recherché.",
+                )
+              : t("Un enclenchement et un retour à vérifier dans votre montage réel.")));
 
   return (
     <main className="mw immersive" aria-label={t("Atelier magnétique")}>
