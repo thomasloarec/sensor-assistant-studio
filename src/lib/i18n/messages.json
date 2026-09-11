@@ -21931,5 +21931,23 @@
     "Проверить срабатывание в моей сборке",
     "Verificare il rilevamento nel mio montaggio",
     "自分の取り付けでの検出を確認する"
+  ],
+  "Distances publiées (documentation)": [
+    "Published distances (documentation)",
+    "已发布距离（文档）",
+    "Veröffentlichte Abstände (Dokumentation)",
+    "Distancias publicadas (documentación)",
+    "Опубликованные расстояния (документация)",
+    "Distanze pubblicate (documentazione)",
+    "公開距離（資料）"
+  ],
+  "Ces distances ne sont pas utilisées par le calcul : la trajectoire de cette approche n'est pas définie.": [
+    "These distances are not used by the calculation: the trajectory of this approach is not defined.",
+    "这些距离未用于计算：该接近方式的轨迹未定义。",
+    "Diese Abstände werden in der Berechnung nicht verwendet: Die Bahn dieser Annäherung ist nicht definiert.",
+    "Estas distancias no se utilizan en el cálculo: la trayectoria de esta aproximación no está definida.",
+    "Эти расстояния не используются в расчёте: траектория этого подхода не определена.",
+    "Queste distanze non sono usate nel calcolo: la traiettoria di questo avvicinamento non è definita.",
+    "これらの距離は計算に使用されません。このアプローチの軌道は定義されていません。"
   ]
 }
