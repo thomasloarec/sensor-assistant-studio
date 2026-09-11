@@ -174,6 +174,7 @@ import {
 } from "@/lib/leadmagnet/connector-library";
 import { routeSamples, SEARCH_LINK_DISCLAIMER } from "@/lib/leadmagnet/samples";
 import { DEFAULT_WORKSHOP } from "@/lib/standex/magnetic-workshop";
+import { mountingFromWorkshop, withComputed } from "@/lib/standex/mounting";
 import type { WorkshopConfig } from "@/lib/standex/magnetic-workshop";
 import { BrandLogo } from "@/components/standex/brand-logo";
 
@@ -2945,6 +2946,8 @@ export function DesignSpace({
     setDossier((d) => ({
       ...d,
       workshop: c,
+      // Contrat de montage guidé recalculé à l'enregistrement : jamais repris d'un import.
+      guidedMounting: withComputed(mountingFromWorkshop(c)),
       // Provenance explicite : un vrai import n'est jamais compté comme exemple.
       workshopSource: c.machine ? "user_asset" : "example",
       workshopAsset: c.machine
