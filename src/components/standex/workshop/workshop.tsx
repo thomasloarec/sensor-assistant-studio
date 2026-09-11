@@ -4,6 +4,12 @@ import { t, msg } from "@/lib/i18n/core";
 import { useLocale } from "@/lib/i18n/react";
 import { AppHeader } from "@/components/standex/app-header";
 import SensorCard from "./sensor-card";
+import {
+  GuidedSuggestion,
+  GuidedVerdict,
+  SensitivityComparison,
+  useGuidedMounting,
+} from "./guided-mounting";
 import StudioV2 from "./studio-v2";
 import type { StudioStudy } from "@/lib/standex/studio-dossier";
 import type { DesignFreeze } from "@/lib/standex/design-freeze";
@@ -194,6 +200,9 @@ export default function MagneticWorkshop({
     [showSpace, setShowSpace] = useState(true),
     [measure, setMeasure] = useState<number | null>(null);
   const machine = config.machine;
+  /** Lecture « montage guidé » recalculée à chaque changement d'entrée : un verdict
+   * n'est jamais conservé ni importé, il est toujours recalculé ici. */
+  const guided = useGuidedMounting(config);
   useEffect(() => {
     let cancelled = false,
       loaded: MachineAsset | null = null;
@@ -581,7 +590,12 @@ export default function MagneticWorkshop({
                 </p>
               </div>
               <nav className="mw-steps" aria-label={t("Étapes du montage")}>
-                {[t("Capteur"), "Aimant", "Mouvement"].map((s, i) => (
+                {[
+                  t("Choisir le capteur"),
+                  "Positionner l'aimant",
+                  "Simuler le mouvement",
+                  "Définir le câble",
+                ].map((s, i) => (
                   <button
                     key={s}
                     className={step === i ? "active" : ""}
@@ -698,6 +712,7 @@ export default function MagneticWorkshop({
                         </select>
                       </label>
                     </details>
+                    <SensitivityComparison config={config} />
                     {!reference && (
                       <Range
                         label={t("Orientation propre du reed")}
@@ -713,7 +728,8 @@ export default function MagneticWorkshop({
                 )}
                 {step === 1 && (
                   <>
-                    <h2>{t("Placez l'aimant")}</h2>
+                    <h2>{t("Positionnez l'aimant dans votre montage")}</h2>
+                    <GuidedSuggestion config={config} update={update} replace={setConfig} />
                     <div className="mw-product">
                       <span className="mw-product-icon">
                         <Magnet size={25} />
@@ -984,6 +1000,18 @@ export default function MagneticWorkshop({
                         </select>
                       </label>
                     </details>
+                    <GuidedVerdict
+                      mounting={guided}
+                      onFixCoverage={() =>
+                        update({
+                          magnetAngle: config.sensorAngle,
+                          magnetTilt: 0,
+                          lateralShift: 0,
+                          ferromagnetic: false,
+                          temperature: "ambient",
+                        })
+                      }
+                    />
                     <p className="mw-help">
                       {t(
                         "La lecture est ralentie pour comprendre le montage. Elle ne valide ni la cadence, ni les rebonds du contact.",
@@ -991,12 +1019,35 @@ export default function MagneticWorkshop({
                     </p>
                   </>
                 )}
+                {step === 3 && (
+                  <>
+                    <h2>{t("Définissez le câble nécessaire")}</h2>
+                    <p className="mw-help">
+                      {t(
+                        cableRouting
+                          ? "Pointez la sortie capteur, les points de passage puis le point de connexion dans la scène. La longueur mesure votre polyligne."
+                          : "Le configurateur de câble du dossier reprend ce montage : la longueur relevée ici y est reportée.",
+                      )}
+                    </p>
+                    {cableRouting && (
+                      <>
+                        <button
+                          className="mw-button mw-wide"
+                          aria-pressed={tool === "cable"}
+                          onClick={() => chooseTool(tool === "cable" ? "navigate" : "cable")}
+                        >
+                          {t(tool === "cable" ? "Arrêter le pointage" : "Pointer le câble dans la 3D")}
+                        </button>
+                        <p className="mw-help t-metric">{t(cableRouting.lengthLabel)}</p>
+                      </>
+                    )}
+                    <GuidedVerdict mounting={guided} />
+                  </>
+                )}
               </div>
               <div className="mw-step-footer">
-                <span>
-                  {t("Étape")} {t(step + 1)} {t("sur 3")}
-                </span>
-                {step < 2 ? (
+                <span>{msg("Étape {0} sur {1}", [step + 1, 4])}</span>
+                {step < 3 ? (
                   <button onClick={() => setStep(step + 1)}>
                     {t("Continuer")}
                     <ArrowRight size={16} />
