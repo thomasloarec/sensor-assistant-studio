@@ -1,11 +1,19 @@
-import { DEFAULT_WORKSHOP } from "@/lib/standex/magnetic-workshop";
+import { DEFAULT_WORKSHOP, COFFEE_ASSEMBLY } from "@/lib/standex/magnetic-workshop";
 import { mountingFromWorkshop, computeMounting, moveCouple, workshopPatchFromMounting } from "@/lib/standex/mounting";
-const base = mountingFromWorkshop({...DEFAULT_WORKSHOP});
-console.log("base", computeMounting(base).coverage, computeMounting(base).verdict);
-const m45 = mountingFromWorkshop({...DEFAULT_WORKSHOP, mountAngle:45});
-const c45 = computeMounting(m45);
-console.log("mountAngle45", c45.coverage, c45.reasons, JSON.stringify(m45.anchor), m45.motion);
-const rot = moveCouple(base, { rotationDeg:[0,30,0] });
-console.log("rigid rot", computeMounting(rot).coverage, JSON.stringify(rot.anchor), rot.motion.sensorYawDeg, JSON.stringify(rot.relative));
-const tr = moveCouple(base, { translationMm:[7,0,3] });
-console.log("rigid tr", computeMounting(tr).coverage);
+const c = {...DEFAULT_WORKSHOP, mode:"education" as const, machine: structuredClone(COFFEE_ASSEMBLY)};
+const m = mountingFromWorkshop(c);
+console.log("machine base", computeMounting(m).coverage, m.travel);
+for (const mv of [{translationMm:[5,0,0] as [number,number,number]}, {rotationDeg:[0,30,0] as [number,number,number]}, {translationMm:[2,3,4] as [number,number,number], rotationDeg:[0,45,0] as [number,number,number]}]) {
+  const moved = moveCouple(m, mv as never);
+  const n = {...c, ...workshopPatchFromMounting(moved, c)};
+  const back = mountingFromWorkshop(n);
+  console.log(JSON.stringify(mv), "travel", JSON.stringify(back.travel), "vs moved", JSON.stringify(moved.travel), "cov", computeMounting(back).coverage);
+}
+// empty space rigid
+const e = mountingFromWorkshop({...DEFAULT_WORKSHOP});
+for (const mv of [{rotationDeg:[0,45,0] as [number,number,number]}, {translationMm:[10,0,0] as [number,number,number]}]) {
+  const moved = moveCouple(e, mv as never);
+  const n = {...DEFAULT_WORKSHOP, ...workshopPatchFromMounting(moved, DEFAULT_WORKSHOP)};
+  const back = mountingFromWorkshop(n);
+  console.log("empty", JSON.stringify(mv), JSON.stringify(back.travel), JSON.stringify(moved.travel), computeMounting(back).coverage, back.motion.sensorYawDeg, JSON.stringify(back.anchor));
+}
