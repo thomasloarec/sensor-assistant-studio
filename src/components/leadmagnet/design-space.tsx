@@ -2421,7 +2421,7 @@ export function DesignSpace({
 
       <div className="panel-block">
         <div className="flex flex-wrap items-center gap-3">
-          <Label className="text-base font-medium">{t("Vérifier la détection dans mon montage")}</Label>
+          <Label className="text-base font-medium">{t("Atelier 3D (facultatif)")}</Label>
           {/* En mode guidé, « Placer en 3D » ci-dessus ouvre déjà l'atelier :
                     pas de second bouton pour la même action. */}
           {showAdvanced ? (
