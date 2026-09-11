@@ -1522,12 +1522,12 @@ export default function MagneticWorkshop({
                     <i className="open" />
                     {t("Ouvert")}
                   </span>
-                  {reference && (
-                    <span>
-                      <i className="unknown" />
-                      {t("Indéterminé")}
-                    </span>
-                  )}
+                  {/* L'état inconnu existe dans tous les modes, y compris avec un
+                      modèle importé : la légende doit toujours le nommer. */}
+                  <span>
+                    <i className="unknown" />
+                    {t("Indéterminé")}
+                  </span>
                   {!machine && (
                     <span>
                       <i className="target" />
