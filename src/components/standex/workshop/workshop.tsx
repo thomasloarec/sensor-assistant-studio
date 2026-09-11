@@ -11,7 +11,7 @@ import {
   useGuidedMounting,
 } from "./guided-mounting";
 import StudioV2 from "./studio-v2";
-import { composeRotations, magnetWorldPosition } from "@/lib/standex/mounting";
+import { composeRotations, magnetWorldPosition, simulateMounting } from "@/lib/standex/mounting";
 import type { GuidedMounting } from "@/lib/standex/mounting";
 import type { StudioStudy } from "@/lib/standex/studio-dossier";
 import type { DesignFreeze } from "@/lib/standex/design-freeze";
@@ -374,7 +374,22 @@ export default function MagneticWorkshop({
     [error, setError] = useState<string | null>(null);
   const [importNotice, setImportNotice] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
-  const result = useMemo(() => simulateCycle(config), [config]);
+  /** Résultat affiché : en mode référence, l'état de contact vient du MÊME moteur
+   * de couverture que le verdict. Hors couverture, la scène, la chronologie et
+   * l'indicateur affichent « inconnu » : jamais de vert par une autre source.
+   * En mode pédagogique, les distances sont explicitement fictives et le verdict
+   * reste indéterminé : la scène garde alors son animation d'illustration. */
+  const guidedSim = useMemo(() => simulateMounting(guided), [guided]);
+  const result = useMemo(() => {
+    const raw = simulateCycle(config);
+    if (config.mode !== "reference") return raw;
+    const last = guidedSim.samples.length - 1;
+    const samples = raw.samples.map((s) => {
+      const g = guidedSim.samples[Math.min(last, Math.round(s.t * last))]!;
+      return { ...s, contact: (g.covered ? g.contact : "unknown") as Contact };
+    });
+    return { ...raw, samples, unknown: raw.unknown || guidedSim.coverage !== "covered" };
+  }, [config, guidedSim]);
   const sample =
     result.samples[
       Math.min(result.samples.length - 1, Math.round(progress * (result.samples.length - 1)))
@@ -400,7 +415,8 @@ export default function MagneticWorkshop({
       (s.contact === "closed") !==
         (s.t * 100 >= config.targetStart && s.t * 100 <= config.targetEnd),
   );
-  const targetMet = !machine && !unknown && mismatches.length <= 3;
+  // Le besoin n'est réputé tenu que si le moteur de couverture le dit lui-même.
+  const targetMet = guided.computed?.verdict === "expected";
 
   useEffect(() => {
     if (!playing) return;
