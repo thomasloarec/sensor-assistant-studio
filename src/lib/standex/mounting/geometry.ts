@@ -21,6 +21,51 @@ export function unrotate(v: Vec3, degrees: Vec3): Vec3 {
   const [a, b, c] = degrees;
   return rotate(rotate(rotate(v, [-a!, 0, 0]), [0, -b!, 0]), [0, 0, -c!]);
 }
+/** Matrice colonne-par-colonne des trois rotations, dans l'ordre XYZ de `rotate`. */
+export type Mat3 = [Vec3, Vec3, Vec3];
+export function matFromEuler(degrees: Vec3): Mat3 {
+  return [
+    rotate([1, 0, 0], degrees),
+    rotate([0, 1, 0], degrees),
+    rotate([0, 0, 1], degrees),
+  ];
+}
+export const applyMat = (m: Mat3, v: Vec3): Vec3 => [
+  m[0][0] * v[0] + m[1][0] * v[1] + m[2][0] * v[2],
+  m[0][1] * v[0] + m[1][1] * v[1] + m[2][1] * v[2],
+  m[0][2] * v[0] + m[1][2] * v[1] + m[2][2] * v[2],
+];
+export const matTranspose = (m: Mat3): Mat3 => [
+  [m[0][0], m[1][0], m[2][0]],
+  [m[0][1], m[1][1], m[2][1]],
+  [m[0][2], m[1][2], m[2][2]],
+];
+export const matMul = (a: Mat3, b: Mat3): Mat3 => [
+  applyMat(a, b[0]),
+  applyMat(a, b[1]),
+  applyMat(a, b[2]),
+];
+const deg = (r: number) => (r * 180) / Math.PI;
+/** Angles XYZ d'une matrice de rotation, réciproques exacts de `matFromEuler`. */
+export function eulerFromMat(m: Mat3): Vec3 {
+  const r02 = m[2][0],
+    r00 = m[0][0],
+    r01 = m[1][0],
+    r12 = m[2][1],
+    r22 = m[2][2],
+    r21 = m[1][2],
+    r11 = m[1][1];
+  const y = Math.asin(Math.max(-1, Math.min(1, r02)));
+  if (Math.abs(r02) < 1 - 1e-9)
+    return [deg(Math.atan2(-r12, r22)), deg(y), deg(Math.atan2(-r01, r00))];
+  return [deg(Math.atan2(r21, r11)), deg(y), 0];
+}
+/** Rotation composée : d'abord `inner`, puis `outer`. */
+export const composeRotations = (outer: Vec3, inner: Vec3): Vec3 =>
+  eulerFromMat(matMul(matFromEuler(outer), matFromEuler(inner)));
+/** Rotation de `target` exprimée dans le repère de `frame`. */
+export const relativeRotation = (frame: Vec3, target: Vec3): Vec3 =>
+  eulerFromMat(matMul(matTranspose(matFromEuler(frame)), matFromEuler(target)));
 /** Local point of an anchored frame expressed in the parent (world or model) frame. */
 export const toWorldPoint = (anchor: Pose, local: Vec3): Vec3 =>
   add(anchor.positionMm, rotate(local, anchor.rotationDeg));

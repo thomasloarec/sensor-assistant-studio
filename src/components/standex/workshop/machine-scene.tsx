@@ -20,7 +20,8 @@ import type { MachineAssembly } from "@/lib/standex/machine-assembly";
 import { movingRotation, openingAt, scale, componentPose } from "@/lib/standex/machine-assembly";
 import type { CycleSample, WorkshopConfig, Vec3 } from "@/lib/standex/magnetic-workshop";
 import { sensorById, sizeLabel } from "@/lib/standex/sensor-catalog";
-import { Body, Contacts, Magnet, CameraRig, ContextGuard } from "./scene";
+import { Body, Contacts, Magnet, CameraRig, ContextGuard, GhostMagnet } from "./scene";
+import type { GhostPose } from "./scene";
 
 export type MachineTool = "navigate" | "sensor" | "magnet" | "measure" | "cable";
 
@@ -120,6 +121,7 @@ function Assembly({
   onMeasure,
   onPlaced,
   routing,
+  ghost,
 }: {
   asset: MachineAsset;
   config: WorkshopConfig;
@@ -134,6 +136,8 @@ function Assembly({
   onMeasure: (distance: number | null) => void;
   onPlaced: () => void;
   routing?: CableRouting | undefined;
+  /** Prévisualisation seule, exprimée dans le repère du modèle importé. */
+  ghost?: GhostPose | null | undefined;
 }) {
   const machine = config.machine!,
     model = sensorById(config.sensorId),
@@ -295,6 +299,7 @@ function Assembly({
           </Html>
         </>
       )}
+      {ghost && <GhostMagnet ghost={ghost} />}
       {routing && routing.points.length > 0 && <CableOverlay routing={routing} />}
     </>
   );
@@ -317,6 +322,7 @@ export default function MachineScene({
   onPlaced,
   onContextLost,
   routing,
+  ghost,
 }: {
   asset: MachineAsset;
   config: WorkshopConfig;
@@ -336,6 +342,8 @@ export default function MachineScene({
   onContextLost: () => void;
   /** Absent = comportement d'origine, aucun tracé de câble. */
   routing?: CableRouting | undefined;
+  /** Prévisualisation seule : jamais enregistrée dans le montage. */
+  ghost?: GhostPose | null | undefined;
 }) {
   const m = config.machine!,
     extent = Math.max(...asset.size),
@@ -378,6 +386,7 @@ export default function MachineScene({
         onMeasure={onMeasure}
         onPlaced={onPlaced}
         routing={routing}
+        ghost={ghost}
       />
 
       <OrbitControls

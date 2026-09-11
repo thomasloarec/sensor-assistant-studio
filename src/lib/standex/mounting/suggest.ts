@@ -3,7 +3,7 @@ import type { MountingProfile } from "./profiles";
 import type { GuidedMounting } from "./contract";
 import { withComputed } from "./simulate";
 import { centreOffsetMm } from "./simulate";
-import { add, bodiesCollide, scale, toWorldPoint } from "./geometry";
+import { add, bodiesCollide, composeRotations, scale, toWorldPoint } from "./geometry";
 import type { Pose, Vec3 } from "./geometry";
 
 export interface MountingSuggestion {
@@ -64,7 +64,11 @@ export function suggestPose(
     },
   };
 }
-/** Prévisualisation : le montage retourné n'est pas appliqué tant que l'appelant garde l'original. */
+/**
+ * Prévisualisation : seule la pose de l'aimant change. La course, le besoin,
+ * le mouvement et l'environnement déclarés sont conservés tels quels ; rien
+ * n'est enregistré tant que l'appelant garde l'original.
+ */
 export function previewSuggestion(
   m: GuidedMounting,
   suggestion: MountingSuggestion,
@@ -78,8 +82,22 @@ export function previewSuggestion(
         positionMm: [...suggestion.relative.positionMm] as Vec3,
         rotationDeg: [...suggestion.relative.rotationDeg] as Vec3,
       },
-      travel: { startGapMm: suggestion.startGapMm, endGapMm: suggestion.endGapMm },
     },
+    profiles,
+  );
+}
+/**
+ * Exploration de référence, action SÉPARÉE et explicite : elle propose la course
+ * du gabarit publié. Elle n'est jamais mélangée à l'application d'une pose et ne
+ * s'applique que si l'utilisateur la demande, en connaissance de cause.
+ */
+export function referenceTravelExploration(
+  m: GuidedMounting,
+  suggestion: MountingSuggestion,
+  profiles?: MountingProfile[],
+): GuidedMounting {
+  return withComputed(
+    { ...m, travel: { startGapMm: suggestion.startGapMm, endGapMm: suggestion.endGapMm } },
     profiles,
   );
 }
@@ -105,7 +123,8 @@ export function moveCouple(
     ...m,
     anchor: {
       positionMm: add(m.anchor.positionMm, translation),
-      rotationDeg: m.anchor.rotationDeg.map((a, i) => a + rotation[i]!) as Vec3,
+      // Composition réelle des rotations : une addition d'angles serait fausse sur trois axes.
+      rotationDeg: composeRotations(rotation, m.anchor.rotationDeg),
     },
     // `relative` volontairement inchangé : la pose relative est l'invariant du couple.
     computed: m.computed,

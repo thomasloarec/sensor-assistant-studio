@@ -62,18 +62,34 @@ export interface MountingSimulation {
   pullInMm: number | null;
   dropOutMm: number | null;
 }
+/**
+ * Epsilon purement numérique : il sert à comparer deux nombres flottants qui
+ * devraient être mathématiquement égaux au gabarit exact. Ce n'est PAS une
+ * tolérance physique qualifiée : aucun écart de montage n'est déclaré
+ * acceptable tant que les datums ne sont pas caractérisés.
+ */
+export const NUMERIC_EPSILON = 1e-9;
 /** Raisons globales : elles ne dépendent pas de l'instant du cycle. */
 export function globalReasons(m: GuidedMounting, profile: MountingProfile | null): string[] {
   const reasons: string[] = [];
   if (!profile) reasons.push("NO_PROFILE");
+  else if (profile.evidence !== "published_typical") reasons.push("SOURCE_NOT_QUALIFIED");
   else if (!profile.classes.includes(m.couple.sensitivityClass)) reasons.push("CLASS_NOT_PUBLISHED");
   if (m.attachment.frame === "custom_model") reasons.push("CUSTOM_MODEL_NOT_CHARACTERISED");
   if (m.environment.ferrousNearby) reasons.push("FERROUS_DECLARED");
   if (m.environment.temperature !== "ambient") reasons.push("TEMPERATURE_NOT_AMBIENT");
+  if (m.mode !== "reference") reasons.push("EDUCATION_MODE");
+  if (m.motion.kind !== "approach") reasons.push("MOTION_NOT_ON_APPROACH_AXIS");
+  if (m.couple.magnetization !== "axial") reasons.push("MAGNETIZATION_NOT_TEMPLATE");
+  if (m.couple.polarity !== 1) reasons.push("POLARITY_NOT_TEMPLATE");
   const normalise = (a: number) => (((a % 360) + 540) % 360) - 180;
-  if (m.relative.rotationDeg.some((a) => Math.abs(normalise(a)) > 0.5))
+  // L'angle propre du capteur sort la trajectoire globale de l'axe du gabarit.
+  if (m.anchor.rotationDeg.some((a) => Math.abs(normalise(a)) > NUMERIC_EPSILON))
+    reasons.push("SENSOR_ANGLE_OFF_TEMPLATE");
+  if (m.relative.rotationDeg.some((a) => Math.abs(normalise(a)) > NUMERIC_EPSILON))
     reasons.push("ORIENTATION_OFF_TEMPLATE");
-  if (profile && lateralOffsetMm(m.relative, profile.axis) > 0.5) reasons.push("LATERAL_OFFSET");
+  if (profile && lateralOffsetMm(m.relative, profile.axis) > NUMERIC_EPSILON)
+    reasons.push("LATERAL_OFFSET");
   return reasons;
 }
 /** Vraie hystérésis : l'enclenchement et le relâchement ne partagent pas de seuil.
@@ -121,7 +137,8 @@ export function simulateMounting(
   return {
     samples,
     transitions,
-    coverage: coveredFraction >= 0.999 ? "covered" : coveredFraction > 0 ? "partial" : "outside",
+    // `covered` exige la totalité du cycle : aucun pourcentage d'inconnu toléré.
+    coverage: covered === steps + 1 ? "covered" : covered > 0 ? "partial" : "outside",
     coveredFraction,
     reasons: [
       ...reasons,
@@ -145,6 +162,26 @@ export function uncoveredSegments(sim: MountingSimulation): [number, number][] {
   if (start !== null) out.push([start, 1]);
   return out;
 }
+/**
+ * Échantillons couvrant [de, à] en pourcentage du cycle, bornes comprises et
+ * échantillons encadrants inclus : entre deux échantillons, l'état n'est pas
+ * connu, donc il n'est jamais réputé satisfait.
+ */
+export function windowOf(
+  samples: MountingSample[],
+  fromPct: number,
+  toPct: number,
+): MountingSample[] {
+  const inside = samples.filter((s) => s.t * 100 >= fromPct && s.t * 100 <= toPct);
+  const before = [...samples].reverse().find((s) => s.t * 100 < fromPct);
+  const after = samples.find((s) => s.t * 100 > toPct);
+  const first = inside[0];
+  const last = inside[inside.length - 1];
+  const out = [...inside];
+  if (before && (!first || first.t * 100 > fromPct)) out.unshift(before);
+  if (after && (!last || last.t * 100 < toPct)) out.push(after);
+  return out;
+}
 export const LIMIT_CODES = [
   "typical_not_guaranteed",
   "datum_not_characterised",
@@ -163,19 +200,20 @@ export function computeMounting(m: GuidedMounting, profiles?: MountingProfile[])
   const profile = profileFor(m.couple.sensorId, m.couple.magnetId, m.couple.approachId, profiles);
   const sim = simulateMounting(m, SAMPLE_STEPS, profiles);
   const need = m.need;
-  const windowSamples = need
-    ? sim.samples.filter(
-        (s) => s.t * 100 >= need.closedFromPct && s.t * 100 <= need.closedToPct,
-      )
-    : [];
+  // Bornes exactes : les échantillons qui encadrent la fenêtre en font partie,
+  // et une fenêtre sans aucun échantillon ne peut jamais valoir « satisfaite ».
+  const windowSamples = need ? windowOf(sim.samples, need.closedFromPct, need.closedToPct) : [];
   let verdict: Verdict = "undetermined";
   if (sim.coverage === "covered" && sim.pullInMm !== null) {
     if (need)
-      verdict = windowSamples.every((s) => s.contact === "closed")
-        ? "expected"
-        : windowSamples.some((s) => s.contact === "unknown")
+      verdict =
+        windowSamples.length === 0
           ? "undetermined"
-          : "not_expected";
+          : windowSamples.every((s) => s.contact === "closed")
+            ? "expected"
+            : windowSamples.some((s) => s.contact === "unknown")
+              ? "undetermined"
+              : "not_expected";
     else
       verdict = sim.transitions.some((x) => x.contact === "closed")
         ? "expected"

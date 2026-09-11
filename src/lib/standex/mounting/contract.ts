@@ -10,11 +10,21 @@ export type Coverage = "covered" | "partial" | "outside";
 export type Verdict = "expected" | "not_expected" | "undetermined";
 export type ContactState = "open" | "closed" | "unknown";
 
+export type Magnetization = "axial" | "diametral" | "thickness";
+export type MotionKind = "approach" | "slide" | "pivot";
 export interface MountingCouple {
   sensorId: string;
   magnetId: string;
   sensitivityClass: string;
   approachId: string;
+  /** Aimantation et polarité déclarées : hors gabarit, la source ne couvre rien. */
+  magnetization: Magnetization;
+  polarity: 1 | -1;
+}
+export interface MountingMotion {
+  kind: MotionKind;
+  /** État de contact au départ, inconnu par défaut : jamais supposé ouvert. */
+  initialContact: ContactState;
 }
 export interface MountingAttachment {
   /** `custom_model` : montage importé par l'utilisateur, datums non caractérisés. */
@@ -62,6 +72,9 @@ export interface MountingComputed {
 }
 export interface GuidedMounting {
   version: typeof MOUNTING_CONTRACT_VERSION;
+  /** `education` = démonstration pédagogique : jamais un résultat de sélection. */
+  mode: "reference" | "education";
+  motion: MountingMotion;
   profileId: string | null;
   profileRevision: string | null;
   profileSource: string | null;
@@ -82,6 +95,8 @@ export function mountingInputs(m: GuidedMounting) {
   return {
     profileId: m.profileId,
     profileRevision: m.profileRevision,
+    mode: m.mode,
+    motion: m.motion,
     couple: m.couple,
     anchor: m.anchor,
     attachment: m.attachment,
@@ -117,7 +132,17 @@ export function parseGuidedMounting(raw: unknown): GuidedMounting | null {
     typeof c.magnetId !== "string" ||
     typeof c.sensitivityClass !== "string" ||
     typeof c.approachId !== "string" ||
+    !["axial", "diametral", "thickness"].includes(c.magnetization) ||
+    (c.polarity !== 1 && c.polarity !== -1) ||
     [c.sensorId, c.magnetId, c.sensitivityClass, c.approachId].some((s) => !s || s.length > 64)
+  )
+    return null;
+  const mo = x.motion;
+  if (
+    !mo ||
+    !["approach", "slide", "pivot"].includes(mo.kind) ||
+    !["open", "closed", "unknown"].includes(mo.initialContact) ||
+    !["reference", "education"].includes(x.mode)
   )
     return null;
   const a = x.attachment;
@@ -167,6 +192,8 @@ export function parseGuidedMounting(raw: unknown): GuidedMounting | null {
   }
   return {
     version: MOUNTING_CONTRACT_VERSION,
+    mode: x.mode,
+    motion: { kind: mo.kind, initialContact: mo.initialContact },
     profileId: typeof x.profileId === "string" && x.profileId.length <= 120 ? x.profileId : null,
     profileRevision:
       typeof x.profileRevision === "string" && x.profileRevision.length <= 120
@@ -179,6 +206,8 @@ export function parseGuidedMounting(raw: unknown): GuidedMounting | null {
       magnetId: c.magnetId,
       sensitivityClass: c.sensitivityClass,
       approachId: c.approachId,
+      magnetization: c.magnetization,
+      polarity: c.polarity,
     },
     anchor,
     attachment: { frame: a.frame, parentNode: a.parentNode, movingPart: a.movingPart },
