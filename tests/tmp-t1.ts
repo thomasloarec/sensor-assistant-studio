@@ -1,4 +1,4 @@
-import { DEFAULT_WORKSHOPledger } from "@/lib/standex/magnetic-workshop";
+import { DEFAULT_WORKSHOP } from "@/lib/standex/magnetic-workshop";
 import { COFFEE_ASSEMBLY } from "@/lib/standex/machine-assembly";
 import { mountingFromWorkshop, computeMounting, moveCouple, workshopPatchFromMounting } from "@/lib/standex/mounting";
 const c = {...DEFAULT_WORKSHOP, mode:"education" as const, machine: structuredClone(COFFEE_ASSEMBLY)};
