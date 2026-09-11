@@ -513,11 +513,15 @@ export default function MagneticWorkshop({
     }
     if (fileRef.current) fileRef.current.value = "";
   }
+  // Hors couverture, le résumé reprend mot pour mot le message du moteur :
+  // aucune reformulation locale ne doit s'y substituer.
   const statusMessage =
-    result.reason ??
-    (unknown
-      ? t("Une partie du parcours ne peut pas être déterminée avec ces paramètres.")
-      : result.closures === 0
+    guidedSim.coverage !== "covered" && guided.computed
+      ? t(guided.computed.mainMessage)
+      : (result.reason ??
+        (unknown
+          ? t("Une partie du parcours ne peut pas être déterminée avec ces paramètres.")
+          : result.closures === 0
         ? t(
             "Aucun nouvel enclenchement sur ce cycle. Essayez une autre position ou rapprochez l'aimant.",
           )
