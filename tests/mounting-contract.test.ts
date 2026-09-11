@@ -22,6 +22,7 @@ import {
   toWorldPoint,
   withComputed,
   workshopPatchFromMounting,
+  referenceTravelExploration,
 } from "@/lib/standex/mounting";
 import type { GuidedMounting } from "@/lib/standex/mounting";
 import { DEFAULT_WORKSHOP, parseWorkshopConfig } from "@/lib/standex/magnetic-workshop";
