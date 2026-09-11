@@ -1076,8 +1076,13 @@ export default function MagneticWorkshop({
                     <GuidedVerdict
                       mounting={guided}
                       onFixCoverage={() =>
+                        // Retour au gabarit publié : l'axe du capteur revient
+                        // explicitement à 0, sinon une orientation propre hors
+                        // gabarit (45°) resterait en place. La course, le besoin
+                        // et les contraintes ne sont pas touchés.
                         update({
-                          magnetAngle: config.sensorAngle,
+                          sensorAngle: 0,
+                          magnetAngle: 0,
                           magnetTilt: 0,
                           lateralShift: 0,
                         })
