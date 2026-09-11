@@ -163,3 +163,86 @@ export function sensitivityComparison(
     .filter((x): x is NonNullable<typeof x> => x !== null)
     .sort((a, b) => b.pullInMm - a.pullInMm);
 }
+
+export interface DocumentedDistance {
+  sensitivityClass: string;
+  pullInMm: number;
+  dropOutMm: number;
+  sourceRef: string;
+  /** Vrai seulement si l'approche est localisée ET la lecture up/to qualifiée. */
+  usableForGeometry: boolean;
+  localisation: Localisation;
+}
+/**
+ * Lecture DOCUMENTAIRE du registre : toutes les classes publiées d'un profil,
+ * quelles que soient la famille et l'approche (D1 à D5, lobes compris). Ces
+ * valeurs sont des distances lues dans la source ; elles ne constituent ni une
+ * trajectoire, ni une pose, ni un volume de détection quand l'approche n'est
+ * pas localisée. Le calcul géométrique passe par `thresholdsFor`, jamais ici.
+ */
+export function documentedDistances(
+  profile: MountingProfile,
+  registry?: PublishedRegistry,
+): DocumentedDistance[] {
+  const usable =
+    profile.localisation === "axis_documented" &&
+    approachQualified(profile.sensorFamily, profile.approachId);
+  return profile.classes
+    .map((sensitivityClass) => {
+      const row = publishedReference(
+        profile.sensorFamily,
+        sensitivityClass,
+        profile.magnetId,
+        profile.approachId,
+        registry,
+      );
+      return row
+        ? {
+            sensitivityClass,
+            pullInMm: row.pullInMm,
+            dropOutMm: row.dropOutMm,
+            sourceRef: row.provenance.sourceRef,
+            usableForGeometry: usable,
+            localisation: profile.localisation,
+          }
+        : null;
+    })
+    .filter((x): x is DocumentedDistance => x !== null)
+    .sort((a, b) => b.pullInMm - a.pullInMm);
+}
+export interface RegistryCoverage {
+  revision: string;
+  rows: number;
+  families: string[];
+  approaches: string[];
+  magnets: string[];
+  classes: string[];
+  profiles: number;
+  /** Profils dont l'axe d'approche est documenté (gabarit schématique). */
+  locatedProfiles: number;
+  /** Profils documentaires sans trajectoire ni pose définie. */
+  unlocatedProfiles: number;
+  /** Profils alimentant réellement le calcul géométrique. */
+  calculableProfiles: number;
+}
+/** État réel de la couverture du registre : aucune restriction aux exemples MK03. */
+export function registryCoverage(
+  registry: PublishedRegistry = PUBLISHED_REGISTRY,
+  profiles: MountingProfile[] = mountingProfiles(registry),
+): RegistryCoverage {
+  const uniq = (v: string[]) => [...new Set(v)].sort();
+  return {
+    revision: registry.version,
+    rows: registry.rows.length,
+    families: uniq(registry.rows.map((r) => r.sensorFamily)),
+    approaches: uniq(registry.rows.map((r) => r.approachId)),
+    magnets: uniq(registry.rows.map((r) => r.magnetId)),
+    classes: uniq(registry.rows.map((r) => r.sensitivityClass)),
+    profiles: profiles.length,
+    locatedProfiles: profiles.filter((p) => p.localisation === "axis_documented").length,
+    unlocatedProfiles: profiles.filter((p) => p.localisation === "not_located").length,
+    calculableProfiles: profiles.filter(
+      (p) => p.localisation === "axis_documented" && p.evidence === "published_typical",
+    ).length,
+  };
+}
