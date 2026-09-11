@@ -11,6 +11,8 @@ import {
   useGuidedMounting,
 } from "./guided-mounting";
 import StudioV2 from "./studio-v2";
+import { composeRotations, magnetWorldPosition } from "@/lib/standex/mounting";
+import type { GuidedMounting } from "@/lib/standex/mounting";
 import type { StudioStudy } from "@/lib/standex/studio-dossier";
 import type { DesignFreeze } from "@/lib/standex/design-freeze";
 import { publishedPair } from "@/lib/standex/magnetics/registries";
@@ -38,6 +40,7 @@ import {
   parseWorkshopConfig,
   simulateCycle,
   summarizeWorkshop,
+  magnetSize,
 } from "@/lib/standex/magnetic-workshop";
 import type { WorkshopConfig, Contact, Vec3 } from "@/lib/standex/magnetic-workshop";
 import "./workshop.css";
