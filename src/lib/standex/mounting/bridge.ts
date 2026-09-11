@@ -195,7 +195,7 @@ export function rigidlyMovedMotion(
     matTranspose(matFromEuler(before.rotationDeg)),
   );
   const identity: number[] = [1, 0, 0, 0, 1, 0, 0, 0, 1];
-  if (rot.every((v, i) => Math.abs(v - identity[i]!) <= ROTATION_EPSILON)) return {};
+  if ((rot as number[]).every((v, i) => Math.abs(v - identity[i]!) <= ROTATION_EPSILON)) return {};
   if (machine.motion === "translation") return { travel: applyMat(rot, machine.travel as Vec3) };
   const index = { x: 0, y: 1, z: 2 }[machine.rotationAxis];
   const axis: Vec3 = [0, 0, 0];
