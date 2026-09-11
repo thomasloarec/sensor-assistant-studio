@@ -1684,14 +1684,20 @@ export default function MagneticWorkshop({
           </div>
         </section>
       </div>
-      <StudioV2
-        config={config}
-        onApply={update}
-        initialStudy={initialStudy}
-        onStudyChange={onStudyChange}
-        dossierId={dossierId}
-        revision={revision}
-      />
+      {/* Registres, comparaison publiée, marges, hypothèses et gel de conception :
+          toutes les actions restent là, simplement repliées par défaut pour que le
+          parcours de montage reste au premier plan. */}
+      <details className="mw-advanced">
+        <summary>{t("Données et outils avancés")}</summary>
+        <StudioV2
+          config={config}
+          onApply={update}
+          initialStudy={initialStudy}
+          onStudyChange={onStudyChange}
+          dossierId={dossierId}
+          revision={revision}
+        />
+      </details>
       <footer className="mw-footer">
         <p>
           <strong>{t(reference ? "Présélection documentée." : "Illustration pédagogique.")}</strong>{" "}
