@@ -2055,3 +2055,15 @@
   background: var(--surface-tint);
   border-radius: var(--r-sm);
 }
+
+/* Outils avancés (registres, comparaison publiée, marges, hypothèses, gel) :
+   repliés par défaut, ils restent atteignables au même niveau qu'avant. */
+.mw-advanced > summary {
+  font: var(--mw-t-title);
+  color: var(--mw-blue);
+  cursor: pointer;
+  padding: 14px 4px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+}
