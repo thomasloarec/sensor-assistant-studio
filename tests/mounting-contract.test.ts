@@ -1,6 +1,10 @@
 import { describe, expect, it } from "bun:test";
 import {
   MOUNTING_CONTRACT_VERSION,
+  simulateMounting,
+  moveCouple,
+  parseGuidedMounting,
+  computeMounting,
   REAL_WORLD_TEST_MESSAGE,
   applySuggestion,
   bodiesCollide,
@@ -394,8 +398,10 @@ describe("pont avec un montage importé réel", () => {
     // Le modèle, ses attaches et sa course sont conservés à l'identique.
     expect(back.machine!.assetKey).toBe(machine.assetKey);
     expect(back.machine!.movingNode).toBe(machine.movingNode);
-    expect(back.machine!.sensorPosition).toEqual(machine.sensorPosition);
-    expect(back.machine!.sensorRotation).toEqual(machine.sensorRotation);
+    // Le capteur est réellement reposé depuis le contrat : au résidu flottant près,
+    // il retrouve exactement sa pose d'origine.
+    near(back.machine!.sensorPosition, machine.sensorPosition);
+    near(back.machine!.sensorRotation, machine.sensorRotation);
     expect(back.machine!.travel).toEqual(machine.travel);
     expect(back.machine!.pivot).toEqual(machine.pivot);
   });
@@ -432,5 +438,96 @@ describe("pont avec un montage importé réel", () => {
     expect(m.computed!.reasons).toContain("CUSTOM_MODEL_NOT_CHARACTERISED");
     expect(m.computed!.verdict).toBe("undetermined");
     expect(m.computed!.mainMessage).toBe(REAL_WORLD_TEST_MESSAGE);
+  });
+});
+
+describe("rotation globale du couple contre orientation propre du capteur", () => {
+  it("tourner tout le montage ne sort pas du gabarit", () => {
+    const m = mountingFromWorkshop({ ...DEFAULT_WORKSHOP, mountAngle: 45 });
+    expect(computeMounting(m).reasons).not.toContain("SENSOR_ANGLE_OFF_TEMPLATE");
+    expect(simulateMounting(m).coverage).toBe("covered");
+  });
+  it("tourner le capteur seul par rapport à l'axe du mouvement en sort", () => {
+    const m = mountingFromWorkshop({ ...DEFAULT_WORKSHOP, sensorAngle: 45, magnetAngle: 45 });
+    const c = computeMounting(m);
+    expect(c.reasons).toContain("SENSOR_ANGLE_OFF_TEMPLATE");
+    expect(c.coverage).toBe("outside");
+    expect(simulateMounting(m).coverage).toBe("outside");
+  });
+  it("un contrat antérieur sans angle propre reste lisible et vaut zéro", () => {
+    const raw = JSON.parse(JSON.stringify(mountingFromWorkshop(DEFAULT_WORKSHOP))) as {
+      motion: Record<string, unknown>;
+    };
+    delete raw.motion.sensorYawDeg;
+    const parsed = parseGuidedMounting(raw);
+    expect(parsed).not.toBeNull();
+    expect(parsed!.motion.sensorYawDeg).toBe(0);
+  });
+});
+
+describe("le pont applique réellement la pose aux deux composants", () => {
+  const base = () => ({ ...DEFAULT_WORKSHOP, machine: structuredClone(COFFEE_ASSEMBLY) });
+  it("une translation du couple déplace capteur ET aimant dans le modèle", () => {
+    const c = { ...base(), mode: "education" as const };
+    const m = moveCouple(mountingFromWorkshop(c), { translationMm: [5, 0, 0] });
+    const n = { ...c, ...workshopPatchFromMounting(m, c) };
+    expect(n.machine!.sensorPosition[0]).toBeCloseTo(COFFEE_ASSEMBLY.sensorPosition[0] + 5, 9);
+    expect(n.machine!.magnetPosition[0]).toBeCloseTo(COFFEE_ASSEMBLY.magnetPosition[0] + 5, 9);
+    // La course, le nœud mobile et les attaches ne bougent pas.
+    expect(n.machine!.travel).toEqual(COFFEE_ASSEMBLY.travel);
+    expect(n.machine!.movingNode).toBe(COFFEE_ASSEMBLY.movingNode);
+    expect(n.machine!.sensorMount).toBe(COFFEE_ASSEMBLY.sensorMount);
+  });
+  it("translation et rotation, pièces fixes et mobiles, à u = 0.37, font un aller-retour exact", () => {
+    for (const mounts of [
+      { sensorMount: "fixed", magnetMount: "moving" },
+      { sensorMount: "moving", magnetMount: "fixed" },
+      { sensorMount: "moving", magnetMount: "moving" },
+    ] as const) {
+      const c = { ...base(), machine: { ...base().machine!, ...mounts } };
+      const m = moveCouple(mountingFromWorkshop(c, 0.37), {
+        translationMm: [4, -3, 2],
+        rotationDeg: [0, 15, 0],
+      });
+      const n = { ...c, ...workshopPatchFromMounting(m, c, 0.37) };
+      const relu = mountingFromWorkshop(n, 0.37);
+      m.anchor.positionMm.forEach((v, i) => expect(relu.anchor.positionMm[i]).toBeCloseTo(v, 6));
+      m.anchor.rotationDeg.forEach((v, i) => expect(relu.anchor.rotationDeg[i]).toBeCloseTo(v, 6));
+      m.relative.positionMm.forEach((v, i) =>
+        expect(relu.relative.positionMm[i]).toBeCloseTo(v, 6),
+      );
+      m.relative.rotationDeg.forEach((v, i) =>
+        expect(relu.relative.rotationDeg[i]).toBeCloseTo(v, 6),
+      );
+      expect(n.machine!.travel).toEqual(COFFEE_ASSEMBLY.travel);
+    }
+  });
+  it("lit l'entrefer aux deux extrémités réelles du cycle, pas à la moitié", () => {
+    const c = base();
+    const wide = {
+      ...c,
+      machine: { ...c.machine!, travel: [0, 0, 40] as [number, number, number], motion: "translation" as const },
+    };
+    const half = { ...wide, machine: { ...wide.machine, travel: [0, 0, 20] as [number, number, number] } };
+    expect(mountingFromWorkshop(wide).travel).not.toEqual(mountingFromWorkshop(half).travel);
+  });
+});
+
+describe("longueur de câble retenue", () => {
+  it("un fichier antérieur sans longueur reste lisible et vaut « non choisie »", () => {
+    const raw = JSON.parse(JSON.stringify(DEFAULT_WORKSHOP)) as Record<string, unknown>;
+    delete raw["cableLengthMm"];
+    const parsed = parseWorkshopConfig(raw);
+    expect(parsed).not.toBeNull();
+    expect(parsed!.cableLengthMm).toBeNull();
+  });
+  it("une longueur non finie ou négative fait refuser le fichier", () => {
+    for (const bad of [0, -50, Number.NaN, "500", 1e9]) {
+      expect(parseWorkshopConfig({ ...DEFAULT_WORKSHOP, cableLengthMm: bad })).toBeNull();
+    }
+  });
+  it("une longueur choisie survit à l'aller-retour d'enregistrement", () => {
+    const parsed = parseWorkshopConfig({ ...DEFAULT_WORKSHOP, cableLengthMm: 1500 });
+    expect(parsed!.cableLengthMm).toBe(1500);
   });
 });

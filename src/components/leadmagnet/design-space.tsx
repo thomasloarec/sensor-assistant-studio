@@ -47,6 +47,7 @@ import {
 } from "@/components/ui/accordion";
 import {
   createDossier,
+  currentMounting,
   confirmRequirement,
   proposeRequirement,
   parseAnnualVolume,
@@ -174,7 +175,6 @@ import {
 } from "@/lib/leadmagnet/connector-library";
 import { routeSamples, SEARCH_LINK_DISCLAIMER } from "@/lib/leadmagnet/samples";
 import { DEFAULT_WORKSHOP } from "@/lib/standex/magnetic-workshop";
-import { mountingFromWorkshop, withComputed } from "@/lib/standex/mounting";
 import type { WorkshopConfig } from "@/lib/standex/magnetic-workshop";
 import { BrandLogo } from "@/components/standex/brand-logo";
 
@@ -1997,7 +1997,7 @@ export function DesignSpace({
               setTab("montage");
             }}
           >
-            {t("Ouvrir l'atelier 3D")}
+            {t("Vérifier la détection dans mon montage")}
           </Button>
         </div>
         <p className="t-caption t-metric mt-2">
@@ -2421,7 +2421,7 @@ export function DesignSpace({
 
       <div className="panel-block">
         <div className="flex flex-wrap items-center gap-3">
-          <Label className="text-base font-medium">{t("Atelier 3D (facultatif)")}</Label>
+          <Label className="text-base font-medium">{t("Vérifier la détection dans mon montage")}</Label>
           {/* En mode guidé, « Placer en 3D » ci-dessus ouvre déjà l'atelier :
                     pas de second bouton pour la même action. */}
           {showAdvanced ? (
@@ -2434,7 +2434,7 @@ export function DesignSpace({
                 setPanel("atelier");
               }}
             >
-              {t("Ouvrir l'atelier magnétique")}
+              {t("Vérifier la détection dans mon montage")}
             </Button>
           ) : null}
           <span className="t-caption">
@@ -2946,8 +2946,10 @@ export function DesignSpace({
     setDossier((d) => ({
       ...d,
       workshop: c,
-      // Contrat de montage guidé recalculé à l'enregistrement : jamais repris d'un import.
-      guidedMounting: withComputed(mountingFromWorkshop(c)),
+      // Contrat recalculé à l'enregistrement sur l'état COURANT du dossier :
+      // configuration d'atelier, besoin exprimé et câble réellement relevé.
+      // Jamais repris d'un import.
+      guidedMounting: currentMounting({ ...d, workshop: c }),
       // Provenance explicite : un vrai import n'est jamais compté comme exemple.
       workshopSource: c.machine ? "user_asset" : "example",
       workshopAsset: c.machine

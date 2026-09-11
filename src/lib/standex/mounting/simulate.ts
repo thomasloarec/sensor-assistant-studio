@@ -83,8 +83,11 @@ export function globalReasons(m: GuidedMounting, profile: MountingProfile | null
   if (m.couple.magnetization !== "axial") reasons.push("MAGNETIZATION_NOT_TEMPLATE");
   if (m.couple.polarity !== 1) reasons.push("POLARITY_NOT_TEMPLATE");
   const normalise = (a: number) => (((a % 360) + 540) % 360) - 180;
-  // L'angle propre du capteur sort la trajectoire globale de l'axe du gabarit.
-  if (m.anchor.rotationDeg.some((a) => Math.abs(normalise(a)) > NUMERIC_EPSILON))
+  // La rotation GLOBALE du couple (`anchor`) n'est PAS une raison : elle tourne le
+  // capteur, l'aimant et la trajectoire ensemble, donc la géométrie relative du
+  // gabarit est inchangée. Seule l'orientation PROPRE du capteur par rapport à
+  // l'axe réel du mouvement sort du gabarit publié.
+  if (Math.abs(normalise(m.motion.sensorYawDeg)) > NUMERIC_EPSILON)
     reasons.push("SENSOR_ANGLE_OFF_TEMPLATE");
   if (m.relative.rotationDeg.some((a) => Math.abs(normalise(a)) > NUMERIC_EPSILON))
     reasons.push("ORIENTATION_OFF_TEMPLATE");

@@ -38,7 +38,29 @@ export function machineComponentPose(
     rotationDeg: moving ? composeRotations(movingRotation(machine, u), own) : ([...own] as Vec3),
   };
 }
-/** Inverse exact de `machineComponentPose` pour l'aimant : repose la pose de base. */
+/** Inverse exact de `machineComponentPose` : repose la pose de base d'un composant,
+ * fixe ou mobile, en défaisant réellement la transformation du mouvement au point `u`. */
+export function componentBaseFromWorldPose(
+  machine: MachineAssembly,
+  which: "sensor" | "magnet",
+  world: Pose,
+  u: number,
+): { position: Vec3; rotation: Vec3 } {
+  const moving = (which === "sensor" ? machine.sensorMount : machine.magnetMount) === "moving";
+  if (!moving)
+    return {
+      position: [...world.positionMm] as Vec3,
+      rotation: [...world.rotationDeg] as Vec3,
+    };
+  const mov = movingRotation(machine, u);
+  const rotation = relativeRotation(mov, world.rotationDeg);
+  if (machine.motion === "translation")
+    return { position: addV(world.positionMm as Vec3, scaleV(machine.travel, -u)), rotation };
+  const inverse = matTranspose(matFromEuler(mov));
+  const local = applyMat(inverse, sub(world.positionMm, machine.pivot as Vec3));
+  return { position: addV(machine.pivot, local), rotation };
+}
+/** Compatibilité : même inverse, restreint à l'aimant. */
 export function magnetBaseFromWorldPose(
   machine: MachineAssembly,
   world: Pose,
@@ -89,7 +111,15 @@ export function mountingFromWorkshop(
   return withComputed({
     version: MOUNTING_CONTRACT_VERSION,
     mode: c.mode,
-    motion: { kind: motionKindOf(c), initialContact: c.initialContact },
+    motion: {
+      kind: motionKindOf(c),
+      initialContact: c.initialContact,
+      // Espace vide : `mountAngle` tourne tout le montage (couple + trajectoire),
+      // `sensorAngle` tourne le capteur seul par rapport à l'axe du mouvement.
+      // Montage importé : l'axe réel n'est pas caractérisé, la limite dédiée
+      // `CUSTOM_MODEL_NOT_CHARACTERISED` couvre déjà ce cas.
+      sensorYawDeg: c.machine ? 0 : c.sensorAngle,
+    },
     profileId: profile?.id ?? null,
     profileRevision: profile?.revision ?? null,
     profileSource: profile?.provenance.sourceRef ?? null,
@@ -133,8 +163,10 @@ function machineTravelGaps(
   const axis = profile?.axis ?? approachAxis(c.geometry);
   const gapAtCycle = (u: number) =>
     surfaceGapMm(c.sensorId, c.magnetModel, relativePoseInMachine(machine, u), axis);
+  // Le cycle du montage importé va de 0 (repos) à 1 (ouverture totale) :
+  // lire 0.5 ne donnait qu'une demi-course.
   const rest = gapAtCycle(0),
-    open = gapAtCycle(0.5);
+    open = gapAtCycle(1);
   return rest >= open ? { startGapMm: rest, endGapMm: open } : { startGapMm: open, endGapMm: rest };
 }
 
@@ -157,14 +189,30 @@ export function workshopPatchFromMounting(
     polarity: m.couple.polarity,
   };
   if (current.machine) {
-    // Montage importé : on repose l'aimant dans le modèle, capteur et attaches intacts.
-    const sensor = machineComponentPose(current.machine, "sensor", u);
-    const world: Pose = {
-      positionMm: toWorldPoint(sensor, m.relative.positionMm),
-      rotationDeg: composeRotations(sensor.rotationDeg, m.relative.rotationDeg),
+    // Montage importé : les DEUX composants suivent réellement le contrat.
+    // `anchor` fixe la pose monde du capteur, `relative` celle de l'aimant dans
+    // le repère capteur. Le modèle, ses attaches, sa course et son nœud mobile
+    // sont conservés à l'identique.
+    const sensorWorld: Pose = {
+      positionMm: [...m.anchor.positionMm] as Vec3,
+      rotationDeg: [...m.anchor.rotationDeg] as Vec3,
     };
-    const base = magnetBaseFromWorldPose(current.machine, world, u);
-    return { ...couple, machine: { ...current.machine, ...base } };
+    const magnetWorld: Pose = {
+      positionMm: toWorldPoint(sensorWorld, m.relative.positionMm),
+      rotationDeg: composeRotations(sensorWorld.rotationDeg, m.relative.rotationDeg),
+    };
+    const s = componentBaseFromWorldPose(current.machine, "sensor", sensorWorld, u);
+    const g = componentBaseFromWorldPose(current.machine, "magnet", magnetWorld, u);
+    return {
+      ...couple,
+      machine: {
+        ...current.machine,
+        sensorPosition: s.position,
+        sensorRotation: s.rotation,
+        magnetPosition: g.position,
+        magnetRotation: g.rotation,
+      },
+    };
   }
   const lateral = lateralAxis(m.couple.approachId);
   const shift = m.relative.positionMm.reduce((sum, v, i) => sum + v * lateral[i]!, 0);

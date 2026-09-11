@@ -47,6 +47,10 @@ export interface WorkshopConfig {
   initialContact: Contact;
   targetStart: number;
   targetEnd: number;
+  /** Longueur de câble choisie par l'utilisateur, en millimètres.
+   * `null` = pas encore choisie : jamais une longueur supposée. Absente des
+   * fichiers antérieurs, elle y est relue comme `null`. */
+  cableLengthMm: number | null;
 }
 export const DEFAULT_WORKSHOP: WorkshopConfig = {
   version: 3,
@@ -77,6 +81,7 @@ export const DEFAULT_WORKSHOP: WorkshopConfig = {
   initialContact: "unknown",
   targetStart: 35,
   targetEnd: 65,
+  cableLengthMm: null,
 };
 export const DISTANCE_SOURCE =
   "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/";
@@ -172,6 +177,13 @@ export function parseWorkshopConfig(value: unknown): WorkshopConfig | null {
   for (const [k, [low, high]] of Object.entries(bounds)) {
     const v = x[k];
     if (typeof v !== "number" || !Number.isFinite(v) || v < low || v > high) return null;
+  }
+  // Longueur de câble : absente des fichiers antérieurs, elle vaut alors `null`.
+  // Une valeur fournie doit être un nombre fini et plausible, sinon le fichier est refusé.
+  if (x["cableLengthMm"] === undefined) x["cableLengthMm"] = null;
+  if (x["cableLengthMm"] !== null) {
+    const cl = x["cableLengthMm"];
+    if (typeof cl !== "number" || !Number.isFinite(cl) || cl <= 0 || cl > 100000) return null;
   }
   if (
     (x["start"] as number) <= (x["end"] as number) ||
