@@ -43,7 +43,32 @@ describe("profils de montage", () => {
     expect(profileFor("MK03", "M02", "D3")?.approachId).toBe("D3");
     expect(profileFor("MK03", "aimant-inventé", "D1")).toBeNull();
     expect(profileFor("MK24-A-J", "4003004003", "D1")).toBeNull();
-    expect(profileFor("MK03", "4003004003", "D2")).toBeNull();
+    // D2 est réellement au registre : la ligne existe, ses distances sont
+    // documentées, mais aucune trajectoire n'est définie donc aucun seuil ne
+    // part au calcul et aucun volume n'est affirmé.
+    const d2 = profileFor("MK03", "4003004003", "D2")!;
+    expect(d2.localisation).toBe("not_located");
+    expect(d2.axis).toBeNull();
+    expect(d2.distancesDocumented).toBe(true);
+    expect(thresholdsFor(d2, "B")).toBeNull();
+    expect(documentedDistances(d2).length).toBeGreaterThan(0);
+    expect(documentedDistances(d2).every((r) => r.usableForGeometry === false)).toBe(true);
+  });
+  it("couvre toutes les familles et approches réellement présentes au registre", () => {
+    const cov = registryCoverage();
+    expect(cov.revision).toBe("published-2026-09-11-v2");
+    expect(cov.rows).toBe(438);
+    expect(cov.families.length).toBe(13);
+    expect(cov.approaches).toEqual(["D1", "D2", "D3", "D4", "D5"]);
+    expect(cov.magnets.length).toBe(6);
+    expect(cov.classes).toEqual(["A", "B", "C", "D", "E"]);
+    // Localisation et qualification restent deux notions distinctes.
+    expect(cov.unlocatedProfiles).toBeGreaterThan(0);
+    expect(cov.locatedProfiles).toBeGreaterThan(cov.calculableProfiles);
+    expect(cov.profiles).toBe(cov.locatedProfiles + cov.unlocatedProfiles);
+    // Chaque famille du registre est représentée, pas seulement MK03.
+    for (const f of cov.families)
+      expect(PROFILES.some((p) => p.sensorFamily === f)).toBe(true);
   });
   it("le gabarit reste schématique et les datums non caractérisés", () => {
     const p = profileFor("MK03", "M02", "D1")!;
