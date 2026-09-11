@@ -22030,5 +22030,32 @@
     "Предлагается положение, движение моделируется, ограничения названы прямо, затем вы выбираете кабель. Ничего не отправляется, пока вы не попросите.",
     "Le viene suggerita una posizione, il movimento è simulato, i limiti sono indicati chiaramente, poi sceglie il cavo. Nulla viene inviato finché non lo chiede.",
     "位置が提案され、動きがシミュレートされ、限界が明確に示され、その後ケーブルを選びます。ご依頼があるまで何も送信されません。"
+  ],
+  "Choisir le couple": [
+    "Choose the pair",
+    "选择组合",
+    "Paarung wählen",
+    "Elegir el par",
+    "Выбрать пару",
+    "Scegliere la coppia",
+    "組み合わせを選ぶ"
+  ],
+  "Choisissez le capteur et l’aimant": [
+    "Choose the sensor and the magnet",
+    "选择传感器和磁铁",
+    "Sensor und Magnet wählen",
+    "Elija el sensor y el imán",
+    "Выберите датчик и магнит",
+    "Scegliere il sensore e il magnete",
+    "センサーと磁石を選択してください"
+  ],
+  "Aimant choisi à l'étape « Choisir le couple ». Revenez-y pour en changer.": [
+    "Magnet chosen in the \"Choose the pair\" step. Go back there to change it.",
+    "磁铁在“选择组合”步骤中选定，如需更改请返回该步骤。",
+    "Der Magnet wird im Schritt \"Paarung wählen\" gewählt. Gehen Sie dorthin zurück, um ihn zu ändern.",
+    "El imán se elige en el paso «Elegir el par». Vuelva allí para cambiarlo.",
+    "Магнит выбирается на шаге «Выбрать пару». Вернитесь туда, чтобы изменить его.",
+    "Il magnete si sceglie nel passaggio «Scegliere la coppia». Tornaci per cambiarlo.",
+    "磁石は「組み合わせを選ぶ」ステップで選択します。変更するにはそのステップに戻ってください。"
   ]
 }
