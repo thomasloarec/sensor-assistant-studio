@@ -27,3 +27,7 @@ User-provided case 12 JSON/Markdown, found in Downloads, were consistent. verify
 The Lead Magnet folder contains SUIVI_CORRECTIONS_2026-09-11 with 28-item tracking, source divergences, optional simplifications, export audit, example exports and RECETTE_DES_CORRECTIONS.html. The original 20-case procedure and its HTML entrypoint were updated, including corrected machine poses and explicit solution selection.
 
 Engine: studio-v2-1.1.0. Published registry: published-2026-09-11. Physics registry unchanged. Connected main branch is intended for private Lovable preview only.
+
+## Final acceptance evidence
+
+The private Lovable preview was rebuilt and verified interactively on 6b1a00b: navigation, added catalogue references, explicit selection, ten-section review and actual PDF/Excel downloads. The final follow-up f35c146 improves inline error contrast and reduces the small-screen panel header; verified at 390 × 844 with production compilation passing. The source sync of that final follow-up is being completed before final handover.
