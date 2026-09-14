@@ -20,7 +20,11 @@ import {
 import { t } from "@/lib/i18n/core";
 import type { DocumentedHousing } from "@/lib/leadmagnet/connector-library";
 import { housingLabel } from "@/lib/leadmagnet/connector-library";
-import { geometryByHousingId, type HousingGeometry } from "@/lib/leadmagnet/connector-geometry";
+import {
+  envelopeHeightMm,
+  geometryByHousingId,
+  type HousingGeometry,
+} from "@/lib/leadmagnet/connector-geometry";
 import {
   acquireThumbnailSlot,
   releaseThumbnailSlot,
@@ -103,6 +107,13 @@ function PreviewCaption({
       <p className="t-caption">
         {t("Encombrement (mm) — largeur")} {geometry.width.valueMm} × {t("hauteur")}{" "}
         {geometry.height.valueMm} × {t("profondeur")} {geometry.depth.valueMm}
+        {geometry.lowerProtrusion && (
+          <>
+            {" — "}
+            {t("saillie inférieure")} {geometry.lowerProtrusion.valueMm} {t("mm, soit une hauteur d'enveloppe de")}{" "}
+            {envelopeHeightMm(geometry)} {t("mm")}
+          </>
+        )}
         {geometry.dimensionsToVerify && (
           <>
             {" — "}
@@ -111,7 +122,11 @@ function PreviewCaption({
         )}
       </p>
       <p className="t-caption">
-        <a href={geometry.width.sourceUrl} target="_blank" rel="noreferrer">
+        <a
+          href={`${geometry.width.sourceUrl}#page=${geometry.width.sourcePage}`}
+          target="_blank"
+          rel="noreferrer"
+        >
           {t("Source fabricant")}
         </a>
       </p>

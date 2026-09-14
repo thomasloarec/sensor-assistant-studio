@@ -173,3 +173,16 @@ describe("stepEnvelopeFor()", () => {
     expect(mk01?.dimensionsLabel).toContain("mm");
   });
 });
+
+describe("identifiants EXPRESS : numériques uniquement", () => {
+  for (const s of SENSOR_CATALOG) {
+    test(`${s.id} : aucune référence #lettre, illégale en EXPRESS`, async () => {
+      const envelope = stepEnvelopeFor(s.id);
+      const text = await readFile(join(STEP_DIR, envelope!.fileName), "utf8");
+      const illegal = text.match(/#[A-Za-z_][A-Za-z0-9_]*/g) ?? [];
+      expect(illegal).toEqual([]);
+      // Chaque définition d'entité porte bien un identifiant numérique.
+      expect(text).toMatch(/^#\d+=/m);
+    });
+  }
+});

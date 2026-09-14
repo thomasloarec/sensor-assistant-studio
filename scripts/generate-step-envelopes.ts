@@ -261,11 +261,29 @@ export function solidsFor(doc: StepDoc, s: SensorModel): string[] {
 
 export function buildStepFile(s: SensorModel): string {
   const doc = new StepDoc();
+  /* ISO-10303-21 §capitalise : un identifiant d'entité est TOUJOURS numérique
+   * (`#` suivi d'un entier). Les identifiants symboliques utilisés auparavant
+   * (#UNITMM, #PC, #SDR…) sont illégaux et faisaient échouer tout lecteur réel.
+   * Toutes les entités, unités et contextes compris, passent donc par le même
+   * compteur numérique. */
+  const unitMm = doc.next(`(NAMED_UNIT(*)LENGTH_UNIT()SI_UNIT(.MILLI.,.METRE.))`);
+  const unitRad = doc.next(`(NAMED_UNIT(*)PLANE_ANGLE_UNIT()SI_UNIT($,.RADIAN.))`);
+  const unitSr = doc.next(`(NAMED_UNIT(*)SOLID_ANGLE_UNIT()SI_UNIT($,.STERADIAN.))`);
+  const uncert = doc.next(
+    `UNCERTAINTY_MEASURE_WITH_UNIT(LENGTH_MEASURE(1.0E-6),${unitMm},'distance_accuracy_value','')`,
+  );
+  const appCtx = doc.next(
+    `APPLICATION_CONTEXT('encombrement capteur reed - modele simplifie')`,
+  );
+  const prodCtx = doc.next(`PRODUCT_CONTEXT('',${appCtx},'mechanical')`);
+  const defCtx = doc.next(`PRODUCT_DEFINITION_CONTEXT('',${appCtx},'design')`);
   const solids = solidsFor(doc, s);
   const geomCtx = doc.next(
-    `(GEOMETRIC_REPRESENTATION_CONTEXT(3)GLOBAL_UNIT_ASSIGNED_CONTEXT((#UNITMM,#UNITRAD,#UNITSR))GLOBAL_UNCERTAINTY_ASSIGNED_CONTEXT((#UNCERT))REPRESENTATION_CONTEXT('',''))`,
+    `(GEOMETRIC_REPRESENTATION_CONTEXT(3)GLOBAL_UNIT_ASSIGNED_CONTEXT((${unitMm},${unitRad},${unitSr}))GLOBAL_UNCERTAINTY_ASSIGNED_CONTEXT((${uncert}))REPRESENTATION_CONTEXT('',''))`,
   );
-  const shapeRep = doc.next(`SHAPE_REPRESENTATION('${s.id}',(${solids.join(",")}),${geomCtx})`);
+  const shapeRep = doc.next(
+    `SHAPE_REPRESENTATION('${s.id}',(${solids.join(",")}),${geomCtx})`,
+  );
   const [ex, ey, ez] = overallEnvelope(s);
   const prov = provenance(s);
   const pedagogical = s.sourceFile === null;
@@ -291,28 +309,14 @@ export function buildStepFile(s: SensorModel): string {
     "ENDSEC;",
     "DATA;",
   ].join("\n");
-  const unitEntities = [
-    `#UNITMM=(NAMED_UNIT(*)LENGTH_UNIT()SI_UNIT(.MILLI.,.METRE.));`,
-    `#UNITRAD=(NAMED_UNIT(*)PLANE_ANGLE_UNIT()SI_UNIT($,.RADIAN.));`,
-    `#UNITSR=(NAMED_UNIT(*)SOLID_ANGLE_UNIT()SI_UNIT($,.STERADIAN.));`,
-    `#UNCERT=UNCERTAINTY_MEASURE_WITH_UNIT(LENGTH_MEASURE(1.0E-6),#UNITMM,'','');`,
-  ].join("\n");
-  const product = doc.next(`PRODUCT('${s.id}','${s.name.replace(/'/g, "''")}','${cotes.replace(/'/g, "''")}',(#PC))`);
-  return [
-    header,
-    unitEntities,
-    `#PC=PRODUCT_CONTEXT('',#PC2,'mechanical');`,
-    `#PC2=APPLICATION_CONTEXT('encombrement capteur reed - modele simplifie');`,
-    doc.body(),
-    `#PDF=PRODUCT_DEFINITION_FORMATION('','',${product});`,
-    `#PD=PRODUCT_DEFINITION('','',#PDF,#PDC);`,
-    `#PDC=PRODUCT_DEFINITION_CONTEXT('',#PC2,'design');`,
-    `#PDS=PRODUCT_DEFINITION_SHAPE('','',#PD);`,
-    `#SDR=SHAPE_DEFINITION_REPRESENTATION(#PDS,${shapeRep});`,
-    "ENDSEC;",
-    "END-ISO-10303-21;",
-    "",
-  ].join("\n");
+  const product = doc.next(
+    `PRODUCT('${s.id}','${s.name.replace(/'/g, "''")}','${cotes.replace(/'/g, "''")}',(${prodCtx}))`,
+  );
+  const formation = doc.next(`PRODUCT_DEFINITION_FORMATION('','',${product})`);
+  const definition = doc.next(`PRODUCT_DEFINITION('','',${formation},${defCtx})`);
+  const defShape = doc.next(`PRODUCT_DEFINITION_SHAPE('','',${definition})`);
+  doc.next(`SHAPE_DEFINITION_REPRESENTATION(${defShape},${shapeRep})`);
+  return [header, doc.body(), "ENDSEC;", "END-ISO-10303-21;", ""].join("\n");
 }
 
 export interface StepManifestEntry {

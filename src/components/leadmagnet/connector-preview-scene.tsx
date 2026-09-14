@@ -64,6 +64,16 @@ export default function ConnectorPreviewScene({
           <boxGeometry args={[chamferSize, chamferSize, depth + 0.02]} />
           <meshStandardMaterial color="#22282e" roughness={0.6} />
         </mesh>
+        {/* Saillie inférieure documentée séparément sur le plan (jamais fondue
+            dans la hauteur du corps). */}
+        {geometry.lowerProtrusion ? (
+          <mesh position={[0, -(height + geometry.lowerProtrusion.valueMm) / 2, 0]}>
+            <boxGeometry
+              args={[width * 0.6, geometry.lowerProtrusion.valueMm, depth * 0.6]}
+            />
+            <meshStandardMaterial color="#3c4853" roughness={0.55} metalness={0.05} />
+          </mesh>
+        ) : null}
         {/* Alvéoles : exactement `positions` creux, un par voie documentée. */}
         {Array.from({ length: housing.positions }, (_, i) => (
           <mesh

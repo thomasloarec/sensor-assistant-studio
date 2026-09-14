@@ -40,6 +40,8 @@ import {
   projectChecklist,
   DELEGATED_CABLE,
   DELEGATED_CONNECTOR,
+  DELEGATED_CONTEXT,
+  DELEGATED_MOUNTING,
   DELEGATED_SENSOR,
 } from "@/lib/leadmagnet/project-checklist";
 import SensorCard from "@/components/standex/workshop/sensor-card";
@@ -1511,6 +1513,18 @@ export function DesignSpace({
   const guidedReq = dossier.requirements.find((r) => r.key === question.key) ?? null;
   const lastQuestion = focusIdx >= GUIDED_QUESTIONS.length - 1;
 
+  /** Bascule une décision explicitement confiée à Standex. Ajout/retrait sans
+   * doublon, et sans écrire aucune valeur technique dans le dossier. */
+  const toggleDelegated = (key: string) =>
+    setDossier((d) => {
+      const rest = (d.delegatedDecisions ?? []).filter((k) => k !== key);
+      return {
+        ...d,
+        delegatedDecisions: (d.delegatedDecisions ?? []).includes(key) ? rest : [...rest, key],
+        updatedAt: new Date().toISOString(),
+      };
+    });
+
   /** Une question mise de côté par « Je ne sais pas encore » : décision traitée,
    * jamais une valeur connue. */
   const setQuestionAside = (key: string, aside: boolean) =>
@@ -2886,7 +2900,26 @@ export function DesignSpace({
             <Button variant="ghost" className="min-h-12 text-base" onClick={() => setTab("besoin")}>
               {t("Revenir à mon besoin")}
             </Button>
+            {/* Délégation explicite du placement : décision prise dans le
+                parcours, jamais une valeur technique connue. */}
+            <Button
+              variant={isDelegated(dossier, DELEGATED_MOUNTING) ? "default" : "outline"}
+              className="min-h-12 text-base"
+              aria-pressed={isDelegated(dossier, DELEGATED_MOUNTING)}
+              onClick={() => toggleDelegated(DELEGATED_MOUNTING)}
+            >
+              {isDelegated(dossier, DELEGATED_MOUNTING)
+                ? t("Placement confié à Standex")
+                : t("Choisir le placement avec Standex")}
+            </Button>
           </div>
+          {isDelegated(dossier, DELEGATED_MOUNTING) ? (
+            <p className="notice notice-info mt-3">
+              {t(
+                "Le placement est noté « à définir avec Standex ». C'est une décision prise, pas une valeur connue ni une validation technique.",
+              )}
+            </p>
+          ) : null}
         </div>
       )}
 
@@ -3073,6 +3106,25 @@ export function DesignSpace({
                   }))
                 }
               />
+            </div>
+            <div className="sm:col-span-2">
+              {/* Délégation explicite du contexte projet : étape traitée, sans
+                  valeur inventée ni validation. */}
+              <Button
+                variant={isDelegated(dossier, DELEGATED_CONTEXT) ? "default" : "outline"}
+                className="min-h-11"
+                aria-pressed={isDelegated(dossier, DELEGATED_CONTEXT)}
+                onClick={() => toggleDelegated(DELEGATED_CONTEXT)}
+              >
+                {isDelegated(dossier, DELEGATED_CONTEXT)
+                  ? t("Contexte confié à Standex")
+                  : t("Préciser le contexte avec Standex")}
+              </Button>
+              <p className="t-caption mt-2">
+                {t(
+                  "Aucun volume, aucune date et aucun contact ne sont déduits : ce qui reste vide reste inconnu.",
+                )}
+              </p>
             </div>
           </AccordionContent>
         </AccordionItem>

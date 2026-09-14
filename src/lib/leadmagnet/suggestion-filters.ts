@@ -84,7 +84,8 @@ export function suggestionFilters(input: {
       requirementKey: "envelope",
       technical:
         "Encombrement hors tout comparé aux dimensions renseignées, terminaisons documentées comprises. " +
-        "Une dimension non renseignée ne filtre rien : inconnu ne vaut pas zéro.",
+        "Une dimension non renseignée reste libre : elle ne limite aucun côté du capteur, et inconnu ne vaut pas zéro. " +
+        "La comparaison retient l'orientation la plus favorable ; l'orientation réelle reste à décider.",
     });
   return filters;
 }
@@ -115,12 +116,19 @@ export function passesFilter(
         input.envelope.heightMm,
       ].filter((v): v is number => typeof v === "number" && Number.isFinite(v) && v > 0);
       if (!available.length) return true;
-      // Comparaison par dimensions triées : le capteur peut être orienté.
-      const needed = [...overallEnvelope(model)].sort((a, b) => b - a);
-      const room = [...available].sort((a, b) => b - a);
-      return needed.every((n, i) => {
-        const limit = room[i];
-        return limit === undefined || n <= limit + EPSILON_MM;
+      /* Une dimension non renseignée est LIBRE, pas nulle : un capteur ne peut
+       * donc pas être écarté en comparant ses plus grands côtés à une place
+       * partiellement connue (« hauteur max 5 mm » ne dit rien de la longueur).
+       * L'orientation reste explicitement à décider, exactement comme dans
+       * evaluateCandidates : on retient donc la meilleure orientation possible,
+       * c'est-à-dire les côtés les PLUS PETITS du capteur placés en face des
+       * seules limites connues. Avec les trois cotes renseignées, cela revient
+       * à la comparaison complète triée. */
+      const needed = [...overallEnvelope(model)].sort((a, b) => a - b);
+      const room = [...available].sort((a, b) => a - b);
+      return room.every((limit, i) => {
+        const side = needed[i];
+        return side === undefined || side <= limit + EPSILON_MM;
       });
     }
   }

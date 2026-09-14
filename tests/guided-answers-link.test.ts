@@ -16,6 +16,7 @@ import { buildDossierExport, parseDossierExport } from "@/lib/leadmagnet/dossier
 import {
   delegatedQuestion,
   delegatedQuestionKeys,
+  GUIDED_QUESTION_KEYS,
   isDelegated,
   projectChecklist,
   checklistProgress,
@@ -95,11 +96,13 @@ describe("« Je ne sais pas encore »", () => {
     const items = projectChecklist(d);
     const besoin = items.find((i) => i.id === "besoin")!;
     const montage = items.find((i) => i.id === "montage")!;
-    expect(besoin.state).toBe("delegated");
+    // Deux questions sur six mises de côté : le besoin n'est pas encore traité.
+    expect(besoin.state).toBe("todo");
+    expect(besoin.detail).toContain("2 question(s) traitée(s) sur 6");
+    // Le placement, lui, est bien une décision confiée à Standex.
     expect(montage.state).toBe("delegated");
     // Délégué compte comme traité, jamais comme validation technique.
-    expect(checklistProgress(items).handled).toBe(2);
-    expect(besoin.detail).toContain("aucune valeur technique");
+    expect(checklistProgress(items).handled).toBe(1);
   });
 
   test("un dossier neuf n'a rien de traité", () => {
@@ -113,9 +116,16 @@ describe("« Je ne sais pas encore »", () => {
       value: "vissé sur une équerre",
       source: "user",
     });
-    // Le composant retire la clé ; ici on vérifie que la réponse suffit à cocher.
+    // Le composant retire la clé : la question n'est plus « à définir ».
     const withoutAside: DesignDossier = { ...d, delegatedDecisions: [] };
-    expect(projectChecklist(withoutAside).find((i) => i.id === "besoin")!.state).toBe("chosen");
+    expect(delegatedQuestionKeys(withoutAside)).toEqual([]);
+    // Une réponse sur six ne coche toujours pas le besoin : il faut traiter les six.
+    expect(projectChecklist(withoutAside).find((i) => i.id === "besoin")!.state).toBe("todo");
+    const allAside = GUIDED_QUESTION_KEYS.filter((k) => k !== "mounting").reduce(
+      (acc, k) => aside(acc, k),
+      withoutAside,
+    );
+    expect(projectChecklist(allAside).find((i) => i.id === "besoin")!.state).toBe("chosen");
   });
 });
 
