@@ -226,29 +226,32 @@ export function projectChecklist(d: DesignDossier): ChecklistItem[] {
     d.business.annualVolume.kind !== "unknown" ||
     d.business.seriesStartDate !== null ||
     d.business.samplesNeededBy !== null;
-  const contactFilled =
-    (d.business.contactName ?? "").trim() !== "" ||
-    (d.business.contactEmail ?? "").trim() !== "" ||
-    (d.business.contactCompany ?? "").trim() !== "";
+  /* Un e-mail de retour valide est indispensable : l'envoi l'exige. Un nom
+   * ou une société seuls ne suffisent pas, et déléguer le contexte ne
+   * délègue PAS l'identité du prospect. */
+  const emailFilled = EMAIL_PATTERN.test((d.business.contactEmail ?? "").trim());
+  const contextDelegated = isDelegated(d, DELEGATED_CONTEXT);
   const contexte: ChecklistItem = {
     id: "contexte",
     label: "Contexte du projet et contact",
-    state:
-      contextFilled && contactFilled
+    state: !emailFilled
+      ? "todo"
+      : contextFilled
         ? "chosen"
-        : isDelegated(d, DELEGATED_CONTEXT)
+        : contextDelegated
           ? "delegated"
           : "todo",
-    detail:
-      contextFilled && contactFilled
+    detail: !emailFilled
+      ? contextDelegated
+        ? "Contexte à préciser avec Standex ; ajoutez votre e-mail pour recevoir notre retour."
+        : contextFilled
+          ? "Contexte renseigné ; ajoutez votre e-mail pour recevoir notre retour."
+          : "À renseigner à la dernière étape, avec votre e-mail, avant d'échanger avec Standex."
+      : contextFilled
         ? "Contexte et interlocuteur renseignés."
-        : isDelegated(d, DELEGATED_CONTEXT)
+        : contextDelegated
           ? "Contexte à préciser avec Standex."
-          : contactFilled
-            ? "Contact renseigné, contexte du projet encore vide."
-            : contextFilled
-              ? "Contexte renseigné, il manque encore votre contact."
-              : "À renseigner à la dernière étape, avant d'échanger avec Standex.",
+          : "E-mail renseigné, contexte du projet encore vide.",
     tab: "revue",
   };
 
