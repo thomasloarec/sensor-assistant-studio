@@ -14,6 +14,7 @@ import {
   CUSTOM_SENSOR_ID,
 } from "./sensor-catalog";
 import { parseMachine, componentPose, openingAt, rotate } from "./machine-assembly";
+import { documentedMagnetAngleDeg } from "./mounting/profiles";
 import type { MachineAssembly } from "./machine-assembly";
 import {
   PUBLISHED_REGISTRY,
@@ -227,10 +228,10 @@ export function parseWorkshopConfig(value: unknown): WorkshopConfig | null {
   ) as unknown as WorkshopConfig;
 }
 
+export { documentedMagnetAngleDeg };
 /** Angle normalisé dans (-180, 180]. */
 export const normaliseAngle = (a: number) => (((a % 360) + 540) % 360) - 180;
 /** Angle de l'aimant imposé par l'approche documentée du couple. */
-export { documentedMagnetAngleDeg } from "./mounting/profiles";
 
 /** Ligne publiée EXACTE du couple sélectionné, ou `null`. */
 export const workshopRow = (c: WorkshopConfig) =>
