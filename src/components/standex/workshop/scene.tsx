@@ -339,7 +339,8 @@ function StandardBody({
                 <meshStandardMaterial color="#a7b5bd" metalness={0.8} roughness={0.25} />
               </mesh>
             ))
-          : electrical && showCable &&
+          : electrical &&
+            showCable &&
             [-1, 1].map((sign) => {
               const side = model.cableSide ?? -1,
                 z = bladeOffsetZ(model) + sign * Math.min(0.65, w * 0.15);

@@ -1,8 +1,4 @@
-import {
-  defaultMagnetFor,
-  documentedAlias,
-  magnetOptionsFor,
-} from "@/lib/standex/default-pairs";
+import { defaultMagnetFor, documentedAlias, magnetOptionsFor } from "@/lib/standex/default-pairs";
 import { pairedMagnetModel } from "@/lib/standex/paired-magnets";
 import { magnetSource } from "@/lib/standex/magnet-catalog";
 import { t, msg } from "@/lib/i18n/core";
@@ -665,7 +661,11 @@ export default function MagneticWorkshop({
   const askTrial = verdictKind === "undocumented" || verdictKind === "unpublished";
 
   const verdictBanner = (
-    <div className={"mw-verdict-bar mw-verdict-bar-" + verdictKind} role="status" data-testid="verdict-bar">
+    <div
+      className={"mw-verdict-bar mw-verdict-bar-" + verdictKind}
+      role="status"
+      data-testid="verdict-bar"
+    >
       <span className="mw-verdict-dot" aria-hidden="true" />
       <div className="mw-verdict-bar-text">
         <p className="t-title-s">{verdictSentence}</p>
@@ -932,9 +932,7 @@ export default function MagneticWorkshop({
             )}
             {(publishedRowsSourceUrl(publishedRows) ?? magnetSource(config.magnetModel)) && (
               <a
-                href={
-                  (publishedRowsSourceUrl(publishedRows) ?? magnetSource(config.magnetModel))!
-                }
+                href={(publishedRowsSourceUrl(publishedRows) ?? magnetSource(config.magnetModel))!}
                 target="_blank"
                 rel="noreferrer"
               >
@@ -1413,11 +1411,7 @@ export default function MagneticWorkshop({
               {t("Dimensions")}
             </label>
             <label>
-              <input
-                type="checkbox"
-                checked={zones}
-                onChange={(e) => setZones(e.target.checked)}
-              />
+              <input type="checkbox" checked={zones} onChange={(e) => setZones(e.target.checked)} />
               {t("Colorer le parcours")}
             </label>
           </>
@@ -1696,7 +1690,9 @@ export default function MagneticWorkshop({
               <span>{t("Position ouverte")}</span>
               <strong className="t-caption">
                 {msg("Un aller-retour · {0} s", [
-                  playbackSpeed === "normal" ? CYCLE_SECONDS_NORMAL : (CYCLE_STEPS_SLOW * 50) / 1000,
+                  playbackSpeed === "normal"
+                    ? CYCLE_SECONDS_NORMAL
+                    : (CYCLE_STEPS_SLOW * 50) / 1000,
                 ])}
               </strong>
               <span>{t("Position fermée")}</span>

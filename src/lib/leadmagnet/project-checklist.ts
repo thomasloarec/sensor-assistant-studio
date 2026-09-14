@@ -72,9 +72,7 @@ export const GUIDED_QUESTION_KEYS = [
 ] as const;
 
 export function projectChecklist(d: DesignDossier): ChecklistItem[] {
-  const answeredRows = d.requirements.filter(
-    (r) => ANSWERED.has(r.state) && r.value.trim() !== "",
-  );
+  const answeredRows = d.requirements.filter((r) => ANSWERED.has(r.state) && r.value.trim() !== "");
   const answeredKeys = new Set(answeredRows.map((r) => r.key));
   const answered = answeredRows.length;
   const setAside = delegatedQuestionKeys(d);
@@ -82,11 +80,9 @@ export function projectChecklist(d: DesignDossier): ChecklistItem[] {
   /** Choix STRUCTURÉS saisis dans les questions : une fixation cliquée ou une
    * dimension mesurée est une réponse traitée, même sans texte libre. Sinon le
    * résumé redemanderait indéfiniment ces deux questions. */
-  const envelopeGiven = [
-    d.envelope.lengthMm,
-    d.envelope.widthMm,
-    d.envelope.heightMm,
-  ].some((v) => typeof v === "number" && Number.isFinite(v) && v > 0);
+  const envelopeGiven = [d.envelope.lengthMm, d.envelope.widthMm, d.envelope.heightMm].some(
+    (v) => typeof v === "number" && Number.isFinite(v) && v > 0,
+  );
   const structured = new Set<string>();
   if (d.mounting.kind !== "undecided") structured.add("mounting");
   if (envelopeGiven) structured.add("envelope");
@@ -162,8 +158,7 @@ export function projectChecklist(d: DesignDossier): ChecklistItem[] {
   const montage: ChecklistItem = {
     id: "montage",
     label: "Où le capteur se place",
-    state:
-      mountingDeclared || modelAttached ? "chosen" : mountingSetAside ? "delegated" : "todo",
+    state: mountingDeclared || modelAttached ? "chosen" : mountingSetAside ? "delegated" : "todo",
     detail: modelAttached
       ? "Un modèle 3D de votre machine est rattaché à ce projet."
       : mountingDeclared

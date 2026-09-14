@@ -83,7 +83,11 @@ export function GuidedVerdict({
   const Icon =
     c.verdict === "expected" ? CircleCheck : c.verdict === "not_expected" ? CircleX : CircleHelp;
   return (
-    <div className={"mw-verdict mw-verdict-" + c.verdict} role="status" data-testid="guided-verdict">
+    <div
+      className={"mw-verdict mw-verdict-" + c.verdict}
+      role="status"
+      data-testid="guided-verdict"
+    >
       <p className="mw-verdict-head">
         <Icon size={18} aria-hidden="true" />
         <strong className="t-title-s">{t(VERDICT_TITLE[c.verdict])}</strong>

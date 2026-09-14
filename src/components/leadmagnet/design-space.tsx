@@ -22,12 +22,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { CandidateThumbnail } from "@/components/leadmagnet/candidate-thumbnail";
 import { PairThumbnail } from "@/components/leadmagnet/pair-thumbnail";
-import {
-  CUSTOM_SENSOR_ID,
-  formatMm,
-  sensorById,
-  sizeLabel,
-} from "@/lib/standex/sensor-catalog";
+import { CUSTOM_SENSOR_ID, formatMm, sensorById, sizeLabel } from "@/lib/standex/sensor-catalog";
 import {
   blockedBy,
   suggestionFilters,
@@ -1687,7 +1682,6 @@ export function DesignSpace({
       </div>
     ) : null;
 
-
   const besoinSection = (
     <div className="space-y-5">
       {showAdvanced ? (
@@ -1791,7 +1785,6 @@ export function DesignSpace({
               )}
             </p>
           ) : null}
-
 
           {guidedReq && guidedReq.state === "hypothesis" && guidedReq.value.trim() ? (
             <div className="relative mt-5 overflow-hidden rounded-[var(--r-md)] bg-[var(--warning-soft)] p-4 pl-5 before:absolute before:inset-y-0 before:left-0 before:w-[3px] before:bg-[var(--warning)]">
@@ -2071,9 +2064,7 @@ export function DesignSpace({
     const aligned = applySensorSelection(base, id);
     // Un montage déjà enregistré peut porter un aimant choisi volontairement.
     // La présélection du capteur aligne le reste de l'atelier sans l'écraser.
-    applyWorkshopConfig(
-      dossier.workshop ? { ...aligned, magnetModel: base.magnetModel } : aligned,
-    );
+    applyWorkshopConfig(dossier.workshop ? { ...aligned, magnetModel: base.magnetModel } : aligned);
     setWorkshopEpoch((e) => e + 1);
     setDossier((d) => ({
       ...d,
@@ -2099,7 +2090,6 @@ export function DesignSpace({
       t("Le choix du capteur est confié à Standex. Ce n'est pas une validation technique."),
     );
   };
-
 
   /** Rangée de puces : les critères réellement actifs, rien d'autre. Aucun
    * encadré : c'est une ligne de lecture posée sous le sous-titre. */
@@ -2223,12 +2213,7 @@ export function DesignSpace({
                 "Vous regardez des capteurs qui peuvent diverger de vos réponses. Rien n'est enregistré : vos exigences et votre montage sont inchangés.",
               )}
             </p>
-            <Button
-              variant="outline"
-              size="sm"
-              className="min-h-11"
-              onClick={() => setExplore({})}
-            >
+            <Button variant="outline" size="sm" className="min-h-11" onClick={() => setExplore({})}>
               {t("Revenir à mes réponses")}
             </Button>
           </>
@@ -2320,9 +2305,7 @@ export function DesignSpace({
         </div>
         {/* Les références (MK04, M04) traversent le rendu inchangées. */}
         <p className="t-title-m">{card.couple}</p>
-        <p className="t-body mt-2">
-          {msg("{0}, {1}.", [t(card.fixingLabel), card.size])}
-        </p>
+        <p className="t-body mt-2">{msg("{0}, {1}.", [t(card.fixingLabel), card.size])}</p>
         <p className="t-body mt-2">
           {card.maxPullInMm === null ? (
             <span className="text-[var(--standex-blue-75)]">
@@ -2433,9 +2416,6 @@ export function DesignSpace({
     </div>
   );
 
-
-
-
   const candidatsSection = (
     <div className="space-y-4">
       <p className="notice notice-info">
@@ -2523,7 +2503,9 @@ export function DesignSpace({
                       </summary>
                       <ul className="space-y-1.5 pl-5">
                         {c.reasons.slice(1).map((r, i) => (
-                          <li key={i} className="t-caption list-disc">{t(r)}</li>
+                          <li key={i} className="t-caption list-disc">
+                            {t(r)}
+                          </li>
                         ))}
                       </ul>
                     </details>
@@ -2634,8 +2616,6 @@ export function DesignSpace({
   const connectorPreference =
     connectorWanted ||
     (termination.kind === "unqualified_connector" && !isDelegated(dossier, DELEGATED_CONNECTOR));
-
-
 
   const cablageSection = (
     <div className="space-y-4">
@@ -2751,7 +2731,6 @@ export function DesignSpace({
                 ],
               }));
             }}
-
           />
           {t("J'ai une préférence de connecteur")}
         </label>
@@ -2829,7 +2808,9 @@ export function DesignSpace({
                   </div>
                 ))}
               </div>
-              {connectorError ? <p className="notice notice-danger mt-2">{connectorError}</p> : null}
+              {connectorError ? (
+                <p className="notice notice-danger mt-2">{connectorError}</p>
+              ) : null}
               <div className="mt-3 flex flex-wrap items-center gap-2">
                 <Button
                   size="sm"
@@ -3135,7 +3116,12 @@ export function DesignSpace({
           <p className="t-caption mt-2">
             {selectedRangeNote.range} : {selectedRangeNote.lengths}{" "}
             {selectedRangeNote.source.startsWith("http") ? (
-              <a className="underline" href={selectedRangeNote.source} target="_blank" rel="noreferrer">
+              <a
+                className="underline"
+                href={selectedRangeNote.source}
+                target="_blank"
+                rel="noreferrer"
+              >
                 {t("voir la source fabricant")}
               </a>
             ) : (
@@ -3228,11 +3214,7 @@ export function DesignSpace({
           <div className="panel-block">
             <div className="flex flex-wrap items-center gap-3">
               <Label className="text-base font-medium">{t("Atelier 3D (facultatif)")}</Label>
-              <Button
-                variant="outline"
-                className="min-h-11 text-base"
-                onClick={openWorkshopPanel}
-              >
+              <Button variant="outline" className="min-h-11 text-base" onClick={openWorkshopPanel}>
                 {t("Vérifier la détection dans mon montage")}
               </Button>
               <span className="t-caption">
@@ -4234,7 +4216,9 @@ export function DesignSpace({
           </button>
           <p className="studio-navigation-note">
             <strong>{t("Conservation et reprise de ce projet")}</strong>
-            <span>{t(MEMORY_LOSS_WARNING)} {t(EXPORT_BINARY_NOTICE)}</span>
+            <span>
+              {t(MEMORY_LOSS_WARNING)} {t(EXPORT_BINARY_NOTICE)}
+            </span>
             {importMessage ? <span>{importMessage}</span> : null}
           </p>
         </nav>
@@ -4326,7 +4310,11 @@ export function DesignSpace({
         <Tabs value={tab} onValueChange={setTab}>
           {showAdvanced ? (
             <div className="mb-2">
-              <Button variant="ghost" className="min-h-11 text-base" onClick={() => setShowAdvanced(false)}>
+              <Button
+                variant="ghost"
+                className="min-h-11 text-base"
+                onClick={() => setShowAdvanced(false)}
+              >
                 {t("Masquer les réglages détaillés")}
               </Button>
             </div>
