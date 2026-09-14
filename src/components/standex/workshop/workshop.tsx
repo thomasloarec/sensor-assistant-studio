@@ -433,10 +433,10 @@ export default function MagneticWorkshop({
     fictitious = isFictitiousSensor(config.sensorId);
   const basisLabel =
     basis === "standex"
-      ? "Données Standex · distances publiées pour ce couple"
+      ? t("Données Standex · distances publiées pour ce couple")
       : basis === "unavailable"
-        ? "Distances non renseignées pour ce couple"
-        : "Démonstration · distances fictives";
+        ? t("Distances non renseignées pour ce couple")
+        : t("Démonstration · distances fictives");
   /** Classes réellement publiées pour le couple : aucune interpolation. */
   const sensitivityChoices = publishedClasses(config.sensorId, config.magnetModel);
   const magnetChoices = magnetOptionsFor(config.sensorId);
@@ -686,7 +686,7 @@ export default function MagneticWorkshop({
                   </option>
                   <option value="education">{t("Démonstration · distances fictives")}</option>
                 </select>
-                <p>{t(reference ? basisLabel : "Forme cotée · champ et seuils fictifs")}</p>
+                <p>{reference ? basisLabel : t("Forme cotée · champ et seuils fictifs")}</p>
               </div>
               )}
               {/* Parcours COMMUN : les quatre étapes, leur corps et le pied sont
@@ -771,7 +771,7 @@ export default function MagneticWorkshop({
                           {pairedMagnetModel(config.magnetModel, config.sensorId)?.name ??
                             t("Aimant fictif")}
                         </strong>
-                        <span>{t(reference ? basisLabel : "Modèle idéal de dipôle dans l'air")}</span>
+                        <span>{reference ? basisLabel : t("Modèle idéal de dipôle dans l'air")}</span>
                         {magnetAlias && (
                           <span className="t-caption">
                             {msg("Correspondance documentaire : {0}", [magnetAlias])}
@@ -1270,7 +1270,7 @@ export default function MagneticWorkshop({
           <div className="mw-scene-card">
             <div className="mw-scene-toolbar">
               <span className={basis === "fictitious" ? "mw-kind education" : "mw-kind"}>
-                {t(basisLabel)}
+                {basisLabel}
               </span>
               {/* Même cycle que la lecture détaillée ci-dessous : même état,
                   même progression, aucune animation parallèle. */}
