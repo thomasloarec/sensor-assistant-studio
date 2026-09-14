@@ -22112,15 +22112,6 @@
     "Nome del sensore",
     "センサー名"
   ],
-  "Distances typiques Standex publiées pour le couple capteur–aimant réellement sélectionné, dans la configuration représentée.": [
-    "Typical Standex distances published for the sensor–magnet pair actually selected, in the configuration shown.",
-    "针对实际所选传感器–磁铁组合公布的 Standex 典型距离，适用于所示配置。",
-    "Typische von Standex veröffentlichte Abstände für das tatsächlich gewählte Sensor-Magnet-Paar in der dargestellten Konfiguration.",
-    "Distancias típicas Standex publicadas para el par sensor–imán realmente seleccionado, en la configuración representada.",
-    "Типовые расстояния Standex, опубликованные для фактически выбранной пары датчик–магнит в показанной конфигурации.",
-    "Distanze tipiche Standex pubblicate per la coppia sensore–magnete effettivamente selezionata, nella configurazione rappresentata.",
-    "実際に選択されたセンサーと磁石の組み合わせについて、図示の構成で Standex が公表した代表距離。"
-  ],
   "Distances non renseignées pour ce couple capteur–aimant. Aucun seuil n'est emprunté à un autre capteur ni à un autre aimant : le comportement du capteur nécessite des tests en environnement réel.": [
     "No distances documented for this sensor–magnet pair. No threshold is borrowed from another sensor or another magnet: the sensor behaviour requires testing in a real environment.",
     "该传感器–磁铁组合没有记录距离。不会借用其他传感器或磁铁的阈值：传感器行为需要在真实环境中测试。",
@@ -22138,5 +22129,14 @@
     "Этот класс чувствительности или этот подход не опубликован для данной пары. Состояние контакта остаётся неопределённым.",
     "Questa classe di sensibilità o questo avvicinamento non è pubblicato per questa coppia. Il contatto resta indeterminato.",
     "この組み合わせについて、この感度クラスまたはこの接近方式は公表されていません。接点は不確定のままです。"
+  ],
+  "Distances typiques Standex publiées pour le couple capteur–aimant réellement sélectionné, dans la configuration représentée. Enveloppes cotées ; contacts internes et pôles symboliques. À confirmer par essais dans votre application.": [
+    "Typical Standex distances published for the sensor–magnet pair actually selected, in the configuration shown. Dimensioned envelopes; internal contacts and poles are symbolic. To be confirmed by tests in your application.",
+    "针对实际所选传感器–磁铁组合公布的 Standex 典型距离，适用于所示配置。 标注外形尺寸；内部触点与磁极为示意。需在您的应用中通过试验确认。",
+    "Typische von Standex veröffentlichte Abstände für das tatsächlich gewählte Sensor-Magnet-Paar in der dargestellten Konfiguration. Bemaßte Umrisse; innere Kontakte und Pole sind symbolisch. Durch Versuche in Ihrer Anwendung zu bestätigen.",
+    "Distancias típicas Standex publicadas para el par sensor–imán realmente seleccionado, en la configuración representada. Envolventes cotadas; contactos internos y polos simbólicos. A confirmar mediante ensayos en su aplicación.",
+    "Типовые расстояния Standex, опубликованные для фактически выбранной пары датчик–магнит в показанной конфигурации. Габаритные размеры указаны; внутренние контакты и полюса условны. Подлежит подтверждению испытаниями в вашем применении.",
+    "Distanze tipiche Standex pubblicate per la coppia sensore–magnete effettivamente selezionata, nella configurazione rappresentata. Ingombri quotati; contatti interni e poli simbolici. Da confermare con prove nella vostra applicazione.",
+    "実際に選択されたセンサーと磁石の組み合わせについて、図示の構成で Standex が公表した代表距離。 外形寸法入り。内部接点と極は象徴的な表現です。実際の用途での試験による確認が必要です。"
   ]
 }
