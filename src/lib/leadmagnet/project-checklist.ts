@@ -224,8 +224,10 @@ export function projectChecklist(d: DesignDossier): ChecklistItem[] {
 
   /* Dernière étape : contexte du projet et interlocuteur. Aucun objet par
    * défaut ne coche cette ligne — il faut une valeur réellement saisie. */
+  /* La phase « exploration » est la valeur par défaut d'un dossier neuf :
+   * elle ne compte pas comme un contexte réellement saisi. */
   const contextFilled =
-    d.business.projectPhase !== "unknown" ||
+    (d.business.projectPhase !== "unknown" && d.business.projectPhase !== "exploration") ||
     d.business.annualVolume.kind !== "unknown" ||
     d.business.seriesStartDate !== null ||
     d.business.samplesNeededBy !== null;

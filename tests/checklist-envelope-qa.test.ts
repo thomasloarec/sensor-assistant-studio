@@ -47,8 +47,10 @@ describe("checklist — toutes les décisions simples, délégation explicite", 
   });
 
   test("délégations explicites comptent comme traitées, jamais comme valeurs", () => {
+    const baseD = fresh();
     const d = {
-      ...fresh(),
+      ...baseD,
+      business: { ...baseD.business, contactEmail: "tloarec@example.com" },
       delegatedDecisions: [
         DELEGATED_MOUNTING,
         DELEGATED_CABLE,
@@ -134,8 +136,10 @@ describe("checklist — complétude réelle et valeurs affichées", () => {
   const base = () => createDossier();
 
   test("les six questions traitées puis tout confié : aucune ligne artificielle à renseigner", () => {
+    const baseD = base();
     const d = {
-      ...base(),
+      ...baseD,
+      business: { ...baseD.business, contactEmail: "tloarec@example.com" },
       delegatedDecisions: [
         ...GUIDED_QUESTION_KEYS.map((k) => delegatedQuestion(k)),
         DELEGATED_SENSOR,
