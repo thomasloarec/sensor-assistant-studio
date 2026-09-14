@@ -3249,7 +3249,11 @@ export function DesignSpace({
   const reviewTestedLabel = reviewTested
     ? [
         `${reviewTested.sensorId} + ${reviewTested.magnetId}`,
-        t(APPROACH_WORD[reviewTested.approach] ?? reviewTested.approach),
+        reviewTested.approach === "F1"
+          ? t("face à face")
+          : reviewTested.approach === "D3"
+            ? t("perpendiculaire")
+            : t("parallèle"),
         reviewTested.verdict === "expected" && reviewTested.pullInMm !== null
           ? msg("détection prévue (ferme {0} mm, ouvre {1} mm)", [
               formatMm(reviewTested.pullInMm),
