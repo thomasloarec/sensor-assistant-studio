@@ -23092,5 +23092,149 @@
     "…. Изменение, внесенное здесь, ни в коем случае не считается опубликованным отзывом.",
     "…. Una modifica apportata qui non vale mai come riscontro pubblicato.",
     "…。ここで行われた変更は公開されたフィードバックとはみなされません。"
+  ],
+  "Critères d'exploration en cours. Vos réponses ne sont pas modifiées.": [
+    "Exploration criteria in use. Your answers are not modified.",
+    "正在使用探索条件。您的回答未被修改。",
+    "Erkundungskriterien aktiv. Ihre Antworten werden nicht verändert.",
+    "Criterios de exploración en curso. Sus respuestas no se modifican.",
+    "Используются критерии поиска. Ваши ответы не изменяются.",
+    "Criteri di esplorazione in corso. Le sue risposte non vengono modificate.",
+    "探索条件を使用中です。回答は変更されません。"
+  ],
+  "· exploration": [
+    "· exploration",
+    "· 探索",
+    "· Erkundung",
+    "· exploración",
+    "· поиск",
+    "· esplorazione",
+    "· 探索"
+  ],
+  "Aucun critère actif : tous les capteurs de l'aperçu sont affichés.": [
+    "No active criterion: every sensor of this preview is shown.",
+    "没有启用条件：显示预览中的全部传感器。",
+    "Kein aktives Kriterium: alle Sensoren der Vorschau werden angezeigt.",
+    "Ningún criterio activo: se muestran todos los sensores de la vista.",
+    "Активных критериев нет: показаны все датчики обзора.",
+    "Nessun criterio attivo: sono mostrati tutti i sensori dell'anteprima.",
+    "有効な条件はありません。プレビューのすべてのセンサーを表示しています。"
+  ],
+  "Explorer avec d'autres critères": [
+    "Explore with other criteria",
+    "使用其他条件浏览",
+    "Mit anderen Kriterien erkunden",
+    "Explorar con otros criterios",
+    "Искать по другим критериям",
+    "Esplorare con altri criteri",
+    "他の条件で探す"
+  ],
+  "Ces critères servent seulement à regarder d'autres capteurs. Ils remplacent le critère correspondant de vos réponses, ils ne s'y ajoutent pas, et vos réponses restent intactes.": [
+    "These criteria only let you look at other sensors. They replace the matching criterion from your answers instead of adding to it, and your answers stay intact.",
+    "这些条件仅用于查看其他传感器。它们会替换您回答中对应的条件，而不是叠加，您的回答保持不变。",
+    "Diese Kriterien dienen nur dazu, andere Sensoren anzusehen. Sie ersetzen das entsprechende Kriterium Ihrer Antworten, sie kommen nicht hinzu, und Ihre Antworten bleiben unverändert.",
+    "Estos criterios solo sirven para mirar otros sensores. Sustituyen el criterio correspondiente de sus respuestas, no se suman a él, y sus respuestas permanecen intactas.",
+    "Эти критерии нужны только для просмотра других датчиков. Они заменяют соответствующий критерий ваших ответов, а не добавляются к нему; ваши ответы остаются без изменений.",
+    "Questi criteri servono solo a guardare altri sensori. Sostituiscono il criterio corrispondente delle sue risposte, non si aggiungono, e le sue risposte restano intatte.",
+    "これらの条件は他のセンサーを見るためだけのものです。回答の該当条件に追加されるのではなく置き換えられ、回答自体は変わりません。"
+  ],
+  "Autre fixation": [
+    "Other mounting",
+    "其他固定方式",
+    "Andere Befestigung",
+    "Otra fijación",
+    "Другое крепление",
+    "Altro fissaggio",
+    "別の取り付け方法"
+  ],
+  "Autre forme de boîtier": [
+    "Other housing shape",
+    "其他外壳形状",
+    "Andere Gehäuseform",
+    "Otra forma de carcasa",
+    "Другая форма корпуса",
+    "Altra forma di custodia",
+    "別のハウジング形状"
+  ],
+  "Vous regardez des capteurs qui peuvent diverger de vos réponses. Rien n'est enregistré : vos exigences et votre montage sont inchangés.": [
+    "You are looking at sensors that may diverge from your answers. Nothing is saved: your requirements and your assembly are unchanged.",
+    "您正在查看可能与回答不符的传感器。不会保存任何内容：您的需求和装配保持不变。",
+    "Sie sehen Sensoren, die von Ihren Antworten abweichen können. Nichts wird gespeichert: Ihre Anforderungen und Ihr Aufbau bleiben unverändert.",
+    "Está viendo sensores que pueden divergir de sus respuestas. No se guarda nada: sus requisitos y su montaje no cambian.",
+    "Вы смотрите датчики, которые могут расходиться с вашими ответами. Ничего не сохраняется: требования и сборка не меняются.",
+    "Sta guardando sensori che possono divergere dalle sue risposte. Nulla viene salvato: i suoi requisiti e il suo montaggio restano invariati.",
+    "回答と異なる可能性のあるセンサーを表示しています。何も保存されません。要件と取り付けは変更されません。"
+  ],
+  "Revenir à mes réponses": [
+    "Back to my answers",
+    "返回我的回答",
+    "Zurück zu meinen Antworten",
+    "Volver a mis respuestas",
+    "Вернуться к моим ответам",
+    "Tornare alle mie risposte",
+    "回答に戻る"
+  ],
+  "Corps tubulaire": [
+    "Tubular body",
+    "管状本体",
+    "Zylindrischer Körper",
+    "Cuerpo tubular",
+    "Трубчатый корпус",
+    "Corpo tubolare",
+    "円筒形ボディ"
+  ],
+  "Corps à collerette": [
+    "Flanged body",
+    "带法兰本体",
+    "Körper mit Flansch",
+    "Cuerpo con pestaña",
+    "Корпус с фланцем",
+    "Corpo con flangia",
+    "フランジ付きボディ"
+  ],
+  "Boîtier parallélépipédique": [
+    "Rectangular housing",
+    "矩形外壳",
+    "Rechteckiges Gehäuse",
+    "Carcasa rectangular",
+    "Прямоугольный корпус",
+    "Custodia rettangolare",
+    "直方体ハウジング"
+  ],
+  "Corps à emmancher": [
+    "Press-fit body",
+    "压入式本体",
+    "Einpress-Körper",
+    "Cuerpo de encaje a presión",
+    "Корпус для запрессовки",
+    "Corpo a pressione",
+    "圧入ボディ"
+  ],
+  "Composant à reporter (CMS)": [
+    "Surface-mount component (SMD)",
+    "表面贴装元件（SMD）",
+    "Bauteil für Oberflächenmontage (SMD)",
+    "Componente de montaje superficial (SMD)",
+    "Компонент для поверхностного монтажа (SMD)",
+    "Componente a montaggio superficiale (SMD)",
+    "表面実装部品（SMD）"
+  ],
+  "Ampoule en verre (traversant)": [
+    "Glass bulb (through-hole)",
+    "玻璃管（通孔）",
+    "Glaskolben (Durchsteckmontage)",
+    "Ampolla de vidrio (through-hole)",
+    "Стеклянный баллон (монтаж в отверстия)",
+    "Ampolla di vetro (foro passante)",
+    "ガラス管（スルーホール）"
+  ],
+  "Exploration : aucune forme de boîtier exclue.": [
+    "Exploration: no housing shape excluded.",
+    "探索：不排除任何外壳形状。",
+    "Erkundung: keine Gehäuseform ausgeschlossen.",
+    "Exploración: no se excluye ninguna forma de carcasa.",
+    "Поиск: ни одна форма корпуса не исключена.",
+    "Esplorazione: nessuna forma di custodia esclusa.",
+    "探索：除外するハウジング形状はありません。"
   ]
 }

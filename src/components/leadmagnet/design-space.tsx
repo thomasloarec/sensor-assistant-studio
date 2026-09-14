@@ -31,8 +31,14 @@ import {
 import {
   blockedBy,
   suggestionFilters,
+  explorationFilters,
+  mergeFilters,
+  EXPLORABLE_MOUNTINGS,
+  EXPLORABLE_SHAPES,
+  type ExplorationChoice,
   type SuggestionFilterId,
 } from "@/lib/leadmagnet/suggestion-filters";
+
 import {
   checklistProgress,
   delegatedQuestion,
@@ -561,6 +567,12 @@ export function DesignSpace({
   /** Critères de suggestion volontairement désactivés par l'utilisateur.
    * C'est un état d'EXPLORATION local : il n'écrase aucune réponse du dossier. */
   const [filtersOff, setFiltersOff] = useState<SuggestionFilterId[]>([]);
+  /** Critères choisis à la main pour explorer d'AUTRES capteurs. Cet état est
+   * distinct des réponses : il ne modifie ni les exigences ni le montage du
+   * dossier, et chaque choix REMPLACE le critère de même nature (jamais
+   * d'intersection impossible « vissé ET CMS »). */
+  const [explore, setExplore] = useState<ExplorationChoice>({});
+
   const [selectionAnnounce, setSelectionAnnounce] = useState("");
   /** Fiche détaillée d'un capteur (cotes, sources, téléchargement STEP). */
   const [detailSensorId, setDetailSensorId] = useState<string | null>(null);
@@ -1970,9 +1982,15 @@ export function DesignSpace({
     () => suggestionFilters({ mounting: dossier.mounting, envelope: dossier.envelope }),
     [dossier.mounting, dossier.envelope],
   );
+  /** Critères réellement affichés : les réponses, dont chaque critère peut être
+   * REMPLACÉ par un critère d'exploration de même nature. */
+  const shownFilters = useMemo(
+    () => mergeFilters(answerFilters, explorationFilters(explore)),
+    [answerFilters, explore],
+  );
   const activeFilterIds = useMemo(
-    () => answerFilters.map((f) => f.id).filter((id) => !filtersOff.includes(id)),
-    [answerFilters, filtersOff],
+    () => shownFilters.map((f) => f.id).filter((id) => !filtersOff.includes(id)),
+    [shownFilters, filtersOff],
   );
   /** Chaque candidat porte les filtres ACTIFS qui l'écartent. Lever un filtre
    * fait réellement réapparaître les capteurs concernés : la liste n'est pas
@@ -1982,7 +2000,7 @@ export function DesignSpace({
       candidates
         .map((c) => ({
           candidate: c,
-          blocked: blockedBy(sensorById(c.id), answerFilters, activeFilterIds, {
+          blocked: blockedBy(sensorById(c.id), shownFilters, activeFilterIds, {
             mounting: dossier.mounting,
             envelope: dossier.envelope,
           }),
@@ -1992,8 +2010,9 @@ export function DesignSpace({
             (a.candidate.status === "kept" ? 0 : a.candidate.status === "to_verify" ? 1 : 2) -
             (b.candidate.status === "kept" ? 0 : b.candidate.status === "to_verify" ? 1 : 2),
         ),
-    [candidates, answerFilters, activeFilterIds, dossier.mounting, dossier.envelope],
+    [candidates, shownFilters, activeFilterIds, dossier.mounting, dossier.envelope],
   );
+
   const plausibleCandidates = useMemo(
     () => candidateRows.filter((r) => r.blocked.length === 0),
     [candidateRows],
@@ -2043,61 +2062,161 @@ export function DesignSpace({
       <p className="sr-only" role="status" aria-live="polite">
         {selectionAnnounce}
       </p>
-      {answerFilters.length ? (
-        <div className="panel-block space-y-3">
+      <div className="panel-block space-y-3">
+        {shownFilters.length ? (
+          <>
+            <p className="t-body">
+              {answerFilters.length
+                ? t("D'après vos réponses, nous ne montrons d'abord que les capteurs compatibles.")
+                : t("Critères d'exploration en cours. Vos réponses ne sont pas modifiées.")}
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {shownFilters.map((f) => {
+                const on = !filtersOff.includes(f.id);
+                return (
+                  <button
+                    key={f.id}
+                    type="button"
+                    className="answer-filter"
+                    data-source={f.source}
+                    aria-pressed={on}
+                    onClick={() =>
+                      setFiltersOff((off) =>
+                        off.includes(f.id) ? off.filter((x) => x !== f.id) : [...off, f.id],
+                      )
+                    }
+                  >
+                    <span aria-hidden="true">{on ? "✓" : "+"}</span>
+                    <span>{t(f.label)}</span>
+                    {f.source === "exploration" ? (
+                      <span className="t-caption">{t("· exploration")}</span>
+                    ) : null}
+                  </button>
+                );
+              })}
+            </div>
+            <p className="t-caption">
+              {t(
+                "Vous pouvez désactiver un critère pour voir les autres capteurs. Vos réponses ne sont pas modifiées.",
+              )}
+            </p>
+          </>
+        ) : (
           <p className="t-body">
-            {t("D'après vos réponses, nous ne montrons d'abord que les capteurs compatibles.")}
+            {t("Aucun critère actif : tous les capteurs de l'aperçu sont affichés.")}
           </p>
-          <div className="flex flex-wrap gap-2">
-            {answerFilters.map((f) => {
-              const on = !filtersOff.includes(f.id);
-              return (
-                <button
-                  key={f.id}
-                  type="button"
-                  className="answer-filter"
-                  aria-pressed={on}
-                  onClick={() =>
-                    setFiltersOff((off) =>
-                      off.includes(f.id) ? off.filter((x) => x !== f.id) : [...off, f.id],
-                    )
-                  }
+        )}
+        {filtersOff.length || explore.mountingKind || explore.shape ? (
+          <Button
+            variant="outline"
+            size="sm"
+            className="min-h-11"
+            onClick={() => {
+              setFiltersOff([]);
+              setExplore({});
+            }}
+          >
+            {t("Rétablir mes réponses")}
+          </Button>
+        ) : null}
+
+        {/* Exploration volontaire : d'AUTRES critères que ses réponses, sans
+            jamais modifier les réponses ni le montage du dossier. Un choix
+            remplace le critère de même nature : pas de « vissé ET CMS ». */}
+        <details className="mt-1">
+          <summary className="t-body min-h-11 cursor-pointer list-none py-2">
+            {t("Explorer avec d'autres critères")}
+          </summary>
+          <div className="mt-2 space-y-3">
+            <p className="t-caption">
+              {t(
+                "Ces critères servent seulement à regarder d'autres capteurs. Ils remplacent le critère correspondant de vos réponses, ils ne s'y ajoutent pas, et vos réponses restent intactes.",
+              )}
+            </p>
+            <div>
+              <Label className="t-label">{t("Autre fixation")}</Label>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {EXPLORABLE_MOUNTINGS.map((m) => {
+                  const on = explore.mountingKind === m.kind;
+                  return (
+                    <button
+                      key={m.kind}
+                      type="button"
+                      className="answer-filter"
+                      aria-pressed={on}
+                      onClick={() =>
+                        setExplore(({ mountingKind: _drop, ...rest }) =>
+                          on ? rest : { ...rest, mountingKind: m.kind },
+                        )
+                      }
+                    >
+                      <span aria-hidden="true">{on ? "✓" : "+"}</span>
+                      <span>{t(m.label)}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+            <div>
+              <Label className="t-label">{t("Autre forme de boîtier")}</Label>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {EXPLORABLE_SHAPES.map((s) => {
+                  const on = explore.shape === s.shape;
+                  return (
+                    <button
+                      key={s.shape}
+                      type="button"
+                      className="answer-filter"
+                      aria-pressed={on}
+                      onClick={() =>
+                        setExplore(({ shape: _drop, ...rest }) =>
+                          on ? rest : { ...rest, shape: s.shape },
+                        )
+                      }
+                    >
+                      <span aria-hidden="true">{on ? "✓" : "+"}</span>
+                      <span>{t(s.label)}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+            {explore.mountingKind || explore.shape ? (
+              <>
+                <p className="notice notice-info">
+                  {t(
+                    "Vous regardez des capteurs qui peuvent diverger de vos réponses. Rien n'est enregistré : vos exigences et votre montage sont inchangés.",
+                  )}
+                </p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="min-h-11"
+                  onClick={() => setExplore({})}
                 >
-                  <span aria-hidden="true">{on ? "✓" : "+"}</span>
-                  <span>{t(f.label)}</span>
-                </button>
-              );
-            })}
+                  {t("Revenir à mes réponses")}
+                </Button>
+              </>
+            ) : null}
           </div>
-          <p className="t-caption">
-            {t(
-              "Vous pouvez désactiver un critère pour voir les autres capteurs. Vos réponses ne sont pas modifiées.",
-            )}
-          </p>
-          {filtersOff.length ? (
-            <Button
-              variant="outline"
-              size="sm"
-              className="min-h-11"
-              onClick={() => setFiltersOff([])}
-            >
-              {t("Rétablir mes réponses")}
-            </Button>
-          ) : null}
+        </details>
+
+        {shownFilters.length ? (
           <details className="mt-1">
             <summary className="t-caption min-h-11 cursor-pointer list-none py-2">
               {t("Voir le motif technique de chaque critère")}
             </summary>
             <ul className="mt-2 space-y-1">
-              {answerFilters.map((f) => (
+              {shownFilters.map((f) => (
                 <li key={f.id} className="t-caption">
                   <strong>{t(f.label)}</strong> — {t(f.technical)}
                 </li>
               ))}
             </ul>
           </details>
-        </div>
-      ) : null}
+        ) : null}
+      </div>
+
       <div className="panel-block flex flex-wrap items-center gap-3">
         <span className="t-body">{t("Vous n'êtes pas obligé de choisir une référence.")}</span>
         <Button

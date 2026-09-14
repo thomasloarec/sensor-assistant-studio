@@ -12,10 +12,16 @@ import {
   CUSTOM_SENSOR_ID,
   overallEnvelope,
   type SensorModel,
+  type SensorShape,
+
 } from "@/lib/standex/sensor-catalog";
 import type { EnvelopeMm, MountingChoice } from "./dossier";
 
 export type SuggestionFilterId = "fixation" | "forme" | "encombrement";
+
+/** D'où vient le critère affiché : des réponses du dossier, ou d'une
+ * exploration volontaire qui ne touche PAS aux réponses. */
+export type SuggestionFilterSource = "answers" | "exploration";
 
 export interface SuggestionFilter {
   id: SuggestionFilterId;
@@ -25,7 +31,43 @@ export interface SuggestionFilter {
   requirementKey: "mounting" | "envelope";
   /** Motif technique, réservé au dépliant « détails ». */
   technical: string;
+  source: SuggestionFilterSource;
+  /** Critère porté par le filtre lui-même (exploration). Absent = le critère
+   * est lu dans les réponses du dossier. */
+  criteria?: {
+    mountingKind?: string;
+    /** Portion insérée maximale, en mm. */
+    holeMm?: number;
+    shape?: SensorShape;
+  };
 }
+
+/** Choix d'exploration : chaque critère REMPLACE explicitement le critère de
+ * même nature issu des réponses. On n'intersecte jamais « vissé ET CMS ». */
+export interface ExplorationChoice {
+  mountingKind?: string;
+  shape?: SensorShape;
+}
+
+/** Formes proposées à l'exploration, avec un libellé compréhensible. */
+export const EXPLORABLE_SHAPES: readonly { shape: SensorShape; label: string }[] = [
+  { shape: "cylinder", label: "Corps tubulaire" },
+  { shape: "threaded", label: "Corps fileté" },
+  { shape: "flange", label: "Corps à collerette" },
+  { shape: "block", label: "Boîtier parallélépipédique" },
+  { shape: "pressfit", label: "Corps à emmancher" },
+  { shape: "smd", label: "Composant à reporter (CMS)" },
+  { shape: "glass", label: "Ampoule en verre (traversant)" },
+];
+
+/** Fixations proposées à l'exploration, dans le même ordre que les réponses. */
+export const EXPLORABLE_MOUNTINGS: readonly { kind: string; label: string }[] = [
+  { kind: "screw", label: "Fixation vissée" },
+  { kind: "press_fit", label: "Emmanchement dans un trou" },
+  { kind: "pcb_through_hole", label: "Fixation traversante" },
+  { kind: "pcb_smd", label: "Fixation par report CMS" },
+];
+
 
 /** Familles de boîtiers réellement compatibles d'un montage déclaré.
  * Même partition que l'évaluation des candidats : aucune forme n'est devinée. */
@@ -62,6 +104,7 @@ export function suggestionFilters(input: {
       label: MOUNTING_LABEL[kind]!,
       requirementKey: "mounting",
       technical: `Formes de boîtier retenues : ${shapes.join(", ")}.`,
+      source: "answers",
     });
   if (input.mounting.kind === "press_fit" && input.mounting.holeDiameterMm > 0) {
     const hole = input.mounting.holeDiameterMm;
@@ -72,6 +115,7 @@ export function suggestionFilters(input: {
       technical:
         `Portion insérée ≤ ${hole} mm. La collerette peut être plus large : ` +
         "c'est sa fonction de butée, ce n'est pas un motif d'exclusion.",
+      source: "answers",
     });
   }
   const dims = [input.envelope.lengthMm, input.envelope.widthMm, input.envelope.heightMm].filter(
@@ -86,9 +130,53 @@ export function suggestionFilters(input: {
         "Encombrement hors tout comparé aux dimensions renseignées, terminaisons documentées comprises. " +
         "Une dimension non renseignée reste libre : elle ne limite aucun côté du capteur, et inconnu ne vaut pas zéro. " +
         "La comparaison retient l'orientation la plus favorable ; l'orientation réelle reste à décider.",
+      source: "answers",
     });
   return filters;
 }
+
+/** Filtres d'EXPLORATION : critères choisis à la main au-dessus de la liste.
+ * Ils ne modifient jamais les réponses ni le montage du dossier. */
+export function explorationFilters(explore: ExplorationChoice): SuggestionFilter[] {
+  const filters: SuggestionFilter[] = [];
+  if (explore.mountingKind) {
+    const shapes = SHAPES_BY_MOUNTING[explore.mountingKind];
+    filters.push({
+      id: "fixation",
+      label: MOUNTING_LABEL[explore.mountingKind] ?? explore.mountingKind,
+      requirementKey: "mounting",
+      technical: shapes
+        ? `Exploration : formes de boîtier retenues : ${shapes.join(", ")}.`
+        : "Exploration : aucune forme de boîtier exclue.",
+      source: "exploration",
+      criteria: { mountingKind: explore.mountingKind },
+    });
+  }
+  if (explore.shape) {
+    const label =
+      EXPLORABLE_SHAPES.find((s) => s.shape === explore.shape)?.label ?? explore.shape;
+    filters.push({
+      id: "forme",
+      label,
+      requirementKey: "mounting",
+      technical: `Exploration : boîtiers de forme « ${explore.shape} » uniquement.`,
+      source: "exploration",
+      criteria: { shape: explore.shape },
+    });
+  }
+  return filters;
+}
+
+/** Fusion EXPLICITE : un critère d'exploration REMPLACE le critère de même
+ * nature issu des réponses. Jamais d'intersection impossible « vissé ET CMS ». */
+export function mergeFilters(
+  answers: readonly SuggestionFilter[],
+  exploration: readonly SuggestionFilter[],
+): SuggestionFilter[] {
+  const replaced = new Set(exploration.map((f) => f.id));
+  return [...exploration, ...answers.filter((f) => !replaced.has(f.id))];
+}
+
 
 /** Le capteur passe-t-il ce filtre ? Aucune tolérance inventée : seule une
  * marge numérique documentée absorbe les arrondis de saisie. */
@@ -102,13 +190,18 @@ export function passesFilter(
   if (alwaysVisible(model)) return true;
   switch (filter.id) {
     case "fixation": {
-      const shapes = SHAPES_BY_MOUNTING[input.mounting.kind];
+      /* Un filtre d'exploration porte son propre critère : il REMPLACE la
+         fixation déclarée, il ne s'y ajoute pas. */
+      const kind = filter.criteria?.mountingKind ?? input.mounting.kind;
+      const shapes = SHAPES_BY_MOUNTING[kind];
       return !shapes || shapes.includes(model.shape);
     }
     case "forme": {
+      if (filter.criteria?.shape) return model.shape === filter.criteria.shape;
       if (input.mounting.kind !== "press_fit") return true;
       return insertionAcross(model) <= input.mounting.holeDiameterMm + EPSILON_MM;
     }
+
     case "encombrement": {
       const available = [
         input.envelope.lengthMm,
