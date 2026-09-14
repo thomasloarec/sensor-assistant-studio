@@ -851,6 +851,11 @@ export default function MagneticWorkshop({
                           </tbody>
                         </table>
                         <p className="mw-help">{t(referenceNoteFor(config))}</p>
+                        {publishedFamilyNoteFor(config) && (
+                          <p className="mw-help" data-testid="published-family-note">
+                            {t(publishedFamilyNoteFor(config)!)}
+                          </p>
+                        )}
                         {magnetSource(config.magnetModel) && (
                           <a
                             href={magnetSource(config.magnetModel)!}
