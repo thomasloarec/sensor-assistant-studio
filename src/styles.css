@@ -539,6 +539,36 @@
   .candidate-thumb-large {
     block-size: 13rem;
   }
+  /* Scène 3D + règle : la règle est posée au-dessus du canvas, sa longueur en
+     pixels vient du zoom orthographique réel (pixels par millimètre). */
+  .candidate-thumb-stage {
+    position: relative;
+    block-size: 100%;
+    inline-size: 100%;
+  }
+  .candidate-thumb-rule {
+    position: absolute;
+    inset-block-end: 0.5rem;
+    inset-inline-start: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.125rem 0.375rem;
+    border-radius: var(--r-sm);
+    background: var(--surface-tint);
+    color: var(--muted-foreground);
+    pointer-events: none;
+  }
+  .candidate-thumb-rule-line {
+    display: block;
+    block-size: 0.5rem;
+    border-inline: 2px solid currentColor;
+    border-block-end: 2px solid currentColor;
+  }
+  .candidate-thumb-rule-text {
+    font: var(--t-caption);
+    white-space: nowrap;
+  }
   .candidate-thumb-scale line {
     stroke: var(--muted-foreground);
   }
