@@ -1,4 +1,6 @@
 import { describe, expect, test, beforeEach } from "bun:test";
+import { createElement } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
 import {
   acquireThumbnailSlot,
   liveThumbnailContexts,
@@ -6,8 +8,15 @@ import {
   resetThumbnailSlots,
   thumbnailSilhouette,
 } from "../src/components/leadmagnet/candidate-thumbnail";
-import { CUSTOM_SENSOR_ID, SENSOR_CATALOG, sensorById } from "../src/lib/standex/sensor-catalog";
-import { contactGeometry } from "../src/components/standex/workshop/scene";
+import {
+  CUSTOM_SENSOR_ID,
+  SENSOR_CATALOG,
+  electricalDetailsAllowed,
+  sensorById,
+} from "../src/lib/standex/sensor-catalog";
+import { Body, Contacts, contactGeometry } from "../src/components/standex/workshop/scene";
+import { SensorPlan } from "../src/components/standex/workshop/sensor-plan";
+import { pairedMagnetModel } from "../src/lib/standex/paired-magnets";
 
 describe("Vignettes 3D des candidats", () => {
   beforeEach(() => resetThumbnailSlots());
@@ -84,6 +93,80 @@ describe("Vignettes 3D des candidats", () => {
     const std = contactGeometry(mk03, false);
     expect(std.thickness).toBe(Math.max(0.09, Math.min(0.55, mk03.body[1] * 0.1)));
     expect(std.gap).toBe(Math.max(0.17, mk03.body[2] * 0.1));
+  });
+
+  test("les aimants restent passifs dans les rendus 2D et 3D, même avec tous les détails demandés", () => {
+    const variants: [string, string?][] = [
+      ["M02"],
+      ["M03"],
+      ["M04"],
+      ["M05"],
+      ["M13"],
+      ["M13B"],
+      ["M11P"],
+      ["M11S", "MK11-M5"],
+      ["M11S", "MK11-M8"],
+      ["M21P/1"],
+      ["M21P/2"],
+      ["M27"],
+      ["M36-N42"],
+      ["M37-N42"],
+      ["M38-N42"],
+      ["4003004003"],
+      ["N45-4X19"],
+    ];
+    for (const [magnetId, sensorId] of variants) {
+      const magnet = pairedMagnetModel(magnetId, sensorId);
+      expect(magnet, magnetId).not.toBeNull();
+      expect(magnet?.magnet, magnetId).toBe(true);
+      expect(electricalDetailsAllowed(magnet!), magnetId).toBe(false);
+      expect(magnet?.cableSide, magnetId).toBeUndefined();
+      expect(magnet?.terminalSpan, magnetId).toBeUndefined();
+      expect(magnet?.reed, magnetId).toBeUndefined();
+      expect(magnet?.pcbThickness, magnetId).toBeUndefined();
+
+      const plan = renderToStaticMarkup(
+        createElement("svg", null, createElement(SensorPlan, {
+          model: magnet!,
+          xray: true,
+          showCable: true,
+          contact: "closed",
+        })),
+      );
+      expect(plan, magnetId).not.toContain("#8394a1");
+      expect(plan, magnetId).not.toContain("<circle");
+      expect(renderToStaticMarkup(createElement(Contacts, {
+        model: magnet!,
+        contact: "closed",
+        reduced: true,
+      })), magnetId).toBe("");
+      expect(() => renderToStaticMarkup(createElement(Body, {
+        model: magnet!,
+        xray: true,
+        showCable: true,
+      }))).not.toThrow();
+    }
+  });
+
+  test("les vrais capteurs conservent fils, contacts et bornes CMS", () => {
+    const cabled = renderToStaticMarkup(
+      createElement("svg", null, createElement(SensorPlan, {
+        model: sensorById("MK04"),
+        xray: true,
+        showCable: true,
+      })),
+    );
+    expect(cabled).toContain("#8394a1");
+    expect(cabled).toContain("<circle");
+
+    const smd = renderToStaticMarkup(
+      createElement("svg", null, createElement(SensorPlan, {
+        model: sensorById("MK15"),
+        xray: false,
+        showCable: false,
+      })),
+    );
+    expect(smd).toContain("#aab5be");
   });
 
 });
