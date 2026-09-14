@@ -40,8 +40,8 @@ ne s'applique qu'au changement de capteur.
 | MK11-P-M8 | M11P | M11P | non | — |
 | MK11-M5 | M11S | M11S | non | boîtier à la géométrie de la variante M5 |
 | MK11-M8 | M11S | M11S, M02, 4003004003 | non pour M11S ; oui pour M02 et 4003004003 (B–E, D1–D5, 40 lignes) | boîtier à la géométrie de la variante M8 |
-| MK21 | M21P/1 | M21P/2, M21 | non pour M21P/1 et M21P/2 ; oui pour M21 (B–E, D1–D5, 18 lignes) | aucune source n'étend la table M21 aux variantes P/1 et P/2 : pas d'alias |
-| MK21PR | M21P/1 | M21P/2, M21 | idem MK21 | — |
+| MK21 | M21P/1 | M21P/2, M21 | oui (B–E, D1–D5, 18 lignes) via la famille documentée « M21/P(1,2) » | brochure p. 37 : la planche MAGNETS IN HOUSINGS nomme la famille « M21/P(1,2) » avec un seul jeu de cotes ; p. 38 : l'aimant 2500000021 / M21 est listé comme valable. Provenance affichée à l'écran ; identité d'AIMANT seulement |
+| MK21PR | M21P/1 | M21P/2, M21 | **non** : le registre ne contient aucune ligne pour la famille capteur MK21PR | aucune source n'établit que MK21PR partage la table du MK21 : les seuils du MK21 ne lui sont pas empruntés |
 | MK27 | M27 | M27 | non | une ligne de la fiche l'étiquette **MK27** : correspondance documentaire signalée |
 | MK36 | M36-N42 | M36-N42, M36 | oui (F1, contact 1A, 1 ligne) | Min Activation 17 / Max Release 25 ; variante d'aimantation N42 explicitée |
 | MK37 | M37-N42 | M37-N42, M37 | oui (F1, contacts 1A et 1B, 2 lignes) | 1A 19 / 32 ; 1B 16 / 26 affiché séparément, hors moteur normalement ouvert |
