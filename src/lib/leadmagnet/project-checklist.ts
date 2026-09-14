@@ -95,15 +95,19 @@ export function projectChecklist(d: DesignDossier): ChecklistItem[] {
    * par défaut dans l'atelier ne suffit pas. */
   const mountingDeclared = d.mounting.kind !== "undecided";
   const modelAttached = d.workshopSource === "user_asset" && d.workshopAsset !== null;
+  const mountingSetAside = setAside.includes("mounting") || setAside.includes("envelope");
   const montage: ChecklistItem = {
     id: "montage",
     label: "Où le capteur se place",
-    state: mountingDeclared || modelAttached ? "chosen" : "todo",
+    state:
+      mountingDeclared || modelAttached ? "chosen" : mountingSetAside ? "delegated" : "todo",
     detail: modelAttached
       ? "Un modèle 3D de votre machine est rattaché à ce projet."
       : mountingDeclared
         ? "Montage mécanique déclaré."
-        : "Ni montage déclaré, ni modèle 3D rattaché.",
+        : mountingSetAside
+          ? "Placement à définir avec Standex."
+          : "Ni montage déclaré, ni modèle 3D rattaché.",
     tab: "montage",
   };
 
