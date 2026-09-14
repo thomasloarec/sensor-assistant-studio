@@ -1511,6 +1511,142 @@ export function DesignSpace({
   const guidedReq = dossier.requirements.find((r) => r.key === question.key) ?? null;
   const lastQuestion = focusIdx >= GUIDED_QUESTIONS.length - 1;
 
+  /** Une question mise de côté par « Je ne sais pas encore » : décision traitée,
+   * jamais une valeur connue. */
+  const setQuestionAside = (key: string, aside: boolean) =>
+    setDossier((d) => ({
+      ...d,
+      delegatedDecisions: aside
+        ? [
+            ...(d.delegatedDecisions ?? []).filter((k) => k !== delegatedQuestion(key)),
+            delegatedQuestion(key),
+          ]
+        : (d.delegatedDecisions ?? []).filter((k) => k !== delegatedQuestion(key)),
+      updatedAt: new Date().toISOString(),
+    }));
+
+  /* Choix structurés FACULTATIFS rattachés à deux questions guidées.
+   * Les six questions restent du texte libre et RIEN n'en est déduit : ni
+   * fixation, ni dimension, ni négation (« pas de vis » ne vaut pas « vissé »),
+   * ni interprétation d'un nom d'application ou d'une autre langue. Seul un clic
+   * ou une valeur saisie ci-dessous renseigne le dossier — et donc les filtres
+   * de suggestion, qui restent modifiables ensuite. */
+  const mountingChips: { kind: MountingChoice["kind"]; label: string }[] = [
+    { kind: "screw", label: "Vissé" },
+    { kind: "press_fit", label: "Inséré dans un trou" },
+    { kind: "pcb_through_hole", label: "Traversant sur carte" },
+    { kind: "pcb_smd", label: "Report CMS sur carte" },
+    { kind: "other", label: "Autre montage" },
+  ];
+
+  const guidedStructured =
+    question.key === "mounting" ? (
+      <div className="panel-block mt-6">
+        <p className="t-label">{t("Facultatif : précisez d'un clic")}</p>
+        <p className="t-caption mt-1">
+          {t(
+            "Rien n'est déduit de votre texte. Ces choix servent seulement à préfiltrer les capteurs, et restent modifiables.",
+          )}
+        </p>
+        <div className="mt-3 flex flex-wrap gap-2">
+          {mountingChips.map((c) => {
+            const active = dossier.mounting.kind === c.kind;
+            return (
+              <button
+                key={c.kind}
+                type="button"
+                aria-pressed={active}
+                className={`answer-filter${active ? " answer-filter-on" : ""}`}
+                onClick={() => {
+                  setDossier((d) => ({
+                    ...d,
+                    mounting: active
+                      ? { kind: "undecided" }
+                      : c.kind === "press_fit"
+                        ? { kind: "press_fit", holeDiameterMm: 0 }
+                        : c.kind === "other"
+                          ? { kind: "other", description: "" }
+                          : ({ kind: c.kind } as MountingChoice),
+                    updatedAt: new Date().toISOString(),
+                  }));
+                  if (!active) setQuestionAside(question.key, false);
+                }}
+              >
+                {active ? "✓ " : "+ "}
+                {t(c.label)}
+              </button>
+            );
+          })}
+        </div>
+        {dossier.mounting.kind === "press_fit" ? (
+          <div className="mt-3 max-w-xs">
+            <Label className="t-label" htmlFor="guided-hole">
+              {t("Diamètre du trou (mm)")}
+            </Label>
+            <Input
+              id="guided-hole"
+              className="t-metric w-32 text-right"
+              inputMode="decimal"
+              value={dossier.mounting.holeDiameterMm || ""}
+              onChange={(e) =>
+                setDossier((d) => ({
+                  ...d,
+                  mounting: { kind: "press_fit", holeDiameterMm: num(e.target.value) ?? 0 },
+                  updatedAt: new Date().toISOString(),
+                }))
+              }
+            />
+            <p className="t-caption mt-1">
+              {t("Laissez vide si vous ne le connaissez pas : inconnu ne vaut pas zéro.")}
+            </p>
+          </div>
+        ) : null}
+      </div>
+    ) : question.key === "envelope" ? (
+      <div className="panel-block mt-6">
+        <p className="t-label">{t("Facultatif : précisez d'un clic")}</p>
+        <p className="t-caption mt-1">
+          {t(
+            "Rien n'est déduit de votre texte. Ces choix servent seulement à préfiltrer les capteurs, et restent modifiables.",
+          )}
+        </p>
+        <div className="mt-3 flex flex-wrap gap-3">
+          {(
+            [
+              ["lengthMm", "Longueur"],
+              ["widthMm", "Largeur"],
+              ["heightMm", "Hauteur"],
+            ] as const
+          ).map(([k, label]) => (
+            <div key={k} className="w-32">
+              <Label className="t-label" htmlFor={`guided-${k}`}>
+                {t(label)} (mm)
+              </Label>
+              <Input
+                id={`guided-${k}`}
+                className="t-metric w-32 text-right"
+                inputMode="decimal"
+                value={dossier.envelope[k] ?? ""}
+                onChange={(e) => {
+                  const v = num(e.target.value);
+                  setDossier((d) => ({
+                    ...d,
+                    envelope: { ...d.envelope, [k]: v },
+                    updatedAt: new Date().toISOString(),
+                  }));
+                  if (v !== null) setQuestionAside(question.key, false);
+                }}
+              />
+            </div>
+          ))}
+        </div>
+        <p className="t-caption mt-2">
+          {t("Une dimension laissée vide reste inconnue et ne filtre rien.")}
+        </p>
+      </div>
+    ) : null;
+
+
   const besoinSection = (
     <div className="space-y-5">
       {showAdvanced ? (
