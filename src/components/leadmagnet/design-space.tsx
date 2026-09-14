@@ -43,6 +43,7 @@ import {
   DELEGATED_CONNECTOR,
   DELEGATED_CONTEXT,
   DELEGATED_MOUNTING,
+  TRIAL_REQUEST,
   DELEGATED_SENSOR,
 } from "@/lib/leadmagnet/project-checklist";
 import SensorCard from "@/components/standex/workshop/sensor-card";
@@ -3234,6 +3235,24 @@ export function DesignSpace({
   const revueSection = (
     <div className="space-y-4">
       {projectSummaryCard}
+      {/* Demande d'essai réel : une DEMANDE de mesure adressée à Standex, jamais
+          une mesure, ni une valeur connue, ni une validation R&D. */}
+      <div className="panel-block">
+        <label className="t-body flex min-h-11 items-center gap-3">
+          <input
+            type="checkbox"
+            data-testid="trial-request"
+            checked={isDelegated(dossier, TRIAL_REQUEST)}
+            onChange={() => toggleDelegated(TRIAL_REQUEST)}
+          />
+          {t("Demande d'essai réel")}
+        </label>
+        <p className="t-caption mt-1">
+          {t(
+            "Standex mesure la position dans son laboratoire. Cocher cette case demande une mesure : ce n'est ni une mesure, ni une validation technique.",
+          )}
+        </p>
+      </div>
       {/* Le câble et le connecteur sont ici, sous le résumé : aucune logique de
           câble n'est retirée, seule sa place change. */}
       <details id="section-cablage" className="panel-block-lg scroll-mt-24">
