@@ -207,6 +207,7 @@ import { DEFAULT_WORKSHOP, applySensorSelection } from "@/lib/standex/magnetic-w
 import type { WorkshopConfig } from "@/lib/standex/magnetic-workshop";
 import { BrandLogo } from "@/components/standex/brand-logo";
 import { usePublishedHeaderHeight } from "@/components/standex/app-header";
+import { pairCards, type PairCard } from "@/lib/leadmagnet/pair-cards";
 
 import {
   openPrivateErrorScope,
