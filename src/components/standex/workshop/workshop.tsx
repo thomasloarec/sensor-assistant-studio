@@ -1396,8 +1396,12 @@ export default function MagneticWorkshop({
                 </button>
               </div>
             </div>
-            {cableRouting ? (
+            {/* Outil de pointage du câble : utile seulement à l'étape câble, ou
+                si le pointage est déjà actif. Les trajets et mesures existants
+                restent intacts, ils ne sont simplement pas rappelés ici. */}
+            {cableRouting && (step === 3 || tool === "cable") ? (
               <div className="mw-cable-panel" data-testid="cable-routing-panel">
+
                 <div className="mw-cable-row">
                   <strong>{t("Tracé du câble")}</strong>
                   <span>{t(cableRouting.targetLabel)}</span>
