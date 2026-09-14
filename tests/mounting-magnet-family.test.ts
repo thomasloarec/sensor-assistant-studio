@@ -4,7 +4,7 @@ import { mountingFromWorkshop } from "../src/lib/standex/mounting/bridge";
 import { simulateMounting } from "../src/lib/standex/mounting/simulate";
 import { suggestPose } from "../src/lib/standex/mounting/suggest";
 import { DEFAULT_WORKSHOP } from "../src/lib/standex/magnetic-workshop";
-import { magnetModel } from "../src/lib/standex/magnetics/magnet-catalog";
+import { pairedMagnetModel } from "../src/lib/standex/paired-magnets";
 
 const ALIASES = ["M21P/1", "M21P/2"] as const;
 
@@ -69,8 +69,8 @@ describe("identité de famille d'aimant M21/P(1,2) dans les profils de montage",
   });
 
   test("les vraies variantes de boîtier restent distinctes", () => {
-    const p1 = magnetModel("M21P/1", "MK21");
-    const p2 = magnetModel("M21P/2", "MK21");
+    const p1 = pairedMagnetModel("M21P/1", "MK21");
+    const p2 = pairedMagnetModel("M21P/2", "MK21");
     expect(JSON.stringify(p1)).not.toBe(JSON.stringify(p2));
   });
 });
