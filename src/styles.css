@@ -1006,6 +1006,53 @@
   }
 
   @media (max-width: 639px) {
+    .project-header > div {
+      gap: 0.25rem;
+      padding-inline: 0.5rem;
+    }
+    .project-header .project-title-display {
+      max-width: 5.5rem;
+    }
+    .project-header .project-title-display button {
+      padding-inline: 0.25rem;
+    }
+    .project-header .project-state-badge {
+      width: 0.75rem;
+      min-width: 0.75rem;
+      height: 0.75rem;
+      overflow: hidden;
+      padding: 0;
+      color: transparent;
+    }
+    .project-header .studio-header-navigation {
+      gap: 0.25rem;
+    }
+    .project-header .language-picker {
+      padding-inline: 0.375rem;
+    }
+    .project-header .language-picker select {
+      width: 1rem;
+      padding: 0;
+    }
+    .project-header .studio-navigation summary {
+      padding-inline: 0.625rem;
+    }
+    .workspace-panel-header {
+      gap: 0.25rem;
+      padding-inline: 0.5rem;
+    }
+    .workspace-panel-header > button {
+      padding-inline: 0.5rem;
+    }
+    .workspace-panel-brand .app-header-tool {
+      display: none;
+    }
+    .workspace-panel-brand + .workspace-panel-title {
+      max-width: 5.5rem;
+    }
+    .workspace-panel-header .language-picker {
+      padding-inline: 0.375rem;
+    }
     .project-stepper {
       grid-template-columns: repeat(3, minmax(0, 1fr));
       grid-template-rows: 1fr;
