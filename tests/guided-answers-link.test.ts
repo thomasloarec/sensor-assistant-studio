@@ -12,7 +12,7 @@
  */
 import { describe, expect, test } from "bun:test";
 import { newDossier, proposeRequirement, type DesignDossier } from "@/lib/leadmagnet/dossier";
-import { exportDossier, parseDossier } from "@/lib/leadmagnet/dossier-io";
+import { buildDossierExport, parseDossierExport } from "@/lib/leadmagnet/dossier-io";
 import {
   delegatedQuestion,
   delegatedQuestionKeys,
@@ -122,9 +122,9 @@ describe("« Je ne sais pas encore »", () => {
 describe("compatibilité des dossiers existants", () => {
   test("un dossier sans delegatedDecisions se relit et se réexporte", () => {
     const base = newDossier("fr");
-    const raw = JSON.parse(exportDossier(base)) as Record<string, unknown>;
-    delete (raw as { delegatedDecisions?: unknown }).delegatedDecisions;
-    const parsed = parseDossier(JSON.stringify(raw));
+    const raw = buildDossierExport(base);
+    delete (raw.dossier as { delegatedDecisions?: unknown }).delegatedDecisions;
+    const parsed = parseDossierExport(raw);
     expect(parsed.ok).toBe(true);
     if (!parsed.ok) return;
     expect(parsed.dossier.delegatedDecisions ?? []).toEqual([]);
@@ -133,7 +133,7 @@ describe("compatibilité des dossiers existants", () => {
 
   test("les décisions mises de côté survivent à un aller-retour", () => {
     const d = aside(newDossier("fr"), "electrical");
-    const parsed = parseDossier(exportDossier(d));
+    const parsed = parseDossierExport(buildDossierExport(d));
     expect(parsed.ok).toBe(true);
     if (!parsed.ok) return;
     expect(delegatedQuestionKeys(parsed.dossier)).toEqual(["electrical"]);
