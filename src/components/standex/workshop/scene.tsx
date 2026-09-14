@@ -451,8 +451,10 @@ export function Magnet({ config, sample }: { config: WorkshopConfig; sample: Cyc
             <boxGeometry args={[Math.max(1.1, l * 0.11), h * 1.05, w * 1.05]} />
             <meshStandardMaterial color="#b4531f" roughness={0.45} />
           </mesh>
+          {/* Le nom du modèle rend l'aimant identifiable sans lire la colonne
+              de gauche. L'étiquette reste AU-DESSUS du boîtier. */}
           <Label position={[0, h / 2 + 3.2, 0]} className="mw-magnet-tag">
-            {t("Aimant")}
+            {`${t("Aimant")} ${config.magnetModel}`}
           </Label>
         </>
       ) : (
@@ -598,6 +600,31 @@ function Dimensions({ model }: { model: SensorModel }) {
       ))}
       <Label position={[0, -3, 46]} className="mw-dimension">
         {t("10 mm")}
+      </Label>
+    </group>
+  );
+}
+/** Cote d'entrefer : distance MESURÉE entre le centre du capteur et le centre de
+ *  l'aimant sur l'échantillon affiché. Aucun seuil, aucune valeur inventée : la
+ *  position vient des échantillons déjà calculés par le moteur. */
+function GapDimension({ sample }: { sample: CycleSample }) {
+  const centre = length(sample.position);
+  const mid: Vec3 = [sample.position[0] / 2, 2.4, sample.position[2] / 2];
+  return (
+    <group>
+      <Line
+        points={[
+          [0, 0, 0],
+          sample.position,
+        ]}
+        color="#577287"
+        lineWidth={1.2}
+        dashed
+        dashSize={1.1}
+        gapSize={0.8}
+      />
+      <Label position={mid} className="mw-dimension">
+        {`${Math.round(centre * 10) / 10} mm`}
       </Label>
     </group>
   );
@@ -837,6 +864,7 @@ export default function WorkshopScene({
           {dimensions && <Dimensions model={model} />}
         </group>
         <Magnet config={config} sample={sample} />
+        <GapDimension sample={sample} />
         {ghost && <GhostMagnet ghost={ghost} />}
         <Trajectory samples={samples} returning={sample.t > 0.5} colored={zones} />
         {reference && available && zones && <ReferenceMarkers config={config} />}

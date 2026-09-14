@@ -54,12 +54,14 @@ export function PairThumbnail({
   const magnetDrawn = pairedMagnetModel(magnetId, sensorId) !== null;
   return (
     <div className="pair-thumb-row" data-magnet-drawn={magnetDrawn ? "3d" : "picto"}>
-      <CandidateThumbnail sensorId={sensorId} cabled={false} fitToView size={size} />
+      {/* Six contextes WebGL simultanés laissaient des vignettes vides : le
+          dessin coté s'affiche tout de suite, la 3D au survol. */}
+      <CandidateThumbnail sensorId={sensorId} cabled={false} fitToView size={size} onDemand />
       <span className="pair-thumb-plus" aria-hidden="true">
         +
       </span>
       {magnetDrawn ? (
-        <CandidateThumbnail sensorId={magnetId} cabled={false} fitToView size={size} />
+        <CandidateThumbnail sensorId={magnetId} cabled={false} fitToView size={size} onDemand />
       ) : (
         <MagnetPictogram magnetId={magnetId} />
       )}

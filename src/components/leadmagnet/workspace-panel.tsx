@@ -70,6 +70,7 @@ export function WorkspacePanel({
 }: WorkspacePanelProps) {
   useLocale();
   const panelRef = useRef<HTMLDivElement | null>(null);
+  const bodyRef = useRef<HTMLDivElement | null>(null);
   const openedOnce = useRef(false);
   const restoreTo = useRef<HTMLElement | null>(null);
   // La callback vit dans une ref : l'effet ne doit pas se relancer quand le
@@ -82,6 +83,10 @@ export function WorkspacePanel({
     if (!open) return;
     restoreTo.current = (document.activeElement as HTMLElement | null) ?? null;
     panelRef.current?.focus();
+    // Un panneau s'ouvre TOUJOURS en haut : la fenêtre et le corps du panneau
+    // sont remis à zéro, sinon on arrive au pied de l'écran précédent.
+    window.scrollTo({ top: 0 });
+    if (bodyRef.current) bodyRef.current.scrollTop = 0;
     const onKey = (e: globalThis.KeyboardEvent) => {
       if (e.key === "Escape") {
         e.stopPropagation();
@@ -186,6 +191,8 @@ export function WorkspacePanel({
           </Button>
         </div>
         <div
+          ref={bodyRef}
+          data-workshop-scroll=""
           className={
             bare
               ? "min-w-0 flex-1 overflow-hidden"

@@ -257,6 +257,7 @@ export function CandidateThumbnail({
   fitToView = false,
   size = "compact",
   scaleBar = false,
+  onDemand = false,
 }: {
   sensorId: string;
   livePreview?: boolean;
@@ -266,9 +267,14 @@ export function CandidateThumbnail({
   /** Hauteur de la vignette. Le cadrage reste propre à chaque capteur. */
   size?: "compact" | "large";
   scaleBar?: boolean;
+  /** Le dessin coté s'affiche IMMÉDIATEMENT ; le rendu 3D interactif n'est monté
+   *  qu'au survol, au focus ou au clic. Six contextes WebGL ouverts en même
+   *  temps laissaient des vignettes vides plusieurs secondes. */
+  onDemand?: boolean;
 }) {
   const model = pairedMagnetModel(sensorId) ?? sensorById(sensorId);
   const host = useRef<HTMLDivElement>(null);
+  const [asked, setAsked] = useState(!onDemand);
   const [inView, setInView] = useState(false);
   const [slot, setSlot] = useState(false);
   const [lost, setLost] = useState(false);
@@ -300,7 +306,7 @@ export function CandidateThumbnail({
 
   const claim = useCallback(() => setSlot(true), []);
   useEffect(() => {
-    if (!inView || !supported || lost || !livePreview) return;
+    if (!inView || !supported || lost || !livePreview || !asked) return;
     const token = acquireThumbnailSlot(claim);
     if (token.held) setSlot(true);
     return () => {
@@ -309,15 +315,20 @@ export function CandidateThumbnail({
       releaseThumbnailSlot(token);
       setSlot(false);
     };
-  }, [inView, supported, lost, claim, livePreview]);
+  }, [inView, supported, lost, claim, livePreview, asked]);
 
-  const live = livePreview && inView && slot && supported && !lost;
+  const live = livePreview && asked && inView && slot && supported && !lost;
+  const wake = onDemand && !asked ? () => setAsked(true) : undefined;
   return (
     <div
       ref={host}
       className={size === "large" ? "candidate-thumb candidate-thumb-large" : "candidate-thumb"}
       data-live={live ? "3d" : "2d"}
+      data-on-demand={onDemand ? (asked ? "asked" : "static") : undefined}
       data-sensor={model.id}
+      onPointerEnter={wake}
+      onPointerDown={wake}
+      onFocusCapture={wake}
     >
       {live ? (
         // Un renderer qui refuse de se créer doit retomber sur le dessin 2D,
@@ -352,11 +363,15 @@ export function CandidateThumbnail({
           reason={
             !livePreview
               ? t("Vue plane")
-              : supported
-                ? lost
-                  ? t("Aperçu 3D indisponible")
-                  : t("Aperçu 3D à l'affichage")
-                : t("3D non disponible sur cet appareil")
+              : onDemand && !asked
+                ? // Dessin coté immédiat : la vignette n'est jamais vide, la 3D
+                  // arrive au survol.
+                  t("Vue cotée · survolez pour la 3D")
+                : supported
+                  ? lost
+                    ? t("Aperçu 3D indisponible")
+                    : t("Aperçu 3D à l'affichage")
+                  : t("3D non disponible sur cet appareil")
           }
           cabled={cabled}
           fitToView={fitToView}

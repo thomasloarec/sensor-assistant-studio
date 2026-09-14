@@ -19637,6 +19637,15 @@
     "Involucri indicativi. Le dimensioni del magnete standard provengono dalla scheda; l'asse magnetico interno resta da confermare.",
     "筐体の参考表示。標準磁石の寸法は仕様書に基づき、内部磁軸は未確認です。"
   ],
+  "Vue cotée · survolez pour la 3D": [
+    "Dimensioned view · hover for 3D",
+    "带尺寸视图 · 悬停查看 3D",
+    "Maßzeichnung · für 3D darüberfahren",
+    "Vista con cotas · pase el cursor para ver en 3D",
+    "Вид с размерами · наведите для 3D",
+    "Vista quotata · passa il mouse per il 3D",
+    "寸法付きの図 · カーソルを合わせると3D"
+  ],
   "Vue plane": [
     "Plan view",
     "平面视图",
@@ -23965,5 +23974,329 @@
     "Магнитная метка",
     "Riferimento magnetico",
     "磁極の目印"
+  ],
+  "Résultat": [
+    "Result",
+    "结果",
+    "Ergebnis",
+    "Resultado",
+    "Результат",
+    "Risultato",
+    "結果"
+  ],
+  "Ce que le test a montré": [
+    "What the test showed",
+    "测试结果显示",
+    "Was der Test gezeigt hat",
+    "Lo que mostró la prueba",
+    "Что показал тест",
+    "Ciò che il test ha mostrato",
+    "テストが示したこと"
+  ],
+  "Faire confirmer par Standex": [
+    "Have Standex confirm it",
+    "请 Standex 确认",
+    "Von Standex bestätigen lassen",
+    "Que Standex lo confirme",
+    "Подтверждение от Standex",
+    "Farlo confermare da Standex",
+    "Standex に確認してもらう"
+  ],
+  "Détection prévue": [
+    "Detection expected",
+    "预计可检测",
+    "Erkennung erwartet",
+    "Detección prevista",
+    "Ожидается срабатывание",
+    "Rilevamento previsto",
+    "検出が見込まれます"
+  ],
+  "Pas de détection sur ce cycle": [
+    "No detection on this cycle",
+    "此循环中无检测",
+    "Keine Erkennung in diesem Zyklus",
+    "Sin detección en este ciclo",
+    "Нет срабатывания в этом цикле",
+    "Nessun rilevamento in questo ciclo",
+    "このサイクルでは検出なし"
+  ],
+  "Position à mesurer": [
+    "Position to be measured",
+    "该位置需实测",
+    "Position zu messen",
+    "Posición por medir",
+    "Положение требует измерения",
+    "Posizione da misurare",
+    "位置は実測が必要"
+  ],
+  "Testez un couple pour voir son résultat ici.": [
+    "Test a pair to see its result here.",
+    "测试一个组合后，结果会显示在这里。",
+    "Testen Sie ein Paar, um hier das Ergebnis zu sehen.",
+    "Pruebe un par para ver aquí su resultado.",
+    "Протестируйте пару, чтобы увидеть результат здесь.",
+    "Prova una coppia per vederne qui il risultato.",
+    "組み合わせをテストすると、ここに結果が表示されます。"
+  ],
+  "Cycle du mouvement": [
+    "Movement cycle",
+    "运动周期",
+    "Bewegungszyklus",
+    "Ciclo del movimiento",
+    "Цикл движения",
+    "Ciclo del movimento",
+    "動作サイクル"
+  ],
+  "Couples testés": [
+    "Pairs tested",
+    "已测试的组合",
+    "Getestete Paare",
+    "Pares probados",
+    "Протестированные пары",
+    "Coppie testate",
+    "テスト済みの組み合わせ"
+  ],
+  "Contact indéterminé": [
+    "Contact undetermined",
+    "触点状态不确定",
+    "Kontakt unbestimmt",
+    "Contacto indeterminado",
+    "Состояние контакта не определено",
+    "Contatto indeterminato",
+    "接点は不確定"
+  ],
+  "Contact fermé de {0} % à {1} % du cycle.": [
+    "Contact closed from {0} % to {1} % of the cycle.",
+    "触点在周期的 {0} % 至 {1} % 之间闭合。",
+    "Kontakt von {0} % bis {1} % des Zyklus geschlossen.",
+    "Contacto cerrado del {0} % al {1} % del ciclo.",
+    "Контакт замкнут с {0} % до {1} % цикла.",
+    "Contatto chiuso dal {0} % al {1} % del ciclo.",
+    "サイクルの {0} % から {1} % まで接点が閉じます。"
+  ],
+  "Cycle indéterminé : aucune distance publiée pour cette position.": [
+    "Undetermined cycle: no published distance for this position.",
+    "周期不确定：该位置没有公开的距离数据。",
+    "Unbestimmter Zyklus: für diese Position ist kein Abstand veröffentlicht.",
+    "Ciclo indeterminado: no hay distancias publicadas para esta posición.",
+    "Цикл не определён: для этого положения нет опубликованных расстояний.",
+    "Ciclo indeterminato: nessuna distanza pubblicata per questa posizione.",
+    "サイクルは不確定です。この位置の距離は公開されていません。"
+  ],
+  "Perpendiculaire": [
+    "Perpendicular",
+    "垂直",
+    "Senkrecht",
+    "Perpendicular",
+    "Перпендикулярно",
+    "Perpendicolare",
+    "垂直"
+  ],
+  "{0} devrait détecter votre {1}.": [
+    "{0} should detect your {1}.",
+    "{0} 应能检测到您的{1}。",
+    "{0} sollte Ihr {1} erkennen.",
+    "{0} debería detectar su {1}.",
+    "{0} должен обнаруживать ваш {1}.",
+    "{0} dovrebbe rilevare il vostro {1}.",
+    "{0} はお客様の{1}を検出できると考えられます。"
+  ],
+  "{0} devrait détecter votre pièce.": [
+    "{0} should detect your part.",
+    "{0} 应能检测到您的部件。",
+    "{0} sollte Ihr Bauteil erkennen.",
+    "{0} debería detectar su pieza.",
+    "{0} должен обнаруживать вашу деталь.",
+    "{0} dovrebbe rilevare il vostro pezzo.",
+    "{0} はお客様の部品を検出できると考えられます。"
+  ],
+  "En position {0}, le contact se ferme quand la pièce arrive à {1} mm et se rouvre à {2} mm.": [
+    "In the {0} position, the contact closes when the part reaches {1} mm and reopens at {2} mm.",
+    "在{0}位置，部件到达 {1} mm 时触点闭合，在 {2} mm 时重新断开。",
+    "In {0}er Anordnung schließt der Kontakt, wenn das Bauteil {1} mm erreicht, und öffnet wieder bei {2} mm.",
+    "En posición {0}, el contacto cierra cuando la pieza llega a {1} mm y vuelve a abrir a {2} mm.",
+    "В положении «{0}» контакт замыкается при {1} мм и снова размыкается при {2} мм.",
+    "In posizione {0}, il contatto si chiude quando il pezzo arriva a {1} mm e si riapre a {2} mm.",
+    "{0}配置では、部品が {1} mm に達すると接点が閉じ、{2} mm で再び開きます。"
+  ],
+  "Votre course de {0} → {1} mm est entièrement couverte.": [
+    "Your {0} → {1} mm travel is fully covered.",
+    "您的 {0} → {1} mm 行程被完全覆盖。",
+    "Ihr Weg von {0} → {1} mm ist vollständig abgedeckt.",
+    "Su recorrido de {0} → {1} mm queda totalmente cubierto.",
+    "Ваш ход {0} → {1} мм полностью покрыт.",
+    "La vostra corsa da {0} → {1} mm è interamente coperta.",
+    "{0} → {1} mm のストロークは全域がカバーされます。"
+  ],
+  "Ferme à": [
+    "Closes at",
+    "闭合于",
+    "Schließt bei",
+    "Cierra a",
+    "Замыкается при",
+    "Si chiude a",
+    "閉じる距離"
+  ],
+  "Ouvre à": [
+    "Opens at",
+    "断开于",
+    "Öffnet bei",
+    "Abre a",
+    "Размыкается при",
+    "Si apre a",
+    "開く距離"
+  ],
+  "Position": [
+    "Position",
+    "位置",
+    "Position",
+    "Posición",
+    "Положение",
+    "Posizione",
+    "位置"
+  ],
+  "Valeurs typiques publiées par Standex. Un essai avec des échantillons dans votre machine reste nécessaire avant de commander.": [
+    "Typical values published by Standex. A trial with samples in your machine is still required before ordering.",
+    "Standex 公布的典型值。下单前仍需在您的设备上用样品实测。",
+    "Von Standex veröffentlichte typische Werte. Vor der Bestellung ist ein Versuch mit Mustern in Ihrer Maschine weiterhin erforderlich.",
+    "Valores típicos publicados por Standex. Antes de pedir sigue siendo necesaria una prueba con muestras en su máquina.",
+    "Типовые значения, опубликованные Standex. Перед заказом всё равно нужны испытания с образцами в вашей машине.",
+    "Valori tipici pubblicati da Standex. Prima di ordinare resta necessaria una prova con campioni nella vostra macchina.",
+    "Standex が公表する代表値です。発注前に、実機でのサンプル試験が必要です。"
+  ],
+  "Ce que ce résultat ne dit pas ⌄": [
+    "What this result does not say ⌄",
+    "此结果未说明的内容 ⌄",
+    "Was dieses Ergebnis nicht sagt ⌄",
+    "Lo que este resultado no dice ⌄",
+    "О чём этот результат не говорит ⌄",
+    "Ciò che questo risultato non dice ⌄",
+    "この結果が示していないこと ⌄"
+  ],
+  "Confirmer avec Standex →": [
+    "Confirm with Standex →",
+    "请 Standex 确认 →",
+    "Mit Standex bestätigen →",
+    "Confirmar con Standex →",
+    "Подтвердить со Standex →",
+    "Confermare con Standex →",
+    "Standex に確認する →"
+  ],
+  "Tester un autre couple": [
+    "Test another pair",
+    "测试其他组合",
+    "Ein anderes Paar testen",
+    "Probar otro par",
+    "Протестировать другую пару",
+    "Testare un'altra coppia",
+    "別の組み合わせをテスト"
+  ],
+  "Les distances de ce couple ne sont pas publiées.": [
+    "The distances for this pair are not published.",
+    "该组合的距离未公开。",
+    "Die Abstände dieses Paares sind nicht veröffentlicht.",
+    "Las distancias de este par no están publicadas.",
+    "Расстояния для этой пары не опубликованы.",
+    "Le distanze di questa coppia non sono pubblicate.",
+    "この組み合わせの距離は公開されていません。"
+  ],
+  "Ce cycle ne referme pas le contact.": [
+    "This cycle does not close the contact.",
+    "此循环不会使触点闭合。",
+    "Dieser Zyklus schließt den Kontakt nicht.",
+    "Este ciclo no cierra el contacto.",
+    "Этот цикл не замыкает контакт.",
+    "Questo ciclo non chiude il contatto.",
+    "このサイクルでは接点が閉じません。"
+  ],
+  "Cette position n'est pas documentée.": [
+    "This position is not documented.",
+    "该位置没有文档记录。",
+    "Diese Position ist nicht dokumentiert.",
+    "Esta posición no está documentada.",
+    "Это положение не документировано.",
+    "Questa posizione non è documentata.",
+    "この位置は文書化されていません。"
+  ],
+  "Standex publie ses distances pour des positions précises. En dehors, seul un essai réel donne la réponse — et Standex peut le faire pour vous.": [
+    "Standex publishes its distances for specific positions. Outside them, only a real trial gives the answer — and Standex can run it for you.",
+    "Standex 只针对特定位置公布距离。超出这些位置时，只有实际试验才能给出答案，Standex 可以为您完成。",
+    "Standex veröffentlicht seine Abstände für bestimmte Positionen. Außerhalb davon gibt nur ein realer Versuch die Antwort — und Standex kann ihn für Sie durchführen.",
+    "Standex publica sus distancias para posiciones concretas. Fuera de ellas, solo un ensayo real da la respuesta, y Standex puede realizarlo por usted.",
+    "Standex публикует расстояния для определённых положений. За их пределами ответ даёт только реальное испытание — и Standex может его провести.",
+    "Standex pubblica le sue distanze per posizioni precise. Al di fuori, solo una prova reale dà la risposta — e Standex può eseguirla per voi.",
+    "Standex は特定の位置についてのみ距離を公表しています。それ以外では実試験のみが答えを出せます。Standex が代行できます。"
+  ],
+  "Option 1": [
+    "Option 1",
+    "方案 1",
+    "Option 1",
+    "Opción 1",
+    "Вариант 1",
+    "Opzione 1",
+    "選択肢 1"
+  ],
+  "Option 2": [
+    "Option 2",
+    "方案 2",
+    "Option 2",
+    "Opción 2",
+    "Вариант 2",
+    "Opzione 2",
+    "選択肢 2"
+  ],
+  "Revenir à une position documentée": [
+    "Return to a documented position",
+    "回到有文档记录的位置",
+    "Zu einer dokumentierten Position zurückkehren",
+    "Volver a una posición documentada",
+    "Вернуться к документированному положению",
+    "Tornare a una posizione documentata",
+    "文書化された位置に戻す"
+  ],
+  "Replacer l'aimant": [
+    "Reposition the magnet",
+    "重新放置磁铁",
+    "Magnet neu setzen",
+    "Recolocar el imán",
+    "Переставить магнит",
+    "Riposizionare il magnete",
+    "磁石を置き直す"
+  ],
+  "Demander un essai à Standex": [
+    "Ask Standex for a trial",
+    "请 Standex 进行实测",
+    "Standex um einen Versuch bitten",
+    "Solicitar un ensayo a Standex",
+    "Запросить испытание у Standex",
+    "Chiedere una prova a Standex",
+    "Standex に実試験を依頼"
+  ],
+  "Demander un essai →": [
+    "Request a trial →",
+    "申请实测 →",
+    "Versuch anfragen →",
+    "Solicitar un ensayo →",
+    "Запросить испытание →",
+    "Richiedere una prova →",
+    "実試験を依頼 →"
+  ],
+  "Ce n'est pas une erreur : c'est la limite de ce que les données publiées permettent d'affirmer.": [
+    "This is not an error: it is the limit of what the published data allows us to state.",
+    "这不是错误，而是公开数据所能确认的界限。",
+    "Das ist kein Fehler: Es ist die Grenze dessen, was die veröffentlichten Daten aussagen können.",
+    "No es un error: es el límite de lo que los datos publicados permiten afirmar.",
+    "Это не ошибка: это предел того, что позволяют утверждать опубликованные данные.",
+    "Non è un errore: è il limite di ciò che i dati pubblicati permettono di affermare.",
+    "これは不具合ではなく、公開データで断定できる範囲の限界です。"
+  ],
+  "+ Tester {0}": [
+    "+ Test {0}",
+    "+ 测试 {0}",
+    "+ {0} testen",
+    "+ Probar {0}",
+    "+ Протестировать {0}",
+    "+ Testare {0}",
+    "+ {0} をテスト"
   ]
 }

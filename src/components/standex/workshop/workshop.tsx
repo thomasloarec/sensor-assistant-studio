@@ -73,6 +73,7 @@ import { COFFEE_ASSEMBLY } from "@/lib/standex/machine-assembly";
 import type { MachineAssembly } from "@/lib/standex/machine-assembly";
 import type { MachineAsset } from "@/lib/standex/machine-assets";
 import type { MachineTool } from "./machine-scene";
+import type { TestedPair } from "@/lib/leadmagnet/tested-pairs";
 import MachineControls from "./machine-controls";
 import FlatScene from "./flat-scene";
 import SensorCatalog from "./sensor-catalog";
@@ -194,10 +195,11 @@ export interface WorkshopProps {
    * Sauvegarder reste une action explicite : ceci sert seulement à ne pas
    * perdre une modification quand l'atelier est fermé ou masqué. */
   onDraftChange?: (config: WorkshopConfig) => void;
-  /** « Voir le résultat » : ferme l'atelier et ouvre la revue du dossier. */
-  onResult?: () => void;
+  /** « Voir le résultat » : ferme l'atelier et ouvre l'écran Résultat.
+   * Le verdict remonté est celui du moteur guidé, jamais recalculé ailleurs. */
+  onResult?: (result: TestedPair) => void;
   /** Demande d'essai réel : cochée dans le dossier par l'espace projet. */
-  onRequestTrial?: () => void;
+  onRequestTrial?: (result: TestedPair) => void;
   /** État d'enregistrement, remonté pour être affiché par la barre du panneau. */
   onSaveState?: (state: "saved" | "saving" | "draft") => void;
 }
@@ -233,7 +235,9 @@ export default function MagneticWorkshop({
     [zones, setZones] = useState(true),
     [field, setField] = useState(false),
     [xray, setXray] = useState(true),
-    [dimensions, setDimensions] = useState(true),
+    // Les cotes de corps se superposaient aux noms : elles restent disponibles
+    // dans « Affichage », mais décochées par défaut.
+    [dimensions, setDimensions] = useState(false),
     [showNames, setShowNames] = useState(true),
     [focus, setFocus] = useState<"assembly" | "sensor">("assembly"),
     [catalogOpen, setCatalogOpen] = useState(false);
@@ -599,9 +603,20 @@ export default function MagneticWorkshop({
   /* Ouverture : le couple est déjà choisi, l'aimant est déjà posé.    */
   /* ---------------------------------------------------------------- */
   const openedRef = useRef(false);
+  /** Bouton de lecture : c'est le premier geste attendu, il reçoit le focus à
+   *  l'ouverture — ce qui remonte aussi la fenêtre en haut de l'atelier. */
+  const playRef = useRef<HTMLButtonElement | null>(null);
   useEffect(() => {
     if (openedRef.current) return;
     openedRef.current = true;
+    // L'atelier s'ouvre en haut : bandeau de verdict et scène d'abord, jamais
+    // la chronologie ni le pied de page.
+    if (typeof window !== "undefined") window.scrollTo({ top: 0 });
+    requestAnimationFrame(() => {
+      for (const node of document.querySelectorAll<HTMLElement>("[data-workshop-scroll]"))
+        node.scrollTop = 0;
+      playRef.current?.focus({ preventScroll: true });
+    });
     // Cadrage sur le COUPLE entier : capteur ET aimant dans l'image. Un cadrage
     // sur le seul capteur laissait l'aimant hors champ à l'ouverture.
     setFocus("assembly");
@@ -661,6 +676,23 @@ export default function MagneticWorkshop({
           : t("Distances non publiées pour ce couple — Standex peut les mesurer");
   const askTrial = verdictKind === "undocumented" || verdictKind === "unpublished";
 
+  /** Essai à conserver dans le dossier : verdict, distances PUBLIÉES (ou `null`)
+   *  et course déclarée. Rien n'est recalculé ni arrondi ici. */
+  const testedPair = (): TestedPair => ({
+    sensorId: config.sensorId,
+    magnetId: config.magnetModel,
+    approach: config.geometry,
+    sensitivity: config.sensitivity ?? null,
+    verdict: verdictKind,
+    pullInMm: referencePair ? referencePair[0] : null,
+    dropOutMm: referencePair ? referencePair[1] : null,
+    travelStartMm: config.start,
+    travelEndMm: config.end,
+    mainMessage: computed && computed.coverage !== "covered" ? computed.mainMessage : null,
+    limits: computed ? computed.limits : [],
+    at: new Date().toISOString(),
+  });
+
   const verdictBanner = (
     <div
       className={"mw-verdict-bar mw-verdict-bar-" + verdictKind}
@@ -685,7 +717,11 @@ export default function MagneticWorkshop({
         )}
       </div>
       {askTrial && onRequestTrial ? (
-        <button className="mw-button mw-secondary" onClick={onRequestTrial} data-testid="ask-trial">
+        <button
+          className="mw-button mw-secondary"
+          onClick={() => onRequestTrial(testedPair())}
+          data-testid="ask-trial"
+        >
           {t("Demander un essai")}
         </button>
       ) : null}
@@ -775,6 +811,7 @@ export default function MagneticWorkshop({
 
   const playButton = (
     <button
+      ref={playRef}
       className="mw-button mw-wide mw-run"
       disabled={!machineReady}
       aria-pressed={playing}
@@ -1771,7 +1808,10 @@ export default function MagneticWorkshop({
             </div>
           </div>
           <div className="mw-exit">
-            <button className="mw-button" onClick={() => (onResult ? onResult() : onClose())}>
+            <button
+              className="mw-button"
+              onClick={() => (onResult ? onResult(testedPair()) : onClose())}
+            >
               {t("Voir le résultat →")}
               <ArrowRight size={16} />
             </button>

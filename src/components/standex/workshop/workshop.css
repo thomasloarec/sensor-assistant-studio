@@ -2289,7 +2289,11 @@
   display: flex;
   align-items: center;
   border-radius: var(--r-pill);
-  background: var(--mw-surface);
+  /* Même matériau que le sélecteur « 3D / Vue plane » voisin : sur un fond de
+     scène clair, un texte hérité en clair rendait le libellé illisible. */
+  background: var(--material-thin);
+  backdrop-filter: var(--material-blur);
+  color: var(--foreground);
   font: var(--mw-t-dense);
   box-shadow: var(--e-2);
 }
