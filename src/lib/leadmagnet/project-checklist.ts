@@ -29,8 +29,19 @@ export const DELEGATED_SENSOR = "sensor";
 export const DELEGATED_CABLE = "cable";
 export const DELEGATED_CONNECTOR = "connector";
 
+/** Une question guidée explicitement laissée de côté par « Je ne sais pas
+ * encore ». La décision est TRAITÉE dans le parcours ; elle ne fabrique aucune
+ * valeur technique et n'alimente aucun filtre. */
+export const DELEGATED_QUESTION_PREFIX = "question:";
+export const delegatedQuestion = (key: string) => `${DELEGATED_QUESTION_PREFIX}${key}`;
+
 export const isDelegated = (d: DesignDossier, key: string) =>
   (d.delegatedDecisions ?? []).includes(key);
+
+export const delegatedQuestionKeys = (d: DesignDossier): string[] =>
+  (d.delegatedDecisions ?? [])
+    .filter((k) => k.startsWith(DELEGATED_QUESTION_PREFIX))
+    .map((k) => k.slice(DELEGATED_QUESTION_PREFIX.length));
 
 const ANSWERED = new Set(["confirmed", "hypothesis"]);
 
