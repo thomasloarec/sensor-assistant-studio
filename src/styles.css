@@ -939,6 +939,19 @@
     text-align: center;
     white-space: normal;
   }
+  /* Couples proposés : trois colonnes égales, une seule colonne dès que la
+     largeur ne permet plus de lire une vignette et son texte. */
+  .pair-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+    align-items: start;
+  }
+  @media (max-width: 900px) {
+    .pair-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
   .guided-envelope-fields {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
