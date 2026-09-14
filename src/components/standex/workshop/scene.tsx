@@ -938,12 +938,15 @@ export default function WorkshopScene({
       <CameraRig
         target={target}
         distance={focus === "sensor" ? dist : coupleDist}
+        fitRadius={focus === "sensor" ? undefined : fitRadius}
         resetKey={[
           config.sensorId,
+          config.magnetModel,
           config.mode,
           config.geometry,
           focus,
           resetEpoch,
+          target.map((n) => Math.round(n * 10)).join(","),
         ].join(":")}
       />
     </Canvas>
