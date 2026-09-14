@@ -1,5 +1,7 @@
 import { useLocale } from "@/lib/i18n/react";
 import { t } from "@/lib/i18n/core";
+import { BrandLogo } from "@/components/standex/brand-logo";
+
 /** Panneau contextuel de l'espace projet.
  *
  * Le projet reste visible et accessible derrière : on n'utilise PAS de dialogue
