@@ -2038,6 +2038,29 @@ export function DesignSpace({
     [candidateRows],
   );
 
+  /** Trois couples au maximum, dans l'ordre décidé par `pair-cards.ts` : les
+   * couples documentés au registre d'abord, l'ordre du moteur ensuite. Un
+   * capteur déjà choisi dans un dossier repris ouvre la liste. */
+  const suggestedPairs = useMemo(
+    () =>
+      pairCards(
+        plausibleCandidates.map((r) => r.candidate.id),
+        { limit: 3, preferredSensorId: dossier.selectedSensorId ?? null },
+      ),
+    [plausibleCandidates, dossier.selectedSensorId],
+  );
+  /** Liste complète repliée : les mêmes couples, en cartes compactes. */
+  const allPairs = useMemo(
+    () =>
+      pairCards(
+        candidateRows.map((r) => r.candidate.id),
+        { limit: candidateRows.length, preferredSensorId: dossier.selectedSensorId ?? null },
+      ),
+    [candidateRows, dossier.selectedSensorId],
+  );
+
+
+
   /** Choisir un capteur = une présélection de GAMME, jamais une commande ni une
    * validation R&D. La délégation à Standex est levée par ce choix explicite. */
   const chooseSensor = (id: string, name: string) => {
