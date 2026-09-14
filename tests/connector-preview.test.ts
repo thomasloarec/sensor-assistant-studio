@@ -27,15 +27,21 @@ describe("cotes des boîtiers connecteurs", () => {
     expect(phr3.dimensionsToVerify).toBe(false);
   });
 
-  test("largeur XH cohérente avec positions × pas, et marquée à vérifier", () => {
+  /* Les cotes XH viennent maintenant du plan officiel eXH.pdf page 4
+   * (Housing) : ce ne sont plus des estimations positions × pas, donc elles ne
+   * sont plus marquées « à vérifier ». La différence de largeur entre XHP-2 et
+   * XHP-3 reste bien d'un pas de 2,5 mm. */
+  test("largeur XH lue sur le plan officiel, plus une estimation", () => {
     const xhp2 = geometryByHousingId("XHP-2")!;
     const xhp3 = geometryByHousingId("XHP-3")!;
-    const housing2 = DOCUMENTED_HOUSINGS.find((h) => h.housingMpn === "XHP-2")!;
     const housing3 = DOCUMENTED_HOUSINGS.find((h) => h.housingMpn === "XHP-3")!;
-    expect(xhp2.width.valueMm).toBeCloseTo(housing2.positions * housing2.pitchMm);
-    expect(xhp3.width.valueMm).toBeCloseTo(housing3.positions * housing3.pitchMm);
-    expect(xhp2.dimensionsToVerify).toBe(true);
-    expect(xhp3.dimensionsToVerify).toBe(true);
+    expect(xhp2.width.valueMm).toBeCloseTo(7.3);
+    expect(xhp3.width.valueMm).toBeCloseTo(9.8);
+    expect(xhp3.width.valueMm - xhp2.width.valueMm).toBeCloseTo(housing3.pitchMm);
+    expect(xhp2.height.valueMm).toBeCloseTo(7.5);
+    expect(xhp2.depth.valueMm).toBeCloseTo(5.7);
+    expect(xhp2.dimensionsToVerify).toBe(false);
+    expect(xhp3.dimensionsToVerify).toBe(false);
   });
 
   test("aucune cote n'est nulle ou négative", () => {

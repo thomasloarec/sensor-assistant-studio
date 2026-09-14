@@ -1952,6 +1952,15 @@
     "Nessun candidato è convalidato qui: la selezione definitiva e il codice ordinabile sono stabiliti dalla revisione R&D Standex.",
     "ここでは候補は検証されていません：最終的な選定および発注可能な型番は、Standex の R&D レビューによって決定されます。"
   ],
+  "Aucun capteur choisi, et aucun choix confié à Standex.": [
+    "No sensor selected, and no choice entrusted to Standex.",
+    "未选定任何传感器，也未将选择权交予Standex。",
+    "Kein Sensor ausgewählt und keine Entscheidung Standex überlassen.",
+    "Ningún sensor seleccionado, y ninguna elección confiada a Standex.",
+    "Датчик не выбран, и выбор не доверен Standex.",
+    "Nessun sensore selezionato, e nessuna scelta affidata a Standex.",
+    "選択されたセンサーはなく、Standexに委ねられた選択もありません。"
+  ],
   "Aucun capteur documenté ne correspond à ces filtres. L'option sur mesure reste ouverte.": [
     "No documented sensor matches these filters. The custom option remains open.",
     "没有符合这些筛选条件的有资料传感器。定制选项仍然可行。",
@@ -2177,6 +2186,15 @@
     "Nessun monitoraggio interno registrato per ora.",
     "内部トラッキングはまだ登録されていません。"
   ],
+  "Aucun volume, aucune date et aucun contact ne sont déduits : ce qui reste vide reste inconnu.": [
+    "No volume, date, or contact is inferred: what remains empty remains unknown.",
+    "未推导出任何数量、日期或联系方式：留空内容仍保持未知状态。",
+    "Es werden keine Mengen, Termine oder Kontakte abgeleitet: Was leer bleibt, bleibt unbekannt.",
+    "No se deduce ningún volumen, fecha ni contacto: lo que queda vacío permanece desconocido.",
+    "Объемы, даты и контакты не вычисляются автоматически: пустые поля остаются неизвестными.",
+    "Non viene dedotto alcun volume, data o contatto: ciò che resta vuoto rimane sconosciuto.",
+    "数量、日付、連絡先は推測されません。空欄の項目は不明なままとなります。"
+  ],
   "Aucun écart.": [
     "No differences.",
     "无差异。",
@@ -2257,6 +2275,15 @@
     "Нет экспериментальной генерации.",
     "Nessuna generazione sperimentale.",
     "実験的生成はありません。"
+  ],
+  "Aucune information à vérifier pour l'instant.": [
+    "No information to verify at the moment.",
+    "目前没有需要核实的信息。",
+    "Zurzeit sind keine Informationen zu prüfen.",
+    "No hay información que verificar por el momento.",
+    "На данный момент нет информации для проверки.",
+    "Nessuna informazione da verificare al momento.",
+    "現時点で確認すべき情報はありません。"
   ],
   "Aucune longueur n'est approuvée ici : la R&D Standex vérifie.": [
     "No length is approved here: Standex R&D verifies it.",
@@ -2339,6 +2366,15 @@
     "Nessuna posizione documentata per questa coppia e sensibilità.",
     "この組み合わせと感度に対する記載された位置はありません。"
   ],
+  "Aucune préférence de connecteur exprimée.": [
+    "No connector preference expressed.",
+    "未表达任何连接器偏好。",
+    "Keine Steckerpräferenz angegeben.",
+    "No se ha expresado ninguna preferencia de conector.",
+    "Предпочтения по разъемам не высказаны.",
+    "Nessuna preferenza espressa per il connettore.",
+    "コネクタの希望はありません。"
+  ],
   "Aucune question prioritaire.": [
     "No priority questions.",
     "暂无优先问题。",
@@ -2374,6 +2410,15 @@
     "В сеансе нет базового ответа.",
     "Nessuna risposta di base per questa sessione.",
     "このセッションにベースライン回答はありません。"
+  ],
+  "Aucune réponse enregistrée pour l'instant.": [
+    "No answer recorded yet.",
+    "目前尚未记录任何回答。",
+    "Bisher keine Antwort erfasst.",
+    "Ninguna respuesta registrada por el momento.",
+    "Пока не зафиксировано ни одного ответа.",
+    "Nessuna risposta registrata per il momento.",
+    "現時点で記録された回答はありません。"
   ],
   "Aucune réserve de service ni terminaison n'a été ajoutée.": [
     "No service loop or termination has been added.",
@@ -2590,6 +2635,15 @@
     "С компанией Standex",
     "Con Standex",
     "Standex と"
+  ],
+  "Avec les terminaisons documentées : {0} mm de long.": [
+    "With the documented terminations: {0} mm long.",
+    "包含已记录的端接：长 {0} mm。",
+    "Mit den dokumentierten Anschlüssen: {0} mm lang.",
+    "Con las terminaciones documentadas: {0} mm de largo.",
+    "С учётом задокументированных выводов: длина {0} мм.",
+    "Con le terminazioni documentate: lunghezza {0} mm.",
+    "記載済みの端末込みで長さ {0} mm。"
   ],
   "Axe Nord–Sud dans l'aimant": [
     "N–S axis within magnet",
@@ -3041,6 +3095,15 @@
     "Sensore: {0} mm; rotazione {1}°. Magnete: {2} mm; rotazione {3}°.",
     "センサー：{0} mm、回転 {1}°。磁石：{2} mm、回転 {3}°。"
   ],
+  "Capteur et aimant": [
+    "Sensor and magnet",
+    "传感器与磁体",
+    "Sensor und Magnet",
+    "Sensor e imán",
+    "Датчик и магнит",
+    "Sensore e magnete",
+    "センサーと磁石"
+  ],
   "Capteurs": [
     "Sensors",
     "传感器",
@@ -3391,6 +3454,15 @@
     "Что показывает цикл",
     "Cosa mostra il tuo ciclo",
     "サイクルの結果"
+  ],
+  "Ce que votre montage indique aujourd'hui": [
+    "What your assembly indicates today",
+    "您的装配当前所反映的情况",
+    "Was Ihre Montage heute anzeigt",
+    "Lo que su montaje indica hoy",
+    "Что показывает ваша сборка на данный момент",
+    "Ciò che il vostro montaggio indica oggi",
+    "現時点で組み立てが示している内容"
   ],
   "Ce que vous voulez détecter": [
     "What you want to detect",
@@ -3743,6 +3815,15 @@
     "Questa pubblicazione è già in corso di salvataggio. Attendi, poi ricarica.",
     "この公開は保存処理中です。しばらく待ってから再読み込みしてください。"
   ],
+  "Cette question est notée « à définir avec Standex ». C'est une décision prise, pas une valeur connue.": [
+    "This question is marked “to be defined with Standex”. It is a decision taken, not a known value.",
+    "此问题标记为“与 Standex 共同确定”。这是已作出的决定，而非已知数值。",
+    "Diese Frage ist als „mit Standex zu klären“ vermerkt. Das ist eine getroffene Entscheidung, kein bekannter Wert.",
+    "Esta pregunta está marcada como «a definir con Standex». Es una decisión tomada, no un valor conocido.",
+    "Этот вопрос отмечен как «определить со Standex». Это принятое решение, а не известное значение.",
+    "Questa domanda è indicata come «da definire con Standex». È una decisione presa, non un valore noto.",
+    "この項目は「Standex と決定する」と記録されています。これは下された判断であり、既知の値ではありません。"
+  ],
   "Cette revue a été remplacée : reprenez la revue en vigueur.": [
     "This review has been superseded: use the review currently in effect.",
     "该审查已被替换：请使用当前生效的审查。",
@@ -4004,6 +4085,15 @@
     "Urti e vibrazioni",
     "衝撃と振動"
   ],
+  "Choisi pour mon projet": [
+    "Selected for my project",
+    "已为我的项目选定",
+    "Für mein Projekt ausgewählt",
+    "Seleccionado para mi proyecto",
+    "Выбрано для моего проекта",
+    "Selezionato per il mio progetto",
+    "自分のプロジェクト用に選択済み"
+  ],
   "Choisir dans le catalogue": [
     "Choose from catalogue",
     "从目录中选择",
@@ -4138,6 +4228,15 @@
     "Выбор длины",
     "Scelta della lunghezza",
     "長さの選択"
+  ],
+  "Choix du connecteur confié à Standex.": [
+    "Connector choice entrusted to Standex.",
+    "连接器选择交由 Standex 决定。",
+    "Steckerwahl Standex anvertraut.",
+    "Elección del conector confiada a Standex.",
+    "Выбор разъема доверен Standex.",
+    "Scelta del connettore affidata a Standex.",
+    "コネクタの選択は Standex に委任。"
   ],
   "Choix mécanique explicite": [
     "Explicit mechanical choice",
@@ -4778,6 +4877,24 @@
     "Confermato",
     "確認済み"
   ],
+  "Connecteur : préférence enregistrée, à vérifier par la R&D.": [
+    "Connector: preference recorded, to be verified by R&D.",
+    "连接器：偏好已记录，需由研发部门核实。",
+    "Stecker: Präferenz erfasst, von der F&E zu prüfen.",
+    "Conector: preferencia registrada, a verificar por I+D.",
+    "Разъём: предпочтение зафиксировано, требует проверки НИОКР.",
+    "Connettore: preferenza registrata, da verificare da parte della R&S.",
+    "コネクター：希望は記録済み、研究開発部門による確認が必要です。"
+  ],
+  "Connecteur {0} retenu comme préférence, à vérifier par la R&D.": [
+    "Connector {0} retained as a preference, to be verified by R&D.",
+    "已保留连接器 {0} 作为偏好，需由研发部门核实。",
+    "Stecker {0} als Präferenz vorgemerkt, von der F&E zu prüfen.",
+    "Conector {0} retenido como preferencia, a verificar por I+D.",
+    "Разъём {0} принят как предпочтение, требует проверки НИОКР.",
+    "Connettore {0} scelto come preferenza, da verificare da parte della R&S.",
+    "コネクター {0} が希望として記録され、研究開発部門による確認が必要です。"
+  ],
   "Connecteur — fabricant": [
     "Connector — manufacturer",
     "连接器 — 制造商",
@@ -5039,6 +5156,15 @@
     "Contatto aperto",
     "接点開"
   ],
+  "Contact renseigné, contexte du projet encore vide.": [
+    "Contact provided, project context still empty.",
+    "联系人已填写，项目背景仍为空。",
+    "Kontakt angegeben, Projektkontext noch leer.",
+    "Contacto completado, contexto del proyecto todavía vacío.",
+    "Контакт указан, контекст проекта пока пуст.",
+    "Contatto inserito, contesto del progetto ancora vuoto.",
+    "連絡先は入力されましたが、プロジェクトの背景はまだ空欄です。"
+  ],
   "Contact souhaité fermé entre {0} et {1} % du cycle.": [
     "Contact desired closed between {0} and {1}% of cycle.",
     "希望触点在循环 {0}% 至 {1}% 闭合。",
@@ -5129,6 +5255,15 @@
     "Contenuto ripreso dalla revisione {0}. Il prossimo invio creerà la revisione {1} di questo dossier.",
     "リビジョン {0} の内容を再開しました。次回の送信でこの案件のリビジョン {1} が作成されます。"
   ],
+  "Contexte confié à Standex": [
+    "Context entrusted to Standex",
+    "背景信息交由 Standex 处理",
+    "Kontext Standex anvertraut",
+    "Contexto confiado a Standex",
+    "Контекст доверен Standex",
+    "Contesto affidato a Standex",
+    "背景情報は Standex に委任"
+  ],
   "Contexte d'application": [
     "Application context",
     "应用背景",
@@ -5138,6 +5273,24 @@
     "Contesto applicativo",
     "用途の背景"
   ],
+  "Contexte du projet et contact": [
+    "Project context and contact",
+    "项目背景与联系人",
+    "Projektkontext und Kontakt",
+    "Contexto del proyecto y contacto",
+    "Контекст проекта и контакт",
+    "Contesto del progetto e contatto",
+    "プロジェクトの背景と連絡先"
+  ],
+  "Contexte et interlocuteur renseignés.": [
+    "Context and contact person provided.",
+    "背景信息和联系人已填写。",
+    "Kontext und Ansprechpartner angegeben.",
+    "Contexto e interlocutor completados.",
+    "Контекст и контактное лицо указаны.",
+    "Contesto e interlocutore inseriti.",
+    "背景情報と担当者が入力されました。"
+  ],
   "Contexte projet": [
     "Project context",
     "项目背景",
@@ -5146,6 +5299,24 @@
     "Контекст проекта",
     "Contesto del progetto",
     "プロジェクトの背景"
+  ],
+  "Contexte renseigné, il manque encore votre contact.": [
+    "Context provided, your contact is still missing.",
+    "背景信息已填写，仍缺少您的联系方式。",
+    "Kontext angegeben, Ihr Kontakt fehlt noch.",
+    "Contexto completado, falta todavía su contacto.",
+    "Контекст указан, ваши контактные данные отсутствуют.",
+    "Contesto inserito, mancano ancora i vostri recapiti.",
+    "背景情報は入力されましたが、連絡先がまだ未入力です。"
+  ],
+  "Contexte à préciser avec Standex.": [
+    "Context to be clarified with Standex.",
+    "背景信息待与 Standex 明确。",
+    "Kontext mit Standex zu präzisieren.",
+    "Contexto a precisar con Standex.",
+    "Контекст необходимо уточнить со Standex.",
+    "Contesto da precisare con Standex.",
+    "背景情報は Standex と要相談。"
   ],
   "Continuer": [
     "Continue",
@@ -5534,6 +5705,15 @@
     "Costo unitario",
     "単価（原価）"
   ],
+  "Crastin SK655FR1": [
+    "Crastin SK655FR1",
+    "Crastin SK655FR1",
+    "Crastin SK655FR1",
+    "Crastin SK655FR1",
+    "Crastin SK655FR1",
+    "Crastin SK655FR1",
+    "Crastin SK655FR1"
+  ],
   "Criticité / sécurité": [
     "Criticality / safety",
     "关键性 / 安全性",
@@ -5677,6 +5857,15 @@
     "D · Независимые измерения",
     "D · Misure indipendenti",
     "D · 独立測定"
+  ],
+  "D'après vos réponses, nous ne montrons d'abord que les capteurs compatibles.": [
+    "Based on your answers, we first show only the compatible sensors.",
+    "根据您的回答，我们首先只显示兼容的传感器。",
+    "Basierend auf Ihren Antworten zeigen wir zunächst nur die kompatiblen Sensoren.",
+    "Según sus respuestas, mostramos primero solo los sensores compatibles.",
+    "На основе ваших ответов сначала показываются только совместимые датчики.",
+    "In base alle vostre risposte, mostriamo prima solo i sensori compatibili.",
+    "回答に基づき、まず互換性のあるセンサーのみを表示します。"
   ],
   "D1 · approche face au centre, axe Z du capteur": [
     "D1 · approach facing the centre, sensor Z axis",
@@ -7109,6 +7298,15 @@
     "Inserimento a pressione in foro",
     "穴への圧入・はめ込み"
   ],
+  "Emmanchement dans un trou": [
+    "Press-fit into a hole",
+    "压入孔中安装",
+    "Einpressen in eine Bohrung",
+    "Encaje a presión en un orificio",
+    "Установка запрессовкой в отверстие",
+    "Inserimento a pressione in un foro",
+    "穴への圧入"
+  ],
   "Empreinte cohérente. Cela ne constitue pas une contre-signature.": [
     "Fingerprint matches. This is not a countersignature.",
     "指纹一致。这不构成会签。",
@@ -7199,6 +7397,15 @@
     "Distanza tipica di attivazione",
     "代表動作距離"
   ],
+  "Encombrement (mm) — largeur": [
+    "Overall dimensions (mm) — width",
+    "外形尺寸（mm）— 宽度",
+    "Abmessungen (mm) — Breite",
+    "Dimensiones (mm) — ancho",
+    "Габариты (мм) — ширина",
+    "Ingombro (mm) — larghezza",
+    "外形寸法（mm）— 幅"
+  ],
   "Encombrement disponible": [
     "Available envelope",
     "可用安装空间",
@@ -7207,6 +7414,15 @@
     "Доступный габарит",
     "Ingombro disponibile",
     "利用可能な寸法"
+  ],
+  "Encombrement hors tout comparé aux dimensions renseignées, terminaisons documentées comprises.": [
+    "Overall dimensions compared to the dimensions provided, including documented terminations.",
+    "外形整体尺寸与已填写尺寸的对比，含已记录的端接。",
+    "Gesamtabmessungen im Vergleich zu den angegebenen Maßen, einschließlich dokumentierter Anschlüsse.",
+    "Dimensiones totales comparadas con las dimensiones indicadas, incluidas las terminaciones documentadas.",
+    "Общие габариты в сравнении с указанными размерами, включая задокументированные выводы.",
+    "Ingombro complessivo confrontato con le dimensioni indicate, terminazioni documentate comprese.",
+    "記載済みの端末を含めた、入力寸法との全体外形の比較。"
   ],
   "Encombrement max (mm)": [
     "Max size (mm)",
@@ -7964,6 +8180,15 @@
     "Produttore",
     "メーカー"
   ],
+  "Facultatif : précisez d'un clic": [
+    "Optional: refine with one click",
+    "可选：一键补充",
+    "Optional: mit einem Klick präzisieren",
+    "Opcional: precise con un clic",
+    "Необязательно: уточните одним щелчком",
+    "Facoltativo: precisa con un clic",
+    "任意：ワンクリックで指定"
+  ],
   "Faire détecter votre idée — Standex DETECT": [
     "Bring your sensing idea to life — Standex DETECT",
     "实现您的检测方案 — Standex DETECT",
@@ -8342,6 +8567,15 @@
     "Fissaggio con due viti",
     "2本ねじ固定"
   ],
+  "Fixation par report CMS": [
+    "SMT surface-mount fixing",
+    "SMT表面贴装固定",
+    "Befestigung durch SMD-Bestückung",
+    "Fijación por montaje superficial SMD",
+    "Крепление методом SMD-монтажа",
+    "Fissaggio tramite montaggio SMD",
+    "SMT表面実装による固定"
+  ],
   "Fixation par vis": [
     "Screw mounting",
     "螺钉固定",
@@ -8350,6 +8584,15 @@
     "Крепление винтами",
     "Fissaggio a vite",
     "ねじ固定"
+  ],
+  "Fixation traversante": [
+    "Through-hole fixing",
+    "通孔固定",
+    "Durchsteckbefestigung",
+    "Fijación pasante",
+    "Крепление сквозным монтажом",
+    "Fissaggio a foro passante",
+    "スルーホール固定"
   ],
   "Fixation vissée": [
     "Screw mounting",
@@ -8693,6 +8936,15 @@
     "Altezza massima del corpo in millimetri",
     "本体の最大高さ（ミリメートル）"
   ],
+  "High Grade Steel (1.4305)": [
+    "High Grade Steel (1.4305)",
+    "High Grade Steel (1.4305)",
+    "High Grade Steel (1.4305)",
+    "High Grade Steel (1.4305)",
+    "High Grade Steel (1.4305)",
+    "High Grade Steel (1.4305)",
+    "High Grade Steel (1.4305)"
+  ],
   "Horizon projet": [
     "Project timeline",
     "项目时间表",
@@ -8710,6 +8962,15 @@
     "Вне зоны действия",
     "Fuori portata",
     "範囲外"
+  ],
+  "Hors des contraintes que vous avez déclarées": [
+    "Outside the constraints you have declared",
+    "超出您所声明的限制条件",
+    "Außerhalb der von Ihnen angegebenen Einschränkungen",
+    "Fuera de las restricciones que ha declarado",
+    "Вне заявленных вами ограничений",
+    "Al di fuori dei vincoli da voi dichiarati",
+    "申告された制約の範囲外"
   ],
   "Hypothèse": [
     "Assumption",
@@ -8755,6 +9016,15 @@
     "Оно остается неизменным на этой вкладке, и вы можете его экспортировать.",
     "Rimane intatto in questa scheda ed è possibile esportarlo.",
     "このタブ内にそのまま残っており、エクスポートが可能です。"
+  ],
+  "Illustration d'encombrement — ni modèle CAO qualifié ni brochage.": [
+    "Dimensional illustration — neither a qualified CAD model nor a pinout.",
+    "外形示意图 — 既非合格的CAD模型，也非接线图。",
+    "Maßillustration — weder ein qualifiziertes CAD-Modell noch eine Pinbelegung.",
+    "Ilustración de dimensiones — ni modelo CAD cualificado ni distribución de pines.",
+    "Иллюстрация габаритов — не является ни аттестованной CAD-моделью, ни распиновкой.",
+    "Illustrazione d'ingombro — né modello CAD qualificato né piedinatura.",
+    "外形図 — 認定されたCADモデルでもピン配置でもありません。"
   ],
   "Illustration du capteur {0}": [
     "Illustration of sensor {0}",
@@ -9025,6 +9295,15 @@
     "Я проверил техническое резюме и перечень неопределенных параметров.",
     "Ho verificato il riassunto tecnico e le incognite elencate.",
     "技術要約と記載された未定事項を確認しました。"
+  ],
+  "J'ai une préférence de connecteur": [
+    "I have a connector preference",
+    "我对连接器有偏好",
+    "Ich habe eine Steckerpräferenz",
+    "Tengo una preferencia de conector",
+    "У меня есть предпочтение по разъёму",
+    "Ho una preferenza di connettore",
+    "コネクターの希望がある"
   ],
   "J'autorise en plus la traduction en anglais des textes de ce dossier par un service externe (Anthropic), afin que l'équipe Standex les lise en anglais. Références, valeurs, unités, noms et fichiers restent inchangés, et mon dossier d'origine est conservé tel quel. Sans cette case, aucun texte n'est transmis à ce service.": [
     "I also authorise an external service (Anthropic) to translate the texts of this file into English so the Standex team can read them in English. References, values, units, names and files stay unchanged, and my original file is kept as it is. Without this box, no text is sent to that service.",
@@ -9376,6 +9655,15 @@
     "Частота переключений не учитывается.",
     "La frequenza di commutazione non è coperta.",
     "開閉頻度は対象外です。"
+  ],
+  "La comparaison retient l'orientation la plus favorable ; l'orientation réelle reste à décider.": [
+    "The comparison uses the most favorable orientation; the actual orientation remains to be decided.",
+    "比较时采用最有利的方向；实际方向仍有待决定。",
+    "Der Vergleich berücksichtigt die günstigste Ausrichtung; die tatsächliche Ausrichtung ist noch zu entscheiden.",
+    "La comparación utiliza la orientación más favorable; la orientación real queda por decidir.",
+    "Для сравнения выбирается наиболее благоприятная ориентация; фактическая ориентация еще не определена.",
+    "Il confronto utilizza l'orientamento più favorevole; l'orientamento effettivo è ancora da decidere.",
+    "比較では最も有利な向きが採用されます。実際の向きは未定です。"
   ],
   "La confirmation d'envoi n'a pas été obtenue : votre dossier est peut-être arrivé malgré tout. Vérifiez le suivi de votre dossier avant de le renvoyer.": [
     "No send confirmation was obtained: your case file may still have arrived. Check the tracking of your case file before sending it again.",
@@ -10025,6 +10313,15 @@
     "La verifica dei diritti non è andata a buon fine: non è stato trasmesso nulla.",
     "権限の確認が完了しませんでした。何も送信されていません。"
   ],
+  "Laissez vide si vous ne le connaissez pas : inconnu ne vaut pas zéro.": [
+    "Leave blank if you do not know it: unknown does not mean zero.",
+    "如不清楚请留空：未知不等于零。",
+    "Leer lassen, wenn unbekannt: unbekannt bedeutet nicht null.",
+    "Déjelo en blanco si no lo conoce: desconocido no equivale a cero.",
+    "Оставьте пустым, если не знаете: неизвестно не значит ноль.",
+    "Lascia vuoto se non lo conosci: sconosciuto non vale zero.",
+    "わからない場合は空欄にしてください。不明はゼロではありません。"
+  ],
   "Laissez-moi vos coordonnées et la ville où vous êtes basé : un responsable Standex reprend le sujet sous 2 jours ouvrés.": [
     "Leave your contact details and city: a Standex representative will follow up within 2 business days.",
     "请留下联系方式和所在城市，Standex 负责人将在 2 个工作日内跟进。",
@@ -10339,6 +10636,15 @@
     "Каталог датчиков",
     "Catalogo sensori",
     "センサーカタログ"
+  ],
+  "Le choix du capteur est confié à Standex. Ce n'est pas une validation technique.": [
+    "The choice of sensor is entrusted to Standex. This is not a technical validation.",
+    "传感器的选择交由 Standex 决定。这不是技术验证。",
+    "Die Wahl des Sensors wird Standex überlassen. Dies ist keine technische Validierung.",
+    "La elección del sensor se confía a Standex. No es una validación técnica.",
+    "Выбор датчика доверен Standex. Это не техническая проверка.",
+    "La scelta del sensore è affidata a Standex. Non si tratta di una convalida tecnica.",
+    "センサーの選定はStandexに委ねられます。これは技術的な検証ではありません。"
   ],
   "Le choix n'a pas pu être enregistré côté Standex.": [
     "Your choice could not be saved on the Standex side.",
@@ -10771,6 +11077,15 @@
     "Корпус меняет условия работы. Параметры голого геркона нельзя переносить без изменений.",
     "Il packaging cambia le condizioni: i valori del reed nudo non si trasferiscono invariati.",
     "パッケージにより使用条件が変わります。裸リードの値をそのまま適用できません。"
+  ],
+  "Le placement est noté « à définir avec Standex ». C'est une décision prise, pas une valeur connue ni une validation technique.": [
+    "Placement is marked as \"to be defined with Standex\". This is a decision made, not a known value or technical validation.",
+    "放置位置被标记为“待与 Standex 确定”。这是一个已作出的决定，而非已知数值或技术验证。",
+    "Die Platzierung ist als „mit Standex zu definieren“ vermerkt. Dies ist eine getroffene Entscheidung, kein bekannter Wert oder eine technische Validierung.",
+    "La ubicación se marca como \"a definir con Standex\". Es una decisión tomada, no un valor conocido ni una validación técnica.",
+    "Размещение помечено как «определяется вместе со Standex». Это принятое решение, а не известное значение или техническое подтверждение.",
+    "Il posizionamento è indicato come \"da definire con Standex\". Si tratta di una decisione presa, non di un valore noto né di una validazione tecnica.",
+    "配置は「Standex と要相談」と記されています。これは下された決定であり、既知の数值や技術的な検証結果ではありません。"
   ],
   "Le plan quadrillé représente le repère de votre machine.": [
     "The grid represents your machine's coordinate system.",
@@ -11348,6 +11663,15 @@
     "Lunghezza",
     "長さ"
   ],
+  "Longueur : choix enregistré, à confirmer en revue.": [
+    "Length: choice recorded, to be confirmed in review.",
+    "长度：选择已记录，需在评审中确认。",
+    "Länge: Auswahl erfasst, in der Prüfung zu bestätigen.",
+    "Longitud: elección registrada, a confirmar en la revisión.",
+    "Длина: выбор зафиксирован, требует подтверждения при проверке.",
+    "Lunghezza: scelta registrata, da confermare in revisione.",
+    "長さ：選択は記録済み、レビューでの確認が必要です。"
+  ],
   "Longueur X": [
     "Length X",
     "长度 X",
@@ -11366,6 +11690,15 @@
     "Lunghezza a catalogo, da confermare",
     "カタログ長さ、要確認"
   ],
+  "Longueur de câble": [
+    "Cable length",
+    "电缆长度",
+    "Kabellänge",
+    "Longitud de cable",
+    "Длина кабеля",
+    "Lunghezza del cavo",
+    "ケーブル長"
+  ],
   "Longueur de câble retenue": [
     "Selected cable length",
     "选定的电缆长度",
@@ -11374,6 +11707,15 @@
     "Выбранная длина кабеля",
     "Lunghezza del cavo scelta",
     "選択したケーブル長"
+  ],
+  "Longueur du câble": [
+    "Cable length",
+    "电缆长度",
+    "Kabellänge",
+    "Longitud del cable",
+    "Длина кабеля",
+    "Lunghezza del cavo",
+    "ケーブルの長さ"
   ],
   "Longueur et connecteur": [
     "Length and connector",
@@ -11429,6 +11771,15 @@
     "Lunghezza minima richiesta, margini inclusi:",
     "要求される最小長（マージンを含む）："
   ],
+  "Longueur non définie : ce n'est pas obligatoire à ce stade.": [
+    "Length not defined: it is not mandatory at this stage.",
+    "长度未定义：此阶段非必填。",
+    "Länge nicht definiert: in dieser Phase nicht erforderlich.",
+    "Longitud no definida: no es obligatoria en esta fase.",
+    "Длина не определена: на данном этапе это не обязательно.",
+    "Lunghezza non definita: non è obbligatoria in questa fase.",
+    "長さ未指定：この段階では必須ではありません。"
+  ],
   "Longueur nécessaire": [
     "Required length",
     "所需长度",
@@ -11464,6 +11815,15 @@
     "Длина · по торцам",
     "Lunghezza · estremità",
     "長さ方向 · 両端"
+  ],
+  "Longueur à définir avec Standex.": [
+    "Length to be defined with Standex.",
+    "长度待与 Standex 确定。",
+    "Länge mit Standex zu definieren.",
+    "Longitud a definir con Standex.",
+    "Длина определяется вместе со Standex.",
+    "Lunghezza da definire con Standex.",
+    "長さは Standex と要相談。"
   ],
   "Longueurs, réserves et connecteurs documentés. Rien n'est perdu en fermant.": [
     "Documented lengths, allowances and connectors. Nothing is lost upon closing.",
@@ -11897,6 +12257,15 @@
     "Modifiche non inviate",
     "未送信の変更"
   ],
+  "Modifier": [
+    "Edit",
+    "修改",
+    "Bearbeiten",
+    "Modificar",
+    "Изменить",
+    "Modifica",
+    "変更"
+  ],
   "Modifier la fiche": [
     "Edit the record",
     "编辑资料",
@@ -11932,6 +12301,15 @@
     "Модель: {0}. Источник: {1}",
     "Modello: {0}. Fonte: {1}",
     "モデル：{0}。出典：{1}"
+  ],
+  "Modèle géométrique simplifié généré à partir des cotes du catalogue. Ce n'est ni un fichier fabricant ni une CAO de fabrication.": [
+    "Simplified geometric model generated from the catalog dimensions. This is neither a manufacturer file nor manufacturing CAD.",
+    "根据目录尺寸生成的简化几何模型。这既不是制造商文件，也不是制造用CAD文件。",
+    "Vereinfachtes geometrisches Modell, erstellt aus den Katalogmaßen. Dies ist weder eine Herstellerdatei noch ein Fertigungs-CAD.",
+    "Modelo geométrico simplificado generado a partir de las cotas del catálogo. No es ni un archivo del fabricante ni un CAD de fabricación.",
+    "Упрощённая геометрическая модель, созданная на основе размеров каталога. Это не файл производителя и не производственная CAD-модель.",
+    "Modello geometrico semplificato generato a partire dalle quote del catalogo. Non è né un file del produttore né un CAD di produzione.",
+    "カタログの寸法から生成された簡易的な幾何モデルです。メーカー提供ファイルでも製造用CADでもありません。"
   ],
   "Modèle idéal de dipôle dans l'air": [
     "Ideal dipole model in air",
@@ -11969,6 +12347,15 @@
     "Modello fisico a scopo puramente didattico: nessuna convalida magnetica automatica. L'esempio della macchina da caffè è puramente illustrativo e non impone alcun codice al progetto.",
     "説明目的の物理モデルです。自動磁気検証は行われません。コーヒーマシンの例は参考用であり、プロジェクトの型番を指定するものではありません。"
   ],
+  "Modèle purement pédagogique : ce capteur n'a pas de fiche source ni de référence commandable.": [
+    "Purely educational model: this sensor has no source datasheet or orderable reference.",
+    "纯教学示例模型：该传感器没有原始数据表，也没有可订购的型号。",
+    "Rein pädagogisches Modell: Dieser Sensor besitzt kein Quelldatenblatt und keine bestellbare Referenz.",
+    "Modelo puramente pedagógico: este sensor no tiene ficha técnica de origen ni referencia comercial.",
+    "Чисто учебная модель: у этого датчика нет исходного технического листа или заказного артикула.",
+    "Modello puramente didattico: questo sensore non dispone di scheda tecnica di origine né di codice ordinabile.",
+    "純粋に教育目的のモデルです。このセンサーには元となるデータシートも発注可能な型番もありません。"
+  ],
   "Modèle pédagogique : aucune référence commandable.": [
     "Educational model: no orderable part number.",
     "教学模型：无可订购型号。",
@@ -11986,6 +12373,15 @@
     "Менее 1 000 датчиков/год: через партнеров-дистрибьюторов.",
     "Meno di 1.000 sensori/anno: tramite distributori partner.",
     "年間1,000個未満のセンサー：提携代理店経由となります。"
+  ],
+  "Moment typ. (MS150)": [
+    "Typ. moment (MS150)",
+    "典型力矩 (MS150)",
+    "Typ. Moment (MS150)",
+    "Momento típ. (MS150)",
+    "Тип. момент (MS150)",
+    "Momento tipico (MS150)",
+    "代表的モーメント（MS150）"
   ],
   "Mon besoin": [
     "My requirement",
@@ -12121,6 +12517,15 @@
     "Механический монтаж",
     "Montaggio meccanico",
     "機械的取り付け"
+  ],
+  "Montage mécanique déclaré.": [
+    "Mechanical mounting declared.",
+    "已声明机械安装方式。",
+    "Mechanische Montage angegeben.",
+    "Montaje mecánico declarado.",
+    "Механический монтаж заявлен.",
+    "Montaggio meccanico dichiarato.",
+    "機械的な取り付け方法が申告されています。"
   ],
   "Montage par vis, sortie câble inversée par rapport au MK21": [
     "Screw mounting, cable exit reversed versus MK21",
@@ -12364,6 +12769,15 @@
     "Основная навигация",
     "Navigazione principale",
     "メインナビゲーション"
+  ],
+  "Ni montage déclaré, ni modèle 3D rattaché.": [
+    "Neither mounting declared nor 3D model attached.",
+    "既未声明安装方式，也未关联3D模型。",
+    "Weder Montage angegeben noch 3D-Modell zugeordnet.",
+    "Ni montaje declarado, ni modelo 3D vinculado.",
+    "Не заявлен ни монтаж, ни прикреплённая 3D-модель.",
+    "Né montaggio dichiarato, né modello 3D collegato.",
+    "取り付け方法の申告も3Dモデルの紐付けもありません。"
   ],
   "Niveau de preuve": [
     "Level of evidence",
@@ -13013,6 +13427,15 @@
     "Apri lo spazio di lavoro",
     "ワークスペースを開く"
   ],
+  "Ouvrir l'étape câble de l'atelier 3D": [
+    "Open the cable step of the 3D workshop",
+    "打开3D工坊的电缆步骤",
+    "Kabelschritt der 3D-Werkstatt öffnen",
+    "Abrir el paso del cable del taller 3D",
+    "Открыть шаг кабеля в 3D-мастерской",
+    "Apri la fase cavo dell'officina 3D",
+    "3Dワークショップのケーブル手順を開く"
+  ],
   "Ouvrir la console dossiers": [
     "Open the case file console",
     "打开档案控制台",
@@ -13120,6 +13543,15 @@
     "PBT, 30 % стекловолокна",
     "PBT, 30% fibra di vetro",
     "PBT、ガラス繊維30%"
+  ],
+  "PBT glass fiber reinforced": [
+    "PBT glass fiber reinforced",
+    "PBT glass fiber reinforced",
+    "PBT glass fiber reinforced",
+    "PBT glass fiber reinforced",
+    "PBT glass fiber reinforced",
+    "PBT glass fiber reinforced",
+    "PBT glass fiber reinforced"
   ],
   "PBT renforcé de fibres de verre": [
     "Glass-fibre-reinforced PBT",
@@ -13544,6 +13976,15 @@
     "Parti ferromagnetiche vicine",
     "周辺の強磁性部品"
   ],
+  "Placement confié à Standex": [
+    "Placement entrusted to Standex",
+    "放置位置交由 Standex 决定",
+    "Platzierung Standex anvertraut",
+    "Ubicación confiada a Standex",
+    "Размещение доверено Standex",
+    "Posizionamento affidato a Standex",
+    "配置は Standex に委任"
+  ],
   "Placement géométrique en millimètres. Cette rotation déplace ensemble le capteur et la trajectoire.": [
     "Positions are in millimetres. This rotation moves both the sensor and path together.",
     "位置单位为毫米。此旋转同时移动传感器和轨迹。",
@@ -13552,6 +13993,15 @@
     "Координаты в миллиметрах. Поворот перемещает датчик и траекторию вместе.",
     "Posizioni in millimetri. La rotazione sposta insieme sensore e traiettoria.",
     "位置はmm単位。この回転はセンサーと軌道を一緒に動かします。"
+  ],
+  "Placement à définir avec Standex.": [
+    "Placement to be defined with Standex.",
+    "安装位置待与 Standex 共同确定。",
+    "Platzierung mit Standex zu klären.",
+    "Ubicación a definir con Standex.",
+    "Расположение будет определено со Standex.",
+    "Posizionamento da definire con Standex.",
+    "取り付け位置は Standex と決定します。"
   ],
   "Placer en 3D": [
     "Place in 3D",
@@ -14147,6 +14597,15 @@
     "Prototipo interno · V0.4",
     "社内プロトタイプ · V0.4"
   ],
+  "Provenance de vos informations": [
+    "Source of your information",
+    "您的信息来源",
+    "Herkunft Ihrer Informationen",
+    "Procedencia de su información",
+    "Происхождение вашей информации",
+    "Provenienza delle vostre informazioni",
+    "情報のソース"
+  ],
   "Préciser la mécanique et la place disponible (facultatif)": [
     "Specify mechanics and available space (optional)",
     "说明机械结构和可用空间（可选）",
@@ -14155,6 +14614,15 @@
     "Уточнить механику и доступное пространство (необязательно)",
     "Specificare la meccanica e lo spazio disponibile (facoltativo)",
     "機構と利用可能なスペースを指定（任意）"
+  ],
+  "Préciser le contexte avec Standex": [
+    "Clarify the context with Standex",
+    "与 Standex 明确背景信息",
+    "Kontext mit Standex präzisieren",
+    "Precisar el contexto con Standex",
+    "Уточнить контекст со Standex",
+    "Precisare il contesto con Standex",
+    "Standex と詳細情報を確認"
   ],
   "Précisez votre besoin, rassemblez les informations et explorez le montage.": [
     "Describe your needs, gather information and explore the assembly.",
@@ -14803,6 +15271,15 @@
     "Рекомендуемые вопросы (тестировщик)",
     "Domande consigliate (tester)",
     "推奨質問（テスター用）"
+  ],
+  "Questions laissées à définir avec Standex : aucune valeur technique n'en est déduite.": [
+    "Questions left to be defined with Standex: no technical value is inferred from them.",
+    "留待与 Standex 共同确定的问题：不会由此推断任何技术数值。",
+    "Fragen, die mit Standex zu klären sind: daraus wird kein technischer Wert abgeleitet.",
+    "Preguntas a definir con Standex: no se deduce de ellas ningún valor técnico.",
+    "Вопросы, оставленные для уточнения со Standex: технические значения из них не выводятся.",
+    "Domande da definire con Standex: nessun valore tecnico ne viene dedotto.",
+    "Standex と決める項目です。ここから技術的な値は導き出しません。"
   ],
   "Questions manquantes": [
     "Missing questions",
@@ -15740,6 +16217,15 @@
     "Nessun dato inserito è stato trasmesso. I dettagli dell'incidente rimangono sul dispositivo: è stato segnalato solo un codice di errore anonimo.",
     "入力されたデータは送信されていません。インシデントの詳細はデバイス上に残り、匿名のインシデントコードのみが報告されました。"
   ],
+  "Rien de décidé : ce n'est pas obligatoire à ce stade.": [
+    "Nothing decided: this is not mandatory at this stage.",
+    "尚未做出决定：此阶段并非强制要求。",
+    "Nichts entschieden: Dies ist in diesem Stadium nicht zwingend erforderlich.",
+    "Nada decidido: no es obligatorio en esta etapa.",
+    "Ничего не решено: это не обязательно на данном этапе.",
+    "Nulla di deciso: non è obbligatorio in questa fase.",
+    "何も決定されていません。この段階では必須ではありません。"
+  ],
   "Rien n'est décidé ici : une référence, un prix ou une livraison ne valent qu'après confirmation écrite de Standex.": [
     "Nothing is finalized here: a part number, price or delivery is only valid upon written confirmation from Standex.",
     "此处不做任何决定：型号、价格或交期仅在收到 Standex 的书面确认后生效。",
@@ -15748,6 +16234,15 @@
     "Здесь ничего не утверждается окончательно: артикул, цена или поставка действительны только после письменного подтверждения Standex.",
     "Nulla viene deciso qui: un codice, un prezzo o una consegna sono validi solo previa conferma scritta di Standex.",
     "ここで決定される事項はありません。品番、価格、納期は Standex からの書面による確認があって初めて有効となります。"
+  ],
+  "Rien n'est déduit de votre texte. Ces choix servent seulement à préfiltrer les capteurs, et restent modifiables.": [
+    "Nothing is inferred from your text. These choices only pre-filter the sensors, and stay editable.",
+    "系统不会从您的文字中推断任何内容。这些选择仅用于预筛选传感器，并可随时修改。",
+    "Aus Ihrem Text wird nichts abgeleitet. Diese Angaben filtern die Sensoren nur vor und bleiben änderbar.",
+    "Nada se deduce de su texto. Estas opciones solo prefiltran los sensores y siguen siendo modificables.",
+    "Из вашего текста ничего не выводится. Эти варианты лишь предварительно отбирают датчики и остаются изменяемыми.",
+    "Nulla viene dedotto dal tuo testo. Queste scelte servono solo a prefiltrare i sensori e restano modificabili.",
+    "入力された文章から推測は行いません。これらの選択はセンサーの事前絞り込みのみに使われ、後から変更できます。"
   ],
   "Rien à annoncer : aucun retour n'est publié sur ce dossier.": [
     "Nothing to announce: no feedback is published on this case file.",
@@ -15929,6 +16424,15 @@
     "Codice esatto richiesto: una serie non è sufficiente, la revisione deve prima definire il codice ordinabile.",
     "正確な型番が必要です。製品ファミリーのみでは不十分であり、レビューで最初に発注可能な型番を確定する必要があります。"
   ],
+  "Réglages avancés du câble": [
+    "Advanced cable settings",
+    "电缆高级设置",
+    "Erweiterte Kabeleinstellungen",
+    "Ajustes avanzados del cable",
+    "Расширенные настройки кабеля",
+    "Impostazioni avanzate del cavo",
+    "ケーブルの詳細設定"
+  ],
   "Réglages de la plateforme": [
     "Platform settings",
     "平台设置",
@@ -16109,6 +16613,15 @@
     "Riepilogo tecnico e incognite",
     "技術要約および不明事項"
   ],
+  "Rétablir mes réponses": [
+    "Restore my answers",
+    "恢复我的回答",
+    "Meine Antworten wiederherstellen",
+    "Restablecer mis respuestas",
+    "Восстановить мои ответы",
+    "Ripristina le mie risposte",
+    "回答を復元する"
+  ],
   "Révision": [
     "Revision",
     "版本",
@@ -16199,6 +16712,15 @@
     "RIDOTTO: confronto tipico da confermare con prove. NON SODDISFATTO: margine sotto il 10%. NON VALUTABILE: manca un dato o una condizione.",
     "余裕小：代表値の比較で試験確認が必要。未達：余裕10%未満。評価不可：データまたは条件が不足。"
   ],
+  "STEP d'encombrement · modèle simplifié": [
+    "STEP for overall dimensions · simplified model",
+    "外形尺寸STEP文件 · 简化模型",
+    "STEP für Abmessungen · vereinfachtes Modell",
+    "STEP de dimensiones · modelo simplificado",
+    "STEP габаритов · упрощённая модель",
+    "STEP d'ingombro · modello semplificato",
+    "外形寸法用STEP · 簡易モデル"
+  ],
   "Saisie invalide : vérifiez les valeurs et leur ordre.": [
     "Invalid input: check values and their order.",
     "输入无效：请检查数值及顺序。",
@@ -16207,6 +16729,15 @@
     "Некорректный ввод: проверьте значения и порядок.",
     "Dati non validi: controllate valori e ordine.",
     "入力が無効です。値と順序を確認してください。"
+  ],
+  "Saisir une référence précise": [
+    "Enter a specific reference",
+    "输入具体型号",
+    "Genaue Referenz eingeben",
+    "Introducir una referencia precisa",
+    "Указать точное обозначение",
+    "Inserire un riferimento preciso",
+    "正確な型番を入力"
   ],
   "Saisissez un nombre entier de capteurs par an.": [
     "Enter an integer number of sensors per year.",
@@ -16288,6 +16819,15 @@
     "Не применимо:",
     "Non applicabile:",
     "対象外："
+  ],
+  "Sans préférence, le choix du connecteur est confié à Standex.": [
+    "Without a preference, the choice of connector is entrusted to Standex.",
+    "如无偏好，连接器的选择交由 Standex 决定。",
+    "Ohne Präferenz wird die Wahl des Steckers Standex überlassen.",
+    "Sin preferencia, la elección del conector se confía a Standex.",
+    "Без предпочтения выбор разъёма доверяется Standex.",
+    "In assenza di preferenza, la scelta del connettore è affidata a Standex.",
+    "希望がない場合、コネクターの選定はStandexに委ねられます。"
   ],
   "Schéma pédagogique proportionnel : les cotes affichées illustrent les rapports (carte 3 × la longueur du reed, 5 × son diamètre), elles ne sont pas des cotes validées.": [
     "Proportional educational diagram: displayed dimensions illustrate proportions (PCB 3 × reed length, 5 × its diameter); they are not validated dimensions.",
@@ -16423,6 +16963,24 @@
     "Sensor Studio · Проверка проекта",
     "Sensor Studio · Revisione del progetto",
     "Sensor Studio · 設計レビュー"
+  ],
+  "Sensor Studio — concevoir une détection · Standex DETECT": [
+    "Sensor Studio — designing a detection · Standex DETECT",
+    "Sensor Studio — 设计检测方案 · Standex DETECT",
+    "Sensor Studio — eine Erkennung entwerfen · Standex DETECT",
+    "Sensor Studio — diseñar una detección · Standex DETECT",
+    "Sensor Studio — разработка детектирования · Standex DETECT",
+    "Sensor Studio — progettare un rilevamento · Standex DETECT",
+    "Sensor Studio — 検出を設計する · Standex DETECT"
+  ],
+  "Sensor Studio — faire détecter votre idée · Standex DETECT": [
+    "Sensor Studio — turning your idea into detection · Standex DETECT",
+    "Sensor Studio — 将您的想法变为检测方案 · Standex DETECT",
+    "Sensor Studio — Ihre Idee erkennbar machen · Standex DETECT",
+    "Sensor Studio — convertir su idea en detección · Standex DETECT",
+    "Sensor Studio — превращаем вашу идею в детектирование · Standex DETECT",
+    "Sensor Studio — trasformare la vostra idea in rilevamento · Standex DETECT",
+    "Sensor Studio — アイデアを検出に変える · Standex DETECT"
   ],
   "Session active": [
     "Active session",
@@ -16711,6 +17269,15 @@
     "Источник Standex ↗",
     "Fonte Standex ↗",
     "Standex出典 ↗"
+  ],
+  "Source fabricant": [
+    "Manufacturer source",
+    "制造商来源",
+    "Herstellerquelle",
+    "Fuente del fabricante",
+    "Источник производителя",
+    "Fonte del produttore",
+    "メーカーの出典"
   ],
   "Spécifique": [
     "Custom",
@@ -17026,6 +17593,15 @@
     "Таблица Standex, параллельные оси. Изменение ориентации включает условную демонстрацию.",
     "Tabella Standex, assi paralleli. Cambiare orientamento attiva la demo fittizia.",
     "Standex表は平行軸の場合。向きを変えると仮のデモに切り替わります。"
+  ],
+  "Table Standex, faces en vis-à-vis (aimant à 180°). Modifier l'orientation passe en démonstration fictive.": [
+    "Standex table, faces opposite each other (magnet at 180°). Changing orientation switches to the fictitious demo.",
+    "Standex 表格，两端面相对（磁体 180°）。更改方向将切换到虚拟演示。",
+    "Standex-Tabelle, Stirnflächen gegenüber (Magnet bei 180°). Andere Ausrichtung aktiviert die fiktive Demo.",
+    "Tabla Standex, caras enfrentadas (imán a 180°). Cambiar orientación activa la demo ficticia.",
+    "Таблица Standex, торцы друг напротив друга (магнит 180°). Изменение ориентации включает условную демонстрацию.",
+    "Tabella Standex, facce affacciate (magnete a 180°). Cambiare orientamento attiva la demo fittizia.",
+    "Standex表は端面が向かい合う場合（磁石180°）。向きを変えると仮のデモに切り替わります。"
   ],
   "Tableau": [
     "Table",
@@ -17405,6 +17981,15 @@
     "Tutti i fissaggi",
     "すべての取付方式"
   ],
+  "Toutes les informations enregistrées viennent de vous et sont confirmées.": [
+    "All recorded information comes from you and is confirmed.",
+    "所有记录的信息均来自您且已确认。",
+    "Alle erfassten Informationen stammen von Ihnen und sind bestätigt.",
+    "Toda la información registrada procede de usted y está confirmada.",
+    "Вся записанная информация предоставлена вами и подтверждена.",
+    "Tutte le informazioni registrate provengono da voi e sono confermate.",
+    "記録されたすべての情報は提供者によるものであり、確認済みです。"
+  ],
   "Toutes les notes ont été copiées.": [
     "All notes were copied.",
     "已复制全部备注。",
@@ -17413,6 +17998,15 @@
     "Все заметки скопированы.",
     "Tutte le note sono state copiate.",
     "すべてのメモをコピーしました。"
+  ],
+  "Toutes les questions sont laissées à définir avec Standex : aucune valeur technique n'en est déduite.": [
+    "All questions are left to be defined with Standex: no technical value is inferred.",
+    "所有问题均留待与 Standex 确定：未推导出任何技术数值。",
+    "Alle Fragen bleiben mit Standex zu klären: Es werden keine technischen Werte daraus abgeleitet.",
+    "Todas las preguntas quedan por definir con Standex: no se deduce ningún valor técnico.",
+    "Все вопросы оставлены для уточнения со Standex: никакие технические значения не выводятся.",
+    "Tutte le domande sono lasciate da definire con Standex: non viene dedotto alcun valore tecnico.",
+    "すべての質問事項は Standex との協議待ちです。技術的な数値は一切導き出されていません。"
   ],
   "Toutes les étapes": [
     "All stages",
@@ -17882,6 +18476,15 @@
     "Una voce «non applicabile» richiede una motivazione.",
     "「対象外」の項目には理由が必要です。"
   ],
+  "Un modèle 3D de votre machine est rattaché à ce projet.": [
+    "A 3D model of your machine is attached to this project.",
+    "本项目已关联您机器的3D模型。",
+    "Ein 3D-Modell Ihrer Maschine ist diesem Projekt zugeordnet.",
+    "Un modelo 3D de su máquina está vinculado a este proyecto.",
+    "К этому проекту прикреплена 3D-модель вашего оборудования.",
+    "Un modello 3D della vostra macchina è collegato a questo progetto.",
+    "お客様の機械の3Dモデルがこのプロジェクトに紐付けられています。"
+  ],
   "Un reed pour apprendre": [
     "A reed switch for learning",
     "用于学习的干簧管",
@@ -17917,6 +18520,33 @@
     "Для этого проекта уже открыт запрос на NDA. Его снятие отменяет запрос; неподписанный документ остаётся на вашем устройстве. Продолжить?",
     "Su questo progetto è già aperta una richiesta di NDA. Rimuoverla abbandona la richiesta; il documento non firmato resta sul tuo dispositivo. Continuare?",
     "このプロジェクトではすでに NDA の要望が開かれています。取り消すとその要望は破棄されます。未署名の文書はお使いの端末に残ります。続行しますか？"
+  ],
+  "Une dimension laissée vide reste inconnue et ne filtre rien.": [
+    "A dimension left blank stays unknown and filters nothing.",
+    "留空的尺寸保持未知，不会用于筛选。",
+    "Ein leeres Maß bleibt unbekannt und filtert nichts.",
+    "Una dimensión en blanco permanece desconocida y no filtra nada.",
+    "Пустой размер остаётся неизвестным и ничего не фильтрует.",
+    "Una dimensione lasciata vuota resta sconosciuta e non filtra nulla.",
+    "空欄の寸法は不明のままで、絞り込みには使われません。"
+  ],
+  "Une dimension non renseignée ne filtre rien : inconnu ne vaut pas zéro.": [
+    "An unfilled dimension filters nothing: unknown does not mean zero.",
+    "未填写的尺寸不会进行任何筛选：未知不等于零。",
+    "Ein nicht angegebenes Maß filtert nichts: unbekannt ist nicht gleich null.",
+    "Una dimensión no indicada no filtra nada: desconocido no equivale a cero.",
+    "Незаполненный размер ничего не фильтрует: неизвестно не значит ноль.",
+    "Una dimensione non indicata non filtra nulla: sconosciuto non equivale a zero.",
+    "未入力の寸法は何もフィルタリングしません。不明はゼロを意味しません。"
+  ],
+  "Une dimension non renseignée reste libre : elle ne limite aucun côté du capteur, et inconnu ne vaut pas zéro.": [
+    "An unspecified dimension remains free: it does not limit any side of the sensor, and unknown does not mean zero.",
+    "未填写的尺寸保持自由状态：它不限制传感器的任何一侧，且未知不等于零。",
+    "Eine nicht angegebene Dimension bleibt frei: Sie begrenzt keine Seite des Sensors, und unbekannt bedeutet nicht Null.",
+    "Una dimensión no especificada permanece libre: no limita ningún lado del sensor, y desconocido no equivale a cero.",
+    "Неуказанный размер остается свободным: он не ограничивает датчик ни с одной стороны, а «неизвестно» не означает ноль.",
+    "Una dimensione non specificata rimane libera: non limita alcun lato del sensore, e \"sconosciuto\" non equivale a zero.",
+    "指定されていない寸法はフリーのままです。センサーのどの面も制限せず、「不明」は「ゼロ」を意味しません。"
   ],
   "Une erreur est survenue. Réessayez ou revenez à l'accueil.": [
     "An error occurred. Try again or return home.",
@@ -18142,6 +18772,15 @@
     "Значение",
     "Valore",
     "値"
+  ],
+  "Valeur brute constructeur, non convertible en distance de commutation.": [
+    "Raw manufacturer value, not convertible into a switching distance.",
+    "制造商原始数值，无法转换为开关距离。",
+    "Roher Herstellerwert, nicht in einen Schaltabstand umrechenbar.",
+    "Valor bruto del fabricante, no convertible en distancia de conmutación.",
+    "Необработанное значение производителя, не пересчитывается в дистанцию срабатывания.",
+    "Valore grezzo del costruttore, non convertibile in distanza di commutazione.",
+    "メーカーの生の値であり、切替距離への換算はできません。"
   ],
   "Valeurs typiques publiées Standex": [
     "Standex published typical values",
@@ -18566,6 +19205,15 @@
     "Mostra frammento risposta originale",
     "生の回答断片を表示"
   ],
+  "Voir le motif technique de chaque critère": [
+    "View the technical reason for each criterion",
+    "查看每个条件的技术依据",
+    "Technischen Grund für jedes Kriterium anzeigen",
+    "Ver el motivo técnico de cada criterio",
+    "Просмотреть техническое обоснование каждого критерия",
+    "Vedi il motivo tecnico di ogni criterio",
+    "各条件の技術的根拠を見る"
+  ],
   "Voir le schéma officiel D1 à D5": [
     "View official D1–D5 diagram",
     "查看官方D1–D5图示",
@@ -18574,6 +19222,15 @@
     "Официальная схема D1–D5",
     "Vedi schema ufficiale D1–D5",
     "公式D1～D5図を表示"
+  ],
+  "Voir les autres capteurs ({0}) — écartés par un critère actif": [
+    "View the other sensors ({0}) — excluded by an active criterion",
+    "查看其他传感器（{0}）— 因有效条件而被排除",
+    "Andere Sensoren anzeigen ({0}) — durch ein aktives Kriterium ausgeschlossen",
+    "Ver los demás sensores ({0}) — excluidos por un criterio activo",
+    "Показать другие датчики ({0}) — исключены активным критерием",
+    "Vedi gli altri sensori ({0}) — esclusi da un criterio attivo",
+    "他のセンサー（{0}）を見る — 有効な条件により除外"
   ],
   "Voir les autres capteurs ({0}) — écartés par une contrainte technique": [
     "See the other sensors ({0}) — ruled out by a technical constraint",
@@ -18610,6 +19267,15 @@
     "Показать контакты",
     "Mostra i contatti",
     "接点を表示"
+  ],
+  "Voir les détails": [
+    "View details",
+    "查看详情",
+    "Details anzeigen",
+    "Ver detalles",
+    "Посмотреть подробности",
+    "Vedi i dettagli",
+    "詳細を見る"
   ],
   "Voir tout le montage": [
     "View entire assembly",
@@ -18880,6 +19546,15 @@
     "Выбирать конкретную позицию необязательно.",
     "Non siete obbligati a scegliere un codice.",
     "型番を選ぶ必要はありません。"
+  ],
+  "Vous pouvez désactiver un critère pour voir les autres capteurs. Vos réponses ne sont pas modifiées.": [
+    "You can disable a criterion to see the other sensors. Your answers are not changed.",
+    "您可以停用某个条件以查看其他传感器。您的回答不会被更改。",
+    "Sie können ein Kriterium deaktivieren, um die anderen Sensoren zu sehen. Ihre Antworten werden nicht geändert.",
+    "Puede desactivar un criterio para ver los demás sensores. Sus respuestas no se modifican.",
+    "Вы можете отключить критерий, чтобы увидеть другие датчики. Ваши ответы не изменяются.",
+    "È possibile disattivare un criterio per vedere gli altri sensori. Le vostre risposte non vengono modificate.",
+    "条件を無効にすると他のセンサーを確認できます。回答は変更されません。"
   ],
   "Vous pouvez faire relire votre projet par nos équipes. Une revue R&D reste toujours nécessaire avant commande.": [
     "You can have your project reviewed by our teams. An R&D review is always required before ordering.",
@@ -19259,6 +19934,15 @@
     "consentita",
     "可"
   ],
+  "axes parallèles": [
+    "parallel axes",
+    "轴线平行",
+    "parallele Achsen",
+    "ejes paralelos",
+    "параллельные оси",
+    "assi paralleli",
+    "平行軸"
+  ],
   "banc de test interne": [
     "internal test bench",
     "内部测试台",
@@ -19285,6 +19969,15 @@
     "заблокировано",
     "bloccata/e",
     "停滞"
+  ],
+  "c'est sa fonction de butée, ce n'est pas un motif d'exclusion.": [
+    "this is its stop function, it is not a reason for exclusion.",
+    "这是其止挡功能，并非排除理由。",
+    "dies ist seine Anschlagfunktion, kein Ausschlussgrund.",
+    "esa es su función de tope, no es un motivo de exclusión.",
+    "это его функция упора, а не причина для исключения.",
+    "questa è la sua funzione di arresto, non un motivo di esclusione.",
+    "これはストッパーとしての機能であり、除外の理由ではありません。"
   ],
   "capteurs/an — corrigé à la main": [
     "sensors/year — corrected by hand",
@@ -19375,6 +20068,15 @@
     "индуктивная нагрузка",
     "carico induttivo",
     "誘導性負荷"
+  ],
+  "choisi": [
+    "selected",
+    "已选定",
+    "ausgewählt",
+    "seleccionado",
+    "выбрано",
+    "selezionato",
+    "選択済み"
   ],
   "circuit imprimé": [
     "printed circuit board",
@@ -19528,6 +20230,15 @@
     "исправлено внутри",
     "corretto internamente",
     "社内で修正済み"
+  ],
+  "cotes non vérifiées, à confirmer par la R&D": [
+    "dimensions not verified, to be confirmed by R&D",
+    "尺寸未经核实，需由研发部门确认",
+    "Maße nicht geprüft, von der F&E zu bestätigen",
+    "cotas no verificadas, a confirmar por I+D",
+    "размеры не проверены, требуют подтверждения НИОКР",
+    "quote non verificate, da confermare da parte della R&S",
+    "寸法は未確認、研究開発部門による確認が必要"
   ],
   "couverture confirmée": [
     "coverage confirmed",
@@ -19826,6 +20537,15 @@
     "cliente indica requisiti prestazionali",
     "顧客から性能要件の記載あり"
   ],
+  "faces en vis-à-vis (aimant à 180°)": [
+    "faces opposite each other (magnet at 180°)",
+    "端面相对（磁体 180°）",
+    "Stirnflächen gegenüber (Magnet bei 180°)",
+    "caras enfrentadas (imán a 180°)",
+    "торцы друг напротив друга (магнит 180°)",
+    "facce affacciate (magnete a 180°)",
+    "端面が向かい合う（磁石180°）"
+  ],
   "fermé": [
     "closed",
     "闭合",
@@ -19897,6 +20617,15 @@
     "Хорошо",
     "Buono",
     "良好"
+  ],
+  "hauteur": [
+    "height",
+    "高度",
+    "Höhe",
+    "altura",
+    "высота",
+    "altezza",
+    "高さ"
   ],
   "high": [
     "High",
@@ -20276,6 +21005,15 @@
     "mm · corpo",
     "mm · 本体"
   ],
+  "mm, soit une hauteur d'enveloppe de": [
+    "mm, which is an envelope height of",
+    "毫米，即包络高度为",
+    "mm, was einer Hüllhöhe von",
+    "mm, lo que supone una altura de envolvente de",
+    "мм, что соответствует габаритной высоте",
+    "mm, ovvero un'altezza di ingombro di",
+    "mm、つまりエンベロープの高さは"
+  ],
   "needs_revision": [
     "Needs revision",
     "需要修改",
@@ -20320,6 +21058,15 @@
     "не назначено",
     "non assegnato",
     "未割り当て"
+  ],
+  "non demandée à ce stade": [
+    "not requested at this stage",
+    "此阶段无需求",
+    "in diesem Stadium nicht erforderlich",
+    "no solicitada en esta etapa",
+    "не требуется на данном этапе",
+    "non richiesta in questa fase",
+    "この段階では未要求"
   ],
   "non décidé": [
     "undecided",
@@ -20636,6 +21383,15 @@
     "prezzo di vendita nullo: il margine non può essere calcolato",
     "販売価格がゼロのため、利益率を計算できません"
   ],
+  "profondeur": [
+    "depth",
+    "深度",
+    "Tiefe",
+    "profundidad",
+    "глубина",
+    "profondità",
+    "奥行き"
+  ],
   "projet sans nom": [
     "untitled project",
     "未命名项目",
@@ -20924,6 +21680,15 @@
     "ruolo nella catena di sicurezza da qualificare",
     "安全系での役割を要確認"
   ],
+  "saillie inférieure": [
+    "lower protrusion",
+    "下方凸起",
+    "unterer Überstand",
+    "saliente inferior",
+    "нижний выступ",
+    "sporgenza inferiore",
+    "下部突出"
+  ],
   "sales": [
     "Sales",
     "销售",
@@ -21031,6 +21796,15 @@
     "источник:",
     "fonte:",
     "出典："
+  ],
+  "source interne Standex, à confirmer par la R&D": [
+    "internal Standex source, to be confirmed by R&D",
+    "Standex内部来源，需由研发部门确认",
+    "interne Standex-Quelle, von der F&E zu bestätigen",
+    "fuente interna de Standex, a confirmar por I+D",
+    "внутренний источник Standex, требует подтверждения НИОКР",
+    "fonte interna Standex, da confermare da parte della R&S",
+    "Standex社内出典、研究開発部門による確認が必要"
   ],
   "spécifique": [
     "custom",
@@ -21311,6 +22085,15 @@
     "a vite",
     "ねじ固定"
   ],
+  "voir la source fabricant": [
+    "see manufacturer source",
+    "查看制造商来源",
+    "Herstellerquelle ansehen",
+    "ver la fuente del fabricante",
+    "см. источник производителя",
+    "vedi la fonte del produttore",
+    "メーカーの出典を見る"
+  ],
   "votre dossier ; l'envoi sera possible dès l'activation.": [
     "your case file; sending will be possible once activated.",
     "您的案卷；激活后即可发送。",
@@ -21346,6 +22129,15 @@
     "Показано датчиков с документацией: {0}, плюс индивидуальное решение.",
     "{0} sensore/i documentato/i mostrato/i, più l'opzione su misura.",
     "資料のあるセンサー {0} 件を表示、加えてカスタム対応。"
+  ],
+  "{0} est choisi pour votre projet. Le résumé du projet est mis à jour.": [
+    "{0} is selected for your project. The project summary is updated.",
+    "{0} 已为您的项目选定。项目摘要已更新。",
+    "{0} ist für Ihr Projekt ausgewählt. Die Projektzusammenfassung wird aktualisiert.",
+    "{0} está seleccionado para su proyecto. El resumen del proyecto se ha actualizado.",
+    "{0} выбран для вашего проекта. Сводка проекта обновлена.",
+    "{0} è selezionato per il vostro progetto. Il riepilogo del progetto è aggiornato.",
+    "{0} がプロジェクト用に選択されました。プロジェクトの概要が更新されます。"
   ],
   "{0} famille(s) documentée(s) sur {1}": [
     "{0} documented families out of {1}",
@@ -21445,6 +22237,15 @@
     "{0} · без адаптера",
     "{0} · senza adattatore",
     "{0} · アダプターなし"
+  ],
+  "{0} étape(s) traitée(s) sur {1}. Rien n'est validé techniquement à ce stade.": [
+    "{0} step(s) completed out of {1}. Nothing is technically validated at this stage.",
+    "已完成 {0}/{1} 个步骤。此阶段尚未进行技术验证。",
+    "{0} von {1} Schritten bearbeitet. Auf dieser Stufe ist nichts technisch validiert.",
+    "{0} paso(s) completado(s) de {1}. Nada está técnicamente validado en esta etapa.",
+    "Обработано {0} из {1} шагов. На данном этапе техническая проверка не проводилась.",
+    "{0} passaggio/i completato/i su {1}. Nulla è tecnicamente convalidato in questa fase.",
+    "{1} 件中 {0} 件のステップが処理済み。この段階では技術的な検証は行われていません。"
   ],
   "{0}/{1} scénarios de relecture disponibles.": [
     "{0}/{1} review scenarios available.",
@@ -21590,6 +22391,24 @@
     "Da caratterizzare",
     "特性評価が必要"
   ],
+  "À définir avec Standex : aucune gamme n'est présélectionnée.": [
+    "To be defined with Standex: no range is preselected.",
+    "待与Standex共同确定：未预先选定任何系列。",
+    "Mit Standex zu definieren: keine Baureihe ist vorausgewählt.",
+    "A definir con Standex: no hay ninguna gama preseleccionada.",
+    "Необходимо определить со Standex: ни одна серия не выбрана заранее.",
+    "Da definire con Standex: nessuna gamma è preselezionata.",
+    "Standexと共に決定予定：あらかじめ選択されたシリーズはありません。"
+  ],
+  "À définir avec Standex.": [
+    "To be defined with Standex.",
+    "待与Standex共同确定。",
+    "Mit Standex zu definieren.",
+    "A definir con Standex.",
+    "Необходимо определить со Standex.",
+    "Da definire con Standex.",
+    "Standexと共に決定予定です。"
+  ],
   "À emmancher": [
     "Press-fit",
     "压入式",
@@ -21652,6 +22471,15 @@
     "К чему будет подключен датчик?",
     "A cosa sarà collegato il sensore?",
     "センサーは何に接続されますか？"
+  ],
+  "À renseigner à la dernière étape, avant d'échanger avec Standex.": [
+    "To be filled in at the last step, before interacting with Standex.",
+    "请在与 Standex 交流前的最后一步填写。",
+    "Im letzten Schritt auszufüllen, vor dem Austausch mit Standex.",
+    "A completar en el último paso, antes de intercambiar información con Standex.",
+    "Необходимо заполнить на последнем этапе, перед общением со Standex.",
+    "Da compilare nell'ultima fase, prima di confrontarsi con Standex.",
+    "Standex とやり取りする前の、最終ステップで入力してください。"
   ],
   "À traiter": [
     "To do",
@@ -21742,6 +22570,15 @@
     "Отклонено",
     "Escluso",
     "除外"
+  ],
+  "Écarté par le critère « {0} ». {1}": [
+    "Excluded by the criterion “{0}”. {1}",
+    "因条件「{0}」被排除。{1}",
+    "Ausgeschlossen durch das Kriterium „{0}“. {1}",
+    "Excluido por el criterio «{0}». {1}",
+    "Исключён критерием «{0}». {1}",
+    "Escluso dal criterio «{0}». {1}",
+    "条件「{0}」により除外。{1}"
   ],
   "Échantillon revalidé explicitement.": [
     "Sample explicitly revalidated.",
@@ -22049,6 +22886,24 @@
     "da correggere",
     "要修正"
   ],
+  "à définir avec Standex": [
+    "to be defined with Standex",
+    "待与Standex共同确定",
+    "mit Standex zu definieren",
+    "a definir con Standex",
+    "необходимо определить со Standex",
+    "da definire con Standex",
+    "Standexと共に決定予定"
+  ],
+  "à renseigner": [
+    "to be provided",
+    "待填写",
+    "anzugeben",
+    "por indicar",
+    "необходимо указать",
+    "da indicare",
+    "入力待ち"
+  ],
   "à vérifier par la R&D": [
     "to be checked by R&D",
     "待 R&D 验证",
@@ -22237,644 +23092,5 @@
     "…. Изменение, внесенное здесь, ни в коем случае не считается опубликованным отзывом.",
     "…. Una modifica apportata qui non vale mai come riscontro pubblicato.",
     "…。ここで行われた変更は公開されたフィードバックとはみなされません。"
-  ],
-  "Table Standex, faces en vis-à-vis (aimant à 180°). Modifier l'orientation passe en démonstration fictive.": [
-    "Standex table, faces opposite each other (magnet at 180°). Changing orientation switches to the fictitious demo.",
-    "Standex 表格，两端面相对（磁体 180°）。更改方向将切换到虚拟演示。",
-    "Standex-Tabelle, Stirnflächen gegenüber (Magnet bei 180°). Andere Ausrichtung aktiviert die fiktive Demo.",
-    "Tabla Standex, caras enfrentadas (imán a 180°). Cambiar orientación activa la demo ficticia.",
-    "Таблица Standex, торцы друг напротив друга (магнит 180°). Изменение ориентации включает условную демонстрацию.",
-    "Tabella Standex, facce affacciate (magnete a 180°). Cambiare orientamento attiva la demo fittizia.",
-    "Standex表は端面が向かい合う場合（磁石180°）。向きを変えると仮のデモに切り替わります。"
-  ],
-  "faces en vis-à-vis (aimant à 180°)": [
-    "faces opposite each other (magnet at 180°)",
-    "端面相对（磁体 180°）",
-    "Stirnflächen gegenüber (Magnet bei 180°)",
-    "caras enfrentadas (imán a 180°)",
-    "торцы друг напротив друга (магнит 180°)",
-    "facce affacciate (magnete a 180°)",
-    "端面が向かい合う（磁石180°）"
-  ],
-  "axes parallèles": [
-    "parallel axes",
-    "轴线平行",
-    "parallele Achsen",
-    "ejes paralelos",
-    "параллельные оси",
-    "assi paralleli",
-    "平行軸"
-  ],
-  "{0} est choisi pour votre projet. Le résumé du projet est mis à jour.": [
-    "{0} is selected for your project. The project summary is updated.",
-    "{0} 已为您的项目选定。项目摘要已更新。",
-    "{0} ist für Ihr Projekt ausgewählt. Die Projektzusammenfassung wird aktualisiert.",
-    "{0} está seleccionado para su proyecto. El resumen del proyecto se ha actualizado.",
-    "{0} выбран для вашего проекта. Сводка проекта обновлена.",
-    "{0} è selezionato per il vostro progetto. Il riepilogo del progetto è aggiornato.",
-    "{0} がプロジェクト用に選択されました。プロジェクトの概要が更新されます。"
-  ],
-  "Le choix du capteur est confié à Standex. Ce n'est pas une validation technique.": [
-    "The choice of sensor is entrusted to Standex. This is not a technical validation.",
-    "传感器的选择交由 Standex 决定。这不是技术验证。",
-    "Die Wahl des Sensors wird Standex überlassen. Dies ist keine technische Validierung.",
-    "La elección del sensor se confía a Standex. No es una validación técnica.",
-    "Выбор датчика доверен Standex. Это не техническая проверка.",
-    "La scelta del sensore è affidata a Standex. Non si tratta di una convalida tecnica.",
-    "センサーの選定はStandexに委ねられます。これは技術的な検証ではありません。"
-  ],
-  "D'après vos réponses, nous ne montrons d'abord que les capteurs compatibles.": [
-    "Based on your answers, we first show only the compatible sensors.",
-    "根据您的回答，我们首先只显示兼容的传感器。",
-    "Basierend auf Ihren Antworten zeigen wir zunächst nur die kompatiblen Sensoren.",
-    "Según sus respuestas, mostramos primero solo los sensores compatibles.",
-    "На основе ваших ответов сначала показываются только совместимые датчики.",
-    "In base alle vostre risposte, mostriamo prima solo i sensori compatibili.",
-    "回答に基づき、まず互換性のあるセンサーのみを表示します。"
-  ],
-  "Vous pouvez désactiver un critère pour voir les autres capteurs. Vos réponses ne sont pas modifiées.": [
-    "You can disable a criterion to see the other sensors. Your answers are not changed.",
-    "您可以停用某个条件以查看其他传感器。您的回答不会被更改。",
-    "Sie können ein Kriterium deaktivieren, um die anderen Sensoren zu sehen. Ihre Antworten werden nicht geändert.",
-    "Puede desactivar un criterio para ver los demás sensores. Sus respuestas no se modifican.",
-    "Вы можете отключить критерий, чтобы увидеть другие датчики. Ваши ответы не изменяются.",
-    "È possibile disattivare un criterio per vedere gli altri sensori. Le vostre risposte non vengono modificate.",
-    "条件を無効にすると他のセンサーを確認できます。回答は変更されません。"
-  ],
-  "Rétablir mes réponses": [
-    "Restore my answers",
-    "恢复我的回答",
-    "Meine Antworten wiederherstellen",
-    "Restablecer mis respuestas",
-    "Восстановить мои ответы",
-    "Ripristina le mie risposte",
-    "回答を復元する"
-  ],
-  "Voir le motif technique de chaque critère": [
-    "View the technical reason for each criterion",
-    "查看每个条件的技术依据",
-    "Technischen Grund für jedes Kriterium anzeigen",
-    "Ver el motivo técnico de cada criterio",
-    "Просмотреть техническое обоснование каждого критерия",
-    "Vedi il motivo tecnico di ogni criterio",
-    "各条件の技術的根拠を見る"
-  ],
-  "Avec les terminaisons documentées : {0} mm de long.": [
-    "With the documented terminations: {0} mm long.",
-    "包含已记录的端接：长 {0} mm。",
-    "Mit den dokumentierten Anschlüssen: {0} mm lang.",
-    "Con las terminaciones documentadas: {0} mm de largo.",
-    "С учётом задокументированных выводов: длина {0} мм.",
-    "Con le terminazioni documentate: lunghezza {0} mm.",
-    "記載済みの端末込みで長さ {0} mm。"
-  ],
-  "Hors des contraintes que vous avez déclarées": [
-    "Outside the constraints you have declared",
-    "超出您所声明的限制条件",
-    "Außerhalb der von Ihnen angegebenen Einschränkungen",
-    "Fuera de las restricciones que ha declarado",
-    "Вне заявленных вами ограничений",
-    "Al di fuori dei vincoli da voi dichiarati",
-    "申告された制約の範囲外"
-  ],
-  "Choisi pour mon projet": [
-    "Selected for my project",
-    "已为我的项目选定",
-    "Für mein Projekt ausgewählt",
-    "Seleccionado para mi proyecto",
-    "Выбрано для моего проекта",
-    "Selezionato per il mio progetto",
-    "自分のプロジェクト用に選択済み"
-  ],
-  "Voir les détails": [
-    "View details",
-    "查看详情",
-    "Details anzeigen",
-    "Ver detalles",
-    "Посмотреть подробности",
-    "Vedi i dettagli",
-    "詳細を見る"
-  ],
-  "Voir les autres capteurs ({0}) — écartés par un critère actif": [
-    "View the other sensors ({0}) — excluded by an active criterion",
-    "查看其他传感器（{0}）— 因有效条件而被排除",
-    "Andere Sensoren anzeigen ({0}) — durch ein aktives Kriterium ausgeschlossen",
-    "Ver los demás sensores ({0}) — excluidos por un criterio activo",
-    "Показать другие датчики ({0}) — исключены активным критерием",
-    "Vedi gli altri sensori ({0}) — esclusi da un criterio attivo",
-    "他のセンサー（{0}）を見る — 有効な条件により除外"
-  ],
-  "Écarté par le critère « {0} ». {1}": [
-    "Excluded by the criterion “{0}”. {1}",
-    "因条件「{0}」被排除。{1}",
-    "Ausgeschlossen durch das Kriterium „{0}“. {1}",
-    "Excluido por el criterio «{0}». {1}",
-    "Исключён критерием «{0}». {1}",
-    "Escluso dal criterio «{0}». {1}",
-    "条件「{0}」により除外。{1}"
-  ],
-  "Longueur du câble": [
-    "Cable length",
-    "电缆长度",
-    "Kabellänge",
-    "Longitud del cable",
-    "Длина кабеля",
-    "Lunghezza del cavo",
-    "ケーブルの長さ"
-  ],
-  "Ouvrir l'étape câble de l'atelier 3D": [
-    "Open the cable step of the 3D workshop",
-    "打开3D工坊的电缆步骤",
-    "Kabelschritt der 3D-Werkstatt öffnen",
-    "Abrir el paso del cable del taller 3D",
-    "Открыть шаг кабеля в 3D-мастерской",
-    "Apri la fase cavo dell'officina 3D",
-    "3Dワークショップのケーブル手順を開く"
-  ],
-  "Ce que votre montage indique aujourd'hui": [
-    "What your assembly indicates today",
-    "您的装配当前所反映的情况",
-    "Was Ihre Montage heute anzeigt",
-    "Lo que su montaje indica hoy",
-    "Что показывает ваша сборка на данный момент",
-    "Ciò che il vostro montaggio indica oggi",
-    "現時点で組み立てが示している内容"
-  ],
-  "non demandée à ce stade": [
-    "not requested at this stage",
-    "此阶段无需求",
-    "in diesem Stadium nicht erforderlich",
-    "no solicitada en esta etapa",
-    "не требуется на данном этапе",
-    "non richiesta in questa fase",
-    "この段階では未要求"
-  ],
-  "J'ai une préférence de connecteur": [
-    "I have a connector preference",
-    "我对连接器有偏好",
-    "Ich habe eine Steckerpräferenz",
-    "Tengo una preferencia de conector",
-    "У меня есть предпочтение по разъёму",
-    "Ho una preferenza di connettore",
-    "コネクターの希望がある"
-  ],
-  "Sans préférence, le choix du connecteur est confié à Standex.": [
-    "Without a preference, the choice of connector is entrusted to Standex.",
-    "如无偏好，连接器的选择交由 Standex 决定。",
-    "Ohne Präferenz wird die Wahl des Steckers Standex überlassen.",
-    "Sin preferencia, la elección del conector se confía a Standex.",
-    "Без предпочтения выбор разъёма доверяется Standex.",
-    "In assenza di preferenza, la scelta del connettore è affidata a Standex.",
-    "希望がない場合、コネクターの選定はStandexに委ねられます。"
-  ],
-  "Connecteur {0} retenu comme préférence, à vérifier par la R&D.": [
-    "Connector {0} retained as a preference, to be verified by R&D.",
-    "已保留连接器 {0} 作为偏好，需由研发部门核实。",
-    "Stecker {0} als Präferenz vorgemerkt, von der F&E zu prüfen.",
-    "Conector {0} retenido como preferencia, a verificar por I+D.",
-    "Разъём {0} принят как предпочтение, требует проверки НИОКР.",
-    "Connettore {0} scelto come preferenza, da verificare da parte della R&S.",
-    "コネクター {0} が希望として記録され、研究開発部門による確認が必要です。"
-  ],
-  "Saisir une référence précise": [
-    "Enter a specific reference",
-    "输入具体型号",
-    "Genaue Referenz eingeben",
-    "Introducir una referencia precisa",
-    "Указать точное обозначение",
-    "Inserire un riferimento preciso",
-    "正確な型番を入力"
-  ],
-  "Réglages avancés du câble": [
-    "Advanced cable settings",
-    "电缆高级设置",
-    "Erweiterte Kabeleinstellungen",
-    "Ajustes avanzados del cable",
-    "Расширенные настройки кабеля",
-    "Impostazioni avanzate del cavo",
-    "ケーブルの詳細設定"
-  ],
-  "voir la source fabricant": [
-    "see manufacturer source",
-    "查看制造商来源",
-    "Herstellerquelle ansehen",
-    "ver la fuente del fabricante",
-    "см. источник производителя",
-    "vedi la fonte del produttore",
-    "メーカーの出典を見る"
-  ],
-  "source interne Standex, à confirmer par la R&D": [
-    "internal Standex source, to be confirmed by R&D",
-    "Standex内部来源，需由研发部门确认",
-    "interne Standex-Quelle, von der F&E zu bestätigen",
-    "fuente interna de Standex, a confirmar por I+D",
-    "внутренний источник Standex, требует подтверждения НИОКР",
-    "fonte interna Standex, da confermare da parte della R&S",
-    "Standex社内出典、研究開発部門による確認が必要"
-  ],
-  "{0} étape(s) traitée(s) sur {1}. Rien n'est validé techniquement à ce stade.": [
-    "{0} step(s) completed out of {1}. Nothing is technically validated at this stage.",
-    "已完成 {0}/{1} 个步骤。此阶段尚未进行技术验证。",
-    "{0} von {1} Schritten bearbeitet. Auf dieser Stufe ist nichts technisch validiert.",
-    "{0} paso(s) completado(s) de {1}. Nada está técnicamente validado en esta etapa.",
-    "Обработано {0} из {1} шагов. На данном этапе техническая проверка не проводилась.",
-    "{0} passaggio/i completato/i su {1}. Nulla è tecnicamente convalidato in questa fase.",
-    "{1} 件中 {0} 件のステップが処理済み。この段階では技術的な検証は行われていません。"
-  ],
-  "choisi": [
-    "selected",
-    "已选定",
-    "ausgewählt",
-    "seleccionado",
-    "выбрано",
-    "selezionato",
-    "選択済み"
-  ],
-  "à définir avec Standex": [
-    "to be defined with Standex",
-    "待与Standex共同确定",
-    "mit Standex zu definieren",
-    "a definir con Standex",
-    "необходимо определить со Standex",
-    "da definire con Standex",
-    "Standexと共に決定予定"
-  ],
-  "à renseigner": [
-    "to be provided",
-    "待填写",
-    "anzugeben",
-    "por indicar",
-    "необходимо указать",
-    "da indicare",
-    "入力待ち"
-  ],
-  "Modifier": [
-    "Edit",
-    "修改",
-    "Bearbeiten",
-    "Modificar",
-    "Изменить",
-    "Modifica",
-    "変更"
-  ],
-  "Encombrement (mm) — largeur": [
-    "Overall dimensions (mm) — width",
-    "外形尺寸（mm）— 宽度",
-    "Abmessungen (mm) — Breite",
-    "Dimensiones (mm) — ancho",
-    "Габариты (мм) — ширина",
-    "Ingombro (mm) — larghezza",
-    "外形寸法（mm）— 幅"
-  ],
-  "hauteur": [
-    "height",
-    "高度",
-    "Höhe",
-    "altura",
-    "высота",
-    "altezza",
-    "高さ"
-  ],
-  "profondeur": [
-    "depth",
-    "深度",
-    "Tiefe",
-    "profundidad",
-    "глубина",
-    "profondità",
-    "奥行き"
-  ],
-  "cotes non vérifiées, à confirmer par la R&D": [
-    "dimensions not verified, to be confirmed by R&D",
-    "尺寸未经核实，需由研发部门确认",
-    "Maße nicht geprüft, von der F&E zu bestätigen",
-    "cotas no verificadas, a confirmar por I+D",
-    "размеры не проверены, требуют подтверждения НИОКР",
-    "quote non verificate, da confermare da parte della R&S",
-    "寸法は未確認、研究開発部門による確認が必要"
-  ],
-  "Source fabricant": [
-    "Manufacturer source",
-    "制造商来源",
-    "Herstellerquelle",
-    "Fuente del fabricante",
-    "Источник производителя",
-    "Fonte del produttore",
-    "メーカーの出典"
-  ],
-  "Illustration d'encombrement — ni modèle CAO qualifié ni brochage.": [
-    "Dimensional illustration — neither a qualified CAD model nor a pinout.",
-    "外形示意图 — 既非合格的CAD模型，也非接线图。",
-    "Maßillustration — weder ein qualifiziertes CAD-Modell noch eine Pinbelegung.",
-    "Ilustración de dimensiones — ni modelo CAD cualificado ni distribución de pines.",
-    "Иллюстрация габаритов — не является ни аттестованной CAD-моделью, ни распиновкой.",
-    "Illustrazione d'ingombro — né modello CAD qualificato né piedinatura.",
-    "外形図 — 認定されたCADモデルでもピン配置でもありません。"
-  ],
-  "Moment typ. (MS150)": [
-    "Typ. moment (MS150)",
-    "典型力矩 (MS150)",
-    "Typ. Moment (MS150)",
-    "Momento típ. (MS150)",
-    "Тип. момент (MS150)",
-    "Momento tipico (MS150)",
-    "代表的モーメント（MS150）"
-  ],
-  "Valeur brute constructeur, non convertible en distance de commutation.": [
-    "Raw manufacturer value, not convertible into a switching distance.",
-    "制造商原始数值，无法转换为开关距离。",
-    "Roher Herstellerwert, nicht in einen Schaltabstand umrechenbar.",
-    "Valor bruto del fabricante, no convertible en distancia de conmutación.",
-    "Необработанное значение производителя, не пересчитывается в дистанцию срабатывания.",
-    "Valore grezzo del costruttore, non convertibile in distanza di commutazione.",
-    "メーカーの生の値であり、切替距離への換算はできません。"
-  ],
-  "Fixation par report CMS": [
-    "SMT surface-mount fixing",
-    "SMT表面贴装固定",
-    "Befestigung durch SMD-Bestückung",
-    "Fijación por montaje superficial SMD",
-    "Крепление методом SMD-монтажа",
-    "Fissaggio tramite montaggio SMD",
-    "SMT表面実装による固定"
-  ],
-  "Fixation traversante": [
-    "Through-hole fixing",
-    "通孔固定",
-    "Durchsteckbefestigung",
-    "Fijación pasante",
-    "Крепление сквозным монтажом",
-    "Fissaggio a foro passante",
-    "スルーホール固定"
-  ],
-  "Emmanchement dans un trou": [
-    "Press-fit into a hole",
-    "压入孔中安装",
-    "Einpressen in eine Bohrung",
-    "Encaje a presión en un orificio",
-    "Установка запрессовкой в отверстие",
-    "Inserimento a pressione in un foro",
-    "穴への圧入"
-  ],
-  "c'est sa fonction de butée, ce n'est pas un motif d'exclusion.": [
-    "this is its stop function, it is not a reason for exclusion.",
-    "这是其止挡功能，并非排除理由。",
-    "dies ist seine Anschlagfunktion, kein Ausschlussgrund.",
-    "esa es su función de tope, no es un motivo de exclusión.",
-    "это его функция упора, а не причина для исключения.",
-    "questa è la sua funzione di arresto, non un motivo di esclusione.",
-    "これはストッパーとしての機能であり、除外の理由ではありません。"
-  ],
-  "Encombrement hors tout comparé aux dimensions renseignées, terminaisons documentées comprises.": [
-    "Overall dimensions compared to the dimensions provided, including documented terminations.",
-    "外形整体尺寸与已填写尺寸的对比，含已记录的端接。",
-    "Gesamtabmessungen im Vergleich zu den angegebenen Maßen, einschließlich dokumentierter Anschlüsse.",
-    "Dimensiones totales comparadas con las dimensiones indicadas, incluidas las terminaciones documentadas.",
-    "Общие габариты в сравнении с указанными размерами, включая задокументированные выводы.",
-    "Ingombro complessivo confrontato con le dimensioni indicate, terminazioni documentate comprese.",
-    "記載済みの端末を含めた、入力寸法との全体外形の比較。"
-  ],
-  "Une dimension non renseignée ne filtre rien : inconnu ne vaut pas zéro.": [
-    "An unfilled dimension filters nothing: unknown does not mean zero.",
-    "未填写的尺寸不会进行任何筛选：未知不等于零。",
-    "Ein nicht angegebenes Maß filtert nichts: unbekannt ist nicht gleich null.",
-    "Una dimensión no indicada no filtra nada: desconocido no equivale a cero.",
-    "Незаполненный размер ничего не фильтрует: неизвестно не значит ноль.",
-    "Una dimensione non indicata non filtra nulla: sconosciuto non equivale a zero.",
-    "未入力の寸法は何もフィルタリングしません。不明はゼロを意味しません。"
-  ],
-  "Aucune réponse enregistrée pour l'instant.": [
-    "No answer recorded yet.",
-    "目前尚未记录任何回答。",
-    "Bisher keine Antwort erfasst.",
-    "Ninguna respuesta registrada por el momento.",
-    "Пока не зафиксировано ни одного ответа.",
-    "Nessuna risposta registrata per il momento.",
-    "現時点で記録された回答はありません。"
-  ],
-  "Capteur et aimant": [
-    "Sensor and magnet",
-    "传感器与磁体",
-    "Sensor und Magnet",
-    "Sensor e imán",
-    "Датчик и магнит",
-    "Sensore e magnete",
-    "センサーと磁石"
-  ],
-  "À définir avec Standex : aucune gamme n'est présélectionnée.": [
-    "To be defined with Standex: no range is preselected.",
-    "待与Standex共同确定：未预先选定任何系列。",
-    "Mit Standex zu definieren: keine Baureihe ist vorausgewählt.",
-    "A definir con Standex: no hay ninguna gama preseleccionada.",
-    "Необходимо определить со Standex: ни одна серия не выбрана заранее.",
-    "Da definire con Standex: nessuna gamma è preselezionata.",
-    "Standexと共に決定予定：あらかじめ選択されたシリーズはありません。"
-  ],
-  "Aucun capteur choisi, et aucun choix confié à Standex.": [
-    "No sensor selected, and no choice entrusted to Standex.",
-    "未选定任何传感器，也未将选择权交予Standex。",
-    "Kein Sensor ausgewählt und keine Entscheidung Standex überlassen.",
-    "Ningún sensor seleccionado, y ninguna elección confiada a Standex.",
-    "Датчик не выбран, и выбор не доверен Standex.",
-    "Nessun sensore selezionato, e nessuna scelta affidata a Standex.",
-    "選択されたセンサーはなく、Standexに委ねられた選択もありません。"
-  ],
-  "Un modèle 3D de votre machine est rattaché à ce projet.": [
-    "A 3D model of your machine is attached to this project.",
-    "本项目已关联您机器的3D模型。",
-    "Ein 3D-Modell Ihrer Maschine ist diesem Projekt zugeordnet.",
-    "Un modelo 3D de su máquina está vinculado a este proyecto.",
-    "К этому проекту прикреплена 3D-модель вашего оборудования.",
-    "Un modello 3D della vostra macchina è collegato a questo progetto.",
-    "お客様の機械の3Dモデルがこのプロジェクトに紐付けられています。"
-  ],
-  "Montage mécanique déclaré.": [
-    "Mechanical mounting declared.",
-    "已声明机械安装方式。",
-    "Mechanische Montage angegeben.",
-    "Montaje mecánico declarado.",
-    "Механический монтаж заявлен.",
-    "Montaggio meccanico dichiarato.",
-    "機械的な取り付け方法が申告されています。"
-  ],
-  "Ni montage déclaré, ni modèle 3D rattaché.": [
-    "Neither mounting declared nor 3D model attached.",
-    "既未声明安装方式，也未关联3D模型。",
-    "Weder Montage angegeben noch 3D-Modell zugeordnet.",
-    "Ni montaje declarado, ni modelo 3D vinculado.",
-    "Не заявлен ни монтаж, ни прикреплённая 3D-модель.",
-    "Né montaggio dichiarato, né modello 3D collegato.",
-    "取り付け方法の申告も3Dモデルの紐付けもありません。"
-  ],
-  "Longueur : choix enregistré, à confirmer en revue.": [
-    "Length: choice recorded, to be confirmed in review.",
-    "长度：选择已记录，需在评审中确认。",
-    "Länge: Auswahl erfasst, in der Prüfung zu bestätigen.",
-    "Longitud: elección registrada, a confirmar en la revisión.",
-    "Длина: выбор зафиксирован, требует подтверждения при проверке.",
-    "Lunghezza: scelta registrata, da confermare in revisione.",
-    "長さ：選択は記録済み、レビューでの確認が必要です。"
-  ],
-  "Connecteur : préférence enregistrée, à vérifier par la R&D.": [
-    "Connector: preference recorded, to be verified by R&D.",
-    "连接器：偏好已记录，需由研发部门核实。",
-    "Stecker: Präferenz erfasst, von der F&E zu prüfen.",
-    "Conector: preferencia registrada, a verificar por I+D.",
-    "Разъём: предпочтение зафиксировано, требует проверки НИОКР.",
-    "Connettore: preferenza registrata, da verificare da parte della R&S.",
-    "コネクター：希望は記録済み、研究開発部門による確認が必要です。"
-  ],
-  "À définir avec Standex.": [
-    "To be defined with Standex.",
-    "待与Standex共同确定。",
-    "Mit Standex zu definieren.",
-    "A definir con Standex.",
-    "Необходимо определить со Standex.",
-    "Da definire con Standex.",
-    "Standexと共に決定予定です。"
-  ],
-  "Rien de décidé : ce n'est pas obligatoire à ce stade.": [
-    "Nothing decided: this is not mandatory at this stage.",
-    "尚未做出决定：此阶段并非强制要求。",
-    "Nichts entschieden: Dies ist in diesem Stadium nicht zwingend erforderlich.",
-    "Nada decidido: no es obligatorio en esta etapa.",
-    "Ничего не решено: это не обязательно на данном этапе.",
-    "Nulla di deciso: non è obbligatorio in questa fase.",
-    "何も決定されていません。この段階では必須ではありません。"
-  ],
-  "PBT glass fiber reinforced": [
-    "PBT glass fiber reinforced",
-    "PBT glass fiber reinforced",
-    "PBT glass fiber reinforced",
-    "PBT glass fiber reinforced",
-    "PBT glass fiber reinforced",
-    "PBT glass fiber reinforced",
-    "PBT glass fiber reinforced"
-  ],
-  "High Grade Steel (1.4305)": [
-    "High Grade Steel (1.4305)",
-    "High Grade Steel (1.4305)",
-    "High Grade Steel (1.4305)",
-    "High Grade Steel (1.4305)",
-    "High Grade Steel (1.4305)",
-    "High Grade Steel (1.4305)",
-    "High Grade Steel (1.4305)"
-  ],
-  "Crastin SK655FR1": [
-    "Crastin SK655FR1",
-    "Crastin SK655FR1",
-    "Crastin SK655FR1",
-    "Crastin SK655FR1",
-    "Crastin SK655FR1",
-    "Crastin SK655FR1",
-    "Crastin SK655FR1"
-  ],
-  "STEP d'encombrement · modèle simplifié": [
-    "STEP for overall dimensions · simplified model",
-    "外形尺寸STEP文件 · 简化模型",
-    "STEP für Abmessungen · vereinfachtes Modell",
-    "STEP de dimensiones · modelo simplificado",
-    "STEP габаритов · упрощённая модель",
-    "STEP d'ingombro · modello semplificato",
-    "外形寸法用STEP · 簡易モデル"
-  ],
-  "Modèle géométrique simplifié généré à partir des cotes du catalogue. Ce n'est ni un fichier fabricant ni une CAO de fabrication.": [
-    "Simplified geometric model generated from the catalog dimensions. This is neither a manufacturer file nor manufacturing CAD.",
-    "根据目录尺寸生成的简化几何模型。这既不是制造商文件，也不是制造用CAD文件。",
-    "Vereinfachtes geometrisches Modell, erstellt aus den Katalogmaßen. Dies ist weder eine Herstellerdatei noch ein Fertigungs-CAD.",
-    "Modelo geométrico simplificado generado a partir de las cotas del catálogo. No es ni un archivo del fabricante ni un CAD de fabricación.",
-    "Упрощённая геометрическая модель, созданная на основе размеров каталога. Это не файл производителя и не производственная CAD-модель.",
-    "Modello geometrico semplificato generato a partire dalle quote del catalogo. Non è né un file del produttore né un CAD di produzione.",
-    "カタログの寸法から生成された簡易的な幾何モデルです。メーカー提供ファイルでも製造用CADでもありません。"
-  ],
-  "Modèle purement pédagogique : ce capteur n'a pas de fiche source ni de référence commandable.": [
-    "Purely educational model: this sensor has no source datasheet or orderable reference.",
-    "纯教学示例模型：该传感器没有原始数据表，也没有可订购的型号。",
-    "Rein pädagogisches Modell: Dieser Sensor besitzt kein Quelldatenblatt und keine bestellbare Referenz.",
-    "Modelo puramente pedagógico: este sensor no tiene ficha técnica de origen ni referencia comercial.",
-    "Чисто учебная модель: у этого датчика нет исходного технического листа или заказного артикула.",
-    "Modello puramente didattico: questo sensore non dispone di scheda tecnica di origine né di codice ordinabile.",
-    "純粋に教育目的のモデルです。このセンサーには元となるデータシートも発注可能な型番もありません。"
-  ],
-  "Sensor Studio — concevoir une détection · Standex DETECT": [
-    "Sensor Studio — designing a detection · Standex DETECT",
-    "Sensor Studio — 设计检测方案 · Standex DETECT",
-    "Sensor Studio — eine Erkennung entwerfen · Standex DETECT",
-    "Sensor Studio — diseñar una detección · Standex DETECT",
-    "Sensor Studio — разработка детектирования · Standex DETECT",
-    "Sensor Studio — progettare un rilevamento · Standex DETECT",
-    "Sensor Studio — 検出を設計する · Standex DETECT"
-  ],
-  "Sensor Studio — faire détecter votre idée · Standex DETECT": [
-    "Sensor Studio — turning your idea into detection · Standex DETECT",
-    "Sensor Studio — 将您的想法变为检测方案 · Standex DETECT",
-    "Sensor Studio — Ihre Idee erkennbar machen · Standex DETECT",
-    "Sensor Studio — convertir su idea en detección · Standex DETECT",
-    "Sensor Studio — превращаем вашу идею в детектирование · Standex DETECT",
-    "Sensor Studio — trasformare la vostra idea in rilevamento · Standex DETECT",
-    "Sensor Studio — アイデアを検出に変える · Standex DETECT"
-  ],
-  "Facultatif : précisez d'un clic": [
-    "Optional: refine with one click",
-    "可选：一键补充",
-    "Optional: mit einem Klick präzisieren",
-    "Opcional: precise con un clic",
-    "Необязательно: уточните одним щелчком",
-    "Facoltativo: precisa con un clic",
-    "任意：ワンクリックで指定"
-  ],
-  "Rien n'est déduit de votre texte. Ces choix servent seulement à préfiltrer les capteurs, et restent modifiables.": [
-    "Nothing is inferred from your text. These choices only pre-filter the sensors, and stay editable.",
-    "系统不会从您的文字中推断任何内容。这些选择仅用于预筛选传感器，并可随时修改。",
-    "Aus Ihrem Text wird nichts abgeleitet. Diese Angaben filtern die Sensoren nur vor und bleiben änderbar.",
-    "Nada se deduce de su texto. Estas opciones solo prefiltran los sensores y siguen siendo modificables.",
-    "Из вашего текста ничего не выводится. Эти варианты лишь предварительно отбирают датчики и остаются изменяемыми.",
-    "Nulla viene dedotto dal tuo testo. Queste scelte servono solo a prefiltrare i sensori e restano modificabili.",
-    "入力された文章から推測は行いません。これらの選択はセンサーの事前絞り込みのみに使われ、後から変更できます。"
-  ],
-  "Laissez vide si vous ne le connaissez pas : inconnu ne vaut pas zéro.": [
-    "Leave blank if you do not know it: unknown does not mean zero.",
-    "如不清楚请留空：未知不等于零。",
-    "Leer lassen, wenn unbekannt: unbekannt bedeutet nicht null.",
-    "Déjelo en blanco si no lo conoce: desconocido no equivale a cero.",
-    "Оставьте пустым, если не знаете: неизвестно не значит ноль.",
-    "Lascia vuoto se non lo conosci: sconosciuto non vale zero.",
-    "わからない場合は空欄にしてください。不明はゼロではありません。"
-  ],
-  "Une dimension laissée vide reste inconnue et ne filtre rien.": [
-    "A dimension left blank stays unknown and filters nothing.",
-    "留空的尺寸保持未知，不会用于筛选。",
-    "Ein leeres Maß bleibt unbekannt und filtert nichts.",
-    "Una dimensión en blanco permanece desconocida y no filtra nada.",
-    "Пустой размер остаётся неизвестным и ничего не фильтрует.",
-    "Una dimensione lasciata vuota resta sconosciuta e non filtra nulla.",
-    "空欄の寸法は不明のままで、絞り込みには使われません。"
-  ],
-  "Cette question est notée « à définir avec Standex ». C'est une décision prise, pas une valeur connue.": [
-    "This question is marked “to be defined with Standex”. It is a decision taken, not a known value.",
-    "此问题标记为“与 Standex 共同确定”。这是已作出的决定，而非已知数值。",
-    "Diese Frage ist als „mit Standex zu klären“ vermerkt. Das ist eine getroffene Entscheidung, kein bekannter Wert.",
-    "Esta pregunta está marcada como «a definir con Standex». Es una decisión tomada, no un valor conocido.",
-    "Этот вопрос отмечен как «определить со Standex». Это принятое решение, а не известное значение.",
-    "Questa domanda è indicata come «da definire con Standex». È una decisione presa, non un valore noto.",
-    "この項目は「Standex と決定する」と記録されています。これは下された判断であり、既知の値ではありません。"
-  ],
-  "Questions laissées à définir avec Standex : aucune valeur technique n'en est déduite.": [
-    "Questions left to be defined with Standex: no technical value is inferred from them.",
-    "留待与 Standex 共同确定的问题：不会由此推断任何技术数值。",
-    "Fragen, die mit Standex zu klären sind: daraus wird kein technischer Wert abgeleitet.",
-    "Preguntas a definir con Standex: no se deduce de ellas ningún valor técnico.",
-    "Вопросы, оставленные для уточнения со Standex: технические значения из них не выводятся.",
-    "Domande da definire con Standex: nessun valore tecnico ne viene dedotto.",
-    "Standex と決める項目です。ここから技術的な値は導き出しません。"
-  ],
-  "Placement à définir avec Standex.": [
-    "Placement to be defined with Standex.",
-    "安装位置待与 Standex 共同确定。",
-    "Platzierung mit Standex zu klären.",
-    "Ubicación a definir con Standex.",
-    "Расположение будет определено со Standex.",
-    "Posizionamento da definire con Standex.",
-    "取り付け位置は Standex と決定します。"
   ]
 }
