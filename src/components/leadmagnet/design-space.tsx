@@ -2264,6 +2264,7 @@ export function DesignSpace({
           return (
             <div
               key={c.id}
+              data-testid="candidate-card"
               className={`surface-interactive p-5 ${chosen ? "candidate-selected" : ""} ${
                 c.status === "excluded" && c.id !== CUSTOM_SENSOR_ID ? "candidate-excluded" : ""
               }`}
