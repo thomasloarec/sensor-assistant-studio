@@ -1805,21 +1805,20 @@ export function DesignSpace({
           <Button
             size="sm"
             className="mt-2"
-            onClick={() =>
-              setDossier((d) => {
-                const next = d.selectedSensorId;
-                if (!next) return d;
-                return {
-                  ...d,
-                  workshopSensorId: next,
-                  sensorSyncConfirmed: true,
-                  // Vraie sélection de capteur : le couple par défaut, la classe,
-                  // l'approche et l'orientation suivent la même logique centrale
-                  // que l'atelier. Machine et câble sont conservés.
-                  workshop: applySensorSelection(d.workshop ?? DEFAULT_WORKSHOP, next),
-                };
-              })
-            }
+            onClick={() => {
+              const next = dossier.selectedSensorId;
+              if (!next) return;
+              // Vraie sélection de capteur : le couple par défaut, la classe,
+              // l'approche et l'orientation suivent la même logique centrale
+              // que l'atelier. Base = état réellement courant (brouillon non
+              // enregistré compris) : machine et câble actuels sont conservés.
+              const base =
+                workshopDraftRef.current ?? workshop ?? dossier.workshop ?? DEFAULT_WORKSHOP;
+              applyWorkshopConfig(applySensorSelection(base, next));
+              // L'atelier ne lit initialConfig qu'au montage : on le remonte
+              // pour que le nouveau couple soit visible immédiatement.
+              setWorkshopEpoch((e) => e + 1);
+            }}
           >
             {t("Aligner l'atelier 3D sur la gamme suivie")}
           </Button>
