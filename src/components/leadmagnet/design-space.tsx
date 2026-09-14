@@ -77,6 +77,8 @@ import {
   proposeRequirement,
   parseAnnualVolume,
   toClientDto,
+  REQUIREMENT_ORDER,
+  REQUIREMENT_LABELS,
   type DesignDossier,
   type MountingChoice,
 } from "@/lib/leadmagnet/dossier";
