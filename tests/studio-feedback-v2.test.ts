@@ -94,6 +94,9 @@ test("chaque boîtier d'aimant reprend la forme réelle du capteur, sans repli c
     M36: "pressfit",
     M37: "pressfit",
     M38: "pressfit",
+    "M36-N42": "pressfit",
+    "M37-N42": "pressfit",
+    "M38-N42": "pressfit",
   };
   for (const id of PACKAGED_MAGNET_IDS) {
     const model = pairedMagnetModel(id)!;

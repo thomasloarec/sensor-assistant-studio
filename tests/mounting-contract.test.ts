@@ -60,12 +60,26 @@ describe("profils de montage", () => {
   });
   it("couvre toutes les familles et approches réellement présentes au registre", () => {
     const cov = registryCoverage();
-    expect(cov.revision).toBe("published-2026-09-11-v2");
-    expect(cov.rows).toBe(438);
-    expect(cov.families.length).toBe(13);
-    expect(cov.approaches).toEqual(["D1", "D2", "D3", "D4", "D5"]);
-    expect(cov.magnets.length).toBe(6);
-    expect(cov.classes).toEqual(["A", "B", "C", "D", "E"]);
+    expect(cov.revision).toBe("published-2026-09-14-v3");
+    expect(cov.rows).toBe(445);
+    expect(cov.families.length).toBe(16);
+    expect(cov.approaches).toEqual(["D1", "D2", "D3", "D4", "D5", "F1"]);
+    expect(cov.magnets.length).toBe(9);
+    // Les fiches MK36/37/38 publient des modèles de contact, pas des classes
+    // de sensibilité : ils apparaissent tels quels, sans classe inventée.
+    expect(cov.classes).toEqual([
+      "1A",
+      "1A66B",
+      "1A85C",
+      "1B",
+      "1B90C",
+      "1C90C",
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+    ]);
     // Localisation et qualification restent deux notions distinctes : une ligne
     // publiée qualifie ses distances, l'axe documenté conditionne la géométrie.
     expect(cov.unlocatedProfiles).toBeGreaterThan(0);

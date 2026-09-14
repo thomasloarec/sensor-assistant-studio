@@ -99,8 +99,10 @@ test("T2.4/T6.5 removing actual published data removes all product results inclu
 });
 test("T6 expanded catalogue retains four MK03 classes and refuses physical predictions", () => {
   const rows = exploreSolutions(need, "D1", domain);
-  expect(rows).toHaveLength(106);
-  expect(new Set(rows.map((r) => r.id)).size).toBe(106);
+  // 110 : les lignes frontales MK36/37/38 ajoutent leurs modèles de contact
+  // réellement publiés, sans qu'aucune valeur ne soit empruntée.
+  expect(rows).toHaveLength(110);
+  expect(new Set(rows.map((r) => r.id)).size).toBe(110);
   expect(new Set(rows.map((r) => r.sensorFamily)).size).toBe(29);
   expect(
     new Set(rows.filter((r) => r.sensorFamily === "MK03").map((r) => r.sensitivityClass)).size,

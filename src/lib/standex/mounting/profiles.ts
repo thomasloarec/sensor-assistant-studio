@@ -81,7 +81,13 @@ export const locatedProfile = (p: MountingProfile | null): LocatedProfile | null
 const AXES: Record<string, { axis: Vec3; plane: "XZ" | "YZ" }> = {
   D1: { axis: [0, 0, 1], plane: "XZ" },
   D3: { axis: [1, 0, 0], plane: "YZ" },
+  // Approche FRONTALE des fiches MK36/MK37/MK38 : les deux collerettes se font
+  // face, l'approche suit l'axe longitudinal des cylindres. La distance publiée
+  // est mesurée entre les FACES ; la conversion vers un écart entre centres est
+  // faite par `approachOffset`, jamais en reclassant la ligne en D1 ou D3.
+  F1: { axis: [1, 0, 0], plane: "YZ" },
 };
+
 export function mountingProfiles(registry: PublishedRegistry = PUBLISHED_REGISTRY) {
   const byKey = new Map<string, MountingProfile>();
   for (const row of registry.rows) {

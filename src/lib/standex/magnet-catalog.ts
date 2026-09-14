@@ -102,11 +102,18 @@ export interface PackagedMagnet {
   holeAxis?: "horizontal" | "vertical";
   /** Page officielle du produit, quand elle existe. */
   productPage?: string;
+  /** Fiche capteur qui publie l'actionneur, quand la variante en vient. */
+  datasheet?: string;
+  /** Nuance/variante exactement telle qu'elle est nommée par la fiche. */
+  grade?: string;
 }
+/** Fiches MK36/MK37/MK38, V00 17 janvier 2025 : actionneurs nommés M36/M37/M38-N42. */
+const MK_SERIES_DATASHEET = (family: string) =>
+  `https://standexdetect.com/wp-content/uploads/sites/2/2026/06/datasheet-reed-sensor-series-${family}.pdf`;
 export const PACKAGED_MAGNETS: readonly PackagedMagnet[] = [
   { id: "M02", housing: "MK02" },
   { id: "M03", housing: "MK03" },
-  { id: "M04", housing: "MK04", productPage: "https://standexdetect.com/products/sensors/magnets-and-actuators/m04" },
+  { id: "M04", housing: "MK04", productPage: "https://standexdetect.com/products/sensors/magnets-and-actuators/m04", datasheet: MK_SERIES_DATASHEET("mk04").replace("2026/06", "2025/09") },
   { id: "M05", housing: "MK05" },
   { id: "M13", housing: "MK13" },
   { id: "M13B", housing: "MK11-B-M6", documentedAs: "M11B" },
@@ -133,7 +140,13 @@ export const PACKAGED_MAGNETS: readonly PackagedMagnet[] = [
   { id: "M36", housing: "MK36" },
   { id: "M37", housing: "MK37" },
   { id: "M38", housing: "MK38" },
+  // Variantes nommées par les fiches produit : la nuance N42 est celle des
+  // tableaux « Activation Distances », elle n'est jamais étendue aux autres.
+  { id: "M36-N42", housing: "MK36", documentedAs: "M36", grade: "N42", datasheet: MK_SERIES_DATASHEET("mk36") },
+  { id: "M37-N42", housing: "MK37", documentedAs: "M37", grade: "N42", datasheet: MK_SERIES_DATASHEET("mk37") },
+  { id: "M38-N42", housing: "MK38", documentedAs: "M38", grade: "N42", datasheet: MK_SERIES_DATASHEET("mk38") },
 ];
+
 export const PACKAGED_MAGNET_IDS: readonly string[] = PACKAGED_MAGNETS.map((m) => m.id);
 export const packagedMagnet = (id: string): PackagedMagnet | null =>
   PACKAGED_MAGNETS.find((m) => m.id === id) ?? null;
@@ -142,7 +155,8 @@ export const HOUSING_DATASHEET =
   "https://standexdetect.com/wp-content/uploads/sites/2/2025/09/datasheet-reed-sensor-series-magnet-in-housing.pdf";
 export function magnetSource(id: string) {
   const packaged = packagedMagnet(id);
-  if (packaged) return packaged.productPage ?? "/datasheets/Packaged-Magnets.pdf";
+  if (packaged) return packaged.datasheet ?? packaged.productPage ?? "/datasheets/Packaged-Magnets.pdf";
+
   if (id === REFERENCE_CYLINDER)
     return "https://standexdetect.com/wp-content/uploads/sites/2/2025/12/Activate-Distance-Guide-for-Reed-Sensors.pdf#page=3";
   const m = BARE_MAGNETS.find((m) => m.id === id);

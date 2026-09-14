@@ -3,20 +3,47 @@ import rawPhysics from "@/data/studio-v2/physics.json";
 import type { Provenance, MagneticBody, Vec3 } from "./types";
 import type { Observation } from "./calibration";
 import { z } from "zod";
-export type PublishedApproach = "D1" | "D2" | "D3" | "D4" | "D5";
+/**
+ * Approches publiées. D1 à D5 sont les approches latérales des tables Academy.
+ * `F1` est l'approche FRONTALE des fiches MK36/MK37/MK38 : deux collerettes se
+ * font face, la distance est mesurée ENTRE LES FACES, le long de l'axe
+ * longitudinal des cylindres. Ce n'est ni un D1 latéral ni une distance entre
+ * centres : elle n'est jamais reclassée dans une approche existante.
+ */
+export type PublishedApproach = "D1" | "D2" | "D3" | "D4" | "D5" | "F1";
+/**
+ * Nature de la colonne de gauche du tableau publié. `sensitivity` : classe A à E
+ * des tables Academy. `switch_model` : modèle de contact de la fiche (1A, 1B,
+ * 1A66B…), quand la fiche ne publie AUCUNE classe de sensibilité. Aucun de ces
+ * deux cas n'est jamais converti dans l'autre.
+ */
+export type PublishedClassKind = "sensitivity" | "switch_model";
+/** Référence de mesure de la distance publiée. */
+export type PublishedDatum = "lateral_surface" | "frontal_faces";
+/**
+ * Nature des seuils publiés. `typical` : distances typiques des tables Academy.
+ * `min_activation_max_release` : libellés « Min Activation » / « Max Release »
+ * des fiches produit — valeurs indicatives dépendant de l'environnement, jamais
+ * un seuil nominal exact mesuré.
+ */
+export type PublishedThresholdKind = "typical" | "min_activation_max_release";
 export interface PublishedRow {
   id: string;
   sensorFamily: string;
   sensorReference: string;
   sensitivityClass: string;
-  contactForm: "1A";
+  classKind: PublishedClassKind;
+  contactForm: "1A" | "1B" | "1C";
   magnetId: string;
   approachId: PublishedApproach;
+  datum: PublishedDatum;
+  thresholdKind: PublishedThresholdKind;
   pullInMm: number;
   dropOutMm: number;
   temperatureC: number | null;
   provenance: Provenance;
 }
+
 export interface PublishedRegistry {
   version: string;
   sourceSha256: string;
@@ -78,8 +105,11 @@ export function readPublishedRegistry(raw: unknown): PublishedRegistry {
       !r.magnetId ||
       !r.sensitivityClass ||
       !r.sensorReference ||
-      r.contactForm !== "1A" ||
-      !["D1", "D2", "D3", "D4", "D5"].includes(r.approachId) ||
+      !["1A", "1B", "1C"].includes(r.contactForm) ||
+      !["sensitivity", "switch_model"].includes(r.classKind) ||
+      !["lateral_surface", "frontal_faces"].includes(r.datum) ||
+      !["typical", "min_activation_max_release"].includes(r.thresholdKind) ||
+      !["D1", "D2", "D3", "D4", "D5", "F1"].includes(r.approachId) ||
       !Number.isFinite(r.pullInMm) ||
       r.pullInMm <= 0 ||
       !Number.isFinite(r.dropOutMm) ||
@@ -91,7 +121,16 @@ export function readPublishedRegistry(raw: unknown): PublishedRegistry {
       !Array.isArray(r.provenance.fields)
     )
       return unavailable;
-    const pair = [r.sensorFamily, r.sensitivityClass, r.magnetId, r.approachId].join("/");
+    // L'unicité inclut le modèle de contact : deux modèles d'une même fiche
+    // (MK38 1A66B et 1A85C) sont deux lignes distinctes, jamais fusionnées.
+    const pair = [
+      r.sensorFamily,
+      r.sensitivityClass,
+      r.contactForm,
+      r.magnetId,
+      r.approachId,
+    ].join("/");
+
     if (ids.has(r.id) || pairs.has(pair)) return unavailable;
     ids.add(r.id);
     pairs.add(pair);
@@ -208,7 +247,36 @@ export function publishedPairFor(
   const row = publishedReference(sensorFamily, sensitivityClass, magnetId, approachId, registry);
   return row ? [row.pullInMm, row.dropOutMm] : null;
 }
+/**
+ * Toutes les lignes publiées d'un couple capteur–aimant, telles qu'elles sont
+ * saisies. Lecture DOCUMENTAIRE : elle inclut les modèles de contact que le
+ * moteur normalement ouvert ne simule pas (1B, 1C), pour qu'ils soient affichés
+ * séparément au lieu d'être supprimés ou convertis.
+ */
+export function publishedRowsForCouple(
+  sensorFamily: string,
+  magnetId: string,
+  registry = PUBLISHED_REGISTRY,
+): PublishedRow[] {
+  return registry.rows
+    .filter((r) => r.sensorFamily === sensorFamily && r.magnetId === magnetId)
+    .slice()
+    .sort((a, b) => a.sensitivityClass.localeCompare(b.sensitivityClass));
+}
+/**
+ * Nature de la colonne publiée pour ce couple : classes de sensibilité A–E des
+ * tables Academy, ou modèles de contact des fiches produit. Jamais les deux :
+ * une fiche sans classe publiée n'en reçoit aucune.
+ */
+export function publishedClassKind(
+  sensorFamily: string,
+  magnetId: string,
+  registry = PUBLISHED_REGISTRY,
+): PublishedClassKind | null {
+  return publishedRowsForCouple(sensorFamily, magnetId, registry)[0]?.classKind ?? null;
+}
 /** Classes de sensibilité réellement publiées pour ce couple, dans l'ordre du registre. */
+
 export function publishedClasses(
   sensorFamily: string,
   magnetId: string,
