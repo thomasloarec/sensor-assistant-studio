@@ -469,6 +469,14 @@ export function DesignSpace({
   const termination = dossier.termination;
   const [connectorDraft, setConnectorDraft] = useState<ConnectorDraft>(EMPTY_CONNECTOR_DRAFT);
   const [connectorError, setConnectorError] = useState<string | null>(null);
+  /**
+   * Intention d'exprimer une préférence de connecteur : état d'OUVERTURE, distinct
+   * de la référence technique retenue (dossier.termination) et de la délégation à
+   * Standex. Cocher ouvre la sélection sans choisir de connecteur ; replier ne
+   * supprime jamais la référence déjà enregistrée.
+   */
+  const [connectorWanted, setConnectorWanted] = useState(false);
+
   const [importMessage, setImportMessage] = useState<string | null>(null);
   const [backend, setBackend] = useState<LeadBackendStatus | null>(null);
   // Dossier serveur : créé à la première transmission réussie, puis réutilisé.
