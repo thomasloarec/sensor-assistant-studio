@@ -76,11 +76,15 @@ describe("chaque fichier STEP annoncé existe réellement et est valide", () => 
       // Unités millimètre.
       expect(text).toMatch(/SI_UNIT\(\.MILLI\.,\.METRE\.\)/);
 
-      // Parsing basique du B-Rep : au moins un solide manifold fermé fait de faces avancées.
-      expect(text).toContain("MANIFOLD_SOLID_BREP");
+      // Parsing basique du B-Rep : solide facetté fermé, faces surfaciques cohérentes.
+      expect(text).toContain("FACETED_BREP");
+      expect(text).toContain("FACETED_BREP_SHAPE_REPRESENTATION");
       expect(text).toContain("CLOSED_SHELL");
-      expect(text).toContain("ADVANCED_FACE");
+      expect(text).toContain("FACE_SURFACE");
       expect(text).toContain("FACE_OUTER_BOUND");
+      expect(text).not.toContain("MANIFOLD_SOLID_BREP");
+      expect(text).not.toContain("ADVANCED_FACE");
+
 
       const points = extractPoints(text);
       expect(points.length).toBeGreaterThan(0);
@@ -183,6 +187,66 @@ describe("identifiants EXPRESS : numériques uniquement", () => {
       expect(illegal).toEqual([]);
       // Chaque définition d'entité porte bien un identifiant numérique.
       expect(text).toMatch(/^#\d+=/m);
+    });
+  }
+});
+
+describe("volumes réellement fermés, sommets partagés", () => {
+  for (const s of SENSOR_CATALOG) {
+    test(`${s.id} : points dédupliqués et arêtes appariées sur chaque solide`, async () => {
+      const envelope = stepEnvelopeFor(s.id);
+      const text = await readFile(join(STEP_DIR, envelope!.fileName), "utf8");
+
+      // 1. Aucun CARTESIAN_POINT dupliqué : deux sommets identiques doivent
+      // partager le même identifiant, sinon les faces sont disjointes.
+      const coords = new Map<string, string[]>();
+      for (const m of text.matchAll(/#(\d+)=CARTESIAN_POINT\('',\(([^)]*)\)\)/g)) {
+        const key = m[2];
+        coords.set(key, [...(coords.get(key) ?? []), m[1]]);
+      }
+      const duplicated = [...coords.entries()].filter(([, ids]) => ids.length > 1);
+      expect(duplicated).toEqual([]);
+
+      // 2. Chaque solide facetté est une coque fermée : toute arête d'une face
+      // est partagée par exactement une autre face du MÊME solide.
+      const loopOf = new Map<string, string[]>();
+      for (const m of text.matchAll(/#(\d+)=POLY_LOOP\('',\(([^)]*)\)\)/g)) {
+        loopOf.set(`#${m[1]}`, m[2].split(",").map((x) => x.trim()));
+      }
+      const boundLoop = new Map<string, string>();
+      for (const m of text.matchAll(/#(\d+)=FACE_(?:OUTER_)?BOUND\('',(#\d+),\.[TF]\.\)/g)) {
+        boundLoop.set(`#${m[1]}`, m[2]);
+      }
+      const faceBounds = new Map<string, string[]>();
+      for (const m of text.matchAll(/#(\d+)=FACE_SURFACE\('',\(([^)]*)\),#\d+,\.[TF]\.\)/g)) {
+        faceBounds.set(`#${m[1]}`, m[2].split(",").map((x) => x.trim()));
+      }
+      const shellFaces = new Map<string, string[]>();
+      for (const m of text.matchAll(/#(\d+)=CLOSED_SHELL\('',\(([^)]*)\)\)/g)) {
+        shellFaces.set(`#${m[1]}`, m[2].split(",").map((x) => x.trim()));
+      }
+      const solids = [...text.matchAll(/#\d+=FACETED_BREP\('[^']*',(#\d+)\)/g)].map((m) => m[1]);
+      expect(solids.length).toBeGreaterThan(0);
+
+      for (const shell of solids) {
+        const faces = shellFaces.get(shell) ?? [];
+        expect(faces.length).toBeGreaterThanOrEqual(4);
+        const edges = new Map<string, number>();
+        for (const f of faces) {
+          for (const b of faceBounds.get(f) ?? []) {
+            const loop = loopOf.get(boundLoop.get(b) ?? "") ?? [];
+            expect(loop.length).toBeGreaterThanOrEqual(3);
+            for (let i = 0; i < loop.length; i += 1) {
+              const a = loop[i];
+              const c = loop[(i + 1) % loop.length];
+              const key = [a, c].sort().join("|");
+              edges.set(key, (edges.get(key) ?? 0) + 1);
+            }
+          }
+        }
+        const unpaired = [...edges.entries()].filter(([, n]) => n !== 2);
+        expect(unpaired).toEqual([]);
+      }
     });
   }
 });
