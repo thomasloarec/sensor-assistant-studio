@@ -115,7 +115,10 @@ function HomeRoute() {
             </div>
           </header>
 
-          <div className="relative mx-auto flex max-w-7xl items-center px-4 py-12 sm:px-6 sm:py-16 lg:min-h-[calc(88svh-4.25rem)] lg:px-8 lg:pb-[12svh] lg:pt-[8svh]">
+          {/* La place laissée par le bandeau est LUE sur le bandeau réel : une
+              hauteur écrite à la main ferait passer le titre sous la barre dès
+              que la rangée s'agrandit (traduction longue, police plus grande). */}
+          <div className="relative mx-auto flex max-w-7xl items-center px-4 py-12 sm:px-6 sm:py-16 lg:min-h-[calc(88svh-var(--standex-header-h,4.25rem))] lg:px-8 lg:pb-[12svh] lg:pt-[8svh]">
             <span className="hero-glow right-[6%] top-[10%] size-[520px] max-w-[70vw]" />
             <div className="grid w-full gap-14 lg:grid-cols-[1.08fr_0.92fr] lg:items-center lg:gap-10">
               <div

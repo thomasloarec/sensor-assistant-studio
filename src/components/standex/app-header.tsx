@@ -47,7 +47,11 @@ export function usePublishedHeaderHeight<T extends HTMLElement>() {
     const readable = node.closest("[data-readable]") as HTMLElement | null;
     if (readable) roots.push(readable);
     const publish = () => {
-      const value = `${Math.round(node.getBoundingClientRect().height)}px`;
+      const height = Math.round(node.getBoundingClientRect().height);
+      // Un bandeau masqué mesure 0 : publier cette valeur ferait remonter tous
+      // les éléments collants sous la barre encore visible ailleurs.
+      if (height <= 0) return;
+      const value = `${height}px`;
       for (const root of roots) root.style.setProperty("--standex-header-h", value);
     };
     publish();
