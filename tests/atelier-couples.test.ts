@@ -16,6 +16,10 @@ import {
   publishedPairFor,
   publishedClassKind,
   publishedRowsForCouple,
+  publishedSensorReference,
+  publishedMagnetFamily,
+  isPublishedFamilyAlias,
+  PUBLISHED_MAGNET_FAMILY,
   PUBLISHED_REGISTRY,
 } from "../src/lib/standex/magnetics/registries";
 import {
@@ -25,6 +29,7 @@ import {
   parseWorkshopNote,
   referenceAllowed,
   referenceNoteFor,
+  publishedFamilyNoteFor,
   serializeWorkshop,
   simulateCycle,
   summarizeWorkshop,
@@ -263,5 +268,60 @@ describe("fiches frontales MK36 / MK37 / MK38", () => {
     const magnetId = defaultMagnetFor("MK27");
     expect(publishedRowsForCouple("MK27", magnetId)).toHaveLength(0);
     expect(distanceBasis(config({ sensorId: "MK27", magnetModel: magnetId }))).toBe("unavailable");
+  });
+});
+
+describe("identité de famille documentée M21/P(1,2)", () => {
+  test("les variantes P/1 et P/2 lisent les lignes publiées du M21", () => {
+    expect(publishedMagnetFamily("M21P/1")).toBe("M21");
+    expect(publishedMagnetFamily("M21P/2")).toBe("M21");
+    const reference = publishedRowsForCouple("MK21", "M21");
+    expect(reference.length).toBeGreaterThan(0);
+    for (const variant of ["M21P/1", "M21P/2"] as const) {
+      expect(isPublishedFamilyAlias(variant)).toBe(true);
+      expect(publishedRowsForCouple("MK21", variant)).toEqual(reference);
+      expect(publishedClasses("MK21", variant)).toEqual(publishedClasses("MK21", "M21"));
+      expect(publishedApproaches("MK21", variant)).toEqual(publishedApproaches("MK21", "M21"));
+      expect(publishedClassKind("MK21", variant)).toBe("sensitivity");
+      const c = config({
+        sensorId: "MK21",
+        magnetModel: variant,
+        sensitivity: "B",
+        geometry: "D1",
+      });
+      expect(workshopPair(c)).toEqual(publishedPairFor("MK21", "B", "D1", "M21"));
+      expect(distanceBasis(c)).toBe("standex");
+      // La provenance de l'identité de famille est explicite à l'écran.
+      const note = publishedFamilyNoteFor(c);
+      expect(note).toContain("M21/P(1,2)");
+      expect(note).toContain("page 37");
+      expect(note).toContain("2500000021");
+      // La référence de variante affichée reste celle réellement saisie.
+      expect(publishedSensorReference("MK21", "B", variant)).toBe(
+        publishedSensorReference("MK21", "B", "M21"),
+      );
+    }
+  });
+  test("aucune autre correspondance d'aimant n'est déclarée", () => {
+    expect(Object.keys(PUBLISHED_MAGNET_FAMILY).sort()).toEqual(["M21P/1", "M21P/2"]);
+    for (const id of PACKAGED_MAGNET_IDS) {
+      if (id === "M21P/1" || id === "M21P/2") continue;
+      expect(publishedMagnetFamily(id)).toBe(id);
+      expect(isPublishedFamilyAlias(id)).toBe(false);
+    }
+  });
+  test("MK21PR n'emprunte AUCUN seuil au MK21 : aucune source de variante capteur", () => {
+    expect(PUBLISHED_REGISTRY.rows.some((r) => r.sensorFamily === "MK21PR")).toBe(false);
+    expect(PUBLISHED_REGISTRY.rows.some((r) => r.sensorFamily === "MK21M")).toBe(false);
+    for (const magnetModel of ["M21P/1", "M21P/2", "M21"] as const) {
+      expect(publishedRowsForCouple("MK21PR", magnetModel)).toHaveLength(0);
+      const c = config({ sensorId: "MK21PR", magnetModel, sensitivity: "B", geometry: "D1" });
+      expect(workshopPair(c)).toBeNull();
+      expect(distanceBasis(c)).toBe("unavailable");
+      expect(publishedFamilyNoteFor(c)).toBeNull();
+    }
+  });
+  test("un couple sans distances ne reçoit aucune note de famille", () => {
+    expect(publishedFamilyNoteFor(config({ sensorId: "MK27", magnetModel: "M27" }))).toBeNull();
   });
 });

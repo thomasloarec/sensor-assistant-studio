@@ -355,7 +355,7 @@ export default function SensorCatalog({
                         ? "Forme disponible · activation non modélisée"
                         : s.id === "MK03"
                           ? "Exemple documenté disponible"
-                          : "Contacts illustrés · réponse pédagogique",
+                          : "Contacts internes symboliques",
                     )}
                   </small>
                 </Choice>

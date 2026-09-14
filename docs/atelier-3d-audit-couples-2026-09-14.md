@@ -10,7 +10,8 @@ magnétique ou d'un capteur voisin.
 | --- | --- |
 | `src/data/registries/published-references.json` (`published-2026-09-14-v3`, 445 lignes) | seule source des distances Max Pull-in / Min Drop-out (D1–D5) et Min Activation / Max Release (F1) |
 | Reed Technology Academy (provenance de chaque ligne du registre) | référence par ligne, citée telle quelle |
-| Brochure Reed Switch Sensors A5 V04 EN, p. 38 | tableau MK04/M04 D1–D5, classes B à E |
+| Brochure Reed Switch Sensors A5 V04 EN, p. 38 | tableau MK04/M04 D1–D5, classes B à E ; liste des aimants valables (dont 2500000021 / M21) |
+| Brochure Reed Switch Sensors A5 V04 EN, p. 37 | planche MAGNETS IN HOUSINGS : famille « M21/P(1,2) », cotes uniques |
 | `public/datasheets/Packaged-Magnets.pdf` V03, 18 juin 2026 | géométrie des boîtiers d'aimants |
 | Fiches produit M21P/1, M21P/2, M04 (standexdetect.com) | variantes de trous oblongs, cotes MK04/MK04R |
 | Fiches `datasheet-reed-sensor-series-mk36/37/38.pdf` V00, 17 janvier 2025, p. 2 | tableaux « Activation Distances » : Min Activation / Max Release, actionneurs M36-N42 / M37-N42 / M38-N42 |
@@ -40,8 +41,8 @@ ne s'applique qu'au changement de capteur.
 | MK11-P-M8 | M11P | M11P | non | — |
 | MK11-M5 | M11S | M11S | non | boîtier à la géométrie de la variante M5 |
 | MK11-M8 | M11S | M11S, M02, 4003004003 | non pour M11S ; oui pour M02 et 4003004003 (B–E, D1–D5, 40 lignes) | boîtier à la géométrie de la variante M8 |
-| MK21 | M21P/1 | M21P/2, M21 | non pour M21P/1 et M21P/2 ; oui pour M21 (B–E, D1–D5, 18 lignes) | aucune source n'étend la table M21 aux variantes P/1 et P/2 : pas d'alias |
-| MK21PR | M21P/1 | M21P/2, M21 | idem MK21 | — |
+| MK21 | M21P/1 | M21P/2, M21 | oui (B–E, D1–D5, 18 lignes) via la famille documentée « M21/P(1,2) » | brochure p. 37 : la planche MAGNETS IN HOUSINGS nomme la famille « M21/P(1,2) » avec un seul jeu de cotes ; p. 38 : l'aimant 2500000021 / M21 est listé comme valable. Provenance affichée à l'écran ; identité d'AIMANT seulement |
+| MK21PR | M21P/1 | M21P/2, M21 | **non** : le registre ne contient aucune ligne pour la famille capteur MK21PR | aucune source n'établit que MK21PR partage la table du MK21 : les seuils du MK21 ne lui sont pas empruntés |
 | MK27 | M27 | M27 | non | une ligne de la fiche l'étiquette **MK27** : correspondance documentaire signalée |
 | MK36 | M36-N42 | M36-N42, M36 | oui (F1, contact 1A, 1 ligne) | Min Activation 17 / Max Release 25 ; variante d'aimantation N42 explicitée |
 | MK37 | M37-N42 | M37-N42, M37 | oui (F1, contacts 1A et 1B, 2 lignes) | 1A 19 / 32 ; 1B 16 / 26 affiché séparément, hors moteur normalement ouvert |
@@ -53,6 +54,20 @@ paire visuelle, sans aucune distance.
 
 Trous oblongs : M21P/1 horizontaux, M21P/2 verticaux — géométries réellement
 différentes en 3D et en vue plane, vérifiées par test.
+
+### Identité de famille documentée « M21/P(1,2) »
+
+Seule correspondance de ce type déclarée (`PUBLISHED_MAGNET_FAMILY` dans
+`src/lib/standex/magnetics/registries.ts`) : les variantes **M21P/1** et **M21P/2**
+lisent les lignes publiées du **M21**, parce que la source les désigne comme une
+seule famille d'aimants — brochure Reed Switch Sensors A5 V04 EN page 37 imprimée
+(planche MAGNETS IN HOUSINGS, libellé « M21/P(1,2) », cotes uniques L 28,6 × W 19 ×
+H 6,35 mm), page 38 (liste des aimants valables : « 2500000021 / M21 »), et fiche
+magnet-in-housing V03 qui liste P1 et P2 dans cette même famille. Ce n'est pas une
+extrapolation depuis une forme : les deux variantes ne diffèrent que par
+l'orientation des trous oblongs. La provenance est affichée sous le tableau des
+distances. Cette identité porte **uniquement sur l'aimant** : aucune variante de
+capteur (MK21M, MK21PR) n'en est déduite.
 
 ## 3. Couverture réelle du registre, par famille
 
@@ -106,13 +121,25 @@ Aucune valeur n'est empruntée entre M36, M37 et M38 (vérifié par test).
 - Hors domaine (pose non localisée, perturbation, limite) le contact reste
   indéterminé et le message affiché est : « Le comportement du capteur nécessite
   des tests en environnement réel. »
+- Cartes du catalogue : la mention « réponse pédagogique » est retirée des vrais
+  capteurs, qui portent désormais **« Contacts internes symboliques »** — une
+  limite de représentation, sans sous-entendre des distances fictives.
+- Les objets 3D ne reçoivent plus l'attribut de débogage `data-tsd-source` injecté
+  par les devtools : il provoquait « Cannot set "data-tsd-source" » au changement
+  de capteur et faisait replier l'atelier en vue plane. La cause est supprimée pour
+  les trois modules de scène (plugin `vite/strip-three-source-tags.ts`), aucune
+  autre erreur n'est masquée.
 - Nouvelle option d'affichage **« Nom capteur »** (3D, vue plane, modèle importé) :
   elle ne change aucune géométrie. Le repère de l'aimant (bande + étiquette
   « Aimant ») est indépendant et reste visible quand les noms sont masqués.
 
 ## 5. Manques assumés
 
-- Aucune table pour M03, M11S, M11P, M13B, M27, M21P/1, M21P/2.
+- Aucune table pour M03, M11S, M11P, M13B, M27. M21P/1 et M21P/2 n'ont pas de
+  table propre : elles lisent celle du M21 par identité de famille documentée
+  (section 2), avec provenance visible.
+- Aucune ligne pour les familles capteur MK21PR et MK21M : rien n'est emprunté au
+  MK21.
 - M36, M37, M38 : tables frontales F1 disponibles ; aucune classe de sensibilité,
   aucun tableau latéral D1–D5 pour ces familles.
 - MK27 : la fiche ne publie aucun tableau de seuils ; distances non renseignées.

@@ -22,6 +22,7 @@ import {
   publishedClasses,
   publishedReference,
   publishedSensorReference,
+  isPublishedFamilyAlias,
 } from "./magnetics/registries";
 
 
@@ -239,6 +240,16 @@ export const workshopPair = (c: WorkshopConfig) =>
  */
 export const simulatedContactForm = (c: WorkshopConfig): boolean =>
   (workshopRow(c)?.contactForm ?? "1A") === "1A";
+/**
+ * Provenance à afficher quand les distances sont lues via une identité de
+ * famille DOCUMENTÉE (aujourd'hui la seule : « M21/P(1,2) »).
+ */
+export const PUBLISHED_FAMILY_NOTE_M21 =
+  "Distances lues sur la famille documentée « M21/P(1,2) » : brochure Reed Switch Sensors A5 V04 EN, page 37 (planche MAGNETS IN HOUSINGS, cotes uniques) et page 38 (aimant 2500000021 / M21 listé comme valable). Les variantes P/1 et P/2 ne diffèrent que par l'orientation des trous oblongs. Aucune variante de capteur n'est déduite de cette identité.";
+export const publishedFamilyNoteFor = (c: WorkshopConfig): string | null =>
+  isPublishedFamilyAlias(c.magnetModel) && hasPublishedDistances(c)
+    ? PUBLISHED_FAMILY_NOTE_M21
+    : null;
 /** Note à afficher selon la nature des seuils réellement publiés. */
 export const referenceNoteFor = (c: WorkshopConfig): string =>
   workshopRow(c)?.thresholdKind === "min_activation_max_release"
