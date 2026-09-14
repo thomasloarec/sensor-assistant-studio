@@ -52,15 +52,10 @@ export interface StepEnvelope {
 const BASE_LABEL = "STEP d'encombrement · modèle simplifié";
 
 const DISCLAIMER =
-  "Modèle géométrique simplifié généré à partir des cotes du catalogue " +
-  "(approximation polygonale des sections rondes, épaisseurs non documentées " +
-  "fixées par convention illustrative). Ce n'est ni un fichier fabricant ni " +
-  "une CAO de fabrication.";
+  "Modèle géométrique simplifié généré à partir des cotes du catalogue. Ce n'est ni un fichier fabricant ni une CAO de fabrication.";
 
 const PEDAGOGICAL_DISCLAIMER =
-  DISCLAIMER +
-  " Ce capteur n'a pas de fiche source : le modèle est purement pédagogique, " +
-  "sans référence commandable.";
+  "Modèle purement pédagogique : ce capteur n'a pas de fiche source ni de référence commandable.";
 
 /**
  * Renvoie les informations de téléchargement du STEP d'encombrement d'un
