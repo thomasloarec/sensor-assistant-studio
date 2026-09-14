@@ -633,9 +633,9 @@ function ReferenceMarkers({ config }: { config: WorkshopConfig }) {
               dashSize={1.1}
               gapSize={0.8}
             />
-            <Label position={d1 ? [i === 0 ? -24 : 24, 1, p] : [p, 1, i === 0 ? -17 : 17]}>
-              {t(i === 0 ? "Ferme" : "Ouvre")} · {t(d)} mm
-            </Label>
+            {/* Les valeurs « ferme / ouvre » sont portées par le bandeau de
+                verdict, au-dessus de la scène : les répéter ici superposait
+                deux étiquettes 3D sur le même millimètre. */}
           </group>
         );
       })}

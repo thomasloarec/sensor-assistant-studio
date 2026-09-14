@@ -23,12 +23,12 @@ const VERDICT_TITLE = {
   not_expected: "Détection non prévue dans le modèle de référence",
   undetermined: "Comportement indéterminé",
 } as const;
-const COVERAGE_LABEL = {
+export const COVERAGE_LABEL = {
   covered: "Toute la course est couverte par le gabarit",
   partial: "Une partie de la course sort du gabarit",
   outside: "La course sort du gabarit de référence",
 } as const;
-const EVIDENCE_LABEL = {
+export const EVIDENCE_LABEL = {
   published_typical: "Valeurs typiques publiées Standex",
   schematic: "Gabarit géométrique schématique, non caractérisé",
   uncharacterised: "Aucune source applicable à cette pose",
@@ -52,7 +52,7 @@ const REASON_LABEL: Record<string, string> = {
   LATERAL_OFFSET: "L'aimant est décalé hors du plan de référence.",
   COLLISION_OR_CONTACT: "Les deux corps se touchent sur une partie de la course.",
 };
-const LIMIT_LABEL: Record<string, string> = {
+export const LIMIT_LABEL: Record<string, string> = {
   typical_not_guaranteed: "Une valeur typique n'est pas une valeur garantie.",
   datum_not_characterised: "Les repères de mesure des plans ne sont pas caractérisés.",
   schematic_template_only: "Le gabarit affiché est explicitement schématique.",
