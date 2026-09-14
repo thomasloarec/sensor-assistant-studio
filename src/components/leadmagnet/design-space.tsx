@@ -2258,6 +2258,165 @@ export function DesignSpace({
         </div>
   );
 
+  const openWorkshopPanel = () => {
+    setWorkshopMounted(true);
+    setShowWorkshop(true);
+    setPanel("atelier");
+  };
+  /** Tester un couple = présélection de gamme + ouverture de l'atelier sur ce
+   * couple. Ce n'est ni une commande ni une validation R&D. */
+  const testPair = (card: PairCard) => {
+    chooseSensor(card.sensorId, t(card.sensorName));
+    openWorkshopPanel();
+  };
+  /** Toutes les questions confiées à Standex : aucun critère ne vient des
+   * réponses, on annonce donc les couples les plus courants. */
+  const allQuestionsAside = GUIDED_QUESTIONS.every((q) =>
+    isDelegated(dossier, delegatedQuestion(q.key)),
+  );
+  const pairsTitle = allQuestionsAside
+    ? t("Couples les plus courants")
+    : suggestedPairs.length >= 3
+      ? t("Trois couples pour votre projet")
+      : suggestedPairs.length === 2
+        ? t("Deux couples pour votre projet")
+        : suggestedPairs.length === 1
+          ? t("Un couple pour votre projet")
+          : t("Aucun couple ne passe vos critères");
+  /** Phrase de critères en langage courant, construite UNIQUEMENT à partir des
+   * filtres réellement actifs : aucune contrainte n'est inventée. */
+  const pairsSubtitle = activeFilterIds.length
+    ? msg("{0}. Testez-les dans votre montage.", [
+        shownFilters
+          .filter((f) => activeFilterIds.includes(f.id))
+          .map((f) => t(f.label))
+          .join(", "),
+      ])
+    : t("Aucun critère actif : testez-les dans votre montage.");
+
+  const pairCardView = (card: PairCard, index: number, compact = false) => {
+    const chosen = dossier.selectedSensorId === card.sensorId;
+    return (
+      <div
+        key={card.sensorId}
+        data-testid="pair-card"
+        className={`surface-interactive p-5 ${chosen ? "candidate-selected" : ""}`}
+      >
+        <CandidateThumbnail
+          sensorId={card.sensorId}
+          cabled={false}
+          fitToView
+          size={compact ? "compact" : "large"}
+          pair={{ magnetId: card.magnetId, approach: "D1" }}
+        />
+        <div className="mt-3 flex flex-wrap items-center gap-2">
+          <p className="t-label">
+            {index === 0 && !compact ? t("Recommandé") : t(card.familyLabel)}
+          </p>
+          {chosen ? <Badge className="candidate-status-badge">{t("Choisi ✓")}</Badge> : null}
+        </div>
+        {/* Les références (MK04, M04) traversent le rendu inchangées. */}
+        <p className="t-title-m">{card.couple}</p>
+        <p className="t-body mt-2">
+          {msg("{0}, {1}.", [t(card.fixingLabel), card.size])}
+        </p>
+        <p className="t-body mt-2">
+          {card.maxPullInMm === null ? (
+            <span className="text-[var(--standex-blue-75)]">
+              {t("Distances à mesurer avec Standex")}
+            </span>
+          ) : (
+            <strong>{msg("Détecte jusqu'à {0} mm", [formatMm(card.maxPullInMm)])}</strong>
+          )}
+        </p>
+        <div className="mt-4">
+          <Button
+            variant={index === 0 && !compact ? "default" : "outline"}
+            className="min-h-11 text-base"
+            onClick={() => testPair(card)}
+          >
+            {t("Tester ce couple →")}
+          </Button>
+        </div>
+        <button
+          type="button"
+          className="t-caption mt-2 min-h-11 underline"
+          onClick={() => setDetailSensorId(card.sensorId)}
+        >
+          {t("Voir les détails")}
+        </button>
+      </div>
+    );
+  };
+
+  const pairsSection = (
+    <div className="space-y-4">
+      <p className="sr-only" role="status" aria-live="polite">
+        {selectionAnnounce}
+      </p>
+      <div className="panel-block-lg">
+        <p className="t-label">{t("D'après vos réponses")}</p>
+        <h2 className="t-display-m">{pairsTitle}</h2>
+        <p className="t-body mt-2">{pairsSubtitle}</p>
+        <div className="mt-4">{filterControls}</div>
+      </div>
+      <div className="pair-grid">{suggestedPairs.map((c, i) => pairCardView(c, i))}</div>
+      <div className="panel-block space-y-3">
+        <details>
+          <summary className="t-body min-h-11 cursor-pointer list-none py-2">
+            {msg("Voir tous les couples possibles ({0})", [allPairs.length])}
+          </summary>
+          <div className="pair-grid mt-3">{allPairs.map((c, i) => pairCardView(c, i, true))}</div>
+        </details>
+        <div className="flex flex-wrap items-center gap-3">
+          <Button
+            variant={isDelegated(dossier, DELEGATED_SENSOR) ? "default" : "outline"}
+            className="min-h-11 text-base"
+            aria-pressed={isDelegated(dossier, DELEGATED_SENSOR)}
+            onClick={delegateSensor}
+          >
+            {t("Laisser Standex choisir pour moi")}
+          </Button>
+          {/* Délégation explicite du placement : décision prise, jamais une
+              valeur technique connue. */}
+          <Button
+            variant="ghost"
+            className="min-h-11 text-base"
+            aria-pressed={isDelegated(dossier, DELEGATED_MOUNTING)}
+            onClick={() => toggleDelegated(DELEGATED_MOUNTING)}
+          >
+            {isDelegated(dossier, DELEGATED_MOUNTING)
+              ? t("Placement confié à Standex")
+              : t("Choisir le placement avec Standex")}
+          </Button>
+        </div>
+        {isDelegated(dossier, DELEGATED_SENSOR) ? (
+          <p className="notice notice-info">
+            {t(
+              "Le choix du capteur est noté « à définir avec Standex ». C'est une décision prise, pas une validation technique.",
+            )}
+          </p>
+        ) : null}
+        {isDelegated(dossier, DELEGATED_MOUNTING) ? (
+          <p className="notice notice-info">
+            {t(
+              "Le placement est noté « à définir avec Standex ». C'est une décision prise, pas une valeur connue ni une validation technique.",
+            )}
+          </p>
+        ) : null}
+        <button
+          type="button"
+          className="t-body min-h-11 underline"
+          onClick={() => setTab("revue")}
+        >
+          {t("Passer directement à Avec Standex")}
+        </button>
+      </div>
+    </div>
+  );
+
+
+
   const candidatsSection = (
     <div className="space-y-4">
       <p className="notice notice-info">
