@@ -66,7 +66,7 @@ describe("identité de famille d'aimant M21/P(1,2) dans les profils de montage",
       expect(sim.samples.every((s) => s.contact === "unknown")).toBe(false);
       // le couple réel n'est pas réécrit vers la famille
       expect(m.couple.magnetId).toBe(alias);
-      expect(suggestPose(m).reasons).not.toContain("PROFILE_MISSING");
+      expect(suggestPose(m2).ok).toBe(true);
     }
   });
 
