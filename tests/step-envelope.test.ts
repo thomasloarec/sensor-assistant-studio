@@ -76,11 +76,15 @@ describe("chaque fichier STEP annoncé existe réellement et est valide", () => 
       // Unités millimètre.
       expect(text).toMatch(/SI_UNIT\(\.MILLI\.,\.METRE\.\)/);
 
-      // Parsing basique du B-Rep : au moins un solide manifold fermé fait de faces avancées.
-      expect(text).toContain("MANIFOLD_SOLID_BREP");
+      // Parsing basique du B-Rep : solide facetté fermé, faces surfaciques cohérentes.
+      expect(text).toContain("FACETED_BREP");
+      expect(text).toContain("FACETED_BREP_SHAPE_REPRESENTATION");
       expect(text).toContain("CLOSED_SHELL");
-      expect(text).toContain("ADVANCED_FACE");
+      expect(text).toContain("FACE_SURFACE");
       expect(text).toContain("FACE_OUTER_BOUND");
+      expect(text).not.toContain("MANIFOLD_SOLID_BREP");
+      expect(text).not.toContain("ADVANCED_FACE");
+
 
       const points = extractPoints(text);
       expect(points.length).toBeGreaterThan(0);
