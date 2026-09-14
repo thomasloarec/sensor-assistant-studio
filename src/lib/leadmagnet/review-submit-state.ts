@@ -8,7 +8,7 @@ export function ndaTransferGuidance(nda: NdaState): string | null {
   if (nda.status === "requested")
     return "Le NDA est demandé, mais aucune preuve signée n'a encore été vérifiée par Standex. Votre accord d'envoi ne remplace pas cette preuve.";
   if (nda.status === "prepared")
-    return "Le NDA est préparé mais non signé. Faites signer le document, puis demandez sa vérification par Standex avant de transmettre le dossier.";
+    return "Le NDA est préparé mais non signé. Faites signer le document, puis demandez sa vérification par Standex avant de transmettre le projet.";
   if (nda.status === "awaiting_signatures")
     return "Le NDA attend encore les signatures ou leur vérification par Standex. Actualisez le statut après confirmation de l'équipe.";
   if (nda.status === "in_force" && !nda.proof)
@@ -17,9 +17,9 @@ export function ndaTransferGuidance(nda: NdaState): string | null {
 }
 
 export function reviewOperationLabel(operation: ReviewOperation): string | null {
-  if (operation === "validation") return "Vérification du dossier…";
+  if (operation === "validation") return "Vérification du projet…";
   if (operation === "upload") return "Dépôt et vérification du fichier 3D en cours…";
-  if (operation === "submission") return "Transmission à la revue Standex en cours…";
+  if (operation === "submission") return "Transmission à la relecture par les ingénieurs Standex en cours…";
   if (operation === "variant") return "Reprise de la proposition Standex en cours…";
   if (operation === "nda") return "Enregistrement de votre choix de NDA…";
   return null;
@@ -33,9 +33,9 @@ export type SubmitPhase = "before_send" | "awaiting_confirmation" | "committed";
 
 export function submitFailureMessage(phase: SubmitPhase): string {
   if (phase === "committed")
-    return "Votre dossier est bien arrivé chez Standex. Seule une étape complémentaire a échoué : consultez le suivi de votre dossier, ne renvoyez pas le dossier pour autant.";
+    return "Votre projet est bien arrivé chez Standex. Seule une étape complémentaire a échoué : consultez le suivi de votre projet, ne renvoyez pas le projet pour autant.";
   if (phase === "awaiting_confirmation")
-    return "La confirmation d'envoi n'a pas été obtenue : votre dossier est peut-être arrivé malgré tout. Vérifiez le suivi de votre dossier avant de le renvoyer.";
+    return "La confirmation d'envoi n'a pas été obtenue : votre projet est peut-être arrivé malgré tout. Vérifiez le suivi de votre projet avant de le renvoyer.";
   return "La transmission n'a pas abouti. Rien n'a été envoyé ; réessayez.";
 }
 

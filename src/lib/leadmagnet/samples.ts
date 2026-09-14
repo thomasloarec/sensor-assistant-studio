@@ -78,13 +78,13 @@ export function createSampleRequest(
   if (!gate.reviewValidated)
     return {
       ok: false,
-      reason: "Échantillons possibles seulement après une revue Standex validée et publiée.",
+      reason: "Échantillons possibles seulement après une relecture par les ingénieurs Standex validée et publiée.",
     };
   if (!gate.exactPartConfirmed)
     return {
       ok: false,
       reason:
-        "Référence exacte requise : une gamme ne suffit pas, la revue doit d'abord fixer la référence commandable.",
+        "Référence exacte requise : une gamme ne suffit pas, la relecture doit d'abord fixer la référence commandable.",
     };
   if (!Number.isInteger(quantity) || quantity <= 0)
     return { ok: false, reason: "La quantité d'échantillons doit être un entier positif." };

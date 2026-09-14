@@ -177,7 +177,7 @@ const knownSensorId = z
 const dossierSchema = z.object({
   studioV2: z.unknown().optional(),
   guidedMounting: z.unknown().optional(),
-  title: z.string().catch("Dossier repris"),
+  title: z.string().catch("Projet repris"),
   // Un dossier plus ancien n'a pas de langue d'origine : le français fait foi.
   sourceLocale: z.enum(["fr", "en", "zh", "de", "es", "ru", "it", "ja"]).catch("fr"),
   requirements: z.array(requirement).catch([]),
@@ -263,7 +263,7 @@ export function parseDossierExport(raw: unknown, now = new Date().toISOString())
     })
     .safeParse(raw);
   if (!envelope.success)
-    return { ok: false, reason: "Ce fichier n'est pas un export de dossier de conception." };
+    return { ok: false, reason: "Ce fichier n'est pas un export de projet de conception." };
   if (!Number.isInteger(envelope.data.version) || envelope.data.version > EXPORT_VERSION)
     return {
       ok: false,

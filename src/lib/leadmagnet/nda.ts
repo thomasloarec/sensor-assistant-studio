@@ -99,12 +99,12 @@ export function ndaDisableNeedsConfirmation(state: NdaState): boolean {
 }
 
 export const NDA_DISABLE_CONFIRMATION =
-  "Une demande de NDA est déjà ouverte sur ce dossier. La retirer abandonne cette demande ; le document non signé reste sur votre appareil. Continuer ?";
+  "Une demande de NDA est déjà ouverte sur ce projet. La retirer abandonne cette demande ; le document non signé reste sur votre appareil. Continuer ?";
 
 /** Raison lisible d'un refus de désactivation, à afficher près de la case. */
 export function ndaDisableBlockedReason(state: NdaState): string | null {
   if (canDisableNda(state)) return null;
-  return "Un accord de confidentialité vérifié est en vigueur sur ce dossier : il ne peut pas être retiré depuis cet écran.";
+  return "Un accord de confidentialité vérifié est en vigueur sur ce projet : il ne peut pas être retiré depuis cet écran.";
 }
 
 /** Décision de basculement, séparée de l'écran pour être réellement testable.
@@ -130,7 +130,7 @@ export function planNdaToggle(
     return {
       kind: "offline",
       reason:
-        "Ce dossier est enregistré chez Standex : connectez-vous pour modifier le choix de NDA. Rien n'a été changé.",
+        "Ce projet est enregistré chez Standex : connectez-vous pour modifier le choix de NDA. Rien n'a été changé.",
     };
   return { kind: "server", optimistic: next ? enableNda(state) : null };
 }

@@ -85,9 +85,9 @@ describe("bandeau d'état après un envoi confirmé", () => {
     const status = submissionStatusKind(lastSent, cycle.binding);
     expect(status).toBe("sent");
     const html = banner(status, lastSent);
-    expect(html).toContain("Dossier transmis à la revue Standex");
+    expect(html).toContain("Projet transmis à la relecture par les ingénieurs Standex");
     expect(html).not.toContain("Modifications non envoyées");
-    expect(html).toContain("Envoyer mon dossier");
+    expect(html).toContain("Envoyer mon projet");
   });
 
   test("modifier le contenu repasse le bandeau en « Modifications non envoyées »", async () => {
@@ -103,7 +103,7 @@ describe("bandeau d'état après un envoi confirmé", () => {
     expect(status).toBe("modified");
     const html = banner(status, lastSent);
     expect(html).toContain("Modifications non envoyées");
-    expect(html).not.toContain("Dossier transmis à la revue Standex.");
+    expect(html).not.toContain("Projet transmis à la relecture par les ingénieurs Standex.");
     expect(html).toContain("Envoyer mes modifications");
   });
 

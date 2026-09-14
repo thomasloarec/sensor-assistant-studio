@@ -62,20 +62,20 @@ export function createOffer(
     return { ok: false, reason: "Seul un commercial autorisé peut saisir une offre." };
   if (!draft.authorId || draft.authorId !== actor.userId)
     return { ok: false, reason: "L'auteur de l'offre doit être la personne connectée." };
-  if (!review) return { ok: false, reason: "Aucun devis avant une revue R&D validée." };
+  if (!review) return { ok: false, reason: "Aucun devis avant une relecture par les ingénieurs Standex validée." };
   // Association stricte dossier / revue / révision : pas d'offre montée sur la revue d'un autre dossier.
   if (review.dossierId !== draft.dossierId || review.id !== draft.reviewId)
-    return { ok: false, reason: "Cette revue n'appartient pas à ce dossier." };
+    return { ok: false, reason: "Cette revue n'appartient pas à ce projet." };
   if (review.verdict !== "validated" || !review.published)
-    return { ok: false, reason: "Aucun devis avant une revue R&D validée et publiée." };
+    return { ok: false, reason: "Aucun devis avant une relecture par les ingénieurs Standex validée et publiée." };
   if (review.supersededBy)
-    return { ok: false, reason: "Cette revue a été remplacée : reprenez la revue en vigueur." };
+    return { ok: false, reason: "Cette revue a été remplacée : reprenez la relecture en vigueur." };
   if (review.revision !== draft.revision)
     return { ok: false, reason: "La revue validée ne porte pas sur cette révision." };
   if (currentRevision !== null && draft.revision !== currentRevision)
     return {
       ok: false,
-      reason: "Le dossier a changé : l'offre doit porter sur la révision courante.",
+      reason: "Le projet a changé : l'offre doit porter sur la révision courante.",
     };
   if (!/^[A-Z]{3}$/.test(draft.currency))
     return { ok: false, reason: "Devise attendue au format ISO (EUR, USD…)." };
@@ -151,7 +151,7 @@ export function invalidationFor(change: ChangeKind): InvalidationResult {
     offerInvalidated: false,
     samplingInvalidated: false,
     newRevisionRequired: false,
-    reason: "Modification sans effet sur la revue ni l'offre.",
+    reason: "Modification sans effet sur la relecture ni l'offre.",
   };
 }
 
@@ -167,7 +167,7 @@ export function guardRevision<T>(
   if (expectedRevision !== currentRevision)
     return {
       ok: false,
-      reason: "Le dossier a changé depuis l'ouverture de cette revue.",
+      reason: "Le projet a changé depuis l'ouverture de cette revue.",
       currentRevision,
     };
   return { ok: true, value: apply() };

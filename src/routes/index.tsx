@@ -82,7 +82,7 @@ function HomeRoute() {
   return (
     <div data-readable className="min-h-screen bg-background text-foreground">
       <main className={started ? "hidden" : undefined}>
-        <div className="immersive hero-field overflow-hidden lg:min-h-[88svh]">
+        <div className="immersive hero-field overflow-hidden">
           <header
             ref={headerRef}
             className="material sticky top-0 z-30 shadow-[inset_0_-1px_0_var(--hairline)]"
@@ -115,10 +115,10 @@ function HomeRoute() {
             </div>
           </header>
 
-          {/* La place laissée par le bandeau est LUE sur le bandeau réel : une
-              hauteur écrite à la main ferait passer le titre sous la barre dès
-              que la rangée s'agrandit (traduction longue, police plus grande). */}
-          <div className="relative mx-auto flex max-w-7xl items-center px-4 py-12 sm:px-6 sm:py-16 lg:min-h-[calc(88svh-var(--standex-header-h,4.25rem))] lg:px-8 lg:pb-[12svh] lg:pt-[8svh]">
+          {/* Hauteur NATURELLE du contenu : le héros ne réserve plus la moitié
+              basse de l'écran, si bien que « Comment ça se passe » est visible
+              sans grand vide au premier coup d'œil. */}
+          <div className="relative mx-auto flex max-w-7xl items-center px-4 py-12 sm:px-6 sm:py-14 lg:px-8 lg:py-16">
             <span className="hero-glow right-[6%] top-[10%] size-[520px] max-w-[70vw]" />
             <div className="grid w-full gap-14 lg:grid-cols-[1.08fr_0.92fr] lg:items-center lg:gap-10">
               <div
@@ -133,20 +133,22 @@ function HomeRoute() {
                   {t("Vérifiez la détection dans votre montage.")}
                 </h1>
                 <p className="t-body-l mt-7 max-w-[34rem] text-muted-foreground">
-                  {t("Choisissez un couple capteur–aimant, placez-le comme dans votre machine, observez le comportement à partir des distances publiées. Ce que le registre ne documente pas est signalé comme tel.")}
+                  {t("Décrivez ce que vous voulez détecter. Sensor Studio vous propose des couples capteur-aimant Standex et vous montre s'ils détecteront dans votre montage.")}
                 </p>
-                <div className="mt-10 flex flex-wrap items-center gap-4">
+                {/* UN SEUL bouton primaire : le retour sur un projet existant est
+                    un lien, pas une seconde action de même poids. */}
+                <div className="mt-10 flex flex-wrap items-center gap-6">
                   <Button size="lg" className="group" onClick={openWorkspace}>
-                    {t("Décrire mon besoin")}
+                    {t("Commencer")}
                     <ArrowRight className="transition-transform duration-[var(--d-fast)] group-hover:translate-x-[3px]" />
                   </Button>
-                  <Button
-                    variant="outline"
-                    size="lg"
+                  <button
+                    type="button"
+                    className="text-link min-h-11"
                     onClick={() => setAccountRequest((n) => n + 1)}
                   >
-                    {t("Retrouver mes projets")}
-                  </Button>
+                    {t("J'ai déjà un projet")}
+                  </button>
                 </div>
                 <p className="t-caption mt-7 max-w-[34rem]">
                   {t("Rien à installer, aucun formulaire pour commencer. Votre travail reste sur votre appareil tant que vous ne l'envoyez pas.")}
@@ -161,15 +163,11 @@ function HomeRoute() {
                 <MagnetPlay />
               </section>
             </div>
-
-            <ChevronDown
-              aria-hidden="true"
-              className="home-scroll-cue absolute bottom-10 left-1/2 hidden size-6 -translate-x-1/2 text-muted-foreground/45 motion-reduce:hidden lg:block"
-            />
           </div>
+
         </div>
 
-        <section aria-label={t("Comment ça se passe")} className="bg-background py-24">
+        <section aria-label={t("Comment ça se passe")} className="bg-background py-20">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <hr className="standex-rule mb-12" />
             <h2 className="t-display-m">{t("Comment ça se passe")}</h2>
@@ -177,19 +175,20 @@ function HomeRoute() {
               {[
                 {
                   n: "01",
-                  t: t("1. Vous décrivez"),
-                  d: t("Quelques questions simples, dans votre langue : ce que vous voulez détecter, où le capteur se place, dans quelles conditions."),
+                  t: t("Décrivez"),
+                  d: t("Six questions simples, dans vos mots."),
                 },
                 {
                   n: "02",
-                  t: t("2. Vous vérifiez votre montage"),
-                  d: t("Une position vous est suggérée, le mouvement est simulé, les limites sont dites clairement, puis vous choisissez le câble. Rien n'est envoyé tant que vous ne le demandez pas."),
+                  t: t("Testez"),
+                  d: t("Des couples capteur-aimant proposés, à essayer dans votre montage en 3D."),
                 },
                 {
                   n: "03",
-                  t: t("3. Standex relit"),
-                  d: t("Vous pouvez faire relire votre projet par nos équipes. Une revue R&D reste toujours nécessaire avant commande."),
+                  t: t("Confirmez"),
+                  d: t("Standex relit votre projet et confirme avec des échantillons."),
                 },
+
               ].map((step, index) => (
                 <ProcessStep key={step.t} step={step} index={index} />
               ))}

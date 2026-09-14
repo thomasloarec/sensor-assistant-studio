@@ -76,9 +76,9 @@ describe("Langue d'origine d'un projet", () => {
   });
 
   test("le titre par défaut est rédigé dans la langue de départ du projet", () => {
-    expect(createDossier(undefined, "de").title).toBe("Neues Explorationsprojekt");
-    expect(createDossier(undefined, "ja").title).not.toBe("Nouveau projet d'exploration");
-    expect(createDossier(undefined, "fr").title).toBe("Nouveau projet d'exploration");
+    expect(createDossier(undefined, "de").title).toBe("Neues Projekt");
+    expect(createDossier(undefined, "ja").title).not.toBe("Nouveau projet");
+    expect(createDossier(undefined, "fr").title).toBe("Nouveau projet");
   });
 
 

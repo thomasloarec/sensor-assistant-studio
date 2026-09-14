@@ -556,11 +556,11 @@ export function DesignSpace({
       if (d.sourceLocale === startLocale) return d;
       // Le titre par défaut, écrit au montage caché, suit la langue de départ ;
       // un titre déjà saisi par l'utilisateur n'est jamais réécrit.
-      const untouched = d.title === t("Nouveau projet d'exploration", d.sourceLocale);
+      const untouched = d.title === t("Nouveau projet", d.sourceLocale);
       return {
         ...d,
         sourceLocale: startLocale,
-        title: untouched ? t("Nouveau projet d'exploration", startLocale) : d.title,
+        title: untouched ? t("Nouveau projet", startLocale) : d.title,
       };
     });
   }, [visible]);
@@ -1098,7 +1098,7 @@ export function DesignSpace({
                 )
               : t("Aucun accord de confidentialité n'est demandé dans ce fichier."),
             t(
-              "Contenu importé dans un dossier local : aucun dossier Standex n'y est rattaché, et l'accord de confidentialité comme l'accord d'envoi sont à refaire.",
+              "Contenu importé dans un projet local : aucun projet Standex n'y est rattaché, et l'accord de confidentialité comme l'accord d'envoi sont à refaire.",
             ),
           ].join(" "),
         );
@@ -1250,7 +1250,7 @@ export function DesignSpace({
         "design_model",
         {
           kind: "supabase_files",
-          statement: t("Partage du modèle 3D avec l'équipe Standex en charge du dossier."),
+          statement: t("Partage du modèle 3D avec l'équipe Standex en charge du projet."),
           accepted_at: new Date().toISOString(),
           content_ref: dossier.workshopAsset.fileName,
           revision: serverRevision + 1,
@@ -1360,7 +1360,7 @@ export function DesignSpace({
         if (current())
           setEnglishMessage(
             t(
-              "La version anglaise n'a pas pu être produite. Votre dossier d'origine est bien arrivé ; vous pouvez relancer.",
+              "La version anglaise n'a pas pu être produite. Votre projet d'origine est bien arrivé ; vous pouvez relancer.",
             ),
           );
       } finally {
@@ -1396,7 +1396,7 @@ export function DesignSpace({
       setPreparedUpload(null);
       setSubmitMessage(
         t(
-          "Le dossier ou la version visée a changé depuis le dépôt du fichier : préparez à nouveau le partage.",
+          "Le projet ou la version visée a changé depuis le dépôt du fichier : préparez à nouveau le partage.",
         ),
       );
       setSubmitMessageTone("danger");
@@ -1498,7 +1498,7 @@ export function DesignSpace({
             setEnglishRetry(null);
             setEnglishMessage(
               t(
-                "Version anglaise non demandée : votre accord de traduction n'a pas été donné pour cette version. Le dossier d'origine est bien arrivé.",
+                "Version anglaise non demandée : votre accord de traduction n'a pas été donné pour cette version. Le projet d'origine est bien arrivé.",
               ),
             );
           }
@@ -2126,7 +2126,7 @@ export function DesignSpace({
             <span aria-hidden="true">{on ? "✓" : "+"}</span>
             <span>{t(f.label)}</span>
             {f.source === "exploration" ? (
-              <span className="t-caption">{t("· exploration")}</span>
+              <span className="t-caption">{t("· autre critère")}</span>
             ) : null}
           </button>
         );
@@ -2253,7 +2253,7 @@ export function DesignSpace({
         <p className="t-body">
           {answerFilters.length
             ? t("D'après vos réponses, nous ne montrons d'abord que les capteurs compatibles.")
-            : t("Critères d'exploration en cours. Vos réponses ne sont pas modifiées.")}
+            : t("Autres critères en cours. Vos réponses ne sont pas modifiées.")}
         </p>
       ) : null}
       {filterChips}
@@ -2433,7 +2433,7 @@ export function DesignSpace({
     <div className="space-y-4">
       <p className="notice notice-info">
         {t(
-          "Ces capteurs sont des exemples à explorer. Le bureau d'études Standex vérifiera leur adaptation à votre projet après l'envoi du dossier.",
+          "Ces capteurs sont des exemples à essayer. Les ingénieurs Standex vérifieront leur adaptation à votre projet après l'envoi.",
         )}
       </p>
       {/* Annonce lue par les lecteurs d'écran à chaque décision. */}
@@ -2703,7 +2703,7 @@ export function DesignSpace({
         </p>
         <p className="t-caption">
           {t(
-            "Cette longueur n'est jamais une longueur approuvée : elle est vérifiée en revue R&D.",
+            "Cette longueur n'est jamais une longueur approuvée : elle est vérifiée par les ingénieurs Standex.",
           )}
         </p>
         {cableDefined && estimate.warnings.length ? (
@@ -2786,7 +2786,7 @@ export function DesignSpace({
                         ),
                       }));
                       setSelectionAnnounce(
-                        msg("Connecteur {0} retenu comme préférence, à vérifier par la R&D.", [
+                        msg("Connecteur {0} retenu comme préférence, à vérifier par les ingénieurs Standex.", [
                           h.housingMpn,
                         ]),
                       );
@@ -2803,7 +2803,7 @@ export function DesignSpace({
             </div>
             <p className="t-caption mt-2">
               {t(
-                "Quelques boîtiers documentés seulement, pas le marché entier. Boîtier, contacts à sertir et embase restent trois références distinctes ; brochage, section de fil réelle et disponibilité restent inconnus et à vérifier par la R&D.",
+                "Quelques boîtiers documentés seulement, pas le marché entier. Boîtier, contacts à sertir et embase restent trois références distinctes ; brochage, section de fil réelle et disponibilité restent inconnus et à vérifier par les ingénieurs Standex.",
               )}
             </p>
             <details className="mt-3">
@@ -2850,12 +2850,12 @@ export function DesignSpace({
                     setDossier((d) => ({ ...d, termination: result.termination }));
                   }}
                 >
-                  {t("Enregistrer en « à vérifier par R&D »")}
+                  {t("Enregistrer en « à vérifier par les ingénieurs Standex »")}
                 </Button>
               </div>
               <p className="t-caption mt-1">
                 {t(
-                  "Aucune combinaison connecteur/capteur qualifiée n'est documentée dans ce projet : toute référence saisie, sa contrepartie et son brochage restent à vérifier par la R&D.",
+                  "Aucune combinaison connecteur/capteur qualifiée n'est documentée dans ce projet : toute référence saisie, sa contrepartie et son brochage restent à vérifier par les ingénieurs Standex.",
                 )}
               </p>
             </details>
@@ -3138,7 +3138,7 @@ export function DesignSpace({
                 {t("voir la source fabricant")}
               </a>
             ) : (
-              t("source interne Standex, à confirmer par la R&D")
+              t("source interne Standex, à confirmer par les ingénieurs Standex")
             )}
           </p>
         ) : null}
@@ -3379,7 +3379,7 @@ export function DesignSpace({
                   <strong>{APPROVED_NDA_TEMPLATE.fileName}</strong> (SHA-256{" "}
                   {APPROVED_NDA_TEMPLATE.sha256.slice(0, 16)}
                   {t(
-                    "…, vérifié avant chaque remplissage). L'original reste intact : seule une copie remplie est produite, sur cet appareil, sans transmettre le dossier.",
+                    "…, vérifié avant chaque remplissage). L'original reste intact : seule une copie remplie est produite, sur cet appareil, sans transmettre le projet.",
                   )}
                 </p>
                 <div className="grid gap-2 md:grid-cols-2">
@@ -3507,7 +3507,7 @@ export function DesignSpace({
                           contentSummary: t(
                             "Exigences, montage, câblage, contraintes et contexte projet.",
                           ),
-                          recipients: [t("Standex R&D"), t("Standex commercial")],
+                          recipients: [t("Ingénieurs Standex"), t("Standex commercial")],
                           binding,
                         })
                       : {
@@ -3517,7 +3517,7 @@ export function DesignSpace({
                   );
                 }}
               />
-              {t("J'autorise l'envoi de ce contenu à Standex (R&D et commercial).")}
+              {t("J'autorise l'envoi de ce contenu à Standex (ingénieurs et commercial).")}
             </label>
             {consentNotice ? <p className="notice notice-warning">{consentNotice}</p> : null}
 
@@ -3531,7 +3531,7 @@ export function DesignSpace({
                       ? grantConsent(p, {
                           kind: "ai_assistant",
                           contentSummary: t(
-                            "Textes de ce dossier (exigences, notes, questions, contraintes) traduits en anglais.",
+                            "Textes de ce projet (exigences, notes, questions, contraintes) traduits en anglais.",
                           ),
                           recipients: [t("Anthropic (service de traduction)")],
                           binding,
@@ -3542,7 +3542,7 @@ export function DesignSpace({
               />
               <span>
                 {t(
-                  "J'autorise en plus la traduction en anglais des textes de ce dossier par un service externe (Anthropic), afin que l'équipe Standex les lise en anglais. Références, valeurs, unités, noms et fichiers restent inchangés, et mon dossier d'origine est conservé tel quel. Sans cette case, aucun texte n'est transmis à ce service.",
+                  "J'autorise en plus la traduction en anglais des textes de ce projet par un service externe (Anthropic), afin que l'équipe Standex les lise en anglais. Références, valeurs, unités, noms et fichiers restent inchangés, et mon projet d'origine est conservé tel quel. Sans cette case, aucun texte n'est transmis à ce service.",
                 )}
               </span>
             </label>
@@ -3636,9 +3636,10 @@ export function DesignSpace({
             )}
             {reopenedFrom ? (
               <p className="t-caption">
-                {msg(
-                  "Contenu repris de la version {0}. Le prochain envoi créera la version {1} de ce dossier.",
-                  [reopenedFrom.revision, serverRevision + 1],
+                {/* Le compteur interne de versions n'est pas une information
+                    utile au client : seul le fait de repartir d'un envoi l'est. */}
+                {t(
+                  "Contenu repris d'un envoi précédent. Le prochain envoi créera une nouvelle version de ce projet.",
                 )}
               </p>
             ) : null}
@@ -3917,7 +3918,7 @@ export function DesignSpace({
                 </span>
                 <span id="nda-optional-help" className="t-caption block">
                   {t(
-                    "Uniquement si votre entreprise en a besoin. Sans NDA, vous pouvez remplir et transmettre votre dossier normalement : les accords de partage restent séparés et inchangés.",
+                    "Uniquement si votre entreprise en a besoin. Sans NDA, vous pouvez remplir et transmettre votre projet normalement : les accords de partage restent séparés et inchangés.",
                   )}
                 </span>
                 <span className="t-caption block">{ndaStatusLabel(nda)}</span>
@@ -3950,7 +3951,7 @@ export function DesignSpace({
 
           {lastSent ? (
             <div className="panel-block-lg space-y-3">
-              <h3 className="t-title-m">{t("Suivi de mon dossier")}</h3>
+              <h3 className="t-title-m">{t("Suivi de mon projet")}</h3>
               <p className="text-sm">{sampleRoute.note}</p>
               <p className="notice notice-warning">
                 {t(
@@ -4046,7 +4047,7 @@ export function DesignSpace({
           }
           key={`workshop-${workshopEpoch}`}
           initialConfig={workshop ?? DEFAULT_WORKSHOP}
-          storageLabel={t("ce dossier, en mémoire de l'onglet")}
+          storageLabel={t("ce projet, en mémoire de l'onglet")}
           storageMode="memory"
           cableRouting={cableRouting}
           onDraftChange={onWorkshopDraft}
@@ -4261,7 +4262,7 @@ export function DesignSpace({
           requestedDossierId={requestedDossierId}
           onSelectDossier={({ id, revision, title, snapshot }) => {
             if (busyRef.current) return { ok: false };
-            if (!guardReplace(t("ouvrir ce dossier"))) return { ok: false };
+            if (!guardReplace(t("ouvrir ce projet"))) return { ok: false };
             // Le dossier CONSULTÉ ne devient le dossier ÉDITÉ que si son
             // dernier contenu envoyé a pu être chargé : sinon l'ancien
             // contenu resterait à l'écran sous une nouvelle étiquette.
@@ -4271,7 +4272,7 @@ export function DesignSpace({
                 parsed && !parsed.ok
                   ? parsed.reason
                   : t(
-                      "Le dernier contenu envoyé de ce dossier n'a pas pu être relu : le dossier ouvert ici reste inchangé.",
+                      "Le dernier contenu envoyé de ce projet n'a pas pu être relu : le projet ouvert ici reste inchangé.",
                     ),
               );
               return { ok: false };
@@ -4293,12 +4294,15 @@ export function DesignSpace({
             resetServerContext(id, revision);
             setPanel(null);
             onWorkspaceOpen?.();
+            // La numérotation interne des versions ne s'affiche plus au client :
+            // seul le nom du projet et l'état du contenu rechargé le concernent.
             setSubmitMessage(
-              `Dossier « ${title} » ouvert à la version ${revision}${
+              msg("Projet « {0} » ouvert{1}. Votre accord d'envoi et la relecture sont à refaire pour ce projet.", [
+                title,
                 parsed && parsed.ok
                   ? t(", contenu envoyé rechargé")
-                  : t(", aucun contenu envoyé à recharger")
-              }. Votre accord d'envoi et la relecture sont à refaire pour ce dossier.`,
+                  : t(", aucun contenu envoyé à recharger"),
+              ]),
             );
             return { ok: true };
           }}
@@ -4405,57 +4409,20 @@ export function DesignSpace({
       <details className="studio-navigation">
         <summary>{t("Menu")}</summary>
         <nav aria-label={t("Navigation principale")}>
-          {[
-            [
-              t("Mon projet en cours"),
-              () => {
-                setCatalogOpen(false);
-                setPanel(null);
-              },
-            ],
-            [
-              t("Mes projets et mon compte"),
-              () => {
-                setCatalogOpen(false);
-                setPanel("espace");
-              },
-            ],
-            [
-              t("Atelier 3D"),
-              () => {
-                setCatalogOpen(false);
-                setWorkshopMounted(true);
-                setShowWorkshop(true);
-                setPanel("atelier");
-              },
-            ],
-            [
-              t("Catalogue des capteurs"),
-              () => {
-                setPanel(null);
-                setCatalogOpen(true);
-              },
-            ],
-            [
-              t("Documents"),
-              () => {
-                setCatalogOpen(false);
-                setPanel("documents");
-              },
-            ],
-          ].map(([label, action]) => (
-            <button
-              key={String(label)}
-              type="button"
-              onClick={(e) => {
-                const d = e.currentTarget.closest("details");
-                if (d) d.open = false;
-                (action as () => void)();
-              }}
-            >
-              {String(label)}
-            </button>
-          ))}
+          {/* Ordre du menu : ce qui agit sur LE projet ouvert d'abord ; l'atelier,
+              le catalogue, les documents et le compte viennent après le trait. */}
+          <button
+            type="button"
+            onClick={(e) => {
+              e.currentTarget.closest("details")?.removeAttribute("open");
+              setCatalogOpen(false);
+              setPanel(null);
+              setShowAdvanced(true);
+              setTab("besoin");
+            }}
+          >
+            {t("Réglages détaillés")}
+          </button>
           <button
             type="button"
             onClick={(e) => {
@@ -4477,16 +4444,6 @@ export function DesignSpace({
               }}
             />
           </label>
-          <button
-            type="button"
-            onClick={(e) => {
-              e.currentTarget.closest("details")?.removeAttribute("open");
-              setShowAdvanced(true);
-              setTab("besoin");
-            }}
-          >
-            {t("Réglages détaillés")}
-          </button>
           <p className="studio-navigation-note">
             <strong>{t("Conservation et reprise de ce projet")}</strong>
             <span>
@@ -4494,6 +4451,52 @@ export function DesignSpace({
             </span>
             {importMessage ? <span>{importMessage}</span> : null}
           </p>
+          <hr className="studio-navigation-rule" />
+          {(
+            [
+              [
+                t("Atelier 3D"),
+                () => {
+                  setCatalogOpen(false);
+                  setWorkshopMounted(true);
+                  setShowWorkshop(true);
+                  setPanel("atelier");
+                },
+              ],
+              [
+                t("Catalogue des capteurs"),
+                () => {
+                  setPanel(null);
+                  setCatalogOpen(true);
+                },
+              ],
+              [
+                t("Documents"),
+                () => {
+                  setCatalogOpen(false);
+                  setPanel("documents");
+                },
+              ],
+              [
+                t("Mon espace"),
+                () => {
+                  setCatalogOpen(false);
+                  setPanel("espace");
+                },
+              ],
+            ] as [string, () => void][]
+          ).map(([label, action]) => (
+            <button
+              key={label}
+              type="button"
+              onClick={(e) => {
+                e.currentTarget.closest("details")?.removeAttribute("open");
+                action();
+              }}
+            >
+              {label}
+            </button>
+          ))}
         </nav>
       </details>
     </div>

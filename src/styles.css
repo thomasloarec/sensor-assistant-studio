@@ -1025,6 +1025,14 @@
     font: var(--t-caption);
     color: var(--muted-foreground);
   }
+  /* Séparation du menu par la LUMIÈRE, pas par un trait gris : une surface
+     enfoncée d'un pixel suffit à distinguer les deux groupes d'actions. */
+  .studio-navigation-rule {
+    height: 1px;
+    margin: 0.25rem 0;
+    border: 0;
+    background: var(--surface-sunken);
+  }
   .technical-summary-readable {
     overflow: visible;
   }

@@ -30,7 +30,7 @@ export const COVERAGE_LABEL = {
 } as const;
 export const EVIDENCE_LABEL = {
   published_typical: "Valeurs typiques publiées Standex",
-  schematic: "Gabarit géométrique schématique, non caractérisé",
+  schematic: "Gabarit géométrique indicatif, non caractérisé",
   uncharacterised: "Aucune source applicable à cette pose",
 } as const;
 /** Chaque code émis par le moteur a ici une phrase lisible : aucun code brut à l'écran. */
@@ -55,7 +55,7 @@ const REASON_LABEL: Record<string, string> = {
 export const LIMIT_LABEL: Record<string, string> = {
   typical_not_guaranteed: "Une valeur typique n'est pas une valeur garantie.",
   datum_not_characterised: "Les repères de mesure des plans ne sont pas caractérisés.",
-  schematic_template_only: "Le gabarit affiché est explicitement schématique.",
+  schematic_template_only: "Le gabarit affiché est explicitement indicatif.",
   sensitivity_spread: "La dispersion de sensibilité entre pièces n'est pas couverte.",
   magnet_spread: "La dispersion des aimants n'est pas couverte.",
   temperature_drift: "La dérive en température n'est pas couverte.",
@@ -179,7 +179,7 @@ export function GuidedSuggestion({
           </dl>
           <p className="mw-help">
             {t(
-              "Gabarit géométrique explicitement schématique, issu des distances typiques publiées. Ce n'est pas une validation de votre montage.",
+              "Gabarit géométrique explicitement indicatif, issu des distances typiques publiées. Ce n'est pas une validation de votre montage.",
             )}
           </p>
           <div className="mw-guide-actions">

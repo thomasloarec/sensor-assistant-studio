@@ -2015,24 +2015,6 @@
     "Nessuno dei due",
     "どちらでもない"
   ],
-  "Aucun devis avant une revue R&D validée et publiée.": [
-    "No quotation prior to a validated and published R&D review.",
-    "研发审查经受审并发布前不得报价。",
-    "Kein Angebot vor einer validierten und veröffentlichten R&D-Prüfung.",
-    "Ningún presupuesto antes de una revisión R&D validada y publicada.",
-    "Никаких предложений до утверждения и публикации рассмотрения R&D.",
-    "Nessun preventivo prima di una revisione R&D convalidata e pubblicata.",
-    "検証および公開された R&D レビューがない場合、見積は作成できません。"
-  ],
-  "Aucun devis avant une revue R&D validée.": [
-    "No quotation prior to a validated R&D review.",
-    "研发审查验证前不得报价。",
-    "Kein Angebot vor einer validierten R&D-Prüfung.",
-    "Ningún presupuesto antes de una revisión R&D validada.",
-    "Никаких предложений до подтверждения рассмотрения R&D.",
-    "Nessun preventivo prima di una revisione R&D convalidata.",
-    "検証済みの R&D レビューがない場合、見積は作成できません。"
-  ],
   "Aucun document déposé. Vous pouvez aussi déclarer une preuve conservée dans une archive externe.": [
     "No document uploaded. You can also declare proof stored in an external archive.",
     "未上传文件。您也可以声明存储在外部存档中的证明。",
@@ -2230,15 +2212,6 @@
     "Действия не зарегистрированы.",
     "Nessuna azione registrata.",
     "記録された操作はありません。"
-  ],
-  "Aucune combinaison connecteur/capteur qualifiée n'est documentée dans ce projet : toute référence saisie, sa contrepartie et son brochage restent à vérifier par la R&D.": [
-    "No qualified connector/sensor combination is documented in this project: any entered part number, its mating counterpart, and its pinout remain to be verified by R&D.",
-    "本项目中未记录任何合格的连接器/传感器组合：输入的任何型号、其对插端及引脚排布均需由 R&D 验证。",
-    "In diesem Projekt ist keine qualifizierte Steckverbinder/Sensor-Kombination dokumentiert: Jede eingegebene Artikelnummer, ihr Gegenstück und ihre Pinbelegung müssen von der R&D überprüft werden.",
-    "No hay documentada ninguna combinación conector/sensor cualificada en este proyecto: cualquier referencia introducida, su contraparte y su patillaje quedan pendientes de verificación por R&D.",
-    "В этом проекте не документировано ни одной квалифицированной комбинации соединитель/датчик: любой введенный артикул, ответная часть и распиновка подлежат проверке со стороны R&D.",
-    "Nessuna combinazione connettore/sensore qualificata è documentata in questo progetto: qualsiasi codice inserito, la controparte e la piedinatura restano da verificare da R&D.",
-    "このプロジェクトには認定済みのコネクタ／センサーの組み合わせは文書化されていません。入力された品番、その相手側コネクタ、およびピン配列は、R&D による検証が必要です。"
   ],
   "Aucune demande.": [
     "No request.",
@@ -3212,15 +3185,6 @@
     "Questa coppia sensore–magnete non ha una tabella pubblicata.",
     "このセンサーと磁石の組み合わせに公表表はありません。"
   ],
-  "Ce dossier est enregistré chez Standex : connectez-vous pour modifier le choix de NDA. Rien n'a été changé.": [
-    "This project is registered with Standex: sign in to change the NDA choice. Nothing has been changed.",
-    "该项目已在 Standex 登记：请登录以更改保密协议选择。未做任何更改。",
-    "Dieses Projekt ist bei Standex registriert: Melden Sie sich an, um die NDA-Auswahl zu ändern. Es wurde nichts geändert.",
-    "Este proyecto está registrado en Standex: inicie sesión para cambiar la elección de NDA. No se ha cambiado nada.",
-    "Этот проект зарегистрирован в Standex: войдите в систему, чтобы изменить выбор NDA. Ничего не изменено.",
-    "Questo progetto è registrato presso Standex: accedi per modificare la scelta dell'NDA. Non è stato modificato nulla.",
-    "このプロジェクトは Standex に登録されています。NDA の選択を変更するにはサインインしてください。変更は行われていません。"
-  ],
   "Ce dossier n'est pas accessible avec ce compte.": [
     "This file is not accessible with this account.",
     "此账户无法访问该资料。",
@@ -3311,15 +3275,6 @@
     "Non è un GLB versione 2 valido.",
     "有効なGLBバージョン2ファイルではありません。"
   ],
-  "Ce fichier n'est pas un export de dossier de conception.": [
-    "This file is not a design case file export.",
-    "该文件不是设计案卷的导出文件。",
-    "Diese Datei ist kein Export eines Entwicklungs-Vorgangs.",
-    "Este archivo no es una exportación de expediente de diseño.",
-    "Этот файл не является экспортом файла дела разработки.",
-    "Questo file non è un'esportazione di fascicolo di progettazione.",
-    "このファイルは設計ケースファイルのエクスポートではありません。"
-  ],
   "Ce fichier ne contient pas un montage valide (V1, V2 ou V3).": [
     "This file does not contain a valid assembly (V1, V2 or V3).",
     "此文件不包含有效装配（V1、V2 或 V3）。",
@@ -3400,15 +3355,6 @@
     "Проект тем временем изменился. Экран только что перезагружен: проверьте значение перед повторной попыткой.",
     "Questo progetto è stato modificato nel frattempo. La schermata è appena stata ricaricata: verifica il valore prima di riprovare.",
     "この案件はその間に変更されました。画面を再読み込みしました。値を確認してから再試行してください。"
-  ],
-  "Ce projet n'existe que dans cet onglet : fermer ou recharger la page l'efface. Exportez le dossier pour le reprendre plus tard.": [
-    "This project exists only in this tab: closing or reloading the page deletes it. Export the case file to resume later.",
-    "此项目仅存在于此标签页中：关闭或重新加载页面将删除它。导出案卷以备稍后继续。",
-    "Dieses Projekt existiert nur in dieser Registerkarte: Schließen oder Neuladen der Seite löscht es. Exportieren Sie das Dossier, um später fortzufahren.",
-    "Este proyecto solo existe en esta pestaña: cerrar o recargar la página lo eliminará. Exporte el expediente para recuperarlo más tarde.",
-    "Этот проект существует только в этой вкладке: закрытие или перезагрузка страницы удалит его. Экспортируйте досье, чтобы возобновить позже.",
-    "Questo progetto esiste solo in questa scheda: la chiusura o il ricaricamento della pagina lo cancellerà. Esportare il fascicolo per riprenderlo in seguito.",
-    "このプロジェクトはこのタブにのみ存在します。ページを閉じるかリロードすると消去されます。後で再開するには案件ファイルをエクスポートしてください。"
   ],
   "Ce qu'il faut détecter": [
     "What needs detecting",
@@ -3517,15 +3463,6 @@
     "Подогнанный центр (мм):",
     "Centro adattato (mm):",
     "推定中心 (mm)："
-  ],
-  "Ces capteurs sont des exemples à explorer. Le bureau d'études Standex vérifiera leur adaptation à votre projet après l'envoi du dossier.": [
-    "These sensors are examples to explore. The Standex engineering office will check whether they suit your project once the case file is sent.",
-    "这些传感器只是可供探索的示例。资料提交后，Standex 研发部门将核实其是否适合您的项目。",
-    "Diese Sensoren sind Beispiele zum Erkunden. Das Standex-Entwicklungsbüro prüft ihre Eignung für Ihr Projekt nach dem Versand des Dossiers.",
-    "Estos sensores son ejemplos para explorar. La oficina técnica de Standex verificará su adecuación a su proyecto tras el envío del expediente.",
-    "Эти датчики — примеры для изучения. Конструкторское бюро Standex проверит их пригодность для вашего проекта после отправки дела.",
-    "Questi sensori sono esempi da esplorare. L'ufficio tecnico Standex ne verificherà l'idoneità al vostro progetto dopo l'invio del fascicolo.",
-    "これらのセンサーは検討用の例です。書類送付後、Standex の技術部門が案件への適合性を確認します。"
   ],
   "Ces deux champs sont facultatifs : laissés vides, le retour est publié seul. Remplis tous les deux, le message est mis en attente d'envoi dans la même opération que la publication. Aucun envoi n'est effectué.": [
     "Both fields are optional: left empty, the feedback is published alone. Filled in together, the message is queued for sending in the same operation as the publication. Nothing is sent.",
@@ -3743,15 +3680,6 @@
     "Questa lunghezza è salvata con il montaggio e riportata nel dossier.",
     "この長さは取り付けとともに保存され、ファイルに引き継がれます。"
   ],
-  "Cette longueur n'est jamais une longueur approuvée : elle est vérifiée en revue R&D.": [
-    "This length is never an approved length: it is verified during R&D review.",
-    "此长度绝非批准长度：将在 R&D 评审中进行验证。",
-    "Diese Länge ist niemals eine freigegebene Länge: Sie wird im R&D-Review überprüft.",
-    "Esta longitud nunca es una longitud aprobada: se verifica en la revisión de R&D.",
-    "Эта длина никогда не является утвержденной: она проверяется в ходе ревью R&D.",
-    "Questa lunghezza non è mai una lunghezza approvata: viene verificata in sede di revisione R&D.",
-    "この長さは承認された長さではありません。R&D レビューで検証されます。"
-  ],
   "Cette modification reste locale à votre écran : publiez un retour R&D pour qu'elle compte.": [
     "This change remains local to your screen: publish an R&D feedback for it to take effect.",
     "此更改仅保留在您的屏幕本地：发布R&D反馈后方可生效。",
@@ -3823,24 +3751,6 @@
     "Этот вопрос отмечен как «определить со Standex». Это принятое решение, а не известное значение.",
     "Questa domanda è indicata come «da definire con Standex». È una decisione presa, non un valore noto.",
     "この項目は「Standex と決定する」と記録されています。これは下された判断であり、既知の値ではありません。"
-  ],
-  "Cette revue a été remplacée : reprenez la revue en vigueur.": [
-    "This review has been superseded: use the review currently in effect.",
-    "该审查已被替换：请使用当前生效的审查。",
-    "Diese Prüfung wurde ersetzt: Übernehmen Sie die aktuell gültige Prüfung.",
-    "Esta revisión ha sido sustituida: retome la revisión en vigor.",
-    "Это рассмотрение было заменено: используйте действующее рассмотрение.",
-    "Questa revisione è stata sostituita: riprendere la revisione in vigore.",
-    "このレビューは置き換えられました：有効なレビューを再開してください。"
-  ],
-  "Cette revue n'appartient pas à ce dossier.": [
-    "This review does not belong to this case file.",
-    "此审查不属于该案卷。",
-    "Diese Prüfung gehört nicht zu diesem Dossier.",
-    "Esta revisión no pertenece a este expediente.",
-    "Это рассмотрение не относится к данному досье.",
-    "Questa revisione non appartiene a questo fascicolo.",
-    "このレビューはこの案件ファイルに属していません。"
   ],
   "Cette réponse vient d'une reprise ou d'une déduction. Confirmez-la si elle est juste.": [
     "This response comes from a carry-over or deduction. Confirm it if it is correct.",
@@ -4886,15 +4796,6 @@
     "Connettore: preferenza registrata, da verificare da parte della R&S.",
     "コネクター：希望は記録済み、研究開発部門による確認が必要です。"
   ],
-  "Connecteur {0} retenu comme préférence, à vérifier par la R&D.": [
-    "Connector {0} retained as a preference, to be verified by R&D.",
-    "已保留连接器 {0} 作为偏好，需由研发部门核实。",
-    "Stecker {0} als Präferenz vorgemerkt, von der F&E zu prüfen.",
-    "Conector {0} retenido como preferencia, a verificar por I+D.",
-    "Разъём {0} принят как предпочтение, требует проверки НИОКР.",
-    "Connettore {0} scelto come preferenza, da verificare da parte della R&S.",
-    "コネクター {0} が希望として記録され、研究開発部門による確認が必要です。"
-  ],
   "Connecteur — fabricant": [
     "Connector — manufacturer",
     "连接器 — 制造商",
@@ -5047,15 +4948,6 @@
     "Вход…",
     "Accesso in corso…",
     "ログイン中…"
-  ],
-  "Consentement d'envoi du dossier non recueilli.": [
-    "Consent to send the case file has not been collected.",
-    "未取得发送案件的同意。",
-    "Zustimmung zum Senden der Fallakte nicht eingeholt.",
-    "Consentimiento para el envío del expediente no obtenido.",
-    "Согласие на отправку досье не получено.",
-    "Consenso all'invio della pratica non acquisito.",
-    "ケースファイルの送信に関する同意が得られていません。"
   ],
   "Consentement explicite non recueilli pour cet envoi.": [
     "Explicit consent not obtained for this submission.",
@@ -5236,15 +5128,6 @@
     "Содержимое отправленной ревизии нечитаемо: ничего не переведено.",
     "Contenuto della revisione inviata illeggibile: non è stato tradotto nulla.",
     "送信されたバージョンの内容を読み取れません。翻訳は行われていません。"
-  ],
-  "Contenu importé dans un dossier local : aucun dossier Standex n'y est rattaché, et l'accord de confidentialité comme l'accord d'envoi sont à refaire.": [
-    "Content imported into a local case file: no Standex case file is linked to it, and both the non-disclosure agreement and sending agreement must be renewed.",
-    "内容已导入本地档案：未关联任何 Standex 档案，保密协议和发送协议均需重新签署。",
-    "Inhalt in einen lokalen Vorgang importiert: Es ist kein Standex-Vorgang damit verknüpft, und sowohl die Geheimhaltungsvereinbarung als auch die Sendevereinbarung müssen erneuert werden.",
-    "Contenido importado en un expediente local: no hay ningún expediente Standex vinculado, y tanto el acuerdo de confidencialidad como el acuerdo de envío deben volver a realizarse.",
-    "Содержимое импортировано в локальное досье: к нему не привязано досье Standex, и соглашение о конфиденциальности, и согласие на отправку необходимо оформить заново.",
-    "Contenuto importato in un fascicolo locale: nessun fascicolo Standex è collegato, e sia l'accordo di riservatezza sia l'accordo di invio devono essere rifatti.",
-    "ローカル案件ファイルにインポートされたコンテンツ：Standex 案件ファイルは関連付けられておらず、秘密保持契約および送信への同意をやり直す必要があります。"
   ],
   "Contenu repris de la version {0}. Le prochain envoi créera la version {1} de ce dossier.": [
     "Content resumed from revision {0}. The next submission will create revision {1} of this file.",
@@ -6659,24 +6542,6 @@
     "Dossier applicativo - Assistente Standex",
     "用途別資料 - Standexセンサーアシスタント"
   ],
-  "Dossier repris": [
-    "Case file resumed",
-    "案卷已恢复",
-    "Vorgang übernommen",
-    "Expediente reanudado",
-    "Файл дела восстановлен",
-    "Fascicolo ripreso",
-    "復元されたケースファイル"
-  ],
-  "Dossier transmis à la revue Standex.": [
-    "Case file sent to the Standex review.",
-    "资料已提交 Standex 评审。",
-    "Dossier an die Standex-Prüfung übermittelt.",
-    "Expediente enviado a la revisión de Standex.",
-    "Дело передано на рассмотрение Standex.",
-    "Fascicolo trasmesso alla revisione Standex.",
-    "案件を Standex レビューに送信しました。"
-  ],
   "Dossier transmis à la revue Standex. Vous serez informé dès qu'un retour est publié.": [
     "Case file submitted to the Standex review. You will be informed as soon as feedback is published.",
     "档案已提交至 Standex 评审。一旦发布反馈，您将收到通知。",
@@ -7523,15 +7388,6 @@
     "Salva",
     "保存"
   ],
-  "Enregistrer en « à vérifier par R&D »": [
-    "Save as \"to be verified by R&D\"",
-    "保存为“待 R&D 验证”",
-    "Als „von R&D zu prüfen“ speichern",
-    "Guardar como «a verificar por R&D»",
-    "Сохранить как «подлежит проверке R&D»",
-    "Salva come \"da verificare da R&D\"",
-    "「R&D による要確認」として保存"
-  ],
   "Enregistrer l'offre": [
     "Save offer",
     "保存报价",
@@ -7720,15 +7576,6 @@
     "Отправить мои изменения",
     "Inviare le mie modifiche",
     "変更を送信"
-  ],
-  "Envoyer mon dossier": [
-    "Send my case file",
-    "发送我的资料",
-    "Mein Dossier senden",
-    "Enviar mi expediente",
-    "Отправить моё дело",
-    "Inviare il mio fascicolo",
-    "案件を送信"
   ],
   "Envoyée le": [
     "Submitted on",
@@ -8774,24 +8621,6 @@
     "Ingombro disponibile",
     "利用可能な領域"
   ],
-  "Gabarit géométrique explicitement schématique, issu des distances typiques publiées. Ce n'est pas une validation de votre montage.": [
-    "Explicitly schematic geometric template, derived from published typical distances. It is not a validation of your assembly.",
-    "明确示意性的几何样板，来自已发布的典型距离。它不是对您装配的验证。",
-    "Ausdrücklich schematische Geometrievorlage aus veröffentlichten typischen Abständen. Keine Validierung Ihrer Baugruppe.",
-    "Plantilla geométrica explícitamente esquemática, basada en distancias típicas publicadas. No valida su montaje.",
-    "Явно схематичный геометрический шаблон на основе опубликованных типовых расстояний. Это не валидация вашей сборки.",
-    "Sagoma geometrica esplicitamente schematica, dalle distanze tipiche pubblicate. Non è una validazione del montaggio.",
-    "公表された代表距離に基づく、明示的に概略の幾何テンプレートです。組付けの検証ではありません。"
-  ],
-  "Gabarit géométrique schématique, non caractérisé": [
-    "Schematic geometric template, not characterised",
-    "示意性几何样板，未表征",
-    "Schematische Geometrievorlage, nicht charakterisiert",
-    "Plantilla geométrica esquemática, no caracterizada",
-    "Схематичный геометрический шаблон, не охарактеризован",
-    "Sagoma geometrica schematica, non caratterizzata",
-    "概略の幾何テンプレート、未特性化"
-  ],
   "Gamme documentée ; la référence exacte est fixée après revue R&D.": [
     "Documented product family; the exact part number is defined after R&D review.",
     "已记录产品系列；具体型号在 R&D 评审后确定。",
@@ -9341,24 +9170,6 @@
     "Ho una preferenza di connettore",
     "コネクターの希望がある"
   ],
-  "J'autorise en plus la traduction en anglais des textes de ce dossier par un service externe (Anthropic), afin que l'équipe Standex les lise en anglais. Références, valeurs, unités, noms et fichiers restent inchangés, et mon dossier d'origine est conservé tel quel. Sans cette case, aucun texte n'est transmis à ce service.": [
-    "I also authorise an external service (Anthropic) to translate the texts of this file into English so the Standex team can read them in English. References, values, units, names and files stay unchanged, and my original file is kept as it is. Without this box, no text is sent to that service.",
-    "我另外授权外部服务（Anthropic）将本资料的文字翻译成英文，以便 Standex 团队用英文阅读。型号、数值、单位、姓名和文件保持不变，我的原始资料原样保留。不勾选此项，任何文字都不会发送给该服务。",
-    "Ich erlaube zusätzlich einem externen Dienst (Anthropic), die Texte dieser Unterlage ins Englische zu übersetzen, damit das Standex-Team sie auf Englisch lesen kann. Referenzen, Werte, Einheiten, Namen und Dateien bleiben unverändert, und meine Originalunterlage bleibt erhalten. Ohne dieses Häkchen wird kein Text an diesen Dienst gesendet.",
-    "Autorizo además a un servicio externo (Anthropic) a traducir al inglés los textos de este expediente para que el equipo de Standex los lea en inglés. Referencias, valores, unidades, nombres y archivos permanecen sin cambios, y mi expediente original se conserva tal cual. Sin esta casilla, no se envía ningún texto a ese servicio.",
-    "Я также разрешаю внешней службе (Anthropic) перевести тексты этого дела на английский, чтобы команда Standex читала их по-английски. Обозначения, значения, единицы, имена и файлы остаются без изменений, а мой оригинал сохраняется как есть. Без этой отметки ни один текст в эту службу не передаётся.",
-    "Autorizzo inoltre un servizio esterno (Anthropic) a tradurre in inglese i testi di questo fascicolo, affinché il team Standex li legga in inglese. Riferimenti, valori, unità, nomi e file restano invariati e il mio fascicolo originale è conservato tale e quale. Senza questa casella, nessun testo viene inviato a quel servizio.",
-    "Standex チームが英語で読めるよう、この資料の文章を外部サービス（Anthropic）が英語に翻訳することにも同意します。型番・数値・単位・氏名・ファイルはそのまま保持され、原本もそのまま保存されます。このチェックがない場合、文章は一切このサービスに送信されません。"
-  ],
-  "J'autorise l'envoi de ce contenu à Standex (R&D et commercial).": [
-    "I authorise sending this content to Standex (R&D and sales).",
-    "我授权将此内容发送给 Standex（R&D 与销售）。",
-    "Ich ermächtige die Übermittlung dieses Inhalts an Standex (R&D und Vertrieb).",
-    "Autorizo el envío de este contenido a Standex (R&D y comercial).",
-    "Я разрешаю передачу этого содержимого в Standex (R&D и отдел продаж).",
-    "Autorizzo l'invio di questo contenuto a Standex (R&D e commerciale).",
-    "この内容を Standex (R&D および営業) に送信することを許可します。"
-  ],
   "Je confirme que tous les états déclarés sont couverts par un trajet.": [
     "I confirm that all declared states are covered by a path.",
     "我确认所有声明的状态均由路径覆盖。",
@@ -9701,15 +9512,6 @@
     "Il confronto utilizza l'orientamento più favorevole; l'orientamento effettivo è ancora da decidere.",
     "比較では最も有利な向きが採用されます。実際の向きは未定です。"
   ],
-  "La confirmation d'envoi n'a pas été obtenue : votre dossier est peut-être arrivé malgré tout. Vérifiez le suivi de votre dossier avant de le renvoyer.": [
-    "No send confirmation was obtained: your case file may still have arrived. Check the tracking of your case file before sending it again.",
-    "未获得发送确认：您的资料仍可能已送达。重新发送前请先查看案件进度。",
-    "Es wurde keine Versandbestätigung erhalten: Ihr Dossier kann dennoch angekommen sein. Prüfen Sie die Verfolgung Ihres Dossiers, bevor Sie erneut senden.",
-    "No se obtuvo confirmación de envío: es posible que su expediente haya llegado igualmente. Consulte el seguimiento antes de volver a enviarlo.",
-    "Подтверждение отправки не получено: возможно, дело всё же дошло. Проверьте отслеживание дела, прежде чем отправлять повторно.",
-    "Non è stata ottenuta la conferma di invio: il fascicolo potrebbe comunque essere arrivato. Verificate il monitoraggio prima di inviarlo di nuovo.",
-    "送信の確認が取れませんでした。案件は届いている可能性があります。再送の前に進捗を確認してください。"
-  ],
   "La confirmation de Standex n'a pas été reçue : la modification a peut-être été": [
     "Standex's confirmation was not received: the change may have been",
     "未收到 Standex 的确认：修改可能已",
@@ -9953,12 +9755,12 @@
     "Il collegamento con il team Standex non è ancora attivo: non è stato inviato nulla.",
     "Standex チームとの連携はまだ有効化されていません。送信されたデータはありません。"
   ],
-  "La liaison avec l'équipe Standex n'est pas encore activée : votre dossier n'a pas été envoyé.": [
+  "La liaison avec l'équipe Standex n'est pas encore activée : votre projet n'a pas été envoyé.": [
     "The connection with the Standex team is not yet activated: your case file has not been sent.",
     "与Standex团队的连接尚未激活：您的案件尚未发送。",
     "Die Verbindung zum Standex-Team ist noch nicht aktiviert: Ihre Fallakte wurde nicht gesendet.",
-    "El enlace con el equipo de Standex aún no está activado: su expediente no ha sido enviado.",
-    "Связь с командой Standex еще не активирована: ваше досье не отправлено.",
+    "El enlace con el equipo de Standex aún no está activado: su proyecto no ha sido enviado.",
+    "Связь с командой Standex еще не активирована: ваше проект не отправлено.",
     "Il collegamento con il team Standex non è ancora attivo: la vostra pratica non è stata inviata.",
     "Standexチームとの接続がまだ有効化されていません。ケースファイルは送信されませんでした。"
   ],
@@ -10304,15 +10106,6 @@
     "Non è stato possibile salvare la versione inglese. Riprova.",
     "英語版を保存できませんでした。もう一度お試しください。"
   ],
-  "La version anglaise n'a pas pu être produite. Votre dossier d'origine est bien arrivé ; vous pouvez relancer.": [
-    "The English version could not be produced. Your original file did arrive; you can try again.",
-    "英文版本未能生成。您的原始资料已送达；您可以重试。",
-    "Die englische Fassung konnte nicht erstellt werden. Ihre Originalunterlage ist angekommen; Sie können es erneut versuchen.",
-    "No se pudo producir la versión en inglés. Su expediente original sí llegó; puede reintentarlo.",
-    "Английскую версию создать не удалось. Ваш оригинал получен; можно повторить попытку.",
-    "Non è stato possibile produrre la versione inglese. Il tuo fascicolo originale è arrivato; puoi riprovare.",
-    "英語版を作成できませんでした。原本は届いています。もう一度お試しいただけます。"
-  ],
   "La version anglaise n'a pas pu être réservée. Réessayez.": [
     "The English version could not be reserved. Try again.",
     "无法预留英文版本。请重试。",
@@ -10574,15 +10367,6 @@
     "L'NDA è stato richiesto, ma Standex non ha ancora verificato una prova firmata. Il consenso all'invio non sostituisce tale prova.",
     "NDA は申請済みですが、署名済みの証明はまだ Standex によって確認されていません。送信への同意はこの証明の代わりにはなりません。"
   ],
-  "Le NDA est préparé mais non signé. Faites signer le document, puis demandez sa vérification par Standex avant de transmettre le dossier.": [
-    "The NDA is prepared but unsigned. Have the document signed, then ask Standex to verify it before submitting the file.",
-    "NDA 已准备但尚未签署。请先签署文件，然后在提交资料前请求 Standex 验证。",
-    "Das NDA ist vorbereitet, aber nicht unterzeichnet. Lassen Sie das Dokument unterzeichnen und vor der Übermittlung von Standex prüfen.",
-    "El NDA está preparado pero no firmado. Haga firmar el documento y solicite su verificación por Standex antes de enviar el expediente.",
-    "NDA подготовлено, но не подписано. Подпишите документ и запросите его проверку Standex перед отправкой досье.",
-    "L'NDA è preparato ma non firmato. Faccia firmare il documento e ne chieda la verifica a Standex prima dell'invio del fascicolo.",
-    "NDA は準備済みですが未署名です。文書に署名し、資料を送信する前に Standex へ確認を依頼してください。"
-  ],
   "Le NDA n'est pas en vigueur : aucun contenu confidentiel n'est transmis.": [
     "NDA is not in effect: no confidential content is transmitted.",
     "NDA 未生效：不传输机密内容。",
@@ -10781,15 +10565,6 @@
     "Il contenuto, il case file di destinazione o i file sono cambiati: rileggere il riepilogo e confermare nuovamente il consenso all'invio.",
     "コンテンツ、対象のcase file、またはファイルが変更されました。概要を再確認し、送信への同意を再度確定してください。"
   ],
-  "Le contenu, le dossier visé ou les fichiers ont changé depuis votre accord : relisez le résumé et confirmez à nouveau.": [
-    "The content, target case file or files have changed since your agreement: review the summary and confirm again.",
-    "自您同意后，内容、目标案件或文件已发生变更：请重新阅读摘要并再次确认。",
-    "Der Inhalt, die betroffene Fallakte oder die Dateien haben sich seit Ihrer Zustimmung geändert: Prüfen Sie die Zusammenfassung erneut und bestätigen Sie nochmals.",
-    "El contenido, el expediente correspondiente o los archivos han cambiado desde su acuerdo: vuelva a leer el resumen y confirme de nuevo.",
-    "Содержимое, целевое досье или файлы изменились с момента вашего согласия: перечитайте резюме и подтвердите снова.",
-    "Il contenuto, la pratica interessata o i file sono cambiati rispetto al vostro accordo: rileggere il riepilogo e confermare nuovamente.",
-    "同意後にコンテンツ、対象ケースファイル、またはファイルが変更されました。サマリーを再確認の上、再度承認してください。"
-  ],
   "Le corps dépasse le gabarit déclaré.": [
     "The body exceeds the declared envelope.",
     "外壳超出所声明的包络。",
@@ -10825,15 +10600,6 @@
     "Последнего активного администратора нельзя удалить: сервер отклоняет операцию.",
     "L'ultimo amministratore attivo non può essere rimosso: il server rifiuta l'operazione.",
     "最後の有効な管理者は解除できません。サーバーが操作を拒否します。"
-  ],
-  "Le dernier contenu envoyé de ce dossier n'a pas pu être relu : le dossier ouvert ici reste inchangé.": [
-    "The last submitted content of this case file could not be re-read: the case file open here remains unchanged.",
-    "此案卷最后发送的内容无法重新读取：此处打开的案卷保持不变。",
-    "Der zuletzt gesendete Inhalt dieser Akte konnte nicht erneut gelesen werden: Die hier geöffnete Akte bleibt unverändert.",
-    "No se ha podido volver a leer el último contenido enviado de este expediente: el expediente abierto aquí permanece sin cambios.",
-    "Последнее отправленное содержимое этого дела не удалось перечитать: открытое здесь дело осталось без изменений.",
-    "Impossibile rileggere l'ultimo contenuto inviato di questo fascicolo: il fascicolo aperto qui rimane invariato.",
-    "この案件の最後に送信されたコンテンツを再読み込みできませんでした。ここで開かれている案件は変更されていません。"
   ],
   "Le diamètre indiqué est celui du corps. Les écrous sont représentés séparément ; profil des filets simplifié.": [
     "Diameter refers to the body. Nuts are shown separately; thread profile is simplified.",
@@ -10871,24 +10637,6 @@
     "Il documento firmato dichiarato non è stato trovato nello spazio sicuro: non è stato salvato nulla.",
     "指定された署名済み文書がセキュア領域に見つかりませんでした。何も保存されませんでした。"
   ],
-  "Le dossier a changé : l'offre doit porter sur la révision courante.": [
-    "The case file has changed: the quote must apply to the current revision.",
-    "案卷已变更：报价必须基于当前修订版本。",
-    "Das Dossier wurde geändert: Das Angebot muss sich auf die aktuelle Revision beziehen.",
-    "El expediente ha cambiado: la oferta debe basarse en la revisión actual.",
-    "Материалы изменились: предложение должно относиться к текущей ревизии.",
-    "Il fascicolo è cambiato: l'offerta deve basarsi sulla revisione corrente.",
-    "ケースファイルが変更されました。見積は現在のリビジョンに基づく必要があります。"
-  ],
-  "Le dossier a changé depuis l'ouverture de cette revue.": [
-    "The case file has changed since this review was opened.",
-    "自打开此评审以来，案卷已发生变更。",
-    "Das Dossier wurde seit dem Öffnen dieser Prüfung geändert.",
-    "El expediente ha cambiado desde la apertura de esta revisión.",
-    "Материалы изменились с момента открытия данного рассмотрения.",
-    "Il fascicolo è cambiato dall'apertura di questa revisione.",
-    "このレビューを開いてからケースファイルが変更されました。"
-  ],
   "Le dossier envoyé est incomplet : complétez l'objectif et le contact, puis réessayez.": [
     "The submitted case file is incomplete: fill in the objective and contact, then try again.",
     "提交的案卷不完整：请填写目标和联系人，然后重试。",
@@ -10897,15 +10645,6 @@
     "Отправленное дело не заполнено: укажите цель и контактное лицо, затем повторите попытку.",
     "La pratica inviata è incompleta: compilare l'obiettivo e il contatto, quindi riprovare.",
     "送信された案件は不完全です。目的と連絡先を入力してから、やり直してください。"
-  ],
-  "Le dossier ou la version visée a changé depuis le dépôt du fichier : préparez à nouveau le partage.": [
-    "The case file or target version has changed since the file was submitted: prepare the sharing again.",
-    "自提交文件以来，档案或目标版本已发生变化：请重新准备共享。",
-    "Der Vorgang oder die Zielversion hat sich seit der Hinterlegung der Datei geändert: Bereiten Sie das Teilen erneut vor.",
-    "El expediente o la versión de destino ha cambiado desde el depósito del archivo: prepare de nuevo el uso compartido.",
-    "Досье или целевая версия изменились с момента загрузки файла: подготовьте отправку заново.",
-    "Il fascicolo o la versione di riferimento è cambiata dal deposito del file: preparare nuovamente la condivisione.",
-    "ファイルの送信以降、案件ファイルまたは対象バージョンが変更されました：共有を再度準備してください。"
   ],
   "Le délai doit être un nombre entier de semaines.": [
     "Lead time must be an integer number of weeks.",
@@ -10987,15 +10726,6 @@
     "Файл монтажа слишком большой.",
     "Il file di montaggio è troppo grande.",
     "構成ファイルが大きすぎます。"
-  ],
-  "Le gabarit affiché est explicitement schématique.": [
-    "The displayed template is explicitly schematic.",
-    "所显示的样板是明确示意性的。",
-    "Die gezeigte Vorlage ist ausdrücklich schematisch.",
-    "La plantilla mostrada es explícitamente esquemática.",
-    "Показанный шаблон явно схематичен.",
-    "La sagoma mostrata è esplicitamente schematica.",
-    "表示されるテンプレートは明示的に概略です。"
   ],
   "Le libellé « responsable Standex reprend le sujet sous 2 jours ouvrés » est-il correct ?": [
     "Is “a Standex representative follows up within 2 business days” correctly stated?",
@@ -12266,15 +11996,6 @@
     "Modalità sperimentale: risposta Claude non validata, mai per clienti reali. La base deterministica resta il riferimento.",
     "実験モード：Claude出力は未検証で、実際の見込み客には表示しません。決定論的ベースラインを基準とします。"
   ],
-  "Modification sans effet sur la revue ni l'offre.": [
-    "Modification without effect on review or quote.",
-    "变更对评审和报价均无影响。",
-    "Änderung ohne Auswirkung auf Prüfung und Angebot.",
-    "Modificación sin efecto en la revisión ni en la oferta.",
-    "Изменение не влияет на рассмотрение и предложение.",
-    "Modifica senza effetto sulla revisione né sull'offerta.",
-    "レビューおよび見積に影響のない変更です。"
-  ],
   "Modification technique : nouvelle révision ; revue, offre et échantillonnage précédents sont périmés.": [
     "Technical modification: new revision; previous review, quote and sampling are obsolete.",
     "技术变更：新修订版本；之前的评审、报价和样品已作废。",
@@ -13060,21 +12781,12 @@
   ],
   "Nouveau projet": [
     "New project",
-    "新项目",
+    "新建项目",
     "Neues Projekt",
     "Nuevo proyecto",
     "Новый проект",
     "Nuovo progetto",
     "新規プロジェクト"
-  ],
-  "Nouveau projet d'exploration": [
-    "New exploratory project",
-    "新探索项目",
-    "Neues Explorationsprojekt",
-    "Nuevo proyecto de exploración",
-    "Новый исследовательский проект",
-    "Nuovo progetto esplorativo",
-    "新規検討プロジェクト"
   ],
   "Nouveau projet ouvert en mémoire de cet onglet.": [
     "New project opened in this tab's memory.",
@@ -13678,15 +13390,6 @@
     "Например: {0}",
     "Ad esempio: {0}",
     "例：{0}"
-  ],
-  "Partage du modèle 3D avec l'équipe Standex en charge du dossier.": [
-    "Sharing the 3D model with the Standex team in charge of the case file.",
-    "与负责该档案的 Standex 团队共享 3D 模型。",
-    "Teilen des 3D-Modells mit dem für den Vorgang zuständigen Standex-Team.",
-    "Compartir el modelo 3D con el equipo Standex a cargo del expediente.",
-    "Предоставление 3D-модели команде Standex, ведущей досье.",
-    "Condivisione del modello 3D con il team Standex incaricato del fascicolo.",
-    "案件ファイルを担当する Standex チームと 3D モデルを共有。"
   ],
   "Partie 1": [
     "Part 1",
@@ -15236,15 +14939,6 @@
     "Quali temperature, vibrazioni e sostanze deve sopportare?",
     "耐える必要のある温度・振動・侵食性物質は？"
   ],
-  "Quelques boîtiers documentés seulement, pas le marché entier. Boîtier, contacts à sertir et embase restent trois références distinctes ; brochage, section de fil réelle et disponibilité restent inconnus et à vérifier par la R&D.": [
-    "Only a few documented housings, not the entire market. Housing, crimp contacts, and header remain three distinct part numbers; pinout, actual wire cross-section, and availability remain unknown and must be verified by R&D.",
-    "仅包含少数记录的壳体，而非整个市场。壳体、压接端子和底座仍是三个不同的型号；引脚排布、实际导线截面积和供货情况仍属未知，须由 R&D 验证。",
-    "Nur einige dokumentierte Gehäuse, nicht der gesamte Markt. Gehäuse, Crimpkontakte und Grundgehäuse bleiben drei unterschiedliche Artikelnummern; Pinbelegung, tatsächlicher Drahtquerschnitt und Verfügbarkeit bleiben unbekannt und müssen von der R&D überprüft werden.",
-    "Solo unas pocas carcasas documentadas, no el mercado entero. La carcasa, los contactos de engaste y la base siguen siendo tres referencias distintas; el patillaje, la sección real del cable y la disponibilidad siguen siendo desconocidos y deben ser verificados por R&D.",
-    "Документированы только некоторые корпуса, а не весь рынок. Корпус, обжимные контакты и основание остаются тремя отдельными артикулами; распиновка, фактическое сечение провода и наличие остаются неизвестными и подлежат проверке со стороны R&D.",
-    "Solo alcuni involucri documentati, non l'intero mercato. Involucro, contatti a crimpare e basetta rimangono tre codici distinti; piedinatura, sezione effettiva del filo e disponibilità rimangono sconosciute e devono essere verificate da R&D.",
-    "文書化されている一部のハウジングのみであり、市場全体を網羅していません。ハウジング、圧着コンタクト、ヘッダーは3つの個別の品番のままです。ピン配列、実際の電線断面積、在庫状況は不明であり、R&D による検証が必要です。"
-  ],
   "Quelques questions simples, dans votre langue : ce que vous voulez détecter, où le capteur se place, dans quelles conditions.": [
     "A few simple questions, in your language: what you want to detect, where the sensor sits, under which conditions.",
     "几个简单的问题，用您的语言：您想检测什么、传感器安装在哪里、在什么条件下。",
@@ -15920,23 +15614,14 @@
     "Riscontro R&D",
     "R&Dフィードバック"
   ],
-  "Retour au dossier": [
-    "Back to dossier",
-    "返回档案",
-    "Zurück zum Dossier",
-    "Volver al expediente",
-    "Назад к досье",
-    "Torna al dossier",
-    "資料に戻る"
-  ],
   "Retour au projet": [
-    "Back to project",
+    "Back to the project",
     "返回项目",
     "Zurück zum Projekt",
     "Volver al proyecto",
-    "Назад к проекту",
+    "Вернуться к проекту",
     "Torna al progetto",
-    "プロジェクトへ戻る"
+    "プロジェクトに戻る"
   ],
   "Retour client (version": [
     "Customer feedback (version",
@@ -16450,15 +16135,6 @@
     "Требуется точный артикул (приблизительные совпадения не допускаются).",
     "Codice esatto richiesto (nessuna corrispondenza approssimativa).",
     "正確な型番が必要です（類似の一致は不可）。"
-  ],
-  "Référence exacte requise : une gamme ne suffit pas, la revue doit d'abord fixer la référence commandable.": [
-    "Exact part number required: a product family is not sufficient; the review must first define the orderable part number.",
-    "需要确切型号：仅提供产品系列不够，审核必须首先确定可订购的型号。",
-    "Genaue Artikelnummer erforderlich: Eine Produktfamilie reicht nicht aus, das Review muss zuerst die bestellbare Artikelnummer festlegen.",
-    "Referencia exacta requerida: una gama no es suficiente, la revisión debe fijar primero la referencia que se puede pedir.",
-    "Требуется точный артикул: продуктовой линейки недостаточно, ревью должно сначала определить заказываемый артикул.",
-    "Codice esatto richiesto: una serie non è sufficiente, la revisione deve prima definire il codice ordinabile.",
-    "正確な型番が必要です。製品ファミリーのみでは不十分であり、レビューで最初に発注可能な型番を確定する必要があります。"
   ],
   "Réglages avancés du câble": [
     "Advanced cable settings",
@@ -17423,15 +17099,6 @@
     "Monitoraggio",
     "追跡"
   ],
-  "Suivi de mon dossier": [
-    "Tracking my case file",
-    "我的资料进度",
-    "Verfolgung meines Dossiers",
-    "Seguimiento de mi expediente",
-    "Отслеживание моего дела",
-    "Monitoraggio del mio fascicolo",
-    "案件の進捗"
-  ],
   "Suivi mis à jour.": [
     "Tracking updated.",
     "跟踪已更新。",
@@ -17837,15 +17504,6 @@
     "Testo per il prospect nella lingua richiesta.",
     "要求された言語での見込み顧客向けテキスト。"
   ],
-  "Textes de ce dossier (exigences, notes, questions, contraintes) traduits en anglais.": [
-    "Texts of this file (requirements, notes, questions, constraints) translated into English.",
-    "本资料中的文字（要求、备注、问题、约束）译为英文。",
-    "Texte dieser Unterlage (Anforderungen, Notizen, Fragen, Randbedingungen) ins Englische übersetzt.",
-    "Textos de este expediente (requisitos, notas, preguntas, restricciones) traducidos al inglés.",
-    "Тексты этого дела (требования, заметки, вопросы, ограничения), переведённые на английский.",
-    "Testi di questo fascicolo (requisiti, note, domande, vincoli) tradotti in inglese.",
-    "この資料の文章（要件・メモ・質問・制約）を英語に翻訳します。"
-  ],
   "Tolérance": [
     "Tolerance",
     "公差",
@@ -18233,15 +17891,6 @@
     "Inviare alla review Standex",
     "Standex のレビューに送信"
   ],
-  "Transmission à la revue Standex en cours…": [
-    "Submitting for Standex review…",
-    "正在提交 Standex 评审…",
-    "Übermittlung zur Standex-Review läuft…",
-    "Enviando a la revisión de Standex…",
-    "Идёт отправка на рассмотрение Standex…",
-    "Invio alla review Standex in corso…",
-    "Standex のレビューに送信しています…"
-  ],
   "Tri et affectation": [
     "Sorting and assignment",
     "分选与分配",
@@ -18440,15 +18089,6 @@
     "Su questo fascicolo è già avviato un accordo di riservatezza: non può più essere rimosso da questa schermata.",
     "この案件では秘密保持契約がすでに進行中です。この画面からは解除できません。"
   ],
-  "Un accord de confidentialité vérifié est en vigueur sur ce dossier : il ne peut pas être retiré depuis cet écran.": [
-    "A verified non-disclosure agreement is in force on this case file: it cannot be removed from this screen.",
-    "本文件已有经核实的生效保密协议：无法在此页面撤销。",
-    "Für dieses Dossier gilt eine geprüfte Geheimhaltungsvereinbarung: Sie kann auf diesem Bildschirm nicht entfernt werden.",
-    "Hay un acuerdo de confidencialidad verificado en vigor en este expediente: no puede retirarse desde esta pantalla.",
-    "По этому делу действует проверенное соглашение о неразглашении: его нельзя отменить на этом экране.",
-    "Su questo fascicolo è in vigore un accordo di riservatezza verificato: non può essere rimosso da questa schermata.",
-    "この案件には検証済みの秘密保持契約が有効です。この画面からは解除できません。"
-  ],
   "Un aimant que l'on approche d'un capteur reed sous ampoule de verre": [
     "A magnet brought close to a glass reed sensor",
     "靠近玻璃管 reed 传感器的磁铁",
@@ -18547,15 +18187,6 @@
     "Состояние движения без идентификатора проигнорировано.",
     "Uno stato di movimento senza identificatore è stato ignorato.",
     "識別子のない動作状態は無視されました。"
-  ],
-  "Une demande de NDA est déjà ouverte sur ce dossier. La retirer abandonne cette demande ; le document non signé reste sur votre appareil. Continuer ?": [
-    "An NDA request is already open on this project. Removing it abandons that request; the unsigned document stays on your device. Continue?",
-    "该项目已存在保密协议请求。取消将放弃该请求；未签署的文件仍保留在您的设备上。是否继续？",
-    "Für dieses Projekt liegt bereits eine NDA-Anfrage vor. Ein Entfernen bricht diese Anfrage ab; das nicht unterzeichnete Dokument bleibt auf Ihrem Gerät. Fortfahren?",
-    "Ya hay una solicitud de NDA abierta en este proyecto. Retirarla abandona esa solicitud; el documento sin firmar permanece en su dispositivo. ¿Continuar?",
-    "Для этого проекта уже открыт запрос на NDA. Его снятие отменяет запрос; неподписанный документ остаётся на вашем устройстве. Продолжить?",
-    "Su questo progetto è già aperta una richiesta di NDA. Rimuoverla abbandona la richiesta; il documento non firmato resta sul tuo dispositivo. Continuare?",
-    "このプロジェクトではすでに NDA の要望が開かれています。取り消すとその要望は破棄されます。未署名の文書はお使いの端末に残ります。続行しますか？"
   ],
   "Une dimension laissée vide reste inconnue et ne filtre rien.": [
     "A dimension left blank stays unknown and filters nothing.",
@@ -18727,15 +18358,6 @@
     "Этап «Closed Won» никогда не выставляется автоматически: он выбирается здесь, осознанно.",
     "La fase «Closed Won» non viene mai impostata automaticamente: si sceglie qui, consapevolmente.",
     "「Closed Won」段階は自動では設定されません。ここで意図して選びます。"
-  ],
-  "Uniquement si votre entreprise en a besoin. Sans NDA, vous pouvez remplir et transmettre votre dossier normalement : les accords de partage restent séparés et inchangés.": [
-    "Only if your company needs one. Without an NDA you can still complete and send your case file normally: the sharing agreements remain separate and unchanged.",
-    "仅在贵公司需要时使用。没有 NDA，您仍可正常填写并提交文件：共享同意事项保持独立且不变。",
-    "Nur wenn Ihr Unternehmen sie benötigt. Ohne NDA können Sie Ihr Dossier ganz normal ausfüllen und senden: Die Freigabe-Einwilligungen bleiben getrennt und unverändert.",
-    "Solo si su empresa lo necesita. Sin NDA puede completar y enviar su expediente con normalidad: los consentimientos de intercambio siguen separados y sin cambios.",
-    "Только если это нужно вашей компании. Без NDA вы можете обычным образом заполнить и отправить дело: согласия на передачу остаются отдельными и неизменными.",
-    "Solo se la vostra azienda ne ha bisogno. Senza NDA potete comunque compilare e inviare il fascicolo normalmente: i consensi di condivisione restano separati e invariati.",
-    "貴社が必要とする場合のみです。NDA がなくてもカルテを通常どおり作成し送信できます。共有の同意は別個で変更されません。"
   ],
   "Unités du fichier": [
     "File units",
@@ -19015,15 +18637,6 @@
     "Английская версия готовится…",
     "Versione inglese in corso…",
     "英語版を作成中…"
-  ],
-  "Version anglaise non demandée : votre accord de traduction n'a pas été donné pour cette version. Le dossier d'origine est bien arrivé.": [
-    "English version not requested: your translation consent was not given for this revision. The original file did arrive.",
-    "未请求英文版本：您未对该版本给予翻译许可。原始资料已送达。",
-    "Englische Fassung nicht angefordert: Ihre Einwilligung zur Übersetzung liegt für diese Version nicht vor. Die Originalunterlage ist angekommen.",
-    "Versión en inglés no solicitada: no dio su consentimiento de traducción para esta revisión. El expediente original sí llegó.",
-    "Английская версия не запрошена: вы не дали согласия на перевод этой ревизии. Оригинал получен.",
-    "Versione inglese non richiesta: non hai dato il consenso alla traduzione per questa revisione. Il fascicolo originale è arrivato.",
-    "英語版は依頼されていません。このバージョンについて翻訳の同意がありません。原本は届いています。"
   ],
   "Version anglaise non produite. Vous pouvez relancer.": [
     "The English version was not produced. You can start it again.",
@@ -19466,15 +19079,6 @@
     "Il fascicolo è cambiato dall'apertura di questa schermata. Ricaricalo: la revisione e l'offerta seguono sempre l'ultima versione inviata.",
     "この画面を開いてからケースファイルが更新されました。再読み込みしてください。レビューおよび見積は常に最後に送信されたバージョンに基づきます。"
   ],
-  "Votre dossier est bien arrivé chez Standex. Seule une étape complémentaire a échoué : consultez le suivi de votre dossier, ne renvoyez pas le dossier pour autant.": [
-    "Your case file did reach Standex. Only an extra step failed: check the tracking of your case file, and do not send it again.",
-    "您的资料已送达 Standex。仅有一个附加步骤失败：请查看案件进度，不要重复发送。",
-    "Ihr Dossier ist bei Standex eingegangen. Nur ein zusätzlicher Schritt ist fehlgeschlagen: Sehen Sie in der Verfolgung Ihres Dossiers nach und senden Sie es nicht erneut.",
-    "Su expediente sí llegó a Standex. Solo falló un paso adicional: consulte el seguimiento de su expediente y no lo envíe de nuevo.",
-    "Ваше дело действительно получено Standex. Не удался только дополнительный шаг: посмотрите отслеживание дела и не отправляйте его повторно.",
-    "Il vostro fascicolo è arrivato a Standex. È fallito solo un passaggio aggiuntivo: consultate il monitoraggio del fascicolo e non inviatelo di nuovo.",
-    "案件は Standex に届いています。失敗したのは追加の処理のみです。案件の進捗を確認し、再送はしないでください。"
-  ],
   "Votre envoi est confirmé. Pour transmettre de nouvelles modifications, relisez le résumé et confirmez à nouveau votre accord d'envoi.": [
     "Your send is confirmed. To submit further changes, re-read the summary and confirm your agreement to send again.",
     "发送已确认。若要提交新的修改，请重读摘要并再次确认发送同意。",
@@ -19681,15 +19285,6 @@
     "Выполняется проверка бэкенда…",
     "Verifica del backend in corso…",
     "バックエンドの確認中…"
-  ],
-  "Vérification du dossier…": [
-    "Checking the dossier…",
-    "正在检查方案…",
-    "Prüfung des Dossiers…",
-    "Comprobando el expediente…",
-    "Проверка досье…",
-    "Verifica del dossier in corso…",
-    "案件を確認しています…"
   ],
   "Vérification manuelle du document signé": [
     "Manual verification of signed document",
@@ -20050,15 +19645,6 @@
     "вызвано:",
     "causato da:",
     "原因："
-  ],
-  "ce dossier, en mémoire de l'onglet": [
-    "this case file, stored in tab memory",
-    "此用例文件，保存在标签页内存中",
-    "dieses Dossier, im Speicher des Tabs",
-    "este expediente, en la memoria de la pestaña",
-    "это досье, в памяти вкладки",
-    "questo fascicolo, nella memoria della scheda",
-    "このケースファイル（タブのメモリ上）"
   ],
   "ce fichier": [
     "this file",
@@ -20897,15 +20483,6 @@
     "usa la pompa",
     "ポンプで使用する値"
   ],
-  "la session et le dossier": [
-    "the session and dossier",
-    "会话和档案",
-    "Sitzung und Dossier",
-    "la sesión y el expediente",
-    "сеанс и досье",
-    "la sessione e il dossier",
-    "セッションと資料"
-  ],
   "langue du client :": [
     "client language:",
     "客户语言：",
@@ -21310,15 +20887,6 @@
     "условно разомкнут, затем пересчитан",
     "aperto per convenzione didattica, poi ricalcolato",
     "学習上は開から開始し再計算"
-  ],
-  "ouvrir ce dossier": [
-    "open this case file",
-    "打开此案卷",
-    "Diese Akte öffnen",
-    "abrir este expediente",
-    "открыть это дело",
-    "apri questo fascicolo",
-    "この案件を開く"
   ],
   "passage latéral": [
     "lateral pass",
@@ -21841,15 +21409,6 @@
     "источник:",
     "fonte:",
     "出典："
-  ],
-  "source interne Standex, à confirmer par la R&D": [
-    "internal Standex source, to be confirmed by R&D",
-    "Standex内部来源，需由研发部门确认",
-    "interne Standex-Quelle, von der F&E zu bestätigen",
-    "fuente interna de Standex, a confirmar por I+D",
-    "внутренний источник Standex, требует подтверждения НИОКР",
-    "fonte interna Standex, da confermare da parte della R&S",
-    "Standex社内出典、研究開発部門による確認が必要"
   ],
   "spécifique": [
     "custom",
@@ -22652,15 +22211,6 @@
     "Campioni e tracciamento",
     "サンプルと進捗追跡"
   ],
-  "Échantillons possibles seulement après une revue Standex validée et publiée.": [
-    "Samples possible only after a validated and published Standex review.",
-    "仅在Standex审核验证并发布后方可提供样品。",
-    "Muster nur nach validiertem und veröffentlichtem Standex-Review möglich.",
-    "Muestras posibles únicamente tras una revisión Standex validada y publicada.",
-    "Образцы возможны только после утверждения и публикации ревью Standex.",
-    "Campioni possibili solo dopo una revisione Standex convalidata e pubblicata.",
-    "検証および公開されたStandexレビューの後にのみサンプル提供が可能です。"
-  ],
   "Échantillons utiles avant": [
     "Samples required before",
     "样品需求截止时间",
@@ -23120,15 +22670,6 @@
     "…). La generazione di un documento non equivale a una firma: registrare qui la prova del documento effettivamente firmato.",
     "…）。ドキュメントの生成は署名を意味しません。実際に署名されたドキュメントの証明をここに登録してください。"
   ],
-  "…, vérifié avant chaque remplissage). L'original reste intact : seule une copie remplie est produite, sur cet appareil, sans transmettre le dossier.": [
-    "…, checked before each completion). The original remains intact: only a completed copy is generated, on this device, without transmitting the case file.",
-    "…，每次填写前均会校验）。原始文件保持不变：仅在本设备上生成一份已填写的副本，无需传输案件文件。",
-    "…, vor jedem Ausfüllen überprüft). Das Original bleibt unverändert: Es wird nur eine ausgefüllte Kopie auf diesem Gerät erstellt, ohne die Akte zu übertragen.",
-    "…, verificado antes de cada cumplimentación). El original permanece intacto: solo se genera una copia cumplimentada, en este dispositivo, sin transmitir el expediente.",
-    "…, проверяется перед каждым заполнением). Оригинал остается неизменным: только заполненная копия создается на этом устройстве, без передачи досье.",
-    "…, verificato prima di ogni compilazione). L'originale rimane intatto: viene generata solo una copia compilata, su questo dispositivo, senza trasmettere il fascicolo.",
-    "…、記入ごとに毎回確認されます）。元のファイルは変更されず、本端末上で記入済みコピーのみが作成され、案件ファイルが送信されることはありません。"
-  ],
   "…. Une modification faite ici ne vaut jamais retour publié.": [
     "…. Any change made here does not count as published feedback.",
     "……此处所做的任何更改均不视为已发布的反馈。",
@@ -23137,24 +22678,6 @@
     "…. Изменение, внесенное здесь, ни в коем случае не считается опубликованным отзывом.",
     "…. Una modifica apportata qui non vale mai come riscontro pubblicato.",
     "…。ここで行われた変更は公開されたフィードバックとはみなされません。"
-  ],
-  "Critères d'exploration en cours. Vos réponses ne sont pas modifiées.": [
-    "Exploration criteria in use. Your answers are not modified.",
-    "正在使用探索条件。您的回答未被修改。",
-    "Erkundungskriterien aktiv. Ihre Antworten werden nicht verändert.",
-    "Criterios de exploración en curso. Sus respuestas no se modifican.",
-    "Используются критерии поиска. Ваши ответы не изменяются.",
-    "Criteri di esplorazione in corso. Le sue risposte non vengono modificate.",
-    "探索条件を使用中です。回答は変更されません。"
-  ],
-  "· exploration": [
-    "· exploration",
-    "· 探索",
-    "· Erkundung",
-    "· exploración",
-    "· поиск",
-    "· esplorazione",
-    "· 探索"
   ],
   "Aucun critère actif : tous les capteurs de l'aperçu sont affichés.": [
     "No active criterion: every sensor of this preview is shown.",
@@ -24550,5 +24073,626 @@
     "Ответ инженера в течение 2 рабочих дней.",
     "Risposta di un ingegnere entro 2 giorni lavorativi.",
     "エンジニアが 2 営業日以内に回答します。"
+  ],
+  "Contenu importé dans un projet local : aucun projet Standex n'y est rattaché, et l'accord de confidentialité comme l'accord d'envoi sont à refaire.": [
+    "Content imported into a local case file: no Standex case file is linked to it, and both the non-disclosure agreement and sending agreement must be renewed.",
+    "内容已导入本地项目：未关联任何 Standex 项目，保密协议和发送协议均需重新签署。",
+    "Inhalt in einen lokalen Vorgang importiert: Es ist kein Standex-Vorgang damit verknüpft, und sowohl die Geheimhaltungsvereinbarung als auch die Sendevereinbarung müssen erneuert werden.",
+    "Contenido importado en un proyecto local: no hay ningún proyecto Standex vinculado, y tanto el acuerdo de confidencialidad como el acuerdo de envío deben volver a realizarse.",
+    "Содержимое импортировано в локальное проект: к нему не привязано проект Standex, и соглашение о конфиденциальности, и согласие на отправку необходимо оформить заново.",
+    "Contenuto importato in un progetto locale: nessun progetto Standex è collegato, e sia l'accordo di riservatezza sia l'accordo di invio devono essere rifatti.",
+    "ローカルプロジェクトファイルにインポートされたコンテンツ：Standex プロジェクトファイルは関連付けられておらず、秘密保持契約および送信への同意をやり直す必要があります。"
+  ],
+  "Partage du modèle 3D avec l'équipe Standex en charge du projet.": [
+    "Sharing the 3D model with the Standex team in charge of the case file.",
+    "与负责该项目的 Standex 团队共享 3D 模型。",
+    "Teilen des 3D-Modells mit dem für den Vorgang zuständigen Standex-Team.",
+    "Compartir el modelo 3D con el equipo Standex a cargo del proyecto.",
+    "Предоставление 3D-модели команде Standex, ведущей проект.",
+    "Condivisione del modello 3D con il team Standex incaricato del progetto.",
+    "プロジェクトファイルを担当する Standex チームと 3D モデルを共有。"
+  ],
+  "La version anglaise n'a pas pu être produite. Votre projet d'origine est bien arrivé ; vous pouvez relancer.": [
+    "The English version could not be produced. Your original file did arrive; you can try again.",
+    "英文版本未能生成。您的原始资料已送达；您可以重试。",
+    "Die englische Fassung konnte nicht erstellt werden. Ihre Originalunterlage ist angekommen; Sie können es erneut versuchen.",
+    "No se pudo producir la versión en inglés. Su proyecto original sí llegó; puede reintentarlo.",
+    "Английскую версию создать не удалось. Ваш оригинал получен; можно повторить попытку.",
+    "Non è stato possibile produrre la versione inglese. Il tuo progetto originale è arrivato; puoi riprovare.",
+    "英語版を作成できませんでした。原本は届いています。もう一度お試しいただけます。"
+  ],
+  "Le projet ou la version visée a changé depuis le dépôt du fichier : préparez à nouveau le partage.": [
+    "The case file or target version has changed since the file was submitted: prepare the sharing again.",
+    "自提交文件以来，项目或目标版本已发生变化：请重新准备共享。",
+    "Der Vorgang oder die Zielversion hat sich seit der Hinterlegung der Datei geändert: Bereiten Sie das Teilen erneut vor.",
+    "El proyecto o la versión de destino ha cambiado desde el depósito del archivo: prepare de nuevo el uso compartido.",
+    "Досье или целевая версия изменились с момента загрузки файла: подготовьте отправку заново.",
+    "Il progetto o la versione di riferimento è cambiata dal deposito del file: preparare nuovamente la condivisione.",
+    "ファイルの送信以降、プロジェクトファイルまたは対象バージョンが変更されました：共有を再度準備してください。"
+  ],
+  "Version anglaise non demandée : votre accord de traduction n'a pas été donné pour cette version. Le projet d'origine est bien arrivé.": [
+    "English version not requested: your translation consent was not given for this revision. The original file did arrive.",
+    "未请求英文版本：您未对该版本给予翻译许可。原始资料已送达。",
+    "Englische Fassung nicht angefordert: Ihre Einwilligung zur Übersetzung liegt für diese Version nicht vor. Die Originalunterlage ist angekommen.",
+    "Versión en inglés no solicitada: no dio su consentimiento de traducción para esta revisión. El proyecto original sí llegó.",
+    "Английская версия не запрошена: вы не дали согласия на перевод этой ревизии. Оригинал получен.",
+    "Versione inglese non richiesta: non hai dato il consenso alla traduzione per questa revisione. Il progetto originale è arrivato.",
+    "英語版は依頼されていません。このバージョンについて翻訳の同意がありません。原本は届いています。"
+  ],
+  "· autre critère": [
+    "· other criterion",
+    "· 其他条件",
+    "· weiteres Kriterium",
+    "· otro criterio",
+    "· другой критерий",
+    "· altro criterio",
+    "· 他の条件"
+  ],
+  "Autres critères en cours. Vos réponses ne sont pas modifiées.": [
+    "Other criteria in progress. Your answers are unchanged.",
+    "正在使用其他筛选条件。您的回答未被修改。",
+    "Weitere Kriterien aktiv. Ihre Antworten bleiben unverändert.",
+    "Otros criterios en curso. Sus respuestas no se modifican.",
+    "Применены другие критерии. Ваши ответы не изменены.",
+    "Altri criteri in corso. Le sue risposte non vengono modificate.",
+    "他の条件を適用中です。回答は変更されません。"
+  ],
+  "Ces capteurs sont des exemples à essayer. Les ingénieurs Standex vérifieront leur adaptation à votre projet après l'envoi.": [
+    "These sensors are examples to try. The Standex engineers will check how they suit your project once you send it.",
+    "这些传感器只是可供试用的示例。发送后，Standex 工程师会核实它们是否适合您的项目。",
+    "Diese Sensoren sind Beispiele zum Erproben. Nach dem Senden prüfen die Standex-Ingenieure die Eignung für Ihr Projekt.",
+    "Estos sensores son ejemplos para probar. Tras el envío, los ingenieros Standex verificarán su adecuación a su proyecto.",
+    "Эти датчики — примеры для пробы. После отправки инженеры Standex проверят их пригодность для вашего проекта.",
+    "Questi sensori sono esempi da provare. Dopo l'invio, gli ingegneri Standex verificheranno l'idoneità al suo progetto.",
+    "これらのセンサーは試用のための例です。送信後、Standex のエンジニアがお客様のプロジェクトへの適合を確認します。"
+  ],
+  "Cette longueur n'est jamais une longueur approuvée : elle est vérifiée par les ingénieurs Standex.": [
+    "This length is never an approved length: it is verified during review by the Standex engineers.",
+    "此长度绝非批准长度：将在 R&D 评审中进行验证。",
+    "Diese Länge ist niemals eine freigegebene Länge: Sie wird im die Standex-Ingenieure-Review überprüft.",
+    "Esta longitud nunca es una longitud aprobada: se verifica en la revisión de R&D.",
+    "Эта длина никогда не является утвержденной: она проверяется в ходе ревью инженерами Standex.",
+    "Questa lunghezza non è mai una lunghezza approvata: viene verificata in sede di revisione gli ingegneri Standex.",
+    "この長さは承認された長さではありません。Standex のエンジニア レビューで検証されます。"
+  ],
+  "Connecteur {0} retenu comme préférence, à vérifier par les ingénieurs Standex.": [
+    "Connector {0} retained as a preference, to be verified by the Standex engineers.",
+    "已保留连接器 {0} 作为偏好，需由Standex 工程师部门核实。",
+    "Stecker {0} als Präferenz vorgemerkt, von der die Standex-Ingenieure zu prüfen.",
+    "Conector {0} retenido como preferencia, a verificar por los ingenieros Standex.",
+    "Разъём {0} принят как предпочтение, требует проверки инженерами Standex.",
+    "Connettore {0} scelto come preferenza, da verificare da parte della gli ingegneri Standex.",
+    "コネクター {0} が希望として記録され、Standex のエンジニア部門による確認が必要です。"
+  ],
+  "Quelques boîtiers documentés seulement, pas le marché entier. Boîtier, contacts à sertir et embase restent trois références distinctes ; brochage, section de fil réelle et disponibilité restent inconnus et à vérifier par les ingénieurs Standex.": [
+    "Only a few documented housings, not the entire market. Housing, crimp contacts, and header remain three distinct part numbers; pinout, actual wire cross-section, and availability remain unknown and must be verified by the Standex engineers.",
+    "仅包含少数记录的壳体，而非整个市场。壳体、压接端子和底座仍是三个不同的型号；引脚排布、实际导线截面积和供货情况仍属未知，须由 R&D 验证。",
+    "Nur einige dokumentierte Gehäuse, nicht der gesamte Markt. Gehäuse, Crimpkontakte und Grundgehäuse bleiben drei unterschiedliche Artikelnummern; Pinbelegung, tatsächlicher Drahtquerschnitt und Verfügbarkeit bleiben unbekannt und müssen von der die Standex-Ingenieure überprüft werden.",
+    "Solo unas pocas carcasas documentadas, no el mercado entero. La carcasa, los contactos de engaste y la base siguen siendo tres referencias distintas; el patillaje, la sección real del cable y la disponibilidad siguen siendo desconocidos y deben ser verificados por R&D.",
+    "Документированы только некоторые корпуса, а не весь рынок. Корпус, обжимные контакты и основание остаются тремя отдельными артикулами; распиновка, фактическое сечение провода и наличие остаются неизвестными и подлежат проверке со стороны инженерами Standex.",
+    "Solo alcuni involucri documentati, non l'intero mercato. Involucro, contatti a crimpare e basetta rimangono tre codici distinti; piedinatura, sezione effettiva del filo e disponibilità rimangono sconosciute e devono essere verificate da gli ingegneri Standex.",
+    "文書化されている一部のハウジングのみであり、市場全体を網羅していません。ハウジング、圧着コンタクト、ヘッダーは3つの個別の品番のままです。ピン配列、実際の電線断面積、在庫状況は不明であり、Standex のエンジニア による検証が必要です。"
+  ],
+  "Enregistrer en « à vérifier par les ingénieurs Standex »": [
+    "Save as “to be checked by the Standex engineers”",
+    "保存为“待 Standex 工程师核实”",
+    "Als „von den Standex-Ingenieuren zu prüfen“ speichern",
+    "Guardar como «a verificar por los ingenieros Standex»",
+    "Сохранить как «подлежит проверке инженерами Standex»",
+    "Salva come «da verificare dagli ingegneri Standex»",
+    "「Standex のエンジニアによる確認待ち」として保存"
+  ],
+  "Aucune combinaison connecteur/capteur qualifiée n'est documentée dans ce projet : toute référence saisie, sa contrepartie et son brochage restent à vérifier par les ingénieurs Standex.": [
+    "No qualified connector/sensor combination is documented in this project: any entered part number, its mating counterpart, and its pinout remain to be verified by the Standex engineers.",
+    "本项目中未记录任何合格的连接器/传感器组合：输入的任何型号、其对插端及引脚排布均需由 R&D 验证。",
+    "In diesem Projekt ist keine qualifizierte Steckverbinder/Sensor-Kombination dokumentiert: Jede eingegebene Artikelnummer, ihr Gegenstück und ihre Pinbelegung müssen von der die Standex-Ingenieure überprüft werden.",
+    "No hay documentada ninguna combinación conector/sensor cualificada en este proyecto: cualquier referencia introducida, su contraparte y su patillaje quedan pendientes de verificación por R&D.",
+    "В этом проекте не документировано ни одной квалифицированной комбинации соединитель/датчик: любой введенный артикул, ответная часть и распиновка подлежат проверке со стороны инженерами Standex.",
+    "Nessuna combinazione connettore/sensore qualificata è documentata in questo progetto: qualsiasi codice inserito, la controparte e la piedinatura restano da verificare da gli ingegneri Standex.",
+    "このプロジェクトには認定済みのコネクタ／センサーの組み合わせは文書化されていません。入力された品番、その相手側コネクタ、およびピン配列は、Standex のエンジニア による検証が必要です。"
+  ],
+  "source interne Standex, à confirmer par les ingénieurs Standex": [
+    "internal Standex source, to be confirmed by the Standex engineers",
+    "Standex 内部来源，待 Standex 工程师确认",
+    "interne Standex-Quelle, von den Standex-Ingenieuren zu bestätigen",
+    "fuente interna de Standex, a confirmar por los ingenieros Standex",
+    "внутренний источник Standex, подлежит подтверждению инженерами Standex",
+    "fonte interna Standex, da confermare dagli ingegneri Standex",
+    "Standex 社内ソース、Standex のエンジニアによる確認待ち"
+  ],
+  "Ingénieurs Standex": [
+    "Standex engineers",
+    "Standex 工程师",
+    "Standex-Ingenieure",
+    "Ingenieros Standex",
+    "Инженеры Standex",
+    "Ingegneri Standex",
+    "Standex のエンジニア"
+  ],
+  "J'autorise l'envoi de ce contenu à Standex (ingénieurs et commercial).": [
+    "I authorise sending this content to Standex (engineers and sales).",
+    "我授权将此内容发送给 Standex（工程师与销售）。",
+    "Ich erlaube das Senden dieses Inhalts an Standex (Ingenieure und Vertrieb).",
+    "Autorizo el envío de este contenido a Standex (ingenieros y comercial).",
+    "Я разрешаю отправить это содержимое в Standex (инженеры и отдел продаж).",
+    "Autorizzo l'invio di questo contenuto a Standex (ingegneri e commerciale).",
+    "この内容を Standex（エンジニアおよび営業）へ送信することを承諾します。"
+  ],
+  "Textes de ce projet (exigences, notes, questions, contraintes) traduits en anglais.": [
+    "Texts of this file (requirements, notes, questions, constraints) translated into English.",
+    "本资料中的文字（要求、备注、问题、约束）译为英文。",
+    "Texte dieser Unterlage (Anforderungen, Notizen, Fragen, Randbedingungen) ins Englische übersetzt.",
+    "Textos de este proyecto (requisitos, notas, preguntas, restricciones) traducidos al inglés.",
+    "Тексты этого дела (требования, заметки, вопросы, ограничения), переведённые на английский.",
+    "Testi di questo progetto (requisiti, note, domande, vincoli) tradotti in inglese.",
+    "この資料の文章（要件・メモ・質問・制約）を英語に翻訳します。"
+  ],
+  "J'autorise en plus la traduction en anglais des textes de ce projet par un service externe (Anthropic), afin que l'équipe Standex les lise en anglais. Références, valeurs, unités, noms et fichiers restent inchangés, et mon projet d'origine est conservé tel quel. Sans cette case, aucun texte n'est transmis à ce service.": [
+    "I also authorise an external service (Anthropic) to translate the texts of this file into English so the Standex team can read them in English. References, values, units, names and files stay unchanged, and my original file is kept as it is. Without this box, no text is sent to that service.",
+    "我另外授权外部服务（Anthropic）将本资料的文字翻译成英文，以便 Standex 团队用英文阅读。型号、数值、单位、姓名和文件保持不变，我的原始资料原样保留。不勾选此项，任何文字都不会发送给该服务。",
+    "Ich erlaube zusätzlich einem externen Dienst (Anthropic), die Texte dieser Unterlage ins Englische zu übersetzen, damit das Standex-Team sie auf Englisch lesen kann. Referenzen, Werte, Einheiten, Namen und Dateien bleiben unverändert, und meine Originalunterlage bleibt erhalten. Ohne dieses Häkchen wird kein Text an diesen Dienst gesendet.",
+    "Autorizo además a un servicio externo (Anthropic) a traducir al inglés los textos de este proyecto para que el equipo de Standex los lea en inglés. Referencias, valores, unidades, nombres y archivos permanecen sin cambios, y mi proyecto original se conserva tal cual. Sin esta casilla, no se envía ningún texto a ese servicio.",
+    "Я также разрешаю внешней службе (Anthropic) перевести тексты этого дела на английский, чтобы команда Standex читала их по-английски. Обозначения, значения, единицы, имена и файлы остаются без изменений, а мой оригинал сохраняется как есть. Без этой отметки ни один текст в эту службу не передаётся.",
+    "Autorizzo inoltre un servizio esterno (Anthropic) a tradurre in inglese i testi di questo progetto, affinché il team Standex li legga in inglese. Riferimenti, valori, unità, nomi e file restano invariati e il mio progetto originale è conservato tale e quale. Senza questa casella, nessun testo viene inviato a quel servizio.",
+    "Standex チームが英語で読めるよう、この資料の文章を外部サービス（Anthropic）が英語に翻訳することにも同意します。型番・数値・単位・氏名・ファイルはそのまま保持され、原本もそのまま保存されます。このチェックがない場合、文章は一切このサービスに送信されません。"
+  ],
+  "Uniquement si votre entreprise en a besoin. Sans NDA, vous pouvez remplir et transmettre votre projet normalement : les accords de partage restent séparés et inchangés.": [
+    "Only if your company needs one. Without an NDA you can still complete and send your case file normally: the sharing agreements remain separate and unchanged.",
+    "仅在贵公司需要时使用。没有 NDA，您仍可正常填写并提交文件：共享同意事项保持独立且不变。",
+    "Nur wenn Ihr Unternehmen sie benötigt. Ohne NDA können Sie Ihr Projekt ganz normal ausfüllen und senden: Die Freigabe-Einwilligungen bleiben getrennt und unverändert.",
+    "Solo si su empresa lo necesita. Sin NDA puede completar y enviar su proyecto con normalidad: los consentimientos de intercambio siguen separados y sin cambios.",
+    "Только если это нужно вашей компании. Без NDA вы можете обычным образом заполнить и отправить дело: согласия на передачу остаются отдельными и неизменными.",
+    "Solo se la vostra azienda ne ha bisogno. Senza NDA potete comunque compilare e inviare il progetto normalmente: i consensi di condivisione restano separati e invariati.",
+    "貴社が必要とする場合のみです。NDA がなくてもカルテを通常どおり作成し送信できます。共有の同意は別個で変更されません。"
+  ],
+  "Suivi de mon projet": [
+    "Tracking my project",
+    "我的项目跟踪",
+    "Verfolgung meines Projekts",
+    "Seguimiento de mi proyecto",
+    "Отслеживание моего проекта",
+    "Monitoraggio del mio progetto",
+    "プロジェクトの進捗"
+  ],
+  "ce projet, en mémoire de l'onglet": [
+    "this project, in the tab's memory",
+    "本项目，保存在标签页内存中",
+    "dieses Projekt, im Speicher des Tabs",
+    "este proyecto, en la memoria de la pestaña",
+    "этот проект, в памяти вкладки",
+    "questo progetto, nella memoria della scheda",
+    "このプロジェクト（タブのメモリ内）"
+  ],
+  "ouvrir ce projet": [
+    "open this project",
+    "打开该项目",
+    "dieses Projekt öffnen",
+    "abrir este proyecto",
+    "открыть этот проект",
+    "aprire questo progetto",
+    "このプロジェクトを開く"
+  ],
+  "Le dernier contenu envoyé de ce projet n'a pas pu être relu : le projet ouvert ici reste inchangé.": [
+    "The last submitted content of this case file could not be re-read: the case file open here remains unchanged.",
+    "此案卷最后发送的内容无法重新读取：此处打开的案卷保持不变。",
+    "Der zuletzt gesendete Inhalt dieser Projekt konnte nicht erneut gelesen werden: Die hier geöffnete Projekt bleibt unverändert.",
+    "No se ha podido volver a leer el último contenido enviado de este proyecto: el proyecto abierto aquí permanece sin cambios.",
+    "Последнее отправленное содержимое этого дела не удалось перечитать: открытое здесь дело осталось без изменений.",
+    "Impossibile rileggere l'ultimo contenuto inviato di questo progetto: il progetto aperto qui rimane invariato.",
+    "このプロジェクトの最後に送信されたコンテンツを再読み込みできませんでした。ここで開かれているプロジェクトは変更されていません。"
+  ],
+  "…, vérifié avant chaque remplissage). L'original reste intact : seule une copie remplie est produite, sur cet appareil, sans transmettre le projet.": [
+    "…, checked before each completion). The original remains intact: only a completed copy is generated, on this device, without transmitting the case file.",
+    "…，每次填写前均会校验）。原始文件保持不变：仅在本设备上生成一份已填写的副本，无需传输案件文件。",
+    "…, vor jedem Ausfüllen überprüft). Das Original bleibt unverändert: Es wird nur eine ausgefüllte Kopie auf diesem Gerät erstellt, ohne die Projekt zu übertragen.",
+    "…, verificado antes de cada cumplimentación). El original permanece intacto: solo se genera una copia cumplimentada, en este dispositivo, sin transmitir el proyecto.",
+    "…, проверяется перед каждым заполнением). Оригинал остается неизменным: только заполненная копия создается на этом устройстве, без передачи проект.",
+    "…, verificato prima di ogni compilazione). L'originale rimane intatto: viene generata solo una copia compilata, su questo dispositivo, senza trasmettere il progetto.",
+    "…、記入ごとに毎回確認されます）。元のファイルは変更されず、本端末上で記入済みコピーのみが作成され、プロジェクトファイルが送信されることはありません。"
+  ],
+  "la session et le projet": [
+    "the session and the project",
+    "会话与项目",
+    "die Sitzung und das Projekt",
+    "la sesión y el proyecto",
+    "сессия и проект",
+    "la sessione e il progetto",
+    "セッションとプロジェクト"
+  ],
+  "Décrivez ce que vous voulez détecter. Sensor Studio vous propose des couples capteur-aimant Standex et vous montre s'ils détecteront dans votre montage.": [
+    "Describe what you want to detect. Sensor Studio proposes Standex sensor-magnet pairs and shows you whether they will detect in your assembly.",
+    "描述您想要检测的对象。Sensor Studio 会推荐 Standex 传感器与磁铁的组合，并显示它们能否在您的装配中实现检测。",
+    "Beschreiben Sie, was Sie erkennen möchten. Sensor Studio schlägt Standex-Paare aus Sensor und Magnet vor und zeigt, ob sie in Ihrem Aufbau erkennen.",
+    "Describa qué quiere detectar. Sensor Studio le propone parejas sensor-imán de Standex y le muestra si detectarán en su montaje.",
+    "Опишите, что нужно обнаруживать. Sensor Studio предложит пары «датчик — магнит» Standex и покажет, сработают ли они в вашей сборке.",
+    "Descriva ciò che vuole rilevare. Sensor Studio propone coppie sensore-magnete Standex e mostra se rileveranno nel suo montaggio.",
+    "検出したい対象を記述してください。Sensor Studio が Standex のセンサーと磁石の組み合わせを提案し、お客様の取り付けで検出できるかを示します。"
+  ],
+  "Commencer": [
+    "Start",
+    "开始",
+    "Starten",
+    "Empezar",
+    "Начать",
+    "Inizia",
+    "はじめる"
+  ],
+  "J'ai déjà un projet": [
+    "I already have a project",
+    "我已有项目",
+    "Ich habe schon ein Projekt",
+    "Ya tengo un proyecto",
+    "У меня уже есть проект",
+    "Ho già un progetto",
+    "すでにプロジェクトがあります"
+  ],
+  "Rapprochez l'aimant →": [
+    "Move the magnet closer →",
+    "让磁铁靠近 →",
+    "Magnet näher bringen →",
+    "Acerque el imán →",
+    "Приблизьте магнит →",
+    "Avvicini il magnete →",
+    "磁石を近づけてください →"
+  ],
+  "Détecté à {0} mm": [
+    "Detected at {0} mm",
+    "在 {0} mm 处检测到",
+    "Erkannt bei {0} mm",
+    "Detectado a {0} mm",
+    "Обнаружено на {0} мм",
+    "Rilevato a {0} mm",
+    "{0} mm で検出"
+  ],
+  "Décrivez": [
+    "Describe",
+    "描述",
+    "Beschreiben",
+    "Describa",
+    "Опишите",
+    "Descriva",
+    "記述する"
+  ],
+  "Testez": [
+    "Test",
+    "测试",
+    "Testen",
+    "Pruebe",
+    "Проверьте",
+    "Provi",
+    "試す"
+  ],
+  "Confirmez": [
+    "Confirm",
+    "确认",
+    "Bestätigen",
+    "Confirme",
+    "Подтвердите",
+    "Confermi",
+    "確定する"
+  ],
+  "Six questions simples, dans vos mots.": [
+    "Six simple questions, in your own words.",
+    "六个简单问题，用您自己的话回答。",
+    "Sechs einfache Fragen, in Ihren Worten.",
+    "Seis preguntas sencillas, con sus palabras.",
+    "Шесть простых вопросов — вашими словами.",
+    "Sei domande semplici, con le sue parole.",
+    "6 つの簡単な質問に、ご自身の言葉で。"
+  ],
+  "Des couples capteur-aimant proposés, à essayer dans votre montage en 3D.": [
+    "Suggested sensor-magnet pairs, to try in your assembly in 3D.",
+    "推荐的传感器-磁铁组合，可在 3D 中于您的装配里试用。",
+    "Vorgeschlagene Sensor-Magnet-Paare, in 3D in Ihrem Aufbau zu erproben.",
+    "Parejas sensor-imán propuestas, para probar en su montaje en 3D.",
+    "Предложенные пары «датчик — магнит» можно опробовать в вашей сборке в 3D.",
+    "Coppie sensore-magnete proposte, da provare nel suo montaggio in 3D.",
+    "提案されたセンサーと磁石の組み合わせを、3D でお客様の取り付けに試せます。"
+  ],
+  "Standex relit votre projet et confirme avec des échantillons.": [
+    "Standex reviews your project and confirms with samples.",
+    "Standex 复核您的项目，并通过样品确认。",
+    "Standex prüft Ihr Projekt und bestätigt mit Mustern.",
+    "Standex revisa su proyecto y lo confirma con muestras.",
+    "Standex проверяет ваш проект и подтверждает образцами.",
+    "Standex rilegge il suo progetto e conferma con campioni.",
+    "Standex がプロジェクトを確認し、サンプルで裏付けます。"
+  ],
+  "mm · Vert : fermé · Gris : ouvert · Vue simplifiée du contact": [
+    "mm · Green: closed · Grey: open · Simplified view of the contact",
+    "mm · 绿色：闭合 · 灰色：断开 · 触点的简化视图",
+    "mm · Grün: geschlossen · Grau: offen · Vereinfachte Ansicht des Kontakts",
+    "mm · Verde: cerrado · Gris: abierto · Vista simplificada del contacto",
+    "мм · Зелёный: замкнут · Серый: разомкнут · Упрощённый вид контакта",
+    "mm · Verde: chiuso · Grigio: aperto · Vista semplificata del contatto",
+    "mm · 緑：閉 · 灰：開 · 接点の簡略表示"
+  ],
+  "Montage importé. Il est enregistré automatiquement dans votre projet.": [
+    "Assembly imported. It is saved automatically in your project.",
+    "已导入装配。它会自动保存到您的项目中。",
+    "Aufbau importiert. Er wird automatisch in Ihrem Projekt gespeichert.",
+    "Montaje importado. Se guarda automáticamente en su proyecto.",
+    "Сборка импортирована. Она автоматически сохраняется в вашем проекте.",
+    "Montaggio importato. Viene salvato automaticamente nel suo progetto.",
+    "取り付けを読み込みました。プロジェクトに自動保存されます。"
+  ],
+  "Télécharger le fichier de montage": [
+    "Download the assembly file",
+    "下载装配文件",
+    "Aufbaudatei herunterladen",
+    "Descargar el archivo de montaje",
+    "Скачать файл сборки",
+    "Scarica il file di montaggio",
+    "取り付けファイルをダウンロード"
+  ],
+  "Distances typiques publiées par Standex pour ce couple, dans cette position. À confirmer par un essai dans votre application.": [
+    "Typical distances published by Standex for this pair, in this position. To be confirmed by a test in your application.",
+    "Standex 为该组合在此位置公布的典型距离。需在您的应用中试验确认。",
+    "Von Standex veröffentlichte typische Abstände für dieses Paar in dieser Position. Durch einen Versuch in Ihrer Anwendung zu bestätigen.",
+    "Distancias típicas publicadas por Standex para esta pareja, en esta posición. A confirmar con un ensayo en su aplicación.",
+    "Типовые расстояния, опубликованные Standex для этой пары в этом положении. Подлежат подтверждению испытанием в вашем применении.",
+    "Distanze tipiche pubblicate da Standex per questa coppia, in questa posizione. Da confermare con una prova nella sua applicazione.",
+    "この組み合わせ・この位置について Standex が公表する代表的な距離です。お客様のアプリケーションでの試験で確認してください。"
+  ],
+  "Projet « {0} » ouvert{1}. Votre accord d'envoi et la relecture sont à refaire pour ce projet.": [
+    "Project “{0}” opened{1}. Your sending consent and the review must be done again for this project.",
+    "已打开项目“{0}”{1}。本项目的发送同意与复核需重新完成。",
+    "Projekt „{0}“ geöffnet{1}. Ihre Sendefreigabe und die Durchsicht sind für dieses Projekt erneut zu erteilen.",
+    "Proyecto «{0}» abierto{1}. Su consentimiento de envío y la revisión deben repetirse para este proyecto.",
+    "Проект «{0}» открыт{1}. Согласие на отправку и вычитку нужно выполнить для этого проекта заново.",
+    "Progetto «{0}» aperto{1}. Il consenso all'invio e la rilettura vanno rifatti per questo progetto.",
+    "プロジェクト「{0}」を開きました{1}。このプロジェクトでは送信の同意と読み返しをやり直してください。"
+  ],
+  "Contenu repris d'un envoi précédent. Le prochain envoi créera une nouvelle version de ce projet.": [
+    "Content reopened from an earlier submission. The next submission will create a new version of this project.",
+    "内容取自此前的一次提交。下一次发送将为本项目创建新版本。",
+    "Inhalt aus einer früheren Übermittlung übernommen. Die nächste Übermittlung erzeugt eine neue Version dieses Projekts.",
+    "Contenido retomado de un envío anterior. El próximo envío creará una nueva versión de este proyecto.",
+    "Содержимое взято из предыдущей отправки. Следующая отправка создаст новую версию этого проекта.",
+    "Contenuto ripreso da un invio precedente. Il prossimo invio creerà una nuova versione di questo progetto.",
+    "以前の送信内容を引き継いでいます。次の送信でこのプロジェクトの新しいバージョンが作成されます。"
+  ],
+  "Gabarit géométrique explicitement indicatif, issu des distances typiques publiées. Ce n'est pas une validation de votre montage.": [
+    "Explicitly indicativ geometric template, derived from published typical distances. It is not a validation of your assembly.",
+    "明确指示性性的几何样板，来自已发布的典型距离。它不是对您装配的验证。",
+    "Ausdrücklich indikative Geometrievorlage aus veröffentlichten typischen Abständen. Keine Validierung Ihrer Baugruppe.",
+    "Plantilla geométrica explícitamente indicativa, basada en distancias típicas publicadas. No valida su montaje.",
+    "Явно ориентировочный геометрический шаблон на основе опубликованных типовых расстояний. Это не валидация вашей сборки.",
+    "Sagoma geometrica esplicitamente indicativa, dalle distanze tipiche pubblicate. Non è una validazione del montaggio.",
+    "公表された代表距離に基づく、明示的に概略の幾何テンプレートです。組付けの検証ではありません。"
+  ],
+  "Gabarit géométrique indicatif, non caractérisé": [
+    "Schematic geometric template, not characterised",
+    "指示性性几何样板，未表征",
+    "Schematische Geometrievorlage, nicht charakterisiert",
+    "Plantilla geométrica indicativa, no caracterizada",
+    "Схематичный геометрический шаблон, не охарактеризован",
+    "Sagoma geometrica indicativea, non caratterizzata",
+    "概略の幾何テンプレート、未特性化"
+  ],
+  "Le gabarit affiché est explicitement indicatif.": [
+    "The displayed template is explicitly indicative.",
+    "所显示的样板是明确指示性性的。",
+    "Die gezeigte Vorlage ist ausdrücklich indikativ.",
+    "La plantilla mostrada es explícitamente indicativa.",
+    "Показанный шаблон явно ориентировочен.",
+    "La sagoma mostrata è esplicitamente indicativea.",
+    "表示されるテンプレートは明示的に概略です。"
+  ],
+  "Ce projet n'existe que dans cet onglet : fermer ou recharger la page l'efface. Exportez le projet pour le reprendre plus tard.": [
+    "This project exists only in this tab: closing or reloading the page deletes it. Export the project to resume later.",
+    "此项目仅存在于此标签页中：关闭或重新加载页面将删除它。导出案卷以备稍后继续。",
+    "Dieses Projekt existiert nur in dieser Registerkarte: Schließen oder Neuladen der Seite löscht es. Exportieren Sie das Projekt, um später fortzufahren.",
+    "Este proyecto solo existe en esta pestaña: cerrar o recargar la página lo eliminará. Exporte el proyecto para recuperarlo más tarde.",
+    "Этот проект существует только в этой вкладке: закрытие или перезагрузка страницы удалит его. Экспортируйте проект, чтобы возобновить позже.",
+    "Questo progetto esiste solo in questa scheda: la chiusura o il ricaricamento della pagina lo cancellerà. Esportare il progetto per riprenderlo in seguito.",
+    "このプロジェクトはこのタブにのみ存在します。ページを閉じるかリロードすると消去されます。後で再開するにはプロジェクトファイルをエクスポートしてください。"
+  ],
+  "Envoyer mon projet": [
+    "Send my project",
+    "发送我的资料",
+    "Mein Projekt senden",
+    "Enviar mi proyecto",
+    "Отправить моё проект",
+    "Inviare il mio progetto",
+    "プロジェクトを送信"
+  ],
+  "Ce fichier n'est pas un export de projet de conception.": [
+    "This file is not a design project export.",
+    "该文件不是设计案卷的导出文件。",
+    "Diese Datei ist kein Export eines Entwicklungs-Vorgangs.",
+    "Este archivo no es una exportación de proyecto de diseño.",
+    "Этот файл не является экспортом файла дела разработки.",
+    "Questo file non è un'esportazione di progetto di progettazione.",
+    "このファイルは設計ケースファイルのエクスポートではありません。"
+  ],
+  "Une demande de NDA est déjà ouverte sur ce projet. La retirer abandonne cette demande ; le document non signé reste sur votre appareil. Continuer ?": [
+    "An NDA request is already open on this project. Removing it abandons that request; the unsigned document stays on your device. Continue?",
+    "该项目已存在保密协议请求。取消将放弃该请求；未签署的文件仍保留在您的设备上。是否继续？",
+    "Für dieses Projekt liegt bereits eine NDA-Anfrage vor. Ein Entfernen bricht diese Anfrage ab; das nicht unterzeichnete Dokument bleibt auf Ihrem Gerät. Fortfahren?",
+    "Ya hay una solicitud de NDA abierta en este proyecto. Retirarla abandona esa solicitud; el documento sin firmar permanece en su dispositivo. ¿Continuar?",
+    "Для этого проекта уже открыт запрос на NDA. Его снятие отменяет запрос; неподписанный документ остаётся на вашем устройстве. Продолжить?",
+    "Su questo progetto è già aperta una richiesta di NDA. Rimuoverla abbandona la richiesta; il documento non firmato resta sul tuo dispositivo. Continuare?",
+    "このプロジェクトではすでに NDA の要望が開かれています。取り消すとその要望は破棄されます。未署名の文書はお使いの端末に残ります。続行しますか？"
+  ],
+  "Un accord de confidentialité vérifié est en vigueur sur ce projet : il ne peut pas être retiré depuis cet écran.": [
+    "A verified non-disclosure agreement is in force on this project: it cannot be removed from this screen.",
+    "本文件已有经核实的生效保密协议：无法在此页面撤销。",
+    "Für dieses Projekt gilt eine geprüfte Geheimhaltungsvereinbarung: Sie kann auf diesem Bildschirm nicht entfernt werden.",
+    "Hay un acuerdo de confidencialidad verificado en vigor en este proyecto: no puede retirarse desde esta pantalla.",
+    "По этому делу действует проверенное соглашение о неразглашении: его нельзя отменить на этом экране.",
+    "Su questo progetto è in vigore un accordo di riservatezza verificato: non può essere rimosso da questa schermata.",
+    "このプロジェクトには検証済みの秘密保持契約が有効です。この画面からは解除できません。"
+  ],
+  "Ce projet est enregistré chez Standex : connectez-vous pour modifier le choix de NDA. Rien n'a été changé.": [
+    "This project is registered with Standex: sign in to change the NDA choice. Nothing has been changed.",
+    "该项目已在 Standex 登记：请登录以更改保密协议选择。未做任何更改。",
+    "Dieses Projekt ist bei Standex registriert: Melden Sie sich an, um die NDA-Auswahl zu ändern. Es wurde nichts geändert.",
+    "Este proyecto está registrado en Standex: inicie sesión para cambiar la elección de NDA. No se ha cambiado nada.",
+    "Этот проект зарегистрирован в Standex: войдите в систему, чтобы изменить выбор NDA. Ничего не изменено.",
+    "Questo progetto è registrato presso Standex: accedi per modificare la scelta dell'NDA. Non è stato modificato nulla.",
+    "このプロジェクトは Standex に登録されています。NDA の選択を変更するにはサインインしてください。変更は行われていません。"
+  ],
+  "Le NDA est préparé mais non signé. Faites signer le document, puis demandez sa vérification par Standex avant de transmettre le projet.": [
+    "The NDA is prepared but unsigned. Have the document signed, then ask Standex to verify it before submitting the file.",
+    "NDA 已准备但尚未签署。请先签署文件，然后在提交资料前请求 Standex 验证。",
+    "Das NDA ist vorbereitet, aber nicht unterzeichnet. Lassen Sie das Dokument unterzeichnen und vor der Übermittlung von Standex prüfen.",
+    "El NDA está preparado pero no firmado. Haga firmar el documento y solicite su verificación por Standex antes de enviar el proyecto.",
+    "NDA подготовлено, но не подписано. Подпишите документ и запросите его проверку Standex перед отправкой проект.",
+    "L'NDA è preparato ma non firmato. Faccia firmare il documento e ne chieda la verifica a Standex prima dell'invio del progetto.",
+    "NDA は準備済みですが未署名です。文書に署名し、資料を送信する前に Standex へ確認を依頼してください。"
+  ],
+  "Vérification du projet…": [
+    "Checking the project…",
+    "正在检查方案…",
+    "Prüfung des Projekts…",
+    "Comprobando el proyecto…",
+    "Проверка проект…",
+    "Verifica del progetto in corso…",
+    "プロジェクトを確認しています…"
+  ],
+  "Transmission à la relecture par les ingénieurs Standex en cours…": [
+    "Submitting for Standex review…",
+    "正在提交 Standex 评审…",
+    "Übermittlung zur Standex-Review läuft…",
+    "Enviando a la revisión de Standex…",
+    "Идёт отправка на рассмотрение Standex…",
+    "Invio alla review Standex in corso…",
+    "Standex のレビューに送信しています…"
+  ],
+  "Votre projet est bien arrivé chez Standex. Seule une étape complémentaire a échoué : consultez le suivi de votre projet, ne renvoyez pas le projet pour autant.": [
+    "Your project did reach Standex. Only an extra step failed: check the tracking of your project, and do not send it again.",
+    "您的资料已送达 Standex。仅有一个附加步骤失败：请查看案件进度，不要重复发送。",
+    "Ihr Projekt ist bei Standex eingegangen. Nur ein zusätzlicher Schritt ist fehlgeschlagen: Sehen Sie in der Verfolgung Ihres Projekts nach und senden Sie es nicht erneut.",
+    "Su proyecto sí llegó a Standex. Solo falló un paso adicional: consulte el seguimiento de su proyecto y no lo envíe de nuevo.",
+    "Ваше проект действительно получено Standex. Не удался только дополнительный шаг: посмотрите отслеживание дела и не отправляйте его повторно.",
+    "Il vostro progetto è arrivato a Standex. È fallito solo un passaggio aggiuntivo: consultate il monitoraggio del progetto e non inviatelo di nuovo.",
+    "プロジェクトは Standex に届いています。失敗したのは追加の処理のみです。プロジェクトの進捗を確認し、再送はしないでください。"
+  ],
+  "La confirmation d'envoi n'a pas été obtenue : votre projet est peut-être arrivé malgré tout. Vérifiez le suivi de votre projet avant de le renvoyer.": [
+    "No send confirmation was obtained: your project may still have arrived. Check the tracking of your project before sending it again.",
+    "未获得发送确认：您的资料仍可能已送达。重新发送前请先查看案件进度。",
+    "Es wurde keine Versandbestätigung erhalten: Ihr Projekt kann dennoch angekommen sein. Prüfen Sie die Verfolgung Ihres Projekts, bevor Sie erneut senden.",
+    "No se obtuvo confirmación de envío: es posible que su proyecto haya llegado igualmente. Consulte el seguimiento antes de volver a enviarlo.",
+    "Подтверждение отправки не получено: возможно, проект всё же дошло. Проверьте отслеживание дела, прежде чем отправлять повторно.",
+    "Non è stata ottenuta la conferma di invio: il progetto potrebbe comunque essere arrivato. Verificate il monitoraggio prima di inviarlo di nuovo.",
+    "送信の確認が取れませんでした。プロジェクトは届いている可能性があります。再送の前に進捗を確認してください。"
+  ],
+  "Consentement d'envoi du projet non recueilli.": [
+    "Consent to send the project has not been collected.",
+    "未取得发送案件的同意。",
+    "Zustimmung zum Senden der Fallakte nicht eingeholt.",
+    "Consentimiento para el envío del proyecto no obtenido.",
+    "Согласие на отправку проект не получено.",
+    "Consenso all'invio della pratica non acquisito.",
+    "ケースファイルの送信に関する同意が得られていません。"
+  ],
+  "Le contenu, le projet visé ou les fichiers ont changé depuis votre accord : relisez le résumé et confirmez à nouveau.": [
+    "The content, target project or files have changed since your agreement: review the summary and confirm again.",
+    "自您同意后，内容、目标案件或文件已发生变更：请重新阅读摘要并再次确认。",
+    "Der Inhalt, die betroffene Fallakte oder die Dateien haben sich seit Ihrer Zustimmung geändert: Prüfen Sie die Zusammenfassung erneut und bestätigen Sie nochmals.",
+    "El contenido, el proyecto correspondiente o los archivos han cambiado desde su acuerdo: vuelva a leer el resumen y confirme de nuevo.",
+    "Содержимое, целевое проект или файлы изменились с момента вашего согласия: перечитайте резюме и подтвердите снова.",
+    "Il contenuto, la pratica interessata o i file sono cambiati rispetto al vostro accordo: rileggere il riepilogo e confermare nuovamente.",
+    "同意後にコンテンツ、対象ケースファイル、またはファイルが変更されました。サマリーを再確認の上、再度承認してください。"
+  ],
+  "Projet transmis à la relecture par les ingénieurs Standex.": [
+    "Case file sent to the Standex review.",
+    "资料已提交 Standex 评审。",
+    "Projekt an die Standex-Prüfung übermittelt.",
+    "Proyecto enviado a la revisión de Standex.",
+    "Дело передано на рассмотрение Standex.",
+    "Fascicolo trasmesso alla revisione Standex.",
+    "プロジェクトを Standex レビューに送信しました。"
+  ],
+  "Projet repris": [
+    "Case file resumed",
+    "案卷已恢复",
+    "Vorgang übernommen",
+    "Proyecto reanudado",
+    "Файл дела восстановлен",
+    "Fascicolo ripreso",
+    "復元されたケースファイル"
+  ],
+  "Échantillons possibles seulement après une relecture par les ingénieurs Standex validée et publiée.": [
+    "Samples possible only after a validated and published Standex review.",
+    "仅在Standex审核验证并发布后方可提供样品。",
+    "Muster nur nach validiertem und veröffentlichtem Standex-Review möglich.",
+    "Muestras posibles únicamente tras una revisión Standex validada y publicada.",
+    "Образцы возможны только после утверждения и публикации ревью Standex.",
+    "Campioni possibili solo dopo una revisione Standex convalidata e pubblicata.",
+    "検証および公開されたStandexレビューの後にのみサンプル提供が可能です。"
+  ],
+  "Référence exacte requise : une gamme ne suffit pas, la relecture doit d'abord fixer la référence commandable.": [
+    "Exact part number required: a product family is not sufficient; the review must first define the orderable part number.",
+    "需要确切型号：仅提供产品系列不够，审核必须首先确定可订购的型号。",
+    "Genaue Artikelnummer erforderlich: Eine Produktfamilie reicht nicht aus, das Review muss zuerst die bestellbare Artikelnummer festlegen.",
+    "Referencia exacta requerida: una gama no es suficiente, la revisión debe fijar primero la referencia que se puede pedir.",
+    "Требуется точный артикул: продуктовой линейки недостаточно, ревью должно сначала определить заказываемый артикул.",
+    "Codice esatto richiesto: una serie non è sufficiente, la revisione deve prima definire il codice ordinabile.",
+    "正確な型番が必要です。製品ファミリーのみでは不十分であり、レビューで最初に発注可能な型番を確定する必要があります。"
+  ],
+  "Aucun devis avant une relecture par les ingénieurs Standex validée.": [
+    "No quotation prior to a validated R&D review.",
+    "研发审查验证前不得报价。",
+    "Kein Angebot vor einer validierten R&D-Prüfung.",
+    "Ningún presupuesto antes de una revisión R&D validada.",
+    "Никаких предложений до подтверждения рассмотрения R&D.",
+    "Nessun preventivo prima di una revisione R&D convalidata.",
+    "検証済みの R&D レビューがない場合、見積は作成できません。"
+  ],
+  "Cette revue n'appartient pas à ce projet.": [
+    "This review does not belong to this project.",
+    "此审查不属于该案卷。",
+    "Diese Prüfung gehört nicht zu diesem Projekt.",
+    "Esta revisión no pertenece a este proyecto.",
+    "Это рассмотрение не относится к данному проект.",
+    "Questa revisione non appartiene a questo progetto.",
+    "このレビューはこのプロジェクトファイルに属していません。"
+  ],
+  "Aucun devis avant une relecture par les ingénieurs Standex validée et publiée.": [
+    "No quotation prior to a validated and published R&D review.",
+    "研发审查经受审并发布前不得报价。",
+    "Kein Angebot vor einer validierten und veröffentlichten R&D-Prüfung.",
+    "Ningún presupuesto antes de una revisión R&D validada y publicada.",
+    "Никаких предложений до утверждения и публикации рассмотрения R&D.",
+    "Nessun preventivo prima di una revisione R&D convalidata e pubblicata.",
+    "検証および公開された R&D レビューがない場合、見積は作成できません。"
+  ],
+  "Cette revue a été remplacée : reprenez la relecture en vigueur.": [
+    "This review has been superseded: use the review currently in effect.",
+    "该审查已被替换：请使用当前生效的审查。",
+    "Diese Prüfung wurde ersetzt: Übernehmen Sie die aktuell gültige Prüfung.",
+    "Esta revisión ha sido sustituida: retome la revisión en vigor.",
+    "Это рассмотрение было заменено: используйте действующее рассмотрение.",
+    "Questa revisione è stata sostituita: riprendere la revisione in vigore.",
+    "このレビューは置き換えられました：有効なレビューを再開してください。"
+  ],
+  "Le projet a changé : l'offre doit porter sur la révision courante.": [
+    "The project has changed: the quote must apply to the current revision.",
+    "案卷已变更：报价必须基于当前修订版本。",
+    "Das Projekt wurde geändert: Das Angebot muss sich auf die aktuelle Revision beziehen.",
+    "El proyecto ha cambiado: la oferta debe basarse en la revisión actual.",
+    "Материалы изменились: предложение должно относиться к текущей ревизии.",
+    "Il progetto è cambiato: l'offerta deve basarsi sulla revisione corrente.",
+    "ケースファイルが変更されました。見積は現在のリビジョンに基づく必要があります。"
+  ],
+  "Modification sans effet sur la relecture ni l'offre.": [
+    "Modification without effect on review or quote.",
+    "变更对评审和报价均无影响。",
+    "Änderung ohne Auswirkung auf Prüfung und Angebot.",
+    "Modificación sin efecto en la revisión ni en la oferta.",
+    "Изменение не влияет на рассмотрение и предложение.",
+    "Modifica senza effetto sulla revisione né sull'offerta.",
+    "レビューおよび見積に影響のない変更です。"
+  ],
+  "Le projet a changé depuis l'ouverture de cette revue.": [
+    "The project has changed since this review was opened.",
+    "自打开此评审以来，案卷已发生变更。",
+    "Das Projekt wurde seit dem Öffnen dieser Prüfung geändert.",
+    "El proyecto ha cambiado desde la apertura de esta revisión.",
+    "Материалы изменились с момента открытия данного рассмотрения.",
+    "Il progetto è cambiato dall'apertura di questa revisione.",
+    "このレビューを開いてからケースファイルが変更されました。"
   ]
 }

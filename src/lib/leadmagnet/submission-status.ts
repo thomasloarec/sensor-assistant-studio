@@ -66,11 +66,11 @@ export function submissionStatusKind(
 export function submitButtonLabel(kind: SubmissionStatusKind, last: SentRevisionRecord | null) {
   return kind === "modified" && last && Number.isFinite(last.revisionNumber)
     ? "Envoyer mes modifications"
-    : "Envoyer mon dossier";
+    : "Envoyer mon projet";
 }
 
 export function statusHeadline(kind: SubmissionStatusKind): string | null {
-  if (kind === "sent") return "Dossier transmis à la revue Standex.";
+  if (kind === "sent") return "Projet transmis à la relecture par les ingénieurs Standex.";
   if (kind === "modified") return "Modifications non envoyées";
   return null;
 }

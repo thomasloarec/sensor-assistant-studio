@@ -212,7 +212,7 @@ export default function MagneticWorkshop({
   initialConfig,
   onClose,
   onSave,
-  storageLabel = t("la session et le dossier"),
+  storageLabel = t("la session et le projet"),
   storageMode = "local-device",
   cableRouting,
   onDraftChange,
@@ -575,7 +575,7 @@ export default function MagneticWorkshop({
       setConfig(parsed);
       setSaved(null);
       setError(null);
-      setImportNotice(t("Montage importé. Enregistrez-le pour le joindre au dossier."));
+      setImportNotice(t("Montage importé. Il est enregistré automatiquement dans votre projet."));
     } catch (e) {
       setError(e instanceof Error ? e.message : t("Fichier illisible."));
     }
@@ -1404,7 +1404,7 @@ export default function MagneticWorkshop({
           />
         </details>
         <details className="mw-export-menu">
-          <summary>{t("Exporter")}</summary>
+          <summary>{t("Exporter le montage")}</summary>
           <button
             className="mw-text-button"
             onClick={() =>
@@ -1415,7 +1415,7 @@ export default function MagneticWorkshop({
               )
             }
           >
-            {t("Exporter le montage")}
+            {t("Télécharger le fichier de montage")}
           </button>
         </details>
       </div>
@@ -1471,7 +1471,7 @@ export default function MagneticWorkshop({
         <span className="t-caption">
           {t("Quadrillage :")}
           {t(machine ? "10" : "5")}
-          {t("mm · Vert : fermé · Gris : ouvert · Contacts internes symboliques")}
+          {t("mm · Vert : fermé · Gris : ouvert · Vue simplifiée du contact")}
         </span>
       </div>
     </details>
@@ -1490,7 +1490,7 @@ export default function MagneticWorkshop({
       {!embedded && (
         <AppHeader
           context={t("Atelier 3D")}
-          back={{ label: t("Retour au dossier"), onClick: onClose, disabled: saving }}
+          back={{ label: t("Retour au projet"), onClick: onClose, disabled: saving }}
         >
           <span className="mw-prototype">{t("Prototype interne · V0.4")}</span>
         </AppHeader>
@@ -1833,14 +1833,16 @@ export default function MagneticWorkshop({
       ) : null}
       <footer className="mw-footer">
         <p>
-          <strong>{t(reference ? "Présélection documentée." : "Illustration pédagogique.")}</strong>{" "}
-          {t(reference ? referenceNoteFor(config) : EDUCATION_NOTE)}
-        </p>
-        <p>
-          {t(
-            saved && !dirty
-              ? `Montage enregistré dans ${storageLabel}.`
-              : `Brouillon en cours d'enregistrement dans ${storageLabel}.`,
+          {/* Une seule phrase : la provenance des distances et la limite qui va
+              avec. L'état d'enregistrement, lui, vit dans la barre du panneau. */}
+          {reference ? (
+            t(
+              "Distances typiques publiées par Standex pour ce couple, dans cette position. À confirmer par un essai dans votre application.",
+            )
+          ) : (
+            <>
+              <strong>{t("Illustration pédagogique.")}</strong> {t(EDUCATION_NOTE)}
+            </>
           )}{" "}
           <a
             href={reference ? DISTANCE_SOURCE : INTERACTION_SOURCE}
@@ -1865,12 +1867,14 @@ export default function MagneticWorkshop({
       <details className="mw-summary">
         <summary>{t("Résumé du montage et hypothèses")}</summary>
         <pre>{t(summary)}</pre>
-        <p>
-          {msg(
-            "Version du calcul : {0}. La scène et ses résultats sont recalculés à chaque modification.",
-            [MODEL_VERSION],
-          )}
-        </p>
+        {!embedded ? (
+          <p>
+            {msg(
+              "Version du calcul : {0}. La scène et ses résultats sont recalculés à chaque modification.",
+              [MODEL_VERSION],
+            )}
+          </p>
+        ) : null}
         <button
           className="mw-text-button"
           onClick={() => download("dossier-montage-magnetique.md", summary, "text/markdown")}
