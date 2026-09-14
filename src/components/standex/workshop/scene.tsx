@@ -728,32 +728,60 @@ export function ContextGuard({ onLost }: { onLost: () => void }) {
   }, [gl, onLost]);
   return null;
 }
+/** Recul nécessaire pour qu'une sphère de rayon `radius` tienne ENTIÈREMENT dans
+ *  le cadre, avec `margin` de marge de chaque côté, en prenant le maximum des
+ *  deux contraintes (verticale par le fov réel, horizontale par le fov dérivé du
+ *  rapport largeur/hauteur). Fonction géométrique pure : elle ne touche ni les
+ *  cotes, ni les seuils, ni la simulation. */
+export function fitDistance(
+  radius: number,
+  fovDeg: number,
+  aspect: number,
+  margin = 0.12,
+): number {
+  const vFov = (fovDeg * Math.PI) / 180;
+  const a = aspect > 0 && Number.isFinite(aspect) ? aspect : 1;
+  const hFov = 2 * Math.atan(Math.tan(vFov / 2) * a);
+  const need = Math.max(radius / Math.sin(vFov / 2), radius / Math.sin(hFov / 2));
+  return need / (1 - margin);
+}
 export function CameraRig({
   target,
   distance,
+  fitRadius,
   view = "3d",
   resetKey,
 }: {
   target: Vec3;
   distance: number;
+  /** Rayon de la boîte englobante à cadrer (couple + course). Prioritaire. */
+  fitRadius?: number | undefined;
   view?: "3d" | "top";
   resetKey: string;
 }) {
   const { camera, controls, size } = useThree();
-  /* Sur un cadre étroit (téléphone en portrait), la largeur visible est plus
-     petite que la hauteur : sans ce recul, le couple sortait du cadre. On ne
-     recadre PAS à chaque pixel de redimensionnement — ouvrir un panneau
-     latéral repositionnait alors la caméra et la scène paraissait vide. */
-  const portrait = size.height > 0 && size.width < size.height;
+  const aspect = size.height > 0 ? size.width / size.height : 1;
   useEffect(() => {
+    // Pendant une transition de mise en page, la hauteur passe par zéro : ne pas
+    // recadrer sur un cadre dégénéré, la caméra partirait à l'infini.
+    if (size.height < 80 || size.width < 80) return;
     const c = controls as unknown as { target: Vector3; update: () => void } | undefined;
-    const d = portrait ? distance / 0.7 : distance;
+    const perspective = camera as unknown as { fov?: number };
+    const d =
+      fitRadius && fitRadius > 0
+        ? fitDistance(fitRadius, perspective.fov ?? 43, aspect)
+        : aspect < 1
+          ? distance / 0.7
+          : distance;
+    /* Direction de vue normalisée : le recul calculé est donc la vraie distance
+       caméra-cible, pas la somme de trois composantes arbitraires. */
+    const dir =
+      view === "top" ? [0, 1, 0.001] : [0.62, 0.55, 0.82].map((n) => n / 1.166);
     camera.position.set(
-      target[0] + (view === "top" ? 0 : d * 0.7),
-      target[1] + d * 0.75,
-      target[2] + (view === "top" ? 0.001 : d),
+      target[0] + dir[0]! * d,
+      target[1] + dir[1]! * d,
+      target[2] + dir[2]! * d,
     );
-    if (view === "top") camera.position.y = target[1] + d;
     camera.up.set(0, view === "top" ? 0 : 1, view === "top" ? -1 : 0);
     camera.lookAt(...target);
     camera.updateProjectionMatrix();
@@ -761,7 +789,7 @@ export function CameraRig({
     c?.update();
     // Deliberately reset only on explicit view/setup changes, not every animation frame.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [resetKey, camera, controls, portrait]);
+  }, [resetKey, camera, controls, aspect, fitRadius, view]);
   return null;
 }
 export default function WorkshopScene({
