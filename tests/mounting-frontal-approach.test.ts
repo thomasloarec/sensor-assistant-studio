@@ -5,7 +5,8 @@ import {
   referenceAllowed,
 } from "../src/lib/standex/magnetic-workshop";
 import type { WorkshopConfig } from "../src/lib/standex/magnetic-workshop";
-import { mountingFromWorkshop } from "../src/lib/standex/mounting/bridge";
+import { mountingFromWorkshop, relativePoseInMachine } from "../src/lib/standex/mounting/bridge";
+import { surfaceGapMm } from "../src/lib/standex/mounting/geometry";
 import { simulateMounting } from "../src/lib/standex/mounting/simulate";
 import { suggestPose } from "../src/lib/standex/mounting/suggest";
 import { documentedRelativeRotation, profileFor, thresholdsFor } from "../src/lib/standex/mounting/profiles";
@@ -120,7 +121,15 @@ describe("approche frontale F1 : les faces se font réellement face", () => {
     const m = mountingFromWorkshop(frontal({ machine }));
     expect(m.profileId).toBe("MK36/M36-N42/F1");
     expect(Number.isFinite(m.travel.startGapMm)).toBe(true);
-    expect(m.travel.startGapMm).toBeGreaterThan(m.travel.endGapMm);
+    // Les entrefers sont lus sur l'axe X du profil frontal, pas sur Z.
+    expect(m.travel.startGapMm).toBeGreaterThanOrEqual(m.travel.endGapMm);
+    const axisReading = surfaceGapMm(
+      "MK36",
+      "M36-N42",
+      relativePoseInMachine(machine, 0),
+      [1, 0, 0],
+    );
+    expect(m.travel.startGapMm === axisReading || m.travel.endGapMm === axisReading).toBe(true);
     // Le décalage latéral d'un couple frontal se lit sur Z, comme en D3.
     const lateral = mountingFromWorkshop(frontal({ lateralShift: 3 }));
     expect(lateral.relative.positionMm).toEqual([0, 0, 3]);
