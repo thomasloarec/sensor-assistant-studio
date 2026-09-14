@@ -3229,6 +3229,17 @@ export function DesignSpace({
   const revueSection = (
     <div className="space-y-4">
       {projectSummaryCard}
+      {/* Le câble et le connecteur sont ici, sous le résumé : aucune logique de
+          câble n'est retirée, seule sa place change. */}
+      <details id="section-cablage" className="panel-block-lg scroll-mt-24">
+        <summary className="t-title-s flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 py-2">
+          {t("Câble et connecteur")}
+          <span className="technical-details-chevron" aria-hidden="true">
+            ⌄
+          </span>
+        </summary>
+        <div className="mt-3">{cablageSection}</div>
+      </details>
       <Accordion
         type="multiple"
         value={reviewSections}
