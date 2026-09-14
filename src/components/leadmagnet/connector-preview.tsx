@@ -25,7 +25,7 @@ import {
   acquireThumbnailSlot,
   releaseThumbnailSlot,
   hasWebGL,
-} from "@/components/standex/workshop/candidate-thumbnail";
+} from "@/components/leadmagnet/candidate-thumbnail";
 
 const PreviewScene = lazy(() => import("./connector-preview-scene"));
 
