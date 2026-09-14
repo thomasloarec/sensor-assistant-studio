@@ -4084,6 +4084,42 @@ export function DesignSpace({
               {String(label)}
             </button>
           ))}
+          <button
+            type="button"
+            onClick={(e) => {
+              e.currentTarget.closest("details")?.removeAttribute("open");
+              exportDossier();
+            }}
+          >
+            {t("Exporter mon projet")}
+          </button>
+          <label className="studio-navigation-file">
+            {t("Reprendre un fichier")}
+            <input
+              type="file"
+              accept="application/json"
+              className="sr-only"
+              onChange={(e) => {
+                void importDossier(e.target.files?.[0]);
+                e.target.value = "";
+              }}
+            />
+          </label>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.currentTarget.closest("details")?.removeAttribute("open");
+              setShowAdvanced(true);
+              setTab("besoin");
+            }}
+          >
+            {t("Réglages détaillés")}
+          </button>
+          <p className="studio-navigation-note">
+            <strong>{t("Conservation et reprise de ce projet")}</strong>
+            <span>{t(MEMORY_LOSS_WARNING)} {t(EXPORT_BINARY_NOTICE)}</span>
+            {importMessage ? <span>{importMessage}</span> : null}
+          </p>
         </nav>
       </details>
     </div>
@@ -4094,9 +4130,9 @@ export function DesignSpace({
       className={embedded ? "text-foreground" : "min-h-screen bg-background text-foreground"}
     >
       <header
-        className={`material sticky top-0 z-20 border-b border-[var(--hairline)]${visible ? "" : " hidden"}`}
+        className={`project-header material sticky top-0 z-30${visible ? "" : " hidden"}`}
       >
-        <div className="mx-auto flex max-w-[76rem] flex-wrap items-center gap-4 px-4 py-4">
+        <div className="mx-auto flex h-14 max-w-[76rem] items-center gap-3 px-4">
           <div className="flex shrink-0 items-center gap-3 self-center">
             {onGoHome ? (
               <button
@@ -4131,66 +4167,18 @@ export function DesignSpace({
             }
           />
           <div className="flex flex-wrap items-center gap-2">
-            <Badge variant="secondary" className="gap-1 px-2.5 py-1 text-sm">
-              <Lock className="h-3 w-3" /> {t(STORAGE_BADGE[privacy.storage])}
+            <Badge variant={lastSent ? "default" : "secondary"} className="project-state-badge">
+              {lastSent ? t("Envoyé") : t("Brouillon")}
             </Badge>
-            <span className="text-muted-foreground" aria-hidden="true">
-              ·
-            </span>
-            <Badge variant="secondary" className="px-2.5 py-1 text-sm">
-              {t("Révision")} {dossier.revision}
-            </Badge>
-          </div>
-          <div className="flex max-w-full flex-wrap items-center gap-1 rounded-[var(--r-sm)] bg-[var(--surface-sunken)] p-1">
-            <Button
-              variant="ghost"
-              className="min-h-11 px-3"
-              onClick={exportDossier}
-              aria-label={t("Exporter")}
-            >
-              <Download className="h-4 w-4" />{" "}
-              <span className="hidden sm:inline">{t("Exporter")}</span>
-            </Button>
-            <Button variant="ghost" className="min-h-11 max-w-full px-3 whitespace-normal" asChild>
-              <label
-                className="inline-flex w-auto max-w-full cursor-pointer text-center"
-                aria-label={t("Reprendre un fichier")}
-              >
-                <Upload className="h-4 w-4" />
-                <span className="hidden sm:inline">{t("Reprendre un fichier")}</span>
-                <input
-                  type="file"
-                  accept="application/json"
-                  className="sr-only"
-                  onChange={(e) => {
-                    // Même garde que partout ailleurs : importDossier la porte.
-                    void importDossier(e.target.files?.[0]);
-                    e.target.value = "";
-                  }}
-                />
-              </label>
-            </Button>
           </div>
           {navigation}
-        </div>
-        <div className="mx-auto max-w-[76rem] px-4 pb-4">
-          <details className="rounded-[var(--r-md)] bg-[var(--surface-tint)] px-4 py-2">
-            <summary className="min-h-11 cursor-pointer t-body">
-              {t("Conservation et reprise de ce projet")}
-            </summary>
-            <Info className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
-            <div className="t-caption !text-[var(--foreground)]">
-              {t(MEMORY_LOSS_WARNING)} {t(EXPORT_BINARY_NOTICE)}
-              {importMessage ? <span className="block font-semibold">{importMessage}</span> : null}
-            </div>
-          </details>
         </div>
       </header>
 
       <main className={`mx-auto max-w-[76rem] px-4 py-6${visible ? "" : " hidden"}`}>
         <nav
           aria-label="Progression"
-          className={`project-stepper project-stepper-${stepIndex} mb-6`}
+          className={`project-stepper project-stepper-${stepIndex} project-stepper-sticky mb-6`}
         >
           <span className="project-stepper-thumb" aria-hidden="true" />
           {steps.map((s, i) => (
@@ -4216,23 +4204,13 @@ export function DesignSpace({
         </nav>
 
         <Tabs value={tab} onValueChange={setTab}>
-          <div className="mb-2 flex flex-wrap items-center gap-2">
-            <Button
-              variant="ghost"
-              className="min-h-11 text-base"
-              aria-expanded={showAdvanced}
-              onClick={() => setShowAdvanced((v) => !v)}
-            >
-              {showAdvanced
-                ? t("Masquer les réglages détaillés")
-                : t("Ouvrir les réglages détaillés")}
-            </Button>
-            {showAdvanced ? null : (
-              <span className="text-base text-muted-foreground">
-                {t("Tous les réglages avancés restent disponibles, sans rien perdre.")}
-              </span>
-            )}
-          </div>
+          {showAdvanced ? (
+            <div className="mb-2">
+              <Button variant="ghost" className="min-h-11 text-base" onClick={() => setShowAdvanced(false)}>
+                {t("Masquer les réglages détaillés")}
+              </Button>
+            </div>
+          ) : null}
           <TabsList className={showAdvanced ? "flex-wrap" : "hidden"}>
             <TabsTrigger value="besoin">{t("Besoin")}</TabsTrigger>
             <TabsTrigger value="montage">{t("Montage & 3D")}</TabsTrigger>
@@ -4286,9 +4264,6 @@ export function DesignSpace({
         onBack={() => setPanel(null)}
         onOpenChange={(o) => setPanel(o ? "atelier" : null)}
         title={t("Atelier 3D")}
-        description={t(
-          "Quatre étapes : le couple capteur-aimant, la position, la simulation du mouvement, le câble. Vos réglages restent en mémoire même si vous refermez ce panneau.",
-        )}
       >
         {workshopMounted ? workshopSection : null}
       </WorkspacePanel>
