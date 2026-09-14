@@ -37,6 +37,11 @@ export interface SensorModel {
   documentedAs?: string;
 
 }
+/** Un aimant reste un composant mécanique passif, même lorsque son enveloppe
+ * réutilise celle d'un capteur. Cette règle unique pilote les rendus 2D/3D. */
+export function electricalDetailsAllowed(model: SensorModel): boolean {
+  return model.magnet !== true;
+}
 const cylindrical = (id: string, length: number, height: number, width = height): SensorModel => ({
   id,
   name: id.replace("_", "/"),

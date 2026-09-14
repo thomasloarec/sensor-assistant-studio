@@ -24,7 +24,11 @@ import {
   type ReactNode,
 } from "react";
 
-import { sensorById, customLayout } from "@/lib/standex/sensor-catalog";
+import {
+  sensorById,
+  customLayout,
+  electricalDetailsAllowed,
+} from "@/lib/standex/sensor-catalog";
 import type { SensorModel } from "@/lib/standex/sensor-catalog";
 
 const ThumbnailScene = lazy(
@@ -159,7 +163,7 @@ function Fallback({
   pair?: { magnetId: string; approach: string };
   fitToView?: boolean;
 }) {
-  const magnet = pair ? pairedMagnetModel(pair.magnetId) : null;
+  const magnet = pair ? pairedMagnetModel(pair.magnetId, model.id) : null;
   const span = Math.max(...model.body, model.terminalSpan ?? 0);
   const layout = magnet ? pairLayout(model, magnet, pair!.approach) : null;
   return (
@@ -175,7 +179,11 @@ function Fallback({
           }
         >
           <g transform={layout ? `rotate(${(-layout.sensorYaw * 180) / Math.PI})` : undefined}>
-            <SensorPlan model={model} xray={false} showCable={cabled} />
+            <SensorPlan
+              model={model}
+              xray={false}
+              showCable={electricalDetailsAllowed(model) && cabled}
+            />
           </g>
           {magnet && layout && (
             <g

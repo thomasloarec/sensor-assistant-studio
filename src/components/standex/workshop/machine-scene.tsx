@@ -259,9 +259,9 @@ function Assembly({
           ref={magnetRef}
           position={machine.magnetPosition}
           rotation={machine.magnetRotation.map((n) => (n * Math.PI) / 180) as Vec3}
-          onClick={(e) =>
-            tool === "cable" ? place(e, machine.magnetMount === "moving") : e.stopPropagation()
-          }
+          // Le routage électrique appartient exclusivement au capteur : cliquer
+          // l'aimant ne doit jamais créer une « sortie capteur » trompeuse.
+          onClick={(e) => e.stopPropagation()}
         >
           <Magnet
             config={{ ...config, magnetTilt: 0 }}

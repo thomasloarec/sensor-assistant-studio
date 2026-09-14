@@ -37,8 +37,18 @@ export function pairedMagnetModel(id: string, sensorId?: string): SensorModel | 
   if (!isKnownSensorId(housing)) return null;
   const base = sensorById(housing);
   const holes = holesFor(id, base);
+  // Un boîtier d'aimant reprend uniquement l'enveloppe et les détails
+  // mécaniques du capteur. Les propriétés de raccordement ne doivent pas
+  // survivre au clonage, même si un rendu oublie ensuite de masquer un détail.
+  const {
+    cableSide: _cableSide,
+    terminalSpan: _terminalSpan,
+    reed: _reed,
+    pcbThickness: _pcbThickness,
+    ...passiveHousing
+  } = base;
   return {
-    ...base,
+    ...passiveHousing,
     id,
     name: id,
     body: BODY_OVERRIDE[id] ?? base.body,

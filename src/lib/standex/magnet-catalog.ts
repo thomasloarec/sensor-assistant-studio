@@ -175,6 +175,7 @@ export function bareMagnetModel(id: string): SensorModel | null {
             : "brochure-reed-sensor-activation-guide.pdf",
         description: "",
         contact: "unsupported",
+        magnet: true,
       }
     : null;
 }

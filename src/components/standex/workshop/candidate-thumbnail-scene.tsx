@@ -10,7 +10,7 @@ import { pairedMagnetModel } from "@/lib/standex/paired-magnets";
 import { Canvas } from "@react-three/fiber";
 import { Line, OrbitControls } from "@react-three/drei";
 import { Body, Contacts, ContextGuard } from "./scene";
-import { sensorById } from "@/lib/standex/sensor-catalog";
+import { electricalDetailsAllowed, sensorById } from "@/lib/standex/sensor-catalog";
 import type { Vec3 } from "@/lib/standex/magnetic-workshop";
 
 export default function CandidateThumbnailScene({
@@ -33,12 +33,13 @@ export default function CandidateThumbnailScene({
   const span = Math.max(l, h, w);
   const dist = pair ? 155 : 100; // Fixed camera: every catalogue thumbnail uses the same mm scale.
   const side = model.cableSide ?? -1;
-  const magnet = pair ? pairedMagnetModel(pair.magnetId) : null;
+  const magnet = pair ? pairedMagnetModel(pair.magnetId, model.id) : null;
   const layout = magnet ? pairLayout(model, magnet, pair!.approach) : null;
   const offset: Vec3 = layout?.offset ?? [0, 0, 0];
 
   // Le contact interne n'est lisible que sur les corps transparents.
-  const showContacts = model.shape === "glass" || model.shape === "custom_pcb";
+  const electrical = electricalDetailsAllowed(model);
+  const showContacts = electrical && (model.shape === "glass" || model.shape === "custom_pcb");
   const wireZ = Math.min(1.4, w * 0.16);
   const wires: Vec3[][] = [-1, 1].map((sign) => [
     [(side * l) / 2, 0, sign * wireZ],
@@ -68,7 +69,7 @@ export default function CandidateThumbnailScene({
       <group rotation={[0, layout?.sensorYaw ?? 0, 0]}>
         <Body model={model} xray={showContacts} showCable={false} />
         {showContacts ? <Contacts model={model} contact="open" reduced /> : null}
-        {cabled && !["smd", "glass", "custom_pcb"].includes(model.shape)
+        {electrical && cabled && !["smd", "glass", "custom_pcb"].includes(model.shape)
           ? wires.map((points, i) => (
               <Line
                 key={i}
