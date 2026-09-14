@@ -47,6 +47,7 @@ import {
   EDUCATION_NOTE,
   REFERENCE_NOTE,
   referenceNoteFor,
+  publishedFamilyNoteFor,
   MODEL_VERSION,
   parseWorkshopConfig,
   simulateCycle,
