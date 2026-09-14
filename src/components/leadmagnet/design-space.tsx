@@ -1839,7 +1839,7 @@ export function DesignSpace({
                 else setTab("montage");
               }}
             >
-              {lastQuestion ? t("Passer à mon montage") : t("Continuer")}
+              {lastQuestion ? t("Voir les couples proposés") : t("Continuer")}
             </Button>
           </div>
 
