@@ -35,6 +35,9 @@ export const DELEGATED_CONTEXT = "context";
  * `bare_leads` : sans ce marqueur, elle ne coche donc rien. */
 export const CHOSEN_BARE_LEADS = "chosen:bare_leads";
 
+/** Forme minimale d'un e-mail de retour (alignée sur l'exigence d'envoi). */
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 /** Une question guidée explicitement laissée de côté par « Je ne sais pas
  * encore ». La décision est TRAITÉE dans le parcours ; elle ne fabrique aucune
  * valeur technique et n'alimente aucun filtre. */
