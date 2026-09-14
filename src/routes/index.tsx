@@ -27,13 +27,13 @@ export const Route = createFileRoute("/")({
   },
   head: () => ({
     meta: [
-      { title: t("Faire détecter votre idée — Standex DETECT") },
+      { title: t("Sensor Studio — faire détecter votre idée · Standex DETECT") },
       {
         name: "description",
         content:
           t("Décrivez ce que vous voulez détecter, jouez avec un aimant et un capteur, et préparez votre projet de détection magnétique avec les ingénieurs Standex."),
       },
-      { property: "og:title", content: t("Faire détecter votre idée — Standex DETECT") },
+      { property: "og:title", content: t("Sensor Studio — faire détecter votre idée · Standex DETECT") },
       {
         property: "og:description",
         content:
@@ -94,6 +94,8 @@ function HomeRoute() {
               <span className="flex min-w-0 items-center">
                 <BrandLogo tone="reversed" height={44} className="hidden sm:block" />
                 <BrandLogo variant="mark" tone="reversed" height={32} className="sm:hidden" />
+                {/* Nom de l'outil à côté de la marque, jamais dans le logo. */}
+                <span className="t-title-s ml-3 whitespace-nowrap">Sensor Studio</span>
               </span>
               <div className="ml-auto flex min-w-0 flex-wrap items-center justify-end gap-2">
                 <LanguagePicker />

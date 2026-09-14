@@ -95,6 +95,8 @@ export function AppHeader({
           )
         ) : null}
         <BrandLogo tone={tone} height={44} />
+        {/* Nom de l'outil visible partout, à côté de la marque conservée. */}
+        <span className="app-header-tool t-title-s">Sensor Studio</span>
         {context ? <p className="app-header-context">{context}</p> : null}
         {center ? <div className="app-header-center">{center}</div> : null}
         <div className="app-header-actions">

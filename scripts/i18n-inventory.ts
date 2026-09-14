@@ -34,6 +34,7 @@ const SKIP_DIRS = ["src/components/ui", "src/lib/i18n"];
 const EXEMPT_TEXTS = new Set([
   "width=device-width, initial-scale=1",
   "Standex Electronics",
+  "Sensor Studio", // nom de l'outil, jamais traduit
   "Standex DETECT Electronics",
   "(SHA-256",
   "Tous",

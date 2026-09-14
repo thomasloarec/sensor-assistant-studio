@@ -12,14 +12,14 @@ export const Route = createFileRoute("/design")({
   },
   head: () => ({
     meta: [
-      { title: t("Concevoir une détection — Standex DETECT") },
+      { title: t("Sensor Studio — concevoir une détection · Standex DETECT") },
       {
         name: "description",
         content: t(
           "Espace de co-conception privé : exigences, montage, candidats, câblage et préparation de la revue Standex.",
         ),
       },
-      { property: "og:title", content: t("Concevoir une détection — Standex DETECT") },
+      { property: "og:title", content: t("Sensor Studio — concevoir une détection · Standex DETECT") },
       {
         property: "og:description",
         content: t("Co-conception privée d'une solution de détection magnétique Standex."),

@@ -42,6 +42,7 @@ import {
   DELEGATED_SENSOR,
 } from "@/lib/leadmagnet/project-checklist";
 import SensorCard from "@/components/standex/workshop/sensor-card";
+import { ConnectorPreview } from "@/components/leadmagnet/connector-preview";
 import SensorCatalog from "@/components/standex/workshop/sensor-catalog";
 import { LanguagePicker, useLocale } from "@/lib/i18n/react";
 import { Input } from "@/components/ui/input";
@@ -81,7 +82,7 @@ import {
   estimateCableLength,
   resetRouting,
   routingPoints,
-  RANGE_CABLE_LENGTH_NOTES,
+  rangeCableLengthNote,
   uncoveredMotionStates,
   undoRoutingPick,
   type CablingConfig,
@@ -2125,6 +2126,10 @@ export function DesignSpace({
     </div>
   );
 
+  /** Note de longueurs de la SEULE gamme choisie, jamais le catalogue entier. */
+  const selectedRangeNote = dossier.selectedSensorId
+    ? rangeCableLengthNote(dossier.selectedSensorId)
+    : null;
   /** Le câble n'est PAS obligatoire à ce stade : tant que rien n'est demandé,
    * une longueur inconnue est un état normal, jamais une erreur. */
   const cableDefined =
@@ -2269,7 +2274,7 @@ export function DesignSpace({
               {DOCUMENTED_HOUSINGS.map((h) => {
                 const selected =
                   termination.kind === "unqualified_connector" &&
-                  termination.connector.housingMpn === h.housingMpn;
+                  termination.spec.mpn === h.housingMpn;
                 return (
                   <button
                     key={h.housingMpn}
@@ -2624,13 +2629,20 @@ export function DesignSpace({
               : `${estimate.longestPathMm.toFixed(1)} mm`}
           </strong>
         </p>
-        <ul className="t-caption mt-2 list-disc pl-5">
-          {RANGE_CABLE_LENGTH_NOTES.map((n) => (
-            <li key={n.range}>
-              {n.range} : {n.lengths} {t("(source :")} {n.source})
-            </li>
-          ))}
-        </ul>
+        {/* Uniquement la note de gamme du capteur RÉELLEMENT choisi : le
+            catalogue des autres gammes n'a rien à faire dans votre projet. */}
+        {selectedRangeNote ? (
+          <p className="t-caption mt-2">
+            {selectedRangeNote.range} : {selectedRangeNote.lengths}{" "}
+            {selectedRangeNote.source.startsWith("http") ? (
+              <a className="underline" href={selectedRangeNote.source} target="_blank" rel="noreferrer">
+                {t("voir la source fabricant")}
+              </a>
+            ) : (
+              t("source interne Standex, à confirmer par la R&D")
+            )}
+          </p>
+        ) : null}
       </details>
     </div>
   );
@@ -2645,8 +2657,61 @@ export function DesignSpace({
     });
   };
 
+  /** Carte de résumé PARTAGÉE entre « Mon montage » et « Avec Standex ».
+   * Aucun pourcentage automatique, aucune case cochée parce qu'un objet par
+   * défaut existe : une délégation est une étape traitée, pas une validation. */
+  const checklist = projectChecklist(dossier);
+  const checklistState = checklistProgress(checklist);
+  const projectSummaryCard = (
+    <div className="panel-block-lg">
+      <h2 className="t-title-m">{t("Résumé de mon projet")}</h2>
+      <p className="t-caption mt-1">
+        {msg("{0} étape(s) traitée(s) sur {1}. Rien n'est validé techniquement à ce stade.", [
+          String(checklistState.handled),
+          String(checklistState.total),
+        ])}
+      </p>
+      <ul className="mt-4 space-y-3">
+        {checklist.map((item) => (
+          <li key={item.id} className="flex flex-wrap items-start gap-3">
+            <Badge
+              variant={
+                item.state === "chosen"
+                  ? "default"
+                  : item.state === "delegated"
+                    ? "warning"
+                    : "secondary"
+              }
+            >
+              {item.state === "chosen"
+                ? t("choisi")
+                : item.state === "delegated"
+                  ? t("à définir avec Standex")
+                  : t("à renseigner")}
+            </Badge>
+            <span className="flex-1 min-w-[12rem]">
+              <span className="t-body block">{t(item.label)}</span>
+              <span className="t-caption block">{t(item.detail)}</span>
+            </span>
+            <Button
+              variant="ghost"
+              className="min-h-11"
+              onClick={() => {
+                if (item.section) goToInlineSection(item.section);
+                else setTab(item.tab as "besoin" | "montage" | "revue");
+              }}
+            >
+              {t("Modifier")}
+            </Button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+
   const montageSection = (
     <div className="space-y-4">
+      {showAdvanced ? null : projectSummaryCard}
       {showAdvanced ? null : (
         <div className="panel-block-lg">
           <h2 className="t-title-m">{t("Où le capteur se place-t-il ?")}</h2>
@@ -2739,6 +2804,7 @@ export function DesignSpace({
 
   const revueSection = (
     <div className="space-y-4">
+      {projectSummaryCard}
       <Accordion
         type="multiple"
         value={reviewSections}
@@ -3722,6 +3788,9 @@ export function DesignSpace({
                 <BrandLogo variant="mark" tone="light" height={32} clearance={false} alt="" />
               </Link>
             )}
+            {/* §10 : la marque n'est pas recomposée. Le nom de l'outil vit à
+                côté d'elle, en texte, jamais dans le verrou logo. */}
+            <span className="t-title-s whitespace-nowrap">Sensor Studio</span>
             <span aria-hidden="true" className="block h-6 w-px bg-[var(--hairline)]" />
           </div>
           <ProjectTitle
@@ -3918,6 +3987,18 @@ export function DesignSpace({
       >
         {espaceSection}
       </WorkspacePanel>
+
+      {/* Fiche détaillée volontaire : cotes, sources et STEP d'encombrement. */}
+      {detailSensorId ? (
+        <SensorCard
+          sensorId={detailSensorId}
+          onClose={() => setDetailSensorId(null)}
+          onSelect={(id) => {
+            chooseSensor(id, t(sensorById(id).name));
+            setDetailSensorId(null);
+          }}
+        />
+      ) : null}
 
       {catalogOpen ? (
         <WorkspacePanel
