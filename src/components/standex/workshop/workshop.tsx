@@ -231,8 +231,7 @@ export default function MagneticWorkshop({
     onDraftChange?.(config);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [config]);
-  const [step, setStep] = useState(0),
-    [progress, setProgress] = useState(0),
+  const [progress, setProgress] = useState(0),
     [playing, setPlaying] = useState(false);
   const [view, setView] = useState<"3d" | "top">("3d"),
     [zones, setZones] = useState(true),
@@ -289,7 +288,7 @@ export default function MagneticWorkshop({
   useEffect(() => {
     // La proposition ne survit pas à un changement d'entrée ni de contexte.
     setPreview(null);
-  }, [config.sensorId, config.magnetModel, config.sensitivity, config.geometry, config.mode, step]);
+  }, [config.sensorId, config.magnetModel, config.sensitivity, config.geometry, config.mode]);
   useEffect(() => {
     let cancelled = false,
       loaded: MachineAsset | null = null;
@@ -500,14 +499,6 @@ export default function MagneticWorkshop({
     drop = referencePair?.[1] ?? "—";
   const unknown = result.unknown;
   const machineReady = !machine || !!machineAsset?.nodes.some((n) => n.path === machine.movingNode);
-  const mismatches = result.samples.filter(
-    (s) =>
-      s.contact !== "unknown" &&
-      (s.contact === "closed") !==
-        (s.t * 100 >= config.targetStart && s.t * 100 <= config.targetEnd),
-  );
-  // Le besoin n'est réputé tenu que si le moteur de couverture le dit lui-même.
-  const targetMet = guided.computed?.verdict === "expected";
 
   useEffect(() => {
     if (!playing) return;
@@ -552,7 +543,6 @@ export default function MagneticWorkshop({
         : { mode, motion: config.motion },
     );
     setField(false);
-    setStep(0);
   }
   /** Sélection réelle d'un capteur : une seule logique centrale, partagée avec
    * l'espace de conception. */
