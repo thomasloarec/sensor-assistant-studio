@@ -205,9 +205,9 @@ export default function MagneticWorkshop({
     () => parseWorkshopConfig(initialConfig) ?? { ...DEFAULT_WORKSHOP },
   );
   useEffect(() => {
-    onDraftChange?.(config);
+    if (!embedded) onDraftChange?.(config);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [config]);
+  }, [config, embedded]);
   // Dans l'espace projet, chaque réglage rejoint directement le dossier : il
   // n'existe plus de second état « utiliser ce montage » à confirmer.
   useEffect(() => {
