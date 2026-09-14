@@ -22,6 +22,7 @@ import {
   bladeOffsetZ,
   bladeOffsetY,
   customLayout,
+  electricalDetailsAllowed,
   formatMm,
 } from "@/lib/standex/sensor-catalog";
 import type { SensorModel } from "@/lib/standex/sensor-catalog";
@@ -189,9 +190,10 @@ export function Body({
   xray: boolean;
   showCable?: boolean;
 }) {
-  if (model.shape === "custom_pcb" && customLayout(model))
+  const electrical = electricalDetailsAllowed(model);
+  if (electrical && model.shape === "custom_pcb" && customLayout(model))
     return <CustomBoard model={model} xray={xray} />;
-  if (model.shape === "glass") return <BareReedBody model={model} />;
+  if (electrical && model.shape === "glass") return <BareReedBody model={model} />;
   return <StandardBody model={model} xray={xray} showCable={showCable} />;
 }
 function BareReedBody({ model }: { model: SensorModel }) {
@@ -235,6 +237,7 @@ function StandardBody({
 }) {
   const [l, h, w] = model.body,
     opacity = xray ? 0.25 : 1;
+  const electrical = electricalDetailsAllowed(model);
   const baseShape = useMemo(() => {
     const s = new Shape();
     rounded(s, -l / 2, -w / 2, l, w, Math.min(0.6, w * 0.1));
@@ -315,14 +318,14 @@ function StandardBody({
           {t(material)}
         </mesh>
       )}
-      {model.id === "MK06-4"
+      {electrical && model.id === "MK06-4"
         ? [-1, 1].map((sign) => (
             <mesh key={sign} position={[sign * 5.08, -h / 2 - 1.65, 0]}>
               <boxGeometry args={[0.5, 3.3, 0.5]} />
               <meshStandardMaterial color="#a7b5bd" metalness={0.8} roughness={0.25} />
             </mesh>
           ))
-        : model.shape === "smd"
+        : electrical && model.shape === "smd"
           ? [-1, 1].map((sign) => (
               <mesh
                 key={sign}
@@ -336,7 +339,7 @@ function StandardBody({
                 <meshStandardMaterial color="#a7b5bd" metalness={0.8} roughness={0.25} />
               </mesh>
             ))
-          : showCable &&
+          : electrical && showCable &&
             [-1, 1].map((sign) => {
               const side = model.cableSide ?? -1,
                 z = bladeOffsetZ(model) + sign * Math.min(0.65, w * 0.15);
@@ -401,6 +404,7 @@ export function Contacts({
   contact: Contact;
   reduced: boolean;
 }) {
+  if (!electricalDetailsAllowed(model)) return null;
   const span = bladeLength(model);
   const closed = contact === "closed";
   const { thickness, gap } = contactGeometry(model, closed);
