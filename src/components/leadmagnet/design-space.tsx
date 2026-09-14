@@ -1840,18 +1840,74 @@ export function DesignSpace({
           "Ces capteurs sont des exemples à explorer. Le bureau d'études Standex vérifiera leur adaptation à votre projet après l'envoi du dossier.",
         )}
       </p>
-      <p className="t-caption">{t(CANDIDATE_DISCLAIMER)}</p>
+      {/* Annonce lue par les lecteurs d'écran à chaque décision. */}
+      <p className="sr-only" role="status" aria-live="polite">
+        {selectionAnnounce}
+      </p>
+      {answerFilters.length ? (
+        <div className="panel-block space-y-3">
+          <p className="t-body">
+            {t("D'après vos réponses, nous ne montrons d'abord que les capteurs compatibles.")}
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {answerFilters.map((f) => {
+              const on = !filtersOff.includes(f.id);
+              return (
+                <button
+                  key={f.id}
+                  type="button"
+                  className="answer-filter"
+                  aria-pressed={on}
+                  onClick={() =>
+                    setFiltersOff((off) =>
+                      off.includes(f.id) ? off.filter((x) => x !== f.id) : [...off, f.id],
+                    )
+                  }
+                >
+                  <span aria-hidden="true">{on ? "✓" : "+"}</span>
+                  <span>{t(f.label)}</span>
+                </button>
+              );
+            })}
+          </div>
+          <p className="t-caption">
+            {t(
+              "Vous pouvez désactiver un critère pour voir les autres capteurs. Vos réponses ne sont pas modifiées.",
+            )}
+          </p>
+          {filtersOff.length ? (
+            <Button
+              variant="outline"
+              size="sm"
+              className="min-h-11"
+              onClick={() => setFiltersOff([])}
+            >
+              {t("Rétablir mes réponses")}
+            </Button>
+          ) : null}
+          <details className="mt-1">
+            <summary className="t-caption min-h-11 cursor-pointer list-none py-2">
+              {t("Voir le motif technique de chaque critère")}
+            </summary>
+            <ul className="mt-2 space-y-1">
+              {answerFilters.map((f) => (
+                <li key={f.id} className="t-caption">
+                  <strong>{t(f.label)}</strong> — {t(f.technical)}
+                </li>
+              ))}
+            </ul>
+          </details>
+        </div>
+      ) : null}
       <div className="panel-block flex flex-wrap items-center gap-3">
         <span className="t-body">{t("Vous n'êtes pas obligé de choisir une référence.")}</span>
         <Button
-          variant={dossier.selectedSensorId === null ? "default" : "outline"}
+          variant={isDelegated(dossier, DELEGATED_SENSOR) ? "default" : "outline"}
           className="min-h-11 text-base"
-          aria-pressed={dossier.selectedSensorId === null}
-          onClick={() =>
-            setDossier((d) => ({ ...d, selectedSensorId: null, sensorSyncConfirmed: true }))
-          }
+          aria-pressed={isDelegated(dossier, DELEGATED_SENSOR)}
+          onClick={delegateSensor}
         >
-          {t("Je ne sais pas encore — à définir avec Standex")}
+          {t("Choisir avec Standex")}
         </Button>
       </div>
       {dossier.selectedSensorId && !dossier.sensorSyncConfirmed ? (
@@ -1884,87 +1940,113 @@ export function DesignSpace({
         </div>
       ) : null}
       <div className="space-y-3">
-        {plausibleCandidates.map((c) => (
-          <div
-            key={c.id}
-            className={`surface-interactive p-5 ${
-              dossier.selectedSensorId === c.id ? "candidate-selected" : ""
-            } ${c.status === "excluded" ? "candidate-excluded" : ""}`}
-          >
-            <div className="grid gap-4 sm:grid-cols-[13rem_1fr]">
-              <div>
-                <CandidateThumbnail sensorId={c.id} cabled={candidatesCabled} />
-                <p className="t-caption mt-2">
-                  {sensorById(c.id).sourceFile
-                    ? t(
-                        "Aperçu 3D d'après les cotes de la fiche technique — ce n'est pas un modèle CAO de fabrication.",
-                      )
-                    : t("Schéma pédagogique proportionnel — ni modèle CAO ni cote validée.")}
-                </p>
-              </div>
-              <div>
-                <div className="flex flex-wrap items-center gap-2">
-                  {/* Les références (MK03…) traversent t() inchangées ; seul un
-                      libellé descriptif comme « Sur mesure » est traduit. */}
-                  <span className="t-title-s">{t(c.name)}</span>
+        {plausibleCandidates.map(({ candidate: c }) => {
+          const model = sensorById(c.id);
+          const chosen = dossier.selectedSensorId === c.id;
+          return (
+            <div
+              key={c.id}
+              className={`surface-interactive p-5 ${chosen ? "candidate-selected" : ""} ${
+                c.status === "excluded" && c.id !== CUSTOM_SENSOR_ID ? "candidate-excluded" : ""
+              }`}
+            >
+              <div className="grid gap-4 sm:grid-cols-[17rem_1fr]">
+                <div>
+                  <CandidateThumbnail
+                    sensorId={c.id}
+                    cabled={candidatesCabled}
+                    fitToView
+                    size="large"
+                    scaleBar
+                  />
+                  <p className="t-metric mt-2">{sizeLabel(model)}</p>
+                  {model.terminalSpan && model.terminalSpan > model.body[0] ? (
+                    <p className="t-caption">
+                      {msg("Avec les terminaisons documentées : {0} mm de long.", [
+                        formatMm(model.terminalSpan),
+                      ])}
+                    </p>
+                  ) : null}
+                  <p className="t-caption mt-1">
+                    {model.sourceFile
+                      ? t(
+                          "Aperçu 3D d'après les cotes de la fiche technique — ce n'est pas un modèle CAO de fabrication.",
+                        )
+                      : t("Schéma pédagogique proportionnel — ni modèle CAO ni cote validée.")}
+                  </p>
+                </div>
+                <div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    {/* Les références (MK03…) traversent t() inchangées ; seul un
+                        libellé descriptif comme « Sur mesure » est traduit. */}
+                    <span className="t-title-s">{t(c.name)}</span>
 
-                  <Badge
-                    variant={
-                      c.status === "kept"
-                        ? "default"
-                        : c.status === "to_verify"
-                          ? "warning"
-                          : "secondary"
-                    }
-                  >
-                    {c.status === "kept"
-                      ? t("Retenu à ce stade")
-                      : c.status === "to_verify"
-                        ? t("À vérifier")
-                        : t("Écarté")}
-                  </Badge>
-                  <span className="t-metric rounded-[var(--r-pill)] bg-[var(--surface-sunken)] px-2.5 py-1 t-caption">
-                    {c.size}
-                  </span>
-                  {c.status !== "excluded" ? (
-                    <Button
-                      size="sm"
-                      variant="secondary"
-                      className="sm:ml-auto"
-                      onClick={() =>
-                        setDossier((d) => ({
-                          ...d,
-                          selectedSensorId: c.id,
-                          sensorSyncConfirmed: d.workshopSensorId === c.id,
-                        }))
+                    <Badge
+                      variant={
+                        c.status === "kept"
+                          ? "default"
+                          : c.status === "to_verify"
+                            ? "warning"
+                            : "secondary"
                       }
                     >
-                      {c.id === CUSTOM_SENSOR_ID
-                        ? t("Partir sur du sur mesure")
-                        : t("Suivre cette gamme")}
+                      {c.status === "kept"
+                        ? t("Retenu à ce stade")
+                        : c.status === "to_verify"
+                          ? t("À vérifier")
+                          : t("Hors des contraintes que vous avez déclarées")}
+                    </Badge>
+                    <span className="t-metric rounded-[var(--r-pill)] bg-[var(--surface-sunken)] px-2.5 py-1 t-caption">
+                      {c.size}
+                    </span>
+                  </div>
+                  <ul className="mt-3 space-y-1.5">
+                    {c.reasons.map((r, i) => (
+                      <li key={i} className="t-caption flex gap-2 leading-[1.6]">
+                        <span
+                          className="mt-[0.62em] h-1 w-1 shrink-0 rounded-full bg-[var(--standex-blue-50)]"
+                          aria-hidden="true"
+                        />
+                        <span>{t(r)}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="mt-4 flex flex-wrap items-center gap-2">
+                    <Button
+                      className="min-h-11 text-base"
+                      variant={chosen ? "default" : "secondary"}
+                      aria-pressed={chosen}
+                      onClick={() => chooseSensor(c.id, t(c.name))}
+                    >
+                      {chosen ? (
+                        <>
+                          <Check className="mr-1.5 size-4" aria-hidden="true" />
+                          {t("Choisi pour mon projet")}
+                        </>
+                      ) : c.id === CUSTOM_SENSOR_ID ? (
+                        t("Partir sur du sur mesure")
+                      ) : (
+                        t("Choisir ce capteur pour mon projet")
+                      )}
                     </Button>
-                  ) : null}
+                    <Button
+                      variant="outline"
+                      className="min-h-11"
+                      onClick={() => setDetailSensorId(c.id)}
+                    >
+                      {t("Voir les détails")}
+                    </Button>
+                  </div>
                 </div>
-                <ul className="mt-3 space-y-1.5">
-                  {c.reasons.map((r, i) => (
-                    <li key={i} className="t-caption flex gap-2 leading-[1.6]">
-                      <span
-                        className="mt-[0.62em] h-1 w-1 shrink-0 rounded-full bg-[var(--standex-blue-50)]"
-                        aria-hidden="true"
-                      />
-                      <span>{t(r)}</span>
-                    </li>
-                  ))}
-                </ul>
               </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
       {otherCandidates.length ? (
         <details className="panel-block">
           <summary className="t-title-s flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 py-2">
-            {msg("Voir les autres capteurs ({0}) — écartés par une contrainte technique", [
+            {msg("Voir les autres capteurs ({0}) — écartés par un critère actif", [
               String(otherCandidates.length),
             ])}
             <span className="technical-details-chevron" aria-hidden="true">
@@ -1972,22 +2054,49 @@ export function DesignSpace({
             </span>
           </summary>
           <ul className="mt-3 space-y-2">
-            {otherCandidates.map((c) => (
+            {otherCandidates.map(({ candidate: c, blocked }) => (
               <li key={c.id} className="panel-block">
                 <p className="t-title-s">{t(c.name)}</p>
                 <p className="t-caption t-metric">{c.size}</p>
                 <ul className="mt-2 space-y-1">
+                  {blocked.map((id) => {
+                    const f = answerFilters.find((x) => x.id === id);
+                    return f ? (
+                      <li key={id} className="t-caption">
+                        {msg("Écarté par le critère « {0} ». {1}", [t(f.label), t(f.technical)])}
+                      </li>
+                    ) : null;
+                  })}
                   {c.reasons.map((r, i) => (
                     <li key={i} className="t-caption">
                       {t(r)}
                     </li>
                   ))}
                 </ul>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    className="min-h-11"
+                    onClick={() => chooseSensor(c.id, t(c.name))}
+                  >
+                    {t("Choisir ce capteur pour mon projet")}
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="min-h-11"
+                    onClick={() => setDetailSensorId(c.id)}
+                  >
+                    {t("Voir les détails")}
+                  </Button>
+                </div>
               </li>
             ))}
           </ul>
         </details>
       ) : null}
+      <p className="t-caption">{t(CANDIDATE_DISCLAIMER)}</p>
     </div>
   );
 

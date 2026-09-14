@@ -1,0 +1,151 @@
+import { describe, expect, test } from "bun:test";
+import { readFile } from "node:fs/promises";
+import { existsSync } from "node:fs";
+import { join } from "node:path";
+import {
+  SENSOR_CATALOG,
+  overallEnvelope,
+  CUSTOM_SENSOR_ID,
+} from "../src/lib/standex/sensor-catalog";
+import {
+  STEP_ENVELOPE_IDS,
+  stepEnvelopeFor,
+  type StepManifest,
+} from "../src/lib/standex/step-envelope";
+
+const STEP_DIR = join(process.cwd(), "public", "step");
+
+async function loadManifest(): Promise<StepManifest> {
+  const raw = await readFile(join(STEP_DIR, "manifest.json"), "utf8");
+  return JSON.parse(raw) as StepManifest;
+}
+
+/** Extrait tous les CARTESIAN_POINT(...) d'un fichier STEP. */
+function extractPoints(text: string): [number, number, number][] {
+  const pts: [number, number, number][] = [];
+  const re = /CARTESIAN_POINT\('',\(([^)]+)\)\)/g;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(text))) {
+    const [x, y, z] = m[1].split(",").map(Number);
+    pts.push([x, y, z]);
+  }
+  return pts;
+}
+
+describe("manifeste STEP", () => {
+  test("aucun identifiant du catalogue ne manque", async () => {
+    const manifest = await loadManifest();
+    const manifestIds = new Set(manifest.entries.map((e) => e.id));
+    for (const s of SENSOR_CATALOG) {
+      expect(manifestIds.has(s.id)).toBe(true);
+    }
+    expect(manifest.entries.length).toBe(SENSOR_CATALOG.length);
+  });
+
+  test("STEP_ENVELOPE_IDS reflète le manifeste, pas une liste écrite à la main", async () => {
+    const manifest = await loadManifest();
+    expect([...STEP_ENVELOPE_IDS].sort()).toEqual(manifest.entries.map((e) => e.id).sort());
+  });
+
+  test("l'unité déclarée est le millimètre", async () => {
+    const manifest = await loadManifest();
+    expect(manifest.unit).toBe("MILLIMETRE");
+  });
+});
+
+describe("chaque fichier STEP annoncé existe réellement et est valide", () => {
+  for (const s of SENSOR_CATALOG) {
+    test(`${s.id} : fichier présent, en-tête ISO-10303-21 / AP214, B-Rep, enveloppe cohérente`, async () => {
+      const envelope = stepEnvelopeFor(s.id);
+      expect(envelope).not.toBeNull();
+      const filePath = join(STEP_DIR, envelope!.fileName);
+      expect(existsSync(filePath)).toBe(true);
+
+      const text = await readFile(filePath, "utf8");
+
+      // En-tête ISO-10303-21 valide.
+      expect(text.startsWith("ISO-10303-21;")).toBe(true);
+      expect(text).toContain("HEADER;");
+      expect(text).toContain("ENDSEC;");
+      expect(text).toContain("DATA;");
+      expect(text.trim().endsWith("END-ISO-10303-21;")).toBe(true);
+
+      // FILE_SCHEMA AP214 (AUTOMOTIVE_DESIGN).
+      expect(text).toMatch(/FILE_SCHEMA\(\('AUTOMOTIVE_DESIGN \{ 1 0 10303 214 1 1 1 1 \}'\)\);/);
+
+      // Unités millimètre.
+      expect(text).toMatch(/SI_UNIT\(\.MILLI\.,\.METRE\.\)/);
+
+      // Parsing basique du B-Rep : au moins un solide manifold fermé fait de faces avancées.
+      expect(text).toContain("MANIFOLD_SOLID_BREP");
+      expect(text).toContain("CLOSED_SHELL");
+      expect(text).toContain("ADVANCED_FACE");
+      expect(text).toContain("FACE_OUTER_BOUND");
+
+      const points = extractPoints(text);
+      expect(points.length).toBeGreaterThan(0);
+
+      // Boîte englobante des points, cohérente avec overallEnvelope() à ±0,01 mm.
+      const xs = points.map((p) => p[0]);
+      const ys = points.map((p) => p[1]);
+      const zs = points.map((p) => p[2]);
+      const spanX = Math.max(...xs) - Math.min(...xs);
+      const spanY = Math.max(...ys) - Math.min(...ys);
+      const spanZ = Math.max(...zs) - Math.min(...zs);
+
+      const [envX, envY, envZ] = overallEnvelope(s);
+      const eps = 0.01;
+      // Le générateur place la longueur/terminaisons sur l'axe X, la hauteur sur Y,
+      // la largeur sur Z, sauf pour "custom_pcb" où l'enveloppe extérieure de la
+      // boîte (reed + PCB) peut légèrement excéder overallEnvelope (qui ne
+      // décrit que le corps déclaré) ; on vérifie donc une borne, pas une égalité,
+      // pour ce cas précis, et une égalité stricte pour tous les autres.
+      if (s.shape === "custom_pcb") {
+        expect(spanX).toBeLessThanOrEqual(envX + eps + 1e-9);
+        expect(spanY).toBeLessThanOrEqual(envY + eps + 1e-9);
+        expect(spanZ).toBeLessThanOrEqual(envZ + eps + 1e-9);
+      } else {
+        expect(Math.abs(spanX - envX)).toBeLessThanOrEqual(eps);
+        expect(Math.abs(spanY - envY)).toBeLessThanOrEqual(eps);
+        expect(Math.abs(spanZ - envZ)).toBeLessThanOrEqual(eps);
+      }
+    });
+  }
+});
+
+describe("stepEnvelopeFor()", () => {
+  test("renvoie null pour un identifiant inconnu", () => {
+    expect(stepEnvelopeFor("NE_EXISTE_PAS")).toBeNull();
+  });
+
+  test("libellé constant « STEP d'encombrement · modèle simplifié »", () => {
+    for (const s of SENSOR_CATALOG) {
+      const envelope = stepEnvelopeFor(s.id);
+      expect(envelope?.label).toBe("STEP d'encombrement · modèle simplifié");
+    }
+  });
+
+  test("jamais un fichier fabricant : aucune URL ne pointe vers /datasheets pour l'URL STEP elle-même", () => {
+    for (const s of SENSOR_CATALOG) {
+      const envelope = stepEnvelopeFor(s.id);
+      expect(envelope?.url.startsWith("/step/")).toBe(true);
+      expect(envelope?.url.endsWith(".step")).toBe(true);
+    }
+  });
+
+  test("mention pédagogique explicite pour GENERIC et CUSTOM", () => {
+    const generic = stepEnvelopeFor("GENERIC");
+    const custom = stepEnvelopeFor(CUSTOM_SENSOR_ID);
+    expect(generic?.disclaimer).toMatch(/pédagogique/i);
+    expect(custom?.disclaimer).toMatch(/pédagogique/i);
+    expect(generic?.sourceUrl).toBeNull();
+    expect(custom?.sourceUrl).toBeNull();
+  });
+
+  test("un capteur documenté renvoie sa provenance réelle", () => {
+    const mk01 = stepEnvelopeFor("MK01");
+    expect(mk01?.sourceUrl).toBe("/datasheets/MK01.pdf#page=1");
+    expect(mk01?.sourceLabel).toContain("MK01.pdf");
+    expect(mk01?.dimensionsLabel).toContain("mm");
+  });
+});
