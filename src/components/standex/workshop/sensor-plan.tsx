@@ -102,6 +102,23 @@ export function SensorPlan({
         stroke={model.color}
         strokeWidth={0.28}
       />
+      {/* Repère de polarité d'un AIMANT : deux demi-teintes N/S posées sur
+          l'enveloppe réellement documentée. C'est un repère de lecture, jamais
+          l'axe magnétique actif, qui n'est pas déduit ici. Sans lui, un boîtier
+          d'aimant et son capteur d'origine ont la même silhouette. */}
+      {model.magnet &&
+        [-1, 1].map((sign) => (
+          <rect
+            key={sign}
+            className={sign < 0 ? "magnet-pole-north" : "magnet-pole-south"}
+            x={sign < 0 ? -l / 2 : 0}
+            y={-w / 2}
+            width={l / 2}
+            height={w}
+            rx={Math.min(0.5, w * 0.12)}
+            fillOpacity={0.85}
+          />
+        ))}
       {model.shape === "flange" && (
         <path
           d={`M${-l / 2} ${-w / 2 + (model.raisedDepth ?? w)} H${l / 2}`}

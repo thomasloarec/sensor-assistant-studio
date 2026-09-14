@@ -242,6 +242,19 @@ export function PrivateDesignError({ reset }: { reset: () => void }) {
   );
 }
 
+/* i18n-canonical : libellés courts de la carte « Votre projet », traduits au
+   rendu. Ils ne remplacent PAS les libellés d'exigence du dossier : l'export,
+   le résumé technique et l'envoi gardent les libellés techniques complets. */
+const REVIEW_SHORT_LABELS: Record<string, string> = {
+  detection_goal: "Besoin",
+  states_motion: "Mouvement",
+  mounting: "Montage",
+  envelope: "Place disponible",
+  electrical: "Électrique",
+  environment: "Environnement",
+};
+
+
 const stateBadge = (state: string) =>
   state === "confirmed" ? t("Confirmé") : state === "hypothesis" ? t("Hypothèse") : "Inconnu";
 
@@ -3474,27 +3487,37 @@ export function DesignSpace({
     </div>
   );
 
-  /** Accords, pièces réellement transmises et action d'envoi : logique inchangée. */
+  /** Contraintes supplémentaires : champ de contexte, il vit maintenant dans le
+   *  dépliant « Plus de détails sur le projet ». Même état, même écriture. */
+  const extraConstraintsField = (
+    <div>
+      <Label className="t-label">{t("Contraintes supplémentaires")}</Label>
+      <Textarea
+        rows={3}
+        className="mt-2"
+        value={extraConstraints}
+        onChange={(e) => setExtraConstraints(e.target.value)}
+      />
+    </div>
+  );
+
+  const transferredFiles = dossier.attachments.filter((a) => a.transferred);
+
+  /** Accords, pièces réellement transmises et action d'envoi : logique inchangée.
+   *  Seule la présentation change : deux accords courts, leur texte complet dans
+   *  « Détails », et l'action d'envoi juste dessous. */
   const sendBlock = (
     <div className="space-y-3">
-            <div>
-              <Label className="t-label">{t("Contraintes supplémentaires")}</Label>
-              <Textarea
-                rows={3}
-                value={extraConstraints}
-                onChange={(e) => setExtraConstraints(e.target.value)}
-              />
-            </div>
-            <p className="text-sm">
-              {t("Fichiers réellement transmis :")}{" "}
-              {dossier.attachments.filter((a) => a.transferred).length === 0
-                ? "aucun"
-                : dossier.attachments
-                    .filter((a) => a.transferred)
-                    .map((a) => a.fileName)
-                    .join(", ")}
-            </p>
-            <label className="t-caption flex items-center gap-2">
+            {/* Aucune ligne « aucun fichier » : on ne parle des fichiers que
+                lorsqu'il y en a réellement un. */}
+            {transferredFiles.length > 0 ? (
+              <p className="t-body">
+                {t("Fichiers réellement transmis :")}{" "}
+                {transferredFiles.map((a) => a.fileName).join(", ")}
+              </p>
+            ) : null}
+            <p className="t-label">{t("Avant l'envoi")}</p>
+            <label className="t-body flex min-h-11 items-center gap-3">
               <Checkbox
                 checked={binding !== null && hasBoundConsent(privacy, "supabase_dossier", binding)}
                 disabled={binding === null}
@@ -3517,11 +3540,19 @@ export function DesignSpace({
                   );
                 }}
               />
-              {t("J'autorise l'envoi de ce contenu à Standex (ingénieurs et commercial).")}
+              {t("J'autorise l'envoi de ce projet aux ingénieurs Standex.")}
             </label>
+            <details className="filter-adjust">
+              <summary className="t-caption min-h-11 cursor-pointer list-none py-2">
+                {t("Détails")}
+              </summary>
+              <p className="t-caption mt-1">
+                {t("J'autorise l'envoi de ce contenu à Standex (ingénieurs et commercial).")}
+              </p>
+            </details>
             {consentNotice ? <p className="notice notice-warning">{consentNotice}</p> : null}
 
-            <label className="t-caption flex items-start gap-2">
+            <label className="t-body flex min-h-11 items-center gap-3">
               <Checkbox
                 checked={binding !== null && hasBoundConsent(privacy, "ai_assistant", binding)}
                 disabled={binding === null}
@@ -3542,10 +3573,20 @@ export function DesignSpace({
               />
               <span>
                 {t(
-                  "J'autorise en plus la traduction en anglais des textes de ce projet par un service externe (Anthropic), afin que l'équipe Standex les lise en anglais. Références, valeurs, unités, noms et fichiers restent inchangés, et mon projet d'origine est conservé tel quel. Sans cette case, aucun texte n'est transmis à ce service.",
+                  "J'autorise la traduction en anglais par un service externe (Anthropic) ; mon projet d'origine reste inchangé.",
                 )}
               </span>
             </label>
+            <details className="filter-adjust">
+              <summary className="t-caption min-h-11 cursor-pointer list-none py-2">
+                {t("Détails")}
+              </summary>
+              <p className="t-caption mt-1">
+                {t(
+                  "J'autorise en plus la traduction en anglais des textes de ce projet par un service externe (Anthropic), afin que l'équipe Standex les lise en anglais. Références, valeurs, unités, noms et fichiers restent inchangés, et mon projet d'origine est conservé tel quel. Sans cette case, aucun texte n'est transmis à ce service.",
+                )}
+              </p>
+            </details>
             {englishMessage ? <p className="notice notice-info">{englishMessage}</p> : null}
             {englishRetry ? (
               <Button
@@ -3813,7 +3854,11 @@ export function DesignSpace({
                 const requirement = dossier.requirements.find((r) => r.key === key);
                 return (
                   <div key={key} className="review-fact">
-                    <dt className="t-label">{t(REQUIREMENT_LABELS[key] ?? key)}</dt>
+                    {/* Libellé court À L'AFFICHAGE seulement : l'exigence garde son
+                        libellé technique dans le dossier, l'export et l'envoi. */}
+                    <dt className="review-fact-label">
+                      {t(REVIEW_SHORT_LABELS[key] ?? REQUIREMENT_LABELS[key] ?? key)}
+                    </dt>
                     <dd className="t-body">
                       {requirement && requirement.value.trim()
                         ? requirement.value
@@ -3823,7 +3868,7 @@ export function DesignSpace({
                 );
               })}
               <div className="review-fact">
-                <dt className="t-label">{t("Couple testé")}</dt>
+                <dt className="review-fact-label">{t("Couple testé")}</dt>
                 <dd className="t-body">
                   {isDelegated(dossier, TRIAL_REQUEST) ? (
                     <strong>{t("Demande d'essai réel")}</strong>
@@ -3851,7 +3896,10 @@ export function DesignSpace({
                 ⌄
               </span>
             </summary>
-            <div className="mt-3">{projectContextFields}</div>
+            <div className="mt-3 space-y-4">
+              {projectContextFields}
+              {extraConstraintsField}
+            </div>
           </details>
         </div>
 
@@ -3898,7 +3946,13 @@ export function DesignSpace({
                 }
               />
             </div>
+            {/* Les accords et le bouton d'envoi vivent dans LA MÊME carte que les
+                coordonnées : la dernière action n'est plus à chercher ailleurs. */}
+            <hr className="standex-rule" />
+            {sendBlock}
+            <p className="t-caption">{t("Réponse d'un ingénieur sous 2 jours ouvrés.")}</p>
           </div>
+
 
           <div className="panel-block-lg space-y-3">
             <label className="flex min-h-11 cursor-pointer items-start gap-3">
@@ -3927,27 +3981,23 @@ export function DesignSpace({
             {nda.required ? ndaFlow : null}
           </div>
 
-      <div className="panel-block">
-        <label className="t-body flex min-h-11 items-center gap-3">
-          <input
-            type="checkbox"
-            data-testid="trial-request"
-            checked={isDelegated(dossier, TRIAL_REQUEST)}
-            onChange={() => toggleDelegated(TRIAL_REQUEST)}
-          />
-          {t("Demande d'essai réel")}
-        </label>
-        <p className="t-caption mt-1">
-          {t(
-            "Standex mesure la position dans son laboratoire. Cocher cette case demande une mesure : ce n'est ni une mesure, ni une validation technique.",
-          )}
-        </p>
-      </div>
-
-          <div className="panel-block-lg space-y-3">
-            {sendBlock}
-            <p className="t-caption">{t("Réponse d'un ingénieur sous 2 jours ouvrés.")}</p>
+          <div className="panel-block">
+            <label className="t-body flex min-h-11 items-center gap-3">
+              <input
+                type="checkbox"
+                data-testid="trial-request"
+                checked={isDelegated(dossier, TRIAL_REQUEST)}
+                onChange={() => toggleDelegated(TRIAL_REQUEST)}
+              />
+              {t("Essai en laboratoire")}
+            </label>
+            <p className="t-caption mt-1">
+              {t(
+                "Standex mesure la position dans son laboratoire : demander une mesure n'est pas une validation technique.",
+              )}
+            </p>
           </div>
+
 
           {lastSent ? (
             <div className="panel-block-lg space-y-3">

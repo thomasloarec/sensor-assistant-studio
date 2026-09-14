@@ -14,11 +14,18 @@ import { PairThumbnail } from "./pair-thumbnail";
 
 /** Un seul mot, et seulement s'il est déjà seul dans la réponse : on ne découpe
  *  pas une phrase pour en extraire un sujet (huit langues, aucune grammaire
- *  fiable ici). Sinon la phrase parle de « votre pièce ». */
+ *  fiable ici).
+ *
+ *  Une seule tournure est reconnue en plus, parce qu'elle est celle de la
+ *  question posée : « … si le/la/un/une <mot> … » (« Savoir si le capot d'une
+ *  machine est fermé » → « capot »). Aucun autre découpage n'est tenté ; sans
+ *  correspondance, la phrase parle de « votre pièce ». */
 export function detectedObjectWord(answer: string | null | undefined): string | null {
   const value = (answer ?? "").trim();
-  if (!value || value.length > 24 || /[\s.,;:!?]/.test(value)) return null;
-  return value;
+  if (!value) return null;
+  if (value.length <= 24 && !/[\s.,;:!?]/.test(value)) return value;
+  const after = /\bsi\s+(?:le|la|les|un|une|des|l['’])\s*([\p{L}]{3,24})\b/iu.exec(value);
+  return after?.[1] ?? null;
 }
 
 /* i18n-canonical : sur-titres traduits au rendu par t(). */

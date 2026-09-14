@@ -132,6 +132,10 @@
   --signal: oklch(0.72 0.13 205);
   --signal-glow: oklch(0.82 0.11 205 / 0.55);
   --standex-bar-color: var(--standex-blue);
+  /* Repère de polarité N/S d'un aimant : convention de lecture, jamais une
+     mesure d'axe magnétique. Rouge = nord, Detect Blue = sud. */
+  --magnet-north: var(--destructive);
+  --magnet-south: var(--standex-blue);
 
   /* --- 4. Typographie ---------------------------------------------------- */
   --font-sans: "Source Sans 3", "Lato", ui-sans-serif, system-ui, -apple-system, sans-serif;
@@ -967,6 +971,14 @@
   .text-link:hover {
     color: var(--standex-blue-75);
   }
+  /* Sur fond sombre, le bleu de marque n'est plus lisible : le lien prend la
+     couleur de texte du contexte immersif, et reste souligné. */
+  .immersive .text-link {
+    color: var(--foreground);
+  }
+  .immersive .text-link:hover {
+    color: var(--heading);
+  }
   /* Vignette d'un couple : capteur et aimant à cadrage égal, « + » discret.
      Chaque objet garde son propre cadrage, donc sa lisibilité. */
   .pair-thumb-row {
@@ -979,16 +991,17 @@
     font: var(--t-body);
     color: var(--muted-foreground);
   }
-  /* Repère N/S : utilisé UNIQUEMENT sans géométrie de boîtier documentée. */
+  /* Repère de polarité N/S : sur le boîtier d'aimant dessiné, et sur le
+     pictogramme utilisé quand aucune géométrie n'est documentée. */
   .magnet-pole-north {
-    fill: var(--surface-tint);
+    fill: var(--magnet-north);
   }
   .magnet-pole-south {
-    fill: var(--surface-sunken);
+    fill: var(--magnet-south);
   }
   .magnet-pole-text {
     font: var(--t-label);
-    fill: var(--muted-foreground);
+    fill: var(--destructive-foreground);
   }
   .filter-adjust > summary {
     color: var(--standex-blue);
@@ -2059,9 +2072,17 @@
 }
 .review-fact {
   display: grid;
-  grid-template-columns: 200px minmax(0, 1fr);
+  grid-template-columns: 180px minmax(0, 1fr);
   gap: var(--s-3, 0.75rem);
   align-items: baseline;
+}
+/* Libellé de fait : un mot court en casse normale. Les libellés techniques
+   longs en capitales rendaient la carte illisible. */
+.review-fact-label {
+  font: var(--t-body);
+  color: var(--muted-foreground);
+  text-transform: none;
+  letter-spacing: var(--tracking-body);
 }
 @media (max-width: 640px) {
   .review-fact {

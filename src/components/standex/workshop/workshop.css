@@ -2182,6 +2182,10 @@
 .mw-stage .mw-canvas {
   flex: 1 1 auto;
   min-height: 420px;
+  /* La scène reste une fenêtre de la taille de l'écran. Sans ce plafond, ouvrir
+     les réglages avancés allongeait la colonne de gauche, la scène s'étirait à
+     plusieurs milliers de pixels et le couple sortait du cadre visible. */
+  max-height: calc(100svh - 240px);
 }
 /* ---- Bandeau de verdict ---- */
 .mw-verdict-bar {
@@ -2360,6 +2364,18 @@
   }
   .mw-stage .mw-canvas {
     min-height: 340px;
+  }
+}
+@media (max-width: 639px) {
+  /* Sur un téléphone, le verdict et sa réserve s'empilent : côte à côte, la
+     phrase se cassait à un mot par ligne. */
+  .mw-verdict-bar {
+    flex-wrap: wrap;
+  }
+  .mw-verdict-bar-text,
+  .mw-verdict-limits {
+    flex: 1 1 100%;
+    max-inline-size: none;
   }
 }
 

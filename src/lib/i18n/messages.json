@@ -4850,7 +4850,7 @@
     "Acceda qui sotto per preparare o aggiornare la verifica dell'NDA.",
     "NDA の確認を準備または更新するには、下からログインしてください。"
   ],
-  "Connectez-vous pour envoyer votre dossier à Standex.": [
+  "Connectez-vous pour envoyer votre projet à Standex.": [
     "Log in to send your case file to Standex.",
     "请登录以将您的案卷发送至 Standex。",
     "Melden Sie sich an, um Ihr Dossier an Standex zu senden.",
@@ -9683,7 +9683,7 @@
     "Riproduzione rallentata per capire. Non valida cadenza né rimbalzi del contatto.",
     "理解のため低速再生しています。動作速度や接点バウンスは検証しません。"
   ],
-  "La liaison avec l'équipe Standex est active : connectez-vous pour envoyer votre dossier.": [
+  "La liaison avec l'équipe Standex est active : connectez-vous pour envoyer votre projet.": [
     "Connection to the Standex team is active: log in to submit your case file.",
     "与Standex团队的连接已激活：请登录以发送您的案卷。",
     "Die Verbindung zum Standex-Team ist aktiv: Melden Sie sich an, um Ihre Projektakte zu senden.",
@@ -9692,7 +9692,7 @@
     "Il collegamento con il team Standex è attivo: accedere per inviare il dossier.",
     "Standexチームとの接続は有効です。案件ファイルを送信するにはログインしてください。"
   ],
-  "La liaison avec l'équipe Standex est active : connectez-vous pour envoyer votre dossier. Tant que vous ne l'envoyez pas, rien ne quitte votre appareil.": [
+  "La liaison avec l'équipe Standex est active : connectez-vous pour envoyer votre projet. Tant que vous ne l'envoyez pas, rien ne quitte votre appareil.": [
     "The link to the Standex team is active: log in to send your case file. As long as you do not send it, nothing leaves your device.",
     "与Standex团队的连接已激活：请登录以发送您的案卷。在您发送之前，任何内容都不会离开您的设备。",
     "Die Verbindung zum Standex-Team ist aktiv: Melden Sie sich an, um Ihr Dossier zu senden. Solange Sie es nicht senden, verlässt nichts Ihr Gerät.",
@@ -9701,7 +9701,7 @@
     "Il collegamento con il team Standex è attivo: accedere per inviare il fascicolo. Finché non lo si invia, nulla lascia il dispositivo.",
     "Standexチームとの接続がアクティブです。ログインして案件ファイルを送信してください。送信するまで、端末からデータが外部に出ることはありません。"
   ],
-  "La liaison avec l'équipe Standex est active : vous pouvez envoyer votre dossier pour revue.": [
+  "La liaison avec l'équipe Standex est active : vous pouvez envoyer votre projet pour revue.": [
     "Connection to the Standex team is active: you can submit your case file for review.",
     "与Standex团队的连接已激活：您可以发送案卷以供审查。",
     "Die Verbindung zum Standex-Team ist aktiv: Sie können Ihre Projektakte zur Prüfung senden.",
@@ -24694,5 +24694,95 @@
     "Материалы изменились с момента открытия данного рассмотрения.",
     "Il progetto è cambiato dall'apertura di questa revisione.",
     "このレビューを開いてからケースファイルが変更されました。"
+  ],
+  "Survolez pour la 3D": [
+    "Hover for 3D",
+    "悬停查看 3D",
+    "Für 3D den Zeiger darüber bewegen",
+    "Pase el cursor para ver en 3D",
+    "Наведите курсор для 3D",
+    "Passa il puntatore per il 3D",
+    "3D表示はカーソルを重ねてください"
+  ],
+  "Avant l'envoi": [
+    "Before sending",
+    "发送前",
+    "Vor dem Senden",
+    "Antes del envío",
+    "Перед отправкой",
+    "Prima dell'invio",
+    "送信の前に"
+  ],
+  "Détails": [
+    "Details",
+    "详情",
+    "Details",
+    "Detalles",
+    "Подробнее",
+    "Dettagli",
+    "詳細"
+  ],
+  "Montage": [
+    "Mounting",
+    "安装",
+    "Montage",
+    "Montaje",
+    "Монтаж",
+    "Montaggio",
+    "取り付け"
+  ],
+  "Place disponible": [
+    "Available space",
+    "可用空间",
+    "Verfügbarer Platz",
+    "Espacio disponible",
+    "Доступное место",
+    "Spazio disponibile",
+    "利用可能なスペース"
+  ],
+  "Environnement": [
+    "Environment",
+    "环境",
+    "Umgebung",
+    "Entorno",
+    "Условия",
+    "Ambiente",
+    "環境"
+  ],
+  "Essai en laboratoire": [
+    "Laboratory measurement",
+    "实验室测量",
+    "Messung im Labor",
+    "Ensayo en laboratorio",
+    "Измерение в лаборатории",
+    "Prova in laboratorio",
+    "ラボでの測定"
+  ],
+  "J'autorise l'envoi de ce projet aux ingénieurs Standex.": [
+    "I authorise sending this project to the Standex engineers.",
+    "我授权将此项目发送给 Standex 工程师。",
+    "Ich erlaube das Senden dieses Projekts an die Standex-Ingenieure.",
+    "Autorizo el envío de este proyecto a los ingenieros de Standex.",
+    "Я разрешаю отправку этого проекта инженерам Standex.",
+    "Autorizzo l'invio di questo progetto agli ingegneri Standex.",
+    "このプロジェクトをStandexのエンジニアに送信することを許可します。"
+  ],
+  "J'autorise la traduction en anglais par un service externe (Anthropic) ; mon projet d'origine reste inchangé.": [
+    "I authorise translation into English by an external service (Anthropic); my original project stays unchanged.",
+    "我授权由外部服务（Anthropic）翻译成英文；我的原始项目保持不变。",
+    "Ich erlaube die Übersetzung ins Englische durch einen externen Dienst (Anthropic); mein ursprüngliches Projekt bleibt unverändert.",
+    "Autorizo la traducción al inglés por un servicio externo (Anthropic); mi proyecto original permanece sin cambios.",
+    "Я разрешаю перевод на английский внешним сервисом (Anthropic); мой исходный проект остаётся без изменений.",
+    "Autorizzo la traduzione in inglese da parte di un servizio esterno (Anthropic); il mio progetto originale resta invariato.",
+    "外部サービス（Anthropic）による英語への翻訳を許可します。元のプロジェクトは変更されません。"
+  ],
+  "Standex mesure la position dans son laboratoire : demander une mesure n'est pas une validation technique.": [
+    "Standex measures the position in its laboratory: requesting a measurement is not a technical validation.",
+    "Standex 在其实验室中测量该位置：请求测量并不等于技术验证。",
+    "Standex misst die Position in seinem Labor: Eine Messung anzufordern ist keine technische Validierung.",
+    "Standex mide la posición en su laboratorio: solicitar una medición no es una validación técnica.",
+    "Standex измеряет положение в своей лаборатории: запрос измерения не является технической проверкой.",
+    "Standex misura la posizione nel proprio laboratorio: richiedere una misura non è una validazione tecnica.",
+    "Standexは自社ラボで位置を測定します。測定の依頼は技術的な検証ではありません。"
   ]
 }
