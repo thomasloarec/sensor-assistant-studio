@@ -30,6 +30,7 @@ import {
   SENSOR_CATALOG,
   overallEnvelope,
   customLayout,
+  sensorSource,
   type SensorModel,
 } from "../src/lib/standex/sensor-catalog";
 
@@ -314,14 +315,59 @@ export function buildStepFile(s: SensorModel): string {
   ].join("\n");
 }
 
+export interface StepManifestEntry {
+  id: string;
+  fileName: string;
+  bytes: number;
+  pedagogical: boolean;
+  sourceLabel: string;
+  sourceUrl: string | null;
+  dimensionsLabel: string;
+}
+
+export interface StepManifest {
+  generatedBy: string;
+  unit: string;
+  facetedApproximationSides: number;
+  entries: StepManifestEntry[];
+}
+
 async function main() {
   await mkdir("public/step", { recursive: true });
+  const entries: StepManifestEntry[] = [];
   for (const s of SENSOR_CATALOG) {
     const text = buildStepFile(s);
-    await writeFile(`public/step/${s.id}.step`, text, "utf8");
+    const fileName = `${s.id}.step`;
+    await writeFile(`public/step/${fileName}`, text, "utf8");
+    const pedagogical = s.sourceFile === null;
+    const [ex, ey, ez] = overallEnvelope(s);
+    const dimensionsLabel =
+      `corps ${s.body.join("×")} mm` +
+      (s.terminalSpan ? `, terminaisons ${s.terminalSpan} mm` : "") +
+      (s.collarDiameter ? `, collerette Ø${s.collarDiameter} mm` : "") +
+      (s.nutWidth ? `, écrou ${s.nutWidth} mm sur plats` : "") +
+      `, enveloppe ${ex}×${ey}×${ez} mm`;
+    entries.push({
+      id: s.id,
+      fileName,
+      bytes: text.length,
+      pedagogical,
+      sourceLabel: provenance(s),
+      sourceUrl: sensorSource(s),
+      dimensionsLabel,
+    });
     // eslint-disable-next-line no-console
-    console.log(`écrit public/step/${s.id}.step (${text.length} octets)`);
+    console.log(`écrit public/step/${fileName} (${text.length} octets)`);
   }
+  const manifest: StepManifest = {
+    generatedBy: "scripts/generate-step-envelopes.ts",
+    unit: STEP_UNIT,
+    facetedApproximationSides: FACETED_APPROXIMATION_SIDES,
+    entries,
+  };
+  await writeFile("public/step/manifest.json", JSON.stringify(manifest, null, 2) + "\n", "utf8");
+  // eslint-disable-next-line no-console
+  console.log(`écrit public/step/manifest.json (${entries.length} entrées)`);
 }
 
 if (import.meta.main) {

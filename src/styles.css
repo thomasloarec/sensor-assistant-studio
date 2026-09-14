@@ -534,6 +534,44 @@
     inline-size: 78%;
     block-size: auto;
   }
+  /* Vignette agrandie : chaque capteur garde SON cadrage, il n'y a pas
+     d'échelle commune imposée à tout le catalogue. */
+  .candidate-thumb-large {
+    block-size: 13rem;
+  }
+  .candidate-thumb-scale line {
+    stroke: var(--muted-foreground);
+  }
+  .candidate-thumb-scale text {
+    fill: var(--muted-foreground);
+  }
+  /* Puce d'un filtre déduit des réponses : état actif très lisible, jamais un
+     simple changement d'opacité. */
+  .answer-filter {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-block-size: 2.75rem;
+    padding: 0.5rem 1rem;
+    border-radius: var(--r-pill);
+    background: var(--surface-sunken);
+    color: var(--muted-foreground);
+    box-shadow: var(--e-1);
+    transition:
+      background var(--d-fast) var(--ease-out),
+      color var(--d-fast) var(--ease-out);
+  }
+  .answer-filter[aria-pressed="true"] {
+    background: var(--primary);
+    color: var(--primary-foreground);
+    box-shadow: var(--e-2);
+  }
+  .connector-option[aria-pressed="true"] {
+    box-shadow:
+      var(--e-2),
+      inset 0 0 0 2px var(--primary);
+    background: var(--surface-tint);
+  }
   .requirement-confirmed {
     box-shadow:
       var(--e-1),

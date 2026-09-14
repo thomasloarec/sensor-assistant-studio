@@ -1,0 +1,286 @@
+{
+  "generatedBy": "scripts/generate-step-envelopes.ts",
+  "unit": "MILLIMETRE",
+  "facetedApproximationSides": 24,
+  "entries": [
+    {
+      "id": "MK01",
+      "fileName": "MK01.step",
+      "bytes": 4992,
+      "pedagogical": false,
+      "sourceLabel": "MK01.pdf, page 1",
+      "sourceUrl": "/datasheets/MK01.pdf#page=1",
+      "dimensionsLabel": "corps 18×3.4×3.7 mm, terminaisons 18.8 mm, enveloppe 18.8×3.4×3.7 mm"
+    },
+    {
+      "id": "MK15",
+      "fileName": "MK15.step",
+      "bytes": 4983,
+      "pedagogical": false,
+      "sourceLabel": "MK15.pdf, page 1",
+      "sourceUrl": "/datasheets/MK15.pdf#page=1",
+      "dimensionsLabel": "corps 16×2.5×2.5 mm, terminaisons 19.5 mm, enveloppe 19.5×2.5×2.5 mm"
+    },
+    {
+      "id": "MK16",
+      "fileName": "MK16.step",
+      "bytes": 4987,
+      "pedagogical": false,
+      "sourceLabel": "MK16.pdf, page 1",
+      "sourceUrl": "/datasheets/MK16.pdf#page=1",
+      "dimensionsLabel": "corps 11.6×2.3×2.3 mm, terminaisons 15.6 mm, enveloppe 15.6×2.3×2.3 mm"
+    },
+    {
+      "id": "MK17",
+      "fileName": "MK17.step",
+      "bytes": 4985,
+      "pedagogical": false,
+      "sourceLabel": "MK17.pdf, page 1",
+      "sourceUrl": "/datasheets/MK17.pdf#page=1",
+      "dimensionsLabel": "corps 8.5×2.1×2.1 mm, terminaisons 12.3 mm, enveloppe 12.3×2.1×2.1 mm"
+    },
+    {
+      "id": "MK22",
+      "fileName": "MK22.step",
+      "bytes": 4991,
+      "pedagogical": false,
+      "sourceLabel": "MK22.pdf, page 1",
+      "sourceUrl": "/datasheets/MK22.pdf#page=1",
+      "dimensionsLabel": "corps 11.6×2.3×2.95 mm, terminaisons 15.6 mm, enveloppe 15.6×2.3×2.95 mm"
+    },
+    {
+      "id": "MK30",
+      "fileName": "MK30.step",
+      "bytes": 5017,
+      "pedagogical": false,
+      "sourceLabel": "MK30.pdf, page 1",
+      "sourceUrl": "/datasheets/MK30.pdf#page=1",
+      "dimensionsLabel": "corps 22.5×3.5×3.5 mm, terminaisons 28.6 mm, enveloppe 28.6×3.5×3.5 mm"
+    },
+    {
+      "id": "MK31",
+      "fileName": "MK31.step",
+      "bytes": 4985,
+      "pedagogical": false,
+      "sourceLabel": "MK31.pdf, page 1",
+      "sourceUrl": "/datasheets/MK31.pdf#page=1",
+      "dimensionsLabel": "corps 6.4×1.95×2.2 mm, terminaisons 6.9 mm, enveloppe 6.9×1.95×2.2 mm"
+    },
+    {
+      "id": "MK06-4",
+      "fileName": "MK06-4.step",
+      "bytes": 5014,
+      "pedagogical": false,
+      "sourceLabel": "MK06.pdf, page 1",
+      "sourceUrl": "/datasheets/MK06.pdf#page=1",
+      "dimensionsLabel": "corps 12.06×3.3×3.3 mm, terminaisons 12.06 mm, enveloppe 12.06×3.3×3.3 mm"
+    },
+    {
+      "id": "MK24-A-J",
+      "fileName": "MK24-A-J.step",
+      "bytes": 5010,
+      "pedagogical": false,
+      "sourceLabel": "MK24.pdf, page 1",
+      "sourceUrl": "/datasheets/MK24.pdf#page=1",
+      "dimensionsLabel": "corps 5×1.6×2.2 mm, terminaisons 5.5 mm, enveloppe 5.5×1.6×2.2 mm"
+    },
+    {
+      "id": "MK03",
+      "fileName": "MK03.step",
+      "bytes": 19304,
+      "pedagogical": false,
+      "sourceLabel": "MK03.pdf, page 1",
+      "sourceUrl": "/datasheets/MK03.pdf#page=1",
+      "dimensionsLabel": "corps 25.5×5.8×5.8 mm, enveloppe 25.5×5.8×5.8 mm"
+    },
+    {
+      "id": "MK02",
+      "fileName": "MK02.step",
+      "bytes": 10845,
+      "pedagogical": false,
+      "sourceLabel": "MK02.pdf, page 1",
+      "sourceUrl": "/datasheets/MK02.pdf#page=1",
+      "dimensionsLabel": "corps 32.4×10×16.8 mm, enveloppe 32.4×10×16.8 mm"
+    },
+    {
+      "id": "MK04",
+      "fileName": "MK04.step",
+      "bytes": 10813,
+      "pedagogical": false,
+      "sourceLabel": "MK04.pdf, page 1",
+      "sourceUrl": "/datasheets/MK04.pdf#page=1",
+      "dimensionsLabel": "corps 23×5.9×13.9 mm, enveloppe 23×5.9×13.9 mm"
+    },
+    {
+      "id": "MK05",
+      "fileName": "MK05.step",
+      "bytes": 7869,
+      "pedagogical": false,
+      "sourceLabel": "MK05.pdf, page 1",
+      "sourceUrl": "/datasheets/MK05.pdf#page=1",
+      "dimensionsLabel": "corps 23×5.9×19.4 mm, enveloppe 23×5.9×19.4 mm"
+    },
+    {
+      "id": "MK13",
+      "fileName": "MK13.step",
+      "bytes": 10841,
+      "pedagogical": false,
+      "sourceLabel": "MK13.pdf, page 1",
+      "sourceUrl": "/datasheets/MK13.pdf#page=1",
+      "dimensionsLabel": "corps 23×5.9×13.9 mm, enveloppe 23×5.9×13.9 mm"
+    },
+    {
+      "id": "MK14",
+      "fileName": "MK14.step",
+      "bytes": 19288,
+      "pedagogical": false,
+      "sourceLabel": "MK14.pdf, page 1",
+      "sourceUrl": "/datasheets/MK14.pdf#page=1",
+      "dimensionsLabel": "corps 25.5×4×4 mm, enveloppe 25.5×4×4 mm"
+    },
+    {
+      "id": "MK18",
+      "fileName": "MK18.step",
+      "bytes": 19118,
+      "pedagogical": false,
+      "sourceLabel": "MK18.pdf, page 1",
+      "sourceUrl": "/datasheets/MK18.pdf#page=1",
+      "dimensionsLabel": "corps 17×5×4.6 mm, enveloppe 17×5×4.6 mm"
+    },
+    {
+      "id": "MK20_1",
+      "fileName": "MK20_1.step",
+      "bytes": 19132,
+      "pedagogical": false,
+      "sourceLabel": "MK20_1.pdf, page 1",
+      "sourceUrl": "/datasheets/MK20_1.pdf#page=1",
+      "dimensionsLabel": "corps 10×3×2.7 mm, enveloppe 10×3×2.7 mm"
+    },
+    {
+      "id": "MK20_2",
+      "fileName": "MK20_2.step",
+      "bytes": 19144,
+      "pedagogical": false,
+      "sourceLabel": "MK20_2.pdf, page 1",
+      "sourceUrl": "/datasheets/MK20_2.pdf#page=1",
+      "dimensionsLabel": "corps 7.5×2.7×2.5 mm, enveloppe 7.5×2.7×2.5 mm"
+    },
+    {
+      "id": "MK21",
+      "fileName": "MK21.step",
+      "bytes": 10845,
+      "pedagogical": false,
+      "sourceLabel": "MK21.pdf, page 1",
+      "sourceUrl": "/datasheets/MK21.pdf#page=1",
+      "dimensionsLabel": "corps 28.5×6.25×19 mm, enveloppe 28.5×6.25×19 mm"
+    },
+    {
+      "id": "MK21PR",
+      "fileName": "MK21PR.step",
+      "bytes": 10859,
+      "pedagogical": false,
+      "sourceLabel": "MK21PR.pdf, page 1",
+      "sourceUrl": "/datasheets/MK21PR.pdf#page=1",
+      "dimensionsLabel": "corps 28.5×6.25×19 mm, enveloppe 28.5×6.25×19 mm"
+    },
+    {
+      "id": "MK26",
+      "fileName": "MK26.step",
+      "bytes": 10867,
+      "pedagogical": false,
+      "sourceLabel": "MK26.pdf, page 1",
+      "sourceUrl": "/datasheets/MK26.pdf#page=1",
+      "dimensionsLabel": "corps 32×6×10 mm, enveloppe 32×6×10 mm"
+    },
+    {
+      "id": "MK27",
+      "fileName": "MK27.step",
+      "bytes": 10943,
+      "pedagogical": false,
+      "sourceLabel": "MK27.pdf, page 1",
+      "sourceUrl": "/datasheets/MK27.pdf#page=1",
+      "dimensionsLabel": "corps 50×10×20 mm, enveloppe 50×10×20 mm"
+    },
+    {
+      "id": "MK11-M5",
+      "fileName": "MK11-M5.step",
+      "bytes": 29461,
+      "pedagogical": false,
+      "sourceLabel": "MK11-Stainless.pdf, page 1",
+      "sourceUrl": "/datasheets/MK11-Stainless.pdf#page=1",
+      "dimensionsLabel": "corps 25×5×5 mm, écrou 7 mm sur plats, enveloppe 25×5×5 mm"
+    },
+    {
+      "id": "MK11-M8",
+      "fileName": "MK11-M8.step",
+      "bytes": 29507,
+      "pedagogical": false,
+      "sourceLabel": "MK11-Stainless.pdf, page 1",
+      "sourceUrl": "/datasheets/MK11-Stainless.pdf#page=1",
+      "dimensionsLabel": "corps 50×8×8 mm, écrou 13 mm sur plats, enveloppe 50×8×8 mm"
+    },
+    {
+      "id": "MK11-P-M8",
+      "fileName": "MK11-P-M8.step",
+      "bytes": 29480,
+      "pedagogical": false,
+      "sourceLabel": "MK11-Plastic.pdf, page 1",
+      "sourceUrl": "/datasheets/MK11-Plastic.pdf#page=1",
+      "dimensionsLabel": "corps 38×8×8 mm, écrou 13 mm sur plats, enveloppe 38×8×8 mm"
+    },
+    {
+      "id": "MK11-B-M6",
+      "fileName": "MK11-B-M6.step",
+      "bytes": 29475,
+      "pedagogical": false,
+      "sourceLabel": "MK11-Brass.pdf, page 1",
+      "sourceUrl": "/datasheets/MK11-Brass.pdf#page=1",
+      "dimensionsLabel": "corps 38×6×6 mm, écrou 10 mm sur plats, enveloppe 38×6×6 mm"
+    },
+    {
+      "id": "MK36",
+      "fileName": "MK36.step",
+      "bytes": 37110,
+      "pedagogical": false,
+      "sourceLabel": "MK36.pdf, page 2",
+      "sourceUrl": "/datasheets/MK36.pdf#page=2",
+      "dimensionsLabel": "corps 15.5×9.3×9.3 mm, collerette Ø10.7 mm, enveloppe 15.5×9.3×9.3 mm"
+    },
+    {
+      "id": "MK37",
+      "fileName": "MK37.step",
+      "bytes": 37369,
+      "pedagogical": false,
+      "sourceLabel": "MK37.pdf, page 2",
+      "sourceUrl": "/datasheets/MK37.pdf#page=2",
+      "dimensionsLabel": "corps 22×9.3×9.3 mm, collerette Ø10.7 mm, enveloppe 22×9.3×9.3 mm"
+    },
+    {
+      "id": "MK38",
+      "fileName": "MK38.step",
+      "bytes": 37442,
+      "pedagogical": false,
+      "sourceLabel": "MK38.pdf, page 2",
+      "sourceUrl": "/datasheets/MK38.pdf#page=2",
+      "dimensionsLabel": "corps 31×8.5×8.5 mm, collerette Ø10.7 mm, enveloppe 31×8.5×8.5 mm"
+    },
+    {
+      "id": "GENERIC",
+      "fileName": "GENERIC.step",
+      "bytes": 19415,
+      "pedagogical": true,
+      "sourceLabel": "schéma pédagogique, aucune référence commandable",
+      "sourceUrl": null,
+      "dimensionsLabel": "corps 20×2.5×2.5 mm, enveloppe 20×2.5×2.5 mm"
+    },
+    {
+      "id": "CUSTOM",
+      "fileName": "CUSTOM.step",
+      "bytes": 5120,
+      "pedagogical": true,
+      "sourceLabel": "schéma pédagogique, aucune référence commandable",
+      "sourceUrl": null,
+      "dimensionsLabel": "corps 60×5.6×20 mm, enveloppe 60×5.6×20 mm"
+    }
+  ]
+}
