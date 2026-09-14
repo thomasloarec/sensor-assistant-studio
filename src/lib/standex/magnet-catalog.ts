@@ -90,6 +90,24 @@ export const BARE_MAGNETS: readonly CatalogMagnet[] = [
  * référence demandée par l'utilisateur diffère du nom de la fiche : rien n'y est
  * présenté comme référence constructeur vérifiée.
  */
+/**
+ * Enveloppe telle que transcrite par la fiche, jamais une géométrie 3D dérivée.
+ * `flangeDiameterMm` est un diamètre de COLLERETTE : un tableau d'enveloppe ne
+ * prouve ni le diamètre du corps ni la portion insérée, donc aucune géométrie
+ * 3D existante n'est modifiée à partir de cette seule valeur.
+ */
+export interface PackagedMagnetEnvelope {
+  lengthMm?: number;
+  widthMm?: number;
+  heightMm?: number;
+  diameterMm?: number;
+  flangeDiameterMm?: number;
+  /** Filetage exact publié (chaîne, jamais un couple diamètre/pas numérique). */
+  threadSpec?: string | readonly string[];
+  /** Transcription d'écran : le pas doit être vérifié sur le plan avant toute
+   * interprétation, il n'est pas confirmé par une cote officielle lisible. */
+  threadSpecToVerify?: boolean;
+}
 export interface PackagedMagnet {
   id: string;
   /** Boîtier capteur réutilisé pour la géométrie. */
@@ -106,6 +124,21 @@ export interface PackagedMagnet {
   datasheet?: string;
   /** Nuance/variante exactement telle qu'elle est nommée par la fiche. */
   grade?: string;
+  /** Matière MAGNÉTIQUE (l'aimant lui-même), distincte du matériau du boîtier. */
+  magnetMaterial: "AlNiCo" | "NdFeB";
+  /** Matière du BOÎTIER, chaîne exacte de la fiche — jamais confondue avec `magnetMaterial`. */
+  housingMaterial: string;
+  /**
+   * Moment magnétique TYPIQUE publié par la fiche, en 10⁻⁶ Vs·cm mesuré au
+   * banc MS150 (unité du pied de tableau constructeur). Ce n'est PAS un moment
+   * SI et cette valeur n'est JAMAIS convertie ni utilisée pour déduire une
+   * distance de commutation : elle est affichée telle quelle, à titre
+   * documentaire uniquement. `null` quand la fiche ne publie rien pour la
+   * variante (ex. nuances N42 non redocumentées ici).
+   */
+  momentTypE6Vscm: number | readonly number[] | null;
+  /** Cotes d'enveloppe transcrites telles quelles ; voir `PackagedMagnetEnvelope`. */
+  envelope?: PackagedMagnetEnvelope;
 }
 /** Fiches MK36/MK37/MK38, V00 17 janvier 2025 : actionneurs nommés M36/M37/M38-N42. */
 const MK_SERIES_DATASHEET = (family: string) =>
