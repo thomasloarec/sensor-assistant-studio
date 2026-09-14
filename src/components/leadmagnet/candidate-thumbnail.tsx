@@ -28,6 +28,7 @@ import {
   sensorById,
   customLayout,
   electricalDetailsAllowed,
+  formatMm,
 } from "@/lib/standex/sensor-catalog";
 import type { SensorModel } from "@/lib/standex/sensor-catalog";
 
