@@ -4,7 +4,6 @@ import { Link } from "@tanstack/react-router";
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowLeft,
-  Lock,
   Download,
   Upload,
   AlertTriangle,
@@ -192,6 +191,7 @@ import {
   DocumentViewer,
   documentFromBytes,
   documentFromFile,
+  renderMarkdown,
   type ViewerDocument,
 } from "@/components/leadmagnet/document-viewer";
 import { memoryAssetBytes } from "@/lib/standex/machine-assets";
@@ -2025,10 +2025,18 @@ export function DesignSpace({
   /** Choisir un capteur = une présélection de GAMME, jamais une commande ni une
    * validation R&D. La délégation à Standex est levée par ce choix explicite. */
   const chooseSensor = (id: string, name: string) => {
+    const base = workshopDraftRef.current ?? workshop ?? dossier.workshop ?? DEFAULT_WORKSHOP;
+    const aligned = applySensorSelection(base, id);
+    // Un montage déjà enregistré peut porter un aimant choisi volontairement.
+    // La présélection du capteur aligne le reste de l'atelier sans l'écraser.
+    applyWorkshopConfig(
+      dossier.workshop ? { ...aligned, magnetModel: base.magnetModel } : aligned,
+    );
+    setWorkshopEpoch((e) => e + 1);
     setDossier((d) => ({
       ...d,
       selectedSensorId: id,
-      sensorSyncConfirmed: d.workshopSensorId === id,
+      sensorSyncConfirmed: true,
       delegatedDecisions: (d.delegatedDecisions ?? []).filter((k) => k !== DELEGATED_SENSOR),
     }));
     setSelectionAnnounce(
@@ -2228,35 +2236,6 @@ export function DesignSpace({
           {t("Choisir avec Standex")}
         </Button>
       </div>
-      {dossier.selectedSensorId && !dossier.sensorSyncConfirmed ? (
-        <div className="notice notice-warning">
-          <p>
-            {t(
-              "La gamme suivie et le capteur affiché en 3D sont différents. Rien n'est changé sans votre accord.",
-            )}
-          </p>
-          <Button
-            size="sm"
-            className="mt-2"
-            onClick={() => {
-              const next = dossier.selectedSensorId;
-              if (!next) return;
-              // Vraie sélection de capteur : le couple par défaut, la classe,
-              // l'approche et l'orientation suivent la même logique centrale
-              // que l'atelier. Base = état réellement courant (brouillon non
-              // enregistré compris) : machine et câble actuels sont conservés.
-              const base =
-                workshopDraftRef.current ?? workshop ?? dossier.workshop ?? DEFAULT_WORKSHOP;
-              applyWorkshopConfig(applySensorSelection(base, next));
-              // L'atelier ne lit initialConfig qu'au montage : on le remonte
-              // pour que le nouveau couple soit visible immédiatement.
-              setWorkshopEpoch((e) => e + 1);
-            }}
-          >
-            {t("Aligner l'atelier 3D sur la gamme suivie")}
-          </Button>
-        </div>
-      ) : null}
       <div className="space-y-3">
         {plausibleCandidates.map(({ candidate: c }) => {
           const model = sensorById(c.id);
@@ -2278,14 +2257,6 @@ export function DesignSpace({
                     size="large"
                     scaleBar
                   />
-                  <p className="t-metric mt-2">{sizeLabel(model)}</p>
-                  {model.terminalSpan && model.terminalSpan > model.body[0] ? (
-                    <p className="t-caption">
-                      {msg("Avec les terminaisons documentées : {0} mm de long.", [
-                        formatMm(model.terminalSpan),
-                      ])}
-                    </p>
-                  ) : null}
                   <p className="t-caption mt-1">
                     {model.sourceFile
                       ? t(
@@ -2301,6 +2272,7 @@ export function DesignSpace({
                     <span className="t-title-s">{t(c.name)}</span>
 
                     <Badge
+                      className="candidate-status-badge"
                       variant={
                         c.status === "kept"
                           ? "default"
@@ -2319,17 +2291,19 @@ export function DesignSpace({
                       {c.size}
                     </span>
                   </div>
-                  <ul className="mt-3 space-y-1.5">
-                    {c.reasons.map((r, i) => (
-                      <li key={i} className="t-caption flex gap-2 leading-[1.6]">
-                        <span
-                          className="mt-[0.62em] h-1 w-1 shrink-0 rounded-full bg-[var(--standex-blue-50)]"
-                          aria-hidden="true"
-                        />
-                        <span>{t(r)}</span>
-                      </li>
-                    ))}
-                  </ul>
+                  {c.reasons[0] ? <p className="t-body mt-3">{t(c.reasons[0])}</p> : null}
+                  {c.reasons.length > 1 ? (
+                    <details className="mt-3">
+                      <summary className="t-caption min-h-11 cursor-pointer py-2">
+                        {t("Voir les détails")}
+                      </summary>
+                      <ul className="space-y-1.5 pl-5">
+                        {c.reasons.slice(1).map((r, i) => (
+                          <li key={i} className="t-caption list-disc">{t(r)}</li>
+                        ))}
+                      </ul>
+                    </details>
+                  ) : null}
                   <div className="mt-4 flex flex-wrap items-center gap-2">
                     <Button
                       className="min-h-11 text-base"
@@ -2340,12 +2314,12 @@ export function DesignSpace({
                       {chosen ? (
                         <>
                           <Check className="mr-1.5 size-4" aria-hidden="true" />
-                          {t("Choisi pour mon projet")}
+                          {t("Choisi ✓")}
                         </>
                       ) : c.id === CUSTOM_SENSOR_ID ? (
                         t("Partir sur du sur mesure")
                       ) : (
-                        t("Choisir ce capteur pour mon projet")
+                        t("Choisir")
                       )}
                     </Button>
                     <Button
@@ -2495,8 +2469,6 @@ export function DesignSpace({
       {/* Récapitulatif automatique du VRAI montage : rien n'est ressaisi ici. */}
       <div className="panel-block">
         <Label className="t-label">{t("Ce que votre montage indique aujourd'hui")}</Label>
-        <p className="t-caption t-metric mt-2">
-          {t("Trajet visé :")} {activeTargetLabel} · {activePoints.length} {t("point(s) ·")}{" "}
           {cableRouting.lengthLabel}
         </p>
         <p className="mt-1">
