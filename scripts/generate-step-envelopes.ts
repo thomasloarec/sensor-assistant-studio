@@ -39,16 +39,31 @@ type Pt = readonly [number, number, number];
 class StepDoc {
   private lines: string[] = [];
   private id = 0;
+  private pool = new Map<string, string>();
   next(content: string): string {
     this.id += 1;
     const ref = `#${this.id}`;
     this.lines.push(`${ref}=${content};`);
     return ref;
   }
+  /**
+   * Entité géométrique partagée : deux sommets de coordonnées exactement
+   * identiques doivent porter le MÊME identifiant, sinon les faces voisines
+   * n'ont aucun sommet commun et le lecteur les importe en solides disjoints
+   * (une face par maillage) au lieu d'un volume fermé.
+   */
+  shared(content: string): string {
+    const seen = this.pool.get(content);
+    if (seen !== undefined) return seen;
+    const ref = this.next(content);
+    this.pool.set(content, ref);
+    return ref;
+  }
   body(): string {
     return this.lines.join("\n");
   }
 }
+
 
 function sub(a: Pt, b: Pt): Pt {
   return [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
