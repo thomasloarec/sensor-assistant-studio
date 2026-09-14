@@ -908,9 +908,11 @@
 
   .project-stepper {
     --step: 0;
+    /* Quatre étapes : besoin, couples, résultat, envoi. */
+    --steps: 4;
     position: relative;
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(var(--steps), minmax(0, 1fr));
     padding: 5px;
     overflow: hidden;
     border-radius: var(--r-md);
@@ -1032,11 +1034,14 @@
   .project-stepper-2 {
     --step: 2;
   }
+  .project-stepper-3 {
+    --step: 3;
+  }
   .project-stepper-thumb {
     position: absolute;
     inset-block: 5px;
     left: 5px;
-    width: calc((100% - 10px) / 3);
+    width: calc((100% - 10px) / var(--steps));
     border-radius: calc(var(--r-md) - 5px);
     background: var(--surface);
     box-shadow: var(--e-2);
@@ -1111,13 +1116,13 @@
       padding-inline: 0.375rem;
     }
     .project-stepper {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(var(--steps), minmax(0, 1fr));
       grid-template-rows: 1fr;
     }
     .project-stepper-thumb {
       inset-block: 5px;
       left: 5px;
-      width: calc((100% - 10px) / 3);
+      width: calc((100% - 10px) / var(--steps));
       height: auto;
       transform: translateX(calc(var(--step) * 100%));
     }
@@ -1928,4 +1933,131 @@
 
 :root {
   --surface-product: oklch(0.97 0.006 250);
+}
+
+/* Écran « Résultat » : ce que l'essai d'un couple a montré. Deux colonnes,
+   pastille d'état, chronologie en lecture seule. Aucune valeur littérale : les
+   teintes viennent des jetons d'état déjà documentés. */
+@layer components {
+  .result-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 460px;
+    gap: 1.5rem;
+    align-items: start;
+  }
+  @media (max-width: 1024px) {
+    .result-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+  .result-dot {
+    inline-size: 0.625rem;
+    block-size: 0.625rem;
+    border-radius: var(--r-pill);
+    background: var(--muted-foreground);
+    flex: none;
+  }
+  .result-dot-expected {
+    background: var(--success);
+  }
+  .result-dot-undocumented,
+  .result-dot-unpublished {
+    background: var(--standex-blue-75);
+  }
+  .result-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    gap: 0.75rem;
+  }
+  /* L'option mise en avant s'élève, elle ne s'encadre pas. */
+  .result-option-primary {
+    background: var(--surface-tint);
+    box-shadow: var(--e-2);
+  }
+  .result-cycle {
+    position: relative;
+    block-size: 1.25rem;
+    border-radius: var(--r-pill);
+    background: var(--surface-sunken);
+    overflow: hidden;
+  }
+  .result-cycle-closed {
+    position: absolute;
+    inset-block: 0;
+    background: var(--success);
+  }
+  /* Indéterminé : hachures, jamais une couleur d'état franche. */
+  .result-cycle-unknown {
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      135deg,
+      var(--surface-tint) 0 0.375rem,
+      var(--surface-sunken) 0.375rem 0.75rem
+    );
+  }
+  .result-cycle-key {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+  }
+  .result-cycle-key::before {
+    content: "";
+    inline-size: 0.75rem;
+    block-size: 0.75rem;
+    border-radius: var(--r-xs);
+  }
+  .result-cycle-key-closed::before {
+    background: var(--success);
+  }
+  .result-cycle-key-open::before {
+    background: var(--surface-sunken);
+  }
+  .result-cycle-key-unknown::before {
+    background: repeating-linear-gradient(
+      135deg,
+      var(--surface-tint) 0 0.25rem,
+      var(--surface-sunken) 0.25rem 0.5rem
+    );
+  }
+  .result-tested-expected {
+    background: var(--success-soft);
+    color: var(--ink);
+  }
+  .result-tested-undocumented,
+  .result-tested-unpublished {
+    background: var(--surface-tint);
+    color: var(--ink);
+  }
+}
+
+/* Page « Envoyer à Standex » : une page lisible, pas un formulaire.
+   La colonne d'action reste à largeur fixe pour que le bouton d'envoi et ses
+   gardes soient toujours au même endroit. */
+.review-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 420px;
+  gap: var(--s-5, 1.25rem);
+  align-items: start;
+}
+@media (max-width: 1024px) {
+  .review-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.review-facts {
+  display: grid;
+  gap: var(--s-3, 0.75rem);
+}
+.review-fact {
+  display: grid;
+  grid-template-columns: 200px minmax(0, 1fr);
+  gap: var(--s-3, 0.75rem);
+  align-items: baseline;
+}
+@media (max-width: 640px) {
+  .review-fact {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--s-1, 0.25rem);
+  }
 }

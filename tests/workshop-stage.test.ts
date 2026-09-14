@@ -170,10 +170,13 @@ describe("enregistrement et sortie", () => {
   test("l'enregistrement emprunte le chemin existant, sans autre écriture", () => {
     expect(WORKSHOP).toContain("onSaveState?.(saving ?");
   });
-  test("« Voir le résultat » ouvre la revue du dossier", () => {
+  test("« Voir le résultat » ouvre l'écran Résultat avec l'essai enregistré", () => {
     expect(WORKSHOP).toContain('t("Voir le résultat →")');
-    expect(SPACE).toContain("onResult={() => {");
-    expect(SPACE).toContain('setTab("revue")');
+    // Le verdict remonte de l'atelier : l'écran Résultat ne le recalcule pas.
+    expect(WORKSHOP).toContain("onResult(testedPair())");
+    expect(SPACE).toContain("onResult={(result) => {");
+    expect(SPACE).toContain("recordResult(result)");
+    expect(SPACE).toContain('setTab("resultat")');
   });
   test("« Demander un essai » coche une demande, jamais une mesure", () => {
     expect(SPACE).toContain("TRIAL_REQUEST");

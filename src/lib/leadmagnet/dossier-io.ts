@@ -191,6 +191,26 @@ const dossierSchema = z.object({
   workshopSensorId: knownSensorId,
   /** Décisions confiées à Standex : reprises telles quelles, jamais devinées. */
   delegatedDecisions: z.array(z.string()).catch([]),
+  /** Couples testés : repris tels quels, jamais recalculés à la lecture. Une
+   * entrée invalide fait retomber la liste entière à vide, sans bloquer. */
+  testedPairs: z
+    .array(
+      z.object({
+        sensorId: z.string(),
+        magnetId: z.string(),
+        approach: z.string(),
+        sensitivity: z.string().nullable().catch(null),
+        verdict: z.enum(["expected", "none", "undocumented", "unpublished"]),
+        pullInMm: z.number().finite().nullable().catch(null),
+        dropOutMm: z.number().finite().nullable().catch(null),
+        travelStartMm: z.number().finite().nullable().catch(null),
+        travelEndMm: z.number().finite().nullable().catch(null),
+        mainMessage: z.string().nullable().catch(null),
+        limits: z.array(z.string()).catch([]),
+        at: z.string(),
+      }),
+    )
+    .catch([]),
   freeConstraints: z.string().catch(""),
   openQuestions: z.array(z.string()).catch([]),
   cabling: cabling.catch(() => EMPTY_CABLING as unknown as z.infer<typeof cabling>),
@@ -317,6 +337,7 @@ export function parseDossierExport(raw: unknown, now = new Date().toISOString())
     selectedSensorId: data.selectedSensorId,
     workshopSensorId: data.workshopSensorId,
     delegatedDecisions: data.delegatedDecisions,
+    testedPairs: data.testedPairs,
     sensorSyncConfirmed: false,
     cabling: { ...EMPTY_CABLING, ...data.cabling },
     termination: data.termination,

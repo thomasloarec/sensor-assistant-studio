@@ -77,6 +77,8 @@ import {
   proposeRequirement,
   parseAnnualVolume,
   toClientDto,
+  REQUIREMENT_ORDER,
+  REQUIREMENT_LABELS,
   type DesignDossier,
   type MountingChoice,
 } from "@/lib/leadmagnet/dossier";
@@ -205,6 +207,12 @@ import type { WorkshopConfig } from "@/lib/standex/magnetic-workshop";
 import { BrandLogo } from "@/components/standex/brand-logo";
 import { usePublishedHeaderHeight } from "@/components/standex/app-header";
 import { pairCards, type PairCard } from "@/lib/leadmagnet/pair-cards";
+import { ResultView } from "@/components/leadmagnet/result-view";
+import {
+  latestTestedPair,
+  recordTestedPair,
+  type TestedPair,
+} from "@/lib/leadmagnet/tested-pairs";
 
 import {
   openPrivateErrorScope,
@@ -1524,11 +1532,13 @@ export function DesignSpace({
 
   const embedded = chrome === "embedded";
   const projectHeaderRef = usePublishedHeaderHeight<HTMLElement>();
-  const stepIndex = tab === "besoin" ? 0 : tab === "revue" ? 2 : 1;
+  const stepIndex =
+    tab === "besoin" ? 0 : tab === "revue" ? 3 : tab === "resultat" ? 2 : 1;
   const steps = [
     { id: "besoin", label: t("Mon besoin"), hint: t("Ce que vous voulez détecter") },
     { id: "montage", label: t("Couples proposés"), hint: t("À tester dans votre montage") },
-    { id: "revue", label: t("Avec Standex"), hint: t("Faire relire votre projet") },
+    { id: "resultat", label: t("Résultat"), hint: t("Ce que le test a montré") },
+    { id: "revue", label: t("Avec Standex"), hint: t("Faire confirmer par Standex") },
   ];
 
   const question = GUIDED_QUESTIONS[focusIdx] ?? GUIDED_QUESTIONS[0]!;
@@ -3232,65 +3242,71 @@ export function DesignSpace({
     </div>
   );
 
-  const revueSection = (
-    <div className="space-y-4">
-      {projectSummaryCard}
-      {/* Demande d'essai réel : une DEMANDE de mesure adressée à Standex, jamais
-          une mesure, ni une valeur connue, ni une validation R&D. */}
-      <div className="panel-block">
-        <label className="t-body flex min-h-11 items-center gap-3">
-          <input
-            type="checkbox"
-            data-testid="trial-request"
-            checked={isDelegated(dossier, TRIAL_REQUEST)}
-            onChange={() => toggleDelegated(TRIAL_REQUEST)}
-          />
-          {t("Demande d'essai réel")}
-        </label>
-        <p className="t-caption mt-1">
-          {t(
-            "Standex mesure la position dans son laboratoire. Cocher cette case demande une mesure : ce n'est ni une mesure, ni une validation technique.",
-          )}
-        </p>
-      </div>
-      {/* Le câble et le connecteur sont ici, sous le résumé : aucune logique de
-          câble n'est retirée, seule sa place change. */}
-      <details id="section-cablage" className="panel-block-lg scroll-mt-24">
-        <summary className="t-title-s flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 py-2">
-          {t("Câble et connecteur")}
-          <span className="technical-details-chevron" aria-hidden="true">
-            ⌄
-          </span>
-        </summary>
-        <div className="mt-3">{cablageSection}</div>
-      </details>
-      <Accordion
-        type="multiple"
-        value={reviewSections}
-        onValueChange={setReviewSections}
-        className="space-y-3"
-      >
-        <AccordionItem value="resume" className="panel-block-lg border-0">
-          <AccordionTrigger
-            ref={ndaSectionRef}
-            className="business-accordion-trigger t-title-s gap-3 hover:no-underline"
-          >
-            <span className="standex-bar !h-5 !w-1" aria-hidden="true" />
-            <span className="flex-1">{t("Résumé technique et inconnues")}</span>
-          </AccordionTrigger>
-          <AccordionContent>
-            <div className="panel-block technical-summary-readable">
-              {renderMarkdown(technicalSummary(dossier, (x) => t(x)))}
-            </div>
-          </AccordionContent>
-        </AccordionItem>
+  /** Libellé du couple réellement testé : reprise du verdict enregistré, jamais
+   * un recalcul, jamais une validation technique. */
+  const reviewTested = latestTestedPair(dossier.testedPairs);
+  const reviewTestedLabel = reviewTested
+    ? [
+        `${reviewTested.sensorId} + ${reviewTested.magnetId}`,
+        reviewTested.approach === "F1"
+          ? t("face à face")
+          : reviewTested.approach === "D3"
+            ? t("perpendiculaire")
+            : t("parallèle"),
+        reviewTested.verdict === "expected" && reviewTested.pullInMm !== null
+          ? msg("détection prévue (ferme {0} mm, ouvre {1} mm)", [
+              formatMm(reviewTested.pullInMm),
+              reviewTested.dropOutMm === null ? "?" : formatMm(reviewTested.dropOutMm),
+            ])
+          : reviewTested.verdict === "none"
+            ? t("pas de détection sur ce cycle")
+            : reviewTested.verdict === "unpublished"
+              ? t("distances non publiées")
+              : t("position non documentée"),
+      ].join(" · ")
+    : null;
 
-        <AccordionItem value="projet" className="panel-block-lg border-0">
-          <AccordionTrigger className="business-accordion-trigger t-title-s gap-3 hover:no-underline">
-            <span className="standex-bar !h-5 !w-1" aria-hidden="true" />
-            <span className="flex-1">{t("Contexte projet")}</span>
-          </AccordionTrigger>
-          <AccordionContent className="grid gap-5 md:grid-cols-2">
+  const [summaryMessage, setSummaryMessage] = useState<string | null>(null);
+  /** Résumé technique complet : PDF quand la fiche de revue existe réellement,
+   * sinon le Markdown déjà exporté aujourd'hui. Aucun envoi. */
+  const downloadTechnicalSummary = useCallback(async () => {
+    setSummaryMessage(null);
+    const base = `resume-technique-r${dossier.revision}`;
+    try {
+      if (dossier.designFreeze) {
+        const { reviewPdf } = await import("@/lib/standex/studio-pdf");
+        const bytes = await reviewPdf(dossier.designFreeze, "/brand/logo-lockup.png", (x) => t(x));
+        const blob = new Blob([bytes as unknown as BlobPart], { type: "application/pdf" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `${base}.pdf`;
+        a.click();
+        URL.revokeObjectURL(url);
+        return;
+      }
+      const blob = new Blob([technicalSummary(dossier, (x) => t(x))], {
+        type: "text/markdown;charset=utf-8",
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${base}.md`;
+      a.click();
+      URL.revokeObjectURL(url);
+      setSummaryMessage(
+        t(
+          "Aucune fiche de revue figée n'existe encore : le résumé est téléchargé en Markdown, avec le même contenu.",
+        ),
+      );
+    } catch {
+      setSummaryMessage(t("Le résumé n'a pas pu être produit sur cet appareil."));
+    }
+  }, [dossier]);
+
+  /** Contexte projet détaillé : dates, échantillons, durée, délégation. */
+  const projectContextFields = (
+    <div className="grid gap-5 md:grid-cols-2">
             <div>
               <Label className="t-label">{t("Volume annuel de capteurs")}</Label>
               <p className="t-caption mt-1">{t("Entier ou inconnu")}</p>
@@ -3355,32 +3371,6 @@ export function DesignSpace({
                 }
               />
             </div>
-            <div>
-              <Label className="t-label">{t("Contact")}</Label>
-              <Input
-                className="mt-2 w-full"
-                placeholder="Nom"
-                onChange={(e) =>
-                  setDossier((d) => ({
-                    ...d,
-                    business: { ...d.business, contactName: e.target.value || null },
-                  }))
-                }
-              />
-            </div>
-            <div>
-              <Label className="t-label">{t("E-mail")}</Label>
-              <Input
-                className="mt-2 w-full"
-                type="email"
-                onChange={(e) =>
-                  setDossier((d) => ({
-                    ...d,
-                    business: { ...d.business, contactEmail: e.target.value || null },
-                  }))
-                }
-              />
-            </div>
             <div className="sm:col-span-2">
               {/* Délégation explicite du contexte projet : étape traitée, sans
                   valeur inventée ni validation. */}
@@ -3400,41 +3390,12 @@ export function DesignSpace({
                 )}
               </p>
             </div>
-          </AccordionContent>
-        </AccordionItem>
+    </div>
+  );
 
-        <AccordionItem value="nda" className="panel-block-lg border-0">
-          <AccordionTrigger className="business-accordion-trigger t-title-s gap-3 hover:no-underline">
-            <span className="standex-bar !h-5 !w-1" aria-hidden="true" />
-            <span className="flex-1">
-              {t("Confidentialité et NDA —")} {ndaStatusLabel(nda)}
-            </span>
-          </AccordionTrigger>
-          <AccordionContent className="space-y-3">
-            <label className="flex min-h-11 cursor-pointer items-start gap-3">
-              <Checkbox
-                className="mt-1"
-                checked={nda.required}
-                // Pendant un envoi, un dépôt ou l'enregistrement du choix,
-                // la case ne bouge plus : une seule opération à la fois.
-                disabled={busy}
-                onCheckedChange={(v) => {
-                  void toggleNdaRequirement(v === true);
-                }}
-                aria-describedby="nda-optional-help"
-              />
-              <span className="space-y-1">
-                <span className="t-body block font-medium">
-                  {t("Je souhaite un accord de confidentialité (NDA)")}
-                </span>
-                <span id="nda-optional-help" className="t-caption block">
-                  {t(
-                    "Uniquement si votre entreprise en a besoin. Sans NDA, vous pouvez remplir et transmettre votre dossier normalement : les accords de partage restent séparés et inchangés.",
-                  )}
-                </span>
-              </span>
-            </label>
-
+  /** Flux NDA existant, déplié sous la case de confidentialité. */
+  const ndaFlow = (
+    <div className="space-y-3">
             {/* Une erreur de choix reste visible même quand les champs NDA sont
                 masqués : sans cela, un refus serveur passerait inaperçu. */}
             {ndaError ? (
@@ -3557,15 +3518,12 @@ export function DesignSpace({
                 </p>
               </>
             ) : null}
-          </AccordionContent>
-        </AccordionItem>
+    </div>
+  );
 
-        <AccordionItem value="envoi" className="panel-block-lg border-0">
-          <AccordionTrigger className="business-accordion-trigger t-title-s gap-3 hover:no-underline">
-            <span className="standex-bar !h-5 !w-1" aria-hidden="true" />
-            <span className="flex-1">{t("Préparer la revue Standex")}</span>
-          </AccordionTrigger>
-          <AccordionContent className="space-y-3">
+  /** Accords, pièces réellement transmises et action d'envoi : logique inchangée. */
+  const sendBlock = (
+    <div className="space-y-3">
             <div>
               <Label className="t-label">{t("Contraintes supplémentaires")}</Label>
               <Textarea
@@ -3731,19 +3689,315 @@ export function DesignSpace({
                 )}
               </p>
             ) : null}
-          </AccordionContent>
-        </AccordionItem>
+    </div>
+  );
 
-        {/* Après envoi confirmé UNIQUEMENT : avant l'envoi, le formulaire se
-            termine sur le résumé, les accords et l'action. Rien n'est supprimé,
-            le suivi complet reste dans « Mon espace ». */}
-        {lastSent ? (
-          <AccordionItem value="echantillons" className="panel-block-lg border-0">
-            <AccordionTrigger className="business-accordion-trigger t-title-s gap-3 hover:no-underline">
-              <span className="standex-bar !h-5 !w-1" aria-hidden="true" />
-              <span className="flex-1">{t("Suivi de mon dossier")}</span>
-            </AccordionTrigger>
-            <AccordionContent className="space-y-3">
+  /** Trois questions facultatives : chaque puce pilote un choix DÉJÀ existant. */
+  const optionalQuestions = (
+    <div className="panel-block-lg space-y-5">
+      <h3 className="t-title-m">{t("Trois questions facultatives")}</h3>
+
+      <div>
+        <Label className="t-label">{t("Longueur de câble")}</Label>
+        <div className="mt-2 flex flex-wrap gap-2">
+          {/* i18n-canonical : libellés traduits par t() au rendu. */}
+          {(
+            [
+              ["undecided", "Je ne sais pas"],
+              ["standard_to_confirm", "Standard"],
+              ["custom_to_confirm", "Sur mesure"],
+            ] as const
+          ).map(([value, label]) => (
+            <Button
+              key={value}
+              variant={cabling.lengthChoice === value ? "default" : "outline"}
+              className="min-h-11 text-base"
+              aria-pressed={cabling.lengthChoice === value}
+              onClick={() => {
+                setCabling((c) => ({ ...c, lengthChoice: value }));
+                setDossier((d) => ({
+                  ...d,
+                  delegatedDecisions:
+                    value === "undecided"
+                      ? [
+                          ...(d.delegatedDecisions ?? []).filter((k) => k !== DELEGATED_CABLE),
+                          DELEGATED_CABLE,
+                        ]
+                      : (d.delegatedDecisions ?? []).filter((k) => k !== DELEGATED_CABLE),
+                }));
+              }}
+            >
+              {t(label)}
+            </Button>
+          ))}
+        </div>
+        <button
+          type="button"
+          className="text-link mt-2"
+          onClick={() => {
+            setShowWorkshop(true);
+            setTab("montage");
+          }}
+        >
+          {t("Préciser le trajet dans l'atelier câble")}
+        </button>
+      </div>
+
+      <div>
+        <Label className="t-label">{t("Connecteur")}</Label>
+        <div className="mt-2 flex flex-wrap gap-2">
+          <Button
+            variant={connectorPreference ? "outline" : "default"}
+            className="min-h-11 text-base"
+            aria-pressed={!connectorPreference}
+            onClick={() => {
+              setConnectorWanted(false);
+              setDossier((d) => ({
+                ...d,
+                delegatedDecisions: [
+                  ...(d.delegatedDecisions ?? []).filter((k) => k !== DELEGATED_CONNECTOR),
+                  DELEGATED_CONNECTOR,
+                ],
+              }));
+            }}
+          >
+            {t("Standex choisit")}
+          </Button>
+          <Button
+            variant={connectorPreference ? "default" : "outline"}
+            className="min-h-11 text-base"
+            aria-pressed={connectorPreference}
+            onClick={() => {
+              setConnectorWanted(true);
+              setDossier((d) => ({
+                ...d,
+                delegatedDecisions: (d.delegatedDecisions ?? []).filter(
+                  (k) => k !== DELEGATED_CONNECTOR,
+                ),
+              }));
+            }}
+          >
+            {t("J'ai une préférence")}
+          </Button>
+        </div>
+      </div>
+
+      <div>
+        <Label className="t-label">{t("Volume par an")}</Label>
+        <p className="t-caption mt-1">
+          {t(
+            "Une tranche donne un ordre de grandeur représentatif, jamais une quantité engagée. « Préciser » permet d'entrer le vrai chiffre.",
+          )}
+        </p>
+        <div className="mt-2 flex flex-wrap gap-2">
+          {/* i18n-canonical : libellés traduits par t() au rendu. */}
+          {(
+            [
+              [500, "< 1 000"],
+              [5000, "1 000 – 10 000"],
+              [20000, "> 10 000"],
+            ] as const
+          ).map(([value, label]) => (
+            <Button
+              key={label}
+              variant={
+                dossier.business.annualVolume.kind === "known" &&
+                dossier.business.annualVolume.sensorsPerYear === value
+                  ? "default"
+                  : "outline"
+              }
+              className="min-h-11 text-base"
+              aria-pressed={
+                dossier.business.annualVolume.kind === "known" &&
+                dossier.business.annualVolume.sensorsPerYear === value
+              }
+              onClick={() => {
+                setVolumeRaw(String(value));
+                setVolumeError(null);
+                setDossier((d) => ({
+                  ...d,
+                  business: {
+                    ...d.business,
+                    annualVolume: { kind: "known", sensorsPerYear: value },
+                  },
+                }));
+              }}
+            >
+              {t(label)}
+            </Button>
+          ))}
+        </div>
+      </div>
+
+      {/* Le configurateur de câble et de connecteur existant reste entier. */}
+      <details id="section-cablage" className="panel-block-lg scroll-mt-24">
+        <summary className="t-title-s flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 py-2">
+          {t("Câble et connecteur")}
+          <span className="technical-details-chevron" aria-hidden="true">
+            ⌄
+          </span>
+        </summary>
+        <div className="mt-3">{cablageSection}</div>
+      </details>
+    </div>
+  );
+
+  const revueSection = (
+    <div className="space-y-5">
+      <div>
+        <h2 className="t-display-m">{t("Envoyer à Standex pour confirmation.")}</h2>
+        <p className="t-body mt-2">
+          {t("Voici ce que nos ingénieurs recevront. Rien ne part sans votre clic.")}
+        </p>
+      </div>
+      <div className="review-grid">
+        <div className="space-y-4">
+          <div className="panel-block-lg">
+            <h3 className="t-title-m">{t("Votre projet")}</h3>
+            <dl className="review-facts mt-3">
+              {REQUIREMENT_ORDER.map((key) => {
+                const requirement = dossier.requirements.find((r) => r.key === key);
+                return (
+                  <div key={key} className="review-fact">
+                    <dt className="t-label">{t(REQUIREMENT_LABELS[key] ?? key)}</dt>
+                    <dd className="t-body">
+                      {requirement && requirement.value.trim()
+                        ? requirement.value
+                        : t("non renseigné")}
+                    </dd>
+                  </div>
+                );
+              })}
+              <div className="review-fact">
+                <dt className="t-label">{t("Couple testé")}</dt>
+                <dd className="t-body">
+                  {isDelegated(dossier, TRIAL_REQUEST) ? (
+                    <strong>{t("Demande d'essai réel")}</strong>
+                  ) : reviewTestedLabel ? (
+                    reviewTestedLabel
+                  ) : (
+                    t("aucun couple testé pour l'instant")
+                  )}
+                </dd>
+              </div>
+            </dl>
+          </div>
+
+          {optionalQuestions}
+
+          <button type="button" className="text-link" onClick={() => void downloadTechnicalSummary()}>
+            {t("Télécharger le résumé technique complet (PDF)")}
+          </button>
+          {summaryMessage ? <p className="notice notice-info">{summaryMessage}</p> : null}
+
+          <details className="panel-block-lg">
+            <summary className="t-title-s flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 py-2">
+              {t("Plus de détails sur le projet")}
+              <span className="technical-details-chevron" aria-hidden="true">
+                ⌄
+              </span>
+            </summary>
+            <div className="mt-3">{projectContextFields}</div>
+          </details>
+        </div>
+
+        <div className="space-y-4">
+          <div className="panel-block-lg space-y-3">
+            <h3 className="t-title-m">{t("Vos coordonnées")}</h3>
+            <div>
+              <Label className="t-label">{t("Nom")}</Label>
+              <Input
+                className="mt-2 w-full"
+                value={dossier.business.contactName ?? ""}
+                onChange={(e) =>
+                  setDossier((d) => ({
+                    ...d,
+                    business: { ...d.business, contactName: e.target.value || null },
+                  }))
+                }
+              />
+            </div>
+            <div>
+              <Label className="t-label">{t("Entreprise")}</Label>
+              <Input
+                className="mt-2 w-full"
+                value={dossier.business.contactCompany ?? ""}
+                onChange={(e) =>
+                  setDossier((d) => ({
+                    ...d,
+                    business: { ...d.business, contactCompany: e.target.value || null },
+                  }))
+                }
+              />
+            </div>
+            <div>
+              <Label className="t-label">{t("E-mail professionnel")}</Label>
+              <Input
+                className="mt-2 w-full"
+                type="email"
+                value={dossier.business.contactEmail ?? ""}
+                onChange={(e) =>
+                  setDossier((d) => ({
+                    ...d,
+                    business: { ...d.business, contactEmail: e.target.value || null },
+                  }))
+                }
+              />
+            </div>
+          </div>
+
+          <div className="panel-block-lg space-y-3">
+            <label className="flex min-h-11 cursor-pointer items-start gap-3">
+              <Checkbox
+                ref={ndaSectionRef}
+                className="mt-1"
+                checked={nda.required}
+                disabled={busy}
+                onCheckedChange={(v) => {
+                  void toggleNdaRequirement(v === true);
+                }}
+                aria-describedby="nda-optional-help"
+              />
+              <span className="space-y-1">
+                <span className="t-body block font-medium">
+                  {t("Mon projet est confidentiel (NDA Standex)")}
+                </span>
+                <span id="nda-optional-help" className="t-caption block">
+                  {t(
+                    "Uniquement si votre entreprise en a besoin. Sans NDA, vous pouvez remplir et transmettre votre dossier normalement : les accords de partage restent séparés et inchangés.",
+                  )}
+                </span>
+                <span className="t-caption block">{ndaStatusLabel(nda)}</span>
+              </span>
+            </label>
+            {nda.required ? ndaFlow : null}
+          </div>
+
+      <div className="panel-block">
+        <label className="t-body flex min-h-11 items-center gap-3">
+          <input
+            type="checkbox"
+            data-testid="trial-request"
+            checked={isDelegated(dossier, TRIAL_REQUEST)}
+            onChange={() => toggleDelegated(TRIAL_REQUEST)}
+          />
+          {t("Demande d'essai réel")}
+        </label>
+        <p className="t-caption mt-1">
+          {t(
+            "Standex mesure la position dans son laboratoire. Cocher cette case demande une mesure : ce n'est ni une mesure, ni une validation technique.",
+          )}
+        </p>
+      </div>
+
+          <div className="panel-block-lg space-y-3">
+            {sendBlock}
+            <p className="t-caption">{t("Réponse d'un ingénieur sous 2 jours ouvrés.")}</p>
+          </div>
+
+          {lastSent ? (
+            <div className="panel-block-lg space-y-3">
+              <h3 className="t-title-m">{t("Suivi de mon dossier")}</h3>
               <p className="text-sm">{sampleRoute.note}</p>
               <p className="notice notice-warning">
                 {t(
@@ -3764,10 +4018,10 @@ export function DesignSpace({
                   "Disponibilités, MOQ et conditionnements : inconnus tant qu'aucun fournisseur réel n'est connecté.",
                 )}
               </p>
-            </AccordionContent>
-          </AccordionItem>
-        ) : null}
-      </Accordion>
+            </div>
+          ) : null}
+        </div>
+      </div>
     </div>
   );
 
@@ -3796,6 +4050,36 @@ export function DesignSpace({
     setWorkshopDraftPending(false);
   }, []);
 
+  /** Essai enregistré dans le dossier : verdict et distances tels quels. */
+  const recordResult = (result: TestedPair) =>
+    setDossier((d) => ({
+      ...d,
+      testedPairs: recordTestedPair(d.testedPairs, result),
+      updatedAt: new Date().toISOString(),
+    }));
+
+  const resultatSection = (
+    <ResultView
+      pair={latestTestedPair(dossier.testedPairs)}
+      detectionGoal={dossier.requirements.find((r) => r.key === "detection_goal")?.value ?? null}
+      tested={dossier.testedPairs ?? []}
+      proposals={suggestedPairs}
+      onSeePairs={() => setTab("montage")}
+      onConfirmWithStandex={() => setTab("revue")}
+      onRequestTrial={() => {
+        if (!isDelegated(dossier, TRIAL_REQUEST)) toggleDelegated(TRIAL_REQUEST);
+        setTab("revue");
+      }}
+      // « Replacer l'aimant » rouvre l'atelier : la pose documentée y est
+      // proposée par le moteur, jamais écrite ici.
+      onReplaceMagnet={() => openWorkshopPanel()}
+      onTestPair={(sensorId) => {
+        const card = allPairs.find((c) => c.sensorId === sensorId);
+        if (card) testPair(card);
+      }}
+    />
+  );
+
   const workshopSection = (
     <div>
       <Suspense fallback={<p className="text-base">{t("Chargement de l'atelier…")}</p>}>
@@ -3814,13 +4098,15 @@ export function DesignSpace({
           cableRouting={cableRouting}
           onDraftChange={onWorkshopDraft}
           onSaveState={setWorkshopSaveState}
-          onResult={() => {
-            // Sortie de l'atelier : la revue s'ouvre sur le couple testé.
+          onResult={(result) => {
+            // Sortie de l'atelier : l'écran Résultat s'ouvre sur le couple testé.
+            recordResult(result);
             setShowWorkshop(false);
             setPanel(null);
-            setTab("revue");
+            setTab("resultat");
           }}
-          onRequestTrial={() => {
+          onRequestTrial={(result) => {
+            recordResult(result);
             if (!isDelegated(dossier, TRIAL_REQUEST)) toggleDelegated(TRIAL_REQUEST);
             setShowWorkshop(false);
             setPanel(null);
@@ -4356,6 +4642,7 @@ export function DesignSpace({
           <TabsList className={showAdvanced ? "flex-wrap" : "hidden"}>
             <TabsTrigger value="besoin">{t("Besoin")}</TabsTrigger>
             <TabsTrigger value="montage">{t("Montage & 3D")}</TabsTrigger>
+            <TabsTrigger value="resultat">{t("Résultat")}</TabsTrigger>
             <TabsTrigger value="candidats">{t("Candidats")}</TabsTrigger>
             <TabsTrigger value="cablage">{t("Câblage")}</TabsTrigger>
             <TabsTrigger value="revue">{t("Revue Standex")}</TabsTrigger>
@@ -4369,6 +4656,11 @@ export function DesignSpace({
           {/* ---------------- Montage ---------------- */}
           <TabsContent value="montage" className="pt-4">
             {montageSection}
+          </TabsContent>
+
+          {/* ---------------- Résultat ---------------- */}
+          <TabsContent value="resultat" className="pt-4">
+            {resultatSection}
           </TabsContent>
 
           {showAdvanced ? (

@@ -100,6 +100,10 @@ export interface DesignDossier {
    * connue ni une validation R&D. Absent des dossiers antérieurs : son absence
    * n'est pas une erreur et ne bloque aucune reprise. */
   delegatedDecisions?: readonly string[];
+  /** Couples réellement testés dans l'atelier, avec le verdict produit par le
+   * moteur guidé. Champ ADDITIF : absent des dossiers antérieurs, son absence
+   * n'est pas une erreur et ne bloque aucune reprise. */
+  testedPairs?: readonly import("./tested-pairs").TestedPair[];
   /** Le capteur affiché dans l'atelier ne suit la gamme choisie qu'après confirmation. */
   workshopSensorId: string | null;
   sensorSyncConfirmed: boolean;
