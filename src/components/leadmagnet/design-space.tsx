@@ -3128,13 +3128,15 @@ export function DesignSpace({
     </div>
   );
 
-  /** Parcours guidé : les capteurs possibles et le câble sont DANS la page
-   * « Mon montage ». L'outil contextuel y conduit au lieu d'ouvrir un panneau,
-   * donc aucune saisie n'est masquée et il n'y a pas de cul-de-sac. */
+  /** Les couples sont dans « Couples proposés », le câble et le connecteur dans
+   * « Avec Standex » : le lien mène à l'onglet où la saisie existe réellement,
+   * pas dans un panneau, donc aucun cul-de-sac. */
   const goToInlineSection = (id: string) => {
-    setTab("montage");
+    setTab(id === "section-cablage" ? "revue" : "montage");
     requestAnimationFrame(() => {
-      document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+      const node = document.getElementById(id);
+      if (node instanceof HTMLDetailsElement) node.open = true;
+      node?.scrollIntoView({ behavior: "smooth", block: "start" });
     });
   };
 
