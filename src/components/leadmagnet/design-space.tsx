@@ -1528,7 +1528,7 @@ export function DesignSpace({
   const stepIndex = tab === "besoin" ? 0 : tab === "revue" ? 2 : 1;
   const steps = [
     { id: "besoin", label: t("Mon besoin"), hint: t("Ce que vous voulez détecter") },
-    { id: "montage", label: t("Mon montage"), hint: t("Où le capteur se place") },
+    { id: "montage", label: t("Couples proposés"), hint: t("À tester dans votre montage") },
     { id: "revue", label: t("Avec Standex"), hint: t("Faire relire votre projet") },
   ];
 
