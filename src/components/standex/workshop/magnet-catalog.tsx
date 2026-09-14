@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { t } from "@/lib/i18n/core";
-import { BARE_MAGNETS, PACKAGED_MAGNET_IDS, magnetSource } from "@/lib/standex/magnet-catalog";
+import { BARE_MAGNETS, PACKAGED_MAGNET_IDS, packagedMagnet, magnetSource } from "@/lib/standex/magnet-catalog";
 import { pairedMagnetModel } from "@/lib/standex/paired-magnets";
 import { CandidateThumbnail } from "@/components/leadmagnet/candidate-thumbnail";
 import { sizeLabel } from "@/lib/standex/sensor-catalog";
@@ -26,7 +26,12 @@ export default function MagnetCatalog({
 }) {
   const [material, setMaterial] = useState("");
   const entries = [
-    ...PACKAGED_MAGNET_IDS.map((id) => ({ id, material: "unknown" as const })),
+    // Le matériau d'un aimant en boîtier est celui de l'AIMANT (`magnetMaterial`),
+    // jamais celui du boîtier : les deux sont distincts et affichés séparément.
+    ...PACKAGED_MAGNET_IDS.map((id) => ({
+      id,
+      material: packagedMagnet(id)!.magnetMaterial,
+    })),
     ...BARE_MAGNETS,
   ].filter((m) => !material || m.material === material);
   return (
@@ -78,6 +83,34 @@ export default function MagnetCatalog({
                 <h3 className="t-title-s">{model.name}</h3>
                 <p className="t-metric">{sizeLabel(model)}</p>
                 <p>{entry.material === "unknown" ? t(ADVICE.unknown) : entry.material}</p>
+                {(() => {
+                  const packaged = packagedMagnet(entry.id);
+                  if (!packaged) return null;
+                  return (
+                    <dl className="mw-catalog-magnet-materials t-body">
+                      <div>
+                        <dt>{t("Aimant")}</dt>
+                        <dd>{packaged.magnetMaterial}</dd>
+                      </div>
+                      <div>
+                        <dt>{t("Boîtier")}</dt>
+                        <dd>{packaged.housingMaterial}</dd>
+                      </div>
+                      {packaged.momentTypE6Vscm != null && (
+                        <div>
+                          <dt>{t("Moment typ. (MS150)")}</dt>
+                          <dd>
+                            {(Array.isArray(packaged.momentTypE6Vscm)
+                              ? packaged.momentTypE6Vscm.join(" / ")
+                              : String(packaged.momentTypE6Vscm)) + " ×10⁻⁶ Vs·cm"}
+                            <br />
+                            {t("Valeur brute constructeur, non convertible en distance de commutation.")}
+                          </dd>
+                        </div>
+                      )}
+                    </dl>
+                  );
+                })()}
               </div>
               <a href={source} target="_blank" rel="noreferrer">
                 {t("Fiche fabricant · PDF")}
