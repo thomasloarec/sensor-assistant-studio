@@ -111,9 +111,14 @@ describe("chaque fichier STEP annoncé existe réellement et est valide", () => 
       let expectedY = envY;
       let expectedZ = envZ;
       if (s.shape === "threaded" && s.nutWidth) {
-        const circumDiameter = (2 * s.nutWidth) / Math.sqrt(3);
-        expectedY = circumDiameter;
-        expectedZ = circumDiameter;
+        // hexPrism() place les sommets de l'écrou hexagonal selon
+        // y = R·sin(a), z = R·cos(a) avec R = nutWidth/√3 (cote sur plats) et
+        // a ∈ {π/6 + k·π/3}. L'extremum en Y touche un sommet (R = 2·nutWidth/(2√3)
+        // → saillie = 2R, le diamètre circonscrit), tandis que l'extremum en Z
+        // tombe entre deux sommets, à l'apothème (R·cos(30°) de part et d'autre
+        // → saillie = nutWidth, la cote sur plats déjà documentée).
+        expectedY = (2 * s.nutWidth) / Math.sqrt(3);
+        expectedZ = s.nutWidth;
       } else if (s.shape === "pressfit") {
         const collar = s.collarDiameter ?? s.body[1];
         expectedY = collar;
