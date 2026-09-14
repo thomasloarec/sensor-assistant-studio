@@ -728,32 +728,60 @@ export function ContextGuard({ onLost }: { onLost: () => void }) {
   }, [gl, onLost]);
   return null;
 }
+/** Recul nécessaire pour qu'une sphère de rayon `radius` tienne ENTIÈREMENT dans
+ *  le cadre, avec `margin` de marge de chaque côté, en prenant le maximum des
+ *  deux contraintes (verticale par le fov réel, horizontale par le fov dérivé du
+ *  rapport largeur/hauteur). Fonction géométrique pure : elle ne touche ni les
+ *  cotes, ni les seuils, ni la simulation. */
+export function fitDistance(
+  radius: number,
+  fovDeg: number,
+  aspect: number,
+  margin = 0.12,
+): number {
+  const vFov = (fovDeg * Math.PI) / 180;
+  const a = aspect > 0 && Number.isFinite(aspect) ? aspect : 1;
+  const hFov = 2 * Math.atan(Math.tan(vFov / 2) * a);
+  const need = Math.max(radius / Math.sin(vFov / 2), radius / Math.sin(hFov / 2));
+  return need / (1 - margin);
+}
 export function CameraRig({
   target,
   distance,
+  fitRadius,
   view = "3d",
   resetKey,
 }: {
   target: Vec3;
   distance: number;
+  /** Rayon de la boîte englobante à cadrer (couple + course). Prioritaire. */
+  fitRadius?: number | undefined;
   view?: "3d" | "top";
   resetKey: string;
 }) {
   const { camera, controls, size } = useThree();
-  /* Sur un cadre étroit (téléphone en portrait), la largeur visible est plus
-     petite que la hauteur : sans ce recul, le couple sortait du cadre. On ne
-     recadre PAS à chaque pixel de redimensionnement — ouvrir un panneau
-     latéral repositionnait alors la caméra et la scène paraissait vide. */
-  const portrait = size.height > 0 && size.width < size.height;
+  const aspect = size.height > 0 ? size.width / size.height : 1;
   useEffect(() => {
+    // Pendant une transition de mise en page, la hauteur passe par zéro : ne pas
+    // recadrer sur un cadre dégénéré, la caméra partirait à l'infini.
+    if (size.height < 80 || size.width < 80) return;
     const c = controls as unknown as { target: Vector3; update: () => void } | undefined;
-    const d = portrait ? distance / 0.7 : distance;
+    const perspective = camera as unknown as { fov?: number };
+    const d =
+      fitRadius && fitRadius > 0
+        ? fitDistance(fitRadius, perspective.fov ?? 43, aspect)
+        : aspect < 1
+          ? distance / 0.7
+          : distance;
+    /* Direction de vue normalisée : le recul calculé est donc la vraie distance
+       caméra-cible, pas la somme de trois composantes arbitraires. */
+    const dir =
+      view === "top" ? [0, 1, 0.001] : [0.62, 0.55, 0.82].map((n) => n / 1.166);
     camera.position.set(
-      target[0] + (view === "top" ? 0 : d * 0.7),
-      target[1] + d * 0.75,
-      target[2] + (view === "top" ? 0.001 : d),
+      target[0] + dir[0]! * d,
+      target[1] + dir[1]! * d,
+      target[2] + dir[2]! * d,
     );
-    if (view === "top") camera.position.y = target[1] + d;
     camera.up.set(0, view === "top" ? 0 : 1, view === "top" ? -1 : 0);
     camera.lookAt(...target);
     camera.updateProjectionMatrix();
@@ -761,7 +789,7 @@ export function CameraRig({
     c?.update();
     // Deliberately reset only on explicit view/setup changes, not every animation frame.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [resetKey, camera, controls, portrait]);
+  }, [resetKey, camera, controls, aspect, fitRadius, view]);
   return null;
 }
 export default function WorkshopScene({
@@ -800,26 +828,50 @@ export default function WorkshopScene({
     reference = config.mode === "reference",
     available = !unavailableReason(config);
   /* Cadrage du couple : il est MESURÉ sur les corps réellement dessinés et sur
-     la course déclarée, jamais posé à une distance fixe. Une distance constante
-     laissait le couple occuper un cinquième de l'image sur les petits capteurs.
-     Ce calcul ne touche ni les cotes, ni les seuils, ni la simulation. */
-  const coupleSpan = Math.max(
-    model.body[0],
-    model.body[2],
-    Math.abs(config.start),
-    Math.abs(config.end),
-    config.travel,
+     les positions que le moteur produit (`samples`), jamais posé à une distance
+     fixe. Ce calcul ne touche ni les cotes, ni les seuils, ni la simulation.
+
+     Boîte englobante = capteur + aimant à la position OUVERTE + aimant à la
+     position FERMÉE. La caméra vise le milieu du segment capteur–aimant en
+     position ouverte, et `CameraRig` calcule le recul qui fait tenir cette boîte
+     entièrement dans le cadre avec 12 % de marge, quel que soit le rapport
+     largeur/hauteur. « Recadrer » rejoue exactement le même calcul. */
+  const cycle = samples.length > 0 ? samples : [sample];
+  const openPose = cycle[0]!;
+  const closedPose = cycle.reduce((a, b) => (b.distance < a.distance ? b : a), openPose);
+  const magnetHalf = magnetSize(config).map((v) => v / 2) as Vec3;
+  const sensorHalf = model.body.map((v) => v / 2) as Vec3;
+  const boxMin: Vec3 = [0, 0, 0];
+  const boxMax: Vec3 = [0, 0, 0];
+  for (let axis = 0; axis < 3; axis += 1) {
+    const lows = [-sensorHalf[axis]!];
+    const highs = [sensorHalf[axis]!];
+    for (const pose of [openPose, closedPose]) {
+      lows.push(pose.position[axis]! - magnetHalf[axis]!);
+      highs.push(pose.position[axis]! + magnetHalf[axis]!);
+    }
+    boxMin[axis] = Math.min(...lows);
+    boxMax[axis] = Math.max(...highs);
+  }
+  const boxSize = boxMax.map((v, i) => v - boxMin[i]!) as Vec3;
+  /* Rayon de la sphère englobante : le cadrage tient donc quel que soit l'angle
+     de vue, sans dépendre de l'orientation courante de la caméra. */
+  const fitRadius = Math.max(
+    6,
+    0.5 * Math.hypot(boxSize[0]!, boxSize[1]!, boxSize[2]!),
   );
-  /* Le couple doit occuper 40 à 60 % de la largeur : la distance est donc
-     proportionnelle à la boîte englobante (corps + course), pas un recul fixe.
-     `CameraRig` place ensuite la caméra à 1,25 × cette valeur, légèrement en
-     plongée, et « Recadrer » rejoue exactement ce même cadrage. */
+  /* Milieu du segment capteur (origine locale) – aimant en position ouverte. */
+  const mid: Vec3 = [
+    openPose.position[0]! / 2,
+    openPose.position[1]! / 2,
+    openPose.position[2]! / 2,
+  ];
   const dist = Math.max(14, model.body[0] * 1.6),
-    coupleDist = Math.max(24, coupleSpan * 1.15),
+    coupleDist = fitRadius * 2.2,
     target: Vec3 =
       focus === "sensor"
         ? [config.mountX, 0, config.mountZ]
-        : [config.mountX, 0, config.mountZ + config.offset / 2];
+        : [config.mountX + mid[0], mid[1], config.mountZ + mid[2]];
 
   return (
     <Canvas
@@ -886,12 +938,15 @@ export default function WorkshopScene({
       <CameraRig
         target={target}
         distance={focus === "sensor" ? dist : coupleDist}
+        fitRadius={focus === "sensor" ? undefined : fitRadius}
         resetKey={[
           config.sensorId,
+          config.magnetModel,
           config.mode,
           config.geometry,
           focus,
           resetEpoch,
+          target.map((n) => Math.round(n * 10)).join(","),
         ].join(":")}
       />
     </Canvas>
