@@ -828,26 +828,50 @@ export default function WorkshopScene({
     reference = config.mode === "reference",
     available = !unavailableReason(config);
   /* Cadrage du couple : il est MESURÉ sur les corps réellement dessinés et sur
-     la course déclarée, jamais posé à une distance fixe. Une distance constante
-     laissait le couple occuper un cinquième de l'image sur les petits capteurs.
-     Ce calcul ne touche ni les cotes, ni les seuils, ni la simulation. */
-  const coupleSpan = Math.max(
-    model.body[0],
-    model.body[2],
-    Math.abs(config.start),
-    Math.abs(config.end),
-    config.travel,
+     les positions que le moteur produit (`samples`), jamais posé à une distance
+     fixe. Ce calcul ne touche ni les cotes, ni les seuils, ni la simulation.
+
+     Boîte englobante = capteur + aimant à la position OUVERTE + aimant à la
+     position FERMÉE. La caméra vise le milieu du segment capteur–aimant en
+     position ouverte, et `CameraRig` calcule le recul qui fait tenir cette boîte
+     entièrement dans le cadre avec 12 % de marge, quel que soit le rapport
+     largeur/hauteur. « Recadrer » rejoue exactement le même calcul. */
+  const cycle = samples.length > 0 ? samples : [sample];
+  const openPose = cycle[0]!;
+  const closedPose = cycle.reduce((a, b) => (b.distance < a.distance ? b : a), openPose);
+  const magnetHalf = magnetSize(config).map((v) => v / 2) as Vec3;
+  const sensorHalf = model.body.map((v) => v / 2) as Vec3;
+  const boxMin: Vec3 = [0, 0, 0];
+  const boxMax: Vec3 = [0, 0, 0];
+  for (let axis = 0; axis < 3; axis += 1) {
+    const lows = [-sensorHalf[axis]!];
+    const highs = [sensorHalf[axis]!];
+    for (const pose of [openPose, closedPose]) {
+      lows.push(pose.position[axis]! - magnetHalf[axis]!);
+      highs.push(pose.position[axis]! + magnetHalf[axis]!);
+    }
+    boxMin[axis] = Math.min(...lows);
+    boxMax[axis] = Math.max(...highs);
+  }
+  const boxSize = boxMax.map((v, i) => v - boxMin[i]!) as Vec3;
+  /* Rayon de la sphère englobante : le cadrage tient donc quel que soit l'angle
+     de vue, sans dépendre de l'orientation courante de la caméra. */
+  const fitRadius = Math.max(
+    6,
+    0.5 * Math.hypot(boxSize[0]!, boxSize[1]!, boxSize[2]!),
   );
-  /* Le couple doit occuper 40 à 60 % de la largeur : la distance est donc
-     proportionnelle à la boîte englobante (corps + course), pas un recul fixe.
-     `CameraRig` place ensuite la caméra à 1,25 × cette valeur, légèrement en
-     plongée, et « Recadrer » rejoue exactement ce même cadrage. */
+  /* Milieu du segment capteur (origine locale) – aimant en position ouverte. */
+  const mid: Vec3 = [
+    openPose.position[0]! / 2,
+    openPose.position[1]! / 2,
+    openPose.position[2]! / 2,
+  ];
   const dist = Math.max(14, model.body[0] * 1.6),
-    coupleDist = Math.max(24, coupleSpan * 1.15),
+    coupleDist = fitRadius * 2.2,
     target: Vec3 =
       focus === "sensor"
         ? [config.mountX, 0, config.mountZ]
-        : [config.mountX, 0, config.mountZ + config.offset / 2];
+        : [config.mountX + mid[0], mid[1], config.mountZ + mid[2]];
 
   return (
     <Canvas
