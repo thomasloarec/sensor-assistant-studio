@@ -2711,6 +2711,7 @@ export function DesignSpace({
 
   const montageSection = (
     <div className="space-y-4">
+      {showAdvanced ? null : projectSummaryCard}
       {showAdvanced ? null : (
         <div className="panel-block-lg">
           <h2 className="t-title-m">{t("Où le capteur se place-t-il ?")}</h2>
@@ -2803,6 +2804,7 @@ export function DesignSpace({
 
   const revueSection = (
     <div className="space-y-4">
+      {projectSummaryCard}
       <Accordion
         type="multiple"
         value={reviewSections}
