@@ -10,13 +10,23 @@ import { useLocale } from "@/lib/i18n/react";
 import { AppHeader } from "@/components/standex/app-header";
 import SensorCard from "./sensor-card";
 import {
+  COVERAGE_LABEL,
+  EVIDENCE_LABEL,
   GuidedSuggestion,
   GuidedVerdict,
+  LIMIT_LABEL,
   SensitivityComparison,
   useGuidedMounting,
 } from "./guided-mounting";
 import StudioV2 from "./studio-v2";
-import { composeRotations, magnetWorldPosition, simulateMounting } from "@/lib/standex/mounting";
+import {
+  applySuggestion,
+  composeRotations,
+  magnetWorldPosition,
+  simulateMounting,
+  suggestPose,
+  workshopPatchFromMounting,
+} from "@/lib/standex/mounting";
 import type { GuidedMounting } from "@/lib/standex/mounting";
 import type { StudioStudy } from "@/lib/standex/studio-dossier";
 import type { DesignFreeze } from "@/lib/standex/design-freeze";
@@ -74,6 +84,10 @@ import ContactIndicator from "./contact-indicator";
 import { SensorPlan } from "./sensor-plan";
 import { sensorById, sizeLabel, sensorSource } from "@/lib/standex/sensor-catalog";
 
+/** Pas de lecture : 80 pas × 50 ms = 4 s (normal), 240 pas = 12 s (lent). */
+const CYCLE_STEPS_NORMAL = 80;
+const CYCLE_STEPS_SLOW = 240;
+const CYCLE_SECONDS_NORMAL = (CYCLE_STEPS_NORMAL * 50) / 1000;
 const Scene = lazy(() => import("./scene"));
 const MachineScene = lazy(() => import("./machine-scene"));
 /* i18n-canonical : libellés stockés en français, traduits au rendu par t(). */
@@ -184,6 +198,12 @@ export interface WorkshopProps {
    * Sauvegarder reste une action explicite : ceci sert seulement à ne pas
    * perdre une modification quand l'atelier est fermé ou masqué. */
   onDraftChange?: (config: WorkshopConfig) => void;
+  /** « Voir le résultat » : ferme l'atelier et ouvre la revue du dossier. */
+  onResult?: () => void;
+  /** Demande d'essai réel : cochée dans le dossier par l'espace projet. */
+  onRequestTrial?: () => void;
+  /** État d'enregistrement, remonté pour être affiché par la barre du panneau. */
+  onSaveState?: (state: "saved" | "saving" | "draft") => void;
 }
 export default function MagneticWorkshop({
   embedded = false,
@@ -198,6 +218,9 @@ export default function MagneticWorkshop({
   storageMode = "local-device",
   cableRouting,
   onDraftChange,
+  onResult,
+  onRequestTrial,
+  onSaveState,
 }: WorkshopProps) {
   useLocale();
   const [productCard, setProductCard] = useState(false);
@@ -219,6 +242,9 @@ export default function MagneticWorkshop({
     [showNames, setShowNames] = useState(true),
     [focus, setFocus] = useState<"assembly" | "sensor">("assembly"),
     [catalogOpen, setCatalogOpen] = useState(false);
+  /** Vitesse de lecture. Par défaut un aller-retour dure 4 s : la lecture
+   * ralentie reste disponible dans les réglages avancés, elle ne disparaît pas. */
+  const [playbackSpeed, setPlaybackSpeed] = useState<"normal" | "slow">("normal");
   const [reduced, setReduced] = useState(false);
   const [resetEpoch, setResetEpoch] = useState(0),
     [sceneError, setSceneError] = useState(false);
@@ -485,9 +511,11 @@ export default function MagneticWorkshop({
 
   useEffect(() => {
     if (!playing) return;
-    const timer = setInterval(() => setProgress((v) => Math.min(1, v + 1 / 240)), 50);
+    // 50 ms par pas : 80 pas = 4 s pour un aller-retour, 240 pas en lecture lente.
+    const steps = playbackSpeed === "normal" ? CYCLE_STEPS_NORMAL : CYCLE_STEPS_SLOW;
+    const timer = setInterval(() => setProgress((v) => Math.min(1, v + 1 / steps)), 50);
     return () => clearInterval(timer);
-  }, [playing]);
+  }, [playing, playbackSpeed]);
   useEffect(() => {
     if (progress >= 1) setPlaying(false);
   }, [progress]);
