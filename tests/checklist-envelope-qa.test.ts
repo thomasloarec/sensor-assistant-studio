@@ -1,6 +1,11 @@
 import { describe, expect, test } from "bun:test";
 import { createDossier } from "@/lib/leadmagnet/dossier";
+import { DEFAULT_WORKSHOP } from "@/lib/standex/magnetic-workshop";
+import { freeReference } from "@/lib/leadmagnet/connectors";
 import {
+  CHOSEN_BARE_LEADS,
+  DELEGATED_SENSOR,
+  GUIDED_QUESTION_KEYS,
   DELEGATED_CABLE,
   DELEGATED_CONNECTOR,
   DELEGATED_CONTEXT,
