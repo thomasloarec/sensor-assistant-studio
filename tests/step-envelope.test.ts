@@ -95,20 +95,39 @@ describe("chaque fichier STEP annoncé existe réellement et est valide", () => 
 
       const [envX, envY, envZ] = overallEnvelope(s);
       const eps = 0.01;
-      // Le générateur place la longueur/terminaisons sur l'axe X, la hauteur sur Y,
-      // la largeur sur Z, sauf pour "custom_pcb" où l'enveloppe extérieure de la
-      // boîte (reed + PCB) peut légèrement excéder overallEnvelope (qui ne
-      // décrit que le corps déclaré) ; on vérifie donc une borne, pas une égalité,
-      // pour ce cas précis, et une égalité stricte pour tous les autres.
-      if (s.shape === "custom_pcb") {
-        expect(spanX).toBeLessThanOrEqual(envX + eps + 1e-9);
+      // La longueur (X) suit toujours overallEnvelope() : écrous et collerettes
+      // sont positionnés par le générateur pour rester dans la longueur du corps.
+      expect(Math.abs(spanX - envX)).toBeLessThanOrEqual(eps);
+
+      // Pour la largeur/hauteur (Y, Z), overallEnvelope() ne décrit que le
+      // corps (body[1], body[2]) : c'est une limite connue et documentée du
+      // catalogue, qui ne modélise pas la saillie radiale des écrous
+      // hexagonaux ("threaded") ni des collerettes ("pressfit") au-delà du
+      // diamètre du corps. Le générateur, lui, construit fidèlement cette
+      // saillie à partir des mêmes champs du catalogue (nutWidth,
+      // collarDiameter) : on compare donc la boîte réelle à la saillie
+      // attendue dérivée de ces champs déjà présents dans le catalogue,
+      // jamais à une cote inventée.
+      let expectedY = envY;
+      let expectedZ = envZ;
+      if (s.shape === "threaded" && s.nutWidth) {
+        const circumDiameter = (2 * s.nutWidth) / Math.sqrt(3);
+        expectedY = circumDiameter;
+        expectedZ = circumDiameter;
+      } else if (s.shape === "pressfit") {
+        const collar = s.collarDiameter ?? s.body[1];
+        expectedY = collar;
+        expectedZ = collar;
+      } else if (s.shape === "custom_pcb") {
+        // L'enveloppe extérieure de la boîte (reed + PCB) peut légèrement
+        // excéder overallEnvelope, qui ne décrit que le corps déclaré : on
+        // vérifie une borne, pas une égalité, pour ce cas précis.
         expect(spanY).toBeLessThanOrEqual(envY + eps + 1e-9);
         expect(spanZ).toBeLessThanOrEqual(envZ + eps + 1e-9);
-      } else {
-        expect(Math.abs(spanX - envX)).toBeLessThanOrEqual(eps);
-        expect(Math.abs(spanY - envY)).toBeLessThanOrEqual(eps);
-        expect(Math.abs(spanZ - envZ)).toBeLessThanOrEqual(eps);
+        return;
       }
+      expect(Math.abs(spanY - expectedY)).toBeLessThanOrEqual(eps);
+      expect(Math.abs(spanZ - expectedZ)).toBeLessThanOrEqual(eps);
     });
   }
 });
