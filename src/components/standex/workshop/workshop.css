@@ -2108,3 +2108,8 @@
 .mw-published-table td .mw-kind {
   margin-left: 8px;
 }
+/* La classe publiée et son badge « non simulé » restent sur une seule ligne. */
+.mw-published-table td:first-child,
+.mw-published-table th:first-child {
+  white-space: nowrap;
+}
