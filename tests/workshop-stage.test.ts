@@ -16,8 +16,12 @@ const SPACE = readFileSync("src/components/leadmagnet/design-space.tsx", "utf8")
 const SCENE = readFileSync("src/components/standex/workshop/scene.tsx", "utf8");
 
 describe("ouverture d'un couple depuis les cartes", () => {
-  test("le cadrage par défaut est le couple, pas une action à cliquer", () => {
-    expect(WORKSHOP).toContain('setFocus("sensor")');
+  test("le cadrage par défaut contient le couple entier, capteur ET aimant", () => {
+    expect(WORKSHOP).toContain('setFocus("assembly")');
+    expect(WORKSHOP).not.toContain('setFocus("sensor")');
+  });
+  test("la source des distances n'est répétée sur la scène que si elle est fictive", () => {
+    expect(WORKSHOP).toContain('{basis === "fictitious" ? (');
   });
   test("l'aimant est posé à la pose suggérée par le gabarit publié", () => {
     expect(WORKSHOP).toContain("suggestPose(guided)");

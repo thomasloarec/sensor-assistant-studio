@@ -602,8 +602,9 @@ export default function MagneticWorkshop({
   useEffect(() => {
     if (openedRef.current) return;
     openedRef.current = true;
-    // Cadrage sur le couple : c'est le cadrage PAR DÉFAUT, plus une action.
-    setFocus("sensor");
+    // Cadrage sur le COUPLE entier : capteur ET aimant dans l'image. Un cadrage
+    // sur le seul capteur laissait l'aimant hors champ à l'ouverture.
+    setFocus("assembly");
     // La démonstration à distances fictives n'est jamais un point de départ
     // pour un vrai capteur : elle reste réservée aux références fictives.
     if (!isFictitiousSensor(config.sensorId) && config.mode !== "reference") {
@@ -1420,7 +1421,7 @@ export default function MagneticWorkshop({
         <button
           className="mw-text-button"
           onClick={() => {
-            setFocus("sensor");
+            setFocus("assembly");
             setResetEpoch((v) => v + 1);
           }}
         >
@@ -1506,9 +1507,12 @@ export default function MagneticWorkshop({
             ])}
           >
             <div className="mw-scene-tools">
-              <span className={basis === "fictitious" ? "mw-kind education" : "mw-kind"}>
-                {basisLabel}
-              </span>
+              {/* La source des distances est portée par le bandeau de verdict.
+                  Elle n'est répétée sur la scène que pour une référence
+                  fictive, où l'avertissement doit rester sous les yeux. */}
+              {basis === "fictitious" ? (
+                <span className="mw-kind education">{basisLabel}</span>
+              ) : null}
               <div className="mw-view-switch">
                 <button aria-pressed={view === "3d"} onClick={request3d}>
                   3D
