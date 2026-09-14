@@ -14,7 +14,7 @@ import type { DesignDossier } from "./dossier";
 export type ChecklistState = "chosen" | "delegated" | "todo";
 
 export interface ChecklistItem {
-  id: "besoin" | "sources" | "capteur" | "montage" | "cable" | "connecteur" | "contexte";
+  id: "besoin" | "capteur" | "montage" | "cable" | "connecteur" | "contexte";
   label: string;
   state: ChecklistState;
   /** Une phrase lisible, sans jargon. */
@@ -30,6 +30,10 @@ export const DELEGATED_CABLE = "cable";
 export const DELEGATED_CONNECTOR = "connector";
 export const DELEGATED_MOUNTING = "mounting";
 export const DELEGATED_CONTEXT = "context";
+
+/** Choix explicite de fils nus. La terminaison par défaut du dossier EST
+ * `bare_leads` : sans ce marqueur, elle ne coche donc rien. */
+export const CHOSEN_BARE_LEADS = "chosen:bare_leads";
 
 /** Une question guidée explicitement laissée de côté par « Je ne sais pas
  * encore ». La décision est TRAITÉE dans le parcours ; elle ne fabrique aucune
@@ -66,54 +70,54 @@ export function projectChecklist(d: DesignDossier): ChecklistItem[] {
   const answered = answeredRows.length;
   const setAside = delegatedQuestionKeys(d);
   const setAsideSet = new Set(setAside);
-  /** Une question n'est traitée que si elle est répondue OU explicitement mise
-   * de côté. Une seule réponse sur six ne coche donc rien. */
+  /** Choix STRUCTURÉS saisis dans les questions : une fixation cliquée ou une
+   * dimension mesurée est une réponse traitée, même sans texte libre. Sinon le
+   * résumé redemanderait indéfiniment ces deux questions. */
+  const envelopeGiven = [
+    d.envelope.lengthMm,
+    d.envelope.widthMm,
+    d.envelope.heightMm,
+  ].some((v) => typeof v === "number" && Number.isFinite(v) && v > 0);
+  const structured = new Set<string>();
+  if (d.mounting.kind !== "undecided") structured.add("mounting");
+  if (envelopeGiven) structured.add("envelope");
+  /** Une question n'est traitée que si elle est répondue (texte libre OU choix
+   * structuré) OU explicitement mise de côté. Une seule réponse sur six ne coche
+   * donc rien. */
   const handledQuestions = GUIDED_QUESTION_KEYS.filter(
-    (k) => answeredKeys.has(k) || setAsideSet.has(k),
+    (k) => answeredKeys.has(k) || structured.has(k) || setAsideSet.has(k),
   ).length;
+  /** Réponses réellement données par l'utilisateur, texte libre et choix
+   * structurés confondus — jamais une valeur par défaut du dossier. */
+  const givenByUser =
+    answered + GUIDED_QUESTION_KEYS.filter((k) => structured.has(k) && !answeredKeys.has(k)).length;
   const allQuestionsHandled = handledQuestions === GUIDED_QUESTION_KEYS.length;
   const besoin: ChecklistItem = {
     id: "besoin",
     label: "Ce que vous voulez détecter",
-    state: allQuestionsHandled ? (answered > 0 ? "chosen" : "delegated") : "todo",
+    state: allQuestionsHandled ? (givenByUser > 0 ? "chosen" : "delegated") : "todo",
     detail: allQuestionsHandled
-      ? answered > 0
-        ? `Les ${GUIDED_QUESTION_KEYS.length} questions sont traitées, dont ${answered} avec une réponse de votre part.`
+      ? givenByUser > 0
+        ? `Les ${GUIDED_QUESTION_KEYS.length} questions sont traitées, dont ${givenByUser} avec une réponse de votre part.`
         : "Toutes les questions sont laissées à définir avec Standex : aucune valeur technique n'en est déduite."
       : `${handledQuestions} question(s) traitée(s) sur ${GUIDED_QUESTION_KEYS.length}. Répondez, ou dites « je ne sais pas encore » pour les autres.`,
     tab: "besoin",
   };
 
-  /** Provenance des exigences : une valeur importée ou proposée par l'assistant
-   * n'est jamais réputée confirmée par vous tant qu'elle n'est pas relue. */
-  const unconfirmed = d.requirements.filter(
-    (r) => r.value.trim() !== "" && (r.state !== "confirmed" || r.source !== "user"),
-  );
-  const sources: ChecklistItem = {
-    id: "sources",
-    label: "Provenance de vos informations",
-    state:
-      answered === 0
-        ? "todo"
-        : unconfirmed.length === 0
-          ? "chosen"
-          : "delegated",
-    detail:
-      answered === 0
-        ? "Aucune information à vérifier pour l'instant."
-        : unconfirmed.length === 0
-          ? "Toutes les informations enregistrées viennent de vous et sont confirmées."
-          : `${unconfirmed.length} information(s) restent à confirmer (hypothèse, import ou proposition) : Standex les reprendra avec vous.`,
-    tab: "besoin",
-  };
-
+  /* La provenance des exigences (hypothèse, import, proposition à confirmer)
+     reste visible dans le détail des exigences : ce n'est pas une étape du
+     parcours, et elle ne bloque jamais la complétude du résumé. */
 
   const capteur: ChecklistItem = d.selectedSensorId
     ? {
         id: "capteur",
         label: "Capteur et aimant",
         state: "chosen",
-        detail: `Gamme retenue : ${d.selectedSensorId}. Ce n'est pas encore une référence commandable.`,
+        detail: `${
+          d.workshop && d.workshop.sensorId === d.selectedSensorId
+            ? `Couple retenu : ${d.selectedSensorId} + ${d.workshop.magnetModel}`
+            : `Gamme retenue : ${d.selectedSensorId}`
+        }. Ce n'est pas encore une référence commandable.`,
         tab: "montage",
         section: "section-candidats",
       }
@@ -163,30 +167,53 @@ export function projectChecklist(d: DesignDossier): ChecklistItem[] {
 
   /* Le câble et le connecteur sont deux décisions séparées : choisir une
    * longueur ne dit rien du connecteur, et inversement. */
-  const lengthDecided = d.cabling.lengthChoice !== "undecided";
-  const connectorChosen = d.termination.kind === "unqualified_connector";
   const cableDelegated = isDelegated(d, DELEGATED_CABLE);
   const connectorDelegated = isDelegated(d, DELEGATED_CONNECTOR);
+  /** Longueur chiffrée réellement retenue dans l'atelier, s'il y en a une. */
+  const lengthMm = d.workshop?.cableLengthMm ?? null;
+  const lengthDecided = d.cabling.lengthChoice !== "undecided" || lengthMm !== null;
+  const lengthText =
+    lengthMm !== null
+      ? `Longueur retenue : ${lengthMm} mm (à confirmer en revue).`
+      : d.cabling.lengthChoice === "standard_to_confirm"
+        ? "Longueur de gamme, valeur exacte à confirmer en revue."
+        : "Longueur sur mesure, valeur exacte à confirmer en revue.";
   const cable: ChecklistItem = {
     id: "cable",
     label: "Longueur de câble",
-    state: lengthDecided ? "chosen" : cableDelegated ? "delegated" : "todo",
-    detail: lengthDecided
-      ? "Longueur : choix enregistré, à confirmer en revue."
-      : cableDelegated
-        ? "Longueur à définir avec Standex."
+    // Une délégation explicite prime : une préférence ancienne conservée dans le
+    // dossier ne « décoche » pas ce qui a ensuite été confié à Standex.
+    state: cableDelegated ? "delegated" : lengthDecided ? "chosen" : "todo",
+    detail: cableDelegated
+      ? "Longueur à définir avec Standex."
+      : lengthDecided
+        ? lengthText
         : "Longueur non définie : ce n'est pas obligatoire à ce stade.",
     tab: "montage",
     section: "section-cablage",
   };
+
+  /** Valeur du connecteur réellement choisi. La terminaison par défaut
+   * (`bare_leads` d'un dossier neuf) ne compte pas : il faut un choix explicite. */
+  const t = d.termination;
+  const connectorValue =
+    t.kind === "unqualified_connector"
+      ? `${t.spec.manufacturer} ${t.spec.mpn}`.trim()
+      : t.kind === "qualified_connector"
+        ? `${t.combo.connector.manufacturer} ${t.combo.connector.mpn}`.trim()
+        : t.kind === "free_reference" && t.text.trim() !== ""
+          ? t.text.trim()
+          : t.kind === "bare_leads" && isDelegated(d, CHOSEN_BARE_LEADS)
+            ? "Fils nus, sans connecteur"
+            : null;
   const connecteur: ChecklistItem = {
     id: "connecteur",
     label: "Connecteur",
-    state: connectorChosen ? "chosen" : connectorDelegated ? "delegated" : "todo",
-    detail: connectorChosen
-      ? "Connecteur : préférence enregistrée, à vérifier par la R&D."
-      : connectorDelegated
-        ? "Choix du connecteur confié à Standex."
+    state: connectorDelegated ? "delegated" : connectorValue !== null ? "chosen" : "todo",
+    detail: connectorDelegated
+      ? "Choix du connecteur confié à Standex."
+      : connectorValue !== null
+        ? `Connecteur retenu : ${connectorValue} — à vérifier par la R&D.`
         : "Aucune préférence de connecteur exprimée.",
     tab: "montage",
     section: "section-cablage",
@@ -225,7 +252,7 @@ export function projectChecklist(d: DesignDossier): ChecklistItem[] {
     tab: "revue",
   };
 
-  return [besoin, sources, capteur, montage, cable, connecteur, contexte];
+  return [besoin, capteur, montage, cable, connecteur, contexte];
 }
 
 /** Aucun pourcentage automatique : seules les étapes réellement traitées comptent,

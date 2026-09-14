@@ -23245,5 +23245,32 @@
     "Масштаб",
     "Scala",
     "スケール"
+  ],
+  "Longueur de gamme, valeur exacte à confirmer en revue.": [
+    "Catalogue length; exact value to be confirmed at review.",
+    "目录长度，确切数值待评审确认。",
+    "Katalog-Länge, exakter Wert wird in der Prüfung bestätigt.",
+    "Longitud de catálogo, valor exacto a confirmar en la revisión.",
+    "Каталожная длина, точное значение подтверждается при рассмотрении.",
+    "Lunghezza di catalogo, valore esatto da confermare in revisione.",
+    "カタログ長さ。正確な値はレビューで確認します。"
+  ],
+  "Longueur sur mesure, valeur exacte à confirmer en revue.": [
+    "Custom length; exact value to be confirmed at review.",
+    "定制长度，确切数值待评审确认。",
+    "Sonderlänge, exakter Wert wird in der Prüfung bestätigt.",
+    "Longitud a medida, valor exacto a confirmar en la revisión.",
+    "Индивидуальная длина, точное значение подтверждается при рассмотрении.",
+    "Lunghezza su misura, valore esatto da confermare in revisione.",
+    "特注長さ。正確な値はレビューで確認します。"
+  ],
+  "Fils nus, sans connecteur": [
+    "Bare leads, no connector",
+    "裸线，无连接器",
+    "Blanke Litzen, ohne Steckverbinder",
+    "Cables desnudos, sin conector",
+    "Оголённые выводы, без разъёма",
+    "Fili nudi, senza connettore",
+    "裸リード線、コネクタなし"
   ]
 }

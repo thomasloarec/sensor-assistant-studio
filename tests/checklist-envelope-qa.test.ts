@@ -1,6 +1,11 @@
 import { describe, expect, test } from "bun:test";
 import { createDossier } from "@/lib/leadmagnet/dossier";
+import { DEFAULT_WORKSHOP } from "@/lib/standex/magnetic-workshop";
+import { freeReference } from "@/lib/leadmagnet/connectors";
 import {
+  CHOSEN_BARE_LEADS,
+  DELEGATED_SENSOR,
+  GUIDED_QUESTION_KEYS,
   DELEGATED_CABLE,
   DELEGATED_CONNECTOR,
   DELEGATED_CONTEXT,
@@ -16,11 +21,10 @@ import { buildDossierExport, parseDossierExport } from "@/lib/leadmagnet/dossier
 const fresh = () => createDossier();
 
 describe("checklist — toutes les décisions simples, délégation explicite", () => {
-  test("sept lignes, dont sources, connecteur et contexte", () => {
+  test("six lignes : aucune étape de provenance ajoutée au parcours", () => {
     const items = projectChecklist(fresh());
     expect(items.map((i) => i.id)).toEqual([
       "besoin",
-      "sources",
       "capteur",
       "montage",
       "cable",
@@ -123,5 +127,102 @@ describe("filtre d'encombrement partiel", () => {
   test("une place très généreuse partielle ne masque aucun capteur", () => {
     const { filter, input } = envelopeFilter({ lengthMm: 500, widthMm: null, heightMm: null });
     for (const model of SENSOR_CATALOG) expect(passesFilter(model, filter, input)).toBe(true);
+  });
+});
+
+describe("checklist — complétude réelle et valeurs affichées", () => {
+  const base = () => createDossier();
+
+  test("les six questions traitées puis tout confié : aucune ligne artificielle à renseigner", () => {
+    const d = {
+      ...base(),
+      delegatedDecisions: [
+        ...GUIDED_QUESTION_KEYS.map((k) => delegatedQuestion(k)),
+        DELEGATED_SENSOR,
+        DELEGATED_MOUNTING,
+        DELEGATED_CABLE,
+        DELEGATED_CONNECTOR,
+        DELEGATED_CONTEXT,
+      ],
+    };
+    const items = projectChecklist(d);
+    expect(items).toHaveLength(6);
+    expect(items.filter((i) => i.state === "todo")).toEqual([]);
+    /* Tout est traité, RIEN n'est validé techniquement. */
+    expect(items.every((i) => i.state === "delegated")).toBe(true);
+    expect(checklistProgress(items)).toEqual({ handled: 6, total: 6 });
+    expect(d.mounting.kind).toBe("undecided");
+    expect(d.selectedSensorId).toBeNull();
+  });
+
+  test("les choix structurés comptent comme réponses, sans texte libre", () => {
+    const f = base();
+    const d = {
+      ...f,
+      mounting: { kind: "screw" as const },
+      envelope: { lengthMm: 30, widthMm: 20, heightMm: 10 },
+      delegatedDecisions: GUIDED_QUESTION_KEYS.filter(
+        (k) => k !== "mounting" && k !== "envelope",
+      ).map((k) => delegatedQuestion(k)),
+    };
+    const besoin = projectChecklist(d as ReturnType<typeof base>).find((i) => i.id === "besoin")!;
+    expect(besoin.state).toBe("chosen");
+    expect(besoin.detail).toContain("2");
+    expect(besoin.detail).not.toContain("question(s) traitée(s)");
+  });
+
+  test("la longueur retenue dans l'atelier est affichée chiffrée", () => {
+    const f = base();
+    const d = {
+      ...f,
+      workshop: { ...DEFAULT_WORKSHOP, cableLengthMm: 500 },
+    };
+    const cable = projectChecklist(d as ReturnType<typeof base>).find((i) => i.id === "cable")!;
+    expect(cable.state).toBe("chosen");
+    expect(cable.detail).toContain("500 mm");
+  });
+
+  test("la référence du connecteur choisi est affichée, y compris en référence libre", () => {
+    const d = { ...base(), termination: freeReference("XHP-2") };
+    const item = projectChecklist(d).find((i) => i.id === "connecteur")!;
+    expect(item.state).toBe("chosen");
+    expect(item.detail).toContain("XHP-2");
+  });
+
+  test("fils nus par défaut ne cochent rien, un choix explicite oui", () => {
+    const implicit = projectChecklist(base()).find((i) => i.id === "connecteur")!;
+    expect(implicit.state).toBe("todo");
+    const explicit = projectChecklist({
+      ...base(),
+      delegatedDecisions: [CHOSEN_BARE_LEADS],
+    }).find((i) => i.id === "connecteur")!;
+    expect(explicit.state).toBe("chosen");
+    expect(explicit.detail).toContain("Fils nus");
+  });
+
+  test("une délégation postérieure prime sur une préférence conservée", () => {
+    const d = {
+      ...base(),
+      termination: freeReference("PHR-3"),
+      cabling: { ...base().cabling, lengthChoice: "standard_to_confirm" as const },
+      delegatedDecisions: [DELEGATED_CONNECTOR, DELEGATED_CABLE],
+    };
+    const items = projectChecklist(d);
+    expect(items.find((i) => i.id === "connecteur")!.state).toBe("delegated");
+    expect(items.find((i) => i.id === "cable")!.state).toBe("delegated");
+    /* La préférence reste enregistrée dans le dossier, elle n'est pas effacée. */
+    expect(d.termination).toEqual(freeReference("PHR-3"));
+  });
+
+  test("le couple réellement retenu est affiché quand il est connu", () => {
+    const d = {
+      ...base(),
+      selectedSensorId: "MK04",
+      workshop: { ...DEFAULT_WORKSHOP, sensorId: "MK04" },
+    };
+    const item = projectChecklist(d as ReturnType<typeof base>).find((i) => i.id === "capteur")!;
+    expect(item.detail).toContain("MK04");
+    expect(item.detail).toContain(DEFAULT_WORKSHOP.magnetModel);
+    expect(item.detail).toContain("pas encore une référence commandable");
   });
 });
