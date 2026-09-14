@@ -195,7 +195,7 @@ function ellipseCylinder(
   faces.push(face(doc, r1));
   for (let i = 0; i < n; i++) {
     const j = (i + 1) % n;
-    faces.push(face(doc, [r0[i], r1[i], r1[j], r0[j]]));
+    faces.push(face(doc, [r0[i], r0[j], r1[j], r1[i]]));
   }
   return closedSolid(doc, name, faces);
 }
@@ -223,7 +223,7 @@ function hexPrism(
   const faces: string[] = [face(doc, [...r0].reverse()), face(doc, r1)];
   for (let i = 0; i < 6; i++) {
     const j = (i + 1) % 6;
-    faces.push(face(doc, [r0[i], r1[i], r1[j], r0[j]]));
+    faces.push(face(doc, [r0[i], r0[j], r1[j], r1[i]]));
   }
   return closedSolid(doc, name, faces);
 }

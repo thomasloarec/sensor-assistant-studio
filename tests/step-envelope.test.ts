@@ -246,6 +246,29 @@ describe("volumes réellement fermés, sommets partagés", () => {
         }
         const unpaired = [...edges.entries()].filter(([, n]) => n !== 2);
         expect(unpaired).toEqual([]);
+
+        // 3. Cohérence d'orientation de la coque : chaque arête est parcourue
+        // UNE fois dans chaque sens. Un quad latéral décrit à l'envers (normale
+        // rentrante alors que les bouchons sortent) laisse deux arêtes de même
+        // sens : le lecteur « répare » alors la coque en écrasant des sommets,
+        // ce qui produit des triangles dégénérés et un maillage ouvert. Le seul
+        // comptage d'arêtes non orientées ne voyait pas ce défaut.
+        const directed = new Map<string, number>();
+        for (const f of faces) {
+          for (const b of faceBounds.get(f) ?? []) {
+            const loop = loopOf.get(boundLoop.get(b) ?? "") ?? [];
+            // Aucun sommet répété : une boucle dégénérée donne un triangle nul.
+            expect(new Set(loop).size).toBe(loop.length);
+            for (let i = 0; i < loop.length; i += 1) {
+              const key = `${loop[i]}>${loop[(i + 1) % loop.length]}`;
+              directed.set(key, (directed.get(key) ?? 0) + 1);
+            }
+          }
+        }
+        const badDirection = [...directed.entries()].filter(
+          ([key, n]) => n !== 1 || (directed.get(key.split(">").reverse().join(">")) ?? 0) !== 1,
+        );
+        expect(badDirection).toEqual([]);
       }
     });
   }
