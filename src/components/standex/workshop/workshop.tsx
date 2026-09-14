@@ -536,6 +536,8 @@ export default function MagneticWorkshop({
     const magnetModel = defaultMagnetFor(sensorId);
     const classes = publishedClasses(sensorId, magnetModel);
     const approaches = approachChoices(sensorId, magnetModel);
+    const geometry =
+      approaches.length && !approaches.includes(config.geometry) ? approaches[0]! : config.geometry;
     const fake = isFictitiousSensor(sensorId);
     update({
       sensorId,
@@ -546,13 +548,12 @@ export default function MagneticWorkshop({
           : config.sensitivity,
       // L'approche suit la source : un couple publié uniquement en frontal ne
       // reste pas sur une approche latérale qui n'existe pas pour lui.
-      geometry:
-        approaches.length && !approaches.includes(config.geometry)
-          ? approaches[0]!
-          : config.geometry,
+      geometry,
       mode: fake ? "education" : "reference",
       sensorAngle: 0,
-      magnetAngle: 0,
+      // L'orientation de départ est celle que la source documente : faces en
+      // vis-à-vis (180°) pour l'approche frontale, axes parallèles sinon.
+      magnetAngle: documentedMagnetAngleDeg(geometry),
     });
   }
 
@@ -1003,9 +1004,13 @@ export default function MagneticWorkshop({
                       {t("Approche du capteur")}
                       <select
                         value={config.geometry}
-                        onChange={(e) =>
-                          update({ geometry: e.target.value as WorkshopConfig["geometry"] })
-                        }
+                        onChange={(e) => {
+                          const geometry = e.target.value as WorkshopConfig["geometry"];
+                          update({
+                            geometry,
+                            magnetAngle: documentedMagnetAngleDeg(geometry),
+                          });
+                        }}
                       >
                         {/* Approches réellement publiées pour ce couple ; en
                             démonstration fictive, les deux approches latérales
