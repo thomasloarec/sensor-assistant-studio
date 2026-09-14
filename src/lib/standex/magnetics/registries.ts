@@ -216,6 +216,31 @@ export function readPhysicsRegistry(raw: unknown): PhysicsRegistry {
   return d;
 }
 export const PHYSICS_REGISTRY = readPhysicsRegistry(rawPhysics);
+/**
+ * Familles d'aimants que la SOURCE désigne comme une seule référence.
+ *
+ * Brochure « Reed Switch Sensors A5 V04 EN » (standexdetect.com), page 37
+ * imprimée : la planche MAGNETS IN HOUSINGS nomme explicitement la famille
+ * « M21/P(1,2) » avec un seul jeu de cotes (L 28,6 × W 19 × H 6,35 mm). Page 38,
+ * la liste « All distance data above are valid for the magnets below » inclut
+ * « 2500000021 / M21 ». La fiche magnet-in-housing V03 liste P1 et P2 dans cette
+ * même famille ; les pages produit ne les distinguent que par l'orientation des
+ * trous oblongs. Les distances publiées du M21 s'appliquent donc aux deux
+ * variantes : c'est une identité de famille documentée, pas une extrapolation
+ * depuis une forme. Aucune autre correspondance n'est déclarée ici.
+ */
+export const PUBLISHED_MAGNET_FAMILY: Readonly<Record<string, string>> = {
+  "M21P/1": "M21",
+  "M21P/2": "M21",
+};
+/** Référence d'aimant réellement présente au registre pour cette variante. */
+export function publishedMagnetFamily(magnetId: string): string {
+  return PUBLISHED_MAGNET_FAMILY[magnetId] ?? magnetId;
+}
+/** La variante demandée est-elle lue via l'identité de famille documentée ? */
+export function isPublishedFamilyAlias(magnetId: string): boolean {
+  return magnetId in PUBLISHED_MAGNET_FAMILY;
+}
 export function publishedReference(
   sensorFamily: string,
   sensitivityClass: string,
@@ -223,12 +248,13 @@ export function publishedReference(
   approachId: string,
   registry = PUBLISHED_REGISTRY,
 ): PublishedRow | null {
+  const magnet = publishedMagnetFamily(magnetId);
   return (
     readPublishedRegistry(registry).rows.find(
       (r) =>
         r.sensorFamily === sensorFamily &&
         r.sensitivityClass === sensitivityClass &&
-        r.magnetId === magnetId &&
+        r.magnetId === magnet &&
         r.approachId === approachId,
     ) ?? null
   );
