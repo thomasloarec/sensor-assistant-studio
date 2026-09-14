@@ -433,3 +433,16 @@
 .sc-drawing {
   background-color: var(--surface-product);
 }
+
+/* Téléchargement STEP : discret, jamais présenté comme un fichier fabricant. */
+.sensor-card .sc-step-download {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-height: 44px;
+  justify-content: center;
+}
+.sensor-card .sc-step-download small {
+  color: var(--muted-foreground);
+  max-inline-size: 34ch;
+}
