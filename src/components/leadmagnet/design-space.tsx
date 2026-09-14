@@ -1532,11 +1532,11 @@ export function DesignSpace({
    * ou une valeur saisie ci-dessous renseigne le dossier — et donc les filtres
    * de suggestion, qui restent modifiables ensuite. */
   const mountingChips: { kind: MountingChoice["kind"]; label: string }[] = [
-    { kind: "screw", label: "Vissé" },
-    { kind: "press_fit", label: "Inséré dans un trou" },
-    { kind: "pcb_through_hole", label: "Traversant sur carte" },
-    { kind: "pcb_smd", label: "Report CMS sur carte" },
-    { kind: "other", label: "Autre montage" },
+    { kind: "screw", label: t("Fixation vissée") },
+    { kind: "press_fit", label: t("Emboîtement dans un trou") },
+    { kind: "pcb_through_hole", label: t("PCB — traversant") },
+    { kind: "pcb_smd", label: t("PCB — report CMS") },
+    { kind: "other", label: t("Autre montage") },
   ];
 
   const guidedStructured =
@@ -1573,7 +1573,7 @@ export function DesignSpace({
                 }}
               >
                 {active ? "✓ " : "+ "}
-                {t(c.label)}
+                {c.label}
               </button>
             );
           })}
