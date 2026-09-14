@@ -2469,7 +2469,10 @@ export function DesignSpace({
       {/* Récapitulatif automatique du VRAI montage : rien n'est ressaisi ici. */}
       <div className="panel-block">
         <Label className="t-label">{t("Ce que votre montage indique aujourd'hui")}</Label>
-          {cableRouting.lengthLabel}
+        <p className="t-body mt-2">
+          {activePoints.length > 1
+            ? msg("Longueur mesurée : {0}", [cableRouting.lengthLabel])
+            : t("Longueur non mesurée : le trajet n'est pas encore tracé.")}
         </p>
         <p className="mt-1">
           {t("Longueur minimale demandée, marges comprises :")}{" "}
