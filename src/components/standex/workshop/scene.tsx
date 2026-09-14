@@ -12,6 +12,8 @@ import {
   magnetSize,
   unavailableReason,
   momentFor,
+  workshopPair,
+  simulatedContactForm,
 } from "@/lib/standex/magnetic-workshop";
 import type { WorkshopConfig, CycleSample, Vec3, Contact } from "@/lib/standex/magnetic-workshop";
 import {
