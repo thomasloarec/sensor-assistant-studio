@@ -2314,7 +2314,9 @@ export function DesignSpace({
    * déjà enregistrée (reprise d'un dossier). Aucune auto-sélection de connecteur.
    */
   const connectorPreference =
-    connectorWanted || termination.kind === "unqualified_connector";
+    connectorWanted ||
+    (termination.kind === "unqualified_connector" && !isDelegated(dossier, DELEGATED_CONNECTOR));
+
 
 
   const cablageSection = (
