@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CandidateThumbnail } from "@/components/leadmagnet/candidate-thumbnail";
+import { PairThumbnail } from "@/components/leadmagnet/pair-thumbnail";
 import {
   CUSTOM_SENSOR_ID,
   formatMm,
@@ -2059,8 +2060,9 @@ export function DesignSpace({
       ),
     [candidateRows, dossier.selectedSensorId],
   );
-
-
+  /** Liste complète dépliée ou non : un état explicite, pour que le lien soit
+   * un vrai lien et non l'ergonomie par défaut d'un dépliant. */
+  const [showAllPairs, setShowAllPairs] = useState(false);
 
   /** Choisir un capteur = une présélection de GAMME, jamais une commande ni une
    * validation R&D. La délégation à Standex est levée par ce choix explicite. */
@@ -2305,12 +2307,10 @@ export function DesignSpace({
         data-testid="pair-card"
         className={`surface-interactive p-5 ${chosen ? "candidate-selected" : ""}`}
       >
-        <CandidateThumbnail
+        <PairThumbnail
           sensorId={card.sensorId}
-          cabled={false}
-          fitToView
+          magnetId={card.magnetId}
           size={compact ? "compact" : "large"}
-          pair={{ magnetId: card.magnetId, approach: "D1" }}
         />
         <div className="mt-3 flex flex-wrap items-center gap-2">
           <p className="t-label">
@@ -2361,38 +2361,51 @@ export function DesignSpace({
         <p className="t-label">{t("D'après vos réponses")}</p>
         <h2 className="t-display-m">{pairsTitle}</h2>
         <p className="t-body mt-2">{pairsSubtitle}</p>
-        <div className="mt-4">{filterControls}</div>
+        {/* Une seule rangée de puces sous le sous-titre ; tout le réglage fin
+            est replié derrière « Ajuster les critères ». */}
+        {filterChips ? <div className="mt-3">{filterChips}</div> : null}
+        <div className="mt-1">{filterAdjust}</div>
       </div>
       <div className="pair-grid">{suggestedPairs.map((c, i) => pairCardView(c, i))}</div>
-      <div className="panel-block space-y-3">
-        <details>
-          <summary className="t-body min-h-11 cursor-pointer list-none py-2">
-            {msg("Voir tous les couples possibles ({0})", [allPairs.length])}
-          </summary>
-          <div className="pair-grid mt-3">{allPairs.map((c, i) => pairCardView(c, i, true))}</div>
-        </details>
-        <div className="flex flex-wrap items-center gap-3">
-          <Button
-            variant={isDelegated(dossier, DELEGATED_SENSOR) ? "default" : "outline"}
-            className="min-h-11 text-base"
+      <div className="space-y-3">
+        <p>
+          <button
+            type="button"
+            className="text-link t-body min-h-11"
+            aria-expanded={showAllPairs}
+            onClick={() => setShowAllPairs((v) => !v)}
+          >
+            {showAllPairs
+              ? t("Masquer les autres couples")
+              : msg("Voir tous les couples possibles ({0})", [allPairs.length])}
+          </button>
+        </p>
+        {showAllPairs ? (
+          <div className="pair-grid">{allPairs.map((c, i) => pairCardView(c, i, true))}</div>
+        ) : null}
+        {/* Deux décisions confiées à Standex : des liens discrets sur une même
+            ligne. Une décision prise, jamais une valeur technique connue. */}
+        <p className="t-caption flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            className="text-link t-caption min-h-11"
             aria-pressed={isDelegated(dossier, DELEGATED_SENSOR)}
             onClick={delegateSensor}
           >
             {t("Laisser Standex choisir pour moi")}
-          </Button>
-          {/* Délégation explicite du placement : décision prise, jamais une
-              valeur technique connue. */}
-          <Button
-            variant="ghost"
-            className="min-h-11 text-base"
+          </button>
+          <span aria-hidden="true">·</span>
+          <button
+            type="button"
+            className="text-link t-caption min-h-11"
             aria-pressed={isDelegated(dossier, DELEGATED_MOUNTING)}
             onClick={() => toggleDelegated(DELEGATED_MOUNTING)}
           >
             {isDelegated(dossier, DELEGATED_MOUNTING)
               ? t("Placement confié à Standex")
               : t("Choisir le placement avec Standex")}
-          </Button>
-        </div>
+          </button>
+        </p>
         {isDelegated(dossier, DELEGATED_SENSOR) ? (
           <p className="notice notice-info">
             {t(
@@ -2407,16 +2420,19 @@ export function DesignSpace({
             )}
           </p>
         ) : null}
-        <button
-          type="button"
-          className="t-body min-h-11 underline"
-          onClick={() => setTab("revue")}
-        >
-          {t("Passer directement à Avec Standex")}
-        </button>
+        <p>
+          <button
+            type="button"
+            className="text-link t-body min-h-11"
+            onClick={() => setTab("revue")}
+          >
+            {t("Passer directement à Avec Standex")}
+          </button>
+        </p>
       </div>
     </div>
   );
+
 
 
 
