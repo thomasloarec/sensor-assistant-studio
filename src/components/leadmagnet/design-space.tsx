@@ -3191,115 +3191,38 @@ export function DesignSpace({
     </div>
   );
 
+  /** Onglet 2 : les COUPLES à tester, et rien au-dessus. Le placement se fait
+   * dans l'atelier, le câble est dans « Avec Standex », le résumé de projet
+   * reste dans « Avec Standex ». Le mode réglages détaillés garde ses champs. */
   const montageSection = (
     <div className="space-y-4">
-      {showAdvanced ? null : projectSummaryCard}
-      {showAdvanced ? null : (
-        <div className="panel-block-lg">
-          <h2 className="t-title-m">{t("Où le capteur se place-t-il ?")}</h2>
-          <p className="t-caption mt-3">
-            {t(
-              "Montrez-le en 3D si c'est plus simple, ou donnez seulement les dimensions disponibles. Rien n'est obligatoire : ce qui reste inconnu reste inconnu.",
-            )}
-          </p>
-          <div className="mt-5 flex flex-wrap items-center gap-3">
-            <Button
-              size="lg"
-              className="min-h-12 px-6 text-base"
-              onClick={() => {
-                setWorkshopMounted(true);
-                setShowWorkshop(true);
-                setPanel("atelier");
-              }}
-            >
-              {t("Placer en 3D")}
-            </Button>
-            <Button variant="ghost" className="min-h-12 text-base" onClick={() => setTab("besoin")}>
-              {t("Revenir à mon besoin")}
-            </Button>
-            {/* Délégation explicite du placement : décision prise dans le
-                parcours, jamais une valeur technique connue. */}
-            <Button
-              variant={isDelegated(dossier, DELEGATED_MOUNTING) ? "default" : "outline"}
-              className="min-h-12 text-base"
-              aria-pressed={isDelegated(dossier, DELEGATED_MOUNTING)}
-              onClick={() => toggleDelegated(DELEGATED_MOUNTING)}
-            >
-              {isDelegated(dossier, DELEGATED_MOUNTING)
-                ? t("Placement confié à Standex")
-                : t("Choisir le placement avec Standex")}
-            </Button>
-          </div>
-          {isDelegated(dossier, DELEGATED_MOUNTING) ? (
-            <p className="notice notice-info mt-3">
-              {t(
-                "Le placement est noté « à définir avec Standex ». C'est une décision prise, pas une valeur connue ni une validation technique.",
-              )}
-            </p>
-          ) : null}
-        </div>
-      )}
-
+      {pairsSection}
+      {showAdvanced ? mechanicalFields : null}
       {showAdvanced ? (
-        mechanicalFields
-      ) : (
-        <details className="panel-block">
-          <summary className="t-title-s flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 py-2">
-            {t("Préciser la mécanique et la place disponible (facultatif)")}
-            <span className="technical-details-chevron" aria-hidden="true">
-              ⌄
-            </span>
-          </summary>
-          <div className="mt-3 space-y-4">{mechanicalFields}</div>
-        </details>
-      )}
-
-      {showAdvanced ? null : (
         <>
           <section id="section-candidats" className="space-y-4 scroll-mt-24">
             <h2 className="t-title-m">{t("Capteurs possibles")}</h2>
             {candidatsSection}
           </section>
-          <section id="section-cablage" className="space-y-4 scroll-mt-24">
-            <h2 className="t-title-m">{t("Câble et connecteur")}</h2>
-            {cablageSection}
-          </section>
-          <div className="panel-block-lg flex flex-wrap items-center gap-3">
-            <Button size="lg" className="min-h-12 px-6 text-base" onClick={() => setTab("revue")}>
-              {t("Continuer vers Avec Standex")}
-            </Button>
-            <Button variant="ghost" className="min-h-12 text-base" onClick={() => setTab("besoin")}>
-              {t("Revenir à mon besoin")}
-            </Button>
+          <div className="panel-block">
+            <div className="flex flex-wrap items-center gap-3">
+              <Label className="text-base font-medium">{t("Atelier 3D (facultatif)")}</Label>
+              <Button
+                variant="outline"
+                className="min-h-11 text-base"
+                onClick={openWorkshopPanel}
+              >
+                {t("Vérifier la détection dans mon montage")}
+              </Button>
+              <span className="t-caption">
+                {t(
+                  "Formats acceptés : GLB autonome uniquement. Les fichiers STEP/IGES ne sont pas lus. Unités, échelle et pièce mobile restent à confirmer par vous. Vos réglages restent en mémoire même si vous refermez le panneau.",
+                )}
+              </span>
+            </div>
           </div>
         </>
-      )}
-
-      <div className="panel-block">
-        <div className="flex flex-wrap items-center gap-3">
-          <Label className="text-base font-medium">{t("Atelier 3D (facultatif)")}</Label>
-          {/* En mode guidé, « Placer en 3D » ci-dessus ouvre déjà l'atelier :
-                    pas de second bouton pour la même action. */}
-          {showAdvanced ? (
-            <Button
-              variant="outline"
-              className="min-h-11 text-base"
-              onClick={() => {
-                setWorkshopMounted(true);
-                setShowWorkshop(true);
-                setPanel("atelier");
-              }}
-            >
-              {t("Vérifier la détection dans mon montage")}
-            </Button>
-          ) : null}
-          <span className="t-caption">
-            {t(
-              "Formats acceptés : GLB autonome uniquement. Les fichiers STEP/IGES ne sont pas lus. Unités, échelle et pièce mobile restent à confirmer par vous. Vos réglages restent en mémoire même si vous refermez le panneau.",
-            )}
-          </span>
-        </div>
-      </div>
+      ) : null}
     </div>
   );
 
