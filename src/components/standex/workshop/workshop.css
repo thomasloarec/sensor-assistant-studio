@@ -2267,15 +2267,21 @@
   position: absolute;
   inset-block-start: 8px;
   inset-inline: 8px;
-  z-index: 2;
+  z-index: 3;
   display: flex;
   align-items: flex-start;
   gap: 8px;
   flex-wrap: wrap;
+  /* L'état du contact vit en haut à gauche de la scène : les outils partent de
+     la droite pour ne jamais passer dessous. */
+  justify-content: flex-end;
 }
-.mw-stage .mw-scene-tools > :last-child {
-  margin-inline-start: auto;
+.mw-stage .mw-scene-tools > :first-child:not(:last-child) {
+  margin-inline-end: auto;
+  /* Un avertissement de valeurs fictives ne passe pas sous le badge d'état. */
+  margin-inline-start: 12.5rem;
 }
+
 .mw-display-menu > summary {
   cursor: pointer;
   padding: 6px 12px;
