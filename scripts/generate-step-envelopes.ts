@@ -301,7 +301,7 @@ export function buildStepFile(s: SensorModel): string {
     `(GEOMETRIC_REPRESENTATION_CONTEXT(3)GLOBAL_UNIT_ASSIGNED_CONTEXT((${unitMm},${unitRad},${unitSr}))GLOBAL_UNCERTAINTY_ASSIGNED_CONTEXT((${uncert}))REPRESENTATION_CONTEXT('',''))`,
   );
   const shapeRep = doc.next(
-    `SHAPE_REPRESENTATION('${s.id}',(${solids.join(",")}),${geomCtx})`,
+    `FACETED_BREP_SHAPE_REPRESENTATION('${s.id}',(${solids.join(",")}),${geomCtx})`,
   );
   const [ex, ey, ez] = overallEnvelope(s);
   const prov = provenance(s);
