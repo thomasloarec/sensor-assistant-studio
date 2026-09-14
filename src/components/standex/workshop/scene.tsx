@@ -789,7 +789,11 @@ export default function WorkshopScene({
         position:
           focus === "sensor"
             ? [target[0] + dist * 0.6, dist * 0.7, target[2] + dist]
-            : [80, 70, 105],
+            : [
+                target[0] + coupleDist * 0.62,
+                coupleDist * 0.55,
+                target[2] + coupleDist * 0.82,
+              ],
         fov: 43,
         near: 0.1,
         far: 600,
@@ -842,8 +846,14 @@ export default function WorkshopScene({
       <OrbitControls makeDefault target={target} minDistance={5} maxDistance={400} />
       <CameraRig
         target={target}
-        distance={focus === "sensor" ? dist : 110}
-        resetKey={[config.sensorId, config.mode, config.geometry, focus, resetEpoch].join(":")}
+        distance={focus === "sensor" ? dist : coupleDist}
+        resetKey={[
+          config.sensorId,
+          config.mode,
+          config.geometry,
+          focus,
+          resetEpoch,
+        ].join(":")}
       />
     </Canvas>
   );
