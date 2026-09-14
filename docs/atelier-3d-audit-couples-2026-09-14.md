@@ -164,3 +164,22 @@ distances publiées restent lisibles comme documentation.
 - Aucun datum caractérisé : aucune pose importée n'est validée par le gabarit.
 - Colonnes « up / to » de la brochure toujours en attente de qualification Standex.
 - MK02 : mécanisme ferreux réel non simulé.
+
+## Points d'entrée (14 septembre 2026, complément)
+
+- `DEFAULT_WORKSHOP` démarre désormais sur **MK04 + M04, approche D1, classe B**
+  (brochure Reed Switch Sensors A5 V04 EN, p. 38 : 15 / 17,5 mm). La première
+  ouverture de l'atelier affiche donc « Données Standex » sur un couple
+  réellement publié, et non plus MK03 + 4003004003.
+- L'ancien exemple MK03 + 4003004003 reste intact : ses lignes de registre, ses
+  quatre classes et ses tests dédiés (`MK03_EXAMPLE` dans les recettes) sont
+  conservés tels quels.
+- `applySensorSelection()` (src/lib/standex/magnetic-workshop.ts) est la seule
+  logique de sélection réelle d'un capteur : couple par défaut, classe et
+  approche réellement publiées, orientation documentée (180° en approche
+  frontale), mode fictif réservé à GENERIC/CUSTOM. Machine, câble, course et
+  pose relative sont conservés.
+- Points d'entrée branchés sur cette fonction : l'atelier (`selectSensor`) et le
+  bouton « Aligner l'atelier 3D sur la gamme suivie » de l'espace de conception,
+  qui n'écrase plus l'aimant précédent et initialise l'état d'atelier absent.
+  Le simple chargement d'un dossier enregistré ne modifie aucun aimant.
