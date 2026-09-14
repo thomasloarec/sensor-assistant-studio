@@ -20,9 +20,13 @@ import {
 } from "../src/lib/standex/machine-assembly";
 import { loadMachineAsset, validateGlb } from "../src/lib/standex/machine-assets";
 import { SENSOR_CATALOG } from "../src/lib/standex/sensor-catalog";
+/** Ancien exemple MK03 + 4003004003 : conservé là où le test porte précisément
+ * sur ce couple, indépendamment du démarrage par défaut. */
+const MK03_EXAMPLE = { ...DEFAULT_WORKSHOP, sensorId: "MK03", magnetModel: "4003004003" };
+
 
 const demo = (patch: Partial<WorkshopConfig> = {}): WorkshopConfig => ({
-  ...DEFAULT_WORKSHOP,
+  ...MK03_EXAMPLE,
   mode: "education",
   magnetModel: "generic",
   ...patch,

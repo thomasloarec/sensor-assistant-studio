@@ -15,6 +15,10 @@ import { COFFEE_ASSEMBLY } from "../src/lib/standex/machine-assembly";
 import { storeMachineFileInMemory, loadMachineAsset } from "../src/lib/standex/machine-assets";
 import { createDesignFreeze } from "../src/lib/standex/design-freeze";
 import { studioExportSheets, workbookBytes } from "../src/lib/standex/studio-exports";
+/** Ancien exemple MK03 + 4003004003 : conservé là où le test porte précisément
+ * sur ce couple, indépendamment du démarrage par défaut. */
+const MK03_EXAMPLE = { ...DEFAULT_WORKSHOP, sensorId: "MK03", magnetModel: "4003004003" };
+
 const need = { ...EMPTY_NEED, gapClosedMm: 7.5, gapOpenMm: 22, gapToleranceMm: 0.5 };
 const domain = { referencePose: true, ferrous: false };
 const key = {
@@ -107,7 +111,7 @@ test("R21 example hardware never populates a client product choice without expli
   expect(f.sections[2]!.entries.find((e) => e.label === "Capteur")?.value).toBe("Non renseigné");
   const chosen = deriveStudioFields(
     { ...s, selectedSolutionId: "MK03/B/M02/D1" },
-    DEFAULT_WORKSHOP,
+    MK03_EXAMPLE,
   );
   expect(chosen.fields.sensor_form_factor?.value).toContain("MK03");
   const stale = deriveStudioFields({ ...chosen, comparisonApproach: "D4" }, DEFAULT_WORKSHOP);

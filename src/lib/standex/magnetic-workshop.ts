@@ -1,5 +1,6 @@
 import { BARE_MAGNETS, PACKAGED_MAGNET_IDS } from "./magnet-catalog";
 import { pairedMagnetModel } from "./paired-magnets";
+import { defaultMagnetFor } from "./default-pairs";
 /** Magnetic workshop V0.3. Geometry, field illustration and switching are separate.
  * Reference distances are typical published values; education is NOT a product model.
  */
@@ -21,6 +22,7 @@ import {
   publishedPair,
   publishedPairFor,
   publishedClasses,
+  publishedApproaches,
   publishedReference,
   publishedSensorReference,
   isPublishedFamilyAlias,
@@ -79,9 +81,12 @@ export const DEFAULT_WORKSHOP: WorkshopConfig = {
   demoReach: 25,
   lateralShift: 0,
   magnetTilt: 0,
-  magnetModel: "4003004003",
+  // Première ouverture : un couple réellement documenté (MK04 + M04, approche
+  // D1, classe B = 15 / 17,5 mm à la brochure). Les couples explicitement
+  // enregistrés dans un dossier ne sont jamais réécrits par ce démarrage.
+  magnetModel: "M04",
   machine: null,
-  sensorId: "MK03",
+  sensorId: "MK04",
   mode: "reference",
   sensitivity: "B",
   geometry: "D1",
@@ -265,9 +270,49 @@ export const referenceNoteFor = (c: WorkshopConfig): string =>
 export const hasPublishedDistances = (c: WorkshopConfig) =>
   publishedClasses(c.sensorId, c.magnetModel).length > 0;
 
+/** Approches réellement publiées pour ce couple, dans l'ordre de lecture.
+ * F1 est l'approche frontale des fiches MK36/MK37/MK38 : proposée seulement si
+ * le registre la publie pour CE couple. */
+export function approachChoicesFor(
+  sensorId: string,
+  magnetModel: string,
+): WorkshopConfig["geometry"][] {
+  const published = publishedApproaches(sensorId, magnetModel);
+  return (["D1", "D3", "F1"] as const).filter((a) => published.includes(a));
+}
+
 /** Un modèle explicitement fictif : jamais un vrai capteur du catalogue. */
 export const isFictitiousSensor = (sensorId: string) =>
   sensorId === "GENERIC" || sensorId === CUSTOM_SENSOR_ID;
+
+/**
+ * Sélection réelle d'un capteur, logique CENTRALE et unique : le couple par
+ * défaut s'applique, la classe et l'approche retombent sur des valeurs
+ * réellement publiées, l'orientation reprend celle que la source documente, et
+ * un vrai capteur ne bascule jamais d'office dans le modèle fictif.
+ *
+ * Machine, câble et cinématique du montage sont conservés tels quels : cette
+ * fonction ne s'applique qu'à un changement EXPLICITE de capteur, jamais au
+ * simple chargement d'un dossier enregistré.
+ */
+export function applySensorSelection(c: WorkshopConfig, sensorId: string): WorkshopConfig {
+  const fake = isFictitiousSensor(sensorId);
+  const magnetModel = fake ? "generic" : defaultMagnetFor(sensorId);
+  const classes = publishedClasses(sensorId, magnetModel);
+  const approaches = approachChoicesFor(sensorId, magnetModel);
+  const geometry =
+    approaches.length && !approaches.includes(c.geometry) ? approaches[0]! : c.geometry;
+  return {
+    ...c,
+    sensorId,
+    magnetModel,
+    sensitivity: classes.length && !classes.includes(c.sensitivity) ? classes[0]! : c.sensitivity,
+    geometry,
+    mode: fake ? "education" : "reference",
+    sensorAngle: 0,
+    magnetAngle: documentedMagnetAngleDeg(geometry),
+  };
+}
 /** Nature des distances affichées. Un vrai capteur sélectionné ne bascule jamais
  * automatiquement dans un modèle fictif : sans données publiées, l'atelier
  * affiche « Distances non renseignées ». */

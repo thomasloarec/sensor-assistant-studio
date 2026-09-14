@@ -14,6 +14,10 @@ import {
 import { SENSOR_CATALOG, sensorById } from "../src/lib/standex/sensor-catalog";
 import { bodyOf } from "../src/lib/standex/mounting/geometry";
 import { pairedMagnetModel } from "../src/lib/standex/paired-magnets";
+/** Ancien exemple MK03 + 4003004003 : conservé tel quel là où le test porte
+ * précisément sur ce couple, indépendamment du démarrage par défaut. */
+const MK03_EXAMPLE = { ...DEFAULT_WORKSHOP, sensorId: "MK03", magnetModel: "4003004003" };
+
 
 describe("Documented body sizes and source plans", () => {
   test("MK24 and MK02 retain their different physical sizes", () => {
@@ -37,8 +41,8 @@ describe("Documented body sizes and source plans", () => {
     }
   });
   test("reference gaps are between actual body envelopes", () => {
-    const d1 = { ...DEFAULT_WORKSHOP },
-      d3 = { ...DEFAULT_WORKSHOP, geometry: "D3" as const };
+    const d1 = { ...MK03_EXAMPLE },
+      d3 = { ...MK03_EXAMPLE, geometry: "D3" as const };
     expect(approachOffset(d1)).toBeCloseTo((5.8 + 4) / 2, 10);
     expect(approachOffset(d3)).toBeCloseTo((25.5 + 19) / 2, 10);
     expect(poseAt(d1, 0.5).position[2] - approachOffset(d1)).toBe(5);
@@ -81,8 +85,8 @@ describe("Documented body sizes and source plans", () => {
 });
 describe("Existing saved assemblies remain readable", () => {
   test("V1 reference and education snapshots migrate to explicit V3 sensor identities", () => {
-    const old = { ...DEFAULT_WORKSHOP, version: 1, sensorId: undefined };
-    expect(parseWorkshopConfig(old)).toEqual({ ...DEFAULT_WORKSHOP, magnetModel: "M02" });
+    const old = { ...MK03_EXAMPLE, version: 1, sensorId: undefined };
+    expect(parseWorkshopConfig(old)).toEqual({ ...MK03_EXAMPLE, magnetModel: "M02" });
     expect(
       parseWorkshopNote(
         "Saved\n\n[STANDEX_MAGNETIC_WORKSHOP_V1]\n" + JSON.stringify({ ...old, mode: "education" }),
