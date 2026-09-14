@@ -208,6 +208,13 @@ export default function MagneticWorkshop({
     onDraftChange?.(config);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [config]);
+  // Dans l'espace projet, chaque réglage rejoint directement le dossier : il
+  // n'existe plus de second état « utiliser ce montage » à confirmer.
+  useEffect(() => {
+    if (!embedded) return;
+    void onSave(config);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [config, embedded]);
   const [step, setStep] = useState(0),
     [progress, setProgress] = useState(0),
     [playing, setPlaying] = useState(false);
