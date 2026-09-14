@@ -261,12 +261,17 @@ export function CandidateThumbnail({
   cabled = false,
   pair,
   fitToView = false,
+  size = "compact",
+  scaleBar = false,
 }: {
   sensorId: string;
   livePreview?: boolean;
   cabled?: boolean;
   pair?: { magnetId: string; approach: string };
   fitToView?: boolean;
+  /** Hauteur de la vignette. Le cadrage reste propre à chaque capteur. */
+  size?: "compact" | "large";
+  scaleBar?: boolean;
 }) {
   const model = pairedMagnetModel(sensorId) ?? sensorById(sensorId);
   const host = useRef<HTMLDivElement>(null);
