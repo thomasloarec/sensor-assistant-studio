@@ -22813,5 +22813,68 @@
     "Sensor Studio — превращаем вашу идею в детектирование · Standex DETECT",
     "Sensor Studio — trasformare la vostra idea in rilevamento · Standex DETECT",
     "Sensor Studio — アイデアを検出に変える · Standex DETECT"
+  ],
+  "Facultatif : précisez d'un clic": [
+    "Optional: refine with one click",
+    "可选：一键补充",
+    "Optional: mit einem Klick präzisieren",
+    "Opcional: precise con un clic",
+    "Необязательно: уточните одним щелчком",
+    "Facoltativo: precisa con un clic",
+    "任意：ワンクリックで指定"
+  ],
+  "Rien n'est déduit de votre texte. Ces choix servent seulement à préfiltrer les capteurs, et restent modifiables.": [
+    "Nothing is inferred from your text. These choices only pre-filter the sensors, and stay editable.",
+    "系统不会从您的文字中推断任何内容。这些选择仅用于预筛选传感器，并可随时修改。",
+    "Aus Ihrem Text wird nichts abgeleitet. Diese Angaben filtern die Sensoren nur vor und bleiben änderbar.",
+    "Nada se deduce de su texto. Estas opciones solo prefiltran los sensores y siguen siendo modificables.",
+    "Из вашего текста ничего не выводится. Эти варианты лишь предварительно отбирают датчики и остаются изменяемыми.",
+    "Nulla viene dedotto dal tuo testo. Queste scelte servono solo a prefiltrare i sensori e restano modificabili.",
+    "入力された文章から推測は行いません。これらの選択はセンサーの事前絞り込みのみに使われ、後から変更できます。"
+  ],
+  "Laissez vide si vous ne le connaissez pas : inconnu ne vaut pas zéro.": [
+    "Leave blank if you do not know it: unknown does not mean zero.",
+    "如不清楚请留空：未知不等于零。",
+    "Leer lassen, wenn unbekannt: unbekannt bedeutet nicht null.",
+    "Déjelo en blanco si no lo conoce: desconocido no equivale a cero.",
+    "Оставьте пустым, если не знаете: неизвестно не значит ноль.",
+    "Lascia vuoto se non lo conosci: sconosciuto non vale zero.",
+    "わからない場合は空欄にしてください。不明はゼロではありません。"
+  ],
+  "Une dimension laissée vide reste inconnue et ne filtre rien.": [
+    "A dimension left blank stays unknown and filters nothing.",
+    "留空的尺寸保持未知，不会用于筛选。",
+    "Ein leeres Maß bleibt unbekannt und filtert nichts.",
+    "Una dimensión en blanco permanece desconocida y no filtra nada.",
+    "Пустой размер остаётся неизвестным и ничего не фильтрует.",
+    "Una dimensione lasciata vuota resta sconosciuta e non filtra nulla.",
+    "空欄の寸法は不明のままで、絞り込みには使われません。"
+  ],
+  "Cette question est notée « à définir avec Standex ». C'est une décision prise, pas une valeur connue.": [
+    "This question is marked “to be defined with Standex”. It is a decision taken, not a known value.",
+    "此问题标记为“与 Standex 共同确定”。这是已作出的决定，而非已知数值。",
+    "Diese Frage ist als „mit Standex zu klären“ vermerkt. Das ist eine getroffene Entscheidung, kein bekannter Wert.",
+    "Esta pregunta está marcada como «a definir con Standex». Es una decisión tomada, no un valor conocido.",
+    "Этот вопрос отмечен как «определить со Standex». Это принятое решение, а не известное значение.",
+    "Questa domanda è indicata come «da definire con Standex». È una decisione presa, non un valore noto.",
+    "この項目は「Standex と決定する」と記録されています。これは下された判断であり、既知の値ではありません。"
+  ],
+  "Questions laissées à définir avec Standex : aucune valeur technique n'en est déduite.": [
+    "Questions left to be defined with Standex: no technical value is inferred from them.",
+    "留待与 Standex 共同确定的问题：不会由此推断任何技术数值。",
+    "Fragen, die mit Standex zu klären sind: daraus wird kein technischer Wert abgeleitet.",
+    "Preguntas a definir con Standex: no se deduce de ellas ningún valor técnico.",
+    "Вопросы, оставленные для уточнения со Standex: технические значения из них не выводятся.",
+    "Domande da definire con Standex: nessun valore tecnico ne viene dedotto.",
+    "Standex と決める項目です。ここから技術的な値は導き出しません。"
+  ],
+  "Placement à définir avec Standex.": [
+    "Placement to be defined with Standex.",
+    "安装位置待与 Standex 共同确定。",
+    "Platzierung mit Standex zu klären.",
+    "Ubicación a definir con Standex.",
+    "Расположение будет определено со Standex.",
+    "Posizionamento da definire con Standex.",
+    "取り付け位置は Standex と決定します。"
   ]
 }

@@ -29,8 +29,19 @@ export const DELEGATED_SENSOR = "sensor";
 export const DELEGATED_CABLE = "cable";
 export const DELEGATED_CONNECTOR = "connector";
 
+/** Une question guidée explicitement laissée de côté par « Je ne sais pas
+ * encore ». La décision est TRAITÉE dans le parcours ; elle ne fabrique aucune
+ * valeur technique et n'alimente aucun filtre. */
+export const DELEGATED_QUESTION_PREFIX = "question:";
+export const delegatedQuestion = (key: string) => `${DELEGATED_QUESTION_PREFIX}${key}`;
+
 export const isDelegated = (d: DesignDossier, key: string) =>
   (d.delegatedDecisions ?? []).includes(key);
+
+export const delegatedQuestionKeys = (d: DesignDossier): string[] =>
+  (d.delegatedDecisions ?? [])
+    .filter((k) => k.startsWith(DELEGATED_QUESTION_PREFIX))
+    .map((k) => k.slice(DELEGATED_QUESTION_PREFIX.length));
 
 const ANSWERED = new Set(["confirmed", "hypothesis"]);
 
@@ -38,14 +49,17 @@ export function projectChecklist(d: DesignDossier): ChecklistItem[] {
   const answered = d.requirements.filter(
     (r) => ANSWERED.has(r.state) && r.value.trim() !== "",
   ).length;
+  const setAside = delegatedQuestionKeys(d);
   const besoin: ChecklistItem = {
     id: "besoin",
     label: "Ce que vous voulez détecter",
-    state: answered === 0 ? "todo" : "chosen",
+    state: answered > 0 ? "chosen" : setAside.length ? "delegated" : "todo",
     detail:
-      answered === 0
-        ? "Aucune réponse enregistrée pour l'instant."
-        : `${answered} réponse(s) enregistrée(s) sur ${d.requirements.length || 6}.`,
+      answered > 0
+        ? `${answered} réponse(s) enregistrée(s) sur ${d.requirements.length || 6}.`
+        : setAside.length
+          ? "Questions laissées à définir avec Standex : aucune valeur technique n'en est déduite."
+          : "Aucune réponse enregistrée pour l'instant.",
     tab: "besoin",
   };
 
@@ -81,15 +95,19 @@ export function projectChecklist(d: DesignDossier): ChecklistItem[] {
    * par défaut dans l'atelier ne suffit pas. */
   const mountingDeclared = d.mounting.kind !== "undecided";
   const modelAttached = d.workshopSource === "user_asset" && d.workshopAsset !== null;
+  const mountingSetAside = setAside.includes("mounting") || setAside.includes("envelope");
   const montage: ChecklistItem = {
     id: "montage",
     label: "Où le capteur se place",
-    state: mountingDeclared || modelAttached ? "chosen" : "todo",
+    state:
+      mountingDeclared || modelAttached ? "chosen" : mountingSetAside ? "delegated" : "todo",
     detail: modelAttached
       ? "Un modèle 3D de votre machine est rattaché à ce projet."
       : mountingDeclared
         ? "Montage mécanique déclaré."
-        : "Ni montage déclaré, ni modèle 3D rattaché.",
+        : mountingSetAside
+          ? "Placement à définir avec Standex."
+          : "Ni montage déclaré, ni modèle 3D rattaché.",
     tab: "montage",
   };
 
