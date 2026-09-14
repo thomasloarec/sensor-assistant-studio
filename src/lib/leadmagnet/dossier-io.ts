@@ -177,7 +177,7 @@ const knownSensorId = z
 const dossierSchema = z.object({
   studioV2: z.unknown().optional(),
   guidedMounting: z.unknown().optional(),
-  title: z.string().catch("Dossier repris"),
+  title: z.string().catch("Projet repris"),
   // Un dossier plus ancien n'a pas de langue d'origine : le français fait foi.
   sourceLocale: z.enum(["fr", "en", "zh", "de", "es", "ru", "it", "ja"]).catch("fr"),
   requirements: z.array(requirement).catch([]),

@@ -101,10 +101,10 @@ export async function checkSubmission(input: SubmissionInput): Promise<Submissio
     );
   const binding = await submissionBinding(input);
   if (!input.consents.some((c) => c.kind === "supabase_dossier"))
-    problems.push("Consentement d'envoi du dossier non recueilli.");
+    problems.push("Consentement d'envoi du projet non recueilli.");
   else if (!hasBoundConsent({ ...INITIAL_PRIVACY, consents: input.consents }, "supabase_dossier", binding))
     problems.push(
-      "Le contenu, le dossier visé ou les fichiers ont changé depuis votre accord : relisez le résumé et confirmez à nouveau.",
+      "Le contenu, le projet visé ou les fichiers ont changé depuis votre accord : relisez le résumé et confirmez à nouveau.",
     );
   return problems.length ? { ok: false, problems } : { ok: true };
 }
@@ -168,7 +168,7 @@ export async function submit(
     return {
       status: "not_submitted",
       reason:
-        "La liaison avec l'équipe Standex n'est pas encore activée : votre dossier n'a pas été envoyé. " +
+        "La liaison avec l'équipe Standex n'est pas encore activée : votre projet n'a pas été envoyé. " +
         "Il reste intact dans cet onglet et vous pouvez l'exporter.",
     };
   try {

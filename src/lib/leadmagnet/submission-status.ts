@@ -70,7 +70,7 @@ export function submitButtonLabel(kind: SubmissionStatusKind, last: SentRevision
 }
 
 export function statusHeadline(kind: SubmissionStatusKind): string | null {
-  if (kind === "sent") return "Dossier transmis à la revue Standex.";
+  if (kind === "sent") return "Projet transmis à la relecture par les ingénieurs Standex.";
   if (kind === "modified") return "Modifications non envoyées";
   return null;
 }

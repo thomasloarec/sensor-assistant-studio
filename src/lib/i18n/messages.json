@@ -2015,24 +2015,6 @@
     "Nessuno dei due",
     "どちらでもない"
   ],
-  "Aucun devis avant une revue R&D validée et publiée.": [
-    "No quotation prior to a validated and published R&D review.",
-    "研发审查经受审并发布前不得报价。",
-    "Kein Angebot vor einer validierten und veröffentlichten R&D-Prüfung.",
-    "Ningún presupuesto antes de una revisión R&D validada y publicada.",
-    "Никаких предложений до утверждения и публикации рассмотрения R&D.",
-    "Nessun preventivo prima di una revisione R&D convalidata e pubblicata.",
-    "検証および公開された R&D レビューがない場合、見積は作成できません。"
-  ],
-  "Aucun devis avant une revue R&D validée.": [
-    "No quotation prior to a validated R&D review.",
-    "研发审查验证前不得报价。",
-    "Kein Angebot vor einer validierten R&D-Prüfung.",
-    "Ningún presupuesto antes de una revisión R&D validada.",
-    "Никаких предложений до подтверждения рассмотрения R&D.",
-    "Nessun preventivo prima di una revisione R&D convalidata.",
-    "検証済みの R&D レビューがない場合、見積は作成できません。"
-  ],
   "Aucun document déposé. Vous pouvez aussi déclarer une preuve conservée dans une archive externe.": [
     "No document uploaded. You can also declare proof stored in an external archive.",
     "未上传文件。您也可以声明存储在外部存档中的证明。",
@@ -3203,15 +3185,6 @@
     "Questa coppia sensore–magnete non ha una tabella pubblicata.",
     "このセンサーと磁石の組み合わせに公表表はありません。"
   ],
-  "Ce dossier est enregistré chez Standex : connectez-vous pour modifier le choix de NDA. Rien n'a été changé.": [
-    "This project is registered with Standex: sign in to change the NDA choice. Nothing has been changed.",
-    "该项目已在 Standex 登记：请登录以更改保密协议选择。未做任何更改。",
-    "Dieses Projekt ist bei Standex registriert: Melden Sie sich an, um die NDA-Auswahl zu ändern. Es wurde nichts geändert.",
-    "Este proyecto está registrado en Standex: inicie sesión para cambiar la elección de NDA. No se ha cambiado nada.",
-    "Этот проект зарегистрирован в Standex: войдите в систему, чтобы изменить выбор NDA. Ничего не изменено.",
-    "Questo progetto è registrato presso Standex: accedi per modificare la scelta dell'NDA. Non è stato modificato nulla.",
-    "このプロジェクトは Standex に登録されています。NDA の選択を変更するにはサインインしてください。変更は行われていません。"
-  ],
   "Ce dossier n'est pas accessible avec ce compte.": [
     "This file is not accessible with this account.",
     "此账户无法访问该资料。",
@@ -3778,24 +3751,6 @@
     "Этот вопрос отмечен как «определить со Standex». Это принятое решение, а не известное значение.",
     "Questa domanda è indicata come «da definire con Standex». È una decisione presa, non un valore noto.",
     "この項目は「Standex と決定する」と記録されています。これは下された判断であり、既知の値ではありません。"
-  ],
-  "Cette revue a été remplacée : reprenez la revue en vigueur.": [
-    "This review has been superseded: use the review currently in effect.",
-    "该审查已被替换：请使用当前生效的审查。",
-    "Diese Prüfung wurde ersetzt: Übernehmen Sie die aktuell gültige Prüfung.",
-    "Esta revisión ha sido sustituida: retome la revisión en vigor.",
-    "Это рассмотрение было заменено: используйте действующее рассмотрение.",
-    "Questa revisione è stata sostituita: riprendere la revisione in vigore.",
-    "このレビューは置き換えられました：有効なレビューを再開してください。"
-  ],
-  "Cette revue n'appartient pas à ce dossier.": [
-    "This review does not belong to this case file.",
-    "此审查不属于该案卷。",
-    "Diese Prüfung gehört nicht zu diesem Dossier.",
-    "Esta revisión no pertenece a este expediente.",
-    "Это рассмотрение не относится к данному досье.",
-    "Questa revisione non appartiene a questo fascicolo.",
-    "このレビューはこの案件ファイルに属していません。"
   ],
   "Cette réponse vient d'une reprise ou d'une déduction. Confirmez-la si elle est juste.": [
     "This response comes from a carry-over or deduction. Confirm it if it is correct.",
@@ -4993,15 +4948,6 @@
     "Вход…",
     "Accesso in corso…",
     "ログイン中…"
-  ],
-  "Consentement d'envoi du dossier non recueilli.": [
-    "Consent to send the case file has not been collected.",
-    "未取得发送案件的同意。",
-    "Zustimmung zum Senden der Fallakte nicht eingeholt.",
-    "Consentimiento para el envío del expediente no obtenido.",
-    "Согласие на отправку досье не получено.",
-    "Consenso all'invio della pratica non acquisito.",
-    "ケースファイルの送信に関する同意が得られていません。"
   ],
   "Consentement explicite non recueilli pour cet envoi.": [
     "Explicit consent not obtained for this submission.",
@@ -6595,24 +6541,6 @@
     "Досье применения - Помощник Standex",
     "Dossier applicativo - Assistente Standex",
     "用途別資料 - Standexセンサーアシスタント"
-  ],
-  "Dossier repris": [
-    "Case file resumed",
-    "案卷已恢复",
-    "Vorgang übernommen",
-    "Expediente reanudado",
-    "Файл дела восстановлен",
-    "Fascicolo ripreso",
-    "復元されたケースファイル"
-  ],
-  "Dossier transmis à la revue Standex.": [
-    "Case file sent to the Standex review.",
-    "资料已提交 Standex 评审。",
-    "Dossier an die Standex-Prüfung übermittelt.",
-    "Expediente enviado a la revisión de Standex.",
-    "Дело передано на рассмотрение Standex.",
-    "Fascicolo trasmesso alla revisione Standex.",
-    "案件を Standex レビューに送信しました。"
   ],
   "Dossier transmis à la revue Standex. Vous serez informé dès qu'un retour est publié.": [
     "Case file submitted to the Standex review. You will be informed as soon as feedback is published.",
@@ -9584,15 +9512,6 @@
     "Il confronto utilizza l'orientamento più favorevole; l'orientamento effettivo è ancora da decidere.",
     "比較では最も有利な向きが採用されます。実際の向きは未定です。"
   ],
-  "La confirmation d'envoi n'a pas été obtenue : votre dossier est peut-être arrivé malgré tout. Vérifiez le suivi de votre dossier avant de le renvoyer.": [
-    "No send confirmation was obtained: your case file may still have arrived. Check the tracking of your case file before sending it again.",
-    "未获得发送确认：您的资料仍可能已送达。重新发送前请先查看案件进度。",
-    "Es wurde keine Versandbestätigung erhalten: Ihr Dossier kann dennoch angekommen sein. Prüfen Sie die Verfolgung Ihres Dossiers, bevor Sie erneut senden.",
-    "No se obtuvo confirmación de envío: es posible que su expediente haya llegado igualmente. Consulte el seguimiento antes de volver a enviarlo.",
-    "Подтверждение отправки не получено: возможно, дело всё же дошло. Проверьте отслеживание дела, прежде чем отправлять повторно.",
-    "Non è stata ottenuta la conferma di invio: il fascicolo potrebbe comunque essere arrivato. Verificate il monitoraggio prima di inviarlo di nuovo.",
-    "送信の確認が取れませんでした。案件は届いている可能性があります。再送の前に進捗を確認してください。"
-  ],
   "La confirmation de Standex n'a pas été reçue : la modification a peut-être été": [
     "Standex's confirmation was not received: the change may have been",
     "未收到 Standex 的确认：修改可能已",
@@ -10448,15 +10367,6 @@
     "L'NDA è stato richiesto, ma Standex non ha ancora verificato una prova firmata. Il consenso all'invio non sostituisce tale prova.",
     "NDA は申請済みですが、署名済みの証明はまだ Standex によって確認されていません。送信への同意はこの証明の代わりにはなりません。"
   ],
-  "Le NDA est préparé mais non signé. Faites signer le document, puis demandez sa vérification par Standex avant de transmettre le dossier.": [
-    "The NDA is prepared but unsigned. Have the document signed, then ask Standex to verify it before submitting the file.",
-    "NDA 已准备但尚未签署。请先签署文件，然后在提交资料前请求 Standex 验证。",
-    "Das NDA ist vorbereitet, aber nicht unterzeichnet. Lassen Sie das Dokument unterzeichnen und vor der Übermittlung von Standex prüfen.",
-    "El NDA está preparado pero no firmado. Haga firmar el documento y solicite su verificación por Standex antes de enviar el expediente.",
-    "NDA подготовлено, но не подписано. Подпишите документ и запросите его проверку Standex перед отправкой досье.",
-    "L'NDA è preparato ma non firmato. Faccia firmare il documento e ne chieda la verifica a Standex prima dell'invio del fascicolo.",
-    "NDA は準備済みですが未署名です。文書に署名し、資料を送信する前に Standex へ確認を依頼してください。"
-  ],
   "Le NDA n'est pas en vigueur : aucun contenu confidentiel n'est transmis.": [
     "NDA is not in effect: no confidential content is transmitted.",
     "NDA 未生效：不传输机密内容。",
@@ -10655,15 +10565,6 @@
     "Il contenuto, il case file di destinazione o i file sono cambiati: rileggere il riepilogo e confermare nuovamente il consenso all'invio.",
     "コンテンツ、対象のcase file、またはファイルが変更されました。概要を再確認し、送信への同意を再度確定してください。"
   ],
-  "Le contenu, le dossier visé ou les fichiers ont changé depuis votre accord : relisez le résumé et confirmez à nouveau.": [
-    "The content, target case file or files have changed since your agreement: review the summary and confirm again.",
-    "自您同意后，内容、目标案件或文件已发生变更：请重新阅读摘要并再次确认。",
-    "Der Inhalt, die betroffene Fallakte oder die Dateien haben sich seit Ihrer Zustimmung geändert: Prüfen Sie die Zusammenfassung erneut und bestätigen Sie nochmals.",
-    "El contenido, el expediente correspondiente o los archivos han cambiado desde su acuerdo: vuelva a leer el resumen y confirme de nuevo.",
-    "Содержимое, целевое досье или файлы изменились с момента вашего согласия: перечитайте резюме и подтвердите снова.",
-    "Il contenuto, la pratica interessata o i file sono cambiati rispetto al vostro accordo: rileggere il riepilogo e confermare nuovamente.",
-    "同意後にコンテンツ、対象ケースファイル、またはファイルが変更されました。サマリーを再確認の上、再度承認してください。"
-  ],
   "Le corps dépasse le gabarit déclaré.": [
     "The body exceeds the declared envelope.",
     "外壳超出所声明的包络。",
@@ -10735,24 +10636,6 @@
     "Заявленный подписанный документ не найден в защищенной области: ничего не сохранено.",
     "Il documento firmato dichiarato non è stato trovato nello spazio sicuro: non è stato salvato nulla.",
     "指定された署名済み文書がセキュア領域に見つかりませんでした。何も保存されませんでした。"
-  ],
-  "Le dossier a changé : l'offre doit porter sur la révision courante.": [
-    "The case file has changed: the quote must apply to the current revision.",
-    "案卷已变更：报价必须基于当前修订版本。",
-    "Das Dossier wurde geändert: Das Angebot muss sich auf die aktuelle Revision beziehen.",
-    "El expediente ha cambiado: la oferta debe basarse en la revisión actual.",
-    "Материалы изменились: предложение должно относиться к текущей ревизии.",
-    "Il fascicolo è cambiato: l'offerta deve basarsi sulla revisione corrente.",
-    "ケースファイルが変更されました。見積は現在のリビジョンに基づく必要があります。"
-  ],
-  "Le dossier a changé depuis l'ouverture de cette revue.": [
-    "The case file has changed since this review was opened.",
-    "自打开此评审以来，案卷已发生变更。",
-    "Das Dossier wurde seit dem Öffnen dieser Prüfung geändert.",
-    "El expediente ha cambiado desde la apertura de esta revisión.",
-    "Материалы изменились с момента открытия данного рассмотрения.",
-    "Il fascicolo è cambiato dall'apertura di questa revisione.",
-    "このレビューを開いてからケースファイルが変更されました。"
   ],
   "Le dossier envoyé est incomplet : complétez l'objectif et le contact, puis réessayez.": [
     "The submitted case file is incomplete: fill in the objective and contact, then try again.",
@@ -12112,15 +11995,6 @@
     "Экспериментальный режим: ответ Claude не проверен и не показывается реальным клиентам. База остаётся эталоном.",
     "Modalità sperimentale: risposta Claude non validata, mai per clienti reali. La base deterministica resta il riferimento.",
     "実験モード：Claude出力は未検証で、実際の見込み客には表示しません。決定論的ベースラインを基準とします。"
-  ],
-  "Modification sans effet sur la revue ni l'offre.": [
-    "Modification without effect on review or quote.",
-    "变更对评审和报价均无影响。",
-    "Änderung ohne Auswirkung auf Prüfung und Angebot.",
-    "Modificación sin efecto en la revisión ni en la oferta.",
-    "Изменение не влияет на рассмотрение и предложение.",
-    "Modifica senza effetto sulla revisione né sull'offerta.",
-    "レビューおよび見積に影響のない変更です。"
   ],
   "Modification technique : nouvelle révision ; revue, offre et échantillonnage précédents sont périmés.": [
     "Technical modification: new revision; previous review, quote and sampling are obsolete.",
@@ -16271,15 +16145,6 @@
     "Codice esatto richiesto (nessuna corrispondenza approssimativa).",
     "正確な型番が必要です（類似の一致は不可）。"
   ],
-  "Référence exacte requise : une gamme ne suffit pas, la revue doit d'abord fixer la référence commandable.": [
-    "Exact part number required: a product family is not sufficient; the review must first define the orderable part number.",
-    "需要确切型号：仅提供产品系列不够，审核必须首先确定可订购的型号。",
-    "Genaue Artikelnummer erforderlich: Eine Produktfamilie reicht nicht aus, das Review muss zuerst die bestellbare Artikelnummer festlegen.",
-    "Referencia exacta requerida: una gama no es suficiente, la revisión debe fijar primero la referencia que se puede pedir.",
-    "Требуется точный артикул: продуктовой линейки недостаточно, ревью должно сначала определить заказываемый артикул.",
-    "Codice esatto richiesto: una serie non è sufficiente, la revisione deve prima definire il codice ordinabile.",
-    "正確な型番が必要です。製品ファミリーのみでは不十分であり、レビューで最初に発注可能な型番を確定する必要があります。"
-  ],
   "Réglages avancés du câble": [
     "Advanced cable settings",
     "电缆高级设置",
@@ -18035,15 +17900,6 @@
     "Inviare alla review Standex",
     "Standex のレビューに送信"
   ],
-  "Transmission à la revue Standex en cours…": [
-    "Submitting for Standex review…",
-    "正在提交 Standex 评审…",
-    "Übermittlung zur Standex-Review läuft…",
-    "Enviando a la revisión de Standex…",
-    "Идёт отправка на рассмотрение Standex…",
-    "Invio alla review Standex in corso…",
-    "Standex のレビューに送信しています…"
-  ],
   "Tri et affectation": [
     "Sorting and assignment",
     "分选与分配",
@@ -18242,15 +18098,6 @@
     "Su questo fascicolo è già avviato un accordo di riservatezza: non può più essere rimosso da questa schermata.",
     "この案件では秘密保持契約がすでに進行中です。この画面からは解除できません。"
   ],
-  "Un accord de confidentialité vérifié est en vigueur sur ce dossier : il ne peut pas être retiré depuis cet écran.": [
-    "A verified non-disclosure agreement is in force on this case file: it cannot be removed from this screen.",
-    "本文件已有经核实的生效保密协议：无法在此页面撤销。",
-    "Für dieses Dossier gilt eine geprüfte Geheimhaltungsvereinbarung: Sie kann auf diesem Bildschirm nicht entfernt werden.",
-    "Hay un acuerdo de confidencialidad verificado en vigor en este expediente: no puede retirarse desde esta pantalla.",
-    "По этому делу действует проверенное соглашение о неразглашении: его нельзя отменить на этом экране.",
-    "Su questo fascicolo è in vigore un accordo di riservatezza verificato: non può essere rimosso da questa schermata.",
-    "この案件には検証済みの秘密保持契約が有効です。この画面からは解除できません。"
-  ],
   "Un aimant que l'on approche d'un capteur reed sous ampoule de verre": [
     "A magnet brought close to a glass reed sensor",
     "靠近玻璃管 reed 传感器的磁铁",
@@ -18349,15 +18196,6 @@
     "Состояние движения без идентификатора проигнорировано.",
     "Uno stato di movimento senza identificatore è stato ignorato.",
     "識別子のない動作状態は無視されました。"
-  ],
-  "Une demande de NDA est déjà ouverte sur ce dossier. La retirer abandonne cette demande ; le document non signé reste sur votre appareil. Continuer ?": [
-    "An NDA request is already open on this project. Removing it abandons that request; the unsigned document stays on your device. Continue?",
-    "该项目已存在保密协议请求。取消将放弃该请求；未签署的文件仍保留在您的设备上。是否继续？",
-    "Für dieses Projekt liegt bereits eine NDA-Anfrage vor. Ein Entfernen bricht diese Anfrage ab; das nicht unterzeichnete Dokument bleibt auf Ihrem Gerät. Fortfahren?",
-    "Ya hay una solicitud de NDA abierta en este proyecto. Retirarla abandona esa solicitud; el documento sin firmar permanece en su dispositivo. ¿Continuar?",
-    "Для этого проекта уже открыт запрос на NDA. Его снятие отменяет запрос; неподписанный документ остаётся на вашем устройстве. Продолжить?",
-    "Su questo progetto è già aperta una richiesta di NDA. Rimuoverla abbandona la richiesta; il documento non firmato resta sul tuo dispositivo. Continuare?",
-    "このプロジェクトではすでに NDA の要望が開かれています。取り消すとその要望は破棄されます。未署名の文書はお使いの端末に残ります。続行しますか？"
   ],
   "Une dimension laissée vide reste inconnue et ne filtre rien.": [
     "A dimension left blank stays unknown and filters nothing.",
@@ -19250,15 +19088,6 @@
     "Il fascicolo è cambiato dall'apertura di questa schermata. Ricaricalo: la revisione e l'offerta seguono sempre l'ultima versione inviata.",
     "この画面を開いてからケースファイルが更新されました。再読み込みしてください。レビューおよび見積は常に最後に送信されたバージョンに基づきます。"
   ],
-  "Votre dossier est bien arrivé chez Standex. Seule une étape complémentaire a échoué : consultez le suivi de votre dossier, ne renvoyez pas le dossier pour autant.": [
-    "Your case file did reach Standex. Only an extra step failed: check the tracking of your case file, and do not send it again.",
-    "您的资料已送达 Standex。仅有一个附加步骤失败：请查看案件进度，不要重复发送。",
-    "Ihr Dossier ist bei Standex eingegangen. Nur ein zusätzlicher Schritt ist fehlgeschlagen: Sehen Sie in der Verfolgung Ihres Dossiers nach und senden Sie es nicht erneut.",
-    "Su expediente sí llegó a Standex. Solo falló un paso adicional: consulte el seguimiento de su expediente y no lo envíe de nuevo.",
-    "Ваше дело действительно получено Standex. Не удался только дополнительный шаг: посмотрите отслеживание дела и не отправляйте его повторно.",
-    "Il vostro fascicolo è arrivato a Standex. È fallito solo un passaggio aggiuntivo: consultate il monitoraggio del fascicolo e non inviatelo di nuovo.",
-    "案件は Standex に届いています。失敗したのは追加の処理のみです。案件の進捗を確認し、再送はしないでください。"
-  ],
   "Votre envoi est confirmé. Pour transmettre de nouvelles modifications, relisez le résumé et confirmez à nouveau votre accord d'envoi.": [
     "Your send is confirmed. To submit further changes, re-read the summary and confirm your agreement to send again.",
     "发送已确认。若要提交新的修改，请重读摘要并再次确认发送同意。",
@@ -19465,15 +19294,6 @@
     "Выполняется проверка бэкенда…",
     "Verifica del backend in corso…",
     "バックエンドの確認中…"
-  ],
-  "Vérification du dossier…": [
-    "Checking the dossier…",
-    "正在检查方案…",
-    "Prüfung des Dossiers…",
-    "Comprobando el expediente…",
-    "Проверка досье…",
-    "Verifica del dossier in corso…",
-    "案件を確認しています…"
   ],
   "Vérification manuelle du document signé": [
     "Manual verification of signed document",
@@ -22400,15 +22220,6 @@
     "Campioni e tracciamento",
     "サンプルと進捗追跡"
   ],
-  "Échantillons possibles seulement après une revue Standex validée et publiée.": [
-    "Samples possible only after a validated and published Standex review.",
-    "仅在Standex审核验证并发布后方可提供样品。",
-    "Muster nur nach validiertem und veröffentlichtem Standex-Review möglich.",
-    "Muestras posibles únicamente tras una revisión Standex validada y publicada.",
-    "Образцы возможны только после утверждения и публикации ревью Standex.",
-    "Campioni possibili solo dopo una revisione Standex convalidata e pubblicata.",
-    "検証および公開されたStandexレビューの後にのみサンプル提供が可能です。"
-  ],
   "Échantillons utiles avant": [
     "Samples required before",
     "样品需求截止时间",
@@ -24703,5 +24514,194 @@
     "Этот файл не является экспортом файла дела разработки.",
     "Questo file non è un'esportazione di progetto di progettazione.",
     "このファイルは設計ケースファイルのエクスポートではありません。"
+  ],
+  "Une demande de NDA est déjà ouverte sur ce projet. La retirer abandonne cette demande ; le document non signé reste sur votre appareil. Continuer ?": [
+    "An NDA request is already open on this project. Removing it abandons that request; the unsigned document stays on your device. Continue?",
+    "该项目已存在保密协议请求。取消将放弃该请求；未签署的文件仍保留在您的设备上。是否继续？",
+    "Für dieses Projekt liegt bereits eine NDA-Anfrage vor. Ein Entfernen bricht diese Anfrage ab; das nicht unterzeichnete Dokument bleibt auf Ihrem Gerät. Fortfahren?",
+    "Ya hay una solicitud de NDA abierta en este proyecto. Retirarla abandona esa solicitud; el documento sin firmar permanece en su dispositivo. ¿Continuar?",
+    "Для этого проекта уже открыт запрос на NDA. Его снятие отменяет запрос; неподписанный документ остаётся на вашем устройстве. Продолжить?",
+    "Su questo progetto è già aperta una richiesta di NDA. Rimuoverla abbandona la richiesta; il documento non firmato resta sul tuo dispositivo. Continuare?",
+    "このプロジェクトではすでに NDA の要望が開かれています。取り消すとその要望は破棄されます。未署名の文書はお使いの端末に残ります。続行しますか？"
+  ],
+  "Un accord de confidentialité vérifié est en vigueur sur ce projet : il ne peut pas être retiré depuis cet écran.": [
+    "A verified non-disclosure agreement is in force on this project: it cannot be removed from this screen.",
+    "本文件已有经核实的生效保密协议：无法在此页面撤销。",
+    "Für dieses Projekt gilt eine geprüfte Geheimhaltungsvereinbarung: Sie kann auf diesem Bildschirm nicht entfernt werden.",
+    "Hay un acuerdo de confidencialidad verificado en vigor en este proyecto: no puede retirarse desde esta pantalla.",
+    "По этому делу действует проверенное соглашение о неразглашении: его нельзя отменить на этом экране.",
+    "Su questo progetto è in vigore un accordo di riservatezza verificato: non può essere rimosso da questa schermata.",
+    "このプロジェクトには検証済みの秘密保持契約が有効です。この画面からは解除できません。"
+  ],
+  "Ce projet est enregistré chez Standex : connectez-vous pour modifier le choix de NDA. Rien n'a été changé.": [
+    "This project is registered with Standex: sign in to change the NDA choice. Nothing has been changed.",
+    "该项目已在 Standex 登记：请登录以更改保密协议选择。未做任何更改。",
+    "Dieses Projekt ist bei Standex registriert: Melden Sie sich an, um die NDA-Auswahl zu ändern. Es wurde nichts geändert.",
+    "Este proyecto está registrado en Standex: inicie sesión para cambiar la elección de NDA. No se ha cambiado nada.",
+    "Этот проект зарегистрирован в Standex: войдите в систему, чтобы изменить выбор NDA. Ничего не изменено.",
+    "Questo progetto è registrato presso Standex: accedi per modificare la scelta dell'NDA. Non è stato modificato nulla.",
+    "このプロジェクトは Standex に登録されています。NDA の選択を変更するにはサインインしてください。変更は行われていません。"
+  ],
+  "Le NDA est préparé mais non signé. Faites signer le document, puis demandez sa vérification par Standex avant de transmettre le projet.": [
+    "The NDA is prepared but unsigned. Have the document signed, then ask Standex to verify it before submitting the file.",
+    "NDA 已准备但尚未签署。请先签署文件，然后在提交资料前请求 Standex 验证。",
+    "Das NDA ist vorbereitet, aber nicht unterzeichnet. Lassen Sie das Dokument unterzeichnen und vor der Übermittlung von Standex prüfen.",
+    "El NDA está preparado pero no firmado. Haga firmar el documento y solicite su verificación por Standex antes de enviar el proyecto.",
+    "NDA подготовлено, но не подписано. Подпишите документ и запросите его проверку Standex перед отправкой проект.",
+    "L'NDA è preparato ma non firmato. Faccia firmare il documento e ne chieda la verifica a Standex prima dell'invio del progetto.",
+    "NDA は準備済みですが未署名です。文書に署名し、資料を送信する前に Standex へ確認を依頼してください。"
+  ],
+  "Vérification du projet…": [
+    "Checking the project…",
+    "正在检查方案…",
+    "Prüfung des Projekts…",
+    "Comprobando el proyecto…",
+    "Проверка проект…",
+    "Verifica del progetto in corso…",
+    "プロジェクトを確認しています…"
+  ],
+  "Transmission à la relecture par les ingénieurs Standex en cours…": [
+    "Submitting for Standex review…",
+    "正在提交 Standex 评审…",
+    "Übermittlung zur Standex-Review läuft…",
+    "Enviando a la revisión de Standex…",
+    "Идёт отправка на рассмотрение Standex…",
+    "Invio alla review Standex in corso…",
+    "Standex のレビューに送信しています…"
+  ],
+  "Votre projet est bien arrivé chez Standex. Seule une étape complémentaire a échoué : consultez le suivi de votre projet, ne renvoyez pas le projet pour autant.": [
+    "Your project did reach Standex. Only an extra step failed: check the tracking of your project, and do not send it again.",
+    "您的资料已送达 Standex。仅有一个附加步骤失败：请查看案件进度，不要重复发送。",
+    "Ihr Projekt ist bei Standex eingegangen. Nur ein zusätzlicher Schritt ist fehlgeschlagen: Sehen Sie in der Verfolgung Ihres Projekts nach und senden Sie es nicht erneut.",
+    "Su proyecto sí llegó a Standex. Solo falló un paso adicional: consulte el seguimiento de su proyecto y no lo envíe de nuevo.",
+    "Ваше проект действительно получено Standex. Не удался только дополнительный шаг: посмотрите отслеживание дела и не отправляйте его повторно.",
+    "Il vostro progetto è arrivato a Standex. È fallito solo un passaggio aggiuntivo: consultate il monitoraggio del progetto e non inviatelo di nuovo.",
+    "プロジェクトは Standex に届いています。失敗したのは追加の処理のみです。プロジェクトの進捗を確認し、再送はしないでください。"
+  ],
+  "La confirmation d'envoi n'a pas été obtenue : votre projet est peut-être arrivé malgré tout. Vérifiez le suivi de votre projet avant de le renvoyer.": [
+    "No send confirmation was obtained: your project may still have arrived. Check the tracking of your project before sending it again.",
+    "未获得发送确认：您的资料仍可能已送达。重新发送前请先查看案件进度。",
+    "Es wurde keine Versandbestätigung erhalten: Ihr Projekt kann dennoch angekommen sein. Prüfen Sie die Verfolgung Ihres Projekts, bevor Sie erneut senden.",
+    "No se obtuvo confirmación de envío: es posible que su proyecto haya llegado igualmente. Consulte el seguimiento antes de volver a enviarlo.",
+    "Подтверждение отправки не получено: возможно, проект всё же дошло. Проверьте отслеживание дела, прежде чем отправлять повторно.",
+    "Non è stata ottenuta la conferma di invio: il progetto potrebbe comunque essere arrivato. Verificate il monitoraggio prima di inviarlo di nuovo.",
+    "送信の確認が取れませんでした。プロジェクトは届いている可能性があります。再送の前に進捗を確認してください。"
+  ],
+  "Consentement d'envoi du projet non recueilli.": [
+    "Consent to send the project has not been collected.",
+    "未取得发送案件的同意。",
+    "Zustimmung zum Senden der Fallakte nicht eingeholt.",
+    "Consentimiento para el envío del proyecto no obtenido.",
+    "Согласие на отправку проект не получено.",
+    "Consenso all'invio della pratica non acquisito.",
+    "ケースファイルの送信に関する同意が得られていません。"
+  ],
+  "Le contenu, le projet visé ou les fichiers ont changé depuis votre accord : relisez le résumé et confirmez à nouveau.": [
+    "The content, target project or files have changed since your agreement: review the summary and confirm again.",
+    "自您同意后，内容、目标案件或文件已发生变更：请重新阅读摘要并再次确认。",
+    "Der Inhalt, die betroffene Fallakte oder die Dateien haben sich seit Ihrer Zustimmung geändert: Prüfen Sie die Zusammenfassung erneut und bestätigen Sie nochmals.",
+    "El contenido, el proyecto correspondiente o los archivos han cambiado desde su acuerdo: vuelva a leer el resumen y confirme de nuevo.",
+    "Содержимое, целевое проект или файлы изменились с момента вашего согласия: перечитайте резюме и подтвердите снова.",
+    "Il contenuto, la pratica interessata o i file sono cambiati rispetto al vostro accordo: rileggere il riepilogo e confermare nuovamente.",
+    "同意後にコンテンツ、対象ケースファイル、またはファイルが変更されました。サマリーを再確認の上、再度承認してください。"
+  ],
+  "Projet transmis à la relecture par les ingénieurs Standex.": [
+    "Case file sent to the Standex review.",
+    "资料已提交 Standex 评审。",
+    "Projekt an die Standex-Prüfung übermittelt.",
+    "Proyecto enviado a la revisión de Standex.",
+    "Дело передано на рассмотрение Standex.",
+    "Fascicolo trasmesso alla revisione Standex.",
+    "プロジェクトを Standex レビューに送信しました。"
+  ],
+  "Projet repris": [
+    "Case file resumed",
+    "案卷已恢复",
+    "Vorgang übernommen",
+    "Proyecto reanudado",
+    "Файл дела восстановлен",
+    "Fascicolo ripreso",
+    "復元されたケースファイル"
+  ],
+  "Échantillons possibles seulement après une relecture par les ingénieurs Standex validée et publiée.": [
+    "Samples possible only after a validated and published Standex review.",
+    "仅在Standex审核验证并发布后方可提供样品。",
+    "Muster nur nach validiertem und veröffentlichtem Standex-Review möglich.",
+    "Muestras posibles únicamente tras una revisión Standex validada y publicada.",
+    "Образцы возможны только после утверждения и публикации ревью Standex.",
+    "Campioni possibili solo dopo una revisione Standex convalidata e pubblicata.",
+    "検証および公開されたStandexレビューの後にのみサンプル提供が可能です。"
+  ],
+  "Référence exacte requise : une gamme ne suffit pas, la relecture doit d'abord fixer la référence commandable.": [
+    "Exact part number required: a product family is not sufficient; the review must first define the orderable part number.",
+    "需要确切型号：仅提供产品系列不够，审核必须首先确定可订购的型号。",
+    "Genaue Artikelnummer erforderlich: Eine Produktfamilie reicht nicht aus, das Review muss zuerst die bestellbare Artikelnummer festlegen.",
+    "Referencia exacta requerida: una gama no es suficiente, la revisión debe fijar primero la referencia que se puede pedir.",
+    "Требуется точный артикул: продуктовой линейки недостаточно, ревью должно сначала определить заказываемый артикул.",
+    "Codice esatto richiesto: una serie non è sufficiente, la revisione deve prima definire il codice ordinabile.",
+    "正確な型番が必要です。製品ファミリーのみでは不十分であり、レビューで最初に発注可能な型番を確定する必要があります。"
+  ],
+  "Aucun devis avant une relecture par les ingénieurs Standex validée.": [
+    "No quotation prior to a validated R&D review.",
+    "研发审查验证前不得报价。",
+    "Kein Angebot vor einer validierten R&D-Prüfung.",
+    "Ningún presupuesto antes de una revisión R&D validada.",
+    "Никаких предложений до подтверждения рассмотрения R&D.",
+    "Nessun preventivo prima di una revisione R&D convalidata.",
+    "検証済みの R&D レビューがない場合、見積は作成できません。"
+  ],
+  "Cette revue n'appartient pas à ce projet.": [
+    "This review does not belong to this project.",
+    "此审查不属于该案卷。",
+    "Diese Prüfung gehört nicht zu diesem Projekt.",
+    "Esta revisión no pertenece a este proyecto.",
+    "Это рассмотрение не относится к данному проект.",
+    "Questa revisione non appartiene a questo progetto.",
+    "このレビューはこのプロジェクトファイルに属していません。"
+  ],
+  "Aucun devis avant une relecture par les ingénieurs Standex validée et publiée.": [
+    "No quotation prior to a validated and published R&D review.",
+    "研发审查经受审并发布前不得报价。",
+    "Kein Angebot vor einer validierten und veröffentlichten R&D-Prüfung.",
+    "Ningún presupuesto antes de una revisión R&D validada y publicada.",
+    "Никаких предложений до утверждения и публикации рассмотрения R&D.",
+    "Nessun preventivo prima di una revisione R&D convalidata e pubblicata.",
+    "検証および公開された R&D レビューがない場合、見積は作成できません。"
+  ],
+  "Cette revue a été remplacée : reprenez la relecture en vigueur.": [
+    "This review has been superseded: use the review currently in effect.",
+    "该审查已被替换：请使用当前生效的审查。",
+    "Diese Prüfung wurde ersetzt: Übernehmen Sie die aktuell gültige Prüfung.",
+    "Esta revisión ha sido sustituida: retome la revisión en vigor.",
+    "Это рассмотрение было заменено: используйте действующее рассмотрение.",
+    "Questa revisione è stata sostituita: riprendere la revisione in vigore.",
+    "このレビューは置き換えられました：有効なレビューを再開してください。"
+  ],
+  "Le projet a changé : l'offre doit porter sur la révision courante.": [
+    "The project has changed: the quote must apply to the current revision.",
+    "案卷已变更：报价必须基于当前修订版本。",
+    "Das Projekt wurde geändert: Das Angebot muss sich auf die aktuelle Revision beziehen.",
+    "El proyecto ha cambiado: la oferta debe basarse en la revisión actual.",
+    "Материалы изменились: предложение должно относиться к текущей ревизии.",
+    "Il progetto è cambiato: l'offerta deve basarsi sulla revisione corrente.",
+    "ケースファイルが変更されました。見積は現在のリビジョンに基づく必要があります。"
+  ],
+  "Modification sans effet sur la relecture ni l'offre.": [
+    "Modification without effect on review or quote.",
+    "变更对评审和报价均无影响。",
+    "Änderung ohne Auswirkung auf Prüfung und Angebot.",
+    "Modificación sin efecto en la revisión ni en la oferta.",
+    "Изменение не влияет на рассмотрение и предложение.",
+    "Modifica senza effetto sulla revisione né sull'offerta.",
+    "レビューおよび見積に影響のない変更です。"
+  ],
+  "Le projet a changé depuis l'ouverture de cette revue.": [
+    "The project has changed since this review was opened.",
+    "自打开此评审以来，案卷已发生变更。",
+    "Das Projekt wurde seit dem Öffnen dieser Prüfung geändert.",
+    "El proyecto ha cambiado desde la apertura de esta revisión.",
+    "Материалы изменились с момента открытия данного рассмотрения.",
+    "Il progetto è cambiato dall'apertura di questa revisione.",
+    "このレビューを開いてからケースファイルが変更されました。"
   ]
 }
