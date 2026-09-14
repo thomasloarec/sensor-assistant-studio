@@ -49,14 +49,17 @@ export function projectChecklist(d: DesignDossier): ChecklistItem[] {
   const answered = d.requirements.filter(
     (r) => ANSWERED.has(r.state) && r.value.trim() !== "",
   ).length;
+  const setAside = delegatedQuestionKeys(d);
   const besoin: ChecklistItem = {
     id: "besoin",
     label: "Ce que vous voulez détecter",
-    state: answered === 0 ? "todo" : "chosen",
+    state: answered > 0 ? "chosen" : setAside.length ? "delegated" : "todo",
     detail:
-      answered === 0
-        ? "Aucune réponse enregistrée pour l'instant."
-        : `${answered} réponse(s) enregistrée(s) sur ${d.requirements.length || 6}.`,
+      answered > 0
+        ? `${answered} réponse(s) enregistrée(s) sur ${d.requirements.length || 6}.`
+        : setAside.length
+          ? "Questions laissées à définir avec Standex : aucune valeur technique n'en est déduite."
+          : "Aucune réponse enregistrée pour l'instant.",
     tab: "besoin",
   };
 
