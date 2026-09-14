@@ -15,6 +15,7 @@ import {
   SensitivityComparison,
   useGuidedMounting,
 } from "./guided-mounting";
+import StudioV2 from "./studio-v2";
 import { composeRotations, magnetWorldPosition, simulateMounting } from "@/lib/standex/mounting";
 import type { GuidedMounting } from "@/lib/standex/mounting";
 import type { StudioStudy } from "@/lib/standex/studio-dossier";
@@ -1861,6 +1862,19 @@ export default function MagneticWorkshop({
           </div>
         </section>
       </div>
+      {!embedded ? (
+        <details className="mw-advanced">
+          <summary>{t("Données et outils avancés")}</summary>
+          <StudioV2
+            config={config}
+            onApply={update}
+            initialStudy={initialStudy}
+            onStudyChange={onStudyChange}
+            dossierId={dossierId}
+            revision={revision}
+          />
+        </details>
+      ) : null}
       <footer className="mw-footer">
         <p>
           <strong>{t(reference ? "Présélection documentée." : "Illustration pédagogique.")}</strong>{" "}
