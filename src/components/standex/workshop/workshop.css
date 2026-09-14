@@ -2132,3 +2132,219 @@
 .mw-published-table th:first-child {
   white-space: nowrap;
 }
+
+/* ==================================================================
+   L'atelier recadré : écran principal, scène 3D en majesté, verdict
+   au-dessus de la scène.
+
+   Ces règles sont volontairement regroupées et portées par `.mw-stage` :
+   elles remplacent la disposition en colonnes de la version « quatre
+   étapes » sans toucher aux styles des contrôles eux-mêmes, qui sont
+   réutilisés tels quels dans les réglages avancés.
+   ================================================================== */
+.mw.mw-stage {
+  display: flex;
+  flex-direction: column;
+  /* Pas de zone à défilement interne : la page défile, ou rien ne défile. */
+  overflow: visible;
+  padding-bottom: 0;
+}
+.mw-stage .mw-stage-grid {
+  display: grid;
+  grid-template-columns: 320px minmax(0, 1fr);
+  gap: 16px;
+  padding: 16px;
+  flex: 1 1 auto;
+  min-height: 0;
+  align-items: stretch;
+}
+.mw-stage .mw-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  /* La colonne ne défile plus séparément : le bouton principal et le
+     tableau des distances ne peuvent plus être coupés. */
+  overflow: visible;
+  max-height: none;
+}
+.mw-stage .mw-controls-links {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.mw-stage .mw-main {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 0;
+}
+.mw-stage .mw-canvas {
+  flex: 1 1 auto;
+  min-height: 420px;
+}
+/* ---- Bandeau de verdict ---- */
+.mw-verdict-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 0 0 auto;
+  min-block-size: 64px;
+  padding: 10px 16px;
+  border-radius: var(--r-lg);
+  background: var(--surface-tint);
+}
+.mw-verdict-bar-expected {
+  background: var(--success-soft);
+}
+.mw-verdict-dot {
+  flex: 0 0 auto;
+  inline-size: 10px;
+  block-size: 10px;
+  border-radius: var(--r-pill);
+  background: var(--muted-foreground);
+}
+.mw-verdict-bar-expected .mw-verdict-dot {
+  background: var(--success);
+}
+.mw-verdict-bar-undocumented .mw-verdict-dot,
+.mw-verdict-bar-unpublished .mw-verdict-dot {
+  background: var(--standex-blue-75);
+}
+.mw-verdict-bar-text {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+}
+.mw-verdict-limits {
+  flex: 0 0 auto;
+  max-inline-size: 18rem;
+}
+.mw-verdict-limits > summary {
+  font: var(--mw-t-dense);
+  cursor: pointer;
+  min-block-size: 2.75rem;
+  display: flex;
+  align-items: center;
+}
+/* ---- Position de l'aimant : trois pictogrammes ---- */
+.mw-approach-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-block: 8px;
+}
+.mw-approach-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-block-size: 4.5rem;
+  padding: 8px 4px;
+  border-radius: var(--r-md);
+  background: var(--surface-sunken);
+  color: var(--mw-ink);
+  font: var(--mw-t-dense);
+  box-shadow: var(--e-1);
+  transition:
+    background var(--d-fast) var(--ease-out),
+    box-shadow var(--d-fast) var(--ease-out);
+}
+.mw-approach-button svg {
+  inline-size: 24px;
+  block-size: 24px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+.mw-approach-button[aria-pressed="true"] {
+  background: var(--mw-blue);
+  color: var(--mw-on-accent);
+  box-shadow: var(--e-2);
+}
+/* ---- Barre d'outils de la scène et menu Affichage ---- */
+.mw-stage .mw-scene-tools {
+  position: absolute;
+  inset-block-start: 8px;
+  inset-inline: 8px;
+  z-index: 2;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.mw-stage .mw-scene-tools > :last-child {
+  margin-inline-start: auto;
+}
+.mw-display-menu > summary {
+  cursor: pointer;
+  padding: 6px 12px;
+  min-block-size: 2.75rem;
+  display: flex;
+  align-items: center;
+  border-radius: var(--r-pill);
+  background: var(--mw-surface);
+  font: var(--mw-t-dense);
+  box-shadow: var(--e-2);
+}
+.mw-display-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-block-start: 6px;
+  padding: 12px;
+  border-radius: var(--r-md);
+  background: var(--mw-surface);
+  box-shadow: var(--e-3);
+  max-inline-size: 17rem;
+}
+/* ---- Chronologie du cycle ---- */
+.mw-stage .mw-cycle {
+  flex: 0 0 auto;
+  min-block-size: 84px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: var(--r-lg);
+  background: var(--surface-sunken);
+}
+.mw-cycle-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font: var(--mw-t-dense);
+}
+.mw-stage .mw-exit {
+  flex: 0 0 auto;
+  display: flex;
+  justify-content: flex-end;
+}
+/* ---- Réglages avancés : tout est replié, rien n'est supprimé ---- */
+.mw-advanced-settings > summary {
+  cursor: pointer;
+  min-block-size: 2.75rem;
+  display: flex;
+  align-items: center;
+  font: var(--mw-t-dense);
+}
+.mw-advanced-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-block-start: 8px;
+}
+@media (max-width: 1023px) {
+  .mw-stage .mw-stage-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .mw-stage .mw-canvas {
+    min-height: 340px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mw-approach-button {
+    transition: none;
+  }
+}
