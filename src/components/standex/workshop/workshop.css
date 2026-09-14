@@ -943,7 +943,7 @@
 }
 .mw-footer {
   max-width: 1440px;
-  padding: 20px 34px 0;
+  padding: 20px 34px;
   margin: auto;
   font: var(--mw-t-dense);
   color: var(--muted-foreground);
@@ -961,8 +961,8 @@
 }
 .mw-summary {
   max-width: 1372px;
-  margin: 15px 34px 0;
-  padding: 5px 0;
+  margin: 15px 34px;
+  padding: 5px 0 20px;
   color: var(--muted-foreground);
 }
 .mw-summary pre {
