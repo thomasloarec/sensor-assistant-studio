@@ -76,19 +76,22 @@ function norm(a: Pt): Pt {
   return [a[0] / m, a[1] / m, a[2] / m];
 }
 
-/** Point cartésien STEP (mm), 6 décimales suffisantes pour nos cotes. */
+/**
+ * Point cartésien STEP (mm), 6 décimales suffisantes pour nos cotes.
+ * Partagé par coordonnées exactes : c'est ce qui coud les faces entre elles.
+ */
 function point(doc: StepDoc, p: Pt): string {
-  return doc.next(`CARTESIAN_POINT('',(${p.map((v) => v.toFixed(6)).join(",")}))`);
+  return doc.shared(`CARTESIAN_POINT('',(${p.map((v) => v.toFixed(6)).join(",")}))`);
 }
 function direction(doc: StepDoc, d: Pt): string {
   const n = norm(d);
-  return doc.next(`DIRECTION('',(${n.map((v) => v.toFixed(9)).join(",")}))`);
+  return doc.shared(`DIRECTION('',(${n.map((v) => v.toFixed(9)).join(",")}))`);
 }
 function axis2placement(doc: StepDoc, origin: Pt, axis: Pt, ref: Pt): string {
   const o = point(doc, origin);
   const z = direction(doc, axis);
   const x = direction(doc, ref);
-  return doc.next(`AXIS2_PLACEMENT_3D('',${o},${z},${x})`);
+  return doc.shared(`AXIS2_PLACEMENT_3D('',${o},${z},${x})`);
 }
 
 /** Construit une face plane à partir d'une boucle extérieure et de trous éventuels. */
@@ -97,7 +100,7 @@ function face(doc: StepDoc, outer: Pt[], holes: Pt[][] = []): string {
   let ref: Pt = Math.abs(n[0]) < 0.9 ? [1, 0, 0] : [0, 1, 0];
   const refDir = norm(cross(n, ref));
   const placement = axis2placement(doc, outer[0], n, refDir);
-  const plane = doc.next(`PLANE('',${placement})`);
+  const plane = doc.shared(`PLANE('',${placement})`);
   const outerPts = outer.map((p) => point(doc, p));
   const outerLoop = doc.next(`POLY_LOOP('',(${outerPts.join(",")}))`);
   const outerBound = doc.next(`FACE_OUTER_BOUND('',${outerLoop},.T.)`);
@@ -107,13 +110,14 @@ function face(doc: StepDoc, outer: Pt[], holes: Pt[][] = []): string {
     const loop = doc.next(`POLY_LOOP('',(${hp.join(",")}))`);
     bounds.push(doc.next(`FACE_BOUND('',${loop},.F.)`));
   }
-  return doc.next(`ADVANCED_FACE('',(${bounds.join(",")}),${plane},.T.)`);
+  return doc.next(`FACE_SURFACE('',(${bounds.join(",")}),${plane},.T.)`);
 }
 
 function closedSolid(doc: StepDoc, name: string, faces: string[]): string {
   const shell = doc.next(`CLOSED_SHELL('',(${faces.join(",")}))`);
-  return doc.next(`MANIFOLD_SOLID_BREP('${name}',${shell})`);
+  return doc.next(`FACETED_BREP('${name}',${shell})`);
 }
+
 
 /** Boîte alignée sur les axes, centrée en (cx,cy,cz). */
 function box(
