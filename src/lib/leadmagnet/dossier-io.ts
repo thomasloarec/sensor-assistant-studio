@@ -316,6 +316,7 @@ export function parseDossierExport(raw: unknown, now = new Date().toISOString())
     workshopAsset: null,
     selectedSensorId: data.selectedSensorId,
     workshopSensorId: data.workshopSensorId,
+    delegatedDecisions: data.delegatedDecisions,
     sensorSyncConfirmed: false,
     cabling: { ...EMPTY_CABLING, ...data.cabling },
     termination: data.termination,
