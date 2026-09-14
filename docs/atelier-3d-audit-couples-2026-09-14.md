@@ -126,7 +126,11 @@ Aucune valeur n'est empruntée entre M36, M37 et M38 (vérifié par test).
 
 ## 5. Manques assumés
 
-- Aucune table pour M03, M11S, M11P, M13B, M27, M21P/1, M21P/2.
+- Aucune table pour M03, M11S, M11P, M13B, M27. M21P/1 et M21P/2 n'ont pas de
+  table propre : elles lisent celle du M21 par identité de famille documentée
+  (section 2), avec provenance visible.
+- Aucune ligne pour les familles capteur MK21PR et MK21M : rien n'est emprunté au
+  MK21.
 - M36, M37, M38 : tables frontales F1 disponibles ; aucune classe de sensibilité,
   aucun tableau latéral D1–D5 pour ces familles.
 - MK27 : la fiche ne publie aucun tableau de seuils ; distances non renseignées.
