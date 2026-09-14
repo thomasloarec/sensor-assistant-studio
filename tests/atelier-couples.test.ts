@@ -9,7 +9,7 @@ import {
 } from "../src/lib/standex/default-pairs";
 import { PACKAGED_MAGNET_IDS, packagedMagnet } from "../src/lib/standex/magnet-catalog";
 import { pairedMagnetModel } from "../src/lib/standex/paired-magnets";
-import { sensorById, SENSORS } from "../src/lib/standex/sensor-catalog";
+import { sensorById, SENSOR_CATALOG } from "../src/lib/standex/sensor-catalog";
 import {
   publishedApproaches,
   publishedClasses,
@@ -64,7 +64,7 @@ describe("couples par défaut : un vrai capteur reçoit son aimant, jamais un cy
     }
   });
   test("aucun capteur du catalogue ne tombe sur un aimant inexistant ni sur une forme inventée", () => {
-    for (const sensor of SENSORS) {
+    for (const sensor of SENSOR_CATALOG) {
       const magnetId = defaultMagnetFor(sensor.id);
       const model = pairedMagnetModel(magnetId, sensor.id);
       expect(model).not.toBeNull();
