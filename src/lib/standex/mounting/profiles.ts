@@ -63,6 +63,8 @@ export interface MountingProfile {
   axis: Vec3 | null;
   /** Plan de référence du gabarit, pour l'affichage, ou null si non localisé. */
   referencePlane: "XZ" | "YZ" | null;
+  /** Orientation relative documentée de l'aimant (0 en latéral, 180° en frontal). */
+  relativeRotationDeg: Vec3;
   localisation: Localisation;
   /** Les distances publiées existent pour toute ligne présente au registre. */
   distancesDocumented: true;
@@ -77,6 +79,28 @@ export interface MountingProfile {
 export type LocatedProfile = MountingProfile & { axis: Vec3; referencePlane: "XZ" | "YZ" };
 export const locatedProfile = (p: MountingProfile | null): LocatedProfile | null =>
   p && p.axis && p.referencePlane ? (p as LocatedProfile) : null;
+
+/**
+ * Orientation RELATIVE documentée de l'aimant dans le repère capteur, par
+ * approche. Les approches latérales D1 et D3 placent les deux corps parallèles
+ * et orientés dans le même sens : rotation nulle. L'approche FRONTALE F1 des
+ * fiches MK36/MK37/MK38 met les deux collerettes EN VIS-À-VIS : le boîtier
+ * capteur porte sa collerette vers +X, donc un aimant placé en +X ne peut lui
+ * faire face qu'en tournant de 180° autour de Y. Ce n'est pas une tolérance
+ * choisie : c'est le dessin de la page 2 des fiches.
+ */
+const APPROACH_RELATIVE_ROTATION: Record<string, Vec3> = {
+  D1: [0, 0, 0],
+  D3: [0, 0, 0],
+  F1: [0, 180, 0],
+};
+/** Orientation relative documentée d'une approche. Les approches sans dessin de
+ * pose retombent sur des axes parallèles, jamais sur une rotation inventée. */
+export const documentedRelativeRotation = (approachId: string): Vec3 =>
+  [...(APPROACH_RELATIVE_ROTATION[approachId] ?? [0, 0, 0])] as Vec3;
+/** Angle de l'aimant, en degrés autour de Y, imposé par l'approche documentée. */
+export const documentedMagnetAngleDeg = (approachId: string): number =>
+  documentedRelativeRotation(approachId)[1];
 
 const AXES: Record<string, { axis: Vec3; plane: "XZ" | "YZ" }> = {
   D1: { axis: [0, 0, 1], plane: "XZ" },
@@ -110,6 +134,7 @@ export function mountingProfiles(registry: PublishedRegistry = PUBLISHED_REGISTR
       classes: [row.sensitivityClass],
       axis: geo ? geo.axis : null,
       referencePlane: geo ? geo.plane : null,
+      relativeRotationDeg: documentedRelativeRotation(row.approachId),
       localisation: geo ? "axis_documented" : "not_located",
       distancesDocumented: true,
       evidence:
@@ -159,7 +184,27 @@ export function thresholdsFor(
     profile.approachId,
     registry,
   );
-  return row ? [row.pullInMm, row.dropOutMm] : null;
+  if (!row) return null;
+  // Le moteur ne modélise QUE le contact normalement ouvert. Les modèles 1B et
+  // 1C publiés par les fiches restent lisibles comme documentation
+  // (`documentedDistances`), mais ils n'alimentent aucun seuil simulé.
+  if (row.contactForm !== "1A") return null;
+  return [row.pullInMm, row.dropOutMm];
+}
+/** Le contact publié de cette ligne est-il celui que le moteur modélise (1A) ? */
+export function simulatedContactForm(
+  profile: MountingProfile,
+  sensitivityClass: string,
+  registry?: PublishedRegistry,
+): boolean {
+  const row = publishedReference(
+    profile.sensorFamily,
+    sensitivityClass,
+    profile.magnetId,
+    profile.approachId,
+    registry,
+  );
+  return row === null || row.contactForm === "1A";
 }
 /** Comparaison des sensibilités pour un profil : sources concrètes uniquement. */
 export function sensitivityComparison(
