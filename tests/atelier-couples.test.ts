@@ -235,10 +235,25 @@ describe("fiches frontales MK36 / MK37 / MK38", () => {
     }
   });
   test("le contact 1A est simulé ; 1B et 1C sont affichés sans être simulés", () => {
-    const no = config({ sensorId: "MK37", magnetModel: "M37-N42", sensitivity: "1A", geometry: "F1" });
+    // Pose RÉELLE de la fiche : les deux collerettes se font face, soit 180°
+    // autour de Y. Un test à 0° validerait la mauvaise pose.
+    const no = config({
+      sensorId: "MK37",
+      magnetModel: "M37-N42",
+      sensitivity: "1A",
+      geometry: "F1",
+      magnetAngle: 180,
+    });
     expect(referenceAllowed(no)).toBe(true);
+    expect(referenceAllowed({ ...no, magnetAngle: 0 })).toBe(false);
     expect(workshopPair(no)).toEqual([19, 32]);
-    const nc = config({ sensorId: "MK37", magnetModel: "M37-N42", sensitivity: "1B", geometry: "F1" });
+    const nc = config({
+      sensorId: "MK37",
+      magnetModel: "M37-N42",
+      sensitivity: "1B",
+      geometry: "F1",
+      magnetAngle: 180,
+    });
     expect(referenceAllowed(nc)).toBe(false);
     // La ligne 1B reste LISIBLE comme documentation : elle n'est ni supprimée
     // ni convertie, seule la simulation normalement ouverte la refuse.
@@ -247,7 +262,13 @@ describe("fiches frontales MK36 / MK37 / MK38", () => {
     expect(simulateCycle(nc).samples.every((s) => s.contact === "unknown")).toBe(true);
   });
   test("la note rappelle que Min Activation et Max Release sont indicatives", () => {
-    const c = config({ sensorId: "MK36", magnetModel: "M36-N42", sensitivity: "1A", geometry: "F1" });
+    const c = config({
+      sensorId: "MK36",
+      magnetModel: "M36-N42",
+      sensitivity: "1A",
+      geometry: "F1",
+      magnetAngle: 180,
+    });
     expect(referenceNoteFor(c)).toContain("Min Activation");
     expect(referenceNoteFor(c)).toContain("faces");
     expect(distanceBasis(c)).toBe("standex");

@@ -1,4 +1,10 @@
-import { locatedProfile, profileFor, thresholdsFor } from "./profiles";
+import {
+  documentedRelativeRotation,
+  locatedProfile,
+  profileFor,
+  simulatedContactForm,
+  thresholdsFor,
+} from "./profiles";
 import type { LocatedProfile, MountingProfile } from "./profiles";
 import { REAL_WORLD_TEST_MESSAGE } from "./contract";
 import type {
@@ -91,8 +97,15 @@ export function globalReasons(m: GuidedMounting, profile: MountingProfile | null
   // l'axe réel du mouvement sort du gabarit publié.
   if (Math.abs(normalise(m.motion.sensorYawDeg)) > NUMERIC_EPSILON)
     reasons.push("SENSOR_ANGLE_OFF_TEMPLATE");
-  if (m.relative.rotationDeg.some((a) => Math.abs(normalise(a)) > NUMERIC_EPSILON))
+  // L'orientation attendue vient du PROFIL, pas d'un zéro codé en dur :
+  // l'approche frontale F1 documente explicitement des faces en vis-à-vis
+  // (180° autour de Y). Comparer à 0 rejetait la vraie pose documentée.
+  const expected = documentedRelativeRotation(m.couple.approachId);
+  if (m.relative.rotationDeg.some((a, i) => Math.abs(normalise(a - expected[i]!)) > NUMERIC_EPSILON))
     reasons.push("ORIENTATION_OFF_TEMPLATE");
+  // Contacts 1B / 1C : distances publiées lisibles, jamais simulées.
+  if (profile && !simulatedContactForm(profile, m.couple.sensitivityClass))
+    reasons.push("CONTACT_FORM_NOT_SIMULATED");
   if (located && lateralOffsetMm(m.relative, located.axis) > NUMERIC_EPSILON)
     reasons.push("LATERAL_OFFSET");
   return reasons;

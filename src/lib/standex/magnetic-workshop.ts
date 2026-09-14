@@ -14,6 +14,7 @@ import {
   CUSTOM_SENSOR_ID,
 } from "./sensor-catalog";
 import { parseMachine, componentPose, openingAt, rotate } from "./machine-assembly";
+import { documentedMagnetAngleDeg } from "./mounting/profiles";
 import type { MachineAssembly } from "./machine-assembly";
 import {
   PUBLISHED_REGISTRY,
@@ -227,6 +228,11 @@ export function parseWorkshopConfig(value: unknown): WorkshopConfig | null {
   ) as unknown as WorkshopConfig;
 }
 
+export { documentedMagnetAngleDeg };
+/** Angle normalisé dans (-180, 180]. */
+export const normaliseAngle = (a: number) => (((a % 360) + 540) % 360) - 180;
+/** Angle de l'aimant imposé par l'approche documentée du couple. */
+
 /** Ligne publiée EXACTE du couple sélectionné, ou `null`. */
 export const workshopRow = (c: WorkshopConfig) =>
   publishedReference(c.sensorId, c.sensitivity, c.magnetModel, c.geometry);
@@ -279,7 +285,9 @@ export function referenceAllowed(c: WorkshopConfig): boolean {
     c.lateralShift === 0 &&
     c.motion === "approach" &&
     c.sensorAngle === 0 &&
-    c.magnetAngle === 0 &&
+    // L'angle attendu vient de l'approche DOCUMENTÉE : 0 en latéral D1/D3,
+    // 180° en frontal F1 où les deux collerettes se font face.
+    normaliseAngle(c.magnetAngle - documentedMagnetAngleDeg(c.geometry)) === 0 &&
     c.magnetization === "axial" &&
     c.polarity === 1 &&
     !c.ferromagnetic &&
@@ -561,7 +569,7 @@ export function summarizeWorkshop(c: WorkshopConfig): string {
     publishedSensorReference(c.sensorId, c.sensitivity, c.magnetModel) ?? sensorById(c.sensorId).name;
   const setup =
     c.mode === "reference"
-      ? `${reference} + ${c.magnetModel} ; approche ${c.geometry}, axes parallèles.`
+      ? `${reference} + ${c.magnetModel} ; approche ${c.geometry}, ${c.geometry === "F1" ? "faces en vis-à-vis (aimant à 180°)" : "axes parallèles"}.`
       : c.machine
         ? `${sensorById(c.sensorId).name} · Démonstration fictive dans ${c.machine.fileName} ; axe Nord–Sud local ${c.magnetization === "axial" ? "X" : c.magnetization === "thickness" ? "Y" : "Z"}, polarité ${c.polarity === 1 ? "N/S" : "S/N"}.`
         : `${sensorById(c.sensorId).name} · Démonstration fictive ; ${c.machine ? "intégration dans une machine" : c.motion === "slide" ? "passage latéral" : c.motion === "pivot" ? "pivot" : "approche " + c.geometry} ; axe reed ${c.sensorAngle}°, aimant ${c.magnetAngle}°, aimantation ${c.magnetization === "axial" ? "axiale" : c.magnetization === "thickness" ? "épaisseur" : "transversale"}, polarité ${c.polarity === 1 ? "N/S" : "S/N"}.`;

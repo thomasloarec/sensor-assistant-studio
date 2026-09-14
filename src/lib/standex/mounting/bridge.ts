@@ -19,8 +19,14 @@ import {
 } from "./geometry";
 import { withComputed } from "./simulate";
 
-const lateralAxis = (approachId: string): Vec3 => (approachId === "D3" ? [0, 0, 1] : [1, 0, 0]);
-const approachAxis = (approachId: string): Vec3 => (approachId === "D3" ? [1, 0, 0] : [0, 0, 1]);
+/** D3 et l'approche frontale F1 suivent l'axe longitudinal X : leur décalage
+ * latéral se lit donc sur Z, exactement comme D3. D1 approche par la face
+ * latérale (Z) et son décalage se lit sur X. */
+const LONGITUDINAL = new Set(["D3", "F1"]);
+const lateralAxis = (approachId: string): Vec3 =>
+  LONGITUDINAL.has(approachId) ? [0, 0, 1] : [1, 0, 0];
+const approachAxis = (approachId: string): Vec3 =>
+  LONGITUDINAL.has(approachId) ? [1, 0, 0] : [0, 0, 1];
 /** Point du cycle utilisé pour lire la pose d'un montage importé. 0 = repos. */
 export const REFERENCE_CYCLE_POINT = 0;
 

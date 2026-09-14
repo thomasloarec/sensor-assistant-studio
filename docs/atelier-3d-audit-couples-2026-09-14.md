@@ -107,6 +107,23 @@ demi-longueurs projetées des deux corps. La note affichée rappelle que ces val
 sont **indicatives et dépendantes de l'environnement**, pas un seuil nominal mesuré.
 Aucune valeur n'est empruntée entre M36, M37 et M38 (vérifié par test).
 
+**Orientation documentée.** Le boîtier capteur porte sa collerette vers +X : un aimant
+placé en +X ne lui fait face qu'après une rotation relative de **180° autour de Y**.
+Cette orientation est portée par le profil (`relativeRotationDeg`), utilisée par la
+validation (`ORIENTATION_OFF_TEMPLATE` compare à l'orientation du profil, plus à un zéro
+codé en dur), par la suggestion (`rotationDeg = [0, 180, 0]`, normale de la face active
+`magnetNormal = -X`) et par l'atelier (`documentedMagnetAngleDeg`, appliqué à la
+sélection du capteur et au changement d'approche). Les approches latérales D1 et D3
+restent à 0°. Un aimant frontal laissé à 0° sort du gabarit : contact **indéterminé**.
+Le décalage latéral d'un couple frontal se lit sur **Z** comme en D3, et les entrefers
+d'un montage importé sont mesurés sur l'axe **X** du profil.
+
+**Contacts 1B / 1C.** Le refus est désormais dans le moteur guidé lui-même :
+`thresholdsFor` ne renvoie aucun seuil pour une ligne dont le contact n'est pas 1A,
+`simulateMounting` pousse `CONTACT_FORM_NOT_SIMULATED` et laisse tous les échantillons
+inconnus, et `suggestPose` refuse toute pose de fermeture normalement ouverte. Les
+distances publiées restent lisibles comme documentation.
+
 ## 4. Ce que l'atelier fait maintenant
 
 - Mode d'affichage : **« Données Standex »** quand la ligne du couple existe,
