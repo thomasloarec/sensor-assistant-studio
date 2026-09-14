@@ -546,6 +546,12 @@ export function DesignSpace({
    * enregistré n'est jamais perdu en fermant le panneau. */
   const [workshopMounted, setWorkshopMounted] = useState(false);
   const [openDoc, setOpenDoc] = useState<ViewerDocument | null>(null);
+  /** Critères de suggestion volontairement désactivés par l'utilisateur.
+   * C'est un état d'EXPLORATION local : il n'écrase aucune réponse du dossier. */
+  const [filtersOff, setFiltersOff] = useState<SuggestionFilterId[]>([]);
+  const [selectionAnnounce, setSelectionAnnounce] = useState("");
+  /** Fiche détaillée d'un capteur (cotes, sources, téléchargement STEP). */
+  const [detailSensorId, setDetailSensorId] = useState<string | null>(null);
   const [workshop, setWorkshop] = useState<WorkshopConfig | null>(null);
   /** Remonté à chaque chargement d'un AUTRE contenu (import, dossier serveur,
    * variante) : l'atelier est alors réellement remplacé, sans modèle fantôme. */
