@@ -35,6 +35,7 @@ import {
 } from "@/lib/leadmagnet/suggestion-filters";
 import {
   checklistProgress,
+  delegatedQuestion,
   isDelegated,
   projectChecklist,
   DELEGATED_CABLE,
