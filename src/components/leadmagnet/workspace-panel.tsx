@@ -1,4 +1,4 @@
-import { useLocale } from "@/lib/i18n/react";
+import { LanguagePicker, useLocale } from "@/lib/i18n/react";
 import { t } from "@/lib/i18n/core";
 import { BrandLogo } from "@/components/standex/brand-logo";
 
@@ -33,6 +33,8 @@ export interface WorkspacePanelProps {
   onBack?: () => void;
   children: ReactNode;
   navigation?: ReactNode;
+  /** Affiche le choix de langue dans les panneaux plein écran sans menu. */
+  languagePicker?: boolean;
 }
 
 const FOCUSABLE =
@@ -56,6 +58,7 @@ export function WorkspacePanel({
   onBack,
   children,
   navigation,
+  languagePicker = false,
 }: WorkspacePanelProps) {
   useLocale();
   const panelRef = useRef<HTMLDivElement | null>(null);
@@ -154,14 +157,15 @@ export function WorkspacePanel({
                 les panneaux plein écran, où l'en-tête d'application est masqué.
                 Le logo n'est jamais recomposé : bloc « S » sous le plancher de
                 charte du verrou complet. */}
-            <div className="flex shrink-0 items-center gap-2">
+            <div className="workspace-panel-brand flex shrink-0 items-center gap-2">
               <BrandLogo variant="mark" height={22} clearance={false} alt="" />
               <span className="app-header-tool t-label">Sensor Studio</span>
             </div>
-            <h2 className="t-title-s truncate">{title}</h2>
+            <h2 className="workspace-panel-title t-title-s truncate">{title}</h2>
             {description ? <p className="sr-only">{description}</p> : null}
           </div>
 
+          {languagePicker ? <LanguagePicker /> : null}
           {navigation}
           <Button
             variant="ghost"

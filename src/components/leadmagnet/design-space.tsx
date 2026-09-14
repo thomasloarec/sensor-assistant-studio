@@ -305,7 +305,7 @@ function ProjectTitle({ title, onRename }: { title: string; onRename: (next: str
 
   if (!editing)
     return (
-      <div className="flex min-w-[min(100%,20rem)] flex-1 basis-80 items-center gap-2">
+      <div className="project-title-display flex min-w-0 flex-1 items-center gap-2">
         <h1 className="t-title-l min-w-0 truncate" title={title}>
           {title}
         </h1>
@@ -3780,35 +3780,38 @@ export function DesignSpace({
         />
       </div>
       <div className="flex flex-wrap items-center gap-3">
-        <Button variant="outline" className="min-h-11 text-base" onClick={exportDossier}>
-          <Download className="mr-1 h-4 w-4" /> {t("Exporter mon projet")}
-        </Button>
-        <Button
-          variant="outline"
-          className="min-h-11 max-w-full whitespace-normal text-base"
-          asChild
-        >
-          <label className="block w-full max-w-full cursor-pointer text-center sm:w-auto">
-            {t("Reprendre un fichier")}
-            <input
-              type="file"
-              accept="application/json"
-              className="sr-only"
-              onChange={(e) => {
-                const f = e.target.files?.[0];
-                e.target.value = "";
-                if (!f) return;
-                // La garde vit DANS importDossier : tous les chemins protégés.
-                void importDossier(f).then((imported) => {
-                  if (imported && !busyRef.current) {
-                    setPanel(null);
-                    onWorkspaceOpen?.();
-                  }
-                });
-              }}
-            />
-          </label>
-        </Button>
+        {!embedded ? (
+          <>
+            <Button variant="outline" className="min-h-11 text-base" onClick={exportDossier}>
+              <Download className="mr-1 h-4 w-4" /> {t("Exporter mon projet")}
+            </Button>
+            <Button
+              variant="outline"
+              className="min-h-11 max-w-full whitespace-normal text-base"
+              asChild
+            >
+              <label className="block w-full max-w-full cursor-pointer text-center sm:w-auto">
+                {t("Reprendre un fichier")}
+                <input
+                  type="file"
+                  accept="application/json"
+                  className="sr-only"
+                  onChange={(e) => {
+                    const f = e.target.files?.[0];
+                    e.target.value = "";
+                    if (!f) return;
+                    void importDossier(f).then((imported) => {
+                      if (imported && !busyRef.current) {
+                        setPanel(null);
+                        onWorkspaceOpen?.();
+                      }
+                    });
+                  }}
+                />
+              </label>
+            </Button>
+          </>
+        ) : null}
         <Button
           variant="ghost"
           className="min-h-11 text-base"
@@ -4219,14 +4222,13 @@ export function DesignSpace({
       </main>
 
       {/* Panneaux contextuels : le projet reste derrière, la saisie est conservée. */}
-      {/* L'atelier occupe tout l'écran : il reste MONTÉ en permanence, donc le
-          retour au projet ne perd ni réglages, ni caméra, ni fichier importé,
-          et n'applique aucun montage non validé (« Utiliser ce montage » reste
-          la seule action qui reprend le montage dans le dossier). */}
+      {/* L'atelier occupe tout l'écran et reste monté en permanence : le retour
+          au projet ne perd ni réglages, ni caméra, ni fichier importé. */}
       <WorkspacePanel
         open={panel === "atelier" && workshopMounted}
         keepMounted={workshopMounted}
         fullscreen
+        languagePicker
         backLabel={t("Retour au projet")}
         onBack={() => setPanel(null)}
         onOpenChange={(o) => setPanel(o ? "atelier" : null)}
