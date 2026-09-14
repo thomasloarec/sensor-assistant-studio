@@ -15,7 +15,6 @@ import {
   SensitivityComparison,
   useGuidedMounting,
 } from "./guided-mounting";
-import StudioV2 from "./studio-v2";
 import { composeRotations, magnetWorldPosition, simulateMounting } from "@/lib/standex/mounting";
 import type { GuidedMounting } from "@/lib/standex/mounting";
 import type { StudioStudy } from "@/lib/standex/studio-dossier";
@@ -600,25 +599,8 @@ export default function MagneticWorkshop({
         </AppHeader>
       )}
       <div className="mw-intro">
-        <div>
-          <p className="mw-eyebrow">{t("Comprendre avant d'intégrer")}</p>
-          <h1>{t("Est-ce que la détection va se faire dans mon montage ?")}</h1>
-          <p>{t("Placez le capteur et l'aimant. Observez quand le contact change d'état.")}</p>
-        </div>
+        <h1 className="t-title-l">{t("Est-ce que la détection va se faire dans mon montage ?")}</h1>
         <div className="mw-intro-actions">
-          <button
-            className="mw-button mw-secondary"
-            onClick={() =>
-              download(
-                "montage-magnetique.json",
-                JSON.stringify(config, null, 2),
-                "application/json",
-              )
-            }
-          >
-            <Download size={16} />
-            {t("Exporter")}
-          </button>
           <button
             className="mw-button"
             onClick={() => void save()}
@@ -646,18 +628,8 @@ export default function MagneticWorkshop({
         </div>
       )}
       <div className="mw-context-card">
-        <div>
-          <strong>{t(machine ? "Objet 3D actif" : "Importer un objet 3D")}</strong>
-          <p>
-            {machine
-              ? machine.fileName
-              : t(
-                  "GLB autonome, 30 Mo maximum. Le fichier reste dans ce navigateur ; les réglages sont joints au dossier.",
-                )}
-          </p>
-        </div>
         <label className="mw-file-label">
-          {t("Importer mon fichier GLB")}
+          {machine ? machine.fileName : t("Importer mon modèle 3D")}
           <input
             type="file"
             accept=".glb,model/gltf-binary"
@@ -675,6 +647,17 @@ export default function MagneticWorkshop({
           <a href="/models/machine-cafe-bac-mobile.glb" download>
             {t("Télécharger le fichier 3D")}
           </a>
+        </details>
+        <details className="mw-export-menu">
+          <summary>{t("Exporter")}</summary>
+          <button
+            className="mw-text-button"
+            onClick={() =>
+              download("montage-magnetique.json", JSON.stringify(config, null, 2), "application/json")
+            }
+          >
+            {t("Exporter le montage")}
+          </button>
         </details>
       </div>
       <div className={machine ? "mw-layout mw-machine-layout" : "mw-layout"}>
@@ -782,8 +765,8 @@ export default function MagneticWorkshop({
                       </label>
                     )}
                     {reference && publishedRows.length > 0 && (
-                      <div className="panel-block" data-testid="published-rows">
-                        <p className="t-label">{t("Distances publiées pour ce couple")}</p>
+                      <details className="panel-block" data-testid="published-rows">
+                        <summary className="t-label">{t("Distances publiées (B–E, D1–D5)")}</summary>
                         <table className="mw-published-table">
                           <thead>
                             <tr>
@@ -842,7 +825,7 @@ export default function MagneticWorkshop({
                             {t("Voir la source des distances ↗")}
                           </a>
                         )}
-                      </div>
+                      </details>
                     )}
                     <div className="mw-product">
                       <span className="mw-product-icon">
@@ -1878,20 +1861,6 @@ export default function MagneticWorkshop({
           </div>
         </section>
       </div>
-      {/* Registres, comparaison publiée, marges, hypothèses et gel de conception :
-          toutes les actions restent là, simplement repliées par défaut pour que le
-          parcours de montage reste au premier plan. */}
-      <details className="mw-advanced">
-        <summary>{t("Données et outils avancés")}</summary>
-        <StudioV2
-          config={config}
-          onApply={update}
-          initialStudy={initialStudy}
-          onStudyChange={onStudyChange}
-          dossierId={dossierId}
-          revision={revision}
-        />
-      </details>
       <footer className="mw-footer">
         <p>
           <strong>{t(reference ? "Présélection documentée." : "Illustration pédagogique.")}</strong>{" "}
