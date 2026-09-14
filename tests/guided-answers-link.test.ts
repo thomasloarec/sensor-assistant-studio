@@ -11,7 +11,7 @@
  *   sérialisables.
  */
 import { describe, expect, test } from "bun:test";
-import { newDossier, proposeRequirement, type DesignDossier } from "@/lib/leadmagnet/dossier";
+import { createDossier, proposeRequirement, type DesignDossier } from "@/lib/leadmagnet/dossier";
 import { buildDossierExport, parseDossierExport } from "@/lib/leadmagnet/dossier-io";
 import {
   delegatedQuestion,
@@ -41,7 +41,7 @@ describe("texte libre des six questions", () => {
 
   for (const value of freeText) {
     test(`« ${value} » ne produit aucun filtre`, () => {
-      let d = newDossier("fr");
+      let d = createDossier("fr");
       for (const key of ["detection_goal", "mounting", "envelope", "environment"]) {
         d = proposeRequirement(d, key, { value, source: "user" });
       }
@@ -54,13 +54,13 @@ describe("texte libre des six questions", () => {
 
 describe("choix structurés explicites", () => {
   test("une fixation cliquée crée le filtre fixation, et lui seul", () => {
-    const d: DesignDossier = { ...newDossier("fr"), mounting: { kind: "screw" } };
+    const d: DesignDossier = { ...createDossier("fr"), mounting: { kind: "screw" } };
     expect(filtersOf(d)).toEqual(["fixation"]);
   });
 
   test("un trou renseigné ajoute le filtre de forme insérée", () => {
     const d: DesignDossier = {
-      ...newDossier("fr"),
+      ...createDossier("fr"),
       mounting: { kind: "press_fit", holeDiameterMm: 6 },
     };
     expect(filtersOf(d)).toEqual(["fixation", "forme"]);
@@ -68,7 +68,7 @@ describe("choix structurés explicites", () => {
 
   test("un trou laissé à zéro reste inconnu : pas de filtre de forme", () => {
     const d: DesignDossier = {
-      ...newDossier("fr"),
+      ...createDossier("fr"),
       mounting: { kind: "press_fit", holeDiameterMm: 0 },
     };
     expect(filtersOf(d)).toEqual(["fixation"]);
@@ -76,7 +76,7 @@ describe("choix structurés explicites", () => {
 
   test("une seule dimension saisie suffit à un filtre d'encombrement", () => {
     const d: DesignDossier = {
-      ...newDossier("fr"),
+      ...createDossier("fr"),
       envelope: { lengthMm: 25, widthMm: null, heightMm: null },
     };
     expect(filtersOf(d)).toEqual(["encombrement"]);
@@ -85,7 +85,7 @@ describe("choix structurés explicites", () => {
 
 describe("« Je ne sais pas encore »", () => {
   test("enregistre la question comme traitée sans valeur ni filtre", () => {
-    const d = aside(aside(newDossier("fr"), "mounting"), "envelope");
+    const d = aside(aside(createDossier("fr"), "mounting"), "envelope");
     expect(delegatedQuestionKeys(d).sort()).toEqual(["envelope", "mounting"]);
     expect(isDelegated(d, delegatedQuestion("mounting"))).toBe(true);
     expect(d.mounting.kind).toBe("undecided");
@@ -103,13 +103,13 @@ describe("« Je ne sais pas encore »", () => {
   });
 
   test("un dossier neuf n'a rien de traité", () => {
-    const items = projectChecklist(newDossier("fr"));
+    const items = projectChecklist(createDossier("fr"));
     expect(items.every((i) => i.state === "todo")).toBe(true);
     expect(checklistProgress(items).handled).toBe(0);
   });
 
   test("une vraie réponse reprend la main sur la délégation", () => {
-    const d = proposeRequirement(aside(newDossier("fr"), "mounting"), "mounting", {
+    const d = proposeRequirement(aside(createDossier("fr"), "mounting"), "mounting", {
       value: "vissé sur une équerre",
       source: "user",
     });
@@ -121,7 +121,7 @@ describe("« Je ne sais pas encore »", () => {
 
 describe("compatibilité des dossiers existants", () => {
   test("un dossier sans delegatedDecisions se relit et se réexporte", () => {
-    const base = newDossier("fr");
+    const base = createDossier("fr");
     const raw = buildDossierExport(base);
     delete (raw.dossier as { delegatedDecisions?: unknown }).delegatedDecisions;
     const parsed = parseDossierExport(raw);
@@ -132,7 +132,7 @@ describe("compatibilité des dossiers existants", () => {
   });
 
   test("les décisions mises de côté survivent à un aller-retour", () => {
-    const d = aside(newDossier("fr"), "electrical");
+    const d = aside(createDossier("fr"), "electrical");
     const parsed = parseDossierExport(buildDossierExport(d));
     expect(parsed.ok).toBe(true);
     if (!parsed.ok) return;
