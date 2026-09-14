@@ -1030,7 +1030,9 @@ export default function MagneticWorkshop({
                     <p className="mw-help">
                       {t(
                         reference
-                          ? "Table Standex, axes parallèles. Modifier l'orientation passe en démonstration fictive."
+                          ? config.geometry === "F1"
+                            ? "Table Standex, faces en vis-à-vis (aimant à 180°). Modifier l'orientation passe en démonstration fictive."
+                            : "Table Standex, axes parallèles. Modifier l'orientation passe en démonstration fictive."
                           : "La position du boîtier et l'axe Nord–Sud sont réglables séparément. Les distances restent fictives.",
                       )}
                     </p>

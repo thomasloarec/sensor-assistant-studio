@@ -569,7 +569,7 @@ export function summarizeWorkshop(c: WorkshopConfig): string {
     publishedSensorReference(c.sensorId, c.sensitivity, c.magnetModel) ?? sensorById(c.sensorId).name;
   const setup =
     c.mode === "reference"
-      ? `${reference} + ${c.magnetModel} ; approche ${c.geometry}, axes parallèles.`
+      ? `${reference} + ${c.magnetModel} ; approche ${c.geometry}, ${c.geometry === "F1" ? "faces en vis-à-vis (aimant à 180°)" : "axes parallèles"}.`
       : c.machine
         ? `${sensorById(c.sensorId).name} · Démonstration fictive dans ${c.machine.fileName} ; axe Nord–Sud local ${c.magnetization === "axial" ? "X" : c.magnetization === "thickness" ? "Y" : "Z"}, polarité ${c.polarity === 1 ? "N/S" : "S/N"}.`
         : `${sensorById(c.sensorId).name} · Démonstration fictive ; ${c.machine ? "intégration dans une machine" : c.motion === "slide" ? "passage latéral" : c.motion === "pivot" ? "pivot" : "approche " + c.geometry} ; axe reed ${c.sensorAngle}°, aimant ${c.magnetAngle}°, aimantation ${c.magnetization === "axial" ? "axiale" : c.magnetization === "thickness" ? "épaisseur" : "transversale"}, polarité ${c.polarity === 1 ? "N/S" : "S/N"}.`;
