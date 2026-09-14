@@ -46,8 +46,9 @@ describe("écran Résultat", () => {
   test("détection prévue : distances enregistrées, jamais recalculées", () => {
     const html = render(pair());
     expect(html).toContain('data-verdict="expected"');
-    expect(html).toContain("15");
-    expect(html).toContain("17,5");
+    // Le séparateur décimal suit la langue active ; la valeur, elle, est celle enregistrée.
+    expect(html).toMatch(/15 mm/);
+    expect(html).toMatch(/17[.,]5 mm/);
     expect(html).toContain("Confirmer avec Standex →");
     expect(html).not.toContain("Demander un essai →");
   });
