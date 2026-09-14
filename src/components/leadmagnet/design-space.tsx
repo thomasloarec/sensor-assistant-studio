@@ -82,7 +82,7 @@ import {
   estimateCableLength,
   resetRouting,
   routingPoints,
-  RANGE_CABLE_LENGTH_NOTES,
+  rangeCableLengthNote,
   uncoveredMotionStates,
   undoRoutingPick,
   type CablingConfig,
