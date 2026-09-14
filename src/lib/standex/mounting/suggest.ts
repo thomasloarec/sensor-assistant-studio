@@ -1,9 +1,15 @@
-import { locatedProfile, profileFor, thresholdsFor } from "./profiles";
+import {
+  documentedRelativeRotation,
+  locatedProfile,
+  profileFor,
+  simulatedContactForm,
+  thresholdsFor,
+} from "./profiles";
 import type { MountingProfile } from "./profiles";
 import type { GuidedMounting } from "./contract";
 import { withComputed } from "./simulate";
 import { centreOffsetMm } from "./simulate";
-import { add, bodiesCollide, composeRotations, scale, toWorldPoint } from "./geometry";
+import { add, bodiesCollide, composeRotations, rotateVec, scale, toWorldPoint } from "./geometry";
 import type { Pose, Vec3 } from "./geometry";
 
 export interface MountingSuggestion {
@@ -19,6 +25,9 @@ export interface MountingSuggestion {
   offsetsMm: Vec3;
   rotationDeg: Vec3;
   axis: Vec3;
+  /** Normale de la face active de l'aimant, dans le repère capteur. En approche
+   * frontale elle pointe vers le capteur (-X) : les deux faces se font face. */
+  magnetNormal: Vec3;
   referencePlane: "XZ" | "YZ";
   /** Le gabarit reste schématique : aucun datum caractérisé. */
   schematic: true;
@@ -38,13 +47,19 @@ export function suggestPose(
   // Distances documentées sans trajectoire : aucune pose ne peut être proposée.
   const profile = locatedProfile(found);
   if (!profile) return { ok: false, reason: "APPROACH_NOT_LOCATED" };
+  // Contact 1B / 1C : la ligne reste documentaire, aucune pose de fermeture
+  // normalement ouverte n'est proposée.
+  if (!simulatedContactForm(profile, m.couple.sensitivityClass))
+    return { ok: false, reason: "CONTACT_FORM_NOT_SIMULATED" };
   const pair = thresholdsFor(profile, m.couple.sensitivityClass);
   if (!pair) return { ok: false, reason: "CLASS_NOT_PUBLISHED" };
-  const aligned: Pose = { positionMm: [0, 0, 0], rotationDeg: [0, 0, 0] };
+  // Orientation documentée de l'approche : faces en vis-à-vis en frontal.
+  const rotationDeg = documentedRelativeRotation(profile.approachId);
+  const aligned: Pose = { positionMm: [0, 0, 0], rotationDeg };
   const offset = centreOffsetMm({ ...m, relative: aligned }, profile);
   const relative: Pose = {
     positionMm: scale(profile.axis, pair[0] + offset),
-    rotationDeg: [0, 0, 0],
+    rotationDeg: [...rotationDeg] as Vec3,
   };
   if (bodiesCollide(m.couple.sensorId, m.couple.magnetId, relative))
     return { ok: false, reason: "COLLISION" };
@@ -59,8 +74,9 @@ export function suggestPose(
       startGapMm: pair[1],
       endGapMm: pair[0],
       offsetsMm: [...relative.positionMm] as Vec3,
-      rotationDeg: [0, 0, 0],
+      rotationDeg: [...rotationDeg] as Vec3,
       axis: profile.axis,
+      magnetNormal: rotateVec(profile.axis, rotationDeg),
       referencePlane: profile.referencePlane,
       schematic: true,
       sourceRef: profile.provenance.sourceRef,
