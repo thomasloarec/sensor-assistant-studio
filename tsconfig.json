@@ -12,6 +12,7 @@
     "verbatimModuleSyntax": false,
     "noEmit": true,
 
+    "resolveJsonModule": true,
     "skipLibCheck": true,
     "strict": true,
     "noUnusedLocals": false,

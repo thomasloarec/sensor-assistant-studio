@@ -1759,20 +1759,79 @@ export function DesignSpace({
     </>
   );
 
-  /** Classement par plausibilité RÉELLE (contraintes explicites), jamais par
-   * secteur : les candidats retenus puis à vérifier d'abord, le sur mesure
-   * toujours visible, les exclusions techniques conservées et consultables. */
-  const plausibleCandidates = useMemo(
+  /* ---------------------------------------------------------------- */
+  /* Filtres déduits des réponses structurées                          */
+  /* ---------------------------------------------------------------- */
+  /** Ces filtres ne viennent QUE des réponses structurées (montage déclaré,
+   * diamètre de trou, encombrement chiffré). Aucun nom d'application n'est
+   * interprété. Les désactiver n'écrit rien dans le dossier : c'est une aide à
+   * l'exploration, pas une exigence. */
+  const filterInput = { mounting: dossier.mounting, envelope: dossier.envelope };
+  const answerFilters = useMemo(
+    () => suggestionFilters({ mounting: dossier.mounting, envelope: dossier.envelope }),
+    [dossier.mounting, dossier.envelope],
+  );
+  const activeFilterIds = useMemo(
+    () => answerFilters.map((f) => f.id).filter((id) => !filtersOff.includes(id)),
+    [answerFilters, filtersOff],
+  );
+  /** Chaque candidat porte les filtres ACTIFS qui l'écartent. Lever un filtre
+   * fait réellement réapparaître les capteurs concernés : la liste n'est pas
+   * pré-réduite en amont. */
+  const candidateRows = useMemo(
     () =>
       candidates
-        .filter((c) => c.status !== "excluded" || c.id === CUSTOM_SENSOR_ID)
-        .sort((a, b) => (a.status === "kept" ? 0 : 1) - (b.status === "kept" ? 0 : 1)),
-    [candidates],
+        .map((c) => ({
+          candidate: c,
+          blocked: blockedBy(sensorById(c.id), answerFilters, activeFilterIds, {
+            mounting: dossier.mounting,
+            envelope: dossier.envelope,
+          }),
+        }))
+        .sort(
+          (a, b) =>
+            (a.candidate.status === "kept" ? 0 : a.candidate.status === "to_verify" ? 1 : 2) -
+            (b.candidate.status === "kept" ? 0 : b.candidate.status === "to_verify" ? 1 : 2),
+        ),
+    [candidates, answerFilters, activeFilterIds, dossier.mounting, dossier.envelope],
+  );
+  const plausibleCandidates = useMemo(
+    () => candidateRows.filter((r) => r.blocked.length === 0),
+    [candidateRows],
   );
   const otherCandidates = useMemo(
-    () => candidates.filter((c) => c.status === "excluded" && c.id !== CUSTOM_SENSOR_ID),
-    [candidates],
+    () => candidateRows.filter((r) => r.blocked.length > 0),
+    [candidateRows],
   );
+
+  /** Choisir un capteur = une présélection de GAMME, jamais une commande ni une
+   * validation R&D. La délégation à Standex est levée par ce choix explicite. */
+  const chooseSensor = (id: string, name: string) => {
+    setDossier((d) => ({
+      ...d,
+      selectedSensorId: id,
+      sensorSyncConfirmed: d.workshopSensorId === id,
+      delegatedDecisions: (d.delegatedDecisions ?? []).filter((k) => k !== DELEGATED_SENSOR),
+    }));
+    setSelectionAnnounce(
+      msg("{0} est choisi pour votre projet. Le résumé du projet est mis à jour.", [name]),
+    );
+  };
+  const delegateSensor = () => {
+    setDossier((d) => ({
+      ...d,
+      selectedSensorId: null,
+      sensorSyncConfirmed: true,
+      delegatedDecisions: [
+        ...(d.delegatedDecisions ?? []).filter((k) => k !== DELEGATED_SENSOR),
+        DELEGATED_SENSOR,
+      ],
+    }));
+    setSelectionAnnounce(
+      t("Le choix du capteur est confié à Standex. Ce n'est pas une validation technique."),
+    );
+  };
+
 
   const candidatsSection = (
     <div className="space-y-4">
