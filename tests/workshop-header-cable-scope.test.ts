@@ -20,10 +20,14 @@ describe("en-tête des panneaux : marque et nom de l'outil (point 11)", () => {
   });
 });
 
-describe("outil de pointage du câble : réservé à l'étape câble", () => {
-  test("le bloc n'est rendu qu'à l'étape 4 ou pointage actif", () => {
+describe("outil de pointage du câble : réservé au pointage actif", () => {
+  // La navigation en quatre étapes a disparu de l'atelier recadré : le
+  // configurateur de câble vit dans « Avec Standex ». Le pointage 3D reste
+  // disponible depuis les réglages avancés et n'apparaît dans la scène que
+  // lorsqu'il est RÉELLEMENT actif.
+  test("le bloc n'est rendu que lorsque le pointage est actif", () => {
     expect(WORKSHOP).toContain(
-      'cableRouting && (step === 3 || tool === "cable") ? (',
+      'cableRouting && tool === "cable" ? (',
     );
   });
 
