@@ -48,10 +48,12 @@ describe("barre et disposition", () => {
     expect(CSS).toContain("grid-template-columns: 320px minmax(0, 1fr)");
     expect(CSS).toMatch(/\.mw-stage \.mw-controls \{[^}]*overflow: visible/s);
   });
-  test("sous 1024 px, la colonne passe au-dessus de la scène", () => {
+  test("sous 1024 px, tout s'empile et la scène reste en tête", () => {
     expect(CSS).toMatch(
       /@media \(max-width: 1023px\) \{\s*\.mw-stage \.mw-stage-grid \{\s*grid-template-columns: minmax\(0, 1fr\)/,
     );
+    expect(CSS).toMatch(/\.mw-stage \.mw-main \{\s*order: 1;/);
+    expect(CSS).toMatch(/\.mw-stage \.mw-controls \{\s*order: 2;/);
   });
   test("la scène garde au moins 420 px de hauteur", () => {
     expect(CSS).toMatch(/\.mw-stage \.mw-canvas \{[^}]*min-height: 420px/s);
