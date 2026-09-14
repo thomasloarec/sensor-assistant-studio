@@ -9755,12 +9755,12 @@
     "Il collegamento con il team Standex non è ancora attivo: non è stato inviato nulla.",
     "Standex チームとの連携はまだ有効化されていません。送信されたデータはありません。"
   ],
-  "La liaison avec l'équipe Standex n'est pas encore activée : votre dossier n'a pas été envoyé.": [
+  "La liaison avec l'équipe Standex n'est pas encore activée : votre projet n'a pas été envoyé.": [
     "The connection with the Standex team is not yet activated: your case file has not been sent.",
     "与Standex团队的连接尚未激活：您的案件尚未发送。",
     "Die Verbindung zum Standex-Team ist noch nicht aktiviert: Ihre Fallakte wurde nicht gesendet.",
-    "El enlace con el equipo de Standex aún no está activado: su expediente no ha sido enviado.",
-    "Связь с командой Standex еще не активирована: ваше досье не отправлено.",
+    "El enlace con el equipo de Standex aún no está activado: su proyecto no ha sido enviado.",
+    "Связь с командой Standex еще не активирована: ваше проект не отправлено.",
     "Il collegamento con il team Standex non è ancora attivo: la vostra pratica non è stata inviata.",
     "Standexチームとの接続がまだ有効化されていません。ケースファイルは送信されませんでした。"
   ],
@@ -15613,15 +15613,6 @@
     "Ответ R&D",
     "Riscontro R&D",
     "R&Dフィードバック"
-  ],
-  "Retour au dossier": [
-    "Back to dossier",
-    "返回档案",
-    "Zurück zum Dossier",
-    "Volver al expediente",
-    "Назад к досье",
-    "Torna al dossier",
-    "資料に戻る"
   ],
   "Retour au projet": [
     "Back to the project",

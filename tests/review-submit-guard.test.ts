@@ -140,7 +140,7 @@ describe("verrou de transmission", () => {
   });
 
   test("libellé contextuel de vérification", () => {
-    expect(reviewOperationLabel("validation")).toBe("Vérification du dossier…");
+    expect(reviewOperationLabel("validation")).toBe("Vérification du projet…");
   });
 });
 
