@@ -641,7 +641,7 @@ export function DesignSpace({
   const [busyOperation, setBusyOperation] = useState<ReviewOperation>(null);
   // Verrou dédié au choix NDA : une seule bascule à la fois, relectures inhibées.
   const ndaToggleRef = useRef(false);
-  const ndaSectionRef = useRef<HTMLButtonElement | null>(null);
+  const ndaSectionRef = useRef<HTMLDivElement | null>(null);
   const [reviewSections, setReviewSections] = useState<string[]>(["resume", "projet", "envoi"]);
 
   /** Remplissage local du NDA : aperçu puis téléchargement, sans aucune transmission. */
@@ -911,7 +911,8 @@ export function DesignSpace({
     setReviewSections((sections) => (sections.includes("nda") ? sections : [...sections, "nda"]));
     requestAnimationFrame(() => {
       ndaSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-      ndaSectionRef.current?.focus();
+      // Le bloc n'est pas un contrôle : le focus va sur sa première case.
+      ndaSectionRef.current?.querySelector<HTMLElement>("button, input")?.focus();
     });
   }, []);
 
@@ -3241,6 +3242,64 @@ export function DesignSpace({
       ) : null}
     </div>
   );
+
+  /** Libellé du couple réellement testé : reprise du verdict enregistré, jamais
+   * un recalcul, jamais une validation technique. */
+  const reviewTested = latestTestedPair(dossier.testedPairs);
+  const reviewTestedLabel = reviewTested
+    ? [
+        `${reviewTested.sensorId} + ${reviewTested.magnetId}`,
+        t(APPROACH_WORD[reviewTested.approach] ?? reviewTested.approach),
+        reviewTested.verdict === "expected" && reviewTested.pullInMm !== null
+          ? msg("détection prévue (ferme {0} mm, ouvre {1} mm)", [
+              formatMm(reviewTested.pullInMm),
+              reviewTested.dropOutMm === null ? "?" : formatMm(reviewTested.dropOutMm),
+            ])
+          : reviewTested.verdict === "none"
+            ? t("pas de détection sur ce cycle")
+            : reviewTested.verdict === "unpublished"
+              ? t("distances non publiées")
+              : t("position non documentée"),
+      ].join(" · ")
+    : null;
+
+  const [summaryMessage, setSummaryMessage] = useState<string | null>(null);
+  /** Résumé technique complet : PDF quand la fiche de revue existe réellement,
+   * sinon le Markdown déjà exporté aujourd'hui. Aucun envoi. */
+  const downloadTechnicalSummary = useCallback(async () => {
+    setSummaryMessage(null);
+    const base = `resume-technique-r${dossier.revision}`;
+    try {
+      if (dossier.designFreeze) {
+        const { reviewPdf } = await import("@/lib/standex/studio-pdf");
+        const bytes = await reviewPdf(dossier.designFreeze, "/brand/logo-lockup.png", (x) => t(x));
+        const blob = new Blob([bytes as unknown as BlobPart], { type: "application/pdf" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `${base}.pdf`;
+        a.click();
+        URL.revokeObjectURL(url);
+        return;
+      }
+      const blob = new Blob([technicalSummary(dossier, (x) => t(x))], {
+        type: "text/markdown;charset=utf-8",
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${base}.md`;
+      a.click();
+      URL.revokeObjectURL(url);
+      setSummaryMessage(
+        t(
+          "Aucune fiche de revue figée n'existe encore : le résumé est téléchargé en Markdown, avec le même contenu.",
+        ),
+      );
+    } catch {
+      setSummaryMessage(t("Le résumé n'a pas pu être produit sur cet appareil."));
+    }
+  }, [dossier]);
 
   /** Contexte projet détaillé : dates, échantillons, durée, délégation. */
   const projectContextFields = (
