@@ -28,6 +28,7 @@ import {
   sensorById,
   customLayout,
   electricalDetailsAllowed,
+  formatMm,
 } from "@/lib/standex/sensor-catalog";
 import type { SensorModel } from "@/lib/standex/sensor-catalog";
 
@@ -150,22 +151,39 @@ export function thumbnailSilhouette(model: SensorModel): string {
   }
 }
 
+/** Pas de graduation lisible pour l'échelle d'un dessin : une valeur ronde
+ * proche du tiers du cadrage. Aucune échelle commune n'est imposée à tous les
+ * capteurs — un MK24 de 5 mm et un MK27 de 50 mm n'ont pas le même cadrage. */
+export function niceScaleStep(span: number): number {
+  const candidates = [0.5, 1, 2, 5, 10, 20, 50, 100];
+  const target = span / 3;
+  return candidates.reduce((best, v) =>
+    Math.abs(v - target) < Math.abs(best - target) ? v : best,
+  );
+}
+
 function Fallback({
   model,
   reason,
   cabled,
   pair,
   fitToView = false,
+  scaleBar = false,
 }: {
   model: SensorModel;
   reason: string;
   cabled: boolean;
   pair?: { magnetId: string; approach: string };
   fitToView?: boolean;
+  /** Règle graduée dessinée DANS le repère millimétrique du dessin : elle est
+   * donc exacte pour ce cadrage précis, et n'apparaît pas sur la vue 3D
+   * inclinée où elle serait trompeuse. */
+  scaleBar?: boolean;
 }) {
   const magnet = pair ? pairedMagnetModel(pair.magnetId, model.id) : null;
   const span = Math.max(...model.body, model.terminalSpan ?? 0);
   const layout = magnet ? pairLayout(model, magnet, pair!.approach) : null;
+  const step = niceScaleStep(span);
   return (
     <div className="candidate-thumb-fallback" role="img" aria-label={`${model.name} — ${reason}`}>
       <svg
@@ -193,6 +211,25 @@ function Fallback({
             </g>
           )}
         </g>
+        {fitToView && scaleBar ? (
+          <g
+            className="candidate-thumb-scale"
+            transform={`translate(${-span * 0.94} ${span * 0.44})`}
+          >
+            <line x1={0} y1={0} x2={step} y2={0} strokeWidth={span * 0.014} />
+            <line x1={0} y1={-span * 0.05} x2={0} y2={span * 0.05} strokeWidth={span * 0.014} />
+            <line
+              x1={step}
+              y1={-span * 0.05}
+              x2={step}
+              y2={span * 0.05}
+              strokeWidth={span * 0.014}
+            />
+            <text x={step + span * 0.06} y={span * 0.05} fontSize={span * 0.11}>
+              {formatMm(step)} mm
+            </text>
+          </g>
+        ) : null}
       </svg>
       <span className="t-caption">{reason}</span>
     </div>
@@ -224,12 +261,17 @@ export function CandidateThumbnail({
   cabled = false,
   pair,
   fitToView = false,
+  size = "compact",
+  scaleBar = false,
 }: {
   sensorId: string;
   livePreview?: boolean;
   cabled?: boolean;
   pair?: { magnetId: string; approach: string };
   fitToView?: boolean;
+  /** Hauteur de la vignette. Le cadrage reste propre à chaque capteur. */
+  size?: "compact" | "large";
+  scaleBar?: boolean;
 }) {
   const model = pairedMagnetModel(sensorId) ?? sensorById(sensorId);
   const host = useRef<HTMLDivElement>(null);
@@ -279,7 +321,7 @@ export function CandidateThumbnail({
   return (
     <div
       ref={host}
-      className="candidate-thumb"
+      className={size === "large" ? "candidate-thumb candidate-thumb-large" : "candidate-thumb"}
       data-live={live ? "3d" : "2d"}
       data-sensor={model.id}
     >
@@ -294,6 +336,7 @@ export function CandidateThumbnail({
                 reason={t("Aperçu 3D en cours")}
                 cabled={cabled}
                 fitToView={fitToView}
+                scaleBar={scaleBar}
                 {...(pair ? { pair } : {})}
               />
             }
@@ -322,6 +365,7 @@ export function CandidateThumbnail({
           }
           cabled={cabled}
           fitToView={fitToView}
+          scaleBar={scaleBar}
           {...(pair ? { pair } : {})}
         />
       )}

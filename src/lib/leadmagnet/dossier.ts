@@ -95,6 +95,11 @@ export interface DesignDossier {
   workshopAsset: { assetKey: string; fileName: string; storage: StorageMode } | null;
   /** Gamme suivie (ce n'est PAS une référence commandable). */
   selectedSensorId: string | null;
+  /** Décisions explicitement confiées à Standex (« à définir avec Standex »).
+   * C'est une décision PRISE dans le parcours, jamais une valeur technique
+   * connue ni une validation R&D. Absent des dossiers antérieurs : son absence
+   * n'est pas une erreur et ne bloque aucune reprise. */
+  delegatedDecisions?: readonly string[];
   /** Le capteur affiché dans l'atelier ne suit la gamme choisie qu'après confirmation. */
   workshopSensorId: string | null;
   sensorSyncConfirmed: boolean;

@@ -1371,6 +1371,25 @@
   line-height: 1.5;
   display: block;
 }
+.mw-catalog-magnet-materials {
+  display: grid;
+  gap: 4px;
+  margin: 0 0 12px;
+  font: var(--mw-t-dense);
+  color: var(--muted-foreground);
+}
+.mw-catalog-magnet-materials div {
+  display: flex;
+  gap: 6px;
+}
+.mw-catalog-magnet-materials dt {
+  font-weight: 600;
+  color: var(--foreground);
+}
+.mw-catalog-magnet-materials dd {
+  margin: 0;
+}
+
 .mw-catalog-list article > a {
   display: flex;
   align-items: center;

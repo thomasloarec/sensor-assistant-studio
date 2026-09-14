@@ -21,7 +21,7 @@ import type { Plugin } from "vite";
  * seulement dans les modules 3D. Les autres modules gardent l'instrumentation.
  */
 const THREE_MODULES =
-  /\/src\/components\/standex\/workshop\/(scene|machine-scene|candidate-thumbnail-scene)\.tsx$/;
+  /\/src\/components\/(standex\/workshop\/(scene|machine-scene|candidate-thumbnail-scene)|leadmagnet\/connector-preview-scene)\.tsx$/;
 
 const ATTRIBUTE = "data-tsd-source";
 
