@@ -309,10 +309,11 @@ export function publishedClasses(
   magnetId: string,
   registry = PUBLISHED_REGISTRY,
 ): string[] {
+  const magnet = publishedMagnetFamily(magnetId);
   return [
     ...new Set(
       registry.rows
-        .filter((r) => r.sensorFamily === sensorFamily && r.magnetId === magnetId)
+        .filter((r) => r.sensorFamily === sensorFamily && r.magnetId === magnet)
         .map((r) => r.sensitivityClass),
     ),
   ].sort();
@@ -323,10 +324,11 @@ export function publishedApproaches(
   magnetId: string,
   registry = PUBLISHED_REGISTRY,
 ): string[] {
+  const magnet = publishedMagnetFamily(magnetId);
   return [
     ...new Set(
       registry.rows
-        .filter((r) => r.sensorFamily === sensorFamily && r.magnetId === magnetId)
+        .filter((r) => r.sensorFamily === sensorFamily && r.magnetId === magnet)
         .map((r) => r.approachId),
     ),
   ].sort();
@@ -338,12 +340,13 @@ export function publishedSensorReference(
   magnetId: string,
   registry = PUBLISHED_REGISTRY,
 ): string | null {
+  const magnet = publishedMagnetFamily(magnetId);
   return (
     registry.rows.find(
       (r) =>
         r.sensorFamily === sensorFamily &&
         r.sensitivityClass === sensitivityClass &&
-        r.magnetId === magnetId,
+        r.magnetId === magnet,
     )?.sensorReference ?? null
   );
 }
