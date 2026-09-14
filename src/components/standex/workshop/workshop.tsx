@@ -47,6 +47,7 @@ import {
   EDUCATION_NOTE,
   REFERENCE_NOTE,
   referenceNoteFor,
+  documentedMagnetAngleDeg,
   publishedFamilyNoteFor,
   MODEL_VERSION,
   parseWorkshopConfig,
