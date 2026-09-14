@@ -1,5 +1,7 @@
 import { useLocale } from "@/lib/i18n/react";
 import { t } from "@/lib/i18n/core";
+import { BrandLogo } from "@/components/standex/brand-logo";
+
 /** Panneau contextuel de l'espace projet.
  *
  * Le projet reste visible et accessible derrière : on n'utilise PAS de dialogue
@@ -148,9 +150,18 @@ export function WorkspacePanel({
             </Button>
           ) : null}
           <div className="min-w-0 flex-1">
+            {/* Point 11 : la marque et le nom de l'outil restent visibles dans
+                les panneaux plein écran, où l'en-tête d'application est masqué.
+                Le logo n'est jamais recomposé : bloc « S » sous le plancher de
+                charte du verrou complet. */}
+            <div className="mb-1 flex items-center gap-2">
+              <BrandLogo variant="mark" height={22} clearance={false} alt="" />
+              <span className="app-header-tool t-label">Sensor Studio</span>
+            </div>
             <h2 className="t-title-l">{title}</h2>
             {description ? <p className="t-caption mt-1 hidden sm:block">{description}</p> : null}
           </div>
+
           {navigation}
           <Button
             variant="ghost"
