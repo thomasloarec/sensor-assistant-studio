@@ -1644,7 +1644,7 @@ export function DesignSpace({
             "Rien n'est déduit de votre texte. Ces choix servent seulement à préfiltrer les capteurs, et restent modifiables.",
           )}
         </p>
-        <div className="mt-3 flex flex-wrap gap-3">
+        <div className="guided-envelope-fields mt-3">
           {(
             [
               ["lengthMm", "Longueur"],
@@ -1652,25 +1652,28 @@ export function DesignSpace({
               ["heightMm", "Hauteur"],
             ] as const
           ).map(([k, label]) => (
-            <div key={k} className="w-32">
+            <div key={k} className="guided-envelope-field">
               <Label className="t-label" htmlFor={`guided-${k}`}>
-                {t(label)} (mm)
+                {t(label)}
               </Label>
-              <Input
-                id={`guided-${k}`}
-                className="t-metric w-32 text-right"
-                inputMode="decimal"
-                value={dossier.envelope[k] ?? ""}
-                onChange={(e) => {
-                  const v = num(e.target.value);
-                  setDossier((d) => ({
-                    ...d,
-                    envelope: { ...d.envelope, [k]: v },
-                    updatedAt: new Date().toISOString(),
-                  }));
-                  if (v !== null) setQuestionAside(question.key, false);
-                }}
-              />
+              <div className="guided-envelope-input">
+                <Input
+                  id={`guided-${k}`}
+                  className="t-metric text-right"
+                  inputMode="decimal"
+                  value={dossier.envelope[k] ?? ""}
+                  onChange={(e) => {
+                    const v = num(e.target.value);
+                    setDossier((d) => ({
+                      ...d,
+                      envelope: { ...d.envelope, [k]: v },
+                      updatedAt: new Date().toISOString(),
+                    }));
+                    if (v !== null) setQuestionAside(question.key, false);
+                  }}
+                />
+                <span className="t-metric">mm</span>
+              </div>
             </div>
           ))}
         </div>
@@ -1839,7 +1842,7 @@ export function DesignSpace({
 
           <details className="project-answer-details mt-7">
             <summary className="t-caption flex min-h-11 cursor-pointer list-none items-center gap-2 py-2">
-              {t("Détails de cette réponse")}
+              {t("Ajouter une précision")}
               <span className="project-answer-chevron" aria-hidden="true">
                 ↓
               </span>
@@ -1858,25 +1861,36 @@ export function DesignSpace({
                 {t("Confirmer cette réponse")}
               </Button>
             </div>
+            <div className="mt-4 ml-4">
+              <Label htmlFor="free-constraints" className="t-label">
+                {t("Autre chose à nous dire")}
+              </Label>
+              <Textarea
+                id="free-constraints"
+                rows={3}
+                className="mt-2 text-base"
+                value={dossier.freeConstraints}
+                onChange={(e) => setDossier((d) => ({ ...d, freeConstraints: e.target.value }))}
+              />
+            </div>
           </details>
         </div>
       )}
 
-      <details className="rounded-xl border p-4" open={showAdvanced}>
-        <summary className="min-h-11 cursor-pointer py-2 text-base font-medium">
-          {t("Autre chose à nous dire ? (facultatif)")}
-        </summary>
-        <Label htmlFor="free-constraints" className="sr-only">
-          {t("Autre chose à nous dire")}
-        </Label>
-        <Textarea
-          id="free-constraints"
-          rows={3}
-          className="mt-2 text-base"
-          value={dossier.freeConstraints}
-          onChange={(e) => setDossier((d) => ({ ...d, freeConstraints: e.target.value }))}
-        />
-      </details>
+      {showAdvanced ? (
+        <div className="panel-block">
+          <Label htmlFor="free-constraints-advanced" className="t-label">
+            {t("Ajouter une précision")}
+          </Label>
+          <Textarea
+            id="free-constraints-advanced"
+            rows={3}
+            className="mt-2 text-base"
+            value={dossier.freeConstraints}
+            onChange={(e) => setDossier((d) => ({ ...d, freeConstraints: e.target.value }))}
+          />
+        </div>
+      ) : null}
     </div>
   );
 
@@ -2951,6 +2965,7 @@ export function DesignSpace({
         {checklist.map((item) => (
           <li key={item.id} className="flex flex-wrap items-start gap-3">
             <Badge
+              className="project-summary-badge"
               variant={
                 item.state === "chosen"
                   ? "default"
@@ -3115,9 +3130,9 @@ export function DesignSpace({
             <span className="flex-1">{t("Résumé technique et inconnues")}</span>
           </AccordionTrigger>
           <AccordionContent>
-            <pre className="code-block max-h-[28rem] overflow-y-auto whitespace-pre-wrap">
-              {technicalSummary(dossier, (x) => t(x))}
-            </pre>
+            <div className="panel-block technical-summary-readable">
+              {renderMarkdown(technicalSummary(dossier, (x) => t(x)))}
+            </div>
           </AccordionContent>
         </AccordionItem>
 
@@ -3128,9 +3143,8 @@ export function DesignSpace({
           </AccordionTrigger>
           <AccordionContent className="grid gap-5 md:grid-cols-2">
             <div>
-              <Label className="t-label">
-                {t("Volume annuel de capteurs (entier ou « inconnu »)")}
-              </Label>
+              <Label className="t-label">{t("Volume annuel de capteurs")}</Label>
+              <p className="t-caption mt-1">{t("Entier ou inconnu")}</p>
               <Input
                 className="t-metric mt-2 w-full text-right"
                 value={volumeRaw}
