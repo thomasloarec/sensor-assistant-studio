@@ -24298,5 +24298,257 @@
     "+ Протестировать {0}",
     "+ Testare {0}",
     "+ {0} をテスト"
+  ],
+  "Envoyer à Standex pour confirmation.": [
+    "Send to Standex for confirmation.",
+    "发送给 Standex 确认。",
+    "Zur Bestätigung an Standex senden.",
+    "Enviar a Standex para su confirmación.",
+    "Отправить в Standex на подтверждение.",
+    "Inviare a Standex per conferma.",
+    "確認のため Standex に送信します。"
+  ],
+  "Voici ce que nos ingénieurs recevront. Rien ne part sans votre clic.": [
+    "This is what our engineers will receive. Nothing leaves without your click.",
+    "这是我们工程师将收到的内容。未经您点击，不会发送任何内容。",
+    "Das erhalten unsere Ingenieure. Ohne Ihren Klick wird nichts gesendet.",
+    "Esto es lo que recibirán nuestros ingenieros. Nada se envía sin su clic.",
+    "Вот что получат наши инженеры. Без вашего нажатия ничего не отправляется.",
+    "Ecco cosa riceveranno i nostri ingegneri. Nulla parte senza il vostro clic.",
+    "これがエンジニアに届く内容です。クリックしない限り何も送信されません。"
+  ],
+  "Votre projet": [
+    "Your project",
+    "您的项目",
+    "Ihr Projekt",
+    "Su proyecto",
+    "Ваш проект",
+    "Il vostro progetto",
+    "お客様のプロジェクト"
+  ],
+  "Couple testé": [
+    "Pair tested",
+    "已测试的组合",
+    "Getestetes Paar",
+    "Par probado",
+    "Протестированная пара",
+    "Coppia testata",
+    "テストした組み合わせ"
+  ],
+  "non renseigné": [
+    "not filled in",
+    "未填写",
+    "nicht angegeben",
+    "sin indicar",
+    "не заполнено",
+    "non indicato",
+    "未記入"
+  ],
+  "aucun couple testé pour l'instant": [
+    "no pair tested yet",
+    "目前尚未测试任何组合",
+    "noch kein Paar getestet",
+    "ningún par probado por ahora",
+    "пока ни одна пара не протестирована",
+    "nessuna coppia testata per ora",
+    "まだ組み合わせをテストしていません"
+  ],
+  "détection prévue (ferme {0} mm, ouvre {1} mm)": [
+    "detection expected (closes {0} mm, opens {1} mm)",
+    "预计可检测（{0} mm 闭合，{1} mm 断开）",
+    "Erkennung erwartet (schließt {0} mm, öffnet {1} mm)",
+    "detección prevista (cierra {0} mm, abre {1} mm)",
+    "ожидается срабатывание (замыкание {0} мм, размыкание {1} мм)",
+    "rilevamento previsto (chiude {0} mm, apre {1} mm)",
+    "検出見込み（{0} mm で閉、{1} mm で開）"
+  ],
+  "pas de détection sur ce cycle": [
+    "no detection on this cycle",
+    "此循环中无检测",
+    "keine Erkennung in diesem Zyklus",
+    "sin detección en este ciclo",
+    "нет срабатывания в этом цикле",
+    "nessun rilevamento in questo ciclo",
+    "このサイクルでは検出なし"
+  ],
+  "distances non publiées": [
+    "distances not published",
+    "距离未公开",
+    "Abstände nicht veröffentlicht",
+    "distancias no publicadas",
+    "расстояния не опубликованы",
+    "distanze non pubblicate",
+    "距離は非公開"
+  ],
+  "position non documentée": [
+    "position not documented",
+    "位置无文档记录",
+    "Position nicht dokumentiert",
+    "posición no documentada",
+    "положение не документировано",
+    "posizione non documentata",
+    "位置は未文書化"
+  ],
+  "parallèle": [
+    "parallel",
+    "平行",
+    "parallel",
+    "paralelo",
+    "параллельно",
+    "parallelo",
+    "平行"
+  ],
+  "perpendiculaire": [
+    "perpendicular",
+    "垂直",
+    "senkrecht",
+    "perpendicular",
+    "перпендикулярно",
+    "perpendicolare",
+    "垂直"
+  ],
+  "face à face": [
+    "face to face",
+    "面对面",
+    "Stirnseite an Stirnseite",
+    "cara a cara",
+    "лицом к лицу",
+    "frontale",
+    "対向"
+  ],
+  "Trois questions facultatives": [
+    "Three optional questions",
+    "三个可选问题",
+    "Drei optionale Fragen",
+    "Tres preguntas opcionales",
+    "Три необязательных вопроса",
+    "Tre domande facoltative",
+    "任意の 3 つの質問"
+  ],
+  "Préciser le trajet dans l'atelier câble": [
+    "Set the routing in the cable workshop",
+    "在线缆工作台中确定走线",
+    "Den Verlauf in der Kabel-Werkstatt festlegen",
+    "Precisar el trazado en el taller de cable",
+    "Уточнить трассу в мастерской кабеля",
+    "Precisare il percorso nell'officina cavo",
+    "ケーブル工房で経路を指定"
+  ],
+  "Connecteur": [
+    "Connector",
+    "连接器",
+    "Steckverbinder",
+    "Conector",
+    "Разъём",
+    "Connettore",
+    "コネクター"
+  ],
+  "Standex choisit": [
+    "Standex chooses",
+    "由 Standex 选择",
+    "Standex wählt",
+    "Standex elige",
+    "Выбирает Standex",
+    "Scegli Standex",
+    "Standex が選ぶ"
+  ],
+  "J'ai une préférence": [
+    "I have a preference",
+    "我有偏好",
+    "Ich habe eine Präferenz",
+    "Tengo una preferencia",
+    "У меня есть предпочтение",
+    "Ho una preferenza",
+    "希望があります"
+  ],
+  "Volume par an": [
+    "Volume per year",
+    "年用量",
+    "Menge pro Jahr",
+    "Volumen por año",
+    "Объём в год",
+    "Volume all'anno",
+    "年間数量"
+  ],
+  "Une tranche donne un ordre de grandeur représentatif, jamais une quantité engagée. « Préciser » permet d'entrer le vrai chiffre.": [
+    "A bracket gives a representative order of magnitude, never a committed quantity. Use “specify” to enter the real figure.",
+    "区间只给出代表性的数量级，并非承诺数量。使用“填写具体值”可输入真实数字。",
+    "Eine Spanne gibt eine repräsentative Größenordnung, niemals eine verbindliche Menge. Mit „Präzisieren“ geben Sie die echte Zahl ein.",
+    "Un tramo da un orden de magnitud representativo, nunca una cantidad comprometida. «Precisar» permite introducir la cifra real.",
+    "Диапазон даёт представительный порядок величины, а не обязательство. «Уточнить» позволяет ввести настоящее число.",
+    "Una fascia indica un ordine di grandezza rappresentativo, mai una quantità impegnata. «Precisare» consente di inserire la cifra reale.",
+    "区分は代表的な規模を示すもので、確約数量ではありません。「詳細指定」で実数を入力できます。"
+  ],
+  "Télécharger le résumé technique complet (PDF)": [
+    "Download the full technical summary (PDF)",
+    "下载完整技术摘要（PDF）",
+    "Vollständige technische Zusammenfassung herunterladen (PDF)",
+    "Descargar el resumen técnico completo (PDF)",
+    "Скачать полное техническое резюме (PDF)",
+    "Scaricare il riepilogo tecnico completo (PDF)",
+    "技術サマリー全文をダウンロード（PDF）"
+  ],
+  "Aucune fiche de revue figée n'existe encore : le résumé est téléchargé en Markdown, avec le même contenu.": [
+    "No frozen review sheet exists yet: the summary is downloaded as Markdown, with the same content.",
+    "目前还没有冻结的评审表：摘要以 Markdown 形式下载，内容相同。",
+    "Es existiert noch kein eingefrorenes Prüfblatt: Die Zusammenfassung wird als Markdown mit gleichem Inhalt heruntergeladen.",
+    "Aún no existe una ficha de revisión congelada: el resumen se descarga en Markdown, con el mismo contenido.",
+    "Зафиксированного листа ревью пока нет: резюме скачивается в Markdown с тем же содержанием.",
+    "Non esiste ancora una scheda di revisione congelata: il riepilogo è scaricato in Markdown, con lo stesso contenuto.",
+    "確定した審査シートはまだありません。同じ内容のサマリーを Markdown で保存します。"
+  ],
+  "Le résumé n'a pas pu être produit sur cet appareil.": [
+    "The summary could not be produced on this device.",
+    "无法在此设备上生成摘要。",
+    "Die Zusammenfassung konnte auf diesem Gerät nicht erzeugt werden.",
+    "No se pudo generar el resumen en este dispositivo.",
+    "Резюме не удалось создать на этом устройстве.",
+    "Non è stato possibile produrre il riepilogo su questo dispositivo.",
+    "この端末ではサマリーを作成できませんでした。"
+  ],
+  "Plus de détails sur le projet": [
+    "More details about the project",
+    "更多项目细节",
+    "Weitere Projektdetails",
+    "Más detalles del proyecto",
+    "Больше сведений о проекте",
+    "Altri dettagli sul progetto",
+    "プロジェクトの詳細"
+  ],
+  "Vos coordonnées": [
+    "Your contact details",
+    "您的联系信息",
+    "Ihre Kontaktdaten",
+    "Sus datos de contacto",
+    "Ваши контактные данные",
+    "I vostri contatti",
+    "ご連絡先"
+  ],
+  "E-mail professionnel": [
+    "Work e-mail",
+    "工作邮箱",
+    "Geschäftliche E-Mail",
+    "Correo profesional",
+    "Рабочая электронная почта",
+    "E-mail professionale",
+    "勤務先メールアドレス"
+  ],
+  "Mon projet est confidentiel (NDA Standex)": [
+    "My project is confidential (Standex NDA)",
+    "我的项目属于保密项目（Standex NDA）",
+    "Mein Projekt ist vertraulich (Standex-NDA)",
+    "Mi proyecto es confidencial (NDA de Standex)",
+    "Мой проект конфиденциален (NDA Standex)",
+    "Il mio progetto è riservato (NDA Standex)",
+    "本プロジェクトは秘密扱いです（Standex NDA）"
+  ],
+  "Réponse d'un ingénieur sous 2 jours ouvrés.": [
+    "An engineer replies within 2 business days.",
+    "工程师将在 2 个工作日内回复。",
+    "Antwort eines Ingenieurs innerhalb von 2 Werktagen.",
+    "Un ingeniero responde en 2 días laborables.",
+    "Ответ инженера в течение 2 рабочих дней.",
+    "Risposta di un ingegnere entro 2 giorni lavorativi.",
+    "エンジニアが 2 営業日以内に回答します。"
   ]
 }

@@ -641,7 +641,7 @@ export function DesignSpace({
   const [busyOperation, setBusyOperation] = useState<ReviewOperation>(null);
   // Verrou dédié au choix NDA : une seule bascule à la fois, relectures inhibées.
   const ndaToggleRef = useRef(false);
-  const ndaSectionRef = useRef<HTMLDivElement | null>(null);
+  const ndaSectionRef = useRef<HTMLButtonElement | null>(null);
   const [reviewSections, setReviewSections] = useState<string[]>(["resume", "projet", "envoi"]);
 
   /** Remplissage local du NDA : aperçu puis téléchargement, sans aucune transmission. */
@@ -911,8 +911,7 @@ export function DesignSpace({
     setReviewSections((sections) => (sections.includes("nda") ? sections : [...sections, "nda"]));
     requestAnimationFrame(() => {
       ndaSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-      // Le bloc n'est pas un contrôle : le focus va sur sa première case.
-      ndaSectionRef.current?.querySelector<HTMLElement>("button, input")?.focus();
+      ndaSectionRef.current?.focus();
     });
   }, []);
 
@@ -3947,9 +3946,10 @@ export function DesignSpace({
             </div>
           </div>
 
-          <div className="panel-block-lg space-y-3" ref={ndaSectionRef}>
+          <div className="panel-block-lg space-y-3">
             <label className="flex min-h-11 cursor-pointer items-start gap-3">
               <Checkbox
+                ref={ndaSectionRef}
                 className="mt-1"
                 checked={nda.required}
                 disabled={busy}
