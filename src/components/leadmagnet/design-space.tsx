@@ -4,7 +4,6 @@ import { Link } from "@tanstack/react-router";
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowLeft,
-  Lock,
   Download,
   Upload,
   AlertTriangle,
@@ -192,6 +191,7 @@ import {
   DocumentViewer,
   documentFromBytes,
   documentFromFile,
+  renderMarkdown,
   type ViewerDocument,
 } from "@/components/leadmagnet/document-viewer";
 import { memoryAssetBytes } from "@/lib/standex/machine-assets";
@@ -1644,7 +1644,7 @@ export function DesignSpace({
             "Rien n'est déduit de votre texte. Ces choix servent seulement à préfiltrer les capteurs, et restent modifiables.",
           )}
         </p>
-        <div className="mt-3 flex flex-wrap gap-3">
+        <div className="guided-envelope-fields mt-3">
           {(
             [
               ["lengthMm", "Longueur"],
@@ -1652,25 +1652,28 @@ export function DesignSpace({
               ["heightMm", "Hauteur"],
             ] as const
           ).map(([k, label]) => (
-            <div key={k} className="w-32">
+            <div key={k} className="guided-envelope-field">
               <Label className="t-label" htmlFor={`guided-${k}`}>
-                {t(label)} (mm)
+                {t(label)}
               </Label>
-              <Input
-                id={`guided-${k}`}
-                className="t-metric w-32 text-right"
-                inputMode="decimal"
-                value={dossier.envelope[k] ?? ""}
-                onChange={(e) => {
-                  const v = num(e.target.value);
-                  setDossier((d) => ({
-                    ...d,
-                    envelope: { ...d.envelope, [k]: v },
-                    updatedAt: new Date().toISOString(),
-                  }));
-                  if (v !== null) setQuestionAside(question.key, false);
-                }}
-              />
+              <div className="guided-envelope-input">
+                <Input
+                  id={`guided-${k}`}
+                  className="t-metric text-right"
+                  inputMode="decimal"
+                  value={dossier.envelope[k] ?? ""}
+                  onChange={(e) => {
+                    const v = num(e.target.value);
+                    setDossier((d) => ({
+                      ...d,
+                      envelope: { ...d.envelope, [k]: v },
+                      updatedAt: new Date().toISOString(),
+                    }));
+                    if (v !== null) setQuestionAside(question.key, false);
+                  }}
+                />
+                <span className="t-metric">mm</span>
+              </div>
             </div>
           ))}
         </div>
@@ -1839,7 +1842,7 @@ export function DesignSpace({
 
           <details className="project-answer-details mt-7">
             <summary className="t-caption flex min-h-11 cursor-pointer list-none items-center gap-2 py-2">
-              {t("Détails de cette réponse")}
+              {t("Ajouter une précision")}
               <span className="project-answer-chevron" aria-hidden="true">
                 ↓
               </span>
@@ -1858,25 +1861,36 @@ export function DesignSpace({
                 {t("Confirmer cette réponse")}
               </Button>
             </div>
+            <div className="mt-4 ml-4">
+              <Label htmlFor="free-constraints" className="t-label">
+                {t("Autre chose à nous dire")}
+              </Label>
+              <Textarea
+                id="free-constraints"
+                rows={3}
+                className="mt-2 text-base"
+                value={dossier.freeConstraints}
+                onChange={(e) => setDossier((d) => ({ ...d, freeConstraints: e.target.value }))}
+              />
+            </div>
           </details>
         </div>
       )}
 
-      <details className="rounded-xl border p-4" open={showAdvanced}>
-        <summary className="min-h-11 cursor-pointer py-2 text-base font-medium">
-          {t("Autre chose à nous dire ? (facultatif)")}
-        </summary>
-        <Label htmlFor="free-constraints" className="sr-only">
-          {t("Autre chose à nous dire")}
-        </Label>
-        <Textarea
-          id="free-constraints"
-          rows={3}
-          className="mt-2 text-base"
-          value={dossier.freeConstraints}
-          onChange={(e) => setDossier((d) => ({ ...d, freeConstraints: e.target.value }))}
-        />
-      </details>
+      {showAdvanced ? (
+        <div className="panel-block">
+          <Label htmlFor="free-constraints-advanced" className="t-label">
+            {t("Ajouter une précision")}
+          </Label>
+          <Textarea
+            id="free-constraints-advanced"
+            rows={3}
+            className="mt-2 text-base"
+            value={dossier.freeConstraints}
+            onChange={(e) => setDossier((d) => ({ ...d, freeConstraints: e.target.value }))}
+          />
+        </div>
+      ) : null}
     </div>
   );
 
@@ -2025,10 +2039,18 @@ export function DesignSpace({
   /** Choisir un capteur = une présélection de GAMME, jamais une commande ni une
    * validation R&D. La délégation à Standex est levée par ce choix explicite. */
   const chooseSensor = (id: string, name: string) => {
+    const base = workshopDraftRef.current ?? workshop ?? dossier.workshop ?? DEFAULT_WORKSHOP;
+    const aligned = applySensorSelection(base, id);
+    // Un montage déjà enregistré peut porter un aimant choisi volontairement.
+    // La présélection du capteur aligne le reste de l'atelier sans l'écraser.
+    applyWorkshopConfig(
+      dossier.workshop ? { ...aligned, magnetModel: base.magnetModel } : aligned,
+    );
+    setWorkshopEpoch((e) => e + 1);
     setDossier((d) => ({
       ...d,
       selectedSensorId: id,
-      sensorSyncConfirmed: d.workshopSensorId === id,
+      sensorSyncConfirmed: true,
       delegatedDecisions: (d.delegatedDecisions ?? []).filter((k) => k !== DELEGATED_SENSOR),
     }));
     setSelectionAnnounce(
@@ -2228,35 +2250,6 @@ export function DesignSpace({
           {t("Choisir avec Standex")}
         </Button>
       </div>
-      {dossier.selectedSensorId && !dossier.sensorSyncConfirmed ? (
-        <div className="notice notice-warning">
-          <p>
-            {t(
-              "La gamme suivie et le capteur affiché en 3D sont différents. Rien n'est changé sans votre accord.",
-            )}
-          </p>
-          <Button
-            size="sm"
-            className="mt-2"
-            onClick={() => {
-              const next = dossier.selectedSensorId;
-              if (!next) return;
-              // Vraie sélection de capteur : le couple par défaut, la classe,
-              // l'approche et l'orientation suivent la même logique centrale
-              // que l'atelier. Base = état réellement courant (brouillon non
-              // enregistré compris) : machine et câble actuels sont conservés.
-              const base =
-                workshopDraftRef.current ?? workshop ?? dossier.workshop ?? DEFAULT_WORKSHOP;
-              applyWorkshopConfig(applySensorSelection(base, next));
-              // L'atelier ne lit initialConfig qu'au montage : on le remonte
-              // pour que le nouveau couple soit visible immédiatement.
-              setWorkshopEpoch((e) => e + 1);
-            }}
-          >
-            {t("Aligner l'atelier 3D sur la gamme suivie")}
-          </Button>
-        </div>
-      ) : null}
       <div className="space-y-3">
         {plausibleCandidates.map(({ candidate: c }) => {
           const model = sensorById(c.id);
@@ -2278,14 +2271,6 @@ export function DesignSpace({
                     size="large"
                     scaleBar
                   />
-                  <p className="t-metric mt-2">{sizeLabel(model)}</p>
-                  {model.terminalSpan && model.terminalSpan > model.body[0] ? (
-                    <p className="t-caption">
-                      {msg("Avec les terminaisons documentées : {0} mm de long.", [
-                        formatMm(model.terminalSpan),
-                      ])}
-                    </p>
-                  ) : null}
                   <p className="t-caption mt-1">
                     {model.sourceFile
                       ? t(
@@ -2301,6 +2286,7 @@ export function DesignSpace({
                     <span className="t-title-s">{t(c.name)}</span>
 
                     <Badge
+                      className="candidate-status-badge"
                       variant={
                         c.status === "kept"
                           ? "default"
@@ -2319,17 +2305,19 @@ export function DesignSpace({
                       {c.size}
                     </span>
                   </div>
-                  <ul className="mt-3 space-y-1.5">
-                    {c.reasons.map((r, i) => (
-                      <li key={i} className="t-caption flex gap-2 leading-[1.6]">
-                        <span
-                          className="mt-[0.62em] h-1 w-1 shrink-0 rounded-full bg-[var(--standex-blue-50)]"
-                          aria-hidden="true"
-                        />
-                        <span>{t(r)}</span>
-                      </li>
-                    ))}
-                  </ul>
+                  {c.reasons[0] ? <p className="t-body mt-3">{t(c.reasons[0])}</p> : null}
+                  {c.reasons.length > 1 ? (
+                    <details className="mt-3">
+                      <summary className="t-caption min-h-11 cursor-pointer py-2">
+                        {t("Voir les détails")}
+                      </summary>
+                      <ul className="space-y-1.5 pl-5">
+                        {c.reasons.slice(1).map((r, i) => (
+                          <li key={i} className="t-caption list-disc">{t(r)}</li>
+                        ))}
+                      </ul>
+                    </details>
+                  ) : null}
                   <div className="mt-4 flex flex-wrap items-center gap-2">
                     <Button
                       className="min-h-11 text-base"
@@ -2340,12 +2328,12 @@ export function DesignSpace({
                       {chosen ? (
                         <>
                           <Check className="mr-1.5 size-4" aria-hidden="true" />
-                          {t("Choisi pour mon projet")}
+                          {t("Choisi ✓")}
                         </>
                       ) : c.id === CUSTOM_SENSOR_ID ? (
                         t("Partir sur du sur mesure")
                       ) : (
-                        t("Choisir ce capteur pour mon projet")
+                        t("Choisir")
                       )}
                     </Button>
                     <Button
@@ -2495,9 +2483,10 @@ export function DesignSpace({
       {/* Récapitulatif automatique du VRAI montage : rien n'est ressaisi ici. */}
       <div className="panel-block">
         <Label className="t-label">{t("Ce que votre montage indique aujourd'hui")}</Label>
-        <p className="t-caption t-metric mt-2">
-          {t("Trajet visé :")} {activeTargetLabel} · {activePoints.length} {t("point(s) ·")}{" "}
-          {cableRouting.lengthLabel}
+        <p className="t-body mt-2">
+          {activePoints.length > 1
+            ? msg("Longueur mesurée : {0}", [cableRouting.lengthLabel])
+            : t("Longueur non mesurée : le trajet n'est pas encore tracé.")}
         </p>
         <p className="mt-1">
           {t("Longueur minimale demandée, marges comprises :")}{" "}
@@ -2976,6 +2965,7 @@ export function DesignSpace({
         {checklist.map((item) => (
           <li key={item.id} className="flex flex-wrap items-start gap-3">
             <Badge
+              className="project-summary-badge"
               variant={
                 item.state === "chosen"
                   ? "default"
@@ -3140,9 +3130,9 @@ export function DesignSpace({
             <span className="flex-1">{t("Résumé technique et inconnues")}</span>
           </AccordionTrigger>
           <AccordionContent>
-            <pre className="code-block max-h-[28rem] overflow-y-auto whitespace-pre-wrap">
-              {technicalSummary(dossier, (x) => t(x))}
-            </pre>
+            <div className="panel-block technical-summary-readable">
+              {renderMarkdown(technicalSummary(dossier, (x) => t(x)))}
+            </div>
           </AccordionContent>
         </AccordionItem>
 
@@ -3153,9 +3143,8 @@ export function DesignSpace({
           </AccordionTrigger>
           <AccordionContent className="grid gap-5 md:grid-cols-2">
             <div>
-              <Label className="t-label">
-                {t("Volume annuel de capteurs (entier ou « inconnu »)")}
-              </Label>
+              <Label className="t-label">{t("Volume annuel de capteurs")}</Label>
+              <p className="t-caption mt-1">{t("Entier ou inconnu")}</p>
               <Input
                 className="t-metric mt-2 w-full text-right"
                 value={volumeRaw}
@@ -3633,8 +3622,7 @@ export function DesignSpace({
     </div>
   );
 
-  /** Applique un montage 3D au dossier, avec la MÊME logique de provenance,
-   * qu'il vienne de « Enregistrer » ou de « Utiliser ce montage ».
+  /** Applique un montage 3D au dossier avec la même logique de provenance.
    * Aucun réseau, aucune écriture sur l'appareil : tout reste en mémoire. */
   const applyWorkshopConfig = useCallback((c: WorkshopConfig) => {
     setWorkshop(c);
@@ -3659,38 +3647,8 @@ export function DesignSpace({
     setWorkshopDraftPending(false);
   }, []);
 
-  const useCurrentDraft = useCallback(() => {
-    const draft = workshopDraftRef.current;
-    if (!draft) return;
-    applyWorkshopConfig(draft);
-    setSubmitMessage(
-      t(
-        "Montage 3D repris dans votre projet : il suivra désormais l'export, le résumé et l'envoi.",
-      ),
-    );
-  }, [applyWorkshopConfig]);
-
-  const draftBanner = workshopDraftPending ? (
-    <div className="notice notice-warning">
-      <p className="text-base">
-        {t(
-          "Des réglages 3D ne sont pas encore repris dans votre projet : ils ne partiraient ni dans l'export ni dans le résumé.",
-        )}
-      </p>
-      <Button className="mt-3 min-h-11 text-base" onClick={useCurrentDraft}>
-        {t("Utiliser ce montage")}
-      </Button>
-    </div>
-  ) : null;
-
   const workshopSection = (
-    <div className="space-y-3">
-      <p className="text-base text-muted-foreground">
-        {t(
-          "Cet atelier répond à une seule question : est-ce que la détection va se faire dans votre montage ? Seules les distances publiées sont utilisées, et l'exemple machine à café n'impose aucune référence à votre projet.",
-        )}
-      </p>
-      {draftBanner}
+    <div>
       <Suspense fallback={<p className="text-base">{t("Chargement de l'atelier…")}</p>}>
         <MagneticWorkshop
           embedded
@@ -3821,7 +3779,6 @@ export function DesignSpace({
           }}
         />
       </div>
-      {draftBanner}
       <div className="flex flex-wrap items-center gap-3">
         <Button variant="outline" className="min-h-11 text-base" onClick={exportDossier}>
           <Download className="mr-1 h-4 w-4" /> {t("Exporter mon projet")}
@@ -4095,6 +4052,42 @@ export function DesignSpace({
               {String(label)}
             </button>
           ))}
+          <button
+            type="button"
+            onClick={(e) => {
+              e.currentTarget.closest("details")?.removeAttribute("open");
+              exportDossier();
+            }}
+          >
+            {t("Exporter mon projet")}
+          </button>
+          <label className="studio-navigation-file">
+            {t("Reprendre un fichier")}
+            <input
+              type="file"
+              accept="application/json"
+              className="sr-only"
+              onChange={(e) => {
+                void importDossier(e.target.files?.[0]);
+                e.target.value = "";
+              }}
+            />
+          </label>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.currentTarget.closest("details")?.removeAttribute("open");
+              setShowAdvanced(true);
+              setTab("besoin");
+            }}
+          >
+            {t("Réglages détaillés")}
+          </button>
+          <p className="studio-navigation-note">
+            <strong>{t("Conservation et reprise de ce projet")}</strong>
+            <span>{t(MEMORY_LOSS_WARNING)} {t(EXPORT_BINARY_NOTICE)}</span>
+            {importMessage ? <span>{importMessage}</span> : null}
+          </p>
         </nav>
       </details>
     </div>
@@ -4105,9 +4098,9 @@ export function DesignSpace({
       className={embedded ? "text-foreground" : "min-h-screen bg-background text-foreground"}
     >
       <header
-        className={`material sticky top-0 z-20 border-b border-[var(--hairline)]${visible ? "" : " hidden"}`}
+        className={`project-header material sticky top-0 z-30${visible ? "" : " hidden"}`}
       >
-        <div className="mx-auto flex max-w-[76rem] flex-wrap items-center gap-4 px-4 py-4">
+        <div className="mx-auto flex h-14 max-w-[76rem] items-center gap-3 px-4">
           <div className="flex shrink-0 items-center gap-3 self-center">
             {onGoHome ? (
               <button
@@ -4142,66 +4135,18 @@ export function DesignSpace({
             }
           />
           <div className="flex flex-wrap items-center gap-2">
-            <Badge variant="secondary" className="gap-1 px-2.5 py-1 text-sm">
-              <Lock className="h-3 w-3" /> {t(STORAGE_BADGE[privacy.storage])}
+            <Badge variant={lastSent ? "default" : "secondary"} className="project-state-badge">
+              {lastSent ? t("Envoyé") : t("Brouillon")}
             </Badge>
-            <span className="text-muted-foreground" aria-hidden="true">
-              ·
-            </span>
-            <Badge variant="secondary" className="px-2.5 py-1 text-sm">
-              {t("Révision")} {dossier.revision}
-            </Badge>
-          </div>
-          <div className="flex max-w-full flex-wrap items-center gap-1 rounded-[var(--r-sm)] bg-[var(--surface-sunken)] p-1">
-            <Button
-              variant="ghost"
-              className="min-h-11 px-3"
-              onClick={exportDossier}
-              aria-label={t("Exporter")}
-            >
-              <Download className="h-4 w-4" />{" "}
-              <span className="hidden sm:inline">{t("Exporter")}</span>
-            </Button>
-            <Button variant="ghost" className="min-h-11 max-w-full px-3 whitespace-normal" asChild>
-              <label
-                className="inline-flex w-auto max-w-full cursor-pointer text-center"
-                aria-label={t("Reprendre un fichier")}
-              >
-                <Upload className="h-4 w-4" />
-                <span className="hidden sm:inline">{t("Reprendre un fichier")}</span>
-                <input
-                  type="file"
-                  accept="application/json"
-                  className="sr-only"
-                  onChange={(e) => {
-                    // Même garde que partout ailleurs : importDossier la porte.
-                    void importDossier(e.target.files?.[0]);
-                    e.target.value = "";
-                  }}
-                />
-              </label>
-            </Button>
           </div>
           {navigation}
-        </div>
-        <div className="mx-auto max-w-[76rem] px-4 pb-4">
-          <details className="rounded-[var(--r-md)] bg-[var(--surface-tint)] px-4 py-2">
-            <summary className="min-h-11 cursor-pointer t-body">
-              {t("Conservation et reprise de ce projet")}
-            </summary>
-            <Info className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
-            <div className="t-caption !text-[var(--foreground)]">
-              {t(MEMORY_LOSS_WARNING)} {t(EXPORT_BINARY_NOTICE)}
-              {importMessage ? <span className="block font-semibold">{importMessage}</span> : null}
-            </div>
-          </details>
         </div>
       </header>
 
       <main className={`mx-auto max-w-[76rem] px-4 py-6${visible ? "" : " hidden"}`}>
         <nav
           aria-label="Progression"
-          className={`project-stepper project-stepper-${stepIndex} mb-6`}
+          className={`project-stepper project-stepper-${stepIndex} project-stepper-sticky mb-6`}
         >
           <span className="project-stepper-thumb" aria-hidden="true" />
           {steps.map((s, i) => (
@@ -4227,23 +4172,13 @@ export function DesignSpace({
         </nav>
 
         <Tabs value={tab} onValueChange={setTab}>
-          <div className="mb-2 flex flex-wrap items-center gap-2">
-            <Button
-              variant="ghost"
-              className="min-h-11 text-base"
-              aria-expanded={showAdvanced}
-              onClick={() => setShowAdvanced((v) => !v)}
-            >
-              {showAdvanced
-                ? t("Masquer les réglages détaillés")
-                : t("Ouvrir les réglages détaillés")}
-            </Button>
-            {showAdvanced ? null : (
-              <span className="text-base text-muted-foreground">
-                {t("Tous les réglages avancés restent disponibles, sans rien perdre.")}
-              </span>
-            )}
-          </div>
+          {showAdvanced ? (
+            <div className="mb-2">
+              <Button variant="ghost" className="min-h-11 text-base" onClick={() => setShowAdvanced(false)}>
+                {t("Masquer les réglages détaillés")}
+              </Button>
+            </div>
+          ) : null}
           <TabsList className={showAdvanced ? "flex-wrap" : "hidden"}>
             <TabsTrigger value="besoin">{t("Besoin")}</TabsTrigger>
             <TabsTrigger value="montage">{t("Montage & 3D")}</TabsTrigger>
@@ -4289,7 +4224,6 @@ export function DesignSpace({
           et n'applique aucun montage non validé (« Utiliser ce montage » reste
           la seule action qui reprend le montage dans le dossier). */}
       <WorkspacePanel
-        navigation={navigation}
         open={panel === "atelier" && workshopMounted}
         keepMounted={workshopMounted}
         fullscreen
@@ -4297,9 +4231,6 @@ export function DesignSpace({
         onBack={() => setPanel(null)}
         onOpenChange={(o) => setPanel(o ? "atelier" : null)}
         title={t("Atelier 3D")}
-        description={t(
-          "Quatre étapes : le couple capteur-aimant, la position, la simulation du mouvement, le câble. Vos réglages restent en mémoire même si vous refermez ce panneau.",
-        )}
       >
         {workshopMounted ? workshopSection : null}
       </WorkspacePanel>

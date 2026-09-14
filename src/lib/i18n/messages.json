@@ -23308,5 +23308,104 @@
     "Оголённые выводы, без разъёма",
     "Fili nudi, senza connettore",
     "裸リード線、コネクタなし"
+  ],
+  "Ajouter une précision": [
+    "Add a detail",
+    "添加说明",
+    "Eine Ergänzung hinzufügen",
+    "Añadir una precisión",
+    "Добавить уточнение",
+    "Aggiungi una precisazione",
+    "補足を追加"
+  ],
+  "Choisi ✓": [
+    "Selected ✓",
+    "已选择 ✓",
+    "Ausgewählt ✓",
+    "Elegido ✓",
+    "Выбрано ✓",
+    "Scelto ✓",
+    "選択済み ✓"
+  ],
+  "Choisir": [
+    "Select",
+    "选择",
+    "Auswählen",
+    "Elegir",
+    "Выбрать",
+    "Scegli",
+    "選択"
+  ],
+  "Longueur non mesurée : le trajet n'est pas encore tracé.": [
+    "Length not measured: the route has not been drawn yet.",
+    "长度未测量：路径尚未绘制。",
+    "Länge nicht gemessen: Der Verlauf wurde noch nicht gezeichnet.",
+    "Longitud sin medir: el recorrido aún no está trazado.",
+    "Длина не измерена: трасса ещё не проложена.",
+    "Lunghezza non misurata: il percorso non è ancora tracciato.",
+    "長さは未測定です：経路はまだ描かれていません。"
+  ],
+  "Longueur mesurée : {0}": [
+    "Measured length: {0}",
+    "测量长度：{0}",
+    "Gemessene Länge: {0}",
+    "Longitud medida: {0}",
+    "Измеренная длина: {0}",
+    "Lunghezza misurata: {0}",
+    "測定長：{0}"
+  ],
+  "Entier ou inconnu": [
+    "Whole number or unknown",
+    "整数或未知",
+    "Ganzzahl oder unbekannt",
+    "Entero o desconocido",
+    "Целое число или неизвестно",
+    "Intero o sconosciuto",
+    "整数または不明"
+  ],
+  "Distances publiées (B–E, D1–D5)": [
+    "Published distances (B–E, D1–D5)",
+    "已发布距离（B–E、D1–D5）",
+    "Veröffentlichte Abstände (B–E, D1–D5)",
+    "Distancias publicadas (B–E, D1–D5)",
+    "Опубликованные расстояния (B–E, D1–D5)",
+    "Distanze pubblicate (B–E, D1–D5)",
+    "公開距離（B–E、D1–D5）"
+  ],
+  "Importer mon modèle 3D": [
+    "Import my 3D model",
+    "导入我的 3D 模型",
+    "Mein 3D-Modell importieren",
+    "Importar mi modelo 3D",
+    "Импортировать мою 3D-модель",
+    "Importa il mio modello 3D",
+    "3Dモデルを読み込む"
+  ],
+  "Exporter le montage": [
+    "Export the assembly",
+    "导出装配",
+    "Montage exportieren",
+    "Exportar el montaje",
+    "Экспортировать монтаж",
+    "Esporta il montaggio",
+    "組み付けをエクスポート"
+  ],
+  "Envoyé": [
+    "Sent",
+    "已发送",
+    "Gesendet",
+    "Enviado",
+    "Отправлено",
+    "Inviato",
+    "送信済み"
+  ],
+  "Réglages détaillés": [
+    "Detailed settings",
+    "详细设置",
+    "Detaillierte Einstellungen",
+    "Ajustes detallados",
+    "Подробные настройки",
+    "Impostazioni dettagliate",
+    "詳細設定"
   ]
 }

@@ -1,10 +1,8 @@
 .mw-context-card {
   max-width: 1372px;
   margin: 0 auto 22px;
-  padding: 18px 22px;
-  background: var(--surface);
-  border: 1px solid var(--hairline);
-  border-radius: var(--r-lg);
+  padding: 0 34px;
+  background: transparent;
   display: flex;
   align-items: center;
   gap: 20px;
@@ -51,18 +49,22 @@
   font: var(--mw-t-dense);
 }
 .mw-file-label {
-  display: block;
-  font: var(--mw-t-label);
-  letter-spacing: var(--tracking-label);
-  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font: var(--mw-t-body);
+  color: var(--primary);
+  text-decoration: underline;
   font-weight: 600;
-  margin: 14px 0;
+  margin: 0;
+  cursor: pointer;
 }
 .mw-file-label input {
-  display: block;
-  width: 100%;
-  font: var(--mw-t-dense);
-  margin-top: 8px;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
 }
 .mw-file-label input::file-selector-button {
   border: 1px solid var(--hairline);
@@ -297,7 +299,7 @@
 .mw-intro {
   max-width: 1440px;
   margin: auto;
-  padding: 30px 34px 24px;
+  padding: 16px 34px 12px;
   display: flex;
   justify-content: space-between;
   gap: 20px;
@@ -312,7 +314,7 @@
   text-transform: uppercase;
 }
 .mw h1 {
-  font: var(--mw-t-display);
+  font: var(--t-title-l);
   font-weight: 600;
   letter-spacing: var(--tracking-display);
   margin: 0 0 6px;
@@ -363,7 +365,7 @@
   background: var(--mw-surface);
   border: 1px solid var(--mw-border);
   border-radius: var(--r-lg);
-  overflow: hidden;
+  overflow: visible;
   /* La colonne des réglages peut être étroite sur un grand écran : les étapes
      s'adaptent à SA largeur, pas à celle de la fenêtre. */
   container-type: inline-size;
@@ -941,7 +943,7 @@
 }
 .mw-footer {
   max-width: 1440px;
-  padding: 20px 34px 0;
+  padding: 20px 34px;
   margin: auto;
   font: var(--mw-t-dense);
   color: var(--muted-foreground);
@@ -959,8 +961,8 @@
 }
 .mw-summary {
   max-width: 1372px;
-  margin: 15px 34px 0;
-  padding: 5px 0;
+  margin: 15px 34px;
+  padding: 5px 0 20px;
   color: var(--muted-foreground);
 }
 .mw-summary pre {
@@ -1785,14 +1787,12 @@
     gap: 1.5rem;
   }
   .mw .mw-controls {
-    position: sticky;
-    top: 1.25rem;
+    position: static;
     grid-column: 1;
     width: 100%;
     min-width: 0;
-    max-height: calc(100dvh - 6rem);
-    overflow-y: auto;
-    overscroll-behavior: contain;
+    max-height: none;
+    overflow: visible;
     background: var(--material-thin);
     border: 1px solid var(--hairline);
     box-shadow: var(--e-3);

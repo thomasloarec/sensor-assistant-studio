@@ -916,6 +916,59 @@
     border-radius: var(--r-md);
     background: var(--surface-sunken);
   }
+  .project-header {
+    height: var(--standex-header-h, 56px);
+    border-bottom: 1px solid var(--hairline);
+  }
+  .project-stepper-sticky {
+    position: sticky;
+    top: var(--standex-header-h, 56px);
+    z-index: 20;
+  }
+  .project-state-badge {
+    min-width: 6.5rem;
+    justify-content: center;
+  }
+  .project-summary-badge,
+  .candidate-status-badge {
+    width: 11.5rem;
+    justify-content: center;
+    text-align: center;
+    white-space: normal;
+  }
+  .guided-envelope-fields {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: start;
+    gap: 0.75rem;
+  }
+  .guided-envelope-field {
+    display: grid;
+    align-content: start;
+    gap: 0.375rem;
+  }
+  .guided-envelope-input {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .studio-navigation-file {
+    display: flex;
+    min-height: 44px;
+    align-items: center;
+    cursor: pointer;
+  }
+  .studio-navigation-note {
+    display: grid;
+    gap: 0.25rem;
+    padding: 0.75rem;
+    font: var(--t-caption);
+    color: var(--muted-foreground);
+  }
+  .technical-summary-readable {
+    overflow: visible;
+  }
   .project-stepper-1 {
     --step: 1;
   }
@@ -954,15 +1007,28 @@
 
   @media (max-width: 639px) {
     .project-stepper {
-      grid-template-columns: 1fr;
-      grid-template-rows: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-rows: 1fr;
     }
     .project-stepper-thumb {
-      inset-inline: 5px;
-      top: 5px;
-      width: auto;
-      height: calc((100% - 10px) / 3);
-      transform: translateY(calc(var(--step) * 100%));
+      inset-block: 5px;
+      left: 5px;
+      width: calc((100% - 10px) / 3);
+      height: auto;
+      transform: translateX(calc(var(--step) * 100%));
+    }
+    .project-stepper button {
+      padding-inline: 0.5rem;
+    }
+    .project-stepper button > span:last-child {
+      display: none;
+    }
+    .guided-envelope-fields {
+      gap: 0.5rem;
+    }
+    .guided-envelope-input {
+      grid-template-columns: 1fr;
+      gap: 0.125rem;
     }
   }
 
