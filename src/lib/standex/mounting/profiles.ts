@@ -1,4 +1,8 @@
-import { PUBLISHED_REGISTRY, publishedReference } from "../magnetics/registries";
+import {
+  PUBLISHED_REGISTRY,
+  publishedMagnetFamily,
+  publishedReference,
+} from "../magnetics/registries";
 import type { PublishedRegistry } from "../magnetics/registries";
 import type { Provenance } from "../magnetics/types";
 import type { Vec3 } from "./geometry";
@@ -158,11 +162,18 @@ export function profileFor(
   approachId: string,
   profiles: MountingProfile[] = PROFILES,
 ): MountingProfile | null {
-  // Identité exacte : aucun repli d'un identifiant d'aimant vers un autre.
+  // Identité exacte, à une seule exception documentée : les variantes d'une même
+  // famille d'aimant publiée (M21P/1 et M21P/2 pour la famille « M21/P(1,2) »)
+  // lisent la ligne de leur famille. Ce n'est PAS un repli d'un aimant vers un
+  // autre : la fiche désigne explicitement la même famille. L'identifiant réel
+  // du couple et le boîtier rendu ne sont pas modifiés ici.
+  const family = publishedMagnetFamily(magnetModel);
   return (
     profiles.find(
       (p) =>
-        p.sensorFamily === sensorId && p.magnetId === magnetModel && p.approachId === approachId,
+        p.sensorFamily === sensorId &&
+        publishedMagnetFamily(p.magnetId) === family &&
+        p.approachId === approachId,
     ) ?? null
   );
 }

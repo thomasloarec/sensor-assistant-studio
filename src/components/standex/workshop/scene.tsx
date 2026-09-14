@@ -1,5 +1,4 @@
 import { pairedMagnetModel } from "@/lib/standex/paired-magnets";
-import { publishedPair } from "@/lib/standex/magnetics/registries";
 import { t } from "@/lib/i18n/core";
 import { useMemo, useRef, useEffect } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
@@ -13,6 +12,8 @@ import {
   magnetSize,
   unavailableReason,
   momentFor,
+  workshopPair,
+  simulatedContactForm,
 } from "@/lib/standex/magnetic-workshop";
 import type { WorkshopConfig, CycleSample, Vec3, Contact } from "@/lib/standex/magnetic-workshop";
 import {
@@ -597,7 +598,10 @@ function Dimensions({ model }: { model: SensorModel }) {
   );
 }
 function ReferenceMarkers({ config }: { config: WorkshopConfig }) {
-  const pair = publishedPair(config.sensitivity, config.geometry);
+  // Distances du couple RÉELLEMENT sélectionné (capteur, aimant, approche,
+  // classe), jamais celles d'un couple de référence : la ligne publiée est lue
+  // par `workshopPair`, qui normalise seulement l'identité de famille d'aimant.
+  const pair = simulatedContactForm(config) ? workshopPair(config) : null;
   if (!pair) return null;
   const [pull, drop] = pair,
     d1 = config.geometry === "D1";
