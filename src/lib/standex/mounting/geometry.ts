@@ -77,7 +77,7 @@ export const toWorldDirection = (anchor: Pose, local: Vec3): Vec3 =>
 export const bodyOf = (sensorId: string, magnetId: string, which: "sensor" | "magnet"): Vec3 =>
   which === "sensor"
     ? ([...sensorById(sensorId).body] as Vec3)
-    : ((pairedMagnetModel(magnetId)?.body ?? [12, 4, 6]).slice(0, 3) as Vec3);
+    : ((pairedMagnetModel(magnetId, sensorId)?.body ?? [12, 4, 6]).slice(0, 3) as Vec3);
 
 /** Half extent of an oriented box projected on a unit direction. */
 export function halfExtent(size: Vec3, rotationDeg: Vec3, direction: Vec3): number {
