@@ -3622,8 +3622,7 @@ export function DesignSpace({
     </div>
   );
 
-  /** Applique un montage 3D au dossier, avec la MÊME logique de provenance,
-   * qu'il vienne de « Enregistrer » ou de « Utiliser ce montage ».
+  /** Applique un montage 3D au dossier avec la même logique de provenance.
    * Aucun réseau, aucune écriture sur l'appareil : tout reste en mémoire. */
   const applyWorkshopConfig = useCallback((c: WorkshopConfig) => {
     setWorkshop(c);
@@ -3648,38 +3647,8 @@ export function DesignSpace({
     setWorkshopDraftPending(false);
   }, []);
 
-  const useCurrentDraft = useCallback(() => {
-    const draft = workshopDraftRef.current;
-    if (!draft) return;
-    applyWorkshopConfig(draft);
-    setSubmitMessage(
-      t(
-        "Montage 3D repris dans votre projet : il suivra désormais l'export, le résumé et l'envoi.",
-      ),
-    );
-  }, [applyWorkshopConfig]);
-
-  const draftBanner = workshopDraftPending ? (
-    <div className="notice notice-warning">
-      <p className="text-base">
-        {t(
-          "Des réglages 3D ne sont pas encore repris dans votre projet : ils ne partiraient ni dans l'export ni dans le résumé.",
-        )}
-      </p>
-      <Button className="mt-3 min-h-11 text-base" onClick={useCurrentDraft}>
-        {t("Utiliser ce montage")}
-      </Button>
-    </div>
-  ) : null;
-
   const workshopSection = (
-    <div className="space-y-3">
-      <p className="text-base text-muted-foreground">
-        {t(
-          "Cet atelier répond à une seule question : est-ce que la détection va se faire dans votre montage ? Seules les distances publiées sont utilisées, et l'exemple machine à café n'impose aucune référence à votre projet.",
-        )}
-      </p>
-      {draftBanner}
+    <div>
       <Suspense fallback={<p className="text-base">{t("Chargement de l'atelier…")}</p>}>
         <MagneticWorkshop
           embedded
@@ -4256,7 +4225,6 @@ export function DesignSpace({
           et n'applique aucun montage non validé (« Utiliser ce montage » reste
           la seule action qui reprend le montage dans le dossier). */}
       <WorkspacePanel
-        navigation={navigation}
         open={panel === "atelier" && workshopMounted}
         keepMounted={workshopMounted}
         fullscreen
