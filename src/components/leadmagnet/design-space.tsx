@@ -2309,11 +2309,13 @@ export function DesignSpace({
     cabling.lengthChoice !== "undecided" ||
     activePoints.length > 0 ||
     cabling.declaredMotionStates.length > 0;
+  /**
+   * La section est ouverte si l'utilisateur l'a demandée OU si une référence est
+   * déjà enregistrée (reprise d'un dossier). Aucune auto-sélection de connecteur.
+   */
   const connectorPreference =
-    termination.kind === "unqualified_connector" ||
-    isDelegated(dossier, DELEGATED_CONNECTOR) === false
-      ? termination.kind === "unqualified_connector"
-      : false;
+    connectorWanted || termination.kind === "unqualified_connector";
+
 
   const cablageSection = (
     <div className="space-y-4">
