@@ -12,6 +12,8 @@ import {
   serializeWorkshop,
 } from "../src/lib/standex/magnetic-workshop";
 import { SENSOR_CATALOG, sensorById } from "../src/lib/standex/sensor-catalog";
+import { bodyOf } from "../src/lib/standex/mounting/geometry";
+import { pairedMagnetModel } from "../src/lib/standex/paired-magnets";
 
 describe("Documented body sizes and source plans", () => {
   test("MK24 and MK02 retain their different physical sizes", () => {
@@ -91,5 +93,15 @@ describe("Existing saved assemblies remain readable", () => {
     const c = { ...DEFAULT_WORKSHOP, sensorId: "MK24-A-J", mode: "education" as const };
     expect(parseWorkshopNote(serializeWorkshop(c))).toEqual(c);
     expect(parseWorkshopConfig({ ...c, sensorId: "invented" })).toBeNull();
+  });
+});
+describe("Engine magnet body matches the displayed model", () => {
+  test("MK11-M5 + M11S uses the M5 housing [25,5,5], not the M8 one", () => {
+    expect(bodyOf("MK11-M5", "M11S", "magnet")).toEqual([25, 5, 5]);
+    expect(pairedMagnetModel("M11S", "MK11-M5")?.body).toEqual([25, 5, 5]);
+  });
+  test("MK11-M8 + M11S uses the M8 housing [50,8,8]", () => {
+    expect(bodyOf("MK11-M8", "M11S", "magnet")).toEqual([50, 8, 8]);
+    expect(pairedMagnetModel("M11S", "MK11-M8")?.body).toEqual([50, 8, 8]);
   });
 });
