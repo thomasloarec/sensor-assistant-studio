@@ -2099,163 +2099,166 @@ export function DesignSpace({
   };
 
 
-  /** Critères actifs, dépliants d'exploration et motifs techniques : un seul
-   * bloc, partagé par l'écran des couples proposés et la liste complète. */
-  const filterControls = (
-        <div className="panel-block space-y-3">
-          {shownFilters.length ? (
-            <>
-              <p className="t-body">
-                {answerFilters.length
-                  ? t("D'après vos réponses, nous ne montrons d'abord que les capteurs compatibles.")
-                  : t("Critères d'exploration en cours. Vos réponses ne sont pas modifiées.")}
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {shownFilters.map((f) => {
-                  const on = !filtersOff.includes(f.id);
-                  return (
-                    <button
-                      key={f.id}
-                      type="button"
-                      className="answer-filter"
-                      data-source={f.source}
-                      aria-pressed={on}
-                      onClick={() =>
-                        setFiltersOff((off) =>
-                          off.includes(f.id) ? off.filter((x) => x !== f.id) : [...off, f.id],
-                        )
-                      }
-                    >
-                      <span aria-hidden="true">{on ? "✓" : "+"}</span>
-                      <span>{t(f.label)}</span>
-                      {f.source === "exploration" ? (
-                        <span className="t-caption">{t("· exploration")}</span>
-                      ) : null}
-                    </button>
-                  );
-                })}
-              </div>
-              <p className="t-caption">
-                {t(
-                  "Vous pouvez désactiver un critère pour voir les autres capteurs. Vos réponses ne sont pas modifiées.",
-                )}
-              </p>
-            </>
-          ) : (
-            <p className="t-body">
-              {t("Aucun critère actif : tous les capteurs de l'aperçu sont affichés.")}
-            </p>
+  /** Rangée de puces : les critères réellement actifs, rien d'autre. Aucun
+   * encadré : c'est une ligne de lecture posée sous le sous-titre. */
+  const filterChips = shownFilters.length ? (
+    <div className="flex flex-wrap items-center gap-2">
+      {shownFilters.map((f) => {
+        const on = !filtersOff.includes(f.id);
+        return (
+          <button
+            key={f.id}
+            type="button"
+            className="answer-filter"
+            data-source={f.source}
+            aria-pressed={on}
+            onClick={() =>
+              setFiltersOff((off) =>
+                off.includes(f.id) ? off.filter((x) => x !== f.id) : [...off, f.id],
+              )
+            }
+          >
+            <span aria-hidden="true">{on ? "✓" : "+"}</span>
+            <span>{t(f.label)}</span>
+            {f.source === "exploration" ? (
+              <span className="t-caption">{t("· exploration")}</span>
+            ) : null}
+          </button>
+        );
+      })}
+    </div>
+  ) : null;
+
+  /** Tout le réglage fin des critères, replié derrière un seul lien : les
+   * réponses ne sont jamais modifiées ici, seule la liste affichée change. */
+  const filterAdjust = (
+    <details className="filter-adjust">
+      <summary className="t-body min-h-11 cursor-pointer list-none py-2">
+        {t("Ajuster les critères ⌄")}
+      </summary>
+      <div className="mt-2 space-y-3">
+        <p className="t-caption">
+          {shownFilters.length
+            ? t(
+                "Vous pouvez désactiver un critère pour voir les autres capteurs. Vos réponses ne sont pas modifiées.",
+              )
+            : t("Aucun critère actif : tous les capteurs de l'aperçu sont affichés.")}
+        </p>
+        {filtersOff.length || explore.mountingKind || explore.shape ? (
+          <Button
+            variant="outline"
+            size="sm"
+            className="min-h-11"
+            onClick={() => {
+              setFiltersOff([]);
+              setExplore({});
+            }}
+          >
+            {t("Rétablir mes réponses")}
+          </Button>
+        ) : null}
+
+        {/* Exploration volontaire : d'AUTRES critères que ses réponses, sans
+            jamais modifier les réponses ni le montage du dossier. Un choix
+            remplace le critère de même nature : pas de « vissé ET CMS ». */}
+        <p className="t-caption">
+          {t(
+            "Ces critères servent seulement à regarder d'autres capteurs. Ils remplacent le critère correspondant de vos réponses, ils ne s'y ajoutent pas, et vos réponses restent intactes.",
           )}
-          {filtersOff.length || explore.mountingKind || explore.shape ? (
+        </p>
+        <div>
+          <Label className="t-label">{t("Autre fixation")}</Label>
+          <div className="mt-2 flex flex-wrap gap-2">
+            {EXPLORABLE_MOUNTINGS.map((m) => {
+              const on = explore.mountingKind === m.kind;
+              return (
+                <button
+                  key={m.kind}
+                  type="button"
+                  className="answer-filter"
+                  aria-pressed={on}
+                  onClick={() =>
+                    setExplore(({ mountingKind: _drop, ...rest }) =>
+                      on ? rest : { ...rest, mountingKind: m.kind },
+                    )
+                  }
+                >
+                  <span aria-hidden="true">{on ? "✓" : "+"}</span>
+                  <span>{t(m.label)}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+        <div>
+          <Label className="t-label">{t("Autre forme de boîtier")}</Label>
+          <div className="mt-2 flex flex-wrap gap-2">
+            {EXPLORABLE_SHAPES.map((s) => {
+              const on = explore.shape === s.shape;
+              return (
+                <button
+                  key={s.shape}
+                  type="button"
+                  className="answer-filter"
+                  aria-pressed={on}
+                  onClick={() =>
+                    setExplore(({ shape: _drop, ...rest }) =>
+                      on ? rest : { ...rest, shape: s.shape },
+                    )
+                  }
+                >
+                  <span aria-hidden="true">{on ? "✓" : "+"}</span>
+                  <span>{t(s.label)}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+        {explore.mountingKind || explore.shape ? (
+          <>
+            <p className="notice notice-info">
+              {t(
+                "Vous regardez des capteurs qui peuvent diverger de vos réponses. Rien n'est enregistré : vos exigences et votre montage sont inchangés.",
+              )}
+            </p>
             <Button
               variant="outline"
               size="sm"
               className="min-h-11"
-              onClick={() => {
-                setFiltersOff([]);
-                setExplore({});
-              }}
+              onClick={() => setExplore({})}
             >
-              {t("Rétablir mes réponses")}
+              {t("Revenir à mes réponses")}
             </Button>
-          ) : null}
+          </>
+        ) : null}
 
-          {/* Exploration volontaire : d'AUTRES critères que ses réponses, sans
-              jamais modifier les réponses ni le montage du dossier. Un choix
-              remplace le critère de même nature : pas de « vissé ET CMS ». */}
-          <details className="mt-1">
-            <summary className="t-body min-h-11 cursor-pointer list-none py-2">
-              {t("Explorer avec d'autres critères")}
-            </summary>
-            <div className="mt-2 space-y-3">
-              <p className="t-caption">
-                {t(
-                  "Ces critères servent seulement à regarder d'autres capteurs. Ils remplacent le critère correspondant de vos réponses, ils ne s'y ajoutent pas, et vos réponses restent intactes.",
-                )}
-              </p>
-              <div>
-                <Label className="t-label">{t("Autre fixation")}</Label>
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {EXPLORABLE_MOUNTINGS.map((m) => {
-                    const on = explore.mountingKind === m.kind;
-                    return (
-                      <button
-                        key={m.kind}
-                        type="button"
-                        className="answer-filter"
-                        aria-pressed={on}
-                        onClick={() =>
-                          setExplore(({ mountingKind: _drop, ...rest }) =>
-                            on ? rest : { ...rest, mountingKind: m.kind },
-                          )
-                        }
-                      >
-                        <span aria-hidden="true">{on ? "✓" : "+"}</span>
-                        <span>{t(m.label)}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-              <div>
-                <Label className="t-label">{t("Autre forme de boîtier")}</Label>
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {EXPLORABLE_SHAPES.map((s) => {
-                    const on = explore.shape === s.shape;
-                    return (
-                      <button
-                        key={s.shape}
-                        type="button"
-                        className="answer-filter"
-                        aria-pressed={on}
-                        onClick={() =>
-                          setExplore(({ shape: _drop, ...rest }) =>
-                            on ? rest : { ...rest, shape: s.shape },
-                          )
-                        }
-                      >
-                        <span aria-hidden="true">{on ? "✓" : "+"}</span>
-                        <span>{t(s.label)}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-              {explore.mountingKind || explore.shape ? (
-                <>
-                  <p className="notice notice-info">
-                    {t(
-                      "Vous regardez des capteurs qui peuvent diverger de vos réponses. Rien n'est enregistré : vos exigences et votre montage sont inchangés.",
-                    )}
-                  </p>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="min-h-11"
-                    onClick={() => setExplore({})}
-                  >
-                    {t("Revenir à mes réponses")}
-                  </Button>
-                </>
-              ) : null}
-            </div>
-          </details>
+        {shownFilters.length ? (
+          <ul className="mt-2 space-y-1">
+            {shownFilters.map((f) => (
+              <li key={f.id} className="t-caption">
+                <strong>{t(f.label)}</strong> — {t(f.technical)}
+              </li>
+            ))}
+          </ul>
+        ) : null}
+      </div>
+    </details>
+  );
 
-          {shownFilters.length ? (
-            <details className="mt-1">
-              <summary className="t-caption min-h-11 cursor-pointer list-none py-2">
-                {t("Voir le motif technique de chaque critère")}
-              </summary>
-              <ul className="mt-2 space-y-1">
-                {shownFilters.map((f) => (
-                  <li key={f.id} className="t-caption">
-                    <strong>{t(f.label)}</strong> — {t(f.technical)}
-                  </li>
-                ))}
-              </ul>
-            </details>
-          ) : null}
-        </div>
+  /** Version encadrée, conservée pour la liste complète des candidats des
+   * réglages avancés : même contenu, même comportement. */
+  const filterControls = (
+    <div className="panel-block space-y-3">
+      {shownFilters.length ? (
+        <p className="t-body">
+          {answerFilters.length
+            ? t("D'après vos réponses, nous ne montrons d'abord que les capteurs compatibles.")
+            : t("Critères d'exploration en cours. Vos réponses ne sont pas modifiées.")}
+        </p>
+      ) : null}
+      {filterChips}
+      {filterAdjust}
+    </div>
   );
 
   const openWorkshopPanel = () => {
