@@ -22,7 +22,26 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CandidateThumbnail } from "@/components/leadmagnet/candidate-thumbnail";
-import { CUSTOM_SENSOR_ID, sensorById } from "@/lib/standex/sensor-catalog";
+import {
+  CUSTOM_SENSOR_ID,
+  formatMm,
+  sensorById,
+  sizeLabel,
+} from "@/lib/standex/sensor-catalog";
+import {
+  blockedBy,
+  suggestionFilters,
+  type SuggestionFilterId,
+} from "@/lib/leadmagnet/suggestion-filters";
+import {
+  checklistProgress,
+  isDelegated,
+  projectChecklist,
+  DELEGATED_CABLE,
+  DELEGATED_CONNECTOR,
+  DELEGATED_SENSOR,
+} from "@/lib/leadmagnet/project-checklist";
+import SensorCard from "@/components/standex/workshop/sensor-card";
 import SensorCatalog from "@/components/standex/workshop/sensor-catalog";
 import { LanguagePicker, useLocale } from "@/lib/i18n/react";
 import { Input } from "@/components/ui/input";
