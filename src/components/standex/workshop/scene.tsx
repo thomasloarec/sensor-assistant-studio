@@ -765,8 +765,24 @@ export default function WorkshopScene({
   const model = sensorById(config.sensorId),
     reference = config.mode === "reference",
     available = !unavailableReason(config);
+  /* Cadrage du couple : il est MESURÉ sur les corps réellement dessinés et sur
+     la course déclarée, jamais posé à une distance fixe. Une distance constante
+     laissait le couple occuper un cinquième de l'image sur les petits capteurs.
+     Ce calcul ne touche ni les cotes, ni les seuils, ni la simulation. */
+  const coupleSpan = Math.max(
+    model.body[0],
+    model.body[2],
+    Math.abs(config.start),
+    Math.abs(config.end),
+    config.travel,
+  );
   const dist = Math.max(14, model.body[0] * 1.6),
-    target: Vec3 = focus === "sensor" ? [config.mountX, 0, config.mountZ] : [6, 0, 18];
+    coupleDist = Math.max(38, coupleSpan * 2.6),
+    target: Vec3 =
+      focus === "sensor"
+        ? [config.mountX, 0, config.mountZ]
+        : [config.mountX, 0, config.mountZ + config.offset / 2];
+
   return (
     <Canvas
       camera={{
