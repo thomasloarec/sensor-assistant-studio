@@ -123,7 +123,19 @@ describe("distances publiées : la source décide, jamais une liste de familles"
   test("un MK04 n'emprunte jamais les seuils d'un MK03 : le titre et les valeurs suivent le couple", () => {
     const mk03 = config({ sensorId: "MK03", magnetModel: "M02", sensitivity: "C", geometry: "D1" }),
       mk04 = config({ sensorId: "MK04", magnetModel: "M04", sensitivity: "C", geometry: "D1" });
-    expect(workshopPair(mk03)).not.toEqual(workshopPair(mk04));
+    // Chaque couple lit SA propre ligne de registre, avec sa propre provenance :
+    // deux valeurs numériquement égales ne sont pas la même source.
+    const rowMk03 = PUBLISHED_REGISTRY.rows.find(
+        (r) => r.sensorFamily === "MK03" && r.magnetId === "M02" && r.sensitivityClass === "C" && r.approachId === "D1",
+      )!,
+      rowMk04 = PUBLISHED_REGISTRY.rows.find(
+        (r) => r.sensorFamily === "MK04" && r.magnetId === "M04" && r.sensitivityClass === "C" && r.approachId === "D1",
+      )!;
+    expect(rowMk03.provenance.sourceRef).not.toBe(rowMk04.provenance.sourceRef);
+    expect(workshopPair(mk03)).toEqual([rowMk03.pullInMm, rowMk03.dropOutMm]);
+    expect(workshopPair(mk04)).toEqual([rowMk04.pullInMm, rowMk04.dropOutMm]);
+    // Retirer la ligne MK04 n'emprunte jamais celle du MK03.
+    expect(publishedPairFor("MK04", "C", "D1", "M02")).toBeNull();
     const note = summarizeWorkshop(mk04);
     expect(note).not.toContain("MK03");
     expect(note).toContain("MK04");
