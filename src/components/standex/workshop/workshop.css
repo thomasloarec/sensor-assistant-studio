@@ -2339,10 +2339,20 @@
   .mw-stage .mw-stage-grid {
     grid-template-columns: minmax(0, 1fr);
   }
+  /* Sur une seule colonne, le verdict et la scène restent en tête : c'est la
+     réponse à la question posée. Les réglages viennent juste après, dans le
+     même ordre de lecture que sur grand écran. */
+  .mw-stage .mw-main {
+    order: 1;
+  }
+  .mw-stage .mw-controls {
+    order: 2;
+  }
   .mw-stage .mw-canvas {
     min-height: 340px;
   }
 }
+
 @media (prefers-reduced-motion: reduce) {
   .mw-approach-button {
     transition: none;
