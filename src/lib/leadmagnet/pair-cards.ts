@@ -72,9 +72,8 @@ export function pairCardFor(sensor: SensorModel): PairCard {
     fixingLabel: FIXING_LABEL[fixingGroup(sensor)] ?? FIXING_LABEL["unknown"]!,
     familyLabel: FAMILY_LABEL[sensor.shape],
     size: sizeLabel(sensor),
-    maxPublishedPullIn: undefined,
     maxPullInMm: maxPublishedPullIn(sensor.id, magnetId),
-  } as PairCard;
+  };
 }
 
 /**
