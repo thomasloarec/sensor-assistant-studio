@@ -142,9 +142,11 @@ function HomeRoute() {
                     {t("Commencer")}
                     <ArrowRight className="transition-transform duration-[var(--d-fast)] group-hover:translate-x-[3px]" />
                   </Button>
+                  {/* Fond sombre : le lien prend la couleur de texte du contexte
+                      immersif (voir `.immersive .text-link`) et la taille du bouton. */}
                   <button
                     type="button"
-                    className="text-link min-h-11"
+                    className="text-link t-body min-h-11"
                     onClick={() => setAccountRequest((n) => n + 1)}
                   >
                     {t("J'ai déjà un projet")}

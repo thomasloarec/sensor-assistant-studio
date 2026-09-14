@@ -163,6 +163,7 @@ function Fallback({
   pair,
   fitToView = false,
   scaleBar = false,
+  caption = true,
 }: {
   model: SensorModel;
   reason: string;
@@ -173,6 +174,9 @@ function Fallback({
    * donc exacte pour ce cadrage précis. La vue 3D a sa propre règle, mesurée
    * dans la projection orthographique. */
   scaleBar?: boolean;
+  /** À `false`, la raison n'est plus écrite dans la vignette : elle reste lue
+   * par les lecteurs d'écran (aria-label) et proposée en infobulle. */
+  caption?: boolean;
 }) {
   const magnet = pair ? pairedMagnetModel(pair.magnetId, model.id) : null;
   const span = Math.max(...model.body, model.terminalSpan ?? 0);
@@ -225,7 +229,7 @@ function Fallback({
           </g>
         ) : null}
       </svg>
-      <span className="t-caption">{reason}</span>
+      {caption ? <span className="t-caption">{reason}</span> : null}
     </div>
   );
 }
@@ -258,6 +262,7 @@ export function CandidateThumbnail({
   size = "compact",
   scaleBar = false,
   onDemand = false,
+  quiet = false,
 }: {
   sensorId: string;
   livePreview?: boolean;
@@ -271,6 +276,9 @@ export function CandidateThumbnail({
    *  qu'au survol, au focus ou au clic. Six contextes WebGL ouverts en même
    *  temps laissaient des vignettes vides plusieurs secondes. */
   onDemand?: boolean;
+  /** Vignette silencieuse : aucun texte dans l'image. L'état de l'aperçu passe
+   *  en infobulle (`title`) et reste annoncé aux lecteurs d'écran. */
+  quiet?: boolean;
 }) {
   const model = pairedMagnetModel(sensorId) ?? sensorById(sensorId);
   const host = useRef<HTMLDivElement>(null);
@@ -319,6 +327,19 @@ export function CandidateThumbnail({
 
   const live = livePreview && asked && inView && slot && supported && !lost;
   const wake = onDemand && !asked ? () => setAsked(true) : undefined;
+  const reason = !livePreview
+    ? t("Vue plane")
+    : onDemand && !asked
+      ? // Dessin coté immédiat : la vignette n'est jamais vide, la 3D arrive au
+        // survol. En mode silencieux, l'indication n'est plus écrite dans l'image.
+        quiet
+        ? t("Survolez pour la 3D")
+        : t("Vue cotée · survolez pour la 3D")
+      : supported
+        ? lost
+          ? t("Aperçu 3D indisponible")
+          : t("Aperçu 3D à l'affichage")
+        : t("3D non disponible sur cet appareil");
   return (
     <div
       ref={host}
@@ -326,6 +347,7 @@ export function CandidateThumbnail({
       data-live={live ? "3d" : "2d"}
       data-on-demand={onDemand ? (asked ? "asked" : "static") : undefined}
       data-sensor={model.id}
+      {...(quiet ? { title: `${model.name} — ${reason}` } : {})}
       onPointerEnter={wake}
       onPointerDown={wake}
       onFocusCapture={wake}
@@ -342,6 +364,7 @@ export function CandidateThumbnail({
                 cabled={cabled}
                 fitToView={fitToView}
                 scaleBar={scaleBar}
+                caption={!quiet}
                 {...(pair ? { pair } : {})}
               />
             }
@@ -360,22 +383,11 @@ export function CandidateThumbnail({
       ) : (
         <Fallback
           model={model}
-          reason={
-            !livePreview
-              ? t("Vue plane")
-              : onDemand && !asked
-                ? // Dessin coté immédiat : la vignette n'est jamais vide, la 3D
-                  // arrive au survol.
-                  t("Vue cotée · survolez pour la 3D")
-                : supported
-                  ? lost
-                    ? t("Aperçu 3D indisponible")
-                    : t("Aperçu 3D à l'affichage")
-                  : t("3D non disponible sur cet appareil")
-          }
+          reason={reason}
           cabled={cabled}
           fitToView={fitToView}
           scaleBar={scaleBar}
+          caption={!quiet}
           {...(pair ? { pair } : {})}
         />
       )}

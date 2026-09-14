@@ -39,11 +39,11 @@ const NOT_CONFIGURED_MESSAGE =
   "la conception et l'export restent disponibles, l'envoi non.";
 
 const SIGN_IN_MESSAGE =
-  "La liaison avec l'équipe Standex est active : connectez-vous pour envoyer votre dossier. " +
+  "La liaison avec l'équipe Standex est active : connectez-vous pour envoyer votre projet. " +
   "Tant que vous ne l'envoyez pas, rien ne quitte votre appareil.";
 
 export const READY_MESSAGE =
-  "La liaison avec l'équipe Standex est active : vous pouvez envoyer votre dossier pour revue.";
+  "La liaison avec l'équipe Standex est active : vous pouvez envoyer votre projet pour revue.";
 
 export async function checkLeadBackend(): Promise<LeadBackendStatus> {
   const probe = await probeLeadSchema();

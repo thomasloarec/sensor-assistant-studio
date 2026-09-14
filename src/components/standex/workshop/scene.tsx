@@ -604,11 +604,12 @@ function Dimensions({ model }: { model: SensorModel }) {
     </group>
   );
 }
-/** Cote d'entrefer : distance MESURÉE entre le centre du capteur et le centre de
- *  l'aimant sur l'échantillon affiché. Aucun seuil, aucune valeur inventée : la
- *  position vient des échantillons déjà calculés par le moteur. */
+/** Cote d'entrefer : EXACTEMENT la grandeur lue par le moteur et affichée par
+ *  les curseurs (`CycleSample.distance`, entrefer de surfaces). La scène ne
+ *  mesure plus une distance entre centres : les deux nombres seraient différents
+ *  au même instant. Aucun seuil, aucune conversion inventée ici. */
 function GapDimension({ sample }: { sample: CycleSample }) {
-  const centre = length(sample.position);
+  const gap = sample.distance;
   const mid: Vec3 = [sample.position[0] / 2, 2.4, sample.position[2] / 2];
   return (
     <group>
@@ -624,7 +625,7 @@ function GapDimension({ sample }: { sample: CycleSample }) {
         gapSize={0.8}
       />
       <Label position={mid} className="mw-dimension">
-        {`${Math.round(centre * 10) / 10} mm`}
+        {`${Math.round(gap * 10) / 10} mm`}
       </Label>
     </group>
   );
@@ -738,15 +739,21 @@ export function CameraRig({
   view?: "3d" | "top";
   resetKey: string;
 }) {
-  const { camera, controls } = useThree();
+  const { camera, controls, size } = useThree();
+  /* Sur un cadre étroit (téléphone en portrait), la largeur visible est plus
+     petite que la hauteur : sans ce recul, le couple sortait du cadre. On ne
+     recadre PAS à chaque pixel de redimensionnement — ouvrir un panneau
+     latéral repositionnait alors la caméra et la scène paraissait vide. */
+  const portrait = size.height > 0 && size.width < size.height;
   useEffect(() => {
     const c = controls as unknown as { target: Vector3; update: () => void } | undefined;
+    const d = portrait ? distance / 0.7 : distance;
     camera.position.set(
-      target[0] + (view === "top" ? 0 : distance * 0.7),
-      target[1] + distance * 0.75,
-      target[2] + (view === "top" ? 0.001 : distance),
+      target[0] + (view === "top" ? 0 : d * 0.7),
+      target[1] + d * 0.75,
+      target[2] + (view === "top" ? 0.001 : d),
     );
-    if (view === "top") camera.position.y = target[1] + distance;
+    if (view === "top") camera.position.y = target[1] + d;
     camera.up.set(0, view === "top" ? 0 : 1, view === "top" ? -1 : 0);
     camera.lookAt(...target);
     camera.updateProjectionMatrix();
@@ -754,7 +761,7 @@ export function CameraRig({
     c?.update();
     // Deliberately reset only on explicit view/setup changes, not every animation frame.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [resetKey, camera, controls]);
+  }, [resetKey, camera, controls, portrait]);
   return null;
 }
 export default function WorkshopScene({
@@ -803,8 +810,12 @@ export default function WorkshopScene({
     Math.abs(config.end),
     config.travel,
   );
+  /* Le couple doit occuper 40 à 60 % de la largeur : la distance est donc
+     proportionnelle à la boîte englobante (corps + course), pas un recul fixe.
+     `CameraRig` place ensuite la caméra à 1,25 × cette valeur, légèrement en
+     plongée, et « Recadrer » rejoue exactement ce même cadrage. */
   const dist = Math.max(14, model.body[0] * 1.6),
-    coupleDist = Math.max(38, coupleSpan * 2.6),
+    coupleDist = Math.max(24, coupleSpan * 1.15),
     target: Vec3 =
       focus === "sensor"
         ? [config.mountX, 0, config.mountZ]

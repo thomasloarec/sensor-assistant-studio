@@ -181,7 +181,8 @@ describe("enregistrement et sortie", () => {
   test("« Demander un essai » coche une demande, jamais une mesure", () => {
     expect(SPACE).toContain("TRIAL_REQUEST");
     expect(SPACE).toContain('data-testid="trial-request"');
-    expect(SPACE).toContain("ce n'est ni une mesure, ni une validation technique.");
+    // Titre raccourci, mais la réserve reste écrite : demander n'est pas valider.
+    expect(SPACE).toContain("demander une mesure n'est pas une validation technique.");
   });
 });
 

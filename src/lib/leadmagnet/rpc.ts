@@ -58,7 +58,7 @@ export type LeadRpcName = (typeof LEAD_RPC)[keyof typeof LEAD_RPC];
 
 /** Erreurs métier levées par les RPC, traduites pour l'utilisateur. */
 const MESSAGES: { match: RegExp; message: string }[] = [
-  { match: /AUTH_REQUIRED/, message: "Connectez-vous pour envoyer votre dossier à Standex." },
+  { match: /AUTH_REQUIRED/, message: "Connectez-vous pour envoyer votre projet à Standex." },
   {
     match: /REVISION_CONFLICT/,
     message:
