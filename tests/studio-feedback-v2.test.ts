@@ -18,6 +18,7 @@ import {
   PUBLISHED_REGISTRY,
   PHYSICS_REGISTRY,
   publishedPair,
+  publishedPairFor,
 } from "../src/lib/standex/magnetics/registries";
 import { evaluateReference } from "../src/lib/standex/magnetics/margin";
 import {
@@ -37,8 +38,13 @@ test("le couple par défaut vient du tableau central ; un aimant choisi reste lu
   // Les aimants réellement documentés pour MK03 restent proposés et lisibles.
   expect(documentedMagnetsFor("MK03")).toEqual(["M02", "4003004003"]);
   expect(magnetOptionsFor("MK03").slice(0, 3)).toEqual(["M03", "M02", "4003004003"]);
-  expect(DEFAULT_WORKSHOP.magnetModel).toBe("4003004003");
-  expect(magnetSize(DEFAULT_WORKSHOP)).toEqual([19, 4, 4]);
+  // Démarrage par défaut : couple réellement documenté MK04 + M04 (D1, classe B).
+  expect(DEFAULT_WORKSHOP.sensorId).toBe("MK04");
+  expect(DEFAULT_WORKSHOP.magnetModel).toBe("M04");
+  expect(DEFAULT_WORKSHOP.geometry).toBe("D1");
+  expect(DEFAULT_WORKSHOP.sensitivity).toBe("B");
+  expect(publishedPairFor("MK04", "B", "D1", "M04", PUBLISHED_REGISTRY)).toEqual([15, 17.5]);
+  expect(magnetSize({ ...DEFAULT_WORKSHOP, magnetModel: "4003004003" })).toEqual([19, 4, 4]);
   expect(parseWorkshopConfig({ ...DEFAULT_WORKSHOP, magnetModel: "M02" })?.magnetModel).toBe("M02");
   expect(magnetSize({ ...DEFAULT_WORKSHOP, magnetModel: "M02" })).toEqual([32.4, 10, 16.7]);
   expect(referenceAllowed(DEFAULT_WORKSHOP)).toBe(true);

@@ -24,6 +24,7 @@ import {
 } from "../src/lib/standex/magnetics/registries";
 import {
   DEFAULT_WORKSHOP,
+  applySensorSelection,
   distanceBasis,
   parseWorkshopConfig,
   parseWorkshopNote,
@@ -344,5 +345,59 @@ describe("identité de famille documentée M21/P(1,2)", () => {
   });
   test("un couple sans distances ne reçoit aucune note de famille", () => {
     expect(publishedFamilyNoteFor(config({ sensorId: "MK27", magnetModel: "M27" }))).toBeNull();
+  });
+});
+
+describe("points d'entrée : le bon couple par défaut partout", () => {
+  test("la première ouverture démarre sur un couple réellement documenté", () => {
+    expect([DEFAULT_WORKSHOP.sensorId, DEFAULT_WORKSHOP.magnetModel]).toEqual(["MK04", "M04"]);
+    expect(DEFAULT_WORKSHOP.magnetModel).toBe(defaultMagnetFor(DEFAULT_WORKSHOP.sensorId));
+    expect(DEFAULT_WORKSHOP.mode).toBe("reference");
+    expect(publishedClasses("MK04", "M04")).toContain(DEFAULT_WORKSHOP.sensitivity);
+    expect(publishedApproaches("MK04", "M04")).toContain(DEFAULT_WORKSHOP.geometry);
+    expect(referenceAllowed(DEFAULT_WORKSHOP)).toBe(true);
+    expect(workshopPair(DEFAULT_WORKSHOP)).toEqual([15, 17.5]);
+    expect(distanceBasis(DEFAULT_WORKSHOP)).toBe("standex");
+  });
+  test("la sélection centrale applique le couple, la classe, l'approche et l'orientation", () => {
+    const from = config({ sensorId: "MK03", magnetModel: "4003004003", sensitivity: "E" });
+    const mk36 = applySensorSelection(from, "MK36");
+    expect(mk36.magnetModel).toBe("M36-N42");
+    expect(mk36.geometry).toBe("F1");
+    expect(mk36.sensitivity).toBe("1A");
+    expect(mk36.magnetAngle).toBe(180);
+    expect(mk36.mode).toBe("reference");
+    const mk21 = applySensorSelection(mk36, "MK21");
+    expect([mk21.magnetModel, mk21.geometry, mk21.magnetAngle]).toEqual(["M21P/1", "D1", 0]);
+  });
+  test("machine, câble et cinématique survivent au changement de capteur", () => {
+    const from = config({
+      cableLengthMm: 500,
+      travel: 42,
+      mountX: 3,
+      mountZ: 7,
+      mountAngle: 15,
+      start: 30,
+      end: 4,
+    });
+    const next = applySensorSelection(from, "MK05");
+    expect(next.cableLengthMm).toBe(500);
+    expect([next.travel, next.mountX, next.mountZ, next.mountAngle]).toEqual([42, 3, 7, 15]);
+    expect([next.start, next.end]).toEqual([30, 4]);
+    expect(next.machine).toBe(from.machine);
+  });
+  test("un aimant explicitement enregistré n'est pas écrasé par une simple relecture", () => {
+    const saved = config({ sensorId: "MK03", magnetModel: "M02" });
+    expect(parseWorkshopConfig(JSON.parse(JSON.stringify(saved)))?.magnetModel).toBe("M02");
+    expect(parseWorkshopNote(serializeWorkshop(saved))?.magnetModel).toBe("M02");
+  });
+  test("un modèle explicitement fictif reste fictif, un vrai capteur non", () => {
+    expect(applySensorSelection(config(), "GENERIC")).toMatchObject({
+      magnetModel: "generic",
+      mode: "education",
+    });
+    expect(applySensorSelection(config({ sensorId: "GENERIC", mode: "education" }), "MK27")).toMatchObject(
+      { magnetModel: "M27", mode: "reference" },
+    );
   });
 });

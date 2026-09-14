@@ -5,6 +5,10 @@ import {
 } from "../src/lib/standex/application-dossier";
 import { DEFAULT_WORKSHOP, serializeWorkshop } from "../src/lib/standex/magnetic-workshop";
 import type { SensorTestSession, SensorTestMessage } from "../src/lib/standex/types";
+/** Ancien exemple MK03 + 4003004003 : conservé là où le test porte précisément
+ * sur ce couple, indépendamment du démarrage par défaut. */
+const MK03_EXAMPLE = { ...DEFAULT_WORKSHOP, sensorId: "MK03", magnetModel: "4003004003" };
+
 
 const session: SensorTestSession = {
   id: "test-session",
@@ -41,7 +45,7 @@ const dossier = (messages: SensorTestMessage[]) =>
 
 test("the example adds documented context without filling real-machine requirements", () => {
   const before = dossier([]);
-  const after = dossier([message(serializeWorkshop(DEFAULT_WORKSHOP))]);
+  const after = dossier([message(serializeWorkshop(MK03_EXAMPLE))]);
   expect(after.fields).toEqual(before.fields);
   expect(after.missingCritical).toEqual(before.missingCritical);
   expect(after.productConfidence).toEqual(before.productConfidence);

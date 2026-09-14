@@ -56,6 +56,8 @@ import {
   magnetSize,
   distanceBasis,
   isFictitiousSensor,
+  applySensorSelection,
+  approachChoicesFor,
   workshopPair,
 } from "@/lib/standex/magnetic-workshop";
 import type { WorkshopConfig, Contact, Vec3 } from "@/lib/standex/magnetic-workshop";
@@ -459,7 +461,7 @@ export default function MagneticWorkshop({
   const classKind = publishedClassKind(config.sensorId, config.magnetModel);
   /** Lignes publiées du couple, y compris les modèles de contact non simulés. */
   const publishedRows = publishedRowsForCouple(config.sensorId, config.magnetModel);
-  const approachOptions = approachChoices(config.sensorId, config.magnetModel);
+  const approachOptions = approachChoicesFor(config.sensorId, config.magnetModel);
   const magnetChoices = magnetOptionsFor(config.sensorId);
   const magnetAlias = documentedAlias(config.magnetModel);
 
@@ -523,39 +525,10 @@ export default function MagneticWorkshop({
     setField(false);
     setStep(0);
   }
-  /** Approches réellement publiées pour ce couple, dans l'ordre de lecture.
-   * F1 est l'approche frontale des fiches MK36/MK37/MK38 : elle n'est proposée
-   * que si le registre la publie pour CE couple. */
-  function approachChoices(sensorId: string, magnetModel: string): WorkshopConfig["geometry"][] {
-    const published = publishedApproaches(sensorId, magnetModel);
-    return (["D1", "D3", "F1"] as const).filter((a) => published.includes(a));
-  }
-  /** Sélection réelle d'un capteur : le couple par défaut central s'applique,
-   * la classe de sensibilité retombe sur une classe réellement publiée, et un
-   * vrai capteur ne bascule jamais d'office dans le modèle fictif. */
+  /** Sélection réelle d'un capteur : une seule logique centrale, partagée avec
+   * l'espace de conception. */
   function selectSensor(sensorId: string) {
-    const magnetModel = defaultMagnetFor(sensorId);
-    const classes = publishedClasses(sensorId, magnetModel);
-    const approaches = approachChoices(sensorId, magnetModel);
-    const geometry =
-      approaches.length && !approaches.includes(config.geometry) ? approaches[0]! : config.geometry;
-    const fake = isFictitiousSensor(sensorId);
-    update({
-      sensorId,
-      magnetModel: fake ? "generic" : magnetModel,
-      sensitivity:
-        classes.length && !classes.includes(config.sensitivity)
-          ? (classes[0] as WorkshopConfig["sensitivity"])
-          : config.sensitivity,
-      // L'approche suit la source : un couple publié uniquement en frontal ne
-      // reste pas sur une approche latérale qui n'existe pas pour lui.
-      geometry,
-      mode: fake ? "education" : "reference",
-      sensorAngle: 0,
-      // L'orientation de départ est celle que la source documente : faces en
-      // vis-à-vis (180°) pour l'approche frontale, axes parallèles sinon.
-      magnetAngle: documentedMagnetAngleDeg(geometry),
-    });
+    update(applySensorSelection(config, sensorId));
   }
 
   async function save() {

@@ -4,6 +4,10 @@ import { buildDossierExport, parseDossierExport, parseServerSnapshot } from "@/l
 import { mountingHash, parseGuidedMounting } from "@/lib/standex/mounting/contract";
 import { DEFAULT_WORKSHOP } from "@/lib/standex/magnetic-workshop";
 import { mountingFromWorkshop, withComputed } from "@/lib/standex/mounting";
+/** Ancien exemple MK03 + 4003004003 : conservé là où le test porte précisément
+ * sur ce couple, indépendamment du démarrage par défaut. */
+const MK03_EXAMPLE = { ...DEFAULT_WORKSHOP, sensorId: "MK03", magnetModel: "4003004003" };
+
 
 const dossierWithWorkshop = () => {
   const d = createDossier(new Date("2026-09-11T00:00:00.000Z").toISOString());
@@ -11,7 +15,7 @@ const dossierWithWorkshop = () => {
     ...d,
     // Choix mécanique EXISTANT : press_fit, avec sa contrainte de perçage.
     mounting: { kind: "press_fit", holeDiameterMm: 8 } as const,
-    workshop: { ...DEFAULT_WORKSHOP },
+    workshop: { ...MK03_EXAMPLE },
     workshopSource: "builtin" as const,
   };
 };
@@ -57,7 +61,7 @@ describe("le champ de montage mécanique existant et le montage guidé sont deux
 
 describe("un résultat importé n'est jamais accepté sur la foi de son empreinte", () => {
   it("une empreinte VALIDE ne suffit pas : le résultat est recalculé", () => {
-    const truthful = withComputed(mountingFromWorkshop({ ...DEFAULT_WORKSHOP }));
+    const truthful = withComputed(mountingFromWorkshop({ ...MK03_EXAMPLE }));
     // Empreinte réellement cohérente avec les entrées, mais verdict falsifié.
     const forged = {
       ...truthful,

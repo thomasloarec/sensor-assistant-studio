@@ -19,6 +19,10 @@ import {
 import { createDesignFreeze, verifyFreeze, freezeMarkdown } from "../src/lib/standex/design-freeze";
 import { stableStringify, createDossier, toClientDto } from "../src/lib/leadmagnet/dossier";
 import { buildDossierExport, parseDossierExport } from "../src/lib/leadmagnet/dossier-io";
+/** Ancien exemple MK03 + 4003004003 : conservé là où le test porte précisément
+ * sur ce couple, indépendamment du démarrage par défaut. */
+const MK03_EXAMPLE = { ...DEFAULT_WORKSHOP, sensorId: "MK03", magnetModel: "4003004003" };
+
 const need = {
   gapClosedMm: 7.5,
   gapOpenMm: 22,
@@ -120,8 +124,8 @@ test("T5 consultation gate, exact derived fields, confirmations, conflict and re
     cycles: 2000000,
     selectedSolutionId: "MK03/B/M02/D1",
   };
-  expect(deriveStudioFields(s, DEFAULT_WORKSHOP).fields).toEqual({});
-  s = deriveStudioFields({ ...s, consulted: true }, DEFAULT_WORKSHOP) as typeof s;
+  expect(deriveStudioFields(s, MK03_EXAMPLE).fields).toEqual({});
+  s = deriveStudioFields({ ...s, consulted: true }, MK03_EXAMPLE) as typeof s;
   expect(Object.keys(s.fields).sort()).toEqual([...DERIVABLE_FIELDS].sort());
   expect(
     Object.values(s.fields).every((f) => f.source === "atelier" && f.state === "hypothesis"),
@@ -130,7 +134,7 @@ test("T5 consultation gate, exact derived fields, confirmations, conflict and re
   const saved = s.fields["target_distance_and_tolerance"]!.value;
   s = deriveStudioFields(
     { ...s, need: { ...need, gapClosedMm: 8.2 } },
-    DEFAULT_WORKSHOP,
+    MK03_EXAMPLE,
   ) as typeof s;
   expect(s.fields["target_distance_and_tolerance"]!.value).toBe(saved);
   expect(s.fields["target_distance_and_tolerance"]!.proposal).toContain("8.2");
@@ -141,7 +145,7 @@ test("T5 consultation gate, exact derived fields, confirmations, conflict and re
 test("T7 deterministic complete unsigned fiche, tamper detection, commercial exclusion and DTO roundtrip", async () => {
   const study = deriveStudioFields(
     { ...newStudy(), need, consulted: true, example: true },
-    DEFAULT_WORKSHOP,
+    MK03_EXAMPLE,
   );
   study.fields["company"] = {
     value: "PRIVATE_COMPANY",
@@ -155,7 +159,7 @@ test("T7 deterministic complete unsigned fiche, tamper detection, commercial exc
     generatedAt: "2026-09-10T12:00:00.000Z",
     author: "",
     study,
-    config: DEFAULT_WORKSHOP,
+    config: MK03_EXAMPLE,
   };
   const a = await createDesignFreeze(input),
     b = await createDesignFreeze(input);
@@ -175,9 +179,9 @@ test("T7 deterministic complete unsigned fiche, tamper detection, commercial exc
   const tampered = structuredClone(a);
   tampered.sections[0]!.entries[0]!.value = "changed";
   expect(await verifyFreeze(tampered)).toBe(false);
-  const d = { ...createDossier(), workshop: DEFAULT_WORKSHOP, studioV2: study, designFreeze: a };
+  const d = { ...createDossier(), workshop: MK03_EXAMPLE, studioV2: study, designFreeze: a };
   expect(toClientDto(d).designFreeze?.hash).toBe(a.hash);
-  expect(toClientDto({ ...d, workshop: { ...DEFAULT_WORKSHOP, end: 6 } }).designFreeze).toBeNull();
+  expect(toClientDto({ ...d, workshop: { ...MK03_EXAMPLE, end: 6 } }).designFreeze).toBeNull();
   const imported = parseDossierExport(buildDossierExport(d));
   expect(imported.ok).toBe(true);
   if (imported.ok) {

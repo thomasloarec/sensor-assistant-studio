@@ -35,8 +35,12 @@ import {
 import type { GuidedMounting } from "@/lib/standex/mounting";
 import { COFFEE_ASSEMBLY } from "@/lib/standex/machine-assembly";
 import { DEFAULT_WORKSHOP, parseWorkshopConfig } from "@/lib/standex/magnetic-workshop";
+/** Ancien exemple MK03 + 4003004003 : conservé là où le test porte précisément
+ * sur ce couple, indépendamment du démarrage par défaut. */
+const MK03_EXAMPLE = { ...DEFAULT_WORKSHOP, sensorId: "MK03", magnetModel: "4003004003" };
 
-const base = () => mountingFromWorkshop({ ...DEFAULT_WORKSHOP });
+
+const base = () => mountingFromWorkshop({ ...MK03_EXAMPLE });
 
 describe("profils de montage", () => {
   it("n'expose que les couples réellement publiés, sans alias d'identité", () => {
@@ -374,7 +378,7 @@ describe("persistance et invalidation", () => {
 
 describe("pont avec l'atelier existant", () => {
   it("traduit une configuration d'atelier sans la déformer", () => {
-    const m = mountingFromWorkshop({ ...DEFAULT_WORKSHOP });
+    const m = mountingFromWorkshop({ ...MK03_EXAMPLE });
     expect(m.couple).toEqual({
       sensorId: "MK03",
       magnetId: "4003004003",

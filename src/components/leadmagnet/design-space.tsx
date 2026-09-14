@@ -174,7 +174,7 @@ import {
   terminationFromHousing,
 } from "@/lib/leadmagnet/connector-library";
 import { routeSamples, SEARCH_LINK_DISCLAIMER } from "@/lib/leadmagnet/samples";
-import { DEFAULT_WORKSHOP } from "@/lib/standex/magnetic-workshop";
+import { DEFAULT_WORKSHOP, applySensorSelection } from "@/lib/standex/magnetic-workshop";
 import type { WorkshopConfig } from "@/lib/standex/magnetic-workshop";
 import { BrandLogo } from "@/components/standex/brand-logo";
 
@@ -1813,7 +1813,10 @@ export function DesignSpace({
                   ...d,
                   workshopSensorId: next,
                   sensorSyncConfirmed: true,
-                  workshop: d.workshop ? { ...d.workshop, sensorId: next } : d.workshop,
+                  // Vraie sélection de capteur : le couple par défaut, la classe,
+                  // l'approche et l'orientation suivent la même logique centrale
+                  // que l'atelier. Machine et câble sont conservés.
+                  workshop: applySensorSelection(d.workshop ?? DEFAULT_WORKSHOP, next),
                 };
               })
             }
