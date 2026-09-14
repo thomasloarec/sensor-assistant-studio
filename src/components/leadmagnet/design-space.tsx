@@ -521,6 +521,8 @@ export function DesignSpace({
   }, []);
 
   const [showWorkshop, setShowWorkshop] = useState(false);
+  /** État d'enregistrement du montage, affiché par la barre de l'atelier. */
+  const [workshopSaveState, setWorkshopSaveState] = useState<"saved" | "saving" | "draft">("saved");
   /** Catalogue filtrable ouvert DIRECTEMENT depuis le sous-menu : il ne dépend
    * pas de l'atelier 3D et sa fermeture ne touche à rien du travail en cours. */
   const [catalogOpen, setCatalogOpen] = useState(false);
@@ -3792,6 +3794,19 @@ export function DesignSpace({
           storageMode="memory"
           cableRouting={cableRouting}
           onDraftChange={onWorkshopDraft}
+          onSaveState={setWorkshopSaveState}
+          onResult={() => {
+            // Sortie de l'atelier : la revue s'ouvre sur le couple testé.
+            setShowWorkshop(false);
+            setPanel(null);
+            setTab("revue");
+          }}
+          onRequestTrial={() => {
+            if (!isDelegated(dossier, TRIAL_REQUEST)) toggleDelegated(TRIAL_REQUEST);
+            setShowWorkshop(false);
+            setPanel(null);
+            setTab("revue");
+          }}
           onClose={() => {
             setShowWorkshop(false);
             setPanel(null);
@@ -4366,10 +4381,29 @@ export function DesignSpace({
         keepMounted={workshopMounted}
         fullscreen
         languagePicker
-        backLabel={t("Retour au projet")}
-        onBack={() => setPanel(null)}
+        bare
+        backLabel={t("Retour aux couples")}
+        onBack={() => {
+          setPanel(null);
+          setTab("montage");
+        }}
         onOpenChange={(o) => setPanel(o ? "atelier" : null)}
         title={t("Atelier 3D")}
+        badge={
+          <span className="flex shrink-0 items-center gap-2">
+            {/* Références portées telles quelles, jamais traduites. */}
+            {workshop ? (
+              <Badge className="project-state-badge">{`${workshop.sensorId} + ${workshop.magnetModel}`}</Badge>
+            ) : null}
+            <span className="t-caption" role="status" data-testid="workshop-save-state">
+              {workshopSaveState === "saving"
+                ? t("Enregistrement…")
+                : workshopSaveState === "saved"
+                  ? t("Enregistré")
+                  : t("Brouillon")}
+            </span>
+          </span>
+        }
       >
         {workshopMounted ? workshopSection : null}
       </WorkspacePanel>
