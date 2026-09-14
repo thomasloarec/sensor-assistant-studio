@@ -10,7 +10,8 @@ magnétique ou d'un capteur voisin.
 | --- | --- |
 | `src/data/registries/published-references.json` (`published-2026-09-14-v3`, 445 lignes) | seule source des distances Max Pull-in / Min Drop-out (D1–D5) et Min Activation / Max Release (F1) |
 | Reed Technology Academy (provenance de chaque ligne du registre) | référence par ligne, citée telle quelle |
-| Brochure Reed Switch Sensors A5 V04 EN, p. 38 | tableau MK04/M04 D1–D5, classes B à E |
+| Brochure Reed Switch Sensors A5 V04 EN, p. 38 | tableau MK04/M04 D1–D5, classes B à E ; liste des aimants valables (dont 2500000021 / M21) |
+| Brochure Reed Switch Sensors A5 V04 EN, p. 37 | planche MAGNETS IN HOUSINGS : famille « M21/P(1,2) », cotes uniques |
 | `public/datasheets/Packaged-Magnets.pdf` V03, 18 juin 2026 | géométrie des boîtiers d'aimants |
 | Fiches produit M21P/1, M21P/2, M04 (standexdetect.com) | variantes de trous oblongs, cotes MK04/MK04R |
 | Fiches `datasheet-reed-sensor-series-mk36/37/38.pdf` V00, 17 janvier 2025, p. 2 | tableaux « Activation Distances » : Min Activation / Max Release, actionneurs M36-N42 / M37-N42 / M38-N42 |
