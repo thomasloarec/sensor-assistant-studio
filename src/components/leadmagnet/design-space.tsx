@@ -4101,7 +4101,10 @@ export function DesignSpace({
       data-readable
       className={embedded ? "text-foreground" : "min-h-screen bg-background text-foreground"}
     >
+      {/* La barre publie sa hauteur réelle : c'est elle qui cale le rail des
+          étapes juste en dessous, sans chevauchement. */}
       <header
+        ref={projectHeaderRef}
         className={`project-header material sticky top-0 z-30${visible ? "" : " hidden"}`}
       >
         <div className="mx-auto flex h-14 max-w-[76rem] items-center gap-3 px-4">
