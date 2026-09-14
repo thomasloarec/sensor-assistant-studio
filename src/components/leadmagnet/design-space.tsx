@@ -2126,6 +2126,10 @@ export function DesignSpace({
     </div>
   );
 
+  /** Note de longueurs de la SEULE gamme choisie, jamais le catalogue entier. */
+  const selectedRangeNote = dossier.selectedSensorId
+    ? rangeCableLengthNote(dossier.selectedSensorId)
+    : null;
   /** Le câble n'est PAS obligatoire à ce stade : tant que rien n'est demandé,
    * une longueur inconnue est un état normal, jamais une erreur. */
   const cableDefined =
