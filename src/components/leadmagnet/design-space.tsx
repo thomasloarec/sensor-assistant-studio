@@ -2625,13 +2625,20 @@ export function DesignSpace({
               : `${estimate.longestPathMm.toFixed(1)} mm`}
           </strong>
         </p>
-        <ul className="t-caption mt-2 list-disc pl-5">
-          {RANGE_CABLE_LENGTH_NOTES.map((n) => (
-            <li key={n.range}>
-              {n.range} : {n.lengths} {t("(source :")} {n.source})
-            </li>
-          ))}
-        </ul>
+        {/* Uniquement la note de gamme du capteur RÉELLEMENT choisi : le
+            catalogue des autres gammes n'a rien à faire dans votre projet. */}
+        {selectedRangeNote ? (
+          <p className="t-caption mt-2">
+            {selectedRangeNote.range} : {selectedRangeNote.lengths}{" "}
+            {selectedRangeNote.source.startsWith("http") ? (
+              <a className="underline" href={selectedRangeNote.source} target="_blank" rel="noreferrer">
+                {t("voir la source fabricant")}
+              </a>
+            ) : (
+              t("source interne Standex, à confirmer par la R&D")
+            )}
+          </p>
+        ) : null}
       </details>
     </div>
   );
