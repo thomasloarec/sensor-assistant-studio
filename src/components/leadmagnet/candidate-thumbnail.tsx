@@ -31,6 +31,7 @@ import {
   formatMm,
 } from "@/lib/standex/sensor-catalog";
 import type { SensorModel } from "@/lib/standex/sensor-catalog";
+import { niceScaleStep } from "@/lib/standex/scale-bar";
 
 const ThumbnailScene = lazy(
   () => import("@/components/standex/workshop/candidate-thumbnail-scene"),
@@ -151,16 +152,9 @@ export function thumbnailSilhouette(model: SensorModel): string {
   }
 }
 
-/** Pas de graduation lisible pour l'échelle d'un dessin : une valeur ronde
- * proche du tiers du cadrage. Aucune échelle commune n'est imposée à tous les
- * capteurs — un MK24 de 5 mm et un MK27 de 50 mm n'ont pas le même cadrage. */
-export function niceScaleStep(span: number): number {
-  const candidates = [0.5, 1, 2, 5, 10, 20, 50, 100];
-  const target = span / 3;
-  return candidates.reduce((best, v) =>
-    Math.abs(v - target) < Math.abs(best - target) ? v : best,
-  );
-}
+/* Le pas de graduation vient du module partagé : le repli 2D et le rendu 3D
+   mesurent la même longueur réelle, avec le même pas. */
+export { niceScaleStep };
 
 function Fallback({
   model,
@@ -176,8 +170,8 @@ function Fallback({
   pair?: { magnetId: string; approach: string };
   fitToView?: boolean;
   /** Règle graduée dessinée DANS le repère millimétrique du dessin : elle est
-   * donc exacte pour ce cadrage précis, et n'apparaît pas sur la vue 3D
-   * inclinée où elle serait trompeuse. */
+   * donc exacte pour ce cadrage précis. La vue 3D a sa propre règle, mesurée
+   * dans la projection orthographique. */
   scaleBar?: boolean;
 }) {
   const magnet = pair ? pairedMagnetModel(pair.magnetId, model.id) : null;
@@ -345,6 +339,7 @@ export function CandidateThumbnail({
               sensorId={model.id}
               cabled={cabled}
               fitToView={fitToView}
+              scaleBar={scaleBar}
               {...(pair ? { pair } : {})}
               reduced={reduced}
               onContextLost={() => setLost(true)}

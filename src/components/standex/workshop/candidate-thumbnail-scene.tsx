@@ -10,7 +10,10 @@ import { pairedMagnetModel } from "@/lib/standex/paired-magnets";
 import { Canvas } from "@react-three/fiber";
 import { Line, OrbitControls } from "@react-three/drei";
 import { Body, Contacts, ContextGuard } from "./scene";
-import { electricalDetailsAllowed, sensorById } from "@/lib/standex/sensor-catalog";
+import { electricalDetailsAllowed, formatMm, sensorById } from "@/lib/standex/sensor-catalog";
+import { projectedScaleBar, thumbnailZoom } from "@/lib/standex/scale-bar";
+import { t } from "@/lib/i18n/core";
+import { useEffect, useRef, useState } from "react";
 import type { Vec3 } from "@/lib/standex/magnetic-workshop";
 
 export default function CandidateThumbnailScene({
@@ -19,6 +22,7 @@ export default function CandidateThumbnailScene({
   pair,
   fitToView = false,
   reduced,
+  scaleBar = false,
   onContextLost,
 }: {
   sensorId: string;
@@ -26,12 +30,31 @@ export default function CandidateThumbnailScene({
   pair?: { magnetId: string; approach: string };
   reduced: boolean;
   fitToView?: boolean;
+  /** Règle graduée mesurée dans la projection orthographique. */
+  scaleBar?: boolean;
   onContextLost: () => void;
 }) {
   const model = pairedMagnetModel(sensorId) ?? sensorById(sensorId);
   const [l, h, w] = model.body;
   const span = Math.max(l, h, w);
   const dist = pair ? 155 : 100; // Fixed camera: every catalogue thumbnail uses the same mm scale.
+  /* Zoom = pixels par millimètre dans le plan de vue (caméra orthographique).
+     La règle ci-dessous en découle : elle mesure une longueur réelle. */
+  const zoom = thumbnailZoom(span, { pair: Boolean(pair), fitToView });
+  const host = useRef<HTMLDivElement>(null);
+  const [hostWidth, setHostWidth] = useState(0);
+  useEffect(() => {
+    const node = host.current;
+    if (!node) return;
+    const read = () => setHostWidth(node.clientWidth);
+    read();
+    if (typeof ResizeObserver === "undefined") return;
+    const observer = new ResizeObserver(read);
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
+  const rule =
+    scaleBar && hostWidth > 0 ? projectedScaleBar(span, zoom, hostWidth * 0.42) : null;
   const side = model.cableSide ?? -1;
   const magnet = pair ? pairedMagnetModel(pair.magnetId, model.id) : null;
   const layout = magnet ? pairLayout(model, magnet, pair!.approach) : null;
@@ -49,10 +72,11 @@ export default function CandidateThumbnailScene({
   ]);
 
   return (
-    <Canvas
+    <div className="candidate-thumb-stage" ref={host}>
+      <Canvas
       orthographic
       camera={{
-        zoom: pair ? 1.4 : fitToView ? 80 / span : 2,
+        zoom,
         position: [dist * 0.68, dist * 0.55, dist * 0.86],
         fov: 38,
         near: 0.1,
@@ -102,6 +126,18 @@ export default function CandidateThumbnailScene({
         autoRotateSpeed={0.8}
         target={pair ? [offset[0] / 2, 0, offset[2] / 2] : [0, 0, 0]}
       />
-    </Canvas>
+      </Canvas>
+      {rule ? (
+        <div className="candidate-thumb-rule" aria-hidden="true">
+          <span className="candidate-thumb-rule-line" style={{ inlineSize: `${rule.lengthPx}px` }} />
+          <span className="candidate-thumb-rule-text">{`${formatMm(rule.stepMm)} mm`}</span>
+        </div>
+      ) : null}
+      {rule ? (
+        <span className="sr-only">
+          {`${t("Échelle")} : ${formatMm(rule.stepMm)} mm`}
+        </span>
+      ) : null}
+    </div>
   );
 }
