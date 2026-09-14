@@ -23407,5 +23407,266 @@
     "Подробные настройки",
     "Impostazioni dettagliate",
     "詳細設定"
+  ],
+  "Couples proposés": [
+    "Suggested pairs",
+    "推荐组合",
+    "Vorgeschlagene Paare",
+    "Parejas propuestas",
+    "Предлагаемые пары",
+    "Coppie proposte",
+    "推奨ペア"
+  ],
+  "À tester dans votre montage": [
+    "To test in your assembly",
+    "在您的装配中测试",
+    "In Ihrem Aufbau zu testen",
+    "Para probar en su montaje",
+    "Для проверки в вашей сборке",
+    "Da provare nel vostro montaggio",
+    "お客様の取り付けでテスト"
+  ],
+  "Voir les couples proposés": [
+    "See the suggested pairs",
+    "查看推荐组合",
+    "Vorgeschlagene Paare ansehen",
+    "Ver las parejas propuestas",
+    "Посмотреть предлагаемые пары",
+    "Vedere le coppie proposte",
+    "推奨ペアを見る"
+  ],
+  "Couples les plus courants": [
+    "Most common pairs",
+    "最常见的组合",
+    "Häufigste Paare",
+    "Parejas más habituales",
+    "Наиболее распространённые пары",
+    "Coppie più comuni",
+    "最も一般的なペア"
+  ],
+  "Trois couples pour votre projet": [
+    "Three pairs for your project",
+    "为您的项目提供三个组合",
+    "Drei Paare für Ihr Projekt",
+    "Tres parejas para su proyecto",
+    "Три пары для вашего проекта",
+    "Tre coppie per il vostro progetto",
+    "プロジェクト向けの3つのペア"
+  ],
+  "Deux couples pour votre projet": [
+    "Two pairs for your project",
+    "为您的项目提供两个组合",
+    "Zwei Paare für Ihr Projekt",
+    "Dos parejas para su proyecto",
+    "Две пары для вашего проекта",
+    "Due coppie per il vostro progetto",
+    "プロジェクト向けの2つのペア"
+  ],
+  "Un couple pour votre projet": [
+    "One pair for your project",
+    "为您的项目提供一个组合",
+    "Ein Paar für Ihr Projekt",
+    "Una pareja para su proyecto",
+    "Одна пара для вашего проекта",
+    "Una coppia per il vostro progetto",
+    "プロジェクト向けの1つのペア"
+  ],
+  "Aucun couple ne passe vos critères": [
+    "No pair matches your criteria",
+    "没有组合符合您的条件",
+    "Kein Paar erfüllt Ihre Kriterien",
+    "Ninguna pareja cumple sus criterios",
+    "Ни одна пара не соответствует вашим критериям",
+    "Nessuna coppia soddisfa i vostri criteri",
+    "条件に合うペアはありません"
+  ],
+  "{0}. Testez-les dans votre montage.": [
+    "{0}. Test them in your assembly.",
+    "{0}。请在您的装配中测试。",
+    "{0}. Testen Sie sie in Ihrem Aufbau.",
+    "{0}. Pruébelas en su montaje.",
+    "{0}. Проверьте их в вашей сборке.",
+    "{0}. Provatele nel vostro montaggio.",
+    "{0}。お客様の取り付けでテストしてください。"
+  ],
+  "Aucun critère actif : testez-les dans votre montage.": [
+    "No active criterion: test them in your assembly.",
+    "没有启用的条件：请在您的装配中测试。",
+    "Kein aktives Kriterium: testen Sie sie in Ihrem Aufbau.",
+    "Ningún criterio activo: pruébelas en su montaje.",
+    "Активных критериев нет: проверьте их в вашей сборке.",
+    "Nessun criterio attivo: provatele nel vostro montaggio.",
+    "有効な条件はありません。お客様の取り付けでテストしてください。"
+  ],
+  "Recommandé": [
+    "Recommended",
+    "推荐",
+    "Empfohlen",
+    "Recomendado",
+    "Рекомендуется",
+    "Consigliato",
+    "推奨"
+  ],
+  "Distances à mesurer avec Standex": [
+    "Distances to be measured with Standex",
+    "距离需与 Standex 一起测量",
+    "Abstände mit Standex zu messen",
+    "Distancias por medir con Standex",
+    "Расстояния измеряются вместе со Standex",
+    "Distanze da misurare con Standex",
+    "距離はStandexと測定します"
+  ],
+  "Détecte jusqu'à {0} mm": [
+    "Detects up to {0} mm",
+    "检测距离可达 {0} mm",
+    "Erkennt bis {0} mm",
+    "Detecta hasta {0} mm",
+    "Обнаруживает до {0} мм",
+    "Rileva fino a {0} mm",
+    "最大 {0} mm で検出"
+  ],
+  "Tester ce couple →": [
+    "Test this pair →",
+    "测试此组合 →",
+    "Dieses Paar testen →",
+    "Probar esta pareja →",
+    "Проверить эту пару →",
+    "Provare questa coppia →",
+    "このペアをテスト →"
+  ],
+  "D'après vos réponses": [
+    "Based on your answers",
+    "根据您的回答",
+    "Auf Grundlage Ihrer Antworten",
+    "Según sus respuestas",
+    "По вашим ответам",
+    "In base alle vostre risposte",
+    "ご回答に基づく"
+  ],
+  "Voir tous les couples possibles ({0})": [
+    "See all possible pairs ({0})",
+    "查看所有可能的组合（{0}）",
+    "Alle möglichen Paare ansehen ({0})",
+    "Ver todas las parejas posibles ({0})",
+    "Посмотреть все возможные пары ({0})",
+    "Vedere tutte le coppie possibili ({0})",
+    "可能なペアをすべて見る（{0}）"
+  ],
+  "Laisser Standex choisir pour moi": [
+    "Let Standex choose for me",
+    "让 Standex 为我选择",
+    "Standex für mich wählen lassen",
+    "Dejar que Standex elija por mí",
+    "Пусть Standex выберет за меня",
+    "Lasciare scegliere a Standex",
+    "Standexに選んでもらう"
+  ],
+  "Le choix du capteur est noté « à définir avec Standex ». C'est une décision prise, pas une validation technique.": [
+    "The sensor choice is recorded as “to be defined with Standex”. That is a decision taken, not a technical validation.",
+    "传感器选择记为“与 Standex 共同确定”。这是一项已作出的决定，而非技术确认。",
+    "Die Sensorwahl ist als „mit Standex festzulegen“ vermerkt. Das ist eine getroffene Entscheidung, keine technische Freigabe.",
+    "La elección del sensor queda anotada como «por definir con Standex». Es una decisión tomada, no una validación técnica.",
+    "Выбор датчика отмечен как «определяется вместе со Standex». Это принятое решение, а не техническое подтверждение.",
+    "La scelta del sensore è annotata come «da definire con Standex». È una decisione presa, non una validazione tecnica.",
+    "センサーの選択は「Standexと決定」と記録されます。これは決定であり、技術的な承認ではありません。"
+  ],
+  "Passer directement à Avec Standex": [
+    "Go straight to With Standex",
+    "直接前往“与 Standex 一起”",
+    "Direkt zu Mit Standex",
+    "Ir directamente a Con Standex",
+    "Перейти сразу к «Со Standex»",
+    "Passare direttamente a Con Standex",
+    "「Standexと」へ直接進む"
+  ],
+  "Boîtier à visser": [
+    "Screw-mounted housing",
+    "螺钉固定外壳",
+    "Gehäuse zum Anschrauben",
+    "Carcasa para atornillar",
+    "Корпус на винтах",
+    "Custodia da avvitare",
+    "ねじ止めハウジング"
+  ],
+  "Corps fileté monté par écrous": [
+    "Threaded body mounted with nuts",
+    "螺纹本体用螺母固定",
+    "Gewindekörper mit Muttern montiert",
+    "Cuerpo roscado montado con tuercas",
+    "Резьбовой корпус на гайках",
+    "Corpo filettato montato con dadi",
+    "ナット固定のねじ本体"
+  ],
+  "Corps à emmancher dans un trou": [
+    "Body press-fitted into a hole",
+    "本体压入孔中",
+    "Körper zum Einpressen in eine Bohrung",
+    "Cuerpo para encajar en un orificio",
+    "Корпус для установки в отверстие",
+    "Corpo da inserire in un foro",
+    "穴に圧入する本体"
+  ],
+  "Montage sur carte": [
+    "Board mounting",
+    "板上安装",
+    "Montage auf Platine",
+    "Montaje en placa",
+    "Монтаж на плату",
+    "Montaggio su scheda",
+    "基板実装"
+  ],
+  "Boîtier documenté": [
+    "Documented housing",
+    "已记录的外壳",
+    "Dokumentiertes Gehäuse",
+    "Carcasa documentada",
+    "Документированный корпус",
+    "Custodia documentata",
+    "記載されたハウジング"
+  ],
+  "Format à collerette": [
+    "Flanged format",
+    "带凸缘外形",
+    "Bauform mit Bund",
+    "Formato con collarín",
+    "Формат с воротником",
+    "Formato con collare",
+    "つば付き形状"
+  ],
+  "Format fileté": [
+    "Threaded format",
+    "螺纹外形",
+    "Gewinde-Bauform",
+    "Formato roscado",
+    "Резьбовой формат",
+    "Formato filettato",
+    "ねじ形状"
+  ],
+  "Format parallélépipédique": [
+    "Rectangular format",
+    "长方体外形",
+    "Quaderförmige Bauform",
+    "Formato paralelepípedo",
+    "Прямоугольный формат",
+    "Formato parallelepipedo",
+    "直方体形状"
+  ],
+  "Format à emmancher": [
+    "Press-fit format",
+    "压入式外形",
+    "Einpress-Bauform",
+    "Formato para encajar",
+    "Формат для запрессовки",
+    "Formato a inserimento",
+    "圧入形状"
+  ],
+  "Ampoule en verre": [
+    "Glass envelope",
+    "玻璃管",
+    "Glaskolben",
+    "Ampolla de vidrio",
+    "Стеклянный баллон",
+    "Ampolla di vetro",
+    "ガラス管"
   ]
 }
