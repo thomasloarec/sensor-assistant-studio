@@ -3734,6 +3734,9 @@ export function DesignSpace({
                 <BrandLogo variant="mark" tone="light" height={32} clearance={false} alt="" />
               </Link>
             )}
+            {/* §10 : la marque n'est pas recomposée. Le nom de l'outil vit à
+                côté d'elle, en texte, jamais dans le verrou logo. */}
+            <span className="t-title-s whitespace-nowrap">Sensor Studio</span>
             <span aria-hidden="true" className="block h-6 w-px bg-[var(--hairline)]" />
           </div>
           <ProjectTitle
