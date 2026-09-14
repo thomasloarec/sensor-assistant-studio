@@ -52,10 +52,17 @@ describe("couples proposés — écran d'après les six questions", () => {
   });
 
   it("le câble et le résumé ne sont plus dans l'onglet des couples", () => {
-    const tab = source.slice(source.indexOf("const montageSection"), source.indexOf("const revueSection"));
+    const tab = source.slice(
+      source.indexOf("const montageSection"),
+      source.indexOf("const projectContextFields"),
+    );
     expect(tab).not.toContain("{cablageSection}");
-    expect(tab).not.toContain("{projectSummaryCard}");
+    // La checklist n'est plus affichée : elle ne pilote plus l'écran d'envoi.
+    expect(source).not.toContain("{projectSummaryCard}");
+    // Le câble vit dans les questions facultatives de la page « Avec Standex ».
+    const questions = source.slice(source.indexOf("const optionalQuestions"));
+    expect(questions).toContain("{cablageSection}");
     const revue = source.slice(source.indexOf("const revueSection"));
-    expect(revue).toContain("{cablageSection}");
+    expect(revue).toContain("{optionalQuestions}");
   });
 });

@@ -3163,53 +3163,6 @@ export function DesignSpace({
    * défaut existe : une délégation est une étape traitée, pas une validation. */
   const checklist = projectChecklist(dossier);
   const checklistState = checklistProgress(checklist);
-  const projectSummaryCard = (
-    <div className="panel-block-lg">
-      <h2 className="t-title-m">{t("Résumé de mon projet")}</h2>
-      <p className="t-caption mt-1">
-        {msg("{0} étape(s) traitée(s) sur {1}. Rien n'est validé techniquement à ce stade.", [
-          String(checklistState.handled),
-          String(checklistState.total),
-        ])}
-      </p>
-      <ul className="mt-4 space-y-3">
-        {checklist.map((item) => (
-          <li key={item.id} className="flex flex-wrap items-start gap-3">
-            <Badge
-              className="project-summary-badge"
-              variant={
-                item.state === "chosen"
-                  ? "default"
-                  : item.state === "delegated"
-                    ? "warning"
-                    : "secondary"
-              }
-            >
-              {item.state === "chosen"
-                ? t("choisi")
-                : item.state === "delegated"
-                  ? t("à définir avec Standex")
-                  : t("à renseigner")}
-            </Badge>
-            <span className="flex-1 min-w-[12rem]">
-              <span className="t-body block">{t(item.label)}</span>
-              <span className="t-caption block">{t(item.detail)}</span>
-            </span>
-            <Button
-              variant="ghost"
-              className="min-h-11"
-              onClick={() => {
-                if (item.section) goToInlineSection(item.section);
-                else setTab(item.tab as "besoin" | "montage" | "revue");
-              }}
-            >
-              {t("Modifier")}
-            </Button>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
 
   /** Onglet 2 : les COUPLES à tester, et rien au-dessus. Le placement se fait
    * dans l'atelier, le câble est dans « Avec Standex », le résumé de projet
