@@ -3,7 +3,7 @@ import { profileFor, thresholdsFor } from "../src/lib/standex/mounting/profiles"
 import { mountingFromWorkshop } from "../src/lib/standex/mounting/bridge";
 import { simulateMounting } from "../src/lib/standex/mounting/simulate";
 import { suggestPose } from "../src/lib/standex/mounting/suggest";
-import { DEFAULT_WORKSHOP } from "../src/lib/standex/magnetic-workshop";
+import { DEFAULT_WORKSHOP, workshopPair } from "../src/lib/standex/magnetic-workshop";
 import { pairedMagnetModel } from "../src/lib/standex/paired-magnets";
 
 const ALIASES = ["M21P/1", "M21P/2"] as const;
@@ -74,5 +74,19 @@ describe("identité de famille d'aimant M21/P(1,2) dans les profils de montage",
     const p1 = pairedMagnetModel("M21P/1", "MK21");
     const p2 = pairedMagnetModel("M21P/2", "MK21");
     expect(JSON.stringify(p1)).not.toBe(JSON.stringify(p2));
+  });
+});
+
+describe("repères de la scène : couple réellement sélectionné", () => {
+  test("workshopPair suit le couple, avec l'identité de famille M21", () => {
+    const cls = profileFor("MK21", "M21", "D1")!.classes[0]!;
+    const family = workshopPair({ ...cfg("M21", cls) });
+    for (const alias of ALIASES) {
+      expect(workshopPair({ ...cfg(alias, cls) })).toEqual(family);
+    }
+    // aucun repli sur le couple de démonstration MK03 / M02
+    expect(workshopPair({ ...cfg("M21", cls) })).not.toEqual(
+      workshopPair({ ...DEFAULT_WORKSHOP, sensitivity: cls } as never),
+    );
   });
 });
