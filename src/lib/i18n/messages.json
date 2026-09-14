@@ -22246,5 +22246,23 @@
     "Таблица Standex, торцы друг напротив друга (магнит 180°). Изменение ориентации включает условную демонстрацию.",
     "Tabella Standex, facce affacciate (magnete a 180°). Cambiare orientamento attiva la demo fittizia.",
     "Standex表は端面が向かい合う場合（磁石180°）。向きを変えると仮のデモに切り替わります。"
+  ],
+  "faces en vis-à-vis (aimant à 180°)": [
+    "faces opposite each other (magnet at 180°)",
+    "端面相对（磁体 180°）",
+    "Stirnflächen gegenüber (Magnet bei 180°)",
+    "caras enfrentadas (imán a 180°)",
+    "торцы друг напротив друга (магнит 180°)",
+    "facce affacciate (magnete a 180°)",
+    "端面が向かい合う（磁石180°）"
+  ],
+  "axes parallèles": [
+    "parallel axes",
+    "轴线平行",
+    "parallele Achsen",
+    "ejes paralelos",
+    "параллельные оси",
+    "assi paralleli",
+    "平行軸"
   ]
 }
