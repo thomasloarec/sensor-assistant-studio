@@ -4,6 +4,7 @@ import {
   magnetOptionsFor,
 } from "@/lib/standex/default-pairs";
 import { pairedMagnetModel } from "@/lib/standex/paired-magnets";
+import { magnetSource } from "@/lib/standex/magnet-catalog";
 import { t, msg } from "@/lib/i18n/core";
 import { useLocale } from "@/lib/i18n/react";
 import { AppHeader } from "@/components/standex/app-header";
@@ -19,7 +20,12 @@ import { composeRotations, magnetWorldPosition, simulateMounting } from "@/lib/s
 import type { GuidedMounting } from "@/lib/standex/mounting";
 import type { StudioStudy } from "@/lib/standex/studio-dossier";
 import type { DesignFreeze } from "@/lib/standex/design-freeze";
-import { publishedClasses } from "@/lib/standex/magnetics/registries";
+import {
+  publishedClasses,
+  publishedApproaches,
+  publishedClassKind,
+  publishedRowsForCouple,
+} from "@/lib/standex/magnetics/registries";
 import { Component, lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import {
@@ -40,6 +46,7 @@ import {
   DISTANCE_SOURCE,
   EDUCATION_NOTE,
   REFERENCE_NOTE,
+  referenceNoteFor,
   MODEL_VERSION,
   parseWorkshopConfig,
   simulateCycle,
@@ -71,6 +78,13 @@ const contactLabel: Record<Contact, string> = {
   unknown: "État indéterminé",
 };
 const motionLabels = { approach: "Approche et retrait", slide: "Passage latéral", pivot: "Pivot" };
+/** Libellés des approches publiées. F1 est frontale : distance ENTRE LES FACES. */
+const APPROACH_LABELS: Record<WorkshopConfig["geometry"], string> = {
+  D1: "D1 · face au centre",
+  D3: "D3 · par l'extrémité",
+  F1: "F1 · faces en vis-à-vis, dans l'axe",
+};
+
 class SceneBoundary extends Component<
   { children: ReactNode; fallback: ReactNode; onError: () => void },
   { failed: boolean }
@@ -439,8 +453,14 @@ export default function MagneticWorkshop({
         : t("Démonstration · distances fictives");
   /** Classes réellement publiées pour le couple : aucune interpolation. */
   const sensitivityChoices = publishedClasses(config.sensorId, config.magnetModel);
+  /** Nature de la colonne publiée : classe de sensibilité ou modèle de contact. */
+  const classKind = publishedClassKind(config.sensorId, config.magnetModel);
+  /** Lignes publiées du couple, y compris les modèles de contact non simulés. */
+  const publishedRows = publishedRowsForCouple(config.sensorId, config.magnetModel);
+  const approachOptions = approachChoices(config.sensorId, config.magnetModel);
   const magnetChoices = magnetOptionsFor(config.sensorId);
   const magnetAlias = documentedAlias(config.magnetModel);
+
   const summary = useMemo(() => summarizeWorkshop(config), [config]);
   const fingerprint = JSON.stringify(config),
     dirty = saved !== fingerprint;
@@ -501,12 +521,20 @@ export default function MagneticWorkshop({
     setField(false);
     setStep(0);
   }
+  /** Approches réellement publiées pour ce couple, dans l'ordre de lecture.
+   * F1 est l'approche frontale des fiches MK36/MK37/MK38 : elle n'est proposée
+   * que si le registre la publie pour CE couple. */
+  function approachChoices(sensorId: string, magnetModel: string): WorkshopConfig["geometry"][] {
+    const published = publishedApproaches(sensorId, magnetModel);
+    return (["D1", "D3", "F1"] as const).filter((a) => published.includes(a));
+  }
   /** Sélection réelle d'un capteur : le couple par défaut central s'applique,
    * la classe de sensibilité retombe sur une classe réellement publiée, et un
    * vrai capteur ne bascule jamais d'office dans le modèle fictif. */
   function selectSensor(sensorId: string) {
     const magnetModel = defaultMagnetFor(sensorId);
     const classes = publishedClasses(sensorId, magnetModel);
+    const approaches = approachChoices(sensorId, magnetModel);
     const fake = isFictitiousSensor(sensorId);
     update({
       sensorId,
@@ -515,11 +543,18 @@ export default function MagneticWorkshop({
         classes.length && !classes.includes(config.sensitivity)
           ? (classes[0] as WorkshopConfig["sensitivity"])
           : config.sensitivity,
+      // L'approche suit la source : un couple publié uniquement en frontal ne
+      // reste pas sur une approche latérale qui n'existe pas pour lui.
+      geometry:
+        approaches.length && !approaches.includes(config.geometry)
+          ? approaches[0]!
+          : config.geometry,
       mode: fake ? "education" : "reference",
       sensorAngle: 0,
       magnetAngle: 0,
     });
   }
+
   async function save() {
     setSaving(true);
     setError(null);
@@ -746,7 +781,14 @@ export default function MagneticWorkshop({
                     {sensor.note && <p className="mw-help">{t(sensor.note)}</p>}
                     {reference && sensitivityChoices.length > 0 && (
                       <label className="mw-select-label">
-                        {t("Classe de sensibilité")}
+                        {/* La fiche décide du libellé : classe de sensibilité
+                            publiée, ou modèle de contact quand la fiche n'en
+                            publie aucune. Aucune classe n'est inventée. */}
+                        {t(
+                          classKind === "switch_model"
+                            ? "Configuration du contact"
+                            : "Classe de sensibilité",
+                        )}
                         <select
                           value={config.sensitivity}
                           onChange={(e) =>
@@ -756,11 +798,69 @@ export default function MagneticWorkshop({
                           {/* Seules les classes réellement publiées pour ce couple. */}
                           {sensitivityChoices.map((x) => (
                             <option key={x} value={x}>
-                              {msg("Classe {0}", [x])}
+                              {classKind === "switch_model" ? x : msg("Classe {0}", [x])}
                             </option>
                           ))}
                         </select>
                       </label>
+                    )}
+                    {reference && publishedRows.length > 0 && (
+                      <div className="panel-block" data-testid="published-rows">
+                        <p className="t-label">{t("Distances publiées pour ce couple")}</p>
+                        <table className="mw-published-table">
+                          <thead>
+                            <tr>
+                              <th scope="col">
+                                {t(
+                                  classKind === "switch_model"
+                                    ? "Configuration du contact"
+                                    : "Classe de sensibilité",
+                                )}
+                              </th>
+                              <th scope="col">{t("Approche")}</th>
+                              <th scope="col">
+                                {t(
+                                  publishedRows[0]!.thresholdKind === "min_activation_max_release"
+                                    ? "Min Activation"
+                                    : "Enclenchement",
+                                )}
+                              </th>
+                              <th scope="col">
+                                {t(
+                                  publishedRows[0]!.thresholdKind === "min_activation_max_release"
+                                    ? "Max Release"
+                                    : "Relâchement",
+                                )}
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {publishedRows.map((r) => (
+                              <tr key={r.id} aria-current={r.sensitivityClass === config.sensitivity}>
+                                <td>
+                                  {r.sensitivityClass}
+                                  {r.contactForm !== "1A" && (
+                                    <span className="mw-kind">{t("non simulé")}</span>
+                                  )}
+                                </td>
+                                <td>{r.approachId}</td>
+                                <td className="t-metric">{r.pullInMm.toString() + unit}</td>
+                                <td className="t-metric">{r.dropOutMm.toString() + unit}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                        <p className="mw-help">{t(referenceNoteFor(config))}</p>
+                        {magnetSource(config.magnetModel) && (
+                          <a
+                            href={magnetSource(config.magnetModel)!}
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            {t("Voir la source des distances ↗")}
+                          </a>
+                        )}
+                      </div>
                     )}
                     <div className="mw-product">
                       <span className="mw-product-icon">
@@ -897,12 +997,24 @@ export default function MagneticWorkshop({
                       {t("Approche du capteur")}
                       <select
                         value={config.geometry}
-                        onChange={(e) => update({ geometry: e.target.value as "D1" | "D3" })}
+                        onChange={(e) =>
+                          update({ geometry: e.target.value as WorkshopConfig["geometry"] })
+                        }
                       >
-                        <option value="D1">{t("D1 · face au centre")}</option>
-                        <option value="D3">{t("D3 · par l'extrémité")}</option>
+                        {/* Approches réellement publiées pour ce couple ; en
+                            démonstration fictive, les deux approches latérales
+                            restent disponibles pour l'illustration. */}
+                        {(approachOptions.length && reference
+                          ? approachOptions
+                          : (["D1", "D3"] as const)
+                        ).map((a) => (
+                          <option key={a} value={a}>
+                            {t(APPROACH_LABELS[a])}
+                          </option>
+                        ))}
                       </select>
                     </label>
+
                     <p className="mw-help">
                       {t(
                         reference
@@ -1791,7 +1903,7 @@ export default function MagneticWorkshop({
       <footer className="mw-footer">
         <p>
           <strong>{t(reference ? "Présélection documentée." : "Illustration pédagogique.")}</strong>{" "}
-          {t(reference ? REFERENCE_NOTE : EDUCATION_NOTE)}
+          {t(reference ? referenceNoteFor(config) : EDUCATION_NOTE)}
         </p>
         <p>
           {t(

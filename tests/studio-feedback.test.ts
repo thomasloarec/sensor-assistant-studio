@@ -24,14 +24,16 @@ const key = {
   approachId: "D1" as const,
 };
 test("R04 published references cover thirteen families and all five paths, with auditable sources", () => {
-  expect(PUBLISHED_REGISTRY.rows).toHaveLength(438);
-  expect(new Set(PUBLISHED_REGISTRY.rows.map((r) => r.sensorFamily)).size).toBe(13);
+  // 438 lignes latérales D1-D5 + 7 lignes frontales F1 des fiches MK36/37/38.
+  expect(PUBLISHED_REGISTRY.rows).toHaveLength(445);
+  expect(new Set(PUBLISHED_REGISTRY.rows.map((r) => r.sensorFamily)).size).toBe(16);
   expect([...new Set(PUBLISHED_REGISTRY.rows.map((r) => r.approachId))].sort()).toEqual([
     "D1",
     "D2",
     "D3",
     "D4",
     "D5",
+    "F1",
   ]);
   expect(
     PUBLISHED_REGISTRY.rows.every((r) =>

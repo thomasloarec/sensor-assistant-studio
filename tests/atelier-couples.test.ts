@@ -14,6 +14,8 @@ import {
   publishedApproaches,
   publishedClasses,
   publishedPairFor,
+  publishedClassKind,
+  publishedRowsForCouple,
   PUBLISHED_REGISTRY,
 } from "../src/lib/standex/magnetics/registries";
 import {
@@ -22,6 +24,7 @@ import {
   parseWorkshopConfig,
   parseWorkshopNote,
   referenceAllowed,
+  referenceNoteFor,
   serializeWorkshop,
   simulateCycle,
   summarizeWorkshop,
@@ -50,9 +53,10 @@ describe("couples par défaut : un vrai capteur reçoit son aimant, jamais un cy
       MK21: "M21P/1",
       MK21PR: "M21P/1",
       MK27: "M27",
-      MK36: "M36",
-      MK37: "M37",
-      MK38: "M38",
+      // Actionneurs de la variante réellement documentée par les fiches V00.
+      MK36: "M36-N42",
+      MK37: "M37-N42",
+      MK38: "M38-N42",
     };
     for (const [sensorId, magnetId] of Object.entries(expected)) {
       expect(DEFAULT_PAIRS[sensorId]).toBe(magnetId);
@@ -179,5 +183,85 @@ describe("sauvegarde et restauration du couple", () => {
   });
   test("le nom du capteur affiché vient du catalogue réel", () => {
     expect(sensorById("MK04").name).toContain("MK04");
+  });
+});
+
+describe("fiches frontales MK36 / MK37 / MK38", () => {
+  // Fiches V00 17Jan2025, page 2, « Activation Distances » : la distance est
+  // mesurée ENTRE LES FACES des collerettes en vis-à-vis, le long de l'axe des
+  // cylindres. Ce n'est ni le D1 latéral ni une distance entre centres : les
+  // lignes portent l'approche F1 et leur propre datum.
+  const expected: Record<string, Array<[string, number, number]>> = {
+    MK36: [["1A", 17, 25]],
+    MK37: [
+      ["1A", 19, 32],
+      ["1B", 16, 26],
+    ],
+    MK38: [
+      ["1A66B", 21, 36],
+      ["1A85C", 20, 36],
+      ["1B90C", 17, 28],
+      ["1C90C", 17, 28],
+    ],
+  };
+  test("les valeurs publiées sont saisies telles quelles, avec leur datum frontal", () => {
+    for (const [family, lines] of Object.entries(expected)) {
+      const magnetId = defaultMagnetFor(family);
+      expect(magnetId).toBe(`${family.replace("MK", "M")}-N42`);
+      const rows = publishedRowsForCouple(family, magnetId);
+      expect(rows).toHaveLength(lines.length);
+      for (const [cls, activation, release] of lines) {
+        const row = rows.find((r) => r.sensitivityClass === cls);
+        expect(row).toBeTruthy();
+        expect(row!.approachId).toBe("F1");
+        expect(row!.datum).toBe("frontal_faces");
+        expect(row!.thresholdKind).toBe("min_activation_max_release");
+        expect(row!.classKind).toBe("switch_model");
+        expect(row!.pullInMm).toBe(activation);
+        expect(row!.dropOutMm).toBe(release);
+        expect(row!.provenance.sourceRef).toContain(
+          `datasheet-reed-sensor-series-${family.toLowerCase()}.pdf`,
+        );
+      }
+      // Aucune classe de sensibilité A–E n'est inventée pour ces familles.
+      expect(publishedClassKind(family, magnetId)).toBe("switch_model");
+      expect(publishedClasses(family, magnetId).some((c) => "ABCDE".includes(c))).toBe(false);
+      expect(publishedApproaches(family, magnetId)).toEqual(["F1"]);
+    }
+  });
+  test("le contact 1A est simulé ; 1B et 1C sont affichés sans être simulés", () => {
+    const no = config({ sensorId: "MK37", magnetModel: "M37-N42", sensitivity: "1A", geometry: "F1" });
+    expect(referenceAllowed(no)).toBe(true);
+    expect(workshopPair(no)).toEqual([19, 32]);
+    const nc = config({ sensorId: "MK37", magnetModel: "M37-N42", sensitivity: "1B", geometry: "F1" });
+    expect(referenceAllowed(nc)).toBe(false);
+    // La ligne 1B reste LISIBLE comme documentation : elle n'est ni supprimée
+    // ni convertie, seule la simulation normalement ouverte la refuse.
+    expect(workshopPair(nc)).toEqual([16, 26]);
+    expect(unavailableReason(nc)).toContain("normalement ouvert");
+    expect(simulateCycle(nc).samples.every((s) => s.contact === "unknown")).toBe(true);
+  });
+  test("la note rappelle que Min Activation et Max Release sont indicatives", () => {
+    const c = config({ sensorId: "MK36", magnetModel: "M36-N42", sensitivity: "1A", geometry: "F1" });
+    expect(referenceNoteFor(c)).toContain("Min Activation");
+    expect(referenceNoteFor(c)).toContain("faces");
+    expect(distanceBasis(c)).toBe("standex");
+  });
+  test("aucun emprunt croisé entre M36, M37 et M38", () => {
+    for (const [family, magnetId] of [
+      ["MK36", "M37-N42"],
+      ["MK37", "M38-N42"],
+      ["MK38", "M36-N42"],
+    ] as const) {
+      expect(publishedRowsForCouple(family, magnetId)).toHaveLength(0);
+      const c = config({ sensorId: family, magnetModel: magnetId, sensitivity: "1A", geometry: "F1" });
+      expect(workshopPair(c)).toBeNull();
+      expect(distanceBasis(c)).toBe("unavailable");
+    }
+  });
+  test("le MK27 ne reçoit aucun seuil fabriqué depuis « up to 40 mm »", () => {
+    const magnetId = defaultMagnetFor("MK27");
+    expect(publishedRowsForCouple("MK27", magnetId)).toHaveLength(0);
+    expect(distanceBasis(config({ sensorId: "MK27", magnetModel: magnetId }))).toBe("unavailable");
   });
 });

@@ -2075,3 +2075,36 @@
   display: flex;
   align-items: center;
 }
+
+/* Table des distances réellement publiées pour le couple sélectionné.
+   Les chiffres s'alignent (t-metric) ; la hiérarchie vient des surfaces. */
+.mw-published-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 10px 0 8px;
+}
+.mw-published-table th,
+.mw-published-table td {
+  text-align: left;
+  padding: 8px 10px;
+  font: var(--mw-t-body);
+  color: var(--foreground);
+}
+.mw-published-table thead th {
+  font: var(--mw-t-dense);
+  color: var(--muted-foreground);
+  background: var(--surface-sunken);
+}
+.mw-published-table tbody tr {
+  background: var(--surface);
+}
+.mw-published-table tbody tr:nth-child(even) {
+  background: var(--surface-sunken);
+}
+.mw-published-table tbody tr[aria-current="true"] {
+  background: var(--surface-tint);
+  box-shadow: var(--e-1);
+}
+.mw-published-table td .mw-kind {
+  margin-left: 8px;
+}

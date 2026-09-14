@@ -30,15 +30,21 @@ export const DEFAULT_PAIRS: Readonly<Record<string, string>> = {
   MK21: "M21P/1",
   MK21PR: "M21P/1",
   MK27: "M27",
-  MK36: "M36",
-  MK37: "M37",
-  MK38: "M38",
+  // Variante N42 explicitée : c'est la nuance nommée par les tableaux
+  // « Activation Distances » des fiches MK36/MK37/MK38 V00 (17 janvier 2025).
+  MK36: "M36-N42",
+  MK37: "M37-N42",
+  MK38: "M38-N42",
 };
 /** Variantes explicitement proposées en plus du défaut, par capteur. */
 export const PAIR_ALTERNATIVES: Readonly<Record<string, readonly string[]>> = {
   MK21: ["M21P/2", "M21"],
   MK21PR: ["M21P/2", "M21"],
+  MK36: ["M36"],
+  MK37: ["M37"],
+  MK38: ["M38"],
 };
+
 /** Ordre de préférence entre aimants réellement documentés au registre. */
 const DOCUMENTED_PREFERENCE = ["M02", "4003004003"];
 

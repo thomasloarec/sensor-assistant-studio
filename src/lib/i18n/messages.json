@@ -22138,5 +22138,95 @@
     "Типовые расстояния Standex, опубликованные для фактически выбранной пары датчик–магнит в показанной конфигурации. Габаритные размеры указаны; внутренние контакты и полюса условны. Подлежит подтверждению испытаниями в вашем применении.",
     "Distanze tipiche Standex pubblicate per la coppia sensore–magnete effettivamente selezionata, nella configurazione rappresentata. Ingombri quotati; contatti interni e poli simbolici. Da confermare con prove nella vostra applicazione.",
     "実際に選択されたセンサーと磁石の組み合わせについて、図示の構成で Standex が公表した代表距離。 外形寸法入り。内部接点と極は象徴的な表現です。実際の用途での試験による確認が必要です。"
+  ],
+  "Configuration du contact": [
+    "Contact configuration",
+    "触点配置",
+    "Kontaktkonfiguration",
+    "Configuración del contacto",
+    "Конфигурация контакта",
+    "Configurazione del contatto",
+    "接点構成"
+  ],
+  "Distances publiées pour ce couple": [
+    "Published distances for this pair",
+    "该组合的已公布距离",
+    "Veröffentlichte Abstände für dieses Paar",
+    "Distancias publicadas para esta pareja",
+    "Опубликованные расстояния для этой пары",
+    "Distanze pubblicate per questa coppia",
+    "この組み合わせの公表距離"
+  ],
+  "Approche": [
+    "Approach",
+    "接近方式",
+    "Annäherung",
+    "Aproximación",
+    "Подход",
+    "Avvicinamento",
+    "接近"
+  ],
+  "Min Activation": [
+    "Min Activation",
+    "最小动作距离",
+    "Min Activation",
+    "Activación mín.",
+    "Min Activation",
+    "Attivazione min.",
+    "最小動作距離"
+  ],
+  "Max Release": [
+    "Max Release",
+    "最大释放距离",
+    "Max Release",
+    "Liberación máx.",
+    "Max Release",
+    "Rilascio max.",
+    "最大復帰距離"
+  ],
+  "non simulé": [
+    "not simulated",
+    "未模拟",
+    "nicht simuliert",
+    "no simulado",
+    "не моделируется",
+    "non simulato",
+    "シミュレーション対象外"
+  ],
+  "Voir la source des distances ↗": [
+    "View the distance source ↗",
+    "查看距离来源 ↗",
+    "Quelle der Abstände ansehen ↗",
+    "Ver la fuente de las distancias ↗",
+    "Открыть источник расстояний ↗",
+    "Vedere la fonte delle distanze ↗",
+    "距離の出典を見る ↗"
+  ],
+  "F1 · faces en vis-à-vis, dans l'axe": [
+    "F1 · facing end faces, along the axis",
+    "F1 · 端面相对，沿轴向",
+    "F1 · Stirnflächen gegenüber, in der Achse",
+    "F1 · caras enfrentadas, en el eje",
+    "F1 · торцы напротив, по оси",
+    "F1 · facce contrapposte, lungo l'asse",
+    "F1 · 端面が向かい合う、軸方向"
+  ],
+  "Valeurs « Min Activation » et « Max Release » publiées par la fiche produit pour ce couple. Indicatives et dépendantes de l'environnement : ce n'est pas un seuil nominal mesuré. Distance mesurée entre les faces en vis-à-vis, le long de l'axe des cylindres.": [
+    "\"Min Activation\" and \"Max Release\" values published by the product datasheet for this pair. Indicative and environment-dependent: this is not a measured nominal threshold. Distance measured between the facing end faces, along the axis of the cylinders.",
+    "本组合由产品数据表公布的“Min Activation”与“Max Release”数值。仅供参考且取决于环境：并非实测标称阈值。距离在相对端面之间、沿圆柱轴向测量。",
+    "Werte „Min Activation“ und „Max Release“ aus dem Produktdatenblatt für dieses Paar. Richtwerte, umgebungsabhängig: kein gemessener Nennschwellwert. Abstand zwischen den gegenüberliegenden Stirnflächen, entlang der Zylinderachse gemessen.",
+    "Valores «Min Activation» y «Max Release» publicados por la ficha de producto para esta pareja. Indicativos y dependientes del entorno: no es un umbral nominal medido. Distancia medida entre las caras enfrentadas, a lo largo del eje de los cilindros.",
+    "Значения «Min Activation» и «Max Release», опубликованные в техническом описании для этой пары. Ориентировочные и зависят от окружения: это не измеренный номинальный порог. Расстояние измеряется между противолежащими торцами по оси цилиндров.",
+    "Valori «Min Activation» e «Max Release» pubblicati dalla scheda prodotto per questa coppia. Indicativi e dipendenti dall'ambiente: non è una soglia nominale misurata. Distanza misurata tra le facce contrapposte, lungo l'asse dei cilindri.",
+    "この組み合わせについて製品データシートが公表する「Min Activation」「Max Release」の値です。目安であり環境に依存します。実測の公称しきい値ではありません。距離は向かい合う端面の間を、円筒の軸に沿って測ります。"
+  ],
+  "Ce modèle de contact n'est pas normalement ouvert : ses distances publiées sont affichées, mais ce simulateur ne modélise que le contact normalement ouvert. Le comportement du capteur nécessite des tests en environnement réel.": [
+    "This contact model is not normally open: its published distances are shown, but this simulator only models the normally open contact. The sensor behaviour requires testing in a real environment.",
+    "该触点型号不是常开型：其公布距离会显示，但本模拟器仅模拟常开触点。传感器行为需在真实环境中测试。",
+    "Dieses Kontaktmodell ist nicht Schließer: Seine veröffentlichten Abstände werden angezeigt, dieser Simulator modelliert jedoch nur den Schließer-Kontakt. Das Sensorverhalten erfordert Tests in realer Umgebung.",
+    "Este modelo de contacto no es normalmente abierto: se muestran sus distancias publicadas, pero este simulador solo modela el contacto normalmente abierto. El comportamiento del sensor requiere pruebas en un entorno real.",
+    "Эта модель контакта не является нормально открытой: её опубликованные расстояния отображаются, но данный симулятор моделирует только нормально открытый контакт. Поведение датчика требует испытаний в реальных условиях.",
+    "Questo modello di contatto non è normalmente aperto: le sue distanze pubblicate sono mostrate, ma questo simulatore modella solo il contatto normalmente aperto. Il comportamento del sensore richiede prove in ambiente reale.",
+    "この接点モデルは常開ではありません。公表距離は表示しますが、本シミュレーターは常開接点のみを扱います。センサーの挙動は実環境での試験が必要です。"
   ]
 }

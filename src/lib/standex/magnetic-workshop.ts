@@ -16,15 +16,26 @@ import {
 import { parseMachine, componentPose, openingAt, rotate } from "./machine-assembly";
 import type { MachineAssembly } from "./machine-assembly";
 import {
+  PUBLISHED_REGISTRY,
   publishedPair,
   publishedPairFor,
   publishedClasses,
+  publishedReference,
   publishedSensorReference,
 } from "./magnetics/registries";
 
+
 export type Vec3 = [number, number, number];
 export type Contact = "open" | "closed" | "unknown";
-export type Sensitivity = "A" | "B" | "C" | "D" | "E";
+/**
+ * Colonne de gauche du tableau publié réellement sélectionnée. Selon la source,
+ * c'est une classe de sensibilité des tables Academy (« A » à « E ») ou un
+ * modèle de contact de fiche produit (« 1A », « 1A66B »…). Les deux ne sont
+ * jamais convertis l'un dans l'autre : la valeur est toujours reprise telle
+ * qu'elle est publiée.
+ */
+export type Sensitivity = string;
+
 export interface WorkshopConfig {
   version: 3;
   demoReach: number;
@@ -35,7 +46,9 @@ export interface WorkshopConfig {
   sensorId: string;
   mode: "reference" | "education";
   sensitivity: Sensitivity;
-  geometry: "D1" | "D3";
+  /** Approche publiée : latérales D1/D3, ou frontale F1 (faces en vis-à-vis). */
+  geometry: "D1" | "D3" | "F1";
+
   motion: "approach" | "slide" | "pivot";
   start: number;
   end: number;
@@ -99,6 +112,14 @@ export const EDUCATION_NOTE =
   "Démonstration fictive : dimensions des boîtiers en mm, champ et seuils choisis pour apprendre. Aucune portée réelle du produit n'est prédite.";
 export const REFERENCE_NOTE =
   "Distances typiques Standex publiées pour le couple capteur–aimant réellement sélectionné, dans la configuration représentée. Enveloppes cotées ; contacts internes et pôles symboliques. À confirmer par essais dans votre application.";
+/** Note propre aux fiches produit qui publient « Min Activation » / « Max Release ». */
+export const REFERENCE_NOTE_ACTIVATION =
+  "Valeurs « Min Activation » et « Max Release » publiées par la fiche produit pour ce couple. Indicatives et dépendantes de l'environnement : ce n'est pas un seuil nominal mesuré. Distance mesurée entre les faces en vis-à-vis, le long de l'axe des cylindres.";
+/** Libellés de colonne réellement présents au registre, plus les classes Academy. */
+export const PUBLISHED_CLASS_VALUES: readonly string[] = [
+  ...new Set(["A", "B", "C", "D", "E", ...PUBLISHED_REGISTRY.rows.map((r) => r.sensitivityClass)]),
+];
+
 
 // MK03 table, checked 2026-09-07. [pull-in, drop-out], mm; D2 deliberately omitted:
 // one distance at a side lobe does not locate the lobe in a full 3D map.
@@ -152,8 +173,11 @@ export function parseWorkshopConfig(value: unknown): WorkshopConfig | null {
   if (typeof x["sensorId"] !== "string" || !isKnownSensorId(x["sensorId"])) return null;
   const choices: Record<string, readonly unknown[]> = {
     mode: ["reference", "education"],
-    sensitivity: ["A", "B", "C", "D", "E"],
-    geometry: ["D1", "D3"],
+    // La colonne publiée acceptée : classes Academy A–E, plus tout libellé
+    // réellement présent au registre (modèles de contact des fiches produit).
+    sensitivity: PUBLISHED_CLASS_VALUES,
+    geometry: ["D1", "D3", "F1"],
+
     motion: ["approach", "slide", "pivot"],
     magnetization: ["axial", "diametral", "thickness"],
     magnetModel: [...PACKAGED_MAGNET_IDS, ...BARE_MAGNETS.map((m) => m.id), "generic"],
@@ -202,12 +226,28 @@ export function parseWorkshopConfig(value: unknown): WorkshopConfig | null {
   ) as unknown as WorkshopConfig;
 }
 
+/** Ligne publiée EXACTE du couple sélectionné, ou `null`. */
+export const workshopRow = (c: WorkshopConfig) =>
+  publishedReference(c.sensorId, c.sensitivity, c.magnetModel, c.geometry);
 /** Distances publiées du couple RÉELLEMENT sélectionné. Aucun repli sur MK03. */
 export const workshopPair = (c: WorkshopConfig) =>
   publishedPairFor(c.sensorId, c.sensitivity, c.geometry, c.magnetModel);
+/**
+ * Le moteur de l'atelier ne simule QUE le contact normalement ouvert (1A).
+ * Les modèles 1B et 1C publiés par les fiches restent lisibles comme
+ * documentation : ils ne sont ni convertis, ni supprimés, ni simulés.
+ */
+export const simulatedContactForm = (c: WorkshopConfig): boolean =>
+  (workshopRow(c)?.contactForm ?? "1A") === "1A";
+/** Note à afficher selon la nature des seuils réellement publiés. */
+export const referenceNoteFor = (c: WorkshopConfig): string =>
+  workshopRow(c)?.thresholdKind === "min_activation_max_release"
+    ? REFERENCE_NOTE_ACTIVATION
+    : REFERENCE_NOTE;
 /** Le capteur choisi dispose-t-il de distances publiées avec cet aimant ? */
 export const hasPublishedDistances = (c: WorkshopConfig) =>
   publishedClasses(c.sensorId, c.magnetModel).length > 0;
+
 /** Un modèle explicitement fictif : jamais un vrai capteur du catalogue. */
 export const isFictitiousSensor = (sensorId: string) =>
   sensorId === "GENERIC" || sensorId === CUSTOM_SENSOR_ID;
@@ -222,6 +262,7 @@ export function referenceAllowed(c: WorkshopConfig): boolean {
   return (
     c.mode === "reference" &&
     workshopPair(c) !== null &&
+    simulatedContactForm(c) &&
     c.machine === null &&
     c.magnetTilt === 0 &&
     c.lateralShift === 0 &&
@@ -234,6 +275,7 @@ export function referenceAllowed(c: WorkshopConfig): boolean {
     c.temperature === "ambient"
   );
 }
+
 export function unavailableReason(c: WorkshopConfig): string | null {
   if (c.mode === "education") return null;
   if (sensorById(c.sensorId).contact === "unsupported")
@@ -250,6 +292,9 @@ export function unavailableReason(c: WorkshopConfig): string | null {
     return "Distances non renseignées pour ce couple capteur–aimant. Aucun seuil n'est emprunté à un autre capteur ni à un autre aimant : le comportement du capteur nécessite des tests en environnement réel.";
   if (!workshopPair(c))
     return "Cette classe de sensibilité ou cette approche n'est pas publiée pour ce couple. Le contact reste indéterminé.";
+  if (!simulatedContactForm(c))
+    return "Ce modèle de contact n'est pas normalement ouvert : ses distances publiées sont affichées, mais ce simulateur ne modélise que le contact normalement ouvert. Le comportement du capteur nécessite des tests en environnement réel.";
+
   if (!referenceAllowed(c))
     return "Cette orientation ou ce mouvement sort de la configuration documentée.";
   return null;
@@ -264,7 +309,11 @@ export function magnetSize(c: WorkshopConfig): Vec3 {
 export function approachOffset(c: WorkshopConfig): number {
   const [l, , w] = sensorById(c.sensorId).body,
     [ml, , mw] = magnetSize(c);
-  const direction: Vec3 = c.geometry === "D3" ? [1, 0, 0] : [0, 0, 1];
+  // D1 approche par la face latérale (axe Z) ; D3 et l'approche frontale F1
+  // suivent l'axe longitudinal (X). Pour F1 la distance publiée est un écart
+  // ENTRE FACES : l'offset ajoute les demi-longueurs, il ne les retranche pas.
+  const direction: Vec3 = c.geometry === "D1" ? [0, 0, 1] : [1, 0, 0];
+
   const projected = (size: Vec3, rotation: Vec3) =>
     size.reduce((sum, n, i) => {
       const e: Vec3 = [0, 0, 0];
