@@ -23668,5 +23668,302 @@
     "Стеклянный баллон",
     "Ampolla di vetro",
     "ガラス管"
+  ],
+  "Détection prévue — ferme à {0} mm, ouvre à {1} mm": [
+    "Detection expected — closes at {0} mm, opens at {1} mm",
+    "预计可检测 — {0} mm 闭合，{1} mm 断开",
+    "Erkennung erwartet — schließt bei {0} mm, öffnet bei {1} mm",
+    "Detección prevista — cierra a {0} mm, abre a {1} mm",
+    "Обнаружение ожидается — замыкание на {0} мм, размыкание на {1} мм",
+    "Rilevamento previsto — chiude a {0} mm, apre a {1} mm",
+    "検出見込みあり — {0} mm で閉、{1} mm で開"
+  ],
+  "Pas de détection sur ce cycle — rapprochez l'aimant ou changez de couple": [
+    "No detection on this cycle — move the magnet closer or change the pair",
+    "本循环未检测到 — 请让磁体更靠近或更换组合",
+    "Keine Erkennung in diesem Zyklus — Magnet näher bringen oder Paar wechseln",
+    "Sin detección en este ciclo — acerque el imán o cambie de pareja",
+    "В этом цикле обнаружения нет — приблизьте магнит или смените пару",
+    "Nessun rilevamento in questo ciclo — avvicinare il magnete o cambiare coppia",
+    "このサイクルでは検出なし — 磁石を近づけるか組み合わせを変更してください"
+  ],
+  "Position non documentée — Standex peut la mesurer pour vous": [
+    "Undocumented position — Standex can measure it for you",
+    "该位置无文档记录 — Standex 可为您测量",
+    "Position nicht dokumentiert — Standex kann sie für Sie messen",
+    "Posición no documentada — Standex puede medirla para usted",
+    "Положение не документировано — Standex может его измерить",
+    "Posizione non documentata — Standex può misurarla per voi",
+    "文書化されていない位置 — Standex が測定できます"
+  ],
+  "Distances non publiées pour ce couple — Standex peut les mesurer": [
+    "No published distances for this pair — Standex can measure them",
+    "该组合未公布距离 — Standex 可进行测量",
+    "Keine veröffentlichten Abstände für dieses Paar — Standex kann sie messen",
+    "Distancias no publicadas para esta pareja — Standex puede medirlas",
+    "Для этой пары расстояния не опубликованы — Standex может их измерить",
+    "Distanze non pubblicate per questa coppia — Standex può misurarle",
+    "この組み合わせの距離は未公開 — Standex が測定できます"
+  ],
+  "Demander un essai": [
+    "Request a test",
+    "申请测试",
+    "Test anfragen",
+    "Solicitar un ensayo",
+    "Запросить испытание",
+    "Richiedi una prova",
+    "試験を依頼する"
+  ],
+  "Valeurs typiques Standex · Ce que ce résultat ne dit pas ⌄": [
+    "Standex typical values · What this result does not say ⌄",
+    "Standex 典型值 · 该结果未说明的内容 ⌄",
+    "Standex-Typwerte · Was dieses Ergebnis nicht aussagt ⌄",
+    "Valores típicos Standex · Lo que este resultado no dice ⌄",
+    "Типовые значения Standex · О чём этот результат не говорит ⌄",
+    "Valori tipici Standex · Ciò che questo risultato non dice ⌄",
+    "Standex 標準値 · この結果が示さないこと ⌄"
+  ],
+  "Parallèle": [
+    "Parallel",
+    "平行",
+    "Parallel",
+    "Paralelo",
+    "Параллельно",
+    "Parallelo",
+    "平行"
+  ],
+  "Face à face": [
+    "Face to face",
+    "面对面",
+    "Stirnseitig gegenüber",
+    "Cara a cara",
+    "Лицом к лицу",
+    "Faccia a faccia",
+    "対向"
+  ],
+  "Non documentée pour ce couple": [
+    "Not documented for this pair",
+    "该组合无文档记录",
+    "Für dieses Paar nicht dokumentiert",
+    "No documentada para esta pareja",
+    "Не документировано для этой пары",
+    "Non documentata per questa coppia",
+    "この組み合わせでは未文書化"
+  ],
+  "Positions documentées par Standex. Toute autre position sera signalée comme à mesurer.": [
+    "Positions documented by Standex. Any other position will be flagged as to be measured.",
+    "由 Standex 记录的位置。其他任何位置都将标注为需测量。",
+    "Von Standex dokumentierte Positionen. Jede andere Position wird als zu messen gekennzeichnet.",
+    "Posiciones documentadas por Standex. Cualquier otra posición se señalará como pendiente de medición.",
+    "Положения, документированные Standex. Любое другое положение будет помечено как требующее измерения.",
+    "Posizioni documentate da Standex. Ogni altra posizione sarà segnalata come da misurare.",
+    "Standex が文書化した位置です。それ以外の位置は測定が必要として表示されます。"
+  ],
+  "Position ouverte": [
+    "Open position",
+    "打开位置",
+    "Offene Stellung",
+    "Posición abierta",
+    "Открытое положение",
+    "Posizione aperta",
+    "開位置"
+  ],
+  "Position fermée": [
+    "Closed position",
+    "闭合位置",
+    "Geschlossene Stellung",
+    "Posición cerrada",
+    "Закрытое положение",
+    "Posizione chiusa",
+    "閉位置"
+  ],
+  "Pause": [
+    "Pause",
+    "暂停",
+    "Pause",
+    "Pausa",
+    "Пауза",
+    "Pausa",
+    "一時停止"
+  ],
+  "Lancer le mouvement": [
+    "Start the movement",
+    "开始运动",
+    "Bewegung starten",
+    "Iniciar el movimiento",
+    "Запустить движение",
+    "Avvia il movimento",
+    "動作を開始"
+  ],
+  "Réglages avancés ⌄": [
+    "Advanced settings ⌄",
+    "高级设置 ⌄",
+    "Erweiterte Einstellungen ⌄",
+    "Ajustes avanzados ⌄",
+    "Расширенные настройки ⌄",
+    "Impostazioni avanzate ⌄",
+    "詳細設定 ⌄"
+  ],
+  "Orientation de l'aimant": [
+    "Magnet orientation",
+    "磁体方向",
+    "Magnetausrichtung",
+    "Orientación del imán",
+    "Ориентация магнита",
+    "Orientamento del magnete",
+    "磁石の向き"
+  ],
+  "Le mouvement vient de votre fichier : il se règle avec les attaches, le nœud mobile et la course.": [
+    "The movement comes from your file: set it with the mounts, the moving node and the travel.",
+    "运动来自您的文件：通过固定件、运动节点和行程进行设置。",
+    "Die Bewegung stammt aus Ihrer Datei: Sie wird über Befestigungen, bewegten Knoten und Hub eingestellt.",
+    "El movimiento proviene de su archivo: se ajusta con las fijaciones, el nodo móvil y la carrera.",
+    "Движение берётся из вашего файла: настраивается креплениями, подвижным узлом и ходом.",
+    "Il movimento proviene dal vostro file: si regola con gli attacchi, il nodo mobile e la corsa.",
+    "動作はお客様のファイルから取得します。取付点、可動ノード、ストロークで調整します。"
+  ],
+  "Vitesse de lecture": [
+    "Playback speed",
+    "播放速度",
+    "Abspielgeschwindigkeit",
+    "Velocidad de lectura",
+    "Скорость воспроизведения",
+    "Velocità di riproduzione",
+    "再生速度"
+  ],
+  "Normale": [
+    "Normal",
+    "正常",
+    "Normal",
+    "Normal",
+    "Обычная",
+    "Normale",
+    "標準"
+  ],
+  "Lente": [
+    "Slow",
+    "慢速",
+    "Langsam",
+    "Lenta",
+    "Медленная",
+    "Lenta",
+    "低速"
+  ],
+  "Affichage ⌄": [
+    "Display ⌄",
+    "显示 ⌄",
+    "Anzeige ⌄",
+    "Visualización ⌄",
+    "Отображение ⌄",
+    "Visualizzazione ⌄",
+    "表示 ⌄"
+  ],
+  "Recadrer": [
+    "Reframe",
+    "重新取景",
+    "Neu ausrichten",
+    "Reencuadrar",
+    "Перекадрировать",
+    "Riquadra",
+    "再フレーミング"
+  ],
+  "Voir le schéma du contact": [
+    "See the contact diagram",
+    "查看触点示意图",
+    "Kontaktschema ansehen",
+    "Ver el esquema del contacto",
+    "Показать схему контакта",
+    "Vedi lo schema del contatto",
+    "接点図を見る"
+  ],
+  "Chronologie du cycle": [
+    "Cycle timeline",
+    "循环时间轴",
+    "Zeitleiste des Zyklus",
+    "Cronología del ciclo",
+    "Хронология цикла",
+    "Cronologia del ciclo",
+    "サイクルのタイムライン"
+  ],
+  "Un aller-retour · {0} s": [
+    "One round trip · {0} s",
+    "一次往返 · {0} 秒",
+    "Ein Hin und Zurück · {0} s",
+    "Una ida y vuelta · {0} s",
+    "Один цикл туда и обратно · {0} с",
+    "Un'andata e ritorno · {0} s",
+    "往復1回 · {0} 秒"
+  ],
+  "Voir le résultat →": [
+    "See the result →",
+    "查看结果 →",
+    "Ergebnis ansehen →",
+    "Ver el resultado →",
+    "Посмотреть результат →",
+    "Vedi il risultato →",
+    "結果を見る →"
+  ],
+  "Ajuster les critères ⌄": [
+    "Adjust the criteria ⌄",
+    "调整筛选条件 ⌄",
+    "Kriterien anpassen ⌄",
+    "Ajustar los criterios ⌄",
+    "Изменить критерии ⌄",
+    "Modifica i criteri ⌄",
+    "条件を調整 ⌄"
+  ],
+  "Masquer les autres couples": [
+    "Hide the other pairs",
+    "隐藏其他组合",
+    "Andere Paare ausblenden",
+    "Ocultar las demás parejas",
+    "Скрыть остальные пары",
+    "Nascondi le altre coppie",
+    "他の組み合わせを隠す"
+  ],
+  "Demande d'essai réel": [
+    "Request a real test",
+    "申请实物测试",
+    "Anfrage für einen realen Test",
+    "Solicitud de ensayo real",
+    "Запрос реального испытания",
+    "Richiesta di prova reale",
+    "実機試験の依頼"
+  ],
+  "Standex mesure la position dans son laboratoire. Cocher cette case demande une mesure : ce n'est ni une mesure, ni une validation technique.": [
+    "Standex measures the position in its laboratory. Ticking this box requests a measurement: it is neither a measurement nor a technical validation.",
+    "Standex 在其实验室测量该位置。勾选此项表示申请测量：它既不是测量结果，也不是技术验证。",
+    "Standex misst die Position im eigenen Labor. Dieses Kästchen fordert eine Messung an: es ist weder eine Messung noch eine technische Freigabe.",
+    "Standex mide la posición en su laboratorio. Marcar esta casilla solicita una medición: no es una medición ni una validación técnica.",
+    "Standex измеряет положение в своей лаборатории. Установка этого флажка запрашивает измерение: это не измерение и не техническое подтверждение.",
+    "Standex misura la posizione nel proprio laboratorio. Selezionare questa casella richiede una misura: non è né una misura né una validazione tecnica.",
+    "Standex が自社ラボで位置を測定します。このチェックは測定の依頼であり、測定結果でも技術的な承認でもありません。"
+  ],
+  "Retour aux couples": [
+    "Back to the pairs",
+    "返回组合列表",
+    "Zurück zu den Paaren",
+    "Volver a las parejas",
+    "Назад к парам",
+    "Torna alle coppie",
+    "組み合わせに戻る"
+  ],
+  "repère magnétique, pas un dessin de la pièce": [
+    "magnetic marker, not a drawing of the part",
+    "磁极标记，并非零件图",
+    "Magnetische Kennzeichnung, keine Zeichnung des Teils",
+    "marca magnética, no un dibujo de la pieza",
+    "магнитная метка, а не чертёж детали",
+    "riferimento magnetico, non un disegno del pezzo",
+    "磁極の目印であり、部品の図面ではありません"
+  ],
+  "Repère magnétique": [
+    "Magnetic marker",
+    "磁极标记",
+    "Magnetische Kennzeichnung",
+    "Marca magnética",
+    "Магнитная метка",
+    "Riferimento magnetico",
+    "磁極の目印"
   ]
 }

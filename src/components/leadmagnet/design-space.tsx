@@ -21,12 +21,8 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CandidateThumbnail } from "@/components/leadmagnet/candidate-thumbnail";
-import {
-  CUSTOM_SENSOR_ID,
-  formatMm,
-  sensorById,
-  sizeLabel,
-} from "@/lib/standex/sensor-catalog";
+import { PairThumbnail } from "@/components/leadmagnet/pair-thumbnail";
+import { CUSTOM_SENSOR_ID, formatMm, sensorById, sizeLabel } from "@/lib/standex/sensor-catalog";
 import {
   blockedBy,
   suggestionFilters,
@@ -47,6 +43,7 @@ import {
   DELEGATED_CONNECTOR,
   DELEGATED_CONTEXT,
   DELEGATED_MOUNTING,
+  TRIAL_REQUEST,
   DELEGATED_SENSOR,
 } from "@/lib/leadmagnet/project-checklist";
 import SensorCard from "@/components/standex/workshop/sensor-card";
@@ -525,6 +522,8 @@ export function DesignSpace({
   }, []);
 
   const [showWorkshop, setShowWorkshop] = useState(false);
+  /** État d'enregistrement du montage, affiché par la barre de l'atelier. */
+  const [workshopSaveState, setWorkshopSaveState] = useState<"saved" | "saving" | "draft">("saved");
   /** Catalogue filtrable ouvert DIRECTEMENT depuis le sous-menu : il ne dépend
    * pas de l'atelier 3D et sa fermeture ne touche à rien du travail en cours. */
   const [catalogOpen, setCatalogOpen] = useState(false);
@@ -1686,7 +1685,6 @@ export function DesignSpace({
       </div>
     ) : null;
 
-
   const besoinSection = (
     <div className="space-y-5">
       {showAdvanced ? (
@@ -1790,7 +1788,6 @@ export function DesignSpace({
               )}
             </p>
           ) : null}
-
 
           {guidedReq && guidedReq.state === "hypothesis" && guidedReq.value.trim() ? (
             <div className="relative mt-5 overflow-hidden rounded-[var(--r-md)] bg-[var(--warning-soft)] p-4 pl-5 before:absolute before:inset-y-0 before:left-0 before:w-[3px] before:bg-[var(--warning)]">
@@ -2059,8 +2056,9 @@ export function DesignSpace({
       ),
     [candidateRows, dossier.selectedSensorId],
   );
-
-
+  /** Liste complète dépliée ou non : un état explicite, pour que le lien soit
+   * un vrai lien et non l'ergonomie par défaut d'un dépliant. */
+  const [showAllPairs, setShowAllPairs] = useState(false);
 
   /** Choisir un capteur = une présélection de GAMME, jamais une commande ni une
    * validation R&D. La délégation à Standex est levée par ce choix explicite. */
@@ -2069,9 +2067,7 @@ export function DesignSpace({
     const aligned = applySensorSelection(base, id);
     // Un montage déjà enregistré peut porter un aimant choisi volontairement.
     // La présélection du capteur aligne le reste de l'atelier sans l'écraser.
-    applyWorkshopConfig(
-      dossier.workshop ? { ...aligned, magnetModel: base.magnetModel } : aligned,
-    );
+    applyWorkshopConfig(dossier.workshop ? { ...aligned, magnetModel: base.magnetModel } : aligned);
     setWorkshopEpoch((e) => e + 1);
     setDossier((d) => ({
       ...d,
@@ -2098,164 +2094,161 @@ export function DesignSpace({
     );
   };
 
+  /** Rangée de puces : les critères réellement actifs, rien d'autre. Aucun
+   * encadré : c'est une ligne de lecture posée sous le sous-titre. */
+  const filterChips = shownFilters.length ? (
+    <div className="flex flex-wrap items-center gap-2">
+      {shownFilters.map((f) => {
+        const on = !filtersOff.includes(f.id);
+        return (
+          <button
+            key={f.id}
+            type="button"
+            className="answer-filter"
+            data-source={f.source}
+            aria-pressed={on}
+            onClick={() =>
+              setFiltersOff((off) =>
+                off.includes(f.id) ? off.filter((x) => x !== f.id) : [...off, f.id],
+              )
+            }
+          >
+            <span aria-hidden="true">{on ? "✓" : "+"}</span>
+            <span>{t(f.label)}</span>
+            {f.source === "exploration" ? (
+              <span className="t-caption">{t("· exploration")}</span>
+            ) : null}
+          </button>
+        );
+      })}
+    </div>
+  ) : null;
 
-  /** Critères actifs, dépliants d'exploration et motifs techniques : un seul
-   * bloc, partagé par l'écran des couples proposés et la liste complète. */
-  const filterControls = (
-        <div className="panel-block space-y-3">
-          {shownFilters.length ? (
-            <>
-              <p className="t-body">
-                {answerFilters.length
-                  ? t("D'après vos réponses, nous ne montrons d'abord que les capteurs compatibles.")
-                  : t("Critères d'exploration en cours. Vos réponses ne sont pas modifiées.")}
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {shownFilters.map((f) => {
-                  const on = !filtersOff.includes(f.id);
-                  return (
-                    <button
-                      key={f.id}
-                      type="button"
-                      className="answer-filter"
-                      data-source={f.source}
-                      aria-pressed={on}
-                      onClick={() =>
-                        setFiltersOff((off) =>
-                          off.includes(f.id) ? off.filter((x) => x !== f.id) : [...off, f.id],
-                        )
-                      }
-                    >
-                      <span aria-hidden="true">{on ? "✓" : "+"}</span>
-                      <span>{t(f.label)}</span>
-                      {f.source === "exploration" ? (
-                        <span className="t-caption">{t("· exploration")}</span>
-                      ) : null}
-                    </button>
-                  );
-                })}
-              </div>
-              <p className="t-caption">
-                {t(
-                  "Vous pouvez désactiver un critère pour voir les autres capteurs. Vos réponses ne sont pas modifiées.",
-                )}
-              </p>
-            </>
-          ) : (
-            <p className="t-body">
-              {t("Aucun critère actif : tous les capteurs de l'aperçu sont affichés.")}
-            </p>
+  /** Tout le réglage fin des critères, replié derrière un seul lien : les
+   * réponses ne sont jamais modifiées ici, seule la liste affichée change. */
+  const filterAdjust = (
+    <details className="filter-adjust">
+      <summary className="t-body min-h-11 cursor-pointer list-none py-2">
+        {t("Ajuster les critères ⌄")}
+      </summary>
+      <div className="mt-2 space-y-3">
+        <p className="t-caption">
+          {shownFilters.length
+            ? t(
+                "Vous pouvez désactiver un critère pour voir les autres capteurs. Vos réponses ne sont pas modifiées.",
+              )
+            : t("Aucun critère actif : tous les capteurs de l'aperçu sont affichés.")}
+        </p>
+        {filtersOff.length || explore.mountingKind || explore.shape ? (
+          <Button
+            variant="outline"
+            size="sm"
+            className="min-h-11"
+            onClick={() => {
+              setFiltersOff([]);
+              setExplore({});
+            }}
+          >
+            {t("Rétablir mes réponses")}
+          </Button>
+        ) : null}
+
+        {/* Exploration volontaire : d'AUTRES critères que ses réponses, sans
+            jamais modifier les réponses ni le montage du dossier. Un choix
+            remplace le critère de même nature : pas de « vissé ET CMS ». */}
+        <p className="t-caption">
+          {t(
+            "Ces critères servent seulement à regarder d'autres capteurs. Ils remplacent le critère correspondant de vos réponses, ils ne s'y ajoutent pas, et vos réponses restent intactes.",
           )}
-          {filtersOff.length || explore.mountingKind || explore.shape ? (
-            <Button
-              variant="outline"
-              size="sm"
-              className="min-h-11"
-              onClick={() => {
-                setFiltersOff([]);
-                setExplore({});
-              }}
-            >
-              {t("Rétablir mes réponses")}
-            </Button>
-          ) : null}
-
-          {/* Exploration volontaire : d'AUTRES critères que ses réponses, sans
-              jamais modifier les réponses ni le montage du dossier. Un choix
-              remplace le critère de même nature : pas de « vissé ET CMS ». */}
-          <details className="mt-1">
-            <summary className="t-body min-h-11 cursor-pointer list-none py-2">
-              {t("Explorer avec d'autres critères")}
-            </summary>
-            <div className="mt-2 space-y-3">
-              <p className="t-caption">
-                {t(
-                  "Ces critères servent seulement à regarder d'autres capteurs. Ils remplacent le critère correspondant de vos réponses, ils ne s'y ajoutent pas, et vos réponses restent intactes.",
-                )}
-              </p>
-              <div>
-                <Label className="t-label">{t("Autre fixation")}</Label>
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {EXPLORABLE_MOUNTINGS.map((m) => {
-                    const on = explore.mountingKind === m.kind;
-                    return (
-                      <button
-                        key={m.kind}
-                        type="button"
-                        className="answer-filter"
-                        aria-pressed={on}
-                        onClick={() =>
-                          setExplore(({ mountingKind: _drop, ...rest }) =>
-                            on ? rest : { ...rest, mountingKind: m.kind },
-                          )
-                        }
-                      >
-                        <span aria-hidden="true">{on ? "✓" : "+"}</span>
-                        <span>{t(m.label)}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-              <div>
-                <Label className="t-label">{t("Autre forme de boîtier")}</Label>
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {EXPLORABLE_SHAPES.map((s) => {
-                    const on = explore.shape === s.shape;
-                    return (
-                      <button
-                        key={s.shape}
-                        type="button"
-                        className="answer-filter"
-                        aria-pressed={on}
-                        onClick={() =>
-                          setExplore(({ shape: _drop, ...rest }) =>
-                            on ? rest : { ...rest, shape: s.shape },
-                          )
-                        }
-                      >
-                        <span aria-hidden="true">{on ? "✓" : "+"}</span>
-                        <span>{t(s.label)}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-              {explore.mountingKind || explore.shape ? (
-                <>
-                  <p className="notice notice-info">
-                    {t(
-                      "Vous regardez des capteurs qui peuvent diverger de vos réponses. Rien n'est enregistré : vos exigences et votre montage sont inchangés.",
-                    )}
-                  </p>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="min-h-11"
-                    onClick={() => setExplore({})}
-                  >
-                    {t("Revenir à mes réponses")}
-                  </Button>
-                </>
-              ) : null}
-            </div>
-          </details>
-
-          {shownFilters.length ? (
-            <details className="mt-1">
-              <summary className="t-caption min-h-11 cursor-pointer list-none py-2">
-                {t("Voir le motif technique de chaque critère")}
-              </summary>
-              <ul className="mt-2 space-y-1">
-                {shownFilters.map((f) => (
-                  <li key={f.id} className="t-caption">
-                    <strong>{t(f.label)}</strong> — {t(f.technical)}
-                  </li>
-                ))}
-              </ul>
-            </details>
-          ) : null}
+        </p>
+        <div>
+          <Label className="t-label">{t("Autre fixation")}</Label>
+          <div className="mt-2 flex flex-wrap gap-2">
+            {EXPLORABLE_MOUNTINGS.map((m) => {
+              const on = explore.mountingKind === m.kind;
+              return (
+                <button
+                  key={m.kind}
+                  type="button"
+                  className="answer-filter"
+                  aria-pressed={on}
+                  onClick={() =>
+                    setExplore(({ mountingKind: _drop, ...rest }) =>
+                      on ? rest : { ...rest, mountingKind: m.kind },
+                    )
+                  }
+                >
+                  <span aria-hidden="true">{on ? "✓" : "+"}</span>
+                  <span>{t(m.label)}</span>
+                </button>
+              );
+            })}
+          </div>
         </div>
+        <div>
+          <Label className="t-label">{t("Autre forme de boîtier")}</Label>
+          <div className="mt-2 flex flex-wrap gap-2">
+            {EXPLORABLE_SHAPES.map((s) => {
+              const on = explore.shape === s.shape;
+              return (
+                <button
+                  key={s.shape}
+                  type="button"
+                  className="answer-filter"
+                  aria-pressed={on}
+                  onClick={() =>
+                    setExplore(({ shape: _drop, ...rest }) =>
+                      on ? rest : { ...rest, shape: s.shape },
+                    )
+                  }
+                >
+                  <span aria-hidden="true">{on ? "✓" : "+"}</span>
+                  <span>{t(s.label)}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+        {explore.mountingKind || explore.shape ? (
+          <>
+            <p className="notice notice-info">
+              {t(
+                "Vous regardez des capteurs qui peuvent diverger de vos réponses. Rien n'est enregistré : vos exigences et votre montage sont inchangés.",
+              )}
+            </p>
+            <Button variant="outline" size="sm" className="min-h-11" onClick={() => setExplore({})}>
+              {t("Revenir à mes réponses")}
+            </Button>
+          </>
+        ) : null}
+
+        {shownFilters.length ? (
+          <ul className="mt-2 space-y-1">
+            {shownFilters.map((f) => (
+              <li key={f.id} className="t-caption">
+                <strong>{t(f.label)}</strong> — {t(f.technical)}
+              </li>
+            ))}
+          </ul>
+        ) : null}
+      </div>
+    </details>
+  );
+
+  /** Version encadrée, conservée pour la liste complète des candidats des
+   * réglages avancés : même contenu, même comportement. */
+  const filterControls = (
+    <div className="panel-block space-y-3">
+      {shownFilters.length ? (
+        <p className="t-body">
+          {answerFilters.length
+            ? t("D'après vos réponses, nous ne montrons d'abord que les capteurs compatibles.")
+            : t("Critères d'exploration en cours. Vos réponses ne sont pas modifiées.")}
+        </p>
+      ) : null}
+      {filterChips}
+      {filterAdjust}
+    </div>
   );
 
   const openWorkshopPanel = () => {
@@ -2302,12 +2295,10 @@ export function DesignSpace({
         data-testid="pair-card"
         className={`surface-interactive p-5 ${chosen ? "candidate-selected" : ""}`}
       >
-        <CandidateThumbnail
+        <PairThumbnail
           sensorId={card.sensorId}
-          cabled={false}
-          fitToView
+          magnetId={card.magnetId}
           size={compact ? "compact" : "large"}
-          pair={{ magnetId: card.magnetId, approach: "D1" }}
         />
         <div className="mt-3 flex flex-wrap items-center gap-2">
           <p className="t-label">
@@ -2317,9 +2308,7 @@ export function DesignSpace({
         </div>
         {/* Les références (MK04, M04) traversent le rendu inchangées. */}
         <p className="t-title-m">{card.couple}</p>
-        <p className="t-body mt-2">
-          {msg("{0}, {1}.", [t(card.fixingLabel), card.size])}
-        </p>
+        <p className="t-body mt-2">{msg("{0}, {1}.", [t(card.fixingLabel), card.size])}</p>
         <p className="t-body mt-2">
           {card.maxPullInMm === null ? (
             <span className="text-[var(--standex-blue-75)]">
@@ -2358,38 +2347,51 @@ export function DesignSpace({
         <p className="t-label">{t("D'après vos réponses")}</p>
         <h2 className="t-display-m">{pairsTitle}</h2>
         <p className="t-body mt-2">{pairsSubtitle}</p>
-        <div className="mt-4">{filterControls}</div>
+        {/* Une seule rangée de puces sous le sous-titre ; tout le réglage fin
+            est replié derrière « Ajuster les critères ». */}
+        {filterChips ? <div className="mt-3">{filterChips}</div> : null}
+        <div className="mt-1">{filterAdjust}</div>
       </div>
       <div className="pair-grid">{suggestedPairs.map((c, i) => pairCardView(c, i))}</div>
-      <div className="panel-block space-y-3">
-        <details>
-          <summary className="t-body min-h-11 cursor-pointer list-none py-2">
-            {msg("Voir tous les couples possibles ({0})", [allPairs.length])}
-          </summary>
-          <div className="pair-grid mt-3">{allPairs.map((c, i) => pairCardView(c, i, true))}</div>
-        </details>
-        <div className="flex flex-wrap items-center gap-3">
-          <Button
-            variant={isDelegated(dossier, DELEGATED_SENSOR) ? "default" : "outline"}
-            className="min-h-11 text-base"
+      <div className="space-y-3">
+        <p>
+          <button
+            type="button"
+            className="text-link t-body min-h-11"
+            aria-expanded={showAllPairs}
+            onClick={() => setShowAllPairs((v) => !v)}
+          >
+            {showAllPairs
+              ? t("Masquer les autres couples")
+              : msg("Voir tous les couples possibles ({0})", [allPairs.length])}
+          </button>
+        </p>
+        {showAllPairs ? (
+          <div className="pair-grid">{allPairs.map((c, i) => pairCardView(c, i, true))}</div>
+        ) : null}
+        {/* Deux décisions confiées à Standex : des liens discrets sur une même
+            ligne. Une décision prise, jamais une valeur technique connue. */}
+        <p className="t-caption flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            className="text-link t-caption min-h-11"
             aria-pressed={isDelegated(dossier, DELEGATED_SENSOR)}
             onClick={delegateSensor}
           >
             {t("Laisser Standex choisir pour moi")}
-          </Button>
-          {/* Délégation explicite du placement : décision prise, jamais une
-              valeur technique connue. */}
-          <Button
-            variant="ghost"
-            className="min-h-11 text-base"
+          </button>
+          <span aria-hidden="true">·</span>
+          <button
+            type="button"
+            className="text-link t-caption min-h-11"
             aria-pressed={isDelegated(dossier, DELEGATED_MOUNTING)}
             onClick={() => toggleDelegated(DELEGATED_MOUNTING)}
           >
             {isDelegated(dossier, DELEGATED_MOUNTING)
               ? t("Placement confié à Standex")
               : t("Choisir le placement avec Standex")}
-          </Button>
-        </div>
+          </button>
+        </p>
         {isDelegated(dossier, DELEGATED_SENSOR) ? (
           <p className="notice notice-info">
             {t(
@@ -2404,18 +2406,18 @@ export function DesignSpace({
             )}
           </p>
         ) : null}
-        <button
-          type="button"
-          className="t-body min-h-11 underline"
-          onClick={() => setTab("revue")}
-        >
-          {t("Passer directement à Avec Standex")}
-        </button>
+        <p>
+          <button
+            type="button"
+            className="text-link t-body min-h-11"
+            onClick={() => setTab("revue")}
+          >
+            {t("Passer directement à Avec Standex")}
+          </button>
+        </p>
       </div>
     </div>
   );
-
-
 
   const candidatsSection = (
     <div className="space-y-4">
@@ -2504,7 +2506,9 @@ export function DesignSpace({
                       </summary>
                       <ul className="space-y-1.5 pl-5">
                         {c.reasons.slice(1).map((r, i) => (
-                          <li key={i} className="t-caption list-disc">{t(r)}</li>
+                          <li key={i} className="t-caption list-disc">
+                            {t(r)}
+                          </li>
                         ))}
                       </ul>
                     </details>
@@ -2615,8 +2619,6 @@ export function DesignSpace({
   const connectorPreference =
     connectorWanted ||
     (termination.kind === "unqualified_connector" && !isDelegated(dossier, DELEGATED_CONNECTOR));
-
-
 
   const cablageSection = (
     <div className="space-y-4">
@@ -2732,7 +2734,6 @@ export function DesignSpace({
                 ],
               }));
             }}
-
           />
           {t("J'ai une préférence de connecteur")}
         </label>
@@ -2810,7 +2811,9 @@ export function DesignSpace({
                   </div>
                 ))}
               </div>
-              {connectorError ? <p className="notice notice-danger mt-2">{connectorError}</p> : null}
+              {connectorError ? (
+                <p className="notice notice-danger mt-2">{connectorError}</p>
+              ) : null}
               <div className="mt-3 flex flex-wrap items-center gap-2">
                 <Button
                   size="sm"
@@ -3116,7 +3119,12 @@ export function DesignSpace({
           <p className="t-caption mt-2">
             {selectedRangeNote.range} : {selectedRangeNote.lengths}{" "}
             {selectedRangeNote.source.startsWith("http") ? (
-              <a className="underline" href={selectedRangeNote.source} target="_blank" rel="noreferrer">
+              <a
+                className="underline"
+                href={selectedRangeNote.source}
+                target="_blank"
+                rel="noreferrer"
+              >
                 {t("voir la source fabricant")}
               </a>
             ) : (
@@ -3209,11 +3217,7 @@ export function DesignSpace({
           <div className="panel-block">
             <div className="flex flex-wrap items-center gap-3">
               <Label className="text-base font-medium">{t("Atelier 3D (facultatif)")}</Label>
-              <Button
-                variant="outline"
-                className="min-h-11 text-base"
-                onClick={openWorkshopPanel}
-              >
+              <Button variant="outline" className="min-h-11 text-base" onClick={openWorkshopPanel}>
                 {t("Vérifier la détection dans mon montage")}
               </Button>
               <span className="t-caption">
@@ -3231,6 +3235,24 @@ export function DesignSpace({
   const revueSection = (
     <div className="space-y-4">
       {projectSummaryCard}
+      {/* Demande d'essai réel : une DEMANDE de mesure adressée à Standex, jamais
+          une mesure, ni une valeur connue, ni une validation R&D. */}
+      <div className="panel-block">
+        <label className="t-body flex min-h-11 items-center gap-3">
+          <input
+            type="checkbox"
+            data-testid="trial-request"
+            checked={isDelegated(dossier, TRIAL_REQUEST)}
+            onChange={() => toggleDelegated(TRIAL_REQUEST)}
+          />
+          {t("Demande d'essai réel")}
+        </label>
+        <p className="t-caption mt-1">
+          {t(
+            "Standex mesure la position dans son laboratoire. Cocher cette case demande une mesure : ce n'est ni une mesure, ni une validation technique.",
+          )}
+        </p>
+      </div>
       {/* Le câble et le connecteur sont ici, sous le résumé : aucune logique de
           câble n'est retirée, seule sa place change. */}
       <details id="section-cablage" className="panel-block-lg scroll-mt-24">
@@ -3791,6 +3813,19 @@ export function DesignSpace({
           storageMode="memory"
           cableRouting={cableRouting}
           onDraftChange={onWorkshopDraft}
+          onSaveState={setWorkshopSaveState}
+          onResult={() => {
+            // Sortie de l'atelier : la revue s'ouvre sur le couple testé.
+            setShowWorkshop(false);
+            setPanel(null);
+            setTab("revue");
+          }}
+          onRequestTrial={() => {
+            if (!isDelegated(dossier, TRIAL_REQUEST)) toggleDelegated(TRIAL_REQUEST);
+            setShowWorkshop(false);
+            setPanel(null);
+            setTab("revue");
+          }}
           onClose={() => {
             setShowWorkshop(false);
             setPanel(null);
@@ -4215,7 +4250,9 @@ export function DesignSpace({
           </button>
           <p className="studio-navigation-note">
             <strong>{t("Conservation et reprise de ce projet")}</strong>
-            <span>{t(MEMORY_LOSS_WARNING)} {t(EXPORT_BINARY_NOTICE)}</span>
+            <span>
+              {t(MEMORY_LOSS_WARNING)} {t(EXPORT_BINARY_NOTICE)}
+            </span>
             {importMessage ? <span>{importMessage}</span> : null}
           </p>
         </nav>
@@ -4307,7 +4344,11 @@ export function DesignSpace({
         <Tabs value={tab} onValueChange={setTab}>
           {showAdvanced ? (
             <div className="mb-2">
-              <Button variant="ghost" className="min-h-11 text-base" onClick={() => setShowAdvanced(false)}>
+              <Button
+                variant="ghost"
+                className="min-h-11 text-base"
+                onClick={() => setShowAdvanced(false)}
+              >
                 {t("Masquer les réglages détaillés")}
               </Button>
             </div>
@@ -4359,10 +4400,29 @@ export function DesignSpace({
         keepMounted={workshopMounted}
         fullscreen
         languagePicker
-        backLabel={t("Retour au projet")}
-        onBack={() => setPanel(null)}
+        bare
+        backLabel={t("Retour aux couples")}
+        onBack={() => {
+          setPanel(null);
+          setTab("montage");
+        }}
         onOpenChange={(o) => setPanel(o ? "atelier" : null)}
         title={t("Atelier 3D")}
+        badge={
+          <span className="flex shrink-0 items-center gap-2">
+            {/* Références portées telles quelles, jamais traduites. */}
+            {workshop ? (
+              <Badge className="project-state-badge">{`${workshop.sensorId} + ${workshop.magnetModel}`}</Badge>
+            ) : null}
+            <span className="t-caption" role="status" data-testid="workshop-save-state">
+              {workshopSaveState === "saving"
+                ? t("Enregistrement…")
+                : workshopSaveState === "saved"
+                  ? t("Enregistré")
+                  : t("Brouillon")}
+            </span>
+          </span>
+        }
       >
         {workshopMounted ? workshopSection : null}
       </WorkspacePanel>

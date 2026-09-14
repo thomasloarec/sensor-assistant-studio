@@ -952,6 +952,47 @@
       grid-template-columns: minmax(0, 1fr);
     }
   }
+  /* Lien texte : la lumière et la couleur de marque portent l'action, pas un
+     encadré. Cible tactile assurée par la classe utilitaire du composant. */
+  .text-link {
+    display: inline-flex;
+    align-items: center;
+    color: var(--standex-blue);
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+    text-align: start;
+  }
+  .text-link:hover {
+    color: var(--standex-blue-75);
+  }
+  /* Vignette d'un couple : capteur et aimant à cadrage égal, « + » discret.
+     Chaque objet garde son propre cadrage, donc sa lisibilité. */
+  .pair-thumb-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .pair-thumb-plus {
+    font: var(--t-body);
+    color: var(--muted-foreground);
+  }
+  /* Repère N/S : utilisé UNIQUEMENT sans géométrie de boîtier documentée. */
+  .magnet-pole-north {
+    fill: var(--surface-tint);
+  }
+  .magnet-pole-south {
+    fill: var(--surface-sunken);
+  }
+  .magnet-pole-text {
+    font: var(--t-label);
+    fill: var(--muted-foreground);
+  }
+  .filter-adjust > summary {
+    color: var(--standex-blue);
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+  }
   .guided-envelope-fields {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
