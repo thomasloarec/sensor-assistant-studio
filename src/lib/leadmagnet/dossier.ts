@@ -152,7 +152,7 @@ export function createDossier(
     revision: 1,
     storage: "memory",
     // Le titre par défaut est rédigé dans la langue de départ du projet.
-    title: t("Nouveau projet d'exploration", isLocale(sourceLocale) ? sourceLocale : "fr"),
+    title: t("Nouveau projet", isLocale(sourceLocale) ? sourceLocale : "fr"),
     sourceLocale: isLocale(sourceLocale) ? sourceLocale : "fr",
     requirements: REQUIREMENT_ORDER.map((key) => ({
       key,

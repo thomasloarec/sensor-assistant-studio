@@ -32,7 +32,7 @@ describe("ouverture d'un dossier", () => {
     expect(followup).toContain("if (!list.some((d) => d.id === requestedDossierId))");
     expect(followup).toContain("Ce lien ne correspond à aucun de vos projets");
     // La garde du brouillon en cours reste celle de l'espace de conception.
-    expect(design).toContain('guardReplace(t("ouvrir ce dossier"))');
+    expect(design).toContain('guardReplace(t("ouvrir ce projet"))');
   });
 
   test("l'écran de conception refuse d'ouvrir un dossier dont le contenu est illisible", () => {

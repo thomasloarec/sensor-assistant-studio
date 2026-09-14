@@ -263,7 +263,7 @@ export function parseDossierExport(raw: unknown, now = new Date().toISOString())
     })
     .safeParse(raw);
   if (!envelope.success)
-    return { ok: false, reason: "Ce fichier n'est pas un export de dossier de conception." };
+    return { ok: false, reason: "Ce fichier n'est pas un export de projet de conception." };
   if (!Number.isInteger(envelope.data.version) || envelope.data.version > EXPORT_VERSION)
     return {
       ok: false,

@@ -47,7 +47,7 @@ export const STORAGE_BADGE: Record<StorageMode, string> = {
 };
 
 export const MEMORY_LOSS_WARNING =
-  "Ce projet n'existe que dans cet onglet : fermer ou recharger la page l'efface. Exportez le dossier pour le reprendre plus tard.";
+  "Ce projet n'existe que dans cet onglet : fermer ou recharger la page l'efface. Exportez le projet pour le reprendre plus tard.";
 
 export const LOCAL_ASSISTANT_LABEL =
   "Qualification guidée locale — aucune IA distante n'est reliée. Vos réponses restent dans cet onglet.";

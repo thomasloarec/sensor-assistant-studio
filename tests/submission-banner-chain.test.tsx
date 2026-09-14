@@ -87,7 +87,7 @@ describe("bandeau d'état après un envoi confirmé", () => {
     const html = banner(status, lastSent);
     expect(html).toContain("Dossier transmis à la revue Standex");
     expect(html).not.toContain("Modifications non envoyées");
-    expect(html).toContain("Envoyer mon dossier");
+    expect(html).toContain("Envoyer mon projet");
   });
 
   test("modifier le contenu repasse le bandeau en « Modifications non envoyées »", async () => {

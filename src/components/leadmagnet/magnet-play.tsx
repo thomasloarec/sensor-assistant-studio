@@ -1,10 +1,10 @@
 import { useLocale } from "@/lib/i18n/react";
-import { t } from "@/lib/i18n/core";
+import { msg, t } from "@/lib/i18n/core";
 /** Démonstration pédagogique : un aimant déplaçable devant un capteur reed.
  *
  * Le dessin est un SVG natif (ampoule de verre, deux lamelles, fils, aimant
  * bicolore N/S) : rien n'est une image figée. Aucune mesure physique n'est
- * affichée, seulement « Détecté » ou « Hors de portée ».
+ * affichée pour un capteur réel : l'étiquette parle de la démonstration seule.
  * Souris, tactile, clavier et curseur donnent exactement le même contrôle.
  */
 import { useCallback, useRef, useState } from "react";
@@ -15,6 +15,9 @@ const MIN = 34;
 const MAX = 92;
 /** Seuil pédagogique : en deçà, l'aimant referme le contact. */
 const THRESHOLD = 52;
+/** Distance annoncée par la DÉMONSTRATION uniquement : ce n'est pas une mesure
+ *  et ce n'est pas une valeur publiée pour un capteur réel (la légende le dit). */
+const DEMO_DISTANCE_MM = 14;
 
 export function MagnetPlay() {
   useLocale();
@@ -248,7 +251,11 @@ export function MagnetPlay() {
           aria-valuemin={MIN}
           aria-valuemax={MAX}
           aria-valuenow={Math.round(pos)}
-          aria-valuetext={detected ? t("Détecté") : t("Hors de portée")}
+          aria-valuetext={
+            detected
+              ? msg("Détecté à {0} mm", [String(DEMO_DISTANCE_MM)])
+              : t("Rapprochez l'aimant →")
+          }
           className="magnet-handle absolute top-1/2 h-24 w-14 -translate-x-1/2 -translate-y-1/2 cursor-grab touch-none rounded-xl border-2 border-transparent bg-transparent focus-visible:border-ring active:cursor-grabbing"
           style={{ left: `${pos}%` }}
           onPointerDown={(e) => {
@@ -281,13 +288,14 @@ export function MagnetPlay() {
           {detected ? (
             <span className="magnet-status-dot size-2 rounded-full bg-signal" aria-hidden="true" />
           ) : null}
-          {detected ? t("Détecté") : t("Hors de portée")}
+          {detected
+            ? msg("Détecté à {0} mm", [String(DEMO_DISTANCE_MM)])
+            : t("Rapprochez l'aimant →")}
         </p>
       </div>
 
       <div className="px-5 pb-5 pt-5 sm:px-7 sm:pb-7">
-        <p className="t-body-l">{t("Rapprochez l'aimant. Observez le capteur.")}</p>
-        <div className="mt-4 flex items-center gap-5">
+        <div className="flex items-center gap-5">
           <span className="t-label shrink-0">{t("Distance")}</span>
           <Slider
             className="min-w-0 flex-1"
