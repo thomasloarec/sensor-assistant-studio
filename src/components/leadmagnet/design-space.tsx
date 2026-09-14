@@ -42,6 +42,7 @@ import {
   DELEGATED_SENSOR,
 } from "@/lib/leadmagnet/project-checklist";
 import SensorCard from "@/components/standex/workshop/sensor-card";
+import { ConnectorPreview } from "@/components/leadmagnet/connector-preview";
 import SensorCatalog from "@/components/standex/workshop/sensor-catalog";
 import { LanguagePicker, useLocale } from "@/lib/i18n/react";
 import { Input } from "@/components/ui/input";
@@ -2269,7 +2270,7 @@ export function DesignSpace({
               {DOCUMENTED_HOUSINGS.map((h) => {
                 const selected =
                   termination.kind === "unqualified_connector" &&
-                  termination.connector.housingMpn === h.housingMpn;
+                  termination.spec.mpn === h.housingMpn;
                 return (
                   <button
                     key={h.housingMpn}
