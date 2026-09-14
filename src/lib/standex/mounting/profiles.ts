@@ -9,18 +9,37 @@ import type { Vec3 } from "./geometry";
 export type Evidence = "published_typical" | "schematic" | "uncharacterised";
 
 /**
- * Couples (famille, approche) dont la lecture des colonnes « up / to » de la
- * source publiée est confirmée par docs/studio-v2/RAPPORT_CALIBRATION_MK03_2026-09-10.md.
- * Toute autre ligne du registre reste représentable mais ne fournit AUCUN seuil
- * au calcul : la qualification Standex des tables up/to est encore ouverte
- * (docs/STUDIO_V2_FEEDBACK_V2.md). Aucun alias entre identifiants d'aimants :
- * 4003004003 (cylindre Ø 4 × 19) et M02 (boîtier) sont deux lignes distinctes.
+ * Qualification d'une distance publiée.
+ *
+ * La qualification porte sur le COUPLE complet réellement saisi au registre :
+ * famille, référence de variante, classe de sensibilité, aimant, approche et
+ * source. Une ligne présente au registre publié provient d'un tableau explicite
+ * « Max Pull-in / Min Drop-out » ; ce n'est pas une valeur fictive et elle n'est
+ * pas effacée au prétexte qu'aucune calibration physique n'existe.
+ *
+ * À ne pas confondre avec les nouvelles colonnes « up / to » de la brochure,
+ * encore en attente de qualification Standex : celles-là ne sont pas au registre
+ * et n'alimentent donc rien.
+ *
+ * Aucun seuil n'est jamais emprunté à un autre capteur ou à un autre aimant :
+ * l'identité (famille, aimant, approche, classe) est exacte.
  */
-export const QUALIFIED_APPROACHES: Readonly<Record<string, readonly string[]>> = {
-  MK03: ["D1", "D3"],
-};
-export const approachQualified = (sensorFamily: string, approachId: string): boolean =>
-  (QUALIFIED_APPROACHES[sensorFamily] ?? []).includes(approachId);
+export const sourceQualified = (
+  sensorFamily: string,
+  sensitivityClass: string,
+  magnetId: string,
+  approachId: string,
+  registry?: PublishedRegistry,
+): boolean =>
+  publishedReference(sensorFamily, sensitivityClass, magnetId, approachId, registry) !== null;
+/** Existe-t-il au moins une ligne publiée pour cette famille et cette approche ? */
+export const approachQualified = (
+  sensorFamily: string,
+  approachId: string,
+  registry: PublishedRegistry = PUBLISHED_REGISTRY,
+): boolean =>
+  registry.rows.some((r) => r.sensorFamily === sensorFamily && r.approachId === approachId);
+
 
 /**
  * Localisation géométrique de l'approche dans le repère capteur.
@@ -117,16 +136,16 @@ export function profileFor(
   );
 }
 /** Distances publiées [enclenchement, relâchement] en mm, ou null. Jamais extrapolées.
- * Refus net tant que la lecture up/to de la table n'est pas qualifiée. */
+ * La ligne du registre EST la qualification ; seule la localisation de l'approche
+ * conditionne encore l'usage géométrique. */
 export function thresholdsFor(
   profile: MountingProfile,
   sensitivityClass: string,
   registry?: PublishedRegistry,
 ): readonly [number, number] | null {
-  // Deux conditions distinctes : la lecture up/to doit être qualifiée ET
-  // l'approche doit être localisée pour alimenter un calcul géométrique.
+  // Une distance documentée ne devient un seuil géométrique que si l'approche
+  // possède un axe : sinon elle reste une lecture documentaire.
   if (profile.localisation !== "axis_documented") return null;
-  if (!approachQualified(profile.sensorFamily, profile.approachId)) return null;
   const row = publishedReference(
     profile.sensorFamily,
     sensitivityClass,
@@ -141,8 +160,8 @@ export function sensitivityComparison(
   profile: MountingProfile,
   registry?: PublishedRegistry,
 ): { sensitivityClass: string; pullInMm: number; dropOutMm: number; sourceRef: string }[] {
-  if (!approachQualified(profile.sensorFamily, profile.approachId)) return [];
   return profile.classes
+
     .map((sensitivityClass) => {
       const row = publishedReference(
         profile.sensorFamily,
@@ -169,7 +188,8 @@ export interface DocumentedDistance {
   pullInMm: number;
   dropOutMm: number;
   sourceRef: string;
-  /** Vrai seulement si l'approche est localisée ET la lecture up/to qualifiée. */
+  /** Vrai seulement si l'approche est localisée : la distance est documentée
+   * dans tous les cas, mais D2/D4/D5 ne fournissent aucune trajectoire. */
   usableForGeometry: boolean;
   localisation: Localisation;
 }
@@ -184,9 +204,8 @@ export function documentedDistances(
   profile: MountingProfile,
   registry?: PublishedRegistry,
 ): DocumentedDistance[] {
-  const usable =
-    profile.localisation === "axis_documented" &&
-    approachQualified(profile.sensorFamily, profile.approachId);
+  const usable = profile.localisation === "axis_documented";
+
   return profile.classes
     .map((sensitivityClass) => {
       const row = publishedReference(

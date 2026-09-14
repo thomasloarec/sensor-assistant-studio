@@ -116,6 +116,7 @@ function Assembly({
   showMachine,
   showSpace,
   xray,
+  showNames,
   reduced,
   onChange,
   onMeasure,
@@ -131,6 +132,8 @@ function Assembly({
   showMachine: boolean;
   showSpace: boolean;
   xray: boolean;
+  /** Affichage du nom du capteur : option d'affichage seule, jamais la géométrie. */
+  showNames: boolean;
   reduced: boolean;
   onChange: (patch: Partial<MachineAssembly>) => void;
   onMeasure: (distance: number | null) => void;
@@ -242,11 +245,13 @@ function Assembly({
               />
             </mesh>
           )}
-          <Html position={[0, model.body[1] / 2 + 7, 0]} center style={{ pointerEvents: "none" }}>
-            <span className="mw-scene-label">
-              {t(model.name)} · {t(sizeLabel(model))}
-            </span>
-          </Html>
+          {showNames && (
+            <Html position={[0, model.body[1] / 2 + 7, 0]} center style={{ pointerEvents: "none" }}>
+              <span className="mw-scene-label">
+                {t(model.name)} · {t(sizeLabel(model))}
+              </span>
+            </Html>
+          )}
         </group>
       </MovingIf>
       <MovingIf moving={machine.magnetMount === "moving"} machine={machine} u={u}>
@@ -316,6 +321,7 @@ export default function MachineScene({
   showMachine,
   showSpace,
   xray,
+  showNames = true,
   reduced,
   onChange,
   onMeasure,
@@ -335,6 +341,8 @@ export default function MachineScene({
   showMachine: boolean;
   showSpace: boolean;
   xray: boolean;
+  /** Affichage du nom du capteur : option d'affichage seule, jamais la géométrie. */
+  showNames?: boolean;
   reduced: boolean;
   onChange: (patch: Partial<MachineAssembly>) => void;
   onMeasure: (distance: number | null) => void;
@@ -381,6 +389,7 @@ export default function MachineScene({
         showMachine={showMachine}
         showSpace={showSpace}
         xray={xray}
+        showNames={showNames}
         reduced={reduced}
         onChange={onChange}
         onMeasure={onMeasure}

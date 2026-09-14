@@ -66,10 +66,16 @@ describe("profils de montage", () => {
     expect(cov.approaches).toEqual(["D1", "D2", "D3", "D4", "D5"]);
     expect(cov.magnets.length).toBe(6);
     expect(cov.classes).toEqual(["A", "B", "C", "D", "E"]);
-    // Localisation et qualification restent deux notions distinctes.
+    // Localisation et qualification restent deux notions distinctes : une ligne
+    // publiée qualifie ses distances, l'axe documenté conditionne la géométrie.
     expect(cov.unlocatedProfiles).toBeGreaterThan(0);
-    expect(cov.locatedProfiles).toBeGreaterThan(cov.calculableProfiles);
+    expect(cov.calculableProfiles).toBe(cov.locatedProfiles);
+    expect(cov.locatedProfiles).toBeGreaterThan(8);
     expect(cov.profiles).toBe(cov.locatedProfiles + cov.unlocatedProfiles);
+    // Une approche non localisée ne fournit jamais de seuil géométrique.
+    for (const p of PROFILES.filter((x) => x.localisation === "not_located"))
+      expect(thresholdsFor(p, p.classes[0]!)).toBeNull();
+
     // Chaque famille du registre est représentée, pas seulement MK03.
     for (const f of cov.families)
       expect(PROFILES.some((p) => p.sensorFamily === f)).toBe(true);

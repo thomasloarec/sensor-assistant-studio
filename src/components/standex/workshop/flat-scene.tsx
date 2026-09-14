@@ -12,6 +12,7 @@ export default function FlatScene({
   xray = true,
   dimensions = true,
   zones = true,
+  showNames = true,
   focus = "assembly",
 }: {
   config: WorkshopConfig;
@@ -20,12 +21,14 @@ export default function FlatScene({
   xray?: boolean;
   dimensions?: boolean;
   zones?: boolean;
+  /** Affichage du nom du capteur : option d'affichage seule, jamais la géométrie. */
+  showNames?: boolean;
   focus?: "assembly" | "sensor";
 }) {
   const model = sensorById(config.sensorId),
     [l, , w] = model.body,
     [ml, , mw] = magnetSize(config);
-  const actualMagnet = pairedMagnetModel(config.magnetModel);
+  const actualMagnet = pairedMagnetModel(config.magnetModel, config.sensorId);
   const axial = config.magnetization === "axial";
   const extent = focus === "sensor" ? Math.max(12, l * 1.6) : 180;
   const cx = focus === "sensor" ? config.mountX : 10,
@@ -66,15 +69,17 @@ export default function FlatScene({
         ))}
         <g transform={`rotate(${config.sensorAngle})`}>
           <SensorPlan model={model} contact={sample.contact} xray={xray} />
-          <text
-            x="0"
-            y={-w / 2 - 3}
-            textAnchor="middle"
-            fontSize={Math.min(3, l * 0.19)}
-            fill="#254061"
-          >
-            {t(model.name)}
-          </text>
+          {showNames && (
+            <text
+              x="0"
+              y={-w / 2 - 3}
+              textAnchor="middle"
+              fontSize={Math.min(3, l * 0.19)}
+              fill="#254061"
+            >
+              {t(model.name)}
+            </text>
+          )}
           {dimensions && (
             <g fill="#577287" stroke="#577287" strokeWidth=".2">
               <path d={`M${-l / 2} ${w / 2 + 3} v2 H${l / 2} v-2`} fill="none" />
@@ -95,7 +100,27 @@ export default function FlatScene({
           transform={`translate(${sample.position[0]} ${sample.position[2]}) rotate(${sample.angle}) scale(${Math.max(0.08, Math.abs(Math.cos((config.magnetTilt * Math.PI) / 180)))} 1)`}
         >
           {actualMagnet ? (
-            <SensorPlan model={actualMagnet} xray={false} showCable={false} />
+            /* Repère propre à l'aimant : bande et étiquette, indépendantes de
+               l'affichage du nom du capteur. */
+            <g>
+              <SensorPlan model={actualMagnet} xray={false} showCable={false} />
+              <rect
+                x={-Math.max(0.55, ml * 0.055)}
+                y={-mw / 2}
+                width={Math.max(1.1, ml * 0.11)}
+                height={mw}
+                fill="#b4531f"
+              />
+              <text
+                x="0"
+                y={mw / 2 + 4}
+                textAnchor="middle"
+                fontSize={Math.min(2.6, ml * 0.2)}
+                fill="#b4531f"
+              >
+                {t("Aimant")}
+              </text>
+            </g>
           ) : config.magnetization === "thickness" ? (
             <g>
               <rect

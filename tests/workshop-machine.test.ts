@@ -9,6 +9,7 @@ import {
   parseWorkshopNote,
   serializeWorkshop,
   simulateCycle,
+  unavailableReason,
 } from "../src/lib/standex/magnetic-workshop";
 import type { WorkshopConfig, Vec3 } from "../src/lib/standex/magnetic-workshop";
 import {
@@ -126,7 +127,15 @@ describe("Machine motion and retained configurations", () => {
     expect(parseWorkshopNote(serializeWorkshop(c))).toEqual(c);
     const dirty = { ...c, machine: { ...c.machine, certified: true } };
     expect(parseWorkshopConfig(dirty)?.machine).not.toHaveProperty("certified");
-    expect(parseWorkshopConfig({ ...c, mode: "reference" })).toBeNull();
+    // Un modèle importé reste lisible avec un vrai capteur : il ne bascule plus
+    // d'office dans le modèle fictif. Mais la pose importée n'est pas la
+    // configuration documentée : le calcul reste indisponible et aucun contact
+    // fermé n'en sort.
+    const imported = parseWorkshopConfig({ ...c, mode: "reference" });
+    expect(imported).not.toBeNull();
+    expect(unavailableReason(imported!)).toBeTruthy();
+    expect(simulateCycle(imported!).samples.every((s) => s.contact === "unknown")).toBe(true);
+
     expect(parseWorkshopConfig({ ...c, machine: { ...c.machine, unitScale: NaN } })).toBeNull();
     expect(
       parseWorkshopConfig({ ...c, machine: { ...c.machine, sensorPosition: [NaN, 0, 0] } }),

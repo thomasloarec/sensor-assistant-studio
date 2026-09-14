@@ -82,9 +82,67 @@ export const BARE_MAGNETS: readonly CatalogMagnet[] = [
   block("HF2826-3.5X1.8X1.8", "HF 28/26 · 3,5 × 1,8 × 1,8 mm", "Ferrite", 3.5, 1.8, 1.8, 39),
   block("HF2826-6.7X6.7X2.7", "HF 28/26 · 6,7 × 6,7 × 2,7 mm", "Ferrite", 6.7, 6.7, 2.7, 39),
 ];
-export const PACKAGED_MAGNET_IDS = ["M02", "M04", "M05", "M13", "M21"] as const;
+/**
+ * Aimants en boîtier de `public/datasheets/Packaged-Magnets.pdf` V03, 18 juin 2026.
+ * Chaque boîtier réutilise EXACTEMENT le dessin du capteur correspondant, sans
+ * câble ni contacts : c'est une enveloppe cotée, jamais une géométrie magnétique
+ * active. `documentedAs` signale une correspondance documentaire quand la
+ * référence demandée par l'utilisateur diffère du nom de la fiche : rien n'y est
+ * présenté comme référence constructeur vérifiée.
+ */
+export interface PackagedMagnet {
+  id: string;
+  /** Boîtier capteur réutilisé pour la géométrie. */
+  housing: string;
+  /** Boîtier alternatif selon la variante de capteur sélectionnée. */
+  housingBySensor?: Readonly<Record<string, string>>;
+  /** Nom porté par la fiche Packaged Magnets quand il diffère de `id`. */
+  documentedAs?: string;
+  /** Orientation des trous oblongs, réellement distincte en 3D. */
+  holeAxis?: "horizontal" | "vertical";
+  /** Page officielle du produit, quand elle existe. */
+  productPage?: string;
+}
+export const PACKAGED_MAGNETS: readonly PackagedMagnet[] = [
+  { id: "M02", housing: "MK02" },
+  { id: "M03", housing: "MK03" },
+  { id: "M04", housing: "MK04", productPage: "https://standexdetect.com/products/sensors/magnets-and-actuators/m04" },
+  { id: "M05", housing: "MK05" },
+  { id: "M13", housing: "MK13" },
+  { id: "M13B", housing: "MK11-B-M6", documentedAs: "M11B" },
+  { id: "M11P", housing: "MK11-P-M8" },
+  {
+    id: "M11S",
+    housing: "MK11-M8",
+    housingBySensor: { "MK11-M5": "MK11-M5", "MK11-M8": "MK11-M8" },
+  },
+  { id: "M21", housing: "MK21", holeAxis: "horizontal" },
+  {
+    id: "M21P/1",
+    housing: "MK21",
+    holeAxis: "horizontal",
+    productPage: "https://standexdetect.com/products/sensors/magnets-and-actuators/m21p1",
+  },
+  {
+    id: "M21P/2",
+    housing: "MK21",
+    holeAxis: "vertical",
+    productPage: "https://standexdetect.com/products/sensors/magnets-and-actuators/m21p2",
+  },
+  { id: "M27", housing: "MK27", documentedAs: "MK27" },
+  { id: "M36", housing: "MK36" },
+  { id: "M37", housing: "MK37" },
+  { id: "M38", housing: "MK38" },
+];
+export const PACKAGED_MAGNET_IDS: readonly string[] = PACKAGED_MAGNETS.map((m) => m.id);
+export const packagedMagnet = (id: string): PackagedMagnet | null =>
+  PACKAGED_MAGNETS.find((m) => m.id === id) ?? null;
+/** Fiche « Magnet in housing » de la gamme, source complémentaire des boîtiers. */
+export const HOUSING_DATASHEET =
+  "https://standexdetect.com/wp-content/uploads/sites/2/2025/09/datasheet-reed-sensor-series-magnet-in-housing.pdf";
 export function magnetSource(id: string) {
-  if (PACKAGED_MAGNET_IDS.some((x) => x === id)) return "/datasheets/Packaged-Magnets.pdf";
+  const packaged = packagedMagnet(id);
+  if (packaged) return packaged.productPage ?? "/datasheets/Packaged-Magnets.pdf";
   if (id === REFERENCE_CYLINDER)
     return "https://standexdetect.com/wp-content/uploads/sites/2/2025/12/Activate-Distance-Guide-for-Reed-Sensors.pdf#page=3";
   const m = BARE_MAGNETS.find((m) => m.id === id);
@@ -106,12 +164,4 @@ export function bareMagnetModel(id: string): SensorModel | null {
       }
     : null;
 }
-export function preferredMagnet(sensor: SensorModel): string {
-  const paired = (
-    { MK02: "M02", MK04: "M04", MK05: "M05", MK13: "M13", MK21: "M21" } as Record<string, string>
-  )[sensor.id];
-  if (paired) return paired;
-  if (["cylinder", "threaded", "pressfit", "glass"].includes(sensor.shape))
-    return REFERENCE_CYLINDER;
-  return "NDFEB-10X5X1.9";
-}
+
