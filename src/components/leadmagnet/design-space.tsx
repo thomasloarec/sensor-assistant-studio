@@ -1523,6 +1523,7 @@ export function DesignSpace({
   const sampleRoute = routeSamples({ volume, isCustom: false });
 
   const embedded = chrome === "embedded";
+  const projectHeaderRef = usePublishedHeaderHeight<HTMLElement>();
   const stepIndex = tab === "besoin" ? 0 : tab === "revue" ? 2 : 1;
   const steps = [
     { id: "besoin", label: t("Mon besoin"), hint: t("Ce que vous voulez détecter") },
