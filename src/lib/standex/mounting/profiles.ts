@@ -1,4 +1,8 @@
-import { PUBLISHED_REGISTRY, publishedReference } from "../magnetics/registries";
+import {
+  PUBLISHED_REGISTRY,
+  publishedMagnetFamily,
+  publishedReference,
+} from "../magnetics/registries";
 import type { PublishedRegistry } from "../magnetics/registries";
 import type { Provenance } from "../magnetics/types";
 import type { Vec3 } from "./geometry";
