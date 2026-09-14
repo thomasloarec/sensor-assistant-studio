@@ -2125,10 +2125,22 @@ export function DesignSpace({
     </div>
   );
 
+  /** Le câble n'est PAS obligatoire à ce stade : tant que rien n'est demandé,
+   * une longueur inconnue est un état normal, jamais une erreur. */
+  const cableDefined =
+    cabling.lengthChoice !== "undecided" ||
+    activePoints.length > 0 ||
+    cabling.declaredMotionStates.length > 0;
+  const connectorPreference =
+    termination.kind === "unqualified_connector" ||
+    isDelegated(dossier, DELEGATED_CONNECTOR) === false
+      ? termination.kind === "unqualified_connector"
+      : false;
+
   const cablageSection = (
     <div className="space-y-4">
       <div className="panel-block">
-        <Label className="t-label">{t("Longueur et connecteur")}</Label>
+        <Label className="t-label">{t("Longueur du câble")}</Label>
         <p className="t-caption mt-1">
           {t(
             "Un choix non décidé reste inconnu : il ne vaut ni zéro, ni « sans câble ». Vous pouvez continuer sans le fixer.",
@@ -2138,7 +2150,7 @@ export function DesignSpace({
           {/* i18n-canonical : libellés traduits par t() au rendu. */}
           {(
             [
-              ["undecided", "Non décidé — à définir avec Standex"],
+              ["undecided", "À définir avec Standex"],
               ["standard_to_confirm", "Longueur catalogue, à confirmer"],
               ["custom_to_confirm", "Longueur sur mesure, à confirmer"],
             ] as const
@@ -2148,16 +2160,220 @@ export function DesignSpace({
               variant={cabling.lengthChoice === value ? "default" : "outline"}
               className="min-h-11 text-base"
               aria-pressed={cabling.lengthChoice === value}
-              onClick={() => setCabling((c) => ({ ...c, lengthChoice: value }))}
+              onClick={() => {
+                setCabling((c) => ({ ...c, lengthChoice: value }));
+                setDossier((d) => ({
+                  ...d,
+                  delegatedDecisions:
+                    value === "undecided"
+                      ? [
+                          ...(d.delegatedDecisions ?? []).filter((k) => k !== DELEGATED_CABLE),
+                          DELEGATED_CABLE,
+                        ]
+                      : (d.delegatedDecisions ?? []).filter((k) => k !== DELEGATED_CABLE),
+                }));
+              }}
             >
               {t(label)}
             </Button>
           ))}
         </div>
+        <Button
+          variant="outline"
+          className="mt-3 min-h-11"
+          onClick={() => {
+            setShowWorkshop(true);
+            setTab("montage");
+          }}
+        >
+          {t("Ouvrir l'étape câble de l'atelier 3D")}
+        </Button>
       </div>
-      <div className="panel-block" data-testid="routing-target-panel">
-        <Label className="t-label">{t("Tracé dans la 3D (facultatif)")}</Label>
-        <p className="t-caption mt-1">
+
+      {/* Récapitulatif automatique du VRAI montage : rien n'est ressaisi ici. */}
+      <div className="panel-block">
+        <Label className="t-label">{t("Ce que votre montage indique aujourd'hui")}</Label>
+        <p className="t-caption t-metric mt-2">
+          {t("Trajet visé :")} {activeTargetLabel} · {activePoints.length} {t("point(s) ·")}{" "}
+          {cableRouting.lengthLabel}
+        </p>
+        <p className="mt-1">
+          {t("Longueur minimale demandée, marges comprises :")}{" "}
+          <strong className="t-metric">
+            {estimate.requiredMm === null
+              ? cableDefined
+                ? t("inconnue tant que le trajet n'est pas complet")
+                : t("non demandée à ce stade")
+              : `${estimate.requiredMm.toFixed(1)} mm`}
+          </strong>
+        </p>
+        <p className="t-caption">
+          {t(
+            "Cette longueur n'est jamais une longueur approuvée : elle est vérifiée en revue R&D.",
+          )}
+        </p>
+        {cableDefined && estimate.warnings.length ? (
+          <ul className="notice notice-warning mt-2 list-disc pl-8">
+            {estimate.warnings.map((w, i) => (
+              <li key={i}>{w}</li>
+            ))}
+          </ul>
+        ) : null}
+        {cableDefined ? <p className="mt-2">{lengthVerdict.message}</p> : null}
+      </div>
+
+      {/* Connecteur : divulgation progressive. Replier ne supprime RIEN. */}
+      <div className="panel-block">
+        <label className="t-body flex min-h-11 items-center gap-3">
+          <Checkbox
+            checked={connectorPreference}
+            onCheckedChange={(v) => {
+              if (v === true) {
+                setDossier((d) => ({
+                  ...d,
+                  delegatedDecisions: (d.delegatedDecisions ?? []).filter(
+                    (k) => k !== DELEGATED_CONNECTOR,
+                  ),
+                }));
+                return;
+              }
+              // Repli volontaire : la préférence enregistrée est conservée dans
+              // le dossier, seule la décision est confiée à Standex.
+              setDossier((d) => ({
+                ...d,
+                delegatedDecisions: [
+                  ...(d.delegatedDecisions ?? []).filter((k) => k !== DELEGATED_CONNECTOR),
+                  DELEGATED_CONNECTOR,
+                ],
+              }));
+            }}
+          />
+          {t("J'ai une préférence de connecteur")}
+        </label>
+        {!connectorPreference ? (
+          <p className="t-caption mt-2">
+            {t("Sans préférence, le choix du connecteur est confié à Standex.")}
+          </p>
+        ) : (
+          <div className="mt-3">
+            <p className="mt-1 text-sm">{terminationLabel(termination)}</p>
+            <ul className="t-caption mt-1 list-disc pl-5">
+              {connectorSummaryLines(termination, t).map((l, i) => (
+                <li key={i}>{l}</li>
+              ))}
+            </ul>
+            <Label className="t-label mt-3 block">
+              {t("Boîtiers documentés par le fabricant")}
+            </Label>
+            <div className="mt-2 grid gap-3 sm:grid-cols-2">
+              {DOCUMENTED_HOUSINGS.map((h) => {
+                const selected =
+                  termination.kind === "unqualified_connector" &&
+                  termination.connector.housingMpn === h.housingMpn;
+                return (
+                  <button
+                    key={h.housingMpn}
+                    type="button"
+                    className="connector-option surface-interactive p-4 text-left"
+                    aria-pressed={selected}
+                    onClick={() => {
+                      const found = housingById(h.housingMpn);
+                      if (!found) return;
+                      setConnectorError(null);
+                      setConnectorDraft((d) => draftFromHousing(found, d));
+                      setDossier((d) => ({
+                        ...d,
+                        termination: terminationFromHousing(found),
+                        delegatedDecisions: (d.delegatedDecisions ?? []).filter(
+                          (k) => k !== DELEGATED_CONNECTOR,
+                        ),
+                      }));
+                      setSelectionAnnounce(
+                        msg("Connecteur {0} retenu comme préférence, à vérifier par la R&D.", [
+                          h.housingMpn,
+                        ]),
+                      );
+                    }}
+                  >
+                    <span className="t-title-s flex items-center gap-2">
+                      {selected ? <Check className="size-4" aria-hidden="true" /> : null}
+                      {housingLabel(h)}
+                    </span>
+                    <ConnectorPreview housing={h} />
+                  </button>
+                );
+              })}
+            </div>
+            <p className="t-caption mt-2">
+              {t(
+                "Quelques boîtiers documentés seulement, pas le marché entier. Boîtier, contacts à sertir et embase restent trois références distinctes ; brochage, section de fil réelle et disponibilité restent inconnus et à vérifier par la R&D.",
+              )}
+            </p>
+            <details className="mt-3">
+              <summary className="t-caption min-h-11 cursor-pointer list-none py-2">
+                {t("Saisir une référence précise")}
+              </summary>
+              <div className="mt-2 grid gap-3 md:grid-cols-2">
+                {CONNECTOR_FIELD_LABELS.map(([key, label]) => (
+                  <div key={key}>
+                    <Label className="t-label">{label}</Label>
+                    <Input
+                      value={connectorDraft[key]}
+                      onChange={(e) => setConnectorDraft((d) => ({ ...d, [key]: e.target.value }))}
+                    />
+                  </div>
+                ))}
+              </div>
+              {connectorError ? <p className="notice notice-danger mt-2">{connectorError}</p> : null}
+              <div className="mt-3 flex flex-wrap items-center gap-2">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="min-h-11"
+                  onClick={() => {
+                    setConnectorError(null);
+                    setDossier((d) => ({ ...d, termination: DEFAULT_TERMINATION }));
+                  }}
+                >
+                  {t("Fils nus")}
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="min-h-11"
+                  onClick={() => {
+                    const result = terminationFromDraft(connectorDraft);
+                    if (!result.ok) {
+                      setConnectorError(`Champs requis : ${result.missing.join(", ")}.`);
+                      return;
+                    }
+                    setConnectorError(null);
+                    setDossier((d) => ({ ...d, termination: result.termination }));
+                  }}
+                >
+                  {t("Enregistrer en « à vérifier par R&D »")}
+                </Button>
+              </div>
+              <p className="t-caption mt-1">
+                {t(
+                  "Aucune combinaison connecteur/capteur qualifiée n'est documentée dans ce projet : toute référence saisie, sa contrepartie et son brochage restent à vérifier par la R&D.",
+                )}
+              </p>
+            </details>
+          </div>
+        )}
+      </div>
+
+      {/* Réglages avancés : coordonnées, réserves, tolérances, états. Repliés
+          par défaut, JAMAIS effacés par le repli. */}
+      <details className="panel-block" data-testid="routing-target-panel">
+        <summary className="t-title-s flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 py-2">
+          {t("Réglages avancés du câble")}
+          <span className="technical-details-chevron" aria-hidden="true">
+            ⌄
+          </span>
+        </summary>
+        <p className="t-caption mt-2">
           {t(
             "Ouvrez l'atelier 3D, activez « Pointer dans la 3D », puis cliquez la sortie de câble, les passages et le point de connexion sur les surfaces réellement affichées. Sans modèle 3D, la saisie numérique ci-dessous reste la voie exacte : une valeur inconnue reste inconnue, elle ne vaut pas zéro.",
           )}
@@ -2195,215 +2411,212 @@ export function DesignSpace({
             {t("Vérifier la détection dans mon montage")}
           </Button>
         </div>
-        <p className="t-caption t-metric mt-2">
-          {t("Trajet visé :")} {activeTargetLabel} · {activePoints.length} {t("point(s) ·")}{" "}
-          {cableRouting.lengthLabel}
-        </p>
         {activeTarget.kind === "state" ? (
-          <p className="t-caption">
+          <p className="t-caption mt-2">
             {t(
               "Chaque état déclaré a son propre trajet complet et sa pose de relevé. Les états non relevés ne sont jamais présentés comme couverts.",
             )}
           </p>
         ) : null}
-      </div>
 
-      <div className="panel-block grid gap-3 md:grid-cols-2">
-        {pointFields(t("Point capteur"), cabling.sensorEndpoint, (p) =>
-          setCabling((c) => ({ ...c, sensorEndpoint: p })),
-        )}
-        {pointFields(t("Point de connexion"), cabling.connectionEndpoint, (p) =>
-          setCabling((c) => ({ ...c, connectionEndpoint: p })),
-        )}
-      </div>
-      <div className="panel-block">
-        <div className="flex items-center justify-between">
-          <Label className="t-label">{t("Waypoints du trajet")}</Label>
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={() => setCabling((c) => ({ ...c, waypoints: [...c.waypoints, [0, 0, 0]] }))}
-          >
-            {t("Ajouter un point")}
-          </Button>
+        <div className="mt-3 grid gap-3 md:grid-cols-2">
+          {pointFields(t("Point capteur"), cabling.sensorEndpoint, (p) =>
+            setCabling((c) => ({ ...c, sensorEndpoint: p })),
+          )}
+          {pointFields(t("Point de connexion"), cabling.connectionEndpoint, (p) =>
+            setCabling((c) => ({ ...c, connectionEndpoint: p })),
+          )}
         </div>
-        <div className="mt-2 space-y-2">
-          {cabling.waypoints.map((w, index) => (
-            <div key={index} className="flex items-end gap-2">
-              {pointFields(`Point ${index + 1}`, w, (p) =>
-                setCabling((c) => ({
-                  ...c,
-                  // Un point effacé rend le trajet incomplet : il n'est jamais remplacé par 0,0,0.
-                  waypoints: p
-                    ? c.waypoints.map((q, i) => (i === index ? p : q))
-                    : c.waypoints.filter((_, i) => i !== index),
-                })),
-              )}
-              <Button
-                size="sm"
-                variant="ghost"
-                onClick={() =>
+        <div className="mt-3">
+          <div className="flex items-center justify-between">
+            <Label className="t-label">{t("Waypoints du trajet")}</Label>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => setCabling((c) => ({ ...c, waypoints: [...c.waypoints, [0, 0, 0]] }))}
+            >
+              {t("Ajouter un point")}
+            </Button>
+          </div>
+          <div className="mt-2 space-y-2">
+            {cabling.waypoints.map((w, index) => (
+              <div key={index} className="flex items-end gap-2">
+                {pointFields(`Point ${index + 1}`, w, (p) =>
                   setCabling((c) => ({
                     ...c,
-                    waypoints: c.waypoints.filter((_, i) => i !== index),
-                  }))
-                }
-              >
-                {t("Retirer")}
-              </Button>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* États de mouvement : le trajet doit être couvert pour chaque état. */}
-      <div className="panel-block">
-        <div className="flex items-center justify-between">
-          <Label className="t-label">{t("États de mouvement")}</Label>
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={() =>
-              setCabling((c) => ({
-                ...c,
-                declaredMotionStates: [
-                  ...c.declaredMotionStates,
-                  {
-                    id: `etat-${c.declaredMotionStates.length + 1}-${Date.now()}`,
-                    label: `État ${c.declaredMotionStates.length + 1}`,
-                  },
-                ],
-                motionCoverageConfirmed: false,
-              }))
-            }
-          >
-            {t("Ajouter un état")}
-          </Button>
-        </div>
-        <div className="mt-2 space-y-2">
-          {cabling.declaredMotionStates.map((st) => {
-            const covered = !uncoveredMotionStates(cabling).some((u) => u.id === st.id);
-            return (
-              <div key={st.id} className="flex flex-wrap items-center gap-2">
-                <Input
-                  className="max-w-xs"
-                  value={st.label}
-                  onChange={(e) =>
-                    setCabling((c) => ({
-                      ...c,
-                      declaredMotionStates: c.declaredMotionStates.map((m) =>
-                        m.id === st.id ? { ...m, label: e.target.value } : m,
-                      ),
-                    }))
-                  }
-                />
-                <span
-                  className={
-                    covered ? "t-caption text-[var(--success)]" : "t-caption text-[var(--warning)]"
-                  }
-                >
-                  {covered ? t("trajet renseigné") : t("trajet manquant pour cet état")}
-                </span>
-                {!covered ? (
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() =>
-                      setCabling((c) => ({
-                        ...c,
-                        statePaths: [
-                          ...c.statePaths,
-                          {
-                            stateId: st.id,
-                            label: st.label,
-                            points: [
-                              ...(c.sensorEndpoint ? [c.sensorEndpoint] : []),
-                              ...c.waypoints,
-                              ...(c.connectionEndpoint ? [c.connectionEndpoint] : []),
-                            ],
-                          },
-                        ],
-                        motionCoverageConfirmed: false,
-                      }))
-                    }
-                  >
-                    {t("Reprendre le trajet courant")}
-                  </Button>
-                ) : null}
+                    // Un point effacé rend le trajet incomplet : il n'est jamais remplacé par 0,0,0.
+                    waypoints: p
+                      ? c.waypoints.map((q, i) => (i === index ? p : q))
+                      : c.waypoints.filter((_, i) => i !== index),
+                  })),
+                )}
                 <Button
                   size="sm"
                   variant="ghost"
                   onClick={() =>
                     setCabling((c) => ({
                       ...c,
-                      declaredMotionStates: c.declaredMotionStates.filter((m) => m.id !== st.id),
-                      statePaths: c.statePaths.filter((sp) => sp.stateId !== st.id),
-                      motionCoverageConfirmed: false,
+                      waypoints: c.waypoints.filter((_, i) => i !== index),
                     }))
                   }
                 >
                   {t("Retirer")}
                 </Button>
               </div>
-            );
-          })}
-          {cabling.declaredMotionStates.length === 0 ? (
-            <p className="t-caption">
-              {t("Aucun état déclaré : si la machine bouge, déclarez chaque position extrême.")}
-            </p>
-          ) : null}
+            ))}
+          </div>
         </div>
-        <label className="t-caption mt-3 flex items-center gap-2">
-          <input
-            type="checkbox"
-            checked={cabling.motionCoverageConfirmed}
-            disabled={
-              cabling.declaredMotionStates.length === 0 || uncoveredMotionStates(cabling).length > 0
-            }
-            onChange={(e) =>
-              setCabling((c) => ({ ...c, motionCoverageConfirmed: e.target.checked }))
-            }
-          />
-          {t("Je confirme que tous les états déclarés sont couverts par un trajet.")}
-        </label>
-      </div>
 
-      <div className="panel-block grid gap-3 md:grid-cols-5">
-        {(
-          [
-            ["serviceReserveMm", t("Réserve de service")],
-            ["terminationMm", "Terminaison"],
-            ["toleranceMm", t("Tolérance fournisseur")],
-            ["surplusHousingMm", t("Surplus logeable")],
-            ["minBendRadiusMm", t("Rayon de courbure mini")],
-          ] as const
-        ).map(([key, label]) => (
-          <div key={key} className="w-32">
-            <Label className="t-label">{label} (mm)</Label>
-            <Input
-              className="t-metric w-32 text-right"
-              inputMode="decimal"
-              value={cabling[key] ?? ""}
-              onChange={(e) =>
+        {/* États de mouvement : le trajet doit être couvert pour chaque état. */}
+        <div className="mt-4">
+          <div className="flex items-center justify-between">
+            <Label className="t-label">{t("États de mouvement")}</Label>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() =>
                 setCabling((c) => ({
                   ...c,
-                  [key]:
-                    key === "minBendRadiusMm"
-                      ? num(e.target.value)
-                      : Math.max(0, num(e.target.value) ?? 0),
+                  declaredMotionStates: [
+                    ...c.declaredMotionStates,
+                    {
+                      id: `etat-${c.declaredMotionStates.length + 1}-${Date.now()}`,
+                      label: `État ${c.declaredMotionStates.length + 1}`,
+                    },
+                  ],
+                  motionCoverageConfirmed: false,
                 }))
               }
-            />
+            >
+              {t("Ajouter un état")}
+            </Button>
           </div>
-        ))}
-      </div>
-      <p className="t-caption -mt-2 px-1">
-        {t(
-          "La tolérance fournisseur et le volume disponible pour loger le surplus sont deux informations différentes.",
-        )}
-      </p>
-      <div className="panel-block">
-        <p>
+          <div className="mt-2 space-y-2">
+            {cabling.declaredMotionStates.map((st) => {
+              const covered = !uncoveredMotionStates(cabling).some((u) => u.id === st.id);
+              return (
+                <div key={st.id} className="flex flex-wrap items-center gap-2">
+                  <Input
+                    className="max-w-xs"
+                    value={st.label}
+                    onChange={(e) =>
+                      setCabling((c) => ({
+                        ...c,
+                        declaredMotionStates: c.declaredMotionStates.map((m) =>
+                          m.id === st.id ? { ...m, label: e.target.value } : m,
+                        ),
+                      }))
+                    }
+                  />
+                  <span
+                    className={
+                      covered
+                        ? "t-caption text-[var(--success)]"
+                        : "t-caption text-[var(--warning)]"
+                    }
+                  >
+                    {covered ? t("trajet renseigné") : t("trajet manquant pour cet état")}
+                  </span>
+                  {!covered ? (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() =>
+                        setCabling((c) => ({
+                          ...c,
+                          statePaths: [
+                            ...c.statePaths,
+                            {
+                              stateId: st.id,
+                              label: st.label,
+                              points: [
+                                ...(c.sensorEndpoint ? [c.sensorEndpoint] : []),
+                                ...c.waypoints,
+                                ...(c.connectionEndpoint ? [c.connectionEndpoint] : []),
+                              ],
+                            },
+                          ],
+                          motionCoverageConfirmed: false,
+                        }))
+                      }
+                    >
+                      {t("Reprendre le trajet courant")}
+                    </Button>
+                  ) : null}
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() =>
+                      setCabling((c) => ({
+                        ...c,
+                        declaredMotionStates: c.declaredMotionStates.filter((m) => m.id !== st.id),
+                        statePaths: c.statePaths.filter((sp) => sp.stateId !== st.id),
+                        motionCoverageConfirmed: false,
+                      }))
+                    }
+                  >
+                    {t("Retirer")}
+                  </Button>
+                </div>
+              );
+            })}
+            {cabling.declaredMotionStates.length === 0 ? (
+              <p className="t-caption">
+                {t("Aucun état déclaré : si la machine bouge, déclarez chaque position extrême.")}
+              </p>
+            ) : null}
+          </div>
+          <label className="t-caption mt-3 flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={cabling.motionCoverageConfirmed}
+              disabled={
+                cabling.declaredMotionStates.length === 0 ||
+                uncoveredMotionStates(cabling).length > 0
+              }
+              onChange={(e) =>
+                setCabling((c) => ({ ...c, motionCoverageConfirmed: e.target.checked }))
+              }
+            />
+            {t("Je confirme que tous les états déclarés sont couverts par un trajet.")}
+          </label>
+        </div>
+
+        <div className="mt-4 grid gap-3 md:grid-cols-5">
+          {(
+            [
+              ["serviceReserveMm", t("Réserve de service")],
+              ["terminationMm", "Terminaison"],
+              ["toleranceMm", t("Tolérance fournisseur")],
+              ["surplusHousingMm", t("Surplus logeable")],
+              ["minBendRadiusMm", t("Rayon de courbure mini")],
+            ] as const
+          ).map(([key, label]) => (
+            <div key={key} className="w-32">
+              <Label className="t-label">{label} (mm)</Label>
+              <Input
+                className="t-metric w-32 text-right"
+                inputMode="decimal"
+                value={cabling[key] ?? ""}
+                onChange={(e) =>
+                  setCabling((c) => ({
+                    ...c,
+                    [key]:
+                      key === "minBendRadiusMm"
+                        ? num(e.target.value)
+                        : Math.max(0, num(e.target.value) ?? 0),
+                  }))
+                }
+              />
+            </div>
+          ))}
+        </div>
+        <p className="t-caption mt-2">
+          {t(
+            "La tolérance fournisseur et le volume disponible pour loger le surplus sont deux informations différentes.",
+          )}
+        </p>
+        <p className="mt-3">
           {t("Plus long trajet mesuré (polyligne) :")}{" "}
           <strong className="t-metric">
             {estimate.longestPathMm === null
@@ -2411,44 +2624,6 @@ export function DesignSpace({
               : `${estimate.longestPathMm.toFixed(1)} mm`}
           </strong>
         </p>
-        <p>
-          {t("Longueur minimale demandée, marges comprises :")}{" "}
-          <strong className="t-metric">
-            {estimate.requiredMm === null
-              ? t("inconnue tant que le trajet n'est pas complet")
-              : `${estimate.requiredMm.toFixed(1)} mm`}
-          </strong>
-        </p>
-        <p className="t-caption">
-          {t(
-            "Cette longueur n'est jamais une longueur approuvée : elle est vérifiée en revue R&D.",
-          )}
-        </p>
-        <ul className="notice notice-warning mt-2 list-disc pl-8">
-          {estimate.warnings.map((w, i) => (
-            <li key={i}>{w}</li>
-          ))}
-        </ul>
-        <Separator className="my-3" />
-        <p>{lengthVerdict.message}</p>
-        <div className="mt-3 flex flex-wrap gap-2">
-          {(
-            [
-              ["standard_to_confirm", t("Longueur catalogue, à confirmer")],
-              ["custom_to_confirm", t("Longueur sur mesure, à confirmer")],
-              ["undecided", t("Non décidé")],
-            ] as const
-          ).map(([value, label]) => (
-            <Button
-              key={value}
-              size="sm"
-              variant={cabling.lengthChoice === value ? "default" : "outline"}
-              onClick={() => setCabling((c) => ({ ...c, lengthChoice: value }))}
-            >
-              {label}
-            </Button>
-          ))}
-        </div>
         <ul className="t-caption mt-2 list-disc pl-5">
           {RANGE_CABLE_LENGTH_NOTES.map((n) => (
             <li key={n.range}>
@@ -2456,87 +2631,7 @@ export function DesignSpace({
             </li>
           ))}
         </ul>
-      </div>
-
-      <div className="panel-block">
-        <Label className="t-label">{t("Terminaison")}</Label>
-        <p className="mt-1 text-sm">{terminationLabel(termination)}</p>
-        <ul className="t-caption mt-1 list-disc pl-5">
-          {connectorSummaryLines(termination, t).map((l, i) => (
-            <li key={i}>{l}</li>
-          ))}
-        </ul>
-        <div className="mt-3">
-          <Label className="t-label">{t("Boîtiers documentés par le fabricant")}</Label>
-          <div className="mt-1 flex flex-wrap gap-2">
-            {DOCUMENTED_HOUSINGS.map((h) => (
-              <Button
-                key={h.housingMpn}
-                size="sm"
-                variant="outline"
-                onClick={() => {
-                  const found = housingById(h.housingMpn);
-                  if (!found) return;
-                  setConnectorError(null);
-                  setConnectorDraft((d) => draftFromHousing(found, d));
-                  setDossier((d) => ({ ...d, termination: terminationFromHousing(found) }));
-                }}
-              >
-                {housingLabel(h)}
-              </Button>
-            ))}
-          </div>
-          <p className="t-caption mt-1">
-            {t(
-              "Quelques boîtiers documentés seulement, pas le marché entier. Boîtier, contacts à sertir et embase restent trois références distinctes ; brochage, section de fil réelle et disponibilité restent inconnus et à vérifier par la R&D.",
-            )}
-          </p>
-        </div>
-        <div className="mt-3 grid gap-3 md:grid-cols-2">
-          {CONNECTOR_FIELD_LABELS.map(([key, label]) => (
-            <div key={key}>
-              <Label className="t-label">{label}</Label>
-              <Input
-                value={connectorDraft[key]}
-                onChange={(e) => setConnectorDraft((d) => ({ ...d, [key]: e.target.value }))}
-              />
-            </div>
-          ))}
-        </div>
-        {connectorError ? <p className="notice notice-danger mt-2">{connectorError}</p> : null}
-        <div className="mt-3 flex flex-wrap items-center gap-2">
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={() => {
-              setConnectorError(null);
-              setDossier((d) => ({ ...d, termination: DEFAULT_TERMINATION }));
-            }}
-          >
-            {t("Fils nus")}
-          </Button>
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={() => {
-              const result = terminationFromDraft(connectorDraft);
-              if (!result.ok) {
-                setConnectorError(`Champs requis : ${result.missing.join(", ")}.`);
-                return;
-              }
-              setConnectorError(null);
-              setDossier((d) => ({ ...d, termination: result.termination }));
-            }}
-          >
-            {t("Enregistrer en « à vérifier par R&D »")}
-          </Button>
-        </div>
-        <p className="t-caption mt-1">
-          {t(
-            "Aucune combinaison connecteur/capteur qualifiée n'est documentée dans ce projet : toute référence saisie, sa contrepartie et son brochage restent à vérifier par la R&D.",
-          )}
-        </p>
-      </div>
+      </details>
     </div>
   );
 
