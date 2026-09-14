@@ -5318,6 +5318,42 @@
     "Contesto da precisare con Standex.",
     "背景情報は Standex と要相談。"
   ],
+  "Contexte à préciser avec Standex ; ajoutez votre e-mail pour recevoir notre retour.": [
+    "Context to be clarified with Standex; add your e-mail so we can get back to you.",
+    "背景信息待与 Standex 明确；请留下您的电子邮箱以便我们回复。",
+    "Kontext mit Standex zu präzisieren; geben Sie Ihre E-Mail an, damit wir antworten können.",
+    "Contexto a precisar con Standex; añada su e-mail para recibir nuestra respuesta.",
+    "Контекст необходимо уточнить со Standex; укажите e-mail, чтобы мы могли ответить.",
+    "Contesto da precisare con Standex; aggiungete la vostra e-mail per ricevere il nostro riscontro.",
+    "背景情報は Standex と要相談。返信を受け取るためメールアドレスを追加してください。"
+  ],
+  "Contexte renseigné ; ajoutez votre e-mail pour recevoir notre retour.": [
+    "Context provided; add your e-mail so we can get back to you.",
+    "背景信息已填写；请留下您的电子邮箱以便我们回复。",
+    "Kontext angegeben; geben Sie Ihre E-Mail an, damit wir antworten können.",
+    "Contexto completado; añada su e-mail para recibir nuestra respuesta.",
+    "Контекст указан; добавьте e-mail, чтобы мы могли ответить.",
+    "Contesto inserito; aggiungete la vostra e-mail per ricevere il nostro riscontro.",
+    "背景情報は入力済み。返信を受け取るためメールアドレスを追加してください。"
+  ],
+  "À renseigner à la dernière étape, avec votre e-mail, avant d'échanger avec Standex.": [
+    "To be completed at the last step, with your e-mail, before exchanging with Standex.",
+    "请在最后一步填写，并留下您的电子邮箱，然后再与 Standex 交流。",
+    "Im letzten Schritt mit Ihrer E-Mail auszufüllen, bevor Sie mit Standex sprechen.",
+    "Por completar en el último paso, con su e-mail, antes de intercambiar con Standex.",
+    "Заполняется на последнем шаге вместе с вашим e-mail перед обменом со Standex.",
+    "Da compilare all'ultimo passaggio, con la vostra e-mail, prima dello scambio con Standex.",
+    "Standex とのやり取りの前に、最後のステップでメールアドレスとともに入力してください。"
+  ],
+  "E-mail renseigné, contexte du projet encore vide.": [
+    "E-mail provided, project context still empty.",
+    "电子邮箱已填写，项目背景仍为空。",
+    "E-Mail angegeben, Projektkontext noch leer.",
+    "E-mail indicado, el contexto del proyecto aún está vacío.",
+    "E-mail указан, контекст проекта пока пуст.",
+    "E-mail inserita, contesto del progetto ancora vuoto.",
+    "メールアドレスは入力済み、プロジェクトの背景はまだ空です。"
+  ],
   "Continuer": [
     "Continue",
     "继续",

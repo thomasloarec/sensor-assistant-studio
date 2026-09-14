@@ -47,8 +47,10 @@ describe("checklist — toutes les décisions simples, délégation explicite", 
   });
 
   test("délégations explicites comptent comme traitées, jamais comme valeurs", () => {
+    const baseD = fresh();
     const d = {
-      ...fresh(),
+      ...baseD,
+      business: { ...baseD.business, contactEmail: "tloarec@example.com" },
       delegatedDecisions: [
         DELEGATED_MOUNTING,
         DELEGATED_CABLE,
@@ -134,8 +136,10 @@ describe("checklist — complétude réelle et valeurs affichées", () => {
   const base = () => createDossier();
 
   test("les six questions traitées puis tout confié : aucune ligne artificielle à renseigner", () => {
+    const baseD = base();
     const d = {
-      ...base(),
+      ...baseD,
+      business: { ...baseD.business, contactEmail: "tloarec@example.com" },
       delegatedDecisions: [
         ...GUIDED_QUESTION_KEYS.map((k) => delegatedQuestion(k)),
         DELEGATED_SENSOR,
@@ -224,5 +228,48 @@ describe("checklist — complétude réelle et valeurs affichées", () => {
     expect(item.detail).toContain("MK04");
     expect(item.detail).toContain(DEFAULT_WORKSHOP.magnetModel);
     expect(item.detail).toContain("pas encore une référence commandable");
+  });
+});
+
+describe("checklist — contexte/contact aligné sur l'envoi (e-mail requis)", () => {
+  const withBusiness = (patch: Record<string, unknown>) => {
+    const d = fresh();
+    return { ...d, business: { ...d.business, ...patch } };
+  };
+
+  test("nom seul sans e-mail : la ligne reste à renseigner", () => {
+    const item = projectChecklist(
+      withBusiness({ contactName: "Thomas Loarec", projectPhase: "prototype" }),
+    ).find((i) => i.id === "contexte")!;
+    expect(item.state).toBe("todo");
+  });
+
+  test("contexte délégué sans e-mail : toujours à renseigner, délégation ≠ identité", () => {
+    const d = withBusiness({ projectPhase: "prototype" });
+    d.delegatedDecisions = [DELEGATED_CONTEXT];
+    const item = projectChecklist(d).find((i) => i.id === "contexte")!;
+    expect(item.state).toBe("todo");
+    expect(item.detail).toContain("ajoutez votre e-mail pour recevoir notre retour");
+  });
+
+  test("e-mail valide + contexte renseigné : traité", () => {
+    const item = projectChecklist(
+      withBusiness({ contactEmail: "tloarec@example.com", projectPhase: "prototype" }),
+    ).find((i) => i.id === "contexte")!;
+    expect(item.state).toBe("chosen");
+  });
+
+  test("e-mail valide + contexte délégué : traité comme délégué", () => {
+    const d = withBusiness({ contactEmail: "tloarec@example.com" });
+    d.delegatedDecisions = [DELEGATED_CONTEXT];
+    const item = projectChecklist(d).find((i) => i.id === "contexte")!;
+    expect(item.state).toBe("delegated");
+  });
+
+  test("e-mail invalide ne coche rien", () => {
+    const item = projectChecklist(
+      withBusiness({ contactEmail: "pas-un-email", projectPhase: "prototype" }),
+    ).find((i) => i.id === "contexte")!;
+    expect(item.state).toBe("todo");
   });
 });
