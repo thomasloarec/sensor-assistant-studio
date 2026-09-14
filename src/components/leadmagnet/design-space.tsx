@@ -1782,7 +1782,9 @@ export function DesignSpace({
               variant="ghost"
               className="ml-auto min-h-12 text-base text-[var(--muted-foreground)]"
               onClick={() => {
-                // Ne rien effacer : passer sans réponse laisse simplement ce point inconnu.
+                // Ne rien effacer et ne rien fabriquer : la question est notée
+                // comme traitée « à définir avec Standex », sans valeur.
+                setQuestionAside(question.key, true);
                 if (!lastQuestion) setFocusIdx((i) => i + 1);
                 else setTab("montage");
               }}
