@@ -3931,6 +3931,18 @@ export function DesignSpace({
         {espaceSection}
       </WorkspacePanel>
 
+      {/* Fiche détaillée volontaire : cotes, sources et STEP d'encombrement. */}
+      {detailSensorId ? (
+        <SensorCard
+          sensorId={detailSensorId}
+          onClose={() => setDetailSensorId(null)}
+          onSelect={(id) => {
+            chooseSensor(id, t(sensorById(id).name));
+            setDetailSensorId(null);
+          }}
+        />
+      ) : null}
+
       {catalogOpen ? (
         <WorkspacePanel
           open
