@@ -704,6 +704,7 @@ export default function MagneticWorkshop({
   /* ---------------------------------------------------------------- */
   /* Colonne de gauche : trois réglages                               */
   /* ---------------------------------------------------------------- */
+  /* i18n-canonical : libellés stockés en français, traduits au rendu par t(). */
   const APPROACH_CHOICES = [
     { id: "D1" as const, label: "Parallèle", path: "M4 6h16M4 18h16" },
     { id: "D3" as const, label: "Perpendiculaire", path: "M12 3v8M4 16h16" },
