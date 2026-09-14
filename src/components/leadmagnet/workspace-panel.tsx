@@ -33,6 +33,12 @@ export interface WorkspacePanelProps {
   onBack?: () => void;
   children: ReactNode;
   navigation?: ReactNode;
+  /** Repère porté par la barre, à droite du titre (couple testé, état
+   * d'enregistrement). Il vit dans la barre, jamais dans le corps de l'écran. */
+  badge?: ReactNode;
+  /** Corps pleine hauteur, sans marge ni défilement propre : l'écran interne
+   * gère sa propre mise en page (atelier 3D). */
+  bare?: boolean;
   /** Affiche le choix de langue dans les panneaux plein écran sans menu. */
   languagePicker?: boolean;
 }

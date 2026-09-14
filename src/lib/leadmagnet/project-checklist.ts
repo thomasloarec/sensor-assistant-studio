@@ -31,6 +31,12 @@ export const DELEGATED_CONNECTOR = "connector";
 export const DELEGATED_MOUNTING = "mounting";
 export const DELEGATED_CONTEXT = "context";
 
+/** Demande d'essai réel adressée à Standex. Champ ADDITIF : c'est une clé de
+ * `delegatedDecisions`, déjà sérialisée et relue par les dossiers existants —
+ * aucune migration, aucune colonne nouvelle. Cocher cette case demande une
+ * mesure ; ce n'est ni une mesure, ni une validation R&D, ni un engagement. */
+export const TRIAL_REQUEST = "trial_request";
+
 /** Choix explicite de fils nus. La terminaison par défaut du dossier EST
  * `bare_leads` : sans ce marqueur, elle ne coche donc rien. */
 export const CHOSEN_BARE_LEADS = "chosen:bare_leads";
