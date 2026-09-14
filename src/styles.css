@@ -1675,6 +1675,14 @@
   .app-header-back:disabled {
     opacity: 0.6;
   }
+  /* Nom de l'outil : lisible partout, il ne recompose jamais le logo. */
+  .app-header-tool {
+    white-space: nowrap;
+    color: var(--standex-blue);
+  }
+  .app-header[data-tone="reversed"] .app-header-tool {
+    color: var(--foreground);
+  }
   .app-header-context {
     margin: 0;
     color: var(--muted-foreground);
