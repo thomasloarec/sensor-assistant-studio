@@ -2409,6 +2409,8 @@ export function DesignSpace({
             checked={connectorPreference}
             onCheckedChange={(v) => {
               if (v === true) {
+                // Ouvre la sélection, sans choisir aucun connecteur.
+                setConnectorWanted(true);
                 setDossier((d) => ({
                   ...d,
                   delegatedDecisions: (d.delegatedDecisions ?? []).filter(
@@ -2417,8 +2419,9 @@ export function DesignSpace({
                 }));
                 return;
               }
-              // Repli volontaire : la préférence enregistrée est conservée dans
-              // le dossier, seule la décision est confiée à Standex.
+              // Repli volontaire : la référence enregistrée reste dans le dossier,
+              // seule la décision est confiée à Standex.
+              setConnectorWanted(false);
               setDossier((d) => ({
                 ...d,
                 delegatedDecisions: [
@@ -2427,6 +2430,7 @@ export function DesignSpace({
                 ],
               }));
             }}
+
           />
           {t("J'ai une préférence de connecteur")}
         </label>
