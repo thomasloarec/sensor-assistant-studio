@@ -194,12 +194,71 @@ export function publishedReference(
     ) ?? null
   );
 }
+/**
+ * Couple publié pour un capteur donné. La famille est explicite : aucun seuil
+ * n'est emprunté à une autre famille ni à un autre aimant.
+ */
+export function publishedPairFor(
+  sensorFamily: string,
+  sensitivityClass: string,
+  approachId: string,
+  magnetId: string,
+  registry = PUBLISHED_REGISTRY,
+): readonly [number, number] | null {
+  const row = publishedReference(sensorFamily, sensitivityClass, magnetId, approachId, registry);
+  return row ? [row.pullInMm, row.dropOutMm] : null;
+}
+/** Classes de sensibilité réellement publiées pour ce couple, dans l'ordre du registre. */
+export function publishedClasses(
+  sensorFamily: string,
+  magnetId: string,
+  registry = PUBLISHED_REGISTRY,
+): string[] {
+  return [
+    ...new Set(
+      registry.rows
+        .filter((r) => r.sensorFamily === sensorFamily && r.magnetId === magnetId)
+        .map((r) => r.sensitivityClass),
+    ),
+  ].sort();
+}
+/** Approches publiées pour ce couple : D1 à D5, telles qu'elles sont saisies. */
+export function publishedApproaches(
+  sensorFamily: string,
+  magnetId: string,
+  registry = PUBLISHED_REGISTRY,
+): string[] {
+  return [
+    ...new Set(
+      registry.rows
+        .filter((r) => r.sensorFamily === sensorFamily && r.magnetId === magnetId)
+        .map((r) => r.approachId),
+    ),
+  ].sort();
+}
+/** Référence de variante réellement saisie au registre. Jamais recomposée. */
+export function publishedSensorReference(
+  sensorFamily: string,
+  sensitivityClass: string,
+  magnetId: string,
+  registry = PUBLISHED_REGISTRY,
+): string | null {
+  return (
+    registry.rows.find(
+      (r) =>
+        r.sensorFamily === sensorFamily &&
+        r.sensitivityClass === sensitivityClass &&
+        r.magnetId === magnetId,
+    )?.sensorReference ?? null
+  );
+}
+/** Compatibilité MK03 : conservée pour les lectures historiques. */
 export function publishedPair(
   sensitivityClass: string,
   approachId: string,
   registry = PUBLISHED_REGISTRY,
   magnetId = "M02",
 ): readonly [number, number] | null {
-  const row = publishedReference("MK03", sensitivityClass, magnetId, approachId, registry);
-  return row ? [row.pullInMm, row.dropOutMm] : null;
+  return publishedPairFor("MK03", sensitivityClass, approachId, magnetId, registry);
 }
+

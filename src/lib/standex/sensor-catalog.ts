@@ -30,6 +30,12 @@ export interface SensorModel {
   reed?: readonly [number, number, number];
   pcbThickness?: number;
   note?: string;
+  /** Vrai pour un aimant en boîtier : la scène ajoute un repère « Aimant »
+   * distinct, qui reste identifiable même si le nom est masqué. */
+  magnet?: boolean;
+  /** Nom porté par la fiche source quand la référence demandée diffère. */
+  documentedAs?: string;
+
 }
 const cylindrical = (id: string, length: number, height: number, width = height): SensorModel => ({
   id,

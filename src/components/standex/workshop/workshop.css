@@ -1051,6 +1051,14 @@
 .mw-pole.south {
   background: var(--primary);
 }
+.mw-magnet-tag {
+  border: 0;
+  font: var(--mw-t-body);
+  font-weight: 650;
+  color: var(--primary-foreground);
+  background: var(--warning);
+  padding: 1px 6px;
+}
 .mw-dimension {
   font-variant-numeric: tabular-nums;
   background: var(--surface);

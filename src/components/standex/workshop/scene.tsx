@@ -426,7 +426,7 @@ export function Contacts({
   );
 }
 export function Magnet({ config, sample }: { config: WorkshopConfig; sample: CycleSample }) {
-  const actualModel = pairedMagnetModel(config.magnetModel);
+  const actualModel = pairedMagnetModel(config.magnetModel, config.sensorId);
   const [l, h, w] = magnetSize(config),
     axial = config.magnetization === "axial",
     thick = config.magnetization === "thickness";
@@ -436,7 +436,19 @@ export function Magnet({ config, sample }: { config: WorkshopConfig; sample: Cyc
       rotation={[0, (-sample.angle * Math.PI) / 180, (config.magnetTilt * Math.PI) / 180]}
     >
       {actualModel ? (
-        <Body model={actualModel} xray={false} showCable={false} />
+        /* Le boîtier de l'aimant reprend la géométrie du capteur, sans câble ni
+           contacts. Un repère propre (bande + étiquette « Aimant ») le distingue
+           du capteur même lorsque les noms sont masqués. */
+        <>
+          <Body model={actualModel} xray={false} showCable={false} />
+          <mesh>
+            <boxGeometry args={[Math.max(1.1, l * 0.11), h * 1.05, w * 1.05]} />
+            <meshStandardMaterial color="#b4531f" roughness={0.45} />
+          </mesh>
+          <Label position={[0, h / 2 + 3.2, 0]} className="mw-magnet-tag">
+            {t("Aimant")}
+          </Label>
+        </>
       ) : (
         ([-1, 1] as const).map((sign) => {
           const north = sign * config.polarity === 1;
@@ -717,6 +729,7 @@ export default function WorkshopScene({
   field,
   xray = true,
   dimensions = true,
+  showNames = true,
   focus = "assembly",
   reduced = false,
   resetEpoch = 0,
@@ -731,6 +744,8 @@ export default function WorkshopScene({
   field: boolean;
   xray?: boolean;
   dimensions?: boolean;
+  /** Affichage du nom du capteur : option d'affichage seule, jamais la géométrie. */
+  showNames?: boolean;
   focus?: "assembly" | "sensor";
   reduced?: boolean;
   resetEpoch?: number;
@@ -785,9 +800,11 @@ export default function WorkshopScene({
             <Contacts model={model} contact={sample.contact} reduced={reduced} />
           )}
 
-          <Label position={[0, model.body[1] / 2 + 3, model.body[2] / 2 + 5]}>
-            {t(model.name)}
-          </Label>
+          {showNames && (
+            <Label position={[0, model.body[1] / 2 + 3, model.body[2] / 2 + 5]}>
+              {t(model.name)}
+            </Label>
+          )}
           {dimensions && <Dimensions model={model} />}
         </group>
         <Magnet config={config} sample={sample} />

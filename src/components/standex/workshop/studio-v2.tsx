@@ -1,4 +1,4 @@
-import { preferredMagnet } from "@/lib/standex/magnet-catalog";
+import { preferredMagnet } from "@/lib/standex/default-pairs";
 import { sensorById } from "@/lib/standex/sensor-catalog";
 import { documentLogoSource } from "@/components/standex/brand-logo";
 import { studioExportSheets, workbookBytes, downloadBinary } from "@/lib/standex/studio-exports";

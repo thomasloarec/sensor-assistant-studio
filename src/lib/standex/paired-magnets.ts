@@ -1,22 +1,53 @@
-import { bareMagnetModel } from "./magnet-catalog";
-import { sensorById, type SensorModel } from "./sensor-catalog";
-/** Housing envelopes from Packaged-Magnets.pdf V03, 18 Jun 2026.
- * Housing details reuse matching sensor drawings; active material/axis is not inferred. */
-export function pairedMagnetModel(id: string): SensorModel | null {
-  const sensorId = (
-    { M02: "MK02", M04: "MK04", M05: "MK05", M13: "MK13", M21: "MK21" } as Record<string, string>
-  )[id];
-  if (!sensorId) return bareMagnetModel(id);
-  const base = sensorById(sensorId);
-  const body: SensorModel["body"] =
-    id === "M02" ? [32.4, 10, 16.7] : id === "M21" ? [28.5, 6.5, 19] : base.body;
+import { bareMagnetModel, packagedMagnet } from "./magnet-catalog";
+import { sensorById, isKnownSensorId, type SensorModel } from "./sensor-catalog";
+/** Enveloppes de boîtier lues dans Packaged-Magnets.pdf V03, 18 juin 2026.
+ * Le boîtier réutilise EXACTEMENT le dessin du capteur correspondant, sans câble
+ * ni contacts. Le matériau et l'axe magnétique actifs ne sont jamais déduits. */
+const BODY_OVERRIDE: Readonly<Record<string, SensorModel["body"]>> = {
+  M02: [32.4, 10, 16.7],
+  M21: [28.5, 6.5, 19],
+  "M21P/1": [28.5, 6.5, 19],
+  "M21P/2": [28.5, 6.5, 19],
+};
+/** Trous oblongs : M21P/1 horizontaux, M21P/2 verticaux. Deux géométries 3D
+ * réellement distinctes, pas deux étiquettes. */
+function holesFor(
+  magnetId: string,
+  base: SensorModel,
+): SensorModel["holes"] | undefined {
+  const axis = packagedMagnet(magnetId)?.holeAxis;
+  if (!axis || !base.holes) return base.holes;
+  return base.holes.map(([x, z, l, w]) =>
+    axis === "vertical"
+      ? ([x, z, Math.min(l, w), Math.max(l, w)] as const)
+      : ([x, z, Math.max(l, w), Math.min(l, w)] as const),
+  );
+}
+/**
+ * Modèle 3D d'un aimant. `sensorId` sert uniquement à choisir la géométrie de
+ * boîtier quand la fiche en propose une par variante de capteur (M11S : M5 ou
+ * M8). Une forme inconnue n'est JAMAIS repliée silencieusement sur un cylindre :
+ * la fonction renvoie `null` et l'interface l'annonce.
+ */
+export function pairedMagnetModel(id: string, sensorId?: string): SensorModel | null {
+  const packaged = packagedMagnet(id);
+  if (!packaged) return bareMagnetModel(id);
+  const housing =
+    (sensorId && packaged.housingBySensor?.[sensorId]) || packaged.housing;
+  if (!isKnownSensorId(housing)) return null;
+  const base = sensorById(housing);
+  const holes = holesFor(id, base);
   return {
     ...base,
     id,
     name: id,
-    body,
-    color: "#3a79ad",
+    body: BODY_OVERRIDE[id] ?? base.body,
+    ...(holes ? { holes } : {}),
+    // Le matériau du boîtier est conservé (laiton, inox, plastique, aluminium) :
+    // le repère « Aimant » assure l'identification, pas une recoloration.
     sourceFile: "Packaged-Magnets.pdf",
     contact: "unsupported",
+    magnet: true,
+    ...(packaged.documentedAs ? { documentedAs: packaged.documentedAs } : {}),
   };
 }

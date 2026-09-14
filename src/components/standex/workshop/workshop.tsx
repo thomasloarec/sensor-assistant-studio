@@ -1,4 +1,8 @@
-import { BARE_MAGNETS, PACKAGED_MAGNET_IDS } from "@/lib/standex/magnet-catalog";
+import {
+  defaultMagnetFor,
+  documentedAlias,
+  magnetOptionsFor,
+} from "@/lib/standex/default-pairs";
 import { pairedMagnetModel } from "@/lib/standex/paired-magnets";
 import { t, msg } from "@/lib/i18n/core";
 import { useLocale } from "@/lib/i18n/react";
@@ -15,7 +19,7 @@ import { composeRotations, magnetWorldPosition, simulateMounting } from "@/lib/s
 import type { GuidedMounting } from "@/lib/standex/mounting";
 import type { StudioStudy } from "@/lib/standex/studio-dossier";
 import type { DesignFreeze } from "@/lib/standex/design-freeze";
-import { publishedPair } from "@/lib/standex/magnetics/registries";
+import { publishedClasses } from "@/lib/standex/magnetics/registries";
 import { Component, lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import {
@@ -41,6 +45,9 @@ import {
   simulateCycle,
   summarizeWorkshop,
   magnetSize,
+  distanceBasis,
+  isFictitiousSensor,
+  workshopPair,
 } from "@/lib/standex/magnetic-workshop";
 import type { WorkshopConfig, Contact, Vec3 } from "@/lib/standex/magnetic-workshop";
 import "./workshop.css";
@@ -190,6 +197,7 @@ export default function MagneticWorkshop({
     [field, setField] = useState(false),
     [xray, setXray] = useState(true),
     [dimensions, setDimensions] = useState(true),
+    [showNames, setShowNames] = useState(true),
     [focus, setFocus] = useState<"assembly" | "sensor">("assembly"),
     [catalogOpen, setCatalogOpen] = useState(false);
   const [reduced, setReduced] = useState(false);
@@ -307,9 +315,11 @@ export default function MagneticWorkshop({
     update({
       machine: structuredClone(COFFEE_ASSEMBLY),
       demoReach: 25,
-      mode: "education",
+      // Un vrai capteur garde son couple documenté : il ne bascule jamais
+      // d'office dans le modèle fictif.
+      mode: "reference",
       sensorId: "MK24-A-J",
-      magnetModel: "generic",
+      magnetModel: defaultMagnetFor("MK24-A-J"),
       initialContact: "open",
       magnetization: "axial",
       polarity: 1,
@@ -327,8 +337,8 @@ export default function MagneticWorkshop({
       const assetKey = await storeMachineFileWithMode(file, storageMode);
       const same = machine?.assetKey === assetKey;
       update({
-        mode: "education",
-        magnetModel: "generic",
+        mode: "reference",
+        magnetModel: defaultMagnetFor(config.sensorId),
         machine: same
           ? { ...machine! }
           : {
@@ -417,15 +427,24 @@ export default function MagneticWorkshop({
     ]!;
   const reference = config.mode === "reference",
     unit = " mm";
+  /** Origine réelle des distances affichées : données publiées pour CE couple,
+   * absence de données, ou démonstration explicitement fictive. */
+  const basis = distanceBasis(config),
+    fictitious = isFictitiousSensor(config.sensorId);
+  const basisLabel =
+    basis === "standex"
+      ? t("Données Standex · distances publiées pour ce couple")
+      : basis === "unavailable"
+        ? t("Distances non renseignées pour ce couple")
+        : t("Démonstration · distances fictives");
+  /** Classes réellement publiées pour le couple : aucune interpolation. */
+  const sensitivityChoices = publishedClasses(config.sensorId, config.magnetModel);
+  const magnetChoices = magnetOptionsFor(config.sensorId);
+  const magnetAlias = documentedAlias(config.magnetModel);
   const summary = useMemo(() => summarizeWorkshop(config), [config]);
   const fingerprint = JSON.stringify(config),
     dirty = saved !== fingerprint;
-  const referencePair = publishedPair(
-    config.sensitivity,
-    config.geometry,
-    undefined,
-    config.magnetModel,
-  );
+  const referencePair = workshopPair(config);
   const pull = referencePair?.[0] ?? "—",
     drop = referencePair?.[1] ?? "—";
   const unknown = result.unknown;
@@ -466,9 +485,9 @@ export default function MagneticWorkshop({
       mode === "reference"
         ? {
             mode,
-            sensorId: "MK03",
-            machine: null,
-            magnetModel: "4003004003",
+            // Le point de départ documentaire garde le capteur choisi : il ne
+            // rebascule jamais sur MK03.
+            magnetModel: defaultMagnetFor(config.sensorId),
             magnetTilt: 0,
             lateralShift: 0,
             motion: "approach",
@@ -481,6 +500,25 @@ export default function MagneticWorkshop({
     );
     setField(false);
     setStep(0);
+  }
+  /** Sélection réelle d'un capteur : le couple par défaut central s'applique,
+   * la classe de sensibilité retombe sur une classe réellement publiée, et un
+   * vrai capteur ne bascule jamais d'office dans le modèle fictif. */
+  function selectSensor(sensorId: string) {
+    const magnetModel = defaultMagnetFor(sensorId);
+    const classes = publishedClasses(sensorId, magnetModel);
+    const fake = isFictitiousSensor(sensorId);
+    update({
+      sensorId,
+      magnetModel: fake ? "generic" : magnetModel,
+      sensitivity:
+        classes.length && !classes.includes(config.sensitivity)
+          ? (classes[0] as WorkshopConfig["sensitivity"])
+          : config.sensitivity,
+      mode: fake ? "education" : "reference",
+      sensorAngle: 0,
+      magnetAngle: 0,
+    });
   }
   async function save() {
     setSaving(true);
@@ -639,18 +677,16 @@ export default function MagneticWorkshop({
                   value={config.mode}
                   onChange={(e) => chooseMode(e.target.value as WorkshopConfig["mode"])}
                 >
-                  <option value="reference">{t("Exemple Standex documenté")}</option>
+                  <option value="reference">
+                    {t(
+                      basis === "standex"
+                        ? "Données Standex"
+                        : "Distances non renseignées pour ce couple",
+                    )}
+                  </option>
                   <option value="education">{t("Démonstration · distances fictives")}</option>
                 </select>
-                <p>
-                  {t(
-                    reference
-                      ? result.reason
-                        ? "Montage à caractériser"
-                        : "MK03 · distances typiques publiées pour l’aimant sélectionné"
-                      : "Forme cotée · champ et seuils fictifs",
-                  )}
-                </p>
+                <p>{reference ? basisLabel : t("Forme cotée · champ et seuils fictifs")}</p>
               </div>
               )}
               {/* Parcours COMMUN : les quatre étapes, leur corps et le pied sont
@@ -685,7 +721,7 @@ export default function MagneticWorkshop({
                         <SensorPlan model={sensor} xray={false} />
                       </svg>
                       <strong className="t-title-s">
-                        {t(reference ? `MK03-1A66${config.sensitivity}-500W` : sensor.name)}
+                        {t(sensor.name)}
                       </strong>
                       <span className="t-metric">{t(sizeLabel(sensor))}</span>
                       <button
@@ -708,7 +744,7 @@ export default function MagneticWorkshop({
                       )}
                     </div>
                     {sensor.note && <p className="mw-help">{t(sensor.note)}</p>}
-                    {reference && (
+                    {reference && sensitivityChoices.length > 0 && (
                       <label className="mw-select-label">
                         {t("Classe de sensibilité")}
                         <select
@@ -717,7 +753,8 @@ export default function MagneticWorkshop({
                             update({ sensitivity: e.target.value as WorkshopConfig["sensitivity"] })
                           }
                         >
-                          {(["B", "C", "D", "E"] as const).map((x) => (
+                          {/* Seules les classes réellement publiées pour ce couple. */}
+                          {sensitivityChoices.map((x) => (
                             <option key={x} value={x}>
                               {msg("Classe {0}", [x])}
                             </option>
@@ -731,17 +768,15 @@ export default function MagneticWorkshop({
                       </span>
                       <div>
                         <strong>
-                          {pairedMagnetModel(config.magnetModel)?.name ?? t("Aimant fictif")}
+                          {pairedMagnetModel(config.magnetModel, config.sensorId)?.name ??
+                            t("Aimant fictif")}
                         </strong>
-                        <span>
-                          {t(
-                            reference
-                              ? result.reason
-                                ? "Montage à caractériser"
-                                : "Actionneur de la table de référence"
-                              : "Modèle idéal de dipôle dans l'air",
-                          )}
-                        </span>
+                        <span>{reference ? basisLabel : t("Modèle idéal de dipôle dans l'air")}</span>
+                        {magnetAlias && (
+                          <span className="t-caption">
+                            {msg("Correspondance documentaire : {0}", [magnetAlias])}
+                          </span>
+                        )}
                       </div>
                     </div>
                     <label className="mw-select-label">
@@ -750,10 +785,11 @@ export default function MagneticWorkshop({
                         value={config.magnetModel}
                         onChange={(e) => update({ magnetModel: e.target.value })}
                       >
-                        <option value="generic">{t("Aimant fictif")}</option>
-                        {[...PACKAGED_MAGNET_IDS, ...BARE_MAGNETS.map((m) => m.id)].map((id) => (
+                        {/* L'aimant fictif reste réservé aux capteurs explicitement fictifs. */}
+                        {fictitious && <option value="generic">{t("Aimant fictif")}</option>}
+                        {magnetChoices.map((id) => (
                           <option key={id} value={id}>
-                            {pairedMagnetModel(id)?.name}
+                            {pairedMagnetModel(id, config.sensorId)?.name ?? t(id)}
                           </option>
                         ))}
                       </select>
@@ -841,7 +877,7 @@ export default function MagneticWorkshop({
                       </span>
                       <div>
                         <strong>
-                          {pairedMagnetModel(config.magnetModel)?.name ?? t("Aimant fictif")}
+                          {pairedMagnetModel(config.magnetModel, config.sensorId)?.name ?? t("Aimant fictif")}
                         </strong>
                         <span>
                           {t(
@@ -1233,14 +1269,8 @@ export default function MagneticWorkshop({
         <section className="mw-visual-column" aria-label={t("Simulation du montage")}>
           <div className="mw-scene-card">
             <div className="mw-scene-toolbar">
-              <span className={reference ? "mw-kind" : "mw-kind education"}>
-                {t(
-                  reference
-                    ? result.reason
-                      ? "Montage à caractériser"
-                      : "Référence Standex · valeurs typiques"
-                    : "Démonstration · distances fictives",
-                )}
+              <span className={basis === "fictitious" ? "mw-kind education" : "mw-kind"}>
+                {basisLabel}
               </span>
               {/* Même cycle que la lecture détaillée ci-dessous : même état,
                   même progression, aucune animation parallèle. */}
@@ -1365,6 +1395,7 @@ export default function MagneticWorkshop({
                         showMachine={showMachine}
                         showSpace={showSpace}
                         xray={xray}
+                        showNames={showNames}
                         reduced={reduced}
                         onChange={machineChange}
                         onMeasure={setMeasure}
@@ -1392,6 +1423,7 @@ export default function MagneticWorkshop({
                   samples={result.samples}
                   xray={xray}
                   dimensions={dimensions}
+                  showNames={showNames}
                   zones={zones}
                   focus={focus}
                 />
@@ -1410,6 +1442,7 @@ export default function MagneticWorkshop({
                         samples={result.samples}
                         xray={xray}
                         dimensions={dimensions}
+                        showNames={showNames}
                         zones={zones}
                         focus={focus}
                       />
@@ -1432,6 +1465,7 @@ export default function MagneticWorkshop({
                       field={field}
                       xray={xray}
                       dimensions={dimensions}
+                      showNames={showNames}
                       focus={focus}
                       reduced={reduced}
                       ghost={ghost}
@@ -1606,6 +1640,14 @@ export default function MagneticWorkshop({
                 <input type="checkbox" checked={xray} onChange={(e) => setXray(e.target.checked)} />
                 {t("Voir les contacts")}
               </label>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={showNames}
+                  onChange={(e) => setShowNames(e.target.checked)}
+                />
+                {t("Nom capteur")}
+              </label>
               {!machine && (
                 <>
                   <label>
@@ -1626,7 +1668,7 @@ export default function MagneticWorkshop({
                   </label>
                 </>
               )}
-              {!reference && !machine && (
+              {fictitious && !machine && (
                 <label>
                   <input
                     type="checkbox"
@@ -1650,7 +1692,7 @@ export default function MagneticWorkshop({
               </span>
             </div>
           </div>
-          {!reference && (
+          {fictitious && (
             <details className="mw-demo-settings" open={!machine}>
               <summary>{t("Distances fictives · réglages de démonstration")}</summary>
               <p>
@@ -1771,22 +1813,7 @@ export default function MagneticWorkshop({
           selected={config.sensorId}
           onClose={() => setCatalogOpen(false)}
           onSelect={(sensorId) => {
-            if (sensorId === "MK03" && !machine && reference) {
-              update({
-                sensorId,
-                mode: "reference",
-                magnetModel: "4003004003",
-                magnetTilt: 0,
-                lateralShift: 0,
-                motion: "approach",
-                sensorAngle: 0,
-                magnetAngle: 0,
-                magnetization: "axial",
-                polarity: 1,
-              });
-            } else {
-              update({ sensorId, mode: "education" });
-            }
+            selectSensor(sensorId);
             setCatalogOpen(false);
             setField(false);
           }}

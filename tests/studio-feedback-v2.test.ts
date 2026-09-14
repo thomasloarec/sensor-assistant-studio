@@ -2,9 +2,15 @@ import { test, expect } from "bun:test";
 import {
   BARE_MAGNETS,
   PACKAGED_MAGNET_IDS,
-  preferredMagnet,
   magnetSource,
 } from "../src/lib/standex/magnet-catalog";
+import {
+  DEFAULT_PAIRS,
+  defaultMagnetFor,
+  documentedMagnetsFor,
+  magnetOptionsFor,
+  preferredMagnet,
+} from "../src/lib/standex/default-pairs";
 import { pairedMagnetModel } from "../src/lib/standex/paired-magnets";
 import { sensorById } from "../src/lib/standex/sensor-catalog";
 import { pairLayout } from "../src/lib/standex/pair-layout";
@@ -22,8 +28,15 @@ import {
   simulateCycle,
 } from "../src/lib/standex/magnetic-workshop";
 
-test("V2 MK03 defaults to the named cylinder; legacy M02 remains readable", () => {
-  expect(preferredMagnet(sensorById("MK03"))).toBe("4003004003");
+test("le couple par défaut vient du tableau central ; un aimant choisi reste lu tel quel", () => {
+  // Couples demandés le 14 septembre 2026 : le tableau central est la seule source.
+  expect(preferredMagnet(sensorById("MK03"))).toBe(DEFAULT_PAIRS["MK03"]);
+  expect(defaultMagnetFor("MK03")).toBe("M03");
+  expect(defaultMagnetFor("MK04")).toBe("M04");
+  expect(defaultMagnetFor("MK21PR")).toBe("M21P/1");
+  // Les aimants réellement documentés pour MK03 restent proposés et lisibles.
+  expect(documentedMagnetsFor("MK03")).toEqual(["M02", "4003004003"]);
+  expect(magnetOptionsFor("MK03").slice(0, 3)).toEqual(["M03", "M02", "4003004003"]);
   expect(DEFAULT_WORKSHOP.magnetModel).toBe("4003004003");
   expect(magnetSize(DEFAULT_WORKSHOP)).toEqual([19, 4, 4]);
   expect(parseWorkshopConfig({ ...DEFAULT_WORKSHOP, magnetModel: "M02" })?.magnetModel).toBe("M02");
@@ -64,8 +77,38 @@ test("V2 new brochure magnets have exact dimensions and sources, never inferred 
   expect(PHYSICS_REGISTRY.datasets).toHaveLength(0);
   expect(parseWorkshopConfig({ ...DEFAULT_WORKSHOP, magnetModel: "invented-magnet" })).toBeNull();
 });
-test("V2 all five packaged housings and cylinder shapes remain distinguishable", () => {
-  for (const id of PACKAGED_MAGNET_IDS) expect(pairedMagnetModel(id)?.shape).toBe("flange");
+test("chaque boîtier d'aimant reprend la forme réelle du capteur, sans repli cylindre", () => {
+  const shapes: Record<string, string> = {
+    M02: "flange",
+    M03: "cylinder",
+    M04: "flange",
+    M05: "flange",
+    M13: "flange",
+    M13B: "threaded",
+    M11P: "threaded",
+    M11S: "threaded",
+    M21: "flange",
+    "M21P/1": "flange",
+    "M21P/2": "flange",
+    M27: "block",
+    M36: "pressfit",
+    M37: "pressfit",
+    M38: "pressfit",
+  };
+  for (const id of PACKAGED_MAGNET_IDS) {
+    const model = pairedMagnetModel(id)!;
+    expect(model.shape).toBe(shapes[id]!);
+    expect(model.magnet).toBe(true);
+    expect(magnetSource(id)).toBeTruthy();
+  }
+  // M11S suit la variante de capteur réellement sélectionnée.
+  expect(pairedMagnetModel("M11S", "MK11-M5")!.body).toEqual([25, 5, 5]);
+  expect(pairedMagnetModel("M11S", "MK11-M8")!.body).toEqual([50, 8, 8]);
+  // Trous oblongs réellement distincts entre M21P/1 et M21P/2.
+  const horizontal = pairedMagnetModel("M21P/1")!.holes![0]!,
+    vertical = pairedMagnetModel("M21P/2")!.holes![0]!;
+  expect(horizontal[2]).toBeGreaterThan(horizontal[3]);
+  expect(vertical[3]).toBeGreaterThan(vertical[2]);
   expect(pairedMagnetModel("4003004003")?.shape).toBe("cylinder");
   expect(pairedMagnetModel("not-a-reference")).toBeNull();
 });
