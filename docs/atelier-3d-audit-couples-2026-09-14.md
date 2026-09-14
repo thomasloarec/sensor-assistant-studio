@@ -54,6 +54,20 @@ paire visuelle, sans aucune distance.
 Trous oblongs : M21P/1 horizontaux, M21P/2 verticaux — géométries réellement
 différentes en 3D et en vue plane, vérifiées par test.
 
+### Identité de famille documentée « M21/P(1,2) »
+
+Seule correspondance de ce type déclarée (`PUBLISHED_MAGNET_FAMILY` dans
+`src/lib/standex/magnetics/registries.ts`) : les variantes **M21P/1** et **M21P/2**
+lisent les lignes publiées du **M21**, parce que la source les désigne comme une
+seule famille d'aimants — brochure Reed Switch Sensors A5 V04 EN page 37 imprimée
+(planche MAGNETS IN HOUSINGS, libellé « M21/P(1,2) », cotes uniques L 28,6 × W 19 ×
+H 6,35 mm), page 38 (liste des aimants valables : « 2500000021 / M21 »), et fiche
+magnet-in-housing V03 qui liste P1 et P2 dans cette même famille. Ce n'est pas une
+extrapolation depuis une forme : les deux variantes ne diffèrent que par
+l'orientation des trous oblongs. La provenance est affichée sous le tableau des
+distances. Cette identité porte **uniquement sur l'aimant** : aucune variante de
+capteur (MK21M, MK21PR) n'en est déduite.
+
 ## 3. Couverture réelle du registre, par famille
 
 | Famille | Aimants | Classes | Approches | Lignes |
