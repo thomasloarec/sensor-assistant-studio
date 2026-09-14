@@ -3779,7 +3779,6 @@ export function DesignSpace({
           }}
         />
       </div>
-      {draftBanner}
       <div className="flex flex-wrap items-center gap-3">
         <Button variant="outline" className="min-h-11 text-base" onClick={exportDossier}>
           <Download className="mr-1 h-4 w-4" /> {t("Exporter mon projet")}
