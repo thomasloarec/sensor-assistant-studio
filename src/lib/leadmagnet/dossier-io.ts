@@ -189,6 +189,8 @@ const dossierSchema = z.object({
   workshopSource: z.enum(["none", "example", "user_asset"]).catch("none"),
   selectedSensorId: knownSensorId,
   workshopSensorId: knownSensorId,
+  /** Décisions confiées à Standex : reprises telles quelles, jamais devinées. */
+  delegatedDecisions: z.array(z.string()).catch([]),
   freeConstraints: z.string().catch(""),
   openQuestions: z.array(z.string()).catch([]),
   cabling: cabling.catch(() => EMPTY_CABLING as unknown as z.infer<typeof cabling>),
