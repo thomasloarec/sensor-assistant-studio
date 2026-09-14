@@ -227,6 +227,11 @@ export function parseWorkshopConfig(value: unknown): WorkshopConfig | null {
   ) as unknown as WorkshopConfig;
 }
 
+/** Angle normalisé dans (-180, 180]. */
+export const normaliseAngle = (a: number) => (((a % 360) + 540) % 360) - 180;
+/** Angle de l'aimant imposé par l'approche documentée du couple. */
+export { documentedMagnetAngleDeg } from "./mounting/profiles";
+
 /** Ligne publiée EXACTE du couple sélectionné, ou `null`. */
 export const workshopRow = (c: WorkshopConfig) =>
   publishedReference(c.sensorId, c.sensitivity, c.magnetModel, c.geometry);
@@ -279,7 +284,9 @@ export function referenceAllowed(c: WorkshopConfig): boolean {
     c.lateralShift === 0 &&
     c.motion === "approach" &&
     c.sensorAngle === 0 &&
-    c.magnetAngle === 0 &&
+    // L'angle attendu vient de l'approche DOCUMENTÉE : 0 en latéral D1/D3,
+    // 180° en frontal F1 où les deux collerettes se font face.
+    normaliseAngle(c.magnetAngle - documentedMagnetAngleDeg(c.geometry)) === 0 &&
     c.magnetization === "axial" &&
     c.polarity === 1 &&
     !c.ferromagnetic &&

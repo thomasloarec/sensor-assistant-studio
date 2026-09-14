@@ -7,6 +7,9 @@ export interface Pose {
   positionMm: Vec3;
   rotationDeg: Vec3;
 }
+/** Rotation d'un vecteur par des angles XYZ, réexportée pour le montage guidé. */
+export const rotateVec = (v: Vec3, degrees: Vec3): Vec3 => rotate(v, degrees) as Vec3;
+
 export const ZERO_POSE: Pose = { positionMm: [0, 0, 0], rotationDeg: [0, 0, 0] };
 
 export const add = (a: Vec3, b: Vec3): Vec3 => [a[0] + b[0], a[1] + b[1], a[2] + b[2]];
