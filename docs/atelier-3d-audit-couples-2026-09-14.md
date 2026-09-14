@@ -121,6 +121,14 @@ Aucune valeur n'est empruntée entre M36, M37 et M38 (vérifié par test).
 - Hors domaine (pose non localisée, perturbation, limite) le contact reste
   indéterminé et le message affiché est : « Le comportement du capteur nécessite
   des tests en environnement réel. »
+- Cartes du catalogue : la mention « réponse pédagogique » est retirée des vrais
+  capteurs, qui portent désormais **« Contacts internes symboliques »** — une
+  limite de représentation, sans sous-entendre des distances fictives.
+- Les objets 3D ne reçoivent plus l'attribut de débogage `data-tsd-source` injecté
+  par les devtools : il provoquait « Cannot set "data-tsd-source" » au changement
+  de capteur et faisait replier l'atelier en vue plane. La cause est supprimée pour
+  les trois modules de scène (plugin `vite/strip-three-source-tags.ts`), aucune
+  autre erreur n'est masquée.
 - Nouvelle option d'affichage **« Nom capteur »** (3D, vue plane, modèle importé) :
   elle ne change aucune géométrie. Le repère de l'aimant (bande + étiquette
   « Aimant ») est indépendant et reste visible quand les noms sont masqués.
