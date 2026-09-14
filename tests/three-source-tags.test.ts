@@ -46,9 +46,9 @@ describe("attribut de débogage retiré des objets Three", () => {
   test("un module de scène sans attribut injecté est laissé intact", () => {
     expect(transform(`jsx("mesh", { position: [0, 0, 0] })`, SCENE)).toBeNull();
   });
-  test("le plugin ne s'applique qu'au serveur de développement", () => {
+  test("le plugin s'applique au dev ET au build : l'aperçu sert des artefacts compilés", () => {
     const plugin = stripThreeSourceTags();
-    expect(plugin.apply).toBe("serve");
+    expect(plugin.apply).toBeUndefined();
     expect(plugin.enforce).toBe("post");
   });
 });
