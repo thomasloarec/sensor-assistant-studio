@@ -765,15 +765,35 @@ export default function WorkshopScene({
   const model = sensorById(config.sensorId),
     reference = config.mode === "reference",
     available = !unavailableReason(config);
+  /* Cadrage du couple : il est MESURÉ sur les corps réellement dessinés et sur
+     la course déclarée, jamais posé à une distance fixe. Une distance constante
+     laissait le couple occuper un cinquième de l'image sur les petits capteurs.
+     Ce calcul ne touche ni les cotes, ni les seuils, ni la simulation. */
+  const coupleSpan = Math.max(
+    model.body[0],
+    model.body[2],
+    Math.abs(config.start),
+    Math.abs(config.end),
+    config.travel,
+  );
   const dist = Math.max(14, model.body[0] * 1.6),
-    target: Vec3 = focus === "sensor" ? [config.mountX, 0, config.mountZ] : [6, 0, 18];
+    coupleDist = Math.max(38, coupleSpan * 2.6),
+    target: Vec3 =
+      focus === "sensor"
+        ? [config.mountX, 0, config.mountZ]
+        : [config.mountX, 0, config.mountZ + config.offset / 2];
+
   return (
     <Canvas
       camera={{
         position:
           focus === "sensor"
             ? [target[0] + dist * 0.6, dist * 0.7, target[2] + dist]
-            : [80, 70, 105],
+            : [
+                target[0] + coupleDist * 0.62,
+                coupleDist * 0.55,
+                target[2] + coupleDist * 0.82,
+              ],
         fov: 43,
         near: 0.1,
         far: 600,
@@ -826,8 +846,14 @@ export default function WorkshopScene({
       <OrbitControls makeDefault target={target} minDistance={5} maxDistance={400} />
       <CameraRig
         target={target}
-        distance={focus === "sensor" ? dist : 110}
-        resetKey={[config.sensorId, config.mode, config.geometry, focus, resetEpoch].join(":")}
+        distance={focus === "sensor" ? dist : coupleDist}
+        resetKey={[
+          config.sensorId,
+          config.mode,
+          config.geometry,
+          focus,
+          resetEpoch,
+        ].join(":")}
       />
     </Canvas>
   );
