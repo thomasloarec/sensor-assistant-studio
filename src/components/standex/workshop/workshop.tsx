@@ -25,6 +25,7 @@ import {
   publishedApproaches,
   publishedClassKind,
   publishedRowsForCouple,
+  publishedRowsSourceUrl,
 } from "@/lib/standex/magnetics/registries";
 import { Component, lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
@@ -832,9 +833,9 @@ export default function MagneticWorkshop({
                             {t(publishedFamilyNoteFor(config)!)}
                           </p>
                         )}
-                        {magnetSource(config.magnetModel) && (
+                        {(publishedRowsSourceUrl(publishedRows) ?? magnetSource(config.magnetModel)) && (
                           <a
-                            href={magnetSource(config.magnetModel)!}
+                            href={(publishedRowsSourceUrl(publishedRows) ?? magnetSource(config.magnetModel))!}
                             target="_blank"
                             rel="noreferrer"
                           >

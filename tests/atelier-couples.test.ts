@@ -18,6 +18,7 @@ import {
   publishedRowsForCouple,
   publishedSensorReference,
   publishedMagnetFamily,
+  publishedRowsSourceUrl,
   isPublishedFamilyAlias,
   PUBLISHED_MAGNET_FAMILY,
   PUBLISHED_REGISTRY,
@@ -399,5 +400,30 @@ describe("points d'entrée : le bon couple par défaut partout", () => {
     expect(applySensorSelection(config({ sensorId: "GENERIC", mode: "education" }), "MK27")).toMatchObject(
       { magnetModel: "M27", mode: "reference" },
     );
+  });
+});
+
+describe("lien « Voir la source des distances » : la provenance des lignes affichées", () => {
+  test("MK04 pointe vers l'Academy (tables des distances), pas vers la fiche géométrique", () => {
+    const rows = publishedRowsForCouple("MK04", "M04");
+    const url = publishedRowsSourceUrl(rows);
+    expect(url).toBe(
+      "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/",
+    );
+    expect(url).not.toContain("datasheet-reed-sensor-series-mk04");
+  });
+  test("MK36/37/38 pointent vers leur fiche officielle p.2", () => {
+    for (const [sensor, magnet, file] of [
+      ["MK36", "M36-N42", "datasheet-reed-sensor-series-mk36.pdf"],
+      ["MK37", "M37-N42", "datasheet-reed-sensor-series-mk37.pdf"],
+      ["MK38", "M38-N42", "datasheet-reed-sensor-series-mk38.pdf"],
+    ] as const) {
+      const url = publishedRowsSourceUrl(publishedRowsForCouple(sensor, magnet));
+      expect(url).toContain(file);
+    }
+  });
+  test("aucune ligne publiée : aucun lien fabriqué", () => {
+    expect(publishedRowsSourceUrl([])).toBeNull();
+    expect(publishedRowsSourceUrl(publishedRowsForCouple("MK27", "M27"))).toBeNull();
   });
 });

@@ -291,6 +291,20 @@ export function publishedRowsForCouple(
     .sort((a, b) => a.sensitivityClass.localeCompare(b.sensitivityClass));
 }
 /**
+ * URL de la source réellement affichée : la provenance des lignes publiées,
+ * jamais la fiche géométrique du capteur ni de l'aimant. Pour MK04 la table
+ * vient de l'Academy + guide p.3 ; pour MK36/37/38 de la fiche officielle p.2.
+ */
+export function publishedRowsSourceUrl(rows: PublishedRow[]): string | null {
+  for (const row of rows) {
+    const ref = row.provenance?.sourceRef;
+    if (!ref) continue;
+    const match = ref.match(/https?:\/\/[^\s;]+/);
+    if (match) return match[0];
+  }
+  return null;
+}
+/**
  * Nature de la colonne publiée pour ce couple : classes de sensibilité A–E des
  * tables Academy, ou modèles de contact des fiches produit. Jamais les deux :
  * une fiche sans classe publiée n'en reçoit aucune.
