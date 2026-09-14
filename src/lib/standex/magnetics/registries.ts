@@ -284,8 +284,9 @@ export function publishedRowsForCouple(
   magnetId: string,
   registry = PUBLISHED_REGISTRY,
 ): PublishedRow[] {
+  const magnet = publishedMagnetFamily(magnetId);
   return registry.rows
-    .filter((r) => r.sensorFamily === sensorFamily && r.magnetId === magnetId)
+    .filter((r) => r.sensorFamily === sensorFamily && r.magnetId === magnet)
     .slice()
     .sort((a, b) => a.sensitivityClass.localeCompare(b.sensitivityClass));
 }
