@@ -25,6 +25,7 @@ export function SensorPlan({
     color = closed ? "#009d78" : contact === "unknown" ? "#b78035" : "#79909e";
   const cableSide = model.cableSide ?? -1;
   const electrical = electricalDetailsAllowed(model);
+  const revealContacts = electrical && xray;
   if (model.shape === "glass")
     return (
       <g>
@@ -97,7 +98,7 @@ export function SensorPlan({
           model.shape === "cylinder" || model.shape === "pressfit" ? 0.4 : Math.min(0.5, w * 0.12)
         }
         fill={model.color}
-        fillOpacity={xray ? 0.28 : 1}
+        fillOpacity={revealContacts ? 0.28 : 1}
         stroke={model.color}
         strokeWidth={0.28}
       />
@@ -156,7 +157,7 @@ export function SensorPlan({
           fillOpacity={0.6}
         />
       )}
-      {electrical && xray && (
+      {revealContacts && (
         <g transform={`translate(0 ${z})`}>
           <path
             d={`M${-length / 2} ${closed ? 0 : -w * 0.12} L${length * 0.03} ${closed ? 0 : -w * 0.12} M${length / 2} ${closed ? 0 : w * 0.12} L${-length * 0.03} ${closed ? 0 : w * 0.12}`}

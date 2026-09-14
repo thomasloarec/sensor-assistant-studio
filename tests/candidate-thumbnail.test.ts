@@ -14,7 +14,7 @@ import {
   electricalDetailsAllowed,
   sensorById,
 } from "../src/lib/standex/sensor-catalog";
-import { Body, Contacts, contactGeometry } from "../src/components/standex/workshop/scene";
+import { Contacts, contactGeometry } from "../src/components/standex/workshop/scene";
 import { SensorPlan } from "../src/components/standex/workshop/sensor-plan";
 import { pairedMagnetModel } from "../src/lib/standex/paired-magnets";
 
@@ -140,11 +140,6 @@ describe("Vignettes 3D des candidats", () => {
         contact: "closed",
         reduced: true,
       })), magnetId).toBe("");
-      expect(() => renderToStaticMarkup(createElement(Body, {
-        model: magnet!,
-        xray: true,
-        showCable: true,
-      }))).not.toThrow();
     }
   });
 

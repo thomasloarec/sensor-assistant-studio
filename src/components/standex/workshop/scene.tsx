@@ -194,7 +194,7 @@ export function Body({
   if (electrical && model.shape === "custom_pcb" && customLayout(model))
     return <CustomBoard model={model} xray={xray} />;
   if (electrical && model.shape === "glass") return <BareReedBody model={model} />;
-  return <StandardBody model={model} xray={xray} showCable={showCable} />;
+  return <StandardBody model={model} xray={electrical && xray} showCable={showCable} />;
 }
 function BareReedBody({ model }: { model: SensorModel }) {
   const [l, d] = model.body;
