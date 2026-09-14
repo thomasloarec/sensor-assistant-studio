@@ -2030,3 +2030,34 @@
     color: var(--ink);
   }
 }
+
+/* Page « Envoyer à Standex » : une page lisible, pas un formulaire.
+   La colonne d'action reste à largeur fixe pour que le bouton d'envoi et ses
+   gardes soient toujours au même endroit. */
+.review-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 420px;
+  gap: var(--s-5, 1.25rem);
+  align-items: start;
+}
+@media (max-width: 1024px) {
+  .review-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.review-facts {
+  display: grid;
+  gap: var(--s-3, 0.75rem);
+}
+.review-fact {
+  display: grid;
+  grid-template-columns: 200px minmax(0, 1fr);
+  gap: var(--s-3, 0.75rem);
+  align-items: baseline;
+}
+@media (max-width: 640px) {
+  .review-fact {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--s-1, 0.25rem);
+  }
+}
