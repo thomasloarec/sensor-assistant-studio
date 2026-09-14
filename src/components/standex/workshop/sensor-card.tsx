@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { sensorById, sizeLabel, formatMm, sensorSource } from "@/lib/standex/sensor-catalog";
 import { SENSOR_SPECIFICATIONS } from "@/lib/standex/sensor-specifications";
+import { stepEnvelopeFor } from "@/lib/standex/step-envelope";
 import type { Contact } from "@/lib/standex/magnetic-workshop";
 import { BrandLogo } from "@/components/standex/brand-logo";
 import { SensorPlan } from "./sensor-plan";
@@ -40,6 +41,7 @@ export default function SensorCard({
   const [xray, setXray] = useState(false),
     [variant, setVariant] = useState(0);
   const rating = specs?.electrical[variant];
+  const step = stepEnvelopeFor(model.id);
   useEffect(() => {
     const el = dialog.current,
       previous = document.activeElement;
@@ -296,6 +298,16 @@ export default function SensorCard({
             </div>
           )}
           <footer>
+            {/* Téléchargement discret : fichier STEP réellement présent sur le
+                disque, généré depuis les seules cotes du catalogue. */}
+            {step && (
+              <a className="sc-step-download" href={step.url} download={step.fileName}>
+                {t(step.label)} <ArrowUpRight size={15} />
+                <small>
+                  {t(step.disclaimer)} {step.dimensionsLabel}
+                </small>
+              </a>
+            )}
             {sensorSource(model) && (
               <a href={sensorSource(model)!} target="_blank" rel="noreferrer">
                 {t("Fiche fabricant · PDF")} <ArrowUpRight size={15} />
