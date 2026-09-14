@@ -22,6 +22,7 @@ import {
   publishedClasses,
   publishedReference,
   publishedSensorReference,
+  isPublishedFamilyAlias,
 } from "./magnetics/registries";
 
 
