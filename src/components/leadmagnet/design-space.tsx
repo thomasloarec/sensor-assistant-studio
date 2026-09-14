@@ -1733,12 +1733,24 @@ export function DesignSpace({
             className="mt-6 min-h-[8.5rem] w-full px-5 py-[1.125rem] text-lg leading-[1.6]"
             value={guidedReq?.value ?? ""}
             placeholder={t(question.placeholder)}
-            onChange={(e) =>
+            onChange={(e) => {
               setDossier((d) =>
                 proposeRequirement(d, question.key, { value: e.target.value, source: "user" }),
-              )
-            }
+              );
+              if (e.target.value.trim()) setQuestionAside(question.key, false);
+            }}
           />
+
+          {guidedStructured}
+
+          {isDelegated(dossier, delegatedQuestion(question.key)) ? (
+            <p className="t-caption mt-4">
+              {t(
+                "Cette question est notée « à définir avec Standex ». C'est une décision prise, pas une valeur connue.",
+              )}
+            </p>
+          ) : null}
+
 
           {guidedReq && guidedReq.state === "hypothesis" && guidedReq.value.trim() ? (
             <div className="relative mt-5 overflow-hidden rounded-[var(--r-md)] bg-[var(--warning-soft)] p-4 pl-5 before:absolute before:inset-y-0 before:left-0 before:w-[3px] before:bg-[var(--warning)]">
