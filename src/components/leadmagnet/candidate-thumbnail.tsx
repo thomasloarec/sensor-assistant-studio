@@ -321,7 +321,7 @@ export function CandidateThumbnail({
   return (
     <div
       ref={host}
-      className="candidate-thumb"
+      className={size === "large" ? "candidate-thumb candidate-thumb-large" : "candidate-thumb"}
       data-live={live ? "3d" : "2d"}
       data-sensor={model.id}
     >
@@ -336,6 +336,7 @@ export function CandidateThumbnail({
                 reason={t("Aperçu 3D en cours")}
                 cabled={cabled}
                 fitToView={fitToView}
+                scaleBar={scaleBar}
                 {...(pair ? { pair } : {})}
               />
             }
@@ -364,6 +365,7 @@ export function CandidateThumbnail({
           }
           cabled={cabled}
           fitToView={fitToView}
+          scaleBar={scaleBar}
           {...(pair ? { pair } : {})}
         />
       )}
