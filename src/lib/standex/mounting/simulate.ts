@@ -115,23 +115,26 @@ export interface MountingSimulation {
 export const ILLUSTRATIVE_PULL_IN_MM = 15;
 export const ILLUSTRATIVE_DROP_OUT_MM = 18;
 
-/** Raisons qui interdisent toute commutation, même illustrative : elles
- * décrivent un montage physiquement douteux (collision, ferreux, température)
- * ou une forme de contact/mode qui ne doit jamais être animée. */
-const ILLUSTRATIVE_BLOCKERS = new Set([
-  "FERROUS_DECLARED",
-  "TEMPERATURE_NOT_AMBIENT",
-  "CONTACT_FORM_NOT_SIMULATED",
-  "EDUCATION_MODE",
-  "COLLISION_OR_CONTACT",
-  // Une POSE qui sort du gabarit documenté n'est pas un manque de données :
-  // c'est une géométrie que la source ne décrit pas. Montrer une commutation
-  // reviendrait à inventer une donnée d'approche, ce qui reste refusé. Le mode
-  // illustratif ne couvre que les couples SANS distance caractérisée.
-  "ORIENTATION_OFF_TEMPLATE",
-  "LATERAL_OFFSET",
-  "OFFSET_OFF_TEMPLATE",
-]);
+/**
+ * Raisons qui interdisent toute commutation, même illustrative.
+ *
+ * La liste est volontairement courte, et c'est le cœur de la distinction entre
+ * ILLUSTRER et QUALIFIER. Un environnement ferreux, une température autre que
+ * l'ambiante, un mode démonstration, un décalage latéral ou une pose hors
+ * gabarit ne sont PAS des raisons de laisser la scène inerte : la demande est de
+ * montrer une réaction de proximité lisible, jamais de la faire passer pour une
+ * mesure. Ces situations restent donc animées, mais avec le drapeau
+ * `illustrative` et la mention permanente qui l'accompagne, et sans qu'aucun
+ * seuil publié, aucune couverture ni aucun verdict ne bouge.
+ *
+ * Le seul refus absolu : un contact dont la forme n'est jamais simulée (1B/1C).
+ * Les distances y sont lisibles au registre, elles ne sont pas animées. La
+ * collision reste traitée échantillon par échantillon : deux corps qui
+ * s'interpénètrent n'affichent pas d'état.
+ */
+const ILLUSTRATIVE_BLOCKERS = new Set(["CONTACT_FORM_NOT_SIMULATED"]);
+/** Au-delà de cette séparation réelle, l'état illustratif est TOUJOURS ouvert. */
+export const ILLUSTRATIVE_FAR_MM = 20;
 
 /** Vrai si l'on peut montrer une commutation illustrative pour ce montage. */
 export function illustrativeAllowed(reasons: readonly string[]): boolean {
