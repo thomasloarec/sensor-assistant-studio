@@ -292,6 +292,13 @@ function GuideRangeTable({
           </tbody>
         </table>
       </div>
+      {rows.some((r) => r.orderAtypical) && (
+        <p className="mw-help" data-testid="guide-atypical-note">
+          {t(
+            "* Ordre imprimé inhabituel dans la brochure (« up » supérieur à « to »). La valeur est reproduite telle quelle, sans tri ni correction, et reste à confirmer par Standex : ces lignes ne servent pas de repère à la démonstration de portée.",
+          )}
+        </p>
+      )}
       <p className="t-caption">
         {msg("Guide d'activation Standex, page {0} · plages en mm", [String(rows[0]!.page)])}
       </p>
