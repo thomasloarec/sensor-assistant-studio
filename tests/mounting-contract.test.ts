@@ -255,7 +255,13 @@ describe("simulation et hystérésis", () => {
       environment: { ferrousNearby: true, temperature: "ambient" },
     });
     const sim = simulateMounting(m);
-    expect(sim.samples.every((s) => s.contact === "unknown")).toBe(true);
+    // La scène peut MONTRER une réaction de proximité, mais rien n'est qualifié :
+    // aucun échantillon n'est couvert, la simulation est marquée illustrative et
+    // aucun seuil n'est publié.
+    expect(sim.samples.every((s) => !s.covered)).toBe(true);
+    expect(sim.illustrative).toBe(true);
+    expect(sim.pullInMm).toBeNull();
+    expect(sim.dropOutMm).toBeNull();
     expect(computeMounting(m).reasons).toContain("FERROUS_DECLARED");
     expect(computeMounting(m).mainMessage).toBe(REAL_WORLD_TEST_MESSAGE);
   });
