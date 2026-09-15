@@ -149,16 +149,48 @@ const worst = (a: CandidateStatus, b: CandidateStatus): CandidateStatus =>
       ? "to_verify"
       : "kept";
 
+/**
+ * Fixation décrite en texte libre. C'est une CONTRAINTE DURE : « screw or
+ * adhesive mounting » veut dire au moins une de ces deux fixations, donc un
+ * boîtier dont la seule fixation documentée est le report sur circuit imprimé
+ * (MK15, MK16, MK17…) est écarté, même si le client n'a coché aucune case.
+ */
+function intentVerdict(
+  sensor: SensorModel,
+  intent: MountingIntent,
+): { status: CandidateStatus; reason: string } | null {
+  if (!intent.explicit || sensor.shape === "custom_pcb") return null;
+  const named = intent.kinds.map((k) => MOUNTING_INTENT_LABEL[k]).join(" ou ");
+  if (satisfiesMountingIntent(sensor, intent))
+    return {
+      status: "to_verify",
+      reason: `Fixation décrite (${named}) compatible de ce boîtier ; la fixation réelle (vis, appui, adhésif) reste à qualifier par les ingénieurs Standex.`,
+    };
+  return {
+    status: "excluded",
+    reason: `Fixation décrite (${named}) : ce boîtier n'a pas de fixation documentée de ce type. Aucun adhésif ni support n'est supposé à sa place.`,
+  };
+}
+
 export function evaluateCandidates(
-  dossier: Pick<DesignDossier, "mounting" | "envelope">,
+  dossier: Pick<DesignDossier, "mounting" | "envelope"> & {
+    /** Réponse en texte libre sur le montage, telle qu'elle a été écrite. */
+    mountingText?: string | null;
+  },
   catalog: readonly SensorModel[] = SENSOR_CATALOG,
 ): CandidateResult[] {
+  const intent = detectMountingIntent(dossier.mountingText ?? null);
   return catalog.map((sensor) => {
     const custom = sensor.shape === "custom_pcb";
     const reasons: string[] = [];
     const mount = mountingVerdict(sensor, dossier.mounting);
     reasons.push(mount.reason);
     let status = mount.status;
+    const named = intentVerdict(sensor, intent);
+    if (named) {
+      reasons.push(named.reason);
+      status = worst(status, named.status);
+    }
     // Les cotes du schéma sur mesure sont proportionnelles et pédagogiques :
     // les comparer à un volume déclaré laisserait croire à une cote figée.
     const env = custom ? null : envelopeVerdict(sensor, dossier.envelope);
