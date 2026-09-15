@@ -7,7 +7,11 @@ import {
 } from "./magnet-catalog";
 import { PUBLISHED_REGISTRY } from "./magnetics/registries";
 import type { PublishedRegistry } from "./magnetics/registries";
-import { guideFallbackMagnet, standardMagnetOptions } from "./magnet-recommendation";
+import {
+  guideFallbackMagnet,
+  standardMagnetOptions,
+  standardShapeForSensor,
+} from "./magnet-recommendation";
 import type { SensorModel } from "./sensor-catalog";
 
 /**
