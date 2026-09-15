@@ -20,10 +20,13 @@ import {
   applySuggestion,
   composeRotations,
   magnetWorldPosition,
+  scenePoseSampler,
   simulateMounting,
+  SAMPLE_STEPS,
   suggestPose,
   workshopPatchFromMounting,
 } from "@/lib/standex/mounting";
+
 import type { GuidedMounting } from "@/lib/standex/mounting";
 import type { StudioStudy } from "@/lib/standex/studio-dossier";
 import type { DesignFreeze } from "@/lib/standex/design-freeze";
