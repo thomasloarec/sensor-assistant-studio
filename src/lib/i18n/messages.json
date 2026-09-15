@@ -18422,6 +18422,15 @@
     "Simulazione del montaggio",
     "構成のシミュレーション"
   ],
+  "Aucune distance publiée pour ce couple : la commutation montrée est illustrative et doit être validée par des essais.": [
+    "No published distance for this pair: the switching shown is illustrative and must be validated by testing.",
+    "该组合没有已发布的距离：所示的动作切换仅为示意，必须通过试验验证。",
+    "Für dieses Paar sind keine Abstände veröffentlicht: das gezeigte Schalten ist illustrativ und muss durch Versuche bestätigt werden.",
+    "No hay distancias publicadas para esta pareja: la conmutación mostrada es ilustrativa y debe validarse mediante ensayos.",
+    "Для этой пары нет опубликованных расстояний: показанное переключение является иллюстративным и требует подтверждения испытаниями.",
+    "Nessuna distanza pubblicata per questa coppia: la commutazione mostrata è illustrativa e deve essere validata con prove.",
+    "この組み合わせには公開された距離がありません。表示されている切り替えは参考であり、試験で検証する必要があります。"
+  ],
   "Simulation illustrative — distance non caractérisée, à valider par essais": [
     "Illustrative simulation — distance not characterised, to be confirmed by testing",
     "示意性模拟——距离未表征，需通过试验确认",
