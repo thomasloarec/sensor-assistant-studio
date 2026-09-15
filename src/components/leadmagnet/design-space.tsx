@@ -898,9 +898,18 @@ export function DesignSpace({
     return () => window.removeEventListener("beforeunload", warn);
   }, []);
 
+  /** Réponse de montage écrite par le client. Une fixation NOMMÉE là (« vissé »,
+   * « screw or adhesive ») est une contrainte dure, même sans case cochée. */
+  const mountingText =
+    dossier.requirements.find((r) => r.key === "mounting")?.value?.trim() || null;
   const candidates = useMemo(
-    () => evaluateCandidates({ mounting: dossier.mounting, envelope: dossier.envelope }),
-    [dossier.mounting, dossier.envelope],
+    () =>
+      evaluateCandidates({
+        mounting: dossier.mounting,
+        envelope: dossier.envelope,
+        mountingText,
+      }),
+    [dossier.mounting, dossier.envelope, mountingText],
   );
   // Le câble n'est montré sur les vignettes que s'il existe réellement un tracé.
   const candidatesCabled =
