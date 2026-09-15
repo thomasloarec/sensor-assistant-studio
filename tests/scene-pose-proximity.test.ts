@@ -90,7 +90,7 @@ describe("proximité lue sur la pose réellement dessinée", () => {
       expect(sample(t)!.positionMm[0]).toBeCloseTo(drawn.position[0], 9);
       expect(sample(t)!.positionMm[2]).toBeCloseTo(drawn.position[2], 9);
     }
-    const sim = simulateMounting(slide, 200, undefined, sample);
+    const sim = simulateMounting(mountingFromWorkshop(slide), 200, undefined, sample);
     expect(sim.illustrative).toBe(true);
     // Aux extrémités de la course, l'aimant est à 60 mm de côté : ouvert.
     expect(sim.samples[0]!.contact).toBe("open");
@@ -108,7 +108,7 @@ describe("proximité lue sur la pose réellement dessinée", () => {
       expect(sample(t)!.positionMm[0]).toBeCloseTo(drawn.position[0], 9);
       expect(sample(t)!.positionMm[2]).toBeCloseTo(drawn.position[2], 9);
     }
-    const sim = simulateMounting(pivot, 200, undefined, sample);
+    const sim = simulateMounting(mountingFromWorkshop(pivot), 200, undefined, sample);
     expect(sim.illustrative).toBe(true);
     // L'arc éloigne puis rapproche : les deux états doivent apparaître.
     const states = new Set(sim.samples.map((s) => s.contact));
