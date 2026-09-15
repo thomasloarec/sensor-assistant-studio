@@ -55,6 +55,11 @@ export interface GuideRange {
   toMm: number | null;
   upNote?: "not_published" | "below_zero";
   toNote?: "not_published" | "below_zero";
+  /** Ordre imprimé ATYPIQUE : « up » est supérieur à « to » (vérifié page 12 sur
+   *  MK04-1A66A-X + SmCo, D3 = 10,3 / 8,2). Ces lignes sont RÉELLES : elles
+   *  restent lisibles telles qu'imprimées, signalées « à confirmer », et ne sont
+   *  jamais triées, corrigées ni utilisées comme repères de démonstration. */
+  orderAtypical?: true;
 }
 export interface ActivationGuide {
   version: string;
