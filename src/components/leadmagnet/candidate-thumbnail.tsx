@@ -31,14 +31,24 @@ const ThumbnailScene = lazy(
 import {
   acquireThumbnailSlot,
   hasWebGL,
+  liveThumbnailContexts,
+  queuedThumbnailSlots,
   releaseThumbnailSlot,
+  resetThumbnailSlots,
   useWebglSlot,
 } from "@/hooks/use-webgl-slot";
 
 /** L'ordonnanceur de contextes WebGL vit dans `@/hooks/use-webgl-slot` : il est
  * partagé par toutes les vignettes (candidats, couples, connecteurs). Ces
  * ré-exports gardent les appelants historiques valides. */
-export { acquireThumbnailSlot, releaseThumbnailSlot, hasWebGL };
+export {
+  acquireThumbnailSlot,
+  releaseThumbnailSlot,
+  hasWebGL,
+  liveThumbnailContexts,
+  queuedThumbnailSlots,
+  resetThumbnailSlots,
+};
 
 /* ------------------------------------------------------------------ */
 /* Repli 2D : une silhouette PAR FORME, jamais un capteur par défaut   */
