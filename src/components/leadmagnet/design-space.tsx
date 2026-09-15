@@ -2174,6 +2174,38 @@ export function DesignSpace({
         {t("Ajuster les critères ⌄")}
       </summary>
       <div className="mt-2 space-y-3">
+        {/* Résumé des critères RÉELLEMENT utilisés, avec la réponse d'origine
+            telle qu'elle a été écrite. Le bouton ramène aux questions, où les
+            réponses sont préremplies et modifiables : les réponses non touchées
+            sont conservées, et la liste se recalcule à la validation. */}
+        <div className="panel-block space-y-2" data-testid="criteria-summary">
+          <p className="t-label">{t("Critères utilisés")}</p>
+          {answerFilters.length ? (
+            <ul className="space-y-1">
+              {answerFilters.map((f) => (
+                <li key={f.id} className="t-body-s">
+                  {t(f.label)}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="t-body-s">{t("Aucun critère issu de vos réponses pour l'instant.")}</p>
+          )}
+          {mountingText ? (
+            <p className="t-caption" data-testid="criteria-mounting-text">
+              {t("Votre réponse sur le montage :")} « {mountingText} »
+            </p>
+          ) : null}
+          <Button
+            variant="outline"
+            size="sm"
+            className="min-h-11"
+            data-testid="edit-answers"
+            onClick={() => setTab("besoin")}
+          >
+            {t("Modifier mes réponses")}
+          </Button>
+        </div>
         <p className="t-caption">
           {shownFilters.length
             ? t(
