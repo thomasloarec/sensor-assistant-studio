@@ -703,7 +703,9 @@ export default function MagneticWorkshop({
   /** Commutation ILLUSTRATIVE : le contact bascule à proximité pour que la scène
    *  reste lisible, mais aucune distance n'est caractérisée. La mention est
    *  PERMANENTE tant que ce mode est actif, et elle suit l'essai enregistré. */
-  const illustrative = computed?.illustrative === true;
+  // La source d'affichage est la simulation de la SCÈNE (pose réellement
+  // dessinée) ; le résultat enregistré porte la même marque.
+  const illustrative = guidedSim.illustrative === true || computed?.illustrative === true;
   
 
   /** Essai à conserver dans le dossier : verdict, distances PUBLIÉES (ou `null`)
