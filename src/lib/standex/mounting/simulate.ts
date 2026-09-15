@@ -16,7 +16,17 @@ import type {
   Verdict,
 } from "./contract";
 import { mountingHash } from "./contract";
-import { add, bodiesCollide, halfExtent, bodyOf, lateralOffsetMm, scale, sub } from "./geometry";
+import {
+  add,
+  approachAxisFor,
+  bodiesCollide,
+  halfExtent,
+  bodyOf,
+  lateralOffsetMm,
+  scale,
+  separationMm,
+  sub,
+} from "./geometry";
 import type { Pose, Vec3 } from "./geometry";
 
 export const SAMPLE_STEPS = 600;
