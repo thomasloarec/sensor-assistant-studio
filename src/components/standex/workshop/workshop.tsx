@@ -1,4 +1,9 @@
-import { defaultMagnetFor, documentedAlias, magnetOptionsFor } from "@/lib/standex/default-pairs";
+import {
+  defaultMagnetFor,
+  documentedAlias,
+  isOutsidePolicy,
+  magnetOptionsFor,
+} from "@/lib/standex/default-pairs";
 import { pairedMagnetModel } from "@/lib/standex/paired-magnets";
 import { magnetSource } from "@/lib/standex/magnet-catalog";
 import { t, msg } from "@/lib/i18n/core";
