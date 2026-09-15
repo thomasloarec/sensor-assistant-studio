@@ -2105,6 +2105,15 @@
     "Nessun criterio attivo: sono mostrati tutti i sensori dell'anteprima.",
     "有効な条件はありません。プレビューのすべてのセンサーを表示しています。"
   ],
+  "Aucun critère issu de vos réponses pour l'instant.": [
+    "No criteria from your answers yet.",
+    "目前尚无来自您回答的标准。",
+    "Noch keine Kriterien aus Ihren Antworten.",
+    "Aún no hay criterios a partir de sus respuestas.",
+    "Пока нет критериев из ваших ответов.",
+    "Nessun criterio dalle tue risposte per ora.",
+    "まだ回答に基づく基準はありません。"
+  ],
   "Aucun des deux": [
     "Neither",
     "都不选",
@@ -6145,6 +6154,15 @@
     "Критичность / безопасность",
     "Criticità / sicurezza",
     "重要度 / 安全性"
+  ],
+  "Critères utilisés": [
+    "Criteria used",
+    "使用的标准",
+    "Verwendete Kriterien",
+    "Criterios utilizados",
+    "Использованные критерии",
+    "Criteri utilizzati",
+    "使用した基準"
   ],
   "Créer une session": [
     "Create session",
@@ -13201,6 +13219,15 @@
     "Изменить карточку",
     "Modifica la scheda",
     "情報を編集"
+  ],
+  "Modifier mes réponses": [
+    "Edit my answers",
+    "修改我的回答",
+    "Meine Antworten ändern",
+    "Modificar mis respuestas",
+    "Изменить мои ответы",
+    "Modifica le mie risposte",
+    "回答を編集する"
   ],
   "Modifié dans votre dossier :": [
     "Modified in your case file:",
@@ -21067,6 +21094,15 @@
     "Ваш отзыв (версия",
     "Il vostro riscontro (versione",
     "お客様のフィードバック（バージョン"
+  ],
+  "Votre réponse sur le montage :": [
+    "Your answer about mounting:",
+    "您关于安装的回答：",
+    "Ihre Antwort zur Montage:",
+    "Su respuesta sobre el montaje:",
+    "Ваш ответ о монтаже:",
+    "La tua risposta sul montaggio:",
+    "取り付けに関するあなたの回答："
   ],
   "Votre version": [
     "Your version",
