@@ -17,6 +17,8 @@ import { CUSTOM_SENSOR_ID, sensorById, sizeLabel } from "@/lib/standex/sensor-ca
 import type { SensorModel, SensorShape } from "@/lib/standex/sensor-catalog";
 import { defaultMagnetFor } from "@/lib/standex/default-pairs";
 import { fixingGroup } from "@/lib/standex/catalog-filters";
+import { guideMagnetMaterial } from "@/lib/standex/activation-guide";
+import { BARE_MAGNETS } from "@/lib/standex/magnet-catalog";
 
 export interface PairCard {
   sensorId: string;
@@ -33,6 +35,9 @@ export interface PairCard {
   /** Distance de fermeture maximale PUBLIÉE pour ce couple, toutes classes de
    * sensibilité et approches confondues. `null` = aucune ligne publiée. */
   maxPullInMm: number | null;
+  /** Matériau lisible de l'aimant proposé (« Ferrite », « AlNiCo »), quand le
+   * guide le publie. Le code de référence reste affiché à part. */
+  materialLabel: string | null;
 }
 
 const FIXING_LABEL: Readonly<Record<string, string>> = {
@@ -62,6 +67,14 @@ export function maxPublishedPullIn(sensorId: string, magnetId: string): number |
   return values.length ? Math.max(...values) : null;
 }
 
+/** Matériau publié d'une référence d'aimant, ou `null` s'il n'est pas documenté. */
+export function materialLabelFor(magnetId: string): string | null {
+  const fromGuide = guideMagnetMaterial(magnetId);
+  if (fromGuide) return fromGuide;
+  const material = BARE_MAGNETS.find((m) => m.id === magnetId)?.material;
+  return material && material !== "unknown" ? material : null;
+}
+
 export function pairCardFor(sensor: SensorModel): PairCard {
   const magnetId = defaultMagnetFor(sensor.id);
   return {
@@ -73,6 +86,9 @@ export function pairCardFor(sensor: SensorModel): PairCard {
     familyLabel: FAMILY_LABEL[sensor.shape],
     size: sizeLabel(sensor),
     maxPullInMm: maxPublishedPullIn(sensor.id, magnetId),
+    // Matériau LU sur la référence : le guide d'abord, sinon la fiche catalogue.
+    // « unknown » n'est jamais affiché comme un matériau.
+    materialLabel: materialLabelFor(magnetId),
   };
 }
 

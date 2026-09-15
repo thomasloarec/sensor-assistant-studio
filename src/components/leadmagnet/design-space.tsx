@@ -2399,6 +2399,9 @@ export function DesignSpace({
         </div>
         {/* Les références (MK04, M04) traversent le rendu inchangées. */}
         <p className="t-title-m">{card.couple}</p>
+        {card.materialLabel ? (
+          <p className="t-caption">{msg("Aimant {0}", [card.materialLabel])}</p>
+        ) : null}
         <p className="t-body mt-2">{msg("{0}, {1}.", [t(card.fixingLabel), card.size])}</p>
         <p className="t-body mt-2">
           {card.maxPullInMm === null ? (
