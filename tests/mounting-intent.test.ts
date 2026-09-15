@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import { detectMountingIntent, satisfiesMountingIntent } from "@/lib/leadmagnet/mounting-intent";
 import { evaluateCandidates } from "@/lib/leadmagnet/candidates";
 import { sensorById } from "@/lib/standex/sensor-catalog";
-import { emptyDossier } from "@/lib/leadmagnet/dossier";
+import { createDossier } from "@/lib/leadmagnet/dossier";
 
 const source = readFileSync("src/components/leadmagnet/design-space.tsx", "utf8");
 
@@ -16,7 +16,7 @@ const FRIDGE_FR =
   "ou collé. Ambiance froide et humide avec condensation.";
 
 const statusOf = (text: string | null, id: string) => {
-  const base = emptyDossier();
+  const base = createDossier();
   return evaluateCandidates({
     mounting: base.mounting,
     envelope: base.envelope,
@@ -67,7 +67,7 @@ describe("fixation nommée en texte libre : contrainte dure", () => {
   it("zéro résultat reste zéro résultat : aucune référence n'est repêchée", () => {
     const all = evaluateCandidates({
       mounting: { kind: "pcb_smd" },
-      envelope: emptyDossier().envelope,
+      envelope: createDossier().envelope,
       mountingText: "vissé sur une équerre",
     });
     expect(all.every((c) => c.status === "excluded")).toBe(true);
