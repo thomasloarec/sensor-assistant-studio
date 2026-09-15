@@ -2384,3 +2384,24 @@
     transition: none;
   }
 }
+
+/* ------------------------------------------------------------------ */
+/* Légendes des vignettes : « Capteur » / « Aimant »                   */
+/* ------------------------------------------------------------------ */
+/* La légende est écrite SOUS l'image, jamais par-dessus : la vignette reste
+   lisible et l'aimant reste reconnaissable même sans couleur (repère de pôles
+   à côté du mot). Les pôles ne sont dessinés que sur l'aimant. */
+.candidate-thumb-legend {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1, 0.25rem);
+  color: var(--muted-foreground);
+  text-align: center;
+}
+
+.candidate-thumb-legend-icon {
+  width: 1.25rem;
+  height: 0.7rem;
+  flex: none;
+}

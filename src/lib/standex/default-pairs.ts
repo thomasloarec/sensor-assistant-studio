@@ -1,6 +1,13 @@
-import { BARE_MAGNETS, PACKAGED_MAGNETS, PACKAGED_MAGNET_IDS, packagedMagnet } from "./magnet-catalog";
+import {
+  BARE_MAGNETS,
+  PACKAGED_MAGNETS,
+  PACKAGED_MAGNET_IDS,
+  REFERENCE_CYLINDER,
+  packagedMagnet,
+} from "./magnet-catalog";
 import { PUBLISHED_REGISTRY } from "./magnetics/registries";
 import type { PublishedRegistry } from "./magnetics/registries";
+import { guideFallbackMagnet, standardMagnetOptions } from "./magnet-recommendation";
 import type { SensorModel } from "./sensor-catalog";
 
 /**
@@ -45,8 +52,17 @@ export const PAIR_ALTERNATIVES: Readonly<Record<string, readonly string[]>> = {
   MK38: ["M38"],
 };
 
-/** Ordre de préférence entre aimants réellement documentés au registre. */
-const DOCUMENTED_PREFERENCE = ["M02", "4003004003"];
+/**
+ * Ordre de préférence entre aimants réellement documentés au registre.
+ *
+ * M02 n'y figure plus : c'était une préférence de POLITIQUE qui remontait
+ * l'actionneur du MK02 en tête des suggestions de tous les autres capteurs.
+ * Le cylindre de référence du guide d'activation reste préféré parce qu'il est
+ * la référence de mesure des tables publiées, pas parce qu'il porte un nom
+ * proche. Les lignes publiées elles-mêmes ne sont pas touchées : M02 reste lu
+ * comme preuve documentaire partout où le registre le publie réellement.
+ */
+const DOCUMENTED_PREFERENCE = ["4003004003"];
 
 /** Aimants pour lesquels CE capteur a des distances publiées au registre. */
 export function documentedMagnetsFor(
@@ -61,31 +77,55 @@ export function documentedMagnetsFor(
   });
 }
 /**
- * Aimant par défaut d'un capteur. Priorité au couple demandé ; sinon un aimant
- * RÉELLEMENT documenté pour ce capteur ; en dernier recours le boîtier M02, sans
- * jamais prétendre que ses distances s'appliquent.
+ * Aimant par défaut d'un capteur. Priorité au couple dédié demandé (MK02/M02,
+ * MK04/M04…) ; sinon un aimant RÉELLEMENT documenté pour ce capteur ; sinon un
+ * aimant STANDARD du guide d'activation choisi sur la forme du capteur
+ * (`magnet-recommendation.ts`). M02 n'est plus le repli universel : il reste
+ * réservé au couple dédié MK02.
  */
 export function defaultMagnetFor(
   sensorId: string,
   registry: PublishedRegistry = PUBLISHED_REGISTRY,
 ): string {
-  return DEFAULT_PAIRS[sensorId] ?? documentedMagnetsFor(sensorId, registry)[0] ?? "M02";
+  return (
+    DEFAULT_PAIRS[sensorId] ??
+    documentedMagnetsFor(sensorId, registry)[0] ??
+    guideFallbackMagnet(sensorId) ??
+    REFERENCE_CYLINDER
+  );
 }
 /** Compatibilité : même décision, à partir du modèle de capteur. */
 export const preferredMagnet = (sensor: SensorModel): string => defaultMagnetFor(sensor.id);
 /**
- * Aimants proposés pour un capteur, dans l'ordre de lecture : défaut, variantes
- * demandées, aimants documentés, puis le reste du catalogue. Aucun aimant n'est
- * masqué : l'utilisateur garde tout le catalogue.
+ * Aimants RECOMMANDÉS pour un capteur : couple dédié, variantes explicitement
+ * demandées, aimants réellement documentés au registre pour CE capteur, puis les
+ * aimants standard du guide d'activation adaptés à sa forme. Aucun actionneur en
+ * boîtier d'un autre capteur (M02 en tête) n'entre ici par défaut.
+ */
+export function recommendedMagnetsFor(
+  sensorId: string,
+  registry: PublishedRegistry = PUBLISHED_REGISTRY,
+): string[] {
+  return [
+    ...new Set([
+      defaultMagnetFor(sensorId, registry),
+      ...(PAIR_ALTERNATIVES[sensorId] ?? []),
+      ...documentedMagnetsFor(sensorId, registry),
+      ...standardMagnetOptions(sensorId).map((o) => o.magnetId),
+    ]),
+  ];
+}
+/**
+ * Aimants proposés pour un capteur, dans l'ordre de lecture : recommandations
+ * d'abord, puis le reste du catalogue. Aucun aimant n'est masqué : l'utilisateur
+ * garde tout le catalogue, mais l'ordre porte la politique de recommandation.
  */
 export function magnetOptionsFor(
   sensorId: string,
   registry: PublishedRegistry = PUBLISHED_REGISTRY,
 ): string[] {
   const ordered = [
-    defaultMagnetFor(sensorId, registry),
-    ...(PAIR_ALTERNATIVES[sensorId] ?? []),
-    ...documentedMagnetsFor(sensorId, registry),
+    ...recommendedMagnetsFor(sensorId, registry),
     ...PACKAGED_MAGNET_IDS,
     ...BARE_MAGNETS.map((m) => m.id),
   ];
