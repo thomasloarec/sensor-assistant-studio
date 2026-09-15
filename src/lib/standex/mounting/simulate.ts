@@ -207,11 +207,10 @@ export function simulateMounting(
   for (let i = 0; i <= steps; i++) {
     const t = i / steps,
       gap = gapAt(m, t);
-    const relative = located
-      ? relativePoseAt(m, located, t)
-      : { positionMm: [0, 0, 0] as Vec3, rotationDeg: [...m.relative.rotationDeg] as Vec3 };
-    const collides =
-      located !== null && bodiesCollide(m.couple.sensorId, m.couple.magnetId, relative);
+    // La pose vient toujours de la scène réelle, avec ou sans profil publié.
+    const relative = scenePoseAt(m, profile, t);
+    const separation = separationMm(m.couple.sensorId, m.couple.magnetId, relative);
+    const collides = bodiesCollide(m.couple.sensorId, m.couple.magnetId, relative);
     collided.push(collides);
     const sampleCovered = !blocked && !collides && gap > 0;
     if (sampleCovered) covered++;
@@ -224,7 +223,15 @@ export function simulateMounting(
     if (i > 0 && next !== contact && next !== "unknown")
       transitions.push({ t, contact: next, gapMm: gap });
     contact = next;
-    samples.push({ t, gapMm: gap, covered: sampleCovered, contact, relative, outward: t > 0.5 });
+    samples.push({
+      t,
+      gapMm: gap,
+      separationMm: separation,
+      covered: sampleCovered,
+      contact,
+      relative,
+      outward: t > 0.5,
+    });
   }
   const coveredFraction = covered / (steps + 1);
   const coverage: Coverage = covered === steps + 1 ? "covered" : covered > 0 ? "partial" : "outside";
@@ -237,20 +244,27 @@ export function simulateMounting(
   // PROXIMITÉ, pour que l'atelier reste lisible. `covered` reste faux, donc la
   // couverture, la preuve et le verdict ne bougent pas d'un iota : seul l'état
   // de contact affiché change, et il est marqué `illustrative`.
+  //
+  // La proximité est lue sur la SÉPARATION RÉELLE des deux enveloppes, pas sur
+  // l'entrefer nominal de la course : un aimant écarté de 100 mm sur le côté est
+  // loin, même si la course annonce 5 mm sur l'axe.
   const illustrative = coverage !== "covered" && illustrativeAllowed(allReasons);
   if (illustrative) {
     transitions.length = 0;
     let shown: ContactState = "unknown";
     for (let i = 0; i < samples.length; i++) {
       const s = samples[i]!;
+      const d = s.separationMm;
       let next: ContactState = "unknown";
-      if (!collided[i] && s.gapMm > 0)
+      if (!collided[i] && d > 0)
         next =
-          s.gapMm <= ILLUSTRATIVE_PULL_IN_MM
-            ? "closed"
-            : s.gapMm >= ILLUSTRATIVE_DROP_OUT_MM
-              ? "open"
-              : shown;
+          d >= ILLUSTRATIVE_FAR_MM
+            ? "open"
+            : d <= ILLUSTRATIVE_PULL_IN_MM
+              ? "closed"
+              : d >= ILLUSTRATIVE_DROP_OUT_MM
+                ? "open"
+                : shown;
       if (i > 0 && next !== shown && next !== "unknown")
         transitions.push({ t: s.t, contact: next, gapMm: s.gapMm });
       shown = next;
