@@ -27,3 +27,10 @@
 ## Recette finale
 - [ ] tests / tsgo / build / quatre scans / inventaire i18n.
 - [ ] Navigateur 1440×900 et 390×844, parcours frigo et cas illustratif.
+
+## Revue e5bd3955 — état après ce tour
+- [x] 1. M02 hors des recommandations de tout autre capteur ; défaut bloc ferrite pour MK15/16/17/MK06-4 ; registre intact.
+- [x] 2. Négations de montage (« No PCB mounting. Screw mounting only. », « sans PCB »).
+- [x] 3. Proximité lue sur la séparation RÉELLE des enveloppes (`separationMm`), décalage latéral et modèle importé compris ; illustration autorisée hors gabarit/ferreux/température/démonstration, jamais de qualification (couverture, seuils, verdict inchangés) ; ouvert au-delà de 20 mm.
+- [~] 4. Résumé « Critères utilisés » : la fixation nommée est lue dans TOUTES les réponses écrites (cause du résumé vide). RESTE : quota WebGL — 6 vignettes visibles nécessitent instantanés/cache ou rendu partagé.
+- [ ] 5. Matériaux et plages du guide d'activation à afficher dans l'atelier ; propagation du capteur de contexte à contrôler pour M11S / MK11-M5.
