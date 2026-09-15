@@ -3,6 +3,12 @@
  */
 import { SENSOR_CATALOG, sizeLabel, type SensorModel } from "@/lib/standex/sensor-catalog";
 import type { DesignDossier, EnvelopeMm, MountingChoice } from "./dossier";
+import {
+  MOUNTING_INTENT_LABEL,
+  detectMountingIntent,
+  satisfiesMountingIntent,
+  type MountingIntent,
+} from "./mounting-intent";
 
 export type CandidateStatus = "kept" | "to_verify" | "excluded";
 
