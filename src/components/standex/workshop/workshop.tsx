@@ -990,21 +990,8 @@ export default function MagneticWorkshop({
             ))}
           </select>
         </label>
-        {/* Le matériau choisi ici sélectionne une VRAIE référence du guide
-            d'activation : la géométrie 3D, les cotes et les plages affichées
-            changent ensemble, sans facteur de matériau inventé. */}
-        <GuideMaterials
-          sensorFamily={config.sensorId}
-          shape={standardShapeForSensor(config.sensorId)}
-          magnetModel={config.magnetModel}
-          guideReference={guideReference}
-          guideApproach={guideApproach}
-          onSelect={(magnetModel) => update({ magnetModel })}
-          onSelectDemo={(ref, approachId) => {
-            setGuideReference(ref);
-            setGuideApproach(approachId);
-          }}
-        />
+        {/* Le choix de matériau est remonté hors des réglages avancés : il est
+            visible dès l'ouverture de l'atelier (voir `guideMaterialsBlock`). */}
         {reference && sensitivityChoices.length > 0 && (
           <label className="mw-select-label">
             {t(classKind === "switch_model" ? "Configuration du contact" : "Classe de sensibilité")}
