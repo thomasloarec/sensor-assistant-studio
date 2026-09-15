@@ -154,7 +154,7 @@ const bodyOf = (id: string) => BARE_MAGNETS.find((m) => m.id === id)?.body ?? nu
 
 /**
  * AUCUN alias de famille. La brochure imprime la taille dans le nom du tableau
- * (« MK06-4 », « MK06-5 », … « MK06-8ï») et chaque variante a ses propres lignes :
+ * (« MK06-4 », « MK06-5 », … « MK06-8») et chaque variante a ses propres lignes :
  * les rapprocher ferait lire des plages d'une taille sur une autre. Une famille
  * absente du guide reste absente.
  */
