@@ -737,6 +737,14 @@ export default function MagneticWorkshop({
           ? "expected"
           : "none"
         : "undocumented";
+  /* Le guide d'activation publie des PLAGES pour ce couple : elles existent et
+     sont lisibles, mais ce ne sont pas des seuils qualifiés. Les deux situations
+     doivent être distinguées dans le texte, sans jamais promouvoir une plage en
+     seuil. */
+  const guideRangesAvailable = useMemo(
+    () => guideRangesFor(config.sensorId, config.magnetModel).length > 0,
+    [config.sensorId, config.magnetModel],
+  );
   const verdictSentence =
     verdictKind === "expected"
       ? msg("Détection prévue — ferme à {0} mm, ouvre à {1} mm", [pull, drop])
@@ -744,7 +752,11 @@ export default function MagneticWorkshop({
         ? t("Pas de détection sur ce cycle — rapprochez l'aimant ou changez de couple")
         : verdictKind === "undocumented"
           ? t("Position non documentée — Standex peut la mesurer pour vous")
-          : t("Distances non publiées pour ce couple — Standex peut les mesurer");
+          : guideRangesAvailable
+            ? t(
+                "Plages du guide d'activation disponibles, mais aucun seuil qualifié pour ce couple — Standex peut le mesurer",
+              )
+            : t("Distances non publiées pour ce couple — Standex peut les mesurer");
   const askTrial = verdictKind === "undocumented" || verdictKind === "unpublished";
   /** Commutation ILLUSTRATIVE : le contact bascule à proximité pour que la scène
    *  reste lisible, mais aucune distance n'est caractérisée. La mention est
