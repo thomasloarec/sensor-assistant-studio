@@ -55,6 +55,11 @@ export interface GuideRange {
   toMm: number | null;
   upNote?: "not_published" | "below_zero";
   toNote?: "not_published" | "below_zero";
+  /** Ordre imprimé ATYPIQUE : « up » est supérieur à « to » (vérifié page 12 sur
+   *  MK04-1A66A-X + SmCo, D3 = 10,3 / 8,2). Ces lignes sont RÉELLES : elles
+   *  restent lisibles telles qu'imprimées, signalées « à confirmer », et ne sont
+   *  jamais triées, corrigées ni utilisées comme repères de démonstration. */
+  orderAtypical?: true;
 }
 export interface ActivationGuide {
   version: string;
@@ -128,6 +133,8 @@ export function readActivationGuide(value: unknown): ActivationGuide {
       toMm,
       ...(upNote === undefined ? {} : { upNote }),
       ...(toNote === undefined ? {} : { toNote }),
+      // Signalement, PAS correction : l'ordre imprimé est conservé.
+      ...(upMm !== null && toMm !== null && upMm > toMm ? { orderAtypical: true as const } : {}),
     });
   }
   const source = (data.source ?? {}) as GuideSource;
@@ -266,6 +273,9 @@ export function guideIllustrativeMarks(
   range: GuideRange | null,
 ): { nearMm: number; farMm: number } | null {
   if (!range || range.upMm === null || range.toMm === null) return null;
+  // Ligne d'ordre imprimé atypique : consultable dans le tableau, JAMAIS
+  // utilisée ici. La trier pour la rendre exploitable inventerait une plage.
+  if (range.orderAtypical) return null;
   const near = Math.min(range.upMm, range.toMm);
   const far = Math.max(range.upMm, range.toMm);
   if (!(near > 0) || !(far > near)) return null;

@@ -209,9 +209,13 @@ function GuideDemoPicker({
               "Animation indicative : la scène se rapproche du repère bas {0} mm et s'éloigne du repère haut {1} mm de la plage publiée. Ce ne sont pas des seuils de fermeture et de réouverture, et rien n'est validé.",
               [number(marks.nearMm), number(marks.farMm)],
             )
-          : t(
-              "Aucune plage exploitable pour cette combinaison : l'animation indicative retombe sur 15 mm et 18 mm, deux repères de lecture qui ne sont pas des seuils.",
-            )}
+          : range?.orderAtypical
+            ? t(
+                "Cette ligne du guide est imprimée dans un ordre inhabituel (« up » supérieur à « to ») : elle reste lisible telle quelle dans le tableau, à confirmer par Standex, mais elle ne sert pas de repère. L'animation indicative retombe sur 15 mm et 18 mm.",
+              )
+            : t(
+                "Aucune plage exploitable pour cette combinaison : l'animation indicative retombe sur 15 mm et 18 mm, deux repères de lecture qui ne sont pas des seuils.",
+              )}
       </p>
     </div>
   );
@@ -263,11 +267,22 @@ function GuideRangeTable({
                 {approaches.map((a) => {
                   const row = rows.find((r) => r.sensorReference === ref && r.approachId === a);
                   return (
-                    <td key={a} className="t-metric">
+                    <td
+                      key={a}
+                      className="t-metric"
+                      {...(row?.orderAtypical ? { "data-atypical": "true" } : {})}
+                      // Signalé, pas corrigé : l'ordre imprimé est conservé.
+                      title={
+                        row?.orderAtypical
+                          ? t("Ordre imprimé inhabituel dans la brochure — à confirmer par Standex")
+                          : undefined
+                      }
+                    >
                       {row
                         ? formatGuideBound(row.upMm, row.upNote) +
                           " / " +
-                          formatGuideBound(row.toMm, row.toNote)
+                          formatGuideBound(row.toMm, row.toNote) +
+                          (row.orderAtypical ? " *" : "")
                         : "—"}
                     </td>
                   );
@@ -277,6 +292,13 @@ function GuideRangeTable({
           </tbody>
         </table>
       </div>
+      {rows.some((r) => r.orderAtypical) && (
+        <p className="mw-help" data-testid="guide-atypical-note">
+          {t(
+            "* Ordre imprimé inhabituel dans la brochure (« up » supérieur à « to »). La valeur est reproduite telle quelle, sans tri ni correction, et reste à confirmer par Standex : ces lignes ne servent pas de repère à la démonstration de portée.",
+          )}
+        </p>
+      )}
       <p className="t-caption">
         {msg("Guide d'activation Standex, page {0} · plages en mm", [String(rows[0]!.page)])}
       </p>
