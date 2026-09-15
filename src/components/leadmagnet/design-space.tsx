@@ -914,7 +914,10 @@ export function DesignSpace({
         .join(". ") || null,
     [dossier.requirements],
   );
-  const mountingText = mountingAnswer ?? answersText;
+  /** La réponse de montage prime ; si elle ne nomme aucune fixation, on lit
+   * l'ensemble des réponses écrites, sans jamais rien deviner. */
+  const mountingText =
+    mountingAnswer && detectMountingIntent(mountingAnswer).explicit ? mountingAnswer : answersText;
   const candidates = useMemo(
     () =>
       evaluateCandidates({
