@@ -39,7 +39,10 @@ test("le couple par défaut vient du tableau central ; un aimant choisi reste lu
   // la PREUVE est intacte (M02 y figure toujours), seule la POLITIQUE change —
   // M02 n'est plus remonté en tête des suggestions des autres capteurs.
   expect(documentedMagnetsFor("MK03")).toEqual(["4003004003", "M02"]);
-  expect(magnetOptionsFor("MK03").slice(0, 3)).toEqual(["M03", "4003004003", "M02"]);
+  // Options proposées : la forme du capteur est respectée (MK03 est tubulaire) et
+  // le boîtier d'un AUTRE capteur (M02, propre à MK02) n'y figure plus.
+  expect(magnetOptionsFor("MK03").slice(0, 2)).toEqual(["M03", "4003004003"]);
+  expect(magnetOptionsFor("MK03")).not.toContain("M02");
   // Démarrage par défaut : couple réellement documenté MK04 + M04 (D1, classe B).
   expect(DEFAULT_WORKSHOP.sensorId).toBe("MK04");
   expect(DEFAULT_WORKSHOP.magnetModel).toBe("M04");
