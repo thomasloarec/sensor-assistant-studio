@@ -25153,5 +25153,32 @@
     "Магнит {0}",
     "Magnete in {0}",
     "{0} マグネット"
+  ],
+  "Plages du guide d'activation disponibles, mais aucun seuil qualifié pour ce couple — Standex peut le mesurer": [
+    "Activation guide ranges are available, but no qualified threshold for this pair — Standex can measure it",
+    "可查阅激活指南的范围，但该组合没有经过验证的阈值——Standex 可以进行测量",
+    "Bereiche aus dem Aktivierungsleitfaden liegen vor, aber kein qualifizierter Schwellwert für dieses Paar — Standex kann ihn messen",
+    "Hay rangos de la guía de activación, pero ningún umbral cualificado para esta pareja: Standex puede medirlo",
+    "Диапазоны из руководства по срабатыванию есть, но квалифицированного порога для этой пары нет — Standex может его измерить",
+    "Sono disponibili gli intervalli della guida di attivazione, ma nessuna soglia qualificata per questa coppia: Standex può misurarla",
+    "アクティベーションガイドの範囲はありますが、この組み合わせの確定したしきい値はありません。Standex が測定できます"
+  ],
+  "Le guide d'activation publie des plages de mesure pour ce couple, mais aucun seuil de fermeture ni de réouverture : la commutation montrée est illustrative et doit être validée par des essais.": [
+    "The activation guide publishes measurement ranges for this pair, but no closing or reopening threshold: the switching shown is illustrative and must be validated by testing.",
+    "激活指南为该组合公布了测量范围，但没有闭合或断开阈值：所显示的动作仅为示意，必须通过试验验证。",
+    "Der Aktivierungsleitfaden veröffentlicht Messbereiche für dieses Paar, aber keinen Schließ- oder Öffnungsschwellwert: Das gezeigte Schalten ist illustrativ und muss durch Versuche bestätigt werden.",
+    "La guía de activación publica rangos de medición para esta pareja, pero ningún umbral de cierre ni de reapertura: la conmutación mostrada es ilustrativa y debe validarse con ensayos.",
+    "Руководство по срабатыванию публикует диапазоны измерений для этой пары, но не пороги замыкания и размыкания: показанное переключение иллюстративно и требует проверки испытаниями.",
+    "La guida di attivazione pubblica intervalli di misura per questa coppia, ma nessuna soglia di chiusura o riapertura: la commutazione mostrata è illustrativa e va validata con prove.",
+    "アクティベーションガイドはこの組み合わせの測定範囲を公表していますが、閉成・復帰のしきい値はありません。表示されている動作は参考であり、試験による検証が必要です。"
+  ],
+  "Ce couple capteur–aimant n'a pas de seuils qualifiés. Les plages du guide d'activation, quand elles existent, ne sont pas des seuils de fermeture.": [
+    "This sensor–magnet pair has no qualified thresholds. Activation guide ranges, where they exist, are not closing thresholds.",
+    "该传感器—磁铁组合没有经过验证的阈值。激活指南中的范围（若存在）并非闭合阈值。",
+    "Für dieses Sensor-Magnet-Paar gibt es keine qualifizierten Schwellwerte. Bereiche aus dem Aktivierungsleitfaden sind, wo vorhanden, keine Schließschwellwerte.",
+    "Esta pareja sensor–imán no tiene umbrales cualificados. Los rangos de la guía de activación, cuando existen, no son umbrales de cierre.",
+    "Для этой пары датчик–магнит нет квалифицированных порогов. Диапазоны руководства по срабатыванию, если они есть, не являются порогами замыкания.",
+    "Questa coppia sensore–magnete non ha soglie qualificate. Gli intervalli della guida di attivazione, quando esistono, non sono soglie di chiusura.",
+    "このセンサーと磁石の組み合わせには確定したしきい値がありません。アクティベーションガイドの範囲があっても、閉成しきい値ではありません。"
   ]
 }
