@@ -51,9 +51,28 @@ export function relativePoseAt(m: GuidedMounting, profile: LocatedProfile, t: nu
     rotationDeg: [...m.relative.rotationDeg] as Vec3,
   };
 }
+/**
+ * Pose de la scène à l'instant `t`, même sans profil publié.
+ *
+ * Sans profil, la pose relative valait `[0, 0, 0]` : l'aimant était réputé au
+ * centre du capteur, ce qui n'est ni la scène affichée ni une distance
+ * mesurable. On reconstruit donc la pose réellement dessinée à partir de l'axe
+ * d'approche du gabarit, en conservant le décalage latéral déclaré. Aucune
+ * donnée magnétique n'est fabriquée : c'est de la géométrie.
+ */
+export function scenePoseAt(m: GuidedMounting, profile: MountingProfile | null, t: number): Pose {
+  const located = locatedProfile(profile);
+  if (located) return relativePoseAt(m, located, t);
+  const axis = approachAxisFor(m.couple.approachId);
+  const fallback: LocatedProfile = { ...(profile ?? {}), axis } as LocatedProfile;
+  return relativePoseAt(m, fallback, t);
+}
 export interface MountingSample {
   t: number;
   gapMm: number;
+  /** Séparation géométrique réelle des deux enveloppes dans la scène, décalage
+   * latéral et montage importé compris. Jamais un seuil de commutation. */
+  separationMm: number;
   covered: boolean;
   contact: ContactState;
   relative: Pose;
