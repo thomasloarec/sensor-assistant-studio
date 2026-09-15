@@ -8,6 +8,7 @@ import {
   DEFAULT_PAIRS,
   defaultMagnetFor,
   documentedMagnetsFor,
+  recommendedMagnetsFor,
   magnetOptionsFor,
   preferredMagnet,
 } from "../src/lib/standex/default-pairs";
