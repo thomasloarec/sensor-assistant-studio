@@ -2123,7 +2123,7 @@ export function DesignSpace({
    * validation R&D. La délégation à Standex est levée par ce choix explicite. */
   const chooseSensor = (id: string, name: string, magnetId?: string) => {
     const base = workshopDraftRef.current ?? workshop ?? dossier.workshop ?? DEFAULT_WORKSHOP;
-    const aligned = applySensorSelection(base, id);
+    const aligned = applyPairSelection(base, id, magnetId);
     // Un montage déjà enregistré peut porter un aimant choisi volontairement.
     // La présélection du capteur aligne le reste de l'atelier sans l'écraser.
     // MAIS un couple demandé explicitement (« Tester ce couple ») impose son
