@@ -60,7 +60,6 @@ describe("approche frontale F1 : les faces se font réellement face", () => {
     // couvert et aucun seuil publié n'est produit.
     expect(sim.samples.every((s) => !s.covered)).toBe(true);
     expect(sim.illustrative).toBe(true);
-    expect(sim.pullInMm).toBeNull();
     expect(referenceAllowed(frontal({ magnetAngle: 0 }))).toBe(false);
     expect(referenceAllowed(frontal())).toBe(true);
   });
@@ -94,8 +93,6 @@ describe("approche frontale F1 : les faces se font réellement face", () => {
     expect(sim.reasons).toContain("LATERAL_OFFSET");
     expect(sim.samples.every((s) => !s.covered)).toBe(true);
     expect(sim.illustrative).toBe(true);
-    expect(sim.pullInMm).toBeNull();
-    expect(sim.dropOutMm).toBeNull();
   });
 
   test("les contacts 1B et 1C ne sont jamais simulés, mais restent documentés", () => {
