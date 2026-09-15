@@ -50,7 +50,7 @@ const PATTERNS: Readonly<Record<MountingIntentKind, readonly RegExp[]>> = {
   press_fit: [/\bemmanch/i, /\bencastr/i, /\bdans un trou\b/i, /\bpress[- ]?fit(ted)?\b/i, /\binto a hole\b/i],
   clamp: [/\bcollier/i, /\bbrid(e|é)/i, /\bclip/i, /\bclamp(ed|ing)?\b/i, /\bstrap(ped)?\b/i],
   pcb: [
-    /\bcircuit imprimé\b/i,
+    /\bcircuit imprim/i,
     /\bsur carte\b/i,
     /\bcms\b/i,
     /\bpcb\b/i,
