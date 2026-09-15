@@ -26,6 +26,8 @@ import {
   toWorldPoint,
 } from "./geometry";
 import { withComputed } from "./simulate";
+import type { ScenePoseSampler } from "./simulate";
+
 
 /** D3 et l'approche frontale F1 suivent l'axe longitudinal X : leur décalage
  * latéral se lit donc sur Z, exactement comme D3. D1 approche par la face
