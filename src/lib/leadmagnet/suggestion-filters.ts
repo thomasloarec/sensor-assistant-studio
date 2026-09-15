@@ -124,10 +124,7 @@ export function suggestionFilters(input: {
         id: "fixation",
         label: intent.kinds.map((k) => MOUNTING_INTENT_LABEL[k]).join(" ou "),
         requirementKey: "mounting",
-        technical:
-          `Fixation nommée dans votre réponse. Formes de boîtier retenues : ` +
-          `${intent.allowedShapes.join(", ")}. Aucune fixation n'est ajoutée à un boîtier ` +
-          "qui ne la documente pas.",
+        technical: `Fixation nommée dans votre réponse. Formes de boîtier retenues : ${intent.allowedShapes.join(", ")}. Aucune fixation n'est ajoutée à un boîtier qui ne la documente pas.`,
         source: "answers",
         criteria: { shapes: intent.allowedShapes },
       });
