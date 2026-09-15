@@ -1964,6 +1964,10 @@ export default function MagneticWorkshop({
             t(
               "Distances typiques publiées par Standex pour ce couple, dans cette position. À confirmer par un essai dans votre application.",
             )
+          ) : reference && guideRangesAvailable ? (
+            t(
+              "Le guide d'activation publie des plages de mesure pour ce couple, mais aucun seuil de fermeture ni de réouverture : la commutation montrée est illustrative et doit être validée par des essais.",
+            )
           ) : reference ? (
             t(
               "Aucune distance publiée pour ce couple : la commutation montrée est illustrative et doit être validée par des essais.",
