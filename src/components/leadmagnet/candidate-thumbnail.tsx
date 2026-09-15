@@ -9,11 +9,14 @@ import { t } from "@/lib/i18n/core";
  * - le nombre de contextes simultanés est plafonné, les vignettes en attente
  *   affichent le repli 2D jusqu'à ce qu'une place se libère ;
  * - la 3D est démontée (et sa place rendue) dès que la vignette sort de vue ;
+ * - dès qu'une autre vignette visible attend une place, le rendu est FIGÉ en
+ *   image et le contexte est rendu : les six objets de trois cartes sont donc
+ *   tous rendus en 3D, à tour de rôle, sans dépendre du survol ;
  * - aucune rotation automatique sous `prefers-reduced-motion: reduce` ;
  * - sans WebGL, le repli 2D dessine LA silhouette du capteur concerné : il ne
  *   substitue jamais une autre référence.
  */
-import { Component, lazy, Suspense, useState, type ReactNode } from "react";
+import { Component, lazy, Suspense, useEffect, useState, type ReactNode } from "react";
 
 import {
   sensorById,
@@ -35,6 +38,8 @@ import {
   queuedThumbnailSlots,
   releaseThumbnailSlot,
   resetThumbnailSlots,
+  storeThumbnailSnapshot,
+  thumbnailSnapshot,
   useWebglSlot,
 } from "@/hooks/use-webgl-slot";
 
@@ -216,10 +221,31 @@ export function CandidateThumbnail({
   const model = pairedMagnetModel(sensorId, hostSensorId) ?? sensorById(sensorId);
   const [lost, setLost] = useState(false);
   const supported = hasWebGL();
+  /* Clé d'instantané : elle décrit EXACTEMENT ce qui est dessiné. Une image
+     figée ne peut donc pas être réaffichée pour une autre géométrie, un autre
+     couple, une autre approche ou un autre cadrage. */
+  const snapshotKey = [
+    model.id,
+    hostSensorId ?? "",
+    pair?.magnetId ?? "",
+    pair?.approach ?? "",
+    cabled ? "cable" : "nocable",
+    fitToView ? "fit" : "fixed",
+    scaleBar ? "rule" : "norule",
+    size,
+  ].join("|");
+  const [snapshot, setSnapshot] = useState<string | null>(() => thumbnailSnapshot(snapshotKey));
+  useEffect(() => {
+    setSnapshot(thumbnailSnapshot(snapshotKey));
+  }, [snapshotKey]);
   // La 3D est demandée pour TOUTE vignette réellement visible : l'attribution
   // dépend de la visibilité, plus du survol. Une carte sans place disponible
   // garde son dessin coté et le dit.
-  const { host, hasSlot, reduced } = useWebglSlot(livePreview && supported && !lost);
+  // Une vignette déjà figée ne redemande PAS de contexte : sa place revient
+  // immédiatement aux vignettes visibles encore en attente.
+  const { host, hasSlot, reduced, crowded } = useWebglSlot(
+    livePreview && supported && !lost && snapshot === null,
+  );
 
   const live = hasSlot;
   const reason = !livePreview
@@ -230,18 +256,24 @@ export function CandidateThumbnail({
         ? t("Aperçu 3D indisponible : dessin coté à la place")
         : live
           ? t("Aperçu 3D")
-          : t("Dessin coté : aperçu 3D en attente d'une place");
+          : snapshot
+            ? t("Aperçu 3D figé")
+            : t("Dessin coté : aperçu 3D en attente d'une place");
   const roleLabel = legend === "magnet" ? t("Aimant") : legend === "sensor" ? t("Capteur") : null;
   return (
     <div
       ref={host as React.RefObject<HTMLDivElement>}
       className={size === "large" ? "candidate-thumb candidate-thumb-large" : "candidate-thumb"}
-      data-live={live ? "3d" : "2d"}
+      data-live={live ? "3d" : snapshot ? "snapshot" : "2d"}
       data-role={legend}
       data-sensor={model.id}
       {...(quiet ? { title: `${model.name} — ${reason}` } : {})}
     >
-      {live ? (
+      {!live && snapshot ? (
+        // Image du rendu 3D réel de CETTE vignette : le contexte a été rendu
+        // pour qu'une autre carte visible puisse être rendue à son tour.
+        <img className="candidate-thumb-snapshot" src={snapshot} alt={`${model.name} — ${reason}`} />
+      ) : live ? (
         // Un renderer qui refuse de se créer doit retomber sur le dessin 2D,
         // au même titre qu'un contexte perdu en cours de route.
         <ThumbnailBoundary onFailed={() => setLost(true)}>
@@ -266,6 +298,13 @@ export function CandidateThumbnail({
               scaleBar={scaleBar}
               {...(pair ? { pair } : {})}
               reduced={reduced}
+              /* Figer dès qu'une autre vignette visible attend, ou d'emblée
+                 quand l'animation est désactivée par préférence système. */
+              snapshotWhenSettled={crowded || reduced}
+              onSnapshot={(dataUrl) => {
+                storeThumbnailSnapshot(snapshotKey, dataUrl);
+                setSnapshot(dataUrl);
+              }}
               onContextLost={() => setLost(true)}
             />
           </Suspense>

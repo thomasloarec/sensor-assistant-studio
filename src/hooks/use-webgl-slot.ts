@@ -19,6 +19,45 @@ export const MAX_LIVE_CONTEXTS = 4;
 let liveContexts = 0;
 const queue: { token: ThumbnailSlot; notify: () => void }[] = [];
 
+/* ------------------------------------------------------------------ */
+/* Pression : qui attend une place, et qui doit donc en libérer une     */
+/* ------------------------------------------------------------------ */
+/** Avec 4 places et 6 objets visibles, plafonner ne suffit pas : les vignettes
+ * déjà servies doivent RENDRE leur place. Les détentrices s'abonnent ici,
+ * capturent un instantané de leur rendu puis libèrent le contexte : les
+ * vignettes en attente passent à leur tour, et l'instantané reste affiché. */
+const demandListeners = new Set<() => void>();
+export function subscribeThumbnailDemand(listener: () => void) {
+  demandListeners.add(listener);
+  return () => {
+    demandListeners.delete(listener);
+  };
+}
+function announceDemand() {
+  for (const listener of [...demandListeners]) listener();
+}
+
+/* ------------------------------------------------------------------ */
+/* Cache d'instantanés                                                 */
+/* ------------------------------------------------------------------ */
+/** Un instantané est une IMAGE du rendu réel de CETTE vignette, indexée par sa
+ * clé exacte (référence, capteur de contexte, couple, approche, cadrage). Deux
+ * vignettes différentes ne partagent donc jamais une image, et un instantané
+ * n'est jamais réutilisé pour une géométrie qu'il ne montre pas. */
+const snapshots = new Map<string, string>();
+const SNAPSHOT_LIMIT = 64;
+export function thumbnailSnapshot(key: string): string | null {
+  return snapshots.get(key) ?? null;
+}
+export function storeThumbnailSnapshot(key: string, dataUrl: string) {
+  if (!key || !dataUrl.startsWith("data:image/")) return;
+  if (snapshots.size >= SNAPSHOT_LIMIT) snapshots.clear();
+  snapshots.set(key, dataUrl);
+}
+export function clearThumbnailSnapshots() {
+  snapshots.clear();
+}
+
 /** Demande une place. Le jeton renvoyé est mis à jour lors d'un passage de
  * relais : il ne faut donc jamais recopier `held` dans une variable locale. */
 export function acquireThumbnailSlot(notify: () => void): ThumbnailSlot {
@@ -30,6 +69,7 @@ export function acquireThumbnailSlot(notify: () => void): ThumbnailSlot {
   }
   token.waiting = true;
   queue.push({ token, notify });
+  announceDemand();
   return token;
 }
 
@@ -63,6 +103,7 @@ export function releaseThumbnailSlot(token: ThumbnailSlot) {
 export function resetThumbnailSlots() {
   liveContexts = 0;
   queue.length = 0;
+  snapshots.clear();
 }
 /** Uniquement pour les tests : nombre de contextes réellement comptés. */
 export function liveThumbnailContexts() {
@@ -151,5 +192,15 @@ export function useWebglSlot(active: boolean) {
     };
   }, [active, inView, claim]);
 
-  return { host, inView, hasSlot: active && inView && slot, reduced };
+  // Pression : d'autres vignettes visibles attendent une place. La détentrice
+  // s'en sert pour figer son rendu et rendre son contexte, au lieu de garder
+  // une place pendant qu'une carte visible reste en 2D.
+  const [crowded, setCrowded] = useState(false);
+  useEffect(() => {
+    const read = () => setCrowded(queuedThumbnailSlots() > 0);
+    read();
+    return subscribeThumbnailDemand(read);
+  }, []);
+
+  return { host, inView, hasSlot: active && inView && slot, reduced, crowded };
 }

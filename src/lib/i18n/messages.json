@@ -24910,5 +24910,149 @@
     "Крепление, которое вы НАЗЫВАЕТЕ здесь («на винтах или клею»), считается ограничением. Больше ничего из вашего текста не выводится: название применения не подразумевает крепления. Эти варианты остаются изменяемыми.",
     "Un fissaggio che NOMINI qui («avvitato o incollato») è considerato un vincolo. Nient'altro viene dedotto dal tuo testo: il nome di un'applicazione non implica alcun fissaggio. Queste scelte restano modificabili.",
     "ここで明記された取付方法（「ネジ留めまたは接着」など）は制約として扱います。それ以外は文章から推測しません：用途名は取付方法を意味しません。これらの選択はいつでも変更できます。"
+  ],
+  "Matériau économique courant, portée plus courte": [
+    "Common economical material, shorter reach",
+    "常见经济材料，作用距离较短",
+    "Verbreitetes günstiges Material, kürzere Reichweite",
+    "Material económico habitual, alcance más corto",
+    "Распространённый экономичный материал, меньшая дистанция",
+    "Materiale economico comune, portata più corta",
+    "一般的で経済的な材料、動作距離は短め"
+  ],
+  "Stable en température, portée moyenne": [
+    "Temperature-stable, medium reach",
+    "温度稳定，作用距离中等",
+    "Temperaturstabil, mittlere Reichweite",
+    "Estable en temperatura, alcance medio",
+    "Стабилен по температуре, средняя дистанция",
+    "Stabile in temperatura, portata media",
+    "温度安定性が高く、動作距離は中程度"
+  ],
+  "Portée longue, sensible à la température": [
+    "Long reach, temperature-sensitive",
+    "作用距离长，对温度敏感",
+    "Große Reichweite, temperaturempfindlich",
+    "Alcance largo, sensible a la temperatura",
+    "Большая дистанция, чувствителен к температуре",
+    "Portata lunga, sensibile alla temperatura",
+    "動作距離は長いが温度に敏感"
+  ],
+  "Portée courte ici, tenue en température élevée": [
+    "Short reach here, high-temperature capability",
+    "此处作用距离短，耐高温",
+    "Hier kurze Reichweite, hohe Temperaturfestigkeit",
+    "Alcance corto aquí, resistencia a alta temperatura",
+    "Здесь малая дистанция, стойкость к высокой температуре",
+    "Portata corta qui, resistenza alle alte temperature",
+    "ここでは動作距離が短いが高温に強い"
+  ],
+  "Matériau de l'aimant (guide d'activation Standex)": [
+    "Magnet material (Standex activation guide)",
+    "磁铁材料（Standex 激活指南）",
+    "Magnetmaterial (Standex Aktivierungsleitfaden)",
+    "Material del imán (guía de activación Standex)",
+    "Материал магнита (руководство Standex по активации)",
+    "Materiale del magnete (guida di attivazione Standex)",
+    "マグネット材料（Standex アクティベーションガイド）"
+  ],
+  "Matériau de l'aimant": [
+    "Magnet material",
+    "磁铁材料",
+    "Magnetmaterial",
+    "Material del imán",
+    "Материал магнита",
+    "Materiale del magnete",
+    "マグネット材料"
+  ],
+  "Cylindre": [
+    "Cylinder",
+    "圆柱",
+    "Zylinder",
+    "Cilindro",
+    "Цилиндр",
+    "Cilindro",
+    "円柱"
+  ],
+  "Bloc": [
+    "Block",
+    "方块",
+    "Block",
+    "Bloque",
+    "Блок",
+    "Blocco",
+    "ブロック"
+  ],
+  "Moment publié : {0} × 10⁻⁶ Vs·cm": [
+    "Published moment: {0} × 10⁻⁶ Vs·cm",
+    "公布磁矩：{0} × 10⁻⁶ Vs·cm",
+    "Veröffentlichtes Moment: {0} × 10⁻⁶ Vs·cm",
+    "Momento publicado: {0} × 10⁻⁶ Vs·cm",
+    "Опубликованный момент: {0} × 10⁻⁶ Vs·cm",
+    "Momento pubblicato: {0} × 10⁻⁶ Vs·cm",
+    "公表モーメント：{0} × 10⁻⁶ Vs·cm"
+  ],
+  "L'aimant sélectionné n'est pas l'un des aimants standard du guide : choisissez un matériau ci-dessus pour lire ses plages publiées.": [
+    "The selected magnet is not one of the guide's standard magnets: choose a material above to read its published ranges.",
+    "所选磁铁不属于指南中的标准磁铁：请在上方选择一种材料以查看其公布范围。",
+    "Der gewählte Magnet ist keiner der Standardmagnete des Leitfadens: Wählen Sie oben ein Material, um die veröffentlichten Bereiche zu lesen.",
+    "El imán seleccionado no es uno de los imanes estándar de la guía: elija un material arriba para ver sus rangos publicados.",
+    "Выбранный магнит не входит в число стандартных магнитов руководства: выберите материал выше, чтобы увидеть опубликованные диапазоны.",
+    "Il magnete selezionato non è uno dei magneti standard della guida: scegli un materiale sopra per leggere gli intervalli pubblicati.",
+    "選択したマグネットはガイドの標準マグネットではありません。上で材料を選ぶと公表範囲が表示されます。"
+  ],
+  "Voir le guide d'activation Standex ↗": [
+    "View the Standex activation guide ↗",
+    "查看 Standex 激活指南 ↗",
+    "Standex Aktivierungsleitfaden ansehen ↗",
+    "Ver la guía de activación Standex ↗",
+    "Открыть руководство Standex по активации ↗",
+    "Vedi la guida di attivazione Standex ↗",
+    "Standex アクティベーションガイドを見る ↗"
+  ],
+  "Plages publiées avec {0}": [
+    "Published ranges with {0}",
+    "{0} 的公布范围",
+    "Veröffentlichte Bereiche mit {0}",
+    "Rangos publicados con {0}",
+    "Опубликованные диапазоны с {0}",
+    "Intervalli pubblicati con {0}",
+    "{0} の公表範囲"
+  ],
+  "Ces deux colonnes sont les bornes d'une plage mesurée par Standex sur une série de capteurs. Ce ne sont pas des seuils de fermeture et de réouverture : la démonstration de portée dans la scène reste indicative tant que le couple n'a pas de distances caractérisées.": [
+    "These two columns are the bounds of a range measured by Standex across a series of sensors. They are not closing and reopening thresholds: the reach shown in the scene stays indicative until the pair has characterised distances.",
+    "这两列是 Standex 在一系列传感器上测得范围的上下限，并非闭合与断开阈值：在该组合尚无表征距离前，场景中的作用距离演示仅供参考。",
+    "Diese beiden Spalten sind die Grenzen eines von Standex über eine Sensorserie gemessenen Bereichs. Es sind keine Schalt- und Rückschaltschwellen: die Reichweite in der Szene bleibt indikativ, solange das Paar keine charakterisierten Abstände hat.",
+    "Estas dos columnas son los límites de un rango medido por Standex en una serie de sensores. No son umbrales de cierre y reapertura: el alcance mostrado en la escena sigue siendo indicativo mientras la pareja no tenga distancias caracterizadas.",
+    "Эти два столбца — границы диапазона, измеренного Standex на серии датчиков. Это не пороги замыкания и размыкания: показанная в сцене дистанция остаётся ориентировочной, пока для пары нет охарактеризованных расстояний.",
+    "Queste due colonne sono i limiti di un intervallo misurato da Standex su una serie di sensori. Non sono soglie di chiusura e riapertura: la portata mostrata nella scena resta indicativa finché la coppia non ha distanze caratterizzate.",
+    "この2列は Standex が一連のセンサーで測定した範囲の下限と上限であり、閉じる／開くのしきい値ではありません。組み合わせに特性距離がない間、シーンの動作距離は参考値です。"
+  ],
+  "Référence du guide": [
+    "Guide reference",
+    "指南型号",
+    "Referenz im Leitfaden",
+    "Referencia de la guía",
+    "Обозначение в руководстве",
+    "Riferimento della guida",
+    "ガイドの型番"
+  ],
+  "Guide d'activation Standex, page {0} · plages en mm": [
+    "Standex activation guide, page {0} · ranges in mm",
+    "Standex 激活指南第 {0} 页 · 范围以 mm 表示",
+    "Standex Aktivierungsleitfaden, Seite {0} · Bereiche in mm",
+    "Guía de activación Standex, página {0} · rangos en mm",
+    "Руководство Standex по активации, стр. {0} · диапазоны в мм",
+    "Guida di attivazione Standex, pagina {0} · intervalli in mm",
+    "Standex アクティベーションガイド {0} ページ · 範囲は mm"
+  ],
+  "Aperçu 3D figé": [
+    "Frozen 3D preview",
+    "已固定的 3D 预览",
+    "Eingefrorene 3D-Vorschau",
+    "Vista 3D congelada",
+    "Зафиксированный 3D-просмотр",
+    "Anteprima 3D congelata",
+    "静止した 3D プレビュー"
   ]
 }

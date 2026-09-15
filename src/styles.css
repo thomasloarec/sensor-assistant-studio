@@ -523,6 +523,15 @@
     inline-size: 100%;
     block-size: 100%;
   }
+  /* Instantané : image du rendu 3D réel de cette vignette, affichée après que
+     le contexte a été rendu à une autre carte visible. Même cadrage, même
+     échelle : ce n'est pas un dessin de remplacement. */
+  .candidate-thumb-snapshot {
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: contain;
+  }
   .candidate-thumb-fallback {
     display: flex;
     flex-direction: column;

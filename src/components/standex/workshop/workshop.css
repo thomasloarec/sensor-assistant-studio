@@ -2405,3 +2405,53 @@
   height: 0.7rem;
   flex: none;
 }
+
+/* ------------------------------------------------------------------ */
+/* Choix du matériau de l'aimant (guide d'activation Standex)          */
+/* ------------------------------------------------------------------ */
+/* Contrôle segmenté : la sélection se lit à la surface et à l'élévation,
+   jamais à un trait gris. Cibles ≥ 44 px, texte ≥ 14 px. */
+.mw-guide-materials,
+.mw-guide-references {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-block: 8px 12px;
+}
+.mw-guide-material,
+.mw-guide-reference {
+  display: grid;
+  gap: 2px;
+  flex: 1 1 10rem;
+  min-block-size: 44px;
+  padding: 8px 12px;
+  text-align: start;
+  border-radius: var(--r-md);
+  background: var(--surface-sunken);
+  color: var(--mw-ink);
+  font: var(--mw-t-dense);
+  box-shadow: var(--e-1);
+  transition:
+    background var(--d-fast) var(--ease-out),
+    box-shadow var(--d-fast) var(--ease-out);
+}
+.mw-guide-material[aria-pressed="true"],
+.mw-guide-reference[aria-pressed="true"] {
+  background: var(--mw-blue);
+  color: var(--mw-on-accent);
+  box-shadow: var(--e-2);
+}
+.mw-guide-material strong,
+.mw-guide-reference strong {
+  font: var(--t-body);
+}
+.mw-guide-scroll {
+  max-block-size: 22rem;
+  overflow: auto;
+}
+@media (prefers-reduced-motion: reduce) {
+  .mw-guide-material,
+  .mw-guide-reference {
+    transition: none;
+  }
+}
