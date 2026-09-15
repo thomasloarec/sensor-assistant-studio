@@ -428,18 +428,30 @@ export default function MagneticWorkshop({
     [error, setError] = useState<string | null>(null);
   const [importNotice, setImportNotice] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
-  /** Résultat affiché : l'état de contact vient TOUJOURS du même moteur de
-   * couverture que le verdict, quel que soit le mode. Hors couverture, la
-   * scène, la chronologie et l'indicateur affichent « inconnu » : jamais de
-   * vert par une autre source. Les positions issues de `simulateCycle` sont
-   * conservées pour l'animation du modèle importé. */
+  /** Résultat affiché : l'état de contact vient TOUJOURS du même moteur que le
+   * verdict, quel que soit le mode. Deux régimes, jamais mélangés :
+   *
+   * - QUALIFIÉ (`covered`) : l'état vient des distances publiées du couple. Hors
+   *   couverture, la scène affiche « inconnu » : jamais de vert par une autre
+   *   source.
+   * - ILLUSTRATIF (`sim.illustrative`) : aucune distance exploitable, le moteur
+   *   fait commuter à proximité pour que la scène raconte quelque chose. Ces
+   *   échantillons ont `covered === false` PAR DESIGN — les filtrer revenait à
+   *   laisser la scène, la lampe et la chronologie éternellement indéterminées.
+   *   L'état est donc rendu tel quel, et rien d'autre ne bouge : la couverture,
+   *   la preuve, le verdict et le message permanent « Simulation illustrative »
+   *   restent ceux du moteur.
+   *
+   * Les positions issues de `simulateCycle` sont conservées pour l'animation du
+   * modèle importé. */
   const guidedSim = useMemo(() => simulateMounting(guided), [guided]);
   const result = useMemo(() => {
     const raw = simulateCycle(config);
     const last = guidedSim.samples.length - 1;
     const samples = raw.samples.map((s) => {
       const g = guidedSim.samples[Math.min(last, Math.round(s.t * last))]!;
-      return { ...s, contact: (g.covered ? g.contact : "unknown") as Contact };
+      const shown = g.covered || guidedSim.illustrative ? g.contact : "unknown";
+      return { ...s, contact: shown as Contact };
     });
     // Les transitions et les comptages doivent découler des MÊMES échantillons
     // que la scène et le verdict : sinon la chronologie affiche des
