@@ -95,6 +95,13 @@ const ILLUSTRATIVE_BLOCKERS = new Set([
   "CONTACT_FORM_NOT_SIMULATED",
   "EDUCATION_MODE",
   "COLLISION_OR_CONTACT",
+  // Une POSE qui sort du gabarit documenté n'est pas un manque de données :
+  // c'est une géométrie que la source ne décrit pas. Montrer une commutation
+  // reviendrait à inventer une donnée d'approche, ce qui reste refusé. Le mode
+  // illustratif ne couvre que les couples SANS distance caractérisée.
+  "ORIENTATION_OFF_TEMPLATE",
+  "LATERAL_OFFSET",
+  "OFFSET_OFF_TEMPLATE",
 ]);
 
 /** Vrai si l'on peut montrer une commutation illustrative pour ce montage. */
