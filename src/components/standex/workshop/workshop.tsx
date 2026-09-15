@@ -2,6 +2,7 @@ import { defaultMagnetFor, documentedAlias, magnetOptionsFor } from "@/lib/stand
 import { pairedMagnetModel } from "@/lib/standex/paired-magnets";
 import { magnetSource } from "@/lib/standex/magnet-catalog";
 import { t, msg } from "@/lib/i18n/core";
+import { GuideMaterials } from "./guide-materials";
 import { useLocale } from "@/lib/i18n/react";
 import { AppHeader } from "@/components/standex/app-header";
 import SensorCard from "./sensor-card";
@@ -929,6 +930,14 @@ export default function MagneticWorkshop({
             ))}
           </select>
         </label>
+        {/* Le matériau choisi ici sélectionne une VRAIE référence du guide
+            d'activation : la géométrie 3D, les cotes et les plages affichées
+            changent ensemble, sans facteur de matériau inventé. */}
+        <GuideMaterials
+          sensorFamily={config.sensorId}
+          magnetModel={config.magnetModel}
+          onSelect={(magnetModel) => update({ magnetModel })}
+        />
         {reference && sensitivityChoices.length > 0 && (
           <label className="mw-select-label">
             {t(classKind === "switch_model" ? "Configuration du contact" : "Classe de sensibilité")}

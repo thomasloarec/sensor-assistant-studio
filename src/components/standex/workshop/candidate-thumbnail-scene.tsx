@@ -7,7 +7,7 @@ import { pairedMagnetModel } from "@/lib/standex/paired-magnets";
  * vignette ne peut donc pas montrer une géométrie différente de l'atelier.
  * Chargé paresseusement et monté uniquement quand la vignette est visible.
  */
-import { Canvas } from "@react-three/fiber";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Line, OrbitControls } from "@react-three/drei";
 import { Body, Contacts, ContextGuard } from "./scene";
 import { electricalDetailsAllowed, formatMm, sensorById } from "@/lib/standex/sensor-catalog";
@@ -15,6 +15,30 @@ import { projectedScaleBar, thumbnailZoom } from "@/lib/standex/scale-bar";
 import { t } from "@/lib/i18n/core";
 import { useEffect, useRef, useState } from "react";
 import type { Vec3 } from "@/lib/standex/magnetic-workshop";
+
+/** Capture l'image du rendu réel après quelques frames, le temps que la scène
+ * soit stabilisée (matériaux compilés, première orbite jouée). La capture est
+ * TENTÉE une seule fois ; si le canevas refuse la lecture (`toDataURL` levé ou
+ * image vide), rien n'est publié et la vignette garde son rendu vivant plutôt
+ * que d'afficher une image fausse. */
+function SnapshotCapture({ onSnapshot }: { onSnapshot: (dataUrl: string) => void }) {
+  const gl = useThree((state) => state.gl);
+  const frames = useRef(0);
+  const done = useRef(false);
+  useFrame(() => {
+    if (done.current) return;
+    frames.current += 1;
+    if (frames.current < 12) return;
+    done.current = true;
+    try {
+      const url = gl.domElement.toDataURL("image/png");
+      if (url.startsWith("data:image/") && url.length > 1024) onSnapshot(url);
+    } catch {
+      /* Canevas non lisible : on ne publie pas d'image. */
+    }
+  });
+  return null;
+}
 
 export default function CandidateThumbnailScene({
   sensorId,
@@ -24,6 +48,8 @@ export default function CandidateThumbnailScene({
   fitToView = false,
   reduced,
   scaleBar = false,
+  snapshotWhenSettled = false,
+  onSnapshot,
   onContextLost,
 }: {
   sensorId: string;
@@ -37,6 +63,9 @@ export default function CandidateThumbnailScene({
   fitToView?: boolean;
   /** Règle graduée mesurée dans la projection orthographique. */
   scaleBar?: boolean;
+  /** Figer le rendu en image dès qu'il est stabilisé, puis rendre le contexte. */
+  snapshotWhenSettled?: boolean;
+  onSnapshot?: (dataUrl: string) => void;
   onContextLost: () => void;
 }) {
   const model = pairedMagnetModel(sensorId, hostSensorId) ?? sensorById(sensorId);
@@ -88,10 +117,18 @@ export default function CandidateThumbnailScene({
         far: dist * 12,
       }}
       dpr={[1, 1.5]}
-      gl={{ antialias: true, alpha: true, powerPreference: "low-power" }}
+      /* `preserveDrawingBuffer` est nécessaire pour lire le rendu : sans lui,
+         `toDataURL` renvoie une image vide après la présentation de la frame. */
+      gl={{
+        antialias: true,
+        alpha: true,
+        powerPreference: "low-power",
+        preserveDrawingBuffer: true,
+      }}
       onCreated={({ gl }) => gl.setClearColor("#000000", 0)}
     >
       <ContextGuard onLost={onContextLost} />
+      {snapshotWhenSettled && onSnapshot ? <SnapshotCapture onSnapshot={onSnapshot} /> : null}
       <ambientLight intensity={2.1} />
       <directionalLight position={[span * 2, span * 3, span * 1.8]} intensity={2.2} />
       <directionalLight position={[-span * 2, span, -span * 2]} intensity={0.8} />

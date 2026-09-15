@@ -523,6 +523,37 @@
     inline-size: 100%;
     block-size: 100%;
   }
+  /* Légende du rôle : « Capteur » d'un côté, « Aimant » de l'autre, avec le
+     repère de pôles. Elle est posée AU BORD de la vignette, dans l'espace
+     libre : le dessin garde tout son cadrage, et la légende reste lisible même
+     quand l'atelier 3D (qui porte ses propres styles) n'est pas monté. */
+  .candidate-thumb-legend {
+    position: absolute;
+    inset-block-end: 0;
+    inset-inline: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    padding-block: 0.25rem;
+    background: var(--surface-tint);
+    color: var(--muted-foreground);
+    text-align: center;
+  }
+  .candidate-thumb-legend-icon {
+    inline-size: 1.25rem;
+    block-size: 0.7rem;
+    flex: none;
+  }
+  /* Instantané : image du rendu 3D réel de cette vignette, affichée après que
+     le contexte a été rendu à une autre carte visible. Même cadrage, même
+     échelle : ce n'est pas un dessin de remplacement. */
+  .candidate-thumb-snapshot {
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: contain;
+  }
   .candidate-thumb-fallback {
     display: flex;
     flex-direction: column;
