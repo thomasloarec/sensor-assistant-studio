@@ -25180,5 +25180,32 @@
     "Для этой пары датчик–магнит нет квалифицированных порогов. Диапазоны руководства по срабатыванию, если они есть, не являются порогами замыкания.",
     "Questa coppia sensore–magnete non ha soglie qualificate. Gli intervalli della guida di attivazione, quando esistono, non sono soglie di chiusura.",
     "このセンサーと磁石の組み合わせには確定したしきい値がありません。アクティベーションガイドの範囲があっても、閉成しきい値ではありません。"
+  ],
+  "Cette ligne du guide est imprimée dans un ordre inhabituel (« up » supérieur à « to ») : elle reste lisible telle quelle dans le tableau, à confirmer par Standex, mais elle ne sert pas de repère. L'animation indicative retombe sur 15 mm et 18 mm.": [
+    "This guide row is printed in an unusual order (“up” greater than “to”): it stays readable as printed in the table, to be confirmed by Standex, but it is not used as a marker. The indicative animation falls back to 15 mm and 18 mm.",
+    "该指南行的打印顺序异常（“up”大于“to”）：表格中按原样保留，需由 Standex 确认，但不用作参考点。示意动画回退到 15 mm 和 18 mm。",
+    "Diese Zeile des Leitfadens ist in einer unüblichen Reihenfolge gedruckt („up“ größer als „to“): Sie bleibt in der Tabelle unverändert lesbar, ist von Standex zu bestätigen, dient aber nicht als Bezugswert. Die indikative Animation fällt auf 15 mm und 18 mm zurück.",
+    "Esta fila de la guía está impresa en un orden inusual («up» mayor que «to»): se mantiene legible tal cual en la tabla, pendiente de confirmación por Standex, pero no se usa como referencia. La animación indicativa vuelve a 15 mm y 18 mm.",
+    "Эта строка руководства напечатана в необычном порядке («up» больше «to»): она остаётся в таблице как напечатана, требует подтверждения Standex, но не используется как ориентир. Иллюстративная анимация возвращается к 15 и 18 мм.",
+    "Questa riga della guida è stampata in un ordine inusuale («up» maggiore di «to»): resta leggibile così com'è nella tabella, da confermare da Standex, ma non è usata come riferimento. L'animazione indicativa torna a 15 mm e 18 mm.",
+    "このガイドの行は通常と異なる順序で印刷されています（「up」が「to」より大きい）。表には印刷どおり残り、Standex の確認待ちですが、目安としては使用しません。参考アニメーションは 15 mm と 18 mm に戻ります。"
+  ],
+  "Ordre imprimé inhabituel dans la brochure — à confirmer par Standex": [
+    "Unusual printed order in the brochure — to be confirmed by Standex",
+    "手册中打印顺序异常——需由 Standex 确认",
+    "Unübliche Druckreihenfolge in der Broschüre — von Standex zu bestätigen",
+    "Orden impreso inusual en el folleto: pendiente de confirmación por Standex",
+    "Необычный порядок печати в брошюре — требует подтверждения Standex",
+    "Ordine di stampa inusuale nella brochure — da confermare da Standex",
+    "ブローシャーの印刷順序が通常と異なります — Standex の確認待ち"
+  ],
+  "* Ordre imprimé inhabituel dans la brochure (« up » supérieur à « to »). La valeur est reproduite telle quelle, sans tri ni correction, et reste à confirmer par Standex : ces lignes ne servent pas de repère à la démonstration de portée.": [
+    "* Unusual printed order in the brochure (“up” greater than “to”). The value is reproduced as printed, without sorting or correction, and remains to be confirmed by Standex: these rows are not used as markers for the range demonstration.",
+    "* 手册中打印顺序异常（“up”大于“to”）。数值按原样再现，未排序也未更正，仍需由 Standex 确认：这些行不用作射程演示的参考点。",
+    "* Unübliche Druckreihenfolge in der Broschüre („up“ größer als „to“). Der Wert wird unverändert wiedergegeben, ohne Sortierung oder Korrektur, und ist von Standex zu bestätigen: Diese Zeilen dienen nicht als Bezug für die Reichweiten-Demonstration.",
+    "* Orden impreso inusual en el folleto («up» mayor que «to»). El valor se reproduce tal cual, sin ordenar ni corregir, y queda pendiente de confirmación por Standex: estas filas no sirven de referencia para la demostración de alcance.",
+    "* Необычный порядок печати в брошюре («up» больше «to»). Значение воспроизведено как напечатано, без сортировки и правок, и требует подтверждения Standex: такие строки не служат ориентиром для демонстрации дальности.",
+    "* Ordine di stampa inusuale nella brochure («up» maggiore di «to»). Il valore è riprodotto così com'è, senza ordinamenti né correzioni, e resta da confermare da Standex: queste righe non fanno da riferimento alla dimostrazione di portata.",
+    "* ブローシャーの印刷順序が通常と異なります（「up」が「to」より大きい）。値は並べ替えや修正なしにそのまま再現し、Standex の確認待ちです。これらの行は距離のデモの目安には使いません。"
   ]
 }
