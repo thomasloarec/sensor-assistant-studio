@@ -401,8 +401,20 @@ export function computeMounting(m: GuidedMounting, profiles?: MountingProfile[])
     dropOutMm: sim.dropOutMm,
     transitions: sim.transitions,
     uncoveredSegments: uncoveredSegments(sim),
+    // Le mode ILLUSTRATIF doit voyager avec le résultat : sans cette recopie, la
+    // mention permanente n'apparaissait nulle part et l'essai enregistré ne
+    // portait pas la marque. Les deux repères de lecture sont nommés comme tels,
+    // jamais comme des seuils : `pullInMm` / `dropOutMm` restent nuls.
+    ...(sim.illustrative
+      ? {
+          illustrative: true,
+          illustrativePullInMm: ILLUSTRATIVE_PULL_IN_MM,
+          illustrativeDropOutMm: ILLUSTRATIVE_DROP_OUT_MM,
+        }
+      : {}),
   };
 }
+
 /** Recalcul systématique : un verdict importé n'est jamais cru. */
 export function withComputed(m: GuidedMounting, profiles?: MountingProfile[]): GuidedMounting {
   return { ...m, computed: computeMounting(m, profiles) };
