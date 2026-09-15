@@ -679,7 +679,7 @@ export default function MagneticWorkshop({
    *  reste lisible, mais aucune distance n'est caractérisée. La mention est
    *  PERMANENTE tant que ce mode est actif, et elle suit l'essai enregistré. */
   const illustrative = computed?.illustrative === true;
-  const ILLUSTRATIVE_NOTE = "Simulation illustrative — distance non caractérisée, à valider par essais";
+  
 
   /** Essai à conserver dans le dossier : verdict, distances PUBLIÉES (ou `null`)
    *  et course déclarée. Rien n'est recalculé ni arrondi ici. */
