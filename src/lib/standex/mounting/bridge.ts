@@ -1,6 +1,14 @@
+import { poseAt } from "../magnetic-workshop";
 import type { WorkshopConfig } from "../magnetic-workshop";
-import { componentPose, movingRotation, add as addV, scale as scaleV } from "../machine-assembly";
+import {
+  componentPose,
+  movingRotation,
+  openingAt,
+  add as addV,
+  scale as scaleV,
+} from "../machine-assembly";
 import type { MachineAssembly } from "../machine-assembly";
+
 import { MOUNTING_CONTRACT_VERSION } from "./contract";
 import type { GuidedMounting, MotionKind } from "./contract";
 import { profileFor } from "./profiles";
