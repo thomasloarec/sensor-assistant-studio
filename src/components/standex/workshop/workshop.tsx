@@ -20,10 +20,13 @@ import {
   applySuggestion,
   composeRotations,
   magnetWorldPosition,
+  scenePoseSampler,
   simulateMounting,
+  SAMPLE_STEPS,
   suggestPose,
   workshopPatchFromMounting,
 } from "@/lib/standex/mounting";
+
 import type { GuidedMounting } from "@/lib/standex/mounting";
 import type { StudioStudy } from "@/lib/standex/studio-dossier";
 import type { DesignFreeze } from "@/lib/standex/design-freeze";
@@ -442,10 +445,19 @@ export default function MagneticWorkshop({
    *   L'état est donc rendu tel quel, et rien d'autre ne bouge : la couverture,
    *   la preuve, le verdict et le message permanent « Simulation illustrative »
    *   restent ceux du moteur.
+   * La proximité illustrative est lue sur la pose RÉELLEMENT DESSINÉE, fournie
+   * par `scenePoseSampler` : modèle importé animé par sa propre course, ou
+   * glissement/pivot de l'espace vide. Sans lui, l'état commutait sur un axe
+   * reconstruit qui ignore le mouvement, donc un aimant emporté à 100 mm de côté
+   * pouvait s'afficher fermé.
    *
    * Les positions issues de `simulateCycle` sont conservées pour l'animation du
    * modèle importé. */
-  const guidedSim = useMemo(() => simulateMounting(guided), [guided]);
+  const guidedSim = useMemo(
+    () => simulateMounting(guided, SAMPLE_STEPS, undefined, scenePoseSampler(config)),
+    [guided, config],
+  );
+
   const result = useMemo(() => {
     const raw = simulateCycle(config);
     const last = guidedSim.samples.length - 1;

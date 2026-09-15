@@ -1,6 +1,14 @@
+import { poseAt } from "../magnetic-workshop";
 import type { WorkshopConfig } from "../magnetic-workshop";
-import { componentPose, movingRotation, add as addV, scale as scaleV } from "../machine-assembly";
+import {
+  componentPose,
+  movingRotation,
+  openingAt,
+  add as addV,
+  scale as scaleV,
+} from "../machine-assembly";
 import type { MachineAssembly } from "../machine-assembly";
+
 import { MOUNTING_CONTRACT_VERSION } from "./contract";
 import type { GuidedMounting, MotionKind } from "./contract";
 import { profileFor } from "./profiles";
@@ -18,6 +26,8 @@ import {
   toWorldPoint,
 } from "./geometry";
 import { withComputed } from "./simulate";
+import type { ScenePoseSampler } from "./simulate";
+
 
 /** D3 et l'approche frontale F1 suivent l'axe longitudinal X : leur décalage
  * latéral se lit donc sur Z, exactement comme D3. D1 approche par la face
@@ -160,6 +170,40 @@ export function relativePoseInMachine(machine: MachineAssembly, u: number): Pose
     rotationDeg: relativeRotation(sensor.rotationDeg, magnet.rotationDeg),
   };
 }
+
+/**
+ * Pose RÉELLEMENT DESSINÉE du couple à l'instant `t` du cycle affiché.
+ *
+ * C'est le point clé : le contrat `GuidedMounting` réduit la course à deux
+ * entrefers sur l'axe d'approche, et cette réduction ne connaît ni la course
+ * d'un modèle importé, ni un glissement, ni un pivot. Les deux extrêmes y sont
+ * même triés, donc « repos » et « ouverte » peuvent être inversés par rapport
+ * au cycle réellement animé. Lire la proximité là-dessus est faux : un aimant
+ * emporté à 100 mm de côté doit être ouvert, même si la course annonce 5 mm.
+ *
+ * On lit donc la pose au même endroit que la scène :
+ * - montage importé : la pose des deux composants au point de cycle
+ *   `openingAt(t)`, exactement comme la scène 3D ;
+ * - espace vide : la position dessinée par `poseAt`, y compris `slide` et
+ *   `pivot`, exprimée dans le repère du capteur.
+ *
+ * Aucune donnée magnétique n'en sort : c'est de la géométrie, et la
+ * qualification continue de se lire sur les distances publiées.
+ */
+export function scenePoseSampler(c: WorkshopConfig): ScenePoseSampler {
+  const machine = c.machine;
+  if (machine) return (t) => relativePoseInMachine(machine, openingAt(t));
+  return (t) => {
+    const drawn = poseAt(c, t);
+    // Espace vide : le capteur est à l'origine, tourné de son propre lacet.
+    const sensor: Pose = { positionMm: [0, 0, 0], rotationDeg: [0, -c.sensorAngle, 0] };
+    return {
+      positionMm: toLocalPoint(sensor, drawn.position),
+      rotationDeg: relativeRotation(sensor.rotationDeg, [0, -drawn.angle, c.magnetTilt]),
+    };
+  };
+}
+
 /** Entrefers de surface aux deux extrêmes du cycle du montage importé. */
 function machineTravelGaps(
   c: WorkshopConfig,
