@@ -52,11 +52,15 @@ describe("approche frontale F1 : les faces se font réellement face", () => {
     expect(sequence).toEqual(["open", "closed", "open"]);
   });
 
-  test("aimant à 0° : la pose sort du gabarit, le contact reste indéterminé", () => {
+  test("aimant à 0° : la pose sort du gabarit, rien n'est qualifié", () => {
     const sim = simulateMounting(mountingFromWorkshop(frontal({ magnetAngle: 0 })));
     expect(sim.reasons).toContain("ORIENTATION_OFF_TEMPLATE");
     expect(sim.coverage).toBe("outside");
-    expect(sim.samples.every((s) => s.contact === "unknown")).toBe(true);
+    // La scène reste lisible (mode illustratif), mais aucun échantillon n'est
+    // couvert et aucun seuil publié n'est produit.
+    expect(sim.samples.every((s) => !s.covered)).toBe(true);
+    expect(sim.illustrative).toBe(true);
+    expect(sim.pullInMm).toBeNull();
     expect(referenceAllowed(frontal({ magnetAngle: 0 }))).toBe(false);
     expect(referenceAllowed(frontal())).toBe(true);
   });
