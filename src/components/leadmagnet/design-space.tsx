@@ -900,8 +900,21 @@ export function DesignSpace({
 
   /** Réponse de montage écrite par le client. Une fixation NOMMÉE là (« vissé »,
    * « screw or adhesive ») est une contrainte dure, même sans case cochée. */
-  const mountingText =
+  const mountingAnswer =
     dossier.requirements.find((r) => r.key === "mounting")?.value?.trim() || null;
+  /** Un client décrit souvent tout son besoin dans une seule réponse. Une
+   * fixation NOMMÉE reste une contrainte donnée par lui, quelle que soit la
+   * question où il l'a écrite : on lit donc l'ensemble de ses réponses écrites.
+   * Ce n'est toujours pas une déduction depuis un nom d'application. */
+  const answersText = useMemo(
+    () =>
+      dossier.requirements
+        .map((r) => r.value?.trim())
+        .filter((v): v is string => !!v)
+        .join(". ") || null,
+    [dossier.requirements],
+  );
+  const mountingText = mountingAnswer ?? answersText;
   const candidates = useMemo(
     () =>
       evaluateCandidates({
