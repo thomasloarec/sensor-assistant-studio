@@ -3250,7 +3250,7 @@ export function DesignSpace({
               : t("position non documentée"),
         // Le mode illustratif est écrit dans le résumé du projet, jamais tu.
         ...(reviewTested.illustrative
-          ? [t("simulation illustrative — distance non caractérisée, à valider par essais")]
+          ? [t("Simulation illustrative — distance non caractérisée, à valider par essais")]
           : []),
       ].join(" · ")
     : null;
