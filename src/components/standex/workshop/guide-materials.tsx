@@ -209,9 +209,13 @@ function GuideDemoPicker({
               "Animation indicative : la scène se rapproche du repère bas {0} mm et s'éloigne du repère haut {1} mm de la plage publiée. Ce ne sont pas des seuils de fermeture et de réouverture, et rien n'est validé.",
               [number(marks.nearMm), number(marks.farMm)],
             )
-          : t(
-              "Aucune plage exploitable pour cette combinaison : l'animation indicative retombe sur 15 mm et 18 mm, deux repères de lecture qui ne sont pas des seuils.",
-            )}
+          : range?.orderAtypical
+            ? t(
+                "Cette ligne du guide est imprimée dans un ordre inhabituel (« up » supérieur à « to ») : elle reste lisible telle quelle dans le tableau, à confirmer par Standex, mais elle ne sert pas de repère. L'animation indicative retombe sur 15 mm et 18 mm.",
+              )
+            : t(
+                "Aucune plage exploitable pour cette combinaison : l'animation indicative retombe sur 15 mm et 18 mm, deux repères de lecture qui ne sont pas des seuils.",
+              )}
       </p>
     </div>
   );
