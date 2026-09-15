@@ -24901,5 +24901,14 @@
     "…. Изменение, внесенное здесь, ни в коем случае не считается опубликованным отзывом.",
     "…. Una modifica apportata qui non vale mai come riscontro pubblicato.",
     "…。ここで行われた変更は公開されたフィードバックとはみなされません。"
+  ],
+  "Une fixation que vous NOMMEZ ici (« vissé ou collé ») est prise comme une contrainte. Rien d'autre n'est déduit de votre texte : un nom d'application n'implique aucune fixation. Ces choix restent modifiables.": [
+    "A fastening you NAME here (“screw or adhesive”) is taken as a constraint. Nothing else is inferred from your text: an application name implies no fastening. These choices stay editable.",
+    "您在此处明确写出的安装方式（如“螺钉或粘接”）将作为约束条件。其余内容不会从您的文字中推断：应用名称并不意味着任何安装方式。这些选择仍可修改。",
+    "Eine Befestigung, die Sie hier ausdrücklich NENNEN („geschraubt oder geklebt“), gilt als Vorgabe. Sonst wird aus Ihrem Text nichts abgeleitet: ein Anwendungsname bedeutet keine Befestigung. Diese Angaben bleiben änderbar.",
+    "Una fijación que USTED NOMBRA aquí («atornillado o pegado») se toma como una restricción. Nada más se deduce de su texto: el nombre de una aplicación no implica ninguna fijación. Estas opciones siguen siendo modificables.",
+    "Крепление, которое вы НАЗЫВАЕТЕ здесь («на винтах или клею»), считается ограничением. Больше ничего из вашего текста не выводится: название применения не подразумевает крепления. Эти варианты остаются изменяемыми.",
+    "Un fissaggio che NOMINI qui («avvitato o incollato») è considerato un vincolo. Nient'altro viene dedotto dal tuo testo: il nome di un'applicazione non implica alcun fissaggio. Queste scelte restano modificabili.",
+    "ここで明記された取付方法（「ネジ留めまたは接着」など）は制約として扱います。それ以外は文章から推測しません：用途名は取付方法を意味しません。これらの選択はいつでも変更できます。"
   ]
 }
