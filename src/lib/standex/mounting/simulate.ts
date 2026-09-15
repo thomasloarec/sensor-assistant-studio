@@ -162,6 +162,7 @@ export function simulateMounting(
   const blocked = reasons.length > 0 || !pair || !located;
   const samples: MountingSample[] = [],
     transitions: MountingTransition[] = [];
+  const collided: boolean[] = [];
   let contact: ContactState = "unknown",
     covered = 0;
   for (let i = 0; i <= steps; i++) {
@@ -172,6 +173,7 @@ export function simulateMounting(
       : { positionMm: [0, 0, 0] as Vec3, rotationDeg: [...m.relative.rotationDeg] as Vec3 };
     const collides =
       located !== null && bodiesCollide(m.couple.sensorId, m.couple.magnetId, relative);
+    collided.push(collides);
     const sampleCovered = !blocked && !collides && gap > 0;
     if (sampleCovered) covered++;
     let next: ContactState = "unknown";
@@ -186,18 +188,48 @@ export function simulateMounting(
     samples.push({ t, gapMm: gap, covered: sampleCovered, contact, relative, outward: t > 0.5 });
   }
   const coveredFraction = covered / (steps + 1);
+  const coverage: Coverage = covered === steps + 1 ? "covered" : covered > 0 ? "partial" : "outside";
+  const allReasons = [
+    ...reasons,
+    ...(reasons.length === 0 && samples.some((s) => !s.covered) ? ["COLLISION_OR_CONTACT"] : []),
+  ];
+
+  // Aucune distance documentée exploitable : on montre une commutation de
+  // PROXIMITÉ, pour que l'atelier reste lisible. `covered` reste faux, donc la
+  // couverture, la preuve et le verdict ne bougent pas d'un iota : seul l'état
+  // de contact affiché change, et il est marqué `illustrative`.
+  const illustrative = coverage !== "covered" && illustrativeAllowed(allReasons);
+  if (illustrative) {
+    transitions.length = 0;
+    let shown: ContactState = "unknown";
+    for (let i = 0; i < samples.length; i++) {
+      const s = samples[i]!;
+      let next: ContactState = "unknown";
+      if (!collided[i] && s.gapMm > 0)
+        next =
+          s.gapMm <= ILLUSTRATIVE_PULL_IN_MM
+            ? "closed"
+            : s.gapMm >= ILLUSTRATIVE_DROP_OUT_MM
+              ? "open"
+              : shown;
+      if (i > 0 && next !== shown && next !== "unknown")
+        transitions.push({ t: s.t, contact: next, gapMm: s.gapMm });
+      shown = next;
+      samples[i] = { ...s, contact: next };
+    }
+  }
+
   return {
     samples,
     transitions,
     // `covered` exige la totalité du cycle : aucun pourcentage d'inconnu toléré.
-    coverage: covered === steps + 1 ? "covered" : covered > 0 ? "partial" : "outside",
+    coverage,
     coveredFraction,
-    reasons: [
-      ...reasons,
-      ...(reasons.length === 0 && samples.some((s) => !s.covered) ? ["COLLISION_OR_CONTACT"] : []),
-    ],
+    reasons: allReasons,
+    // Jamais de seuil inventé : hors domaine, les seuils publiés restent nuls.
     pullInMm: pair?.[0] ?? null,
     dropOutMm: pair?.[1] ?? null,
+    illustrative,
   };
 }
 /** Segments [début, fin] du cycle où aucune détection n'est affirmée. */
