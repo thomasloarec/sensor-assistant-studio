@@ -102,3 +102,25 @@ describe("carte de couple — matériau lisible", () => {
     expect(guideMagnetMaterial(card.magnetId)).toBe("Ferrite");
   });
 });
+
+describe("guide — lignes d'ordre imprimé atypique conservées", () => {
+  it("garde MK04-1A66A-X + SmCo telles qu'imprimées (D3 10,3 / 8,2) et les signale", () => {
+    const row = guideRange("MK04", "MK04-1A66A-X", "SMCO5-5X4", "D3");
+    expect(row).not.toBeNull();
+    expect(row!.upMm).toBe(10.3);
+    expect(row!.toMm).toBe(8.2);
+    expect(row!.orderAtypical).toBe(true);
+  });
+
+  it("ne les exploite JAMAIS comme repères de démonstration", () => {
+    const row = guideRange("MK04", "MK04-1A66A-X", "SMCO5-5X4", "D3");
+    expect(guideIllustrativeMarks(row)).toBeNull();
+  });
+
+  it("conserve les 73 lignes atypiques dans le registre consultable", () => {
+    const atypical = ACTIVATION_GUIDE.rows.filter((r) => r.orderAtypical);
+    expect(atypical.length).toBe(73);
+    // Aucune n'est triée ni recalculée.
+    for (const r of atypical) expect(r.upMm! > r.toMm!).toBe(true);
+  });
+});
