@@ -1615,6 +1615,7 @@ export default function MagneticWorkshop({
           {approachPicker}
           {travelControls}
           {playButton}
+          {guideMaterialsBlock}
           <div className="mw-controls-links">
             <label className="mw-file-label">
               {machine ? machine.fileName : t("Importer mon modèle 3D")}
