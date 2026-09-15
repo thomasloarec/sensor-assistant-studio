@@ -30,21 +30,25 @@ const SHAPES_BY_INTENT: Readonly<Record<MountingIntentKind, readonly SensorShape
   pcb: ["smd", "glass"],
 };
 
-/** Motifs français ET anglais. Une même intention accepte plusieurs formulations. */
+/** Motifs français ET anglais. Une même intention accepte plusieurs formulations.
+ *
+ * Aucun motif accentué ne se termine par `\b` : en JavaScript, « é » n'est pas un
+ * caractère de mot, donc `/vissé\b/` ne reconnaît PAS « vissé » suivi d'un espace.
+ * C'est exactement le piège qui laissait passer la réponse française. */
 const PATTERNS: Readonly<Record<MountingIntentKind, readonly RegExp[]>> = {
-  screw: [/\bvis(s(er|é|ée|ées|és|age))?\b/i, /\bécrou/i, /\bscrew(s|ed|ing)?\b/i, /\bbolt(s|ed)?\b/i, /\bnut(s)?\b/i],
+  screw: [/\bviss/i, /\bvis\b/i, /\bécrou/i, /\bscrew/i, /\bbolt(s|ed)?\b/i, /\bnut(s)?\b/i],
   adhesive: [
-    /\bcoll(e|é|ée|ées|és|age|er)\b/i,
+    /\bcoll(e|er|é|age)/i,
     /\badhés/i,
     /\bruban\b/i,
-    /\badhesive(ly)?\b/i,
+    /\badhesive/i,
     /\bglue(d|ing)?\b/i,
     /\bdouble[- ]sided tape\b/i,
     /\btape[dr]?\b/i,
     /\bbond(ed|ing)\b/i,
   ],
   press_fit: [/\bemmanch/i, /\bencastr/i, /\bdans un trou\b/i, /\bpress[- ]?fit(ted)?\b/i, /\binto a hole\b/i],
-  clamp: [/\bcollier\b/i, /\bbrid(e|é)\b/i, /\bclip(s|sé|ped)?\b/i, /\bclamp(ed|ing)?\b/i, /\bstrap(ped)?\b/i],
+  clamp: [/\bcollier/i, /\bbrid(e|é)/i, /\bclip/i, /\bclamp(ed|ing)?\b/i, /\bstrap(ped)?\b/i],
   pcb: [
     /\bcircuit imprimé\b/i,
     /\bsur carte\b/i,
