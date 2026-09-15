@@ -82,6 +82,7 @@ import {
   type DesignDossier,
   type MountingChoice,
 } from "@/lib/leadmagnet/dossier";
+import { detectMountingIntent } from "@/lib/leadmagnet/mounting-intent";
 import { CANDIDATE_DISCLAIMER, evaluateCandidates } from "@/lib/leadmagnet/candidates";
 import {
   applyRoutingPick,
