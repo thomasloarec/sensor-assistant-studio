@@ -133,6 +133,8 @@ export function readActivationGuide(value: unknown): ActivationGuide {
       toMm,
       ...(upNote === undefined ? {} : { upNote }),
       ...(toNote === undefined ? {} : { toNote }),
+      // Signalement, PAS correction : l'ordre imprimé est conservé.
+      ...(upMm !== null && toMm !== null && upMm > toMm ? { orderAtypical: true as const } : {}),
     });
   }
   const source = (data.source ?? {}) as GuideSource;
