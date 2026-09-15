@@ -11,7 +11,7 @@ import {
   hasGuideData,
 } from "@/lib/standex/activation-guide";
 import { standardShapeForSensor } from "@/lib/standex/magnet-recommendation";
-import { isOutsidePolicy, magnetOptionsFor } from "@/lib/standex/default-pairs";
+import { defaultMagnetFor, isOutsidePolicy, magnetOptionsFor } from "@/lib/standex/default-pairs";
 import { BARE_MAGNETS } from "@/lib/standex/magnet-catalog";
 import { pairCardFor } from "@/lib/leadmagnet/pair-cards";
 import { sensorById } from "@/lib/standex/sensor-catalog";
@@ -150,5 +150,29 @@ describe("sélecteur avancé — mêmes règles M02 et forme", () => {
     expect(magnetOptionsFor("MK04")).not.toContain("M02");
     expect(isOutsidePolicy("MK04", "M02")).toBe(true);
     expect(isOutsidePolicy("MK02", "M02")).toBe(false);
+  });
+});
+
+describe("défaut économique — matériau toujours explicable", () => {
+  it("donne le standard économique du guide, jamais 4003004003, aux capteurs sans couple dédié", () => {
+    for (const s of ["MK14", "MK18", "MK20_1"]) {
+      expect(defaultMagnetFor(s)).toBe("ALNICO500-4X19");
+      expect(guideMagnetMaterial(defaultMagnetFor(s))).toBe("AlNiCo");
+    }
+    expect(defaultMagnetFor("MK15")).toBe("HF3225-14.95X10X5");
+    expect(guideMagnetMaterial(defaultMagnetFor("MK15"))).toBe("Ferrite");
+  });
+
+  it("préserve les couples dédiés", () => {
+    expect(defaultMagnetFor("MK02")).toBe("M02");
+    expect(defaultMagnetFor("MK04")).toBe("M04");
+    expect(defaultMagnetFor("MK03")).toBe("M03");
+  });
+
+  it("garde 4003004003 consultable en option cylindrique, sans en faire un AlNiCo500", () => {
+    const opts = magnetOptionsFor("MK14");
+    expect(opts).toContain("4003004003");
+    expect(opts.indexOf("ALNICO500-4X19")).toBeLessThan(opts.indexOf("4003004003"));
+    expect(guideMagnetMaterial("4003004003")).not.toBe("AlNiCo");
   });
 });
