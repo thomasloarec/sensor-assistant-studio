@@ -2025,8 +2025,15 @@ export function DesignSpace({
    * l'exploration, pas une exigence. */
   const filterInput = { mounting: dossier.mounting, envelope: dossier.envelope };
   const answerFilters = useMemo(
-    () => suggestionFilters({ mounting: dossier.mounting, envelope: dossier.envelope }),
-    [dossier.mounting, dossier.envelope],
+    () =>
+      suggestionFilters({
+        mounting: dossier.mounting,
+        envelope: dossier.envelope,
+        // La fixation NOMMÉE dans la réponse écrite compte même quand la case
+        // de montage vaut « autre » ou « à décider ».
+        mountingText,
+      }),
+    [dossier.mounting, dossier.envelope, mountingText],
   );
   /** Critères réellement affichés : les réponses, dont chaque critère peut être
    * REMPLACÉ par un critère d'exploration de même nature. */
@@ -2167,6 +2174,38 @@ export function DesignSpace({
         {t("Ajuster les critères ⌄")}
       </summary>
       <div className="mt-2 space-y-3">
+        {/* Résumé des critères RÉELLEMENT utilisés, avec la réponse d'origine
+            telle qu'elle a été écrite. Le bouton ramène aux questions, où les
+            réponses sont préremplies et modifiables : les réponses non touchées
+            sont conservées, et la liste se recalcule à la validation. */}
+        <div className="panel-block space-y-2" data-testid="criteria-summary">
+          <p className="t-label">{t("Critères utilisés")}</p>
+          {answerFilters.length ? (
+            <ul className="space-y-1">
+              {answerFilters.map((f) => (
+                <li key={f.id} className="t-body-s">
+                  {t(f.label)}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="t-body-s">{t("Aucun critère issu de vos réponses pour l'instant.")}</p>
+          )}
+          {mountingText ? (
+            <p className="t-caption" data-testid="criteria-mounting-text">
+              {t("Votre réponse sur le montage :")} « {mountingText} »
+            </p>
+          ) : null}
+          <Button
+            variant="outline"
+            size="sm"
+            className="min-h-11"
+            data-testid="edit-answers"
+            onClick={() => setTab("besoin")}
+          >
+            {t("Modifier mes réponses")}
+          </Button>
+        </div>
         <p className="t-caption">
           {shownFilters.length
             ? t(
@@ -3241,6 +3280,10 @@ export function DesignSpace({
             : reviewTested.verdict === "unpublished"
               ? t("distances non publiées")
               : t("position non documentée"),
+        // Le mode illustratif est écrit dans le résumé du projet, jamais tu.
+        ...(reviewTested.illustrative
+          ? [t("Simulation illustrative — distance non caractérisée, à valider par essais")]
+          : []),
       ].join(" · ")
     : null;
 

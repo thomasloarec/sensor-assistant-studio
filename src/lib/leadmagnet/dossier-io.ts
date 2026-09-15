@@ -207,6 +207,8 @@ const dossierSchema = z.object({
         travelEndMm: z.number().finite().nullable().catch(null),
         mainMessage: z.string().nullable().catch(null),
         limits: z.array(z.string()).catch([]),
+        // Champ additif : un essai illustratif reste illustratif après reprise.
+        illustrative: z.boolean().optional().catch(undefined),
         at: z.string(),
       }),
     )

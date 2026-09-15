@@ -183,6 +183,7 @@ class ThumbnailBoundary extends Component<
 
 export function CandidateThumbnail({
   sensorId,
+  hostSensorId,
   livePreview = true,
   cabled = false,
   pair,
@@ -193,6 +194,11 @@ export function CandidateThumbnail({
   quiet = false,
 }: {
   sensorId: string;
+  /** Capteur du COUPLE quand l'objet dessiné est un aimant. La fiche produit
+   *  peut donner un boîtier par variante de capteur (M11S en M5 ou en M8) :
+   *  sans ce contexte, l'aimant serait dessiné dans la mauvaise variante, en
+   *  2D comme en 3D. */
+  hostSensorId?: string;
   livePreview?: boolean;
   cabled?: boolean;
   pair?: { magnetId: string; approach: string };
@@ -207,7 +213,7 @@ export function CandidateThumbnail({
    *  en infobulle (`title`) et reste annoncé aux lecteurs d'écran. */
   quiet?: boolean;
 }) {
-  const model = pairedMagnetModel(sensorId) ?? sensorById(sensorId);
+  const model = pairedMagnetModel(sensorId, hostSensorId) ?? sensorById(sensorId);
   const [lost, setLost] = useState(false);
   const supported = hasWebGL();
   // La 3D est demandée pour TOUTE vignette réellement visible : l'attribution
@@ -254,6 +260,7 @@ export function CandidateThumbnail({
           >
             <ThumbnailScene
               sensorId={model.id}
+              {...(hostSensorId ? { hostSensorId } : {})}
               cabled={cabled}
               fitToView={fitToView}
               scaleBar={scaleBar}
