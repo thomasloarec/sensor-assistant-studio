@@ -13,16 +13,7 @@ import { t } from "@/lib/i18n/core";
  * - sans WebGL, le repli 2D dessine LA silhouette du capteur concerné : il ne
  *   substitue jamais une autre référence.
  */
-import {
-  Component,
-  lazy,
-  Suspense,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-  type ReactNode,
-} from "react";
+import { Component, lazy, Suspense, useState, type ReactNode } from "react";
 
 import {
   sensorById,
@@ -37,90 +28,27 @@ const ThumbnailScene = lazy(
   () => import("@/components/standex/workshop/candidate-thumbnail-scene"),
 );
 
-/* ------------------------------------------------------------------ */
-/* Plafond de contextes WebGL simultanés                               */
-/* ------------------------------------------------------------------ */
-/** Jeton d'appartenance : c'est LUI qui dit si une vignette détient une place,
- * jamais un booléen figé au moment de la demande. Une place transmise à une
- * vignette en attente reste comptée, et la vignette servie la rend vraiment. */
-export type ThumbnailSlot = { held: boolean; waiting: boolean };
+import {
+  acquireThumbnailSlot,
+  hasWebGL,
+  liveThumbnailContexts,
+  queuedThumbnailSlots,
+  releaseThumbnailSlot,
+  resetThumbnailSlots,
+  useWebglSlot,
+} from "@/hooks/use-webgl-slot";
 
-const MAX_LIVE_CONTEXTS = 4;
-let liveContexts = 0;
-const queue: { token: ThumbnailSlot; notify: () => void }[] = [];
-
-/** Demande une place. Le jeton renvoyé est mis à jour lors d'un passage de
- * relais : il ne faut donc jamais recopier `held` dans une variable locale. */
-export function acquireThumbnailSlot(notify: () => void): ThumbnailSlot {
-  const token: ThumbnailSlot = { held: false, waiting: false };
-  if (liveContexts < MAX_LIVE_CONTEXTS) {
-    liveContexts += 1;
-    token.held = true;
-    return token;
-  }
-  token.waiting = true;
-  queue.push({ token, notify });
-  return token;
-}
-
-/** Rendu idempotent : une attente annulée sort de la file, une place détenue
- * est transmise atomiquement à la vignette suivante (le compteur ne redescend
- * pas), et un second appel ne libère rien de plus. */
-export function releaseThumbnailSlot(token: ThumbnailSlot) {
-  if (token.waiting) {
-    token.waiting = false;
-    const index = queue.findIndex((entry) => entry.token === token);
-    if (index >= 0) queue.splice(index, 1);
-    return;
-  }
-  if (!token.held) return;
-  token.held = false;
-  const next = queue.shift();
-  if (next) {
-    next.token.waiting = false;
-    next.token.held = true; // la place change de mains, elle n'est pas rendue
-    // Réveil différé : on ne met jamais à jour une autre vignette pendant le
-    // nettoyage d'effet de celle qui libère sa place.
-    queueMicrotask(() => {
-      if (next.token.held) next.notify();
-    });
-    return;
-  }
-  liveContexts = Math.max(0, liveContexts - 1);
-}
-
-/** Uniquement pour les tests : remet le compteur à zéro. */
-export function resetThumbnailSlots() {
-  liveContexts = 0;
-  queue.length = 0;
-}
-/** Uniquement pour les tests : nombre de contextes réellement comptés. */
-export function liveThumbnailContexts() {
-  return liveContexts;
-}
-
-/** Three 0.185 rend EXCLUSIVEMENT en WebGL2 : sonder « webgl » ferait croire à
- * un rendu possible sur un appareil qui n'a que WebGL1. La sonde libère son
- * propre contexte, sinon elle occuperait une place au détriment des vignettes. */
-let webglSupport: boolean | null = null;
-export function hasWebGL(): boolean {
-  if (webglSupport !== null) return webglSupport;
-  if (typeof document === "undefined") return false;
-  try {
-    const canvas = document.createElement("canvas");
-    const gl = canvas.getContext("webgl2");
-    webglSupport = Boolean(gl);
-    gl?.getExtension("WEBGL_lose_context")?.loseContext();
-  } catch {
-    webglSupport = false;
-  }
-  return webglSupport;
-}
-
-function prefersReducedMotion(): boolean {
-  if (typeof window === "undefined" || !window.matchMedia) return false;
-  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-}
+/** L'ordonnanceur de contextes WebGL vit dans `@/hooks/use-webgl-slot` : il est
+ * partagé par toutes les vignettes (candidats, couples, connecteurs). Ces
+ * ré-exports gardent les appelants historiques valides. */
+export {
+  acquireThumbnailSlot,
+  releaseThumbnailSlot,
+  hasWebGL,
+  liveThumbnailContexts,
+  queuedThumbnailSlots,
+  resetThumbnailSlots,
+};
 
 /* ------------------------------------------------------------------ */
 /* Repli 2D : une silhouette PAR FORME, jamais un capteur par défaut   */
@@ -261,7 +189,7 @@ export function CandidateThumbnail({
   fitToView = false,
   size = "compact",
   scaleBar = false,
-  onDemand = false,
+  legend,
   quiet = false,
 }: {
   sensorId: string;
@@ -272,85 +200,40 @@ export function CandidateThumbnail({
   /** Hauteur de la vignette. Le cadrage reste propre à chaque capteur. */
   size?: "compact" | "large";
   scaleBar?: boolean;
-  /** Le dessin coté s'affiche IMMÉDIATEMENT ; le rendu 3D interactif n'est monté
-   *  qu'au survol, au focus ou au clic. Six contextes WebGL ouverts en même
-   *  temps laissaient des vignettes vides plusieurs secondes. */
-  onDemand?: boolean;
+  /** Rôle de l'objet dessiné : « Capteur » ou « Aimant ». Écrit SOUS l'image,
+   *  jamais par-dessus, et repris dans le libellé accessible. */
+  legend?: "sensor" | "magnet";
   /** Vignette silencieuse : aucun texte dans l'image. L'état de l'aperçu passe
    *  en infobulle (`title`) et reste annoncé aux lecteurs d'écran. */
   quiet?: boolean;
 }) {
   const model = pairedMagnetModel(sensorId) ?? sensorById(sensorId);
-  const host = useRef<HTMLDivElement>(null);
-  const [asked, setAsked] = useState(!onDemand);
-  const [inView, setInView] = useState(false);
-  const [slot, setSlot] = useState(false);
   const [lost, setLost] = useState(false);
-  const [reduced, setReduced] = useState(true);
   const supported = hasWebGL();
+  // La 3D est demandée pour TOUTE vignette réellement visible : l'attribution
+  // dépend de la visibilité, plus du survol. Une carte sans place disponible
+  // garde son dessin coté et le dit.
+  const { host, hasSlot, reduced } = useWebglSlot(livePreview && supported && !lost);
 
-  useEffect(() => {
-    setReduced(prefersReducedMotion());
-    const media = window.matchMedia?.("(prefers-reduced-motion: reduce)");
-    if (!media) return;
-    const onChange = () => setReduced(media.matches);
-    media.addEventListener("change", onChange);
-    return () => media.removeEventListener("change", onChange);
-  }, []);
-
-  useEffect(() => {
-    const node = host.current;
-    if (!node || typeof IntersectionObserver === "undefined") {
-      setInView(true);
-      return;
-    }
-    const observer = new IntersectionObserver(
-      (entries) => setInView(entries.some((e) => e.isIntersecting)),
-      { rootMargin: "120px" },
-    );
-    observer.observe(node);
-    return () => observer.disconnect();
-  }, []);
-
-  const claim = useCallback(() => setSlot(true), []);
-  useEffect(() => {
-    if (!inView || !supported || lost || !livePreview || !asked) return;
-    const token = acquireThumbnailSlot(claim);
-    if (token.held) setSlot(true);
-    return () => {
-      // On rend le JETON, pas une valeur figée : si une place nous a été
-      // transmise entre-temps, elle est bien restituée.
-      releaseThumbnailSlot(token);
-      setSlot(false);
-    };
-  }, [inView, supported, lost, claim, livePreview, asked]);
-
-  const live = livePreview && asked && inView && slot && supported && !lost;
-  const wake = onDemand && !asked ? () => setAsked(true) : undefined;
+  const live = hasSlot;
   const reason = !livePreview
     ? t("Vue plane")
-    : onDemand && !asked
-      ? // Dessin coté immédiat : la vignette n'est jamais vide, la 3D arrive au
-        // survol. En mode silencieux, l'indication n'est plus écrite dans l'image.
-        quiet
-        ? t("Survolez pour la 3D")
-        : t("Vue cotée · survolez pour la 3D")
-      : supported
-        ? lost
-          ? t("Aperçu 3D indisponible")
-          : t("Aperçu 3D à l'affichage")
-        : t("3D non disponible sur cet appareil");
+    : !supported
+      ? t("3D non disponible sur cet appareil")
+      : lost
+        ? t("Aperçu 3D indisponible : dessin coté à la place")
+        : live
+          ? t("Aperçu 3D")
+          : t("Dessin coté : aperçu 3D en attente d'une place");
+  const roleLabel = legend === "magnet" ? t("Aimant") : legend === "sensor" ? t("Capteur") : null;
   return (
     <div
-      ref={host}
+      ref={host as React.RefObject<HTMLDivElement>}
       className={size === "large" ? "candidate-thumb candidate-thumb-large" : "candidate-thumb"}
       data-live={live ? "3d" : "2d"}
-      data-on-demand={onDemand ? (asked ? "asked" : "static") : undefined}
+      data-role={legend}
       data-sensor={model.id}
       {...(quiet ? { title: `${model.name} — ${reason}` } : {})}
-      onPointerEnter={wake}
-      onPointerDown={wake}
-      onFocusCapture={wake}
     >
       {live ? (
         // Un renderer qui refuse de se créer doit retomber sur le dessin 2D,
@@ -391,6 +274,22 @@ export function CandidateThumbnail({
           {...(pair ? { pair } : {})}
         />
       )}
+      {roleLabel ? (
+        <span className="candidate-thumb-legend t-label">
+          {legend === "magnet" ? (
+            <svg
+              className="candidate-thumb-legend-icon"
+              viewBox="-12 -6 24 12"
+              aria-hidden="true"
+              focusable="false"
+            >
+              <rect className="magnet-pole-north" x={-10} y={-5} width={10} height={10} rx={1} />
+              <rect className="magnet-pole-south" x={0} y={-5} width={10} height={10} rx={1} />
+            </svg>
+          ) : null}
+          {roleLabel}
+        </span>
+      ) : null}
     </div>
   );
 }

@@ -74,6 +74,14 @@ export interface MountingComputed {
   dropOutMm: number | null;
   transitions: MountingTransition[];
   uncoveredSegments: [number, number][];
+  /** Vrai quand le contact affiché vient d'une commutation ILLUSTRATIVE de
+   * proximité (aucune distance documentée exploitable). Le verdict reste
+   * `undetermined` et la preuve `uncharacterised` : ce mode ne vaut jamais
+   * validation technique, et il est repris tel quel dans les exports. */
+  illustrative?: boolean;
+  /** Distances de la commutation illustrative, jamais des seuils publiés. */
+  illustrativePullInMm?: number;
+  illustrativeDropOutMm?: number;
 }
 export interface GuidedMounting {
   version: typeof MOUNTING_CONTRACT_VERSION;

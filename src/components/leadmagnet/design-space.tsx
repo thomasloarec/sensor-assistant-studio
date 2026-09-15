@@ -898,9 +898,18 @@ export function DesignSpace({
     return () => window.removeEventListener("beforeunload", warn);
   }, []);
 
+  /** Réponse de montage écrite par le client. Une fixation NOMMÉE là (« vissé »,
+   * « screw or adhesive ») est une contrainte dure, même sans case cochée. */
+  const mountingText =
+    dossier.requirements.find((r) => r.key === "mounting")?.value?.trim() || null;
   const candidates = useMemo(
-    () => evaluateCandidates({ mounting: dossier.mounting, envelope: dossier.envelope }),
-    [dossier.mounting, dossier.envelope],
+    () =>
+      evaluateCandidates({
+        mounting: dossier.mounting,
+        envelope: dossier.envelope,
+        mountingText,
+      }),
+    [dossier.mounting, dossier.envelope, mountingText],
   );
   // Le câble n'est montré sur les vignettes que s'il existe réellement un tracé.
   const candidatesCabled =
@@ -2050,12 +2059,15 @@ export function DesignSpace({
     [candidates, shownFilters, activeFilterIds, dossier.mounting, dossier.envelope],
   );
 
+  /** Un capteur ÉCARTÉ par une contrainte dure (montage nommé, encombrement)
+   * ne remonte jamais dans les propositions : il reste lisible dans la liste
+   * complète, avec sa raison, mais il n'est plus reclassé en tête. */
   const plausibleCandidates = useMemo(
-    () => candidateRows.filter((r) => r.blocked.length === 0),
+    () => candidateRows.filter((r) => r.blocked.length === 0 && r.candidate.status !== "excluded"),
     [candidateRows],
   );
   const otherCandidates = useMemo(
-    () => candidateRows.filter((r) => r.blocked.length > 0),
+    () => candidateRows.filter((r) => r.blocked.length > 0 || r.candidate.status === "excluded"),
     [candidateRows],
   );
 

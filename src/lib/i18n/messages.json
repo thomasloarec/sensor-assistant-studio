@@ -24784,5 +24784,77 @@
     "Standex измеряет положение в своей лаборатории: запрос измерения не является технической проверкой.",
     "Standex misura la posizione nel proprio laboratorio: richiedere una misura non è una validazione tecnica.",
     "Standexは自社ラボで位置を測定します。測定の依頼は技術的な検証ではありません。"
+  ],
+  "fixation vissée": [
+    "screwed mounting",
+    "螺钉固定",
+    "Schraubbefestigung",
+    "fijación con tornillos",
+    "крепление винтами",
+    "fissaggio a vite",
+    "ねじ固定"
+  ],
+  "fixation collée": [
+    "adhesive mounting",
+    "粘接固定",
+    "Klebebefestigung",
+    "fijación adhesiva",
+    "приклеивание",
+    "fissaggio adesivo",
+    "接着固定"
+  ],
+  "emmanchement dans un trou": [
+    "press-fit into a hole",
+    "压入孔内",
+    "Einpressen in eine Bohrung",
+    "encaje a presión en un orificio",
+    "установка в отверстие с натягом",
+    "inserimento a pressione in un foro",
+    "穴への圧入"
+  ],
+  "maintien par collier ou clip": [
+    "clamp or clip retention",
+    "卡箍或卡扣固定",
+    "Halterung mit Schelle oder Clip",
+    "sujeción con brida o clip",
+    "фиксация хомутом или защёлкой",
+    "fissaggio con fascetta o clip",
+    "バンドまたはクリップ保持"
+  ],
+  "report sur circuit imprimé": [
+    "mounting on a printed circuit board",
+    "印刷电路板贴装",
+    "Bestückung auf Leiterplatte",
+    "montaje en circuito impreso",
+    "монтаж на печатной плате",
+    "montaggio su circuito stampato",
+    "プリント基板への実装"
+  ],
+  "Aperçu 3D indisponible : dessin coté à la place": [
+    "3D preview unavailable: dimensioned drawing instead",
+    "无法显示三维预览：改为标注图",
+    "3D-Vorschau nicht verfügbar: stattdessen Maßzeichnung",
+    "Vista 3D no disponible: plano acotado en su lugar",
+    "3D-просмотр недоступен: вместо него чертёж с размерами",
+    "Anteprima 3D non disponibile: al suo posto il disegno quotato",
+    "3Dプレビュー利用不可：寸法図を表示"
+  ],
+  "Aperçu 3D": [
+    "3D preview",
+    "三维预览",
+    "3D-Vorschau",
+    "Vista 3D",
+    "3D-просмотр",
+    "Anteprima 3D",
+    "3Dプレビュー"
+  ],
+  "Dessin coté : aperçu 3D en attente d'une place": [
+    "Dimensioned drawing: 3D preview waiting for a slot",
+    "标注图：三维预览等待空位",
+    "Maßzeichnung: 3D-Vorschau wartet auf einen Platz",
+    "Plano acotado: la vista 3D espera un espacio",
+    "Чертёж с размерами: 3D-просмотр ожидает свободного места",
+    "Disegno quotato: anteprima 3D in attesa di un posto",
+    "寸法図：3Dプレビューは空き待ち"
   ]
 }
