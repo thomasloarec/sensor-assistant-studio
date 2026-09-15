@@ -703,7 +703,9 @@ export default function MagneticWorkshop({
   /** Commutation ILLUSTRATIVE : le contact bascule à proximité pour que la scène
    *  reste lisible, mais aucune distance n'est caractérisée. La mention est
    *  PERMANENTE tant que ce mode est actif, et elle suit l'essai enregistré. */
-  const illustrative = computed?.illustrative === true;
+  // La source d'affichage est la simulation de la SCÈNE (pose réellement
+  // dessinée) ; le résultat enregistré porte la même marque.
+  const illustrative = guidedSim.illustrative === true || computed?.illustrative === true;
   
 
   /** Essai à conserver dans le dossier : verdict, distances PUBLIÉES (ou `null`)
@@ -1883,9 +1885,15 @@ export default function MagneticWorkshop({
         <p>
           {/* Une seule phrase : la provenance des distances et la limite qui va
               avec. L'état d'enregistrement, lui, vit dans la barre du panneau. */}
-          {reference ? (
+          {/* Sans distance publiée pour ce couple, on ne prétend PAS en afficher :
+              le pied de page dit alors que la commutation est illustrative. */}
+          {reference && !illustrative ? (
             t(
               "Distances typiques publiées par Standex pour ce couple, dans cette position. À confirmer par un essai dans votre application.",
+            )
+          ) : reference ? (
+            t(
+              "Aucune distance publiée pour ce couple : la commutation montrée est illustrative et doit être validée par des essais.",
             )
           ) : (
             <>
