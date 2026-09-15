@@ -1,4 +1,9 @@
-import { defaultMagnetFor, documentedAlias, magnetOptionsFor } from "@/lib/standex/default-pairs";
+import {
+  defaultMagnetFor,
+  documentedAlias,
+  isOutsidePolicy,
+  magnetOptionsFor,
+} from "@/lib/standex/default-pairs";
 import { pairedMagnetModel } from "@/lib/standex/paired-magnets";
 import { magnetSource } from "@/lib/standex/magnet-catalog";
 import { t, msg } from "@/lib/i18n/core";
@@ -559,7 +564,10 @@ export default function MagneticWorkshop({
   /** Lignes publiées du couple, y compris les modèles de contact non simulés. */
   const publishedRows = publishedRowsForCouple(config.sensorId, config.magnetModel);
   const approachOptions = approachChoicesFor(config.sensorId, config.magnetModel);
-  const magnetChoices = magnetOptionsFor(config.sensorId);
+  // Le choix déjà enregistré reste lisible même hors politique ; il n'est pas
+  // reproposé ailleurs et rien n'est réécrit à la relecture d'un dossier.
+  const magnetChoices = magnetOptionsFor(config.sensorId, undefined, config.magnetModel);
+  const magnetOutsidePolicy = isOutsidePolicy(config.sensorId, config.magnetModel);
   const magnetAlias = documentedAlias(config.magnetModel);
 
   const summary = useMemo(() => summarizeWorkshop(config), [config]);
@@ -1018,10 +1026,18 @@ export default function MagneticWorkshop({
             {magnetChoices.map((id) => (
               <option key={id} value={id}>
                 {pairedMagnetModel(id, config.sensorId)?.name ?? t(id)}
+                {isOutsidePolicy(config.sensorId, id) ? t(" (choix conservé)") : ""}
               </option>
             ))}
           </select>
         </label>
+        {magnetOutsidePolicy && (
+          <p className="mw-help" data-testid="magnet-outside-policy">
+            {t(
+              "Cet aimant vient d'un choix déjà enregistré : il reste affiché tel quel et n'est plus proposé pour ce capteur.",
+            )}
+          </p>
+        )}
         {/* Le choix de matériau est remonté hors des réglages avancés : il est
             visible dès l'ouverture de l'atelier (voir `guideMaterialsBlock`). */}
         {reference && sensitivityChoices.length > 0 && (

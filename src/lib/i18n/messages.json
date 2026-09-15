@@ -25207,5 +25207,23 @@
     "* Необычный порядок печати в брошюре («up» больше «to»). Значение воспроизведено как напечатано, без сортировки и правок, и требует подтверждения Standex: такие строки не служат ориентиром для демонстрации дальности.",
     "* Ordine di stampa inusuale nella brochure («up» maggiore di «to»). Il valore è riprodotto così com'è, senza ordinamenti né correzioni, e resta da confermare da Standex: queste righe non fanno da riferimento alla dimostrazione di portata.",
     "* ブローシャーの印刷順序が通常と異なります（「up」が「to」より大きい）。値は並べ替えや修正なしにそのまま再現し、Standex の確認待ちです。これらの行は距離のデモの目安には使いません。"
+  ],
+  " (choix conservé)": [
+    " (kept choice)",
+    " （保留的选择）",
+    " (beibehaltene Auswahl)",
+    " (elección conservada)",
+    " (сохранённый выбор)",
+    " (scelta conservata)",
+    " （保持された選択）"
+  ],
+  "Cet aimant vient d'un choix déjà enregistré : il reste affiché tel quel et n'est plus proposé pour ce capteur.": [
+    "This magnet comes from a previously saved choice: it stays shown as is and is no longer offered for this sensor.",
+    "该磁铁来自先前保存的选择：按原样保留显示，但不再为该传感器提供。",
+    "Dieser Magnet stammt aus einer bereits gespeicherten Auswahl: Er bleibt unverändert sichtbar und wird für diesen Sensor nicht mehr angeboten.",
+    "Este imán proviene de una elección ya guardada: se mantiene tal cual y ya no se ofrece para este sensor.",
+    "Этот магнит взят из ранее сохранённого выбора: он остаётся отображённым как есть и больше не предлагается для этого датчика.",
+    "Questo magnete deriva da una scelta già salvata: resta visualizzato così com'è e non è più proposto per questo sensore.",
+    "このマグネットは以前に保存された選択によるものです。そのまま表示され続けますが、このセンサーには今後提案されません。"
   ]
 }
