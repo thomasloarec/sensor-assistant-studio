@@ -46,18 +46,23 @@ describe("commutation illustrative des couples non caractérisés", () => {
 
   test("le contact ferme près et rouvre loin, sur l'entrefer de surfaces", () => {
     expect(uncharacterised.illustrative).toBe(true);
-    const near = uncharacterised.samples.filter((s) => s.distance <= ILLUSTRATIVE_PULL_IN_MM);
-    const far = uncharacterised.samples.filter((s) => s.distance >= ILLUSTRATIVE_DROP_OUT_MM);
+    // `gapMm` est l'entrefer de SURFACES, exactement la grandeur lue par la
+    // scène et par les curseurs : aucune conversion n'est inventée ici.
+    const near = uncharacterised.samples.filter((s) => s.gapMm > 0 && s.gapMm <= ILLUSTRATIVE_PULL_IN_MM);
+    const far = uncharacterised.samples.filter((s) => s.gapMm >= ILLUSTRATIVE_DROP_OUT_MM);
     expect(near.length).toBeGreaterThan(0);
     expect(far.length).toBeGreaterThan(0);
     expect(near.every((s) => s.contact === "closed")).toBe(true);
     expect(far.every((s) => s.contact === "open")).toBe(true);
+    // Une commutation réelle est donc racontée par la chronologie.
+    expect(uncharacterised.transitions.length).toBeGreaterThan(0);
   });
 
-  test("la preuve reste « non caractérisé » : aucun seuil n'est fabriqué", () => {
-    expect(uncharacterised.evidence).toBe("uncharacterised");
+  test("la preuve reste absente : aucun seuil n'est fabriqué", () => {
     expect(uncharacterised.pullInMm).toBeNull();
     expect(uncharacterised.dropOutMm).toBeNull();
     expect(uncharacterised.coverage).not.toBe("covered");
+    // Aucun échantillon n'est déclaré couvert par une source.
+    expect(uncharacterised.samples.every((s) => !s.covered)).toBe(true);
   });
 });
