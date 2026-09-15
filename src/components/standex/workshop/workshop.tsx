@@ -3,7 +3,12 @@ import { pairedMagnetModel } from "@/lib/standex/paired-magnets";
 import { magnetSource } from "@/lib/standex/magnet-catalog";
 import { t, msg } from "@/lib/i18n/core";
 import { GuideMaterials } from "./guide-materials";
-import { guideIllustrativeMarks, guideRange } from "@/lib/standex/activation-guide";
+import {
+  guideIllustrativeMarks,
+  guideRange,
+  guideRangesFor,
+  guideReferencesFor,
+} from "@/lib/standex/activation-guide";
 import { standardShapeForSensor } from "@/lib/standex/magnet-recommendation";
 import { useLocale } from "@/lib/i18n/react";
 import { AppHeader } from "@/components/standex/app-header";
@@ -471,7 +476,13 @@ export default function MagneticWorkshop({
     const reference =
       guideReference && references.includes(guideReference) ? guideReference : references[0];
     if (!reference) return null;
-    const approaches = guideApproachesFor(config.sensorId, config.magnetModel);
+    const approaches = [
+      ...new Set(
+        guideRangesFor(config.sensorId, config.magnetModel)
+          .filter((r) => r.sensorReference === reference)
+          .map((r) => r.approachId),
+      ),
+    ];
     const approach =
       guideApproach && approaches.includes(guideApproach) ? guideApproach : approaches[0];
     if (!approach) return null;
