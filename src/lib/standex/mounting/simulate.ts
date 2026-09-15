@@ -16,7 +16,17 @@ import type {
   Verdict,
 } from "./contract";
 import { mountingHash } from "./contract";
-import { add, bodiesCollide, halfExtent, bodyOf, lateralOffsetMm, scale, sub } from "./geometry";
+import {
+  add,
+  approachAxisFor,
+  bodiesCollide,
+  halfExtent,
+  bodyOf,
+  lateralOffsetMm,
+  scale,
+  separationMm,
+  sub,
+} from "./geometry";
 import type { Pose, Vec3 } from "./geometry";
 
 export const SAMPLE_STEPS = 600;
@@ -51,9 +61,28 @@ export function relativePoseAt(m: GuidedMounting, profile: LocatedProfile, t: nu
     rotationDeg: [...m.relative.rotationDeg] as Vec3,
   };
 }
+/**
+ * Pose de la scène à l'instant `t`, même sans profil publié.
+ *
+ * Sans profil, la pose relative valait `[0, 0, 0]` : l'aimant était réputé au
+ * centre du capteur, ce qui n'est ni la scène affichée ni une distance
+ * mesurable. On reconstruit donc la pose réellement dessinée à partir de l'axe
+ * d'approche du gabarit, en conservant le décalage latéral déclaré. Aucune
+ * donnée magnétique n'est fabriquée : c'est de la géométrie.
+ */
+export function scenePoseAt(m: GuidedMounting, profile: MountingProfile | null, t: number): Pose {
+  const located = locatedProfile(profile);
+  if (located) return relativePoseAt(m, located, t);
+  const axis = approachAxisFor(m.couple.approachId);
+  const fallback: LocatedProfile = { ...(profile ?? {}), axis } as LocatedProfile;
+  return relativePoseAt(m, fallback, t);
+}
 export interface MountingSample {
   t: number;
   gapMm: number;
+  /** Séparation géométrique réelle des deux enveloppes dans la scène, décalage
+   * latéral et montage importé compris. Jamais un seuil de commutation. */
+  separationMm: number;
   covered: boolean;
   contact: ContactState;
   relative: Pose;
@@ -86,23 +115,26 @@ export interface MountingSimulation {
 export const ILLUSTRATIVE_PULL_IN_MM = 15;
 export const ILLUSTRATIVE_DROP_OUT_MM = 18;
 
-/** Raisons qui interdisent toute commutation, même illustrative : elles
- * décrivent un montage physiquement douteux (collision, ferreux, température)
- * ou une forme de contact/mode qui ne doit jamais être animée. */
-const ILLUSTRATIVE_BLOCKERS = new Set([
-  "FERROUS_DECLARED",
-  "TEMPERATURE_NOT_AMBIENT",
-  "CONTACT_FORM_NOT_SIMULATED",
-  "EDUCATION_MODE",
-  "COLLISION_OR_CONTACT",
-  // Une POSE qui sort du gabarit documenté n'est pas un manque de données :
-  // c'est une géométrie que la source ne décrit pas. Montrer une commutation
-  // reviendrait à inventer une donnée d'approche, ce qui reste refusé. Le mode
-  // illustratif ne couvre que les couples SANS distance caractérisée.
-  "ORIENTATION_OFF_TEMPLATE",
-  "LATERAL_OFFSET",
-  "OFFSET_OFF_TEMPLATE",
-]);
+/**
+ * Raisons qui interdisent toute commutation, même illustrative.
+ *
+ * La liste est volontairement courte, et c'est le cœur de la distinction entre
+ * ILLUSTRER et QUALIFIER. Un environnement ferreux, une température autre que
+ * l'ambiante, un mode démonstration, un décalage latéral ou une pose hors
+ * gabarit ne sont PAS des raisons de laisser la scène inerte : la demande est de
+ * montrer une réaction de proximité lisible, jamais de la faire passer pour une
+ * mesure. Ces situations restent donc animées, mais avec le drapeau
+ * `illustrative` et la mention permanente qui l'accompagne, et sans qu'aucun
+ * seuil publié, aucune couverture ni aucun verdict ne bouge.
+ *
+ * Le seul refus absolu : un contact dont la forme n'est jamais simulée (1B/1C).
+ * Les distances y sont lisibles au registre, elles ne sont pas animées. La
+ * collision reste traitée échantillon par échantillon : deux corps qui
+ * s'interpénètrent n'affichent pas d'état.
+ */
+const ILLUSTRATIVE_BLOCKERS = new Set(["CONTACT_FORM_NOT_SIMULATED"]);
+/** Au-delà de cette séparation réelle, l'état illustratif est TOUJOURS ouvert. */
+export const ILLUSTRATIVE_FAR_MM = 20;
 
 /** Vrai si l'on peut montrer une commutation illustrative pour ce montage. */
 export function illustrativeAllowed(reasons: readonly string[]): boolean {
@@ -175,11 +207,10 @@ export function simulateMounting(
   for (let i = 0; i <= steps; i++) {
     const t = i / steps,
       gap = gapAt(m, t);
-    const relative = located
-      ? relativePoseAt(m, located, t)
-      : { positionMm: [0, 0, 0] as Vec3, rotationDeg: [...m.relative.rotationDeg] as Vec3 };
-    const collides =
-      located !== null && bodiesCollide(m.couple.sensorId, m.couple.magnetId, relative);
+    // La pose vient toujours de la scène réelle, avec ou sans profil publié.
+    const relative = scenePoseAt(m, profile, t);
+    const separation = separationMm(m.couple.sensorId, m.couple.magnetId, relative);
+    const collides = bodiesCollide(m.couple.sensorId, m.couple.magnetId, relative);
     collided.push(collides);
     const sampleCovered = !blocked && !collides && gap > 0;
     if (sampleCovered) covered++;
@@ -192,7 +223,15 @@ export function simulateMounting(
     if (i > 0 && next !== contact && next !== "unknown")
       transitions.push({ t, contact: next, gapMm: gap });
     contact = next;
-    samples.push({ t, gapMm: gap, covered: sampleCovered, contact, relative, outward: t > 0.5 });
+    samples.push({
+      t,
+      gapMm: gap,
+      separationMm: separation,
+      covered: sampleCovered,
+      contact,
+      relative,
+      outward: t > 0.5,
+    });
   }
   const coveredFraction = covered / (steps + 1);
   const coverage: Coverage = covered === steps + 1 ? "covered" : covered > 0 ? "partial" : "outside";
@@ -205,20 +244,27 @@ export function simulateMounting(
   // PROXIMITÉ, pour que l'atelier reste lisible. `covered` reste faux, donc la
   // couverture, la preuve et le verdict ne bougent pas d'un iota : seul l'état
   // de contact affiché change, et il est marqué `illustrative`.
+  //
+  // La proximité est lue sur la SÉPARATION RÉELLE des deux enveloppes, pas sur
+  // l'entrefer nominal de la course : un aimant écarté de 100 mm sur le côté est
+  // loin, même si la course annonce 5 mm sur l'axe.
   const illustrative = coverage !== "covered" && illustrativeAllowed(allReasons);
   if (illustrative) {
     transitions.length = 0;
     let shown: ContactState = "unknown";
     for (let i = 0; i < samples.length; i++) {
       const s = samples[i]!;
+      const d = s.separationMm;
       let next: ContactState = "unknown";
-      if (!collided[i] && s.gapMm > 0)
+      if (!collided[i] && d > 0)
         next =
-          s.gapMm <= ILLUSTRATIVE_PULL_IN_MM
-            ? "closed"
-            : s.gapMm >= ILLUSTRATIVE_DROP_OUT_MM
-              ? "open"
-              : shown;
+          d >= ILLUSTRATIVE_FAR_MM
+            ? "open"
+            : d <= ILLUSTRATIVE_PULL_IN_MM
+              ? "closed"
+              : d >= ILLUSTRATIVE_DROP_OUT_MM
+                ? "open"
+                : shown;
       if (i > 0 && next !== shown && next !== "unknown")
         transitions.push({ t: s.t, contact: next, gapMm: s.gapMm });
       shown = next;

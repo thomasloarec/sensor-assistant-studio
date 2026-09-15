@@ -7,7 +7,11 @@ import {
 } from "./magnet-catalog";
 import { PUBLISHED_REGISTRY } from "./magnetics/registries";
 import type { PublishedRegistry } from "./magnetics/registries";
-import { guideFallbackMagnet, standardMagnetOptions } from "./magnet-recommendation";
+import {
+  guideFallbackMagnet,
+  standardMagnetOptions,
+  standardShapeForSensor,
+} from "./magnet-recommendation";
 import type { SensorModel } from "./sensor-catalog";
 
 /**
@@ -76,10 +80,42 @@ export function documentedMagnetsFor(
     return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib) || a.localeCompare(b);
   });
 }
+/** Vrai si cet aimant est un couple explicitement demandé pour CE capteur. */
+function dedicatedFor(sensorId: string, magnetId: string): boolean {
+  return DEFAULT_PAIRS[sensorId] === magnetId || (PAIR_ALTERNATIVES[sensorId] ?? []).includes(magnetId);
+}
+/**
+ * Filtre de POLITIQUE appliqué aux aimants documentés, sans jamais toucher au
+ * registre : `documentedMagnetsFor` continue de dire la vérité documentaire.
+ *
+ * Deux exclusions, et seulement celles-là :
+ *
+ * - l'actionneur en BOÎTIER d'un autre capteur (M02 est le boîtier du MK02) :
+ *   une ligne publiée avec cet actionneur reste une preuve de mesure, ce n'est
+ *   pas une raison de proposer le boîtier d'un autre produit comme aimant de
+ *   travail ;
+ * - une FORME incompatible avec le capteur : le cylindre de référence
+ *   4003004003 sert de mètre-étalon aux tables publiées, il n'est pas l'aimant
+ *   à proposer devant un reed CMS, dont la politique demande un bloc.
+ *
+ * Un couple explicitement demandé pour ce capteur échappe aux deux filtres.
+ */
+export function policyMagnetsFor(
+  sensorId: string,
+  registry: PublishedRegistry = PUBLISHED_REGISTRY,
+): string[] {
+  const wanted = standardShapeForSensor(sensorId);
+  return documentedMagnetsFor(sensorId, registry).filter((id) => {
+    if (dedicatedFor(sensorId, id)) return true;
+    const housed = packagedMagnet(id);
+    if (housed) return housingFor(id, sensorId) === sensorId;
+    return (BARE_MAGNETS.find((m) => m.id === id)?.shape ?? wanted) === wanted;
+  });
+}
 /**
  * Aimant par défaut d'un capteur. Priorité au couple dédié demandé (MK02/M02,
- * MK04/M04…) ; sinon un aimant RÉELLEMENT documenté pour ce capteur ; sinon un
- * aimant STANDARD du guide d'activation choisi sur la forme du capteur
+ * MK04/M04…) ; sinon un aimant documenté RETENU par la politique ci-dessus ;
+ * sinon un aimant STANDARD du guide d'activation choisi sur la forme du capteur
  * (`magnet-recommendation.ts`). M02 n'est plus le repli universel : il reste
  * réservé au couple dédié MK02.
  */
@@ -89,7 +125,7 @@ export function defaultMagnetFor(
 ): string {
   return (
     DEFAULT_PAIRS[sensorId] ??
-    documentedMagnetsFor(sensorId, registry)[0] ??
+    policyMagnetsFor(sensorId, registry)[0] ??
     guideFallbackMagnet(sensorId) ??
     REFERENCE_CYLINDER
   );
@@ -98,9 +134,10 @@ export function defaultMagnetFor(
 export const preferredMagnet = (sensor: SensorModel): string => defaultMagnetFor(sensor.id);
 /**
  * Aimants RECOMMANDÉS pour un capteur : couple dédié, variantes explicitement
- * demandées, aimants réellement documentés au registre pour CE capteur, puis les
- * aimants standard du guide d'activation adaptés à sa forme. Aucun actionneur en
- * boîtier d'un autre capteur (M02 en tête) n'entre ici par défaut.
+ * demandées, aimants documentés retenus par la politique, puis les aimants
+ * standard du guide d'activation adaptés à sa forme. Aucun actionneur en
+ * boîtier d'un autre capteur (M02 en tête) n'entre ici, et aucune forme
+ * étrangère au capteur ne passe devant.
  */
 export function recommendedMagnetsFor(
   sensorId: string,
@@ -110,7 +147,7 @@ export function recommendedMagnetsFor(
     ...new Set([
       defaultMagnetFor(sensorId, registry),
       ...(PAIR_ALTERNATIVES[sensorId] ?? []),
-      ...documentedMagnetsFor(sensorId, registry),
+      ...policyMagnetsFor(sensorId, registry),
       ...standardMagnetOptions(sensorId).map((o) => o.magnetId),
     ]),
   ];

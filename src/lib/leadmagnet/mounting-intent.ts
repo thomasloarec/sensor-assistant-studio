@@ -62,26 +62,85 @@ const PATTERNS: Readonly<Record<MountingIntentKind, readonly RegExp[]>> = {
   ],
 };
 
+/** Marques de NÉGATION, françaises et anglaises. « No PCB mounting » nomme le
+ * report sur carte pour l'EXCLURE : le lire comme une fixation possible était le
+ * défaut qui laissait passer un MK15 sur une porte vitrée. */
+const NEGATIONS: readonly RegExp[] = [
+  /\bno\b/i,
+  /\bnot\b/i,
+  /\bnone\b/i,
+  /\bwithout\b/i,
+  /\bcannot\b/i,
+  /\bcan't\b/i,
+  /\bexclud/i,
+  /\bavoid/i,
+  /\bimpossible\b/i,
+  /\bsans\b/i,
+  /\bpas de\b/i,
+  /\bpas d'/i,
+  /\bni\b/i,
+  /\baucun/i,
+  /\bexclu/i,
+  /\binterdit/i,
+  /\bimpossible de\b/i,
+];
+
+/** Une négation ne porte que sur SA proposition : on découpe donc le texte en
+ * propositions (ponctuation, « mais », « but ») avant de lire les fixations. */
+const clausesOf = (text: string): string[] =>
+  text
+    .split(/[.;:!?\n,]+|\bmais\b|\bbut\b|\btoutefois\b|\bhowever\b/i)
+    .map((c) => c.trim())
+    .filter(Boolean);
+
+const ALL_SHAPES: readonly SensorShape[] = [
+  ...new Set(Object.values(SHAPES_BY_INTENT).flat()),
+];
+
 export interface MountingIntent {
-  /** Fixations réellement nommées, dans l'ordre de lecture. */
+  /** Fixations réellement nommées comme POSSIBLES, dans l'ordre de lecture. */
   kinds: MountingIntentKind[];
-  /** Vrai dès qu'au moins une fixation est nommée : la contrainte devient dure. */
+  /** Fixations nommées puis explicitement REFUSÉES (« sans PCB », « no PCB »). */
+  excluded: MountingIntentKind[];
+  /** Vrai dès qu'une fixation est nommée, possible ou refusée : la contrainte
+   * devient dure dans les deux cas. */
   explicit: boolean;
   /** Formes de boîtier acceptées par AU MOINS UNE des fixations nommées. */
   allowedShapes: SensorShape[];
 }
 
-const EMPTY: MountingIntent = { kinds: [], explicit: false, allowedShapes: [] };
+const EMPTY: MountingIntent = { kinds: [], excluded: [], explicit: false, allowedShapes: [] };
 
-/** Lit la ou les fixations nommées dans un texte libre, français ou anglais. */
+/** Lit la ou les fixations nommées dans un texte libre, français ou anglais, en
+ * distinguant ce qui est proposé de ce qui est refusé. */
 export function detectMountingIntent(text: string | null | undefined): MountingIntent {
   if (!text || !text.trim()) return EMPTY;
-  const kinds = (Object.keys(PATTERNS) as MountingIntentKind[]).filter((kind) =>
-    PATTERNS[kind].some((re) => re.test(text)),
-  );
-  if (kinds.length === 0) return EMPTY;
-  const allowedShapes = [...new Set(kinds.flatMap((k) => SHAPES_BY_INTENT[k]))];
-  return { kinds, explicit: true, allowedShapes };
+  const kinds = new Set<MountingIntentKind>();
+  const excluded = new Set<MountingIntentKind>();
+  for (const clause of clausesOf(text)) {
+    const negated = NEGATIONS.some((re) => re.test(clause));
+    for (const kind of Object.keys(PATTERNS) as MountingIntentKind[]) {
+      if (!PATTERNS[kind].some((re) => re.test(clause))) continue;
+      if (negated) excluded.add(kind);
+      else kinds.add(kind);
+    }
+  }
+  // Un refus explicite gagne contre une mention positive ailleurs : personne ne
+  // veut se voir proposer ce qu'il vient d'écarter.
+  for (const kind of excluded) kinds.delete(kind);
+  if (kinds.size === 0 && excluded.size === 0) return EMPTY;
+
+  const allowedShapes =
+    kinds.size > 0
+      ? [...new Set([...kinds].flatMap((k) => SHAPES_BY_INTENT[k]))]
+      : // Refus seul : on retire les formes que SEULES les fixations refusées
+        // permettaient, et on n'invente aucune fixation à la place.
+        ALL_SHAPES.filter((shape) =>
+          (Object.keys(SHAPES_BY_INTENT) as MountingIntentKind[]).some(
+            (k) => !excluded.has(k) && SHAPES_BY_INTENT[k].includes(shape),
+          ),
+        );
+  return { kinds: [...kinds], excluded: [...excluded], explicit: true, allowedShapes };
 }
 
 /** Le boîtier a-t-il une fixation documentée compatible d'au moins une des

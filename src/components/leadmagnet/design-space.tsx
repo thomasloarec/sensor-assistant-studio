@@ -82,6 +82,7 @@ import {
   type DesignDossier,
   type MountingChoice,
 } from "@/lib/leadmagnet/dossier";
+import { detectMountingIntent } from "@/lib/leadmagnet/mounting-intent";
 import { CANDIDATE_DISCLAIMER, evaluateCandidates } from "@/lib/leadmagnet/candidates";
 import {
   applyRoutingPick,
@@ -900,8 +901,24 @@ export function DesignSpace({
 
   /** Réponse de montage écrite par le client. Une fixation NOMMÉE là (« vissé »,
    * « screw or adhesive ») est une contrainte dure, même sans case cochée. */
-  const mountingText =
+  const mountingAnswer =
     dossier.requirements.find((r) => r.key === "mounting")?.value?.trim() || null;
+  /** Un client décrit souvent tout son besoin dans une seule réponse. Une
+   * fixation NOMMÉE reste une contrainte donnée par lui, quelle que soit la
+   * question où il l'a écrite : on lit donc l'ensemble de ses réponses écrites.
+   * Ce n'est toujours pas une déduction depuis un nom d'application. */
+  const answersText = useMemo(
+    () =>
+      dossier.requirements
+        .map((r) => r.value?.trim())
+        .filter((v): v is string => !!v)
+        .join(". ") || null,
+    [dossier.requirements],
+  );
+  /** La réponse de montage prime ; si elle ne nomme aucune fixation, on lit
+   * l'ensemble des réponses écrites, sans jamais rien deviner. */
+  const mountingText =
+    mountingAnswer && detectMountingIntent(mountingAnswer).explicit ? mountingAnswer : answersText;
   const candidates = useMemo(
     () =>
       evaluateCandidates({

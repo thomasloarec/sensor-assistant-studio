@@ -105,6 +105,33 @@ export function surfaceGapMm(
     halfExtent(magnet, relative.rotationDeg, axis)
   );
 }
+/**
+ * Séparation RÉELLE des deux enveloppes dans l'espace, quelle que soit la
+ * direction qui les sépare : distance de centre à centre moins les deux
+ * demi-enveloppes projetées sur cette direction.
+ *
+ * Pourquoi elle existe : `surfaceGapMm` ne lit que la composante le long d'un
+ * axe. Un aimant décalé de 100 mm latéralement gardait donc un « entrefer » de
+ * 5 mm, et une commutation de proximité pouvait se déclencher alors que les deux
+ * pièces sont éloignées. Cette fonction lit la pose telle qu'elle est réellement
+ * dessinée dans la scène, y compris le décalage latéral et le montage importé.
+ * Ce n'est PAS une distance de commutation : c'est une distance géométrique.
+ */
+export function separationMm(sensorId: string, magnetId: string, relative: Pose): number {
+  const centre = Math.hypot(...relative.positionMm);
+  if (centre <= 0) return 0;
+  const direction = scale(relative.positionMm, 1 / centre);
+  return (
+    centre -
+    halfExtent(bodyOf(sensorId, magnetId, "sensor"), [0, 0, 0], direction) -
+    halfExtent(bodyOf(sensorId, magnetId, "magnet"), relative.rotationDeg, direction)
+  );
+}
+/** Axe d'approche par défaut d'un gabarit, quand aucun profil n'est publié.
+ * D3 et l'approche frontale F1 suivent l'axe longitudinal X, D1 la face
+ * latérale Z. Source unique, partagée par le pont d'atelier et le moteur. */
+export const approachAxisFor = (approachId: string): Vec3 =>
+  approachId === "D3" || approachId === "F1" ? [1, 0, 0] : [0, 0, 1];
 /** Distance of the magnet centre off the approach axis, in the sensor frame. */
 export function lateralOffsetMm(relative: Pose, axis: Vec3): number {
   const along = scale(axis, dot(relative.positionMm, axis));

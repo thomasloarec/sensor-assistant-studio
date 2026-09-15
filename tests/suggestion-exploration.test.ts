@@ -85,3 +85,25 @@ describe("exploration d'autres critères", () => {
     ]);
   });
 });
+
+/** Le client décrit tout son besoin dans une seule réponse : la fixation qu'il
+ * NOMME reste une contrainte, et le résumé « Critères utilisés » ne doit pas
+ * rester vide. La lecture porte donc sur l'ensemble des réponses écrites. */
+describe("fixation nommée dans n'importe quelle réponse écrite", () => {
+  const paragraph =
+    "The sensor will be used for monitoring the open/closed status of glass doors on " +
+    "commercial refrigerated display cabinets. screw or adhesive mounting. refrigerated " +
+    "environment with humidity and condensation.";
+  test("un critère de fixation est produit et exclut les boîtiers CMS", () => {
+    const filters = suggestionFilters({
+      mounting: { kind: "other", holeDiameterMm: 0 } as never,
+      envelope: {} as never,
+      mountingText: paragraph,
+    });
+    const fixation = filters.find((f) => f.id === "fixation");
+    expect(fixation).toBeDefined();
+    expect(fixation?.source).toBe("answers");
+    expect(fixation?.criteria?.shapes).not.toContain("smd");
+    expect(fixation?.criteria?.shapes).toContain("flange");
+  });
+});
