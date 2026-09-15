@@ -3,6 +3,13 @@ import { pairedMagnetModel } from "@/lib/standex/paired-magnets";
 import { magnetSource } from "@/lib/standex/magnet-catalog";
 import { t, msg } from "@/lib/i18n/core";
 import { GuideMaterials } from "./guide-materials";
+import {
+  guideIllustrativeMarks,
+  guideRange,
+  guideRangesFor,
+  guideReferencesFor,
+} from "@/lib/standex/activation-guide";
+import { standardShapeForSensor } from "@/lib/standex/magnet-recommendation";
 import { useLocale } from "@/lib/i18n/react";
 import { AppHeader } from "@/components/standex/app-header";
 import SensorCard from "./sensor-card";
@@ -262,6 +269,11 @@ export default function MagneticWorkshop({
   /** Lecture « montage guidé » recalculée à chaque changement d'entrée : un verdict
    * n'est jamais conservé ni importé, il est toujours recalculé ici. */
   const guided = useGuidedMounting(config);
+  /** Ligne du guide d'activation et approche choisies EXPLICITEMENT pour la
+   *  démonstration illustrative de portée. Aucun profil n'est créé, aucune
+   *  qualification n'en dépend. */
+  const [guideReference, setGuideReference] = useState<string | null>(null),
+    [guideApproach, setGuideApproach] = useState<string | null>(null);
   /** Prévisualisation de pose : état séparé, jamais écrit dans la configuration.
    * Une proposition devenue obsolète (autres entrées modifiées) est abandonnée. */
   const [preview, setPreview] = useState<GuidedMounting | null>(null);
@@ -453,9 +465,43 @@ export default function MagneticWorkshop({
    *
    * Les positions issues de `simulateCycle` sont conservées pour l'animation du
    * modèle importé. */
+  /** Repères d'animation ILLUSTRATIVE : bornes de la plage du guide choisie
+   *  explicitement (référence + approche), sinon 15 / 18 mm. Ces bornes ne
+   *  touchent ni la couverture, ni la preuve, ni le verdict. */
+  const guideDemoRange = useMemo(() => {
+    // Sans choix explicite, la première ligne et la première approche publiées
+    // servent de repères : la démonstration suit donc le matériau dès l'ouverture,
+    // et le panneau affiche exactement les bornes utilisées.
+    const references = guideReferencesFor(config.sensorId, config.magnetModel);
+    const reference =
+      guideReference && references.includes(guideReference) ? guideReference : references[0];
+    if (!reference) return null;
+    const approaches = [
+      ...new Set(
+        guideRangesFor(config.sensorId, config.magnetModel)
+          .filter((r) => r.sensorReference === reference)
+          .map((r) => r.approachId),
+      ),
+    ];
+    const approach =
+      guideApproach && approaches.includes(guideApproach) ? guideApproach : approaches[0];
+    if (!approach) return null;
+    return guideRange(config.sensorId, reference, config.magnetModel, approach);
+  }, [config.sensorId, config.magnetModel, guideReference, guideApproach]);
+  const illustrativeBounds = useMemo(
+    () => guideIllustrativeMarks(guideDemoRange),
+    [guideDemoRange],
+  );
   const guidedSim = useMemo(
-    () => simulateMounting(guided, SAMPLE_STEPS, undefined, scenePoseSampler(config)),
-    [guided, config],
+    () =>
+      simulateMounting(
+        guided,
+        SAMPLE_STEPS,
+        undefined,
+        scenePoseSampler(config),
+        illustrativeBounds,
+      ),
+    [guided, config, illustrativeBounds],
   );
 
   const result = useMemo(() => {
@@ -949,8 +995,15 @@ export default function MagneticWorkshop({
             changent ensemble, sans facteur de matériau inventé. */}
         <GuideMaterials
           sensorFamily={config.sensorId}
+          shape={standardShapeForSensor(config.sensorId)}
           magnetModel={config.magnetModel}
+          guideReference={guideReference}
+          guideApproach={guideApproach}
           onSelect={(magnetModel) => update({ magnetModel })}
+          onSelectDemo={(ref, approachId) => {
+            setGuideReference(ref);
+            setGuideApproach(approachId);
+          }}
         />
         {reference && sensitivityChoices.length > 0 && (
           <label className="mw-select-label">

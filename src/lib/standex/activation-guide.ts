@@ -152,38 +152,72 @@ export interface GuideMagnetOption extends GuideMagnet {
 }
 const bodyOf = (id: string) => BARE_MAGNETS.find((m) => m.id === id)?.body ?? null;
 
+/**
+ * Alias de famille STRICTEMENT documentés : la brochure imprime la taille dans
+ * le nom du tableau (« MK06-4 »), alors que le reste de l'application peut
+ * nommer la famille sans la taille. Un alias n'est utilisé que si la famille
+ * demandée n'a AUCUNE ligne et que la cible en a : rien n'est rapproché par
+ * ressemblance de nom, et aucune donnée n'est copiée d'une famille à l'autre.
+ */
+export const GUIDE_FAMILY_ALIASES: Readonly<Record<string, string>> = {
+  MK06: "MK06-4",
+  "MK06-4": "MK06-4",
+};
+/** Famille du guide à interroger pour ce capteur. */
+export function guideFamilyFor(sensorFamily: string, guide = ACTIVATION_GUIDE): string {
+  if (guide.rows.some((r) => r.sensorFamily === sensorFamily)) return sensorFamily;
+  const alias = GUIDE_FAMILY_ALIASES[sensorFamily];
+  return alias && guide.rows.some((r) => r.sensorFamily === alias) ? alias : sensorFamily;
+}
 /** Familles de capteurs réellement présentes dans le guide. */
 export function guideFamilies(guide = ACTIVATION_GUIDE): string[] {
   return [...new Set(guide.rows.map((r) => r.sensorFamily))].sort();
 }
 /** Le guide publie-t-il au moins une plage pour cette famille ? */
 export function hasGuideData(sensorFamily: string, guide = ACTIVATION_GUIDE): boolean {
-  return guide.rows.some((r) => r.sensorFamily === sensorFamily);
+  const family = guideFamilyFor(sensorFamily, guide);
+  return guide.rows.some((r) => r.sensorFamily === family);
 }
 /**
  * Aimants standard que le guide documente POUR CETTE FAMILLE, dans l'ordre
  * d'apparition de la brochure. Aucun aimant n'est ajouté par ressemblance de
  * nom ou de forme : seule la présence d'une ligne compte.
+ *
+ * `shape` filtre l'AFFICHAGE selon la forme standard du capteur (corps tubulaire
+ * → cylindre, autre → bloc). Le registre brut reste entier : le filtre est une
+ * politique de proposition, jamais une suppression de preuve documentaire.
  */
 export function guideMagnetsFor(
   sensorFamily: string,
   guide = ACTIVATION_GUIDE,
+  shape?: GuideMagnet["shape"] | null,
 ): GuideMagnetOption[] {
-  const ids = new Set(guide.rows.filter((r) => r.sensorFamily === sensorFamily).map((r) => r.magnetId));
-  return guide.magnets.filter((m) => ids.has(m.id)).map((m) => ({ ...m, body: bodyOf(m.id) }));
+  const family = guideFamilyFor(sensorFamily, guide);
+  const ids = new Set(guide.rows.filter((r) => r.sensorFamily === family).map((r) => r.magnetId));
+  return guide.magnets
+    .filter((m) => ids.has(m.id) && (!shape || m.shape === shape))
+    .map((m) => ({ ...m, body: bodyOf(m.id) }));
 }
 /** Matériaux réellement documentés pour cette famille, avec leurs aimants. */
 export function guideMaterialsFor(
   sensorFamily: string,
   guide = ACTIVATION_GUIDE,
+  shape?: GuideMagnet["shape"] | null,
 ): { material: GuideMagnet["material"]; magnets: GuideMagnetOption[] }[] {
   const out: { material: GuideMagnet["material"]; magnets: GuideMagnetOption[] }[] = [];
-  for (const magnet of guideMagnetsFor(sensorFamily, guide)) {
+  for (const magnet of guideMagnetsFor(sensorFamily, guide, shape)) {
     const bucket = out.find((o) => o.material === magnet.material);
     if (bucket) bucket.magnets.push(magnet);
     else out.push({ material: magnet.material, magnets: [magnet] });
   }
   return out;
+}
+/** Matériau publié d'un aimant du guide, ou `null` s'il n'y figure pas. */
+export function guideMagnetMaterial(
+  magnetId: string,
+  guide = ACTIVATION_GUIDE,
+): GuideMagnet["material"] | null {
+  return guide.magnets.find((m) => m.id === magnetId)?.material ?? null;
 }
 /** Plages publiées d'un couple famille + aimant, telles qu'elles sont saisies. */
 export function guideRangesFor(
@@ -191,7 +225,8 @@ export function guideRangesFor(
   magnetId: string,
   guide = ACTIVATION_GUIDE,
 ): GuideRange[] {
-  return guide.rows.filter((r) => r.sensorFamily === sensorFamily && r.magnetId === magnetId);
+  const family = guideFamilyFor(sensorFamily, guide);
+  return guide.rows.filter((r) => r.sensorFamily === family && r.magnetId === magnetId);
 }
 /** Références (lignes) publiées pour ce couple, dans l'ordre de la brochure. */
 export function guideReferencesFor(
@@ -217,15 +252,32 @@ export function guideRange(
   approachId: string,
   guide = ACTIVATION_GUIDE,
 ): GuideRange | null {
+  const family = guideFamilyFor(sensorFamily, guide);
   return (
     guide.rows.find(
       (r) =>
-        r.sensorFamily === sensorFamily &&
+        r.sensorFamily === family &&
         r.sensorReference === sensorReference &&
         r.magnetId === magnetId &&
         r.approachId === approachId,
     ) ?? null
   );
+}
+/**
+ * Repères d'animation ILLUSTRATIVE tirés d'une plage du guide : la borne basse
+ * sert de repère de proximité, la borne haute de repère d'éloignement. Ce ne
+ * sont pas des seuils d'enclenchement ni de relâchement, et rien n'est qualifié
+ * par ce calcul : il ne sert qu'à faire évoluer la démonstration avec le
+ * matériau. `null` quand la brochure ne publie pas deux bornes exploitables.
+ */
+export function guideIllustrativeMarks(
+  range: GuideRange | null,
+): { nearMm: number; farMm: number } | null {
+  if (!range || range.upMm === null || range.toMm === null) return null;
+  const near = Math.min(range.upMm, range.toMm);
+  const far = Math.max(range.upMm, range.toMm);
+  if (!(near > 0) || !(far > near)) return null;
+  return { nearMm: near, farMm: far };
 }
 /**
  * Choix par défaut pour une famille : le PLUS GRAND aimant d'un matériau
@@ -236,8 +288,9 @@ export function guideRange(
 export function guideEconomicalMagnet(
   sensorFamily: string,
   guide = ACTIVATION_GUIDE,
+  shape?: GuideMagnet["shape"] | null,
 ): GuideMagnetOption | null {
-  const magnets = guideMagnetsFor(sensorFamily, guide);
+  const magnets = guideMagnetsFor(sensorFamily, guide, shape);
   const order: GuideMagnet["material"][] = ["Ferrite", "AlNiCo", "NdFeB", "SmCo"];
   for (const material of order) {
     const found = magnets.filter((m) => m.material === material);

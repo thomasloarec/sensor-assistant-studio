@@ -25072,5 +25072,86 @@
     "Зафиксированный 3D-просмотр",
     "Anteprima 3D congelata",
     "静止した 3D プレビュー"
+  ],
+  "Matériau courant, préférence économique indicative pour les blocs": [
+    "Common material, indicative economical preference for blocks",
+    "常用材料，块状磁铁的经济性选择（仅供参考）",
+    "Gängiges Material, indikative wirtschaftliche Präferenz für Blöcke",
+    "Material corriente, preferencia económica indicativa para bloques",
+    "Распространённый материал, ориентировочно экономичный выбор для блоков",
+    "Materiale comune, preferenza economica indicativa per i blocchi",
+    "一般的な材料。ブロック形状で経済性が高いとされる目安"
+  ],
+  "Matériau métallique stable en température": [
+    "Metallic material, stable with temperature",
+    "金属材料，温度稳定性好",
+    "Metallisches Material, temperaturstabil",
+    "Material metálico estable con la temperatura",
+    "Металлический материал, стабильный по температуре",
+    "Materiale metallico stabile in temperatura",
+    "温度に対して安定な金属材料"
+  ],
+  "Terre rare, sensible à la température": [
+    "Rare earth, temperature sensitive",
+    "稀土材料，对温度敏感",
+    "Seltene Erde, temperaturempfindlich",
+    "Tierra rara, sensible a la temperatura",
+    "Редкоземельный материал, чувствительный к температуре",
+    "Terra rara, sensibile alla temperatura",
+    "希土類。温度に敏感"
+  ],
+  "Terre rare, tenue en température élevée": [
+    "Rare earth, withstands high temperature",
+    "稀土材料，耐高温",
+    "Seltene Erde, hochtemperaturfest",
+    "Tierra rara, resistente a alta temperatura",
+    "Редкоземельный материал, стойкий к высокой температуре",
+    "Terra rara, resistente alle alte temperature",
+    "希土類。高温に耐える"
+  ],
+  "Référence du guide utilisée pour la démonstration": [
+    "Guide reference used for the demonstration",
+    "用于演示的指南型号",
+    "Für die Demonstration verwendete Referenz aus dem Leitfaden",
+    "Referencia de la guía utilizada para la demostración",
+    "Обозначение из руководства, используемое для демонстрации",
+    "Riferimento della guida usato per la dimostrazione",
+    "デモに使用するガイド掲載の型番"
+  ],
+  "Approche du guide": [
+    "Guide approach",
+    "指南中的接近方式",
+    "Annäherung aus dem Leitfaden",
+    "Aproximación de la guía",
+    "Вариант подхода из руководства",
+    "Approccio della guida",
+    "ガイドの接近方向"
+  ],
+  "Animation indicative : la scène se rapproche du repère bas {0} mm et s'éloigne du repère haut {1} mm de la plage publiée. Ce ne sont pas des seuils de fermeture et de réouverture, et rien n'est validé.": [
+    "Indicative animation: the scene closes in on the lower marker {0} mm and moves away past the upper marker {1} mm of the published range. These are not closing and reopening thresholds, and nothing is validated.",
+    "示意动画：场景在已发布范围的下限标记 {0} mm 处靠近，在上限标记 {1} mm 处远离。它们不是闭合与断开阈值，也不构成任何验证。",
+    "Indikative Animation: Die Szene nähert sich der unteren Marke {0} mm und entfernt sich über die obere Marke {1} mm des veröffentlichten Bereichs. Das sind keine Schließ- und Öffnungsschwellen, und nichts ist validiert.",
+    "Animación indicativa: la escena se acerca a la marca inferior de {0} mm y se aleja de la marca superior de {1} mm del rango publicado. No son umbrales de cierre y reapertura, y nada queda validado.",
+    "Ориентировочная анимация: сцена сближается до нижней отметки {0} мм и удаляется за верхнюю отметку {1} мм опубликованного диапазона. Это не пороги замыкания и размыкания, и ничего не подтверждено.",
+    "Animazione indicativa: la scena si avvicina al riferimento inferiore {0} mm e si allontana oltre il riferimento superiore {1} mm dell'intervallo pubblicato. Non sono soglie di chiusura e riapertura e nulla è convalidato.",
+    "参考用アニメーション：公開範囲の下限 {0} mm で接近し、上限 {1} mm で離れます。これは閉／開のしきい値ではなく、検証済みでもありません。"
+  ],
+  "Aucune plage exploitable pour cette combinaison : l'animation indicative retombe sur 15 mm et 18 mm, deux repères de lecture qui ne sont pas des seuils.": [
+    "No usable range for this combination: the indicative animation falls back to 15 mm and 18 mm, two reading markers that are not thresholds.",
+    "此组合没有可用范围：示意动画回退到 15 mm 和 18 mm，这只是两个阅读标记，不是阈值。",
+    "Kein nutzbarer Bereich für diese Kombination: Die indikative Animation greift auf 15 mm und 18 mm zurück, zwei Lesemarken, keine Schwellen.",
+    "Ningún rango utilizable para esta combinación: la animación indicativa recurre a 15 mm y 18 mm, dos marcas de lectura que no son umbrales.",
+    "Для этого сочетания нет пригодного диапазона: ориентировочная анимация использует 15 мм и 18 мм — это метки для чтения, а не пороги.",
+    "Nessun intervallo utilizzabile per questa combinazione: l'animazione indicativa ripiega su 15 mm e 18 mm, due riferimenti di lettura che non sono soglie.",
+    "この組み合わせに使える範囲はありません：参考用アニメーションは 15 mm と 18 mm に戻ります。これは読み取りの目安でしきい値ではありません。"
+  ],
+  "Aimant {0}": [
+    "{0} magnet",
+    "{0} 磁铁",
+    "{0}-Magnet",
+    "Imán de {0}",
+    "Магнит {0}",
+    "Magnete in {0}",
+    "{0} マグネット"
   ]
 }

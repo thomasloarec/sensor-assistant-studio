@@ -116,6 +116,31 @@ export const ILLUSTRATIVE_PULL_IN_MM = 15;
 export const ILLUSTRATIVE_DROP_OUT_MM = 18;
 
 /**
+ * Repères d'animation illustrative, quand l'utilisateur a choisi une référence
+ * et une approche du guide d'activation : les deux bornes de la PLAGE publiée
+ * servent de repères de lecture pour que la démonstration de portée évolue avec
+ * le matériau. Ce ne sont JAMAIS des seuils ON/OFF : `pullInMm`/`dropOutMm`
+ * restent nuls, la couverture, la preuve et le verdict ne bougent pas, et la
+ * mention permanente « animation indicative » accompagne l'affichage.
+ * Sans plage exploitable, on retombe sur 15 / 18 mm.
+ */
+export interface IllustrativeBounds {
+  nearMm: number;
+  farMm: number;
+}
+export function illustrativeMarks(bounds?: IllustrativeBounds | null): [number, number] {
+  if (
+    bounds &&
+    Number.isFinite(bounds.nearMm) &&
+    Number.isFinite(bounds.farMm) &&
+    bounds.nearMm > 0 &&
+    bounds.farMm > 0
+  )
+    return [bounds.nearMm, bounds.farMm];
+  return [ILLUSTRATIVE_PULL_IN_MM, ILLUSTRATIVE_DROP_OUT_MM];
+}
+
+/**
  * Raisons qui interdisent toute commutation, même illustrative.
  *
  * La liste est volontairement courte, et c'est le cœur de la distinction entre
@@ -205,6 +230,7 @@ export function simulateMounting(
   steps = SAMPLE_STEPS,
   profiles?: MountingProfile[],
   scenePose?: ScenePoseSampler,
+  illustrativeBounds?: IllustrativeBounds | null,
 ): MountingSimulation {
   const profile = profileFor(
     m.couple.sensorId,
@@ -268,20 +294,22 @@ export function simulateMounting(
   // l'entrefer nominal de la course : un aimant écarté de 100 mm sur le côté est
   // loin, même si la course annonce 5 mm sur l'axe.
   const illustrative = coverage !== "covered" && illustrativeAllowed(allReasons);
+  const [nearMark, farMark] = illustrativeMarks(illustrativeBounds);
   if (illustrative) {
     transitions.length = 0;
     let shown: ContactState = "unknown";
+    const alwaysOpen = Math.max(farMark, ILLUSTRATIVE_FAR_MM);
     for (let i = 0; i < samples.length; i++) {
       const s = samples[i]!;
       const d = s.separationMm;
       let next: ContactState = "unknown";
       if (!collided[i] && d > 0)
         next =
-          d >= ILLUSTRATIVE_FAR_MM
+          d >= alwaysOpen
             ? "open"
-            : d <= ILLUSTRATIVE_PULL_IN_MM
+            : d <= nearMark
               ? "closed"
-              : d >= ILLUSTRATIVE_DROP_OUT_MM
+              : d >= farMark
                 ? "open"
                 : shown;
       if (i > 0 && next !== shown && next !== "unknown")
@@ -290,6 +318,8 @@ export function simulateMounting(
       samples[i] = { ...s, contact: next };
     }
   }
+
+
 
   return {
     samples,
@@ -352,9 +382,14 @@ export const LIMIT_CODES = [
   "switching_rate",
 ] as const;
 
-export function computeMounting(m: GuidedMounting, profiles?: MountingProfile[]): MountingComputed {
+export function computeMounting(
+  m: GuidedMounting,
+  profiles?: MountingProfile[],
+  illustrativeBounds?: IllustrativeBounds | null,
+): MountingComputed {
   const profile = profileFor(m.couple.sensorId, m.couple.magnetId, m.couple.approachId, profiles);
-  const sim = simulateMounting(m, SAMPLE_STEPS, profiles);
+  const sim = simulateMounting(m, SAMPLE_STEPS, profiles, undefined, illustrativeBounds);
+  const marks = illustrativeMarks(illustrativeBounds);
   const need = m.need;
   // Bornes exactes : les échantillons qui encadrent la fenêtre en font partie,
   // et une fenêtre sans aucun échantillon ne peut jamais valoir « satisfaite ».
@@ -408,8 +443,8 @@ export function computeMounting(m: GuidedMounting, profiles?: MountingProfile[])
     ...(sim.illustrative
       ? {
           illustrative: true,
-          illustrativePullInMm: ILLUSTRATIVE_PULL_IN_MM,
-          illustrativeDropOutMm: ILLUSTRATIVE_DROP_OUT_MM,
+          illustrativePullInMm: marks[0],
+          illustrativeDropOutMm: marks[1],
         }
       : {}),
   };
