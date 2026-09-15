@@ -737,6 +737,14 @@ export default function MagneticWorkshop({
           ? "expected"
           : "none"
         : "undocumented";
+  /* Le guide d'activation publie des PLAGES pour ce couple : elles existent et
+     sont lisibles, mais ce ne sont pas des seuils qualifiés. Les deux situations
+     doivent être distinguées dans le texte, sans jamais promouvoir une plage en
+     seuil. */
+  const guideRangesAvailable = useMemo(
+    () => guideRangesFor(config.sensorId, config.magnetModel).length > 0,
+    [config.sensorId, config.magnetModel],
+  );
   const verdictSentence =
     verdictKind === "expected"
       ? msg("Détection prévue — ferme à {0} mm, ouvre à {1} mm", [pull, drop])
@@ -744,7 +752,11 @@ export default function MagneticWorkshop({
         ? t("Pas de détection sur ce cycle — rapprochez l'aimant ou changez de couple")
         : verdictKind === "undocumented"
           ? t("Position non documentée — Standex peut la mesurer pour vous")
-          : t("Distances non publiées pour ce couple — Standex peut les mesurer");
+          : guideRangesAvailable
+            ? t(
+                "Plages du guide d'activation disponibles, mais aucun seuil qualifié pour ce couple — Standex peut le mesurer",
+              )
+            : t("Distances non publiées pour ce couple — Standex peut les mesurer");
   const askTrial = verdictKind === "undocumented" || verdictKind === "unpublished";
   /** Commutation ILLUSTRATIVE : le contact bascule à proximité pour que la scène
    *  reste lisible, mais aucune distance n'est caractérisée. La mention est
@@ -913,6 +925,26 @@ export default function MagneticWorkshop({
     </button>
   );
 
+  /* Matériau, référence et approche du guide : VISIBLES dès l'ouverture de
+     l'atelier, hors des réglages avancés. Le choix sélectionne une vraie
+     référence du guide d'activation : géométrie 3D, cotes et plages affichées
+     changent ensemble, sans facteur de matériau inventé. Le grand tableau des
+     plages reste replié par défaut à l'intérieur du bloc. */
+  const guideMaterialsBlock = (
+    <GuideMaterials
+      sensorFamily={config.sensorId}
+      shape={standardShapeForSensor(config.sensorId)}
+      magnetModel={config.magnetModel}
+      guideReference={guideReference}
+      guideApproach={guideApproach}
+      onSelect={(magnetModel) => update({ magnetModel })}
+      onSelectDemo={(ref, approachId) => {
+        setGuideReference(ref);
+        setGuideApproach(approachId);
+      }}
+    />
+  );
+
   /* Réglages avancés : RIEN n'est supprimé, tout est replié ici. */
   const advancedSettings = (
     <details className="mw-advanced-settings" data-testid="workshop-advanced">
@@ -990,21 +1022,8 @@ export default function MagneticWorkshop({
             ))}
           </select>
         </label>
-        {/* Le matériau choisi ici sélectionne une VRAIE référence du guide
-            d'activation : la géométrie 3D, les cotes et les plages affichées
-            changent ensemble, sans facteur de matériau inventé. */}
-        <GuideMaterials
-          sensorFamily={config.sensorId}
-          shape={standardShapeForSensor(config.sensorId)}
-          magnetModel={config.magnetModel}
-          guideReference={guideReference}
-          guideApproach={guideApproach}
-          onSelect={(magnetModel) => update({ magnetModel })}
-          onSelectDemo={(ref, approachId) => {
-            setGuideReference(ref);
-            setGuideApproach(approachId);
-          }}
-        />
+        {/* Le choix de matériau est remonté hors des réglages avancés : il est
+            visible dès l'ouverture de l'atelier (voir `guideMaterialsBlock`). */}
         {reference && sensitivityChoices.length > 0 && (
           <label className="mw-select-label">
             {t(classKind === "switch_model" ? "Configuration du contact" : "Classe de sensibilité")}
@@ -1608,6 +1627,7 @@ export default function MagneticWorkshop({
           {approachPicker}
           {travelControls}
           {playButton}
+          {guideMaterialsBlock}
           <div className="mw-controls-links">
             <label className="mw-file-label">
               {machine ? machine.fileName : t("Importer mon modèle 3D")}
@@ -1943,6 +1963,10 @@ export default function MagneticWorkshop({
           {reference && !illustrative ? (
             t(
               "Distances typiques publiées par Standex pour ce couple, dans cette position. À confirmer par un essai dans votre application.",
+            )
+          ) : reference && guideRangesAvailable ? (
+            t(
+              "Le guide d'activation publie des plages de mesure pour ce couple, mais aucun seuil de fermeture ni de réouverture : la commutation montrée est illustrative et doit être validée par des essais.",
             )
           ) : reference ? (
             t(

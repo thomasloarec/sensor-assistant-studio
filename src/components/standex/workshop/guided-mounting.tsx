@@ -35,7 +35,8 @@ export const EVIDENCE_LABEL = {
 } as const;
 /** Chaque code émis par le moteur a ici une phrase lisible : aucun code brut à l'écran. */
 const REASON_LABEL: Record<string, string> = {
-  NO_PROFILE: "Ce couple capteur–aimant n'a pas de table publiée.",
+  NO_PROFILE:
+    "Ce couple capteur–aimant n'a pas de seuils qualifiés. Les plages du guide d'activation, quand elles existent, ne sont pas des seuils de fermeture.",
   APPROACH_NOT_LOCATED:
     "Cette approche est documentée en distances, mais sa trajectoire n'est pas définie.",
   SOURCE_NOT_QUALIFIED: "La source de ce couple n'est pas encore qualifiée pour le calcul.",

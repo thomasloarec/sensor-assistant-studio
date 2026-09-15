@@ -232,7 +232,7 @@ function GuideRangeTable({
   const approaches = useMemo(() => [...new Set(rows.map((r) => r.approachId))], [rows]);
   if (rows.length === 0) return null;
   return (
-    <details className="panel-block" data-testid="guide-ranges" open>
+    <details className="panel-block" data-testid="guide-ranges">
       <summary className="t-label">{msg("Plages publiées avec {0}", [magnet.label])}</summary>
       <p className="mw-help">
         {t(

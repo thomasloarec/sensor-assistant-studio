@@ -42,12 +42,22 @@ describe("guide — proposition filtrée par la forme du capteur", () => {
   });
 });
 
-describe("guide — alias de famille documentés seulement", () => {
-  it("résout MK06 vers la famille imprimée MK06-4 et laisse MK06-4 inchangée", () => {
-    expect(guideFamilyFor("MK06-4")).toBe("MK06-4");
-    expect(guideFamilyFor("MK06")).toBe("MK06-4");
-    expect(hasGuideData("MK06")).toBe(true);
-    expect(guideRange("MK06", "MK06-4-B", "HF3225-14.95X10X5", "D1")).not.toBeNull();
+describe("guide — variantes de taille préservées, aucun alias", () => {
+  it("chaque taille MK06 garde ses propres lignes et n'est jamais confondue", () => {
+    for (const family of ["MK06-4", "MK06-5", "MK06-6", "MK06-7", "MK06-8"]) {
+      expect(guideFamilyFor(family)).toBe(family);
+      expect(hasGuideData(family)).toBe(true);
+    }
+    const four = guideRange("MK06-4", "MK06-4-B", "HF3225-14.95X10X5", "D1");
+    const five = guideRange("MK06-5", "MK06-5-B", "HF3225-14.95X10X5", "D1");
+    expect(four).not.toBeNull();
+    expect(five).not.toBeNull();
+    expect(four!.sensorFamily).toBe("MK06-4");
+    expect(five!.sensorFamily).toBe("MK06-5");
+    // Une famille sans taille n'est PAS rapprochée d'une variante imprimée.
+    expect(guideFamilyFor("MK06")).toBe("MK06");
+    expect(hasGuideData("MK06")).toBe(false);
+    expect(guideRange("MK06", "MK06-4-B", "HF3225-14.95X10X5", "D1")).toBeNull();
   });
 
   it("n'invente aucun autre rapprochement", () => {
