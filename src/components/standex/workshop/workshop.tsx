@@ -1026,10 +1026,18 @@ export default function MagneticWorkshop({
             {magnetChoices.map((id) => (
               <option key={id} value={id}>
                 {pairedMagnetModel(id, config.sensorId)?.name ?? t(id)}
+                {isOutsidePolicy(config.sensorId, id) ? t(" (choix conservé)") : ""}
               </option>
             ))}
           </select>
         </label>
+        {magnetOutsidePolicy && (
+          <p className="mw-help" data-testid="magnet-outside-policy">
+            {t(
+              "Cet aimant vient d'un choix déjà enregistré : il reste affiché tel quel et n'est plus proposé pour ce capteur.",
+            )}
+          </p>
+        )}
         {/* Le choix de matériau est remonté hors des réglages avancés : il est
             visible dès l'ouverture de l'atelier (voir `guideMaterialsBlock`). */}
         {reference && sensitivityChoices.length > 0 && (
