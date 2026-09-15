@@ -1885,9 +1885,15 @@ export default function MagneticWorkshop({
         <p>
           {/* Une seule phrase : la provenance des distances et la limite qui va
               avec. L'état d'enregistrement, lui, vit dans la barre du panneau. */}
-          {reference ? (
+          {/* Sans distance publiée pour ce couple, on ne prétend PAS en afficher :
+              le pied de page dit alors que la commutation est illustrative. */}
+          {reference && !illustrative ? (
             t(
               "Distances typiques publiées par Standex pour ce couple, dans cette position. À confirmer par un essai dans votre application.",
+            )
+          ) : reference ? (
+            t(
+              "Aucune distance publiée pour ce couple : la commutation montrée est illustrative et doit être validée par des essais.",
             )
           ) : (
             <>
