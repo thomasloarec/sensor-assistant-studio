@@ -25,6 +25,10 @@ export interface TestedPair {
   /** Message du moteur hors couverture, repris mot pour mot. */
   mainMessage: string | null;
   limits: readonly string[];
+  /** Vrai quand le contact affiché venait d'une commutation ILLUSTRATIVE de
+   * proximité : aucune distance caractérisée, donc jamais un résultat validé.
+   * Le champ est additif et suit le projet jusque dans les exports. */
+  illustrative?: boolean | undefined;
   at: string;
 }
 

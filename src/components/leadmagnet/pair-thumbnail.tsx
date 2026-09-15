@@ -81,6 +81,10 @@ export function PairThumbnail({
       {magnetDrawn ? (
         <CandidateThumbnail
           sensorId={magnetId}
+          // Capteur du couple : la fiche peut donner un boîtier par variante
+          // (M11S en M5 ou en M8). Sans lui, l'aimant serait dessiné dans une
+          // autre variante que celle réellement retenue, en 2D comme en 3D.
+          hostSensorId={sensorId}
           cabled={false}
           fitToView
           size={size}

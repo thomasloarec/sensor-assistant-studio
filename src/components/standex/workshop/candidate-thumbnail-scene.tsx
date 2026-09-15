@@ -18,6 +18,7 @@ import type { Vec3 } from "@/lib/standex/magnetic-workshop";
 
 export default function CandidateThumbnailScene({
   sensorId,
+  hostSensorId,
   cabled,
   pair,
   fitToView = false,
@@ -26,6 +27,10 @@ export default function CandidateThumbnailScene({
   onContextLost,
 }: {
   sensorId: string;
+  /** Capteur du COUPLE quand l'objet dessiné est un aimant : certaines fiches
+   *  donnent un boîtier par variante de capteur (M11S en M5 ou en M8). Sans ce
+   *  contexte, l'aimant serait dessiné dans la mauvaise variante. */
+  hostSensorId?: string;
   cabled: boolean;
   pair?: { magnetId: string; approach: string };
   reduced: boolean;
@@ -34,7 +39,7 @@ export default function CandidateThumbnailScene({
   scaleBar?: boolean;
   onContextLost: () => void;
 }) {
-  const model = pairedMagnetModel(sensorId) ?? sensorById(sensorId);
+  const model = pairedMagnetModel(sensorId, hostSensorId) ?? sensorById(sensorId);
   const [l, h, w] = model.body;
   const span = Math.max(l, h, w);
   const dist = pair ? 155 : 100; // Fixed camera: every catalogue thumbnail uses the same mm scale.

@@ -2025,8 +2025,15 @@ export function DesignSpace({
    * l'exploration, pas une exigence. */
   const filterInput = { mounting: dossier.mounting, envelope: dossier.envelope };
   const answerFilters = useMemo(
-    () => suggestionFilters({ mounting: dossier.mounting, envelope: dossier.envelope }),
-    [dossier.mounting, dossier.envelope],
+    () =>
+      suggestionFilters({
+        mounting: dossier.mounting,
+        envelope: dossier.envelope,
+        // La fixation NOMMÉE dans la réponse écrite compte même quand la case
+        // de montage vaut « autre » ou « à décider ».
+        mountingText,
+      }),
+    [dossier.mounting, dossier.envelope, mountingText],
   );
   /** Critères réellement affichés : les réponses, dont chaque critère peut être
    * REMPLACÉ par un critère d'exploration de même nature. */
@@ -3241,6 +3248,10 @@ export function DesignSpace({
             : reviewTested.verdict === "unpublished"
               ? t("distances non publiées")
               : t("position non documentée"),
+        // Le mode illustratif est écrit dans le résumé du projet, jamais tu.
+        ...(reviewTested.illustrative
+          ? [t("simulation illustrative — distance non caractérisée, à valider par essais")]
+          : []),
       ].join(" · ")
     : null;
 

@@ -16,6 +16,7 @@ import {
 
 } from "@/lib/standex/sensor-catalog";
 import type { EnvelopeMm, MountingChoice } from "./dossier";
+import { detectMountingIntent, MOUNTING_INTENT_LABEL } from "./mounting-intent";
 
 export type SuggestionFilterId = "fixation" | "forme" | "encombrement";
 
@@ -39,6 +40,9 @@ export interface SuggestionFilter {
     /** Portion insérée maximale, en mm. */
     holeMm?: number;
     shape?: SensorShape;
+    /** Formes acceptées quand la fixation a été NOMMÉE en texte libre (« vissé
+     * ou collé ») : au moins une des fixations nommées doit convenir. */
+    shapes?: readonly SensorShape[];
   };
 }
 
@@ -94,6 +98,10 @@ const insertionAcross = (model: SensorModel) => Math.max(model.body[1], model.bo
 export function suggestionFilters(input: {
   mounting: MountingChoice;
   envelope: EnvelopeMm;
+  /** Réponse de montage en TEXTE LIBRE. Seule une fixation NOMMÉE y est lue
+   * (« vissé ou collé ») : c'est une contrainte donnée par le client, pas une
+   * déduction depuis un nom d'application. */
+  mountingText?: string | null;
 }): SuggestionFilter[] {
   const filters: SuggestionFilter[] = [];
   const kind = input.mounting.kind;
@@ -106,6 +114,24 @@ export function suggestionFilters(input: {
       technical: `Formes de boîtier retenues : ${shapes.join(", ")}.`,
       source: "answers",
     });
+  else {
+    /* Aucune case de montage exploitable (« autre », « à décider ») : la
+       fixation nommée dans la réponse écrite prend le relais. Elle vaut AU
+       MOINS UNE des fixations citées, jamais toutes à la fois. */
+    const intent = detectMountingIntent(input.mountingText ?? null);
+    if (intent.explicit)
+      filters.push({
+        id: "fixation",
+        label: intent.kinds.map((k) => MOUNTING_INTENT_LABEL[k]).join(" ou "),
+        requirementKey: "mounting",
+        technical:
+          `Fixation nommée dans votre réponse. Formes de boîtier retenues : ` +
+          `${intent.allowedShapes.join(", ")}. Aucune fixation n'est ajoutée à un boîtier ` +
+          "qui ne la documente pas.",
+        source: "answers",
+        criteria: { shapes: intent.allowedShapes },
+      });
+  }
   if (input.mounting.kind === "press_fit" && input.mounting.holeDiameterMm > 0) {
     const hole = input.mounting.holeDiameterMm;
     filters.push({
@@ -190,6 +216,9 @@ export function passesFilter(
   if (alwaysVisible(model)) return true;
   switch (filter.id) {
     case "fixation": {
+      /* Fixation nommée en texte libre : les formes acceptées sont portées par
+         le filtre. Une conception sur mesure passe déjà par `alwaysVisible`. */
+      if (filter.criteria?.shapes) return filter.criteria.shapes.includes(model.shape);
       /* Un filtre d'exploration porte son propre critère : il REMPLACE la
          fixation déclarée, il ne s'y ajoute pas. */
       const kind = filter.criteria?.mountingKind ?? input.mounting.kind;

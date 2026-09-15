@@ -222,6 +222,13 @@ export function ResultView({
                     "Standex publie ses distances pour des positions précises. En dehors, seul un essai réel donne la réponse — et Standex peut le faire pour vous.",
                   )}
             </p>
+            {/* L'essai a été LU sur une commutation illustrative : la mention
+                suit le résultat, elle ne vaut jamais validation technique. */}
+            {pair.illustrative ? (
+              <p className="notice-warning t-body-s" data-testid="result-illustrative">
+                {t("Simulation illustrative — distance non caractérisée, à valider par essais")}
+              </p>
+            ) : null}
             <div className="result-options">
               <div className="panel-block space-y-3">
                 <p className="t-title-s">{t("Option 1")}</p>

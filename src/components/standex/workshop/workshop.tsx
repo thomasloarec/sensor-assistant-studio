@@ -675,6 +675,11 @@ export default function MagneticWorkshop({
           ? t("Position non documentée — Standex peut la mesurer pour vous")
           : t("Distances non publiées pour ce couple — Standex peut les mesurer");
   const askTrial = verdictKind === "undocumented" || verdictKind === "unpublished";
+  /** Commutation ILLUSTRATIVE : le contact bascule à proximité pour que la scène
+   *  reste lisible, mais aucune distance n'est caractérisée. La mention est
+   *  PERMANENTE tant que ce mode est actif, et elle suit l'essai enregistré. */
+  const illustrative = computed?.illustrative === true;
+  const ILLUSTRATIVE_NOTE = "Simulation illustrative — distance non caractérisée, à valider par essais";
 
   /** Essai à conserver dans le dossier : verdict, distances PUBLIÉES (ou `null`)
    *  et course déclarée. Rien n'est recalculé ni arrondi ici. */
@@ -690,6 +695,9 @@ export default function MagneticWorkshop({
     travelEndMm: config.end,
     mainMessage: computed && computed.coverage !== "covered" ? computed.mainMessage : null,
     limits: computed ? computed.limits : [],
+    // Jamais un résultat validé : le mode illustratif est écrit dans l'essai,
+    // donc dans le résumé, la reprise et les exports.
+    ...(illustrative ? { illustrative: true as const } : {}),
     at: new Date().toISOString(),
   });
 
@@ -715,6 +723,13 @@ export default function MagneticWorkshop({
         ) : (
           <p className="t-caption">{t(statusMessage)}</p>
         )}
+        {/* Mention PERMANENTE du mode illustratif : elle ne se replie pas et ne
+            disparaît pas pendant la lecture. */}
+        {illustrative ? (
+          <p className="notice-warning t-body-s" data-testid="illustrative-note">
+            {t(ILLUSTRATIVE_NOTE)}
+          </p>
+        ) : null}
       </div>
       {askTrial && onRequestTrial ? (
         <button
