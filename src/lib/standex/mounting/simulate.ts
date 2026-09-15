@@ -67,6 +67,39 @@ export interface MountingSimulation {
   reasons: string[];
   pullInMm: number | null;
   dropOutMm: number | null;
+  /** Commutation illustrative de proximité : voir `ILLUSTRATIVE_*`. */
+  illustrative: boolean;
+}
+
+/* ------------------------------------------------------------------ */
+/* Commutation ILLUSTRATIVE de proximité                               */
+/* ------------------------------------------------------------------ */
+/**
+ * Quand aucune distance documentée n'est exploitable, la scène doit tout de
+ * même montrer un contact qui commute à proximité — sinon l'atelier reste
+ * indéterminé partout et n'apprend rien. Ces deux valeurs sont des repères
+ * de LECTURE, pas des seuils : elles ne viennent d'aucune publication, ne sont
+ * jamais recopiées dans `pullInMm`/`dropOutMm`, ne changent ni la couverture,
+ * ni la preuve, ni le verdict, et l'interface comme les exports doivent porter
+ * la mention « Simulation illustrative ».
+ */
+export const ILLUSTRATIVE_PULL_IN_MM = 15;
+export const ILLUSTRATIVE_DROP_OUT_MM = 18;
+
+/** Raisons qui interdisent toute commutation, même illustrative : elles
+ * décrivent un montage physiquement douteux (collision, ferreux, température)
+ * ou une forme de contact/mode qui ne doit jamais être animée. */
+const ILLUSTRATIVE_BLOCKERS = new Set([
+  "FERROUS_DECLARED",
+  "TEMPERATURE_NOT_AMBIENT",
+  "CONTACT_FORM_NOT_SIMULATED",
+  "EDUCATION_MODE",
+  "COLLISION_OR_CONTACT",
+]);
+
+/** Vrai si l'on peut montrer une commutation illustrative pour ce montage. */
+export function illustrativeAllowed(reasons: readonly string[]): boolean {
+  return !reasons.some((r) => ILLUSTRATIVE_BLOCKERS.has(r));
 }
 /**
  * Epsilon purement numérique : il sert à comparer deux nombres flottants qui
