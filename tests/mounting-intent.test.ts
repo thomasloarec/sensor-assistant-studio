@@ -70,7 +70,10 @@ describe("fixation nommée en texte libre : contrainte dure", () => {
       envelope: createDossier().envelope,
       mountingText: "vissé sur une équerre",
     });
-    expect(all.every((c) => c.status === "excluded")).toBe(true);
+    // La conception sur mesure reste ouverte par construction (sa géométrie est
+    // définie avec les ingénieurs Standex) ; aucune référence de catalogue n'est
+    // repêchée pour combler la liste.
+    expect(all.filter((c) => c.status !== "excluded").map((c) => c.id)).toEqual(["CUSTOM"]);
   });
 
   it("l'écran lit la réponse de montage et n'affiche jamais un capteur écarté", () => {
