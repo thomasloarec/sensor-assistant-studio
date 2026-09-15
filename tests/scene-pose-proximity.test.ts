@@ -40,7 +40,7 @@ const lateralMachine = {
   travel: [100, 0, 0] as [number, number, number],
   motion: "translation" as const,
 };
-const machineConfig = config({ machine: lateralMachine, start: 32, end: 5 });
+const machineConfig = config({ sensorId: "MK27", machine: lateralMachine, start: 32, end: 5 });
 
 describe("proximité lue sur la pose réellement dessinée", () => {
   test("montage importé : la course latérale de la machine est réellement suivie", () => {
@@ -83,7 +83,7 @@ describe("proximité lue sur la pose réellement dessinée", () => {
   });
 
   test("espace vide : un glissement suit la position dessinée, pas l'axe d'approche", () => {
-    const slide = config({ sensorId: "MK27", motion: "slide", travel: 60, offset: 8 });
+    const slide = config({ sensorId: "MK27", motion: "slide", travel: 60, offset: 30 });
     const sample = scenePoseSampler(slide);
     for (const t of [0, 0.25, 0.5, 0.75, 1]) {
       const drawn = poseAt(slide, t);
@@ -101,7 +101,7 @@ describe("proximité lue sur la pose réellement dessinée", () => {
   });
 
   test("espace vide : un pivot suit l'arc dessiné", () => {
-    const pivot = config({ sensorId: "MK27", motion: "pivot", span: 160, offset: 10 });
+    const pivot = config({ sensorId: "MK27", motion: "pivot", span: 160, offset: 45 });
     const sample = scenePoseSampler(pivot);
     for (const t of [0, 0.3, 0.5, 1]) {
       const drawn = poseAt(pivot, t);
