@@ -267,11 +267,22 @@ function GuideRangeTable({
                 {approaches.map((a) => {
                   const row = rows.find((r) => r.sensorReference === ref && r.approachId === a);
                   return (
-                    <td key={a} className="t-metric">
+                    <td
+                      key={a}
+                      className="t-metric"
+                      {...(row?.orderAtypical ? { "data-atypical": "true" } : {})}
+                      // Signalé, pas corrigé : l'ordre imprimé est conservé.
+                      title={
+                        row?.orderAtypical
+                          ? t("Ordre imprimé inhabituel dans la brochure — à confirmer par Standex")
+                          : undefined
+                      }
+                    >
                       {row
                         ? formatGuideBound(row.upMm, row.upNote) +
                           " / " +
-                          formatGuideBound(row.toMm, row.toNote)
+                          formatGuideBound(row.toMm, row.toNote) +
+                          (row.orderAtypical ? " *" : "")
                         : "—"}
                     </td>
                   );
