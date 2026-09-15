@@ -203,7 +203,7 @@ import {
   terminationFromHousing,
 } from "@/lib/leadmagnet/connector-library";
 import { routeSamples, SEARCH_LINK_DISCLAIMER } from "@/lib/leadmagnet/samples";
-import { DEFAULT_WORKSHOP, applySensorSelection } from "@/lib/standex/magnetic-workshop";
+import { DEFAULT_WORKSHOP, applyPairSelection } from "@/lib/standex/magnetic-workshop";
 import type { WorkshopConfig } from "@/lib/standex/magnetic-workshop";
 import { BrandLogo } from "@/components/standex/brand-logo";
 import { usePublishedHeaderHeight } from "@/components/standex/app-header";
@@ -2121,13 +2121,22 @@ export function DesignSpace({
 
   /** Choisir un capteur = une présélection de GAMME, jamais une commande ni une
    * validation R&D. La délégation à Standex est levée par ce choix explicite. */
-  const chooseSensor = (id: string, name: string) => {
+  const chooseSensor = (id: string, name: string, magnetId?: string) => {
     const base = workshopDraftRef.current ?? workshop ?? dossier.workshop ?? DEFAULT_WORKSHOP;
-    const aligned = applySensorSelection(base, id);
+    const aligned = applyPairSelection(base, id, magnetId);
     // Un montage déjà enregistré peut porter un aimant choisi volontairement.
     // La présélection du capteur aligne le reste de l'atelier sans l'écraser.
-    applyWorkshopConfig(dossier.workshop ? { ...aligned, magnetModel: base.magnetModel } : aligned);
+    // MAIS un couple demandé explicitement (« Tester ce couple ») impose son
+    // aimant : sinon l'atelier ouvrirait un autre duo que celui de la carte.
+    applyWorkshopConfig(
+      magnetId
+        ? { ...aligned, magnetModel: magnetId }
+        : dossier.workshop
+          ? { ...aligned, magnetModel: base.magnetModel }
+          : aligned,
+    );
     setWorkshopEpoch((e) => e + 1);
+
     setDossier((d) => ({
       ...d,
       selectedSensorId: id,
@@ -2350,7 +2359,7 @@ export function DesignSpace({
   /** Tester un couple = présélection de gamme + ouverture de l'atelier sur ce
    * couple. Ce n'est ni une commande ni une validation R&D. */
   const testPair = (card: PairCard) => {
-    chooseSensor(card.sensorId, t(card.sensorName));
+    chooseSensor(card.sensorId, t(card.sensorName), card.magnetId);
     openWorkshopPanel();
   };
   /** Toutes les questions confiées à Standex : aucun critère ne vient des

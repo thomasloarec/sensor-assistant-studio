@@ -296,8 +296,19 @@ export const isFictitiousSensor = (sensorId: string) =>
  * simple chargement d'un dossier enregistré.
  */
 export function applySensorSelection(c: WorkshopConfig, sensorId: string): WorkshopConfig {
+  return applyPairSelection(c, sensorId);
+}
+/** Sélection d'un COUPLE demandé explicitement (carte « Tester ce couple ») :
+ * le capteur ET l'aimant de la carte sont appliqués, puis classes, approche et
+ * angles sont réalignés sur ce duo. Sans `magnetId`, on retombe sur le défaut
+ * du capteur : un simple changement de capteur ne fabrique aucun duo. */
+export function applyPairSelection(
+  c: WorkshopConfig,
+  sensorId: string,
+  magnetId?: string,
+): WorkshopConfig {
   const fake = isFictitiousSensor(sensorId);
-  const magnetModel = fake ? "generic" : defaultMagnetFor(sensorId);
+  const magnetModel = fake ? "generic" : (magnetId ?? defaultMagnetFor(sensorId));
   const classes = publishedClasses(sensorId, magnetModel);
   const approaches = approachChoicesFor(sensorId, magnetModel);
   const geometry =
