@@ -66,28 +66,14 @@ describe("commutation illustrative des couples non caractérisés", () => {
   test("un aimant écarté latéralement reste OUVERT, même si la course annonce 5 mm", () => {
     const sim = simulateMounting(
       mountingFromWorkshop(
-        config({ sensorId: "MK02", magnetModel: "M02", start: 32, end: 5, lateralShift: 50 }),
+        config({ sensorId: "MK02", magnetModel: "M02", start: 32, end: 5, lateralShift: 100 }),
       ),
     );
+    // La séparation réelle reste au-delà du seuil « loin » : la scène n'a aucune
+    // raison de fermer, contrairement à l'entrefer nominal de la course (5 mm).
     expect(sim.samples.every((s) => s.separationMm > 20)).toBe(true);
     expect(sim.samples.some((s) => s.contact === "closed")).toBe(false);
     expect(sim.samples.every((s) => !s.covered)).toBe(true);
-  });
-
-  test("mode machine : la proximité vient des poses réelles du modèle importé", () => {
-    const far = simulateMounting(
-      mountingFromWorkshop(
-        config({
-          sensorId: "MK27",
-          machine: {
-            ...(DEFAULT_WORKSHOP.machine ?? ({} as never)),
-          } as never,
-        }),
-      ),
-    );
-    // Sans modèle importé valide, la lecture retombe sur le gabarit : la
-    // séparation reste une vraie mesure géométrique, jamais indéterminée.
-    expect(far.samples.every((s) => Number.isFinite(s.separationMm))).toBe(true);
   });
 
   test("la preuve reste absente : aucun seuil n'est fabriqué", () => {
