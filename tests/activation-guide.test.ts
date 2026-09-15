@@ -23,7 +23,7 @@ describe("guide d'activation — transcription", () => {
       "https://standexdetect.com/wp-content/uploads/sites/2/2025/10/brochure-reed-sensor-activation-guide.pdf",
     );
     expect(ACTIVATION_GUIDE.source.sha256).toMatch(/^[0-9a-f]{64}$/);
-    expect(ACTIVATION_GUIDE.rows.length).toBeGreaterThan(3000);
+    expect(ACTIVATION_GUIDE.rows.length).toBe(3004);
   });
 
   it("ne contient aucune ligne en double contradictoire", () => {
@@ -37,13 +37,39 @@ describe("guide d'activation — transcription", () => {
     expect(seen.size).toBe(ACTIVATION_GUIDE.rows.length);
   });
 
-  it("garde des plages croissantes et des bornes finies ou nulles", () => {
+  it("garde des bornes finies, positives ou explicitement non publiées", () => {
     for (const r of ACTIVATION_GUIDE.rows) {
       if (r.upMm !== null) expect(Number.isFinite(r.upMm)).toBe(true);
       if (r.upMm !== null) expect(r.upMm).toBeGreaterThanOrEqual(0);
-      if (r.upMm !== null && r.toMm !== null) expect(r.toMm).toBeGreaterThanOrEqual(r.upMm);
+      if (r.toMm !== null) expect(r.toMm).toBeGreaterThanOrEqual(0);
       if (r.upMm === null) expect(r.upNote).toBeDefined();
+      if (r.toMm === null) expect(r.toNote).toBeDefined();
     }
+  });
+
+  it("conserve les colonnes « up » et « to » dans l'ordre imprimé, même décroissant", () => {
+    // Page 12 : la colonne « to » est inférieure à « up ». Ce sont deux colonnes
+    // distinctes, pas un intervalle trié : la ligne est conservée telle quelle.
+    expect(guideRange("MK04", "MK04-1A66A-X", "SMCO5-5X4", "D3")).toMatchObject({
+      upMm: 10.3,
+      toMm: 8.2,
+      page: 12,
+    });
+    const decreasing = ACTIVATION_GUIDE.rows.filter(
+      (r) => r.upMm !== null && r.toMm !== null && r.toMm < r.upMm,
+    );
+    expect(decreasing.length).toBeGreaterThan(0);
+  });
+
+  it("transcrit les 751 couples référence + aimant de l'extraction, sans doublon", () => {
+    const pairs = new Set(
+      ACTIVATION_GUIDE.rows.map((r) => r.sensorReference + "|" + r.magnetId),
+    );
+    expect(pairs.size).toBe(751);
+    expect(ACTIVATION_GUIDE.rows.length).toBe(3004);
+    expect(
+      ACTIVATION_GUIDE.rows.every((r) => /^MK[0-9]/.test(r.sensorReference)),
+    ).toBe(true);
   });
 
   it("reprend les valeurs exactes de la brochure pour MK15-B", () => {
@@ -120,20 +146,21 @@ describe("guide d'activation — lecture défensive", () => {
   const base = { version: "v", source: {}, magnets };
   const row = { page: 1, sensorFamily: "MK15", sensorReference: "MK15-B-X", magnetId: "X", approachId: "D1" };
 
-  it("écarte une plage inversée, un aimant inconnu et une approche invalide", () => {
+  it("écarte une borne négative, un aimant inconnu, une approche invalide et un doublon", () => {
     const guide = readActivationGuide({
       ...base,
       rows: [
-        { ...row, upMm: 5, toMm: 4 },
         { ...row, magnetId: "ZZ", upMm: 1, toMm: 2 },
         { ...row, approachId: "D9", upMm: 1, toMm: 2 },
         { ...row, upMm: -1, toMm: 2 },
-        { ...row, upMm: 1, toMm: 2 },
-        { ...row, upMm: 3, toMm: 4 },
+        { ...row, upMm: 1, toMm: -2 },
+        { ...row, upMm: 5, toMm: 4 },
+        { ...row, upMm: 3, toMm: 9 },
       ],
     });
+    // La ligne « up 5 / to 4 » est CONSERVÉE : deux colonnes, pas un intervalle.
     expect(guide.rows).toHaveLength(1);
-    expect(guide.rows[0]).toMatchObject({ upMm: 1, toMm: 2 });
+    expect(guide.rows[0]).toMatchObject({ upMm: 5, toMm: 4 });
   });
 
   it("transforme une valeur non finie en borne non publiée sans inventer zéro", () => {

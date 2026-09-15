@@ -140,6 +140,11 @@ function GuideRangeTable({
           "Ces deux colonnes sont les bornes d'une plage mesurée par Standex sur une série de capteurs. Ce ne sont pas des seuils de fermeture et de réouverture : la démonstration de portée dans la scène reste indicative tant que le couple n'a pas de distances caractérisées.",
         )}
       </p>
+      <p className="mw-help">
+        {t(
+          "Les deux valeurs sont les colonnes « up » et « to » de la brochure, dans cet ordre imprimé : elles ne sont ni triées ni recalculées.",
+        )}
+      </p>
       <div className="mw-guide-scroll">
         <table className="mw-published-table">
           <thead>
@@ -162,7 +167,7 @@ function GuideRangeTable({
                     <td key={a} className="t-metric">
                       {row
                         ? formatGuideBound(row.upMm, row.upNote) +
-                          " – " +
+                          " / " +
                           formatGuideBound(row.toMm, row.toNote)
                         : "—"}
                     </td>
