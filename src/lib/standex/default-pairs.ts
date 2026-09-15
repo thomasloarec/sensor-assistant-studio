@@ -153,20 +153,40 @@ export function recommendedMagnetsFor(
   ];
 }
 /**
- * Aimants proposés pour un capteur, dans l'ordre de lecture : recommandations
- * d'abord, puis le reste du catalogue. Aucun aimant n'est masqué : l'utilisateur
- * garde tout le catalogue, mais l'ordre porte la politique de recommandation.
+ * Aimants SÉLECTIONNABLES pour un capteur, dans l'ordre de lecture :
+ * recommandations d'abord, puis le reste du catalogue RETENU par la même
+ * politique — un actionneur en boîtier d'un autre capteur (M02 hors MK02) et une
+ * forme étrangère au capteur ne sont pas proposés ici non plus. Le registre brut
+ * (`documentedMagnetsFor`) reste consultable et inchangé.
+ *
+ * `current` est le choix déjà enregistré d'un dossier existant : il est
+ * conservé dans la liste pour rester lisible et ne jamais être réécrit à la
+ * relecture, même s'il sort de la politique — il n'est simplement plus proposé
+ * comme nouveau choix ailleurs.
  */
 export function magnetOptionsFor(
   sensorId: string,
   registry: PublishedRegistry = PUBLISHED_REGISTRY,
+  current?: string,
 ): string[] {
+  const wanted = standardShapeForSensor(sensorId);
+  const allowed = (id: string): boolean => {
+    if (dedicatedFor(sensorId, id)) return true;
+    const housed = packagedMagnet(id);
+    if (housed) return housingFor(id, sensorId) === sensorId;
+    return (BARE_MAGNETS.find((m) => m.id === id)?.shape ?? wanted) === wanted;
+  };
   const ordered = [
     ...recommendedMagnetsFor(sensorId, registry),
-    ...PACKAGED_MAGNET_IDS,
-    ...BARE_MAGNETS.map((m) => m.id),
+    ...PACKAGED_MAGNET_IDS.filter(allowed),
+    ...BARE_MAGNETS.map((m) => m.id).filter(allowed),
+    ...(current ? [current] : []),
   ];
   return [...new Set(ordered)];
+}
+/** Vrai si ce choix est conservé pour mémoire, hors politique de recommandation. */
+export function isOutsidePolicy(sensorId: string, magnetId: string): boolean {
+  return !magnetOptionsFor(sensorId).includes(magnetId);
 }
 /**
  * Correspondance documentaire à signaler discrètement quand la référence
