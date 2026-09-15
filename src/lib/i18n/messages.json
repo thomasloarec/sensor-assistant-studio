@@ -25037,6 +25037,15 @@
     "Queste due colonne sono i limiti di un intervallo misurato da Standex su una serie di sensori. Non sono soglie di chiusura e riapertura: la portata mostrata nella scena resta indicativa finché la coppia non ha distanze caratterizzate.",
     "この2列は Standex が一連のセンサーで測定した範囲の下限と上限であり、閉じる／開くのしきい値ではありません。組み合わせに特性距離がない間、シーンの動作距離は参考値です。"
   ],
+  "Les deux valeurs sont les colonnes « up » et « to » de la brochure, dans cet ordre imprimé : elles ne sont ni triées ni recalculées.": [
+    "The two values are the brochure's \"up\" and \"to\" columns, in that printed order: they are neither sorted nor recomputed.",
+    "这两个数值是手册中的 \"up\" 与 \"to\" 两列，按印刷顺序显示：既不排序也不重新计算。",
+    "Die beiden Werte sind die Spalten \"up\" und \"to\" der Broschüre, in dieser gedruckten Reihenfolge: weder sortiert noch neu berechnet.",
+    "Los dos valores son las columnas \"up\" y \"to\" del folleto, en ese orden impreso: no se ordenan ni se recalculan.",
+    "Два значения — столбцы \"up\" и \"to\" из брошюры, в напечатанном порядке: они не сортируются и не пересчитываются.",
+    "I due valori sono le colonne \"up\" e \"to\" della brochure, nell'ordine stampato: non sono ordinati né ricalcolati.",
+    "この2つの値はカタログの \"up\" と \"to\" の列で、印刷された順序どおりです。並べ替えや再計算はしていません。"
+  ],
   "Référence du guide": [
     "Guide reference",
     "指南型号",

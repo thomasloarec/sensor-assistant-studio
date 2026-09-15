@@ -48,9 +48,10 @@ export interface GuideRange {
   sensorReference: string;
   magnetId: string;
   approachId: string;
-  /** Borne basse de la PLAGE publiée, en mm. `null` si non publiée. */
+  /** Colonne « up » de la brochure, en mm. `null` si non publiée. */
   upMm: number | null;
-  /** Borne haute de la PLAGE publiée, en mm. `null` si non publiée. */
+  /** Colonne « to » de la brochure, en mm. `null` si non publiée. Elle peut
+   *  être INFÉRIEURE à `upMm` : les deux colonnes ne sont pas triées. */
   toMm: number | null;
   upNote?: "not_published" | "below_zero";
   toNote?: "not_published" | "below_zero";
@@ -106,9 +107,12 @@ export function readActivationGuide(value: unknown): ActivationGuide {
       continue;
     const upMm = bound(r.upMm),
       toMm = bound(r.toMm);
-    // Une plage inversée ou négative n'est pas corrigée : elle est écartée.
+    // Une valeur négative n'est pas corrigée : elle est écartée.
+    // En revanche « to » PEUT être inférieur à « up » : ce sont deux colonnes
+    // distinctes de la brochure, pas les bornes triées d'un intervalle. Elles
+    // sont conservées dans l'ordre imprimé, sans tri ni correction.
     if (upMm !== null && upMm < 0) continue;
-    if (upMm !== null && toMm !== null && toMm < upMm) continue;
+    if (toMm !== null && toMm < 0) continue;
     const key = r.sensorReference + "|" + r.magnetId + "|" + r.approachId;
     if (seen.has(key)) continue;
     seen.add(key);
