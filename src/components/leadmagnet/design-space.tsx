@@ -2359,7 +2359,7 @@ export function DesignSpace({
   /** Tester un couple = présélection de gamme + ouverture de l'atelier sur ce
    * couple. Ce n'est ni une commande ni une validation R&D. */
   const testPair = (card: PairCard) => {
-    chooseSensor(card.sensorId, t(card.sensorName));
+    chooseSensor(card.sensorId, t(card.sensorName), card.magnetId);
     openWorkshopPanel();
   };
   /** Toutes les questions confiées à Standex : aucun critère ne vient des
