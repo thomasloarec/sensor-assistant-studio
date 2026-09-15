@@ -1630,7 +1630,7 @@ export function DesignSpace({
         <p className="t-label">{t("Facultatif : précisez d'un clic")}</p>
         <p className="t-caption mt-1">
           {t(
-            "Rien n'est déduit de votre texte. Ces choix servent seulement à préfiltrer les capteurs, et restent modifiables.",
+            "Une fixation que vous NOMMEZ ici (« vissé ou collé ») est prise comme une contrainte. Rien d'autre n'est déduit de votre texte : un nom d'application n'implique aucune fixation. Ces choix restent modifiables.",
           )}
         </p>
         <div className="mt-3 flex flex-wrap gap-2">
