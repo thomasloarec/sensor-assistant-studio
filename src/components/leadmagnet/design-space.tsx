@@ -2059,12 +2059,15 @@ export function DesignSpace({
     [candidates, shownFilters, activeFilterIds, dossier.mounting, dossier.envelope],
   );
 
+  /** Un capteur ÉCARTÉ par une contrainte dure (montage nommé, encombrement)
+   * ne remonte jamais dans les propositions : il reste lisible dans la liste
+   * complète, avec sa raison, mais il n'est plus reclassé en tête. */
   const plausibleCandidates = useMemo(
-    () => candidateRows.filter((r) => r.blocked.length === 0),
+    () => candidateRows.filter((r) => r.blocked.length === 0 && r.candidate.status !== "excluded"),
     [candidateRows],
   );
   const otherCandidates = useMemo(
-    () => candidateRows.filter((r) => r.blocked.length > 0),
+    () => candidateRows.filter((r) => r.blocked.length > 0 || r.candidate.status === "excluded"),
     [candidateRows],
   );
 
