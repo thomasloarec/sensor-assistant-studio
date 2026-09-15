@@ -727,7 +727,7 @@ export default function MagneticWorkshop({
             disparaît pas pendant la lecture. */}
         {illustrative ? (
           <p className="notice-warning t-body-s" data-testid="illustrative-note">
-            {t(ILLUSTRATIVE_NOTE)}
+            {t("Simulation illustrative — distance non caractérisée, à valider par essais")}
           </p>
         ) : null}
       </div>
