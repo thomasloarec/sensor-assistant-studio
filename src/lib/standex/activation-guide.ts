@@ -153,21 +153,13 @@ export interface GuideMagnetOption extends GuideMagnet {
 const bodyOf = (id: string) => BARE_MAGNETS.find((m) => m.id === id)?.body ?? null;
 
 /**
- * Alias de famille STRICTEMENT documentés : la brochure imprime la taille dans
- * le nom du tableau (« MK06-4 »), alors que le reste de l'application peut
- * nommer la famille sans la taille. Un alias n'est utilisé que si la famille
- * demandée n'a AUCUNE ligne et que la cible en a : rien n'est rapproché par
- * ressemblance de nom, et aucune donnée n'est copiée d'une famille à l'autre.
+ * AUCUN alias de famille. La brochure imprime la taille dans le nom du tableau
+ * (« MK06-4 », « MK06-5 », … « MK06-8ï») et chaque variante a ses propres lignes :
+ * les rapprocher ferait lire des plages d'une taille sur une autre. Une famille
+ * absente du guide reste absente.
  */
-export const GUIDE_FAMILY_ALIASES: Readonly<Record<string, string>> = {
-  MK06: "MK06-4",
-  "MK06-4": "MK06-4",
-};
-/** Famille du guide à interroger pour ce capteur. */
-export function guideFamilyFor(sensorFamily: string, guide = ACTIVATION_GUIDE): string {
-  if (guide.rows.some((r) => r.sensorFamily === sensorFamily)) return sensorFamily;
-  const alias = GUIDE_FAMILY_ALIASES[sensorFamily];
-  return alias && guide.rows.some((r) => r.sensorFamily === alias) ? alias : sensorFamily;
+export function guideFamilyFor(sensorFamily: string, _guide = ACTIVATION_GUIDE): string {
+  return sensorFamily;
 }
 /** Familles de capteurs réellement présentes dans le guide. */
 export function guideFamilies(guide = ACTIVATION_GUIDE): string[] {
