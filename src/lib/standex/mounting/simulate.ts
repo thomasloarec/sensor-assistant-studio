@@ -182,12 +182,29 @@ export function globalReasons(m: GuidedMounting, profile: MountingProfile | null
     reasons.push("LATERAL_OFFSET");
   return reasons;
 }
+/**
+ * Pose réellement DESSINÉE à l'instant `t`, quand la scène en connaît une.
+ *
+ * `scenePoseAt` ne sait reconstruire qu'un aller-retour sur l'axe d'approche :
+ * il ignore la course d'un modèle importé (translation, pivot, nœud mobile) et
+ * les mouvements `slide`/`pivot` de l'espace vide. Un aimant qui part à 100 mm
+ * de côté y resterait donc « proche » parce que la course annonce 5 mm sur
+ * l'axe. La scène, elle, sait où sont les deux pièces : quand elle fournit cet
+ * échantillonneur, c'est LUI qui décide de la proximité et de la collision.
+ *
+ * Il ne touche jamais la qualification : les seuils publiés restent lus sur
+ * l'entrefer nominal de la course, et un montage importé ou un mouvement hors
+ * axe reste hors gabarit, donc non qualifié, exactement comme avant.
+ */
+export type ScenePoseSampler = (t: number) => Pose | null;
+
 /** Vraie hystérésis : l'enclenchement et le relâchement ne partagent pas de seuil.
  * L'état initial reste inconnu tant qu'aucun seuil documenté n'a été franchi. */
 export function simulateMounting(
   m: GuidedMounting,
   steps = SAMPLE_STEPS,
   profiles?: MountingProfile[],
+  scenePose?: ScenePoseSampler,
 ): MountingSimulation {
   const profile = profileFor(
     m.couple.sensorId,
@@ -207,8 +224,10 @@ export function simulateMounting(
   for (let i = 0; i <= steps; i++) {
     const t = i / steps,
       gap = gapAt(m, t);
-    // La pose vient toujours de la scène réelle, avec ou sans profil publié.
-    const relative = scenePoseAt(m, profile, t);
+    // La pose vient de la scène RÉELLE quand elle en fournit une (montage
+    // importé, glissement, pivot) ; sinon de la reconstruction sur l'axe.
+    const relative = scenePose?.(t) ?? scenePoseAt(m, profile, t);
+
     const separation = separationMm(m.couple.sensorId, m.couple.magnetId, relative);
     const collides = bodiesCollide(m.couple.sensorId, m.couple.magnetId, relative);
     collided.push(collides);
