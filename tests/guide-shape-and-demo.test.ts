@@ -11,6 +11,8 @@ import {
   hasGuideData,
 } from "@/lib/standex/activation-guide";
 import { standardShapeForSensor } from "@/lib/standex/magnet-recommendation";
+import { isOutsidePolicy, magnetOptionsFor } from "@/lib/standex/default-pairs";
+import { BARE_MAGNETS } from "@/lib/standex/magnet-catalog";
 import { pairCardFor } from "@/lib/leadmagnet/pair-cards";
 import { sensorById } from "@/lib/standex/sensor-catalog";
 import { illustrativeMarks, ILLUSTRATIVE_PULL_IN_MM, ILLUSTRATIVE_DROP_OUT_MM } from "@/lib/standex/mounting/simulate";
@@ -122,5 +124,31 @@ describe("guide — lignes d'ordre imprimé atypique conservées", () => {
     expect(atypical.length).toBe(73);
     // Aucune n'est triée ni recalculée.
     for (const r of atypical) expect(r.upMm! > r.toMm!).toBe(true);
+  });
+});
+
+describe("sélecteur avancé — mêmes règles M02 et forme", () => {
+  it("ne propose M02 qu'au MK02", () => {
+    expect(magnetOptionsFor("MK02")).toContain("M02");
+    for (const s of ["MK15", "MK16", "MK17", "MK03", "MK04", "MK06-4"])
+      expect(magnetOptionsFor(s)).not.toContain("M02");
+  });
+
+  it("ne propose que la forme du capteur, boîtiers d'autres capteurs exclus", () => {
+    const mk15 = magnetOptionsFor("MK15");
+    expect(mk15).not.toContain("M03");
+    expect(mk15.some((id) => id.startsWith("SMCO5-"))).toBe(false);
+    for (const id of mk15) {
+      const bare = BARE_MAGNETS.find((m) => m.id === id);
+      if (bare) expect(bare.shape).toBe("block");
+    }
+    expect(magnetOptionsFor("MK03")).toContain("M03");
+  });
+
+  it("garde lisible un choix historique sans le reproposer", () => {
+    expect(magnetOptionsFor("MK04", undefined, "M02")).toContain("M02");
+    expect(magnetOptionsFor("MK04")).not.toContain("M02");
+    expect(isOutsidePolicy("MK04", "M02")).toBe(true);
+    expect(isOutsidePolicy("MK02", "M02")).toBe(false);
   });
 });
