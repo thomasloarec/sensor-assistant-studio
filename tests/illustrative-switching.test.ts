@@ -34,28 +34,60 @@ describe("commutation illustrative des couples non caractérisés", () => {
     expect(ILLUSTRATIVE_DROP_OUT_MM).toBeGreaterThan(ILLUSTRATIVE_PULL_IN_MM);
   });
 
-  test("une pose hors gabarit n'ouvre JAMAIS le mode illustratif", () => {
-    expect(illustrativeAllowed(["ORIENTATION_OFF_TEMPLATE"])).toBe(false);
-    expect(illustrativeAllowed(["LATERAL_OFFSET"])).toBe(false);
-    // Un contact non simulable ou un aimant en présence de fer non caractérisé
-    // ne devient pas lisible pour autant.
-    expect(illustrativeAllowed(["FERROUS_DECLARED"])).toBe(false);
-    expect(illustrativeAllowed(["CONTACT_FORM_NOT_SIMULATED"])).toBe(false);
+  test("illustrer n'est pas qualifier : seul un contact non simulable reste inerte", () => {
+    // Une pose hors gabarit, un décalage latéral, un environnement ferreux, une
+    // température autre ou le mode démonstration restent ANIMÉS : la demande est
+    // de montrer une réaction de proximité, marquée illustrative, jamais une mesure.
+    expect(illustrativeAllowed(["ORIENTATION_OFF_TEMPLATE"])).toBe(true);
+    expect(illustrativeAllowed(["LATERAL_OFFSET"])).toBe(true);
+    expect(illustrativeAllowed(["FERROUS_DECLARED"])).toBe(true);
+    expect(illustrativeAllowed(["EDUCATION_MODE"])).toBe(true);
     expect(illustrativeAllowed(["NO_PUBLISHED_TABLE"])).toBe(true);
+    // Seule exception : une forme de contact qui n'est jamais simulée (1B/1C).
+    expect(illustrativeAllowed(["CONTACT_FORM_NOT_SIMULATED"])).toBe(false);
   });
 
-  test("le contact ferme près et rouvre loin, sur l'entrefer de surfaces", () => {
+  test("le contact ferme près et rouvre loin, sur la séparation réelle de la scène", () => {
     expect(uncharacterised.illustrative).toBe(true);
-    // `gapMm` est l'entrefer de SURFACES, exactement la grandeur lue par la
-    // scène et par les curseurs : aucune conversion n'est inventée ici.
-    const near = uncharacterised.samples.filter((s) => s.gapMm > 0 && s.gapMm <= ILLUSTRATIVE_PULL_IN_MM);
-    const far = uncharacterised.samples.filter((s) => s.gapMm >= ILLUSTRATIVE_DROP_OUT_MM);
+    // `separationMm` est la séparation RÉELLE des deux enveloppes dans la scène,
+    // décalage latéral compris : aucune conversion n'est inventée ici.
+    const near = uncharacterised.samples.filter(
+      (s) => s.separationMm > 0 && s.separationMm <= ILLUSTRATIVE_PULL_IN_MM,
+    );
+    const far = uncharacterised.samples.filter((s) => s.separationMm >= ILLUSTRATIVE_DROP_OUT_MM);
     expect(near.length).toBeGreaterThan(0);
     expect(far.length).toBeGreaterThan(0);
     expect(near.every((s) => s.contact === "closed")).toBe(true);
     expect(far.every((s) => s.contact === "open")).toBe(true);
     // Une commutation réelle est donc racontée par la chronologie.
     expect(uncharacterised.transitions.length).toBeGreaterThan(0);
+  });
+
+  test("un aimant écarté latéralement reste OUVERT, même si la course annonce 5 mm", () => {
+    const sim = simulateMounting(
+      mountingFromWorkshop(
+        config({ sensorId: "MK02", magnetModel: "M02", start: 32, end: 5, lateralShift: 50 }),
+      ),
+    );
+    expect(sim.samples.every((s) => s.separationMm > 20)).toBe(true);
+    expect(sim.samples.some((s) => s.contact === "closed")).toBe(false);
+    expect(sim.samples.every((s) => !s.covered)).toBe(true);
+  });
+
+  test("mode machine : la proximité vient des poses réelles du modèle importé", () => {
+    const far = simulateMounting(
+      mountingFromWorkshop(
+        config({
+          sensorId: "MK27",
+          machine: {
+            ...(DEFAULT_WORKSHOP.machine ?? ({} as never)),
+          } as never,
+        }),
+      ),
+    );
+    // Sans modèle importé valide, la lecture retombe sur le gabarit : la
+    // séparation reste une vraie mesure géométrique, jamais indéterminée.
+    expect(far.samples.every((s) => Number.isFinite(s.separationMm))).toBe(true);
   });
 
   test("la preuve reste absente : aucun seuil n'est fabriqué", () => {
