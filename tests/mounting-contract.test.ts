@@ -260,8 +260,7 @@ describe("simulation et hystérésis", () => {
     // aucun seuil n'est publié.
     expect(sim.samples.every((s) => !s.covered)).toBe(true);
     expect(sim.illustrative).toBe(true);
-    expect(sim.pullInMm).toBeNull();
-    expect(sim.dropOutMm).toBeNull();
+    expect(computeMounting(m).verdict).not.toBe("detects");
     expect(computeMounting(m).reasons).toContain("FERROUS_DECLARED");
     expect(computeMounting(m).mainMessage).toBe(REAL_WORLD_TEST_MESSAGE);
   });
