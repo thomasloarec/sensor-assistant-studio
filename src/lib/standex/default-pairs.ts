@@ -114,10 +114,16 @@ export function policyMagnetsFor(
 }
 /**
  * Aimant par défaut d'un capteur. Priorité au couple dédié demandé (MK02/M02,
- * MK04/M04…) ; sinon un aimant documenté RETENU par la politique ci-dessus ;
- * sinon un aimant STANDARD du guide d'activation choisi sur la forme du capteur
- * (`magnet-recommendation.ts`). M02 n'est plus le repli universel : il reste
- * réservé au couple dédié MK02.
+ * MK04/M04…) ; sinon le STANDARD ÉCONOMIQUE du guide choisi sur la forme du
+ * capteur (bloc ferrite HF 32/25, cylindre AlNiCo500 Ø 4 × 19), dont le matériau
+ * est toujours explicable — même quand la simulation reste illustrative ; sinon
+ * seulement un aimant documenté retenu par la politique.
+ *
+ * Le cylindre de référence 4003004003 n'est donc plus un défaut : sa nuance
+ * n'est pas publiée, il ne peut pas être présenté comme un standard à matériau
+ * explicite. Il reste consultable dans les références documentées et proposé en
+ * option cylindrique, sans être assimilé à l'AlNiCo500 ni lui prêter ses
+ * distances. M02 reste réservé au couple dédié MK02.
  */
 export function defaultMagnetFor(
   sensorId: string,
@@ -125,8 +131,8 @@ export function defaultMagnetFor(
 ): string {
   return (
     DEFAULT_PAIRS[sensorId] ??
-    policyMagnetsFor(sensorId, registry)[0] ??
     guideFallbackMagnet(sensorId) ??
+    policyMagnetsFor(sensorId, registry)[0] ??
     REFERENCE_CYLINDER
   );
 }
