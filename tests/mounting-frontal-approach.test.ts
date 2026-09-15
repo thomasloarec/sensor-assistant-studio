@@ -89,10 +89,13 @@ describe("approche frontale F1 : les faces se font réellement face", () => {
     }
   });
 
-  test("un décalage latéral reste refusé même avec la rotation correcte", () => {
+  test("un décalage latéral reste refusé pour la qualification", () => {
     const sim = simulateMounting(mountingFromWorkshop(frontal({ lateralShift: 1 })));
     expect(sim.reasons).toContain("LATERAL_OFFSET");
-    expect(sim.samples.every((s) => s.contact === "unknown")).toBe(true);
+    expect(sim.samples.every((s) => !s.covered)).toBe(true);
+    expect(sim.illustrative).toBe(true);
+    expect(sim.pullInMm).toBeNull();
+    expect(sim.dropOutMm).toBeNull();
   });
 
   test("les contacts 1B et 1C ne sont jamais simulés, mais restent documentés", () => {
