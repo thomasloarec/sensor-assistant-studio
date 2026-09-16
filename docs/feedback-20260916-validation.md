@@ -81,16 +81,27 @@ sur l'ensemble des données exportées.
   NDA et téléchargement PDF. Inspection bureau et mobile.
 - PDF final ouvert, ses trois pages rendues et relues ; volume 12 345,
   câble 725 mm, dates, durée et téléphone vérifiés dans la pièce jointe intégrée.
-- **Envoi authentifié réel vers Supabase non exécuté** : la liaison de
-  l'application est active, mais aucune session client authentifiée n'était
-  disponible. Les contrats et SQL sont testés localement ; aucune donnée de
-  production n'a été créée pour simuler une soumission. Le connecteur Supabase
+- **Soumission commerciale réelle vers Supabase non exécutée** : la liaison de
+  l'application est active et la session distante affiche le rôle administrateur.
+  Les contrats et SQL sont testés localement ; aucune demande n'a été transmise
+  aux ingénieurs pour simuler une soumission. Le connecteur Supabase
   accessible correspond à un autre projet et n'a pas été utilisé.
 - **Import GLB via navigateur non exécuté** : l'extension Chrome refuse l'accès
   aux fichiers locaux tant que « Allow access to file URLs » est désactivé.
   Les validations de données et les tests existants d'import/placement restent
-  verts ; le pointage sur un nouveau GLB doit être recetté dans une session
-  disposant de cette permission.
+  verts. Le GLB d'exemple intégré a toutefois été chargé dans l'aperçu distant :
+  pointage de la sortie et de la connexion réussi, trajet mesuré à 85 mm.
+  Seul le passage par le sélecteur d'un nouveau fichier local reste à recetter
+  dans une session disposant de cette permission.
 
 Ces deux limites empêchent de qualifier la recette d'intégration en production
 de complète, malgré la validation du code, des calculs et du parcours accessible.
+
+## Livraison
+
+Le commit `94eba8e` est poussé sur `main` du dépôt connecté. Lovable confirme
+ce commit comme dernière version prête, sans erreur ; le nouvel écran final
+a également été vérifié dans l'aperçu distant, ainsi que l'atelier et le GLB
+d'exemple. Après l'alerte initiale de génération, l'API Lovable confirme l'état
+`ready` sans erreur et la bonne version est effectivement chargée. Le projet
+reste non publié.
