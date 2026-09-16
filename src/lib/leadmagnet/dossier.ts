@@ -48,6 +48,9 @@ export interface BusinessMeta {
   contactName: string | null;
   contactEmail: string | null;
   contactCompany: string | null;
+  contactPhone?: string | null;
+  /** Explicitly deferred fields; an empty input is not an answered question. */
+  undefinedFields?: string[];
 }
 
 export interface Attachment {
@@ -184,6 +187,8 @@ export function createDossier(
       contactName: null,
       contactEmail: null,
       contactCompany: null,
+      contactPhone: null,
+      undefinedFields: [],
     },
     internalNotes: [],
   };

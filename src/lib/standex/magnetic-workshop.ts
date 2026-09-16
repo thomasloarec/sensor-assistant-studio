@@ -1,3 +1,4 @@
+import { housingYawDeg, transverseApproach } from "./housing-pose";
 import { BARE_MAGNETS, PACKAGED_MAGNET_IDS } from "./magnet-catalog";
 import { pairedMagnetModel } from "./paired-magnets";
 import { defaultMagnetFor } from "./default-pairs";
@@ -321,7 +322,7 @@ export function applyPairSelection(
     geometry,
     mode: fake ? "education" : "reference",
     sensorAngle: 0,
-    magnetAngle: documentedMagnetAngleDeg(geometry),
+    magnetAngle: documentedMagnetAngleDeg(geometry, sensorId),
   };
 }
 /** Nature des distances affichées. Un vrai capteur sélectionné ne bascule jamais
@@ -343,7 +344,7 @@ export function referenceAllowed(c: WorkshopConfig): boolean {
     c.sensorAngle === 0 &&
     // L'angle attendu vient de l'approche DOCUMENTÉE : 0 en latéral D1/D3,
     // 180° en frontal F1 où les deux collerettes se font face.
-    normaliseAngle(c.magnetAngle - documentedMagnetAngleDeg(c.geometry)) === 0 &&
+    normaliseAngle(c.magnetAngle - documentedMagnetAngleDeg(c.geometry, c.sensorId)) === 0 &&
     c.magnetization === "axial" &&
     c.polarity === 1 &&
     !c.ferromagnetic &&
@@ -387,7 +388,7 @@ export function approachOffset(c: WorkshopConfig): number {
   // D1 approche par la face latérale (axe Z) ; D3 et l'approche frontale F1
   // suivent l'axe longitudinal (X). Pour F1 la distance publiée est un écart
   // ENTRE FACES : l'offset ajoute les demi-longueurs, il ne les retranche pas.
-  const direction: Vec3 = c.geometry === "D1" ? [0, 0, 1] : [1, 0, 0];
+  const direction: Vec3 = transverseApproach(c.geometry, c.sensorId) ? [0, 0, 1] : [1, 0, 0];
 
   const projected = (size: Vec3, rotation: Vec3) =>
     size.reduce((sum, n, i) => {
@@ -439,7 +440,7 @@ export function poseAt(
   if (c.motion === "approach")
     return {
       position:
-        c.geometry === "D1"
+        transverseApproach(c.geometry, c.sensorId)
           ? [c.lateralShift, 0, distance + approachOffset(c)]
           : [distance + approachOffset(c), 0, c.lateralShift],
       angle: c.magnetAngle,
@@ -516,7 +517,7 @@ export function educationSignal(c: WorkshopConfig, position: Vec3, angle: number
       : momentFor(c, angle);
   let sum = 0;
   for (let i = -3; i <= 3; i++) {
-    const local = sensor.transform([(i * bladeLength(model)) / 6, 0, bladeOffsetZ(model)]);
+    const local = sensor.transform(rotate([(i * bladeLength(model)) / 6, 0, bladeOffsetZ(model)], [0, housingYawDeg(c.sensorId), 0]));
     const p = local.map((v, j) => v + sensor.position[j]!) as Vec3;
     sum += dot(demoField(p, position, m, c.demoReach), a);
   }
@@ -625,7 +626,7 @@ export function summarizeWorkshop(c: WorkshopConfig): string {
     publishedSensorReference(c.sensorId, c.sensitivity, c.magnetModel) ?? sensorById(c.sensorId).name;
   const setup =
     c.mode === "reference"
-      ? `${reference} + ${c.magnetModel} ; approche ${c.geometry}, ${c.geometry === "F1" ? "faces en vis-à-vis (aimant à 180°)" : "axes parallèles"}.`
+      ? `${reference} + ${c.magnetModel} ; approche ${c.geometry}, ${c.geometry === "F1" ? `faces en vis-à-vis (aimant à ${c.magnetAngle}°)` : "axes parallèles"}.`
       : c.machine
         ? `${sensorById(c.sensorId).name} · Démonstration fictive dans ${c.machine.fileName} ; axe Nord–Sud local ${c.magnetization === "axial" ? "X" : c.magnetization === "thickness" ? "Y" : "Z"}, polarité ${c.polarity === 1 ? "N/S" : "S/N"}.`
         : `${sensorById(c.sensorId).name} · Démonstration fictive ; ${c.machine ? "intégration dans une machine" : c.motion === "slide" ? "passage latéral" : c.motion === "pivot" ? "pivot" : "approche " + c.geometry} ; axe reed ${c.sensorAngle}°, aimant ${c.magnetAngle}°, aimantation ${c.magnetization === "axial" ? "axiale" : c.magnetization === "thickness" ? "épaisseur" : "transversale"}, polarité ${c.polarity === 1 ? "N/S" : "S/N"}.`;

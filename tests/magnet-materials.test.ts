@@ -1,3 +1,4 @@
+import { readdirSync, statSync, readFileSync } from "node:fs";
 import { describe, expect, test } from "bun:test";
 import { execSync } from "node:child_process";
 import { PACKAGED_MAGNETS, packagedMagnet } from "../src/lib/standex/magnet-catalog";
@@ -99,10 +100,9 @@ describe("matériaux des aimants en boîtier : aimant et boîtier restent distin
   });
 
   test("aucun module de distance publiée ne consomme les champs matériau/moment", () => {
-    const hits = execSync(
-      "rg -l \"magnetMaterial|momentTypE6Vscm\" src/lib/standex/mounting src/lib/standex/magnetics src/lib/standex/pair-layout.ts src/lib/standex/magnetic-workshop.ts 2>/dev/null || true",
-      { encoding: "utf8" },
-    ).trim();
+    const paths = ["src/lib/standex/mounting", "src/lib/standex/magnetics", "src/lib/standex/pair-layout.ts", "src/lib/standex/magnetic-workshop.ts"];
+    const files = (p: string): string[] => statSync(p).isDirectory() ? readdirSync(p).flatMap(n => files(`${p}/${n}`)) : [p];
+    const hits = paths.flatMap(files).filter(p => /magnetMaterial|momentTypE6Vscm/.test(readFileSync(p,"utf8"))).join("\n");
     expect(hits).toBe("");
   });
 });

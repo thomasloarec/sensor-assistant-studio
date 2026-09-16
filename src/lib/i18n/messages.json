@@ -25225,5 +25225,374 @@
     "Этот магнит взят из ранее сохранённого выбора: он остаётся отображённым как есть и больше не предлагается для этого датчика.",
     "Questo magnete deriva da una scelta già salvata: resta visualizzato così com'è e non è più proposto per questo sensore.",
     "このマグネットは以前に保存された選択によるものです。そのまま表示され続けますが、このセンサーには今後提案されません。"
+  ],
+  "Non défini pour le moment": [
+    "Not defined yet",
+    "暂未确定",
+    "Noch nicht festgelegt",
+    "Aún sin definir",
+    "Пока не определено",
+    "Non ancora definito",
+    "現時点では未定"
+  ],
+  "Aucun": [
+    "None",
+    "无",
+    "Keine",
+    "Ninguno",
+    "Нет",
+    "Nessuno",
+    "なし"
+  ],
+  "Oui": [
+    "Yes",
+    "是",
+    "Ja",
+    "Sí",
+    "Да",
+    "Sì",
+    "はい"
+  ],
+  "Non": [
+    "No",
+    "否",
+    "Nein",
+    "No",
+    "Нет",
+    "No",
+    "いいえ"
+  ],
+  "Coordonnées et contexte": [
+    "Contact and project context",
+    "联系方式与项目背景",
+    "Kontakt und Projektkontext",
+    "Contacto y contexto del proyecto",
+    "Контакты и контекст проекта",
+    "Contatti e contesto del progetto",
+    "連絡先とプロジェクト背景"
+  ],
+  "Configuration du montage": [
+    "Assembly configuration",
+    "安装配置",
+    "Montagekonfiguration",
+    "Configuración del montaje",
+    "Конфигурация монтажа",
+    "Configurazione del montaggio",
+    "組付け構成"
+  ],
+  "Trajet et longueur du câble": [
+    "Cable route and length",
+    "电缆路径与长度",
+    "Kabelverlauf und Länge",
+    "Recorrido y longitud del cable",
+    "Трасса и длина кабеля",
+    "Percorso e lunghezza del cavo",
+    "ケーブル経路と長さ"
+  ],
+  "Pièces jointes": [
+    "Attachments",
+    "附件",
+    "Anhänge",
+    "Archivos adjuntos",
+    "Вложения",
+    "Allegati",
+    "添付ファイル"
+  ],
+  "Calcul et limites de détection": [
+    "Detection calculation and limits",
+    "检测计算与限制",
+    "Berechnung und Grenzen der Erkennung",
+    "Cálculo y límites de detección",
+    "Расчёт и ограничения обнаружения",
+    "Calcolo e limiti di rilevamento",
+    "検出計算と制限"
+  ],
+  "Historique des essais": [
+    "Test history",
+    "测试历史",
+    "Testverlauf",
+    "Historial de pruebas",
+    "История испытаний",
+    "Cronologia delle prove",
+    "試験履歴"
+  ],
+  "Étude de conception": [
+    "Design study",
+    "设计研究",
+    "Entwurfsstudie",
+    "Estudio de diseño",
+    "Проектное исследование",
+    "Studio di progettazione",
+    "設計検討"
+  ],
+  "Revue de conception": [
+    "Design review",
+    "设计评审",
+    "Entwurfsprüfung",
+    "Revisión del diseño",
+    "Анализ проекта",
+    "Revisione del progetto",
+    "設計レビュー"
+  ],
+  "Décisions confiées à Standex": [
+    "Decisions delegated to Standex",
+    "交由 Standex 决定的事项",
+    "An Standex übertragene Entscheidungen",
+    "Decisiones delegadas a Standex",
+    "Решения, порученные Standex",
+    "Decisioni affidate a Standex",
+    "Standex に委ねた判断"
+  ],
+  "Questions ouvertes": [
+    "Open questions",
+    "待解决问题",
+    "Offene Fragen",
+    "Preguntas pendientes",
+    "Открытые вопросы",
+    "Questioni aperte",
+    "未解決の質問"
+  ],
+  "Confidentialité · NDA": [
+    "Confidentiality · NDA",
+    "保密协议 · NDA",
+    "Vertraulichkeit · NDA",
+    "Confidencialidad · NDA",
+    "Конфиденциальность · NDA",
+    "Riservatezza · NDA",
+    "機密保持 · NDA"
+  ],
+  "Rapport complet du projet": [
+    "Complete project report",
+    "完整项目报告",
+    "Vollständiger Projektbericht",
+    "Informe completo del proyecto",
+    "Полный отчёт по проекту",
+    "Rapporto completo del progetto",
+    "プロジェクト全体のレポート"
+  ],
+  "Projet à confirmer par Standex": [
+    "Project subject to Standex confirmation",
+    "项目须经 Standex 确认",
+    "Projekt durch Standex zu bestätigen",
+    "Proyecto pendiente de confirmación de Standex",
+    "Проект требует подтверждения Standex",
+    "Progetto da confermare da Standex",
+    "Standex による確認が必要なプロジェクト"
+  ],
+  "Le rapport PDF n'a pas pu être produit sur cet appareil.": [
+    "The PDF report could not be generated on this device.",
+    "无法在此设备上生成 PDF 报告。",
+    "Der PDF-Bericht konnte auf diesem Gerät nicht erstellt werden.",
+    "No se pudo generar el informe PDF en este dispositivo.",
+    "Не удалось создать PDF-отчёт на этом устройстве.",
+    "Impossibile generare il rapporto PDF su questo dispositivo.",
+    "この端末で PDF レポートを生成できませんでした。"
+  ],
+  "Câble et connexion": [
+    "Cable and connection",
+    "电缆与连接",
+    "Kabel und Anschluss",
+    "Cable y conexión",
+    "Кабель и подключение",
+    "Cavo e collegamento",
+    "ケーブルと接続"
+  ],
+  "Longueurs standard documentées": [
+    "Documented standard lengths",
+    "文档列明的标准长度",
+    "Dokumentierte Standardlängen",
+    "Longitudes estándar documentadas",
+    "Документированные стандартные длины",
+    "Lunghezze standard documentate",
+    "資料に記載された標準長さ"
+  ],
+  "Selon la version du capteur, à confirmer par Standex.": [
+    "Depending on the sensor version, to be confirmed by Standex.",
+    "取决于传感器版本，须由 Standex 确认。",
+    "Je nach Sensorversion, von Standex zu bestätigen.",
+    "Según la versión del sensor, pendiente de confirmación de Standex.",
+    "Зависит от версии датчика, требуется подтверждение Standex.",
+    "Secondo la versione del sensore, da confermare da Standex.",
+    "センサーの仕様により異なります。Standex の確認が必要です。"
+  ],
+  "Aucune longueur standard documentée pour cette gamme. À définir avec Standex.": [
+    "No standard length documented for this family. To be defined with Standex.",
+    "此系列未列明标准长度。请与 Standex 确定。",
+    "Keine Standardlänge für diese Baureihe dokumentiert. Mit Standex festzulegen.",
+    "No hay longitud estándar documentada para esta gama. A definir con Standex.",
+    "Для этой серии стандартная длина не документирована. Определяется со Standex.",
+    "Nessuna lunghezza standard documentata per questa gamma. Da definire con Standex.",
+    "このシリーズの標準長さは資料にありません。Standex と決定してください。"
+  ],
+  "Longueur sur mesure (cm)": [
+    "Custom length (cm)",
+    "定制长度（cm）",
+    "Sonderlänge (cm)",
+    "Longitud a medida (cm)",
+    "Длина на заказ (см)",
+    "Lunghezza su misura (cm)",
+    "特注長さ（cm）"
+  ],
+  "Autre référence de connecteur": [
+    "Other connector reference",
+    "其他连接器型号",
+    "Andere Steckverbinderreferenz",
+    "Otra referencia de conector",
+    "Другая модель разъёма",
+    "Altro riferimento del connettore",
+    "その他のコネクター型番"
+  ],
+  "Détails du projet": [
+    "Project details",
+    "项目详情",
+    "Projektdetails",
+    "Detalles del proyecto",
+    "Подробности проекта",
+    "Dettagli del progetto",
+    "プロジェクト詳細"
+  ],
+  "Télécharger le rapport complet du projet (PDF)": [
+    "Download the complete project report (PDF)",
+    "下载完整项目报告（PDF）",
+    "Vollständigen Projektbericht herunterladen (PDF)",
+    "Descargar el informe completo del proyecto (PDF)",
+    "Скачать полный отчёт по проекту (PDF)",
+    "Scarica il rapporto completo del progetto (PDF)",
+    "プロジェクト全体のレポートをダウンロード（PDF）"
+  ],
+  "Numéro de téléphone": [
+    "Phone number",
+    "电话号码",
+    "Telefonnummer",
+    "Número de teléfono",
+    "Номер телефона",
+    "Numero di telefono",
+    "電話番号"
+  ],
+  "Ouvrir les informations NDA": [
+    "Open NDA information",
+    "打开保密协议信息",
+    "NDA-Informationen öffnen",
+    "Abrir información del NDA",
+    "Открыть сведения о NDA",
+    "Apri informazioni NDA",
+    "NDA 情報を開く"
+  ],
+  "Confidentialité du projet · NDA Standex": [
+    "Project confidentiality · Standex NDA",
+    "项目保密 · Standex NDA",
+    "Projektvertraulichkeit · Standex NDA",
+    "Confidencialidad del proyecto · NDA Standex",
+    "Конфиденциальность проекта · NDA Standex",
+    "Riservatezza del progetto · NDA Standex",
+    "プロジェクトの機密保持 · Standex NDA"
+  ],
+  "Complétez et vérifiez votre demande de confidentialité.": [
+    "Complete and review your confidentiality request.",
+    "填写并检查您的保密申请。",
+    "Ergänzen und prüfen Sie Ihre Vertraulichkeitsanfrage.",
+    "Complete y revise su solicitud de confidencialidad.",
+    "Заполните и проверьте запрос о конфиденциальности.",
+    "Completa e verifica la richiesta di riservatezza.",
+    "機密保持の申請を入力し、確認してください。"
+  ],
+  "Phase du projet": [
+    "Project phase",
+    "项目阶段",
+    "Projektphase",
+    "Fase del proyecto",
+    "Этап проекта",
+    "Fase del progetto",
+    "プロジェクト段階"
+  ],
+  "Les couleurs repèrent l'aimant. Polarité non caractérisée : aucun changement de polarité ni effet calculé.": [
+    "The colors identify the magnet. Polarity is not characterized: no polarity changes or calculated effects.",
+    "颜色用于识别磁铁。极性未经表征：不改变极性，也不计算其影响。",
+    "Die Farben kennzeichnen den Magneten. Polarität nicht charakterisiert: keine Poländerung oder berechnete Wirkung.",
+    "Los colores identifican el imán. Polaridad no caracterizada: sin cambios de polaridad ni efectos calculados.",
+    "Цвета обозначают магнит. Полярность не охарактеризована: изменение полярности и расчёт её влияния недоступны.",
+    "I colori identificano il magnete. Polarità non caratterizzata: nessuna variazione di polarità né effetto calcolato.",
+    "色は磁石の識別用です。極性は未評価のため、極性変更やその影響の計算は行いません。"
+  ],
+  "Longueur et trajet du câble": [
+    "Cable length and route",
+    "电缆长度与路径",
+    "Kabellänge und Verlauf",
+    "Longitud y recorrido del cable",
+    "Длина и трасса кабеля",
+    "Lunghezza e percorso del cavo",
+    "ケーブルの長さと経路"
+  ],
+  "Longueur de câble retenue (mm)": [
+    "Selected cable length (mm)",
+    "选定电缆长度（mm）",
+    "Gewählte Kabellänge (mm)",
+    "Longitud de cable elegida (mm)",
+    "Выбранная длина кабеля (мм)",
+    "Lunghezza del cavo scelta (mm)",
+    "選択したケーブル長さ（mm）"
+  ],
+  "Valider ce choix et voir le résultat": [
+    "Confirm this choice and view the result",
+    "确认此选择并查看结果",
+    "Auswahl bestätigen und Ergebnis anzeigen",
+    "Confirmar esta elección y ver el resultado",
+    "Подтвердить выбор и посмотреть результат",
+    "Conferma la scelta e visualizza il risultato",
+    "選択を確定して結果を見る"
+  ],
+  "Le capteur": [
+    "Sensor",
+    "传感器",
+    "Sensor",
+    "El sensor",
+    "Датчик",
+    "Il sensore",
+    "センサー"
+  ],
+  "l’aimant": [
+    "magnet",
+    "磁铁",
+    "Magnet",
+    "el imán",
+    "магнит",
+    "il magnete",
+    "磁石"
+  ],
+  "Connexion et câbles standards": [
+    "Connection and standard cables",
+    "连接与标准电缆",
+    "Anschluss und Standardkabel",
+    "Conexión y cables estándar",
+    "Подключение и стандартные кабели",
+    "Collegamento e cavi standard",
+    "接続と標準ケーブル"
+  ],
+  "Sans modèle importé, saisissez la longueur souhaitée. Le pointage d’un trajet nécessite les surfaces de votre modèle.": [
+    "Without an imported model, enter the desired length. Picking a route requires the surfaces of your machine.",
+    "未导入模型时，请输入所需长度。选取路径需要机器表面。",
+    "Ohne importiertes Modell geben Sie die gewünschte Länge ein. Die Wegauswahl erfordert die Oberflächen Ihrer Maschine.",
+    "Sin modelo importado, introduzca la longitud deseada. Seleccionar el recorrido requiere las superficies de su máquina.",
+    "Без импортированной модели введите нужную длину. Для выбора трассы нужны поверхности вашей машины.",
+    "Senza modello importato, inserisci la lunghezza desiderata. Per selezionare il percorso servono le superfici della macchina.",
+    "モデル未取込の場合は必要な長さを入力してください。経路の指定には機械の表面が必要です。"
+  ],
+  "Fichier 3D": [
+    "3D file",
+    "3D 文件",
+    "3D-Datei",
+    "Archivo 3D",
+    "3D-файл",
+    "File 3D",
+    "3D ファイル"
+  ],
+  "Les données détaillées du projet sont jointes à ce PDF dans dossier-complet.json.": [
+    "Detailed project data is attached to this PDF as dossier-complet.json.",
+    "项目详细数据以 dossier-complet.json 附加在此 PDF 中。",
+    "Die detaillierten Projektdaten sind diesem PDF als dossier-complet.json beigefügt.",
+    "Los datos detallados del proyecto se adjuntan a este PDF como dossier-complet.json.",
+    "Подробные данные проекта приложены к этому PDF в файле dossier-complet.json.",
+    "I dati dettagliati del progetto sono allegati a questo PDF in dossier-complet.json.",
+    "プロジェクトの詳細データは dossier-complet.json としてこの PDF に添付されています。"
   ]
 }

@@ -1,3 +1,4 @@
+import { requirementAnswer } from "./requirement-answer";
 /** Soumission : instantané immuable, statut réel uniquement après succès backend. */
 import { dossierHash, toClientDto, type ClientDossierDto, type DesignDossier } from "./dossier";
 import type { ConsentBinding, ConsentRecord } from "./privacy";
@@ -187,9 +188,9 @@ export async function submit(
  * personne (valeurs d'exigence, contraintes libres, titre) ne passent jamais
  * par la traduction. */
 export function technicalSummary(dossier: DesignDossier, tr: Tr = identity): string {
-  const line = (r: { label: string; value: string; unit: string | null; state: string }) =>
-    `- ${tr(r.label)} : ${r.value || tr("inconnu")}${r.unit ? " " + r.unit : ""} (${
-      r.state === "confirmed"
+  const line = (r: { key: string; label: string; value: string; unit: string | null; state: string }) =>
+    `- ${tr(r.label)} : ${requirementAnswer(dossier, r.key, tr) || tr("inconnu")}${r.unit ? " " + r.unit : ""} (${
+      r.state === "confirmed" || (!r.value.trim() && requirementAnswer(dossier, r.key, tr))
         ? tr("confirmé")
         : r.state === "hypothesis"
           ? tr("hypothèse")
@@ -209,6 +210,7 @@ export function technicalSummary(dossier: DesignDossier, tr: Tr = identity): str
     dossier.freeConstraints || "—",
     "",
     `## ${tr("Contexte projet")}`,
+    `- ${tr("Numéro de téléphone")} : ${dossier.business.contactPhone || tr("inconnu")}`,
     `- ${tr("Phase")} : ${tr(dossier.business.projectPhase)}`,
     `- ${tr("Volume annuel")} : ${volume}`,
     `- ${tr("Démarrage série")} : ${dossier.business.seriesStartDate ?? tr("inconnu")}`,

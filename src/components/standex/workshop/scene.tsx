@@ -1,3 +1,4 @@
+import { housingYawDeg, transverseApproach } from "@/lib/standex/housing-pose";
 import { pairedMagnetModel } from "@/lib/standex/paired-magnets";
 import { t } from "@/lib/i18n/core";
 import { useMemo, useRef, useEffect } from "react";
@@ -185,16 +186,18 @@ export function Body({
   model,
   xray,
   showCable = true,
+  poleColors = false,
 }: {
   model: SensorModel;
   xray: boolean;
   showCable?: boolean;
+  poleColors?: boolean;
 }) {
   const electrical = electricalDetailsAllowed(model);
   if (electrical && model.shape === "custom_pcb" && customLayout(model))
     return <CustomBoard model={model} xray={xray} />;
   if (electrical && model.shape === "glass") return <BareReedBody model={model} />;
-  return <StandardBody model={model} xray={electrical && xray} showCable={showCable} />;
+  return <StandardBody model={model} xray={electrical && xray} showCable={showCable} poleColors={poleColors} />;
 }
 function BareReedBody({ model }: { model: SensorModel }) {
   const [l, d] = model.body;
@@ -230,10 +233,12 @@ function StandardBody({
   model,
   xray,
   showCable,
+  poleColors,
 }: {
   model: SensorModel;
   xray: boolean;
   showCable: boolean;
+  poleColors: boolean;
 }) {
   const [l, h, w] = model.body,
     opacity = xray ? 0.25 : 1;
@@ -248,9 +253,19 @@ function StandardBody({
     });
     return s;
   }, [model, l, w]);
+  // i18n-canonical: GLSL shader source below is code, never user-facing prose.
   const material = (
     <meshStandardMaterial
-      color={model.color}
+      color={poleColors ? "#ffffff" : model.color}
+      onBeforeCompile={(shader) => {
+        if (!poleColors) return;
+        const axis = ["cylinder", "threaded", "pressfit", "glass"].includes(model.shape) ? "y" : "x";
+        shader.vertexShader = "varying float polePosition;\n" + shader.vertexShader;
+        shader.vertexShader = shader.vertexShader.replace("#include <begin_vertex>", `#include <begin_vertex>\npolePosition = position.${axis};`);
+        shader.fragmentShader = "varying float polePosition;\n" + shader.fragmentShader;
+        shader.fragmentShader = shader.fragmentShader.replace("#include <color_fragment>", "#include <color_fragment>\ndiffuseColor.rgb = polePosition < 0.0 ? vec3(0.035, 0.205, 0.63) : vec3(0.67, 0.065, 0.055);");
+      }}
+      customProgramCacheKey={() => poleColors ? `poles-${model.shape}` : "body"}
       transparent={xray}
       opacity={opacity}
       depthWrite={!xray}
@@ -446,11 +461,7 @@ export function Magnet({ config, sample }: { config: WorkshopConfig; sample: Cyc
            contacts. Un repère propre (bande + étiquette « Aimant ») le distingue
            du capteur même lorsque les noms sont masqués. */
         <>
-          <Body model={actualModel} xray={false} showCable={false} />
-          <mesh>
-            <boxGeometry args={[Math.max(1.1, l * 0.11), h * 1.05, w * 1.05]} />
-            <meshStandardMaterial color="#b4531f" roughness={0.45} />
-          </mesh>
+          <Body model={actualModel} xray={false} showCable={false} poleColors />
           {/* Le nom du modèle rend l'aimant identifiable sans lire la colonne
               de gauche. L'étiquette reste AU-DESSUS du boîtier. */}
           <Label position={[0, h / 2 + 3.2, 0]} className="mw-magnet-tag">
@@ -459,7 +470,7 @@ export function Magnet({ config, sample }: { config: WorkshopConfig; sample: Cyc
         </>
       ) : (
         ([-1, 1] as const).map((sign) => {
-          const north = sign * config.polarity === 1;
+          const north = sign === 1;
           return (
             <group
               key={sign}
@@ -637,7 +648,7 @@ function ReferenceMarkers({ config }: { config: WorkshopConfig }) {
   const pair = simulatedContactForm(config) ? workshopPair(config) : null;
   if (!pair) return null;
   const [pull, drop] = pair,
-    d1 = config.geometry === "D1";
+    d1 = transverseApproach(config.geometry, config.sensorId);
   return (
     <group>
       {[pull, drop].map((d, i) => {
@@ -911,7 +922,7 @@ export default function WorkshopScene({
         position={[config.mountX, 0, config.mountZ]}
         rotation={[0, (-config.mountAngle * Math.PI) / 180, 0]}
       >
-        <group rotation={[0, (-config.sensorAngle * Math.PI) / 180, 0]}>
+        <group rotation={[0, ((housingYawDeg(config.sensorId) - config.sensorAngle) * Math.PI) / 180, 0]}>
           <Body model={model} xray={xray} />
           {/* Le reed nu est déjà transparent : ses lames restent visibles sans
               passer l'atelier en radiographie, la carte imprimée reste opaque. */}

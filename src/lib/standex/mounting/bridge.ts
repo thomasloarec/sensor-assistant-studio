@@ -1,3 +1,4 @@
+import { transverseApproach } from "../housing-pose";
 import { poseAt } from "../magnetic-workshop";
 import type { WorkshopConfig } from "../magnetic-workshop";
 import {
@@ -32,11 +33,10 @@ import type { ScenePoseSampler } from "./simulate";
 /** D3 et l'approche frontale F1 suivent l'axe longitudinal X : leur décalage
  * latéral se lit donc sur Z, exactement comme D3. D1 approche par la face
  * latérale (Z) et son décalage se lit sur X. */
-const LONGITUDINAL = new Set(["D3", "F1"]);
-const lateralAxis = (approachId: string): Vec3 =>
-  LONGITUDINAL.has(approachId) ? [0, 0, 1] : [1, 0, 0];
-const approachAxis = (approachId: string): Vec3 =>
-  LONGITUDINAL.has(approachId) ? [1, 0, 0] : [0, 0, 1];
+const lateralAxis = (approachId: string, sensorId = ""): Vec3 =>
+  transverseApproach(approachId, sensorId) ? [1, 0, 0] : [0, 0, 1];
+const approachAxis = (approachId: string, sensorId = ""): Vec3 =>
+  transverseApproach(approachId, sensorId) ? [0, 0, 1] : [1, 0, 0];
 /** Point du cycle utilisé pour lire la pose d'un montage importé. 0 = repos. */
 export const REFERENCE_CYCLE_POINT = 0;
 
@@ -110,7 +110,7 @@ export function mountingFromWorkshop(
   u: number = REFERENCE_CYCLE_POINT,
 ): GuidedMounting {
   const profile = profileFor(c.sensorId, c.magnetModel, c.geometry);
-  const lateral = lateralAxis(c.geometry);
+  const lateral = lateralAxis(c.geometry, c.sensorId);
   const machine = c.machine;
   const anchor: Pose = machine
     ? machineComponentPose(machine, "sensor", u)
@@ -210,7 +210,7 @@ function machineTravelGaps(
   machine: MachineAssembly,
   profile: MountingProfile | null,
 ): { startGapMm: number; endGapMm: number } {
-  const axis = profile?.axis ?? approachAxis(c.geometry);
+  const axis = profile?.axis ?? approachAxis(c.geometry, c.sensorId);
   const gapAtCycle = (u: number) =>
     surfaceGapMm(c.sensorId, c.magnetModel, relativePoseInMachine(machine, u), axis);
   // Le cycle du montage importé va de 0 (repos) à 1 (ouverture totale) :
@@ -269,7 +269,7 @@ export function workshopPatchFromMounting(
       },
     };
   }
-  const lateral = lateralAxis(m.couple.approachId);
+  const lateral = lateralAxis(m.couple.approachId, m.couple.sensorId);
   const shift = m.relative.positionMm.reduce((sum, v, i) => sum + v * lateral[i]!, 0);
   return {
     ...couple,

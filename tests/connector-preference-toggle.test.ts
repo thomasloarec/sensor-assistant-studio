@@ -29,7 +29,7 @@ describe("préférence de connecteur : ouverture réelle, sans cercle fermé", (
 
   test("une référence enregistrée non déléguée réouvre la section à la reprise", () => {
     expect(SRC).toContain(
-      '(termination.kind === "unqualified_connector" && !isDelegated(dossier, DELEGATED_CONNECTOR))',
+      '(termination.kind !== "bare_leads" && !isDelegated(dossier, DELEGATED_CONNECTOR))',
     );
   });
 });

@@ -73,7 +73,7 @@ export function relativePoseAt(m: GuidedMounting, profile: LocatedProfile, t: nu
 export function scenePoseAt(m: GuidedMounting, profile: MountingProfile | null, t: number): Pose {
   const located = locatedProfile(profile);
   if (located) return relativePoseAt(m, located, t);
-  const axis = approachAxisFor(m.couple.approachId);
+  const axis = approachAxisFor(m.couple.approachId, m.couple.sensorId);
   const fallback: LocatedProfile = { ...(profile ?? {}), axis } as LocatedProfile;
   return relativePoseAt(m, fallback, t);
 }
@@ -157,7 +157,11 @@ export function illustrativeMarks(bounds?: IllustrativeBounds | null): [number, 
  * collision reste traitée échantillon par échantillon : deux corps qui
  * s'interpénètrent n'affichent pas d'état.
  */
-const ILLUSTRATIVE_BLOCKERS = new Set(["CONTACT_FORM_NOT_SIMULATED"]);
+const ILLUSTRATIVE_BLOCKERS = new Set([
+  "CONTACT_FORM_NOT_SIMULATED",
+  "POLARITY_NOT_TEMPLATE",
+  "MAGNETIZATION_NOT_TEMPLATE",
+]);
 /** Au-delà de cette séparation réelle, l'état illustratif est TOUJOURS ouvert. */
 export const ILLUSTRATIVE_FAR_MM = 20;
 
@@ -197,7 +201,7 @@ export function globalReasons(m: GuidedMounting, profile: MountingProfile | null
   // L'orientation attendue vient du PROFIL, pas d'un zéro codé en dur :
   // l'approche frontale F1 documente explicitement des faces en vis-à-vis
   // (180° autour de Y). Comparer à 0 rejetait la vraie pose documentée.
-  const expected = documentedRelativeRotation(m.couple.approachId);
+  const expected = documentedRelativeRotation(m.couple.approachId, m.couple.sensorId);
   if (m.relative.rotationDeg.some((a, i) => Math.abs(normalise(a - expected[i]!)) > NUMERIC_EPSILON))
     reasons.push("ORIENTATION_OFF_TEMPLATE");
   // Contacts 1B / 1C : distances publiées lisibles, jamais simulées.
@@ -329,8 +333,8 @@ export function simulateMounting(
     coveredFraction,
     reasons: allReasons,
     // Jamais de seuil inventé : hors domaine, les seuils publiés restent nuls.
-    pullInMm: pair?.[0] ?? null,
-    dropOutMm: pair?.[1] ?? null,
+    pullInMm: !blocked ? pair?.[0] ?? null : null,
+    dropOutMm: !blocked ? pair?.[1] ?? null : null,
     illustrative,
   };
 }

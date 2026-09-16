@@ -446,3 +446,6 @@
   color: var(--muted-foreground);
   max-inline-size: 34ch;
 }
+
+.sc-content footer a { display:flex; flex-direction:column; justify-content:center; gap:0.5rem; padding:1rem; min-height:44px; color:var(--foreground); background:var(--surface-sunken); border-radius:var(--r-sm); box-shadow:var(--e-1); font:var(--t-body); flex:1 1 15rem; }
+.sc-content footer a small { color:var(--foreground); margin:0; }

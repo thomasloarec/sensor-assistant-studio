@@ -1,3 +1,4 @@
+import { transverseApproach } from "../housing-pose";
 import { rotate } from "../machine-assembly";
 import { pairedMagnetModel } from "../paired-magnets";
 import { sensorById } from "../sensor-catalog";
@@ -130,8 +131,8 @@ export function separationMm(sensorId: string, magnetId: string, relative: Pose)
 /** Axe d'approche par défaut d'un gabarit, quand aucun profil n'est publié.
  * D3 et l'approche frontale F1 suivent l'axe longitudinal X, D1 la face
  * latérale Z. Source unique, partagée par le pont d'atelier et le moteur. */
-export const approachAxisFor = (approachId: string): Vec3 =>
-  approachId === "D3" || approachId === "F1" ? [1, 0, 0] : [0, 0, 1];
+export const approachAxisFor = (approachId: string, sensorId = ""): Vec3 =>
+  transverseApproach(approachId, sensorId) ? [0, 0, 1] : [1, 0, 0];
 /** Distance of the magnet centre off the approach axis, in the sensor frame. */
 export function lateralOffsetMm(relative: Pose, axis: Vec3): number {
   const along = scale(axis, dot(relative.positionMm, axis));

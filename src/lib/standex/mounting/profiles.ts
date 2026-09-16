@@ -1,3 +1,4 @@
+import { transverseApproach } from "../housing-pose";
 import {
   PUBLISHED_REGISTRY,
   publishedMagnetFamily,
@@ -100,11 +101,11 @@ const APPROACH_RELATIVE_ROTATION: Record<string, Vec3> = {
 };
 /** Orientation relative documentée d'une approche. Les approches sans dessin de
  * pose retombent sur des axes parallèles, jamais sur une rotation inventée. */
-export const documentedRelativeRotation = (approachId: string): Vec3 =>
-  [...(APPROACH_RELATIVE_ROTATION[approachId] ?? [0, 0, 0])] as Vec3;
+export const documentedRelativeRotation = (approachId: string, sensorId = ""): Vec3 =>
+  [...(transverseApproach(approachId, sensorId) ? [0, 0, 0] : APPROACH_RELATIVE_ROTATION[approachId] ?? [0, 0, 0])] as Vec3;
 /** Angle de l'aimant, en degrés autour de Y, imposé par l'approche documentée. */
-export const documentedMagnetAngleDeg = (approachId: string): number =>
-  documentedRelativeRotation(approachId)[1];
+export const documentedMagnetAngleDeg = (approachId: string, sensorId = ""): number =>
+  documentedRelativeRotation(approachId, sensorId)[1];
 
 const AXES: Record<string, { axis: Vec3; plane: "XZ" | "YZ" }> = {
   D1: { axis: [0, 0, 1], plane: "XZ" },

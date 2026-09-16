@@ -69,7 +69,7 @@ export function PairThumbnail({
           la vignette est visible, sans survol. */}
       <CandidateThumbnail
         sensorId={sensorId}
-        cabled={false}
+        cabled={true}
         fitToView
         size={size}
         legend="sensor"

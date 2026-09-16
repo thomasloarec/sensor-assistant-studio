@@ -41,7 +41,7 @@ describe("barre et disposition", () => {
   test("le corps de l'atelier occupe le panneau sans marge ni défilement propre", () => {
     expect(PANEL).toContain("bare?: boolean");
     expect(PANEL).toContain('"min-w-0 flex-1 overflow-hidden"');
-    expect(SPACE).toContain("bare\n        backLabel={t(\"Retour aux couples\")}");
+    expect(SPACE).toMatch(/bare\s+backLabel/);
   });
   test("la barre porte le couple testé et l'état d'enregistrement", () => {
     expect(PANEL).toContain("badge?: ReactNode");
@@ -80,11 +80,8 @@ describe("bandeau de verdict", () => {
     expect(WORKSHOP).toContain("{t(computed.mainMessage)}");
     expect(WORKSHOP).toContain('data-testid="verdict-main-message"');
   });
-  test("le bouton d'essai n'apparaît que hors gabarit ou sans table publiée", () => {
-    expect(WORKSHOP).toContain(
-      'const askTrial = verdictKind === "undocumented" || verdictKind === "unpublished";',
-    );
-    expect(WORKSHOP).toContain('data-testid="ask-trial"');
+  test("le bandeau ne contient plus de CTA d'essai concurrent", () => {
+    expect(WORKSHOP).not.toContain('data-testid="ask-trial"');
   });
   test("le bandeau est au-dessus de la scène et fait au moins 64 px", () => {
     expect(WORKSHOP.indexOf("{verdictBanner}")).toBeLessThan(
@@ -92,9 +89,8 @@ describe("bandeau de verdict", () => {
     );
     expect(CSS).toMatch(/\.mw-verdict-bar \{[^}]*min-block-size: 64px/s);
   });
-  test("« ce que ce résultat ne dit pas » reste accessible, replié", () => {
-    expect(WORKSHOP).toContain("Valeurs typiques Standex · Ce que ce résultat ne dit pas ⌄");
-    expect(WORKSHOP).toContain("LIMIT_LABEL[l] ?? l");
+  test("le bloc de limites retiré ne surcharge plus le bandeau", () => {
+    expect(WORKSHOP).not.toContain("Valeurs typiques Standex · Ce que ce résultat ne dit pas ⌄");
   });
 });
 
@@ -112,8 +108,8 @@ describe("colonne de gauche : trois réglages, rien de plus", () => {
     expect(column).not.toContain("Orientation sur la machine");
     expect(column).not.toContain("Classe de sensibilité");
   });
-  test("les approches non publiées sont désactivées et expliquées", () => {
-    expect(WORKSHOP).toContain("disabled={!available}");
+  test("les approches non publiées restent explorables et expliquées", () => {
+    expect(WORKSHOP).not.toContain("disabled={!available}");
     expect(WORKSHOP).toContain('t("Non documentée pour ce couple")');
   });
   test("la course parle en positions, pas en distances abstraites", () => {
@@ -136,7 +132,7 @@ describe("colonne de gauche : trois réglages, rien de plus", () => {
       "Longueur de câble retenue",
       "Reprendre un montage",
       "Échelle du champ fictif",
-      "Inverser les pôles N / S",
+
     ])
       expect(WORKSHOP).toContain(label);
     expect(WORKSHOP).toContain("<GuidedSuggestion");
@@ -171,18 +167,16 @@ describe("enregistrement et sortie", () => {
     expect(WORKSHOP).toContain("onSaveState?.(saving ?");
   });
   test("« Voir le résultat » ouvre l'écran Résultat avec l'essai enregistré", () => {
-    expect(WORKSHOP).toContain('t("Voir le résultat →")');
+    expect(WORKSHOP).toContain('t("Valider ce choix et voir le résultat")');
     // Le verdict remonte de l'atelier : l'écran Résultat ne le recalcule pas.
     expect(WORKSHOP).toContain("onResult(testedPair())");
     expect(SPACE).toContain("onResult={(result) => {");
     expect(SPACE).toContain("recordResult(result)");
     expect(SPACE).toContain('setTab("resultat")');
   });
-  test("« Demander un essai » coche une demande, jamais une mesure", () => {
-    expect(SPACE).toContain("TRIAL_REQUEST");
-    expect(SPACE).toContain('data-testid="trial-request"');
-    // Titre raccourci, mais la réserve reste écrite : demander n'est pas valider.
-    expect(SPACE).toContain("demander une mesure n'est pas une validation technique.");
+  test("le bloc de demande d'essai est retiré du formulaire final", () => {
+    expect(SPACE).not.toContain('data-testid="trial-request"');
+    expect(SPACE).toContain("if (workshopDraftRef.current) applyWorkshopConfig(workshopDraftRef.current)");
   });
 });
 

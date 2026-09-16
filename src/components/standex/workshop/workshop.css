@@ -2455,3 +2455,12 @@
     transition: none;
   }
 }
+
+/* Feedback 16/09: visible actions and controls, with the shared design tokens. */
+.mw-primary-actions { display:flex; flex-wrap:wrap; justify-content:flex-end; align-items:center; gap:1rem; padding:1rem; background:var(--surface); }
+.mw-primary-actions .mw-file-label { min-height:44px; padding:0.75rem 1rem; box-shadow:var(--e-1); border-radius:var(--r-sm); color:var(--foreground); }
+.mw-approach-row { display:flex; flex-wrap:wrap; gap:0.5rem; }
+.mw-approach-button { flex:1 1 7rem; padding:0.75rem 1rem; min-width:0; }
+.mw-cable-settings, .mw-controls > .mw-advanced-settings { padding:0.75rem; background:var(--surface); border-radius:var(--r-md); margin-block:0.75rem; }
+.mw-cable-settings > summary, .mw-controls > .mw-advanced-settings > summary { cursor:pointer; min-height:44px; display:flex; align-items:center; font:var(--t-body); color:var(--foreground); }
+.mw-controls .mw-advanced-body { position:static; max-height:none; width:auto; }

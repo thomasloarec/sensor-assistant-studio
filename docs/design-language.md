@@ -418,3 +418,18 @@ cibles de 44 px conformes).
 ### Catalogue et navigation — retour utilisateur V2
 
 Le sélecteur de langue et le menu restent groupés à droite dans les en-têtes de projet et de panneau. Les filtres actifs associent un anneau primaire, une graisse renforcée et un compteur textuel. Le repère de 50 mm est un texte HTML de légende, indépendant du redimensionnement du dessin SVG. La vue 3D est proposée par défaut ; la même échelle et le cadrage individuel restent contrôlables. Les petites références peuvent ainsi être agrandies sans changer leurs dimensions. Les vignettes conservent la limite de quatre contextes WebGL et le respect du mouvement réduit.
+
+
+### Corrections du parcours du 16 septembre 2026
+
+L'atelier présente deux actions en tête : import secondaire et validation primaire.
+Les boutons d'approche peuvent revenir à la ligne ; ils conservent leur cible de
+44 px et une marge intérieure. Câble et réglages avancés sont des dépliants dans
+la colonne de contrôles, sans positionnement flottant. Les liens STEP/datasheet
+utilisent une surface claire, le texte courant et l'élévation existante.
+Le formulaire de contexte reste visible. Le NDA utilise la fenêtre modale du
+socle, avec fermeture accessible de 44 px. Aucun nouveau jeton de marque.
+Les demi-couleurs des aimants 3D sont des matériaux de scène : repères visuels
+seulement, sans attribution d'un axe magnétique caractérisé.
+Sur mobile, la progression conserve ses quatre libellés ; les sous-titres
+explicatifs sont masqués pour laisser de la place au formulaire.

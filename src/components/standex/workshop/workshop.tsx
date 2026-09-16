@@ -207,6 +207,7 @@ export interface WorkshopProps {
   /** "memory" : le GLB ne quitte jamais la mémoire de l'onglet (aucune écriture appareil). */
   storageMode?: "memory" | "local-device";
   cableRouting?: WorkshopCableRouting;
+  initialCableOpen?: boolean;
   /** Remontée du brouillon en cours (mémoire de l'onglet uniquement).
    * Sauvegarder reste une action explicite : ceci sert seulement à ne pas
    * perdre une modification quand l'atelier est fermé ou masqué. */
@@ -231,12 +232,14 @@ export default function MagneticWorkshop({
   storageLabel = t("la session et le projet"),
   storageMode = "local-device",
   cableRouting,
+  initialCableOpen = false,
   onDraftChange,
   onResult,
   onRequestTrial,
   onSaveState,
 }: WorkshopProps) {
   useLocale();
+  const [cableOpen, setCableOpen] = useState(initialCableOpen);
   const [productCard, setProductCard] = useState(false);
   const [config, setConfig] = useState<WorkshopConfig>(
     () => parseWorkshopConfig(initialConfig) ?? { ...DEFAULT_WORKSHOP },
@@ -803,11 +806,6 @@ export default function MagneticWorkshop({
       <span className="mw-verdict-dot" aria-hidden="true" />
       <div className="mw-verdict-bar-text">
         <p className="t-title-s">{verdictSentence}</p>
-        {computed ? (
-          <p className="t-caption">
-            {t(COVERAGE_LABEL[computed.coverage])} · {t(EVIDENCE_LABEL[computed.evidence])}
-          </p>
-        ) : null}
         {/* Hors couverture, le message du moteur est repris MOT POUR MOT. */}
         {computed && computed.coverage !== "covered" ? (
           <p className="t-caption" data-testid="verdict-main-message">
@@ -824,25 +822,6 @@ export default function MagneticWorkshop({
           </p>
         ) : null}
       </div>
-      {askTrial && onRequestTrial ? (
-        <button
-          className="mw-button mw-secondary"
-          onClick={() => onRequestTrial(testedPair())}
-          data-testid="ask-trial"
-        >
-          {t("Demander un essai")}
-        </button>
-      ) : null}
-      {computed ? (
-        <details className="mw-verdict-limits">
-          <summary>{t("Valeurs typiques Standex · Ce que ce résultat ne dit pas ⌄")}</summary>
-          <ul className="mw-verdict-reasons">
-            {computed.limits.map((l) => (
-              <li key={l}>{t(LIMIT_LABEL[l] ?? l)}</li>
-            ))}
-          </ul>
-        </details>
-      ) : null}
     </div>
   );
 
@@ -872,10 +851,9 @@ export default function MagneticWorkshop({
               type="button"
               className="mw-approach-button"
               aria-pressed={config.geometry === a.id}
-              disabled={!available}
               title={available ? t(APPROACH_LABELS[a.id]) : t("Non documentée pour ce couple")}
               onClick={() =>
-                update({ geometry: a.id, magnetAngle: documentedMagnetAngleDeg(a.id) })
+                update({ geometry: a.id, magnetAngle: documentedMagnetAngleDeg(a.id, config.sensorId) })
               }
             >
               <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -1186,7 +1164,7 @@ export default function MagneticWorkshop({
               value={config.geometry}
               onChange={(e) => {
                 const geometry = e.target.value as WorkshopConfig["geometry"];
-                update({ geometry, magnetAngle: documentedMagnetAngleDeg(geometry) });
+                update({ geometry, magnetAngle: documentedMagnetAngleDeg(geometry, config.sensorId) });
               }}
             >
               {availableApproaches.map((a) => (
@@ -1262,25 +1240,7 @@ export default function MagneticWorkshop({
             unit="°"
             onChange={(magnetTilt) => orientMagnet({ magnetTilt })}
           />
-          <label className="mw-select-label">
-            {t("Axe Nord–Sud dans l'aimant")}
-            <select
-              value={config.magnetization}
-              onChange={(e) =>
-                orientMagnet({ magnetization: e.target.value as WorkshopConfig["magnetization"] })
-              }
-            >
-              <option value="axial">{t("Longueur · aux extrémités")}</option>
-              <option value="diametral">{t("Largeur · sur les côtés")}</option>
-              <option value="thickness">{t("Épaisseur · dessus / dessous")}</option>
-            </select>
-          </label>
-          <button
-            className="mw-button mw-secondary mw-wide"
-            onClick={() => orientMagnet({ polarity: config.polarity === 1 ? -1 : 1 })}
-          >
-            {t("Inverser les pôles N / S")}
-          </button>
+          <p className="mw-help">{t("Les couleurs repèrent l'aimant. Polarité non caractérisée : aucun changement de polarité ni effet calculé.")}</p>
           {!reference && (
             <>
               <Range
@@ -1302,11 +1262,6 @@ export default function MagneticWorkshop({
               />
             </>
           )}
-          <p className="mw-help">
-            {t(
-              "Une rotation de 90° change le couplage et les lobes. Inverser N/S seul ne change pas l'activation d'un reed Form A non polarisé. Un axe mal placé peut laisser le contact ouvert.",
-            )}
-          </p>
           <a href={INTERACTION_SOURCE} target="_blank" rel="noreferrer">
             {t("Comprendre avec les schémas Standex ↗")}
           </a>
@@ -1414,36 +1369,6 @@ export default function MagneticWorkshop({
             <option value="slow">{t("Lente")}</option>
           </select>
         </label>
-        {/* Longueur retenue : réellement modifiable et enregistrée avec le
-            montage. Le configurateur de câble complet vit dans « Avec Standex ». */}
-        <label className="mw-select-label">
-          {t("Longueur de câble retenue")}
-          <input
-            type="number"
-            min={1}
-            step={10}
-            inputMode="numeric"
-            className="t-metric"
-            placeholder={t("Non choisie")}
-            value={config.cableLengthMm ?? ""}
-            onChange={(e) => {
-              const v = e.target.value.trim();
-              if (v === "") return update({ cableLengthMm: null });
-              const n = Number(v);
-              if (Number.isFinite(n) && n > 0 && n <= 100000) update({ cableLengthMm: n });
-            }}
-          />
-        </label>
-        {cableRouting && (
-          <button
-            className="mw-button mw-secondary mw-wide"
-            aria-pressed={tool === "cable"}
-            data-testid="cable-tool-toggle"
-            onClick={() => chooseTool(tool === "cable" ? "navigate" : "cable")}
-          >
-            {t(tool === "cable" ? "Arrêter le pointage" : "Pointer le câble dans la 3D")}
-          </button>
-        )}
         <GuidedVerdict
           mounting={guided}
           onFixCoverage={() =>
@@ -1643,8 +1568,58 @@ export default function MagneticWorkshop({
           {approachPicker}
           {travelControls}
           {playButton}
+          <details className="mw-cable-settings" open={cableOpen} onToggle={(e) => setCableOpen(e.currentTarget.open)}>
+            <summary>{t("Longueur et trajet du câble")}</summary>
+        {/* Longueur retenue : réellement modifiable et enregistrée avec le
+            montage. Le configurateur de câble complet vit dans « Avec Standex ». */}
+        <label className="mw-select-label">
+          {t("Longueur de câble retenue (mm)")}
+          <input
+            type="number"
+            min={1}
+            step={10}
+            inputMode="numeric"
+            className="t-metric"
+            placeholder={t("Non choisie")}
+            value={config.cableLengthMm ?? ""}
+            onChange={(e) => {
+              const v = e.target.value.trim();
+              if (v === "") return update({ cableLengthMm: null });
+              const n = Number(v);
+              if (Number.isFinite(n) && n > 0 && n <= 100000) update({ cableLengthMm: n });
+            }}
+          />
+        </label>
+        {cableRouting && (
+          <button
+            className="mw-button mw-secondary mw-wide"
+            aria-pressed={tool === "cable"}
+            data-testid="cable-tool-toggle"
+            disabled={!machine}
+            onClick={() => chooseTool(tool === "cable" ? "navigate" : "cable")}
+          >
+            {t(tool === "cable" ? "Arrêter le pointage" : "Pointer le câble dans la 3D")}
+          </button>
+        )}
+
+            {!machine ? <p className="mw-help">{t("Sans modèle importé, saisissez la longueur souhaitée. Le pointage d’un trajet nécessite les surfaces de votre modèle.")}</p> : null}
+          </details>
+          {advancedSettings}
           {guideMaterialsBlock}
           <div className="mw-controls-links">
+            <details>
+              <summary>{t("Exemple : machine à café")}</summary>
+              <button className="mw-button mw-secondary" onClick={exampleMachine}>
+                {t("Ouvrir la machine à café")}
+              </button>
+              <a href="/models/machine-cafe-bac-mobile.glb" download>
+                {t("Télécharger le fichier 3D")}
+              </a>
+            </details>
+          </div>
+        </aside>
+        <section className="mw-main" aria-label={t("Simulation du montage")}>
+          <div className="mw-primary-actions">
             <label className="mw-file-label">
               {machine ? machine.fileName : t("Importer mon modèle 3D")}
               <input
@@ -1656,19 +1631,9 @@ export default function MagneticWorkshop({
                 }}
               />
             </label>
-            <details>
-              <summary>{t("Exemple : machine à café")}</summary>
-              <button className="mw-button mw-secondary" onClick={exampleMachine}>
-                {t("Ouvrir la machine à café")}
-              </button>
-              <a href="/models/machine-cafe-bac-mobile.glb" download>
-                {t("Télécharger le fichier 3D")}
-              </a>
-            </details>
-            {advancedSettings}
+
+            <button className="mw-button" onClick={() => (onResult ? onResult(testedPair()) : onClose())}>{t("Valider ce choix et voir le résultat")}</button>
           </div>
-        </aside>
-        <section className="mw-main" aria-label={t("Simulation du montage")}>
           {verdictBanner}
           <div
             className="mw-canvas"
@@ -1945,15 +1910,6 @@ export default function MagneticWorkshop({
                 <RotateCcw size={17} />
               </button>
             </div>
-          </div>
-          <div className="mw-exit">
-            <button
-              className="mw-button"
-              onClick={() => (onResult ? onResult(testedPair()) : onClose())}
-            >
-              {t("Voir le résultat →")}
-              <ArrowRight size={16} />
-            </button>
           </div>
         </section>
       </div>

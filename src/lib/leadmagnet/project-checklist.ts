@@ -193,7 +193,7 @@ export function projectChecklist(d: DesignDossier): ChecklistItem[] {
       : lengthDecided
         ? lengthText
         : "Longueur non définie : ce n'est pas obligatoire à ce stade.",
-    tab: "montage",
+    tab: "revue",
     section: "section-cablage",
   };
 
@@ -219,7 +219,7 @@ export function projectChecklist(d: DesignDossier): ChecklistItem[] {
       : connectorValue !== null
         ? `Connecteur retenu : ${connectorValue} — à vérifier par la R&D.`
         : "Aucune préférence de connecteur exprimée.",
-    tab: "montage",
+    tab: "revue",
     section: "section-cablage",
   };
 
@@ -236,7 +236,7 @@ export function projectChecklist(d: DesignDossier): ChecklistItem[] {
    * ou une société seuls ne suffisent pas, et déléguer le contexte ne
    * délègue PAS l'identité du prospect. */
   const emailFilled = EMAIL_PATTERN.test((d.business.contactEmail ?? "").trim());
-  const contextDelegated = isDelegated(d, DELEGATED_CONTEXT);
+  const contextDelegated = isDelegated(d, DELEGATED_CONTEXT) || (d.business.undefinedFields?.length ?? 0) > 0;
   const contexte: ChecklistItem = {
     id: "contexte",
     label: "Contexte du projet et contact",

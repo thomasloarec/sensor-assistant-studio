@@ -13,7 +13,7 @@
  *   puis les autres, chaque groupe gardant l'ordre reçu du moteur de suggestion.
  */
 import { publishedRowsForCouple } from "@/lib/standex/magnetics/registries";
-import { CUSTOM_SENSOR_ID, sensorById, sizeLabel } from "@/lib/standex/sensor-catalog";
+import { CUSTOM_SENSOR_ID, isKnownSensorId, sensorById, sizeLabel } from "@/lib/standex/sensor-catalog";
 import type { SensorModel, SensorShape } from "@/lib/standex/sensor-catalog";
 import { defaultMagnetFor } from "@/lib/standex/default-pairs";
 import { fixingGroup } from "@/lib/standex/catalog-filters";
@@ -101,8 +101,8 @@ export function pairCards(
   options: { limit?: number; preferredSensorId?: string | null } = {},
 ): PairCard[] {
   const limit = options.limit ?? 3;
-  const cards = sensorIds
-    .filter((id) => id !== CUSTOM_SENSOR_ID)
+  const cards = [...new Set(sensorIds)]
+    .filter((id) => id !== CUSTOM_SENSOR_ID && isKnownSensorId(id))
     .map((id) => pairCardFor(sensorById(id)));
   const documented = cards.filter((c) => c.maxPullInMm !== null);
   const rest = cards.filter((c) => c.maxPullInMm === null);

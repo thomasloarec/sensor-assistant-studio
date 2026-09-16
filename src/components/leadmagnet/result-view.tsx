@@ -122,7 +122,7 @@ export function ResultView({
     );
 
   const word = detectedObjectWord(detectionGoal);
-  const couple = `${pair.sensorId} + ${pair.magnetId}`;
+  const couple = `${t("Le capteur")} ${pair.sensorId} + ${t("l’aimant")} ${pair.magnetId}`;
   const positive = pair.verdict === "expected";
   const approachLabel =
     pair.approach === "F1"
@@ -185,16 +185,6 @@ export function ResultView({
                   "Valeurs typiques publiées par Standex. Un essai avec des échantillons dans votre machine reste nécessaire avant de commander.",
                 )}
               </p>
-              {pair.limits.length ? (
-                <details>
-                  <summary className="t-label">{t("Ce que ce résultat ne dit pas ⌄")}</summary>
-                  <ul className="mt-2 list-disc space-y-1 pl-5">
-                    {pair.limits.map((l) => (
-                      <li key={l}>{t(l)}</li>
-                    ))}
-                  </ul>
-                </details>
-              ) : null}
             </div>
             <div className="flex flex-wrap gap-3">
               <Button className="min-h-11" onClick={onConfirmWithStandex}>
@@ -261,34 +251,6 @@ export function ResultView({
           <p className="t-caption">
             {positive ? `● ${t("Contact fermé")}` : `◐ ${t("Contact indéterminé")}`}
           </p>
-        </div>
-        <div className="panel-block space-y-3">
-          <p className="t-label">{t("Cycle du mouvement")}</p>
-          <ResultCycle pair={pair} />
-        </div>
-        <div className="panel-block space-y-3">
-          <p className="t-label">{t("Couples testés")}</p>
-          <ul className="flex flex-wrap gap-2">
-            {tested.map((p) => (
-              <li key={`${p.sensorId}-${p.magnetId}-${p.approach}`}>
-                <Badge
-                  variant={p === pair ? "default" : "secondary"}
-                  className={`result-tested result-tested-${p.verdict}`}
-                >
-                  {`${p.sensorId} + ${p.magnetId}`}
-                </Badge>
-              </li>
-            ))}
-          </ul>
-          {nextProposal ? (
-            <button
-              type="button"
-              className="text-link min-h-11"
-              onClick={() => onTestPair(nextProposal.sensorId)}
-            >
-              {msg("+ Tester {0}", [nextProposal.couple])}
-            </button>
-          ) : null}
         </div>
       </aside>
     </div>

@@ -1,3 +1,4 @@
+import { housingYawDeg } from "@/lib/standex/housing-pose";
 import { magnetSize } from "@/lib/standex/magnetic-workshop";
 import { t } from "@/lib/i18n/core";
 import { useRef, useState, useMemo, useEffect } from "react";
@@ -232,8 +233,8 @@ function Assembly({
             tool === "cable" ? place(e, machine.sensorMount === "moving") : e.stopPropagation()
           }
         >
-          <Body model={model} xray={xray} showCable={!routing?.points.length} />
-          {xray && <Contacts model={model} contact={sample.contact} reduced={reduced} />}
+          <group rotation={[0, housingYawDeg(model.id) * Math.PI / 180, 0]}><Body model={model} xray={xray} showCable={!routing?.points.length} />
+          {xray && <Contacts model={model} contact={sample.contact} reduced={reduced} />}</group>
           {showSpace && (
             <mesh>
               <boxGeometry args={machine.space} />

@@ -1,3 +1,4 @@
+import { housingYawDeg } from "@/lib/standex/housing-pose";
 import { pairedMagnetModel } from "@/lib/standex/paired-magnets";
 import { t } from "@/lib/i18n/core";
 import { magnetSize } from "@/lib/standex/magnetic-workshop";
@@ -67,7 +68,7 @@ export default function FlatScene({
             strokeWidth={zones ? 0.65 : 0.3}
           />
         ))}
-        <g transform={`rotate(${config.sensorAngle})`}>
+        <g transform={`rotate(${config.sensorAngle - housingYawDeg(config.sensorId)})`}>
           <SensorPlan model={model} contact={sample.contact} xray={xray} />
           {showNames && (
             <text
@@ -104,19 +105,12 @@ export default function FlatScene({
                l'affichage du nom du capteur. */
             <g>
               <SensorPlan model={actualMagnet} xray={false} showCable={false} />
-              <rect
-                x={-Math.max(0.55, ml * 0.055)}
-                y={-mw / 2}
-                width={Math.max(1.1, ml * 0.11)}
-                height={mw}
-                fill="#b4531f"
-              />
               <text
                 x="0"
                 y={mw / 2 + 4}
                 textAnchor="middle"
                 fontSize={Math.min(2.6, ml * 0.2)}
-                fill="#b4531f"
+                fill="#254061"
               >
                 {t("Aimant")}
               </text>
@@ -136,7 +130,7 @@ export default function FlatScene({
             </g>
           ) : (
             [-1, 1].map((sign) => {
-              const north = sign * config.polarity === 1;
+              const north = sign === 1;
               return (
                 <g
                   key={sign}

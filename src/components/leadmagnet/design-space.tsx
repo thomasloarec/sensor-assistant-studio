@@ -1,3 +1,4 @@
+import { requirementAnswer } from "@/lib/leadmagnet/requirement-answer";
 import { getLocale, msg, setLocale, t, type Locale } from "@/lib/i18n/core";
 import { createNdaSync, StaleContextError } from "@/lib/leadmagnet/nda-sync";
 import { Link } from "@tanstack/react-router";
@@ -205,8 +206,11 @@ import {
 import { routeSamples, SEARCH_LINK_DISCLAIMER } from "@/lib/leadmagnet/samples";
 import { DEFAULT_WORKSHOP, applyPairSelection } from "@/lib/standex/magnetic-workshop";
 import type { WorkshopConfig } from "@/lib/standex/magnetic-workshop";
-import { BrandLogo } from "@/components/standex/brand-logo";
+import { ProjectContextFields } from "./project-context-fields";
+import { standardLengthsMm, customLengthMm } from "@/lib/leadmagnet/cable-options";
+import { BrandLogo, documentLogoSource } from "@/components/standex/brand-logo";
 import { usePublishedHeaderHeight } from "@/components/standex/app-header";
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { pairCards, type PairCard } from "@/lib/leadmagnet/pair-cards";
 import { ResultView } from "@/components/leadmagnet/result-view";
 import {
@@ -615,7 +619,8 @@ export function DesignSpace({
     setWorkshopDraftPending(true);
   }, []);
 
-  const [volumeRaw, setVolumeRaw] = useState("");
+  const [ndaDialogOpen, setNdaDialogOpen] = useState(false);
+  const [cablePanelOpen, setCablePanelOpen] = useState(false);
   const [volumeError, setVolumeError] = useState<string | null>(null);
   /** Le modèle 3D reste en mémoire tant que ce partage n'est pas explicitement demandé. */
   const [shareModel, setShareModel] = useState(false);
@@ -947,6 +952,7 @@ export function DesignSpace({
   const ndaGuidance = ndaTransferGuidance(nda);
   const focusNdaSection = useCallback(() => {
     setTab("revue");
+    setNdaDialogOpen(true);
     setReviewSections((sections) => (sections.includes("nda") ? sections : [...sections, "nda"]));
     requestAnimationFrame(() => {
       ndaSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -1184,6 +1190,8 @@ export function DesignSpace({
       setServerRevision(revision);
       setNdaServer(null);
       setNda(INITIAL_NDA);
+    setNdaDialogOpen(false);
+    setVolumeError(null);
       setPrivacy((p) => ({ ...p, consents: [] }));
       setAcknowledged(false);
       setPreparedUpload(null);
@@ -1418,6 +1426,11 @@ export function DesignSpace({
    */
   const onSubmit = useCallback(async () => {
     if (busyRef.current) return;
+    if (volumeError) {
+      setSubmitMessage(volumeError);
+      setSubmitMessageTone("danger");
+      return;
+    }
     if (shareModel && dossier.workshopAsset && !preparedUpload) {
       setSubmitMessage(
         t(
@@ -1563,6 +1576,7 @@ export function DesignSpace({
     runEnglishReport,
     ndaOk,
     focusNdaSection,
+    volumeError,
   ]);
 
   const volume = dossier.business.annualVolume;
@@ -2110,13 +2124,14 @@ export function DesignSpace({
   const allPairs = useMemo(
     () =>
       pairCards(
-        candidateRows.map((r) => r.candidate.id),
-        { limit: candidateRows.length, preferredSensorId: dossier.selectedSensorId ?? null },
+        plausibleCandidates.map((r) => r.candidate.id),
+        { limit: plausibleCandidates.length, preferredSensorId: dossier.selectedSensorId ?? null },
       ),
-    [candidateRows, dossier.selectedSensorId],
+    [plausibleCandidates, dossier.selectedSensorId],
   );
   /** Liste complète dépliée ou non : un état explicite, pour que le lien soit
    * un vrai lien et non l'ergonomie par défaut d'un dépliant. */
+  const additionalPairs = allPairs.filter((c) => !suggestedPairs.some((s) => s.sensorId === c.sensorId && s.magnetId === c.magnetId));
   const [showAllPairs, setShowAllPairs] = useState(false);
 
   /** Choisir un capteur = une présélection de GAMME, jamais une commande ni une
@@ -2206,22 +2221,12 @@ export function DesignSpace({
             sont conservées, et la liste se recalcule à la validation. */}
         <div className="panel-block space-y-2" data-testid="criteria-summary">
           <p className="t-label">{t("Critères utilisés")}</p>
-          {answerFilters.length ? (
-            <ul className="space-y-1">
-              {answerFilters.map((f) => (
-                <li key={f.id} className="t-body-s">
-                  {t(f.label)}
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="t-body-s">{t("Aucun critère issu de vos réponses pour l'instant.")}</p>
-          )}
-          {mountingText ? (
-            <p className="t-caption" data-testid="criteria-mounting-text">
-              {t("Votre réponse sur le montage :")} « {mountingText} »
-            </p>
-          ) : null}
+          <dl className="space-y-3">
+            {REQUIREMENT_ORDER.map((key) => {
+              const answer = dossier.requirements.find((r) => r.key === key);
+              return <div key={key}><dt className="t-label">{t(REQUIREMENT_LABELS[key]!)}</dt><dd className="t-body whitespace-pre-wrap">{requirementAnswer(dossier, key, t) || t("Non défini pour le moment")}</dd></div>;
+            })}
+          </dl>
           <Button
             variant="outline"
             size="sm"
@@ -2352,13 +2357,21 @@ export function DesignSpace({
   );
 
   const openWorkshopPanel = () => {
+    setCablePanelOpen(false);
     setWorkshopMounted(true);
     setShowWorkshop(true);
     setPanel("atelier");
   };
+  const openCableWorkshopPanel = () => {
+    openWorkshopPanel();
+    setCablePanelOpen(true);
+    setWorkshopEpoch((e) => e + 1);
+    setTab("montage");
+  };
   /** Tester un couple = présélection de gamme + ouverture de l'atelier sur ce
    * couple. Ce n'est ni une commande ni une validation R&D. */
   const testPair = (card: PairCard) => {
+    setCablePanelOpen(false);
     chooseSensor(card.sensorId, t(card.sensorName), card.magnetId);
     openWorkshopPanel();
   };
@@ -2466,11 +2479,11 @@ export function DesignSpace({
           >
             {showAllPairs
               ? t("Masquer les autres couples")
-              : msg("Voir tous les couples possibles ({0})", [allPairs.length])}
+              : msg("Voir tous les couples possibles ({0})", [additionalPairs.length])}
           </button>
         </p>
         {showAllPairs ? (
-          <div className="pair-grid">{allPairs.map((c, i) => pairCardView(c, i, true))}</div>
+          <div className="pair-grid">{additionalPairs.map((c, i) => pairCardView(c, i, true))}</div>
         ) : null}
         {/* Deux décisions confiées à Standex : des liens discrets sur une même
             ligne. Une décision prise, jamais une valeur technique connue. */}
@@ -2721,7 +2734,7 @@ export function DesignSpace({
    */
   const connectorPreference =
     connectorWanted ||
-    (termination.kind === "unqualified_connector" && !isDelegated(dossier, DELEGATED_CONNECTOR));
+    (termination.kind !== "bare_leads" && !isDelegated(dossier, DELEGATED_CONNECTOR));
 
   const cablageSection = (
     <div className="space-y-4">
@@ -2748,6 +2761,11 @@ export function DesignSpace({
               aria-pressed={cabling.lengthChoice === value}
               onClick={() => {
                 setCabling((c) => ({ ...c, lengthChoice: value }));
+                const current = workshopDraftRef.current ?? workshop ?? dossier.workshop;
+                if (current && value !== cabling.lengthChoice) {
+                  const retained = value === "custom_to_confirm" || (value === "standard_to_confirm" && standardLengthsMm(current.sensorId).includes(current.cableLengthMm ?? -1));
+                  applyWorkshopConfig({...current, cableLengthMm: retained ? current.cableLengthMm : null});
+                }
                 setDossier((d) => ({
                   ...d,
                   delegatedDecisions:
@@ -2767,10 +2785,7 @@ export function DesignSpace({
         <Button
           variant="outline"
           className="mt-3 min-h-11"
-          onClick={() => {
-            setShowWorkshop(true);
-            setTab("montage");
-          }}
+          onClick={openCableWorkshopPanel}
         >
           {t("Ouvrir l'étape câble de l'atelier 3D")}
         </Button>
@@ -2995,10 +3010,7 @@ export function DesignSpace({
           <Button
             size="sm"
             variant="outline"
-            onClick={() => {
-              setShowWorkshop(true);
-              setTab("montage");
-            }}
+            onClick={openWorkshopPanel}
           >
             {t("Vérifier la détection dans mon montage")}
           </Button>
@@ -3321,127 +3333,23 @@ export function DesignSpace({
    * sinon le Markdown déjà exporté aujourd'hui. Aucun envoi. */
   const downloadTechnicalSummary = useCallback(async () => {
     setSummaryMessage(null);
-    const base = `resume-technique-r${dossier.revision}`;
     try {
-      if (dossier.designFreeze) {
-        const { reviewPdf } = await import("@/lib/standex/studio-pdf");
-        const bytes = await reviewPdf(dossier.designFreeze, "/brand/logo-lockup.png", (x) => t(x));
-        const blob = new Blob([bytes as unknown as BlobPart], { type: "application/pdf" });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = `${base}.pdf`;
-        a.click();
-        URL.revokeObjectURL(url);
-        return;
-      }
-      const blob = new Blob([technicalSummary(dossier, (x) => t(x))], {
-        type: "text/markdown;charset=utf-8",
-      });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `${base}.md`;
-      a.click();
-      URL.revokeObjectURL(url);
-      setSummaryMessage(
-        t(
-          "Aucune fiche de revue figée n'existe encore : le résumé est téléchargé en Markdown, avec le même contenu.",
-        ),
-      );
+      const { projectPdf } = await import("@/lib/leadmagnet/project-report");
+      const bytes = await projectPdf(dossier, documentLogoSource(), {
+        requis: nda.required, statut: ndaStatusLabel(nda), champs: nda.fields,
+        preuve: nda.proof, contraintesComplementaires: extraConstraints,
+      }, t);
+      const url = URL.createObjectURL(new Blob([bytes as unknown as BlobPart], { type: "application/pdf" }));
+      const a = document.createElement("a"); a.href = url;
+      a.download = `rapport-projet-r${dossier.revision}.pdf`; a.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
     } catch {
-      setSummaryMessage(t("Le résumé n'a pas pu être produit sur cet appareil."));
+      setSummaryMessage(t("Le rapport PDF n'a pas pu être produit sur cet appareil."));
     }
-  }, [dossier]);
+  }, [dossier, nda, extraConstraints]);
 
-  /** Contexte projet détaillé : dates, échantillons, durée, délégation. */
-  const projectContextFields = (
-    <div className="grid gap-5 md:grid-cols-2">
-            <div>
-              <Label className="t-label">{t("Volume annuel de capteurs")}</Label>
-              <p className="t-caption mt-1">{t("Entier ou inconnu")}</p>
-              <Input
-                className="t-metric mt-2 w-full text-right"
-                value={volumeRaw}
-                placeholder="inconnu"
-                onChange={(e) => {
-                  setVolumeRaw(e.target.value);
-                  const parsed = parseAnnualVolume(e.target.value);
-                  if ("error" in parsed) {
-                    setVolumeError(parsed.error);
-                  } else {
-                    setVolumeError(null);
-                    setDossier((d) => ({
-                      ...d,
-                      business: { ...d.business, annualVolume: parsed },
-                    }));
-                  }
-                }}
-              />
-              {volumeError ? (
-                <p className="notice notice-danger mt-2 w-full">{volumeError}</p>
-              ) : null}
-            </div>
-            <div>
-              <Label className="t-label">{t("Date de lancement série")}</Label>
-              <Input
-                className="t-metric mt-2 w-full"
-                type="date"
-                onChange={(e) =>
-                  setDossier((d) => ({
-                    ...d,
-                    business: { ...d.business, seriesStartDate: e.target.value || null },
-                  }))
-                }
-              />
-            </div>
-            <div>
-              <Label className="t-label">{t("Échantillons utiles avant")}</Label>
-              <Input
-                className="t-metric mt-2 w-full"
-                type="date"
-                onChange={(e) =>
-                  setDossier((d) => ({
-                    ...d,
-                    business: { ...d.business, samplesNeededBy: e.target.value || null },
-                  }))
-                }
-              />
-            </div>
-            <div>
-              <Label className="t-label">{t("Durée de série (années)")}</Label>
-              <Input
-                className="t-metric mt-2 w-full text-right"
-                inputMode="numeric"
-                onChange={(e) =>
-                  setDossier((d) => ({
-                    ...d,
-                    business: { ...d.business, seriesDurationYears: num(e.target.value) },
-                  }))
-                }
-              />
-            </div>
-            <div className="sm:col-span-2">
-              {/* Délégation explicite du contexte projet : étape traitée, sans
-                  valeur inventée ni validation. */}
-              <Button
-                variant={isDelegated(dossier, DELEGATED_CONTEXT) ? "default" : "outline"}
-                className="min-h-11"
-                aria-pressed={isDelegated(dossier, DELEGATED_CONTEXT)}
-                onClick={() => toggleDelegated(DELEGATED_CONTEXT)}
-              >
-                {isDelegated(dossier, DELEGATED_CONTEXT)
-                  ? t("Contexte confié à Standex")
-                  : t("Préciser le contexte avec Standex")}
-              </Button>
-              <p className="t-caption mt-2">
-                {t(
-                  "Aucun volume, aucune date et aucun contact ne sont déduits : ce qui reste vide reste inconnu.",
-                )}
-              </p>
-            </div>
-    </div>
-  );
+  const projectContextFields = <ProjectContextFields key={`${dossier.id}-${contextGenRef.current}`} business={dossier.business}
+    onInvalid={setVolumeError} onChange={business => setDossier(d => ({ ...d, business }))} />;
 
   /** Flux NDA existant, déplié sous la case de confidentialité. */
   const ndaFlow = (
@@ -3773,8 +3681,8 @@ export function DesignSpace({
 
   /** Trois questions facultatives : chaque puce pilote un choix DÉJÀ existant. */
   const optionalQuestions = (
-    <div className="panel-block-lg space-y-5">
-      <h3 className="t-title-m">{t("Trois questions facultatives")}</h3>
+    <div id="section-cablage" className="panel-block-lg space-y-5">
+      <h3 className="t-title-m">{t("Câble et connexion")}</h3>
 
       <div>
         <Label className="t-label">{t("Longueur de câble")}</Label>
@@ -3794,6 +3702,11 @@ export function DesignSpace({
               aria-pressed={cabling.lengthChoice === value}
               onClick={() => {
                 setCabling((c) => ({ ...c, lengthChoice: value }));
+                const current = workshopDraftRef.current ?? workshop ?? dossier.workshop;
+                if (current && value !== cabling.lengthChoice) {
+                  const retained = value === "custom_to_confirm" || (value === "standard_to_confirm" && standardLengthsMm(current.sensorId).includes(current.cableLengthMm ?? -1));
+                  applyWorkshopConfig({...current, cableLengthMm: retained ? current.cableLengthMm : null});
+                }
                 setDossier((d) => ({
                   ...d,
                   delegatedDecisions:
@@ -3810,13 +3723,25 @@ export function DesignSpace({
             </Button>
           ))}
         </div>
+        {cabling.lengthChoice === "standard_to_confirm" ? <div className="mt-3">
+          <Label htmlFor="standard-length">{t("Longueurs standard documentées")}</Label>
+          <select id="standard-length" className="t-metric min-h-11 w-full"
+            value={dossier.workshop?.cableLengthMm ?? ""}
+            onChange={e => applyWorkshopConfig({...workshopDraftRef.current ?? workshop ?? dossier.workshop ?? DEFAULT_WORKSHOP, cableLengthMm:e.target.value ? Number(e.target.value) : null})}>
+            <option value="">{t("Choisir une longueur")}</option>
+            {standardLengthsMm(dossier.selectedSensorId ?? "").map(mm => <option key={mm} value={mm}>{mm / 10} cm</option>)}
+          </select>
+          <p className="t-caption">{standardLengthsMm(dossier.selectedSensorId ?? "").length ? t("Selon la version du capteur, à confirmer par Standex.") : t("Aucune longueur standard documentée pour cette gamme. À définir avec Standex.")}</p>
+        </div> : null}
+        {cabling.lengthChoice === "custom_to_confirm" ? <div className="mt-3">
+          <Label htmlFor="custom-length">{t("Longueur sur mesure (cm)")}</Label>
+          <Input id="custom-length" type="number" min="0.1" max="10000" step="0.1" value={dossier.workshop?.cableLengthMm != null ? dossier.workshop.cableLengthMm / 10 : ""}
+            onChange={e => applyWorkshopConfig({...workshopDraftRef.current ?? workshop ?? dossier.workshop ?? DEFAULT_WORKSHOP, cableLengthMm:customLengthMm(e.target.value)})} />
+        </div> : null}
         <button
           type="button"
           className="text-link mt-2"
-          onClick={() => {
-            setShowWorkshop(true);
-            setTab("montage");
-          }}
+          onClick={openCableWorkshopPanel}
         >
           {t("Préciser le trajet dans l'atelier câble")}
         </button>
@@ -3859,65 +3784,121 @@ export function DesignSpace({
             {t("J'ai une préférence")}
           </Button>
         </div>
+        {connectorPreference ? (          <div className="mt-3">
+            <p className="mt-1 text-sm">{terminationLabel(termination)}</p>
+            <ul className="t-caption mt-1 list-disc pl-5">
+              {connectorSummaryLines(termination, t).map((l, i) => (
+                <li key={i}>{l}</li>
+              ))}
+            </ul>
+            <Label className="t-label mt-3 block">
+              {t("Boîtiers documentés par le fabricant")}
+            </Label>
+            <div className="mt-2 grid gap-3 sm:grid-cols-2">
+              {DOCUMENTED_HOUSINGS.map((h) => {
+                const selected =
+                  termination.kind === "unqualified_connector" &&
+                  termination.spec.mpn === h.housingMpn;
+                return (
+                  <button
+                    key={h.housingMpn}
+                    type="button"
+                    className="connector-option surface-interactive p-4 text-left"
+                    aria-pressed={selected}
+                    onClick={() => {
+                      const found = housingById(h.housingMpn);
+                      if (!found) return;
+                      setConnectorError(null);
+                      setConnectorDraft((d) => draftFromHousing(found, d));
+                      setDossier((d) => ({
+                        ...d,
+                        termination: terminationFromHousing(found),
+                        delegatedDecisions: (d.delegatedDecisions ?? []).filter(
+                          (k) => k !== DELEGATED_CONNECTOR,
+                        ),
+                      }));
+                      setSelectionAnnounce(
+                        msg("Connecteur {0} retenu comme préférence, à vérifier par les ingénieurs Standex.", [
+                          h.housingMpn,
+                        ]),
+                      );
+                    }}
+                  >
+                    <span className="t-title-s flex items-center gap-2">
+                      {selected ? <Check className="size-4" aria-hidden="true" /> : null}
+                      {housingLabel(h)}
+                    </span>
+                    <ConnectorPreview housing={h} />
+                  </button>
+                );
+              })}
+            </div>
+            <p className="t-caption mt-2">
+              {t(
+                "Quelques boîtiers documentés seulement, pas le marché entier. Boîtier, contacts à sertir et embase restent trois références distinctes ; brochage, section de fil réelle et disponibilité restent inconnus et à vérifier par les ingénieurs Standex.",
+              )}
+            </p>
+            <div className="mt-3">
+              <Label htmlFor="connector-free-reference">{t("Autre référence de connecteur")}</Label>
+              <Input id="connector-free-reference" value={termination.kind === "free_reference" ? termination.text : ""}
+                onChange={e => setDossier(d => ({...d, termination: {kind:"free_reference", text:e.target.value, status:"to_verify_by_rnd"}}))} />
+            </div>
+            <details className="mt-3">
+              <summary className="t-caption min-h-11 cursor-pointer list-none py-2">
+                {t("Saisir une référence précise")}
+              </summary>
+              <div className="mt-2 grid gap-3 md:grid-cols-2">
+                {CONNECTOR_FIELD_LABELS.map(([key, label]) => (
+                  <div key={key}>
+                    <Label className="t-label">{label}</Label>
+                    <Input
+                      value={connectorDraft[key]}
+                      onChange={(e) => setConnectorDraft((d) => ({ ...d, [key]: e.target.value }))}
+                    />
+                  </div>
+                ))}
+              </div>
+              {connectorError ? (
+                <p className="notice notice-danger mt-2">{connectorError}</p>
+              ) : null}
+              <div className="mt-3 flex flex-wrap items-center gap-2">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="min-h-11"
+                  onClick={() => {
+                    setConnectorError(null);
+                    setDossier((d) => ({ ...d, termination: DEFAULT_TERMINATION }));
+                  }}
+                >
+                  {t("Fils nus")}
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="min-h-11"
+                  onClick={() => {
+                    const result = terminationFromDraft(connectorDraft);
+                    if (!result.ok) {
+                      setConnectorError(`Champs requis : ${result.missing.join(", ")}.`);
+                      return;
+                    }
+                    setConnectorError(null);
+                    setDossier((d) => ({ ...d, termination: result.termination }));
+                  }}
+                >
+                  {t("Enregistrer en « à vérifier par les ingénieurs Standex »")}
+                </Button>
+              </div>
+              <p className="t-caption mt-1">
+                {t(
+                  "Aucune combinaison connecteur/capteur qualifiée n'est documentée dans ce projet : toute référence saisie, sa contrepartie et son brochage restent à vérifier par les ingénieurs Standex.",
+                )}
+              </p>
+            </details>
+          </div>) : null}
       </div>
 
-      <div>
-        <Label className="t-label">{t("Volume par an")}</Label>
-        <p className="t-caption mt-1">
-          {t(
-            "Une tranche donne un ordre de grandeur représentatif, jamais une quantité engagée. « Préciser » permet d'entrer le vrai chiffre.",
-          )}
-        </p>
-        <div className="mt-2 flex flex-wrap gap-2">
-          {/* i18n-canonical : libellés traduits par t() au rendu. */}
-          {(
-            [
-              [500, "< 1 000"],
-              [5000, "1 000 – 10 000"],
-              [20000, "> 10 000"],
-            ] as const
-          ).map(([value, label]) => (
-            <Button
-              key={label}
-              variant={
-                dossier.business.annualVolume.kind === "known" &&
-                dossier.business.annualVolume.sensorsPerYear === value
-                  ? "default"
-                  : "outline"
-              }
-              className="min-h-11 text-base"
-              aria-pressed={
-                dossier.business.annualVolume.kind === "known" &&
-                dossier.business.annualVolume.sensorsPerYear === value
-              }
-              onClick={() => {
-                setVolumeRaw(String(value));
-                setVolumeError(null);
-                setDossier((d) => ({
-                  ...d,
-                  business: {
-                    ...d.business,
-                    annualVolume: { kind: "known", sensorsPerYear: value },
-                  },
-                }));
-              }}
-            >
-              {t(label)}
-            </Button>
-          ))}
-        </div>
-      </div>
-
-      {/* Le configurateur de câble et de connecteur existant reste entier. */}
-      <details id="section-cablage" className="panel-block-lg scroll-mt-24">
-        <summary className="t-title-s flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 py-2">
-          {t("Câble et connecteur")}
-          <span className="technical-details-chevron" aria-hidden="true">
-            ⌄
-          </span>
-        </summary>
-        <div className="mt-3">{cablageSection}</div>
-      </details>
     </div>
   );
 
@@ -3944,9 +3925,7 @@ export function DesignSpace({
                       {t(REVIEW_SHORT_LABELS[key] ?? REQUIREMENT_LABELS[key] ?? key)}
                     </dt>
                     <dd className="t-body">
-                      {requirement && requirement.value.trim()
-                        ? requirement.value
-                        : t("non renseigné")}
+                      {requirementAnswer(dossier, key, t) || t("Non défini pour le moment")}
                     </dd>
                   </div>
                 );
@@ -3968,23 +3947,13 @@ export function DesignSpace({
 
           {optionalQuestions}
 
-          <button type="button" className="text-link" onClick={() => void downloadTechnicalSummary()}>
-            {t("Télécharger le résumé technique complet (PDF)")}
-          </button>
+          <section className="panel-block-lg space-y-4">
+            <h3 className="t-title-m">{t("Détails du projet")}</h3>
+            {projectContextFields}
+            {extraConstraintsField}
+          </section>
+          <Button variant="outline" disabled={Boolean(volumeError)} onClick={() => void downloadTechnicalSummary()}>{t("Télécharger le rapport complet du projet (PDF)")}</Button>
           {summaryMessage ? <p className="notice notice-info">{summaryMessage}</p> : null}
-
-          <details className="panel-block-lg">
-            <summary className="t-title-s flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 py-2">
-              {t("Plus de détails sur le projet")}
-              <span className="technical-details-chevron" aria-hidden="true">
-                ⌄
-              </span>
-            </summary>
-            <div className="mt-3 space-y-4">
-              {projectContextFields}
-              {extraConstraintsField}
-            </div>
-          </details>
         </div>
 
         <div className="space-y-4">
@@ -4030,6 +3999,10 @@ export function DesignSpace({
                 }
               />
             </div>
+            <div>
+              <Label htmlFor="contact-phone" className="t-label">{t("Numéro de téléphone")}</Label>
+              <Input id="contact-phone" type="tel" autoComplete="tel" maxLength={80} value={dossier.business.contactPhone ?? ""} onChange={(e) => setDossier((d) => ({ ...d, business: { ...d.business, contactPhone: e.target.value || null } }))} />
+            </div>
             {/* Les accords et le bouton d'envoi vivent dans LA MÊME carte que les
                 coordonnées : la dernière action n'est plus à chercher ailleurs. */}
             <hr className="standex-rule" />
@@ -4047,6 +4020,7 @@ export function DesignSpace({
                 disabled={busy}
                 onCheckedChange={(v) => {
                   void toggleNdaRequirement(v === true);
+                  if (v === true) setNdaDialogOpen(true);
                 }}
                 aria-describedby="nda-optional-help"
               />
@@ -4062,26 +4036,15 @@ export function DesignSpace({
                 <span className="t-caption block">{ndaStatusLabel(nda)}</span>
               </span>
             </label>
-            {nda.required ? ndaFlow : null}
+            {nda.required ? <Button variant="outline" onClick={() => setNdaDialogOpen(true)}>{t("Ouvrir les informations NDA")}</Button> : null}
+            <Dialog open={ndaDialogOpen} onOpenChange={setNdaDialogOpen}>
+              <DialogContent className="max-w-3xl max-h-[85dvh] overflow-y-auto" aria-describedby="nda-dialog-description">
+                <DialogTitle>{t("Confidentialité du projet · NDA Standex")}</DialogTitle>
+                <DialogDescription id="nda-dialog-description">{t("Complétez et vérifiez votre demande de confidentialité.")}</DialogDescription>
+                {ndaFlow}
+              </DialogContent>
+            </Dialog>
           </div>
-
-          <div className="panel-block">
-            <label className="t-body flex min-h-11 items-center gap-3">
-              <input
-                type="checkbox"
-                data-testid="trial-request"
-                checked={isDelegated(dossier, TRIAL_REQUEST)}
-                onChange={() => toggleDelegated(TRIAL_REQUEST)}
-              />
-              {t("Essai en laboratoire")}
-            </label>
-            <p className="t-caption mt-1">
-              {t(
-                "Standex mesure la position dans son laboratoire : demander une mesure n'est pas une validation technique.",
-              )}
-            </p>
-          </div>
-
 
           {lastSent ? (
             <div className="panel-block-lg space-y-3">
@@ -4120,6 +4083,11 @@ export function DesignSpace({
     setDossier((d) => ({
       ...d,
       workshop: c,
+      cabling: {...d.cabling, lengthChoice: c.cableLengthMm !== null &&
+        (d.cabling.lengthChoice === "undecided" || (d.cabling.lengthChoice === "standard_to_confirm" && !standardLengthsMm(c.sensorId).includes(c.cableLengthMm)))
+          ? "custom_to_confirm" : d.cabling.lengthChoice},
+      delegatedDecisions: c.cableLengthMm !== null && c.cableLengthMm !== d.workshop?.cableLengthMm
+        ? (d.delegatedDecisions ?? []).filter(k=>k!==DELEGATED_CABLE) : d.delegatedDecisions ?? [],
       // Contrat recalculé à l'enregistrement sur l'état COURANT du dossier :
       // configuration d'atelier, besoin exprimé et câble réellement relevé.
       // Jamais repris d'un import.
@@ -4143,6 +4111,8 @@ export function DesignSpace({
     setDossier((d) => ({
       ...d,
       testedPairs: recordTestedPair(d.testedPairs, result),
+      selectedSensorId: result.sensorId,
+      sensorSyncConfirmed: d.workshop?.sensorId === result.sensorId,
       updatedAt: new Date().toISOString(),
     }));
 
@@ -4173,6 +4143,7 @@ export function DesignSpace({
       <Suspense fallback={<p className="text-base">{t("Chargement de l'atelier…")}</p>}>
         <MagneticWorkshop
           embedded
+          initialCableOpen={cablePanelOpen}
           initialStudy={dossier.studioV2}
           dossierId={dossier.id}
           revision={dossier.revision}
@@ -4187,7 +4158,8 @@ export function DesignSpace({
           onDraftChange={onWorkshopDraft}
           onSaveState={setWorkshopSaveState}
           onResult={(result) => {
-            // Sortie de l'atelier : l'écran Résultat s'ouvre sur le couple testé.
+            // Commit the exact draft before recording its result and leaving the workshop.
+            if (workshopDraftRef.current) applyWorkshopConfig(workshopDraftRef.current);
             recordResult(result);
             setShowWorkshop(false);
             setPanel(null);
@@ -4712,7 +4684,7 @@ export function DesignSpace({
                   {i + 1}. {s.label}
                 </span>
               </span>
-              <span className="mt-0.5 block pl-3 text-sm">{s.hint}</span>
+              <span className="mt-0.5 hidden pl-3 text-sm sm:block">{s.hint}</span>
             </button>
           ))}
         </nav>

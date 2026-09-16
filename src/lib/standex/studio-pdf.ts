@@ -4,9 +4,10 @@ const encoder = new TextEncoder();
 /** Local PDF pages preserve Unicode and brand rendering through the browser's fonts.
  * JSON and Excel retain searchable structured values; no server receives the dossier. */
 export async function reviewPdf(
-  f: DesignFreeze,
+  f: Pick<DesignFreeze, "sections" | "hash">,
   logoUrl: string,
   translate: (text: string) => string = (text) => text,
+  options: {title?: string; subtitle?: string; attachment?: Uint8Array} = {},
 ): Promise<Uint8Array> {
   await document.fonts.ready;
   const logo = new Image();
@@ -25,10 +26,10 @@ export async function reviewPdf(
     ctx!.drawImage(logo, 84, 62, 310, (310 * 141) / 600);
     ctx!.fillStyle = "#254061";
     ctx!.font = "bold 31px Arial";
-    ctx!.fillText(translate("Fiche de revue de conception"), 84, 190);
+    ctx!.fillText(options.title ?? translate("Fiche de revue de conception"), 84, 190);
     ctx!.fillStyle = "#56616b";
     ctx!.font = "20px Arial";
-    ctx!.fillText("Sensor Studio · " + translate("Non contre-signée"), 84, 226);
+    ctx!.fillText("Sensor Studio · " + (options.subtitle ?? translate("Non contre-signée")), 84, 226);
     ctx!.fillStyle = "#254061";
     ctx!.fillRect(84, 250, 1072, 3);
     y = 295;
@@ -92,9 +93,9 @@ export async function reviewPdf(
   line("SHA-256", true);
   line(f.hash);
   finish();
-  return imagePagesPdf(pages, 1240, 1754);
+  return imagePagesPdf(pages, 1240, 1754, options.attachment);
 }
-export function imagePagesPdf(pages: Uint8Array[], width: number, height: number): Uint8Array {
+export function imagePagesPdf(pages: Uint8Array[], width: number, height: number, attachment?: Uint8Array): Uint8Array {
   const chunks: Uint8Array[] = [];
   let length = 0;
   const offsets: number[] = [0];
@@ -108,7 +109,8 @@ export function imagePagesPdf(pages: Uint8Array[], width: number, height: number
     text(`${id} 0 obj\n${s}\nendobj\n`);
   };
   text("%PDF-1.4\n");
-  obj(1, "<< /Type /Catalog /Pages 2 0 R >>");
+  const fileId = 3 + pages.length * 3;
+  obj(1, `<< /Type /Catalog /Pages 2 0 R ${attachment ? `/Names << /EmbeddedFiles << /Names [(dossier-complet.json) ${fileId + 1} 0 R] >> >>` : ""} >>`);
   obj(
     2,
     `<< /Type /Pages /Count ${pages.length} /Kids [${pages.map((_, i) => `${3 + i * 3} 0 R`).join(" ")}] >>`,
@@ -128,6 +130,13 @@ export function imagePagesPdf(pages: Uint8Array[], width: number, height: number
     const commands = "q 595.276 0 0 841.89 0 0 cm /Im0 Do Q\n";
     obj(id + 2, `<< /Length ${encoder.encode(commands).length} >>\nstream\n${commands}endstream`);
   });
+  if (attachment) {
+    offsets[fileId] = length;
+    text(`${fileId} 0 obj\n<< /Type /EmbeddedFile /Subtype /application#2Fjson /Length ${attachment.length} >>\nstream\n`);
+    raw(attachment);
+    text("\nendstream\nendobj\n");
+    obj(fileId + 1, `<< /Type /Filespec /F (dossier-complet.json) /EF << /F ${fileId} 0 R >> >>`);
+  }
   const xref = length;
   text(`xref\n0 ${offsets.length}\n0000000000 65535 f \n`);
   for (const p of offsets.slice(1)) text(`${String(p).padStart(10, "0")} 00000 n \n`);

@@ -139,7 +139,7 @@ export function GuideMaterials({
         </p>
       )}
       {ACTIVATION_GUIDE.source.url && (
-        <a href={ACTIVATION_GUIDE.source.url} target="_blank" rel="noreferrer">
+        <a href="https://standexdetect.fr/resources/reed-technology-academy/reed-sensor-activation-distances/" target="_blank" rel="noreferrer">
           {t("Voir le guide d'activation Standex ↗")}
         </a>
       )}

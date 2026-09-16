@@ -121,6 +121,8 @@ const businessSchema = z.object({
   contactName: z.string().nullable(),
   contactEmail: z.string().nullable(),
   contactCompany: z.string().nullable(),
+  contactPhone: z.string().max(80).nullable().optional().default(null),
+  undefinedFields: z.array(z.enum(["annualVolume", "seriesStartDate", "samplesNeededBy", "seriesDurationYears", "projectPhase"])).optional().default([]),
 });
 
 /** Encombrement : une dimension négative ou non finie n'est pas une donnée exploitable. */
