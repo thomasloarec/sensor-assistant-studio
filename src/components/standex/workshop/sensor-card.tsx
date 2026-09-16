@@ -194,7 +194,7 @@ export default function SensorCard({
                   </div>
                   <h3>
                     <Cable size={19} />
-                    {t("Connexion et câbles")}
+                    {t("Connexion et câbles standards")}
                   </h3>
                   <p>{t(specs.cableMaterial)}</p>
                   {!!specs.cableLengths.length && (
