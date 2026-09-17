@@ -1431,11 +1431,7 @@ export function DesignSpace({
         if (!current()) return;
         if (outcome.state === "ready") {
           setEnglishRetry(null);
-          setEnglishMessage(
-            t(
-              "Version anglaise prête pour cette version : l'équipe Standex la lit en anglais, votre original reste consultable.",
-            ),
-          );
+          setEnglishMessage(null);
         } else {
           setEnglishMessage(englishReportMessage(outcome.code, t));
           if (outcome.state === "pending" && !outcome.retryable) setEnglishRetry(null);
