@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { t } from "@/lib/i18n/core";
 import { Button } from "@/components/ui/button";
 
@@ -36,36 +36,51 @@ const EXAMPLES: Record<string, readonly string[]> = {
   ],
 };
 
+/**
+ * Exemples de réponses détaillées : navigation ENTIÈREMENT manuelle.
+ *
+ * Aucun défilement automatique, donc aucun bouton « Pause » : l'exemple affiché
+ * ne change que sur une action explicite, ce qui rend la lecture possible au
+ * clavier comme au lecteur d'écran, et sans mouvement non demandé.
+ */
 export function NeedExamples({ questionKey }: { questionKey: string }) {
   const [index, setIndex] = useState(0);
-  const [paused, setPaused] = useState(false);
   const examples = EXAMPLES[questionKey] ?? [];
-  useEffect(() => {
-    if (paused || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const timer = window.setInterval(() => setIndex((i) => (i + 1) % 3), 6000);
-    return () => window.clearInterval(timer);
-  }, [paused]);
+  if (examples.length === 0) return null;
+  const total = examples.length;
+  const go = (delta: number) => setIndex((i) => (i + delta + total) % total);
   return (
     <div className="panel-block space-y-2">
       <p className="t-label">
-        {t("Exemple de réponse détaillée")} · {index + 1}/3
+        {t("Exemple de réponse détaillée")} · {index + 1}/{total}
       </p>
-      <p className="t-body">{examples[index] ? t(examples[index]) : null}</p>
-      <div className="flex gap-2">
-        <Button type="button" variant="ghost" size="sm" onClick={() => setPaused((p) => !p)}>
-          {paused ? t("Reprendre") : t("Pause")}
+      <p className="t-body" aria-live="polite">
+        {examples[index] ? t(examples[index]) : null}
+      </p>
+      <div className="flex items-center gap-2">
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          className="min-h-11"
+          aria-label={t("Exemple précédent")}
+          onClick={() => go(-1)}
+        >
+          {t("Précédent")}
         </Button>
         <Button
           type="button"
           variant="ghost"
           size="sm"
-          onClick={() => {
-            setPaused(true);
-            setIndex((i) => (i + 1) % 3);
-          }}
+          className="min-h-11"
+          aria-label={t("Exemple suivant")}
+          onClick={() => go(1)}
         >
-          {t("Autre exemple")}
+          {t("Suivant")}
         </Button>
+        <span className="t-caption" aria-hidden="true">
+          {index + 1} / {total}
+        </span>
       </div>
     </div>
   );

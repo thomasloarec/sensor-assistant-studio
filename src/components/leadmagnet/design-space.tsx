@@ -1,6 +1,11 @@
 import { NeedExamples } from "./need-examples";
 import { BookingDialog } from "./booking-dialog";
 import { COUNTRY_CODES, salesContactFor } from "@/lib/leadmagnet/sales-contact";
+import {
+  EXTERNAL_TRANSLATION_ENABLED,
+  externalTranslationAllowed,
+  stripDisabledConsents,
+} from "@/lib/leadmagnet/external-translation";
 import { pairDemonstration } from "@/lib/standex/magnetic-workshop";
 import { isPcbSensor, housingMaterial, pairCategory, suggestedProjectTitle } from "@/lib/leadmagnet/product-presentation";
 import { pairCardFor } from "@/lib/leadmagnet/pair-cards";
@@ -48,6 +53,7 @@ import {
   projectChecklist,
   DELEGATED_CABLE,
   DELEGATED_CONNECTOR,
+  CHOSEN_BARE_LEADS,
   DELEGATED_CONTEXT,
   DELEGATED_MOUNTING,
   TRIAL_REQUEST,
@@ -131,6 +137,7 @@ import {
   pruneStaleConsents,
   sameBinding,
   type ConsentBinding,
+  type PrivacyState,
 } from "@/lib/leadmagnet/privacy";
 import {
   APPROVED_NDA_TEMPLATE,
@@ -481,7 +488,17 @@ export function DesignSpace({
     dossierLocaleRef.current = dossier.sourceLocale;
   }, [dossier.sourceLocale]);
 
-  const [privacy, setPrivacy] = useState(INITIAL_PRIVACY);
+  const [privacy, setPrivacyState] = useState(INITIAL_PRIVACY);
+  /** Toute écriture des accords passe par ce filtre : un accord de traduction
+   *  externe restauré, importé ou hérité d'un ancien état est retiré tant que la
+   *  fonction est coupée. Aucun garde-fou ne peut donc le lire ensuite. */
+  const setPrivacy = useCallback(
+    (update: PrivacyState | ((previous: PrivacyState) => PrivacyState)) =>
+      setPrivacyState((previous) =>
+        stripDisabledConsents(typeof update === "function" ? update(previous) : update),
+      ),
+    [],
+  );
   /** Miroir synchrone de l'état des accords : l'effet de liaison est asynchrone
    * et ne doit pas relire une valeur capturée trop tôt. */
   const privacyRef = useRef(privacy);
@@ -1559,23 +1576,23 @@ export function DesignSpace({
           });
           setSubmitMessage(null);
           setSubmitMessageTone("info");
-          // Version anglaise : demandée UNIQUEMENT si l'accord de traduction a été
-          // donné pour ce contenu exact. Sans accord, rien n'est transmis et on le dit.
+          // Traduction externe COUPÉE : aucun appel automatique, aucun texte
+          // transmis à un service de traduction, et aucun message à ce sujet.
+          // Réactivable par `EXTERNAL_TRANSLATION_ENABLED` sans autre changement.
           const target = {
             dossierId: targetDossierId ?? "",
             revisionId: outcome.submissionId,
             contentHash: bound.contentHash,
           };
-          if (hasBoundConsent(privacy, "ai_assistant", bound) && target.dossierId) {
+          if (
+            externalTranslationAllowed(hasBoundConsent(privacy, "ai_assistant", bound)) &&
+            target.dossierId
+          ) {
             setEnglishRetry(target);
             await runEnglishReport(target);
           } else {
             setEnglishRetry(null);
-            setEnglishMessage(
-              t(
-                "Version anglaise non demandée : votre accord de traduction n'a pas été donné pour cette version. Le projet d'origine est bien arrivé.",
-              ),
-            );
+            setEnglishMessage(null);
           }
         } else {
           setSubmitMessage(outcome.reason);
@@ -2767,9 +2784,18 @@ export function DesignSpace({
    * La section est ouverte si l'utilisateur l'a demandée OU si une référence est
    * déjà enregistrée (reprise d'un dossier). Aucune auto-sélection de connecteur.
    */
+  /** Choix VOLONTAIRE de ne pas mettre de connecteur. Distinct du défaut d'un
+   *  dossier neuf (fils nus sans décision) et distinct de « Je ne sais pas », qui
+   *  confie le choix à Standex. Il persiste dans `delegatedDecisions`, donc dans
+   *  l'enregistrement, l'export, la reprise et le résumé. */
+  const noConnectorChosen =
+    termination.kind === "bare_leads" &&
+    isDelegated(dossier, CHOSEN_BARE_LEADS) &&
+    !isDelegated(dossier, DELEGATED_CONNECTOR);
   const connectorPreference =
-    connectorWanted ||
-    (termination.kind !== "bare_leads" && !isDelegated(dossier, DELEGATED_CONNECTOR));
+    !noConnectorChosen &&
+    (connectorWanted ||
+      (termination.kind !== "bare_leads" && !isDelegated(dossier, DELEGATED_CONNECTOR)));
 
   const cablageSection = (
     <div className="space-y-4">
@@ -3571,51 +3597,26 @@ export function DesignSpace({
             </details>
             {consentNotice && submissionStatusKind(lastSent, binding) !== "sent" ? <p className="notice notice-warning">{consentNotice}</p> : null}
 
-            <label className="t-body flex min-h-11 items-center gap-3">
-              <Checkbox
-                checked={binding !== null && hasBoundConsent(privacy, "ai_assistant", binding)}
-                disabled={binding === null}
-                onCheckedChange={(v) => {
-                  setPrivacy((p) =>
-                    v && binding
-                      ? grantConsent(p, {
-                          kind: "ai_assistant",
-                          contentSummary: t(
-                            "Textes de ce projet (exigences, notes, questions, contraintes) traduits en anglais.",
-                          ),
-                          recipients: [t("Anthropic (service de traduction)")],
-                          binding,
-                        })
-                      : { ...p, consents: p.consents.filter((c) => c.kind !== "ai_assistant") },
-                  );
-                }}
-              />
-              <span>
-                {t(
-                  "J'autorise la traduction en anglais par un service externe (Anthropic) ; mon projet d'origine reste inchangé.",
-                )}
-              </span>
-            </label>
-            <details className="filter-adjust">
-              <summary className="t-caption min-h-11 cursor-pointer list-none py-2">
-                {t("Détails")}
-              </summary>
-              <p className="t-caption mt-1">
-                {t(
-                  "J'autorise en plus la traduction en anglais des textes de ce projet par un service externe (Anthropic), afin que l'équipe Standex les lise en anglais. Références, valeurs, unités, noms et fichiers restent inchangés, et mon projet d'origine est conservé tel quel. Sans cette case, aucun texte n'est transmis à ce service.",
-                )}
-              </p>
-            </details>
-            {englishMessage ? <p className="notice notice-info">{englishMessage}</p> : null}
-            {englishRetry ? (
-              <Button
-                variant="outline"
-                size="sm"
-                disabled={busy || englishBusy}
-                onClick={() => void runEnglishReport(englishRetry)}
-              >
-                {englishBusy ? t("Version anglaise en cours…") : t("Relancer la version anglaise")}
-              </Button>
+            {/* Traduction externe COUPÉE pour ce parcours : ni case d'accord, ni
+                détails, ni relance, et aucun texte transmis à un service de
+                traduction. Le code reste réactivable par
+                `EXTERNAL_TRANSLATION_ENABLED`. */}
+            {EXTERNAL_TRANSLATION_ENABLED ? (
+              <>
+                {englishMessage ? <p className="notice notice-info">{englishMessage}</p> : null}
+                {englishRetry ? (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={busy || englishBusy}
+                    onClick={() => void runEnglishReport(englishRetry)}
+                  >
+                    {englishBusy
+                      ? t("Version anglaise en cours…")
+                      : t("Relancer la version anglaise")}
+                  </Button>
+                ) : null}
+              </>
             ) : null}
 
             <label className="t-caption flex items-center gap-2">
@@ -3706,6 +3707,57 @@ export function DesignSpace({
     </div>
   );
 
+  /** Confidentialité : la carte NDA est posée AVANT le bloc d'envoi, pour que le
+   *  choix de confidentialité soit fait avant la dernière action. La garde NDA
+   *  et les états côté serveur sont inchangés : seul l'ordre de lecture change. */
+  const ndaCard = (
+    <div className="panel-block-lg space-y-3" data-testid="nda-card">
+      <label className="flex min-h-11 cursor-pointer items-start gap-3">
+        <Checkbox
+          ref={ndaSectionRef}
+          className="mt-1"
+          checked={nda.required}
+          disabled={busy}
+          onCheckedChange={(v) => {
+            void toggleNdaRequirement(v === true);
+            if (v === true) setNdaDialogOpen(true);
+          }}
+          aria-describedby="nda-optional-help"
+        />
+        <span className="space-y-1">
+          <span className="t-body block font-medium">
+            {t("Mon projet est confidentiel (NDA Standex)")}
+          </span>
+          <span id="nda-optional-help" className="t-caption block">
+            {t(
+              "Uniquement si votre entreprise en a besoin. Sans NDA, vous pouvez remplir et transmettre votre projet normalement : les accords de partage restent séparés et inchangés.",
+            )}
+          </span>
+          <span className="t-caption block">{ndaStatusLabel(nda)}</span>
+        </span>
+      </label>
+      {nda.required ? (
+        <Button variant="outline" onClick={() => setNdaDialogOpen(true)}>
+          {t("Ouvrir les informations NDA")}
+        </Button>
+      ) : null}
+      <Dialog open={ndaDialogOpen} onOpenChange={setNdaDialogOpen}>
+        <DialogContent
+          className="max-w-3xl max-h-[85dvh] overflow-y-auto"
+          aria-describedby="nda-dialog-description"
+        >
+          <DialogTitle>{t("Confidentialité du projet · NDA Standex")}</DialogTitle>
+          <DialogDescription id="nda-dialog-description">
+            {t("Complétez et vérifiez votre demande de confidentialité.")}
+          </DialogDescription>
+          {ndaFlow}
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+
+
+
   /** Trois questions facultatives : chaque puce pilote un choix DÉJÀ existant. */
   const optionalQuestions = (
     <div id="section-cablage" className="panel-block-lg space-y-5">
@@ -3776,23 +3828,25 @@ export function DesignSpace({
 
       <div>
         <Label className="t-label">{t("Connecteur")}</Label>
-        <div className="mt-2 flex flex-wrap gap-2">
+        <div className="mt-2 flex flex-wrap gap-2" data-testid="connector-choice">
           <Button
-            variant={connectorPreference ? "outline" : "default"}
+            variant={!connectorPreference && !noConnectorChosen ? "default" : "outline"}
             className="min-h-11 text-base"
-            aria-pressed={!connectorPreference}
+            aria-pressed={!connectorPreference && !noConnectorChosen}
             onClick={() => {
               setConnectorWanted(false);
               setDossier((d) => ({
                 ...d,
                 delegatedDecisions: [
-                  ...(d.delegatedDecisions ?? []).filter((k) => k !== DELEGATED_CONNECTOR),
+                  ...(d.delegatedDecisions ?? []).filter(
+                    (k) => k !== DELEGATED_CONNECTOR && k !== CHOSEN_BARE_LEADS,
+                  ),
                   DELEGATED_CONNECTOR,
                 ],
               }));
             }}
           >
-            {t("Standex choisit")}
+            {t("Je ne sais pas")}
           </Button>
           <Button
             variant={connectorPreference ? "default" : "outline"}
@@ -3803,14 +3857,44 @@ export function DesignSpace({
               setDossier((d) => ({
                 ...d,
                 delegatedDecisions: (d.delegatedDecisions ?? []).filter(
-                  (k) => k !== DELEGATED_CONNECTOR,
+                  (k) => k !== DELEGATED_CONNECTOR && k !== CHOSEN_BARE_LEADS,
                 ),
               }));
             }}
           >
             {t("J'ai une préférence")}
           </Button>
+          <Button
+            variant={noConnectorChosen ? "default" : "outline"}
+            className="min-h-11 text-base"
+            aria-pressed={noConnectorChosen}
+            onClick={() => {
+              // Choix volontaire : fils nus, marqueur explicite conservé, et le
+              // choix n'est PAS confié à Standex.
+              setConnectorWanted(false);
+              setConnectorError(null);
+              setDossier((d) => ({
+                ...d,
+                termination: DEFAULT_TERMINATION,
+                delegatedDecisions: [
+                  ...(d.delegatedDecisions ?? []).filter(
+                    (k) => k !== DELEGATED_CONNECTOR && k !== CHOSEN_BARE_LEADS,
+                  ),
+                  CHOSEN_BARE_LEADS,
+                ],
+              }));
+            }}
+          >
+            {t("Pas besoin de connecteur")}
+          </Button>
         </div>
+        {noConnectorChosen ? (
+          <p className="t-caption mt-2">
+            {t(
+              "Vous avez choisi de rester sur des fils nus, sans connecteur. Ce choix est enregistré tel quel : il n'est pas confié à Standex et il apparaît dans le résumé de votre projet.",
+            )}
+          </p>
+        ) : null}
         {connectorPreference ? (          <div className="mt-3">
             <p className="mt-1 text-sm">{terminationLabel(termination)}</p>
             <ul className="t-caption mt-1 list-disc pl-5">
@@ -3984,6 +4068,8 @@ export function DesignSpace({
         </div>
 
         <div className="space-y-4">
+          {/* Confidentialité d'abord, envoi ensuite. */}
+          {ndaCard}
           <div className="panel-block-lg space-y-3">
             <h3 className="t-title-m">{t("Vos coordonnées")}</h3>
             <div>
@@ -4042,68 +4128,40 @@ export function DesignSpace({
               </select>
               {salesContactFor(dossier.business.siteCountry) ? <p className="t-caption mt-2">{salesContactFor(dossier.business.siteCountry)!.name} · {t(salesContactFor(dossier.business.siteCountry)!.territory)}</p> : null}
             </div>
-            {/* Les accords et le bouton d'envoi vivent dans LA MÊME carte que les
-                coordonnées : la dernière action n'est plus à chercher ailleurs. */}
+            {/* La confidentialité est traitée AVANT : ici ne reste que la
+                dernière action logique, l'envoi. */}
             <hr className="standex-rule" />
             {sendBlock}
-            {bookingCountry && lastSent ? <Button variant="outline" onClick={() => setBookingOpen(true)}>{t("Échanger avec mon responsable Standex")}</Button> : null}
             <p className="t-caption">{t("Réponse d'un ingénieur sous 2 jours ouvrés.")}</p>
           </div>
 
-
-          <div className="panel-block-lg space-y-3">
-            <label className="flex min-h-11 cursor-pointer items-start gap-3">
-              <Checkbox
-                ref={ndaSectionRef}
-                className="mt-1"
-                checked={nda.required}
-                disabled={busy}
-                onCheckedChange={(v) => {
-                  void toggleNdaRequirement(v === true);
-                  if (v === true) setNdaDialogOpen(true);
-                }}
-                aria-describedby="nda-optional-help"
-              />
-              <span className="space-y-1">
-                <span className="t-body block font-medium">
-                  {t("Mon projet est confidentiel (NDA Standex)")}
-                </span>
-                <span id="nda-optional-help" className="t-caption block">
-                  {t(
-                    "Uniquement si votre entreprise en a besoin. Sans NDA, vous pouvez remplir et transmettre votre projet normalement : les accords de partage restent séparés et inchangés.",
-                  )}
-                </span>
-                <span className="t-caption block">{ndaStatusLabel(nda)}</span>
-              </span>
-            </label>
-            {nda.required ? <Button variant="outline" onClick={() => setNdaDialogOpen(true)}>{t("Ouvrir les informations NDA")}</Button> : null}
-            <Dialog open={ndaDialogOpen} onOpenChange={setNdaDialogOpen}>
-              <DialogContent className="max-w-3xl max-h-[85dvh] overflow-y-auto" aria-describedby="nda-dialog-description">
-                <DialogTitle>{t("Confidentialité du projet · NDA Standex")}</DialogTitle>
-                <DialogDescription id="nda-dialog-description">{t("Complétez et vérifiez votre demande de confidentialité.")}</DialogDescription>
-                {ndaFlow}
-              </DialogContent>
-            </Dialog>
-          </div>
-
           {lastSent ? (
-            <div className="panel-block-lg space-y-3">
+            <div className="panel-block-lg space-y-3" data-testid="project-followup">
               <h3 className="t-title-m">{t("Suivi de mon projet")}</h3>
-              <p className="text-sm">{sampleRoute.note}</p>
-              <p className="notice notice-warning">
-                {t(
-                  "Les échantillons s'ouvrent après un retour Standex validé et publié, qui fixe la référence exacte à commander. Une gamme ne suffit pas.",
-                )}
-              </p>
               <p className="t-caption">{t(SEARCH_LINK_DISCLAIMER)}</p>
-              <Button
-                variant="outline"
-                className="min-h-11 text-base"
-                onClick={() => setPanel("espace")}
-              >
-                {t("Ouvrir mon espace (mes projets, suivi, variantes)")}
-              </Button>
-
+              {/* Les trois actions d'après-envoi sont regroupées ici : espace,
+                  rendez-vous, déconnexion. Elles ne sont plus dispersées dans le
+                  formulaire. Les règles métier des échantillons restent
+                  appliquées en arrière-plan, sans texte de seuil ici. */}
+              <div className="flex flex-wrap gap-3">
+                <Button
+                  variant="outline"
+                  className="min-h-11 text-base"
+                  onClick={() => setPanel("espace")}
+                >
+                  {t("Ouvrir mon espace (mes projets, suivi, variantes)")}
+                </Button>
+                {bookingCountry ? (
+                  <Button
+                    variant="outline"
+                    className="min-h-11 text-base"
+                    onClick={() => setBookingOpen(true)}
+                  >
+                    {t("Échanger avec mon responsable Standex")}
+                  </Button>
+                ) : null}
+              </div>
+              <AuthPanel backend={backend} />
               <p className="t-caption">
                 {t(
                   "Disponibilités, MOQ et conditionnements : inconnus tant qu'aucun fournisseur réel n'est connecté.",
@@ -4555,20 +4613,23 @@ export function DesignSpace({
       <details className="studio-navigation">
         <summary>{t("Menu")}</summary>
         <nav aria-label={t("Navigation principale")}>
-          {/* Ordre du menu : ce qui agit sur LE projet ouvert d'abord ; l'atelier,
-              le catalogue, les documents et le compte viennent après le trait. */}
-          <button
-            type="button"
-            onClick={(e) => {
-              e.currentTarget.closest("details")?.removeAttribute("open");
-              setCatalogOpen(false);
-              setPanel(null);
-              setShowAdvanced(true);
-              setTab("besoin");
-            }}
-          >
-            {t("Réglages détaillés")}
-          </button>
+          {/* Ordre du menu : l'accueil, puis ce qui agit sur LE projet ouvert ;
+              l'atelier, le catalogue, les documents et le compte après le trait. */}
+          {onGoHome ? (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.currentTarget.closest("details")?.removeAttribute("open");
+                onGoHome();
+              }}
+            >
+              {t("Accueil")}
+            </button>
+          ) : (
+            <Link to="/" onClick={(e) => e.currentTarget.closest("details")?.removeAttribute("open")}>
+              {t("Accueil")}
+            </Link>
+          )}
           <button
             type="button"
             onClick={(e) => {
