@@ -6,7 +6,7 @@ import {
 } from "@/lib/leadmagnet/external-translation";
 import { INITIAL_PRIVACY, grantConsent } from "@/lib/leadmagnet/privacy";
 import { createDossier } from "@/lib/leadmagnet/dossier";
-import { submissionSummary } from "@/lib/leadmagnet/submission";
+import { technicalSummary } from "@/lib/leadmagnet/submission";
 import { CHOSEN_BARE_LEADS, DELEGATED_CONNECTOR } from "@/lib/leadmagnet/project-checklist";
 import { readFileSync } from "node:fs";
 
@@ -44,7 +44,7 @@ describe("choix connecteur « pas besoin »", () => {
   const base = () => ({ ...createDossier(), selectedSensorId: "MK03" });
 
   it("est repris dans le résumé comme choix volontaire", () => {
-    const summary = submissionSummary({
+    const summary = technicalSummary({
       ...base(),
       delegatedDecisions: [CHOSEN_BARE_LEADS],
     });
@@ -52,7 +52,7 @@ describe("choix connecteur « pas besoin »", () => {
   });
 
   it("reste distinct d'une délégation à Standex", () => {
-    const summary = submissionSummary({
+    const summary = technicalSummary({
       ...base(),
       delegatedDecisions: [DELEGATED_CONNECTOR],
     });
@@ -60,6 +60,6 @@ describe("choix connecteur « pas besoin »", () => {
   });
 
   it("ne s'affiche pas pour un dossier neuf resté au défaut", () => {
-    expect(submissionSummary(base())).not.toContain("Choix du client : pas de connecteur");
+    expect(technicalSummary(base())).not.toContain("Choix du client : pas de connecteur");
   });
 });
