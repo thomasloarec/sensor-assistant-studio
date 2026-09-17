@@ -26098,5 +26098,86 @@
     "Температура от −20 до +80 °C; вибрация, масло и пыль; требуется IP67.",
     "Temperatura da −20 a +80 °C; vibrazioni, olio e polvere; protezione IP67 desiderata.",
     "温度−20～+80 °C、振動、油、粉塵、防護等級IP67を希望。"
+  ],
+  "Je ne sais pas": [
+    "I don't know",
+    "我不确定",
+    "Ich weiß es nicht",
+    "No lo sé",
+    "Не знаю",
+    "Non lo so",
+    "わかりません"
+  ],
+  "Pas besoin de connecteur": [
+    "No connector needed",
+    "不需要连接器",
+    "Kein Steckverbinder nötig",
+    "Sin conector",
+    "Разъём не нужен",
+    "Nessun connettore necessario",
+    "コネクター不要"
+  ],
+  "Vous avez choisi de rester sur des fils nus, sans connecteur. Ce choix est enregistré tel quel : il n'est pas confié à Standex et il apparaît dans le résumé de votre projet.": [
+    "You have chosen bare leads, with no connector. This choice is recorded as such: it is not handed over to Standex and it appears in your project summary.",
+    "您选择使用裸线，不使用连接器。该选择按原样记录：不会交由 Standex 决定，并会出现在您的项目摘要中。",
+    "Sie haben blanke Litzen ohne Steckverbinder gewählt. Diese Wahl wird so festgehalten: Sie wird nicht an Standex übertragen und erscheint in der Zusammenfassung Ihres Projekts.",
+    "Ha elegido cables desnudos, sin conector. Esta elección se registra tal cual: no se delega a Standex y aparece en el resumen de su proyecto.",
+    "Вы выбрали зачищенные провода без разъёма. Этот выбор сохраняется как есть: он не передаётся Standex и отображается в сводке вашего проекта.",
+    "Ha scelto fili nudi, senza connettore. Questa scelta è registrata come tale: non è affidata a Standex e appare nel riepilogo del suo progetto.",
+    "コネクターなしの裸線を選択しました。この選択はそのまま記録されます。Standex に委ねられることはなく、プロジェクトの要約に表示されます。"
+  ],
+  "Accueil": [
+    "Home",
+    "首页",
+    "Startseite",
+    "Inicio",
+    "Главная",
+    "Home",
+    "ホーム"
+  ],
+  "Exemple précédent": [
+    "Previous example",
+    "上一个示例",
+    "Vorheriges Beispiel",
+    "Ejemplo anterior",
+    "Предыдущий пример",
+    "Esempio precedente",
+    "前の例"
+  ],
+  "Précédent": [
+    "Previous",
+    "上一个",
+    "Zurück",
+    "Anterior",
+    "Назад",
+    "Precedente",
+    "前へ"
+  ],
+  "Exemple suivant": [
+    "Next example",
+    "下一个示例",
+    "Nächstes Beispiel",
+    "Ejemplo siguiente",
+    "Следующий пример",
+    "Esempio successivo",
+    "次の例"
+  ],
+  "Suivant": [
+    "Next",
+    "下一个",
+    "Weiter",
+    "Siguiente",
+    "Далее",
+    "Successivo",
+    "次へ"
+  ],
+  "Choix du client : pas de connecteur, fils nus.": [
+    "Customer's choice: no connector, bare leads.",
+    "客户选择：不使用连接器，裸线。",
+    "Kundenwahl: kein Steckverbinder, blanke Litzen.",
+    "Elección del cliente: sin conector, cables desnudos.",
+    "Выбор клиента: без разъёма, зачищенные провода.",
+    "Scelta del cliente: nessun connettore, fili nudi.",
+    "お客様の選択：コネクターなし、裸線。"
   ]
 }
