@@ -5,7 +5,7 @@ import {
   stripDisabledConsents,
 } from "@/lib/leadmagnet/external-translation";
 import { INITIAL_PRIVACY, grantConsent } from "@/lib/leadmagnet/privacy";
-import { emptyDossier } from "@/lib/leadmagnet/dossier";
+import { createDossier } from "@/lib/leadmagnet/dossier";
 import { submissionSummary } from "@/lib/leadmagnet/submission";
 import { CHOSEN_BARE_LEADS, DELEGATED_CONNECTOR } from "@/lib/leadmagnet/project-checklist";
 import { readFileSync } from "node:fs";
@@ -41,7 +41,7 @@ describe("traduction externe coupée", () => {
 });
 
 describe("choix connecteur « pas besoin »", () => {
-  const base = () => ({ ...emptyDossier(), selectedSensorId: "MK03" });
+  const base = () => ({ ...createDossier(), selectedSensorId: "MK03" });
 
   it("est repris dans le résumé comme choix volontaire", () => {
     const summary = submissionSummary({
