@@ -219,7 +219,7 @@ test("soumission : pas de succès simulé sans backend, instantané immuable et 
   const base = dossier();
   const d = {
     ...base,
-    business: { ...base.business, contactEmail: "client@example.com" },
+    business: { ...base.business, contactEmail: "client@example.com", siteCity: "Lyon", siteCountry: "FR" },
     internalNotes: [{ id: "n1", author: "standex", createdAt: "2026-09-08", body: "note privée" }],
     attachments: [
       { id: "a1", fileName: "plan.glb", bytes: 10, transferred: false, storagePath: null },

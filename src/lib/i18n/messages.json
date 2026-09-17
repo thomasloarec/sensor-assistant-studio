@@ -25594,5 +25594,509 @@
     "Подробные данные проекта приложены к этому PDF в файле dossier-complet.json.",
     "I dati dettagliati del progetto sono allegati a questo PDF in dossier-complet.json.",
     "プロジェクトの詳細データは dossier-complet.json としてこの PDF に添付されています。"
+  ],
+  "Échangez avec votre responsable Standex": [
+    "Talk to your Standex representative",
+    "联系您的 Standex 区域负责人",
+    "Sprechen Sie mit Ihrem Standex-Ansprechpartner",
+    "Hable con su responsable Standex",
+    "Свяжитесь с представителем Standex",
+    "Parla con il referente Standex",
+    "Standexの地域担当者に相談"
+  ],
+  "Votre projet a bien été reçu. Préparons la suite ensemble.": [
+    "Your project has been received. Let’s plan the next steps together.",
+    "您的项目已收到。让我们共同规划后续步骤。",
+    "Ihr Projekt ist eingegangen. Planen wir gemeinsam die nächsten Schritte.",
+    "Hemos recibido su proyecto. Preparemos juntos los próximos pasos.",
+    "Ваш проект получен. Давайте обсудим дальнейшие шаги.",
+    "Il progetto è stato ricevuto. Prepariamo insieme i prossimi passi.",
+    "プロジェクトを受け付けました。次のステップを一緒に進めましょう。"
+  ],
+  "Choisissez une date et un horaire dans le calendrier de votre interlocuteur. La confirmation et les invitations vous seront envoyées par le service de réservation.": [
+    "Choose a date and time in your representative’s calendar. The booking service will send confirmation and invitations.",
+    "请在负责人的日历中选择日期和时间。预约服务将发送确认和邀请。",
+    "Wählen Sie Datum und Uhrzeit im Kalender Ihres Ansprechpartners. Der Buchungsdienst sendet Bestätigung und Einladungen.",
+    "Elija fecha y hora en el calendario de su contacto. El servicio de reservas enviará la confirmación y las invitaciones.",
+    "Выберите дату и время в календаре представителя. Сервис бронирования отправит подтверждение и приглашения.",
+    "Scegli data e ora nel calendario del referente. Il servizio di prenotazione invierà conferma e inviti.",
+    "担当者のカレンダーで日時を選択してください。予約サービスから確認と招待が送信されます。"
+  ],
+  "La réservation en ligne sera bientôt disponible. Votre responsable Standex vous recontactera pour convenir d’un rendez-vous. Aucun créneau n’est réservé à ce stade.": [
+    "Online booking will be available soon. Your Standex representative will contact you to arrange a meeting. No time slot has been booked yet.",
+    "在线预约即将开放。Standex负责人将联系您安排会议。目前尚未预约任何时段。",
+    "Die Online-Buchung ist bald verfügbar. Ihr Standex-Ansprechpartner meldet sich zur Terminvereinbarung. Bisher ist kein Termin gebucht.",
+    "La reserva en línea estará disponible próximamente. Su responsable Standex le contactará para acordar una cita. Aún no hay ninguna franja reservada.",
+    "Онлайн-запись скоро станет доступна. Представитель Standex свяжется с вами для согласования встречи. Время пока не забронировано.",
+    "La prenotazione online sarà presto disponibile. Il referente Standex ti contatterà per fissare un incontro. Nessun orario è ancora prenotato.",
+    "オンライン予約は準備中です。Standex担当者から日程調整のご連絡をします。現時点では予約は確定していません。"
+  ],
+  "Revenir à mon projet": [
+    "Back to my project",
+    "返回我的项目",
+    "Zurück zu meinem Projekt",
+    "Volver a mi proyecto",
+    "Вернуться к проекту",
+    "Torna al progetto",
+    "プロジェクトに戻る"
+  ],
+  "Votre fiche NDA est prête. Ouvrez les informations NDA pour déposer votre document signé et suivre sa vérification.": [
+    "Your NDA record is ready. Open NDA information to upload your signed document and follow its verification.",
+    "保密协议记录已准备好。打开保密协议信息以上传签署文件并查看审核状态。",
+    "Ihr NDA-Vorgang ist bereit. Öffnen Sie die NDA-Informationen, um das unterschriebene Dokument hochzuladen und die Prüfung zu verfolgen.",
+    "Su expediente NDA está listo. Abra la información NDA para cargar el documento firmado y seguir su verificación.",
+    "Запись NDA готова. Откройте сведения NDA, чтобы загрузить подписанный документ и следить за проверкой.",
+    "La pratica NDA è pronta. Apri le informazioni NDA per caricare il documento firmato e seguirne la verifica.",
+    "NDAの登録が完了しました。NDA情報から署名済み文書を提出し、確認状況をご覧ください。"
+  ],
+  "réinitialiser la recherche": [
+    "reset the search",
+    "重置搜索",
+    "die Suche zurücksetzen",
+    "reiniciar la búsqueda",
+    "сбросить поиск",
+    "reimpostare la ricerca",
+    "検索をリセット"
+  ],
+  "Réinitialiser ma recherche": [
+    "Reset my search",
+    "重置我的搜索",
+    "Meine Suche zurücksetzen",
+    "Reiniciar mi búsqueda",
+    "Сбросить мой поиск",
+    "Reimposta la ricerca",
+    "検索をリセット"
+  ],
+  "Une solution sur mesure pour votre projet": [
+    "A custom solution for your project",
+    "为您的项目提供定制方案",
+    "Eine kundenspezifische Lösung für Ihr Projekt",
+    "Una solución a medida para su proyecto",
+    "Индивидуальное решение для вашего проекта",
+    "Una soluzione su misura per il progetto",
+    "プロジェクトに合わせたカスタムソリューション"
+  ],
+  "Conception sur mesure : forme, fixation et distances à définir avec Standex. Schéma illustratif, sans performance validée.": [
+    "Custom design: shape, mounting and distances to be defined with Standex. Illustrative diagram; performance not validated.",
+    "定制设计：形状、安装和距离需与Standex确定。示意图，性能未经验证。",
+    "Sonderanfertigung: Form, Befestigung und Abstände mit Standex festlegen. Illustrative Darstellung ohne bestätigte Leistung.",
+    "Diseño a medida: forma, fijación y distancias por definir con Standex. Esquema ilustrativo, sin prestaciones validadas.",
+    "Индивидуальная конструкция: форма, крепление и расстояния согласуются со Standex. Схема иллюстративная, характеристики не подтверждены.",
+    "Progetto su misura: forma, fissaggio e distanze da definire con Standex. Schema illustrativo, prestazioni non validate.",
+    "形状、取付方法、距離はStandexと設計します。図は参考であり、性能は未検証です。"
+  ],
+  "Compromis nécessaire avec vos critères": [
+    "Trade-off required against your criteria",
+    "需要调整您的条件",
+    "Abwägung Ihrer Kriterien erforderlich",
+    "Es necesario ajustar sus criterios",
+    "Необходимо согласовать отклонения от требований",
+    "Occorre valutare un compromesso sui criteri",
+    "条件の調整が必要です"
+  ],
+  "Ville du site": [
+    "Site city",
+    "工作地点城市",
+    "Stadt des Standorts",
+    "Ciudad del centro",
+    "Город площадки",
+    "Città del sito",
+    "事業所の市区町村"
+  ],
+  "Pays du site": [
+    "Site country",
+    "工作地点国家",
+    "Land des Standorts",
+    "País del centro",
+    "Страна площадки",
+    "Paese del sito",
+    "事業所の国"
+  ],
+  "Sélectionnez le pays de votre site": [
+    "Select your site’s country",
+    "选择工作地点所在国家",
+    "Wählen Sie das Land Ihres Standorts",
+    "Seleccione el país de su centro",
+    "Выберите страну площадки",
+    "Seleziona il paese del sito",
+    "事業所の国を選択"
+  ],
+  "Échanger avec mon responsable Standex": [
+    "Talk to my Standex representative",
+    "联系我的Standex负责人",
+    "Mit meinem Standex-Ansprechpartner sprechen",
+    "Hablar con mi responsable Standex",
+    "Связаться с представителем Standex",
+    "Parla con il referente Standex",
+    "Standexの担当者に相談"
+  ],
+  "Exemple de réponse détaillée": [
+    "Example of a detailed answer",
+    "详细回答示例",
+    "Beispiel einer ausführlichen Antwort",
+    "Ejemplo de respuesta detallada",
+    "Пример подробного ответа",
+    "Esempio di risposta dettagliata",
+    "詳しい回答の例"
+  ],
+  "Reprendre": [
+    "Resume",
+    "继续",
+    "Fortsetzen",
+    "Reanudar",
+    "Продолжить",
+    "Riprendi",
+    "再開"
+  ],
+  "Autre exemple": [
+    "Another example",
+    "其他示例",
+    "Weiteres Beispiel",
+    "Otro ejemplo",
+    "Другой пример",
+    "Altro esempio",
+    "別の例"
+  ],
+  "Course simulée : {0} → {1} mm.": [
+    "Simulated travel: {0} → {1} mm.",
+    "模拟行程：{0} → {1} mm。",
+    "Simulierter Hub: {0} → {1} mm.",
+    "Recorrido simulado: {0} → {1} mm.",
+    "Моделируемый ход: {0} → {1} mm.",
+    "Corsa simulata: {0} → {1} mm.",
+    "シミュレーションの移動範囲：{0} → {1} mm。"
+  ],
+  "Rapprocher l’aimant dans cette position": [
+    "Move the magnet closer in this position",
+    "在此位置将磁铁移近",
+    "Den Magneten in dieser Position näher bringen",
+    "Acercar el imán en esta posición",
+    "Приблизить магнит в этом положении",
+    "Avvicina il magnete in questa posizione",
+    "この配置で磁石を近づける"
+  ],
+  "Vue de l’embout : Ø 5 mm, méplats à 4,6 mm": [
+    "End view: Ø 5 mm, 4.6 mm across flats",
+    "端面图：Ø 5 mm，对边4.6 mm",
+    "Stirnansicht: Ø 5 mm, Abflachungen bei 4,6 mm",
+    "Vista del extremo: Ø 5 mm, entre planos 4,6 mm",
+    "Вид с торца: Ø 5 mm, размер между плоскостями 4,6 mm",
+    "Vista dell’estremità: Ø 5 mm, distanza tra piani 4,6 mm",
+    "端面図：直径5 mm、平面間4.6 mm"
+  ],
+  "Embout avec méplats": [
+    "End with flats",
+    "带平面的端部",
+    "Ende mit Abflachungen",
+    "Extremo con planos",
+    "Торец с плоскими гранями",
+    "Estremità con piani",
+    "平面部のある端面"
+  ],
+  "Boîtier en plastique": [
+    "Plastic housing",
+    "塑料外壳",
+    "Kunststoffgehäuse",
+    "Carcasa de plástico",
+    "Пластиковый корпус",
+    "Custodia in plastica",
+    "樹脂ハウジング"
+  ],
+  "Boîtier en laiton": [
+    "Brass housing",
+    "黄铜外壳",
+    "Messinggehäuse",
+    "Carcasa de latón",
+    "Латунный корпус",
+    "Custodia in ottone",
+    "真鍮ハウジング"
+  ],
+  "Boîtier en acier inoxydable": [
+    "Stainless steel housing",
+    "不锈钢外壳",
+    "Edelstahlgehäuse",
+    "Carcasa de acero inoxidable",
+    "Корпус из нержавеющей стали",
+    "Custodia in acciaio inox",
+    "ステンレスハウジング"
+  ],
+  "Capteurs sur PCB et sur mesure": [
+    "PCB and custom sensors",
+    "PCB及定制传感器",
+    "Leiterplatten- und kundenspezifische Sensoren",
+    "Sensores para PCB y a medida",
+    "Датчики для плат и индивидуальные решения",
+    "Sensori per PCB e su misura",
+    "基板実装・カスタムセンサー"
+  ],
+  "Capteurs cylindriques et filetés": [
+    "Cylindrical and threaded sensors",
+    "圆柱形及螺纹传感器",
+    "Zylindrische Sensoren und Gewindesensoren",
+    "Sensores cilíndricos y roscados",
+    "Цилиндрические и резьбовые датчики",
+    "Sensori cilindrici e filettati",
+    "円筒形・ねじ形センサー"
+  ],
+  "Capteurs à visser": [
+    "Screw-mounted sensors",
+    "螺钉安装传感器",
+    "Sensoren zur Schraubmontage",
+    "Sensores con fijación por tornillos",
+    "Датчики с винтовым креплением",
+    "Sensori con fissaggio a vite",
+    "ねじ固定センサー"
+  ],
+  "Responsable Standex — France": [
+    "Standex representative — France",
+    "Standex负责人 — 法国",
+    "Standex-Ansprechpartner — Frankreich",
+    "Responsable Standex — Francia",
+    "Представитель Standex — Франция",
+    "Referente Standex — Francia",
+    "Standex担当 — フランス"
+  ],
+  "Responsable Standex — Allemagne": [
+    "Standex representative — Germany",
+    "Standex负责人 — 德国",
+    "Standex-Ansprechpartner — Deutschland",
+    "Responsable Standex — Alemania",
+    "Представитель Standex — Германия",
+    "Referente Standex — Germania",
+    "Standex担当 — ドイツ"
+  ],
+  "Responsable Standex — autres pays": [
+    "Standex representative — other countries",
+    "Standex负责人 — 其他国家",
+    "Standex-Ansprechpartner — andere Länder",
+    "Responsable Standex — otros países",
+    "Представитель Standex — другие страны",
+    "Referente Standex — altri paesi",
+    "Standex担当 — その他の国"
+  ],
+  "Votre projet a bien été reçu. Votre responsable Standex vous recontactera pour préciser votre besoin et convenir des prochaines étapes.": [
+    "Your project has been received. Your Standex representative will contact you to clarify your needs and agree on the next steps.",
+    "您的项目已收到。Standex负责人将联系您确认需求并商定后续步骤。",
+    "Ihr Projekt ist eingegangen. Ihr Standex-Ansprechpartner meldet sich, um Ihren Bedarf zu klären und die nächsten Schritte abzustimmen.",
+    "Hemos recibido su proyecto. Su responsable Standex le contactará para precisar sus necesidades y acordar los próximos pasos.",
+    "Ваш проект получен. Представитель Standex свяжется с вами для уточнения требований и дальнейших шагов.",
+    "Il progetto è stato ricevuto. Il referente Standex ti contatterà per chiarire le esigenze e concordare i prossimi passi.",
+    "プロジェクトを受け付けました。Standex担当者から要件確認と次のステップについてご連絡します。"
+  ],
+  "Montage sur PCB : câble et connecteur non applicables.": [
+    "PCB mounting: cable and connector not applicable.",
+    "PCB安装：不适用电缆和连接器。",
+    "Leiterplattenmontage: Kabel und Stecker nicht anwendbar.",
+    "Montaje en PCB: cable y conector no aplicables.",
+    "Монтаж на плату: кабель и разъём не применяются.",
+    "Montaggio su PCB: cavo e connettore non applicabili.",
+    "基板実装：ケーブルとコネクターは対象外です。"
+  ],
+  "Renseignez la ville et le pays de votre site pour contacter le responsable Standex de votre zone.": [
+    "Enter your site’s city and country to reach your regional Standex representative.",
+    "请填写工作地点的城市和国家，以联系您所在区域的Standex负责人。",
+    "Geben Sie Stadt und Land Ihres Standorts an, um Ihren regionalen Standex-Ansprechpartner zu erreichen.",
+    "Indique la ciudad y el país de su centro para contactar con el responsable Standex de su zona.",
+    "Укажите город и страну площадки для связи с региональным представителем Standex.",
+    "Indica città e paese del sito per contattare il referente Standex della tua zona.",
+    "地域のStandex担当者をご案内するため、事業所の市区町村と国を入力してください。"
+  ],
+  "Corps Ø 5 mm avec méplats, deux fils séparés": [
+    "Ø 5 mm body with flats, two separate wires",
+    "Ø 5 mm带平面壳体，两根独立导线",
+    "Gehäuse Ø 5 mm mit Abflachungen, zwei Einzeladern",
+    "Cuerpo Ø 5 mm con planos, dos hilos separados",
+    "Корпус Ø 5 mm с плоскими гранями, два отдельных провода",
+    "Corpo Ø 5 mm con piani, due fili separati",
+    "直径5 mmの平面付き本体、独立した2本のリード線"
+  ],
+  "Thomas LOAREC": [
+    "Thomas LOAREC",
+    "Thomas LOAREC",
+    "Thomas LOAREC",
+    "Thomas LOAREC",
+    "Thomas LOAREC",
+    "Thomas LOAREC",
+    "Thomas LOAREC"
+  ],
+  "Thomas FRANKE": [
+    "Thomas FRANKE",
+    "Thomas FRANKE",
+    "Thomas FRANKE",
+    "Thomas FRANKE",
+    "Thomas FRANKE",
+    "Thomas FRANKE",
+    "Thomas FRANKE"
+  ],
+  "Hemant SINGH": [
+    "Hemant SINGH",
+    "Hemant SINGH",
+    "Hemant SINGH",
+    "Hemant SINGH",
+    "Hemant SINGH",
+    "Hemant SINGH",
+    "Hemant SINGH"
+  ],
+  "Détecter que le réservoir d’eau amovible est complètement inséré dans une machine à café professionnelle.": [
+    "Detect when a removable water tank is fully inserted in a professional coffee machine.",
+    "检测专业咖啡机的可拆水箱是否完全插入。",
+    "Erkennen, ob der abnehmbare Wassertank einer professionellen Kaffeemaschine vollständig eingesetzt ist.",
+    "Detectar la inserción completa del depósito extraíble de una cafetera profesional.",
+    "Определять полную установку съёмного бака воды профессиональной кофемашины.",
+    "Rilevare l’inserimento completo del serbatoio rimovibile di una macchina da caffè professionale.",
+    "業務用コーヒーマシンの着脱式水タンクが完全に挿入されたことを検出。"
+  ],
+  "Détecter la fermeture du tiroir de cartouche d’un appareil de diagnostic médical.": [
+    "Detect closure of the cartridge drawer in a medical diagnostic device.",
+    "检测医疗诊断设备的试剂盒抽屉是否关闭。",
+    "Das Schließen der Kartuschenschublade eines medizinischen Diagnosegeräts erkennen.",
+    "Detectar el cierre del cajón de cartucho de un equipo de diagnóstico médico.",
+    "Определять закрытие ящика картриджа медицинского диагностического прибора.",
+    "Rilevare la chiusura del cassetto cartuccia di un dispositivo diagnostico medico.",
+    "医療診断装置のカートリッジ引き出しの閉鎖を検出。"
+  ],
+  "Détecter la fin de course du vérin d’une ligne de conditionnement.": [
+    "Detect the end position of a cylinder on a packaging line.",
+    "检测包装生产线气缸的行程终点。",
+    "Die Endlage eines Zylinders in einer Verpackungslinie erkennen.",
+    "Detectar el fin de carrera del cilindro de una línea de envasado.",
+    "Определять конечное положение цилиндра упаковочной линии.",
+    "Rilevare il fine corsa del cilindro di una linea di confezionamento.",
+    "包装ラインのシリンダーの終端位置を検出。"
+  ],
+  "Le réservoir coulisse horizontalement sur 40 mm. Un aimant est intégré au réservoir ; la détection doit se faire à 3–6 mm du capteur.": [
+    "The tank slides horizontally over 40 mm. A magnet is built into the tank; detection is required at 3–6 mm from the sensor.",
+    "水箱水平滑动40 mm。磁铁嵌入水箱；要求在距传感器3–6 mm处检测。",
+    "Der Tank gleitet horizontal über 40 mm. Ein Magnet sitzt im Tank; Erkennung bei 3–6 mm Abstand zum Sensor.",
+    "El depósito se desliza 40 mm horizontalmente. Lleva un imán integrado; detección a 3–6 mm del sensor.",
+    "Бак перемещается горизонтально на 40 mm. Встроен магнит; обнаружение на расстоянии 3–6 mm от датчика.",
+    "Il serbatoio scorre orizzontalmente per 40 mm. Magnete integrato; rilevamento a 3–6 mm dal sensore.",
+    "タンクが水平方向に40 mmスライド。内蔵磁石をセンサーから3–6 mmで検出。"
+  ],
+  "Le tiroir avance de 30 mm. Contact fermé lorsqu’il est inséré, ouvert dès son retrait de 5 mm.": [
+    "The drawer travels 30 mm. Contact closed when inserted, open after withdrawal by 5 mm.",
+    "抽屉行程30 mm。插入时触点闭合，拉出5 mm后断开。",
+    "Die Schublade bewegt sich 30 mm. Kontakt bei Einschub geschlossen, nach 5 mm Herausziehen offen.",
+    "El cajón recorre 30 mm. Contacto cerrado al insertarlo, abierto al retirarlo 5 mm.",
+    "Ход ящика 30 mm. Контакт замкнут при вставке, разомкнут при выдвижении на 5 mm.",
+    "Il cassetto avanza di 30 mm. Contatto chiuso da inserito, aperto dopo un’estrazione di 5 mm.",
+    "引き出しの移動量30 mm。挿入時に閉接点、5 mm引き出すと開接点。"
+  ],
+  "Le piston porte un aimant permanent et se déplace à 1 m/s. Répétabilité souhaitée : ±1 mm.": [
+    "The piston carries a permanent magnet and moves at 1 m/s. Desired repeatability: ±1 mm.",
+    "活塞带永久磁铁，速度1 m/s。期望重复精度：±1 mm。",
+    "Der Kolben trägt einen Permanentmagneten und fährt mit 1 m/s. Gewünschte Wiederholgenauigkeit: ±1 mm.",
+    "El pistón lleva un imán permanente y se mueve a 1 m/s. Repetibilidad deseada: ±1 mm.",
+    "Поршень с постоянным магнитом движется со скоростью 1 m/s. Требуемая повторяемость: ±1 mm.",
+    "Pistone con magnete permanente, velocità 1 m/s. Ripetibilità desiderata: ±1 mm.",
+    "永久磁石付きピストンが1 m/sで移動。希望繰返し精度：±1 mm。"
+  ],
+  "Capteur vissé à l’intérieur de la machine, aimant fixé sur le réservoir plastique amovible.": [
+    "Sensor screwed inside the machine, magnet attached to the removable plastic tank.",
+    "传感器用螺钉固定在机器内，磁铁固定在可拆塑料水箱上。",
+    "Sensor im Maschineninneren verschraubt, Magnet am abnehmbaren Kunststofftank befestigt.",
+    "Sensor atornillado dentro de la máquina, imán fijado al depósito plástico extraíble.",
+    "Датчик закреплён винтами внутри машины, магнит — на съёмном пластиковом баке.",
+    "Sensore avvitato all’interno della macchina, magnete fissato al serbatoio plastico rimovibile.",
+    "センサーは装置内にねじ固定、磁石は着脱式樹脂タンクに固定。"
+  ],
+  "Capteur soudé en CMS sur la carte électronique fixe ; aimant intégré au tiroir mobile.": [
+    "Sensor soldered by SMD mounting on the fixed PCB; magnet built into the moving drawer.",
+    "传感器以SMD方式焊接到固定PCB上；磁铁嵌入移动抽屉。",
+    "Sensor per SMD auf die feste Leiterplatte gelötet; Magnet in der beweglichen Schublade.",
+    "Sensor soldado en SMD en la placa fija; imán integrado en el cajón móvil.",
+    "Датчик SMD припаян к неподвижной плате; магнит встроен в подвижный ящик.",
+    "Sensore SMD saldato sulla scheda fissa; magnete integrato nel cassetto mobile.",
+    "固定基板にSMD実装したセンサー、可動引き出しに内蔵した磁石。"
+  ],
+  "Capteur placé à l’extérieur du vérin dans un logement Ø 8 mm ; maintien mécanique à définir.": [
+    "Sensor outside the cylinder in an Ø 8 mm bore; mechanical retention to be defined.",
+    "传感器位于气缸外部Ø 8 mm孔内；固定方式待定。",
+    "Sensor außerhalb des Zylinders in einer Bohrung Ø 8 mm; mechanische Sicherung noch festzulegen.",
+    "Sensor fuera del cilindro en un alojamiento Ø 8 mm; sujeción mecánica por definir.",
+    "Датчик снаружи цилиндра в отверстии Ø 8 mm; крепление предстоит определить.",
+    "Sensore all’esterno del cilindro in un foro Ø 8 mm; fissaggio da definire.",
+    "シリンダー外側の直径8 mmの穴に配置。保持方法は未定。"
+  ],
+  "Volume disponible pour le capteur : 15 × 15 × 15 mm, hors câble. Accès aux vis par le dessus.": [
+    "Available sensor space: 15 × 15 × 15 mm, excluding cable. Screws accessible from above.",
+    "传感器可用空间：15 × 15 × 15 mm，不含电缆。螺钉可从上方操作。",
+    "Bauraum: 15 × 15 × 15 mm ohne Kabel. Schraubenzugang von oben.",
+    "Espacio para sensor: 15 × 15 × 15 mm, sin cable. Acceso superior a los tornillos.",
+    "Место для датчика: 15 × 15 × 15 mm без кабеля. Доступ к винтам сверху.",
+    "Spazio sensore: 15 × 15 × 15 mm, escluso cavo. Accesso alle viti dall’alto.",
+    "センサー用空間：15 × 15 × 15 mm、ケーブル除外。上方からねじ締め可能。"
+  ],
+  "Zone sur la carte : 8 × 4 mm ; hauteur maximale 3 mm, terminaisons comprises.": [
+    "PCB area: 8 × 4 mm; maximum height 3 mm, including terminals.",
+    "PCB区域：8 × 4 mm；最大高度3 mm，含端子。",
+    "Leiterplattenfläche: 8 × 4 mm; maximale Höhe 3 mm einschließlich Anschlüssen.",
+    "Zona en placa: 8 × 4 mm; altura máxima 3 mm, incluidos terminales.",
+    "Участок платы: 8 × 4 mm; высота не более 3 mm с выводами.",
+    "Area sulla scheda: 8 × 4 mm; altezza massima 3 mm, terminali inclusi.",
+    "基板上の面積8 × 4 mm、端子を含め高さ最大3 mm。"
+  ],
+  "Logement Ø 8 mm, profondeur 30 mm ; prévoir le passage du câble à l’arrière.": [
+    "Bore Ø 8 mm, depth 30 mm; allow cable routing at the rear.",
+    "孔径Ø 8 mm，深度30 mm；后部预留电缆通道。",
+    "Bohrung Ø 8 mm, Tiefe 30 mm; Kabeldurchführung hinten vorsehen.",
+    "Alojamiento Ø 8 mm, profundidad 30 mm; prever salida del cable detrás.",
+    "Отверстие Ø 8 mm, глубина 30 mm; предусмотреть кабель сзади.",
+    "Foro Ø 8 mm, profondità 30 mm; prevedere il passaggio del cavo sul retro.",
+    "直径8 mm、深さ30 mmの穴。背面にケーブル経路を確保。"
+  ],
+  "Entrée numérique 3,3 VDC, courant inférieur à 5 mA ; contact normalement ouvert.": [
+    "Digital input 3.3 VDC, current below 5 mA; normally open contact.",
+    "数字输入3.3 VDC，电流小于5 mA；常开触点。",
+    "Digitaleingang 3,3 VDC, Strom unter 5 mA; Schließerkontakt.",
+    "Entrada digital 3,3 VDC, corriente inferior a 5 mA; contacto normalmente abierto.",
+    "Цифровой вход 3,3 VDC, ток менее 5 mA; нормально разомкнутый контакт.",
+    "Ingresso digitale 3,3 VDC, corrente inferiore a 5 mA; contatto normalmente aperto.",
+    "デジタル入力3.3 VDC、5 mA未満、常開接点。"
+  ],
+  "Entrée de carte 5 VDC, 2 mA ; commutation d’un signal, sans charge de puissance.": [
+    "PCB input 5 VDC, 2 mA; signal switching, no power load.",
+    "PCB输入5 VDC、2 mA；信号切换，无功率负载。",
+    "Leiterplatteneingang 5 VDC, 2 mA; Signalschaltung ohne Leistungslast.",
+    "Entrada de placa 5 VDC, 2 mA; conmutación de señal, sin carga de potencia.",
+    "Вход платы 5 VDC, 2 mA; коммутация сигнала без силовой нагрузки.",
+    "Ingresso scheda 5 VDC, 2 mA; commutazione di segnale, senza carico di potenza.",
+    "基板入力5 VDC、2 mA。信号の切替のみで電力負荷なし。"
+  ],
+  "Entrée automate 24 VDC, courant inférieur à 20 mA ; deux fils souhaités.": [
+    "PLC input 24 VDC, current below 20 mA; two wires preferred.",
+    "PLC输入24 VDC，电流小于20 mA；希望两线制。",
+    "SPS-Eingang 24 VDC, Strom unter 20 mA; zwei Adern gewünscht.",
+    "Entrada PLC 24 VDC, corriente inferior a 20 mA; dos hilos deseados.",
+    "Вход ПЛК 24 VDC, ток менее 20 mA; предпочтительно два провода.",
+    "Ingresso PLC 24 VDC, corrente inferiore a 20 mA; due fili desiderati.",
+    "PLC入力24 VDC、20 mA未満。2線式を希望。"
+  ],
+  "Température de 5 à 60 °C ; humidité, vapeur et projections d’eau occasionnelles.": [
+    "Temperature 5 to 60 °C; humidity, steam and occasional splashes.",
+    "温度5至60 °C；潮湿、蒸汽及偶尔溅水。",
+    "Temperatur 5 bis 60 °C; Feuchtigkeit, Dampf und gelegentliches Spritzwasser.",
+    "Temperatura de 5 a 60 °C; humedad, vapor y salpicaduras ocasionales.",
+    "Температура от 5 до 60 °C; влажность, пар и редкие брызги воды.",
+    "Temperatura da 5 a 60 °C; umidità, vapore e schizzi occasionali.",
+    "温度5～60 °C、湿気、蒸気、時折の水しぶき。"
+  ],
+  "Utilisation intérieure, 10 à 40 °C ; nettoyage avec désinfectant, sans immersion.": [
+    "Indoor use, 10 to 40 °C; cleaning with disinfectant, no immersion.",
+    "室内使用，10至40 °C；消毒剂清洁，无浸泡。",
+    "Innenbereich, 10 bis 40 °C; Reinigung mit Desinfektionsmittel, kein Eintauchen.",
+    "Uso interior, 10 a 40 °C; limpieza con desinfectante, sin inmersión.",
+    "В помещении, от 10 до 40 °C; очистка дезинфицирующим средством без погружения.",
+    "Uso interno, da 10 a 40 °C; pulizia con disinfettante, senza immersione.",
+    "屋内使用10～40 °C、消毒剤で清掃、浸漬なし。"
+  ],
+  "Température de −20 à +80 °C ; vibrations, huile et poussières ; protection IP67 souhaitée.": [
+    "Temperature −20 to +80 °C; vibration, oil and dust; IP67 protection required.",
+    "温度−20至+80 °C；振动、油和灰尘；希望IP67防护。",
+    "Temperatur −20 bis +80 °C; Vibrationen, Öl und Staub; Schutzart IP67 gewünscht.",
+    "Temperatura de −20 a +80 °C; vibración, aceite y polvo; protección IP67 deseada.",
+    "Температура от −20 до +80 °C; вибрация, масло и пыль; требуется IP67.",
+    "Temperatura da −20 a +80 °C; vibrazioni, olio e polvere; protezione IP67 desiderata.",
+    "温度−20～+80 °C、振動、油、粉塵、防護等級IP67を希望。"
   ]
 }

@@ -104,6 +104,9 @@ export interface CrmProject {
   company: string | null;
   projectName: string | null;
   countryCode: string | null;
+  /** Submitted site; additive for servers preceding the location migration. */
+  siteCity?: string | null;
+  salesContactSuggested?: string | null;
   salesPersonId: string | null;
   faePersonId: string | null;
   currency: string | null;

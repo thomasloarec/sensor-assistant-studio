@@ -2162,8 +2162,7 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  /* La colonne ne défile plus séparément : le bouton principal et le
-     tableau des distances ne peuvent plus être coupés. */
+  /* Aperçu autonome : le panneau plein écran borne séparément cette colonne. */
   overflow: visible;
   max-height: none;
 }
@@ -2464,3 +2463,23 @@
 .mw-cable-settings, .mw-controls > .mw-advanced-settings { padding:0.75rem; background:var(--surface); border-radius:var(--r-md); margin-block:0.75rem; }
 .mw-cable-settings > summary, .mw-controls > .mw-advanced-settings > summary { cursor:pointer; min-height:44px; display:flex; align-items:center; font:var(--t-body); color:var(--foreground); }
 .mw-controls .mw-advanced-body { position:static; max-height:none; width:auto; }
+
+/* September feedback: independent control and scene scrolling. */
+.workspace-panel-bare > div { height: 100%; min-height: 0; }
+.workspace-panel-bare .mw.mw-stage { height: 100%; min-height: 0; overflow: hidden; }
+.workspace-panel-bare .mw-stage-grid { overflow: hidden; }
+.workspace-panel-bare .mw-stage .mw-controls,
+.workspace-panel-bare .mw-stage .mw-main { min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
+.workspace-panel-bare .mw-stage .mw-canvas { flex: 1 1 auto; min-height: 280px; height: auto; max-height: none; }
+.mw .mw-display-body { background: var(--standex-deep); color: var(--foreground); }
+.mw .mw-display-body label, .mw .mw-display-body summary, .mw .mw-display-body .mw-help { color: inherit; }
+.mw .mw-display-body label { display: flex; align-items: center; gap: 8px; min-height: 44px; }
+.mw-stage .mw-scene-tools { inset-block-end: 8px; pointer-events: none; }
+.mw-stage .mw-scene-tools > * { pointer-events: auto; }
+.mw-stage .mw-display-menu { max-height: 100%; overflow-y: auto; overscroll-behavior: contain; }
+@media (max-width: 1023px) {
+  .workspace-panel-bare .mw-stage-grid { display: flex; flex-direction: column; overflow-y: auto; }
+  .workspace-panel-bare .mw-stage .mw-main { flex-shrink: 0; overflow: visible; }
+  .workspace-panel-bare .mw-stage .mw-controls { flex-shrink: 0; max-height: 45dvh; overflow-y: auto; }
+  .workspace-panel-bare .mw-stage .mw-canvas { flex: none; height: 55dvh; min-height: 340px; }
+}

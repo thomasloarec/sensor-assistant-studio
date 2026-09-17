@@ -1,3 +1,4 @@
+import { createPortal } from "react-dom";
 import { LanguagePicker, useLocale } from "@/lib/i18n/react";
 import { t } from "@/lib/i18n/core";
 import { BrandLogo } from "@/components/standex/brand-logo";
@@ -82,7 +83,9 @@ export function WorkspacePanel({
   useEffect(() => {
     if (!open) return;
     restoreTo.current = (document.activeElement as HTMLElement | null) ?? null;
-    panelRef.current?.focus();
+    panelRef.current?.focus({ preventScroll: true });
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
     // Un panneau s'ouvre TOUJOURS en haut : la fenêtre et le corps du panneau
     // sont remis à zéro, sinon on arrive au pied de l'écran précédent.
     window.scrollTo({ top: 0 });
@@ -96,6 +99,7 @@ export function WorkspacePanel({
     document.addEventListener("keydown", onKey);
     return () => {
       document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = previousOverflow;
       const back = restoreTo.current;
       if (back && document.contains(back)) back.focus();
     };
@@ -109,7 +113,7 @@ export function WorkspacePanel({
     const nodes = focusableIn(panelRef.current);
     if (nodes.length === 0) {
       e.preventDefault();
-      panelRef.current?.focus();
+      panelRef.current?.focus({ preventScroll: true });
       return;
     }
     const first = nodes[0]!;
@@ -127,7 +131,8 @@ export function WorkspacePanel({
   // Rien à rendre tant que le panneau n'a jamais été ouvert.
   if (!open && !(keepMounted && openedOnce.current)) return null;
 
-  return (
+  if (typeof document === "undefined") return null;
+  return createPortal(
     <div data-readable>
       {open ? (
         <button
@@ -153,7 +158,7 @@ export function WorkspacePanel({
             : "hidden"
         }
       >
-        <div className="workspace-panel-header material sticky top-0 z-10 flex h-14 items-center gap-3 border-b border-[var(--hairline)] px-4 sm:px-6">
+        <div className="workspace-panel-header shrink-0 material sticky top-0 z-10 flex h-14 items-center gap-3 border-b border-[var(--hairline)] px-4 sm:px-6">
           {onBack ? (
             <Button
               variant="ghost"
@@ -195,13 +200,13 @@ export function WorkspacePanel({
           data-workshop-scroll=""
           className={
             bare
-              ? "min-w-0 flex-1 overflow-hidden"
-              : "min-w-0 flex-1 scroll-smooth overflow-y-auto px-4 py-7 sm:px-6"
+              ? "workspace-panel-bare min-h-0 min-w-0 flex-1 overflow-hidden"
+              : "min-h-0 min-w-0 flex-1 scroll-smooth overflow-y-auto px-4 py-7 sm:px-6"
           }
         >
           {children}
         </div>
       </div>
-    </div>
+    </div>, document.body
   );
 }

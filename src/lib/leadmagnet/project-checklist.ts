@@ -1,3 +1,4 @@
+import { isPcbSensor } from "./product-presentation";
 /** Résumé de projet partagé entre « Mon montage » et « Avec Standex ».
  *
  * Trois états seulement, et ils ne se confondent jamais :
@@ -261,7 +262,7 @@ export function projectChecklist(d: DesignDossier): ChecklistItem[] {
     tab: "revue",
   };
 
-  return [besoin, capteur, montage, cable, connecteur, contexte];
+  return [besoin, capteur, montage, ...(isPcbSensor(d.selectedSensorId) ? [] : [cable, connecteur]), contexte];
 }
 
 /** Aucun pourcentage automatique : seules les étapes réellement traitées comptent,

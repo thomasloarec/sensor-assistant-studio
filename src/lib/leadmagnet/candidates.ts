@@ -64,7 +64,7 @@ function mountingVerdict(
           }
         : { status: "excluded", reason: "Pas de fixation vissée documentée pour ce boîtier." };
     case "press_fit": {
-      if (sensor.shape !== "pressfit")
+      if (!["pressfit", "cylinder"].includes(sensor.shape))
         return { status: "excluded", reason: "Pas d'emboîtement dans un trou documenté." };
       if (!Number.isFinite(mounting.holeDiameterMm) || mounting.holeDiameterMm <= 0)
         return { status: "to_verify", reason: "Diamètre du trou non renseigné." };

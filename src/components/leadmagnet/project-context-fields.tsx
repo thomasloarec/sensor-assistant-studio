@@ -38,13 +38,13 @@ export function ProjectContextFields({
   const unknownButton = (key: string) => (
     <Button
       type="button"
-      variant="outline"
+      variant={business.undefinedFields?.includes(key) ? "default" : "outline"}
       size="sm"
       className="mt-2 min-h-11"
       aria-pressed={business.undefinedFields?.includes(key) ?? false}
       onClick={() => defer(key)}
     >
-      {t("Non défini pour le moment")}
+      {business.undefinedFields?.includes(key) ? "✓ " : ""}{t("Non défini pour le moment")}
     </Button>
   );
   // i18n-canonical: choice labels are translated at render time.

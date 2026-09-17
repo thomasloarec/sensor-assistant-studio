@@ -1,3 +1,4 @@
+import { cableConstruction } from "@/lib/leadmagnet/product-presentation";
 import { housingYawDeg, transverseApproach } from "@/lib/standex/housing-pose";
 import { pairedMagnetModel } from "@/lib/standex/paired-magnets";
 import { t } from "@/lib/i18n/core";
@@ -166,19 +167,6 @@ function CustomBoard({ model, xray }: { model: SensorModel; xray: boolean }) {
           lineWidth={2}
         />
       ))}
-      {/* Fils de liaison vers l'extérieur */}
-      {([-1, 1] as const).map((sign) => (
-        <Line
-          key={`wire${sign}`}
-          points={[
-            [-L, boardTop + 0.12, sign * 2.2],
-            [-L - reedDiameter * 2, boardTop + 0.12, sign * 2.2],
-            [-L - reedDiameter * 3.2, boardTop + 0.12, sign * 3.4],
-          ]}
-          color="#60727d"
-          lineWidth={2}
-        />
-      ))}
     </group>
   );
 }
@@ -229,6 +217,13 @@ function BareReedBody({ model }: { model: SensorModel }) {
     </group>
   );
 }
+function mk18Profile() {
+  const s = new Shape(), r = 2.5, flat = 2.3, a = Math.acos(flat / r);
+  s.absarc(0, 0, r, a, Math.PI - a, false);
+  s.lineTo(-flat, -Math.sqrt(r * r - flat * flat));
+  s.absarc(0, 0, r, Math.PI + a, 2 * Math.PI - a, false);
+  s.closePath(); return s;
+}
 function StandardBody({
   model,
   xray,
@@ -276,7 +271,7 @@ function StandardBody({
   const cylindrical = ["cylinder", "threaded", "pressfit", "glass"].includes(model.shape);
   return (
     <group>
-      {cylindrical ? (
+      {model.id === "MK18" ? <mesh position={[-l / 2, 0, 0]} rotation={[0, Math.PI / 2, 0]}><extrudeGeometry args={[mk18Profile(), { depth: l, bevelEnabled: false, curveSegments: 24 }]} />{material}</mesh> : cylindrical ? (
         <mesh rotation={[0, 0, Math.PI / 2]} scale={[h / 2, 1, w / 2]}>
           <cylinderGeometry args={[1, 1, l, 48]} />
           {t(material)}
@@ -354,26 +349,29 @@ function StandardBody({
                 <meshStandardMaterial color="#a7b5bd" metalness={0.8} roughness={0.25} />
               </mesh>
             ))
-          : electrical &&
-            showCable &&
-            [-1, 1].map((sign) => {
-              const side = model.cableSide ?? -1,
-                z = bladeOffsetZ(model) + sign * Math.min(0.65, w * 0.15);
-              return (
-                <Line
-                  key={sign}
-                  points={[
-                    [(side * l) / 2, 0, z],
-                    [side * (l / 2 + 8), 0, z],
-                    [side * (l / 2 + 10), 0, z],
-                  ]}
-                  color="#60727d"
-                  lineWidth={2}
-                />
-              );
-            })}
+          : electrical && showCable ? <SensorCable model={model} /> : null}
+
     </group>
   );
+}
+function SensorCable({ model }: { model: SensorModel }) {
+  const kind = cableConstruction(model);
+  if (kind === "none") return null;
+  const side = model.cableSide ?? -1;
+  const start = side * model.body[0] / 2;
+  const z = bladeOffsetZ(model), y = bladeOffsetY(model);
+  const jacket = kind !== "wires";
+  const split = jacket ? 7 : 0;
+  return <group>
+    {jacket ? <mesh position={[start + side * 3.5, y, z]} rotation={[0, 0, Math.PI / 2]}>
+      <cylinderGeometry args={[0.9, 0.9, 7, 16]} />
+      <meshStandardMaterial color={kind === "metal" ? "#a7b5bd" : "#60727d"} metalness={kind === "metal" ? 0.8 : 0.1} roughness={0.5} />
+    </mesh> : null}
+    {[-1, 1].map(sign => <group key={sign}>
+      <Line points={[[start + side * split, y, z + sign * 0.4], [start + side * 10, y, z + sign * 0.65]]} color="#60727d" lineWidth={2} />
+      <Line points={[[start + side * 10, y, z + sign * 0.65], [start + side * 12, y, z + sign * 0.65]]} color="#b4bcc4" lineWidth={1.5} />
+    </group>)}
+  </group>;
 }
 function ContactFlow({ span, reduced }: { span: number; reduced: boolean }) {
   const ref = useRef<Group>(null);

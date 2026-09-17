@@ -1,3 +1,5 @@
+import { validSiteCountry } from "./sales-contact";
+import { isPcbSensor } from "./product-presentation";
 import { requirementAnswer } from "./requirement-answer";
 /** Soumission : instantané immuable, statut réel uniquement après succès backend. */
 import { dossierHash, toClientDto, type ClientDossierDto, type DesignDossier } from "./dossier";
@@ -12,6 +14,7 @@ type Tr = (source: string) => string;
 const identity: Tr = (source) => source;
 
 function cablingSummary(dossier: DesignDossier, tr: Tr = identity): string[] {
+  if (isPcbSensor(dossier.selectedSensorId)) return [tr("Montage sur PCB : câble et connecteur non applicables.")];
   const e = estimateCableLength(dossier.cabling);
   const uncovered = uncoveredMotionStates(dossier.cabling);
   return [
@@ -96,6 +99,8 @@ export async function checkSubmission(input: SubmissionInput): Promise<Submissio
   if (!input.reviewAcknowledged) problems.push("Confirmez la relecture du résumé technique.");
   if (!input.dossier.business.contactEmail?.trim())
     problems.push("Renseignez un contact pour le retour Standex.");
+  if (!input.dossier.business.siteCity?.trim() || !validSiteCountry(input.dossier.business.siteCountry))
+    problems.push("Renseignez la ville et le pays de votre site pour contacter le responsable Standex de votre zone.");
   if (!ndaAllowsConfidentialTransfer(input.nda))
     problems.push(
       "NDA requis : aucun transfert confidentiel n'est possible sans preuve vérifiée d'un NDA en vigueur.",
@@ -211,6 +216,8 @@ export function technicalSummary(dossier: DesignDossier, tr: Tr = identity): str
     "",
     `## ${tr("Contexte projet")}`,
     `- ${tr("Numéro de téléphone")} : ${dossier.business.contactPhone || tr("inconnu")}`,
+    `- ${tr("Ville du site")} : ${dossier.business.siteCity || tr("inconnu")}`,
+    `- ${tr("Pays du site")} : ${dossier.business.siteCountry || tr("inconnu")}`,
     `- ${tr("Phase")} : ${tr(dossier.business.projectPhase)}`,
     `- ${tr("Volume annuel")} : ${volume}`,
     `- ${tr("Démarrage série")} : ${dossier.business.seriesStartDate ?? tr("inconnu")}`,
@@ -221,6 +228,6 @@ export function technicalSummary(dossier: DesignDossier, tr: Tr = identity): str
     ...cablingSummary(dossier, tr),
     "",
     `## ${tr("Terminaison")}`,
-    ...connectorSummaryLines(dossier.termination, tr).map((l) => `- ${l}`),
+    ...(isPcbSensor(dossier.selectedSensorId) ? [] : connectorSummaryLines(dossier.termination, tr).map((l) => `- ${l}`)),
   ].join("\n");
 }

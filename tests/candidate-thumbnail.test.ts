@@ -151,7 +151,7 @@ describe("Vignettes 3D des candidats", () => {
         showCable: true,
       })),
     );
-    expect(cabled).toContain("#8394a1");
+    expect(cabled).toContain("#60727d");
     expect(cabled).toContain("<circle");
 
     const smd = renderToStaticMarkup(

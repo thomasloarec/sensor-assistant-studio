@@ -122,6 +122,8 @@ const businessSchema = z.object({
   contactEmail: z.string().nullable(),
   contactCompany: z.string().nullable(),
   contactPhone: z.string().max(80).nullable().optional().default(null),
+  siteCity: z.string().max(160).nullable().optional().default(null),
+  siteCountry: z.string().regex(/^[A-Z]{2}$/).nullable().optional().default(null),
   undefinedFields: z.array(z.enum(["annualVolume", "seriesStartDate", "samplesNeededBy", "seriesDurationYears", "projectPhase"])).optional().default([]),
 });
 

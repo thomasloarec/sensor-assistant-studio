@@ -81,7 +81,7 @@ export function pairCardFor(sensor: SensorModel): PairCard {
     sensorId: sensor.id,
     sensorName: sensor.name,
     magnetId,
-    couple: `${sensor.id} + ${magnetId}`,
+    couple: `${sensor.id === CUSTOM_SENSOR_ID ? sensor.name : sensor.id} + ${magnetId}`,
     fixingLabel: FIXING_LABEL[fixingGroup(sensor)] ?? FIXING_LABEL["unknown"]!,
     familyLabel: FAMILY_LABEL[sensor.shape],
     size: sizeLabel(sensor),
@@ -102,7 +102,7 @@ export function pairCards(
 ): PairCard[] {
   const limit = options.limit ?? 3;
   const cards = [...new Set(sensorIds)]
-    .filter((id) => id !== CUSTOM_SENSOR_ID && isKnownSensorId(id))
+    .filter((id) => id !== CUSTOM_SENSOR_ID && id !== "GENERIC" && isKnownSensorId(id))
     .map((id) => pairCardFor(sensorById(id)));
   const documented = cards.filter((c) => c.maxPullInMm !== null);
   const rest = cards.filter((c) => c.maxPullInMm === null);

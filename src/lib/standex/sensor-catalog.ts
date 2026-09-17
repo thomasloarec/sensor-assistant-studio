@@ -19,6 +19,7 @@ export interface SensorModel {
   description: string;
   contact: "A" | "unsupported";
   cableSide?: -1 | 1;
+  reedOffsetZ?: number;
   terminalSpan?: number;
   collarDiameter?: number;
   nutWidth?: number;
@@ -199,7 +200,7 @@ export const SENSOR_CATALOG: readonly SensorModel[] = [
     [6.225, 3.05, 9, 3.1],
   ]),
   cylindrical("MK14", 25.5, 4),
-  { ...cylindrical("MK18", 17, 5, 4.6), description: "Corps compact à section ovale" },
+  { ...cylindrical("MK18", 17, 5, 4.6), description: "Corps Ø 5 mm avec méplats, deux fils séparés" },
   { ...cylindrical("MK20_1", 10, 3, 2.7), description: "Petit boîtier à section ovale" },
   { ...cylindrical("MK20_2", 7.5, 2.7, 2.5), description: "Boîtier miniature à section ovale" },
   flanged("MK21", 28.5, 19, 6.25, 9.5, 3.4, [
@@ -234,6 +235,8 @@ export const SENSOR_CATALOG: readonly SensorModel[] = [
       [12, -1.5, 3.3, 3.3],
     ],
     {
+      shape: "block",
+      reedOffsetZ: 2,
       description: "Boîtier bas avec deux fixations",
       note: "Enveloppe vérifiée ; épaulements autour des fixations simplifiés.",
     },
@@ -330,6 +333,7 @@ export { number as formatMm } from "@/lib/i18n/core";
 import { number as formatMm } from "@/lib/i18n/core";
 export function sizeLabel(s: SensorModel): string {
   const [l, h, w] = s.body;
+  if (s.id === "MK18") return `${formatMm(l)} mm · Ø 5 mm`;
   if (["cylinder", "threaded", "pressfit", "glass"].includes(s.shape) && h === w)
     return `${formatMm(l)} mm · Ø ${formatMm(h)} mm`;
   return `${formatMm(l)} × ${formatMm(w)} × ${formatMm(h)} mm`;
@@ -338,7 +342,7 @@ export const sensorSource = (s: SensorModel) =>
   s.sourceFile ? `/datasheets/${s.sourceFile}#page=${s.sourcePage}` : null;
 /** Blade centre is illustrative, inside the raised part; this is not a CAD datum. */
 export const bladeOffsetZ = (s: SensorModel) =>
-  s.shape === "flange" ? -s.body[2] / 2 + (s.raisedDepth ?? s.body[2]) / 2 : 0;
+  s.reedOffsetZ ?? (s.shape === "flange" ? -s.body[2] / 2 + (s.raisedDepth ?? s.body[2]) / 2 : 0);
 /** Le reed du schéma sur mesure repose SUR la carte : ses lames ne sont pas au centre. */
 export const bladeOffsetY = (s: SensorModel) => {
   const layout = customLayout(s);

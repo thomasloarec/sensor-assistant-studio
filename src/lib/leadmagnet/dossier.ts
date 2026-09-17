@@ -1,3 +1,4 @@
+import { isPcbSensor } from "./product-presentation";
 /** Lead Magnet — dossier vivant partagé entre conversation, atelier 3D et revue.
  * Logique métier pure : aucun accès réseau, aucun stockage, aucune UI ici.
  */
@@ -49,6 +50,8 @@ export interface BusinessMeta {
   contactEmail: string | null;
   contactCompany: string | null;
   contactPhone?: string | null;
+  siteCity?: string | null;
+  siteCountry?: string | null;
   /** Explicitly deferred fields; an empty input is not an answered question. */
   undefinedFields?: string[];
 }
@@ -188,6 +191,8 @@ export function createDossier(
       contactEmail: null,
       contactCompany: null,
       contactPhone: null,
+      siteCity: null,
+      siteCountry: null,
       undefinedFields: [],
     },
     internalNotes: [],
@@ -299,7 +304,8 @@ export function currentMounting(d: DesignDossier) {
 }
 
 export function toClientDto(d: DesignDossier): ClientDossierDto {
-  const clone = { ...d, guidedMounting: currentMounting(d) };
+  const current = isPcbSensor(d.selectedSensorId) ? { ...d, cabling: EMPTY_CABLING, termination: DEFAULT_TERMINATION, workshop: d.workshop ? { ...d.workshop, cableLengthMm: null } : null } : d;
+  const clone = { ...current, guidedMounting: currentMounting(current) };
   if (clone.designFreeze && clone.designFreeze.contextKey !== freezeContextKey(clone.workshop, clone.studioV2)) clone.designFreeze = null;
   delete (clone as Partial<DesignDossier>).internalNotes;
   return clone as ClientDossierDto;

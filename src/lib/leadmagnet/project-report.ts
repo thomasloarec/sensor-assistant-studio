@@ -1,6 +1,17 @@
+import { isPcbSensor } from "./product-presentation";
 import { toClientDto, stableStringify, REQUIREMENT_LABELS, type DesignDossier } from "./dossier";
 import { technicalSummary } from "./submission";
 import { VARIABLE_FIELDS } from "./nda-docx";
+import { type TestedVerdict } from "./tested-pairs";
+import { simulateMounting } from "../standex/mounting/simulate";
+import { scenePoseSampler } from "../standex/mounting/bridge";
+
+// i18n-canonical: same observed-cycle verdict as the result screen.
+const cycleMessage = (verdict: TestedVerdict) => verdict === "expected"
+  ? "Détection prévue dans ce montage"
+  : verdict === "none" ? "Pas de détection sur ce cycle — rapprochez l'aimant ou changez de couple"
+  : verdict === "undocumented" ? "Position non documentée — Standex peut la mesurer pour vous"
+  : "Distances non publiées pour ce couple — Standex peut les mesurer";
 
 export interface ReportSection {
   id: number;
@@ -26,10 +37,17 @@ export function projectReportSections(
     entry("Entreprise", d.business.contactCompany),
     entry("E-mail professionnel", d.business.contactEmail),
     entry("Numéro de téléphone", d.business.contactPhone),
+    entry("Ville du site", d.business.siteCity),
+    entry("Pays du site", d.business.siteCountry),
   ]);
   const w = d.workshop;
   if (w) {
-    const computed = toClientDto(d).guidedMounting?.computed;
+    const mounting = toClientDto(d).guidedMounting;
+    const computed = mounting?.computed;
+    const sim = mounting ? simulateMounting(mounting, undefined, undefined, scenePoseSampler(w)) : null;
+    const result = sim?.coverage === "covered" && !sim.illustrative
+      ? cycleMessage(sim.samples.some(s => s.contact === "closed") ? "expected" : "none")
+      : computed?.mainMessage;
     add("Configuration du montage", [
       entry("Capteur", w.sensorId),
       entry("Aimant", w.magnetModel),
@@ -40,12 +58,12 @@ export function projectReportSections(
       ),
       entry("Position ouverte", `${w.start} mm`),
       entry("Position fermée", `${w.end} mm`),
-      entry("Longueur de câble retenue (mm)", w.cableLengthMm),
+      ...(!isPcbSensor(d.selectedSensorId) ? [entry("Longueur de câble retenue (mm)", w.cableLengthMm)] : []),
       entry("Orientation de l'aimant", `${w.magnetAngle}° / ${w.magnetTilt}°`),
       entry("Orientation sur la machine", `${w.mountAngle}° · (${w.mountX}, ${w.mountZ}) mm`),
       entry("Trajectoire", `${w.motion} · ${w.offset} / ${w.travel} mm · ${w.span}°`),
       entry("Fichier 3D", w.machine?.fileName),
-      entry("Le résultat", computed ? tr(computed.mainMessage) : unknown),
+      entry("Le résultat", result ? tr(result) : unknown),
       entry("Ferme à", computed?.pullInMm == null ? unknown : `${computed.pullInMm} mm`),
       entry("Ouvre à", computed?.dropOutMm == null ? unknown : `${computed.dropOutMm} mm`),
       ...(computed?.illustrative
@@ -70,7 +88,7 @@ export function projectReportSections(
       d.testedPairs.map((p) =>
         entry(
           `${p.sensorId} + ${p.magnetId} · ${p.approach} · ${p.at}`,
-          p.mainMessage || tr(p.verdict === "expected" ? "Détection prévue" : "Position à mesurer"),
+          tr(p.mainMessage || cycleMessage(p.verdict)),
         ),
       ),
     );

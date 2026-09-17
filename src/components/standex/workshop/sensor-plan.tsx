@@ -1,3 +1,4 @@
+import { cableConstruction } from "@/lib/leadmagnet/product-presentation";
 import type { SensorModel } from "@/lib/standex/sensor-catalog";
 import {
   bladeLength,
@@ -82,12 +83,14 @@ export function SensorPlan({
             fill="#aab5be"
           />
         ))
-      ) : electrical && showCable ? (
-        <path
-          d={`M${(cableSide * l) / 2} ${-w * 0.17} h${cableSide * 7} M${(cableSide * l) / 2} ${w * 0.17} h${cableSide * 7}`}
-          stroke="#8394a1"
-          strokeWidth={Math.min(0.65, w * 0.12)}
-        />
+      ) : electrical && showCable && cableConstruction(model) !== "none" ? (
+        <g transform={`translate(${cableSide * l / 2}, ${z}) scale(${cableSide},1)`} fill="none">
+          {cableConstruction(model) !== "wires" ? <path d="M0 0 H2 Q3 -1.2 4 0 T6 0 H7" stroke="#60727d" strokeWidth="1.6" /> : null}
+          {[-1,1].map(sign => <g key={sign}>
+            <path d={cableConstruction(model) === "wires" ? `M0 ${sign * 0.5} H2 Q3 ${sign * 0.5 - 1.2} 4 ${sign * 0.5} T6 ${sign * 0.5} H9` : `M7 ${sign * 0.35} L9 ${sign * 0.7}`} stroke="#60727d" strokeWidth="0.5" />
+            <path d={`M9 ${sign * (cableConstruction(model) === "wires" ? 0.5 : 0.7)} h2`} stroke="#a7b5bd" strokeWidth="0.3" />
+          </g>)}
+        </g>
       ) : null}
       <rect
         x={-l / 2}

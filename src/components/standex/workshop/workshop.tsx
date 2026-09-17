@@ -1,3 +1,5 @@
+import { observedCycleVerdict } from "@/lib/leadmagnet/tested-pairs";
+import { isPcbSensor } from "@/lib/leadmagnet/product-presentation";
 import {
   defaultMagnetFor,
   documentedAlias,
@@ -740,14 +742,7 @@ export default function MagneticWorkshop({
   /** Quatre situations distinctes, jamais confondues : détection prévue,
    *  absence de détection sur ce cycle, pose hors gabarit, couple sans table
    *  publiée. Le nom du couple n'emprunte jamais les seuils d'un autre. */
-  const verdictKind: "expected" | "none" | "undocumented" | "unpublished" =
-    basis === "unavailable"
-      ? "unpublished"
-      : computed && computed.coverage === "covered" && computed.evidence !== "uncharacterised"
-        ? computed.verdict === "expected"
-          ? "expected"
-          : "none"
-        : "undocumented";
+  const verdictKind = observedCycleVerdict(guidedSim, basis !== "unavailable");
   /* Le guide d'activation publie des PLAGES pour ce couple : elles existent et
      sont lisibles, mais ce ne sont pas des seuils qualifiés. Les deux situations
      doivent être distinguées dans le texte, sans jamais promouvoir une plage en
@@ -1568,7 +1563,7 @@ export default function MagneticWorkshop({
           {approachPicker}
           {travelControls}
           {playButton}
-          <details className="mw-cable-settings" open={cableOpen} onToggle={(e) => setCableOpen(e.currentTarget.open)}>
+          {!isPcbSensor(config.sensorId) ? <details className="mw-cable-settings" open={cableOpen} onToggle={(e) => setCableOpen(e.currentTarget.open)}>
             <summary>{t("Longueur et trajet du câble")}</summary>
         {/* Longueur retenue : réellement modifiable et enregistrée avec le
             montage. Le configurateur de câble complet vit dans « Avec Standex ». */}
@@ -1604,6 +1599,7 @@ export default function MagneticWorkshop({
 
             {!machine ? <p className="mw-help">{t("Sans modèle importé, saisissez la longueur souhaitée. Le pointage d’un trajet nécessite les surfaces de votre modèle.")}</p> : null}
           </details>
+          : null}
           {advancedSettings}
           {guideMaterialsBlock}
           <div className="mw-controls-links">

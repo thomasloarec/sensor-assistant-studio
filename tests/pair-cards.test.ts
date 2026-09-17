@@ -63,6 +63,6 @@ describe("couples proposés — écran d'après les six questions", () => {
     const questions = source.slice(source.indexOf("const optionalQuestions"));
     expect(questions).toContain("{cablageSection}");
     const revue = source.slice(source.indexOf("const revueSection"));
-    expect(revue).toContain("{optionalQuestions}");
+    expect(revue).toContain("!isPcbSensor(dossier.selectedSensorId) ? optionalQuestions : null");
   });
 });

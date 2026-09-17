@@ -1,5 +1,11 @@
+import { NeedExamples } from "./need-examples";
+import { BookingDialog } from "./booking-dialog";
+import { COUNTRY_CODES, salesContactFor } from "@/lib/leadmagnet/sales-contact";
+import { pairDemonstration } from "@/lib/standex/magnetic-workshop";
+import { isPcbSensor, housingMaterial, pairCategory, suggestedProjectTitle } from "@/lib/leadmagnet/product-presentation";
+import { pairCardFor } from "@/lib/leadmagnet/pair-cards";
 import { requirementAnswer } from "@/lib/leadmagnet/requirement-answer";
-import { getLocale, msg, setLocale, t, type Locale } from "@/lib/i18n/core";
+import { getLocale, isLocale, msg, setLocale, t, type Locale } from "@/lib/i18n/core";
 import { createNdaSync, StaleContextError } from "@/lib/leadmagnet/nda-sync";
 import { Link } from "@tanstack/react-router";
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -620,6 +626,8 @@ export function DesignSpace({
   }, []);
 
   const [ndaDialogOpen, setNdaDialogOpen] = useState(false);
+  const [bookingCountry, setBookingCountry] = useState<string | null>(null);
+  const [bookingOpen, setBookingOpen] = useState(false);
   const [cablePanelOpen, setCablePanelOpen] = useState(false);
   const [volumeError, setVolumeError] = useState<string | null>(null);
   /** Le modèle 3D reste en mémoire tant que ce partage n'est pas explicitement demandé. */
@@ -628,6 +636,14 @@ export function DesignSpace({
   const [routingTarget, setRoutingTarget] = useState<RoutingTarget>({ kind: "base" });
   const [routingSlot, setRoutingSlot] = useState<RoutingSlot>("sensor");
   const [tab, setTab] = useState("besoin");
+  useEffect(() => {
+    if (tab !== "montage") return;
+    setDossier(d => {
+      if (d.title.trim() && d.title !== t("Nouveau projet", isLocale(d.sourceLocale) ? d.sourceLocale : "fr")) return d;
+      const title = suggestedProjectTitle(d.requirements.find(r => r.key === "detection_goal")?.value ?? "");
+      return title ? { ...d, title } : d;
+    });
+  }, [tab]);
   /** Divulgation progressive : les onglets détaillés restent accessibles à la demande. */
   const [showAdvanced, setShowAdvanced] = useState(false);
   /** Mode guidé : une seule question à la fois, sans rien retirer du dossier. */
@@ -723,6 +739,8 @@ export function DesignSpace({
       // Réponse née d'un autre dossier : elle ne doit pas s'appliquer ici.
       if (contextGenRef.current !== gen) return;
       applyNdaStatus(status);
+      setNdaDialogOpen(false);
+      setSummaryMessage(t("Votre fiche NDA est prête. Ouvrez les informations NDA pour déposer votre document signé et suivre sa vérification."));
     } catch (error) {
       if (contextGenRef.current !== gen) return;
       setNdaError(
@@ -1191,6 +1209,8 @@ export function DesignSpace({
       setNdaServer(null);
       setNda(INITIAL_NDA);
     setNdaDialogOpen(false);
+    setBookingOpen(false);
+    setBookingCountry(null);
     setVolumeError(null);
       setPrivacy((p) => ({ ...p, consents: [] }));
       setAcknowledged(false);
@@ -1524,6 +1544,9 @@ export function DesignSpace({
           if (contextGenRef.current !== gen) return;
           setServerRevision((r) => r + 1);
           setPreparedUpload(null);
+          setConsentNotice(null);
+          setBookingCountry(input.dossier.business.siteCountry ?? null);
+          setBookingOpen(true);
           // Le succès n'est PAS un message libre : il décrit la révision
           // exactement confirmée par le serveur. Dès que le brouillon change,
           // l'écran repasse de lui-même en « Modifications non envoyées ».
@@ -1748,8 +1771,17 @@ export function DesignSpace({
       </div>
     ) : null;
 
+  const resetSearch = () => {
+    if (busyRef.current || !guardReplace(t("réinitialiser la recherche"))) return;
+    const fresh = createDossier(undefined, getLocale());
+    setDossier(fresh); adoptBaseline(fresh); loadWorkshop(null); resetServerContext(null, 0);
+    setConnectorDraft(EMPTY_CONNECTOR_DRAFT); setConnectorError(null);
+    setFiltersOff([]); setExplore({}); setShowAllPairs(false); setFocusIdx(0);
+    setPanel(null); setTab("besoin");
+  };
   const besoinSection = (
     <div className="space-y-5">
+      <Button variant="ghost" onClick={resetSearch}>{t("Réinitialiser ma recherche")}</Button>
       {showAdvanced ? (
         <>
           <p className="text-base text-muted-foreground">{t(LOCAL_ASSISTANT_LABEL)}</p>
@@ -1822,9 +1854,7 @@ export function DesignSpace({
             {msg("Question {0} sur {1}", [focusIdx + 1, GUIDED_QUESTIONS.length])}
           </p>
           <h2 className="t-display-m mt-3">{t(question.prompt)}</h2>
-          <p className="t-caption mt-4 max-w-[44ch]">
-            {msg("Par exemple : {0}", [t(question.example)])}
-          </p>
+          <div className="mt-4"><NeedExamples questionKey={question.key} /></div>
           <Label htmlFor={`guide-${question.key}`} className="sr-only">
             {t(question.prompt)}
           </Label>
@@ -2097,11 +2127,10 @@ export function DesignSpace({
     [candidates, shownFilters, activeFilterIds, dossier.mounting, dossier.envelope],
   );
 
-  /** Un capteur ÉCARTÉ par une contrainte dure (montage nommé, encombrement)
-   * ne remonte jamais dans les propositions : il reste lisible dans la liste
-   * complète, avec sa raison, mais il n'est plus reclassé en tête. */
+  /** Les critères actifs filtrent les suggestions. Les lever permet d'explorer
+   * d'autres montages sans réécrire les exigences du dossier. */
   const plausibleCandidates = useMemo(
-    () => candidateRows.filter((r) => r.blocked.length === 0 && r.candidate.status !== "excluded"),
+    () => candidateRows.filter((r) => r.blocked.length === 0 && r.candidate.id !== "GENERIC"),
     [candidateRows],
   );
   const otherCandidates = useMemo(
@@ -2124,11 +2153,13 @@ export function DesignSpace({
   const allPairs = useMemo(
     () =>
       pairCards(
-        plausibleCandidates.map((r) => r.candidate.id),
-        { limit: plausibleCandidates.length, preferredSensorId: dossier.selectedSensorId ?? null },
+        candidateRows.map((r) => r.candidate.id),
+        { limit: candidateRows.length, preferredSensorId: dossier.selectedSensorId ?? null },
       ),
-    [plausibleCandidates, dossier.selectedSensorId],
+    [candidateRows, dossier.selectedSensorId],
   );
+  const customPair = pairCardFor(sensorById(CUSTOM_SENSOR_ID));
+  const offerCustom = suggestedPairs.length === 0 || dossier.mounting.kind.startsWith("pcb_") || plausibleCandidates.some(r => isPcbSensor(r.candidate.id) && r.candidate.id !== CUSTOM_SENSOR_ID);
   /** Liste complète dépliée ou non : un état explicite, pour que le lien soit
    * un vrai lien et non l'ergonomie par défaut d'un dépliant. */
   const additionalPairs = allPairs.filter((c) => !suggestedPairs.some((s) => s.sensorId === c.sensorId && s.magnetId === c.magnetId));
@@ -2138,7 +2169,7 @@ export function DesignSpace({
    * validation R&D. La délégation à Standex est levée par ce choix explicite. */
   const chooseSensor = (id: string, name: string, magnetId?: string) => {
     const base = workshopDraftRef.current ?? workshop ?? dossier.workshop ?? DEFAULT_WORKSHOP;
-    const aligned = applyPairSelection(base, id, magnetId);
+    const aligned = magnetId ? pairDemonstration(base, id, magnetId) : applyPairSelection(base, id);
     // Un montage déjà enregistré peut porter un aimant choisi volontairement.
     // La présélection du capteur aligne le reste de l'atelier sans l'écraser.
     // MAIS un couple demandé explicitement (« Tester ce couple ») impose son
@@ -2388,7 +2419,7 @@ export function DesignSpace({
         ? t("Deux couples pour votre projet")
         : suggestedPairs.length === 1
           ? t("Un couple pour votre projet")
-          : t("Aucun couple ne passe vos critères");
+          : t("Une solution sur mesure pour votre projet");
   /** Phrase de critères en langage courant, construite UNIQUEMENT à partir des
    * filtres réellement actifs : aucune contrainte n'est inventée. */
   const pairsSubtitle = activeFilterIds.length
@@ -2402,6 +2433,7 @@ export function DesignSpace({
 
   const pairCardView = (card: PairCard, index: number, compact = false) => {
     const chosen = dossier.selectedSensorId === card.sensorId;
+    const blocked = candidateRows.find(r => r.candidate.id === card.sensorId)?.blocked ?? [];
     return (
       <div
         key={card.sensorId}
@@ -2421,10 +2453,13 @@ export function DesignSpace({
         </div>
         {/* Les références (MK04, M04) traversent le rendu inchangées. */}
         <p className="t-title-m">{card.couple}</p>
+        {housingMaterial(sensorById(card.sensorId)) ? <p className="t-body">{t(housingMaterial(sensorById(card.sensorId))!)}</p> : null}
+        {card.sensorId === CUSTOM_SENSOR_ID ? <p className="notice-info t-caption">{t("Conception sur mesure : forme, fixation et distances à définir avec Standex. Schéma illustratif, sans performance validée.")}</p> : null}
+        {compact && blocked.length > 0 ? <p className="notice-warning t-caption">{t("Compromis nécessaire avec vos critères")} : {shownFilters.filter(f => blocked.includes(f.id)).map(f => t(f.label)).join(" · ")}</p> : null}
         {card.materialLabel ? (
           <p className="t-caption">{msg("Aimant {0}", [card.materialLabel])}</p>
         ) : null}
-        <p className="t-body mt-2">{msg("{0}, {1}.", [t(card.fixingLabel), card.size])}</p>
+        {card.sensorId !== CUSTOM_SENSOR_ID ? <p className="t-body mt-2">{msg("{0}, {1}.", [t(card.fixingLabel), card.size])}</p> : null}
         <p className="t-body mt-2">
           {card.maxPullInMm === null ? (
             <span className="text-[var(--standex-blue-75)]">
@@ -2468,7 +2503,7 @@ export function DesignSpace({
         {filterChips ? <div className="mt-3">{filterChips}</div> : null}
         <div className="mt-1">{filterAdjust}</div>
       </div>
-      <div className="pair-grid">{suggestedPairs.map((c, i) => pairCardView(c, i))}</div>
+      <div className="pair-grid">{suggestedPairs.map((c, i) => pairCardView(c, i))}{offerCustom ? pairCardView(customPair, suggestedPairs.length) : null}</div>
       <div className="space-y-3">
         <p>
           <button
@@ -2483,7 +2518,7 @@ export function DesignSpace({
           </button>
         </p>
         {showAllPairs ? (
-          <div className="pair-grid">{additionalPairs.map((c, i) => pairCardView(c, i, true))}</div>
+          <div className="space-y-6">{[...new Set(additionalPairs.map(c => pairCategory(sensorById(c.sensorId))))].map(category => <section key={category} className="space-y-3"><h3 className="t-title-m">{t(category)}</h3><div className="pair-grid">{additionalPairs.filter(c => pairCategory(sensorById(c.sensorId)) === category).map((c, i) => pairCardView(c, i, true))}</div></section>)}</div>
         ) : null}
         {/* Deux décisions confiées à Standex : des liens discrets sur une même
             ligne. Une décision prise, jamais une valeur technique connue. */}
@@ -3379,14 +3414,6 @@ export function DesignSpace({
 
             {nda.required ? (
               <>
-                <p className="text-sm">
-                  {t("Modèle juridique approuvé :")}{" "}
-                  <strong>{APPROVED_NDA_TEMPLATE.fileName}</strong> (SHA-256{" "}
-                  {APPROVED_NDA_TEMPLATE.sha256.slice(0, 16)}
-                  {t(
-                    "…, vérifié avant chaque remplissage). L'original reste intact : seule une copie remplie est produite, sur cet appareil, sans transmettre le projet.",
-                  )}
-                </p>
                 <div className="grid gap-2 md:grid-cols-2">
                   {NDA_FIELD_LABELS.map(([key, label]) => (
                     <div key={key}>
@@ -3542,7 +3569,7 @@ export function DesignSpace({
                 {t("J'autorise l'envoi de ce contenu à Standex (ingénieurs et commercial).")}
               </p>
             </details>
-            {consentNotice ? <p className="notice notice-warning">{consentNotice}</p> : null}
+            {consentNotice && submissionStatusKind(lastSent, binding) !== "sent" ? <p className="notice notice-warning">{consentNotice}</p> : null}
 
             <label className="t-body flex min-h-11 items-center gap-3">
               <Checkbox
@@ -3945,7 +3972,7 @@ export function DesignSpace({
             </dl>
           </div>
 
-          {optionalQuestions}
+          {!isPcbSensor(dossier.selectedSensorId) ? optionalQuestions : null}
 
           <section className="panel-block-lg space-y-4">
             <h3 className="t-title-m">{t("Détails du projet")}</h3>
@@ -4003,10 +4030,23 @@ export function DesignSpace({
               <Label htmlFor="contact-phone" className="t-label">{t("Numéro de téléphone")}</Label>
               <Input id="contact-phone" type="tel" autoComplete="tel" maxLength={80} value={dossier.business.contactPhone ?? ""} onChange={(e) => setDossier((d) => ({ ...d, business: { ...d.business, contactPhone: e.target.value || null } }))} />
             </div>
+            <div>
+              <Label htmlFor="site-city" className="t-label">{t("Ville du site")} *</Label>
+              <Input id="site-city" autoComplete="address-level2" required maxLength={160} value={dossier.business.siteCity ?? ""} onChange={e => setDossier(d => ({ ...d, business: { ...d.business, siteCity: e.target.value || null } }))} />
+            </div>
+            <div>
+              <Label htmlFor="site-country" className="t-label">{t("Pays du site")} *</Label>
+              <select id="site-country" required className="t-body min-h-11 w-full rounded-[var(--r-sm)] bg-[var(--surface-sunken)] p-3" value={dossier.business.siteCountry ?? ""} onChange={e => setDossier(d => ({ ...d, business: { ...d.business, siteCountry: e.target.value || null } }))}>
+                <option value="">{t("Sélectionnez le pays de votre site")}</option>
+                {COUNTRY_CODES.map(code => ({ code, name: new Intl.DisplayNames([getLocale()], { type: "region" }).of(code) ?? code })).sort((a,b) => a.name.localeCompare(b.name, getLocale())).map(c => <option key={c.code} value={c.code}>{c.name}</option>)}
+              </select>
+              {salesContactFor(dossier.business.siteCountry) ? <p className="t-caption mt-2">{salesContactFor(dossier.business.siteCountry)!.name} · {t(salesContactFor(dossier.business.siteCountry)!.territory)}</p> : null}
+            </div>
             {/* Les accords et le bouton d'envoi vivent dans LA MÊME carte que les
                 coordonnées : la dernière action n'est plus à chercher ailleurs. */}
             <hr className="standex-rule" />
             {sendBlock}
+            {bookingCountry && lastSent ? <Button variant="outline" onClick={() => setBookingOpen(true)}>{t("Échanger avec mon responsable Standex")}</Button> : null}
             <p className="t-caption">{t("Réponse d'un ingénieur sous 2 jours ouvrés.")}</p>
           </div>
 
@@ -4804,6 +4844,7 @@ export function DesignSpace({
         {espaceSection}
       </WorkspacePanel>
 
+      <BookingDialog open={bookingOpen} onOpenChange={setBookingOpen} country={bookingCountry} />
       {/* Fiche détaillée volontaire : cotes, sources et STEP d'encombrement. */}
       {detailSensorId ? (
         <SensorCard

@@ -77,7 +77,7 @@ export function statusHeadline(kind: SubmissionStatusKind): string | null {
 
 export function statusDetail(kind: SubmissionStatusKind): string | null {
   if (kind === "sent")
-    return "Cette version exacte est arrivée chez Standex. Vous serez informé dès qu'un retour est publié.";
+    return "Votre projet a bien été reçu. Votre responsable Standex vous recontactera pour préciser votre besoin et convenir des prochaines étapes.";
   if (kind === "modified")
     return "Le contenu ouvert ici diffère de la dernière version envoyée. Rien de ces changements n'est encore parti : relisez le résumé, confirmez votre accord, puis envoyez.";
   return null;

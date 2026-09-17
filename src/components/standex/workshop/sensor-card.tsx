@@ -53,7 +53,7 @@ export default function SensorCard({
   }, []);
   const height = Math.max(model.body[2], model.nutWidth ?? 0, model.collarDiameter ?? 0);
   const drawingUnit = Math.max(model.body[0], height) / 26;
-  const drawingPad = model.shape === "smd" ? model.body[0] * 0.3 : 9;
+  const drawingPad = model.shape === "smd" ? model.body[0] * 0.3 : 13;
   return (
     <dialog
       ref={dialog}
@@ -79,6 +79,7 @@ export default function SensorCard({
             {t(model.name)}
           </h2>
           <p>{t(model.description)}</p>
+          {model.id === "MK18" ? <div className="panel-block"><p>{t("Vue de l’embout : Ø 5 mm, méplats à 4,6 mm")}</p><svg viewBox="-4 -4 8 8" width="100" height="100" role="img" aria-label={t("Embout avec méplats")}><path d="M2.3 -0.98 A2.5 2.5 0 0 0 -2.3 -0.98 L-2.3 0.98 A2.5 2.5 0 0 0 2.3 0.98 Z" fill="currentColor" /><circle cx="0" cy="-0.7" r="0.35" fill="var(--surface)"/><circle cx="0" cy="0.7" r="0.35" fill="var(--surface)"/></svg></div> : null}
           <div className="sc-drawing">
             <svg
               viewBox={`${-model.body[0] / 2 - drawingPad} ${-height / 2 - 6 * drawingUnit} ${model.body[0] + drawingPad * 2} ${height + 18 * drawingUnit}`}

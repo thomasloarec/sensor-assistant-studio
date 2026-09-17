@@ -65,3 +65,11 @@ export function testedPairFor(
 export function latestTestedPair(list: readonly TestedPair[] | undefined): TestedPair | null {
   return (list ?? [])[0] ?? null;
 }
+
+/** Cycle observation, independent of the optional target timing window.
+ * A failed timing requirement does not mean the contact never closed. */
+export function observedCycleVerdict(sim: import("@/lib/standex/mounting/simulate").MountingSimulation, published: boolean): TestedVerdict {
+  if (!published) return "unpublished";
+  if (sim.coverage !== "covered" || sim.illustrative) return "undocumented";
+  return sim.samples.some(s => s.contact === "closed") ? "expected" : "none";
+}

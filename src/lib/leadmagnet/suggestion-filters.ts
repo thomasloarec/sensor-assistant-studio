@@ -79,7 +79,7 @@ const SHAPES_BY_MOUNTING: Record<string, readonly SensorModel["shape"][]> = {
   pcb_smd: ["smd"],
   pcb_through_hole: ["glass"],
   screw: ["flange", "block", "threaded"],
-  press_fit: ["pressfit"],
+  press_fit: ["pressfit", "cylinder"],
 };
 
 const MOUNTING_LABEL: Record<string, string> = {

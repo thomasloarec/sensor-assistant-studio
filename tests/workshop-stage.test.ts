@@ -40,7 +40,7 @@ describe("ouverture d'un couple depuis les cartes", () => {
 describe("barre et disposition", () => {
   test("le corps de l'atelier occupe le panneau sans marge ni défilement propre", () => {
     expect(PANEL).toContain("bare?: boolean");
-    expect(PANEL).toContain('"min-w-0 flex-1 overflow-hidden"');
+    expect(PANEL).toContain('"workspace-panel-bare min-h-0 min-w-0 flex-1 overflow-hidden"');
     expect(SPACE).toMatch(/bare\s+backLabel/);
   });
   test("la barre porte le couple testé et l'état d'enregistrement", () => {

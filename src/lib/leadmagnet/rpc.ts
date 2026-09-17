@@ -159,6 +159,7 @@ export function humanRpcError(error: unknown): string {
       : error && typeof error === "object" && "message" in error
         ? String((error as { message: unknown }).message)
         : "";
+  if (/SITE_LOCATION_REQUIRED/.test(raw)) return "Renseignez la ville et le pays de votre site pour contacter le responsable Standex de votre zone.";
   const hit = MESSAGES.find((m) => m.match.test(raw));
   if (hit) return hit.message;
   return "L'envoi vers Standex n'a pas abouti. Votre dossier reste intact et exportable.";

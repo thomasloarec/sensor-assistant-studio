@@ -1,3 +1,5 @@
+import { sensorById, sizeLabel } from "@/lib/standex/sensor-catalog";
+import { housingMaterial } from "@/lib/leadmagnet/product-presentation";
 /** Écran « Résultat » : ce que le test d'un couple a montré.
  *
  * Cet écran est de la PRÉSENTATION seule. Il n'appelle aucun moteur, ne calcule
@@ -159,7 +161,7 @@ export function ResultView({
                 ],
               )}{" "}
               {pair.travelStartMm !== null && pair.travelEndMm !== null
-                ? msg("Votre course de {0} → {1} mm est entièrement couverte.", [
+                ? msg("Course simulée : {0} → {1} mm.", [
                     String(pair.travelStartMm),
                     String(pair.travelEndMm),
                   ])
@@ -222,7 +224,7 @@ export function ResultView({
             <div className="result-options">
               <div className="panel-block space-y-3">
                 <p className="t-title-s">{t("Option 1")}</p>
-                <p className="t-body">{t("Revenir à une position documentée")}</p>
+                <p className="t-body">{pair.verdict === "none" ? t("Rapprocher l’aimant dans cette position") : t("Revenir à une position documentée")}</p>
                 <Button variant="outline" className="min-h-11" onClick={onReplaceMagnet}>
                   {t("Replacer l'aimant")}
                 </Button>
@@ -248,6 +250,10 @@ export function ResultView({
         <div className="panel-block space-y-3">
           {/* Vue statique du couple au point de fermeture : aucun canvas animé ici. */}
           <PairThumbnail sensorId={pair.sensorId} magnetId={pair.magnetId} />
+          <h3 className="t-title-m">{sensorById(pair.sensorId).name} + {pair.magnetId}</h3>
+          <p className="t-body">{t(sensorById(pair.sensorId).description)}</p>
+          <p className="t-metric">{sizeLabel(sensorById(pair.sensorId))}</p>
+          {housingMaterial(sensorById(pair.sensorId)) ? <p className="t-body">{t(housingMaterial(sensorById(pair.sensorId))!)}</p> : null}
           <p className="t-caption">
             {positive ? `● ${t("Contact fermé")}` : `◐ ${t("Contact indéterminé")}`}
           </p>

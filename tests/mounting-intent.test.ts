@@ -76,8 +76,8 @@ describe("fixation nommée en texte libre : contrainte dure", () => {
     expect(all.filter((c) => c.status !== "excluded").map((c) => c.id)).toEqual(["CUSTOM"]);
   });
 
-  it("l'écran lit la réponse de montage et n'affiche jamais un capteur écarté", () => {
+  it("l'écran utilise les filtres actifs et garde les compromis consultables", () => {
     expect(source).toContain("mountingText");
-    expect(source).toContain('r.candidate.status !== "excluded"');
+    expect(source).toContain('r.blocked.length === 0');
   });
 });

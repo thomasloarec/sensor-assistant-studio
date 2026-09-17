@@ -325,6 +325,17 @@ export function applyPairSelection(
     magnetAngle: documentedMagnetAngleDeg(geometry, sensorId),
   };
 }
+/** A new pair starts on its published template. Imported assemblies keep their own motion. */
+export function pairDemonstration(c: WorkshopConfig, sensorId: string, magnetId: string): WorkshopConfig {
+  const next = applyPairSelection(c, sensorId, magnetId);
+  if (c.machine) return next;
+  const geometry = approachChoicesFor(sensorId, magnetId).find(a => a === "D1") ?? approachChoicesFor(sensorId, magnetId)[0] ?? "D1";
+  const aligned = { ...next, geometry, motion: "approach" as const, lateralShift: 0, magnetTilt: 0,
+    sensorAngle: 0, magnetAngle: documentedMagnetAngleDeg(geometry, sensorId), polarity: 1 as const,
+    magnetization: "axial" as const };
+  const thresholds = workshopPair(aligned);
+  return thresholds ? { ...aligned, start: Math.min(60, Math.max(thresholds[1] * 1.4, thresholds[1] + 5)), end: Math.max(1, thresholds[0] * 0.5) } : aligned;
+}
 /** Nature des distances affichées. Un vrai capteur sélectionné ne bascule jamais
  * automatiquement dans un modèle fictif : sans données publiées, l'atelier
  * affiche « Distances non renseignées ». */

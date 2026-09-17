@@ -433,3 +433,9 @@ Les demi-couleurs des aimants 3D sont des matériaux de scène : repères visuel
 seulement, sans attribution d'un axe magnétique caractérisé.
 Sur mobile, la progression conserve ses quatre libellés ; les sous-titres
 explicatifs sont masqués pour laisser de la place au formulaire.
+
+### Corrections du 17 septembre 2026
+
+Les panneaux plein écran sont rendus à la racine du document pour rester indépendants des transformations des cartes. Leur en-tête reste fixe, le contenu défile dans son propre espace. Dans l'atelier, les réglages et la scène ont des défilements indépendants ; la scène réserve la place des actions, du verdict et de la chronologie. Sur mobile les deux colonnes s'empilent.
+
+Le menu Affichage utilise une surface opaque sombre et le texte clair du contexte immersif. Le catalogue complet est regroupé par familles et les compromis utilisent l'encart d'avertissement du socle. Les choix « Non défini » montrent un état sélectionné. Les exemples proposent pause et navigation manuelle, avec rotation désactivée en mouvement réduit. Les portraits de responsables sont circulaires, avec nom et territoire en texte. Aucun nouveau jeton de marque.
