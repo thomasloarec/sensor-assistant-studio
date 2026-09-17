@@ -10,7 +10,15 @@ describe("préférence de connecteur : ouverture réelle, sans cercle fermé", (
 
   test("cocher ouvre la sélection au lieu de dépendre d'un connecteur déjà choisi", () => {
     expect(SRC).toContain("setConnectorWanted(true)");
-    expect(SRC).toMatch(/connectorPreference =\s*\n?\s*connectorWanted \|\|/);
+    expect(SRC).toMatch(/connectorPreference =\s*\n?\s*!noConnectorChosen &&\s*\n?\s*\(connectorWanted \|\|/);
+  });
+
+  test("les trois choix sont explicites et « pas besoin » n'est pas une délégation", () => {
+    expect(SRC).toContain('t("Je ne sais pas")');
+    expect(SRC).toContain('t("J\'ai une préférence")');
+    expect(SRC).toContain('t("Pas besoin de connecteur")');
+    expect(SRC).toMatch(/noConnectorChosen =\s*\n?\s*termination\.kind === "bare_leads" &&/);
+    expect(SRC).toMatch(/isDelegated\(dossier, CHOSEN_BARE_LEADS\) &&\s*\n?\s*!isDelegated\(dossier, DELEGATED_CONNECTOR\)/);
   });
 
   test("cocher ne sélectionne aucun connecteur automatiquement", () => {
