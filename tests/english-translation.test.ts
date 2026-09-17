@@ -176,9 +176,14 @@ describe("aucun secret ni appel côté client", () => {
     expect(server).not.toMatch(/VITE_|import\.meta\.env/);
   });
 
-  it("la traduction n'est demandée qu'avec l'accord explicite lié à cette version", () => {
-    expect(client).toContain('hasBoundConsent(privacy, "ai_assistant", bound)');
-    expect(client).toContain('kind: "ai_assistant"');
+  it("la traduction est coupée pour ce parcours, en plus de l'accord lié à la version", () => {
+    // Deux verrous cumulés : l'accord lié à cette version exacte ET le drapeau de
+    // désactivation. Aucun accord ne peut donc plus être donné ni relu ici.
+    expect(client).toContain(
+      'externalTranslationAllowed(hasBoundConsent(privacy, "ai_assistant", bound))',
+    );
+    expect(client).not.toContain('kind: "ai_assistant"');
+    expect(EXTERNAL_TRANSLATION_ENABLED).toBe(false);
   });
 });
 
