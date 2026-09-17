@@ -29,6 +29,9 @@ export interface TestedPair {
    * proximité : aucune distance caractérisée, donc jamais un résultat validé.
    * Le champ est additif et suit le projet jusque dans les exports. */
   illustrative?: boolean | undefined;
+  /** Exact source row, distinct from qualified pull-in/drop-out thresholds. */
+  guideReference?: string | null | undefined;
+  documentedPosition?: boolean | undefined;
   at: string;
 }
 

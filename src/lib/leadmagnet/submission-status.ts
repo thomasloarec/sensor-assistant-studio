@@ -70,14 +70,14 @@ export function submitButtonLabel(kind: SubmissionStatusKind, last: SentRevision
 }
 
 export function statusHeadline(kind: SubmissionStatusKind): string | null {
-  if (kind === "sent") return "Projet transmis à la relecture par les ingénieurs Standex.";
+  if (kind === "sent") return "Merci, votre projet a bien été transmis !";
   if (kind === "modified") return "Modifications non envoyées";
   return null;
 }
 
 export function statusDetail(kind: SubmissionStatusKind): string | null {
   if (kind === "sent")
-    return "Votre projet a bien été reçu. Votre responsable Standex vous recontactera pour préciser votre besoin et convenir des prochaines étapes.";
+    return "Vous avez terminé la présentation de votre projet. Merci pour ces informations : un membre de l’équipe Standex reviendra très rapidement vers vous pour préparer la suite ensemble.";
   if (kind === "modified")
     return "Le contenu ouvert ici diffère de la dernière version envoyée. Rien de ces changements n'est encore parti : relisez le résumé, confirmez votre accord, puis envoyez.";
   return null;

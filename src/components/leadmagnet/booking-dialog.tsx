@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { msg, t, localeTag } from "@/lib/i18n/core";
 import { salesContactFor, bookingUrl } from "@/lib/leadmagnet/sales-contact";
 import {
@@ -19,6 +19,7 @@ const OPEN_DAYS = 10;
 /** Jours ouvrés à venir, à partir d'aujourd'hui. Un jour n'est proposé que s'il
  *  lui reste au moins un créneau dans le futur. */
 export function demoDays(now: Date, days = OPEN_DAYS): Date[] {
+  if (!Number.isFinite(now.getTime()) || !Number.isInteger(days) || days < 0 || days > 60) return [];
   const out: Date[] = [];
   const cursor = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   while (out.length < days) {
@@ -32,6 +33,7 @@ export function demoDays(now: Date, days = OPEN_DAYS): Date[] {
 
 /** Créneaux d'un jour, strictement postérieurs à l'instant présent. */
 export function demoSlots(day: Date, now: Date): Date[] {
+  if (day.getDay() === 0 || day.getDay() === 6) return [];
   return SLOT_MINUTES.map(
     (minutes) =>
       new Date(day.getFullYear(), day.getMonth(), day.getDate(), Math.floor(minutes / 60), minutes % 60),
@@ -59,9 +61,12 @@ export function BookingDialog({
   const [day, setDay] = useState<string | null>(null);
   const [slot, setSlot] = useState<string | null>(null);
   const [confirmed, setConfirmed] = useState<string | null>(null);
+  const [error, setError] = useState(false);
+  const [refresh, setRefresh] = useState(0);
+  useEffect(() => { setDay(null); setSlot(null); setConfirmed(null); setError(false); }, [open, country]);
   // L'instant de référence est figé à l'ouverture : la liste ne doit pas changer
   // sous les doigts de la personne pendant qu'elle choisit.
-  const now = useMemo(() => new Date(), [open]);
+  const now = useMemo(() => new Date(), [open, country, refresh]);
   const days = useMemo(() => demoDays(now), [now]);
   if (!contact) return null;
   const url = bookingUrl(
@@ -85,7 +90,7 @@ export function BookingDialog({
   };
   return (
     <Dialog open={open} onOpenChange={(next) => (next ? onOpenChange(true) : close())}>
-      <DialogContent className="max-w-xl">
+      <DialogContent className="max-w-xl max-h-[90dvh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{t("Échangez avec votre responsable Standex")}</DialogTitle>
           <DialogDescription>
@@ -120,12 +125,12 @@ export function BookingDialog({
           </>
         ) : confirmed ? (
           <div className="panel-block-lg space-y-2" data-testid="booking-confirmation">
-            <p className="t-title-s">{t("Votre souhait de rendez-vous est noté")}</p>
+            <p className="t-title-s">{t("Votre rendez-vous de démonstration est confirmé")}</p>
             <p className="t-metric">{confirmed}</p>
             <p className="t-body">{msg("Avec {0}, {1}.", [contact.name, t(contact.territory)])}</p>
             <p className="notice-warning t-body">
               {t(
-                "Mode démonstration : aucun agenda n'est consulté ni modifié, et aucune invitation n'est envoyée. Votre responsable Standex vous recontactera pour confirmer ce créneau.",
+                "Démonstration terminée : aucune réservation réelle ni invitation n'a été créée. Ce créneau sert uniquement à présenter le parcours de prise de rendez-vous.",
               )}
             </p>
             <Button variant="outline" onClick={close}>
@@ -155,6 +160,7 @@ export function BookingDialog({
                       onClick={() => {
                         setDay(value);
                         setSlot(null);
+                        setError(false);
                       }}
                     >
                       {dayLabel(d)}
@@ -196,17 +202,21 @@ export function BookingDialog({
               </p>
             ) : null}
             <div className="flex flex-wrap gap-2">
+              {error ? <p role="alert" className="notice-warning t-body">{t("Ce créneau est passé. Choisissez un nouvel horaire.")}</p> : null}
               <Button
                 disabled={!slot}
-                onClick={() =>
+                onClick={() => {
+                  if (!selectedDay || !slot || !demoSlots(selectedDay, new Date()).some(s => s.toISOString() === slot)) {
+                    setSlot(null); setError(true); setRefresh(n => n + 1); return;
+                  }
                   setConfirmed(
                     msg("{0} à {1} ({2})", [
                       dayLabel(selectedDay!),
                       timeLabel(new Date(slot!)),
                       localTimeZone(),
                     ]),
-                  )
-                }
+                  );
+                }}
               >
                 {t("Confirmer ce créneau")}
               </Button>

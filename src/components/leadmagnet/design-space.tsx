@@ -968,11 +968,8 @@ export function DesignSpace({
       }),
     [dossier.mounting, dossier.envelope, mountingText],
   );
-  // Le câble n'est montré sur les vignettes que s'il existe réellement un tracé.
-  const candidatesCabled =
-    cabling.sensorEndpoint !== null ||
-    cabling.connectionEndpoint !== null ||
-    cabling.waypoints.length > 0;
+  // Catalogue: la connectique produit reste visible avant tout routage projet.
+  const candidatesCabled = true;
   const estimate = useMemo(() => estimateCableLength(cabling), [cabling]);
   const lengthVerdict = useMemo(
     () =>
@@ -1405,7 +1402,7 @@ export function DesignSpace({
    */
   const runEnglishReport = useCallback(
     async (target: { dossierId: string; revisionId: string; contentHash: string }) => {
-      if (!supabase) return;
+      if (!EXTERNAL_TRANSLATION_ENABLED || !supabase) return;
       // Verrou : un double clic, ou une relance pendant qu'une autre est en
       // cours, ne déclenche pas une seconde demande au traducteur.
       const run = englishLockRef.current.start();
@@ -2476,7 +2473,7 @@ export function DesignSpace({
         <p className="t-body mt-2">
           {card.maxPullInMm === null ? (
             <span className="text-[var(--standex-blue-75)]">
-              {t("Distances à mesurer avec Standex")}
+              {t(card.hasGuideRange ? "Plage du guide disponible" : "Distances à mesurer avec Standex")}
             </span>
           ) : (
             <strong>{msg("Détecte jusqu'à {0} mm", [formatMm(card.maxPullInMm)])}</strong>
@@ -3659,22 +3656,7 @@ export function DesignSpace({
               />
               {t("J'ai relu le résumé technique et les inconnues listées.")}
             </label>
-            <ReviewSubmitControl
-              busy={busy}
-              operation={busyOperation}
-              ndaGuidance={ndaGuidance}
-              canRefreshNda={Boolean(serverDossierId && backend?.ready)}
-              authenticated={Boolean(backend?.authenticated)}
-              message={submitMessage}
-              messageTone={submitMessageTone}
-              status={submissionStatusKind(lastSent, binding)}
-              lastSent={lastSent}
-
-              onSubmit={() => void onSubmit()}
-              onOpenNda={focusNdaSection}
-              onRefreshNda={() => void refreshNdaStatus()}
-            />
-            {!backend?.ready ? (
+            {!backend?.authenticated && !backend?.ready ? (
               <div className="space-y-2">
                 <p className="t-caption">
                   {t(backend?.message ?? "Vérification du backend en cours…")}
@@ -3688,9 +3670,9 @@ export function DesignSpace({
                   }}
                 />
               </div>
-            ) : (
+            ) : !backend?.authenticated ? (
               <AuthPanel backend={backend} />
-            )}
+            ) : null}
             {reopenedFrom ? (
               <p className="t-caption">
                 {/* Le compteur interne de versions n'est pas une information
@@ -3700,6 +3682,20 @@ export function DesignSpace({
                 )}
               </p>
             ) : null}
+            <ReviewSubmitControl
+              busy={busy}
+              operation={busyOperation}
+              ndaGuidance={ndaGuidance}
+              canRefreshNda={Boolean(serverDossierId && backend?.ready)}
+              authenticated={Boolean(backend?.authenticated)}
+              message={submitMessage}
+              messageTone={submitMessageTone}
+              status={submissionStatusKind(lastSent, binding)}
+              lastSent={lastSent}
+              onSubmit={() => void onSubmit()}
+              onOpenNda={focusNdaSection}
+              onRefreshNda={() => void refreshNdaStatus()}
+            />
     </div>
   );
 
@@ -4134,7 +4130,6 @@ export function DesignSpace({
           {lastSent ? (
             <div className="panel-block-lg space-y-3" data-testid="project-followup">
               <h3 className="t-title-m">{t("Suivi de mon projet")}</h3>
-              <p className="t-caption">{t(SEARCH_LINK_DISCLAIMER)}</p>
               {/* Les trois actions d'après-envoi sont regroupées ici : espace,
                   rendez-vous, déconnexion. Elles ne sont plus dispersées dans le
                   formulaire. Les règles métier des échantillons restent
@@ -4158,11 +4153,6 @@ export function DesignSpace({
                 ) : null}
               </div>
               <AuthPanel backend={backend} />
-              <p className="t-caption">
-                {t(
-                  "Disponibilités, MOQ et conditionnements : inconnus tant qu'aucun fournisseur réel n'est connecté.",
-                )}
-              </p>
             </div>
           ) : null}
         </div>

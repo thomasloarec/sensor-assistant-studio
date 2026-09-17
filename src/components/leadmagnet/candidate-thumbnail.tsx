@@ -112,7 +112,7 @@ function Fallback({
   caption?: boolean;
 }) {
   const magnet = pair ? pairedMagnetModel(pair.magnetId, model.id) : null;
-  const span = Math.max(...model.body, model.terminalSpan ?? 0);
+  const span = Math.max(...model.body, model.terminalSpan ?? 0, cabled && !model.magnet ? model.body[0] / 2 + 12 : 0);
   const layout = magnet ? pairLayout(model, magnet, pair!.approach) : null;
   const step = niceScaleStep(span);
   return (
@@ -190,7 +190,7 @@ export function CandidateThumbnail({
   sensorId,
   hostSensorId,
   livePreview = true,
-  cabled = false,
+  cabled = true,
   pair,
   fitToView = false,
   size = "compact",

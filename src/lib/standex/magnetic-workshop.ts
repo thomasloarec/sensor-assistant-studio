@@ -17,6 +17,7 @@ import {
 } from "./sensor-catalog";
 import { parseMachine, componentPose, openingAt, rotate } from "./machine-assembly";
 import { documentedMagnetAngleDeg } from "./mounting/profiles";
+import { workshopGuideRange, GUIDE_SIMULATION_NOTE } from "./workshop-guide";
 import type { MachineAssembly } from "./machine-assembly";
 import {
   PUBLISHED_REGISTRY,
@@ -43,6 +44,7 @@ export type Sensitivity = string;
 
 export interface WorkshopConfig {
   version: 3;
+  guideReference?: string | null;
   demoReach: number;
   lateralShift: number;
   magnetTilt: number;
@@ -79,6 +81,7 @@ export interface WorkshopConfig {
 }
 export const DEFAULT_WORKSHOP: WorkshopConfig = {
   version: 3,
+  guideReference: null,
   demoReach: 25,
   lateralShift: 0,
   magnetTilt: 0,
@@ -173,6 +176,8 @@ export function parseWorkshopConfig(value: unknown): WorkshopConfig | null {
       }
     : { ...raw };
   if (x["version"] !== 3) return null;
+  if (x["guideReference"] === undefined) x["guideReference"] = null;
+  if (x["guideReference"] !== null && (typeof x["guideReference"] !== "string" || (x["guideReference"] as string).length > 100)) return null;
   if (x["machine"] !== null) {
     const machine = parseMachine(x["machine"]);
     if (!machine) return null;
@@ -318,6 +323,7 @@ export function applyPairSelection(
     ...c,
     sensorId,
     magnetModel,
+    guideReference: c.sensorId === sensorId && c.magnetModel === magnetModel ? c.guideReference ?? null : null,
     sensitivity: classes.length && !classes.includes(c.sensitivity) ? classes[0]! : c.sensitivity,
     geometry,
     mode: fake ? "education" : "reference",
@@ -627,6 +633,7 @@ export function simulateCycle(c: WorkshopConfig, steps = 600): CycleResult {
 }
 
 export function summarizeWorkshop(c: WorkshopConfig): string {
+  const guide = workshopGuideRange(c);
   const result = simulateCycle(c),
     pair = workshopPair(c),
     pull = pair?.[0] ?? "?",
@@ -670,7 +677,9 @@ export function summarizeWorkshop(c: WorkshopConfig): string {
       ? []
       : [`Contact souhaité fermé entre ${c.targetStart} et ${c.targetEnd} % du cycle.`]),
     `État initial : ${c.initialContact === "unknown" ? (c.mode === "education" ? "ouvert par convention pédagogique, puis recalculé" : "inconnu") : c.initialContact === "closed" ? "fermé" : "ouvert"}. Matière ferromagnétique : ${c.ferromagnetic ? "oui" : "non déclarée"}. Température : ${c.temperature === "ambient" ? "ambiante" : "autre"}.`,
-    result.reason
+    guide && !pair
+      ? `${guide.sensorReference} · ${guide.approachId} · up ${guide.upMm ?? "—"} mm / to ${guide.toMm ?? "—"} mm · p. ${guide.page}. ${GUIDE_SIMULATION_NOTE}`
+      : result.reason
       ? `Calcul indisponible : ${result.reason}`
       : `Cycle indicatif : ${result.closures} enclenchement(s), ${result.releases} relâchement(s).${result.unknown ? " Une partie du parcours est indéterminée." : ""}`,
     c.mode === "reference" ? REFERENCE_NOTE : EDUCATION_NOTE,

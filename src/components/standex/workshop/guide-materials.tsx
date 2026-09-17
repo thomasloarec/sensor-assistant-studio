@@ -139,7 +139,7 @@ export function GuideMaterials({
         </p>
       )}
       {ACTIVATION_GUIDE.source.url && (
-        <a href="https://standexdetect.fr/resources/reed-technology-academy/reed-sensor-activation-distances/" target="_blank" rel="noreferrer">
+        <a href={ACTIVATION_GUIDE.source.url} target="_blank" rel="noreferrer">
           {t("Voir le guide d'activation Standex ↗")}
         </a>
       )}
@@ -175,10 +175,10 @@ function GuideDemoPicker({
   const reference =
     guideReference && references.includes(guideReference) ? guideReference : references[0]!;
   const approaches = [
-    ...new Set(rows.filter((r) => r.sensorReference === reference).map((r) => r.approachId)),
+    ...new Set(rows.filter((r) => r.sensorReference === reference && (r.approachId === "D1" || r.approachId === "D3")).map((r) => r.approachId)),
   ];
   const approach =
-    guideApproach && approaches.includes(guideApproach) ? guideApproach : approaches[0]!;
+    guideApproach ?? approaches[0]!;
   const range = guideRange(sensorFamily, reference, magnet.id, approach);
   const marks = guideIllustrativeMarks(range);
   return (
@@ -196,6 +196,7 @@ function GuideDemoPicker({
       <label className="mw-select-label">
         {t("Approche du guide")}
         <select value={approach} onChange={(e) => onSelectDemo(reference, e.target.value)}>
+          {!approaches.includes(approach) ? <option value={approach}>{approach}</option> : null}
           {approaches.map((a) => (
             <option key={a} value={a}>
               {a}

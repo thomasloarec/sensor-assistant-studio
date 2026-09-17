@@ -1,4 +1,6 @@
 import { isPcbSensor } from "./product-presentation";
+import { workshopGuideRange, GUIDE_SIMULATION_NOTE } from "../standex/workshop-guide";
+import { guideIllustrativeMarks, ACTIVATION_GUIDE } from "../standex/activation-guide";
 import { toClientDto, stableStringify, REQUIREMENT_LABELS, type DesignDossier } from "./dossier";
 import { technicalSummary } from "./submission";
 import { VARIABLE_FIELDS } from "./nda-docx";
@@ -42,15 +44,17 @@ export function projectReportSections(
   ]);
   const w = d.workshop;
   if (w) {
+    const guide = workshopGuideRange(w);
     const mounting = toClientDto(d).guidedMounting;
     const computed = mounting?.computed;
-    const sim = mounting ? simulateMounting(mounting, undefined, undefined, scenePoseSampler(w)) : null;
+    const sim = mounting ? simulateMounting(mounting, undefined, undefined, scenePoseSampler(w), guideIllustrativeMarks(guide)) : null;
     const result = sim?.coverage === "covered" && !sim.illustrative
       ? cycleMessage(sim.samples.some(s => s.contact === "closed") ? "expected" : "none")
-      : computed?.mainMessage;
+      : guide ? GUIDE_SIMULATION_NOTE : computed?.mainMessage;
     add("Configuration du montage", [
       entry("Capteur", w.sensorId),
       entry("Aimant", w.magnetModel),
+      ...(guide ? [entry("Plage du guide disponible", `${guide.sensorReference} · ${guide.approachId} · up ${guide.upMm ?? "—"} mm / to ${guide.toMm ?? "—"} mm · p. ${guide.page} · ${ACTIVATION_GUIDE.source.url}`)] : []),
       entry("Classe de sensibilité", w.sensitivity),
       entry(
         "Position",
@@ -70,7 +74,7 @@ export function projectReportSections(
         ? [
             entry(
               "Le résultat",
-              tr("Simulation illustrative — distance non caractérisée, à valider par essais"),
+              tr(guide ? GUIDE_SIMULATION_NOTE : "Simulation illustrative — distance non caractérisée, à valider par essais"),
             ),
           ]
         : []),

@@ -1,4 +1,6 @@
 import { observedCycleVerdict } from "@/lib/leadmagnet/tested-pairs";
+import { workshopGuideRange, onDocumentedPosition, GUIDE_SIMULATION_NOTE } from "@/lib/standex/workshop-guide";
+import { ACTIVATION_GUIDE, formatGuideBound } from "@/lib/standex/activation-guide";
 import { isPcbSensor } from "@/lib/leadmagnet/product-presentation";
 import {
   defaultMagnetFor,
@@ -12,9 +14,7 @@ import { t, msg } from "@/lib/i18n/core";
 import { GuideMaterials } from "./guide-materials";
 import {
   guideIllustrativeMarks,
-  guideRange,
   guideRangesFor,
-  guideReferencesFor,
 } from "@/lib/standex/activation-guide";
 import { standardShapeForSensor } from "@/lib/standex/magnet-recommendation";
 import { useLocale } from "@/lib/i18n/react";
@@ -260,6 +260,7 @@ export default function MagneticWorkshop({
     // dans « Affichage », mais décochées par défaut.
     [dimensions, setDimensions] = useState(false),
     [showNames, setShowNames] = useState(true),
+    [showMagnetName, setShowMagnetName] = useState(true),
     [focus, setFocus] = useState<"assembly" | "sensor">("assembly"),
     [catalogOpen, setCatalogOpen] = useState(false);
   /** Vitesse de lecture. Par défaut un aller-retour dure 4 s : la lecture
@@ -282,8 +283,6 @@ export default function MagneticWorkshop({
   /** Ligne du guide d'activation et approche choisies EXPLICITEMENT pour la
    *  démonstration illustrative de portée. Aucun profil n'est créé, aucune
    *  qualification n'en dépend. */
-  const [guideReference, setGuideReference] = useState<string | null>(null),
-    [guideApproach, setGuideApproach] = useState<string | null>(null);
   /** Prévisualisation de pose : état séparé, jamais écrit dans la configuration.
    * Une proposition devenue obsolète (autres entrées modifiées) est abandonnée. */
   const [preview, setPreview] = useState<GuidedMounting | null>(null);
@@ -479,25 +478,8 @@ export default function MagneticWorkshop({
    *  explicitement (référence + approche), sinon 15 / 18 mm. Ces bornes ne
    *  touchent ni la couverture, ni la preuve, ni le verdict. */
   const guideDemoRange = useMemo(() => {
-    // Sans choix explicite, la première ligne et la première approche publiées
-    // servent de repères : la démonstration suit donc le matériau dès l'ouverture,
-    // et le panneau affiche exactement les bornes utilisées.
-    const references = guideReferencesFor(config.sensorId, config.magnetModel);
-    const reference =
-      guideReference && references.includes(guideReference) ? guideReference : references[0];
-    if (!reference) return null;
-    const approaches = [
-      ...new Set(
-        guideRangesFor(config.sensorId, config.magnetModel)
-          .filter((r) => r.sensorReference === reference)
-          .map((r) => r.approachId),
-      ),
-    ];
-    const approach =
-      guideApproach && approaches.includes(guideApproach) ? guideApproach : approaches[0];
-    if (!approach) return null;
-    return guideRange(config.sensorId, reference, config.magnetModel, approach);
-  }, [config.sensorId, config.magnetModel, guideReference, guideApproach]);
+    return workshopGuideRange(config);
+  }, [config.sensorId, config.magnetModel, config.guideReference, config.geometry]);
   const illustrativeBounds = useMemo(
     () => guideIllustrativeMarks(guideDemoRange),
     [guideDemoRange],
@@ -560,7 +542,7 @@ export default function MagneticWorkshop({
     basis === "standex"
       ? t("Données Standex · distances publiées pour ce couple")
       : basis === "unavailable"
-        ? t("Distances non renseignées pour ce couple")
+        ? t(guideDemoRange ? "Plage du guide disponible" : "Distances non renseignées pour ce couple")
         : t("Démonstration · distances fictives");
   /** Classes réellement publiées pour le couple : aucune interpolation. */
   const sensitivityChoices = publishedClasses(config.sensorId, config.magnetModel);
@@ -758,10 +740,8 @@ export default function MagneticWorkshop({
         ? t("Pas de détection sur ce cycle — rapprochez l'aimant ou changez de couple")
         : verdictKind === "undocumented"
           ? t("Position non documentée — Standex peut la mesurer pour vous")
-          : guideRangesAvailable
-            ? t(
-                "Plages du guide d'activation disponibles, mais aucun seuil qualifié pour ce couple — Standex peut le mesurer",
-              )
+          : guideDemoRange
+            ? msg("Plage documentée : {0} à {1} mm — {2}, {3}", [formatGuideBound(guideDemoRange.upMm, guideDemoRange.upNote), formatGuideBound(guideDemoRange.toMm, guideDemoRange.toNote), guideDemoRange.sensorReference, guideDemoRange.approachId])
             : t("Distances non publiées pour ce couple — Standex peut les mesurer");
   const askTrial = verdictKind === "undocumented" || verdictKind === "unpublished";
   /** Commutation ILLUSTRATIVE : le contact bascule à proximité pour que la scène
@@ -778,13 +758,15 @@ export default function MagneticWorkshop({
     sensorId: config.sensorId,
     magnetId: config.magnetModel,
     approach: config.geometry,
-    sensitivity: config.sensitivity ?? null,
+    sensitivity: basis === "unavailable" ? null : config.sensitivity ?? null,
     verdict: verdictKind,
     pullInMm: referencePair ? referencePair[0] : null,
     dropOutMm: referencePair ? referencePair[1] : null,
     travelStartMm: config.start,
     travelEndMm: config.end,
-    mainMessage: computed && computed.coverage !== "covered" ? computed.mainMessage : null,
+    mainMessage: guideDemoRange ? GUIDE_SIMULATION_NOTE : computed && computed.coverage !== "covered" ? computed.mainMessage : null,
+    guideReference: guideDemoRange?.sensorReference ?? null,
+    documentedPosition: onDocumentedPosition(config),
     limits: computed ? computed.limits : [],
     // Jamais un résultat validé : le mode illustratif est écrit dans l'essai,
     // donc dans le résumé, la reprise et les exports.
@@ -802,7 +784,12 @@ export default function MagneticWorkshop({
       <div className="mw-verdict-bar-text">
         <p className="t-title-s">{verdictSentence}</p>
         {/* Hors couverture, le message du moteur est repris MOT POUR MOT. */}
-        {computed && computed.coverage !== "covered" ? (
+        {guideDemoRange && basis === "unavailable" ? (
+          <p className="t-caption" data-testid="verdict-main-message">
+            {t(onDocumentedPosition(config) ? "Position du guide sélectionnée." : "Montage différent de la position du guide : la plage reste une référence, à confirmer dans votre configuration.")}{" "}
+            <a href={ACTIVATION_GUIDE.source.url} target="_blank" rel="noopener noreferrer">{msg("Guide Standex, page {0}", [String(guideDemoRange.page)])}</a>
+          </p>
+        ) : computed && computed.coverage !== "covered" ? (
           <p className="t-caption" data-testid="verdict-main-message">
             {t(computed.mainMessage)}
           </p>
@@ -813,7 +800,7 @@ export default function MagneticWorkshop({
             disparaît pas pendant la lecture. */}
         {illustrative ? (
           <p className="notice-warning t-body-s" data-testid="illustrative-note">
-            {t("Simulation illustrative — distance non caractérisée, à valider par essais")}
+            {t(guideDemoRange && illustrativeBounds ? GUIDE_SIMULATION_NOTE : "Simulation illustrative — distance non caractérisée, à valider par essais")}
           </p>
         ) : null}
       </div>
@@ -916,12 +903,13 @@ export default function MagneticWorkshop({
       sensorFamily={config.sensorId}
       shape={standardShapeForSensor(config.sensorId)}
       magnetModel={config.magnetModel}
-      guideReference={guideReference}
-      guideApproach={guideApproach}
+      guideReference={guideDemoRange?.sensorReference ?? config.guideReference ?? null}
+      guideApproach={config.geometry}
       onSelect={(magnetModel) => update({ magnetModel })}
       onSelectDemo={(ref, approachId) => {
-        setGuideReference(ref);
-        setGuideApproach(approachId);
+        if (approachId === "D1" || approachId === "D3") {
+          update({ guideReference: ref, geometry: approachId, magnetAngle: documentedMagnetAngleDeg(approachId, config.sensorId) });
+        }
       }}
     />
   );
@@ -945,7 +933,7 @@ export default function MagneticWorkshop({
                 {t(
                   basis === "standex"
                     ? "Données Standex"
-                    : "Distances non renseignées pour ce couple",
+                    : guideDemoRange ? "Plage du guide disponible" : "Distances non renseignées pour ce couple",
                 )}
               </option>
               <option value="education">{t("Démonstration · distances fictives")}</option>
@@ -1074,7 +1062,7 @@ export default function MagneticWorkshop({
                 ))}
               </tbody>
             </table>
-            <p className="mw-help">{t(referenceNoteFor(config))}</p>
+            <p className="mw-help">{t(guideDemoRange && basis === "unavailable" ? GUIDE_SIMULATION_NOTE : referenceNoteFor(config))}</p>
             {publishedFamilyNoteFor(config) && (
               <p className="mw-help" data-testid="published-family-note">
                 {t(publishedFamilyNoteFor(config)!)}
@@ -1497,6 +1485,10 @@ export default function MagneticWorkshop({
           />
           {t("Nom capteur")}
         </label>
+        <label>
+          <input type="checkbox" checked={showMagnetName} onChange={(e) => setShowMagnetName(e.target.checked)} />
+          {t("Nom de l’aimant")}
+        </label>
         {!machine && (
           <>
             <label>
@@ -1738,6 +1730,7 @@ export default function MagneticWorkshop({
                       showSpace={showSpace}
                       xray={xray}
                       showNames={showNames}
+                    showMagnetName={showMagnetName}
                       reduced={reduced}
                       onChange={machineChange}
                       onMeasure={setMeasure}
@@ -1766,6 +1759,7 @@ export default function MagneticWorkshop({
                 xray={xray}
                 dimensions={dimensions}
                 showNames={showNames}
+                    showMagnetName={showMagnetName}
                 zones={zones}
                 focus={focus}
               />
@@ -1785,6 +1779,7 @@ export default function MagneticWorkshop({
                       xray={xray}
                       dimensions={dimensions}
                       showNames={showNames}
+                    showMagnetName={showMagnetName}
                       zones={zones}
                       focus={focus}
                     />
@@ -1806,6 +1801,7 @@ export default function MagneticWorkshop({
                     xray={xray}
                     dimensions={dimensions}
                     showNames={showNames}
+                    showMagnetName={showMagnetName}
                     focus={focus}
                     reduced={reduced}
                     ghost={ghost}
@@ -1946,7 +1942,7 @@ export default function MagneticWorkshop({
             </>
           )}{" "}
           <a
-            href={reference ? DISTANCE_SOURCE : INTERACTION_SOURCE}
+            href={guideDemoRange ? ACTIVATION_GUIDE.source.url : reference ? DISTANCE_SOURCE : INTERACTION_SOURCE}
             target="_blank"
             rel="noreferrer"
           >

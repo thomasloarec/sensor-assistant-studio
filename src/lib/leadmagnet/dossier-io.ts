@@ -213,6 +213,8 @@ const dossierSchema = z.object({
         limits: z.array(z.string()).catch([]),
         // Champ additif : un essai illustratif reste illustratif après reprise.
         illustrative: z.boolean().optional().catch(undefined),
+        guideReference: z.string().max(100).nullable().optional().catch(undefined),
+        documentedPosition: z.boolean().optional().catch(undefined),
         at: z.string(),
       }),
     )

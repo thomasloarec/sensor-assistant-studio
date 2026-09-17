@@ -26179,5 +26179,167 @@
     "Выбор клиента: без разъёма, зачищенные провода.",
     "Scelta del cliente: nessun connettore, fili nudi.",
     "お客様の選択：コネクターなし、裸線。"
+  ],
+  "Votre rendez-vous de démonstration est confirmé": [
+    "Your demo appointment is confirmed",
+    "您的演示预约已确认",
+    "Ihr Demo-Termin ist bestätigt",
+    "Su cita de demostración está confirmada",
+    "Демонстрационная встреча подтверждена",
+    "Il tuo appuntamento dimostrativo è confermato",
+    "デモ予約が確認されました"
+  ],
+  "Avec {0}, {1}.": [
+    "With {0}, {1}.",
+    "与 {0}，{1}。",
+    "Mit {0}, {1}.",
+    "Con {0}, {1}.",
+    "С {0}, {1}.",
+    "Con {0}, {1}.",
+    "担当：{0}、{1}。"
+  ],
+  "Démonstration terminée : aucune réservation réelle ni invitation n'a été créée. Ce créneau sert uniquement à présenter le parcours de prise de rendez-vous.": [
+    "Demo complete: no real booking or invitation has been created. This slot only demonstrates the appointment booking process.",
+    "演示完成：未创建实际预约或邀请。此时段仅用于展示预约流程。",
+    "Demo abgeschlossen: Es wurde keine echte Buchung oder Einladung erstellt. Dieser Termin dient nur zur Demonstration des Buchungsablaufs.",
+    "Demostración completada: no se ha creado ninguna reserva real ni invitación. Este horario solo muestra el proceso de reserva.",
+    "Демонстрация завершена: реальная запись и приглашение не созданы. Этот интервал показывает только процесс записи.",
+    "Dimostrazione completata: nessuna prenotazione reale o invito è stato creato. Questo orario illustra soltanto il processo di prenotazione.",
+    "デモ完了：実際の予約や招待は作成されていません。この時間枠は予約手順のデモ専用です。"
+  ],
+  "Mode démonstration : les créneaux affichés sont des exemples, pas les disponibilités réelles de votre responsable. Choisir un créneau n'écrit dans aucun agenda.": [
+    "Demo mode: the slots shown are examples, not your representative's actual availability. Selecting a slot does not update any calendar.",
+    "演示模式：所示时段为示例，不代表负责人的实际空闲时间。选择时段不会修改任何日历。",
+    "Demo-Modus: Die Zeiten sind Beispiele, keine tatsächlichen Verfügbarkeiten Ihres Ansprechpartners. Die Auswahl ändert keinen Kalender.",
+    "Modo de demostración: los horarios son ejemplos, no la disponibilidad real de su responsable. Elegir un horario no modifica ningún calendario.",
+    "Демонстрационный режим: интервалы приведены для примера и не отражают реальную доступность сотрудника. Выбор не изменяет календарь.",
+    "Modalità dimostrativa: gli orari sono esempi, non le disponibilità reali del referente. La selezione non modifica alcun calendario.",
+    "デモモード：表示される時間枠は例であり、担当者の実際の空き時間ではありません。選択してもカレンダーは変更されません。"
+  ],
+  "Choisissez une date": [
+    "Choose a date",
+    "选择日期",
+    "Wählen Sie ein Datum",
+    "Elija una fecha",
+    "Выберите дату",
+    "Scegli una data",
+    "日付を選択"
+  ],
+  "Choisissez un horaire": [
+    "Choose a time",
+    "选择时间",
+    "Wählen Sie eine Uhrzeit",
+    "Elija una hora",
+    "Выберите время",
+    "Scegli un orario",
+    "時間を選択"
+  ],
+  "Ce créneau est passé. Choisissez un nouvel horaire.": [
+    "This slot has passed. Choose another time.",
+    "该时段已过。请选择其他时间。",
+    "Dieser Termin liegt in der Vergangenheit. Wählen Sie eine neue Uhrzeit.",
+    "Este horario ya ha pasado. Elija otro.",
+    "Это время уже прошло. Выберите другое.",
+    "Questo orario è passato. Scegline un altro.",
+    "この時間は過ぎています。別の時間を選択してください。"
+  ],
+  "Confirmer ce créneau": [
+    "Confirm this slot",
+    "确认此时段",
+    "Termin bestätigen",
+    "Confirmar este horario",
+    "Подтвердить время",
+    "Conferma questo orario",
+    "この時間枠を確定"
+  ],
+  "Plage du guide disponible": [
+    "Guide range available",
+    "有指南范围数据",
+    "Bereich aus dem Leitfaden verfügbar",
+    "Rango de la guía disponible",
+    "Доступен диапазон из руководства",
+    "Intervallo della guida disponibile",
+    "ガイドの範囲データあり"
+  ],
+  "Plage documentée : {0} à {1} mm — {2}, {3}": [
+    "Documented range: {0} to {1} mm — {2}, {3}",
+    "已记录范围：{0} 至 {1} mm — {2}，{3}",
+    "Dokumentierter Bereich: {0} bis {1} mm — {2}, {3}",
+    "Rango documentado: {0} a {1} mm — {2}, {3}",
+    "Документированный диапазон: от {0} до {1} мм — {2}, {3}",
+    "Intervallo documentato: da {0} a {1} mm — {2}, {3}",
+    "文書化された範囲：{0}～{1} mm — {2}、{3}"
+  ],
+  "Position du guide sélectionnée.": [
+    "Guide position selected.",
+    "已选择指南中的位置。",
+    "Position aus dem Leitfaden ausgewählt.",
+    "Posición de la guía seleccionada.",
+    "Выбрано положение из руководства.",
+    "Posizione della guida selezionata.",
+    "ガイドの配置が選択されています。"
+  ],
+  "Montage différent de la position du guide : la plage reste une référence, à confirmer dans votre configuration.": [
+    "The assembly differs from the guide position: the range remains a reference to be confirmed in your configuration.",
+    "安装方式与指南位置不同：该范围仍可作为参考，需在您的配置中确认。",
+    "Der Aufbau weicht von der Position im Leitfaden ab: Der Bereich bleibt ein Referenzwert, der in Ihrer Konfiguration bestätigt werden muss.",
+    "El montaje difiere de la posición de la guía: el rango sigue siendo una referencia que debe confirmarse en su configuración.",
+    "Монтаж отличается от положения в руководстве: диапазон остается ориентиром, который нужно подтвердить для вашей конфигурации.",
+    "Il montaggio differisce dalla posizione della guida: l'intervallo resta un riferimento da confermare nella tua configurazione.",
+    "取り付けはガイドの配置と異なります。この範囲は参考値であり、お使いの構成で確認が必要です。"
+  ],
+  "Guide Standex, page {0}": [
+    "Standex guide, page {0}",
+    "Standex 指南，第 {0} 页",
+    "Standex-Leitfaden, Seite {0}",
+    "Guía Standex, página {0}",
+    "Руководство Standex, страница {0}",
+    "Guida Standex, pagina {0}",
+    "Standex ガイド、{0} ページ"
+  ],
+  "Nom de l’aimant": [
+    "Magnet name",
+    "磁铁名称",
+    "Magnetname",
+    "Nombre del imán",
+    "Название магнита",
+    "Nome del magnete",
+    "磁石名"
+  ],
+  "Votre couple dispose de données documentées.": [
+    "Your sensor–magnet pair has documented data.",
+    "您的传感器与磁铁组合有文档数据。",
+    "Für Ihr Sensor-Magnet-Paar liegen dokumentierte Daten vor.",
+    "Su pareja sensor–imán dispone de datos documentados.",
+    "Для вашей пары датчик–магнит есть документированные данные.",
+    "La tua coppia sensore–magnete dispone di dati documentati.",
+    "選択したセンサーと磁石の組み合わせには文書化されたデータがあります。"
+  ],
+  "Merci, votre projet a bien été transmis !": [
+    "Thank you, your project has been sent!",
+    "谢谢，您的项目已发送！",
+    "Vielen Dank, Ihr Projekt wurde übermittelt!",
+    "¡Gracias, su proyecto se ha enviado!",
+    "Спасибо, ваш проект отправлен!",
+    "Grazie, il tuo progetto è stato inviato!",
+    "ありがとうございます。プロジェクトを送信しました！"
+  ],
+  "Vous avez terminé la présentation de votre projet. Merci pour ces informations : un membre de l’équipe Standex reviendra très rapidement vers vous pour préparer la suite ensemble.": [
+    "You have completed your project presentation. Thank you for the information: a member of the Standex team will get back to you very soon to plan the next steps together.",
+    "您已完成项目介绍。感谢您提供的信息，Standex 团队成员将很快与您联系，共同规划后续步骤。",
+    "Sie haben Ihre Projektvorstellung abgeschlossen. Vielen Dank für die Informationen: Ein Mitglied des Standex-Teams wird sich sehr bald bei Ihnen melden, um gemeinsam die nächsten Schritte zu planen.",
+    "Ha completado la presentación de su proyecto. Gracias por la información: un miembro del equipo Standex se pondrá en contacto muy pronto para preparar juntos los siguientes pasos.",
+    "Вы завершили представление проекта. Спасибо за информацию: сотрудник Standex свяжется с вами в ближайшее время, чтобы вместе подготовить следующие шаги.",
+    "Hai completato la presentazione del progetto. Grazie per le informazioni: un membro del team Standex ti contatterà molto presto per preparare insieme i prossimi passi.",
+    "プロジェクトの紹介が完了しました。情報をご提供いただきありがとうございます。Standex チームの担当者が近日中にご連絡し、次のステップを一緒に準備します。"
+  ],
+  "Animation fondée sur la plage du guide Standex. Les colonnes « up » et « to » ne définissent pas à elles seules les seuils de fermeture et de réouverture de votre montage.": [
+    "Animation based on the range in the Standex guide. The “up” and “to” columns alone do not define the closing and reopening thresholds of your assembly.",
+    "动画基于 Standex 指南中的范围。仅凭“up”和“to”列无法确定您安装中的闭合和重新断开阈值。",
+    "Animation auf Basis des Bereichs im Standex-Leitfaden. Die Spalten „up“ und „to“ allein definieren nicht die Schließ- und Wiederöffnungsschwellen Ihres Aufbaus.",
+    "Animación basada en el rango de la guía Standex. Las columnas «up» y «to» por sí solas no definen los umbrales de cierre y reapertura de su montaje.",
+    "Анимация основана на диапазоне из руководства Standex. Столбцы «up» и «to» сами по себе не определяют пороги замыкания и размыкания вашего монтажа.",
+    "Animazione basata sull'intervallo della guida Standex. Le sole colonne «up» e «to» non definiscono le soglie di chiusura e riapertura del tuo montaggio.",
+    "Standex ガイドの範囲に基づくアニメーションです。「up」と「to」の列だけでは、お使いの取り付けの閉路・再開路しきい値は定義できません。"
   ]
 }

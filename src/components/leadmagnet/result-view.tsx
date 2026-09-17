@@ -1,5 +1,6 @@
 import { sensorById, sizeLabel } from "@/lib/standex/sensor-catalog";
 import { housingMaterial } from "@/lib/leadmagnet/product-presentation";
+import { guideRange, formatGuideBound, ACTIVATION_GUIDE } from "@/lib/standex/activation-guide";
 /** Écran « Résultat » : ce que le test d'un couple a montré.
  *
  * Cet écran est de la PRÉSENTATION seule. Il n'appelle aucun moteur, ne calcule
@@ -126,6 +127,8 @@ export function ResultView({
   const word = detectedObjectWord(detectionGoal);
   const couple = `${t("Le capteur")} ${pair.sensorId} + ${t("l’aimant")} ${pair.magnetId}`;
   const positive = pair.verdict === "expected";
+  const guide = pair.guideReference ? guideRange(pair.sensorId, pair.guideReference, pair.magnetId, pair.approach) : null;
+  const canReplace = pair.verdict === "none" || pair.documentedPosition === false || (pair.documentedPosition === undefined && pair.verdict === "undocumented");
   const approachLabel =
     pair.approach === "F1"
       ? t("Face à face")
@@ -141,7 +144,7 @@ export function ResultView({
       <div className="space-y-5">
         <p className="flex items-center gap-2">
           <span className={`result-dot result-dot-${positive ? "expected" : pair.verdict}`} aria-hidden="true" />
-          <span className="t-label">{t(VERDICT_OVERLINE[pair.verdict])}</span>
+          <span className="t-label">{t(guide ? "Plage du guide disponible" : VERDICT_OVERLINE[pair.verdict])}</span>
         </p>
 
         {positive ? (
@@ -200,7 +203,7 @@ export function ResultView({
         ) : (
           <>
             <h2 className="t-display-m">
-              {pair.verdict === "unpublished"
+              {guide ? t("Votre couple dispose de données documentées.") : pair.verdict === "unpublished"
                 ? t("Les distances de ce couple ne sont pas publiées.")
                 : pair.verdict === "none"
                   ? t("Ce cycle ne referme pas le contact.")
@@ -216,32 +219,38 @@ export function ResultView({
             </p>
             {/* L'essai a été LU sur une commutation illustrative : la mention
                 suit le résultat, elle ne vaut jamais validation technique. */}
-            {pair.illustrative ? (
+            {guide ? (
+              <div className="notice-info space-y-2" data-testid="result-guide">
+                <p className="t-metric">{msg("Plage documentée : {0} à {1} mm — {2}, {3}", [formatGuideBound(guide.upMm, guide.upNote), formatGuideBound(guide.toMm, guide.toNote), guide.sensorReference, guide.approachId])}</p>
+                <p className="t-body">{t(pair.documentedPosition ? "Position du guide sélectionnée." : "Montage différent de la position du guide : la plage reste une référence, à confirmer dans votre configuration.")}</p>
+                <a href={ACTIVATION_GUIDE.source.url} target="_blank" rel="noopener noreferrer">{msg("Guide Standex, page {0}", [String(guide.page)])}</a>
+              </div>
+            ) : pair.illustrative ? (
               <p className="notice-warning t-body-s" data-testid="result-illustrative">
                 {t("Simulation illustrative — distance non caractérisée, à valider par essais")}
               </p>
             ) : null}
             <div className="result-options">
-              <div className="panel-block space-y-3">
+              {canReplace ? <div className="panel-block space-y-3">
                 <p className="t-title-s">{t("Option 1")}</p>
                 <p className="t-body">{pair.verdict === "none" ? t("Rapprocher l’aimant dans cette position") : t("Revenir à une position documentée")}</p>
                 <Button variant="outline" className="min-h-11" onClick={onReplaceMagnet}>
                   {t("Replacer l'aimant")}
                 </Button>
-              </div>
+              </div> : null}
               <div className="panel-block result-option-primary space-y-3">
-                <p className="t-title-s">{t("Option 2")}</p>
-                <p className="t-body">{t("Demander un essai à Standex")}</p>
-                <Button className="min-h-11" onClick={onRequestTrial}>
-                  {t("Demander un essai →")}
+                {canReplace ? <p className="t-title-s">{t("Option 2")}</p> : null}
+                <p className="t-body">{t(guide && pair.documentedPosition ? "Faire confirmer par Standex" : "Demander un essai à Standex")}</p>
+                <Button className="min-h-11" onClick={guide && pair.documentedPosition ? onConfirmWithStandex : onRequestTrial}>
+                  {t(guide && pair.documentedPosition ? "Confirmer avec Standex →" : "Demander un essai →")}
                 </Button>
               </div>
             </div>
-            <p className="t-caption">
+            {!guide ? <p className="t-caption">
               {t(
                 "Ce n'est pas une erreur : c'est la limite de ce que les données publiées permettent d'affirmer.",
               )}
-            </p>
+            </p> : null}
           </>
         )}
       </div>

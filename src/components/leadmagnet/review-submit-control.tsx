@@ -1,4 +1,4 @@
-import { AlertTriangle, Loader2, ShieldCheck } from "lucide-react";
+import { AlertTriangle, Loader2, ShieldCheck, CircleCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { msg, t } from "@/lib/i18n/core";
 import type { ReviewOperation } from "@/lib/leadmagnet/review-submit-state";
@@ -104,6 +104,7 @@ export function ReviewSubmitControl({
           role="status"
           aria-live="polite"
         >
+          {status === "sent" && <CircleCheck className="h-10 w-10 anim-scale-in" aria-hidden="true" />}
           <p className="t-title-s">{t(headline)}</p>
           {detail ? <p>{t(detail)}</p> : null}
           {history && status === "modified" ? (

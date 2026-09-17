@@ -444,7 +444,7 @@ export function Contacts({
     </group>
   );
 }
-export function Magnet({ config, sample }: { config: WorkshopConfig; sample: CycleSample }) {
+export function Magnet({ config, sample, showName = true }: { config: WorkshopConfig; sample: CycleSample; showName?: boolean }) {
   const actualModel = pairedMagnetModel(config.magnetModel, config.sensorId);
   const [l, h, w] = magnetSize(config),
     axial = config.magnetization === "axial",
@@ -462,9 +462,9 @@ export function Magnet({ config, sample }: { config: WorkshopConfig; sample: Cyc
           <Body model={actualModel} xray={false} showCable={false} poleColors />
           {/* Le nom du modèle rend l'aimant identifiable sans lire la colonne
               de gauche. L'étiquette reste AU-DESSUS du boîtier. */}
-          <Label position={[0, h / 2 + 3.2, 0]} className="mw-magnet-tag">
+          {showName && <Label position={[0, h / 2 + 3.2, 0]} className="mw-magnet-tag">
             {`${t("Aimant")} ${config.magnetModel}`}
-          </Label>
+          </Label>}
         </>
       ) : (
         ([-1, 1] as const).map((sign) => {
@@ -810,6 +810,7 @@ export default function WorkshopScene({
   xray = true,
   dimensions = true,
   showNames = true,
+  showMagnetName = true,
   focus = "assembly",
   reduced = false,
   resetEpoch = 0,
@@ -826,6 +827,7 @@ export default function WorkshopScene({
   dimensions?: boolean;
   /** Affichage du nom du capteur : option d'affichage seule, jamais la géométrie. */
   showNames?: boolean;
+  showMagnetName?: boolean;
   focus?: "assembly" | "sensor";
   reduced?: boolean;
   resetEpoch?: number;
@@ -935,7 +937,7 @@ export default function WorkshopScene({
           )}
           {dimensions && <Dimensions model={model} />}
         </group>
-        <Magnet config={config} sample={sample} />
+        <Magnet config={config} sample={sample} showName={showMagnetName} />
         <GapDimension sample={sample} />
         {ghost && <GhostMagnet ghost={ghost} />}
         <Trajectory samples={samples} returning={sample.t > 0.5} colored={zones} />

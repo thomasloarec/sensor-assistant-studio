@@ -85,7 +85,8 @@ describe("bandeau d'état après un envoi confirmé", () => {
     const status = submissionStatusKind(lastSent, cycle.binding);
     expect(status).toBe("sent");
     const html = banner(status, lastSent);
-    expect(html).toContain("Projet transmis à la relecture par les ingénieurs Standex");
+    expect(html).toContain("Merci, votre projet a bien été transmis !");
+    expect(html).toContain("reviendra très rapidement vers vous");
     expect(html).not.toContain("Modifications non envoyées");
     expect(html).toContain("Envoyer mon projet");
   });

@@ -1,4 +1,5 @@
 import { pairLayout } from "@/lib/standex/pair-layout";
+import { cableConstruction } from "@/lib/leadmagnet/product-presentation";
 import { pairedMagnetModel } from "@/lib/standex/paired-magnets";
 /** Rendu 3D réel d'une vignette de candidat.
  *
@@ -8,7 +9,7 @@ import { pairedMagnetModel } from "@/lib/standex/paired-magnets";
  * Chargé paresseusement et monté uniquement quand la vignette est visible.
  */
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Line, OrbitControls } from "@react-three/drei";
+import { OrbitControls } from "@react-three/drei";
 import { Body, Contacts, ContextGuard } from "./scene";
 import { electricalDetailsAllowed, formatMm, sensorById } from "@/lib/standex/sensor-catalog";
 import { projectedScaleBar, thumbnailZoom } from "@/lib/standex/scale-bar";
@@ -70,7 +71,8 @@ export default function CandidateThumbnailScene({
 }) {
   const model = pairedMagnetModel(sensorId, hostSensorId) ?? sensorById(sensorId);
   const [l, h, w] = model.body;
-  const span = Math.max(l, h, w);
+  const cableVisible = cabled && cableConstruction(model) !== "none";
+  const span = Math.max(l + (cableVisible ? 12 : 0), h, w, model.terminalSpan ?? 0);
   const dist = pair ? 155 : 100; // Fixed camera: every catalogue thumbnail uses the same mm scale.
   /* Zoom = pixels par millimètre dans le plan de vue (caméra orthographique).
      La règle ci-dessous en découle : elle mesure une longueur réelle. */
@@ -97,13 +99,6 @@ export default function CandidateThumbnailScene({
   // Le contact interne n'est lisible que sur les corps transparents.
   const electrical = electricalDetailsAllowed(model);
   const showContacts = electrical && (model.shape === "glass" || model.shape === "custom_pcb");
-  const wireZ = Math.min(1.4, w * 0.16);
-  const wires: Vec3[][] = [-1, 1].map((sign) => [
-    [(side * l) / 2, 0, sign * wireZ],
-    [side * (l / 2 + span * 0.5), 0, sign * wireZ],
-    [side * (l / 2 + span * 0.85), h * 0.35, sign * wireZ * 2.2],
-    [side * (l / 2 + span * 1.05), h * 0.9, sign * wireZ * 2.6],
-  ]);
 
   return (
     <div className="candidate-thumb-stage" ref={host}>
@@ -133,18 +128,8 @@ export default function CandidateThumbnailScene({
       <directionalLight position={[span * 2, span * 3, span * 1.8]} intensity={2.2} />
       <directionalLight position={[-span * 2, span, -span * 2]} intensity={0.8} />
       <group rotation={[0, layout?.sensorYaw ?? 0, 0]}>
-        <Body model={model} xray={showContacts} showCable={false} />
+        <Body model={model} xray={showContacts} showCable={cableVisible} />
         {showContacts ? <Contacts model={model} contact="open" reduced /> : null}
-        {electrical && cabled && !["smd", "glass", "custom_pcb"].includes(model.shape)
-          ? wires.map((points, i) => (
-              <Line
-                key={i}
-                points={points}
-                color={i === 0 ? "#3c4853" : "#a55038"}
-                lineWidth={2.5}
-              />
-            ))
-          : null}
       </group>
       {pair && magnet && (
         <group position={offset} rotation={[0, layout?.magnetYaw ?? 0, 0]}>
@@ -166,7 +151,7 @@ export default function CandidateThumbnailScene({
         enableZoom={false}
         autoRotate={!reduced}
         autoRotateSpeed={0.8}
-        target={pair ? [offset[0] / 2, 0, offset[2] / 2] : [0, 0, 0]}
+        target={pair ? [offset[0] / 2, 0, offset[2] / 2] : [cableVisible ? side * 6 : 0, 0, 0]}
       />
       </Canvas>
       {rule ? (

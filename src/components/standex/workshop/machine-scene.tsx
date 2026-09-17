@@ -118,6 +118,7 @@ function Assembly({
   showSpace,
   xray,
   showNames,
+  showMagnetName,
   reduced,
   onChange,
   onMeasure,
@@ -135,6 +136,7 @@ function Assembly({
   xray: boolean;
   /** Affichage du nom du capteur : option d'affichage seule, jamais la géométrie. */
   showNames: boolean;
+  showMagnetName: boolean;
   reduced: boolean;
   onChange: (patch: Partial<MachineAssembly>) => void;
   onMeasure: (distance: number | null) => void;
@@ -265,6 +267,7 @@ function Assembly({
           onClick={(e) => e.stopPropagation()}
         >
           <Magnet
+            showName={showMagnetName}
             config={{ ...config, magnetTilt: 0 }}
             sample={{ ...sample, position: [0, 0, 0], angle: 0 }}
           />
@@ -323,6 +326,7 @@ export default function MachineScene({
   showSpace,
   xray,
   showNames = true,
+  showMagnetName = true,
   reduced,
   onChange,
   onMeasure,
@@ -344,6 +348,7 @@ export default function MachineScene({
   xray: boolean;
   /** Affichage du nom du capteur : option d'affichage seule, jamais la géométrie. */
   showNames?: boolean;
+  showMagnetName?: boolean;
   reduced: boolean;
   onChange: (patch: Partial<MachineAssembly>) => void;
   onMeasure: (distance: number | null) => void;
@@ -391,6 +396,7 @@ export default function MachineScene({
         showSpace={showSpace}
         xray={xray}
         showNames={showNames}
+        showMagnetName={showMagnetName}
         reduced={reduced}
         onChange={onChange}
         onMeasure={onMeasure}
