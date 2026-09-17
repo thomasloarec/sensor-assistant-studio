@@ -2,6 +2,7 @@ import { describe, expect, it } from "bun:test";
 import { readFileSync } from "node:fs";
 
 import { createDossier, toClientDto } from "../src/lib/leadmagnet/dossier";
+import { EXTERNAL_TRANSLATION_ENABLED } from "../src/lib/leadmagnet/external-translation";
 import { DEFAULT_WORKSHOP } from "../src/lib/standex/magnetic-workshop";
 import { COFFEE_ASSEMBLY } from "../src/lib/standex/machine-assembly";
 import {
