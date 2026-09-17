@@ -9,6 +9,7 @@ import type { NdaState } from "./nda";
 import { ndaAllowsConfidentialTransfer } from "./nda";
 import { estimateCableLength, uncoveredMotionStates } from "./cabling";
 import { connectorSummaryLines } from "./connectors";
+import { CHOSEN_BARE_LEADS, DELEGATED_CONNECTOR } from "./project-checklist";
 
 type Tr = (source: string) => string;
 const identity: Tr = (source) => source;
@@ -228,6 +229,18 @@ export function technicalSummary(dossier: DesignDossier, tr: Tr = identity): str
     ...cablingSummary(dossier, tr),
     "",
     `## ${tr("Terminaison")}`,
-    ...(isPcbSensor(dossier.selectedSensorId) ? [] : connectorSummaryLines(dossier.termination, tr).map((l) => `- ${l}`)),
+    ...(isPcbSensor(dossier.selectedSensorId)
+      ? []
+      : [
+          // Un choix VOLONTAIRE de rester sans connecteur est dit comme tel : il ne
+          // doit pas se lire comme le défaut d'un dossier neuf ni comme une
+          // délégation à Standex.
+          ...(dossier.termination.kind === "bare_leads" &&
+          (dossier.delegatedDecisions ?? []).includes(CHOSEN_BARE_LEADS) &&
+          !(dossier.delegatedDecisions ?? []).includes(DELEGATED_CONNECTOR)
+            ? [`- ${tr("Choix du client : pas de connecteur, fils nus.")}`]
+            : []),
+          ...connectorSummaryLines(dossier.termination, tr).map((l) => `- ${l}`),
+        ]),
   ].join("\n");
 }
