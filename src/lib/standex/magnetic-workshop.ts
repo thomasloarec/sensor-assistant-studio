@@ -317,19 +317,41 @@ export function applyPairSelection(
   const magnetModel = fake ? "generic" : (magnetId ?? defaultMagnetFor(sensorId));
   const classes = publishedClasses(sensorId, magnetModel);
   const approaches = approachChoicesFor(sensorId, magnetModel);
-  const geometry =
+  let geometry =
     approaches.length && !approaches.includes(c.geometry) ? approaches[0]! : c.geometry;
+  /* Variante du guide RÉSOLUE ICI, une seule fois, et enregistrée dans le
+     projet : atelier, essai, résultat, export et réouverture lisent ensuite la
+     même ligne. Le choix déjà fait sur le même couple est conservé. */
+  const sameCouple = c.sensorId === sensorId && c.magnetModel === magnetModel;
+  let guideReference: string | null = null;
+  if (!fake) {
+    let selection = guideSelectionFor(
+      sensorId,
+      magnetModel,
+      geometry,
+      sameCouple ? c.guideReference : null,
+    );
+    if (!selection && approaches.length === 0) {
+      const fallback = defaultGuideSelection(sensorId, magnetModel);
+      if (fallback && (fallback.approachId === "D1" || fallback.approachId === "D3")) {
+        geometry = fallback.approachId;
+        selection = fallback;
+      }
+    }
+    guideReference = selection?.reference ?? null;
+  }
   return {
     ...c,
     sensorId,
     magnetModel,
-    guideReference: c.sensorId === sensorId && c.magnetModel === magnetModel ? c.guideReference ?? null : null,
+    guideReference,
     sensitivity: classes.length && !classes.includes(c.sensitivity) ? classes[0]! : c.sensitivity,
     geometry,
     mode: fake ? "education" : "reference",
     sensorAngle: 0,
     magnetAngle: documentedMagnetAngleDeg(geometry, sensorId),
   };
+
 }
 /** A new pair starts on its published template. Imported assemblies keep their own motion. */
 export function pairDemonstration(c: WorkshopConfig, sensorId: string, magnetId: string): WorkshopConfig {
