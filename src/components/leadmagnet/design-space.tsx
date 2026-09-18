@@ -3434,7 +3434,7 @@ export function DesignSpace({
     } catch {
       setSummaryMessage(t("Le rapport PDF n'a pas pu être produit sur cet appareil."));
     }
-  }, [dossier, nda, extraConstraints]);
+  }, [dossier, nda, extraConstraints, serverDossierId, t]);
 
   const projectContextFields = <ProjectContextFields key={`${dossier.id}-${contextGenRef.current}`} business={dossier.business}
     onInvalid={setVolumeError} onChange={business => setDossier(d => ({ ...d, business }))} />;
