@@ -173,12 +173,21 @@ select r.id,
  where r.status = 'validated'
    and not lead_priv.detection_shape_ok(r.sensor_family, r.magnet_id);
 
-update lead.detection_rows r
-   set status = 'draft',
-       version = r.version + 1,
-       updated_at = now()
- where not lead_priv.detection_shape_ok(r.sensor_family, r.magnet_id)
-   and r.status <> 'draft';
+do $$
+declare quarantined_count integer;
+begin
+  update lead.detection_rows r
+     set status = 'draft',
+         version = r.version + 1,
+         updated_at = now(),
+         updated_by = null
+   where not lead_priv.detection_shape_ok(r.sensor_family, r.magnet_id)
+     and r.status = 'validated';
+  get diagnostics quarantined_count = row_count;
+  if quarantined_count > 0 then
+    perform lead_priv.detection_bump(false);
+  end if;
+end $$;
 
 -- La contrainte peut maintenant être validée : plus aucune ligne ACTIVE ne la
 -- viole. Les brouillons incompatibles restent lisibles dans l'annuaire.

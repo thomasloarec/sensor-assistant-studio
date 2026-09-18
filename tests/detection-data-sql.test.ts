@@ -545,6 +545,11 @@ describe("migration 1.10 exécutée sur le schéma 1.9 inchangé", () => {
       });
       expect(Number(quarantined.rows[0]!.pull_in_mm)).toBe(15);
       expect(Number(quarantined.rows[0]!.drop_out_mm)).toBe(17.5);
+      expect(
+        (await db.query<{ revision: string }>(
+          "select revision::text as revision from lead.detection_state where singleton",
+        )).rows[0]!.revision,
+      ).toBe("2");
 
       const audit = await db.query<{
         action: string;
