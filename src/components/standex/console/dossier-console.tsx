@@ -166,8 +166,9 @@ export function consoleLayout(props: DossierConsoleProps): {
 /** Référence lisible du projet, telle que le client la voit sur son PDF :
  *  lue dans le contenu réellement enregistré, jamais recalculée autrement. */
 function snapshotReference(snapshot: unknown): string | null {
-  const dossier = (snapshot as { dossier?: { id?: unknown } } | null | undefined)?.dossier;
-  return typeof dossier?.id === "string" ? projectReference(dossier.id) : null;
+  const dto = snapshot as { id?: unknown; dossier?: { id?: unknown } } | null | undefined;
+  const id = typeof dto?.id === "string" ? dto.id : dto?.dossier?.id;
+  return typeof id === "string" ? projectReference(id) : null;
 }
 
 export function DossierConsole(props: DossierConsoleProps) {
