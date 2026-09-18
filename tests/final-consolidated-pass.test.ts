@@ -24,7 +24,9 @@ describe("calendrier de démonstration : navigation par mois", () => {
   });
 
   test("fin novembre : le mois suivant est bien décembre, pas novembre", () => {
-    const nov30 = new Date(2026, 10, 30);
+    // Semaine du 23 novembre : son jeudi est en novembre, donc le mois affiché
+    // est novembre et « mois suivant » doit donner décembre.
+    const nov30 = new Date(2026, 10, 23);
     const next = shiftWeek(nov30, 1, "month");
     expect(next.getMonth()).toBe(11);
     expect(next.getDay()).toBe(1);
@@ -85,8 +87,8 @@ describe("récapitulatif d'un essai : la ligne du guide réellement enregistrée
     expect(fact).not.toBeNull();
     expect(fact!.range.page).toBe(35);
     expect(fact!.range.sensorReference).toBe("MK17-B-X");
-    expect(fact!.label).toContain("14.4");
-    expect(fact!.label).toContain("16.6");
+    expect(fact!.label).toContain("14,4");
+    expect(fact!.label).toContain("16,6");
     expect(fact!.label).toContain("MK17-B-X");
     expect(fact!.label).toContain("35");
   });
