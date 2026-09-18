@@ -20,9 +20,9 @@ describe("référence de projet", () => {
     expect(projectReference(createDossier().id)).not.toBe(projectReference(createDossier().id));
   });
 
-  test("un brouillon exporté avant envoi se retrouve sous la même référence", async () => {
+  test("un brouillon exporté avant envoi se retrouve sous la même référence", () => {
     const d = createDossier();
-    const round = parseDossierExport(JSON.parse(await buildDossierExport(d)));
+    const round = parseDossierExport(buildDossierExport(d));
     expect(projectReference(round.dossier.id)).toBe(projectReference(d.id));
   });
 
