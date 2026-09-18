@@ -34,7 +34,7 @@ const need = {
 const key = {
     sensorFamily: "MK03",
     sensitivityClass: "B",
-    magnetId: "M02",
+    magnetId: "4003004003",
     approachId: "D1" as const,
   },
   domain = { referencePose: true, ferrous: false };
@@ -105,8 +105,9 @@ test("T6 expanded catalogue retains four MK03 classes and refuses physical predi
   const rows = exploreSolutions(need, "D1", domain);
   // 110 : les lignes frontales MK36/37/38 ajoutent leurs modèles de contact
   // réellement publiés, sans qu'aucune valeur ne soit empruntée.
-  expect(rows).toHaveLength(110);
-  expect(new Set(rows.map((r) => r.id)).size).toBe(110);
+  // 73 : la règle de forme écarte les couples contradictoires des résultats.
+  expect(rows).toHaveLength(73);
+  expect(new Set(rows.map((r) => r.id)).size).toBe(73);
   expect(new Set(rows.map((r) => r.sensorFamily)).size).toBe(29);
   expect(
     new Set(rows.filter((r) => r.sensorFamily === "MK03").map((r) => r.sensitivityClass)).size,
@@ -122,7 +123,7 @@ test("T5 consultation gate, exact derived fields, confirmations, conflict and re
     need,
     envelopeMm: [45, 25, 15] as [number, number, number],
     cycles: 2000000,
-    selectedSolutionId: "MK03/B/M02/D1",
+    selectedSolutionId: "MK03/B/4003004003/D1",
   };
   expect(deriveStudioFields(s, MK03_EXAMPLE).fields).toEqual({});
   s = deriveStudioFields({ ...s, consulted: true }, MK03_EXAMPLE) as typeof s;

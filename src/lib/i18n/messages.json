@@ -27268,5 +27268,32 @@
     "Укажите документированное семейство, оно покрывает свои варианты",
     "Inserire la famiglia documentata, che copre le sue varianti",
     "記載されているファミリーを入力してください（その変種を含みます）"
+  ],
+  "Combinaison exclue (forme)": [
+    "Combination excluded (shape)",
+    "组合被排除（形状）",
+    "Kombination ausgeschlossen (Form)",
+    "Combinación excluida (forma)",
+    "Комбинация исключена (форма)",
+    "Combinazione esclusa (forma)",
+    "除外された組み合わせ（形状）"
+  ],
+  "un capteur tubulaire ne travaille qu'avec un aimant tubulaire, un capteur non tubulaire qu'avec un aimant bloc": [
+    "a tubular sensor only works with a tubular magnet, a non-tubular sensor only with a block magnet",
+    "管状传感器只能与管状磁体配合，非管状传感器只能与块状磁体配合",
+    "ein rohrförmiger Sensor arbeitet nur mit einem rohrförmigen Magnet, ein nicht rohrförmiger Sensor nur mit einem Blockmagnet",
+    "un sensor tubular solo funciona con un imán tubular, un sensor no tubular solo con un imán de bloque",
+    "трубчатый датчик работает только с трубчатым магнитом, нетрубчатый датчик — только с блочным магнитом",
+    "un sensore tubolare funziona solo con un magnete tubolare, un sensore non tubolare solo con un magnete a blocco",
+    "円筒形センサーは円筒形マグネットのみ、非円筒形センサーはブロックマグネットのみと組み合わせます"
+  ],
+  "Forme incompatible avec ce capteur : combinaison non simulée": [
+    "Shape incompatible with this sensor: combination not simulated",
+    "形状与该传感器不兼容：组合未仿真",
+    "Form mit diesem Sensor nicht kompatibel: Kombination nicht simuliert",
+    "Forma incompatible con este sensor: combinación no simulada",
+    "Форма несовместима с этим датчиком: комбинация не моделируется",
+    "Forma incompatibile con questo sensore: combinazione non simulata",
+    "このセンサーと形状が非互換：組み合わせは非シミュレーション"
   ]
 }

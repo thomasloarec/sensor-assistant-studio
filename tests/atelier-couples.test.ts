@@ -132,12 +132,12 @@ describe("distances publiées : la source décide, jamais une liste de familles"
     expect(r.transitions[1]!.distance).toBeCloseTo(17.5, 0);
   });
   test("un MK04 n'emprunte jamais les seuils d'un MK03 : le titre et les valeurs suivent le couple", () => {
-    const mk03 = config({ sensorId: "MK03", magnetModel: "M02", sensitivity: "C", geometry: "D1" }),
+    const mk03 = config({ sensorId: "MK03", magnetModel: "4003004003", sensitivity: "C", geometry: "D1" }),
       mk04 = config({ sensorId: "MK04", magnetModel: "M04", sensitivity: "C", geometry: "D1" });
     // Chaque couple lit SA propre ligne de registre, avec sa propre provenance :
     // deux valeurs numériquement égales ne sont pas la même source.
     const rowMk03 = PUBLISHED_REGISTRY.rows.find(
-        (r) => r.sensorFamily === "MK03" && r.magnetId === "M02" && r.sensitivityClass === "C" && r.approachId === "D1",
+        (r) => r.sensorFamily === "MK03" && r.magnetId === "4003004003" && r.sensitivityClass === "C" && r.approachId === "D1",
       )!,
       rowMk04 = PUBLISHED_REGISTRY.rows.find(
         (r) => r.sensorFamily === "MK04" && r.magnetId === "M04" && r.sensitivityClass === "C" && r.approachId === "D1",
@@ -388,9 +388,11 @@ describe("points d'entrée : le bon couple par défaut partout", () => {
     expect(next.machine).toBe(from.machine);
   });
   test("un aimant explicitement enregistré n'est pas écrasé par une simple relecture", () => {
-    const saved = config({ sensorId: "MK03", magnetModel: "M02" });
-    expect(parseWorkshopConfig(JSON.parse(JSON.stringify(saved)))?.magnetModel).toBe("M02");
-    expect(parseWorkshopNote(serializeWorkshop(saved))?.magnetModel).toBe("M02");
+    // Aimant compatible avec ce capteur tubulaire, et différent de son défaut :
+    // la relecture le conserve tel quel.
+    const saved = config({ sensorId: "MK03", magnetModel: "4003004003" });
+    expect(parseWorkshopConfig(JSON.parse(JSON.stringify(saved)))?.magnetModel).toBe("4003004003");
+    expect(parseWorkshopNote(serializeWorkshop(saved))?.magnetModel).toBe("4003004003");
   });
   test("un modèle explicitement fictif reste fictif, un vrai capteur non", () => {
     expect(applySensorSelection(config(), "GENERIC")).toMatchObject({

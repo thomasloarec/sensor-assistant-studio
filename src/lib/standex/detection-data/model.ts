@@ -21,6 +21,7 @@ import {
   type SensorModel,
 } from "@/lib/standex/sensor-catalog";
 import { BARE_MAGNETS, PACKAGED_MAGNET_IDS } from "@/lib/standex/magnet-catalog";
+import { isShapeIncompatible, shapeClassCompatible } from "@/lib/standex/shape-compatibility";
 import {
   effectiveActivationGuide,
   type GuideRange,
@@ -242,6 +243,11 @@ export function validateDetectionRecord(
   if (!isKnownMagnetId(r.magnetId)) e.magnetId = "Aimant inconnu du catalogue";
   else if (isPublishedFamilyAlias(r.magnetId))
     e.magnetId = "Saisir la famille documentée, qui couvre ses variantes";
+  // Règle de compatibilité de FORME : un capteur tubulaire ne travaille qu'avec
+  // un aimant tubulaire, un capteur non tubulaire qu'avec un aimant bloc. Une
+  // telle ligne serait acceptée puis ignorée des moteurs : elle est refusée ici.
+  else if (isShapeIncompatible(r.sensorFamily, r.magnetId))
+    e.magnetId = "Forme incompatible avec ce capteur : combinaison non simulée";
   if (!DETECTION_APPROACHES.includes(r.approachId)) e.approachId = "Approche inconnue";
   if (r.datum !== datumForApproach(r.approachId)) e.datum = "Datum incompatible avec l'approche";
   if (r.pullInMm !== null && !(Number.isFinite(r.pullInMm) && r.pullInMm > 0))
@@ -325,7 +331,15 @@ export const DRAWN_APPROACHES: readonly PublishedApproach[] = ["D1", "D3", "F1"]
 export function isRecordSimulatable(r: {
   contactForm: string;
   approachId: PublishedApproach;
+  sensorFamily?: string;
+  magnetId?: string;
 }): boolean {
+  if (
+    r.sensorFamily !== undefined &&
+    r.magnetId !== undefined &&
+    isShapeIncompatible(r.sensorFamily, r.magnetId)
+  )
+    return false;
   return r.contactForm === "1A" && DRAWN_APPROACHES.includes(r.approachId);
 }
 

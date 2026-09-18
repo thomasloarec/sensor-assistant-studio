@@ -44,11 +44,13 @@ const base = () => mountingFromWorkshop({ ...MK03_EXAMPLE });
 
 describe("profils de montage", () => {
   it("n'expose que les couples réellement publiés, sans alias d'identité", () => {
-    // 4003004003 (cylindre) et M02 (boîtier) sont deux lignes distinctes du
-    // registre : aucun repli de l'un sur l'autre.
+    // 4003004003 (cylindre) et M02 (bloc) sont deux lignes distinctes du
+    // registre : aucun repli de l'un sur l'autre. MK03 étant tubulaire, la règle
+    // de forme de l'application écarte le couple MK03 + M02 des simulations :
+    // ses lignes publiées restent lisibles à l'annuaire, sans profil ni seuil.
     expect(profileFor("MK03", "4003004003", "D1")?.magnetId).toBe("4003004003");
-    expect(profileFor("MK03", "M02", "D1")?.magnetId).toBe("M02");
-    expect(profileFor("MK03", "M02", "D3")?.approachId).toBe("D3");
+    expect(profileFor("MK03", "M02", "D1")).toBeNull();
+    expect(profileFor("MK03", "4003004003", "D3")?.approachId).toBe("D3");
     expect(profileFor("MK03", "aimant-inventé", "D1")).toBeNull();
     expect(profileFor("MK24-A-J", "4003004003", "D1")).toBeNull();
     // D2 est réellement au registre : la ligne existe, ses distances sont
@@ -65,7 +67,8 @@ describe("profils de montage", () => {
   it("couvre toutes les familles et approches réellement présentes au registre", () => {
     const cov = registryCoverage();
     expect(cov.revision).toBe("published-2026-09-14-v3");
-    expect(cov.rows).toBe(445);
+    // 180 lignes de formes contradictoires sont écartées des simulations.
+    expect(cov.rows).toBe(265);
     expect(cov.families.length).toBe(16);
     expect(cov.approaches).toEqual(["D1", "D2", "D3", "D4", "D5", "F1"]);
     expect(cov.magnets.length).toBe(9);
@@ -99,13 +102,13 @@ describe("profils de montage", () => {
       expect(currentMountingProfiles().some((p) => p.sensorFamily === f)).toBe(true);
   });
   it("le gabarit reste schématique et les datums non caractérisés", () => {
-    const p = profileFor("MK03", "M02", "D1")!;
+    const p = profileFor("MK03", "4003004003", "D1")!;
     expect(p.geometry).toBe("schematic");
     expect(p.datumCharacterised).toBe(false);
     expect(p.evidence).toBe("published_typical");
   });
   it("classe les sensibilités par portée réelle : B porte le plus loin", () => {
-    const rows = sensitivityComparison(profileFor("MK03", "M02", "D1")!);
+    const rows = sensitivityComparison(profileFor("MK03", "4003004003", "D1")!);
     expect(rows.map((r) => r.sensitivityClass)).toEqual(["B", "C", "D", "E"]);
     expect(rows.map((r) => [r.pullInMm, r.dropOutMm])).toEqual([
       [15, 17.5],
@@ -114,7 +117,7 @@ describe("profils de montage", () => {
       [10, 13.5],
     ]);
     expect(rows.every((r) => r.sourceRef.length > 0)).toBe(true);
-    const d3 = sensitivityComparison(profileFor("MK03", "M02", "D3")!);
+    const d3 = sensitivityComparison(profileFor("MK03", "4003004003", "D3")!);
     expect(d3.map((r) => [r.pullInMm, r.dropOutMm])).toEqual([
       [9.3, 11.4],
       [7.4, 9.9],
@@ -133,7 +136,7 @@ describe("géométrie du couple", () => {
     const gap = surfaceGapMm("MK03", "M02", { positionMm: [0, 0, 40], rotationDeg: [0, 0, 0] }, axis);
     expect(gap).toBeLessThan(40);
     expect(gap).toBeGreaterThan(0);
-    expect(relativePoseAt(m, profileFor("MK03", "M02", "D1")!, 0).positionMm[2]).toBeGreaterThan(
+    expect(relativePoseAt(m, profileFor("MK03", "4003004003", "D1")!, 0).positionMm[2]).toBeGreaterThan(
       m.travel.startGapMm,
     );
   });
@@ -196,7 +199,7 @@ describe("guidage de position", () => {
       m.anchor.positionMm[1] + 4,
       m.anchor.positionMm[2] - 6,
     ]);
-    const profile = profileFor("MK03", "M02", "D1")!;
+    const profile = profileFor("MK03", "4003004003", "D1")!;
     const before = relativePoseAt(m, profile, 0.3),
       after = relativePoseAt(moved, profile, 0.3);
     expect(after.positionMm).toEqual(before.positionMm);
@@ -205,7 +208,7 @@ describe("guidage de position", () => {
   });
   it("transporte correctement la pose dans le repère d'une pièce mobile", () => {
     const m = { ...base(), anchor: { positionMm: [30, 0, 0] as [number, number, number], rotationDeg: [0, 90, 0] as [number, number, number] } };
-    const profile = profileFor("MK03", "M02", "D1")!;
+    const profile = profileFor("MK03", "4003004003", "D1")!;
     const world = magnetWorldPosition(m, relativePoseAt(m, profile, 0.5));
     // Ancrage tourné de 90° : l'approche +Z locale sort en X monde.
     expect(Math.abs(world[0]) - 30).toBeGreaterThan(0);

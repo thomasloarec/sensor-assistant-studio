@@ -1,6 +1,7 @@
 import raw from "@/data/studio-v2/activation-guide.json";
 import { number } from "@/lib/i18n/core";
 import { BARE_MAGNETS, type CatalogMagnet } from "./magnet-catalog";
+import { shapeClassCompatible } from "./shape-compatibility";
 
 /**
  * Guide d'activation officiel Standex (brochure 40 pages, édition 10/2025).
@@ -355,6 +356,20 @@ const usableRow = (r: GuideRange): boolean =>
 
 /** Ligne publiée pour CETTE approche, en gardant la variante déjà retenue si
  *  elle publie cette approche. `null` = rien de publié : aucune substitution. */
+/**
+ * La règle de compatibilité de FORME de l'application s'applique aussi aux
+ * sélections ILLUSTRATIVES du guide : une plage de la brochure reste lisible
+ * dans le tableau, mais un couple de formes incompatibles ne peut pas être
+ * choisi comme démonstration. Aucune plage n'est convertie ni déplacée.
+ */
+export function guideShapeAllowed(
+  sensorFamily: string,
+  magnetId: string,
+  guide = effectiveActivationGuide(),
+): boolean {
+  const shape = guide.magnets.find((m) => m.id === magnetId)?.shape ?? null;
+  return shapeClassCompatible(sensorFamily, shape) !== "incompatible";
+}
 export function guideSelectionFor(
   sensorFamily: string,
   magnetId: string,
@@ -362,6 +377,7 @@ export function guideSelectionFor(
   preferredReference?: string | null,
   guide = effectiveActivationGuide(),
 ): GuideSelection | null {
+  if (!guideShapeAllowed(sensorFamily, magnetId, guide)) return null;
   const rows = guideRangesFor(sensorFamily, magnetId, guide).filter(
     (r) => r.approachId === approachId && usableRow(r),
   );
@@ -382,6 +398,7 @@ export function defaultGuideSelection(
     const found = guideSelectionFor(sensorFamily, magnetId, approachId, undefined, guide);
     if (found) return found;
   }
+  if (!guideShapeAllowed(sensorFamily, magnetId, guide)) return null;
   const row = guideRangesFor(sensorFamily, magnetId, guide).find(usableRow);
   return row ? { reference: row.sensorReference, approachId: row.approachId, range: row } : null;
 }

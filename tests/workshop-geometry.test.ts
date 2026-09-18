@@ -14,6 +14,7 @@ import {
 import { SENSOR_CATALOG, sensorById } from "../src/lib/standex/sensor-catalog";
 import { bodyOf } from "../src/lib/standex/mounting/geometry";
 import { pairedMagnetModel } from "../src/lib/standex/paired-magnets";
+import { defaultMagnetFor } from "../src/lib/standex/default-pairs";
 /** Ancien exemple MK03 + 4003004003 : conservé tel quel là où le test porte
  * précisément sur ce couple, indépendamment du démarrage par défaut. */
 const MK03_EXAMPLE = { ...DEFAULT_WORKSHOP, sensorId: "MK03", magnetModel: "4003004003" };
@@ -86,7 +87,9 @@ describe("Documented body sizes and source plans", () => {
 describe("Existing saved assemblies remain readable", () => {
   test("V1 reference and education snapshots migrate to explicit V3 sensor identities", () => {
     const old = { ...MK03_EXAMPLE, version: 1, sensorId: undefined };
-    expect(parseWorkshopConfig(old)).toEqual({ ...MK03_EXAMPLE, magnetModel: "M02" });
+    // MK03 est tubulaire : un enregistrement d'avant la règle de forme est ramené
+    // au couple par défaut du capteur, sans inventer de distance.
+    expect(parseWorkshopConfig(old)).toEqual({ ...MK03_EXAMPLE, magnetModel: defaultMagnetFor("MK03") });
     expect(
       parseWorkshopNote(
         "Saved\n\n[STANDEX_MAGNETIC_WORKSHOP_V1]\n" + JSON.stringify({ ...old, mode: "education" }),

@@ -79,6 +79,7 @@ import {
   saveGuideRow,
 } from "@/lib/standex/detection-data/adapter";
 import { loadDetectionData } from "@/lib/standex/detection-data/store";
+import { isShapeIncompatible } from "@/lib/standex/shape-compatibility";
 
 export const Route = createFileRoute("/standex/detection-data")({
   component: DetectionDataScreen,
@@ -546,8 +547,12 @@ function DetectionDataScreen() {
           id="dd-complete"
           label={t("Complétude")}
           value={filters.completeness}
-          options={["complete", "incomplete"]}
-          labels={{ complete: t("Complète"), incomplete: t("Incomplète") }}
+          options={["complete", "incomplete", "excluded"]}
+          labels={{
+            complete: t("Complète"),
+            incomplete: t("Incomplète"),
+            excluded: t("Combinaison exclue (forme)"),
+          }}
           onChange={(v) => setFilters({ ...filters, completeness: v })}
         />
         <Button
@@ -694,6 +699,18 @@ function DetectionDataScreen() {
                       {e.record.sensorFamily}
                       {e.simulatable ? "" : " · " + t("Combinaison non simulée")}
                     </span>
+                    {/* Couple écarté par la règle de forme : dit ici, jamais actif. */}
+                    {e.excluded ? (
+                      <span
+                        className="t-caption block max-w-[16rem] text-warning"
+                        data-testid="dd-shape-excluded"
+                      >
+                        {t("Combinaison exclue (forme)")} ·{" "}
+                        {t(
+                          "un capteur tubulaire ne travaille qu'avec un aimant tubulaire, un capteur non tubulaire qu'avec un aimant bloc",
+                        )}
+                      </span>
+                    ) : null}
                   </th>
                   <td className="px-2 py-1.5">
                     {e.record.sensitivityClass || "—"}
@@ -1039,11 +1056,15 @@ function EditPanel({
                 <SelectValue placeholder={t("Aimant")} />
               </SelectTrigger>
               <SelectContent>
-                {detectionMagnetIds().map((m) => (
-                  <SelectItem key={m} value={m}>
-                    {m}
-                  </SelectItem>
-                ))}
+                {/* Seuls les aimants de FORME compatible avec ce capteur sont
+                    proposés : le choix déjà enregistré reste affiché tel quel. */}
+                {detectionMagnetIds()
+                  .filter((m) => m === r.magnetId || !isShapeIncompatible(r.sensorFamily, m))
+                  .map((m) => (
+                    <SelectItem key={m} value={m}>
+                      {m}
+                    </SelectItem>
+                  ))}
               </SelectContent>
             </Select>
           )}

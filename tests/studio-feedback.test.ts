@@ -24,7 +24,7 @@ const domain = { referencePose: true, ferrous: false };
 const key = {
   sensorFamily: "MK03",
   sensitivityClass: "B",
-  magnetId: "M02",
+  magnetId: "4003004003",
   approachId: "D1" as const,
 };
 test("R04 published references cover thirteen families and all five paths, with auditable sources", () => {
@@ -110,7 +110,7 @@ test("R21 example hardware never populates a client product choice without expli
   });
   expect(f.sections[2]!.entries.find((e) => e.label === "Capteur")?.value).toBe("Non renseigné");
   const chosen = deriveStudioFields(
-    { ...s, selectedSolutionId: "MK03/B/M02/D1" },
+    { ...s, selectedSolutionId: "MK03/B/4003004003/D1" },
     MK03_EXAMPLE,
   );
   expect(chosen.fields.sensor_form_factor?.value).toContain("MK03");
@@ -118,7 +118,7 @@ test("R21 example hardware never populates a client product choice without expli
   expect(stale.fields.sensor_form_factor).toBeUndefined();
 });
 test("R11 workbook preserves numeric cells, blanks, provenance and literal formula-like user text", async () => {
-  const s = { ...newStudy(), need, selectedSolutionId: "MK03/B/M02/D1" };
+  const s = { ...newStudy(), need, selectedSolutionId: "MK03/B/4003004003/D1" };
   const f = await createDesignFreeze({
     dossierId: "TEST",
     revision: 1,
