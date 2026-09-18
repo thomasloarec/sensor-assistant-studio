@@ -25,6 +25,10 @@ import {
   effectiveActivationGuide,
   type GuideRange,
 } from "@/lib/standex/activation-guide";
+import {
+  isPublishedFamilyAlias,
+  publishedMagnetFamily,
+} from "@/lib/standex/magnetics/registries";
 import type {
   PublishedApproach,
   PublishedClassKind,
@@ -73,6 +77,26 @@ export function knownMagnetIds(): string[] {
   return [...PACKAGED_MAGNET_IDS, ...BARE_MAGNETS.map((m) => m.id)];
 }
 export const isKnownMagnetId = (id: string) => knownMagnetIds().includes(id);
+
+/** Aimants saisissables pour de VRAIES distances de commutation.
+ *
+ *  Les variantes lues via une famille documentée (« M21P/1 » et « M21P/2 » sont
+ *  lues via « M21 ») sont exclues : une ligne enregistrée sous la variante
+ *  serait acceptée par le serveur puis IGNORÉE par le simulateur, qui canonise
+ *  la famille à la lecture. On saisit donc la famille documentée, dont la portée
+ *  couvre explicitement ses variantes. Les plages du guide, elles, gardent les
+ *  variantes telles qu'imprimées : c'est une lecture de brochure, pas une clé de
+ *  simulation. */
+export function detectionMagnetIds(): string[] {
+  return knownMagnetIds().filter((id) => !isPublishedFamilyAlias(id));
+}
+
+/** Variantes couvertes par une famille documentée, pour le dire à l'écran. */
+export function magnetFamilyScope(magnetId: string): string[] {
+  return knownMagnetIds().filter(
+    (id) => id !== magnetId && publishedMagnetFamily(id) === magnetId,
+  );
+}
 
 export type DetectionStatus = "draft" | "validated";
 
@@ -216,6 +240,8 @@ export function validateDetectionRecord(
   )
     e.sensitivityClass = "Classe ou modèle requis";
   if (!isKnownMagnetId(r.magnetId)) e.magnetId = "Aimant inconnu du catalogue";
+  else if (isPublishedFamilyAlias(r.magnetId))
+    e.magnetId = "Saisir la famille documentée, qui couvre ses variantes";
   if (!DETECTION_APPROACHES.includes(r.approachId)) e.approachId = "Approche inconnue";
   if (r.datum !== datumForApproach(r.approachId)) e.datum = "Datum incompatible avec l'approche";
   if (r.pullInMm !== null && !(Number.isFinite(r.pullInMm) && r.pullInMm > 0))
