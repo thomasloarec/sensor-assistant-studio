@@ -141,10 +141,18 @@ export function buildDirectory(saved: readonly DetectionRecord[]): DirectoryEntr
       complete,
       simulatable: isRecordSimulatable(record),
       // Une saisie complète et validée est servie ; un brouillon ne l'est pas,
-      // et alors la ligne livrée de la MÊME combinaison reste en vigueur.
+      // et alors la ligne livrée de la MÊME combinaison reste en vigueur —
+      // sauf si cette ligne livrée est elle-même exclue par la règle de forme :
+      // dans ce cas aucune valeur n'est active et il ne faut rien présenter
+      // comme « reste en vigueur ».
       active: complete && !excluded,
       excluded,
-      baseline: complete && !excluded ? null : base,
+      baseline:
+        complete && !excluded
+          ? null
+          : base && !isShapeIncompatible(base.sensorFamily, base.magnetId)
+            ? base
+            : null,
     });
   }
   // Références réelles jamais documentées : visibles, à compléter.
@@ -213,7 +221,14 @@ export function buildGuideDirectory(saved: readonly GuideRecord[]): GuideDirecto
       atypical: guideAtypical(record),
       excluded: !guideShapeAllowed(record.sensorFamily, record.magnetId),
       active: complete,
-      baseline: complete ? null : base,
+      // Même honnêteté que pour les distances : une plage livrée dont les
+      // formes sont incompatibles n'est jamais présentée comme « en vigueur ».
+      baseline:
+        complete
+          ? null
+          : base && guideShapeAllowed(base.sensorFamily, base.magnetId)
+            ? base
+            : null,
     });
   }
   return [...entries.values()].sort(
