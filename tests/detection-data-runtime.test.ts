@@ -102,7 +102,8 @@ describe("Une combinaison complétée alimente vraiment les moteurs", () => {
       // défaut ne pointe sur un tableau figé à l'import du module.
       const profile = profileFor(family, MAGNET, "D1");
       expect(profile).not.toBeNull();
-      expect(profile!.pullInMm).toBe(9.5);
+      expect(profile!.classes).toContain("B");
+      expect(publishedReference(family, "B", MAGNET, "D1")?.pullInMm).toBe(9.5);
       expect(currentMountingProfiles().some((p) => p.sensorId === family)).toBe(true);
 
       const after = simulateMounting(workshopFor(family));
