@@ -167,8 +167,16 @@ const ILLUSTRATIVE_BLOCKERS = new Set([
   "POLARITY_NOT_TEMPLATE",
   "MAGNETIZATION_NOT_TEMPLATE",
 ]);
-/** Au-delà de cette séparation réelle, l'état illustratif est TOUJOURS ouvert. */
+/**
+ * Plafond de LECTURE réservé au cas SANS plage publiée : quand la démonstration
+ * ne repose sur aucune ligne du guide, l'état illustratif est toujours ouvert
+ * au-delà de cette séparation réelle. Dès qu'une plage publiée est fournie, ses
+ * propres bornes font foi et ne sont JAMAIS tronquées par ce plafond (MK15-B-X
+ * D1 va jusqu'à 20,1 mm, MK16-B-X D3 jusqu'à 22,7 mm), ni relevées jusqu'à lui
+ * quand elles sont plus courtes (NdFeB 13,9 mm reste 13,9 mm).
+ */
 export const ILLUSTRATIVE_FAR_MM = 20;
+
 
 /** Vrai si l'on peut montrer une commutation illustrative pour ce montage. */
 export function illustrativeAllowed(reasons: readonly string[]): boolean {
