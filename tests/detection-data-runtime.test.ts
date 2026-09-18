@@ -9,6 +9,7 @@
 import { afterEach, describe, expect, test } from "bun:test";
 import {
   COMPILED_PUBLISHED_REGISTRY,
+  applyEffectivePublishedRows,
   effectivePublishedRegistry,
   effectiveRegistryRevisionLabel,
   publishedReference,
@@ -22,7 +23,9 @@ import {
 } from "../src/lib/standex/detection-data/store";
 import type { DetectionRecord, GuideRecord } from "../src/lib/standex/detection-data/model";
 import {
+  detectionMagnetIds,
   hasErrors,
+  magnetFamilyScope,
   isRecordSimulatable,
   parseDecimal,
   validateDetectionRecord,
@@ -253,5 +256,62 @@ describe("Saisie : virgule décimale et valeurs refusées", () => {
     const errors = validateDetectionRecord(distance({ status: "validated", dropOutMm: null }));
     expect(hasErrors(errors)).toBe(true);
     expect(errors.dropOutMm).toBeTruthy();
+  });
+});
+
+describe("Variante d'aimant : jamais acceptée puis ignorée", () => {
+  test("une ligne sous « M21P/1 » est refusée, pas silencieusement inopérante", () => {
+    const before = publishedReference("MK21", "A", "M21P/1", "D1");
+    const applied = applyEffectivePublishedRows([
+      {
+        sensorFamily: "MK21",
+        sensorReference: "MK21",
+        classKind: "sensitivity",
+        sensitivityClass: "A",
+        contactForm: "1A",
+        magnetId: "M21P/1",
+        approachId: "D1",
+        datum: "lateral_surface",
+        thresholdKind: "typical",
+        pullInMm: 1,
+        dropOutMm: 2,
+        provenance: null,
+      },
+    ]);
+    expect(applied.ok).toBe(false);
+    expect(applied.error).toBe("ALIAS_MAGNET");
+    // Rien n'a bougé : la lecture rend toujours la ligne livrée.
+    expect(publishedReference("MK21", "A", "M21P/1", "D1")).toEqual(before);
+    expect(effectivePublishedRegistry()).toBe(COMPILED_PUBLISHED_REGISTRY);
+  });
+
+  test("la même donnée saisie sous la famille documentée agit vraiment", () => {
+    expect(
+      applyDetectionRecords([
+        distance({ sensorFamily: "MK21", sensorReference: "MK21", sensitivityClass: "A", magnetId: "M21", pullInMm: 9, dropOutMm: 11 }),
+      ]),
+    ).toBe(true);
+    // La portée de la famille documentée couvre explicitement ses variantes :
+    // la lecture par variante rend la valeur saisie, sans ligne fantôme.
+    expect(publishedReference("MK21", "A", "M21", "D1")?.pullInMm).toBe(9);
+    expect(publishedReference("MK21", "A", "M21P/1", "D1")?.pullInMm).toBe(9);
+    expect(publishedReference("MK21", "A", "M21P/2", "D1")?.pullInMm).toBe(9);
+  });
+
+  test("la saisie refuse la variante et annonce la portée de la famille", () => {
+    expect(detectionMagnetIds()).not.toContain("M21P/1");
+    expect(detectionMagnetIds()).toContain("M21");
+    expect(magnetFamilyScope("M21").sort()).toEqual(["M21P/1", "M21P/2"]);
+    const errors = validateDetectionRecord(distance({ magnetId: "M21P/1" }));
+    expect(errors.magnetId).toBe("Saisir la famille documentée, qui couvre ses variantes");
+  });
+
+  test("aucune collision : deux familles documentées restent distinctes", () => {
+    applyDetectionRecords([
+      distance({ sensorFamily: "MK21", sensorReference: "MK21", sensitivityClass: "A", magnetId: "M21", pullInMm: 9, dropOutMm: 11 }),
+      distance({ sensorFamily: "MK21", sensorReference: "MK21", sensitivityClass: "A", magnetId: "M27", pullInMm: 4, dropOutMm: 6 }),
+    ]);
+    expect(publishedReference("MK21", "A", "M21", "D1")?.pullInMm).toBe(9);
+    expect(publishedReference("MK21", "A", "M27", "D1")?.pullInMm).toBe(4);
   });
 });
