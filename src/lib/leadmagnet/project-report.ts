@@ -166,6 +166,7 @@ export async function projectPdf(
   logoUrl: string,
   nda: Record<string, unknown>,
   tr = (s: string) => s,
+  serverDossierId: string | null = null,
 ) {
   const { reviewPdf } = await import("@/lib/standex/studio-pdf");
   const data = projectReportData(dossier, nda);
