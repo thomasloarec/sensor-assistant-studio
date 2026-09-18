@@ -172,20 +172,37 @@ function GuideDemoPicker({
     [sensorFamily, magnet.id],
   );
   if (!onSelectDemo || references.length === 0) return null;
+  /* AUCUN repli implicite sur la première ligne imprimée : la variante affichée
+     est celle réellement enregistrée dans le projet. Sans variante enregistrée,
+     le menu le dit et aucune plage n'est présentée. */
   const reference =
-    guideReference && references.includes(guideReference) ? guideReference : references[0]!;
+    guideReference && references.includes(guideReference) ? guideReference : null;
   const approaches = [
-    ...new Set(rows.filter((r) => r.sensorReference === reference && (r.approachId === "D1" || r.approachId === "D3")).map((r) => r.approachId)),
+    ...new Set(
+      rows
+        .filter(
+          (r) =>
+            (reference === null || r.sensorReference === reference) &&
+            (r.approachId === "D1" || r.approachId === "D3"),
+        )
+        .map((r) => r.approachId),
+    ),
   ];
-  const approach =
-    guideApproach ?? approaches[0]!;
-  const range = guideRange(sensorFamily, reference, magnet.id, approach);
+  const approach = guideApproach ?? null;
+  const range =
+    reference && approach ? guideRange(sensorFamily, reference, magnet.id, approach) : null;
   const marks = guideIllustrativeMarks(range);
   return (
     <div className="panel-block" data-testid="guide-demo-picker">
       <label className="mw-select-label">
         {t("Référence du guide utilisée pour la démonstration")}
-        <select value={reference} onChange={(e) => onSelectDemo(e.target.value, approach)}>
+        <select
+          value={reference ?? ""}
+          onChange={(e) => e.target.value && onSelectDemo(e.target.value, approach ?? approaches[0] ?? "D1")}
+        >
+          {reference === null ? (
+            <option value="">{t("Aucune variante publiée pour cette position")}</option>
+          ) : null}
           {references.map((r) => (
             <option key={r} value={r}>
               {r}
@@ -195,8 +212,11 @@ function GuideDemoPicker({
       </label>
       <label className="mw-select-label">
         {t("Approche du guide")}
-        <select value={approach} onChange={(e) => onSelectDemo(reference, e.target.value)}>
-          {!approaches.includes(approach) ? <option value={approach}>{approach}</option> : null}
+        <select
+          value={approach ?? ""}
+          onChange={(e) => onSelectDemo(reference ?? references[0]!, e.target.value)}
+        >
+          {approach && !approaches.includes(approach) ? <option value={approach}>{approach}</option> : null}
           {approaches.map((a) => (
             <option key={a} value={a}>
               {a}
@@ -204,6 +224,7 @@ function GuideDemoPicker({
           ))}
         </select>
       </label>
+
       <p className="notice-warning t-body-s" data-testid="guide-demo-note">
         {marks
           ? msg(
