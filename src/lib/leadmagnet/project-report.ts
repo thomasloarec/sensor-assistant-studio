@@ -3,7 +3,13 @@ import { workshopGuideRange, GUIDE_SIMULATION_NOTE, illustrativeNoteFor } from "
 import { guideIllustrativeMarks, ACTIVATION_GUIDE } from "../standex/activation-guide";
 import { toClientDto, stableStringify, REQUIREMENT_LABELS, type DesignDossier } from "./dossier";
 import { technicalSummary } from "./submission";
-import { projectReference } from "./project-reference";
+import {
+  projectReference,
+  projectIdentity,
+  REFERENCE_LABEL,
+  PROVISIONAL_REFERENCE_LABEL,
+  PROVISIONAL_REFERENCE_NOTE,
+} from "./project-reference";
 import { VARIABLE_FIELDS } from "./nda-docx";
 import { type TestedVerdict } from "./tested-pairs";
 import { simulateMounting } from "../standex/mounting/simulate";
