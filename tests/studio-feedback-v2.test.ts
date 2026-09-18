@@ -15,6 +15,8 @@ import {
 import { pairedMagnetModel } from "../src/lib/standex/paired-magnets";
 import { sensorById } from "../src/lib/standex/sensor-catalog";
 import { pairLayout } from "../src/lib/standex/pair-layout";
+import { magnetShapeClass } from "../src/lib/standex/shape-compatibility";
+import { COMPILED_PUBLISHED_REGISTRY } from "../src/lib/standex/magnetics/registries";
 import {
   PUBLISHED_REGISTRY,
   PHYSICS_REGISTRY,
