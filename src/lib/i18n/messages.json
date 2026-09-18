@@ -26881,5 +26881,32 @@
     "…. Изменение, внесенное здесь, ни в коем случае не считается опубликованным отзывом.",
     "…. Una modifica apportata qui non vale mai come riscontro pubblicato.",
     "…。ここで行われた変更は公開されたフィードバックとはみなされません。"
+  ],
+  "Saisie non numérique": [
+    "Non-numeric entry",
+    "输入非数字",
+    "Keine Zahleneingabe",
+    "Entrada no numérica",
+    "Введено не число",
+    "Valore non numerico",
+    "数値ではありません"
+  ],
+  "Distance manquante pour une ligne validée": [
+    "Distance missing for a validated row",
+    "已验证行缺少距离",
+    "Abstand fehlt für eine validierte Zeile",
+    "Falta la distancia en una línea validada",
+    "Для проверенной строки не указано расстояние",
+    "Distanza mancante per una riga validata",
+    "確定済みの行に距離がありません"
+  ],
+  "Données de détection non relues depuis le serveur : cette scène peut afficher des valeurs plus anciennes.": [
+    "Detection data has not been re-read from the server: this scene may show older values.",
+    "检测数据未从服务器重新读取：此场景可能显示较旧的数值。",
+    "Erkennungsdaten wurden nicht erneut vom Server gelesen: Diese Szene kann ältere Werte zeigen.",
+    "Los datos de detección no se han vuelto a leer del servidor: esta escena puede mostrar valores antiguos.",
+    "Данные обнаружения не были перечитаны с сервера: на этой сцене могут быть устаревшие значения.",
+    "I dati di rilevamento non sono stati riletti dal server: questa scena può mostrare valori più vecchi.",
+    "検出データをサーバーから再読み込みしていません。この画面は古い値を表示している可能性があります。"
   ]
 }
