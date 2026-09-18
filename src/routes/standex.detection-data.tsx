@@ -120,6 +120,8 @@ function DetectionDataScreen() {
   const [state, setState] = useState<"loading" | "ready" | "denied" | "error">("loading");
   const [detail, setDetail] = useState<string | null>(null);
   const [filters, setFilters] = useState<DirectoryFilters>(EMPTY_FILTERS);
+  /** Page courante : l'affichage est borné, les données ne le sont jamais. */
+  const [page, setPage] = useState(0);
   const [draft, setDraft] = useState<DistanceDraft | null>(null);
   const [guideDraft, setGuideDraft] = useState<GuideDraft | null>(null);
   const [pending, setPending] = useState(false);
