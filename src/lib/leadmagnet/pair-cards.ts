@@ -17,7 +17,7 @@ import { CUSTOM_SENSOR_ID, isKnownSensorId, sensorById, sizeLabel } from "@/lib/
 import type { SensorModel, SensorShape } from "@/lib/standex/sensor-catalog";
 import { defaultMagnetFor } from "@/lib/standex/default-pairs";
 import { fixingGroup } from "@/lib/standex/catalog-filters";
-import { guideMagnetMaterial, guideRangesFor } from "@/lib/standex/activation-guide";
+import { defaultGuideSelection, guideMagnetMaterial } from "@/lib/standex/activation-guide";
 import { BARE_MAGNETS } from "@/lib/standex/magnet-catalog";
 
 export interface PairCard {
@@ -86,6 +86,9 @@ export function materialLabelFor(magnetId: string): string | null {
 
 export function pairCardFor(sensor: SensorModel): PairCard {
   const magnetId = defaultMagnetFor(sensor.id);
+  // Même politique de résolution que l'atelier : la carte annonce la variante et
+  // l'approche qui seront RÉELLEMENT ouvertes, jamais une autre ligne.
+  const selection = defaultGuideSelection(sensor.id, magnetId);
   return {
     sensorId: sensor.id,
     sensorName: sensor.name,
@@ -95,12 +98,17 @@ export function pairCardFor(sensor: SensorModel): PairCard {
     familyLabel: FAMILY_LABEL[sensor.shape],
     size: sizeLabel(sensor),
     maxPullInMm: maxPublishedPullIn(sensor.id, magnetId),
-    hasGuideRange: guideRangesFor(sensor.id, magnetId).some(r => r.upMm !== null || r.toMm !== null),
+    guideReference: selection?.reference ?? null,
+    guideApproach: selection?.approachId ?? null,
+    guideUpMm: selection?.range.upMm ?? null,
+    guideToMm: selection?.range.toMm ?? null,
+    hasGuideRange: selection !== null,
     // Matériau LU sur la référence : le guide d'abord, sinon la fiche catalogue.
     // « unknown » n'est jamais affiché comme un matériau.
     materialLabel: materialLabelFor(magnetId),
   };
 }
+
 
 /**
  * Couples proposés, dans l'ordre de lecture. `preferredSensorId` (capteur déjà
