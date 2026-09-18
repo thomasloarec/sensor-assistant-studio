@@ -15,7 +15,7 @@
  */
 import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Loader2, Lock } from "lucide-react";
+import { ChevronLeft, ChevronRight, Loader2, Lock } from "lucide-react";
 import { msg, t } from "@/lib/i18n/core";
 import { useLocale } from "@/lib/i18n/react";
 import { Button } from "@/components/ui/button";
@@ -752,6 +752,39 @@ function DetectionDataScreen() {
           </table>
         </div>
       )}
+
+      {state === "ready" && pages > 1 ? (
+        <nav
+          className="flex flex-wrap items-center gap-2"
+          aria-label={t("Navigation entre les pages de l'annuaire")}
+        >
+          <Button
+            size="sm"
+            variant="secondary"
+            disabled={current === 0}
+            onClick={() => setPage(Math.max(0, current - 1))}
+            aria-label={t("Page précédente")}
+          >
+            <ChevronLeft className="mr-1 h-4 w-4" aria-hidden="true" />
+            {t("Précédent")}
+          </Button>
+          <span className="t-caption text-muted-foreground" aria-live="polite">
+            {msg("Page {0} sur {1}", [current + 1, pages])}
+            {" · "}
+            {listed} {t("combinaisons")}
+          </span>
+          <Button
+            size="sm"
+            variant="secondary"
+            disabled={current >= pages - 1}
+            onClick={() => setPage(Math.min(pages - 1, current + 1))}
+            aria-label={t("Page suivante")}
+          >
+            {t("Suivant")}
+            <ChevronRight className="ml-1 h-4 w-4" aria-hidden="true" />
+          </Button>
+        </nav>
+      ) : null}
 
       {state === "ready" ? (
         <Button
