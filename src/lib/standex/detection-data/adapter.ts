@@ -117,6 +117,10 @@ async function rpc<T>(name: string, args: Record<string, unknown>): Promise<T> {
 
 export interface EffectiveDetectionPayload {
   version: string;
+  /** Révision DÉTERMINISTE du jeu servi, calculée par le serveur à chaque
+   *  écriture. Elle sert de provenance traçable dans les exports : deux
+   *  écritures distinctes ne peuvent pas porter la même révision. */
+  dataRevision: string | null;
   rows: DetectionRecord[];
 }
 
@@ -126,6 +130,7 @@ export async function fetchEffectiveDetectionRows(): Promise<EffectiveDetectionP
   const rows = Array.isArray(data?.["rows"]) ? (data["rows"] as unknown[]) : [];
   return {
     version: str(data?.["version"], "unknown"),
+    dataRevision: str(data?.["dataRevision"], "") || null,
     rows: rows
       .map((r) => readRecord({ ...(r as object), status: "validated" }))
       .filter((r): r is DetectionRecord => r !== null),
@@ -233,6 +238,7 @@ export function readGuideRecord(raw: unknown): GuideRecord | null {
 
 export interface EffectiveGuidePayload {
   version: string;
+  dataRevision: string | null;
   rows: GuideRecord[];
 }
 
@@ -241,6 +247,7 @@ export async function fetchEffectiveGuideRows(): Promise<EffectiveGuidePayload> 
   const rows = Array.isArray(data?.["rows"]) ? (data["rows"] as unknown[]) : [];
   return {
     version: str(data?.["version"], "unknown"),
+    dataRevision: str(data?.["dataRevision"], "") || null,
     rows: rows
       .map((r) => readGuideRecord({ ...(r as object), status: "validated" }))
       .filter((r): r is GuideRecord => r !== null),
