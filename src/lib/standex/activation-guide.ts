@@ -243,7 +243,55 @@ export function guideApproachesFor(
 ): string[] {
   return [...new Set(guideRangesFor(sensorFamily, magnetId, guide).map((r) => r.approachId))];
 }
+/**
+ * Sélection EXPLICITE d'une ligne du guide : variante (référence) + approche.
+ * Aucune ligne n'est choisie « au hasard de la première » ailleurs dans
+ * l'application : cette fonction est la seule politique de résolution, et son
+ * résultat est ENREGISTRÉ dans le projet (`workshop.guideReference`) afin que
+ * l'essai, le résultat, l'export et la réouverture montrent la même ligne.
+ */
+export interface GuideSelection {
+  reference: string;
+  approachId: string;
+  range: GuideRange;
+}
+const usableRow = (r: GuideRange): boolean =>
+  r.upMm !== null || r.toMm !== null || r.upNote === "below_zero" || r.toNote === "below_zero";
+
+/** Ligne publiée pour CETTE approche, en gardant la variante déjà retenue si
+ *  elle publie cette approche. `null` = rien de publié : aucune substitution. */
+export function guideSelectionFor(
+  sensorFamily: string,
+  magnetId: string,
+  approachId: string,
+  preferredReference?: string | null,
+  guide = ACTIVATION_GUIDE,
+): GuideSelection | null {
+  const rows = guideRangesFor(sensorFamily, magnetId, guide).filter(
+    (r) => r.approachId === approachId && usableRow(r),
+  );
+  if (rows.length === 0) return null;
+  const row =
+    (preferredReference ? rows.find((r) => r.sensorReference === preferredReference) : undefined) ??
+    rows[0]!;
+  return { reference: row.sensorReference, approachId, range: row };
+}
+/** Ligne par défaut d'un couple : approche D1, sinon D3, sinon la première
+ *  approche réellement imprimée. Utilisée à la SÉLECTION du couple, puis figée. */
+export function defaultGuideSelection(
+  sensorFamily: string,
+  magnetId: string,
+  guide = ACTIVATION_GUIDE,
+): GuideSelection | null {
+  for (const approachId of ["D1", "D3"]) {
+    const found = guideSelectionFor(sensorFamily, magnetId, approachId, undefined, guide);
+    if (found) return found;
+  }
+  const row = guideRangesFor(sensorFamily, magnetId, guide).find(usableRow);
+  return row ? { reference: row.sensorReference, approachId: row.approachId, range: row } : null;
+}
 /** Une plage exacte, ou `null` si la brochure ne publie pas cette combinaison. */
+
 export function guideRange(
   sensorFamily: string,
   sensorReference: string,

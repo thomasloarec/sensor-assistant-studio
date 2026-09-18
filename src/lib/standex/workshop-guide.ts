@@ -1,16 +1,16 @@
-import { guideRange, guideRangesFor, guideReferencesFor, type GuideRange } from "./activation-guide";
+import { guideSelectionFor, type GuideRange } from "./activation-guide";
 import type { WorkshopConfig } from "./magnetic-workshop";
 import { documentedMagnetAngleDeg } from "./mounting/profiles";
 
-/** Read the exact guide row for the approach actually drawn, never another approach. */
+/** Read the exact guide row actually SELECTED: variant stored in the project and
+ *  approach actually drawn. No implicit fall back to the first printed row: when
+ *  the stored variant publishes nothing for this approach, there is no range. */
 export function workshopGuideRange(c: WorkshopConfig): GuideRange | null {
-  const refs = guideReferencesFor(c.sensorId, c.magnetModel);
-  const reference = c.guideReference && refs.includes(c.guideReference)
-    ? c.guideReference
-    : guideRangesFor(c.sensorId, c.magnetModel).find(r => r.approachId === c.geometry)?.sensorReference;
-  const row = reference ? guideRange(c.sensorId, reference, c.magnetModel, c.geometry) : null;
-  return row && (row.upMm !== null || row.toMm !== null || row.upNote === "below_zero" || row.toNote === "below_zero") ? row : null;
+  if (!c.guideReference) return null;
+  const selection = guideSelectionFor(c.sensorId, c.magnetModel, c.geometry, c.guideReference);
+  return selection && selection.reference === c.guideReference ? selection.range : null;
 }
+
 
 /** Pose only: temperature and nearby metal are separate application conditions. */
 export function onDocumentedPosition(c: WorkshopConfig): boolean {
