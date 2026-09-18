@@ -87,7 +87,7 @@ export const Route = createFileRoute("/standex/detection-data")({
 /* En-têtes des deux tableaux : compacts, sans retour à la ligne ; la colonne
    d'action reste visible à droite pendant le défilement horizontal. */
 const DD_HEAD = "t-label whitespace-nowrap px-2 py-1.5 align-bottom";
-const DD_HEAD_ACTION = DD_HEAD + " sticky right-0 bg-[var(--surface)]";
+const DD_HEAD_ACTION = "t-label whitespace-nowrap px-2 py-1.5 align-bottom sticky right-0 bg-[var(--surface)]";
 
 const mm = (v: number | null) => (v === null ? "—" : v.toFixed(2).replace(/\.00$/, ""));
 const raw = (v: number | null) => (v === null ? "" : String(v));
