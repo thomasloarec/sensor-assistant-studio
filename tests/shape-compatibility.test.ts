@@ -31,7 +31,7 @@ import {
   parseWorkshopConfig,
 } from "../src/lib/standex/magnetic-workshop";
 import { defaultGuideSelection, guideSelectionFor } from "../src/lib/standex/activation-guide";
-import { validateDetectionRecord, isRecordSimulatable } from "../src/lib/standex/detection-data/model";
+import { validateDetectionRecord, isRecordSimulatable, recordFromPublished } from "../src/lib/standex/detection-data/model";
 import { buildDirectory, emptyRecordFor, filterDirectory, EMPTY_FILTERS } from "../src/lib/standex/detection-data/directory";
 import { mountingFromWorkshop } from "../src/lib/standex/mounting/bridge";
 import { simulateMounting } from "../src/lib/standex/mounting/simulate";
