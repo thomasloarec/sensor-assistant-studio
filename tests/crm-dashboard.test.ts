@@ -344,7 +344,7 @@ describe("recherche, filtres et tri", () => {
     const saved = project({ dossierId: "11111111-2222-3333-4444-555555555555" });
     expect(matchesSearch(saved, "11111111-2222-3333-4444-555555555555")).toBe(true);
     // Abrégé lisible tel qu'il figure sur le PDF du client.
-    expect(matchesSearch(saved, "SST-444455-555555")).toBe(true);
+    expect(matchesSearch(saved, "SST-555555-555555")).toBe(true);
     expect(matchesSearch(saved, "SST-000000-000000")).toBe(false);
   });
 
