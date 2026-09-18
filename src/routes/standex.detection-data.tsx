@@ -16,7 +16,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Loader2, Lock } from "lucide-react";
-import { t } from "@/lib/i18n/core";
+import { msg, t } from "@/lib/i18n/core";
 import { useLocale } from "@/lib/i18n/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
