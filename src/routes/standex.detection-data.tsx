@@ -582,7 +582,11 @@ function DetectionDataScreen() {
                   <th
                     key={h}
                     scope="col"
-                    className={h === "" ? DD_HEAD_ACTION : DD_HEAD}
+                    className={
+                      h === ""
+                        ? "t-label whitespace-nowrap px-2 py-1.5 align-bottom sticky right-0 bg-[var(--surface)]"
+                        : "t-label whitespace-nowrap px-2 py-1.5 align-bottom"
+                    }
                   >
                     {h}
                   </th>
