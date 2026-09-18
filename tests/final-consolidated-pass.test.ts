@@ -15,27 +15,29 @@ import { withDefaultGuideSelection } from "@/lib/standex/magnetic-workshop";
 import type { TestedPair } from "@/lib/leadmagnet/tested-pairs";
 
 describe("calendrier de démonstration : navigation par mois", () => {
-  test("le lundi visé tombe DANS le mois cible (28 sept. -> octobre)", () => {
+  test("le lundi visé tombe DANS le mois cible (28 sept. -> 5 oct.)", () => {
     // Semaine du 14 septembre (mois affiché : septembre).
     const sep14 = new Date(2026, 8, 14);
     const next = shiftWeek(sep14, 1, "month");
     expect(next.getMonth()).toBe(9); // octobre
     expect(next.getDay()).toBe(1); // lundi
     expect(next.getDate()).toBeLessThanOrEqual(7);
-    // La semaine du 28 septembre a son jeudi le 1er octobre : elle est déjà
-    // « octobre », donc le mois suivant est bien novembre et le libellé bouge.
+    // La semaine du 28 septembre est affichée « septembre » (libellé du lundi) :
+    // le mois suivant est octobre, dont le premier lundi est le 5 octobre.
     const fromSep28 = shiftWeek(new Date(2026, 8, 28), 1, "month");
-    expect(fromSep28.getMonth()).toBe(10);
+    expect(fromSep28.getMonth()).toBe(9);
     expect(fromSep28.getDay()).toBe(1);
+    expect(fromSep28.getDate()).toBe(5);
   });
 
   test("fin novembre : le mois suivant est bien décembre, pas novembre", () => {
-    // Semaine du 23 novembre : son jeudi est en novembre, donc le mois affiché
-    // est novembre et « mois suivant » doit donner décembre.
-    const nov30 = new Date(2026, 10, 23);
+    // Semaine du 30 novembre : affichée « novembre », le mois suivant est
+    // décembre, dont le premier lundi est le 7 décembre.
+    const nov30 = new Date(2026, 10, 30);
     const next = shiftWeek(nov30, 1, "month");
     expect(next.getMonth()).toBe(11);
     expect(next.getDay()).toBe(1);
+    expect(next.getDate()).toBe(7);
   });
 
   test("avance et recul répétés restent cohérents, y compris au changement d'année", () => {
