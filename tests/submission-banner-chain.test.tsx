@@ -88,7 +88,7 @@ describe("bandeau d'état après un envoi confirmé", () => {
     expect(html).toContain("Merci, votre projet a bien été transmis !");
     expect(html).toContain("reviendra très rapidement vers vous");
     expect(html).not.toContain("Modifications non envoyées");
-    expect(html).toContain("Envoyer mon projet");
+    expect(html).toContain("Projet envoyé");
   });
 
   test("modifier le contenu repasse le bandeau en « Modifications non envoyées »", async () => {

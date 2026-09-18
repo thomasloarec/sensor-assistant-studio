@@ -350,7 +350,7 @@ export function applyPairSelection(
       geometry,
       sameCouple ? c.guideReference : null,
     );
-    if (!selection && approaches.length === 0) {
+    if (!selection) {
       const fallback = defaultGuideSelection(sensorId, magnetModel);
       if (fallback && (fallback.approachId === "D1" || fallback.approachId === "D3")) {
         geometry = fallback.approachId;
@@ -372,6 +372,25 @@ export function applyPairSelection(
   };
 
 }
+/** Pose documentée par DÉFAUT : un projet ouvert sans être passé par une carte
+ *  de couple n'avait aucune variante enregistrée, donc aucune plage lue, alors
+ *  que la brochure en publie une. La sélection déjà explicite n'est jamais
+ *  réécrite, et un capteur non documenté reste sans plage. */
+export function withDefaultGuideSelection(c: WorkshopConfig): WorkshopConfig {
+  if (c.guideReference || isFictitiousSensor(c.sensorId) || c.mode !== "reference") return c;
+  const direct = guideSelectionFor(c.sensorId, c.magnetModel, c.geometry);
+  if (direct) return { ...c, guideReference: direct.reference };
+  const fallback = defaultGuideSelection(c.sensorId, c.magnetModel);
+  if (fallback && (fallback.approachId === "D1" || fallback.approachId === "D3"))
+    return {
+      ...c,
+      geometry: fallback.approachId,
+      guideReference: fallback.reference,
+      magnetAngle: documentedMagnetAngleDeg(fallback.approachId, c.sensorId),
+    };
+  return c;
+}
+
 /** A new pair starts on its published template. Imported assemblies keep their own motion. */
 export function pairDemonstration(c: WorkshopConfig, sensorId: string, magnetId: string): WorkshopConfig {
   const next = applyPairSelection(c, sensorId, magnetId);

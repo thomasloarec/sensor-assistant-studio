@@ -50,7 +50,7 @@ export function ReviewSubmitControl({
     <div className="space-y-3">
       <Button
         size="lg"
-        className="w-full sm:w-auto"
+        className="w-full max-w-full sm:w-auto sm:max-w-[18rem] justify-center overflow-hidden whitespace-nowrap [&>span]:truncate"
         onClick={onSubmit}
         disabled={busy}
         aria-busy={busy ? "true" : undefined}

@@ -123,8 +123,12 @@ export interface DesignDossier {
   internalNotes: { id: string; author: string; createdAt: string; body: string }[];
 }
 
+/** `envelope` reste dans le dossier : il porte les dimensions disponibles, qui
+ *  ne sont plus demandées deux fois (saisie structurée sous Montage), et il
+ *  conserve les réponses déjà écrites dans les projets existants. */
 export const REQUIREMENT_ORDER = [
   "detection_goal",
+  "target_object",
   "states_motion",
   "mounting",
   "envelope",
@@ -133,11 +137,12 @@ export const REQUIREMENT_ORDER = [
 ] as const;
 
 export const REQUIREMENT_LABELS: Record<string, string> = {
-  detection_goal: "Objectif de détection",
-  states_motion: "États et mouvements à distinguer",
-  mounting: "Montage mécanique",
-  envelope: "Encombrement disponible",
-  electrical: "Contraintes électriques",
+  detection_goal: "Application",
+  target_object: "Élément à détecter",
+  states_motion: "Mouvement et détection",
+  mounting: "Montage : position et fixation",
+  envelope: "Dimensions disponibles",
+  electrical: "Électrique",
   environment: "Environnement",
 };
 

@@ -1,5 +1,5 @@
 import { isPcbSensor } from "./product-presentation";
-import { workshopGuideRange, GUIDE_SIMULATION_NOTE } from "../standex/workshop-guide";
+import { workshopGuideRange, GUIDE_SIMULATION_NOTE, illustrativeNoteFor } from "../standex/workshop-guide";
 import { guideIllustrativeMarks, ACTIVATION_GUIDE } from "../standex/activation-guide";
 import { toClientDto, stableStringify, REQUIREMENT_LABELS, type DesignDossier } from "./dossier";
 import { technicalSummary } from "./submission";
@@ -74,7 +74,7 @@ export function projectReportSections(
         ? [
             entry(
               "Le résultat",
-              tr(guide ? GUIDE_SIMULATION_NOTE : "Simulation illustrative — distance non caractérisée, à valider par essais"),
+              tr(guide ? GUIDE_SIMULATION_NOTE : illustrativeNoteFor(w)),
             ),
           ]
         : []),

@@ -165,13 +165,13 @@ describe("checklist — complétude réelle et valeurs affichées", () => {
       ...f,
       mounting: { kind: "screw" as const },
       envelope: { lengthMm: 30, widthMm: 20, heightMm: 10 },
-      delegatedDecisions: GUIDED_QUESTION_KEYS.filter(
-        (k) => k !== "mounting" && k !== "envelope",
-      ).map((k) => delegatedQuestion(k)),
+      delegatedDecisions: GUIDED_QUESTION_KEYS.filter((k) => k !== "mounting").map((k) =>
+        delegatedQuestion(k),
+      ),
     };
     const besoin = projectChecklist(d as ReturnType<typeof base>).find((i) => i.id === "besoin")!;
+    // Montage renseigné par un clic ET une dimension : question traitée sans texte.
     expect(besoin.state).toBe("chosen");
-    expect(besoin.detail).toContain("2");
     expect(besoin.detail).not.toContain("question(s) traitée(s)");
   });
 

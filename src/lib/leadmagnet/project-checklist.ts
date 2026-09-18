@@ -65,9 +65,9 @@ const ANSWERED = new Set(["confirmed", "hypothesis"]);
  * lignes déjà écrites dans le dossier. */
 export const GUIDED_QUESTION_KEYS = [
   "detection_goal",
+  "target_object",
   "states_motion",
   "mounting",
-  "envelope",
   "electrical",
   "environment",
 ] as const;
@@ -86,7 +86,9 @@ export function projectChecklist(d: DesignDossier): ChecklistItem[] {
   );
   const structured = new Set<string>();
   if (d.mounting.kind !== "undecided") structured.add("mounting");
-  if (envelopeGiven) structured.add("envelope");
+  // Les dimensions sont maintenant saisies dans la question Montage : une
+  // dimension mesurée y vaut donc une réponse traitée.
+  if (envelopeGiven) structured.add("mounting");
   /** Une question n'est traitée que si elle est répondue (texte libre OU choix
    * structuré) OU explicitement mise de côté. Une seule réponse sur six ne coche
    * donc rien. */

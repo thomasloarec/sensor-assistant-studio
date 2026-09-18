@@ -219,6 +219,8 @@ import {
 } from "@/lib/leadmagnet/connector-library";
 import { routeSamples, SEARCH_LINK_DISCLAIMER } from "@/lib/leadmagnet/samples";
 import { DEFAULT_WORKSHOP, applyPairSelection } from "@/lib/standex/magnetic-workshop";
+import { ILLUSTRATIVE_NOTE, GUIDE_UNPUBLISHED_NOTE } from "@/lib/standex/workshop-guide";
+import { hasGuideData } from "@/lib/standex/activation-guide";
 import type { WorkshopConfig } from "@/lib/standex/magnetic-workshop";
 import { ProjectContextFields } from "./project-context-fields";
 import { standardLengthsMm, customLengthMm } from "@/lib/leadmagnet/cable-options";
@@ -406,47 +408,58 @@ function ProjectTitle({ title, onRename }: { title: string; onRename: (next: str
 /** Questions du parcours guidé : une intention simple par écran, reliée à la
  * MÊME exigence du dossier que le mode détaillé (aucun second état). */
 /* i18n-canonical : libellés stockés en français, traduits au rendu par t(). */
+/** Six étapes : une catégorie claire, puis une question précise. Aucune question
+ *  de volume, de durée de série ou de calendrier ici : ces sujets restent dans
+ *  « Avec Standex ». Les dimensions ne sont demandées qu'une fois, en saisie
+ *  structurée sous Montage. */
 export const GUIDED_QUESTIONS: {
   key: string;
+  category: string;
   prompt: string;
   example: string;
   placeholder: string;
 }[] = [
   {
     key: "detection_goal",
-    prompt: "Que voulez-vous détecter ?",
-    example: "savoir si une trappe est bien fermée, compter des passages, repérer une position",
-    placeholder: "Décrivez-le avec vos mots.",
+    category: "Application",
+    prompt: "Dans quel équipement, et pour quoi faire ?",
+    example: "machine à café professionnelle : savoir si le réservoir est bien en place",
+    placeholder: "L'équipement et ce que la détection doit permettre.",
+  },
+  {
+    key: "target_object",
+    category: "Élément à détecter",
+    prompt: "Quelle pièce doit être détectée ?",
+    example: "un réservoir amovible en plastique, un tiroir métallique, un piston",
+    placeholder: "La pièce concernée, sa matière si vous la connaissez.",
   },
   {
     key: "states_motion",
-    prompt: "Que se passe-t-il quand la pièce bouge ?",
-    example: "elle coulisse de 20 mm, elle pivote, elle est retirée puis remise",
-    placeholder: "Décrivez le mouvement et les positions à distinguer.",
+    category: "Mouvement et détection",
+    prompt: "Comment cette pièce bouge-t-elle, et quels états faut-il distinguer ?",
+    example: "elle coulisse de 20 mm ; présente ou retirée",
+    placeholder: "Le mouvement, la course et les états à distinguer.",
   },
   {
     key: "mounting",
-    prompt: "Où le capteur pourrait-il se placer ?",
-    example: "collé sous le couvercle, inséré dans un trou du bâti, vissé sur une équerre",
-    placeholder: "Même une idée approximative nous aide.",
-  },
-  {
-    key: "envelope",
-    prompt: "Quelle place avez-vous à cet endroit ?",
-    example: "un logement d'environ 6 mm de diamètre et 25 mm de long",
-    placeholder: "Dimensions disponibles, même approximatives.",
+    category: "Montage",
+    prompt: "Où placer le capteur, et comment le tenir ?",
+    example: "vissé à l'intérieur du bâti, en face de la pièce mobile",
+    placeholder: "Position et fixation seulement : les dimensions se saisissent juste en dessous.",
   },
   {
     key: "electrical",
+    category: "Électrique",
     prompt: "À quoi le capteur sera-t-il relié ?",
     example: "une carte 5 V, un automate 24 V, un petit relais",
     placeholder: "Tension, courant ou carte de destination si vous les connaissez.",
   },
   {
     key: "environment",
-    prompt: "Dans quel environnement travaille-t-il ?",
+    category: "Environnement",
+    prompt: "Que doit-il supporter à cet endroit ?",
     example: "humidité, huile, vibrations, températures élevées, extérieur",
-    placeholder: "Ce que le capteur devra supporter.",
+    placeholder: "Température, liquides, poussières, nettoyage, vibrations.",
   },
 ];
 
@@ -1738,13 +1751,12 @@ export function DesignSpace({
             </p>
           </div>
         ) : null}
-      </div>
-    ) : question.key === "envelope" ? (
-      <div className="panel-block mt-6">
-        <p className="t-label">{t("Facultatif : précisez d'un clic")}</p>
+        {/* Dimensions demandées UNE SEULE FOIS, ici, en saisie structurée : le
+            texte de cette question ne parle que de position et de fixation. */}
+        <p className="t-label mt-5">{t("Facultatif : place disponible pour le capteur")}</p>
         <p className="t-caption mt-1">
           {t(
-            "Rien n'est déduit de votre texte. Ces choix servent seulement à préfiltrer les capteurs, et restent modifiables.",
+            "Rien n'est déduit de votre texte. Ces valeurs servent seulement à préfiltrer les capteurs, et restent modifiables.",
           )}
         </p>
         <div className="guided-envelope-fields mt-3">
@@ -1868,7 +1880,8 @@ export function DesignSpace({
           <p className="t-label mt-5">
             {msg("Question {0} sur {1}", [focusIdx + 1, GUIDED_QUESTIONS.length])}
           </p>
-          <h2 className="t-display-m mt-3">{t(question.prompt)}</h2>
+          <p className="t-label mt-4 text-[var(--primary)]">{t(question.category)}</p>
+          <h2 className="t-display-m mt-2">{t(question.prompt)}</h2>
           <div className="mt-4"><NeedExamples questionKey={question.key} /></div>
           <Label htmlFor={`guide-${question.key}`} className="sr-only">
             {t(question.prompt)}
@@ -3391,7 +3404,7 @@ export function DesignSpace({
               : t("position non documentée"),
         // Le mode illustratif est écrit dans le résumé du projet, jamais tu.
         ...(reviewTested.illustrative
-          ? [t("Simulation illustrative — distance non caractérisée, à valider par essais")]
+          ? [t(hasGuideData(reviewTested.sensorId) ? ILLUSTRATIVE_NOTE : GUIDE_UNPUBLISHED_NOTE)]
           : []),
       ].join(" · ")
     : null;

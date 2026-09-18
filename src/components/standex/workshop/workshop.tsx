@@ -1,5 +1,5 @@
 import { observedCycleVerdict } from "@/lib/leadmagnet/tested-pairs";
-import { workshopGuideRange, onDocumentedPosition, GUIDE_SIMULATION_NOTE } from "@/lib/standex/workshop-guide";
+import { workshopGuideRange, onDocumentedPosition, GUIDE_SIMULATION_NOTE, illustrativeNoteFor } from "@/lib/standex/workshop-guide";
 import { ACTIVATION_GUIDE, formatGuideBound } from "@/lib/standex/activation-guide";
 import { isPcbSensor } from "@/lib/leadmagnet/product-presentation";
 import {
@@ -70,6 +70,7 @@ import {
 } from "lucide-react";
 import {
   DEFAULT_WORKSHOP,
+  withDefaultGuideSelection,
   INTERACTION_SOURCE,
   DISTANCE_SOURCE,
   EDUCATION_NOTE,
@@ -247,7 +248,9 @@ export default function MagneticWorkshop({
   const [cableOpen, setCableOpen] = useState(initialCableOpen);
   const [productCard, setProductCard] = useState(false);
   const [config, setConfig] = useState<WorkshopConfig>(
-    () => parseWorkshopConfig(initialConfig) ?? { ...DEFAULT_WORKSHOP },
+    // La variante documentée par défaut est résolue à l'ouverture : sans cela un
+    // couple pourtant publié restait affiché comme non caractérisé.
+    () => withDefaultGuideSelection(parseWorkshopConfig(initialConfig) ?? { ...DEFAULT_WORKSHOP }),
   );
   useEffect(() => {
     onDraftChange?.(config);
@@ -815,7 +818,7 @@ export default function MagneticWorkshop({
             disparaît pas pendant la lecture. */}
         {illustrative ? (
           <p className="notice-warning t-body-s" data-testid="illustrative-note">
-            {t(guideDemoRange && illustrativeBounds ? GUIDE_SIMULATION_NOTE : "Simulation illustrative — distance non caractérisée, à valider par essais")}
+            {t(guideDemoRange && illustrativeBounds ? GUIDE_SIMULATION_NOTE : illustrativeNoteFor(config))}
           </p>
         ) : null}
       </div>

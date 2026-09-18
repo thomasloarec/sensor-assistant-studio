@@ -86,8 +86,8 @@ describe("choix structurés explicites", () => {
 
 describe("« Je ne sais pas encore »", () => {
   test("enregistre la question comme traitée sans valeur ni filtre", () => {
-    const d = aside(aside(createDossier("fr"), "mounting"), "envelope");
-    expect(delegatedQuestionKeys(d).sort()).toEqual(["envelope", "mounting"]);
+    const d = aside(aside(createDossier("fr"), "mounting"), "electrical");
+    expect(delegatedQuestionKeys(d).sort()).toEqual(["electrical", "mounting"]);
     expect(isDelegated(d, delegatedQuestion("mounting"))).toBe(true);
     expect(d.mounting.kind).toBe("undecided");
     expect(d.envelope.lengthMm).toBeNull();
