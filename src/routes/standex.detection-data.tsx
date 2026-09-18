@@ -260,6 +260,9 @@ function DetectionDataScreen() {
         </p>
       ) : null}
 
+      {/* Le tableau ne s'affiche qu'une fois le rôle administrateur CONFIRMÉ par
+          le serveur : sans confirmation, l'écran ne montre pas l'annuaire. */}
+      {state !== "ready" ? null : (
       <div className="panel-block max-h-[60vh] overflow-auto p-0">
         <table className="t-body w-full border-separate border-spacing-0 text-left">
           <thead className="sticky top-0 z-10 bg-[var(--surface)]">
@@ -336,7 +339,9 @@ function DetectionDataScreen() {
           </tbody>
         </table>
       </div>
+      )}
 
+      {state === "ready" ? (
       <Button
         size="sm"
         variant="secondary"
@@ -347,6 +352,7 @@ function DetectionDataScreen() {
       >
         {t("Ajouter une combinaison")}
       </Button>
+      ) : null}
 
       {draft ? (
         <EditPanel
