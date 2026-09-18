@@ -4,7 +4,7 @@ import {
   documentedDistances,
   registryCoverage,
   thresholdsFor,
-  PROFILES,
+  currentMountingProfiles,
   simulateMounting,
   moveCouple,
   parseGuidedMounting,
@@ -91,12 +91,12 @@ describe("profils de montage", () => {
     expect(cov.locatedProfiles).toBeGreaterThan(8);
     expect(cov.profiles).toBe(cov.locatedProfiles + cov.unlocatedProfiles);
     // Une approche non localisée ne fournit jamais de seuil géométrique.
-    for (const p of PROFILES.filter((x) => x.localisation === "not_located"))
+    for (const p of currentMountingProfiles().filter((x) => x.localisation === "not_located"))
       expect(thresholdsFor(p, p.classes[0]!)).toBeNull();
 
     // Chaque famille du registre est représentée, pas seulement MK03.
     for (const f of cov.families)
-      expect(PROFILES.some((p) => p.sensorFamily === f)).toBe(true);
+      expect(currentMountingProfiles().some((p) => p.sensorFamily === f)).toBe(true);
   });
   it("le gabarit reste schématique et les datums non caractérisés", () => {
     const p = profileFor("MK03", "M02", "D1")!;

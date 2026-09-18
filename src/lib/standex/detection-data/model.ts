@@ -21,6 +21,10 @@ import {
   type SensorModel,
 } from "@/lib/standex/sensor-catalog";
 import { BARE_MAGNETS, PACKAGED_MAGNET_IDS } from "@/lib/standex/magnet-catalog";
+import {
+  effectiveActivationGuide,
+  type GuideRange,
+} from "@/lib/standex/activation-guide";
 import type {
   PublishedApproach,
   PublishedClassKind,
@@ -201,8 +205,16 @@ export function validateDetectionRecord(
 ): DetectionFieldErrors {
   const e: DetectionFieldErrors = {};
   if (!isRealSensorId(r.sensorFamily)) e.sensorFamily = "Référence catalogue inconnue";
-  if (r.sensorReference.trim().length < 1) e.sensorReference = "Référence imprimée requise";
-  if (r.sensitivityClass.trim().length < 1) e.sensitivityClass = "Classe ou modèle requis";
+  if (
+    r.sensorReference.trim().length < 1 ||
+    r.sensorReference.length > DETECTION_LIMITS.sensorReference
+  )
+    e.sensorReference = "Référence imprimée requise";
+  if (
+    r.sensitivityClass.trim().length < 1 ||
+    r.sensitivityClass.length > DETECTION_LIMITS.sensitivityClass
+  )
+    e.sensitivityClass = "Classe ou modèle requis";
   if (!isKnownMagnetId(r.magnetId)) e.magnetId = "Aimant inconnu du catalogue";
   if (!DETECTION_APPROACHES.includes(r.approachId)) e.approachId = "Approche inconnue";
   if (r.datum !== datumForApproach(r.approachId)) e.datum = "Datum incompatible avec l'approche";
@@ -220,9 +232,11 @@ export function validateDetectionRecord(
     e.dropOutMm = "Le relâchement est plus loin que l'activation";
   if (r.temperatureC !== null && !Number.isFinite(r.temperatureC))
     e.temperatureC = "Température non finie";
-  if (r.sourceType.trim().length < 2) e.sourceType = "Nature de la source requise";
-  if (r.sourceRef.trim().length < 8) e.sourceRef = "Source précise requise (fiche, page, essai)";
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(r.enteredOn)) e.enteredOn = "Date au format AAAA-MM-JJ";
+  if (r.sourceType.trim().length < 2 || r.sourceType.length > DETECTION_LIMITS.sourceType)
+    e.sourceType = "Nature de la source requise";
+  if (r.sourceRef.trim().length < 8 || r.sourceRef.length > DETECTION_LIMITS.sourceRef)
+    e.sourceRef = "Source précise requise (fiche, page, essai)";
+  if (!isRealDate(r.enteredOn)) e.enteredOn = "Date au format AAAA-MM-JJ";
   if (r.status === "validated" && (r.pullInMm === null || r.dropOutMm === null))
     e.status = "Une ligne validée porte deux distances";
   const key = detectionKey(r);
@@ -238,4 +252,220 @@ export const hasErrors = (e: DetectionFieldErrors) => Object.keys(e).length > 0;
 export function isSimulatable(sensorId: string): boolean {
   const s = realSensors().find((x) => x.id === sensorId);
   return s?.contact === "A";
+}
+
+/* ==========================================================================
+ * Contrôles partagés supplémentaires
+ * ======================================================================== */
+
+/** Longueurs maximales, IDENTIQUES à celles de la migration 1.9. */
+export const DETECTION_LIMITS = {
+  sensorReference: 64,
+  sensitivityClass: 32,
+  sourceType: 64,
+  sourceRef: 300,
+  note: 2000,
+} as const;
+
+/** Date réellement existante, pas seulement au bon format, et jamais future. */
+export function isRealDate(value: string): boolean {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+  const [y, m, d] = value.split("-").map(Number) as [number, number, number];
+  if (m < 1 || m > 12 || d < 1) return false;
+  const date = new Date(Date.UTC(y, m - 1, d));
+  return (
+    date.getUTCFullYear() === y &&
+    date.getUTCMonth() === m - 1 &&
+    date.getUTCDate() === d &&
+    y >= 1970
+  );
+}
+
+/** Approches réellement DESSINÉES par le moteur de pose. D2, D4 et D5 restent
+ *  documentaires : elles peuvent être saisies et consultées, jamais présentées
+ *  comme une scène calculée. */
+export const DRAWN_APPROACHES: readonly PublishedApproach[] = ["D1", "D3", "F1"];
+
+/**
+ * Une LIGNE est-elle réellement exploitable par le moteur ? On regarde la forme
+ * de contact DE LA LIGNE (un même capteur peut être publié en 1A, 1B ou 1C) et
+ * la géométrie disponible pour l'approche, pas seulement la fiche catalogue.
+ */
+export function isRecordSimulatable(r: {
+  contactForm: string;
+  approachId: PublishedApproach;
+}): boolean {
+  return r.contactForm === "1A" && DRAWN_APPROACHES.includes(r.approachId);
+}
+
+/* ==========================================================================
+ * Guide d'activation — jeu DOCUMENTAIRE, natures strictement distinctes
+ *
+ * Les colonnes « up » et « to » de la brochure ne sont PAS une activation et un
+ * relâchement. Elles ne sont ni triées, ni converties, ni comparées à un seuil.
+ * Un ordre imprimé atypique (« up » supérieur à « to ») est conservé tel quel et
+ * signalé. La validation ci-dessous est donc VOLONTAIREMENT différente de celle
+ * des distances de commutation : aucune contrainte d'ordre.
+ * ======================================================================== */
+
+export const GUIDE_APPROACHES = ["D1", "D2", "D3", "D4", "D5"] as const;
+export type GuideApproachId = (typeof GUIDE_APPROACHES)[number];
+export const GUIDE_BOUND_NOTES = ["not_published", "below_zero"] as const;
+
+export interface GuideRecord {
+  id: string | null;
+  page: number | null;
+  sensorFamily: string;
+  /** Référence telle qu'IMPRIMÉE dans la brochure (« MK15-B-X »). */
+  sensorReference: string;
+  magnetId: string;
+  approachId: GuideApproachId;
+  /** Colonne « up », en mm. `null` = non publiée. */
+  upMm: number | null;
+  /** Colonne « to », en mm. `null` = non publiée. Peut être inférieure à « up ». */
+  toMm: number | null;
+  upNote: (typeof GUIDE_BOUND_NOTES)[number] | null;
+  toNote: (typeof GUIDE_BOUND_NOTES)[number] | null;
+  status: DetectionStatus;
+  sourceRef: string;
+  enteredOn: string;
+  note: string | null;
+  rowVersion: number | null;
+  updatedAt: string | null;
+  updatedBy: string | null;
+}
+
+export type GuideFieldErrors = Partial<
+  Record<
+    | "page"
+    | "sensorFamily"
+    | "sensorReference"
+    | "magnetId"
+    | "approachId"
+    | "upMm"
+    | "toMm"
+    | "sourceRef"
+    | "enteredOn"
+    | "status",
+    string
+  >
+>;
+
+export function guideRecordKey(r: {
+  sensorReference: string;
+  magnetId: string;
+  approachId: string;
+}): string {
+  return [r.sensorReference, r.magnetId, r.approachId].join("|");
+}
+
+/** Familles acceptées pour le guide : celles de la brochure ET celles du
+ *  catalogue. La brochure documente des familles absentes du site (MK06-5 à
+ *  MK06-8, MK07, MK12) : les écarter serait perdre de la donnée réelle. */
+export function guideKnownFamilies(): string[] {
+  const guide = effectiveActivationGuide();
+  return [
+    ...new Set([...guide.rows.map((r) => r.sensorFamily), ...realSensors().map((s) => s.id)]),
+  ].sort();
+}
+export function guideKnownMagnetIds(): string[] {
+  return effectiveActivationGuide().magnets.map((m) => m.id);
+}
+
+export function recordFromGuideRange(row: GuideRange): GuideRecord {
+  return {
+    id: guideRecordKey(row),
+    page: row.page,
+    sensorFamily: row.sensorFamily,
+    sensorReference: row.sensorReference,
+    magnetId: row.magnetId,
+    approachId: row.approachId as GuideApproachId,
+    upMm: row.upMm,
+    toMm: row.toMm,
+    upNote: row.upNote ?? null,
+    toNote: row.toNote ?? null,
+    status: "validated",
+    sourceRef: effectiveActivationGuide().source.title + " p. " + row.page,
+    enteredOn: "2025-10-01",
+    note: null,
+    rowVersion: null,
+    updatedAt: null,
+    updatedBy: null,
+  };
+}
+
+/** Un brouillon n'alimente JAMAIS une lecture de guide. */
+export function guideRangeFromRecord(r: GuideRecord): GuideRange | null {
+  if (r.status !== "validated" || r.page === null) return null;
+  if (r.upMm === null && r.toMm === null && r.upNote === null && r.toNote === null) return null;
+  return {
+    page: r.page,
+    sensorFamily: r.sensorFamily,
+    sensorReference: r.sensorReference,
+    magnetId: r.magnetId,
+    approachId: r.approachId,
+    upMm: r.upMm,
+    toMm: r.toMm,
+    ...(r.upNote === null ? {} : { upNote: r.upNote }),
+    ...(r.toNote === null ? {} : { toNote: r.toNote }),
+    // `orderAtypical` n'est PAS recopié : la lecture défensive le recalcule à
+    // partir des bornes réellement enregistrées, sans jamais les réordonner.
+  };
+}
+
+export function validateGuideRecord(
+  r: GuideRecord,
+  others: readonly GuideRecord[] = [],
+): GuideFieldErrors {
+  const e: GuideFieldErrors = {};
+  if (r.page === null || !Number.isFinite(r.page) || r.page < 1 || r.page > 400)
+    e.page = "Page de la brochure requise";
+  if (!guideKnownFamilies().includes(r.sensorFamily)) e.sensorFamily = "Famille inconnue du guide";
+  if (
+    r.sensorReference.trim().length < 1 ||
+    r.sensorReference.length > DETECTION_LIMITS.sensorReference
+  )
+    e.sensorReference = "Référence imprimée requise";
+  if (!guideKnownMagnetIds().includes(r.magnetId)) e.magnetId = "Aimant inconnu du guide";
+  if (!(GUIDE_APPROACHES as readonly string[]).includes(r.approachId))
+    e.approachId = "Approche du guide inconnue (D1 à D5)";
+  // Aucune contrainte d'ORDRE : « up » peut dépasser « to ». Seules les valeurs
+  // non finies ou négatives sont refusées, jamais réparées.
+  if (r.upMm !== null && !(Number.isFinite(r.upMm) && r.upMm >= 0))
+    e.upMm = "Borne finie et non négative, ou vide";
+  if (r.toMm !== null && !(Number.isFinite(r.toMm) && r.toMm >= 0))
+    e.toMm = "Borne finie et non négative, ou vide";
+  if (r.sourceRef.trim().length < 8 || r.sourceRef.length > DETECTION_LIMITS.sourceRef)
+    e.sourceRef = "Source précise requise (brochure, page)";
+  if (!isRealDate(r.enteredOn)) e.enteredOn = "Date au format AAAA-MM-JJ";
+  if (r.status === "validated" && r.upMm === null && r.toMm === null && r.upNote === null && r.toNote === null)
+    e.status = "Une ligne validée porte au moins une borne ou une mention « non publié »";
+  const key = guideRecordKey(r);
+  if (others.some((o) => o !== r && guideRecordKey(o) === key))
+    e.sensorReference = "Cette ligne du guide existe déjà";
+  return e;
+}
+
+export const hasGuideErrors = (e: GuideFieldErrors) => Object.keys(e).length > 0;
+
+export function emptyGuideRecord(): GuideRecord {
+  return {
+    id: null,
+    page: null,
+    sensorFamily: "",
+    sensorReference: "",
+    magnetId: "",
+    approachId: "D1",
+    upMm: null,
+    toMm: null,
+    upNote: null,
+    toNote: null,
+    status: "draft",
+    sourceRef: "",
+    enteredOn: new Date().toISOString().slice(0, 10),
+    note: null,
+    rowVersion: null,
+    updatedAt: null,
+    updatedBy: null,
+  };
 }
