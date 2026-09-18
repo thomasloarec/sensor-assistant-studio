@@ -97,10 +97,17 @@ export function detectionConflictVersion(error: unknown): number | null {
   const found = /DETECTION_CONFLICT:(\d+)/.exec(m);
   return found ? Number(found[1]) : null;
 }
+/** Refus de rôle, formulé une seule fois : l'écran le compare et l'affiche via
+ *  le dictionnaire, il ne le réécrit pas. */
+export const DETECTION_DENIED_MESSAGE = "Réservé à l'administration Standex";
+
+/** Message de champ partagé entre la saisie et la validation. */
+export const NON_NUMERIC_MESSAGE = "Saisie non numérique";
+
 export function humanDetectionError(error: unknown): string {
   const m = String((error as { message?: string })?.message ?? error ?? "");
   if (isMissingDetectionRpc(error)) return "Annuaire non activé sur ce serveur";
-  if (/NOT_ALLOWED|42501/.test(m)) return "Réservé à l'administration Standex";
+  if (/NOT_ALLOWED|42501/.test(m)) return DETECTION_DENIED_MESSAGE;
   if (/AUTH_REQUIRED/.test(m)) return "Session requise";
   if (/DETECTION_CONFLICT/.test(m)) return "Ligne modifiée entre-temps";
   if (/DETECTION_INCOMPLETE/.test(m)) return "Une ligne validée porte deux distances";
