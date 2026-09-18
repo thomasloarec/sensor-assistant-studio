@@ -3,6 +3,7 @@ import { createDossier } from "../src/lib/leadmagnet/dossier";
 import { buildDossierExport, parseDossierExport } from "../src/lib/leadmagnet/dossier-io";
 import {
   projectReference,
+  projectIdentity,
   projectPdfFilename,
   titleSlug,
 } from "../src/lib/leadmagnet/project-reference";
