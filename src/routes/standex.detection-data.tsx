@@ -145,7 +145,7 @@ function DetectionDataScreen() {
       // La réussite n'est annoncée qu'après réponse du serveur.
       await load();
       await loadDetectionData(true);
-      flash(t("Ligne enregistrée. Les simulations utilisent la nouvelle valeur."));
+      flash.success(t("Ligne enregistrée. Les simulations utilisent la nouvelle valeur."));
       setDraft(null);
       setDraftVersion(null);
     } catch (error) {
@@ -641,7 +641,7 @@ function Field({
   children,
 }: {
   label: string;
-  error?: string;
+  error?: string | undefined;
   children: React.ReactNode;
 }) {
   return (
