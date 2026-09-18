@@ -915,9 +915,19 @@ export default function MagneticWorkshop({
       sensorFamily={config.sensorId}
       shape={standardShapeForSensor(config.sensorId)}
       magnetModel={config.magnetModel}
-      guideReference={guideDemoRange?.sensorReference ?? config.guideReference ?? null}
+      guideReference={config.guideReference ?? null}
       guideApproach={config.geometry}
-      onSelect={(magnetModel) => update({ magnetModel })}
+      onSelect={(magnetModel) =>
+        update({
+          magnetModel,
+          // Changer d'aimant change de lignes publiées : la variante est
+          // ré-résolue pour l'approche courante, jamais héritée de l'autre aimant.
+          guideReference:
+            guideSelectionFor(config.sensorId, magnetModel, config.geometry, config.guideReference)
+              ?.reference ?? null,
+        })
+      }
+
       onSelectDemo={(ref, approachId) => {
         if (approachId === "D1" || approachId === "D3") {
           update({ guideReference: ref, geometry: approachId, magnetAngle: documentedMagnetAngleDeg(approachId, config.sensorId) });
