@@ -26908,5 +26908,275 @@
     "Данные обнаружения не были перечитаны с сервера: на этой сцене могут быть устаревшие значения.",
     "I dati di rilevamento non sono stati riletti dal server: questa scena può mostrare valori più vecchi.",
     "検出データをサーバーから再読み込みしていません。この画面は古い値を表示している可能性があります。"
+  ],
+  "Abandonner la modification": [
+    "Discard the change",
+    "放弃修改",
+    "Änderung verwerfen",
+    "Descartar la modificación",
+    "Отменить изменение",
+    "Abbandona la modifica",
+    "変更を破棄"
+  ],
+  "Approche du guide inconnue (D1 à D5)": [
+    "Unknown guide approach (D1 to D5)",
+    "指南接近方式未知（D1 至 D5）",
+    "Unbekannte Annäherung im Leitfaden (D1 bis D5)",
+    "Aproximación del guía desconocida (D1 a D5)",
+    "Неизвестный подход из руководства (D1–D5)",
+    "Approccio della guida sconosciuto (da D1 a D5)",
+    "ガイドの接近方法が不明（D1〜D5）"
+  ],
+  "Borne finie et non négative, ou vide": [
+    "Finite, non-negative bound, or empty",
+    "有限且非负的界限，或留空",
+    "Endlicher, nicht negativer Grenzwert oder leer",
+    "Límite finito y no negativo, o vacío",
+    "Конечная неотрицательная граница или пусто",
+    "Limite finito e non negativo, oppure vuoto",
+    "有限で負でない値、または空欄"
+  ],
+  "Ces deux colonnes sont recopiées de la brochure. Elles ne sont pas un seuil d'activation ni de relâchement : « up » peut être supérieur à « to », et cet ordre est conservé tel qu'imprimé.": [
+    "These two columns are copied from the brochure. They are not an activation or release threshold: “up” may exceed “to”, and that order is kept exactly as printed.",
+    "这两列直接摘自手册。它们不是动作或释放阈值：“up”可能大于“to”，该顺序按印刷原样保留。",
+    "Diese beiden Spalten sind aus der Broschüre übernommen. Sie sind kein Anzugs- oder Abfallwert: „up“ kann größer als „to“ sein, und diese Reihenfolge bleibt wie gedruckt.",
+    "Estas dos columnas se copian del folleto. No son un umbral de activación ni de liberación: «up» puede ser mayor que «to», y ese orden se conserva tal como está impreso.",
+    "Эти два столбца перенесены из брошюры. Это не порог срабатывания или отпускания: «up» может быть больше «to», и этот порядок сохраняется как напечатано.",
+    "Queste due colonne sono ricopiate dalla brochure. Non sono una soglia di attivazione né di rilascio: «up» può superare «to» e questo ordine è conservato come stampato.",
+    "この2列はカタログからの転記です。動作値や復帰値ではありません。「up」が「to」より大きい場合もあり、その順序は印刷どおり保持されます。"
+  ],
+  "Cette ligne du guide existe déjà": [
+    "This guide row already exists",
+    "该指南行已存在",
+    "Diese Leitfadenzeile existiert bereits",
+    "Esta línea del guía ya existe",
+    "Эта строка руководства уже существует",
+    "Questa riga della guida esiste già",
+    "このガイド行はすでに存在します"
+  ],
+  "Continuer l'édition": [
+    "Continue editing",
+    "继续编辑",
+    "Bearbeitung fortsetzen",
+    "Continuar la edición",
+    "Продолжить редактирование",
+    "Continua la modifica",
+    "編集を続ける"
+  ],
+  "Distances de commutation": [
+    "Switching distances",
+    "开关距离",
+    "Schaltabstände",
+    "Distancias de conmutación",
+    "Расстояния переключения",
+    "Distanze di commutazione",
+    "動作距離"
+  ],
+  "Distances réelles d'activation et de relâchement, par combinaison exacte. Les plages du guide d'activation ne sont pas des seuils : elles sont dans l'autre onglet.": [
+    "Real activation and release distances, per exact combination. The activation guide ranges are not thresholds: they are in the other tab.",
+    "按精确组合给出的真实动作与释放距离。激活指南的范围不是阈值：它们在另一个选项卡。",
+    "Reale Anzugs- und Abfallabstände je genauer Kombination. Die Bereiche des Aktivierungsleitfadens sind keine Schwellen: sie stehen im anderen Tab.",
+    "Distancias reales de activación y liberación, por combinación exacta. Los rangos del guía de activación no son umbrales: están en la otra pestaña.",
+    "Реальные расстояния срабатывания и отпускания для точной комбинации. Диапазоны руководства не являются порогами: они на другой вкладке.",
+    "Distanze reali di attivazione e rilascio, per combinazione esatta. Gli intervalli della guida non sono soglie: sono nell'altra scheda.",
+    "正確な組み合わせごとの実際の動作距離と復帰距離。ガイドの範囲はしきい値ではなく、別のタブにあります。"
+  ],
+  "Famille inconnue du guide": [
+    "Family unknown to the guide",
+    "指南中未知的系列",
+    "Dem Leitfaden unbekannte Familie",
+    "Familia desconocida para el guía",
+    "Семейство неизвестно руководству",
+    "Famiglia sconosciuta alla guida",
+    "ガイドに存在しないファミリー"
+  ],
+  "La relecture du serveur a échoué.": [
+    "Re-reading from the server failed.",
+    "从服务器重新读取失败。",
+    "Das erneute Lesen vom Server ist fehlgeschlagen.",
+    "La relectura del servidor ha fallado.",
+    "Повторное чтение с сервера не удалось.",
+    "La rilettura dal server è fallita.",
+    "サーバーからの再読み込みに失敗しました。"
+  ],
+  "Ligne enregistrée, mais la relecture a échoué : les simulations peuvent encore afficher la valeur précédente.": [
+    "Row saved, but re-reading failed: simulations may still show the previous value.",
+    "该行已保存，但重新读取失败：模拟可能仍显示旧值。",
+    "Zeile gespeichert, aber das erneute Lesen ist fehlgeschlagen: Simulationen können noch den vorherigen Wert zeigen.",
+    "Línea guardada, pero la relectura ha fallado: las simulaciones pueden mostrar aún el valor anterior.",
+    "Строка сохранена, но повторное чтение не удалось: в симуляциях может остаться прежнее значение.",
+    "Riga salvata, ma la rilettura è fallita: le simulazioni possono ancora mostrare il valore precedente.",
+    "行は保存されましたが再読み込みに失敗しました。シミュレーションに以前の値が残る場合があります。"
+  ],
+  "Mention de la colonne « to »": [
+    "Note on the “to” column",
+    "“to”列的标注",
+    "Hinweis zur Spalte „to“",
+    "Mención de la columna «to»",
+    "Примечание к столбцу «to»",
+    "Nota della colonna «to»",
+    "「to」列の注記"
+  ],
+  "Mention de la colonne « up »": [
+    "Note on the “up” column",
+    "“up”列的标注",
+    "Hinweis zur Spalte „up“",
+    "Mención de la columna «up»",
+    "Примечание к столбцу «up»",
+    "Nota della colonna «up»",
+    "「up」列の注記"
+  ],
+  "Modifier la plage du guide": [
+    "Edit the guide range",
+    "修改指南范围",
+    "Leitfadenbereich bearbeiten",
+    "Modificar el rango del guía",
+    "Изменить диапазон руководства",
+    "Modifica l'intervallo della guida",
+    "ガイド範囲を編集"
+  ],
+  "Nature de la donnée": [
+    "Kind of data",
+    "数据类型",
+    "Art der Daten",
+    "Naturaleza del dato",
+    "Тип данных",
+    "Natura del dato",
+    "データの種類"
+  ],
+  "Non publié (« - »)": [
+    "Not published (“-”)",
+    "未公布（“-”）",
+    "Nicht veröffentlicht („-“)",
+    "No publicado («-»)",
+    "Не опубликовано («-»)",
+    "Non pubblicato («-»)",
+    "非公開（「-」）"
+  ],
+  "Page": [
+    "Page",
+    "页",
+    "Seite",
+    "Página",
+    "Страница",
+    "Pagina",
+    "ページ"
+  ],
+  "Page de la brochure requise": [
+    "Brochure page required",
+    "需填写手册页码",
+    "Broschürenseite erforderlich",
+    "Se requiere la página del folleto",
+    "Требуется страница брошюры",
+    "Pagina della brochure obbligatoria",
+    "カタログのページが必要です"
+  ],
+  "Plage du guide enregistrée. Elle reste documentaire, jamais un seuil.": [
+    "Guide range saved. It stays documentary, never a threshold.",
+    "指南范围已保存。它仅作资料，绝非阈值。",
+    "Leitfadenbereich gespeichert. Er bleibt dokumentarisch, niemals ein Schwellenwert.",
+    "Rango del guía guardado. Sigue siendo documental, nunca un umbral.",
+    "Диапазон руководства сохранён. Он остаётся справочным, а не порогом.",
+    "Intervallo della guida salvato. Resta documentale, mai una soglia.",
+    "ガイド範囲を保存しました。資料値であり、しきい値ではありません。"
+  ],
+  "Plages du guide (documentaires)": [
+    "Guide ranges (documentary)",
+    "指南范围（资料）",
+    "Leitfadenbereiche (dokumentarisch)",
+    "Rangos del guía (documentales)",
+    "Диапазоны руководства (справочные)",
+    "Intervalli della guida (documentali)",
+    "ガイド範囲（資料）"
+  ],
+  "Plages « up » et « to » de la brochure d'activation. Ce sont des plages documentaires : elles ne sont ni des seuils d'activation, ni des seuils de relâchement, et ne sont jamais réordonnées.": [
+    "“up” and “to” ranges from the activation brochure. They are documentary ranges: neither activation nor release thresholds, and never reordered.",
+    "激活手册中的“up”与“to”范围。它们是资料范围：既不是动作阈值也不是释放阈值，且从不重新排序。",
+    "„up“- und „to“-Bereiche aus der Aktivierungsbroschüre. Es sind dokumentarische Bereiche: weder Anzugs- noch Abfallwerte, und sie werden nie umsortiert.",
+    "Rangos «up» y «to» del folleto de activación. Son rangos documentales: ni umbrales de activación ni de liberación, y nunca se reordenan.",
+    "Диапазоны «up» и «to» из брошюры активации. Это справочные диапазоны: не пороги срабатывания или отпускания, и они никогда не переупорядочиваются.",
+    "Intervalli «up» e «to» della brochure di attivazione. Sono intervalli documentali: né soglie di attivazione né di rilascio, e non vengono mai riordinati.",
+    "起動カタログの「up」「to」範囲です。資料としての範囲であり、動作値でも復帰値でもなく、並べ替えもしません。"
+  ],
+  "Source précise requise (brochure, page)": [
+    "Precise source required (brochure, page)",
+    "需填写确切来源（手册、页码）",
+    "Genaue Quelle erforderlich (Broschüre, Seite)",
+    "Se requiere la fuente precisa (folleto, página)",
+    "Требуется точный источник (брошюра, страница)",
+    "Fonte precisa obbligatoria (brochure, pagina)",
+    "正確な出典が必要です（カタログ、ページ）"
+  ],
+  "Sous zéro (« <0 »)": [
+    "Below zero (“<0”)",
+    "低于零（“<0”）",
+    "Unter Null („<0“)",
+    "Bajo cero («<0»)",
+    "Ниже нуля («<0»)",
+    "Sotto zero («<0»)",
+    "ゼロ未満（「<0」）"
+  ],
+  "Une ligne validée porte au moins une borne ou une mention « non publié »": [
+    "A validated row carries at least one bound or a “not published” note",
+    "已验证行至少包含一个界限或“未公布”标注",
+    "Eine validierte Zeile enthält mindestens einen Grenzwert oder den Hinweis „nicht veröffentlicht“",
+    "Una línea validada incluye al menos un límite o la mención «no publicado»",
+    "Проверенная строка содержит хотя бы одну границу или отметку «не опубликовано»",
+    "Una riga validata riporta almeno un limite o la menzione «non pubblicato»",
+    "確定済みの行には少なくとも1つの値、または「非公開」の注記が必要です"
+  ],
+  "Une modification n'est pas enregistrée.": [
+    "A change is not saved.",
+    "有未保存的修改。",
+    "Eine Änderung ist nicht gespeichert.",
+    "Hay una modificación sin guardar.",
+    "Изменение не сохранено.",
+    "Una modifica non è salvata.",
+    "未保存の変更があります。"
+  ],
+  "Valeur imprimée": [
+    "Printed value",
+    "印刷值",
+    "Gedruckter Wert",
+    "Valor impreso",
+    "Напечатанное значение",
+    "Valore stampato",
+    "印刷値"
+  ],
+  "avec une plage imprimée": [
+    "with a printed range",
+    "含印刷范围",
+    "mit gedrucktem Bereich",
+    "con un rango impreso",
+    "с напечатанным диапазоном",
+    "con un intervallo stampato",
+    "印刷範囲あり"
+  ],
+  "brochure, page": [
+    "brochure, page",
+    "手册，页码",
+    "Broschüre, Seite",
+    "folleto, página",
+    "брошюра, страница",
+    "brochure, pagina",
+    "カタログ、ページ"
+  ],
+  "brouillon proposé ; la ligne livrée reste en vigueur": [
+    "proposed draft; the delivered row remains in force",
+    "提议的草稿；已交付的行仍然有效",
+    "vorgeschlagener Entwurf; die gelieferte Zeile bleibt gültig",
+    "borrador propuesto; la línea entregada sigue vigente",
+    "предложенный черновик; поставленная строка остаётся в силе",
+    "bozza proposta; la riga consegnata resta in vigore",
+    "提案中の下書き。提供済みの行が有効です"
+  ],
+  "ordre imprimé inhabituel — à confirmer par Standex": [
+    "unusual printed order — to be confirmed by Standex",
+    "印刷顺序异常 — 需由 Standex 确认",
+    "ungewöhnliche gedruckte Reihenfolge — von Standex zu bestätigen",
+    "orden impreso inusual: lo debe confirmar Standex",
+    "необычный печатный порядок — подлежит подтверждению Standex",
+    "ordine stampato inusuale — da confermare da Standex",
+    "印刷順序が異例 — Standex の確認が必要"
   ]
 }
