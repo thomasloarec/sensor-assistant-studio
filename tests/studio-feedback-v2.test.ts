@@ -36,10 +36,14 @@ test("le couple par défaut vient du tableau central ; un aimant choisi reste lu
   expect(defaultMagnetFor("MK03")).toBe("M03");
   expect(defaultMagnetFor("MK04")).toBe("M04");
   expect(defaultMagnetFor("MK21PR")).toBe("M21P/1");
-  // Les aimants réellement documentés pour MK03 restent proposés et lisibles :
-  // la PREUVE est intacte (M02 y figure toujours), seule la POLITIQUE change —
-  // M02 n'est plus remonté en tête des suggestions des autres capteurs.
-  expect(documentedMagnetsFor("MK03")).toEqual(["4003004003", "M02"]);
+  // La PREUVE reste intacte dans le jeu livré : les lignes MK03 + M02 y figurent
+  // toujours et restent lisibles à l'annuaire. Mais MK03 est tubulaire et M02 est
+  // un bloc : la règle de forme de l'application écarte ce couple des couples
+  // documentés exploitables, sans convertir ni déplacer aucune valeur.
+  expect(
+    COMPILED_PUBLISHED_REGISTRY.rows.some((r) => r.sensorFamily === "MK03" && r.magnetId === "M02"),
+  ).toBe(true);
+  expect(documentedMagnetsFor("MK03")).toEqual(["4003004003"]);
   // Options proposées : la forme du capteur est respectée (MK03 est tubulaire) et
   // le boîtier d'un AUTRE capteur (M02, propre à MK02) n'y figure plus.
   expect(magnetOptionsFor("MK03").slice(0, 2)).toEqual(["M03", "4003004003"]);
@@ -77,7 +81,12 @@ test("V2 new brochure magnets have exact dimensions and sources, never inferred 
   for (const m of BARE_MAGNETS) {
     expect(magnetSource(m.id)).toBeTruthy();
     expect(m.body.every((n) => Number.isFinite(n) && n > 0)).toBe(true);
-    expect(parseWorkshopConfig({ ...DEFAULT_WORKSHOP, magnetModel: m.id })?.magnetModel).toBe(m.id);
+    // Le capteur hôte suit la forme de l'aimant : la relecture conserve alors
+    // exactement l'aimant enregistré.
+    const host = magnetShapeClass(m.id) === "tubular" ? "MK03" : "MK15";
+    expect(
+      parseWorkshopConfig({ ...DEFAULT_WORKSHOP, sensorId: host, magnetModel: m.id })?.magnetModel,
+    ).toBe(m.id);
     if (m.id !== "4003004003") {
       expect(referenceAllowed({ ...DEFAULT_WORKSHOP, magnetModel: m.id })).toBe(false);
       expect(
