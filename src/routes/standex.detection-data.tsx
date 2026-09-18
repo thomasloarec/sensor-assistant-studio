@@ -661,7 +661,7 @@ function DetectionDataScreen() {
                     {e.record.sensorReference}
                     <span className="t-caption block text-muted-foreground">
                       {e.record.sensorFamily}
-                      {e.simulatable ? "" : " · " + t("contact non simulé")}
+                      {e.simulatable ? "" : " · " + t("Combinaison non simulée")}
                     </span>
                   </th>
                   <td className="px-3 py-2">

@@ -23696,14 +23696,14 @@
     "console R&amp;D",
     "R&amp;Dコンソール"
   ],
-  "contact non simulé": [
-    "contact not simulated",
-    "接点未仿真",
-    "Kontakt nicht simuliert",
-    "contacto no simulado",
-    "контакт не моделируется",
-    "contatto non simulato",
-    "接点は非シミュレーション"
+  "Combinaison non simulée": [
+    "Combination not simulated",
+    "组合未仿真",
+    "Kombination nicht simuliert",
+    "Combinación no simulada",
+    "Комбинация не моделируется",
+    "Combinazione non simulata",
+    "組み合わせは非シミュレーション"
   ],
   "contexte sécurité": [
     "safety context",
