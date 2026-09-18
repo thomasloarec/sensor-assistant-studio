@@ -854,13 +854,35 @@ function EditPanel({
   onSave: () => void;
 }) {
   const r = draft.record;
+  /* Identité VERROUILLÉE sur une ligne déjà enregistrée : la combinaison
+     (référence, classe, contact, aimant, approche) est la clé métier. La
+     changer ici pointerait sur une autre ligne. Pour une autre combinaison, le
+     bouton crée explicitement une nouvelle ligne. */
+  const locked = !draft.isNew && draft.record.id !== null;
+  const scope = magnetFamilyScope(r.magnetId);
   return (
     <section className="panel-block-lg space-y-3" aria-label={t("Modifier la ligne")}>
       <h3 className="t-title-s">{t("Modifier la ligne")}</h3>
+      {locked ? (
+        <div className="notice-info t-caption space-y-2" data-testid="dd-key-locked">
+          <p>
+            {t(
+              "La combinaison de cette ligne ne change pas : elle identifie la donnée. Pour une autre combinaison, créez-en une nouvelle.",
+            )}
+          </p>
+          <Button type="button" variant="secondary" className="min-h-11" onClick={onDuplicate}>
+            {t("Créer une nouvelle combinaison à partir de celle-ci")}
+          </Button>
+        </div>
+      ) : null}
       <div className="grid gap-3 md:grid-cols-3">
         <Field id="dd-f-family" label={t("Référence catalogue")} error={errors.sensorFamily}>
           {(id) => (
-            <Select value={r.sensorFamily} onValueChange={(v) => onPatch({ sensorFamily: v })}>
+            <Select
+              value={r.sensorFamily}
+              disabled={locked}
+              onValueChange={(v) => onPatch({ sensorFamily: v })}
+            >
               <SelectTrigger id={id} className="min-h-11">
                 <SelectValue />
               </SelectTrigger>
@@ -909,6 +931,7 @@ function EditPanel({
               id={id}
               className="min-h-11"
               value={r.sensitivityClass}
+              disabled={locked}
               onChange={(e) => onPatch({ sensitivityClass: e.target.value })}
             />
           )}
@@ -917,6 +940,7 @@ function EditPanel({
           {(id) => (
             <Select
               value={r.contactForm}
+              disabled={locked}
               onValueChange={(v) => onPatch({ contactForm: v as DetectionRecord["contactForm"] })}
             >
               <SelectTrigger id={id} className="min-h-11">
@@ -934,12 +958,16 @@ function EditPanel({
         </Field>
         <Field id="dd-f-magnet" label={t("Aimant")} error={errors.magnetId}>
           {(id) => (
-            <Select value={r.magnetId} onValueChange={(v) => onPatch({ magnetId: v })}>
+            <Select
+              value={r.magnetId}
+              disabled={locked}
+              onValueChange={(v) => onPatch({ magnetId: v })}
+            >
               <SelectTrigger id={id} className="min-h-11">
                 <SelectValue placeholder={t("Aimant")} />
               </SelectTrigger>
               <SelectContent>
-                {knownMagnetIds().map((m) => (
+                {detectionMagnetIds().map((m) => (
                   <SelectItem key={m} value={m}>
                     {m}
                   </SelectItem>
@@ -952,6 +980,7 @@ function EditPanel({
           {(id) => (
             <Select
               value={r.approachId}
+              disabled={locked}
               onValueChange={(v) => onPatch({ approachId: v as DetectionRecord["approachId"] })}
             >
               <SelectTrigger id={id} className="min-h-11">
