@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { projectReference } from "@/lib/leadmagnet/project-reference";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { InternalEnglishHint } from "@/components/standex/dashboard/crm-shared";
@@ -160,6 +161,14 @@ export function consoleLayout(props: DossierConsoleProps): {
     header: !(props.hideHeader ?? props.embedded ?? false),
     sidebar: !(props.hideSidebar ?? Boolean(props.initialDossierId)),
   };
+}
+
+/** Référence lisible du projet, telle que le client la voit sur son PDF :
+ *  lue dans le contenu réellement enregistré, jamais recalculée autrement. */
+function snapshotReference(snapshot: unknown): string | null {
+  const dto = snapshot as { id?: unknown; dossier?: { id?: unknown } } | null | undefined;
+  const id = typeof dto?.id === "string" ? dto.id : dto?.dossier?.id;
+  return typeof id === "string" ? projectReference(id) : null;
 }
 
 export function DossierConsole(props: DossierConsoleProps) {
@@ -605,6 +614,11 @@ export function DossierConsole(props: DossierConsoleProps) {
             <>
               <div className="flex flex-wrap items-center gap-2">
                 <h2 className="t-title-m">{view.dossier.title}</h2>
+                {snapshotReference(lastRevision?.snapshot) ? (
+                  <Badge variant="outline" className="t-metric">
+                    {snapshotReference(lastRevision?.snapshot)}
+                  </Badge>
+                ) : null}
                 <Badge variant="outline">version {view.dossier.current_revision}</Badge>
                 <Badge variant="secondary">
                   {view.dossier.nda_status === "in_force"

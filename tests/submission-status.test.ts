@@ -68,7 +68,7 @@ describe("état de soumission : envoi confirmé vs brouillon courant", () => {
 
   test("libellé du bouton", () => {
     expect(submitButtonLabel("draft", null)).toBe("Envoyer mon projet");
-    expect(submitButtonLabel("sent", sent())).toBe("Envoyer mon projet");
+    expect(submitButtonLabel("sent", sent())).toBe("Projet envoyé");
     expect(submitButtonLabel("modified", sent())).toBe("Envoyer mes modifications");
     expect(submitButtonLabel("modified", null)).toBe("Envoyer mon projet");
   });

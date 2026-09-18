@@ -1,4 +1,4 @@
-import { guideSelectionFor, type GuideRange } from "./activation-guide";
+import { guideSelectionFor, hasGuideData, type GuideRange } from "./activation-guide";
 import type { WorkshopConfig } from "./magnetic-workshop";
 import { documentedMagnetAngleDeg } from "./mounting/profiles";
 
@@ -22,3 +22,18 @@ export function onDocumentedPosition(c: WorkshopConfig): boolean {
 
 // i18n-canonical: translated at display/export time.
 export const GUIDE_SIMULATION_NOTE = "Animation fondée sur la plage du guide Standex. Les colonnes « up » et « to » ne définissent pas à elles seules les seuils de fermeture et de réouverture de votre montage.";
+
+/** Message générique, réservé aux capteurs que la brochure documente : la plage
+ *  existe mais la position choisie n'est pas celle du guide. */
+export const ILLUSTRATIVE_NOTE =
+  "Simulation illustrative — distance non caractérisée, à valider par essais";
+
+/** Message NOMMÉ quand la brochure ne publie rien pour cette famille : la cause
+ *  est dite, et aucune plage d'une autre famille n'est transférée. */
+export const GUIDE_UNPUBLISHED_NOTE =
+  "La brochure d'activation Standex (édition 10/2025) ne publie aucune plage pour cette famille de capteurs : la simulation reste illustrative, à valider par essais.";
+
+/** Mention honnête à afficher pour une simulation illustrative. */
+export function illustrativeNoteFor(c: WorkshopConfig): string {
+  return hasGuideData(c.sensorId) ? ILLUSTRATIVE_NOTE : GUIDE_UNPUBLISHED_NOTE;
+}

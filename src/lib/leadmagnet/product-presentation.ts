@@ -29,13 +29,22 @@ export function pairCategory(model: SensorModel): string {
 }
 
 /** Title from the user's own first sentence; a manually supplied title wins. */
+/** Titre automatique COURT : première intention utile, six mots au plus et
+ *  48 caractères au plus, jamais coupé en milieu de mot. Les titres déjà
+ *  enregistrés ne sont pas réécrits par cette fonction. */
 export function suggestedProjectTitle(goal: string): string {
-  return goal
+  const words = goal
     .trim()
     .replace(/\s+/g, " ")
     .replace(/[.!?].*$/, "")
     .split(" ")
-    .slice(0, 9)
-    .join(" ")
-    .slice(0, 80);
+    .filter(Boolean)
+    .slice(0, 6);
+  const out: string[] = [];
+  for (const word of words) {
+    const next = out.length === 0 ? word : `${out.join(" ")} ${word}`;
+    if (next.length > 48) break;
+    out.push(word);
+  }
+  return (out.length > 0 ? out.join(" ") : (words[0] ?? "")).slice(0, 48);
 }

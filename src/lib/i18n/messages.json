@@ -27295,5 +27295,275 @@
     "Форма несовместима с этим датчиком: комбинация не моделируется",
     "Forma incompatibile con questo sensore: combinazione non simulata",
     "このセンサーと形状が非互換：組み合わせは非シミュレーション"
+  ],
+  "Mois précédent": [
+    "Previous month",
+    "上一个月",
+    "Vorheriger Monat",
+    "Mes anterior",
+    "Предыдущий месяц",
+    "Mese precedente",
+    "前の月"
+  ],
+  "Mois suivant": [
+    "Next month",
+    "下一个月",
+    "Nächster Monat",
+    "Mes siguiente",
+    "Следующий месяц",
+    "Mese successivo",
+    "次の月"
+  ],
+  "Semaine précédente": [
+    "Previous week",
+    "上一周",
+    "Vorherige Woche",
+    "Semana anterior",
+    "Предыдущая неделя",
+    "Settimana precedente",
+    "前の週"
+  ],
+  "Semaine suivante": [
+    "Next week",
+    "下一周",
+    "Nächste Woche",
+    "Semana siguiente",
+    "Следующая неделя",
+    "Settimana successiva",
+    "次の週"
+  ],
+  "Facultatif : place disponible pour le capteur": [
+    "Optional: space available for the sensor",
+    "可选：传感器可用空间",
+    "Optional: verfügbarer Platz für den Sensor",
+    "Opcional: espacio disponible para el sensor",
+    "Необязательно: доступное место для датчика",
+    "Facoltativo: spazio disponibile per il sensore",
+    "任意：センサー用の利用可能スペース"
+  ],
+  "Rien n'est déduit de votre texte. Ces valeurs servent seulement à préfiltrer les capteurs, et restent modifiables.": [
+    "Nothing is inferred from your text. These values only pre-filter sensors and remain editable.",
+    "不会从您的文字中推断任何内容。这些数值仅用于预筛选传感器，并可随时修改。",
+    "Aus Ihrem Text wird nichts abgeleitet. Diese Werte dienen nur der Vorauswahl der Sensoren und bleiben änderbar.",
+    "No se deduce nada de su texto. Estos valores solo prefiltran los sensores y siguen siendo modificables.",
+    "Из вашего текста ничего не выводится. Эти значения служат только для предварительного отбора датчиков и остаются изменяемыми.",
+    "Nulla viene dedotto dal suo testo. Questi valori servono solo a prefiltrare i sensori e restano modificabili.",
+    "入力された文章から推測は行いません。これらの値はセンサーの絞り込みのみに使われ、後から変更できます。"
+  ],
+  "Élément à détecter": [
+    "Part to detect",
+    "待检测部件",
+    "Zu erkennendes Teil",
+    "Pieza a detectar",
+    "Обнаруживаемая деталь",
+    "Parte da rilevare",
+    "検出対象の部品"
+  ],
+  "Mouvement et détection": [
+    "Movement and detection",
+    "运动与检测",
+    "Bewegung und Erkennung",
+    "Movimiento y detección",
+    "Движение и обнаружение",
+    "Movimento e rilevamento",
+    "動きと検出"
+  ],
+  "Montage : position et fixation": [
+    "Mounting: position and fastening",
+    "安装：位置与固定",
+    "Montage: Position und Befestigung",
+    "Montaje: posición y fijación",
+    "Монтаж: положение и крепление",
+    "Montaggio: posizione e fissaggio",
+    "取り付け：位置と固定"
+  ],
+  "Dimensions disponibles": [
+    "Available dimensions",
+    "可用尺寸",
+    "Verfügbare Abmessungen",
+    "Dimensiones disponibles",
+    "Доступные размеры",
+    "Dimensioni disponibili",
+    "利用可能な寸法"
+  ],
+  "Projet envoyé": [
+    "Project sent",
+    "项目已发送",
+    "Projekt gesendet",
+    "Proyecto enviado",
+    "Проект отправлен",
+    "Progetto inviato",
+    "プロジェクトを送信しました"
+  ],
+  "La brochure d'activation Standex (édition 10/2025) ne publie aucune plage pour cette famille de capteurs : la simulation reste illustrative, à valider par essais.": [
+    "The Standex activation brochure (10/2025 edition) publishes no range for this sensor family: the simulation stays illustrative and must be validated by testing.",
+    "Standex 激活手册（2025年10月版）未公布该传感器系列的范围：该仿真仅为示意，须通过实测验证。",
+    "Die Standex-Aktivierungsbroschüre (Ausgabe 10/2025) veröffentlicht für diese Sensorfamilie keinen Bereich: Die Simulation bleibt illustrativ und muss durch Versuche bestätigt werden.",
+    "El folleto de activación Standex (edición 10/2025) no publica ningún rango para esta familia de sensores: la simulación es ilustrativa y debe validarse mediante ensayos.",
+    "Брошюра активации Standex (издание 10/2025) не публикует диапазон для этого семейства датчиков: моделирование остаётся иллюстративным и требует проверки испытаниями.",
+    "La brochure di attivazione Standex (edizione 10/2025) non pubblica alcun intervallo per questa famiglia di sensori: la simulazione resta illustrativa e va validata con prove.",
+    "Standex のアクティベーション資料（2025年10月版）にはこのセンサーファミリーの範囲が記載されていません。シミュレーションは参考であり、試験による確認が必要です。"
+  ],
+  "Dans quel équipement, et pour quoi faire ?": [
+    "In which equipment, and what for?",
+    "用于哪种设备，目的是什么？",
+    "In welchem Gerät und wofür?",
+    "¿En qué equipo y para qué?",
+    "В каком оборудовании и для чего?",
+    "In quale apparecchiatura e per farne cosa?",
+    "どの装置で、何のために使いますか？"
+  ],
+  "Quelle pièce doit être détectée ?": [
+    "Which part must be detected?",
+    "需要检测哪个部件？",
+    "Welches Teil soll erkannt werden?",
+    "¿Qué pieza debe detectarse?",
+    "Какую деталь нужно обнаруживать?",
+    "Quale parte deve essere rilevata?",
+    "どの部品を検出しますか？"
+  ],
+  "Comment cette pièce bouge-t-elle, et quels états faut-il distinguer ?": [
+    "How does this part move, and which states must be distinguished?",
+    "该部件如何运动，需要区分哪些状态？",
+    "Wie bewegt sich dieses Teil, und welche Zustände sind zu unterscheiden?",
+    "¿Cómo se mueve esta pieza y qué estados hay que distinguir?",
+    "Как перемещается эта деталь и какие состояния нужно различать?",
+    "Come si muove questa parte e quali stati vanno distinti?",
+    "その部品はどう動き、どの状態を区別しますか？"
+  ],
+  "Où placer le capteur, et comment le tenir ?": [
+    "Where would the sensor go, and how would it be held?",
+    "传感器放在哪里，如何固定？",
+    "Wo soll der Sensor sitzen, und wie wird er gehalten?",
+    "¿Dónde iría el sensor y cómo se sujetaría?",
+    "Где разместить датчик и как его закрепить?",
+    "Dove collocare il sensore e come fissarlo?",
+    "センサーをどこに置き、どう固定しますか？"
+  ],
+  "Que doit-il supporter à cet endroit ?": [
+    "What must it withstand there?",
+    "在该位置需要承受什么？",
+    "Was muss er dort aushalten?",
+    "¿Qué debe soportar en ese lugar?",
+    "Что он должен выдерживать в этом месте?",
+    "Cosa deve sopportare in quel punto?",
+    "その場所で何に耐える必要がありますか？"
+  ],
+  "machine à café professionnelle : savoir si le réservoir est bien en place": [
+    "professional coffee machine: knowing whether the tank is fully in place",
+    "专业咖啡机：判断水箱是否完全到位",
+    "professionelle Kaffeemaschine: erkennen, ob der Tank richtig sitzt",
+    "máquina de café profesional: saber si el depósito está bien colocado",
+    "профессиональная кофемашина: определить, установлен ли бак до конца",
+    "macchina da caffè professionale: sapere se il serbatoio è inserito correttamente",
+    "業務用コーヒーマシン：タンクが正しく装着されているかを知る"
+  ],
+  "un réservoir amovible en plastique, un tiroir métallique, un piston": [
+    "a removable plastic tank, a metal drawer, a piston",
+    "可拆卸塑料水箱、金属抽屉、活塞",
+    "ein abnehmbarer Kunststofftank, eine Metallschublade, ein Kolben",
+    "un depósito de plástico extraíble, un cajón metálico, un pistón",
+    "съёмный пластиковый бак, металлический ящик, поршень",
+    "un serbatoio di plastica rimovibile, un cassetto metallico, un pistone",
+    "取り外し式の樹脂タンク、金属製の引き出し、ピストン"
+  ],
+  "elle coulisse de 20 mm ; présente ou retirée": [
+    "it slides 20 mm; present or removed",
+    "它滑动 20 mm；到位或取出",
+    "es gleitet 20 mm; vorhanden oder entnommen",
+    "se desliza 20 mm; presente o retirada",
+    "перемещается на 20 мм; на месте или снята",
+    "scorre di 20 mm; presente o rimossa",
+    "20 mm スライドする；装着または取り外し"
+  ],
+  "vissé à l'intérieur du bâti, en face de la pièce mobile": [
+    "screwed inside the frame, facing the moving part",
+    "拧装在机架内部，正对运动部件",
+    "im Gehäuse verschraubt, gegenüber dem beweglichen Teil",
+    "atornillado dentro del bastidor, frente a la pieza móvil",
+    "привинчен внутри корпуса, напротив подвижной детали",
+    "avvitato all'interno del telaio, di fronte alla parte mobile",
+    "フレーム内側にねじ止めし、可動部品と正対"
+  ],
+  "L'équipement et ce que la détection doit permettre.": [
+    "The equipment and what the detection should make possible.",
+    "设备以及检测需要实现的目标。",
+    "Das Gerät und was die Erkennung ermöglichen soll.",
+    "El equipo y qué debe permitir la detección.",
+    "Оборудование и то, что должно обеспечить обнаружение.",
+    "L'apparecchiatura e ciò che il rilevamento deve consentire.",
+    "装置と、検出によって実現したいこと。"
+  ],
+  "La pièce concernée, sa matière si vous la connaissez.": [
+    "The part concerned, and its material if you know it.",
+    "相关部件，如知晓请注明材料。",
+    "Das betroffene Teil und sein Material, falls bekannt.",
+    "La pieza afectada y su material, si lo conoce.",
+    "Нужная деталь и её материал, если известен.",
+    "La parte interessata e il suo materiale, se lo conosce.",
+    "対象の部品と、分かれば材質。"
+  ],
+  "Le mouvement, la course et les états à distinguer.": [
+    "The movement, the travel and the states to distinguish.",
+    "运动方式、行程以及需区分的状态。",
+    "Die Bewegung, der Weg und die zu unterscheidenden Zustände.",
+    "El movimiento, el recorrido y los estados a distinguir.",
+    "Движение, ход и состояния, которые нужно различать.",
+    "Il movimento, la corsa e gli stati da distinguere.",
+    "動き、ストローク、区別する状態。"
+  ],
+  "Position et fixation seulement : les dimensions se saisissent juste en dessous.": [
+    "Position and fastening only: dimensions are entered just below.",
+    "仅填写位置与固定方式：尺寸在下方填写。",
+    "Nur Position und Befestigung: Die Abmessungen werden direkt darunter eingegeben.",
+    "Solo posición y fijación: las dimensiones se introducen justo debajo.",
+    "Только положение и крепление: размеры вводятся ниже.",
+    "Solo posizione e fissaggio: le dimensioni si inseriscono qui sotto.",
+    "位置と固定方法のみ：寸法はすぐ下で入力します。"
+  ],
+  "Température, liquides, poussières, nettoyage, vibrations.": [
+    "Temperature, liquids, dust, cleaning, vibration.",
+    "温度、液体、粉尘、清洗、振动。",
+    "Temperatur, Flüssigkeiten, Staub, Reinigung, Vibrationen.",
+    "Temperatura, líquidos, polvo, limpieza, vibraciones.",
+    "Температура, жидкости, пыль, очистка, вибрации.",
+    "Temperatura, liquidi, polveri, pulizia, vibrazioni.",
+    "温度、液体、粉じん、洗浄、振動。"
+  ],
+  "Le réservoir d’eau amovible, en plastique, poignée vers l’avant.": [
+    "The removable plastic water tank, handle facing forward.",
+    "可拆卸塑料水箱，把手朝前。",
+    "Der abnehmbare Kunststoff-Wassertank, Griff nach vorn.",
+    "El depósito de agua de plástico extraíble, con el asa hacia delante.",
+    "Съёмный пластиковый бак для воды, ручка вперёд.",
+    "Il serbatoio d'acqua di plastica rimovibile, con maniglia in avanti.",
+    "取り外し式の樹脂製給水タンク、ハンドルは前向き。"
+  ],
+  "Le tiroir de cartouche, en tôle pliée, avec un aimant déjà intégré.": [
+    "The cartridge drawer, in folded sheet metal, with a magnet already fitted.",
+    "折弯钣金制的药盒抽屉，已内置磁铁。",
+    "Die Kassettenschublade aus Blech, mit bereits integriertem Magneten.",
+    "El cajón de cartucho, de chapa plegada, con imán ya integrado.",
+    "Кассетный ящик из гнутого листа, с уже встроенным магнитом.",
+    "Il cassetto della cartuccia, in lamiera piegata, con magnete già integrato.",
+    "曲げ板金製のカートリッジ引き出し、マグネット内蔵済み。"
+  ],
+  "La tige du vérin, en acier, portant un aimant permanent.": [
+    "The steel cylinder rod, carrying a permanent magnet.",
+    "气缸钢制活塞杆，带永磁体。",
+    "Die Stahlstange des Zylinders mit einem Permanentmagneten.",
+    "El vástago de acero del cilindro, con un imán permanente.",
+    "Стальной шток цилиндра с постоянным магнитом.",
+    "L'asta in acciaio del cilindro, con un magnete permanente.",
+    "シリンダーの鋼製ロッド、永久磁石付き。"
+  ],
+  "Référence du projet": [
+    "Project reference",
+    "项目编号",
+    "Projektreferenz",
+    "Referencia del proyecto",
+    "Номер проекта",
+    "Riferimento del progetto",
+    "プロジェクト参照番号"
   ]
 }

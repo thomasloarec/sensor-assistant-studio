@@ -1,8 +1,9 @@
 import { isPcbSensor } from "./product-presentation";
-import { workshopGuideRange, GUIDE_SIMULATION_NOTE } from "../standex/workshop-guide";
+import { workshopGuideRange, GUIDE_SIMULATION_NOTE, illustrativeNoteFor } from "../standex/workshop-guide";
 import { guideIllustrativeMarks, ACTIVATION_GUIDE } from "../standex/activation-guide";
 import { toClientDto, stableStringify, REQUIREMENT_LABELS, type DesignDossier } from "./dossier";
 import { technicalSummary } from "./submission";
+import { projectReference } from "./project-reference";
 import { VARIABLE_FIELDS } from "./nda-docx";
 import { type TestedVerdict } from "./tested-pairs";
 import { simulateMounting } from "../standex/mounting/simulate";
@@ -74,7 +75,7 @@ export function projectReportSections(
         ? [
             entry(
               "Le résultat",
-              tr(guide ? GUIDE_SIMULATION_NOTE : "Simulation illustrative — distance non caractérisée, à valider par essais"),
+              tr(guide ? GUIDE_SIMULATION_NOTE : illustrativeNoteFor(w)),
             ),
           ]
         : []),
@@ -128,6 +129,7 @@ export function projectReportSections(
     entry("Contraintes supplémentaires", nda["contraintesComplementaires"] ?? nda["contraintes"]),
   ]);
   add("Identification", [
+    entry("Référence du projet", projectReference(d.id) ?? unknown),
     entry("révision", d.revision),
     entry(
       "Rapport complet du projet",
@@ -156,9 +158,11 @@ export async function projectPdf(
     new TextEncoder().encode(stableStringify(data)),
   );
   const hash = Array.from(new Uint8Array(digest), (v) => v.toString(16).padStart(2, "0")).join("");
+  const reference = projectReference(dossier.id);
   return reviewPdf({ sections: projectReportSections(dossier, nda, tr), hash }, logoUrl, (s) => s, {
-    title: tr("Rapport complet du projet"),
-    subtitle: tr("Projet à confirmer par Standex"),
+    // Le nom du projet est en tête du document ; la référence stable le suit.
+    title: dossier.title || tr("Rapport complet du projet"),
+    subtitle: [reference, tr("Projet à confirmer par Standex")].filter(Boolean).join(" · "),
     attachment: new TextEncoder().encode(JSON.stringify(data, null, 2)),
   });
 }

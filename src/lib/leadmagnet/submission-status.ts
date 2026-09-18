@@ -64,6 +64,9 @@ export function submissionStatusKind(
 /** Le libellé ne promet « mes modifications » que si la version envoyée est
  * clairement identifiée : sinon le bouton reste neutre. */
 export function submitButtonLabel(kind: SubmissionStatusKind, last: SentRevisionRecord | null) {
+  // Après un envoi confirmé, le bouton reste COURT : l'explication complète est
+  // portée par le bandeau d'état voisin, qui lui peut revenir à la ligne.
+  if (kind === "sent") return "Projet envoyé";
   return kind === "modified" && last && Number.isFinite(last.revisionNumber)
     ? "Envoyer mes modifications"
     : "Envoyer mon projet";

@@ -1,6 +1,7 @@
+import { ILLUSTRATIVE_NOTE, GUIDE_UNPUBLISHED_NOTE } from "@/lib/standex/workshop-guide";
 import { sensorById, sizeLabel } from "@/lib/standex/sensor-catalog";
 import { housingMaterial } from "@/lib/leadmagnet/product-presentation";
-import { guideRange, formatGuideBound, ACTIVATION_GUIDE } from "@/lib/standex/activation-guide";
+import { guideRange, formatGuideBound, hasGuideData, ACTIVATION_GUIDE } from "@/lib/standex/activation-guide";
 /** Écran « Résultat » : ce que le test d'un couple a montré.
  *
  * Cet écran est de la PRÉSENTATION seule. Il n'appelle aucun moteur, ne calcule
@@ -227,7 +228,7 @@ export function ResultView({
               </div>
             ) : pair.illustrative ? (
               <p className="notice-warning t-body-s" data-testid="result-illustrative">
-                {t("Simulation illustrative — distance non caractérisée, à valider par essais")}
+                {t(hasGuideData(pair.sensorId) ? ILLUSTRATIVE_NOTE : GUIDE_UNPUBLISHED_NOTE)}
               </p>
             ) : null}
             <div className="result-options">

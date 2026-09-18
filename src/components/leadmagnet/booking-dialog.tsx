@@ -40,6 +40,55 @@ export function demoSlots(day: Date, now: Date): Date[] {
   ).filter((slot) => slot.getTime() > now.getTime());
 }
 
+/* --------------------------------------------------------------------------
+ * Calendrier : semaine de travail lundi → vendredi, navigation par semaine et
+ * par mois. La navigation est purement locale à cet écran : elle ne lit ni
+ * n'écrit aucun agenda, et un jour sans créneau futur reste non sélectionnable.
+ * ------------------------------------------------------------------------ */
+const dayOnly = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+
+/** Lundi de la semaine contenant `d`. */
+export function weekStart(d: Date): Date {
+  const base = dayOnly(d);
+  const shift = (base.getDay() + 6) % 7; // lundi = 0
+  base.setDate(base.getDate() - shift);
+  return base;
+}
+
+/** Les cinq jours ouvrés de la semaine commençant au lundi `monday`. */
+export function workWeek(monday: Date): Date[] {
+  const start = weekStart(monday);
+  return [0, 1, 2, 3, 4].map((i) => {
+    const d = new Date(start);
+    d.setDate(d.getDate() + i);
+    return d;
+  });
+}
+
+/** Décalage de semaines (`unit: "week"`) ou de mois (`unit: "month"`). */
+export function shiftWeek(monday: Date, delta: number, unit: "week" | "month"): Date {
+  const d = weekStart(monday);
+  if (unit === "week") d.setDate(d.getDate() + delta * 7);
+  else {
+    const target = new Date(d.getFullYear(), d.getMonth() + delta, 1);
+    return weekStart(target);
+  }
+  return weekStart(d);
+}
+
+/** Un jour n'est proposé que s'il lui reste au moins un créneau futur. */
+export function daySelectable(day: Date, now: Date): boolean {
+  return demoSlots(day, now).length > 0;
+}
+
+/** Navigation bornée : jamais avant la semaine en cours, jamais au-delà d'un an. */
+export function weekNavigable(monday: Date, now: Date, delta: number, unit: "week" | "month"): boolean {
+  const target = shiftWeek(monday, delta, unit);
+  const floor = weekStart(now);
+  const ceiling = weekStart(new Date(now.getFullYear() + 1, now.getMonth(), now.getDate()));
+  return target.getTime() >= floor.getTime() && target.getTime() <= ceiling.getTime();
+}
+
 const localTimeZone = () => {
   try {
     return Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
@@ -67,7 +116,11 @@ export function BookingDialog({
   // L'instant de référence est figé à l'ouverture : la liste ne doit pas changer
   // sous les doigts de la personne pendant qu'elle choisit.
   const now = useMemo(() => new Date(), [open, country, refresh]);
-  const days = useMemo(() => demoDays(now), [now]);
+  const [monday, setMonday] = useState(() => weekStart(new Date()));
+  useEffect(() => {
+    if (open) setMonday(weekStart(new Date()));
+  }, [open, country]);
+  const week = useMemo(() => workWeek(monday), [monday]);
   if (!contact) return null;
   const url = bookingUrl(
     {
@@ -80,7 +133,8 @@ export function BookingDialog({
   const dayLabel = (d: Date) =>
     d.toLocaleDateString(tag, { weekday: "long", day: "numeric", month: "long" });
   const timeLabel = (d: Date) => d.toLocaleTimeString(tag, { hour: "2-digit", minute: "2-digit" });
-  const selectedDay = days.find((d) => d.toISOString() === day) ?? null;
+  const monthLabel = (d: Date) => d.toLocaleDateString(tag, { month: "long", year: "numeric" });
+  const selectedDay = day ? new Date(day) : null;
   const slots = selectedDay ? demoSlots(selectedDay, now) : [];
   const close = () => {
     setDay(null);
@@ -139,31 +193,81 @@ export function BookingDialog({
           </div>
         ) : (
           <div className="space-y-4" data-testid="booking-calendar">
-            <p className="notice-info t-body">
-              {t(
-                "Mode démonstration : les créneaux affichés sont des exemples, pas les disponibilités réelles de votre responsable. Choisir un créneau n'écrit dans aucun agenda.",
-              )}
-            </p>
-            <fieldset className="space-y-2">
+            <fieldset className="space-y-3">
               <legend className="t-label">{t("Choisissez une date")}</legend>
-              <div className="flex flex-wrap gap-2">
-                {days.map((d) => {
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex gap-1">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    className="min-h-11 min-w-11"
+                    aria-label={t("Mois précédent")}
+                    disabled={!weekNavigable(monday, now, -1, "month")}
+                    onClick={() => setMonday(shiftWeek(monday, -1, "month"))}
+                  >
+                    «
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    className="min-h-11 min-w-11"
+                    aria-label={t("Semaine précédente")}
+                    disabled={!weekNavigable(monday, now, -1, "week")}
+                    onClick={() => setMonday(shiftWeek(monday, -1, "week"))}
+                  >
+                    ‹
+                  </Button>
+                </div>
+                <p className="t-title-s text-center" aria-live="polite">
+                  {monthLabel(monday)}
+                </p>
+                <div className="flex gap-1">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    className="min-h-11 min-w-11"
+                    aria-label={t("Semaine suivante")}
+                    disabled={!weekNavigable(monday, now, 1, "week")}
+                    onClick={() => setMonday(shiftWeek(monday, 1, "week"))}
+                  >
+                    ›
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    className="min-h-11 min-w-11"
+                    aria-label={t("Mois suivant")}
+                    disabled={!weekNavigable(monday, now, 1, "month")}
+                    onClick={() => setMonday(shiftWeek(monday, 1, "month"))}
+                  >
+                    »
+                  </Button>
+                </div>
+              </div>
+              <div className="grid grid-cols-5 gap-2" data-testid="booking-week">
+                {week.map((d) => {
                   const value = d.toISOString();
                   const active = value === day;
+                  const enabled = daySelectable(d, now);
                   return (
                     <Button
                       key={value}
                       type="button"
                       variant={active ? "default" : "outline"}
-                      className="min-h-11 text-base"
+                      className="min-h-16 flex-col gap-0 px-1 text-base"
                       aria-pressed={active}
+                      aria-label={dayLabel(d)}
+                      disabled={!enabled}
                       onClick={() => {
                         setDay(value);
                         setSlot(null);
                         setError(false);
                       }}
                     >
-                      {dayLabel(d)}
+                      <span className="t-caption">
+                        {d.toLocaleDateString(tag, { weekday: "short" })}
+                      </span>
+                      <span className="t-metric">{d.getDate()}</span>
                     </Button>
                   );
                 })}

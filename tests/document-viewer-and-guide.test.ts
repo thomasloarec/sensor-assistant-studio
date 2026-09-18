@@ -63,8 +63,9 @@ describe("parcours guidé", () => {
     const asked = GUIDED_QUESTIONS.map((q) => q.key);
     for (const k of asked) expect(keys).toContain(k);
     expect(new Set(asked).size).toBe(asked.length);
-    // Toutes les exigences du dossier sont couvertes par le parcours guidé.
-    for (const k of keys) expect(asked).toContain(k);
+    // Toutes les exigences du dossier sont couvertes par le parcours guidé, sauf
+    // les dimensions disponibles, saisies en clair sous la question Montage.
+    for (const k of keys) if (k !== "envelope") expect(asked).toContain(k);
   });
 
   test("chaque question donne un exemple concret et un intitulé non technique", () => {

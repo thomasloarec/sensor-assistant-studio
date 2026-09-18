@@ -9,6 +9,11 @@ const EXAMPLES: Record<string, readonly string[]> = {
     "Détecter la fermeture du tiroir de cartouche d’un appareil de diagnostic médical.",
     "Détecter la fin de course du vérin d’une ligne de conditionnement.",
   ],
+  target_object: [
+    "Le réservoir d’eau amovible, en plastique, poignée vers l’avant.",
+    "Le tiroir de cartouche, en tôle pliée, avec un aimant déjà intégré.",
+    "La tige du vérin, en acier, portant un aimant permanent.",
+  ],
   states_motion: [
     "Le réservoir coulisse horizontalement sur 40 mm. Un aimant est intégré au réservoir ; la détection doit se faire à 3–6 mm du capteur.",
     "Le tiroir avance de 30 mm. Contact fermé lorsqu’il est inséré, ouvert dès son retrait de 5 mm.",
