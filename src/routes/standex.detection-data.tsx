@@ -56,7 +56,9 @@ import {
   guideRecordKey,
   hasErrors,
   hasGuideErrors,
+  detectionMagnetIds,
   knownMagnetIds,
+  magnetFamilyScope,
   parseDecimal,
   realSensors,
   validateDetectionRecord,
@@ -267,6 +269,25 @@ function DetectionDataScreen() {
   const patchGuide = (next: Partial<GuideRecord>) => {
     setDirty(true);
     setGuideDraft((cur) => (cur ? { ...cur, record: { ...cur.record, ...next } } : cur));
+  };
+
+  /** Une autre combinaison est une NOUVELLE ligne, créée explicitement : la clé
+   *  d'une ligne existante ne se renomme pas. La saisie en cours est reprise
+   *  telle quelle, sans identifiant ni version, donc sans risque d'écraser la
+   *  ligne d'origine ni une autre ligne de même version. */
+  const duplicateDraft = () => {
+    setDraft((cur) =>
+      cur
+        ? {
+            ...cur,
+            record: { ...cur.record, id: null, rowVersion: null, updatedAt: null, updatedBy: null },
+            expectedVersion: null,
+            isNew: true,
+          }
+        : cur,
+    );
+    setErrors({});
+    setDirty(true);
   };
 
   const closeDraft = () => {
@@ -740,6 +761,7 @@ function DetectionDataScreen() {
               errors={errors}
               pending={pending}
               onPatch={patch}
+              onDuplicate={duplicateDraft}
               onRaw={(key, value) => {
                 setDirty(true);
                 setDraft((cur) => (cur ? { ...cur, [key]: value } : cur));
@@ -817,6 +839,7 @@ function EditPanel({
   errors,
   pending,
   onPatch,
+  onDuplicate,
   onRaw,
   onCancel,
   onSave,
@@ -825,6 +848,7 @@ function EditPanel({
   errors: DetectionFieldErrors;
   pending: boolean;
   onPatch: (next: Partial<DetectionRecord>) => void;
+  onDuplicate: () => void;
   onRaw: (key: "pullIn" | "dropOut" | "temperature", value: string) => void;
   onCancel: () => void;
   onSave: () => void;
