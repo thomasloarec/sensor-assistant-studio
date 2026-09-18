@@ -157,7 +157,13 @@ export function loadDetectionData(force = false): Promise<void> {
   inFlight = Promise.all([fetchEffectiveDetectionRows(), fetchEffectiveGuideRows()])
     .then(([distances, guide]) => {
       if (mine !== generation) return; // réponse périmée : ignorée
-      applyDetectionRecords(distances.rows, guide.rows, distances.version);
+      // Révision serveur réelle des DEUX jeux : une écriture côté guide change la
+      // provenance exportée autant qu'une écriture côté distances.
+      const revision =
+        distances.dataRevision || guide.dataRevision
+          ? `${distances.dataRevision ?? "0"}/${guide.dataRevision ?? "0"}`
+          : null;
+      applyDetectionRecords(distances.rows, guide.rows, revision);
     })
     .catch((error: unknown) => {
       if (mine !== generation) return;

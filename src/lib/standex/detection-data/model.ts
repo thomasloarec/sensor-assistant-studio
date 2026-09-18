@@ -237,8 +237,13 @@ export function validateDetectionRecord(
   if (r.sourceRef.trim().length < 8 || r.sourceRef.length > DETECTION_LIMITS.sourceRef)
     e.sourceRef = "Source précise requise (fiche, page, essai)";
   if (!isRealDate(r.enteredOn)) e.enteredOn = "Date au format AAAA-MM-JJ";
-  if (r.status === "validated" && (r.pullInMm === null || r.dropOutMm === null))
+  if (r.status === "validated" && (r.pullInMm === null || r.dropOutMm === null)) {
     e.status = "Une ligne validée porte deux distances";
+    // Le champ manquant porte AUSSI l'erreur : l'administrateur voit où saisir,
+    // il ne cherche pas la cause dans un message général.
+    if (r.pullInMm === null) e.pullInMm = "Distance manquante pour une ligne validée";
+    if (r.dropOutMm === null) e.dropOutMm = "Distance manquante pour une ligne validée";
+  }
   const key = detectionKey(r);
   if (others.some((o) => o !== r && detectionKey(o) === key))
     e.sensitivityClass = "Cette combinaison existe déjà";

@@ -71,6 +71,8 @@ import {
   detectionConflictVersion,
   fetchDetectionDirectory,
   fetchGuideDirectory,
+  DETECTION_DENIED_MESSAGE,
+  NON_NUMERIC_MESSAGE,
   humanDetectionError,
   saveDetectionRow,
   saveGuideRow,
@@ -149,7 +151,7 @@ function DetectionDataScreen() {
       if (mine !== generation.current) return false;
       const message = humanDetectionError(error);
       setDetail(message);
-      setState(message === "Réservé à l'administration Standex" ? "denied" : "error");
+      setState(message === DETECTION_DENIED_MESSAGE ? "denied" : "error");
       return false;
     }
   }, []);
@@ -300,11 +302,11 @@ function DetectionDataScreen() {
     const pullIn = parseDecimal(draft.pullIn);
     const dropOut = parseDecimal(draft.dropOut);
     const temperature = parseDecimal(draft.temperature);
-    if (pullIn === "invalid") found.pullInMm = "Saisie non numérique";
+    if (pullIn === "invalid") found.pullInMm = NON_NUMERIC_MESSAGE;
     else record.pullInMm = pullIn;
-    if (dropOut === "invalid") found.dropOutMm = "Saisie non numérique";
+    if (dropOut === "invalid") found.dropOutMm = NON_NUMERIC_MESSAGE;
     else record.dropOutMm = dropOut;
-    if (temperature === "invalid") found.temperatureC = "Saisie non numérique";
+    if (temperature === "invalid") found.temperatureC = NON_NUMERIC_MESSAGE;
     else record.temperatureC = temperature;
     const others = saved.filter((r) => detectionKey(r) !== detectionKey(record));
     const all = { ...validateDetectionRecord(record, others), ...found };
@@ -343,11 +345,11 @@ function DetectionDataScreen() {
     const page = parseDecimal(guideDraft.page);
     const up = parseDecimal(guideDraft.up);
     const to = parseDecimal(guideDraft.to);
-    if (page === "invalid") found.page = "Saisie non numérique";
+    if (page === "invalid") found.page = NON_NUMERIC_MESSAGE;
     else record.page = page;
-    if (up === "invalid") found.upMm = "Saisie non numérique";
+    if (up === "invalid") found.upMm = NON_NUMERIC_MESSAGE;
     else record.upMm = up;
-    if (to === "invalid") found.toMm = "Saisie non numérique";
+    if (to === "invalid") found.toMm = NON_NUMERIC_MESSAGE;
     else record.toMm = to;
     const others = savedGuide.filter((r) => guideRecordKey(r) !== guideRecordKey(record));
     const all = { ...validateGuideRecord(record, others), ...found };
