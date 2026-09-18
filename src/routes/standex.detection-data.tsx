@@ -84,6 +84,11 @@ export const Route = createFileRoute("/standex/detection-data")({
   component: DetectionDataScreen,
 });
 
+/* En-têtes des deux tableaux : compacts, sans retour à la ligne ; la colonne
+   d'action reste visible à droite pendant le défilement horizontal. */
+const DD_HEAD = "t-label whitespace-nowrap px-2 py-1.5 align-bottom";
+const DD_HEAD_ACTION = DD_HEAD + " sticky right-0 bg-[var(--surface)]";
+
 const mm = (v: number | null) => (v === null ? "—" : v.toFixed(2).replace(/\.00$/, ""));
 const raw = (v: number | null) => (v === null ? "" : String(v));
 
@@ -652,9 +657,7 @@ function DetectionDataScreen() {
                   <th
                     key={h}
                     scope="col"
-                    className={`t-label whitespace-nowrap px-2 py-1.5 align-bottom${
-                      h === "" ? " sticky right-0 bg-[var(--surface)]" : ""
-                    }`}
+                    className={h === "" ? DD_HEAD_ACTION : DD_HEAD}
                   >
                     {h}
                   </th>
