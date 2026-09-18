@@ -574,7 +574,13 @@ function DetectionDataScreen() {
                   t("État"),
                   "",
                 ].map((h) => (
-                  <th key={h} scope="col" className="t-label px-3 py-2 align-bottom">
+                  <th
+                    key={h}
+                    scope="col"
+                    className={`t-label whitespace-nowrap px-2 py-1.5 align-bottom${
+                      h === "" ? " sticky right-0 bg-[var(--surface)]" : ""
+                    }`}
+                  >
                     {h}
                   </th>
                 ))}
@@ -585,40 +591,40 @@ function DetectionDataScreen() {
                 <tr key={e.key} data-testid="guide-row" data-origin={e.origin}>
                   <th
                     scope="row"
-                    className="t-body sticky left-0 bg-[var(--surface)] px-3 py-2 font-normal"
+                    className="t-body sticky left-0 bg-[var(--surface)] px-2 py-1.5 font-normal"
                   >
                     {e.record.sensorReference}
-                    <span className="t-caption block text-muted-foreground">
+                    <span className="t-caption block whitespace-nowrap text-muted-foreground">
                       {e.record.sensorFamily}
                     </span>
                   </th>
-                  <td className="px-3 py-2">{e.record.magnetId}</td>
-                  <td className="px-3 py-2">{e.record.approachId}</td>
-                  <td className="t-metric px-3 py-2">
+                  <td className="whitespace-nowrap px-2 py-1.5">{e.record.magnetId}</td>
+                  <td className="px-2 py-1.5">{e.record.approachId}</td>
+                  <td className="t-metric whitespace-nowrap px-2 py-1.5">
                     {e.record.upNote === "not_published" ? "—" : mm(e.record.upMm)}
                     {e.record.upNote === "below_zero" ? " (<0)" : ""}
                   </td>
-                  <td className="t-metric px-3 py-2">
+                  <td className="t-metric whitespace-nowrap px-2 py-1.5">
                     {e.record.toNote === "not_published" ? "—" : mm(e.record.toMm)}
                     {e.record.toNote === "below_zero" ? " (<0)" : ""}
                     {e.atypical ? (
-                      <span className="t-caption block text-muted-foreground">
+                      <span className="t-caption block whitespace-normal text-muted-foreground">
                         {t("ordre imprimé inhabituel — à confirmer par Standex")}
                       </span>
                     ) : null}
                   </td>
-                  <td className="t-metric px-3 py-2">{e.record.page ?? "—"}</td>
-                  <td className="px-3 py-2">
+                  <td className="t-metric whitespace-nowrap px-2 py-1.5">{e.record.page ?? "—"}</td>
+                  <td className="px-2 py-1.5">
                     <span className="chip">
                       {e.complete ? t("Complète") : t("Incomplète")}
                     </span>
                     {e.baseline ? (
-                      <span className="t-caption block text-muted-foreground">
+                      <span className="t-caption block max-w-[16rem] text-muted-foreground">
                         {t("brouillon proposé ; la ligne livrée reste en vigueur")}
                       </span>
                     ) : null}
                   </td>
-                  <td className="px-3 py-2">
+                  <td className="sticky right-0 bg-[var(--surface)] px-2 py-1.5">
                     <Button size="sm" variant="ghost" onClick={() => openGuideEntry(e)}>
                       {t("Modifier")}
                     </Button>
@@ -645,7 +651,13 @@ function DetectionDataScreen() {
                   t("Source"),
                   "",
                 ].map((h) => (
-                  <th key={h} scope="col" className="t-label px-3 py-2 align-bottom">
+                  <th
+                    key={h}
+                    scope="col"
+                    className={`t-label whitespace-nowrap px-2 py-1.5 align-bottom${
+                      h === "" ? " sticky right-0 bg-[var(--surface)]" : ""
+                    }`}
+                  >
                     {h}
                   </th>
                 ))}
@@ -656,28 +668,30 @@ function DetectionDataScreen() {
                 <tr key={e.key} data-testid="detection-row" data-origin={e.origin}>
                   <th
                     scope="row"
-                    className="t-body sticky left-0 bg-[var(--surface)] px-3 py-2 font-normal"
+                    className="t-body sticky left-0 bg-[var(--surface)] px-2 py-1.5 font-normal"
                   >
                     {e.record.sensorReference}
-                    <span className="t-caption block text-muted-foreground">
+                    <span className="t-caption block whitespace-nowrap text-muted-foreground">
                       {e.record.sensorFamily}
                       {e.simulatable ? "" : " · " + t("Combinaison non simulée")}
                     </span>
                   </th>
-                  <td className="px-3 py-2">
+                  <td className="px-2 py-1.5">
                     {e.record.sensitivityClass || "—"}
-                    <span className="t-caption block text-muted-foreground">
+                    <span className="t-caption block whitespace-nowrap text-muted-foreground">
                       {e.record.classKind === "sensitivity"
                         ? t("Classe de sensibilité")
                         : t("Modèle de contact")}
                     </span>
                   </td>
-                  <td className="px-3 py-2">{e.record.contactForm}</td>
-                  <td className="px-3 py-2">{e.record.magnetId || "—"}</td>
-                  <td className="px-3 py-2">{e.record.approachId}</td>
-                  <td className="t-metric px-3 py-2">{mm(e.record.pullInMm)}</td>
-                  <td className="t-metric px-3 py-2">{mm(e.record.dropOutMm)}</td>
-                  <td className="px-3 py-2">
+                  <td className="px-2 py-1.5">{e.record.contactForm}</td>
+                  <td className="max-w-[12rem] truncate px-2 py-1.5" title={e.record.magnetId || ""}>
+                    {e.record.magnetId || "—"}
+                  </td>
+                  <td className="px-2 py-1.5">{e.record.approachId}</td>
+                  <td className="t-metric whitespace-nowrap px-2 py-1.5">{mm(e.record.pullInMm)}</td>
+                  <td className="t-metric whitespace-nowrap px-2 py-1.5">{mm(e.record.dropOutMm)}</td>
+                  <td className="px-2 py-1.5">
                     <span className="chip">
                       {e.complete
                         ? t("Complète")
@@ -686,22 +700,29 @@ function DetectionDataScreen() {
                           : t("Incomplète")}
                     </span>
                     {e.baseline ? (
-                      <span className="t-caption block text-muted-foreground">
+                      <span className="t-caption block max-w-[16rem] text-muted-foreground">
                         {t("brouillon proposé ; la ligne livrée reste en vigueur")} :{" "}
                         {mm(e.baseline.pullInMm)} / {mm(e.baseline.dropOutMm)} {t("mm")}
                       </span>
                     ) : null}
                   </td>
-                  <td className="t-caption px-3 py-2">
-                    {e.record.sourceRef || t("Source à renseigner")}
+                  {/* Source : deux lignes au plus dans le tableau, texte complet en
+                      infobulle et dans le panneau d'édition. */}
+                  <td
+                    className="t-caption max-w-[15rem] px-2 py-1.5"
+                    title={e.record.sourceRef || t("Source à renseigner")}
+                  >
+                    <span className="line-clamp-2 break-all">
+                      {e.record.sourceRef || t("Source à renseigner")}
+                    </span>
                     {e.record.updatedAt ? (
-                      <span className="block text-muted-foreground">
+                      <span className="block whitespace-nowrap text-muted-foreground">
                         {t("Modifiée le")} {e.record.updatedAt.slice(0, 10)}
                         {e.record.updatedBy ? " · " + e.record.updatedBy : ""}
                       </span>
                     ) : null}
                   </td>
-                  <td className="px-3 py-2">
+                  <td className="sticky right-0 bg-[var(--surface)] px-2 py-1.5">
                     <Button size="sm" variant="ghost" onClick={() => openEntry(e)}>
                       {e.origin === "missing" ? t("Renseigner") : t("Modifier")}
                     </Button>
