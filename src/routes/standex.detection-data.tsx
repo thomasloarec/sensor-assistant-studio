@@ -211,6 +211,17 @@ function DetectionDataScreen() {
   const listed = isGuide ? guideShown.length : shown.length;
   const complete = (isGuide ? guideEntries : entries).filter((e) => e.complete).length;
 
+  /* Tout changement de filtre ramène à la première page : l'endroit lu
+     correspond toujours au filtre affiché. */
+  useEffect(() => setPage(0), [filters]);
+  const pages = Math.max(1, Math.ceil(listed / PAGE_SIZE));
+  const current = Math.min(page, pages - 1);
+  /** Tranche affichée : le filtrage porte sur TOUTES les lignes, seule la
+   *  fenêtre de rendu est bornée. */
+  const windowEntries = <T,>(all: T[]) => all.slice(current * PAGE_SIZE, (current + 1) * PAGE_SIZE);
+  const shownPage = windowEntries(shown);
+  const guideShownPage = windowEntries(guideShown);
+
   /** Toute ouverture passe par ici : un brouillon non enregistré n'est jamais
    *  perdu sans décision explicite. */
   const guard = (action: () => void) => {
