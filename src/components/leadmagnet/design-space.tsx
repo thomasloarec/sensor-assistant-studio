@@ -221,7 +221,6 @@ import {
 import { routeSamples, SEARCH_LINK_DISCLAIMER } from "@/lib/leadmagnet/samples";
 import { DEFAULT_WORKSHOP, applyPairSelection } from "@/lib/standex/magnetic-workshop";
 import { reviewIllustrativeNote } from "@/lib/standex/workshop-guide";
-import { hasGuideData } from "@/lib/standex/activation-guide";
 import type { WorkshopConfig } from "@/lib/standex/magnetic-workshop";
 import { ProjectContextFields } from "./project-context-fields";
 import { standardLengthsMm, customLengthMm } from "@/lib/leadmagnet/cable-options";
