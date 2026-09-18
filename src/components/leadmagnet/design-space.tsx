@@ -3425,15 +3425,7 @@ export function DesignSpace({
         // (bornes « up »/« to » ≠ seuils du montage) au lieu du message
         // « distance non caractérisée », qui contredirait la plage affichée.
         ...(reviewTested.illustrative
-          ? [
-              t(
-                reviewGuideFact
-                  ? GUIDE_SIMULATION_NOTE
-                  : hasGuideData(reviewTested.sensorId)
-                    ? ILLUSTRATIVE_NOTE
-                    : GUIDE_UNPUBLISHED_NOTE,
-              ),
-            ]
+          ? [t(reviewIllustrativeNote(reviewTested.sensorId, reviewGuideFact !== null))]
           : []),
       ].join(" · ")
     : null;
