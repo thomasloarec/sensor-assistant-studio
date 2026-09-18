@@ -107,7 +107,7 @@ test("T6 expanded catalogue retains four MK03 classes and refuses physical predi
   // réellement publiés, sans qu'aucune valeur ne soit empruntée.
   // 73 : la règle de forme écarte les couples contradictoires des résultats.
   expect(rows).toHaveLength(73);
-  expect(new Set(rows.map((r) => r.id)).size).toBe(110);
+  expect(new Set(rows.map((r) => r.id)).size).toBe(73);
   expect(new Set(rows.map((r) => r.sensorFamily)).size).toBe(29);
   expect(
     new Set(rows.filter((r) => r.sensorFamily === "MK03").map((r) => r.sensitivityClass)).size,
