@@ -16,11 +16,17 @@ import type { TestedPair } from "@/lib/leadmagnet/tested-pairs";
 
 describe("calendrier de démonstration : navigation par mois", () => {
   test("le lundi visé tombe DANS le mois cible (28 sept. -> octobre)", () => {
-    const sep28 = new Date(2026, 8, 28); // lundi 28 septembre 2026
-    const next = shiftWeek(sep28, 1, "month");
+    // Semaine du 14 septembre (mois affiché : septembre).
+    const sep14 = new Date(2026, 8, 14);
+    const next = shiftWeek(sep14, 1, "month");
     expect(next.getMonth()).toBe(9); // octobre
     expect(next.getDay()).toBe(1); // lundi
     expect(next.getDate()).toBeLessThanOrEqual(7);
+    // La semaine du 28 septembre a son jeudi le 1er octobre : elle est déjà
+    // « octobre », donc le mois suivant est bien novembre et le libellé bouge.
+    const fromSep28 = shiftWeek(new Date(2026, 8, 28), 1, "month");
+    expect(fromSep28.getMonth()).toBe(10);
+    expect(fromSep28.getDay()).toBe(1);
   });
 
   test("fin novembre : le mois suivant est bien décembre, pas novembre", () => {
