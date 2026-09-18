@@ -220,7 +220,7 @@ import {
 } from "@/lib/leadmagnet/connector-library";
 import { routeSamples, SEARCH_LINK_DISCLAIMER } from "@/lib/leadmagnet/samples";
 import { DEFAULT_WORKSHOP, applyPairSelection } from "@/lib/standex/magnetic-workshop";
-import { ILLUSTRATIVE_NOTE, GUIDE_UNPUBLISHED_NOTE } from "@/lib/standex/workshop-guide";
+import { ILLUSTRATIVE_NOTE, GUIDE_SIMULATION_NOTE, GUIDE_UNPUBLISHED_NOTE } from "@/lib/standex/workshop-guide";
 import { hasGuideData } from "@/lib/standex/activation-guide";
 import type { WorkshopConfig } from "@/lib/standex/magnetic-workshop";
 import { ProjectContextFields } from "./project-context-fields";
@@ -3421,8 +3421,19 @@ export function DesignSpace({
                 : t("distances de ce couple non publiées")
               : t("position non documentée"),
         // Le mode illustratif est écrit dans le résumé du projet, jamais tu.
+        // Avec une ligne du guide enregistrée, on rappelle la prudence réelle
+        // (bornes « up »/« to » ≠ seuils du montage) au lieu du message
+        // « distance non caractérisée », qui contredirait la plage affichée.
         ...(reviewTested.illustrative
-          ? [t(hasGuideData(reviewTested.sensorId) ? ILLUSTRATIVE_NOTE : GUIDE_UNPUBLISHED_NOTE)]
+          ? [
+              t(
+                reviewGuideFact
+                  ? GUIDE_SIMULATION_NOTE
+                  : hasGuideData(reviewTested.sensorId)
+                    ? ILLUSTRATIVE_NOTE
+                    : GUIDE_UNPUBLISHED_NOTE,
+              ),
+            ]
           : []),
       ].join(" · ")
     : null;
