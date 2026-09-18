@@ -105,7 +105,10 @@ alter table lead.detection_audit enable row level security;
 --    démonstration pédagogique (« GENERIC ») et le « sur mesure » (« CUSTOM »)
 --    n'y figurent pas : ils ne peuvent donc pas recevoir de distances.
 --    Les variantes documentées de la famille M21 (« M21P/1 », « M21P/2 ») sont
---    listées telles qu'imprimées, sans alias ni conversion.
+--    listées telles qu'imprimées, sans alias ni conversion. Elles sont marquées
+--    « family_alias » : les PLAGES du guide les acceptent (c'est une lecture de
+--    brochure), les DISTANCES de commutation les refusent, parce que la lecture
+--    du simulateur canonise la famille documentée et ignorerait la ligne.
 -- ----------------------------------------------------------------------------
 create table if not exists lead.detection_sensor_allow (
   sensor_family text primary key,
@@ -113,8 +116,16 @@ create table if not exists lead.detection_sensor_allow (
 );
 create table if not exists lead.detection_magnet_allow (
   magnet_id text primary key,
-  guide_only boolean not null default false
+  guide_only boolean not null default false,
+  /** Identité lue via une famille documentée : interdite comme clé de distance. */
+  family_alias boolean not null default false,
+  /** Famille documentée qui porte réellement les distances. */
+  family_of text
 );
+alter table lead.detection_magnet_allow
+  add column if not exists family_alias boolean not null default false;
+alter table lead.detection_magnet_allow
+  add column if not exists family_of text;
 alter table lead.detection_sensor_allow enable row level security;
 alter table lead.detection_magnet_allow enable row level security;
 
