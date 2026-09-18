@@ -1251,7 +1251,11 @@ function GuideEditPanel({
       <div className="grid gap-3 md:grid-cols-3">
         <Field id="dg-family" label={t("Famille")} error={errors.sensorFamily}>
           {(id) => (
-            <Select value={r.sensorFamily} onValueChange={(v) => onPatch({ sensorFamily: v })}>
+            <Select
+              value={r.sensorFamily}
+              disabled={locked}
+              onValueChange={(v) => onPatch({ sensorFamily: v })}
+            >
               <SelectTrigger id={id} className="min-h-11">
                 <SelectValue placeholder={t("Famille")} />
               </SelectTrigger>
@@ -1271,13 +1275,18 @@ function GuideEditPanel({
               id={id}
               className="min-h-11"
               value={r.sensorReference}
+              disabled={locked}
               onChange={(e) => onPatch({ sensorReference: e.target.value })}
             />
           )}
         </Field>
         <Field id="dg-magnet" label={t("Aimant")} error={errors.magnetId}>
           {(id) => (
-            <Select value={r.magnetId} onValueChange={(v) => onPatch({ magnetId: v })}>
+            <Select
+              value={r.magnetId}
+              disabled={locked}
+              onValueChange={(v) => onPatch({ magnetId: v })}
+            >
               <SelectTrigger id={id} className="min-h-11">
                 <SelectValue placeholder={t("Aimant")} />
               </SelectTrigger>
@@ -1295,6 +1304,7 @@ function GuideEditPanel({
           {(id) => (
             <Select
               value={r.approachId}
+              disabled={locked}
               onValueChange={(v) => onPatch({ approachId: v as GuideApproachId })}
             >
               <SelectTrigger id={id} className="min-h-11">
