@@ -2473,9 +2473,18 @@ export function DesignSpace({
         <p className="t-body mt-2">
           {card.maxPullInMm === null ? (
             <span className="text-[var(--standex-blue-75)]">
-              {t(card.hasGuideRange ? "Plage du guide disponible" : "Distances à mesurer avec Standex")}
+              {card.guideUpMm !== null && card.guideToMm !== null
+                ? msg("Plage du guide : {0} à {1} mm — {2} · {3}", [
+                    formatMm(card.guideUpMm),
+                    formatMm(card.guideToMm),
+                    card.guideReference!,
+                    card.guideApproach!,
+
+                  ])
+                : t(card.hasGuideRange ? "Plage du guide disponible" : "Distances à mesurer avec Standex")}
             </span>
           ) : (
+
             <strong>{msg("Détecte jusqu'à {0} mm", [formatMm(card.maxPullInMm)])}</strong>
           )}
         </p>

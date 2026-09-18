@@ -18,6 +18,8 @@ import {
 import { parseMachine, componentPose, openingAt, rotate } from "./machine-assembly";
 import { documentedMagnetAngleDeg } from "./mounting/profiles";
 import { workshopGuideRange, GUIDE_SIMULATION_NOTE } from "./workshop-guide";
+import { defaultGuideSelection, guideSelectionFor } from "./activation-guide";
+
 import type { MachineAssembly } from "./machine-assembly";
 import {
   PUBLISHED_REGISTRY,
@@ -317,31 +319,58 @@ export function applyPairSelection(
   const magnetModel = fake ? "generic" : (magnetId ?? defaultMagnetFor(sensorId));
   const classes = publishedClasses(sensorId, magnetModel);
   const approaches = approachChoicesFor(sensorId, magnetModel);
-  const geometry =
+  let geometry =
     approaches.length && !approaches.includes(c.geometry) ? approaches[0]! : c.geometry;
+  /* Variante du guide RÉSOLUE ICI, une seule fois, et enregistrée dans le
+     projet : atelier, essai, résultat, export et réouverture lisent ensuite la
+     même ligne. Le choix déjà fait sur le même couple est conservé. */
+  const sameCouple = c.sensorId === sensorId && c.magnetModel === magnetModel;
+  let guideReference: string | null = null;
+  if (!fake) {
+    let selection = guideSelectionFor(
+      sensorId,
+      magnetModel,
+      geometry,
+      sameCouple ? c.guideReference : null,
+    );
+    if (!selection && approaches.length === 0) {
+      const fallback = defaultGuideSelection(sensorId, magnetModel);
+      if (fallback && (fallback.approachId === "D1" || fallback.approachId === "D3")) {
+        geometry = fallback.approachId;
+        selection = fallback;
+      }
+    }
+    guideReference = selection?.reference ?? null;
+  }
   return {
     ...c,
     sensorId,
     magnetModel,
-    guideReference: c.sensorId === sensorId && c.magnetModel === magnetModel ? c.guideReference ?? null : null,
+    guideReference,
     sensitivity: classes.length && !classes.includes(c.sensitivity) ? classes[0]! : c.sensitivity,
     geometry,
     mode: fake ? "education" : "reference",
     sensorAngle: 0,
     magnetAngle: documentedMagnetAngleDeg(geometry, sensorId),
   };
+
 }
 /** A new pair starts on its published template. Imported assemblies keep their own motion. */
 export function pairDemonstration(c: WorkshopConfig, sensorId: string, magnetId: string): WorkshopConfig {
   const next = applyPairSelection(c, sensorId, magnetId);
   if (c.machine) return next;
-  const geometry = approachChoicesFor(sensorId, magnetId).find(a => a === "D1") ?? approachChoicesFor(sensorId, magnetId)[0] ?? "D1";
-  const aligned = { ...next, geometry, motion: "approach" as const, lateralShift: 0, magnetTilt: 0,
+  const geometry = approachChoicesFor(sensorId, magnetId).find(a => a === "D1") ?? approachChoicesFor(sensorId, magnetId)[0] ?? next.geometry;
+  // La variante du guide suit l'approche réellement dessinée, sans retomber
+  // implicitement sur la première ligne imprimée d'une autre approche.
+  const guideReference =
+    guideSelectionFor(sensorId, magnetId, geometry, next.guideReference)?.reference ?? null;
+  const aligned = { ...next, geometry, guideReference, motion: "approach" as const, lateralShift: 0, magnetTilt: 0,
     sensorAngle: 0, magnetAngle: documentedMagnetAngleDeg(geometry, sensorId), polarity: 1 as const,
     magnetization: "axial" as const };
   const thresholds = workshopPair(aligned);
   return thresholds ? { ...aligned, start: Math.min(60, Math.max(thresholds[1] * 1.4, thresholds[1] + 5)), end: Math.max(1, thresholds[0] * 0.5) } : aligned;
 }
+
 /** Nature des distances affichées. Un vrai capteur sélectionné ne bascule jamais
  * automatiquement dans un modèle fictif : sans données publiées, l'atelier
  * affiche « Distances non renseignées ». */

@@ -15,7 +15,9 @@ import { GuideMaterials } from "./guide-materials";
 import {
   guideIllustrativeMarks,
   guideRangesFor,
+  guideSelectionFor,
 } from "@/lib/standex/activation-guide";
+
 import { standardShapeForSensor } from "@/lib/standex/magnet-recommendation";
 import { useLocale } from "@/lib/i18n/react";
 import { AppHeader } from "@/components/standex/app-header";
@@ -835,8 +837,18 @@ export default function MagneticWorkshop({
               aria-pressed={config.geometry === a.id}
               title={available ? t(APPROACH_LABELS[a.id]) : t("Non documentée pour ce couple")}
               onClick={() =>
-                update({ geometry: a.id, magnetAngle: documentedMagnetAngleDeg(a.id, config.sensorId) })
+                update({
+                  geometry: a.id,
+                  magnetAngle: documentedMagnetAngleDeg(a.id, config.sensorId),
+                  // La variante du guide suit l'approche choisie : on garde la
+                  // même ligne quand elle publie cette approche, sinon la
+                  // variante publiée pour cette approche, sinon aucune.
+                  guideReference:
+                    guideSelectionFor(config.sensorId, config.magnetModel, a.id, config.guideReference)
+                      ?.reference ?? null,
+                })
               }
+
             >
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d={a.path} />
@@ -903,9 +915,19 @@ export default function MagneticWorkshop({
       sensorFamily={config.sensorId}
       shape={standardShapeForSensor(config.sensorId)}
       magnetModel={config.magnetModel}
-      guideReference={guideDemoRange?.sensorReference ?? config.guideReference ?? null}
+      guideReference={config.guideReference ?? null}
       guideApproach={config.geometry}
-      onSelect={(magnetModel) => update({ magnetModel })}
+      onSelect={(magnetModel) =>
+        update({
+          magnetModel,
+          // Changer d'aimant change de lignes publiées : la variante est
+          // ré-résolue pour l'approche courante, jamais héritée de l'autre aimant.
+          guideReference:
+            guideSelectionFor(config.sensorId, magnetModel, config.geometry, config.guideReference)
+              ?.reference ?? null,
+        })
+      }
+
       onSelectDemo={(ref, approachId) => {
         if (approachId === "D1" || approachId === "D3") {
           update({ guideReference: ref, geometry: approachId, magnetAngle: documentedMagnetAngleDeg(approachId, config.sensorId) });
