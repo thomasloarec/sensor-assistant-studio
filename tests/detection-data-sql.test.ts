@@ -165,8 +165,9 @@ describe("migration 1.9 exécutée : chemin d'appel et autorisation réels", () 
       await expect(save(db, { ...VALID, magnetId: "NOT_A_MAGNET" }, null)).rejects.toThrow(
         "DETECTION_UNKNOWN_MAGNET",
       );
-      // La variante documentée de la famille M21 est acceptée telle qu'imprimée.
-      const ok = await save(db, { ...VALID, magnetId: "M21P/1" }, null);
+      // La famille documentée M21 est acceptée telle qu'imprimée ; ses variantes
+      // relèvent du contrôle dédié plus bas (elles ne portent pas de distance).
+      const ok = await save(db, { ...VALID, sensorFamily: "MK21", sensorReference: "MK21", magnetId: "M21" }, null);
       expect((ok.rows[0] as { r: { status: string } }).r.status).toBe("validated");
       expect((await db.query("select public.lead_detection_directory()")).rows).toHaveLength(1);
     } finally {
