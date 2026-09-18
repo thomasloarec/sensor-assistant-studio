@@ -315,7 +315,12 @@ export function simulateMounting(
   if (illustrative) {
     transitions.length = 0;
     let shown: ContactState = "unknown";
-    const alwaysOpen = Math.max(farMark, ILLUSTRATIVE_FAR_MM);
+    // Plage publiée fournie : ses bornes font foi, sans plafond générique.
+    // Aucune plage : repli de lecture 15 / 18 mm, ouvert au-delà de 20 mm.
+    const alwaysOpen = hasIllustrativeBounds(illustrativeBounds)
+      ? farMark
+      : Math.max(farMark, ILLUSTRATIVE_FAR_MM);
+
     for (let i = 0; i < samples.length; i++) {
       const s = samples[i]!;
       const d = s.separationMm;
