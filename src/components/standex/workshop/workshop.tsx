@@ -835,8 +835,18 @@ export default function MagneticWorkshop({
               aria-pressed={config.geometry === a.id}
               title={available ? t(APPROACH_LABELS[a.id]) : t("Non documentée pour ce couple")}
               onClick={() =>
-                update({ geometry: a.id, magnetAngle: documentedMagnetAngleDeg(a.id, config.sensorId) })
+                update({
+                  geometry: a.id,
+                  magnetAngle: documentedMagnetAngleDeg(a.id, config.sensorId),
+                  // La variante du guide suit l'approche choisie : on garde la
+                  // même ligne quand elle publie cette approche, sinon la
+                  // variante publiée pour cette approche, sinon aucune.
+                  guideReference:
+                    guideSelectionFor(config.sensorId, config.magnetModel, a.id, config.guideReference)
+                      ?.reference ?? null,
+                })
               }
+
             >
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d={a.path} />
