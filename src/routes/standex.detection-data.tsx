@@ -572,20 +572,20 @@ function DetectionDataScreen() {
                   t("to (mm)"),
                   t("Page"),
                   t("État"),
-                  "",
                 ].map((h) => (
                   <th
                     key={h}
                     scope="col"
-                    className={
-                      h === ""
-                        ? "t-label whitespace-nowrap px-2 py-1.5 align-bottom sticky right-0 bg-[var(--surface)]"
-                        : "t-label whitespace-nowrap px-2 py-1.5 align-bottom"
-                    }
+                    className="t-label whitespace-nowrap px-2 py-1.5 align-bottom"
                   >
                     {h}
                   </th>
                 ))}
+                {/* Colonne d'action : toujours visible pendant le défilement. */}
+                <th
+                  scope="col"
+                  className="t-label sticky right-0 whitespace-nowrap bg-[var(--surface)] px-2 py-1.5 align-bottom"
+                />
               </tr>
             </thead>
             <tbody>
@@ -651,20 +651,20 @@ function DetectionDataScreen() {
                   t("Relâchement (mm)"),
                   t("État"),
                   t("Source"),
-                  "",
                 ].map((h) => (
                   <th
                     key={h}
                     scope="col"
-                    className={
-                      h === ""
-                        ? "t-label whitespace-nowrap px-2 py-1.5 align-bottom sticky right-0 bg-[var(--surface)]"
-                        : "t-label whitespace-nowrap px-2 py-1.5 align-bottom"
-                    }
+                    className="t-label whitespace-nowrap px-2 py-1.5 align-bottom"
                   >
                     {h}
                   </th>
                 ))}
+                {/* Colonne d'action : toujours visible pendant le défilement. */}
+                <th
+                  scope="col"
+                  className="t-label sticky right-0 whitespace-nowrap bg-[var(--surface)] px-2 py-1.5 align-bottom"
+                />
               </tr>
             </thead>
             <tbody>
