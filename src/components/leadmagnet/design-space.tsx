@@ -11,6 +11,7 @@ import { isPcbSensor, housingMaterial, pairCategory, suggestedProjectTitle } fro
 import { pairCardFor } from "@/lib/leadmagnet/pair-cards";
 import { useDetectionDataRevision } from "@/lib/standex/detection-data/store";
 import { requirementAnswer } from "@/lib/leadmagnet/requirement-answer";
+import { projectPdfFilename } from "@/lib/leadmagnet/project-reference";
 import { getLocale, isLocale, msg, setLocale, t, type Locale } from "@/lib/i18n/core";
 import { createNdaSync, StaleContextError } from "@/lib/leadmagnet/nda-sync";
 import { Link } from "@tanstack/react-router";
@@ -3422,7 +3423,7 @@ export function DesignSpace({
       }, t);
       const url = URL.createObjectURL(new Blob([bytes as unknown as BlobPart], { type: "application/pdf" }));
       const a = document.createElement("a"); a.href = url;
-      a.download = `rapport-projet-r${dossier.revision}.pdf`; a.click();
+      a.download = projectPdfFilename(dossier.title, dossier.id, dossier.revision); a.click();
       setTimeout(() => URL.revokeObjectURL(url), 1000);
     } catch {
       setSummaryMessage(t("Le rapport PDF n'a pas pu être produit sur cet appareil."));
