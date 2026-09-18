@@ -128,17 +128,22 @@ export interface IllustrativeBounds {
   nearMm: number;
   farMm: number;
 }
-export function illustrativeMarks(bounds?: IllustrativeBounds | null): [number, number] {
-  if (
-    bounds &&
+/** Vrai quand des bornes de plage RÉELLEMENT publiées sont fournies : dans ce
+ *  cas, aucun plafond générique ne vient les tronquer. */
+export function hasIllustrativeBounds(bounds?: IllustrativeBounds | null): boolean {
+  return (
+    !!bounds &&
     Number.isFinite(bounds.nearMm) &&
     Number.isFinite(bounds.farMm) &&
     bounds.nearMm > 0 &&
     bounds.farMm > 0
-  )
-    return [bounds.nearMm, bounds.farMm];
+  );
+}
+export function illustrativeMarks(bounds?: IllustrativeBounds | null): [number, number] {
+  if (hasIllustrativeBounds(bounds)) return [bounds!.nearMm, bounds!.farMm];
   return [ILLUSTRATIVE_PULL_IN_MM, ILLUSTRATIVE_DROP_OUT_MM];
 }
+
 
 /**
  * Raisons qui interdisent toute commutation, même illustrative.
@@ -162,8 +167,16 @@ const ILLUSTRATIVE_BLOCKERS = new Set([
   "POLARITY_NOT_TEMPLATE",
   "MAGNETIZATION_NOT_TEMPLATE",
 ]);
-/** Au-delà de cette séparation réelle, l'état illustratif est TOUJOURS ouvert. */
+/**
+ * Plafond de LECTURE réservé au cas SANS plage publiée : quand la démonstration
+ * ne repose sur aucune ligne du guide, l'état illustratif est toujours ouvert
+ * au-delà de cette séparation réelle. Dès qu'une plage publiée est fournie, ses
+ * propres bornes font foi et ne sont JAMAIS tronquées par ce plafond (MK15-B-X
+ * D1 va jusqu'à 20,1 mm, MK16-B-X D3 jusqu'à 22,7 mm), ni relevées jusqu'à lui
+ * quand elles sont plus courtes (NdFeB 13,9 mm reste 13,9 mm).
+ */
 export const ILLUSTRATIVE_FAR_MM = 20;
+
 
 /** Vrai si l'on peut montrer une commutation illustrative pour ce montage. */
 export function illustrativeAllowed(reasons: readonly string[]): boolean {
@@ -302,7 +315,12 @@ export function simulateMounting(
   if (illustrative) {
     transitions.length = 0;
     let shown: ContactState = "unknown";
-    const alwaysOpen = Math.max(farMark, ILLUSTRATIVE_FAR_MM);
+    // Plage publiée fournie : ses bornes font foi, sans plafond générique.
+    // Aucune plage : repli de lecture 15 / 18 mm, ouvert au-delà de 20 mm.
+    const alwaysOpen = hasIllustrativeBounds(illustrativeBounds)
+      ? farMark
+      : Math.max(farMark, ILLUSTRATIVE_FAR_MM);
+
     for (let i = 0; i < samples.length; i++) {
       const s = samples[i]!;
       const d = s.separationMm;
