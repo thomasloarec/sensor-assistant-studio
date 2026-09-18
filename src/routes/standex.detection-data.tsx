@@ -604,7 +604,7 @@ function DetectionDataScreen() {
               </tr>
             </thead>
             <tbody>
-              {guideShown.map((e) => (
+              {guideShownPage.map((e) => (
                 <tr key={e.key} data-testid="guide-row" data-origin={e.origin}>
                   <th
                     scope="row"
@@ -683,7 +683,7 @@ function DetectionDataScreen() {
               </tr>
             </thead>
             <tbody>
-              {shown.map((e) => (
+              {shownPage.map((e) => (
                 <tr key={e.key} data-testid="detection-row" data-origin={e.origin}>
                   <th
                     scope="row"
