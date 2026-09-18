@@ -12,6 +12,8 @@
 import { describe, expect, test } from "bun:test";
 import { readFileSync } from "node:fs";
 import { PGlite } from "@electric-sql/pglite";
+import { detectionSavePayload, isSavedRowId } from "@/lib/standex/detection-data/adapter";
+import type { DetectionRecord } from "@/lib/standex/detection-data/model";
 
 const MIGRATION = readFileSync("supabase/schema/migration_v1.9_detection_data.sql", "utf8");
 
@@ -440,6 +442,60 @@ describe("migration 1.9 exécutée : chemin d'appel et autorisation réels", () 
       await asRole(db, "authenticated", ADMIN);
       for (const table of ["detection_rows", "guide_rows", "detection_audit", "detection_state"])
         await expect(db.query(`select * from lead.${table}`)).rejects.toThrow(/permission denied/i);
+    } finally {
+      await db.close();
+    }
+  });
+});
+
+/**
+ * Régression : une ligne COMPILÉE porte un identifiant de clé métier, pas un
+ * UUID de base. La charge utile réellement envoyée doit donc valoir création
+ * (id null, version attendue null), puis la ligne enregistrée repart avec son
+ * UUID stable pour une mise à jour versionnée.
+ */
+describe("enregistrement d'une ligne compilée puis d'une ligne réellement enregistrée", () => {
+  test("compilé -> création, enregistré -> mise à jour par identifiant stable", async () => {
+    const db = await bootstrap();
+    try {
+      const compiled = {
+        ...VALID,
+        id: "MK22/B/1A/HF3225-14.95X10X5/D1",
+      } as unknown as DetectionRecord;
+      expect(isSavedRowId(compiled.id)).toBe(false);
+
+      const first = detectionSavePayload(compiled, 4);
+      expect(first.p_payload["id"]).toBeNull();
+      expect(first.p_expected_version).toBeNull();
+      expect(first.p_payload["pullInMm"]).toBe(VALID.pullInMm);
+      expect(first.p_payload["sourceRef"]).toBe(VALID.sourceRef);
+
+      await asRole(db, "authenticated", ADMIN);
+      const created = await db.query<{ r: { id: string; rowVersion: number } }>(
+        "select public.lead_detection_save_row($1::jsonb, $2) as r",
+        [JSON.stringify(first.p_payload), first.p_expected_version],
+      );
+      const saved = created.rows[0]!.r;
+      expect(isSavedRowId(saved.id)).toBe(true);
+      expect(saved.rowVersion).toBe(1);
+
+      const second = detectionSavePayload(
+        { ...compiled, id: saved.id, pullInMm: 12.9 } as DetectionRecord,
+        saved.rowVersion,
+      );
+      expect(second.p_payload["id"]).toBe(saved.id);
+      expect(second.p_expected_version).toBe(1);
+      const updated = await db.query<{ r: { id: string; rowVersion: number } }>(
+        "select public.lead_detection_save_row($1::jsonb, $2) as r",
+        [JSON.stringify(second.p_payload), second.p_expected_version],
+      );
+      expect(updated.rows[0]!.r.id).toBe(saved.id);
+      expect(updated.rows[0]!.r.rowVersion).toBe(2);
+
+      const all = await db.query<{ r: { rows: unknown[] } }>(
+        "select public.lead_detection_directory() as r",
+      );
+      expect(all.rows[0]!.r.rows).toHaveLength(1);
     } finally {
       await db.close();
     }

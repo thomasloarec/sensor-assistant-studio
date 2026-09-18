@@ -163,38 +163,59 @@ export interface SaveDetectionResult {
   updatedAt: string | null;
 }
 
+/**
+ * Un identifiant de ligne réellement enregistrée en base est un UUID. Les
+ * lignes COMPILÉES (baseline) et les brouillons portent un identifiant de clé
+ * métier : il ne doit jamais partir au serveur, qui le convertirait en uuid et
+ * ferait échouer l'enregistrement. Dans ce cas la ligne est une création.
+ */
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+export const isSavedRowId = (id: string | null | undefined): boolean =>
+  typeof id === "string" && UUID_RE.test(id);
+
+/** Charge utile réellement envoyée au serveur : exposée pour les recettes. */
+export function detectionSavePayload(
+  record: DetectionRecord,
+  expectedVersion: number | null,
+): { p_payload: Record<string, unknown>; p_expected_version: number | null } {
+  const saved = isSavedRowId(record.id);
+  return {
+    p_payload: {
+      // Identifiant STABLE : le serveur localise la ligne par lui, jamais par la
+      // clé métier recomposée. Une clé modifiée ne peut donc pas écraser une
+      // autre ligne dont la version coïnciderait. `null` = création.
+      id: saved ? record.id : null,
+      sensorFamily: record.sensorFamily,
+      sensorReference: record.sensorReference,
+      classKind: record.classKind,
+      sensitivityClass: record.sensitivityClass,
+      contactForm: record.contactForm,
+      magnetId: record.magnetId,
+      approachId: record.approachId,
+      datum: record.datum,
+      thresholdKind: record.thresholdKind,
+      pullInMm: record.pullInMm,
+      dropOutMm: record.dropOutMm,
+      temperatureC: record.temperatureC,
+      status: record.status,
+      sourceType: record.sourceType,
+      sourceRef: record.sourceRef,
+      enteredOn: record.enteredOn,
+      note: record.note,
+    },
+    p_expected_version: saved ? expectedVersion : null,
+  };
+}
+
 /** Écriture atomique avec version attendue : `null` pour une création. */
 export async function saveDetectionRow(
   record: DetectionRecord,
   expectedVersion: number | null,
 ): Promise<SaveDetectionResult> {
-  const payload = {
-    // Identifiant STABLE : le serveur localise la ligne par lui, jamais par la
-    // clé métier recomposée. Une clé modifiée ne peut donc pas écraser une
-    // autre ligne dont la version coïnciderait.
-    id: record.id,
-    sensorFamily: record.sensorFamily,
-    sensorReference: record.sensorReference,
-    classKind: record.classKind,
-    sensitivityClass: record.sensitivityClass,
-    contactForm: record.contactForm,
-    magnetId: record.magnetId,
-    approachId: record.approachId,
-    datum: record.datum,
-    thresholdKind: record.thresholdKind,
-    pullInMm: record.pullInMm,
-    dropOutMm: record.dropOutMm,
-    temperatureC: record.temperatureC,
-    status: record.status,
-    sourceType: record.sourceType,
-    sourceRef: record.sourceRef,
-    enteredOn: record.enteredOn,
-    note: record.note,
-  };
-  const data = await rpc<Record<string, unknown>>(DETECTION_RPC.saveRow, {
-    p_payload: payload,
-    p_expected_version: expectedVersion,
-  });
+  const data = await rpc<Record<string, unknown>>(
+    DETECTION_RPC.saveRow,
+    detectionSavePayload(record, expectedVersion),
+  );
   return {
     id: str(data?.["id"], ""),
     rowVersion: num(data?.["rowVersion"]) ?? 1,
