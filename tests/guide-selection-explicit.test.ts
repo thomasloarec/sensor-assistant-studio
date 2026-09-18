@@ -146,6 +146,7 @@ describe("chosen guide bounds drive the illustrative animation, uncapped", () =>
     // Et changer D1 -> D3 change la ligne lue ET la géométrie effective.
     const d3: WorkshopConfig = { ...c, geometry: "D3", guideReference: "MK15-B-X" };
     expect(workshopGuideRange(d3)?.approachId).toBe("D3");
-    expect(mountingFromWorkshop(d3).approach).not.toEqual(mountingFromWorkshop(c).approach);
+    expect(mountingFromWorkshop(d3).couple.approachId).toBe("D3");
+    expect(mountingFromWorkshop(c).couple.approachId).toBe("D1");
   });
 });
