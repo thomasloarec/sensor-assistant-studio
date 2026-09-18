@@ -1210,6 +1210,10 @@ function GuideEditPanel({
   onSave: () => void;
 }) {
   const r = draft.record;
+  /* Identité VERROUILLÉE sur une plage déjà enregistrée : la combinaison
+     (famille, référence imprimée, aimant, approche) est la clé métier utilisée
+     pour localiser la ligne. La changer ici pointerait sur une autre plage. */
+  const locked = !draft.isNew && draft.record.id !== null;
   const noteSelect = (
     id: string,
     value: GuideRecord["upNote"],
@@ -1232,6 +1236,13 @@ function GuideEditPanel({
   return (
     <section className="panel-block-lg space-y-3" aria-label={t("Modifier la plage du guide")}>
       <h3 className="t-title-s">{t("Modifier la plage du guide")}</h3>
+      {locked ? (
+        <p className="notice-info t-caption" data-testid="dg-key-locked">
+          {t(
+            "La combinaison de cette ligne ne change pas : elle identifie la donnée. Pour une autre combinaison, créez-en une nouvelle.",
+          )}
+        </p>
+      ) : null}
       <p className="notice-info t-caption">
         {t(
           "Ces deux colonnes sont recopiées de la brochure. Elles ne sont pas un seuil d'activation ni de relâchement : « up » peut être supérieur à « to », et cet ordre est conservé tel qu'imprimé.",
@@ -1240,7 +1251,11 @@ function GuideEditPanel({
       <div className="grid gap-3 md:grid-cols-3">
         <Field id="dg-family" label={t("Famille")} error={errors.sensorFamily}>
           {(id) => (
-            <Select value={r.sensorFamily} onValueChange={(v) => onPatch({ sensorFamily: v })}>
+            <Select
+              value={r.sensorFamily}
+              disabled={locked}
+              onValueChange={(v) => onPatch({ sensorFamily: v })}
+            >
               <SelectTrigger id={id} className="min-h-11">
                 <SelectValue placeholder={t("Famille")} />
               </SelectTrigger>
@@ -1260,13 +1275,18 @@ function GuideEditPanel({
               id={id}
               className="min-h-11"
               value={r.sensorReference}
+              disabled={locked}
               onChange={(e) => onPatch({ sensorReference: e.target.value })}
             />
           )}
         </Field>
         <Field id="dg-magnet" label={t("Aimant")} error={errors.magnetId}>
           {(id) => (
-            <Select value={r.magnetId} onValueChange={(v) => onPatch({ magnetId: v })}>
+            <Select
+              value={r.magnetId}
+              disabled={locked}
+              onValueChange={(v) => onPatch({ magnetId: v })}
+            >
               <SelectTrigger id={id} className="min-h-11">
                 <SelectValue placeholder={t("Aimant")} />
               </SelectTrigger>
@@ -1284,6 +1304,7 @@ function GuideEditPanel({
           {(id) => (
             <Select
               value={r.approachId}
+              disabled={locked}
               onValueChange={(v) => onPatch({ approachId: v as GuideApproachId })}
             >
               <SelectTrigger id={id} className="min-h-11">
