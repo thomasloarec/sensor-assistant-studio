@@ -372,23 +372,22 @@ export function applyPairSelection(
   };
 
 }
-/** Pose documentée par DÉFAUT : un projet ouvert sans être passé par une carte
- *  de couple n'avait aucune variante enregistrée, donc aucune plage lue, alors
- *  que la brochure en publie une. La sélection déjà explicite n'est jamais
- *  réécrite, et un capteur non documenté reste sans plage. */
+/**
+ * Variante du guide manquante : on complète la LECTURE, jamais la POSE.
+ *
+ * Un projet ouvert sans passer par une carte de couple n'avait aucune variante
+ * enregistrée, donc aucune plage lue alors que la brochure en publie une. On
+ * résout uniquement la variante correspondant à l'approche RÉELLEMENT dessinée.
+ * On ne fait plus tourner la géométrie ni l'aimant pour tomber sur une ligne
+ * publiée : la position posée par l'utilisateur ou importée reste intacte, sinon
+ * le résultat décrirait un montage que personne n'a monté. Le choix explicite
+ * d'une pose documentée appartient à l'initialisation d'un nouveau couple
+ * (`pairDemonstration`).
+ */
 export function withDefaultGuideSelection(c: WorkshopConfig): WorkshopConfig {
   if (c.guideReference || isFictitiousSensor(c.sensorId) || c.mode !== "reference") return c;
   const direct = guideSelectionFor(c.sensorId, c.magnetModel, c.geometry);
-  if (direct) return { ...c, guideReference: direct.reference };
-  const fallback = defaultGuideSelection(c.sensorId, c.magnetModel);
-  if (fallback && (fallback.approachId === "D1" || fallback.approachId === "D3"))
-    return {
-      ...c,
-      geometry: fallback.approachId,
-      guideReference: fallback.reference,
-      magnetAngle: documentedMagnetAngleDeg(fallback.approachId, c.sensorId),
-    };
-  return c;
+  return direct ? { ...c, guideReference: direct.reference } : c;
 }
 
 /** A new pair starts on its published template. Imported assemblies keep their own motion. */

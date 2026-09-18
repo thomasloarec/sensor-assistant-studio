@@ -65,15 +65,30 @@ export function workWeek(monday: Date): Date[] {
   });
 }
 
-/** Décalage de semaines (`unit: "week"`) ou de mois (`unit: "month"`). */
+/** Premier lundi qui tombe RÉELLEMENT dans le mois de `d`. */
+function firstMondayInMonth(d: Date): Date {
+  const first = new Date(d.getFullYear(), d.getMonth(), 1);
+  const shift = (8 - first.getDay()) % 7; // 0 si le 1er est déjà un lundi
+  return dayOnly(new Date(first.getFullYear(), first.getMonth(), 1 + shift));
+}
+
+/**
+ * Décalage de semaines (`unit: "week"`) ou de mois (`unit: "month"`).
+ *
+ * Pour un mois, on vise le premier lundi SITUÉ DANS le mois cible. Prendre le
+ * lundi de la semaine du 1er ramenait dans le mois précédent (28 septembre pour
+ * octobre, 30 novembre pour décembre) et le libellé du mois semblait bloqué.
+ */
 export function shiftWeek(monday: Date, delta: number, unit: "week" | "month"): Date {
   const d = weekStart(monday);
-  if (unit === "week") d.setDate(d.getDate() + delta * 7);
-  else {
-    const target = new Date(d.getFullYear(), d.getMonth() + delta, 1);
-    return weekStart(target);
+  if (unit === "week") {
+    d.setDate(d.getDate() + delta * 7);
+    return weekStart(d);
   }
-  return weekStart(d);
+  // Le mois affiché est celui de la majorité de la semaine, donc celui du jeudi.
+  const thursday = new Date(d);
+  thursday.setDate(thursday.getDate() + 3);
+  return firstMondayInMonth(new Date(thursday.getFullYear(), thursday.getMonth() + delta, 1));
 }
 
 /** Un jour n'est proposé que s'il lui reste au moins un créneau futur. */
@@ -81,11 +96,28 @@ export function daySelectable(day: Date, now: Date): boolean {
   return demoSlots(day, now).length > 0;
 }
 
-/** Navigation bornée : jamais avant la semaine en cours, jamais au-delà d'un an. */
-export function weekNavigable(monday: Date, now: Date, delta: number, unit: "week" | "month"): boolean {
+/**
+ * Semaine réellement atteinte : revenir au mois en cours ramène à la semaine
+ * courante, pas à un lundi déjà passé. Les deux boutons et leur état désactivé
+ * utilisent cette même valeur, donc l'affichage ne peut pas mentir.
+ */
+export function navigateMonday(monday: Date, now: Date, delta: number, unit: "week" | "month"): Date {
   const target = shiftWeek(monday, delta, unit);
   const floor = weekStart(now);
+  if (unit === "month" && target.getTime() < floor.getTime()) {
+    const sameMonth =
+      target.getFullYear() === now.getFullYear() && target.getMonth() === now.getMonth();
+    if (sameMonth) return floor;
+  }
+  return target;
+}
+
+/** Navigation bornée : jamais avant la semaine en cours, jamais au-delà d'un an. */
+export function weekNavigable(monday: Date, now: Date, delta: number, unit: "week" | "month"): boolean {
+  const target = navigateMonday(monday, now, delta, unit);
+  const floor = weekStart(now);
   const ceiling = weekStart(new Date(now.getFullYear() + 1, now.getMonth(), now.getDate()));
+  if (target.getTime() === weekStart(monday).getTime()) return false;
   return target.getTime() >= floor.getTime() && target.getTime() <= ceiling.getTime();
 }
 
@@ -203,7 +235,7 @@ export function BookingDialog({
                     className="min-h-11 min-w-11"
                     aria-label={t("Mois précédent")}
                     disabled={!weekNavigable(monday, now, -1, "month")}
-                    onClick={() => setMonday(shiftWeek(monday, -1, "month"))}
+                    onClick={() => setMonday(navigateMonday(monday, now, -1, "month"))}
                   >
                     «
                   </Button>
@@ -213,7 +245,7 @@ export function BookingDialog({
                     className="min-h-11 min-w-11"
                     aria-label={t("Semaine précédente")}
                     disabled={!weekNavigable(monday, now, -1, "week")}
-                    onClick={() => setMonday(shiftWeek(monday, -1, "week"))}
+                    onClick={() => setMonday(navigateMonday(monday, now, -1, "week"))}
                   >
                     ‹
                   </Button>
@@ -228,7 +260,7 @@ export function BookingDialog({
                     className="min-h-11 min-w-11"
                     aria-label={t("Semaine suivante")}
                     disabled={!weekNavigable(monday, now, 1, "week")}
-                    onClick={() => setMonday(shiftWeek(monday, 1, "week"))}
+                    onClick={() => setMonday(navigateMonday(monday, now, 1, "week"))}
                   >
                     ›
                   </Button>
@@ -238,7 +270,7 @@ export function BookingDialog({
                     className="min-h-11 min-w-11"
                     aria-label={t("Mois suivant")}
                     disabled={!weekNavigable(monday, now, 1, "month")}
-                    onClick={() => setMonday(shiftWeek(monday, 1, "month"))}
+                    onClick={() => setMonday(navigateMonday(monday, now, 1, "month"))}
                   >
                     »
                   </Button>
