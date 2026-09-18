@@ -309,7 +309,7 @@ function DetectionDataScreen() {
                 <td className="t-metric px-3 py-2">{mm(e.record.pullInMm)}</td>
                 <td className="t-metric px-3 py-2">{mm(e.record.dropOutMm)}</td>
                 <td className="px-3 py-2">
-                  <span className={e.complete ? "chip" : "chip"} data-state={e.complete}>
+                  <span className="chip">
                     {e.complete
                       ? t("Complète")
                       : e.origin === "missing"
@@ -648,7 +648,7 @@ function Field({
     <div className="space-y-1">
       <Label className="t-label">{label}</Label>
       {children}
-      {error ? <p className="t-caption text-[color:var(--danger)]">{t(error)}</p> : null}
+      {error ? <p className="notice-danger t-caption">{t(error)}</p> : null}
     </div>
   );
 }

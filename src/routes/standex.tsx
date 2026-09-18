@@ -118,9 +118,16 @@ function AccountMenu() {
         </div>
         <DropdownMenuSeparator />
         {capabilities?.role === "admin" ? (
-          <DropdownMenuItem asChild>
-            <Link to="/standex/admin">{t("Administration")}</Link>
-          </DropdownMenuItem>
+          <>
+            <DropdownMenuItem asChild>
+              <Link to="/standex/admin">{t("Administration")}</Link>
+            </DropdownMenuItem>
+            {/* Réservé à l'administration : le masquage ne protège rien, les RPC
+                revérifient le rôle réel côté serveur. */}
+            <DropdownMenuItem asChild>
+              <Link to="/standex/detection-data">{t("Données de détection")}</Link>
+            </DropdownMenuItem>
+          </>
         ) : null}
         <DropdownMenuItem asChild>
           <Link to="/">{t("Espace de conception")}</Link>
