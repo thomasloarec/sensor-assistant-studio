@@ -175,11 +175,21 @@ export async function projectPdf(
     new TextEncoder().encode(stableStringify(data)),
   );
   const hash = Array.from(new Uint8Array(digest), (v) => v.toString(16).padStart(2, "0")).join("");
-  const reference = projectReference(dossier.id);
-  return reviewPdf({ sections: projectReportSections(dossier, nda, tr), hash }, logoUrl, (s) => s, {
-    // Le nom du projet est en tête du document ; la référence stable le suit.
+  const identity = projectIdentity(serverDossierId, dossier.id);
+  return reviewPdf(
+    { sections: projectReportSections(dossier, nda, tr, serverDossierId), hash },
+    logoUrl,
+    (s) => s,
+    {
+    // Le nom du projet est en tête du document ; la référence suit, provisoire si le projet n'est pas enregistré.
     title: dossier.title || tr("Rapport complet du projet"),
-    subtitle: [reference, tr("Projet à confirmer par Standex")].filter(Boolean).join(" · "),
+    subtitle: [
+      identity.reference,
+      identity.provisional ? tr("brouillon non enregistré") : null,
+      tr("Projet à confirmer par Standex"),
+    ]
+      .filter(Boolean)
+      .join(" · "),
     attachment: new TextEncoder().encode(JSON.stringify(data, null, 2)),
   });
 }
