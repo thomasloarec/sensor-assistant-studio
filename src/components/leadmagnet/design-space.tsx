@@ -2500,7 +2500,13 @@ export function DesignSpace({
                     card.guideApproach!,
 
                   ])
-                : t(card.hasGuideRange ? "Plage du guide disponible" : "Distances à mesurer avec Standex")}
+                : t(
+                    card.hasGuideRange
+                      ? "Plage du guide disponible"
+                      : // La fiche produit existe : c'est la distance DE CE COUPLE
+                        // qui n'est pas publiée. Les deux ne sont pas confondues.
+                        "Fiche produit disponible · distances de ce couple non publiées",
+                  )}
             </span>
           ) : (
 

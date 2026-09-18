@@ -28,10 +28,12 @@ export const GUIDE_SIMULATION_NOTE = "Animation fondée sur la plage du guide St
 export const ILLUSTRATIVE_NOTE =
   "Simulation illustrative — distance non caractérisée, à valider par essais";
 
-/** Message NOMMÉ quand la brochure ne publie rien pour cette famille : la cause
- *  est dite, et aucune plage d'une autre famille n'est transférée. */
+/** Message NOMMÉ quand le guide intégré ne publie rien pour cette famille : la
+ *  fiche produit du capteur existe, mais les distances de CE couple ne sont pas
+ *  publiées. Aucune plage d'une autre famille n'est transférée, et rien ne
+ *  suggère que la position ait été modifiée. */
 export const GUIDE_UNPUBLISHED_NOTE =
-  "La brochure d'activation Standex (édition 10/2025) ne publie aucune plage pour cette famille de capteurs : la simulation reste illustrative, à valider par essais.";
+  "Fiche produit disponible pour ce capteur, mais les distances de ce couple ne sont pas publiées dans le guide d'activation intégré (édition 10/2025). La simulation reste illustrative, à valider par essais avec Standex.";
 
 /** Mention honnête à afficher pour une simulation illustrative. */
 export function illustrativeNoteFor(c: WorkshopConfig): string {
