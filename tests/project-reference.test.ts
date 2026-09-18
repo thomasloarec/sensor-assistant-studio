@@ -21,11 +21,12 @@ describe("référence de projet", () => {
     expect(projectReference(createDossier().id)).not.toBe(projectReference(createDossier().id));
   });
 
-  test("le brouillon téléchargé garde sa référence ; une reprise détachée en reçoit une autre", () => {
+  test("le brouillon téléchargé garde son identifiant ; une reprise détachée en reçoit un autre", () => {
     const d = createDossier();
-    // Même projet en mémoire : le PDF d'avant envoi et l'envoi portent la même référence.
-    expect(projectPdfFilename(d.title, d.id, 1)).toContain(projectReference(d.id)!);
-    expect(projectPdfFilename(d.title, d.id, 2)).toContain(projectReference(d.id)!);
+    // Même projet en mémoire : le PDF d'avant envoi et l'envoi portent le même
+    // identifiant COMPLET, jamais un abrégé qui pourrait coïncider.
+    expect(projectPdfFilename(d.title, d.id, 1)).toContain(d.id.replace(/[^A-Za-z0-9]+/g, "-"));
+    expect(projectPdfFilename(d.title, d.id, 2)).toContain(d.id.replace(/[^A-Za-z0-9]+/g, "-"));
     // Une reprise importée est volontairement un NOUVEAU projet : autre référence.
     const round = parseDossierExport(buildDossierExport(d));
     expect(projectReference(round.dossier.id)).not.toBe(projectReference(d.id));
