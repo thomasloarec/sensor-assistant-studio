@@ -220,7 +220,7 @@ import {
 } from "@/lib/leadmagnet/connector-library";
 import { routeSamples, SEARCH_LINK_DISCLAIMER } from "@/lib/leadmagnet/samples";
 import { DEFAULT_WORKSHOP, applyPairSelection } from "@/lib/standex/magnetic-workshop";
-import { ILLUSTRATIVE_NOTE, GUIDE_SIMULATION_NOTE, GUIDE_UNPUBLISHED_NOTE } from "@/lib/standex/workshop-guide";
+import { reviewIllustrativeNote } from "@/lib/standex/workshop-guide";
 import { hasGuideData } from "@/lib/standex/activation-guide";
 import type { WorkshopConfig } from "@/lib/standex/magnetic-workshop";
 import { ProjectContextFields } from "./project-context-fields";
