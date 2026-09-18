@@ -1,6 +1,7 @@
 import { transverseApproach } from "../housing-pose";
 import {
   PUBLISHED_REGISTRY,
+  effectivePublishedRegistry,
   publishedMagnetFamily,
   publishedReference,
 } from "../magnetics/registries";
@@ -41,7 +42,7 @@ export const sourceQualified = (
 export const approachQualified = (
   sensorFamily: string,
   approachId: string,
-  registry: PublishedRegistry = PUBLISHED_REGISTRY,
+  registry: PublishedRegistry = effectivePublishedRegistry(),
 ): boolean =>
   registry.rows.some((r) => r.sensorFamily === sensorFamily && r.approachId === approachId);
 
@@ -117,7 +118,7 @@ const AXES: Record<string, { axis: Vec3; plane: "XZ" | "YZ" }> = {
   F1: { axis: [1, 0, 0], plane: "YZ" },
 };
 
-export function mountingProfiles(registry: PublishedRegistry = PUBLISHED_REGISTRY) {
+export function mountingProfiles(registry: PublishedRegistry = effectivePublishedRegistry()) {
   const byKey = new Map<string, MountingProfile>();
   for (const row of registry.rows) {
     // Toutes les lignes du registre sont représentées : familles, classes et
@@ -309,7 +310,7 @@ export interface RegistryCoverage {
 }
 /** État réel de la couverture du registre : aucune restriction aux exemples MK03. */
 export function registryCoverage(
-  registry: PublishedRegistry = PUBLISHED_REGISTRY,
+  registry: PublishedRegistry = effectivePublishedRegistry(),
   profiles: MountingProfile[] = mountingProfiles(registry),
 ): RegistryCoverage {
   const uniq = (v: string[]) => [...new Set(v)].sort();

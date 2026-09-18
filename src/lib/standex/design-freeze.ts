@@ -8,7 +8,7 @@ import { evaluateReference, emptyMargin } from "./magnetics/margin";
 import { referenceAllowed } from "./magnetic-workshop";
 import { solveSwitching } from "./magnetics/solve";
 import { ENGINE_VERSION } from "./magnetics/types";
-import { PUBLISHED_REGISTRY, PHYSICS_REGISTRY } from "./magnetics/registries";
+import { effectivePublishedRegistry, PUBLISHED_REGISTRY, PHYSICS_REGISTRY } from "./magnetics/registries";
 import { SENSOR_SPECIFICATIONS } from "./sensor-specifications";
 export interface FreezeInput {
   dossierId: string;
@@ -132,7 +132,7 @@ export function freezeContextKey(
         }
       : null,
     engine: ENGINE_VERSION,
-    published: PUBLISHED_REGISTRY,
+    published: effectivePublishedRegistry(),
     physics: PHYSICS_REGISTRY,
   });
 }
@@ -147,7 +147,7 @@ export async function createDesignFreeze(input: FreezeInput): Promise<DesignFree
   )
     throw new Error("INVALID_INPUT");
   const { config: c, study: s } = input;
-  const chosen = PUBLISHED_REGISTRY.rows.find(
+  const chosen = effectivePublishedRegistry().rows.find(
     (r) =>
       [r.sensorFamily, r.sensitivityClass, r.magnetId, r.approachId].join("/") ===
         s.selectedSolutionId && r.approachId === (s.comparisonApproach ?? "D1"),

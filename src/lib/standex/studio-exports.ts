@@ -8,7 +8,7 @@ import { DOSSIER_FIELDS } from "./application-dossier";
 import type { StudioStudy } from "./studio-dossier";
 import type { WorkshopConfig } from "./magnetic-workshop";
 import { exploreSolutions } from "./magnetics/solutions";
-import { PUBLISHED_REGISTRY } from "./magnetics/registries";
+import { effectivePublishedRegistry, PUBLISHED_REGISTRY } from "./magnetics/registries";
 
 const en = (s: string) => (messages as Record<string, string[]>)[s]?.[0] ?? s;
 type Cell = string | number | boolean | null;
@@ -107,7 +107,7 @@ export function studioExportSheets(
           "Ouverture / Drop-out (mm)",
           "Source",
         ],
-        ...PUBLISHED_REGISTRY.rows.map((r) => [
+        ...effectivePublishedRegistry().rows.map((r) => [
           r.sensorFamily,
           r.sensorReference,
           r.sensitivityClass,

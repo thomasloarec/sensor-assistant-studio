@@ -23,6 +23,7 @@ import { defaultGuideSelection, guideSelectionFor } from "./activation-guide";
 import type { MachineAssembly } from "./machine-assembly";
 import {
   PUBLISHED_REGISTRY,
+  effectivePublishedRegistry,
   publishedPair,
   publishedPairFor,
   publishedClasses,
@@ -130,7 +131,7 @@ export const REFERENCE_NOTE_ACTIVATION =
   "Valeurs « Min Activation » et « Max Release » publiées par la fiche produit pour ce couple. Indicatives et dépendantes de l'environnement : ce n'est pas un seuil nominal mesuré. Distance mesurée entre les faces en vis-à-vis, le long de l'axe des cylindres.";
 /** Libellés de colonne réellement présents au registre, plus les classes Academy. */
 export const PUBLISHED_CLASS_VALUES: readonly string[] = [
-  ...new Set(["A", "B", "C", "D", "E", ...PUBLISHED_REGISTRY.rows.map((r) => r.sensitivityClass)]),
+  ...new Set(["A", "B", "C", "D", "E", ...effectivePublishedRegistry().rows.map((r) => r.sensitivityClass)]),
 ];
 
 

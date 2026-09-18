@@ -16,6 +16,7 @@ import { Route as StandexRouteImport } from './routes/standex'
 import { Route as StandexIndexRouteImport } from './routes/standex.index'
 import { Route as StandexAdminRouteImport } from './routes/standex.admin'
 import { Route as StandexConsoleRouteImport } from './routes/standex.console'
+import { Route as StandexDetectionDataRouteImport } from './routes/standex.detection-data'
 import { Route as StandexTasksRouteImport } from './routes/standex.tasks'
 import { Route as StandexProjectsDossierIdRouteImport } from './routes/standex.projects.$dossierId'
 
@@ -54,6 +55,11 @@ const StandexConsoleRoute = StandexConsoleRouteImport.update({
   path: '/console',
   getParentRoute: () => StandexRoute,
 } as any)
+const StandexDetectionDataRoute = StandexDetectionDataRouteImport.update({
+  id: '/detection-data',
+  path: '/detection-data',
+  getParentRoute: () => StandexRoute,
+} as any)
 const StandexTasksRoute = StandexTasksRouteImport.update({
   id: '/tasks',
   path: '/tasks',
@@ -73,6 +79,7 @@ export interface FileRoutesByFullPath {
   '/standex': typeof StandexRouteWithChildren
   '/standex/admin': typeof StandexAdminRoute
   '/standex/console': typeof StandexConsoleRoute
+  '/standex/detection-data': typeof StandexDetectionDataRoute
   '/standex/tasks': typeof StandexTasksRoute
   '/standex/': typeof StandexIndexRoute
   '/standex/projects/$dossierId': typeof StandexProjectsDossierIdRoute
@@ -83,6 +90,7 @@ export interface FileRoutesByTo {
   '/internal': typeof InternalRoute
   '/standex/admin': typeof StandexAdminRoute
   '/standex/console': typeof StandexConsoleRoute
+  '/standex/detection-data': typeof StandexDetectionDataRoute
   '/standex/tasks': typeof StandexTasksRoute
   '/standex': typeof StandexIndexRoute
   '/standex/projects/$dossierId': typeof StandexProjectsDossierIdRoute
@@ -95,6 +103,7 @@ export interface FileRoutesById {
   '/standex': typeof StandexRouteWithChildren
   '/standex/admin': typeof StandexAdminRoute
   '/standex/console': typeof StandexConsoleRoute
+  '/standex/detection-data': typeof StandexDetectionDataRoute
   '/standex/tasks': typeof StandexTasksRoute
   '/standex/': typeof StandexIndexRoute
   '/standex/projects/$dossierId': typeof StandexProjectsDossierIdRoute
@@ -108,6 +117,7 @@ export interface FileRouteTypes {
     | '/standex'
     | '/standex/admin'
     | '/standex/console'
+    | '/standex/detection-data'
     | '/standex/tasks'
     | '/standex/'
     | '/standex/projects/$dossierId'
@@ -118,6 +128,7 @@ export interface FileRouteTypes {
     | '/internal'
     | '/standex/admin'
     | '/standex/console'
+    | '/standex/detection-data'
     | '/standex/tasks'
     | '/standex'
     | '/standex/projects/$dossierId'
@@ -129,6 +140,7 @@ export interface FileRouteTypes {
     | '/standex'
     | '/standex/admin'
     | '/standex/console'
+    | '/standex/detection-data'
     | '/standex/tasks'
     | '/standex/'
     | '/standex/projects/$dossierId'
@@ -192,6 +204,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StandexConsoleRouteImport
       parentRoute: typeof StandexRoute
     }
+    '/standex/detection-data': {
+      id: '/standex/detection-data'
+      path: '/detection-data'
+      fullPath: '/standex/detection-data'
+      preLoaderRoute: typeof StandexDetectionDataRouteImport
+      parentRoute: typeof StandexRoute
+    }
     '/standex/tasks': {
       id: '/standex/tasks'
       path: '/tasks'
@@ -212,6 +231,7 @@ declare module '@tanstack/react-router' {
 interface StandexRouteChildren {
   StandexAdminRoute: typeof StandexAdminRoute
   StandexConsoleRoute: typeof StandexConsoleRoute
+  StandexDetectionDataRoute: typeof StandexDetectionDataRoute
   StandexTasksRoute: typeof StandexTasksRoute
   StandexIndexRoute: typeof StandexIndexRoute
   StandexProjectsDossierIdRoute: typeof StandexProjectsDossierIdRoute
@@ -220,6 +240,7 @@ interface StandexRouteChildren {
 const StandexRouteChildren: StandexRouteChildren = {
   StandexAdminRoute: StandexAdminRoute,
   StandexConsoleRoute: StandexConsoleRoute,
+  StandexDetectionDataRoute: StandexDetectionDataRoute,
   StandexTasksRoute: StandexTasksRoute,
   StandexIndexRoute: StandexIndexRoute,
   StandexProjectsDossierIdRoute: StandexProjectsDossierIdRoute,
