@@ -130,8 +130,16 @@ export function projectReportSections(
     ),
     entry("Contraintes supplémentaires", nda["contraintesComplementaires"] ?? nda["contraintes"]),
   ]);
+  const identity = projectIdentity(serverDossierId, d.id);
   add("Identification", [
-    entry("Référence du projet", projectReference(d.id) ?? unknown),
+    entry(
+      identity.provisional ? PROVISIONAL_REFERENCE_LABEL : REFERENCE_LABEL,
+      identity.reference ?? unknown,
+    ),
+    // Un brouillon non enregistré le dit, et dit ce qui rend la référence définitive.
+    ...(identity.provisional
+      ? [entry("Ce qu'il faut savoir", tr(PROVISIONAL_REFERENCE_NOTE))]
+      : [entry("Référence provisoire du brouillon", projectReference(d.id) ?? unknown)]),
     entry("révision", d.revision),
     entry(
       "Rapport complet du projet",
