@@ -134,7 +134,7 @@ export function ResultView({
    *  ligne n'est publiée pour ce couple, déplacer l'aimant ne change rien : on ne
    *  laisse donc pas entendre que la personne a bougé quelque chose. */
   const canReplace =
-    pair.verdict !== "unpublished" &&
+    !(pair.verdict === "unpublished" && !guide) &&
     (pair.verdict === "none" ||
       pair.documentedPosition === false ||
       (pair.documentedPosition === undefined && pair.verdict === "undocumented"));
