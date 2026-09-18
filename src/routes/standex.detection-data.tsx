@@ -71,6 +71,8 @@ import {
   detectionConflictVersion,
   fetchDetectionDirectory,
   fetchGuideDirectory,
+  DETECTION_DENIED_MESSAGE,
+  NON_NUMERIC_MESSAGE,
   humanDetectionError,
   saveDetectionRow,
   saveGuideRow,
