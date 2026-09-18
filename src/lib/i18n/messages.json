@@ -26341,5 +26341,23 @@
     "Анимация основана на диапазоне из руководства Standex. Столбцы «up» и «to» сами по себе не определяют пороги замыкания и размыкания вашего монтажа.",
     "Animazione basata sull'intervallo della guida Standex. Le sole colonne «up» e «to» non definiscono le soglie di chiusura e riapertura del tuo montaggio.",
     "Standex ガイドの範囲に基づくアニメーションです。「up」と「to」の列だけでは、お使いの取り付けの閉路・再開路しきい値は定義できません。"
+  ],
+  "Plage du guide : {0} à {1} mm — {2} · {3}": [
+    "Guide range: {0} to {1} mm — {2} · {3}",
+    "指南范围：{0} 至 {1} mm — {2} · {3}",
+    "Bereich aus dem Leitfaden: {0} bis {1} mm — {2} · {3}",
+    "Rango de la guía: {0} a {1} mm — {2} · {3}",
+    "Диапазон из руководства: от {0} до {1} мм — {2} · {3}",
+    "Intervallo della guida: da {0} a {1} mm — {2} · {3}",
+    "ガイドの範囲：{0}～{1} mm — {2} · {3}"
+  ],
+  "Aucune variante publiée pour cette position": [
+    "No variant published for this position",
+    "此位置没有已发布的型号",
+    "Keine veröffentlichte Variante für diese Position",
+    "Ninguna variante publicada para esta posición",
+    "Для этого положения вариант не опубликован",
+    "Nessuna variante pubblicata per questa posizione",
+    "この位置に公開されたバリアントはありません"
   ]
 }
