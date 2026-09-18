@@ -15812,6 +15812,42 @@
     "Pacchetto revisione qualitativa - Assistente Standex",
     "定性レビューパック - Standexアシスタント"
   ],
+  "Navigation entre les pages de l'annuaire": [
+    "Directory page navigation",
+    "目录翻页",
+    "Seitennavigation im Verzeichnis",
+    "Navegación entre páginas del directorio",
+    "Навигация по страницам каталога",
+    "Navigazione tra le pagine dell'elenco",
+    "ディレクトリのページ移動"
+  ],
+  "Page {0} sur {1}": [
+    "Page {0} of {1}",
+    "第 {0} 页，共 {1} 页",
+    "Seite {0} von {1}",
+    "Página {0} de {1}",
+    "Страница {0} из {1}",
+    "Pagina {0} di {1}",
+    "{1} ページ中 {0} ページ目"
+  ],
+  "Page précédente": [
+    "Previous page",
+    "上一页",
+    "Vorherige Seite",
+    "Página anterior",
+    "Предыдущая страница",
+    "Pagina precedente",
+    "前のページ"
+  ],
+  "Page suivante": [
+    "Next page",
+    "下一页",
+    "Nächste Seite",
+    "Página siguiente",
+    "Следующая страница",
+    "Pagina successiva",
+    "次のページ"
+  ],
   "Page introuvable": [
     "Page not found",
     "页面不存在",

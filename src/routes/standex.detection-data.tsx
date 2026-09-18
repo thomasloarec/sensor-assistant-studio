@@ -15,8 +15,8 @@
  */
 import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Loader2, Lock } from "lucide-react";
-import { t } from "@/lib/i18n/core";
+import { ChevronLeft, ChevronRight, Loader2, Lock } from "lucide-react";
+import { msg, t } from "@/lib/i18n/core";
 import { useLocale } from "@/lib/i18n/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -86,6 +86,8 @@ export const Route = createFileRoute("/standex/detection-data")({
 
 const mm = (v: number | null) => (v === null ? "—" : v.toFixed(2).replace(/\.00$/, ""));
 const raw = (v: number | null) => (v === null ? "" : String(v));
+/** Fenêtre de rendu : assez pour lire, assez peu pour rester fluide. */
+const PAGE_SIZE = 50;
 
 /** Brouillon en cours : les champs numériques restent des CHAÎNES pendant la
  *  frappe. Sans cela, « 15, » serait refusé à chaque touche et il deviendrait
@@ -120,6 +122,8 @@ function DetectionDataScreen() {
   const [state, setState] = useState<"loading" | "ready" | "denied" | "error">("loading");
   const [detail, setDetail] = useState<string | null>(null);
   const [filters, setFilters] = useState<DirectoryFilters>(EMPTY_FILTERS);
+  /** Page courante : l'affichage est borné, les données ne le sont jamais. */
+  const [page, setPage] = useState(0);
   const [draft, setDraft] = useState<DistanceDraft | null>(null);
   const [guideDraft, setGuideDraft] = useState<GuideDraft | null>(null);
   const [pending, setPending] = useState(false);
@@ -208,6 +212,17 @@ function DetectionDataScreen() {
   const total = isGuide ? guideEntries.length : entries.length;
   const listed = isGuide ? guideShown.length : shown.length;
   const complete = (isGuide ? guideEntries : entries).filter((e) => e.complete).length;
+
+  /* Tout changement de filtre ramène à la première page : l'endroit lu
+     correspond toujours au filtre affiché. */
+  useEffect(() => setPage(0), [filters]);
+  const pages = Math.max(1, Math.ceil(listed / PAGE_SIZE));
+  const current = Math.min(page, pages - 1);
+  /** Tranche affichée : le filtrage porte sur TOUTES les lignes, seule la
+   *  fenêtre de rendu est bornée. */
+  const windowEntries = <T,>(all: T[]) => all.slice(current * PAGE_SIZE, (current + 1) * PAGE_SIZE);
+  const shownPage = windowEntries(shown);
+  const guideShownPage = windowEntries(guideShown);
 
   /** Toute ouverture passe par ici : un brouillon non enregistré n'est jamais
    *  perdu sans décision explicite. */
@@ -589,7 +604,7 @@ function DetectionDataScreen() {
               </tr>
             </thead>
             <tbody>
-              {guideShown.map((e) => (
+              {guideShownPage.map((e) => (
                 <tr key={e.key} data-testid="guide-row" data-origin={e.origin}>
                   <th
                     scope="row"
@@ -668,7 +683,7 @@ function DetectionDataScreen() {
               </tr>
             </thead>
             <tbody>
-              {shown.map((e) => (
+              {shownPage.map((e) => (
                 <tr key={e.key} data-testid="detection-row" data-origin={e.origin}>
                   <th
                     scope="row"
@@ -737,6 +752,39 @@ function DetectionDataScreen() {
           </table>
         </div>
       )}
+
+      {state === "ready" && pages > 1 ? (
+        <nav
+          className="flex flex-wrap items-center gap-2"
+          aria-label={t("Navigation entre les pages de l'annuaire")}
+        >
+          <Button
+            size="sm"
+            variant="secondary"
+            disabled={current === 0}
+            onClick={() => setPage(Math.max(0, current - 1))}
+            aria-label={t("Page précédente")}
+          >
+            <ChevronLeft className="mr-1 h-4 w-4" aria-hidden="true" />
+            {t("Précédent")}
+          </Button>
+          <span className="t-caption text-muted-foreground" aria-live="polite">
+            {msg("Page {0} sur {1}", [current + 1, pages])}
+            {" · "}
+            {listed} {t("combinaisons")}
+          </span>
+          <Button
+            size="sm"
+            variant="secondary"
+            disabled={current >= pages - 1}
+            onClick={() => setPage(Math.min(pages - 1, current + 1))}
+            aria-label={t("Page suivante")}
+          >
+            {t("Suivant")}
+            <ChevronRight className="ml-1 h-4 w-4" aria-hidden="true" />
+          </Button>
+        </nav>
+      ) : null}
 
       {state === "ready" ? (
         <Button
