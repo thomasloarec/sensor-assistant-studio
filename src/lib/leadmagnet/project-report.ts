@@ -190,6 +190,7 @@ export async function projectPdf(
     ]
       .filter(Boolean)
       .join(" · "),
-    attachment: new TextEncoder().encode(JSON.stringify(data, null, 2)),
-  });
+      attachment: new TextEncoder().encode(JSON.stringify(data, null, 2)),
+    },
+  );
 }
