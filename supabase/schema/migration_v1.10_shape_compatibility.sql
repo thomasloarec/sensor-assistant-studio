@@ -153,35 +153,45 @@ alter table lead.detection_rows
   drop constraint if exists detection_rows_shape_ok;
 alter table lead.detection_rows
   add constraint detection_rows_shape_ok
-  check (lead_priv.detection_shape_ok(sensor_family, magnet_id)) not valid;
+  check (status <> 'validated' or lead_priv.detection_shape_ok(sensor_family, magnet_id)) not valid;
 
 -- ----------------------------------------------------------------------------
 -- 4. Ligne de recette devenue incompatible : repassée en brouillon AVEC audit.
 --    Sa valeur (15 / 17.5), sa source et son historique restent intacts.
 -- ----------------------------------------------------------------------------
-insert into lead.detection_audit (row_id, action, old_value, new_value, actor_id, actor_name, source)
+insert into lead.detection_audit (row_id, actor, action, old_value, new_value)
 select r.id,
-       'shape_rule_deactivated',
-       to_jsonb(r),
-       jsonb_build_object('status','draft'),
        null,
-       'migration 1.10',
-       'Règle de compatibilité de forme (capteur tubulaire / aimant tubulaire, sinon bloc) : couple conservé pour mémoire, retiré des simulations.'
+       'detection_row_updated',
+       to_jsonb(r),
+       to_jsonb(r) || jsonb_build_object(
+         'status', 'draft',
+         'version', r.version + 1,
+         'updated_at', now(),
+         'updated_by', null)
   from lead.detection_rows r
- where not lead_priv.detection_shape_ok(r.sensor_family, r.magnet_id);
+ where r.status = 'validated'
+   and not lead_priv.detection_shape_ok(r.sensor_family, r.magnet_id);
 
-update lead.detection_rows r
-   set status = 'draft',
-       version = r.version + 1,
-       updated_at = now()
- where not lead_priv.detection_shape_ok(r.sensor_family, r.magnet_id)
-   and r.status <> 'draft';
+do $$
+declare quarantined_count integer;
+begin
+  update lead.detection_rows r
+     set status = 'draft',
+         version = r.version + 1,
+         updated_at = now(),
+         updated_by = null
+   where not lead_priv.detection_shape_ok(r.sensor_family, r.magnet_id)
+     and r.status = 'validated';
+  get diagnostics quarantined_count = row_count;
+  if quarantined_count > 0 then
+    perform lead_priv.detection_bump(false);
+  end if;
+end $$;
 
--- La contrainte peut maintenant être validée : plus aucune ligne active ne la
--- viole. Les brouillons conservés restent lisibles dans l'annuaire.
--- (Validation volontairement laissée à la relecture : décommenter après
---  vérification du contenu réel de la table.)
--- alter table lead.detection_rows validate constraint detection_rows_shape_ok;
+-- La contrainte peut maintenant être validée : plus aucune ligne ACTIVE ne la
+-- viole. Les brouillons incompatibles restent lisibles dans l'annuaire.
+alter table lead.detection_rows validate constraint detection_rows_shape_ok;
 
 -- ----------------------------------------------------------------------------
 -- 5. Refus explicite à l'écriture, avec un code d'erreur parlant.
@@ -197,32 +207,161 @@ end;
 $$;
 
 -- ----------------------------------------------------------------------------
--- 6. Jeu EFFECTIF : les couples de formes contradictoires n'en sortent jamais.
---    (Vue filtrée réutilisée par `lead_priv.detection_effective`, qui doit être
---     recréée à l'identique en ajoutant la clause ci-dessous.)
+-- 6. Écriture atomique 1.10 : fonction 1.9 conservée, avec le garde de forme.
 -- ----------------------------------------------------------------------------
-create or replace view lead_priv.detection_effective_rows as
-  select r.*
-    from lead.detection_rows r
-   where r.status = 'validated'
-     and r.pull_in_mm is not null
-     and r.drop_out_mm is not null
-     and r.drop_out_mm > r.pull_in_mm
-     and lead_priv.detection_shape_ok(r.sensor_family, r.magnet_id);
+create or replace function lead_priv.detection_save_row(_payload jsonb, _expected_version integer)
+returns jsonb language plpgsql security definer
+set search_path = lead, lead_priv, pg_temp as $$
+declare
+  u uuid := lead_priv.crm_require_admin();
+  cur lead.detection_rows;
+  res lead.detection_rows;
+  old_json jsonb;
+  pull numeric := nullif(_payload->>'pullInMm','')::numeric;
+  drop_out numeric := nullif(_payload->>'dropOutMm','')::numeric;
+  st text := coalesce(nullif(_payload->>'status',''), 'draft');
+begin
+  if _payload is null or jsonb_typeof(_payload) <> 'object' then
+    raise exception 'DETECTION_BAD_PAYLOAD' using errcode = '22023';
+  end if;
+  if st not in ('draft','validated') then
+    raise exception 'DETECTION_BAD_STATUS' using errcode = '22023';
+  end if;
+  if st = 'validated' and (pull is null or drop_out is null or drop_out <= pull) then
+    raise exception 'DETECTION_INCOMPLETE' using errcode = '22023';
+  end if;
+  if not exists (select 1 from lead.detection_sensor_allow a
+                  where a.sensor_family = _payload->>'sensorFamily' and not a.guide_only) then
+    raise exception 'DETECTION_UNKNOWN_SENSOR' using errcode = '22023';
+  end if;
+  if not exists (select 1 from lead.detection_magnet_allow a
+                  where a.magnet_id = _payload->>'magnetId') then
+    raise exception 'DETECTION_UNKNOWN_MAGNET' using errcode = '22023';
+  end if;
+  perform lead_priv.detection_require_shape(_payload);
+  if exists (select 1 from lead.detection_magnet_allow a
+              where a.magnet_id = _payload->>'magnetId' and a.family_alias) then
+    raise exception 'DETECTION_ALIAS_MAGNET' using errcode = '22023';
+  end if;
+  if coalesce(_payload->>'classKind','') not in ('sensitivity','switch_model')
+     or coalesce(_payload->>'contactForm','') not in ('1A','1B','1C')
+     or coalesce(_payload->>'approachId','') not in ('D1','D2','D3','D4','D5','F1')
+     or coalesce(_payload->>'thresholdKind','') not in ('typical','min_activation_max_release')
+     or (_payload->>'approachId' = 'F1') <> (_payload->>'datum' = 'frontal_faces')
+     or length(btrim(coalesce(_payload->>'sensorReference',''))) not between 1 and 64
+     or length(btrim(coalesce(_payload->>'sensitivityClass',''))) not between 1 and 32
+     or length(btrim(coalesce(_payload->>'sourceType',''))) not between 2 and 64
+     or length(btrim(coalesce(_payload->>'sourceRef',''))) < 8
+     or length(coalesce(_payload->>'note','')) > 2000 then
+    raise exception 'DETECTION_BAD_PAYLOAD' using errcode = '22023';
+  end if;
+  if coalesce(nullif(_payload->>'enteredOn','')::date, current_date) > current_date then
+    raise exception 'DETECTION_BAD_PAYLOAD' using errcode = '22023';
+  end if;
+  if (pull is not null and pull <= 0) or (drop_out is not null and drop_out <= 0) then
+    raise exception 'DETECTION_BAD_PAYLOAD' using errcode = '22023';
+  end if;
 
-revoke all on lead_priv.detection_effective_rows from public, anon, authenticated;
+  if nullif(_payload->>'id','') is not null then
+    select * into cur from lead.detection_rows
+     where id = (_payload->>'id')::uuid for update;
+    if cur.id is null then
+      raise exception 'DETECTION_MISSING_ROW' using errcode = '22023';
+    end if;
+    if cur.sensor_family <> _payload->>'sensorFamily'
+       or cur.sensitivity_class <> _payload->>'sensitivityClass'
+       or cur.contact_form <> _payload->>'contactForm'
+       or cur.magnet_id <> _payload->>'magnetId'
+       or cur.approach_id <> _payload->>'approachId' then
+      raise exception 'DETECTION_KEY_LOCKED' using errcode = '22023';
+    end if;
+  else
+    select * into cur from lead.detection_rows
+     where sensor_family = _payload->>'sensorFamily'
+       and sensitivity_class = _payload->>'sensitivityClass'
+       and contact_form = _payload->>'contactForm'
+       and magnet_id = _payload->>'magnetId'
+       and approach_id = _payload->>'approachId' for update;
+  end if;
+
+  if cur.id is null then
+    if _expected_version is not null then
+      raise exception 'DETECTION_CONFLICT:0' using errcode = '40001';
+    end if;
+    insert into lead.detection_rows (sensor_family, sensor_reference, class_kind,
+      sensitivity_class, contact_form, magnet_id, approach_id, datum, threshold_kind,
+      pull_in_mm, drop_out_mm, temperature_c, status, source_type, source_ref,
+      entered_on, note, updated_by)
+    values (_payload->>'sensorFamily', _payload->>'sensorReference', _payload->>'classKind',
+      _payload->>'sensitivityClass', _payload->>'contactForm', _payload->>'magnetId',
+      _payload->>'approachId', _payload->>'datum', _payload->>'thresholdKind',
+      pull, drop_out, nullif(_payload->>'temperatureC','')::numeric, st,
+      _payload->>'sourceType', _payload->>'sourceRef',
+      coalesce(nullif(_payload->>'enteredOn','')::date, current_date),
+      nullif(_payload->>'note',''), u)
+    returning * into res;
+    insert into lead.detection_audit (row_id, actor, action, old_value, new_value)
+    values (res.id, u, 'detection_row_created', null, to_jsonb(res));
+  else
+    if _expected_version is null or cur.version <> _expected_version then
+      raise exception 'DETECTION_CONFLICT:%', cur.version using errcode = '40001';
+    end if;
+    old_json := to_jsonb(cur);
+    update lead.detection_rows set
+      sensor_reference = _payload->>'sensorReference', class_kind = _payload->>'classKind',
+      datum = _payload->>'datum', threshold_kind = _payload->>'thresholdKind',
+      pull_in_mm = pull, drop_out_mm = drop_out,
+      temperature_c = nullif(_payload->>'temperatureC','')::numeric, status = st,
+      source_type = _payload->>'sourceType', source_ref = _payload->>'sourceRef',
+      entered_on = coalesce(nullif(_payload->>'enteredOn','')::date, cur.entered_on),
+      note = nullif(_payload->>'note',''), version = cur.version + 1,
+      updated_at = now(), updated_by = u
+     where id = cur.id returning * into res;
+    insert into lead.detection_audit (row_id, actor, action, old_value, new_value)
+    values (res.id, u, 'detection_row_updated', old_json, to_jsonb(res));
+  end if;
+  perform lead_priv.detection_bump(false);
+  return jsonb_build_object('id', res.id, 'rowVersion', res.version, 'status', res.status,
+    'updatedAt', res.updated_at);
+end $$;
+
+-- ----------------------------------------------------------------------------
+-- 7. Jeu EFFECTIF 1.10 : filtre de forme inclus dans la fonction réellement
+--    appelée par le wrapper public. Aucun TODO ni modification de 1.9 requise.
+-- ----------------------------------------------------------------------------
+create or replace function lead_priv.detection_effective()
+returns jsonb language sql stable security definer
+set search_path = lead, lead_priv, pg_temp as $$
+  select jsonb_build_object(
+    'version', '1.10',
+    'dataRevision', (select revision::text from lead.detection_state where singleton),
+    'rows', coalesce((select jsonb_agg(jsonb_build_object(
+        'id', r.id, 'sensorFamily', r.sensor_family, 'sensorReference', r.sensor_reference,
+        'classKind', r.class_kind, 'sensitivityClass', r.sensitivity_class,
+        'contactForm', r.contact_form, 'magnetId', r.magnet_id,
+        'approachId', r.approach_id, 'datum', r.datum,
+        'thresholdKind', r.threshold_kind, 'pullInMm', r.pull_in_mm,
+        'dropOutMm', r.drop_out_mm, 'temperatureC', r.temperature_c,
+        'sourceType', r.source_type, 'sourceRef', r.source_ref,
+        'enteredOn', r.entered_on, 'rowVersion', r.version)
+        order by r.sensor_family, r.sensitivity_class, r.magnet_id, r.approach_id)
+      from lead.detection_rows r
+      where r.status = 'validated'
+        and r.pull_in_mm is not null and r.drop_out_mm is not null
+        and lead_priv.detection_shape_ok(r.sensor_family, r.magnet_id)), '[]'::jsonb));
+$$;
+
 revoke all on function lead_priv.detection_shape_ok(text, text) from public, anon, authenticated;
 revoke all on function lead_priv.detection_require_shape(jsonb) from public, anon, authenticated;
 
-commit;
+-- CREATE OR REPLACE conserve normalement les ACL, mais ces droits explicites
+-- rendent le chemin wrapper public -> fonction privée vérifiable et autonome.
+revoke all on function lead_priv.detection_effective() from public;
+grant execute on function lead_priv.detection_effective() to anon, authenticated;
+revoke all on function lead_priv.detection_save_row(jsonb, integer) from public, anon;
+grant execute on function lead_priv.detection_save_row(jsonb, integer) to authenticated;
 
--- ============================================================================
--- À FAIRE DANS LA MÊME RELECTURE (édition manuelle de la 1.9 en place) :
---  * appeler `lead_priv.detection_require_shape(_payload)` dans
---    `lead_priv.detection_save_row`, juste après le contrôle
---    `DETECTION_UNKNOWN_MAGNET` ;
---  * faire lire `lead_priv.detection_effective_rows` à
---    `lead_priv.detection_effective()` au lieu de `lead.detection_rows`.
--- Aucune modification n'est demandée aux fonctions du GUIDE : ses plages restent
--- documentaires, conservées telles qu'imprimées.
--- ============================================================================
+insert into lead.schema_migrations (version) values ('1.10')
+on conflict (version) do nothing;
+
+commit;

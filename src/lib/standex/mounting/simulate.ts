@@ -28,6 +28,7 @@ import {
   sub,
 } from "./geometry";
 import type { Pose, Vec3 } from "./geometry";
+import { isShapeCompatible } from "../shape-compatibility";
 
 export const SAMPLE_STEPS = 600;
 /** Décalage entre entrefer de surface et distance de centres, sur l'axe d'approche. */
@@ -157,13 +158,15 @@ export function illustrativeMarks(bounds?: IllustrativeBounds | null): [number, 
  * `illustrative` et la mention permanente qui l'accompagne, et sans qu'aucun
  * seuil publié, aucune couverture ni aucun verdict ne bouge.
  *
- * Le seul refus absolu : un contact dont la forme n'est jamais simulée (1B/1C).
- * Les distances y sont lisibles au registre, elles ne sont pas animées. La
- * collision reste traitée échantillon par échantillon : deux corps qui
- * s'interpénètrent n'affichent pas d'état.
+ * Refus absolus : un contact dont la forme n'est jamais simulée (1B/1C), ou un
+ * couple capteur / aimant interdit par la règle de forme de l'application. Les
+ * distances historiques restent lisibles, mais aucune animation de contact ne
+ * doit les réactiver indirectement. La collision reste traitée échantillon par
+ * échantillon : deux corps qui s'interpénètrent n'affichent pas d'état.
  */
 const ILLUSTRATIVE_BLOCKERS = new Set([
   "CONTACT_FORM_NOT_SIMULATED",
+  "SHAPE_NOT_COMPATIBLE",
   "POLARITY_NOT_TEMPLATE",
   "MAGNETIZATION_NOT_TEMPLATE",
 ]);
@@ -193,6 +196,14 @@ export const NUMERIC_EPSILON = 1e-9;
 export function globalReasons(m: GuidedMounting, profile: MountingProfile | null): string[] {
   const reasons: string[] = [];
   const located = locatedProfile(profile);
+  // La démonstration GENERIC reste volontairement pédagogique. En revanche,
+  // une vraie référence ne commute jamais, même de façon illustrative, si les
+  // formes sont incompatibles ou inconnues.
+  if (
+    m.mode === "reference" &&
+    !isShapeCompatible(m.couple.sensorId, m.couple.magnetId)
+  )
+    reasons.push("SHAPE_NOT_COMPATIBLE");
   if (!profile) reasons.push("NO_PROFILE");
   else if (profile.localisation !== "axis_documented") reasons.push("APPROACH_NOT_LOCATED");
   else if (profile.evidence !== "published_typical") reasons.push("SOURCE_NOT_QUALIFIED");

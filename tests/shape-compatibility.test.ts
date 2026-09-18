@@ -33,6 +33,9 @@ import {
 import { defaultGuideSelection, guideSelectionFor } from "../src/lib/standex/activation-guide";
 import { validateDetectionRecord, isRecordSimulatable } from "../src/lib/standex/detection-data/model";
 import { buildDirectory, emptyRecordFor, filterDirectory, EMPTY_FILTERS } from "../src/lib/standex/detection-data/directory";
+import { mountingFromWorkshop } from "../src/lib/standex/mounting/bridge";
+import { simulateMounting } from "../src/lib/standex/mounting/simulate";
+import { simulateCycle } from "../src/lib/standex/magnetic-workshop";
 
 afterEach(() => {
   resetEffectivePublishedRows();
@@ -88,6 +91,45 @@ describe("moteurs : aucun seuil sur un couple incompatible", () => {
     const profile = profileFor("MK03", "4003004003", "D1");
     expect(profile).toBeTruthy();
     expect(publishedReference("MK03", "B", "4003004003", "D1")).toBeTruthy();
+  });
+  test.each([
+    ["MK03", "M02"],
+    ["MK15", "4003004003"],
+  ])("%s + %s ne commute jamais, même par repli illustratif", (sensorId, magnetId) => {
+    const config = {
+      ...DEFAULT_WORKSHOP,
+      mode: "reference" as const,
+      sensorId,
+      magnetModel: magnetId,
+      sensitivity: "B",
+      geometry: "D1" as const,
+      start: 32,
+      end: 5,
+    };
+    const mounting = simulateMounting(mountingFromWorkshop(config));
+    expect(mounting.illustrative).toBe(false);
+    expect(mounting.transitions).toEqual([]);
+    expect(mounting.samples.every((sample) => sample.contact === "unknown")).toBe(true);
+    expect(mounting.reasons).toContain("SHAPE_NOT_COMPATIBLE");
+
+    const cycle = simulateCycle(config);
+    expect(cycle.transitions).toEqual([]);
+    expect(cycle.closures).toBe(0);
+    expect(cycle.releases).toBe(0);
+    expect(cycle.samples.every((sample) => sample.contact === "unknown")).toBe(true);
+  });
+  test("la démonstration GENERIC conserve sa commutation pédagogique", () => {
+    const demo = {
+      ...DEFAULT_WORKSHOP,
+      mode: "education" as const,
+      sensorId: "MK03",
+      magnetModel: "generic",
+      start: 32,
+      end: 5,
+    };
+    const cycle = simulateCycle(demo);
+    expect(cycle.samples.some((sample) => sample.contact === "open")).toBe(true);
+    expect(cycle.samples.some((sample) => sample.contact === "closed")).toBe(true);
   });
 });
 
