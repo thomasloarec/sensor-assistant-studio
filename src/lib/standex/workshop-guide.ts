@@ -39,3 +39,10 @@ export const GUIDE_UNPUBLISHED_NOTE =
 export function illustrativeNoteFor(c: WorkshopConfig): string {
   return hasGuideData(c.sensorId) ? ILLUSTRATIVE_NOTE : GUIDE_UNPUBLISHED_NOTE;
 }
+
+/** Note du récapitulatif d'essai : quand la ligne du guide est enregistrée, on
+ *  rappelle la prudence réelle (bornes « up »/« to » ≠ seuils du montage)
+ *  plutôt que « distance non caractérisée », qui contredirait la plage. */
+export function reviewIllustrativeNote(sensorId: string, hasGuideFact: boolean): string {
+  return hasGuideFact ? GUIDE_SIMULATION_NOTE : hasGuideData(sensorId) ? ILLUSTRATIVE_NOTE : GUIDE_UNPUBLISHED_NOTE;
+}

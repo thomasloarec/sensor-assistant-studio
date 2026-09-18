@@ -10,6 +10,7 @@
 import { describe, expect, test } from "bun:test";
 import { navigateMonday, shiftWeek, weekStart, workWeek } from "@/components/leadmagnet/booking-dialog";
 import { testedPairGuideFact } from "@/lib/leadmagnet/tested-pair-guide";
+import { reviewIllustrativeNote, GUIDE_SIMULATION_NOTE, ILLUSTRATIVE_NOTE, GUIDE_UNPUBLISHED_NOTE } from "@/lib/standex/workshop-guide";
 import { suggestedProjectTitle } from "@/lib/leadmagnet/product-presentation";
 import { withDefaultGuideSelection } from "@/lib/standex/magnetic-workshop";
 import type { TestedPair } from "@/lib/leadmagnet/tested-pairs";
@@ -172,5 +173,20 @@ describe("pose physique : la lecture du guide ne déplace rien", () => {
     expect(next.geometry).toBe("D1");
     expect(next.magnetAngle).toBe(37);
     expect(next.guideReference).not.toBeNull();
+  });
+});
+
+describe("récapitulatif : la note illustrative respecte la ligne du guide", () => {
+  test("MK17 documenté : prudence up/to ≠ seuils, jamais « distance non caractérisée »", () => {
+    // Cas réel exporté : guideReference MK17-B-X, documentedPosition true, illustrative true.
+    const note = reviewIllustrativeNote("MK17", true);
+    expect(note).toBe(GUIDE_SIMULATION_NOTE);
+    expect(note).not.toContain("distance non caractérisée");
+    expect(note).toContain("ne définissent pas à elles seules les seuils");
+  });
+
+  test("sans ligne du guide : messages d'absence inchangés", () => {
+    expect(reviewIllustrativeNote("MK17", false)).toBe(ILLUSTRATIVE_NOTE);
+    expect(reviewIllustrativeNote("MK01", false)).toBe(GUIDE_UNPUBLISHED_NOTE);
   });
 });
