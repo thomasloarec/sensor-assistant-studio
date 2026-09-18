@@ -146,9 +146,8 @@ describe("retours du 17 septembre : parcours et physique", () => {
     expect(bookingUrl(undefined)).toBeNull();
     expect(bookingUrl("javascript:alert(1)")).toBeNull();
     expect(bookingUrl("https://calendly.com/example")).toContain("https:");
-    expect(suggestedProjectTitle("Détecter le réservoir. Autre phrase.")).toBe(
-      "Détecter le réservoir",
-    );
+    // Règle courante : le titre nomme la PIÈCE, pas l'intention de détection.
+    expect(suggestedProjectTitle("Détecter le réservoir. Autre phrase.")).toBe("Réservoir");
   });
 });
 
