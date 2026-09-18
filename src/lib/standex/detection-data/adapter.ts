@@ -10,14 +10,18 @@
  *  enregistré quoi que ce soit.
  */
 import { supabase } from "@/lib/standex/supabase";
-import type { DetectionRecord, DetectionStatus } from "./model";
-import { DETECTION_APPROACHES, DETECTION_CONTACT_FORMS } from "./model";
+import type { DetectionRecord, DetectionStatus, GuideRecord } from "./model";
+import { DETECTION_APPROACHES, DETECTION_CONTACT_FORMS, GUIDE_APPROACHES, GUIDE_BOUND_NOTES } from "./model";
+import type { GuideApproachId } from "./model";
 import type { PublishedApproach, PublishedClassKind } from "@/lib/standex/magnetics/registries";
 
 export const DETECTION_RPC = {
   effective: "lead_detection_effective",
   directory: "lead_detection_directory",
   saveRow: "lead_detection_save_row",
+  guideEffective: "lead_guide_effective",
+  guideDirectory: "lead_guide_directory",
+  guideSaveRow: "lead_guide_save_row",
 } as const;
 
 export const DETECTION_MIGRATION_FILE = "supabase/schema/migration_v1.9_detection_data.sql";
@@ -167,6 +171,108 @@ export async function saveDetectionRow(
     note: record.note,
   };
   const data = await rpc<Record<string, unknown>>(DETECTION_RPC.saveRow, {
+    p_payload: payload,
+    p_expected_version: expectedVersion,
+  });
+  return {
+    id: str(data?.["id"], ""),
+    rowVersion: num(data?.["rowVersion"]) ?? 1,
+    status: (str(data?.["status"], "draft") as DetectionStatus) ?? "draft",
+    updatedAt: str(data?.["updatedAt"], "") || null,
+  };
+}
+
+/* ==========================================================================
+ * Guide d'activation — jeu DOCUMENTAIRE
+ *
+ * Lecture et écriture strictement séparées des distances de commutation :
+ * autres RPC, autre validation, aucune conversion. Les bornes « up » et « to »
+ * sont relues telles qu'enregistrées, sans tri.
+ * ======================================================================== */
+
+const boundNote = (v: unknown): GuideRecord["upNote"] =>
+  typeof v === "string" && (GUIDE_BOUND_NOTES as readonly string[]).includes(v)
+    ? (v as GuideRecord["upNote"])
+    : null;
+
+export function readGuideRecord(raw: unknown): GuideRecord | null {
+  if (!raw || typeof raw !== "object") return null;
+  const o = raw as Record<string, unknown>;
+  const approach = str(o["approachId"]) as GuideApproachId;
+  if (!(GUIDE_APPROACHES as readonly string[]).includes(approach)) return null;
+  const status = str(o["status"], "validated");
+  if (status !== "draft" && status !== "validated") return null;
+  const family = str(o["sensorFamily"]);
+  const reference = str(o["sensorReference"]);
+  const magnet = str(o["magnetId"]);
+  if (family === "" || reference === "" || magnet === "") return null;
+  const up = num(o["upMm"]);
+  const to = num(o["toMm"]);
+  // Aucune valeur négative n'est acceptée, aucune n'est corrigée.
+  if ((up !== null && up < 0) || (to !== null && to < 0)) return null;
+  return {
+    id: str(o["id"], "") || null,
+    page: num(o["page"]),
+    sensorFamily: family,
+    sensorReference: reference,
+    magnetId: magnet,
+    approachId: approach,
+    upMm: up,
+    toMm: to,
+    upNote: boundNote(o["upNote"]),
+    toNote: boundNote(o["toNote"]),
+    status: status as DetectionStatus,
+    sourceRef: str(o["sourceRef"], "unknown"),
+    enteredOn: str(o["enteredOn"], "").slice(0, 10),
+    note: str(o["note"], "") || null,
+    rowVersion: num(o["rowVersion"]),
+    updatedAt: str(o["updatedAt"], "") || null,
+    updatedBy: str(o["updatedBy"], "") || null,
+  };
+}
+
+export interface EffectiveGuidePayload {
+  version: string;
+  rows: GuideRecord[];
+}
+
+export async function fetchEffectiveGuideRows(): Promise<EffectiveGuidePayload> {
+  const data = await rpc<Record<string, unknown>>(DETECTION_RPC.guideEffective, {});
+  const rows = Array.isArray(data?.["rows"]) ? (data["rows"] as unknown[]) : [];
+  return {
+    version: str(data?.["version"], "unknown"),
+    rows: rows
+      .map((r) => readGuideRecord({ ...(r as object), status: "validated" }))
+      .filter((r): r is GuideRecord => r !== null),
+  };
+}
+
+export async function fetchGuideDirectory(): Promise<GuideRecord[]> {
+  const data = await rpc<Record<string, unknown>>(DETECTION_RPC.guideDirectory, {});
+  const rows = Array.isArray(data?.["rows"]) ? (data["rows"] as unknown[]) : [];
+  return rows.map(readGuideRecord).filter((r): r is GuideRecord => r !== null);
+}
+
+export async function saveGuideRow(
+  record: GuideRecord,
+  expectedVersion: number | null,
+): Promise<SaveDetectionResult> {
+  const payload = {
+    page: record.page,
+    sensorFamily: record.sensorFamily,
+    sensorReference: record.sensorReference,
+    magnetId: record.magnetId,
+    approachId: record.approachId,
+    upMm: record.upMm,
+    toMm: record.toMm,
+    upNote: record.upNote,
+    toNote: record.toNote,
+    status: record.status,
+    sourceRef: record.sourceRef,
+    enteredOn: record.enteredOn,
+    note: record.note,
+  };
+  const data = await rpc<Record<string, unknown>>(DETECTION_RPC.guideSaveRow, {
     p_payload: payload,
     p_expected_version: expectedVersion,
   });

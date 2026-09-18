@@ -150,7 +150,102 @@ export function readActivationGuide(value: unknown): ActivationGuide {
     rows,
   };
 }
+/** Jeu COMPILÉ de la brochure : base de provenance, jamais modifié en place. */
 export const ACTIVATION_GUIDE = readActivationGuide(raw);
+export const COMPILED_ACTIVATION_GUIDE: ActivationGuide = ACTIVATION_GUIDE;
+
+/* --------------------------------------------------------------------------
+ * Guide EFFECTIF
+ *
+ * L'ingénierie Standex peut corriger ou compléter une ligne du guide depuis
+ * l'annuaire d'administration. Ces corrections restent DOCUMENTAIRES : les
+ * colonnes « up » et « to » ne deviennent jamais des seuils d'activation ou de
+ * relâchement, ne sont jamais triées, et un ordre imprimé atypique est conservé
+ * tel quel puis signalé. Les lectures passent toutes par
+ * `effectiveActivationGuide()` : un appel, jamais un cache figé.
+ * ------------------------------------------------------------------------ */
+let guideOverlay: ActivationGuide | null = null;
+let guideRevisionCounter = 0;
+let guideDataRevision: string | null = null;
+
+/** Clé documentaire d'une ligne du guide : référence imprimée + aimant + approche. */
+export function guideRowKey(r: {
+  sensorReference: string;
+  magnetId: string;
+  approachId: string;
+}): string {
+  return [r.sensorReference, r.magnetId, r.approachId].join("|");
+}
+
+export function effectiveActivationGuide(): ActivationGuide {
+  return guideOverlay ?? COMPILED_ACTIVATION_GUIDE;
+}
+export function guideRevision(): number {
+  return guideRevisionCounter;
+}
+export function effectiveGuideSource(): "compiled" | "server" {
+  return guideOverlay ? "server" : "compiled";
+}
+export function effectiveGuideRevisionLabel(): string {
+  const base = COMPILED_ACTIVATION_GUIDE.version;
+  return guideOverlay && guideDataRevision ? `${base}+guide.${guideDataRevision}` : base;
+}
+
+export interface GuideApplyResult {
+  ok: boolean;
+  replaced: number;
+  added: number;
+  error: string | null;
+}
+
+/**
+ * Applique des lignes de guide saisies. Refus ENTIER si une ligne est mal
+ * formée. Aucun tri : `upMm` peut rester supérieur à `toMm`, la lecture
+ * défensive se contente de le SIGNALER (`orderAtypical`).
+ */
+export function applyEffectiveGuideRows(
+  rows: readonly unknown[],
+  dataRevision?: string | null,
+): GuideApplyResult {
+  if (!Array.isArray(rows)) return { ok: false, replaced: 0, added: 0, error: "BAD_PAYLOAD" };
+  const base = COMPILED_ACTIVATION_GUIDE;
+  const compiledKeys = new Set(base.rows.map(guideRowKey));
+  const merged = new Map<string, GuideRange>();
+  for (const r of base.rows) merged.set(guideRowKey(r), r);
+  const incoming = new Set<string>();
+  let replaced = 0,
+    added = 0;
+  for (const raw of rows) {
+    if (!raw || typeof raw !== "object") return { ok: false, replaced: 0, added: 0, error: "BAD_ROW" };
+    const r = raw as GuideRange;
+    const key = guideRowKey(r);
+    if (incoming.has(key)) return { ok: false, replaced: 0, added: 0, error: "DUPLICATE_KEY" };
+    incoming.add(key);
+    if (compiledKeys.has(key)) replaced += 1;
+    else added += 1;
+    merged.set(key, r);
+  }
+  const candidate = {
+    version: base.version,
+    source: base.source,
+    magnets: base.magnets,
+    rows: [...merged.values()],
+  };
+  const checked = readActivationGuide(candidate);
+  if (checked.version === "unavailable" || checked.rows.length !== merged.size)
+    return { ok: false, replaced: 0, added: 0, error: "INVALID_ROWS" };
+  guideOverlay = checked;
+  guideDataRevision = dataRevision ?? null;
+  guideRevisionCounter += 1;
+  return { ok: true, replaced, added, error: null };
+}
+
+export function resetEffectiveGuideRows(): void {
+  if (guideOverlay === null) return;
+  guideOverlay = null;
+  guideDataRevision = null;
+  guideRevisionCounter += 1;
+}
 
 /** Aimant du guide, enrichi de ses cotes d'enveloppe si le catalogue les publie. */
 export interface GuideMagnetOption extends GuideMagnet {
@@ -165,15 +260,15 @@ const bodyOf = (id: string) => BARE_MAGNETS.find((m) => m.id === id)?.body ?? nu
  * les rapprocher ferait lire des plages d'une taille sur une autre. Une famille
  * absente du guide reste absente.
  */
-export function guideFamilyFor(sensorFamily: string, _guide = ACTIVATION_GUIDE): string {
+export function guideFamilyFor(sensorFamily: string, _guide = effectiveActivationGuide()): string {
   return sensorFamily;
 }
 /** Familles de capteurs réellement présentes dans le guide. */
-export function guideFamilies(guide = ACTIVATION_GUIDE): string[] {
+export function guideFamilies(guide = effectiveActivationGuide()): string[] {
   return [...new Set(guide.rows.map((r) => r.sensorFamily))].sort();
 }
 /** Le guide publie-t-il au moins une plage pour cette famille ? */
-export function hasGuideData(sensorFamily: string, guide = ACTIVATION_GUIDE): boolean {
+export function hasGuideData(sensorFamily: string, guide = effectiveActivationGuide()): boolean {
   const family = guideFamilyFor(sensorFamily, guide);
   return guide.rows.some((r) => r.sensorFamily === family);
 }
@@ -188,7 +283,7 @@ export function hasGuideData(sensorFamily: string, guide = ACTIVATION_GUIDE): bo
  */
 export function guideMagnetsFor(
   sensorFamily: string,
-  guide = ACTIVATION_GUIDE,
+  guide = effectiveActivationGuide(),
   shape?: GuideMagnet["shape"] | null,
 ): GuideMagnetOption[] {
   const family = guideFamilyFor(sensorFamily, guide);
@@ -200,7 +295,7 @@ export function guideMagnetsFor(
 /** Matériaux réellement documentés pour cette famille, avec leurs aimants. */
 export function guideMaterialsFor(
   sensorFamily: string,
-  guide = ACTIVATION_GUIDE,
+  guide = effectiveActivationGuide(),
   shape?: GuideMagnet["shape"] | null,
 ): { material: GuideMagnet["material"]; magnets: GuideMagnetOption[] }[] {
   const out: { material: GuideMagnet["material"]; magnets: GuideMagnetOption[] }[] = [];
@@ -214,7 +309,7 @@ export function guideMaterialsFor(
 /** Matériau publié d'un aimant du guide, ou `null` s'il n'y figure pas. */
 export function guideMagnetMaterial(
   magnetId: string,
-  guide = ACTIVATION_GUIDE,
+  guide = effectiveActivationGuide(),
 ): GuideMagnet["material"] | null {
   return guide.magnets.find((m) => m.id === magnetId)?.material ?? null;
 }
@@ -222,7 +317,7 @@ export function guideMagnetMaterial(
 export function guideRangesFor(
   sensorFamily: string,
   magnetId: string,
-  guide = ACTIVATION_GUIDE,
+  guide = effectiveActivationGuide(),
 ): GuideRange[] {
   const family = guideFamilyFor(sensorFamily, guide);
   return guide.rows.filter((r) => r.sensorFamily === family && r.magnetId === magnetId);
@@ -231,7 +326,7 @@ export function guideRangesFor(
 export function guideReferencesFor(
   sensorFamily: string,
   magnetId: string,
-  guide = ACTIVATION_GUIDE,
+  guide = effectiveActivationGuide(),
 ): string[] {
   return [...new Set(guideRangesFor(sensorFamily, magnetId, guide).map((r) => r.sensorReference))];
 }
@@ -239,7 +334,7 @@ export function guideReferencesFor(
 export function guideApproachesFor(
   sensorFamily: string,
   magnetId: string,
-  guide = ACTIVATION_GUIDE,
+  guide = effectiveActivationGuide(),
 ): string[] {
   return [...new Set(guideRangesFor(sensorFamily, magnetId, guide).map((r) => r.approachId))];
 }
@@ -265,7 +360,7 @@ export function guideSelectionFor(
   magnetId: string,
   approachId: string,
   preferredReference?: string | null,
-  guide = ACTIVATION_GUIDE,
+  guide = effectiveActivationGuide(),
 ): GuideSelection | null {
   const rows = guideRangesFor(sensorFamily, magnetId, guide).filter(
     (r) => r.approachId === approachId && usableRow(r),
@@ -281,7 +376,7 @@ export function guideSelectionFor(
 export function defaultGuideSelection(
   sensorFamily: string,
   magnetId: string,
-  guide = ACTIVATION_GUIDE,
+  guide = effectiveActivationGuide(),
 ): GuideSelection | null {
   for (const approachId of ["D1", "D3"]) {
     const found = guideSelectionFor(sensorFamily, magnetId, approachId, undefined, guide);
@@ -297,7 +392,7 @@ export function guideRange(
   sensorReference: string,
   magnetId: string,
   approachId: string,
-  guide = ACTIVATION_GUIDE,
+  guide = effectiveActivationGuide(),
 ): GuideRange | null {
   const family = guideFamilyFor(sensorFamily, guide);
   return (
@@ -337,7 +432,7 @@ export function guideIllustrativeMarks(
  */
 export function guideEconomicalMagnet(
   sensorFamily: string,
-  guide = ACTIVATION_GUIDE,
+  guide = effectiveActivationGuide(),
   shape?: GuideMagnet["shape"] | null,
 ): GuideMagnetOption | null {
   const magnets = guideMagnetsFor(sensorFamily, guide, shape);

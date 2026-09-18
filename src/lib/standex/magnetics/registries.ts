@@ -157,6 +157,7 @@ export const PUBLISHED_REGISTRY = readPublishedRegistry(rawReferences);
 export const COMPILED_PUBLISHED_REGISTRY: PublishedRegistry = PUBLISHED_REGISTRY;
 let effectiveOverlay: PublishedRegistry | null = null;
 let effectiveRevisionCounter = 0;
+let effectiveDataRevision: string | null = null;
 
 /** Clé métier d'une ligne : la combinaison EXACTE, contact compris. */
 export function publishedRowKey(r: {
@@ -173,13 +174,38 @@ export function publishedRowKey(r: {
 export function effectivePublishedRegistry(): PublishedRegistry {
   return effectiveOverlay ?? COMPILED_PUBLISHED_REGISTRY;
 }
-/** Compteur d'invalidation : il change à chaque application réussie. */
+/** Compteur d'invalidation LOCAL : il change à chaque application réussie. Ce
+ *  n'est pas une identité de données : pour tracer un export, utiliser
+ *  `effectiveRegistryRevisionLabel()`, qui porte la révision du serveur. */
 export function publishedRegistryRevision(): number {
   return effectiveRevisionCounter;
 }
 /** Origine du jeu effectif, pour l'afficher honnêtement. */
 export function effectiveRegistrySource(): "compiled" | "server" {
   return effectiveOverlay ? "server" : "compiled";
+}
+/**
+ * Étiquette de révision RÉELLE du jeu effectif, telle qu'elle doit figurer dans
+ * un export ou une provenance : la version compilée seule quand rien n'est
+ * appliqué, sinon la version compilée suivie de la révision DÉTERMINISTE
+ * renvoyée par le serveur (séquence d'écriture, unique à chaque écriture, y
+ * compris quand deux lignes différentes changent tour à tour).
+ *
+ * Les instantanés de dossiers déjà figés ne sont jamais réécrits : ils gardent
+ * l'étiquette qu'ils portaient au moment de leur gel.
+ */
+export function effectiveRegistryRevisionLabel(): string {
+  const base = COMPILED_PUBLISHED_REGISTRY.version;
+  return effectiveOverlay && effectiveDataRevision ? `${base}+detection.${effectiveDataRevision}` : base;
+}
+/** Étiquette de révision d'un registre donné : le jeu effectif porte la
+ *  révision serveur, tout autre jeu (compilé, instantané figé) garde la sienne. */
+export function registryRevisionLabel(registry: PublishedRegistry): string {
+  return registry === effectiveOverlay ? effectiveRegistryRevisionLabel() : registry.version;
+}
+/** Révision serveur appliquée, ou `null` si le jeu est purement compilé. */
+export function effectiveDataRevisionId(): string | null {
+  return effectiveOverlay ? effectiveDataRevision : null;
 }
 
 export interface EffectiveApplyResult {
@@ -196,23 +222,32 @@ export interface EffectiveApplyResult {
  * un jeu partiellement accepté serait une donnée inventée. Les brouillons et
  * les lignes incomplètes doivent avoir été écartés en amont (le serveur ne les
  * publie pas) ; s'il en arrive une, tout est refusé.
+ *
+ * @param dataRevision révision déterministe du serveur, conservée pour la
+ *        traçabilité des exports. Absente en test ou hors serveur.
  */
-export function applyEffectivePublishedRows(rows: readonly unknown[]): EffectiveApplyResult {
+export function applyEffectivePublishedRows(
+  rows: readonly unknown[],
+  dataRevision?: string | null,
+): EffectiveApplyResult {
   if (!Array.isArray(rows)) return { ok: false, replaced: 0, added: 0, error: "BAD_PAYLOAD" };
   const base = COMPILED_PUBLISHED_REGISTRY;
+  const compiledKeys = new Set(base.rows.map(publishedRowKey));
   const merged = new Map<string, PublishedRow>();
   for (const r of base.rows) merged.set(publishedRowKey(r), r);
+  // Ensemble SÉPARÉ des clés déjà vues DANS CET ENVOI : un doublon interne est
+  // refusé même quand la combinaison existe déjà dans le jeu compilé — sinon la
+  // seconde ligne écraserait silencieusement la première.
+  const incoming = new Set<string>();
   let replaced = 0,
     added = 0;
   for (const raw of rows) {
     if (!raw || typeof raw !== "object") return { ok: false, replaced: 0, added: 0, error: "BAD_ROW" };
     const r = raw as PublishedRow;
     const key = publishedRowKey(r as never);
-    if (merged.has(key) && !base.rows.some((b) => publishedRowKey(b) === key)) {
-      // Deux fois la même combinaison dans le même envoi : refus.
-      return { ok: false, replaced: 0, added: 0, error: "DUPLICATE_KEY" };
-    }
-    if (base.rows.some((b) => publishedRowKey(b) === key)) replaced += 1;
+    if (incoming.has(key)) return { ok: false, replaced: 0, added: 0, error: "DUPLICATE_KEY" };
+    incoming.add(key);
+    if (compiledKeys.has(key)) replaced += 1;
     else added += 1;
     merged.set(key, r);
   }
@@ -226,6 +261,7 @@ export function applyEffectivePublishedRows(rows: readonly unknown[]): Effective
   if (checked.version === "unavailable")
     return { ok: false, replaced: 0, added: 0, error: "INVALID_ROWS" };
   effectiveOverlay = checked;
+  effectiveDataRevision = dataRevision ?? null;
   effectiveRevisionCounter += 1;
   return { ok: true, replaced, added, error: null };
 }
@@ -234,6 +270,7 @@ export function applyEffectivePublishedRows(rows: readonly unknown[]): Effective
 export function resetEffectivePublishedRows(): void {
   if (effectiveOverlay === null) return;
   effectiveOverlay = null;
+  effectiveDataRevision = null;
   effectiveRevisionCounter += 1;
 }
 /** Compiled empty until source-defined active geometry is supplied; never populated with fixtures. */

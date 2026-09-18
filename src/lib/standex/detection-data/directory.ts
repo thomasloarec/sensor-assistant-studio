@@ -1,29 +1,63 @@
 /** Construction de l'annuaire affiché : jeu compilé, saisies serveur, et
  *  références réelles ENCORE SANS DONNÉE.
  *
+ *  Deux natures de données coexistent et ne sont JAMAIS mélangées :
+ *   - `distances` : vraies distances de commutation (activation / relâchement) ;
+ *   - `guide` : plages documentaires « up / to » de la brochure, qui ne sont pas
+ *     des seuils, ne sont jamais triées ni converties.
+ *
  *  Une référence du catalogue sans aucune ligne n'est pas cachée : elle apparaît
  *  avec l'état « à compléter », pour que l'ingénierie puisse la renseigner. Une
  *  ligne absente n'est jamais comblée par une valeur voisine.
  */
 import { COMPILED_PUBLISHED_REGISTRY } from "@/lib/standex/magnetics/registries";
+import { COMPILED_ACTIVATION_GUIDE } from "@/lib/standex/activation-guide";
 import {
   detectionKey,
+  guideRecordKey,
+  isRecordSimulatable,
   realSensors,
+  recordFromGuideRange,
   recordFromPublished,
-  isSimulatable,
   type DetectionOrigin,
   type DetectionRecord,
+  type GuideRecord,
 } from "./model";
+
+/** Nature de la donnée : la distinction est structurelle, pas cosmétique. */
+export type DetectionDataset = "distances" | "guide";
 
 export interface DirectoryEntry {
   key: string;
+  dataset: "distances";
   record: DetectionRecord;
   /** `compiled` : jeu livré ; `saved` : saisie serveur ; `missing` : à créer. */
   origin: DetectionOrigin;
   /** Vraies distances de commutation présentes et ordonnées. */
   complete: boolean;
-  /** Le moteur ne sait pas simuler ce contact : dit tel quel, jamais masqué. */
+  /** Le moteur ne sait pas simuler cette LIGNE : dit tel quel, jamais masqué. */
   simulatable: boolean;
+  /** Ligne réellement servie aux simulations à cet instant. */
+  active: boolean;
+  /**
+   * Brouillon proposé PAR-DESSUS une ligne livrée toujours active : l'annuaire
+   * doit distinguer la valeur de référence en vigueur et la proposition en
+   * cours. Un brouillon ne retire jamais la ligne livrée.
+   */
+  baseline: DetectionRecord | null;
+}
+
+export interface GuideDirectoryEntry {
+  key: string;
+  dataset: "guide";
+  record: GuideRecord;
+  origin: DetectionOrigin;
+  /** Au moins une borne imprimée ou une mention « non publié ». */
+  complete: boolean;
+  /** Ordre imprimé atypique : conservé tel quel, signalé, jamais trié. */
+  atypical: boolean;
+  active: boolean;
+  baseline: GuideRecord | null;
 }
 
 /** Ligne vide proposée pour une référence sans aucune donnée. */
@@ -54,32 +88,47 @@ export function emptyRecordFor(sensorFamily: string, sensorReference: string): D
 }
 
 const isComplete = (r: DetectionRecord) =>
-  r.pullInMm !== null && r.dropOutMm !== null && r.dropOutMm > r.pullInMm && r.status === "validated";
+  r.pullInMm !== null &&
+  r.dropOutMm !== null &&
+  r.dropOutMm > r.pullInMm &&
+  r.status === "validated";
 
 /**
  * @param saved lignes réellement enregistrées côté serveur (brouillons compris)
  */
 export function buildDirectory(saved: readonly DetectionRecord[]): DirectoryEntry[] {
   const entries = new Map<string, DirectoryEntry>();
+  const compiled = new Map<string, DetectionRecord>();
   for (const row of COMPILED_PUBLISHED_REGISTRY.rows) {
     const record = recordFromPublished(row);
     const key = detectionKey(record);
+    compiled.set(key, record);
     entries.set(key, {
       key,
+      dataset: "distances",
       record,
       origin: "compiled",
       complete: isComplete(record),
-      simulatable: isSimulatable(record.sensorFamily),
+      simulatable: isRecordSimulatable(record),
+      active: true,
+      baseline: null,
     });
   }
   for (const record of saved) {
     const key = detectionKey(record);
+    const base = compiled.get(key) ?? null;
+    const complete = isComplete(record);
     entries.set(key, {
       key,
+      dataset: "distances",
       record,
       origin: "saved",
-      complete: isComplete(record),
-      simulatable: isSimulatable(record.sensorFamily),
+      complete,
+      simulatable: isRecordSimulatable(record),
+      // Une saisie complète et validée est servie ; un brouillon ne l'est pas,
+      // et alors la ligne livrée de la MÊME combinaison reste en vigueur.
+      active: complete,
+      baseline: complete ? null : base,
     });
   }
   // Références réelles jamais documentées : visibles, à compléter.
@@ -89,10 +138,13 @@ export function buildDirectory(saved: readonly DetectionRecord[]): DirectoryEntr
     const record = emptyRecordFor(sensor.id, sensor.documentedAs ?? sensor.name);
     entries.set("missing/" + sensor.id, {
       key: "missing/" + sensor.id,
+      dataset: "distances",
       record,
       origin: "missing",
       complete: false,
-      simulatable: isSimulatable(sensor.id),
+      simulatable: isRecordSimulatable(record),
+      active: false,
+      baseline: null,
     });
   }
   return [...entries.values()].sort(
@@ -104,8 +156,58 @@ export function buildDirectory(saved: readonly DetectionRecord[]): DirectoryEntr
   );
 }
 
+const guideComplete = (r: GuideRecord) =>
+  r.status === "validated" &&
+  (r.upMm !== null || r.toMm !== null || r.upNote !== null || r.toNote !== null);
+const guideAtypical = (r: GuideRecord) => r.upMm !== null && r.toMm !== null && r.upMm > r.toMm;
+
+/** Annuaire du guide : lignes imprimées de la brochure, puis corrections. */
+export function buildGuideDirectory(saved: readonly GuideRecord[]): GuideDirectoryEntry[] {
+  const entries = new Map<string, GuideDirectoryEntry>();
+  const compiled = new Map<string, GuideRecord>();
+  for (const row of COMPILED_ACTIVATION_GUIDE.rows) {
+    const record = recordFromGuideRange(row);
+    const key = guideRecordKey(record);
+    compiled.set(key, record);
+    entries.set(key, {
+      key,
+      dataset: "guide",
+      record,
+      origin: "compiled",
+      complete: guideComplete(record),
+      atypical: guideAtypical(record),
+      active: true,
+      baseline: null,
+    });
+  }
+  for (const record of saved) {
+    const key = guideRecordKey(record);
+    const base = compiled.get(key) ?? null;
+    const complete = guideComplete(record);
+    entries.set(key, {
+      key,
+      dataset: "guide",
+      record,
+      origin: "saved",
+      complete,
+      atypical: guideAtypical(record),
+      active: complete,
+      baseline: complete ? null : base,
+    });
+  }
+  return [...entries.values()].sort(
+    (a, b) =>
+      a.record.sensorFamily.localeCompare(b.record.sensorFamily) ||
+      a.record.sensorReference.localeCompare(b.record.sensorReference) ||
+      a.record.magnetId.localeCompare(b.record.magnetId) ||
+      a.record.approachId.localeCompare(b.record.approachId),
+  );
+}
+
 export interface DirectoryFilters {
   search: string;
+  /** Nature de la donnée affichée. */
+  dataset: DetectionDataset;
   family: string;
   magnet: string;
   approach: string;
@@ -115,6 +217,7 @@ export interface DirectoryFilters {
 
 export const EMPTY_FILTERS: DirectoryFilters = {
   search: "",
+  dataset: "distances",
   family: "all",
   magnet: "all",
   approach: "all",
@@ -133,6 +236,27 @@ export function filterDirectory(
       const hay = [r.sensorFamily, r.sensorReference, r.magnetId, r.sensitivityClass]
         .join(" ")
         .toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    if (f.family !== "all" && r.sensorFamily !== f.family) return false;
+    if (f.magnet !== "all" && r.magnetId !== f.magnet) return false;
+    if (f.approach !== "all" && r.approachId !== f.approach) return false;
+    if (f.origin !== "all" && e.origin !== f.origin) return false;
+    if (f.completeness === "complete" && !e.complete) return false;
+    if (f.completeness === "incomplete" && e.complete) return false;
+    return true;
+  });
+}
+
+export function filterGuideDirectory(
+  entries: readonly GuideDirectoryEntry[],
+  f: DirectoryFilters,
+): GuideDirectoryEntry[] {
+  const q = f.search.trim().toLowerCase();
+  return entries.filter((e) => {
+    const r = e.record;
+    if (q !== "") {
+      const hay = [r.sensorFamily, r.sensorReference, r.magnetId].join(" ").toLowerCase();
       if (!hay.includes(q)) return false;
     }
     if (f.family !== "all" && r.sensorFamily !== f.family) return false;

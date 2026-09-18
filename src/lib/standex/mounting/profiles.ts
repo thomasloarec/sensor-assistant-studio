@@ -1,9 +1,10 @@
 import { transverseApproach } from "../housing-pose";
 import {
-  PUBLISHED_REGISTRY,
   effectivePublishedRegistry,
   publishedMagnetFamily,
   publishedReference,
+  publishedRegistryRevision,
+  registryRevisionLabel,
 } from "../magnetics/registries";
 import type { PublishedRegistry } from "../magnetics/registries";
 import type { Provenance } from "../magnetics/types";
@@ -149,20 +150,31 @@ export function mountingProfiles(registry: PublishedRegistry = effectivePublishe
           : "uncharacterised",
       geometry: "schematic",
       datumCharacterised: false,
-      revision: registry.version,
+      revision: registryRevisionLabel(registry),
       provenance: row.provenance,
     });
   }
   for (const p of byKey.values()) p.classes.sort();
   return [...byKey.values()].sort((a, b) => a.id.localeCompare(b.id));
 }
-export const PROFILES = mountingProfiles();
+/* Profils EFFECTIFS : reconstruits dès que le jeu de distances change (saisie
+   Standex appliquée, retour au jeu compilé). Un tableau figé au chargement du
+   module empêcherait une combinaison fraîchement complétée — MK22, MK26… —
+   d'obtenir un profil, donc toute détection. Le cache est indexé sur la
+   révision du registre : jamais servi périmé. */
+let profileCache: { revision: number; profiles: MountingProfile[] } | null = null;
+export function currentMountingProfiles(): MountingProfile[] {
+  const revision = publishedRegistryRevision();
+  if (profileCache === null || profileCache.revision !== revision)
+    profileCache = { revision, profiles: mountingProfiles() };
+  return profileCache.profiles;
+}
 
 export function profileFor(
   sensorId: string,
   magnetModel: string,
   approachId: string,
-  profiles: MountingProfile[] = PROFILES,
+  profiles: MountingProfile[] = currentMountingProfiles(),
 ): MountingProfile | null {
   // Identité exacte, à une seule exception documentée : les variantes d'une même
   // famille d'aimant publiée (M21P/1 et M21P/2 pour la famille « M21/P(1,2) »)
@@ -315,7 +327,7 @@ export function registryCoverage(
 ): RegistryCoverage {
   const uniq = (v: string[]) => [...new Set(v)].sort();
   return {
-    revision: registry.version,
+    revision: registryRevisionLabel(registry),
     rows: registry.rows.length,
     families: uniq(registry.rows.map((r) => r.sensorFamily)),
     approaches: uniq(registry.rows.map((r) => r.approachId)),
