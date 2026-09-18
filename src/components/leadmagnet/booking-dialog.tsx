@@ -85,10 +85,8 @@ export function shiftWeek(monday: Date, delta: number, unit: "week" | "month"): 
     d.setDate(d.getDate() + delta * 7);
     return weekStart(d);
   }
-  // Le mois affiché est celui de la majorité de la semaine, donc celui du jeudi.
-  const thursday = new Date(d);
-  thursday.setDate(thursday.getDate() + 3);
-  return firstMondayInMonth(new Date(thursday.getFullYear(), thursday.getMonth() + delta, 1));
+  // Le mois affiché est celui du lundi de la semaine (libellé monthLabel(monday)).
+  return firstMondayInMonth(new Date(d.getFullYear(), d.getMonth() + delta, 1));
 }
 
 /** Un jour n'est proposé que s'il lui reste au moins un créneau futur. */
