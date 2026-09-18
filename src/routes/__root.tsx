@@ -140,9 +140,12 @@ function RootComponent() {
   }, [locale]);
   /* Données de détection effectives : chargées une fois par session, dans le
      navigateur. Tant que le serveur n'a pas répondu, le jeu compilé sert tel
-     quel ; aucun écran ne prétend disposer de données serveur. */
+     quel ; aucun écran ne prétend disposer de données serveur. Un onglet resté
+     ouvert se remet à jour au retour de focus : une saisie faite ailleurs ne
+     laisse pas cette session simuler indéfiniment sur des données périmées. */
   useEffect(() => {
     void loadDetectionData();
+    return watchDetectionDataFreshness();
   }, []);
 
   return (
