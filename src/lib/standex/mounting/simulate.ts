@@ -128,17 +128,22 @@ export interface IllustrativeBounds {
   nearMm: number;
   farMm: number;
 }
-export function illustrativeMarks(bounds?: IllustrativeBounds | null): [number, number] {
-  if (
-    bounds &&
+/** Vrai quand des bornes de plage RÉELLEMENT publiées sont fournies : dans ce
+ *  cas, aucun plafond générique ne vient les tronquer. */
+export function hasIllustrativeBounds(bounds?: IllustrativeBounds | null): boolean {
+  return (
+    !!bounds &&
     Number.isFinite(bounds.nearMm) &&
     Number.isFinite(bounds.farMm) &&
     bounds.nearMm > 0 &&
     bounds.farMm > 0
-  )
-    return [bounds.nearMm, bounds.farMm];
+  );
+}
+export function illustrativeMarks(bounds?: IllustrativeBounds | null): [number, number] {
+  if (hasIllustrativeBounds(bounds)) return [bounds!.nearMm, bounds!.farMm];
   return [ILLUSTRATIVE_PULL_IN_MM, ILLUSTRATIVE_DROP_OUT_MM];
 }
+
 
 /**
  * Raisons qui interdisent toute commutation, même illustrative.
