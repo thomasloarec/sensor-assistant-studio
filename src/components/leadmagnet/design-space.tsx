@@ -2477,8 +2477,9 @@ export function DesignSpace({
                 ? msg("Plage du guide : {0} à {1} mm — {2} · {3}", [
                     formatMm(card.guideUpMm),
                     formatMm(card.guideToMm),
-                    card.guideReference ?? "",
-                    card.guideApproach ?? "",
+                    card.guideReference!,
+                    card.guideApproach!,
+
                   ])
                 : t(card.hasGuideRange ? "Plage du guide disponible" : "Distances à mesurer avec Standex")}
             </span>
