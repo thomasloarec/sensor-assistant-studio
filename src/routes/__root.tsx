@@ -10,7 +10,7 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
-import { loadDetectionData } from "@/lib/standex/detection-data/store";
+import { loadDetectionData, watchDetectionDataFreshness } from "@/lib/standex/detection-data/store";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
