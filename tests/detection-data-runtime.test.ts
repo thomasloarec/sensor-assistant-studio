@@ -104,7 +104,7 @@ describe("Une combinaison complétée alimente vraiment les moteurs", () => {
       expect(profile).not.toBeNull();
       expect(profile!.classes).toContain("B");
       expect(publishedReference(family, "B", MAGNET, "D1")?.pullInMm).toBe(9.5);
-      expect(currentMountingProfiles().some((p) => p.sensorId === family)).toBe(true);
+      expect(currentMountingProfiles().some((p) => p.sensorFamily === family)).toBe(true);
 
       const after = simulateMounting(workshopFor(family));
       expect(after.coverage).toBe("covered");
