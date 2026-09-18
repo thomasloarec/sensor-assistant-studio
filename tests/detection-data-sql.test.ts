@@ -16,6 +16,10 @@ import { detectionSavePayload, isSavedRowId } from "@/lib/standex/detection-data
 import type { DetectionRecord } from "@/lib/standex/detection-data/model";
 
 const MIGRATION = readFileSync("supabase/schema/migration_v1.9_detection_data.sql", "utf8");
+const SHAPE_MIGRATION = readFileSync(
+  "supabase/schema/migration_v1.10_shape_compatibility.sql",
+  "utf8",
+);
 
 const ADMIN = "11111111-1111-1111-1111-111111111111";
 const STAFF = "22222222-2222-2222-2222-222222222222";
@@ -496,6 +500,120 @@ describe("enregistrement d'une ligne compilée puis d'une ligne réellement enre
         "select public.lead_detection_directory() as r",
       );
       expect(all.rows[0]!.r.rows).toHaveLength(1);
+    } finally {
+      await db.close();
+    }
+  });
+});
+
+describe("migration 1.10 exécutée sur le schéma 1.9 inchangé", () => {
+  test("quarantaine, audit, lecture effective et RPC de forme sont atomiques", async () => {
+    const db = await bootstrap();
+    try {
+      await asRole(db, "authenticated", ADMIN);
+      const incompatible = {
+        ...VALID,
+        sensorFamily: "MK03",
+        sensorReference: "MK03-1A66B-500W",
+        magnetId: "M02",
+        pullInMm: 15,
+        dropOutMm: 17.5,
+        sourceType: "datasheet",
+        sourceRef: "datasheet-reed-sensor-series-mk03.pdf p1",
+      };
+      await save(db, incompatible, null);
+
+      await db.exec("reset role");
+      await db.exec(SHAPE_MIGRATION);
+
+      const quarantined = await db.query<{
+        status: string;
+        pull_in_mm: string;
+        drop_out_mm: string;
+        source_type: string;
+        source_ref: string;
+        version: number;
+      }>(`select status, pull_in_mm, drop_out_mm, source_type, source_ref, version
+            from lead.detection_rows
+           where sensor_family = 'MK03' and magnet_id = 'M02'`);
+      expect(quarantined.rows).toHaveLength(1);
+      expect(quarantined.rows[0]).toMatchObject({
+        status: "draft",
+        source_type: "datasheet",
+        source_ref: "datasheet-reed-sensor-series-mk03.pdf p1",
+        version: 2,
+      });
+      expect(Number(quarantined.rows[0]!.pull_in_mm)).toBe(15);
+      expect(Number(quarantined.rows[0]!.drop_out_mm)).toBe(17.5);
+
+      const audit = await db.query<{
+        action: string;
+        old_value: { status: string; pull_in_mm: string } | null;
+        new_value: { status: string; pull_in_mm: string; version: number };
+      }>(`select action, old_value, new_value
+            from lead.detection_audit
+           where row_id = (select id from lead.detection_rows
+                            where sensor_family = 'MK03' and magnet_id = 'M02')
+           order by id`);
+      expect(audit.rows).toHaveLength(2);
+      expect(audit.rows.map((row) => row.action)).toEqual([
+        "detection_row_created",
+        "detection_row_updated",
+      ]);
+      expect(audit.rows[1]!.old_value?.status).toBe("validated");
+      expect(Number(audit.rows[1]!.old_value?.pull_in_mm)).toBe(15);
+      expect(audit.rows[1]!.new_value.status).toBe("draft");
+      expect(audit.rows[1]!.new_value.version).toBe(2);
+
+      await asRole(db, "anon", null);
+      const effective = await db.query<{ r: { version: string; rows: unknown[] } }>(
+        "select public.lead_detection_effective() as r",
+      );
+      expect(effective.rows[0]!.r.version).toBe("1.10");
+      expect(effective.rows[0]!.r.rows).toEqual([]);
+
+      await asRole(db, "authenticated", STAFF);
+      await expect(
+        save(db, { ...VALID, sensorFamily: "MK15", magnetId: "4003004003" }, null),
+      ).rejects.toThrow("NOT_ALLOWED");
+
+      await asRole(db, "authenticated", ADMIN);
+      for (const payload of [
+        { ...VALID, sensorFamily: "MK03", sensorReference: "MK03-1A66B-500W", magnetId: "M02" },
+        { ...VALID, sensorFamily: "MK15", sensorReference: "MK15-B-X", magnetId: "4003004003" },
+      ])
+        await expect(save(db, payload, null)).rejects.toThrow("DETECTION_SHAPE_MISMATCH");
+
+      const tubular = await save(
+        db,
+        {
+          ...VALID,
+          sensorFamily: "MK03",
+          sensorReference: "MK03-1A66B-500W",
+          magnetId: "4003004003",
+          approachId: "D3",
+        },
+        null,
+      );
+      const block = await save(db, VALID, null);
+      expect((tubular.rows[0] as { r: { status: string } }).r.status).toBe("validated");
+      expect((block.rows[0] as { r: { status: string } }).r.status).toBe("validated");
+
+      const served = (
+        await db.query<{ r: { rows: { sensorFamily: string; magnetId: string }[] } }>(
+          "select public.lead_detection_effective() as r",
+        )
+      ).rows[0]!.r.rows;
+      expect(served.map((row) => [row.sensorFamily, row.magnetId]).sort()).toEqual([
+        ["MK03", "4003004003"],
+        ["MK22", "HF3225-14.95X10X5"],
+      ]);
+
+      await db.exec("reset role");
+      const versions = await db.query<{ version: string }>(
+        "select version from lead.schema_migrations order by version",
+      );
+      expect(versions.rows.map((row) => row.version)).toEqual(["1.10", "1.9"]);
     } finally {
       await db.close();
     }
