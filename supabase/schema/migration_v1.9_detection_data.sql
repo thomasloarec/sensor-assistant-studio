@@ -219,6 +219,12 @@ insert into lead.detection_magnet_allow (magnet_id) values
   ('HF2826-6.7X6.7X2.7')
 on conflict (magnet_id) do nothing;
 
+-- Variantes documentées de la famille M21, telles qu'imprimées : consultables et
+-- saisissables pour les PLAGES du guide, refusées comme clé de distance.
+update lead.detection_magnet_allow
+   set family_alias = true, family_of = 'M21'
+ where magnet_id in ('M21P/1','M21P/2');
+
 -- Révision DÉTERMINISTE du jeu effectif : incrémentée dans la MÊME transaction
 -- que chaque écriture. Deux écritures distinctes ne peuvent pas partager une
 -- révision, même si elles portent sur des lignes différentes.
@@ -405,6 +411,12 @@ begin
   if not exists (select 1 from lead.detection_magnet_allow a
                   where a.magnet_id = _payload->>'magnetId') then
     raise exception 'DETECTION_UNKNOWN_MAGNET' using errcode = '22023';
+  end if;
+  -- Une variante lue via une famille documentée ne peut pas porter de distance :
+  -- la ligne serait acceptée puis ignorée par le simulateur, qui lit la famille.
+  if exists (select 1 from lead.detection_magnet_allow a
+              where a.magnet_id = _payload->>'magnetId' and a.family_alias) then
+    raise exception 'DETECTION_ALIAS_MAGNET' using errcode = '22023';
   end if;
   if coalesce(_payload->>'classKind','') not in ('sensitivity','switch_model')
      or coalesce(_payload->>'contactForm','') not in ('1A','1B','1C')
