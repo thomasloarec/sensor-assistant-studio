@@ -15,7 +15,9 @@ import { GuideMaterials } from "./guide-materials";
 import {
   guideIllustrativeMarks,
   guideRangesFor,
+  guideSelectionFor,
 } from "@/lib/standex/activation-guide";
+
 import { standardShapeForSensor } from "@/lib/standex/magnet-recommendation";
 import { useLocale } from "@/lib/i18n/react";
 import { AppHeader } from "@/components/standex/app-header";
