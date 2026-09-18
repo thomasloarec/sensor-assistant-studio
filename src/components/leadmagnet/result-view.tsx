@@ -37,7 +37,8 @@ const VERDICT_OVERLINE: Readonly<Record<TestedPair["verdict"], string>> = {
   expected: "Détection prévue",
   none: "Pas de détection sur ce cycle",
   undocumented: "Position à mesurer",
-  unpublished: "Position à mesurer",
+  // Aucune ligne publiée pour CE couple : ce n'est pas un problème de position.
+  unpublished: "Distances de ce couple non publiées",
 };
 
 /** Chronologie du cycle, en LECTURE SEULE, reconstruite depuis les valeurs
@@ -129,7 +130,14 @@ export function ResultView({
   const couple = `${t("Le capteur")} ${pair.sensorId} + ${t("l’aimant")} ${pair.magnetId}`;
   const positive = pair.verdict === "expected";
   const guide = pair.guideReference ? guideRange(pair.sensorId, pair.guideReference, pair.magnetId, pair.approach) : null;
-  const canReplace = pair.verdict === "none" || pair.documentedPosition === false || (pair.documentedPosition === undefined && pair.verdict === "undocumented");
+  /** Replacer l'aimant n'a de sens que si la POSITION est en cause. Quand aucune
+   *  ligne n'est publiée pour ce couple, déplacer l'aimant ne change rien : on ne
+   *  laisse donc pas entendre que la personne a bougé quelque chose. */
+  const canReplace =
+    !(pair.verdict === "unpublished" && !guide) &&
+    (pair.verdict === "none" ||
+      pair.documentedPosition === false ||
+      (pair.documentedPosition === undefined && pair.verdict === "undocumented"));
   const approachLabel =
     pair.approach === "F1"
       ? t("Face à face")

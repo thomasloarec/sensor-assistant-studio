@@ -27395,15 +27395,6 @@
     "Progetto inviato",
     "プロジェクトを送信しました"
   ],
-  "La brochure d'activation Standex (édition 10/2025) ne publie aucune plage pour cette famille de capteurs : la simulation reste illustrative, à valider par essais.": [
-    "The Standex activation brochure (10/2025 edition) publishes no range for this sensor family: the simulation stays illustrative and must be validated by testing.",
-    "Standex 激活手册（2025年10月版）未公布该传感器系列的范围：该仿真仅为示意，须通过实测验证。",
-    "Die Standex-Aktivierungsbroschüre (Ausgabe 10/2025) veröffentlicht für diese Sensorfamilie keinen Bereich: Die Simulation bleibt illustrativ und muss durch Versuche bestätigt werden.",
-    "El folleto de activación Standex (edición 10/2025) no publica ningún rango para esta familia de sensores: la simulación es ilustrativa y debe validarse mediante ensayos.",
-    "Брошюра активации Standex (издание 10/2025) не публикует диапазон для этого семейства датчиков: моделирование остаётся иллюстративным и требует проверки испытаниями.",
-    "La brochure di attivazione Standex (edizione 10/2025) non pubblica alcun intervallo per questa famiglia di sensori: la simulazione resta illustrativa e va validata con prove.",
-    "Standex のアクティベーション資料（2025年10月版）にはこのセンサーファミリーの範囲が記載されていません。シミュレーションは参考であり、試験による確認が必要です。"
-  ],
   "Dans quel équipement, et pour quoi faire ?": [
     "In which equipment, and what for?",
     "用于哪种设备，目的是什么？",
@@ -27565,5 +27556,32 @@
     "Номер проекта",
     "Riferimento del progetto",
     "プロジェクト参照番号"
+  ],
+  "Distances de ce couple non publiées": [
+    "Distances not published for this pair",
+    "该组合的距离未公布",
+    "Abstände für dieses Paar nicht veröffentlicht",
+    "Distancias de esta pareja no publicadas",
+    "Расстояния для этой пары не опубликованы",
+    "Distanze di questa coppia non pubblicate",
+    "この組み合わせの距離は非公開"
+  ],
+  "Fiche produit disponible · distances de ce couple non publiées": [
+    "Product datasheet available · distances not published for this pair",
+    "有产品资料 · 该组合的距离未公布",
+    "Produktdatenblatt verfügbar · Abstände für dieses Paar nicht veröffentlicht",
+    "Ficha de producto disponible · distancias de esta pareja no publicadas",
+    "Техническая карта доступна · расстояния для этой пары не опубликованы",
+    "Scheda prodotto disponibile · distanze di questa coppia non pubblicate",
+    "製品データシートあり · この組み合わせの距離は非公開"
+  ],
+  "Fiche produit disponible pour ce capteur, mais les distances de ce couple ne sont pas publiées dans le guide d'activation intégré (édition 10/2025). La simulation reste illustrative, à valider par essais avec Standex.": [
+    "A product datasheet is available for this sensor, but the distances for this pair are not published in the built-in activation guide (10/2025 edition). The simulation stays illustrative and must be validated by testing with Standex.",
+    "该传感器有产品资料，但内置激活指南（2025年10月版）未公布该组合的距离。仿真仅作示意，须与 Standex 一起通过实测验证。",
+    "Für diesen Sensor liegt ein Produktdatenblatt vor, die Abstände dieses Paares sind im integrierten Aktivierungsleitfaden (Ausgabe 10/2025) jedoch nicht veröffentlicht. Die Simulation bleibt illustrativ und ist durch Versuche mit Standex zu bestätigen.",
+    "Existe una ficha de producto para este sensor, pero las distancias de esta pareja no se publican en la guía de activación integrada (edición 10/2025). La simulación es solo ilustrativa y debe validarse mediante ensayos con Standex.",
+    "Для этого датчика есть техническая карта, но расстояния этой пары не опубликованы во встроенном руководстве по активации (выпуск 10/2025). Моделирование остаётся иллюстративным и требует подтверждения испытаниями со Standex.",
+    "Per questo sensore è disponibile una scheda prodotto, ma le distanze di questa coppia non sono pubblicate nella guida di attivazione integrata (edizione 10/2025). La simulazione resta illustrativa, da validare con prove insieme a Standex.",
+    "このセンサーの製品データシートはありますが、この組み合わせの距離は内蔵のアクティベーションガイド（2025年10月版）には掲載されていません。シミュレーションは参考であり、Standex との実測で検証が必要です。"
   ]
 }
