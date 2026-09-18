@@ -163,12 +163,12 @@ export function consoleLayout(props: DossierConsoleProps): {
   };
 }
 
-/** Référence lisible du projet, telle que le client la voit sur son PDF :
- *  lue dans le contenu réellement enregistré, jamais recalculée autrement. */
-function snapshotReference(snapshot: unknown): string | null {
+/** Identifiant local COMPLET du brouillon, tel qu'il est imprimé sur le PDF
+ *  d'avant envoi : lu dans le contenu réellement enregistré, jamais recalculé. */
+function snapshotLocalId(snapshot: unknown): string | null {
   const dto = snapshot as { id?: unknown; dossier?: { id?: unknown } } | null | undefined;
   const id = typeof dto?.id === "string" ? dto.id : dto?.dossier?.id;
-  return typeof id === "string" ? projectReference(id) : null;
+  return typeof id === "string" && id.trim() ? id : null;
 }
 
 export function DossierConsole(props: DossierConsoleProps) {
@@ -614,22 +614,34 @@ export function DossierConsole(props: DossierConsoleProps) {
             <>
               <div className="flex flex-wrap items-center gap-2">
                 <h2 className="t-title-m">{view.dossier.title}</h2>
-                {/* Référence définitive : celle de l'identifiant serveur du projet. */}
+                {/* Identifiant unique du projet en base : affiché en entier,
+                    jamais tronqué. L'abrégé n'est qu'un confort de lecture. */}
+                <Badge
+                  variant="outline"
+                  className="t-metric"
+                  title={`${t("Identifiant unique du projet (base Standex)")} : ${view.dossier.id}`}
+                >
+                  {view.dossier.id}
+                </Badge>
                 {projectReference(view.dossier.id) ? (
-                  <Badge variant="outline" className="t-metric" title={t("Référence du projet")}>
-                    {projectReference(view.dossier.id)}
-                  </Badge>
-                ) : null}
-                {/* Référence provisoire imprimée sur le brouillon PDF du client,
-                    lue dans le contenu réellement envoyé : elle permet de
-                    retrouver ce projet à partir d'un PDF d'avant envoi. */}
-                {snapshotReference(lastRevision?.snapshot) ? (
                   <Badge
                     variant="secondary"
                     className="t-metric"
-                    title={t("Référence provisoire imprimée sur le brouillon du client")}
+                    title={t("Abrégé lisible (raccourci, pas une clé unique)")}
                   >
-                    {t("brouillon")} {snapshotReference(lastRevision?.snapshot)}
+                    {projectReference(view.dossier.id)}
+                  </Badge>
+                ) : null}
+                {/* Identifiant local imprimé sur le brouillon PDF du client, lu
+                    dans le contenu réellement envoyé : il permet de retrouver ce
+                    projet à partir d'un PDF d'avant envoi. */}
+                {snapshotLocalId(lastRevision?.snapshot) ? (
+                  <Badge
+                    variant="secondary"
+                    className="t-metric"
+                    title={t("Identifiant complet du brouillon local (non enregistré)")}
+                  >
+                    {t("brouillon")} {snapshotLocalId(lastRevision?.snapshot)}
                   </Badge>
                 ) : null}
                 <Badge variant="outline">version {view.dossier.current_revision}</Badge>

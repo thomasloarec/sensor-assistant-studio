@@ -8,6 +8,8 @@
  * zéro implicite, jamais une marge calculée sur un prix absent, jamais une somme
  * mélangeant deux devises.
  */
+import { projectReference } from "./project-reference";
+
 
 export const CRM_STAGES = [
   "lead",
@@ -423,7 +425,10 @@ export function matchesSearch(project: CrmProject, search: string): boolean {
     project.projectName,
     project.title,
     project.countryCode,
+    // L'identifiant complet reste la clé de recherche ; l'abrégé imprimé sur le
+    // PDF du client est ajouté pour qu'il soit trouvable tel qu'il est lu.
     project.dossierId,
+    projectReference(project.dossierId),
   ]
     .map(norm)
     .join(" ");

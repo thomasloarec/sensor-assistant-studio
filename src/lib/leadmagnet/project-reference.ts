@@ -41,8 +41,19 @@ export function projectReference(dossierId: string | null | undefined): string |
 }
 
 export interface ProjectIdentity {
-  /** Référence lisible à afficher, ou null si aucun identifiant n'est utilisable. */
+  /**
+   * Abrégé LISIBLE de l'identifiant (`SST-…`). Ce n'est pas une clé : il ne
+   * garde que la fin de l'identifiant, donc deux projets différents pourraient
+   * théoriquement produire le même abrégé. Il n'est jamais utilisé seul pour
+   * désigner un projet.
+   */
   reference: string | null;
+  /** Identifiant complet, jamais tronqué : c'est lui qui identifie le projet. */
+  fullId: string | null;
+  /** `server` = UUID unique en base ; `local` = brouillon de cet onglet. */
+  idKind: "server" | "local" | "none";
+  /** Identifiant local du brouillon, conservé même après enregistrement. */
+  localId: string | null;
   /** Vrai tant que le projet n'existe pas côté serveur. */
   provisional: boolean;
 }
@@ -55,9 +66,16 @@ export function projectIdentity(
   serverDossierId: string | null | undefined,
   localDossierId: string | null | undefined,
 ): ProjectIdentity {
-  const server = projectReference(serverDossierId);
-  if (server) return { reference: server, provisional: false };
-  return { reference: projectReference(localDossierId), provisional: true };
+  const local = typeof localDossierId === "string" && localDossierId.trim() ? localDossierId : null;
+  const server = typeof serverDossierId === "string" && serverDossierId.trim() ? serverDossierId : null;
+  const full = server ?? local;
+  return {
+    reference: projectReference(full),
+    fullId: full,
+    idKind: server ? "server" : local ? "local" : "none",
+    localId: local,
+    provisional: !server,
+  };
 }
 
 // i18n-canonical: libellés traduits au rendu et à l'export.
@@ -65,6 +83,10 @@ export const REFERENCE_LABEL = "Référence du projet";
 export const PROVISIONAL_REFERENCE_LABEL = "Référence provisoire (brouillon non enregistré)";
 export const PROVISIONAL_REFERENCE_NOTE =
   "Ce projet n'est pas encore enregistré chez Standex : cette référence est provisoire. La référence définitive est attribuée à l'envoi, et cette référence provisoire est conservée dans le projet transmis pour retrouver ce brouillon.";
+/** L'abrégé est un confort de lecture, jamais la clé d'un projet. */
+export const SHORT_ALIAS_LABEL = "Abrégé lisible (raccourci, pas une clé unique)";
+export const UNIQUE_ID_LABEL = "Identifiant unique du projet (base Standex)";
+export const LOCAL_DRAFT_ID_LABEL = "Identifiant complet du brouillon local (non enregistré)";
 
 /** Morceau de titre utilisable dans un nom de fichier, jamais vide. */
 export function titleSlug(title: string | null | undefined): string {
@@ -80,9 +102,10 @@ export function titleSlug(title: string | null | undefined): string {
 }
 
 /**
- * Nom du fichier PDF : nom du projet, référence, révision. Un brouillon non
- * enregistré porte `brouillon` dans son nom : le fichier ne prétend pas
- * désigner un projet existant côté Standex.
+ * Nom du fichier PDF : nom du projet, IDENTIFIANT COMPLET (jamais tronqué, pour
+ * que le fichier désigne un seul projet), révision. Un brouillon non enregistré
+ * porte `brouillon` dans son nom : le fichier ne prétend pas désigner un projet
+ * existant côté Standex.
  */
 export function projectPdfFilename(
   title: string | null | undefined,
@@ -91,10 +114,11 @@ export function projectPdfFilename(
   serverDossierId: string | null | undefined = null,
 ): string {
   const identity = projectIdentity(serverDossierId, dossierId);
+  const fullSlug = (identity.fullId ?? "").replace(/[^A-Za-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
   return (
     [
       titleSlug(title),
-      identity.reference ?? null,
+      fullSlug || null,
       identity.provisional ? "brouillon" : null,
       `r${revision}`,
     ]
