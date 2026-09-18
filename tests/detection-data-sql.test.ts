@@ -63,6 +63,7 @@ async function bootstrap(): Promise<PGlite> {
       end $$;
     grant usage on schema auth to anon, authenticated;
     grant execute on function auth.uid() to anon, authenticated;
+    insert into lead.schema_migrations(version) values ('1.8');
   `);
   await db.exec(MIGRATION);
   return db;
@@ -618,7 +619,7 @@ describe("migration 1.10 exécutée sur le schéma 1.9 inchangé", () => {
       const versions = await db.query<{ version: string }>(
         "select version from lead.schema_migrations order by version",
       );
-      expect(versions.rows.map((row) => row.version)).toEqual(["1.10", "1.9"]);
+      expect(versions.rows.map((row) => row.version)).toEqual(["1.10", "1.8", "1.9"]);
     } finally {
       await db.close();
     }
