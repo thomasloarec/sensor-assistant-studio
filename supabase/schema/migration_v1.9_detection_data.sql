@@ -438,13 +438,35 @@ begin
     raise exception 'DETECTION_BAD_PAYLOAD' using errcode = '22023';
   end if;
 
-  select * into cur from lead.detection_rows
-   where sensor_family = _payload->>'sensorFamily'
-     and sensitivity_class = _payload->>'sensitivityClass'
-     and contact_form = _payload->>'contactForm'
-     and magnet_id = _payload->>'magnetId'
-     and approach_id = _payload->>'approachId'
-   for update;
+  -- Identité de la ligne : quand l'écran envoie un identifiant, la ligne est
+  -- localisée par CET identifiant, jamais par la clé métier recomposée. Sinon
+  -- une clé modifiée dans le panneau pointerait sur une AUTRE ligne et
+  -- l'écraserait si les versions coïncidaient.
+  if nullif(_payload->>'id','') is not null then
+    select * into cur from lead.detection_rows
+     where id = (_payload->>'id')::uuid
+     for update;
+    if cur.id is null then
+      raise exception 'DETECTION_MISSING_ROW' using errcode = '22023';
+    end if;
+    -- La clé métier est IMMUABLE sur une ligne existante. Une autre combinaison
+    -- est une nouvelle ligne, créée explicitement, jamais un renommage discret.
+    if cur.sensor_family <> _payload->>'sensorFamily'
+       or cur.sensitivity_class <> _payload->>'sensitivityClass'
+       or cur.contact_form <> _payload->>'contactForm'
+       or cur.magnet_id <> _payload->>'magnetId'
+       or cur.approach_id <> _payload->>'approachId' then
+      raise exception 'DETECTION_KEY_LOCKED' using errcode = '22023';
+    end if;
+  else
+    select * into cur from lead.detection_rows
+     where sensor_family = _payload->>'sensorFamily'
+       and sensitivity_class = _payload->>'sensitivityClass'
+       and contact_form = _payload->>'contactForm'
+       and magnet_id = _payload->>'magnetId'
+       and approach_id = _payload->>'approachId'
+     for update;
+  end if;
 
   if cur.id is null then
     if _expected_version is not null then
