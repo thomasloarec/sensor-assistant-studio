@@ -35,10 +35,18 @@ export interface PairCard {
   /** Distance de fermeture maximale PUBLIÉE pour ce couple, toutes classes de
    * sensibilité et approches confondues. `null` = aucune ligne publiée. */
   maxPullInMm: number | null;
+  /** Plage RÉELLEMENT publiée pour la variante et l'approche par défaut de ce
+   *  couple. Ce sont les colonnes « up » et « to » du guide, jamais des seuils
+   *  de fermeture ou de réouverture. `null` = rien de publié. */
+  guideReference: string | null;
+  guideApproach: string | null;
+  guideUpMm: number | null;
+  guideToMm: number | null;
   hasGuideRange?: boolean;
   /** Matériau lisible de l'aimant proposé (« Ferrite », « AlNiCo »), quand le
    * guide le publie. Le code de référence reste affiché à part. */
   materialLabel: string | null;
+
 }
 
 const FIXING_LABEL: Readonly<Record<string, string>> = {
