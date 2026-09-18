@@ -14,9 +14,19 @@ import {
   publishedReference,
   resetEffectivePublishedRows,
 } from "../src/lib/standex/magnetics/registries";
-import { applyDetectionRecords, resetDetectionData } from "../src/lib/standex/detection-data/store";
+import {
+  applyDetectionRecords,
+  detectionDataSnapshot,
+  detectionDataSource,
+  resetDetectionData,
+} from "../src/lib/standex/detection-data/store";
 import type { DetectionRecord, GuideRecord } from "../src/lib/standex/detection-data/model";
-import { isRecordSimulatable } from "../src/lib/standex/detection-data/model";
+import {
+  hasErrors,
+  isRecordSimulatable,
+  parseDecimal,
+  validateDetectionRecord,
+} from "../src/lib/standex/detection-data/model";
 import { currentMountingProfiles, profileFor } from "../src/lib/standex/mounting/profiles";
 import { simulateMounting } from "../src/lib/standex/mounting/simulate";
 import { DEFAULT_WORKSHOP, pairDemonstration, simulateCycle } from "../src/lib/standex/magnetic-workshop";
@@ -192,5 +202,56 @@ describe("Plages du guide : saisie documentaire, sémantique intacte", () => {
     const before = guideRange("MK15", "MK15-B-X", MAGNET, "D1");
     applyDetectionRecords([], [guide({ status: "draft", upMm: 1, toMm: 2 })]);
     expect(guideRange("MK15", "MK15-B-X", MAGNET, "D1")).toEqual(before);
+  });
+});
+
+describe("État du magasin : honnêteté du chargement et des refus", () => {
+  test("un jeu refusé n'est pas compté comme retenu et se déclare périmé", () => {
+    expect(
+      applyDetectionRecords([distance(), distance({ pullInMm: 20, dropOutMm: 19 })]),
+    ).toBe(false);
+    const status = detectionDataSnapshot();
+    expect(status.state).toBe("error");
+    expect(status.savedRows).toBe(0);
+    expect(status.stale).toBe(true);
+    // Le refus est ENTIER : aucune des deux lignes n'entre dans les moteurs.
+    expect(profileFor("MK22", MAGNET, "D1")).toBeNull();
+  });
+
+  test("un jeu accepté déclare le nombre réellement retenu et la révision serveur", () => {
+    expect(applyDetectionRecords([distance()], [guide()], "7/2")).toBe(true);
+    const status = detectionDataSnapshot();
+    expect(status.state).toBe("ready");
+    expect(status.savedRows).toBe(1);
+    expect(status.savedGuideRows).toBe(1);
+    expect(status.stale).toBe(false);
+    expect(status.serverVersion).toBe("7/2");
+    expect(status.revisionLabel).toContain("7/2");
+  });
+
+  test("une remise à zéro rend la main au jeu compilé et remet l'état au départ", () => {
+    applyDetectionRecords([distance()], [], "9/0");
+    resetDetectionData();
+    expect(detectionDataSnapshot().state).toBe("idle");
+    expect(detectionDataSnapshot().savedRows).toBe(0);
+    expect(effectivePublishedRegistry()).toBe(COMPILED_PUBLISHED_REGISTRY);
+    expect(detectionDataSource()).toBe("compiled");
+  });
+});
+
+describe("Saisie : virgule décimale et valeurs refusées", () => {
+  test("une frappe en cours n'est jamais transformée en valeur", () => {
+    expect(parseDecimal("15,")).toBe("invalid");
+    expect(parseDecimal("-")).toBe("invalid");
+    expect(parseDecimal("abc")).toBe("invalid");
+    expect(parseDecimal("15,4")).toBe(15.4);
+    expect(parseDecimal("-12,5")).toBe(-12.5);
+    expect(parseDecimal("")).toBeNull();
+  });
+
+  test("une ligne validée sans les deux distances est refusée avec un message de champ", () => {
+    const errors = validateDetectionRecord(distance({ status: "validated", dropOutMm: null }));
+    expect(hasErrors(errors)).toBe(true);
+    expect(errors.dropOutMm).toBeTruthy();
   });
 });
