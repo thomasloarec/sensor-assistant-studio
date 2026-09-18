@@ -118,7 +118,7 @@ create table if not exists lead.detection_magnet_allow (
 alter table lead.detection_sensor_allow enable row level security;
 alter table lead.detection_magnet_allow enable row level security;
 
-insert into lead.detection_sensor_allow (sensor_family, guide_only) values
+insert into lead.detection_sensor_allow (sensor_family) values
   ('MK01'),
   ('MK15'),
   ('MK16'),
