@@ -1,7 +1,8 @@
 import { housingYawDeg, transverseApproach } from "./housing-pose";
 import { BARE_MAGNETS, PACKAGED_MAGNET_IDS } from "./magnet-catalog";
 import { pairedMagnetModel } from "./paired-magnets";
-import { defaultMagnetFor } from "./default-pairs";
+import { defaultMagnetFor, normalizedMagnetFor } from "./default-pairs";
+import { isShapeIncompatible } from "./shape-compatibility";
 /** Magnetic workshop V0.3. Geometry, field illustration and switching are separate.
  * Reference distances are typical published values; education is NOT a product model.
  */
@@ -236,6 +237,18 @@ export function parseWorkshopConfig(value: unknown): WorkshopConfig | null {
     (x["targetStart"] as number) >= (x["targetEnd"] as number)
   )
     return null;
+  /* Couple enregistré AVANT la règle de compatibilité de forme (un ancien
+     fichier « mode référence » portait MK03 + M02, aimant bloc sur corps
+     tubulaire) : l'aimant est ramené au défaut du capteur. Le fichier n'est pas
+     refusé et aucune distance n'est reprise de l'aimant écarté. */
+  if (
+    typeof x["magnetModel"] === "string" &&
+    x["magnetModel"] !== "generic" &&
+    isShapeIncompatible(x["sensorId"] as string, x["magnetModel"])
+  ) {
+    x["magnetModel"] = defaultMagnetFor(x["sensorId"] as string);
+    x["guideReference"] = null;
+  }
   // Allow only schema keys; ignore potential result/provenance properties on imported objects.
   return Object.fromEntries(
     Object.keys(DEFAULT_WORKSHOP).map((k) => [k, x[k]]),
@@ -317,7 +330,10 @@ export function applyPairSelection(
   magnetId?: string,
 ): WorkshopConfig {
   const fake = isFictitiousSensor(sensorId);
-  const magnetModel = fake ? "generic" : (magnetId ?? defaultMagnetFor(sensorId));
+  /* Règle de compatibilité de FORME : un aimant demandé dont la forme contredit
+     celle du capteur est ramené au défaut du capteur. Rien n'est converti, aucune
+     distance n'est reprise de l'aimant écarté. */
+  const magnetModel = fake ? "generic" : normalizedMagnetFor(sensorId, magnetId);
   const classes = publishedClasses(sensorId, magnetModel);
   const approaches = approachChoicesFor(sensorId, magnetModel);
   let geometry =

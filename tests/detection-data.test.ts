@@ -9,7 +9,9 @@ import { afterEach, describe, expect, test } from "bun:test";
 import {
   COMPILED_PUBLISHED_REGISTRY,
   applyEffectivePublishedRows,
+  effectiveFullRegistry,
   effectivePublishedRegistry,
+  shapeSuppressedRowKeys,
   publishedRegistryRevision,
   publishedReference,
   publishedRowsForCouple,
@@ -208,7 +210,9 @@ describe("Données effectives et simulations", () => {
   });
 
   test("une ligne enregistrée remplace la ligne compilée de MÊME combinaison", () => {
-    const compiled = COMPILED_PUBLISHED_REGISTRY.rows[0]!;
+    // Une ligne livrée dont les formes sont compatibles : elle alimente les
+    // simulations, donc une saisie de même combinaison doit la remplacer.
+    const compiled = effectivePublishedRegistry().rows[0]!;
     const changed = recordFromPublished(compiled);
     changed.pullInMm = compiled.pullInMm + 1.5;
     changed.dropOutMm = compiled.pullInMm + 3;
@@ -222,7 +226,7 @@ describe("Données effectives et simulations", () => {
       compiled.approachId,
     );
     expect(found?.pullInMm).toBe(compiled.pullInMm + 1.5);
-    expect(effectivePublishedRegistry().rows.length).toBe(COMPILED_PUBLISHED_REGISTRY.rows.length);
+    expect(effectivePublishedRegistry().rows.length).toBe(effectiveFullRegistry().rows.length - shapeSuppressedRowKeys().length);
   });
 
   test("un brouillon n'alimente jamais une simulation", () => {
@@ -250,13 +254,17 @@ describe("Données effectives et simulations", () => {
     };
     const result = applyEffectivePublishedRows([bad]);
     expect(result.ok).toBe(false);
-    expect(effectivePublishedRegistry()).toBe(COMPILED_PUBLISHED_REGISTRY);
+    // Le jeu effectif est le jeu livré filtré des formes contradictoires :
+    // on compare donc la source, pas l'identité de l'objet filtré.
+    expect(effectiveFullRegistry()).toBe(COMPILED_PUBLISHED_REGISTRY);
   });
 
   test("le retour au jeu compilé est complet", () => {
     applyDetectionRecords([record({ sensorFamily: "MK15", magnetId: "HF3225-14.95X10X5" })]);
     resetEffectivePublishedRows();
-    expect(effectivePublishedRegistry()).toBe(COMPILED_PUBLISHED_REGISTRY);
+    // Le jeu effectif est le jeu livré filtré des formes contradictoires :
+    // on compare donc la source, pas l'identité de l'objet filtré.
+    expect(effectiveFullRegistry()).toBe(COMPILED_PUBLISHED_REGISTRY);
   });
 
   test("les plages documentaires du guide ne bougent pas", () => {

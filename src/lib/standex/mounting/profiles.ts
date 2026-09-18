@@ -1,4 +1,5 @@
 import { transverseApproach } from "../housing-pose";
+import { isShapeIncompatible } from "../shape-compatibility";
 import {
   effectivePublishedRegistry,
   publishedMagnetFamily,
@@ -122,8 +123,12 @@ const AXES: Record<string, { axis: Vec3; plane: "XZ" | "YZ" }> = {
 export function mountingProfiles(registry: PublishedRegistry = effectivePublishedRegistry()) {
   const byKey = new Map<string, MountingProfile>();
   for (const row of registry.rows) {
-    // Toutes les lignes du registre sont représentées : familles, classes et
-    // approches. L'absence d'axe documenté ne supprime pas la ligne, elle la
+    /* Couple de FORMES incompatibles au sens de la règle d'application : aucun
+       profil n'est produit, donc aucune géométrie ni aucun seuil. La ligne reste
+       lisible dans l'annuaire des données de détection, marquée exclue. */
+    if (isShapeIncompatible(row.sensorFamily, row.magnetId)) continue;
+    // Toutes les autres lignes du registre sont représentées : familles, classes
+    // et approches. L'absence d'axe documenté ne supprime pas la ligne, elle la
     // marque comme non localisée.
     const geo = AXES[row.approachId] ?? null;
     const id = [row.sensorFamily, row.magnetId, row.approachId].join("/");
@@ -202,6 +207,9 @@ export function thresholdsFor(
   // Une distance documentée ne devient un seuil géométrique que si l'approche
   // possède un axe : sinon elle reste une lecture documentaire.
   if (profile.localisation !== "axis_documented") return null;
+  // Deuxième verrou de la règle de forme : même un profil transmis directement
+  // ne peut pas produire de seuil sur un couple de formes incompatibles.
+  if (isShapeIncompatible(profile.sensorFamily, profile.magnetId)) return null;
   const row = publishedReference(
     profile.sensorFamily,
     sensitivityClass,

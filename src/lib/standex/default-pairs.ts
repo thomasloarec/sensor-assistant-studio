@@ -13,6 +13,7 @@ import {
   standardShapeForSensor,
 } from "./magnet-recommendation";
 import type { SensorModel } from "./sensor-catalog";
+import { isShapeCompatible, isShapeIncompatible } from "./shape-compatibility";
 
 /**
  * Couple capteur → aimant par défaut, source unique de vérité.
@@ -104,13 +105,21 @@ export function policyMagnetsFor(
   sensorId: string,
   registry: PublishedRegistry = effectivePublishedRegistry(),
 ): string[] {
+  return documentedMagnetsFor(sensorId, registry).filter((id) => proposable(sensorId, id));
+}
+/**
+ * Aimant PROPOSABLE pour ce capteur. La règle de compatibilité de forme
+ * (capteur tubulaire ↔ aimant tubulaire, capteur non tubulaire ↔ aimant bloc)
+ * est appliquée AVANT toute autre considération, y compris pour un couple
+ * dédié : elle ne se contourne pas. Une forme inconnue n'est pas proposée.
+ */
+function proposable(sensorId: string, magnetId: string): boolean {
+  if (!isShapeCompatible(sensorId, magnetId)) return false;
+  if (dedicatedFor(sensorId, magnetId)) return true;
+  const housed = packagedMagnet(magnetId);
+  if (housed) return housingFor(magnetId, sensorId) === sensorId;
   const wanted = standardShapeForSensor(sensorId);
-  return documentedMagnetsFor(sensorId, registry).filter((id) => {
-    if (dedicatedFor(sensorId, id)) return true;
-    const housed = packagedMagnet(id);
-    if (housed) return housingFor(id, sensorId) === sensorId;
-    return (BARE_MAGNETS.find((m) => m.id === id)?.shape ?? wanted) === wanted;
-  });
+  return (BARE_MAGNETS.find((m) => m.id === magnetId)?.shape ?? wanted) === wanted;
 }
 /**
  * Aimant par défaut d'un capteur. Priorité au couple dédié demandé (MK02/M02,
@@ -129,12 +138,29 @@ export function defaultMagnetFor(
   sensorId: string,
   registry: PublishedRegistry = effectivePublishedRegistry(),
 ): string {
+  const dedicated = DEFAULT_PAIRS[sensorId];
   return (
-    DEFAULT_PAIRS[sensorId] ??
+    (dedicated && isShapeCompatible(sensorId, dedicated) ? dedicated : undefined) ??
     guideFallbackMagnet(sensorId) ??
     policyMagnetsFor(sensorId, registry)[0] ??
     REFERENCE_CYLINDER
   );
+}
+/**
+ * Aimant retenu pour un couple de TRAVAIL, à partir d'un choix déjà enregistré.
+ * Un choix dont la FORME contredit la règle de compatibilité est ramené au
+ * défaut du capteur : aucune distance n'est reprise, aucune valeur n'est
+ * convertie d'une forme vers l'autre. Un choix compatible n'est jamais réécrit.
+ */
+export function normalizedMagnetFor(
+  sensorId: string,
+  magnetId: string | null | undefined,
+  registry: PublishedRegistry = effectivePublishedRegistry(),
+): string {
+  if (!magnetId) return defaultMagnetFor(sensorId, registry);
+  return isShapeIncompatible(sensorId, magnetId)
+    ? defaultMagnetFor(sensorId, registry)
+    : magnetId;
 }
 /** Compatibilité : même décision, à partir du modèle de capteur. */
 export const preferredMagnet = (sensor: SensorModel): string => defaultMagnetFor(sensor.id);
@@ -175,13 +201,7 @@ export function magnetOptionsFor(
   registry: PublishedRegistry = effectivePublishedRegistry(),
   current?: string,
 ): string[] {
-  const wanted = standardShapeForSensor(sensorId);
-  const allowed = (id: string): boolean => {
-    if (dedicatedFor(sensorId, id)) return true;
-    const housed = packagedMagnet(id);
-    if (housed) return housingFor(id, sensorId) === sensorId;
-    return (BARE_MAGNETS.find((m) => m.id === id)?.shape ?? wanted) === wanted;
-  };
+  const allowed = (id: string): boolean => proposable(sensorId, id);
   const ordered = [
     ...recommendedMagnetsFor(sensorId, registry),
     ...PACKAGED_MAGNET_IDS.filter(allowed),

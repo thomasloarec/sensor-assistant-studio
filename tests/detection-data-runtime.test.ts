@@ -10,6 +10,7 @@ import { afterEach, describe, expect, test } from "bun:test";
 import {
   COMPILED_PUBLISHED_REGISTRY,
   applyEffectivePublishedRows,
+  effectiveFullRegistry,
   effectivePublishedRegistry,
   effectiveRegistryRevisionLabel,
   publishedReference,
@@ -237,7 +238,9 @@ describe("État du magasin : honnêteté du chargement et des refus", () => {
     resetDetectionData();
     expect(detectionDataSnapshot().state).toBe("idle");
     expect(detectionDataSnapshot().savedRows).toBe(0);
-    expect(effectivePublishedRegistry()).toBe(COMPILED_PUBLISHED_REGISTRY);
+    // Le jeu effectif est le jeu livré filtré des formes contradictoires :
+    // on compare donc la source, pas l'identité de l'objet filtré.
+    expect(effectiveFullRegistry()).toBe(COMPILED_PUBLISHED_REGISTRY);
     expect(detectionDataSource()).toBe("compiled");
   });
 });
@@ -282,7 +285,9 @@ describe("Variante d'aimant : jamais acceptée puis ignorée", () => {
     expect(applied.error).toBe("ALIAS_MAGNET");
     // Rien n'a bougé : la lecture rend toujours la ligne livrée.
     expect(publishedReference("MK21", "A", "M21P/1", "D1")).toEqual(before);
-    expect(effectivePublishedRegistry()).toBe(COMPILED_PUBLISHED_REGISTRY);
+    // Le jeu effectif est le jeu livré filtré des formes contradictoires :
+    // on compare donc la source, pas l'identité de l'objet filtré.
+    expect(effectiveFullRegistry()).toBe(COMPILED_PUBLISHED_REGISTRY);
   });
 
   test("la même donnée saisie sous la famille documentée agit vraiment", () => {

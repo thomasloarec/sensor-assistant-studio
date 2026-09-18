@@ -3,6 +3,7 @@ import rawPhysics from "@/data/studio-v2/physics.json";
 import type { Provenance, MagneticBody, Vec3 } from "./types";
 import type { Observation } from "./calibration";
 import { z } from "zod";
+import { isShapeIncompatible } from "../shape-compatibility";
 /**
  * Approches publiées. D1 à D5 sont les approches latérales des tables Academy.
  * `F1` est l'approche FRONTALE des fiches MK36/MK37/MK38 : deux collerettes se
@@ -170,8 +171,43 @@ export function publishedRowKey(r: {
   return [r.sensorFamily, r.sensitivityClass, r.contactForm, r.magnetId, r.approachId].join("/");
 }
 
-/** Jeu réellement lu par les simulations : compilé, puis saisies validées. */
+/* Lignes dont la FORME du couple contredit la règle de compatibilité de
+   l'application (capteur tubulaire ↔ aimant tubulaire, capteur non tubulaire ↔
+   aimant bloc). Elles restent dans le jeu COMPILÉ, donc lisibles et traçables
+   dans l'annuaire, mais elles sont retirées du jeu EFFECTIF : aucun moteur, ni
+   aucune proposition, ne peut les présenter comme actives. Aucune valeur n'est
+   convertie ni déplacée vers un autre aimant. */
+/* Le cache retient aussi le tableau de lignes d'origine : si une source remplace
+   ses lignes, le filtre est recalculé au lieu de servir une copie périmée. */
+const shapeFiltered = new WeakMap<
+  PublishedRegistry,
+  { from: PublishedRegistry["rows"]; out: PublishedRegistry }
+>();
+function withoutIncompatibleShapes(registry: PublishedRegistry): PublishedRegistry {
+  const cached = shapeFiltered.get(registry);
+  if (cached && cached.from === registry.rows) return cached.out;
+  const rows = registry.rows.filter((r) => !isShapeIncompatible(r.sensorFamily, r.magnetId));
+  const out: PublishedRegistry =
+    rows.length === registry.rows.length ? registry : { ...registry, rows };
+  shapeFiltered.set(registry, { from: registry.rows, out });
+  if (out !== registry) shapeFiltered.set(out, { from: out.rows, out });
+  return out;
+}
+/** Clés des lignes compilées écartées des moteurs par la règle de forme. */
+export function shapeSuppressedRowKeys(
+  registry: PublishedRegistry = COMPILED_PUBLISHED_REGISTRY,
+): string[] {
+  return registry.rows
+    .filter((r) => isShapeIncompatible(r.sensorFamily, r.magnetId))
+    .map(publishedRowKey);
+}
+/** Jeu réellement lu par les simulations : compilé, puis saisies validées,
+ *  toujours débarrassé des couples de formes incompatibles. */
 export function effectivePublishedRegistry(): PublishedRegistry {
+  return withoutIncompatibleShapes(effectiveOverlay ?? COMPILED_PUBLISHED_REGISTRY);
+}
+/** Le jeu effectif COMPLET, sans filtre de forme : lecture documentaire seule. */
+export function effectiveFullRegistry(): PublishedRegistry {
   return effectiveOverlay ?? COMPILED_PUBLISHED_REGISTRY;
 }
 /** Compteur d'invalidation LOCAL : il change à chaque application réussie. Ce
@@ -201,7 +237,10 @@ export function effectiveRegistryRevisionLabel(): string {
 /** Étiquette de révision d'un registre donné : le jeu effectif porte la
  *  révision serveur, tout autre jeu (compilé, instantané figé) garde la sienne. */
 export function registryRevisionLabel(registry: PublishedRegistry): string {
-  return registry === effectiveOverlay ? effectiveRegistryRevisionLabel() : registry.version;
+  const overlay = effectiveOverlay;
+  const isEffective =
+    overlay !== null && (registry === overlay || registry === shapeFiltered.get(overlay)?.out);
+  return isEffective ? effectiveRegistryRevisionLabel() : registry.version;
 }
 /** Révision serveur appliquée, ou `null` si le jeu est purement compilé. */
 export function effectiveDataRevisionId(): string | null {
@@ -250,6 +289,10 @@ export function applyEffectivePublishedRows(
     // famille documentée elle-même.
     if (isPublishedFamilyAlias(r.magnetId))
       return { ok: false, replaced: 0, added: 0, error: "ALIAS_MAGNET" };
+    // Couple de FORMES incompatibles : refusé à l'entrée du jeu effectif. Une
+    // telle ligne serait acceptée puis écartée des moteurs, donc trompeuse.
+    if (isShapeIncompatible(r.sensorFamily, r.magnetId))
+      return { ok: false, replaced: 0, added: 0, error: "SHAPE_MISMATCH" };
     const key = publishedRowKey(r as never);
     if (incoming.has(key)) return { ok: false, replaced: 0, added: 0, error: "DUPLICATE_KEY" };
     incoming.add(key);
@@ -510,7 +553,9 @@ export function publishedPair(
   sensitivityClass: string,
   approachId: string,
   registry = effectivePublishedRegistry(),
-  magnetId = "M02",
+  // MK03 est tubulaire : la ligne lisible par défaut est celle du cylindre publié.
+  // Le bloc M02 reste au registre livré mais ne sert aucune simulation MK03.
+  magnetId = "4003004003",
 ): readonly [number, number] | null {
   return publishedPairFor("MK03", sensitivityClass, approachId, magnetId, registry);
 }

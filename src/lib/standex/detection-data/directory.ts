@@ -11,7 +11,8 @@
  *  ligne absente n'est jamais comblée par une valeur voisine.
  */
 import { COMPILED_PUBLISHED_REGISTRY } from "@/lib/standex/magnetics/registries";
-import { COMPILED_ACTIVATION_GUIDE } from "@/lib/standex/activation-guide";
+import { COMPILED_ACTIVATION_GUIDE, guideShapeAllowed } from "@/lib/standex/activation-guide";
+import { isShapeIncompatible } from "@/lib/standex/shape-compatibility";
 import {
   detectionKey,
   guideRecordKey,
@@ -40,6 +41,13 @@ export interface DirectoryEntry {
   /** Ligne réellement servie aux simulations à cet instant. */
   active: boolean;
   /**
+   * Couple écarté par la règle de compatibilité de FORME de l'application
+   * (capteur tubulaire ↔ aimant tubulaire, sinon bloc). La ligne reste lisible
+   * et traçable, sa valeur n'est ni modifiée ni transférée, mais elle n'est
+   * jamais active ni simulée.
+   */
+  excluded: boolean;
+  /**
    * Brouillon proposé PAR-DESSUS une ligne livrée toujours active : l'annuaire
    * doit distinguer la valeur de référence en vigueur et la proposition en
    * cours. Un brouillon ne retire jamais la ligne livrée.
@@ -57,6 +65,8 @@ export interface GuideDirectoryEntry {
   /** Ordre imprimé atypique : conservé tel quel, signalé, jamais trié. */
   atypical: boolean;
   active: boolean;
+  /** Couple écarté par la règle de forme : plage lisible, jamais démonstrable. */
+  excluded: boolean;
   baseline: GuideRecord | null;
 }
 
@@ -102,6 +112,7 @@ export function buildDirectory(saved: readonly DetectionRecord[]): DirectoryEntr
   for (const row of COMPILED_PUBLISHED_REGISTRY.rows) {
     const record = recordFromPublished(row);
     const key = detectionKey(record);
+    const excluded = isShapeIncompatible(record.sensorFamily, record.magnetId);
     compiled.set(key, record);
     entries.set(key, {
       key,
@@ -110,7 +121,10 @@ export function buildDirectory(saved: readonly DetectionRecord[]): DirectoryEntr
       origin: "compiled",
       complete: isComplete(record),
       simulatable: isRecordSimulatable(record),
-      active: true,
+      // Une ligne livrée dont les formes se contredisent n'est plus servie aux
+      // moteurs : elle reste affichée, avec sa valeur d'origine, marquée exclue.
+      active: !excluded,
+      excluded,
       baseline: null,
     });
   }
@@ -118,6 +132,7 @@ export function buildDirectory(saved: readonly DetectionRecord[]): DirectoryEntr
     const key = detectionKey(record);
     const base = compiled.get(key) ?? null;
     const complete = isComplete(record);
+    const excluded = isShapeIncompatible(record.sensorFamily, record.magnetId);
     entries.set(key, {
       key,
       dataset: "distances",
@@ -127,8 +142,9 @@ export function buildDirectory(saved: readonly DetectionRecord[]): DirectoryEntr
       simulatable: isRecordSimulatable(record),
       // Une saisie complète et validée est servie ; un brouillon ne l'est pas,
       // et alors la ligne livrée de la MÊME combinaison reste en vigueur.
-      active: complete,
-      baseline: complete ? null : base,
+      active: complete && !excluded,
+      excluded,
+      baseline: complete && !excluded ? null : base,
     });
   }
   // Références réelles jamais documentées : visibles, à compléter.
@@ -144,6 +160,7 @@ export function buildDirectory(saved: readonly DetectionRecord[]): DirectoryEntr
       complete: false,
       simulatable: isRecordSimulatable(record),
       active: false,
+      excluded: false,
       baseline: null,
     });
   }
@@ -177,6 +194,9 @@ export function buildGuideDirectory(saved: readonly GuideRecord[]): GuideDirecto
       complete: guideComplete(record),
       atypical: guideAtypical(record),
       active: true,
+      /* La plage imprimée reste DOCUMENTAIRE et visible même quand les formes se
+         contredisent : seule la démonstration illustrative lui est interdite. */
+      excluded: !guideShapeAllowed(record.sensorFamily, record.magnetId),
       baseline: null,
     });
   }
@@ -191,6 +211,7 @@ export function buildGuideDirectory(saved: readonly GuideRecord[]): GuideDirecto
       origin: "saved",
       complete,
       atypical: guideAtypical(record),
+      excluded: !guideShapeAllowed(record.sensorFamily, record.magnetId),
       active: complete,
       baseline: complete ? null : base,
     });
@@ -244,6 +265,8 @@ export function filterDirectory(
     if (f.origin !== "all" && e.origin !== f.origin) return false;
     if (f.completeness === "complete" && !e.complete) return false;
     if (f.completeness === "incomplete" && e.complete) return false;
+    // Couples écartés par la règle de forme : consultables à part, jamais actifs.
+    if (f.completeness === "excluded" && !e.excluded) return false;
     return true;
   });
 }
@@ -265,6 +288,8 @@ export function filterGuideDirectory(
     if (f.origin !== "all" && e.origin !== f.origin) return false;
     if (f.completeness === "complete" && !e.complete) return false;
     if (f.completeness === "incomplete" && e.complete) return false;
+    // Couples écartés par la règle de forme : consultables à part, jamais actifs.
+    if (f.completeness === "excluded" && !e.excluded) return false;
     return true;
   });
 }
