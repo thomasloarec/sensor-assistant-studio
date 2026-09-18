@@ -57,7 +57,6 @@ import {
   hasErrors,
   hasGuideErrors,
   detectionMagnetIds,
-  knownMagnetIds,
   magnetFamilyScope,
   parseDecimal,
   realSensors,
@@ -976,6 +975,11 @@ function EditPanel({
             </Select>
           )}
         </Field>
+        {scope.length > 0 ? (
+          <p className="t-caption md:col-span-3" data-testid="dd-magnet-scope">
+            {t("Portée de cette famille documentée :")} {scope.join(", ")}
+          </p>
+        ) : null}
         <Field id="dd-f-approach" label={t("Approche")} error={errors.approachId}>
           {(id) => (
             <Select
