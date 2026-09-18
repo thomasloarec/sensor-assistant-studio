@@ -86,6 +86,8 @@ export const Route = createFileRoute("/standex/detection-data")({
 
 const mm = (v: number | null) => (v === null ? "—" : v.toFixed(2).replace(/\.00$/, ""));
 const raw = (v: number | null) => (v === null ? "" : String(v));
+/** Fenêtre de rendu : assez pour lire, assez peu pour rester fluide. */
+const PAGE_SIZE = 50;
 
 /** Brouillon en cours : les champs numériques restent des CHAÎNES pendant la
  *  frappe. Sans cela, « 15, » serait refusé à chaque touche et il deviendrait
