@@ -478,25 +478,206 @@ returns jsonb language sql security invoker
 set search_path = public, lead_priv, pg_temp as $$
   select lead_priv.detection_save_row(p_payload, p_expected_version); $$;
 
+
+-- ----------------------------------------------------------------------------
+-- 5bis. Plages du guide : lecture effective, annuaire, écriture
+--    Sémantique DOCUMENTAIRE conservée de bout en bout : aucune borne n'est
+--    réordonnée, aucune n'est transformée en seuil de commutation.
+-- ----------------------------------------------------------------------------
+create or replace function lead_priv.guide_effective()
+returns jsonb language sql stable security definer
+set search_path = lead, lead_priv, pg_temp as $$
+  select jsonb_build_object(
+    'version', '1.9',
+    'dataRevision', (select guide_revision::text from lead.detection_state where singleton),
+    'rows', coalesce((select jsonb_agg(jsonb_build_object(
+        'id', g.id, 'page', g.page,
+        'sensorFamily', g.sensor_family, 'sensorReference', g.sensor_reference,
+        'magnetId', g.magnet_id, 'approachId', g.approach_id,
+        'upMm', g.up_mm, 'toMm', g.to_mm,
+        'upNote', g.up_note, 'toNote', g.to_note,
+        'sourceRef', g.source_ref, 'enteredOn', g.entered_on,
+        'rowVersion', g.version)
+        order by g.sensor_reference, g.magnet_id, g.approach_id)
+      from lead.guide_rows g
+      where g.status = 'validated'
+        and (g.up_mm is not null or g.to_mm is not null)), '[]'::jsonb));
+$$;
+
+create or replace function public.lead_guide_effective()
+returns jsonb language sql stable security invoker
+set search_path = public, lead_priv, pg_temp as $$
+  select lead_priv.guide_effective(); $$;
+
+create or replace function lead_priv.guide_directory()
+returns jsonb language plpgsql stable security definer
+set search_path = lead, lead_priv, pg_temp as $$
+declare u uuid := lead_priv.crm_require_admin();
+begin
+  return jsonb_build_object('version', '1.9', 'actor', u,
+    'rows', coalesce((select jsonb_agg(jsonb_build_object(
+        'id', g.id, 'page', g.page,
+        'sensorFamily', g.sensor_family, 'sensorReference', g.sensor_reference,
+        'magnetId', g.magnet_id, 'approachId', g.approach_id,
+        'upMm', g.up_mm, 'toMm', g.to_mm,
+        'upNote', g.up_note, 'toNote', g.to_note,
+        'status', g.status, 'sourceRef', g.source_ref, 'enteredOn', g.entered_on,
+        'note', g.note, 'rowVersion', g.version, 'updatedAt', g.updated_at,
+        'updatedBy', lead_priv.crm_actor_name(g.updated_by))
+        order by g.sensor_reference, g.magnet_id, g.approach_id)
+      from lead.guide_rows g), '[]'::jsonb));
+end $$;
+
+create or replace function public.lead_guide_directory()
+returns jsonb language sql stable security invoker
+set search_path = public, lead_priv, pg_temp as $$
+  select lead_priv.guide_directory(); $$;
+
+create or replace function lead_priv.guide_save_row(_payload jsonb, _expected_version integer)
+returns jsonb language plpgsql security definer
+set search_path = lead, lead_priv, pg_temp as $$
+declare
+  u uuid := lead_priv.crm_require_admin();
+  cur lead.guide_rows;
+  res lead.guide_rows;
+  old_json jsonb;
+  up_v numeric := nullif(_payload->>'upMm','')::numeric;
+  to_v numeric := nullif(_payload->>'toMm','')::numeric;
+  st text := coalesce(nullif(_payload->>'status',''), 'draft');
+begin
+  if _payload is null or jsonb_typeof(_payload) <> 'object' then
+    raise exception 'GUIDE_BAD_PAYLOAD' using errcode = '22023';
+  end if;
+  if st not in ('draft','validated') then
+    raise exception 'GUIDE_BAD_STATUS' using errcode = '22023';
+  end if;
+  -- Famille connue du guide OU du catalogue : la brochure documente des
+  -- familles que le site ne propose pas, elles restent consultables.
+  if not exists (select 1 from lead.detection_sensor_allow a
+                  where a.sensor_family = _payload->>'sensorFamily') then
+    raise exception 'GUIDE_UNKNOWN_SENSOR' using errcode = '22023';
+  end if;
+  if not exists (select 1 from lead.detection_magnet_allow a
+                  where a.magnet_id = _payload->>'magnetId') then
+    raise exception 'GUIDE_UNKNOWN_MAGNET' using errcode = '22023';
+  end if;
+  if coalesce(_payload->>'approachId','') not in ('D1','D2','D3','D4','D5')
+     or coalesce(_payload->>'upNote','not_published') not in ('not_published','below_zero')
+     or coalesce(_payload->>'toNote','not_published') not in ('not_published','below_zero')
+     or length(btrim(coalesce(_payload->>'sensorReference',''))) not between 1 and 64
+     or length(btrim(coalesce(_payload->>'sourceRef',''))) < 8
+     or length(coalesce(_payload->>'note','')) > 2000
+     or (up_v is not null and up_v < 0) or (to_v is not null and to_v < 0)
+     or coalesce(nullif(_payload->>'enteredOn','')::date, current_date) > current_date then
+    raise exception 'GUIDE_BAD_PAYLOAD' using errcode = '22023';
+  end if;
+  if st = 'validated' and up_v is null and to_v is null then
+    raise exception 'GUIDE_INCOMPLETE' using errcode = '22023';
+  end if;
+
+  select * into cur from lead.guide_rows
+   where sensor_reference = _payload->>'sensorReference'
+     and magnet_id = _payload->>'magnetId'
+     and approach_id = _payload->>'approachId'
+   for update;
+
+  if cur.id is null then
+    if _expected_version is not null then
+      raise exception 'GUIDE_CONFLICT:0' using errcode = '40001';
+    end if;
+    insert into lead.guide_rows (page, sensor_family, sensor_reference, magnet_id,
+      approach_id, up_mm, to_mm, up_note, to_note, status, source_ref, entered_on,
+      note, updated_by)
+    values (nullif(_payload->>'page','')::integer, _payload->>'sensorFamily',
+      _payload->>'sensorReference', _payload->>'magnetId', _payload->>'approachId',
+      up_v, to_v, nullif(_payload->>'upNote',''), nullif(_payload->>'toNote',''), st,
+      _payload->>'sourceRef',
+      coalesce(nullif(_payload->>'enteredOn','')::date, current_date),
+      nullif(_payload->>'note',''), u)
+    returning * into res;
+    insert into lead.guide_audit (row_id, actor, action, old_value, new_value)
+    values (res.id, u, 'guide_row_created', null, to_jsonb(res));
+  else
+    if _expected_version is null or cur.version <> _expected_version then
+      raise exception 'GUIDE_CONFLICT:%', cur.version using errcode = '40001';
+    end if;
+    old_json := to_jsonb(cur);
+    update lead.guide_rows set
+      page = nullif(_payload->>'page','')::integer,
+      sensor_family = _payload->>'sensorFamily',
+      up_mm = up_v, to_mm = to_v,
+      up_note = nullif(_payload->>'upNote',''),
+      to_note = nullif(_payload->>'toNote',''),
+      status = st,
+      source_ref = _payload->>'sourceRef',
+      entered_on = coalesce(nullif(_payload->>'enteredOn','')::date, cur.entered_on),
+      note = nullif(_payload->>'note',''),
+      version = cur.version + 1, updated_at = now(), updated_by = u
+     where id = cur.id
+    returning * into res;
+    insert into lead.guide_audit (row_id, actor, action, old_value, new_value)
+    values (res.id, u, 'guide_row_updated', old_json, to_jsonb(res));
+  end if;
+
+  perform lead_priv.detection_bump(true);
+  return jsonb_build_object('id', res.id, 'rowVersion', res.version, 'status', res.status,
+    'updatedAt', res.updated_at);
+end $$;
+
+create or replace function public.lead_guide_save_row(p_payload jsonb, p_expected_version integer)
+returns jsonb language sql security invoker
+set search_path = public, lead_priv, pg_temp as $$
+  select lead_priv.guide_save_row(p_payload, p_expected_version); $$;
+
 -- ----------------------------------------------------------------------------
 -- 6. Droits : rien d'accessible en direct, points d'entrée explicites
 -- ----------------------------------------------------------------------------
 revoke all on lead.detection_rows, lead.detection_audit from public, anon, authenticated;
+revoke all on lead.guide_rows, lead.guide_audit from public, anon, authenticated;
+revoke all on lead.detection_sensor_allow, lead.detection_magnet_allow from public, anon, authenticated;
+revoke all on lead.detection_state from public, anon, authenticated;
 
-revoke all on function lead_priv.detection_effective() from public, anon, authenticated;
-revoke all on function lead_priv.detection_directory() from public, anon, authenticated;
-revoke all on function lead_priv.detection_save_row(jsonb, integer) from public, anon, authenticated;
+-- Le chemin d'appel COMPLET doit être exécutable : le wrapper public est
+-- invoker, il n'emprunte aucun droit. Sans EXECUTE sur la fonction definer
+-- appelée, chaque appel échoue par « permission denied ». On ouvre donc
+-- exactement les trois (puis six) fonctions d'entrée, et rien d'autre : le
+-- schéma lead_priv n'est pas exposé à l'API, toutes ses autres fonctions
+-- restent révoquées, et le contrôle du rôle administrateur RÉEL reste à
+-- l'intérieur des fonctions definer.
+grant usage on schema lead_priv to anon, authenticated;
 
--- Lecture technique effective : moindre privilège, ouverte en lecture seule
--- parce qu'elle ne contient ni identité, ni note, ni donnée client.
+revoke all on function lead_priv.detection_bump(boolean) from public, anon, authenticated;
+
+revoke all on function lead_priv.detection_effective() from public;
+grant execute on function lead_priv.detection_effective() to anon, authenticated;
+revoke all on function lead_priv.detection_directory() from public, anon;
+grant execute on function lead_priv.detection_directory() to authenticated;
+revoke all on function lead_priv.detection_save_row(jsonb, integer) from public, anon;
+grant execute on function lead_priv.detection_save_row(jsonb, integer) to authenticated;
+
+revoke all on function lead_priv.guide_effective() from public;
+grant execute on function lead_priv.guide_effective() to anon, authenticated;
+revoke all on function lead_priv.guide_directory() from public, anon;
+grant execute on function lead_priv.guide_directory() to authenticated;
+revoke all on function lead_priv.guide_save_row(jsonb, integer) from public, anon;
+grant execute on function lead_priv.guide_save_row(jsonb, integer) to authenticated;
+
+-- Lecture technique effective : moindre privilège, lecture seule, ni identité,
+-- ni note interne, ni donnée client.
 revoke all on function public.lead_detection_effective() from public;
 grant execute on function public.lead_detection_effective() to anon, authenticated;
+revoke all on function public.lead_guide_effective() from public;
+grant execute on function public.lead_guide_effective() to anon, authenticated;
 
 -- Annuaire et écriture : session requise, rôle admin vérifié DANS la fonction.
 revoke all on function public.lead_detection_directory() from public, anon;
 grant execute on function public.lead_detection_directory() to authenticated;
 revoke all on function public.lead_detection_save_row(jsonb, integer) from public, anon;
 grant execute on function public.lead_detection_save_row(jsonb, integer) to authenticated;
+revoke all on function public.lead_guide_directory() from public, anon;
+grant execute on function public.lead_guide_directory() to authenticated;
+revoke all on function public.lead_guide_save_row(jsonb, integer) from public, anon;
+grant execute on function public.lead_guide_save_row(jsonb, integer) to authenticated;
 
 insert into lead.schema_migrations (version) values ('1.9')
 on conflict (version) do nothing;
@@ -508,7 +689,13 @@ commit;
 --   public.lead_detection_effective() -> jsonb   (anon + authenticated, lecture)
 --   public.lead_detection_directory() -> jsonb   (admin réel uniquement)
 --   public.lead_detection_save_row(payload jsonb, expected_version int) -> jsonb
+--   public.lead_guide_effective() -> jsonb       (anon + authenticated, lecture)
+--   public.lead_guide_directory() -> jsonb       (admin réel uniquement)
+--   public.lead_guide_save_row(payload jsonb, expected_version int) -> jsonb
 -- Erreurs : NOT_ALLOWED, AUTH_REQUIRED, DETECTION_BAD_PAYLOAD,
 --           DETECTION_BAD_STATUS, DETECTION_INCOMPLETE,
---           DETECTION_CONFLICT:<version>
+--           DETECTION_UNKNOWN_SENSOR, DETECTION_UNKNOWN_MAGNET,
+--           DETECTION_CONFLICT:<version>, GUIDE_BAD_PAYLOAD, GUIDE_BAD_STATUS,
+--           GUIDE_INCOMPLETE, GUIDE_UNKNOWN_SENSOR, GUIDE_UNKNOWN_MAGNET,
+--           GUIDE_CONFLICT:<version>
 -- ============================================================================
