@@ -27646,5 +27646,32 @@
     "черновик",
     "bozza",
     "下書き"
+  ],
+  "Identifiant unique du projet (base Standex)": [
+    "Unique project identifier (Standex database)",
+    "项目唯一标识符（Standex 数据库）",
+    "Eindeutige Projektkennung (Standex-Datenbank)",
+    "Identificador único del proyecto (base de datos Standex)",
+    "Уникальный идентификатор проекта (база Standex)",
+    "Identificativo univoco del progetto (database Standex)",
+    "プロジェクト固有識別子（Standex データベース）"
+  ],
+  "Identifiant complet du brouillon local (non enregistré)": [
+    "Full local draft identifier (not saved)",
+    "本地草稿完整标识符（未保存）",
+    "Vollständige lokale Entwurfskennung (nicht gespeichert)",
+    "Identificador completo del borrador local (no guardado)",
+    "Полный идентификатор локального черновика (не сохранён)",
+    "Identificativo completo della bozza locale (non salvata)",
+    "ローカル下書きの完全な識別子（未保存）"
+  ],
+  "Abrégé lisible (raccourci, pas une clé unique)": [
+    "Readable short form (shortcut, not a unique key)",
+    "可读缩写（便于阅读，非唯一键）",
+    "Lesbare Kurzform (Abkürzung, kein eindeutiger Schlüssel)",
+    "Forma corta legible (atajo, no una clave única)",
+    "Читаемое сокращение (не уникальный ключ)",
+    "Forma breve leggibile (scorciatoia, non una chiave univoca)",
+    "読みやすい短縮表記（一意キーではありません）"
   ]
 }

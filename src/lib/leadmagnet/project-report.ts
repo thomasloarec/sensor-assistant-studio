@@ -4,11 +4,11 @@ import { guideIllustrativeMarks, ACTIVATION_GUIDE } from "../standex/activation-
 import { toClientDto, stableStringify, REQUIREMENT_LABELS, type DesignDossier } from "./dossier";
 import { technicalSummary } from "./submission";
 import {
-  projectReference,
   projectIdentity,
-  REFERENCE_LABEL,
-  PROVISIONAL_REFERENCE_LABEL,
   PROVISIONAL_REFERENCE_NOTE,
+  SHORT_ALIAS_LABEL,
+  UNIQUE_ID_LABEL,
+  LOCAL_DRAFT_ID_LABEL,
 } from "./project-reference";
 import { VARIABLE_FIELDS } from "./nda-docx";
 import { type TestedVerdict } from "./tested-pairs";
@@ -138,14 +138,17 @@ export function projectReportSections(
   ]);
   const identity = projectIdentity(serverDossierId, d.id);
   add("Identification", [
+    // L'identifiant COMPLET est imprimé tel quel : c'est lui qui désigne le
+    // projet. L'abrégé n'est qu'un confort de lecture, jamais une clé.
     entry(
-      identity.provisional ? PROVISIONAL_REFERENCE_LABEL : REFERENCE_LABEL,
-      identity.reference ?? unknown,
+      identity.provisional ? LOCAL_DRAFT_ID_LABEL : UNIQUE_ID_LABEL,
+      identity.fullId ?? unknown,
     ),
+    entry(SHORT_ALIAS_LABEL, identity.reference ?? unknown),
     // Un brouillon non enregistré le dit, et dit ce qui rend la référence définitive.
     ...(identity.provisional
       ? [entry("Ce qu'il faut savoir", tr(PROVISIONAL_REFERENCE_NOTE))]
-      : [entry("Référence provisoire du brouillon", projectReference(d.id) ?? unknown)]),
+      : [entry(LOCAL_DRAFT_ID_LABEL, d.id)]),
     entry("révision", d.revision),
     entry(
       "Rapport complet du projet",

@@ -340,6 +340,14 @@ describe("recherche, filtres et tri", () => {
     expect(matchesSearch(alpha, "inconnu")).toBe(false);
   });
 
+  test("la recherche trouve un projet par son identifiant complet ET par l'abrégé imprimé", () => {
+    const saved = project({ dossierId: "11111111-2222-3333-4444-555555555555" });
+    expect(matchesSearch(saved, "11111111-2222-3333-4444-555555555555")).toBe(true);
+    // Abrégé lisible tel qu'il figure sur le PDF du client.
+    expect(matchesSearch(saved, "SST-555555-555555")).toBe(true);
+    expect(matchesSearch(saved, "SST-000000-000000")).toBe(false);
+  });
+
   test("la recherche trouve la société réellement affichée", () => {
     // Société déclarée par le client, sans correction interne.
     const submittedOnly = project({
