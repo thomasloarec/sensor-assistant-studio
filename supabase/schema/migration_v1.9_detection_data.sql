@@ -98,6 +98,182 @@ create table if not exists lead.detection_audit (
 create index if not exists detection_audit_row_idx on lead.detection_audit (row_id, at desc);
 alter table lead.detection_audit enable row level security;
 
+
+-- ----------------------------------------------------------------------------
+-- 2bis. Catalogue AUTORISÉ, côté serveur
+--    Le serveur n'accepte que des identifiants RÉELS du catalogue du site. La
+--    démonstration pédagogique (« GENERIC ») et le « sur mesure » (« CUSTOM »)
+--    n'y figurent pas : ils ne peuvent donc pas recevoir de distances.
+--    Les variantes documentées de la famille M21 (« M21P/1 », « M21P/2 ») sont
+--    listées telles qu'imprimées, sans alias ni conversion.
+-- ----------------------------------------------------------------------------
+create table if not exists lead.detection_sensor_allow (
+  sensor_family text primary key,
+  guide_only boolean not null default false
+);
+create table if not exists lead.detection_magnet_allow (
+  magnet_id text primary key,
+  guide_only boolean not null default false
+);
+alter table lead.detection_sensor_allow enable row level security;
+alter table lead.detection_magnet_allow enable row level security;
+
+insert into lead.detection_sensor_allow (sensor_family, guide_only) values
+  ('MK01'),
+  ('MK15'),
+  ('MK16'),
+  ('MK17'),
+  ('MK22'),
+  ('MK30'),
+  ('MK31'),
+  ('MK06-4'),
+  ('MK24-A-J'),
+  ('MK03'),
+  ('MK02'),
+  ('MK04'),
+  ('MK05'),
+  ('MK13'),
+  ('MK14'),
+  ('MK18'),
+  ('MK20_1'),
+  ('MK20_2'),
+  ('MK21'),
+  ('MK21PR'),
+  ('MK26'),
+  ('MK27'),
+  ('MK11-M5'),
+  ('MK11-M8'),
+  ('MK11-P-M8'),
+  ('MK11-B-M6'),
+  ('MK36'),
+  ('MK37'),
+  ('MK38')
+on conflict (sensor_family) do nothing;
+
+-- Familles présentes UNIQUEMENT dans le guide (brochure) : elles acceptent une
+-- plage documentaire, pas une distance de commutation.
+insert into lead.detection_sensor_allow (sensor_family, guide_only) values
+  ('MK06-5', true),
+  ('MK06-6', true),
+  ('MK06-7', true),
+  ('MK06-8', true),
+  ('MK07', true),
+  ('MK12', true)
+on conflict (sensor_family) do nothing;
+
+insert into lead.detection_magnet_allow (magnet_id) values
+  ('M02'),
+  ('M03'),
+  ('M04'),
+  ('M05'),
+  ('M13'),
+  ('M13B'),
+  ('M11P'),
+  ('M11S'),
+  ('M21'),
+  ('M21P/1'),
+  ('M21P/2'),
+  ('M27'),
+  ('M36'),
+  ('M37'),
+  ('M38'),
+  ('M36-N42'),
+  ('M37-N42'),
+  ('M38-N42'),
+  ('4003004003'),
+  ('SMCO5-5X4'),
+  ('N45-4X19'),
+  ('NDFEB-10X5X1.9'),
+  ('HF3225-14.95X10X5'),
+  ('ALNICO500-5.5X22'),
+  ('ALNICO500-4X19'),
+  ('ALNICO500-3.7X22'),
+  ('N35-4X2'),
+  ('ALNICO-2.5X12.7'),
+  ('ALNICO-3X12'),
+  ('ALNICO-4X19'),
+  ('ALNICO-5X4'),
+  ('ALNICO-5X20'),
+  ('ALNICO-5.5X22'),
+  ('ALNICO-7.5X27'),
+  ('ALNICO-3.2X3.2X19'),
+  ('N35-4X19'),
+  ('N35H-4X19'),
+  ('NDFEB250175H-6X10'),
+  ('NDFEB250175H-10X5X1.9'),
+  ('SMCO5-1.9X3'),
+  ('SMCO5-3X4'),
+  ('HF2826-2.6X2.6X4'),
+  ('HF2826-3.5X1.8X1.8'),
+  ('HF2826-6.7X6.7X2.7')
+on conflict (magnet_id) do nothing;
+
+-- Révision DÉTERMINISTE du jeu effectif : incrémentée dans la MÊME transaction
+-- que chaque écriture. Deux écritures distinctes ne peuvent pas partager une
+-- révision, même si elles portent sur des lignes différentes.
+create table if not exists lead.detection_state (
+  singleton boolean primary key default true check (singleton),
+  revision bigint not null default 0,
+  guide_revision bigint not null default 0
+);
+insert into lead.detection_state (singleton) values (true) on conflict do nothing;
+alter table lead.detection_state enable row level security;
+
+create or replace function lead_priv.detection_bump(_guide boolean)
+returns bigint language sql
+set search_path = lead, lead_priv, pg_temp as $$
+  update lead.detection_state
+     set revision = revision + (case when _guide then 0 else 1 end),
+         guide_revision = guide_revision + (case when _guide then 1 else 0 end)
+   where singleton
+  returning case when _guide then guide_revision else revision end;
+$$;
+
+-- ----------------------------------------------------------------------------
+-- 2ter. Plages DOCUMENTAIRES du guide d'activation (brochure 40 pages)
+--    « up » et « to » sont les colonnes IMPRIMÉES. Ce ne sont PAS des seuils
+--    d'activation ni de relâchement. Elles ne sont jamais converties, jamais
+--    triées : aucune contrainte d'ordre n'existe ici, parce que la brochure
+--    imprime elle-même des lignes où « up » dépasse « to ».
+-- ----------------------------------------------------------------------------
+create table if not exists lead.guide_rows (
+  id uuid primary key default gen_random_uuid(),
+  page integer check (page is null or (page between 1 and 400)),
+  sensor_family text not null,
+  sensor_reference text not null check (length(btrim(sensor_reference)) between 1 and 60),
+  magnet_id text not null,
+  approach_id text not null check (approach_id in ('D1','D2','D3','D4','D5')),
+  up_mm numeric check (up_mm is null or (up_mm >= 0 and up_mm < 1000)),
+  to_mm numeric check (to_mm is null or (to_mm >= 0 and to_mm < 1000)),
+  up_note text check (up_note is null or up_note in ('not_published','below_zero')),
+  to_note text check (to_note is null or to_note in ('not_published','below_zero')),
+  status text not null default 'draft' check (status in ('draft','validated')),
+  source_ref text not null check (length(btrim(source_ref)) >= 8),
+  entered_on date not null,
+  note text check (note is null or length(note) <= 2000),
+  version integer not null default 1 check (version > 0),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  updated_by uuid references auth.users(id) on delete set null,
+  -- Une ligne servie porte au moins une borne lisible.
+  constraint guide_validated_readable check (
+    status <> 'validated' or up_mm is not null or to_mm is not null)
+);
+create unique index if not exists guide_rows_key_idx
+  on lead.guide_rows (sensor_reference, magnet_id, approach_id);
+alter table lead.guide_rows enable row level security;
+
+create table if not exists lead.guide_audit (
+  id bigserial primary key,
+  row_id uuid,
+  at timestamptz not null default now(),
+  actor uuid references auth.users(id) on delete set null,
+  action text not null check (action in ('guide_row_created','guide_row_updated')),
+  old_value jsonb,
+  new_value jsonb not null
+);
+alter table lead.guide_audit enable row level security;
+
 -- ----------------------------------------------------------------------------
 -- 3. Lecture EFFECTIVE, moindre privilège
 --    Seules les lignes validées et complètes sortent, et uniquement les champs
@@ -108,7 +284,7 @@ returns jsonb language sql stable security definer
 set search_path = lead, lead_priv, pg_temp as $$
   select jsonb_build_object(
     'version', '1.9',
-    'revision', coalesce((select max(version) + count(*) from lead.detection_rows), 0),
+    'dataRevision', (select revision::text from lead.detection_state where singleton),
     'rows', coalesce((select jsonb_agg(jsonb_build_object(
         'id', r.id,
         'sensorFamily', r.sensor_family,
@@ -208,6 +384,36 @@ begin
   if st = 'validated' and (pull is null or drop_out is null or drop_out <= pull) then
     raise exception 'DETECTION_INCOMPLETE' using errcode = '22023';
   end if;
+  -- Catalogue RÉEL : un capteur ou un aimant inconnu est refusé ici, pas
+  -- seulement dans l'écran. La démonstration et le sur mesure sont absents de
+  -- la liste et donc refusés par construction.
+  if not exists (select 1 from lead.detection_sensor_allow a
+                  where a.sensor_family = _payload->>'sensorFamily' and not a.guide_only) then
+    raise exception 'DETECTION_UNKNOWN_SENSOR' using errcode = '22023';
+  end if;
+  if not exists (select 1 from lead.detection_magnet_allow a
+                  where a.magnet_id = _payload->>'magnetId') then
+    raise exception 'DETECTION_UNKNOWN_MAGNET' using errcode = '22023';
+  end if;
+  if coalesce(_payload->>'classKind','') not in ('sensitivity','switch_model')
+     or coalesce(_payload->>'contactForm','') not in ('1A','1B','1C')
+     or coalesce(_payload->>'approachId','') not in ('D1','D2','D3','D4','D5','F1')
+     or coalesce(_payload->>'thresholdKind','') not in ('typical','min_activation_max_release')
+     or (_payload->>'approachId' = 'F1') <> (_payload->>'datum' = 'frontal_faces')
+     or length(btrim(coalesce(_payload->>'sensorReference',''))) not between 1 and 64
+     or length(btrim(coalesce(_payload->>'sensitivityClass',''))) not between 1 and 32
+     or length(btrim(coalesce(_payload->>'sourceType',''))) not between 2 and 64
+     or length(btrim(coalesce(_payload->>'sourceRef',''))) < 8
+     or length(coalesce(_payload->>'note','')) > 2000 then
+    raise exception 'DETECTION_BAD_PAYLOAD' using errcode = '22023';
+  end if;
+  -- Une date de saisie existe et n'est pas dans l'avenir.
+  if coalesce(nullif(_payload->>'enteredOn','')::date, current_date) > current_date then
+    raise exception 'DETECTION_BAD_PAYLOAD' using errcode = '22023';
+  end if;
+  if (pull is not null and pull <= 0) or (drop_out is not null and drop_out <= 0) then
+    raise exception 'DETECTION_BAD_PAYLOAD' using errcode = '22023';
+  end if;
 
   select * into cur from lead.detection_rows
    where sensor_family = _payload->>'sensorFamily'
@@ -262,6 +468,7 @@ begin
     values (res.id, u, 'detection_row_updated', old_json, to_jsonb(res));
   end if;
 
+  perform lead_priv.detection_bump(false);
   return jsonb_build_object('id', res.id, 'rowVersion', res.version, 'status', res.status,
     'updatedAt', res.updated_at);
 end $$;
