@@ -46,7 +46,7 @@ import {
 import type { GuidedMounting } from "@/lib/standex/mounting";
 import type { StudioStudy } from "@/lib/standex/studio-dossier";
 import type { DesignFreeze } from "@/lib/standex/design-freeze";
-import { useDetectionDataRevision } from "@/lib/standex/detection-data/store";
+import { useDetectionDataRevision, useDetectionDataStatus } from "@/lib/standex/detection-data/store";
 import {
   publishedClasses,
   publishedApproaches,
@@ -484,9 +484,12 @@ export default function MagneticWorkshop({
      l'administration Standex doit recalculer la scène montée, pas attendre un
      rechargement. */
   const dataRevision = useDetectionDataRevision();
+  /* État RÉEL des données lues par cette scène : si la relecture du serveur a
+     échoué, la scène le dit au lieu de laisser croire à des données à jour. */
+  const dataStatus = useDetectionDataStatus();
   const guideDemoRange = useMemo(() => {
     return workshopGuideRange(config);
-  }, [config.sensorId, config.magnetModel, config.guideReference, config.geometry]);
+  }, [config.sensorId, config.magnetModel, config.guideReference, config.geometry, dataRevision]);
   const illustrativeBounds = useMemo(
     () => guideIllustrativeMarks(guideDemoRange),
     [guideDemoRange],
@@ -790,6 +793,11 @@ export default function MagneticWorkshop({
       <span className="mw-verdict-dot" aria-hidden="true" />
       <div className="mw-verdict-bar-text">
         <p className="t-title-s">{verdictSentence}</p>
+        {dataStatus.stale && dataStatus.state === "error" ? (
+          <p className="t-caption" data-testid="data-stale-notice">
+            {t("Données de détection non relues depuis le serveur : cette scène peut afficher des valeurs plus anciennes.")}
+          </p>
+        ) : null}
         {/* Hors couverture, le message du moteur est repris MOT POUR MOT. */}
         {guideDemoRange && basis === "unavailable" ? (
           <p className="t-caption" data-testid="verdict-main-message">
