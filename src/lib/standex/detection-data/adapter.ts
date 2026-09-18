@@ -111,6 +111,11 @@ export function humanDetectionError(error: unknown): string {
   if (/AUTH_REQUIRED/.test(m)) return "Session requise";
   if (/DETECTION_CONFLICT/.test(m)) return "Ligne modifiée entre-temps";
   if (/DETECTION_INCOMPLETE/.test(m)) return "Une ligne validée porte deux distances";
+  if (/DETECTION_ALIAS_MAGNET/.test(m))
+    return "Saisir la famille documentée, qui couvre ses variantes";
+  if (/DETECTION_KEY_LOCKED/.test(m))
+    return "La combinaison d'une ligne existante ne change pas : créer une nouvelle combinaison";
+  if (/DETECTION_MISSING_ROW/.test(m)) return "Ligne introuvable sur le serveur";
   if (/DETECTION_BAD_/.test(m)) return "Données refusées par le serveur";
   return "Serveur indisponible";
 }
@@ -164,6 +169,10 @@ export async function saveDetectionRow(
   expectedVersion: number | null,
 ): Promise<SaveDetectionResult> {
   const payload = {
+    // Identifiant STABLE : le serveur localise la ligne par lui, jamais par la
+    // clé métier recomposée. Une clé modifiée ne peut donc pas écraser une
+    // autre ligne dont la version coïnciderait.
+    id: record.id,
     sensorFamily: record.sensorFamily,
     sensorReference: record.sensorReference,
     classKind: record.classKind,
