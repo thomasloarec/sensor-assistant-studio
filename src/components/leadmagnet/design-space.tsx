@@ -3426,15 +3426,15 @@ export function DesignSpace({
       const bytes = await projectPdf(dossier, documentLogoSource(), {
         requis: nda.required, statut: ndaStatusLabel(nda), champs: nda.fields,
         preuve: nda.proof, contraintesComplementaires: extraConstraints,
-      }, t);
+      }, t, serverDossierId);
       const url = URL.createObjectURL(new Blob([bytes as unknown as BlobPart], { type: "application/pdf" }));
       const a = document.createElement("a"); a.href = url;
-      a.download = projectPdfFilename(dossier.title, dossier.id, dossier.revision); a.click();
+      a.download = projectPdfFilename(dossier.title, dossier.id, dossier.revision, serverDossierId); a.click();
       setTimeout(() => URL.revokeObjectURL(url), 1000);
     } catch {
       setSummaryMessage(t("Le rapport PDF n'a pas pu être produit sur cet appareil."));
     }
-  }, [dossier, nda, extraConstraints]);
+  }, [dossier, nda, extraConstraints, serverDossierId, t]);
 
   const projectContextFields = <ProjectContextFields key={`${dossier.id}-${contextGenRef.current}`} business={dossier.business}
     onInvalid={setVolumeError} onChange={business => setDossier(d => ({ ...d, business }))} />;

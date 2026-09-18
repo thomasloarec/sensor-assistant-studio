@@ -3,7 +3,13 @@ import { workshopGuideRange, GUIDE_SIMULATION_NOTE, illustrativeNoteFor } from "
 import { guideIllustrativeMarks, ACTIVATION_GUIDE } from "../standex/activation-guide";
 import { toClientDto, stableStringify, REQUIREMENT_LABELS, type DesignDossier } from "./dossier";
 import { technicalSummary } from "./submission";
-import { projectReference } from "./project-reference";
+import {
+  projectReference,
+  projectIdentity,
+  REFERENCE_LABEL,
+  PROVISIONAL_REFERENCE_LABEL,
+  PROVISIONAL_REFERENCE_NOTE,
+} from "./project-reference";
 import { VARIABLE_FIELDS } from "./nda-docx";
 import { type TestedVerdict } from "./tested-pairs";
 import { simulateMounting } from "../standex/mounting/simulate";
@@ -27,6 +33,8 @@ export function projectReportSections(
   d: DesignDossier,
   nda: Record<string, unknown> = {},
   tr = (s: string) => s,
+  /** Identifiant serveur du projet, null tant que rien n'est enregistré. */
+  serverDossierId: string | null = null,
 ): ReportSection[] {
   const sections: ReportSection[] = [];
   const unknown = tr("Non défini pour le moment");
@@ -128,8 +136,16 @@ export function projectReportSections(
     ),
     entry("Contraintes supplémentaires", nda["contraintesComplementaires"] ?? nda["contraintes"]),
   ]);
+  const identity = projectIdentity(serverDossierId, d.id);
   add("Identification", [
-    entry("Référence du projet", projectReference(d.id) ?? unknown),
+    entry(
+      identity.provisional ? PROVISIONAL_REFERENCE_LABEL : REFERENCE_LABEL,
+      identity.reference ?? unknown,
+    ),
+    // Un brouillon non enregistré le dit, et dit ce qui rend la référence définitive.
+    ...(identity.provisional
+      ? [entry("Ce qu'il faut savoir", tr(PROVISIONAL_REFERENCE_NOTE))]
+      : [entry("Référence provisoire du brouillon", projectReference(d.id) ?? unknown)]),
     entry("révision", d.revision),
     entry(
       "Rapport complet du projet",
@@ -150,6 +166,7 @@ export async function projectPdf(
   logoUrl: string,
   nda: Record<string, unknown>,
   tr = (s: string) => s,
+  serverDossierId: string | null = null,
 ) {
   const { reviewPdf } = await import("@/lib/standex/studio-pdf");
   const data = projectReportData(dossier, nda);
@@ -158,11 +175,22 @@ export async function projectPdf(
     new TextEncoder().encode(stableStringify(data)),
   );
   const hash = Array.from(new Uint8Array(digest), (v) => v.toString(16).padStart(2, "0")).join("");
-  const reference = projectReference(dossier.id);
-  return reviewPdf({ sections: projectReportSections(dossier, nda, tr), hash }, logoUrl, (s) => s, {
-    // Le nom du projet est en tête du document ; la référence stable le suit.
+  const identity = projectIdentity(serverDossierId, dossier.id);
+  return reviewPdf(
+    { sections: projectReportSections(dossier, nda, tr, serverDossierId), hash },
+    logoUrl,
+    (s) => s,
+    {
+    // Le nom du projet est en tête du document ; la référence suit, provisoire si le projet n'est pas enregistré.
     title: dossier.title || tr("Rapport complet du projet"),
-    subtitle: [reference, tr("Projet à confirmer par Standex")].filter(Boolean).join(" · "),
-    attachment: new TextEncoder().encode(JSON.stringify(data, null, 2)),
-  });
+    subtitle: [
+      identity.reference,
+      identity.provisional ? tr("brouillon non enregistré") : null,
+      tr("Projet à confirmer par Standex"),
+    ]
+      .filter(Boolean)
+      .join(" · "),
+      attachment: new TextEncoder().encode(JSON.stringify(data, null, 2)),
+    },
+  );
 }

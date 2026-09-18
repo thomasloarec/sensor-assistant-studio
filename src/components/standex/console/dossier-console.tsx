@@ -614,9 +614,22 @@ export function DossierConsole(props: DossierConsoleProps) {
             <>
               <div className="flex flex-wrap items-center gap-2">
                 <h2 className="t-title-m">{view.dossier.title}</h2>
+                {/* Référence définitive : celle de l'identifiant serveur du projet. */}
+                {projectReference(view.dossier.id) ? (
+                  <Badge variant="outline" className="t-metric" title={t("Référence du projet")}>
+                    {projectReference(view.dossier.id)}
+                  </Badge>
+                ) : null}
+                {/* Référence provisoire imprimée sur le brouillon PDF du client,
+                    lue dans le contenu réellement envoyé : elle permet de
+                    retrouver ce projet à partir d'un PDF d'avant envoi. */}
                 {snapshotReference(lastRevision?.snapshot) ? (
-                  <Badge variant="outline" className="t-metric">
-                    {snapshotReference(lastRevision?.snapshot)}
+                  <Badge
+                    variant="secondary"
+                    className="t-metric"
+                    title={t("Référence provisoire imprimée sur le brouillon du client")}
+                  >
+                    {t("brouillon")} {snapshotReference(lastRevision?.snapshot)}
                   </Badge>
                 ) : null}
                 <Badge variant="outline">version {view.dossier.current_revision}</Badge>

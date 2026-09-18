@@ -3,6 +3,7 @@ import { createDossier } from "../src/lib/leadmagnet/dossier";
 import { buildDossierExport, parseDossierExport } from "../src/lib/leadmagnet/dossier-io";
 import {
   projectReference,
+  projectIdentity,
   projectPdfFilename,
   titleSlug,
 } from "../src/lib/leadmagnet/project-reference";
@@ -39,8 +40,29 @@ describe("référence de projet", () => {
   test("le nom de fichier porte le nom du projet, la référence et la révision", () => {
     const d = createDossier();
     const name = projectPdfFilename("Réservoir d'eau — machine à café", d.id, 3);
-    expect(name.endsWith(`-${projectReference(d.id)}-r3.pdf`)).toBe(true);
+    // Aucun identifiant serveur : le fichier se dit brouillon.
+    expect(name.endsWith(`-${projectReference(d.id)}-brouillon-r3.pdf`)).toBe(true);
     expect(name.startsWith("reservoir-d-eau-machine-a-cafe")).toBe(true);
     expect(titleSlug("")).toBe("projet");
+    const server = "11111111-2222-3333-4444-555555555555";
+    const saved = projectPdfFilename("Projet", d.id, 3, server);
+    expect(saved).toBe(`projet-${projectReference(server)}-r3.pdf`);
+    expect(saved).not.toContain("brouillon");
+  });
+
+  test("l'identifiant serveur fait la référence définitive dès qu'il existe", () => {
+    const d = createDossier();
+    const server = "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee";
+    expect(projectIdentity(null, d.id)).toEqual({
+      reference: projectReference(d.id),
+      provisional: true,
+    });
+    expect(projectIdentity(server, d.id)).toEqual({
+      reference: projectReference(server),
+      provisional: false,
+    });
+    // La référence provisoire n'est pas réécrite par l'identifiant serveur :
+    // elle reste lisible dans le contenu envoyé pour retrouver le brouillon.
+    expect(projectReference(d.id)).not.toBe(projectReference(server));
   });
 });

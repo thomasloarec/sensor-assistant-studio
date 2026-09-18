@@ -27583,5 +27583,68 @@
     "Для этого датчика есть техническая карта, но расстояния этой пары не опубликованы во встроенном руководстве по активации (выпуск 10/2025). Моделирование остаётся иллюстративным и требует подтверждения испытаниями со Standex.",
     "Per questo sensore è disponibile una scheda prodotto, ma le distanze di questa coppia non sono pubblicate nella guida di attivazione integrata (edizione 10/2025). La simulazione resta illustrativa, da validare con prove insieme a Standex.",
     "このセンサーの製品データシートはありますが、この組み合わせの距離は内蔵のアクティベーションガイド（2025年10月版）には掲載されていません。シミュレーションは参考であり、Standex との実測で検証が必要です。"
+  ],
+  "Référence provisoire (brouillon non enregistré)": [
+    "Provisional reference (unsaved draft)",
+    "临时编号（未保存的草稿）",
+    "Vorläufige Referenz (nicht gespeicherter Entwurf)",
+    "Referencia provisional (borrador no guardado)",
+    "Предварительный номер (несохранённый черновик)",
+    "Riferimento provvisorio (bozza non salvata)",
+    "仮の参照番号（未保存の下書き）"
+  ],
+  "Ce projet n'est pas encore enregistré chez Standex : cette référence est provisoire. La référence définitive est attribuée à l'envoi, et cette référence provisoire est conservée dans le projet transmis pour retrouver ce brouillon.": [
+    "This project is not yet saved at Standex: this reference is provisional. The final reference is assigned when you submit, and this provisional reference is kept inside the submitted project so this draft can be found.",
+    "该项目尚未保存到 Standex：此编号为临时编号。最终编号在提交时分配，且该临时编号会保留在已提交的项目中，以便找回此草稿。",
+    "Dieses Projekt ist bei Standex noch nicht gespeichert: Diese Referenz ist vorläufig. Die endgültige Referenz wird beim Absenden vergeben, und diese vorläufige Referenz bleibt im übermittelten Projekt erhalten, damit dieser Entwurf gefunden werden kann.",
+    "Este proyecto aún no está guardado en Standex: esta referencia es provisional. La referencia definitiva se asigna al enviar, y esta referencia provisional se conserva en el proyecto enviado para poder encontrar este borrador.",
+    "Этот проект ещё не сохранён в Standex: номер предварительный. Окончательный номер присваивается при отправке, а предварительный сохраняется в отправленном проекте, чтобы можно было найти этот черновик.",
+    "Questo progetto non è ancora salvato presso Standex: questo riferimento è provvisorio. Il riferimento definitivo viene assegnato all'invio e questo riferimento provvisorio resta nel progetto inviato per ritrovare questa bozza.",
+    "このプロジェクトはまだ Standex に保存されていません。この参照番号は仮のものです。確定番号は送信時に付与され、この仮番号は送信済みプロジェクト内に保持されるため、この下書きを後から特定できます。"
+  ],
+  "Ce qu'il faut savoir": [
+    "What you should know",
+    "须知",
+    "Wichtig zu wissen",
+    "Lo que debe saber",
+    "Что нужно знать",
+    "Da sapere",
+    "ご留意事項"
+  ],
+  "Référence provisoire du brouillon": [
+    "Provisional draft reference",
+    "草稿临时编号",
+    "Vorläufige Entwurfsreferenz",
+    "Referencia provisional del borrador",
+    "Предварительный номер черновика",
+    "Riferimento provvisorio della bozza",
+    "下書きの仮参照番号"
+  ],
+  "Référence provisoire imprimée sur le brouillon du client": [
+    "Provisional reference printed on the customer draft",
+    "打印在客户草稿上的临时编号",
+    "Vorläufige Referenz auf dem Kundenentwurf",
+    "Referencia provisional impresa en el borrador del cliente",
+    "Предварительный номер, напечатанный в черновике клиента",
+    "Riferimento provvisorio stampato sulla bozza del cliente",
+    "顧客の下書きに印字された仮参照番号"
+  ],
+  "brouillon non enregistré": [
+    "unsaved draft",
+    "未保存的草稿",
+    "nicht gespeicherter Entwurf",
+    "borrador no guardado",
+    "несохранённый черновик",
+    "bozza non salvata",
+    "未保存の下書き"
+  ],
+  "brouillon": [
+    "draft",
+    "草稿",
+    "Entwurf",
+    "borrador",
+    "черновик",
+    "bozza",
+    "下書き"
   ]
 }
