@@ -31,7 +31,7 @@ import {
   parseWorkshopConfig,
 } from "../src/lib/standex/magnetic-workshop";
 import { defaultGuideSelection, guideSelectionFor } from "../src/lib/standex/activation-guide";
-import { validateDetectionRecord, isRecordSimulatable } from "../src/lib/standex/detection-data/model";
+import { validateDetectionRecord, isRecordSimulatable, recordFromPublished } from "../src/lib/standex/detection-data/model";
 import { buildDirectory, emptyRecordFor, filterDirectory, EMPTY_FILTERS } from "../src/lib/standex/detection-data/directory";
 import { mountingFromWorkshop } from "../src/lib/standex/mounting/bridge";
 import { simulateMounting } from "../src/lib/standex/mounting/simulate";
@@ -195,6 +195,54 @@ describe("annuaire d'administration", () => {
     const only = filterDirectory(entries, { ...EMPTY_FILTERS, completeness: "excluded" });
     expect(only.every((e) => e.excluded)).toBe(true);
     expect(only.length).toBe(entries.filter((e) => e.excluded).length);
+  });
+  test("un brouillon sur une ligne livrée exclue ne présente AUCUNE valeur « en vigueur »", () => {
+    // Cas réel constaté : MK03 B M02 D1 repassé brouillon par la mise en
+    // quarantaine. Sa ligne livrée compilée est elle-même exclue par la règle
+    // de forme : l'annuaire ne doit pas écrire « la ligne livrée reste en
+    // vigueur », car aucune valeur n'est active pour cette combinaison.
+    const compiledRow = COMPILED_PUBLISHED_REGISTRY.rows.find(
+      (r) =>
+        r.sensorFamily === "MK03" &&
+        r.sensitivityClass === "B" &&
+        r.magnetId === "M02" &&
+        r.approachId === "D1",
+    )!;
+    const draft = { ...recordFromPublished(compiledRow), status: "draft" as const, id: null };
+    const entries = buildDirectory([draft]);
+    const entry = entries.find(
+      (e) =>
+        e.record.sensorFamily === "MK03" &&
+        e.record.magnetId === "M02" &&
+        e.record.status === "draft",
+    )!;
+    expect(entry.excluded).toBe(true);
+    expect(entry.active).toBe(false);
+    expect(entry.baseline).toBeNull();
+    // La valeur du brouillon reste lisible telle quelle (15 / 17,5 mm).
+    expect(entry.record.pullInMm).toBe(15);
+    expect(entry.record.dropOutMm).toBe(17.5);
+  });
+  test("un brouillon sur une ligne livrée COMPATIBLE conserve le repli « en vigueur »", () => {
+    const compiledRow = COMPILED_PUBLISHED_REGISTRY.rows.find(
+      (r) =>
+        r.sensorFamily === "MK03" &&
+        r.sensitivityClass === "B" &&
+        r.magnetId === "4003004003" &&
+        r.approachId === "D1",
+    )!;
+    const draft = { ...recordFromPublished(compiledRow), status: "draft" as const, id: null };
+    const entries = buildDirectory([draft]);
+    const entry = entries.find(
+      (e) =>
+        e.record.sensorFamily === "MK03" &&
+        e.record.magnetId === "4003004003" &&
+        e.record.status === "draft",
+    )!;
+    expect(entry.excluded).toBe(false);
+    expect(entry.active).toBe(false);
+    expect(entry.baseline).toBeTruthy();
+    expect(entry.baseline!.pullInMm).toBe(compiledRow.pullInMm);
   });
   test("le jeu effectif refuse en bloc une saisie de formes contradictoires", () => {
     const row = COMPILED_PUBLISHED_REGISTRY.rows.find(
