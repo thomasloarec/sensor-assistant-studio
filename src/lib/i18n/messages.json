@@ -27178,5 +27178,59 @@
     "необычный печатный порядок — подлежит подтверждению Standex",
     "ordine stampato inusuale — da confermare da Standex",
     "印刷順序が異例 — Standex の確認が必要"
+  ],
+  "Créer une nouvelle combinaison à partir de celle-ci": [
+    "Create a new combination from this one",
+    "以此为基础创建新组合",
+    "Neue Kombination auf dieser Basis erstellen",
+    "Crear una nueva combinación a partir de esta",
+    "Создать новую комбинацию на основе этой",
+    "Crea una nuova combinazione da questa",
+    "この組み合わせから新しい組み合わせを作成"
+  ],
+  "La combinaison d'une ligne existante ne change pas : créer une nouvelle combinaison": [
+    "An existing row's combination does not change: create a new combination",
+    "已有行的组合不可更改：请创建新组合",
+    "Die Kombination einer bestehenden Zeile ändert sich nicht: neue Kombination erstellen",
+    "La combinación de una línea existente no cambia: cree una nueva combinación",
+    "Комбинация существующей строки не меняется: создайте новую комбинацию",
+    "La combinazione di una riga esistente non cambia: creare una nuova combinazione",
+    "既存行の組み合わせは変更できません。新しい組み合わせを作成してください"
+  ],
+  "La combinaison de cette ligne ne change pas : elle identifie la donnée. Pour une autre combinaison, créez-en une nouvelle.": [
+    "This row's combination does not change: it identifies the data. For another combination, create a new one.",
+    "该行的组合不可更改：它标识这条数据。若需其他组合，请新建一条。",
+    "Die Kombination dieser Zeile ändert sich nicht: sie identifiziert die Daten. Für eine andere Kombination neue Zeile erstellen.",
+    "La combinación de esta línea no cambia: identifica el dato. Para otra combinación, cree una nueva.",
+    "Комбинация этой строки не меняется: она идентифицирует данные. Для другой комбинации создайте новую строку.",
+    "La combinazione di questa riga non cambia: identifica il dato. Per un'altra combinazione, creane una nuova.",
+    "この行の組み合わせはデータを識別するため変更できません。別の組み合わせは新規作成してください。"
+  ],
+  "Ligne introuvable sur le serveur": [
+    "Row not found on the server",
+    "服务器上找不到该行",
+    "Zeile auf dem Server nicht gefunden",
+    "Línea no encontrada en el servidor",
+    "Строка не найдена на сервере",
+    "Riga non trovata sul server",
+    "サーバーに該当する行がありません"
+  ],
+  "Portée de cette famille documentée :": [
+    "Scope of this documented family:",
+    "该记录系列的适用范围：",
+    "Geltungsbereich dieser dokumentierten Familie:",
+    "Alcance de esta familia documentada:",
+    "Область действия этого документированного семейства:",
+    "Ambito di questa famiglia documentata:",
+    "この記載ファミリーの適用範囲："
+  ],
+  "Saisir la famille documentée, qui couvre ses variantes": [
+    "Enter the documented family, which covers its variants",
+    "请填写记录中的系列，它涵盖其各变型",
+    "Die dokumentierte Familie eingeben, die ihre Varianten abdeckt",
+    "Introduzca la familia documentada, que cubre sus variantes",
+    "Укажите документированное семейство, оно покрывает свои варианты",
+    "Inserire la famiglia documentata, che copre le sue varianti",
+    "記載されているファミリーを入力してください（その変種を含みます）"
   ]
 }
