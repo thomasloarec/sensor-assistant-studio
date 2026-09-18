@@ -56,7 +56,8 @@ import {
   guideRecordKey,
   hasErrors,
   hasGuideErrors,
-  knownMagnetIds,
+  detectionMagnetIds,
+  magnetFamilyScope,
   parseDecimal,
   realSensors,
   validateDetectionRecord,
@@ -267,6 +268,25 @@ function DetectionDataScreen() {
   const patchGuide = (next: Partial<GuideRecord>) => {
     setDirty(true);
     setGuideDraft((cur) => (cur ? { ...cur, record: { ...cur.record, ...next } } : cur));
+  };
+
+  /** Une autre combinaison est une NOUVELLE ligne, créée explicitement : la clé
+   *  d'une ligne existante ne se renomme pas. La saisie en cours est reprise
+   *  telle quelle, sans identifiant ni version, donc sans risque d'écraser la
+   *  ligne d'origine ni une autre ligne de même version. */
+  const duplicateDraft = () => {
+    setDraft((cur) =>
+      cur
+        ? {
+            ...cur,
+            record: { ...cur.record, id: null, rowVersion: null, updatedAt: null, updatedBy: null },
+            expectedVersion: null,
+            isNew: true,
+          }
+        : cur,
+    );
+    setErrors({});
+    setDirty(true);
   };
 
   const closeDraft = () => {
@@ -740,6 +760,7 @@ function DetectionDataScreen() {
               errors={errors}
               pending={pending}
               onPatch={patch}
+              onDuplicate={duplicateDraft}
               onRaw={(key, value) => {
                 setDirty(true);
                 setDraft((cur) => (cur ? { ...cur, [key]: value } : cur));
@@ -817,6 +838,7 @@ function EditPanel({
   errors,
   pending,
   onPatch,
+  onDuplicate,
   onRaw,
   onCancel,
   onSave,
@@ -825,18 +847,41 @@ function EditPanel({
   errors: DetectionFieldErrors;
   pending: boolean;
   onPatch: (next: Partial<DetectionRecord>) => void;
+  onDuplicate: () => void;
   onRaw: (key: "pullIn" | "dropOut" | "temperature", value: string) => void;
   onCancel: () => void;
   onSave: () => void;
 }) {
   const r = draft.record;
+  /* Identité VERROUILLÉE sur une ligne déjà enregistrée : la combinaison
+     (référence, classe, contact, aimant, approche) est la clé métier. La
+     changer ici pointerait sur une autre ligne. Pour une autre combinaison, le
+     bouton crée explicitement une nouvelle ligne. */
+  const locked = !draft.isNew && draft.record.id !== null;
+  const scope = magnetFamilyScope(r.magnetId);
   return (
     <section className="panel-block-lg space-y-3" aria-label={t("Modifier la ligne")}>
       <h3 className="t-title-s">{t("Modifier la ligne")}</h3>
+      {locked ? (
+        <div className="notice-info t-caption space-y-2" data-testid="dd-key-locked">
+          <p>
+            {t(
+              "La combinaison de cette ligne ne change pas : elle identifie la donnée. Pour une autre combinaison, créez-en une nouvelle.",
+            )}
+          </p>
+          <Button type="button" variant="secondary" className="min-h-11" onClick={onDuplicate}>
+            {t("Créer une nouvelle combinaison à partir de celle-ci")}
+          </Button>
+        </div>
+      ) : null}
       <div className="grid gap-3 md:grid-cols-3">
         <Field id="dd-f-family" label={t("Référence catalogue")} error={errors.sensorFamily}>
           {(id) => (
-            <Select value={r.sensorFamily} onValueChange={(v) => onPatch({ sensorFamily: v })}>
+            <Select
+              value={r.sensorFamily}
+              disabled={locked}
+              onValueChange={(v) => onPatch({ sensorFamily: v })}
+            >
               <SelectTrigger id={id} className="min-h-11">
                 <SelectValue />
               </SelectTrigger>
@@ -885,6 +930,7 @@ function EditPanel({
               id={id}
               className="min-h-11"
               value={r.sensitivityClass}
+              disabled={locked}
               onChange={(e) => onPatch({ sensitivityClass: e.target.value })}
             />
           )}
@@ -893,6 +939,7 @@ function EditPanel({
           {(id) => (
             <Select
               value={r.contactForm}
+              disabled={locked}
               onValueChange={(v) => onPatch({ contactForm: v as DetectionRecord["contactForm"] })}
             >
               <SelectTrigger id={id} className="min-h-11">
@@ -910,12 +957,16 @@ function EditPanel({
         </Field>
         <Field id="dd-f-magnet" label={t("Aimant")} error={errors.magnetId}>
           {(id) => (
-            <Select value={r.magnetId} onValueChange={(v) => onPatch({ magnetId: v })}>
+            <Select
+              value={r.magnetId}
+              disabled={locked}
+              onValueChange={(v) => onPatch({ magnetId: v })}
+            >
               <SelectTrigger id={id} className="min-h-11">
                 <SelectValue placeholder={t("Aimant")} />
               </SelectTrigger>
               <SelectContent>
-                {knownMagnetIds().map((m) => (
+                {detectionMagnetIds().map((m) => (
                   <SelectItem key={m} value={m}>
                     {m}
                   </SelectItem>
@@ -924,10 +975,16 @@ function EditPanel({
             </Select>
           )}
         </Field>
+        {scope.length > 0 ? (
+          <p className="t-caption md:col-span-3" data-testid="dd-magnet-scope">
+            {t("Portée de cette famille documentée :")} {scope.join(", ")}
+          </p>
+        ) : null}
         <Field id="dd-f-approach" label={t("Approche")} error={errors.approachId}>
           {(id) => (
             <Select
               value={r.approachId}
+              disabled={locked}
               onValueChange={(v) => onPatch({ approachId: v as DetectionRecord["approachId"] })}
             >
               <SelectTrigger id={id} className="min-h-11">

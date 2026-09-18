@@ -244,6 +244,12 @@ export function applyEffectivePublishedRows(
   for (const raw of rows) {
     if (!raw || typeof raw !== "object") return { ok: false, replaced: 0, added: 0, error: "BAD_ROW" };
     const r = raw as PublishedRow;
+    // Un aimant dont l'identité est lue via une famille documentée (« M21P/1 »
+    // → « M21 ») est REFUSÉ ici : la lecture canonise la famille, donc la ligne
+    // serait acceptée puis ignorée par le simulateur. Le jeu doit porter la
+    // famille documentée elle-même.
+    if (isPublishedFamilyAlias(r.magnetId))
+      return { ok: false, replaced: 0, added: 0, error: "ALIAS_MAGNET" };
     const key = publishedRowKey(r as never);
     if (incoming.has(key)) return { ok: false, replaced: 0, added: 0, error: "DUPLICATE_KEY" };
     incoming.add(key);

@@ -105,7 +105,10 @@ alter table lead.detection_audit enable row level security;
 --    démonstration pédagogique (« GENERIC ») et le « sur mesure » (« CUSTOM »)
 --    n'y figurent pas : ils ne peuvent donc pas recevoir de distances.
 --    Les variantes documentées de la famille M21 (« M21P/1 », « M21P/2 ») sont
---    listées telles qu'imprimées, sans alias ni conversion.
+--    listées telles qu'imprimées, sans alias ni conversion. Elles sont marquées
+--    « family_alias » : les PLAGES du guide les acceptent (c'est une lecture de
+--    brochure), les DISTANCES de commutation les refusent, parce que la lecture
+--    du simulateur canonise la famille documentée et ignorerait la ligne.
 -- ----------------------------------------------------------------------------
 create table if not exists lead.detection_sensor_allow (
   sensor_family text primary key,
@@ -113,8 +116,16 @@ create table if not exists lead.detection_sensor_allow (
 );
 create table if not exists lead.detection_magnet_allow (
   magnet_id text primary key,
-  guide_only boolean not null default false
+  guide_only boolean not null default false,
+  /** Identité lue via une famille documentée : interdite comme clé de distance. */
+  family_alias boolean not null default false,
+  /** Famille documentée qui porte réellement les distances. */
+  family_of text
 );
+alter table lead.detection_magnet_allow
+  add column if not exists family_alias boolean not null default false;
+alter table lead.detection_magnet_allow
+  add column if not exists family_of text;
 alter table lead.detection_sensor_allow enable row level security;
 alter table lead.detection_magnet_allow enable row level security;
 
@@ -207,6 +218,12 @@ insert into lead.detection_magnet_allow (magnet_id) values
   ('HF2826-3.5X1.8X1.8'),
   ('HF2826-6.7X6.7X2.7')
 on conflict (magnet_id) do nothing;
+
+-- Variantes documentées de la famille M21, telles qu'imprimées : consultables et
+-- saisissables pour les PLAGES du guide, refusées comme clé de distance.
+update lead.detection_magnet_allow
+   set family_alias = true, family_of = 'M21'
+ where magnet_id in ('M21P/1','M21P/2');
 
 -- Révision DÉTERMINISTE du jeu effectif : incrémentée dans la MÊME transaction
 -- que chaque écriture. Deux écritures distinctes ne peuvent pas partager une
@@ -395,6 +412,12 @@ begin
                   where a.magnet_id = _payload->>'magnetId') then
     raise exception 'DETECTION_UNKNOWN_MAGNET' using errcode = '22023';
   end if;
+  -- Une variante lue via une famille documentée ne peut pas porter de distance :
+  -- la ligne serait acceptée puis ignorée par le simulateur, qui lit la famille.
+  if exists (select 1 from lead.detection_magnet_allow a
+              where a.magnet_id = _payload->>'magnetId' and a.family_alias) then
+    raise exception 'DETECTION_ALIAS_MAGNET' using errcode = '22023';
+  end if;
   if coalesce(_payload->>'classKind','') not in ('sensitivity','switch_model')
      or coalesce(_payload->>'contactForm','') not in ('1A','1B','1C')
      or coalesce(_payload->>'approachId','') not in ('D1','D2','D3','D4','D5','F1')
@@ -415,13 +438,35 @@ begin
     raise exception 'DETECTION_BAD_PAYLOAD' using errcode = '22023';
   end if;
 
-  select * into cur from lead.detection_rows
-   where sensor_family = _payload->>'sensorFamily'
-     and sensitivity_class = _payload->>'sensitivityClass'
-     and contact_form = _payload->>'contactForm'
-     and magnet_id = _payload->>'magnetId'
-     and approach_id = _payload->>'approachId'
-   for update;
+  -- Identité de la ligne : quand l'écran envoie un identifiant, la ligne est
+  -- localisée par CET identifiant, jamais par la clé métier recomposée. Sinon
+  -- une clé modifiée dans le panneau pointerait sur une AUTRE ligne et
+  -- l'écraserait si les versions coïncidaient.
+  if nullif(_payload->>'id','') is not null then
+    select * into cur from lead.detection_rows
+     where id = (_payload->>'id')::uuid
+     for update;
+    if cur.id is null then
+      raise exception 'DETECTION_MISSING_ROW' using errcode = '22023';
+    end if;
+    -- La clé métier est IMMUABLE sur une ligne existante. Une autre combinaison
+    -- est une nouvelle ligne, créée explicitement, jamais un renommage discret.
+    if cur.sensor_family <> _payload->>'sensorFamily'
+       or cur.sensitivity_class <> _payload->>'sensitivityClass'
+       or cur.contact_form <> _payload->>'contactForm'
+       or cur.magnet_id <> _payload->>'magnetId'
+       or cur.approach_id <> _payload->>'approachId' then
+      raise exception 'DETECTION_KEY_LOCKED' using errcode = '22023';
+    end if;
+  else
+    select * into cur from lead.detection_rows
+     where sensor_family = _payload->>'sensorFamily'
+       and sensitivity_class = _payload->>'sensitivityClass'
+       and contact_form = _payload->>'contactForm'
+       and magnet_id = _payload->>'magnetId'
+       and approach_id = _payload->>'approachId'
+     for update;
+  end if;
 
   if cur.id is null then
     if _expected_version is not null then

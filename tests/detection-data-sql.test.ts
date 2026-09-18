@@ -165,8 +165,9 @@ describe("migration 1.9 exécutée : chemin d'appel et autorisation réels", () 
       await expect(save(db, { ...VALID, magnetId: "NOT_A_MAGNET" }, null)).rejects.toThrow(
         "DETECTION_UNKNOWN_MAGNET",
       );
-      // La variante documentée de la famille M21 est acceptée telle qu'imprimée.
-      const ok = await save(db, { ...VALID, magnetId: "M21P/1" }, null);
+      // La famille documentée M21 est acceptée telle qu'imprimée ; ses variantes
+      // relèvent du contrôle dédié plus bas (elles ne portent pas de distance).
+      const ok = await save(db, { ...VALID, sensorFamily: "MK21", sensorReference: "MK21", magnetId: "M21" }, null);
       expect((ok.rows[0] as { r: { status: string } }).r.status).toBe("validated");
       expect((await db.query("select public.lead_detection_directory()")).rows).toHaveLength(1);
     } finally {
@@ -213,6 +214,95 @@ describe("migration 1.9 exécutée : chemin d'appel et autorisation réels", () 
         "select public.lead_detection_effective() as r",
       );
       expect(eff.rows[0]!.r.rows).toEqual([]);
+    } finally {
+      await db.close();
+    }
+  });
+
+  test("une variante lue via une famille documentée est refusée comme clé de distance", async () => {
+    const db = await bootstrap();
+    try {
+      await asRole(db, "authenticated", ADMIN);
+      // « M21P/1 » et « M21P/2 » sont imprimées au catalogue, mais la lecture du
+      // simulateur canonise « M21 » : une ligne sous la variante serait acceptée
+      // puis IGNORÉE. Le serveur la refuse donc, et nomme la famille à saisir.
+      for (const magnetId of ["M21P/1", "M21P/2"])
+        await expect(
+          save(db, { ...VALID, sensorFamily: "MK21", sensorReference: "MK21", magnetId }, null),
+        ).rejects.toThrow("DETECTION_ALIAS_MAGNET");
+      // La même donnée sous la famille documentée passe et est servie.
+      const ok = await save(
+        db,
+        { ...VALID, sensorFamily: "MK21", sensorReference: "MK21", magnetId: "M21" },
+        null,
+      );
+      expect((ok.rows[0] as { r: { rowVersion: number } }).r.rowVersion).toBe(1);
+      const eff = (
+        await db.query<{ r: { rows: { magnetId: string }[] } }>(
+          "select public.lead_detection_effective() as r",
+        )
+      ).rows[0]!.r.rows;
+      expect(eff.map((r) => r.magnetId)).toEqual(["M21"]);
+      // Les PLAGES du guide gardent la variante telle qu'imprimée.
+      const guide = await db.query("select public.lead_guide_save_row($1::jsonb, $2) as r", [
+        JSON.stringify({
+          page: 12,
+          sensorFamily: "MK21",
+          sensorReference: "MK21",
+          magnetId: "M21P/1",
+          approachId: "D1",
+          upMm: 6.4,
+          toMm: 8.2,
+          status: "validated",
+          sourceRef: "Guide d'activation Standex, page 12",
+          enteredOn: "2026-09-18",
+        }),
+        null,
+      ]);
+      expect((guide.rows[0] as { r: { rowVersion: number } }).r.rowVersion).toBe(1);
+    } finally {
+      await db.close();
+    }
+  });
+
+  test("la clé d'une ligne existante est immuable et ne peut pas en écraser une autre", async () => {
+    const db = await bootstrap();
+    try {
+      await asRole(db, "authenticated", ADMIN);
+      const a = (
+        await save(db, VALID, null)
+      ).rows[0] as { r: { id: string; rowVersion: number } };
+      const b = (
+        await save(db, { ...VALID, sensitivityClass: "C", pullInMm: 5, dropOutMm: 7 }, null)
+      ).rows[0] as { r: { id: string; rowVersion: number } };
+      expect(a.r.id).not.toBe(b.r.id);
+
+      // Clé modifiée dans le panneau : la ligne A pointerait sur la ligne B et,
+      // les versions coïncidant (1 et 1), l'écraserait. Le serveur refuse.
+      await expect(
+        save(db, { ...VALID, id: a.r.id, sensitivityClass: "C", pullInMm: 99, dropOutMm: 111 }, 1),
+      ).rejects.toThrow("DETECTION_KEY_LOCKED");
+
+      // Aucune des deux lignes n'a bougé.
+      const rows = (
+        await db.query<{ r: { rows: { sensitivityClass: string; pullInMm: string }[] } }>(
+          "select public.lead_detection_effective() as r",
+        )
+      ).rows[0]!.r.rows;
+      expect(
+        rows.map((r) => [r.sensitivityClass, Number(r.pullInMm)]).sort(),
+      ).toEqual([
+        ["B", 12.4],
+        ["C", 5],
+      ]);
+
+      // Écriture par identifiant stable, à clé inchangée : acceptée et versionnée.
+      const up = await save(db, { ...VALID, id: a.r.id, pullInMm: 12.9 }, 1);
+      expect((up.rows[0] as { r: { rowVersion: number } }).r.rowVersion).toBe(2);
+      // Un identifiant inconnu ne crée rien en douce.
+      await expect(
+        save(db, { ...VALID, id: "00000000-0000-0000-0000-000000000000" }, 1),
+      ).rejects.toThrow("DETECTION_MISSING_ROW");
     } finally {
       await db.close();
     }
