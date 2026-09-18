@@ -158,7 +158,7 @@ export function WorkspacePanel({
             : "hidden"
         }
       >
-        <div className="workspace-panel-header shrink-0 material sticky top-0 z-10 flex h-14 items-center gap-3 border-b border-[var(--hairline)] px-4 sm:px-6">
+        <div className="workspace-panel-header shrink-0 material sticky top-0 z-10 flex min-h-14 items-center gap-3 border-b border-[var(--hairline)] px-4 sm:px-6">
           {onBack ? (
             <Button
               variant="ghost"
@@ -170,7 +170,7 @@ export function WorkspacePanel({
               <span className="hidden sm:inline">{backLabel ?? "Retour"}</span>
             </Button>
           ) : null}
-          <div className="flex min-w-0 flex-1 items-center gap-3">
+          <div className="workspace-panel-heading flex min-w-0 flex-1 items-center gap-3">
             {/* Point 11 : la marque et le nom de l'outil restent visibles dans
                 les panneaux plein écran, où l'en-tête d'application est masqué.
                 Le logo n'est jamais recomposé : bloc « S » sous le plancher de
@@ -179,7 +179,7 @@ export function WorkspacePanel({
               <BrandLogo variant="mark" height={22} clearance={false} alt="" />
               <span className="app-header-tool t-label">Sensor Studio</span>
             </div>
-            <h2 className="workspace-panel-title t-title-s truncate">{title}</h2>
+            <h2 className="workspace-panel-title t-title-s">{title}</h2>
             {badge}
             {description ? <p className="sr-only">{description}</p> : null}
           </div>

@@ -348,7 +348,7 @@ function ProjectTitle({ title, onRename }: { title: string; onRename: (next: str
   if (!editing)
     return (
       <div className="project-title-display flex min-w-0 flex-1 items-center gap-2">
-        <h1 className="t-title-l min-w-0 truncate" title={title}>
+        <h1 className="t-title-l min-w-0" title={title}>
           {title}
         </h1>
         <Button
@@ -4752,8 +4752,8 @@ export function DesignSpace({
         ref={projectHeaderRef}
         className={`project-header material sticky top-0 z-30${visible ? "" : " hidden"}`}
       >
-        <div className="mx-auto flex h-14 max-w-[76rem] items-center gap-3 px-4">
-          <div className="flex shrink-0 items-center gap-3 self-center">
+        <div className="project-header-row mx-auto grid max-w-[76rem] items-center gap-3 px-4">
+          <div className="project-header-brand flex shrink-0 items-center gap-3 self-center">
             {onGoHome ? (
               <button
                 type="button"
@@ -4786,7 +4786,7 @@ export function DesignSpace({
               setDossier((d) => ({ ...d, title: next, updatedAt: new Date().toISOString() }))
             }
           />
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="project-header-status flex flex-wrap items-center gap-2">
             <Badge variant={lastSent ? "default" : "secondary"} className="project-state-badge">
               {lastSent ? t("Envoyé") : t("Brouillon")}
             </Badge>

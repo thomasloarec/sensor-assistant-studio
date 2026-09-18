@@ -19,6 +19,7 @@ import { AuthPanel } from "@/components/leadmagnet/auth-panel";
 import { checkLeadBackend, type LeadBackendStatus } from "@/lib/leadmagnet/backend";
 import { supabase } from "@/lib/standex/supabase";
 import { Badge } from "@/components/ui/badge";
+import { useLocale } from "@/lib/i18n/react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -149,7 +150,7 @@ function AccountMenu() {
   );
 }
 
-function WorkspaceHeader() {
+export function WorkspaceHeader() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const index = activeIndex(pathname);
 
@@ -262,10 +263,11 @@ function WorkspaceBody() {
 }
 
 function StandexWorkspace() {
+  const locale = useLocale();
   return (
     <CrmProvider>
       <FlashProvider>
-        <div data-readable className="min-h-screen bg-background text-foreground">
+        <div data-readable data-locale={locale} className="min-h-screen bg-background text-foreground">
           <WorkspaceHeader />
           <WorkspaceBody />
         </div>

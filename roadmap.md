@@ -1,5 +1,11 @@
 # Feuille de route — lot des 7 correctifs (base 12be3e3d)
 
+## Correctif responsive et langue — 18 septembre 2026
+- [x] En-tête projet lisible avec titre et statut complets aux largeurs contraintes.
+- [x] Titre des panneaux contextuels complet sans déplacer les contrôles hors écran.
+- [x] Cadre Standex abonné au changement de langue sans rechargement.
+- [x] Recette ciblée, types, compilation et contrôle navigateur aux 24 combinaisons.
+
 ## Fait
 - [x] 1. M02 réservé à MK02 : preuve documentaire séparée de la politique de recommandation.
 - [x] 2. Aimants standard du guide d'activation (forme, matériau, page source) comme repli.

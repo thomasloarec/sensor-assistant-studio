@@ -960,6 +960,15 @@
     min-height: 56px;
     border-bottom: 1px solid var(--hairline);
   }
+  .project-header-row {
+    grid-template-columns: auto minmax(0, 1fr) auto auto;
+    min-height: 56px;
+    padding-block: 0.375rem;
+  }
+  .project-title-display h1,
+  .workspace-panel-title {
+    overflow-wrap: anywhere;
+  }
   .project-stepper-sticky {
     position: sticky;
     top: var(--standex-header-h, 56px);
@@ -968,6 +977,8 @@
   .project-state-badge {
     min-width: 6.5rem;
     justify-content: center;
+    white-space: normal;
+    text-align: center;
   }
   .project-summary-badge,
   .candidate-status-badge {
@@ -1119,24 +1130,44 @@
     animation: standex-panel-in 420ms var(--ease-glide) both;
   }
 
-  @media (max-width: 639px) {
-    .project-header > div {
-      gap: 0.25rem;
-      padding-inline: 0.5rem;
+  @media (max-width: 1024px) {
+    .project-header-row {
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 0.375rem 0.75rem;
+      padding-block: 0.5rem;
+    }
+    .project-header-brand {
+      grid-column: 1;
+      grid-row: 1;
+    }
+    .project-header .studio-header-navigation {
+      grid-column: 2;
+      grid-row: 1;
     }
     .project-header .project-title-display {
-      max-width: 5.5rem;
+      grid-column: 1;
+      grid-row: 2;
+    }
+    .project-header-status {
+      grid-column: 2;
+      grid-row: 2;
+      align-self: center;
+    }
+    .project-header .project-title-display h1 {
+      white-space: normal;
+    }
+    .project-header .project-title-display button span {
+      display: none;
+    }
+  }
+
+  @media (max-width: 639px) {
+    .project-header-row {
+      gap: 0.375rem 0.5rem;
+      padding-inline: 0.5rem;
     }
     .project-header .project-title-display button {
-      padding-inline: 0.25rem;
-    }
-    .project-header .project-state-badge {
-      width: 0.75rem;
-      min-width: 0.75rem;
-      height: 0.75rem;
-      overflow: hidden;
-      padding: 0;
-      color: transparent;
+      padding-inline: 0.5rem;
     }
     .project-header .studio-header-navigation {
       gap: 0.25rem;
@@ -1144,25 +1175,30 @@
     .project-header .language-picker {
       padding-inline: 0.375rem;
     }
-    .project-header .language-picker select {
-      width: 1rem;
-      padding: 0;
-    }
     .project-header .studio-navigation summary {
       padding-inline: 0.625rem;
     }
     .workspace-panel-header {
+      flex-wrap: wrap;
       gap: 0.25rem;
       padding-inline: 0.5rem;
+      padding-block: 0.375rem;
+    }
+    .workspace-panel-heading {
+      order: 2;
+      flex-basis: 100%;
     }
     .workspace-panel-header > button {
+      flex-shrink: 0;
       padding-inline: 0.5rem;
     }
     .workspace-panel-brand .app-header-tool {
       display: none;
     }
-    .workspace-panel-brand + .workspace-panel-title {
-      max-width: 5.5rem;
+    .workspace-panel-title {
+      min-width: 0;
+      flex: 1 1 auto;
+      white-space: normal;
     }
     .workspace-panel-header .language-picker {
       padding-inline: 0.375rem;
