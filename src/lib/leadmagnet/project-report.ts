@@ -27,6 +27,8 @@ export function projectReportSections(
   d: DesignDossier,
   nda: Record<string, unknown> = {},
   tr = (s: string) => s,
+  /** Identifiant serveur du projet, null tant que rien n'est enregistré. */
+  serverDossierId: string | null = null,
 ): ReportSection[] {
   const sections: ReportSection[] = [];
   const unknown = tr("Non défini pour le moment");
