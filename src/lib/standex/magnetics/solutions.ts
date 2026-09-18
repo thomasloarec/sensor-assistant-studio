@@ -1,6 +1,6 @@
 import { preferredMagnet } from "../default-pairs";
 import { SENSOR_CATALOG } from "../sensor-catalog";
-import { PUBLISHED_REGISTRY, PHYSICS_REGISTRY } from "./registries";
+import { effectivePublishedRegistry, PUBLISHED_REGISTRY, PHYSICS_REGISTRY } from "./registries";
 import type { PublishedRegistry, PhysicsRegistry, PublishedApproach } from "./registries";
 import { evaluateReference, evaluateMargin } from "./margin";
 import type { MarginResult, Need } from "./margin";
@@ -17,7 +17,7 @@ export function exploreSolutions(
   need: Need,
   approachId: PublishedApproach,
   domain: { referencePose: boolean; ferrous: boolean },
-  published: PublishedRegistry = PUBLISHED_REGISTRY,
+  published: PublishedRegistry = effectivePublishedRegistry(),
   physics: PhysicsRegistry = PHYSICS_REGISTRY,
 ): Solution[] {
   return SENSOR_CATALOG.filter((s) => s.sourceFile !== null)

@@ -5,7 +5,7 @@ import {
   REFERENCE_CYLINDER,
   packagedMagnet,
 } from "./magnet-catalog";
-import { PUBLISHED_REGISTRY } from "./magnetics/registries";
+import { effectivePublishedRegistry, PUBLISHED_REGISTRY } from "./magnetics/registries";
 import type { PublishedRegistry } from "./magnetics/registries";
 import {
   guideFallbackMagnet,
@@ -71,7 +71,7 @@ const DOCUMENTED_PREFERENCE = ["4003004003"];
 /** Aimants pour lesquels CE capteur a des distances publiées au registre. */
 export function documentedMagnetsFor(
   sensorId: string,
-  registry: PublishedRegistry = PUBLISHED_REGISTRY,
+  registry: PublishedRegistry = effectivePublishedRegistry(),
 ): string[] {
   const ids = [...new Set(registry.rows.filter((r) => r.sensorFamily === sensorId).map((r) => r.magnetId))];
   return ids.sort((a, b) => {
@@ -102,7 +102,7 @@ function dedicatedFor(sensorId: string, magnetId: string): boolean {
  */
 export function policyMagnetsFor(
   sensorId: string,
-  registry: PublishedRegistry = PUBLISHED_REGISTRY,
+  registry: PublishedRegistry = effectivePublishedRegistry(),
 ): string[] {
   const wanted = standardShapeForSensor(sensorId);
   return documentedMagnetsFor(sensorId, registry).filter((id) => {
@@ -127,7 +127,7 @@ export function policyMagnetsFor(
  */
 export function defaultMagnetFor(
   sensorId: string,
-  registry: PublishedRegistry = PUBLISHED_REGISTRY,
+  registry: PublishedRegistry = effectivePublishedRegistry(),
 ): string {
   return (
     DEFAULT_PAIRS[sensorId] ??
@@ -147,7 +147,7 @@ export const preferredMagnet = (sensor: SensorModel): string => defaultMagnetFor
  */
 export function recommendedMagnetsFor(
   sensorId: string,
-  registry: PublishedRegistry = PUBLISHED_REGISTRY,
+  registry: PublishedRegistry = effectivePublishedRegistry(),
 ): string[] {
   return [
     ...new Set([
@@ -172,7 +172,7 @@ export function recommendedMagnetsFor(
  */
 export function magnetOptionsFor(
   sensorId: string,
-  registry: PublishedRegistry = PUBLISHED_REGISTRY,
+  registry: PublishedRegistry = effectivePublishedRegistry(),
   current?: string,
 ): string[] {
   const wanted = standardShapeForSensor(sensorId);

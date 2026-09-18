@@ -138,6 +138,104 @@ export function readPublishedRegistry(raw: unknown): PublishedRegistry {
   return data;
 }
 export const PUBLISHED_REGISTRY = readPublishedRegistry(rawReferences);
+
+/* --------------------------------------------------------------------------
+ * Données EFFECTIVES de détection
+ *
+ * `PUBLISHED_REGISTRY` reste le jeu COMPILÉ, base de provenance : il n'est
+ * jamais modifié en place. Les lignes saisies et validées par l'ingénierie
+ * Standex (annuaire « Données de détection », migration 1.9) sont appliquées
+ * par-dessus, par combinaison EXACTE famille / classe ou modèle de contact /
+ * aimant / approche. Aucune ligne n'est empruntée à une autre famille ni à un
+ * autre aimant, aucune valeur manquante n'est remplacée par zéro, et les plages
+ * « up / to » du guide d'activation n'entrent JAMAIS ici.
+ *
+ * Toutes les lectures du registre passent par `effectivePublishedRegistry()` :
+ * c'est un appel, donc évalué à chaque appel, jamais figé dans un argument par
+ * défaut ni dans un cache de module.
+ * ------------------------------------------------------------------------ */
+export const COMPILED_PUBLISHED_REGISTRY: PublishedRegistry = PUBLISHED_REGISTRY;
+let effectiveOverlay: PublishedRegistry | null = null;
+let effectiveRevisionCounter = 0;
+
+/** Clé métier d'une ligne : la combinaison EXACTE, contact compris. */
+export function publishedRowKey(r: {
+  sensorFamily: string;
+  sensitivityClass: string;
+  contactForm: string;
+  magnetId: string;
+  approachId: string;
+}): string {
+  return [r.sensorFamily, r.sensitivityClass, r.contactForm, r.magnetId, r.approachId].join("/");
+}
+
+/** Jeu réellement lu par les simulations : compilé, puis saisies validées. */
+export function effectivePublishedRegistry(): PublishedRegistry {
+  return effectiveOverlay ?? COMPILED_PUBLISHED_REGISTRY;
+}
+/** Compteur d'invalidation : il change à chaque application réussie. */
+export function publishedRegistryRevision(): number {
+  return effectiveRevisionCounter;
+}
+/** Origine du jeu effectif, pour l'afficher honnêtement. */
+export function effectiveRegistrySource(): "compiled" | "server" {
+  return effectiveOverlay ? "server" : "compiled";
+}
+
+export interface EffectiveApplyResult {
+  ok: boolean;
+  /** Lignes qui ont REMPLACÉ une ligne compilée de même combinaison. */
+  replaced: number;
+  /** Combinaisons qui n'existaient pas du tout dans le jeu compilé. */
+  added: number;
+  error: string | null;
+}
+
+/**
+ * Applique un jeu de lignes validées. Refus ENTIER en cas de ligne invalide :
+ * un jeu partiellement accepté serait une donnée inventée. Les brouillons et
+ * les lignes incomplètes doivent avoir été écartés en amont (le serveur ne les
+ * publie pas) ; s'il en arrive une, tout est refusé.
+ */
+export function applyEffectivePublishedRows(rows: readonly unknown[]): EffectiveApplyResult {
+  if (!Array.isArray(rows)) return { ok: false, replaced: 0, added: 0, error: "BAD_PAYLOAD" };
+  const base = COMPILED_PUBLISHED_REGISTRY;
+  const merged = new Map<string, PublishedRow>();
+  for (const r of base.rows) merged.set(publishedRowKey(r), r);
+  let replaced = 0,
+    added = 0;
+  for (const raw of rows) {
+    if (!raw || typeof raw !== "object") return { ok: false, replaced: 0, added: 0, error: "BAD_ROW" };
+    const r = raw as PublishedRow;
+    const key = publishedRowKey(r as never);
+    if (merged.has(key) && !base.rows.some((b) => publishedRowKey(b) === key)) {
+      // Deux fois la même combinaison dans le même envoi : refus.
+      return { ok: false, replaced: 0, added: 0, error: "DUPLICATE_KEY" };
+    }
+    if (base.rows.some((b) => publishedRowKey(b) === key)) replaced += 1;
+    else added += 1;
+    merged.set(key, r);
+  }
+  const candidate: PublishedRegistry = {
+    version: base.version,
+    sourceSha256: base.sourceSha256,
+    rows: [...merged.values()],
+  };
+  // La MÊME lecture défensive que le jeu compilé : mêmes contrôles, mêmes refus.
+  const checked = readPublishedRegistry(candidate);
+  if (checked.version === "unavailable")
+    return { ok: false, replaced: 0, added: 0, error: "INVALID_ROWS" };
+  effectiveOverlay = checked;
+  effectiveRevisionCounter += 1;
+  return { ok: true, replaced, added, error: null };
+}
+
+/** Retour au jeu compilé seul : déconnexion, changement de compte, tests. */
+export function resetEffectivePublishedRows(): void {
+  if (effectiveOverlay === null) return;
+  effectiveOverlay = null;
+  effectiveRevisionCounter += 1;
+}
 /** Compiled empty until source-defined active geometry is supplied; never populated with fixtures. */
 const finite = z.number().finite(),
   positive = finite.positive();
@@ -246,7 +344,7 @@ export function publishedReference(
   sensitivityClass: string,
   magnetId: string,
   approachId: string,
-  registry = PUBLISHED_REGISTRY,
+  registry = effectivePublishedRegistry(),
 ): PublishedRow | null {
   const magnet = publishedMagnetFamily(magnetId);
   return (
@@ -268,7 +366,7 @@ export function publishedPairFor(
   sensitivityClass: string,
   approachId: string,
   magnetId: string,
-  registry = PUBLISHED_REGISTRY,
+  registry = effectivePublishedRegistry(),
 ): readonly [number, number] | null {
   const row = publishedReference(sensorFamily, sensitivityClass, magnetId, approachId, registry);
   return row ? [row.pullInMm, row.dropOutMm] : null;
@@ -282,7 +380,7 @@ export function publishedPairFor(
 export function publishedRowsForCouple(
   sensorFamily: string,
   magnetId: string,
-  registry = PUBLISHED_REGISTRY,
+  registry = effectivePublishedRegistry(),
 ): PublishedRow[] {
   const magnet = publishedMagnetFamily(magnetId);
   return registry.rows
@@ -312,7 +410,7 @@ export function publishedRowsSourceUrl(rows: PublishedRow[]): string | null {
 export function publishedClassKind(
   sensorFamily: string,
   magnetId: string,
-  registry = PUBLISHED_REGISTRY,
+  registry = effectivePublishedRegistry(),
 ): PublishedClassKind | null {
   return publishedRowsForCouple(sensorFamily, magnetId, registry)[0]?.classKind ?? null;
 }
@@ -321,7 +419,7 @@ export function publishedClassKind(
 export function publishedClasses(
   sensorFamily: string,
   magnetId: string,
-  registry = PUBLISHED_REGISTRY,
+  registry = effectivePublishedRegistry(),
 ): string[] {
   const magnet = publishedMagnetFamily(magnetId);
   return [
@@ -336,7 +434,7 @@ export function publishedClasses(
 export function publishedApproaches(
   sensorFamily: string,
   magnetId: string,
-  registry = PUBLISHED_REGISTRY,
+  registry = effectivePublishedRegistry(),
 ): string[] {
   const magnet = publishedMagnetFamily(magnetId);
   return [
@@ -352,7 +450,7 @@ export function publishedSensorReference(
   sensorFamily: string,
   sensitivityClass: string,
   magnetId: string,
-  registry = PUBLISHED_REGISTRY,
+  registry = effectivePublishedRegistry(),
 ): string | null {
   const magnet = publishedMagnetFamily(magnetId);
   return (
@@ -368,7 +466,7 @@ export function publishedSensorReference(
 export function publishedPair(
   sensitivityClass: string,
   approachId: string,
-  registry = PUBLISHED_REGISTRY,
+  registry = effectivePublishedRegistry(),
   magnetId = "M02",
 ): readonly [number, number] | null {
   return publishedPairFor("MK03", sensitivityClass, approachId, magnetId, registry);

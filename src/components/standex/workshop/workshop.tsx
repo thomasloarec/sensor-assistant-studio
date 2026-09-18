@@ -46,6 +46,7 @@ import {
 import type { GuidedMounting } from "@/lib/standex/mounting";
 import type { StudioStudy } from "@/lib/standex/studio-dossier";
 import type { DesignFreeze } from "@/lib/standex/design-freeze";
+import { useDetectionDataRevision } from "@/lib/standex/detection-data/store";
 import {
   publishedClasses,
   publishedApproaches,
@@ -479,6 +480,10 @@ export default function MagneticWorkshop({
   /** Repères d'animation ILLUSTRATIVE : bornes de la plage du guide choisie
    *  explicitement (référence + approche), sinon 15 / 18 mm. Ces bornes ne
    *  touchent ni la couverture, ni la preuve, ni le verdict. */
+  /* Révision des données de détection effectives : une ligne enregistrée par
+     l'administration Standex doit recalculer la scène montée, pas attendre un
+     rechargement. */
+  const dataRevision = useDetectionDataRevision();
   const guideDemoRange = useMemo(() => {
     return workshopGuideRange(config);
   }, [config.sensorId, config.magnetModel, config.guideReference, config.geometry]);
@@ -495,7 +500,7 @@ export default function MagneticWorkshop({
         scenePoseSampler(config),
         illustrativeBounds,
       ),
-    [guided, config, illustrativeBounds],
+    [guided, config, illustrativeBounds, dataRevision],
   );
 
   const result = useMemo(() => {
@@ -559,7 +564,7 @@ export default function MagneticWorkshop({
   const magnetOutsidePolicy = isOutsidePolicy(config.sensorId, config.magnetModel);
   const magnetAlias = documentedAlias(config.magnetModel);
 
-  const summary = useMemo(() => summarizeWorkshop(config), [config]);
+  const summary = useMemo(() => summarizeWorkshop(config), [config, dataRevision]);
   const fingerprint = JSON.stringify(config),
     dirty = saved !== fingerprint;
   const referencePair = workshopPair(config);

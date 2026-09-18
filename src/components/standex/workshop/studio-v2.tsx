@@ -13,7 +13,7 @@ import { newStudy, deriveStudioFields, confirmStudioField } from "@/lib/standex/
 import type { StudioStudy } from "@/lib/standex/studio-dossier";
 import { DOSSIER_FIELDS } from "@/lib/standex/application-dossier";
 import { exploreSolutions } from "@/lib/standex/magnetics/solutions";
-import { PUBLISHED_REGISTRY } from "@/lib/standex/magnetics/registries";
+import { effectivePublishedRegistry, PUBLISHED_REGISTRY } from "@/lib/standex/magnetics/registries";
 import { validNeed } from "@/lib/standex/magnetics/margin";
 import type { Need } from "@/lib/standex/magnetics/margin";
 import {
@@ -134,7 +134,7 @@ export default function StudioV2({
       ? [...displaySolutions].sort((a, b) => a.id.localeCompare(b.id))
       : displaySolutions;
   const selected = solutions.find((s) => s.id === selectedId) ?? null;
-  const documented = new Set(PUBLISHED_REGISTRY.rows.map((r) => r.sensorFamily)).size;
+  const documented = new Set(effectivePublishedRegistry().rows.map((r) => r.sensorFamily)).size;
   const families = new Set(rows.map((r) => r.sensorFamily)).size;
   const calibrated = new Set(
     rows.filter((r) => r.physical.provenance.length).map((r) => r.sensorFamily),

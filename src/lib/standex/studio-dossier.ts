@@ -1,4 +1,4 @@
-import { PUBLISHED_REGISTRY, type PublishedApproach } from "./magnetics/registries";
+import { effectivePublishedRegistry, PUBLISHED_REGISTRY, type PublishedApproach } from "./magnetics/registries";
 import { DOSSIER_FIELDS } from "./application-dossier";
 import { sensorById, MAGNET_REFERENCE } from "./sensor-catalog";
 import type { WorkshopConfig } from "./magnetic-workshop";
@@ -47,7 +47,7 @@ export function deriveStudioFields(study: StudioStudy, config: WorkshopConfig | 
     n = study.need;
   if (config) {
     const sensor = sensorById(config.sensorId);
-    const chosen = PUBLISHED_REGISTRY.rows.find(
+    const chosen = effectivePublishedRegistry().rows.find(
       (r) =>
         [r.sensorFamily, r.sensitivityClass, r.magnetId, r.approachId].join("/") ===
           study.selectedSolutionId && r.approachId === (study.comparisonApproach ?? "D1"),

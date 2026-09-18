@@ -10,6 +10,7 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
+import { loadDetectionData } from "@/lib/standex/detection-data/store";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
@@ -137,6 +138,12 @@ function RootComponent() {
   useEffect(() => {
     document.documentElement.lang = localeTag(locale);
   }, [locale]);
+  /* Données de détection effectives : chargées une fois par session, dans le
+     navigateur. Tant que le serveur n'a pas répondu, le jeu compilé sert tel
+     quel ; aucun écran ne prétend disposer de données serveur. */
+  useEffect(() => {
+    void loadDetectionData();
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>

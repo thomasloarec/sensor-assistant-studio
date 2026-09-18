@@ -9,6 +9,7 @@ import {
 import { pairDemonstration } from "@/lib/standex/magnetic-workshop";
 import { isPcbSensor, housingMaterial, pairCategory, suggestedProjectTitle } from "@/lib/leadmagnet/product-presentation";
 import { pairCardFor } from "@/lib/leadmagnet/pair-cards";
+import { useDetectionDataRevision } from "@/lib/standex/detection-data/store";
 import { requirementAnswer } from "@/lib/leadmagnet/requirement-answer";
 import { getLocale, isLocale, msg, setLocale, t, type Locale } from "@/lib/i18n/core";
 import { createNdaSync, StaleContextError } from "@/lib/leadmagnet/nda-sync";
@@ -959,6 +960,10 @@ export function DesignSpace({
    * l'ensemble des réponses écrites, sans jamais rien deviner. */
   const mountingText =
     mountingAnswer && detectMountingIntent(mountingAnswer).explicit ? mountingAnswer : answersText;
+  /* Les cartes lisent les données de détection EFFECTIVES : une ligne saisie et
+     validée par l'administration Standex change donc les couples annoncés sans
+     rechargement. */
+  const dataRevision = useDetectionDataRevision();
   const candidates = useMemo(
     () =>
       evaluateCandidates({
@@ -966,7 +971,7 @@ export function DesignSpace({
         envelope: dossier.envelope,
         mountingText,
       }),
-    [dossier.mounting, dossier.envelope, mountingText],
+    [dossier.mounting, dossier.envelope, mountingText, dataRevision],
   );
   // Catalogue: la connectique produit reste visible avant tout routage projet.
   const candidatesCabled = true;
