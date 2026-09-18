@@ -52,7 +52,7 @@ describe("couple sans ligne publiée dans le guide intégré", () => {
   });
 
   test("le résultat nomme la cause réelle, sans parler de position", () => {
-    const html = render();
+    const html = render(pair());
     expect(html).toContain("Les distances de ce couple ne sont pas publiées.");
     expect(html).toContain("Fiche produit disponible pour ce capteur");
     expect(html).not.toContain("Revenir à une position documentée");
