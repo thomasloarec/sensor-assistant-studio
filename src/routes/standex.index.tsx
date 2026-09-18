@@ -36,6 +36,7 @@ import {
   CrmUnavailableNotice,
 } from "@/components/standex/dashboard/crm-shared";
 import { fetchCrmBoard, type CrmBoard } from "@/lib/leadmagnet/dashboard-adapter";
+import { projectReference } from "@/lib/leadmagnet/project-reference";
 import {
   stageAgeDays,
   filterProjects,
@@ -286,14 +287,14 @@ function ProjectsBoard() {
           <span className="workbar-progress" aria-hidden="true" />
         ) : null}
         <Label className="sr-only" htmlFor="crm-search">
-          {t("Rechercher (société, projet, pays)")}
+          {t("Rechercher (société, projet, pays, identifiant)")}
         </Label>
         <Input
           id="crm-search"
           className="min-w-[12rem] flex-1"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder={t("Rechercher (société, projet, pays)")}
+          placeholder={t("Rechercher (société, projet, pays, identifiant)")}
         />
 
         <Popover>
@@ -648,6 +649,19 @@ function ProjectsBoard() {
                     <p className="t-caption text-muted-foreground">
                       {p.projectName ?? p.title} — {t("version")} {p.currentRevision}
                     </p>
+                    {/* Identifiant unique COMPLET du projet en base, jamais tronqué,
+                        suivi de l'abrégé lisible imprimé sur le PDF client. */}
+                    <p className="t-caption t-metric break-all text-muted-foreground">
+                      <span title={t("Identifiant unique du projet (base Standex)")}>
+                        {p.dossierId}
+                      </span>
+                      {projectReference(p.dossierId) ? (
+                        <span title={t("Abrégé lisible (raccourci, pas une clé unique)")}>
+                          {" · "}
+                          {projectReference(p.dossierId)}
+                        </span>
+                      ) : null}
+                    </p>
                   </td>
 
                   <td>
@@ -777,6 +791,14 @@ function ProjectsBoard() {
                     <span className="block t-title-s">{p.companyEffective ?? p.title}</span>
                     <span className="block t-caption text-muted-foreground">
                       {p.projectName ?? t("projet sans nom")}
+                    </span>
+                    {/* Même identifiant complet que dans le tableau : le pipeline
+                        ne montre pas un projet sans dire lequel. */}
+                    <span
+                      className="block t-caption t-metric break-all text-muted-foreground"
+                      title={t("Identifiant unique du projet (base Standex)")}
+                    >
+                      {p.dossierId}
                     </span>
                     <span className="block t-caption text-muted-foreground">
                       {t("Commercial")} : {personName(board.directory, p.salesPersonId)} — {t("FAE")}{" "}

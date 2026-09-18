@@ -47,10 +47,12 @@ export function ReviewSubmitControl({
   const detail = statusDetail(status);
   const history = sentHistory(lastSent);
   return (
-    <div className="space-y-3">
+    // min-w-0 sur le conteneur : sans lui, un bouton large peut pousser la
+    // colonne latérale au-delà de sa largeur à toutes les tailles d'écran.
+    <div className="min-w-0 max-w-full space-y-3">
       <Button
         size="lg"
-        className="w-full max-w-full sm:w-auto sm:max-w-[18rem] justify-center overflow-hidden whitespace-nowrap [&>span]:truncate"
+        className="min-w-0 w-full max-w-full justify-center overflow-hidden whitespace-nowrap [&>span]:min-w-0 [&>span]:truncate"
         onClick={onSubmit}
         disabled={busy}
         aria-busy={busy ? "true" : undefined}

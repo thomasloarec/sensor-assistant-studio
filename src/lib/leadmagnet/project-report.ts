@@ -12,6 +12,7 @@ import {
 } from "./project-reference";
 import { VARIABLE_FIELDS } from "./nda-docx";
 import { type TestedVerdict } from "./tested-pairs";
+import { testedPairGuideFact } from "./tested-pair-guide";
 import { simulateMounting } from "../standex/mounting/simulate";
 import { scenePoseSampler } from "../standex/mounting/bridge";
 
@@ -98,12 +99,18 @@ export function projectReportSections(
   if (d.testedPairs?.length)
     add(
       "Historique des essais",
-      d.testedPairs.map((p) =>
-        entry(
+      d.testedPairs.map((p) => {
+        // MÊME source que le récapitulatif de l'écran : la ligne du guide
+        // réellement enregistrée avec l'essai, avec sa page. Les bornes restent
+        // documentaires : ce ne sont pas des seuils de ce montage.
+        const fact = testedPairGuideFact(p, tr, (template: string, args: string[]) =>
+          tr(template).replace(/\{(\d+)\}/g, (_, i) => args[Number(i)] ?? ""),
+        );
+        return entry(
           `${p.sensorId} + ${p.magnetId} · ${p.approach} · ${p.at}`,
-          tr(p.mainMessage || cycleMessage(p.verdict)),
-        ),
-      ),
+          [fact?.label, tr(p.mainMessage || cycleMessage(p.verdict))].filter(Boolean).join(" · "),
+        );
+      }),
     );
   if (d.openQuestions.length)
     add(

@@ -27673,5 +27673,50 @@
     "Читаемое сокращение (не уникальный ключ)",
     "Forma breve leggibile (scorciatoia, non una chiave univoca)",
     "読みやすい短縮表記（一意キーではありません）"
+  ],
+  "Rechercher (société, projet, pays, identifiant)": [
+    "Search (company, project, country, identifier)",
+    "搜索（公司、项目、国家、标识符）",
+    "Suchen (Firma, Projekt, Land, Kennung)",
+    "Buscar (empresa, proyecto, país, identificador)",
+    "Поиск (компания, проект, страна, идентификатор)",
+    "Cerca (azienda, progetto, paese, identificativo)",
+    "検索（会社、案件、国、識別子）"
+  ],
+  "plage du guide {0}–{1} mm, ligne {2}, page {3}": [
+    "guide range {0}–{1} mm, row {2}, page {3}",
+    "指南范围 {0}–{1} mm，行 {2}，第 {3} 页",
+    "Leitfaden-Bereich {0}–{1} mm, Zeile {2}, Seite {3}",
+    "rango de la guía {0}–{1} mm, fila {2}, página {3}",
+    "диапазон из руководства {0}–{1} мм, строка {2}, страница {3}",
+    "intervallo della guida {0}–{1} mm, riga {2}, pagina {3}",
+    "ガイド範囲 {0}–{1} mm、行 {2}、{3} ページ"
+  ],
+  "ordre imprimé inhabituel, à confirmer": [
+    "unusual printed order, to be confirmed",
+    "印刷顺序异常，待确认",
+    "ungewöhnliche gedruckte Reihenfolge, zu bestätigen",
+    "orden impreso inusual, por confirmar",
+    "необычный порядок в печати, требует подтверждения",
+    "ordine stampato inusuale, da confermare",
+    "印刷順序が通常と異なります。確認が必要です"
+  ],
+  "seuils de ce montage non caractérisés": [
+    "thresholds for this assembly are not characterised",
+    "本装配的阈值未表征",
+    "Schaltabstände dieses Aufbaus sind nicht charakterisiert",
+    "umbrales de este montaje no caracterizados",
+    "пороги этой сборки не охарактеризованы",
+    "soglie di questo montaggio non caratterizzate",
+    "この取り付けのしきい値は未特性評価です"
+  ],
+  "distances de ce couple non publiées": [
+    "distances for this pair are not published",
+    "该组合的距离未公布",
+    "Abstände dieser Kombination sind nicht veröffentlicht",
+    "distancias de esta pareja no publicadas",
+    "расстояния для этой пары не опубликованы",
+    "distanze di questa coppia non pubblicate",
+    "この組み合わせの距離は未公開です"
   ]
 }

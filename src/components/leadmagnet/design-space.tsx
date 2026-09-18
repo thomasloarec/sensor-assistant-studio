@@ -235,6 +235,7 @@ import {
   recordTestedPair,
   type TestedPair,
 } from "@/lib/leadmagnet/tested-pairs";
+import { testedPairGuideFact } from "@/lib/leadmagnet/tested-pair-guide";
 
 import {
   openPrivateErrorScope,
@@ -3391,14 +3392,20 @@ export function DesignSpace({
   /** Libellé du couple réellement testé : reprise du verdict enregistré, jamais
    * un recalcul, jamais une validation technique. */
   const reviewTested = latestTestedPair(dossier.testedPairs);
+  /** Ligne du guide réellement enregistrée avec l'essai : même source que le
+   *  PDF et l'historique. Les bornes « up »/« to » restent documentaires. */
+  const reviewGuideFact = reviewTested ? testedPairGuideFact(reviewTested, t, msg) : null;
   const reviewTestedLabel = reviewTested
     ? [
         `${reviewTested.sensorId} + ${reviewTested.magnetId}`,
-        reviewTested.approach === "F1"
-          ? t("face à face")
-          : reviewTested.approach === "D3"
-            ? t("perpendiculaire")
-            : t("parallèle"),
+        `${
+          reviewTested.approach === "F1"
+            ? t("face à face")
+            : reviewTested.approach === "D3"
+              ? t("perpendiculaire")
+              : t("parallèle")
+        } (${reviewTested.approach})`,
+        ...(reviewGuideFact ? [reviewGuideFact.label] : []),
         reviewTested.verdict === "expected" && reviewTested.pullInMm !== null
           ? msg("détection prévue (ferme {0} mm, ouvre {1} mm)", [
               formatMm(reviewTested.pullInMm),
@@ -3407,7 +3414,11 @@ export function DesignSpace({
           : reviewTested.verdict === "none"
             ? t("pas de détection sur ce cycle")
             : reviewTested.verdict === "unpublished"
-              ? t("distances non publiées")
+              ? // Aucune ligne publiée pour ce couple : on nomme l'absence, sans
+                // laisser croire que la plage existe ailleurs.
+                reviewGuideFact
+                ? t("seuils de ce montage non caractérisés")
+                : t("distances de ce couple non publiées")
               : t("position non documentée"),
         // Le mode illustratif est écrit dans le résumé du projet, jamais tu.
         ...(reviewTested.illustrative
