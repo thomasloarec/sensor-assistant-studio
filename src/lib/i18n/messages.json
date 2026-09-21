@@ -27718,5 +27718,32 @@
     "расстояния для этой пары не опубликованы",
     "distanze di questa coppia non pubblicate",
     "この組み合わせの距離は未公開です"
+  ],
+  "Lampe allumée": [
+    "Lamp on",
+    "灯亮",
+    "Lampe an",
+    "Lámpara encendida",
+    "Лампа включена",
+    "Lampada accesa",
+    "ランプ点灯"
+  ],
+  "Lampe éteinte": [
+    "Lamp off",
+    "灯灭",
+    "Lampe aus",
+    "Lámpara apagada",
+    "Лампа выключена",
+    "Lampada spenta",
+    "ランプ消灯"
+  ],
+  "Reed": [
+    "Reed",
+    "干簧管",
+    "Reed",
+    "Reed",
+    "Геркон",
+    "Reed",
+    "リード"
   ]
 }

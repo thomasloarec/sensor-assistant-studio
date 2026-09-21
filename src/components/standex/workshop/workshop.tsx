@@ -100,6 +100,7 @@ import MachineControls from "./machine-controls";
 import FlatScene from "./flat-scene";
 import SensorCatalog from "./sensor-catalog";
 import ContactIndicator from "./contact-indicator";
+import ContactCircuit from "./contact-circuit";
 import { SensorPlan } from "./sensor-plan";
 import { sensorById, sizeLabel, sensorSource } from "@/lib/standex/sensor-catalog";
 
@@ -1690,6 +1691,7 @@ export default function MagneticWorkshop({
               </div>
               {displayMenu}
             </div>
+            <ContactCircuit contact={sample.contact} />
             {/* Outil de pointage du câble : seulement quand le pointage est
                 réellement actif. Les trajets existants restent intacts. */}
             {cableRouting && tool === "cable" ? (

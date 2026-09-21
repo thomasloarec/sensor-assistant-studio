@@ -350,6 +350,15 @@ cibles de 44 px conformes).
 
 ### Atelier magnétique
 
+- Un circuit compact, placé sous « Affichage », relie alimentation, reed et
+  lampe à l'état du contact calculé. La lampe, la position des lames et le
+  libellé rendent cet état lisible sans dépendre de la couleur. L'état inconnu
+  affiche un point d'interrogation, sans courant. Le menu passe devant ce
+  schéma non interactif ; les gestes de la scène restent disponibles. Le
+  mouvement suit les jetons existants et s'arrête en mouvement réduit. Sur
+  téléphone, le circuit se place en bas à droite pour libérer le centre de la
+  scène et la deuxième ligne de commandes.
+
 - L'atelier utilise l'échelle typographique unique par des alias locaux
   `--mw-t-body`, `--mw-t-dense`, `--mw-t-label`, `--mw-t-title`, `--mw-t-title-m`,
   `--mw-t-title-l`, `--mw-t-display`, définis dans `.mw` comme de simples renvois

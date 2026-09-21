@@ -2273,6 +2273,7 @@
   z-index: 3;
   display: flex;
   align-items: flex-start;
+  align-content: flex-start;
   gap: 8px;
   flex-wrap: wrap;
   /* L'état du contact vit en haut à gauche de la scène : les outils partent de
@@ -2310,6 +2311,62 @@
   background: var(--mw-surface);
   box-shadow: var(--e-3);
   max-inline-size: 17rem;
+}
+/* Compact electrical readout, below Affichage and behind its dropdown. */
+.mw-contact-circuit {
+  position: absolute;
+  inset-block-start: 64px;
+  inset-inline-end: 12px;
+  z-index: 2;
+  inline-size: 208px;
+  padding: 8px;
+  border-radius: var(--r-md);
+  background: color-mix(in oklch, var(--standex-deep) 70%, transparent);
+  color: var(--foreground);
+  box-shadow: var(--e-0);
+  pointer-events: none;
+  text-align: center;
+}
+.mw-contact-circuit svg { display: block; width: 100%; overflow: visible; }
+.mw-contact-circuit text { fill: var(--foreground); font: var(--t-caption); }
+.mw-mini-wire, .mw-mini-source, .mw-mini-switch, .mw-mini-filament, .mw-mini-rays {
+  fill: none;
+  stroke: var(--muted-foreground);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.mw-mini-capsule { fill: var(--surface); }
+.mw-mini-terminal { fill: var(--muted-foreground); }
+.mw-mini-switch {
+  transform-origin: 78px 20px;
+  transform: rotate(-25deg);
+  transition: transform var(--d-fast) var(--ease-out);
+}
+.mw-mini-bulb { fill: var(--standex-deep); stroke: var(--muted-foreground); stroke-width: 2; }
+.mw-contact-circuit[data-contact="closed"] .mw-mini-switch { transform: rotate(0deg); }
+.mw-contact-circuit[data-contact="closed"] :is(.mw-mini-wire, .mw-mini-switch) { stroke: var(--success); }
+.mw-contact-circuit[data-contact="closed"] .mw-mini-bulb {
+  fill: var(--success);
+  stroke: var(--success);
+  filter: drop-shadow(0 0 5px var(--success));
+}
+.mw-contact-circuit[data-contact="closed"] .mw-mini-filament { stroke: var(--standex-deep); }
+.mw-mini-rays { stroke: var(--success); }
+.mw-mini-current {
+  fill: none;
+  stroke: var(--success);
+  stroke-width: 3;
+  stroke-dasharray: 2 18;
+  animation: mw-mini-flow var(--mw-flow-duration) var(--ease-in-out) infinite;
+}
+@keyframes mw-mini-flow { to { stroke-dashoffset: -40; } }
+@media (max-width: 639px) {
+  .mw-contact-circuit { inline-size: 168px; inset-block-start: auto; inset-block-end: 36px; inset-inline-end: 8px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mw-mini-current { animation: none; }
+  .mw-mini-switch { transition: none; }
 }
 /* ---- Chronologie du cycle ---- */
 .mw-stage .mw-cycle {
