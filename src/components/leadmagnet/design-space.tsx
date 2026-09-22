@@ -3470,6 +3470,8 @@ export function DesignSpace({
         ...(reviewTested.illustrative
           ? [t(reviewIllustrativeNote(reviewTested.sensorId, reviewGuideFact !== null))]
           : []),
+        // La conclusion de revue dit la même vérité que l'écran Résultat.
+        ...(fitBlocked ? [t(FIT_PANEL.demoNotApplication)] : []),
       ].join(" · ")
     : null;
 
