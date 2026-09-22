@@ -4318,6 +4318,10 @@ export function DesignSpace({
       // Un point de compatibilité ouvert interdit un résultat positif : la
       // démonstration ne vérifie pas l'application.
       applicationBlocked={fitBlocked}
+      // Le MÊME encart pédagogique qu'au-dessus des couples, avec ses liens
+      // exacts : il s'affiche aussi quand aucun couple n'a été essayé.
+      fit={fit}
+      onGoToStep={goToRequirementStep}
       detectionGoal={dossier.requirements.find((r) => r.key === "detection_goal")?.value ?? null}
       tested={dossier.testedPairs ?? []}
       proposals={suggestedPairs}
