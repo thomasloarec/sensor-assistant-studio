@@ -99,7 +99,7 @@ import {
 } from "@/lib/leadmagnet/dossier";
 import { detectMountingIntent } from "@/lib/leadmagnet/mounting-intent";
 import { CANDIDATE_DISCLAIMER, evaluateCandidates } from "@/lib/leadmagnet/candidates";
-import { assessApplicationFit } from "@/lib/leadmagnet/application-fit";
+import { assessApplicationFit, FIT_PANEL } from "@/lib/leadmagnet/application-fit";
 import { CompatibilityPanel } from "./compatibility-panel";
 import {
   applyRoutingPick,
