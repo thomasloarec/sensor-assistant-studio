@@ -2,6 +2,7 @@ import { isPcbSensor } from "./product-presentation";
 import { workshopGuideRange, GUIDE_SIMULATION_NOTE, illustrativeNoteFor } from "../standex/workshop-guide";
 import { guideIllustrativeMarks, ACTIVATION_GUIDE } from "../standex/activation-guide";
 import { toClientDto, stableStringify, REQUIREMENT_LABELS, type DesignDossier } from "./dossier";
+import { assessApplicationFit, FIT_PANEL } from "./application-fit";
 import { technicalSummary } from "./submission";
 import {
   projectIdentity,
