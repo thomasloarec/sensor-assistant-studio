@@ -216,10 +216,19 @@ export function assessApplicationFit(
 
   /* ---- Point 1 ---- */
   const direct = anyMatch(frags, DIRECT_SWITCH);
-  const refuseInterface = anyMatch(frags, REFUSE_INTERFACE);
   const safe = anyMatch(frags, SAFE_WIRING);
+  // Un refus d'interface n'est levé que si la phrase QUI REFUSE explique
+  // elle-même le câblage réel (« no relay needed because the PLC controls an
+  // external contactor »). Un câblage sûr décrit ailleurs ne supprime pas une
+  // contrainte encore posée dans une autre réponse : la contradiction demeure.
+  const refuseInterface = anyMatch(frags, REFUSE_INTERFACE).filter(
+    (f) => !SAFE_WIRING.some((p) => p.test(f.text)),
+  );
   const load = heavyLoad(frags);
-  if ((direct.length > 0 || refuseInterface.length > 0) && load.found && safe.length === 0) {
+  if (
+    ((direct.length > 0 && safe.length === 0) || refuseInterface.length > 0) &&
+    load.found
+  ) {
     const evidence: FitEvidence[] = [...direct, ...refuseInterface].map((f) => ({
       step: f.step,
       quote: f.quote,
