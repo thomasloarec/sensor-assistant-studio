@@ -259,7 +259,12 @@ describe("liens vers le questionnaire réel", () => {
     expect(issue.why).toContain("courant d'appel");
     const joined = issue.cautions.join(" ");
     expect(joined).toContain("charge inductive");
-    expect(joined).toContain("handling-and-load-precautions");
+    // L'URL brute et la liste de composants ne figurent plus dans le texte :
+    // la source est un lien nommé, la protection reste générique.
+    expect(joined).not.toContain("handling-and-load-precautions");
+    expect(joined).not.toContain("diode");
+    expect(joined).toContain("adaptée au type d'alimentation");
+    expect(FIT_PANEL.sourceUrl).toContain("handling-and-load-precautions");
   });
 });
 
