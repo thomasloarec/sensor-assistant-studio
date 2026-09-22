@@ -3,7 +3,7 @@
 import { describe, expect, test } from "bun:test";
 import { renderToStaticMarkup } from "react-dom/server";
 import { ResultView } from "@/components/leadmagnet/result-view";
-import { FIT_PANEL } from "@/lib/leadmagnet/application-fit";
+import { assessApplicationFit, FIT_PANEL } from "@/lib/leadmagnet/application-fit";
 import { projectReportSections } from "@/lib/leadmagnet/project-report";
 import { createDossier, setRequirement } from "@/lib/leadmagnet/dossier";
 import type { TestedPair } from "@/lib/leadmagnet/dossier";
@@ -103,5 +103,82 @@ describe("encart de compatibilité : liens vers le questionnaire", () => {
     const idx = html.indexOf('data-step="free_constraints"');
     expect(html.slice(idx, idx + 300)).not.toContain("Question");
     expect(html.slice(idx, idx + 300)).toContain("Précision supplémentaire");
+  });
+});
+
+describe("Résultat sans couple essayé", () => {
+  const fit = assessApplicationFit(
+    [
+      setRequirement(createDossier("d3", "fr"), "detection_goal", {
+        value: "Detect an aluminum part; no magnet can be added.",
+        source: "client",
+      }).requirements.find((r) => r.key === "detection_goal")!,
+    ],
+    "",
+  );
+  const html = renderToStaticMarkup(
+    <ResultView
+      pair={null}
+      applicationBlocked
+      fit={fit}
+      onGoToStep={noop}
+      detectionGoal="Detect an aluminum part; no magnet can be added."
+      tested={[]}
+      proposals={[]}
+      onSeePairs={noop}
+      onConfirmWithStandex={noop}
+      onRequestTrial={noop}
+      onReplaceMagnet={noop}
+      onTestPair={noop}
+    />,
+  );
+  test("l'encart pédagogique complet remplace « Testez un couple »", () => {
+    expect(fit.blocking).toBe(true);
+    expect(html).toContain('data-testid="fit-panel"');
+    expect(html).toContain('data-testid="result-blocked-empty"');
+    expect(html).not.toContain("Testez un couple pour voir son résultat ici");
+    expect(html).not.toContain("Voir les couples proposés");
+  });
+  test("les liens d'édition exacts sont présents", () => {
+    expect(html).toContain('data-step="target_object"');
+    expect(html).toContain('data-step="mounting"');
+    expect(html).toContain(FIT_PANEL.changeAction);
+  });
+  test("sans point ouvert, l'écran vide habituel revient", () => {
+    const plain = renderToStaticMarkup(
+      <ResultView
+        pair={null}
+        detectionGoal={null}
+        tested={[]}
+        proposals={[]}
+        onSeePairs={noop}
+        onConfirmWithStandex={noop}
+        onRequestTrial={noop}
+        onReplaceMagnet={noop}
+        onTestPair={noop}
+      />,
+    );
+    expect(plain).toContain('data-testid="result-empty"');
+  });
+  test("avec un couple essayé, l'encart s'affiche aussi et sans bouton redondant", () => {
+    const withPair = renderToStaticMarkup(
+      <ResultView
+        pair={pair()}
+        applicationBlocked
+        fit={fit}
+        onGoToStep={noop}
+        detectionGoal="Detect an aluminum part; no magnet can be added."
+        tested={[pair()]}
+        proposals={[]}
+        onSeePairs={noop}
+        onConfirmWithStandex={noop}
+        onRequestTrial={noop}
+        onReplaceMagnet={noop}
+        onTestPair={noop}
+      />,
+    );
+    expect(withPair).toContain('data-testid="result-application-blocked"');
+    expect(withPair).toContain('data-testid="fit-panel"');
+    expect(withPair).not.toContain("Revoir les points de compatibilité");
   });
 });
