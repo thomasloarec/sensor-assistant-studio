@@ -1009,8 +1009,15 @@ export function DesignSpace({
     setTab("besoin");
     requestAnimationFrame(() => {
       const field =
-        document.getElementById(`guide-${key}`) ?? document.getElementById(`req-${key}`);
+        document.getElementById(`guide-${key}`) ??
+        document.getElementById(`req-${key}`) ??
+        // Le contexte projet n'est pas une question numérotée : on ouvre le
+        // champ « Ajouter une précision », guidé ou détaillé selon le mode.
+        document.getElementById("free-constraints") ??
+        document.getElementById("free-constraints-advanced");
       if (field) {
+        const details = field.closest("details");
+        if (details) details.open = true;
         field.scrollIntoView({ behavior: "smooth", block: "center" });
         (field as HTMLTextAreaElement).focus();
       }
