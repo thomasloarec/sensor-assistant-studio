@@ -243,20 +243,18 @@ export function assessApplicationFit(
   const issues: FitIssue[] = [];
 
   /* ---- Point 1 ---- */
-  const direct = anyMatch(frags, DIRECT_SWITCH);
-  const safe = anyMatch(frags, SAFE_WIRING);
-  // Un refus d'interface n'est levé que si la phrase QUI REFUSE explique
-  // elle-même le câblage réel (« no relay needed because the PLC controls an
-  // external contactor »). Un câblage sûr décrit ailleurs ne supprime pas une
-  // contrainte encore posée dans une autre réponse : la contradiction demeure.
-  const refuseInterface = anyMatch(frags, REFUSE_INTERFACE).filter(
-    (f) => !SAFE_WIRING.some((p) => p.test(f.text)),
+  // Portée LOCALE : une phrase n'affirme l'intention directe que si elle ne la
+  // nie pas et ne décrit pas elle-même le câblage sûr. Un câblage sûr écrit
+  // ailleurs ne supprime pas une intention restée dans une autre réponse (par
+  // exemple « alimenter directement le moteur » en Application) : la
+  // contradiction demeure jusqu'à l'édition de CETTE réponse.
+  const localSafe = (f: Fragment) => SAFE_WIRING.some((p) => p.test(f.text));
+  const direct = anyMatch(frags, DIRECT_SWITCH).filter(
+    (f) => !localSafe(f) && !NEGATED_DIRECT.some((p) => p.test(f.text)),
   );
+  const refuseInterface = anyMatch(frags, REFUSE_INTERFACE).filter((f) => !localSafe(f));
   const load = heavyLoad(frags);
-  if (
-    ((direct.length > 0 && safe.length === 0) || refuseInterface.length > 0) &&
-    load.found
-  ) {
+  if ((direct.length > 0 || refuseInterface.length > 0) && load.found) {
     const evidence: FitEvidence[] = [...direct, ...refuseInterface].map((f) => ({
       step: f.step,
       quote: f.quote,
