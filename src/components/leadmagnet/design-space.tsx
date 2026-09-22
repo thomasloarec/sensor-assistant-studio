@@ -2452,13 +2452,24 @@ export function DesignSpace({
     </div>
   );
 
+  /** Tant qu'un point de compatibilité subsiste, aucune entrée directe dans
+   * l'atelier ni aucun essai de couple : on ouvre la réponse à revoir. Aucune
+   * réponse n'est modifiée, rien n'est présenté comme vérifié. */
+  const fitGuard = () => {
+    if (!fitBlocked) return false;
+    const key = fit.issues[0]?.steps[0]?.key;
+    if (key) goToRequirementStep(key);
+    return true;
+  };
   const openWorkshopPanel = () => {
+    if (fitGuard()) return;
     setCablePanelOpen(false);
     setWorkshopMounted(true);
     setShowWorkshop(true);
     setPanel("atelier");
   };
   const openCableWorkshopPanel = () => {
+    if (fitGuard()) return;
     openWorkshopPanel();
     setCablePanelOpen(true);
     setWorkshopEpoch((e) => e + 1);
@@ -2467,6 +2478,7 @@ export function DesignSpace({
   /** Tester un couple = présélection de gamme + ouverture de l'atelier sur ce
    * couple. Ce n'est ni une commande ni une validation R&D. */
   const testPair = (card: PairCard) => {
+    if (fitGuard()) return;
     setCablePanelOpen(false);
     chooseSensor(card.sensorId, t(card.sensorName), card.magnetId);
     openWorkshopPanel();
