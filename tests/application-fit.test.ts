@@ -227,3 +227,38 @@ describe("textes du panneau", () => {
     expect(FIT_PANEL.noRewrite).toContain("jamais modifiées");
   });
 });
+
+describe("liens vers le questionnaire réel", () => {
+  test("le contexte projet est une précision supplémentaire, jamais la question 6", () => {
+    // Cas 10 : le refus du relais est écrit dans la précision, pas dans une question.
+    const fit = assessApplicationFit(
+      [
+        { key: "detection_goal", value: "Détecter la fermeture d'un capot et alimenter directement le moteur 230 VAC 8 A quand il est fermé.", state: "confirmed", source: "client" },
+        { key: "electrical", value: "Le moteur fonctionne en 230 VAC et consomme 8 A. Je veux que le courant d'alimentation du moteur passe directement dans le capteur reed.", state: "confirmed", source: "client" },
+        { key: "environment", value: "0-50°C intérieur", state: "confirmed", source: "client" },
+      ],
+      "5 000 machines par an. Je veux éviter d'utiliser un relais ou un contacteur supplémentaire.",
+    );
+    expect(fit.blocking).toBe(true);
+    const issue = fit.issues.find((i) => i.id === "direct_load_switching")!;
+    const free = issue.steps.find((s) => s.key === "free_constraints")!;
+    expect(free.number).toBeNull();
+    expect(free.label).toBe("Précision supplémentaire");
+    // Les six questions gardent leur numérotation réelle de l'interface.
+    const numbered = issue.steps.filter((s) => s.number !== null);
+    for (const s of numbered) expect(s.number).toBeGreaterThanOrEqual(1);
+    for (const s of numbered) expect(s.number).toBeLessThanOrEqual(6);
+  });
+
+  test("l'explication de charge cite la protection des charges inductives et la source Standex", () => {
+    const fit = assessApplicationFit(
+      [{ key: "electrical", value: "230 VAC, 8 A, le courant du moteur passe directement dans le capteur.", state: "confirmed", source: "client" }],
+      "",
+    );
+    const issue = fit.issues.find((i) => i.id === "direct_load_switching")!;
+    expect(issue.why).toContain("courant d'appel");
+    const joined = issue.cautions.join(" ");
+    expect(joined).toContain("charge inductive");
+    expect(joined).toContain("handling-and-load-precautions");
+  });
+});
