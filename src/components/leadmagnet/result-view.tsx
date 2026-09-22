@@ -1,5 +1,6 @@
 import { ILLUSTRATIVE_NOTE, GUIDE_UNPUBLISHED_NOTE } from "@/lib/standex/workshop-guide";
-import { FIT_PANEL } from "@/lib/leadmagnet/application-fit";
+import { CompatibilityPanel } from "@/components/leadmagnet/compatibility-panel";
+import { FIT_PANEL, type FitAssessment } from "@/lib/leadmagnet/application-fit";
 import { sensorById, sizeLabel } from "@/lib/standex/sensor-catalog";
 import { housingMaterial } from "@/lib/leadmagnet/product-presentation";
 import { guideRange, formatGuideBound, hasGuideData, ACTIVATION_GUIDE } from "@/lib/standex/activation-guide";
