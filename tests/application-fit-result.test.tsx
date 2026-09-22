@@ -64,7 +64,7 @@ describe("rapport exporté", () => {
         source: "user",
       },
     );
-    const sections = projectReportSections(d, null, (s: string) => s, null);
+    const sections = projectReportSections(d, {}, (s: string) => s, null);
     const flat = JSON.stringify(sections);
     expect(flat).toContain("Compatibilité de votre application");
     expect(flat).toContain("Le capteur ne peut pas couper lui-même");
@@ -77,7 +77,7 @@ describe("rapport exporté", () => {
       value: "Signal vers un automate en 24 V continu.",
       source: "user",
     });
-    expect(JSON.stringify(projectReportSections(d, null, (s: string) => s, null))).not.toContain(
+    expect(JSON.stringify(projectReportSections(d, {}, (s: string) => s, null))).not.toContain(
       "Compatibilité de votre application",
     );
   });
