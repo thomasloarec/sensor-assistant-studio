@@ -101,7 +101,17 @@ function IssueBlock({ issue, onGoToStep }: { issue: FitIssue; onGoToStep: (key: 
 
       {issue.cautions.map((c) => (
         <p key={c} className="notice-warning t-body-s">
-          {t(c)}
+          {t(c)}{" "}
+          {/* Lien nommé vers la source Standex : jamais l'URL brute. */}
+          <a
+            className="underline underline-offset-2"
+            href={FIT_PANEL.sourceUrl}
+            target="_blank"
+            rel="noreferrer"
+            data-testid="fit-source-link"
+          >
+            {t(FIT_PANEL.sourceLabel)}
+          </a>
         </p>
       ))}
 

@@ -53,6 +53,18 @@ export function projectReportSections(
     entry("Ville du site", d.business.siteCity),
     entry("Pays du site", d.business.siteCountry),
   ]);
+  // Compatibilité du besoin : évaluée AVANT toute conclusion d'essai, pour
+  // qu'aucun verdict magnétique antérieur ne soit écrit comme une validation de
+  // l'application décrite aujourd'hui. Les données historiques restent intactes.
+  const fit = assessApplicationFit(d.requirements, d.freeConstraints);
+  /** Conserve la donnée, mais remplace une conclusion positive par le rappel
+   *  qu'une démonstration magnétique ne valide pas l'application. */
+  const qualify = (text: string | undefined, positive: boolean) => {
+    const base = text ? tr(text) : "";
+    if (!fit.blocking) return base;
+    if (positive || !base) return tr(FIT_PANEL.historicalDemo);
+    return `${base} · ${tr(FIT_PANEL.historicalDemo)}`;
+  };
   const w = d.workshop;
   if (w) {
     const guide = workshopGuideRange(w);
@@ -78,14 +90,17 @@ export function projectReportSections(
       entry("Orientation sur la machine", `${w.mountAngle}° · (${w.mountX}, ${w.mountZ}) mm`),
       entry("Trajectoire", `${w.motion} · ${w.offset} / ${w.travel} mm · ${w.span}°`),
       entry("Fichier 3D", w.machine?.fileName),
-      entry("Le résultat", result ? tr(result) : unknown),
+      entry(
+        "Le résultat",
+        result ? qualify(result, result === cycleMessage("expected")) : fit.blocking ? tr(FIT_PANEL.historicalDemo) : unknown,
+      ),
       entry("Ferme à", computed?.pullInMm == null ? unknown : `${computed.pullInMm} mm`),
       entry("Ouvre à", computed?.dropOutMm == null ? unknown : `${computed.dropOutMm} mm`),
       ...(computed?.illustrative
         ? [
             entry(
               "Le résultat",
-              tr(guide ? GUIDE_SIMULATION_NOTE : illustrativeNoteFor(w)),
+              qualify(guide ? GUIDE_SIMULATION_NOTE : illustrativeNoteFor(w), false),
             ),
           ]
         : []),
@@ -99,7 +114,6 @@ export function projectReportSections(
   }
   // Compatibilité du besoin : la MÊME vérité que l'écran des couples et le
   // résultat. Une contradiction posée dans les réponses reste écrite ici.
-  const fit = assessApplicationFit(d.requirements, d.freeConstraints);
   if (fit.issues.length)
     add("Compatibilité de votre application", [
       ...fit.issues.flatMap((issue) => [
@@ -139,7 +153,12 @@ export function projectReportSections(
         );
         return entry(
           `${p.sensorId} + ${p.magnetId} · ${p.approach} · ${p.at}`,
-          [fact?.label, tr(p.mainMessage || cycleMessage(p.verdict))].filter(Boolean).join(" · "),
+          [
+            fact?.label,
+            qualify(p.mainMessage || cycleMessage(p.verdict), p.verdict === "expected"),
+          ]
+            .filter(Boolean)
+            .join(" · "),
         );
       }),
     );

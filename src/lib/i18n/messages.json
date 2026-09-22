@@ -28249,5 +28249,32 @@
     "Посмотреть, что вы написали",
     "Vedere ciò che ha scritto",
     "入力内容を見る"
+  ],
+  "Un moteur est une charge inductive à fort courant d'appel : l'interface de puissance doit être dimensionnée et protégée en conséquence, avec une protection adaptée au type d'alimentation. Voir les précautions de charge Standex.": [
+    "A motor is an inductive load with a high inrush current: the power interface must be sized and protected accordingly, with protection suited to the type of supply. See the Standex load precautions.",
+    "电机属于具有高浪涌电流的感性负载：功率接口必须据此选型并加以保护，保护方式应与供电类型相匹配。请参阅 Standex 负载注意事项。",
+    "Ein Motor ist eine induktive Last mit hohem Einschaltstrom: Die Leistungsschnittstelle muss entsprechend dimensioniert und mit einem zur Versorgungsart passenden Schutz versehen werden. Siehe die Standex-Hinweise zu Lasten.",
+    "Un motor es una carga inductiva con alta corriente de arranque: la interfaz de potencia debe dimensionarse y protegerse en consecuencia, con una protección adecuada al tipo de alimentación. Consulte las precauciones de carga de Standex.",
+    "Двигатель — индуктивная нагрузка с большим пусковым током: силовой интерфейс должен быть рассчитан и защищён соответственно, с защитой, подходящей типу питания. См. рекомендации Standex по нагрузкам.",
+    "Un motore è un carico induttivo con elevata corrente di spunto: l'interfaccia di potenza deve essere dimensionata e protetta di conseguenza, con una protezione adatta al tipo di alimentazione. Vedere le precauzioni di carico Standex.",
+    "モーターは突入電流の大きい誘導負荷です。電源方式に適した保護を備え、パワーインターフェースを適切に選定・保護してください。Standex の負荷に関する注意事項を参照してください。"
+  ],
+  "Démonstration magnétique antérieure, conservée telle quelle : elle ne vaut pas validation de l'application décrite aujourd'hui.": [
+    "Earlier magnetic demonstration, kept as recorded: it is not a validation of the application described today.",
+    "先前的磁性演示，按原样保留：它不构成对当前所述应用的验证。",
+    "Frühere magnetische Demonstration, unverändert erhalten: Sie stellt keine Validierung der heute beschriebenen Anwendung dar.",
+    "Demostración magnética anterior, conservada tal cual: no constituye una validación de la aplicación descrita hoy.",
+    "Прежняя магнитная демонстрация сохранена как есть: она не является подтверждением описанного сегодня применения.",
+    "Dimostrazione magnetica precedente, conservata così com'è: non costituisce una validazione dell'applicazione descritta oggi.",
+    "以前の磁気デモンストレーションはそのまま保持されています。これは本日記載された用途の検証にはなりません。"
+  ],
+  "Précautions de manipulation et de charge — Standex": [
+    "Handling and load precautions — Standex",
+    "操作与负载注意事项 — Standex",
+    "Handhabungs- und Lasthinweise — Standex",
+    "Precauciones de manipulación y carga — Standex",
+    "Меры при обращении и по нагрузке — Standex",
+    "Precauzioni di manipolazione e di carico — Standex",
+    "取り扱いおよび負荷に関する注意事項 — Standex"
   ]
 }

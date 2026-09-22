@@ -182,3 +182,66 @@ describe("Résultat sans couple essayé", () => {
     expect(withPair).not.toContain("Revoir les points de compatibilité");
   });
 });
+
+describe("essai « attendu » périmé dans le rapport", () => {
+  const stale = (): TestedPair => ({
+    sensorId: "MK17",
+    magnetId: "HF3225-14.95X10X5",
+    approach: "D1",
+    verdict: "expected",
+    pullInMm: 16.6,
+    dropOutMm: 14.4,
+    illustrative: true,
+    documentedPosition: true,
+    guideReference: "MK17-B-X",
+    at: "2026-09-18T10:00:00.000Z",
+  });
+  const blockedDossier = () => {
+    let d = createDossier("Projet", "fr");
+    d = setRequirement(d, "electrical", {
+      value:
+        "The motor operates at 230 VAC and draws 8 A. I want the motor supply current to pass directly through the reed sensor.",
+      source: "user",
+    });
+    return { ...d, testedPairs: [stale()] };
+  };
+
+  test("la donnée historique est conservée mais n'est plus une conclusion positive", () => {
+    const flat = JSON.stringify(projectReportSections(blockedDossier(), {}, (s: string) => s, null));
+    expect(flat).toContain("MK17 + HF3225-14.95X10X5");
+    expect(flat).toContain(FIT_PANEL.historicalDemo);
+    expect(flat).not.toContain("Détection attendue");
+  });
+
+  test("sans point de compatibilité, le verdict historique reste écrit tel quel", () => {
+    let d = createDossier("Projet", "fr");
+    d = setRequirement(d, "electrical", { value: "Signal 24 V vers un automate.", source: "user" });
+    const flat = JSON.stringify(
+      projectReportSections({ ...d, testedPairs: [stale()] }, {}, (s: string) => s, null),
+    );
+    expect(flat).not.toContain(FIT_PANEL.historicalDemo);
+    expect(flat).toContain("MK17 + HF3225-14.95X10X5");
+  });
+
+  test("le lien pédagogique est nommé, sans URL brute dans le texte", async () => {
+    const { CompatibilityPanel } = await import("@/components/leadmagnet/compatibility-panel");
+    const fit = assessApplicationFit(
+      [
+        {
+          key: "electrical",
+          value: "230 VAC, 8 A : le courant du moteur passe directement dans le capteur reed.",
+          state: "confirmed",
+          source: "client",
+        },
+      ],
+      "",
+    );
+    const html = renderToStaticMarkup(
+      <CompatibilityPanel assessment={fit} onGoToStep={() => {}} />,
+    );
+    expect(html).toContain("fit-source-link");
+    expect(html).toContain(FIT_PANEL.sourceLabel);
+    expect(html).not.toContain("diode");
+    expect(html).not.toContain("varistance");
+  });
+});
