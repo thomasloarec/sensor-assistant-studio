@@ -2233,6 +2233,10 @@ export function DesignSpace({
   /** Choisir un capteur = une présélection de GAMME, jamais une commande ni une
    * validation R&D. La délégation à Standex est levée par ce choix explicite. */
   const chooseSensor = (id: string, name: string, magnetId?: string) => {
+    // Tant qu'un point de compatibilité reste ouvert, aucune sélection de
+    // produit n'est enregistrée : on ouvre la réponse à revoir. Sans cela, un
+    // capteur choisi resterait affiché comme retenu pour un besoin incohérent.
+    if (fitGuard()) return;
     const base = workshopDraftRef.current ?? workshop ?? dossier.workshop ?? DEFAULT_WORKSHOP;
     const aligned = magnetId ? pairDemonstration(base, id, magnetId) : applyPairSelection(base, id);
     // Un montage déjà enregistré peut porter un aimant choisi volontairement.
