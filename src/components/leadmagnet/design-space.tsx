@@ -99,6 +99,8 @@ import {
 } from "@/lib/leadmagnet/dossier";
 import { detectMountingIntent } from "@/lib/leadmagnet/mounting-intent";
 import { CANDIDATE_DISCLAIMER, evaluateCandidates } from "@/lib/leadmagnet/candidates";
+import { assessApplicationFit } from "@/lib/leadmagnet/application-fit";
+import { CompatibilityPanel } from "./compatibility-panel";
 import {
   applyRoutingPick,
   compareStandardLengths,
@@ -987,6 +989,33 @@ export function DesignSpace({
       }),
     [dossier.mounting, dossier.envelope, mountingText, dataRevision],
   );
+  /** Compatibilité pédagogique du BESOIN, indépendante du verdict géométrique :
+   * une contradiction posée par la personne elle-même (puissance dans le
+   * capteur, aucun aimant autorisé) bloque toute proposition de produit tant
+   * qu'elle n'est pas levée. Recalculée à chaque édition de réponse. */
+  const fit = useMemo(
+    () => assessApplicationFit(dossier.requirements, dossier.freeConstraints),
+    [dossier.requirements, dossier.freeConstraints],
+  );
+  const fitBlocked = fit.blocking;
+  /** Un point a réellement été levé dans cette session : seule condition pour
+   * afficher la confirmation. Aucune confirmation gratuite au premier écran. */
+  const fitEverBlockedRef = useRef(false);
+  if (fitBlocked) fitEverBlockedRef.current = true;
+  /** Ouvre la question visée et y place le curseur, SANS rien réécrire. */
+  const goToRequirementStep = useCallback((key: string) => {
+    const index = GUIDED_QUESTIONS.findIndex((q) => q.key === key);
+    if (index >= 0) setFocusIdx(index);
+    setTab("besoin");
+    requestAnimationFrame(() => {
+      const field =
+        document.getElementById(`guide-${key}`) ?? document.getElementById(`req-${key}`);
+      if (field) {
+        field.scrollIntoView({ behavior: "smooth", block: "center" });
+        (field as HTMLTextAreaElement).focus();
+      }
+    });
+  }, []);
   // Catalogue: la connectique produit reste visible avant tout routage projet.
   const candidatesCabled = true;
   const estimate = useMemo(() => estimateCableLength(cabling), [cabling]);
@@ -2538,6 +2567,16 @@ export function DesignSpace({
       <p className="sr-only" role="status" aria-live="polite">
         {selectionAnnounce}
       </p>
+      {/* L'encart de compatibilité passe AVANT les produits. Tant qu'un point
+          subsiste, aucune carte n'est proposée : ni les couples suggérés, ni la
+          liste complète, ni la conception sur mesure, et aucun réglage de
+          critères ne peut contourner ce point. */}
+      <CompatibilityPanel
+        assessment={fit}
+        onGoToStep={goToRequirementStep}
+        showResolved={fitEverBlockedRef.current}
+      />
+      {fitBlocked ? null : (
       <div className="panel-block-lg">
         <p className="t-label">{t("D'après vos réponses")}</p>
         <h2 className="t-display-m">{pairsTitle}</h2>
@@ -2547,8 +2586,12 @@ export function DesignSpace({
         {filterChips ? <div className="mt-3">{filterChips}</div> : null}
         <div className="mt-1">{filterAdjust}</div>
       </div>
+      )}
+      {fitBlocked ? null : (
       <div className="pair-grid">{suggestedPairs.map((c, i) => pairCardView(c, i))}{offerCustom ? pairCardView(customPair, suggestedPairs.length) : null}</div>
+      )}
       <div className="space-y-3">
+        {fitBlocked ? null : (
         <p>
           <button
             type="button"
@@ -2561,7 +2604,8 @@ export function DesignSpace({
               : msg("Voir tous les couples possibles ({0})", [additionalPairs.length])}
           </button>
         </p>
-        {showAllPairs ? (
+        )}
+        {showAllPairs && !fitBlocked ? (
           <div className="space-y-6">{[...new Set(additionalPairs.map(c => pairCategory(sensorById(c.sensorId))))].map(category => <section key={category} className="space-y-3"><h3 className="t-title-m">{t(category)}</h3><div className="pair-grid">{additionalPairs.filter(c => pairCategory(sensorById(c.sensorId)) === category).map((c, i) => pairCardView(c, i, true))}</div></section>)}</div>
         ) : null}
         {/* Deux décisions confiées à Standex : des liens discrets sur une même
@@ -4250,6 +4294,9 @@ export function DesignSpace({
   const resultatSection = (
     <ResultView
       pair={latestTestedPair(dossier.testedPairs)}
+      // Un point de compatibilité ouvert interdit un résultat positif : la
+      // démonstration ne vérifie pas l'application.
+      applicationBlocked={fitBlocked}
       detectionGoal={dossier.requirements.find((r) => r.key === "detection_goal")?.value ?? null}
       tested={dossier.testedPairs ?? []}
       proposals={suggestedPairs}
