@@ -58,9 +58,11 @@ describe("rapport exporté", () => {
     d = setRequirement(
       d,
       "electrical",
-      "The motor operates at 230 VAC and draws 8 A. I want the motor supply current to pass directly through the reed sensor.",
-      null,
-      "user",
+      {
+        value:
+          "The motor operates at 230 VAC and draws 8 A. I want the motor supply current to pass directly through the reed sensor.",
+        source: "user",
+      },
     );
     const sections = projectReportSections(d, null, (s: string) => s, null);
     const flat = JSON.stringify(sections);
@@ -71,7 +73,10 @@ describe("rapport exporté", () => {
   });
   test("un besoin cohérent n'ajoute aucune section de compatibilité", () => {
     let d = createDossier("Projet", "fr");
-    d = setRequirement(d, "electrical", "Signal vers un automate en 24 V continu.", null, "user");
+    d = setRequirement(d, "electrical", {
+      value: "Signal vers un automate en 24 V continu.",
+      source: "user",
+    });
     expect(JSON.stringify(projectReportSections(d, null, (s: string) => s, null))).not.toContain(
       "Compatibilité de votre application",
     );
