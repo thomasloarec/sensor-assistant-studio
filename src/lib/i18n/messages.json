@@ -27745,5 +27745,410 @@
     "Геркон",
     "Reed",
     "リード"
+  ],
+  "Revoir les points de compatibilité": [
+    "Review the compatibility points",
+    "查看兼容性要点",
+    "Kompatibilitätspunkte prüfen",
+    "Revisar los puntos de compatibilidad",
+    "Просмотреть вопросы совместимости",
+    "Rivedere i punti di compatibilità",
+    "互換性の要点を確認する"
+  ],
+  "Question {0} · {1}": [
+    "Question {0} · {1}",
+    "问题 {0} · {1}",
+    "Frage {0} · {1}",
+    "Pregunta {0} · {1}",
+    "Вопрос {0} · {1}",
+    "Domanda {0} · {1}",
+    "質問 {0} · {1}"
+  ],
+  "Compatibilité de votre application": [
+    "Compatibility of your application",
+    "您的应用的兼容性",
+    "Kompatibilität Ihrer Anwendung",
+    "Compatibilidad de su aplicación",
+    "Совместимость вашего применения",
+    "Compatibilità della vostra applicazione",
+    "お客様の用途の適合性"
+  ],
+  "Ce qui ne fonctionne pas": [
+    "What does not work",
+    "哪些无法实现",
+    "Was nicht funktioniert",
+    "Lo que no funciona",
+    "Что не работает",
+    "Ciò che non funziona",
+    "うまくいかない点"
+  ],
+  "Modifications possibles": [
+    "Possible changes",
+    "可行的修改",
+    "Mögliche Änderungen",
+    "Modificaciones posibles",
+    "Возможные изменения",
+    "Modifiche possibili",
+    "考えられる変更"
+  ],
+  "À retenir": [
+    "Worth remembering",
+    "需要注意",
+    "Wichtig zu wissen",
+    "Para tener en cuenta",
+    "Важно помнить",
+    "Da ricordare",
+    "覚えておくこと"
+  ],
+  "Ce que cela implique": [
+    "What this means",
+    "这意味着什么",
+    "Was das bedeutet",
+    "Lo que esto implica",
+    "Что это означает",
+    "Cosa comporta",
+    "これが意味すること"
+  ],
+  "triphasé": [
+    "three-phase",
+    "三相",
+    "dreiphasig",
+    "trifásico",
+    "трёхфазный",
+    "trifase",
+    "三相"
+  ],
+  "Décrire le capteur comme un signal de commande (par exemple 24 V continu vers un automate ou une entrée logique) et garder l'alimentation du moteur sur un circuit séparé.": [
+    "Describe the sensor as a control signal (for example 24 V DC to a PLC or a logic input) and keep the motor supply on a separate circuit.",
+    "将传感器描述为控制信号（例如向 PLC 或逻辑输入提供 24 V 直流），并将电机供电保持在独立回路中。",
+    "Beschreiben Sie den Sensor als Steuersignal (zum Beispiel 24 V DC an eine Steuerung oder einen Logikeingang) und halten Sie die Motorversorgung in einem separaten Kreis.",
+    "Describa el sensor como una señal de mando (por ejemplo 24 V CC hacia un autómata o una entrada lógica) y mantenga la alimentación del motor en un circuito separado.",
+    "Опишите датчик как сигнал управления (например, 24 В постоянного тока на контроллер или логический вход) и оставьте питание двигателя в отдельной цепи.",
+    "Descrivete il sensore come un segnale di comando (per esempio 24 V CC verso un PLC o un ingresso logico) e mantenete l'alimentazione del motore su un circuito separato.",
+    "センサーを制御信号として記述し（例：PLC や論理入力への DC24V）、モーター電源は別回路のままにしてください。"
+  ],
+  "Prévoir entre ce signal et le moteur un relais, un contacteur ou une interface de puissance dimensionnés pour la charge réelle du moteur.": [
+    "Place between that signal and the motor a relay, contactor or power interface rated for the motor's actual load.",
+    "在该信号与电机之间加入按电机实际负载选型的继电器、接触器或功率接口。",
+    "Sehen Sie zwischen diesem Signal und dem Motor ein Relais, einen Schütz oder eine Leistungsschnittstelle vor, die für die tatsächliche Motorlast ausgelegt ist.",
+    "Prevea entre esa señal y el motor un relé, un contactor o una interfaz de potencia dimensionados para la carga real del motor.",
+    "Предусмотрите между этим сигналом и двигателем реле, контактор или силовой интерфейс, рассчитанный на фактическую нагрузку двигателя.",
+    "Prevedete tra questo segnale e il motore un relè, un contattore o un'interfaccia di potenza dimensionati per il carico reale del motore.",
+    "その信号とモーターの間に、実際のモーター負荷に適合した リレー、コンタクタまたはパワーインターフェースを設けてください。"
+  ],
+  "Retirer le refus d'un relais ou d'un contacteur, ou expliquer ce qui l'empêche chez vous : sans interface, aucun capteur reed ne convient.": [
+    "Remove the refusal of a relay or contactor, or explain what prevents it on your side: without an interface, no reed sensor is suitable.",
+    "取消对继电器或接触器的排除，或说明您方面的限制：没有接口，任何干簧管传感器都不适用。",
+    "Streichen Sie die Ablehnung eines Relais oder Schützes oder erklären Sie, was bei Ihnen dagegen spricht: ohne Schnittstelle ist kein Reed-Sensor geeignet.",
+    "Retire el rechazo de un relé o contactor, o explique qué lo impide en su caso: sin interfaz, ningún sensor reed es adecuado.",
+    "Снимите отказ от реле или контактора либо объясните, что этому мешает: без интерфейса ни один герконовый датчик не подходит.",
+    "Rimuovete il rifiuto di un relè o di un contattore, oppure spiegate cosa lo impedisce da voi: senza interfaccia nessun sensore reed è adatto.",
+    "リレーやコンタクタを使わないという条件を外すか、使えない理由をご説明ください。インターフェースなしでは適合するリードセンサーはありません。"
+  ],
+  "Reformuler l'application si le capteur doit encore alimenter le moteur lui-même.": [
+    "Reword the application if the sensor is still meant to power the motor itself.",
+    "如果仍要求传感器直接为电机供电，请重新描述应用。",
+    "Formulieren Sie die Anwendung neu, wenn der Sensor den Motor weiterhin selbst speisen soll.",
+    "Reformule la aplicación si el sensor debe seguir alimentando el motor.",
+    "Переформулируйте задачу, если датчик по-прежнему должен сам питать двигатель.",
+    "Riformulate l'applicazione se il sensore deve ancora alimentare il motore.",
+    "センサー自体がモーターに給電する前提が残る場合は、用途の記述を見直してください。"
+  ],
+  "Le capteur ne peut pas couper lui-même l'alimentation du moteur": [
+    "The sensor cannot switch the motor supply itself",
+    "传感器无法自行切断电机供电",
+    "Der Sensor kann die Motorversorgung nicht selbst schalten",
+    "El sensor no puede cortar por sí mismo la alimentación del motor",
+    "Датчик не может сам коммутировать питание двигателя",
+    "Il sensore non può interrompere da solo l'alimentazione del motore",
+    "センサー自体でモーター電源を開閉することはできません"
+  ],
+  "Un capteur reed convient tout à fait pour donner le SIGNAL de position : savoir si le capot est fermé, et transmettre cette information.": [
+    "A reed sensor is entirely suitable for giving the position SIGNAL: knowing whether the cover is closed, and passing that information on.",
+    "干簧管传感器完全适合提供位置信号：判断护罩是否关闭并传递该信息。",
+    "Ein Reed-Sensor ist durchaus geeignet, das Positions-SIGNAL zu liefern: zu erkennen, ob die Haube geschlossen ist, und diese Information weiterzugeben.",
+    "Un sensor reed es perfectamente adecuado para dar la SEÑAL de posición: saber si la tapa está cerrada y transmitir esa información.",
+    "Герконовый датчик вполне подходит для выдачи СИГНАЛА положения: определить, закрыт ли кожух, и передать эту информацию.",
+    "Un sensore reed è del tutto adatto a fornire il SEGNALE di posizione: sapere se il coperchio è chiuso e trasmettere l'informazione.",
+    "リードセンサーは位置の「信号」を出すのに十分適しています。カバーが閉じているかを判定し、その情報を伝えます。"
+  ],
+  "Faire passer l'alimentation du moteur ({0}) directement dans le contact du capteur.": [
+    "Passing the motor supply ({0}) directly through the sensor contact.",
+    "让电机供电（{0}）直接通过传感器触点。",
+    "Die Motorversorgung ({0}) direkt über den Sensorkontakt zu führen.",
+    "Hacer pasar la alimentación del motor ({0}) directamente por el contacto del sensor.",
+    "Пропустить питание двигателя ({0}) прямо через контакт датчика.",
+    "Far passare l'alimentazione del motore ({0}) direttamente nel contatto del sensore.",
+    "モーター電源（{0}）をセンサー接点に直接通すこと。"
+  ],
+  "Faire passer l'alimentation du moteur directement dans le contact du capteur.": [
+    "Passing the motor supply directly through the sensor contact.",
+    "让电机供电直接通过传感器触点。",
+    "Die Motorversorgung direkt über den Sensorkontakt zu führen.",
+    "Hacer pasar la alimentación del motor directamente por el contacto del sensor.",
+    "Пропустить питание двигателя прямо через контакт датчика.",
+    "Far passare l'alimentazione del motore direttamente nel contatto del sensore.",
+    "モーター電源をセンサー接点に直接通すこと。"
+  ],
+  "La charge du moteur et son courant de démarrage dépassent largement ce qu'un contact reed peut couper. Les contacts peuvent se souder ou se dégrader, et la machine peut alors démarrer ou rester en marche sans commande.": [
+    "The motor load and its starting current far exceed what a reed contact can switch. The contacts can weld or degrade, and the machine may then start or keep running without any command.",
+    "电机负载及其启动电流远超干簧管触点的开断能力。触点可能熔焊或劣化，机器随后可能在无指令的情况下启动或持续运转。",
+    "Die Motorlast und ihr Anlaufstrom übersteigen bei Weitem, was ein Reed-Kontakt schalten kann. Die Kontakte können verschweißen oder verschleißen, und die Maschine kann dann ohne Befehl anlaufen oder weiterlaufen.",
+    "La carga del motor y su corriente de arranque superan ampliamente lo que un contacto reed puede cortar. Los contactos pueden soldarse o degradarse, y la máquina podría arrancar o seguir en marcha sin orden.",
+    "Нагрузка двигателя и его пусковой ток значительно превышают возможности герконового контакта. Контакты могут свариться или деградировать, и машина может запуститься или продолжать работу без команды.",
+    "Il carico del motore e la sua corrente di avvio superano ampiamente ciò che un contatto reed può interrompere. I contatti possono saldarsi o degradarsi e la macchina può avviarsi o restare in funzione senza comando.",
+    "モーター負荷と起動電流はリード接点で開閉できる範囲を大きく超えます。接点が溶着・劣化し、指令なしに機械が起動したり運転を続ける恐れがあります。"
+  ],
+  "Capteur reed (signal de position)": [
+    "Reed sensor (position signal)",
+    "干簧管传感器（位置信号）",
+    "Reed-Sensor (Positionssignal)",
+    "Sensor reed (señal de posición)",
+    "Герконовый датчик (сигнал положения)",
+    "Sensore reed (segnale di posizione)",
+    "リードセンサー（位置信号）"
+  ],
+  "Entrée de commande compatible (automate, carte, entrée logique)": [
+    "Compatible control input (PLC, board, logic input)",
+    "兼容的控制输入（PLC、电路板、逻辑输入）",
+    "Kompatibler Steuereingang (Steuerung, Platine, Logikeingang)",
+    "Entrada de mando compatible (autómata, tarjeta, entrada lógica)",
+    "Совместимый вход управления (контроллер, плата, логический вход)",
+    "Ingresso di comando compatibile (PLC, scheda, ingresso logico)",
+    "適合する制御入力（PLC、基板、論理入力）"
+  ],
+  "Relais ou contacteur dimensionné pour la charge": [
+    "Relay or contactor rated for the load",
+    "按负载选型的继电器或接触器",
+    "Relais oder Schütz, für die Last ausgelegt",
+    "Relé o contactor dimensionado para la carga",
+    "Реле или контактор, рассчитанный на нагрузку",
+    "Relè o contattore dimensionato per il carico",
+    "負荷に適合したリレーまたはコンタクタ"
+  ],
+  "Moteur (circuit de puissance séparé)": [
+    "Motor (separate power circuit)",
+    "电机（独立功率回路）",
+    "Motor (separater Leistungskreis)",
+    "Motor (circuito de potencia separado)",
+    "Двигатель (отдельная силовая цепь)",
+    "Motore (circuito di potenza separato)",
+    "モーター（独立した動力回路）"
+  ],
+  "Le circuit de puissance du moteur et le circuit de signal du capteur restent deux circuits distincts.": [
+    "The motor power circuit and the sensor signal circuit remain two distinct circuits.",
+    "电机功率回路与传感器信号回路始终是两个独立回路。",
+    "Der Leistungskreis des Motors und der Signalkreis des Sensors bleiben zwei getrennte Kreise.",
+    "El circuito de potencia del motor y el circuito de señal del sensor siguen siendo dos circuitos distintos.",
+    "Силовая цепь двигателя и сигнальная цепь датчика остаются двумя разными цепями.",
+    "Il circuito di potenza del motore e il circuito di segnale del sensore restano due circuiti distinti.",
+    "モーターの動力回路とセンサーの信号回路は、あくまで別々の回路です。"
+  ],
+  "Un capteur reed sur un capot donne une information de position. Il ne constitue pas à lui seul un verrouillage de sécurité machine certifié.": [
+    "A reed sensor on a cover gives position information. On its own it does not constitute a certified machine safety interlock.",
+    "护罩上的干簧管传感器提供位置信息，本身并不构成经认证的机器安全联锁。",
+    "Ein Reed-Sensor an einer Haube liefert eine Positionsinformation. Er stellt allein keine zertifizierte Maschinen-Sicherheitsverriegelung dar.",
+    "Un sensor reed en una tapa da información de posición. Por sí solo no constituye un enclavamiento de seguridad de máquina certificado.",
+    "Герконовый датчик на кожухе даёт информацию о положении. Сам по себе он не является сертифицированной блокировкой безопасности машины.",
+    "Un sensore reed su un coperchio fornisce un'informazione di posizione. Da solo non costituisce un interblocco di sicurezza macchina certificato.",
+    "カバー上のリードセンサーは位置情報を与えるものであり、それ単体で認証された機械安全インターロックにはなりません。"
+  ],
+  "Sans champ magnétique, aucun capteur reed ne peut détecter cette pièce": [
+    "Without a magnetic field, no reed sensor can detect this part",
+    "没有磁场，任何干簧管传感器都无法检测该零件",
+    "Ohne Magnetfeld kann kein Reed-Sensor dieses Teil erkennen",
+    "Sin campo magnético, ningún sensor reed puede detectar esta pieza",
+    "Без магнитного поля ни один герконовый датчик не обнаружит эту деталь",
+    "Senza campo magnetico nessun sensore reed può rilevare questo pezzo",
+    "磁界がなければ、どのリードセンサーもこの部品を検出できません"
+  ],
+  "Repérer le passage ou la position d'une pièce mobile avec un capteur reed ne pose aucune difficulté en soi, y compris sur un convoyeur.": [
+    "Detecting the passage or position of a moving part with a reed sensor is not a difficulty in itself, including on a conveyor.",
+    "用干簧管传感器检测运动件的经过或位置本身并不困难，输送线上同样如此。",
+    "Den Durchgang oder die Position eines bewegten Teils mit einem Reed-Sensor zu erfassen, ist an sich kein Problem, auch nicht auf einem Förderband.",
+    "Detectar el paso o la posición de una pieza móvil con un sensor reed no supone dificultad en sí, incluso en un transportador.",
+    "Определить прохождение или положение движущейся детали герконовым датчиком само по себе несложно, в том числе на конвейере.",
+    "Rilevare il passaggio o la posizione di un pezzo mobile con un sensore reed non è di per sé un problema, anche su un convogliatore.",
+    "リードセンサーで可動部品の通過や位置を捉えること自体は、コンベヤ上でも問題ありません。"
+  ],
+  "Un capteur reed réagit à un champ magnétique. Une pièce en {0} non aimantée n'en produit aucun : le contact ne se fermera jamais.": [
+    "A reed sensor responds to a magnetic field. A non-magnetised {0} part produces none: the contact will never close.",
+    "干簧管传感器响应磁场。未磁化的{0}零件不产生磁场：触点永远不会闭合。",
+    "Ein Reed-Sensor reagiert auf ein Magnetfeld. Ein nicht magnetisiertes Teil aus {0} erzeugt keines: der Kontakt schließt niemals.",
+    "Un sensor reed reacciona a un campo magnético. Una pieza de {0} no imantada no produce ninguno: el contacto nunca se cerrará.",
+    "Герконовый датчик реагирует на магнитное поле. Ненамагниченная деталь из {0} его не создаёт: контакт никогда не замкнётся.",
+    "Un sensore reed reagisce a un campo magnetico. Un pezzo in {0} non magnetizzato non ne produce alcuno: il contatto non si chiuderà mai.",
+    "リードセンサーは磁界に反応します。磁化されていない{0}の部品は磁界を生じないため、接点は決して閉じません。"
+  ],
+  "Un capteur reed réagit à un champ magnétique. Une pièce qui n'en produit aucun ne fermera jamais le contact.": [
+    "A reed sensor responds to a magnetic field. A part that produces none will never close the contact.",
+    "干簧管传感器响应磁场。不产生磁场的零件永远不会使触点闭合。",
+    "Ein Reed-Sensor reagiert auf ein Magnetfeld. Ein Teil, das keines erzeugt, schließt den Kontakt niemals.",
+    "Un sensor reed reacciona a un campo magnético. Una pieza que no produce ninguno nunca cerrará el contacto.",
+    "Герконовый датчик реагирует на магнитное поле. Деталь, которая его не создаёт, никогда не замкнёт контакт.",
+    "Un sensore reed reagisce a un campo magnetico. Un pezzo che non ne produce alcuno non chiuderà mai il contatto.",
+    "リードセンサーは磁界に反応します。磁界を生じない部品では接点は閉じません。"
+  ],
+  "Vos réponses interdisent aujourd'hui d'ajouter un aimant ou un élément magnétique. Ces deux points ne peuvent pas être vrais en même temps.": [
+    "Your answers currently forbid adding a magnet or any magnetic element. Those two things cannot both hold at the same time.",
+    "您当前的回答禁止添加磁铁或任何磁性元件。这两点无法同时成立。",
+    "Ihre Antworten verbieten derzeit das Hinzufügen eines Magneten oder magnetischen Elements. Beides kann nicht gleichzeitig zutreffen.",
+    "Sus respuestas prohíben hoy añadir un imán o un elemento magnético. Esos dos puntos no pueden ser ciertos a la vez.",
+    "Ваши ответы сейчас запрещают добавлять магнит или магнитный элемент. Эти два условия не могут выполняться одновременно.",
+    "Le vostre risposte vietano oggi di aggiungere un magnete o un elemento magnetico. Questi due punti non possono essere veri insieme.",
+    "現在のご回答では磁石や磁性部品の追加が禁止されています。この二つは同時には成立しません。"
+  ],
+  "Une conception sur mesure ne change rien à ce point : elle ne crée pas de champ magnétique là où il n'y en a pas.": [
+    "A custom design changes nothing here: it does not create a magnetic field where there is none.",
+    "定制设计对此毫无改变：它不会在没有磁场的地方产生磁场。",
+    "Eine Sonderkonstruktion ändert daran nichts: sie erzeugt kein Magnetfeld, wo keines ist.",
+    "Un diseño a medida no cambia nada aquí: no crea un campo magnético donde no lo hay.",
+    "Индивидуальная конструкция здесь ничего не меняет: она не создаёт магнитное поле там, где его нет.",
+    "Una progettazione su misura non cambia nulla: non crea un campo magnetico dove non esiste.",
+    "特注設計でもこの点は変わりません。磁界のない場所に磁界を作ることはできません。"
+  ],
+  "Autoriser un aimant sur la pièce mobile ou sur son support : c'est la voie la plus simple.": [
+    "Allow a magnet on the moving part or on its support: this is the simplest route.",
+    "允许在运动件或其支架上安装磁铁：这是最简单的途径。",
+    "Erlauben Sie einen Magneten am bewegten Teil oder an dessen Träger: das ist der einfachste Weg.",
+    "Permitir un imán en la pieza móvil o en su soporte: es la vía más sencilla.",
+    "Разрешите магнит на движущейся детали или её носителе: это самый простой путь.",
+    "Consentire un magnete sul pezzo mobile o sul suo supporto: è la via più semplice.",
+    "可動部品またはその支持側に磁石を許容する：これが最も簡単な方法です。"
+  ],
+  "Revoir aussi la réponse de montage qui interdit tout aimant, sinon la contradiction demeure, puis indiquer la distance réelle entre l'aimant et le capteur.": [
+    "Also revise the mounting answer that forbids any magnet, otherwise the contradiction remains, then state the actual distance between magnet and sensor.",
+    "同时修改禁止使用磁铁的安装回答，否则矛盾仍然存在，然后给出磁铁与传感器之间的实际距离。",
+    "Überarbeiten Sie auch die Montageantwort, die jeden Magneten verbietet, sonst bleibt der Widerspruch, und geben Sie dann den tatsächlichen Abstand zwischen Magnet und Sensor an.",
+    "Revise también la respuesta de montaje que prohíbe todo imán, de lo contrario la contradicción persiste, e indique luego la distancia real entre imán y sensor.",
+    "Также измените ответ о монтаже, запрещающий любой магнит, иначе противоречие сохранится, и укажите фактическое расстояние между магнитом и датчиком.",
+    "Rivedete anche la risposta di montaggio che vieta ogni magnete, altrimenti la contraddizione resta, poi indicate la distanza reale tra magnete e sensore.",
+    "磁石を禁止している取り付けの回答も見直してください。そのままでは矛盾が残ります。その上で磁石とセンサーの実際の距離をご記入ください。"
+  ],
+  "Ou conserver la contrainte « aucun aimant » : il faut alors évaluer une autre technologie de détection. Aucun produit reed ne résout ce cas et nous ne le présenterons pas comme résolu.": [
+    "Or keep the \"no magnet\" constraint: another sensing technology then has to be evaluated. No reed product solves this case and we will not present it as solved.",
+    "或保留“无磁铁”约束：那就需要评估其他检测技术。没有干簧管产品能解决该情形，我们也不会将其描述为已解决。",
+    "Oder behalten Sie die Vorgabe „kein Magnet“: dann ist eine andere Sensortechnologie zu prüfen. Kein Reed-Produkt löst diesen Fall, und wir stellen ihn nicht als gelöst dar.",
+    "O mantener la restricción «ningún imán»: habrá entonces que evaluar otra tecnología de detección. Ningún producto reed resuelve este caso y no lo presentaremos como resuelto.",
+    "Либо сохраните условие «без магнита»: тогда нужно рассмотреть другую технологию обнаружения. Ни один герконовый продукт этот случай не решает, и мы не станем выдавать его за решённый.",
+    "Oppure mantenere il vincolo «nessun magnete»: occorre allora valutare un'altra tecnologia di rilevamento. Nessun prodotto reed risolve questo caso e non lo presenteremo come risolto.",
+    "あるいは「磁石なし」の条件を維持する：その場合は別の検出技術を検討する必要があります。この案件をリード製品で解決することはできず、解決済みとして提示はしません。"
+  ],
+  "Un point à revoir avant de proposer des produits": [
+    "One point to revisit before proposing products",
+    "在推荐产品前需复核的一点",
+    "Ein Punkt, der vor Produktvorschlägen zu klären ist",
+    "Un punto a revisar antes de proponer productos",
+    "Один вопрос требует уточнения до подбора продукции",
+    "Un punto da rivedere prima di proporre prodotti",
+    "製品をご提案する前に見直す点が1件あります"
+  ],
+  "Points à revoir avant de proposer des produits": [
+    "Points to revisit before proposing products",
+    "在推荐产品前需复核的要点",
+    "Punkte, die vor Produktvorschlägen zu klären sind",
+    "Puntos a revisar antes de proponer productos",
+    "Вопросы, требующие уточнения до подбора продукции",
+    "Punti da rivedere prima di proporre prodotti",
+    "製品をご提案する前に見直す点"
+  ],
+  "Votre projet reste tout à fait réalisable, mais tel qu'il est décrit aujourd'hui il ne peut pas fonctionner. Voici ce qui fonctionne, ce qui ne fonctionne pas, et les modifications concrètes possibles.": [
+    "Your project remains entirely feasible, but as described today it cannot work. Here is what works, what does not, and the concrete changes available.",
+    "您的项目完全可行，但按目前的描述无法运行。以下是可行之处、不可行之处以及可采取的具体修改。",
+    "Ihr Projekt bleibt durchaus machbar, kann aber so, wie es heute beschrieben ist, nicht funktionieren. Hier steht, was funktioniert, was nicht, und welche konkreten Änderungen möglich sind.",
+    "Su proyecto sigue siendo perfectamente viable, pero tal como está descrito hoy no puede funcionar. Esto es lo que funciona, lo que no, y las modificaciones concretas posibles.",
+    "Ваш проект вполне осуществим, но в текущем описании он работать не может. Ниже — что работает, что не работает и какие конкретные изменения возможны.",
+    "Il vostro progetto resta del tutto realizzabile, ma così come è descritto oggi non può funzionare. Ecco ciò che funziona, ciò che non funziona e le modifiche concrete possibili.",
+    "ご計画は十分に実現可能ですが、現在の記述のままでは成立しません。うまくいく点、いかない点、そして具体的な変更案を以下に示します。"
+  ],
+  "Ce qui fonctionne": [
+    "What works",
+    "哪些可行",
+    "Was funktioniert",
+    "Lo que funciona",
+    "Что работает",
+    "Ciò che funziona",
+    "うまくいく点"
+  ],
+  "Le câblage habituel": [
+    "The usual wiring",
+    "常规接线方式",
+    "Die übliche Verdrahtung",
+    "El cableado habitual",
+    "Обычная схема подключения",
+    "Il cablaggio abituale",
+    "一般的な配線"
+  ],
+  "Revoir vos réponses": [
+    "Revise your answers",
+    "修改您的回答",
+    "Ihre Antworten überarbeiten",
+    "Revisar sus respuestas",
+    "Изменить ваши ответы",
+    "Rivedere le vostre risposte",
+    "ご回答を見直す"
+  ],
+  "Ce que vous avez écrit": [
+    "What you wrote",
+    "您所填写的内容",
+    "Was Sie geschrieben haben",
+    "Lo que usted escribió",
+    "Что вы написали",
+    "Ciò che avete scritto",
+    "ご記入いただいた内容"
+  ],
+  "Vos réponses ne sont jamais modifiées à votre place. Ces boutons ouvrent la question concernée : vous décidez de ce qui change.": [
+    "Your answers are never changed for you. These buttons open the relevant question: you decide what changes.",
+    "我们绝不会替您修改回答。这些按钮会打开相应问题：由您决定修改内容。",
+    "Ihre Antworten werden niemals für Sie geändert. Diese Schaltflächen öffnen die betreffende Frage: Sie entscheiden, was sich ändert.",
+    "Sus respuestas nunca se modifican en su lugar. Estos botones abren la pregunta correspondiente: usted decide qué cambia.",
+    "Ваши ответы никогда не меняются за вас. Эти кнопки открывают соответствующий вопрос: вы решаете, что изменить.",
+    "Le vostre risposte non vengono mai modificate al vostro posto. Questi pulsanti aprono la domanda interessata: decidete voi cosa cambiare.",
+    "ご回答を代わりに書き換えることはありません。これらのボタンは該当する質問を開くだけで、変更はお客様が決めます。"
+  ],
+  "Aucun produit n'est proposé tant que ces points subsistent. Si vous ne souhaitez pas modifier ces contraintes, c'est une limite réelle de la technologie reed, pas un refus de notre part.": [
+    "No product is proposed while these points remain. If you prefer not to change these constraints, that is a real limit of reed technology, not a refusal on our side.",
+    "只要这些问题仍存在，我们就不会推荐产品。若您不愿修改这些约束，这是干簧管技术的实际局限，而非我们的拒绝。",
+    "Solange diese Punkte bestehen, wird kein Produkt vorgeschlagen. Wenn Sie diese Vorgaben nicht ändern möchten, ist das eine echte Grenze der Reed-Technologie und keine Ablehnung unserer Seite.",
+    "No se propone ningún producto mientras subsistan estos puntos. Si prefiere no modificar estas restricciones, se trata de un límite real de la tecnología reed, no de una negativa nuestra.",
+    "Пока эти вопросы не решены, продукция не предлагается. Если вы не хотите менять эти условия, это реальное ограничение герконовой технологии, а не отказ с нашей стороны.",
+    "Nessun prodotto viene proposto finché questi punti permangono. Se non desiderate modificare questi vincoli, si tratta di un limite reale della tecnologia reed, non di un rifiuto da parte nostra.",
+    "これらの点が残る間は製品のご提案は行いません。条件を変更されない場合、それはリード技術の実際の限界であり、当方の拒否ではありません。"
+  ],
+  "Vos réponses ne présentent plus de contradiction : les couples proposés sont de nouveau affichés.": [
+    "Your answers no longer contradict each other: the proposed pairs are shown again.",
+    "您的回答不再存在矛盾：推荐组合已重新显示。",
+    "Ihre Antworten widersprechen sich nicht mehr: die vorgeschlagenen Paare werden wieder angezeigt.",
+    "Sus respuestas ya no presentan contradicción: los pares propuestos se muestran de nuevo.",
+    "В ваших ответах больше нет противоречий: предлагаемые пары снова отображаются.",
+    "Le vostre risposte non presentano più contraddizioni: le coppie proposte sono di nuovo visibili.",
+    "ご回答の矛盾は解消されました。ご提案の組み合わせを再度表示しています。"
+  ],
+  "Les distances d'une démonstration ne valent pas vérification de votre application : ce point de compatibilité reste à traiter.": [
+    "Demonstration distances are not a verification of your application: this compatibility point still has to be addressed.",
+    "演示距离不等于对您应用的验证：该兼容性问题仍待处理。",
+    "Abstände aus einer Demonstration sind keine Prüfung Ihrer Anwendung: dieser Kompatibilitätspunkt ist noch zu klären.",
+    "Las distancias de una demostración no equivalen a una verificación de su aplicación: este punto de compatibilidad sigue pendiente.",
+    "Расстояния в демонстрации не являются проверкой вашего применения: этот вопрос совместимости остаётся открытым.",
+    "Le distanze di una dimostrazione non equivalgono a una verifica della vostra applicazione: questo punto di compatibilità resta da risolvere.",
+    "デモの距離はお客様の用途の検証にはなりません。この互換性の点は未解決です。"
+  ],
+  "Point de compatibilité à traiter": [
+    "Compatibility point to address",
+    "待处理的兼容性问题",
+    "Zu klärender Kompatibilitätspunkt",
+    "Punto de compatibilidad pendiente",
+    "Открытый вопрос совместимости",
+    "Punto di compatibilità da risolvere",
+    "対応が必要な互換性の点"
+  ],
+  "Cette démonstration ne répond pas encore à votre besoin": [
+    "This demonstration does not yet answer your need",
+    "此演示尚未满足您的需求",
+    "Diese Demonstration erfüllt Ihren Bedarf noch nicht",
+    "Esta demostración aún no responde a su necesidad",
+    "Эта демонстрация пока не отвечает вашей задаче",
+    "Questa dimostrazione non risponde ancora alla vostra esigenza",
+    "このデモはまだお客様のご要望に応えていません"
   ]
 }
