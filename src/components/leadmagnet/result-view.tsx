@@ -1,4 +1,5 @@
 import { ILLUSTRATIVE_NOTE, GUIDE_UNPUBLISHED_NOTE } from "@/lib/standex/workshop-guide";
+import { FIT_PANEL } from "@/lib/leadmagnet/application-fit";
 import { sensorById, sizeLabel } from "@/lib/standex/sensor-catalog";
 import { housingMaterial } from "@/lib/leadmagnet/product-presentation";
 import { guideRange, formatGuideBound, hasGuideData, ACTIVATION_GUIDE } from "@/lib/standex/activation-guide";
@@ -93,6 +94,9 @@ function ResultCycle({ pair }: { pair: TestedPair }) {
 
 export interface ResultViewProps {
   pair: TestedPair | null;
+  /** Un point de compatibilité du besoin reste ouvert : aucun résultat ne peut
+   *  être présenté comme positif, même si la démonstration a fermé le contact. */
+  applicationBlocked?: boolean;
   /** Réponse 1, telle que saisie : jamais traduite, jamais réécrite. */
   detectionGoal: string | null;
   tested: readonly TestedPair[];
@@ -107,6 +111,7 @@ export interface ResultViewProps {
 
 export function ResultView({
   pair,
+  applicationBlocked = false,
   detectionGoal,
   tested,
   proposals,
@@ -128,7 +133,9 @@ export function ResultView({
 
   const word = detectedObjectWord(detectionGoal);
   const couple = `${t("Le capteur")} ${pair.sensorId} + ${t("l’aimant")} ${pair.magnetId}`;
-  const positive = pair.verdict === "expected";
+  /** Un point de compatibilité ouvert interdit tout résultat positif : une
+   *  commutation obtenue en démonstration ne vérifie pas l'application. */
+  const positive = pair.verdict === "expected" && !applicationBlocked;
   const guide = pair.guideReference ? guideRange(pair.sensorId, pair.guideReference, pair.magnetId, pair.approach) : null;
   /** Replacer l'aimant n'a de sens que si la POSITION est en cause. Quand aucune
    *  ligne n'est publiée pour ce couple, déplacer l'aimant ne change rien : on ne
@@ -153,8 +160,17 @@ export function ResultView({
       <div className="space-y-5">
         <p className="flex items-center gap-2">
           <span className={`result-dot result-dot-${positive ? "expected" : pair.verdict}`} aria-hidden="true" />
-          <span className="t-label">{t(guide ? "Plage du guide disponible" : VERDICT_OVERLINE[pair.verdict])}</span>
+          <span className="t-label">{t(applicationBlocked ? FIT_PANEL.resultOverline : guide ? "Plage du guide disponible" : VERDICT_OVERLINE[pair.verdict])}</span>
         </p>
+        {applicationBlocked ? (
+          <div className="notice-warning space-y-3" data-testid="result-application-blocked">
+            <p className="t-body">{t(FIT_PANEL.demoNotApplication)}</p>
+            <Button variant="outline" className="min-h-11" onClick={onSeePairs}>
+              {t("Revoir les points de compatibilité")}
+            </Button>
+          </div>
+        ) : null}
+
 
         {positive ? (
           <>
@@ -212,7 +228,7 @@ export function ResultView({
         ) : (
           <>
             <h2 className="t-display-m">
-              {guide ? t("Votre couple dispose de données documentées.") : pair.verdict === "unpublished"
+              {applicationBlocked ? t(FIT_PANEL.resultHeadline) : guide ? t("Votre couple dispose de données documentées.") : pair.verdict === "unpublished"
                 ? t("Les distances de ce couple ne sont pas publiées.")
                 : pair.verdict === "none"
                   ? t("Ce cycle ne referme pas le contact.")
