@@ -82,3 +82,26 @@ describe("rapport exporté", () => {
     );
   });
 });
+
+describe("encart de compatibilité : liens vers le questionnaire", () => {
+  test("la précision supplémentaire est un bouton cliquable, sans numéro de question", async () => {
+    const { CompatibilityPanel } = await import("@/components/leadmagnet/compatibility-panel");
+    const { assessApplicationFit } = await import("@/lib/leadmagnet/application-fit");
+    const fit = assessApplicationFit(
+      [
+        { key: "electrical", value: "230 VAC, 8 A : le courant du moteur passe directement dans le capteur reed.", state: "confirmed", source: "client" },
+      ],
+      "Je veux éviter d'utiliser un relais ou un contacteur supplémentaire.",
+    );
+    expect(fit.blocking).toBe(true);
+    const html = renderToStaticMarkup(
+      <CompatibilityPanel assessment={fit} onGoToStep={() => {}} />,
+    );
+    expect(html).toContain('data-step="free_constraints"');
+    expect(html).toContain('data-step="electrical"');
+    // La précision n'est jamais présentée comme une question numérotée.
+    const idx = html.indexOf('data-step="free_constraints"');
+    expect(html.slice(idx, idx + 300)).not.toContain("Question");
+    expect(html.slice(idx, idx + 300)).toContain("Précision supplémentaire");
+  });
+});

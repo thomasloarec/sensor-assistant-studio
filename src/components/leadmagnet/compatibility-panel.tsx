@@ -87,20 +87,18 @@ function IssueBlock({ issue, onGoToStep }: { issue: FitIssue; onGoToStep: (key: 
       <div className="space-y-2">
         <p className="t-label">{t(FIT_PANEL.review)}</p>
         <div className="flex flex-wrap gap-3">
-          {issue.steps.map((s) =>
-            s.number === null ? null : (
-              <Button
-                key={s.key}
-                variant="outline"
-                className="min-h-11 text-base"
-                data-testid="fit-step-button"
-                data-step={s.key}
-                onClick={() => onGoToStep(s.key)}
-              >
-                {stepLabel(s)}
-              </Button>
-            ),
-          )}
+          {issue.steps.map((s) => (
+            <Button
+              key={s.key}
+              variant="outline"
+              className="min-h-11 text-base"
+              data-testid="fit-step-button"
+              data-step={s.key}
+              onClick={() => onGoToStep(s.key)}
+            >
+              {stepLabel(s)}
+            </Button>
+          ))}
         </div>
       </div>
     </section>

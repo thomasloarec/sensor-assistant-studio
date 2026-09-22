@@ -27890,15 +27890,6 @@
     "Far passare l'alimentazione del motore direttamente nel contatto del sensore.",
     "モーター電源をセンサー接点に直接通すこと。"
   ],
-  "La charge du moteur et son courant de démarrage dépassent largement ce qu'un contact reed peut couper. Les contacts peuvent se souder ou se dégrader, et la machine peut alors démarrer ou rester en marche sans commande.": [
-    "The motor load and its starting current far exceed what a reed contact can switch. The contacts can weld or degrade, and the machine may then start or keep running without any command.",
-    "电机负载及其启动电流远超干簧管触点的开断能力。触点可能熔焊或劣化，机器随后可能在无指令的情况下启动或持续运转。",
-    "Die Motorlast und ihr Anlaufstrom übersteigen bei Weitem, was ein Reed-Kontakt schalten kann. Die Kontakte können verschweißen oder verschleißen, und die Maschine kann dann ohne Befehl anlaufen oder weiterlaufen.",
-    "La carga del motor y su corriente de arranque superan ampliamente lo que un contacto reed puede cortar. Los contactos pueden soldarse o degradarse, y la máquina podría arrancar o seguir en marcha sin orden.",
-    "Нагрузка двигателя и его пусковой ток значительно превышают возможности герконового контакта. Контакты могут свариться или деградировать, и машина может запуститься или продолжать работу без команды.",
-    "Il carico del motore e la sua corrente di avvio superano ampiamente ciò che un contatto reed può interrompere. I contatti possono saldarsi o degradarsi e la macchina può avviarsi o restare in funzione senza comando.",
-    "モーター負荷と起動電流はリード接点で開閉できる範囲を大きく超えます。接点が溶着・劣化し、指令なしに機械が起動したり運転を続ける恐れがあります。"
-  ],
   "Capteur reed (signal de position)": [
     "Reed sensor (position signal)",
     "干簧管传感器（位置信号）",
@@ -28150,5 +28141,32 @@
     "Эта демонстрация пока не отвечает вашей задаче",
     "Questa dimostrazione non risponde ancora alla vostra esigenza",
     "このデモはまだお客様のご要望に応えていません"
+  ],
+  "La charge du moteur et son courant d'appel au démarrage dépassent largement ce qu'un contact reed peut couper. Les contacts peuvent se souder ou se dégrader, et la machine peut alors démarrer ou rester en marche sans commande.": [
+    "The motor load and its inrush current at start-up far exceed what a reed contact can switch. The contacts can weld or degrade, and the machine may then start or keep running without any command.",
+    "电机负载及其启动浪涌电流远超簧片触点所能切断的能力。触点可能熔焊或损坏，机器随后可能在无指令的情况下启动或持续运转。",
+    "Die Motorlast und ihr Einschaltstrom beim Anlauf übersteigen bei Weitem, was ein Reed-Kontakt schalten kann. Die Kontakte können verschweißen oder sich zersetzen, und die Maschine kann dann ohne Befehl anlaufen oder weiterlaufen.",
+    "La carga del motor y su corriente de arranque superan con creces lo que un contacto reed puede cortar. Los contactos pueden soldarse o degradarse, y la máquina puede entonces arrancar o seguir en marcha sin ninguna orden.",
+    "Нагрузка двигателя и его пусковой ток значительно превышают возможности геркона. Контакты могут свариться или разрушиться, и машина может запуститься или продолжать работать без команды.",
+    "Il carico del motore e la sua corrente di spunto all'avvio superano di gran lunga ciò che un contatto reed può interrompere. I contatti possono saldarsi o degradarsi, e la macchina può quindi avviarsi o restare in marcia senza alcun comando.",
+    "モーター負荷とその始動時の突入電流は、リード接点が遮断できる能力を大きく上回ります。接点が溶着・劣化し、機械が指令なしに起動したり動き続けたりするおそれがあります。"
+  ],
+  "Précision supplémentaire": [
+    "Additional precision",
+    "补充说明",
+    "Zusätzliche Angabe",
+    "Precisión adicional",
+    "Дополнительное уточнение",
+    "Precisazione aggiuntiva",
+    "追加の補足情報"
+  ],
+  "Un moteur est une charge inductive à fort courant d'appel : l'interface de puissance doit être dimensionnée et protégée en conséquence (diode, réseau RC ou varistance). Voir les précautions de charge Standex : https://standexdetect.com/resources/reed-technology-academy/handling-and-load-precautions/": [
+    "A motor is an inductive load with a high inrush current: the power interface must be sized and protected accordingly (diode, RC network or varistor). See the Standex load precautions: https://standexdetect.com/resources/reed-technology-academy/handling-and-load-precautions/",
+    "电机属于具有高浪涌电流的感性负载：功率接口必须据此选型并加以保护（二极管、RC 网络或压敏电阻）。请参阅 Standex 负载注意事项：https://standexdetect.com/resources/reed-technology-academy/handling-and-load-precautions/",
+    "Ein Motor ist eine induktive Last mit hohem Einschaltstrom: das Leistungsinterface muss entsprechend dimensioniert und geschützt werden (Diode, RC-Glied oder Varistor). Siehe die Standex-Lasthinweise: https://standexdetect.com/resources/reed-technology-academy/handling-and-load-precautions/",
+    "Un motor es una carga inductiva con una alta corriente de arranque: la interfaz de potencia debe dimensionarse y protegerse en consecuencia (diodo, red RC o varistor). Consulte las precauciones de carga de Standex: https://standexdetect.com/resources/reed-technology-academy/handling-and-load-precautions/",
+    "Двигатель — это индуктивная нагрузка с высоким пусковым током: силовой интерфейс должен быть рассчитан и защищён соответствующим образом (диод, RC-цепь или варистор). См. рекомендации Standex по нагрузке: https://standexdetect.com/resources/reed-technology-academy/handling-and-load-precautions/",
+    "Un motore è un carico induttivo con una corrente di spunto elevata: l'interfaccia di potenza deve essere dimensionata e protetta di conseguenza (diodo, rete RC o varistore). Vedere le precauzioni di carico Standex: https://standexdetect.com/resources/reed-technology-academy/handling-and-load-precautions/",
+    "モーターは突入電流の大きい誘導負荷です。パワーインターフェースはそれに応じて選定・保護（ダイオード、RC 回路、バリスタ）する必要があります。Standex の負荷に関する注意事項をご覧ください：https://standexdetect.com/resources/reed-technology-academy/handling-and-load-precautions/"
   ]
 }
