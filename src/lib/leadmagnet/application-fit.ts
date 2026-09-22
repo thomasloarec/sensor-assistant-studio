@@ -74,11 +74,13 @@ const STEP_TABLE: Record<string, FitStep> = {
   envelope: { key: "mounting", number: 4, label: "Montage" },
   electrical: { key: "electrical", number: 5, label: "Électrique" },
   environment: { key: "environment", number: 6, label: "Environnement" },
-  free_constraints: { key: "free_constraints", number: null, label: "Contraintes supplémentaires" },
+  // Le contexte projet est une précision EN PLUS des six questions : jamais
+  // numéroté, libellé comme le champ réellement affiché dans le questionnaire.
+  free_constraints: { key: "free_constraints", number: null, label: "Précision supplémentaire" },
 };
 
 const stepFor = (key: string): FitStep =>
-  STEP_TABLE[key] ?? { key, number: null, label: "Contraintes supplémentaires" };
+  STEP_TABLE[key] ?? { key, number: null, label: "Précision supplémentaire" };
 
 /** Minuscules sans accents, apostrophes ouvertes : « pas d'aimant » → « pas d aimant ». */
 const norm = (value: string) =>
