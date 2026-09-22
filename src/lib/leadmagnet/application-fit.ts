@@ -264,7 +264,7 @@ export function assessApplicationFit(
         ? "Faire passer l'alimentation du moteur ({0}) directement dans le contact du capteur."
         : "Faire passer l'alimentation du moteur directement dans le contact du capteur.",
       whatFailsArgs: load.label ? [load.label] : [],
-      why: "La charge du moteur et son courant de démarrage dépassent largement ce qu'un contact reed peut couper. Les contacts peuvent se souder ou se dégrader, et la machine peut alors démarrer ou rester en marche sans commande.",
+      why: "La charge du moteur et son courant d'appel au démarrage dépassent largement ce qu'un contact reed peut couper. Les contacts peuvent se souder ou se dégrader, et la machine peut alors démarrer ou rester en marche sans commande.",
       diagram: [
         "Capteur reed (signal de position)",
         "Entrée de commande compatible (automate, carte, entrée logique)",
@@ -273,6 +273,7 @@ export function assessApplicationFit(
       ],
       cautions: [
         "Le circuit de puissance du moteur et le circuit de signal du capteur restent deux circuits distincts.",
+        "Un moteur est une charge inductive à fort courant d'appel : l'interface de puissance doit être dimensionnée et protégée en conséquence (diode, réseau RC ou varistance). Voir les précautions de charge Standex : https://standexdetect.com/resources/reed-technology-academy/handling-and-load-precautions/",
         "Un capteur reed sur un capot donne une information de position. Il ne constitue pas à lui seul un verrouillage de sécurité machine certifié.",
       ],
       changes,
