@@ -96,6 +96,36 @@ export function projectReportSections(
       ),
     ]);
   }
+  // Compatibilité du besoin : la MÊME vérité que l'écran des couples et le
+  // résultat. Une contradiction posée dans les réponses reste écrite ici.
+  const fit = assessApplicationFit(d.requirements, d.freeConstraints);
+  if (fit.issues.length)
+    add("Compatibilité de votre application", [
+      ...fit.issues.flatMap((issue) => [
+        entry(tr(issue.title), tr(issue.whatWorks)),
+        entry(
+          tr("Ce qui ne fonctionne pas"),
+          issue.whatFailsArgs.length
+            ? tr(issue.whatFails).replace(
+                /\{(\d+)\}/g,
+                (_, i) => issue.whatFailsArgs[Number(i)] ?? "",
+              )
+            : tr(issue.whatFails),
+        ),
+        entry(tr("Pourquoi"), tr(issue.why)),
+        entry(
+          tr("Modifications possibles"),
+          issue.changes
+            .map(
+              (c) =>
+                `${c.step.number === null ? tr(c.step.label) : `${tr("Question")} ${c.step.number} · ${tr(c.step.label)}`} — ${tr(c.text)}`,
+            )
+            .join(" | "),
+        ),
+        ...issue.cautions.map((c) => entry(tr("À retenir"), tr(c))),
+      ]),
+      entry(tr("Ce que cela implique"), tr(FIT_PANEL.noProducts)),
+    ]);
   if (d.testedPairs?.length)
     add(
       "Historique des essais",
