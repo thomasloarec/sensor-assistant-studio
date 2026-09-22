@@ -307,9 +307,18 @@ export function assessApplicationFit(
   }
 
   /* ---- Point 2 ---- */
-  const refuseMagnet = anyMatch(frags, REFUSE_MAGNET);
-  const already = anyMatch(frags, MAGNET_ALREADY);
-  if (refuseMagnet.length > 0 && already.length === 0) {
+  // Portée LOCALE encore : une phrase ne cesse d'être un refus que si ELLE dit
+  // qu'un aimant existe déjà et que seul un aimant SUPPLÉMENTAIRE est inutile.
+  // « Aucun aimant ne peut être ajouté » en Montage reste une contradiction même
+  // si une autre réponse mentionne un aimant déjà posé.
+  const refuseMagnet = anyMatch(frags, REFUSE_MAGNET).filter(
+    (f) =>
+      !(
+        MAGNET_ALREADY_LOCAL.some((p) => p.test(f.text)) &&
+        !NOT_ALREADY.some((p) => p.test(f.text))
+      ),
+  );
+  if (refuseMagnet.length > 0) {
     const evidence: FitEvidence[] = refuseMagnet.map((f) => ({ step: f.step, quote: f.quote }));
     const materialFrag = anyMatch(frags, NON_MAGNETIC)[0] ?? null;
     const material = materialFrag
@@ -319,7 +328,7 @@ export function assessApplicationFit(
       id: "no_magnetic_source",
       title: "Sans champ magnétique, aucun capteur reed ne peut détecter cette pièce",
       whatWorks:
-        "Repérer le passage ou la position d'une pièce mobile avec un capteur reed ne pose aucune difficulté en soi, y compris sur un convoyeur.",
+        "La position peut être détectée si un champ magnétique adapté vient actionner le capteur reed : un aimant sur la pièce mobile ou sur son support suffit, convoyeur compris.",
       whatFails: material
         ? "Un capteur reed réagit à un champ magnétique. Une pièce en {0} non aimantée n'en produit aucun : le contact ne se fermera jamais."
         : "Un capteur reed réagit à un champ magnétique. Une pièce qui n'en produit aucun ne fermera jamais le contact.",
@@ -336,15 +345,25 @@ export function assessApplicationFit(
         },
         {
           step: stepFor("mounting"),
-          text: "Revoir aussi la réponse de montage qui interdit tout aimant, sinon la contradiction demeure, puis indiquer la distance réelle entre l'aimant et le capteur.",
+          text: "Revoir aussi la réponse de montage qui interdit tout aimant, sinon la contradiction demeure.",
+        },
+        {
+          step: stepFor("states_motion"),
+          text: "Indiquer ensuite la distance réelle entre l'aimant et le capteur, aimant en place.",
         },
         {
           step: stepFor("target_object"),
-          text: "Ou conserver la contrainte « aucun aimant » : il faut alors évaluer une autre technologie de détection. Aucun produit reed ne résout ce cas et nous ne le présenterons pas comme résolu.",
+          text: material === "aluminium"
+            ? "Ou conserver la contrainte « aucun aimant » : il faut alors évaluer une autre technologie, par exemple un détecteur inductif prévu pour l'aluminium ou une détection optique, selon la distance réelle et l'environnement. Aucun produit reed ne résout ce cas, et nous ne garantissons pas d'avance la performance d'une autre technologie."
+            : "Ou conserver la contrainte « aucun aimant » : il faut alors évaluer une autre technologie de détection, par exemple inductive ou optique, selon la distance réelle et l'environnement. Aucun produit reed ne résout ce cas, et nous ne garantissons pas d'avance la performance d'une autre technologie.",
         },
       ],
       evidence,
-      steps: orderedSteps(evidence, [stepFor("target_object"), stepFor("mounting")]),
+      steps: orderedSteps(evidence, [
+        stepFor("target_object"),
+        stepFor("states_motion"),
+        stepFor("mounting"),
+      ]),
     });
   }
 
