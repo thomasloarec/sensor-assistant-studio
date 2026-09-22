@@ -392,6 +392,10 @@ export const FIT_PANEL = {
     "Les distances d'une démonstration ne valent pas vérification de votre application : ce point de compatibilité reste à traiter.",
   historicalDemo:
     "Démonstration magnétique antérieure, conservée telle quelle : elle ne vaut pas validation de l'application décrite aujourd'hui.",
+  /** Lien nommé : l'URL brute n'est jamais affichée dans le texte pédagogique. */
+  sourceLabel: "Précautions de manipulation et de charge — Standex",
+  sourceUrl:
+    "https://standexdetect.com/resources/reed-technology-academy/handling-and-load-precautions/",
   resultOverline: "Point de compatibilité à traiter",
   resultHeadline: "Cette démonstration ne répond pas encore à votre besoin",
 } as const;
