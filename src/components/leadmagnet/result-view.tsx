@@ -186,11 +186,15 @@ export function ResultView({
         {applicationBlocked ? (
           <div className="notice-warning space-y-3" data-testid="result-application-blocked">
             <p className="t-body">{t(FIT_PANEL.demoNotApplication)}</p>
-            <Button variant="outline" className="min-h-11" onClick={onSeePairs}>
-              {t("Revoir les points de compatibilité")}
-            </Button>
+            {fitPanel ? null : (
+              <Button variant="outline" className="min-h-11" onClick={onSeePairs}>
+                {t("Revoir les points de compatibilité")}
+              </Button>
+            )}
           </div>
         ) : null}
+        {/* Encart complet, avec les liens exacts vers les réponses à revoir. */}
+        {fitPanel}
 
 
         {positive ? (
