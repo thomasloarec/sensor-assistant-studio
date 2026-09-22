@@ -199,8 +199,6 @@ const REFUSE_MAGNET = [
 const MAGNET_ALREADY_LOCAL = [
   /(aimant|magnet)\b[^.]{0,50}\b(deja|already)\b/,
   /\b(deja|already)\b[^.]{0,50}(un |une |a |an )?(aimant|magnet)\b/,
-  /(aucun|pas d|pas de|no)\s?[^.,;]{0,22}(aimant|magnet)\b[^.]{0,40}(supplementaire|additional|en plus|de plus|needed|necessaire|utile)/,
-  /(supplementaire|additional)\s?[^.,;]{0,22}(aimant|magnet)\b/,
 ];
 
 /** « L'aimant n'est PAS déjà posé » ne lève rien du tout. */
