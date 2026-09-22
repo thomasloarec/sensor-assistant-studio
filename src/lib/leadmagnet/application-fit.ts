@@ -295,7 +295,7 @@ export function assessApplicationFit(
       ],
       cautions: [
         "Le circuit de puissance du moteur et le circuit de signal du capteur restent deux circuits distincts.",
-        "Un moteur est une charge inductive à fort courant d'appel : l'interface de puissance doit être dimensionnée et protégée en conséquence (diode, réseau RC ou varistance). Voir les précautions de charge Standex : https://standexdetect.com/resources/reed-technology-academy/handling-and-load-precautions/",
+        "Un moteur est une charge inductive à fort courant d'appel : l'interface de puissance doit être dimensionnée et protégée en conséquence, avec une protection adaptée au type d'alimentation. Voir les précautions de charge Standex.",
         "Un capteur reed sur un capot donne une information de position. Il ne constitue pas à lui seul un verrouillage de sécurité machine certifié.",
       ],
       changes,
@@ -390,6 +390,8 @@ export const FIT_PANEL = {
     "Vos réponses ne présentent plus de contradiction : les couples proposés sont de nouveau affichés.",
   demoNotApplication:
     "Les distances d'une démonstration ne valent pas vérification de votre application : ce point de compatibilité reste à traiter.",
+  historicalDemo:
+    "Démonstration magnétique antérieure, conservée telle quelle : elle ne vaut pas validation de l'application décrite aujourd'hui.",
   resultOverline: "Point de compatibilité à traiter",
   resultHeadline: "Cette démonstration ne répond pas encore à votre besoin",
 } as const;
