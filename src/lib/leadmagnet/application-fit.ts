@@ -128,6 +128,18 @@ const DIRECT_SWITCH = [
   /(directement|directly)[^.]{0,40}(alimenter|alimente|power|powering|powers)[^.]{0,40}(le |la |the )?(moteur|motor)/,
 ];
 
+/** Négation DANS la phrase elle-même : « le capteur ne commute pas directement
+ *  le moteur ». L'intention n'est affirmée que si la phrase QUI la porte ne la
+ *  nie pas et ne décrit pas elle-même le câblage sûr. Une phrase sûre écrite
+ *  AILLEURS n'annule jamais une intention directe restée dans une autre
+ *  réponse : la contradiction demeure jusqu'à l'édition de cette réponse. */
+const NEGATED_DIRECT = [
+  /\b(ne|n)\s[^.]{0,60}\bpas\b/,
+  /\b(jamais|never)\b/,
+  /\b(non|not|no|does not|do not|doesn t|don t|without|sans|au lieu de|instead of|plutot que)\b[^.]{0,40}(directement|directly|direct)/,
+  /(sans (passer|commuter|faire passer)|without (passing|switching|carrying))/,
+];
+
 /** Refus explicite de l'interface de puissance. */
 const REFUSE_INTERFACE = [
   /(sans|pas de|aucun|aucune|eviter|eviter d|eviter de|no|without|avoid|avoiding)[^.]{0,50}(relais|relay|contacteur|contactor|interface de puissance|power interface)/,
