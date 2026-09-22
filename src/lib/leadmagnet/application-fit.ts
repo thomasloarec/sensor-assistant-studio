@@ -375,14 +375,15 @@ export const FIT_PANEL = {
   titleOne: "Un point à revoir avant de proposer des produits",
   titleMany: "Points à revoir avant de proposer des produits",
   intro:
-    "Votre projet reste tout à fait réalisable, mais tel qu'il est décrit aujourd'hui il ne peut pas fonctionner. Voici ce qui fonctionne, ce qui ne fonctionne pas, et les modifications concrètes possibles.",
+    "Votre objectif peut être étudié avec une architecture adaptée. Tel qu'il est décrit aujourd'hui, il ne peut pas fonctionner : voici ce qui fonctionne, ce qui ne fonctionne pas, et les adaptations possibles.",
   works: "Ce qui fonctionne",
   fails: "Ce qui ne fonctionne pas",
   why: "Pourquoi",
   diagram: "Le câblage habituel",
-  changes: "Modifications possibles",
+  changes: "Adaptations possibles",
+  changeAction: "Modifier cette réponse",
   review: "Revoir vos réponses",
-  yourWords: "Ce que vous avez écrit",
+  yourWords: "Voir ce que vous avez écrit",
   noRewrite:
     "Vos réponses ne sont jamais modifiées à votre place. Ces boutons ouvrent la question concernée : vous décidez de ce qui change.",
   noProducts:
