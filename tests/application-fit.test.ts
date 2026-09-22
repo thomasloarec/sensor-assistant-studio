@@ -262,3 +262,107 @@ describe("liens vers le questionnaire réel", () => {
     expect(joined).toContain("handling-and-load-precautions");
   });
 });
+
+describe("portée locale des négations et des contextes bénins", () => {
+  test("intention directe en Application : une réponse électrique sûre ne l'annule pas", () => {
+    const fit = assessApplicationFit(
+      [
+        req("detection_goal", "Directly power the motor when the cover closes."),
+        req(
+          "electrical",
+          "Motor 230 VAC 8 A; the reed sends a control signal to the PLC with a separate contactor.",
+        ),
+      ],
+      "",
+    );
+    expect(fit.blocking).toBe(true);
+    const issue = fit.issues.find((i) => i.id === "direct_load_switching")!;
+    expect(issue.evidence.some((e) => e.quote.includes("Directly power the motor"))).toBe(true);
+    expect(issue.steps.some((s) => s.key === "detection_goal")).toBe(true);
+  });
+  test("phrase directe explicite plus phrase sûre séparée : le point subsiste", () => {
+    const fit = assessApplicationFit(
+      [
+        req(
+          "electrical",
+          "The 230 VAC 8 A motor current must pass directly through the reed sensor. A separate contactor drives the pump.",
+        ),
+      ],
+      "",
+    );
+    expect(fit.blocking).toBe(true);
+  });
+  test("phrase niée seule : aucun point", () => {
+    const fit = assessApplicationFit(
+      [
+        req(
+          "electrical",
+          "The reed does not directly switch the 230 VAC 8 A motor; a rated contactor does.",
+        ),
+      ],
+      "",
+    );
+    expect(fit.issues).toHaveLength(0);
+  });
+  test("« aucun aimant ne peut être ajouté » en Montage reste une contradiction", () => {
+    const fit = assessApplicationFit(
+      [
+        req("target_object", "A magnet is already installed on the cover."),
+        req("mounting", "No magnet can be added."),
+      ],
+      "",
+    );
+    expect(fit.issues.map((i) => i.id)).toEqual(["no_magnetic_source"]);
+    expect(fit.issues[0]!.evidence.some((e) => e.quote.includes("No magnet can be added"))).toBe(true);
+  });
+  test("« a magnet is not already installed » ne supprime rien", () => {
+    const fit = assessApplicationFit(
+      [req("target_object", "A magnet is not already installed and no magnet can be added.")],
+      "",
+    );
+    expect(fit.blocking).toBe(true);
+  });
+  test("« boîtier plastique non magnétique, aimant sur le capot mobile » : aucun refus", () => {
+    const fit = assessApplicationFit(
+      [
+        req("target_object", "Non-magnetic plastic housing, magnet on the moving cover."),
+        req("mounting", "Sensor screwed on the frame."),
+      ],
+      "",
+    );
+    expect(fit.issues).toHaveLength(0);
+  });
+  test("aimant déjà posé, seul un aimant supplémentaire jugé inutile : aucun point", () => {
+    const fit = assessApplicationFit(
+      [req("target_object", "A magnet is already installed on the cover, no additional magnet needed.")],
+      "",
+    );
+    expect(fit.issues).toHaveLength(0);
+  });
+});
+
+describe("textes non catégoriques et autre technologie concrète", () => {
+  test("l'introduction parle d'architecture adaptée, sans promesse", () => {
+    expect(FIT_PANEL.intro).toContain("architecture adaptée");
+    expect(FIT_PANEL.intro).not.toContain("tout à fait réalisable");
+  });
+  test("aluminium : détecteur inductif ou optique nommés, sans garantie", () => {
+    const fit = assessApplicationFit(
+      [
+        req("target_object", "Entirely aluminum, no magnet can be added."),
+        req("mounting", "No magnet or additional magnetic element permitted."),
+      ],
+      "",
+    );
+    const issue = fit.issues.find((i) => i.id === "no_magnetic_source")!;
+    expect(issue.whatWorks).toContain("champ magnétique adapté");
+    expect(issue.whatWorks).not.toContain("aucune difficulté en soi");
+    const texts = issue.changes.map((c) => c.text).join(" ");
+    expect(texts).toContain("détecteur inductif");
+    expect(texts).toContain("optique");
+    expect(texts).toContain("ne garantissons pas");
+    // La distance aimant-capteur se revoit à la question 3.
+    expect(issue.steps.some((s) => s.key === "states_motion" && s.number === 3)).toBe(true);
+    expect(issue.changes.some((c) => c.step.key === "states_motion")).toBe(true);
+  });
+});
