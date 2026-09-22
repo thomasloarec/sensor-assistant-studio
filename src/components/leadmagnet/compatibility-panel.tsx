@@ -3,6 +3,11 @@
  * Présentation seule : aucune réponse n'est réécrite ici, aucun calcul n'est
  * fait. Les boutons ouvrent la question concernée du questionnaire et y placent
  * le curseur ; c'est la personne qui décide de ce qui change.
+ *
+ * Mise en page : un résumé court et visuellement séparé (ce qui fonctionne / ce
+ * qui ne fonctionne pas), puis les adaptations possibles avec, à côté de chaque
+ * adaptation, le bouton qui ouvre la réponse visée. Les citations restent
+ * disponibles mais repliées, pour ne pas noyer l'essentiel.
  */
 import { Button } from "@/components/ui/button";
 import { msg, t } from "@/lib/i18n/core";
@@ -13,28 +18,53 @@ const stepLabel = (step: FitStep) =>
     ? t(step.label)
     : msg("Question {0} · {1}", [String(step.number), t(step.label)]);
 
+function StepButton({
+  step,
+  label,
+  onGoToStep,
+}: {
+  step: FitStep;
+  label: string;
+  onGoToStep: (key: string) => void;
+}) {
+  return (
+    <Button
+      variant="outline"
+      className="min-h-11 shrink-0 text-base"
+      data-testid="fit-step-button"
+      data-step={step.key}
+      aria-label={`${label} — ${stepLabel(step)}`}
+      onClick={() => onGoToStep(step.key)}
+    >
+      {label}
+    </Button>
+  );
+}
+
 function IssueBlock({ issue, onGoToStep }: { issue: FitIssue; onGoToStep: (key: string) => void }) {
   return (
-    <section className="panel-block space-y-4" data-testid="fit-issue" data-issue={issue.id}>
+    <section className="panel-block space-y-5" data-testid="fit-issue" data-issue={issue.id}>
       <h3 className="t-title-m">{t(issue.title)}</h3>
 
-      <div className="space-y-1">
-        <p className="t-label">{t(FIT_PANEL.works)}</p>
-        <p className="t-body">{t(issue.whatWorks)}</p>
-      </div>
-
-      <div className="space-y-1">
-        <p className="t-label">{t(FIT_PANEL.fails)}</p>
-        <p className="t-body">
-          {issue.whatFailsArgs.length
-            ? msg(issue.whatFails, issue.whatFailsArgs)
-            : t(issue.whatFails)}
-        </p>
+      {/* Résumé : deux blocs courts, côte à côte dès qu'il y a la place. */}
+      <div className="grid gap-3 sm:grid-cols-2">
+        <div className="rounded-[var(--r-m)] bg-[var(--surface-tint)] p-4 space-y-1">
+          <p className="t-label">{t(FIT_PANEL.works)}</p>
+          <p className="t-body-s">{t(issue.whatWorks)}</p>
+        </div>
+        <div className="rounded-[var(--r-m)] bg-[var(--surface-sunken)] p-4 space-y-1">
+          <p className="t-label">{t(FIT_PANEL.fails)}</p>
+          <p className="t-body-s">
+            {issue.whatFailsArgs.length
+              ? msg(issue.whatFails, issue.whatFailsArgs)
+              : t(issue.whatFails)}
+          </p>
+        </div>
       </div>
 
       <div className="space-y-1">
         <p className="t-label">{t(FIT_PANEL.why)}</p>
-        <p className="t-body">{t(issue.why)}</p>
+        <p className="t-body-s">{t(issue.why)}</p>
       </div>
 
       {issue.diagram.length ? (
@@ -53,26 +83,17 @@ function IssueBlock({ issue, onGoToStep }: { issue: FitIssue; onGoToStep: (key: 
         </div>
       ) : null}
 
-      {issue.evidence.length ? (
-        <div className="space-y-1" data-testid="fit-evidence">
-          <p className="t-label">{t(FIT_PANEL.yourWords)}</p>
-          <ul className="space-y-1">
-            {issue.evidence.map((e, i) => (
-              <li key={`${e.step.key}-${i}`} className="t-body-s">
-                {/* La citation reste dans la langue de la personne : jamais traduite. */}
-                <span className="t-label">{stepLabel(e.step)}</span> — « {e.quote} »
-              </li>
-            ))}
-          </ul>
-        </div>
-      ) : null}
-
-      <div className="space-y-2">
+      {/* Adaptations : chaque ligne porte son propre bouton d'édition. */}
+      <div className="space-y-3">
         <p className="t-label">{t(FIT_PANEL.changes)}</p>
-        <ul className="space-y-1">
+        <ul className="space-y-3">
           {issue.changes.map((c, i) => (
-            <li key={i} className="t-body">
-              <span className="t-label">{stepLabel(c.step)}</span> — {t(c.text)}
+            <li key={i} className="flex flex-wrap items-start justify-between gap-3">
+              <div className="min-w-0 flex-1 space-y-1">
+                <p className="t-label">{stepLabel(c.step)}</p>
+                <p className="t-body-s">{t(c.text)}</p>
+              </div>
+              <StepButton step={c.step} label={t(FIT_PANEL.changeAction)} onGoToStep={onGoToStep} />
             </li>
           ))}
         </ul>
@@ -84,20 +105,25 @@ function IssueBlock({ issue, onGoToStep }: { issue: FitIssue; onGoToStep: (key: 
         </p>
       ))}
 
+      {issue.evidence.length ? (
+        <details className="space-y-2" data-testid="fit-evidence">
+          <summary className="t-label min-h-11 cursor-pointer">{t(FIT_PANEL.yourWords)}</summary>
+          <ul className="mt-2 space-y-1">
+            {issue.evidence.map((e, i) => (
+              <li key={`${e.step.key}-${i}`} className="t-body-s">
+                {/* La citation reste dans la langue de la personne : jamais traduite. */}
+                <span className="t-label">{stepLabel(e.step)}</span> — « {e.quote} »
+              </li>
+            ))}
+          </ul>
+        </details>
+      ) : null}
+
       <div className="space-y-2">
         <p className="t-label">{t(FIT_PANEL.review)}</p>
         <div className="flex flex-wrap gap-3">
           {issue.steps.map((s) => (
-            <Button
-              key={s.key}
-              variant="outline"
-              className="min-h-11 text-base"
-              data-testid="fit-step-button"
-              data-step={s.key}
-              onClick={() => onGoToStep(s.key)}
-            >
-              {stepLabel(s)}
-            </Button>
+            <StepButton key={s.key} step={s} label={stepLabel(s)} onGoToStep={onGoToStep} />
           ))}
         </div>
       </div>

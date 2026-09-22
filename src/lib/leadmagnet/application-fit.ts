@@ -128,6 +128,18 @@ const DIRECT_SWITCH = [
   /(directement|directly)[^.]{0,40}(alimenter|alimente|power|powering|powers)[^.]{0,40}(le |la |the )?(moteur|motor)/,
 ];
 
+/** Négation DANS la phrase elle-même : « le capteur ne commute pas directement
+ *  le moteur ». L'intention n'est affirmée que si la phrase QUI la porte ne la
+ *  nie pas et ne décrit pas elle-même le câblage sûr. Une phrase sûre écrite
+ *  AILLEURS n'annule jamais une intention directe restée dans une autre
+ *  réponse : la contradiction demeure jusqu'à l'édition de cette réponse. */
+const NEGATED_DIRECT = [
+  /\b(ne|n)\s[^.]{0,60}\bpas\b/,
+  /\b(jamais|never)\b/,
+  /\b(non|not|no|does not|do not|doesn t|don t|without|sans|au lieu de|instead of|plutot que)\b[^.]{0,40}(directement|directly|direct)/,
+  /(sans (passer|commuter|faire passer)|without (passing|switching|carrying))/,
+];
+
 /** Refus explicite de l'interface de puissance. */
 const REFUSE_INTERFACE = [
   /(sans|pas de|aucun|aucune|eviter|eviter d|eviter de|no|without|avoid|avoiding)[^.]{0,50}(relais|relay|contacteur|contactor|interface de puissance|power interface)/,
@@ -169,17 +181,29 @@ function heavyLoad(frags: Fragment[]): { found: boolean; label: string | null } 
  * Point 2 — sans champ magnétique, pas de détection reed
  * ------------------------------------------------------------------------- */
 
+/* Le refus doit porter DIRECTEMENT sur l'aimant : pas de virgule ni de
+ * point-virgule entre la négation et le mot « aimant ». « Boîtier plastique non
+ * magnétique, aimant sur le capot mobile » décrit un matériau, pas un refus, et
+ * ne doit donc rien déclencher (`magnet\b` exclut « magnetic »). */
 const REFUSE_MAGNET = [
-  /(aucun|aucune|pas de|pas d|sans|no|without|non)[^.]{0,30}(aimant|aimants|magnet|magnets|element magnetique|elements magnetiques|magnetic element|magnetic elements)/,
-  /(aimant|aimants|magnet|magnets|magnetique|magnetic)[^.]{0,40}(interdit|interdite|interdits|impossible|not allowed|not permitted|forbidden|cannot be added|can not be added|can t be added)/,
-  /(impossible|interdit|pas possible|not possible|cannot|can not|can t)[^.]{0,50}(ajouter|fixer|coller|add|adding|attach|fit)[^.]{0,30}(un |une |a |an )?(aimant|magnet)/,
+  /(aucun|aucune|pas de|pas d|sans|no|without|non)\s?[^.,;]{0,22}(aimant|aimants|magnet|magnets)\b/,
+  /(aucun|aucune|pas de|pas d|sans|no|without)\s?[^.,;]{0,22}(element magnetique|elements magnetiques|magnetic element|magnetic elements)\b/,
+  /(aimant|aimants|magnet|magnets)\b[^.]{0,40}(interdit|interdite|interdits|impossible|not allowed|not permitted|forbidden|cannot be added|can not be added|can t be added)/,
+  /(impossible|interdit|pas possible|not possible|cannot|can not|can t)[^.]{0,50}(ajouter|fixer|coller|add|adding|attach|fit)[^.]{0,30}(un |une |a |an )?(aimant|magnet)\b/,
 ];
 
-/** Un aimant DÉJÀ présent n'est pas un refus d'en ajouter un. */
-const MAGNET_ALREADY = [
-  /(aimant|magnet)[^.]{0,40}(deja|already)/,
-  /(deja|already)[^.]{0,40}(un |une |a |an )?(aimant|magnet)/,
-  /(aucun aimant (n est|nest)? ?(pas)? ?(necessaire|utile))|no (additional )?magnet (is )?needed because/,
+/** Contexte BÉNIN, reconnu DANS LA PHRASE MÊME qui semble refuser : un aimant
+ *  existe déjà et seul un aimant SUPPLÉMENTAIRE est jugé inutile. Une phrase
+ *  « un aimant est déjà posé » écrite ailleurs ne suffit pas : une réponse qui
+ *  interdit encore tout aimant reste une contradiction. */
+const MAGNET_ALREADY_LOCAL = [
+  /(aimant|magnet)\b[^.]{0,50}\b(deja|already)\b/,
+  /\b(deja|already)\b[^.]{0,50}(un |une |a |an )?(aimant|magnet)\b/,
+];
+
+/** « L'aimant n'est PAS déjà posé » ne lève rien du tout. */
+const NOT_ALREADY = [
+  /\b(n est pas deja|nest pas deja|pas deja|is not already|isn t already|not already|no magnet is already)\b/,
 ];
 
 const NON_MAGNETIC = [
@@ -217,20 +241,18 @@ export function assessApplicationFit(
   const issues: FitIssue[] = [];
 
   /* ---- Point 1 ---- */
-  const direct = anyMatch(frags, DIRECT_SWITCH);
-  const safe = anyMatch(frags, SAFE_WIRING);
-  // Un refus d'interface n'est levé que si la phrase QUI REFUSE explique
-  // elle-même le câblage réel (« no relay needed because the PLC controls an
-  // external contactor »). Un câblage sûr décrit ailleurs ne supprime pas une
-  // contrainte encore posée dans une autre réponse : la contradiction demeure.
-  const refuseInterface = anyMatch(frags, REFUSE_INTERFACE).filter(
-    (f) => !SAFE_WIRING.some((p) => p.test(f.text)),
+  // Portée LOCALE : une phrase n'affirme l'intention directe que si elle ne la
+  // nie pas et ne décrit pas elle-même le câblage sûr. Un câblage sûr écrit
+  // ailleurs ne supprime pas une intention restée dans une autre réponse (par
+  // exemple « alimenter directement le moteur » en Application) : la
+  // contradiction demeure jusqu'à l'édition de CETTE réponse.
+  const localSafe = (f: Fragment) => SAFE_WIRING.some((p) => p.test(f.text));
+  const direct = anyMatch(frags, DIRECT_SWITCH).filter(
+    (f) => !localSafe(f) && !NEGATED_DIRECT.some((p) => p.test(f.text)),
   );
+  const refuseInterface = anyMatch(frags, REFUSE_INTERFACE).filter((f) => !localSafe(f));
   const load = heavyLoad(frags);
-  if (
-    ((direct.length > 0 && safe.length === 0) || refuseInterface.length > 0) &&
-    load.found
-  ) {
+  if ((direct.length > 0 || refuseInterface.length > 0) && load.found) {
     const evidence: FitEvidence[] = [...direct, ...refuseInterface].map((f) => ({
       step: f.step,
       quote: f.quote,
@@ -283,9 +305,18 @@ export function assessApplicationFit(
   }
 
   /* ---- Point 2 ---- */
-  const refuseMagnet = anyMatch(frags, REFUSE_MAGNET);
-  const already = anyMatch(frags, MAGNET_ALREADY);
-  if (refuseMagnet.length > 0 && already.length === 0) {
+  // Portée LOCALE encore : une phrase ne cesse d'être un refus que si ELLE dit
+  // qu'un aimant existe déjà et que seul un aimant SUPPLÉMENTAIRE est inutile.
+  // « Aucun aimant ne peut être ajouté » en Montage reste une contradiction même
+  // si une autre réponse mentionne un aimant déjà posé.
+  const refuseMagnet = anyMatch(frags, REFUSE_MAGNET).filter(
+    (f) =>
+      !(
+        MAGNET_ALREADY_LOCAL.some((p) => p.test(f.text)) &&
+        !NOT_ALREADY.some((p) => p.test(f.text))
+      ),
+  );
+  if (refuseMagnet.length > 0) {
     const evidence: FitEvidence[] = refuseMagnet.map((f) => ({ step: f.step, quote: f.quote }));
     const materialFrag = anyMatch(frags, NON_MAGNETIC)[0] ?? null;
     const material = materialFrag
@@ -295,7 +326,7 @@ export function assessApplicationFit(
       id: "no_magnetic_source",
       title: "Sans champ magnétique, aucun capteur reed ne peut détecter cette pièce",
       whatWorks:
-        "Repérer le passage ou la position d'une pièce mobile avec un capteur reed ne pose aucune difficulté en soi, y compris sur un convoyeur.",
+        "La position peut être détectée si un champ magnétique adapté vient actionner le capteur reed : un aimant sur la pièce mobile ou sur son support suffit, convoyeur compris.",
       whatFails: material
         ? "Un capteur reed réagit à un champ magnétique. Une pièce en {0} non aimantée n'en produit aucun : le contact ne se fermera jamais."
         : "Un capteur reed réagit à un champ magnétique. Une pièce qui n'en produit aucun ne fermera jamais le contact.",
@@ -312,15 +343,25 @@ export function assessApplicationFit(
         },
         {
           step: stepFor("mounting"),
-          text: "Revoir aussi la réponse de montage qui interdit tout aimant, sinon la contradiction demeure, puis indiquer la distance réelle entre l'aimant et le capteur.",
+          text: "Revoir aussi la réponse de montage qui interdit tout aimant, sinon la contradiction demeure.",
+        },
+        {
+          step: stepFor("states_motion"),
+          text: "Indiquer ensuite la distance réelle entre l'aimant et le capteur, aimant en place.",
         },
         {
           step: stepFor("target_object"),
-          text: "Ou conserver la contrainte « aucun aimant » : il faut alors évaluer une autre technologie de détection. Aucun produit reed ne résout ce cas et nous ne le présenterons pas comme résolu.",
+          text: material === "aluminium"
+            ? "Ou conserver la contrainte « aucun aimant » : il faut alors évaluer une autre technologie de détection, par exemple un détecteur inductif prévu pour l'aluminium ou une détection optique, selon la distance réelle et l'environnement. Aucun produit reed ne résout ce cas, et nous ne garantissons pas d'avance la performance d'une autre technologie."
+            : "Ou conserver la contrainte « aucun aimant » : il faut alors évaluer une autre technologie de détection, par exemple inductive ou optique, selon la distance réelle et l'environnement. Aucun produit reed ne résout ce cas, et nous ne garantissons pas d'avance la performance d'une autre technologie.",
         },
       ],
       evidence,
-      steps: orderedSteps(evidence, [stepFor("target_object"), stepFor("mounting")]),
+      steps: orderedSteps(evidence, [
+        stepFor("target_object"),
+        stepFor("states_motion"),
+        stepFor("mounting"),
+      ]),
     });
   }
 
@@ -332,14 +373,15 @@ export const FIT_PANEL = {
   titleOne: "Un point à revoir avant de proposer des produits",
   titleMany: "Points à revoir avant de proposer des produits",
   intro:
-    "Votre projet reste tout à fait réalisable, mais tel qu'il est décrit aujourd'hui il ne peut pas fonctionner. Voici ce qui fonctionne, ce qui ne fonctionne pas, et les modifications concrètes possibles.",
+    "Votre objectif peut être étudié avec une architecture adaptée. Tel qu'il est décrit aujourd'hui, il ne peut pas fonctionner : voici ce qui fonctionne, ce qui ne fonctionne pas, et les adaptations possibles.",
   works: "Ce qui fonctionne",
   fails: "Ce qui ne fonctionne pas",
   why: "Pourquoi",
   diagram: "Le câblage habituel",
-  changes: "Modifications possibles",
+  changes: "Adaptations possibles",
+  changeAction: "Modifier cette réponse",
   review: "Revoir vos réponses",
-  yourWords: "Ce que vous avez écrit",
+  yourWords: "Voir ce que vous avez écrit",
   noRewrite:
     "Vos réponses ne sont jamais modifiées à votre place. Ces boutons ouvrent la question concernée : vous décidez de ce qui change.",
   noProducts:

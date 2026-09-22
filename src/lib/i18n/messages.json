@@ -28168,5 +28168,86 @@
     "Двигатель — это индуктивная нагрузка с высоким пусковым током: силовой интерфейс должен быть рассчитан и защищён соответствующим образом (диод, RC-цепь или варистор). См. рекомендации Standex по нагрузке: https://standexdetect.com/resources/reed-technology-academy/handling-and-load-precautions/",
     "Un motore è un carico induttivo con una corrente di spunto elevata: l'interfaccia di potenza deve essere dimensionata e protetta di conseguenza (diodo, rete RC o varistore). Vedere le precauzioni di carico Standex: https://standexdetect.com/resources/reed-technology-academy/handling-and-load-precautions/",
     "モーターは突入電流の大きい誘導負荷です。パワーインターフェースはそれに応じて選定・保護（ダイオード、RC 回路、バリスタ）する必要があります。Standex の負荷に関する注意事項をご覧ください：https://standexdetect.com/resources/reed-technology-academy/handling-and-load-precautions/"
+  ],
+  "La position peut être détectée si un champ magnétique adapté vient actionner le capteur reed : un aimant sur la pièce mobile ou sur son support suffit, convoyeur compris.": [
+    "The position can be detected if a suitable magnetic field actuates the reed sensor: a magnet on the moving part or on its support is enough, conveyors included.",
+    "只要有合适的磁场驱动干簧管传感器，就可以检测位置：在运动部件或其支架上安装一块磁铁即可，输送机同样适用。",
+    "Die Position lässt sich erfassen, wenn ein passendes Magnetfeld den Reed-Sensor betätigt: Ein Magnet am bewegten Teil oder an seiner Halterung genügt, auch auf Förderbändern.",
+    "La posición puede detectarse si un campo magnético adecuado acciona el sensor reed: basta un imán en la pieza móvil o en su soporte, también en transportadores.",
+    "Положение можно определить, если подходящее магнитное поле воздействует на геркон: достаточно магнита на подвижной детали или её опоре, в том числе на конвейере.",
+    "La posizione può essere rilevata se un campo magnetico adeguato aziona il sensore reed: basta un magnete sulla parte mobile o sul suo supporto, anche su nastro trasportatore.",
+    "適切な磁界がリードセンサーを動作させれば位置は検出できます。可動部またはその支持部に磁石を1個取り付けるだけで足り、コンベヤーでも同様です。"
+  ],
+  "Revoir aussi la réponse de montage qui interdit tout aimant, sinon la contradiction demeure.": [
+    "Also revise the mounting answer that forbids any magnet, otherwise the contradiction remains.",
+    "同时修改禁止使用任何磁铁的安装回答，否则矛盾依然存在。",
+    "Überarbeiten Sie auch die Montageantwort, die jeden Magneten verbietet, sonst bleibt der Widerspruch bestehen.",
+    "Revise también la respuesta de montaje que prohíbe cualquier imán; de lo contrario, la contradicción permanece.",
+    "Измените также ответ о монтаже, запрещающий любой магнит, иначе противоречие сохранится.",
+    "Rivedere anche la risposta di montaggio che vieta qualsiasi magnete, altrimenti la contraddizione resta.",
+    "磁石を一切禁じている取り付けの回答も見直してください。そのままでは矛盾が残ります。"
+  ],
+  "Indiquer ensuite la distance réelle entre l'aimant et le capteur, aimant en place.": [
+    "Then state the actual distance between magnet and sensor, with the magnet in place.",
+    "然后在磁铁安装到位的情况下，说明磁铁与传感器之间的实际距离。",
+    "Geben Sie dann den tatsächlichen Abstand zwischen Magnet und Sensor an, mit eingebautem Magneten.",
+    "Indique después la distancia real entre el imán y el sensor, con el imán colocado.",
+    "Затем укажите фактическое расстояние между магнитом и датчиком при установленном магните.",
+    "Indicare poi la distanza reale tra magnete e sensore, con il magnete installato.",
+    "次に、磁石を取り付けた状態での磁石とセンサーの実際の距離を記入してください。"
+  ],
+  "Ou conserver la contrainte « aucun aimant » : il faut alors évaluer une autre technologie de détection, par exemple un détecteur inductif prévu pour l'aluminium ou une détection optique, selon la distance réelle et l'environnement. Aucun produit reed ne résout ce cas, et nous ne garantissons pas d'avance la performance d'une autre technologie.": [
+    "Or keep the “no magnet” constraint: another sensing technology must then be evaluated, for example an inductive detector rated for aluminium or optical detection, depending on the actual distance and environment. No reed product solves this case, and we do not guarantee the performance of another technology in advance.",
+    "或保留“不加磁铁”的约束：届时需评估其他检测技术，例如适用于铝的电感式检测器或光学检测，具体取决于实际距离和环境。没有干簧管产品能解决此情况，我们也不预先保证其他技术的性能。",
+    "Oder die Vorgabe „kein Magnet“ beibehalten: Dann ist eine andere Sensortechnologie zu prüfen, etwa ein für Aluminium geeigneter induktiver Sensor oder eine optische Erfassung, je nach tatsächlichem Abstand und Umgebung. Kein Reed-Produkt löst diesen Fall, und wir garantieren die Leistung einer anderen Technologie nicht im Voraus.",
+    "O mantener la restricción «sin imán»: entonces hay que evaluar otra tecnología de detección, por ejemplo un detector inductivo apto para el aluminio o una detección óptica, según la distancia real y el entorno. Ningún producto reed resuelve este caso y no garantizamos por adelantado el rendimiento de otra tecnología.",
+    "Либо сохранить условие «без магнита»: тогда следует оценить другую технологию обнаружения, например индуктивный датчик для алюминия или оптическое обнаружение, в зависимости от фактического расстояния и условий. Ни один герконовый продукт этот случай не решает, и мы не гарантируем заранее характеристики другой технологии.",
+    "Oppure mantenere il vincolo « nessun magnete »: occorre allora valutare un'altra tecnologia di rilevamento, per esempio un rilevatore induttivo adatto all'alluminio o un rilevamento ottico, in funzione della distanza reale e dell'ambiente. Nessun prodotto reed risolve questo caso e non garantiamo in anticipo le prestazioni di un'altra tecnologia.",
+    "または「磁石なし」の制約を維持します。その場合は、実際の距離と環境に応じて、アルミニウム対応の誘導式検出器や光学式検出など別の検出技術を評価する必要があります。この事例を解決するリードスイッチ製品はなく、他技術の性能を事前に保証することもできません。"
+  ],
+  "Ou conserver la contrainte « aucun aimant » : il faut alors évaluer une autre technologie de détection, par exemple inductive ou optique, selon la distance réelle et l'environnement. Aucun produit reed ne résout ce cas, et nous ne garantissons pas d'avance la performance d'une autre technologie.": [
+    "Or keep the “no magnet” constraint: another sensing technology must then be evaluated, for example inductive or optical, depending on the actual distance and environment. No reed product solves this case, and we do not guarantee the performance of another technology in advance.",
+    "或保留“不加磁铁”的约束：届时需评估其他检测技术，例如电感式或光学式，具体取决于实际距离和环境。没有干簧管产品能解决此情况，我们也不预先保证其他技术的性能。",
+    "Oder die Vorgabe „kein Magnet“ beibehalten: Dann ist eine andere Sensortechnologie zu prüfen, etwa induktiv oder optisch, je nach tatsächlichem Abstand und Umgebung. Kein Reed-Produkt löst diesen Fall, und wir garantieren die Leistung einer anderen Technologie nicht im Voraus.",
+    "O mantener la restricción «sin imán»: entonces hay que evaluar otra tecnología de detección, por ejemplo inductiva u óptica, según la distancia real y el entorno. Ningún producto reed resuelve este caso y no garantizamos por adelantado el rendimiento de otra tecnología.",
+    "Либо сохранить условие «без магнита»: тогда следует оценить другую технологию обнаружения, например индуктивную или оптическую, в зависимости от фактического расстояния и условий. Ни один герконовый продукт этот случай не решает, и мы не гарантируем заранее характеристики другой технологии.",
+    "Oppure mantenere il vincolo « nessun magnete »: occorre allora valutare un'altra tecnologia di rilevamento, per esempio induttiva o ottica, in funzione della distanza reale e dell'ambiente. Nessun prodotto reed risolve questo caso e non garantiamo in anticipo le prestazioni di un'altra tecnologia.",
+    "または「磁石なし」の制約を維持します。その場合は、実際の距離と環境に応じて、誘導式や光学式など別の検出技術を評価する必要があります。この事例を解決するリードスイッチ製品はなく、他技術の性能を事前に保証することもできません。"
+  ],
+  "Votre objectif peut être étudié avec une architecture adaptée. Tel qu'il est décrit aujourd'hui, il ne peut pas fonctionner : voici ce qui fonctionne, ce qui ne fonctionne pas, et les adaptations possibles.": [
+    "Your goal can be studied with a suitable architecture. As described today it cannot work: here is what works, what does not, and the possible adaptations.",
+    "您的目标可以在合适的架构下进行研究。但按目前的描述无法实现：以下说明哪些可行、哪些不可行以及可能的调整。",
+    "Ihr Ziel lässt sich mit einer geeigneten Architektur untersuchen. So wie es heute beschrieben ist, kann es nicht funktionieren: Hier steht, was funktioniert, was nicht, und welche Anpassungen möglich sind.",
+    "Su objetivo puede estudiarse con una arquitectura adecuada. Tal como está descrito hoy no puede funcionar: esto es lo que funciona, lo que no, y las adaptaciones posibles.",
+    "Вашу задачу можно рассмотреть при подходящей архитектуре. В нынешнем описании она работать не может: ниже — что работает, что нет и какие возможны изменения.",
+    "Il suo obiettivo può essere studiato con un'architettura adeguata. Come è descritto oggi non può funzionare: ecco cosa funziona, cosa non funziona e gli adattamenti possibili.",
+    "適切な構成であれば、ご要望は検討できます。ただし現在の記載内容では動作しません。以下に、動作する点、動作しない点、可能な調整を示します。"
+  ],
+  "Adaptations possibles": [
+    "Possible adaptations",
+    "可能的调整",
+    "Mögliche Anpassungen",
+    "Adaptaciones posibles",
+    "Возможные изменения",
+    "Adattamenti possibili",
+    "可能な調整"
+  ],
+  "Modifier cette réponse": [
+    "Edit this answer",
+    "修改此回答",
+    "Diese Antwort ändern",
+    "Modificar esta respuesta",
+    "Изменить этот ответ",
+    "Modifica questa risposta",
+    "この回答を修正"
+  ],
+  "Voir ce que vous avez écrit": [
+    "See what you wrote",
+    "查看您填写的内容",
+    "Ansehen, was Sie geschrieben haben",
+    "Ver lo que ha escrito",
+    "Посмотреть, что вы написали",
+    "Vedere ciò che ha scritto",
+    "入力内容を見る"
   ]
 }
