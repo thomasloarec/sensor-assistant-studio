@@ -352,7 +352,7 @@ export function assessApplicationFit(
         {
           step: stepFor("target_object"),
           text: material === "aluminium"
-            ? "Ou conserver la contrainte « aucun aimant » : il faut alors évaluer une autre technologie, par exemple un détecteur inductif prévu pour l'aluminium ou une détection optique, selon la distance réelle et l'environnement. Aucun produit reed ne résout ce cas, et nous ne garantissons pas d'avance la performance d'une autre technologie."
+            ? "Ou conserver la contrainte « aucun aimant » : il faut alors évaluer une autre technologie de détection, par exemple un détecteur inductif prévu pour l'aluminium ou une détection optique, selon la distance réelle et l'environnement. Aucun produit reed ne résout ce cas, et nous ne garantissons pas d'avance la performance d'une autre technologie."
             : "Ou conserver la contrainte « aucun aimant » : il faut alors évaluer une autre technologie de détection, par exemple inductive ou optique, selon la distance réelle et l'environnement. Aucun produit reed ne résout ce cas, et nous ne garantissons pas d'avance la performance d'une autre technologie.",
         },
       ],
