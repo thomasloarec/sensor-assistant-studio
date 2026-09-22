@@ -181,17 +181,31 @@ function heavyLoad(frags: Fragment[]): { found: boolean; label: string | null } 
  * Point 2 — sans champ magnétique, pas de détection reed
  * ------------------------------------------------------------------------- */
 
+/* Le refus doit porter DIRECTEMENT sur l'aimant : pas de virgule ni de
+ * point-virgule entre la négation et le mot « aimant ». « Boîtier plastique non
+ * magnétique, aimant sur le capot mobile » décrit un matériau, pas un refus, et
+ * ne doit donc rien déclencher (`magnet\b` exclut « magnetic »). */
 const REFUSE_MAGNET = [
-  /(aucun|aucune|pas de|pas d|sans|no|without|non)[^.]{0,30}(aimant|aimants|magnet|magnets|element magnetique|elements magnetiques|magnetic element|magnetic elements)/,
-  /(aimant|aimants|magnet|magnets|magnetique|magnetic)[^.]{0,40}(interdit|interdite|interdits|impossible|not allowed|not permitted|forbidden|cannot be added|can not be added|can t be added)/,
-  /(impossible|interdit|pas possible|not possible|cannot|can not|can t)[^.]{0,50}(ajouter|fixer|coller|add|adding|attach|fit)[^.]{0,30}(un |une |a |an )?(aimant|magnet)/,
+  /(aucun|aucune|pas de|pas d|sans|no|without|non)\s?[^.,;]{0,22}(aimant|aimants|magnet|magnets)\b/,
+  /(aucun|aucune|pas de|pas d|sans|no|without)\s?[^.,;]{0,22}(element magnetique|elements magnetiques|magnetic element|magnetic elements)\b/,
+  /(aimant|aimants|magnet|magnets)\b[^.]{0,40}(interdit|interdite|interdits|impossible|not allowed|not permitted|forbidden|cannot be added|can not be added|can t be added)/,
+  /(impossible|interdit|pas possible|not possible|cannot|can not|can t)[^.]{0,50}(ajouter|fixer|coller|add|adding|attach|fit)[^.]{0,30}(un |une |a |an )?(aimant|magnet)\b/,
 ];
 
-/** Un aimant DÉJÀ présent n'est pas un refus d'en ajouter un. */
-const MAGNET_ALREADY = [
-  /(aimant|magnet)[^.]{0,40}(deja|already)/,
-  /(deja|already)[^.]{0,40}(un |une |a |an )?(aimant|magnet)/,
-  /(aucun aimant (n est|nest)? ?(pas)? ?(necessaire|utile))|no (additional )?magnet (is )?needed because/,
+/** Contexte BÉNIN, reconnu DANS LA PHRASE MÊME qui semble refuser : un aimant
+ *  existe déjà et seul un aimant SUPPLÉMENTAIRE est jugé inutile. Une phrase
+ *  « un aimant est déjà posé » écrite ailleurs ne suffit pas : une réponse qui
+ *  interdit encore tout aimant reste une contradiction. */
+const MAGNET_ALREADY_LOCAL = [
+  /(aimant|magnet)\b[^.]{0,50}\b(deja|already)\b/,
+  /\b(deja|already)\b[^.]{0,50}(un |une |a |an )?(aimant|magnet)\b/,
+  /(aucun|pas d|pas de|no)\s?[^.,;]{0,22}(aimant|magnet)\b[^.]{0,40}(supplementaire|additional|en plus|de plus|needed|necessaire|utile)/,
+  /(supplementaire|additional)\s?[^.,;]{0,22}(aimant|magnet)\b/,
+];
+
+/** « L'aimant n'est PAS déjà posé » ne lève rien du tout. */
+const NOT_ALREADY = [
+  /\b(n est pas deja|nest pas deja|pas deja|is not already|isn t already|not already|no magnet is already)\b/,
 ];
 
 const NON_MAGNETIC = [
