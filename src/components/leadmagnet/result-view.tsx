@@ -97,6 +97,10 @@ export interface ResultViewProps {
   /** Un point de compatibilité du besoin reste ouvert : aucun résultat ne peut
    *  être présenté comme positif, même si la démonstration a fermé le contact. */
   applicationBlocked?: boolean;
+  /** Évaluation complète, pour afficher ici le MÊME encart pédagogique que sur
+   *  les couples, avec ses liens exacts vers les réponses à revoir. */
+  fit?: FitAssessment | null;
+  onGoToStep?: (key: string) => void;
   /** Réponse 1, telle que saisie : jamais traduite, jamais réécrite. */
   detectionGoal: string | null;
   tested: readonly TestedPair[];
@@ -112,6 +116,8 @@ export interface ResultViewProps {
 export function ResultView({
   pair,
   applicationBlocked = false,
+  fit = null,
+  onGoToStep,
   detectionGoal,
   tested,
   proposals,
@@ -121,8 +127,21 @@ export function ResultView({
   onReplaceMagnet,
   onTestPair,
 }: ResultViewProps) {
+  /** Le même encart qu'ailleurs, avec ses boutons d'édition : tant qu'un point
+   *  reste ouvert, il s'affiche AVANT tout le reste, y compris quand aucun
+   *  couple n'a été essayé — proposer « testez un couple » serait faux, puisque
+   *  l'essai est justement bloqué. */
+  const fitPanel =
+    fit && fit.blocking && onGoToStep ? (
+      <CompatibilityPanel assessment={fit} onGoToStep={onGoToStep} />
+    ) : null;
+
   if (!pair)
-    return (
+    return fitPanel ? (
+      <div className="space-y-5" data-testid="result-blocked-empty">
+        {fitPanel}
+      </div>
+    ) : (
       <div className="panel-block-lg space-y-4" data-testid="result-empty">
         <p className="t-title-m">{t("Testez un couple pour voir son résultat ici.")}</p>
         <Button onClick={onSeePairs} className="min-h-11">
@@ -130,6 +149,7 @@ export function ResultView({
         </Button>
       </div>
     );
+
 
   const word = detectedObjectWord(detectionGoal);
   const couple = `${t("Le capteur")} ${pair.sensorId} + ${t("l’aimant")} ${pair.magnetId}`;
