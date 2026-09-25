@@ -333,7 +333,7 @@ export function ResultView({
               <p className="t-caption">{t("Distances non publiées pour ce couple")}</p>
             ) : pair.pullInMm !== null || pair.dropOutMm !== null ? (
               <>
-                <p className="t-label">{t("Valeurs typiques publiées par Standex")}</p>
+                <p className="t-label">{t("Valeurs typiques publiées Standex")}</p>
                 <p className="t-metric">{t("Ferme à")} {pair.pullInMm ?? "—"} mm · {t("Ouvre à")} {pair.dropOutMm ?? "—"} mm</p>
               </>
             ) : null}

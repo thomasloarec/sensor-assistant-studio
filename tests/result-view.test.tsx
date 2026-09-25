@@ -58,8 +58,8 @@ describe("écran Résultat", () => {
   });
 
   test("les faits de l'aimant suivent le couple testé, pas son aimant conseillé", () => {
-    const html = render(pair({ sensorId: "MK15", magnetId: "4003004003" }));
-    expect(html).toContain("4003004003");
+    const html = render(pair({ sensorId: "MK15", magnetId: "NDFEB-10X5X1.9" }));
+    expect(html).toContain("NDFEB-10X5X1.9");
     expect(html).toContain("NdFeB");
     expect(html).not.toContain("Distances non publiées pour ce couple");
   });
