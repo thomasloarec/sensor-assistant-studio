@@ -28276,5 +28276,41 @@
     "Меры при обращении и по нагрузке — Standex",
     "Precauzioni di manipolazione e di carico — Standex",
     "取り扱いおよび負荷に関する注意事項 — Standex"
+  ],
+  "Accès réservé": [
+    "Restricted access",
+    "访问受限",
+    "Eingeschränkter Zugang",
+    "Acceso restringido",
+    "Доступ ограничен",
+    "Accesso riservato",
+    "アクセス制限"
+  ],
+  "Cet outil est en phase de test. Connectez-vous avec un compte autorisé pour y accéder.": [
+    "This tool is in testing. Sign in with an authorised account to access it.",
+    "此工具处于测试阶段。请使用授权账户登录以访问。",
+    "Dieses Tool befindet sich in der Testphase. Melden Sie sich mit einem autorisierten Konto an.",
+    "Esta herramienta está en fase de prueba. Inicie sesión con una cuenta autorizada para acceder.",
+    "Инструмент находится на стадии тестирования. Войдите с авторизованной учётной записью.",
+    "Questo strumento è in fase di test. Accedi con un account autorizzato.",
+    "このツールはテスト段階です。許可されたアカウントでサインインしてください。"
+  ],
+  "Ce compte n'est pas autorisé à tester l'outil.": [
+    "This account is not authorised to test the tool.",
+    "此账户无权测试该工具。",
+    "Dieses Konto ist nicht zum Testen des Tools berechtigt.",
+    "Esta cuenta no está autorizada para probar la herramienta.",
+    "Эта учётная запись не имеет права тестировать инструмент.",
+    "Questo account non è autorizzato a testare lo strumento.",
+    "このアカウントにはツールをテストする権限がありません。"
+  ],
+  "Vérification de l'accès…": [
+    "Checking access…",
+    "正在验证访问权限…",
+    "Zugang wird geprüft…",
+    "Verificando el acceso…",
+    "Проверка доступа…",
+    "Verifica dell'accesso…",
+    "アクセスを確認中…"
   ]
 }
