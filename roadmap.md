@@ -40,3 +40,8 @@
 - [x] 3. Proximité lue sur la séparation RÉELLE des enveloppes (`separationMm`), décalage latéral et modèle importé compris ; illustration autorisée hors gabarit/ferreux/température/démonstration, jamais de qualification (couverture, seuils, verdict inchangés) ; ouvert au-delà de 20 mm.
 - [~] 4. Résumé « Critères utilisés » : la fixation nommée est lue dans TOUTES les réponses écrites (cause du résumé vide). RESTE : quota WebGL — 6 vignettes visibles nécessitent instantanés/cache ou rendu partagé.
 - [ ] 5. Matériaux et plages du guide d'activation à afficher dans l'atelier ; propagation du capteur de contexte à contrôler pour M11S / MK11-M5.
+
+## Ajustements atelier et cartes — 2026-09-25
+- [ ] Ralentir le cycle atelier à environ 6 s, corriger la chronologie et retirer le badge flottant.
+- [ ] Séparer clairement capteur et aimant dans toutes les cartes, avec faits essentiels et limites documentaires.
+- [ ] Vérifier tests, types, compilation et rendu desktop/mobile, puis fournir le commit.

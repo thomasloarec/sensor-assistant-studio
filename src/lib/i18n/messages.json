@@ -28312,5 +28312,77 @@
     "Проверка доступа…",
     "Verifica dell'accesso…",
     "アクセスを確認中…"
+  ],
+  "Montage du capteur": [
+    "Sensor mounting",
+    "传感器安装方式",
+    "Sensormontage",
+    "Montaje del sensor",
+    "Монтаж датчика",
+    "Montaggio del sensore",
+    "センサーの取付方法"
+  ],
+  "Dimensions du capteur": [
+    "Sensor dimensions",
+    "传感器尺寸",
+    "Sensorabmessungen",
+    "Dimensiones del sensor",
+    "Размеры датчика",
+    "Dimensioni del sensore",
+    "センサー寸法"
+  ],
+  "Plage indicative d'activation": [
+    "Indicative activation range",
+    "参考动作范围",
+    "Indikativer Aktivierungsbereich",
+    "Rango indicativo de activación",
+    "Ориентировочный диапазон срабатывания",
+    "Intervallo indicativo di attivazione",
+    "参考動作範囲"
+  ],
+  "Référence documentaire": [
+    "Document reference",
+    "文档参考",
+    "Dokumentreferenz",
+    "Referencia documental",
+    "Документальная ссылка",
+    "Riferimento documentale",
+    "文書参照"
+  ],
+  "Données de choix": [
+    "Selection details",
+    "选型数据",
+    "Auswahldaten",
+    "Datos de selección",
+    "Данные для выбора",
+    "Dati di selezione",
+    "選定情報"
+  ],
+  "Distances non publiées pour ce couple": [
+    "Distances not published for this pair",
+    "该组合的距离未公布",
+    "Abstände für dieses Paar nicht veröffentlicht",
+    "Distancias no publicadas para esta pareja",
+    "Расстояния для этой пары не опубликованы",
+    "Distanze non pubblicate per questa coppia",
+    "この組み合わせの距離は未公表"
+  ],
+  "Plage documentaire indicative, sans validation de la simulation.": [
+    "Indicative documented range; this does not validate the simulation.",
+    "文档中的参考范围；不构成仿真验证。",
+    "Indikativer dokumentierter Bereich; keine Validierung der Simulation.",
+    "Rango documental indicativo; no valida la simulación.",
+    "Ориентировочный документированный диапазон; он не подтверждает симуляцию.",
+    "Intervallo documentale indicativo; non convalida la simulazione.",
+    "文書上の参考範囲であり、シミュレーションの検証ではありません。"
+  ],
+  "Chronologie du contact": [
+    "Contact timeline",
+    "触点时间线",
+    "Kontaktverlauf",
+    "Cronología del contacto",
+    "Хронология контакта",
+    "Cronologia del contatto",
+    "接点タイムライン"
   ]
 }
