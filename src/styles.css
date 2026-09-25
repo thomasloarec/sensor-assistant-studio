@@ -1042,11 +1042,6 @@
     min-width: 0;
     text-align: center;
   }
-  .candidate-thumb-legend strong {
-    max-width: 100%;
-    overflow-wrap: anywhere;
-    color: var(--heading);
-  }
   .pair-card-identities {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
