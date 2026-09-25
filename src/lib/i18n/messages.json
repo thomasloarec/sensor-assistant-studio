@@ -27782,6 +27782,24 @@
     "Età totale del progetto",
     "プロジェクト全体の経過日数"
   ],
+  "Écart au départ": [
+    "Starting gap",
+    "起始间隙",
+    "Abstand am Start",
+    "Separación inicial",
+    "Зазор в начале",
+    "Distanza iniziale",
+    "開始時の間隔"
+  ],
+  "Écart au plus près": [
+    "Closest gap",
+    "最接近间隙",
+    "Kleinster Abstand",
+    "Separación mínima",
+    "Зазор при максимальном сближении",
+    "Distanza minima",
+    "最接近時の間隔"
+  ],
   "Écart d'ouverture": [
     "Opening margin",
     "断开裕量",

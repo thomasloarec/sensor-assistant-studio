@@ -112,9 +112,11 @@ describe("colonne de gauche : trois réglages, rien de plus", () => {
     expect(WORKSHOP).not.toContain("disabled={!available}");
     expect(WORKSHOP).toContain('t("Non documentée pour ce couple")');
   });
-  test("la course parle en positions, pas en distances abstraites", () => {
-    expect(WORKSHOP).toContain('label={t("Position ouverte")}');
-    expect(WORKSHOP).toContain('label={t("Position fermée")}');
+  test("les curseurs décrivent les écarts physiques sans les confondre avec le contact", () => {
+    expect(WORKSHOP).toContain('label={t("Écart au départ")}');
+    expect(WORKSHOP).toContain('label={t("Écart au plus près")}');
+    expect(WORKSHOP).not.toContain('label={t("Position ouverte")}');
+    expect(WORKSHOP).not.toContain('label={t("Position fermée")}');
   });
   test("la navigation en quatre étapes a disparu", () => {
     expect(WORKSHOP).not.toContain("setStep");
