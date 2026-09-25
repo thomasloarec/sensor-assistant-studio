@@ -142,8 +142,8 @@ describe("colonne de gauche : trois réglages, rien de plus", () => {
 });
 
 describe("chronologie et lecture", () => {
-  test("un aller-retour dure 4 secondes en lecture normale", () => {
-    expect(WORKSHOP).toContain("const CYCLE_STEPS_NORMAL = 80;");
+  test("un aller-retour dure 6 secondes en lecture normale", () => {
+    expect(WORKSHOP).toContain("const CYCLE_STEPS_NORMAL = 120;");
     expect(WORKSHOP).toContain("const CYCLE_SECONDS_NORMAL = (CYCLE_STEPS_NORMAL * 50) / 1000;");
   });
   test("la lecture lente reste disponible dans les réglages avancés", () => {
@@ -153,6 +153,10 @@ describe("chronologie et lecture", () => {
   test("la chronologie utilise les mêmes échantillons que la scène", () => {
     const cycle = WORKSHOP.slice(WORKSHOP.indexOf('className="mw-cycle"'));
     expect(cycle).toContain("result.samples");
+    expect(cycle).toContain("timelineContacts.map");
+    expect(cycle).not.toContain("Position ouverte");
+    expect(cycle).not.toContain("Position fermée");
+    expect(cycle).not.toContain("Un aller-retour");
   });
   test("la chronologie fait au moins 84 px", () => {
     expect(CSS).toMatch(/\.mw-stage \.mw-cycle \{[^}]*min-block-size: 84px/s);
@@ -181,6 +185,9 @@ describe("enregistrement et sortie", () => {
 });
 
 describe("scène : plus d'étiquettes superposées", () => {
+  test("le badge flottant d'état est absent de toutes les vues", () => {
+    expect(WORKSHOP).not.toContain("mw-live-state");
+  });
   test("les cotes « ferme / ouvre » ne sont plus dessinées dans la 3D", () => {
     expect(SCENE).not.toContain('t(i === 0 ? "Ferme" : "Ouvre")');
     // Les repères de distance eux-mêmes restent affichés.

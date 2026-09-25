@@ -44,7 +44,8 @@ function MagnetPictogram({ magnetId }: { magnetId: string }) {
           <rect className="magnet-pole-north" x={-10} y={-5} width={10} height={10} rx={1} />
           <rect className="magnet-pole-south" x={0} y={-5} width={10} height={10} rx={1} />
         </svg>
-        {t("Aimant")}
+        <span>{t("Aimant")}</span>
+        <strong className="t-metric">{magnetId}</strong>
       </span>
     </div>
   );

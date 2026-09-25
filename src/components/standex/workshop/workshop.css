@@ -706,42 +706,6 @@
   white-space: nowrap;
   user-select: none;
 }
-.mw-live-state {
-  position: absolute;
-  top: 2px;
-  left: 19px;
-  z-index: 2;
-  background: var(--surface);
-  border: 1px solid var(--hairline);
-  padding: 10px 14px;
-  border-radius: var(--r-md);
-  font: var(--mw-t-body);
-  font-weight: 700;
-  box-shadow: var(--e-2);
-  pointer-events: none;
-}
-.mw-live-state > span {
-  display: inline-block;
-  width: 7px;
-  height: 7px;
-  border-radius: var(--r-pill);
-  background: var(--muted-foreground);
-  margin-right: 7px;
-}
-.mw-live-state.closed > span {
-  background: var(--success);
-}
-.mw-live-state.unknown > span {
-  background: var(--warning);
-}
-.mw-live-state small {
-  display: block;
-  color: var(--muted-foreground);
-  font: var(--mw-t-dense);
-  font-weight: 400;
-  padding-top: 3px;
-  padding-left: 14px;
-}
 .mw-orbit-help {
   position: absolute;
   bottom: 7px;
@@ -1560,9 +1524,6 @@
   .mw-layers {
     gap: 12px;
   }
-  .mw-live-state {
-    padding: 8px 11px;
-  }
 }
 
 /* Tracé de câble (mode facultatif du parcours de conception). */
@@ -1647,23 +1608,12 @@
   z-index: 1;
   background: radial-gradient(ellipse at 52% 86%, var(--surface-tint), transparent 62%);
 }
-.mw .mw-live-state,
 .mw .mw-scene-label {
   background: var(--material-regular);
   border-color: var(--hairline-strong);
   color: var(--foreground);
   box-shadow: var(--e-2);
   backdrop-filter: var(--material-blur);
-}
-.mw .mw-live-state > span {
-  box-shadow: 0 0 0 4px var(--surface-tint);
-  transition:
-    background-color var(--d-base) var(--ease-spring),
-    box-shadow var(--d-base) var(--ease-spring);
-}
-.mw .mw-live-state.closed > span {
-  background: var(--signal);
-  box-shadow: 0 0 18px var(--signal-glow);
 }
 .mw .mw-controls,
 .mw .mw-machine-controls {
@@ -2380,12 +2330,15 @@
   background: var(--surface-sunken);
 }
 .mw-cycle-head {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   align-items: center;
-  justify-content: space-between;
   gap: 8px;
   font: var(--mw-t-dense);
 }
+.mw-cycle-head > :nth-child(2) { text-align: center; }
+.mw-cycle-head > :last-child { text-align: end; }
+.mw-cycle-state-unknown { color: var(--warning); }
 .mw-stage .mw-exit {
   flex: 0 0 auto;
   display: flex;

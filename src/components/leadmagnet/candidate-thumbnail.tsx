@@ -333,7 +333,8 @@ export function CandidateThumbnail({
               <rect className="magnet-pole-south" x={0} y={-5} width={10} height={10} rx={1} />
             </svg>
           ) : null}
-          {roleLabel}
+          <span>{roleLabel}</span>
+          <strong className="t-metric">{model.id}</strong>
         </span>
       ) : null}
     </div>
