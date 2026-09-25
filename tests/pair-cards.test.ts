@@ -13,6 +13,25 @@ describe("couples proposés — écran d'après les six questions", () => {
     expect(card.couple).toBe("MK04 + M04");
   });
 
+  it("sépare toujours les identités capteur et aimant dans la carte", () => {
+    expect(source).toContain('className="pair-card-identities"');
+    expect(source).toContain('{t("Capteur")}');
+    expect(source).toContain('{t("Aimant")}');
+    expect(source).not.toContain('<p className="t-title-m">{card.couple}</p>');
+  });
+
+  it("présente des faits stables et qualifie la plage du guide", () => {
+    for (const label of [
+      "Matériau de l'aimant",
+      "Montage du capteur",
+      "Dimensions du capteur",
+      "Plage indicative d'activation",
+      "Référence documentaire",
+      "Plage documentaire indicative, sans validation de la simulation.",
+      "Distances non publiées pour ce couple",
+    ]) expect(source).toContain(label);
+  });
+
   it("la distance annoncée est la fermeture maximale RÉELLEMENT publiée pour ce couple", () => {
     expect(maxPublishedPullIn("MK04", "M04")).toBe(15);
     expect(pairCardFor(sensorById("MK04")).maxPullInMm).toBe(15);

@@ -12,7 +12,6 @@ import { guideRange, formatGuideBound, hasGuideData, ACTIVATION_GUIDE } from "@/
  * un verdict hors couverture reprend le message du moteur mot pour mot.
  */
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { msg, t } from "@/lib/i18n/core";
 import type { PairCard } from "@/lib/leadmagnet/pair-cards";
 import type { TestedPair } from "@/lib/leadmagnet/tested-pairs";
@@ -309,10 +308,15 @@ export function ResultView({
         <div className="panel-block space-y-3">
           {/* Vue statique du couple au point de fermeture : aucun canvas animé ici. */}
           <PairThumbnail sensorId={pair.sensorId} magnetId={pair.magnetId} />
-          <h3 className="t-title-m">{sensorById(pair.sensorId).name} + {pair.magnetId}</h3>
+          <div className="pair-card-identities" aria-label={t("Capteur et aimant")}>
+            <div><span className="t-label">{t("Capteur")}</span><strong className="t-title-m">{pair.sensorId}</strong></div>
+            <div><span className="t-label">{t("Aimant")}</span><strong className="t-title-m">{pair.magnetId}</strong></div>
+          </div>
           <p className="t-body">{t(sensorById(pair.sensorId).description)}</p>
-          <p className="t-metric">{sizeLabel(sensorById(pair.sensorId))}</p>
-          {housingMaterial(sensorById(pair.sensorId)) ? <p className="t-body">{t(housingMaterial(sensorById(pair.sensorId))!)}</p> : null}
+          <dl className="pair-card-facts">
+            <div><dt>{t("Dimensions du capteur")}</dt><dd className="t-metric">{sizeLabel(sensorById(pair.sensorId))}</dd></div>
+            {housingMaterial(sensorById(pair.sensorId)) ? <div><dt>{t("Montage du capteur")}</dt><dd>{t(housingMaterial(sensorById(pair.sensorId)) ?? "")}</dd></div> : null}
+          </dl>
           <p className="t-caption">
             {positive ? `● ${t("Contact fermé")}` : `◐ ${t("Contact indéterminé")}`}
           </p>
