@@ -12,9 +12,8 @@ import { guideRange, formatGuideBound, hasGuideData, ACTIVATION_GUIDE } from "@/
  * un verdict hors couverture reprend le message du moteur mot pour mot.
  */
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { msg, t } from "@/lib/i18n/core";
-import type { PairCard } from "@/lib/leadmagnet/pair-cards";
+import { materialLabelFor, pairCardFor, type PairCard } from "@/lib/leadmagnet/pair-cards";
 import type { TestedPair } from "@/lib/leadmagnet/tested-pairs";
 import { PairThumbnail } from "./pair-thumbnail";
 
@@ -153,6 +152,10 @@ export function ResultView({
 
 
   const word = detectedObjectWord(detectionGoal);
+  const card = pairCardFor(sensorById(pair.sensorId));
+  // Les faits de l'aimant suivent le couple réellement testé, qui peut différer
+  // du couple conseillé par défaut pour ce capteur.
+  const testedMagnetMaterial = materialLabelFor(pair.magnetId);
   const couple = `${t("Le capteur")} ${pair.sensorId} + ${t("l’aimant")} ${pair.magnetId}`;
   /** Un point de compatibilité ouvert interdit tout résultat positif : une
    *  commutation obtenue en démonstration ne vérifie pas l'application. */
@@ -309,10 +312,32 @@ export function ResultView({
         <div className="panel-block space-y-3">
           {/* Vue statique du couple au point de fermeture : aucun canvas animé ici. */}
           <PairThumbnail sensorId={pair.sensorId} magnetId={pair.magnetId} />
-          <h3 className="t-title-m">{sensorById(pair.sensorId).name} + {pair.magnetId}</h3>
+          <div className="pair-card-identities" aria-label={t("Capteur et aimant")}>
+            <div><span className="t-label">{t("Capteur")}</span><strong className="t-title-m">{pair.sensorId}</strong></div>
+            <div><span className="t-label">{t("Aimant")}</span><strong className="t-title-m">{pair.magnetId}</strong></div>
+          </div>
           <p className="t-body">{t(sensorById(pair.sensorId).description)}</p>
-          <p className="t-metric">{sizeLabel(sensorById(pair.sensorId))}</p>
-          {housingMaterial(sensorById(pair.sensorId)) ? <p className="t-body">{t(housingMaterial(sensorById(pair.sensorId))!)}</p> : null}
+          <dl className="pair-card-facts">
+            {testedMagnetMaterial ? <div><dt>{t("Matériau de l'aimant")}</dt><dd>{t(testedMagnetMaterial)}</dd></div> : null}
+            <div><dt>{t("Montage du capteur")}</dt><dd>{t(card.fixingLabel)}</dd></div>
+            <div><dt>{t("Dimensions du capteur")}</dt><dd className="t-metric">{sizeLabel(sensorById(pair.sensorId))}</dd></div>
+          </dl>
+          {housingMaterial(sensorById(pair.sensorId)) ? <p className="t-caption">{t(housingMaterial(sensorById(pair.sensorId)))}</p> : null}
+          <div className="pair-card-documentation">
+            {guide ? <>
+              <p className="t-label">{t("Plage indicative d'activation")}</p>
+              <p className="t-metric">{formatGuideBound(guide.upMm, guide.upNote)} – {formatGuideBound(guide.toMm, guide.toNote)} mm</p>
+              <p className="t-caption">{t("Plage documentaire indicative, sans validation de la simulation.")}</p>
+              <p className="t-caption"><strong>{t("Référence documentaire")}</strong> · {guide.sensorReference} · {guide.approachId}</p>
+            </> : pair.verdict === "unpublished" ? (
+              <p className="t-caption">{t("Distances non publiées pour ce couple")}</p>
+            ) : pair.pullInMm !== null || pair.dropOutMm !== null ? (
+              <>
+                <p className="t-label">{t("Valeurs typiques publiées Standex")}</p>
+                <p className="t-metric">{t("Ferme à")} {pair.pullInMm ?? "—"} mm · {t("Ouvre à")} {pair.dropOutMm ?? "—"} mm</p>
+              </>
+            ) : null}
+          </div>
           <p className="t-caption">
             {positive ? `● ${t("Contact fermé")}` : `◐ ${t("Contact indéterminé")}`}
           </p>

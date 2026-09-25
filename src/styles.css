@@ -1033,6 +1033,71 @@
     font: var(--t-body);
     color: var(--muted-foreground);
   }
+  .candidate-thumb-legend {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem 0.375rem;
+    min-width: 0;
+    text-align: center;
+  }
+  .candidate-thumb-legend strong {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    color: var(--heading);
+  }
+  .pair-card-identities {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+    margin-block: 0.75rem;
+  }
+  .pair-card-identities > div {
+    display: grid;
+    gap: 0.125rem;
+    min-width: 0;
+  }
+  .pair-card-identities strong {
+    overflow-wrap: anywhere;
+    color: var(--heading);
+  }
+  .pair-card-facts {
+    display: grid;
+    gap: 0.625rem;
+    margin-block: 0.875rem;
+  }
+  .pair-card-facts > div {
+    display: grid;
+    grid-template-columns: minmax(7.5rem, 0.8fr) minmax(0, 1.2fr);
+    gap: 0.5rem;
+    align-items: baseline;
+  }
+  .pair-card-facts dt {
+    font: var(--t-caption);
+    color: var(--muted-foreground);
+  }
+  .pair-card-facts dd {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    font: var(--t-body);
+    color: var(--ink);
+  }
+  .pair-card-documentation {
+    display: grid;
+    gap: 0.375rem;
+    min-height: 7.5rem;
+    padding: 0.875rem;
+    border-radius: var(--r-sm);
+    background: var(--surface-sunken);
+  }
+  .pair-card-documentation p { margin: 0; }
+  @media (max-width: 420px) {
+    .pair-card-identities,
+    .pair-card-facts > div {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
   /* Repère de polarité N/S : sur le boîtier d'aimant dessiné, et sur le
      pictogramme utilisé quand aucune géométrie n'est documentée. */
   .magnet-pole-north {

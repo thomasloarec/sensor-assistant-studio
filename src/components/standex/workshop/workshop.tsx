@@ -104,10 +104,9 @@ import ContactCircuit from "./contact-circuit";
 import { SensorPlan } from "./sensor-plan";
 import { sensorById, sizeLabel, sensorSource } from "@/lib/standex/sensor-catalog";
 
-/** Pas de lecture : 80 pas × 50 ms = 4 s (normal), 240 pas = 12 s (lent). */
-const CYCLE_STEPS_NORMAL = 80;
+/** Pas de lecture : 120 pas × 50 ms = 6 s (normal), 240 pas = 12 s (lent). */
+const CYCLE_STEPS_NORMAL = 120;
 const CYCLE_STEPS_SLOW = 240;
-const CYCLE_SECONDS_NORMAL = (CYCLE_STEPS_NORMAL * 50) / 1000;
 const Scene = lazy(() => import("./scene"));
 const MachineScene = lazy(() => import("./machine-scene"));
 /* i18n-canonical : libellés stockés en français, traduits au rendu par t(). */
@@ -546,6 +545,11 @@ export default function MagneticWorkshop({
     result.samples[
       Math.min(result.samples.length - 1, Math.round(progress * (result.samples.length - 1)))
     ]!;
+  const timelineContacts = [
+    result.samples[0]?.contact ?? "unknown",
+    result.samples[Math.round((result.samples.length - 1) / 2)]?.contact ?? "unknown",
+    result.samples[result.samples.length - 1]?.contact ?? "unknown",
+  ] as const;
   const reference = config.mode === "reference",
     unit = " mm";
   /** Origine réelle des distances affichées : données publiées pour CE couple,
@@ -582,7 +586,7 @@ export default function MagneticWorkshop({
 
   useEffect(() => {
     if (!playing) return;
-    // 50 ms par pas : 80 pas = 4 s pour un aller-retour, 240 pas en lecture lente.
+    // 50 ms par pas : 120 pas = 6 s pour un aller-retour, 240 pas en lecture lente.
     const steps = playbackSpeed === "normal" ? CYCLE_STEPS_NORMAL : CYCLE_STEPS_SLOW;
     const timer = setInterval(() => setProgress((v) => Math.min(1, v + 1 / steps)), 50);
     return () => clearInterval(timer);
@@ -1849,10 +1853,6 @@ export default function MagneticWorkshop({
                 </Suspense>
               </SceneBoundary>
             )}
-            <div className={`mw-live-state ${sample.contact}`}>
-              <span />
-              {t(contactLabel[sample.contact])}
-            </div>
             <p className="mw-orbit-help">
               <Expand size={13} />
               {t(
@@ -1865,15 +1865,11 @@ export default function MagneticWorkshop({
           {/* Chronologie du cycle : mêmes échantillons que la scène et le verdict. */}
           <div className="mw-cycle" aria-label={t("Chronologie du cycle")}>
             <div className="mw-cycle-head">
-              <span>{t("Position ouverte")}</span>
-              <strong className="t-caption">
-                {msg("Un aller-retour · {0} s", [
-                  playbackSpeed === "normal"
-                    ? CYCLE_SECONDS_NORMAL
-                    : (CYCLE_STEPS_SLOW * 50) / 1000,
-                ])}
-              </strong>
-              <span>{t("Position fermée")}</span>
+              {timelineContacts.map((contact, index) => (
+                <span key={index} className={contact === "unknown" ? "mw-cycle-state-unknown" : undefined}>
+                  {t(contactLabel[contact])}
+                </span>
+              ))}
             </div>
             <div className="mw-timeline" aria-hidden="true">
               {result.samples

@@ -51,6 +51,17 @@ describe("écran Résultat", () => {
     expect(html).toMatch(/17[.,]5 mm/);
     expect(html).toContain("Confirmer avec Standex →");
     expect(html).not.toContain("Demander un essai →");
+    expect(html).toContain("Capteur");
+    expect(html).toContain("Aimant");
+    expect(html).not.toContain("MK04 + M04");
+    expect(html).not.toContain("Distances non publiées pour ce couple");
+  });
+
+  test("les faits de l'aimant suivent le couple testé, pas son aimant conseillé", () => {
+    const html = render(pair({ sensorId: "MK15", magnetId: "NDFEB-10X5X1.9" }));
+    expect(html).toContain("NDFEB-10X5X1.9");
+    expect(html).toContain("NdFeB");
+    expect(html).not.toContain("Distances non publiées pour ce couple");
   });
 
   test("pose non documentée : aucune valeur inventée, essai réel proposé", () => {

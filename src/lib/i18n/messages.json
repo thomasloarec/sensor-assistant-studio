@@ -1142,6 +1142,24 @@
     "AWG 30–24; isolamento Ø0,8–1,5 mm",
     "AWG 30–24、被覆外径 Ø0.8–1.5 mm"
   ],
+  "Abandonner la modification": [
+    "Discard the change",
+    "放弃修改",
+    "Änderung verwerfen",
+    "Descartar la modificación",
+    "Отменить изменение",
+    "Abbandona la modifica",
+    "変更を破棄"
+  ],
+  "Abrégé lisible (raccourci, pas une clé unique)": [
+    "Readable short form (shortcut, not a unique key)",
+    "可读缩写（便于阅读，非唯一键）",
+    "Lesbare Kurzform (Abkürzung, kein eindeutiger Schlüssel)",
+    "Forma corta legible (atajo, no una clave única)",
+    "Читаемое сокращение (не уникальный ключ)",
+    "Forma breve leggibile (scorciatoia, non una chiave univoca)",
+    "読みやすい短縮表記（一意キーではありません）"
+  ],
   "Accorder ce droit": [
     "Grant this right",
     "授予该权限",
@@ -1168,6 +1186,15 @@
     "Главная",
     "Home",
     "ホーム"
+  ],
+  "Accès réservé": [
+    "Restricted access",
+    "访问受限",
+    "Eingeschränkter Zugang",
+    "Acceso restringido",
+    "Доступ ограничен",
+    "Accesso riservato",
+    "アクセス制限"
   ],
   "Accès serveur indisponible : rien n'a été transmis.": [
     "Server access unavailable: nothing was transmitted.",
@@ -1339,6 +1366,15 @@
     "Обновить мои досье",
     "Aggiorna i miei dossier",
     "案件ファイルを更新"
+  ],
+  "Adaptations possibles": [
+    "Possible adaptations",
+    "可能的调整",
+    "Mögliche Anpassungen",
+    "Adaptaciones posibles",
+    "Возможные изменения",
+    "Adattamenti possibili",
+    "可能な調整"
   ],
   "Administrateurs actifs": [
     "Active administrators",
@@ -2015,6 +2051,15 @@
     "Approccio della guida",
     "ガイドの接近方向"
   ],
+  "Approche du guide inconnue (D1 à D5)": [
+    "Unknown guide approach (D1 to D5)",
+    "指南接近方式未知（D1 至 D5）",
+    "Unbekannte Annäherung im Leitfaden (D1 bis D5)",
+    "Aproximación del guía desconocida (D1 a D5)",
+    "Неизвестный подход из руководства (D1–D5)",
+    "Approccio della guida sconosciuto (da D1 a D5)",
+    "ガイドの接近方法が不明（D1〜D5）"
+  ],
   "Approche et retrait": [
     "Approach and withdraw",
     "接近和远离",
@@ -2374,6 +2419,15 @@
     "Цена не отображается, пока по текущей версии не опубликован подтвержденный отзыв с точным артикулом.",
     "Nessun prezzo finché non viene pubblicato un riscontro convalidato con riferimento esatto sulla versione corrente.",
     "現在のバージョンに正確な型番を含む承認済みフィードバックが公開されるまで、価格は表示されません。"
+  ],
+  "Aucun produit n'est proposé tant que ces points subsistent. Si vous ne souhaitez pas modifier ces contraintes, c'est une limite réelle de la technologie reed, pas un refus de notre part.": [
+    "No product is proposed while these points remain. If you prefer not to change these constraints, that is a real limit of reed technology, not a refusal on our side.",
+    "只要这些问题仍存在，我们就不会推荐产品。若您不愿修改这些约束，这是干簧管技术的实际局限，而非我们的拒绝。",
+    "Solange diese Punkte bestehen, wird kein Produkt vorgeschlagen. Wenn Sie diese Vorgaben nicht ändern möchten, ist das eine echte Grenze der Reed-Technologie und keine Ablehnung unserer Seite.",
+    "No se propone ningún producto mientras subsistan estos puntos. Si prefiere no modificar estas restricciones, se trata de un límite real de la tecnología reed, no de una negativa nuestra.",
+    "Пока эти вопросы не решены, продукция не предлагается. Если вы не хотите менять эти условия, это реальное ограничение герконовой технологии, а не отказ с нашей стороны.",
+    "Nessun prodotto viene proposto finché questi punti permangono. Se non desiderate modificare questi vincoli, si tratta di un limite reale della tecnologia reed, non di un rifiuto da parte nostra.",
+    "これらの点が残る間は製品のご提案は行いません。条件を変更されない場合、それはリード技術の実際の限界であり、当方の拒否ではありません。"
   ],
   "Aucun projet ne correspond à cette recherche.": [
     "No project matches this search.",
@@ -2852,6 +2906,15 @@
     "Nessuna versione inviata.",
     "送信されたバージョンはありません。"
   ],
+  "Autoriser un aimant sur la pièce mobile ou sur son support : c'est la voie la plus simple.": [
+    "Allow a magnet on the moving part or on its support: this is the simplest route.",
+    "允许在运动件或其支架上安装磁铁：这是最简单的途径。",
+    "Erlauben Sie einen Magneten am bewegten Teil oder an dessen Träger: das ist der einfachste Weg.",
+    "Permitir un imán en la pieza móvil o en su soporte: es la vía más sencilla.",
+    "Разрешите магнит на движущейся детали или её носителе: это самый простой путь.",
+    "Consentire un magnete sul pezzo mobile o sul suo supporto: è la via più semplice.",
+    "可動部品またはその支持側に磁石を許容する：これが最も簡単な方法です。"
+  ],
   "Autre chose à nous dire": [
     "Anything else to tell us",
     "其他补充说明",
@@ -3175,6 +3238,15 @@
     "Заблокировано",
     "Bloccato",
     "停滞"
+  ],
+  "Borne finie et non négative, ou vide": [
+    "Finite, non-negative bound, or empty",
+    "有限且非负的界限，或留空",
+    "Endlicher, nicht negativer Grenzwert oder leer",
+    "Límite finito y no negativo, o vacío",
+    "Конечная неотрицательная граница или пусто",
+    "Limite finito e non negativo, oppure vuoto",
+    "有限で負でない値、または空欄"
   ],
   "Boîtier": [
     "Housing",
@@ -3536,6 +3608,15 @@
     "Sensore all’esterno del cilindro in un foro Ø 8 mm; fissaggio da definire.",
     "シリンダー外側の直径8 mmの穴に配置。保持方法は未定。"
   ],
+  "Capteur reed (signal de position)": [
+    "Reed sensor (position signal)",
+    "干簧管传感器（位置信号）",
+    "Reed-Sensor (Positionssignal)",
+    "Sensor reed (señal de posición)",
+    "Герконовый датчик (сигнал положения)",
+    "Sensore reed (segnale di posizione)",
+    "リードセンサー（位置信号）"
+  ],
   "Capteur soudé en CMS sur la carte électronique fixe ; aimant intégré au tiroir mobile.": [
     "Sensor soldered by SMD mounting on the fixed PCB; magnet built into the moving drawer.",
     "传感器以SMD方式焊接到固定PCB上；磁铁嵌入移动抽屉。",
@@ -3679,6 +3760,15 @@
     "Учётная запись привязана, но прав Standex пока нет. Выберите право для предоставления.",
     "Questo account è collegato ma non ha ancora alcun diritto Standex. Scegliere il diritto da concedere.",
     "このアカウントは紐づけ済みですが、Standex の権限はまだありません。付与する権限を選んでください。"
+  ],
+  "Ce compte n'est pas autorisé à tester l'outil.": [
+    "This account is not authorised to test the tool.",
+    "此账户无权测试该工具。",
+    "Dieses Konto ist nicht zum Testen des Tools berechtigt.",
+    "Esta cuenta no está autorizada para probar la herramienta.",
+    "Эта учётная запись не имеет права тестировать инструмент.",
+    "Questo account non è autorizzato a testare lo strumento.",
+    "このアカウントにはツールをテストする権限がありません。"
   ],
   "Ce couple capteur–aimant n'a pas de seuils qualifiés. Les plages du guide d'activation, quand elles existent, ne sont pas des seuils de fermeture.": [
     "This sensor–magnet pair has no qualified thresholds. Activation guide ranges, where they exist, are not closing thresholds.",
@@ -3914,6 +4004,15 @@
     "Questo progetto è registrato presso Standex: accedi per modificare la scelta dell'NDA. Non è stato modificato nulla.",
     "このプロジェクトは Standex に登録されています。NDA の選択を変更するにはサインインしてください。変更は行われていません。"
   ],
+  "Ce projet n'est pas encore enregistré chez Standex : cette référence est provisoire. La référence définitive est attribuée à l'envoi, et cette référence provisoire est conservée dans le projet transmis pour retrouver ce brouillon.": [
+    "This project is not yet saved at Standex: this reference is provisional. The final reference is assigned when you submit, and this provisional reference is kept inside the submitted project so this draft can be found.",
+    "该项目尚未保存到 Standex：此编号为临时编号。最终编号在提交时分配，且该临时编号会保留在已提交的项目中，以便找回此草稿。",
+    "Dieses Projekt ist bei Standex noch nicht gespeichert: Diese Referenz ist vorläufig. Die endgültige Referenz wird beim Absenden vergeben, und diese vorläufige Referenz bleibt im übermittelten Projekt erhalten, damit dieser Entwurf gefunden werden kann.",
+    "Este proyecto aún no está guardado en Standex: esta referencia es provisional. La referencia definitiva se asigna al enviar, y esta referencia provisional se conserva en el proyecto enviado para poder encontrar este borrador.",
+    "Этот проект ещё не сохранён в Standex: номер предварительный. Окончательный номер присваивается при отправке, а предварительный сохраняется в отправленном проекте, чтобы можно было найти этот черновик.",
+    "Questo progetto non è ancora salvato presso Standex: questo riferimento è provvisorio. Il riferimento definitivo viene assegnato all'invio e questo riferimento provvisorio resta nel progetto inviato per ritrovare questa bozza.",
+    "このプロジェクトはまだ Standex に保存されていません。この参照番号は仮のものです。確定番号は送信時に付与され、この仮番号は送信済みプロジェクト内に保持されるため、この下書きを後から特定できます。"
+  ],
   "Ce projet n'existe que dans cet onglet : fermer ou recharger la page l'efface. Exportez le projet pour le reprendre plus tard.": [
     "This project exists only in this tab: closing or reloading the page deletes it. Export the project to resume later.",
     "此项目仅存在于此标签页中：关闭或重新加载页面将删除它。导出案卷以备稍后继续。",
@@ -3932,6 +4031,15 @@
     "Cosa rilevare",
     "検出するもの"
   ],
+  "Ce qu'il faut savoir": [
+    "What you should know",
+    "须知",
+    "Wichtig zu wissen",
+    "Lo que debe saber",
+    "Что нужно знать",
+    "Da sapere",
+    "ご留意事項"
+  ],
   "Ce que ce résultat ne dit pas": [
     "What this result does not say",
     "本结果未涵盖的内容",
@@ -3949,6 +4057,15 @@
     "О чём этот результат не говорит ⌄",
     "Ciò che questo risultato non dice ⌄",
     "この結果が示していないこと ⌄"
+  ],
+  "Ce que cela implique": [
+    "What this means",
+    "这意味着什么",
+    "Was das bedeutet",
+    "Lo que esto implica",
+    "Что это означает",
+    "Cosa comporta",
+    "これが意味すること"
   ],
   "Ce que je comprends de votre besoin : {0}": [
     "What I understand about your need: {0}",
@@ -3995,6 +4112,15 @@
     "Ciò che il vostro montaggio indica oggi",
     "現時点で組み立てが示している内容"
   ],
+  "Ce que vous avez écrit": [
+    "What you wrote",
+    "您所填写的内容",
+    "Was Sie geschrieben haben",
+    "Lo que usted escribió",
+    "Что вы написали",
+    "Ciò che avete scritto",
+    "ご記入いただいた内容"
+  ],
   "Ce que vous voulez détecter": [
     "What you want to detect",
     "您希望检测的内容",
@@ -4013,6 +4139,15 @@
     "Cosa viene rilevato",
     "検出対象"
   ],
+  "Ce qui fonctionne": [
+    "What works",
+    "哪些可行",
+    "Was funktioniert",
+    "Lo que funciona",
+    "Что работает",
+    "Ciò che funziona",
+    "うまくいく点"
+  ],
   "Ce qui invalide cette conception": [
     "What invalidates this design",
     "使设计失效的条件",
@@ -4030,6 +4165,15 @@
     "Что не моделируется",
     "Cosa non è modellato",
     "モデルに含まれない要素"
+  ],
+  "Ce qui ne fonctionne pas": [
+    "What does not work",
+    "哪些无法实现",
+    "Was nicht funktioniert",
+    "Lo que no funciona",
+    "Что не работает",
+    "Ciò che non funziona",
+    "うまくいかない点"
   ],
   "Centimètres": [
     "Centimetres",
@@ -4084,6 +4228,15 @@
     "Эти два столбца — границы диапазона, измеренного Standex на серии датчиков. Это не пороги замыкания и размыкания: показанная в сцене дистанция остаётся ориентировочной, пока для пары нет охарактеризованных расстояний.",
     "Queste due colonne sono i limiti di un intervallo misurato da Standex su una serie di sensori. Non sono soglie di chiusura e riapertura: la portata mostrata nella scena resta indicativa finché la coppia non ha distanze caratterizzate.",
     "この2列は Standex が一連のセンサーで測定した範囲の下限と上限であり、閉じる／開くのしきい値ではありません。組み合わせに特性距離がない間、シーンの動作距離は参考値です。"
+  ],
+  "Ces deux colonnes sont recopiées de la brochure. Elles ne sont pas un seuil d'activation ni de relâchement : « up » peut être supérieur à « to », et cet ordre est conservé tel qu'imprimé.": [
+    "These two columns are copied from the brochure. They are not an activation or release threshold: “up” may exceed “to”, and that order is kept exactly as printed.",
+    "这两列直接摘自手册。它们不是动作或释放阈值：“up”可能大于“to”，该顺序按印刷原样保留。",
+    "Diese beiden Spalten sind aus der Broschüre übernommen. Sie sind kein Anzugs- oder Abfallwert: „up“ kann größer als „to“ sein, und diese Reihenfolge bleibt wie gedruckt.",
+    "Estas dos columnas se copian del folleto. No son un umbral de activación ni de liberación: «up» puede ser mayor que «to», y ese orden se conserva tal como está impreso.",
+    "Эти два столбца перенесены из брошюры. Это не порог срабатывания или отпускания: «up» может быть больше «to», и этот порядок сохраняется как напечатано.",
+    "Queste due colonne sono ricopiate dalla brochure. Non sono una soglia di attivazione né di rilascio: «up» può superare «to» e questo ordine è conservato come stampato.",
+    "この2列はカタログからの転記です。動作値や復帰値ではありません。「up」が「to」より大きい場合もあり、その順序は印刷どおり保持されます。"
   ],
   "Ces distances ne sont pas utilisées par le calcul : la trajectoire de cette approche n'est pas définie.": [
     "These distances are not used by the calculation: the trajectory of this approach is not defined.",
@@ -4175,6 +4328,15 @@
     "Questo spazio è riservato ai team Standex. Accedi con il tuo account aziendale.",
     "このスペースは Standex のチーム専用です。業務用アカウントでログインしてください。"
   ],
+  "Cet outil est en phase de test. Connectez-vous avec un compte autorisé pour y accéder.": [
+    "This tool is in testing. Sign in with an authorised account to access it.",
+    "此工具处于测试阶段。请使用授权账户登录以访问。",
+    "Dieses Tool befindet sich in der Testphase. Melden Sie sich mit einem autorisierten Konto an.",
+    "Esta herramienta está en fase de prueba. Inicie sesión con una cuenta autorizada para acceder.",
+    "Инструмент находится на стадии тестирования. Войдите с авторизованной учётной записью.",
+    "Questo strumento è in fase di test. Accedi con un account autorizzato.",
+    "このツールはテスト段階です。許可されたアカウントでサインインしてください。"
+  ],
   "Cet échantillon correspond à une version dépassée du dossier : une revalidation explicite est nécessaire.": [
     "This sample corresponds to an outdated version of the case file: explicit revalidation is required.",
     "此样品对应案卷的过时版本：需要重新进行明确验证。",
@@ -4256,6 +4418,15 @@
     "Questa combinazione esiste già",
     "この組み合わせは既に存在します"
   ],
+  "Cette démonstration ne répond pas encore à votre besoin": [
+    "This demonstration does not yet answer your need",
+    "此演示尚未满足您的需求",
+    "Diese Demonstration erfüllt Ihren Bedarf noch nicht",
+    "Esta demostración aún no responde a su necesidad",
+    "Эта демонстрация пока не отвечает вашей задаче",
+    "Questa dimostrazione non risponde ancora alla vostra esigenza",
+    "このデモはまだお客様のご要望に応えていません"
+  ],
   "Cette fonction a-t-elle un rôle de sécurité ou une conséquence critique ?": [
     "Does this function have a safety role or critical consequence?",
     "此功能是否涉及安全或关键后果？",
@@ -4291,6 +4462,15 @@
     "Эта строка руководства напечатана в необычном порядке («up» больше «to»): она остаётся в таблице как напечатана, требует подтверждения Standex, но не используется как ориентир. Иллюстративная анимация возвращается к 15 и 18 мм.",
     "Questa riga della guida è stampata in un ordine inusuale («up» maggiore di «to»): resta leggibile così com'è nella tabella, da confermare da Standex, ma non è usata come riferimento. L'animazione indicativa torna a 15 mm e 18 mm.",
     "このガイドの行は通常と異なる順序で印刷されています（「up」が「to」より大きい）。表には印刷どおり残り、Standex の確認待ちですが、目安としては使用しません。参考アニメーションは 15 mm と 18 mm に戻ります。"
+  ],
+  "Cette ligne du guide existe déjà": [
+    "This guide row already exists",
+    "该指南行已存在",
+    "Diese Leitfadenzeile existiert bereits",
+    "Esta línea del guía ya existe",
+    "Эта строка руководства уже существует",
+    "Questa riga della guida esiste già",
+    "このガイド行はすでに存在します"
   ],
   "Cette liste décrit les limites du modèle. Ce ne sont pas des champs supplémentaires à remplir : Standex doit fournir les mesures, avec votre contexte de montage.": [
     "This list describes model limitations. These are not additional fields to fill: Standex must provide measurements for your assembly context.",
@@ -4886,6 +5066,15 @@
     "Scelta meccanica esplicita",
     "明示的な機構選択"
   ],
+  "Chronologie du contact": [
+    "Contact timeline",
+    "触点时间线",
+    "Kontaktverlauf",
+    "Cronología del contacto",
+    "Хронология контакта",
+    "Cronologia del contatto",
+    "接点タイムライン"
+  ],
   "Chronologie du cycle": [
     "Cycle timeline",
     "循环时间轴",
@@ -5084,6 +5273,15 @@
     "Colora il percorso",
     "軌道を色分け"
   ],
+  "Combinaison exclue (forme)": [
+    "Combination excluded (shape)",
+    "组合被排除（形状）",
+    "Kombination ausgeschlossen (Form)",
+    "Combinación excluida (forma)",
+    "Комбинация исключена (форма)",
+    "Combinazione esclusa (forma)",
+    "除外された組み合わせ（形状）"
+  ],
   "Combinaison non qualifiée : à vérifier par la R&D.": [
     "Unqualified combination: to be checked by R&D.",
     "未限定组合：待 R&D 验证。",
@@ -5092,6 +5290,15 @@
     "Неквалифицированная комбинация: подлежит проверке R&D.",
     "Combinazione non qualificata: da verificare con R&D.",
     "未検証の組み合わせ：R&D による確認要。"
+  ],
+  "Combinaison non simulée": [
+    "Combination not simulated",
+    "组合未仿真",
+    "Kombination nicht simuliert",
+    "Combinación no simulada",
+    "Комбинация не моделируется",
+    "Combinazione non simulata",
+    "組み合わせは非シミュレーション"
   ],
   "Combinaison qualifiée": [
     "Qualified combination",
@@ -5137,6 +5344,15 @@
     "Начать",
     "Inizia",
     "はじめる"
+  ],
+  "Comment cette pièce bouge-t-elle, et quels états faut-il distinguer ?": [
+    "How does this part move, and which states must be distinguished?",
+    "该部件如何运动，需要区分哪些状态？",
+    "Wie bewegt sich dieses Teil, und welche Zustände sind zu unterscheiden?",
+    "¿Cómo se mueve esta pieza y qué estados hay que distinguir?",
+    "Как перемещается эта деталь и какие состояния нужно различать?",
+    "Come si muove questa parte e quali stati vanno distinti?",
+    "その部品はどう動き、どの状態を区別しますか？"
   ],
   "Comment ça se passe": [
     "How it works",
@@ -5227,6 +5443,15 @@
     "Сравните зазоры с опубликованными данными и подготовьте недостающие испытания.",
     "Confrontate i traferri con i dati pubblicati e preparate le prove mancanti.",
     "ギャップを公開データと比較し、不足する試験を準備します。"
+  ],
+  "Compatibilité de votre application": [
+    "Compatibility of your application",
+    "您的应用的兼容性",
+    "Kompatibilität Ihrer Anwendung",
+    "Compatibilidad de su aplicación",
+    "Совместимость вашего применения",
+    "Compatibilità della vostra applicazione",
+    "お客様の用途の適合性"
   ],
   "Complète": [
     "Complete",
@@ -6155,6 +6380,15 @@
     "Continua",
     "次へ"
   ],
+  "Continuer l'édition": [
+    "Continue editing",
+    "继续编辑",
+    "Bearbeitung fortsetzen",
+    "Continuar la edición",
+    "Продолжить редактирование",
+    "Continua la modifica",
+    "編集を続ける"
+  ],
   "Continuer vers Avec Standex": [
     "Continue to With Standex",
     "继续前往「与 Standex 一起」",
@@ -6668,6 +6902,15 @@
     "Criteri utilizzati",
     "使用した基準"
   ],
+  "Créer une nouvelle combinaison à partir de celle-ci": [
+    "Create a new combination from this one",
+    "以此为基础创建新组合",
+    "Neue Kombination auf dieser Basis erstellen",
+    "Crear una nueva combinación a partir de esta",
+    "Создать новую комбинацию на основе этой",
+    "Crea una nuova combinazione da questa",
+    "この組み合わせから新しい組み合わせを作成"
+  ],
   "Créer une session": [
     "Create session",
     "创建会话",
@@ -6919,6 +7162,15 @@
     "В какой стране находится объект?",
     "In quale paese si trova il sito?",
     "対象拠点はどの国ですか？"
+  ],
+  "Dans quel équipement, et pour quoi faire ?": [
+    "In which equipment, and what for?",
+    "用于哪种设备，目的是什么？",
+    "In welchem Gerät und wofür?",
+    "¿En qué equipo y para qué?",
+    "В каком оборудовании и для чего?",
+    "In quale apparecchiatura e per farne cosa?",
+    "どの装置で、何のために使いますか？"
   ],
   "Dans quelle ville êtes-vous basé ?": [
     "Which city are you based in?",
@@ -7289,6 +7541,15 @@
     "Dimensioni illustrative; nessun riferimento commerciale.",
     "説明用寸法、商用型番ではありません。"
   ],
+  "Dimensions disponibles": [
+    "Available dimensions",
+    "可用尺寸",
+    "Verfügbare Abmessungen",
+    "Dimensiones disponibles",
+    "Доступные размеры",
+    "Dimensioni disponibili",
+    "利用可能な寸法"
+  ],
   "Dimensions disponibles, même approximatives.": [
     "Available dimensions, even approximate.",
     "可用尺寸，哪怕是近似值。",
@@ -7297,6 +7558,15 @@
     "Доступные размеры, даже приблизительные.",
     "Dimensioni disponibili, anche approssimative.",
     "使用可能な寸法（概略でも可）。"
+  ],
+  "Dimensions du capteur": [
+    "Sensor dimensions",
+    "传感器尺寸",
+    "Sensorabmessungen",
+    "Dimensiones del sensor",
+    "Размеры датчика",
+    "Dimensioni del sensore",
+    "センサー寸法"
   ],
   "Dimensions du corps": [
     "Body dimensions",
@@ -7406,6 +7676,15 @@
     "Spazio libero tra sensore e magnete con il pezzo aperto, ad esempio vassoio estratto. Usa le stesse facce di riferimento della posizione chiusa.",
     "部品が開位置にあるときの隙間です。例：トレイを引き出した状態。閉位置と同じ基準面で測定します。"
   ],
+  "Distance manquante pour une ligne validée": [
+    "Distance missing for a validated row",
+    "已验证行缺少距离",
+    "Abstand fehlt für eine validierte Zeile",
+    "Falta la distancia en una línea validada",
+    "Для проверенной строки не указано расстояние",
+    "Distanza mancante per una riga validata",
+    "確定済みの行に距離がありません"
+  ],
   "Distance mesurée :": [
     "Measured distance:",
     "测得距离：",
@@ -7414,6 +7693,24 @@
     "Измеренное расстояние:",
     "Distanza misurata:",
     "測定距離："
+  ],
+  "Distances de ce couple non publiées": [
+    "Distances not published for this pair",
+    "该组合的距离未公布",
+    "Abstände für dieses Paar nicht veröffentlicht",
+    "Distancias de esta pareja no publicadas",
+    "Расстояния для этой пары не опубликованы",
+    "Distanze di questa coppia non pubblicate",
+    "この組み合わせの距離は非公開"
+  ],
+  "Distances de commutation": [
+    "Switching distances",
+    "开关距离",
+    "Schaltabstände",
+    "Distancias de conmutación",
+    "Расстояния переключения",
+    "Distanze di commutazione",
+    "動作距離"
   ],
   "Distances fictives · réglages de démonstration": [
     "Fictitious distances · demo settings",
@@ -7432,6 +7729,15 @@
     "Расстояния взяты для документированного семейства «M21/P(1,2)»: брошюра Reed Switch Sensors A5 V04 EN, страница 37 (лист MAGNETS IN HOUSINGS, единый набор размеров) и страница 38 (магнит 2500000021 / M21 указан как допустимый). Варианты P/1 и P/2 различаются только ориентацией продольных отверстий. Никакой вариант датчика из этого не выводится.",
     "Distanze lette sulla famiglia documentata «M21/P(1,2)»: brochure Reed Switch Sensors A5 V04 EN, pagina 37 (tavola MAGNETS IN HOUSINGS, quote uniche) e pagina 38 (magnete 2500000021 / M21 indicato come valido). Le varianti P/1 e P/2 differiscono solo per l’orientamento dei fori asolati. Nessuna variante di sensore è dedotta da questa identità.",
     "距離は文書化された「M21/P(1,2)」ファミリーの値です：Reed Switch Sensors A5 V04 EN カタログ 37 ページ（MAGNETS IN HOUSINGS の図、寸法は 1 組のみ）および 38 ページ（磁石 2500000021 / M21 が有効として記載）。P/1 と P/2 は長穴の向きだけが異なります。この同一性からセンサーの派生型は推定しません。"
+  ],
+  "Distances non publiées pour ce couple": [
+    "Distances not published for this pair",
+    "该组合的距离未公布",
+    "Abstände für dieses Paar nicht veröffentlicht",
+    "Distancias no publicadas para esta pareja",
+    "Расстояния для этой пары не опубликованы",
+    "Distanze non pubblicate per questa coppia",
+    "この組み合わせの距離は未公表"
   ],
   "Distances non publiées pour ce couple — Standex peut les mesurer": [
     "No published distances for this pair — Standex can measure them",
@@ -7495,6 +7801,15 @@
     "Реальные расстояния срабатывания и отпускания для точной комбинации. Диапазоны руководства не являются порогами и здесь не приводятся.",
     "Distanze reali di attivazione e rilascio, per combinazione esatta. Gli intervalli della guida di attivazione non sono soglie: non figurano qui.",
     "正確な組み合わせごとの実際の動作距離と復帰距離。アクティベーションガイドの範囲はしきい値ではないため、ここには載せません。"
+  ],
+  "Distances réelles d'activation et de relâchement, par combinaison exacte. Les plages du guide d'activation ne sont pas des seuils : elles sont dans l'autre onglet.": [
+    "Real activation and release distances, per exact combination. The activation guide ranges are not thresholds: they are in the other tab.",
+    "按精确组合给出的真实动作与释放距离。激活指南的范围不是阈值：它们在另一个选项卡。",
+    "Reale Anzugs- und Abfallabstände je genauer Kombination. Die Bereiche des Aktivierungsleitfadens sind keine Schwellen: sie stehen im anderen Tab.",
+    "Distancias reales de activación y liberación, por combinación exacta. Los rangos del guía de activación no son umbrales: están en la otra pestaña.",
+    "Реальные расстояния срабатывания и отпускания для точной комбинации. Диапазоны руководства не являются порогами: они на другой вкладке.",
+    "Distanze reali di attivazione e rilascio, per combinazione esatta. Gli intervalli della guida non sono soglie: sono nell'altra scheda.",
+    "正確な組み合わせごとの実際の動作距離と復帰距離。ガイドの範囲はしきい値ではなく、別のタブにあります。"
   ],
   "Distances typiques Standex pour le MK03 + M02 dans la configuration représentée. Enveloppes cotées ; contacts internes et pôles symboliques. À confirmer par essais dans votre application.": [
     "Typical Standex distances for MK03 + M02 in the shown configuration. Dimensioned envelopes; symbolic contacts and poles. Confirm by testing your application.",
@@ -7649,6 +7964,15 @@
     "Dati di esempio",
     "サンプルデータ"
   ],
+  "Données de choix": [
+    "Selection details",
+    "选型数据",
+    "Auswahldaten",
+    "Datos de selección",
+    "Данные для выбора",
+    "Dati di selezione",
+    "選定情報"
+  ],
   "Données de détection": [
     "Detection data",
     "检测数据",
@@ -7657,6 +7981,15 @@
     "Данные обнаружения",
     "Dati di rilevamento",
     "検出データ"
+  ],
+  "Données de détection non relues depuis le serveur : cette scène peut afficher des valeurs plus anciennes.": [
+    "Detection data has not been re-read from the server: this scene may show older values.",
+    "检测数据未从服务器重新读取：此场景可能显示较旧的数值。",
+    "Erkennungsdaten wurden nicht erneut vom Server gelesen: Diese Szene kann ältere Werte zeigen.",
+    "Los datos de detección no se han vuelto a leer del servidor: esta escena puede mostrar valores antiguos.",
+    "Данные обнаружения не были перечитаны с сервера: на этой сцене могут быть устаревшие значения.",
+    "I dati di rilevamento non sono stati riletti dal server: questa scena può mostrare valori più vecchi.",
+    "検出データをサーバーから再読み込みしていません。この画面は古い値を表示している可能性があります。"
   ],
   "Données et outils avancés": [
     "Data and advanced tools",
@@ -8009,6 +8342,15 @@
     "Scopri questo sensore",
     "このセンサーを見る"
   ],
+  "Décrire le capteur comme un signal de commande (par exemple 24 V continu vers un automate ou une entrée logique) et garder l'alimentation du moteur sur un circuit séparé.": [
+    "Describe the sensor as a control signal (for example 24 V DC to a PLC or a logic input) and keep the motor supply on a separate circuit.",
+    "将传感器描述为控制信号（例如向 PLC 或逻辑输入提供 24 V 直流），并将电机供电保持在独立回路中。",
+    "Beschreiben Sie den Sensor als Steuersignal (zum Beispiel 24 V DC an eine Steuerung oder einen Logikeingang) und halten Sie die Motorversorgung in einem separaten Kreis.",
+    "Describa el sensor como una señal de mando (por ejemplo 24 V CC hacia un autómata o una entrada lógica) y mantenga la alimentación del motor en un circuito separado.",
+    "Опишите датчик как сигнал управления (например, 24 В постоянного тока на контроллер или логический вход) и оставьте питание двигателя в отдельной цепи.",
+    "Descrivete il sensore come un segnale di comando (per esempio 24 V CC verso un PLC o un ingresso logico) e mantenete l'alimentazione del motore su un circuito separato.",
+    "センサーを制御信号として記述し（例：PLC や論理入力への DC24V）、モーター電源は別回路のままにしてください。"
+  ],
   "Décrire mon besoin": [
     "Describe my requirements",
     "描述我的需求",
@@ -8170,6 +8512,15 @@
     "Пошаговая демонстрация",
     "Demo guidata",
     "ガイド付きデモ"
+  ],
+  "Démonstration magnétique antérieure, conservée telle quelle : elle ne vaut pas validation de l'application décrite aujourd'hui.": [
+    "Earlier magnetic demonstration, kept as recorded: it is not a validation of the application described today.",
+    "先前的磁性演示，按原样保留：它不构成对当前所述应用的验证。",
+    "Frühere magnetische Demonstration, unverändert erhalten: Sie stellt keine Validierung der heute beschriebenen Anwendung dar.",
+    "Demostración magnética anterior, conservada tal cual: no constituye una validación de la aplicación descrita hoy.",
+    "Прежняя магнитная демонстрация сохранена как есть: она не является подтверждением описанного сегодня применения.",
+    "Dimostrazione magnetica precedente, conservata così com'è: non costituisce una validazione dell'applicazione descritta oggi.",
+    "以前の磁気デモンストレーションはそのまま保持されています。これは本日記載された用途の検証にはなりません。"
   ],
   "Démonstration terminée : aucune réservation réelle ni invitation n'a été créée. Ce créneau sert uniquement à présenter le parcours de prise de rendez-vous.": [
     "Demo complete: no real booking or invitation has been created. This slot only demonstrates the appointment booking process.",
@@ -8936,6 +9287,15 @@
     "Ingresso scheda 5 VDC, 2 mA; commutazione di segnale, senza carico di potenza.",
     "基板入力5 VDC、2 mA。信号の切替のみで電力負荷なし。"
   ],
+  "Entrée de commande compatible (automate, carte, entrée logique)": [
+    "Compatible control input (PLC, board, logic input)",
+    "兼容的控制输入（PLC、电路板、逻辑输入）",
+    "Kompatibler Steuereingang (Steuerung, Platine, Logikeingang)",
+    "Entrada de mando compatible (autómata, tarjeta, entrada lógica)",
+    "Совместимый вход управления (контроллер, плата, логический вход)",
+    "Ingresso di comando compatibile (PLC, scheda, ingresso logico)",
+    "適合する制御入力（PLC、基板、論理入力）"
+  ],
   "Entrée numérique 3,3 VDC, courant inférieur à 5 mA ; contact normalement ouvert.": [
     "Digital input 3.3 VDC, current below 5 mA; normally open contact.",
     "数字输入3.3 VDC，电流小于5 mA；常开触点。",
@@ -9602,6 +9962,15 @@
     "Faccia a faccia",
     "対向"
   ],
+  "Facultatif : place disponible pour le capteur": [
+    "Optional: space available for the sensor",
+    "可选：传感器可用空间",
+    "Optional: verfügbarer Platz für den Sensor",
+    "Opcional: espacio disponible para el sensor",
+    "Необязательно: доступное место для датчика",
+    "Facoltativo: spazio disponibile per il sensore",
+    "任意：センサー用の利用可能スペース"
+  ],
   "Facultatif : précisez d'un clic": [
     "Optional: refine with one click",
     "可选：一键补充",
@@ -9629,6 +9998,24 @@
     "Dai forma alla tua idea di rilevamento — Standex DETECT",
     "検出のアイデアを形に — Standex DETECT"
   ],
+  "Faire passer l'alimentation du moteur ({0}) directement dans le contact du capteur.": [
+    "Passing the motor supply ({0}) directly through the sensor contact.",
+    "让电机供电（{0}）直接通过传感器触点。",
+    "Die Motorversorgung ({0}) direkt über den Sensorkontakt zu führen.",
+    "Hacer pasar la alimentación del motor ({0}) directamente por el contacto del sensor.",
+    "Пропустить питание двигателя ({0}) прямо через контакт датчика.",
+    "Far passare l'alimentazione del motore ({0}) direttamente nel contatto del sensore.",
+    "モーター電源（{0}）をセンサー接点に直接通すこと。"
+  ],
+  "Faire passer l'alimentation du moteur directement dans le contact du capteur.": [
+    "Passing the motor supply directly through the sensor contact.",
+    "让电机供电直接通过传感器触点。",
+    "Die Motorversorgung direkt über den Sensorkontakt zu führen.",
+    "Hacer pasar la alimentación del motor directamente por el contacto del sensor.",
+    "Пропустить питание двигателя прямо через контакт датчика.",
+    "Far passare l'alimentazione del motore direttamente nel contatto del sensore.",
+    "モーター電源をセンサー接点に直接通すこと。"
+  ],
   "Faire relire votre projet": [
     "Have your project reviewed",
     "提交项目审核",
@@ -9646,6 +10033,15 @@
     "Семейство",
     "Famiglia",
     "製品群"
+  ],
+  "Famille inconnue du guide": [
+    "Family unknown to the guide",
+    "指南中未知的系列",
+    "Dem Leitfaden unbekannte Familie",
+    "Familia desconocida para el guía",
+    "Семейство неизвестно руководству",
+    "Famiglia sconosciuta alla guida",
+    "ガイドに存在しないファミリー"
   ],
   "Fenêtre souhaitée": [
     "Desired window",
@@ -9817,6 +10213,24 @@
     "Карточка изделия",
     "Scheda prodotto",
     "製品情報"
+  ],
+  "Fiche produit disponible pour ce capteur, mais les distances de ce couple ne sont pas publiées dans le guide d'activation intégré (édition 10/2025). La simulation reste illustrative, à valider par essais avec Standex.": [
+    "A product datasheet is available for this sensor, but the distances for this pair are not published in the built-in activation guide (10/2025 edition). The simulation stays illustrative and must be validated by testing with Standex.",
+    "该传感器有产品资料，但内置激活指南（2025年10月版）未公布该组合的距离。仿真仅作示意，须与 Standex 一起通过实测验证。",
+    "Für diesen Sensor liegt ein Produktdatenblatt vor, die Abstände dieses Paares sind im integrierten Aktivierungsleitfaden (Ausgabe 10/2025) jedoch nicht veröffentlicht. Die Simulation bleibt illustrativ und ist durch Versuche mit Standex zu bestätigen.",
+    "Existe una ficha de producto para este sensor, pero las distancias de esta pareja no se publican en la guía de activación integrada (edición 10/2025). La simulación es solo ilustrativa y debe validarse mediante ensayos con Standex.",
+    "Для этого датчика есть техническая карта, но расстояния этой пары не опубликованы во встроенном руководстве по активации (выпуск 10/2025). Моделирование остаётся иллюстративным и требует подтверждения испытаниями со Standex.",
+    "Per questo sensore è disponibile una scheda prodotto, ma le distanze di questa coppia non sono pubblicate nella guida di attivazione integrata (edizione 10/2025). La simulazione resta illustrativa, da validare con prove insieme a Standex.",
+    "このセンサーの製品データシートはありますが、この組み合わせの距離は内蔵のアクティベーションガイド（2025年10月版）には掲載されていません。シミュレーションは参考であり、Standex との実測で検証が必要です。"
+  ],
+  "Fiche produit disponible · distances de ce couple non publiées": [
+    "Product datasheet available · distances not published for this pair",
+    "有产品资料 · 该组合的距离未公布",
+    "Produktdatenblatt verfügbar · Abstände für dieses Paar nicht veröffentlicht",
+    "Ficha de producto disponible · distancias de esta pareja no publicadas",
+    "Техническая карта доступна · расстояния для этой пары не опубликованы",
+    "Scheda prodotto disponibile · distanze di questa coppia non pubblicate",
+    "製品データシートあり · この組み合わせの距離は非公開"
   ],
   "Fiche projet": [
     "Project record",
@@ -10159,6 +10573,15 @@
     "Форма доступна · срабатывание не моделируется",
     "Forma disponibile · attivazione non modellata",
     "形状あり · 動作は未モデル化"
+  ],
+  "Forme incompatible avec ce capteur : combinaison non simulée": [
+    "Shape incompatible with this sensor: combination not simulated",
+    "形状与该传感器不兼容：组合未仿真",
+    "Form mit diesem Sensor nicht kompatibel: Kombination nicht simuliert",
+    "Forma incompatible con este sensor: combinación no simulada",
+    "Форма несовместима с этим датчиком: комбинация не моделируется",
+    "Forma incompatibile con questo sensore: combinazione non simulata",
+    "このセンサーと形状が非互換：組み合わせは非シミュレーション"
   ],
   "Fuite": [
     "Leak",
@@ -10529,6 +10952,24 @@
     "I · Parti ferromagnetiche",
     "I · 強磁性部品"
   ],
+  "Identifiant complet du brouillon local (non enregistré)": [
+    "Full local draft identifier (not saved)",
+    "本地草稿完整标识符（未保存）",
+    "Vollständige lokale Entwurfskennung (nicht gespeichert)",
+    "Identificador completo del borrador local (no guardado)",
+    "Полный идентификатор локального черновика (не сохранён)",
+    "Identificativo completo della bozza locale (non salvata)",
+    "ローカル下書きの完全な識別子（未保存）"
+  ],
+  "Identifiant unique du projet (base Standex)": [
+    "Unique project identifier (Standex database)",
+    "项目唯一标识符（Standex 数据库）",
+    "Eindeutige Projektkennung (Standex-Datenbank)",
+    "Identificador único del proyecto (base de datos Standex)",
+    "Уникальный идентификатор проекта (база Standex)",
+    "Identificativo univoco del progetto (database Standex)",
+    "プロジェクト固有識別子（Standex データベース）"
+  ],
   "Identité du projet": [
     "Project identity",
     "项目信息",
@@ -10681,6 +11122,15 @@
     "Инкотермс",
     "Incoterm",
     "インコタームズ"
+  ],
+  "Indiquer ensuite la distance réelle entre l'aimant et le capteur, aimant en place.": [
+    "Then state the actual distance between magnet and sensor, with the magnet in place.",
+    "然后在磁铁安装到位的情况下，说明磁铁与传感器之间的实际距离。",
+    "Geben Sie dann den tatsächlichen Abstand zwischen Magnet und Sensor an, mit eingebautem Magneten.",
+    "Indique después la distancia real entre el imán y el sensor, con el imán colocado.",
+    "Затем укажите фактическое расстояние между магнитом и датчиком при установленном магните.",
+    "Indicare poi la distanza reale tra magnete e sensore, con il magnete installato.",
+    "次に、磁石を取り付けた状態での磁石とセンサーの実際の距離を記入してください。"
   ],
   "Indiquez pourquoi cette étape est sans objet.": [
     "State why this step is not applicable.",
@@ -11231,6 +11681,15 @@
     "L'oggetto e il riepilogo della notifica sono necessari.",
     "通知の件名と要約は必須です。"
   ],
+  "L'équipement et ce que la détection doit permettre.": [
+    "The equipment and what the detection should make possible.",
+    "设备以及检测需要实现的目标。",
+    "Das Gerät und was die Erkennung ermöglichen soll.",
+    "El equipo y qué debe permitir la detección.",
+    "Оборудование и то, что должно обеспечить обнаружение.",
+    "L'apparecchiatura e ciò che il rilevamento deve consentire.",
+    "装置と、検出によって実現したいこと。"
+  ],
   "L'étanchéité annoncée dépend du montage et du passage de câble : elle se vérifie sur l'intégration réelle.": [
     "Sealing depends on mounting and cable entry; verify it in the real integration.",
     "密封性能取决于安装和电缆入口，需在实际集成中验证。",
@@ -11275,6 +11734,33 @@
     "Частота переключений не учитывается.",
     "La frequenza di commutazione non è coperta.",
     "開閉頻度は対象外です。"
+  ],
+  "La charge du moteur et son courant d'appel au démarrage dépassent largement ce qu'un contact reed peut couper. Les contacts peuvent se souder ou se dégrader, et la machine peut alors démarrer ou rester en marche sans commande.": [
+    "The motor load and its inrush current at start-up far exceed what a reed contact can switch. The contacts can weld or degrade, and the machine may then start or keep running without any command.",
+    "电机负载及其启动浪涌电流远超簧片触点所能切断的能力。触点可能熔焊或损坏，机器随后可能在无指令的情况下启动或持续运转。",
+    "Die Motorlast und ihr Einschaltstrom beim Anlauf übersteigen bei Weitem, was ein Reed-Kontakt schalten kann. Die Kontakte können verschweißen oder sich zersetzen, und die Maschine kann dann ohne Befehl anlaufen oder weiterlaufen.",
+    "La carga del motor y su corriente de arranque superan con creces lo que un contacto reed puede cortar. Los contactos pueden soldarse o degradarse, y la máquina puede entonces arrancar o seguir en marcha sin ninguna orden.",
+    "Нагрузка двигателя и его пусковой ток значительно превышают возможности геркона. Контакты могут свариться или разрушиться, и машина может запуститься или продолжать работать без команды.",
+    "Il carico del motore e la sua corrente di spunto all'avvio superano di gran lunga ciò che un contatto reed può interrompere. I contatti possono saldarsi o degradarsi, e la macchina può quindi avviarsi o restare in marcia senza alcun comando.",
+    "モーター負荷とその始動時の突入電流は、リード接点が遮断できる能力を大きく上回ります。接点が溶着・劣化し、機械が指令なしに起動したり動き続けたりするおそれがあります。"
+  ],
+  "La combinaison d'une ligne existante ne change pas : créer une nouvelle combinaison": [
+    "An existing row's combination does not change: create a new combination",
+    "已有行的组合不可更改：请创建新组合",
+    "Die Kombination einer bestehenden Zeile ändert sich nicht: neue Kombination erstellen",
+    "La combinación de una línea existente no cambia: cree una nueva combinación",
+    "Комбинация существующей строки не меняется: создайте новую комбинацию",
+    "La combinazione di una riga esistente non cambia: creare una nuova combinazione",
+    "既存行の組み合わせは変更できません。新しい組み合わせを作成してください"
+  ],
+  "La combinaison de cette ligne ne change pas : elle identifie la donnée. Pour une autre combinaison, créez-en une nouvelle.": [
+    "This row's combination does not change: it identifies the data. For another combination, create a new one.",
+    "该行的组合不可更改：它标识这条数据。若需其他组合，请新建一条。",
+    "Die Kombination dieser Zeile ändert sich nicht: sie identifiziert die Daten. Für eine andere Kombination neue Zeile erstellen.",
+    "La combinación de esta línea no cambia: identifica el dato. Para otra combinación, cree una nueva.",
+    "Комбинация этой строки не меняется: она идентифицирует данные. Для другой комбинации создайте новую строку.",
+    "La combinazione di questa riga non cambia: identifica il dato. Per un'altra combinazione, creane una nuova.",
+    "この行の組み合わせはデータを識別するため変更できません。別の組み合わせは新規作成してください。"
   ],
   "La comparaison retient l'orientation la plus favorable ; l'orientation réelle reste à décider.": [
     "The comparison uses the most favorable orientation; the actual orientation remains to be decided.",
@@ -11600,6 +12086,15 @@
     "La permeabilità dei materiali vicini non è coperta.",
     "近傍材料の透磁率は対象外です。"
   ],
+  "La pièce concernée, sa matière si vous la connaissez.": [
+    "The part concerned, and its material if you know it.",
+    "相关部件，如知晓请注明材料。",
+    "Das betroffene Teil und sein Material, falls bekannt.",
+    "La pieza afectada y su material, si lo conoce.",
+    "Нужная деталь и её материал, если известен.",
+    "La parte interessata e il suo materiale, se lo conosce.",
+    "対象の部品と、分かれば材質。"
+  ],
   "La polarité déclarée n'est pas celle du gabarit.": [
     "The declared polarity is not the template one.",
     "所声明的极性与样板不同。",
@@ -11626,6 +12121,15 @@
     "Положение корпуса и ось N–S регулируются отдельно. Расстояния условные.",
     "Posizione del corpo e asse N–S regolabili separatamente. Le distanze restano fittizie.",
     "本体の位置とN–S軸を別々に設定できます。距離は仮の値です。"
+  ],
+  "La position peut être détectée si un champ magnétique adapté vient actionner le capteur reed : un aimant sur la pièce mobile ou sur son support suffit, convoyeur compris.": [
+    "The position can be detected if a suitable magnetic field actuates the reed sensor: a magnet on the moving part or on its support is enough, conveyors included.",
+    "只要有合适的磁场驱动干簧管传感器，就可以检测位置：在运动部件或其支架上安装一块磁铁即可，输送机同样适用。",
+    "Die Position lässt sich erfassen, wenn ein passendes Magnetfeld den Reed-Sensor betätigt: Ein Magnet am bewegten Teil oder an seiner Halterung genügt, auch auf Förderbändern.",
+    "La posición puede detectarse si un campo magnético adecuado acciona el sensor reed: basta un imán en la pieza móvil o en su soporte, también en transportadores.",
+    "Положение можно определить, если подходящее магнитное поле воздействует на геркон: достаточно магнита на подвижной детали или её опоре, в том числе на конвейере.",
+    "La posizione può essere rilevata se un campo magnetico adeguato aziona il sensore reed: basta un magnete sulla parte mobile o sul suo supporto, anche su nastro trasportatore.",
+    "適切な磁界がリードセンサーを動作させれば位置は検出できます。可動部またはその支持部に磁石を1個取り付けるだけで足り、コンベヤーでも同様です。"
   ],
   "La position réelle de la machine au moment du relevé n'est pas documentée.": [
     "The actual machine position at the time of survey is not documented.",
@@ -11689,6 +12193,15 @@
     "Ключевой вопрос: {0}",
     "La domanda chiave è: {0}",
     "重要な質問：{0}"
+  ],
+  "La relecture du serveur a échoué.": [
+    "Re-reading from the server failed.",
+    "从服务器重新读取失败。",
+    "Das erneute Lesen vom Server ist fehlgeschlagen.",
+    "La relectura del servidor ha fallado.",
+    "Повторное чтение с сервера не удалось.",
+    "La rilettura dal server è fallita.",
+    "サーバーからの再読み込みに失敗しました。"
   ],
   "La reprise de cette proposition n'a pas été enregistrée.": [
     "The resumption of this proposal was not saved.",
@@ -11815,6 +12328,15 @@
     "Напряжение AC — RMS или пиковое?",
     "La tensione AC è RMS o picco?",
     "AC電圧はRMSですか、ピーク値ですか？"
+  ],
+  "La tige du vérin, en acier, portant un aimant permanent.": [
+    "The steel cylinder rod, carrying a permanent magnet.",
+    "气缸钢制活塞杆，带永磁体。",
+    "Die Stahlstange des Zylinders mit einem Permanentmagneten.",
+    "El vástago de acero del cilindro, con un imán permanente.",
+    "Стальной шток цилиндра с постоянным магнитом.",
+    "L'asta in acciaio del cilindro, con un magnete permanente.",
+    "シリンダーの鋼製ロッド、永久磁石付き。"
   ],
   "La tolérance doit rester inférieure à chacune des deux distances.": [
     "Tolerance must be smaller than both distances.",
@@ -11977,6 +12499,24 @@
     "Латунь",
     "Ottone",
     "黄銅"
+  ],
+  "Lampe allumée": [
+    "Lamp on",
+    "灯亮",
+    "Lampe an",
+    "Lámpara encendida",
+    "Лампа включена",
+    "Lampada accesa",
+    "ランプ点灯"
+  ],
+  "Lampe éteinte": [
+    "Lamp off",
+    "灯灭",
+    "Lampe aus",
+    "Lámpara apagada",
+    "Лампа выключена",
+    "Lampada spenta",
+    "ランプ消灯"
   ],
   "Lancement série": [
     "Series launch",
@@ -12275,6 +12815,15 @@
     "Sensore e magnete mantengono esattamente la posa relativa.",
     "センサーと磁石は相対姿勢をそのまま保ちます。"
   ],
+  "Le capteur ne peut pas couper lui-même l'alimentation du moteur": [
+    "The sensor cannot switch the motor supply itself",
+    "传感器无法自行切断电机供电",
+    "Der Sensor kann die Motorversorgung nicht selbst schalten",
+    "El sensor no puede cortar por sí mismo la alimentación del motor",
+    "Датчик не может сам коммутировать питание двигателя",
+    "Il sensore non può interrompere da solo l'alimentazione del motore",
+    "センサー自体でモーター電源を開閉することはできません"
+  ],
   "Le capteur tient-il dans l'espace prévu ?": [
     "Does the sensor fit the available space?",
     "传感器能放入预留空间吗？",
@@ -12328,6 +12877,15 @@
     "Выбранное решение фиксирует это сравнение. Положение и магнит в 3D-мастерской настраиваются отдельно.",
     "La soluzione scelta documenta questo confronto. Posizione e magnete dell'officina 3D vanno impostati separatamente.",
     "選択した方案はこの比較を記録します。3D作業場の配置と磁石は別途設定してください。"
+  ],
+  "Le circuit de puissance du moteur et le circuit de signal du capteur restent deux circuits distincts.": [
+    "The motor power circuit and the sensor signal circuit remain two distinct circuits.",
+    "电机功率回路与传感器信号回路始终是两个独立回路。",
+    "Der Leistungskreis des Motors und der Signalkreis des Sensors bleiben zwei getrennte Kreise.",
+    "El circuito de potencia del motor y el circuito de señal del sensor siguen siendo dos circuitos distintos.",
+    "Силовая цепь двигателя и сигнальная цепь датчика остаются двумя разными цепями.",
+    "Il circuito di potenza del motore e il circuito di segnale del sensore restano due circuiti distinti.",
+    "モーターの動力回路とセンサーの信号回路は、あくまで別々の回路です。"
   ],
   "Le comportement du capteur nécessite des tests en environnement réel": [
     "The sensor behaviour requires testing in a real environment",
@@ -12445,6 +13003,15 @@
     "Стоимость оснастки должна быть положительным числом или нулем.",
     "Il costo delle attrezzature deve essere un numero positivo o zero.",
     "金型費用は正の数またはゼロである必要があります。"
+  ],
+  "Le câblage habituel": [
+    "The usual wiring",
+    "常规接线方式",
+    "Die übliche Verdrahtung",
+    "El cableado habitual",
+    "Обычная схема подключения",
+    "Il cablaggio abituale",
+    "一般的な配線"
   ],
   "Le dernier administrateur actif ne peut pas être retiré : le serveur refuse l'opération.": [
     "The last active administrator cannot be removed: the server refuses the operation.",
@@ -12716,6 +13283,15 @@
     "Il movimento proviene dal suo file: si imposta nel passaggio precedente, insieme ai fissaggi, al nodo mobile e alla corsa.",
     "動きはファイルから来ます。前のステップで、取り付け・可動ノード・ストロークとあわせて設定します。"
   ],
+  "Le mouvement, la course et les états à distinguer.": [
+    "The movement, the travel and the states to distinguish.",
+    "运动方式、行程以及需区分的状态。",
+    "Die Bewegung, der Weg und die zu unterscheidenden Zustände.",
+    "El movimiento, el recorrido y los estados a distinguir.",
+    "Движение, ход и состояния, которые нужно различать.",
+    "Il movimento, la corsa e gli stati da distinguere.",
+    "動き、ストローク、区別する状態。"
+  ],
   "Le nom du projet ne peut pas être vide.": [
     "The project name cannot be empty.",
     "项目名称不能为空。",
@@ -12860,6 +13436,15 @@
     "Il serbatoio scorre orizzontalmente per 40 mm. Magnete integrato; rilevamento a 3–6 mm dal sensore.",
     "タンクが水平方向に40 mmスライド。内蔵磁石をセンサーから3–6 mmで検出。"
   ],
+  "Le réservoir d’eau amovible, en plastique, poignée vers l’avant.": [
+    "The removable plastic water tank, handle facing forward.",
+    "可拆卸塑料水箱，把手朝前。",
+    "Der abnehmbare Kunststoff-Wassertank, Griff nach vorn.",
+    "El depósito de agua de plástico extraíble, con el asa hacia delante.",
+    "Съёмный пластиковый бак для воды, ручка вперёд.",
+    "Il serbatoio d'acqua di plastica rimovibile, con maniglia in avanti.",
+    "取り外し式の樹脂製給水タンク、ハンドルは前向き。"
+  ],
   "Le résultat": [
     "The result",
     "结果",
@@ -12967,6 +13552,15 @@
     "Ход ящика 30 mm. Контакт замкнут при вставке, разомкнут при выдвижении на 5 mm.",
     "Il cassetto avanza di 30 mm. Contatto chiuso da inserito, aperto dopo un’estrazione di 5 mm.",
     "引き出しの移動量30 mm。挿入時に閉接点、5 mm引き出すと開接点。"
+  ],
+  "Le tiroir de cartouche, en tôle pliée, avec un aimant déjà intégré.": [
+    "The cartridge drawer, in folded sheet metal, with a magnet already fitted.",
+    "折弯钣金制的药盒抽屉，已内置磁铁。",
+    "Die Kassettenschublade aus Blech, mit bereits integriertem Magneten.",
+    "El cajón de cartucho, de chapa plegada, con imán ya integrado.",
+    "Кассетный ящик из гнутого листа, с уже встроенным магнитом.",
+    "Il cassetto della cartuccia, in lamiera piegata, con magnete già integrato.",
+    "曲げ板金製のカートリッジ引き出し、マグネット内蔵済み。"
   ],
   "Le ton est-il clair et professionnel ?": [
     "Is the tone clear and professional?",
@@ -13120,6 +13714,15 @@
     "Размеры относятся к корпусу. Предусмотрите место для кабелей, выводов, гаек, адаптеров и зазоров.",
     "Le dimensioni sono del corpo. Prevedere spazio per cavi, terminali, dadi, adattatori e giochi di montaggio.",
     "寸法は本体のみです。ケーブル、端子、ナット、アダプター、取り付け隙間も確保してください。"
+  ],
+  "Les distances d'une démonstration ne valent pas vérification de votre application : ce point de compatibilité reste à traiter.": [
+    "Demonstration distances are not a verification of your application: this compatibility point still has to be addressed.",
+    "演示距离不等于对您应用的验证：该兼容性问题仍待处理。",
+    "Abstände aus einer Demonstration sind keine Prüfung Ihrer Anwendung: dieser Kompatibilitätspunkt ist noch zu klären.",
+    "Las distancias de una demostración no equivalen a una verificación de su aplicación: este punto de compatibilidad sigue pendiente.",
+    "Расстояния в демонстрации не являются проверкой вашего применения: этот вопрос совместимости остаётся открытым.",
+    "Le distanze di una dimostrazione non equivalgono a una verifica della vostra applicazione: questo punto di compatibilità resta da risolvere.",
+    "デモの距離はお客様の用途の検証にはなりません。この互換性の点は未解決です。"
   ],
   "Les distances de ce couple ne sont pas publiées.": [
     "The distances for this pair are not published.",
@@ -13373,6 +13976,15 @@
     "Link di download aperto (valido per alcuni minuti).",
     "ダウンロードリンクが開かれました（数分間有効）。"
   ],
+  "Ligne enregistrée, mais la relecture a échoué : les simulations peuvent encore afficher la valeur précédente.": [
+    "Row saved, but re-reading failed: simulations may still show the previous value.",
+    "该行已保存，但重新读取失败：模拟可能仍显示旧值。",
+    "Zeile gespeichert, aber das erneute Lesen ist fehlgeschlagen: Simulationen können noch den vorherigen Wert zeigen.",
+    "Línea guardada, pero la relectura ha fallado: las simulaciones pueden mostrar aún el valor anterior.",
+    "Строка сохранена, но повторное чтение не удалось: в симуляциях может остаться прежнее значение.",
+    "Riga salvata, ma la rilettura è fallita: le simulazioni possono ancora mostrare il valore precedente.",
+    "行は保存されましたが再読み込みに失敗しました。シミュレーションに以前の値が残る場合があります。"
+  ],
   "Ligne enregistrée. Les simulations utilisent la nouvelle valeur.": [
     "Row saved. Simulations now use the new value.",
     "该行已保存。仿真已使用新数值。",
@@ -13381,6 +13993,15 @@
     "Строка сохранена. Симуляции используют новое значение.",
     "Riga salvata. Le simulazioni usano il nuovo valore.",
     "行を保存しました。シミュレーションは新しい値を使用します。"
+  ],
+  "Ligne introuvable sur le serveur": [
+    "Row not found on the server",
+    "服务器上找不到该行",
+    "Zeile auf dem Server nicht gefunden",
+    "Línea no encontrada en el servidor",
+    "Строка не найдена на сервере",
+    "Riga non trovata sul server",
+    "サーバーに該当する行がありません"
   ],
   "Ligne modifiée entre-temps": [
     "Row changed in the meantime",
@@ -13976,6 +14597,24 @@
     "Membro Standex",
     "Standexメンバー"
   ],
+  "Mention de la colonne « to »": [
+    "Note on the “to” column",
+    "“to”列的标注",
+    "Hinweis zur Spalte „to“",
+    "Mención de la columna «to»",
+    "Примечание к столбцу «to»",
+    "Nota della colonna «to»",
+    "「to」列の注記"
+  ],
+  "Mention de la colonne « up »": [
+    "Note on the “up” column",
+    "“up”列的标注",
+    "Hinweis zur Spalte „up“",
+    "Mención de la columna «up»",
+    "Примечание к столбцу «up»",
+    "Nota della colonna «up»",
+    "「up」列の注記"
+  ],
   "Menu": [
     "Menu",
     "菜单",
@@ -14210,6 +14849,15 @@
     "Modifiche non inviate",
     "未送信の変更"
   ],
+  "Modifications possibles": [
+    "Possible changes",
+    "可行的修改",
+    "Mögliche Änderungen",
+    "Modificaciones posibles",
+    "Возможные изменения",
+    "Modifiche possibili",
+    "考えられる変更"
+  ],
   "Modifier": [
     "Edit",
     "修改",
@@ -14218,6 +14866,15 @@
     "Изменить",
     "Modifica",
     "変更"
+  ],
+  "Modifier cette réponse": [
+    "Edit this answer",
+    "修改此回答",
+    "Diese Antwort ändern",
+    "Modificar esta respuesta",
+    "Изменить этот ответ",
+    "Modifica questa risposta",
+    "この回答を修正"
   ],
   "Modifier la fiche": [
     "Edit the record",
@@ -14236,6 +14893,15 @@
     "Изменить строку",
     "Modifica la riga",
     "行を編集"
+  ],
+  "Modifier la plage du guide": [
+    "Edit the guide range",
+    "修改指南范围",
+    "Leitfadenbereich bearbeiten",
+    "Modificar el rango del guía",
+    "Изменить диапазон руководства",
+    "Modifica l'intervallo della guida",
+    "ガイド範囲を編集"
   ],
   "Modifier mes réponses": [
     "Edit my answers",
@@ -14363,6 +15029,24 @@
     "Meno di 1.000 sensori/anno: tramite distributori partner.",
     "年間1,000個未満のセンサー：提携代理店経由となります。"
   ],
+  "Mois précédent": [
+    "Previous month",
+    "上一个月",
+    "Vorheriger Monat",
+    "Mes anterior",
+    "Предыдущий месяц",
+    "Mese precedente",
+    "前の月"
+  ],
+  "Mois suivant": [
+    "Next month",
+    "下一个月",
+    "Nächster Monat",
+    "Mes siguiente",
+    "Следующий месяц",
+    "Mese successivo",
+    "次の月"
+  ],
   "Moment publié : {0} × 10⁻⁶ Vs·cm": [
     "Published moment: {0} × 10⁻⁶ Vs·cm",
     "公布磁矩：{0} × 10⁻⁶ Vs·cm",
@@ -14453,6 +15137,15 @@
     "Montaggio 3D integrato nel progetto: d'ora in avanti seguirà l'esportazione, il riepilogo e l'invio.",
     "3D取り付け構成をプロジェクトに適用しました。以降のエクスポート、要約、送信に含まれます。"
   ],
+  "Montage : position et fixation": [
+    "Mounting: position and fastening",
+    "安装：位置与固定",
+    "Montage: Position und Befestigung",
+    "Montaje: posición y fijación",
+    "Монтаж: положение и крепление",
+    "Montaggio: posizione e fissaggio",
+    "取り付け：位置と固定"
+  ],
   "Montage de l'atelier magnétique": [
     "Magnetic workshop assembly",
     "磁场工作室装配",
@@ -14470,6 +15163,15 @@
     "Монтаж отличается от положения в руководстве: диапазон остается ориентиром, который нужно подтвердить для вашей конфигурации.",
     "Il montaggio differisce dalla posizione della guida: l'intervallo resta un riferimento da confermare nella tua configurazione.",
     "取り付けはガイドの配置と異なります。この範囲は参考値であり、お使いの構成で確認が必要です。"
+  ],
+  "Montage du capteur": [
+    "Sensor mounting",
+    "传感器安装方式",
+    "Sensormontage",
+    "Montaje del sensor",
+    "Монтаж датчика",
+    "Montaggio del sensore",
+    "センサーの取付方法"
   ],
   "Montage encastré": [
     "Recessed installation",
@@ -14624,6 +15326,15 @@
     "Password",
     "パスワード"
   ],
+  "Moteur (circuit de puissance séparé)": [
+    "Motor (separate power circuit)",
+    "电机（独立功率回路）",
+    "Motor (separater Leistungskreis)",
+    "Motor (circuito de potencia separado)",
+    "Двигатель (отдельная силовая цепь)",
+    "Motore (circuito di potenza separato)",
+    "モーター（独立した動力回路）"
+  ],
   "Moteur déterministe gelé, contrat de réponse V0.2.": [
     "Frozen deterministic engine, response contract V0.2.",
     "冻结的确定性引擎，回复规范 V0.2。",
@@ -14686,6 +15397,15 @@
     "Движение открывания",
     "Movimento di apertura",
     "開く動き"
+  ],
+  "Mouvement et détection": [
+    "Movement and detection",
+    "运动与检测",
+    "Bewegung und Erkennung",
+    "Movimiento y detección",
+    "Движение и обнаружение",
+    "Movimento e rilevamento",
+    "動きと検出"
   ],
   "Mètres · standard GLB": [
     "Metres · GLB standard",
@@ -14822,6 +15542,15 @@
     "Natura della colonna",
     "列の種類"
   ],
+  "Nature de la donnée": [
+    "Kind of data",
+    "数据类型",
+    "Art der Daten",
+    "Naturaleza del dato",
+    "Тип данных",
+    "Natura del dato",
+    "データの種類"
+  ],
   "Nature de la source": [
     "Nature of the source",
     "来源性质",
@@ -14848,6 +15577,15 @@
     "Тип расстояний",
     "Natura delle distanze",
     "距離の種類"
+  ],
+  "Navigation entre les pages de l'annuaire": [
+    "Directory page navigation",
+    "目录翻页",
+    "Seitennavigation im Verzeichnis",
+    "Navegación entre páginas del directorio",
+    "Навигация по страницам каталога",
+    "Navigazione tra le pagine dell'elenco",
+    "ディレクトリのページ移動"
   ],
   "Navigation principale": [
     "Main navigation",
@@ -15046,6 +15784,15 @@
     "Не определено",
     "Non determinato",
     "未確定"
+  ],
+  "Non publié (« - »)": [
+    "Not published (“-”)",
+    "未公布（“-”）",
+    "Nicht veröffentlicht („-“)",
+    "No publicado («-»)",
+    "Не опубликовано («-»)",
+    "Non pubblicato («-»)",
+    "非公開（「-」）"
   ],
   "Non renseigné": [
     "Not specified",
@@ -15434,6 +16181,33 @@
     "Origine di questa versione inglese:",
     "この英語版の出所:"
   ],
+  "Ou conserver la contrainte « aucun aimant » : il faut alors évaluer une autre technologie de détection, par exemple inductive ou optique, selon la distance réelle et l'environnement. Aucun produit reed ne résout ce cas, et nous ne garantissons pas d'avance la performance d'une autre technologie.": [
+    "Or keep the “no magnet” constraint: another sensing technology must then be evaluated, for example inductive or optical, depending on the actual distance and environment. No reed product solves this case, and we do not guarantee the performance of another technology in advance.",
+    "或保留“不加磁铁”的约束：届时需评估其他检测技术，例如电感式或光学式，具体取决于实际距离和环境。没有干簧管产品能解决此情况，我们也不预先保证其他技术的性能。",
+    "Oder die Vorgabe „kein Magnet“ beibehalten: Dann ist eine andere Sensortechnologie zu prüfen, etwa induktiv oder optisch, je nach tatsächlichem Abstand und Umgebung. Kein Reed-Produkt löst diesen Fall, und wir garantieren die Leistung einer anderen Technologie nicht im Voraus.",
+    "O mantener la restricción «sin imán»: entonces hay que evaluar otra tecnología de detección, por ejemplo inductiva u óptica, según la distancia real y el entorno. Ningún producto reed resuelve este caso y no garantizamos por adelantado el rendimiento de otra tecnología.",
+    "Либо сохранить условие «без магнита»: тогда следует оценить другую технологию обнаружения, например индуктивную или оптическую, в зависимости от фактического расстояния и условий. Ни один герконовый продукт этот случай не решает, и мы не гарантируем заранее характеристики другой технологии.",
+    "Oppure mantenere il vincolo « nessun magnete »: occorre allora valutare un'altra tecnologia di rilevamento, per esempio induttiva o ottica, in funzione della distanza reale e dell'ambiente. Nessun prodotto reed risolve questo caso e non garantiamo in anticipo le prestazioni di un'altra tecnologia.",
+    "または「磁石なし」の制約を維持します。その場合は、実際の距離と環境に応じて、誘導式や光学式など別の検出技術を評価する必要があります。この事例を解決するリードスイッチ製品はなく、他技術の性能を事前に保証することもできません。"
+  ],
+  "Ou conserver la contrainte « aucun aimant » : il faut alors évaluer une autre technologie de détection, par exemple un détecteur inductif prévu pour l'aluminium ou une détection optique, selon la distance réelle et l'environnement. Aucun produit reed ne résout ce cas, et nous ne garantissons pas d'avance la performance d'une autre technologie.": [
+    "Or keep the “no magnet” constraint: another sensing technology must then be evaluated, for example an inductive detector rated for aluminium or optical detection, depending on the actual distance and environment. No reed product solves this case, and we do not guarantee the performance of another technology in advance.",
+    "或保留“不加磁铁”的约束：届时需评估其他检测技术，例如适用于铝的电感式检测器或光学检测，具体取决于实际距离和环境。没有干簧管产品能解决此情况，我们也不预先保证其他技术的性能。",
+    "Oder die Vorgabe „kein Magnet“ beibehalten: Dann ist eine andere Sensortechnologie zu prüfen, etwa ein für Aluminium geeigneter induktiver Sensor oder eine optische Erfassung, je nach tatsächlichem Abstand und Umgebung. Kein Reed-Produkt löst diesen Fall, und wir garantieren die Leistung einer anderen Technologie nicht im Voraus.",
+    "O mantener la restricción «sin imán»: entonces hay que evaluar otra tecnología de detección, por ejemplo un detector inductivo apto para el aluminio o una detección óptica, según la distancia real y el entorno. Ningún producto reed resuelve este caso y no garantizamos por adelantado el rendimiento de otra tecnología.",
+    "Либо сохранить условие «без магнита»: тогда следует оценить другую технологию обнаружения, например индуктивный датчик для алюминия или оптическое обнаружение, в зависимости от фактического расстояния и условий. Ни один герконовый продукт этот случай не решает, и мы не гарантируем заранее характеристики другой технологии.",
+    "Oppure mantenere il vincolo « nessun magnete »: occorre allora valutare un'altra tecnologia di rilevamento, per esempio un rilevatore induttivo adatto all'alluminio o un rilevamento ottico, in funzione della distanza reale e dell'ambiente. Nessun prodotto reed risolve questo caso e non garantiamo in anticipo le prestazioni di un'altra tecnologia.",
+    "または「磁石なし」の制約を維持します。その場合は、実際の距離と環境に応じて、アルミニウム対応の誘導式検出器や光学式検出など別の検出技術を評価する必要があります。この事例を解決するリードスイッチ製品はなく、他技術の性能を事前に保証することもできません。"
+  ],
+  "Ou conserver la contrainte « aucun aimant » : il faut alors évaluer une autre technologie de détection. Aucun produit reed ne résout ce cas et nous ne le présenterons pas comme résolu.": [
+    "Or keep the \"no magnet\" constraint: another sensing technology then has to be evaluated. No reed product solves this case and we will not present it as solved.",
+    "或保留“无磁铁”约束：那就需要评估其他检测技术。没有干簧管产品能解决该情形，我们也不会将其描述为已解决。",
+    "Oder behalten Sie die Vorgabe „kein Magnet“: dann ist eine andere Sensortechnologie zu prüfen. Kein Reed-Produkt löst diesen Fall, und wir stellen ihn nicht als gelöst dar.",
+    "O mantener la restricción «ningún imán»: habrá entonces que evaluar otra tecnología de detección. Ningún producto reed resuelve este caso y no lo presentaremos como resuelto.",
+    "Либо сохраните условие «без магнита»: тогда нужно рассмотреть другую технологию обнаружения. Ни один герконовый продукт этот случай не решает, и мы не станем выдавать его за решённый.",
+    "Oppure mantenere il vincolo «nessun magnete»: occorre allora valutare un'altra tecnologia di rilevamento. Nessun prodotto reed risolve questo caso e non lo presenteremo come risolto.",
+    "あるいは「磁石なし」の条件を維持する：その場合は別の検出技術を検討する必要があります。この案件をリード製品で解決することはできず、解決済みとして提示はしません。"
+  ],
   "Oui": [
     "Yes",
     "是",
@@ -15731,6 +16505,15 @@
     "Dove si posiziona il sensore?",
     "センサーの配置場所"
   ],
+  "Où placer le capteur, et comment le tenir ?": [
+    "Where would the sensor go, and how would it be held?",
+    "传感器放在哪里，如何固定？",
+    "Wo soll der Sensor sitzen, und wie wird er gehalten?",
+    "¿Dónde iría el sensor y cómo se sujetaría?",
+    "Где разместить датчик и как его закрепить?",
+    "Dove collocare il sensore e come fissarlo?",
+    "センサーをどこに置き、どう固定しますか？"
+  ],
   "Où votre conception casse": [
     "Where your design fails",
     "设计失效边界",
@@ -15812,23 +16595,32 @@
     "Pacchetto revisione qualitativa - Assistente Standex",
     "定性レビューパック - Standexアシスタント"
   ],
-  "Navigation entre les pages de l'annuaire": [
-    "Directory page navigation",
-    "目录翻页",
-    "Seitennavigation im Verzeichnis",
-    "Navegación entre páginas del directorio",
-    "Навигация по страницам каталога",
-    "Navigazione tra le pagine dell'elenco",
-    "ディレクトリのページ移動"
+  "Page": [
+    "Page",
+    "页",
+    "Seite",
+    "Página",
+    "Страница",
+    "Pagina",
+    "ページ"
   ],
-  "Page {0} sur {1}": [
-    "Page {0} of {1}",
-    "第 {0} 页，共 {1} 页",
-    "Seite {0} von {1}",
-    "Página {0} de {1}",
-    "Страница {0} из {1}",
-    "Pagina {0} di {1}",
-    "{1} ページ中 {0} ページ目"
+  "Page de la brochure requise": [
+    "Brochure page required",
+    "需填写手册页码",
+    "Broschürenseite erforderlich",
+    "Se requiere la página del folleto",
+    "Требуется страница брошюры",
+    "Pagina della brochure obbligatoria",
+    "カタログのページが必要です"
+  ],
+  "Page introuvable": [
+    "Page not found",
+    "页面不存在",
+    "Seite nicht gefunden",
+    "Página no encontrada",
+    "Страница не найдена",
+    "Pagina non trovata",
+    "ページが見つかりません"
   ],
   "Page précédente": [
     "Previous page",
@@ -15848,14 +16640,14 @@
     "Pagina successiva",
     "次のページ"
   ],
-  "Page introuvable": [
-    "Page not found",
-    "页面不存在",
-    "Seite nicht gefunden",
-    "Página no encontrada",
-    "Страница не найдена",
-    "Pagina non trovata",
-    "ページが見つかりません"
+  "Page {0} sur {1}": [
+    "Page {0} of {1}",
+    "第 {0} 页，共 {1} 页",
+    "Seite {0} von {1}",
+    "Página {0} de {1}",
+    "Страница {0} из {1}",
+    "Pagina {0} di {1}",
+    "{1} ページ中 {0} ページ目"
   ],
   "Paliers « quantité:prix » (une ligne par palier)": [
     "\"Quantity:price\" tiers (one line per tier)",
@@ -16397,6 +17189,15 @@
     "Intervallo termico non dichiarato",
     "温度範囲未入力"
   ],
+  "Plage documentaire indicative, sans validation de la simulation.": [
+    "Indicative documented range; this does not validate the simulation.",
+    "文档中的参考范围；不构成仿真验证。",
+    "Indikativer dokumentierter Bereich; keine Validierung der Simulation.",
+    "Rango documental indicativo; no valida la simulación.",
+    "Ориентировочный документированный диапазон; он не подтверждает симуляцию.",
+    "Intervallo documentale indicativo; non convalida la simulazione.",
+    "文書上の参考範囲であり、シミュレーションの検証ではありません。"
+  ],
   "Plage documentée : {0} à {1} mm — {2}, {3}": [
     "Documented range: {0} to {1} mm — {2}, {3}",
     "已记录范围：{0} 至 {1} mm — {2}，{3}",
@@ -16424,6 +17225,33 @@
     "Intervallo della guida disponibile",
     "ガイドの範囲データあり"
   ],
+  "Plage du guide enregistrée. Elle reste documentaire, jamais un seuil.": [
+    "Guide range saved. It stays documentary, never a threshold.",
+    "指南范围已保存。它仅作资料，绝非阈值。",
+    "Leitfadenbereich gespeichert. Er bleibt dokumentarisch, niemals ein Schwellenwert.",
+    "Rango del guía guardado. Sigue siendo documental, nunca un umbral.",
+    "Диапазон руководства сохранён. Он остаётся справочным, а не порогом.",
+    "Intervallo della guida salvato. Resta documentale, mai una soglia.",
+    "ガイド範囲を保存しました。資料値であり、しきい値ではありません。"
+  ],
+  "Plage indicative d'activation": [
+    "Indicative activation range",
+    "参考动作范围",
+    "Indikativer Aktivierungsbereich",
+    "Rango indicativo de activación",
+    "Ориентировочный диапазон срабатывания",
+    "Intervallo indicativo di attivazione",
+    "参考動作範囲"
+  ],
+  "Plages du guide (documentaires)": [
+    "Guide ranges (documentary)",
+    "指南范围（资料）",
+    "Leitfadenbereiche (dokumentarisch)",
+    "Rangos del guía (documentales)",
+    "Диапазоны руководства (справочные)",
+    "Intervalli della guida (documentali)",
+    "ガイド範囲（資料）"
+  ],
   "Plages du guide d'activation disponibles, mais aucun seuil qualifié pour ce couple — Standex peut le mesurer": [
     "Activation guide ranges are available, but no qualified threshold for this pair — Standex can measure it",
     "可查阅激活指南的范围，但该组合没有经过验证的阈值——Standex 可以进行测量",
@@ -16441,6 +17269,15 @@
     "Опубликованные диапазоны с {0}",
     "Intervalli pubblicati con {0}",
     "{0} の公表範囲"
+  ],
+  "Plages « up » et « to » de la brochure d'activation. Ce sont des plages documentaires : elles ne sont ni des seuils d'activation, ni des seuils de relâchement, et ne sont jamais réordonnées.": [
+    "“up” and “to” ranges from the activation brochure. They are documentary ranges: neither activation nor release thresholds, and never reordered.",
+    "激活手册中的“up”与“to”范围。它们是资料范围：既不是动作阈值也不是释放阈值，且从不重新排序。",
+    "„up“- und „to“-Bereiche aus der Aktivierungsbroschüre. Es sind dokumentarische Bereiche: weder Anzugs- noch Abfallwerte, und sie werden nie umsortiert.",
+    "Rangos «up» y «to» del folleto de activación. Son rangos documentales: ni umbrales de activación ni de liberación, y nunca se reordenan.",
+    "Диапазоны «up» и «to» из брошюры активации. Это справочные диапазоны: не пороги срабатывания или отпускания, и они никогда не переупорядочиваются.",
+    "Intervalli «up» e «to» della brochure di attivazione. Sono intervalli documentali: né soglie di attivazione né di rilascio, e non vengono mai riordinati.",
+    "起動カタログの「up」「to」範囲です。資料としての範囲であり、動作値でも復帰値でもなく、並べ替えもしません。"
   ],
   "Plan et axe de référence": [
     "Reference plane and axis",
@@ -16495,6 +17332,15 @@
     "Точка датчика",
     "Punto sensore",
     "センサーポイント"
+  ],
+  "Point de compatibilité à traiter": [
+    "Compatibility point to address",
+    "待处理的兼容性问题",
+    "Zu klärender Kompatibilitätspunkt",
+    "Punto de compatibilidad pendiente",
+    "Открытый вопрос совместимости",
+    "Punto di compatibilità da risolvere",
+    "対応が必要な互換性の点"
   ],
   "Point de connexion": [
     "Connection point",
@@ -16559,6 +17405,15 @@
     "Indicare l'uscita del sensore, i punti di passaggio e il punto di connessione nella scena. La lunghezza misura la polilinea.",
     "シーンでセンサー出口、経由点、接続点を指定します。長さは折れ線を測ります。"
   ],
+  "Points à revoir avant de proposer des produits": [
+    "Points to revisit before proposing products",
+    "在推荐产品前需复核的要点",
+    "Punkte, die vor Produktvorschlägen zu klären sind",
+    "Puntos a revisar antes de proponer productos",
+    "Вопросы, требующие уточнения до подбора продукции",
+    "Punti da rivedere prima di proporre prodotti",
+    "製品をご提案する前に見直す点"
+  ],
   "Portée courte ici, tenue en température élevée": [
     "Short reach here, high-temperature capability",
     "此处作用距离短，耐高温",
@@ -16567,6 +17422,15 @@
     "Здесь малая дистанция, стойкость к высокой температуре",
     "Portata corta qui, resistenza alle alte temperature",
     "ここでは動作距離が短いが高温に強い"
+  ],
+  "Portée de cette famille documentée :": [
+    "Scope of this documented family:",
+    "该记录系列的适用范围：",
+    "Geltungsbereich dieser dokumentierten Familie:",
+    "Alcance de esta familia documentada:",
+    "Область действия этого документированного семейства:",
+    "Ambito di questa famiglia documentata:",
+    "この記載ファミリーの適用範囲："
   ],
   "Portée de la revue": [
     "Review scope",
@@ -16684,6 +17548,15 @@
     "Положение и среда",
     "Posizione e ambiente",
     "位置と環境"
+  ],
+  "Position et fixation seulement : les dimensions se saisissent juste en dessous.": [
+    "Position and fastening only: dimensions are entered just below.",
+    "仅填写位置与固定方式：尺寸在下方填写。",
+    "Nur Position und Befestigung: Die Abmessungen werden direkt darunter eingegeben.",
+    "Solo posición y fijación: las dimensiones se introducen justo debajo.",
+    "Только положение и крепление: размеры вводятся ниже.",
+    "Solo posizione e fissaggio: le dimensioni si inseriscono qui sotto.",
+    "位置と固定方法のみ：寸法はすぐ下で入力します。"
   ],
   "Position fermée": [
     "Closed position",
@@ -16991,6 +17864,15 @@
     "Profilo basso",
     "低背形状"
   ],
+  "Projet envoyé": [
+    "Project sent",
+    "项目已发送",
+    "Projekt gesendet",
+    "Proyecto enviado",
+    "Проект отправлен",
+    "Progetto inviato",
+    "プロジェクトを送信しました"
+  ],
   "Projet repris": [
     "Case file resumed",
     "案卷已恢复",
@@ -17117,6 +17999,15 @@
     "Provenienza delle vostre informazioni",
     "情報のソース"
   ],
+  "Précautions de manipulation et de charge — Standex": [
+    "Handling and load precautions — Standex",
+    "操作与负载注意事项 — Standex",
+    "Handhabungs- und Lasthinweise — Standex",
+    "Precauciones de manipulación y carga — Standex",
+    "Меры при обращении и по нагрузке — Standex",
+    "Precauzioni di manipolazione e di carico — Standex",
+    "取り扱いおよび負荷に関する注意事項 — Standex"
+  ],
   "Préciser la mécanique et la place disponible (facultatif)": [
     "Specify mechanics and available space (optional)",
     "说明机械结构和可用空间（可选）",
@@ -17161,6 +18052,15 @@
     "Пояснение производителя к звёздочке ↗",
     "Chiarimento del produttore sull'asterisco ↗",
     "アスタリスクのメーカー説明 ↗"
+  ],
+  "Précision supplémentaire": [
+    "Additional precision",
+    "补充说明",
+    "Zusätzliche Angabe",
+    "Precisión adicional",
+    "Дополнительное уточнение",
+    "Precisazione aggiuntiva",
+    "追加の補足情報"
   ],
   "Précision, répétabilité, durée de vie": [
     "Accuracy, repeatability, lifetime",
@@ -17324,6 +18224,15 @@
     "Anteprima della posizione suggerita",
     "推奨位置をプレビュー"
   ],
+  "Prévoir entre ce signal et le moteur un relais, un contacteur ou une interface de puissance dimensionnés pour la charge réelle du moteur.": [
+    "Place between that signal and the motor a relay, contactor or power interface rated for the motor's actual load.",
+    "在该信号与电机之间加入按电机实际负载选型的继电器、接触器或功率接口。",
+    "Sehen Sie zwischen diesem Signal und dem Motor ein Relais, einen Schütz oder eine Leistungsschnittstelle vor, die für die tatsächliche Motorlast ausgelegt ist.",
+    "Prevea entre esa señal y el motor un relé, un contactor o una interfaz de potencia dimensionados para la carga real del motor.",
+    "Предусмотрите между этим сигналом и двигателем реле, контактор или силовой интерфейс, рассчитанный на фактическую нагрузку двигателя.",
+    "Prevedete tra questo segnale e il motore un relè, un contattore o un'interfaccia di potenza dimensionati per il carico reale del motore.",
+    "その信号とモーターの間に、実際のモーター負荷に適合した リレー、コンタクタまたはパワーインターフェースを設けてください。"
+  ],
   "Prêt pour revue qualitative Thomas / Claude / BE.": [
     "Ready for Thomas / Claude / engineering review.",
     "可供 Thomas / Claude / 工程团队审核。",
@@ -17431,6 +18340,15 @@
     "Четыре шага: пара «датчик — магнит», положение, моделирование движения, кабель. Ваши настройки сохраняются, даже если вы закроете эту панель.",
     "Quattro passaggi: la coppia sensore-magnete, la posizione, la simulazione del movimento, il cavo. Le impostazioni restano in memoria anche chiudendo questo pannello.",
     "4つのステップ：センサーと磁石の組み合わせ、位置、動作シミュレーション、ケーブル。このパネルを閉じても設定は保持されます。"
+  ],
+  "Que doit-il supporter à cet endroit ?": [
+    "What must it withstand there?",
+    "在该位置需要承受什么？",
+    "Was muss er dort aushalten?",
+    "¿Qué debe soportar en ese lugar?",
+    "Что он должен выдерживать в этом месте?",
+    "Cosa deve sopportare in quel punto?",
+    "その場所で何に耐える必要がありますか？"
   ],
   "Que faut-il détecter exactement (objet, état, mouvement) ?": [
     "What exactly needs detecting (object, state, movement)?",
@@ -17648,6 +18566,15 @@
     "Quale grado di magnete e durata esposizione termica?",
     "磁石の材質グレードと熱曝露時間は？"
   ],
+  "Quelle pièce doit être détectée ?": [
+    "Which part must be detected?",
+    "需要检测哪个部件？",
+    "Welches Teil soll erkannt werden?",
+    "¿Qué pieza debe detectarse?",
+    "Какую деталь нужно обнаруживать?",
+    "Quale parte deve essere rilevata?",
+    "どの部品を検出しますか？"
+  ],
   "Quelle place avez-vous à cet endroit ?": [
     "How much space do you have at this location?",
     "该位置有多少可用空间？",
@@ -17782,6 +18709,15 @@
     "Вопрос {0} из {1}",
     "Domanda {0} di {1}",
     "質問 {0} / {1}"
+  ],
+  "Question {0} · {1}": [
+    "Question {0} · {1}",
+    "问题 {0} · {1}",
+    "Frage {0} · {1}",
+    "Pregunta {0} · {1}",
+    "Вопрос {0} · {1}",
+    "Domanda {0} · {1}",
+    "質問 {0} · {1}"
   ],
   "Questions": [
     "Questions",
@@ -18044,6 +18980,15 @@
     "Cerca (azienda, progetto, paese)",
     "検索（会社、案件、国）"
   ],
+  "Rechercher (société, projet, pays, identifiant)": [
+    "Search (company, project, country, identifier)",
+    "搜索（公司、项目、国家、标识符）",
+    "Suchen (Firma, Projekt, Land, Kennung)",
+    "Buscar (empresa, proyecto, país, identificador)",
+    "Поиск (компания, проект, страна, идентификатор)",
+    "Cerca (azienda, progetto, paese, identificativo)",
+    "検索（会社、案件、国、識別子）"
+  ],
   "Rechercher MK24, cylindrique, miniature…": [
     "Search MK24, cylindrical, miniature…",
     "搜索 MK24、圆柱形、微型…",
@@ -18089,6 +19034,15 @@
     "Consigliato",
     "推奨"
   ],
+  "Reed": [
+    "Reed",
+    "干簧管",
+    "Reed",
+    "Reed",
+    "Геркон",
+    "Reed",
+    "リード"
+  ],
   "Reed miniature surmoulé, connexions repliées sous le boîtier": [
     "Miniature overmoulded reed, terminals folded beneath the housing",
     "微型包塑干簧管，端子折于外壳下方",
@@ -18125,6 +19079,15 @@
     "Reed sovrastampato per circuito stampato",
     "プリント基板用モールドリードスイッチ"
   ],
+  "Reformuler l'application si le capteur doit encore alimenter le moteur lui-même.": [
+    "Reword the application if the sensor is still meant to power the motor itself.",
+    "如果仍要求传感器直接为电机供电，请重新描述应用。",
+    "Formulieren Sie die Anwendung neu, wenn der Sensor den Motor weiterhin selbst speisen soll.",
+    "Reformule la aplicación si el sensor debe seguir alimentando el motor.",
+    "Переформулируйте задачу, если датчик по-прежнему должен сам питать двигатель.",
+    "Riformulate l'applicazione se il sensore deve ancora alimentare il motore.",
+    "センサー自体がモーターに給電する前提が残る場合は、用途の記述を見直してください。"
+  ],
   "Registre de migrations vide côté serveur.": [
     "Server-side migration registry is empty.",
     "服务器端迁移注册表为空。",
@@ -18142,6 +19105,15 @@
     "Повторить тестовый сценарий",
     "Ripeti scenario di test",
     "試験シナリオを再実行"
+  ],
+  "Relais ou contacteur dimensionné pour la charge": [
+    "Relay or contactor rated for the load",
+    "按负载选型的继电器或接触器",
+    "Relais oder Schütz, für die Last ausgelegt",
+    "Relé o contactor dimensionado para la carga",
+    "Реле или контактор, рассчитанный на нагрузку",
+    "Relè o contattore dimensionato per il carico",
+    "負荷に適合したリレーまたはコンタクタ"
   ],
   "Relancer Claude": [
     "Run Claude again",
@@ -18431,6 +19403,15 @@
     "Riferimento magnetico",
     "磁極の目印"
   ],
+  "Repérer le passage ou la position d'une pièce mobile avec un capteur reed ne pose aucune difficulté en soi, y compris sur un convoyeur.": [
+    "Detecting the passage or position of a moving part with a reed sensor is not a difficulty in itself, including on a conveyor.",
+    "用干簧管传感器检测运动件的经过或位置本身并不困难，输送线上同样如此。",
+    "Den Durchgang oder die Position eines bewegten Teils mit einem Reed-Sensor zu erfassen, ist an sich kein Problem, auch nicht auf einem Förderband.",
+    "Detectar el paso o la posición de una pieza móvil con un sensor reed no supone dificultad en sí, incluso en un transportador.",
+    "Определить прохождение или положение движущейся детали герконовым датчиком само по себе несложно, в том числе на конвейере.",
+    "Rilevare il passaggio o la posizione di un pezzo mobile con un sensore reed non è di per sé un problema, anche su un convogliatore.",
+    "リードセンサーで可動部品の通過や位置を捉えること自体は、コンベヤ上でも問題ありません。"
+  ],
   "Respecter simultanément les limites de tension, de courant et de puissance. Les valeurs tension et courant s'entendent en continu ou en crête alternative, selon la fiche.": [
     "Voltage, current and power limits must all be respected. Voltage and current are DC or peak AC as stated in the datasheet.",
     "电压、电流和功率限制必须同时满足。根据数据表，电压和电流为直流或交流峰值。",
@@ -18529,6 +19510,15 @@
     "Убрать фильтр {0}",
     "Rimuovi il filtro {0}",
     "フィルター {0} を解除"
+  ],
+  "Retirer le refus d'un relais ou d'un contacteur, ou expliquer ce qui l'empêche chez vous : sans interface, aucun capteur reed ne convient.": [
+    "Remove the refusal of a relay or contactor, or explain what prevents it on your side: without an interface, no reed sensor is suitable.",
+    "取消对继电器或接触器的排除，或说明您方面的限制：没有接口，任何干簧管传感器都不适用。",
+    "Streichen Sie die Ablehnung eines Relais oder Schützes oder erklären Sie, was bei Ihnen dagegen spricht: ohne Schnittstelle ist kein Reed-Sensor geeignet.",
+    "Retire el rechazo de un relé o contactor, o explique qué lo impide en su caso: sin interfaz, ningún sensor reed es adecuado.",
+    "Снимите отказ от реле или контактора либо объясните, что этому мешает: без интерфейса ни один герконовый датчик не подходит.",
+    "Rimuovete il rifiuto di un relè o di un contattore, oppure spiegate cosa lo impedisce da voi: senza interfaccia nessun sensore reed è adatto.",
+    "リレーやコンタクタを使わないという条件を外すか、使えない理由をご説明ください。インターフェースなしでは適合するリードセンサーはありません。"
   ],
   "Retirez un filtre pour élargir la recherche.": [
     "Remove a filter to widen the search.",
@@ -18791,6 +19781,24 @@
     "Tornare a una posizione documentata",
     "文書化された位置に戻す"
   ],
+  "Revoir aussi la réponse de montage qui interdit tout aimant, sinon la contradiction demeure, puis indiquer la distance réelle entre l'aimant et le capteur.": [
+    "Also revise the mounting answer that forbids any magnet, otherwise the contradiction remains, then state the actual distance between magnet and sensor.",
+    "同时修改禁止使用磁铁的安装回答，否则矛盾仍然存在，然后给出磁铁与传感器之间的实际距离。",
+    "Überarbeiten Sie auch die Montageantwort, die jeden Magneten verbietet, sonst bleibt der Widerspruch, und geben Sie dann den tatsächlichen Abstand zwischen Magnet und Sensor an.",
+    "Revise también la respuesta de montaje que prohíbe todo imán, de lo contrario la contradicción persiste, e indique luego la distancia real entre imán y sensor.",
+    "Также измените ответ о монтаже, запрещающий любой магнит, иначе противоречие сохранится, и укажите фактическое расстояние между магнитом и датчиком.",
+    "Rivedete anche la risposta di montaggio che vieta ogni magnete, altrimenti la contraddizione resta, poi indicate la distanza reale tra magnete e sensore.",
+    "磁石を禁止している取り付けの回答も見直してください。そのままでは矛盾が残ります。その上で磁石とセンサーの実際の距離をご記入ください。"
+  ],
+  "Revoir aussi la réponse de montage qui interdit tout aimant, sinon la contradiction demeure.": [
+    "Also revise the mounting answer that forbids any magnet, otherwise the contradiction remains.",
+    "同时修改禁止使用任何磁铁的安装回答，否则矛盾依然存在。",
+    "Überarbeiten Sie auch die Montageantwort, die jeden Magneten verbietet, sonst bleibt der Widerspruch bestehen.",
+    "Revise también la respuesta de montaje que prohíbe cualquier imán; de lo contrario, la contradicción permanece.",
+    "Измените также ответ о монтаже, запрещающий любой магнит, иначе противоречие сохранится.",
+    "Rivedere anche la risposta di montaggio che vieta qualsiasi magnete, altrimenti la contraddizione resta.",
+    "磁石を一切禁じている取り付けの回答も見直してください。そのままでは矛盾が残ります。"
+  ],
   "Revoir le moteur déterministe avant de brancher un vrai assistant.": [
     "Review the deterministic engine before connecting a live assistant.",
     "接入真实助手前请检查确定性引擎。",
@@ -18799,6 +19807,24 @@
     "Проверьте детерминированный движок до подключения реального помощника.",
     "Rivedi il motore deterministico prima di collegare un assistente reale.",
     "実際のアシスタント接続前に決定論的エンジンを確認してください。"
+  ],
+  "Revoir les points de compatibilité": [
+    "Review the compatibility points",
+    "查看兼容性要点",
+    "Kompatibilitätspunkte prüfen",
+    "Revisar los puntos de compatibilidad",
+    "Просмотреть вопросы совместимости",
+    "Rivedere i punti di compatibilità",
+    "互換性の要点を確認する"
+  ],
+  "Revoir vos réponses": [
+    "Revise your answers",
+    "修改您的回答",
+    "Ihre Antworten überarbeiten",
+    "Revisar sus respuestas",
+    "Изменить ваши ответы",
+    "Rivedere le vostre risposte",
+    "ご回答を見直す"
   ],
   "Revue": [
     "Review",
@@ -18953,6 +19979,15 @@
     "Nulla viene dedotto dal tuo testo. Queste scelte servono solo a prefiltrare i sensori e restano modificabili.",
     "入力された文章から推測は行いません。これらの選択はセンサーの事前絞り込みのみに使われ、後から変更できます。"
   ],
+  "Rien n'est déduit de votre texte. Ces valeurs servent seulement à préfiltrer les capteurs, et restent modifiables.": [
+    "Nothing is inferred from your text. These values only pre-filter sensors and remain editable.",
+    "不会从您的文字中推断任何内容。这些数值仅用于预筛选传感器，并可随时修改。",
+    "Aus Ihrem Text wird nichts abgeleitet. Diese Werte dienen nur der Vorauswahl der Sensoren und bleiben änderbar.",
+    "No se deduce nada de su texto. Estos valores solo prefiltran los sensores y siguen siendo modificables.",
+    "Из вашего текста ничего не выводится. Эти значения служат только для предварительного отбора датчиков и остаются изменяемыми.",
+    "Nulla viene dedotto dal suo testo. Questi valori servono solo a prefiltrare i sensori e restano modificabili.",
+    "入力された文章から推測は行いません。これらの値はセンサーの絞り込みのみに使われ、後から変更できます。"
+  ],
   "Rien à annoncer : aucun retour n'est publié sur ce dossier.": [
     "Nothing to announce: no feedback is published on this case file.",
     "无可通知内容：该档案尚未发布任何反馈。",
@@ -19106,6 +20141,15 @@
     "Riferimento della prova",
     "証明の参照番号"
   ],
+  "Référence documentaire": [
+    "Document reference",
+    "文档参考",
+    "Dokumentreferenz",
+    "Referencia documental",
+    "Документальная ссылка",
+    "Riferimento documentale",
+    "文書参照"
+  ],
   "Référence du guide": [
     "Guide reference",
     "指南型号",
@@ -19123,6 +20167,15 @@
     "Обозначение из руководства, используемое для демонстрации",
     "Riferimento della guida usato per la dimostrazione",
     "デモに使用するガイド掲載の型番"
+  ],
+  "Référence du projet": [
+    "Project reference",
+    "项目编号",
+    "Projektreferenz",
+    "Referencia del proyecto",
+    "Номер проекта",
+    "Riferimento del progetto",
+    "プロジェクト参照番号"
   ],
   "Référence exacte": [
     "Exact part number",
@@ -19186,6 +20239,33 @@
     "Требуется печатный артикул",
     "Riferimento stampato obbligatorio",
     "印刷型番が必要です"
+  ],
+  "Référence provisoire (brouillon non enregistré)": [
+    "Provisional reference (unsaved draft)",
+    "临时编号（未保存的草稿）",
+    "Vorläufige Referenz (nicht gespeicherter Entwurf)",
+    "Referencia provisional (borrador no guardado)",
+    "Предварительный номер (несохранённый черновик)",
+    "Riferimento provvisorio (bozza non salvata)",
+    "仮の参照番号（未保存の下書き）"
+  ],
+  "Référence provisoire du brouillon": [
+    "Provisional draft reference",
+    "草稿临时编号",
+    "Vorläufige Entwurfsreferenz",
+    "Referencia provisional del borrador",
+    "Предварительный номер черновика",
+    "Riferimento provvisorio della bozza",
+    "下書きの仮参照番号"
+  ],
+  "Référence provisoire imprimée sur le brouillon du client": [
+    "Provisional reference printed on the customer draft",
+    "打印在客户草稿上的临时编号",
+    "Vorläufige Referenz auf dem Kundenentwurf",
+    "Referencia provisional impresa en el borrador del cliente",
+    "Предварительный номер, напечатанный в черновике клиента",
+    "Riferimento provvisorio stampato sulla bozza del cliente",
+    "顧客の下書きに印字された仮参照番号"
   ],
   "Réglages avancés du câble": [
     "Advanced cable settings",
@@ -19556,6 +20636,24 @@
     "Dati non validi: controllate valori e ordine.",
     "入力が無効です。値と順序を確認してください。"
   ],
+  "Saisie non numérique": [
+    "Non-numeric entry",
+    "输入非数字",
+    "Keine Zahleneingabe",
+    "Entrada no numérica",
+    "Введено не число",
+    "Valore non numerico",
+    "数値ではありません"
+  ],
+  "Saisir la famille documentée, qui couvre ses variantes": [
+    "Enter the documented family, which covers its variants",
+    "请填写记录中的系列，它涵盖其各变型",
+    "Die dokumentierte Familie eingeben, die ihre Varianten abdeckt",
+    "Introduzca la familia documentada, que cubre sus variantes",
+    "Укажите документированное семейство, оно покрывает свои варианты",
+    "Inserire la famiglia documentata, che copre le sue varianti",
+    "記載されているファミリーを入力してください（その変種を含みます）"
+  ],
   "Saisir une référence précise": [
     "Enter a specific reference",
     "输入具体型号",
@@ -19609,6 +20707,15 @@
     "Давно без активности",
     "Nessuna attività da tempo",
     "長く動きがない"
+  ],
+  "Sans champ magnétique, aucun capteur reed ne peut détecter cette pièce": [
+    "Without a magnetic field, no reed sensor can detect this part",
+    "没有磁场，任何干簧管传感器都无法检测该零件",
+    "Ohne Magnetfeld kann kein Reed-Sensor dieses Teil erkennen",
+    "Sin campo magnético, ningún sensor reed puede detectar esta pieza",
+    "Без магнитного поля ни один герконовый датчик не обнаружит эту деталь",
+    "Senza campo magnetico nessun sensore reed può rilevare questo pezzo",
+    "磁界がなければ、どのリードセンサーもこの部品を検出できません"
   ],
   "Sans câble": [
     "No cable",
@@ -19798,6 +20905,24 @@
     "Зависит от версии датчика, требуется подтверждение Standex.",
     "Secondo la versione del sensore, da confermare da Standex.",
     "センサーの仕様により異なります。Standex の確認が必要です。"
+  ],
+  "Semaine précédente": [
+    "Previous week",
+    "上一周",
+    "Vorherige Woche",
+    "Semana anterior",
+    "Предыдущая неделя",
+    "Settimana precedente",
+    "前の週"
+  ],
+  "Semaine suivante": [
+    "Next week",
+    "下一周",
+    "Nächste Woche",
+    "Semana siguiente",
+    "Следующая неделя",
+    "Settimana successiva",
+    "次の週"
   ],
   "Sensor Studio · Revue de conception": [
     "Sensor Studio · Design review",
@@ -20168,6 +21293,15 @@
     "Fonte precisa",
     "正確な出典"
   ],
+  "Source précise requise (brochure, page)": [
+    "Precise source required (brochure, page)",
+    "需填写确切来源（手册、页码）",
+    "Genaue Quelle erforderlich (Broschüre, Seite)",
+    "Se requiere la fuente precisa (folleto, página)",
+    "Требуется точный источник (брошюра, страница)",
+    "Fonte precisa obbligatoria (brochure, pagina)",
+    "正確な出典が必要です（カタログ、ページ）"
+  ],
   "Source précise requise (fiche, page, essai)": [
     "Precise source required (datasheet, page, test)",
     "需填写具体来源（数据表、页码、试验）",
@@ -20185,6 +21319,15 @@
     "Источник не указан",
     "Fonte da indicare",
     "出典は未記入"
+  ],
+  "Sous zéro (« <0 »)": [
+    "Below zero (“<0”)",
+    "低于零（“<0”）",
+    "Unter Null („<0“)",
+    "Bajo cero («<0»)",
+    "Ниже нуля («<0»)",
+    "Sotto zero («<0»)",
+    "ゼロ未満（「<0」）"
   ],
   "Spécifique": [
     "Custom",
@@ -20752,6 +21895,15 @@
     "Температура не конечна",
     "Temperatura non finita",
     "温度が有限値ではありません"
+  ],
+  "Température, liquides, poussières, nettoyage, vibrations.": [
+    "Temperature, liquids, dust, cleaning, vibration.",
+    "温度、液体、粉尘、清洗、振动。",
+    "Temperatur, Flüssigkeiten, Staub, Reinigung, Vibrationen.",
+    "Temperatura, líquidos, polvo, limpieza, vibraciones.",
+    "Температура, жидкости, пыль, очистка, вибрации.",
+    "Temperatura, liquidi, polveri, pulizia, vibrazioni.",
+    "温度、液体、粉じん、洗浄、振動。"
   ],
   "Tension": [
     "Voltage",
@@ -21599,6 +22751,42 @@
     "Una bozza può restare incompleta: non alimenta alcuna simulazione. Una riga validata porta attivazione e rilascio finiti, con il rilascio più lontano dell'attivazione.",
     "下書きは未完成でもかまいません。シミュレーションには使われません。確定行は有限の動作値と復帰値を持ち、復帰は動作より遠い必要があります。"
   ],
+  "Un capteur reed convient tout à fait pour donner le SIGNAL de position : savoir si le capot est fermé, et transmettre cette information.": [
+    "A reed sensor is entirely suitable for giving the position SIGNAL: knowing whether the cover is closed, and passing that information on.",
+    "干簧管传感器完全适合提供位置信号：判断护罩是否关闭并传递该信息。",
+    "Ein Reed-Sensor ist durchaus geeignet, das Positions-SIGNAL zu liefern: zu erkennen, ob die Haube geschlossen ist, und diese Information weiterzugeben.",
+    "Un sensor reed es perfectamente adecuado para dar la SEÑAL de posición: saber si la tapa está cerrada y transmitir esa información.",
+    "Герконовый датчик вполне подходит для выдачи СИГНАЛА положения: определить, закрыт ли кожух, и передать эту информацию.",
+    "Un sensore reed è del tutto adatto a fornire il SEGNALE di posizione: sapere se il coperchio è chiuso e trasmettere l'informazione.",
+    "リードセンサーは位置の「信号」を出すのに十分適しています。カバーが閉じているかを判定し、その情報を伝えます。"
+  ],
+  "Un capteur reed réagit à un champ magnétique. Une pièce en {0} non aimantée n'en produit aucun : le contact ne se fermera jamais.": [
+    "A reed sensor responds to a magnetic field. A non-magnetised {0} part produces none: the contact will never close.",
+    "干簧管传感器响应磁场。未磁化的{0}零件不产生磁场：触点永远不会闭合。",
+    "Ein Reed-Sensor reagiert auf ein Magnetfeld. Ein nicht magnetisiertes Teil aus {0} erzeugt keines: der Kontakt schließt niemals.",
+    "Un sensor reed reacciona a un campo magnético. Una pieza de {0} no imantada no produce ninguno: el contacto nunca se cerrará.",
+    "Герконовый датчик реагирует на магнитное поле. Ненамагниченная деталь из {0} его не создаёт: контакт никогда не замкнётся.",
+    "Un sensore reed reagisce a un campo magnetico. Un pezzo in {0} non magnetizzato non ne produce alcuno: il contatto non si chiuderà mai.",
+    "リードセンサーは磁界に反応します。磁化されていない{0}の部品は磁界を生じないため、接点は決して閉じません。"
+  ],
+  "Un capteur reed réagit à un champ magnétique. Une pièce qui n'en produit aucun ne fermera jamais le contact.": [
+    "A reed sensor responds to a magnetic field. A part that produces none will never close the contact.",
+    "干簧管传感器响应磁场。不产生磁场的零件永远不会使触点闭合。",
+    "Ein Reed-Sensor reagiert auf ein Magnetfeld. Ein Teil, das keines erzeugt, schließt den Kontakt niemals.",
+    "Un sensor reed reacciona a un campo magnético. Una pieza que no produce ninguno nunca cerrará el contacto.",
+    "Герконовый датчик реагирует на магнитное поле. Деталь, которая его не создаёт, никогда не замкнёт контакт.",
+    "Un sensore reed reagisce a un campo magnetico. Un pezzo che non ne produce alcuno non chiuderà mai il contatto.",
+    "リードセンサーは磁界に反応します。磁界を生じない部品では接点は閉じません。"
+  ],
+  "Un capteur reed sur un capot donne une information de position. Il ne constitue pas à lui seul un verrouillage de sécurité machine certifié.": [
+    "A reed sensor on a cover gives position information. On its own it does not constitute a certified machine safety interlock.",
+    "护罩上的干簧管传感器提供位置信息，本身并不构成经认证的机器安全联锁。",
+    "Ein Reed-Sensor an einer Haube liefert eine Positionsinformation. Er stellt allein keine zertifizierte Maschinen-Sicherheitsverriegelung dar.",
+    "Un sensor reed en una tapa da información de posición. Por sí solo no constituye un enclavamiento de seguridad de máquina certificado.",
+    "Герконовый датчик на кожухе даёт информацию о положении. Сам по себе он не является сертифицированной блокировкой безопасности машины.",
+    "Un sensore reed su un coperchio fornisce un'informazione di posizione. Da solo non costituisce un interblocco di sicurezza macchina certificato.",
+    "カバー上のリードセンサーは位置情報を与えるものであり、それ単体で認証された機械安全インターロックにはなりません。"
+  ],
   "Un choix non décidé reste inconnu : il ne vaut ni zéro, ni « sans câble ». Vous pouvez continuer sans le fixer.": [
     "An undecided choice stays unknown: it does not mean zero, nor \"no cable\". You can carry on without settling it.",
     "未决定的选项仍属未知：它既不等于零，也不等于“无电缆”。您可以先不确定并继续。",
@@ -21662,6 +22850,33 @@
     "Un modello 3D della vostra macchina è collegato a questo progetto.",
     "お客様の機械の3Dモデルがこのプロジェクトに紐付けられています。"
   ],
+  "Un moteur est une charge inductive à fort courant d'appel : l'interface de puissance doit être dimensionnée et protégée en conséquence (diode, réseau RC ou varistance). Voir les précautions de charge Standex : https://standexdetect.com/resources/reed-technology-academy/handling-and-load-precautions/": [
+    "A motor is an inductive load with a high inrush current: the power interface must be sized and protected accordingly (diode, RC network or varistor). See the Standex load precautions: https://standexdetect.com/resources/reed-technology-academy/handling-and-load-precautions/",
+    "电机属于具有高浪涌电流的感性负载：功率接口必须据此选型并加以保护（二极管、RC 网络或压敏电阻）。请参阅 Standex 负载注意事项：https://standexdetect.com/resources/reed-technology-academy/handling-and-load-precautions/",
+    "Ein Motor ist eine induktive Last mit hohem Einschaltstrom: das Leistungsinterface muss entsprechend dimensioniert und geschützt werden (Diode, RC-Glied oder Varistor). Siehe die Standex-Lasthinweise: https://standexdetect.com/resources/reed-technology-academy/handling-and-load-precautions/",
+    "Un motor es una carga inductiva con una alta corriente de arranque: la interfaz de potencia debe dimensionarse y protegerse en consecuencia (diodo, red RC o varistor). Consulte las precauciones de carga de Standex: https://standexdetect.com/resources/reed-technology-academy/handling-and-load-precautions/",
+    "Двигатель — это индуктивная нагрузка с высоким пусковым током: силовой интерфейс должен быть рассчитан и защищён соответствующим образом (диод, RC-цепь или варистор). См. рекомендации Standex по нагрузке: https://standexdetect.com/resources/reed-technology-academy/handling-and-load-precautions/",
+    "Un motore è un carico induttivo con una corrente di spunto elevata: l'interfaccia di potenza deve essere dimensionata e protetta di conseguenza (diodo, rete RC o varistore). Vedere le precauzioni di carico Standex: https://standexdetect.com/resources/reed-technology-academy/handling-and-load-precautions/",
+    "モーターは突入電流の大きい誘導負荷です。パワーインターフェースはそれに応じて選定・保護（ダイオード、RC 回路、バリスタ）する必要があります。Standex の負荷に関する注意事項をご覧ください：https://standexdetect.com/resources/reed-technology-academy/handling-and-load-precautions/"
+  ],
+  "Un moteur est une charge inductive à fort courant d'appel : l'interface de puissance doit être dimensionnée et protégée en conséquence, avec une protection adaptée au type d'alimentation. Voir les précautions de charge Standex.": [
+    "A motor is an inductive load with a high inrush current: the power interface must be sized and protected accordingly, with protection suited to the type of supply. See the Standex load precautions.",
+    "电机属于具有高浪涌电流的感性负载：功率接口必须据此选型并加以保护，保护方式应与供电类型相匹配。请参阅 Standex 负载注意事项。",
+    "Ein Motor ist eine induktive Last mit hohem Einschaltstrom: Die Leistungsschnittstelle muss entsprechend dimensioniert und mit einem zur Versorgungsart passenden Schutz versehen werden. Siehe die Standex-Hinweise zu Lasten.",
+    "Un motor es una carga inductiva con alta corriente de arranque: la interfaz de potencia debe dimensionarse y protegerse en consecuencia, con una protección adecuada al tipo de alimentación. Consulte las precauciones de carga de Standex.",
+    "Двигатель — индуктивная нагрузка с большим пусковым током: силовой интерфейс должен быть рассчитан и защищён соответственно, с защитой, подходящей типу питания. См. рекомендации Standex по нагрузкам.",
+    "Un motore è un carico induttivo con elevata corrente di spunto: l'interfaccia di potenza deve essere dimensionata e protetta di conseguenza, con una protezione adatta al tipo di alimentazione. Vedere le precauzioni di carico Standex.",
+    "モーターは突入電流の大きい誘導負荷です。電源方式に適した保護を備え、パワーインターフェースを適切に選定・保護してください。Standex の負荷に関する注意事項を参照してください。"
+  ],
+  "Un point à revoir avant de proposer des produits": [
+    "One point to revisit before proposing products",
+    "在推荐产品前需复核的一点",
+    "Ein Punkt, der vor Produktvorschlägen zu klären ist",
+    "Un punto a revisar antes de proponer productos",
+    "Один вопрос требует уточнения до подбора продукции",
+    "Un punto da rivedere prima di proporre prodotti",
+    "製品をご提案する前に見直す点が1件あります"
+  ],
   "Un reed pour apprendre": [
     "A reed switch for learning",
     "用于学习的干簧管",
@@ -21688,6 +22903,15 @@
     "Состояние движения без идентификатора проигнорировано.",
     "Uno stato di movimento senza identificatore è stato ignorato.",
     "識別子のない動作状態は無視されました。"
+  ],
+  "Une conception sur mesure ne change rien à ce point : elle ne crée pas de champ magnétique là où il n'y en a pas.": [
+    "A custom design changes nothing here: it does not create a magnetic field where there is none.",
+    "定制设计对此毫无改变：它不会在没有磁场的地方产生磁场。",
+    "Eine Sonderkonstruktion ändert daran nichts: sie erzeugt kein Magnetfeld, wo keines ist.",
+    "Un diseño a medida no cambia nada aquí: no crea un campo magnético donde no lo hay.",
+    "Индивидуальная конструкция здесь ничего не меняет: она не создаёт магнитное поле там, где его нет.",
+    "Una progettazione su misura non cambia nulla: non crea un campo magnetico dove non esiste.",
+    "特注設計でもこの点は変わりません。磁界のない場所に磁界を作ることはできません。"
   ],
   "Une demande de NDA est déjà ouverte sur ce projet. La retirer abandonne cette demande ; le document non signé reste sur votre appareil. Continuer ?": [
     "An NDA request is already open on this project. Removing it abandons that request; the unsigned document stays on your device. Continue?",
@@ -21743,6 +22967,15 @@
     "Un fissaggio che NOMINI qui («avvitato o incollato») è considerato un vincolo. Nient'altro viene dedotto dal tuo testo: il nome di un'applicazione non implica alcun fissaggio. Queste scelte restano modificabili.",
     "ここで明記された取付方法（「ネジ留めまたは接着」など）は制約として扱います。それ以外は文章から推測しません：用途名は取付方法を意味しません。これらの選択はいつでも変更できます。"
   ],
+  "Une ligne validée porte au moins une borne ou une mention « non publié »": [
+    "A validated row carries at least one bound or a “not published” note",
+    "已验证行至少包含一个界限或“未公布”标注",
+    "Eine validierte Zeile enthält mindestens einen Grenzwert oder den Hinweis „nicht veröffentlicht“",
+    "Una línea validada incluye al menos un límite o la mención «no publicado»",
+    "Проверенная строка содержит хотя бы одну границу или отметку «не опубликовано»",
+    "Una riga validata riporta almeno un limite o la menzione «non pubblicato»",
+    "確定済みの行には少なくとも1つの値、または「非公開」の注記が必要です"
+  ],
   "Une ligne validée porte deux distances": [
     "A validated row carries two distances",
     "已确认的行必须有两个距离",
@@ -21787,6 +23020,15 @@
     "Изменение сборки или заявлений требует нового листа.",
     "Modificare montaggio o dichiarazioni richiede una nuova scheda.",
     "配置や入力を変更した場合、新しい票が必要です。"
+  ],
+  "Une modification n'est pas enregistrée.": [
+    "A change is not saved.",
+    "有未保存的修改。",
+    "Eine Änderung ist nicht gespeichert.",
+    "Hay una modificación sin guardar.",
+    "Изменение не сохранено.",
+    "Una modifica non è salvata.",
+    "未保存の変更があります。"
   ],
   "Une opération est en cours. Réessayez après sa fin.": [
     "An operation is in progress. Try again after it finishes.",
@@ -22003,6 +23245,15 @@
     "Необработанное значение производителя, не пересчитывается в дистанцию срабатывания.",
     "Valore grezzo del costruttore, non convertibile in distanza di commutazione.",
     "メーカーの生の値であり、切替距離への換算はできません。"
+  ],
+  "Valeur imprimée": [
+    "Printed value",
+    "印刷值",
+    "Gedruckter Wert",
+    "Valor impreso",
+    "Напечатанное значение",
+    "Valore stampato",
+    "印刷値"
   ],
   "Valeurs typiques": [
     "Typical values",
@@ -22445,6 +23696,15 @@
     "Vie",
     "極数"
   ],
+  "Voir ce que vous avez écrit": [
+    "See what you wrote",
+    "查看您填写的内容",
+    "Ansehen, was Sie geschrieben haben",
+    "Ver lo que ha escrito",
+    "Посмотреть, что вы написали",
+    "Vedere ciò che ha scritto",
+    "入力内容を見る"
+  ],
   "Voir la fiche et le plan Standex ↗": [
     "View Standex datasheet and drawing ↗",
     "查看 Standex 数据表和图纸 ↗",
@@ -22751,6 +24011,33 @@
     "Le impostazioni restano memorizzate anche se si chiude questo pannello. Il salvataggio rimane un'azione esplicita.",
     "このパネルを閉じても設定は保持されます。保存するには明示的な操作が必要です。"
   ],
+  "Vos réponses interdisent aujourd'hui d'ajouter un aimant ou un élément magnétique. Ces deux points ne peuvent pas être vrais en même temps.": [
+    "Your answers currently forbid adding a magnet or any magnetic element. Those two things cannot both hold at the same time.",
+    "您当前的回答禁止添加磁铁或任何磁性元件。这两点无法同时成立。",
+    "Ihre Antworten verbieten derzeit das Hinzufügen eines Magneten oder magnetischen Elements. Beides kann nicht gleichzeitig zutreffen.",
+    "Sus respuestas prohíben hoy añadir un imán o un elemento magnético. Esos dos puntos no pueden ser ciertos a la vez.",
+    "Ваши ответы сейчас запрещают добавлять магнит или магнитный элемент. Эти два условия не могут выполняться одновременно.",
+    "Le vostre risposte vietano oggi di aggiungere un magnete o un elemento magnetico. Questi due punti non possono essere veri insieme.",
+    "現在のご回答では磁石や磁性部品の追加が禁止されています。この二つは同時には成立しません。"
+  ],
+  "Vos réponses ne présentent plus de contradiction : les couples proposés sont de nouveau affichés.": [
+    "Your answers no longer contradict each other: the proposed pairs are shown again.",
+    "您的回答不再存在矛盾：推荐组合已重新显示。",
+    "Ihre Antworten widersprechen sich nicht mehr: die vorgeschlagenen Paare werden wieder angezeigt.",
+    "Sus respuestas ya no presentan contradicción: los pares propuestos se muestran de nuevo.",
+    "В ваших ответах больше нет противоречий: предлагаемые пары снова отображаются.",
+    "Le vostre risposte non presentano più contraddizioni: le coppie proposte sono di nuovo visibili.",
+    "ご回答の矛盾は解消されました。ご提案の組み合わせを再度表示しています。"
+  ],
+  "Vos réponses ne sont jamais modifiées à votre place. Ces boutons ouvrent la question concernée : vous décidez de ce qui change.": [
+    "Your answers are never changed for you. These buttons open the relevant question: you decide what changes.",
+    "我们绝不会替您修改回答。这些按钮会打开相应问题：由您决定修改内容。",
+    "Ihre Antworten werden niemals für Sie geändert. Diese Schaltflächen öffnen die betreffende Frage: Sie entscheiden, was sich ändert.",
+    "Sus respuestas nunca se modifican en su lugar. Estos botones abren la pregunta correspondiente: usted decide qué cambia.",
+    "Ваши ответы никогда не меняются за вас. Эти кнопки открывают соответствующий вопрос: вы решаете, что изменить.",
+    "Le vostre risposte non vengono mai modificate al vostro posto. Questi pulsanti aprono la domanda interessata: decidete voi cosa cambiare.",
+    "ご回答を代わりに書き換えることはありません。これらのボタンは該当する質問を開くだけで、変更はお客様が決めます。"
+  ],
   "Votre accord d'envoi doit être daté et rattaché au dossier concerné : aucun fichier n'a été transmis.": [
     "Your submission agreement must be dated and linked to the relevant case file: no file was transmitted.",
     "您的发送同意书必须注明日期并关联至相关案卷：未传输任何文件。",
@@ -22850,6 +24137,15 @@
     "Il tuo montaggio, in movimento.",
     "構成を動かして確認。"
   ],
+  "Votre objectif peut être étudié avec une architecture adaptée. Tel qu'il est décrit aujourd'hui, il ne peut pas fonctionner : voici ce qui fonctionne, ce qui ne fonctionne pas, et les adaptations possibles.": [
+    "Your goal can be studied with a suitable architecture. As described today it cannot work: here is what works, what does not, and the possible adaptations.",
+    "您的目标可以在合适的架构下进行研究。但按目前的描述无法实现：以下说明哪些可行、哪些不可行以及可能的调整。",
+    "Ihr Ziel lässt sich mit einer geeigneten Architektur untersuchen. So wie es heute beschrieben ist, kann es nicht funktionieren: Hier steht, was funktioniert, was nicht, und welche Anpassungen möglich sind.",
+    "Su objetivo puede estudiarse con una arquitectura adecuada. Tal como está descrito hoy no puede funcionar: esto es lo que funciona, lo que no, y las adaptaciones posibles.",
+    "Вашу задачу можно рассмотреть при подходящей архитектуре. В нынешнем описании она работать не может: ниже — что работает, что нет и какие возможны изменения.",
+    "Il suo obiettivo può essere studiato con un'architettura adeguata. Come è descritto oggi non può funzionare: ecco cosa funziona, cosa non funziona e gli adattamenti possibili.",
+    "適切な構成であれば、ご要望は検討できます。ただし現在の記載内容では動作しません。以下に、動作する点、動作しない点、可能な調整を示します。"
+  ],
   "Votre point de départ": [
     "Your starting point",
     "起点",
@@ -22930,6 +24226,15 @@
     "Ваш проект обретает форму.",
     "Il tuo progetto prende forma.",
     "プロジェクトを形に。"
+  ],
+  "Votre projet reste tout à fait réalisable, mais tel qu'il est décrit aujourd'hui il ne peut pas fonctionner. Voici ce qui fonctionne, ce qui ne fonctionne pas, et les modifications concrètes possibles.": [
+    "Your project remains entirely feasible, but as described today it cannot work. Here is what works, what does not, and the concrete changes available.",
+    "您的项目完全可行，但按目前的描述无法运行。以下是可行之处、不可行之处以及可采取的具体修改。",
+    "Ihr Projekt bleibt durchaus machbar, kann aber so, wie es heute beschrieben ist, nicht funktionieren. Hier steht, was funktioniert, was nicht, und welche konkreten Änderungen möglich sind.",
+    "Su proyecto sigue siendo perfectamente viable, pero tal como está descrito hoy no puede funcionar. Esto es lo que funciona, lo que no, y las modificaciones concretas posibles.",
+    "Ваш проект вполне осуществим, но в текущем описании он работать не может. Ниже — что работает, что не работает и какие конкретные изменения возможны.",
+    "Il vostro progetto resta del tutto realizzabile, ma così come è descritto oggi non può funzionare. Ecco ciò che funziona, ciò che non funziona e le modifiche concrete possibili.",
+    "ご計画は十分に実現可能ですが、現在の記述のままでは成立しません。うまくいく点、いかない点、そして具体的な変更案を以下に示します。"
   ],
   "Votre rendez-vous de démonstration est confirmé": [
     "Your demo appointment is confirmed",
@@ -23110,6 +24415,15 @@
     "Вид в плане в масштабе · {0}",
     "Vista piana in scala · {0}",
     "縮尺付き平面図 · {0}"
+  ],
+  "Vérification de l'accès…": [
+    "Checking access…",
+    "正在验证访问权限…",
+    "Zugang wird geprüft…",
+    "Verificando el acceso…",
+    "Проверка доступа…",
+    "Verifica dell'accesso…",
+    "アクセスを確認中…"
   ],
   "Vérification du backend en cours…": [
     "Backend verification in progress…",
@@ -23453,6 +24767,15 @@
     "con due distanze reali",
     "実距離が2つあるもの"
   ],
+  "avec une plage imprimée": [
+    "with a printed range",
+    "含印刷范围",
+    "mit gedrucktem Bereich",
+    "con un rango impreso",
+    "с напечатанным диапазоном",
+    "con un intervallo stampato",
+    "印刷範囲あり"
+  ],
   "axes parallèles": [
     "parallel axes",
     "轴线平行",
@@ -23488,6 +24811,42 @@
     "заблокировано",
     "bloccata/e",
     "停滞"
+  ],
+  "brochure, page": [
+    "brochure, page",
+    "手册，页码",
+    "Broschüre, Seite",
+    "folleto, página",
+    "брошюра, страница",
+    "brochure, pagina",
+    "カタログ、ページ"
+  ],
+  "brouillon": [
+    "draft",
+    "草稿",
+    "Entwurf",
+    "borrador",
+    "черновик",
+    "bozza",
+    "下書き"
+  ],
+  "brouillon non enregistré": [
+    "unsaved draft",
+    "未保存的草稿",
+    "nicht gespeicherter Entwurf",
+    "borrador no guardado",
+    "несохранённый черновик",
+    "bozza non salvata",
+    "未保存の下書き"
+  ],
+  "brouillon proposé ; la ligne livrée reste en vigueur": [
+    "proposed draft; the delivered row remains in force",
+    "提议的草稿；已交付的行仍然有效",
+    "vorgeschlagener Entwurf; die gelieferte Zeile bleibt gültig",
+    "borrador propuesto; la línea entregada sigue vigente",
+    "предложенный черновик; поставленная строка остаётся в силе",
+    "bozza proposta; la riga consegnata resta in vigore",
+    "提案中の下書き。提供済みの行が有効です"
   ],
   "c'est sa fonction de butée, ce n'est pas un motif d'exclusion.": [
     "this is its stop function, it is not a reason for exclusion.",
@@ -23732,15 +25091,6 @@
     "console R&amp;D",
     "R&amp;Dコンソール"
   ],
-  "Combinaison non simulée": [
-    "Combination not simulated",
-    "组合未仿真",
-    "Kombination nicht simuliert",
-    "Combinación no simulada",
-    "Комбинация не моделируется",
-    "Combinazione non simulata",
-    "組み合わせは非シミュレーション"
-  ],
   "contexte sécurité": [
     "safety context",
     "安全背景",
@@ -23867,6 +25217,15 @@
     "valuta non indicata",
     "通貨が未入力"
   ],
+  "distances de ce couple non publiées": [
+    "distances for this pair are not published",
+    "该组合的距离未公布",
+    "Abstände dieser Kombination sind nicht veröffentlicht",
+    "distancias de esta pareja no publicadas",
+    "расстояния для этой пары не опубликованы",
+    "distanze di questa coppia non pubblicate",
+    "この組み合わせの距離は未公開です"
+  ],
   "distances non publiées": [
     "distances not published",
     "距离未公开",
@@ -23965,6 +25324,15 @@
     "ожидается срабатывание (замыкание {0} мм, размыкание {1} мм)",
     "rilevamento previsto (chiude {0} mm, apre {1} mm)",
     "検出見込み（{0} mm で閉、{1} mm で開）"
+  ],
+  "elle coulisse de 20 mm ; présente ou retirée": [
+    "it slides 20 mm; present or removed",
+    "它滑动 20 mm；到位或取出",
+    "es gleitet 20 mm; vorhanden oder entnommen",
+    "se desliza 20 mm; presente o retirada",
+    "перемещается на 20 мм; на месте или снята",
+    "scorre di 20 mm; presente o rimossa",
+    "20 mm スライドする；装着または取り外し"
   ],
   "elle coulisse de 20 mm, elle pivote, elle est retirée puis remise": [
     "it slides 20 mm, it pivots, it is removed then replaced",
@@ -24560,6 +25928,15 @@
     "il magnete",
     "磁石"
   ],
+  "machine à café professionnelle : savoir si le réservoir est bien en place": [
+    "professional coffee machine: knowing whether the tank is fully in place",
+    "专业咖啡机：判断水箱是否完全到位",
+    "professionelle Kaffeemaschine: erkennen, ob der Tank richtig sitzt",
+    "máquina de café profesional: saber si el depósito está bien colocado",
+    "профессиональная кофемашина: определить, установлен ли бак до конца",
+    "macchina da caffè professionale: sapere se il serbatoio è inserito correttamente",
+    "業務用コーヒーマシン：タンクが正しく装着されているかを知る"
+  ],
   "maintenance / faible volume (20 pièces)": [
     "maintenance / low volume (20 units)",
     "维护 / 小批量（20 件）",
@@ -24848,6 +26225,24 @@
     "facoltativa",
     "任意"
   ],
+  "ordre imprimé inhabituel — à confirmer par Standex": [
+    "unusual printed order — to be confirmed by Standex",
+    "印刷顺序异常 — 需由 Standex 确认",
+    "ungewöhnliche gedruckte Reihenfolge — von Standex zu bestätigen",
+    "orden impreso inusual: lo debe confirmar Standex",
+    "необычный печатный порядок — подлежит подтверждению Standex",
+    "ordine stampato inusuale — da confermare da Standex",
+    "印刷順序が異例 — Standex の確認が必要"
+  ],
+  "ordre imprimé inhabituel, à confirmer": [
+    "unusual printed order, to be confirmed",
+    "印刷顺序异常，待确认",
+    "ungewöhnliche gedruckte Reihenfolge, zu bestätigen",
+    "orden impreso inusual, por confirmar",
+    "необычный порядок в печати, требует подтверждения",
+    "ordine stampato inusuale, da confermare",
+    "印刷順序が通常と異なります。確認が必要です"
+  ],
   "original déjà rédigé en anglais": [
     "original already written in English",
     "原件本身即为英文",
@@ -25000,6 +26395,15 @@
     "шт.:",
     "pezzi:",
     "個："
+  ],
+  "plage du guide {0}–{1} mm, ligne {2}, page {3}": [
+    "guide range {0}–{1} mm, row {2}, page {3}",
+    "指南范围 {0}–{1} mm，行 {2}，第 {3} 页",
+    "Leitfaden-Bereich {0}–{1} mm, Zeile {2}, Seite {3}",
+    "rango de la guía {0}–{1} mm, fila {2}, página {3}",
+    "диапазон из руководства {0}–{1} мм, строка {2}, страница {3}",
+    "intervallo della guida {0}–{1} mm, riga {2}, pagina {3}",
+    "ガイド範囲 {0}–{1} mm、行 {2}、{3} ページ"
   ],
   "point(s) ·": [
     "point(s) ·",
@@ -25469,6 +26873,15 @@
     "scenari di revisione disponibili nel lotto.",
     "件のレビューシナリオが利用可能。"
   ],
+  "seuils de ce montage non caractérisés": [
+    "thresholds for this assembly are not characterised",
+    "本装配的阈值未表征",
+    "Schaltabstände dieses Aufbaus sind nicht charakterisiert",
+    "umbrales de este montaje no caracterizados",
+    "пороги этой сборки не охарактеризованы",
+    "soglie di questo montaggio non caratterizzate",
+    "この取り付けのしきい値は未特性評価です"
+  ],
   "small": [
     "Small",
     "少量",
@@ -25676,6 +27089,15 @@
     "trasmesso per il momento. È possibile continuare a progettare, preparare l'NDA ed esportare",
     "送信できません。設計の継続、NDAの準備、および案件ファイルの"
   ],
+  "triphasé": [
+    "three-phase",
+    "三相",
+    "dreiphasig",
+    "trifásico",
+    "трёхфазный",
+    "trifase",
+    "三相"
+  ],
   "tâche(s)": [
     "task(s)",
     "个任务",
@@ -25685,6 +27107,15 @@
     "attività",
     "件のタスク"
   ],
+  "un capteur tubulaire ne travaille qu'avec un aimant tubulaire, un capteur non tubulaire qu'avec un aimant bloc": [
+    "a tubular sensor only works with a tubular magnet, a non-tubular sensor only with a block magnet",
+    "管状传感器只能与管状磁体配合，非管状传感器只能与块状磁体配合",
+    "ein rohrförmiger Sensor arbeitet nur mit einem rohrförmigen Magnet, ein nicht rohrförmiger Sensor nur mit einem Blockmagnet",
+    "un sensor tubular solo funciona con un imán tubular, un sensor no tubular solo con un imán de bloque",
+    "трубчатый датчик работает только с трубчатым магнитом, нетрубчатый датчик — только с блочным магнитом",
+    "un sensore tubolare funziona solo con un magnete tubolare, un sensore non tubolare solo con un magnete a blocco",
+    "円筒形センサーは円筒形マグネットのみ、非円筒形センサーはブロックマグネットのみと組み合わせます"
+  ],
   "un logement d'environ 6 mm de diamètre et 25 mm de long": [
     "a cavity of approx. 6 mm in diameter and 25 mm long",
     "约直径6 mm、长25 mm的安装空间",
@@ -25693,6 +27124,15 @@
     "гнездо диаметром около 6 мм и длиной 25 мм",
     "un alloggiamento di circa 6 mm di diametro e 25 mm di lunghezza",
     "直径約6 mm、長さ25 mmの取り付けスペース"
+  ],
+  "un réservoir amovible en plastique, un tiroir métallique, un piston": [
+    "a removable plastic tank, a metal drawer, a piston",
+    "可拆卸塑料水箱、金属抽屉、活塞",
+    "ein abnehmbarer Kunststofftank, eine Metallschublade, ein Kolben",
+    "un depósito de plástico extraíble, un cajón metálico, un pistón",
+    "съёмный пластиковый бак, металлический ящик, поршень",
+    "un serbatoio di plastica rimovibile, un cassetto metallico, un pistone",
+    "取り外し式の樹脂タンク、金属製の引き出し、ピストン"
   ],
   "unclear": [
     "Unclear",
@@ -25810,6 +27250,15 @@
     "винтовое крепление",
     "a vite",
     "ねじ固定"
+  ],
+  "vissé à l'intérieur du bâti, en face de la pièce mobile": [
+    "screwed inside the frame, facing the moving part",
+    "拧装在机架内部，正对运动部件",
+    "im Gehäuse verschraubt, gegenüber dem beweglichen Teil",
+    "atornillado dentro del bastidor, frente a la pieza móvil",
+    "привинчен внутри корпуса, напротив подвижной детали",
+    "avvitato all'interno del telaio, di fronte alla parte mobile",
+    "フレーム内側にねじ止めし、可動部品と正対"
   ],
   "voir la source fabricant": [
     "see manufacturer source",
@@ -26261,6 +27710,15 @@
     "Da compilare all'ultimo passaggio, con la vostra e-mail, prima dello scambio con Standex.",
     "Standex とのやり取りの前に、最後のステップでメールアドレスとともに入力してください。"
   ],
+  "À retenir": [
+    "Worth remembering",
+    "需要注意",
+    "Wichtig zu wissen",
+    "Para tener en cuenta",
+    "Важно помнить",
+    "Da ricordare",
+    "覚えておくこと"
+  ],
   "À tester dans votre montage": [
     "To test in your assembly",
     "在您的装配中测试",
@@ -26521,6 +27979,15 @@
     "Изгиб кабеля не ближе 5 мм от корпуса. Железо меняет расстояние срабатывания.",
     "Curva del cavo ad almeno 5 mm dal corpo. Il ferro può modificare la distanza di commutazione.",
     "ケーブルの曲げは本体から5 mm以上離してください。鉄材が動作距離に影響する場合があります。"
+  ],
+  "Élément à détecter": [
+    "Part to detect",
+    "待检测部件",
+    "Zu erkennendes Teil",
+    "Pieza a detectar",
+    "Обнаруживаемая деталь",
+    "Parte da rilevare",
+    "検出対象の部品"
   ],
   "Éléments interdits": [
     "Forbidden items",
@@ -26917,1400 +28384,5 @@
     "…. Изменение, внесенное здесь, ни в коем случае не считается опубликованным отзывом.",
     "…. Una modifica apportata qui non vale mai come riscontro pubblicato.",
     "…。ここで行われた変更は公開されたフィードバックとはみなされません。"
-  ],
-  "Saisie non numérique": [
-    "Non-numeric entry",
-    "输入非数字",
-    "Keine Zahleneingabe",
-    "Entrada no numérica",
-    "Введено не число",
-    "Valore non numerico",
-    "数値ではありません"
-  ],
-  "Distance manquante pour une ligne validée": [
-    "Distance missing for a validated row",
-    "已验证行缺少距离",
-    "Abstand fehlt für eine validierte Zeile",
-    "Falta la distancia en una línea validada",
-    "Для проверенной строки не указано расстояние",
-    "Distanza mancante per una riga validata",
-    "確定済みの行に距離がありません"
-  ],
-  "Données de détection non relues depuis le serveur : cette scène peut afficher des valeurs plus anciennes.": [
-    "Detection data has not been re-read from the server: this scene may show older values.",
-    "检测数据未从服务器重新读取：此场景可能显示较旧的数值。",
-    "Erkennungsdaten wurden nicht erneut vom Server gelesen: Diese Szene kann ältere Werte zeigen.",
-    "Los datos de detección no se han vuelto a leer del servidor: esta escena puede mostrar valores antiguos.",
-    "Данные обнаружения не были перечитаны с сервера: на этой сцене могут быть устаревшие значения.",
-    "I dati di rilevamento non sono stati riletti dal server: questa scena può mostrare valori più vecchi.",
-    "検出データをサーバーから再読み込みしていません。この画面は古い値を表示している可能性があります。"
-  ],
-  "Abandonner la modification": [
-    "Discard the change",
-    "放弃修改",
-    "Änderung verwerfen",
-    "Descartar la modificación",
-    "Отменить изменение",
-    "Abbandona la modifica",
-    "変更を破棄"
-  ],
-  "Approche du guide inconnue (D1 à D5)": [
-    "Unknown guide approach (D1 to D5)",
-    "指南接近方式未知（D1 至 D5）",
-    "Unbekannte Annäherung im Leitfaden (D1 bis D5)",
-    "Aproximación del guía desconocida (D1 a D5)",
-    "Неизвестный подход из руководства (D1–D5)",
-    "Approccio della guida sconosciuto (da D1 a D5)",
-    "ガイドの接近方法が不明（D1〜D5）"
-  ],
-  "Borne finie et non négative, ou vide": [
-    "Finite, non-negative bound, or empty",
-    "有限且非负的界限，或留空",
-    "Endlicher, nicht negativer Grenzwert oder leer",
-    "Límite finito y no negativo, o vacío",
-    "Конечная неотрицательная граница или пусто",
-    "Limite finito e non negativo, oppure vuoto",
-    "有限で負でない値、または空欄"
-  ],
-  "Ces deux colonnes sont recopiées de la brochure. Elles ne sont pas un seuil d'activation ni de relâchement : « up » peut être supérieur à « to », et cet ordre est conservé tel qu'imprimé.": [
-    "These two columns are copied from the brochure. They are not an activation or release threshold: “up” may exceed “to”, and that order is kept exactly as printed.",
-    "这两列直接摘自手册。它们不是动作或释放阈值：“up”可能大于“to”，该顺序按印刷原样保留。",
-    "Diese beiden Spalten sind aus der Broschüre übernommen. Sie sind kein Anzugs- oder Abfallwert: „up“ kann größer als „to“ sein, und diese Reihenfolge bleibt wie gedruckt.",
-    "Estas dos columnas se copian del folleto. No son un umbral de activación ni de liberación: «up» puede ser mayor que «to», y ese orden se conserva tal como está impreso.",
-    "Эти два столбца перенесены из брошюры. Это не порог срабатывания или отпускания: «up» может быть больше «to», и этот порядок сохраняется как напечатано.",
-    "Queste due colonne sono ricopiate dalla brochure. Non sono una soglia di attivazione né di rilascio: «up» può superare «to» e questo ordine è conservato come stampato.",
-    "この2列はカタログからの転記です。動作値や復帰値ではありません。「up」が「to」より大きい場合もあり、その順序は印刷どおり保持されます。"
-  ],
-  "Cette ligne du guide existe déjà": [
-    "This guide row already exists",
-    "该指南行已存在",
-    "Diese Leitfadenzeile existiert bereits",
-    "Esta línea del guía ya existe",
-    "Эта строка руководства уже существует",
-    "Questa riga della guida esiste già",
-    "このガイド行はすでに存在します"
-  ],
-  "Continuer l'édition": [
-    "Continue editing",
-    "继续编辑",
-    "Bearbeitung fortsetzen",
-    "Continuar la edición",
-    "Продолжить редактирование",
-    "Continua la modifica",
-    "編集を続ける"
-  ],
-  "Distances de commutation": [
-    "Switching distances",
-    "开关距离",
-    "Schaltabstände",
-    "Distancias de conmutación",
-    "Расстояния переключения",
-    "Distanze di commutazione",
-    "動作距離"
-  ],
-  "Distances réelles d'activation et de relâchement, par combinaison exacte. Les plages du guide d'activation ne sont pas des seuils : elles sont dans l'autre onglet.": [
-    "Real activation and release distances, per exact combination. The activation guide ranges are not thresholds: they are in the other tab.",
-    "按精确组合给出的真实动作与释放距离。激活指南的范围不是阈值：它们在另一个选项卡。",
-    "Reale Anzugs- und Abfallabstände je genauer Kombination. Die Bereiche des Aktivierungsleitfadens sind keine Schwellen: sie stehen im anderen Tab.",
-    "Distancias reales de activación y liberación, por combinación exacta. Los rangos del guía de activación no son umbrales: están en la otra pestaña.",
-    "Реальные расстояния срабатывания и отпускания для точной комбинации. Диапазоны руководства не являются порогами: они на другой вкладке.",
-    "Distanze reali di attivazione e rilascio, per combinazione esatta. Gli intervalli della guida non sono soglie: sono nell'altra scheda.",
-    "正確な組み合わせごとの実際の動作距離と復帰距離。ガイドの範囲はしきい値ではなく、別のタブにあります。"
-  ],
-  "Famille inconnue du guide": [
-    "Family unknown to the guide",
-    "指南中未知的系列",
-    "Dem Leitfaden unbekannte Familie",
-    "Familia desconocida para el guía",
-    "Семейство неизвестно руководству",
-    "Famiglia sconosciuta alla guida",
-    "ガイドに存在しないファミリー"
-  ],
-  "La relecture du serveur a échoué.": [
-    "Re-reading from the server failed.",
-    "从服务器重新读取失败。",
-    "Das erneute Lesen vom Server ist fehlgeschlagen.",
-    "La relectura del servidor ha fallado.",
-    "Повторное чтение с сервера не удалось.",
-    "La rilettura dal server è fallita.",
-    "サーバーからの再読み込みに失敗しました。"
-  ],
-  "Ligne enregistrée, mais la relecture a échoué : les simulations peuvent encore afficher la valeur précédente.": [
-    "Row saved, but re-reading failed: simulations may still show the previous value.",
-    "该行已保存，但重新读取失败：模拟可能仍显示旧值。",
-    "Zeile gespeichert, aber das erneute Lesen ist fehlgeschlagen: Simulationen können noch den vorherigen Wert zeigen.",
-    "Línea guardada, pero la relectura ha fallado: las simulaciones pueden mostrar aún el valor anterior.",
-    "Строка сохранена, но повторное чтение не удалось: в симуляциях может остаться прежнее значение.",
-    "Riga salvata, ma la rilettura è fallita: le simulazioni possono ancora mostrare il valore precedente.",
-    "行は保存されましたが再読み込みに失敗しました。シミュレーションに以前の値が残る場合があります。"
-  ],
-  "Mention de la colonne « to »": [
-    "Note on the “to” column",
-    "“to”列的标注",
-    "Hinweis zur Spalte „to“",
-    "Mención de la columna «to»",
-    "Примечание к столбцу «to»",
-    "Nota della colonna «to»",
-    "「to」列の注記"
-  ],
-  "Mention de la colonne « up »": [
-    "Note on the “up” column",
-    "“up”列的标注",
-    "Hinweis zur Spalte „up“",
-    "Mención de la columna «up»",
-    "Примечание к столбцу «up»",
-    "Nota della colonna «up»",
-    "「up」列の注記"
-  ],
-  "Modifier la plage du guide": [
-    "Edit the guide range",
-    "修改指南范围",
-    "Leitfadenbereich bearbeiten",
-    "Modificar el rango del guía",
-    "Изменить диапазон руководства",
-    "Modifica l'intervallo della guida",
-    "ガイド範囲を編集"
-  ],
-  "Nature de la donnée": [
-    "Kind of data",
-    "数据类型",
-    "Art der Daten",
-    "Naturaleza del dato",
-    "Тип данных",
-    "Natura del dato",
-    "データの種類"
-  ],
-  "Non publié (« - »)": [
-    "Not published (“-”)",
-    "未公布（“-”）",
-    "Nicht veröffentlicht („-“)",
-    "No publicado («-»)",
-    "Не опубликовано («-»)",
-    "Non pubblicato («-»)",
-    "非公開（「-」）"
-  ],
-  "Page": [
-    "Page",
-    "页",
-    "Seite",
-    "Página",
-    "Страница",
-    "Pagina",
-    "ページ"
-  ],
-  "Page de la brochure requise": [
-    "Brochure page required",
-    "需填写手册页码",
-    "Broschürenseite erforderlich",
-    "Se requiere la página del folleto",
-    "Требуется страница брошюры",
-    "Pagina della brochure obbligatoria",
-    "カタログのページが必要です"
-  ],
-  "Plage du guide enregistrée. Elle reste documentaire, jamais un seuil.": [
-    "Guide range saved. It stays documentary, never a threshold.",
-    "指南范围已保存。它仅作资料，绝非阈值。",
-    "Leitfadenbereich gespeichert. Er bleibt dokumentarisch, niemals ein Schwellenwert.",
-    "Rango del guía guardado. Sigue siendo documental, nunca un umbral.",
-    "Диапазон руководства сохранён. Он остаётся справочным, а не порогом.",
-    "Intervallo della guida salvato. Resta documentale, mai una soglia.",
-    "ガイド範囲を保存しました。資料値であり、しきい値ではありません。"
-  ],
-  "Plages du guide (documentaires)": [
-    "Guide ranges (documentary)",
-    "指南范围（资料）",
-    "Leitfadenbereiche (dokumentarisch)",
-    "Rangos del guía (documentales)",
-    "Диапазоны руководства (справочные)",
-    "Intervalli della guida (documentali)",
-    "ガイド範囲（資料）"
-  ],
-  "Plages « up » et « to » de la brochure d'activation. Ce sont des plages documentaires : elles ne sont ni des seuils d'activation, ni des seuils de relâchement, et ne sont jamais réordonnées.": [
-    "“up” and “to” ranges from the activation brochure. They are documentary ranges: neither activation nor release thresholds, and never reordered.",
-    "激活手册中的“up”与“to”范围。它们是资料范围：既不是动作阈值也不是释放阈值，且从不重新排序。",
-    "„up“- und „to“-Bereiche aus der Aktivierungsbroschüre. Es sind dokumentarische Bereiche: weder Anzugs- noch Abfallwerte, und sie werden nie umsortiert.",
-    "Rangos «up» y «to» del folleto de activación. Son rangos documentales: ni umbrales de activación ni de liberación, y nunca se reordenan.",
-    "Диапазоны «up» и «to» из брошюры активации. Это справочные диапазоны: не пороги срабатывания или отпускания, и они никогда не переупорядочиваются.",
-    "Intervalli «up» e «to» della brochure di attivazione. Sono intervalli documentali: né soglie di attivazione né di rilascio, e non vengono mai riordinati.",
-    "起動カタログの「up」「to」範囲です。資料としての範囲であり、動作値でも復帰値でもなく、並べ替えもしません。"
-  ],
-  "Source précise requise (brochure, page)": [
-    "Precise source required (brochure, page)",
-    "需填写确切来源（手册、页码）",
-    "Genaue Quelle erforderlich (Broschüre, Seite)",
-    "Se requiere la fuente precisa (folleto, página)",
-    "Требуется точный источник (брошюра, страница)",
-    "Fonte precisa obbligatoria (brochure, pagina)",
-    "正確な出典が必要です（カタログ、ページ）"
-  ],
-  "Sous zéro (« <0 »)": [
-    "Below zero (“<0”)",
-    "低于零（“<0”）",
-    "Unter Null („<0“)",
-    "Bajo cero («<0»)",
-    "Ниже нуля («<0»)",
-    "Sotto zero («<0»)",
-    "ゼロ未満（「<0」）"
-  ],
-  "Une ligne validée porte au moins une borne ou une mention « non publié »": [
-    "A validated row carries at least one bound or a “not published” note",
-    "已验证行至少包含一个界限或“未公布”标注",
-    "Eine validierte Zeile enthält mindestens einen Grenzwert oder den Hinweis „nicht veröffentlicht“",
-    "Una línea validada incluye al menos un límite o la mención «no publicado»",
-    "Проверенная строка содержит хотя бы одну границу или отметку «не опубликовано»",
-    "Una riga validata riporta almeno un limite o la menzione «non pubblicato»",
-    "確定済みの行には少なくとも1つの値、または「非公開」の注記が必要です"
-  ],
-  "Une modification n'est pas enregistrée.": [
-    "A change is not saved.",
-    "有未保存的修改。",
-    "Eine Änderung ist nicht gespeichert.",
-    "Hay una modificación sin guardar.",
-    "Изменение не сохранено.",
-    "Una modifica non è salvata.",
-    "未保存の変更があります。"
-  ],
-  "Valeur imprimée": [
-    "Printed value",
-    "印刷值",
-    "Gedruckter Wert",
-    "Valor impreso",
-    "Напечатанное значение",
-    "Valore stampato",
-    "印刷値"
-  ],
-  "avec une plage imprimée": [
-    "with a printed range",
-    "含印刷范围",
-    "mit gedrucktem Bereich",
-    "con un rango impreso",
-    "с напечатанным диапазоном",
-    "con un intervallo stampato",
-    "印刷範囲あり"
-  ],
-  "brochure, page": [
-    "brochure, page",
-    "手册，页码",
-    "Broschüre, Seite",
-    "folleto, página",
-    "брошюра, страница",
-    "brochure, pagina",
-    "カタログ、ページ"
-  ],
-  "brouillon proposé ; la ligne livrée reste en vigueur": [
-    "proposed draft; the delivered row remains in force",
-    "提议的草稿；已交付的行仍然有效",
-    "vorgeschlagener Entwurf; die gelieferte Zeile bleibt gültig",
-    "borrador propuesto; la línea entregada sigue vigente",
-    "предложенный черновик; поставленная строка остаётся в силе",
-    "bozza proposta; la riga consegnata resta in vigore",
-    "提案中の下書き。提供済みの行が有効です"
-  ],
-  "ordre imprimé inhabituel — à confirmer par Standex": [
-    "unusual printed order — to be confirmed by Standex",
-    "印刷顺序异常 — 需由 Standex 确认",
-    "ungewöhnliche gedruckte Reihenfolge — von Standex zu bestätigen",
-    "orden impreso inusual: lo debe confirmar Standex",
-    "необычный печатный порядок — подлежит подтверждению Standex",
-    "ordine stampato inusuale — da confermare da Standex",
-    "印刷順序が異例 — Standex の確認が必要"
-  ],
-  "Créer une nouvelle combinaison à partir de celle-ci": [
-    "Create a new combination from this one",
-    "以此为基础创建新组合",
-    "Neue Kombination auf dieser Basis erstellen",
-    "Crear una nueva combinación a partir de esta",
-    "Создать новую комбинацию на основе этой",
-    "Crea una nuova combinazione da questa",
-    "この組み合わせから新しい組み合わせを作成"
-  ],
-  "La combinaison d'une ligne existante ne change pas : créer une nouvelle combinaison": [
-    "An existing row's combination does not change: create a new combination",
-    "已有行的组合不可更改：请创建新组合",
-    "Die Kombination einer bestehenden Zeile ändert sich nicht: neue Kombination erstellen",
-    "La combinación de una línea existente no cambia: cree una nueva combinación",
-    "Комбинация существующей строки не меняется: создайте новую комбинацию",
-    "La combinazione di una riga esistente non cambia: creare una nuova combinazione",
-    "既存行の組み合わせは変更できません。新しい組み合わせを作成してください"
-  ],
-  "La combinaison de cette ligne ne change pas : elle identifie la donnée. Pour une autre combinaison, créez-en une nouvelle.": [
-    "This row's combination does not change: it identifies the data. For another combination, create a new one.",
-    "该行的组合不可更改：它标识这条数据。若需其他组合，请新建一条。",
-    "Die Kombination dieser Zeile ändert sich nicht: sie identifiziert die Daten. Für eine andere Kombination neue Zeile erstellen.",
-    "La combinación de esta línea no cambia: identifica el dato. Para otra combinación, cree una nueva.",
-    "Комбинация этой строки не меняется: она идентифицирует данные. Для другой комбинации создайте новую строку.",
-    "La combinazione di questa riga non cambia: identifica il dato. Per un'altra combinazione, creane una nuova.",
-    "この行の組み合わせはデータを識別するため変更できません。別の組み合わせは新規作成してください。"
-  ],
-  "Ligne introuvable sur le serveur": [
-    "Row not found on the server",
-    "服务器上找不到该行",
-    "Zeile auf dem Server nicht gefunden",
-    "Línea no encontrada en el servidor",
-    "Строка не найдена на сервере",
-    "Riga non trovata sul server",
-    "サーバーに該当する行がありません"
-  ],
-  "Portée de cette famille documentée :": [
-    "Scope of this documented family:",
-    "该记录系列的适用范围：",
-    "Geltungsbereich dieser dokumentierten Familie:",
-    "Alcance de esta familia documentada:",
-    "Область действия этого документированного семейства:",
-    "Ambito di questa famiglia documentata:",
-    "この記載ファミリーの適用範囲："
-  ],
-  "Saisir la famille documentée, qui couvre ses variantes": [
-    "Enter the documented family, which covers its variants",
-    "请填写记录中的系列，它涵盖其各变型",
-    "Die dokumentierte Familie eingeben, die ihre Varianten abdeckt",
-    "Introduzca la familia documentada, que cubre sus variantes",
-    "Укажите документированное семейство, оно покрывает свои варианты",
-    "Inserire la famiglia documentata, che copre le sue varianti",
-    "記載されているファミリーを入力してください（その変種を含みます）"
-  ],
-  "Combinaison exclue (forme)": [
-    "Combination excluded (shape)",
-    "组合被排除（形状）",
-    "Kombination ausgeschlossen (Form)",
-    "Combinación excluida (forma)",
-    "Комбинация исключена (форма)",
-    "Combinazione esclusa (forma)",
-    "除外された組み合わせ（形状）"
-  ],
-  "un capteur tubulaire ne travaille qu'avec un aimant tubulaire, un capteur non tubulaire qu'avec un aimant bloc": [
-    "a tubular sensor only works with a tubular magnet, a non-tubular sensor only with a block magnet",
-    "管状传感器只能与管状磁体配合，非管状传感器只能与块状磁体配合",
-    "ein rohrförmiger Sensor arbeitet nur mit einem rohrförmigen Magnet, ein nicht rohrförmiger Sensor nur mit einem Blockmagnet",
-    "un sensor tubular solo funciona con un imán tubular, un sensor no tubular solo con un imán de bloque",
-    "трубчатый датчик работает только с трубчатым магнитом, нетрубчатый датчик — только с блочным магнитом",
-    "un sensore tubolare funziona solo con un magnete tubolare, un sensore non tubolare solo con un magnete a blocco",
-    "円筒形センサーは円筒形マグネットのみ、非円筒形センサーはブロックマグネットのみと組み合わせます"
-  ],
-  "Forme incompatible avec ce capteur : combinaison non simulée": [
-    "Shape incompatible with this sensor: combination not simulated",
-    "形状与该传感器不兼容：组合未仿真",
-    "Form mit diesem Sensor nicht kompatibel: Kombination nicht simuliert",
-    "Forma incompatible con este sensor: combinación no simulada",
-    "Форма несовместима с этим датчиком: комбинация не моделируется",
-    "Forma incompatibile con questo sensore: combinazione non simulata",
-    "このセンサーと形状が非互換：組み合わせは非シミュレーション"
-  ],
-  "Mois précédent": [
-    "Previous month",
-    "上一个月",
-    "Vorheriger Monat",
-    "Mes anterior",
-    "Предыдущий месяц",
-    "Mese precedente",
-    "前の月"
-  ],
-  "Mois suivant": [
-    "Next month",
-    "下一个月",
-    "Nächster Monat",
-    "Mes siguiente",
-    "Следующий месяц",
-    "Mese successivo",
-    "次の月"
-  ],
-  "Semaine précédente": [
-    "Previous week",
-    "上一周",
-    "Vorherige Woche",
-    "Semana anterior",
-    "Предыдущая неделя",
-    "Settimana precedente",
-    "前の週"
-  ],
-  "Semaine suivante": [
-    "Next week",
-    "下一周",
-    "Nächste Woche",
-    "Semana siguiente",
-    "Следующая неделя",
-    "Settimana successiva",
-    "次の週"
-  ],
-  "Facultatif : place disponible pour le capteur": [
-    "Optional: space available for the sensor",
-    "可选：传感器可用空间",
-    "Optional: verfügbarer Platz für den Sensor",
-    "Opcional: espacio disponible para el sensor",
-    "Необязательно: доступное место для датчика",
-    "Facoltativo: spazio disponibile per il sensore",
-    "任意：センサー用の利用可能スペース"
-  ],
-  "Rien n'est déduit de votre texte. Ces valeurs servent seulement à préfiltrer les capteurs, et restent modifiables.": [
-    "Nothing is inferred from your text. These values only pre-filter sensors and remain editable.",
-    "不会从您的文字中推断任何内容。这些数值仅用于预筛选传感器，并可随时修改。",
-    "Aus Ihrem Text wird nichts abgeleitet. Diese Werte dienen nur der Vorauswahl der Sensoren und bleiben änderbar.",
-    "No se deduce nada de su texto. Estos valores solo prefiltran los sensores y siguen siendo modificables.",
-    "Из вашего текста ничего не выводится. Эти значения служат только для предварительного отбора датчиков и остаются изменяемыми.",
-    "Nulla viene dedotto dal suo testo. Questi valori servono solo a prefiltrare i sensori e restano modificabili.",
-    "入力された文章から推測は行いません。これらの値はセンサーの絞り込みのみに使われ、後から変更できます。"
-  ],
-  "Élément à détecter": [
-    "Part to detect",
-    "待检测部件",
-    "Zu erkennendes Teil",
-    "Pieza a detectar",
-    "Обнаруживаемая деталь",
-    "Parte da rilevare",
-    "検出対象の部品"
-  ],
-  "Mouvement et détection": [
-    "Movement and detection",
-    "运动与检测",
-    "Bewegung und Erkennung",
-    "Movimiento y detección",
-    "Движение и обнаружение",
-    "Movimento e rilevamento",
-    "動きと検出"
-  ],
-  "Montage : position et fixation": [
-    "Mounting: position and fastening",
-    "安装：位置与固定",
-    "Montage: Position und Befestigung",
-    "Montaje: posición y fijación",
-    "Монтаж: положение и крепление",
-    "Montaggio: posizione e fissaggio",
-    "取り付け：位置と固定"
-  ],
-  "Dimensions disponibles": [
-    "Available dimensions",
-    "可用尺寸",
-    "Verfügbare Abmessungen",
-    "Dimensiones disponibles",
-    "Доступные размеры",
-    "Dimensioni disponibili",
-    "利用可能な寸法"
-  ],
-  "Projet envoyé": [
-    "Project sent",
-    "项目已发送",
-    "Projekt gesendet",
-    "Proyecto enviado",
-    "Проект отправлен",
-    "Progetto inviato",
-    "プロジェクトを送信しました"
-  ],
-  "Dans quel équipement, et pour quoi faire ?": [
-    "In which equipment, and what for?",
-    "用于哪种设备，目的是什么？",
-    "In welchem Gerät und wofür?",
-    "¿En qué equipo y para qué?",
-    "В каком оборудовании и для чего?",
-    "In quale apparecchiatura e per farne cosa?",
-    "どの装置で、何のために使いますか？"
-  ],
-  "Quelle pièce doit être détectée ?": [
-    "Which part must be detected?",
-    "需要检测哪个部件？",
-    "Welches Teil soll erkannt werden?",
-    "¿Qué pieza debe detectarse?",
-    "Какую деталь нужно обнаруживать?",
-    "Quale parte deve essere rilevata?",
-    "どの部品を検出しますか？"
-  ],
-  "Comment cette pièce bouge-t-elle, et quels états faut-il distinguer ?": [
-    "How does this part move, and which states must be distinguished?",
-    "该部件如何运动，需要区分哪些状态？",
-    "Wie bewegt sich dieses Teil, und welche Zustände sind zu unterscheiden?",
-    "¿Cómo se mueve esta pieza y qué estados hay que distinguir?",
-    "Как перемещается эта деталь и какие состояния нужно различать?",
-    "Come si muove questa parte e quali stati vanno distinti?",
-    "その部品はどう動き、どの状態を区別しますか？"
-  ],
-  "Où placer le capteur, et comment le tenir ?": [
-    "Where would the sensor go, and how would it be held?",
-    "传感器放在哪里，如何固定？",
-    "Wo soll der Sensor sitzen, und wie wird er gehalten?",
-    "¿Dónde iría el sensor y cómo se sujetaría?",
-    "Где разместить датчик и как его закрепить?",
-    "Dove collocare il sensore e come fissarlo?",
-    "センサーをどこに置き、どう固定しますか？"
-  ],
-  "Que doit-il supporter à cet endroit ?": [
-    "What must it withstand there?",
-    "在该位置需要承受什么？",
-    "Was muss er dort aushalten?",
-    "¿Qué debe soportar en ese lugar?",
-    "Что он должен выдерживать в этом месте?",
-    "Cosa deve sopportare in quel punto?",
-    "その場所で何に耐える必要がありますか？"
-  ],
-  "machine à café professionnelle : savoir si le réservoir est bien en place": [
-    "professional coffee machine: knowing whether the tank is fully in place",
-    "专业咖啡机：判断水箱是否完全到位",
-    "professionelle Kaffeemaschine: erkennen, ob der Tank richtig sitzt",
-    "máquina de café profesional: saber si el depósito está bien colocado",
-    "профессиональная кофемашина: определить, установлен ли бак до конца",
-    "macchina da caffè professionale: sapere se il serbatoio è inserito correttamente",
-    "業務用コーヒーマシン：タンクが正しく装着されているかを知る"
-  ],
-  "un réservoir amovible en plastique, un tiroir métallique, un piston": [
-    "a removable plastic tank, a metal drawer, a piston",
-    "可拆卸塑料水箱、金属抽屉、活塞",
-    "ein abnehmbarer Kunststofftank, eine Metallschublade, ein Kolben",
-    "un depósito de plástico extraíble, un cajón metálico, un pistón",
-    "съёмный пластиковый бак, металлический ящик, поршень",
-    "un serbatoio di plastica rimovibile, un cassetto metallico, un pistone",
-    "取り外し式の樹脂タンク、金属製の引き出し、ピストン"
-  ],
-  "elle coulisse de 20 mm ; présente ou retirée": [
-    "it slides 20 mm; present or removed",
-    "它滑动 20 mm；到位或取出",
-    "es gleitet 20 mm; vorhanden oder entnommen",
-    "se desliza 20 mm; presente o retirada",
-    "перемещается на 20 мм; на месте или снята",
-    "scorre di 20 mm; presente o rimossa",
-    "20 mm スライドする；装着または取り外し"
-  ],
-  "vissé à l'intérieur du bâti, en face de la pièce mobile": [
-    "screwed inside the frame, facing the moving part",
-    "拧装在机架内部，正对运动部件",
-    "im Gehäuse verschraubt, gegenüber dem beweglichen Teil",
-    "atornillado dentro del bastidor, frente a la pieza móvil",
-    "привинчен внутри корпуса, напротив подвижной детали",
-    "avvitato all'interno del telaio, di fronte alla parte mobile",
-    "フレーム内側にねじ止めし、可動部品と正対"
-  ],
-  "L'équipement et ce que la détection doit permettre.": [
-    "The equipment and what the detection should make possible.",
-    "设备以及检测需要实现的目标。",
-    "Das Gerät und was die Erkennung ermöglichen soll.",
-    "El equipo y qué debe permitir la detección.",
-    "Оборудование и то, что должно обеспечить обнаружение.",
-    "L'apparecchiatura e ciò che il rilevamento deve consentire.",
-    "装置と、検出によって実現したいこと。"
-  ],
-  "La pièce concernée, sa matière si vous la connaissez.": [
-    "The part concerned, and its material if you know it.",
-    "相关部件，如知晓请注明材料。",
-    "Das betroffene Teil und sein Material, falls bekannt.",
-    "La pieza afectada y su material, si lo conoce.",
-    "Нужная деталь и её материал, если известен.",
-    "La parte interessata e il suo materiale, se lo conosce.",
-    "対象の部品と、分かれば材質。"
-  ],
-  "Le mouvement, la course et les états à distinguer.": [
-    "The movement, the travel and the states to distinguish.",
-    "运动方式、行程以及需区分的状态。",
-    "Die Bewegung, der Weg und die zu unterscheidenden Zustände.",
-    "El movimiento, el recorrido y los estados a distinguir.",
-    "Движение, ход и состояния, которые нужно различать.",
-    "Il movimento, la corsa e gli stati da distinguere.",
-    "動き、ストローク、区別する状態。"
-  ],
-  "Position et fixation seulement : les dimensions se saisissent juste en dessous.": [
-    "Position and fastening only: dimensions are entered just below.",
-    "仅填写位置与固定方式：尺寸在下方填写。",
-    "Nur Position und Befestigung: Die Abmessungen werden direkt darunter eingegeben.",
-    "Solo posición y fijación: las dimensiones se introducen justo debajo.",
-    "Только положение и крепление: размеры вводятся ниже.",
-    "Solo posizione e fissaggio: le dimensioni si inseriscono qui sotto.",
-    "位置と固定方法のみ：寸法はすぐ下で入力します。"
-  ],
-  "Température, liquides, poussières, nettoyage, vibrations.": [
-    "Temperature, liquids, dust, cleaning, vibration.",
-    "温度、液体、粉尘、清洗、振动。",
-    "Temperatur, Flüssigkeiten, Staub, Reinigung, Vibrationen.",
-    "Temperatura, líquidos, polvo, limpieza, vibraciones.",
-    "Температура, жидкости, пыль, очистка, вибрации.",
-    "Temperatura, liquidi, polveri, pulizia, vibrazioni.",
-    "温度、液体、粉じん、洗浄、振動。"
-  ],
-  "Le réservoir d’eau amovible, en plastique, poignée vers l’avant.": [
-    "The removable plastic water tank, handle facing forward.",
-    "可拆卸塑料水箱，把手朝前。",
-    "Der abnehmbare Kunststoff-Wassertank, Griff nach vorn.",
-    "El depósito de agua de plástico extraíble, con el asa hacia delante.",
-    "Съёмный пластиковый бак для воды, ручка вперёд.",
-    "Il serbatoio d'acqua di plastica rimovibile, con maniglia in avanti.",
-    "取り外し式の樹脂製給水タンク、ハンドルは前向き。"
-  ],
-  "Le tiroir de cartouche, en tôle pliée, avec un aimant déjà intégré.": [
-    "The cartridge drawer, in folded sheet metal, with a magnet already fitted.",
-    "折弯钣金制的药盒抽屉，已内置磁铁。",
-    "Die Kassettenschublade aus Blech, mit bereits integriertem Magneten.",
-    "El cajón de cartucho, de chapa plegada, con imán ya integrado.",
-    "Кассетный ящик из гнутого листа, с уже встроенным магнитом.",
-    "Il cassetto della cartuccia, in lamiera piegata, con magnete già integrato.",
-    "曲げ板金製のカートリッジ引き出し、マグネット内蔵済み。"
-  ],
-  "La tige du vérin, en acier, portant un aimant permanent.": [
-    "The steel cylinder rod, carrying a permanent magnet.",
-    "气缸钢制活塞杆，带永磁体。",
-    "Die Stahlstange des Zylinders mit einem Permanentmagneten.",
-    "El vástago de acero del cilindro, con un imán permanente.",
-    "Стальной шток цилиндра с постоянным магнитом.",
-    "L'asta in acciaio del cilindro, con un magnete permanente.",
-    "シリンダーの鋼製ロッド、永久磁石付き。"
-  ],
-  "Référence du projet": [
-    "Project reference",
-    "项目编号",
-    "Projektreferenz",
-    "Referencia del proyecto",
-    "Номер проекта",
-    "Riferimento del progetto",
-    "プロジェクト参照番号"
-  ],
-  "Distances de ce couple non publiées": [
-    "Distances not published for this pair",
-    "该组合的距离未公布",
-    "Abstände für dieses Paar nicht veröffentlicht",
-    "Distancias de esta pareja no publicadas",
-    "Расстояния для этой пары не опубликованы",
-    "Distanze di questa coppia non pubblicate",
-    "この組み合わせの距離は非公開"
-  ],
-  "Fiche produit disponible · distances de ce couple non publiées": [
-    "Product datasheet available · distances not published for this pair",
-    "有产品资料 · 该组合的距离未公布",
-    "Produktdatenblatt verfügbar · Abstände für dieses Paar nicht veröffentlicht",
-    "Ficha de producto disponible · distancias de esta pareja no publicadas",
-    "Техническая карта доступна · расстояния для этой пары не опубликованы",
-    "Scheda prodotto disponibile · distanze di questa coppia non pubblicate",
-    "製品データシートあり · この組み合わせの距離は非公開"
-  ],
-  "Fiche produit disponible pour ce capteur, mais les distances de ce couple ne sont pas publiées dans le guide d'activation intégré (édition 10/2025). La simulation reste illustrative, à valider par essais avec Standex.": [
-    "A product datasheet is available for this sensor, but the distances for this pair are not published in the built-in activation guide (10/2025 edition). The simulation stays illustrative and must be validated by testing with Standex.",
-    "该传感器有产品资料，但内置激活指南（2025年10月版）未公布该组合的距离。仿真仅作示意，须与 Standex 一起通过实测验证。",
-    "Für diesen Sensor liegt ein Produktdatenblatt vor, die Abstände dieses Paares sind im integrierten Aktivierungsleitfaden (Ausgabe 10/2025) jedoch nicht veröffentlicht. Die Simulation bleibt illustrativ und ist durch Versuche mit Standex zu bestätigen.",
-    "Existe una ficha de producto para este sensor, pero las distancias de esta pareja no se publican en la guía de activación integrada (edición 10/2025). La simulación es solo ilustrativa y debe validarse mediante ensayos con Standex.",
-    "Для этого датчика есть техническая карта, но расстояния этой пары не опубликованы во встроенном руководстве по активации (выпуск 10/2025). Моделирование остаётся иллюстративным и требует подтверждения испытаниями со Standex.",
-    "Per questo sensore è disponibile una scheda prodotto, ma le distanze di questa coppia non sono pubblicate nella guida di attivazione integrata (edizione 10/2025). La simulazione resta illustrativa, da validare con prove insieme a Standex.",
-    "このセンサーの製品データシートはありますが、この組み合わせの距離は内蔵のアクティベーションガイド（2025年10月版）には掲載されていません。シミュレーションは参考であり、Standex との実測で検証が必要です。"
-  ],
-  "Référence provisoire (brouillon non enregistré)": [
-    "Provisional reference (unsaved draft)",
-    "临时编号（未保存的草稿）",
-    "Vorläufige Referenz (nicht gespeicherter Entwurf)",
-    "Referencia provisional (borrador no guardado)",
-    "Предварительный номер (несохранённый черновик)",
-    "Riferimento provvisorio (bozza non salvata)",
-    "仮の参照番号（未保存の下書き）"
-  ],
-  "Ce projet n'est pas encore enregistré chez Standex : cette référence est provisoire. La référence définitive est attribuée à l'envoi, et cette référence provisoire est conservée dans le projet transmis pour retrouver ce brouillon.": [
-    "This project is not yet saved at Standex: this reference is provisional. The final reference is assigned when you submit, and this provisional reference is kept inside the submitted project so this draft can be found.",
-    "该项目尚未保存到 Standex：此编号为临时编号。最终编号在提交时分配，且该临时编号会保留在已提交的项目中，以便找回此草稿。",
-    "Dieses Projekt ist bei Standex noch nicht gespeichert: Diese Referenz ist vorläufig. Die endgültige Referenz wird beim Absenden vergeben, und diese vorläufige Referenz bleibt im übermittelten Projekt erhalten, damit dieser Entwurf gefunden werden kann.",
-    "Este proyecto aún no está guardado en Standex: esta referencia es provisional. La referencia definitiva se asigna al enviar, y esta referencia provisional se conserva en el proyecto enviado para poder encontrar este borrador.",
-    "Этот проект ещё не сохранён в Standex: номер предварительный. Окончательный номер присваивается при отправке, а предварительный сохраняется в отправленном проекте, чтобы можно было найти этот черновик.",
-    "Questo progetto non è ancora salvato presso Standex: questo riferimento è provvisorio. Il riferimento definitivo viene assegnato all'invio e questo riferimento provvisorio resta nel progetto inviato per ritrovare questa bozza.",
-    "このプロジェクトはまだ Standex に保存されていません。この参照番号は仮のものです。確定番号は送信時に付与され、この仮番号は送信済みプロジェクト内に保持されるため、この下書きを後から特定できます。"
-  ],
-  "Ce qu'il faut savoir": [
-    "What you should know",
-    "须知",
-    "Wichtig zu wissen",
-    "Lo que debe saber",
-    "Что нужно знать",
-    "Da sapere",
-    "ご留意事項"
-  ],
-  "Référence provisoire du brouillon": [
-    "Provisional draft reference",
-    "草稿临时编号",
-    "Vorläufige Entwurfsreferenz",
-    "Referencia provisional del borrador",
-    "Предварительный номер черновика",
-    "Riferimento provvisorio della bozza",
-    "下書きの仮参照番号"
-  ],
-  "Référence provisoire imprimée sur le brouillon du client": [
-    "Provisional reference printed on the customer draft",
-    "打印在客户草稿上的临时编号",
-    "Vorläufige Referenz auf dem Kundenentwurf",
-    "Referencia provisional impresa en el borrador del cliente",
-    "Предварительный номер, напечатанный в черновике клиента",
-    "Riferimento provvisorio stampato sulla bozza del cliente",
-    "顧客の下書きに印字された仮参照番号"
-  ],
-  "brouillon non enregistré": [
-    "unsaved draft",
-    "未保存的草稿",
-    "nicht gespeicherter Entwurf",
-    "borrador no guardado",
-    "несохранённый черновик",
-    "bozza non salvata",
-    "未保存の下書き"
-  ],
-  "brouillon": [
-    "draft",
-    "草稿",
-    "Entwurf",
-    "borrador",
-    "черновик",
-    "bozza",
-    "下書き"
-  ],
-  "Identifiant unique du projet (base Standex)": [
-    "Unique project identifier (Standex database)",
-    "项目唯一标识符（Standex 数据库）",
-    "Eindeutige Projektkennung (Standex-Datenbank)",
-    "Identificador único del proyecto (base de datos Standex)",
-    "Уникальный идентификатор проекта (база Standex)",
-    "Identificativo univoco del progetto (database Standex)",
-    "プロジェクト固有識別子（Standex データベース）"
-  ],
-  "Identifiant complet du brouillon local (non enregistré)": [
-    "Full local draft identifier (not saved)",
-    "本地草稿完整标识符（未保存）",
-    "Vollständige lokale Entwurfskennung (nicht gespeichert)",
-    "Identificador completo del borrador local (no guardado)",
-    "Полный идентификатор локального черновика (не сохранён)",
-    "Identificativo completo della bozza locale (non salvata)",
-    "ローカル下書きの完全な識別子（未保存）"
-  ],
-  "Abrégé lisible (raccourci, pas une clé unique)": [
-    "Readable short form (shortcut, not a unique key)",
-    "可读缩写（便于阅读，非唯一键）",
-    "Lesbare Kurzform (Abkürzung, kein eindeutiger Schlüssel)",
-    "Forma corta legible (atajo, no una clave única)",
-    "Читаемое сокращение (не уникальный ключ)",
-    "Forma breve leggibile (scorciatoia, non una chiave univoca)",
-    "読みやすい短縮表記（一意キーではありません）"
-  ],
-  "Rechercher (société, projet, pays, identifiant)": [
-    "Search (company, project, country, identifier)",
-    "搜索（公司、项目、国家、标识符）",
-    "Suchen (Firma, Projekt, Land, Kennung)",
-    "Buscar (empresa, proyecto, país, identificador)",
-    "Поиск (компания, проект, страна, идентификатор)",
-    "Cerca (azienda, progetto, paese, identificativo)",
-    "検索（会社、案件、国、識別子）"
-  ],
-  "plage du guide {0}–{1} mm, ligne {2}, page {3}": [
-    "guide range {0}–{1} mm, row {2}, page {3}",
-    "指南范围 {0}–{1} mm，行 {2}，第 {3} 页",
-    "Leitfaden-Bereich {0}–{1} mm, Zeile {2}, Seite {3}",
-    "rango de la guía {0}–{1} mm, fila {2}, página {3}",
-    "диапазон из руководства {0}–{1} мм, строка {2}, страница {3}",
-    "intervallo della guida {0}–{1} mm, riga {2}, pagina {3}",
-    "ガイド範囲 {0}–{1} mm、行 {2}、{3} ページ"
-  ],
-  "ordre imprimé inhabituel, à confirmer": [
-    "unusual printed order, to be confirmed",
-    "印刷顺序异常，待确认",
-    "ungewöhnliche gedruckte Reihenfolge, zu bestätigen",
-    "orden impreso inusual, por confirmar",
-    "необычный порядок в печати, требует подтверждения",
-    "ordine stampato inusuale, da confermare",
-    "印刷順序が通常と異なります。確認が必要です"
-  ],
-  "seuils de ce montage non caractérisés": [
-    "thresholds for this assembly are not characterised",
-    "本装配的阈值未表征",
-    "Schaltabstände dieses Aufbaus sind nicht charakterisiert",
-    "umbrales de este montaje no caracterizados",
-    "пороги этой сборки не охарактеризованы",
-    "soglie di questo montaggio non caratterizzate",
-    "この取り付けのしきい値は未特性評価です"
-  ],
-  "distances de ce couple non publiées": [
-    "distances for this pair are not published",
-    "该组合的距离未公布",
-    "Abstände dieser Kombination sind nicht veröffentlicht",
-    "distancias de esta pareja no publicadas",
-    "расстояния для этой пары не опубликованы",
-    "distanze di questa coppia non pubblicate",
-    "この組み合わせの距離は未公開です"
-  ],
-  "Lampe allumée": [
-    "Lamp on",
-    "灯亮",
-    "Lampe an",
-    "Lámpara encendida",
-    "Лампа включена",
-    "Lampada accesa",
-    "ランプ点灯"
-  ],
-  "Lampe éteinte": [
-    "Lamp off",
-    "灯灭",
-    "Lampe aus",
-    "Lámpara apagada",
-    "Лампа выключена",
-    "Lampada spenta",
-    "ランプ消灯"
-  ],
-  "Reed": [
-    "Reed",
-    "干簧管",
-    "Reed",
-    "Reed",
-    "Геркон",
-    "Reed",
-    "リード"
-  ],
-  "Revoir les points de compatibilité": [
-    "Review the compatibility points",
-    "查看兼容性要点",
-    "Kompatibilitätspunkte prüfen",
-    "Revisar los puntos de compatibilidad",
-    "Просмотреть вопросы совместимости",
-    "Rivedere i punti di compatibilità",
-    "互換性の要点を確認する"
-  ],
-  "Question {0} · {1}": [
-    "Question {0} · {1}",
-    "问题 {0} · {1}",
-    "Frage {0} · {1}",
-    "Pregunta {0} · {1}",
-    "Вопрос {0} · {1}",
-    "Domanda {0} · {1}",
-    "質問 {0} · {1}"
-  ],
-  "Compatibilité de votre application": [
-    "Compatibility of your application",
-    "您的应用的兼容性",
-    "Kompatibilität Ihrer Anwendung",
-    "Compatibilidad de su aplicación",
-    "Совместимость вашего применения",
-    "Compatibilità della vostra applicazione",
-    "お客様の用途の適合性"
-  ],
-  "Ce qui ne fonctionne pas": [
-    "What does not work",
-    "哪些无法实现",
-    "Was nicht funktioniert",
-    "Lo que no funciona",
-    "Что не работает",
-    "Ciò che non funziona",
-    "うまくいかない点"
-  ],
-  "Modifications possibles": [
-    "Possible changes",
-    "可行的修改",
-    "Mögliche Änderungen",
-    "Modificaciones posibles",
-    "Возможные изменения",
-    "Modifiche possibili",
-    "考えられる変更"
-  ],
-  "À retenir": [
-    "Worth remembering",
-    "需要注意",
-    "Wichtig zu wissen",
-    "Para tener en cuenta",
-    "Важно помнить",
-    "Da ricordare",
-    "覚えておくこと"
-  ],
-  "Ce que cela implique": [
-    "What this means",
-    "这意味着什么",
-    "Was das bedeutet",
-    "Lo que esto implica",
-    "Что это означает",
-    "Cosa comporta",
-    "これが意味すること"
-  ],
-  "triphasé": [
-    "three-phase",
-    "三相",
-    "dreiphasig",
-    "trifásico",
-    "трёхфазный",
-    "trifase",
-    "三相"
-  ],
-  "Décrire le capteur comme un signal de commande (par exemple 24 V continu vers un automate ou une entrée logique) et garder l'alimentation du moteur sur un circuit séparé.": [
-    "Describe the sensor as a control signal (for example 24 V DC to a PLC or a logic input) and keep the motor supply on a separate circuit.",
-    "将传感器描述为控制信号（例如向 PLC 或逻辑输入提供 24 V 直流），并将电机供电保持在独立回路中。",
-    "Beschreiben Sie den Sensor als Steuersignal (zum Beispiel 24 V DC an eine Steuerung oder einen Logikeingang) und halten Sie die Motorversorgung in einem separaten Kreis.",
-    "Describa el sensor como una señal de mando (por ejemplo 24 V CC hacia un autómata o una entrada lógica) y mantenga la alimentación del motor en un circuito separado.",
-    "Опишите датчик как сигнал управления (например, 24 В постоянного тока на контроллер или логический вход) и оставьте питание двигателя в отдельной цепи.",
-    "Descrivete il sensore come un segnale di comando (per esempio 24 V CC verso un PLC o un ingresso logico) e mantenete l'alimentazione del motore su un circuito separato.",
-    "センサーを制御信号として記述し（例：PLC や論理入力への DC24V）、モーター電源は別回路のままにしてください。"
-  ],
-  "Prévoir entre ce signal et le moteur un relais, un contacteur ou une interface de puissance dimensionnés pour la charge réelle du moteur.": [
-    "Place between that signal and the motor a relay, contactor or power interface rated for the motor's actual load.",
-    "在该信号与电机之间加入按电机实际负载选型的继电器、接触器或功率接口。",
-    "Sehen Sie zwischen diesem Signal und dem Motor ein Relais, einen Schütz oder eine Leistungsschnittstelle vor, die für die tatsächliche Motorlast ausgelegt ist.",
-    "Prevea entre esa señal y el motor un relé, un contactor o una interfaz de potencia dimensionados para la carga real del motor.",
-    "Предусмотрите между этим сигналом и двигателем реле, контактор или силовой интерфейс, рассчитанный на фактическую нагрузку двигателя.",
-    "Prevedete tra questo segnale e il motore un relè, un contattore o un'interfaccia di potenza dimensionati per il carico reale del motore.",
-    "その信号とモーターの間に、実際のモーター負荷に適合した リレー、コンタクタまたはパワーインターフェースを設けてください。"
-  ],
-  "Retirer le refus d'un relais ou d'un contacteur, ou expliquer ce qui l'empêche chez vous : sans interface, aucun capteur reed ne convient.": [
-    "Remove the refusal of a relay or contactor, or explain what prevents it on your side: without an interface, no reed sensor is suitable.",
-    "取消对继电器或接触器的排除，或说明您方面的限制：没有接口，任何干簧管传感器都不适用。",
-    "Streichen Sie die Ablehnung eines Relais oder Schützes oder erklären Sie, was bei Ihnen dagegen spricht: ohne Schnittstelle ist kein Reed-Sensor geeignet.",
-    "Retire el rechazo de un relé o contactor, o explique qué lo impide en su caso: sin interfaz, ningún sensor reed es adecuado.",
-    "Снимите отказ от реле или контактора либо объясните, что этому мешает: без интерфейса ни один герконовый датчик не подходит.",
-    "Rimuovete il rifiuto di un relè o di un contattore, oppure spiegate cosa lo impedisce da voi: senza interfaccia nessun sensore reed è adatto.",
-    "リレーやコンタクタを使わないという条件を外すか、使えない理由をご説明ください。インターフェースなしでは適合するリードセンサーはありません。"
-  ],
-  "Reformuler l'application si le capteur doit encore alimenter le moteur lui-même.": [
-    "Reword the application if the sensor is still meant to power the motor itself.",
-    "如果仍要求传感器直接为电机供电，请重新描述应用。",
-    "Formulieren Sie die Anwendung neu, wenn der Sensor den Motor weiterhin selbst speisen soll.",
-    "Reformule la aplicación si el sensor debe seguir alimentando el motor.",
-    "Переформулируйте задачу, если датчик по-прежнему должен сам питать двигатель.",
-    "Riformulate l'applicazione se il sensore deve ancora alimentare il motore.",
-    "センサー自体がモーターに給電する前提が残る場合は、用途の記述を見直してください。"
-  ],
-  "Le capteur ne peut pas couper lui-même l'alimentation du moteur": [
-    "The sensor cannot switch the motor supply itself",
-    "传感器无法自行切断电机供电",
-    "Der Sensor kann die Motorversorgung nicht selbst schalten",
-    "El sensor no puede cortar por sí mismo la alimentación del motor",
-    "Датчик не может сам коммутировать питание двигателя",
-    "Il sensore non può interrompere da solo l'alimentazione del motore",
-    "センサー自体でモーター電源を開閉することはできません"
-  ],
-  "Un capteur reed convient tout à fait pour donner le SIGNAL de position : savoir si le capot est fermé, et transmettre cette information.": [
-    "A reed sensor is entirely suitable for giving the position SIGNAL: knowing whether the cover is closed, and passing that information on.",
-    "干簧管传感器完全适合提供位置信号：判断护罩是否关闭并传递该信息。",
-    "Ein Reed-Sensor ist durchaus geeignet, das Positions-SIGNAL zu liefern: zu erkennen, ob die Haube geschlossen ist, und diese Information weiterzugeben.",
-    "Un sensor reed es perfectamente adecuado para dar la SEÑAL de posición: saber si la tapa está cerrada y transmitir esa información.",
-    "Герконовый датчик вполне подходит для выдачи СИГНАЛА положения: определить, закрыт ли кожух, и передать эту информацию.",
-    "Un sensore reed è del tutto adatto a fornire il SEGNALE di posizione: sapere se il coperchio è chiuso e trasmettere l'informazione.",
-    "リードセンサーは位置の「信号」を出すのに十分適しています。カバーが閉じているかを判定し、その情報を伝えます。"
-  ],
-  "Faire passer l'alimentation du moteur ({0}) directement dans le contact du capteur.": [
-    "Passing the motor supply ({0}) directly through the sensor contact.",
-    "让电机供电（{0}）直接通过传感器触点。",
-    "Die Motorversorgung ({0}) direkt über den Sensorkontakt zu führen.",
-    "Hacer pasar la alimentación del motor ({0}) directamente por el contacto del sensor.",
-    "Пропустить питание двигателя ({0}) прямо через контакт датчика.",
-    "Far passare l'alimentazione del motore ({0}) direttamente nel contatto del sensore.",
-    "モーター電源（{0}）をセンサー接点に直接通すこと。"
-  ],
-  "Faire passer l'alimentation du moteur directement dans le contact du capteur.": [
-    "Passing the motor supply directly through the sensor contact.",
-    "让电机供电直接通过传感器触点。",
-    "Die Motorversorgung direkt über den Sensorkontakt zu führen.",
-    "Hacer pasar la alimentación del motor directamente por el contacto del sensor.",
-    "Пропустить питание двигателя прямо через контакт датчика.",
-    "Far passare l'alimentazione del motore direttamente nel contatto del sensore.",
-    "モーター電源をセンサー接点に直接通すこと。"
-  ],
-  "Capteur reed (signal de position)": [
-    "Reed sensor (position signal)",
-    "干簧管传感器（位置信号）",
-    "Reed-Sensor (Positionssignal)",
-    "Sensor reed (señal de posición)",
-    "Герконовый датчик (сигнал положения)",
-    "Sensore reed (segnale di posizione)",
-    "リードセンサー（位置信号）"
-  ],
-  "Entrée de commande compatible (automate, carte, entrée logique)": [
-    "Compatible control input (PLC, board, logic input)",
-    "兼容的控制输入（PLC、电路板、逻辑输入）",
-    "Kompatibler Steuereingang (Steuerung, Platine, Logikeingang)",
-    "Entrada de mando compatible (autómata, tarjeta, entrada lógica)",
-    "Совместимый вход управления (контроллер, плата, логический вход)",
-    "Ingresso di comando compatibile (PLC, scheda, ingresso logico)",
-    "適合する制御入力（PLC、基板、論理入力）"
-  ],
-  "Relais ou contacteur dimensionné pour la charge": [
-    "Relay or contactor rated for the load",
-    "按负载选型的继电器或接触器",
-    "Relais oder Schütz, für die Last ausgelegt",
-    "Relé o contactor dimensionado para la carga",
-    "Реле или контактор, рассчитанный на нагрузку",
-    "Relè o contattore dimensionato per il carico",
-    "負荷に適合したリレーまたはコンタクタ"
-  ],
-  "Moteur (circuit de puissance séparé)": [
-    "Motor (separate power circuit)",
-    "电机（独立功率回路）",
-    "Motor (separater Leistungskreis)",
-    "Motor (circuito de potencia separado)",
-    "Двигатель (отдельная силовая цепь)",
-    "Motore (circuito di potenza separato)",
-    "モーター（独立した動力回路）"
-  ],
-  "Le circuit de puissance du moteur et le circuit de signal du capteur restent deux circuits distincts.": [
-    "The motor power circuit and the sensor signal circuit remain two distinct circuits.",
-    "电机功率回路与传感器信号回路始终是两个独立回路。",
-    "Der Leistungskreis des Motors und der Signalkreis des Sensors bleiben zwei getrennte Kreise.",
-    "El circuito de potencia del motor y el circuito de señal del sensor siguen siendo dos circuitos distintos.",
-    "Силовая цепь двигателя и сигнальная цепь датчика остаются двумя разными цепями.",
-    "Il circuito di potenza del motore e il circuito di segnale del sensore restano due circuiti distinti.",
-    "モーターの動力回路とセンサーの信号回路は、あくまで別々の回路です。"
-  ],
-  "Un capteur reed sur un capot donne une information de position. Il ne constitue pas à lui seul un verrouillage de sécurité machine certifié.": [
-    "A reed sensor on a cover gives position information. On its own it does not constitute a certified machine safety interlock.",
-    "护罩上的干簧管传感器提供位置信息，本身并不构成经认证的机器安全联锁。",
-    "Ein Reed-Sensor an einer Haube liefert eine Positionsinformation. Er stellt allein keine zertifizierte Maschinen-Sicherheitsverriegelung dar.",
-    "Un sensor reed en una tapa da información de posición. Por sí solo no constituye un enclavamiento de seguridad de máquina certificado.",
-    "Герконовый датчик на кожухе даёт информацию о положении. Сам по себе он не является сертифицированной блокировкой безопасности машины.",
-    "Un sensore reed su un coperchio fornisce un'informazione di posizione. Da solo non costituisce un interblocco di sicurezza macchina certificato.",
-    "カバー上のリードセンサーは位置情報を与えるものであり、それ単体で認証された機械安全インターロックにはなりません。"
-  ],
-  "Sans champ magnétique, aucun capteur reed ne peut détecter cette pièce": [
-    "Without a magnetic field, no reed sensor can detect this part",
-    "没有磁场，任何干簧管传感器都无法检测该零件",
-    "Ohne Magnetfeld kann kein Reed-Sensor dieses Teil erkennen",
-    "Sin campo magnético, ningún sensor reed puede detectar esta pieza",
-    "Без магнитного поля ни один герконовый датчик не обнаружит эту деталь",
-    "Senza campo magnetico nessun sensore reed può rilevare questo pezzo",
-    "磁界がなければ、どのリードセンサーもこの部品を検出できません"
-  ],
-  "Repérer le passage ou la position d'une pièce mobile avec un capteur reed ne pose aucune difficulté en soi, y compris sur un convoyeur.": [
-    "Detecting the passage or position of a moving part with a reed sensor is not a difficulty in itself, including on a conveyor.",
-    "用干簧管传感器检测运动件的经过或位置本身并不困难，输送线上同样如此。",
-    "Den Durchgang oder die Position eines bewegten Teils mit einem Reed-Sensor zu erfassen, ist an sich kein Problem, auch nicht auf einem Förderband.",
-    "Detectar el paso o la posición de una pieza móvil con un sensor reed no supone dificultad en sí, incluso en un transportador.",
-    "Определить прохождение или положение движущейся детали герконовым датчиком само по себе несложно, в том числе на конвейере.",
-    "Rilevare il passaggio o la posizione di un pezzo mobile con un sensore reed non è di per sé un problema, anche su un convogliatore.",
-    "リードセンサーで可動部品の通過や位置を捉えること自体は、コンベヤ上でも問題ありません。"
-  ],
-  "Un capteur reed réagit à un champ magnétique. Une pièce en {0} non aimantée n'en produit aucun : le contact ne se fermera jamais.": [
-    "A reed sensor responds to a magnetic field. A non-magnetised {0} part produces none: the contact will never close.",
-    "干簧管传感器响应磁场。未磁化的{0}零件不产生磁场：触点永远不会闭合。",
-    "Ein Reed-Sensor reagiert auf ein Magnetfeld. Ein nicht magnetisiertes Teil aus {0} erzeugt keines: der Kontakt schließt niemals.",
-    "Un sensor reed reacciona a un campo magnético. Una pieza de {0} no imantada no produce ninguno: el contacto nunca se cerrará.",
-    "Герконовый датчик реагирует на магнитное поле. Ненамагниченная деталь из {0} его не создаёт: контакт никогда не замкнётся.",
-    "Un sensore reed reagisce a un campo magnetico. Un pezzo in {0} non magnetizzato non ne produce alcuno: il contatto non si chiuderà mai.",
-    "リードセンサーは磁界に反応します。磁化されていない{0}の部品は磁界を生じないため、接点は決して閉じません。"
-  ],
-  "Un capteur reed réagit à un champ magnétique. Une pièce qui n'en produit aucun ne fermera jamais le contact.": [
-    "A reed sensor responds to a magnetic field. A part that produces none will never close the contact.",
-    "干簧管传感器响应磁场。不产生磁场的零件永远不会使触点闭合。",
-    "Ein Reed-Sensor reagiert auf ein Magnetfeld. Ein Teil, das keines erzeugt, schließt den Kontakt niemals.",
-    "Un sensor reed reacciona a un campo magnético. Una pieza que no produce ninguno nunca cerrará el contacto.",
-    "Герконовый датчик реагирует на магнитное поле. Деталь, которая его не создаёт, никогда не замкнёт контакт.",
-    "Un sensore reed reagisce a un campo magnetico. Un pezzo che non ne produce alcuno non chiuderà mai il contatto.",
-    "リードセンサーは磁界に反応します。磁界を生じない部品では接点は閉じません。"
-  ],
-  "Vos réponses interdisent aujourd'hui d'ajouter un aimant ou un élément magnétique. Ces deux points ne peuvent pas être vrais en même temps.": [
-    "Your answers currently forbid adding a magnet or any magnetic element. Those two things cannot both hold at the same time.",
-    "您当前的回答禁止添加磁铁或任何磁性元件。这两点无法同时成立。",
-    "Ihre Antworten verbieten derzeit das Hinzufügen eines Magneten oder magnetischen Elements. Beides kann nicht gleichzeitig zutreffen.",
-    "Sus respuestas prohíben hoy añadir un imán o un elemento magnético. Esos dos puntos no pueden ser ciertos a la vez.",
-    "Ваши ответы сейчас запрещают добавлять магнит или магнитный элемент. Эти два условия не могут выполняться одновременно.",
-    "Le vostre risposte vietano oggi di aggiungere un magnete o un elemento magnetico. Questi due punti non possono essere veri insieme.",
-    "現在のご回答では磁石や磁性部品の追加が禁止されています。この二つは同時には成立しません。"
-  ],
-  "Une conception sur mesure ne change rien à ce point : elle ne crée pas de champ magnétique là où il n'y en a pas.": [
-    "A custom design changes nothing here: it does not create a magnetic field where there is none.",
-    "定制设计对此毫无改变：它不会在没有磁场的地方产生磁场。",
-    "Eine Sonderkonstruktion ändert daran nichts: sie erzeugt kein Magnetfeld, wo keines ist.",
-    "Un diseño a medida no cambia nada aquí: no crea un campo magnético donde no lo hay.",
-    "Индивидуальная конструкция здесь ничего не меняет: она не создаёт магнитное поле там, где его нет.",
-    "Una progettazione su misura non cambia nulla: non crea un campo magnetico dove non esiste.",
-    "特注設計でもこの点は変わりません。磁界のない場所に磁界を作ることはできません。"
-  ],
-  "Autoriser un aimant sur la pièce mobile ou sur son support : c'est la voie la plus simple.": [
-    "Allow a magnet on the moving part or on its support: this is the simplest route.",
-    "允许在运动件或其支架上安装磁铁：这是最简单的途径。",
-    "Erlauben Sie einen Magneten am bewegten Teil oder an dessen Träger: das ist der einfachste Weg.",
-    "Permitir un imán en la pieza móvil o en su soporte: es la vía más sencilla.",
-    "Разрешите магнит на движущейся детали или её носителе: это самый простой путь.",
-    "Consentire un magnete sul pezzo mobile o sul suo supporto: è la via più semplice.",
-    "可動部品またはその支持側に磁石を許容する：これが最も簡単な方法です。"
-  ],
-  "Revoir aussi la réponse de montage qui interdit tout aimant, sinon la contradiction demeure, puis indiquer la distance réelle entre l'aimant et le capteur.": [
-    "Also revise the mounting answer that forbids any magnet, otherwise the contradiction remains, then state the actual distance between magnet and sensor.",
-    "同时修改禁止使用磁铁的安装回答，否则矛盾仍然存在，然后给出磁铁与传感器之间的实际距离。",
-    "Überarbeiten Sie auch die Montageantwort, die jeden Magneten verbietet, sonst bleibt der Widerspruch, und geben Sie dann den tatsächlichen Abstand zwischen Magnet und Sensor an.",
-    "Revise también la respuesta de montaje que prohíbe todo imán, de lo contrario la contradicción persiste, e indique luego la distancia real entre imán y sensor.",
-    "Также измените ответ о монтаже, запрещающий любой магнит, иначе противоречие сохранится, и укажите фактическое расстояние между магнитом и датчиком.",
-    "Rivedete anche la risposta di montaggio che vieta ogni magnete, altrimenti la contraddizione resta, poi indicate la distanza reale tra magnete e sensore.",
-    "磁石を禁止している取り付けの回答も見直してください。そのままでは矛盾が残ります。その上で磁石とセンサーの実際の距離をご記入ください。"
-  ],
-  "Ou conserver la contrainte « aucun aimant » : il faut alors évaluer une autre technologie de détection. Aucun produit reed ne résout ce cas et nous ne le présenterons pas comme résolu.": [
-    "Or keep the \"no magnet\" constraint: another sensing technology then has to be evaluated. No reed product solves this case and we will not present it as solved.",
-    "或保留“无磁铁”约束：那就需要评估其他检测技术。没有干簧管产品能解决该情形，我们也不会将其描述为已解决。",
-    "Oder behalten Sie die Vorgabe „kein Magnet“: dann ist eine andere Sensortechnologie zu prüfen. Kein Reed-Produkt löst diesen Fall, und wir stellen ihn nicht als gelöst dar.",
-    "O mantener la restricción «ningún imán»: habrá entonces que evaluar otra tecnología de detección. Ningún producto reed resuelve este caso y no lo presentaremos como resuelto.",
-    "Либо сохраните условие «без магнита»: тогда нужно рассмотреть другую технологию обнаружения. Ни один герконовый продукт этот случай не решает, и мы не станем выдавать его за решённый.",
-    "Oppure mantenere il vincolo «nessun magnete»: occorre allora valutare un'altra tecnologia di rilevamento. Nessun prodotto reed risolve questo caso e non lo presenteremo come risolto.",
-    "あるいは「磁石なし」の条件を維持する：その場合は別の検出技術を検討する必要があります。この案件をリード製品で解決することはできず、解決済みとして提示はしません。"
-  ],
-  "Un point à revoir avant de proposer des produits": [
-    "One point to revisit before proposing products",
-    "在推荐产品前需复核的一点",
-    "Ein Punkt, der vor Produktvorschlägen zu klären ist",
-    "Un punto a revisar antes de proponer productos",
-    "Один вопрос требует уточнения до подбора продукции",
-    "Un punto da rivedere prima di proporre prodotti",
-    "製品をご提案する前に見直す点が1件あります"
-  ],
-  "Points à revoir avant de proposer des produits": [
-    "Points to revisit before proposing products",
-    "在推荐产品前需复核的要点",
-    "Punkte, die vor Produktvorschlägen zu klären sind",
-    "Puntos a revisar antes de proponer productos",
-    "Вопросы, требующие уточнения до подбора продукции",
-    "Punti da rivedere prima di proporre prodotti",
-    "製品をご提案する前に見直す点"
-  ],
-  "Votre projet reste tout à fait réalisable, mais tel qu'il est décrit aujourd'hui il ne peut pas fonctionner. Voici ce qui fonctionne, ce qui ne fonctionne pas, et les modifications concrètes possibles.": [
-    "Your project remains entirely feasible, but as described today it cannot work. Here is what works, what does not, and the concrete changes available.",
-    "您的项目完全可行，但按目前的描述无法运行。以下是可行之处、不可行之处以及可采取的具体修改。",
-    "Ihr Projekt bleibt durchaus machbar, kann aber so, wie es heute beschrieben ist, nicht funktionieren. Hier steht, was funktioniert, was nicht, und welche konkreten Änderungen möglich sind.",
-    "Su proyecto sigue siendo perfectamente viable, pero tal como está descrito hoy no puede funcionar. Esto es lo que funciona, lo que no, y las modificaciones concretas posibles.",
-    "Ваш проект вполне осуществим, но в текущем описании он работать не может. Ниже — что работает, что не работает и какие конкретные изменения возможны.",
-    "Il vostro progetto resta del tutto realizzabile, ma così come è descritto oggi non può funzionare. Ecco ciò che funziona, ciò che non funziona e le modifiche concrete possibili.",
-    "ご計画は十分に実現可能ですが、現在の記述のままでは成立しません。うまくいく点、いかない点、そして具体的な変更案を以下に示します。"
-  ],
-  "Ce qui fonctionne": [
-    "What works",
-    "哪些可行",
-    "Was funktioniert",
-    "Lo que funciona",
-    "Что работает",
-    "Ciò che funziona",
-    "うまくいく点"
-  ],
-  "Le câblage habituel": [
-    "The usual wiring",
-    "常规接线方式",
-    "Die übliche Verdrahtung",
-    "El cableado habitual",
-    "Обычная схема подключения",
-    "Il cablaggio abituale",
-    "一般的な配線"
-  ],
-  "Revoir vos réponses": [
-    "Revise your answers",
-    "修改您的回答",
-    "Ihre Antworten überarbeiten",
-    "Revisar sus respuestas",
-    "Изменить ваши ответы",
-    "Rivedere le vostre risposte",
-    "ご回答を見直す"
-  ],
-  "Ce que vous avez écrit": [
-    "What you wrote",
-    "您所填写的内容",
-    "Was Sie geschrieben haben",
-    "Lo que usted escribió",
-    "Что вы написали",
-    "Ciò che avete scritto",
-    "ご記入いただいた内容"
-  ],
-  "Vos réponses ne sont jamais modifiées à votre place. Ces boutons ouvrent la question concernée : vous décidez de ce qui change.": [
-    "Your answers are never changed for you. These buttons open the relevant question: you decide what changes.",
-    "我们绝不会替您修改回答。这些按钮会打开相应问题：由您决定修改内容。",
-    "Ihre Antworten werden niemals für Sie geändert. Diese Schaltflächen öffnen die betreffende Frage: Sie entscheiden, was sich ändert.",
-    "Sus respuestas nunca se modifican en su lugar. Estos botones abren la pregunta correspondiente: usted decide qué cambia.",
-    "Ваши ответы никогда не меняются за вас. Эти кнопки открывают соответствующий вопрос: вы решаете, что изменить.",
-    "Le vostre risposte non vengono mai modificate al vostro posto. Questi pulsanti aprono la domanda interessata: decidete voi cosa cambiare.",
-    "ご回答を代わりに書き換えることはありません。これらのボタンは該当する質問を開くだけで、変更はお客様が決めます。"
-  ],
-  "Aucun produit n'est proposé tant que ces points subsistent. Si vous ne souhaitez pas modifier ces contraintes, c'est une limite réelle de la technologie reed, pas un refus de notre part.": [
-    "No product is proposed while these points remain. If you prefer not to change these constraints, that is a real limit of reed technology, not a refusal on our side.",
-    "只要这些问题仍存在，我们就不会推荐产品。若您不愿修改这些约束，这是干簧管技术的实际局限，而非我们的拒绝。",
-    "Solange diese Punkte bestehen, wird kein Produkt vorgeschlagen. Wenn Sie diese Vorgaben nicht ändern möchten, ist das eine echte Grenze der Reed-Technologie und keine Ablehnung unserer Seite.",
-    "No se propone ningún producto mientras subsistan estos puntos. Si prefiere no modificar estas restricciones, se trata de un límite real de la tecnología reed, no de una negativa nuestra.",
-    "Пока эти вопросы не решены, продукция не предлагается. Если вы не хотите менять эти условия, это реальное ограничение герконовой технологии, а не отказ с нашей стороны.",
-    "Nessun prodotto viene proposto finché questi punti permangono. Se non desiderate modificare questi vincoli, si tratta di un limite reale della tecnologia reed, non di un rifiuto da parte nostra.",
-    "これらの点が残る間は製品のご提案は行いません。条件を変更されない場合、それはリード技術の実際の限界であり、当方の拒否ではありません。"
-  ],
-  "Vos réponses ne présentent plus de contradiction : les couples proposés sont de nouveau affichés.": [
-    "Your answers no longer contradict each other: the proposed pairs are shown again.",
-    "您的回答不再存在矛盾：推荐组合已重新显示。",
-    "Ihre Antworten widersprechen sich nicht mehr: die vorgeschlagenen Paare werden wieder angezeigt.",
-    "Sus respuestas ya no presentan contradicción: los pares propuestos se muestran de nuevo.",
-    "В ваших ответах больше нет противоречий: предлагаемые пары снова отображаются.",
-    "Le vostre risposte non presentano più contraddizioni: le coppie proposte sono di nuovo visibili.",
-    "ご回答の矛盾は解消されました。ご提案の組み合わせを再度表示しています。"
-  ],
-  "Les distances d'une démonstration ne valent pas vérification de votre application : ce point de compatibilité reste à traiter.": [
-    "Demonstration distances are not a verification of your application: this compatibility point still has to be addressed.",
-    "演示距离不等于对您应用的验证：该兼容性问题仍待处理。",
-    "Abstände aus einer Demonstration sind keine Prüfung Ihrer Anwendung: dieser Kompatibilitätspunkt ist noch zu klären.",
-    "Las distancias de una demostración no equivalen a una verificación de su aplicación: este punto de compatibilidad sigue pendiente.",
-    "Расстояния в демонстрации не являются проверкой вашего применения: этот вопрос совместимости остаётся открытым.",
-    "Le distanze di una dimostrazione non equivalgono a una verifica della vostra applicazione: questo punto di compatibilità resta da risolvere.",
-    "デモの距離はお客様の用途の検証にはなりません。この互換性の点は未解決です。"
-  ],
-  "Point de compatibilité à traiter": [
-    "Compatibility point to address",
-    "待处理的兼容性问题",
-    "Zu klärender Kompatibilitätspunkt",
-    "Punto de compatibilidad pendiente",
-    "Открытый вопрос совместимости",
-    "Punto di compatibilità da risolvere",
-    "対応が必要な互換性の点"
-  ],
-  "Cette démonstration ne répond pas encore à votre besoin": [
-    "This demonstration does not yet answer your need",
-    "此演示尚未满足您的需求",
-    "Diese Demonstration erfüllt Ihren Bedarf noch nicht",
-    "Esta demostración aún no responde a su necesidad",
-    "Эта демонстрация пока не отвечает вашей задаче",
-    "Questa dimostrazione non risponde ancora alla vostra esigenza",
-    "このデモはまだお客様のご要望に応えていません"
-  ],
-  "La charge du moteur et son courant d'appel au démarrage dépassent largement ce qu'un contact reed peut couper. Les contacts peuvent se souder ou se dégrader, et la machine peut alors démarrer ou rester en marche sans commande.": [
-    "The motor load and its inrush current at start-up far exceed what a reed contact can switch. The contacts can weld or degrade, and the machine may then start or keep running without any command.",
-    "电机负载及其启动浪涌电流远超簧片触点所能切断的能力。触点可能熔焊或损坏，机器随后可能在无指令的情况下启动或持续运转。",
-    "Die Motorlast und ihr Einschaltstrom beim Anlauf übersteigen bei Weitem, was ein Reed-Kontakt schalten kann. Die Kontakte können verschweißen oder sich zersetzen, und die Maschine kann dann ohne Befehl anlaufen oder weiterlaufen.",
-    "La carga del motor y su corriente de arranque superan con creces lo que un contacto reed puede cortar. Los contactos pueden soldarse o degradarse, y la máquina puede entonces arrancar o seguir en marcha sin ninguna orden.",
-    "Нагрузка двигателя и его пусковой ток значительно превышают возможности геркона. Контакты могут свариться или разрушиться, и машина может запуститься или продолжать работать без команды.",
-    "Il carico del motore e la sua corrente di spunto all'avvio superano di gran lunga ciò che un contatto reed può interrompere. I contatti possono saldarsi o degradarsi, e la macchina può quindi avviarsi o restare in marcia senza alcun comando.",
-    "モーター負荷とその始動時の突入電流は、リード接点が遮断できる能力を大きく上回ります。接点が溶着・劣化し、機械が指令なしに起動したり動き続けたりするおそれがあります。"
-  ],
-  "Précision supplémentaire": [
-    "Additional precision",
-    "补充说明",
-    "Zusätzliche Angabe",
-    "Precisión adicional",
-    "Дополнительное уточнение",
-    "Precisazione aggiuntiva",
-    "追加の補足情報"
-  ],
-  "Un moteur est une charge inductive à fort courant d'appel : l'interface de puissance doit être dimensionnée et protégée en conséquence (diode, réseau RC ou varistance). Voir les précautions de charge Standex : https://standexdetect.com/resources/reed-technology-academy/handling-and-load-precautions/": [
-    "A motor is an inductive load with a high inrush current: the power interface must be sized and protected accordingly (diode, RC network or varistor). See the Standex load precautions: https://standexdetect.com/resources/reed-technology-academy/handling-and-load-precautions/",
-    "电机属于具有高浪涌电流的感性负载：功率接口必须据此选型并加以保护（二极管、RC 网络或压敏电阻）。请参阅 Standex 负载注意事项：https://standexdetect.com/resources/reed-technology-academy/handling-and-load-precautions/",
-    "Ein Motor ist eine induktive Last mit hohem Einschaltstrom: das Leistungsinterface muss entsprechend dimensioniert und geschützt werden (Diode, RC-Glied oder Varistor). Siehe die Standex-Lasthinweise: https://standexdetect.com/resources/reed-technology-academy/handling-and-load-precautions/",
-    "Un motor es una carga inductiva con una alta corriente de arranque: la interfaz de potencia debe dimensionarse y protegerse en consecuencia (diodo, red RC o varistor). Consulte las precauciones de carga de Standex: https://standexdetect.com/resources/reed-technology-academy/handling-and-load-precautions/",
-    "Двигатель — это индуктивная нагрузка с высоким пусковым током: силовой интерфейс должен быть рассчитан и защищён соответствующим образом (диод, RC-цепь или варистор). См. рекомендации Standex по нагрузке: https://standexdetect.com/resources/reed-technology-academy/handling-and-load-precautions/",
-    "Un motore è un carico induttivo con una corrente di spunto elevata: l'interfaccia di potenza deve essere dimensionata e protetta di conseguenza (diodo, rete RC o varistore). Vedere le precauzioni di carico Standex: https://standexdetect.com/resources/reed-technology-academy/handling-and-load-precautions/",
-    "モーターは突入電流の大きい誘導負荷です。パワーインターフェースはそれに応じて選定・保護（ダイオード、RC 回路、バリスタ）する必要があります。Standex の負荷に関する注意事項をご覧ください：https://standexdetect.com/resources/reed-technology-academy/handling-and-load-precautions/"
-  ],
-  "La position peut être détectée si un champ magnétique adapté vient actionner le capteur reed : un aimant sur la pièce mobile ou sur son support suffit, convoyeur compris.": [
-    "The position can be detected if a suitable magnetic field actuates the reed sensor: a magnet on the moving part or on its support is enough, conveyors included.",
-    "只要有合适的磁场驱动干簧管传感器，就可以检测位置：在运动部件或其支架上安装一块磁铁即可，输送机同样适用。",
-    "Die Position lässt sich erfassen, wenn ein passendes Magnetfeld den Reed-Sensor betätigt: Ein Magnet am bewegten Teil oder an seiner Halterung genügt, auch auf Förderbändern.",
-    "La posición puede detectarse si un campo magnético adecuado acciona el sensor reed: basta un imán en la pieza móvil o en su soporte, también en transportadores.",
-    "Положение можно определить, если подходящее магнитное поле воздействует на геркон: достаточно магнита на подвижной детали или её опоре, в том числе на конвейере.",
-    "La posizione può essere rilevata se un campo magnetico adeguato aziona il sensore reed: basta un magnete sulla parte mobile o sul suo supporto, anche su nastro trasportatore.",
-    "適切な磁界がリードセンサーを動作させれば位置は検出できます。可動部またはその支持部に磁石を1個取り付けるだけで足り、コンベヤーでも同様です。"
-  ],
-  "Revoir aussi la réponse de montage qui interdit tout aimant, sinon la contradiction demeure.": [
-    "Also revise the mounting answer that forbids any magnet, otherwise the contradiction remains.",
-    "同时修改禁止使用任何磁铁的安装回答，否则矛盾依然存在。",
-    "Überarbeiten Sie auch die Montageantwort, die jeden Magneten verbietet, sonst bleibt der Widerspruch bestehen.",
-    "Revise también la respuesta de montaje que prohíbe cualquier imán; de lo contrario, la contradicción permanece.",
-    "Измените также ответ о монтаже, запрещающий любой магнит, иначе противоречие сохранится.",
-    "Rivedere anche la risposta di montaggio che vieta qualsiasi magnete, altrimenti la contraddizione resta.",
-    "磁石を一切禁じている取り付けの回答も見直してください。そのままでは矛盾が残ります。"
-  ],
-  "Indiquer ensuite la distance réelle entre l'aimant et le capteur, aimant en place.": [
-    "Then state the actual distance between magnet and sensor, with the magnet in place.",
-    "然后在磁铁安装到位的情况下，说明磁铁与传感器之间的实际距离。",
-    "Geben Sie dann den tatsächlichen Abstand zwischen Magnet und Sensor an, mit eingebautem Magneten.",
-    "Indique después la distancia real entre el imán y el sensor, con el imán colocado.",
-    "Затем укажите фактическое расстояние между магнитом и датчиком при установленном магните.",
-    "Indicare poi la distanza reale tra magnete e sensore, con il magnete installato.",
-    "次に、磁石を取り付けた状態での磁石とセンサーの実際の距離を記入してください。"
-  ],
-  "Ou conserver la contrainte « aucun aimant » : il faut alors évaluer une autre technologie de détection, par exemple un détecteur inductif prévu pour l'aluminium ou une détection optique, selon la distance réelle et l'environnement. Aucun produit reed ne résout ce cas, et nous ne garantissons pas d'avance la performance d'une autre technologie.": [
-    "Or keep the “no magnet” constraint: another sensing technology must then be evaluated, for example an inductive detector rated for aluminium or optical detection, depending on the actual distance and environment. No reed product solves this case, and we do not guarantee the performance of another technology in advance.",
-    "或保留“不加磁铁”的约束：届时需评估其他检测技术，例如适用于铝的电感式检测器或光学检测，具体取决于实际距离和环境。没有干簧管产品能解决此情况，我们也不预先保证其他技术的性能。",
-    "Oder die Vorgabe „kein Magnet“ beibehalten: Dann ist eine andere Sensortechnologie zu prüfen, etwa ein für Aluminium geeigneter induktiver Sensor oder eine optische Erfassung, je nach tatsächlichem Abstand und Umgebung. Kein Reed-Produkt löst diesen Fall, und wir garantieren die Leistung einer anderen Technologie nicht im Voraus.",
-    "O mantener la restricción «sin imán»: entonces hay que evaluar otra tecnología de detección, por ejemplo un detector inductivo apto para el aluminio o una detección óptica, según la distancia real y el entorno. Ningún producto reed resuelve este caso y no garantizamos por adelantado el rendimiento de otra tecnología.",
-    "Либо сохранить условие «без магнита»: тогда следует оценить другую технологию обнаружения, например индуктивный датчик для алюминия или оптическое обнаружение, в зависимости от фактического расстояния и условий. Ни один герконовый продукт этот случай не решает, и мы не гарантируем заранее характеристики другой технологии.",
-    "Oppure mantenere il vincolo « nessun magnete »: occorre allora valutare un'altra tecnologia di rilevamento, per esempio un rilevatore induttivo adatto all'alluminio o un rilevamento ottico, in funzione della distanza reale e dell'ambiente. Nessun prodotto reed risolve questo caso e non garantiamo in anticipo le prestazioni di un'altra tecnologia.",
-    "または「磁石なし」の制約を維持します。その場合は、実際の距離と環境に応じて、アルミニウム対応の誘導式検出器や光学式検出など別の検出技術を評価する必要があります。この事例を解決するリードスイッチ製品はなく、他技術の性能を事前に保証することもできません。"
-  ],
-  "Ou conserver la contrainte « aucun aimant » : il faut alors évaluer une autre technologie de détection, par exemple inductive ou optique, selon la distance réelle et l'environnement. Aucun produit reed ne résout ce cas, et nous ne garantissons pas d'avance la performance d'une autre technologie.": [
-    "Or keep the “no magnet” constraint: another sensing technology must then be evaluated, for example inductive or optical, depending on the actual distance and environment. No reed product solves this case, and we do not guarantee the performance of another technology in advance.",
-    "或保留“不加磁铁”的约束：届时需评估其他检测技术，例如电感式或光学式，具体取决于实际距离和环境。没有干簧管产品能解决此情况，我们也不预先保证其他技术的性能。",
-    "Oder die Vorgabe „kein Magnet“ beibehalten: Dann ist eine andere Sensortechnologie zu prüfen, etwa induktiv oder optisch, je nach tatsächlichem Abstand und Umgebung. Kein Reed-Produkt löst diesen Fall, und wir garantieren die Leistung einer anderen Technologie nicht im Voraus.",
-    "O mantener la restricción «sin imán»: entonces hay que evaluar otra tecnología de detección, por ejemplo inductiva u óptica, según la distancia real y el entorno. Ningún producto reed resuelve este caso y no garantizamos por adelantado el rendimiento de otra tecnología.",
-    "Либо сохранить условие «без магнита»: тогда следует оценить другую технологию обнаружения, например индуктивную или оптическую, в зависимости от фактического расстояния и условий. Ни один герконовый продукт этот случай не решает, и мы не гарантируем заранее характеристики другой технологии.",
-    "Oppure mantenere il vincolo « nessun magnete »: occorre allora valutare un'altra tecnologia di rilevamento, per esempio induttiva o ottica, in funzione della distanza reale e dell'ambiente. Nessun prodotto reed risolve questo caso e non garantiamo in anticipo le prestazioni di un'altra tecnologia.",
-    "または「磁石なし」の制約を維持します。その場合は、実際の距離と環境に応じて、誘導式や光学式など別の検出技術を評価する必要があります。この事例を解決するリードスイッチ製品はなく、他技術の性能を事前に保証することもできません。"
-  ],
-  "Votre objectif peut être étudié avec une architecture adaptée. Tel qu'il est décrit aujourd'hui, il ne peut pas fonctionner : voici ce qui fonctionne, ce qui ne fonctionne pas, et les adaptations possibles.": [
-    "Your goal can be studied with a suitable architecture. As described today it cannot work: here is what works, what does not, and the possible adaptations.",
-    "您的目标可以在合适的架构下进行研究。但按目前的描述无法实现：以下说明哪些可行、哪些不可行以及可能的调整。",
-    "Ihr Ziel lässt sich mit einer geeigneten Architektur untersuchen. So wie es heute beschrieben ist, kann es nicht funktionieren: Hier steht, was funktioniert, was nicht, und welche Anpassungen möglich sind.",
-    "Su objetivo puede estudiarse con una arquitectura adecuada. Tal como está descrito hoy no puede funcionar: esto es lo que funciona, lo que no, y las adaptaciones posibles.",
-    "Вашу задачу можно рассмотреть при подходящей архитектуре. В нынешнем описании она работать не может: ниже — что работает, что нет и какие возможны изменения.",
-    "Il suo obiettivo può essere studiato con un'architettura adeguata. Come è descritto oggi non può funzionare: ecco cosa funziona, cosa non funziona e gli adattamenti possibili.",
-    "適切な構成であれば、ご要望は検討できます。ただし現在の記載内容では動作しません。以下に、動作する点、動作しない点、可能な調整を示します。"
-  ],
-  "Adaptations possibles": [
-    "Possible adaptations",
-    "可能的调整",
-    "Mögliche Anpassungen",
-    "Adaptaciones posibles",
-    "Возможные изменения",
-    "Adattamenti possibili",
-    "可能な調整"
-  ],
-  "Modifier cette réponse": [
-    "Edit this answer",
-    "修改此回答",
-    "Diese Antwort ändern",
-    "Modificar esta respuesta",
-    "Изменить этот ответ",
-    "Modifica questa risposta",
-    "この回答を修正"
-  ],
-  "Voir ce que vous avez écrit": [
-    "See what you wrote",
-    "查看您填写的内容",
-    "Ansehen, was Sie geschrieben haben",
-    "Ver lo que ha escrito",
-    "Посмотреть, что вы написали",
-    "Vedere ciò che ha scritto",
-    "入力内容を見る"
-  ],
-  "Un moteur est une charge inductive à fort courant d'appel : l'interface de puissance doit être dimensionnée et protégée en conséquence, avec une protection adaptée au type d'alimentation. Voir les précautions de charge Standex.": [
-    "A motor is an inductive load with a high inrush current: the power interface must be sized and protected accordingly, with protection suited to the type of supply. See the Standex load precautions.",
-    "电机属于具有高浪涌电流的感性负载：功率接口必须据此选型并加以保护，保护方式应与供电类型相匹配。请参阅 Standex 负载注意事项。",
-    "Ein Motor ist eine induktive Last mit hohem Einschaltstrom: Die Leistungsschnittstelle muss entsprechend dimensioniert und mit einem zur Versorgungsart passenden Schutz versehen werden. Siehe die Standex-Hinweise zu Lasten.",
-    "Un motor es una carga inductiva con alta corriente de arranque: la interfaz de potencia debe dimensionarse y protegerse en consecuencia, con una protección adecuada al tipo de alimentación. Consulte las precauciones de carga de Standex.",
-    "Двигатель — индуктивная нагрузка с большим пусковым током: силовой интерфейс должен быть рассчитан и защищён соответственно, с защитой, подходящей типу питания. См. рекомендации Standex по нагрузкам.",
-    "Un motore è un carico induttivo con elevata corrente di spunto: l'interfaccia di potenza deve essere dimensionata e protetta di conseguenza, con una protezione adatta al tipo di alimentazione. Vedere le precauzioni di carico Standex.",
-    "モーターは突入電流の大きい誘導負荷です。電源方式に適した保護を備え、パワーインターフェースを適切に選定・保護してください。Standex の負荷に関する注意事項を参照してください。"
-  ],
-  "Démonstration magnétique antérieure, conservée telle quelle : elle ne vaut pas validation de l'application décrite aujourd'hui.": [
-    "Earlier magnetic demonstration, kept as recorded: it is not a validation of the application described today.",
-    "先前的磁性演示，按原样保留：它不构成对当前所述应用的验证。",
-    "Frühere magnetische Demonstration, unverändert erhalten: Sie stellt keine Validierung der heute beschriebenen Anwendung dar.",
-    "Demostración magnética anterior, conservada tal cual: no constituye una validación de la aplicación descrita hoy.",
-    "Прежняя магнитная демонстрация сохранена как есть: она не является подтверждением описанного сегодня применения.",
-    "Dimostrazione magnetica precedente, conservata così com'è: non costituisce una validazione dell'applicazione descritta oggi.",
-    "以前の磁気デモンストレーションはそのまま保持されています。これは本日記載された用途の検証にはなりません。"
-  ],
-  "Précautions de manipulation et de charge — Standex": [
-    "Handling and load precautions — Standex",
-    "操作与负载注意事项 — Standex",
-    "Handhabungs- und Lasthinweise — Standex",
-    "Precauciones de manipulación y carga — Standex",
-    "Меры при обращении и по нагрузке — Standex",
-    "Precauzioni di manipolazione e di carico — Standex",
-    "取り扱いおよび負荷に関する注意事項 — Standex"
-  ],
-  "Accès réservé": [
-    "Restricted access",
-    "访问受限",
-    "Eingeschränkter Zugang",
-    "Acceso restringido",
-    "Доступ ограничен",
-    "Accesso riservato",
-    "アクセス制限"
-  ],
-  "Cet outil est en phase de test. Connectez-vous avec un compte autorisé pour y accéder.": [
-    "This tool is in testing. Sign in with an authorised account to access it.",
-    "此工具处于测试阶段。请使用授权账户登录以访问。",
-    "Dieses Tool befindet sich in der Testphase. Melden Sie sich mit einem autorisierten Konto an.",
-    "Esta herramienta está en fase de prueba. Inicie sesión con una cuenta autorizada para acceder.",
-    "Инструмент находится на стадии тестирования. Войдите с авторизованной учётной записью.",
-    "Questo strumento è in fase di test. Accedi con un account autorizzato.",
-    "このツールはテスト段階です。許可されたアカウントでサインインしてください。"
-  ],
-  "Ce compte n'est pas autorisé à tester l'outil.": [
-    "This account is not authorised to test the tool.",
-    "此账户无权测试该工具。",
-    "Dieses Konto ist nicht zum Testen des Tools berechtigt.",
-    "Esta cuenta no está autorizada para probar la herramienta.",
-    "Эта учётная запись не имеет права тестировать инструмент.",
-    "Questo account non è autorizzato a testare lo strumento.",
-    "このアカウントにはツールをテストする権限がありません。"
-  ],
-  "Vérification de l'accès…": [
-    "Checking access…",
-    "正在验证访问权限…",
-    "Zugang wird geprüft…",
-    "Verificando el acceso…",
-    "Проверка доступа…",
-    "Verifica dell'accesso…",
-    "アクセスを確認中…"
   ]
 }

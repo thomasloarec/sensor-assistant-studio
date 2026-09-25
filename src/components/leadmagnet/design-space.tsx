@@ -2526,45 +2526,42 @@ export function DesignSpace({
           magnetId={card.magnetId}
           size={compact ? "compact" : "large"}
         />
-        <div className="mt-3 flex flex-wrap items-center gap-2">
+        <div className="pair-card-status mt-3 flex flex-wrap items-center gap-2">
           <p className="t-label">
             {index === 0 && !compact ? t("Recommandé") : t(card.familyLabel)}
           </p>
           {chosen ? <Badge className="candidate-status-badge">{t("Choisi ✓")}</Badge> : null}
         </div>
-        {/* Les références (MK04, M04) traversent le rendu inchangées. */}
-        <p className="t-title-m">{card.couple}</p>
-        {housingMaterial(sensorById(card.sensorId)) ? <p className="t-body">{t(housingMaterial(sensorById(card.sensorId))!)}</p> : null}
+        {/* Les deux références restent séparées et alignées avec leurs images. */}
+        <div className="pair-card-identities" aria-label={t("Capteur et aimant")}>
+          <div><span className="t-label">{t("Capteur")}</span><strong className="t-title-m">{card.sensorId}</strong></div>
+          <div><span className="t-label">{t("Aimant")}</span><strong className="t-title-m">{card.magnetId}</strong></div>
+        </div>
         {card.sensorId === CUSTOM_SENSOR_ID ? <p className="notice-info t-caption">{t("Conception sur mesure : forme, fixation et distances à définir avec Standex. Schéma illustratif, sans performance validée.")}</p> : null}
         {compact && blocked.length > 0 ? <p className="notice-warning t-caption">{t("Compromis nécessaire avec vos critères")} : {shownFilters.filter(f => blocked.includes(f.id)).map(f => t(f.label)).join(" · ")}</p> : null}
-        {card.materialLabel ? (
-          <p className="t-caption">{msg("Aimant {0}", [card.materialLabel])}</p>
+        {card.sensorId !== CUSTOM_SENSOR_ID ? (
+          <dl className="pair-card-facts" aria-label={t("Données de choix")}>
+            {card.materialLabel ? <div><dt>{t("Matériau de l'aimant")}</dt><dd>{t(card.materialLabel)}</dd></div> : null}
+            <div><dt>{t("Montage du capteur")}</dt><dd>{t(card.fixingLabel)}</dd></div>
+            <div><dt>{t("Dimensions du capteur")}</dt><dd className="t-metric">{card.size}</dd></div>
+          </dl>
         ) : null}
-        {card.sensorId !== CUSTOM_SENSOR_ID ? <p className="t-body mt-2">{msg("{0}, {1}.", [t(card.fixingLabel), card.size])}</p> : null}
-        <p className="t-body mt-2">
-          {card.maxPullInMm === null ? (
-            <span className="text-[var(--standex-blue-75)]">
-              {card.guideUpMm !== null && card.guideToMm !== null
-                ? msg("Plage du guide : {0} à {1} mm — {2} · {3}", [
-                    formatMm(card.guideUpMm),
-                    formatMm(card.guideToMm),
-                    card.guideReference!,
-                    card.guideApproach!,
-
-                  ])
-                : t(
-                    card.hasGuideRange
-                      ? "Plage du guide disponible"
-                      : // La fiche produit existe : c'est la distance DE CE COUPLE
-                        // qui n'est pas publiée. Les deux ne sont pas confondues.
-                        "Fiche produit disponible · distances de ce couple non publiées",
-                  )}
-            </span>
-          ) : (
-
-            <strong>{msg("Détecte jusqu'à {0} mm", [formatMm(card.maxPullInMm)])}</strong>
-          )}
-        </p>
+        {card.sensorId !== CUSTOM_SENSOR_ID ? (
+          <div className="pair-card-documentation">
+            {card.guideUpMm !== null && card.guideToMm !== null ? (
+              <>
+                <p className="t-label">{t("Plage indicative d'activation")}</p>
+                <p className="t-metric">{formatMm(card.guideUpMm)} – {formatMm(card.guideToMm)} mm</p>
+                <p className="t-caption">{t("Plage documentaire indicative, sans validation de la simulation.")}</p>
+                <p className="t-caption"><strong>{t("Référence documentaire")}</strong> · {card.guideReference} · {card.guideApproach}</p>
+              </>
+            ) : card.maxPullInMm !== null ? (
+              <p className="t-body"><strong>{msg("Détecte jusqu'à {0} mm", [formatMm(card.maxPullInMm)])}</strong></p>
+            ) : (
+              <p className="t-caption">{t("Distances non publiées pour ce couple")}</p>
+            )}
+          </div>
+        ) : null}
         <div className="mt-4">
           <Button
             variant={index === 0 && !compact ? "default" : "outline"}
