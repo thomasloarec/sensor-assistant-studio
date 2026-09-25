@@ -319,7 +319,7 @@ export function ResultView({
             <div><dt>{t("Montage du capteur")}</dt><dd>{t(card.fixingLabel)}</dd></div>
             <div><dt>{t("Dimensions du capteur")}</dt><dd className="t-metric">{sizeLabel(sensorById(pair.sensorId))}</dd></div>
           </dl>
-          {housingMaterial(sensorById(pair.sensorId)) ? <p className="t-caption">{t(housingMaterial(sensorById(pair.sensorId)) ?? "")}</p> : null}
+          {housingMaterial(sensorById(pair.sensorId)) ? <p className="t-caption">{t(housingMaterial(sensorById(pair.sensorId)))}</p> : null}
           <div className="pair-card-documentation">
             {guide ? <>
               <p className="t-label">{t("Plage indicative d'activation")}</p>
