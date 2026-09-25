@@ -42,6 +42,6 @@
 - [ ] 5. Matériaux et plages du guide d'activation à afficher dans l'atelier ; propagation du capteur de contexte à contrôler pour M11S / MK11-M5.
 
 ## Ajustements atelier et cartes — 2026-09-25
-- [ ] Ralentir le cycle atelier à environ 6 s, corriger la chronologie et retirer le badge flottant.
-- [ ] Séparer clairement capteur et aimant dans toutes les cartes, avec faits essentiels et limites documentaires.
-- [ ] Vérifier tests, types, compilation et rendu desktop/mobile, puis fournir le commit.
+- [x] Ralentir le cycle atelier à environ 6 s, corriger la chronologie et retirer le badge flottant.
+- [x] Séparer clairement capteur et aimant dans toutes les cartes, avec faits essentiels et limites documentaires.
+- [x] Vérifier tests, types, compilation et rendu responsive public ; l'accès authentifié reste couvert par la recette automatisée.

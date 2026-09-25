@@ -54,6 +54,14 @@ describe("écran Résultat", () => {
     expect(html).toContain("Capteur");
     expect(html).toContain("Aimant");
     expect(html).not.toContain("MK04 + M04");
+    expect(html).not.toContain("Distances non publiées pour ce couple");
+  });
+
+  test("les faits de l'aimant suivent le couple testé, pas son aimant conseillé", () => {
+    const html = render(pair({ sensorId: "MK15", magnetId: "4003004003" }));
+    expect(html).toContain("4003004003");
+    expect(html).toContain("NdFeB");
+    expect(html).not.toContain("Distances non publiées pour ce couple");
   });
 
   test("pose non documentée : aucune valeur inventée, essai réel proposé", () => {
