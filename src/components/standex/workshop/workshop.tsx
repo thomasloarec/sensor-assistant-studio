@@ -107,7 +107,6 @@ import { sensorById, sizeLabel, sensorSource } from "@/lib/standex/sensor-catalo
 /** Pas de lecture : 120 pas × 50 ms = 6 s (normal), 240 pas = 12 s (lent). */
 const CYCLE_STEPS_NORMAL = 120;
 const CYCLE_STEPS_SLOW = 240;
-const CYCLE_SECONDS_NORMAL = (CYCLE_STEPS_NORMAL * 50) / 1000;
 const Scene = lazy(() => import("./scene"));
 const MachineScene = lazy(() => import("./machine-scene"));
 /* i18n-canonical : libellés stockés en français, traduits au rendu par t(). */

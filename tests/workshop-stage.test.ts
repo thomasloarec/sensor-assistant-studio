@@ -144,7 +144,6 @@ describe("colonne de gauche : trois réglages, rien de plus", () => {
 describe("chronologie et lecture", () => {
   test("un aller-retour dure 6 secondes en lecture normale", () => {
     expect(WORKSHOP).toContain("const CYCLE_STEPS_NORMAL = 120;");
-    expect(WORKSHOP).toContain("const CYCLE_SECONDS_NORMAL = (CYCLE_STEPS_NORMAL * 50) / 1000;");
   });
   test("la lecture lente reste disponible dans les réglages avancés", () => {
     expect(WORKSHOP).toContain('t("Vitesse de lecture")');

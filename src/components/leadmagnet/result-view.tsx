@@ -13,7 +13,7 @@ import { guideRange, formatGuideBound, hasGuideData, ACTIVATION_GUIDE } from "@/
  */
 import { Button } from "@/components/ui/button";
 import { msg, t } from "@/lib/i18n/core";
-import type { PairCard } from "@/lib/leadmagnet/pair-cards";
+import { pairCardFor, type PairCard } from "@/lib/leadmagnet/pair-cards";
 import type { TestedPair } from "@/lib/leadmagnet/tested-pairs";
 import { PairThumbnail } from "./pair-thumbnail";
 
@@ -152,6 +152,7 @@ export function ResultView({
 
 
   const word = detectedObjectWord(detectionGoal);
+  const card = pairCardFor(sensorById(pair.sensorId));
   const couple = `${t("Le capteur")} ${pair.sensorId} + ${t("l’aimant")} ${pair.magnetId}`;
   /** Un point de compatibilité ouvert interdit tout résultat positif : une
    *  commutation obtenue en démonstration ne vérifie pas l'application. */
@@ -314,9 +315,19 @@ export function ResultView({
           </div>
           <p className="t-body">{t(sensorById(pair.sensorId).description)}</p>
           <dl className="pair-card-facts">
+            {card.materialLabel ? <div><dt>{t("Matériau de l'aimant")}</dt><dd>{t(card.materialLabel)}</dd></div> : null}
+            <div><dt>{t("Montage du capteur")}</dt><dd>{t(card.fixingLabel)}</dd></div>
             <div><dt>{t("Dimensions du capteur")}</dt><dd className="t-metric">{sizeLabel(sensorById(pair.sensorId))}</dd></div>
-            {housingMaterial(sensorById(pair.sensorId)) ? <div><dt>{t("Montage du capteur")}</dt><dd>{t(housingMaterial(sensorById(pair.sensorId)) ?? "")}</dd></div> : null}
           </dl>
+          {housingMaterial(sensorById(pair.sensorId)) ? <p className="t-caption">{t(housingMaterial(sensorById(pair.sensorId)) ?? "")}</p> : null}
+          <div className="pair-card-documentation">
+            {guide ? <>
+              <p className="t-label">{t("Plage indicative d'activation")}</p>
+              <p className="t-metric">{formatGuideBound(guide.upMm, guide.upNote)} – {formatGuideBound(guide.toMm, guide.toNote)} mm</p>
+              <p className="t-caption">{t("Plage documentaire indicative, sans validation de la simulation.")}</p>
+              <p className="t-caption"><strong>{t("Référence documentaire")}</strong> · {guide.sensorReference} · {guide.approachId}</p>
+            </> : <p className="t-caption">{t("Distances non publiées pour ce couple")}</p>}
+          </div>
           <p className="t-caption">
             {positive ? `● ${t("Contact fermé")}` : `◐ ${t("Contact indéterminé")}`}
           </p>
