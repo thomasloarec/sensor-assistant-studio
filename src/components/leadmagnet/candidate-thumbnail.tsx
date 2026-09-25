@@ -334,7 +334,6 @@ export function CandidateThumbnail({
             </svg>
           ) : null}
           <span>{roleLabel}</span>
-          <strong className="t-metric">{model.id}</strong>
         </span>
       ) : null}
     </div>
