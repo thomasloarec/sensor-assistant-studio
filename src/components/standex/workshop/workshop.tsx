@@ -890,7 +890,7 @@ export default function MagneticWorkshop({
   const travelControls = (
     <div className="mw-travel">
       <Range
-        label={t("Position ouverte")}
+        label={t("Écart au départ")}
         value={config.start}
         min={2}
         max={60}
@@ -899,7 +899,7 @@ export default function MagneticWorkshop({
         onChange={(start) => update({ start })}
       />
       <Range
-        label={t("Position fermée")}
+        label={t("Écart au plus près")}
         value={config.end}
         min={1}
         max={59}
