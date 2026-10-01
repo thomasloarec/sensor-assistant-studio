@@ -270,7 +270,7 @@ export function ClientFollowUp({
                       </Badge>
                     ) : null}
                   </div>
-                  {r.message ? <p className="mt-2 whitespace-pre-wrap">{r.message}</p> : null}
+                  {r.message ? <p className="mt-2 whitespace-pre-wrap">{t(r.message)}</p> : null}
                   {r.conditions ? (
                     <p className="t-caption mt-1">{t("Conditions :")} {r.conditions}</p>
                   ) : null}
