@@ -118,7 +118,7 @@ export function ClientFollowUp({
     try {
       setList(await fetchMyDossiers());
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : null);
+      setMessage(error instanceof Error ? t(error.message) : t("Impossible d'actualiser vos projets."));
     } finally {
       setListLoaded(true);
     }
@@ -137,7 +137,7 @@ export function ClientFollowUp({
     } catch (error) {
       if (request !== viewRequest.current) return;
       setView(null);
-      setMessage(error instanceof Error ? error.message : null);
+      setMessage(error instanceof Error ? t(error.message) : t("Impossible d'ouvrir ce projet."));
     }
   }, []);
 
@@ -152,7 +152,7 @@ export function ClientFollowUp({
         if (request !== viewRequest.current) return;
       } catch (error) {
         if (request !== viewRequest.current) return;
-        setMessage(error instanceof Error ? error.message : null);
+        setMessage(error instanceof Error ? t(error.message) : t("Impossible d'ouvrir ce projet."));
         return;
       }
       const latest = [...loaded.revisions].sort((a, b) => b.revision - a.revision)[0];
@@ -326,7 +326,7 @@ export function ClientFollowUp({
                             );
                             await reloadView(current.dossier.id);
                           } catch (error) {
-                            setMessage(error instanceof Error ? error.message : null);
+                            setMessage(error instanceof Error ? t(error.message) : t("La variante n'a pas pu être reprise."));
                           }
                         }}
                       >
@@ -416,7 +416,7 @@ export function ClientFollowUp({
                       );
                       await reloadView(current.dossier.id);
                     } catch (error) {
-                      setMessage(error instanceof Error ? error.message : null);
+                      setMessage(error instanceof Error ? t(error.message) : t("La demande d'échantillons n'a pas abouti."));
                     }
                   }}
                 >
@@ -470,7 +470,7 @@ export function ClientFollowUp({
                         );
                         await reloadView(current.dossier.id);
                       } catch (error) {
-                        setMessage(error instanceof Error ? error.message : null);
+                        setMessage(error instanceof Error ? t(error.message) : t("Le retour d'essai n'a pas pu être enregistré."));
                       }
                     }}
                   >

@@ -358,7 +358,7 @@ export function DossierConsole(props: DossierConsoleProps) {
       setInbox(await fetchStaffInbox());
     } catch (error) {
       setInbox(null);
-      setMessage(error instanceof Error ? error.message : null);
+      setMessage(error instanceof Error ? t(error.message) : t("Impossible de charger les dossiers."));
     }
   }, []);
 
@@ -384,7 +384,7 @@ export function DossierConsole(props: DossierConsoleProps) {
     } catch (error) {
       if (request !== selectionRequest.current) return;
       setView(null);
-      setMessage(error instanceof Error ? error.message : null);
+      setMessage(error instanceof Error ? t(error.message) : t("Impossible d'ouvrir ce dossier."));
     }
   }, []);
 
@@ -410,7 +410,7 @@ export function DossierConsole(props: DossierConsoleProps) {
       await loadInbox();
     } catch (error) {
       if (request !== selectionRequest.current) return;
-      setMessage(error instanceof Error ? error.message : t("Action refusée."));
+      setMessage(t(error instanceof Error ? error.message : "Action refusée."));
     }
   };
 

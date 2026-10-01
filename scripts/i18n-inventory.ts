@@ -295,6 +295,26 @@ export function inventory(): Finding[] {
       return false;
     };
 
+    /** A literal inside a JSX expression is displayed text unless it belongs to
+     * an explicitly technical attribute. This catches short labels such as
+     * "Valable" that the general prose heuristic intentionally ignores. */
+    const inRenderedJsx = (node: ts.Node): boolean => {
+      let current: ts.Node | undefined = node.parent;
+      while (current) {
+        if (ts.isJsxAttribute(current))
+          return TEXT_ATTRS.has(current.name.getText(source));
+        if (ts.isJsxExpression(current)) return true;
+        if (
+          ts.isFunctionDeclaration(current) ||
+          ts.isFunctionExpression(current) ||
+          ts.isArrowFunction(current)
+        )
+          return false;
+        current = current.parent;
+      }
+      return false;
+    };
+
     /** t()/msg() évalué une seule fois au chargement du module : le texte
      * resterait français après un changement de langue. */
     const atModuleLevel = (node: ts.Node): boolean => {
@@ -339,7 +359,7 @@ export function inventory(): Finding[] {
           !known(text)
         ) {
           report(node, text, "missing");
-        } else if (isProse(text)) {
+        } else if (isProse(text) || (inRenderedJsx(node) && isProse(text, true))) {
           const parent = node.parent;
           // Module specifiers and object property keys never reach a human.
           if (ts.isImportDeclaration(parent) || ts.isExportDeclaration(parent)) {

@@ -3077,7 +3077,7 @@ export function DesignSpace({
               <div className="mt-2 grid gap-3 md:grid-cols-2">
                 {CONNECTOR_FIELD_LABELS.map(([key, label]) => (
                   <div key={key}>
-                    <Label className="t-label">{label}</Label>
+                      <Label className="t-label">{t(label)}</Label>
                     <Input
                       value={connectorDraft[key]}
                       onChange={(e) => setConnectorDraft((d) => ({ ...d, [key]: e.target.value }))}
@@ -3107,7 +3107,11 @@ export function DesignSpace({
                   onClick={() => {
                     const result = terminationFromDraft(connectorDraft);
                     if (!result.ok) {
-                      setConnectorError(`Champs requis : ${result.missing.join(", ")}.`);
+                      setConnectorError(
+                        msg("Champs requis : {0}.", [
+                          result.missing.map((label) => t(label)).join(", "),
+                        ]),
+                      );
                       return;
                     }
                     setConnectorError(null);
@@ -4017,7 +4021,7 @@ export function DesignSpace({
           </p>
         ) : null}
         {connectorPreference ? (          <div className="mt-3">
-            <p className="mt-1 text-sm">{terminationLabel(termination)}</p>
+            <p className="mt-1 text-sm">{t(terminationLabel(termination))}</p>
             <ul className="t-caption mt-1 list-disc pl-5">
               {connectorSummaryLines(termination, t).map((l, i) => (
                 <li key={i}>{l}</li>
@@ -4082,7 +4086,7 @@ export function DesignSpace({
               <div className="mt-2 grid gap-3 md:grid-cols-2">
                 {CONNECTOR_FIELD_LABELS.map(([key, label]) => (
                   <div key={key}>
-                    <Label className="t-label">{label}</Label>
+                    <Label className="t-label">{t(label)}</Label>
                     <Input
                       value={connectorDraft[key]}
                       onChange={(e) => setConnectorDraft((d) => ({ ...d, [key]: e.target.value }))}
