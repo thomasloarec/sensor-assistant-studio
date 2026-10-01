@@ -225,7 +225,7 @@ function SignIn() {
     setBusy(true);
     setError(null);
     const { error } = await supabase!.auth.signInWithPassword({ email, password });
-    if (error) setError(error.message);
+    if (error) setError(t("Connexion refusée. Vérifiez l'adresse et le mot de passe."));
     setBusy(false);
   };
 

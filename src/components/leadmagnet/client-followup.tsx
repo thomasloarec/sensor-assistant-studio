@@ -1,5 +1,5 @@
 import { useLocale } from "@/lib/i18n/react";
-import { t } from "@/lib/i18n/core";
+import { msg, t } from "@/lib/i18n/core";
 /** Suivi client réel : dossiers envoyés, retours Standex publiés, offres, échantillons.
  *
  * Tout vient des appels serveur : aucune réussite n'est simulée localement.
@@ -195,7 +195,7 @@ export function ClientFollowUp({
   if (!ready)
     return (
       <p className="t-caption">
-        {backend?.message ??
+        {backend?.message ? t(backend.message) :
           t("La liaison avec l'équipe Standex n'est pas encore active : rien n'a été envoyé.")}
       </p>
     );
@@ -230,7 +230,7 @@ export function ClientFollowUp({
             </Button>
             <span className="t-title-s">{d.title}</span>
             <Badge variant="outline" className="t-metric">
-              version {d.current_revision}
+              {msg("Version {0}", [d.current_revision])}
             </Badge>
             <Badge variant="secondary">
               {d.nda_required
@@ -357,12 +357,12 @@ export function ClientFollowUp({
                 >
                   <div className="flex flex-wrap items-center gap-2">
                     <Badge variant={o.active ? "default" : "outline"}>
-                      {o.active ? "Valable" : o.voided ? t("Périmée") : t("Échue")}
+                    {o.active ? t("Valable") : o.voided ? t("Périmée") : t("Échue")}
                     </Badge>
                     <span className="font-medium">{o.part_number}</span>
                     <span className="t-metric t-caption">
-                      version {o.revision} —{" "}
-                      {o.designation === "custom" ? t("spécifique") : "standard"}
+                      {msg("Version {0}", [o.revision])} —{" "}
+                      {o.designation === "custom" ? t("spécifique") : t("standard")}
                     </span>
                   </div>
                   <ul className="t-metric mt-1 list-disc pl-5 t-caption">
@@ -374,10 +374,10 @@ export function ClientFollowUp({
                   </ul>
                   <p className="t-caption t-metric mt-1">
                     {t("Minimum")} {o.moq} — {o.incoterm} {t("— délai")}{" "}
-                    {o.lead_time_weeks ? `${o.lead_time_weeks} semaines` : t("à confirmer")} {t("— valable jusqu'au")} {o.valid_until}
-                    {o.nre_tooling_cost ? ` — outillage ${o.nre_tooling_cost} ${o.currency}` : ""}
+                    {o.lead_time_weeks ? msg("{0} semaines", [o.lead_time_weeks]) : t("à confirmer")} {t("— valable jusqu'au")} {o.valid_until}
+                    {o.nre_tooling_cost ? msg(" — outillage {0} {1}", [o.nre_tooling_cost, o.currency]) : ""}
                     {o.annual_volume_basis
-                      ? ` — base ${o.annual_volume_basis} capteurs/an`
+                      ? msg(" — base {0} capteurs/an", [o.annual_volume_basis])
                       : t(" — volume annuel non renseigné")}
                   </p>
                   {o.void_reason ? <p className="t-caption mt-1">{o.void_reason}</p> : null}
@@ -409,9 +409,10 @@ export function ClientFollowUp({
                         quantity: Number(qty),
                       });
                       setMessage(
-                        `Demande enregistrée pour ${out.part_number} — traitement : ${
-                          t(routeLabel[out.route] ?? out.route)
-                        }. La gratuité n'est jamais automatique.`,
+                        msg("Demande enregistrée pour {0} — traitement : {1}. La gratuité n'est jamais automatique.", [
+                          out.part_number,
+                          t(routeLabel[out.route] ?? out.route),
+                        ]),
                       );
                       await reloadView(current.dossier.id);
                     } catch (error) {
@@ -437,12 +438,12 @@ export function ClientFollowUp({
                   <Badge variant="secondary">
                     {s.status === "superseded" ? t("conception modifiée depuis") : s.status}
                   </Badge>
-                  <span className="t-metric t-caption">version {s.revision}</span>
+                  <span className="t-metric t-caption">{msg("Version {0}", [s.revision])}</span>
                 </div>
                 <p className="t-caption t-metric mt-1">
                   {t("Commandés sur la version")} {s.origin_revision ?? s.revision}
                   {s.revalidated_from_revision !== null && s.revalidated_from_revision !== undefined
-                    ? ` — revalidés depuis la version ${s.revalidated_from_revision}`
+                    ? msg(" — revalidés depuis la version {0}", [s.revalidated_from_revision])
                     : ""}
                   .
                 </p>

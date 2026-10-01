@@ -45,3 +45,9 @@
 - [x] Ralentir le cycle atelier à environ 6 s, corriger la chronologie et retirer le badge flottant.
 - [x] Séparer clairement capteur et aimant dans toutes les cartes, avec faits essentiels et limites documentaires.
 - [x] Vérifier tests, types, compilation et rendu responsive public ; l'accès authentifié reste couvert par la recette automatisée.
+
+## Audit complet des traductions — 1 octobre 2026
+- [ ] Traduire les champs, erreurs et statuts NDA au rendu, y compris dans une fenêtre déjà ouverte.
+- [ ] Corriger les libellés dynamiques et erreurs visibles des parcours client et Standex.
+- [ ] Renforcer l'inventaire et les tests sur les tableaux de libellés, interpolations et huit langues.
+- [ ] Vérifier tests, types, compilation, inventaire et aperçu desktop/mobile sans publication.

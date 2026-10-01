@@ -719,7 +719,11 @@ export function DesignSpace({
       setNdaError(null);
       const missing = missingNdaFields(nda.fields);
       if (missing.length) {
-        setNdaError(`Champs à compléter avant génération : ${missing.join(", ")}.`);
+        setNdaError(
+          msg("Champs à compléter avant génération : {0}.", [
+            missing.map((label) => t(label)).join(", "),
+          ]),
+        );
         return;
       }
       try {
@@ -740,7 +744,7 @@ export function DesignSpace({
         }
       } catch (error) {
         setNdaPreview(null);
-        setNdaError(error instanceof Error ? error.message : t("Génération impossible."));
+        setNdaError(t(error instanceof Error ? error.message : "Génération impossible."));
       }
     },
     [nda],
@@ -778,7 +782,7 @@ export function DesignSpace({
     } catch (error) {
       if (contextGenRef.current !== gen) return;
       setNdaError(
-        error instanceof Error ? error.message : t("La préparation du NDA n'a pas abouti."),
+        t(error instanceof Error ? error.message : "La préparation du NDA n'a pas abouti."),
       );
     }
   }, [applyNdaStatus, serverDossierId]);
@@ -3526,7 +3530,7 @@ export function DesignSpace({
             {ndaError ? (
               <p className="notice notice-warning flex items-start gap-2" role="alert">
                 <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
-                {ndaError}
+                {t(ndaError)}
               </p>
             ) : null}
 
@@ -3549,7 +3553,7 @@ export function DesignSpace({
                 <div className="grid gap-2 md:grid-cols-2">
                   {NDA_FIELD_LABELS.map(([key, label]) => (
                     <div key={key}>
-                      <Label className="t-label">{label}</Label>
+                      <Label className="t-label">{t(label)}</Label>
                       <Input
                         value={nda.fields[key]}
                         onChange={(e) =>
@@ -3609,11 +3613,23 @@ export function DesignSpace({
                     "« Préparer mon NDA » n'envoie aucune donnée de conception : seule une fiche vide est créée côté Standex pour que vous puissiez déposer le document signé et que l'équipe puisse le vérifier.",
                   )}{" "}
                   {ndaServer
-                    ? `Statut côté Standex : ${ndaServer.nda_status}${
+                    ? msg("Statut côté Standex : {0}{1}.", [
+                        t(ndaStatusLabel({
+                          ...nda,
+                          required: ndaServer.nda_required,
+                          status: ndaServer.nda_status,
+                          proof: ndaServer.proof
+                            ? {
+                                documentSha256: ndaServer.proof.document_sha256,
+                                verifiedAt: ndaServer.proof.verified_at,
+                                verifiedBy: ndaServer.proof.proof_reference,
+                              }
+                            : null,
+                        })),
                         ndaServer.allows_transfer
                           ? t(" — transfert autorisé")
-                          : t(" — transfert bloqué")
-                      }.`
+                          : t(" — transfert bloqué"),
+                      ])
                     : t("Aucune fiche NDA créée pour l'instant.")}
                 </p>
 
@@ -3838,7 +3854,7 @@ export function DesignSpace({
               "Uniquement si votre entreprise en a besoin. Sans NDA, vous pouvez remplir et transmettre votre projet normalement : les accords de partage restent séparés et inchangés.",
             )}
           </span>
-          <span className="t-caption block">{ndaStatusLabel(nda)}</span>
+          <span className="t-caption block">{t(ndaStatusLabel(nda))}</span>
         </span>
       </label>
       {nda.required ? (

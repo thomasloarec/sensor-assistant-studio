@@ -329,7 +329,7 @@ export function DossierConsole(props: DossierConsoleProps) {
       } catch (error) {
         if (stale()) return;
         setViewerError(
-          error instanceof Error ? error.message : t("Le modèle 3D n'a pas pu être ouvert."),
+          t(error instanceof Error ? error.message : "Le modèle 3D n'a pas pu être ouvert."),
         );
       }
     },
