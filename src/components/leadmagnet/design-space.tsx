@@ -12,7 +12,7 @@ import { pairCardFor } from "@/lib/leadmagnet/pair-cards";
 import { useDetectionDataRevision } from "@/lib/standex/detection-data/store";
 import { requirementAnswer } from "@/lib/leadmagnet/requirement-answer";
 import { projectPdfFilename } from "@/lib/leadmagnet/project-reference";
-import { getLocale, isLocale, msg, setLocale, t, type Locale } from "@/lib/i18n/core";
+import { getLocale, isLocale, msg, setLocale, t, uiError, type Locale } from "@/lib/i18n/core";
 import { createNdaSync, StaleContextError } from "@/lib/leadmagnet/nda-sync";
 import { Link } from "@tanstack/react-router";
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -744,7 +744,7 @@ export function DesignSpace({
         }
       } catch (error) {
         setNdaPreview(null);
-        setNdaError(t(error instanceof Error ? error.message : "Génération impossible."));
+        setNdaError(uiError(error, "Génération impossible."));
       }
     },
     [nda],
@@ -782,7 +782,7 @@ export function DesignSpace({
     } catch (error) {
       if (contextGenRef.current !== gen) return;
       setNdaError(
-        t(error instanceof Error ? error.message : "La préparation du NDA n'a pas abouti."),
+        uiError(error, "La préparation du NDA n'a pas abouti."),
       );
     }
   }, [applyNdaStatus, serverDossierId]);
@@ -819,9 +819,7 @@ export function DesignSpace({
       (error) =>
         error instanceof StaleContextError
           ? ""
-          : error instanceof Error
-            ? error.message
-            : t("Statut NDA indisponible."),
+          : uiError(error, "Statut NDA indisponible."),
     );
   }, [ndaSync, serverDossierId]);
 
@@ -867,9 +865,7 @@ export function DesignSpace({
           errText: (error) =>
             error instanceof StaleContextError
               ? ""
-              : error instanceof Error
-                ? error.message
-                : t("Le choix n'a pas pu être enregistré côté Standex."),
+              : uiError(error, "Le choix n'a pas pu être enregistré côté Standex."),
         },
       );
       // Le serveur fait autorité : après un échec, on relit plutôt que de

@@ -341,6 +341,13 @@ export function inventory(): Finding[] {
         atModuleLevel(node)
       )
         report(node, node.getText(source).slice(0, 80), "frozen");
+      if (ts.isTemplateExpression(node) && !inTranslator(node) && !inCodeSlot(node)) {
+        const text = [
+          node.head.text,
+          ...node.templateSpans.flatMap((span, index) => [`{${index}}`, span.literal.text]),
+        ].join("");
+        if (isProse(text)) report(node, text, known(text) ? "untranslated" : "missing");
+      }
       if (ts.isJsxText(node)) {
         const text = node.getText(source);
         if (isProse(text, true))
