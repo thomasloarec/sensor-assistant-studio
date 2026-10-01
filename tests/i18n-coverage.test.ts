@@ -9,11 +9,22 @@ import { inventory } from "../scripts/i18n-inventory";
 import messages from "../src/lib/i18n/messages.json";
 import { LANGUAGES, isLocale, setLocale, t, msg, localeTag, uiError, type Locale } from "../src/lib/i18n/core";
 import { INITIAL_NDA, NDA_FIELD_LABELS, ndaStatusLabel } from "../src/lib/leadmagnet/nda";
+import { VARIABLE_FIELDS } from "../src/lib/leadmagnet/nda-docx";
 import { createDossier } from "../src/lib/leadmagnet/dossier";
 import { buildDossierExport, parseDossierExport } from "../src/lib/leadmagnet/dossier-io";
 
 const dictionary = messages as Record<string, string[]>;
 const OTHER: Locale[] = ["en", "zh", "de", "es", "ru", "it", "ja"];
+const EXACT_NDA_LABELS: Record<string, readonly string[]> = {
+  "Raison sociale du client": ["Client legal name", "客户法定名称", "Rechtlicher Name des Kunden", "Razón social del cliente", "Юридическое название клиента", "Ragione sociale del cliente", "顧客の法人名"],
+  "Rue du client": ["Client street address", "客户街道地址", "Straße des Kunden", "Calle del cliente", "Улица клиента", "Via del cliente", "顧客の住所"],
+  "Code postal et ville": ["Postal code and city", "邮政编码和城市", "Postleitzahl und Ort", "Código postal y ciudad", "Почтовый индекс и город", "CAP e città", "郵便番号と市区町村"],
+  Pays: ["Country", "国家", "Land", "País", "Страна", "Paese", "国"],
+  "Date côté Standex": ["Standex date", "Standex 日期", "Datum seitens Standex", "Fecha de Standex", "Дата со стороны Standex", "Data Standex", "Standex側の日付"],
+  "Nom du signataire client": ["Client signatory name", "客户签署人姓名", "Name der unterzeichnenden Person beim Kunden", "Nombre del firmante del cliente", "Имя подписанта со стороны клиента", "Nome del firmatario del cliente", "顧客署名者名"],
+  "Fonction du signataire client": ["Client signatory position", "客户签署人职务", "Funktion der unterzeichnenden Person beim Kunden", "Cargo del firmante del cliente", "Должность подписанта со стороны клиента", "Ruolo del firmatario del cliente", "顧客署名者の役職"],
+  "Lieu et date de signature du client": ["Client signature place and date", "客户签署地点和日期", "Ort und Datum der Unterschrift des Kunden", "Lugar y fecha de firma del cliente", "Место и дата подписания клиентом", "Luogo e data della firma del cliente", "顧客の署名場所と日付"],
+};
 
 describe("Couverture des langues de l'interface", () => {
   test("aucun texte d'interface n'échappe au dictionnaire", () => {
@@ -65,12 +76,20 @@ describe("Couverture des langues de l'interface", () => {
     expect(out).not.toContain("{0}");
   });
 
-  test("les champs et statuts NDA changent dans chacune des huit langues", () => {
-    const status = ndaStatusLabel({ ...INITIAL_NDA, required: true, status: "requested" });
-    for (const locale of OTHER) {
-      for (const [, label] of NDA_FIELD_LABELS) expect(t(label, locale)).not.toBe(label);
-      expect(t(status, locale)).not.toBe(status);
+  test("les huit libellés NDA ont une entrée exacte et la traduction attendue dans chaque langue", () => {
+    expect(VARIABLE_FIELDS.map(({ label }) => label)).toEqual(Object.keys(EXACT_NDA_LABELS));
+    expect(NDA_FIELD_LABELS.map(([, label]) => label)).toEqual(
+      VARIABLE_FIELDS.filter(({ standexOnly }) => !standexOnly).map(({ label }) => label),
+    );
+    for (const [label, expected] of Object.entries(EXACT_NDA_LABELS)) {
+      expect(dictionary[label]).toEqual(expected);
+      for (const [index, locale] of OTHER.entries()) expect(t(label, locale)).toBe(expected[index]);
     }
+  });
+
+  test("les statuts NDA changent dans chacune des huit langues", () => {
+    const status = ndaStatusLabel({ ...INITIAL_NDA, required: true, status: "requested" });
+    for (const locale of OTHER) expect(t(status, locale)).not.toBe(status);
   });
 
   test("une erreur UI reste une clé traduisible après un changement de langue", () => {
