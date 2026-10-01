@@ -493,6 +493,22 @@ export function DesignSpace({
   requestedDossierId = null,
 }: DesignSpaceProps) {
   useLocale();
+  const localizedValidation = (value: string) => {
+    try {
+      const parsed = JSON.parse(value) as { kind?: string; fields?: string[] };
+      if (parsed.kind === "nda-missing" && Array.isArray(parsed.fields))
+        return msg("Champs à compléter avant génération : {0}.", [
+          parsed.fields.map((field) => t(field)).join(", "),
+        ]);
+      if (parsed.kind === "connector-missing" && Array.isArray(parsed.fields))
+        return msg("Champs requis : {0}.", [
+          parsed.fields.map((field) => t(field)).join(", "),
+        ]);
+    } catch {
+      // Canonical UI keys are translated below; user-entered values never use this path.
+    }
+    return t(value);
+  };
   const [dossier, setDossier] = useState<DesignDossier>(() => createDossier());
   /** L'espace est monté CACHÉ dès l'accueil : la langue d'origine du projet
    * n'est capturée qu'au démarrage réel, jamais à ce montage silencieux. */
@@ -3080,7 +3096,7 @@ export function DesignSpace({
                 ))}
               </div>
               {connectorError ? (
-                <p className="notice notice-danger mt-2">{t(connectorError)}</p>
+                <p className="notice notice-danger mt-2">{localizedValidation(connectorError)}</p>
               ) : null}
               <div className="mt-3 flex flex-wrap items-center gap-2">
                 <Button
@@ -3528,7 +3544,7 @@ export function DesignSpace({
             {ndaError ? (
               <p className="notice notice-warning flex items-start gap-2" role="alert">
                 <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
-                {t(ndaError)}
+                {localizedValidation(ndaError)}
               </p>
             ) : null}
 
@@ -4089,7 +4105,7 @@ export function DesignSpace({
                 ))}
               </div>
               {connectorError ? (
-                <p className="notice notice-danger mt-2">{t(connectorError)}</p>
+                <p className="notice notice-danger mt-2">{localizedValidation(connectorError)}</p>
               ) : null}
               <div className="mt-3 flex flex-wrap items-center gap-2">
                 <Button
