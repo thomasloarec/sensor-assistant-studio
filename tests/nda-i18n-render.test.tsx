@@ -1,5 +1,5 @@
 import { GlobalRegistrator } from "@happy-dom/global-registrator";
-if (typeof document === "undefined") {
+if (typeof document === "undefined" || typeof window === "undefined") {
   GlobalRegistrator.unregister();
   GlobalRegistrator.register({ url: "https://exemple.invalid/" });
 }
