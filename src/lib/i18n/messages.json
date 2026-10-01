@@ -8,6 +8,33 @@
     " (scelta conservata)",
     " （保持された選択）"
   ],
+  " — base {0} capteurs/an": [
+    " — basis {0} sensors/year",
+    " — 基准 {0} 个传感器/年",
+    " — Basis {0} Sensoren/Jahr",
+    " — base {0} sensores/año",
+    " — база {0} датчиков/год",
+    " — base {0} sensori/anno",
+    " — 基準 {0} センサー/年"
+  ],
+  " — outillage {0} {1}": [
+    " — tooling {0} {1}",
+    " — 工装 {0} {1}",
+    " — Werkzeugkosten {0} {1}",
+    " — utillaje {0} {1}",
+    " — оснастка {0} {1}",
+    " — attrezzaggio {0} {1}",
+    " — 金型費 {0} {1}"
+  ],
+  " — revalidés depuis la version {0}": [
+    " — revalidated from version {0}",
+    " — 已从版本 {0} 重新验证",
+    " — seit Version {0} erneut validiert",
+    " — revalidados desde la versión {0}",
+    " — повторно подтверждено с версии {0}",
+    " — riconvalidati dalla versione {0}",
+    " — バージョン {0} から再確認済み"
+  ],
   "# Dossier d'application - Assistant capteur Standex": [
     "# Application Case File - Standex Sensor Assistant",
     "# 应用文件 - Standex 传感器助手",
@@ -4715,6 +4742,24 @@
     "Campi mancanti prioritari",
     "優先して確認する項目"
   ],
+  "Champs requis : {0}.": [
+    "Required fields: {0}.",
+    "必填字段：{0}。",
+    "Pflichtfelder: {0}.",
+    "Campos obligatorios: {0}.",
+    "Обязательные поля: {0}.",
+    "Campi obbligatori: {0}.",
+    "必須項目：{0}。"
+  ],
+  "Champs à compléter avant génération : {0}.": [
+    "Complete these fields before generating: {0}.",
+    "生成前请填写以下字段：{0}。",
+    "Vor der Erstellung auszufüllende Felder: {0}.",
+    "Campos que debe completar antes de generar: {0}.",
+    "Заполните поля перед созданием документа: {0}.",
+    "Campi da completare prima della generazione: {0}.",
+    "生成前に入力する項目：{0}。"
+  ],
   "Changement d'aimant : nouvelle caractérisation": [
     "Magnet change: recharacterise",
     "更换磁体：需重新表征",
@@ -5254,6 +5299,15 @@
     "Совместная закрытая разработка решений магнитного обнаружения Standex.",
     "Co-progettazione privata di una soluzione di rilevamento magnetico Standex.",
     "Standex 磁気検出ソリューションのプライベート共同設計。"
+  ],
+  "Code postal et ville": [
+    "Postal code and city",
+    "邮政编码和城市",
+    "Postleitzahl und Ort",
+    "Código postal y ciudad",
+    "Почтовый индекс и город",
+    "CAP e città",
+    "郵便番号と市区町村"
   ],
   "Colonne generation_mode absente : appliquer supabase/schema/migration_v0.3.sql pour distinguer baseline et expérimental.": [
     "generation_mode column missing: apply supabase/schema/migration_v0.3.sql to distinguish baseline and experimental.",
@@ -5965,6 +6019,24 @@
     "Подключено",
     "Connesso",
     "接続済み"
+  ],
+  "Connecté — rôle {0}.": [
+    "Signed in — role {0}.",
+    "已登录 — 角色 {0}。",
+    "Angemeldet — Rolle {0}.",
+    "Sesión iniciada — rol {0}.",
+    "Вход выполнен — роль {0}.",
+    "Accesso effettuato — ruolo {0}.",
+    "ログイン中 — 役割 {0}。"
+  ],
+  "Connecté.": [
+    "Signed in.",
+    "已登录。",
+    "Angemeldet.",
+    "Sesión iniciada.",
+    "Вход выполнен.",
+    "Accesso effettuato.",
+    "ログイン中。"
   ],
   "Connexion": [
     "Log in",
@@ -7288,6 +7360,15 @@
     "Некорректный запрос английской версии: ничего не передано.",
     "Richiesta di versione inglese non valida: non è stato trasmesso nulla.",
     "英語版のリクエストが無効です。何も送信されていません。"
+  ],
+  "Demande enregistrée pour {0} — traitement : {1}. La gratuité n'est jamais automatique.": [
+    "Request recorded for {0} — processing: {1}. Samples are never automatically free of charge.",
+    "已记录 {0} 的申请 — 处理方式：{1}。样品不会自动免费。",
+    "Anfrage für {0} erfasst — Bearbeitung: {1}. Kostenfreiheit gilt nie automatisch.",
+    "Solicitud registrada para {0} — tramitación: {1}. La gratuidad nunca es automática.",
+    "Запрос для {0} зарегистрирован — обработка: {1}. Бесплатность никогда не предоставляется автоматически.",
+    "Richiesta registrata per {0} — gestione: {1}. La gratuità non è mai automatica.",
+    "{0} の依頼を登録しました — 対応：{1}。無償提供は自動ではありません。"
   ],
   "Demande incomplète : rien n'a été publié.": [
     "Incomplete request: nothing was published.",
@@ -10484,6 +10565,15 @@
     "Ruolo",
     "職務"
   ],
+  "Fonction du signataire client": [
+    "Client signatory position",
+    "客户签署人职务",
+    "Funktion der unterzeichnenden Person beim Kunden",
+    "Cargo del firmante del cliente",
+    "Должность подписанта со стороны клиента",
+    "Ruolo del firmatario del cliente",
+    "顧客署名者の役職"
+  ],
   "Format capteur souhaité": [
     "Desired sensor format",
     "期望传感器外形",
@@ -11077,6 +11167,42 @@
     "Импортировать 3D-объект",
     "Importa un oggetto 3D",
     "3Dオブジェクトを読み込む"
+  ],
+  "Impossible d'actualiser vos projets.": [
+    "Your projects could not be refreshed.",
+    "无法刷新您的项目。",
+    "Ihre Projekte konnten nicht aktualisiert werden.",
+    "No se pudieron actualizar sus proyectos.",
+    "Не удалось обновить ваши проекты.",
+    "Impossibile aggiornare i progetti.",
+    "プロジェクトを更新できませんでした。"
+  ],
+  "Impossible d'ouvrir ce dossier.": [
+    "This project file could not be opened.",
+    "无法打开此项目档案。",
+    "Dieses Projektdossier konnte nicht geöffnet werden.",
+    "No se pudo abrir este expediente.",
+    "Не удалось открыть это досье.",
+    "Impossibile aprire questo fascicolo.",
+    "この案件を開けませんでした。"
+  ],
+  "Impossible d'ouvrir ce projet.": [
+    "This project could not be opened.",
+    "无法打开此项目。",
+    "Dieses Projekt konnte nicht geöffnet werden.",
+    "No se pudo abrir este proyecto.",
+    "Не удалось открыть этот проект.",
+    "Impossibile aprire questo progetto.",
+    "このプロジェクトを開けませんでした。"
+  ],
+  "Impossible de charger les dossiers.": [
+    "The projects could not be loaded.",
+    "无法加载项目。",
+    "Die Projekte konnten nicht geladen werden.",
+    "No se pudieron cargar los proyectos.",
+    "Не удалось загрузить проекты.",
+    "Impossibile caricare i progetti.",
+    "プロジェクトを読み込めませんでした。"
   ],
   "Imprimer": [
     "Print",
@@ -11834,6 +11960,15 @@
     "La richiesta di accordo di riservatezza presente nel file viene ripresa: dovrà essere verificata nuovamente da Standex.",
     "ファイルに含まれる秘密保持契約の要望は復元されます。Standex 側で改めて検証が必要です。"
   ],
+  "La demande d'échantillons n'a pas abouti.": [
+    "The sample request could not be completed.",
+    "样品申请未能完成。",
+    "Die Musteranfrage konnte nicht abgeschlossen werden.",
+    "No se pudo completar la solicitud de muestras.",
+    "Не удалось завершить запрос образцов.",
+    "Impossibile completare la richiesta di campioni.",
+    "サンプル依頼を完了できませんでした。"
+  ],
   "La dernière note a été copiée.": [
     "The latest note was copied.",
     "已复制最新一条备注。",
@@ -12391,6 +12526,15 @@
     "Проверка Standex упомянута без блокировки?",
     "La validazione Standex è citata senza bloccare?",
     "進行を止めずにStandex確認を説明していますか？"
+  ],
+  "La variante n'a pas pu être reprise.": [
+    "The variant could not be applied.",
+    "无法应用该变体。",
+    "Die Variante konnte nicht übernommen werden.",
+    "No se pudo aplicar la variante.",
+    "Не удалось применить вариант.",
+    "Impossibile applicare la variante.",
+    "バリアントを適用できませんでした。"
   ],
   "La version anglaise de cette version est demandée mais pas encore disponible.": [
     "The English version of this revision has been requested but is not available yet.",
@@ -13427,6 +13571,15 @@
     "Il rilascio è più lontano dell'attivazione",
     "復帰は動作より遠くなります"
   ],
+  "Le retour d'essai n'a pas pu être enregistré.": [
+    "The test feedback could not be saved.",
+    "无法保存测试反馈。",
+    "Die Testrückmeldung konnte nicht gespeichert werden.",
+    "No se pudo guardar el resultado de la prueba.",
+    "Не удалось сохранить отзыв об испытании.",
+    "Impossibile salvare il riscontro della prova.",
+    "試験フィードバックを保存できませんでした。"
+  ],
   "Le réservoir coulisse horizontalement sur 40 mm. Un aimant est intégré au réservoir ; la détection doit se faire à 3–6 mm du capteur.": [
     "The tank slides horizontally over 40 mm. A magnet is built into the tank; detection is required at 3–6 mm from the sensor.",
     "水箱水平滑动40 mm。磁铁嵌入水箱；要求在距传感器3–6 mm处检测。",
@@ -13975,6 +14128,15 @@
     "Ссылка на скачивание открыта (действительна несколько минут).",
     "Link di download aperto (valido per alcuni minuti).",
     "ダウンロードリンクが開かれました（数分間有効）。"
+  ],
+  "Lieu et date de signature du client": [
+    "Client signature place and date",
+    "客户签署地点和日期",
+    "Ort und Datum der Unterschrift des Kunden",
+    "Lugar y fecha de firma del cliente",
+    "Место и дата подписания клиентом",
+    "Luogo e data della firma del cliente",
+    "顧客の署名場所と日付"
   ],
   "Ligne enregistrée, mais la relecture a échoué : les simulations peuvent encore afficher la valeur précédente.": [
     "Row saved, but re-reading failed: simulations may still show the previous value.",
@@ -15667,6 +15829,15 @@
     "Название проекта",
     "Nome del progetto",
     "プロジェクト名"
+  ],
+  "Nom du signataire client": [
+    "Client signatory name",
+    "客户签署人姓名",
+    "Name der unterzeichnenden Person beim Kunden",
+    "Nombre del firmante del cliente",
+    "Имя подписанта со стороны клиента",
+    "Nome del firmatario del cliente",
+    "顧客署名者名"
   ],
   "Nom saisi dans le projet": [
     "Name entered in the project",
@@ -18818,6 +18989,15 @@
     "Collegamento non documentato",
     "接続方式は資料なし"
   ],
+  "Raison sociale du client": [
+    "Client legal name",
+    "客户法定名称",
+    "Rechtlicher Name des Kunden",
+    "Razón social del cliente",
+    "Юридическое название клиента",
+    "Ragione sociale del cliente",
+    "顧客の法人名"
+  ],
   "Rappel": [
     "Follow-up",
     "跟进",
@@ -20059,6 +20239,15 @@
     "Разделы карточки",
     "Sezioni della scheda",
     "製品カードの項目"
+  ],
+  "Rue du client": [
+    "Client street address",
+    "客户街道地址",
+    "Straße des Kunden",
+    "Calle del cliente",
+    "Улица клиента",
+    "Via del cliente",
+    "顧客の住所"
   ],
   "Réactiver": [
     "Reactivate",
@@ -21472,6 +21661,15 @@
     "Статус NDA недоступен.",
     "Stato NDA non disponibile.",
     "NDAステータスは利用できません。"
+  ],
+  "Statut côté Standex : {0}{1}.": [
+    "Standex status: {0}{1}.",
+    "Standex 端状态：{0}{1}。",
+    "Status bei Standex: {0}{1}.",
+    "Estado en Standex: {0}{1}.",
+    "Статус на стороне Standex: {0}{1}.",
+    "Stato lato Standex: {0}{1}.",
+    "Standex 側のステータス：{0}{1}。"
   ],
   "Statut incohérent : preuve absente": [
     "Inconsistent status: missing proof",
@@ -23219,6 +23417,15 @@
     "IL TUO DOSSIER APPLICATIVO",
     "用途別資料"
   ],
+  "Valable": [
+    "Valid",
+    "有效",
+    "Gültig",
+    "Válida",
+    "Действительно",
+    "Valida",
+    "有効"
+  ],
   "Valable jusqu'au": [
     "Valid until",
     "有效期至",
@@ -23569,6 +23776,15 @@
     "Полная и точная французская версия customer_response, предназначенная только для внутренних проверок.",
     "Versione francese completa e fedele di customer_response, riservata ai controlli interni.",
     "customer_response の完全かつ忠実なフランス語版。内部チェック専用。"
+  ],
+  "Version {0}": [
+    "Version {0}",
+    "版本 {0}",
+    "Version {0}",
+    "Versión {0}",
+    "Версия {0}",
+    "Versione {0}",
+    "バージョン {0}"
   ],
   "Version à broches traversantes ; modèle visuel simplifié. Consulter la fiche pour les autres tailles.": [
     "Through-hole version; simplified visual model. See datasheet for other sizes.",
@@ -25937,6 +26153,15 @@
     "macchina da caffè professionale: sapere se il serbatoio è inserito correttamente",
     "業務用コーヒーマシン：タンクが正しく装着されているかを知る"
   ],
+  "maintenance": [
+    "Maintenance",
+    "维护",
+    "Wartung",
+    "Mantenimiento",
+    "Техническое обслуживание",
+    "Manutenzione",
+    "保守"
+  ],
   "maintenance / faible volume (20 pièces)": [
     "maintenance / low volume (20 units)",
     "维护 / 小批量（20 件）",
@@ -26945,6 +27170,15 @@
     "specifico",
     "カスタム"
   ],
+  "standard": [
+    "standard",
+    "标准",
+    "Standard",
+    "estándar",
+    "стандарт",
+    "standard",
+    "標準"
+  ],
   "suffisante": [
     "sufficient",
     "充足",
@@ -27385,6 +27619,15 @@
     "{0} шт./год",
     "{0} pezzi/anno",
     "年間 {0} 個"
+  ],
+  "{0} semaines": [
+    "{0} weeks",
+    "{0} 周",
+    "{0} Wochen",
+    "{0} semanas",
+    "{0} недель",
+    "{0} settimane",
+    "{0} 週間"
   ],
   "{0} tour(s)": [
     "{0} turn(s)",
