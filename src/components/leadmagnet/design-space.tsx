@@ -1087,7 +1087,7 @@ export function DesignSpace({
     (action: string) =>
       typeof window === "undefined" ||
       window.confirm(
-        `Le projet ouvert ici n'est enregistré nulle part. Exportez-le d'abord si vous voulez le garder.\n\nRemplacer le travail en cours pour ${action} ?`,
+        msg("Le projet ouvert ici n'est enregistré nulle part. Exportez-le d'abord si vous voulez le garder. Remplacer le travail en cours pour {0} ?", [action]),
       ),
     [],
   );
@@ -1319,7 +1319,7 @@ export function DesignSpace({
       } catch (error) {
         if (gen !== docGenRef.current || ctx !== contextGenRef.current) return;
         setSubmitMessage(
-          error instanceof Error ? error.message : t("Ce fichier n'a pas pu être relu."),
+          uiError(error, "Ce fichier n'a pas pu être relu."),
         );
       }
     },
@@ -1394,9 +1394,9 @@ export function DesignSpace({
         // resterait refusé à la soumission. On le dit franchement ici.
         setPreparedUpload(null);
         setSubmitMessage(
-          `Le fichier a été déposé mais le serveur n'a pas pu en vérifier le contenu (${
-            uploaded.verificationError ?? t("raison inconnue")
-          }). Il n'est donc pas joint à votre envoi.`,
+          msg("Le fichier a été déposé mais le serveur n'a pas pu en vérifier le contenu ({0}). Il n'est donc pas joint à votre envoi.", [
+            uploaded.verificationError ? t(uploaded.verificationError) : t("raison inconnue"),
+          ]),
         );
         setSubmitMessageTone("danger");
         return;
@@ -1431,7 +1431,7 @@ export function DesignSpace({
       setSubmitMessageTone("success");
     } catch (error) {
       setSubmitMessage(
-        error instanceof Error ? error.message : t("Le fichier 3D n'a pas pu être partagé."),
+        uiError(error, "Le fichier 3D n'a pas pu être partagé."),
       );
       setSubmitMessageTone("danger");
     } finally {
@@ -4472,9 +4472,7 @@ export function DesignSpace({
                       name: f.name,
                       kind: "binary",
                       note:
-                        error instanceof Error
-                          ? error.message
-                          : t("Ce fichier n'a pas pu être lu dans cet onglet."),
+                        uiError(error, "Ce fichier n'a pas pu être lu dans cet onglet."),
                     });
                   });
               }}
@@ -4651,7 +4649,11 @@ export function DesignSpace({
             setPanel(null);
             onWorkspaceOpen?.();
             setSubmitMessage(
-              `Contenu de la version ${sourceRevision} repris. Le prochain envoi créera la version ${currentRevision + 1} du dossier. ${parsed.notices.join(" ")}`,
+              msg("Contenu de la version {0} repris. Le prochain envoi créera la version {1} du dossier. {2}", [
+                sourceRevision,
+                currentRevision + 1,
+                parsed.notices.map((notice) => t(notice)).join(" "),
+              ]),
             );
             return { ok: true };
           }}
@@ -4695,9 +4697,7 @@ export function DesignSpace({
                 applied: [],
                 notApplied: out.notApplied,
                 refused:
-                  error instanceof Error
-                    ? error.message
-                    : t("La reprise de cette proposition n'a pas été enregistrée."),
+                  uiError(error, "La reprise de cette proposition n'a pas été enregistrée."),
               };
             } finally {
               busyRef.current = false;

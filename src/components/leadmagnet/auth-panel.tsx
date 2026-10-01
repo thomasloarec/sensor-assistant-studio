@@ -52,7 +52,7 @@ export function AuthPanel({ backend, onChanged }: Props) {
         >
           {t("Se déconnecter")}
         </Button>
-        {message ? <span>{message}</span> : null}
+        {message ? <span>{t(message)}</span> : null}
       </div>
     );
 
@@ -118,7 +118,7 @@ export function AuthPanel({ backend, onChanged }: Props) {
         {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
         {busy ? t("Connexion…") : t("Se connecter")}
       </Button>
-      {message ? <p className="notice notice-info sm:col-span-full">{message}</p> : null}
+      {message ? <p className="notice notice-info sm:col-span-full">{t(message)}</p> : null}
     </form>
   );
 }

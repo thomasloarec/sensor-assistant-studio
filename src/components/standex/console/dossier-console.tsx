@@ -1,4 +1,4 @@
-import { localeTag, t, uiError } from "@/lib/i18n/core";
+import { localeTag, msg, t, uiError } from "@/lib/i18n/core";
 import FreezeReview from "./freeze-review";
 /** Console interne Standex : boîte de réception, revue R&D, offre, échantillons, preuve NDA.
  *
@@ -246,7 +246,9 @@ export function DossierConsole(props: DossierConsoleProps) {
         lengthLabel:
           viewerEstimate?.requiredMm === null || viewerEstimate === null
             ? t("Longueur inconnue : trajet incomplet.")
-            : `Longueur nécessaire : ${viewerEstimate.requiredMm?.toFixed(1)} mm. Aucune validation d'ingénierie.`,
+            : msg("Longueur nécessaire : {0} mm. Aucune validation d'ingénierie.", [
+                viewerEstimate.requiredMm?.toFixed(1) ?? "—",
+              ]),
       }
     : undefined;
 
@@ -272,7 +274,9 @@ export function DossierConsole(props: DossierConsoleProps) {
       const parsed = parseServerSnapshot(last.snapshot as Record<string, unknown>);
       if (!parsed.ok) {
         setViewerError(
-          `La configuration envoyée n'est pas lisible (${parsed.reason}) : le modèle n'est pas ouvert.`,
+          msg("La configuration envoyée n'est pas lisible ({0}) : le modèle n'est pas ouvert.", [
+            t(parsed.reason),
+          ]),
         );
         return;
       }
@@ -601,7 +605,7 @@ export function DossierConsole(props: DossierConsoleProps) {
         <section className="space-y-4">
           {message ? (
             <p className="min-h-11 rounded-[var(--r-sm)] border-0 bg-[var(--surface-sunken)] p-3 text-sm shadow-[var(--e-inset)]">
-              {message}
+              {t(message)}
             </p>
           ) : null}
           {!view ? (
@@ -1411,7 +1415,10 @@ export function DossierConsole(props: DossierConsoleProps) {
                           />
                           <p className="mt-1 t-caption text-muted-foreground">
                             {nda.signedFileName
-                              ? `Déposé : ${nda.signedFileName} — empreinte ${nda.documentSha256.slice(0, 16)}…`
+                              ? msg("Déposé : {0} — empreinte {1}…", [
+                                  nda.signedFileName,
+                                  nda.documentSha256.slice(0, 16),
+                                ])
                               : t("Aucun document déposé. Vous pouvez aussi déclarer une preuve conservée dans une archive externe.")}
                           </p>
                           <Button
