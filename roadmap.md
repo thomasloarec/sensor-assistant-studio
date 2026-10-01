@@ -52,4 +52,4 @@
 - [x] Renforcer l'inventaire et les tests sur les tableaux de libellés, interpolations et huit langues.
 - [x] Vérifier tests, types, compilation, inventaire et aperçu desktop/mobile sans publication.
 - [x] Verrouiller les huit libellés NDA par leurs traductions exactes, sans repli sur les modèles génériques.
-- [ ] Vérifier derrière la connexion le changement de langue et les erreurs du dialogue NDA, sans envoi.
+- [ ] Vérifier derrière la connexion le changement de langue et les erreurs du dialogue NDA, sans envoi — bloqué : aucune session autorisée ni identifiants de recette sécurisés ne sont injectés dans l'aperçu.

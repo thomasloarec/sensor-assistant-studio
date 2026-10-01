@@ -34,6 +34,8 @@ describe("Couverture des langues de l'interface", () => {
   });
 
   test("chaque entrée porte exactement sept traductions non vides", () => {
+    // Baseline auditée : 3 156 entrées avant ce lot, puis 34 entrées UI ajoutées.
+    expect(Object.keys(dictionary)).toHaveLength(3_190);
     const broken = Object.entries(dictionary).filter(
       ([, v]) => v.length !== 7 || v.some((x) => typeof x !== "string" || x.trim() === ""),
     );
