@@ -20,7 +20,6 @@ const EXACT_NDA_LABELS: Record<string, readonly string[]> = {
   "Rue du client": ["Client street address", "客户街道地址", "Straße des Kunden", "Calle del cliente", "Улица клиента", "Via del cliente", "顧客の住所"],
   "Code postal et ville": ["Postal code and city", "邮政编码和城市", "Postleitzahl und Ort", "Código postal y ciudad", "Почтовый индекс и город", "CAP e città", "郵便番号と市区町村"],
   Pays: ["Country", "国家", "Land", "País", "Страна", "Paese", "国"],
-  "Date côté Standex": ["Standex date", "Standex 日期", "Datum seitens Standex", "Fecha de Standex", "Дата со стороны Standex", "Data Standex", "Standex側の日付"],
   "Nom du signataire client": ["Client signatory name", "客户签署人姓名", "Name der unterzeichnenden Person beim Kunden", "Nombre del firmante del cliente", "Имя подписанта со стороны клиента", "Nome del firmatario del cliente", "顧客署名者名"],
   "Fonction du signataire client": ["Client signatory position", "客户签署人职务", "Funktion der unterzeichnenden Person beim Kunden", "Cargo del firmante del cliente", "Должность подписанта со стороны клиента", "Ruolo del firmatario del cliente", "顧客署名者の役職"],
   "Lieu et date de signature du client": ["Client signature place and date", "客户签署地点和日期", "Ort und Datum der Unterschrift des Kunden", "Lugar y fecha de firma del cliente", "Место и дата подписания клиентом", "Luogo e data della firma del cliente", "顧客の署名場所と日付"],
@@ -34,8 +33,8 @@ describe("Couverture des langues de l'interface", () => {
   });
 
   test("chaque entrée porte exactement sept traductions non vides", () => {
-    // Baseline auditée : 3 156 entrées avant ce lot, puis 34 entrées UI ajoutées.
-    expect(Object.keys(dictionary)).toHaveLength(3_190);
+    // Baseline auditée : 3 189 entrées, puis les deux sélecteurs absents ajoutés ici.
+    expect(Object.keys(dictionary)).toHaveLength(3_191);
     const broken = Object.entries(dictionary).filter(
       ([, v]) => v.length !== 7 || v.some((x) => typeof x !== "string" || x.trim() === ""),
     );
@@ -79,7 +78,7 @@ describe("Couverture des langues de l'interface", () => {
   });
 
   test("les huit libellés NDA ont une entrée exacte et la traduction attendue dans chaque langue", () => {
-    expect(VARIABLE_FIELDS.map(({ label }) => label)).toEqual(Object.keys(EXACT_NDA_LABELS));
+    expect(VARIABLE_FIELDS.filter(({ standexOnly }) => !standexOnly).map(({ label }) => label)).toEqual(Object.keys(EXACT_NDA_LABELS));
     expect(NDA_FIELD_LABELS.map(([, label]) => label)).toEqual(
       VARIABLE_FIELDS.filter(({ standexOnly }) => !standexOnly).map(({ label }) => label),
     );

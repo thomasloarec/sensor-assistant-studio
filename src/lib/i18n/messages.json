@@ -4922,6 +4922,24 @@
     "Scegli",
     "選択"
   ],
+  "Choisir mon rendez-vous": [
+    "Choose my appointment",
+    "选择我的预约",
+    "Meinen Termin auswählen",
+    "Elegir mi cita",
+    "Выбрать встречу",
+    "Scegli il mio appuntamento",
+    "予約を選択"
+  ],
+  "Choisir un retour déjà publié": [
+    "Choose an already published review",
+    "选择已发布的反馈",
+    "Eine bereits veröffentlichte Rückmeldung auswählen",
+    "Elegir una revisión ya publicada",
+    "Выбрать уже опубликованный отзыв",
+    "Scegli un riscontro già pubblicato",
+    "公開済みの回答を選択"
+  ],
   "Choisir dans le catalogue": [
     "Choose from catalogue",
     "从目录中选择",
@@ -7306,15 +7324,6 @@
     "Дата подписания",
     "Data di firma",
     "署名日"
-  ],
-  "Date côté Standex": [
-    "Standex date",
-    "Standex 日期",
-    "Datum seitens Standex",
-    "Fecha de Standex",
-    "Дата со стороны Standex",
-    "Data Standex",
-    "Standex側の日付"
   ],
   "Date de validité invalide.": [
     "Invalid validity date.",

@@ -53,3 +53,5 @@
 - [x] Vérifier tests, types, compilation, inventaire et aperçu desktop/mobile sans publication.
 - [x] Verrouiller les huit libellés NDA par leurs traductions exactes, sans repli sur les modèles génériques.
 - [ ] Vérifier derrière la connexion le changement de langue et les erreurs du dialogue NDA, sans envoi — bloqué : aucune session autorisée ni identifiants de recette sécurisés ne sont injectés dans l'aperçu.
+- [x] Garder les erreurs ouvertes réactives à la langue et préserver sans traduction les retours humains.
+- [x] Ajouter les deux libellés exacts des sélecteurs rendez-vous et retour publié.
