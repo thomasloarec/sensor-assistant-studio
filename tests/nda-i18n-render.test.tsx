@@ -1,5 +1,5 @@
 import { GlobalRegistrator } from "@happy-dom/global-registrator";
-GlobalRegistrator.register({ url: "https://exemple.invalid/" });
+if (typeof document === "undefined") GlobalRegistrator.register({ url: "https://exemple.invalid/" });
 
 import { afterEach, describe, expect, test } from "bun:test";
 import { act, cleanup, render } from "@testing-library/react";

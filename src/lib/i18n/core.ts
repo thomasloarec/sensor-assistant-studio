@@ -86,7 +86,7 @@ const templates = Object.keys(dictionary)
     key,
     pattern: new RegExp(
       "^" +
-        key
+        normalize(key)
           .split(/\{\d+\}/)
           .map(escape)
           .join("(.*?)") +
