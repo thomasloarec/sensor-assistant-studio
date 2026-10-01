@@ -245,7 +245,11 @@ export function inventory(): Finding[] {
       while (current) {
         if (ts.isCallExpression(current)) {
           const name = current.expression.getText(source);
-          if (name === "t" || name === "msg" || name.endsWith(".t")) return true;
+          if (name === "t" || name === "msg" || name === "uiError" || name.endsWith(".t"))
+            return true;
+          // A nested non-translation call (for example join(" ")) belongs to
+          // that call, not to an outer msg() argument.
+          return false;
         }
         current = current.parent;
       }

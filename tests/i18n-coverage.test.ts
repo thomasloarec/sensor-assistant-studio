@@ -7,7 +7,8 @@
 import { describe, expect, test } from "bun:test";
 import { inventory } from "../scripts/i18n-inventory";
 import messages from "../src/lib/i18n/messages.json";
-import { LANGUAGES, isLocale, setLocale, t, msg, localeTag, type Locale } from "../src/lib/i18n/core";
+import { LANGUAGES, isLocale, setLocale, t, msg, localeTag, uiError, type Locale } from "../src/lib/i18n/core";
+import { NDA_FIELD_LABELS, ndaStatusLabel, emptyNdaState } from "../src/lib/leadmagnet/nda";
 import { createDossier } from "../src/lib/leadmagnet/dossier";
 import { buildDossierExport, parseDossierExport } from "../src/lib/leadmagnet/dossier-io";
 
@@ -62,6 +63,21 @@ describe("Couverture des langues de l'interface", () => {
     const out = msg("Renommer le projet « {0} »", ["Vanne K"], "de");
     expect(out).toContain("Vanne K");
     expect(out).not.toContain("{0}");
+  });
+
+  test("les champs et statuts NDA changent dans chacune des huit langues", () => {
+    const status = ndaStatusLabel({ ...emptyNdaState(), required: true });
+    for (const locale of OTHER) {
+      for (const [, label] of NDA_FIELD_LABELS) expect(t(label, locale)).not.toBe(label);
+      expect(t(status, locale)).not.toBe(status);
+    }
+  });
+
+  test("une erreur UI reste une clé traduisible après un changement de langue", () => {
+    const source = uiError(new Error("Génération impossible."), "Action refusée.");
+    expect(t(source, "en")).toBe("Generation failed.");
+    expect(t(source, "ja")).not.toBe(t(source, "en"));
+    expect(uiError(new Error("private backend detail"), "Action refusée.")).toBe("Action refusée.");
   });
 });
 
