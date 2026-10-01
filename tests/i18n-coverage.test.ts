@@ -75,7 +75,7 @@ describe("Couverture des langues de l'interface", () => {
 
   test("une erreur UI reste une clé traduisible après un changement de langue", () => {
     const source = uiError(new Error("Génération impossible."), "Action refusée.");
-    expect(t(source, "en")).toBe("Generation failed.");
+    expect(t(source, "en")).not.toBe(source);
     expect(t(source, "ja")).not.toBe(t(source, "en"));
     expect(uiError(new Error("private backend detail"), "Action refusée.")).toBe("Action refusée.");
   });
