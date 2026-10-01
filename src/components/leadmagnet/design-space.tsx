@@ -719,7 +719,9 @@ export function DesignSpace({
       setNdaError(null);
       const missing = missingNdaFields(nda.fields);
       if (missing.length) {
-        setNdaError(`Champs à compléter avant génération : ${missing.join(", ")}.`);
+        setNdaError(
+          JSON.stringify({ kind: "nda-missing", fields: missing }),
+        );
         return;
       }
       try {
@@ -3078,7 +3080,7 @@ export function DesignSpace({
                 ))}
               </div>
               {connectorError ? (
-                <p className="notice notice-danger mt-2">{connectorError}</p>
+                <p className="notice notice-danger mt-2">{t(connectorError)}</p>
               ) : null}
               <div className="mt-3 flex flex-wrap items-center gap-2">
                 <Button
@@ -4087,7 +4089,7 @@ export function DesignSpace({
                 ))}
               </div>
               {connectorError ? (
-                <p className="notice notice-danger mt-2">{connectorError}</p>
+                <p className="notice notice-danger mt-2">{t(connectorError)}</p>
               ) : null}
               <div className="mt-3 flex flex-wrap items-center gap-2">
                 <Button
@@ -4108,7 +4110,9 @@ export function DesignSpace({
                   onClick={() => {
                     const result = terminationFromDraft(connectorDraft);
                     if (!result.ok) {
-                      setConnectorError(`Champs requis : ${result.missing.join(", ")}.`);
+                      setConnectorError(
+                        JSON.stringify({ kind: "connector-missing", fields: result.missing }),
+                      );
                       return;
                     }
                     setConnectorError(null);
