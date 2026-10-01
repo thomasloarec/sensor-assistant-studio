@@ -6335,6 +6335,15 @@
     "Contenuto della revisione inviata illeggibile: non è stato tradotto nulla.",
     "送信されたバージョンの内容を読み取れません。翻訳は行われていません。"
   ],
+  "Contenu de la version {0} repris. Le prochain envoi créera la version {1} du dossier. {2}": [
+    "Content from version {0} restored. The next submission will create project version {1}. {2}",
+    "已恢复版本 {0} 的内容。下次提交将创建项目版本 {1}。{2}",
+    "Inhalt aus Version {0} übernommen. Die nächste Übermittlung erstellt Version {1} des Dossiers. {2}",
+    "Contenido de la versión {0} recuperado. El próximo envío creará la versión {1} del expediente. {2}",
+    "Содержимое версии {0} восстановлено. Следующая отправка создаст версию {1} досье. {2}",
+    "Contenuto della versione {0} ripristinato. Il prossimo invio creerà la versione {1} del fascicolo. {2}",
+    "バージョン {0} の内容を復元しました。次回の送信で案件のバージョン {1} が作成されます。{2}"
+  ],
   "Contenu importé dans un projet local : aucun projet Standex n'y est rattaché, et l'accord de confidentialité comme l'accord d'envoi sont à refaire.": [
     "Content imported into a local case file: no Standex case file is linked to it, and both the non-disclosure agreement and sending agreement must be renewed.",
     "内容已导入本地项目：未关联任何 Standex 项目，保密协议和发送协议均需重新签署。",
@@ -8674,6 +8683,15 @@
     "Переместить пару целиком",
     "Spostare l'intera coppia",
     "ペア全体を移動"
+  ],
+  "Déposé : {0} — empreinte {1}…": [
+    "Uploaded: {0} — fingerprint {1}…",
+    "已上传：{0} — 指纹 {1}…",
+    "Hochgeladen: {0} — Fingerabdruck {1}…",
+    "Cargado: {0} — huella {1}…",
+    "Загружено: {0} — отпечаток {1}…",
+    "Caricato: {0} — impronta {1}…",
+    "アップロード済み：{0} — フィンガープリント {1}…"
   ],
   "Dépôt du document signé pour vérification par Standex.": [
     "Upload of signed document for verification by Standex.",
@@ -11897,6 +11915,15 @@
     "Il confronto utilizza l'orientamento più favorevole; l'orientamento effettivo è ancora da decidere.",
     "比較では最も有利な向きが採用されます。実際の向きは未定です。"
   ],
+  "La configuration envoyée n'est pas lisible ({0}) : le modèle n'est pas ouvert.": [
+    "The submitted configuration cannot be read ({0}); the model was not opened.",
+    "无法读取已提交的配置（{0}）：模型未打开。",
+    "Die übermittelte Konfiguration ist nicht lesbar ({0}); das Modell wurde nicht geöffnet.",
+    "No se puede leer la configuración enviada ({0}); el modelo no se ha abierto.",
+    "Отправленная конфигурация не читается ({0}); модель не открыта.",
+    "La configurazione inviata non è leggibile ({0}); il modello non è stato aperto.",
+    "送信された設定を読み取れません（{0}）。モデルは開かれていません。"
+  ],
   "La confirmation d'envoi n'a pas été obtenue : votre projet est peut-être arrivé malgré tout. Vérifiez le suivi de votre projet avant de le renvoyer.": [
     "No send confirmation was obtained: your project may still have arrived. Check the tracking of your project before sending it again.",
     "未获得发送确认：您的资料仍可能已送达。重新发送前请先查看案件进度。",
@@ -13292,6 +13319,15 @@
     "Il file 3D non è più presente nella memoria di questa scheda. Reimportare lo stesso GLB per recuperare il montaggio.",
     "3D ファイルはこのタブのメモリに残っていません。取り付け状態を復元するには、同じ GLB を再インポートしてください。"
   ],
+  "Le fichier a été déposé mais le serveur n'a pas pu en vérifier le contenu ({0}). Il n'est donc pas joint à votre envoi.": [
+    "The file was uploaded, but the server could not verify its contents ({0}). It is therefore not attached to your submission.",
+    "文件已上传，但服务器无法验证其内容（{0}）。因此未附加到您的提交中。",
+    "Die Datei wurde hochgeladen, der Server konnte ihren Inhalt jedoch nicht prüfen ({0}). Sie wird daher nicht an Ihre Übermittlung angehängt.",
+    "El archivo se cargó, pero el servidor no pudo verificar su contenido ({0}). Por tanto, no se adjunta al envío.",
+    "Файл загружен, но сервер не смог проверить его содержимое ({0}). Поэтому он не приложен к отправке.",
+    "Il file è stato caricato, ma il server non ha potuto verificarne il contenuto ({0}). Pertanto non è allegato all'invio.",
+    "ファイルはアップロードされましたが、サーバーが内容を確認できませんでした（{0}）。そのため送信には添付されません。"
+  ],
   "Le fichier de montage est trop volumineux.": [
     "The assembly file is too large.",
     "装配文件过大。",
@@ -13543,6 +13579,15 @@
     "Досье или целевая версия изменились с момента загрузки файла: подготовьте отправку заново.",
     "Il progetto o la versione di riferimento è cambiata dal deposito del file: preparare nuovamente la condivisione.",
     "ファイルの送信以降、プロジェクトファイルまたは対象バージョンが変更されました：共有を再度準備してください。"
+  ],
+  "Le projet ouvert ici n'est enregistré nulle part. Exportez-le d'abord si vous voulez le garder. Remplacer le travail en cours pour {0} ?": [
+    "The project open here has not been saved anywhere. Export it first if you want to keep it. Replace the current work to {0}?",
+    "此处打开的项目尚未保存。若要保留，请先导出。是否替换当前工作以{0}？",
+    "Das hier geöffnete Projekt ist nirgends gespeichert. Exportieren Sie es zuerst, wenn Sie es behalten möchten. Aktuelle Arbeit ersetzen, um {0}?",
+    "El proyecto abierto aquí no está guardado. Expórtelo primero si desea conservarlo. ¿Sustituir el trabajo actual para {0}?",
+    "Открытый здесь проект нигде не сохранён. Сначала экспортируйте его, если хотите сохранить. Заменить текущую работу, чтобы {0}?",
+    "Il progetto aperto qui non è salvato. Esportarlo prima per conservarlo. Sostituire il lavoro corrente per {0}?",
+    "ここで開いているプロジェクトは保存されていません。保持するには先にエクスポートしてください。現在の作業を置き換えて{0}しますか？"
   ],
   "Le rapport PDF n'a pas pu être produit sur cet appareil.": [
     "The PDF report could not be generated on this device.",
@@ -14425,6 +14470,15 @@
     "Требуемая длина",
     "Lunghezza necessaria",
     "必要な長さ"
+  ],
+  "Longueur nécessaire : {0} mm. Aucune validation d'ingénierie.": [
+    "Required length: {0} mm. This is not an engineering validation.",
+    "所需长度：{0} mm。这不构成工程验证。",
+    "Erforderliche Länge: {0} mm. Keine technische Validierung.",
+    "Longitud necesaria: {0} mm. No constituye una validación de ingeniería.",
+    "Необходимая длина: {0} мм. Это не является инженерным подтверждением.",
+    "Lunghezza necessaria: {0} mm. Non costituisce una validazione ingegneristica.",
+    "必要な長さ：{0} mm。設計検証ではありません。"
   ],
   "Longueur nécessaire inconnue : complétez le trajet avant toute comparaison avec une longueur catalogue.": [
     "Required length unknown: complete the routing before any comparison with a catalogue length.",
