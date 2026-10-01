@@ -32,7 +32,7 @@ describe("rendu réactif des validations NDA", () => {
 
     act(() => setLocale("ja"));
     expect(view.getByRole("alert").textContent).toBe(
-      "生成前に入力する項目：顧客の法人名、顧客署名者名、顧客署名者の役職。",
+      "生成前に入力する項目：顧客の法人名, 顧客署名者名, 顧客署名者の役職。",
     );
   });
 });
