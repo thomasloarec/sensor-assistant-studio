@@ -4,6 +4,7 @@ import { parseAnnualVolume, type BusinessMeta } from "@/lib/leadmagnet/dossier";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { useLocale } from "@/lib/i18n/react";
 
 export function ProjectContextFields({
   business,
@@ -14,6 +15,7 @@ export function ProjectContextFields({
   onChange: (business: BusinessMeta) => void;
   onInvalid: (message: string | null) => void;
 }) {
+  useLocale();
   const [raw, setRaw] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const defer = (key: string) => {
@@ -75,7 +77,7 @@ export function ProjectContextFields({
         />
         {error ? (
           <p role="alert" className="notice-danger">
-            {error}
+            {t(error)}
           </p>
         ) : null}
         {unknownButton("annualVolume")}

@@ -163,11 +163,11 @@ export function WorkspacePanel({
             <Button
               variant="ghost"
               className="min-h-11 text-base"
-              aria-label={backLabel ?? "Retour"}
+              aria-label={backLabel ?? t("Retour")}
               onClick={onBack}
             >
               <ArrowLeft className="h-4 w-4" />{" "}
-              <span className="hidden sm:inline">{backLabel ?? "Retour"}</span>
+              <span className="hidden sm:inline">{backLabel ?? t("Retour")}</span>
             </Button>
           ) : null}
           <div className="workspace-panel-heading flex min-w-0 flex-1 items-center gap-3">

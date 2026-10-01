@@ -1,5 +1,5 @@
 import { useLocale } from "@/lib/i18n/react";
-import { t } from "@/lib/i18n/core";
+import { msg, t } from "@/lib/i18n/core";
 /** Entrée de connexion réelle au projet Supabase existant.
  *
  * Aucun service externe n'est ajouté : on utilise le client déjà présent.
@@ -39,7 +39,9 @@ export function AuthPanel({ backend, onChanged }: Props) {
   if (backend.authenticated)
     return (
       <div className="flex flex-wrap items-center gap-3 text-base">
-        <span className="t-caption">{t("Connecté")}{backend.role ? ` — rôle ${backend.role}` : ""}.</span>
+        <span className="t-caption">
+          {backend.role ? msg("Connecté — rôle {0}.", [backend.role]) : t("Connecté.")}
+        </span>
         <Button
           variant="outline"
           className="min-h-11 text-base"
@@ -50,7 +52,7 @@ export function AuthPanel({ backend, onChanged }: Props) {
         >
           {t("Se déconnecter")}
         </Button>
-        {message ? <span>{message}</span> : null}
+        {message ? <span>{t(message)}</span> : null}
       </div>
     );
 
@@ -116,7 +118,7 @@ export function AuthPanel({ backend, onChanged }: Props) {
         {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
         {busy ? t("Connexion…") : t("Se connecter")}
       </Button>
-      {message ? <p className="notice notice-info sm:col-span-full">{message}</p> : null}
+      {message ? <p className="notice notice-info sm:col-span-full">{t(message)}</p> : null}
     </form>
   );
 }

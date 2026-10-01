@@ -245,7 +245,11 @@ export function inventory(): Finding[] {
       while (current) {
         if (ts.isCallExpression(current)) {
           const name = current.expression.getText(source);
-          if (name === "t" || name === "msg" || name.endsWith(".t")) return true;
+          if (name === "t" || name === "msg" || name === "uiError" || name.endsWith(".t"))
+            return true;
+          // A nested non-translation call (for example join(" ")) belongs to
+          // that call, not to an outer msg() argument.
+          return false;
         }
         current = current.parent;
       }
@@ -295,6 +299,23 @@ export function inventory(): Finding[] {
       return false;
     };
 
+    /** Is this expression directly destined for rendered UI or a UI-state
+     * setter? Template expressions used for paths, hashes and source data stay
+     * outside the translation inventory. */
+    const isUiExpression = (node: ts.Node): boolean => {
+      let current: ts.Node | undefined = node.parent;
+      while (current) {
+        if (ts.isJsxExpression(current)) return true;
+        if (ts.isCallExpression(current)) {
+          const name = current.expression.getText(source).split(".").pop() ?? "";
+          return /^set[A-Z].*(?:Message|Error)$/.test(name) || /^(?:confirm|alert)$/.test(name);
+        }
+        if (ts.isStatement(current)) return false;
+        current = current.parent;
+      }
+      return false;
+    };
+
     /** t()/msg() évalué une seule fois au chargement du module : le texte
      * resterait français après un changement de langue. */
     const atModuleLevel = (node: ts.Node): boolean => {
@@ -321,6 +342,18 @@ export function inventory(): Finding[] {
         atModuleLevel(node)
       )
         report(node, node.getText(source).slice(0, 80), "frozen");
+      if (
+        ts.isTemplateExpression(node) &&
+        !inTranslator(node) &&
+        !inCodeSlot(node) &&
+        isUiExpression(node)
+      ) {
+        const text = [
+          node.head.text,
+          ...node.templateSpans.flatMap((span, index) => [`{${index}}`, span.literal.text]),
+        ].join("");
+        if (isProse(text)) report(node, text, known(text) ? "untranslated" : "missing");
+      }
       if (ts.isJsxText(node)) {
         const text = node.getText(source);
         if (isProse(text, true))

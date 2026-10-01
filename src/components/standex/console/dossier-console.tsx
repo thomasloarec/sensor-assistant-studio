@@ -1,4 +1,4 @@
-import { t } from "@/lib/i18n/core";
+import { localeTag, msg, t, uiError } from "@/lib/i18n/core";
 import FreezeReview from "./freeze-review";
 /** Console interne Standex : boîte de réception, revue R&D, offre, échantillons, preuve NDA.
  *
@@ -246,7 +246,9 @@ export function DossierConsole(props: DossierConsoleProps) {
         lengthLabel:
           viewerEstimate?.requiredMm === null || viewerEstimate === null
             ? t("Longueur inconnue : trajet incomplet.")
-            : `Longueur nécessaire : ${viewerEstimate.requiredMm?.toFixed(1)} mm. Aucune validation d'ingénierie.`,
+            : msg("Longueur nécessaire : {0} mm. Aucune validation d'ingénierie.", [
+                viewerEstimate.requiredMm?.toFixed(1) ?? "—",
+              ]),
       }
     : undefined;
 
@@ -272,7 +274,9 @@ export function DossierConsole(props: DossierConsoleProps) {
       const parsed = parseServerSnapshot(last.snapshot as Record<string, unknown>);
       if (!parsed.ok) {
         setViewerError(
-          `La configuration envoyée n'est pas lisible (${parsed.reason}) : le modèle n'est pas ouvert.`,
+          msg("La configuration envoyée n'est pas lisible ({0}) : le modèle n'est pas ouvert.", [
+            t(parsed.reason),
+          ]),
         );
         return;
       }
@@ -328,9 +332,7 @@ export function DossierConsole(props: DossierConsoleProps) {
         });
       } catch (error) {
         if (stale()) return;
-        setViewerError(
-          error instanceof Error ? error.message : t("Le modèle 3D n'a pas pu être ouvert."),
-        );
+        setViewerError(uiError(error, "Le modèle 3D n'a pas pu être ouvert."));
       }
     },
     [view],
@@ -358,7 +360,7 @@ export function DossierConsole(props: DossierConsoleProps) {
       setInbox(await fetchStaffInbox());
     } catch (error) {
       setInbox(null);
-      setMessage(error instanceof Error ? error.message : null);
+      setMessage(uiError(error, "Impossible de charger les dossiers."));
     }
   }, []);
 
@@ -384,7 +386,7 @@ export function DossierConsole(props: DossierConsoleProps) {
     } catch (error) {
       if (request !== selectionRequest.current) return;
       setView(null);
-      setMessage(error instanceof Error ? error.message : null);
+      setMessage(uiError(error, "Impossible d'ouvrir ce dossier."));
     }
   }, []);
 
@@ -410,7 +412,7 @@ export function DossierConsole(props: DossierConsoleProps) {
       await loadInbox();
     } catch (error) {
       if (request !== selectionRequest.current) return;
-      setMessage(error instanceof Error ? error.message : t("Action refusée."));
+      setMessage(uiError(error, "Action refusée."));
     }
   };
 
@@ -441,7 +443,7 @@ export function DossierConsole(props: DossierConsoleProps) {
       <div className="mx-auto max-w-3xl space-y-3 p-6">
         <h1 className="t-title-m">{t("Console Standex")}</h1>
         <p className="text-sm">
-          {message ??
+          {message ? t(message) :
             t("Cet espace est réservé aux membres de l'équipe Standex habilités. Votre compte n'y donne pas accès.")}
         </p>
       </div>
@@ -603,7 +605,7 @@ export function DossierConsole(props: DossierConsoleProps) {
         <section className="space-y-4">
           {message ? (
             <p className="min-h-11 rounded-[var(--r-sm)] border-0 bg-[var(--surface-sunken)] p-3 text-sm shadow-[var(--e-inset)]">
-              {message}
+              {t(message)}
             </p>
           ) : null}
           {!view ? (
@@ -661,7 +663,7 @@ export function DossierConsole(props: DossierConsoleProps) {
                     {lastRevision ? (
                       <>
                         <p className="t-caption text-muted-foreground">
-                          {t("Envoyée le")} {new Date(lastRevision.submitted_at).toLocaleString("fr-FR")} {t("— empreinte")} {lastRevision.content_hash.slice(0, 16)}{t("… — fichiers joints :")}{" "}
+                          {t("Envoyée le")} {new Date(lastRevision.submitted_at).toLocaleString(localeTag())} {t("— empreinte")} {lastRevision.content_hash.slice(0, 16)}{t("… — fichiers joints :")}{" "}
                           {lastRevision.transferred_files.length}
                         </p>
                         {(() => {
@@ -1183,7 +1185,7 @@ export function DossierConsole(props: DossierConsoleProps) {
                       {(view.internal_notes ?? []).map((n) => (
                         <li key={n.id} className="panel-block">
                           <span className="t-caption text-muted-foreground">
-                            {new Date(n.created_at).toLocaleString("fr-FR")}
+                            {new Date(n.created_at).toLocaleString(localeTag())}
                           </span>
                           <p className="whitespace-pre-wrap">{n.body}</p>
                         </li>
@@ -1413,7 +1415,10 @@ export function DossierConsole(props: DossierConsoleProps) {
                           />
                           <p className="mt-1 t-caption text-muted-foreground">
                             {nda.signedFileName
-                              ? `Déposé : ${nda.signedFileName} — empreinte ${nda.documentSha256.slice(0, 16)}…`
+                              ? msg("Déposé : {0} — empreinte {1}…", [
+                                  nda.signedFileName,
+                                  nda.documentSha256.slice(0, 16),
+                                ])
                               : t("Aucun document déposé. Vous pouvez aussi déclarer une preuve conservée dans une archive externe.")}
                           </p>
                           <Button

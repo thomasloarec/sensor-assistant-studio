@@ -12,7 +12,7 @@ import { pairCardFor } from "@/lib/leadmagnet/pair-cards";
 import { useDetectionDataRevision } from "@/lib/standex/detection-data/store";
 import { requirementAnswer } from "@/lib/leadmagnet/requirement-answer";
 import { projectPdfFilename } from "@/lib/leadmagnet/project-reference";
-import { getLocale, isLocale, msg, setLocale, t, type Locale } from "@/lib/i18n/core";
+import { getLocale, isLocale, msg, setLocale, t, uiError, type Locale } from "@/lib/i18n/core";
 import { createNdaSync, StaleContextError } from "@/lib/leadmagnet/nda-sync";
 import { Link } from "@tanstack/react-router";
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -493,6 +493,22 @@ export function DesignSpace({
   requestedDossierId = null,
 }: DesignSpaceProps) {
   useLocale();
+  const localizedValidation = (value: string) => {
+    try {
+      const parsed = JSON.parse(value) as { kind?: string; fields?: string[] };
+      if (parsed.kind === "nda-missing" && Array.isArray(parsed.fields))
+        return msg("Champs à compléter avant génération : {0}.", [
+          parsed.fields.map((field) => t(field)).join(", "),
+        ]);
+      if (parsed.kind === "connector-missing" && Array.isArray(parsed.fields))
+        return msg("Champs requis : {0}.", [
+          parsed.fields.map((field) => t(field)).join(", "),
+        ]);
+    } catch {
+      // Canonical UI keys are translated below; user-entered values never use this path.
+    }
+    return t(value);
+  };
   const [dossier, setDossier] = useState<DesignDossier>(() => createDossier());
   /** L'espace est monté CACHÉ dès l'accueil : la langue d'origine du projet
    * n'est capturée qu'au démarrage réel, jamais à ce montage silencieux. */
@@ -719,7 +735,9 @@ export function DesignSpace({
       setNdaError(null);
       const missing = missingNdaFields(nda.fields);
       if (missing.length) {
-        setNdaError(`Champs à compléter avant génération : ${missing.join(", ")}.`);
+        setNdaError(
+          JSON.stringify({ kind: "nda-missing", fields: missing }),
+        );
         return;
       }
       try {
@@ -740,7 +758,7 @@ export function DesignSpace({
         }
       } catch (error) {
         setNdaPreview(null);
-        setNdaError(error instanceof Error ? error.message : t("Génération impossible."));
+        setNdaError(uiError(error, "Génération impossible."));
       }
     },
     [nda],
@@ -778,7 +796,7 @@ export function DesignSpace({
     } catch (error) {
       if (contextGenRef.current !== gen) return;
       setNdaError(
-        error instanceof Error ? error.message : t("La préparation du NDA n'a pas abouti."),
+        uiError(error, "La préparation du NDA n'a pas abouti."),
       );
     }
   }, [applyNdaStatus, serverDossierId]);
@@ -815,9 +833,7 @@ export function DesignSpace({
       (error) =>
         error instanceof StaleContextError
           ? ""
-          : error instanceof Error
-            ? error.message
-            : t("Statut NDA indisponible."),
+          : uiError(error, "Statut NDA indisponible."),
     );
   }, [ndaSync, serverDossierId]);
 
@@ -863,9 +879,7 @@ export function DesignSpace({
           errText: (error) =>
             error instanceof StaleContextError
               ? ""
-              : error instanceof Error
-                ? error.message
-                : t("Le choix n'a pas pu être enregistré côté Standex."),
+              : uiError(error, "Le choix n'a pas pu être enregistré côté Standex."),
         },
       );
       // Le serveur fait autorité : après un échec, on relit plutôt que de
@@ -1091,7 +1105,7 @@ export function DesignSpace({
     (action: string) =>
       typeof window === "undefined" ||
       window.confirm(
-        `Le projet ouvert ici n'est enregistré nulle part. Exportez-le d'abord si vous voulez le garder.\n\nRemplacer le travail en cours pour ${action} ?`,
+        msg("Le projet ouvert ici n'est enregistré nulle part. Exportez-le d'abord si vous voulez le garder. Remplacer le travail en cours pour {0} ?", [action]),
       ),
     [],
   );
@@ -1323,7 +1337,7 @@ export function DesignSpace({
       } catch (error) {
         if (gen !== docGenRef.current || ctx !== contextGenRef.current) return;
         setSubmitMessage(
-          error instanceof Error ? error.message : t("Ce fichier n'a pas pu être relu."),
+          uiError(error, "Ce fichier n'a pas pu être relu."),
         );
       }
     },
@@ -1398,9 +1412,9 @@ export function DesignSpace({
         // resterait refusé à la soumission. On le dit franchement ici.
         setPreparedUpload(null);
         setSubmitMessage(
-          `Le fichier a été déposé mais le serveur n'a pas pu en vérifier le contenu (${
-            uploaded.verificationError ?? t("raison inconnue")
-          }). Il n'est donc pas joint à votre envoi.`,
+          msg("Le fichier a été déposé mais le serveur n'a pas pu en vérifier le contenu ({0}). Il n'est donc pas joint à votre envoi.", [
+            uploaded.verificationError ? t(uploaded.verificationError) : t("raison inconnue"),
+          ]),
         );
         setSubmitMessageTone("danger");
         return;
@@ -1435,7 +1449,7 @@ export function DesignSpace({
       setSubmitMessageTone("success");
     } catch (error) {
       setSubmitMessage(
-        error instanceof Error ? error.message : t("Le fichier 3D n'a pas pu être partagé."),
+        uiError(error, "Le fichier 3D n'a pas pu être partagé."),
       );
       setSubmitMessageTone("danger");
     } finally {
@@ -3073,7 +3087,7 @@ export function DesignSpace({
               <div className="mt-2 grid gap-3 md:grid-cols-2">
                 {CONNECTOR_FIELD_LABELS.map(([key, label]) => (
                   <div key={key}>
-                    <Label className="t-label">{label}</Label>
+                      <Label className="t-label">{t(label)}</Label>
                     <Input
                       value={connectorDraft[key]}
                       onChange={(e) => setConnectorDraft((d) => ({ ...d, [key]: e.target.value }))}
@@ -3082,7 +3096,7 @@ export function DesignSpace({
                 ))}
               </div>
               {connectorError ? (
-                <p className="notice notice-danger mt-2">{connectorError}</p>
+                <p className="notice notice-danger mt-2">{localizedValidation(connectorError)}</p>
               ) : null}
               <div className="mt-3 flex flex-wrap items-center gap-2">
                 <Button
@@ -3103,7 +3117,11 @@ export function DesignSpace({
                   onClick={() => {
                     const result = terminationFromDraft(connectorDraft);
                     if (!result.ok) {
-                      setConnectorError(`Champs requis : ${result.missing.join(", ")}.`);
+                      setConnectorError(
+                        msg("Champs requis : {0}.", [
+                          result.missing.map((label) => t(label)).join(", "),
+                        ]),
+                      );
                       return;
                     }
                     setConnectorError(null);
@@ -3526,7 +3544,7 @@ export function DesignSpace({
             {ndaError ? (
               <p className="notice notice-warning flex items-start gap-2" role="alert">
                 <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
-                {ndaError}
+                {localizedValidation(ndaError)}
               </p>
             ) : null}
 
@@ -3549,7 +3567,7 @@ export function DesignSpace({
                 <div className="grid gap-2 md:grid-cols-2">
                   {NDA_FIELD_LABELS.map(([key, label]) => (
                     <div key={key}>
-                      <Label className="t-label">{label}</Label>
+                      <Label className="t-label">{t(label)}</Label>
                       <Input
                         value={nda.fields[key]}
                         onChange={(e) =>
@@ -3609,11 +3627,23 @@ export function DesignSpace({
                     "« Préparer mon NDA » n'envoie aucune donnée de conception : seule une fiche vide est créée côté Standex pour que vous puissiez déposer le document signé et que l'équipe puisse le vérifier.",
                   )}{" "}
                   {ndaServer
-                    ? `Statut côté Standex : ${ndaServer.nda_status}${
+                    ? msg("Statut côté Standex : {0}{1}.", [
+                        t(ndaStatusLabel({
+                          ...nda,
+                          required: ndaServer.nda_required,
+                          status: ndaServer.nda_status,
+                          proof: ndaServer.proof
+                            ? {
+                                documentSha256: ndaServer.proof.document_sha256,
+                                verifiedAt: ndaServer.proof.verified_at,
+                                verifiedBy: ndaServer.proof.proof_reference,
+                              }
+                            : null,
+                        })),
                         ndaServer.allows_transfer
                           ? t(" — transfert autorisé")
-                          : t(" — transfert bloqué")
-                      }.`
+                          : t(" — transfert bloqué"),
+                      ])
                     : t("Aucune fiche NDA créée pour l'instant.")}
                 </p>
 
@@ -3838,7 +3868,7 @@ export function DesignSpace({
               "Uniquement si votre entreprise en a besoin. Sans NDA, vous pouvez remplir et transmettre votre projet normalement : les accords de partage restent séparés et inchangés.",
             )}
           </span>
-          <span className="t-caption block">{ndaStatusLabel(nda)}</span>
+          <span className="t-caption block">{t(ndaStatusLabel(nda))}</span>
         </span>
       </label>
       {nda.required ? (
@@ -4001,7 +4031,7 @@ export function DesignSpace({
           </p>
         ) : null}
         {connectorPreference ? (          <div className="mt-3">
-            <p className="mt-1 text-sm">{terminationLabel(termination)}</p>
+            <p className="mt-1 text-sm">{t(terminationLabel(termination))}</p>
             <ul className="t-caption mt-1 list-disc pl-5">
               {connectorSummaryLines(termination, t).map((l, i) => (
                 <li key={i}>{l}</li>
@@ -4066,7 +4096,7 @@ export function DesignSpace({
               <div className="mt-2 grid gap-3 md:grid-cols-2">
                 {CONNECTOR_FIELD_LABELS.map(([key, label]) => (
                   <div key={key}>
-                    <Label className="t-label">{label}</Label>
+                    <Label className="t-label">{t(label)}</Label>
                     <Input
                       value={connectorDraft[key]}
                       onChange={(e) => setConnectorDraft((d) => ({ ...d, [key]: e.target.value }))}
@@ -4075,7 +4105,7 @@ export function DesignSpace({
                 ))}
               </div>
               {connectorError ? (
-                <p className="notice notice-danger mt-2">{connectorError}</p>
+                <p className="notice notice-danger mt-2">{localizedValidation(connectorError)}</p>
               ) : null}
               <div className="mt-3 flex flex-wrap items-center gap-2">
                 <Button
@@ -4096,7 +4126,9 @@ export function DesignSpace({
                   onClick={() => {
                     const result = terminationFromDraft(connectorDraft);
                     if (!result.ok) {
-                      setConnectorError(`Champs requis : ${result.missing.join(", ")}.`);
+                      setConnectorError(
+                        JSON.stringify({ kind: "connector-missing", fields: result.missing }),
+                      );
                       return;
                     }
                     setConnectorError(null);
@@ -4460,9 +4492,7 @@ export function DesignSpace({
                       name: f.name,
                       kind: "binary",
                       note:
-                        error instanceof Error
-                          ? error.message
-                          : t("Ce fichier n'a pas pu être lu dans cet onglet."),
+                        uiError(error, "Ce fichier n'a pas pu être lu dans cet onglet."),
                     });
                   });
               }}
@@ -4639,7 +4669,11 @@ export function DesignSpace({
             setPanel(null);
             onWorkspaceOpen?.();
             setSubmitMessage(
-              `Contenu de la version ${sourceRevision} repris. Le prochain envoi créera la version ${currentRevision + 1} du dossier. ${parsed.notices.join(" ")}`,
+              msg("Contenu de la version {0} repris. Le prochain envoi créera la version {1} du dossier. {2}", [
+                sourceRevision,
+                currentRevision + 1,
+                parsed.notices.map((notice) => t(notice)).join(" "),
+              ]),
             );
             return { ok: true };
           }}
@@ -4683,9 +4717,7 @@ export function DesignSpace({
                 applied: [],
                 notApplied: out.notApplied,
                 refused:
-                  error instanceof Error
-                    ? error.message
-                    : t("La reprise de cette proposition n'a pas été enregistrée."),
+                  uiError(error, "La reprise de cette proposition n'a pas été enregistrée."),
               };
             } finally {
               busyRef.current = false;

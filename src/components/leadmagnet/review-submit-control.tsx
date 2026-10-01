@@ -133,7 +133,7 @@ export function ReviewSubmitControl({
           role={messageTone === "danger" ? "alert" : "status"}
           aria-live="polite"
         >
-          {message}
+          {t(message)}
         </p>
       ) : null}
     </div>

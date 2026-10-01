@@ -9,6 +9,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { useLocale } from "@/lib/i18n/react";
 
 /** Créneaux proposés en démonstration : demi-heures d'une journée de travail.
  *  Ce ne sont PAS les disponibilités réelles du responsable : aucun agenda n'est
@@ -136,6 +137,7 @@ export function BookingDialog({
   onOpenChange: (open: boolean) => void;
   country: string | null;
 }) {
+  useLocale();
   const contact = salesContactFor(country);
   const [day, setDay] = useState<string | null>(null);
   const [slot, setSlot] = useState<string | null>(null);

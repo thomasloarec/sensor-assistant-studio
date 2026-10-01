@@ -1440,7 +1440,7 @@ function NotifyTab({
             ) : null}
             {selected.message ? (
               <li>
-                {t("Questions ouvertes :")} {selected.message}
+                {t("Questions ouvertes :")} {t(selected.message)}
               </li>
             ) : null}
           </ul>
