@@ -8,7 +8,7 @@ import { describe, expect, test } from "bun:test";
 import { inventory } from "../scripts/i18n-inventory";
 import messages from "../src/lib/i18n/messages.json";
 import { LANGUAGES, isLocale, setLocale, t, msg, localeTag, uiError, type Locale } from "../src/lib/i18n/core";
-import { NDA_FIELD_LABELS, ndaStatusLabel, emptyNdaState } from "../src/lib/leadmagnet/nda";
+import { INITIAL_NDA, NDA_FIELD_LABELS, ndaStatusLabel } from "../src/lib/leadmagnet/nda";
 import { createDossier } from "../src/lib/leadmagnet/dossier";
 import { buildDossierExport, parseDossierExport } from "../src/lib/leadmagnet/dossier-io";
 
@@ -66,7 +66,7 @@ describe("Couverture des langues de l'interface", () => {
   });
 
   test("les champs et statuts NDA changent dans chacune des huit langues", () => {
-    const status = ndaStatusLabel({ ...emptyNdaState(), required: true });
+    const status = ndaStatusLabel({ ...INITIAL_NDA, required: true, status: "requested" });
     for (const locale of OTHER) {
       for (const [, label] of NDA_FIELD_LABELS) expect(t(label, locale)).not.toBe(label);
       expect(t(status, locale)).not.toBe(status);
