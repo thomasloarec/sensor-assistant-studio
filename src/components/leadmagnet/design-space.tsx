@@ -4088,7 +4088,7 @@ export function DesignSpace({
                 ))}
               </div>
               {connectorError ? (
-                <p className="notice notice-danger mt-2">{localizedValidation(connectorError)}</p>
+                <p className="notice notice-danger mt-2"><LocalizedValidationMessage value={connectorError} /></p>
               ) : null}
               <div className="mt-3 flex flex-wrap items-center gap-2">
                 <Button
