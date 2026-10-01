@@ -144,8 +144,8 @@ export function msg(
 
 /** Translate known application errors and replace unknown service details with
  * an owned fallback. User-entered text never passes through this helper. */
-export function uiError(error: unknown, fallback: string, locale = getLocale()): string {
-  if (!(error instanceof Error)) return t(fallback, locale);
+export function uiError(error: unknown, fallback: string): string {
+  if (!(error instanceof Error)) return fallback;
   const knownSource = Boolean(frenchLabels[error.message] || dictionary[normalize(error.message)]);
-  return knownSource ? t(error.message, locale) : t(fallback, locale);
+  return knownSource ? error.message : fallback;
 }

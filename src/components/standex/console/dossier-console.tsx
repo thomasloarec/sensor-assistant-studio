@@ -439,7 +439,7 @@ export function DossierConsole(props: DossierConsoleProps) {
       <div className="mx-auto max-w-3xl space-y-3 p-6">
         <h1 className="t-title-m">{t("Console Standex")}</h1>
         <p className="text-sm">
-          {message ??
+          {message ? t(message) :
             t("Cet espace est réservé aux membres de l'équipe Standex habilités. Votre compte n'y donne pas accès.")}
         </p>
       </div>

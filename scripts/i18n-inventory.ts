@@ -295,21 +295,18 @@ export function inventory(): Finding[] {
       return false;
     };
 
-    /** A literal inside a JSX expression is displayed text unless it belongs to
-     * an explicitly technical attribute. This catches short labels such as
-     * "Valable" that the general prose heuristic intentionally ignores. */
-    const inRenderedJsx = (node: ts.Node): boolean => {
+    /** Is this expression directly destined for rendered UI or a UI-state
+     * setter? Template expressions used for paths, hashes and source data stay
+     * outside the translation inventory. */
+    const isUiExpression = (node: ts.Node): boolean => {
       let current: ts.Node | undefined = node.parent;
       while (current) {
-        if (ts.isJsxAttribute(current))
-          return TEXT_ATTRS.has(current.name.getText(source));
         if (ts.isJsxExpression(current)) return true;
-        if (
-          ts.isFunctionDeclaration(current) ||
-          ts.isFunctionExpression(current) ||
-          ts.isArrowFunction(current)
-        )
-          return false;
+        if (ts.isCallExpression(current)) {
+          const name = current.expression.getText(source).split(".").pop() ?? "";
+          return /^set[A-Z].*(?:Message|Error)$/.test(name) || /^(?:confirm|alert)$/.test(name);
+        }
+        if (ts.isStatement(current)) return false;
         current = current.parent;
       }
       return false;
@@ -341,7 +338,12 @@ export function inventory(): Finding[] {
         atModuleLevel(node)
       )
         report(node, node.getText(source).slice(0, 80), "frozen");
-      if (ts.isTemplateExpression(node) && !inTranslator(node) && !inCodeSlot(node)) {
+      if (
+        ts.isTemplateExpression(node) &&
+        !inTranslator(node) &&
+        !inCodeSlot(node) &&
+        isUiExpression(node)
+      ) {
         const text = [
           node.head.text,
           ...node.templateSpans.flatMap((span, index) => [`{${index}}`, span.literal.text]),
@@ -366,7 +368,7 @@ export function inventory(): Finding[] {
           !known(text)
         ) {
           report(node, text, "missing");
-        } else if (isProse(text) || (inRenderedJsx(node) && isProse(text, true))) {
+        } else if (isProse(text)) {
           const parent = node.parent;
           // Module specifiers and object property keys never reach a human.
           if (ts.isImportDeclaration(parent) || ts.isExportDeclaration(parent)) {

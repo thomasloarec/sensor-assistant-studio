@@ -719,11 +719,7 @@ export function DesignSpace({
       setNdaError(null);
       const missing = missingNdaFields(nda.fields);
       if (missing.length) {
-        setNdaError(
-          msg("Champs à compléter avant génération : {0}.", [
-            missing.map((label) => t(label)).join(", "),
-          ]),
-        );
+        setNdaError(`Champs à compléter avant génération : ${missing.join(", ")}.`);
         return;
       }
       try {

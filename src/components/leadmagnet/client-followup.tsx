@@ -555,7 +555,7 @@ export function ClientFollowUp({
         </>
       ) : null}
 
-      {message ? <p className="notice notice-info">{message}</p> : null}
+      {message ? <p className="notice notice-info">{t(message)}</p> : null}
       <p className="t-caption">
         {t("Rien n'est décidé ici : une référence, un prix ou une livraison ne valent qu'après confirmation écrite de Standex.")}
       </p>
