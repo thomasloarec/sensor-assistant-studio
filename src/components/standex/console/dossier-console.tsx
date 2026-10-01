@@ -1,4 +1,4 @@
-import { t } from "@/lib/i18n/core";
+import { localeTag, t, uiError } from "@/lib/i18n/core";
 import FreezeReview from "./freeze-review";
 /** Console interne Standex : boîte de réception, revue R&D, offre, échantillons, preuve NDA.
  *
@@ -328,9 +328,7 @@ export function DossierConsole(props: DossierConsoleProps) {
         });
       } catch (error) {
         if (stale()) return;
-        setViewerError(
-          t(error instanceof Error ? error.message : "Le modèle 3D n'a pas pu être ouvert."),
-        );
+        setViewerError(uiError(error, "Le modèle 3D n'a pas pu être ouvert."));
       }
     },
     [view],
@@ -358,7 +356,7 @@ export function DossierConsole(props: DossierConsoleProps) {
       setInbox(await fetchStaffInbox());
     } catch (error) {
       setInbox(null);
-      setMessage(error instanceof Error ? t(error.message) : t("Impossible de charger les dossiers."));
+      setMessage(uiError(error, "Impossible de charger les dossiers."));
     }
   }, []);
 
@@ -384,7 +382,7 @@ export function DossierConsole(props: DossierConsoleProps) {
     } catch (error) {
       if (request !== selectionRequest.current) return;
       setView(null);
-      setMessage(error instanceof Error ? t(error.message) : t("Impossible d'ouvrir ce dossier."));
+      setMessage(uiError(error, "Impossible d'ouvrir ce dossier."));
     }
   }, []);
 
@@ -410,7 +408,7 @@ export function DossierConsole(props: DossierConsoleProps) {
       await loadInbox();
     } catch (error) {
       if (request !== selectionRequest.current) return;
-      setMessage(t(error instanceof Error ? error.message : "Action refusée."));
+      setMessage(uiError(error, "Action refusée."));
     }
   };
 
@@ -661,7 +659,7 @@ export function DossierConsole(props: DossierConsoleProps) {
                     {lastRevision ? (
                       <>
                         <p className="t-caption text-muted-foreground">
-                          {t("Envoyée le")} {new Date(lastRevision.submitted_at).toLocaleString("fr-FR")} {t("— empreinte")} {lastRevision.content_hash.slice(0, 16)}{t("… — fichiers joints :")}{" "}
+                          {t("Envoyée le")} {new Date(lastRevision.submitted_at).toLocaleString(localeTag())} {t("— empreinte")} {lastRevision.content_hash.slice(0, 16)}{t("… — fichiers joints :")}{" "}
                           {lastRevision.transferred_files.length}
                         </p>
                         {(() => {
@@ -1183,7 +1181,7 @@ export function DossierConsole(props: DossierConsoleProps) {
                       {(view.internal_notes ?? []).map((n) => (
                         <li key={n.id} className="panel-block">
                           <span className="t-caption text-muted-foreground">
-                            {new Date(n.created_at).toLocaleString("fr-FR")}
+                            {new Date(n.created_at).toLocaleString(localeTag())}
                           </span>
                           <p className="whitespace-pre-wrap">{n.body}</p>
                         </li>
