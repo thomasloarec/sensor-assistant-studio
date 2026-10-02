@@ -67,7 +67,7 @@ function continueButton(view: RenderResult) {
 }
 
 function answer(view: RenderResult, value: string) {
-  fireEvent.change(view.getByLabelText("Votre réponse"), { target: { value } });
+  fireEvent.input(view.getByLabelText("Votre réponse"), { target: { value } });
 }
 
 function goToQuestion(view: RenderResult, target: number) {
@@ -140,11 +140,15 @@ describe("rendu du questionnaire guidé", () => {
       expect(view.getByRole("button", { name: "Afficher l'exemple 2" }).getAttribute("aria-pressed")).toBe("true");
       answer(view, value);
       await flushState();
-      if (index < values.length - 1) fireEvent.click(continueButton(view));
+      if (index < values.length - 1) {
+        fireEvent.click(continueButton(view));
+        await flushState();
+      }
     }
 
     for (let index = values.length - 2; index >= 0; index -= 1) {
       fireEvent.click(view.getByRole("button", { name: "Question précédente" }));
+      await flushState();
       expect((view.getByLabelText("Votre réponse") as HTMLTextAreaElement).value).toBe(values[index]);
     }
   });
@@ -168,13 +172,16 @@ describe("rendu du questionnaire guidé", () => {
     const optional = view.getByText("Précisions facultatives");
     fireEvent.click(optional);
     fireEvent.click(view.getByRole("button", { name: /Fixation vissée/ }));
-    fireEvent.change(view.getByLabelText("Longueur"), { target: { value: "15,5" } });
-    fireEvent.change(view.getByLabelText("Largeur"), { target: { value: "8" } });
+    fireEvent.input(view.getByLabelText("Longueur"), { target: { value: "15,5" } });
+    await flushState();
+    fireEvent.input(view.getByLabelText("Largeur"), { target: { value: "8" } });
     fireEvent.click(view.getByText("Ajouter une précision"));
-    fireEvent.change(view.getByLabelText("Autre chose à nous dire"), { target: { value: "Câble vers l'arrière" } });
+    fireEvent.input(view.getByLabelText("Autre chose à nous dire"), { target: { value: "Câble vers l'arrière" } });
     await flushState();
     fireEvent.click(continueButton(view));
+    await flushState();
     fireEvent.click(view.getByRole("button", { name: "Question précédente" }));
+    await flushState();
     expect(view.getByRole("button", { name: /Fixation vissée/ }).getAttribute("aria-pressed")).toBe("true");
     expect((view.getByLabelText("Longueur") as HTMLInputElement).value).toBe("15.5");
     expect((view.getByLabelText("Largeur") as HTMLInputElement).value).toBe("8");
