@@ -63,3 +63,9 @@
 - [x] Traduire les nouvelles chaînes dans les huit langues et couvrir Q1, Q5 et Q6.
 - [x] Finaliser la typographie, l’apostrophe validée et la promesse « capteurs » avant révélation.
 - [x] Monter réellement Q1, Q5 et Q6 en test isolé à 390/320 px, avec retour, inconnue et bascule FR/EN/JA.
+
+## Refonte de présentation du questionnaire — 2 octobre 2026
+- [ ] Recomposer les six questions selon la maquette approuvée, sans modifier leurs données ni leurs actions.
+- [ ] Remplacer la navigation des exemples par une pagination numérique accessible et documenter la composition.
+- [ ] Prouver la parité des sorties avec la base 0e4e373e86eac992da0a887de53764e92ed367e2.
+- [ ] Exécuter la recette complète, les types, la compilation, l’inventaire i18n et les contrôles de charte.
