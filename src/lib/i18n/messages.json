@@ -1466,6 +1466,15 @@
     "Visualizzazione ⌄",
     "表示 ⌄"
   ],
+  "Afficher l'exemple {0}": [
+    "Show example {0}",
+    "显示示例 {0}",
+    "Beispiel {0} anzeigen",
+    "Mostrar el ejemplo {0}",
+    "Показать пример {0}",
+    "Mostra l'esempio {0}",
+    "例 {0} を表示"
+  ],
   "Afficher plus": [
     "Show more",
     "显示更多",
@@ -4922,24 +4931,6 @@
     "Scegli",
     "選択"
   ],
-  "Choisir mon rendez-vous": [
-    "Choose my appointment",
-    "选择我的预约",
-    "Meinen Termin auswählen",
-    "Elegir mi cita",
-    "Выбрать встречу",
-    "Scegli il mio appuntamento",
-    "予約を選択"
-  ],
-  "Choisir un retour déjà publié": [
-    "Choose an already published review",
-    "选择已发布的反馈",
-    "Eine bereits veröffentlichte Rückmeldung auswählen",
-    "Elegir una revisión ya publicada",
-    "Выбрать уже опубликованный отзыв",
-    "Scegli un riscontro già pubblicato",
-    "公開済みの回答を選択"
-  ],
   "Choisir dans le catalogue": [
     "Choose from catalogue",
     "从目录中选择",
@@ -4967,6 +4958,15 @@
     "Scegliere la coppia",
     "組み合わせを選ぶ"
   ],
+  "Choisir mon rendez-vous": [
+    "Choose my appointment",
+    "选择我的预约",
+    "Meinen Termin auswählen",
+    "Elegir mi cita",
+    "Выбрать встречу",
+    "Scegli il mio appuntamento",
+    "予約を選択"
+  ],
   "Choisir un capteur · visualiser son mouvement": [
     "Choose a sensor · explore its movement",
     "选择传感器 · 查看运动",
@@ -4975,6 +4975,15 @@
     "Выбрать датчик · посмотреть движение",
     "Scegli il sensore · visualizza il movimento",
     "センサーを選ぶ · 動きを確認"
+  ],
+  "Choisir un retour déjà publié": [
+    "Choose an already published review",
+    "选择已发布的反馈",
+    "Eine bereits veröffentlichte Rückmeldung auswählen",
+    "Elegir una revisión ya publicada",
+    "Выбрать уже опубликованный отзыв",
+    "Scegli un riscontro già pubblicato",
+    "公開済みの回答を選択"
   ],
   "Choisir une forme et un format": [
     "Choose a shape and size",
@@ -5416,60 +5425,6 @@
     "Начать",
     "Inizia",
     "はじめる"
-  ],
-  "Trouvez le capteur adapté à votre projet.": [
-    "Find the right sensor for your project.",
-    "为您的项目找到合适的传感器。",
-    "Finden Sie den passenden Sensor für Ihr Projekt.",
-    "Encuentre el sensor adecuado para su proyecto.",
-    "Найдите подходящий датчик для вашего проекта.",
-    "Trovi il sensore adatto al suo progetto.",
-    "プロジェクトに適したセンサーを見つけましょう。"
-  ],
-  "Répondez à 6 questions pour explorer les capteurs proposés, puis les tester dans l’atelier 3D.": [
-    "Answer 6 questions to explore the suggested sensors, then test them in the 3D workshop.",
-    "回答 6 个问题，探索推荐的传感器，然后在 3D 工作室中进行测试。",
-    "Beantworten Sie 6 Fragen, um vorgeschlagene Sensoren zu entdecken und anschließend im 3D-Atelier zu testen.",
-    "Responda a 6 preguntas para explorar los sensores propuestos y probarlos después en el taller 3D.",
-    "Ответьте на 6 вопросов, чтобы изучить предложенные датчики, а затем проверить их в 3D-мастерской.",
-    "Risponda a 6 domande per esplorare i sensori proposti e poi provarli nell'atelier 3D.",
-    "6つの質問に答えて提案センサーを確認し、3Dワークショップで試してください。"
-  ],
-  "À la fin : les capteurs proposés pour votre application.": [
-    "At the end: sensors suggested for your application.",
-    "完成后：查看为您的应用推荐的传感器。",
-    "Am Ende: vorgeschlagene Sensoren für Ihre Anwendung.",
-    "Al final: los sensores propuestos para su aplicación.",
-    "В конце — предложенные датчики для вашей задачи.",
-    "Al termine: i sensori proposti per la sua applicazione.",
-    "回答後：用途に合う提案センサーを確認できます。"
-  ],
-  "Encore 2 questions avant de découvrir les capteurs proposés.": [
-    "2 more questions before discovering the suggested sensors.",
-    "再回答 2 个问题，即可查看推荐的传感器。",
-    "Noch 2 Fragen, dann sehen Sie die vorgeschlagenen Sensoren.",
-    "2 preguntas más antes de descubrir los sensores propuestos.",
-    "Ещё 2 вопроса — и вы увидите предложенные датчики.",
-    "Ancora 2 domande prima di scoprire i sensori proposti.",
-    "提案センサーの確認まで、あと2問です。"
-  ],
-  "Dernière question avant de découvrir les capteurs proposés.": [
-    "Last question before discovering the suggested sensors.",
-    "最后 1 个问题，之后即可查看推荐的传感器。",
-    "Letzte Frage, dann sehen Sie die vorgeschlagenen Sensoren.",
-    "Última pregunta antes de descubrir los sensores propuestos.",
-    "Последний вопрос перед просмотром предложенных датчиков.",
-    "Ultima domanda prima di scoprire i sensori proposti.",
-    "提案センサーの確認まで、最後の1問です。"
-  ],
-  "Voir les capteurs proposés": [
-    "See the suggested sensors",
-    "查看推荐的传感器",
-    "Vorgeschlagene Sensoren ansehen",
-    "Ver los sensores propuestos",
-    "Посмотреть предложенные датчики",
-    "Vedere i sensori proposti",
-    "提案センサーを見る"
   ],
   "Comment cette pièce bouge-t-elle, et quels états faut-il distinguer ?": [
     "How does this part move, and which states must be distinguished?",
@@ -7532,6 +7487,15 @@
     "Ultimo invio confermato: versione {0}, il {1}.",
     "確認済みの最終送信：バージョン {0}、{1}。"
   ],
+  "Dernière question avant de découvrir les capteurs proposés.": [
+    "Last question before discovering the suggested sensors.",
+    "最后 1 个问题，之后即可查看推荐的传感器。",
+    "Letzte Frage, dann sehen Sie die vorgeschlagenen Sensoren.",
+    "Última pregunta antes de descubrir los sensores propuestos.",
+    "Последний вопрос перед просмотром предложенных датчиков.",
+    "Ultima domanda prima di scoprire i sensori proposti.",
+    "提案センサーの確認まで、最後の1問です。"
+  ],
   "Dernière version envoyée": [
     "Last version sent",
     "最近发送的版本",
@@ -9259,6 +9223,15 @@
     "Габаритные размеры указаны частично.",
     "Ingombro parzialmente indicato.",
     "外形寸法は一部のみ指定されています。"
+  ],
+  "Encore 2 questions avant de découvrir les capteurs proposés.": [
+    "2 more questions before discovering the suggested sensors.",
+    "再回答 2 个问题，即可查看推荐的传感器。",
+    "Noch 2 Fragen, dann sehen Sie die vorgeschlagenen Sensoren.",
+    "2 preguntas más antes de descubrir los sensores propuestos.",
+    "Ещё 2 вопроса — и вы увидите предложенные датчики.",
+    "Ancora 2 domande prima di scoprire i sensori proposti.",
+    "提案センサーの確認まで、あと2問です。"
   ],
   "Enregistrement de votre choix de NDA…": [
     "Saving your NDA choice…",
@@ -18368,6 +18341,15 @@
     "Precisione, ripetibilità, durata",
     "精度・再現性・寿命"
   ],
+  "Précisions facultatives": [
+    "Optional details",
+    "可选详细信息",
+    "Optionale Angaben",
+    "Detalles opcionales",
+    "Необязательные сведения",
+    "Dettagli facoltativi",
+    "任意の詳細"
+  ],
   "Précédent": [
     "Previous",
     "上一个",
@@ -20681,6 +20663,15 @@
     "Reimposta la ricerca",
     "検索をリセット"
   ],
+  "Répondez à 6 questions pour explorer les capteurs proposés, puis les tester dans l’atelier 3D.": [
+    "Answer 6 questions to explore the suggested sensors, then test them in the 3D workshop.",
+    "回答 6 个问题，探索推荐的传感器，然后在 3D 工作室中进行测试。",
+    "Beantworten Sie 6 Fragen, um vorgeschlagene Sensoren zu entdecken und anschließend im 3D-Atelier zu testen.",
+    "Responda a 6 preguntas para explorar los sensores propuestos y probarlos después en el taller 3D.",
+    "Ответьте на 6 вопросов, чтобы изучить предложенные датчики, а затем проверить их в 3D-мастерской.",
+    "Risponda a 6 domande per esplorare i sensori proposti e poi provarli nell'atelier 3D.",
+    "6つの質問に答えて提案センサーを確認し、3Dワークショップで試してください。"
+  ],
   "Réponse Claude illisible (corps non JSON).": [
     "Unreadable Claude response (not JSON).",
     "Claude 回复无法读取（非 JSON）。",
@@ -22859,6 +22850,15 @@
     "Foro minimo 9,53 mm. Adattatori per acciaio disponibili. Collarino Ø 10,7 mm.",
     "取付穴9.53 mm以上。鋼材用アダプターあり。つば径10.7 mm。"
   ],
+  "Trouvez le capteur adapté à votre projet.": [
+    "Find the right sensor for your project.",
+    "为您的项目找到合适的传感器。",
+    "Finden Sie den passenden Sensor für Ihr Projekt.",
+    "Encuentre el sensor adecuado para su proyecto.",
+    "Найдите подходящий датчик для вашего проекта.",
+    "Trovi il sensore adatto al suo progetto.",
+    "プロジェクトに適したセンサーを見つけましょう。"
+  ],
   "Type": [
     "Type",
     "类型",
@@ -24182,6 +24182,15 @@
     "Vedere i sensori",
     "センサーを見る"
   ],
+  "Voir les capteurs proposés": [
+    "See the suggested sensors",
+    "查看推荐的传感器",
+    "Vorgeschlagene Sensoren ansehen",
+    "Ver los sensores propuestos",
+    "Посмотреть предложенные датчики",
+    "Vedere i sensori proposti",
+    "提案センサーを見る"
+  ],
   "Voir les contacts": [
     "See the contacts",
     "查看触点",
@@ -24595,6 +24604,15 @@
     "Ваш отзыв (версия",
     "Il vostro riscontro (versione",
     "お客様のフィードバック（バージョン"
+  ],
+  "Votre réponse": [
+    "Your answer",
+    "您的回答",
+    "Ihre Antwort",
+    "Su respuesta",
+    "Ваш ответ",
+    "La sua risposta",
+    "回答"
   ],
   "Votre réponse sur le montage :": [
     "Your answer about mounting:",
@@ -28024,6 +28042,15 @@
     "К выполнению",
     "Da fare",
     "未着手"
+  ],
+  "À la fin : les capteurs proposés pour votre application.": [
+    "At the end: sensors suggested for your application.",
+    "完成后：查看为您的应用推荐的传感器。",
+    "Am Ende: vorgeschlagene Sensoren für Ihre Anwendung.",
+    "Al final: los sensores propuestos para su aplicación.",
+    "В конце — предложенные датчики для вашей задачи.",
+    "Al termine: i sensori proposti per la sua applicazione.",
+    "回答後：用途に合う提案センサーを確認できます。"
   ],
   "À partir de 1000 capteurs/an : échantillons Standex en direct, sous réserve de confirmation Standex. La gratuité n'est jamais automatique.": [
     "From 1,000 sensors/year: direct Standex samples, subject to Standex confirmation. Samples are never automatically free of charge.",

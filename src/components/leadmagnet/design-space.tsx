@@ -1680,10 +1680,10 @@ export function DesignSpace({
   const stepIndex =
     tab === "besoin" ? 0 : tab === "revue" ? 3 : tab === "resultat" ? 2 : 1;
   const steps = [
-    { id: "besoin", label: t("Mon besoin"), hint: t("Ce que vous voulez détecter") },
-    { id: "montage", label: t("Couples proposés"), hint: t("À tester dans votre montage") },
-    { id: "resultat", label: t("Résultat"), hint: t("Ce que le test a montré") },
-    { id: "revue", label: t("Avec Standex"), hint: t("Faire confirmer par Standex") },
+    { id: "besoin", label: t("Mon besoin") },
+    { id: "montage", label: t("Couples proposés") },
+    { id: "resultat", label: t("Résultat") },
+    { id: "revue", label: t("Avec Standex") },
   ];
 
   const question = GUIDED_QUESTIONS[focusIdx] ?? GUIDED_QUESTIONS[0]!;
@@ -1738,7 +1738,7 @@ export function DesignSpace({
 
   const guidedStructured =
     question.key === "mounting" ? (
-      <div className="panel-block mt-6">
+      <div className="panel-block">
         <p className="t-label">{t("Facultatif : précisez d'un clic")}</p>
         <p className="t-caption mt-1">
           {t(
@@ -1911,138 +1911,161 @@ export function DesignSpace({
           ))}
         </>
       ) : (
-        <div
-          key={question.key}
-          className="step-enter mx-auto max-w-[46rem] rounded-[var(--r-xl)] bg-[var(--surface)] p-10 shadow-[var(--e-2)] sm:p-14"
-        >
-          <div
-            className="h-[3px] w-full overflow-hidden rounded-[var(--r-pill)] bg-[var(--surface-sunken)]"
-            aria-hidden="true"
-          >
-            <div
-              className="h-full rounded-[var(--r-pill)] bg-[var(--primary)] transition-[width] duration-[var(--d-page)] ease-[var(--ease-out)]"
-              style={{ width: `${guidedQuestionProgress(focusIdx, GUIDED_QUESTIONS.length) * 100}%` }}
-            />
-          </div>
-          <p className="t-label mt-5">
-            {msg("Question {0} sur {1}", [focusIdx + 1, GUIDED_QUESTIONS.length])}
-          </p>
-          <p className="t-body mt-2 text-muted-foreground">{questionOutcome}</p>
-          <p className="t-label mt-4 text-[var(--primary)]">{t(question.category)}</p>
-          <h2 className="t-display-m mt-2">{t(question.prompt)}</h2>
-          <div className="mt-4"><NeedExamples questionKey={question.key} /></div>
-          <Label htmlFor={`guide-${question.key}`} className="sr-only">
-            {t(question.prompt)}
-          </Label>
-          <Textarea
-            id={`guide-${question.key}`}
-            rows={4}
-            className="mt-6 min-h-[8.5rem] w-full px-5 py-[1.125rem] text-lg leading-[1.6]"
-            value={guidedReq?.value ?? ""}
-            placeholder={t(question.placeholder)}
-            onChange={(e) => {
-              setDossier((d) =>
-                proposeRequirement(d, question.key, { value: e.target.value, source: "user" }),
-              );
-              if (e.target.value.trim()) setQuestionAside(question.key, false);
-            }}
-          />
-
-          {guidedStructured}
-
-          {isDelegated(dossier, delegatedQuestion(question.key)) ? (
-            <p className="t-caption mt-4">
-              {t(
-                "Cette question est notée « à définir avec Standex ». C'est une décision prise, pas une valeur connue.",
-              )}
-            </p>
-          ) : null}
-
-          {guidedReq && guidedReq.state === "hypothesis" && guidedReq.value.trim() ? (
-            <div className="relative mt-5 overflow-hidden rounded-[var(--r-md)] bg-[var(--warning-soft)] p-4 pl-5 before:absolute before:inset-y-0 before:left-0 before:w-[3px] before:bg-[var(--warning)]">
-              <p className="text-base">
-                {t(
-                  "Cette réponse vient d'une reprise ou d'une déduction. Confirmez-la si elle est juste.",
-                )}
+        <div key={question.key} className="step-enter mx-auto max-w-[68rem]">
+          <p className="questionnaire-outcome t-body">{questionOutcome}</p>
+          <section className="questionnaire-card" aria-labelledby={`question-title-${question.key}`}>
+            <div className="questionnaire-meta">
+              <p className="t-label">
+                {msg("Question {0} sur {1}", [focusIdx + 1, GUIDED_QUESTIONS.length])}
               </p>
-              <Button
-                variant="outline"
-                className="mt-3 min-h-11 text-base"
-                onClick={() => setDossier((d) => confirmRequirement(d, question.key))}
-              >
-                {t("Oui, c'est bien cela")}
-              </Button>
+              <p className="questionnaire-category t-label">{t(question.category)}</p>
             </div>
-          ) : null}
-
-          <div className="mt-7 flex flex-wrap items-center gap-3">
-            <Button
-              variant="ghost"
-              className="min-h-12 text-base"
-              disabled={focusIdx === 0}
-              onClick={() => setFocusIdx((i) => Math.max(0, i - 1))}
-            >
-              {t("Question précédente")}
-            </Button>
-            <Button
-              variant="ghost"
-              className="ml-auto min-h-12 text-base text-[var(--muted-foreground)]"
-              onClick={() => {
-                // Ne rien effacer et ne rien fabriquer : la question est notée
-                // comme traitée « à définir avec Standex », sans valeur.
-                setQuestionAside(question.key, true);
-                if (!lastQuestion) setFocusIdx((i) => i + 1);
-                else setTab("montage");
-              }}
-            >
-              {t("Je ne sais pas encore")}
-            </Button>
-            <Button
-              size="lg"
-              className="min-h-12 px-6 text-base"
-              onClick={() => {
-                if (!lastQuestion) setFocusIdx((i) => i + 1);
-                else setTab("montage");
-              }}
-            >
-              {lastQuestion ? t("Voir les capteurs proposés") : t("Continuer")}
-            </Button>
-          </div>
-
-          <details className="project-answer-details mt-7">
-            <summary className="t-caption flex min-h-11 cursor-pointer list-none items-center gap-2 py-2">
-              {t("Ajouter une précision")}
-              <span className="project-answer-chevron" aria-hidden="true">
-                ↓
-              </span>
-            </summary>
-            <div className="mt-2 ml-4 flex flex-wrap items-center gap-3">
-              <Badge variant="outline">{stateBadge(guidedReq?.state ?? "unknown")}</Badge>
-              <span className="text-base text-muted-foreground">
-                {t("intitulé technique :")} {guidedReq?.label} {t("· source :")} {guidedReq?.source}
-              </span>
-              <Button
-                variant="outline"
-                className="min-h-11 text-base"
-                disabled={!guidedReq?.value.trim() || guidedReq?.state === "confirmed"}
-                onClick={() => setDossier((d) => confirmRequirement(d, question.key))}
-              >
-                {t("Confirmer cette réponse")}
-              </Button>
-            </div>
-            <div className="mt-4 ml-4">
-              <Label htmlFor="free-constraints" className="t-label">
-                {t("Autre chose à nous dire")}
-              </Label>
-              <Textarea
-                id="free-constraints"
-                rows={3}
-                className="mt-2 text-base"
-                value={dossier.freeConstraints}
-                onChange={(e) => setDossier((d) => ({ ...d, freeConstraints: e.target.value }))}
+            <div className="questionnaire-progress" aria-hidden="true">
+              <div
+                style={{ width: `${guidedQuestionProgress(focusIdx, GUIDED_QUESTIONS.length) * 100}%` }}
               />
             </div>
-          </details>
+            <h2 id={`question-title-${question.key}`} className="t-title-l mt-5">
+              {t(question.prompt)}
+            </h2>
+
+            <div className="questionnaire-grid mt-6">
+              <div className="questionnaire-answer min-w-0">
+                <Label htmlFor={`guide-${question.key}`} className="t-label">
+                  {t("Votre réponse")}
+                </Label>
+                <Textarea
+                  id={`guide-${question.key}`}
+                  rows={4}
+                  className="mt-2 min-h-[8.5rem] w-full px-5 py-[1.125rem] text-lg leading-[1.6]"
+                  value={guidedReq?.value ?? ""}
+                  placeholder={t(question.placeholder)}
+                  onChange={(e) => {
+                    setDossier((d) =>
+                      proposeRequirement(d, question.key, { value: e.target.value, source: "user" }),
+                    );
+                    if (e.target.value.trim()) setQuestionAside(question.key, false);
+                  }}
+                />
+
+                <Button
+                  variant="ghost"
+                  className="mt-2 min-h-11 text-base text-[var(--muted-foreground)]"
+                  onClick={() => {
+                    // Ne rien effacer et ne rien fabriquer : la question est notée
+                    // comme traitée « à définir avec Standex », sans valeur.
+                    setQuestionAside(question.key, true);
+                    if (!lastQuestion) setFocusIdx((i) => i + 1);
+                    else setTab("montage");
+                  }}
+                >
+                  {t("Je ne sais pas encore")}
+                </Button>
+
+                {isDelegated(dossier, delegatedQuestion(question.key)) ? (
+                  <p className="t-caption mt-3">
+                    {t(
+                      "Cette question est notée « à définir avec Standex ». C'est une décision prise, pas une valeur connue.",
+                    )}
+                  </p>
+                ) : null}
+
+                {guidedReq && guidedReq.state === "hypothesis" && guidedReq.value.trim() ? (
+                  <div className="relative mt-4 overflow-hidden rounded-[var(--r-md)] bg-[var(--warning-soft)] p-4 pl-5 before:absolute before:inset-y-0 before:left-0 before:w-[3px] before:bg-[var(--warning)]">
+                    <p className="t-body">
+                      {t(
+                        "Cette réponse vient d'une reprise ou d'une déduction. Confirmez-la si elle est juste.",
+                      )}
+                    </p>
+                    <Button
+                      variant="outline"
+                      className="mt-3 min-h-11 text-base"
+                      onClick={() => setDossier((d) => confirmRequirement(d, question.key))}
+                    >
+                      {t("Oui, c'est bien cela")}
+                    </Button>
+                  </div>
+                ) : null}
+
+                {guidedStructured ? (
+                  <details
+                    className="questionnaire-optional project-answer-details mt-5"
+                    ref={(node) => {
+                      if (!node || node.dataset["initialized"] === "true") return;
+                      node.dataset["initialized"] = "true";
+                      node.open =
+                        dossier.mounting.kind !== "undecided" ||
+                        Object.values(dossier.envelope).some((value) => value !== null);
+                    }}
+                  >
+                    <summary className="t-body flex min-h-11 cursor-pointer list-none items-center gap-2 py-2 font-semibold text-[var(--heading)]">
+                      {t("Précisions facultatives")}
+                      <span className="project-answer-chevron" aria-hidden="true">↓</span>
+                    </summary>
+                    <div className="mt-2">{guidedStructured}</div>
+                  </details>
+                ) : null}
+              </div>
+
+              <aside className="questionnaire-examples min-w-0">
+                <NeedExamples questionKey={question.key} />
+              </aside>
+            </div>
+
+            <details className="project-answer-details mt-5">
+              <summary className="t-caption flex min-h-11 cursor-pointer list-none items-center gap-2 py-2">
+                {t("Ajouter une précision")}
+                <span className="project-answer-chevron" aria-hidden="true">↓</span>
+              </summary>
+              <div className="mt-2 ml-4 flex flex-wrap items-center gap-3">
+                <Badge variant="outline">{stateBadge(guidedReq?.state ?? "unknown")}</Badge>
+                <span className="text-base text-muted-foreground">
+                  {t("intitulé technique :")} {guidedReq?.label} {t("· source :")} {guidedReq?.source}
+                </span>
+                <Button
+                  variant="outline"
+                  className="min-h-11 text-base"
+                  disabled={!guidedReq?.value.trim() || guidedReq?.state === "confirmed"}
+                  onClick={() => setDossier((d) => confirmRequirement(d, question.key))}
+                >
+                  {t("Confirmer cette réponse")}
+                </Button>
+              </div>
+              <div className="mt-4 ml-4">
+                <Label htmlFor="free-constraints" className="t-label">
+                  {t("Autre chose à nous dire")}
+                </Label>
+                <Textarea
+                  id="free-constraints"
+                  rows={3}
+                  className="mt-2 text-base"
+                  value={dossier.freeConstraints}
+                  onChange={(e) => setDossier((d) => ({ ...d, freeConstraints: e.target.value }))}
+                />
+              </div>
+            </details>
+
+            <div className="questionnaire-navigation mt-6 flex items-center justify-between gap-3">
+              <Button
+                variant="ghost"
+                className="min-h-12 text-base"
+                disabled={focusIdx === 0}
+                onClick={() => setFocusIdx((i) => Math.max(0, i - 1))}
+              >
+                {t("Question précédente")}
+              </Button>
+              <Button
+                size="lg"
+                className="min-h-12 px-6 text-base"
+                onClick={() => {
+                  if (!lastQuestion) setFocusIdx((i) => i + 1);
+                  else setTab("montage");
+                }}
+              >
+                {lastQuestion ? t("Voir les capteurs proposés") : t("Continuer")}
+              </Button>
+            </div>
+          </section>
         </div>
       )}
 
@@ -4918,7 +4941,6 @@ export function DesignSpace({
                   {i + 1}. {s.label}
                 </span>
               </span>
-              <span className="mt-0.5 hidden pl-3 text-sm sm:block">{s.hint}</span>
             </button>
           ))}
         </nav>

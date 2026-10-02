@@ -1116,6 +1116,62 @@
     align-items: start;
     gap: 0.75rem;
   }
+  .questionnaire-outcome {
+    margin-bottom: 0.75rem;
+    color: var(--muted-foreground);
+  }
+  .questionnaire-card {
+    padding: 2rem;
+    border-radius: var(--r-xl);
+    background: var(--surface);
+    box-shadow: var(--e-2);
+  }
+  .questionnaire-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .questionnaire-category {
+    max-width: 60%;
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--r-pill);
+    background: var(--surface-tint);
+    color: var(--primary);
+    text-align: end;
+  }
+  .questionnaire-progress {
+    height: 0.375rem;
+    margin-top: 1rem;
+    overflow: hidden;
+    border-radius: var(--r-pill);
+    background: var(--surface-sunken);
+  }
+  .questionnaire-progress > div {
+    height: 100%;
+    border-radius: var(--r-pill);
+    background: var(--primary);
+    transition: width var(--d-page) var(--ease-out);
+  }
+  .questionnaire-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    grid-template-areas: "answer examples";
+    gap: 1.5rem;
+    align-items: start;
+  }
+  .questionnaire-answer {
+    grid-area: answer;
+  }
+  .questionnaire-examples {
+    grid-area: examples;
+    padding: 1.25rem;
+    border-radius: var(--r-lg);
+    background: var(--surface-tint);
+  }
+  .questionnaire-optional > div {
+    min-width: 0;
+  }
   .guided-envelope-field {
     display: grid;
     align-content: start;
@@ -1281,11 +1337,38 @@
       display: none;
     }
     .guided-envelope-fields {
-      gap: 0.5rem;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0.75rem;
     }
     .guided-envelope-input {
-      grid-template-columns: 1fr;
-      gap: 0.125rem;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 0.5rem;
+    }
+    .questionnaire-card {
+      padding: 1.25rem;
+    }
+    .questionnaire-meta {
+      align-items: flex-start;
+    }
+    .questionnaire-category {
+      max-width: 58%;
+    }
+    .questionnaire-grid {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-areas:
+        "examples"
+        "answer";
+      gap: 1rem;
+    }
+    .questionnaire-examples {
+      padding: 1rem;
+    }
+    .questionnaire-navigation {
+      align-items: stretch;
+      flex-direction: column-reverse;
+    }
+    .questionnaire-navigation > * {
+      width: 100%;
     }
   }
 

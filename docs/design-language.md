@@ -440,8 +440,9 @@ Le formulaire de contexte reste visible. Le NDA utilise la fenêtre modale du
 socle, avec fermeture accessible de 44 px. Aucun nouveau jeton de marque.
 Les demi-couleurs des aimants 3D sont des matériaux de scène : repères visuels
 seulement, sans attribution d'un axe magnétique caractérisé.
-Sur mobile, la progression conserve ses quatre libellés ; les sous-titres
-explicatifs sont masqués pour laisser de la place au formulaire.
+La progression conserve ses quatre libellés, son pouce et sa structure segmentée
+à toutes les largeurs ; les sous-textes explicatifs ne font plus partie de ce
+rail afin de laisser la priorité au questionnaire.
 
 ### Corrections du 17 septembre 2026
 
@@ -450,3 +451,15 @@ Les panneaux plein écran sont rendus à la racine du document pour rester indé
 Le menu Affichage utilise une surface opaque sombre et le texte clair du contexte immersif. Le catalogue complet est regroupé par familles et les compromis utilisent l'encart d'avertissement du socle. Les choix « Non défini » montrent un état sélectionné. Les exemples proposent uniquement Précédent et Suivant, sans rotation automatique ni commande de pause. Les portraits de responsables sont circulaires, avec nom et territoire en texte. Aucun nouveau jeton de marque.
 
 Les noms du capteur et de l'aimant se masquent indépendamment. Les vignettes montrent les câbles ou gaines prévus par le modèle ; les références pour carte gardent leurs pattes. Le calendrier de démonstration utilise les boutons du socle, des cibles de 44 px et une fenêtre limitée à 90 % de la hauteur disponible avec défilement. La confirmation d'envoi remercie l'utilisateur, annonce le suivi Standex et accompagne la réussite d'une coche avec `anim-scale-in`, neutralisée en mouvement réduit. Le NDA précède la soumission ; les actions de suivi sont regroupées après l'envoi.
+
+### Questionnaire client — composition validée
+
+Le rappel du résultat attendu précède la carte. La carte associe l'avancement et
+la catégorie, puis une question en `t-title-l`. Sur grand écran, la réponse
+occupe trois parts et les exemples deux parts ; sur mobile, les exemples passent
+avant le champ sans masquer de contenu. Le champ conserve un libellé visible.
+Les précisions structurées restent montées dans un dépliant natif et celui-ci
+s'ouvre quand une contrainte existe déjà. La précision libre précède toujours
+la navigation finale. Les exemples utilisent une pagination numérique manuelle,
+avec une cible de 44 px, `aria-label` explicite et `aria-pressed` ; aucune
+rotation automatique n'est autorisée.

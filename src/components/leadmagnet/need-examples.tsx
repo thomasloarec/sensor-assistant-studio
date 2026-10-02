@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { t } from "@/lib/i18n/core";
+import { msg, t } from "@/lib/i18n/core";
 import { Button } from "@/components/ui/button";
 
 // i18n-canonical: complete examples, never copied into the user's answers.
@@ -53,39 +53,29 @@ export function NeedExamples({ questionKey }: { questionKey: string }) {
   const examples = EXAMPLES[questionKey] ?? [];
   if (examples.length === 0) return null;
   const total = examples.length;
-  const go = (delta: number) => setIndex((i) => (i + delta + total) % total);
   return (
-    <div className="panel-block space-y-2">
+    <div className="questionnaire-examples-content space-y-3">
       <p className="t-label">
         {t("Exemple de réponse détaillée")} · {index + 1}/{total}
       </p>
       <p className="t-body" aria-live="polite">
         {examples[index] ? t(examples[index]) : null}
       </p>
-      <div className="flex items-center gap-2">
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          className="min-h-11"
-          aria-label={t("Exemple précédent")}
-          onClick={() => go(-1)}
-        >
-          {t("Précédent")}
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          className="min-h-11"
-          aria-label={t("Exemple suivant")}
-          onClick={() => go(1)}
-        >
-          {t("Suivant")}
-        </Button>
-        <span className="t-caption" aria-hidden="true">
-          {index + 1} / {total}
-        </span>
+      <div className="flex flex-wrap items-center gap-2" aria-label={t("Exemple de réponse détaillée")}>
+        {examples.map((_, exampleIndex) => (
+          <Button
+            key={exampleIndex}
+            type="button"
+            variant={index === exampleIndex ? "secondary" : "ghost"}
+            size="icon"
+            className="min-h-11 min-w-11"
+            aria-label={msg("Afficher l'exemple {0}", [exampleIndex + 1])}
+            aria-pressed={index === exampleIndex}
+            onClick={() => setIndex(exampleIndex)}
+          >
+            {exampleIndex + 1}
+          </Button>
+        ))}
       </div>
     </div>
   );
