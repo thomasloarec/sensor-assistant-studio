@@ -4610,7 +4610,7 @@ export function DesignSpace({
           </div>
         </section>
       ) : null}
-      {submitMessage ? <p className="notice notice-info">{submitMessage}</p> : null}
+      {submitMessage ? <p className="notice notice-info">{t(submitMessage)}</p> : null}
       <div className="panel-block-lg">
         <ClientFollowUp
           backend={backend}
