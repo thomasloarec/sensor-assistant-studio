@@ -62,7 +62,7 @@ describe("couples proposés — écran d'après les six questions", () => {
 
   it("l'onglet annonce les couples et le bouton final annonce d'abord les capteurs", () => {
     expect(source).toContain('t("Couples proposés")');
-    expect(source).toContain('t("À tester dans votre montage")');
+    expect(source).not.toContain('t("À tester dans votre montage")');
     expect(source).toContain('t("Voir les capteurs proposés")');
   });
 

@@ -2,6 +2,7 @@
  * neutralisées. Le composant, ses boutons, son état et l'i18n restent réels. */
 import { GlobalRegistrator } from "@happy-dom/global-registrator";
 if (typeof document === "undefined" || typeof window === "undefined") {
+  GlobalRegistrator.unregister();
   GlobalRegistrator.register({ url: "https://exemple.invalid/" });
 }
 
