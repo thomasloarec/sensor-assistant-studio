@@ -73,7 +73,7 @@ describe("rendu du questionnaire guidé", () => {
 
       expect(view.getByText("Question 1 sur 6")).toBeTruthy();
       expect(view.getByText("À la fin : les capteurs proposés pour votre application.")).toBeTruthy();
-      expect(view.getByRole("button", { name: "Question précédente" })).toBeDisabled();
+      expect((view.getByRole("button", { name: "Question précédente" }) as HTMLButtonElement).disabled).toBe(true);
 
       const continueButton = () => view.getByRole("button", { name: "Continuer" });
       for (let question = 1; question < 5; question += 1) fireEvent.click(continueButton());
@@ -90,11 +90,11 @@ describe("rendu du questionnaire guidé", () => {
       expect(view.getByRole("button", { name: "Voir les capteurs proposés" })).toBeTruthy();
 
       const locale = view.getByLabelText("Langue du site");
-      fireEvent.change(locale, { target: { value: "en" } });
+      act(() => fireEvent.change(locale, { target: { value: "en" } }));
       expect(view.getByText("Question 6 of 6")).toBeTruthy();
       expect(view.getByText("Last question before discovering the suggested sensors.")).toBeTruthy();
 
-      fireEvent.change(locale, { target: { value: "ja" } });
+      act(() => fireEvent.change(locale, { target: { value: "ja" } }));
       expect(view.getByText("質問 6 / 6")).toBeTruthy();
       expect(view.getByText("提案センサーの確認まで、最後の1問です。")).toBeTruthy();
 
