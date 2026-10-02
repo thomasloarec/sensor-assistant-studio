@@ -130,7 +130,7 @@ function HomeRoute() {
                   {t("Détection magnétique")}
                 </p>
                 <h1 className="t-display-xl mt-5 max-w-[20ch] text-balance">
-                  {t("Découvrez les meilleures solutions pour votre application.")}
+                  {t("Trouvez le capteur adapté à votre projet.")}
                 </h1>
                 <p className="t-body-l mt-7 max-w-[34rem] text-muted-foreground">
                   {t("Répondez à 6 questions pour explorer les capteurs proposés, puis les tester dans l’atelier 3D.")}
