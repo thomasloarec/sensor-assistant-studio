@@ -10115,6 +10115,15 @@
     "Facoltativo: spazio disponibile per il sensore",
     "任意：センサー用の利用可能スペース"
   ],
+  "Facultatif : comment fixer le capteur ?": [
+    "Optional: how will the sensor be mounted?",
+    "可选：如何固定传感器？",
+    "Optional: Wie soll der Sensor befestigt werden?",
+    "Opcional: ¿cómo se fijará el sensor?",
+    "Необязательно: как будет закреплён датчик?",
+    "Facoltativo: come sarà fissato il sensore?",
+    "任意：センサーはどのように固定しますか？"
+  ],
   "Facultatif : précisez d'un clic": [
     "Optional: refine with one click",
     "可选：一键补充",

@@ -1194,8 +1194,15 @@
     opacity: 1;
     transform: scale(1.25);
   }
-  .questionnaire-optional > div {
+  .questionnaire-mounting {
     min-width: 0;
+    padding: 1rem;
+    border-radius: var(--r-lg);
+    background: var(--surface-tint);
+  }
+  .questionnaire-mounting .answer-filter {
+    white-space: normal;
+    text-align: left;
   }
   .guided-envelope-field {
     display: grid;
