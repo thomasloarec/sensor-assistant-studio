@@ -60,6 +60,10 @@ const router = createRouter({
 });
 
 function renderQuestionnaire(width: 390 | 320) {
+  if (typeof document === "undefined" || typeof window === "undefined") {
+    GlobalRegistrator.unregister();
+    GlobalRegistrator.register({ url: "https://exemple.invalid/" });
+  }
   Object.defineProperty(window, "innerWidth", { configurable: true, value: width });
   window.dispatchEvent(new Event("resize"));
   return render(
