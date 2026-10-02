@@ -1348,14 +1348,21 @@
       min-width: 0;
       padding-inline: 0.125rem;
     }
+    /* Mobile : les quatre segments tiennent côte à côte grâce à l'échelle
+       compacte --t-label (14 px, plancher d'accessibilité) et au retrait de
+       la barre décorative ; la piste, le pouce et le style restent identiques. */
     .project-stepper-content {
       min-width: 0;
       justify-content: center;
-      gap: 0.25rem;
+      gap: 0;
+      font: var(--t-label);
+    }
+    .project-stepper-content .standex-bar {
+      display: none;
     }
     .project-stepper-label {
       min-width: 0;
-      overflow-wrap: normal;
+      overflow-wrap: anywhere;
       word-break: normal;
       hyphens: none;
       text-align: center;
