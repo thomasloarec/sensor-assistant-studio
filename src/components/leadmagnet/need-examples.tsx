@@ -58,22 +58,32 @@ export function NeedExamples({ questionKey }: { questionKey: string }) {
       <p className="t-label">
         {t("Exemple de réponse détaillée")} · {index + 1}/{total}
       </p>
-      <p className="t-body" aria-live="polite">
+      <p className="t-body questionnaire-examples-text" aria-live="polite">
         {examples[index] ? t(examples[index]) : null}
       </p>
-      <div className="flex flex-wrap items-center gap-2" aria-label={t("Exemple de réponse détaillée")}>
+      {/* Puces de navigation : chaque puce est une cible cliquable ≥ 44 px,
+          libellée explicitement pour les lecteurs d'écran ; le point visible
+          est décoratif (aria-hidden), l'état actif suit aria-pressed. */}
+      <div className="questionnaire-examples-dots" role="group" aria-label={t("Exemple de réponse détaillée")}>
         {examples.map((_, exampleIndex) => (
           <Button
             key={exampleIndex}
             type="button"
-            variant={index === exampleIndex ? "secondary" : "ghost"}
+            variant="ghost"
             size="icon"
             className="min-h-11 min-w-11"
             aria-label={msg("Afficher l'exemple {0}", [exampleIndex + 1])}
             aria-pressed={index === exampleIndex}
             onClick={() => setIndex(exampleIndex)}
           >
-            {exampleIndex + 1}
+            <span
+              className={
+                index === exampleIndex
+                  ? "questionnaire-examples-dot is-active"
+                  : "questionnaire-examples-dot"
+              }
+              aria-hidden="true"
+            />
           </Button>
         ))}
       </div>
