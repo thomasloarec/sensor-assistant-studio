@@ -1990,10 +1990,19 @@ export function DesignSpace({
                 {guidedStructured ? (
                   <details
                     className="questionnaire-optional project-answer-details mt-5"
-                    defaultOpen={
+                    open={
                       dossier.mounting.kind !== "undecided" ||
                       Object.values(dossier.envelope).some((value) => value !== null)
+                        ? true
+                        : undefined
                     }
+                    onToggle={(event) => {
+                      if (event.currentTarget.open) return;
+                      if (
+                        dossier.mounting.kind !== "undecided" ||
+                        Object.values(dossier.envelope).some((value) => value !== null)
+                      ) return;
+                    }}
                   >
                     <summary className="t-body flex min-h-11 cursor-pointer list-none items-center gap-2 py-2 font-semibold text-[var(--heading)]">
                       {t("Précisions facultatives")}
