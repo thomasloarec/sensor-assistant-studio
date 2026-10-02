@@ -1744,11 +1744,12 @@ export function DesignSpace({
           {mountingChips.map((c) => {
             const active = dossier.mounting.kind === c.kind;
             return (
-              <button
+              <Button
+                variant="ghost"
                 key={c.kind}
                 type="button"
                 aria-pressed={active}
-                className={`answer-filter${active ? " answer-filter-on" : ""}`}
+                className={`answer-filter whitespace-normal text-left${active ? " answer-filter-on" : ""}`}
                 onClick={() => {
                   setDossier((d) => ({
                     ...d,
@@ -1766,13 +1767,14 @@ export function DesignSpace({
               >
                 {active ? "✓ " : "+ "}
                 {c.label}
-              </button>
+              </Button>
             );
           })}
           <Button
             type="button"
             variant="ghost"
             aria-pressed={dossier.mounting.kind === "undecided"}
+            aria-label={`${t("Montage")} : ${t("Je ne sais pas encore")}`}
             className={`answer-filter whitespace-normal text-left${dossier.mounting.kind === "undecided" ? " answer-filter-on" : ""}`}
             onClick={() => setDossier((d) => ({
               ...d,

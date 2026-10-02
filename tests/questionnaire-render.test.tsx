@@ -189,7 +189,7 @@ describe("rendu du questionnaire guidé", () => {
     expect(view.queryByText(/Rien n'est déduit de votre texte/)).toBeNull();
     expect(view.queryByText(/Une dimension laissée vide/)).toBeNull();
     expect(view.getByRole("button", { name: /Fixation vissée/ })).toBeTruthy();
-    const unknown = view.getAllByRole("button", { name: "Je ne sais pas encore" }).at(-1);
+    const unknown = view.getByRole("button", { name: "Montage : Je ne sais pas encore" });
     expect(unknown?.getAttribute("aria-pressed")).toBe("true");
     fireEvent.click(view.getByRole("button", { name: /Fixation vissée/ }));
     expect(unknown?.getAttribute("aria-pressed")).toBe("false");

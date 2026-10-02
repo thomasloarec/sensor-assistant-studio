@@ -34,8 +34,8 @@ describe("Couverture des langues de l'interface", () => {
 
   test("chaque entrée porte exactement sept traductions non vides", () => {
     // Baseline auditée : 3 189 entrées, puis 2 sélecteurs, 6 chaînes d'entrée
-    // et 3 libellés de composition du questionnaire.
-    expect(Object.keys(dictionary)).toHaveLength(3_200);
+    // et 3 libellés de composition du questionnaire, plus le libellé du montage guidé.
+    expect(Object.keys(dictionary)).toHaveLength(3_201);
     const broken = Object.entries(dictionary).filter(
       ([, v]) => v.length !== 7 || v.some((x) => typeof x !== "string" || x.trim() === ""),
     );
