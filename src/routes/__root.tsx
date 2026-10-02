@@ -8,6 +8,7 @@ import {
   useRouter,
   HeadContent,
   Scripts,
+  type ErrorComponentProps,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 import { loadDetectionData, watchDetectionDataFreshness } from "@/lib/standex/detection-data/store";
@@ -41,7 +42,7 @@ function NotFoundComponent() {
   );
 }
 
-function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
+function ErrorComponent({ error, reset }: ErrorComponentProps) {
   useLocale();
   console.error(error);
   const router = useRouter();
