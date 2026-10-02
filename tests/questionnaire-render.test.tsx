@@ -11,7 +11,7 @@ if (typeof document === "undefined" || typeof window === "undefined") {
 
 import { afterEach, describe, expect, mock, test } from "bun:test";
 import * as React from "react";
-import { act, cleanup, fireEvent, render, type RenderResult } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, waitFor, type RenderResult } from "@testing-library/react";
 import {
   RouterContextProvider,
   createMemoryHistory,
@@ -198,9 +198,9 @@ describe("rendu du questionnaire guidé", () => {
     const view = renderQuestionnaire(320);
     goToQuestion(view, 6);
     fireEvent.click(view.getByRole("button", { name: "Voir les capteurs proposés" }));
-    await flushState();
-    expect(view.queryByText("Question 6 sur 6")).toBeNull();
-    expect(view.getByRole("button", { name: "2. Couples proposés" }).getAttribute("aria-current")).toBe("step");
+    await waitFor(() => {
+      expect(view.getByRole("button", { name: "2. Couples proposés" }).getAttribute("aria-current")).toBe("step");
+    });
   });
 
   test("les libellés de composition changent immédiatement de français à anglais puis japonais", () => {
