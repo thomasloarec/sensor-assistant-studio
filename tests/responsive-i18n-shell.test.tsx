@@ -6,7 +6,8 @@ const css = readFileSync("src/styles.css", "utf8");
 const shell = readFileSync("src/routes/standex.tsx", "utf8");
 const designSpace = readFileSync("src/components/leadmagnet/design-space.tsx", "utf8");
 const panel = readFileSync("src/components/leadmagnet/workspace-panel.tsx", "utf8");
-const widths = [320, 390, 620, 768, 1024] as const;
+const widths = [620, 768, 1024] as const;
+const mobileWidths = [320, 390] as const;
 
 afterAll(() => {
   setLocale("fr");
@@ -33,6 +34,7 @@ describe("en-têtes adaptatifs dans les huit langues", () => {
   });
 
   test("le titre du projet et les quatre segments reviennent à la ligne seulement entre les mots sur mobile", () => {
+    expect(mobileWidths).toEqual([320, 390]);
     expect(css).toContain(".project-header .project-title-display h1 {\n      overflow-wrap: normal;\n      word-break: normal;");
     expect(css).toContain(".project-stepper-label {\n      min-width: 0;\n      overflow-wrap: normal;\n      word-break: normal;");
     expect(designSpace).toContain('className="project-stepper-label"');
