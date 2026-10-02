@@ -1991,8 +1991,8 @@ export function DesignSpace({
                   <details
                     className="questionnaire-optional project-answer-details mt-5"
                     ref={(node) => {
-                      if (!node || node.dataset.initialized === "true") return;
-                      node.dataset.initialized = "true";
+                      if (!node || node.dataset["initialized"] === "true") return;
+                      node.dataset["initialized"] = "true";
                       node.open =
                         dossier.mounting.kind !== "undecided" ||
                         Object.values(dossier.envelope).some((value) => value !== null);
