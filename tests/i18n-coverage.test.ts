@@ -65,7 +65,7 @@ describe("Couverture des langues de l'interface", () => {
 
   test("l'entrée et les repères des six questions sont complets dans les huit langues", () => {
     const questionnaireCopy = [
-      "Découvrez les meilleures solutions pour votre application.",
+      "Trouvez le capteur adapté à votre projet.",
       "Répondez à 6 questions pour explorer les capteurs proposés, puis les tester dans l’atelier 3D.",
       "Des capteurs proposés, à essayer dans votre montage en 3D.",
       "À la fin : les capteurs proposés pour votre application.",
