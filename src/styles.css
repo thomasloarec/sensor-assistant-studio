@@ -1286,10 +1286,7 @@
       min-width: 0;
     }
     .project-header-brand .t-title-s {
-      min-width: 0;
-      white-space: normal;
-      overflow-wrap: normal;
-      word-break: normal;
+      display: none;
     }
     .project-header-brand > span[aria-hidden="true"] {
       display: none;
@@ -1349,7 +1346,7 @@
     }
     .project-stepper button {
       min-width: 0;
-      padding-inline: 0.25rem;
+      padding-inline: 0.125rem;
     }
     .project-stepper-content {
       min-width: 0;
@@ -1360,7 +1357,7 @@
       min-width: 0;
       overflow-wrap: normal;
       word-break: normal;
-      hyphens: auto;
+      hyphens: none;
       text-align: center;
     }
     .guided-envelope-fields {
