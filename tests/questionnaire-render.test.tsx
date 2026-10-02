@@ -188,9 +188,12 @@ describe("rendu du questionnaire guidé", () => {
 
   test("le dernier passage révèle les capteurs sans ajouter de validation", async () => {
     const view = renderQuestionnaire(320);
-    goToQuestion(view, 6);
-    fireEvent.click(view.getByRole("button", { name: "Voir les capteurs proposés" }));
-    await flushState();
+    await act(async () => {
+      goToQuestion(view, 6);
+    });
+    await act(async () => {
+      fireEvent.click(view.getByRole("button", { name: "Voir les capteurs proposés" }));
+    });
     expect(view.queryByText("Question 6 sur 6")).toBeNull();
     expect(view.getByRole("button", { name: "2. Couples proposés" }).getAttribute("aria-current")).toBe("step");
   });
