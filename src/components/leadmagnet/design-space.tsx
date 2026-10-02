@@ -4932,12 +4932,12 @@ export function DesignSpace({
               onClick={() => setTab(s.id)}
               className={`relative z-10 min-h-11 bg-transparent px-4 py-3 text-left transition-colors duration-[var(--d-base)] ${stepIndex === i ? "text-[var(--heading)]" : "text-[var(--muted-foreground)]"}`}
             >
-              <span className="flex items-center gap-2 text-base font-semibold">
+              <span className="project-stepper-content flex min-w-0 items-center gap-2 text-base font-semibold">
                 <span
                   className={`standex-bar !h-3 !w-1 transition-opacity duration-[var(--d-base)] ${stepIndex === i ? "opacity-100" : "opacity-25"}`}
                   aria-hidden="true"
                 />
-                <span>
+                <span className="project-stepper-label">
                   {i + 1}. {s.label}
                 </span>
               </span>

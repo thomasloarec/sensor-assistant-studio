@@ -1282,6 +1282,23 @@
       gap: 0.375rem 0.5rem;
       padding-inline: 0.5rem;
     }
+    .project-header-brand {
+      min-width: 0;
+    }
+    .project-header-brand .t-title-s {
+      min-width: 0;
+      white-space: normal;
+      overflow-wrap: normal;
+      word-break: normal;
+    }
+    .project-header-brand > span[aria-hidden="true"] {
+      display: none;
+    }
+    .project-header .project-title-display h1 {
+      overflow-wrap: normal;
+      word-break: normal;
+      hyphens: none;
+    }
     .project-header .project-title-display button {
       padding-inline: 0.5rem;
     }
@@ -1331,10 +1348,20 @@
       transform: translateX(calc(var(--step) * 100%));
     }
     .project-stepper button {
-      padding-inline: 0.5rem;
+      min-width: 0;
+      padding-inline: 0.25rem;
     }
-    .project-stepper button > span:last-child {
-      display: none;
+    .project-stepper-content {
+      min-width: 0;
+      justify-content: center;
+      gap: 0.25rem;
+    }
+    .project-stepper-label {
+      min-width: 0;
+      overflow-wrap: normal;
+      word-break: normal;
+      hyphens: auto;
+      text-align: center;
     }
     .guided-envelope-fields {
       grid-template-columns: minmax(0, 1fr);
