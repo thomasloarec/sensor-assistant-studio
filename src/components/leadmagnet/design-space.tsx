@@ -1691,10 +1691,10 @@ export function DesignSpace({
   const lastQuestion = focusIdx >= GUIDED_QUESTIONS.length - 1;
   const questionOutcome =
     focusIdx < 4
-      ? "À la fin : les capteurs proposés pour votre application."
+      ? t("À la fin : les capteurs proposés pour votre application.")
       : focusIdx === 4
-        ? "Encore 2 questions avant de découvrir les capteurs proposés."
-        : "Dernière question avant de découvrir les capteurs proposés.";
+        ? t("Encore 2 questions avant de découvrir les capteurs proposés.")
+        : t("Dernière question avant de découvrir les capteurs proposés.");
 
   /** Bascule une décision explicitement confiée à Standex. Ajout/retrait sans
    * doublon, et sans écrire aucune valeur technique dans le dossier. */
@@ -1927,7 +1927,7 @@ export function DesignSpace({
           <p className="t-label mt-5">
             {msg("Question {0} sur {1}", [focusIdx + 1, GUIDED_QUESTIONS.length])}
           </p>
-          <p className="t-body-s mt-2 text-muted-foreground">{t(questionOutcome)}</p>
+          <p className="t-body-s mt-2 text-muted-foreground">{questionOutcome}</p>
           <p className="t-label mt-4 text-[var(--primary)]">{t(question.category)}</p>
           <h2 className="t-display-m mt-2">{t(question.prompt)}</h2>
           <div className="mt-4"><NeedExamples questionKey={question.key} /></div>
