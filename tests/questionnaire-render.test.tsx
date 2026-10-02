@@ -1,7 +1,10 @@
 /** Rendu isolé du questionnaire : seules la session et les lectures serveur sont
  * neutralisées. Le composant, ses boutons, son état et l'i18n restent réels. */
 import { GlobalRegistrator } from "@happy-dom/global-registrator";
-GlobalRegistrator.register({ url: "https://exemple.invalid/" });
+if (typeof document === "undefined" || typeof window === "undefined") {
+  GlobalRegistrator.unregister();
+  GlobalRegistrator.register({ url: "https://exemple.invalid/" });
+}
 
 import { afterEach, describe, expect, mock, test } from "bun:test";
 import * as React from "react";
