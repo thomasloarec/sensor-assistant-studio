@@ -2,8 +2,11 @@
  * neutralisées. Le composant, ses boutons, son état et l'i18n restent réels. */
 import { GlobalRegistrator } from "@happy-dom/global-registrator";
 if (typeof document === "undefined" || typeof window === "undefined") {
-  GlobalRegistrator.unregister();
-  GlobalRegistrator.register({ url: "https://exemple.invalid/" });
+  try {
+    GlobalRegistrator.register({ url: "https://exemple.invalid/" });
+  } catch (error) {
+    if (!(error instanceof Error) || !error.message.includes("already been globally registered")) throw error;
+  }
 }
 
 import { afterEach, describe, expect, mock, test } from "bun:test";
