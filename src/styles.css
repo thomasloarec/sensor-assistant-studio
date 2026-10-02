@@ -1355,7 +1355,9 @@
       min-width: 0;
       justify-content: center;
       gap: 0;
-      font: var(--t-label);
+      /* !important requis : les utilitaires (couche utilities) priment sinon
+         sur cette couche components. */
+      font: var(--t-label) !important;
     }
     .project-stepper-content .standex-bar {
       display: none;
