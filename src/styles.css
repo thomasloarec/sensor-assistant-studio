@@ -1346,7 +1346,8 @@
     }
     .project-stepper button {
       min-width: 0;
-      padding-inline: 0.125rem;
+      /* !important : doit primer sur l'utilitaire px-4 (couche utilities). */
+      padding-inline: 0.125rem !important;
     }
     /* Mobile : les quatre segments tiennent côte à côte grâce à l'échelle
        compacte --t-label (14 px, plancher d'accessibilité) et au retrait de
