@@ -66,8 +66,10 @@ function continueButton(view: RenderResult) {
   return view.getByRole("button", { name: "Continuer" });
 }
 
-function answer(view: RenderResult, value: string) {
-  fireEvent.input(view.getByLabelText("Votre réponse"), { target: { value } });
+async function answer(view: RenderResult, value: string) {
+  await act(async () => {
+    fireEvent.change(view.getByLabelText("Votre réponse"), { target: { value } });
+  });
 }
 
 function goToQuestion(view: RenderResult, target: number) {
@@ -138,8 +140,7 @@ describe("rendu du questionnaire guidé", () => {
       expect(view.getByRole("button", { name: "Afficher l'exemple 1" }).getAttribute("aria-pressed")).toBe("true");
       fireEvent.click(view.getByRole("button", { name: "Afficher l'exemple 2" }));
       expect(view.getByRole("button", { name: "Afficher l'exemple 2" }).getAttribute("aria-pressed")).toBe("true");
-      answer(view, value);
-      await flushState();
+      await answer(view, value);
       if (index < values.length - 1) {
         fireEvent.click(continueButton(view));
         await flushState();
@@ -172,12 +173,16 @@ describe("rendu du questionnaire guidé", () => {
     const optional = view.getByText("Précisions facultatives");
     fireEvent.click(optional);
     fireEvent.click(view.getByRole("button", { name: /Fixation vissée/ }));
-    fireEvent.input(view.getByLabelText("Longueur"), { target: { value: "15,5" } });
-    await flushState();
-    fireEvent.input(view.getByLabelText("Largeur"), { target: { value: "8" } });
+    await act(async () => {
+      fireEvent.change(view.getByLabelText("Longueur"), { target: { value: "15,5" } });
+    });
+    await act(async () => {
+      fireEvent.change(view.getByLabelText("Largeur"), { target: { value: "8" } });
+    });
     fireEvent.click(view.getByText("Ajouter une précision"));
-    fireEvent.input(view.getByLabelText("Autre chose à nous dire"), { target: { value: "Câble vers l'arrière" } });
-    await flushState();
+    await act(async () => {
+      fireEvent.change(view.getByLabelText("Autre chose à nous dire"), { target: { value: "Câble vers l'arrière" } });
+    });
     fireEvent.click(continueButton(view));
     await flushState();
     fireEvent.click(view.getByRole("button", { name: "Question précédente" }));
