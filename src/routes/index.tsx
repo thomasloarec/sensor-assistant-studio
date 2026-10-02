@@ -133,7 +133,7 @@ function HomeRoute() {
                   {t("Découvrez les meilleures solutions pour votre application.")}
                 </h1>
                 <p className="t-body-l mt-7 max-w-[34rem] text-muted-foreground">
-                  {t("Répondez à 6 questions pour explorer les capteurs proposés, puis les tester dans l'atelier 3D.")}
+                  {t("Répondez à 6 questions pour explorer les capteurs proposés, puis les tester dans l’atelier 3D.")}
                 </p>
                 {/* UN SEUL bouton primaire : le retour sur un projet existant est
                     un lien, pas une seconde action de même poids. */}
@@ -183,7 +183,7 @@ function HomeRoute() {
                 {
                   n: "02",
                   t: t("Testez"),
-                  d: t("Des couples capteur-aimant proposés, à essayer dans votre montage en 3D."),
+                  d: t("Des capteurs proposés, à essayer dans votre montage en 3D."),
                 },
                 {
                   n: "03",

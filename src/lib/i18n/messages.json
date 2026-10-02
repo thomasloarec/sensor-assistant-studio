@@ -5426,7 +5426,7 @@
     "Scopra le soluzioni migliori per la sua applicazione.",
     "用途に最適なソリューションを見つけましょう。"
   ],
-  "Répondez à 6 questions pour explorer les capteurs proposés, puis les tester dans l'atelier 3D.": [
+  "Répondez à 6 questions pour explorer les capteurs proposés, puis les tester dans l’atelier 3D.": [
     "Answer 6 questions to explore the suggested sensors, then test them in the 3D workshop.",
     "回答 6 个问题，探索推荐的传感器，然后在 3D 工作室中进行测试。",
     "Beantworten Sie 6 Fragen, um vorgeschlagene Sensoren zu entdecken und anschließend im 3D-Atelier zu testen.",
@@ -7541,14 +7541,14 @@
     "Ultima versione inviata",
     "最後に送信した版"
   ],
-  "Des couples capteur-aimant proposés, à essayer dans votre montage en 3D.": [
-    "Suggested sensor-magnet pairs, to try in your assembly in 3D.",
-    "推荐的传感器-磁铁组合，可在 3D 中于您的装配里试用。",
-    "Vorgeschlagene Sensor-Magnet-Paare, in 3D in Ihrem Aufbau zu erproben.",
-    "Parejas sensor-imán propuestas, para probar en su montaje en 3D.",
-    "Предложенные пары «датчик — магнит» можно опробовать в вашей сборке в 3D.",
-    "Coppie sensore-magnete proposte, da provare nel suo montaggio in 3D.",
-    "提案されたセンサーと磁石の組み合わせを、3D でお客様の取り付けに試せます。"
+  "Des capteurs proposés, à essayer dans votre montage en 3D.": [
+    "Suggested sensors to try in your assembly in 3D.",
+    "推荐的传感器，可在您的 3D 装配中试用。",
+    "Vorgeschlagene Sensoren, die Sie in Ihrem Aufbau in 3D erproben können.",
+    "Sensores propuestos, para probar en su montaje en 3D.",
+    "Предложенные датчики можно опробовать в вашей сборке в 3D.",
+    "Sensori proposti, da provare nel suo montaggio in 3D.",
+    "提案されたセンサーを、3D でお客様の取り付けに試せます。"
   ],
   "Des réglages 3D ne sont pas encore repris dans votre projet : ils ne partiraient ni dans l'export ni dans le résumé.": [
     "Some 3D settings are not yet incorporated into your project: they would not be included in the export or the summary.",

@@ -33,7 +33,7 @@ describe("Couverture des langues de l'interface", () => {
   });
 
   test("chaque entrée porte exactement sept traductions non vides", () => {
-    // Baseline auditée : 3 189 entrées, puis les deux sélecteurs absents ajoutés ici.
+    // Baseline auditée : 3 189 entrées, puis 2 sélecteurs et 6 chaînes du questionnaire.
     expect(Object.keys(dictionary)).toHaveLength(3_197);
     const broken = Object.entries(dictionary).filter(
       ([, v]) => v.length !== 7 || v.some((x) => typeof x !== "string" || x.trim() === ""),
@@ -66,7 +66,8 @@ describe("Couverture des langues de l'interface", () => {
   test("l'entrée et les repères des six questions sont complets dans les huit langues", () => {
     const questionnaireCopy = [
       "Découvrez les meilleures solutions pour votre application.",
-      "Répondez à 6 questions pour explorer les capteurs proposés, puis les tester dans l'atelier 3D.",
+      "Répondez à 6 questions pour explorer les capteurs proposés, puis les tester dans l’atelier 3D.",
+      "Des capteurs proposés, à essayer dans votre montage en 3D.",
       "À la fin : les capteurs proposés pour votre application.",
       "Encore 2 questions avant de découvrir les capteurs proposés.",
       "Dernière question avant de découvrir les capteurs proposés.",
