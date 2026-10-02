@@ -56,6 +56,7 @@ const { buildDossierExport } = await import("../src/lib/leadmagnet/dossier-io");
 const router = createRouter({
   routeTree: createRootRoute({ component: () => null }),
   history: createMemoryHistory({ initialEntries: ["/"] }),
+  origin: "https://exemple.invalid",
 });
 
 function renderQuestionnaire(width: 390 | 320) {
