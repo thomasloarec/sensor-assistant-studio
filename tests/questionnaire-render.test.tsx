@@ -195,6 +195,11 @@ describe("rendu du questionnaire guidé", () => {
     expect(unknown?.getAttribute("aria-pressed")).toBe("false");
     if (unknown) fireEvent.click(unknown);
     expect(unknown?.getAttribute("aria-pressed")).toBe("true");
+    fireEvent.click(view.getByRole("button", { name: /Autre montage/ }));
+    await changeValue(view.getByLabelText("Décrivez le montage"), "Collage sur support");
+    fireEvent.click(view.getByRole("button", { name: "Question précédente" }));
+    fireEvent.click(continueButton(view));
+    expect((view.getByLabelText("Décrivez le montage") as HTMLTextAreaElement).value).toBe("Collage sur support");
     expect(view.getByLabelText("Longueur")).toBeTruthy();
     expect(view.getByLabelText("Largeur")).toBeTruthy();
     expect(view.getByLabelText("Hauteur")).toBeTruthy();
