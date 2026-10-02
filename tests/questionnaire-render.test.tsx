@@ -87,7 +87,13 @@ async function goToQuestion(view: RenderResult, target: number) {
 }
 
 async function changeValue(element: HTMLElement, value: string) {
-  fireEvent.change(element, { target: { value } });
+  const prototype = element instanceof HTMLTextAreaElement
+    ? HTMLTextAreaElement.prototype
+    : HTMLInputElement.prototype;
+  const setter = Object.getOwnPropertyDescriptor(prototype, "value")?.set;
+  if (!setter) throw new Error("Le champ rendu ne fournit pas de setter de valeur natif");
+  setter.call(element, value);
+  fireEvent.input(element);
   await flushState();
   await waitFor(() => expect((element as HTMLInputElement | HTMLTextAreaElement).value).toBe(value));
 }
