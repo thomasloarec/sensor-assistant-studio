@@ -80,8 +80,10 @@ function continueButton(view: RenderResult) {
 async function goToQuestion(view: RenderResult, target: number) {
   for (let click = 0; click < 6; click += 1) {
     if (view.queryByText(`Question ${target} sur 6`) !== null) return;
-    fireEvent.click(continueButton(view));
-    await flushState();
+    await act(async () => {
+      fireEvent.click(continueButton(view));
+      await Promise.resolve();
+    });
   }
   throw new Error(`Question ${target} inaccessible après six clics au maximum`);
 }
@@ -92,9 +94,11 @@ async function changeValue(element: HTMLElement, value: string) {
     : HTMLInputElement.prototype;
   const setter = Object.getOwnPropertyDescriptor(prototype, "value")?.set;
   if (!setter) throw new Error("Le champ rendu ne fournit pas de setter de valeur natif");
-  setter.call(element, value);
-  fireEvent.input(element);
-  await flushState();
+  await act(async () => {
+    setter.call(element, value);
+    element.dispatchEvent(new InputEvent("input", { bubbles: true, data: value, inputType: "insertText" }));
+    await Promise.resolve();
+  });
   await waitFor(() => expect((element as HTMLInputElement | HTMLTextAreaElement).value).toBe(value));
 }
 
