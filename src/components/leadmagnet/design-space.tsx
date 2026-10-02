@@ -1749,7 +1749,7 @@ export function DesignSpace({
                 key={c.kind}
                 type="button"
                 aria-pressed={active}
-                className={`answer-filter whitespace-normal text-left${active ? " answer-filter-on" : ""}`}
+                className={`answer-filter whitespace-normal text-left ${active ? "bg-[var(--primary)] text-[var(--primary-foreground)]" : "bg-[var(--surface-sunken)] text-[var(--muted-foreground)]"}`}
                 onClick={() => {
                   setDossier((d) => ({
                     ...d,
@@ -1775,7 +1775,7 @@ export function DesignSpace({
             variant="ghost"
             aria-pressed={dossier.mounting.kind === "undecided"}
             aria-label={`${t("Montage")} : ${t("Je ne sais pas encore")}`}
-            className={`answer-filter whitespace-normal text-left${dossier.mounting.kind === "undecided" ? " answer-filter-on" : ""}`}
+            className={`answer-filter whitespace-normal text-left ${dossier.mounting.kind === "undecided" ? "bg-[var(--primary)] text-[var(--primary-foreground)]" : "bg-[var(--surface-sunken)] text-[var(--muted-foreground)]"}`}
             onClick={() => setDossier((d) => ({
               ...d,
               mounting: { kind: "undecided" },
