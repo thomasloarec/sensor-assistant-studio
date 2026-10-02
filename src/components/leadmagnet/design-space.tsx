@@ -1990,18 +1990,12 @@ export function DesignSpace({
                 {guidedStructured ? (
                   <details
                     className="questionnaire-optional project-answer-details mt-5"
-                    open={
-                      dossier.mounting.kind !== "undecided" ||
-                      Object.values(dossier.envelope).some((value) => value !== null)
-                        ? true
-                        : undefined
-                    }
-                    onToggle={(event) => {
-                      if (event.currentTarget.open) return;
-                      if (
+                    ref={(node) => {
+                      if (!node || node.dataset.initialized === "true") return;
+                      node.dataset.initialized = "true";
+                      node.open =
                         dossier.mounting.kind !== "undecided" ||
-                        Object.values(dossier.envelope).some((value) => value !== null)
-                      ) return;
+                        Object.values(dossier.envelope).some((value) => value !== null);
                     }}
                   >
                     <summary className="t-body flex min-h-11 cursor-pointer list-none items-center gap-2 py-2 font-semibold text-[var(--heading)]">
