@@ -62,4 +62,4 @@
 - [x] Compter uniquement les questions franchies dans la barre de progression.
 - [x] Traduire les nouvelles chaînes dans les huit langues et couvrir Q1, Q5 et Q6.
 - [x] Finaliser la typographie, l’apostrophe validée et la promesse « capteurs » avant révélation.
-- [ ] Monter réellement Q1, Q5 et Q6 en test isolé à 390/320 px, avec retour, inconnue et bascule FR/EN/JA.
+- [x] Monter réellement Q1, Q5 et Q6 en test isolé à 390/320 px, avec retour, inconnue et bascule FR/EN/JA.
