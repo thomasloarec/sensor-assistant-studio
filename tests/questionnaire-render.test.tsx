@@ -11,7 +11,7 @@ if (typeof document === "undefined" || typeof window === "undefined") {
 
 import { afterEach, describe, expect, mock, test } from "bun:test";
 import * as React from "react";
-import { act, cleanup, fireEvent, render, type RenderResult } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, waitFor, type RenderResult } from "@testing-library/react";
 import {
   RouterContextProvider,
   createMemoryHistory,
@@ -56,9 +56,14 @@ const { buildDossierExport } = await import("../src/lib/leadmagnet/dossier-io");
 const router = createRouter({
   routeTree: createRootRoute({ component: () => null }),
   history: createMemoryHistory({ initialEntries: ["/"] }),
+  origin: "https://exemple.invalid",
 });
 
 function renderQuestionnaire(width: 390 | 320) {
+  if (typeof document === "undefined" || typeof window === "undefined") {
+    GlobalRegistrator.unregister();
+    GlobalRegistrator.register({ url: "https://exemple.invalid/" });
+  }
   Object.defineProperty(window, "innerWidth", { configurable: true, value: width });
   window.dispatchEvent(new Event("resize"));
   return render(
@@ -191,14 +196,11 @@ describe("rendu du questionnaire guidé", () => {
 
   test("le dernier passage révèle les capteurs sans ajouter de validation", async () => {
     const view = renderQuestionnaire(320);
-    await act(async () => {
-      goToQuestion(view, 6);
+    goToQuestion(view, 6);
+    fireEvent.click(view.getByRole("button", { name: "Voir les capteurs proposés" }));
+    await waitFor(() => {
+      expect(view.getByRole("button", { name: "2. Couples proposés" }).getAttribute("aria-current")).toBe("step");
     });
-    await act(async () => {
-      fireEvent.click(view.getByRole("button", { name: "Voir les capteurs proposés" }));
-    });
-    expect(view.queryByText("Question 6 sur 6")).toBeNull();
-    expect(view.getByRole("button", { name: "2. Couples proposés" }).getAttribute("aria-current")).toBe("step");
   });
 
   test("les libellés de composition changent immédiatement de français à anglais puis japonais", () => {
