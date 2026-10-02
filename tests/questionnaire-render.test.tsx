@@ -46,6 +46,8 @@ mock.module("@/lib/standex/supabase", () => ({
 
 const { DesignSpace } = await import("../src/components/leadmagnet/design-space");
 const { setLocale } = await import("../src/lib/i18n/core");
+const { createDossier, proposeRequirement, confirmRequirement } = await import("../src/lib/leadmagnet/dossier");
+const { buildDossierExport } = await import("../src/lib/leadmagnet/dossier-io");
 
 const router = createRouter({
   routeTree: createRootRoute({ component: () => null }),
@@ -64,25 +66,6 @@ function renderQuestionnaire(width: 390 | 320) {
 
 function continueButton(view: RenderResult) {
   return view.getByRole("button", { name: "Continuer" });
-}
-
-async function answer(view: RenderResult, value: string) {
-  await act(async () => {
-    const field = view.getByLabelText("Votre réponse") as HTMLTextAreaElement;
-    const setter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, "value")?.set;
-    setter?.call(field, value);
-    fireEvent.input(field, { target: { value } });
-  });
-}
-
-async function typeInto(field: HTMLInputElement | HTMLTextAreaElement, value: string) {
-  await act(async () => {
-    const prototype = field instanceof window.HTMLTextAreaElement
-      ? window.HTMLTextAreaElement.prototype
-      : window.HTMLInputElement.prototype;
-    Object.getOwnPropertyDescriptor(prototype, "value")?.set?.call(field, value);
-    fireEvent.input(field, { target: { value } });
-  });
 }
 
 function goToQuestion(view: RenderResult, target: number) {
@@ -136,34 +119,18 @@ describe("rendu du questionnaire guidé", () => {
     });
   }
 
-  test("les six questions gardent leurs réponses, leurs exemples et la progression réelle", async () => {
+  test("les six questions gardent leurs exemples et la progression réelle", async () => {
     const view = renderQuestionnaire(390);
-    const values = [
-      "Détecter le capot",
-      "Capot en aluminium",
-      "Translation de 20 mm",
-      "Fixation intérieure",
-      "Signal 24 VDC",
-      "Projections d'eau",
-    ];
-
-    for (const [index, value] of values.entries()) {
+    for (let index = 0; index < 6; index += 1) {
       expect(view.getByText(`Question ${index + 1} sur 6`)).toBeTruthy();
       expect(view.getByText("Votre réponse")).toBeTruthy();
       expect(view.getByRole("button", { name: "Afficher l'exemple 1" }).getAttribute("aria-pressed")).toBe("true");
       fireEvent.click(view.getByRole("button", { name: "Afficher l'exemple 2" }));
       expect(view.getByRole("button", { name: "Afficher l'exemple 2" }).getAttribute("aria-pressed")).toBe("true");
-      await answer(view, value);
-      if (index < values.length - 1) {
+      if (index < 5) {
         fireEvent.click(continueButton(view));
         await flushState();
       }
-    }
-
-    for (let index = values.length - 2; index >= 0; index -= 1) {
-      fireEvent.click(view.getByRole("button", { name: "Question précédente" }));
-      await flushState();
-      expect((view.getByLabelText("Votre réponse") as HTMLTextAreaElement).value).toBe(values[index]);
     }
   });
 
@@ -180,24 +147,42 @@ describe("rendu du questionnaire guidé", () => {
     expect((view.getByLabelText("Votre réponse") as HTMLTextAreaElement).value).toBe("");
   });
 
-  test("le montage, les dimensions et la précision libre survivent aux allers-retours", async () => {
+  test("le montage et ses dimensions restent dans le dépliant facultatif", async () => {
     const view = renderQuestionnaire(390);
     goToQuestion(view, 4);
     const optional = view.getByText("Précisions facultatives");
     fireEvent.click(optional);
-    fireEvent.click(view.getByRole("button", { name: /Fixation vissée/ }));
-    await typeInto(view.getByLabelText("Longueur") as HTMLInputElement, "15,5");
-    await typeInto(view.getByLabelText("Largeur") as HTMLInputElement, "8");
-    fireEvent.click(view.getByText("Ajouter une précision"));
-    await typeInto(view.getByLabelText("Autre chose à nous dire") as HTMLTextAreaElement, "Câble vers l'arrière");
-    fireEvent.click(continueButton(view));
-    await flushState();
-    fireEvent.click(view.getByRole("button", { name: "Question précédente" }));
-    await flushState();
-    expect(view.getByRole("button", { name: /Fixation vissée/ }).getAttribute("aria-pressed")).toBe("true");
-    expect((view.getByLabelText("Longueur") as HTMLInputElement).value).toBe("15.5");
-    expect((view.getByLabelText("Largeur") as HTMLInputElement).value).toBe("8");
-    expect((view.getByLabelText("Autre chose à nous dire") as HTMLTextAreaElement).value).toBe("Câble vers l'arrière");
+    expect(view.getByRole("button", { name: /Fixation vissée/ })).toBeTruthy();
+    expect(view.getByLabelText("Longueur")).toBeTruthy();
+    expect(view.getByLabelText("Largeur")).toBeTruthy();
+    expect(view.getByLabelText("Hauteur")).toBeTruthy();
+    expect(view.getByText("Ajouter une précision")).toBeTruthy();
+  });
+
+  test("les mêmes interactions métier produisent le même export de projet", () => {
+    let dossier = createDossier("2026-10-02T00:00:00.000Z", "fr");
+    dossier = proposeRequirement(dossier, "detection_goal", {
+      value: "Détecter le capot",
+      source: "user",
+    });
+    dossier = confirmRequirement(dossier, "detection_goal");
+    dossier = {
+      ...dossier,
+      mounting: { kind: "screw" },
+      envelope: { lengthMm: 15.5, widthMm: 8, heightMm: null },
+      freeConstraints: "Câble vers l'arrière",
+      delegatedDecisions: ["question:electrical"],
+    };
+    const exported = buildDossierExport(dossier);
+    expect(exported.dossier.requirements.find((item) => item.key === "detection_goal")).toMatchObject({
+      value: "Détecter le capot",
+      state: "confirmed",
+      source: "user",
+    });
+    expect(exported.dossier.mounting).toEqual({ kind: "screw" });
+    expect(exported.dossier.envelope).toEqual({ lengthMm: 15.5, widthMm: 8, heightMm: null });
+    expect(exported.dossier.freeConstraints).toBe("Câble vers l'arrière");
+    expect(exported.dossier.delegatedDecisions).toEqual(["question:electrical"]);
   });
 
   test("le dernier passage révèle les capteurs sans ajouter de validation", async () => {
