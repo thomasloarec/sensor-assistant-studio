@@ -6,7 +6,7 @@ const css = readFileSync("src/styles.css", "utf8");
 const shell = readFileSync("src/routes/standex.tsx", "utf8");
 const designSpace = readFileSync("src/components/leadmagnet/design-space.tsx", "utf8");
 const panel = readFileSync("src/components/leadmagnet/workspace-panel.tsx", "utf8");
-const widths = [620, 768, 1024] as const;
+const widths = [320, 390, 620, 768, 1024] as const;
 
 afterAll(() => {
   setLocale("fr");
@@ -30,6 +30,13 @@ describe("en-têtes adaptatifs dans les huit langues", () => {
       expect(designSpace).toContain("min-h-11 min-w-11");
       expect(panel).toContain("min-h-11");
     }
+  });
+
+  test("le titre du projet et les quatre segments reviennent à la ligne seulement entre les mots sur mobile", () => {
+    expect(css).toContain(".project-header .project-title-display h1 {\n      overflow-wrap: normal;\n      word-break: normal;");
+    expect(css).toContain(".project-stepper-label {\n      min-width: 0;\n      overflow-wrap: normal;\n      word-break: normal;");
+    expect(designSpace).toContain('className="project-stepper-label"');
+    expect(css).not.toContain(".project-stepper button > span:last-child {\n      display: none;");
   });
 
   test("les titres de compte et les états restent complets dans les 24 combinaisons", () => {
