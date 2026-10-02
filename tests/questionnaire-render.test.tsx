@@ -76,6 +76,10 @@ function goToQuestion(view: RenderResult, target: number) {
   }
 }
 
+async function flushState() {
+  await act(async () => Promise.resolve());
+}
+
 afterEach(() => {
   cleanup();
   setLocale("fr");
@@ -117,7 +121,7 @@ describe("rendu du questionnaire guidé", () => {
     });
   }
 
-  test("les six questions gardent leurs réponses, leurs exemples et la progression réelle", () => {
+  test("les six questions gardent leurs réponses, leurs exemples et la progression réelle", async () => {
     const view = renderQuestionnaire(390);
     const values = [
       "Détecter le capot",
@@ -135,6 +139,7 @@ describe("rendu du questionnaire guidé", () => {
       fireEvent.click(view.getByRole("button", { name: "Afficher l'exemple 2" }));
       expect(view.getByRole("button", { name: "Afficher l'exemple 2" }).getAttribute("aria-pressed")).toBe("true");
       answer(view, value);
+      await flushState();
       if (index < values.length - 1) fireEvent.click(continueButton(view));
     });
 
@@ -144,19 +149,20 @@ describe("rendu du questionnaire guidé", () => {
     }
   });
 
-  test("continuer vide et déléguer restent deux comportements distincts", () => {
+  test("continuer vide et déléguer restent deux comportements distincts", async () => {
     const view = renderQuestionnaire(390);
     fireEvent.click(continueButton(view));
     expect(view.getByText("Question 2 sur 6")).toBeTruthy();
     fireEvent.click(view.getByRole("button", { name: "Question précédente" }));
     expect(view.queryByText(/Cette question est notée/)).toBeNull();
     fireEvent.click(view.getByRole("button", { name: "Je ne sais pas encore" }));
+    await flushState();
     fireEvent.click(view.getByRole("button", { name: "Question précédente" }));
     expect(view.getByText(/Cette question est notée/)).toBeTruthy();
     expect((view.getByLabelText("Votre réponse") as HTMLTextAreaElement).value).toBe("");
   });
 
-  test("le montage, les dimensions et la précision libre survivent aux allers-retours", () => {
+  test("le montage, les dimensions et la précision libre survivent aux allers-retours", async () => {
     const view = renderQuestionnaire(390);
     goToQuestion(view, 4);
     const optional = view.getByText("Précisions facultatives");
@@ -166,6 +172,7 @@ describe("rendu du questionnaire guidé", () => {
     fireEvent.change(view.getByLabelText("Largeur"), { target: { value: "8" } });
     fireEvent.click(view.getByText("Ajouter une précision"));
     fireEvent.change(view.getByLabelText("Autre chose à nous dire"), { target: { value: "Câble vers l'arrière" } });
+    await flushState();
     fireEvent.click(continueButton(view));
     fireEvent.click(view.getByRole("button", { name: "Question précédente" }));
     expect(view.getByRole("button", { name: /Fixation vissée/ }).getAttribute("aria-pressed")).toBe("true");
@@ -174,12 +181,13 @@ describe("rendu du questionnaire guidé", () => {
     expect((view.getByLabelText("Autre chose à nous dire") as HTMLTextAreaElement).value).toBe("Câble vers l'arrière");
   });
 
-  test("le dernier passage révèle les capteurs sans ajouter de validation", () => {
+  test("le dernier passage révèle les capteurs sans ajouter de validation", async () => {
     const view = renderQuestionnaire(320);
     goToQuestion(view, 6);
     fireEvent.click(view.getByRole("button", { name: "Voir les capteurs proposés" }));
+    await flushState();
     expect(view.queryByText("Question 6 sur 6")).toBeNull();
-    expect(view.getByRole("button", { name: "Couples proposés" }).getAttribute("aria-current")).toBe("step");
+    expect(view.getByRole("button", { name: "2. Couples proposés" }).getAttribute("aria-current")).toBe("step");
   });
 
   test("les libellés de composition changent immédiatement de français à anglais puis japonais", () => {
