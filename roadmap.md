@@ -55,3 +55,9 @@
 - [ ] Vérifier derrière la connexion le changement de langue et les erreurs du dialogue NDA, sans envoi — bloqué : aucune session autorisée ni identifiants de recette sécurisés ne sont injectés dans l'aperçu.
 - [x] Garder les erreurs ouvertes réactives à la langue et préserver sans traduction les retours humains.
 - [x] Ajouter les deux libellés exacts des sélecteurs rendez-vous et retour publié.
+
+## Entrée et questionnaire — 2 octobre 2026
+- [x] Remplacer l'accroche d'entrée par la promesse validée, sans écran intermédiaire.
+- [x] Ajouter le repère stable Q1–Q6 et le bouton final « Voir les capteurs proposés ».
+- [x] Compter uniquement les questions franchies dans la barre de progression.
+- [x] Traduire les nouvelles chaînes dans les huit langues et couvrir Q1, Q5 et Q6.

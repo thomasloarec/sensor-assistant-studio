@@ -60,10 +60,10 @@ describe("couples proposés — écran d'après les six questions", () => {
     expect(cards[0]!.sensorId).toBe("MK03");
   });
 
-  it("l'onglet annonce les couples et le bouton final y conduit", () => {
+  it("l'onglet annonce les couples et le bouton final annonce d'abord les capteurs", () => {
     expect(source).toContain('t("Couples proposés")');
     expect(source).toContain('t("À tester dans votre montage")');
-    expect(source).toContain('t("Voir les couples proposés")');
+    expect(source).toContain('t("Voir les capteurs proposés")');
   });
 
   it("tester un couple enregistre le choix ET ouvre l'atelier sur ce couple", () => {

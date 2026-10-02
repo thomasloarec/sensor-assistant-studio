@@ -467,6 +467,11 @@ export const GUIDED_QUESTIONS: {
   },
 ];
 
+/** Avancement des questions déjà franchies. La question affichée n'est jamais
+ * comptée comme terminée avant l'action explicite Continuer / Je ne sais pas. */
+export const guidedQuestionProgress = (focusIndex: number, total: number): number =>
+  total > 0 ? Math.min(Math.max(focusIndex, 0), total) / total : 0;
+
 export interface DesignSpaceProps {
   /** "page" : route /design autonome. "embedded" : monté dans l'espace projet de l'accueil. */
   chrome?: "page" | "embedded";
@@ -1684,6 +1689,12 @@ export function DesignSpace({
   const question = GUIDED_QUESTIONS[focusIdx] ?? GUIDED_QUESTIONS[0]!;
   const guidedReq = dossier.requirements.find((r) => r.key === question.key) ?? null;
   const lastQuestion = focusIdx >= GUIDED_QUESTIONS.length - 1;
+  const questionOutcome =
+    focusIdx < 4
+      ? t("À la fin : les capteurs proposés pour votre application.")
+      : focusIdx === 4
+        ? t("Encore 2 questions avant de découvrir les capteurs proposés.")
+        : t("Dernière question avant de découvrir les capteurs proposés.");
 
   /** Bascule une décision explicitement confiée à Standex. Ajout/retrait sans
    * doublon, et sans écrire aucune valeur technique dans le dossier. */
@@ -1910,12 +1921,13 @@ export function DesignSpace({
           >
             <div
               className="h-full rounded-[var(--r-pill)] bg-[var(--primary)] transition-[width] duration-[var(--d-page)] ease-[var(--ease-out)]"
-              style={{ width: `${((focusIdx + 1) / GUIDED_QUESTIONS.length) * 100}%` }}
+              style={{ width: `${guidedQuestionProgress(focusIdx, GUIDED_QUESTIONS.length) * 100}%` }}
             />
           </div>
           <p className="t-label mt-5">
             {msg("Question {0} sur {1}", [focusIdx + 1, GUIDED_QUESTIONS.length])}
           </p>
+          <p className="t-body-s mt-2 text-muted-foreground">{questionOutcome}</p>
           <p className="t-label mt-4 text-[var(--primary)]">{t(question.category)}</p>
           <h2 className="t-display-m mt-2">{t(question.prompt)}</h2>
           <div className="mt-4"><NeedExamples questionKey={question.key} /></div>
@@ -1993,7 +2005,7 @@ export function DesignSpace({
                 else setTab("montage");
               }}
             >
-              {lastQuestion ? t("Voir les couples proposés") : t("Continuer")}
+              {lastQuestion ? t("Voir les capteurs proposés") : t("Continuer")}
             </Button>
           </div>
 

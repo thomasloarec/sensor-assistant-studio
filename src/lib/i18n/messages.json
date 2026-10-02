@@ -5417,6 +5417,60 @@
     "Inizia",
     "はじめる"
   ],
+  "Découvrez les meilleures solutions pour votre application.": [
+    "Discover the best solutions for your application.",
+    "探索最适合您应用的解决方案。",
+    "Entdecken Sie die besten Lösungen für Ihre Anwendung.",
+    "Descubra las mejores soluciones para su aplicación.",
+    "Найдите лучшие решения для вашей задачи.",
+    "Scopra le soluzioni migliori per la sua applicazione.",
+    "用途に最適なソリューションを見つけましょう。"
+  ],
+  "Répondez à 6 questions pour explorer les capteurs proposés, puis les tester dans l'atelier 3D.": [
+    "Answer 6 questions to explore the suggested sensors, then test them in the 3D workshop.",
+    "回答 6 个问题，探索推荐的传感器，然后在 3D 工作室中进行测试。",
+    "Beantworten Sie 6 Fragen, um vorgeschlagene Sensoren zu entdecken und anschließend im 3D-Atelier zu testen.",
+    "Responda a 6 preguntas para explorar los sensores propuestos y probarlos después en el taller 3D.",
+    "Ответьте на 6 вопросов, чтобы изучить предложенные датчики, а затем проверить их в 3D-мастерской.",
+    "Risponda a 6 domande per esplorare i sensori proposti e poi provarli nell'atelier 3D.",
+    "6つの質問に答えて提案センサーを確認し、3Dワークショップで試してください。"
+  ],
+  "À la fin : les capteurs proposés pour votre application.": [
+    "At the end: sensors suggested for your application.",
+    "完成后：查看为您的应用推荐的传感器。",
+    "Am Ende: vorgeschlagene Sensoren für Ihre Anwendung.",
+    "Al final: los sensores propuestos para su aplicación.",
+    "В конце — предложенные датчики для вашей задачи.",
+    "Al termine: i sensori proposti per la sua applicazione.",
+    "回答後：用途に合う提案センサーを確認できます。"
+  ],
+  "Encore 2 questions avant de découvrir les capteurs proposés.": [
+    "2 more questions before discovering the suggested sensors.",
+    "再回答 2 个问题，即可查看推荐的传感器。",
+    "Noch 2 Fragen, dann sehen Sie die vorgeschlagenen Sensoren.",
+    "2 preguntas más antes de descubrir los sensores propuestos.",
+    "Ещё 2 вопроса — и вы увидите предложенные датчики.",
+    "Ancora 2 domande prima di scoprire i sensori proposti.",
+    "提案センサーの確認まで、あと2問です。"
+  ],
+  "Dernière question avant de découvrir les capteurs proposés.": [
+    "Last question before discovering the suggested sensors.",
+    "最后 1 个问题，之后即可查看推荐的传感器。",
+    "Letzte Frage, dann sehen Sie die vorgeschlagenen Sensoren.",
+    "Última pregunta antes de descubrir los sensores propuestos.",
+    "Последний вопрос перед просмотром предложенных датчиков.",
+    "Ultima domanda prima di scoprire i sensori proposti.",
+    "提案センサーの確認まで、最後の1問です。"
+  ],
+  "Voir les capteurs proposés": [
+    "See the suggested sensors",
+    "查看推荐的传感器",
+    "Vorgeschlagene Sensoren ansehen",
+    "Ver los sensores propuestos",
+    "Посмотреть предложенные датчики",
+    "Vedere i sensori proposti",
+    "提案センサーを見る"
+  ],
   "Comment cette pièce bouge-t-elle, et quels états faut-il distinguer ?": [
     "How does this part move, and which states must be distinguished?",
     "该部件如何运动，需要区分哪些状态？",

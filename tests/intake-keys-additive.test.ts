@@ -5,7 +5,10 @@ import {
   REQUIREMENT_LABELS,
   type DesignDossier,
 } from "../src/lib/leadmagnet/dossier";
-import { GUIDED_QUESTIONS } from "../src/components/leadmagnet/design-space";
+import {
+  GUIDED_QUESTIONS,
+  guidedQuestionProgress,
+} from "../src/components/leadmagnet/design-space";
 import { requirementAnswer } from "../src/lib/leadmagnet/requirement-answer";
 
 describe("clés d'exigences : ajout, jamais réinterprétation", () => {
@@ -24,6 +27,13 @@ describe("clés d'exigences : ajout, jamais réinterprétation", () => {
     }
     // Les dimensions ne sont demandées qu'une fois, en saisie structurée.
     expect(GUIDED_QUESTIONS.filter((q) => /dimension/i.test(q.prompt)).length).toBe(0);
+  });
+
+  test("la progression compte les questions terminées, jamais celle seulement ouverte", () => {
+    expect(guidedQuestionProgress(0, 6)).toBe(0);
+    expect(guidedQuestionProgress(4, 6)).toBeCloseTo(4 / 6);
+    expect(guidedQuestionProgress(5, 6)).toBeCloseTo(5 / 6);
+    expect(guidedQuestionProgress(5, 6)).toBeLessThan(1);
   });
 
   test("`target_object` est ADDITIF : `envelope` garde son sens de dimensions", () => {
