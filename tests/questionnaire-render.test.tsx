@@ -94,9 +94,14 @@ async function changeValue(element: HTMLElement, value: string) {
     : HTMLInputElement.prototype;
   const setter = Object.getOwnPropertyDescriptor(prototype, "value")?.set;
   if (!setter) throw new Error("Le champ rendu ne fournit pas de setter de valeur natif");
+  const reactPropsKey = Object.keys(element).find((key) => key.startsWith("__reactProps$"));
+  const reactProps = reactPropsKey
+    ? (element as unknown as Record<string, { onChange?: (event: { target: HTMLElement }) => void }>)[reactPropsKey]
+    : undefined;
+  if (!reactProps?.onChange) throw new Error("Le champ rendu ne fournit pas son gestionnaire React");
   await act(async () => {
     setter.call(element, value);
-    element.dispatchEvent(new InputEvent("input", { bubbles: true, data: value, inputType: "insertText" }));
+    reactProps.onChange?.({ target: element });
     await Promise.resolve();
   });
   await waitFor(() => expect((element as HTMLInputElement | HTMLTextAreaElement).value).toBe(value));
