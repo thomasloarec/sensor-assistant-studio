@@ -132,7 +132,7 @@ describe("rendu du questionnaire guidé", () => {
       "Projections d'eau",
     ];
 
-    values.forEach((value, index) => {
+    for (const [index, value] of values.entries()) {
       expect(view.getByText(`Question ${index + 1} sur 6`)).toBeTruthy();
       expect(view.getByText("Votre réponse")).toBeTruthy();
       expect(view.getByRole("button", { name: "Afficher l'exemple 1" }).getAttribute("aria-pressed")).toBe("true");
@@ -141,7 +141,7 @@ describe("rendu du questionnaire guidé", () => {
       answer(view, value);
       await flushState();
       if (index < values.length - 1) fireEvent.click(continueButton(view));
-    });
+    }
 
     for (let index = values.length - 2; index >= 0; index -= 1) {
       fireEvent.click(view.getByRole("button", { name: "Question précédente" }));
