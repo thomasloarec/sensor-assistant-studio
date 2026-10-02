@@ -1738,14 +1738,9 @@ export function DesignSpace({
 
   const guidedStructured =
     question.key === "mounting" ? (
-      <div className="panel-block">
-        <p className="t-label">{t("Facultatif : précisez d'un clic")}</p>
-        <p className="t-caption mt-1">
-          {t(
-            "Une fixation que vous NOMMEZ ici (« vissé ou collé ») est prise comme une contrainte. Rien d'autre n'est déduit de votre texte : un nom d'application n'implique aucune fixation. Ces choix restent modifiables.",
-          )}
-        </p>
-        <div className="mt-3 flex flex-wrap gap-2">
+      <div className="questionnaire-mounting mt-5">
+        <p className="t-label">{t("Facultatif : comment fixer le capteur ?")}</p>
+        <div className="mt-3 flex flex-wrap gap-2" role="group" aria-label={t("Facultatif : comment fixer le capteur ?")}>
           {mountingChips.map((c) => {
             const active = dossier.mounting.kind === c.kind;
             return (
@@ -1774,6 +1769,19 @@ export function DesignSpace({
               </button>
             );
           })}
+          <Button
+            type="button"
+            variant="ghost"
+            aria-pressed={dossier.mounting.kind === "undecided"}
+            className={`answer-filter whitespace-normal text-left${dossier.mounting.kind === "undecided" ? " answer-filter-on" : ""}`}
+            onClick={() => setDossier((d) => ({
+              ...d,
+              mounting: { kind: "undecided" },
+              updatedAt: new Date().toISOString(),
+            }))}
+          >
+            {t("Je ne sais pas encore")}
+          </Button>
         </div>
         {dossier.mounting.kind === "press_fit" ? (
           <div className="mt-3 max-w-xs">
@@ -1798,14 +1806,25 @@ export function DesignSpace({
             </p>
           </div>
         ) : null}
+        {dossier.mounting.kind === "other" ? (
+          <div className="mt-3">
+            <Label className="t-label" htmlFor="guided-other-mounting">{t("Décrivez le montage")}</Label>
+            <Textarea
+              id="guided-other-mounting"
+              rows={2}
+              className="mt-2"
+              value={dossier.mounting.description}
+              onChange={(e) => setDossier((d) => ({
+                ...d,
+                mounting: { kind: "other", description: e.target.value },
+                updatedAt: new Date().toISOString(),
+              }))}
+            />
+          </div>
+        ) : null}
         {/* Dimensions demandées UNE SEULE FOIS, ici, en saisie structurée : le
             texte de cette question ne parle que de position et de fixation. */}
         <p className="t-label mt-5">{t("Facultatif : place disponible pour le capteur")}</p>
-        <p className="t-caption mt-1">
-          {t(
-            "Rien n'est déduit de votre texte. Ces valeurs servent seulement à préfiltrer les capteurs, et restent modifiables.",
-          )}
-        </p>
         <div className="guided-envelope-fields mt-3">
           {(
             [
@@ -1839,9 +1858,6 @@ export function DesignSpace({
             </div>
           ))}
         </div>
-        <p className="t-caption mt-2">
-          {t("Une dimension laissée vide reste inconnue et ne filtre rien.")}
-        </p>
       </div>
     ) : null;
 
@@ -1988,22 +2004,7 @@ export function DesignSpace({
                 ) : null}
 
                 {guidedStructured ? (
-                  <details
-                    className="questionnaire-optional project-answer-details mt-5"
-                    ref={(node) => {
-                      if (!node || node.dataset["initialized"] === "true") return;
-                      node.dataset["initialized"] = "true";
-                      node.open =
-                        dossier.mounting.kind !== "undecided" ||
-                        Object.values(dossier.envelope).some((value) => value !== null);
-                    }}
-                  >
-                    <summary className="t-body flex min-h-11 cursor-pointer list-none items-center gap-2 py-2 font-semibold text-[var(--heading)]">
-                      {t("Précisions facultatives")}
-                      <span className="project-answer-chevron" aria-hidden="true">↓</span>
-                    </summary>
-                    <div className="mt-2">{guidedStructured}</div>
-                  </details>
+                  guidedStructured
                 ) : null}
               </div>
 
