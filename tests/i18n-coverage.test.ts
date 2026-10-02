@@ -75,6 +75,7 @@ describe("Couverture des langues de l'interface", () => {
       "Voir les capteurs proposés",
       "Votre réponse",
       "Précisions facultatives",
+      "Facultatif : comment fixer le capteur ?",
       "Afficher l'exemple {0}",
     ];
     for (const source of questionnaireCopy) {

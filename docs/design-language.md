@@ -458,8 +458,9 @@ Le rappel du résultat attendu précède la carte. La carte associe l'avancement
 la catégorie, puis une question en `t-title-l`. Sur grand écran, la réponse
 occupe trois parts et les exemples deux parts ; sur mobile, les exemples passent
 avant le champ sans masquer de contenu. Le champ conserve un libellé visible.
-Les précisions structurées restent montées dans un dépliant natif et celui-ci
-s'ouvre quand une contrainte existe déjà. La précision libre précède toujours
-la navigation finale. Les exemples utilisent une pagination numérique manuelle,
-avec une cible de 44 px, `aria-label` explicite et `aria-pressed` ; aucune
-rotation automatique n'est autorisée.
+À la question de montage, les choix structurés facultatifs sont visibles sans
+dépliant, regroupés sur une surface teintée avec un choix « Je ne sais pas encore »
+qui laisse le montage inconnu. La précision libre précède toujours la navigation
+finale. Les exemples utilisent des puces de pagination manuelle, avec une cible
+de 44 px, `aria-label` explicite et `aria-pressed` ; aucune rotation automatique
+n'est autorisée.

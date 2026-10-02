@@ -180,12 +180,21 @@ describe("rendu du questionnaire guidé", () => {
     expect((view.getByLabelText("Votre réponse") as HTMLTextAreaElement).value).toBe("");
   });
 
-  test("le montage et ses dimensions restent dans le dépliant facultatif", async () => {
+  test("les solutions de fixation et dimensions sont visibles sans déplier", async () => {
     const view = renderQuestionnaire(390);
     await goToQuestion(view, 4);
-    const optional = view.getByText("Précisions facultatives");
-    fireEvent.click(optional);
+    expect(view.queryByText("Précisions facultatives")).toBeNull();
+    expect(view.getByText("Facultatif : comment fixer le capteur ?")).toBeTruthy();
+    expect(view.queryByText(/Une fixation que vous NOMMEZ/)).toBeNull();
+    expect(view.queryByText(/Rien n'est déduit de votre texte/)).toBeNull();
+    expect(view.queryByText(/Une dimension laissée vide/)).toBeNull();
     expect(view.getByRole("button", { name: /Fixation vissée/ })).toBeTruthy();
+    const unknown = view.getAllByRole("button", { name: "Je ne sais pas encore" }).at(-1);
+    expect(unknown?.getAttribute("aria-pressed")).toBe("true");
+    fireEvent.click(view.getByRole("button", { name: /Fixation vissée/ }));
+    expect(unknown?.getAttribute("aria-pressed")).toBe("false");
+    if (unknown) fireEvent.click(unknown);
+    expect(unknown?.getAttribute("aria-pressed")).toBe("true");
     expect(view.getByLabelText("Longueur")).toBeTruthy();
     expect(view.getByLabelText("Largeur")).toBeTruthy();
     expect(view.getByLabelText("Hauteur")).toBeTruthy();
@@ -204,7 +213,6 @@ describe("rendu du questionnaire guidé", () => {
     expect((view.getByLabelText("Votre réponse") as HTMLTextAreaElement).value).toBe("Détecter le capot");
 
     await goToQuestion(view, 4);
-    fireEvent.click(view.getByText("Précisions facultatives"));
     fireEvent.click(view.getByRole("button", { name: /Emboîtement dans un trou/ }));
     await flushState();
     await changeValue(view.getByLabelText("Diamètre du trou (mm)"), "5.5");
