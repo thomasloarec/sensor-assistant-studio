@@ -77,10 +77,19 @@ function continueButton(view: RenderResult) {
   return view.getByRole("button", { name: "Continuer" });
 }
 
-function goToQuestion(view: RenderResult, target: number) {
-  while (view.queryByText(`Question ${target} sur 6`) === null) {
+async function goToQuestion(view: RenderResult, target: number) {
+  for (let click = 0; click < 6; click += 1) {
+    if (view.queryByText(`Question ${target} sur 6`) !== null) return;
     fireEvent.click(continueButton(view));
+    await flushState();
   }
+  throw new Error(`Question ${target} inaccessible après six clics au maximum`);
+}
+
+async function changeValue(element: HTMLElement, value: string) {
+  fireEvent.change(element, { target: { value } });
+  await flushState();
+  await waitFor(() => expect((element as HTMLInputElement | HTMLTextAreaElement).value).toBe(value));
 }
 
 async function flushState() {
@@ -158,7 +167,7 @@ describe("rendu du questionnaire guidé", () => {
 
   test("le montage et ses dimensions restent dans le dépliant facultatif", async () => {
     const view = renderQuestionnaire(390);
-    goToQuestion(view, 4);
+    await goToQuestion(view, 4);
     const optional = view.getByText("Précisions facultatives");
     fireEvent.click(optional);
     expect(view.getByRole("button", { name: /Fixation vissée/ })).toBeTruthy();
@@ -168,35 +177,82 @@ describe("rendu du questionnaire guidé", () => {
     expect(view.getByText("Ajouter une précision")).toBeTruthy();
   });
 
-  test("les mêmes interactions métier produisent le même export de projet", () => {
-    let dossier = createDossier("2026-10-02T00:00:00.000Z", "fr");
-    dossier = proposeRequirement(dossier, "detection_goal", {
+  test("la saisie réelle, le retour et la sortie conservent les données de référence", async () => {
+    const view = renderQuestionnaire(390);
+
+    const answer = view.getByLabelText("Votre réponse");
+    await changeValue(answer, "Détecter le capot");
+    fireEvent.click(continueButton(view));
+    await flushState();
+    fireEvent.click(view.getByRole("button", { name: "Question précédente" }));
+    await flushState();
+    expect((view.getByLabelText("Votre réponse") as HTMLTextAreaElement).value).toBe("Détecter le capot");
+
+    await goToQuestion(view, 4);
+    fireEvent.click(view.getByText("Précisions facultatives"));
+    fireEvent.click(view.getByRole("button", { name: /Emboîtement dans un trou/ }));
+    await flushState();
+    await changeValue(view.getByLabelText("Diamètre du trou (mm)"), "5.5");
+    await changeValue(view.getByLabelText("Longueur"), "15.5");
+    await changeValue(view.getByLabelText("Largeur"), "8");
+
+    fireEvent.click(view.getByText("Ajouter une précision"));
+    await changeValue(view.getByLabelText("Autre chose à nous dire"), "Câble vers l'arrière");
+
+    fireEvent.click(continueButton(view));
+    await flushState();
+    fireEvent.click(view.getByRole("button", { name: "Je ne sais pas encore" }));
+    await flushState();
+    expect(view.getByText("Question 6 sur 6")).toBeTruthy();
+
+    const blobs: Blob[] = [];
+    const previousCreateObjectURL = URL.createObjectURL;
+    const previousRevokeObjectURL = URL.revokeObjectURL;
+    const previousAnchorClick = HTMLAnchorElement.prototype.click;
+    URL.createObjectURL = (blob) => {
+      blobs.push(blob);
+      return "blob:questionnaire-export";
+    };
+    URL.revokeObjectURL = () => undefined;
+    HTMLAnchorElement.prototype.click = () => undefined;
+    try {
+      fireEvent.click(view.getByText("Menu"));
+      fireEvent.click(view.getByRole("button", { name: "Exporter mon projet" }));
+    } finally {
+      URL.createObjectURL = previousCreateObjectURL;
+      URL.revokeObjectURL = previousRevokeObjectURL;
+      HTMLAnchorElement.prototype.click = previousAnchorClick;
+    }
+
+    expect(blobs).toHaveLength(1);
+    const exported = JSON.parse(await blobs[0].text()) as ReturnType<typeof buildDossierExport>;
+
+    // Référence fonctionnelle antérieure à la refonte de présentation : mêmes
+    // opérations de domaine, comparées à la sortie réellement téléchargée.
+    let baseline = createDossier(exported.dossier.createdAt, "fr");
+    baseline = proposeRequirement(baseline, "detection_goal", {
       value: "Détecter le capot",
       source: "user",
     });
-    dossier = confirmRequirement(dossier, "detection_goal");
-    dossier = {
-      ...dossier,
-      mounting: { kind: "screw" },
+    baseline = {
+      ...baseline,
+      mounting: { kind: "press_fit", holeDiameterMm: 5.5 },
       envelope: { lengthMm: 15.5, widthMm: 8, heightMm: null },
       freeConstraints: "Câble vers l'arrière",
       delegatedDecisions: ["question:electrical"],
     };
-    const exported = buildDossierExport(dossier);
-    expect(exported.dossier.requirements.find((item) => item.key === "detection_goal")).toMatchObject({
-      value: "Détecter le capot",
-      state: "confirmed",
-      source: "user",
-    });
-    expect(exported.dossier.mounting).toEqual({ kind: "screw" });
-    expect(exported.dossier.envelope).toEqual({ lengthMm: 15.5, widthMm: 8, heightMm: null });
-    expect(exported.dossier.freeConstraints).toBe("Câble vers l'arrière");
-    expect(exported.dossier.delegatedDecisions).toEqual(["question:electrical"]);
+    const expected = buildDossierExport(baseline);
+
+    expect(exported.dossier.requirements).toEqual(expected.dossier.requirements);
+    expect(exported.dossier.mounting).toEqual(expected.dossier.mounting);
+    expect(exported.dossier.envelope).toEqual(expected.dossier.envelope);
+    expect(exported.dossier.freeConstraints).toBe(expected.dossier.freeConstraints);
+    expect(exported.dossier.delegatedDecisions).toEqual(expected.dossier.delegatedDecisions);
   });
 
   test("le dernier passage révèle les capteurs sans ajouter de validation", async () => {
     const view = renderQuestionnaire(320);
-    goToQuestion(view, 6);
+    await goToQuestion(view, 6);
     fireEvent.click(view.getByRole("button", { name: "Voir les capteurs proposés" }));
     await waitFor(() => {
       expect(view.getByRole("button", { name: "2. Couples proposés" }).getAttribute("aria-current")).toBe("step");
