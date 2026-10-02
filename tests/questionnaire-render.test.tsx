@@ -68,7 +68,20 @@ function continueButton(view: RenderResult) {
 
 async function answer(view: RenderResult, value: string) {
   await act(async () => {
-    fireEvent.change(view.getByLabelText("Votre réponse"), { target: { value } });
+    const field = view.getByLabelText("Votre réponse") as HTMLTextAreaElement;
+    const setter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, "value")?.set;
+    setter?.call(field, value);
+    fireEvent.input(field, { target: { value } });
+  });
+}
+
+async function typeInto(field: HTMLInputElement | HTMLTextAreaElement, value: string) {
+  await act(async () => {
+    const prototype = field instanceof window.HTMLTextAreaElement
+      ? window.HTMLTextAreaElement.prototype
+      : window.HTMLInputElement.prototype;
+    Object.getOwnPropertyDescriptor(prototype, "value")?.set?.call(field, value);
+    fireEvent.input(field, { target: { value } });
   });
 }
 
@@ -173,16 +186,10 @@ describe("rendu du questionnaire guidé", () => {
     const optional = view.getByText("Précisions facultatives");
     fireEvent.click(optional);
     fireEvent.click(view.getByRole("button", { name: /Fixation vissée/ }));
-    await act(async () => {
-      fireEvent.change(view.getByLabelText("Longueur"), { target: { value: "15,5" } });
-    });
-    await act(async () => {
-      fireEvent.change(view.getByLabelText("Largeur"), { target: { value: "8" } });
-    });
+    await typeInto(view.getByLabelText("Longueur") as HTMLInputElement, "15,5");
+    await typeInto(view.getByLabelText("Largeur") as HTMLInputElement, "8");
     fireEvent.click(view.getByText("Ajouter une précision"));
-    await act(async () => {
-      fireEvent.change(view.getByLabelText("Autre chose à nous dire"), { target: { value: "Câble vers l'arrière" } });
-    });
+    await typeInto(view.getByLabelText("Autre chose à nous dire") as HTMLTextAreaElement, "Câble vers l'arrière");
     fireEvent.click(continueButton(view));
     await flushState();
     fireEvent.click(view.getByRole("button", { name: "Question précédente" }));
