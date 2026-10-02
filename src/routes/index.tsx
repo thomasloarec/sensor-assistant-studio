@@ -129,11 +129,11 @@ function HomeRoute() {
                   <span className="standex-bar h-[14px] w-[6px] shrink-0" aria-hidden="true" />
                   {t("Détection magnétique")}
                 </p>
-                <h1 className="t-display-xl mt-5 max-w-[18ch] text-balance">
-                  {t("Vérifiez la détection dans votre montage.")}
+                <h1 className="t-display-xl mt-5 max-w-[20ch] text-balance">
+                  {t("Découvrez les meilleures solutions pour votre application.")}
                 </h1>
                 <p className="t-body-l mt-7 max-w-[34rem] text-muted-foreground">
-                  {t("Décrivez ce que vous voulez détecter. Sensor Studio vous propose des couples capteur-aimant Standex et vous montre s'ils détecteront dans votre montage.")}
+                  {t("Répondez à 6 questions pour explorer les capteurs proposés, puis les tester dans l'atelier 3D.")}
                 </p>
                 {/* UN SEUL bouton primaire : le retour sur un projet existant est
                     un lien, pas une seconde action de même poids. */}

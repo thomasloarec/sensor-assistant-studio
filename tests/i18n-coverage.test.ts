@@ -34,7 +34,7 @@ describe("Couverture des langues de l'interface", () => {
 
   test("chaque entrée porte exactement sept traductions non vides", () => {
     // Baseline auditée : 3 189 entrées, puis les deux sélecteurs absents ajoutés ici.
-    expect(Object.keys(dictionary)).toHaveLength(3_191);
+    expect(Object.keys(dictionary)).toHaveLength(3_197);
     const broken = Object.entries(dictionary).filter(
       ([, v]) => v.length !== 7 || v.some((x) => typeof x !== "string" || x.trim() === ""),
     );
@@ -61,6 +61,21 @@ describe("Couverture des langues de l'interface", () => {
     expect(samples.length).toBeGreaterThan(0);
     for (const locale of OTHER)
       for (const source of samples) expect(t(source, locale)).not.toBe(source);
+  });
+
+  test("l'entrée et les repères des six questions sont complets dans les huit langues", () => {
+    const questionnaireCopy = [
+      "Découvrez les meilleures solutions pour votre application.",
+      "Répondez à 6 questions pour explorer les capteurs proposés, puis les tester dans l'atelier 3D.",
+      "À la fin : les capteurs proposés pour votre application.",
+      "Encore 2 questions avant de découvrir les capteurs proposés.",
+      "Dernière question avant de découvrir les capteurs proposés.",
+      "Voir les capteurs proposés",
+    ];
+    for (const source of questionnaireCopy) {
+      expect(dictionary[source], source).toHaveLength(7);
+      for (const locale of OTHER) expect(t(source, locale), `${locale}: ${source}`).not.toBe(source);
+    }
   });
 
   test("les références et unités ne sont jamais traduites", () => {
