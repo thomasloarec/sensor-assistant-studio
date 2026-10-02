@@ -1169,6 +1169,31 @@
     border-radius: var(--r-lg);
     background: var(--surface-tint);
   }
+  .questionnaire-examples-text {
+    font-style: italic;
+  }
+  .questionnaire-examples-dots {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+  .questionnaire-examples-dot {
+    display: block;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: var(--r-pill);
+    background: var(--muted-foreground);
+    opacity: 0.4;
+    transition:
+      background var(--d-fast) var(--ease-out),
+      opacity var(--d-fast) var(--ease-out),
+      transform var(--d-fast) var(--ease-out);
+  }
+  .questionnaire-examples-dot.is-active {
+    background: var(--primary);
+    opacity: 1;
+    transform: scale(1.25);
+  }
   .questionnaire-optional > div {
     min-width: 0;
   }
@@ -2041,8 +2066,9 @@
   .data-table tbody tr:hover {
     transform: none;
   }
-  .task-more,
-  .status-pill {
+  .task-more > div,
+  .status-pill,
+  .questionnaire-examples-dot {
     transition: none;
   }
 }
