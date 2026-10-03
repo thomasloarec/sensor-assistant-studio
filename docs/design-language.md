@@ -131,6 +131,10 @@ bordure.
 Matières : `--material-thin`, `--material-regular` et `--material-blur`
 (`saturate(180%) blur(24px)`) pour les barres et surfaces translucides.
 
+### Curseurs documentaires à crans
+
+Un choix ordinal documenté peut prendre la forme d’un curseur à crans si plusieurs valeurs existent. Une valeur unique est affichée sans faux curseur. La valeur métier lisible précède toujours son code secondaire.
+
 ## 6. Mouvement
 
 Courbes : `--ease-out` (sortie naturelle), `--ease-in-out`, `--ease-spring`

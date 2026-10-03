@@ -14,6 +14,7 @@ import {
   publishedApproaches,
   publishedClasses,
   publishedPairFor,
+  nominalSensitivityRowsFor,
   publishedClassKind,
   publishedRowsForCouple,
   publishedSensorReference,
@@ -130,6 +131,10 @@ describe("distances publiées : la source décide, jamais une liste de familles"
     expect(r.unknown).toBe(false);
     expect(r.transitions[0]!.distance).toBeCloseTo(15, 0);
     expect(r.transitions[1]!.distance).toBeCloseTo(17.5, 0);
+  });
+  test("le réglage d'activation trie les seuils typiques du couple et de l'approche", () => {
+    expect(nominalSensitivityRowsFor("MK04", "M04", "D1").map((row) => [row.sensitivityClass, row.pullInMm])).toEqual([["E", 10], ["D", 11], ["C", 13], ["B", 15]]);
+    expect(nominalSensitivityRowsFor("MK38", "M38-N42", "F1")).toEqual([]);
   });
   test("un MK04 n'emprunte jamais les seuils d'un MK03 : le titre et les valeurs suivent le couple", () => {
     const mk03 = config({ sensorId: "MK03", magnetModel: "4003004003", sensitivity: "C", geometry: "D1" }),
