@@ -20,6 +20,7 @@ import { pairCards } from "../src/lib/leadmagnet/pair-cards";
 import { DEFAULT_WORKSHOP, poseAt, simulateCycle } from "../src/lib/standex/magnetic-workshop";
 import {
   housingYawDeg,
+  renderedMagnetHousingYawDeg,
   rotatedLocalZ,
   workshopHousingYawDeg,
   workshopMagnetHousingYawDeg,
@@ -238,6 +239,10 @@ describe("retours 16/09 : pose et honnêteté physique", () => {
     expect(Math.sign(sensorSide)).toBe(Math.sign(magnetSide));
     expect(workshopMagnetHousingYawDeg(sensor.id, "D1", true)).toBe(0);
     expect(workshopMagnetHousingYawDeg(sensor.id, "F1", true)).toBe(0);
+  });
+  test("une machine MK21PR D3 conserve sa pose aimant importée", () => {
+    expect(renderedMagnetHousingYawDeg("MK21PR", "D3", true, true)).toBe(0);
+    expect(renderedMagnetHousingYawDeg("MK21PR", "D3", true, false)).toBe(180);
   });
   test("une polarité non caractérisée importée ne produit jamais de seuil publié", () => {
     const c = { ...DEFAULT_WORKSHOP, sensorId: "MK04", magnetModel: "M04", polarity: -1 as const };

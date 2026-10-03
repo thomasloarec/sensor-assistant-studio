@@ -2,7 +2,7 @@ import { cableConstruction } from "@/lib/leadmagnet/product-presentation";
 import {
   transverseApproach,
   workshopHousingYawDeg,
-  workshopMagnetHousingYawDeg,
+  renderedMagnetHousingYawDeg,
 } from "@/lib/standex/housing-pose";
 import { pairedMagnetModel } from "@/lib/standex/paired-magnets";
 import { t } from "@/lib/i18n/core";
@@ -513,10 +513,11 @@ export function Magnet({
   const [l, h, w] = magnetSize(config),
     axial = config.magnetization === "axial",
     thick = config.magnetization === "thickness";
-  const housingYaw = workshopMagnetHousingYawDeg(
+  const housingYaw = renderedMagnetHousingYawDeg(
     config.sensorId,
     config.geometry,
     Boolean(actualModel),
+    Boolean(config.machine),
   );
   return (
     <group
