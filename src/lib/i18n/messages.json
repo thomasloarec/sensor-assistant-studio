@@ -332,7 +332,15 @@
     "* Ordine di stampa inusuale nella brochure («up» maggiore di «to»). Il valore è riprodotto così com'è, senza ordinamenti né correzioni, e resta da confermare da Standex: queste righe non fanno da riferimento alla dimostrazione di portata.",
     "* ブローシャーの印刷順序が通常と異なります（「up」が「to」より大きい）。値は並べ替えや修正なしにそのまま再現し、Standex の確認待ちです。これらの行は距離のデモの目安には使いません。"
   ],
-  "+ Nouvelle": ["+ New", "+ 新建", "+ Neu", "+ Nueva", "+ Новый", "+ Nuova", "+ 新規"],
+  "+ Nouvelle": [
+    "+ New",
+    "+ 新建",
+    "+ Neu",
+    "+ Nueva",
+    "+ Новый",
+    "+ Nuova",
+    "+ 新規"
+  ],
   "+ Tester {0}": [
     "+ Test {0}",
     "+ 测试 {0}",
@@ -765,8 +773,24 @@
     "- Città cliente: {0}",
     "- 顧客所在地：{0}"
   ],
-  "- aucun": ["- none", "- 无", "- keine", "- ninguno", "- нет", "- nessuno", "- なし"],
-  "- aucune": ["- none", "- 无", "- keine", "- ninguna", "- нет", "- nessuna", "- なし"],
+  "- aucun": [
+    "- none",
+    "- 无",
+    "- keine",
+    "- ninguno",
+    "- нет",
+    "- nessuno",
+    "- なし"
+  ],
+  "- aucune": [
+    "- none",
+    "- 无",
+    "- keine",
+    "- ninguna",
+    "- нет",
+    "- nessuna",
+    "- なし"
+  ],
   "- courant de commutation : 0,5 A ;": [
     "- switching current: 0.5 A;",
     "- 切换电流：0.5 A；",
@@ -1181,7 +1205,15 @@
     "Concedi un diritto Standex",
     "Standex 権限を付与"
   ],
-  "Accueil": ["Home", "首页", "Startseite", "Inicio", "Главная", "Home", "ホーム"],
+  "Accueil": [
+    "Home",
+    "首页",
+    "Startseite",
+    "Inicio",
+    "Главная",
+    "Home",
+    "ホーム"
+  ],
   "Accès réservé": [
     "Restricted access",
     "访问受限",
@@ -1245,8 +1277,24 @@
     "Acciaio o altro materiale ferromagnetico vicino",
     "近くに鋼などの強磁性体あり"
   ],
-  "Actif": ["Active", "有效", "Aktiv", "Activa", "Активна", "Attivo", "有効"],
-  "Action": ["Action", "操作", "Aktion", "Acción", "Действие", "Azione", "操作"],
+  "Actif": [
+    "Active",
+    "有效",
+    "Aktiv",
+    "Activa",
+    "Активна",
+    "Attivo",
+    "有効"
+  ],
+  "Action": [
+    "Action",
+    "操作",
+    "Aktion",
+    "Acción",
+    "Действие",
+    "Azione",
+    "操作"
+  ],
   "Action distincte : elle remplace votre course déclarée par celle du gabarit publié. Votre besoin et vos contraintes restent inchangés.": [
     "Separate action: it replaces your declared travel with the published template travel. Your requirement and constraints stay unchanged.",
     "独立操作：将您声明的行程替换为已发布样板的行程。您的需求与约束保持不变。",
@@ -1310,7 +1358,15 @@
     "Attività più recente",
     "最近の動き"
   ],
-  "Actualiser": ["Refresh", "刷新", "Aktualisieren", "Actualizar", "Обновить", "Aggiorna", "更新"],
+  "Actualiser": [
+    "Refresh",
+    "刷新",
+    "Aktualisieren",
+    "Actualizar",
+    "Обновить",
+    "Aggiorna",
+    "更新"
+  ],
   "Actualiser le statut": [
     "Refresh status",
     "刷新状态",
@@ -1365,7 +1421,15 @@
     "Amministrazione",
     "管理"
   ],
-  "Adresse": ["Address", "邮箱地址", "Adresse", "Dirección", "Адрес", "Indirizzo", "アドレス"],
+  "Adresse": [
+    "Address",
+    "邮箱地址",
+    "Adresse",
+    "Dirección",
+    "Адрес",
+    "Indirizzo",
+    "アドレス"
+  ],
   "Adresse d'un compte existant": [
     "Address of an existing account",
     "现有账户的邮箱地址",
@@ -1429,7 +1493,15 @@
     "Guida al posizionamento",
     "配置のヘルプ"
   ],
-  "Aimant": ["Magnet", "磁铁", "Magnet", "Imán", "Магнит", "Magnete", "磁石"],
+  "Aimant": [
+    "Magnet",
+    "磁铁",
+    "Magnet",
+    "Imán",
+    "Магнит",
+    "Magnete",
+    "磁石"
+  ],
   "Aimant choisi à l'étape « Choisir le couple ». Revenez-y pour en changer.": [
     "Magnet chosen in the \"Choose the pair\" step. Go back there to change it.",
     "磁铁在“选择组合”步骤中选定，如需更改请返回该步骤。",
@@ -1493,7 +1565,15 @@
     "Magnete in {0}",
     "{0} マグネット"
   ],
-  "Aimants": ["Magnets", "磁铁", "Magnete", "Imanes", "Магниты", "Magneti", "磁石"],
+  "Aimants": [
+    "Magnets",
+    "磁铁",
+    "Magnete",
+    "Imanes",
+    "Магниты",
+    "Magneti",
+    "磁石"
+  ],
   "Ajout de matière ferromagnétique : nouvelle caractérisation": [
     "Added ferromagnetic material: recharacterise",
     "添加铁磁材料：需重新表征",
@@ -1503,7 +1583,15 @@
     "Materiale ferromagnetico aggiunto: nuova caratterizzazione",
     "強磁性材料の追加：再評価が必要"
   ],
-  "Ajouter": ["Add", "添加", "Hinzufügen", "Añadir", "Добавить", "Aggiungi", "追加"],
+  "Ajouter": [
+    "Add",
+    "添加",
+    "Hinzufügen",
+    "Añadir",
+    "Добавить",
+    "Aggiungi",
+    "追加"
+  ],
   "Ajouter la liste de tâches type": [
     "Add the standard task list",
     "添加标准任务清单",
@@ -1612,7 +1700,15 @@
     "Allinea lo studio 3D alla gamma seguita",
     "3Dスタジオを追跡対象の製品ファミリーに合わせる"
   ],
-  "Aller": ["Outward", "去程", "Hinweg", "Ida", "Прямой ход", "Andata", "往路"],
+  "Aller": [
+    "Outward",
+    "去程",
+    "Hinweg",
+    "Ida",
+    "Прямой ход",
+    "Andata",
+    "往路"
+  ],
   "Aller → retour · lecture pédagogique": [
     "Outward → return · educational playback",
     "去程 → 回程 · 教学播放",
@@ -1730,7 +1826,15 @@
     "Anima il magnete",
     "マグネットを動かす"
   ],
-  "Annuaire": ["Directory", "名录", "Verzeichnis", "Directorio", "Справочник", "Rubrica", "名簿"],
+  "Annuaire": [
+    "Directory",
+    "名录",
+    "Verzeichnis",
+    "Directorio",
+    "Справочник",
+    "Rubrica",
+    "名簿"
+  ],
   "Annuaire des commerciaux et des FAE, comptes et droits d'accès, journal des actions.": [
     "Directory of sales and FAE staff, accounts and access rights, action log.",
     "销售与 FAE 名录、账户与访问权限、操作日志。",
@@ -1758,7 +1862,15 @@
     "Elenco non attivato su questo server",
     "このサーバーではディレクトリが有効になっていません"
   ],
-  "Annuler": ["Cancel", "取消", "Abbrechen", "Cancelar", "Отмена", "Annulla", "キャンセル"],
+  "Annuler": [
+    "Cancel",
+    "取消",
+    "Abbrechen",
+    "Cancelar",
+    "Отмена",
+    "Annulla",
+    "キャンセル"
+  ],
   "Annuler la prévisualisation": [
     "Cancel the preview",
     "取消预览",
@@ -2011,7 +2123,15 @@
     "Dopo il ripristino, reimportare lo stesso GLB per recuperare il montaggio.",
     "再開後、同じGLBを再インポートして取り付けを復元してください。"
   ],
-  "Arrivée": ["Finish", "结束", "Ende", "Final", "Конец", "Fine", "終了"],
+  "Arrivée": [
+    "Finish",
+    "结束",
+    "Ende",
+    "Final",
+    "Конец",
+    "Fine",
+    "終了"
+  ],
   "Arrêter le pointage": [
     "Stop plotting",
     "停止标点",
@@ -2075,7 +2195,15 @@
     "Non usare valori più favorevoli: non 1,25 A o 250 VDC. Per 66 Form A: 1 A passante e 200 VDC di rottura.",
     "別条件の有利な値（通電1.25 A、破壊250 VDC）は使いません。66 Form Aは通電1 A、破壊200 VDCです。"
   ],
-  "Aucun": ["None", "无", "Keine", "Ninguno", "Нет", "Nessuno", "なし"],
+  "Aucun": [
+    "None",
+    "无",
+    "Keine",
+    "Ninguno",
+    "Нет",
+    "Nessuno",
+    "なし"
+  ],
   "Aucun accord de confidentialité n'est demandé dans ce fichier.": [
     "No confidentiality agreement is requested in this file.",
     "此文件中未请求保密协议。",
@@ -2904,7 +3032,15 @@
     "Altri criteri in corso. Le sue risposte non vengono modificate.",
     "他の条件を適用中です。回答は変更されません。"
   ],
-  "Avancement": ["Progress", "进度", "Fortschritt", "Avance", "Прогресс", "Avanzamento", "進捗"],
+  "Avancement": [
+    "Progress",
+    "进度",
+    "Fortschritt",
+    "Avance",
+    "Прогресс",
+    "Avanzamento",
+    "進捗"
+  ],
   "Avant de proposer une référence, il me manque un élément déterminant.": [
     "A decisive piece of information is missing before I can suggest a part.",
     "推荐型号前还缺一项关键信息。",
@@ -3049,7 +3185,15 @@
     "Barra di lavoro",
     "作業バー"
   ],
-  "Base :": ["Base:", "基准：", "Basis:", "Base:", "База:", "Base:", "ベース："],
+  "Base :": [
+    "Base:",
+    "基准：",
+    "Basis:",
+    "Base:",
+    "База:",
+    "Base:",
+    "ベース："
+  ],
   "Base de conception issue du fabricant. Boîtier et contacts distincts.": [
     "Design basis from manufacturer. Housing and contacts separate.",
     "制造商设计基准。外壳与触点独立。",
@@ -3086,7 +3230,15 @@
     "Base deterministica {0}",
     "決定論的ベースライン {0}"
   ],
-  "Besoin": ["Requirement", "需求", "Anforderung", "Requisito", "Потребность", "Requisito", "要件"],
+  "Besoin": [
+    "Requirement",
+    "需求",
+    "Anforderung",
+    "Requisito",
+    "Потребность",
+    "Requisito",
+    "要件"
+  ],
   "Besoin à préciser avec le prospect.": [
     "Need to clarify with the customer.",
     "需与客户明确需求。",
@@ -3105,8 +3257,24 @@
     "Libreria scenari",
     "シナリオライブラリ"
   ],
-  "Bloc": ["Block", "方块", "Block", "Bloque", "Блок", "Blocco", "ブロック"],
-  "Bloqué": ["Blocked", "受阻", "Blockiert", "Bloqueado", "Заблокировано", "Bloccato", "停滞"],
+  "Bloc": [
+    "Block",
+    "方块",
+    "Block",
+    "Bloque",
+    "Блок",
+    "Blocco",
+    "ブロック"
+  ],
+  "Bloqué": [
+    "Blocked",
+    "受阻",
+    "Blockiert",
+    "Bloqueado",
+    "Заблокировано",
+    "Bloccato",
+    "停滞"
+  ],
   "Borne finie et non négative, ou vide": [
     "Finite, non-negative bound, or empty",
     "有限且非负的界限，或留空",
@@ -3116,7 +3284,15 @@
     "Limite finito e non negativo, oppure vuoto",
     "有限で負でない値、または空欄"
   ],
-  "Boîtier": ["Housing", "外壳", "Gehäuse", "Carcasa", "Корпус", "Involucro", "筐体"],
+  "Boîtier": [
+    "Housing",
+    "外壳",
+    "Gehäuse",
+    "Carcasa",
+    "Корпус",
+    "Involucro",
+    "筐体"
+  ],
   "Boîtier : {0}. Contacts internes schématiques, position non caractérisée.": [
     "Housing: {0}. Internal contacts are schematic; their position is not characterized.",
     "外壳：{0}。内部触点为示意，位置未实测。",
@@ -3306,7 +3482,15 @@
     "Pin SMD",
     "SMD ピン"
   ],
-  "Brouillon": ["Draft", "草稿", "Entwurf", "Borrador", "Черновик", "Bozza", "下書き"],
+  "Brouillon": [
+    "Draft",
+    "草稿",
+    "Entwurf",
+    "Borrador",
+    "Черновик",
+    "Bozza",
+    "下書き"
+  ],
   "Brouillon · utilisez « Joindre au dossier » pour enregistrer dans {0}.": [
     "Draft · use “Add to dossier” to save in {0}.",
     "草稿 · 使用“加入档案”保存到 {0}。",
@@ -3352,7 +3536,15 @@
     "Ricavi min",
     "最小売上"
   ],
-  "CMS": ["SMD", "表面贴装", "SMD", "SMD", "SMD", "SMD", "SMD"],
+  "CMS": [
+    "SMD",
+    "表面贴装",
+    "SMD",
+    "SMD",
+    "SMD",
+    "SMD",
+    "SMD"
+  ],
   "Cadence de commutation": [
     "Switching rate",
     "开关频率",
@@ -3398,9 +3590,33 @@
     "Calibrazione: RIFIUTATA",
     "校正：拒否"
   ],
-  "Canal": ["Channel", "渠道", "Kanal", "Canal", "Канал", "Canale", "チャネル"],
-  "Candidats": ["Candidates", "候选", "Kandidaten", "Candidatos", "Кандидаты", "Candidati", "候補"],
-  "Capteur": ["Sensor", "传感器", "Sensor", "Sensor", "Датчик", "Sensore", "センサー"],
+  "Canal": [
+    "Channel",
+    "渠道",
+    "Kanal",
+    "Canal",
+    "Канал",
+    "Canale",
+    "チャネル"
+  ],
+  "Candidats": [
+    "Candidates",
+    "候选",
+    "Kandidaten",
+    "Candidatos",
+    "Кандидаты",
+    "Candidati",
+    "候補"
+  ],
+  "Capteur": [
+    "Sensor",
+    "传感器",
+    "Sensor",
+    "Sensor",
+    "Датчик",
+    "Sensore",
+    "センサー"
+  ],
   "Capteur : {0} mm ; rotation {1}°. Aimant : {2} mm ; rotation {3}°.": [
     "Sensor: {0} mm; rotation {1}°. Magnet: {2} mm; rotation {3}°.",
     "传感器：{0} mm；旋转 {1}°。磁铁：{2} mm；旋转 {3}°。",
@@ -3455,7 +3671,15 @@
     "Sensore avvitato all’interno della macchina, magnete fissato al serbatoio plastico rimovibile.",
     "センサーは装置内にねじ固定、磁石は着脱式樹脂タンクに固定。"
   ],
-  "Capteurs": ["Sensors", "传感器", "Sensoren", "Sensores", "Датчики", "Sensori", "センサー"],
+  "Capteurs": [
+    "Sensors",
+    "传感器",
+    "Sensoren",
+    "Sensores",
+    "Датчики",
+    "Sensori",
+    "センサー"
+  ],
   "Capteurs Standex cotés et reed pédagogique, à échelle commune.": [
     "Dimensioned Standex sensors and an educational reed, at a common scale.",
     "同一比例的带尺寸Standex传感器及教学干簧管。",
@@ -3501,7 +3725,15 @@
     "Sensori con fissaggio a vite",
     "ねじ固定センサー"
   ],
-  "Catalogue": ["Catalogue", "目录", "Katalog", "Catálogo", "Каталог", "Catalogo", "カタログ"],
+  "Catalogue": [
+    "Catalogue",
+    "目录",
+    "Katalog",
+    "Catálogo",
+    "Каталог",
+    "Catalogo",
+    "カタログ"
+  ],
   "Catalogue des aimants": [
     "Magnet catalogue",
     "磁铁目录",
@@ -4492,7 +4724,15 @@
     "Questo passaggio è possibile solo dopo un riscontro convalidato da Standex sulla versione corrente.",
     "この手順は、現在のバージョンに対してStandexによる承認済みのフィードバックが得られた後にのみ実行できます。"
   ],
-  "Champ": ["Field", "字段", "Feld", "Campo", "Поле", "Campo", "項目"],
+  "Champ": [
+    "Field",
+    "字段",
+    "Feld",
+    "Campo",
+    "Поле",
+    "Campo",
+    "項目"
+  ],
   "Champ idéal": [
     "Ideal field",
     "理想磁场",
@@ -4682,7 +4922,15 @@
     "Scelto ✓",
     "選択済み ✓"
   ],
-  "Choisir": ["Select", "选择", "Auswählen", "Elegir", "Выбрать", "Scegli", "選択"],
+  "Choisir": [
+    "Select",
+    "选择",
+    "Auswählen",
+    "Elegir",
+    "Выбрать",
+    "Scegli",
+    "選択"
+  ],
   "Choisir dans le catalogue": [
     "Choose from catalogue",
     "从目录中选择",
@@ -4971,7 +5219,15 @@
     "Circuito interrotto",
     "回路遮断"
   ],
-  "Classe": ["Class", "等级", "Klasse", "Clase", "Класс", "Classe", "クラス"],
+  "Classe": [
+    "Class",
+    "等级",
+    "Klasse",
+    "Clase",
+    "Класс",
+    "Classe",
+    "クラス"
+  ],
   "Classe de sensibilité": [
     "Sensitivity class",
     "灵敏度等级",
@@ -5017,7 +5273,15 @@
     "Claude non ha restituito una risposta utile. Resta visibile la base deterministica.",
     "利用可能なClaude回答がありません。ベースラインを表示します。"
   ],
-  "Client": ["Client", "客户", "Kunde", "Cliente", "Клиент", "Cliente", "顧客"],
+  "Client": [
+    "Client",
+    "客户",
+    "Kunde",
+    "Cliente",
+    "Клиент",
+    "Cliente",
+    "顧客"
+  ],
   "Cliquez sur deux surfaces pour mesurer leur distance. Un troisième clic recommence la mesure.": [
     "Click two surfaces to measure their distance. A third click starts a new measurement.",
     "点击两个表面测量距离。第三次点击开始新测量。",
@@ -5153,7 +5417,15 @@
     "Poiché {0} è induttivo, serve validazione Standex. Si consiglia un'interfaccia tra reed e carico.",
     "{0}は誘導性負荷のためStandexの確認が必要です。リードと負荷間に中間回路を推奨します。"
   ],
-  "Commencer": ["Start", "开始", "Starten", "Empezar", "Начать", "Inizia", "はじめる"],
+  "Commencer": [
+    "Start",
+    "开始",
+    "Starten",
+    "Empezar",
+    "Начать",
+    "Inizia",
+    "はじめる"
+  ],
   "Comment cette pièce bouge-t-elle, et quels états faut-il distinguer ?": [
     "How does this part move, and which states must be distinguished?",
     "该部件如何运动，需要区分哪些状态？",
@@ -5181,7 +5453,15 @@
     "Partiamo dalla tua applicazione.",
     "まず用途を教えてください。"
   ],
-  "Commerce": ["Sales", "销售", "Vertrieb", "Comercial", "Продажи", "Commerciale", "営業"],
+  "Commerce": [
+    "Sales",
+    "销售",
+    "Vertrieb",
+    "Comercial",
+    "Продажи",
+    "Commerciale",
+    "営業"
+  ],
   "Commercial": [
     "Commercial",
     "商务",
@@ -5218,7 +5498,15 @@
     "Confronto eseguito nell'orientamento più favorevole; l'orientamento effettivo rimane da confermare.",
     "最も有利な向きでの比較です。実際の向きは確認が必要です。"
   ],
-  "Comparer": ["Compare", "比较", "Vergleichen", "Comparar", "Сравнить", "Confronta", "比較"],
+  "Comparer": [
+    "Compare",
+    "比较",
+    "Vergleichen",
+    "Comparar",
+    "Сравнить",
+    "Confronta",
+    "比較"
+  ],
   "Comparer les sensibilités": [
     "Compare sensitivity classes",
     "比较灵敏度",
@@ -5246,7 +5534,15 @@
     "Compatibilità della vostra applicazione",
     "お客様の用途の適合性"
   ],
-  "Complète": ["Complete", "完整", "Vollständig", "Completa", "Полная", "Completa", "完全"],
+  "Complète": [
+    "Complete",
+    "完整",
+    "Vollständig",
+    "Completa",
+    "Полная",
+    "Completa",
+    "完全"
+  ],
   "Complétez et vérifiez votre demande de confidentialité.": [
     "Complete and review your confidentiality request.",
     "填写并检查您的保密申请。",
@@ -5463,7 +5759,15 @@
     "Progetta un rilevamento — Standex DETECT",
     "検出システムの設計 — Standex DETECT"
   ],
-  "Conclusion": ["Conclusion", "结论", "Fazit", "Conclusión", "Заключение", "Conclusione", "結論"],
+  "Conclusion": [
+    "Conclusion",
+    "结论",
+    "Fazit",
+    "Conclusión",
+    "Заключение",
+    "Conclusione",
+    "結論"
+  ],
   "Conditions": [
     "Conditions",
     "条件",
@@ -5545,7 +5849,15 @@
     "Riservatezza · NDA",
     "機密保持 · NDA"
   ],
-  "Confier": ["Assign", "指派", "Zuweisen", "Asignar", "Назначить", "Assegna", "割り当て"],
+  "Confier": [
+    "Assign",
+    "指派",
+    "Zuweisen",
+    "Asignar",
+    "Назначить",
+    "Assegna",
+    "割り当て"
+  ],
   "Configuration du contact": [
     "Contact configuration",
     "触点配置",
@@ -5564,7 +5876,15 @@
     "Configurazione del montaggio",
     "組付け構成"
   ],
-  "Confirmer": ["Confirm", "确认", "Bestätigen", "Confirmar", "Подтвердить", "Conferma", "確認"],
+  "Confirmer": [
+    "Confirm",
+    "确认",
+    "Bestätigen",
+    "Confirmar",
+    "Подтвердить",
+    "Conferma",
+    "確認"
+  ],
   "Confirmer avec Standex →": [
     "Confirm with Standex →",
     "请 Standex 确认 →",
@@ -5601,7 +5921,15 @@
     "Conferma questa risposta",
     "この回答を確認する"
   ],
-  "Confirmez": ["Confirm", "确认", "Bestätigen", "Confirme", "Подтвердите", "Confermi", "確定する"],
+  "Confirmez": [
+    "Confirm",
+    "确认",
+    "Bestätigen",
+    "Confirme",
+    "Подтвердите",
+    "Confermi",
+    "確定する"
+  ],
   "Confirmez la relecture du résumé technique.": [
     "Confirm review of the technical summary.",
     "确认已核阅技术摘要。",
@@ -5737,7 +6065,15 @@
     "Accesso effettuato.",
     "ログイン中。"
   ],
-  "Connexion": ["Log in", "登录", "Anmelden", "Iniciar sesión", "Вход", "Accedi", "ログイン"],
+  "Connexion": [
+    "Log in",
+    "登录",
+    "Anmelden",
+    "Iniciar sesión",
+    "Вход",
+    "Accedi",
+    "ログイン"
+  ],
   "Connexion en cours…": [
     "Logging in…",
     "正在登录…",
@@ -5882,7 +6218,15 @@
     "Consulta il disegno Standex",
     "Standex図面を見る"
   ],
-  "Contact": ["Contact", "触点", "Kontakt", "Contacto", "Контакт", "Contatto", "接点"],
+  "Contact": [
+    "Contact",
+    "触点",
+    "Kontakt",
+    "Contacto",
+    "Контакт",
+    "Contatto",
+    "接点"
+  ],
   "Contact fermé": [
     "Contact closed",
     "触点闭合",
@@ -6135,7 +6479,15 @@
     "Contesto da precisare con Standex.",
     "背景情報は Standex と要相談。"
   ],
-  "Continuer": ["Continue", "继续", "Weiter", "Continuar", "Продолжить", "Continua", "次へ"],
+  "Continuer": [
+    "Continue",
+    "继续",
+    "Weiter",
+    "Continuar",
+    "Продолжить",
+    "Continua",
+    "次へ"
+  ],
   "Continuer l'édition": [
     "Continue editing",
     "继续编辑",
@@ -6289,7 +6641,15 @@
     "Copia non riuscita in questo browser: seleziona il testo e copialo manualmente.",
     "このブラウザではコピーできません。テキストを選択して手動でコピーしてください。"
   ],
-  "Copier": ["Copy", "复制", "Kopieren", "Copiar", "Копировать", "Copia", "コピー"],
+  "Copier": [
+    "Copy",
+    "复制",
+    "Kopieren",
+    "Copiar",
+    "Копировать",
+    "Copia",
+    "コピー"
+  ],
   "Copier la dernière": [
     "Copy latest",
     "复制最新一条",
@@ -6344,7 +6704,15 @@
     "Copia il testo nell'editor SQL Supabase e ricarica. Il banco funziona; manca solo il confronto.",
     "以下を Supabase の SQL エディターに貼り付け、再読み込みしてください。比較以外の機能は利用できます。"
   ],
-  "Copié": ["Copied", "已复制", "Kopiert", "Copiado", "Скопировано", "Copiato", "コピーしました"],
+  "Copié": [
+    "Copied",
+    "已复制",
+    "Kopiert",
+    "Copiado",
+    "Скопировано",
+    "Copiato",
+    "コピーしました"
+  ],
   "Corps 5 × 2,2 × 1,6 mm ; encombrement avec connexions J : 5,5 mm. Les autres connexions et Form B ont d'autres encombrements.": [
     "Body 5 × 2.2 × 1.6 mm; 5.5 mm including J terminals. Other terminals and Form B have different envelopes.",
     "外壳 5 × 2.2 × 1.6 mm；含 J 端子长 5.5 mm。其他端子和 Form B 外形不同。",
@@ -6525,7 +6893,15 @@
     "Coppie testate",
     "テスト済みの組み合わせ"
   ],
-  "Courant": ["Current", "电流", "Strom", "Corriente", "Ток", "Corrente", "電流"],
+  "Courant": [
+    "Current",
+    "电流",
+    "Strom",
+    "Corriente",
+    "Ток",
+    "Corrente",
+    "電流"
+  ],
   "Courant commuté max.": [
     "Max. switching current",
     "最大切换电流",
@@ -6688,7 +7064,15 @@
     "Ciclo indeterminato: nessuna distanza pubblicata per questa posizione.",
     "サイクルは不確定です。この位置の距離は公開されていません。"
   ],
-  "Cylindre": ["Cylinder", "圆柱", "Zylinder", "Cilindro", "Цилиндр", "Cilindro", "円柱"],
+  "Cylindre": [
+    "Cylinder",
+    "圆柱",
+    "Zylinder",
+    "Cilindro",
+    "Цилиндр",
+    "Cilindro",
+    "円柱"
+  ],
   "Cylindrique": [
     "Cylindrical",
     "圆柱形",
@@ -7166,7 +7550,15 @@
     "Due coppie per il vostro progetto",
     "プロジェクト向けの2つのペア"
   ],
-  "Devise": ["Currency", "币种", "Währung", "Moneda", "Валюта", "Valuta", "通貨"],
+  "Devise": [
+    "Currency",
+    "币种",
+    "Währung",
+    "Moneda",
+    "Валюта",
+    "Valuta",
+    "通貨"
+  ],
   "Devise (code à trois lettres)": [
     "Currency (three-letter code)",
     "货币（三位字母代码）",
@@ -7257,7 +7649,15 @@
     "DigiKey FR",
     "DigiKey FR"
   ],
-  "Dimensions": ["Dimensions", "尺寸", "Maße", "Dimensiones", "Размеры", "Dimensioni", "寸法"],
+  "Dimensions": [
+    "Dimensions",
+    "尺寸",
+    "Maße",
+    "Dimensiones",
+    "Размеры",
+    "Dimensioni",
+    "寸法"
+  ],
   "Dimensions choisies pour l'illustration ; aucune référence commerciale.": [
     "Illustrative dimensions; no commercial part.",
     "示意尺寸；非商业型号。",
@@ -7330,7 +7730,15 @@
     "Disponibilità, MOQ e imballaggio: sconosciuti finché non viene collegato un fornitore effettivo.",
     "在庫状況、MOQ、梱包仕様：実際のサプライヤが連携されるまで不明です。"
   ],
-  "Distance": ["Distance", "距离", "Abstand", "Distancia", "Расстояние", "Distanza", "距離"],
+  "Distance": [
+    "Distance",
+    "距离",
+    "Abstand",
+    "Distancia",
+    "Расстояние",
+    "Distanza",
+    "距離"
+  ],
   "Distance au départ": [
     "Starting distance",
     "起始距离",
@@ -7844,7 +8252,15 @@
     "Fascicolo troppo voluminoso per una traduzione affidabile.",
     "資料が大きすぎて確実に翻訳できません。"
   ],
-  "Dossiers": ["Case files", "案卷", "Dossiers", "Expedientes", "Дела", "Fascicoli", "案件"],
+  "Dossiers": [
+    "Case files",
+    "案卷",
+    "Dossiers",
+    "Expedientes",
+    "Дела",
+    "Fascicoli",
+    "案件"
+  ],
   "Dossiers pas encore suivis ici": [
     "Case files not tracked here yet",
     "尚未在此跟踪的档案",
@@ -7863,7 +8279,15 @@
     "Dossier a me assegnati",
     "担当ケースファイル"
   ],
-  "Droit": ["Right", "权限", "Recht", "Derecho", "Право", "Diritto", "権限"],
+  "Droit": [
+    "Right",
+    "权限",
+    "Recht",
+    "Derecho",
+    "Право",
+    "Diritto",
+    "権限"
+  ],
   "Droit Standex accordé à ce compte.": [
     "Standex right granted to this account.",
     "已向该账号授予 Standex 权限。",
@@ -8062,7 +8486,15 @@
     "Descrivi la mia esigenza",
     "要件を入力"
   ],
-  "Décrivez": ["Describe", "描述", "Beschreiben", "Describa", "Опишите", "Descriva", "記述する"],
+  "Décrivez": [
+    "Describe",
+    "描述",
+    "Beschreiben",
+    "Describa",
+    "Опишите",
+    "Descriva",
+    "記述する"
+  ],
   "Décrivez ce point avec vos mots ; laissez vide s'il est inconnu.": [
     "Describe this point in your own words; leave blank if unknown.",
     "用您自己的话描述该项；若未知请留空。",
@@ -8234,7 +8666,15 @@
     "Demo · distanze fittizie",
     "デモ · 仮の距離"
   ],
-  "Départ": ["Start", "开始", "Start", "Inicio", "Начало", "Inizio", "開始"],
+  "Départ": [
+    "Start",
+    "开始",
+    "Start",
+    "Inicio",
+    "Начало",
+    "Inizio",
+    "開始"
+  ],
   "Départ conseillé": [
     "Recommended start distance",
     "建议起始距离",
@@ -8253,7 +8693,15 @@
     "Spostamento in apertura",
     "開いたときの変位"
   ],
-  "Déplacer": ["Move", "移动", "Verschieben", "Mover", "Переместить", "Sposta", "移動"],
+  "Déplacer": [
+    "Move",
+    "移动",
+    "Verschieben",
+    "Mover",
+    "Переместить",
+    "Sposta",
+    "移動"
+  ],
   "Déplacer l'aimant": [
     "Move the magnet",
     "移动磁体",
@@ -8344,7 +8792,15 @@
     "Scollega",
     "紐づけを外す"
   ],
-  "Détails": ["Details", "详情", "Details", "Detalles", "Подробнее", "Dettagli", "詳細"],
+  "Détails": [
+    "Details",
+    "详情",
+    "Details",
+    "Detalles",
+    "Подробнее",
+    "Dettagli",
+    "詳細"
+  ],
   "Détails de cette réponse": [
     "Details of this response",
     "此答案详情",
@@ -8516,7 +8972,15 @@
     "Rilevamento previsto — chiude a {0} mm, apre a {1} mm",
     "検出見込みあり — {0} mm で閉、{1} mm で開"
   ],
-  "Détecté": ["Detected", "已检测到", "Erkannt", "Detectado", "Обнаружено", "Rilevato", "検出"],
+  "Détecté": [
+    "Detected",
+    "已检测到",
+    "Erkannt",
+    "Detectado",
+    "Обнаружено",
+    "Rilevato",
+    "検出"
+  ],
   "Détecté à {0} mm": [
     "Detected at {0} mm",
     "在 {0} mm 处检测到",
@@ -8535,7 +8999,15 @@
     "E · Rimanenza e dispersione",
     "E · 残留磁束密度とばらつき"
   ],
-  "E-mail": ["Email", "电子邮件", "E-Mail", "Correo electrónico", "Эл. почта", "E-mail", "メール"],
+  "E-mail": [
+    "Email",
+    "电子邮件",
+    "E-Mail",
+    "Correo electrónico",
+    "Эл. почта",
+    "E-mail",
+    "メール"
+  ],
   "E-mail professionnel": [
     "Work e-mail",
     "工作邮箱",
@@ -8563,7 +9035,15 @@
     "Cancella percorso",
     "経路を消去"
   ],
-  "Email": ["Email", "电子邮箱", "E-Mail", "Correo electrónico", "Эл. почта", "E-mail", "メール"],
+  "Email": [
+    "Email",
+    "电子邮箱",
+    "E-Mail",
+    "Correo electrónico",
+    "Эл. почта",
+    "E-mail",
+    "メール"
+  ],
   "Embout avec méplats": [
     "End with flats",
     "带平面的端部",
@@ -8627,7 +9107,15 @@
     "In attesa delle firme",
     "署名待ち"
   ],
-  "En cours": ["In progress", "进行中", "In Arbeit", "En curso", "В работе", "In corso", "進行中"],
+  "En cours": [
+    "In progress",
+    "进行中",
+    "In Arbeit",
+    "En curso",
+    "В работе",
+    "In corso",
+    "進行中"
+  ],
   "En position {0}, le contact se ferme quand la pièce arrive à {1} mm et se rouvre à {2} mm.": [
     "In the {0} position, the contact closes when the part reaches {1} mm and reopens at {2} mm.",
     "在{0}位置，部件到达 {1} mm 时触点闭合，在 {2} mm 时重新断开。",
@@ -8637,7 +9125,15 @@
     "In posizione {0}, il contatto si chiude quando il pezzo arriva a {1} mm e si riapre a {2} mm.",
     "{0}配置では、部品が {1} mm に達すると接点が閉じ、{2} mm で再び開きます。"
   ],
-  "En retard": ["Overdue", "逾期", "Überfällig", "Con retraso", "Просрочено", "In ritardo", "遅延"],
+  "En retard": [
+    "Overdue",
+    "逾期",
+    "Überfällig",
+    "Con retraso",
+    "Просрочено",
+    "In ritardo",
+    "遅延"
+  ],
   "En revue": [
     "In review",
     "审核中",
@@ -8764,7 +9260,15 @@
     "Salvataggio…",
     "保存中…"
   ],
-  "Enregistrer": ["Save", "保存", "Speichern", "Guardar", "Сохранить", "Salva", "保存"],
+  "Enregistrer": [
+    "Save",
+    "保存",
+    "Speichern",
+    "Guardar",
+    "Сохранить",
+    "Salva",
+    "保存"
+  ],
   "Enregistrer en « à vérifier par les ingénieurs Standex »": [
     "Save as “to be checked by the Standex engineers”",
     "保存为“待 Standex 工程师核实”",
@@ -8837,7 +9341,15 @@
     "Salva i responsabili",
     "担当者を保存"
   ],
-  "Enregistré": ["Saved", "已保存", "Gespeichert", "Guardado", "Сохранено", "Salvato", "保存済み"],
+  "Enregistré": [
+    "Saved",
+    "已保存",
+    "Gespeichert",
+    "Guardado",
+    "Сохранено",
+    "Salvato",
+    "保存済み"
+  ],
   "Enregistré sur cet appareil • non partagé": [
     "Saved on this device • not shared",
     "已保存在此设备上 • 未共享",
@@ -8892,7 +9404,15 @@
     "Traferro previsto",
     "目標エアギャップ"
   ],
-  "Entreprise": ["Company", "企业", "Unternehmen", "Empresa", "Компания", "Azienda", "会社"],
+  "Entreprise": [
+    "Company",
+    "企业",
+    "Unternehmen",
+    "Empresa",
+    "Компания",
+    "Azienda",
+    "会社"
+  ],
   "Entrée automate 24 VDC, courant inférieur à 20 mA ; deux fils souhaités.": [
     "PLC input 24 VDC, current below 20 mA; two wires preferred.",
     "PLC输入24 VDC，电流小于20 mA；希望两线制。",
@@ -8947,7 +9467,15 @@
     "Ingombro verificato; spallamenti dei fissaggi semplificati.",
     "外形寸法確認済み。固定部の段差は簡略化しています。"
   ],
-  "Environnement": ["Environment", "环境", "Umgebung", "Entorno", "Условия", "Ambiente", "環境"],
+  "Environnement": [
+    "Environment",
+    "环境",
+    "Umgebung",
+    "Entorno",
+    "Условия",
+    "Ambiente",
+    "環境"
+  ],
   "Environnement d'utilisation": [
     "Operating environment",
     "使用环境",
@@ -8975,7 +9503,15 @@
     "Invio in corso…",
     "送信中…"
   ],
-  "Envoyer": ["Send", "发送", "Senden", "Enviar", "Отправить", "Invia", "送信"],
+  "Envoyer": [
+    "Send",
+    "发送",
+    "Senden",
+    "Enviar",
+    "Отправить",
+    "Invia",
+    "送信"
+  ],
   "Envoyer mes modifications": [
     "Send my changes",
     "发送我的修改",
@@ -9003,7 +9539,15 @@
     "Inviare a Standex per conferma.",
     "確認のため Standex に送信します。"
   ],
-  "Envoyé": ["Sent", "已发送", "Gesendet", "Enviado", "Отправлено", "Inviato", "送信済み"],
+  "Envoyé": [
+    "Sent",
+    "已发送",
+    "Gesendet",
+    "Enviado",
+    "Отправлено",
+    "Inviato",
+    "送信済み"
+  ],
   "Envoyée le": [
     "Submitted on",
     "提交于",
@@ -9166,7 +9710,15 @@
     "Prova in un oggetto 3D",
     "3Dオブジェクトで試す"
   ],
-  "Essentiel": ["Overview", "概览", "Überblick", "Esencial", "Обзор", "Essenziale", "概要"],
+  "Essentiel": [
+    "Overview",
+    "概览",
+    "Überblick",
+    "Esencial",
+    "Обзор",
+    "Essenziale",
+    "概要"
+  ],
   "Est-ce que la détection va se faire dans mon montage ?": [
     "Will detection actually happen in my assembly?",
     "在我的装配中真的会发生检测吗？",
@@ -9374,7 +9926,15 @@
     "Esportazione team (inglese)",
     "チーム向けエクスポート（英語）"
   ],
-  "Exporter": ["Export", "导出", "Exportieren", "Exportar", "Экспорт", "Esporta", "エクスポート"],
+  "Exporter": [
+    "Export",
+    "导出",
+    "Exportieren",
+    "Exportar",
+    "Экспорт",
+    "Esporta",
+    "エクスポート"
+  ],
   "Exporter JSON": [
     "Export JSON",
     "导出 JSON",
@@ -9519,7 +10079,15 @@
     "F1 · facce contrapposte, lungo l'asse",
     "F1 · 端面が向かい合う、軸方向"
   ],
-  "FAE": ["FAE", "FAE", "FAE", "FAE", "FAE", "FAE", "FAE"],
+  "FAE": [
+    "FAE",
+    "FAE",
+    "FAE",
+    "FAE",
+    "FAE",
+    "FAE",
+    "FAE"
+  ],
   "Fabricant": [
     "Manufacturer",
     "制造商",
@@ -9610,7 +10178,15 @@
     "Fai revisionare il tuo progetto",
     "プロジェクトのレビューを依頼する"
   ],
-  "Famille": ["Family", "系列", "Familie", "Familia", "Семейство", "Famiglia", "製品群"],
+  "Famille": [
+    "Family",
+    "系列",
+    "Familie",
+    "Familia",
+    "Семейство",
+    "Famiglia",
+    "製品群"
+  ],
   "Famille inconnue du guide": [
     "Family unknown to the guide",
     "指南中未知的系列",
@@ -9629,7 +10205,15 @@
     "Finestra desiderata",
     "希望範囲"
   ],
-  "Ferme": ["Closes", "闭合", "Schließt", "Cierra", "Замыкает", "Chiude", "クローズ"],
+  "Ferme": [
+    "Closes",
+    "闭合",
+    "Schließt",
+    "Cierra",
+    "Замыкает",
+    "Chiude",
+    "クローズ"
+  ],
   "Ferme à": [
     "Closes at",
     "闭合于",
@@ -9639,7 +10223,15 @@
     "Si chiude a",
     "閉じる距離"
   ],
-  "Fermer": ["Close", "关闭", "Schließen", "Cerrar", "Закрыть", "Chiudi", "閉じる"],
+  "Fermer": [
+    "Close",
+    "关闭",
+    "Schließen",
+    "Cerrar",
+    "Закрыть",
+    "Chiudi",
+    "閉じる"
+  ],
   "Fermer ce message": [
     "Close this message",
     "关闭此消息",
@@ -9676,7 +10268,15 @@
     "Chiudi pannello",
     "パネルを閉じる"
   ],
-  "Fermeture": ["Closing", "关闭", "Schließen", "Cierre", "Закрытие", "Chiusura", "閉動作"],
+  "Fermeture": [
+    "Closing",
+    "关闭",
+    "Schließen",
+    "Cierre",
+    "Закрытие",
+    "Chiusura",
+    "閉動作"
+  ],
   "Fermeture : entrefer maximal avant écart négatif": [
     "Closure: maximum gap before negative margin",
     "闭合：裕量为负前的最大间隙",
@@ -9695,7 +10295,15 @@
     "Chiusura tipica",
     "代表閉成距離"
   ],
-  "Fermé": ["Closed", "闭合", "Geschlossen", "Cerrado", "Замкнут", "Chiuso", "閉"],
+  "Fermé": [
+    "Closed",
+    "闭合",
+    "Geschlossen",
+    "Cerrado",
+    "Замкнут",
+    "Chiuso",
+    "閉"
+  ],
   "Ferrite : économique et résistante à la corrosion, mais moins puissante à volume égal et cassante.": [
     "Ferrite: economical and corrosion resistant, but weaker at equal volume and brittle.",
     "铁氧体：经济耐腐蚀，但同体积下磁力较弱且易碎。",
@@ -9921,7 +10529,15 @@
     "Filtra per fase",
     "ステージで絞り込む"
   ],
-  "Filtres": ["Filters", "筛选", "Filter", "Filtros", "Фильтры", "Filtri", "フィルター"],
+  "Filtres": [
+    "Filters",
+    "筛选",
+    "Filter",
+    "Filtros",
+    "Фильтры",
+    "Filtri",
+    "フィルター"
+  ],
   "Filtres actifs": [
     "Active filters",
     "已启用的筛选",
@@ -10012,7 +10628,15 @@
     "Fissaggio a vite",
     "ねじ留め"
   ],
-  "Fonction": ["Job title", "职务", "Funktion", "Función", "Должность", "Ruolo", "職務"],
+  "Fonction": [
+    "Job title",
+    "职务",
+    "Funktion",
+    "Función",
+    "Должность",
+    "Ruolo",
+    "職務"
+  ],
   "Fonction du signataire client": [
     "Client signatory position",
     "客户签署人职务",
@@ -10121,7 +10745,15 @@
     "Forma incompatibile con questo sensore: combinazione non simulata",
     "このセンサーと形状が非互換：組み合わせは非シミュレーション"
   ],
-  "Fuite": ["Leak", "泄漏", "Datenleck", "Filtración", "Утечка", "Fuga", "漏出"],
+  "Fuite": [
+    "Leak",
+    "泄漏",
+    "Datenleck",
+    "Filtración",
+    "Утечка",
+    "Fuga",
+    "漏出"
+  ],
   "G · Dérives en température": [
     "G · Temperature drifts",
     "G · 温漂",
@@ -10356,7 +10988,15 @@
     "La generazione di un documento non costituisce una firma: non viene aggiunta alcuna firma né timbro, il documento rimane non firmato. Lo stato \"in vigore\" viene concesso solo a fronte di prova verificata lato Standex; finché non viene raggiunto, non viene trasmesso alcun contenuto riservato.",
     "文書の生成は署名ではありません。署名や捺印は追加されず、文書は未署名のままとなります。「有効」ステータスは Standex 側での確認が完了した場合にのみ付与されます。それまでは機密情報が送信されることはありません。"
   ],
-  "Géométrie": ["Geometry", "几何形状", "Geometrie", "Geometría", "Геометрия", "Geometria", "形状"],
+  "Géométrie": [
+    "Geometry",
+    "几何形状",
+    "Geometrie",
+    "Geometría",
+    "Геометрия",
+    "Geometria",
+    "形状"
+  ],
   "Géométrie vide, trop détaillée ou hors échelle. Vérifiez les unités et limitez le modèle à 1,5 million de sommets / 20 m.": [
     "Geometry empty, too detailed or out of scale. Check units; limit the model to 1.5 million vertices / 20 m.",
     "几何为空、过于复杂或比例错误。检查单位，限制为 150 万顶点 / 20 米。",
@@ -10447,7 +11087,15 @@
     "Al di fuori dei vincoli da voi dichiarati",
     "申告された制約の範囲外"
   ],
-  "Hypothèse": ["Assumption", "假设", "Annahme", "Hipótesis", "Предположение", "Ipotesi", "仮定"],
+  "Hypothèse": [
+    "Assumption",
+    "假设",
+    "Annahme",
+    "Hipótesis",
+    "Предположение",
+    "Ipotesi",
+    "仮定"
+  ],
   "Hypothèses à examiner : définition des approches ; datum/centre magnétique ; géométrie active de l'aimant.": [
     "Check approach definitions, datum/magnetic centre and active magnet geometry.",
     "检查接近定义、基准/磁中心及磁体有效几何。",
@@ -10628,7 +11276,15 @@
     "Impossibile caricare i progetti.",
     "プロジェクトを読み込めませんでした。"
   ],
-  "Imprimer": ["Print", "打印", "Drucken", "Imprimir", "Печать", "Stampa", "印刷"],
+  "Imprimer": [
+    "Print",
+    "打印",
+    "Drucken",
+    "Imprimir",
+    "Печать",
+    "Stampa",
+    "印刷"
+  ],
   "Inclinaison hors du plan": [
     "Out-of-plane tilt",
     "平面外倾斜",
@@ -10647,7 +11303,15 @@
     "Incompleta",
     "不完全"
   ],
-  "Inconnu": ["Unknown", "未知", "Unbekannt", "Desconocido", "Неизвестно", "Sconosciuto", "不明"],
+  "Inconnu": [
+    "Unknown",
+    "未知",
+    "Unbekannt",
+    "Desconocido",
+    "Неизвестно",
+    "Sconosciuto",
+    "不明"
+  ],
   "Incoterm": [
     "Incoterm",
     "国际贸易术语",
@@ -10756,7 +11420,15 @@
     "Installa il sensore",
     "センサーを取り付ける"
   ],
-  "Interdits": ["Forbidden", "禁止", "Unzulässig", "Prohibidos", "Запрещённые", "Vietati", "禁止"],
+  "Interdits": [
+    "Forbidden",
+    "禁止",
+    "Unzulässig",
+    "Prohibidos",
+    "Запрещённые",
+    "Vietati",
+    "禁止"
+  ],
   "Interne — à rédiger en anglais": [
     "Internal — write in English",
     "内部 — 请用英语填写",
@@ -11018,7 +11690,15 @@
     "Sperimenta con il magnete e il sensore",
     "磁石とセンサーの動作を試す"
   ],
-  "Journal": ["Log", "日志", "Protokoll", "Registro", "Журнал", "Registro", "ログ"],
+  "Journal": [
+    "Log",
+    "日志",
+    "Protokoll",
+    "Registro",
+    "Журнал",
+    "Registro",
+    "ログ"
+  ],
   "Journal des actions": [
     "Action log",
     "操作日志",
@@ -12036,7 +12716,15 @@
     "Lascia contatti e città: un responsabile Standex ti ricontatterà entro 2 giorni lavorativi.",
     "連絡先と所在地をお知らせください。Standex担当者が2営業日以内にご連絡します。"
   ],
-  "Laiton": ["Brass", "黄铜", "Messing", "Latón", "Латунь", "Ottone", "黄銅"],
+  "Laiton": [
+    "Brass",
+    "黄铜",
+    "Messing",
+    "Latón",
+    "Латунь",
+    "Ottone",
+    "黄銅"
+  ],
   "Lampe allumée": [
     "Lamp on",
     "灯亮",
@@ -12163,8 +12851,24 @@
     "Lingua registrata del cliente",
     "顧客の登録言語"
   ],
-  "Largeur": ["Width", "宽度", "Breite", "Anchura", "Ширина", "Larghezza", "幅"],
-  "Largeur Z": ["Width Z", "宽度 Z", "Breite Z", "Anchura Z", "Ширина Z", "Larghezza Z", "幅 Z"],
+  "Largeur": [
+    "Width",
+    "宽度",
+    "Breite",
+    "Anchura",
+    "Ширина",
+    "Larghezza",
+    "幅"
+  ],
+  "Largeur Z": [
+    "Width Z",
+    "宽度 Z",
+    "Breite Z",
+    "Anchura Z",
+    "Ширина Z",
+    "Larghezza Z",
+    "幅 Z"
+  ],
   "Largeur max (mm)": [
     "Max width (mm)",
     "最大宽度 (mm)",
@@ -12282,7 +12986,15 @@
     "L'esigenza riguarda: {0}.",
     "要件：{0}。"
   ],
-  "Le capteur": ["Sensor", "传感器", "Sensor", "El sensor", "Датчик", "Il sensore", "センサー"],
+  "Le capteur": [
+    "Sensor",
+    "传感器",
+    "Sensor",
+    "El sensor",
+    "Датчик",
+    "Il sensore",
+    "センサー"
+  ],
   "Le capteur doit-il détecter un flotteur aimanté à travers la paroi, ou être intégré dans le réservoir ?": [
     "Should the sensor detect a magnetic float through the wall, or sit inside the tank?",
     "传感器隔墙检测磁性浮子，还是位于罐内？",
@@ -13192,7 +13904,15 @@
     "Stato elettrico del contatto",
     "接点の電気的状態"
   ],
-  "Lente": ["Slow", "慢速", "Langsam", "Lenta", "Медленная", "Lenta", "低速"],
+  "Lente": [
+    "Slow",
+    "慢速",
+    "Langsam",
+    "Lenta",
+    "Медленная",
+    "Lenta",
+    "低速"
+  ],
   "Les ajustements du tracé restent dans cette copie de lecture.": [
     "Routing adjustments remain in this read-only copy.",
     "布线调整仅保留在此只读副本中。",
@@ -13571,7 +14291,15 @@
     "Limiti elettrici",
     "電気的制限"
   ],
-  "Lire": ["Read", "读取", "Lesen", "Leer", "Читать", "Leggi", "読み取り"],
+  "Lire": [
+    "Read",
+    "读取",
+    "Lesen",
+    "Leer",
+    "Читать",
+    "Leggi",
+    "読み取り"
+  ],
   "Lire ici": [
     "Read here",
     "在此阅读",
@@ -13599,7 +14327,15 @@
     "Elenco attività tipo aggiunto.",
     "標準タスク一覧を追加しました。"
   ],
-  "Locale": ["Language", "语言", "Sprache", "Idioma", "Язык", "Lingua", "言語"],
+  "Locale": [
+    "Language",
+    "语言",
+    "Sprache",
+    "Idioma",
+    "Язык",
+    "Lingua",
+    "言語"
+  ],
   "Logement Ø 8 mm, profondeur 30 mm ; prévoir le passage du câble à l’arrière.": [
     "Bore Ø 8 mm, depth 30 mm; allow cable routing at the rear.",
     "孔径Ø 8 mm，深度30 mm；后部预留电缆通道。",
@@ -13609,7 +14345,15 @@
     "Foro Ø 8 mm, profondità 30 mm; prevedere il passaggio del cavo sul retro.",
     "直径8 mm、深さ30 mmの穴。背面にケーブル経路を確保。"
   ],
-  "Longueur": ["Length", "长度", "Länge", "Longitud", "Длина", "Lunghezza", "長さ"],
+  "Longueur": [
+    "Length",
+    "长度",
+    "Länge",
+    "Longitud",
+    "Длина",
+    "Lunghezza",
+    "長さ"
+  ],
   "Longueur : choix enregistré, à confirmer en revue.": [
     "Length: choice recorded, to be confirmed in review.",
     "长度：选择已记录，需在评审中确认。",
@@ -13619,7 +14363,15 @@
     "Lunghezza: scelta registrata, da confermare in revisione.",
     "長さ：選択は記録済み、レビューでの確認が必要です。"
   ],
-  "Longueur X": ["Length X", "长度 X", "Länge X", "Longitud X", "Длина X", "Lunghezza X", "長さ X"],
+  "Longueur X": [
+    "Length X",
+    "长度 X",
+    "Länge X",
+    "Longitud X",
+    "Длина X",
+    "Lunghezza X",
+    "長さ X"
+  ],
   "Longueur catalogue, à confirmer": [
     "Catalogue length, to be confirmed",
     "目录长度，待确认",
@@ -14007,7 +14759,15 @@
     "Manipolazione 3D",
     "3D操作"
   ],
-  "Marge": ["Margin", "毛利率", "Marge", "Margen", "Маржа", "Margine", "利益率"],
+  "Marge": [
+    "Margin",
+    "毛利率",
+    "Marge",
+    "Margen",
+    "Маржа",
+    "Margine",
+    "利益率"
+  ],
   "Masquer les autres couples": [
     "Hide the other pairs",
     "隐藏其他组合",
@@ -14125,7 +14885,15 @@
     "Nota della colonna «up»",
     "「up」列の注記"
   ],
-  "Menu": ["Menu", "菜单", "Menü", "Menú", "Меню", "Menu", "メニュー"],
+  "Menu": [
+    "Menu",
+    "菜单",
+    "Menü",
+    "Menú",
+    "Меню",
+    "Menu",
+    "メニュー"
+  ],
   "Merci, votre projet a bien été transmis !": [
     "Thank you, your project has been sent!",
     "谢谢，您的项目已发送！",
@@ -14234,9 +15002,33 @@
     "Messaggi preparati",
     "用意したメッセージ"
   ],
-  "Mesure :": ["Measurement:", "测量：", "Messung:", "Medida:", "Измерение:", "Misura:", "測定："],
-  "Mesurer": ["Measure", "测量", "Messen", "Medir", "Измерить", "Misura", "測定"],
-  "Mettre en pause": ["Pause", "暂停", "Pause", "Pausar", "Пауза", "Pausa", "一時停止"],
+  "Mesure :": [
+    "Measurement:",
+    "测量：",
+    "Messung:",
+    "Medida:",
+    "Измерение:",
+    "Misura:",
+    "測定："
+  ],
+  "Mesurer": [
+    "Measure",
+    "测量",
+    "Messen",
+    "Medir",
+    "Измерить",
+    "Misura",
+    "測定"
+  ],
+  "Mettre en pause": [
+    "Pause",
+    "暂停",
+    "Pause",
+    "Pausar",
+    "Пауза",
+    "Pausa",
+    "一時停止"
+  ],
   "Millimètres": [
     "Millimetres",
     "毫米",
@@ -14264,7 +15056,15 @@
     "Miniaturizzazione",
     "小型化"
   ],
-  "Minimum": ["Minimum", "最小值", "Minimum", "Mínimo", "Минимум", "Minimo", "最小"],
+  "Minimum": [
+    "Minimum",
+    "最小值",
+    "Minimum",
+    "Mínimo",
+    "Минимум",
+    "Minimo",
+    "最小"
+  ],
   "Mode assistant (testeur)": [
     "Assistant mode (tester)",
     "助手模式（测试人员）",
@@ -14328,7 +15128,15 @@
     "Modifiche possibili",
     "考えられる変更"
   ],
-  "Modifier": ["Edit", "修改", "Bearbeiten", "Modificar", "Изменить", "Modifica", "変更"],
+  "Modifier": [
+    "Edit",
+    "修改",
+    "Bearbeiten",
+    "Modificar",
+    "Изменить",
+    "Modifica",
+    "変更"
+  ],
   "Modifier cette réponse": [
     "Edit this answer",
     "修改此回答",
@@ -14572,7 +15380,15 @@
     "Il mio progetto è riservato (NDA Standex)",
     "本プロジェクトは秘密扱いです（Standex NDA）"
   ],
-  "Montage": ["Mounting", "安装", "Montage", "Montaje", "Монтаж", "Montaggio", "取り付け"],
+  "Montage": [
+    "Mounting",
+    "安装",
+    "Montage",
+    "Montaje",
+    "Монтаж",
+    "Montaggio",
+    "取り付け"
+  ],
   "Montage & 3D": [
     "Mounting & 3D",
     "安装与 3D",
@@ -14798,7 +15614,15 @@
     "Motore deterministico congelato, contratto risposta V0.2.",
     "固定された決定論的エンジン、回答仕様V0.2。"
   ],
-  "Motif :": ["Reason:", "原因：", "Grund:", "Motivo:", "Причина:", "Motivo:", "理由："],
+  "Motif :": [
+    "Reason:",
+    "原因：",
+    "Grund:",
+    "Motivo:",
+    "Причина:",
+    "Motivo:",
+    "理由："
+  ],
   "Motif si « sans objet »": [
     "Reason if \"not applicable\"",
     "若“不适用”，请说明理由",
@@ -14817,7 +15641,15 @@
     "Mouser FR",
     "Mouser FR"
   ],
-  "Mouvement": ["Movement", "运动", "Bewegung", "Movimiento", "Движение", "Movimento", "動き"],
+  "Mouvement": [
+    "Movement",
+    "运动",
+    "Bewegung",
+    "Movimiento",
+    "Движение",
+    "Movimento",
+    "動き"
+  ],
   "Mouvement : {0}, déplacement {1} mm, pivot {2} mm, axe {3}, angle {4}°.": [
     "Motion: {0}, displacement {1} mm, pivot {2} mm, axis {3}, angle {4}°.",
     "运动：{0}，位移 {1} mm，支点 {2} mm，轴 {3}，角度 {4}°。",
@@ -15052,7 +15884,15 @@
     "Livello di evidenza",
     "根拠の水準"
   ],
-  "Nom": ["Name", "姓名", "Name", "Nombre", "Имя", "Nome", "名前"],
+  "Nom": [
+    "Name",
+    "姓名",
+    "Name",
+    "Nombre",
+    "Имя",
+    "Nome",
+    "名前"
+  ],
   "Nom capteur": [
     "Sensor name",
     "传感器名称",
@@ -15125,7 +15965,15 @@
     "Numero di vie",
     "極数"
   ],
-  "Non": ["No", "否", "Nein", "No", "Нет", "No", "いいえ"],
+  "Non": [
+    "No",
+    "否",
+    "Nein",
+    "No",
+    "Нет",
+    "No",
+    "いいえ"
+  ],
   "Non authentifié : session testeur invalide ou expirée.": [
     "Not authenticated: tester session invalid or expired.",
     "未认证：测试会话无效或已过期。",
@@ -15252,7 +16100,15 @@
     "Non userei 1000 V per MK38 1A85C: è del reed 85 nudo in altro contesto, non trasferibile automaticamente al MK38.",
     "MK38 1A85Cには1000 Vを適用しません。別条件の裸リード85の値で、パッケージ品MK38には自動適用できません。"
   ],
-  "Normale": ["Normal", "正常", "Normal", "Normal", "Обычная", "Normale", "標準"],
+  "Normale": [
+    "Normal",
+    "正常",
+    "Normal",
+    "Normal",
+    "Обычная",
+    "Normale",
+    "標準"
+  ],
   "Note interne": [
     "Internal note",
     "内部备注",
@@ -15397,7 +16253,15 @@
     "Obiettivo di rilevamento",
     "検出目的"
   ],
-  "Objet": ["Subject", "主题", "Betreff", "Asunto", "Тема", "Oggetto", "件名"],
+  "Objet": [
+    "Subject",
+    "主题",
+    "Betreff",
+    "Asunto",
+    "Тема",
+    "Oggetto",
+    "件名"
+  ],
   "Objet 3D actif": [
     "Active 3D object",
     "当前3D对象",
@@ -15416,7 +16280,15 @@
     "Oggetto 3D e parte mobile",
     "3Dオブジェクトと可動部品"
   ],
-  "Objet :": ["Object:", "对象：", "Objekt:", "Objeto:", "Объект:", "Oggetto:", "オブジェクト："],
+  "Objet :": [
+    "Object:",
+    "对象：",
+    "Objekt:",
+    "Objeto:",
+    "Объект:",
+    "Oggetto:",
+    "オブジェクト："
+  ],
   "Objet du message client (facultatif)": [
     "Client message subject (optional)",
     "客户消息主题（可选）",
@@ -15426,8 +16298,24 @@
     "Oggetto del messaggio al cliente (facoltativo)",
     "顧客向けメッセージの件名（任意）"
   ],
-  "Oblig.": ["Required", "必需", "Pflicht", "Obligatorios", "Обязательные", "Obbligatori", "必須"],
-  "Observer": ["Explore", "观察", "Betrachten", "Observar", "Осмотреть", "Osserva", "観察"],
+  "Oblig.": [
+    "Required",
+    "必需",
+    "Pflicht",
+    "Obligatorios",
+    "Обязательные",
+    "Obbligatori",
+    "必須"
+  ],
+  "Observer": [
+    "Explore",
+    "观察",
+    "Betrachten",
+    "Observar",
+    "Осмотреть",
+    "Osserva",
+    "観察"
+  ],
   "Offre commerciale": [
     "Commercial offer",
     "商务报价",
@@ -15446,10 +16334,42 @@
     "Offerta salvata e visibile al cliente accanto alla progettazione convalidata.",
     "見積は保存され、承認済み設計の横に顧客向けに表示されます。"
   ],
-  "Offres": ["Offers", "报价", "Angebote", "Ofertas", "Предложения", "Offerte", "見積"],
-  "On Hold": ["On Hold", "On Hold", "On Hold", "On Hold", "On Hold", "On Hold", "On Hold"],
-  "Option 1": ["Option 1", "方案 1", "Option 1", "Opción 1", "Вариант 1", "Opzione 1", "選択肢 1"],
-  "Option 2": ["Option 2", "方案 2", "Option 2", "Opción 2", "Вариант 2", "Opzione 2", "選択肢 2"],
+  "Offres": [
+    "Offers",
+    "报价",
+    "Angebote",
+    "Ofertas",
+    "Предложения",
+    "Offerte",
+    "見積"
+  ],
+  "On Hold": [
+    "On Hold",
+    "On Hold",
+    "On Hold",
+    "On Hold",
+    "On Hold",
+    "On Hold",
+    "On Hold"
+  ],
+  "Option 1": [
+    "Option 1",
+    "方案 1",
+    "Option 1",
+    "Opción 1",
+    "Вариант 1",
+    "Opzione 1",
+    "選択肢 1"
+  ],
+  "Option 2": [
+    "Option 2",
+    "方案 2",
+    "Option 2",
+    "Opción 2",
+    "Вариант 2",
+    "Opzione 2",
+    "選択肢 2"
+  ],
   "Option électrique de la série": [
     "Series electrical option",
     "系列电气选项",
@@ -15522,7 +16442,15 @@
     "Originale del cliente",
     "お客様の原文"
   ],
-  "Origine": ["Origin", "来源", "Herkunft", "Origen", "Источник", "Origine", "出所"],
+  "Origine": [
+    "Origin",
+    "来源",
+    "Herkunft",
+    "Origen",
+    "Источник",
+    "Origine",
+    "出所"
+  ],
   "Origine de cette version anglaise :": [
     "Origin of this English version:",
     "此英文版本的来源：",
@@ -15559,7 +16487,15 @@
     "Oppure mantenere il vincolo «nessun magnete»: occorre allora valutare un'altra tecnologia di rilevamento. Nessun prodotto reed risolve questo caso e non lo presenteremo come risolto.",
     "あるいは「磁石なし」の条件を維持する：その場合は別の検出技術を検討する必要があります。この案件をリード製品で解決することはできず、解決済みとして提示はしません。"
   ],
-  "Oui": ["Yes", "是", "Ja", "Sí", "Да", "Sì", "はい"],
+  "Oui": [
+    "Yes",
+    "是",
+    "Ja",
+    "Sí",
+    "Да",
+    "Sì",
+    "はい"
+  ],
   "Oui, c'est bien cela": [
     "Yes, that is correct",
     "是的，正是如此",
@@ -15605,8 +16541,24 @@
     "Strumenti di posizionamento",
     "配置ツール"
   ],
-  "Ouvert": ["Open", "断开", "Offen", "Abierto", "Разомкнут", "Aperto", "開"],
-  "Ouverture": ["Opening", "打开", "Öffnen", "Apertura", "Открытие", "Apertura", "開動作"],
+  "Ouvert": [
+    "Open",
+    "断开",
+    "Offen",
+    "Abierto",
+    "Разомкнут",
+    "Aperto",
+    "開"
+  ],
+  "Ouverture": [
+    "Opening",
+    "打开",
+    "Öffnen",
+    "Apertura",
+    "Открытие",
+    "Apertura",
+    "開動作"
+  ],
   "Ouverture : entrefer minimal avant écart négatif": [
     "Opening: minimum gap before negative margin",
     "断开：裕量为负前的最小间隙",
@@ -15634,7 +16586,15 @@
     "Apertura tipica",
     "代表開離距離"
   ],
-  "Ouvre": ["Opens", "断开", "Öffnet", "Abre", "Размыкает", "Apre", "オープン"],
+  "Ouvre": [
+    "Opens",
+    "断开",
+    "Öffnet",
+    "Abre",
+    "Размыкает",
+    "Apre",
+    "オープン"
+  ],
   "Ouvre à": [
     "Opens at",
     "断开于",
@@ -15653,7 +16613,15 @@
     "Aprire l'officina 3D, attivare «Puntare in 3D», quindi fare clic sull'uscita del cavo, sui passaggi e sul punto di connessione sulle superfici effettivamente visualizzate. Senza modello 3D, l'inserimento numerico sottostante rimane il metodo esatto: un valore sconosciuto rimane sconosciuto, non equivale a zero.",
     "3Dワークショップを開き、「3Dで指定」を有効にして、実際に表示されている表面上のケーブル引き出し口、通過点、接続点をクリックしてください。3Dモデルがない場合でも、下記の数値入力が正確な方法となります。不明な値は不明のままであり、ゼロにはなりません。"
   ],
-  "Ouvrir": ["Open", "打开", "Öffnen", "Abrir", "Открыть", "Apri", "開く"],
+  "Ouvrir": [
+    "Open",
+    "打开",
+    "Öffnen",
+    "Abrir",
+    "Открыть",
+    "Apri",
+    "開く"
+  ],
   "Ouvrir Confidentialité et NDA": [
     "Open Privacy and NDA",
     "打开隐私与 NDA",
@@ -15906,7 +16874,15 @@
     "Pacchetto revisione qualitativa - Assistente Standex",
     "定性レビューパック - Standexアシスタント"
   ],
-  "Page": ["Page", "页", "Seite", "Página", "Страница", "Pagina", "ページ"],
+  "Page": [
+    "Page",
+    "页",
+    "Seite",
+    "Página",
+    "Страница",
+    "Pagina",
+    "ページ"
+  ],
   "Page de la brochure requise": [
     "Brochure page required",
     "需填写手册页码",
@@ -15979,7 +16955,15 @@
     "Ad esempio: {0}",
     "例：{0}"
   ],
-  "Parallèle": ["Parallel", "平行", "Parallel", "Paralelo", "Параллельно", "Parallelo", "平行"],
+  "Parallèle": [
+    "Parallel",
+    "平行",
+    "Parallel",
+    "Paralelo",
+    "Параллельно",
+    "Parallelo",
+    "平行"
+  ],
   "Partage du modèle 3D avec l'équipe Standex en charge du projet.": [
     "Sharing the 3D model with the Standex team in charge of the case file.",
     "与负责该项目的 Standex 团队共享 3D 模型。",
@@ -15989,8 +16973,24 @@
     "Condivisione del modello 3D con il team Standex incaricato del progetto.",
     "プロジェクトファイルを担当する Standex チームと 3D モデルを共有。"
   ],
-  "Partie 1": ["Part 1", "第 1 部分", "Teil 1", "Parte 1", "Часть 1", "Parte 1", "パート1"],
-  "Partie 2": ["Part 2", "第 2 部分", "Teil 2", "Parte 2", "Часть 2", "Parte 2", "パート2"],
+  "Partie 1": [
+    "Part 1",
+    "第 1 部分",
+    "Teil 1",
+    "Parte 1",
+    "Часть 1",
+    "Parte 1",
+    "パート1"
+  ],
+  "Partie 2": [
+    "Part 2",
+    "第 2 部分",
+    "Teil 2",
+    "Parte 2",
+    "Часть 2",
+    "Parte 2",
+    "パート2"
+  ],
   "Partir sur du sur mesure": [
     "Opt for custom",
     "采用定制方案",
@@ -16126,8 +17126,24 @@
     "Terminali nudi",
     "裸リード"
   ],
-  "Pause": ["Pause", "暂停", "Pause", "Pausa", "Пауза", "Pausa", "一時停止"],
-  "Pays": ["Country", "国家", "Land", "País", "Страна", "Paese", "国"],
+  "Pause": [
+    "Pause",
+    "暂停",
+    "Pause",
+    "Pausa",
+    "Пауза",
+    "Pausa",
+    "一時停止"
+  ],
+  "Pays": [
+    "Country",
+    "国家",
+    "Land",
+    "País",
+    "Страна",
+    "Paese",
+    "国"
+  ],
   "Pays (code à deux lettres)": [
     "Country (two-letter code)",
     "国家（两位字母代码）",
@@ -16182,7 +17198,15 @@
     "Perpendicolare",
     "垂直"
   ],
-  "Personne": ["Person", "人员", "Person", "Persona", "Сотрудник", "Persona", "担当者"],
+  "Personne": [
+    "Person",
+    "人员",
+    "Person",
+    "Persona",
+    "Сотрудник",
+    "Persona",
+    "担当者"
+  ],
   "Personne ajoutée à l'annuaire.": [
     "Person added to the directory.",
     "已将该人员加入名录。",
@@ -16273,8 +17297,24 @@
     "Caso peggiore garantito",
     "最悪条件の保証"
   ],
-  "Pivot": ["Pivot", "旋转", "Drehung", "Giro", "Поворот", "Rotazione", "回転"],
-  "Pièce": ["Part", "部件", "Teil", "Pieza", "Часть", "Parte", "部品"],
+  "Pivot": [
+    "Pivot",
+    "旋转",
+    "Drehung",
+    "Giro",
+    "Поворот",
+    "Rotazione",
+    "回転"
+  ],
+  "Pièce": [
+    "Part",
+    "部件",
+    "Teil",
+    "Pieza",
+    "Часть",
+    "Parte",
+    "部品"
+  ],
   "Pièce fermée": [
     "Part closed",
     "部件关闭",
@@ -16689,7 +17729,15 @@
     "Portata lunga, sensibile alla temperatura",
     "動作距離は長いが温度に敏感"
   ],
-  "Position": ["Position", "位置", "Position", "Posición", "Положение", "Posizione", "位置"],
+  "Position": [
+    "Position",
+    "位置",
+    "Position",
+    "Posición",
+    "Положение",
+    "Posizione",
+    "位置"
+  ],
   "Position X du montage": [
     "Assembly X position",
     "装配 X 位置",
@@ -17023,7 +18071,15 @@
     "Principio di rilevamento diverso da reed + magnete esterno: da confermare da parte di R&D.",
     "検出原理が reed ＋外部磁石と異なります：R&D による確認が必要です。"
   ],
-  "Prio": ["Priority", "优先级", "Priorität", "Prioridad", "Приоритет", "Priorità", "優先度"],
+  "Prio": [
+    "Priority",
+    "优先级",
+    "Priorität",
+    "Prioridad",
+    "Приоритет",
+    "Priorità",
+    "優先度"
+  ],
   "Prix : montant positif attendu.": [
     "Price: a positive amount is expected.",
     "价格：需为正数金额。",
@@ -17132,7 +18188,15 @@
     "Progetto da confermare da Standex",
     "Standex による確認が必要なプロジェクト"
   ],
-  "Projets": ["Projects", "项目", "Projekte", "Proyectos", "Проекты", "Progetti", "案件"],
+  "Projets": [
+    "Projects",
+    "项目",
+    "Projekte",
+    "Proyectos",
+    "Проекты",
+    "Progetti",
+    "案件"
+  ],
   "Projets suivis": [
     "Tracked projects",
     "已跟踪项目",
@@ -17295,7 +18359,15 @@
     "Dettagli facoltativi",
     "任意の詳細"
   ],
-  "Précédent": ["Previous", "上一个", "Zurück", "Anterior", "Назад", "Precedente", "前へ"],
+  "Précédent": [
+    "Previous",
+    "上一个",
+    "Zurück",
+    "Anterior",
+    "Назад",
+    "Precedente",
+    "前へ"
+  ],
   "Prédiction physique": [
     "Physical prediction",
     "物理预测",
@@ -17323,7 +18395,15 @@
     "Preferisci la base",
     "ベースラインを選ぶ"
   ],
-  "Prénom": ["First name", "名", "Vorname", "Nombre", "Имя", "Nome", "名"],
+  "Prénom": [
+    "First name",
+    "名",
+    "Vorname",
+    "Nombre",
+    "Имя",
+    "Nome",
+    "名"
+  ],
   "Préparation d'un accord de confidentialité": [
     "Preparing a non-disclosure agreement",
     "正在准备保密协议",
@@ -17468,7 +18548,15 @@
     "Pubblica prima il riscontro al cliente: nulla viene notificato prima della pubblicazione.",
     "まず顧客への回答を公開してください。公開前に通知は行われません。"
   ],
-  "Puissance": ["Power", "功率", "Leistung", "Potencia", "Мощность", "Potenza", "電力"],
+  "Puissance": [
+    "Power",
+    "功率",
+    "Leistung",
+    "Potencia",
+    "Мощность",
+    "Potenza",
+    "電力"
+  ],
   "Puissance commutée max.": [
     "Max. switching power",
     "最大切换功率",
@@ -17487,7 +18575,15 @@
     "Didattico",
     "学習用"
   ],
-  "Périmée": ["Obsolete", "已作废", "Veraltet", "Obsoleta", "Устарела", "Obsoleta", "無効"],
+  "Périmée": [
+    "Obsolete",
+    "已作废",
+    "Veraltet",
+    "Obsoleta",
+    "Устарела",
+    "Obsoleta",
+    "無効"
+  ],
   "Quadrillage :": [
     "Grid:",
     "网格：",
@@ -17506,7 +18602,15 @@
     "Qualificazione guidata locale — nessuna IA remota collegata. Le risposte rimangono in questa scheda.",
     "ローカル誘導型評価 — リモートAIは接続されていません。回答はこのタブにのみ保持されます。"
   ],
-  "Quantité": ["Quantity", "数量", "Menge", "Cantidad", "Количество", "Quantità", "数量"],
+  "Quantité": [
+    "Quantity",
+    "数量",
+    "Menge",
+    "Cantidad",
+    "Количество",
+    "Quantità",
+    "数量"
+  ],
   "Quantité minimale": [
     "Minimum quantity",
     "最小订购量",
@@ -17867,7 +18971,15 @@
     "Alcune semplici domande, in francese: cosa si desidera rilevare, dove viene posizionato il sensore e in quali condizioni.",
     "フランス語での簡単な質問：検出対象、センサーの設置場所、使用条件。"
   ],
-  "Question": ["Question", "问题", "Frage", "Pregunta", "Вопрос", "Domanda", "質問"],
+  "Question": [
+    "Question",
+    "问题",
+    "Frage",
+    "Pregunta",
+    "Вопрос",
+    "Domanda",
+    "質問"
+  ],
   "Question précédente": [
     "Previous question",
     "上一题",
@@ -17895,7 +19007,15 @@
     "Domanda {0} · {1}",
     "質問 {0} · {1}"
   ],
-  "Questions": ["Questions", "问题", "Fragen", "Preguntas", "Вопросы", "Domande", "質問"],
+  "Questions": [
+    "Questions",
+    "问题",
+    "Fragen",
+    "Preguntas",
+    "Вопросы",
+    "Domande",
+    "質問"
+  ],
   "Questions conseillées (testeur)": [
     "Suggested questions (tester)",
     "建议问题（测试人员）",
@@ -18058,7 +19178,15 @@
     "Collegamento rimosso.",
     "紐づけを解除しました。"
   ],
-  "Rattacher": ["Link", "关联", "Verknüpfen", "Vincular", "Привязать", "Collega", "紐づける"],
+  "Rattacher": [
+    "Link",
+    "关联",
+    "Verknüpfen",
+    "Vincular",
+    "Привязать",
+    "Collega",
+    "紐づける"
+  ],
   "Rattacher un compte": [
     "Link an account",
     "关联账户",
@@ -18203,7 +19331,15 @@
     "Consigliato",
     "推奨"
   ],
-  "Reed": ["Reed", "干簧管", "Reed", "Reed", "Геркон", "Reed", "リード"],
+  "Reed": [
+    "Reed",
+    "干簧管",
+    "Reed",
+    "Reed",
+    "Геркон",
+    "Reed",
+    "リード"
+  ],
   "Reed miniature surmoulé, connexions repliées sous le boîtier": [
     "Miniature overmoulded reed, terminals folded beneath the housing",
     "微型包塑干簧管，端子折于外壳下方",
@@ -18294,7 +19430,15 @@
     "Rilancia la versione inglese",
     "英語版をやり直す"
   ],
-  "Relâchement": ["Drop-out", "释放", "Abfall", "Liberación", "Отпускание", "Rilascio", "復帰"],
+  "Relâchement": [
+    "Drop-out",
+    "释放",
+    "Abfall",
+    "Liberación",
+    "Отпускание",
+    "Rilascio",
+    "復帰"
+  ],
   "Relâchement (mm)": [
     "Release (mm)",
     "释放 (mm)",
@@ -18340,7 +19484,15 @@
     "Rinomina il progetto «{0}»",
     "プロジェクト「{0}」の名前を変更"
   ],
-  "Renseigner": ["Fill in", "填写", "Ergänzen", "Completar", "Заполнить", "Compila", "入力"],
+  "Renseigner": [
+    "Fill in",
+    "填写",
+    "Ergänzen",
+    "Completar",
+    "Заполнить",
+    "Compila",
+    "入力"
+  ],
   "Renseignez l'espace disponible dans les axes locaux du capteur. Le gabarit est dessiné en 3D. Vérification du corps, hors câble et fixations.": [
     "Enter available space along the sensor's local axes. The envelope is shown in 3D. Only the body is checked, excluding cables and fixings.",
     "按传感器局部轴输入可用空间。3D 显示包络。仅检查外壳，不含电缆和紧固件。",
@@ -18413,7 +19565,15 @@
     "Montaggio su circuito stampato",
     "プリント基板実装"
   ],
-  "Reprendre": ["Resume", "继续", "Fortsetzen", "Reanudar", "Продолжить", "Riprendi", "再開"],
+  "Reprendre": [
+    "Resume",
+    "继续",
+    "Fortsetzen",
+    "Reanudar",
+    "Продолжить",
+    "Riprendi",
+    "再開"
+  ],
   "Reprendre cette variante": [
     "Import this variant",
     "采用此变型",
@@ -18630,7 +19790,15 @@
     "Selezionato in questa fase",
     "現段階で選択済み"
   ],
-  "Retirer": ["Remove", "移除", "Entfernen", "Quitar", "Удалить", "Rimuovi", "削除"],
+  "Retirer": [
+    "Remove",
+    "移除",
+    "Entfernen",
+    "Quitar",
+    "Удалить",
+    "Rimuovi",
+    "削除"
+  ],
   "Retirer le filtre {0}": [
     "Remove filter {0}",
     "移除筛选 {0}",
@@ -18658,7 +19826,15 @@
     "Rimuovi un filtro per ampliare la ricerca.",
     "検索範囲を広げるにはフィルターを解除してください。"
   ],
-  "Retour": ["Return", "返程", "Rückweg", "Vuelta", "Обратный ход", "Ritorno", "復路"],
+  "Retour": [
+    "Return",
+    "返程",
+    "Rückweg",
+    "Vuelta",
+    "Обратный ход",
+    "Ritorno",
+    "復路"
+  ],
   "Retour R&D": [
     "R&D feedback",
     "R&D反馈",
@@ -18947,7 +20123,15 @@
     "Rivedere le vostre risposte",
     "ご回答を見直す"
   ],
-  "Revue": ["Review", "审核", "Bewertung", "Revisión", "Проверка", "Revisione", "レビュー"],
+  "Revue": [
+    "Review",
+    "审核",
+    "Bewertung",
+    "Revisión",
+    "Проверка",
+    "Revisione",
+    "レビュー"
+  ],
   "Revue R&D": [
     "R&D review",
     "研发评审",
@@ -19596,7 +20780,15 @@
     "Risoluzione non valida",
     "無効な解像度"
   ],
-  "Résultat": ["Result", "结果", "Ergebnis", "Resultado", "Результат", "Risultato", "結果"],
+  "Résultat": [
+    "Result",
+    "结果",
+    "Ergebnis",
+    "Resultado",
+    "Результат",
+    "Risultato",
+    "結果"
+  ],
   "Résumé de mon projet": [
     "Summary of my project",
     "我的项目摘要",
@@ -19642,7 +20834,15 @@
     "Ripristina le mie risposte",
     "回答を復元する"
   ],
-  "Révision": ["Revision", "版本", "Revision", "Revisión", "Ревизия", "Revisione", "リビジョン"],
+  "Révision": [
+    "Revision",
+    "版本",
+    "Revision",
+    "Revisión",
+    "Ревизия",
+    "Revisione",
+    "リビジョン"
+  ],
   "Rôle Standex non reconnu : cette action est réservée à l'équipe Standex.": [
     "Unrecognised Standex role: this action is restricted to the Standex team.",
     "无法识别的 Standex 角色：此操作仅限 Standex 团队。",
@@ -19706,7 +20906,15 @@
     "È un nuovo progetto, manutenzione, sostituzione o ricerca equivalente?",
     "新規設計、保守、交換、代替品探しのどれですか？"
   ],
-  "SERRÉ": ["TIGHT", "裕量有限", "KNAPP", "AJUSTADO", "ОГРАНИЧЕННЫЙ ЗАПАС", "RIDOTTO", "余裕限定"],
+  "SERRÉ": [
+    "TIGHT",
+    "裕量有限",
+    "KNAPP",
+    "AJUSTADO",
+    "ОГРАНИЧЕННЫЙ ЗАПАС",
+    "RIDOTTO",
+    "余裕限定"
+  ],
   "SERRÉ : comparaison typique à confirmer par des essais. NON TENU : marge inférieure à 10 %. NON ÉVALUABLE : une donnée ou une condition manque.": [
     "TIGHT: typical comparison requiring tests. NOT MET: margin below 10%. NOT EVALUABLE: a required value or condition is missing.",
     "余量紧张：基于典型值，需试验确认。不满足：余量低于10%。无法评估：缺少数据或条件。",
@@ -19905,7 +21113,15 @@
     "Solo schema illustrativo: reed nudo in vetro da 20 mm × Ø 4 mm montato su PCB da 60 × 20 × 1,6 mm (lunghezza = 3 × corpo del reed, larghezza = 5 × suo diametro). Non è un codice ordinabile, non è documentata alcuna distanza di commutazione e nessuna caratteristica è validata.",
     "概念図専用：20 mm × Ø 4 mm のガラス製ベア reed を 60 × 20 × 1.6 mm の PCB に配置（長さ = reed 本体の 3 倍、幅 = 直径の 5 倍）。これは注文可能な製品型番ではなく、動作距離は文書化されておらず、いかなる特性も検証されていません。"
   ],
-  "Scénario": ["Scenario", "场景", "Szenario", "Escenario", "Сценарий", "Scenario", "シナリオ"],
+  "Scénario": [
+    "Scenario",
+    "场景",
+    "Szenario",
+    "Escenario",
+    "Сценарий",
+    "Scenario",
+    "シナリオ"
+  ],
   "Scénario de test ({0})": [
     "Test scenario ({0})",
     "测试场景（{0}）",
@@ -19933,7 +21149,15 @@
     "Scenari attivi",
     "有効なシナリオ"
   ],
-  "Se connecter": ["Sign in", "登录", "Anmelden", "Iniciar sesión", "Войти", "Accedi", "ログイン"],
+  "Se connecter": [
+    "Sign in",
+    "登录",
+    "Anmelden",
+    "Iniciar sesión",
+    "Войти",
+    "Accedi",
+    "ログイン"
+  ],
   "Se déconnecter": [
     "Log out",
     "退出登录",
@@ -20096,7 +21320,15 @@
     "Ogni scenario salva sessione, messaggio, risposta, uscita, traccia e revisione.",
     "各シナリオのセッション、顧客メッセージ、回答、出力、記録、レビューを保存します。"
   ],
-  "Sessions": ["Sessions", "会话", "Sitzungen", "Sesiones", "Сеансы", "Sessioni", "セッション"],
+  "Sessions": [
+    "Sessions",
+    "会话",
+    "Sitzungen",
+    "Sesiones",
+    "Сеансы",
+    "Sessioni",
+    "セッション"
+  ],
   "Seul le commerce ou l'administration désigne les responsables.": [
     "Only sales or administration assigns owners.",
     "仅销售或管理员可指定负责人。",
@@ -20223,7 +21455,15 @@
     "Sei domande semplici, con le sue parole.",
     "6 つの簡単な質問に、ご自身の言葉で。"
   ],
-  "Société": ["Company", "公司", "Unternehmen", "Empresa", "Компания", "Azienda", "会社"],
+  "Société": [
+    "Company",
+    "公司",
+    "Unternehmen",
+    "Empresa",
+    "Компания",
+    "Azienda",
+    "会社"
+  ],
   "Société (A→Z)": [
     "Company (A→Z)",
     "公司（A→Z）",
@@ -20314,7 +21554,15 @@
     "Uscita ottenuta",
     "実際の出力"
   ],
-  "Source": ["Source", "来源", "Quelle", "Fuente", "Источник", "Fonte", "出典"],
+  "Source": [
+    "Source",
+    "来源",
+    "Quelle",
+    "Fuente",
+    "Источник",
+    "Fonte",
+    "出典"
+  ],
   "Source : atelier": [
     "Source: workshop",
     "来源：工作区",
@@ -20414,7 +21662,15 @@
     "Stabile in temperatura, portata media",
     "温度安定性が高く、動作距離は中程度"
   ],
-  "Standard": ["Standard", "标准", "Standard", "Estándar", "Стандарт", "Standard", "標準"],
+  "Standard": [
+    "Standard",
+    "标准",
+    "Standard",
+    "Estándar",
+    "Стандарт",
+    "Standard",
+    "標準"
+  ],
   "Standex DETECT — Détection magnétique": [
     "Standex DETECT — Magnetic sensing",
     "Standex DETECT — 磁感应",
@@ -20514,7 +21770,15 @@
     "Standex valida il riferimento finale.",
     "最終型番はStandexが確認します。"
   ],
-  "Statut": ["Status", "状态", "Status", "Estado", "Статус", "Stato", "状態"],
+  "Statut": [
+    "Status",
+    "状态",
+    "Status",
+    "Estado",
+    "Статус",
+    "Stato",
+    "状態"
+  ],
   "Statut NDA indisponible.": [
     "NDA status unavailable.",
     "NDA状态不可用。",
@@ -20542,7 +21806,15 @@
     "Stato incoerente: prova assente",
     "ステータス不整合：証明がありません"
   ],
-  "Suivant": ["Next", "下一个", "Weiter", "Siguiente", "Далее", "Successivo", "次へ"],
+  "Suivant": [
+    "Next",
+    "下一个",
+    "Weiter",
+    "Siguiente",
+    "Далее",
+    "Successivo",
+    "次へ"
+  ],
   "Suivi": [
     "Tracking",
     "跟踪",
@@ -20687,7 +21959,15 @@
     "Sintesi applicativa",
     "用途の概要"
   ],
-  "Synthèse": ["Summary", "摘要", "Übersicht", "Resumen", "Сводка", "Sintesi", "概要"],
+  "Synthèse": [
+    "Summary",
+    "摘要",
+    "Übersicht",
+    "Resumen",
+    "Сводка",
+    "Sintesi",
+    "概要"
+  ],
   "Synthèse de régression - Assistant capteur Standex": [
     "Regression summary - Standex sensor assistant",
     "回归摘要 - Standex 传感器助手",
@@ -20742,7 +22022,15 @@
     "Selezionate una riga per esaminare fonti e limiti.",
     "行を選択して出典と制約を確認します。"
   ],
-  "TENU": ["HELD", "满足", "ERFÜLLT", "CUMPLIDO", "ВЫДЕРЖАНО", "RISPETTATO", "成立"],
+  "TENU": [
+    "HELD",
+    "满足",
+    "ERFÜLLT",
+    "CUMPLIDO",
+    "ВЫДЕРЖАНО",
+    "RISPETTATO",
+    "成立"
+  ],
   "TTI Europe": [
     "TTI Europe",
     "TTI Europe",
@@ -20770,7 +22058,15 @@
     "Tabella Standex, facce affacciate (magnete a 180°). Cambiare orientamento attiva la demo fittizia.",
     "Standex表は端面が向かい合う場合（磁石180°）。向きを変えると仮のデモに切り替わります。"
   ],
-  "Tableau": ["Table", "表格", "Tabelle", "Tabla", "Таблица", "Tabella", "一覧"],
+  "Tableau": [
+    "Table",
+    "表格",
+    "Tabelle",
+    "Tabla",
+    "Таблица",
+    "Tabella",
+    "一覧"
+  ],
   "Tant qu'aucune longueur n'est retenue, la longueur reste inconnue dans le dossier.": [
     "As long as no length is selected, the length stays unknown in the file.",
     "只要未选择长度，档案中的长度就保持未知。",
@@ -20933,7 +22229,15 @@
     "Temperatura, liquidi, polveri, pulizia, vibrazioni.",
     "温度、液体、粉じん、洗浄、振動。"
   ],
-  "Tension": ["Voltage", "电压", "Spannung", "Tensión", "Напряжение", "Tensione", "電圧"],
+  "Tension": [
+    "Voltage",
+    "电压",
+    "Spannung",
+    "Tensión",
+    "Напряжение",
+    "Tensione",
+    "電圧"
+  ],
   "Tension commutée max.": [
     "Max. switching voltage",
     "最大切换电压",
@@ -20970,7 +22274,15 @@
     "Terminazione",
     "終端"
   ],
-  "Terminé": ["Done", "已完成", "Erledigt", "Terminado", "Готово", "Completato", "完了"],
+  "Terminé": [
+    "Done",
+    "已完成",
+    "Erledigt",
+    "Terminado",
+    "Готово",
+    "Completato",
+    "完了"
+  ],
   "Terre rare, sensible à la température": [
     "Rare earth, temperature sensitive",
     "稀土材料，对温度敏感",
@@ -20989,7 +22301,15 @@
     "Terra rara, resistente alle alte temperature",
     "希土類。高温に耐える"
   ],
-  "Tester": ["Test", "测试", "Testen", "Probar", "Проверить", "Prova", "試す"],
+  "Tester": [
+    "Test",
+    "测试",
+    "Testen",
+    "Probar",
+    "Проверить",
+    "Prova",
+    "試す"
+  ],
   "Tester ce couple →": [
     "Test this pair →",
     "测试此组合 →",
@@ -21008,7 +22328,15 @@
     "Testare un'altra coppia",
     "別の組み合わせをテスト"
   ],
-  "Testez": ["Test", "测试", "Testen", "Pruebe", "Проверьте", "Provi", "試す"],
+  "Testez": [
+    "Test",
+    "测试",
+    "Testen",
+    "Pruebe",
+    "Проверьте",
+    "Provi",
+    "試す"
+  ],
   "Testez un couple pour voir son résultat ici.": [
     "Test a pair to see its result here.",
     "测试一个组合后，结果会显示在这里。",
@@ -21054,7 +22382,15 @@
     "Thomas LOAREC",
     "Thomas LOAREC"
   ],
-  "Tolérance": ["Tolerance", "公差", "Toleranz", "Tolerancia", "Допуск", "Tolleranza", "公差"],
+  "Tolérance": [
+    "Tolerance",
+    "公差",
+    "Toleranz",
+    "Tolerancia",
+    "Допуск",
+    "Tolleranza",
+    "公差"
+  ],
   "Tolérance de montage": [
     "Assembly tolerance",
     "装配公差",
@@ -21109,7 +22445,15 @@
     "Tolleranza proposta (± mm)",
     "提案された公差（± mm）"
   ],
-  "Tourner": ["Rotate", "旋转", "Drehen", "Girar", "Повернуть", "Ruota", "回転"],
+  "Tourner": [
+    "Rotate",
+    "旋转",
+    "Drehen",
+    "Girar",
+    "Повернуть",
+    "Ruota",
+    "回転"
+  ],
   "Tourner de 15°": [
     "Rotate by 15°",
     "旋转 15°",
@@ -21128,7 +22472,15 @@
     "Ruota il magnete di 90°",
     "磁石を90°回転"
   ],
-  "Tous": ["All", "全部", "Alle", "Todos", "Все", "Tutti", "すべて"],
+  "Tous": [
+    "All",
+    "全部",
+    "Alle",
+    "Todos",
+    "Все",
+    "Tutti",
+    "すべて"
+  ],
   "Tous les matériaux": [
     "All materials",
     "所有材料",
@@ -21336,7 +22688,15 @@
     "Linea continua: chiusura con tolleranza. Tratteggio: apertura con tolleranza. Banda: isteresi tipica.",
     "実線：公差を含む閉成。破線：公差を含む開離。帯：代表ヒステリシス。"
   ],
-  "Trajectoire": ["Path", "轨迹", "Bahn", "Trayectoria", "Траектория", "Traiettoria", "軌道"],
+  "Trajectoire": [
+    "Path",
+    "轨迹",
+    "Bahn",
+    "Trayectoria",
+    "Траектория",
+    "Traiettoria",
+    "軌道"
+  ],
   "Trajet de câble affiché": [
     "Cable routing displayed",
     "已显示线缆走向",
@@ -21445,7 +22805,15 @@
     "Ordine per margine di chiusura decrescente, senza raccomandazione automatica.",
     "閉成余裕の降順です。自動推奨ではありません。"
   ],
-  "Trier": ["Sort", "排序", "Sortieren", "Ordenar", "Сортировать", "Ordina", "並べ替え"],
+  "Trier": [
+    "Sort",
+    "排序",
+    "Sortieren",
+    "Ordenar",
+    "Сортировать",
+    "Ordina",
+    "並べ替え"
+  ],
   "Trier par": [
     "Sort by",
     "排序方式",
@@ -21500,7 +22868,15 @@
     "Trovi il sensore adatto al suo progetto.",
     "プロジェクトに適したセンサーを見つけましょう。"
   ],
-  "Type": ["Type", "类型", "Typ", "Tipo", "Тип", "Tipo", "タイプ"],
+  "Type": [
+    "Type",
+    "类型",
+    "Typ",
+    "Tipo",
+    "Тип",
+    "Tipo",
+    "タイプ"
+  ],
   "Type de besoin": [
     "Type of need",
     "需求类型",
@@ -21555,7 +22931,15 @@
     "Attività aggiornata.",
     "タスクを更新しました。"
   ],
-  "Tâches": ["Tasks", "任务", "Aufgaben", "Tareas", "Задачи", "Attività", "タスク"],
+  "Tâches": [
+    "Tasks",
+    "任务",
+    "Aufgaben",
+    "Tareas",
+    "Задачи",
+    "Attività",
+    "タスク"
+  ],
   "Télécharger": [
     "Download",
     "下载",
@@ -21628,7 +23012,15 @@
     "Scaricare il riepilogo tecnico completo (PDF)",
     "技術サマリー全文をダウンロード（PDF）"
   ],
-  "Téléphone": ["Phone", "电话", "Telefon", "Teléfono", "Телефон", "Telefono", "電話"],
+  "Téléphone": [
+    "Phone",
+    "电话",
+    "Telefon",
+    "Teléfono",
+    "Телефон",
+    "Telefono",
+    "電話"
+  ],
   "UL · câble immobile": [
     "UL · cable stationary",
     "UL · 电缆固定",
@@ -22160,7 +23552,15 @@
     "IL TUO DOSSIER APPLICATIVO",
     "用途別資料"
   ],
-  "Valable": ["Valid", "有效", "Gültig", "Válida", "Действительно", "Valida", "有効"],
+  "Valable": [
+    "Valid",
+    "有效",
+    "Gültig",
+    "Válida",
+    "Действительно",
+    "Valida",
+    "有効"
+  ],
   "Valable jusqu'au": [
     "Valid until",
     "有效期至",
@@ -22170,7 +23570,15 @@
     "Valido fino al",
     "有効期限"
   ],
-  "Valeur": ["Value", "值", "Wert", "Valor", "Значение", "Valore", "値"],
+  "Valeur": [
+    "Value",
+    "值",
+    "Wert",
+    "Valor",
+    "Значение",
+    "Valore",
+    "値"
+  ],
   "Valeur brute constructeur, non convertible en distance de commutation.": [
     "Raw manufacturer value, not convertible into a switching distance.",
     "制造商原始数值，无法转换为开关距离。",
@@ -22252,7 +23660,15 @@
     "Validazione Standex",
     "Standexによる確認"
   ],
-  "Valider": ["Confirm", "确认", "Bestätigen", "Confirmar", "Подтвердить", "Conferma", "確定"],
+  "Valider": [
+    "Confirm",
+    "确认",
+    "Bestätigen",
+    "Confirmar",
+    "Подтвердить",
+    "Conferma",
+    "確定"
+  ],
   "Valider ce choix et voir le résultat": [
     "Confirm this choice and view the result",
     "确认此选择并查看结果",
@@ -22361,7 +23777,15 @@
     "VdS · cavo fermo",
     "VdS · ケーブル固定時"
   ],
-  "Verdict": ["Verdict", "结论", "Urteil", "Veredicto", "Вердикт", "Verdetto", "判定"],
+  "Verdict": [
+    "Verdict",
+    "结论",
+    "Urteil",
+    "Veredicto",
+    "Вердикт",
+    "Verdetto",
+    "判定"
+  ],
   "Verdict humain (comparaison)": [
     "Human verdict (comparison)",
     "人工结论（比较）",
@@ -22380,7 +23804,15 @@
     "Revisione umana del confronto base/sperimentale.",
     "ベースラインと実験的回答を人が比較します。"
   ],
-  "Version": ["Version", "版本", "Version", "Versión", "Версия", "Versione", "バージョン"],
+  "Version": [
+    "Version",
+    "版本",
+    "Version",
+    "Versión",
+    "Версия",
+    "Versione",
+    "バージョン"
+  ],
   "Version anglaise": [
     "English version",
     "英文版本",
@@ -22525,7 +23957,15 @@
     "Invecchiamento del magnete",
     "磁石の経年変化"
   ],
-  "Ville": ["City", "城市", "Stadt", "Ciudad", "Город", "Città", "所在地"],
+  "Ville": [
+    "City",
+    "城市",
+    "Stadt",
+    "Ciudad",
+    "Город",
+    "Città",
+    "所在地"
+  ],
   "Ville Standex": [
     "Standex city",
     "Standex 所在城市",
@@ -22598,7 +24038,15 @@
     "Canale distributore",
     "代理店経由"
   ],
-  "Voies": ["Positions", "极数", "Polzahl", "Vías", "Число контактов", "Vie", "極数"],
+  "Voies": [
+    "Positions",
+    "极数",
+    "Polzahl",
+    "Vías",
+    "Число контактов",
+    "Vie",
+    "極数"
+  ],
   "Voir ce que vous avez écrit": [
     "See what you wrote",
     "查看您填写的内容",
@@ -22797,7 +24245,15 @@
     "Mostra tutto il montaggio",
     "構成全体を表示"
   ],
-  "Volume": ["Volume", "数量", "Stückzahl", "Volumen", "Объём", "Volume", "数量"],
+  "Volume": [
+    "Volume",
+    "数量",
+    "Stückzahl",
+    "Volumen",
+    "Объём",
+    "Volume",
+    "数量"
+  ],
   "Volume annuel": [
     "Annual volume",
     "年用量",
@@ -23257,8 +24713,24 @@
     "Visibile al cliente — lingua registrata del progetto:",
     "顧客が閲覧 — 保存されたプロジェクト言語:"
   ],
-  "Vue 2D": ["2D view", "2D 视图", "2D-Ansicht", "Vista 2D", "Вид 2D", "Vista 2D", "2D 表示"],
-  "Vue 3D": ["3D view", "3D 视图", "3D-Ansicht", "Vista 3D", "Вид 3D", "Vista 3D", "3D 表示"],
+  "Vue 2D": [
+    "2D view",
+    "2D 视图",
+    "2D-Ansicht",
+    "Vista 2D",
+    "Вид 2D",
+    "Vista 2D",
+    "2D 表示"
+  ],
+  "Vue 3D": [
+    "3D view",
+    "3D 视图",
+    "3D-Ansicht",
+    "Vista 3D",
+    "Вид 3D",
+    "Vista 3D",
+    "3D 表示"
+  ],
   "Vue cotée · survolez pour la 3D": [
     "Dimensioned view · hover for 3D",
     "带尺寸视图 · 悬停查看 3D",
@@ -23484,7 +24956,15 @@
     "_mancante_",
     "_未入力_"
   ],
-  "absent": ["missing", "缺失", "fehlt", "ausente", "отсутствует", "assente", "なし"],
+  "absent": [
+    "missing",
+    "缺失",
+    "fehlt",
+    "ausente",
+    "отсутствует",
+    "assente",
+    "なし"
+  ],
   "absents : {0}": [
     "absent: {0}",
     "缺少：{0}",
@@ -23512,7 +24992,15 @@
     "allinea uscita a {0}",
     "出力を{0}に合わせる"
   ],
-  "aller": ["outward", "去程", "Hinweg", "ida", "прямой", "andata", "往路"],
+  "aller": [
+    "outward",
+    "去程",
+    "Hinweg",
+    "ida",
+    "прямой",
+    "andata",
+    "往路"
+  ],
   "alter table public.sensor_test_outputs add column generation_mode text not null default 'baseline' check (generation_mode in ('baseline','experimental')); alter table public.sensor_test_internal_traces add column generation_mode text not null default 'baseline' check (generation_mode in ('baseline','experimental')); alter table public.sensor_test_reviews add column compared_output_id uuid references public.sensor_test_outputs(id) on delete set null, add column preferred_mode text check (preferred_mode in ('baseline','experimental'));": [
     "alter table public.sensor_test_outputs add column generation_mode text not null default 'baseline' check (generation_mode in ('baseline','experimental')); alter table public.sensor_test_internal_traces add column generation_mode text not null default 'baseline' check (generation_mode in ('baseline','experimental')); alter table public.sensor_test_reviews add column compared_output_id uuid references public.sensor_test_outputs(id) on delete set null, add column preferred_mode text check (preferred_mode in ('baseline','experimental'));",
     "alter table public.sensor_test_outputs add column generation_mode text not null default 'baseline' check (generation_mode in ('baseline','experimental')); alter table public.sensor_test_internal_traces add column generation_mode text not null default 'baseline' check (generation_mode in ('baseline','experimental')); alter table public.sensor_test_reviews add column compared_output_id uuid references public.sensor_test_outputs(id) on delete set null, add column preferred_mode text check (preferred_mode in ('baseline','experimental'));",
@@ -23630,7 +25118,15 @@
     "nessuna attività",
     "タスクなし"
   ],
-  "autorisée": ["allowed", "允许", "zulässig", "permitida", "разрешено", "consentita", "可"],
+  "autorisée": [
+    "allowed",
+    "允许",
+    "zulässig",
+    "permitida",
+    "разрешено",
+    "consentita",
+    "可"
+  ],
   "avec deux distances réelles": [
     "with two real distances",
     "含两个真实距离",
@@ -23667,7 +25163,15 @@
     "banco di prova interno",
     "社内テストベンチ"
   ],
-  "bloquée": ["blocked", "已阻止", "gesperrt", "bloqueada", "заблокировано", "bloccata", "不可"],
+  "bloquée": [
+    "blocked",
+    "已阻止",
+    "gesperrt",
+    "bloqueada",
+    "заблокировано",
+    "bloccata",
+    "不可"
+  ],
   "bloquée(s)": [
     "blocked",
     "受阻",
@@ -23686,7 +25190,15 @@
     "brochure, pagina",
     "カタログ、ページ"
   ],
-  "brouillon": ["draft", "草稿", "Entwurf", "borrador", "черновик", "bozza", "下書き"],
+  "brouillon": [
+    "draft",
+    "草稿",
+    "Entwurf",
+    "borrador",
+    "черновик",
+    "bozza",
+    "下書き"
+  ],
   "brouillon non enregistré": [
     "unsaved draft",
     "未保存的草稿",
@@ -23831,7 +25343,15 @@
     "cita {0} nella risposta o traccia",
     "回答または記録で{0}を明示"
   ],
-  "closed": ["Closed", "已关闭", "Geschlossen", "Cerrado", "Закрыто", "Chiuso", "終了"],
+  "closed": [
+    "Closed",
+    "已关闭",
+    "Geschlossen",
+    "Cerrado",
+    "Закрыто",
+    "Chiuso",
+    "終了"
+  ],
   "collé sous le couvercle, inséré dans un trou du bâti, vissé sur une équerre": [
     "glued under the cover, inserted into a hole in the frame, screwed onto a bracket",
     "粘在机盖下方、插入机架孔中、用螺钉固定在支架上",
@@ -23913,7 +25433,15 @@
     "confermati",
     "確認済み"
   ],
-  "conforme": ["compliant", "符合", "konform", "conforme", "соответствует", "conforme", "適合"],
+  "conforme": [
+    "compliant",
+    "符合",
+    "konform",
+    "conforme",
+    "соответствует",
+    "conforme",
+    "適合"
+  ],
   "conseil de coupe/pliage d'un reed brut sans avertissement": [
     "cut/bend advice for bare reed without warning",
     "无提示的裸干簧管切割/弯折建议",
@@ -24004,7 +25532,15 @@
     "costo unitario non indicato",
     "単価（原価）が未入力"
   ],
-  "critique": ["critical", "关键", "kritisch", "crítico", "критично", "critico", "重要"],
+  "critique": [
+    "critical",
+    "关键",
+    "kritisch",
+    "crítico",
+    "критично",
+    "critico",
+    "重要"
+  ],
   "câblage, type d'entrée, conditions réelles": [
     "wiring, input type, actual conditions",
     "接线、输入类型、实际条件",
@@ -24014,7 +25550,15 @@
     "cablaggio, tipo ingresso, condizioni reali",
     "配線・入力形式・実条件"
   ],
-  "câble": ["cable", "电缆", "Kabel", "cable", "кабель", "cavo", "ケーブル"],
+  "câble": [
+    "cable",
+    "电缆",
+    "Kabel",
+    "cable",
+    "кабель",
+    "cavo",
+    "ケーブル"
+  ],
   "demander la ville du prospect": [
     "ask for the customer's city",
     "询问客户所在城市",
@@ -24078,8 +25622,24 @@
     "download non riuscito",
     "ダウンロードに失敗しました"
   ],
-  "draft": ["Draft", "草稿", "Entwurf", "Borrador", "Черновик", "Bozza", "下書き"],
-  "durée de vie": ["lifetime", "寿命", "Lebensdauer", "vida útil", "ресурс", "durata", "寿命"],
+  "draft": [
+    "Draft",
+    "草稿",
+    "Entwurf",
+    "Borrador",
+    "Черновик",
+    "Bozza",
+    "下書き"
+  ],
+  "durée de vie": [
+    "lifetime",
+    "寿命",
+    "Lebensdauer",
+    "vida útil",
+    "ресурс",
+    "durata",
+    "寿命"
+  ],
   "déclaré par le client": [
     "declared by the client",
     "由客户申报",
@@ -24161,7 +25721,15 @@
     "inserimento a pressione in un foro",
     "穴への圧入"
   ],
-  "en": ["English", "英语", "Englisch", "Inglés", "Английский", "Inglese", "英語"],
+  "en": [
+    "English",
+    "英语",
+    "Englisch",
+    "Inglés",
+    "Английский",
+    "Inglese",
+    "英語"
+  ],
   "en attente d'envoi — envoi non configuré": [
     "awaiting sending — sending not configured",
     "待发送 — 未配置发送",
@@ -24171,8 +25739,24 @@
     "in attesa di invio — invio non configurato",
     "送信待ち — 送信は未設定"
   ],
-  "en panne": ["broken", "故障", "defekt", "averiado", "неисправен", "guasto", "故障"],
-  "en retard": ["late", "延迟", "verspätet", "con retraso", "просрочено", "in ritardo", "遅延"],
+  "en panne": [
+    "broken",
+    "故障",
+    "defekt",
+    "averiado",
+    "неисправен",
+    "guasto",
+    "故障"
+  ],
+  "en retard": [
+    "late",
+    "延迟",
+    "verspätet",
+    "con retraso",
+    "просрочено",
+    "in ritardo",
+    "遅延"
+  ],
   "enregistré ·": [
     "saved ·",
     "已保存 ·",
@@ -24200,7 +25784,15 @@
     "arricchisci traccia (salvaguardie, domande, valori scheda)",
     "内部記録に条件・質問・資料値を追加"
   ],
-  "entrée": ["input", "输入", "Eingang", "entrada", "вход", "ingresso", "入力"],
+  "entrée": [
+    "input",
+    "输入",
+    "Eingang",
+    "entrada",
+    "вход",
+    "ingresso",
+    "入力"
+  ],
   "entrée automate 24 V": [
     "24 V PLC input",
     "24 V PLC 输入",
@@ -24273,7 +25865,15 @@
     "facce affacciate (magnete a 180°)",
     "端面が向かい合う（磁石180°）"
   ],
-  "fermé": ["closed", "闭合", "geschlossen", "cerrado", "замкнут", "chiuso", "閉"],
+  "fermé": [
+    "closed",
+    "闭合",
+    "geschlossen",
+    "cerrado",
+    "замкнут",
+    "chiuso",
+    "閉"
+  ],
   "ferrite 280 °C": [
     "ferrite 280 °C",
     "铁氧体 280 °C",
@@ -24328,7 +25928,15 @@
     "galleggiante attraverso parete o installazione interna",
     "壁越しフロート検出か内部設置か"
   ],
-  "fr": ["French", "法语", "Französisch", "Francés", "Французский", "Francese", "フランス語"],
+  "fr": [
+    "French",
+    "法语",
+    "Französisch",
+    "Francés",
+    "Французский",
+    "Francese",
+    "フランス語"
+  ],
   "fragments : {0}": [
     "fragments: {0}",
     "片段：{0}",
@@ -24338,10 +25946,42 @@
     "frammenti: {0}",
     "断片：{0}"
   ],
-  "français": ["French", "法语", "Französisch", "francés", "французский", "francese", "フランス語"],
-  "good": ["Good", "良好", "Gut", "Bien", "Хорошо", "Buono", "良好"],
-  "hauteur": ["height", "高度", "Höhe", "altura", "высота", "altezza", "高さ"],
-  "high": ["High", "高", "Hoch", "Alta", "Высокая", "Alta", "高"],
+  "français": [
+    "French",
+    "法语",
+    "Französisch",
+    "francés",
+    "французский",
+    "francese",
+    "フランス語"
+  ],
+  "good": [
+    "Good",
+    "良好",
+    "Gut",
+    "Bien",
+    "Хорошо",
+    "Buono",
+    "良好"
+  ],
+  "hauteur": [
+    "height",
+    "高度",
+    "Höhe",
+    "altura",
+    "высота",
+    "altezza",
+    "高さ"
+  ],
+  "high": [
+    "High",
+    "高",
+    "Hoch",
+    "Alta",
+    "Высокая",
+    "Alta",
+    "高"
+  ],
   "horizon projet évoqué dans la demande": [
     "project timeline mentioned in request",
     "需求中提及项目时间",
@@ -24378,8 +26018,24 @@
     "In revisione",
     "レビュー中"
   ],
-  "inconnu": ["unknown", "未知", "unbekannt", "desconocido", "неизвестно", "sconosciuto", "不明"],
-  "inconnue": ["unknown", "未知", "unbekannt", "desconocida", "неизвестно", "sconosciuta", "不明"],
+  "inconnu": [
+    "unknown",
+    "未知",
+    "unbekannt",
+    "desconocido",
+    "неизвестно",
+    "sconosciuto",
+    "不明"
+  ],
+  "inconnue": [
+    "unknown",
+    "未知",
+    "unbekannt",
+    "desconocida",
+    "неизвестно",
+    "sconosciuta",
+    "不明"
+  ],
   "inconnue (trajet incomplet ou invalide)": [
     "unknown (incomplete or invalid route)",
     "未知（路径不完整或无效）",
@@ -24461,7 +26117,15 @@
     "interfaccia consigliata tra reed e carico",
     "リードと負荷の間に中間回路を推奨"
   ],
-  "internal": ["Internal", "内部", "Intern", "Interno", "Внутреннее", "Interno", "社内"],
+  "internal": [
+    "Internal",
+    "内部",
+    "Intern",
+    "Interno",
+    "Внутреннее",
+    "Interno",
+    "社内"
+  ],
   "internal_review": [
     "Internal review",
     "内部审核",
@@ -24489,7 +26153,15 @@
     "integrazione in una macchina",
     "機械への組み込み"
   ],
-  "jour(s)": ["day(s)", "天", "Tag(e)", "día(s)", "дн.", "giorno/i", "日"],
+  "jour(s)": [
+    "day(s)",
+    "天",
+    "Tag(e)",
+    "día(s)",
+    "дн.",
+    "giorno/i",
+    "日"
+  ],
   "jour(s) de retard": [
     "day(s) late",
     "天延迟",
@@ -24544,7 +26216,15 @@
     "lingua del cliente:",
     "顧客の言語："
   ],
-  "lien :": ["link:", "链接：", "Link:", "enlace:", "ссылка:", "link:", "リンク："],
+  "lien :": [
+    "link:",
+    "链接：",
+    "Link:",
+    "enlace:",
+    "ссылка:",
+    "link:",
+    "リンク："
+  ],
   "longueur catalogue, à confirmer": [
     "catalogue length, to be confirmed",
     "目录长度，待确认",
@@ -24599,8 +26279,24 @@
     "Area test",
     "試験環境"
   ],
-  "low": ["Low", "低", "Niedrig", "Baja", "Низкая", "Bassa", "低"],
-  "l’aimant": ["magnet", "磁铁", "Magnet", "el imán", "магнит", "il magnete", "磁石"],
+  "low": [
+    "Low",
+    "低",
+    "Niedrig",
+    "Baja",
+    "Низкая",
+    "Bassa",
+    "低"
+  ],
+  "l’aimant": [
+    "magnet",
+    "磁铁",
+    "Magnet",
+    "el imán",
+    "магнит",
+    "il magnete",
+    "磁石"
+  ],
   "machine à café professionnelle : savoir si le réservoir est bien en place": [
     "professional coffee machine: knowing whether the tank is fully in place",
     "专业咖啡机：判断水箱是否完全到位",
@@ -24664,7 +26360,15 @@
     "Importazione manuale",
     "手動読み込み"
   ],
-  "medium": ["Medium", "中", "Mittel", "Media", "Средняя", "Media", "中"],
+  "medium": [
+    "Medium",
+    "中",
+    "Mittel",
+    "Media",
+    "Средняя",
+    "Media",
+    "中"
+  ],
   "mm · Vert : fermé · Gris : ouvert · Contacts internes symboliques": [
     "mm · Green: closed · Grey: open · Symbolic internal contacts",
     "mm · 绿色：闭合 · 灰色：断开 · 内部触点示意",
@@ -24728,7 +26432,15 @@
     "né l'assenza di attrito, e non costituisce alcuna convalida. La navigazione rimane separata dal puntamento.",
     "摩擦がないことも保証せず、検証としても機能しません。画面操作はポイント指定とは分離されています。"
   ],
-  "non": ["no", "否", "nein", "no", "нет", "no", "いいえ"],
+  "non": [
+    "no",
+    "否",
+    "nein",
+    "no",
+    "нет",
+    "no",
+    "いいえ"
+  ],
   "non attribué": [
     "unassigned",
     "未指派",
@@ -24927,8 +26639,24 @@
     "origine della versione inglese non dichiarata",
     "英語版の出所が明示されていません"
   ],
-  "other": ["Other", "其他", "Andere", "Otro", "Другое", "Altro", "その他"],
-  "oui": ["yes", "是", "ja", "sí", "да", "sì", "はい"],
+  "other": [
+    "Other",
+    "其他",
+    "Andere",
+    "Otro",
+    "Другое",
+    "Altro",
+    "その他"
+  ],
+  "oui": [
+    "yes",
+    "是",
+    "ja",
+    "sí",
+    "да",
+    "sì",
+    "はい"
+  ],
   "oui ({0})": [
     "yes ({0})",
     "是（{0}）",
@@ -24938,7 +26666,15 @@
     "sì ({0})",
     "はい（{0}）"
   ],
-  "oui : {0}": ["yes: {0}", "是：{0}", "ja: {0}", "sí: {0}", "да: {0}", "sì: {0}", "はい：{0}"],
+  "oui : {0}": [
+    "yes: {0}",
+    "是：{0}",
+    "ja: {0}",
+    "sí: {0}",
+    "да: {0}",
+    "sì: {0}",
+    "はい：{0}"
+  ],
   "ouvert par convention pédagogique, puis recalculé": [
     "open by educational convention, then recalculated",
     "按教学约定初始断开，然后重新计算",
@@ -24957,7 +26693,15 @@
     "aprire questo progetto",
     "このプロジェクトを開く"
   ],
-  "parallèle": ["parallel", "平行", "parallel", "paralelo", "параллельно", "parallelo", "平行"],
+  "parallèle": [
+    "parallel",
+    "平行",
+    "parallel",
+    "paralelo",
+    "параллельно",
+    "parallelo",
+    "平行"
+  ],
   "pas de détection sur ce cycle": [
     "no detection on this cycle",
     "此循环中无检测",
@@ -25021,7 +26765,15 @@
     "Rilevato consiglio di taglio/piegatura",
     "切断・曲げを指示する文あり"
   ],
-  "pièces :": ["parts:", "件：", "Stück:", "piezas:", "шт.:", "pezzi:", "個："],
+  "pièces :": [
+    "parts:",
+    "件：",
+    "Stück:",
+    "piezas:",
+    "шт.:",
+    "pezzi:",
+    "個："
+  ],
   "plage du guide {0}–{1} mm, ligne {2}, page {3}": [
     "guide range {0}–{1} mm, row {2}, page {3}",
     "指南范围 {0}–{1} mm，行 {2}，第 {3} 页",
@@ -25094,7 +26846,15 @@
     "prezzo di vendita nullo: il margine non può essere calcolato",
     "販売価格がゼロのため、利益率を計算できません"
   ],
-  "profondeur": ["depth", "深度", "Tiefe", "profundidad", "глубина", "profondità", "奥行き"],
+  "profondeur": [
+    "depth",
+    "深度",
+    "Tiefe",
+    "profundidad",
+    "глубина",
+    "profondità",
+    "奥行き"
+  ],
   "projet sans nom": [
     "untitled project",
     "未命名项目",
@@ -25140,7 +26900,15 @@
     "cliente potenziale",
     "見込み客"
   ],
-  "précis": ["precis", "精度", "Präzis", "precis", "точн", "precis", "精度"],
+  "précis": [
+    "precis",
+    "精度",
+    "Präzis",
+    "precis",
+    "точн",
+    "precis",
+    "精度"
+  ],
   "présents : {0}": [
     "present: {0}",
     "存在：{0}",
@@ -25168,7 +26936,15 @@
     "motivo sconosciuto",
     "不明な理由"
   ],
-  "rattaché": ["linked", "已关联", "verknüpft", "vinculada", "привязана", "collegato", "連携済み"],
+  "rattaché": [
+    "linked",
+    "已关联",
+    "verknüpft",
+    "vinculada",
+    "привязана",
+    "collegato",
+    "連携済み"
+  ],
   "rattaché, sans droit": [
     "linked, no right",
     "已关联，无权限",
@@ -25214,7 +26990,15 @@
     "relè / bobina",
     "リレー / コイル"
   ],
-  "remplacé": ["replaced", "已替换", "ersetzt", "sustituido", "заменено", "sostituito", "置換済み"],
+  "remplacé": [
+    "replaced",
+    "已替换",
+    "ersetzt",
+    "sustituido",
+    "заменено",
+    "sostituito",
+    "置換済み"
+  ],
   "report sur circuit imprimé": [
     "mounting on a printed circuit board",
     "印刷电路板贴装",
@@ -25305,7 +27089,15 @@
     "rimuovi formulazioni come {0}",
     "{0}のような表現を除く"
   ],
-  "retour": ["return", "回程", "Rückweg", "vuelta", "обратный", "ritorno", "復路"],
+  "retour": [
+    "return",
+    "回程",
+    "Rückweg",
+    "vuelta",
+    "обратный",
+    "ritorno",
+    "復路"
+  ],
   "retour(s) —": [
     "feedback(s) —",
     "项反馈 —",
@@ -25315,7 +27107,15 @@
     "riscontro/i —",
     "件のフィードバック —"
   ],
-  "revue": ["review", "审核", "Bewertung", "revisión", "проверка", "revisione", "レビュー"],
+  "revue": [
+    "review",
+    "审核",
+    "Bewertung",
+    "revisión",
+    "проверка",
+    "revisione",
+    "レビュー"
+  ],
   "référence concurrente évoquée, datasheet à obtenir": [
     "competitor part mentioned; datasheet needed",
     "提及竞品型号，需数据表",
@@ -25343,7 +27143,15 @@
     "reimpostare la ricerca",
     "検索をリセット"
   ],
-  "répétab": ["repeatab", "重复", "Wiederholb", "repetib", "повторяем", "ripetib", "再現"],
+  "répétab": [
+    "repeatab",
+    "重复",
+    "Wiederholb",
+    "repetib",
+    "повторяем",
+    "ripetib",
+    "再現"
+  ],
   "réserve de service": [
     "service loop",
     "维护预留长度",
@@ -25353,7 +27161,15 @@
     "riserva di servizio",
     "サービスループ"
   ],
-  "révision": ["revision", "版本", "Revision", "revisión", "ревизия", "revisione", "リビジョン"],
+  "révision": [
+    "revision",
+    "版本",
+    "Revision",
+    "revisión",
+    "ревизия",
+    "revisione",
+    "リビジョン"
+  ],
   "rôle dans la chaîne de sécurité à qualifier": [
     "role in safety chain to qualify",
     "安全链中的作用待确认",
@@ -25372,7 +27188,15 @@
     "sporgenza inferiore",
     "下部突出"
   ],
-  "sales": ["Sales", "销售", "Vertrieb", "Ventas", "Продажи", "Vendite", "営業"],
+  "sales": [
+    "Sales",
+    "销售",
+    "Vertrieb",
+    "Ventas",
+    "Продажи",
+    "Vendite",
+    "営業"
+  ],
   "sans chiffre d'affaires estimable": [
     "with no estimable revenue",
     "无法估算营业额",
@@ -25436,7 +27260,15 @@
     "soglie di questo montaggio non caratterizzate",
     "この取り付けのしきい値は未特性評価です"
   ],
-  "small": ["Small", "少量", "Klein", "Pequeño", "Малый", "Piccolo", "小"],
+  "small": [
+    "Small",
+    "少量",
+    "Klein",
+    "Pequeño",
+    "Малый",
+    "Piccolo",
+    "小"
+  ],
   "sont saisis : aucune conversion n'est faite ici. Effacez d'abord ces montants.": [
     "are recorded: no conversion happens here. Clear those amounts first.",
     "：此处不做任何换算。请先清除这些金额。",
@@ -25455,8 +27287,24 @@
     "uscita assistente",
     "アシスタント出力"
   ],
-  "sortie —": ["output —", "输出 —", "Ausgabe —", "salida —", "результат —", "uscita —", "出力 —"],
-  "source :": ["source:", "来源：", "Quelle:", "fuente:", "источник:", "fonte:", "出典："],
+  "sortie —": [
+    "output —",
+    "输出 —",
+    "Ausgabe —",
+    "salida —",
+    "результат —",
+    "uscita —",
+    "出力 —"
+  ],
+  "source :": [
+    "source:",
+    "来源：",
+    "Quelle:",
+    "fuente:",
+    "источник:",
+    "fonte:",
+    "出典："
+  ],
   "source interne Standex, à confirmer par les ingénieurs Standex": [
     "internal Standex source, to be confirmed by the Standex engineers",
     "Standex 内部来源，待 Standex 工程师确认",
@@ -25475,7 +27323,15 @@
     "specifico",
     "カスタム"
   ],
-  "standard": ["standard", "标准", "Standard", "estándar", "стандарт", "standard", "標準"],
+  "standard": [
+    "standard",
+    "标准",
+    "Standard",
+    "estándar",
+    "стандарт",
+    "standard",
+    "標準"
+  ],
   "suffisante": [
     "sufficient",
     "充足",
@@ -25503,7 +27359,15 @@
     "rimuovi frammenti interni {0} dalla risposta",
     "顧客向け回答から内部断片{0}を除く"
   ],
-  "sur 3": ["of 3", "/ 3", "von 3", "de 3", "из 3", "su 3", "/ 3"],
+  "sur 3": [
+    "of 3",
+    "/ 3",
+    "von 3",
+    "de 3",
+    "из 3",
+    "su 3",
+    "/ 3"
+  ],
   "surplus logeable": [
     "accommodable excess",
     "可容纳余量",
@@ -25513,8 +27377,24 @@
     "eccesso alloggiabile",
     "収容可能余長"
   ],
-  "sécurit": ["safet", "安全", "Sicherh", "segurid", "безопасн", "sicurez", "安全"],
-  "série": ["production", "量产", "Serie", "serie", "серия", "serie", "量産"],
+  "sécurit": [
+    "safet",
+    "安全",
+    "Sicherh",
+    "segurid",
+    "безопасн",
+    "sicurez",
+    "安全"
+  ],
+  "série": [
+    "production",
+    "量产",
+    "Serie",
+    "serie",
+    "серия",
+    "serie",
+    "量産"
+  ],
   "terminée par": [
     "completed by",
     "完成人",
@@ -25533,7 +27413,15 @@
     "tolleranza del fornitore",
     "サプライヤ公差"
   ],
-  "tout": ["all", "全部", "alle", "todo", "все", "tutto", "すべて"],
+  "tout": [
+    "all",
+    "全部",
+    "alle",
+    "todo",
+    "все",
+    "tutto",
+    "すべて"
+  ],
   "trace interne": [
     "internal trace",
     "内部记录",
@@ -25588,8 +27476,24 @@
     "trasmesso per il momento. È possibile continuare a progettare, preparare l'NDA ed esportare",
     "送信できません。設計の継続、NDAの準備、および案件ファイルの"
   ],
-  "triphasé": ["three-phase", "三相", "dreiphasig", "trifásico", "трёхфазный", "trifase", "三相"],
-  "tâche(s)": ["task(s)", "个任务", "Aufgabe(n)", "tarea(s)", "задач(и)", "attività", "件のタスク"],
+  "triphasé": [
+    "three-phase",
+    "三相",
+    "dreiphasig",
+    "trifásico",
+    "трёхфазный",
+    "trifase",
+    "三相"
+  ],
+  "tâche(s)": [
+    "task(s)",
+    "个任务",
+    "Aufgabe(n)",
+    "tarea(s)",
+    "задач(и)",
+    "attività",
+    "件のタスク"
+  ],
   "un capteur tubulaire ne travaille qu'avec un aimant tubulaire, un capteur non tubulaire qu'avec un aimant bloc": [
     "a tubular sensor only works with a tubular magnet, a non-tubular sensor only with a block magnet",
     "管状传感器只能与管状磁体配合，非管状传感器只能与块状磁体配合",
@@ -25617,7 +27521,15 @@
     "un serbatoio di plastica rimovibile, un cassetto metallico, un pistone",
     "取り外し式の樹脂タンク、金属製の引き出し、ピストン"
   ],
-  "unclear": ["Unclear", "不清晰", "Unklar", "Poco claro", "Неясно", "Poco chiaro", "不明瞭"],
+  "unclear": [
+    "Unclear",
+    "不清晰",
+    "Unklar",
+    "Poco claro",
+    "Неясно",
+    "Poco chiaro",
+    "不明瞭"
+  ],
   "une carte 5 V, un automate 24 V, un petit relais": [
     "a 5 V board, a 24 V PLC, a small relay",
     "5 V板卡、24 V PLC、微型继电器",
@@ -25627,10 +27539,42 @@
     "una scheda a 5 V, un PLC a 24 V, un piccolo relè",
     "5 V基板、24 V PLC、小型リレー"
   ],
-  "une pompe": ["a pump", "泵", "eine Pumpe", "una bomba", "насос", "una pompa", "ポンプ"],
-  "unknown": ["Unknown", "未知", "Unbekannt", "Desconocida", "Неизвестно", "Sconosciuta", "不明"],
-  "unsafe": ["Unsafe", "不安全", "Unsicher", "Inseguro", "Небезопасно", "Non sicuro", "不適切"],
-  "utile": ["useful", "有用", "nützlich", "útil", "полезно", "utile", "有用"],
+  "une pompe": [
+    "a pump",
+    "泵",
+    "eine Pumpe",
+    "una bomba",
+    "насос",
+    "una pompa",
+    "ポンプ"
+  ],
+  "unknown": [
+    "Unknown",
+    "未知",
+    "Unbekannt",
+    "Desconocida",
+    "Неизвестно",
+    "Sconosciuta",
+    "不明"
+  ],
+  "unsafe": [
+    "Unsafe",
+    "不安全",
+    "Unsicher",
+    "Inseguro",
+    "Небезопасно",
+    "Non sicuro",
+    "不適切"
+  ],
+  "utile": [
+    "useful",
+    "有用",
+    "nützlich",
+    "útil",
+    "полезно",
+    "utile",
+    "有用"
+  ],
   "validation Standex absente": [
     "Standex validation missing",
     "缺少 Standex 验证",
@@ -25658,7 +27602,15 @@
     "vetro indebolito, sensibilità alterata, affidabilità ridotta",
     "ガラス劣化・感度変化・信頼性低下"
   ],
-  "version": ["version", "版本", "Version", "versión", "версия", "versione", "版"],
+  "version": [
+    "version",
+    "版本",
+    "Version",
+    "versión",
+    "версия",
+    "versione",
+    "版"
+  ],
   "version annoncée prête mais sans texte anglais": [
     "version reported ready but with no English text",
     "版本标记为就绪但没有英文内容",
@@ -25839,7 +27791,15 @@
     "{0} turno/i",
     "{0} ターン"
   ],
-  "{0} {1}": ["{0} {1}", "{0} {1}", "{0} {1}", "{0} {1}", "{0} {1}", "{0} {1}", "{0} {1}"],
+  "{0} {1}": [
+    "{0} {1}",
+    "{0} {1}",
+    "{0} {1}",
+    "{0} {1}",
+    "{0} {1}",
+    "{0} {1}",
+    "{0} {1}"
+  ],
   "{0} · Démonstration fictive ; {1} ; axe reed {2}°, aimant {3}°, aimantation {4}, polarité {5}.": [
     "{0} · Fictitious demo; {1}; reed axis {2}°, magnet {3}°, magnetization {4}, polarity {5}.",
     "{0} · 虚拟演示；{1}；干簧管轴 {2}°，磁铁 {3}°，磁化 {4}，极性 {5}。",
@@ -26083,7 +28043,15 @@
     "Da incasso",
     "埋め込み"
   ],
-  "À faire": ["To do", "待办", "Zu erledigen", "Por hacer", "К выполнению", "Da fare", "未着手"],
+  "À faire": [
+    "To do",
+    "待办",
+    "Zu erledigen",
+    "Por hacer",
+    "К выполнению",
+    "Da fare",
+    "未着手"
+  ],
   "À la fin : les capteurs proposés pour votre application.": [
     "At the end: sensors suggested for your application.",
     "完成后：查看为您的应用推荐的传感器。",
@@ -26264,7 +28232,15 @@
     "Differenze",
     "差異"
   ],
-  "Écarté": ["Dismissed", "已排除", "Verworfen", "Descartado", "Отклонено", "Escluso", "除外"],
+  "Écarté": [
+    "Dismissed",
+    "已排除",
+    "Verworfen",
+    "Descartado",
+    "Отклонено",
+    "Escluso",
+    "除外"
+  ],
   "Écarté par le critère « {0} ». {1}": [
     "Excluded by the criterion “{0}”. {1}",
     "因条件「{0}」被排除。{1}",
@@ -26301,7 +28277,15 @@
     "Campione riconvalidato esplicitamente.",
     "サンプルが明示的に再検証されました。"
   ],
-  "Échantillons": ["Samples", "样品", "Muster", "Muestras", "Образцы", "Campioni", "サンプル"],
+  "Échantillons": [
+    "Samples",
+    "样品",
+    "Muster",
+    "Muestras",
+    "Образцы",
+    "Campioni",
+    "サンプル"
+  ],
   "Échantillons et suivi": [
     "Samples and tracking",
     "样品与跟踪",
@@ -26338,7 +28322,15 @@
     "Invio non riuscito.",
     "送信に失敗しました。"
   ],
-  "Échelle": ["Scale", "比例尺", "Maßstab", "Escala", "Масштаб", "Scala", "スケール"],
+  "Échelle": [
+    "Scale",
+    "比例尺",
+    "Maßstab",
+    "Escala",
+    "Масштаб",
+    "Scala",
+    "スケール"
+  ],
   "Échelle de champ fictive : {0} mm{1}. Environnement et matériaux non simulés.": [
     "Fictitious field scale: {0} mm{1}. Environment and materials not simulated.",
     "虚拟磁场尺度：{0} mm{1}。未模拟环境和材料。",
@@ -26357,8 +28349,24 @@
     "Scala del campo fittizio",
     "仮想磁場のスケール"
   ],
-  "Échue": ["Expired", "已过期", "Abgelaufen", "Caducada", "Истекла", "Scaduta", "期限切れ"],
-  "Échéance": ["Due date", "截止日期", "Fälligkeit", "Fecha límite", "Срок", "Scadenza", "期限"],
+  "Échue": [
+    "Expired",
+    "已过期",
+    "Abgelaufen",
+    "Caducada",
+    "Истекла",
+    "Scaduta",
+    "期限切れ"
+  ],
+  "Échéance": [
+    "Due date",
+    "截止日期",
+    "Fälligkeit",
+    "Fecha límite",
+    "Срок",
+    "Scadenza",
+    "期限"
+  ],
   "Échéance (facultative)": [
     "Due date (optional)",
     "截止日期（可选）",
@@ -26422,7 +28430,15 @@
     "Elementi obbligatori",
     "必須項目"
   ],
-  "Épaisseur": ["Thickness", "厚度", "Dicke", "Espesor", "Толщина", "Spessore", "厚さ"],
+  "Épaisseur": [
+    "Thickness",
+    "厚度",
+    "Dicke",
+    "Espesor",
+    "Толщина",
+    "Spessore",
+    "厚さ"
+  ],
   "Épaisseur Y": [
     "Thickness Y",
     "厚度 Y",
@@ -26450,7 +28466,15 @@
     "Epossidica con carica minerale",
     "無機充填エポキシ"
   ],
-  "Étape": ["Step", "步骤", "Schritt", "Paso", "Шаг", "Fase", "手順"],
+  "Étape": [
+    "Step",
+    "步骤",
+    "Schritt",
+    "Paso",
+    "Шаг",
+    "Fase",
+    "手順"
+  ],
   "Étape mise à jour.": [
     "Stage updated.",
     "阶段已更新。",
@@ -26478,7 +28502,15 @@
     "Fasi del montaggio",
     "構成の手順"
   ],
-  "État": ["Status", "状态", "Status", "Estado", "Статус", "Stato", "状態"],
+  "État": [
+    "Status",
+    "状态",
+    "Status",
+    "Estado",
+    "Статус",
+    "Stato",
+    "状態"
+  ],
   "État indéterminé": [
     "Undetermined state",
     "状态未确定",
@@ -26596,8 +28628,24 @@
     "da verificare dalla R&S",
     "R&D による確認が必要"
   ],
-  "échec": ["failed", "失败", "fehlgeschlagen", "fallo", "сбой", "non riuscito", "失敗"],
-  "échéance": ["due", "截止", "fällig", "vencimiento", "срок", "scadenza", "期限"],
+  "échec": [
+    "failed",
+    "失败",
+    "fehlgeschlagen",
+    "fallo",
+    "сбой",
+    "non riuscito",
+    "失敗"
+  ],
+  "échéance": [
+    "due",
+    "截止",
+    "fällig",
+    "vencimiento",
+    "срок",
+    "scadenza",
+    "期限"
+  ],
   "électrovanne": [
     "solenoid valve",
     "电磁阀",
@@ -26607,8 +28655,24 @@
     "elettrovalvola",
     "電磁弁"
   ],
-  "épaisseur": ["thickness", "厚度", "Dicke", "espesor", "толщина", "spessore", "厚さ"],
-  "équivalen": ["equivalen", "等效", "Äquivalen", "equivalen", "эквивален", "equivalen", "同等"],
+  "épaisseur": [
+    "thickness",
+    "厚度",
+    "Dicke",
+    "espesor",
+    "толщина",
+    "spessore",
+    "厚さ"
+  ],
+  "équivalen": [
+    "equivalen",
+    "等效",
+    "Äquivalen",
+    "equivalen",
+    "эквивален",
+    "equivalen",
+    "同等"
+  ],
   "équivalence / cross-reference": [
     "equivalence / cross-reference",
     "替代 / 交叉参考",
@@ -26753,8 +28817,24 @@
     "Distanza di attivazione",
     "動作距離"
   ],
-  "Plus près": ["Closer", "更近", "Näher", "Más cerca", "Ближе", "Più vicino", "近い"],
-  "Plus loin": ["Farther", "更远", "Weiter", "Más lejos", "Дальше", "Più lontano", "遠い"],
+  "Plus près": [
+    "Closer",
+    "更近",
+    "Näher",
+    "Más cerca",
+    "Ближе",
+    "Più vicino",
+    "近い"
+  ],
+  "Plus loin": [
+    "Farther",
+    "更远",
+    "Weiter",
+    "Más lejos",
+    "Дальше",
+    "Più lontano",
+    "遠い"
+  ],
   "Environ {0} mm (classe {1})": [
     "About {0} mm (class {1})",
     "约 {0} mm（等级 {1}）",
@@ -26799,5 +28879,59 @@
     "Выбрать примерно {0} мм (класс {1})",
     "Scegli circa {0} mm (classe {1})",
     "約 {0} mm（クラス {1}）を選択"
+  ],
+  "Dans l’alignement": [
+    "In line",
+    "同轴对齐",
+    "In einer Linie",
+    "En línea",
+    "На одной линии",
+    "In allineamento",
+    "一直線上"
+  ],
+  "Choix du produit": [
+    "Product choice",
+    "产品选择",
+    "Produktauswahl",
+    "Elección del producto",
+    "Выбор изделия",
+    "Scelta del prodotto",
+    "製品の選択"
+  ],
+  "Choix de l’aimant": [
+    "Magnet choice",
+    "磁体选择",
+    "Magnetauswahl",
+    "Elección del imán",
+    "Выбор магнита",
+    "Scelta del magnete",
+    "磁石の選択"
+  ],
+  "Positionnement du capteur et de l’aimant": [
+    "Sensor and magnet positioning",
+    "传感器与磁体定位",
+    "Positionierung von Sensor und Magnet",
+    "Posicionamiento del sensor y del imán",
+    "Позиционирование датчика и магнита",
+    "Posizionamento del sensore e del magnete",
+    "センサーと磁石の位置決め"
+  ],
+  "Ces distances sont indicatives. La distance d’activation réelle sera déterminée avec les équipes Standex.": [
+    "These distances are indicative. The actual activation distance will be determined with the Standex teams.",
+    "这些距离仅供参考。实际动作距离将由 Standex 团队确定。",
+    "Diese Abstände sind Richtwerte. Der tatsächliche Betätigungsabstand wird gemeinsam mit den Standex-Teams bestimmt.",
+    "Estas distancias son indicativas. La distancia de activación real se determinará con los equipos de Standex.",
+    "Эти расстояния являются ориентировочными. Фактическое расстояние срабатывания будет определено совместно с командами Standex.",
+    "Queste distanze sono indicative. La distanza di attivazione effettiva sarà determinata con i team Standex.",
+    "これらの距離は目安です。実際の作動距離はStandexチームと決定します。"
+  ],
+  "Position enregistrée : F1. Elle reste inchangée tant que vous ne choisissez pas l’un des deux positionnements ci-dessus.": [
+    "Saved position: F1. It remains unchanged until you choose one of the two positions above.",
+    "已保存位置：F1。在您选择上述两个位置之一前，该位置保持不变。",
+    "Gespeicherte Position: F1. Sie bleibt unverändert, bis Sie eine der beiden obigen Positionen wählen.",
+    "Posición guardada: F1. Permanecerá sin cambios hasta que elija una de las dos posiciones anteriores.",
+    "Сохранённое положение: F1. Оно останется неизменным, пока вы не выберете одно из двух положений выше.",
+    "Posizione salvata: F1. Resta invariata finché non si sceglie uno dei due posizionamenti qui sopra.",
+    "保存済みの位置：F1。上の2つの位置のいずれかを選択するまで変更されません。"
   ]
 }
