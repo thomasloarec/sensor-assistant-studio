@@ -66,7 +66,6 @@ import {
   Download,
   Expand,
   Info,
-  Magnet,
   Pause,
   Play,
   RotateCcw,
@@ -1161,22 +1160,6 @@ export default function MagneticWorkshop({
         <details className="mw-advanced-category" data-testid="advanced-magnet">
           <summary>{t("Choix de l’aimant")}</summary>
           <div className="mw-advanced-category-body">
-        <div className="mw-product">
-          <span className="mw-product-icon">
-            <Magnet size={25} />
-          </span>
-          <div>
-            <strong>
-              {pairedMagnetModel(config.magnetModel, config.sensorId)?.name ?? t("Aimant fictif")}
-            </strong>
-            <span>{reference ? basisLabel : t("Modèle idéal de dipôle dans l'air")}</span>
-            {magnetAlias && (
-              <span className="t-caption">
-                {msg("Correspondance documentaire : {0}", [magnetAlias])}
-              </span>
-            )}
-          </div>
-        </div>
         <label className="mw-select-label">
           {t("Aimant")}
           <select
@@ -1192,6 +1175,11 @@ export default function MagneticWorkshop({
             ))}
           </select>
         </label>
+        {magnetAlias ? (
+          <p className="mw-help t-caption">
+            {msg("Correspondance documentaire : {0}", [magnetAlias])}
+          </p>
+        ) : null}
         {magnetOutsidePolicy && (
           <p className="mw-help" data-testid="magnet-outside-policy">
             {t(
@@ -1272,7 +1260,7 @@ export default function MagneticWorkshop({
             open={cableOpen}
             onToggle={(event) => setCableOpen(event.currentTarget.open)}
           >
-            <summary>{t("Longueur et trajet du câble")}</summary>
+            <summary>{t("Trajet du câble")}</summary>
             {cableRouting ? (
               <button
                 className="mw-button mw-secondary mw-wide"
@@ -1287,7 +1275,7 @@ export default function MagneticWorkshop({
             {!machine ? (
               <p className="mw-help">
                 {t(
-                  "Sans modèle importé, saisissez la longueur souhaitée. Le pointage d’un trajet nécessite les surfaces de votre modèle.",
+                  "Le pointage du trajet du câble nécessite l’import de votre modèle 3D. La longueur souhaitée se règle dans « Choix du produit ».",
                 )}
               </p>
             ) : null}

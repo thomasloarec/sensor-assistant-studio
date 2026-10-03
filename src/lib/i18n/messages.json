@@ -14444,6 +14444,15 @@
     "Lunghezza e percorso del cavo",
     "ケーブルの長さと経路"
   ],
+  "Trajet du câble": [
+    "Cable route",
+    "电缆路径",
+    "Kabelverlauf",
+    "Recorrido del cable",
+    "Трасса кабеля",
+    "Percorso del cavo",
+    "ケーブル経路"
+  ],
   "Longueur inconnue : trajet incomplet.": [
     "Unknown length: incomplete path.",
     "未知长度：路径不完整。",
@@ -21058,6 +21067,15 @@
     "Без импортированной модели введите нужную длину. Для выбора трассы нужны поверхности вашей машины.",
     "Senza modello importato, inserisci la lunghezza desiderata. Per selezionare il percorso servono le superfici della macchina.",
     "モデル未取込の場合は必要な長さを入力してください。経路の指定には機械の表面が必要です。"
+  ],
+  "Le pointage du trajet du câble nécessite l’import de votre modèle 3D. La longueur souhaitée se règle dans « Choix du produit ».": [
+    "Picking the cable route requires importing your 3D model. Set the desired length under “Product selection”.",
+    "选取电缆路径需要导入您的 3D 模型。所需长度可在“产品选择”中设置。",
+    "Zum Festlegen des Kabelverlaufs müssen Sie Ihr 3D-Modell importieren. Die gewünschte Länge stellen Sie unter „Produktauswahl“ ein.",
+    "Para señalar el recorrido del cable, debe importar su modelo 3D. La longitud deseada se ajusta en «Selección del producto».",
+    "Для указания трассы кабеля необходимо импортировать вашу 3D-модель. Желаемая длина задаётся в разделе «Выбор продукта».",
+    "Per indicare il percorso del cavo è necessario importare il modello 3D. La lunghezza desiderata si imposta in «Scelta del prodotto».",
+    "ケーブル経路を指定するには、3Dモデルのインポートが必要です。必要な長さは「製品の選択」で設定します。"
   ],
   "Sans objet": [
     "Not applicable",

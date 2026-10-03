@@ -165,6 +165,16 @@ describe("colonne de gauche : réglages essentiels", () => {
     ]) expect(WORKSHOP).toContain(`t("${label}")`);
     expect(WORKSHOP).toContain("useState(initialCableOpen)");
   });
+  test("le choix de l'aimant ne répète pas sa carte et le câble sépare produit et trajet", () => {
+    const magnetSection = WORKSHOP.slice(
+      WORKSHOP.indexOf('data-testid="advanced-magnet"'),
+      WORKSHOP.indexOf('data-testid="advanced-positioning"'),
+    );
+    expect(magnetSection).not.toContain('className="mw-product"');
+    expect(magnetSection).toContain('msg("Correspondance documentaire : {0}"');
+    expect(WORKSHOP).toContain('t("Trajet du câble")');
+    expect(WORKSHOP).toContain("Le pointage du trajet du câble nécessite l’import de votre modèle 3D.");
+  });
 });
 
 describe("chronologie et lecture", () => {
