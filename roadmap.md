@@ -69,3 +69,9 @@
 - [x] Remplacer la navigation des exemples par une pagination numérique accessible et documenter la composition.
 - [x] Prouver la parité des sorties avec la base 0e4e373e86eac992da0a887de53764e92ed367e2.
 - [x] Exécuter la recette complète, les types, la compilation, l’inventaire i18n et les contrôles de charte.
+
+## Réorganisation de l’atelier — 3 octobre 2026
+- [x] Limiter les positions principales à D1 « Face à face » et D3 « Dans l’alignement », sans convertir les poses F1 enregistrées.
+- [x] Garder position, activation et lecture visibles, puis répartir les autres commandes entre produit, aimant et positionnement.
+- [x] Retirer les tableaux de distances publiées de l’atelier sans modifier les données ni les calculs.
+- [ ] Terminer la suite complète, la compilation et la vérification visuelle authentifiée si une session autorisée devient disponible.
