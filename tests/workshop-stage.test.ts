@@ -111,9 +111,8 @@ describe("colonne de gauche : réglages essentiels", () => {
     expect(column).not.toContain("{travelControls}");
   });
   test("deux positions principales sont proposées sans réécrire une pose F1", () => {
-    expect(WORKSHOP).toContain('label: "Face à face"');
-    expect(WORKSHOP).toContain('label: "Dans l’alignement"');
-    expect(WORKSHOP).toContain('msg("Face à face{0}", [""])');
+    expect(WORKSHOP).toContain('label: msg("Face à face{0}", [""])');
+    expect(WORKSHOP).toContain('label: t("Dans l’alignement")');
     expect(WORKSHOP).not.toContain('label: "Parallèle"');
     expect(WORKSHOP).not.toContain('label: "Perpendiculaire"');
     expect(WORKSHOP).toContain('config.geometry === "F1"');
