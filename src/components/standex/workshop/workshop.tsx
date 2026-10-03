@@ -14,7 +14,6 @@ import {
   magnetOptionsFor,
 } from "@/lib/standex/default-pairs";
 import { pairedMagnetModel } from "@/lib/standex/paired-magnets";
-import { magnetSource } from "@/lib/standex/magnet-catalog";
 import { t, msg, number } from "@/lib/i18n/core";
 import { GuideMaterials } from "./guide-materials";
 import {
@@ -33,7 +32,6 @@ import {
   GuidedSuggestion,
   GuidedVerdict,
   LIMIT_LABEL,
-  SensitivityComparison,
   useGuidedMounting,
 } from "./guided-mounting";
 import StudioV2 from "./studio-v2";
@@ -57,11 +55,8 @@ import {
 } from "@/lib/standex/detection-data/store";
 import {
   publishedClasses,
-  publishedApproaches,
   publishedClassKind,
   nominalSensitivityRowsFor,
-  publishedRowsForCouple,
-  publishedRowsSourceUrl,
 } from "@/lib/standex/magnetics/registries";
 import { Component, lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
@@ -84,9 +79,7 @@ import {
   DISTANCE_SOURCE,
   EDUCATION_NOTE,
   REFERENCE_NOTE,
-  referenceNoteFor,
   documentedMagnetAngleDeg,
-  publishedFamilyNoteFor,
   MODEL_VERSION,
   parseWorkshopConfig,
   simulateCycle,
@@ -95,7 +88,6 @@ import {
   distanceBasis,
   isFictitiousSensor,
   applySensorSelection,
-  approachChoicesFor,
   workshopPair,
 } from "@/lib/standex/magnetic-workshop";
 import type { WorkshopConfig, Contact, Vec3 } from "@/lib/standex/magnetic-workshop";
@@ -125,13 +117,6 @@ const contactLabel: Record<Contact, string> = {
   unknown: "État indéterminé",
 };
 const motionLabels = { approach: "Approche et retrait", slide: "Passage latéral", pivot: "Pivot" };
-/** Libellés des approches publiées. F1 est frontale : distance ENTRE LES FACES. */
-const APPROACH_LABELS: Record<WorkshopConfig["geometry"], string> = {
-  D1: "D1 · face au centre",
-  D3: "D3 · par l'extrémité",
-  F1: "F1 · faces en vis-à-vis, dans l'axe",
-};
-
 class SceneBoundary extends Component<
   { children: ReactNode; fallback: ReactNode; onError: () => void },
   { failed: boolean }
@@ -255,6 +240,9 @@ export default function MagneticWorkshop({
 }: WorkshopProps) {
   useLocale();
   const [cableOpen, setCableOpen] = useState(initialCableOpen);
+  const [advancedOpen, setAdvancedOpen] = useState(initialCableOpen);
+  const [productOpen, setProductOpen] = useState(initialCableOpen);
+  const [positioningOpen, setPositioningOpen] = useState(initialCableOpen);
   const [productCard, setProductCard] = useState(false);
   const [config, setConfig] = useState<WorkshopConfig>(
     // La variante documentée par défaut est résolue à l'ouverture : sans cela un
@@ -278,7 +266,7 @@ export default function MagneticWorkshop({
     [showMagnetName, setShowMagnetName] = useState(true),
     [focus, setFocus] = useState<"assembly" | "sensor">("assembly"),
     [catalogOpen, setCatalogOpen] = useState(false);
-  /** Vitesse de lecture. Par défaut un aller-retour dure 4 s : la lecture
+  /** Vitesse de lecture. Par défaut un aller-retour dure 6 s : la lecture
    * ralentie reste disponible dans les réglages avancés, elle ne disparaît pas. */
   const [playbackSpeed, setPlaybackSpeed] = useState<"normal" | "slow">("normal");
   const [reduced, setReduced] = useState(false);
@@ -579,14 +567,11 @@ export default function MagneticWorkshop({
   const sensitivityChoices = publishedClasses(config.sensorId, config.magnetModel);
   /** Nature de la colonne publiée : classe de sensibilité ou modèle de contact. */
   const classKind = publishedClassKind(config.sensorId, config.magnetModel);
-  /** Lignes publiées du couple, y compris les modèles de contact non simulés. */
-  const publishedRows = publishedRowsForCouple(config.sensorId, config.magnetModel);
   const activationChoices = nominalSensitivityRowsFor(
     config.sensorId,
     config.magnetModel,
     config.geometry,
   );
-  const approachOptions = approachChoicesFor(config.sensorId, config.magnetModel);
   // Le choix déjà enregistré reste lisible même hors politique ; il n'est pas
   // reproposé ailleurs et rien n'est réécrit à la relecture d'un dossier.
   const magnetChoices = magnetOptionsFor(config.sensorId, undefined, config.magnetModel);
@@ -873,28 +858,22 @@ export default function MagneticWorkshop({
   /* ---------------------------------------------------------------- */
   /* i18n-canonical : libellés stockés en français, traduits au rendu par t(). */
   const APPROACH_CHOICES = [
-    { id: "D1" as const, label: "Parallèle", path: "M4 6h16M4 18h16" },
-    { id: "D3" as const, label: "Perpendiculaire", path: "M12 3v8M4 16h16" },
-    { id: "F1" as const, label: "Face à face", path: "M4 12h6M14 12h6M10 7v10M14 7v10" },
+    { id: "D1" as const, label: "Face à face", path: "M4 7h6M10 17H4M14 7h6M20 17h-6" },
+    { id: "D3" as const, label: "Dans l’alignement", path: "M4 12h7M13 12h7M11 5v14" },
   ];
-  /** Approches réellement publiées pour CE couple. En démonstration fictive les
-   *  deux approches latérales restent disponibles pour l'illustration. */
-  const availableApproaches: readonly WorkshopConfig["geometry"][] =
-    approachOptions.length && reference ? approachOptions : (["D1", "D3"] as const);
 
   const approachPicker = (
     <div className="mw-approach">
       <p className="t-label">{t("Position de l'aimant")}</p>
       <div className="mw-approach-row">
         {APPROACH_CHOICES.map((a) => {
-          const available = availableApproaches.includes(a.id);
           return (
             <button
               key={a.id}
               type="button"
               className="mw-approach-button"
               aria-pressed={config.geometry === a.id}
-              title={available ? t(APPROACH_LABELS[a.id]) : t("Non documentée pour ce couple")}
+              title={t(a.label)}
               onClick={() =>
                 update({
                   geometry: a.id,
@@ -920,11 +899,13 @@ export default function MagneticWorkshop({
           );
         })}
       </div>
-      <p className="t-caption">
-        {t(
-          "Positions documentées par Standex. Toute autre position sera signalée comme à mesurer.",
-        )}
-      </p>
+      {config.geometry === "F1" ? (
+        <p className="notice-info t-caption" data-testid="legacy-approach-notice">
+          {t(
+            "Position enregistrée : F1. Elle reste inchangée tant que vous ne choisissez pas l’un des deux positionnements ci-dessus.",
+          )}
+        </p>
+      ) : null}
     </div>
   );
 
@@ -969,8 +950,11 @@ export default function MagneticWorkshop({
     : "";
   const activationDistanceControl =
     activationChoices.length > 0 ? (
-      <fieldset className="mw-activation-distance">
-        <legend className="t-label">{t("Distance d’activation")}</legend>
+      <fieldset className="mw-activation-distance" aria-labelledby="mw-activation-heading">
+        <legend className="mw-visually-hidden">{t("Distance d’activation")}</legend>
+        <p id="mw-activation-heading" className="t-label mw-activation-heading">
+          {t("Distance d’activation")}
+        </p>
         <div className="mw-activation-scale" aria-hidden="true">
           <span>{t("Plus près")}</span>
           <span>↔</span>
@@ -1041,7 +1025,7 @@ export default function MagneticWorkshop({
         )}
         <p className="mw-help">
           {t(
-            "Le capteur s’active trop tôt ou trop tard ? Essayez une autre distance d’activation. Ce choix correspond à une autre sensibilité du capteur.",
+            "Ces distances sont indicatives. La distance d’activation réelle sera déterminée avec les équipes Standex.",
           )}
         </p>
       </fieldset>
@@ -1063,11 +1047,9 @@ export default function MagneticWorkshop({
     </button>
   );
 
-  /* Matériau, référence et approche du guide : VISIBLES dès l'ouverture de
-     l'atelier, hors des réglages avancés. Le choix sélectionne une vraie
-     référence du guide d'activation : géométrie 3D, cotes et plages affichées
-     changent ensemble, sans facteur de matériau inventé. Le grand tableau des
-     plages reste replié par défaut à l'intérieur du bloc. */
+  /* Matériau, référence et approche du guide : regroupés avec l'aimant dans
+     les réglages avancés. Le choix sélectionne une vraie référence du guide
+     d'activation sans facteur de matériau inventé. */
   const guideMaterialsBlock = (
     <GuideMaterials
       sensorFamily={config.sensorId}
@@ -1098,36 +1080,24 @@ export default function MagneticWorkshop({
     />
   );
 
-  /* Réglages avancés : RIEN n'est supprimé, tout est replié ici. */
+  /* Réglages avancés : trois catégories fermées, sans modifier leurs données. */
   const advancedSettings = (
-    <details className="mw-advanced-settings" data-testid="workshop-advanced">
+    <details
+      className="mw-advanced-settings"
+      data-testid="workshop-advanced"
+      open={advancedOpen}
+      onToggle={(event) => setAdvancedOpen(event.currentTarget.open)}
+    >
       <summary>{t("Réglages avancés ⌄")}</summary>
       <div className="mw-advanced-body">
-        {travelControls}
-        {/* Point de départ documentaire : le mode fictif n'est proposé que pour
-            les références explicitement fictives (GENERIC / CUSTOM). */}
-        {fictitious && !machine && (
-          <div className="mw-start">
-            <label htmlFor="mw-mode">{t("Votre point de départ")}</label>
-            <select
-              id="mw-mode"
-              value={config.mode}
-              onChange={(e) => chooseMode(e.target.value as WorkshopConfig["mode"])}
-            >
-              <option value="reference">
-                {t(
-                  basis === "standex"
-                    ? "Données Standex"
-                    : guideDemoRange
-                      ? "Plage du guide disponible"
-                      : "Distances non renseignées pour ce couple",
-                )}
-              </option>
-              <option value="education">{t("Démonstration · distances fictives")}</option>
-            </select>
-            <p>{reference ? basisLabel : t("Forme cotée · champ et seuils fictifs")}</p>
-          </div>
-        )}
+        <details
+          className="mw-advanced-category"
+          data-testid="advanced-product"
+          open={productOpen}
+          onToggle={(event) => setProductOpen(event.currentTarget.open)}
+        >
+          <summary>{t("Choix du produit")}</summary>
+          <div className="mw-advanced-category-body">
         <div className="mw-selected-sensor surface-interactive">
           <svg viewBox="-38 -17 76 34" aria-hidden="true">
             <SensorPlan model={sensor} xray={false} />
@@ -1148,6 +1118,49 @@ export default function MagneticWorkshop({
           )}
         </div>
         {sensor.note && <p className="mw-help">{t(sensor.note)}</p>}
+        {reference && classKind === "switch_model" && sensitivityChoices.length > 0 && (
+          <label className="mw-select-label">
+            {t(classKind === "switch_model" ? "Configuration du contact" : "Classe de sensibilité")}
+            <select
+              value={config.sensitivity}
+              onChange={(e) =>
+                update({ sensitivity: e.target.value as WorkshopConfig["sensitivity"] })
+              }
+            >
+              {sensitivityChoices.map((x) => (
+                <option key={x} value={x}>
+                  {classKind === "switch_model" ? x : msg("Classe {0}", [x])}
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
+        {!isPcbSensor(config.sensorId) ? (
+          <label className="mw-select-label">
+            {t("Longueur de câble retenue (mm)")}
+            <input
+              type="number"
+              min={1}
+              step={10}
+              inputMode="numeric"
+              className="t-metric"
+              placeholder={t("Non choisie")}
+              value={config.cableLengthMm ?? ""}
+              onChange={(event) => {
+                const value = event.target.value.trim();
+                if (value === "") return update({ cableLengthMm: null });
+                const length = Number(value);
+                if (Number.isFinite(length) && length > 0 && length <= 100000)
+                  update({ cableLengthMm: length });
+              }}
+            />
+          </label>
+        ) : null}
+          </div>
+        </details>
+        <details className="mw-advanced-category" data-testid="advanced-magnet">
+          <summary>{t("Choix de l’aimant")}</summary>
+          <div className="mw-advanced-category-body">
         <div className="mw-product">
           <span className="mw-product-icon">
             <Magnet size={25} />
@@ -1186,93 +1199,100 @@ export default function MagneticWorkshop({
             )}
           </p>
         )}
-        {/* Le choix de matériau est remonté hors des réglages avancés : il est
-            visible dès l'ouverture de l'atelier (voir `guideMaterialsBlock`). */}
-        {reference && classKind === "switch_model" && sensitivityChoices.length > 0 && (
-          <label className="mw-select-label">
-            {t(classKind === "switch_model" ? "Configuration du contact" : "Classe de sensibilité")}
+          {guideMaterialsBlock}
+        {/* Point de départ documentaire : le mode fictif n'est proposé que pour
+            les références explicitement fictives (GENERIC / CUSTOM). */}
+        {fictitious && !machine && (
+          <div className="mw-start">
+            <label htmlFor="mw-mode">{t("Votre point de départ")}</label>
             <select
-              value={config.sensitivity}
-              onChange={(e) =>
-                update({ sensitivity: e.target.value as WorkshopConfig["sensitivity"] })
-              }
+              id="mw-mode"
+              value={config.mode}
+              onChange={(e) => chooseMode(e.target.value as WorkshopConfig["mode"])}
             >
-              {sensitivityChoices.map((x) => (
-                <option key={x} value={x}>
-                  {classKind === "switch_model" ? x : msg("Classe {0}", [x])}
-                </option>
-              ))}
+              <option value="reference">
+                {t(
+                  basis === "standex"
+                    ? "Données Standex"
+                    : guideDemoRange
+                      ? "Plage du guide disponible"
+                      : "Distances non renseignées pour ce couple",
+                )}
+              </option>
+              <option value="education">{t("Démonstration · distances fictives")}</option>
             </select>
-          </label>
+            <p>{reference ? basisLabel : t("Forme cotée · champ et seuils fictifs")}</p>
+          </div>
         )}
-        {reference && publishedRows.length > 0 && (
-          <details className="panel-block" data-testid="published-rows">
-            <summary className="t-label">{t("Distances publiées (B–E, D1–D5)")}</summary>
-            <table className="mw-published-table">
-              <thead>
-                <tr>
-                  <th scope="col">
-                    {t(
-                      classKind === "switch_model"
-                        ? "Configuration du contact"
-                        : "Classe de sensibilité",
-                    )}
-                  </th>
-                  <th scope="col">{t("Approche")}</th>
-                  <th scope="col">
-                    {t(
-                      publishedRows[0]!.thresholdKind === "min_activation_max_release"
-                        ? "Min Activation"
-                        : "Enclenchement",
-                    )}
-                  </th>
-                  <th scope="col">
-                    {t(
-                      publishedRows[0]!.thresholdKind === "min_activation_max_release"
-                        ? "Max Release"
-                        : "Relâchement",
-                    )}
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {publishedRows.map((r) => (
-                  <tr key={r.id} aria-current={r.sensitivityClass === config.sensitivity}>
-                    <td>
-                      {r.sensitivityClass}
-                      {r.contactForm !== "1A" && <span className="mw-kind">{t("non simulé")}</span>}
-                    </td>
-                    <td>{r.approachId}</td>
-                    <td className="t-metric">{r.pullInMm.toString() + unit}</td>
-                    <td className="t-metric">{r.dropOutMm.toString() + unit}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            <p className="mw-help">
-              {t(
-                guideDemoRange && basis === "unavailable"
-                  ? GUIDE_SIMULATION_NOTE
-                  : referenceNoteFor(config),
-              )}
+        {fictitious && (
+          <div className="mw-demo-settings">
+            <p>
+              {t("Les matériaux et la température n'interviennent pas dans ce calcul.")}{" "}
+              {sensor.id === "MK02"
+                ? t(
+                    "Le MK02 est représenté avec un contact Form A fictif : son mécanisme ferreux réel n'est pas simulé.",
+                  )
+                : null}
             </p>
-            {publishedFamilyNoteFor(config) && (
-              <p className="mw-help" data-testid="published-family-note">
-                {t(publishedFamilyNoteFor(config)!)}
-              </p>
+            <Range
+              label={t("Échelle du champ fictif")}
+              value={config.demoReach}
+              min={5}
+              max={100}
+              unit=" mm"
+              onChange={(demoReach) => update({ demoReach })}
+            />
+            {!machine && (
+              <label>
+                <input
+                  type="checkbox"
+                  checked={field}
+                  disabled={view === "top"}
+                  onChange={(e) => setField(e.target.checked)}
+                />
+                {t("Champ idéal")}
+              </label>
             )}
-            {(publishedRowsSourceUrl(publishedRows) ?? magnetSource(config.magnetModel)) && (
-              <a
-                href={(publishedRowsSourceUrl(publishedRows) ?? magnetSource(config.magnetModel))!}
-                target="_blank"
-                rel="noreferrer"
-              >
-                {t("Voir la source des distances ↗")}
-              </a>
-            )}
-          </details>
+          </div>
         )}
-        <SensitivityComparison config={config} />
+          </div>
+        </details>
+        <details
+          className="mw-advanced-category"
+          data-testid="advanced-positioning"
+          open={positioningOpen}
+          onToggle={(event) => setPositioningOpen(event.currentTarget.open)}
+        >
+          <summary>{t("Positionnement du capteur et de l’aimant")}</summary>
+          <div className="mw-advanced-category-body">
+            {travelControls}
+        {!isPcbSensor(config.sensorId) ? (
+          <details
+            className="mw-cable-settings"
+            open={cableOpen}
+            onToggle={(event) => setCableOpen(event.currentTarget.open)}
+          >
+            <summary>{t("Longueur et trajet du câble")}</summary>
+            {cableRouting ? (
+              <button
+                className="mw-button mw-secondary mw-wide"
+                aria-pressed={tool === "cable"}
+                data-testid="cable-tool-toggle"
+                disabled={!machine}
+                onClick={() => chooseTool(tool === "cable" ? "navigate" : "cable")}
+              >
+                {t(tool === "cable" ? "Arrêter le pointage" : "Pointer le câble dans la 3D")}
+              </button>
+            ) : null}
+            {!machine ? (
+              <p className="mw-help">
+                {t(
+                  "Sans modèle importé, saisissez la longueur souhaitée. Le pointage d’un trajet nécessite les surfaces de votre modèle.",
+                )}
+              </p>
+            ) : null}
+          </details>
+        ) : null}
         <GuidedSuggestion
           config={config}
           update={update}
@@ -1334,25 +1354,6 @@ export default function MagneticWorkshop({
         </details>
         <details>
           <summary>{t("Orientation de l'aimant")}</summary>
-          <label className="mw-select-label">
-            {t("Approche du capteur")}
-            <select
-              value={config.geometry}
-              onChange={(e) => {
-                const geometry = e.target.value as WorkshopConfig["geometry"];
-                update({
-                  geometry,
-                  magnetAngle: documentedMagnetAngleDeg(geometry, config.sensorId),
-                });
-              }}
-            >
-              {availableApproaches.map((a) => (
-                <option key={a} value={a}>
-                  {t(APPROACH_LABELS[a])}
-                </option>
-              ))}
-            </select>
-          </label>
           <p className="mw-help">
             {t(
               reference
@@ -1605,37 +1606,6 @@ export default function MagneticWorkshop({
             </label>
           </div>
         )}
-        {fictitious && (
-          <div className="mw-demo-settings">
-            <p>
-              {t("Les matériaux et la température n'interviennent pas dans ce calcul.")}{" "}
-              {sensor.id === "MK02"
-                ? t(
-                    "Le MK02 est représenté avec un contact Form A fictif : son mécanisme ferreux réel n'est pas simulé.",
-                  )
-                : null}
-            </p>
-            <Range
-              label={t("Échelle du champ fictif")}
-              value={config.demoReach}
-              min={5}
-              max={100}
-              unit=" mm"
-              onChange={(demoReach) => update({ demoReach })}
-            />
-            {!machine && (
-              <label>
-                <input
-                  type="checkbox"
-                  checked={field}
-                  disabled={view === "top"}
-                  onChange={(e) => setField(e.target.checked)}
-                />
-                {t("Champ idéal")}
-              </label>
-            )}
-          </div>
-        )}
         <details className="mw-file-tools">
           <summary>{t("Reprendre un montage")}</summary>
           <button className="mw-text-button" onClick={() => fileRef.current?.click()}>
@@ -1663,6 +1633,17 @@ export default function MagneticWorkshop({
           >
             {t("Télécharger le fichier de montage")}
           </button>
+        </details>
+        <details className="mw-workshop-example">
+          <summary>{t("Exemple : machine à café")}</summary>
+          <button className="mw-button mw-secondary" onClick={exampleMachine}>
+            {t("Ouvrir la machine à café")}
+          </button>
+          <a href="/models/machine-cafe-bac-mobile.glb" download>
+            {t("Télécharger le fichier 3D")}
+          </a>
+        </details>
+          </div>
         </details>
       </div>
     </details>
@@ -1759,67 +1740,7 @@ export default function MagneticWorkshop({
           {approachPicker}
           {activationDistanceControl}
           {playButton}
-          {!isPcbSensor(config.sensorId) ? (
-            <details
-              className="mw-cable-settings"
-              open={cableOpen}
-              onToggle={(e) => setCableOpen(e.currentTarget.open)}
-            >
-              <summary>{t("Longueur et trajet du câble")}</summary>
-              {/* Longueur retenue : réellement modifiable et enregistrée avec le
-            montage. Le configurateur de câble complet vit dans « Avec Standex ». */}
-              <label className="mw-select-label">
-                {t("Longueur de câble retenue (mm)")}
-                <input
-                  type="number"
-                  min={1}
-                  step={10}
-                  inputMode="numeric"
-                  className="t-metric"
-                  placeholder={t("Non choisie")}
-                  value={config.cableLengthMm ?? ""}
-                  onChange={(e) => {
-                    const v = e.target.value.trim();
-                    if (v === "") return update({ cableLengthMm: null });
-                    const n = Number(v);
-                    if (Number.isFinite(n) && n > 0 && n <= 100000) update({ cableLengthMm: n });
-                  }}
-                />
-              </label>
-              {cableRouting && (
-                <button
-                  className="mw-button mw-secondary mw-wide"
-                  aria-pressed={tool === "cable"}
-                  data-testid="cable-tool-toggle"
-                  disabled={!machine}
-                  onClick={() => chooseTool(tool === "cable" ? "navigate" : "cable")}
-                >
-                  {t(tool === "cable" ? "Arrêter le pointage" : "Pointer le câble dans la 3D")}
-                </button>
-              )}
-
-              {!machine ? (
-                <p className="mw-help">
-                  {t(
-                    "Sans modèle importé, saisissez la longueur souhaitée. Le pointage d’un trajet nécessite les surfaces de votre modèle.",
-                  )}
-                </p>
-              ) : null}
-            </details>
-          ) : null}
           {advancedSettings}
-          {guideMaterialsBlock}
-          <div className="mw-controls-links">
-            <details>
-              <summary>{t("Exemple : machine à café")}</summary>
-              <button className="mw-button mw-secondary" onClick={exampleMachine}>
-                {t("Ouvrir la machine à café")}
-              </button>
-              <a href="/models/machine-cafe-bac-mobile.glb" download>
-                {t("Télécharger le fichier 3D")}
-              </a>
-            </details>
-          </div>
         </aside>
         <section className="mw-main" aria-label={t("Simulation du montage")}>
           <div className="mw-primary-actions">

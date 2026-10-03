@@ -2115,6 +2115,8 @@
   /* Aperçu autonome : le panneau plein écran borne séparément cette colonne. */
   overflow: visible;
   max-height: none;
+  padding: 16px;
+  padding-inline-end: 20px;
 }
 .mw-stage .mw-controls-links {
   margin-top: auto;
@@ -2179,10 +2181,10 @@
   display: flex;
   align-items: center;
 }
-/* ---- Position de l'aimant : trois pictogrammes ---- */
+/* ---- Position de l'aimant : deux pictogrammes ---- */
 .mw-approach-row {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
   margin-block: 8px;
 }
@@ -2217,10 +2219,26 @@
 }
 .mw-activation-distance {
   min-inline-size: 0;
+  border: 0;
+  margin: 0;
   padding: 12px;
   border-radius: var(--r-md);
   background: var(--surface-tint);
   box-shadow: var(--e-1);
+}
+.mw-visually-hidden {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.mw-activation-heading {
+  margin: 0;
+  overflow-wrap: anywhere;
 }
 .mw-activation-scale,
 .mw-activation-ticks {
@@ -2594,6 +2612,42 @@
   position: static;
   max-height: none;
   width: auto;
+}
+.mw-advanced-category {
+  border-top: 0;
+  border-radius: var(--r-sm);
+  background: var(--surface-sunken);
+  box-shadow: var(--e-1);
+  overflow: clip;
+}
+.mw-advanced-category > summary {
+  min-block-size: 44px;
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+  color: var(--foreground);
+  overflow-wrap: anywhere;
+}
+.mw-advanced-category[open] > summary {
+  margin-block-end: 0;
+}
+.mw-advanced-category-body {
+  display: grid;
+  min-inline-size: 0;
+  gap: 12px;
+  padding: 4px 12px 12px;
+}
+.mw-advanced-category-body > :where(.mw-field, .mw-select-label, .mw-product, .mw-help) {
+  margin-block: 0;
+}
+@container mw-controls (max-width: 300px) {
+  .mw-stage .mw-controls {
+    padding-inline: 10px 14px;
+  }
+  .mw-approach-button {
+    padding-inline: 6px;
+    overflow-wrap: anywhere;
+  }
 }
 
 /* September feedback: independent control and scene scrolling. */

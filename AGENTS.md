@@ -98,9 +98,10 @@ rg -n "\brounded-md border\b|\bborder border-input\b|\btext-xs\b" src/ \
 
 ### Faire évoluer le système
 
-Le langage de design peut évoluer — mais alors `docs/design-language.md` est mis
-à jour **dans le même commit** que le changement. Un jeton ajouté sans
-documentation, ou une règle contournée « juste cette fois », fait repartir
-l'interface vers l'état qu'elle avait avant septembre 2026 : bordures grises,
-coins droits, aucune animation.
+Toute évolution met à jour `docs/design-language.md` dans le même commit ; aucun
+jeton sans documentation ni contournement ponctuel.
+
+## Architecture de l’atelier
+
+- Répartir les réglages avancés entre produit, aimant et positionnement pour éviter les doublons et préserver l’accès direct au câble.
 

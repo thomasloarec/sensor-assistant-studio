@@ -2,7 +2,6 @@ import { useMemo, useState } from "react";
 import { t, msg, number } from "@/lib/i18n/core";
 import {
   ACTIVATION_GUIDE,
-  formatGuideBound,
   guideIllustrativeMarks,
   guideMagnetsFor,
   guideMaterialsFor,
@@ -129,7 +128,6 @@ export function GuideMaterials({
             guideApproach={guideApproach ?? null}
             onSelectDemo={onSelectDemo}
           />
-          <GuideRangeTable sensorFamily={sensorFamily} magnet={current} />
         </>
       ) : (
         <p className="mw-help">
@@ -225,7 +223,7 @@ function GuideDemoPicker({
         </select>
       </label>
 
-      <p className="notice-warning t-body-s" data-testid="guide-demo-note">
+      <p className="notice-warning t-body" data-testid="guide-demo-note">
         {marks
           ? msg(
               "Animation indicative : la scène se rapproche du repère bas {0} mm et s'éloigne du repère haut {1} mm de la plage publiée. Ce ne sont pas des seuils de fermeture et de réouverture, et rien n'est validé.",
@@ -243,87 +241,3 @@ function GuideDemoPicker({
   );
 }
 
-function GuideRangeTable({
-  sensorFamily,
-  magnet,
-}: {
-  sensorFamily: string;
-  magnet: GuideMagnetOption;
-}) {
-  const rows = useMemo(() => guideRangesFor(sensorFamily, magnet.id), [sensorFamily, magnet.id]);
-  const references = useMemo(
-    () => guideReferencesFor(sensorFamily, magnet.id),
-    [sensorFamily, magnet.id],
-  );
-  const approaches = useMemo(() => [...new Set(rows.map((r) => r.approachId))], [rows]);
-  if (rows.length === 0) return null;
-  return (
-    <details className="panel-block" data-testid="guide-ranges">
-      <summary className="t-label">{msg("Plages publiées avec {0}", [magnet.label])}</summary>
-      <p className="mw-help">
-        {t(
-          "Ces deux colonnes sont les bornes d'une plage mesurée par Standex sur une série de capteurs. Ce ne sont pas des seuils de fermeture et de réouverture : la démonstration de portée dans la scène reste indicative tant que le couple n'a pas de distances caractérisées.",
-        )}
-      </p>
-      <p className="mw-help">
-        {t(
-          "Les deux valeurs sont les colonnes « up » et « to » de la brochure, dans cet ordre imprimé : elles ne sont ni triées ni recalculées.",
-        )}
-      </p>
-      <div className="mw-guide-scroll">
-        <table className="mw-published-table">
-          <thead>
-            <tr>
-              <th scope="col">{t("Référence du guide")}</th>
-              {approaches.map((a) => (
-                <th key={a} scope="col">
-                  {a}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {references.map((ref) => (
-              <tr key={ref}>
-                <th scope="row">{ref}</th>
-                {approaches.map((a) => {
-                  const row = rows.find((r) => r.sensorReference === ref && r.approachId === a);
-                  return (
-                    <td
-                      key={a}
-                      className="t-metric"
-                      {...(row?.orderAtypical ? { "data-atypical": "true" } : {})}
-                      // Signalé, pas corrigé : l'ordre imprimé est conservé.
-                      title={
-                        row?.orderAtypical
-                          ? t("Ordre imprimé inhabituel dans la brochure — à confirmer par Standex")
-                          : undefined
-                      }
-                    >
-                      {row
-                        ? formatGuideBound(row.upMm, row.upNote) +
-                          " / " +
-                          formatGuideBound(row.toMm, row.toNote) +
-                          (row.orderAtypical ? " *" : "")
-                        : "—"}
-                    </td>
-                  );
-                })}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      {rows.some((r) => r.orderAtypical) && (
-        <p className="mw-help" data-testid="guide-atypical-note">
-          {t(
-            "* Ordre imprimé inhabituel dans la brochure (« up » supérieur à « to »). La valeur est reproduite telle quelle, sans tri ni correction, et reste à confirmer par Standex : ces lignes ne servent pas de repère à la démonstration de portée.",
-          )}
-        </p>
-      )}
-      <p className="t-caption">
-        {msg("Guide d'activation Standex, page {0} · plages en mm", [String(rows[0]!.page)])}
-      </p>
-    </details>
-  );
-}
