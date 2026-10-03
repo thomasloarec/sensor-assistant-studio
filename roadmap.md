@@ -74,4 +74,4 @@
 - [x] Limiter les positions principales à D1 « Face à face » et D3 « Dans l’alignement », sans convertir les poses F1 enregistrées.
 - [x] Garder position, activation et lecture visibles, puis répartir les autres commandes entre produit, aimant et positionnement.
 - [x] Retirer les tableaux de distances publiées de l’atelier sans modifier les données ni les calculs.
-- [ ] Terminer la suite complète, la compilation et la vérification visuelle authentifiée si une session autorisée devient disponible.
+- [x] Terminer la suite complète et la compilation ; contrôle visuel authentifié non réalisable sans session autorisée.

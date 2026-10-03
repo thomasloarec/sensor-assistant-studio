@@ -266,7 +266,7 @@ export default function MagneticWorkshop({
     [showMagnetName, setShowMagnetName] = useState(true),
     [focus, setFocus] = useState<"assembly" | "sensor">("assembly"),
     [catalogOpen, setCatalogOpen] = useState(false);
-  /** Vitesse de lecture. Par défaut un aller-retour dure 4 s : la lecture
+  /** Vitesse de lecture. Par défaut un aller-retour dure 6 s : la lecture
    * ralentie reste disponible dans les réglages avancés, elle ne disparaît pas. */
   const [playbackSpeed, setPlaybackSpeed] = useState<"normal" | "slow">("normal");
   const [reduced, setReduced] = useState(false);
