@@ -960,6 +960,13 @@ export default function MagneticWorkshop({
   const applySuggestedActivation = () => {
     if (suggestedActivation) update({ sensitivity: suggestedActivation.sensitivityClass });
   };
+  // i18n-canonical: owned action template, translated reactively by msg().
+  const suggestedActivationLabel = suggestedActivation
+    ? msg("Choisir environ {0} mm (classe {1})", [
+        number(suggestedActivation.pullInMm),
+        suggestedActivation.sensitivityClass,
+      ])
+    : "";
   const activationDistanceControl =
     activationChoices.length > 0 ? (
       <fieldset className="mw-activation-distance">
@@ -983,10 +990,7 @@ export default function MagneticWorkshop({
               className="mw-button mw-secondary mw-wide"
               onClick={applySuggestedActivation}
             >
-              {msg("Choisir environ {0} mm (classe {1})", [
-                number(suggestedActivation?.pullInMm ?? 0),
-                suggestedActivation?.sensitivityClass ?? "",
-              ])}
+              {suggestedActivationLabel}
             </button>
           )
         ) : (
@@ -1022,10 +1026,7 @@ export default function MagneticWorkshop({
                 className="mw-button mw-secondary mw-wide"
                 onClick={applySuggestedActivation}
               >
-                {msg("Choisir environ {0} mm (classe {1})", [
-                  number(suggestedActivation?.pullInMm ?? 0),
-                  suggestedActivation?.sensitivityClass ?? "",
-                ])}
+                {suggestedActivationLabel}
               </button>
             )}
             <p className="mw-activation-value t-metric">
