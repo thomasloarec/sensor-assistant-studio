@@ -90,9 +90,9 @@ describe("Couverture des langues de l'interface", () => {
   });
 
   test("chaque entrée porte exactement sept traductions non vides", () => {
-    // Baseline auditée : 3 209 entrées, plus les 6 libellés traduits de la
-    // réorganisation des réglages de l’atelier.
-    expect(Object.keys(dictionary)).toHaveLength(3_217);
+    // Baseline auditée, enrichie des libellés de la réorganisation de l’atelier
+    // et de la variante D1 propre à son sélecteur visuel.
+    expect(Object.keys(dictionary)).toHaveLength(3_218);
     const broken = Object.entries(dictionary).filter(
       ([, v]) => v.length !== 7 || v.some((x) => typeof x !== "string" || x.trim() === ""),
     );

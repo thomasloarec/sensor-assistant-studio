@@ -14,7 +14,7 @@ import {
   magnetOptionsFor,
 } from "@/lib/standex/default-pairs";
 import { pairedMagnetModel } from "@/lib/standex/paired-magnets";
-import { t, msg, number } from "@/lib/i18n/core";
+import { contextual, t, msg, number } from "@/lib/i18n/core";
 import { GuideMaterials } from "./guide-materials";
 import {
   guideIllustrativeMarks,
@@ -856,9 +856,18 @@ export default function MagneticWorkshop({
   /* Colonne de gauche : trois réglages                               */
   /* ---------------------------------------------------------------- */
   /* i18n-canonical : libellés stockés en français, traduits au rendu par t(). */
+  const WORKSHOP_D1_LABEL = contextual("Face à face", "workshop.position.d1");
   const APPROACH_CHOICES = [
-    { id: "D1" as const, label: "Face à face", path: "M4 7h6M10 17H4M14 7h6M20 17h-6" },
-    { id: "D3" as const, label: "Dans l’alignement", path: "M4 12h7M13 12h7M11 5v14" },
+    {
+      id: "D1" as const,
+      label: WORKSHOP_D1_LABEL,
+      path: "M4 7h6M10 17H4M14 7h6M20 17h-6",
+    },
+    {
+      id: "D3" as const,
+      label: t("Dans l’alignement"),
+      path: "M4 12h7M13 12h7M11 5v14",
+    },
   ];
 
   const approachPicker = (
@@ -872,7 +881,7 @@ export default function MagneticWorkshop({
               type="button"
               className="mw-approach-button"
               aria-pressed={config.geometry === a.id}
-              title={t(a.label)}
+              title={a.id === "D1" ? a.label : t(a.label)}
               onClick={() =>
                 update({
                   geometry: a.id,
@@ -893,7 +902,7 @@ export default function MagneticWorkshop({
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d={a.path} />
               </svg>
-              <span>{t(a.label)}</span>
+              <span>{a.id === "D1" ? a.label : t(a.label)}</span>
             </button>
           );
         })}

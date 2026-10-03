@@ -142,6 +142,12 @@ export function msg(
   return t(source, locale).replace(/\{(\d+)\}/g, (_, n: string) => String(values[Number(n)] ?? ""));
 }
 
+/** Translate a display label whose wording intentionally differs from the same source in another context. */
+export function contextual(source: string, key: string, locale = getLocale()): string {
+  if (locale === "fr") return source;
+  return phrase(key, locale) ?? source;
+}
+
 /** Translate known application errors and replace unknown service details with
  * an owned fallback. User-entered text never passes through this helper. */
 export function uiError(error: unknown, fallback: string): string {
