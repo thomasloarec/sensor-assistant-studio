@@ -856,10 +856,11 @@ export default function MagneticWorkshop({
   /* Colonne de gauche : trois réglages                               */
   /* ---------------------------------------------------------------- */
   /* i18n-canonical : libellés stockés en français, traduits au rendu par t(). */
+  const WORKSHOP_D1_LABEL = "Face à face";
   const APPROACH_CHOICES = [
     {
       id: "D1" as const,
-      label: msg("Face à face{0}", [""]),
+      label: WORKSHOP_D1_LABEL,
       path: "M4 7h6M10 17H4M14 7h6M20 17h-6",
     },
     {
@@ -880,7 +881,7 @@ export default function MagneticWorkshop({
               type="button"
               className="mw-approach-button"
               aria-pressed={config.geometry === a.id}
-              title={a.label}
+              title={a.id === "D1" ? msg("Face à face{0}", [""]) : t(a.label)}
               onClick={() =>
                 update({
                   geometry: a.id,
@@ -901,7 +902,7 @@ export default function MagneticWorkshop({
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d={a.path} />
               </svg>
-              <span>{a.label}</span>
+              <span>{a.id === "D1" ? msg("Face à face{0}", [""]) : t(a.label)}</span>
             </button>
           );
         })}
