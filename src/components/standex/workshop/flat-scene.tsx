@@ -109,15 +109,17 @@ export default function FlatScene({
                l'affichage du nom du capteur. */
             <g>
               <SensorPlan model={actualMagnet} xray={false} showCable={false} />
-              {showMagnetName && <text
-                x="0"
-                y={mw / 2 + 4}
-                textAnchor="middle"
-                fontSize={Math.min(2.6, ml * 0.2)}
-                fill="#254061"
-              >
-                {`${t("Aimant")} ${actualMagnet.id}`}
-              </text>}
+              {showMagnetName && (
+                <text
+                  x="0"
+                  y={mw / 2 + 4}
+                  textAnchor="middle"
+                  fontSize={Math.min(2.6, ml * 0.2)}
+                  fill="#254061"
+                >
+                  {`${t("Aimant")} ${actualMagnet.id}`}
+                </text>
+              )}
             </g>
           ) : config.magnetization === "thickness" ? (
             <g>
@@ -162,9 +164,11 @@ export default function FlatScene({
               );
             })
           )}
-          {!actualMagnet && showMagnetName && <text y={mw / 2 + 4} textAnchor="middle" fontSize="2.6" fill="#536b80">
-            {t("Aimant")}
-          </text>}
+          {!actualMagnet && showMagnetName && (
+            <text y={mw / 2 + 4} textAnchor="middle" fontSize="2.6" fill="#536b80">
+              {t("Aimant")}
+            </text>
+          )}
         </g>
       </g>
       {dimensions && (

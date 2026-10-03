@@ -1,5 +1,10 @@
 import { observedCycleVerdict } from "@/lib/leadmagnet/tested-pairs";
-import { workshopGuideRange, onDocumentedPosition, GUIDE_SIMULATION_NOTE, illustrativeNoteFor } from "@/lib/standex/workshop-guide";
+import {
+  workshopGuideRange,
+  onDocumentedPosition,
+  GUIDE_SIMULATION_NOTE,
+  illustrativeNoteFor,
+} from "@/lib/standex/workshop-guide";
 import { ACTIVATION_GUIDE, formatGuideBound } from "@/lib/standex/activation-guide";
 import { isPcbSensor } from "@/lib/leadmagnet/product-presentation";
 import {
@@ -46,7 +51,10 @@ import {
 import type { GuidedMounting } from "@/lib/standex/mounting";
 import type { StudioStudy } from "@/lib/standex/studio-dossier";
 import type { DesignFreeze } from "@/lib/standex/design-freeze";
-import { useDetectionDataRevision, useDetectionDataStatus } from "@/lib/standex/detection-data/store";
+import {
+  useDetectionDataRevision,
+  useDetectionDataStatus,
+} from "@/lib/standex/detection-data/store";
 import {
   publishedClasses,
   publishedApproaches,
@@ -561,7 +569,11 @@ export default function MagneticWorkshop({
     basis === "standex"
       ? t("Données Standex · distances publiées pour ce couple")
       : basis === "unavailable"
-        ? t(guideDemoRange ? "Plage du guide disponible" : "Distances non renseignées pour ce couple")
+        ? t(
+            guideDemoRange
+              ? "Plage du guide disponible"
+              : "Distances non renseignées pour ce couple",
+          )
         : t("Démonstration · distances fictives");
   /** Classes réellement publiées pour le couple : aucune interpolation. */
   const sensitivityChoices = publishedClasses(config.sensorId, config.magnetModel);
@@ -765,7 +777,12 @@ export default function MagneticWorkshop({
         : verdictKind === "undocumented"
           ? t("Position non documentée — Standex peut la mesurer pour vous")
           : guideDemoRange
-            ? msg("Plage documentée : {0} à {1} mm — {2}, {3}", [formatGuideBound(guideDemoRange.upMm, guideDemoRange.upNote), formatGuideBound(guideDemoRange.toMm, guideDemoRange.toNote), guideDemoRange.sensorReference, guideDemoRange.approachId])
+            ? msg("Plage documentée : {0} à {1} mm — {2}, {3}", [
+                formatGuideBound(guideDemoRange.upMm, guideDemoRange.upNote),
+                formatGuideBound(guideDemoRange.toMm, guideDemoRange.toNote),
+                guideDemoRange.sensorReference,
+                guideDemoRange.approachId,
+              ])
             : t("Distances non publiées pour ce couple — Standex peut les mesurer");
   const askTrial = verdictKind === "undocumented" || verdictKind === "unpublished";
   /** Commutation ILLUSTRATIVE : le contact bascule à proximité pour que la scène
@@ -774,7 +791,6 @@ export default function MagneticWorkshop({
   // La source d'affichage est la simulation de la SCÈNE (pose réellement
   // dessinée) ; le résultat enregistré porte la même marque.
   const illustrative = guidedSim.illustrative === true || computed?.illustrative === true;
-  
 
   /** Essai à conserver dans le dossier : verdict, distances PUBLIÉES (ou `null`)
    *  et course déclarée. Rien n'est recalculé ni arrondi ici. */
@@ -782,13 +798,17 @@ export default function MagneticWorkshop({
     sensorId: config.sensorId,
     magnetId: config.magnetModel,
     approach: config.geometry,
-    sensitivity: basis === "unavailable" ? null : config.sensitivity ?? null,
+    sensitivity: basis === "unavailable" ? null : (config.sensitivity ?? null),
     verdict: verdictKind,
     pullInMm: referencePair ? referencePair[0] : null,
     dropOutMm: referencePair ? referencePair[1] : null,
     travelStartMm: config.start,
     travelEndMm: config.end,
-    mainMessage: guideDemoRange ? GUIDE_SIMULATION_NOTE : computed && computed.coverage !== "covered" ? computed.mainMessage : null,
+    mainMessage: guideDemoRange
+      ? GUIDE_SIMULATION_NOTE
+      : computed && computed.coverage !== "covered"
+        ? computed.mainMessage
+        : null,
     guideReference: guideDemoRange?.sensorReference ?? null,
     documentedPosition: onDocumentedPosition(config),
     limits: computed ? computed.limits : [],
@@ -809,14 +829,22 @@ export default function MagneticWorkshop({
         <p className="t-title-s">{verdictSentence}</p>
         {dataStatus.stale && dataStatus.state === "error" ? (
           <p className="t-caption" data-testid="data-stale-notice">
-            {t("Données de détection non relues depuis le serveur : cette scène peut afficher des valeurs plus anciennes.")}
+            {t(
+              "Données de détection non relues depuis le serveur : cette scène peut afficher des valeurs plus anciennes.",
+            )}
           </p>
         ) : null}
         {/* Hors couverture, le message du moteur est repris MOT POUR MOT. */}
         {guideDemoRange && basis === "unavailable" ? (
           <p className="t-caption" data-testid="verdict-main-message">
-            {t(onDocumentedPosition(config) ? "Position du guide sélectionnée." : "Montage différent de la position du guide : la plage reste une référence, à confirmer dans votre configuration.")}{" "}
-            <a href={ACTIVATION_GUIDE.source.url} target="_blank" rel="noopener noreferrer">{msg("Guide Standex, page {0}", [String(guideDemoRange.page)])}</a>
+            {t(
+              onDocumentedPosition(config)
+                ? "Position du guide sélectionnée."
+                : "Montage différent de la position du guide : la plage reste une référence, à confirmer dans votre configuration.",
+            )}{" "}
+            <a href={ACTIVATION_GUIDE.source.url} target="_blank" rel="noopener noreferrer">
+              {msg("Guide Standex, page {0}", [String(guideDemoRange.page)])}
+            </a>
           </p>
         ) : computed && computed.coverage !== "covered" ? (
           <p className="t-caption" data-testid="verdict-main-message">
@@ -829,7 +857,11 @@ export default function MagneticWorkshop({
             disparaît pas pendant la lecture. */}
         {illustrative ? (
           <p className="notice-warning t-body-s" data-testid="illustrative-note">
-            {t(guideDemoRange && illustrativeBounds ? GUIDE_SIMULATION_NOTE : illustrativeNoteFor(config))}
+            {t(
+              guideDemoRange && illustrativeBounds
+                ? GUIDE_SIMULATION_NOTE
+                : illustrativeNoteFor(config),
+            )}
           </p>
         ) : null}
       </div>
@@ -871,11 +903,14 @@ export default function MagneticWorkshop({
                   // même ligne quand elle publie cette approche, sinon la
                   // variante publiée pour cette approche, sinon aucune.
                   guideReference:
-                    guideSelectionFor(config.sensorId, config.magnetModel, a.id, config.guideReference)
-                      ?.reference ?? null,
+                    guideSelectionFor(
+                      config.sensorId,
+                      config.magnetModel,
+                      a.id,
+                      config.guideReference,
+                    )?.reference ?? null,
                 })
               }
-
             >
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d={a.path} />
@@ -921,66 +956,67 @@ export default function MagneticWorkshop({
   );
   const selectedActivation =
     selectedActivationIndex >= 0 ? activationChoices[selectedActivationIndex] : null;
-  const activationDistanceControl = activationChoices.length > 0 ? (
-    <fieldset className="mw-activation-distance">
-      <legend className="t-label">{t("Distance d’activation")}</legend>
-      <div className="mw-activation-scale" aria-hidden="true">
-        <span>{t("Plus près")}</span>
-        <span>↔</span>
-        <span>{t("Plus loin")}</span>
-      </div>
-      {activationChoices.length === 1 ? (
-        <p className="mw-activation-value t-metric">
-          {msg("Environ {0} mm (classe {1})", [
-            number(activationChoices[0]!.pullInMm),
-            activationChoices[0]!.sensitivityClass,
-          ])}
-        </p>
-      ) : (
-        <>
-          <input
-            className="mw-activation-range"
-            type="range"
-            min={0}
-            max={activationChoices.length - 1}
-            step={1}
-            value={Math.max(0, selectedActivationIndex)}
-            aria-label={t("Choisir la distance d’activation")}
-            aria-valuetext={
-              selectedActivation
+  const activationDistanceControl =
+    activationChoices.length > 0 ? (
+      <fieldset className="mw-activation-distance">
+        <legend className="t-label">{t("Distance d’activation")}</legend>
+        <div className="mw-activation-scale" aria-hidden="true">
+          <span>{t("Plus près")}</span>
+          <span>↔</span>
+          <span>{t("Plus loin")}</span>
+        </div>
+        {activationChoices.length === 1 ? (
+          <p className="mw-activation-value t-metric">
+            {msg("Environ {0} mm (classe {1})", [
+              number(activationChoices[0]!.pullInMm),
+              activationChoices[0]!.sensitivityClass,
+            ])}
+          </p>
+        ) : (
+          <>
+            <input
+              className="mw-activation-range"
+              type="range"
+              min={0}
+              max={activationChoices.length - 1}
+              step={1}
+              value={Math.max(0, selectedActivationIndex)}
+              aria-label={t("Choisir la distance d’activation")}
+              aria-valuetext={
+                selectedActivation
+                  ? msg("Environ {0} mm (classe {1})", [
+                      number(selectedActivation.pullInMm),
+                      selectedActivation.sensitivityClass,
+                    ])
+                  : undefined
+              }
+              onChange={(event) => {
+                const row = activationChoices[Number(event.target.value)];
+                if (row) update({ sensitivity: row.sensitivityClass });
+              }}
+            />
+            <div className="mw-activation-ticks" aria-hidden="true">
+              {activationChoices.map((row) => (
+                <span key={row.id}>{number(row.pullInMm)}</span>
+              ))}
+            </div>
+            <p className="mw-activation-value t-metric">
+              {selectedActivation
                 ? msg("Environ {0} mm (classe {1})", [
                     number(selectedActivation.pullInMm),
                     selectedActivation.sensitivityClass,
                   ])
-                : undefined
-            }
-            onChange={(event) => {
-              const row = activationChoices[Number(event.target.value)];
-              if (row) update({ sensitivity: row.sensitivityClass });
-            }}
-          />
-          <div className="mw-activation-ticks" aria-hidden="true">
-            {activationChoices.map((row) => (
-              <span key={row.id}>{number(row.pullInMm)}</span>
-            ))}
-          </div>
-          <p className="mw-activation-value t-metric">
-            {selectedActivation
-              ? msg("Environ {0} mm (classe {1})", [
-                  number(selectedActivation.pullInMm),
-                  selectedActivation.sensitivityClass,
-                ])
-              : t("Choisissez une distance d’activation.")}
-          </p>
-        </>
-      )}
-      <p className="mw-help">
-        {t(
-          "Le capteur s’active trop tôt ou trop tard ? Essayez une autre distance d’activation. Ce choix correspond à une autre sensibilité du capteur.",
+                : t("Choisissez une distance d’activation.")}
+            </p>
+          </>
         )}
-      </p>
-    </fieldset>
-  ) : null;
+        <p className="mw-help">
+          {t(
+            "Le capteur s’active trop tôt ou trop tard ? Essayez une autre distance d’activation. Ce choix correspond à une autre sensibilité du capteur.",
+          )}
+        </p>
+      </fieldset>
+    ) : null;
 
   const playButton = (
     <button
@@ -1023,7 +1059,11 @@ export default function MagneticWorkshop({
 
       onSelectDemo={(ref, approachId) => {
         if (approachId === "D1" || approachId === "D3") {
-          update({ guideReference: ref, geometry: approachId, magnetAngle: documentedMagnetAngleDeg(approachId, config.sensorId) });
+          update({
+            guideReference: ref,
+            geometry: approachId,
+            magnetAngle: documentedMagnetAngleDeg(approachId, config.sensorId),
+          });
         }
       }}
     />
@@ -1049,7 +1089,9 @@ export default function MagneticWorkshop({
                 {t(
                   basis === "standex"
                     ? "Données Standex"
-                    : guideDemoRange ? "Plage du guide disponible" : "Distances non renseignées pour ce couple",
+                    : guideDemoRange
+                      ? "Plage du guide disponible"
+                      : "Distances non renseignées pour ce couple",
                 )}
               </option>
               <option value="education">{t("Démonstration · distances fictives")}</option>
@@ -1178,7 +1220,13 @@ export default function MagneticWorkshop({
                 ))}
               </tbody>
             </table>
-            <p className="mw-help">{t(guideDemoRange && basis === "unavailable" ? GUIDE_SIMULATION_NOTE : referenceNoteFor(config))}</p>
+            <p className="mw-help">
+              {t(
+                guideDemoRange && basis === "unavailable"
+                  ? GUIDE_SIMULATION_NOTE
+                  : referenceNoteFor(config),
+              )}
+            </p>
             {publishedFamilyNoteFor(config) && (
               <p className="mw-help" data-testid="published-family-note">
                 {t(publishedFamilyNoteFor(config)!)}
@@ -1263,7 +1311,10 @@ export default function MagneticWorkshop({
               value={config.geometry}
               onChange={(e) => {
                 const geometry = e.target.value as WorkshopConfig["geometry"];
-                update({ geometry, magnetAngle: documentedMagnetAngleDeg(geometry, config.sensorId) });
+                update({
+                  geometry,
+                  magnetAngle: documentedMagnetAngleDeg(geometry, config.sensorId),
+                });
               }}
             >
               {availableApproaches.map((a) => (
@@ -1339,7 +1390,11 @@ export default function MagneticWorkshop({
             unit="°"
             onChange={(magnetTilt) => orientMagnet({ magnetTilt })}
           />
-          <p className="mw-help">{t("Les couleurs repèrent l'aimant. Polarité non caractérisée : aucun changement de polarité ni effet calculé.")}</p>
+          <p className="mw-help">
+            {t(
+              "Les couleurs repèrent l'aimant. Polarité non caractérisée : aucun changement de polarité ni effet calculé.",
+            )}
+          </p>
           {!reference && (
             <>
               <Range
@@ -1602,7 +1657,11 @@ export default function MagneticWorkshop({
           {t("Nom capteur")}
         </label>
         <label>
-          <input type="checkbox" checked={showMagnetName} onChange={(e) => setShowMagnetName(e.target.checked)} />
+          <input
+            type="checkbox"
+            checked={showMagnetName}
+            onChange={(e) => setShowMagnetName(e.target.checked)}
+          />
           {t("Nom de l’aimant")}
         </label>
         {!machine && (
@@ -1671,43 +1730,54 @@ export default function MagneticWorkshop({
           {approachPicker}
           {activationDistanceControl}
           {playButton}
-          {!isPcbSensor(config.sensorId) ? <details className="mw-cable-settings" open={cableOpen} onToggle={(e) => setCableOpen(e.currentTarget.open)}>
-            <summary>{t("Longueur et trajet du câble")}</summary>
-        {/* Longueur retenue : réellement modifiable et enregistrée avec le
+          {!isPcbSensor(config.sensorId) ? (
+            <details
+              className="mw-cable-settings"
+              open={cableOpen}
+              onToggle={(e) => setCableOpen(e.currentTarget.open)}
+            >
+              <summary>{t("Longueur et trajet du câble")}</summary>
+              {/* Longueur retenue : réellement modifiable et enregistrée avec le
             montage. Le configurateur de câble complet vit dans « Avec Standex ». */}
-        <label className="mw-select-label">
-          {t("Longueur de câble retenue (mm)")}
-          <input
-            type="number"
-            min={1}
-            step={10}
-            inputMode="numeric"
-            className="t-metric"
-            placeholder={t("Non choisie")}
-            value={config.cableLengthMm ?? ""}
-            onChange={(e) => {
-              const v = e.target.value.trim();
-              if (v === "") return update({ cableLengthMm: null });
-              const n = Number(v);
-              if (Number.isFinite(n) && n > 0 && n <= 100000) update({ cableLengthMm: n });
-            }}
-          />
-        </label>
-        {cableRouting && (
-          <button
-            className="mw-button mw-secondary mw-wide"
-            aria-pressed={tool === "cable"}
-            data-testid="cable-tool-toggle"
-            disabled={!machine}
-            onClick={() => chooseTool(tool === "cable" ? "navigate" : "cable")}
-          >
-            {t(tool === "cable" ? "Arrêter le pointage" : "Pointer le câble dans la 3D")}
-          </button>
-        )}
+              <label className="mw-select-label">
+                {t("Longueur de câble retenue (mm)")}
+                <input
+                  type="number"
+                  min={1}
+                  step={10}
+                  inputMode="numeric"
+                  className="t-metric"
+                  placeholder={t("Non choisie")}
+                  value={config.cableLengthMm ?? ""}
+                  onChange={(e) => {
+                    const v = e.target.value.trim();
+                    if (v === "") return update({ cableLengthMm: null });
+                    const n = Number(v);
+                    if (Number.isFinite(n) && n > 0 && n <= 100000) update({ cableLengthMm: n });
+                  }}
+                />
+              </label>
+              {cableRouting && (
+                <button
+                  className="mw-button mw-secondary mw-wide"
+                  aria-pressed={tool === "cable"}
+                  data-testid="cable-tool-toggle"
+                  disabled={!machine}
+                  onClick={() => chooseTool(tool === "cable" ? "navigate" : "cable")}
+                >
+                  {t(tool === "cable" ? "Arrêter le pointage" : "Pointer le câble dans la 3D")}
+                </button>
+              )}
 
-            {!machine ? <p className="mw-help">{t("Sans modèle importé, saisissez la longueur souhaitée. Le pointage d’un trajet nécessite les surfaces de votre modèle.")}</p> : null}
-          </details>
-          : null}
+              {!machine ? (
+                <p className="mw-help">
+                  {t(
+                    "Sans modèle importé, saisissez la longueur souhaitée. Le pointage d’un trajet nécessite les surfaces de votre modèle.",
+                  )}
+                </p>
+              ) : null}
+            </details>
+          ) : null}
           {advancedSettings}
           {guideMaterialsBlock}
           <div className="mw-controls-links">
@@ -1736,7 +1806,12 @@ export default function MagneticWorkshop({
               />
             </label>
 
-            <button className="mw-button" onClick={() => (onResult ? onResult(testedPair()) : onClose())}>{t("Valider ce choix et voir le résultat")}</button>
+            <button
+              className="mw-button"
+              onClick={() => (onResult ? onResult(testedPair()) : onClose())}
+            >
+              {t("Valider ce choix et voir le résultat")}
+            </button>
           </div>
           {verdictBanner}
           <div
@@ -1847,7 +1922,7 @@ export default function MagneticWorkshop({
                       showSpace={showSpace}
                       xray={xray}
                       showNames={showNames}
-                    showMagnetName={showMagnetName}
+                      showMagnetName={showMagnetName}
                       reduced={reduced}
                       onChange={machineChange}
                       onMeasure={setMeasure}
@@ -1876,7 +1951,7 @@ export default function MagneticWorkshop({
                 xray={xray}
                 dimensions={dimensions}
                 showNames={showNames}
-                    showMagnetName={showMagnetName}
+                showMagnetName={showMagnetName}
                 zones={zones}
                 focus={focus}
               />
@@ -1896,7 +1971,7 @@ export default function MagneticWorkshop({
                       xray={xray}
                       dimensions={dimensions}
                       showNames={showNames}
-                    showMagnetName={showMagnetName}
+                      showMagnetName={showMagnetName}
                       zones={zones}
                       focus={focus}
                     />
@@ -1939,7 +2014,10 @@ export default function MagneticWorkshop({
           <div className="mw-cycle" aria-label={t("Chronologie du cycle")}>
             <div className="mw-cycle-head">
               {timelineContacts.map((contact, index) => (
-                <span key={index} className={contact === "unknown" ? "mw-cycle-state-unknown" : undefined}>
+                <span
+                  key={index}
+                  className={contact === "unknown" ? "mw-cycle-state-unknown" : undefined}
+                >
                   {t(contactLabel[contact])}
                 </span>
               ))}
@@ -2051,7 +2129,13 @@ export default function MagneticWorkshop({
             </>
           )}{" "}
           <a
-            href={guideDemoRange ? ACTIVATION_GUIDE.source.url : reference ? DISTANCE_SOURCE : INTERACTION_SOURCE}
+            href={
+              guideDemoRange
+                ? ACTIVATION_GUIDE.source.url
+                : reference
+                  ? DISTANCE_SOURCE
+                  : INTERACTION_SOURCE
+            }
             target="_blank"
             rel="noreferrer"
           >

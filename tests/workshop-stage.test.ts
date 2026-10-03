@@ -74,7 +74,9 @@ describe("bandeau de verdict", () => {
     expect(WORKSHOP).toContain("Distances non publiées pour ce couple");
   });
   test("les seuils affichés sont ceux du couple lu par le moteur", () => {
-    expect(WORKSHOP).toContain("msg(\"Détection prévue — ferme à {0} mm, ouvre à {1} mm\", [pull, drop])");
+    expect(WORKSHOP).toContain(
+      'msg("Détection prévue — ferme à {0} mm, ouvre à {1} mm", [pull, drop])',
+    );
   });
   test("hors couverture, le message du moteur est repris mot pour mot", () => {
     expect(WORKSHOP).toContain("{t(computed.mainMessage)}");
@@ -140,7 +142,6 @@ describe("colonne de gauche : réglages essentiels", () => {
       "Longueur de câble retenue",
       "Reprendre un montage",
       "Échelle du champ fictif",
-
     ])
       expect(WORKSHOP).toContain(label);
     expect(WORKSHOP).toContain("<GuidedSuggestion");
@@ -187,7 +188,9 @@ describe("enregistrement et sortie", () => {
   });
   test("le bloc de demande d'essai est retiré du formulaire final", () => {
     expect(SPACE).not.toContain('data-testid="trial-request"');
-    expect(SPACE).toContain("if (workshopDraftRef.current) applyWorkshopConfig(workshopDraftRef.current)");
+    expect(SPACE).toContain(
+      "if (workshopDraftRef.current) applyWorkshopConfig(workshopDraftRef.current)",
+    );
   });
 });
 

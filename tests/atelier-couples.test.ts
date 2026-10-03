@@ -84,7 +84,9 @@ describe("couples par défaut : un vrai capteur reçoit son aimant, jamais un cy
       const options = magnetOptionsFor(sensor.id);
       expect(options[0]).toBe(magnetId);
       expect(new Set(options).size).toBe(options.length);
-      expect(parseWorkshopConfig(config({ sensorId: sensor.id, magnetModel: magnetId }))).not.toBeNull();
+      expect(
+        parseWorkshopConfig(config({ sensorId: sensor.id, magnetModel: magnetId })),
+      ).not.toBeNull();
     }
   });
   test("les variantes M21P/1 et M21P/2 restent proposées et réellement différentes en 3D", () => {
@@ -133,19 +135,42 @@ describe("distances publiées : la source décide, jamais une liste de familles"
     expect(r.transitions[1]!.distance).toBeCloseTo(17.5, 0);
   });
   test("le réglage d'activation trie les seuils typiques du couple et de l'approche", () => {
-    expect(nominalSensitivityRowsFor("MK04", "M04", "D1").map((row) => [row.sensitivityClass, row.pullInMm])).toEqual([["E", 10], ["D", 11], ["C", 13], ["B", 15]]);
+    expect(
+      nominalSensitivityRowsFor("MK04", "M04", "D1").map((row) => [
+        row.sensitivityClass,
+        row.pullInMm,
+      ]),
+    ).toEqual([
+      ["E", 10],
+      ["D", 11],
+      ["C", 13],
+      ["B", 15],
+    ]);
     expect(nominalSensitivityRowsFor("MK38", "M38-N42", "F1")).toEqual([]);
   });
   test("un MK04 n'emprunte jamais les seuils d'un MK03 : le titre et les valeurs suivent le couple", () => {
-    const mk03 = config({ sensorId: "MK03", magnetModel: "4003004003", sensitivity: "C", geometry: "D1" }),
+    const mk03 = config({
+        sensorId: "MK03",
+        magnetModel: "4003004003",
+        sensitivity: "C",
+        geometry: "D1",
+      }),
       mk04 = config({ sensorId: "MK04", magnetModel: "M04", sensitivity: "C", geometry: "D1" });
     // Chaque couple lit SA propre ligne de registre, avec sa propre provenance :
     // deux valeurs numériquement égales ne sont pas la même source.
     const rowMk03 = PUBLISHED_REGISTRY.rows.find(
-        (r) => r.sensorFamily === "MK03" && r.magnetId === "4003004003" && r.sensitivityClass === "C" && r.approachId === "D1",
+        (r) =>
+          r.sensorFamily === "MK03" &&
+          r.magnetId === "4003004003" &&
+          r.sensitivityClass === "C" &&
+          r.approachId === "D1",
       )!,
       rowMk04 = PUBLISHED_REGISTRY.rows.find(
-        (r) => r.sensorFamily === "MK04" && r.magnetId === "M04" && r.sensitivityClass === "C" && r.approachId === "D1",
+        (r) =>
+          r.sensorFamily === "MK04" &&
+          r.magnetId === "M04" &&
+          r.sensitivityClass === "C" &&
+          r.approachId === "D1",
       )!;
     expect(rowMk03.provenance.sourceRef).not.toBe(rowMk04.provenance.sourceRef);
     expect(workshopPair(mk03)).toEqual([rowMk03.pullInMm, rowMk03.dropOutMm]);
@@ -177,7 +202,9 @@ describe("distances publiées : la source décide, jamais une liste de familles"
     expect(simulateCycle(c).samples.every((s) => s.contact === "unknown")).toBe(true);
   });
   test("les capteurs explicitement fictifs restent seuls à porter la démonstration", () => {
-    expect(distanceBasis(config({ sensorId: "GENERIC", magnetModel: "generic" }))).toBe("fictitious");
+    expect(distanceBasis(config({ sensorId: "GENERIC", magnetModel: "generic" }))).toBe(
+      "fictitious",
+    );
     expect(distanceBasis(config({ sensorId: "MK04", magnetModel: "M04" }))).not.toBe("fictitious");
   });
 });
@@ -287,7 +314,12 @@ describe("fiches frontales MK36 / MK37 / MK38", () => {
       ["MK38", "M36-N42"],
     ] as const) {
       expect(publishedRowsForCouple(family, magnetId)).toHaveLength(0);
-      const c = config({ sensorId: family, magnetModel: magnetId, sensitivity: "1A", geometry: "F1" });
+      const c = config({
+        sensorId: family,
+        magnetModel: magnetId,
+        sensitivity: "1A",
+        geometry: "F1",
+      });
       expect(workshopPair(c)).toBeNull();
       expect(distanceBasis(c)).toBe("unavailable");
     }
@@ -404,9 +436,9 @@ describe("points d'entrée : le bon couple par défaut partout", () => {
       magnetModel: "generic",
       mode: "education",
     });
-    expect(applySensorSelection(config({ sensorId: "GENERIC", mode: "education" }), "MK27")).toMatchObject(
-      { magnetModel: "M27", mode: "reference" },
-    );
+    expect(
+      applySensorSelection(config({ sensorId: "GENERIC", mode: "education" }), "MK27"),
+    ).toMatchObject({ magnetModel: "M27", mode: "reference" });
   });
 });
 

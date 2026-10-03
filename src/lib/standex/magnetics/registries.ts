@@ -124,13 +124,9 @@ export function readPublishedRegistry(raw: unknown): PublishedRegistry {
       return unavailable;
     // L'unicité inclut le modèle de contact : deux modèles d'une même fiche
     // (MK38 1A66B et 1A85C) sont deux lignes distinctes, jamais fusionnées.
-    const pair = [
-      r.sensorFamily,
-      r.sensitivityClass,
-      r.contactForm,
-      r.magnetId,
-      r.approachId,
-    ].join("/");
+    const pair = [r.sensorFamily, r.sensitivityClass, r.contactForm, r.magnetId, r.approachId].join(
+      "/",
+    );
 
     if (ids.has(r.id) || pairs.has(pair)) return unavailable;
     ids.add(r.id);
@@ -232,7 +228,9 @@ export function effectiveRegistrySource(): "compiled" | "server" {
  */
 export function effectiveRegistryRevisionLabel(): string {
   const base = COMPILED_PUBLISHED_REGISTRY.version;
-  return effectiveOverlay && effectiveDataRevision ? `${base}+detection.${effectiveDataRevision}` : base;
+  return effectiveOverlay && effectiveDataRevision
+    ? `${base}+detection.${effectiveDataRevision}`
+    : base;
 }
 /** Étiquette de révision d'un registre donné : le jeu effectif porte la
  *  révision serveur, tout autre jeu (compilé, instantané figé) garde la sienne. */
@@ -281,7 +279,8 @@ export function applyEffectivePublishedRows(
   let replaced = 0,
     added = 0;
   for (const raw of rows) {
-    if (!raw || typeof raw !== "object") return { ok: false, replaced: 0, added: 0, error: "BAD_ROW" };
+    if (!raw || typeof raw !== "object")
+      return { ok: false, replaced: 0, added: 0, error: "BAD_ROW" };
     const r = raw as PublishedRow;
     // Un aimant dont l'identité est lue via une famille documentée (« M21P/1 »
     // → « M21 ») est REFUSÉ ici : la lecture canonise la famille, donc la ligne
@@ -456,8 +455,8 @@ export function nominalSensitivityRowsFor(
   registry = effectivePublishedRegistry(),
 ): PublishedRow[] {
   const magnet = publishedMagnetFamily(magnetId);
-  return readPublishedRegistry(registry).rows
-    .filter(
+  return readPublishedRegistry(registry)
+    .rows.filter(
       (row) =>
         row.sensorFamily === sensorFamily &&
         row.magnetId === magnet &&
@@ -581,4 +580,3 @@ export function publishedPair(
 ): readonly [number, number] | null {
   return publishedPairFor("MK03", sensitivityClass, approachId, magnetId, registry);
 }
-
