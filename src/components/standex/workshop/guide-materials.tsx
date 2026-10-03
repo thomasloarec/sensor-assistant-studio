@@ -223,7 +223,7 @@ function GuideDemoPicker({
         </select>
       </label>
 
-      <p className="notice-warning t-body-s" data-testid="guide-demo-note">
+      <p className="notice-warning t-body" data-testid="guide-demo-note">
         {marks
           ? msg(
               "Animation indicative : la scène se rapproche du repère bas {0} mm et s'éloigne du repère haut {1} mm de la plage publiée. Ce ne sont pas des seuils de fermeture et de réouverture, et rien n'est validé.",

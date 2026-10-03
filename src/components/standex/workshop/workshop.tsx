@@ -241,6 +241,7 @@ export default function MagneticWorkshop({
   useLocale();
   const [cableOpen, setCableOpen] = useState(initialCableOpen);
   const [advancedOpen, setAdvancedOpen] = useState(initialCableOpen);
+  const [productOpen, setProductOpen] = useState(initialCableOpen);
   const [positioningOpen, setPositioningOpen] = useState(initialCableOpen);
   const [productCard, setProductCard] = useState(false);
   const [config, setConfig] = useState<WorkshopConfig>(
@@ -1089,7 +1090,12 @@ export default function MagneticWorkshop({
     >
       <summary>{t("Réglages avancés ⌄")}</summary>
       <div className="mw-advanced-body">
-        <details className="mw-advanced-category" data-testid="advanced-product">
+        <details
+          className="mw-advanced-category"
+          data-testid="advanced-product"
+          open={productOpen}
+          onToggle={(event) => setProductOpen(event.currentTarget.open)}
+        >
           <summary>{t("Choix du produit")}</summary>
           <div className="mw-advanced-category-body">
         <div className="mw-selected-sensor surface-interactive">
@@ -1129,6 +1135,27 @@ export default function MagneticWorkshop({
             </select>
           </label>
         )}
+        {!isPcbSensor(config.sensorId) ? (
+          <label className="mw-select-label">
+            {t("Longueur de câble retenue (mm)")}
+            <input
+              type="number"
+              min={1}
+              step={10}
+              inputMode="numeric"
+              className="t-metric"
+              placeholder={t("Non choisie")}
+              value={config.cableLengthMm ?? ""}
+              onChange={(event) => {
+                const value = event.target.value.trim();
+                if (value === "") return update({ cableLengthMm: null });
+                const length = Number(value);
+                if (Number.isFinite(length) && length > 0 && length <= 100000)
+                  update({ cableLengthMm: length });
+              }}
+            />
+          </label>
+        ) : null}
           </div>
         </details>
         <details className="mw-advanced-category" data-testid="advanced-magnet">
@@ -1246,25 +1273,6 @@ export default function MagneticWorkshop({
             onToggle={(event) => setCableOpen(event.currentTarget.open)}
           >
             <summary>{t("Longueur et trajet du câble")}</summary>
-            <label className="mw-select-label">
-              {t("Longueur de câble retenue (mm)")}
-              <input
-                type="number"
-                min={1}
-                step={10}
-                inputMode="numeric"
-                className="t-metric"
-                placeholder={t("Non choisie")}
-                value={config.cableLengthMm ?? ""}
-                onChange={(event) => {
-                  const value = event.target.value.trim();
-                  if (value === "") return update({ cableLengthMm: null });
-                  const length = Number(value);
-                  if (Number.isFinite(length) && length > 0 && length <= 100000)
-                    update({ cableLengthMm: length });
-                }}
-              />
-            </label>
             {cableRouting ? (
               <button
                 className="mw-button mw-secondary mw-wide"

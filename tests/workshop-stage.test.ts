@@ -110,9 +110,13 @@ describe("colonne de gauche : réglages essentiels", () => {
     expect(column).not.toContain("Orientation sur la machine");
     expect(column).not.toContain("{travelControls}");
   });
-  test("les approches non publiées restent explorables et expliquées", () => {
-    expect(WORKSHOP).not.toContain("disabled={!available}");
-    expect(WORKSHOP).toContain('t("Non documentée pour ce couple")');
+  test("deux positions principales sont proposées sans réécrire une pose F1", () => {
+    expect(WORKSHOP).toContain('label: "Face à face"');
+    expect(WORKSHOP).toContain('label: "Dans l’alignement"');
+    expect(WORKSHOP).not.toContain('label: "Parallèle"');
+    expect(WORKSHOP).not.toContain('label: "Perpendiculaire"');
+    expect(WORKSHOP).toContain('config.geometry === "F1"');
+    expect(WORKSHOP).toContain('data-testid="legacy-approach-notice"');
   });
   test("les curseurs décrivent les écarts physiques sans les confondre avec le contact", () => {
     expect(WORKSHOP).toContain('label={t("Écart au départ")}');
@@ -136,8 +140,7 @@ describe("colonne de gauche : réglages essentiels", () => {
   });
   test("aucun contrôle avancé n'a été supprimé : tout est replié", () => {
     for (const label of [
-      "Classe de sensibilité",
-      "Distances publiées (B–E, D1–D5)",
+      "Configuration du contact",
       "Orientation sur la machine",
       "Position et environnement",
       "Orientation de l'aimant",
@@ -149,8 +152,18 @@ describe("colonne de gauche : réglages essentiels", () => {
     ])
       expect(WORKSHOP).toContain(label);
     expect(WORKSHOP).toContain("<GuidedSuggestion");
-    expect(WORKSHOP).toContain("<SensitivityComparison");
     expect(WORKSHOP).toContain("<MachineControls");
+    expect(WORKSHOP).not.toContain("<SensitivityComparison");
+    expect(WORKSHOP).not.toContain('data-testid="published-rows"');
+  });
+  test("les réglages avancés sont répartis dans exactement trois catégories", () => {
+    expect(WORKSHOP.match(/className="mw-advanced-category"/g)).toHaveLength(3);
+    for (const label of [
+      "Choix du produit",
+      "Choix de l’aimant",
+      "Positionnement du capteur et de l’aimant",
+    ]) expect(WORKSHOP).toContain(`t("${label}")`);
+    expect(WORKSHOP).toContain("useState(initialCableOpen)");
   });
 });
 
