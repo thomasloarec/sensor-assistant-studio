@@ -10,7 +10,7 @@ import {
 } from "@/lib/standex/default-pairs";
 import { pairedMagnetModel } from "@/lib/standex/paired-magnets";
 import { magnetSource } from "@/lib/standex/magnet-catalog";
-import { t, msg } from "@/lib/i18n/core";
+import { t, msg, number } from "@/lib/i18n/core";
 import { GuideMaterials } from "./guide-materials";
 import {
   guideIllustrativeMarks,
@@ -51,6 +51,7 @@ import {
   publishedClasses,
   publishedApproaches,
   publishedClassKind,
+  nominalSensitivityRowsFor,
   publishedRowsForCouple,
   publishedRowsSourceUrl,
 } from "@/lib/standex/magnetics/registries";
@@ -568,6 +569,11 @@ export default function MagneticWorkshop({
   const classKind = publishedClassKind(config.sensorId, config.magnetModel);
   /** Lignes publiées du couple, y compris les modèles de contact non simulés. */
   const publishedRows = publishedRowsForCouple(config.sensorId, config.magnetModel);
+  const activationChoices = nominalSensitivityRowsFor(
+    config.sensorId,
+    config.magnetModel,
+    config.geometry,
+  );
   const approachOptions = approachChoicesFor(config.sensorId, config.magnetModel);
   // Le choix déjà enregistré reste lisible même hors politique ; il n'est pas
   // reproposé ailleurs et rien n'est réécrit à la relecture d'un dossier.
@@ -910,6 +916,72 @@ export default function MagneticWorkshop({
     </div>
   );
 
+  const selectedActivationIndex = activationChoices.findIndex(
+    (row) => row.sensitivityClass === config.sensitivity,
+  );
+  const selectedActivation =
+    selectedActivationIndex >= 0 ? activationChoices[selectedActivationIndex] : null;
+  const activationDistanceControl = activationChoices.length > 0 ? (
+    <fieldset className="mw-activation-distance">
+      <legend className="t-label">{t("Distance d’activation")}</legend>
+      <div className="mw-activation-scale" aria-hidden="true">
+        <span>{t("Plus près")}</span>
+        <span>↔</span>
+        <span>{t("Plus loin")}</span>
+      </div>
+      {activationChoices.length === 1 ? (
+        <p className="mw-activation-value t-metric">
+          {msg("Environ {0} mm (classe {1})", [
+            number(activationChoices[0]!.pullInMm),
+            activationChoices[0]!.sensitivityClass,
+          ])}
+        </p>
+      ) : (
+        <>
+          <input
+            className="mw-activation-range"
+            type="range"
+            min={0}
+            max={activationChoices.length - 1}
+            step={1}
+            value={Math.max(0, selectedActivationIndex)}
+            aria-label={t("Choisir la distance d’activation")}
+            aria-valuetext={
+              selectedActivation
+                ? msg("Environ {0} mm (classe {1})", [
+                    number(selectedActivation.pullInMm),
+                    selectedActivation.sensitivityClass,
+                  ])
+                : undefined
+            }
+            onChange={(event) => {
+              const row = activationChoices[Number(event.target.value)];
+              if (row) update({ sensitivity: row.sensitivityClass });
+            }}
+          />
+          <div className="mw-activation-ticks" aria-hidden="true">
+            {activationChoices.map((row) => (
+              <span key={row.id}>{number(row.pullInMm)}</span>
+            ))}
+          </div>
+          <p className="mw-activation-value t-metric">
+            {selectedActivation
+              ? msg("Environ {0} mm (classe {1})", [
+                  number(selectedActivation.pullInMm),
+                  selectedActivation.sensitivityClass,
+                ])
+              : t("Choisissez une distance d’activation.")}
+          </p>
+        </>
+      )}
+      <p className="mw-help">
+        {t(
+          "Le capteur s’active trop tôt ou trop tard ? Essayez une autre distance d’activation. Ce choix correspond à une autre sensibilité du capteur.",
+        )}
+      </p>
+    </fieldset>
+  ) : null;
+
   const playButton = (
     <button
       ref={playRef}
@@ -962,6 +1034,7 @@ export default function MagneticWorkshop({
     <details className="mw-advanced-settings" data-testid="workshop-advanced">
       <summary>{t("Réglages avancés ⌄")}</summary>
       <div className="mw-advanced-body">
+        {travelControls}
         {/* Point de départ documentaire : le mode fictif n'est proposé que pour
             les références explicitement fictives (GENERIC / CUSTOM). */}
         {fictitious && !machine && (
@@ -1044,7 +1117,7 @@ export default function MagneticWorkshop({
         )}
         {/* Le choix de matériau est remonté hors des réglages avancés : il est
             visible dès l'ouverture de l'atelier (voir `guideMaterialsBlock`). */}
-        {reference && sensitivityChoices.length > 0 && (
+        {reference && classKind === "switch_model" && sensitivityChoices.length > 0 && (
           <label className="mw-select-label">
             {t(classKind === "switch_model" ? "Configuration du contact" : "Classe de sensibilité")}
             <select
@@ -1596,7 +1669,7 @@ export default function MagneticWorkshop({
       <div className="mw-stage-grid">
         <aside className="mw-controls">
           {approachPicker}
-          {travelControls}
+          {activationDistanceControl}
           {playButton}
           {!isPcbSensor(config.sensorId) ? <details className="mw-cable-settings" open={cableOpen} onToggle={(e) => setCableOpen(e.currentTarget.open)}>
             <summary>{t("Longueur et trajet du câble")}</summary>
