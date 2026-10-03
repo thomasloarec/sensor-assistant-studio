@@ -233,8 +233,8 @@ describe("retours 16/09 : pose et honnêteté physique", () => {
       bladeOffsetZ(magnet),
       workshopMagnetHousingYawDeg(sensor.id, "D3", true),
     );
-    expect(sensorSide).toBeLessThan(0);
-    expect(magnetSide).toBeLessThan(0);
+    expect(sensorSide).toBeGreaterThan(0);
+    expect(magnetSide).toBeGreaterThan(0);
     expect(Math.sign(sensorSide)).toBe(Math.sign(magnetSide));
     expect(workshopMagnetHousingYawDeg(sensor.id, "D1", true)).toBe(0);
     expect(workshopMagnetHousingYawDeg(sensor.id, "F1", true)).toBe(0);
