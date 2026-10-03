@@ -74,7 +74,9 @@ describe("bandeau de verdict", () => {
     expect(WORKSHOP).toContain("Distances non publiées pour ce couple");
   });
   test("les seuils affichés sont ceux du couple lu par le moteur", () => {
-    expect(WORKSHOP).toContain("msg(\"Détection prévue — ferme à {0} mm, ouvre à {1} mm\", [pull, drop])");
+    expect(WORKSHOP).toContain(
+      'msg("Détection prévue — ferme à {0} mm, ouvre à {1} mm", [pull, drop])',
+    );
   });
   test("hors couverture, le message du moteur est repris mot pour mot", () => {
     expect(WORKSHOP).toContain("{t(computed.mainMessage)}");
@@ -94,19 +96,19 @@ describe("bandeau de verdict", () => {
   });
 });
 
-describe("colonne de gauche : trois réglages, rien de plus", () => {
-  test("position, course et lecture sont les seuls contrôles ouverts", () => {
+describe("colonne de gauche : réglages essentiels", () => {
+  test("position, activation et lecture sont ouvertes ; la course reste avancée", () => {
     const column = WORKSHOP.slice(
       WORKSHOP.indexOf('<aside className="mw-controls">'),
       WORKSHOP.indexOf('<section className="mw-main"'),
     );
     expect(column).toContain("{approachPicker}");
-    expect(column).toContain("{travelControls}");
+    expect(column).toContain("{activationDistanceControl}");
     expect(column).toContain("{playButton}");
     expect(column).toContain("{advancedSettings}");
     // Aucun réglage avancé n'est ouvert directement dans la colonne.
     expect(column).not.toContain("Orientation sur la machine");
-    expect(column).not.toContain("Classe de sensibilité");
+    expect(column).not.toContain("{travelControls}");
   });
   test("les approches non publiées restent explorables et expliquées", () => {
     expect(WORKSHOP).not.toContain("disabled={!available}");
@@ -117,6 +119,12 @@ describe("colonne de gauche : trois réglages, rien de plus", () => {
     expect(WORKSHOP).toContain('label={t("Écart au plus près")}');
     expect(WORKSHOP).not.toContain('label={t("Position ouverte")}');
     expect(WORKSHOP).not.toContain('label={t("Position fermée")}');
+  });
+  test("la distance d'activation utilise les seuils nominaux de l'approche", () => {
+    expect(WORKSHOP).toContain("nominalSensitivityRowsFor(");
+    expect(WORKSHOP).toContain('t("Distance d’activation")');
+    expect(WORKSHOP).toContain('msg("Environ {0} mm (classe {1})"');
+    expect(WORKSHOP).toContain('classKind === "switch_model"');
   });
   test("la navigation en quatre étapes a disparu", () => {
     expect(WORKSHOP).not.toContain("setStep");
@@ -134,7 +142,6 @@ describe("colonne de gauche : trois réglages, rien de plus", () => {
       "Longueur de câble retenue",
       "Reprendre un montage",
       "Échelle du champ fictif",
-
     ])
       expect(WORKSHOP).toContain(label);
     expect(WORKSHOP).toContain("<GuidedSuggestion");
@@ -181,7 +188,9 @@ describe("enregistrement et sortie", () => {
   });
   test("le bloc de demande d'essai est retiré du formulaire final", () => {
     expect(SPACE).not.toContain('data-testid="trial-request"');
-    expect(SPACE).toContain("if (workshopDraftRef.current) applyWorkshopConfig(workshopDraftRef.current)");
+    expect(SPACE).toContain(
+      "if (workshopDraftRef.current) applyWorkshopConfig(workshopDraftRef.current)",
+    );
   });
 });
 

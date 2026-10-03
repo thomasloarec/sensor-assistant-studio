@@ -7,7 +7,16 @@
 import { describe, expect, test } from "bun:test";
 import { inventory } from "../scripts/i18n-inventory";
 import messages from "../src/lib/i18n/messages.json";
-import { LANGUAGES, isLocale, setLocale, t, msg, localeTag, uiError, type Locale } from "../src/lib/i18n/core";
+import {
+  LANGUAGES,
+  isLocale,
+  setLocale,
+  t,
+  msg,
+  localeTag,
+  uiError,
+  type Locale,
+} from "../src/lib/i18n/core";
 import { INITIAL_NDA, NDA_FIELD_LABELS, ndaStatusLabel } from "../src/lib/leadmagnet/nda";
 import { VARIABLE_FIELDS } from "../src/lib/leadmagnet/nda-docx";
 import { createDossier } from "../src/lib/leadmagnet/dossier";
@@ -16,13 +25,61 @@ import { buildDossierExport, parseDossierExport } from "../src/lib/leadmagnet/do
 const dictionary = messages as Record<string, string[]>;
 const OTHER: Locale[] = ["en", "zh", "de", "es", "ru", "it", "ja"];
 const EXACT_NDA_LABELS: Record<string, readonly string[]> = {
-  "Raison sociale du client": ["Client legal name", "客户法定名称", "Rechtlicher Name des Kunden", "Razón social del cliente", "Юридическое название клиента", "Ragione sociale del cliente", "顧客の法人名"],
-  "Rue du client": ["Client street address", "客户街道地址", "Straße des Kunden", "Calle del cliente", "Улица клиента", "Via del cliente", "顧客の住所"],
-  "Code postal et ville": ["Postal code and city", "邮政编码和城市", "Postleitzahl und Ort", "Código postal y ciudad", "Почтовый индекс и город", "CAP e città", "郵便番号と市区町村"],
+  "Raison sociale du client": [
+    "Client legal name",
+    "客户法定名称",
+    "Rechtlicher Name des Kunden",
+    "Razón social del cliente",
+    "Юридическое название клиента",
+    "Ragione sociale del cliente",
+    "顧客の法人名",
+  ],
+  "Rue du client": [
+    "Client street address",
+    "客户街道地址",
+    "Straße des Kunden",
+    "Calle del cliente",
+    "Улица клиента",
+    "Via del cliente",
+    "顧客の住所",
+  ],
+  "Code postal et ville": [
+    "Postal code and city",
+    "邮政编码和城市",
+    "Postleitzahl und Ort",
+    "Código postal y ciudad",
+    "Почтовый индекс и город",
+    "CAP e città",
+    "郵便番号と市区町村",
+  ],
   Pays: ["Country", "国家", "Land", "País", "Страна", "Paese", "国"],
-  "Nom du signataire client": ["Client signatory name", "客户签署人姓名", "Name der unterzeichnenden Person beim Kunden", "Nombre del firmante del cliente", "Имя подписанта со стороны клиента", "Nome del firmatario del cliente", "顧客署名者名"],
-  "Fonction du signataire client": ["Client signatory position", "客户签署人职务", "Funktion der unterzeichnenden Person beim Kunden", "Cargo del firmante del cliente", "Должность подписанта со стороны клиента", "Ruolo del firmatario del cliente", "顧客署名者の役職"],
-  "Lieu et date de signature du client": ["Client signature place and date", "客户签署地点和日期", "Ort und Datum der Unterschrift des Kunden", "Lugar y fecha de firma del cliente", "Место и дата подписания клиентом", "Luogo e data della firma del cliente", "顧客の署名場所と日付"],
+  "Nom du signataire client": [
+    "Client signatory name",
+    "客户签署人姓名",
+    "Name der unterzeichnenden Person beim Kunden",
+    "Nombre del firmante del cliente",
+    "Имя подписанта со стороны клиента",
+    "Nome del firmatario del cliente",
+    "顧客署名者名",
+  ],
+  "Fonction du signataire client": [
+    "Client signatory position",
+    "客户签署人职务",
+    "Funktion der unterzeichnenden Person beim Kunden",
+    "Cargo del firmante del cliente",
+    "Должность подписанта со стороны клиента",
+    "Ruolo del firmatario del cliente",
+    "顧客署名者の役職",
+  ],
+  "Lieu et date de signature du client": [
+    "Client signature place and date",
+    "客户签署地点和日期",
+    "Ort und Datum der Unterschrift des Kunden",
+    "Lugar y fecha de firma del cliente",
+    "Место и дата подписания клиентом",
+    "Luogo e data della firma del cliente",
+    "顧客の署名場所と日付",
+  ],
 };
 
 describe("Couverture des langues de l'interface", () => {
@@ -33,9 +90,9 @@ describe("Couverture des langues de l'interface", () => {
   });
 
   test("chaque entrée porte exactement sept traductions non vides", () => {
-    // Baseline auditée : 3 189 entrées, puis 2 sélecteurs, 6 chaînes d'entrée
-    // et 3 libellés de composition du questionnaire, plus le libellé du montage guidé.
-    expect(Object.keys(dictionary)).toHaveLength(3_201);
+    // Baseline auditée : 3 201 entrées, plus les 7 libellés traduits du réglage
+    // documentaire de distance d’activation.
+    expect(Object.keys(dictionary)).toHaveLength(3_208);
     const broken = Object.entries(dictionary).filter(
       ([, v]) => v.length !== 7 || v.some((x) => typeof x !== "string" || x.trim() === ""),
     );
@@ -80,7 +137,8 @@ describe("Couverture des langues de l'interface", () => {
     ];
     for (const source of questionnaireCopy) {
       expect(dictionary[source], source).toHaveLength(7);
-      for (const locale of OTHER) expect(t(source, locale), `${locale}: ${source}`).not.toBe(source);
+      for (const locale of OTHER)
+        expect(t(source, locale), `${locale}: ${source}`).not.toBe(source);
     }
   });
 
@@ -99,7 +157,9 @@ describe("Couverture des langues de l'interface", () => {
   });
 
   test("les huit libellés NDA ont une entrée exacte et la traduction attendue dans chaque langue", () => {
-    expect(VARIABLE_FIELDS.filter(({ standexOnly }) => !standexOnly).map(({ label }) => label)).toEqual(Object.keys(EXACT_NDA_LABELS));
+    expect(
+      VARIABLE_FIELDS.filter(({ standexOnly }) => !standexOnly).map(({ label }) => label),
+    ).toEqual(Object.keys(EXACT_NDA_LABELS));
     expect(NDA_FIELD_LABELS.map(([, label]) => label)).toEqual(
       VARIABLE_FIELDS.filter(({ standexOnly }) => !standexOnly).map(({ label }) => label),
     );
@@ -137,8 +197,6 @@ describe("Langue d'origine d'un projet", () => {
     expect(createDossier(undefined, "ja").title).not.toBe("Nouveau projet");
     expect(createDossier(undefined, "fr").title).toBe("Nouveau projet");
   });
-
-
 
   test("la langue d'origine survit à l'export puis à la reprise", () => {
     const d = { ...createDossier(undefined, "ja"), title: "Projet volet" };

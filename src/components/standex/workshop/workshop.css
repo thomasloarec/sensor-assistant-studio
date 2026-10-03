@@ -2215,6 +2215,42 @@
   color: var(--mw-on-accent);
   box-shadow: var(--e-2);
 }
+.mw-activation-distance {
+  min-inline-size: 0;
+  padding: 12px;
+  border-radius: var(--r-md);
+  background: var(--surface-tint);
+  box-shadow: var(--e-1);
+}
+.mw-activation-scale,
+.mw-activation-ticks {
+  display: grid;
+  align-items: center;
+  gap: 4px;
+  color: var(--muted-foreground);
+  font: var(--mw-t-dense);
+}
+.mw-activation-scale {
+  grid-template-columns: 1fr auto 1fr;
+  margin-block: 6px 2px;
+}
+.mw-activation-scale > :last-child {
+  text-align: end;
+}
+.mw-activation-range {
+  inline-size: 100%;
+  min-block-size: 44px;
+  accent-color: var(--primary);
+  cursor: pointer;
+}
+.mw-activation-ticks {
+  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+  text-align: center;
+}
+.mw-activation-value {
+  margin-block: 6px;
+  color: var(--heading);
+}
 /* ---- Barre d'outils de la scène et menu Affichage ---- */
 .mw-stage .mw-scene-tools {
   position: absolute;
@@ -2277,32 +2313,59 @@
   pointer-events: none;
   text-align: center;
 }
-.mw-contact-circuit svg { display: block; width: 100%; overflow: visible; }
-.mw-contact-circuit text { fill: var(--foreground); font: var(--t-caption); }
-.mw-mini-wire, .mw-mini-source, .mw-mini-switch, .mw-mini-filament, .mw-mini-rays {
+.mw-contact-circuit svg {
+  display: block;
+  width: 100%;
+  overflow: visible;
+}
+.mw-contact-circuit text {
+  fill: var(--foreground);
+  font: var(--t-caption);
+}
+.mw-mini-wire,
+.mw-mini-source,
+.mw-mini-switch,
+.mw-mini-filament,
+.mw-mini-rays {
   fill: none;
   stroke: var(--muted-foreground);
   stroke-width: 2;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
-.mw-mini-capsule { fill: var(--surface); }
-.mw-mini-terminal { fill: var(--muted-foreground); }
+.mw-mini-capsule {
+  fill: var(--surface);
+}
+.mw-mini-terminal {
+  fill: var(--muted-foreground);
+}
 .mw-mini-switch {
   transform-origin: 78px 20px;
   transform: rotate(-25deg);
   transition: transform var(--d-fast) var(--ease-out);
 }
-.mw-mini-bulb { fill: var(--standex-deep); stroke: var(--muted-foreground); stroke-width: 2; }
-.mw-contact-circuit[data-contact="closed"] .mw-mini-switch { transform: rotate(0deg); }
-.mw-contact-circuit[data-contact="closed"] :is(.mw-mini-wire, .mw-mini-switch) { stroke: var(--success); }
+.mw-mini-bulb {
+  fill: var(--standex-deep);
+  stroke: var(--muted-foreground);
+  stroke-width: 2;
+}
+.mw-contact-circuit[data-contact="closed"] .mw-mini-switch {
+  transform: rotate(0deg);
+}
+.mw-contact-circuit[data-contact="closed"] :is(.mw-mini-wire, .mw-mini-switch) {
+  stroke: var(--success);
+}
 .mw-contact-circuit[data-contact="closed"] .mw-mini-bulb {
   fill: var(--success);
   stroke: var(--success);
   filter: drop-shadow(0 0 5px var(--success));
 }
-.mw-contact-circuit[data-contact="closed"] .mw-mini-filament { stroke: var(--standex-deep); }
-.mw-mini-rays { stroke: var(--success); }
+.mw-contact-circuit[data-contact="closed"] .mw-mini-filament {
+  stroke: var(--standex-deep);
+}
+.mw-mini-rays {
+  stroke: var(--success);
+}
 .mw-mini-current {
   fill: none;
   stroke: var(--success);
@@ -2310,13 +2373,26 @@
   stroke-dasharray: 2 18;
   animation: mw-mini-flow var(--mw-flow-duration) var(--ease-in-out) infinite;
 }
-@keyframes mw-mini-flow { to { stroke-dashoffset: -40; } }
+@keyframes mw-mini-flow {
+  to {
+    stroke-dashoffset: -40;
+  }
+}
 @media (max-width: 639px) {
-  .mw-contact-circuit { inline-size: 168px; inset-block-start: auto; inset-block-end: 36px; inset-inline-end: 8px; }
+  .mw-contact-circuit {
+    inline-size: 168px;
+    inset-block-start: auto;
+    inset-block-end: 36px;
+    inset-inline-end: 8px;
+  }
 }
 @media (prefers-reduced-motion: reduce) {
-  .mw-mini-current { animation: none; }
-  .mw-mini-switch { transition: none; }
+  .mw-mini-current {
+    animation: none;
+  }
+  .mw-mini-switch {
+    transition: none;
+  }
 }
 /* ---- Chronologie du cycle ---- */
 .mw-stage .mw-cycle {
@@ -2336,9 +2412,15 @@
   gap: 8px;
   font: var(--mw-t-dense);
 }
-.mw-cycle-head > :nth-child(2) { text-align: center; }
-.mw-cycle-head > :last-child { text-align: end; }
-.mw-cycle-state-unknown { color: var(--warning); }
+.mw-cycle-head > :nth-child(2) {
+  text-align: center;
+}
+.mw-cycle-head > :last-child {
+  text-align: end;
+}
+.mw-cycle-state-unknown {
+  color: var(--warning);
+}
 .mw-stage .mw-exit {
   flex: 0 0 auto;
   display: flex;
@@ -2466,30 +2548,124 @@
 }
 
 /* Feedback 16/09: visible actions and controls, with the shared design tokens. */
-.mw-primary-actions { display:flex; flex-wrap:wrap; justify-content:flex-end; align-items:center; gap:1rem; padding:1rem; background:var(--surface); }
-.mw-primary-actions .mw-file-label { min-height:44px; padding:0.75rem 1rem; box-shadow:var(--e-1); border-radius:var(--r-sm); color:var(--foreground); }
-.mw-approach-row { display:flex; flex-wrap:wrap; gap:0.5rem; }
-.mw-approach-button { flex:1 1 7rem; padding:0.75rem 1rem; min-width:0; }
-.mw-cable-settings, .mw-controls > .mw-advanced-settings { padding:0.75rem; background:var(--surface); border-radius:var(--r-md); margin-block:0.75rem; }
-.mw-cable-settings > summary, .mw-controls > .mw-advanced-settings > summary { cursor:pointer; min-height:44px; display:flex; align-items:center; font:var(--t-body); color:var(--foreground); }
-.mw-controls .mw-advanced-body { position:static; max-height:none; width:auto; }
+.mw-primary-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--surface);
+}
+.mw-primary-actions .mw-file-label {
+  min-height: 44px;
+  padding: 0.75rem 1rem;
+  box-shadow: var(--e-1);
+  border-radius: var(--r-sm);
+  color: var(--foreground);
+}
+.mw-approach-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.mw-approach-button {
+  flex: 1 1 7rem;
+  padding: 0.75rem 1rem;
+  min-width: 0;
+}
+.mw-cable-settings,
+.mw-controls > .mw-advanced-settings {
+  padding: 0.75rem;
+  background: var(--surface);
+  border-radius: var(--r-md);
+  margin-block: 0.75rem;
+}
+.mw-cable-settings > summary,
+.mw-controls > .mw-advanced-settings > summary {
+  cursor: pointer;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  font: var(--t-body);
+  color: var(--foreground);
+}
+.mw-controls .mw-advanced-body {
+  position: static;
+  max-height: none;
+  width: auto;
+}
 
 /* September feedback: independent control and scene scrolling. */
-.workspace-panel-bare > div { height: 100%; min-height: 0; }
-.workspace-panel-bare .mw.mw-stage { height: 100%; min-height: 0; overflow: hidden; }
-.workspace-panel-bare .mw-stage-grid { overflow: hidden; }
+.workspace-panel-bare > div {
+  height: 100%;
+  min-height: 0;
+}
+.workspace-panel-bare .mw.mw-stage {
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+.workspace-panel-bare .mw-stage-grid {
+  overflow: hidden;
+}
 .workspace-panel-bare .mw-stage .mw-controls,
-.workspace-panel-bare .mw-stage .mw-main { min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
-.workspace-panel-bare .mw-stage .mw-canvas { flex: 1 1 auto; min-height: 280px; height: auto; max-height: none; }
-.mw .mw-display-body { background: var(--standex-deep); color: var(--foreground); }
-.mw .mw-display-body label, .mw .mw-display-body summary, .mw .mw-display-body .mw-help { color: inherit; }
-.mw .mw-display-body label { display: flex; align-items: center; gap: 8px; min-height: 44px; }
-.mw-stage .mw-scene-tools { inset-block-end: 8px; pointer-events: none; }
-.mw-stage .mw-scene-tools > * { pointer-events: auto; }
-.mw-stage .mw-display-menu { max-height: 100%; overflow-y: auto; overscroll-behavior: contain; }
+.workspace-panel-bare .mw-stage .mw-main {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.workspace-panel-bare .mw-stage .mw-canvas {
+  flex: 1 1 auto;
+  min-height: 280px;
+  height: auto;
+  max-height: none;
+}
+.mw .mw-display-body {
+  background: var(--standex-deep);
+  color: var(--foreground);
+}
+.mw .mw-display-body label,
+.mw .mw-display-body summary,
+.mw .mw-display-body .mw-help {
+  color: inherit;
+}
+.mw .mw-display-body label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+}
+.mw-stage .mw-scene-tools {
+  inset-block-end: 8px;
+  pointer-events: none;
+}
+.mw-stage .mw-scene-tools > * {
+  pointer-events: auto;
+}
+.mw-stage .mw-display-menu {
+  max-height: 100%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
 @media (max-width: 1023px) {
-  .workspace-panel-bare .mw-stage-grid { display: flex; flex-direction: column; overflow-y: auto; }
-  .workspace-panel-bare .mw-stage .mw-main { flex-shrink: 0; overflow: visible; }
-  .workspace-panel-bare .mw-stage .mw-controls { flex-shrink: 0; max-height: 45dvh; overflow-y: auto; }
-  .workspace-panel-bare .mw-stage .mw-canvas { flex: none; height: 55dvh; min-height: 340px; }
+  .workspace-panel-bare .mw-stage-grid {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+  .workspace-panel-bare .mw-stage .mw-main {
+    flex-shrink: 0;
+    overflow: visible;
+  }
+  .workspace-panel-bare .mw-stage .mw-controls {
+    flex-shrink: 0;
+    max-height: 45dvh;
+    overflow-y: auto;
+  }
+  .workspace-panel-bare .mw-stage .mw-canvas {
+    flex: none;
+    height: 55dvh;
+    min-height: 340px;
+  }
 }

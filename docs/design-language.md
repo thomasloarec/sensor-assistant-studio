@@ -66,11 +66,11 @@ peuvent pas utiliser directement les classes Tailwind. Trois alias, définis en
 tête de `src/components/standex/workshop/workshop.css`, y relaient les jetons du
 socle. Ils ne portent aucune valeur littérale : ce sont des renvois.
 
-| Alias            | Renvoie vers            | Usage                                        |
-| ---------------- | ----------------------- | -------------------------------------------- |
-| `--mw-surface`   | `--surface`             | panneaux et cartes de l'atelier               |
-| `--mw-field`     | `--popover`             | champs, listes déroulantes, options natives   |
-| `--mw-on-accent` | `--primary-foreground`  | texte posé sur une action pleine              |
+| Alias            | Renvoie vers           | Usage                                       |
+| ---------------- | ---------------------- | ------------------------------------------- |
+| `--mw-surface`   | `--surface`            | panneaux et cartes de l'atelier             |
+| `--mw-field`     | `--popover`            | champs, listes déroulantes, options natives |
+| `--mw-on-accent` | `--primary-foreground` | texte posé sur une action pleine            |
 
 En contexte `.immersive`, ces trois alias suivent automatiquement les jetons
 sombres : aucun `background: white` ni `color: white` ne subsiste dans l'atelier.
@@ -130,6 +130,10 @@ bordure.
 
 Matières : `--material-thin`, `--material-regular` et `--material-blur`
 (`saturate(180%) blur(24px)`) pour les barres et surfaces translucides.
+
+### Curseurs documentaires à crans
+
+Un choix ordinal documenté peut prendre la forme d’un curseur à crans si plusieurs valeurs existent. Une valeur unique est affichée sans faux curseur. La valeur métier lisible précède toujours son code secondaire.
 
 ## 6. Mouvement
 
@@ -220,15 +224,15 @@ maintenu à 14 px minimum au rendu, y compris dans l'atelier dense.
 Fichiers officiels dans `public/brand/`, référencés uniquement par
 `src/components/standex/brand-logo.tsx` :
 
-| Fichier | Usage |
-| --- | --- |
-| `logo-lockup.png` (600×141) | logo primaire sur fond clair |
-| `logo-lockup-reversed.png` | logo primaire sur fond sombre |
-| `logo-mark.png` (120×117) | bloc « S » seul, fond clair (chrome dense) |
-| `logo-mark-reversed.png` | bloc « S » seul, fond sombre |
-| `favicon-32.png` | favicon navigateur |
-| `apple-touch-icon.png` | écran d'accueil iOS (180×180) |
-| `icon-192.png`, `icon-512.png` | `site.webmanifest` |
+| Fichier                        | Usage                                      |
+| ------------------------------ | ------------------------------------------ |
+| `logo-lockup.png` (600×141)    | logo primaire sur fond clair               |
+| `logo-lockup-reversed.png`     | logo primaire sur fond sombre              |
+| `logo-mark.png` (120×117)      | bloc « S » seul, fond clair (chrome dense) |
+| `logo-mark-reversed.png`       | bloc « S » seul, fond sombre               |
+| `favicon-32.png`               | favicon navigateur                         |
+| `apple-touch-icon.png`         | écran d'accueil iOS (180×180)              |
+| `icon-192.png`, `icon-512.png` | `site.webmanifest`                         |
 
 - **Taille minimale** : le lockup ne descend jamais sous 185 px de large, soit
   44 px de haut (ratio 600/141 → 187 px). Le composant force ce plancher.
@@ -399,9 +403,6 @@ cibles de 44 px conformes).
   - Les filets de séparation encore présents dans l'atelier sont des séparateurs
     de scène interne, pas la bordure grise 1 px proscrite par la règle 2.
 
-
-
-
 ## 11. Ce qui reste ouvert
 
 - La console `/standex` ne peut être validée de bout en bout sans session staff
@@ -427,7 +428,6 @@ cibles de 44 px conformes).
 ### Catalogue et navigation — retour utilisateur V2
 
 Le sélecteur de langue et le menu restent groupés à droite dans les en-têtes de projet et de panneau. Les filtres actifs associent un anneau primaire, une graisse renforcée et un compteur textuel. Le repère de 50 mm est un texte HTML de légende, indépendant du redimensionnement du dessin SVG. La vue 3D est proposée par défaut ; la même échelle et le cadrage individuel restent contrôlables. Les petites références peuvent ainsi être agrandies sans changer leurs dimensions. Les vignettes conservent la limite de quatre contextes WebGL et le respect du mouvement réduit.
-
 
 ### Corrections du parcours du 16 septembre 2026
 

@@ -1,4 +1,4 @@
-import { housingYawDeg, transverseApproach } from "./housing-pose";
+import { housingYawDeg, transverseApproach, workshopHousingYawDeg } from "./housing-pose";
 import { BARE_MAGNETS, PACKAGED_MAGNET_IDS } from "./magnet-catalog";
 import { pairedMagnetModel } from "./paired-magnets";
 import { defaultMagnetFor, normalizedMagnetFor } from "./default-pairs";
@@ -33,7 +33,6 @@ import {
   publishedSensorReference,
   isPublishedFamilyAlias,
 } from "./magnetics/registries";
-
 
 export type Vec3 = [number, number, number];
 export type Contact = "open" | "closed" | "unknown";
@@ -132,9 +131,15 @@ export const REFERENCE_NOTE_ACTIVATION =
   "Valeurs « Min Activation » et « Max Release » publiées par la fiche produit pour ce couple. Indicatives et dépendantes de l'environnement : ce n'est pas un seuil nominal mesuré. Distance mesurée entre les faces en vis-à-vis, le long de l'axe des cylindres.";
 /** Libellés de colonne réellement présents au registre, plus les classes Academy. */
 export const PUBLISHED_CLASS_VALUES: readonly string[] = [
-  ...new Set(["A", "B", "C", "D", "E", ...effectivePublishedRegistry().rows.map((r) => r.sensitivityClass)]),
+  ...new Set([
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    ...effectivePublishedRegistry().rows.map((r) => r.sensitivityClass),
+  ]),
 ];
-
 
 // MK03 table, checked 2026-09-07. [pull-in, drop-out], mm; D2 deliberately omitted:
 // one distance at a side lobe does not locate the lobe in a full 3D map.
@@ -181,7 +186,11 @@ export function parseWorkshopConfig(value: unknown): WorkshopConfig | null {
     : { ...raw };
   if (x["version"] !== 3) return null;
   if (x["guideReference"] === undefined) x["guideReference"] = null;
-  if (x["guideReference"] !== null && (typeof x["guideReference"] !== "string" || (x["guideReference"] as string).length > 100)) return null;
+  if (
+    x["guideReference"] !== null &&
+    (typeof x["guideReference"] !== "string" || (x["guideReference"] as string).length > 100)
+  )
+    return null;
   if (x["machine"] !== null) {
     const machine = parseMachine(x["machine"]);
     if (!machine) return null;
@@ -370,7 +379,6 @@ export function applyPairSelection(
     sensorAngle: 0,
     magnetAngle: documentedMagnetAngleDeg(geometry, sensorId),
   };
-
 }
 /**
  * Variante du guide manquante : on complète la LECTURE, jamais la POSE.
@@ -391,19 +399,41 @@ export function withDefaultGuideSelection(c: WorkshopConfig): WorkshopConfig {
 }
 
 /** A new pair starts on its published template. Imported assemblies keep their own motion. */
-export function pairDemonstration(c: WorkshopConfig, sensorId: string, magnetId: string): WorkshopConfig {
+export function pairDemonstration(
+  c: WorkshopConfig,
+  sensorId: string,
+  magnetId: string,
+): WorkshopConfig {
   const next = applyPairSelection(c, sensorId, magnetId);
   if (c.machine) return next;
-  const geometry = approachChoicesFor(sensorId, magnetId).find(a => a === "D1") ?? approachChoicesFor(sensorId, magnetId)[0] ?? next.geometry;
+  const geometry =
+    approachChoicesFor(sensorId, magnetId).find((a) => a === "D1") ??
+    approachChoicesFor(sensorId, magnetId)[0] ??
+    next.geometry;
   // La variante du guide suit l'approche réellement dessinée, sans retomber
   // implicitement sur la première ligne imprimée d'une autre approche.
   const guideReference =
     guideSelectionFor(sensorId, magnetId, geometry, next.guideReference)?.reference ?? null;
-  const aligned = { ...next, geometry, guideReference, motion: "approach" as const, lateralShift: 0, magnetTilt: 0,
-    sensorAngle: 0, magnetAngle: documentedMagnetAngleDeg(geometry, sensorId), polarity: 1 as const,
-    magnetization: "axial" as const };
+  const aligned = {
+    ...next,
+    geometry,
+    guideReference,
+    motion: "approach" as const,
+    lateralShift: 0,
+    magnetTilt: 0,
+    sensorAngle: 0,
+    magnetAngle: documentedMagnetAngleDeg(geometry, sensorId),
+    polarity: 1 as const,
+    magnetization: "axial" as const,
+  };
   const thresholds = workshopPair(aligned);
-  return thresholds ? { ...aligned, start: Math.min(60, Math.max(thresholds[1] * 1.4, thresholds[1] + 5)), end: Math.max(1, thresholds[0] * 0.5) } : aligned;
+  return thresholds
+    ? {
+        ...aligned,
+        start: Math.min(60, Math.max(thresholds[1] * 1.4, thresholds[1] + 5)),
+        end: Math.max(1, thresholds[0] * 0.5),
+      }
+    : aligned;
 }
 
 /** Nature des distances affichées. Un vrai capteur sélectionné ne bascule jamais
@@ -456,7 +486,6 @@ export function unavailableReason(c: WorkshopConfig): string | null {
     return "Cette orientation ou ce mouvement sort de la configuration documentée.";
   return null;
 }
-
 
 export function magnetSize(c: WorkshopConfig): Vec3 {
   const model = pairedMagnetModel(c.magnetModel, c.sensorId);
@@ -520,10 +549,9 @@ export function poseAt(
   }
   if (c.motion === "approach")
     return {
-      position:
-        transverseApproach(c.geometry, c.sensorId)
-          ? [c.lateralShift, 0, distance + approachOffset(c)]
-          : [distance + approachOffset(c), 0, c.lateralShift],
+      position: transverseApproach(c.geometry, c.sensorId)
+        ? [c.lateralShift, 0, distance + approachOffset(c)]
+        : [distance + approachOffset(c), 0, c.lateralShift],
       angle: c.magnetAngle,
       distance,
       outward: phase > 0.5,
@@ -598,7 +626,12 @@ export function educationSignal(c: WorkshopConfig, position: Vec3, angle: number
       : momentFor(c, angle);
   let sum = 0;
   for (let i = -3; i <= 3; i++) {
-    const local = sensor.transform(rotate([(i * bladeLength(model)) / 6, 0, bladeOffsetZ(model)], [0, housingYawDeg(c.sensorId), 0]));
+    const housingYaw = c.machine
+      ? housingYawDeg(c.sensorId)
+      : workshopHousingYawDeg(c.sensorId, c.geometry, model.cableSide);
+    const local = sensor.transform(
+      rotate([(i * bladeLength(model)) / 6, 0, bladeOffsetZ(model)], [0, housingYaw, 0]),
+    );
     const p = local.map((v, j) => v + sensor.position[j]!) as Vec3;
     sum += dot(demoField(p, position, m, c.demoReach), a);
   }
@@ -705,7 +738,8 @@ export function summarizeWorkshop(c: WorkshopConfig): string {
   // La référence de variante vient du registre, jamais recomposée : on ne titre
   // jamais un résultat MK04 avec une référence MK03.
   const reference =
-    publishedSensorReference(c.sensorId, c.sensitivity, c.magnetModel) ?? sensorById(c.sensorId).name;
+    publishedSensorReference(c.sensorId, c.sensitivity, c.magnetModel) ??
+    sensorById(c.sensorId).name;
   const setup =
     c.mode === "reference"
       ? `${reference} + ${c.magnetModel} ; approche ${c.geometry}, ${c.geometry === "F1" ? `faces en vis-à-vis (aimant à ${c.magnetAngle}°)` : "axes parallèles"}.`
@@ -744,8 +778,8 @@ export function summarizeWorkshop(c: WorkshopConfig): string {
     guide && !pair
       ? `${guide.sensorReference} · ${guide.approachId} · up ${guide.upMm ?? "—"} mm / to ${guide.toMm ?? "—"} mm · p. ${guide.page}. ${GUIDE_SIMULATION_NOTE}`
       : result.reason
-      ? `Calcul indisponible : ${result.reason}`
-      : `Cycle indicatif : ${result.closures} enclenchement(s), ${result.releases} relâchement(s).${result.unknown ? " Une partie du parcours est indéterminée." : ""}`,
+        ? `Calcul indisponible : ${result.reason}`
+        : `Cycle indicatif : ${result.closures} enclenchement(s), ${result.releases} relâchement(s).${result.unknown ? " Une partie du parcours est indéterminée." : ""}`,
     c.mode === "reference" ? REFERENCE_NOTE : EDUCATION_NOTE,
     `Modèle : ${MODEL_VERSION}. Source : ${c.mode === "reference" ? DISTANCE_SOURCE : INTERACTION_SOURCE}`,
   ].join("\n");

@@ -1,5 +1,5 @@
 import { cableConstruction } from "@/lib/leadmagnet/product-presentation";
-import { housingYawDeg, transverseApproach } from "@/lib/standex/housing-pose";
+import { transverseApproach, workshopHousingYawDeg } from "@/lib/standex/housing-pose";
 import { pairedMagnetModel } from "@/lib/standex/paired-magnets";
 import { t } from "@/lib/i18n/core";
 import { useMemo, useRef, useEffect } from "react";
@@ -185,7 +185,14 @@ export function Body({
   if (electrical && model.shape === "custom_pcb" && customLayout(model))
     return <CustomBoard model={model} xray={xray} />;
   if (electrical && model.shape === "glass") return <BareReedBody model={model} />;
-  return <StandardBody model={model} xray={electrical && xray} showCable={showCable} poleColors={poleColors} />;
+  return (
+    <StandardBody
+      model={model}
+      xray={electrical && xray}
+      showCable={showCable}
+      poleColors={poleColors}
+    />
+  );
 }
 function BareReedBody({ model }: { model: SensorModel }) {
   const [l, d] = model.body;
@@ -218,11 +225,15 @@ function BareReedBody({ model }: { model: SensorModel }) {
   );
 }
 function mk18Profile() {
-  const s = new Shape(), r = 2.5, flat = 2.3, a = Math.acos(flat / r);
+  const s = new Shape(),
+    r = 2.5,
+    flat = 2.3,
+    a = Math.acos(flat / r);
   s.absarc(0, 0, r, a, Math.PI - a, false);
   s.lineTo(-flat, -Math.sqrt(r * r - flat * flat));
   s.absarc(0, 0, r, Math.PI + a, 2 * Math.PI - a, false);
-  s.closePath(); return s;
+  s.closePath();
+  return s;
 }
 function StandardBody({
   model,
@@ -254,13 +265,21 @@ function StandardBody({
       color={poleColors ? "#ffffff" : model.color}
       onBeforeCompile={(shader) => {
         if (!poleColors) return;
-        const axis = ["cylinder", "threaded", "pressfit", "glass"].includes(model.shape) ? "y" : "x";
+        const axis = ["cylinder", "threaded", "pressfit", "glass"].includes(model.shape)
+          ? "y"
+          : "x";
         shader.vertexShader = "varying float polePosition;\n" + shader.vertexShader;
-        shader.vertexShader = shader.vertexShader.replace("#include <begin_vertex>", `#include <begin_vertex>\npolePosition = position.${axis};`);
+        shader.vertexShader = shader.vertexShader.replace(
+          "#include <begin_vertex>",
+          `#include <begin_vertex>\npolePosition = position.${axis};`,
+        );
         shader.fragmentShader = "varying float polePosition;\n" + shader.fragmentShader;
-        shader.fragmentShader = shader.fragmentShader.replace("#include <color_fragment>", "#include <color_fragment>\ndiffuseColor.rgb = polePosition < 0.0 ? vec3(0.035, 0.205, 0.63) : vec3(0.67, 0.065, 0.055);");
+        shader.fragmentShader = shader.fragmentShader.replace(
+          "#include <color_fragment>",
+          "#include <color_fragment>\ndiffuseColor.rgb = polePosition < 0.0 ? vec3(0.035, 0.205, 0.63) : vec3(0.67, 0.065, 0.055);",
+        );
       }}
-      customProgramCacheKey={() => poleColors ? `poles-${model.shape}` : "body"}
+      customProgramCacheKey={() => (poleColors ? `poles-${model.shape}` : "body")}
       transparent={xray}
       opacity={opacity}
       depthWrite={!xray}
@@ -271,7 +290,14 @@ function StandardBody({
   const cylindrical = ["cylinder", "threaded", "pressfit", "glass"].includes(model.shape);
   return (
     <group>
-      {model.id === "MK18" ? <mesh position={[-l / 2, 0, 0]} rotation={[0, Math.PI / 2, 0]}><extrudeGeometry args={[mk18Profile(), { depth: l, bevelEnabled: false, curveSegments: 24 }]} />{material}</mesh> : cylindrical ? (
+      {model.id === "MK18" ? (
+        <mesh position={[-l / 2, 0, 0]} rotation={[0, Math.PI / 2, 0]}>
+          <extrudeGeometry
+            args={[mk18Profile(), { depth: l, bevelEnabled: false, curveSegments: 24 }]}
+          />
+          {material}
+        </mesh>
+      ) : cylindrical ? (
         <mesh rotation={[0, 0, Math.PI / 2]} scale={[h / 2, 1, w / 2]}>
           <cylinderGeometry args={[1, 1, l, 48]} />
           {t(material)}
@@ -328,29 +354,30 @@ function StandardBody({
           {t(material)}
         </mesh>
       )}
-      {electrical && model.id === "MK06-4"
-        ? [-1, 1].map((sign) => (
-            <mesh key={sign} position={[sign * 5.08, -h / 2 - 1.65, 0]}>
-              <boxGeometry args={[0.5, 3.3, 0.5]} />
-              <meshStandardMaterial color="#a7b5bd" metalness={0.8} roughness={0.25} />
-            </mesh>
-          ))
-        : electrical && model.shape === "smd"
-          ? [-1, 1].map((sign) => (
-              <mesh
-                key={sign}
-                position={[
-                  sign * (l / 2 + ((model.terminalSpan ?? l) - l) / 4 - 0.2),
-                  -h / 2 + 0.18,
-                  0,
-                ]}
-              >
-                <boxGeometry args={[((model.terminalSpan ?? l) - l) / 2 + 0.4, 0.28, w * 0.65]} />
-                <meshStandardMaterial color="#a7b5bd" metalness={0.8} roughness={0.25} />
-              </mesh>
-            ))
-          : electrical && showCable ? <SensorCable model={model} /> : null}
-
+      {electrical && model.id === "MK06-4" ? (
+        [-1, 1].map((sign) => (
+          <mesh key={sign} position={[sign * 5.08, -h / 2 - 1.65, 0]}>
+            <boxGeometry args={[0.5, 3.3, 0.5]} />
+            <meshStandardMaterial color="#a7b5bd" metalness={0.8} roughness={0.25} />
+          </mesh>
+        ))
+      ) : electrical && model.shape === "smd" ? (
+        [-1, 1].map((sign) => (
+          <mesh
+            key={sign}
+            position={[
+              sign * (l / 2 + ((model.terminalSpan ?? l) - l) / 4 - 0.2),
+              -h / 2 + 0.18,
+              0,
+            ]}
+          >
+            <boxGeometry args={[((model.terminalSpan ?? l) - l) / 2 + 0.4, 0.28, w * 0.65]} />
+            <meshStandardMaterial color="#a7b5bd" metalness={0.8} roughness={0.25} />
+          </mesh>
+        ))
+      ) : electrical && showCable ? (
+        <SensorCable model={model} />
+      ) : null}
     </group>
   );
 }
@@ -358,20 +385,45 @@ function SensorCable({ model }: { model: SensorModel }) {
   const kind = cableConstruction(model);
   if (kind === "none") return null;
   const side = model.cableSide ?? -1;
-  const start = side * model.body[0] / 2;
-  const z = bladeOffsetZ(model), y = bladeOffsetY(model);
+  const start = (side * model.body[0]) / 2;
+  const z = bladeOffsetZ(model),
+    y = bladeOffsetY(model);
   const jacket = kind !== "wires";
   const split = jacket ? 7 : 0;
-  return <group>
-    {jacket ? <mesh position={[start + side * 3.5, y, z]} rotation={[0, 0, Math.PI / 2]}>
-      <cylinderGeometry args={[0.9, 0.9, 7, 16]} />
-      <meshStandardMaterial color={kind === "metal" ? "#a7b5bd" : "#60727d"} metalness={kind === "metal" ? 0.8 : 0.1} roughness={0.5} />
-    </mesh> : null}
-    {[-1, 1].map(sign => <group key={sign}>
-      <Line points={[[start + side * split, y, z + sign * 0.4], [start + side * 10, y, z + sign * 0.65]]} color="#60727d" lineWidth={2} />
-      <Line points={[[start + side * 10, y, z + sign * 0.65], [start + side * 12, y, z + sign * 0.65]]} color="#b4bcc4" lineWidth={1.5} />
-    </group>)}
-  </group>;
+  return (
+    <group>
+      {jacket ? (
+        <mesh position={[start + side * 3.5, y, z]} rotation={[0, 0, Math.PI / 2]}>
+          <cylinderGeometry args={[0.9, 0.9, 7, 16]} />
+          <meshStandardMaterial
+            color={kind === "metal" ? "#a7b5bd" : "#60727d"}
+            metalness={kind === "metal" ? 0.8 : 0.1}
+            roughness={0.5}
+          />
+        </mesh>
+      ) : null}
+      {[-1, 1].map((sign) => (
+        <group key={sign}>
+          <Line
+            points={[
+              [start + side * split, y, z + sign * 0.4],
+              [start + side * 10, y, z + sign * 0.65],
+            ]}
+            color="#60727d"
+            lineWidth={2}
+          />
+          <Line
+            points={[
+              [start + side * 10, y, z + sign * 0.65],
+              [start + side * 12, y, z + sign * 0.65],
+            ]}
+            color="#b4bcc4"
+            lineWidth={1.5}
+          />
+        </group>
+      ))}
+    </group>
+  );
 }
 function ContactFlow({ span, reduced }: { span: number; reduced: boolean }) {
   const ref = useRef<Group>(null);
@@ -444,7 +496,15 @@ export function Contacts({
     </group>
   );
 }
-export function Magnet({ config, sample, showName = true }: { config: WorkshopConfig; sample: CycleSample; showName?: boolean }) {
+export function Magnet({
+  config,
+  sample,
+  showName = true,
+}: {
+  config: WorkshopConfig;
+  sample: CycleSample;
+  showName?: boolean;
+}) {
   const actualModel = pairedMagnetModel(config.magnetModel, config.sensorId);
   const [l, h, w] = magnetSize(config),
     axial = config.magnetization === "axial",
@@ -462,9 +522,11 @@ export function Magnet({ config, sample, showName = true }: { config: WorkshopCo
           <Body model={actualModel} xray={false} showCable={false} poleColors />
           {/* Le nom du modèle rend l'aimant identifiable sans lire la colonne
               de gauche. L'étiquette reste AU-DESSUS du boîtier. */}
-          {showName && <Label position={[0, h / 2 + 3.2, 0]} className="mw-magnet-tag">
-            {`${t("Aimant")} ${config.magnetModel}`}
-          </Label>}
+          {showName && (
+            <Label position={[0, h / 2 + 3.2, 0]} className="mw-magnet-tag">
+              {`${t("Aimant")} ${config.magnetModel}`}
+            </Label>
+          )}
         </>
       ) : (
         ([-1, 1] as const).map((sign) => {
@@ -623,10 +685,7 @@ function GapDimension({ sample }: { sample: CycleSample }) {
   return (
     <group>
       <Line
-        points={[
-          [0, 0, 0],
-          sample.position,
-        ]}
+        points={[[0, 0, 0], sample.position]}
         color="#577287"
         lineWidth={1.2}
         dashed
@@ -742,12 +801,7 @@ export function ContextGuard({ onLost }: { onLost: () => void }) {
  *  deux contraintes (verticale par le fov réel, horizontale par le fov dérivé du
  *  rapport largeur/hauteur). Fonction géométrique pure : elle ne touche ni les
  *  cotes, ni les seuils, ni la simulation. */
-export function fitDistance(
-  radius: number,
-  fovDeg: number,
-  aspect: number,
-  margin = 0.12,
-): number {
+export function fitDistance(radius: number, fovDeg: number, aspect: number, margin = 0.12): number {
   const vFov = (fovDeg * Math.PI) / 180;
   const a = aspect > 0 && Number.isFinite(aspect) ? aspect : 1;
   const hFov = 2 * Math.atan(Math.tan(vFov / 2) * a);
@@ -784,13 +838,8 @@ export function CameraRig({
           : distance;
     /* Direction de vue normalisée : le recul calculé est donc la vraie distance
        caméra-cible, pas la somme de trois composantes arbitraires. */
-    const dir =
-      view === "top" ? [0, 1, 0.001] : [0.62, 0.55, 0.82].map((n) => n / 1.166);
-    camera.position.set(
-      target[0] + dir[0]! * d,
-      target[1] + dir[1]! * d,
-      target[2] + dir[2]! * d,
-    );
+    const dir = view === "top" ? [0, 1, 0.001] : [0.62, 0.55, 0.82].map((n) => n / 1.166);
+    camera.position.set(target[0] + dir[0]! * d, target[1] + dir[1]! * d, target[2] + dir[2]! * d);
     camera.up.set(0, view === "top" ? 0 : 1, view === "top" ? -1 : 0);
     camera.lookAt(...target);
     camera.updateProjectionMatrix();
@@ -867,10 +916,7 @@ export default function WorkshopScene({
   const boxSize = boxMax.map((v, i) => v - boxMin[i]!) as Vec3;
   /* Rayon de la sphère englobante : le cadrage tient donc quel que soit l'angle
      de vue, sans dépendre de l'orientation courante de la caméra. */
-  const fitRadius = Math.max(
-    6,
-    0.5 * Math.hypot(boxSize[0]!, boxSize[1]!, boxSize[2]!),
-  );
+  const fitRadius = Math.max(6, 0.5 * Math.hypot(boxSize[0]!, boxSize[1]!, boxSize[2]!));
   /* Milieu du segment capteur (origine locale) – aimant en position ouverte. */
   const mid: Vec3 = [
     openPose.position[0]! / 2,
@@ -890,11 +936,7 @@ export default function WorkshopScene({
         position:
           focus === "sensor"
             ? [target[0] + dist * 0.6, dist * 0.7, target[2] + dist]
-            : [
-                target[0] + coupleDist * 0.62,
-                coupleDist * 0.55,
-                target[2] + coupleDist * 0.82,
-              ],
+            : [target[0] + coupleDist * 0.62, coupleDist * 0.55, target[2] + coupleDist * 0.82],
         fov: 43,
         near: 0.1,
         far: 600,
@@ -922,7 +964,16 @@ export default function WorkshopScene({
         position={[config.mountX, 0, config.mountZ]}
         rotation={[0, (-config.mountAngle * Math.PI) / 180, 0]}
       >
-        <group rotation={[0, ((housingYawDeg(config.sensorId) - config.sensorAngle) * Math.PI) / 180, 0]}>
+        <group
+          rotation={[
+            0,
+            ((workshopHousingYawDeg(config.sensorId, config.geometry, model.cableSide) -
+              config.sensorAngle) *
+              Math.PI) /
+              180,
+            0,
+          ]}
+        >
           <Body model={model} xray={xray} />
           {/* Le reed nu est déjà transparent : ses lames restent visibles sans
               passer l'atelier en radiographie, la carte imprimée reste opaque. */}

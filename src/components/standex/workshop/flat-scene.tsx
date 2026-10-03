@@ -1,4 +1,4 @@
-import { housingYawDeg } from "@/lib/standex/housing-pose";
+import { workshopHousingYawDeg } from "@/lib/standex/housing-pose";
 import { pairedMagnetModel } from "@/lib/standex/paired-magnets";
 import { t } from "@/lib/i18n/core";
 import { magnetSize } from "@/lib/standex/magnetic-workshop";
@@ -70,7 +70,9 @@ export default function FlatScene({
             strokeWidth={zones ? 0.65 : 0.3}
           />
         ))}
-        <g transform={`rotate(${config.sensorAngle - housingYawDeg(config.sensorId)})`}>
+        <g
+          transform={`rotate(${config.sensorAngle - workshopHousingYawDeg(config.sensorId, config.geometry, model.cableSide)})`}
+        >
           <SensorPlan model={model} contact={sample.contact} xray={xray} />
           {showNames && (
             <text
@@ -107,15 +109,17 @@ export default function FlatScene({
                l'affichage du nom du capteur. */
             <g>
               <SensorPlan model={actualMagnet} xray={false} showCable={false} />
-              {showMagnetName && <text
-                x="0"
-                y={mw / 2 + 4}
-                textAnchor="middle"
-                fontSize={Math.min(2.6, ml * 0.2)}
-                fill="#254061"
-              >
-                {`${t("Aimant")} ${actualMagnet.id}`}
-              </text>}
+              {showMagnetName && (
+                <text
+                  x="0"
+                  y={mw / 2 + 4}
+                  textAnchor="middle"
+                  fontSize={Math.min(2.6, ml * 0.2)}
+                  fill="#254061"
+                >
+                  {`${t("Aimant")} ${actualMagnet.id}`}
+                </text>
+              )}
             </g>
           ) : config.magnetization === "thickness" ? (
             <g>
@@ -160,9 +164,11 @@ export default function FlatScene({
               );
             })
           )}
-          {!actualMagnet && showMagnetName && <text y={mw / 2 + 4} textAnchor="middle" fontSize="2.6" fill="#536b80">
-            {t("Aimant")}
-          </text>}
+          {!actualMagnet && showMagnetName && (
+            <text y={mw / 2 + 4} textAnchor="middle" fontSize="2.6" fill="#536b80">
+              {t("Aimant")}
+            </text>
+          )}
         </g>
       </g>
       {dimensions && (

@@ -18,7 +18,7 @@ import { requirementAnswer } from "../src/lib/leadmagnet/requirement-answer";
 import { imagePagesPdf } from "../src/lib/standex/studio-pdf";
 import { pairCards } from "../src/lib/leadmagnet/pair-cards";
 import { DEFAULT_WORKSHOP, poseAt, simulateCycle } from "../src/lib/standex/magnetic-workshop";
-import { housingYawDeg } from "../src/lib/standex/housing-pose";
+import { housingYawDeg, workshopHousingYawDeg } from "../src/lib/standex/housing-pose";
 import { mountingFromWorkshop } from "../src/lib/standex/mounting/bridge";
 import { approachAxisFor } from "../src/lib/standex/mounting/geometry";
 import { simulateMounting } from "../src/lib/standex/mounting/simulate";
@@ -202,6 +202,18 @@ describe("retours 16/09 : pose et honnêteté physique", () => {
       expect(sim.pullInMm).toBeNull();
       expect(sim.dropOutMm).toBeNull();
     });
+  test("les boîtiers câblés tournent une seule fois en D3 et gardent D1/F1", () => {
+    for (const id of ["MK02", "MK04", "MK05", "MK13", "MK21"]) {
+      expect(workshopHousingYawDeg(id, "D1")).toBe(180);
+      expect(workshopHousingYawDeg(id, "F1")).toBe(180);
+      expect(workshopHousingYawDeg(id, "D3")).toBe(0);
+      expect(workshopHousingYawDeg(id, "D1")).toBe(180);
+    }
+    expect(workshopHousingYawDeg("MK21PR", "D1", 1)).toBe(0);
+    expect(workshopHousingYawDeg("MK21PR", "F1", 1)).toBe(0);
+    expect(workshopHousingYawDeg("MK21PR", "D3", 1)).toBe(180);
+    expect(workshopHousingYawDeg("MK03", "D3")).toBe(0);
+  });
   test("une polarité non caractérisée importée ne produit jamais de seuil publié", () => {
     const c = { ...DEFAULT_WORKSHOP, sensorId: "MK04", magnetModel: "M04", polarity: -1 as const };
     const sim = simulateMounting(mountingFromWorkshop(c));
