@@ -1,5 +1,5 @@
 import { cableConstruction } from "@/lib/leadmagnet/product-presentation";
-import { housingYawDeg, transverseApproach } from "@/lib/standex/housing-pose";
+import { transverseApproach, workshopHousingYawDeg } from "@/lib/standex/housing-pose";
 import { pairedMagnetModel } from "@/lib/standex/paired-magnets";
 import { t } from "@/lib/i18n/core";
 import { useMemo, useRef, useEffect } from "react";
@@ -922,7 +922,16 @@ export default function WorkshopScene({
         position={[config.mountX, 0, config.mountZ]}
         rotation={[0, (-config.mountAngle * Math.PI) / 180, 0]}
       >
-        <group rotation={[0, ((housingYawDeg(config.sensorId) - config.sensorAngle) * Math.PI) / 180, 0]}>
+        <group
+          rotation={[
+            0,
+            ((workshopHousingYawDeg(config.sensorId, config.geometry, model.cableSide) -
+              config.sensorAngle) *
+              Math.PI) /
+              180,
+            0,
+          ]}
+        >
           <Body model={model} xray={xray} />
           {/* Le reed nu est déjà transparent : ses lames restent visibles sans
               passer l'atelier en radiographie, la carte imprimée reste opaque. */}

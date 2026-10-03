@@ -447,6 +447,28 @@ export function publishedReference(
  * Couple publié pour un capteur donné. La famille est explicite : aucun seuil
  * n'est emprunté à une autre famille ni à un autre aimant.
  */
+/** Nominal sensitivity choices for one exact documented pair and approach.
+ * Guide ranges and min/max datasheet bounds are deliberately excluded. */
+export function nominalSensitivityRowsFor(
+  sensorFamily: string,
+  magnetId: string,
+  approachId: PublishedApproach,
+  registry = effectivePublishedRegistry(),
+): PublishedRow[] {
+  const magnet = publishedMagnetFamily(magnetId);
+  return readPublishedRegistry(registry).rows
+    .filter(
+      (row) =>
+        row.sensorFamily === sensorFamily &&
+        row.magnetId === magnet &&
+        row.approachId === approachId &&
+        row.classKind === "sensitivity" &&
+        row.thresholdKind === "typical",
+    )
+    .slice()
+    .sort((a, b) => a.pullInMm - b.pullInMm);
+}
+
 export function publishedPairFor(
   sensorFamily: string,
   sensitivityClass: string,

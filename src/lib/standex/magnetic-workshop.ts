@@ -1,4 +1,4 @@
-import { housingYawDeg, transverseApproach } from "./housing-pose";
+import { housingYawDeg, transverseApproach, workshopHousingYawDeg } from "./housing-pose";
 import { BARE_MAGNETS, PACKAGED_MAGNET_IDS } from "./magnet-catalog";
 import { pairedMagnetModel } from "./paired-magnets";
 import { defaultMagnetFor, normalizedMagnetFor } from "./default-pairs";
@@ -598,7 +598,12 @@ export function educationSignal(c: WorkshopConfig, position: Vec3, angle: number
       : momentFor(c, angle);
   let sum = 0;
   for (let i = -3; i <= 3; i++) {
-    const local = sensor.transform(rotate([(i * bladeLength(model)) / 6, 0, bladeOffsetZ(model)], [0, housingYawDeg(c.sensorId), 0]));
+    const housingYaw = c.machine
+      ? housingYawDeg(c.sensorId)
+      : workshopHousingYawDeg(c.sensorId, c.geometry, model.cableSide);
+    const local = sensor.transform(
+      rotate([(i * bladeLength(model)) / 6, 0, bladeOffsetZ(model)], [0, housingYaw, 0]),
+    );
     const p = local.map((v, j) => v + sensor.position[j]!) as Vec3;
     sum += dot(demoField(p, position, m, c.demoReach), a);
   }

@@ -1,4 +1,4 @@
-import { housingYawDeg } from "@/lib/standex/housing-pose";
+import { workshopHousingYawDeg } from "@/lib/standex/housing-pose";
 import { pairedMagnetModel } from "@/lib/standex/paired-magnets";
 import { t } from "@/lib/i18n/core";
 import { magnetSize } from "@/lib/standex/magnetic-workshop";
@@ -70,7 +70,9 @@ export default function FlatScene({
             strokeWidth={zones ? 0.65 : 0.3}
           />
         ))}
-        <g transform={`rotate(${config.sensorAngle - housingYawDeg(config.sensorId)})`}>
+        <g
+          transform={`rotate(${config.sensorAngle - workshopHousingYawDeg(config.sensorId, config.geometry, model.cableSide)})`}
+        >
           <SensorPlan model={model} contact={sample.contact} xray={xray} />
           {showNames && (
             <text
