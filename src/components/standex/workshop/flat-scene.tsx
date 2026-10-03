@@ -1,7 +1,4 @@
-import {
-  workshopHousingYawDeg,
-  workshopMagnetHousingYawDeg,
-} from "@/lib/standex/housing-pose";
+import { workshopHousingYawDeg, workshopMagnetHousingYawDeg } from "@/lib/standex/housing-pose";
 import { pairedMagnetModel } from "@/lib/standex/paired-magnets";
 import { t } from "@/lib/i18n/core";
 import { magnetSize } from "@/lib/standex/magnetic-workshop";
