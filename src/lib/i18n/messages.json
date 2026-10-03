@@ -10106,6 +10106,15 @@
     "Faccia a faccia",
     "対向"
   ],
+  "Face à face{0}": [
+    "Face to face{0}",
+    "面对面{0}",
+    "Gegenüberliegend{0}",
+    "Cara a cara{0}",
+    "Лицом к лицу{0}",
+    "Faccia a faccia{0}",
+    "対向{0}"
+  ],
   "Facultatif : place disponible pour le capteur": [
     "Optional: space available for the sensor",
     "可选：传感器可用空间",
@@ -28900,7 +28909,7 @@
   ],
   "Dans l’alignement": [
     "In line",
-    "同轴对齐",
+    "直线排列",
     "In einer Linie",
     "En línea",
     "На одной линии",

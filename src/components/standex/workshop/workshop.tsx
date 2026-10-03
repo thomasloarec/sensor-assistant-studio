@@ -860,6 +860,8 @@ export default function MagneticWorkshop({
     { id: "D1" as const, label: "Face à face", path: "M4 7h6M10 17H4M14 7h6M20 17h-6" },
     { id: "D3" as const, label: "Dans l’alignement", path: "M4 12h7M13 12h7M11 5v14" },
   ];
+  const approachLabel = (choice: (typeof APPROACH_CHOICES)[number]) =>
+    choice.id === "D1" ? msg("Face à face{0}", [""]) : t(choice.label);
 
   const approachPicker = (
     <div className="mw-approach">
@@ -872,7 +874,7 @@ export default function MagneticWorkshop({
               type="button"
               className="mw-approach-button"
               aria-pressed={config.geometry === a.id}
-              title={t(a.label)}
+              title={approachLabel(a)}
               onClick={() =>
                 update({
                   geometry: a.id,
@@ -893,7 +895,7 @@ export default function MagneticWorkshop({
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d={a.path} />
               </svg>
-              <span>{t(a.label)}</span>
+              <span>{approachLabel(a)}</span>
             </button>
           );
         })}
