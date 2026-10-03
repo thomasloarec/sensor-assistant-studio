@@ -1,5 +1,9 @@
 import { cableConstruction } from "@/lib/leadmagnet/product-presentation";
-import { transverseApproach, workshopHousingYawDeg } from "@/lib/standex/housing-pose";
+import {
+  transverseApproach,
+  workshopHousingYawDeg,
+  workshopMagnetHousingYawDeg,
+} from "@/lib/standex/housing-pose";
 import { pairedMagnetModel } from "@/lib/standex/paired-magnets";
 import { t } from "@/lib/i18n/core";
 import { useMemo, useRef, useEffect } from "react";
@@ -509,10 +513,19 @@ export function Magnet({
   const [l, h, w] = magnetSize(config),
     axial = config.magnetization === "axial",
     thick = config.magnetization === "thickness";
+  const housingYaw = workshopMagnetHousingYawDeg(
+    config.sensorId,
+    config.geometry,
+    Boolean(actualModel),
+  );
   return (
     <group
       position={sample.position}
-      rotation={[0, (-sample.angle * Math.PI) / 180, (config.magnetTilt * Math.PI) / 180]}
+      rotation={[
+        0,
+        (-(sample.angle + housingYaw) * Math.PI) / 180,
+        (config.magnetTilt * Math.PI) / 180,
+      ]}
     >
       {actualModel ? (
         /* Le boîtier de l'aimant reprend la géométrie du capteur, sans câble ni

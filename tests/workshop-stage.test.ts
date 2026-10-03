@@ -123,6 +123,10 @@ describe("colonne de gauche : réglages essentiels", () => {
   test("la distance d'activation utilise les seuils nominaux de l'approche", () => {
     expect(WORKSHOP).toContain("nominalSensitivityRowsFor(");
     expect(WORKSHOP).toContain('t("Distance d’activation")');
+    expect(WORKSHOP).toContain("selectedActivationIndex >= 0");
+    expect(WORKSHOP).toContain("applySuggestedActivation");
+    expect(WORKSHOP).not.toContain("Math.max(0, selectedActivationIndex)");
+    expect(WORKSHOP).toContain('msg("Choisir environ {0} mm (classe {1})"');
     expect(WORKSHOP).toContain('msg("Environ {0} mm (classe {1})"');
     expect(WORKSHOP).toContain('classKind === "switch_model"');
   });

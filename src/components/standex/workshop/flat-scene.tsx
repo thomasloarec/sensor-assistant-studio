@@ -1,4 +1,7 @@
-import { workshopHousingYawDeg } from "@/lib/standex/housing-pose";
+import {
+  workshopHousingYawDeg,
+  workshopMagnetHousingYawDeg,
+} from "@/lib/standex/housing-pose";
 import { pairedMagnetModel } from "@/lib/standex/paired-magnets";
 import { t } from "@/lib/i18n/core";
 import { magnetSize } from "@/lib/standex/magnetic-workshop";
@@ -32,6 +35,11 @@ export default function FlatScene({
     [l, , w] = model.body,
     [ml, , mw] = magnetSize(config);
   const actualMagnet = pairedMagnetModel(config.magnetModel, config.sensorId);
+  const magnetHousingYaw = workshopMagnetHousingYawDeg(
+    config.sensorId,
+    config.geometry,
+    Boolean(actualMagnet),
+  );
   const axial = config.magnetization === "axial";
   const extent = focus === "sensor" ? Math.max(12, l * 1.6) : 180;
   const cx = focus === "sensor" ? config.mountX : 10,
@@ -102,7 +110,7 @@ export default function FlatScene({
           )}
         </g>
         <g
-          transform={`translate(${sample.position[0]} ${sample.position[2]}) rotate(${sample.angle}) scale(${Math.max(0.08, Math.abs(Math.cos((config.magnetTilt * Math.PI) / 180)))} 1)`}
+          transform={`translate(${sample.position[0]} ${sample.position[2]}) rotate(${sample.angle + magnetHousingYaw}) scale(${Math.max(0.08, Math.abs(Math.cos((config.magnetTilt * Math.PI) / 180)))} 1)`}
         >
           {actualMagnet ? (
             /* Repère propre à l'aimant : bande et étiquette, indépendantes de
