@@ -1046,11 +1046,9 @@ export default function MagneticWorkshop({
     </button>
   );
 
-  /* Matériau, référence et approche du guide : VISIBLES dès l'ouverture de
-     l'atelier, hors des réglages avancés. Le choix sélectionne une vraie
-     référence du guide d'activation : géométrie 3D, cotes et plages affichées
-     changent ensemble, sans facteur de matériau inventé. Le grand tableau des
-     plages reste replié par défaut à l'intérieur du bloc. */
+  /* Matériau, référence et approche du guide : regroupés avec l'aimant dans
+     les réglages avancés. Le choix sélectionne une vraie référence du guide
+     d'activation sans facteur de matériau inventé. */
   const guideMaterialsBlock = (
     <GuideMaterials
       sensorFamily={config.sensorId}
