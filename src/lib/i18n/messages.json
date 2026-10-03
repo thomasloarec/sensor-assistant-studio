@@ -10106,14 +10106,14 @@
     "Faccia a faccia",
     "対向"
   ],
-  "Face à face{0}": [
-    "Face to face{0}",
-    "面对面{0}",
-    "Gegenüberliegend{0}",
-    "Cara a cara{0}",
-    "Лицом к лицу{0}",
-    "Faccia a faccia{0}",
-    "対向{0}"
+  "workshop.position.d1": [
+    "Face to face",
+    "面对面",
+    "Gegenüberliegend",
+    "Cara a cara",
+    "Лицом к лицу",
+    "Faccia a faccia",
+    "対向"
   ],
   "Facultatif : place disponible pour le capteur": [
     "Optional: space available for the sensor",
