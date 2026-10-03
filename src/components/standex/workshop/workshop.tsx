@@ -956,6 +956,17 @@ export default function MagneticWorkshop({
   );
   const selectedActivation =
     selectedActivationIndex >= 0 ? activationChoices[selectedActivationIndex] : null;
+  const suggestedActivation = activationChoices[0] ?? null;
+  const applySuggestedActivation = () => {
+    if (suggestedActivation) update({ sensitivity: suggestedActivation.sensitivityClass });
+  };
+  // i18n-canonical: owned action template, translated reactively by msg().
+  const suggestedActivationLabel = suggestedActivation
+    ? msg("Choisir environ {0} mm (classe {1})", [
+        number(suggestedActivation.pullInMm),
+        suggestedActivation.sensitivityClass,
+      ])
+    : "";
   const activationDistanceControl =
     activationChoices.length > 0 ? (
       <fieldset className="mw-activation-distance">
@@ -966,40 +977,58 @@ export default function MagneticWorkshop({
           <span>{t("Plus loin")}</span>
         </div>
         {activationChoices.length === 1 ? (
-          <p className="mw-activation-value t-metric">
-            {msg("Environ {0} mm (classe {1})", [
-              number(activationChoices[0]!.pullInMm),
-              activationChoices[0]!.sensitivityClass,
-            ])}
-          </p>
+          selectedActivation ? (
+            <p className="mw-activation-value t-metric">
+              {msg("Environ {0} mm (classe {1})", [
+                number(selectedActivation.pullInMm),
+                selectedActivation.sensitivityClass,
+              ])}
+            </p>
+          ) : (
+            <button
+              type="button"
+              className="mw-button mw-secondary mw-wide"
+              onClick={applySuggestedActivation}
+            >
+              {suggestedActivationLabel}
+            </button>
+          )
         ) : (
           <>
-            <input
-              className="mw-activation-range"
-              type="range"
-              min={0}
-              max={activationChoices.length - 1}
-              step={1}
-              value={Math.max(0, selectedActivationIndex)}
-              aria-label={t("Choisir la distance d’activation")}
-              aria-valuetext={
-                selectedActivation
-                  ? msg("Environ {0} mm (classe {1})", [
-                      number(selectedActivation.pullInMm),
-                      selectedActivation.sensitivityClass,
-                    ])
-                  : undefined
-              }
-              onChange={(event) => {
-                const row = activationChoices[Number(event.target.value)];
-                if (row) update({ sensitivity: row.sensitivityClass });
-              }}
-            />
-            <div className="mw-activation-ticks" aria-hidden="true">
-              {activationChoices.map((row) => (
-                <span key={row.id}>{number(row.pullInMm)}</span>
-              ))}
-            </div>
+            {selectedActivation ? (
+              <>
+                <input
+                  className="mw-activation-range"
+                  type="range"
+                  min={0}
+                  max={activationChoices.length - 1}
+                  step={1}
+                  value={selectedActivationIndex}
+                  aria-label={t("Choisir la distance d’activation")}
+                  aria-valuetext={msg("Environ {0} mm (classe {1})", [
+                    number(selectedActivation.pullInMm),
+                    selectedActivation.sensitivityClass,
+                  ])}
+                  onChange={(event) => {
+                    const row = activationChoices[Number(event.target.value)];
+                    if (row) update({ sensitivity: row.sensitivityClass });
+                  }}
+                />
+                <div className="mw-activation-ticks" aria-hidden="true">
+                  {activationChoices.map((row) => (
+                    <span key={row.id}>{number(row.pullInMm)}</span>
+                  ))}
+                </div>
+              </>
+            ) : (
+              <button
+                type="button"
+                className="mw-button mw-secondary mw-wide"
+                onClick={applySuggestedActivation}
+              >
+                {suggestedActivationLabel}
+              </button>
+            )}
             <p className="mw-activation-value t-metric">
               {selectedActivation
                 ? msg("Environ {0} mm (classe {1})", [

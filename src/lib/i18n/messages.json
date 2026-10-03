@@ -26790,5 +26790,14 @@
     "Датчик срабатывает слишком рано или слишком поздно? Попробуйте другое расстояние срабатывания. Этот выбор соответствует другой чувствительности датчика.",
     "Il sensore si attiva troppo presto o troppo tardi? Prova un'altra distanza di attivazione. Questa scelta corrisponde a un'altra sensibilità del sensore.",
     "センサーの動作が早すぎたり遅すぎたりしますか？別の動作距離を試してください。この選択は別のセンサー感度に対応します。"
+  ],
+  "Choisir environ {0} mm (classe {1})": [
+    "Choose approximately {0} mm (class {1})",
+    "选择约 {0} mm（等级 {1}）",
+    "Etwa {0} mm wählen (Klasse {1})",
+    "Elegir aproximadamente {0} mm (clase {1})",
+    "Выбрать примерно {0} мм (класс {1})",
+    "Scegli circa {0} mm (classe {1})",
+    "約 {0} mm（クラス {1}）を選択"
   ]
 }

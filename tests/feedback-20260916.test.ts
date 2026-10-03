@@ -18,7 +18,13 @@ import { requirementAnswer } from "../src/lib/leadmagnet/requirement-answer";
 import { imagePagesPdf } from "../src/lib/standex/studio-pdf";
 import { pairCards } from "../src/lib/leadmagnet/pair-cards";
 import { DEFAULT_WORKSHOP, poseAt, simulateCycle } from "../src/lib/standex/magnetic-workshop";
-import { housingYawDeg, workshopHousingYawDeg } from "../src/lib/standex/housing-pose";
+import {
+  housingYawDeg,
+  rotatedLocalZ,
+  workshopHousingYawDeg,
+  workshopMagnetHousingYawDeg,
+} from "../src/lib/standex/housing-pose";
+import { pairedMagnetModel } from "../src/lib/standex/paired-magnets";
 import { mountingFromWorkshop } from "../src/lib/standex/mounting/bridge";
 import { approachAxisFor } from "../src/lib/standex/mounting/geometry";
 import { simulateMounting } from "../src/lib/standex/mounting/simulate";
@@ -213,6 +219,25 @@ describe("retours 16/09 : pose et honnêteté physique", () => {
     expect(workshopHousingYawDeg("MK21PR", "F1", 1)).toBe(0);
     expect(workshopHousingYawDeg("MK21PR", "D3", 1)).toBe(180);
     expect(workshopHousingYawDeg("MK03", "D3")).toBe(0);
+  });
+  test("MK21PR D3 présente réellement les deux zones pleines du même côté", () => {
+    const sensor = sensorById("MK21PR");
+    const magnet = pairedMagnetModel("M21P/1", "MK21PR");
+    expect(magnet).not.toBeNull();
+    if (!magnet) return;
+    const sensorSide = rotatedLocalZ(
+      bladeOffsetZ(sensor),
+      workshopHousingYawDeg(sensor.id, "D3", sensor.cableSide),
+    );
+    const magnetSide = rotatedLocalZ(
+      bladeOffsetZ(magnet),
+      workshopMagnetHousingYawDeg(sensor.id, "D3", true),
+    );
+    expect(sensorSide).toBeGreaterThan(0);
+    expect(magnetSide).toBeGreaterThan(0);
+    expect(Math.sign(sensorSide)).toBe(Math.sign(magnetSide));
+    expect(workshopMagnetHousingYawDeg(sensor.id, "D1", true)).toBe(0);
+    expect(workshopMagnetHousingYawDeg(sensor.id, "F1", true)).toBe(0);
   });
   test("une polarité non caractérisée importée ne produit jamais de seuil publié", () => {
     const c = { ...DEFAULT_WORKSHOP, sensorId: "MK04", magnetModel: "M04", polarity: -1 as const };

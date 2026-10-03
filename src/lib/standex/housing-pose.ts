@@ -12,5 +12,21 @@ export const workshopHousingYawDeg = (
   approach: string,
   cableSide: -1 | 1 = -1,
 ): number => (approach === "D3" ? (cableSide === 1 ? 180 : 0) : housingYawDeg(sensorId));
+
+/** Presentation-only orientation for a packaged magnet housing. MK21PR uses
+ * the reverse-cable sensor body, while M21/P keeps the MK21 housing datum. In
+ * D3 the matching housings therefore need the same half-turn so their raised
+ * sides face each other. This does not alter polarity, distances or magnetic
+ * calibration, and is deliberately unused by machine/manual poses. */
+export const workshopMagnetHousingYawDeg = (
+  sensorId: string,
+  approach: string,
+  hasPackagedHousing: boolean,
+): number => (hasPackagedHousing && sensorId === "MK21PR" && approach === "D3" ? 180 : 0);
+
+/** Rotate an illustrative local Z offset around Y. Kept pure so 2D and 3D
+ * presentation tests compare the actual sides rather than yaw constants. */
+export const rotatedLocalZ = (localZ: number, yawDeg: number): number =>
+  localZ * Math.cos((yawDeg * Math.PI) / 180);
 export const transverseApproach = (approach: string, sensorId = ""): boolean =>
   (approach !== "D3" && approach !== "F1") || (approach === "F1" && FACING_HOUSINGS.has(sensorId));
