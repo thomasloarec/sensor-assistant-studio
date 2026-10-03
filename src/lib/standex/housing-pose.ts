@@ -24,6 +24,16 @@ export const workshopMagnetHousingYawDeg = (
   hasPackagedHousing: boolean,
 ): number => (hasPackagedHousing && sensorId === "MK21PR" && approach === "D3" ? 180 : 0);
 
+/** Scene-level guard: an imported machine already owns the complete magnet
+ * transform, so workshop presentation yaw must never leak into that pose. */
+export const renderedMagnetHousingYawDeg = (
+  sensorId: string,
+  approach: string,
+  hasPackagedHousing: boolean,
+  hasMachinePose: boolean,
+): number =>
+  hasMachinePose ? 0 : workshopMagnetHousingYawDeg(sensorId, approach, hasPackagedHousing);
+
 /** Rotate an illustrative local Z offset around Y. Kept pure so 2D and 3D
  * presentation tests compare the actual sides rather than yaw constants. */
 export const rotatedLocalZ = (localZ: number, yawDeg: number): number =>
