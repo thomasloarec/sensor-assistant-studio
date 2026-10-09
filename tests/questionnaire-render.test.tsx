@@ -143,11 +143,9 @@ describe("rendu du questionnaire guidé", () => {
 
       expect(view.getByText("Question 1 sur 6")).toBeTruthy();
       expect(
-        view.getByText("À la fin : les capteurs proposés pour votre application."),
-      ).toBeTruthy();
-      expect(
-        (view.getByRole("button", { name: "Question précédente" }) as HTMLButtonElement).disabled,
-      ).toBe(true);
+        view.queryByText("À la fin : les capteurs proposés pour votre application."),
+      ).toBeNull();
+      expect(view.queryByRole("button", { name: "Question précédente" })).toBeNull();
 
       for (let question = 1; question < 5; question += 1) fireEvent.click(continueButton(view));
 
@@ -184,13 +182,11 @@ describe("rendu du questionnaire guidé", () => {
     for (let index = 0; index < 6; index += 1) {
       expect(view.getByText(`Question ${index + 1} sur 6`)).toBeTruthy();
       expect(view.getByText("Votre réponse")).toBeTruthy();
-      expect(
-        view.getByRole("button", { name: "Afficher l'exemple 1" }).getAttribute("aria-pressed"),
-      ).toBe("true");
-      fireEvent.click(view.getByRole("button", { name: "Afficher l'exemple 2" }));
-      expect(
-        view.getByRole("button", { name: "Afficher l'exemple 2" }).getAttribute("aria-pressed"),
-      ).toBe("true");
+      const first = view.getByText(/^« /).textContent;
+      fireEvent.click(view.getByRole("button", { name: "Exemple suivant" }));
+      expect(view.getByText(/^« /).textContent).not.toBe(first);
+      fireEvent.click(view.getByRole("button", { name: "Exemple précédent" }));
+      expect(view.getByText(/^« /).textContent).toBe(first);
       if (index < 5) {
         fireEvent.click(continueButton(view));
         await flushState();
@@ -329,9 +325,9 @@ describe("rendu du questionnaire guidé", () => {
     const locale = view.getByLabelText("Langue du site");
     fireEvent.change(locale, { target: { value: "en" } });
     expect(view.getByText("Your answer")).toBeTruthy();
-    expect(view.getByRole("button", { name: "Show example 1" })).toBeTruthy();
+    expect(view.getByRole("button", { name: "Next example" })).toBeTruthy();
     fireEvent.change(locale, { target: { value: "ja" } });
     expect(view.getByText("回答")).toBeTruthy();
-    expect(view.getByRole("button", { name: "例 1 を表示" })).toBeTruthy();
+    expect(view.getByRole("button", { name: "次の例" })).toBeTruthy();
   });
 });

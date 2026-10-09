@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { msg, t } from "@/lib/i18n/core";
+import { ChevronLeft, ChevronRight, Lightbulb } from "lucide-react";
+import { t } from "@/lib/i18n/core";
 import { Button } from "@/components/ui/button";
 
 // i18n-canonical: complete examples, never copied into the user's answers.
@@ -42,51 +43,69 @@ const EXAMPLES: Record<string, readonly string[]> = {
 };
 
 /**
- * Exemples de réponses détaillées : navigation ENTIÈREMENT manuelle.
+ * Exemples de réponses détaillées : une note éditoriale, pas un champ.
  *
- * Aucun défilement automatique, donc aucun bouton « Pause » : l'exemple affiché
- * ne change que sur une action explicite, ce qui rend la lecture possible au
- * clavier comme au lecteur d'écran, et sans mouvement non demandé.
+ * Navigation ENTIÈREMENT manuelle (flèches précédent / suivant) : aucun
+ * défilement automatique, donc aucun bouton « Pause ». Les flèches sont les
+ * cibles cliquables (≥ 44 px) ; les points, rapprochés, indiquent seulement la
+ * position et restent décoratifs pour les lecteurs d'écran, qui reçoivent le
+ * compteur en texte.
  */
 export function NeedExamples({ questionKey }: { questionKey: string }) {
   const [index, setIndex] = useState(0);
   const examples = EXAMPLES[questionKey] ?? [];
   if (examples.length === 0) return null;
   const total = examples.length;
+  const go = (delta: number) => setIndex((i) => (i + delta + total) % total);
   return (
-    <div className="questionnaire-examples-content space-y-3">
-      <p className="t-label">
-        {t("Exemple de réponse détaillée")} · {index + 1}/{total}
+    <div className="questionnaire-examples-content">
+      <p className="questionnaire-examples-label">
+        <Lightbulb className="size-4" aria-hidden="true" />
+        <span>{t("Exemple")}</span>
+        <span className="sr-only">
+          {" "}
+          {index + 1}/{total}
+        </span>
       </p>
-      <p className="t-body questionnaire-examples-text" aria-live="polite">
-        {examples[index] ? t(examples[index]) : null}
+      <p key={index} className="t-body questionnaire-examples-text" aria-live="polite">
+        {examples[index] ? `« ${t(examples[index])} »` : null}
       </p>
-      {/* Puces de navigation : chaque puce est une cible cliquable ≥ 44 px,
-          libellée explicitement pour les lecteurs d'écran ; le point visible
-          est décoratif (aria-hidden), l'état actif suit aria-pressed. */}
-      <div className="questionnaire-examples-dots" role="group" aria-label={t("Exemple de réponse détaillée")}>
-        {examples.map((_, exampleIndex) => (
+      {total > 1 ? (
+        <div className="questionnaire-examples-nav">
           <Button
-            key={exampleIndex}
             type="button"
             variant="ghost"
             size="icon"
             className="min-h-11 min-w-11"
-            aria-label={msg("Afficher l'exemple {0}", [exampleIndex + 1])}
-            aria-pressed={index === exampleIndex}
-            onClick={() => setIndex(exampleIndex)}
+            aria-label={t("Exemple précédent")}
+            onClick={() => go(-1)}
           >
-            <span
-              className={
-                index === exampleIndex
-                  ? "questionnaire-examples-dot is-active"
-                  : "questionnaire-examples-dot"
-              }
-              aria-hidden="true"
-            />
+            <ChevronLeft className="size-4" aria-hidden="true" />
           </Button>
-        ))}
-      </div>
+          <span className="questionnaire-examples-dots" aria-hidden="true">
+            {examples.map((_, exampleIndex) => (
+              <span
+                key={exampleIndex}
+                className={
+                  index === exampleIndex
+                    ? "questionnaire-examples-dot is-active"
+                    : "questionnaire-examples-dot"
+                }
+              />
+            ))}
+          </span>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="min-h-11 min-w-11"
+            aria-label={t("Exemple suivant")}
+            onClick={() => go(1)}
+          >
+            <ChevronRight className="size-4" aria-hidden="true" />
+          </Button>
+        </div>
+      ) : null}
     </div>
   );
 }

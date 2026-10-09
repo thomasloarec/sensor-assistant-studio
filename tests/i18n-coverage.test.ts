@@ -90,9 +90,9 @@ describe("Couverture des langues de l'interface", () => {
   });
 
   test("chaque entrée porte exactement sept traductions non vides", () => {
-    // Baseline auditée, enrichie des libellés de la réorganisation de l’atelier
-    // et de la variante D1 propre à son sélecteur visuel.
-    expect(Object.keys(dictionary)).toHaveLength(3_218);
+    // Baseline auditée, enrichie des libellés de la réorganisation de l’atelier,
+    // de la variante D1 et de la carte de question (exemple, flèches, invitations).
+    expect(Object.keys(dictionary)).toHaveLength(3_225);
     const broken = Object.entries(dictionary).filter(
       ([, v]) => v.length !== 7 || v.some((x) => typeof x !== "string" || x.trim() === ""),
     );

@@ -464,3 +464,11 @@ qui laisse le montage inconnu. La précision libre précède toujours la navigat
 finale. Les exemples utilisent des puces de pagination manuelle, avec une cible
 de 44 px, `aria-label` explicite et `aria-pressed` ; aucune rotation automatique
 n'est autorisée.
+
+## Carte de question — champ et exemple (9 octobre 2026)
+
+- Champ de réponse (`.answer-field`, aussi sur les trois dimensions de la question 4) : fond `--surface`, bordure 1,5 px `--standex-gray-75`, `--standex-gray` au survol, `--standex-blue` au focus avec l'anneau unique `--ring`. Dérogation assumée à « la lumière remplace le trait » : c'est l'affordance d'un champ, pas un séparateur. Gray 75 plutôt que Gray 50 car Gray 50 n'atteint pas 3:1 sur blanc.
+- Libellé « Votre réponse » et « Question X sur 6 » en casse normale, SemiBold ; seule la pastille de catégorie garde les capitales.
+- Exemple (`.questionnaire-examples`) : note sans fond ni coins, filet gauche 2 px `--standex-blue-25`, retrait 14 px, icône ampoule + « Exemple » en Detect Blue, texte italique Electronics Gray entre guillemets, aligné sur le haut du champ ; sous 768 px il passe sous le champ.
+- Navigation : flèches précédent/suivant (44 px, aria-label), points décoratifs rapprochés (6 px), actif Detect Blue, autres Gray 25. Aucun défilement automatique ; fondu neutralisé sous `prefers-reduced-motion`.
+- Progression remplie de 1/6 dès la question 1 ; « Question précédente » masquée à la question 1 ; focus automatique dans le champ sur desktop (≥ 768 px, pointeur fin).
