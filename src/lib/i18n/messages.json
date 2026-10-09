@@ -28960,5 +28960,68 @@
     "Сохранённое положение: F1. Оно останется неизменным, пока вы не выберете одно из двух положений выше.",
     "Posizione salvata: F1. Resta invariata finché non si sceglie uno dei due posizionamenti qui sopra.",
     "保存済みの位置：F1。上の2つの位置のいずれかを選択するまで変更されません。"
+  ],
+  "Exemple": [
+    "Example",
+    "示例",
+    "Beispiel",
+    "Ejemplo",
+    "Пример",
+    "Esempio",
+    "例"
+  ],
+  "Décrivez votre équipement…": [
+    "Describe your equipment…",
+    "描述您的设备…",
+    "Beschreiben Sie Ihr Gerät…",
+    "Describa su equipo…",
+    "Опишите ваше оборудование…",
+    "Descrivete la vostra apparecchiatura…",
+    "装置について記入してください…"
+  ],
+  "Décrivez la pièce à détecter…": [
+    "Describe the part to detect…",
+    "描述需要检测的部件…",
+    "Beschreiben Sie das zu erfassende Teil…",
+    "Describa la pieza a detectar…",
+    "Опишите обнаруживаемую деталь…",
+    "Descrivete il pezzo da rilevare…",
+    "検出する部品について記入してください…"
+  ],
+  "Décrivez le mouvement…": [
+    "Describe the movement…",
+    "描述运动方式…",
+    "Beschreiben Sie die Bewegung…",
+    "Describa el movimiento…",
+    "Опишите движение…",
+    "Descrivete il movimento…",
+    "動きについて記入してください…"
+  ],
+  "Décrivez la position et la fixation…": [
+    "Describe the position and fastening…",
+    "描述位置和固定方式…",
+    "Beschreiben Sie Position und Befestigung…",
+    "Describa la posición y la fijación…",
+    "Опишите положение и крепление…",
+    "Descrivete posizione e fissaggio…",
+    "位置と固定方法について記入してください…"
+  ],
+  "Indiquez la tension ou l'entrée…": [
+    "State the voltage or input…",
+    "请说明电压或输入…",
+    "Geben Sie Spannung oder Eingang an…",
+    "Indique la tensión o la entrada…",
+    "Укажите напряжение или вход…",
+    "Indicate la tensione o l'ingresso…",
+    "電圧または入力を記入してください…"
+  ],
+  "Décrivez les conditions d'utilisation…": [
+    "Describe the operating conditions…",
+    "描述使用条件…",
+    "Beschreiben Sie die Einsatzbedingungen…",
+    "Describa las condiciones de uso…",
+    "Опишите условия эксплуатации…",
+    "Descrivete le condizioni d'uso…",
+    "使用条件について記入してください…"
   ]
 }

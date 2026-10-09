@@ -2367,3 +2367,108 @@
     gap: var(--s-1, 0.25rem);
   }
 }
+
+/* Carte de question — le champ est un objet sur lequel on agit, l'exemple une
+   note. Hors couche : ces règles doivent primer sur les utilitaires des
+   primitives Input/Textarea (fond enfoncé, sans bordure). La bordure
+   Gray 75 est une dérogation documentée à « la lumière remplace le trait » :
+   c'est l'affordance d'un champ de saisie, pas un séparateur (contraste ≥ 3:1). */
+.answer-field {
+  background: var(--surface);
+  border: 1.5px solid var(--standex-gray-75);
+  transition:
+    border-color var(--d-fast) var(--ease-out),
+    box-shadow var(--d-fast) var(--ease-out);
+}
+.answer-field:hover {
+  border-color: var(--standex-gray);
+}
+.answer-field:focus-visible {
+  border-color: var(--standex-blue);
+  background: var(--surface);
+}
+.answer-field::placeholder {
+  color: var(--standex-gray);
+}
+.questionnaire-count {
+  font-weight: 600;
+}
+.questionnaire-answer-label {
+  display: block;
+  font: var(--t-body);
+  font-weight: 600;
+  line-height: 1.75rem;
+  color: var(--foreground);
+}
+.questionnaire-examples {
+  padding: 0 0 0 14px;
+  padding-top: 2.25rem; /* hauteur du libellé + son écart : aligne sur le champ */
+  border-radius: 0;
+  background: none;
+  box-shadow: inset 2px 0 0 var(--standex-blue-25);
+}
+.questionnaire-examples-label {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  font: var(--t-caption);
+  font-weight: 600;
+  color: var(--standex-blue);
+}
+.questionnaire-examples-text {
+  margin-top: 0.5rem;
+  font-style: italic;
+  color: var(--standex-gray);
+  animation: questionnaire-example-in var(--d-fast) var(--ease-out);
+}
+.questionnaire-examples-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-top: 0.5rem;
+  margin-left: -0.75rem;
+}
+.questionnaire-examples-dots {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.questionnaire-examples-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  opacity: 1;
+  transform: none;
+  background: var(--standex-gray-25);
+}
+.questionnaire-examples-dot.is-active {
+  background: var(--standex-blue);
+  transform: none;
+}
+@keyframes questionnaire-example-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@media (max-width: 767px) {
+  .questionnaire-grid {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "answer"
+      "examples";
+    gap: 1.25rem;
+  }
+  .questionnaire-examples {
+    padding: 0 0 0 14px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .questionnaire-progress > div,
+  .questionnaire-examples-text,
+  .answer-field {
+    transition: none;
+    animation: none;
+  }
+}
