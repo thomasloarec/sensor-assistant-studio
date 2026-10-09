@@ -428,42 +428,42 @@ export const GUIDED_QUESTIONS: {
     category: "Application",
     prompt: "Dans quel équipement, et pour quoi faire ?",
     example: "machine à café professionnelle : savoir si le réservoir est bien en place",
-    placeholder: "L'équipement et ce que la détection doit permettre.",
+    placeholder: "Décrivez votre équipement…",
   },
   {
     key: "target_object",
     category: "Élément à détecter",
     prompt: "Quelle pièce doit être détectée ?",
     example: "un réservoir amovible en plastique, un tiroir métallique, un piston",
-    placeholder: "La pièce concernée, sa matière si vous la connaissez.",
+    placeholder: "Décrivez la pièce à détecter…",
   },
   {
     key: "states_motion",
     category: "Mouvement et détection",
     prompt: "Comment cette pièce bouge-t-elle, et quels états faut-il distinguer ?",
     example: "elle coulisse de 20 mm ; présente ou retirée",
-    placeholder: "Le mouvement, la course et les états à distinguer.",
+    placeholder: "Décrivez le mouvement…",
   },
   {
     key: "mounting",
     category: "Montage",
     prompt: "Où placer le capteur, et comment le tenir ?",
     example: "vissé à l'intérieur du bâti, en face de la pièce mobile",
-    placeholder: "Position et fixation seulement : les dimensions se saisissent juste en dessous.",
+    placeholder: "Décrivez la position et la fixation…",
   },
   {
     key: "electrical",
     category: "Électrique",
     prompt: "À quoi le capteur sera-t-il relié ?",
     example: "une carte 5 V, un automate 24 V, un petit relais",
-    placeholder: "Tension, courant ou carte de destination si vous les connaissez.",
+    placeholder: "Indiquez la tension ou l'entrée…",
   },
   {
     key: "environment",
     category: "Environnement",
     prompt: "Que doit-il supporter à cet endroit ?",
     example: "humidité, huile, vibrations, températures élevées, extérieur",
-    placeholder: "Température, liquides, poussières, nettoyage, vibrations.",
+    placeholder: "Décrivez les conditions d'utilisation…",
   },
 ];
 
@@ -1689,9 +1689,18 @@ export function DesignSpace({
   const question = GUIDED_QUESTIONS[focusIdx] ?? GUIDED_QUESTIONS[0]!;
   const guidedReq = dossier.requirements.find((r) => r.key === question.key) ?? null;
   const lastQuestion = focusIdx >= GUIDED_QUESTIONS.length - 1;
+  /* Focus automatique dans le champ à chaque question, sur desktop seulement
+   * (pointeur fin, ≥ 768 px) : sur mobile, ouvrir le clavier serait intrusif. */
+  useEffect(() => {
+    if (!visible || showAdvanced) return;
+    if (!window.matchMedia("(min-width: 768px) and (pointer: fine)").matches) return;
+    const field = document.getElementById(`guide-${question.key}`);
+    if (field instanceof HTMLTextAreaElement) field.focus({ preventScroll: true });
+  }, [visible, showAdvanced, question.key]);
+
   const questionOutcome =
     focusIdx < 4
-      ? t("À la fin : les capteurs proposés pour votre application.")
+      ? null
       : focusIdx === 4
         ? t("Encore 2 questions avant de découvrir les capteurs proposés.")
         : t("Dernière question avant de découvrir les capteurs proposés.");
@@ -1842,7 +1851,7 @@ export function DesignSpace({
               <div className="guided-envelope-input">
                 <Input
                   id={`guided-${k}`}
-                  className="t-metric text-right"
+                  className="answer-field t-metric text-right"
                   inputMode="decimal"
                   value={dossier.envelope[k] ?? ""}
                   onChange={(e) => {
@@ -1930,17 +1939,19 @@ export function DesignSpace({
         </>
       ) : (
         <div key={question.key} className="step-enter mx-auto max-w-[68rem]">
-          <p className="questionnaire-outcome t-body">{questionOutcome}</p>
+          {questionOutcome ? (
+            <p className="questionnaire-outcome t-body">{questionOutcome}</p>
+          ) : null}
           <section className="questionnaire-card" aria-labelledby={`question-title-${question.key}`}>
             <div className="questionnaire-meta">
-              <p className="t-label">
+              <p className="questionnaire-count t-caption">
                 {msg("Question {0} sur {1}", [focusIdx + 1, GUIDED_QUESTIONS.length])}
               </p>
               <p className="questionnaire-category t-label">{t(question.category)}</p>
             </div>
             <div className="questionnaire-progress" aria-hidden="true">
               <div
-                style={{ width: `${guidedQuestionProgress(focusIdx, GUIDED_QUESTIONS.length) * 100}%` }}
+                style={{ width: `${guidedQuestionProgress(focusIdx + 1, GUIDED_QUESTIONS.length) * 100}%` }}
               />
             </div>
             <h2 id={`question-title-${question.key}`} className="t-title-l mt-5">
@@ -1949,13 +1960,13 @@ export function DesignSpace({
 
             <div className="questionnaire-grid mt-6">
               <div className="questionnaire-answer min-w-0">
-                <Label htmlFor={`guide-${question.key}`} className="t-label">
+                <Label htmlFor={`guide-${question.key}`} className="questionnaire-answer-label">
                   {t("Votre réponse")}
                 </Label>
                 <Textarea
                   id={`guide-${question.key}`}
                   rows={4}
-                  className="mt-2 min-h-[8.5rem] w-full px-5 py-[1.125rem] text-lg leading-[1.6]"
+                  className="answer-field mt-2 min-h-[8.5rem] w-full px-5 py-[1.125rem] text-lg leading-[1.6]"
                   value={guidedReq?.value ?? ""}
                   placeholder={t(question.placeholder)}
                   onChange={(e) => {
@@ -1967,8 +1978,8 @@ export function DesignSpace({
                 />
 
                 <Button
-                  variant="ghost"
-                  className="mt-2 min-h-11 text-base text-[var(--muted-foreground)]"
+                  variant="secondary"
+                  className="mt-3 min-h-11 text-base"
                   onClick={() => {
                     // Ne rien effacer et ne rien fabriquer : la question est notée
                     // comme traitée « à définir avec Standex », sans valeur.
@@ -2049,14 +2060,17 @@ export function DesignSpace({
             </details>
 
             <div className="questionnaire-navigation mt-6 flex items-center justify-between gap-3">
-              <Button
-                variant="ghost"
-                className="min-h-12 text-base"
-                disabled={focusIdx === 0}
-                onClick={() => setFocusIdx((i) => Math.max(0, i - 1))}
-              >
-                {t("Question précédente")}
-              </Button>
+              {focusIdx > 0 ? (
+                <Button
+                  variant="ghost"
+                  className="min-h-12 text-base"
+                  onClick={() => setFocusIdx((i) => Math.max(0, i - 1))}
+                >
+                  {t("Question précédente")}
+                </Button>
+              ) : (
+                <span aria-hidden="true" />
+              )}
               <Button
                 size="lg"
                 className="min-h-12 px-6 text-base"
