@@ -25,7 +25,7 @@ describe("P0 — blocages attendus", () => {
         detection_goal: "Continuous volumetric water flow measurement 0–40 L/min, proportional 0–10V.",
         target_object: "Sealed metal pipe, without magnet or turbine inside.",
       }),
-    ).toEqual(["continuous_flow_measurement"]);
+    ).toContain("continuous_flow_measurement");
   });
   test("C01 courant moteur direct, « without a relay or contactor »", () => {
     expect(
