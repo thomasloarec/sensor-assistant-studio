@@ -335,7 +335,10 @@ describe("rendu du questionnaire guidé", () => {
         view.getByRole("button", { name: "2. Couples proposés" }).getAttribute("aria-current"),
       ).toBe("step");
     });
-    await flushState();
+    await waitFor(
+      () => expect(view.container.ownerDocument.body.textContent).not.toContain("Question 6 sur 6"),
+      { timeout: 5000 },
+    );
     expect(within(view.container.ownerDocument.body).queryAllByTestId("pair-card")).toHaveLength(0);
     expect(within(view.container.ownerDocument.body).getAllByText("Décrivez votre besoin pour voir des capteurs proposés").length).toBeGreaterThan(0);
   });
@@ -353,8 +356,10 @@ describe("rendu du questionnaire guidé", () => {
         view.getByRole("button", { name: "2. Couples proposés" }).getAttribute("aria-current"),
       ).toBe("step");
     });
-    await flushState();
-    if (process.env.DBG) console.log("DBG", view.container.ownerDocument.body.textContent?.slice(500, 2000));
+    await waitFor(
+      () => expect(view.container.ownerDocument.body.textContent).not.toContain("Question 6 sur 6"),
+      { timeout: 5000 },
+    );
   }
 
   test("P0 C01 : courant moteur direct dans le reed sans contacteur → aucune carte", async () => {
