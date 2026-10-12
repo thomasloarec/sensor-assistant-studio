@@ -1790,8 +1790,9 @@ export function DesignSpace({
    * ni interprétation d'un nom d'application ou d'une autre langue. Seul un clic
    * ou une valeur saisie ci-dessous renseigne le dossier — et donc les filtres
    * de suggestion, qui restent modifiables ensuite. */
-  const mountingChips: { kind: MountingChoice["kind"]; label: string }[] = [
-    { kind: "screw", label: t("Fixation vissée") },
+  const mountingChips: { kind: MountingChoice["kind"]; style?: ScrewStyle; label: string }[] = [
+    { kind: "screw", style: "threaded_body", label: t("Corps fileté — se visse dans un trou taraudé") },
+    { kind: "screw", style: "screw_fixed", label: t("Collerette ou boîtier fixé par vis") },
     { kind: "press_fit", label: t("Emboîtement dans un trou") },
     { kind: "pcb_through_hole", label: t("PCB — traversant") },
     { kind: "pcb_smd", label: t("PCB — report CMS") },
@@ -1804,11 +1805,13 @@ export function DesignSpace({
         <p className="t-label">{t("Facultatif : comment fixer le capteur ?")}</p>
         <div className="mt-3 flex flex-wrap gap-2" role="group" aria-label={t("Facultatif : comment fixer le capteur ?")}>
           {mountingChips.map((c) => {
-            const active = dossier.mounting.kind === c.kind;
+            const active =
+              dossier.mounting.kind === c.kind &&
+              (c.kind !== "screw" || (dossier.mounting.kind === "screw" && dossier.mounting.style === c.style));
             return (
               <Button
                 variant="ghost"
-                key={c.kind}
+                key={`${c.kind}-${c.style ?? ""}`}
                 type="button"
                 aria-pressed={active}
                 className={`answer-filter whitespace-normal text-left ${active ? "bg-[var(--primary)] text-[var(--primary-foreground)]" : "bg-[var(--surface-sunken)] text-[var(--muted-foreground)]"}`}
@@ -1821,7 +1824,9 @@ export function DesignSpace({
                         ? { kind: "press_fit", holeDiameterMm: 0 }
                         : c.kind === "other"
                           ? { kind: "other", description: "" }
-                          : ({ kind: c.kind } as MountingChoice),
+                          : c.kind === "screw" && c.style
+                            ? { kind: "screw", style: c.style }
+                            : ({ kind: c.kind } as MountingChoice),
                     updatedAt: new Date().toISOString(),
                   }));
                   if (!active) setQuestionAside(question.key, false);

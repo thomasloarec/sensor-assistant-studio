@@ -50,8 +50,8 @@ export interface PairCard {
 }
 
 const FIXING_LABEL: Readonly<Record<string, string>> = {
-  screw: "Boîtier à visser",
-  threaded: "Corps fileté monté par écrous",
+  screw: "Collerette ou boîtier fixé par vis",
+  threaded: "Corps fileté : se visse dans un trou taraudé ou se fixe par écrous",
   pressfit: "Corps à emmancher dans un trou",
   pcb: "Montage sur carte",
   unknown: "Boîtier documenté",

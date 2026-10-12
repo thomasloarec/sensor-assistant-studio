@@ -15,7 +15,7 @@ import {
   type SensorShape,
 
 } from "@/lib/standex/sensor-catalog";
-import type { EnvelopeMm, MountingChoice } from "./dossier";
+import { SCREW_STYLE_SHAPES, type EnvelopeMm, type MountingChoice } from "./dossier";
 import { detectMountingIntent, MOUNTING_INTENT_LABEL } from "./mounting-intent";
 
 export type SuggestionFilterId = "fixation" | "forme" | "encombrement";
@@ -115,7 +115,6 @@ export function suggestionFilters(input: {
   mountingText?: string | null;
 }): SuggestionFilter[] {
   const filters: SuggestionFilter[] = [];
-  const kind = input.mounting.kind;
   const shapes = shapesForMounting(input.mounting);
   if (shapes)
     filters.push({
