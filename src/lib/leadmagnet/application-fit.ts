@@ -16,8 +16,15 @@
  *  - les textes sont canoniques en français et traduits au rendu par `t()`.
  */
 import type { Requirement } from "./dossier";
+import { ACTIVATION_GUIDE } from "@/lib/standex/activation-guide";
 
-export type FitIssueId = "direct_load_switching" | "no_magnetic_source";
+export type FitIssueId =
+  | "direct_load_switching"
+  | "no_magnetic_source"
+  | "continuous_temperature_measurement"
+  | "continuous_flow_measurement"
+  | "extreme_temperature_review"
+  | "extreme_gap_review";
 
 export interface FitStep {
   /** Clé d'exigence à ouvrir dans le questionnaire (jamais modifiée ici). */
@@ -142,17 +149,18 @@ const NEGATED_DIRECT = [
 
 /** Refus explicite de l'interface de puissance. */
 const REFUSE_INTERFACE = [
-  /(sans|pas de|aucun|aucune|eviter|eviter d|eviter de|no|without|avoid|avoiding)[^.]{0,50}(relais|relay|contacteur|contactor|interface de puissance|power interface)/,
+  /\b(sans|pas de|aucun|aucune|eviter|eviter d|eviter de|no|without|avoid|avoiding)\b[^.]{0,50}(relais|relay|contacteur|contactor|interface de puissance|power interface)/,
   /(ne (veux|souhaite|voudrais) pas|do not want|don t want)[^.]{0,60}(relais|relay|contacteur|contactor)/,
 ];
 
 /** Câblage réellement sûr décrit quelque part : le point n'est pas levé. */
 const SAFE_WIRING = [
   /(pas de commutation directe|aucune commutation directe|no direct switching|not directly switch|ne commute pas directement|ne passe pas (par|dans) le capteur|does not pass through the sensor|not through the sensor)/,
-  /(via|a travers|au travers|through|par|with)[^.]{0,40}(un |une |a |an )?(relais|relay|contacteur|contactor|interface de puissance|power interface|module de puissance)/,
+  // \b obligatoire : « with » ne doit jamais être lu dans « without ».
+  /\b(via|a travers|au travers|through|par|with)\b[^.]{0,40}(un |une |a |an )?(relais|relay|contacteur|contactor|interface de puissance|power interface|module de puissance)/,
   /(pilote|pilotage|commande|commandes|drives|drive|driving|controls|control|controlled|actionne)[^.]{0,50}(relais|relay|contacteur|contactor)/,
   /(relais|relay|contacteur|contactor)[^.]{0,60}(externe|external|separe|separate|dimensionne|rated|approprie|appropriate)/,
-  /(automate|plc|api|controleur|controller|carte)[^.]{0,80}(contacteur|contactor|relais|relay)/,
+  /\b(automate|plc|api|controleur|controller|carte)\b[^.]{0,80}(contacteur|contactor|relais|relay)/,
   /(signal de commande|control signal|signal seul|signal uniquement|signal only|information de position seulement)/,
 ];
 
@@ -246,11 +254,14 @@ export function assessApplicationFit(
   // ailleurs ne supprime pas une intention restée dans une autre réponse (par
   // exemple « alimenter directement le moteur » en Application) : la
   // contradiction demeure jusqu'à l'édition de CETTE réponse.
-  const localSafe = (f: Fragment) => SAFE_WIRING.some((p) => p.test(f.text));
+  // Une phrase qui REFUSE elle-même le relais ou le contacteur n'est jamais un
+  // câblage sûr, même si elle contient « through … relay » plus loin.
+  const localSafe = (f: Fragment) =>
+    !REFUSE_INTERFACE.some((p) => p.test(f.text)) && SAFE_WIRING.some((p) => p.test(f.text));
   const direct = anyMatch(frags, DIRECT_SWITCH).filter(
     (f) => !localSafe(f) && !NEGATED_DIRECT.some((p) => p.test(f.text)),
   );
-  const refuseInterface = anyMatch(frags, REFUSE_INTERFACE).filter((f) => !localSafe(f));
+  const refuseInterface = anyMatch(frags, REFUSE_INTERFACE);
   const load = heavyLoad(frags);
   if ((direct.length > 0 || refuseInterface.length > 0) && load.found) {
     const evidence: FitEvidence[] = [...direct, ...refuseInterface].map((f) => ({
@@ -365,7 +376,213 @@ export function assessApplicationFit(
     });
   }
 
+  issues.push(...assessModalityAndLimits(frags));
   return { issues, blocking: issues.length > 0 };
+}
+
+/* ---------------------------------------------------------------------------
+ * Points 3 à 6 — modalité de mesure incompatible, limites hors documentation
+ * Deux natures DISTINCTES :
+ *  - modalité inadaptée : un reed + aimant donne un état tout-ou-rien, il ne
+ *    mesure pas une grandeur continue (température, débit) ;
+ *  - aucune correspondance standard documentée : la demande peut relever d'une
+ *    étude d'ingénierie Standex, rien n'est déclaré impossible.
+ * Chaque point exige une preuve écrite explicite ; l'inconnu ne bloque jamais.
+ * ------------------------------------------------------------------------- */
+
+const ANALOG_CONTINUOUS = [
+  /\b4\s*(?:-|–|to|a)\s*20\s*ma\b/,
+  /\b0\s*(?:-|–|to|a)\s*10\s*v\b/,
+  /\b(analog|analogue|analogique|proportionnel|proportionnelle|proportional|proportionally|continuous|continuously|continue|continu|en continu)\b/,
+];
+const TEMPERATURE_MEASURE = [
+  /\b(mesur\w*|measur\w*|monitor\w*|suivre|suivi)\b[^.]{0,40}\b(temperature|temperatures)\b/,
+  /\b(temperature|temperatures)\b[^.]{0,20}\b(measurement|measuring|mesure|monitoring)\b/,
+];
+const FLOW_MEASURE = [
+  /\b(mesur\w*|measur\w*|monitor\w*)\b[^.]{0,50}\b(debit|flow|flow rate|flowrate)\b/,
+  /\b(debit|flow rate|volumetric flow|water flow|fluid flow|flow measurement)\b/,
+  /\bl\s?\/\s?min\b/,
+];
+const FORBID_MOVING = [
+  /\b(sans|without|no|pas de|pas d|aucun|aucune)\b[^.,;]{0,40}\b(turbine|rotor|flotteur|float|piece mobile|pieces mobiles|moving part|moving parts|moving element|moving elements|element mobile|elements mobiles|palette|paddle|aimant|magnet)\b/,
+];
+/** Une partie mobile ou un aimant décrits positivement : la mesure n'est plus
+ *  une pure grandeur continue, on ne bloque pas (flotteur magnétique, rotor). */
+const MAGNETIC_MOVER = /\b(aimant|magnet|magnetique|magnetic|flotteur|float|rotor|turbine|porte|door|capot|lid|position)\b/;
+const LEVEL_THRESHOLD = /\b(niveau|level|seuil|threshold|trop plein|overflow)\b/;
+
+const negatedMover = (text: string) => FORBID_MOVING.some((p) => p.test(text));
+
+/** Températures explicites en °C dans une phrase. */
+function temperaturesC(text: string): number[] {
+  const out: number[] = [];
+  for (const m of text.matchAll(/([+-]?\d{2,3}(?:[.,]\d+)?)\s*(?:°|º|deg|degres|degrees)\s*c?\b|([+-]?\d{2,3}(?:[.,]\d+)?)\s*c\b/g)) {
+    const n = Number((m[1] ?? m[2])!.replace(",", "."));
+    if (Number.isFinite(n)) out.push(n);
+  }
+  return out;
+}
+const THERMAL_OPERATING =
+  /\b(continu|continue|continuous|continuously|permanent|permanente|en permanence|ambient|ambiante|ambiant|fonctionn\w*|operat\w*|withstand|resist\w*|tenir|remain|rester|reste|doit|must|expose|exposed|peak|pointe|pic|stay|survive)\b/;
+const THERMAL_COMPARISON =
+  /\b(unlike|contrairement|compared|comparison|comparaison|par rapport|far below|bien en dessous|bien inferieur|next door|voisin|voisine|whereas|alors que|not exposed|pas expose|jamais expose|never exposed|isole|isolated|away from|loin de)\b/;
+/** Au-delà, aucune limite de fonctionnement de gamme n'est vérifiée dans l'outil. */
+const EXTREME_TEMPERATURE_C = 150;
+
+/** Plus grande distance publiée au guide : au-delà, rien n'est documenté. */
+const MAX_DOCUMENTED_GAP_MM = (() => {
+  let max = 0;
+  for (const r of ACTIVATION_GUIDE.rows)
+    for (const v of [r.upMm, r.toMm]) if (typeof v === "number" && Number.isFinite(v)) max = Math.max(max, v);
+  return max;
+})();
+const GAP_CONTEXT = /\b(aimant|magnet|sensing|detect\w*|capteur|sensor|ecart|gap|entrefer|distance|away|loin|portee|range)\b/;
+const CABLE_CONTEXT = /\b(cable|cables|cord|wire|wires|fil|fils|longueur de cable|cable length)\b/;
+
+function explicitGapsMm(text: string): number[] {
+  if (!GAP_CONTEXT.test(text) || CABLE_CONTEXT.test(text)) return [];
+  const out: number[] = [];
+  const unit = (n: number, u: string) => (u === "m" ? n * 1000 : u === "cm" ? n * 10 : n);
+  for (const m of text.matchAll(/\b(?:at|a|distance|gap|ecart|entrefer|range|portee|from|jusqu a|up to)\s+(?:of |de |d )?(\d+(?:[.,]\d+)?)\s*(mm|cm|m)\b/g))
+    out.push(unit(Number(m[1]!.replace(",", ".")), m[2]!));
+  for (const m of text.matchAll(/(\d+(?:[.,]\d+)?)\s*(mm|cm|m)\s+(?:away|de distance|d ecart|of distance|gap|loin)\b/g))
+    out.push(unit(Number(m[1]!.replace(",", ".")), m[2]!));
+  return out.filter(Number.isFinite);
+}
+
+function assessModalityAndLimits(frags: Fragment[]): FitIssue[] {
+  const issues: FitIssue[] = [];
+  const analog = anyMatch(frags, ANALOG_CONTINUOUS);
+  // Une partie mobile ou un aimant décrits POSITIVEMENT quelque part (non niés
+  // dans leur phrase) : la détection reed reste plausible, on ne bloque pas.
+  const positiveMover = frags.some((f) => MAGNETIC_MOVER.test(f.text) && !negatedMover(f.text));
+  const level = frags.some((f) => LEVEL_THRESHOLD.test(f.text));
+  const ask = [stepFor("detection_goal"), stepFor("states_motion"), stepFor("electrical")];
+
+  /* ---- Température mesurée en continu ---- */
+  const tempMeasure = anyMatch(frags, TEMPERATURE_MEASURE);
+  const tempModality = tempMeasure.length > 0 && analog.length > 0 && !positiveMover && !level;
+  if (tempModality) {
+    const evidence = [...tempMeasure, ...analog.filter((f) => !tempMeasure.includes(f))].map((f) => ({ step: f.step, quote: f.quote }));
+    issues.push({
+      id: "continuous_temperature_measurement",
+      title: "Un capteur reed ne mesure pas une température en continu",
+      whatWorks:
+        "Un capteur reed associé à un aimant donne un état tout-ou-rien : présence, position, fin de course ou seuil d'un élément mobile.",
+      whatFails:
+        "Fournir une mesure proportionnelle et continue de température (signal analogique) : ce n'est pas le principe d'un contact reed.",
+      whatFailsArgs: [],
+      why: "Le contact reed s'ouvre ou se ferme sous l'effet d'un champ magnétique. Il ne produit pas de valeur proportionnelle à la température.",
+      diagram: [],
+      cautions: [
+        "Une mesure de température continue relève d'une autre technologie (sonde de température, thermocouple, RTD) : nous ne garantissons pas d'avance sa performance.",
+      ],
+      changes: [
+        { step: stepFor("detection_goal"), text: "Si votre besoin est en réalité un état (seuil atteint, position d'un élément mobile), décrivez cet état et l'élément qui bouge." },
+        { step: stepFor("electrical"), text: "Indiquer si un signal tout-ou-rien convient à la place d'un signal analogique." },
+      ],
+      evidence,
+      steps: orderedSteps(evidence, ask),
+    });
+  }
+
+  /* ---- Débit mesuré en continu sans élément mobile ---- */
+  const flowMeasure = anyMatch(frags, FLOW_MEASURE);
+  const forbidMoving = anyMatch(frags, FORBID_MOVING);
+  const flowMover = frags.some(
+    (f) => /\b(rotor|turbine|flotteur|float|palette|paddle)\b/.test(f.text) && !negatedMover(f.text),
+  );
+  if (flowMeasure.length > 0 && analog.length > 0 && forbidMoving.length > 0 && !flowMover && !level) {
+    const seen = new Set<Fragment>();
+    const evidence = [...flowMeasure, ...forbidMoving, ...analog]
+      .filter((f) => (seen.has(f) ? false : (seen.add(f), true)))
+      .map((f) => ({ step: f.step, quote: f.quote }));
+    issues.push({
+      id: "continuous_flow_measurement",
+      title: "Un capteur reed ne mesure pas un débit en continu sans élément mobile aimanté",
+      whatWorks:
+        "Un capteur reed peut signaler un passage ou un seuil quand un élément aimanté bouge avec le fluide (rotor, palette ou flotteur instrumenté).",
+      whatFails:
+        "Mesurer un débit de façon proportionnelle et continue dans une conduite sans aucun aimant ni élément mobile : le contact n'a rien qui l'actionne.",
+      whatFailsArgs: [],
+      why: "Vos réponses interdisent tout élément mobile ou aimant dans la conduite et demandent un signal analogique. Un contact reed ne fournit qu'un état tout-ou-rien déclenché par un champ magnétique.",
+      diagram: [],
+      cautions: [
+        "Une mesure de débit sans pièce mobile relève d'une autre technologie (électromagnétique, ultrasons, thermique) : nous ne garantissons pas d'avance sa performance.",
+      ],
+      changes: [
+        { step: stepFor("target_object"), text: "Indiquer si un élément mobile aimanté (rotor, palette, flotteur) peut être intégré à la conduite." },
+        { step: stepFor("electrical"), text: "Indiquer si un signal d'impulsions ou de seuil convient à la place d'un signal analogique." },
+      ],
+      evidence,
+      steps: orderedSteps(evidence, [stepFor("target_object"), stepFor("electrical")]),
+    });
+  }
+
+  /* ---- Température de fonctionnement au-delà de toute limite vérifiée ---- */
+  if (!tempModality) {
+    const hot = frags.filter((f) => {
+      const temps = temperaturesC(f.text);
+      return (
+        temps.some((n) => n >= EXTREME_TEMPERATURE_C) &&
+        THERMAL_OPERATING.test(f.text) &&
+        !THERMAL_COMPARISON.test(f.text)
+      );
+    });
+    if (hot.length > 0) {
+      const max = Math.max(...hot.flatMap((f) => temperaturesC(f.text)));
+      const evidence = hot.map((f) => ({ step: f.step, quote: f.quote }));
+      issues.push({
+        id: "extreme_temperature_review",
+        title: "Aucune correspondance standard documentée à cette température",
+        whatWorks:
+          "Votre projet peut être étudié par l'ingénierie Standex : une solution adaptée à cette température n'est pas exclue.",
+        whatFails:
+          "Proposer ici un capteur standard pour {0} °C au point de montage : aucune limite de fonctionnement vérifiée dans cet outil ne couvre cette température.",
+        whatFailsArgs: [String(max)],
+        why: "Proposer une gamme standard sans limite de température vérifiée laisserait croire qu'elle convient. La tenue du capteur, de l'aimant et du câble doit être évaluée par la R&D Standex.",
+        diagram: [],
+        cautions: [
+          "Ce n'est ni un refus ni une impossibilité : c'est une revue d'ingénierie Standex obligatoire avant toute proposition.",
+        ],
+        changes: [
+          { step: stepFor("environment"), text: "Préciser la température réelle au point de montage du capteur et de l'aimant, en continu et en pointe." },
+          { step: stepFor("environment"), text: "Si cette température concerne une autre zone de la machine, l'indiquer : le capteur peut être placé à l'écart de la source de chaleur." },
+        ],
+        evidence,
+        steps: orderedSteps(evidence, [stepFor("environment")]),
+      });
+    }
+  }
+
+  /* ---- Distance de détection au-delà de toute distance publiée ---- */
+  const far = frags.filter((f) => explicitGapsMm(f.text).some((mm) => mm > MAX_DOCUMENTED_GAP_MM));
+  if (far.length > 0) {
+    const max = Math.max(...far.flatMap((f) => explicitGapsMm(f.text)));
+    const evidence = far.map((f) => ({ step: f.step, quote: f.quote }));
+    issues.push({
+      id: "extreme_gap_review",
+      title: "Aucune distance de détection documentée à cet écart",
+      whatWorks:
+        "Votre besoin peut faire l'objet d'une étude de faisabilité par l'ingénierie Standex, sans engagement de résultat.",
+      whatFails:
+        "Annoncer un capteur standard à {0} mm de l'aimant : c'est au-delà de toutes les distances d'activation publiées par Standex.",
+      whatFailsArgs: [String(max)],
+      why: "La distance d'activation dépend de l'aimant, de son orientation et du capteur. Aucune distance n'est extrapolée au-delà des valeurs publiées, et aucune précision de position n'est garantie sans essai.",
+      diagram: [],
+      cautions: [
+        "Un aimant plus gros, un écart réduit ou un autre emplacement peuvent changer la conclusion : rien n'est déclaré impossible ici.",
+      ],
+      changes: [
+        { step: stepFor("states_motion"), text: "Indiquer si l'aimant peut être rapproché du capteur, et la distance réelle possible." },
+        { step: stepFor("target_object"), text: "Indiquer si un aimant plus grand peut être utilisé." },
+      ],
+      evidence,
+      steps: orderedSteps(evidence, [stepFor("states_motion"), stepFor("target_object")]),
+    });
+  }
+  return issues;
 }
 
 /* i18n-canonical : textes de l'encart pédagogique, traduits au rendu. */
