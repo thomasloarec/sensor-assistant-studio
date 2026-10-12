@@ -101,6 +101,7 @@ import { detectMountingIntent } from "@/lib/leadmagnet/mounting-intent";
 import { CANDIDATE_DISCLAIMER, evaluateCandidates } from "@/lib/leadmagnet/candidates";
 import { assessApplicationFit, FIT_PANEL } from "@/lib/leadmagnet/application-fit";
 import { documentedLabel, thermalWarning } from "@/lib/leadmagnet/thermal-fit";
+import { detectEnvelopeFromText, ENVELOPE_TEXT, envelopeIsEmpty } from "@/lib/leadmagnet/envelope-text";
 import { CompatibilityPanel } from "./compatibility-panel";
 import { LocalizedValidationMessage } from "./localized-validation-message";
 import {
@@ -1009,6 +1010,49 @@ export function DesignSpace({
     [dossier.requirements, dossier.freeConstraints, dossier.mounting.kind, dossier.envelope],
   );
   const fitBlocked = fit.blocking;
+  /** A05 : place capteur écrite en texte libre, PROPOSÉE seulement. Rien n'est
+   * appliqué sans clic, et rien n'est proposé dès qu'une cote structurée existe. */
+  const envelopeHint = useMemo(
+    () => (envelopeIsEmpty(dossier.envelope) ? detectEnvelopeFromText(dossier.requirements, dossier.freeConstraints) : null),
+    [dossier.requirements, dossier.freeConstraints, dossier.envelope],
+  );
+  const [envelopeDeclined, setEnvelopeDeclined] = useState<string | null>(null);
+  const envelopeHintView =
+    envelopeHint && envelopeDeclined !== envelopeHint.quote ? (
+      <div className={envelopeHint.kind === "found" ? "notice-info space-y-3" : "notice-warning"} data-testid="envelope-hint" data-kind={envelopeHint.kind}>
+        {envelopeHint.kind === "found" ? (
+          <>
+            <p className="t-body">
+              {msg(ENVELOPE_TEXT.found, [
+                formatMm(envelopeHint.envelope.lengthMm),
+                formatMm(envelopeHint.envelope.widthMm),
+                formatMm(envelopeHint.envelope.heightMm),
+              ])}
+            </p>
+            <p className="t-body-s">« {envelopeHint.quote} »</p>
+            <div className="flex flex-wrap gap-3">
+              <Button
+                className="min-h-11 text-base"
+                data-testid="envelope-apply"
+                onClick={() => {
+                  const env = envelopeHint.envelope;
+                  setDossier((d) =>
+                    envelopeIsEmpty(d.envelope) ? { ...d, envelope: { ...env }, updatedAt: new Date().toISOString() } : d,
+                  );
+                }}
+              >
+                {t(ENVELOPE_TEXT.apply)}
+              </Button>
+              <Button variant="outline" className="min-h-11 text-base" onClick={() => setEnvelopeDeclined(envelopeHint.quote)}>
+                {t(ENVELOPE_TEXT.decline)}
+              </Button>
+            </div>
+          </>
+        ) : (
+          <p className="t-body-s">{t(ENVELOPE_TEXT.ambiguous)}</p>
+        )}
+      </div>
+    ) : null;
   /** Aucune réponse réelle : le bouton final ne mène pas à des capteurs au hasard. */
   const intakeEmpty = fit.issues.some((i) => i.id === "no_meaningful_requirement");
   /** Un point a réellement été levé dans cette session : seule condition pour
@@ -1844,6 +1888,7 @@ export function DesignSpace({
         ) : null}
         {/* Dimensions demandées UNE SEULE FOIS, ici, en saisie structurée : le
             texte de cette question ne parle que de position et de fixation. */}
+        {envelopeHintView ? <div className="mt-5">{envelopeHintView}</div> : null}
         <p className="t-label mt-5">{t("Facultatif : place disponible pour le capteur")}</p>
         <div className="guided-envelope-fields mt-3">
           {(
@@ -2689,6 +2734,7 @@ export function DesignSpace({
         <div className="mt-1">{filterAdjust}</div>
       </div>
       )}
+      {fitBlocked ? null : envelopeHintView}
       {fit.validationPoints.length > 0 ? (
         <div className="notice-info space-y-1" data-testid="validation-points">
           <p className="t-label">{t("Points à valider avec la R&D Standex")}</p>
