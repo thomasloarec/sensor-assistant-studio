@@ -58,6 +58,14 @@ mock.module("@/lib/standex/supabase", () => ({
   },
 }));
 
+// Un fichier de test précédent sans DOM peut avoir chargé Radix quand
+// `document` n'existait pas : son useLayoutEffect resterait alors une fonction
+// vide et les onglets ne monteraient jamais leur contenu. On rétablit le vrai
+// crochet React, sans rien changer au code applicatif.
+mock.module("@radix-ui/react-use-layout-effect", () => ({
+  useLayoutEffect: React.useLayoutEffect,
+}));
+
 const { DesignSpace } = await import("../src/components/leadmagnet/design-space");
 const { setLocale } = await import("../src/lib/i18n/core");
 const { createDossier, proposeRequirement, confirmRequirement } =
@@ -336,7 +344,6 @@ describe("rendu du questionnaire guidé", () => {
       ).toBe("step");
     });
     await flushState();
-    if (process.env.DBG) { const panel = [...view.container.ownerDocument.body.querySelectorAll("[role=tabpanel]")].find((x) => x.getAttribute("data-state") === "active"); console.log("DBG", panel?.innerHTML.length, panel?.innerHTML.slice(0, 400)); }
     // Le volet « Couples » peut se monter après un chargement différé : on
     // attend son contenu réel (cartes ou encart), jamais un délai fixe.
     await waitFor(
