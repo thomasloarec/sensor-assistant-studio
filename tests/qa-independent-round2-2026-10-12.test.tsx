@@ -4,7 +4,7 @@
  */
 import { GlobalRegistrator } from '@happy-dom/global-registrator';
 import { afterEach, beforeEach, describe, expect, mock, test } from 'bun:test';
-import { writeFileSync } from 'node:fs';
+import { mkdirSync, writeFileSync } from 'node:fs';
 import * as React from 'react';
 import { act, cleanup, fireEvent, render, waitFor, within, type RenderResult } from '@testing-library/react';
 import { RouterContextProvider, createMemoryHistory, createRootRoute, createRouter } from '@tanstack/react-router';
@@ -124,6 +124,28 @@ for(const [prefix,base] of [['heat',fixtures.find(f=>f.id==='R21')],['mains',fix
 }
 describe('Round2 60 adversarial semantic mutations',()=>{for(const f of mutations)test(f.id,()=>checkFixture(f));});
 
+const extraMutations: Fixture[] = [
+ {id:'MX01',a:{...door,electrical:'The motor is switched by the reed contact, 230 VAC, 7 A'},expected:'out-of-scope',note:'Passive voice direct mains switching'},
+ {id:'MX02',a:{...door,electrical:'Le contact reed alimente directement le moteur 230 VAC, 7 A.'},expected:'out-of-scope',note:'French direct power'},
+ {id:'MX03',a:{...door,detection_goal:'Reed powers the motor directly',electrical:'24 V PLC signal only, an external rated contactor switches 230 VAC 7 A'},expected:'out-of-scope',note:'Conflicting fields must not erase direct-power statement'},
+ {id:'MX04',a:{...door,electrical:'The reed does not switch the motor directly. PLC signal 24 V 5 mA; external contactor controls 230 VAC 7 A.'},expected:'catalog',note:'Negated direct switching, independent safe architecture'},
+ {id:'MX05',a:{...door,electrical:'Not without a contactor: motor 230 VAC 7 A, reed only signals PLC.'},expected:'catalog',note:'Double negation must not become refusal of interface'},
+ {id:'MX06',a:{...door,environment:'Sensor operating from −40 to +85°C'},expected:'catalog',site:{min:-40,max:85},note:'Unicode minus preserves low-temperature bound'},
+ {id:'MX07',a:{...door,environment:'Sensor operating range -40—+85°C'},expected:'catalog',site:{min:-40,max:85},note:'Em dash range preserves both bounds'},
+ {id:'MX08',a:{...door,environment:'Sensor ambient 170,5°C'},expected:'engineering',site:{min:null,max:170.5},note:'Decimal comma at sensor'},
+ {id:'MX09',a:{...door,target_object:'2×2 mm magnet',states_motion:'Sensor is 0,2 m away from magnet; cable 1,5 m long'},expected:'engineering',note:'Decimal comma distance vs cable'},
+ {id:'MX10',a:{...door,target_object:'2x2 mm magnet',states_motion:'Cable 1.5 m; sensing gap 20 cm'},expected:'engineering',note:'Gap cm versus metre cable'},
+ {id:'MX11',a:{...door,target_object:'No magnet is already mounted; nonmagnetic plastic target.'},expected:'out-of-scope',note:'Mistaken already-negation cannot create a field'},
+ {id:'MX12',a:{...door,target_object:'Magnet already mounted, no additional magnet necessary'},expected:'catalog',note:'Local additional-magnet refusal benign'},
+ {id:'MX13',a:{detection_goal:'Analog continuous temperature measurement',target_object:'Another sensor detects a magnetic door',electrical:'4–20 mA transmitter'},expected:'out-of-scope',note:'Other-device magnetic door cannot cancel actual analog goal'},
+ {id:'MX14',a:{detection_goal:'Proportional flow-rate acquisition in litres per minute',target_object:'No rotor or magnetic marker allowed in sealed pipe',electrical:'Output 0–10 V'},expected:'out-of-scope',note:'Flow synonym and Unicode output range'},
+ {id:'MX15',a:{...door,environment:'Sensor operating at 140°C with moving cable'},expected:'catalog',site:{min:null,max:140},note:'Moving cable 140°C still within both documented upper limits'},
+ {id:'MX16',a:{...door,environment:'Sensor operating at 140°C with fixed cable'},expected:'catalog',site:{min:null,max:140},note:'Fixed cable 140°C positive counterpart'},
+ {id:'MX17',a:{detection_goal:'Door state detection is not required. Continuously measure temperature.',target_object:'Magnet on unrelated shaft',electrical:'4-20 mA'},expected:'out-of-scope',note:'Negated detection goal cannot mask continuous temperature'},
+ {id:'MX18',a:{...door,environment:'Sensor outside at 40°C; liquid inside at 200°C'},expected:'catalog',site:{min:null,max:40},note:'Two thermal sites separated by semicolon'},
+];
+describe('Round2 original synonyms, passive, negation and units',()=>{for(const f of extraMutations)test(f.id,()=>checkFixture(f));});
+
 // Cases not inferred from the recognition regex vocabulary.
 const localized: [string,string][]=[['en','Continuously measure temperature; 4-20 mA analog'],['fr','Relever la température en permanence, signal analogique 4-20 mA'],['de','Temperatur kontinuierlich messen, analoges Signal 4-20 mA'],['es','Medir temperatura de forma continua, señal analógica 4-20 mA'],['nl','Temperatuur continu meten met analoog signaal 4-20 mA'],['it','Misurare continuamente la temperatura, segnale analogico 4-20 mA'],['zh','连续测量温度，模拟输出4-20mA']];
 describe('Round2 explicit locale coverage (NL is not claimed supported)',()=>{
@@ -184,9 +206,9 @@ mock.module('@radix-ui/react-use-layout-effect',()=>({useLayoutEffect:React.useL
 const { DesignSpace }=await import('@/components/leadmagnet/design-space');
 const { ConnectorChoices }=await import('@/components/leadmagnet/connector-choices');
 const router=createRouter({routeTree:createRootRoute({component:()=>null}),history:createMemoryHistory({initialEntries:['/']}),origin:'https://exemple.invalid'});
-function restoreDOM(){if(typeof document==='undefined'||typeof window==='undefined'){try{GlobalRegistrator.unregister();}catch{}GlobalRegistrator.register({url:'https://exemple.invalid/'});}}
-beforeEach(()=>{restoreDOM();setLocale('fr');setWebGLSupportForTests(false);});
-afterEach(()=>{cleanup();setLocale('fr');setWebGLSupportForTests(null);writeFileSync('/tmp/qa-round2/results.json',JSON.stringify(results,null,2));});
+async function restoreDOM(){if(typeof document==='undefined'||typeof window==='undefined'){try{await GlobalRegistrator.unregister();}catch{}GlobalRegistrator.register({url:'https://exemple.invalid/'});}}
+beforeEach(async()=>{await restoreDOM();setLocale('fr');setWebGLSupportForTests(false);});
+afterEach(()=>{cleanup();setLocale('fr');setWebGLSupportForTests(null);mkdirSync('/tmp/qa-round2',{recursive:true});writeFileSync('/tmp/qa-round2/results.json',JSON.stringify(results,null,2));});
 function space(){return render(<RouterContextProvider router={router}><DesignSpace visible/></RouterContextProvider>);}
 async function change(el:HTMLElement,value:string){
  const setter=Object.getOwnPropertyDescriptor(el instanceof HTMLTextAreaElement?HTMLTextAreaElement.prototype:HTMLInputElement.prototype,'value')?.set;
