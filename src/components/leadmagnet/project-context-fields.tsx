@@ -148,14 +148,15 @@ export function ProjectContextFields({
         <Input
           id="series-duration"
           type="number"
-          min={0}
+          min={0.5}
+          max={100}
           step={0.5}
           value={business.seriesDurationYears ?? ""}
           onChange={(e) => {
             const n = Number(e.target.value);
             patch(
               "seriesDurationYears",
-              e.target.value !== "" && Number.isFinite(n) && n >= 0 ? n : null,
+              e.target.value !== "" && Number.isFinite(n) && n > 0 && n <= 100 ? n : null,
             );
           }}
         />

@@ -133,7 +133,7 @@ export function ResultView({
    *  l'essai est justement bloqué. */
   const fitPanel =
     fit && fit.blocking && onGoToStep ? (
-      <CompatibilityPanel assessment={fit} onGoToStep={onGoToStep} />
+      <CompatibilityPanel assessment={fit} onGoToStep={onGoToStep} onContactStandex={onConfirmWithStandex} />
     ) : null;
 
   if (!pair)

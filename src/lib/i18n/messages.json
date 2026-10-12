@@ -29437,5 +29437,239 @@
     "Выберите этап",
     "Scegliere una fase",
     "段階を選択"
+  ],
+  "Corps fileté — se visse dans un trou taraudé": [
+    "Threaded body — screws into a tapped hole",
+    "螺纹壳体——旋入螺纹孔",
+    "Gewindekörper — wird in eine Gewindebohrung geschraubt",
+    "Cuerpo roscado — se atornilla en un orificio roscado",
+    "Резьбовой корпус — вкручивается в резьбовое отверстие",
+    "Corpo filettato — si avvita in un foro filettato",
+    "ねじ付きボディ — ねじ穴にねじ込み"
+  ],
+  "Collerette ou boîtier fixé par vis": [
+    "Flange or housing fixed with screws",
+    "法兰或壳体用螺钉固定",
+    "Flansch oder Gehäuse mit Schrauben befestigt",
+    "Brida o carcasa fijada con tornillos",
+    "Фланец или корпус, закреплённый винтами",
+    "Flangia o custodia fissata con viti",
+    "フランジまたはケースをねじで固定"
+  ],
+  "Exploration du catalogue uniquement": [
+    "Catalogue exploration only",
+    "仅供目录浏览",
+    "Nur Katalogerkundung",
+    "Solo exploración del catálogo",
+    "Только просмотр каталога",
+    "Solo esplorazione del catalogo",
+    "カタログ閲覧のみ"
+  ],
+  "Aucune recommandation : vous n'avez pas encore décrit ce que le capteur doit détecter. Ces couples correspondent seulement à vos choix mécaniques. Décrivez votre besoin, ou confiez la demande à Standex pour une étude sur mesure.": [
+    "No recommendation: you have not yet described what the sensor must detect. These pairs only match your mechanical choices. Describe your need, or hand the request to Standex for a custom study.",
+    "无推荐：您尚未描述传感器需要检测什么。这些组合仅符合您的机械选择。请描述您的需求，或交由 Standex 进行定制研究。",
+    "Keine Empfehlung: Sie haben noch nicht beschrieben, was der Sensor erfassen soll. Diese Paare entsprechen nur Ihren mechanischen Angaben. Beschreiben Sie Ihren Bedarf oder übergeben Sie die Anfrage für eine Sonderstudie an Standex.",
+    "Sin recomendación: aún no ha descrito qué debe detectar el sensor. Estos pares solo corresponden a sus elecciones mecánicas. Describa su necesidad o confíe la solicitud a Standex para un estudio a medida.",
+    "Нет рекомендации: вы ещё не описали, что должен обнаруживать датчик. Эти пары соответствуют только вашему механическому выбору. Опишите задачу или передайте запрос Standex для индивидуальной проработки.",
+    "Nessuna raccomandazione: non avete ancora descritto cosa deve rilevare il sensore. Queste coppie corrispondono solo alle vostre scelte meccaniche. Descrivete l'esigenza o affidate la richiesta a Standex per uno studio su misura.",
+    "推奨なし：センサーが何を検出すべきかがまだ記載されていません。これらの組み合わせは機械的な選択にのみ対応します。用途を記載するか、カスタム検討として Standex にご依頼ください。"
+  ],
+  "Place disponible détectée dans vos réponses : {0} × {1} × {2} mm. L'appliquer aux dimensions ?": [
+    "Available space found in your answers: {0} × {1} × {2} mm. Apply it to the dimensions?",
+    "在您的回答中识别到可用空间：{0} × {1} × {2} mm。是否应用到尺寸？",
+    "In Ihren Antworten erkannter Bauraum: {0} × {1} × {2} mm. Auf die Abmessungen übernehmen?",
+    "Espacio disponible detectado en sus respuestas: {0} × {1} × {2} mm. ¿Aplicarlo a las dimensiones?",
+    "В ваших ответах найдено свободное место: {0} × {1} × {2} мм. Применить к размерам?",
+    "Spazio disponibile rilevato nelle risposte: {0} × {1} × {2} mm. Applicarlo alle dimensioni?",
+    "回答から利用可能スペースを検出：{0} × {1} × {2} mm。寸法に適用しますか？"
+  ],
+  "Appliquer ces dimensions": [
+    "Apply these dimensions",
+    "应用这些尺寸",
+    "Diese Abmessungen übernehmen",
+    "Aplicar estas dimensiones",
+    "Применить эти размеры",
+    "Applica queste dimensioni",
+    "この寸法を適用"
+  ],
+  "Ne pas appliquer": [
+    "Do not apply",
+    "不应用",
+    "Nicht übernehmen",
+    "No aplicar",
+    "Не применять",
+    "Non applicare",
+    "適用しない"
+  ],
+  "Une place disponible semble décrite dans vos réponses, mais les cotes ou l'unité sont ambiguës : saisissez-les ci-dessous pour qu'elles filtrent les capteurs.": [
+    "An available space seems to be described in your answers, but the dimensions or unit are ambiguous: enter them below so they filter the sensors.",
+    "您的回答似乎描述了可用空间，但尺寸或单位不明确：请在下方输入，以便筛选传感器。",
+    "Ihre Antworten scheinen einen Bauraum zu beschreiben, Maße oder Einheit sind aber unklar: Geben Sie sie unten ein, damit sie die Sensoren filtern.",
+    "Sus respuestas parecen describir un espacio disponible, pero las cotas o la unidad son ambiguas: introdúzcalas abajo para que filtren los sensores.",
+    "Похоже, в ответах описано свободное место, но размеры или единицы неоднозначны: введите их ниже, чтобы они фильтровали датчики.",
+    "Le risposte sembrano descrivere uno spazio disponibile, ma quote o unità sono ambigue: inseritele qui sotto perché filtrino i sensori.",
+    "回答に利用可能スペースの記載があるようですが、寸法または単位が不明確です：センサーを絞り込むため下に入力してください。"
+  ],
+  "Corps fileté : le capteur se visse dans un trou taraudé ou se fixe par écrous.": [
+    "Threaded body: the sensor screws into a tapped hole or is fixed with nuts.",
+    "螺纹壳体：传感器旋入螺纹孔或用螺母固定。",
+    "Gewindekörper: Der Sensor wird in eine Gewindebohrung geschraubt oder mit Muttern befestigt.",
+    "Cuerpo roscado: el sensor se atornilla en un orificio roscado o se fija con tuercas.",
+    "Резьбовой корпус: датчик вкручивается в резьбовое отверстие или крепится гайками.",
+    "Corpo filettato: il sensore si avvita in un foro filettato o si fissa con dadi.",
+    "ねじ付きボディ：センサーはねじ穴にねじ込むか、ナットで固定します。"
+  ],
+  "Pas de corps fileté documenté pour ce boîtier.": [
+    "No threaded body documented for this housing.",
+    "该壳体无文档记载的螺纹壳体。",
+    "Für dieses Gehäuse ist kein Gewindekörper dokumentiert.",
+    "No hay cuerpo roscado documentado para esta carcasa.",
+    "Для этого корпуса резьбовое исполнение не задокументировано.",
+    "Nessun corpo filettato documentato per questa custodia.",
+    "このケースにはねじ付きボディの記載がありません。"
+  ],
+  "Pas de collerette ni de boîtier à fixer par vis documenté.": [
+    "No flange or screw-fixed housing documented.",
+    "无文档记载的法兰或螺钉固定壳体。",
+    "Kein Flansch und kein verschraubbares Gehäuse dokumentiert.",
+    "No hay brida ni carcasa atornillable documentada.",
+    "Фланец или корпус под винты не задокументированы.",
+    "Nessuna flangia né custodia da fissare con viti documentata.",
+    "フランジまたはねじ固定ケースの記載がありません。"
+  ],
+  "Corps fileté : se visse dans un trou taraudé ou se fixe par écrous": [
+    "Threaded body: screws into a tapped hole or is fixed with nuts",
+    "螺纹壳体：旋入螺纹孔或用螺母固定",
+    "Gewindekörper: in Gewindebohrung geschraubt oder mit Muttern befestigt",
+    "Cuerpo roscado: se atornilla en un orificio roscado o se fija con tuercas",
+    "Резьбовой корпус: вкручивается в резьбовое отверстие или крепится гайками",
+    "Corpo filettato: si avvita in un foro filettato o si fissa con dadi",
+    "ねじ付きボディ：ねじ穴にねじ込み、またはナットで固定"
+  ],
+  "Corps fileté vissé dans un trou taraudé": [
+    "Threaded body screwed into a tapped hole",
+    "螺纹壳体旋入螺纹孔",
+    "Gewindekörper in Gewindebohrung geschraubt",
+    "Cuerpo roscado atornillado en un orificio roscado",
+    "Резьбовой корпус, вкрученный в резьбовое отверстие",
+    "Corpo filettato avvitato in un foro filettato",
+    "ねじ穴にねじ込むねじ付きボディ"
+  ],
+  "Fixation par vis (collerette ou boîtier)": [
+    "Screw fixing (flange or housing)",
+    "螺钉固定（法兰或壳体）",
+    "Schraubbefestigung (Flansch oder Gehäuse)",
+    "Fijación por tornillos (brida o carcasa)",
+    "Крепление винтами (фланец или корпус)",
+    "Fissaggio a vite (flangia o custodia)",
+    "ねじ固定（フランジまたはケース）"
+  ],
+  "Contexte projet incomplet : renseignez le volume annuel, la phase, la date de lancement série et la durée de série, ou choisissez « Non défini pour le moment » pour chacun. Rien n'a été enregistré.": [
+    "Incomplete project context: enter the annual volume, phase, series launch date and series duration, or choose “Not defined yet” for each. Nothing was saved.",
+    "项目背景不完整：请填写年度数量、阶段、量产启动日期和量产周期，或为每项选择“暂未确定”。未保存任何内容。",
+    "Projektkontext unvollständig: Geben Sie Jahresmenge, Phase, Serienstart und Seriendauer an oder wählen Sie jeweils „Noch nicht festgelegt“. Es wurde nichts gespeichert.",
+    "Contexto del proyecto incompleto: indique el volumen anual, la fase, la fecha de inicio de serie y la duración, o elija «Aún sin definir» para cada uno. No se ha guardado nada.",
+    "Контекст проекта неполный: укажите годовой объём, этап, дату запуска и срок серии или выберите «Пока не определено» для каждого. Ничего не сохранено.",
+    "Contesto del progetto incompleto: indicate volume annuo, fase, data di avvio e durata della serie, o scegliete «Non ancora definito» per ciascuno. Nulla è stato salvato.",
+    "プロジェクト情報が不足しています：年間数量、段階、量産開始日、量産期間を入力するか、それぞれ「現時点では未定」を選択してください。何も保存されていません。"
+  ],
+  "Forme A · connexions J — configuration illustrée": [
+    "Form A · J-leads — illustrated configuration",
+    "A 型 · J 形引脚——图示配置",
+    "Form A · J-Anschlüsse — dargestellte Konfiguration",
+    "Forma A · conexiones J — configuración ilustrada",
+    "Форма A · J-выводы — показанная конфигурация",
+    "Forma A · connessioni J — configurazione illustrata",
+    "フォーム A · J リード — 図示の構成"
+  ],
+  "Technologie reed inadaptée telle que décrite": [
+    "Reed technology unsuitable as described",
+    "按所述情况，干簧技术不适用",
+    "Reed-Technik wie beschrieben ungeeignet",
+    "Tecnología reed inadecuada tal como se describe",
+    "Герконовая технология не подходит в описанном виде",
+    "Tecnologia reed non adatta così come descritto",
+    "記載どおりではリード技術は不適"
+  ],
+  "Étude d'ingénierie Standex nécessaire": [
+    "Standex engineering study required",
+    "需要 Standex 工程研究",
+    "Standex-Engineeringstudie erforderlich",
+    "Se requiere un estudio de ingeniería de Standex",
+    "Требуется инженерная проработка Standex",
+    "Necessario uno studio di ingegneria Standex",
+    "Standex のエンジニアリング検討が必要"
+  ],
+  "Informations insuffisantes": [
+    "Insufficient information",
+    "信息不足",
+    "Unzureichende Angaben",
+    "Información insuficiente",
+    "Недостаточно информации",
+    "Informazioni insufficienti",
+    "情報が不足しています"
+  ],
+  "Vous avez écrit": [
+    "You wrote",
+    "您写道",
+    "Sie haben geschrieben",
+    "Usted escribió",
+    "Вы написали",
+    "Avete scritto",
+    "ご記入内容"
+  ],
+  "Prochaines étapes": [
+    "Next steps",
+    "下一步",
+    "Nächste Schritte",
+    "Próximos pasos",
+    "Следующие шаги",
+    "Prossimi passi",
+    "次のステップ"
+  ],
+  "Détails techniques et sources": [
+    "Technical details and sources",
+    "技术细节与来源",
+    "Technische Details und Quellen",
+    "Detalles técnicos y fuentes",
+    "Технические подробности и источники",
+    "Dettagli tecnici e fonti",
+    "技術的な詳細と出典"
+  ],
+  "Contacter l'ingénierie Standex": [
+    "Contact Standex engineering",
+    "联系 Standex 工程部门",
+    "Standex-Engineering kontaktieren",
+    "Contactar con ingeniería de Standex",
+    "Связаться с инженерами Standex",
+    "Contattare l'ingegneria Standex",
+    "Standex エンジニアリングに相談"
+  ],
+  "Votre demande relève d'une étude d'ingénierie": [
+    "Your request calls for an engineering study",
+    "您的需求需要进行工程研究",
+    "Ihre Anfrage erfordert eine Engineeringstudie",
+    "Su solicitud requiere un estudio de ingeniería",
+    "Ваш запрос требует инженерной проработки",
+    "La vostra richiesta richiede uno studio di ingegneria",
+    "ご要望にはエンジニアリング検討が必要です"
+  ],
+  "Ce n'est pas un refus : aucune gamme standard documentée ne couvre cette demande, mais votre projet peut être transmis à l'ingénierie Standex.": [
+    "This is not a refusal: no documented standard series covers this request, but your project can be passed to Standex engineering.",
+    "这不是拒绝：没有文档记载的标准系列覆盖此需求，但您的项目可以转交 Standex 工程部门。",
+    "Das ist keine Absage: Keine dokumentierte Standardserie deckt diese Anfrage ab, Ihr Projekt kann aber an das Standex-Engineering übergeben werden.",
+    "No es un rechazo: ninguna serie estándar documentada cubre esta solicitud, pero su proyecto puede transmitirse a ingeniería de Standex.",
+    "Это не отказ: ни одна задокументированная стандартная серия не покрывает запрос, но проект можно передать инженерам Standex.",
+    "Non è un rifiuto: nessuna serie standard documentata copre questa richiesta, ma il progetto può essere trasmesso all'ingegneria Standex.",
+    "お断りではありません：記載された標準シリーズでは対応できませんが、プロジェクトを Standex エンジニアリングに引き継げます。"
+  ],
+  "Encore une information avant de proposer des capteurs": [
+    "One more piece of information before suggesting sensors",
+    "推荐传感器前还需一项信息",
+    "Noch eine Angabe, bevor Sensoren vorgeschlagen werden",
+    "Falta un dato antes de proponer sensores",
+    "Нужна ещё одна деталь, прежде чем предлагать датчики",
+    "Ancora un'informazione prima di proporre sensori",
+    "センサーを提案する前に、もう一つ情報が必要です"
   ]
 }

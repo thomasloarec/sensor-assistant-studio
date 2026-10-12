@@ -76,6 +76,9 @@ export interface FitAssessment {
   validationPoints: string[];
   /** Plage de température AU CAPTEUR lue dans les réponses (null si aucune). */
   sensorSiteC: { min: number | null; max: number | null } | null;
+  /** Seuls des choix mécaniques (montage, cotes) existent, aucun but écrit :
+   *  les couples ne sont qu'une EXPLORATION du catalogue, jamais recommandés. */
+  explorationOnly: boolean;
 }
 
 /* i18n-canonical : libellés d'étapes, identiques à ceux du questionnaire. */
@@ -263,7 +266,17 @@ export interface StructuredIntake {
   envelopeSet: boolean;
 }
 
-const MEANINGFUL = /[\p{L}\p{N}]{2,}/u;
+/** Réponses de remplissage (« je ne sais pas », « ??? ok ») : elles ne
+ *  décrivent aucun besoin. Liste volontairement courte et explicite : seules ces
+ *  formules sont reconnues, aucune couverture sémantique n'est revendiquée. */
+const FILLER = /\b(je ne sais pas|je sais pas|sais pas|aucune idee|pas d idee|je ne sais|ne sais pas encore|i don t know|i dont know|don t know|dont know|do not know|idk|no idea|not sure|unsure|unknown|inconnu|inconnue|n a|na|tbd|a definir|to be defined|nothing|rien|ok|okay|yes|no|oui|non|test|xxx|asdf|weiss nicht|keine ahnung|no lo se|no se|non lo so|nessuna idea|ne znayu|wakaranai)\b/g;
+const normFill = (v: string) =>
+  v.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/['’`/]/g, " ");
+/** Vrai si le texte contient une information au-delà des formules de remplissage. */
+export function isSubstantive(value: string | null | undefined): boolean {
+  const rest = normFill(value ?? "").replace(FILLER, " ");
+  return /\p{L}{3,}|\p{N}|[\u3040-\u30ff\u4e00-\u9fff]/u.test(rest);
+}
 
 /** Vrai quand AUCUNE exigence réelle n'a été donnée (une question confiée à
  *  Standex sans texte reste une question sans réponse). */
@@ -273,8 +286,13 @@ export function intakeIsEmpty(
   structured: StructuredIntake,
 ): boolean {
   if (structured.mountingChosen || structured.envelopeSet) return false;
-  if (MEANINGFUL.test(freeConstraints)) return false;
-  return !requirements.some((r) => MEANINGFUL.test(r.value ?? ""));
+  return !hasStatedPurpose(requirements, freeConstraints);
+}
+
+/** Au moins une réponse écrite substantielle (pas seulement un montage ou des cotes). */
+export function hasStatedPurpose(requirements: readonly Requirement[], freeConstraints: string): boolean {
+  if (isSubstantive(freeConstraints)) return true;
+  return requirements.some((r) => isSubstantive(r.value));
 }
 
 export function assessApplicationFit(
@@ -303,7 +321,7 @@ export function assessApplicationFit(
       evidence: [],
       steps,
     });
-    return { issues, blocking: true, validationPoints: [], sensorSiteC: null };
+    return { issues, blocking: true, validationPoints: [], sensorSiteC: null, explorationOnly: false };
   }
 
   /* ---- Point 1 ---- */
@@ -437,6 +455,7 @@ export function assessApplicationFit(
     blocking: issues.length > 0,
     validationPoints: validationPoints(frags),
     sensorSiteC: sensorSiteRange(frags),
+    explorationOnly: issues.length === 0 && !!structured && !hasStatedPurpose(requirements, freeConstraints),
   };
 }
 

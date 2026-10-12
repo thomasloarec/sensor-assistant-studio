@@ -36,7 +36,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { CandidateThumbnail } from "@/components/leadmagnet/candidate-thumbnail";
 import { PairThumbnail } from "@/components/leadmagnet/pair-thumbnail";
-import { CUSTOM_SENSOR_ID, formatMm, sensorById, sizeLabel } from "@/lib/standex/sensor-catalog";
+import { CUSTOM_SENSOR_ID, formatMm, sensorById, sensorDisplayTitle, sensorDisplayVariant, sizeLabel } from "@/lib/standex/sensor-catalog";
 import {
   blockedBy,
   suggestionFilters,
@@ -96,11 +96,13 @@ import {
   REQUIREMENT_LABELS,
   type DesignDossier,
   type MountingChoice,
+  type ScrewStyle,
 } from "@/lib/leadmagnet/dossier";
 import { detectMountingIntent } from "@/lib/leadmagnet/mounting-intent";
 import { CANDIDATE_DISCLAIMER, evaluateCandidates } from "@/lib/leadmagnet/candidates";
 import { assessApplicationFit, FIT_PANEL } from "@/lib/leadmagnet/application-fit";
 import { documentedLabel, thermalWarning } from "@/lib/leadmagnet/thermal-fit";
+import { detectEnvelopeFromText, ENVELOPE_TEXT, envelopeIsEmpty } from "@/lib/leadmagnet/envelope-text";
 import { CompatibilityPanel } from "./compatibility-panel";
 import { LocalizedValidationMessage } from "./localized-validation-message";
 import {
@@ -1009,6 +1011,49 @@ export function DesignSpace({
     [dossier.requirements, dossier.freeConstraints, dossier.mounting.kind, dossier.envelope],
   );
   const fitBlocked = fit.blocking;
+  /** A05 : place capteur écrite en texte libre, PROPOSÉE seulement. Rien n'est
+   * appliqué sans clic, et rien n'est proposé dès qu'une cote structurée existe. */
+  const envelopeHint = useMemo(
+    () => (envelopeIsEmpty(dossier.envelope) ? detectEnvelopeFromText(dossier.requirements, dossier.freeConstraints) : null),
+    [dossier.requirements, dossier.freeConstraints, dossier.envelope],
+  );
+  const [envelopeDeclined, setEnvelopeDeclined] = useState<string | null>(null);
+  const envelopeHintView =
+    envelopeHint && envelopeDeclined !== envelopeHint.quote ? (
+      <div className={envelopeHint.kind === "found" ? "notice-info space-y-3" : "notice-warning"} data-testid="envelope-hint" data-kind={envelopeHint.kind}>
+        {envelopeHint.kind === "found" ? (
+          <>
+            <p className="t-body">
+              {msg(ENVELOPE_TEXT.found, [
+                formatMm(envelopeHint.envelope.lengthMm),
+                formatMm(envelopeHint.envelope.widthMm),
+                formatMm(envelopeHint.envelope.heightMm),
+              ])}
+            </p>
+            <p className="t-body-s">« {envelopeHint.quote} »</p>
+            <div className="flex flex-wrap gap-3">
+              <Button
+                className="min-h-11 text-base"
+                data-testid="envelope-apply"
+                onClick={() => {
+                  const env = envelopeHint.envelope;
+                  setDossier((d) =>
+                    envelopeIsEmpty(d.envelope) ? { ...d, envelope: { ...env }, updatedAt: new Date().toISOString() } : d,
+                  );
+                }}
+              >
+                {t(ENVELOPE_TEXT.apply)}
+              </Button>
+              <Button variant="outline" className="min-h-11 text-base" onClick={() => setEnvelopeDeclined(envelopeHint.quote)}>
+                {t(ENVELOPE_TEXT.decline)}
+              </Button>
+            </div>
+          </>
+        ) : (
+          <p className="t-body-s">{t(ENVELOPE_TEXT.ambiguous)}</p>
+        )}
+      </div>
+    ) : null;
   /** Aucune réponse réelle : le bouton final ne mène pas à des capteurs au hasard. */
   const intakeEmpty = fit.issues.some((i) => i.id === "no_meaningful_requirement");
   /** Un point a réellement été levé dans cette session : seule condition pour
@@ -1746,8 +1791,9 @@ export function DesignSpace({
    * ni interprétation d'un nom d'application ou d'une autre langue. Seul un clic
    * ou une valeur saisie ci-dessous renseigne le dossier — et donc les filtres
    * de suggestion, qui restent modifiables ensuite. */
-  const mountingChips: { kind: MountingChoice["kind"]; label: string }[] = [
-    { kind: "screw", label: t("Fixation vissée") },
+  const mountingChips: { kind: MountingChoice["kind"]; style?: ScrewStyle; label: string }[] = [
+    { kind: "screw", style: "threaded_body", label: t("Corps fileté — se visse dans un trou taraudé") },
+    { kind: "screw", style: "screw_fixed", label: t("Collerette ou boîtier fixé par vis") },
     { kind: "press_fit", label: t("Emboîtement dans un trou") },
     { kind: "pcb_through_hole", label: t("PCB — traversant") },
     { kind: "pcb_smd", label: t("PCB — report CMS") },
@@ -1760,11 +1806,13 @@ export function DesignSpace({
         <p className="t-label">{t("Facultatif : comment fixer le capteur ?")}</p>
         <div className="mt-3 flex flex-wrap gap-2" role="group" aria-label={t("Facultatif : comment fixer le capteur ?")}>
           {mountingChips.map((c) => {
-            const active = dossier.mounting.kind === c.kind;
+            const active =
+              dossier.mounting.kind === c.kind &&
+              (c.kind !== "screw" || (dossier.mounting.kind === "screw" && dossier.mounting.style === c.style));
             return (
               <Button
                 variant="ghost"
-                key={c.kind}
+                key={`${c.kind}-${c.style ?? ""}`}
                 type="button"
                 aria-pressed={active}
                 className={`answer-filter whitespace-normal text-left ${active ? "bg-[var(--primary)] text-[var(--primary-foreground)]" : "bg-[var(--surface-sunken)] text-[var(--muted-foreground)]"}`}
@@ -1777,7 +1825,9 @@ export function DesignSpace({
                         ? { kind: "press_fit", holeDiameterMm: 0 }
                         : c.kind === "other"
                           ? { kind: "other", description: "" }
-                          : ({ kind: c.kind } as MountingChoice),
+                          : c.kind === "screw" && c.style
+                            ? { kind: "screw", style: c.style }
+                            : ({ kind: c.kind } as MountingChoice),
                     updatedAt: new Date().toISOString(),
                   }));
                   if (!active) setQuestionAside(question.key, false);
@@ -1844,6 +1894,7 @@ export function DesignSpace({
         ) : null}
         {/* Dimensions demandées UNE SEULE FOIS, ici, en saisie structurée : le
             texte de cette question ne parle que de position et de fixation. */}
+        {envelopeHintView ? <div className="mt-5">{envelopeHintView}</div> : null}
         <p className="t-label mt-5">{t("Facultatif : place disponible pour le capteur")}</p>
         <div className="guided-envelope-fields mt-3">
           {(
@@ -2597,13 +2648,13 @@ export function DesignSpace({
         />
         <div className="pair-card-status mt-3 flex flex-wrap items-center gap-2">
           <p className="t-label">
-            {index === 0 && !compact ? t("Recommandé") : t(card.familyLabel)}
+            {index === 0 && !compact && !fit.explorationOnly ? t("Recommandé") : t(card.familyLabel)}
           </p>
           {chosen ? <Badge className="candidate-status-badge">{t("Choisi ✓")}</Badge> : null}
         </div>
         {/* Les deux références restent séparées et alignées avec leurs images. */}
         <div className="pair-card-identities" aria-label={t("Capteur et aimant")}>
-          <div><span className="t-label">{t("Capteur")}</span><strong className="t-title-m">{card.sensorId}</strong></div>
+          <div><span className="t-label">{t("Capteur")}</span><strong className="t-title-m" data-testid="pair-sensor-title">{sensorDisplayTitle(card.sensorId)}</strong>{sensorDisplayVariant(card.sensorId) ? <span className="t-caption" data-testid="pair-sensor-variant">{t(sensorDisplayVariant(card.sensorId)!)}</span> : null}</div>
           <div><span className="t-label">{t("Aimant")}</span><strong className="t-title-m">{card.magnetId}</strong></div>
         </div>
         {card.sensorId === CUSTOM_SENSOR_ID ? <p className="notice-info t-caption">{t("Conception sur mesure : forme, fixation et distances à définir avec Standex. Schéma illustratif, sans performance validée.")}</p> : null}
@@ -2675,19 +2726,27 @@ export function DesignSpace({
       <CompatibilityPanel
         assessment={fit}
         onGoToStep={goToRequirementStep}
+        onContactStandex={() => setTab("revue")}
         showResolved={fitEverBlockedRef.current}
       />
       {fitBlocked ? null : (
       <div className="panel-block-lg">
         <p className="t-label">{t("D'après vos réponses")}</p>
-        <h2 className="t-display-m">{pairsTitle}</h2>
-        <p className="t-body mt-2">{pairsSubtitle}</p>
+        <h2 className="t-display-m">{fit.explorationOnly ? t("Exploration du catalogue uniquement") : pairsTitle}</h2>
+        {fit.explorationOnly ? (
+          <p className="notice-info t-body mt-2" data-testid="exploration-only">
+            {t("Aucune recommandation : vous n'avez pas encore décrit ce que le capteur doit détecter. Ces couples correspondent seulement à vos choix mécaniques. Décrivez votre besoin, ou confiez la demande à Standex pour une étude sur mesure.")}
+          </p>
+        ) : (
+          <p className="t-body mt-2">{pairsSubtitle}</p>
+        )}
         {/* Une seule rangée de puces sous le sous-titre ; tout le réglage fin
             est replié derrière « Ajuster les critères ». */}
         {filterChips ? <div className="mt-3">{filterChips}</div> : null}
         <div className="mt-1">{filterAdjust}</div>
       </div>
       )}
+      {fitBlocked ? null : envelopeHintView}
       {fit.validationPoints.length > 0 ? (
         <div className="notice-info space-y-1" data-testid="validation-points">
           <p className="t-label">{t("Points à valider avec la R&D Standex")}</p>
@@ -2824,7 +2883,8 @@ export function DesignSpace({
                   <div className="flex flex-wrap items-center gap-2">
                     {/* Les références (MK03…) traversent t() inchangées ; seul un
                         libellé descriptif comme « Sur mesure » est traduit. */}
-                    <span className="t-title-s">{t(c.name)}</span>
+                    <span className="t-title-s">{t(sensorDisplayTitle(c.id, c.name))}</span>
+                    {sensorDisplayVariant(c.id) ? <span className="t-caption">{t(sensorDisplayVariant(c.id)!)}</span> : null}
 
                     <Badge
                       className="candidate-status-badge"
@@ -2906,7 +2966,8 @@ export function DesignSpace({
           <ul className="mt-3 space-y-2">
             {otherCandidates.map(({ candidate: c, blocked }) => (
               <li key={c.id} className="panel-block">
-                <p className="t-title-s">{t(c.name)}</p>
+                <p className="t-title-s">{t(sensorDisplayTitle(c.id, c.name))}</p>
+                {sensorDisplayVariant(c.id) ? <p className="t-caption">{t(sensorDisplayVariant(c.id)!)}</p> : null}
                 <p className="t-caption t-metric">{c.size}</p>
                 <ul className="mt-2 space-y-1">
                   {blocked.map((id) => {
