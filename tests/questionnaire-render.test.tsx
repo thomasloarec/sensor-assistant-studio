@@ -354,6 +354,7 @@ describe("rendu du questionnaire guidé", () => {
       ).toBe("step");
     });
     await flushState();
+    if (process.env.DBG) console.log("DBG", view.container.ownerDocument.body.textContent?.slice(500, 2000));
   }
 
   test("P0 C01 : courant moteur direct dans le reed sans contacteur → aucune carte", async () => {
