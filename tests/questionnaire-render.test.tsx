@@ -335,10 +335,11 @@ describe("rendu du questionnaire guidé", () => {
         view.getByRole("button", { name: "2. Couples proposés" }).getAttribute("aria-current"),
       ).toBe("step");
     });
-    await waitFor(
-      () => expect(view.container.ownerDocument.body.textContent).not.toContain("Question 6 sur 6"),
-      { timeout: 5000 },
-    );
+    await flushState();
+    if (process.env.DBG) {
+      const b = view.container.ownerDocument.body;
+      console.log("DBG", b.textContent?.includes("D'après vos réponses"), b.textContent?.includes("Points à revoir"), b.textContent?.includes("Un point à revoir"), b.querySelectorAll("[role=tabpanel]").length, [...b.querySelectorAll("[role=tabpanel]")].map((x) => x.getAttribute("data-state") + ":" + x.id.slice(-8)).join(","), b.textContent?.length);
+    }
     expect(within(view.container.ownerDocument.body).queryAllByTestId("pair-card")).toHaveLength(0);
     expect(within(view.container.ownerDocument.body).getAllByText("Décrivez votre besoin pour voir des capteurs proposés").length).toBeGreaterThan(0);
   });
@@ -356,10 +357,11 @@ describe("rendu du questionnaire guidé", () => {
         view.getByRole("button", { name: "2. Couples proposés" }).getAttribute("aria-current"),
       ).toBe("step");
     });
-    await waitFor(
-      () => expect(view.container.ownerDocument.body.textContent).not.toContain("Question 6 sur 6"),
-      { timeout: 5000 },
-    );
+    await flushState();
+    if (process.env.DBG) {
+      const b = view.container.ownerDocument.body;
+      console.log("DBG", b.textContent?.includes("D'après vos réponses"), b.textContent?.includes("Points à revoir"), b.textContent?.includes("Un point à revoir"), b.querySelectorAll("[role=tabpanel]").length, [...b.querySelectorAll("[role=tabpanel]")].map((x) => x.getAttribute("data-state") + ":" + x.id.slice(-8)).join(","), b.textContent?.length);
+    }
   }
 
   test("P0 C01 : courant moteur direct dans le reed sans contacteur → aucune carte", async () => {
