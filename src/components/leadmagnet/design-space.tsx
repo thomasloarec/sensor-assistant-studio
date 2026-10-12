@@ -96,6 +96,7 @@ import {
   REQUIREMENT_LABELS,
   type DesignDossier,
   type MountingChoice,
+  type ScrewStyle,
 } from "@/lib/leadmagnet/dossier";
 import { detectMountingIntent } from "@/lib/leadmagnet/mounting-intent";
 import { CANDIDATE_DISCLAIMER, evaluateCandidates } from "@/lib/leadmagnet/candidates";
