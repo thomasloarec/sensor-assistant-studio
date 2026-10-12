@@ -18,6 +18,7 @@ import {
   fireEvent,
   render,
   waitFor,
+  within,
   type RenderResult,
 } from "@testing-library/react";
 import {
@@ -55,6 +56,14 @@ mock.module("@/lib/standex/supabase", () => ({
       onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => undefined } } }),
     },
   },
+}));
+
+// Un fichier de test précédent sans DOM peut avoir chargé Radix quand
+// `document` n'existait pas : son useLayoutEffect resterait alors une fonction
+// vide et les onglets ne monteraient jamais leur contenu. On rétablit le vrai
+// crochet React, sans rien changer au code applicatif.
+mock.module("@radix-ui/react-use-layout-effect", () => ({
+  useLayoutEffect: React.useLayoutEffect,
 }));
 
 const { DesignSpace } = await import("../src/components/leadmagnet/design-space");
@@ -312,6 +321,7 @@ describe("rendu du questionnaire guidé", () => {
   test("le dernier passage révèle les capteurs sans ajouter de validation", async () => {
     const view = renderQuestionnaire(320);
     await goToQuestion(view, 6);
+    await changeValue(view.getByLabelText("Votre réponse"), "Intérieur, 20 °C, lave-vaisselle.");
     fireEvent.click(view.getByRole("button", { name: "Voir les capteurs proposés" }));
     await waitFor(() => {
       expect(
@@ -319,6 +329,90 @@ describe("rendu du questionnaire guidé", () => {
       ).toBe("step");
     });
   });
+
+  test("P0 vide : aucun capteur proposé, bouton final désactivé et expliqué, autre accès gardé", async () => {
+    const view = renderQuestionnaire(390);
+    await goToQuestion(view, 6);
+    const reveal = view.getByRole("button", { name: "Voir les capteurs proposés" });
+    expect((reveal as HTMLButtonElement).disabled).toBe(true);
+    expect(reveal.getAttribute("aria-describedby")).toBe("intake-empty-note");
+    expect(view.getByText("Répondez à au moins une question pour voir des capteurs proposés.")).toBeTruthy();
+    fireEvent.click(view.getByRole("button", { name: "2. Couples proposés" }));
+    await waitFor(() => {
+      expect(
+        view.getByRole("button", { name: "2. Couples proposés" }).getAttribute("aria-current"),
+      ).toBe("step");
+    });
+    await flushState();
+    // Le volet « Couples » peut se monter après un chargement différé : on
+    // attend son contenu réel (cartes ou encart), jamais un délai fixe.
+    await waitFor(
+      () =>
+        expect(
+          /D'après vos réponses|à revoir avant de proposer|Décrivez votre besoin/.test(
+            view.container.ownerDocument.body.textContent ?? "",
+          ),
+        ).toBe(true),
+      { timeout: 15_000 },
+    );
+    expect(within(view.container.ownerDocument.body).queryAllByTestId("pair-card")).toHaveLength(0);
+    expect(within(view.container.ownerDocument.body).getAllByText("Décrivez votre besoin pour voir des capteurs proposés").length).toBeGreaterThan(0);
+  }, 30_000);
+
+  async function reveal(view: RenderResult, goal: string, electrical?: string) {
+    await changeValue(view.getByLabelText("Votre réponse"), goal);
+    if (electrical) {
+      await goToQuestion(view, 5);
+      await changeValue(view.getByLabelText("Votre réponse"), electrical);
+    }
+    await goToQuestion(view, 6);
+    fireEvent.click(view.getByRole("button", { name: "Voir les capteurs proposés" }));
+    await waitFor(() => {
+      expect(
+        view.getByRole("button", { name: "2. Couples proposés" }).getAttribute("aria-current"),
+      ).toBe("step");
+    });
+    await flushState();
+    // Le volet « Couples » peut se monter après un chargement différé : on
+    // attend son contenu réel (cartes ou encart), jamais un délai fixe.
+    await waitFor(
+      () =>
+        expect(
+          /D'après vos réponses|à revoir avant de proposer|Décrivez votre besoin/.test(
+            view.container.ownerDocument.body.textContent ?? "",
+          ),
+        ).toBe(true),
+      { timeout: 15_000 },
+    );
+  }
+
+  test("P0 C01 : courant moteur direct dans le reed sans contacteur → aucune carte", async () => {
+    const view = renderQuestionnaire(390);
+    await reveal(
+      view,
+      "I want all motor current to pass directly through the reed contact, without a relay or contactor.",
+      "230 VAC, 8 A motor.",
+    );
+    expect(within(view.container.ownerDocument.body).queryAllByTestId("pair-card")).toHaveLength(0);
+    expect(within(view.container.ownerDocument.body).getAllByText("Le capteur ne peut pas couper lui-même l'alimentation du moteur").length).toBeGreaterThan(0);
+  }, 30_000);
+
+  test("P0 B02 : mesure continue de température → aucune carte", async () => {
+    const view = renderQuestionnaire(390);
+    await reveal(view, "Continuous temperature measurement from 20 to 250 °C.", "Analog 4-20 mA output.");
+    expect(within(view.container.ownerDocument.body).queryAllByTestId("pair-card")).toHaveLength(0);
+    expect(within(view.container.ownerDocument.body).getAllByText("Un capteur reed ne mesure pas une température en continu").length).toBeGreaterThan(0);
+  }, 30_000);
+
+  test("contrôle positif : contacteur externe dimensionné → cartes proposées", async () => {
+    const view = renderQuestionnaire(390);
+    await reveal(
+      view,
+      "Detect when the lid is closed; the reed signal goes to a 24 V PLC input.",
+      "The 230 VAC 8 A motor is switched by an external properly rated contactor driven by the PLC.",
+    );
+    expect(within(view.container.ownerDocument.body).queryAllByTestId("pair-card").length).toBeGreaterThan(0);
+  }, 30_000);
 
   test("les libellés de composition changent immédiatement de français à anglais puis japonais", () => {
     const view = renderQuestionnaire(390);
