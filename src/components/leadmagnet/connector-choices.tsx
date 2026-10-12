@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { t, msg } from "@/lib/i18n/core";
 import { useLocale } from "@/lib/i18n/react";
 import { DOCUMENTED_HOUSINGS, type DocumentedHousing } from "@/lib/leadmagnet/connector-library";
-import { geometryByHousingId } from "@/lib/leadmagnet/connector-geometry";
+import { envelopeHeightMm, geometryByHousingId } from "@/lib/leadmagnet/connector-geometry";
 import { connectorSummaryLines, type Termination } from "@/lib/leadmagnet/connectors";
 import { ConnectorPreview, ConnectorGeometryDetails } from "./connector-preview";
 
@@ -40,7 +40,7 @@ export function ConnectorChoices({ termination, onSelect }: {
           </span>
           <span className="t-caption">{msg("{0} voies · pas {1} mm", [h.positions, h.pitchMm])}</span>
           {geometry ? <span className="t-caption"><span className="t-metric">
-            {geometry.width.valueMm} × {geometry.height.valueMm} × {geometry.depth.valueMm} mm
+            {geometry.width.valueMm} × {envelopeHeightMm(geometry)} × {geometry.depth.valueMm} mm
           </span></span> : null}
         </Button>;
       })}

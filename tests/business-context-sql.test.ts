@@ -87,5 +87,5 @@ describe("v1.11 — garde serveur du contexte projet", () => {
   test("un indicateur client « vérifié » n'ouvre rien", async () =>
     expect(await insert(business({ clientCheckPassed: true }))).toContain("BUSINESS_CONTEXT_REQUIRED"));
   test("l'erreur serveur est traduite en message client lisible", () =>
-    expect(humanRpcError({ message: "BUSINESS_CONTEXT_REQUIRED:projectPhase" })).toContain("Contexte projet incomplet"));
+    expect(humanRpcError({ message: "BUSINESS_CONTEXT_REQUIRED:projectPhase" })).toContain("Phase du projet"));
 });

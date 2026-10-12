@@ -144,6 +144,48 @@ afterEach(() => {
   setLocale("fr");
 });
 
+describe("Connecteurs compacts — état réel du questionnaire", () => {
+  test("préférence, sélection, sources repliées et conservation après fermeture", async () => {
+    const view = renderQuestionnaire(390);
+    await act(async () => fireEvent.click(view.getByRole("button", { name: /4\. Avec Standex/ })));
+    const choices = within(view.getByTestId("connector-choice"));
+    expect(choices.getByRole("button", { name: "Je ne sais pas" }).getAttribute("aria-pressed")).toBe("true");
+    expect(view.queryByTestId("connector-choices")).toBeNull();
+    await act(async () => fireEvent.click(choices.getByRole("button", { name: "J'ai une préférence" })));
+    const picker = within(view.getByTestId("connector-choices"));
+    expect(picker.getAllByRole("button")).toHaveLength(4);
+    for (const tile of picker.getAllByRole("button")) {
+      expect(tile.getAttribute("aria-pressed")).toBe("false");
+      expect(tile.querySelector("a, details, canvas")).toBeNull();
+    }
+    const details = view.getByTestId("connector-technical-details") as HTMLDetailsElement;
+    expect(details.open).toBe(false);
+    expect(picker.queryByRole("link", { name: "Source fabricant" })).toBeNull();
+    expect(view.getByTestId("connector-selection").textContent).toBe("Compatibilité à confirmer par Standex");
+    await act(async () => fireEvent.click(picker.getByRole("button", { name: "JST PHR-2" })));
+    expect(view.getByTestId("connector-selection").textContent).toContain("JST PHR-2 — Compatibilité à confirmer par Standex");
+    expect(picker.getByRole("button", { name: "JST PHR-2" }).getAttribute("aria-pressed")).toBe("true");
+    await act(async () => { details.open = true; fireEvent(details, new Event("toggle")); });
+    const links = within(details).getAllByRole("link", { name: "Source fabricant" });
+    expect(links).toHaveLength(4);
+    expect(links.map(l => l.getAttribute("href"))).toContain("https://www.jst-mfg.com/product/pdf/eng/ePH.pdf#page=3");
+    expect(details.textContent).toContain("Aucune combinaison connecteur/capteur qualifiée");
+    expect(details.textContent).toContain("disponibilité restent inconnus");
+    expect(details.textContent).toContain("Câble, genre des contacts, sertissage");
+    expect(details.textContent).toContain("SPH-002T-P0.5S");
+    expect(details.querySelector('[data-housing="PHR-2"]')).toBeTruthy();
+    await act(async () => { details.open = false; fireEvent(details, new Event("toggle")); });
+    expect(picker.getByRole("button", { name: "JST PHR-2" }).getAttribute("aria-pressed")).toBe("true");
+    await act(async () => fireEvent.click(choices.getByRole("button", { name: "Je ne sais pas" })));
+    expect(view.queryByTestId("connector-choices")).toBeNull();
+    await act(async () => fireEvent.click(choices.getByRole("button", { name: "J'ai une préférence" })));
+    expect(view.getByRole("button", { name: "JST PHR-2" }).getAttribute("aria-pressed")).toBe("true");
+    const manual = view.getByText("Saisir une référence précise").closest("details");
+    expect(manual?.open).toBe(false);
+    expect(manual?.querySelector<HTMLInputElement>('#connector-free-reference')?.value).toBe("");
+  }, 30_000);
+});
+
 describe("rendu du questionnaire guidé", () => {
   for (const width of [390, 320] as const) {
     test(`Q1, Q5, Q6, retour, inconnue et FR→EN→JA à ${width}px`, async () => {
