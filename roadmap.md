@@ -77,6 +77,6 @@
 - [x] Terminer la suite complète et la compilation ; contrôle visuel authentifié non réalisable sans session autorisée.
 
 ## Nettoyage ciblé pré-démo — 12 octobre 2026
-- [ ] Présentation compacte des connecteurs aux deux points d’entrée, données conservées.
-- [ ] Erreurs de contexte projet limitées aux champs autorisés et traduites.
-- [ ] Tests complets, inventaire, contrôle automatique et rapport ; aucun déploiement.
+- [x] Présentation compacte des connecteurs aux deux points d’entrée, données conservées.
+- [x] Erreurs de contexte projet limitées aux champs autorisés et traduites.
+- [x] Tests complets, inventaire, contrôle automatique et rapport ; aucun déploiement.

@@ -93,5 +93,3 @@ rg -n "\brounded-md border\b|\bborder border-input\b|\btext-xs\b" src/ --glob '!
 Toute évolution met à jour `docs/design-language.md` dans le même commit ; aucun
 jeton sans documentation ni contournement ponctuel.
 
-- Connector selection UI is shared through ConnectorChoices while DesignSpace owns its state and callbacks, so both entry points preserve the same dossier and safety behavior.
-- Business RPC errors expose only exact allowlisted field labels through localized templates, so database internals never reach the interface.
