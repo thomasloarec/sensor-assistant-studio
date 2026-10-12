@@ -70,6 +70,11 @@ export interface FitAssessment {
   issues: FitIssue[];
   /** Vrai dès qu'un point bloque : aucun produit n'est proposé dans cet état. */
   blocking: boolean;
+  /** Points de validation NON bloquants, explicitement écrits par la personne
+   *  (petit aimant, précision de position) : ils restent à vérifier avec la R&D. */
+  validationPoints: string[];
+  /** Plage de température AU CAPTEUR lue dans les réponses (null si aucune). */
+  sensorSiteC: { min: number | null; max: number | null } | null;
 }
 
 /* i18n-canonical : libellés d'étapes, identiques à ceux du questionnaire. */
@@ -134,6 +139,12 @@ const DIRECT_SWITCH = [
   /(commuter|commute|couper|switch|switching)[^.]{0,40}(directement|directly)[^.]{0,40}(le |la |the )?(moteur|motor|charge|load)/,
   /(alimenter|alimente|power|powers|powering|energise|energize)[^.]{0,40}(directement|directly)[^.]{0,40}(le |la |the )?(moteur|motor)/,
   /(directement|directly)[^.]{0,40}(alimenter|alimente|power|powering|powers)[^.]{0,40}(le |la |the )?(moteur|motor)/,
+  // « the reed should cut the motor power » : le capteur coupe lui-même la puissance.
+  /\b(capteur|reed|sensor|ils)\b[^.]{0,40}\b(cut|cuts|cutting|interrupt|interrupts|break|breaks|coupe|couper|interrompt|interrompre)\b[^.]{0,30}\b(moteur|motor|power|puissance|load|charge|alimentation|mains|secteur)\b/,
+  // « switch the 230 V mains load with the reed » : verbe, charge, PUIS le capteur.
+  /\b(switch|switches|switching|cut|cuts|commuter|commute|couper|coupe)\b[^.]{0,50}\b(mains|secteur|load|charge|motor|moteur|power|puissance)\b[^.]{0,40}\b(with|by|using|via|avec|par)\s+(the |le |la |l |our |notre )?(reed|capteur|sensor|ils)\b/,
+  // Passif : « the motor is switched by the reed ».
+  /\b(motor|moteur|load|charge|power|puissance|mains|secteur)\b[^.]{0,40}\b(switched|cut|interrupted|commute|coupe|coupee|alimente)\b[^.]{0,20}\b(by|par)\s+(the |le |la |l )?(reed|capteur|sensor|ils)\b/,
 ];
 
 /** Négation DANS la phrase elle-même : « le capteur ne commute pas directement
@@ -291,7 +302,7 @@ export function assessApplicationFit(
       evidence: [],
       steps,
     });
-    return { issues, blocking: true };
+    return { issues, blocking: true, validationPoints: [], sensorSiteC: null };
   }
 
   /* ---- Point 1 ---- */
@@ -420,7 +431,12 @@ export function assessApplicationFit(
   }
 
   issues.push(...assessModalityAndLimits(frags));
-  return { issues, blocking: issues.length > 0 };
+  return {
+    issues,
+    blocking: issues.length > 0,
+    validationPoints: validationPoints(frags),
+    sensorSiteC: sensorSiteRange(frags),
+  };
 }
 
 /* ---------------------------------------------------------------------------
@@ -446,7 +462,12 @@ const FLOW_MEASURE = [
   /\b(mesur\w*|measur\w*|monitor\w*)\b[^.]{0,50}\b(debit|flow|flow rate|flowrate)\b/,
   /\b(debit|flow rate|volumetric flow|water flow|fluid flow|flow measurement)\b/,
   /\bl\s?\/\s?min\b/,
+  /\b(flow output|flow signal|flow value|debit proportionnel|sortie de debit|signal de debit)\b/,
+  /\b(litres?|liters?|l) (per|par|a la) (minute|min|heure|hour)\b/,
+  /\bm3\s?\/\s?h\b/,
 ];
+/** Un détecteur de débit tout-ou-rien (contacteur de débit) reste un usage reed. */
+const FLOW_SWITCH = /\b(flow switch|contacteur de debit|detecteur de debit|interrupteur de debit)\b/;
 const FORBID_MOVING = [
   /\b(sans|without|no|pas de|pas d|aucun|aucune)\b[^.,;]{0,40}\b(turbine|rotor|flotteur|float|piece mobile|pieces mobiles|moving part|moving parts|moving element|moving elements|element mobile|elements mobiles|palette|paddle|aimant|magnet)\b/,
 ];
@@ -456,6 +477,10 @@ const MAGNETIC_MOVER = /\b(aimant|magnet|magnetique|magnetic|flotteur|float|roto
 const LEVEL_THRESHOLD = /\b(niveau|level|seuil|threshold|trop plein|overflow)\b/;
 
 const negatedMover = (text: string) => FORBID_MOVING.some((p) => p.test(text));
+/** But de détection tout-ou-rien réellement énoncé (seuil, position, alarme). */
+const DETECT_GOAL = /\b(detect\w*|detecter|detection|signal\w*|alarm\w*|alerte|switch|interrupteur|seuil|threshold|fin de course|end position|presence|trigger\w*|declench\w*)\b/;
+/** La grandeur est mesurée par un AUTRE appareil : pas une demande au capteur reed. */
+const OTHER_DEVICE = /\b(another|other|separate|existing|autre|separee|separe|existante|existant)\b[^.]{0,20}\b(probe|sensor|system|device|sonde|capteur|systeme|appareil|transmitter|transmetteur)\b/;
 
 /** Températures explicites en °C dans une phrase. */
 function temperaturesC(text: string): number[] {
@@ -499,12 +524,19 @@ function assessModalityAndLimits(frags: Fragment[]): FitIssue[] {
   const analog = anyMatch(frags, ANALOG_CONTINUOUS);
   // Une partie mobile ou un aimant décrits POSITIVEMENT quelque part (non niés
   // dans leur phrase) : la détection reed reste plausible, on ne bloque pas.
-  const positiveMover = frags.some((f) => MAGNETIC_MOVER.test(f.text) && !negatedMover(f.text));
-  const level = frags.some((f) => LEVEL_THRESHOLD.test(f.text));
+  /* Portée LIMITÉE au but énoncé : un aimant, une porte ou une position cités
+   * ailleurs (« la position de la porte est connue par un autre système ») ne
+   * transforment pas une mesure de température en détection reed. Seul un but
+   * de détection tout-ou-rien écrit explicitement (détecter, seuil, alarme…)
+   * portant sur un élément mobile ou un niveau lève le blocage. */
+  const detectionGoal = (f: Fragment) =>
+    DETECT_GOAL.test(f.text) && (MAGNETIC_MOVER.test(f.text) || LEVEL_THRESHOLD.test(f.text)) && !negatedMover(f.text);
+  const positiveMover = frags.some(detectionGoal);
+  const level = frags.some((f) => LEVEL_THRESHOLD.test(f.text) && DETECT_GOAL.test(f.text));
   const ask = [stepFor("detection_goal"), stepFor("states_motion"), stepFor("electrical")];
 
   /* ---- Température mesurée en continu ---- */
-  const tempMeasure = anyMatch(frags, TEMPERATURE_MEASURE);
+  const tempMeasure = anyMatch(frags, TEMPERATURE_MEASURE).filter((f) => !OTHER_DEVICE.test(f.text));
   const tempModality = tempMeasure.length > 0 && analog.length > 0 && !positiveMover && !level;
   if (tempModality) {
     const evidence = [...tempMeasure, ...analog.filter((f) => !tempMeasure.includes(f))].map((f) => ({ step: f.step, quote: f.quote }));
@@ -536,7 +568,8 @@ function assessModalityAndLimits(frags: Fragment[]): FitIssue[] {
   const flowMover = frags.some(
     (f) => /\b(rotor|turbine|flotteur|float|palette|paddle)\b/.test(f.text) && !negatedMover(f.text),
   );
-  if (flowMeasure.length > 0 && analog.length > 0 && forbidMoving.length > 0 && !flowMover && !level) {
+  const flowSwitch = frags.some((f) => FLOW_SWITCH.test(f.text));
+  if (flowMeasure.length > 0 && analog.length > 0 && forbidMoving.length > 0 && !flowMover && !level && !flowSwitch) {
     const seen = new Set<Fragment>();
     const evidence = [...flowMeasure, ...forbidMoving, ...analog]
       .filter((f) => (seen.has(f) ? false : (seen.add(f), true)))
