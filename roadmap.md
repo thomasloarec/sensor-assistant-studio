@@ -80,3 +80,7 @@
 - [x] Présentation compacte des connecteurs aux deux points d’entrée, données conservées.
 - [x] Erreurs de contexte projet limitées aux champs autorisés et traduites.
 - [x] Tests complets, inventaire, contrôle automatique et rapport ; aucun déploiement.
+
+## Restauration ciblée des aperçus connecteurs — 12 octobre 2026
+- [ ] Quatre aperçus visibles avant sélection, contrôles séparés et sources repliées.
+- [ ] Régressions, suite complète, inventaire et rapport sans publication ni connexion utilisateur.

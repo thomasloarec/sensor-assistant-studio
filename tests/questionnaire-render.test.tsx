@@ -67,6 +67,8 @@ mock.module("@radix-ui/react-use-layout-effect", () => ({
 }));
 
 const { DesignSpace } = await import("../src/components/leadmagnet/design-space");
+const { ConnectorChoices } = await import("../src/components/leadmagnet/connector-choices");
+const { DOCUMENTED_HOUSINGS, terminationFromHousing } = await import("../src/lib/leadmagnet/connector-library");
 const { setLocale } = await import("../src/lib/i18n/core");
 const { createDossier, proposeRequirement, confirmRequirement } =
   await import("../src/lib/leadmagnet/dossier");
@@ -177,7 +179,8 @@ describe("Connecteurs compacts — état réel du questionnaire", () => {
     expect(details.textContent).toContain("disponibilité restent inconnus");
     expect(details.textContent).toContain("Câble, genre des contacts, sertissage");
     expect(details.textContent).toContain("SPH-002T-P0.5S");
-    expect(details.querySelector('[data-housing="PHR-2"]')).toBeTruthy();
+    expect(details.querySelector('[data-housing]')).toBeNull();
+    expect(view.container.querySelectorAll('[data-housing]')).toHaveLength(4);
     await act(async () => { details.open = false; fireEvent(details, new Event("toggle")); });
     expect(picker.getByRole("button", { name: "JST PHR-2" }).getAttribute("aria-pressed")).toBe("true");
     await act(async () => fireEvent.click(choices.getByRole("button", { name: "Je ne sais pas" })));
