@@ -38,7 +38,7 @@ export const SCREW_STYLE_SHAPES: Readonly<Record<ScrewStyle, readonly ("threaded
 export type MountingChoice =
   | { kind: "pcb_smd" }
   | { kind: "pcb_through_hole" }
-  | { kind: "screw"; style?: ScrewStyle }
+  | { kind: "screw"; style?: ScrewStyle | undefined }
   | { kind: "press_fit"; holeDiameterMm: number }
   | { kind: "other"; description: string }
   | { kind: "undecided" };

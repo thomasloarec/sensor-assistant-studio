@@ -74,7 +74,7 @@ function IssueBlock({
 }: {
   issue: FitIssue;
   onGoToStep: (key: string) => void;
-  onContactStandex?: () => void;
+  onContactStandex?: (() => void) | undefined;
 }) {
   const kind = fitIssueKind(issue.id);
   const first = issue.changes[0] ?? null;
@@ -206,7 +206,7 @@ export interface CompatibilityPanelProps {
   /** Ouvre la question demandée et y place le curseur. */
   onGoToStep: (key: string) => void;
   /** Ouvre l'envoi du projet à Standex (contexte, contact) : le prospect n'est jamais perdu. */
-  onContactStandex?: () => void;
+  onContactStandex?: (() => void) | undefined;
   /** Vrai seulement après qu'un point a réellement été levé dans cette session. */
   showResolved?: boolean;
 }
