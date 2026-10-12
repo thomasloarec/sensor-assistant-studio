@@ -2675,6 +2675,7 @@ export function DesignSpace({
       <CompatibilityPanel
         assessment={fit}
         onGoToStep={goToRequirementStep}
+        onContactStandex={() => setTab("revue")}
         showResolved={fitEverBlockedRef.current}
       />
       {fitBlocked ? null : (
