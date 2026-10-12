@@ -29671,5 +29671,95 @@
     "Нужна ещё одна деталь, прежде чем предлагать датчики",
     "Ancora un'informazione prima di proporre sensori",
     "センサーを提案する前に、もう一つ情報が必要です"
+  ],
+  "Compatibilité à confirmer par Standex": [
+    "Compatibility to be confirmed by Standex",
+    "兼容性需由 Standex 确认",
+    "Kompatibilität von Standex zu bestätigen",
+    "Compatibilidad pendiente de confirmación por Standex",
+    "Совместимость должна быть подтверждена Standex",
+    "Compatibilità da confermare da Standex",
+    "適合性は Standex による確認が必要です"
+  ],
+  "{0} voies · pas {1} mm": [
+    "{0} positions · {1} mm pitch",
+    "{0} 位 · 间距 {1} mm",
+    "{0} Positionen · Raster {1} mm",
+    "{0} vías · paso {1} mm",
+    "{0} позиций · шаг {1} мм",
+    "{0} vie · passo {1} mm",
+    "{0} 極 · ピッチ {1} mm"
+  ],
+  "Détails techniques · sources et compatibilité": [
+    "Technical details · sources and compatibility",
+    "技术详情 · 来源与兼容性",
+    "Technische Details · Quellen und Kompatibilität",
+    "Detalles técnicos · fuentes y compatibilidad",
+    "Технические сведения · источники и совместимость",
+    "Dettagli tecnici · fonti e compatibilità",
+    "技術詳細 · 出典と適合性"
+  ],
+  "Câble, genre des contacts, sertissage et conditions d'usage restent à confirmer avant commande.": [
+    "Cable, contact gender, crimping and operating conditions must be confirmed before ordering.",
+    "订购前须确认电缆、触点公母类型、压接和使用条件。",
+    "Kabel, Kontaktgeschlecht, Crimpung und Einsatzbedingungen müssen vor der Bestellung bestätigt werden.",
+    "El cable, el género de los contactos, el crimpado y las condiciones de uso deben confirmarse antes de pedir.",
+    "Кабель, тип контактов (штырь/гнездо), обжим и условия эксплуатации необходимо подтвердить до заказа.",
+    "Cavo, genere dei contatti, crimpatura e condizioni d’uso devono essere confermati prima dell’ordine.",
+    "発注前にケーブル、接点のオス・メス、圧着および使用条件の確認が必要です。"
+  ],
+  "Référence du contact": [
+    "Contact part number",
+    "触点料号",
+    "Kontaktteilenummer",
+    "Referencia del contacto",
+    "Артикул контакта",
+    "Codice del contatto",
+    "接点の型番"
+  ],
+  "Plage de fil documentée": [
+    "Documented wire range",
+    "已记录的导线范围",
+    "Dokumentierter Drahtbereich",
+    "Rango de cable documentado",
+    "Документированный диапазон проводов",
+    "Gamma di fili documentata",
+    "資料に記載された電線範囲"
+  ],
+  "Contexte projet à compléter : {0}. Renseignez ces champs dans le contexte projet ou choisissez « Non défini pour le moment » pour chacun. Rien n'a été enregistré.": [
+    "Project context to complete: {0}. Complete these fields in the project context or choose “Not defined yet” for each. Nothing has been saved.",
+    "项目背景待补充：{0}。请在项目背景中填写这些字段，或为每项选择“暂未定义”。未保存任何内容。",
+    "Projektkontext ergänzen: {0}. Füllen Sie diese Felder im Projektkontext aus oder wählen Sie jeweils „Noch nicht festgelegt“. Es wurde nichts gespeichert.",
+    "Contexto del proyecto por completar: {0}. Complete estos campos en el contexto del proyecto o elija «Aún no definido» para cada uno. No se ha guardado nada.",
+    "Необходимо дополнить контекст проекта: {0}. Заполните эти поля в контексте проекта или выберите «Пока не определено» для каждого. Ничего не сохранено.",
+    "Contesto del progetto da completare: {0}. Compilare questi campi nel contesto del progetto oppure scegliere «Non ancora definito» per ciascuno. Non è stato salvato nulla.",
+    "プロジェクト情報の補完が必要です：{0}。プロジェクト情報でこれらの項目を入力するか、各項目で「現時点では未定」を選択してください。何も保存されていません。"
+  ],
+  "Contexte projet à compléter : {0}, {1}. Renseignez ces champs dans le contexte projet ou choisissez « Non défini pour le moment » pour chacun. Rien n'a été enregistré.": [
+    "Project context to complete: {0}, {1}. Complete these fields in the project context or choose “Not defined yet” for each. Nothing has been saved.",
+    "项目背景待补充：{0}, {1}。请在项目背景中填写这些字段，或为每项选择“暂未定义”。未保存任何内容。",
+    "Projektkontext ergänzen: {0}, {1}. Füllen Sie diese Felder im Projektkontext aus oder wählen Sie jeweils „Noch nicht festgelegt“. Es wurde nichts gespeichert.",
+    "Contexto del proyecto por completar: {0}, {1}. Complete estos campos en el contexto del proyecto o elija «Aún no definido» para cada uno. No se ha guardado nada.",
+    "Необходимо дополнить контекст проекта: {0}, {1}. Заполните эти поля в контексте проекта или выберите «Пока не определено» для каждого. Ничего не сохранено.",
+    "Contesto del progetto da completare: {0}, {1}. Compilare questi campi nel contesto del progetto oppure scegliere «Non ancora definito» per ciascuno. Non è stato salvato nulla.",
+    "プロジェクト情報の補完が必要です：{0}, {1}。プロジェクト情報でこれらの項目を入力するか、各項目で「現時点では未定」を選択してください。何も保存されていません。"
+  ],
+  "Contexte projet à compléter : {0}, {1}, {2}. Renseignez ces champs dans le contexte projet ou choisissez « Non défini pour le moment » pour chacun. Rien n'a été enregistré.": [
+    "Project context to complete: {0}, {1}, {2}. Complete these fields in the project context or choose “Not defined yet” for each. Nothing has been saved.",
+    "项目背景待补充：{0}, {1}, {2}。请在项目背景中填写这些字段，或为每项选择“暂未定义”。未保存任何内容。",
+    "Projektkontext ergänzen: {0}, {1}, {2}. Füllen Sie diese Felder im Projektkontext aus oder wählen Sie jeweils „Noch nicht festgelegt“. Es wurde nichts gespeichert.",
+    "Contexto del proyecto por completar: {0}, {1}, {2}. Complete estos campos en el contexto del proyecto o elija «Aún no definido» para cada uno. No se ha guardado nada.",
+    "Необходимо дополнить контекст проекта: {0}, {1}, {2}. Заполните эти поля в контексте проекта или выберите «Пока не определено» для каждого. Ничего не сохранено.",
+    "Contesto del progetto da completare: {0}, {1}, {2}. Compilare questi campi nel contesto del progetto oppure scegliere «Non ancora definito» per ciascuno. Non è stato salvato nulla.",
+    "プロジェクト情報の補完が必要です：{0}, {1}, {2}。プロジェクト情報でこれらの項目を入力するか、各項目で「現時点では未定」を選択してください。何も保存されていません。"
+  ],
+  "Contexte projet à compléter : {0}, {1}, {2}, {3}. Renseignez ces champs dans le contexte projet ou choisissez « Non défini pour le moment » pour chacun. Rien n'a été enregistré.": [
+    "Project context to complete: {0}, {1}, {2}, {3}. Complete these fields in the project context or choose “Not defined yet” for each. Nothing has been saved.",
+    "项目背景待补充：{0}, {1}, {2}, {3}。请在项目背景中填写这些字段，或为每项选择“暂未定义”。未保存任何内容。",
+    "Projektkontext ergänzen: {0}, {1}, {2}, {3}. Füllen Sie diese Felder im Projektkontext aus oder wählen Sie jeweils „Noch nicht festgelegt“. Es wurde nichts gespeichert.",
+    "Contexto del proyecto por completar: {0}, {1}, {2}, {3}. Complete estos campos en el contexto del proyecto o elija «Aún no definido» para cada uno. No se ha guardado nada.",
+    "Необходимо дополнить контекст проекта: {0}, {1}, {2}, {3}. Заполните эти поля в контексте проекта или выберите «Пока не определено» для каждого. Ничего не сохранено.",
+    "Contesto del progetto da completare: {0}, {1}, {2}, {3}. Compilare questi campi nel contesto del progetto oppure scegliere «Non ancora definito» per ciascuno. Non è stato salvato nulla.",
+    "プロジェクト情報の補完が必要です：{0}, {1}, {2}, {3}。プロジェクト情報でこれらの項目を入力するか、各項目で「現時点では未定」を選択してください。何も保存されていません。"
   ]
 }
