@@ -334,8 +334,8 @@ describe("rendu du questionnaire guidé", () => {
       await Promise.resolve();
     });
     await flushState();
-    expect(within(document.body).queryAllByTestId("pair-card")).toHaveLength(0);
-    expect(within(document.body).getAllByText("Décrivez votre besoin pour voir des capteurs proposés").length).toBeGreaterThan(0);
+    expect(within(view.container.ownerDocument.body).queryAllByTestId("pair-card")).toHaveLength(0);
+    expect(within(view.container.ownerDocument.body).getAllByText("Décrivez votre besoin pour voir des capteurs proposés").length).toBeGreaterThan(0);
   });
 
   async function reveal(view: RenderResult, goal: string, electrical?: string) {
@@ -359,15 +359,15 @@ describe("rendu du questionnaire guidé", () => {
       "I want all motor current to pass directly through the reed contact, without a relay or contactor.",
       "230 VAC, 8 A motor.",
     );
-    expect(within(document.body).queryAllByTestId("pair-card")).toHaveLength(0);
-    expect(within(document.body).getAllByText("Le capteur ne peut pas couper lui-même l'alimentation du moteur").length).toBeGreaterThan(0);
+    expect(within(view.container.ownerDocument.body).queryAllByTestId("pair-card")).toHaveLength(0);
+    expect(within(view.container.ownerDocument.body).getAllByText("Le capteur ne peut pas couper lui-même l'alimentation du moteur").length).toBeGreaterThan(0);
   });
 
   test("P0 B02 : mesure continue de température → aucune carte", async () => {
     const view = renderQuestionnaire(390);
     await reveal(view, "Continuous temperature measurement from 20 to 250 °C.", "Analog 4-20 mA output.");
-    expect(within(document.body).queryAllByTestId("pair-card")).toHaveLength(0);
-    expect(within(document.body).getAllByText("Un capteur reed ne mesure pas une température en continu").length).toBeGreaterThan(0);
+    expect(within(view.container.ownerDocument.body).queryAllByTestId("pair-card")).toHaveLength(0);
+    expect(within(view.container.ownerDocument.body).getAllByText("Un capteur reed ne mesure pas une température en continu").length).toBeGreaterThan(0);
   });
 
   test("contrôle positif : contacteur externe dimensionné → cartes proposées", async () => {
@@ -377,7 +377,7 @@ describe("rendu du questionnaire guidé", () => {
       "Detect when the lid is closed; the reed signal goes to a 24 V PLC input.",
       "The 230 VAC 8 A motor is switched by an external properly rated contactor driven by the PLC.",
     );
-    expect(within(document.body).queryAllByTestId("pair-card").length).toBeGreaterThan(0);
+    expect(within(view.container.ownerDocument.body).queryAllByTestId("pair-card").length).toBeGreaterThan(0);
   });
 
   test("les libellés de composition changent immédiatement de français à anglais puis japonais", () => {
