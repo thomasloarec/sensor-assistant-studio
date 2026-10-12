@@ -43,7 +43,7 @@ function StepButton({
 /** Trois natures distinctes, jamais confondues à l'affichage. */
 export type FitIssueKind = "modality" | "review" | "insufficient";
 export function fitIssueKind(id: FitIssue["id"]): FitIssueKind {
-  if (id === "extreme_temperature_review" || id === "extreme_gap_review") return "review";
+  if (id === "extreme_temperature_review" || id === "extreme_gap_review" || id === "hall_analog_review") return "review";
   if (id === "no_meaningful_requirement") return "insufficient";
   return "modality";
 }

@@ -26,7 +26,8 @@ export type FitIssueId =
   | "continuous_flow_measurement"
   | "extreme_temperature_review"
   | "extreme_gap_review"
-  | "no_meaningful_requirement";
+  | "no_meaningful_requirement"
+  | "hall_analog_review";
 
 export interface FitStep {
   /** Clé d'exigence à ouvrir dans le questionnaire (jamais modifiée ici). */
@@ -103,6 +104,7 @@ const stepFor = (key: string): FitStep =>
 const norm = (value: string) =>
   value
     .toLowerCase()
+    .replace(/ß/g, "ss")
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
     .replace(/['’`]/g, " ")
@@ -137,9 +139,9 @@ const anyMatch = (frags: Fragment[], patterns: readonly RegExp[]): Fragment[] =>
 
 /** Intention EXPLICITE de faire passer la charge dans le capteur. */
 const DIRECT_SWITCH = [
-  /(passe|passer|passage|circule|circuler|pass|passing|flow|flows|route|routed)[^.]{0,80}(directement|direct|directly)[^.]{0,80}(capteur|reed|ils|sensor|interrupteur|contact)/,
-  /(directement|directly)[^.]{0,40}(par|via|through|dans|in|into)[^.]{0,30}(le |la |the )?(capteur|reed|sensor|contact)/,
-  /(capteur|reed|sensor|contact)[^.]{0,60}(coupe|couper|commute|commuter|alimente|alimenter|switch|switches|switching|carry|carries|power|powers)[^.]{0,40}(directement|direct|directly)?[^.]{0,30}(moteur|motor|charge|load|puissance)/,
+  /(passe|passer|passage|circule|circuler|pass|passing|flow|flows|route|routed)[^.]{0,80}(directement|direct|directly)[^.]{0,80}\b(capteur|reed|ils|sensor|interrupteur|contact)\b/,
+  /(directement|directly)[^.]{0,40}(par|via|through|dans|in|into)[^.]{0,30}(le |la |the )?\b(capteur|reed|sensor|contact)\b/,
+  /\b(capteur|reed|sensor|contact)\b[^.]{0,60}(coupe|couper|commute|commuter|alimente|alimenter|switch|switches|switching|carry|carries|power|powers)[^.]{0,40}(directement|direct|directly)?[^.]{0,30}(moteur|motor|charge|load|puissance)/,
   /(commuter|commute|couper|switch|switching)[^.]{0,40}(directement|directly)[^.]{0,40}(le |la |the )?(moteur|motor|charge|load)/,
   /(alimenter|alimente|power|powers|powering|energise|energize)[^.]{0,40}(directement|directly)[^.]{0,40}(le |la |the )?(moteur|motor)/,
   /(directement|directly)[^.]{0,40}(alimenter|alimente|power|powering|powers)[^.]{0,40}(le |la |the )?(moteur|motor)/,
@@ -177,6 +179,9 @@ const SAFE_WIRING = [
   // reed, without a relay » n'est PAS un câblage sûr.
   /\b(via|a travers|au travers|through|par|with)\b(?:(?!\b(?:sans|without|no|pas|aucun|aucune)\b)[^.]){0,40}(un |une |a |an )?(relais|relay|contacteur|contactor|interface de puissance|power interface|module de puissance)/,
   /(pilote|pilotage|commande|commandes|drives|drive|driving|controls|control|controlled|actionne)[^.]{0,50}(relais|relay|contacteur|contactor)/,
+  // « Separate externally rated contactor » : qualificatif AVANT l'interface.
+  /\b(separate|separated|separately|external|externally|rated|dedicated|independent|separe|separee|externe|dedie|dimensionne)\b[^.,;]{0,30}\b(relais|relay|contacteur|contactor)\b/,
+  /\b(reed|capteur|sensor)\b[^.]{0,20}\b(only|seulement|uniquement)\b[^.]{0,10}\b(signal\w*)\b/,
   /(relais|relay|contacteur|contactor)[^.]{0,60}(externe|external|separe|separate|dimensionne|rated|approprie|appropriate)/,
   /\b(automate|plc|api|controleur|controller|carte)\b[^.]{0,80}(contacteur|contactor|relais|relay)/,
   /(signal de commande|control signal|signal seul|signal uniquement|signal only|information de position seulement)/,
@@ -232,6 +237,11 @@ const NOT_ALREADY = [
   /\b(n est pas deja|nest pas deja|pas deja|is not already|isn t already|not already|no magnet is already)\b/,
 ];
 
+const FERROUS = /\b(ferrous|ferreux|ferreuse|ferromagnetic|ferromagnetique|steel|acier|iron|fer|fonte|eisen|stahl|acero|acciaio)\b/;
+const NEGATED_FERROUS = /\b(no|non|without|sans|pas de|aucun|aucune|not)\b[^.,;]{0,20}\b(ferrous|ferreux|ferreuse|steel|acier|iron|fer)\b|\b(nonferrous|non-ferrous|non ferreux|stainless|inox)\b/;
+const INTERNAL_BIAS = /\b(mk02|internal|integrated|built-in|built in|integre|integree|interne|incorpore|bias)\b[^.]{0,30}\b(magnet|aimant|bias)\b|\bmk02\b/;
+const MAGNET_ANYWHERE = /\b(anywhere|partout|nulle part|at all|du tout|whatsoever)\b/;
+
 const NON_MAGNETIC = [
   /\b(aluminium|aluminum|alu)\b/,
   /\b(inox|stainless|austenitique|austenitic)\b/,
@@ -271,11 +281,13 @@ export interface StructuredIntake {
  *  formules sont reconnues, aucune couverture sémantique n'est revendiquée. */
 const FILLER = /\b(je ne sais pas|je sais pas|sais pas|aucune idee|pas d idee|je ne sais|ne sais pas encore|i don t know|i dont know|don t know|dont know|do not know|idk|no idea|not sure|unsure|unknown|inconnu|inconnue|n a|na|tbd|a definir|to be defined|nothing|rien|ok|okay|yes|no|oui|non|test|xxx|asdf|weiss nicht|keine ahnung|no lo se|no se|non lo so|nessuna idea|ne znayu|wakaranai)\b/g;
 const normFill = (v: string) =>
-  v.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/['’`/]/g, " ");
+  v.toLowerCase().replace(/ß/g, "ss").normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/['’`/]/g, " ");
 /** Vrai si le texte contient une information au-delà des formules de remplissage. */
 export function isSubstantive(value: string | null | undefined): boolean {
   const rest = normFill(value ?? "").replace(FILLER, " ");
-  return /\p{L}{3,}|\p{N}|[\u3040-\u30ff\u4e00-\u9fff]/u.test(rest);
+  // Un mot sans voyelle (« qzxv ») n'est pas une information.
+  return /\p{N}|[\u3040-\u30ff\u4e00-\u9fff\uac00-\ud7af]/u.test(rest) ||
+    rest.split(/[^\p{L}]+/u).some((w) => w.length >= 3 && (/[aeiouy]/.test(w) || /[^a-z]/.test(w)));
 }
 
 /** Vrai quand AUCUNE exigence réelle n'a été donnée (une question confiée à
@@ -286,14 +298,17 @@ export function intakeIsEmpty(
   structured: StructuredIntake,
 ): boolean {
   if (structured.mountingChosen || structured.envelopeSet) return false;
+  if (requirements.some((r) => MECHANICAL_KEYS.has(r.key) && isSubstantive(r.value))) return false;
   return !hasStatedPurpose(requirements, freeConstraints);
 }
 
 /** Au moins une réponse écrite substantielle (pas seulement un montage ou des cotes). */
 export function hasStatedPurpose(requirements: readonly Requirement[], freeConstraints: string): boolean {
   if (isSubstantive(freeConstraints)) return true;
-  return requirements.some((r) => isSubstantive(r.value));
+  return requirements.some((r) => !MECHANICAL_KEYS.has(r.key) && isSubstantive(r.value));
 }
+/** Réponses purement mécaniques : un montage ou des cotes ne sont pas un but. */
+const MECHANICAL_KEYS = new Set(["mounting", "envelope"]);
 
 export function assessApplicationFit(
   requirements: readonly Requirement[],
@@ -334,7 +349,9 @@ export function assessApplicationFit(
   const direct = anyMatch(frags, DIRECT_SWITCH).filter(
     (f) => !localSafe(f) && !NEGATED_DIRECT.some((p) => p.test(f.text)),
   );
-  const refuseInterface = anyMatch(frags, REFUSE_INTERFACE).filter((f) => !localSafe(f));
+  // « Not without a contactor » : double négation, l'interface est EXIGÉE.
+  const DOUBLE_NEG = /\b(not|never|pas|jamais|nicht)\s+(without|sans|ohne)\b/;
+  const refuseInterface = anyMatch(frags, REFUSE_INTERFACE).filter((f) => !localSafe(f) && !DOUBLE_NEG.test(f.text));
   const load = heavyLoad(frags);
   if ((direct.length > 0 || refuseInterface.length > 0) && load.found) {
     const evidence: FitEvidence[] = [...direct, ...refuseInterface].map((f) => ({
@@ -400,7 +417,14 @@ export function assessApplicationFit(
         !NOT_ALREADY.some((p) => p.test(f.text))
       ),
   );
-  if (refuseMagnet.length > 0) {
+  // Cible ferreuse + aimant de polarisation INTÉGRÉ au capteur (MK02) : le
+  // refus porte sur un aimant EXTERNE seulement. Un « aucun aimant nulle part »
+  // ou une cible non ferreuse continuent de bloquer.
+  const ferrousTarget = frags.some((f) => FERROUS.test(f.text) && !NEGATED_FERROUS.test(f.text));
+  const internalBias = frags.some((f) => INTERNAL_BIAS.test(f.text));
+  const absoluteRefusal = refuseMagnet.some((f) => MAGNET_ANYWHERE.test(f.text));
+  const internalBiasCase = refuseMagnet.length > 0 && ferrousTarget && internalBias && !absoluteRefusal;
+  if (refuseMagnet.length > 0 && !internalBiasCase) {
     const evidence: FitEvidence[] = refuseMagnet.map((f) => ({ step: f.step, quote: f.quote }));
     const materialFrag = anyMatch(frags, NON_MAGNETIC)[0] ?? null;
     const material = materialFrag
@@ -472,11 +496,14 @@ export function assessApplicationFit(
 const ANALOG_CONTINUOUS = [
   /\b4\s*(?:-|–|to|a)\s*20\s*ma\b/,
   /\b0\s*(?:-|–|to|a)\s*10\s*v\b/,
+  /\banalog\w*|\banaloo\w*|模拟|连续/,
+  /\b(kontinuierlich|continuamente|continua|continuo|stetig|en permanence|permanentemente)\b/,
   /\b(analog|analogue|analogique|proportionnel|proportionnelle|proportional|proportionally|continuous|continuously|continue|continu|en continu)\b/,
 ];
 const TEMPERATURE_MEASURE = [
-  /\b(mesur\w*|measur\w*|monitor\w*|suivre|suivi)\b[^.]{0,40}\b(temperature|temperatures)\b/,
-  /\b(temperature|temperatures)\b[^.]{0,20}\b(measurement|measuring|mesure|monitoring)\b/,
+  /\b(mesur\w*|measur\w*|monitor\w*|suivre|suivi|relev\w*|surveill\w*|messen|misst|messung|gemessen|erfass\w*|uberwach\w*|ueberwach\w*|medir|mide|midiendo|medicion|medida|misur\w*|monitorare|meten|registr\w*)\b[^.]{0,40}\b(temperature|temperatures|temperatur|temperatura|temperaturas|temperatuur)\b/,
+  /\b(temperature|temperatures|temperatur|temperatura|temperaturas|temperatuur)\b[^.]{0,30}\b(measurement|measuring|mesure|monitoring|messen|messung|medir|medicion|misura\w*|meten)\b/,
+  /(测量|监测|测定|检测)[^。.]{0,8}温度|温度[^。.]{0,6}(测量|监测|测定)/,
 ];
 const FLOW_MEASURE = [
   /\b(mesur\w*|measur\w*|monitor\w*)\b[^.]{0,50}\b(debit|flow|flow rate|flowrate)\b/,
@@ -497,6 +524,8 @@ const MAGNETIC_MOVER = /\b(aimant|magnet|magnetique|magnetic|flotteur|float|roto
 const LEVEL_THRESHOLD = /\b(niveau|level|seuil|threshold|trop plein|overflow)\b/;
 
 const negatedMover = (text: string) => FORBID_MOVING.some((p) => p.test(text));
+/** But de détection explicitement nié : « door state detection is not required ». */
+const NEGATED_GOAL = /\b(not required|not needed|no need|unnecessary|not necessary|isn t required|is not|pas necessaire|pas requis|pas requise|inutile|n est pas|nicht erforderlich|nicht notig|no es necesario|no se requiere|non necessari\w*|non richiest\w*)\b/;
 /** But de détection tout-ou-rien réellement énoncé (seuil, position, alarme). */
 const DETECT_GOAL = /\b(detect\w*|detecter|detection|signal\w*|alarm\w*|alerte|switch|interrupteur|seuil|threshold|fin de course|end position|presence|trigger\w*|declench\w*)\b/;
 /** La grandeur est mesurée par un AUTRE appareil : pas une demande au capteur reed. */
@@ -507,6 +536,8 @@ const OTHER_DEVICE = /\b(another|other|separate|existing|autre|separee|separe|ex
 export function temperaturesC(text: string): number[] {
   const out: number[] = [];
   const num = (v: string) => Number(v.replace(",", "."));
+  // Signe moins Unicode (U+2212) et tirets typographiques lus comme « - ».
+  text = text.replace(/[\u2212\u2010-\u2015\ufe63\uff0d]/g, "-");
   // Plages : la première borne hérite de l'unité de la seconde.
   for (const m of text.matchAll(/(?<!\d)([+-]?\d{1,3}(?:[.,]\d+)?)\s*(?:°\s*c?)?\s*(?:to|a|-|–|\.\.|…|bis|hasta)\s*([+-]?\d{1,3}(?:[.,]\d+)?)\s*(?:°|º|deg|degres|degrees)\s*(c|f)?\b/g)) {
     const f = m[3] === "f";
@@ -592,6 +623,16 @@ export const VALIDATION_POINT = {
     "Aimant de très petite taille indiqué : sa capacité à actionner le capteur à la distance prévue doit être vérifiée par la R&D Standex.",
   precision:
     "Précision de position de l'ordre du millimètre demandée : aucune précision de commutation n'est garantie sans essai Standex.",
+  internalBias:
+    "Cible en acier sans aimant externe : un capteur à aimant de polarisation intégré (par exemple MK02) peut convenir, mais la distance de détection dépend de la cible réelle et doit être validée par la R&D Standex. Aucune distance n'est garantie.",
+  ferrousStructure:
+    "Acier ou matière ferreuse près de l'aimant, ou décalage variable : le champ magnétique peut être dévié. L'actionnement doit être vérifié par la R&D Standex sur l'assemblage réel.",
+  shielding:
+    "Blindage ou écran magnétique entre l'aimant et le capteur : il peut atténuer le champ jusqu'à empêcher l'actionnement. Un essai Standex est nécessaire.",
+  crosstalk:
+    "Aimants voisins : leur champ peut actionner ou bloquer le capteur (interférence). L'immunité n'est pas garantie sans essai Standex.",
+  dualOutput:
+    "Deux seuils ou deux sorties indépendants : il faut deux éléments de détection distincts, un seul contact reed ne donne qu'un état. À valider avec la R&D Standex.",
 } as const;
 
 function validationPoints(frags: Fragment[]): string[] {
@@ -610,6 +651,23 @@ function validationPoints(frags: Fragment[]): string[] {
     /(±|\+\/-|\+-|plus or minus|plus ou moins)\s*(0(?:[.,]\d+)?|1(?:[.,]0+)?)\s*mm\b/.test(f.text),
   );
   if (precise) out.push(VALIDATION_POINT.precision);
+  const has = (p: RegExp) => frags.some((f) => p.test(f.text));
+  if (
+    has(/\b(no|without|sans|aucun|pas d)\b[^.,;]{0,20}\b(external |externe )?(magnet|aimant)\b/) &&
+    has(FERROUS) && !frags.some((f) => FERROUS.test(f.text) && NEGATED_FERROUS.test(f.text)) && has(INTERNAL_BIAS)
+  )
+    out.push(VALIDATION_POINT.internalBias);
+  if (
+    frags.some((f) => FERROUS.test(f.text) && !NEGATED_FERROUS.test(f.text) && /\b(magnet|aimant|frame|cadre|linkage|structure|chassis)\b/.test(f.text)) ||
+    has(/\b(offset|decalage|desalignement|misalign\w*)\b/)
+  )
+    out.push(VALIDATION_POINT.ferrousStructure);
+  if (has(/\b(shield|shielded|shielding|blindage|blinde|ecran magnetique|abschirmung|mu-metal)\b/))
+    out.push(VALIDATION_POINT.shielding);
+  if (has(/\b(cross-?talk|diaphonie|adjacent magnets?|neighbou?r\w* magnets?|aimants? voisins?|two adjacent|deux aimants)\b/))
+    out.push(VALIDATION_POINT.crosstalk);
+  if (has(/\b(two|deux|2)\s+(distinct|independent|separate|independants?|independantes?|distincts?|separes?)\s+(level |sensor )?(limits?|thresholds?|seuils?|niveaux?|channels?|canaux|elements?|outputs?|sorties?)\b|\btwo independent sensor elements\b/))
+    out.push(VALIDATION_POINT.dualOutput);
   return out;
 }
 
@@ -624,10 +682,41 @@ function assessModalityAndLimits(frags: Fragment[]): FitIssue[] {
    * de détection tout-ou-rien écrit explicitement (détecter, seuil, alarme…)
    * portant sur un élément mobile ou un niveau lève le blocage. */
   const detectionGoal = (f: Fragment) =>
-    DETECT_GOAL.test(f.text) && (MAGNETIC_MOVER.test(f.text) || LEVEL_THRESHOLD.test(f.text)) && !negatedMover(f.text) && !OTHER_DEVICE.test(f.text);
+    DETECT_GOAL.test(f.text) && !NEGATED_GOAL.test(f.text) && (MAGNETIC_MOVER.test(f.text) || LEVEL_THRESHOLD.test(f.text)) && !negatedMover(f.text) && !OTHER_DEVICE.test(f.text);
   const positiveMover = frags.some(detectionGoal);
   const level = frags.some((f) => LEVEL_THRESHOLD.test(f.text) && DETECT_GOAL.test(f.text));
   const ask = [stepFor("detection_goal"), stepFor("states_motion"), stepFor("electrical")];
+
+  /* ---- Mesure linéaire/analogique par effet Hall : autre technologie ---- */
+  const hall = frags.filter(
+    (f) =>
+      /\bhall\b/.test(f.text) &&
+      /\b(linear|lineaire|linearer|lineal|lineare|analog\w*|amplitude|proportional\w*|proportionnel\w*|field strength|intensite du champ|three-wire|three wire|3-wire|trois fils)\b/.test(f.text) &&
+      !/\b(no|without|sans|pas de|aucun|unrelated|another|other|autre|not the)\b[^.]{0,40}\bhall\b/.test(f.text) &&
+      !OTHER_DEVICE.test(f.text),
+  );
+  if (hall.length > 0) {
+    const evidence = hall.map((f) => ({ step: f.step, quote: f.quote }));
+    issues.push({
+      id: "hall_analog_review",
+      title: "Mesure de champ par effet Hall : étude d'ingénierie Standex",
+      whatWorks:
+        "Votre besoin peut être étudié par l'ingénierie Standex avec un capteur actif adapté à la mesure du champ magnétique.",
+      whatFails:
+        "Proposer un capteur reed à deux fils : il donne un état tout-ou-rien, pas une sortie linéaire proportionnelle au champ.",
+      whatFailsArgs: [],
+      why: "Un capteur à effet Hall linéaire est un composant actif à trois fils, alimenté, avec une sortie analogique. Aucun produit de ce type n'est décrit dans cet outil : aucune référence n'est proposée à sa place.",
+      diagram: [],
+      cautions: [
+        "Ce n'est ni un refus ni une impossibilité : c'est une revue d'ingénierie Standex obligatoire avant toute proposition.",
+      ],
+      changes: [
+        { step: stepFor("electrical"), text: "Si un signal tout-ou-rien à deux fils suffit, l'indiquer : un capteur reed peut alors être étudié." },
+      ],
+      evidence,
+      steps: orderedSteps(evidence, [stepFor("detection_goal"), stepFor("electrical")]),
+    });
+  }
 
   /* ---- Température mesurée en continu ---- */
   const tempMeasure = anyMatch(frags, TEMPERATURE_MEASURE).filter((f) => !OTHER_DEVICE.test(f.text));

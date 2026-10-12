@@ -16,7 +16,7 @@ export type EnvelopeSuggestion =
 const norm = (v: string) =>
   v.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/['’`]/g, " ").replace(/\s+/g, " ");
 
-const SPACE = /\b(available (sensor )?(space|volume|envelope)|maximum (available )?(sensor )?(space|volume|envelope|size)|max(imum)? (sensor )?(space|volume|envelope|size)|sensor (space|volume|envelope|pocket)|must fit (in|within|into)|place disponible|espace disponible|volume disponible|encombrement (max\w*|disponible)|logement (du capteur|disponible)|taille max\w*|dimensions? max\w*)\b/;
+const SPACE = /\b(available (sensor )?(space|volume|envelope)|maximum (available )?(sensor )?(space|volume|envelope|size)|max(imum)? (sensor )?(space|volume|envelope|size)|sensor (space|volume|envelope|pocket)|must fit (in|within|into|inside)|fits? inside|doit (tenir|entrer) dans|place disponible|espace disponible|volume disponible|encombrement (max\w*|disponible)|logement (du capteur|disponible)|taille max\w*|dimensions? max\w*)\b/;
 const OTHER_OBJECT = /\b(aimant|aimants|magnet|magnets|cable|cables|piece|part|target|cible|bracket|support|housing of the machine)\b/;
 const NUM = "(\\d+(?:[.,]\\d+)?)";
 const TRIPLE = new RegExp(`(-\\s*)?${NUM}\\s*(mm|cm|m|in|")?\\s*[x×*]\\s*${NUM}\\s*(mm|cm|m|in|")?\\s*[x×*]\\s*${NUM}\\s*(mm|cm|m|in|"|inch|inches)?`, "g");

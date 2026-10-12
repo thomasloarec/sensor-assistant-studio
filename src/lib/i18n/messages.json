@@ -29761,5 +29761,95 @@
     "Необходимо дополнить контекст проекта: {0}, {1}, {2}, {3}. Заполните эти поля в контексте проекта или выберите «Пока не определено» для каждого. Ничего не сохранено.",
     "Contesto del progetto da completare: {0}, {1}, {2}, {3}. Compilare questi campi nel contesto del progetto oppure scegliere «Non ancora definito» per ciascuno. Non è stato salvato nulla.",
     "プロジェクト情報の補完が必要です：{0}, {1}, {2}, {3}。プロジェクト情報でこれらの項目を入力するか、各項目で「現時点では未定」を選択してください。何も保存されていません。"
+  ],
+  "Cible en acier sans aimant externe : un capteur à aimant de polarisation intégré (par exemple MK02) peut convenir, mais la distance de détection dépend de la cible réelle et doit être validée par la R&D Standex. Aucune distance n'est garantie.": [
+    "Steel target without an external magnet: a sensor with an integrated bias magnet (for example MK02) may be suitable, but the detection distance depends on the real target and must be validated by Standex R&D. No distance is guaranteed.",
+    "无外部磁铁的钢制目标：带内置偏置磁铁的传感器（例如 MK02）可能适用，但检测距离取决于实际目标，须由 Standex 研发部门验证。不保证任何距离。",
+    "Stahlziel ohne externen Magneten: Ein Sensor mit integriertem Vormagnetisierungsmagneten (zum Beispiel MK02) kann geeignet sein, der Erfassungsabstand hängt jedoch vom realen Ziel ab und muss von der Standex-F&E validiert werden. Kein Abstand ist garantiert.",
+    "Objetivo de acero sin imán externo: un sensor con imán de polarización integrado (por ejemplo MK02) puede ser adecuado, pero la distancia de detección depende del objetivo real y debe validarla I+D de Standex. No se garantiza ninguna distancia.",
+    "Стальная цель без внешнего магнита: датчик со встроенным магнитом смещения (например, MK02) может подойти, но расстояние обнаружения зависит от реальной цели и должно быть подтверждено R&D Standex. Расстояние не гарантируется.",
+    "Bersaglio in acciaio senza magnete esterno: un sensore con magnete di polarizzazione integrato (ad esempio MK02) può essere adatto, ma la distanza di rilevamento dipende dal bersaglio reale e deve essere validata dalla R&D Standex. Nessuna distanza è garantita.",
+    "外部磁石のない鋼製ターゲット：バイアス磁石内蔵センサー（例：MK02）が適する場合がありますが、検出距離は実際のターゲットに依存し、Standex R&D による検証が必要です。距離は保証されません。"
+  ],
+  "Acier ou matière ferreuse près de l'aimant, ou décalage variable : le champ magnétique peut être dévié. L'actionnement doit être vérifié par la R&D Standex sur l'assemblage réel.": [
+    "Steel or ferrous material near the magnet, or a variable offset: the magnetic field can be diverted. Actuation must be verified by Standex R&D on the real assembly.",
+    "磁铁附近有钢或铁磁材料，或偏移量可变：磁场可能被偏转。须由 Standex 研发部门在实际装配上验证驱动。",
+    "Stahl oder ferromagnetisches Material nahe am Magneten oder variabler Versatz: Das Magnetfeld kann abgelenkt werden. Die Betätigung muss von der Standex-F&E an der realen Baugruppe geprüft werden.",
+    "Acero o material ferroso cerca del imán, o desplazamiento variable: el campo magnético puede desviarse. La activación debe verificarla I+D de Standex en el montaje real.",
+    "Сталь или ферромагнитный материал рядом с магнитом либо переменное смещение: магнитное поле может отклоняться. Срабатывание должно проверить R&D Standex на реальной сборке.",
+    "Acciaio o materiale ferroso vicino al magnete, o disallineamento variabile: il campo magnetico può essere deviato. L'azionamento deve essere verificato dalla R&D Standex sull'assemblaggio reale.",
+    "磁石付近の鋼・強磁性材料、または変動するずれ：磁界が曲げられる可能性があります。作動は実際の組立品で Standex R&D による確認が必要です。"
+  ],
+  "Blindage ou écran magnétique entre l'aimant et le capteur : il peut atténuer le champ jusqu'à empêcher l'actionnement. Un essai Standex est nécessaire.": [
+    "Shielding or a magnetic screen between the magnet and the sensor: it can weaken the field enough to prevent actuation. A Standex test is required.",
+    "磁铁与传感器之间有屏蔽或磁屏：可能削弱磁场以致无法驱动。需要 Standex 测试。",
+    "Abschirmung oder magnetischer Schirm zwischen Magnet und Sensor: Sie kann das Feld so weit schwächen, dass keine Betätigung erfolgt. Ein Standex-Test ist erforderlich.",
+    "Blindaje o pantalla magnética entre el imán y el sensor: puede atenuar el campo hasta impedir la activación. Se requiere un ensayo Standex.",
+    "Экранирование между магнитом и датчиком: оно может ослабить поле настолько, что срабатывания не будет. Требуется испытание Standex.",
+    "Schermatura o schermo magnetico tra magnete e sensore: può attenuare il campo fino a impedire l'azionamento. È necessario un test Standex.",
+    "磁石とセンサーの間のシールド：磁界が弱まり作動しない可能性があります。Standex による試験が必要です。"
+  ],
+  "Aimants voisins : leur champ peut actionner ou bloquer le capteur (interférence). L'immunité n'est pas garantie sans essai Standex.": [
+    "Neighboring magnets: their field can actuate or block the sensor (interference). Immunity is not guaranteed without a Standex test.",
+    "相邻磁铁：其磁场可能驱动或阻止传感器（干扰）。未经 Standex 测试不保证抗干扰。",
+    "Benachbarte Magnete: Ihr Feld kann den Sensor betätigen oder blockieren (Störung). Ohne Standex-Test ist keine Störfestigkeit garantiert.",
+    "Imanes vecinos: su campo puede activar o bloquear el sensor (interferencia). La inmunidad no está garantizada sin ensayo Standex.",
+    "Соседние магниты: их поле может вызвать или заблокировать срабатывание датчика (помехи). Без испытания Standex устойчивость не гарантируется.",
+    "Magneti vicini: il loro campo può azionare o bloccare il sensore (interferenza). L'immunità non è garantita senza un test Standex.",
+    "隣接する磁石：その磁界がセンサーを作動または阻害する可能性があります（干渉）。Standex の試験なしに耐性は保証されません。"
+  ],
+  "Deux seuils ou deux sorties indépendants : il faut deux éléments de détection distincts, un seul contact reed ne donne qu'un état. À valider avec la R&D Standex.": [
+    "Two independent thresholds or outputs: two distinct sensing elements are needed; a single reed contact gives only one state. To be validated with Standex R&D.",
+    "两个独立阈值或输出：需要两个不同的检测元件，单个干簧触点只提供一个状态。须与 Standex 研发部门确认。",
+    "Zwei unabhängige Schwellen oder Ausgänge: Es werden zwei getrennte Sensorelemente benötigt, ein einzelner Reedkontakt liefert nur einen Zustand. Mit der Standex-F&E zu validieren.",
+    "Dos umbrales o salidas independientes: se necesitan dos elementos de detección distintos; un solo contacto reed solo da un estado. A validar con I+D de Standex.",
+    "Два независимых порога или выхода: нужны два отдельных чувствительных элемента, один геркон даёт только одно состояние. Подтвердить с R&D Standex.",
+    "Due soglie o uscite indipendenti: servono due elementi di rilevamento distinti, un solo contatto reed fornisce un solo stato. Da validare con la R&D Standex.",
+    "2つの独立した閾値または出力：別々の検出素子が2つ必要です。リード接点1つでは1つの状態しか得られません。Standex R&D と確認してください。"
+  ],
+  "Mesure de champ par effet Hall : étude d'ingénierie Standex": [
+    "Hall-effect field measurement: Standex engineering study",
+    "霍尔效应磁场测量：Standex 工程研究",
+    "Feldmessung mit Hall-Effekt: Standex-Engineering-Studie",
+    "Medición de campo por efecto Hall: estudio de ingeniería Standex",
+    "Измерение поля эффектом Холла: инженерное исследование Standex",
+    "Misura di campo ad effetto Hall: studio di ingegneria Standex",
+    "ホール効果による磁界測定：Standex エンジニアリング検討"
+  ],
+  "Votre besoin peut être étudié par l'ingénierie Standex avec un capteur actif adapté à la mesure du champ magnétique.": [
+    "Your need can be studied by Standex engineering with an active sensor suited to magnetic field measurement.",
+    "Standex 工程部门可使用适合磁场测量的有源传感器研究您的需求。",
+    "Ihr Bedarf kann von der Standex-Entwicklung mit einem aktiven, für die Magnetfeldmessung geeigneten Sensor untersucht werden.",
+    "Su necesidad puede ser estudiada por la ingeniería Standex con un sensor activo adecuado para medir el campo magnético.",
+    "Ваша задача может быть изучена инженерами Standex с активным датчиком для измерения магнитного поля.",
+    "La sua esigenza può essere studiata dall'ingegneria Standex con un sensore attivo adatto alla misura del campo magnetico.",
+    "磁界測定に適したアクティブセンサーで、Standex エンジニアリングがご要望を検討できます。"
+  ],
+  "Proposer un capteur reed à deux fils : il donne un état tout-ou-rien, pas une sortie linéaire proportionnelle au champ.": [
+    "Proposing a two-wire reed sensor: it gives an on/off state, not a linear output proportional to the field.",
+    "推荐两线干簧传感器：它只给出通断状态，而非与磁场成比例的线性输出。",
+    "Einen zweiadrigen Reedsensor vorschlagen: Er liefert einen Ein/Aus-Zustand, keinen feldproportionalen linearen Ausgang.",
+    "Proponer un sensor reed de dos hilos: da un estado todo o nada, no una salida lineal proporcional al campo.",
+    "Предложить двухпроводной герконовый датчик: он даёт состояние вкл/выкл, а не линейный выход, пропорциональный полю.",
+    "Proporre un sensore reed a due fili: fornisce uno stato on/off, non un'uscita lineare proporzionale al campo.",
+    "2線式リードセンサーの提案：オン/オフ状態のみで、磁界に比例する線形出力ではありません。"
+  ],
+  "Un capteur à effet Hall linéaire est un composant actif à trois fils, alimenté, avec une sortie analogique. Aucun produit de ce type n'est décrit dans cet outil : aucune référence n'est proposée à sa place.": [
+    "A linear Hall-effect sensor is an active, powered three-wire component with an analog output. No such product is described in this tool: no part number is proposed in its place.",
+    "线性霍尔传感器是带供电的三线有源元件，具有模拟输出。本工具未描述此类产品：不会以其他型号替代。",
+    "Ein linearer Hall-Sensor ist ein aktives, versorgtes Dreileiter-Bauteil mit Analogausgang. Kein solches Produkt ist in diesem Tool beschrieben: Es wird keine Ersatzreferenz vorgeschlagen.",
+    "Un sensor Hall lineal es un componente activo de tres hilos, alimentado, con salida analógica. Ningún producto de este tipo se describe en esta herramienta: no se propone ninguna referencia en su lugar.",
+    "Линейный датчик Холла — активный трёхпроводной компонент с питанием и аналоговым выходом. Такие изделия в этом инструменте не описаны: замена не предлагается.",
+    "Un sensore Hall lineare è un componente attivo a tre fili, alimentato, con uscita analogica. Nessun prodotto di questo tipo è descritto in questo strumento: nessun codice viene proposto al suo posto.",
+    "リニアホールセンサーは電源を要する3線式のアクティブ部品で、アナログ出力を持ちます。このツールには該当製品がなく、代替型番は提案しません。"
+  ],
+  "Si un signal tout-ou-rien à deux fils suffit, l'indiquer : un capteur reed peut alors être étudié.": [
+    "If a two-wire on/off signal is enough, say so: a reed sensor can then be studied.",
+    "如两线通断信号即可满足，请注明：届时可研究干簧传感器。",
+    "Wenn ein zweiadriges Ein/Aus-Signal genügt, geben Sie dies an: Dann kann ein Reedsensor untersucht werden.",
+    "Si basta una señal todo o nada de dos hilos, indíquelo: entonces se puede estudiar un sensor reed.",
+    "Если достаточно двухпроводного сигнала вкл/выкл, укажите это: тогда можно рассмотреть герконовый датчик.",
+    "Se basta un segnale on/off a due fili, indicatelo: si potrà allora studiare un sensore reed.",
+    "2線式のオン/オフ信号で十分な場合はお知らせください。リードセンサーを検討できます。"
   ]
 }
