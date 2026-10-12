@@ -10,7 +10,7 @@ if (typeof document === "undefined" || typeof window === "undefined") {
   }
 }
 
-import { afterEach, describe, expect, mock, test } from "bun:test";
+import { afterEach, beforeEach, describe, expect, mock, test } from "bun:test";
 import * as React from "react";
 import {
   act,
@@ -142,6 +142,16 @@ async function changeValue(element: HTMLElement, value: string) {
 async function flushState() {
   await act(async () => Promise.resolve());
 }
+
+beforeEach(() => {
+  // Other suites unregister the shared Happy DOM globals; isolated selector
+  // renders need the same restoration as renderQuestionnaire.
+  if (typeof document === "undefined" || typeof window === "undefined") {
+    GlobalRegistrator.unregister();
+    GlobalRegistrator.register({ url: "https://exemple.invalid/" });
+  }
+  setLocale("fr");
+});
 
 afterEach(() => {
   cleanup();
