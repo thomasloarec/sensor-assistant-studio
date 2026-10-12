@@ -5,6 +5,8 @@
  * transactionnelles listées ici (voir supabase/schema/migration_v1.2_lead_magnet.sql).
  * Les noms sont centralisés pour qu'une RPC absente soit détectée, pas devinée.
  */
+import { msg } from "@/lib/i18n/core";
+
 export const LEAD_RPC = {
   schemaVersion: "lead_schema_version",
   capabilities: "lead_my_capabilities",
@@ -156,6 +158,23 @@ const EXTRA_MESSAGES: { match: RegExp; message: string }[] = [
 
 MESSAGES.unshift(...EXTRA_MESSAGES);
 
+const BUSINESS_FIELDS = {
+  annualVolume: "Volume annuel de capteurs",
+  projectPhase: "Phase du projet",
+  seriesStartDate: "Date de lancement série",
+  seriesDurationYears: "Durée de série (années)",
+} as const;
+
+/** Only exact, allowlisted identifiers from this business code may reach the UI. */
+export function businessContextErrorFields(raw: string): string[] {
+  const match = /^BUSINESS_CONTEXT_REQUIRED:([^\r\n]*)$/.exec(raw.trim());
+  if (!match?.[1]) return [];
+  return [...new Set(match[1].split(",").map(field => field.trim()))]
+    .filter((field): field is keyof typeof BUSINESS_FIELDS =>
+      Object.prototype.hasOwnProperty.call(BUSINESS_FIELDS, field))
+    .map(field => BUSINESS_FIELDS[field]);
+}
+
 /** Jamais de message brut de base de données côté client. */
 export function humanRpcError(error: unknown): string {
   const raw =
@@ -164,6 +183,11 @@ export function humanRpcError(error: unknown): string {
       : error && typeof error === "object" && "message" in error
         ? String((error as { message: unknown }).message)
         : "";
+  const fields = businessContextErrorFields(raw);
+  if (fields.length) return msg(
+    "Contexte projet à compléter : {0}. Renseignez ces champs dans le contexte projet ou choisissez « Non défini pour le moment » pour chacun. Rien n'a été enregistré.",
+    [fields.join(", ")], "fr",
+  );
   if (/SITE_LOCATION_REQUIRED/.test(raw)) return "Renseignez la ville et le pays de votre site pour contacter le responsable Standex de votre zone.";
   const hit = MESSAGES.find((m) => m.match.test(raw));
   if (hit) return hit.message;
