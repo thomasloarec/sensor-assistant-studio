@@ -376,6 +376,7 @@ describe("rendu du questionnaire guidé", () => {
       "Detect when the lid is closed; the reed signal goes to a 24 V PLC input.",
       "The 230 VAC 8 A motor is switched by an external properly rated contactor driven by the PLC.",
     );
+    console.log("DBG", document.body.textContent?.slice(0, 3000));
     expect(view.queryAllByTestId("pair-card").length).toBeGreaterThan(0);
   });
 
