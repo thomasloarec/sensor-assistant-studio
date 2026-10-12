@@ -998,10 +998,18 @@ export function DesignSpace({
    * capteur, aucun aimant autorisé) bloque toute proposition de produit tant
    * qu'elle n'est pas levée. Recalculée à chaque édition de réponse. */
   const fit = useMemo(
-    () => assessApplicationFit(dossier.requirements, dossier.freeConstraints),
-    [dossier.requirements, dossier.freeConstraints],
+    () =>
+      assessApplicationFit(dossier.requirements, dossier.freeConstraints, {
+        mountingChosen: dossier.mounting.kind !== "undecided",
+        envelopeSet: [dossier.envelope.lengthMm, dossier.envelope.widthMm, dossier.envelope.heightMm].some(
+          (v) => v !== null,
+        ),
+      }),
+    [dossier.requirements, dossier.freeConstraints, dossier.mounting.kind, dossier.envelope],
   );
   const fitBlocked = fit.blocking;
+  /** Aucune réponse réelle : le bouton final ne mène pas à des capteurs au hasard. */
+  const intakeEmpty = fit.issues.some((i) => i.id === "no_meaningful_requirement");
   /** Un point a réellement été levé dans cette session : seule condition pour
    * afficher la confirmation. Aucune confirmation gratuite au premier écran. */
   const fitEverBlockedRef = useRef(false);
@@ -2071,16 +2079,25 @@ export function DesignSpace({
               ) : (
                 <span aria-hidden="true" />
               )}
-              <Button
-                size="lg"
-                className="min-h-12 px-6 text-base"
-                onClick={() => {
-                  if (!lastQuestion) setFocusIdx((i) => i + 1);
-                  else setTab("montage");
-                }}
-              >
-                {lastQuestion ? t("Voir les capteurs proposés") : t("Continuer")}
-              </Button>
+              <div className="flex flex-col items-end gap-2">
+                <Button
+                  size="lg"
+                  className="min-h-12 px-6 text-base"
+                  disabled={lastQuestion && intakeEmpty}
+                  aria-describedby={lastQuestion && intakeEmpty ? "intake-empty-note" : undefined}
+                  onClick={() => {
+                    if (!lastQuestion) setFocusIdx((i) => i + 1);
+                    else if (!intakeEmpty) setTab("montage");
+                  }}
+                >
+                  {lastQuestion ? t("Voir les capteurs proposés") : t("Continuer")}
+                </Button>
+                {lastQuestion && intakeEmpty ? (
+                  <p id="intake-empty-note" className="t-caption" role="status">
+                    {t("Répondez à au moins une question pour voir des capteurs proposés.")}
+                  </p>
+                ) : null}
+              </div>
             </div>
           </section>
         </div>

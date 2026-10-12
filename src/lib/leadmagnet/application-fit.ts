@@ -24,7 +24,8 @@ export type FitIssueId =
   | "continuous_temperature_measurement"
   | "continuous_flow_measurement"
   | "extreme_temperature_review"
-  | "extreme_gap_review";
+  | "extreme_gap_review"
+  | "no_meaningful_requirement";
 
 export interface FitStep {
   /** Clé d'exigence à ouvrir dans le questionnaire (jamais modifiée ici). */
@@ -241,12 +242,55 @@ const orderedSteps = (evidence: FitEvidence[], required: FitStep[]): FitStep[] =
   );
 };
 
+/** Choix structurés hors texte libre : un montage choisi ou une cote saisie
+ *  sont de vraies exigences, même sans phrase écrite. */
+export interface StructuredIntake {
+  mountingChosen: boolean;
+  envelopeSet: boolean;
+}
+
+const MEANINGFUL = /[\p{L}\p{N}]{2,}/u;
+
+/** Vrai quand AUCUNE exigence réelle n'a été donnée (une question confiée à
+ *  Standex sans texte reste une question sans réponse). */
+export function intakeIsEmpty(
+  requirements: readonly Requirement[],
+  freeConstraints: string,
+  structured: StructuredIntake,
+): boolean {
+  if (structured.mountingChosen || structured.envelopeSet) return false;
+  if (MEANINGFUL.test(freeConstraints)) return false;
+  return !requirements.some((r) => MEANINGFUL.test(r.value ?? ""));
+}
+
 export function assessApplicationFit(
   requirements: readonly Requirement[],
   freeConstraints = "",
+  structured?: StructuredIntake,
 ): FitAssessment {
   const frags = fragments(requirements, freeConstraints);
   const issues: FitIssue[] = [];
+  if (structured && intakeIsEmpty(requirements, freeConstraints, structured)) {
+    const steps = ["detection_goal", "target_object", "states_motion"].map(stepFor);
+    issues.push({
+      id: "no_meaningful_requirement",
+      title: "Décrivez votre besoin pour voir des capteurs proposés",
+      whatWorks:
+        "Une seule réponse concrète suffit pour commencer : ce que vous voulez détecter, ou l'élément qui bouge. Vous pouvez aussi confier vos questions aux ingénieurs Standex.",
+      whatFails:
+        "Proposer des capteurs alors qu'aucune question n'a de réponse : ce serait une suggestion au hasard, pas une recommandation.",
+      whatFailsArgs: [],
+      why: "Les capteurs proposés sont filtrés d'après vos réponses. Sans aucune réponse, aucun filtre ne peut s'appliquer.",
+      diagram: [],
+      cautions: [],
+      changes: [
+        { step: stepFor("detection_goal"), text: "Décrire en une phrase ce que le capteur doit détecter." },
+      ],
+      evidence: [],
+      steps,
+    });
+    return { issues, blocking: true };
+  }
 
   /* ---- Point 1 ---- */
   // Portée LOCALE : une phrase n'affirme l'intention directe que si elle ne la
