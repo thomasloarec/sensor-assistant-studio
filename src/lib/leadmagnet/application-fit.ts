@@ -584,7 +584,7 @@ function validationPoints(frags: Fragment[]): string[] {
       const b = Number(m[2]!.replace(",", "."));
       if (Math.max(a, b) <= 6) return true;
     }
-    return /\b(diameter|diametre|o)\s*(?:of |de )?\d(?:[.,]\d+)?\s*mm\b/.test(f.text) && /\b(\d(?:[.,]\d+)?)\s*mm\b/.test(f.text) && /\b[1-5](?:[.,]\d+)?\s*mm (diameter|diametre)\b|\b(diameter|diametre)\s*(?:of |de )?[1-5](?:[.,]\d+)?\s*mm\b/.test(f.text);
+    return /\b[1-5](?:[.,]\d+)?\s*mm\s*(diameter|diametre|dia)\b|\b(diameter|diametre|dia|ø)\s*(?:of |de )?[1-5](?:[.,]\d+)?\s*mm\b/.test(f.text);
   });
   if (tiny) out.push(VALIDATION_POINT.tinyMagnet);
   const precise = frags.some((f) =>
@@ -721,6 +721,7 @@ function assessModalityAndLimits(frags: Fragment[]): FitIssue[] {
       diagram: [],
       cautions: [
         "Un aimant plus gros, un écart réduit ou un autre emplacement peuvent changer la conclusion : rien n'est déclaré impossible ici.",
+        "Seuil de revue : la plus grande distance publiée dans le guide d'activation Standex. Ce n'est pas une distance validée pour un couple précis ; la limite réelle est confirmée par la R&D Standex.",
       ],
       changes: [
         { step: stepFor("states_motion"), text: "Indiquer si l'aimant peut être rapproché du capteur, et la distance réelle possible." },
