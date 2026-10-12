@@ -106,14 +106,30 @@ export const BUSINESS_FIELD_MESSAGES = {
   seriesDurationYears: "Durée de série : indiquez une durée ou choisissez « Non défini pour le moment ».",
 } as const;
 
+/** Date calendaire AAAA-MM-JJ réellement existante (pas de 2026-02-31). */
+export function isIsoDate(value: unknown): boolean {
+  if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+  const d = new Date(`${value}T00:00:00Z`);
+  return !Number.isNaN(d.getTime()) && d.toISOString().slice(0, 10) === value;
+}
+
 export function missingBusinessContext(dossier: DesignDossier): string[] {
   const b = dossier.business;
   const deferred = new Set(b.undefinedFields ?? []);
   const answered: Record<keyof typeof BUSINESS_FIELD_MESSAGES, boolean> = {
-    annualVolume: b.annualVolume.kind === "known",
-    projectPhase: b.projectPhase !== "unknown",
-    seriesStartDate: typeof b.seriesStartDate === "string" && !Number.isNaN(Date.parse(b.seriesStartDate)),
-    seriesDurationYears: typeof b.seriesDurationYears === "number" && Number.isFinite(b.seriesDurationYears),
+    // Mêmes règles que lead_priv.business_context_missing (migration v1.11).
+    annualVolume:
+      b.annualVolume.kind === "known" &&
+      Number.isSafeInteger(b.annualVolume.sensorsPerYear) &&
+      b.annualVolume.sensorsPerYear > 0 &&
+      b.annualVolume.sensorsPerYear <= 1_000_000_000,
+    projectPhase: ["exploration", "design", "prototype", "industrialisation"].includes(b.projectPhase),
+    seriesStartDate: isIsoDate(b.seriesStartDate),
+    seriesDurationYears:
+      typeof b.seriesDurationYears === "number" &&
+      Number.isFinite(b.seriesDurationYears) &&
+      b.seriesDurationYears > 0 &&
+      b.seriesDurationYears <= 100,
   };
   return (Object.keys(BUSINESS_FIELD_MESSAGES) as (keyof typeof BUSINESS_FIELD_MESSAGES)[])
     .filter((k) => !answered[k] && !deferred.has(k))

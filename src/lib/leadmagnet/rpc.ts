@@ -138,6 +138,11 @@ const EXTRA_MESSAGES: { match: RegExp; message: string }[] = [
       "Cet échantillon correspond à une version dépassée du dossier : une revalidation explicite est nécessaire.",
   },
   {
+    match: /BUSINESS_CONTEXT_REQUIRED/,
+    message:
+      "Contexte projet incomplet : renseignez le volume annuel, la phase, la date de lancement série et la durée de série, ou choisissez « Non défini pour le moment » pour chacun. Rien n'a été enregistré.",
+  },
+  {
     match: /BAD_ANNUAL_VOLUME/,
     message:
       "Le volume annuel doit être un nombre entier de capteurs par an, ou déclaré inconnu : rien n'a été enregistré.",
