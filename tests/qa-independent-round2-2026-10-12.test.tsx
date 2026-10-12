@@ -72,7 +72,7 @@ const fixtures: Fixture[] = [
 const results: Record<string, unknown>[] = [];
 function observe(f: Fixture) {
  const requirements = req(f.a);
- const mounting = f.mounting ?? {kind:'undecided'};
+ const mounting: DesignDossier['mounting'] = f.mounting ?? {kind:'undecided'};
  const envelope = {lengthMm:null,widthMm:null,heightMm:null};
  const fit = assessApplicationFit(requirements,'',{mountingChosen:mounting.kind !== 'undecided',envelopeSet:false});
  const filters = suggestionFilters({mounting,envelope,mountingText:f.a.mounting});
