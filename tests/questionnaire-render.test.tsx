@@ -312,12 +312,71 @@ describe("rendu du questionnaire guidé", () => {
   test("le dernier passage révèle les capteurs sans ajouter de validation", async () => {
     const view = renderQuestionnaire(320);
     await goToQuestion(view, 6);
+    await changeValue(view.getByLabelText("Votre réponse"), "Intérieur, 20 °C, lave-vaisselle.");
     fireEvent.click(view.getByRole("button", { name: "Voir les capteurs proposés" }));
     await waitFor(() => {
       expect(
         view.getByRole("button", { name: "2. Couples proposés" }).getAttribute("aria-current"),
       ).toBe("step");
     });
+  });
+
+  test("P0 vide : aucun capteur proposé, bouton final désactivé et expliqué, autre accès gardé", async () => {
+    const view = renderQuestionnaire(390);
+    await goToQuestion(view, 6);
+    const reveal = view.getByRole("button", { name: "Voir les capteurs proposés" });
+    expect((reveal as HTMLButtonElement).disabled).toBe(true);
+    expect(reveal.getAttribute("aria-describedby")).toBe("intake-empty-note");
+    expect(view.getByText("Répondez à au moins une question pour voir des capteurs proposés.")).toBeTruthy();
+    await act(async () => {
+      fireEvent.click(view.getByRole("button", { name: "2. Couples proposés" }));
+      await Promise.resolve();
+    });
+    await flushState();
+    expect(view.queryAllByTestId("pair-card")).toHaveLength(0);
+    expect(view.getByText("Décrivez votre besoin pour voir des capteurs proposés")).toBeTruthy();
+  });
+
+  async function reveal(view: RenderResult, goal: string, electrical?: string) {
+    await changeValue(view.getByLabelText("Votre réponse"), goal);
+    if (electrical) {
+      await goToQuestion(view, 5);
+      await changeValue(view.getByLabelText("Votre réponse"), electrical);
+    }
+    await goToQuestion(view, 6);
+    await act(async () => {
+      fireEvent.click(view.getByRole("button", { name: "Voir les capteurs proposés" }));
+      await Promise.resolve();
+    });
+    await flushState();
+  }
+
+  test("P0 C01 : courant moteur direct dans le reed sans contacteur → aucune carte", async () => {
+    const view = renderQuestionnaire(390);
+    await reveal(
+      view,
+      "I want all motor current to pass directly through the reed contact, without a relay or contactor.",
+      "230 VAC, 8 A motor.",
+    );
+    expect(view.queryAllByTestId("pair-card")).toHaveLength(0);
+    expect(view.getByText("Le capteur ne peut pas couper lui-même l'alimentation du moteur")).toBeTruthy();
+  });
+
+  test("P0 B02 : mesure continue de température → aucune carte", async () => {
+    const view = renderQuestionnaire(390);
+    await reveal(view, "Continuous temperature measurement from 20 to 250 °C.", "Analog 4-20 mA output.");
+    expect(view.queryAllByTestId("pair-card")).toHaveLength(0);
+    expect(view.getByText("Un capteur reed ne mesure pas une température en continu")).toBeTruthy();
+  });
+
+  test("contrôle positif : contacteur externe dimensionné → cartes proposées", async () => {
+    const view = renderQuestionnaire(390);
+    await reveal(
+      view,
+      "Detect when the lid is closed; the reed signal goes to a 24 V PLC input.",
+      "The 230 VAC 8 A motor is switched by an external properly rated contactor driven by the PLC.",
+    );
+    expect(view.queryAllByTestId("pair-card").length).toBeGreaterThan(0);
   });
 
   test("les libellés de composition changent immédiatement de français à anglais puis japonais", () => {
