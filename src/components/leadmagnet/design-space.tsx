@@ -36,7 +36,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { CandidateThumbnail } from "@/components/leadmagnet/candidate-thumbnail";
 import { PairThumbnail } from "@/components/leadmagnet/pair-thumbnail";
-import { CUSTOM_SENSOR_ID, formatMm, sensorById, sizeLabel } from "@/lib/standex/sensor-catalog";
+import { CUSTOM_SENSOR_ID, formatMm, sensorById, sensorDisplayTitle, sensorDisplayVariant, sizeLabel } from "@/lib/standex/sensor-catalog";
 import {
   blockedBy,
   suggestionFilters,
@@ -2654,7 +2654,7 @@ export function DesignSpace({
         </div>
         {/* Les deux références restent séparées et alignées avec leurs images. */}
         <div className="pair-card-identities" aria-label={t("Capteur et aimant")}>
-          <div><span className="t-label">{t("Capteur")}</span><strong className="t-title-m">{card.sensorId}</strong></div>
+          <div><span className="t-label">{t("Capteur")}</span><strong className="t-title-m" data-testid="pair-sensor-title">{sensorDisplayTitle(card.sensorId)}</strong>{sensorDisplayVariant(card.sensorId) ? <span className="t-caption" data-testid="pair-sensor-variant">{t(sensorDisplayVariant(card.sensorId)!)}</span> : null}</div>
           <div><span className="t-label">{t("Aimant")}</span><strong className="t-title-m">{card.magnetId}</strong></div>
         </div>
         {card.sensorId === CUSTOM_SENSOR_ID ? <p className="notice-info t-caption">{t("Conception sur mesure : forme, fixation et distances à définir avec Standex. Schéma illustratif, sans performance validée.")}</p> : null}
@@ -2877,7 +2877,8 @@ export function DesignSpace({
                   <div className="flex flex-wrap items-center gap-2">
                     {/* Les références (MK03…) traversent t() inchangées ; seul un
                         libellé descriptif comme « Sur mesure » est traduit. */}
-                    <span className="t-title-s">{t(c.name)}</span>
+                    <span className="t-title-s">{t(sensorDisplayTitle(c.id, c.name))}</span>
+                    {sensorDisplayVariant(c.id) ? <span className="t-caption">{t(sensorDisplayVariant(c.id)!)}</span> : null}
 
                     <Badge
                       className="candidate-status-badge"
@@ -2959,7 +2960,8 @@ export function DesignSpace({
           <ul className="mt-3 space-y-2">
             {otherCandidates.map(({ candidate: c, blocked }) => (
               <li key={c.id} className="panel-block">
-                <p className="t-title-s">{t(c.name)}</p>
+                <p className="t-title-s">{t(sensorDisplayTitle(c.id, c.name))}</p>
+                {sensorDisplayVariant(c.id) ? <p className="t-caption">{t(sensorDisplayVariant(c.id)!)}</p> : null}
                 <p className="t-caption t-metric">{c.size}</p>
                 <ul className="mt-2 space-y-1">
                   {blocked.map((id) => {

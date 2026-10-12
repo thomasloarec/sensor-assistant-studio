@@ -357,3 +357,12 @@ export const MAGNET_REFERENCE = { length: 32.4, height: 10, width: 16.7 }; // M0
 export function overallEnvelope(s: SensorModel): readonly [number, number, number] {
   return [Math.max(s.body[0], s.terminalSpan ?? 0), s.body[1], s.body[2]];
 }
+
+/** Titre AFFICHÉ d'une gamme et variante illustrée. L'identifiant interne, la
+ *  source et la géométrie restent inchangés (ex. MK24-A-J). */
+/* i18n-canonical */
+export const SENSOR_DISPLAY: Readonly<Record<string, { title: string; variant: string }>> = {
+  "MK24-A-J": { title: "MK24", variant: "Forme A · connexions J — configuration illustrée" },
+};
+export const sensorDisplayTitle = (id: string, fallback: string = id) => SENSOR_DISPLAY[id]?.title ?? fallback;
+export const sensorDisplayVariant = (id: string): string | null => SENSOR_DISPLAY[id]?.variant ?? null;
