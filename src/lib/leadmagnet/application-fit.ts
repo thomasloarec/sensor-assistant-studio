@@ -17,6 +17,7 @@
  */
 import type { Requirement } from "./dossier";
 import { ACTIVATION_GUIDE } from "@/lib/standex/activation-guide";
+import { SENSOR_SPECIFICATIONS } from "@/lib/standex/sensor-specifications";
 
 export type FitIssueId =
   | "direct_load_switching"
@@ -482,41 +483,115 @@ const DETECT_GOAL = /\b(detect\w*|detecter|detection|signal\w*|alarm\w*|alerte|s
 /** La grandeur est mesurée par un AUTRE appareil : pas une demande au capteur reed. */
 const OTHER_DEVICE = /\b(another|other|separate|existing|autre|separee|separe|existante|existant)\b[^.]{0,20}\b(probe|sensor|system|device|sonde|capteur|systeme|appareil|transmitter|transmetteur)\b/;
 
-/** Températures explicites en °C dans une phrase. */
-function temperaturesC(text: string): number[] {
+/** Températures explicites dans une phrase, converties en °C. Les °F sont
+ *  convertis ; une plage « -40 to +85°C » compte ses DEUX bornes. */
+export function temperaturesC(text: string): number[] {
   const out: number[] = [];
-  for (const m of text.matchAll(/([+-]?\d{2,3}(?:[.,]\d+)?)\s*(?:°|º|deg|degres|degrees)\s*c?\b|([+-]?\d{2,3}(?:[.,]\d+)?)\s*c\b/g)) {
-    const n = Number((m[1] ?? m[2])!.replace(",", "."));
-    if (Number.isFinite(n)) out.push(n);
+  const num = (v: string) => Number(v.replace(",", "."));
+  // Plages : la première borne hérite de l'unité de la seconde.
+  for (const m of text.matchAll(/([+-]?\d{1,3}(?:[.,]\d+)?)\s*(?:°\s*c?)?\s*(?:to|a|-|–|\.\.|…|bis|hasta)\s*([+-]?\d{1,3}(?:[.,]\d+)?)\s*(?:°|º|deg|degres|degrees)\s*(c|f)?\b/g)) {
+    const f = m[3] === "f";
+    for (const v of [m[1]!, m[2]!]) {
+      const n = num(v);
+      if (Number.isFinite(n)) out.push(f ? ((n - 32) * 5) / 9 : n);
+    }
+  }
+  for (const m of text.matchAll(/([+-]?\d{1,3}(?:[.,]\d+)?)\s*(?:(?:°|º|deg|degres|degrees)\s*(c|f|fahrenheit|celsius)?\b|(c|f)\b)/g)) {
+    const n = num(m[1]!);
+    const unit = m[2] ?? m[3] ?? "c";
+    if (!Number.isFinite(n)) continue;
+    const c = unit.startsWith("f") ? ((n - 32) * 5) / 9 : n;
+    if (!out.some((o) => Math.abs(o - c) < 1e-9)) out.push(Math.round(c * 10) / 10);
   }
   return out;
 }
 const THERMAL_OPERATING =
-  /\b(continu|continue|continuous|continuously|permanent|permanente|en permanence|ambient|ambiante|ambiant|fonctionn\w*|operat\w*|withstand|resist\w*|tenir|remain|rester|reste|doit|must|expose|exposed|peak|pointe|pic|stay|survive)\b/;
+  /\b(continu|continue|continuous|continuously|permanent|permanente|en permanence|ambient|ambiante|ambiant|fonctionn\w*|operat\w*|withstand|resist\w*|tenir|remain|rester|reste|doit|must|expose|exposed|peak|pointe|pic|stay|survive|reach|reaches|reaching|atteint|atteindre|monte|rises|max|maxi|maximum|range|plage)\b|\b(at|au|sur|on) (the |le |la )?(capteur|reed|sensor|ils|aimant|magnet)\b|\b(capteur|reed|sensor|ils|aimant|magnet|component|composant)\b[^.]{0,30}\b(at|a|is|est)\b[^.]{0,6}\d/;
 const THERMAL_COMPARISON =
   /\b(unlike|contrairement|compared|comparison|comparaison|par rapport|far below|bien en dessous|bien inferieur|next door|voisin|voisine|whereas|alors que|not exposed|pas expose|jamais expose|never exposed|isole|isolated|away from|loin de)\b/;
-/** Au-delà, aucune limite de fonctionnement de gamme n'est vérifiée dans l'outil. */
-const EXTREME_TEMPERATURE_C = 150;
+/** Un procédé de soudure n'est pas une température de fonctionnement. */
+const THERMAL_PROCESS = /\b(soud\w*|solder\w*|reflow|brasage|refusion|wave)\b/;
+/** Phrase qui décrit une zone AUTRE que le capteur (chambre, four) sans le capteur. */
+const OTHER_ZONE = /\b(chamber|chambre|oven|four|enceinte|furnace|process|fluid|fluide|liquid|liquide|water|eau|oil|huile)\b/;
+const SENSOR_WORD = /\b(capteur|reed|sensor|ils|aimant|magnet|component|composant|mounting point|point de montage)\b/;
 
-/** Plus grande distance publiée au guide : au-delà, rien n'est documenté. */
-const MAX_DOCUMENTED_GAP_MM = (() => {
+/** Plus haute température de FONCTIONNEMENT vérifiée dans les fiches transcrites
+ *  (`sensor-specifications.ts`). Au-delà, aucune gamme standard n'est documentée. */
+export const MAX_VERIFIED_OPERATING_C = Math.max(
+  ...Object.values(SENSOR_SPECIFICATIONS).flatMap((s) => s.temperatures.map((t) => t.max)),
+);
+
+const isSensorSiteTemperature = (f: Fragment) =>
+  temperaturesC(f.text).length > 0 &&
+  THERMAL_OPERATING.test(f.text) &&
+  !THERMAL_COMPARISON.test(f.text) &&
+  !THERMAL_PROCESS.test(f.text) &&
+  // « Chamber at 220°C » sans mention du capteur : zone voisine, pas le capteur.
+  !(OTHER_ZONE.test(f.text) && !SENSOR_WORD.test(f.text));
+
+function sensorSiteRange(frags: Fragment[]): { min: number | null; max: number | null } | null {
+  const temps = frags.filter(isSensorSiteTemperature).flatMap((f) => temperaturesC(f.text));
+  if (!temps.length) return null;
+  const min = Math.min(...temps);
+  const max = Math.max(...temps);
+  return { min: temps.length > 1 || min < 0 ? min : null, max };
+}
+
+/** Écart magnétique publié le plus grand du guide d'activation Standex : SEUIL
+ *  DE REVUE, jamais une distance validée pour un couple précis. */
+export const MAX_DOCUMENTED_GAP_MM = (() => {
   let max = 0;
   for (const r of ACTIVATION_GUIDE.rows)
     for (const v of [r.upMm, r.toMm]) if (typeof v === "number" && Number.isFinite(v)) max = Math.max(max, v);
   return max;
 })();
 const GAP_CONTEXT = /\b(aimant|magnet|sensing|detect\w*|capteur|sensor|ecart|gap|entrefer|distance|away|loin|portee|range)\b/;
-const CABLE_CONTEXT = /\b(cable|cables|cord|wire|wires|fil|fils|longueur de cable|cable length)\b/;
+const CABLE_WORD = /\b(cable|cables|cord|wire|wires|fil|fils|lead|leads|harness)\b/;
 
 function explicitGapsMm(text: string): number[] {
-  if (!GAP_CONTEXT.test(text) || CABLE_CONTEXT.test(text)) return [];
+  if (!GAP_CONTEXT.test(text)) return [];
   const out: number[] = [];
   const unit = (n: number, u: string) => (u === "m" ? n * 1000 : u === "cm" ? n * 10 : n);
-  for (const m of text.matchAll(/\b(?:at|a|distance|gap|ecart|entrefer|range|portee|from|jusqu a|up to)\s+(?:of |de |d )?(\d+(?:[.,]\d+)?)\s*(mm|cm|m)\b/g))
-    out.push(unit(Number(m[1]!.replace(",", ".")), m[2]!));
+  // La longueur de câble est écartée MESURE PAR MESURE (mot câble collé au
+  // nombre), plus jamais toute la phrase.
+  const nearCable = (m: RegExpMatchArray) => {
+    const i = m.index ?? 0;
+    const after = text.slice(i + m[0].length, i + m[0].length + 12);
+    const before = text.slice(Math.max(0, i - 14), i);
+    return CABLE_WORD.test(after) || /\b(cable|cord|wire|fil)\b[^.,;]{0,8}$/.test(before);
+  };
+  for (const m of text.matchAll(/\b(?:at|a|distance|gap|ecart|entrefer|range|portee|from|jusqu a|up to)\s*(?:=|:)?\s*(?:of |de |d )?(\d+(?:[.,]\d+)?)\s*(mm|cm|m)\b/g))
+    if (!nearCable(m)) out.push(unit(Number(m[1]!.replace(",", ".")), m[2]!));
   for (const m of text.matchAll(/(\d+(?:[.,]\d+)?)\s*(mm|cm|m)\s+(?:away|de distance|d ecart|of distance|gap|loin)\b/g))
     out.push(unit(Number(m[1]!.replace(",", ".")), m[2]!));
   return out.filter(Number.isFinite);
+}
+
+/* i18n-canonical : points de validation non bloquants. */
+export const VALIDATION_POINT = {
+  tinyMagnet:
+    "Aimant de très petite taille indiqué : sa capacité à actionner le capteur à la distance prévue doit être vérifiée par la R&D Standex.",
+  precision:
+    "Précision de position de l'ordre du millimètre demandée : aucune précision de commutation n'est garantie sans essai Standex.",
+} as const;
+
+function validationPoints(frags: Fragment[]): string[] {
+  const out: string[] = [];
+  const tiny = frags.some((f) => {
+    if (!/\b(aimant|magnet)\b/.test(f.text)) return false;
+    for (const m of f.text.matchAll(/(\d+(?:[.,]\d+)?)\s*(?:mm)?\s*(?:x|×|\*)\s*(\d+(?:[.,]\d+)?)\s*mm/g)) {
+      const a = Number(m[1]!.replace(",", "."));
+      const b = Number(m[2]!.replace(",", "."));
+      if (Math.max(a, b) <= 6) return true;
+    }
+    return /\b(diameter|diametre|o)\s*(?:of |de )?\d(?:[.,]\d+)?\s*mm\b/.test(f.text) && /\b(\d(?:[.,]\d+)?)\s*mm\b/.test(f.text) && /\b[1-5](?:[.,]\d+)?\s*mm (diameter|diametre)\b|\b(diameter|diametre)\s*(?:of |de )?[1-5](?:[.,]\d+)?\s*mm\b/.test(f.text);
+  });
+  if (tiny) out.push(VALIDATION_POINT.tinyMagnet);
+  const precise = frags.some((f) =>
+    /(±|\+\/-|\+-|plus or minus|plus ou moins)\s*(0(?:[.,]\d+)?|1(?:[.,]0+)?)\s*mm\b/.test(f.text),
+  );
+  if (precise) out.push(VALIDATION_POINT.precision);
+  return out;
 }
 
 function assessModalityAndLimits(frags: Fragment[]): FitIssue[] {
@@ -598,14 +673,11 @@ function assessModalityAndLimits(frags: Fragment[]): FitIssue[] {
 
   /* ---- Température de fonctionnement au-delà de toute limite vérifiée ---- */
   if (!tempModality) {
-    const hot = frags.filter((f) => {
-      const temps = temperaturesC(f.text);
-      return (
-        temps.some((n) => n >= EXTREME_TEMPERATURE_C) &&
-        THERMAL_OPERATING.test(f.text) &&
-        !THERMAL_COMPARISON.test(f.text)
-      );
-    });
+    // Au-delà de la plus haute limite VÉRIFIÉE (MK21 : 150 °C) seulement. De
+    // 131 à 150 °C, aucun blocage : avertissement par candidat (thermal-fit.ts).
+    const hot = frags.filter(
+      (f) => isSensorSiteTemperature(f) && temperaturesC(f.text).some((n) => n > MAX_VERIFIED_OPERATING_C),
+    );
     if (hot.length > 0) {
       const max = Math.max(...hot.flatMap((f) => temperaturesC(f.text)));
       const evidence = hot.map((f) => ({ step: f.step, quote: f.quote }));
