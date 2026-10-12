@@ -2648,7 +2648,7 @@ export function DesignSpace({
         />
         <div className="pair-card-status mt-3 flex flex-wrap items-center gap-2">
           <p className="t-label">
-            {index === 0 && !compact ? t("Recommandé") : t(card.familyLabel)}
+            {index === 0 && !compact && !fit.explorationOnly ? t("Recommandé") : t(card.familyLabel)}
           </p>
           {chosen ? <Badge className="candidate-status-badge">{t("Choisi ✓")}</Badge> : null}
         </div>
@@ -2732,8 +2732,14 @@ export function DesignSpace({
       {fitBlocked ? null : (
       <div className="panel-block-lg">
         <p className="t-label">{t("D'après vos réponses")}</p>
-        <h2 className="t-display-m">{pairsTitle}</h2>
-        <p className="t-body mt-2">{pairsSubtitle}</p>
+        <h2 className="t-display-m">{fit.explorationOnly ? t("Exploration du catalogue uniquement") : pairsTitle}</h2>
+        {fit.explorationOnly ? (
+          <p className="notice-info t-body mt-2" data-testid="exploration-only">
+            {t("Aucune recommandation : vous n'avez pas encore décrit ce que le capteur doit détecter. Ces couples correspondent seulement à vos choix mécaniques. Décrivez votre besoin, ou confiez la demande à Standex pour une étude sur mesure.")}
+          </p>
+        ) : (
+          <p className="t-body mt-2">{pairsSubtitle}</p>
+        )}
         {/* Une seule rangée de puces sous le sous-titre ; tout le réglage fin
             est replié derrière « Ajuster les critères ». */}
         {filterChips ? <div className="mt-3">{filterChips}</div> : null}
