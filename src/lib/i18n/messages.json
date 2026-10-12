@@ -29023,5 +29023,311 @@
     "Опишите условия эксплуатации…",
     "Descrivete le condizioni d'uso…",
     "使用条件について記入してください…"
+  ],
+  "Décrivez votre besoin pour voir des capteurs proposés": [
+    "Describe your need to see suggested sensors",
+    "描述您的需求以查看推荐的传感器",
+    "Beschreiben Sie Ihren Bedarf, um vorgeschlagene Sensoren zu sehen",
+    "Describa su necesidad para ver los sensores propuestos",
+    "Опишите вашу задачу, чтобы увидеть предлагаемые датчики",
+    "Descriva la sua esigenza per vedere i sensori proposti",
+    "ご要件を記入すると、提案センサーが表示されます"
+  ],
+  "Une seule réponse concrète suffit pour commencer : ce que vous voulez détecter, ou l'élément qui bouge. Vous pouvez aussi confier vos questions aux ingénieurs Standex.": [
+    "A single concrete answer is enough to start: what you want to detect, or the part that moves. You can also hand your questions over to Standex engineers.",
+    "一个具体的回答就足以开始：您想检测什么，或哪个部件在移动。您也可以将问题交给 Standex 工程师。",
+    "Eine einzige konkrete Antwort genügt für den Anfang: was Sie erfassen möchten oder welches Teil sich bewegt. Sie können Ihre Fragen auch den Standex-Ingenieuren überlassen.",
+    "Una sola respuesta concreta basta para empezar: qué quiere detectar o qué pieza se mueve. También puede confiar sus preguntas a los ingenieros de Standex.",
+    "Для начала достаточно одного конкретного ответа: что нужно обнаружить или какая деталь движется. Вы также можете передать вопросы инженерам Standex.",
+    "Basta una sola risposta concreta per iniziare: cosa vuole rilevare o quale parte si muove. Può anche affidare le domande agli ingegneri Standex.",
+    "まずは具体的な回答が1つあれば十分です：検出したいもの、または動く部品。質問を Standex のエンジニアに任せることもできます。"
+  ],
+  "Proposer des capteurs alors qu'aucune question n'a de réponse : ce serait une suggestion au hasard, pas une recommandation.": [
+    "Suggesting sensors when no question has an answer: that would be a random suggestion, not a recommendation.",
+    "在没有任何问题得到回答时推荐传感器：那只是随机建议，而不是推荐。",
+    "Sensoren vorschlagen, obwohl keine Frage beantwortet ist: Das wäre ein Zufallsvorschlag, keine Empfehlung.",
+    "Proponer sensores sin que ninguna pregunta tenga respuesta: sería una sugerencia al azar, no una recomendación.",
+    "Предлагать датчики, когда ни на один вопрос нет ответа: это было бы случайное предложение, а не рекомендация.",
+    "Proporre sensori senza alcuna risposta alle domande: sarebbe un suggerimento a caso, non una raccomandazione.",
+    "どの質問にも回答がないままセンサーを提案すること：それは推奨ではなく、無作為な提案になります。"
+  ],
+  "Les capteurs proposés sont filtrés d'après vos réponses. Sans aucune réponse, aucun filtre ne peut s'appliquer.": [
+    "Suggested sensors are filtered from your answers. Without any answer, no filter can apply.",
+    "推荐的传感器根据您的回答进行筛选。没有任何回答，就无法应用任何筛选。",
+    "Die vorgeschlagenen Sensoren werden anhand Ihrer Antworten gefiltert. Ohne Antwort kann kein Filter greifen.",
+    "Los sensores propuestos se filtran según sus respuestas. Sin ninguna respuesta, no se puede aplicar ningún filtro.",
+    "Предлагаемые датчики отбираются по вашим ответам. Без ответов никакой фильтр применить нельзя.",
+    "I sensori proposti sono filtrati in base alle sue risposte. Senza alcuna risposta, nessun filtro può applicarsi.",
+    "提案センサーは回答に基づいて絞り込まれます。回答がなければ、絞り込みは行えません。"
+  ],
+  "Décrire en une phrase ce que le capteur doit détecter.": [
+    "Describe in one sentence what the sensor must detect.",
+    "用一句话描述传感器必须检测什么。",
+    "Beschreiben Sie in einem Satz, was der Sensor erfassen soll.",
+    "Describa en una frase lo que debe detectar el sensor.",
+    "Опишите одним предложением, что должен обнаруживать датчик.",
+    "Descriva in una frase cosa deve rilevare il sensore.",
+    "センサーが検出すべきものを1文で記述してください。"
+  ],
+  "Un capteur reed ne mesure pas une température en continu": [
+    "A reed sensor does not measure temperature continuously",
+    "干簧传感器不能连续测量温度",
+    "Ein Reed-Sensor misst keine Temperatur kontinuierlich",
+    "Un sensor reed no mide la temperatura de forma continua",
+    "Герконовый датчик не измеряет температуру непрерывно",
+    "Un sensore reed non misura la temperatura in modo continuo",
+    "リードセンサーは温度を連続測定しません"
+  ],
+  "Un capteur reed associé à un aimant donne un état tout-ou-rien : présence, position, fin de course ou seuil d'un élément mobile.": [
+    "A reed sensor paired with a magnet gives an on/off state: presence, position, end of travel or threshold of a moving part.",
+    "干簧传感器与磁铁配合给出通/断状态：存在、位置、行程终点或移动部件的阈值。",
+    "Ein Reed-Sensor mit Magnet liefert einen Ein/Aus-Zustand: Anwesenheit, Position, Endlage oder Schwelle eines beweglichen Teils.",
+    "Un sensor reed asociado a un imán da un estado todo o nada: presencia, posición, final de carrera o umbral de una pieza móvil.",
+    "Герконовый датчик с магнитом даёт состояние «вкл/выкл»: наличие, положение, конец хода или порог движущейся детали.",
+    "Un sensore reed abbinato a un magnete fornisce uno stato on/off: presenza, posizione, fine corsa o soglia di una parte mobile.",
+    "リードセンサーと磁石の組み合わせはオン/オフ状態を出力します：有無、位置、終端、または可動部のしきい値。"
+  ],
+  "Fournir une mesure proportionnelle et continue de température (signal analogique) : ce n'est pas le principe d'un contact reed.": [
+    "Providing a proportional, continuous temperature measurement (analog signal): that is not how a reed contact works.",
+    "提供比例、连续的温度测量（模拟信号）：这不是干簧触点的工作原理。",
+    "Eine proportionale, kontinuierliche Temperaturmessung (Analogsignal) liefern: Das ist nicht das Prinzip eines Reed-Kontakts.",
+    "Proporcionar una medición de temperatura proporcional y continua (señal analógica): no es el principio de un contacto reed.",
+    "Давать пропорциональное непрерывное измерение температуры (аналоговый сигнал): геркон работает не так.",
+    "Fornire una misura di temperatura proporzionale e continua (segnale analogico): non è il principio di un contatto reed.",
+    "比例的・連続的な温度測定（アナログ信号）を提供すること：それはリード接点の原理ではありません。"
+  ],
+  "Le contact reed s'ouvre ou se ferme sous l'effet d'un champ magnétique. Il ne produit pas de valeur proportionnelle à la température.": [
+    "The reed contact opens or closes under a magnetic field. It does not produce a value proportional to temperature.",
+    "干簧触点在磁场作用下断开或闭合。它不会产生与温度成比例的数值。",
+    "Der Reed-Kontakt öffnet oder schließt unter einem Magnetfeld. Er erzeugt keinen zur Temperatur proportionalen Wert.",
+    "El contacto reed se abre o se cierra bajo un campo magnético. No produce un valor proporcional a la temperatura.",
+    "Геркон размыкается или замыкается под действием магнитного поля. Он не выдаёт значение, пропорциональное температуре.",
+    "Il contatto reed si apre o si chiude sotto un campo magnetico. Non produce un valore proporzionale alla temperatura.",
+    "リード接点は磁界によって開閉します。温度に比例した値は出力しません。"
+  ],
+  "Une mesure de température continue relève d'une autre technologie (sonde de température, thermocouple, RTD) : nous ne garantissons pas d'avance sa performance.": [
+    "Continuous temperature measurement calls for another technology (temperature probe, thermocouple, RTD): we do not guarantee its performance in advance.",
+    "连续温度测量需要其他技术（温度探头、热电偶、RTD）：我们不预先保证其性能。",
+    "Eine kontinuierliche Temperaturmessung erfordert eine andere Technologie (Temperaturfühler, Thermoelement, RTD): Wir garantieren deren Leistung nicht im Voraus.",
+    "Una medición continua de temperatura requiere otra tecnología (sonda de temperatura, termopar, RTD): no garantizamos de antemano su rendimiento.",
+    "Непрерывное измерение температуры требует другой технологии (датчик температуры, термопара, RTD): мы не гарантируем заранее её характеристики.",
+    "Una misura continua di temperatura richiede un'altra tecnologia (sonda di temperatura, termocoppia, RTD): non ne garantiamo in anticipo le prestazioni.",
+    "連続温度測定には別の技術（温度プローブ、熱電対、RTD）が必要です：その性能を事前に保証するものではありません。"
+  ],
+  "Si votre besoin est en réalité un état (seuil atteint, position d'un élément mobile), décrivez cet état et l'élément qui bouge.": [
+    "If your need is actually a state (threshold reached, position of a moving part), describe that state and the part that moves.",
+    "如果您的需求实际上是一种状态（达到阈值、移动部件的位置），请描述该状态及移动的部件。",
+    "Wenn Ihr Bedarf eigentlich ein Zustand ist (Schwelle erreicht, Position eines beweglichen Teils), beschreiben Sie diesen Zustand und das bewegte Teil.",
+    "Si su necesidad es en realidad un estado (umbral alcanzado, posición de una pieza móvil), describa ese estado y la pieza que se mueve.",
+    "Если ваша задача на самом деле — состояние (достигнут порог, положение движущейся детали), опишите это состояние и движущуюся деталь.",
+    "Se la sua esigenza è in realtà uno stato (soglia raggiunta, posizione di una parte mobile), descriva quello stato e la parte che si muove.",
+    "実際の要件が状態（しきい値到達、可動部の位置）であれば、その状態と動く部品を記述してください。"
+  ],
+  "Indiquer si un signal tout-ou-rien convient à la place d'un signal analogique.": [
+    "State whether an on/off signal would work instead of an analog signal.",
+    "说明通/断信号能否代替模拟信号。",
+    "Geben Sie an, ob ein Ein/Aus-Signal statt eines Analogsignals genügt.",
+    "Indique si una señal todo o nada serviría en lugar de una señal analógica.",
+    "Укажите, подойдёт ли дискретный сигнал вместо аналогового.",
+    "Indichi se un segnale on/off andrebbe bene al posto di un segnale analogico.",
+    "アナログ信号の代わりにオン/オフ信号で対応できるかを記入してください。"
+  ],
+  "Un capteur reed ne mesure pas un débit en continu sans élément mobile aimanté": [
+    "A reed sensor does not measure flow continuously without a magnetised moving part",
+    "没有带磁的移动部件，干簧传感器无法连续测量流量",
+    "Ein Reed-Sensor misst ohne magnetisiertes bewegliches Teil keinen Durchfluss kontinuierlich",
+    "Un sensor reed no mide un caudal de forma continua sin una pieza móvil imantada",
+    "Герконовый датчик не измеряет расход непрерывно без намагниченной подвижной детали",
+    "Un sensore reed non misura una portata in modo continuo senza una parte mobile magnetizzata",
+    "磁化された可動部がなければ、リードセンサーは流量を連続測定できません"
+  ],
+  "Un capteur reed peut signaler un passage ou un seuil quand un élément aimanté bouge avec le fluide (rotor, palette ou flotteur instrumenté).": [
+    "A reed sensor can signal a passage or a threshold when a magnetised part moves with the fluid (instrumented rotor, paddle or float).",
+    "当带磁部件随流体移动时（带仪表的转子、叶片或浮子），干簧传感器可以发出通过或阈值信号。",
+    "Ein Reed-Sensor kann einen Durchgang oder eine Schwelle melden, wenn sich ein magnetisiertes Teil mit dem Fluid bewegt (instrumentierter Rotor, Paddel oder Schwimmer).",
+    "Un sensor reed puede señalar un paso o un umbral cuando una pieza imantada se mueve con el fluido (rotor, paleta o flotador instrumentado).",
+    "Герконовый датчик может сигнализировать прохождение или порог, когда намагниченная деталь движется вместе с жидкостью (ротор, лопасть или поплавок).",
+    "Un sensore reed può segnalare un passaggio o una soglia quando una parte magnetizzata si muove con il fluido (rotore, paletta o galleggiante strumentato).",
+    "磁化された部品が流体とともに動く場合（計測用ロータ、パドル、フロート）、リードセンサーは通過やしきい値を知らせることができます。"
+  ],
+  "Mesurer un débit de façon proportionnelle et continue dans une conduite sans aucun aimant ni élément mobile : le contact n'a rien qui l'actionne.": [
+    "Measuring flow proportionally and continuously in a pipe with no magnet and no moving part: nothing actuates the contact.",
+    "在没有任何磁铁和移动部件的管道中按比例连续测量流量：没有任何东西能驱动触点。",
+    "Den Durchfluss proportional und kontinuierlich in einer Leitung ohne Magnet und ohne bewegliches Teil messen: Nichts betätigt den Kontakt.",
+    "Medir un caudal de forma proporcional y continua en una tubería sin imán ni pieza móvil: nada acciona el contacto.",
+    "Измерять расход пропорционально и непрерывно в трубе без магнита и подвижных деталей: контакт ничто не приводит в действие.",
+    "Misurare una portata in modo proporzionale e continuo in un tubo senza magnete né parti mobili: nulla aziona il contatto.",
+    "磁石も可動部もない配管で流量を比例的・連続的に測定すること：接点を作動させるものがありません。"
+  ],
+  "Vos réponses interdisent tout élément mobile ou aimant dans la conduite et demandent un signal analogique. Un contact reed ne fournit qu'un état tout-ou-rien déclenché par un champ magnétique.": [
+    "Your answers forbid any moving part or magnet in the pipe and ask for an analog signal. A reed contact only provides an on/off state triggered by a magnetic field.",
+    "您的回答禁止管道内有任何移动部件或磁铁，并要求模拟信号。干簧触点只提供由磁场触发的通/断状态。",
+    "Ihre Antworten verbieten jedes bewegliche Teil und jeden Magneten in der Leitung und verlangen ein Analogsignal. Ein Reed-Kontakt liefert nur einen durch ein Magnetfeld ausgelösten Ein/Aus-Zustand.",
+    "Sus respuestas prohíben cualquier pieza móvil o imán en la tubería y piden una señal analógica. Un contacto reed solo ofrece un estado todo o nada activado por un campo magnético.",
+    "Ваши ответы запрещают любые подвижные детали и магниты в трубе и требуют аналоговый сигнал. Геркон даёт только дискретное состояние, вызванное магнитным полем.",
+    "Le sue risposte vietano qualsiasi parte mobile o magnete nel tubo e chiedono un segnale analogico. Un contatto reed fornisce solo uno stato on/off attivato da un campo magnetico.",
+    "回答では配管内の可動部や磁石を禁止し、アナログ信号を求めています。リード接点は磁界で作動するオン/オフ状態しか出力しません。"
+  ],
+  "Une mesure de débit sans pièce mobile relève d'une autre technologie (électromagnétique, ultrasons, thermique) : nous ne garantissons pas d'avance sa performance.": [
+    "Flow measurement without moving parts calls for another technology (electromagnetic, ultrasonic, thermal): we do not guarantee its performance in advance.",
+    "无移动部件的流量测量需要其他技术（电磁、超声波、热式）：我们不预先保证其性能。",
+    "Eine Durchflussmessung ohne bewegliche Teile erfordert eine andere Technologie (magnetisch-induktiv, Ultraschall, thermisch): Wir garantieren deren Leistung nicht im Voraus.",
+    "Una medición de caudal sin piezas móviles requiere otra tecnología (electromagnética, ultrasonidos, térmica): no garantizamos de antemano su rendimiento.",
+    "Измерение расхода без подвижных деталей требует другой технологии (электромагнитной, ультразвуковой, тепловой): мы не гарантируем заранее её характеристики.",
+    "Una misura di portata senza parti mobili richiede un'altra tecnologia (elettromagnetica, a ultrasuoni, termica): non ne garantiamo in anticipo le prestazioni.",
+    "可動部のない流量測定には別の技術（電磁式、超音波式、熱式）が必要です：その性能を事前に保証するものではありません。"
+  ],
+  "Indiquer si un élément mobile aimanté (rotor, palette, flotteur) peut être intégré à la conduite.": [
+    "State whether a magnetised moving part (rotor, paddle, float) can be fitted in the pipe.",
+    "说明管道中能否安装带磁的移动部件（转子、叶片、浮子）。",
+    "Geben Sie an, ob ein magnetisiertes bewegliches Teil (Rotor, Paddel, Schwimmer) in die Leitung eingebaut werden kann.",
+    "Indique si se puede integrar en la tubería una pieza móvil imantada (rotor, paleta, flotador).",
+    "Укажите, можно ли установить в трубе намагниченную подвижную деталь (ротор, лопасть, поплавок).",
+    "Indichi se una parte mobile magnetizzata (rotore, paletta, galleggiante) può essere integrata nel tubo.",
+    "配管内に磁化された可動部（ロータ、パドル、フロート）を組み込めるかを記入してください。"
+  ],
+  "Indiquer si un signal d'impulsions ou de seuil convient à la place d'un signal analogique.": [
+    "State whether a pulse or threshold signal would work instead of an analog signal.",
+    "说明脉冲或阈值信号能否代替模拟信号。",
+    "Geben Sie an, ob ein Impuls- oder Schwellensignal statt eines Analogsignals genügt.",
+    "Indique si una señal de impulsos o de umbral serviría en lugar de una señal analógica.",
+    "Укажите, подойдёт ли импульсный или пороговый сигнал вместо аналогового.",
+    "Indichi se un segnale a impulsi o di soglia andrebbe bene al posto di un segnale analogico.",
+    "アナログ信号の代わりにパルス信号やしきい値信号で対応できるかを記入してください。"
+  ],
+  "Aucune correspondance standard documentée à cette température": [
+    "No documented standard match at this temperature",
+    "在此温度下没有已记录的标准匹配",
+    "Keine dokumentierte Standardlösung bei dieser Temperatur",
+    "Ninguna correspondencia estándar documentada a esta temperatura",
+    "Нет задокументированного стандартного решения для этой температуры",
+    "Nessuna corrispondenza standard documentata a questa temperatura",
+    "この温度に対応する標準品の記載はありません"
+  ],
+  "Votre projet peut être étudié par l'ingénierie Standex : une solution adaptée à cette température n'est pas exclue.": [
+    "Your project can be studied by Standex engineering: a solution suited to this temperature is not ruled out.",
+    "您的项目可由 Standex 工程部门研究：并不排除适合此温度的解决方案。",
+    "Ihr Projekt kann vom Standex-Engineering untersucht werden: Eine für diese Temperatur geeignete Lösung ist nicht ausgeschlossen.",
+    "Su proyecto puede ser estudiado por la ingeniería de Standex: no se descarta una solución adaptada a esta temperatura.",
+    "Ваш проект может изучить инженерная служба Standex: решение для этой температуры не исключено.",
+    "Il suo progetto può essere studiato dall'ingegneria Standex: una soluzione adatta a questa temperatura non è esclusa.",
+    "お客様のプロジェクトは Standex のエンジニアリングで検討できます：この温度に適した解決策が除外されるわけではありません。"
+  ],
+  "Proposer ici un capteur standard pour {0} °C au point de montage : aucune limite de fonctionnement vérifiée dans cet outil ne couvre cette température.": [
+    "Suggesting a standard sensor here for {0} °C at the mounting point: no operating limit verified in this tool covers this temperature.",
+    "在此为安装点 {0} °C 推荐标准传感器：本工具中没有经过验证的工作极限覆盖此温度。",
+    "Hier einen Standardsensor für {0} °C am Einbauort vorschlagen: Keine in diesem Tool geprüfte Betriebsgrenze deckt diese Temperatur ab.",
+    "Proponer aquí un sensor estándar para {0} °C en el punto de montaje: ningún límite de funcionamiento verificado en esta herramienta cubre esta temperatura.",
+    "Предлагать здесь стандартный датчик для {0} °C в месте установки: ни один проверенный в этом инструменте рабочий предел не охватывает эту температуру.",
+    "Proporre qui un sensore standard per {0} °C nel punto di montaggio: nessun limite di funzionamento verificato in questo strumento copre questa temperatura.",
+    "取付位置で {0} °C となる条件に標準センサーをここで提案すること：本ツールで検証済みの動作限界はこの温度をカバーしていません。"
+  ],
+  "Proposer une gamme standard sans limite de température vérifiée laisserait croire qu'elle convient. La tenue du capteur, de l'aimant et du câble doit être évaluée par la R&D Standex.": [
+    "Suggesting a standard range without a verified temperature limit would suggest it is suitable. The withstand of the sensor, magnet and cable must be assessed by Standex R&D.",
+    "在没有经过验证的温度极限的情况下推荐标准系列，会让人以为它适用。传感器、磁铁和电缆的耐受性必须由 Standex 研发部门评估。",
+    "Eine Standardbaureihe ohne geprüfte Temperaturgrenze vorzuschlagen, würde Eignung suggerieren. Die Beständigkeit von Sensor, Magnet und Kabel muss von der Standex-F&E bewertet werden.",
+    "Proponer una gama estándar sin límite de temperatura verificado haría creer que es adecuada. La resistencia del sensor, del imán y del cable debe evaluarla la I+D de Standex.",
+    "Предложение стандартной серии без проверенного температурного предела создало бы впечатление, что она подходит. Стойкость датчика, магнита и кабеля должна оценить служба НИОКР Standex.",
+    "Proporre una gamma standard senza limite di temperatura verificato farebbe credere che sia adatta. La tenuta di sensore, magnete e cavo deve essere valutata dalla R&S Standex.",
+    "検証済みの温度限界がない標準シリーズを提案すると、適合すると誤解させます。センサー、磁石、ケーブルの耐性は Standex の研究開発部門が評価する必要があります。"
+  ],
+  "Ce n'est ni un refus ni une impossibilité : c'est une revue d'ingénierie Standex obligatoire avant toute proposition.": [
+    "This is neither a refusal nor an impossibility: it is a mandatory Standex engineering review before any proposal.",
+    "这既不是拒绝也不是不可能：这是任何方案提出前必须进行的 Standex 工程评审。",
+    "Dies ist weder eine Ablehnung noch eine Unmöglichkeit: Es ist eine verpflichtende Standex-Engineering-Prüfung vor jedem Vorschlag.",
+    "No es un rechazo ni una imposibilidad: es una revisión de ingeniería de Standex obligatoria antes de cualquier propuesta.",
+    "Это не отказ и не невозможность: это обязательная инженерная проверка Standex перед любым предложением.",
+    "Non è né un rifiuto né un'impossibilità: è una revisione di ingegneria Standex obbligatoria prima di qualsiasi proposta.",
+    "これは拒否でも不可能の判断でもありません：提案前に必須となる Standex のエンジニアリングレビューです。"
+  ],
+  "Préciser la température réelle au point de montage du capteur et de l'aimant, en continu et en pointe.": [
+    "Specify the actual temperature at the mounting point of the sensor and the magnet, continuous and peak.",
+    "请说明传感器和磁铁安装点的实际温度，包括持续温度和峰值温度。",
+    "Geben Sie die tatsächliche Temperatur am Einbauort von Sensor und Magnet an, dauerhaft und als Spitze.",
+    "Precise la temperatura real en el punto de montaje del sensor y del imán, en continuo y en pico.",
+    "Уточните фактическую температуру в месте установки датчика и магнита — постоянную и пиковую.",
+    "Precisi la temperatura reale nel punto di montaggio del sensore e del magnete, continua e di picco.",
+    "センサーと磁石の取付位置における実際の温度（連続およびピーク）を記入してください。"
+  ],
+  "Si cette température concerne une autre zone de la machine, l'indiquer : le capteur peut être placé à l'écart de la source de chaleur.": [
+    "If this temperature concerns another area of the machine, say so: the sensor can be placed away from the heat source.",
+    "如果此温度涉及机器的其他区域，请说明：传感器可以远离热源安装。",
+    "Wenn diese Temperatur einen anderen Bereich der Maschine betrifft, geben Sie es an: Der Sensor kann abseits der Wärmequelle platziert werden.",
+    "Si esta temperatura corresponde a otra zona de la máquina, indíquelo: el sensor puede colocarse lejos de la fuente de calor.",
+    "Если эта температура относится к другой зоне машины, укажите это: датчик можно разместить вдали от источника тепла.",
+    "Se questa temperatura riguarda un'altra zona della macchina, lo indichi: il sensore può essere posizionato lontano dalla fonte di calore.",
+    "この温度が機械の別の部位に関するものであれば、その旨を記入してください：センサーは熱源から離して配置できます。"
+  ],
+  "Aucune distance de détection documentée à cet écart": [
+    "No documented sensing distance at this gap",
+    "在此间距下没有已记录的检测距离",
+    "Kein dokumentierter Schaltabstand bei diesem Abstand",
+    "Ninguna distancia de detección documentada para esta separación",
+    "Нет задокументированного расстояния срабатывания для этого зазора",
+    "Nessuna distanza di rilevamento documentata a questa distanza",
+    "この距離に対応する検出距離の記載はありません"
+  ],
+  "Votre besoin peut faire l'objet d'une étude de faisabilité par l'ingénierie Standex, sans engagement de résultat.": [
+    "Your need can be the subject of a feasibility study by Standex engineering, with no commitment to a result.",
+    "您的需求可由 Standex 工程部门进行可行性研究，但不承诺结果。",
+    "Ihr Bedarf kann Gegenstand einer Machbarkeitsstudie durch das Standex-Engineering sein, ohne Ergebniszusage.",
+    "Su necesidad puede ser objeto de un estudio de viabilidad por la ingeniería de Standex, sin compromiso de resultado.",
+    "Ваша задача может стать предметом технико-экономического исследования инженерной службы Standex без гарантии результата.",
+    "La sua esigenza può essere oggetto di uno studio di fattibilità da parte dell'ingegneria Standex, senza impegno di risultato.",
+    "ご要件は Standex のエンジニアリングによる実現可能性調査の対象にできます（結果は保証されません）。"
+  ],
+  "Annoncer un capteur standard à {0} mm de l'aimant : c'est au-delà de toutes les distances d'activation publiées par Standex.": [
+    "Announcing a standard sensor at {0} mm from the magnet: this is beyond all activation distances published by Standex.",
+    "宣称标准传感器可在距磁铁 {0} mm 处工作：这超出了 Standex 公布的所有动作距离。",
+    "Einen Standardsensor bei {0} mm vom Magneten ankündigen: Das liegt jenseits aller von Standex veröffentlichten Ansprechabstände.",
+    "Anunciar un sensor estándar a {0} mm del imán: está más allá de todas las distancias de activación publicadas por Standex.",
+    "Заявлять стандартный датчик на расстоянии {0} мм от магнита: это за пределами всех расстояний срабатывания, опубликованных Standex.",
+    "Annunciare un sensore standard a {0} mm dal magnete: è oltre tutte le distanze di attivazione pubblicate da Standex.",
+    "磁石から {0} mm で標準センサーを示すこと：Standex が公開しているすべての作動距離を超えています。"
+  ],
+  "La distance d'activation dépend de l'aimant, de son orientation et du capteur. Aucune distance n'est extrapolée au-delà des valeurs publiées, et aucune précision de position n'est garantie sans essai.": [
+    "The activation distance depends on the magnet, its orientation and the sensor. No distance is extrapolated beyond published values, and no positional accuracy is guaranteed without testing.",
+    "动作距离取决于磁铁、其方向和传感器。不会在公布值之外外推任何距离，未经测试也不保证任何位置精度。",
+    "Der Ansprechabstand hängt vom Magneten, seiner Ausrichtung und vom Sensor ab. Kein Abstand wird über die veröffentlichten Werte hinaus extrapoliert, und ohne Versuch wird keine Positionsgenauigkeit garantiert.",
+    "La distancia de activación depende del imán, de su orientación y del sensor. Ninguna distancia se extrapola más allá de los valores publicados y no se garantiza ninguna precisión de posición sin ensayo.",
+    "Расстояние срабатывания зависит от магнита, его ориентации и датчика. Расстояния не экстраполируются за пределы опубликованных значений, а точность положения без испытаний не гарантируется.",
+    "La distanza di attivazione dipende dal magnete, dal suo orientamento e dal sensore. Nessuna distanza viene estrapolata oltre i valori pubblicati e nessuna precisione di posizione è garantita senza prova.",
+    "作動距離は磁石、その向き、センサーによって決まります。公開値を超えて距離を外挿することはなく、試験なしに位置精度を保証することもありません。"
+  ],
+  "Un aimant plus gros, un écart réduit ou un autre emplacement peuvent changer la conclusion : rien n'est déclaré impossible ici.": [
+    "A bigger magnet, a smaller gap or another location may change the conclusion: nothing is declared impossible here.",
+    "更大的磁铁、更小的间距或其他位置可能改变结论：这里没有宣布任何事情不可能。",
+    "Ein größerer Magnet, ein geringerer Abstand oder ein anderer Ort können das Ergebnis ändern: Hier wird nichts für unmöglich erklärt.",
+    "Un imán más grande, una separación menor u otra ubicación pueden cambiar la conclusión: aquí no se declara nada imposible.",
+    "Более крупный магнит, меньший зазор или другое место могут изменить вывод: здесь ничто не объявлено невозможным.",
+    "Un magnete più grande, una distanza ridotta o un'altra posizione possono cambiare la conclusione: qui nulla è dichiarato impossibile.",
+    "より大きな磁石、より小さな距離、別の配置で結論が変わる可能性があります：ここでは何も不可能とは判断していません。"
+  ],
+  "Indiquer si l'aimant peut être rapproché du capteur, et la distance réelle possible.": [
+    "State whether the magnet can be brought closer to the sensor, and the actual distance possible.",
+    "说明磁铁能否靠近传感器，以及实际可行的距离。",
+    "Geben Sie an, ob der Magnet näher an den Sensor gebracht werden kann, und den tatsächlich möglichen Abstand.",
+    "Indique si el imán puede acercarse al sensor y la distancia real posible.",
+    "Укажите, можно ли приблизить магнит к датчику, и реально возможное расстояние.",
+    "Indichi se il magnete può essere avvicinato al sensore e la distanza reale possibile.",
+    "磁石をセンサーに近づけられるか、また実際に可能な距離を記入してください。"
+  ],
+  "Indiquer si un aimant plus grand peut être utilisé.": [
+    "State whether a larger magnet can be used.",
+    "说明能否使用更大的磁铁。",
+    "Geben Sie an, ob ein größerer Magnet verwendet werden kann.",
+    "Indique si se puede utilizar un imán más grande.",
+    "Укажите, можно ли использовать более крупный магнит.",
+    "Indichi se è possibile utilizzare un magnete più grande.",
+    "より大きな磁石を使用できるかを記入してください。"
+  ],
+  "Répondez à au moins une question pour voir des capteurs proposés.": [
+    "Answer at least one question to see suggested sensors.",
+    "请至少回答一个问题以查看推荐的传感器。",
+    "Beantworten Sie mindestens eine Frage, um vorgeschlagene Sensoren zu sehen.",
+    "Responda al menos una pregunta para ver los sensores propuestos.",
+    "Ответьте хотя бы на один вопрос, чтобы увидеть предлагаемые датчики.",
+    "Risponda ad almeno una domanda per vedere i sensori proposti.",
+    "提案センサーを表示するには、少なくとも1つの質問に回答してください。"
   ]
 }
