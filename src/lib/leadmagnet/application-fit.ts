@@ -605,7 +605,7 @@ function assessModalityAndLimits(frags: Fragment[]): FitIssue[] {
    * de détection tout-ou-rien écrit explicitement (détecter, seuil, alarme…)
    * portant sur un élément mobile ou un niveau lève le blocage. */
   const detectionGoal = (f: Fragment) =>
-    DETECT_GOAL.test(f.text) && (MAGNETIC_MOVER.test(f.text) || LEVEL_THRESHOLD.test(f.text)) && !negatedMover(f.text);
+    DETECT_GOAL.test(f.text) && (MAGNETIC_MOVER.test(f.text) || LEVEL_THRESHOLD.test(f.text)) && !negatedMover(f.text) && !OTHER_DEVICE.test(f.text);
   const positiveMover = frags.some(detectionGoal);
   const level = frags.some((f) => LEVEL_THRESHOLD.test(f.text) && DETECT_GOAL.test(f.text));
   const ask = [stepFor("detection_goal"), stepFor("states_motion"), stepFor("electrical")];

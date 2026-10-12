@@ -104,7 +104,7 @@ describe("C02 — exposition du capteur, seuils vérifiés", () => {
     const r = fit({ environment: "Sensor must withstand 150°C" }).sensorSiteC;
     expect(thermalWarning("MK21", r)).toBeNull();
     expect(thermalWarning("MK03", r)?.status).toBe("exceeded");
-    expect(thermalWarning("MK04", r)?.status).toBe("unknown");
+    expect(thermalWarning("GENERIC", r)?.status).toBe("unknown");
   });
   test("A06 -40…+85 vs -30…+80 : avertissement visible, rien d'écarté", () => {
     const r = fit({ environment: "-40 to +85°C operating" });
