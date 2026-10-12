@@ -17,10 +17,11 @@ const req = (a: Record<string, string>): Requirement[] =>
   Object.entries(a).map(([key, value]) => ({ key, value }) as unknown as Requirement);
 const none = { mountingChosen: false, envelopeSet: false };
 const fit = (a: Record<string, string>, s = none) => assessApplicationFit(req(a), "", s);
+const decode = (h: string) => h.replace(/&#x27;/g, "'").replace(/&amp;/g, "&");
 const panel = (a: Record<string, string>, contact = true) =>
-  renderToStaticMarkup(
+  decode(renderToStaticMarkup(
     <CompatibilityPanel assessment={fit(a)} onGoToStep={() => undefined} {...(contact ? { onContactStandex: () => undefined } : {})} />,
-  );
+  ));
 
 describe("Encart « aucune correspondance » — trois statuts distincts", () => {
   test("classement des points", () => {
@@ -54,7 +55,7 @@ describe("Encart « aucune correspondance » — trois statuts distincts", () =>
   });
   test("questionnaire vide : informations insuffisantes, pas de contact ni de refus", () => {
     const a = assessApplicationFit(req({ detection_goal: "" }), "", none);
-    const html = renderToStaticMarkup(<CompatibilityPanel assessment={a} onGoToStep={() => undefined} onContactStandex={() => undefined} />);
+    const html = decode(renderToStaticMarkup(<CompatibilityPanel assessment={a} onGoToStep={() => undefined} onContactStandex={() => undefined} />));
     expect(html).toContain(FIT_STATUS.insufficientTitle);
     expect(html).not.toContain("fit-contact-standex");
   });
