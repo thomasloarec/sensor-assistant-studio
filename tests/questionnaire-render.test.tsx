@@ -160,7 +160,11 @@ describe("Connecteurs compacts — état réel du questionnaire", () => {
     }
     const details = view.getByTestId("connector-technical-details") as HTMLDetailsElement;
     expect(details.open).toBe(false);
-    expect(picker.queryByRole("link", { name: "Source fabricant" })).toBeNull();
+    // Happy DOM does not model native <details> visibility; verify containment
+    // and the real closed attribute instead of weakening the disclosure check.
+    const closedLinks = picker.getAllByRole("link", { name: "Source fabricant" });
+    expect(closedLinks).toHaveLength(4);
+    for (const link of closedLinks) expect(link.closest("details")).toBe(details);
     expect(view.getByTestId("connector-selection").textContent).toBe("Compatibilité à confirmer par Standex");
     await act(async () => fireEvent.click(picker.getByRole("button", { name: "JST PHR-2" })));
     expect(view.getByTestId("connector-selection").textContent).toContain("JST PHR-2 — Compatibilité à confirmer par Standex");
