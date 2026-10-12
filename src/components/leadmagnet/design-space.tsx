@@ -62,7 +62,7 @@ import {
   DELEGATED_SENSOR,
 } from "@/lib/leadmagnet/project-checklist";
 import SensorCard from "@/components/standex/workshop/sensor-card";
-import { ConnectorPreview } from "@/components/leadmagnet/connector-preview";
+import { ConnectorChoices } from "@/components/leadmagnet/connector-choices";
 import SensorCatalog from "@/components/standex/workshop/sensor-catalog";
 import { LanguagePicker, useLocale } from "@/lib/i18n/react";
 import { Input } from "@/components/ui/input";
@@ -126,7 +126,6 @@ import {
   EMPTY_CONNECTOR_DRAFT,
   connectorSummaryLines,
   terminationFromDraft,
-  terminationLabel,
   type ConnectorDraft,
 } from "@/lib/leadmagnet/connectors";
 import {
@@ -218,10 +217,7 @@ import {
 } from "@/components/leadmagnet/document-viewer";
 import { memoryAssetBytes } from "@/lib/standex/machine-assets";
 import {
-  DOCUMENTED_HOUSINGS,
   draftFromHousing,
-  housingById,
-  housingLabel,
   terminationFromHousing,
 } from "@/lib/leadmagnet/connector-library";
 import { routeSamples, SEARCH_LINK_DISCLAIMER } from "@/lib/leadmagnet/samples";
@@ -3163,59 +3159,14 @@ export function DesignSpace({
           </p>
         ) : (
           <div className="mt-3">
-            <p className="mt-1 text-sm">{terminationLabel(termination)}</p>
-            <ul className="t-caption mt-1 list-disc pl-5">
-              {connectorSummaryLines(termination, t).map((l, i) => (
-                <li key={i}>{l}</li>
-              ))}
-            </ul>
-            <Label className="t-label mt-3 block">
-              {t("Boîtiers documentés par le fabricant")}
-            </Label>
-            <div className="mt-2 grid gap-3 sm:grid-cols-2">
-              {DOCUMENTED_HOUSINGS.map((h) => {
-                const selected =
-                  termination.kind === "unqualified_connector" &&
-                  termination.spec.mpn === h.housingMpn;
-                return (
-                  <button
-                    key={h.housingMpn}
-                    type="button"
-                    className="connector-option surface-interactive p-4 text-left"
-                    aria-pressed={selected}
-                    onClick={() => {
-                      const found = housingById(h.housingMpn);
-                      if (!found) return;
-                      setConnectorError(null);
-                      setConnectorDraft((d) => draftFromHousing(found, d));
-                      setDossier((d) => ({
-                        ...d,
-                        termination: terminationFromHousing(found),
-                        delegatedDecisions: (d.delegatedDecisions ?? []).filter(
-                          (k) => k !== DELEGATED_CONNECTOR,
-                        ),
-                      }));
-                      setSelectionAnnounce(
-                        msg("Connecteur {0} retenu comme préférence, à vérifier par les ingénieurs Standex.", [
-                          h.housingMpn,
-                        ]),
-                      );
-                    }}
-                  >
-                    <span className="t-title-s flex items-center gap-2">
-                      {selected ? <Check className="size-4" aria-hidden="true" /> : null}
-                      {housingLabel(h)}
-                    </span>
-                    <ConnectorPreview housing={h} />
-                  </button>
-                );
-              })}
-            </div>
-            <p className="t-caption mt-2">
-              {t(
-                "Quelques boîtiers documentés seulement, pas le marché entier. Boîtier, contacts à sertir et embase restent trois références distinctes ; brochage, section de fil réelle et disponibilité restent inconnus et à vérifier par les ingénieurs Standex.",
-              )}
-            </p>
+            <ConnectorChoices termination={termination} onSelect={(found) => {
+              setConnectorError(null);
+              setConnectorDraft((d) => draftFromHousing(found, d));
+              setDossier((d) => ({ ...d, termination: terminationFromHousing(found),
+                delegatedDecisions: (d.delegatedDecisions ?? []).filter(k => k !== DELEGATED_CONNECTOR),
+              }));
+              setSelectionAnnounce(msg("Connecteur {0} retenu comme préférence, à vérifier par les ingénieurs Standex.", [found.housingMpn]));
+            }} />
             <details className="mt-3">
               <summary className="t-caption min-h-11 cursor-pointer list-none py-2">
                 {t("Saisir une référence précise")}
@@ -4165,68 +4116,23 @@ export function DesignSpace({
           </p>
         ) : null}
         {connectorPreference ? (          <div className="mt-3">
-            <p className="mt-1 text-sm">{t(terminationLabel(termination))}</p>
-            <ul className="t-caption mt-1 list-disc pl-5">
-              {connectorSummaryLines(termination, t).map((l, i) => (
-                <li key={i}>{l}</li>
-              ))}
-            </ul>
-            <Label className="t-label mt-3 block">
-              {t("Boîtiers documentés par le fabricant")}
-            </Label>
-            <div className="mt-2 grid gap-3 sm:grid-cols-2">
-              {DOCUMENTED_HOUSINGS.map((h) => {
-                const selected =
-                  termination.kind === "unqualified_connector" &&
-                  termination.spec.mpn === h.housingMpn;
-                return (
-                  <button
-                    key={h.housingMpn}
-                    type="button"
-                    className="connector-option surface-interactive p-4 text-left"
-                    aria-pressed={selected}
-                    onClick={() => {
-                      const found = housingById(h.housingMpn);
-                      if (!found) return;
-                      setConnectorError(null);
-                      setConnectorDraft((d) => draftFromHousing(found, d));
-                      setDossier((d) => ({
-                        ...d,
-                        termination: terminationFromHousing(found),
-                        delegatedDecisions: (d.delegatedDecisions ?? []).filter(
-                          (k) => k !== DELEGATED_CONNECTOR,
-                        ),
-                      }));
-                      setSelectionAnnounce(
-                        msg("Connecteur {0} retenu comme préférence, à vérifier par les ingénieurs Standex.", [
-                          h.housingMpn,
-                        ]),
-                      );
-                    }}
-                  >
-                    <span className="t-title-s flex items-center gap-2">
-                      {selected ? <Check className="size-4" aria-hidden="true" /> : null}
-                      {housingLabel(h)}
-                    </span>
-                    <ConnectorPreview housing={h} />
-                  </button>
-                );
-              })}
-            </div>
-            <p className="t-caption mt-2">
-              {t(
-                "Quelques boîtiers documentés seulement, pas le marché entier. Boîtier, contacts à sertir et embase restent trois références distinctes ; brochage, section de fil réelle et disponibilité restent inconnus et à vérifier par les ingénieurs Standex.",
-              )}
-            </p>
+            <ConnectorChoices termination={termination} onSelect={(found) => {
+              setConnectorError(null);
+              setConnectorDraft((d) => draftFromHousing(found, d));
+              setDossier((d) => ({ ...d, termination: terminationFromHousing(found),
+                delegatedDecisions: (d.delegatedDecisions ?? []).filter(k => k !== DELEGATED_CONNECTOR),
+              }));
+              setSelectionAnnounce(msg("Connecteur {0} retenu comme préférence, à vérifier par les ingénieurs Standex.", [found.housingMpn]));
+            }} />
+            <details className="mt-3">
+              <summary className="t-caption min-h-11 cursor-pointer list-none py-2">
+                {t("Saisir une référence précise")}
+              </summary>
             <div className="mt-3">
               <Label htmlFor="connector-free-reference">{t("Autre référence de connecteur")}</Label>
               <Input id="connector-free-reference" value={termination.kind === "free_reference" ? termination.text : ""}
                 onChange={e => setDossier(d => ({...d, termination: {kind:"free_reference", text:e.target.value, status:"to_verify_by_rnd"}}))} />
             </div>
-            <details className="mt-3">
-              <summary className="t-caption min-h-11 cursor-pointer list-none py-2">
-                {t("Saisir une référence précise")}
-              </summary>
               <div className="mt-2 grid gap-3 md:grid-cols-2">
                 {CONNECTOR_FIELD_LABELS.map(([key, label]) => (
                   <div key={key}>

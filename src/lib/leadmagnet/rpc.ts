@@ -184,10 +184,18 @@ export function humanRpcError(error: unknown): string {
         ? String((error as { message: unknown }).message)
         : "";
   const fields = businessContextErrorFields(raw);
-  if (fields.length) return msg(
-    "Contexte projet à compléter : {0}. Renseignez ces champs dans le contexte projet ou choisissez « Non défini pour le moment » pour chacun. Rien n'a été enregistré.",
-    [fields.join(", ")], "fr",
-  );
+  if (fields.length) {
+    // Separate placeholders let the existing locale renderer translate each label,
+    // including an error already displayed before switching interface language.
+    const templates = [
+      "Contexte projet à compléter : {0}. Renseignez ces champs dans le contexte projet ou choisissez « Non défini pour le moment » pour chacun. Rien n'a été enregistré.",
+      "Contexte projet à compléter : {0}, {1}. Renseignez ces champs dans le contexte projet ou choisissez « Non défini pour le moment » pour chacun. Rien n'a été enregistré.",
+      "Contexte projet à compléter : {0}, {1}, {2}. Renseignez ces champs dans le contexte projet ou choisissez « Non défini pour le moment » pour chacun. Rien n'a été enregistré.",
+      "Contexte projet à compléter : {0}, {1}, {2}, {3}. Renseignez ces champs dans le contexte projet ou choisissez « Non défini pour le moment » pour chacun. Rien n'a été enregistré.",
+    ];
+    const template = templates[fields.length - 1];
+    if (template) return msg(template, fields, "fr");
+  }
   if (/SITE_LOCATION_REQUIRED/.test(raw)) return "Renseignez la ville et le pays de votre site pour contacter le responsable Standex de votre zone.";
   const hit = MESSAGES.find((m) => m.match.test(raw));
   if (hit) return hit.message;
