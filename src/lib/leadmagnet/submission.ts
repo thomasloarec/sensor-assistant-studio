@@ -93,6 +93,33 @@ export async function submissionBinding(input: SubmissionInput): Promise<Consent
   };
 }
 
+/** Contexte projet ESSENTIEL : chaque champ porte soit une vraie valeur, soit
+ *  le choix explicite « Non défini pour le moment ». Une valeur par défaut d'un
+ *  dossier neuf (volume inconnu, phase non choisie, date vide) n'est jamais une
+ *  réponse. La date d'échantillons reste facultative. Aucune valeur n'est
+ *  écrite ici : la personne décide. */
+/* i18n-canonical : messages renvoyés vers le champ concerné. */
+export const BUSINESS_FIELD_MESSAGES = {
+  annualVolume: "Volume annuel de capteurs : indiquez un nombre ou choisissez « Non défini pour le moment ».",
+  projectPhase: "Phase du projet : choisissez une phase ou « Non défini pour le moment ».",
+  seriesStartDate: "Date de lancement série : indiquez une date ou choisissez « Non défini pour le moment ».",
+  seriesDurationYears: "Durée de série : indiquez une durée ou choisissez « Non défini pour le moment ».",
+} as const;
+
+export function missingBusinessContext(dossier: DesignDossier): string[] {
+  const b = dossier.business;
+  const deferred = new Set(b.undefinedFields ?? []);
+  const answered: Record<keyof typeof BUSINESS_FIELD_MESSAGES, boolean> = {
+    annualVolume: b.annualVolume.kind === "known",
+    projectPhase: b.projectPhase !== "unknown",
+    seriesStartDate: typeof b.seriesStartDate === "string" && !Number.isNaN(Date.parse(b.seriesStartDate)),
+    seriesDurationYears: typeof b.seriesDurationYears === "number" && Number.isFinite(b.seriesDurationYears),
+  };
+  return (Object.keys(BUSINESS_FIELD_MESSAGES) as (keyof typeof BUSINESS_FIELD_MESSAGES)[])
+    .filter((k) => !answered[k] && !deferred.has(k))
+    .map((k) => BUSINESS_FIELD_MESSAGES[k]);
+}
+
 export type SubmissionCheck = { ok: true } | { ok: false; problems: string[] };
 
 export async function checkSubmission(input: SubmissionInput): Promise<SubmissionCheck> {
@@ -102,6 +129,7 @@ export async function checkSubmission(input: SubmissionInput): Promise<Submissio
     problems.push("Renseignez un contact pour le retour Standex.");
   if (!input.dossier.business.siteCity?.trim() || !validSiteCountry(input.dossier.business.siteCountry))
     problems.push("Renseignez la ville et le pays de votre site pour contacter le responsable Standex de votre zone.");
+  problems.push(...missingBusinessContext(input.dossier));
   if (!ndaAllowsConfidentialTransfer(input.nda))
     problems.push(
       "NDA requis : aucun transfert confidentiel n'est possible sans preuve vérifiée d'un NDA en vigueur.",

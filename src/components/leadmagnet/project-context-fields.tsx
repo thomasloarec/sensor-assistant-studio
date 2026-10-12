@@ -89,13 +89,23 @@ export function ProjectContextFields({
         <select
           id="project-phase"
           className="t-body min-h-11 w-full"
-          value={business.projectPhase}
+          value={
+            business.projectPhase === "unknown" && !business.undefinedFields?.includes("projectPhase")
+              ? ""
+              : business.projectPhase
+          }
           onChange={(e) =>
             e.target.value === "unknown"
               ? defer("projectPhase")
               : patch("projectPhase", e.target.value)
           }
         >
+          {/* Phase non encore choisie : aucune valeur n'est présentée comme répondue. */}
+          {business.projectPhase === "unknown" && !business.undefinedFields?.includes("projectPhase") ? (
+            <option value="" disabled>
+              {t("Choisir une phase")}
+            </option>
+          ) : null}
           {(
             [
               ["unknown", "Non défini pour le moment"],

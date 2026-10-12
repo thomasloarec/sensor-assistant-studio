@@ -187,7 +187,8 @@ export function createDossier(
     openQuestions: [],
     attachments: [],
     business: {
-      projectPhase: "exploration",
+      // Aucune phase par défaut : « exploration » doit être un choix explicite.
+      projectPhase: "unknown",
       seriesStartDate: null,
       samplesNeededBy: null,
       annualVolume: { kind: "unknown" },

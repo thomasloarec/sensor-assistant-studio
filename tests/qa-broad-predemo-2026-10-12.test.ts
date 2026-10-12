@@ -13,6 +13,7 @@ import { checkSubmission, submissionBinding, type SubmissionInput } from "@/lib/
 import { INITIAL_NDA } from "@/lib/leadmagnet/nda";
 import { ACTIVATION_GUIDE } from "@/lib/standex/activation-guide";
 import { SENSOR_SPECIFICATIONS } from "@/lib/standex/sensor-specifications";
+import { thermalWarning } from "@/lib/leadmagnet/thermal-fit";
 
 const req = (a: Record<string, string>): Requirement[] =>
   Object.entries(a).map(([key, value]) => ({ key, value }) as unknown as Requirement);
@@ -124,21 +125,21 @@ describe("Questionnaire vide / délégué", () => {
 
 /* ------------------------------------------------------------------ */
 describe("Défauts constatés — faux négatifs (aucun blocage alors qu'il en faut un)", () => {
-  test.failing("P1 B02 : une porte citée dans une AUTRE réponse désactive le blocage température", () =>
+  test("P1 B02 : une porte citée dans une AUTRE réponse désactive le blocage température", () =>
     expect(ids({ detection_goal: "Continuous temperature measurement 20-250°C, 4-20mA", target_object: "Oven door position is known by another system" })).toContain("continuous_temperature_measurement"));
-  test.failing("P1 B03 : « proportional flow output … litres per minute » + « no moving parts » non reconnu", () =>
+  test("P1 B03 : « proportional flow output … litres per minute » + « no moving parts » non reconnu", () =>
     expect(ids({ detection_goal: "Proportional flow output 0-10 V, 0-40 litres per minute", target_object: "No moving parts allowed in the pipe" })).toContain("continuous_flow_measurement"));
-  test.failing("P1 C01 : « reed should cut the motor power » 230 V 8 A non reconnu", () =>
+  test("P1 C01 : « reed should cut the motor power » 230 V 8 A non reconnu", () =>
     expect(ids({ detection_goal: "Reed should cut the motor power when lid opens", electrical: "230 V 8 A motor" })).toContain("direct_load_switching"));
-  test.failing("P1 C01 : « switch the 230 V mains load with the reed, 8 A » non reconnu", () =>
+  test("P1 C01 : « switch the 230 V mains load with the reed, 8 A » non reconnu", () =>
     expect(ids({ electrical: "Switch the 230 V mains load with the reed, 8 A" })).toContain("direct_load_switching"));
-  test.failing("P1 C02 : « component temperature at the sensor reaches 180°C » non reconnu (verbe absent)", () =>
+  test("P1 C02 : « component temperature at the sensor reaches 180°C » non reconnu (verbe absent)", () =>
     expect(ids({ environment: "Component temperature at the sensor reaches 180°C" })).toContain("extreme_temperature_review"));
-  test.failing("P1 C03 : écart 500 mm ignoré dès qu'un câble est cité dans la même phrase", () =>
+  test("P1 C03 : écart 500 mm ignoré dès qu'un câble est cité dans la même phrase", () =>
     expect(ids({ states_motion: "Magnet at 500 mm from the sensor, with 2 m cable" })).toContain("extreme_gap_review"));
-  test.failing("P1 C03 : « gap = 500 mm » non reconnu", () =>
+  test("P1 C03 : « gap = 500 mm » non reconnu", () =>
     expect(ids({ states_motion: "gap = 500 mm" })).toContain("extreme_gap_review"));
-  test.failing("P2 : 300 °F lu comme 300 °C (≈149 °C réels)", () =>
+  test("CORRIGÉ P2 : 300 °F converti (≈149 °C), sous le seuil de revue", () =>
     expect(ids({ environment: "Sensor operates continuously at 300°F" })).toEqual([]));
 });
 
@@ -156,16 +157,21 @@ describe("Seuils P0 confrontés aux données catalogue", () => {
     const maxima = Object.values(SENSOR_SPECIFICATIONS).flatMap((s: any) => (s.temperatures ?? []).map((t: any) => t.max));
     expect(Math.max(...maxima)).toBe(150);
   });
-  test.failing("P1 : 150 °C est déclaré « sans correspondance documentée » alors que MK21 est documenté à 150 °C", () =>
+  test("P1 : 150 °C est déclaré « sans correspondance documentée » alors que MK21 est documenté à 150 °C", () =>
     expect(ids({ environment: "Sensor must withstand 150°C" })).toEqual([]));
-  test.failing("P1 : 140 °C dépasse toutes les gammes sauf MK21 mais ne déclenche aucun avertissement candidat", () =>
-    expect(ids({ environment: "Sensor must withstand 140°C" }).length).toBeGreaterThan(0));
+  test("CORRIGÉ P1 : 140 °C → aucun blocage global, avertissement par gamme (MK03 dépassé, MK21 couvert)", () => {
+    const r = assessApplicationFit(req({ environment: "Sensor must withstand 140°C" }), "", none);
+    expect(r.blocking).toBe(false);
+    expect(thermalWarning("MK03", r.sensorSiteC)?.status).toBe("exceeded");
+    expect(thermalWarning("MK21", r.sensorSiteC)).toBeNull();
+  });
 });
 
 /* ------------------------------------------------------------------ */
 describe("Soumission — garde-fous", () => {
-  const base = (): SubmissionInput => {
+  const base = (deferAll = true): SubmissionInput => {
     const d = createDossier("2026-10-12T00:00:00.000Z");
+    if (deferAll) d.business.undefinedFields = ["annualVolume", "projectPhase", "seriesStartDate", "seriesDurationYears"];
     d.business.contactEmail = "qa@example.invalid";
     d.business.siteCity = "Lyon";
     d.business.siteCountry = "FR";
@@ -191,8 +197,8 @@ describe("Soumission — garde-fous", () => {
   test("NDA optionnel non requis + consentement lié : accepté", async () => {
     expect((await checkSubmission(await withConsent(base()))).ok).toBe(true);
   });
-  test.failing("P1 : volume/phase/dates inconnus sans mention explicite « à définir » devraient être signalés", async () => {
-    const i = await withConsent(base());
+  test("P1 : volume/phase/dates inconnus sans mention explicite « à définir » devraient être signalés", async () => {
+    const i = await withConsent(base(false));
     expect(i.dossier.business.annualVolume.kind).not.toBe("known");
     expect((await checkSubmission(i)).ok).toBe(false);
   });

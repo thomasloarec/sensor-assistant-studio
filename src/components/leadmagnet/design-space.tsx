@@ -100,6 +100,7 @@ import {
 import { detectMountingIntent } from "@/lib/leadmagnet/mounting-intent";
 import { CANDIDATE_DISCLAIMER, evaluateCandidates } from "@/lib/leadmagnet/candidates";
 import { assessApplicationFit, FIT_PANEL } from "@/lib/leadmagnet/application-fit";
+import { documentedLabel, thermalWarning } from "@/lib/leadmagnet/thermal-fit";
 import { CompatibilityPanel } from "./compatibility-panel";
 import { LocalizedValidationMessage } from "./localized-validation-message";
 import {
@@ -2606,6 +2607,18 @@ export function DesignSpace({
           <div><span className="t-label">{t("Aimant")}</span><strong className="t-title-m">{card.magnetId}</strong></div>
         </div>
         {card.sensorId === CUSTOM_SENSOR_ID ? <p className="notice-info t-caption">{t("Conception sur mesure : forme, fixation et distances à définir avec Standex. Schéma illustratif, sans performance validée.")}</p> : null}
+        {(() => {
+          // Avertissement thermique NON bloquant : la plage au capteur écrite par
+          // la personne dépasse (ou ne couvre que sous condition) la plage
+          // transcrite de la fiche. Aucune qualification n'est annoncée.
+          if (card.sensorId === CUSTOM_SENSOR_ID) return null;
+          const w = thermalWarning(card.sensorId, fit.sensorSiteC);
+          return w ? (
+            <p className="notice-warning t-caption" data-testid="thermal-warning" data-status={w.status}>
+              {msg(w.text, [w.asked, documentedLabel(w, t)])}
+            </p>
+          ) : null;
+        })()}
         {compact && blocked.length > 0 ? <p className="notice-warning t-caption">{t("Compromis nécessaire avec vos critères")} : {shownFilters.filter(f => blocked.includes(f.id)).map(f => t(f.label)).join(" · ")}</p> : null}
         {card.sensorId !== CUSTOM_SENSOR_ID ? (
           <dl className="pair-card-facts" aria-label={t("Données de choix")}>
@@ -2675,6 +2688,14 @@ export function DesignSpace({
         <div className="mt-1">{filterAdjust}</div>
       </div>
       )}
+      {fit.validationPoints.length > 0 ? (
+        <div className="notice-info space-y-1" data-testid="validation-points">
+          <p className="t-label">{t("Points à valider avec la R&D Standex")}</p>
+          <ul className="t-body list-disc pl-5">
+            {fit.validationPoints.map((v) => <li key={v}>{t(v)}</li>)}
+          </ul>
+        </div>
+      ) : null}
       {fitBlocked ? null : (
       <div className="pair-grid">{suggestedPairs.map((c, i) => pairCardView(c, i))}{offerCustom ? pairCardView(customPair, suggestedPairs.length) : null}</div>
       )}

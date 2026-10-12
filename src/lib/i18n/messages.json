@@ -29329,5 +29329,113 @@
     "Ответьте хотя бы на один вопрос, чтобы увидеть предлагаемые датчики.",
     "Risponda ad almeno una domanda per vedere i sensori proposti.",
     "提案センサーを表示するには、少なくとも1つの質問に回答してください。"
+  ],
+  "Volume annuel de capteurs : indiquez un nombre ou choisissez « Non défini pour le moment ».": [
+    "Annual sensor volume: enter a number or choose “Not defined yet”.",
+    "年度传感器数量：请输入数字或选择“暂未确定”。",
+    "Jährliche Sensormenge: Geben Sie eine Zahl ein oder wählen Sie „Noch nicht festgelegt“.",
+    "Volumen anual de sensores: indique un número o elija «Aún sin definir».",
+    "Годовой объём датчиков: укажите число или выберите «Пока не определено».",
+    "Volume annuo di sensori: indicate un numero o scegliete «Non ancora definito».",
+    "年間センサー数量：数値を入力するか「現時点では未定」を選択してください。"
+  ],
+  "Phase du projet : choisissez une phase ou « Non défini pour le moment ».": [
+    "Project phase: choose a phase or “Not defined yet”.",
+    "项目阶段：请选择一个阶段或“暂未确定”。",
+    "Projektphase: Wählen Sie eine Phase oder „Noch nicht festgelegt“.",
+    "Fase del proyecto: elija una fase o «Aún sin definir».",
+    "Этап проекта: выберите этап или «Пока не определено».",
+    "Fase del progetto: scegliete una fase o «Non ancora definito».",
+    "プロジェクト段階：段階を選ぶか「現時点では未定」を選択してください。"
+  ],
+  "Date de lancement série : indiquez une date ou choisissez « Non défini pour le moment ».": [
+    "Series launch date: enter a date or choose “Not defined yet”.",
+    "量产启动日期：请输入日期或选择“暂未确定”。",
+    "Serienstart: Geben Sie ein Datum ein oder wählen Sie „Noch nicht festgelegt“.",
+    "Fecha de inicio de serie: indique una fecha o elija «Aún sin definir».",
+    "Дата запуска серии: укажите дату или выберите «Пока не определено».",
+    "Data di avvio della serie: indicate una data o scegliete «Non ancora definito».",
+    "量産開始日：日付を入力するか「現時点では未定」を選択してください。"
+  ],
+  "Durée de série : indiquez une durée ou choisissez « Non défini pour le moment ».": [
+    "Series duration: enter a duration or choose “Not defined yet”.",
+    "量产周期：请输入时长或选择“暂未确定”。",
+    "Seriendauer: Geben Sie eine Dauer ein oder wählen Sie „Noch nicht festgelegt“.",
+    "Duración de la serie: indique una duración o elija «Aún sin definir».",
+    "Срок серии: укажите срок или выберите «Пока не определено».",
+    "Durata della serie: indicate una durata o scegliete «Non ancora definito».",
+    "量産期間：期間を入力するか「現時点では未定」を選択してください。"
+  ],
+  "Température demandée {0} hors de la plage de fonctionnement documentée pour cette gamme ({1}) : à revoir avec la R&D Standex avant tout choix.": [
+    "Requested temperature {0} is outside the documented operating range for this series ({1}): to be reviewed with Standex R&D before any choice.",
+    "所需温度 {0} 超出该系列文档记载的工作范围（{1}）：任何选择前须与 Standex 研发部门复核。",
+    "Geforderte Temperatur {0} liegt außerhalb des dokumentierten Betriebsbereichs dieser Serie ({1}): vor jeder Auswahl mit der Standex-F&E zu prüfen.",
+    "La temperatura solicitada {0} está fuera del rango de funcionamiento documentado para esta serie ({1}): debe revisarse con I+D de Standex antes de cualquier elección.",
+    "Требуемая температура {0} выходит за документированный рабочий диапазон этой серии ({1}): проверить с R&D Standex до любого выбора.",
+    "La temperatura richiesta {0} è fuori dall'intervallo di funzionamento documentato per questa serie ({1}): da verificare con la R&D Standex prima di ogni scelta.",
+    "要求温度 {0} はこのシリーズの記載動作範囲（{1}）外です：選定前に Standex R&D と確認してください。"
+  ],
+  "Température demandée {0} couverte seulement dans certaines conditions documentées ({1}) : à confirmer avec la R&D Standex. Ce n'est pas une qualification.": [
+    "Requested temperature {0} is covered only under some documented conditions ({1}): to be confirmed with Standex R&D. This is not a qualification.",
+    "所需温度 {0} 仅在部分文档条件下覆盖（{1}）：须与 Standex 研发部门确认。这并非认证。",
+    "Geforderte Temperatur {0} ist nur unter bestimmten dokumentierten Bedingungen abgedeckt ({1}): mit der Standex-F&E zu bestätigen. Dies ist keine Qualifizierung.",
+    "La temperatura solicitada {0} solo está cubierta en algunas condiciones documentadas ({1}): debe confirmarse con I+D de Standex. No es una cualificación.",
+    "Требуемая температура {0} покрывается только при некоторых документированных условиях ({1}): подтвердить с R&D Standex. Это не квалификация.",
+    "La temperatura richiesta {0} è coperta solo in alcune condizioni documentate ({1}): da confermare con la R&D Standex. Non è una qualifica.",
+    "要求温度 {0} は一部の記載条件でのみ対応しています（{1}）：Standex R&D と確認してください。これは適合認定ではありません。"
+  ],
+  "Plage de température de cette gamme non transcrite dans l'outil : inconnue — à vérifier avec la R&D Standex pour {0}.": [
+    "Temperature range of this series is not transcribed in the tool: unknown — verify with Standex R&D for {0}.",
+    "该系列的温度范围未录入本工具：未知——请就 {0} 与 Standex 研发部门核实。",
+    "Temperaturbereich dieser Serie ist im Tool nicht erfasst: unbekannt — für {0} mit der Standex-F&E prüfen.",
+    "El rango de temperatura de esta serie no está transcrito en la herramienta: desconocido — verificar con I+D de Standex para {0}.",
+    "Температурный диапазон этой серии не внесён в инструмент: неизвестно — проверить с R&D Standex для {0}.",
+    "L'intervallo di temperatura di questa serie non è trascritto nello strumento: sconosciuto — da verificare con la R&D Standex per {0}.",
+    "このシリーズの温度範囲はツールに未登録です：不明 — {0} について Standex R&D と確認してください。"
+  ],
+  "Aimant de très petite taille indiqué : sa capacité à actionner le capteur à la distance prévue doit être vérifiée par la R&D Standex.": [
+    "Very small magnet indicated: its ability to actuate the sensor at the intended distance must be verified by Standex R&D.",
+    "所述磁铁尺寸很小：其在预定距离驱动传感器的能力须由 Standex 研发部门验证。",
+    "Sehr kleiner Magnet angegeben: ob er den Sensor im vorgesehenen Abstand betätigt, muss die Standex-F&E prüfen.",
+    "Imán de tamaño muy pequeño indicado: su capacidad para accionar el sensor a la distancia prevista debe verificarla I+D de Standex.",
+    "Указан очень маленький магнит: его способность срабатывать датчик на заданном расстоянии должна проверить R&D Standex.",
+    "Indicato un magnete molto piccolo: la sua capacità di azionare il sensore alla distanza prevista deve essere verificata dalla R&D Standex.",
+    "非常に小さい磁石が指定されています：想定距離でセンサーを作動できるかは Standex R&D による確認が必要です。"
+  ],
+  "Précision de position de l'ordre du millimètre demandée : aucune précision de commutation n'est garantie sans essai Standex.": [
+    "Position accuracy of about one millimetre requested: no switching accuracy is guaranteed without a Standex test.",
+    "要求约 1 毫米的位置精度：未经 Standex 试验，不保证任何切换精度。",
+    "Positionsgenauigkeit im Millimeterbereich gefordert: ohne Standex-Versuch wird keine Schaltgenauigkeit garantiert.",
+    "Se solicita una precisión de posición del orden del milímetro: no se garantiza ninguna precisión de conmutación sin ensayo de Standex.",
+    "Требуется точность положения порядка миллиметра: без испытания Standex точность срабатывания не гарантируется.",
+    "Richiesta una precisione di posizione dell'ordine del millimetro: nessuna precisione di commutazione è garantita senza prova Standex.",
+    "ミリ単位の位置精度が求められています：Standex の試験なしに切替精度は保証されません。"
+  ],
+  "Seuil de revue : la plus grande distance publiée dans le guide d'activation Standex. Ce n'est pas une distance validée pour un couple précis ; la limite réelle est confirmée par la R&D Standex.": [
+    "Review threshold: the largest distance published in the Standex activation guide. It is not a validated distance for a specific pair; the actual limit is confirmed by Standex R&D.",
+    "复核阈值：Standex 激活指南中公布的最大距离。它不是针对特定组合验证过的距离；实际限值由 Standex 研发部门确认。",
+    "Prüfschwelle: der größte im Standex-Aktivierungsleitfaden veröffentlichte Abstand. Kein validierter Abstand für ein bestimmtes Paar; die tatsächliche Grenze bestätigt die Standex-F&E.",
+    "Umbral de revisión: la mayor distancia publicada en la guía de activación de Standex. No es una distancia validada para un par concreto; el límite real lo confirma I+D de Standex.",
+    "Порог проверки: наибольшее расстояние, опубликованное в руководстве по срабатыванию Standex. Это не подтверждённое расстояние для конкретной пары; реальный предел подтверждает R&D Standex.",
+    "Soglia di revisione: la distanza più grande pubblicata nella guida di attivazione Standex. Non è una distanza validata per una coppia precisa; il limite reale è confermato dalla R&D Standex.",
+    "レビュー閾値：Standex 作動ガイドで公開されている最大距離です。特定の組み合わせで検証された距離ではなく、実際の限界は Standex R&D が確認します。"
+  ],
+  "Points à valider avec la R&D Standex": [
+    "Points to validate with Standex R&D",
+    "须与 Standex 研发部门确认的要点",
+    "Mit der Standex-F&E zu klärende Punkte",
+    "Puntos a validar con I+D de Standex",
+    "Пункты для проверки с R&D Standex",
+    "Punti da validare con la R&D Standex",
+    "Standex R&D と確認すべき点"
+  ],
+  "Choisir une phase": [
+    "Choose a phase",
+    "选择阶段",
+    "Phase wählen",
+    "Elegir una fase",
+    "Выберите этап",
+    "Scegliere una fase",
+    "段階を選択"
   ]
 }

@@ -404,6 +404,53 @@ describe("rendu du questionnaire guidé", () => {
     expect(within(view.container.ownerDocument.body).getAllByText("Un capteur reed ne mesure pas une température en continu").length).toBeGreaterThan(0);
   }, 30_000);
 
+  async function revealWithEnvironment(view: RenderResult, goal: string, environment: string) {
+    await changeValue(view.getByLabelText("Votre réponse"), goal);
+    await goToQuestion(view, 6);
+    await changeValue(view.getByLabelText("Votre réponse"), environment);
+    fireEvent.click(view.getByRole("button", { name: "Voir les capteurs proposés" }));
+    await waitFor(() => {
+      expect(
+        view.getByRole("button", { name: "2. Couples proposés" }).getAttribute("aria-current"),
+      ).toBe("step");
+    });
+    await waitFor(
+      () =>
+        expect(
+          /D'après vos réponses|à revoir avant de proposer/.test(view.container.ownerDocument.body.textContent ?? ""),
+        ).toBe(true),
+      { timeout: 15_000 },
+    );
+  }
+
+  test("P1 A06 : -40…+85 °C au capteur → cartes conservées avec avertissement thermique visible", async () => {
+    const view = renderQuestionnaire(390);
+    await revealWithEnvironment(view, "Detect when the door is closed.", "Sensor operating from -40 to +85 °C.");
+    const body = within(view.container.ownerDocument.body);
+    expect(body.queryAllByTestId("pair-card").length).toBeGreaterThan(0);
+    const warnings = body.queryAllByTestId("thermal-warning");
+    expect(warnings.length).toBeGreaterThan(0);
+    expect(warnings[0]!.textContent).toContain("-40 … 85 °C");
+  }, 30_000);
+
+  test("P1 C02 : 220 °C au capteur → aucune carte, revue d'ingénierie affichée", async () => {
+    const view = renderQuestionnaire(390);
+    await revealWithEnvironment(view, "Detect when the door is closed.", "Sensor operating at 220 °C.");
+    const body = within(view.container.ownerDocument.body);
+    expect(body.queryAllByTestId("pair-card")).toHaveLength(0);
+    expect(body.getAllByText("Aucune correspondance standard documentée à cette température").length).toBeGreaterThan(0);
+  }, 30_000);
+
+  test("P1 C03 : petit aimant et ±1 mm sous le seuil → cartes + points de validation explicites", async () => {
+    const view = renderQuestionnaire(390);
+    await revealWithEnvironment(view, "Detect a 5 mm diameter x 2 mm magnet at 10 mm, ±1 mm.", "Indoor, 25 °C ambient.");
+    const body = within(view.container.ownerDocument.body);
+    expect(body.queryAllByTestId("pair-card").length).toBeGreaterThan(0);
+    const points = body.getByTestId("validation-points");
+    expect(points.textContent).toContain("Aimant de très petite taille");
+    expect(points.textContent).toContain("Précision de position");
+  }, 30_000);
+
   test("contrôle positif : contacteur externe dimensionné → cartes proposées", async () => {
     const view = renderQuestionnaire(390);
     await reveal(
