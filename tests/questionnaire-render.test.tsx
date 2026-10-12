@@ -329,9 +329,11 @@ describe("rendu du questionnaire guidé", () => {
     expect((reveal as HTMLButtonElement).disabled).toBe(true);
     expect(reveal.getAttribute("aria-describedby")).toBe("intake-empty-note");
     expect(view.getByText("Répondez à au moins une question pour voir des capteurs proposés.")).toBeTruthy();
-    await act(async () => {
-      fireEvent.click(view.getByRole("button", { name: "2. Couples proposés" }));
-      await Promise.resolve();
+    fireEvent.click(view.getByRole("button", { name: "2. Couples proposés" }));
+    await waitFor(() => {
+      expect(
+        view.getByRole("button", { name: "2. Couples proposés" }).getAttribute("aria-current"),
+      ).toBe("step");
     });
     await flushState();
     expect(within(view.container.ownerDocument.body).queryAllByTestId("pair-card")).toHaveLength(0);
@@ -345,12 +347,13 @@ describe("rendu du questionnaire guidé", () => {
       await changeValue(view.getByLabelText("Votre réponse"), electrical);
     }
     await goToQuestion(view, 6);
-    await act(async () => {
-      fireEvent.click(view.getByRole("button", { name: "Voir les capteurs proposés" }));
-      await Promise.resolve();
+    fireEvent.click(view.getByRole("button", { name: "Voir les capteurs proposés" }));
+    await waitFor(() => {
+      expect(
+        view.getByRole("button", { name: "2. Couples proposés" }).getAttribute("aria-current"),
+      ).toBe("step");
     });
     await flushState();
-    if (process.env.DBG) console.log("DBG", view.container.ownerDocument === document, view.container.ownerDocument.body.textContent?.slice(600, 1500));
   }
 
   test("P0 C01 : courant moteur direct dans le reed sans contacteur → aucune carte", async () => {
