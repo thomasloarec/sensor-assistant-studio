@@ -84,3 +84,7 @@
 ## Restauration ciblée des aperçus connecteurs — 12 octobre 2026
 - [x] Quatre aperçus visibles avant sélection, contrôles séparés et sources repliées.
 - [x] Régressions, suite complète, inventaire et rapport sans publication ni connexion utilisateur.
+
+## Remédiation round 2 (2026-10-12)
+- [x] D01–D06 corrigés, P2 faible risque traités ; rapport docs/QA_ROUND2_P1_REMEDIATION_2026-10-12.md
+- [ ] Recette navigateur authentifiée (WebGL, soumission) — attend le propriétaire
