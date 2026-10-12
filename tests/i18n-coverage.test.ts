@@ -92,7 +92,8 @@ describe("Couverture des langues de l'interface", () => {
   test("chaque entrée porte exactement sept traductions non vides", () => {
     // Baseline auditée, enrichie des libellés de la réorganisation de l’atelier,
     // de la variante D1 et de la carte de question (exemple, flèches, invitations).
-    expect(Object.keys(dictionary)).toHaveLength(3_307);
+    // + 10 entrées : points de validation (aimant intégré, acier, blindage, aimants voisins, deux sorties) et revue Hall linéaire.
+    expect(Object.keys(dictionary)).toHaveLength(3_317);
     const broken = Object.entries(dictionary).filter(
       ([, v]) => v.length !== 7 || v.some((x) => typeof x !== "string" || x.trim() === ""),
     );
