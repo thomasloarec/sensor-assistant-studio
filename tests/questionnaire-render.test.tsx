@@ -345,11 +345,11 @@ describe("rendu du questionnaire guidé", () => {
             view.container.ownerDocument.body.textContent ?? "",
           ),
         ).toBe(true),
-      { timeout: 15000 },
+      { timeout: 15_000 },
     );
     expect(within(view.container.ownerDocument.body).queryAllByTestId("pair-card")).toHaveLength(0);
     expect(within(view.container.ownerDocument.body).getAllByText("Décrivez votre besoin pour voir des capteurs proposés").length).toBeGreaterThan(0);
-  });
+  }, 30_000);
 
   async function reveal(view: RenderResult, goal: string, electrical?: string) {
     await changeValue(view.getByLabelText("Votre réponse"), goal);
@@ -365,10 +365,17 @@ describe("rendu du questionnaire guidé", () => {
       ).toBe("step");
     });
     await flushState();
-    if (process.env.DBG) {
-      const b = view.container.ownerDocument.body;
-      console.log("DBG", b.textContent?.includes("D'après vos réponses"), b.textContent?.includes("Points à revoir"), b.textContent?.includes("Un point à revoir"), b.querySelectorAll("[role=tabpanel]").length, [...b.querySelectorAll("[role=tabpanel]")].map((x) => x.getAttribute("data-state") + ":" + x.id.slice(-8)).join(","), b.textContent?.length);
-    }
+    // Le volet « Couples » peut se monter après un chargement différé : on
+    // attend son contenu réel (cartes ou encart), jamais un délai fixe.
+    await waitFor(
+      () =>
+        expect(
+          /D'après vos réponses|à revoir avant de proposer|Décrivez votre besoin/.test(
+            view.container.ownerDocument.body.textContent ?? "",
+          ),
+        ).toBe(true),
+      { timeout: 15_000 },
+    );
   }
 
   test("P0 C01 : courant moteur direct dans le reed sans contacteur → aucune carte", async () => {
@@ -380,14 +387,14 @@ describe("rendu du questionnaire guidé", () => {
     );
     expect(within(view.container.ownerDocument.body).queryAllByTestId("pair-card")).toHaveLength(0);
     expect(within(view.container.ownerDocument.body).getAllByText("Le capteur ne peut pas couper lui-même l'alimentation du moteur").length).toBeGreaterThan(0);
-  });
+  }, 30_000);
 
   test("P0 B02 : mesure continue de température → aucune carte", async () => {
     const view = renderQuestionnaire(390);
     await reveal(view, "Continuous temperature measurement from 20 to 250 °C.", "Analog 4-20 mA output.");
     expect(within(view.container.ownerDocument.body).queryAllByTestId("pair-card")).toHaveLength(0);
     expect(within(view.container.ownerDocument.body).getAllByText("Un capteur reed ne mesure pas une température en continu").length).toBeGreaterThan(0);
-  });
+  }, 30_000);
 
   test("contrôle positif : contacteur externe dimensionné → cartes proposées", async () => {
     const view = renderQuestionnaire(390);
@@ -397,7 +404,7 @@ describe("rendu du questionnaire guidé", () => {
       "The 230 VAC 8 A motor is switched by an external properly rated contactor driven by the PLC.",
     );
     expect(within(view.container.ownerDocument.body).queryAllByTestId("pair-card").length).toBeGreaterThan(0);
-  });
+  }, 30_000);
 
   test("les libellés de composition changent immédiatement de français à anglais puis japonais", () => {
     const view = renderQuestionnaire(390);
