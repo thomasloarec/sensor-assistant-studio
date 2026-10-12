@@ -423,6 +423,24 @@ describe("rendu du questionnaire guidé", () => {
     );
   }
 
+  test("A05 : place disponible écrite → proposée, appliquée seulement après clic", async () => {
+    const view = renderQuestionnaire(390);
+    await changeValue(view.getByLabelText("Votre réponse"), "Detect when the door is closed.");
+    await goToQuestion(view, 4);
+    await changeValue(view.getByLabelText("Votre réponse"), "Maximum available space: 8 × 5 × 4 mm");
+    const hint = await waitFor(() => view.getByTestId("envelope-hint"));
+    expect(hint.getAttribute("data-kind")).toBe("found");
+    expect((view.getByLabelText("Longueur") as HTMLInputElement).value).toBe("");
+    await act(async () => {
+      fireEvent.click(view.getByTestId("envelope-apply"));
+      await Promise.resolve();
+    });
+    await waitFor(() => expect((view.getByLabelText("Longueur") as HTMLInputElement).value).toBe("8"));
+    expect((view.getByLabelText("Largeur") as HTMLInputElement).value).toBe("5");
+    expect((view.getByLabelText("Hauteur") as HTMLInputElement).value).toBe("4");
+    expect(view.queryByTestId("envelope-hint")).toBeNull();
+  }, 30_000);
+
   test("P1 A06 : -40…+85 °C au capteur → cartes conservées avec avertissement thermique visible", async () => {
     const view = renderQuestionnaire(390);
     await revealWithEnvironment(view, "Detect when the door is closed.", "Sensor operating from -40 to +85 °C.");
