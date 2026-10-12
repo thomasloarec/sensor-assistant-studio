@@ -92,3 +92,4 @@ rg -n "\brounded-md border\b|\bborder border-input\b|\btext-xs\b" src/ --glob '!
 
 Toute évolution met à jour `docs/design-language.md` dans le même commit ; aucun
 jeton sans documentation ni contournement ponctuel.
+

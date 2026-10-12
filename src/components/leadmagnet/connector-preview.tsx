@@ -59,8 +59,8 @@ function HousingSilhouette({
     <svg viewBox="-64 -40 128 80" role="img" aria-label={housingLabel(housing)} focusable="false">
       <path
         d={`M ${-w + chamfer} ${-h} H ${w} V ${h} H ${-w} V ${-h + chamfer} Z`}
-        fill="#3c4853"
-        stroke="#22282e"
+        fill="var(--standex-gray)"
+        stroke="var(--standex-abyss)"
         strokeWidth="0.6"
       />
       {Array.from({ length: housing.positions }, (_, i) => (
@@ -70,7 +70,7 @@ function HousingSilhouette({
           y={-cavityHeight / 2}
           width={cavityWidth}
           height={cavityHeight}
-          fill="#0f1317"
+          fill="var(--standex-abyss)"
         />
       ))}
     </svg>
@@ -93,18 +93,13 @@ class PreviewBoundary extends Component<
   }
 }
 
-/** Bandeau de cotes + source, toujours visible quel que soit le mode de rendu. */
-function PreviewCaption({
-  housing,
-  geometry,
-}: {
-  housing: DocumentedHousing;
-  geometry: HousingGeometry;
-}) {
+/** Cotes et sources sans répéter le nom du boîtier. */
+export function ConnectorGeometryDetails({ housing }: { housing: DocumentedHousing }) {
+  const geometry = geometryByHousingId(housing.housingMpn);
+  if (!geometry) return null;
   return (
     <div className="connector-preview-caption">
-      <p className="t-label">{housingLabel(housing)}</p>
-      <p className="t-caption">
+      <p className="t-caption t-metric">
         {t("Encombrement (mm) — largeur")} {geometry.width.valueMm} × {t("hauteur")}{" "}
         {geometry.height.valueMm} × {t("profondeur")} {geometry.depth.valueMm}
         {geometry.lowerProtrusion && (
@@ -126,6 +121,7 @@ function PreviewCaption({
           href={`${geometry.width.sourceUrl}#page=${geometry.width.sourcePage}`}
           target="_blank"
           rel="noreferrer"
+          className="inline-flex min-h-11 items-center underline"
         >
           {t("Source fabricant")}
         </a>
@@ -140,9 +136,11 @@ function PreviewCaption({
 export function ConnectorPreview({
   housing,
   livePreview = true,
+  showCaption = true,
 }: {
   housing: DocumentedHousing;
   livePreview?: boolean;
+  showCaption?: boolean;
 }) {
   const geometry = geometryByHousingId(housing.housingMpn);
   const host = useRef<HTMLDivElement>(null);
@@ -197,7 +195,7 @@ export function ConnectorPreview({
       data-live={live ? "3d" : "2d"}
       data-housing={housing.housingMpn}
     >
-      <div className="connector-preview-canvas">
+      <div className="connector-preview-canvas relative aspect-[8/5] w-full overflow-hidden bg-[var(--surface-product)] [&>svg]:h-full [&>svg]:w-full">
         {live ? (
           <PreviewBoundary onFailed={() => setLost(true)}>
             <Suspense fallback={<HousingSilhouette housing={housing} geometry={geometry} />}>
@@ -213,7 +211,7 @@ export function ConnectorPreview({
           <HousingSilhouette housing={housing} geometry={geometry} />
         )}
       </div>
-      <PreviewCaption housing={housing} geometry={geometry} />
+      {showCaption ? <ConnectorGeometryDetails housing={housing} /> : null}
     </div>
   );
 }

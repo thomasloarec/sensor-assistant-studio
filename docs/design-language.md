@@ -472,3 +472,6 @@ n'est autorisée.
 - Exemple (`.questionnaire-examples`) : note sans fond ni coins, filet gauche 2 px `--standex-blue-25`, retrait 14 px, icône ampoule + « Exemple » en Detect Blue, texte italique Electronics Gray entre guillemets, aligné sur le haut du champ ; sous 768 px il passe sous le champ.
 - Navigation : flèches précédent/suivant (44 px, aria-label), points décoratifs rapprochés (6 px), actif Detect Blue, autres Gray 25. Aucun défilement automatique ; fondu neutralisé sous `prefers-reduced-motion`.
 - Progression remplie de 1/6 dès la question 1 ; « Question précédente » masquée à la question 1 ; focus automatique dans le champ sur desktop (≥ 768 px, pointeur fin).
+
+### Connecteurs — divulgation progressive (12 octobre 2026)
+Les tuiles documentées utilisent le bouton du socle, un état sélectionné explicite et les dimensions en `t-metric`. Le nom choisi et la confirmation Standex restent visibles ; les sources, limites et l’aperçu géométrique sont regroupés dans un dépliant natif fermé par défaut. Aucun lien ni dépliant n’est imbriqué dans le bouton de sélection. Les couleurs du repli SVG utilisent les jetons existants, sans nouveau jeton.

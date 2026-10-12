@@ -27,7 +27,11 @@ Tests ajoutés : `tests/qa-predemo-final-lot-2026-10-12.test.tsx` (64), A05 dans
 `supabase/schema/migration_v1.11_business_context_guard.sql` (nouveau), `src/lib/leadmagnet/{submission,rpc,dossier,dossier-io,candidates,suggestion-filters,pair-cards,application-fit,envelope-text}.ts`, `src/lib/standex/sensor-catalog.ts`, `src/components/leadmagnet/{compatibility-panel,design-space,result-view,project-context-fields}.tsx`, `src/lib/i18n/messages.json`, tests ci-dessus, `tests/i18n-coverage.test.ts` (3 297 clés), `tests/qa-broad-predemo-2026-10-12.test.ts`.
 
 ## Reste ouvert
-- **P2 connecteurs** : présentation courte avec détails repliés **non faite** dans ce lot.
-- Migration v1.11 non appliquée ; le message serveur ne pointe pas encore champ par champ.
+- **P2 connecteurs clôturé dans le complément** : présentation commune compacte, sources et qualifications repliées, sélection conservée. Voir `docs/QA_PREDEMO_CONNECTOR_FINAL_2026-10-12.md` (code testé `a1fcd7e31381d4a127e553b574eb32c648c0bded`).
+- Migration v1.11 toujours **NON APPLIQUÉE** ; le complément ajoute les noms de champs localisés au message client, sans prétendre que le garde serveur est actif.
 - Repérage par texte : des formulations non testées peuvent passer à travers.
 - Non testé : navigateur connecté, captures d'écran, vrai envoi au serveur, envois de fichiers, droits d'accès.
+
+### Vérification finale du complément
+
+`bun test tests/` : **1 449 pass, 0 fail, 96 304 assertions**, 105 fichiers, 41,48 s ; inventaire huit langues **TOTAL 0** ; compilation automatique **build OK**. Un premier échec SQL local intermittent est consigné dans le rapport complémentaire avec sa reprise isolée et complète, sans modification du test. Aucun résultat distinct de typecheck automatique n'est disponible pour ce complément ; les commandes manuelles de compilation/typecheck sont interdites dans l'environnement actuel. La seule capture navigateur est l'écran d'accès réservé, pas une validation visuelle du questionnaire. Aucun déploiement, accès Supabase externe ni authentification utilisateur.

@@ -75,3 +75,8 @@
 - [x] Garder position, activation et lecture visibles, puis répartir les autres commandes entre produit, aimant et positionnement.
 - [x] Retirer les tableaux de distances publiées de l’atelier sans modifier les données ni les calculs.
 - [x] Terminer la suite complète et la compilation ; contrôle visuel authentifié non réalisable sans session autorisée.
+
+## Nettoyage ciblé pré-démo — 12 octobre 2026
+- [x] Présentation compacte des connecteurs aux deux points d’entrée, données conservées.
+- [x] Erreurs de contexte projet limitées aux champs autorisés et traduites.
+- [x] Tests complets, inventaire, contrôle automatique et rapport ; aucun déploiement.
