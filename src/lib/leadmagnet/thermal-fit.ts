@@ -14,9 +14,11 @@ export type ThermalStatus = "covered" | "conditional" | "exceeded" | "unknown";
 
 export interface ThermalWarning {
   status: Exclude<ThermalStatus, "covered">;
-  /** Texte canonique FR, traduit au rendu ; {0} = plage demandée, {1} = plage documentée. */
+  /** Texte canonique FR, traduit au rendu ; {0} = plage demandée, {1} = plages documentées. */
   text: string;
-  args: string[];
+  asked: string;
+  /** Conditions documentées, libellés canoniques FR (traduits au rendu). */
+  documented: readonly { condition: string; min: number; max: number }[];
 }
 
 export interface SiteRangeC {
@@ -46,11 +48,15 @@ export function thermalWarning(sensorId: string, range: SiteRangeC | null): Ther
   const spec = SENSOR_SPECIFICATIONS[sensorId];
   const asked = rangeLabel(range);
   if (!spec || spec.temperatures.length === 0)
-    return { status: "unknown", text: THERMAL_TEXT.unknown, args: [asked] };
+    return { status: "unknown", text: THERMAL_TEXT.unknown, asked, documented: [] };
   const conds = spec.temperatures;
   const ok = conds.filter((c) => covers(c, range));
-  const documented = conds.map((c) => `${c.condition} ${fmt(c.min)} … ${fmt(c.max)} °C`).join(" · ");
   if (ok.length === conds.length) return null;
-  if (ok.length > 0) return { status: "conditional", text: THERMAL_TEXT.conditional, args: [asked, documented] };
-  return { status: "exceeded", text: THERMAL_TEXT.exceeded, args: [asked, documented] };
+  if (ok.length > 0) return { status: "conditional", text: THERMAL_TEXT.conditional, asked, documented: conds };
+  return { status: "exceeded", text: THERMAL_TEXT.exceeded, asked, documented: conds };
+}
+
+/** Plage documentée lisible ; `tr` traduit uniquement le libellé de condition. */
+export function documentedLabel(w: ThermalWarning, tr: (s: string) => string = (s) => s): string {
+  return w.documented.map((c) => `${tr(c.condition)} ${fmt(c.min)} … ${fmt(c.max)} °C`).join(" · ");
 }
