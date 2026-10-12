@@ -1013,7 +1013,7 @@ export function DesignSpace({
   /** Un point a réellement été levé dans cette session : seule condition pour
    * afficher la confirmation. Aucune confirmation gratuite au premier écran. */
   const fitEverBlockedRef = useRef(false);
-  if (fitBlocked) fitEverBlockedRef.current = true;
+  if (fitBlocked && !intakeEmpty) fitEverBlockedRef.current = true;
   /** Ouvre la question visée et y place le curseur, SANS rien réécrire. */
   const goToRequirementStep = useCallback((key: string) => {
     const index = GUIDED_QUESTIONS.findIndex((q) => q.key === key);
