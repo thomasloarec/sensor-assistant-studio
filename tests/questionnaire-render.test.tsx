@@ -350,7 +350,7 @@ describe("rendu du questionnaire guidé", () => {
       await Promise.resolve();
     });
     await flushState();
-    if (process.env.DBG) console.log("DBG", view.container.ownerDocument === document, view.container.ownerDocument.body.textContent?.slice(0, 600));
+    if (process.env.DBG) console.log("DBG", view.container.ownerDocument === document, view.container.ownerDocument.body.textContent?.slice(600, 1500));
   }
 
   test("P0 C01 : courant moteur direct dans le reed sans contacteur → aucune carte", async () => {
