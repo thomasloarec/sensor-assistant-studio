@@ -336,10 +336,17 @@ describe("rendu du questionnaire guidé", () => {
       ).toBe("step");
     });
     await flushState();
-    if (process.env.DBG) {
-      const b = view.container.ownerDocument.body;
-      console.log("DBG", b.textContent?.includes("D'après vos réponses"), b.textContent?.includes("Points à revoir"), b.textContent?.includes("Un point à revoir"), b.querySelectorAll("[role=tabpanel]").length, [...b.querySelectorAll("[role=tabpanel]")].map((x) => x.getAttribute("data-state") + ":" + x.id.slice(-8)).join(","), b.textContent?.length);
-    }
+    // Le volet « Couples » peut se monter après un chargement différé : on
+    // attend son contenu réel (cartes ou encart), jamais un délai fixe.
+    await waitFor(
+      () =>
+        expect(
+          /D'après vos réponses|à revoir avant de proposer|Décrivez votre besoin/.test(
+            view.container.ownerDocument.body.textContent ?? "",
+          ),
+        ).toBe(true),
+      { timeout: 15000 },
+    );
     expect(within(view.container.ownerDocument.body).queryAllByTestId("pair-card")).toHaveLength(0);
     expect(within(view.container.ownerDocument.body).getAllByText("Décrivez votre besoin pour voir des capteurs proposés").length).toBeGreaterThan(0);
   });
