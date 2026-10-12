@@ -23,11 +23,22 @@ export interface Requirement {
   note?: string;
 }
 
+/** Précision RÉTROCOMPATIBLE d'une fixation vissée (champ facultatif : les
+ *  dossiers existants sans `style` gardent les trois formes vissables, et le
+ *  contrôle SQL `mounting_ok` accepte déjà `kind = screw` quel que soit le reste).
+ *  - threaded_body : corps fileté, le capteur se visse dans un trou taraudé (MK11) ;
+ *  - screw_fixed   : boîtier à collerette ou bloc fixé par vis. */
+export type ScrewStyle = "threaded_body" | "screw_fixed";
+export const SCREW_STYLE_SHAPES: Readonly<Record<ScrewStyle, readonly ("threaded" | "flange" | "block")[]>> = {
+  threaded_body: ["threaded"],
+  screw_fixed: ["flange", "block"],
+};
+
 /** Choix mécaniques explicites : jamais déduits d'une application. */
 export type MountingChoice =
   | { kind: "pcb_smd" }
   | { kind: "pcb_through_hole" }
-  | { kind: "screw" }
+  | { kind: "screw"; style?: ScrewStyle }
   | { kind: "press_fit"; holeDiameterMm: number }
   | { kind: "other"; description: string }
   | { kind: "undecided" };

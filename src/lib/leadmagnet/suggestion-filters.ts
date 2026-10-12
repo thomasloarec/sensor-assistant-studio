@@ -89,6 +89,17 @@ const MOUNTING_LABEL: Record<string, string> = {
   press_fit: "Emmanchement dans un trou",
 };
 
+/** Formes retenues pour le montage DÉCLARÉ, précision de vissage comprise. */
+function shapesForMounting(m: MountingChoice): readonly SensorModel["shape"][] | undefined {
+  if (m.kind === "screw" && m.style) return SCREW_STYLE_SHAPES[m.style];
+  return SHAPES_BY_MOUNTING[m.kind];
+}
+function mountingLabel(m: MountingChoice): string {
+  if (m.kind === "screw" && m.style === "threaded_body") return "Corps fileté vissé dans un trou taraudé";
+  if (m.kind === "screw" && m.style === "screw_fixed") return "Fixation par vis (collerette ou boîtier)";
+  return MOUNTING_LABEL[m.kind]!;
+}
+
 /** Le sur mesure n'est jamais filtré : sa géométrie serait justement définie. */
 const alwaysVisible = (model: SensorModel) => model.id === CUSTOM_SENSOR_ID;
 
@@ -105,11 +116,11 @@ export function suggestionFilters(input: {
 }): SuggestionFilter[] {
   const filters: SuggestionFilter[] = [];
   const kind = input.mounting.kind;
-  const shapes = SHAPES_BY_MOUNTING[kind];
+  const shapes = shapesForMounting(input.mounting);
   if (shapes)
     filters.push({
       id: "fixation",
-      label: MOUNTING_LABEL[kind]!,
+      label: mountingLabel(input.mounting),
       requirementKey: "mounting",
       technical: `Formes de boîtier retenues : ${shapes.join(", ")}.`,
       source: "answers",
@@ -218,8 +229,9 @@ export function passesFilter(
       if (filter.criteria?.shapes) return filter.criteria.shapes.includes(model.shape);
       /* Un filtre d'exploration porte son propre critère : il REMPLACE la
          fixation déclarée, il ne s'y ajoute pas. */
-      const kind = filter.criteria?.mountingKind ?? input.mounting.kind;
-      const shapes = SHAPES_BY_MOUNTING[kind];
+      const shapes = filter.criteria?.mountingKind
+        ? SHAPES_BY_MOUNTING[filter.criteria.mountingKind]
+        : shapesForMounting(input.mounting);
       return !shapes || shapes.includes(model.shape);
     }
     case "forme": {

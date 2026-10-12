@@ -54,6 +54,14 @@ function mountingVerdict(
           }
         : { status: "excluded", reason: "Pas de version traversante documentée ici." };
     case "screw":
+      if (mounting.style === "threaded_body")
+        return sensor.shape === "threaded"
+          ? { status: "kept", reason: "Corps fileté : le capteur se visse dans un trou taraudé ou se fixe par écrous." }
+          : { status: "excluded", reason: "Pas de corps fileté documenté pour ce boîtier." };
+      if (mounting.style === "screw_fixed")
+        return sensor.shape === "flange" || sensor.shape === "block"
+          ? { status: "kept", reason: "Boîtier à fixation par vis." }
+          : { status: "excluded", reason: "Pas de collerette ni de boîtier à fixer par vis documenté." };
       return SCREW_SHAPES.has(sensor.shape)
         ? {
             status: "kept",
