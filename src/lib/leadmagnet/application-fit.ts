@@ -489,14 +489,14 @@ export function temperaturesC(text: string): number[] {
   const out: number[] = [];
   const num = (v: string) => Number(v.replace(",", "."));
   // Plages : la première borne hérite de l'unité de la seconde.
-  for (const m of text.matchAll(/([+-]?\d{1,3}(?:[.,]\d+)?)\s*(?:°\s*c?)?\s*(?:to|a|-|–|\.\.|…|bis|hasta)\s*([+-]?\d{1,3}(?:[.,]\d+)?)\s*(?:°|º|deg|degres|degrees)\s*(c|f)?\b/g)) {
+  for (const m of text.matchAll(/(?<!\d)([+-]?\d{1,3}(?:[.,]\d+)?)\s*(?:°\s*c?)?\s*(?:to|a|-|–|\.\.|…|bis|hasta)\s*([+-]?\d{1,3}(?:[.,]\d+)?)\s*(?:°|º|deg|degres|degrees)\s*(c|f)?\b/g)) {
     const f = m[3] === "f";
     for (const v of [m[1]!, m[2]!]) {
       const n = num(v);
       if (Number.isFinite(n)) out.push(f ? ((n - 32) * 5) / 9 : n);
     }
   }
-  for (const m of text.matchAll(/([+-]?\d{1,3}(?:[.,]\d+)?)\s*(?:(?:°|º|deg|degres|degrees)\s*(c|f|fahrenheit|celsius)?\b|(c|f)\b)/g)) {
+  for (const m of text.matchAll(/(?<![\d.,])([+-]?\d{1,3}(?:[.,]\d+)?)\s*(?:(?:°|º|deg|degres|degrees)\s*(c|f|fahrenheit|celsius)?\b|(c|f)\b)/g)) {
     const n = num(m[1]!);
     const unit = m[2] ?? m[3] ?? "c";
     if (!Number.isFinite(n)) continue;
