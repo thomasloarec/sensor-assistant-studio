@@ -158,7 +158,9 @@ const REFUSE_INTERFACE = [
 const SAFE_WIRING = [
   /(pas de commutation directe|aucune commutation directe|no direct switching|not directly switch|ne commute pas directement|ne passe pas (par|dans) le capteur|does not pass through the sensor|not through the sensor)/,
   // \b obligatoire : « with » ne doit jamais être lu dans « without ».
-  /\b(via|a travers|au travers|through|par|with)\b[^.]{0,40}(un |une |a |an )?(relais|relay|contacteur|contactor|interface de puissance|power interface|module de puissance)/,
+  // … et aucune négation entre la préposition et l'interface : « through the
+  // reed, without a relay » n'est PAS un câblage sûr.
+  /\b(via|a travers|au travers|through|par|with)\b(?:(?!\b(?:sans|without|no|pas|aucun|aucune)\b)[^.]){0,40}(un |une |a |an )?(relais|relay|contacteur|contactor|interface de puissance|power interface|module de puissance)/,
   /(pilote|pilotage|commande|commandes|drives|drive|driving|controls|control|controlled|actionne)[^.]{0,50}(relais|relay|contacteur|contactor)/,
   /(relais|relay|contacteur|contactor)[^.]{0,60}(externe|external|separe|separate|dimensionne|rated|approprie|appropriate)/,
   /\b(automate|plc|api|controleur|controller|carte)\b[^.]{0,80}(contacteur|contactor|relais|relay)/,
@@ -298,14 +300,11 @@ export function assessApplicationFit(
   // ailleurs ne supprime pas une intention restée dans une autre réponse (par
   // exemple « alimenter directement le moteur » en Application) : la
   // contradiction demeure jusqu'à l'édition de CETTE réponse.
-  // Une phrase qui REFUSE elle-même le relais ou le contacteur n'est jamais un
-  // câblage sûr, même si elle contient « through … relay » plus loin.
-  const localSafe = (f: Fragment) =>
-    !REFUSE_INTERFACE.some((p) => p.test(f.text)) && SAFE_WIRING.some((p) => p.test(f.text));
+  const localSafe = (f: Fragment) => SAFE_WIRING.some((p) => p.test(f.text));
   const direct = anyMatch(frags, DIRECT_SWITCH).filter(
     (f) => !localSafe(f) && !NEGATED_DIRECT.some((p) => p.test(f.text)),
   );
-  const refuseInterface = anyMatch(frags, REFUSE_INTERFACE);
+  const refuseInterface = anyMatch(frags, REFUSE_INTERFACE).filter((f) => !localSafe(f));
   const load = heavyLoad(frags);
   if ((direct.length > 0 || refuseInterface.length > 0) && load.found) {
     const evidence: FitEvidence[] = [...direct, ...refuseInterface].map((f) => ({
