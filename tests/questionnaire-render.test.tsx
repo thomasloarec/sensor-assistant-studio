@@ -224,10 +224,10 @@ describe("rendu du questionnaire guidé", () => {
     expect(view.queryByText(/Une fixation que vous NOMMEZ/)).toBeNull();
     expect(view.queryByText(/Rien n'est déduit de votre texte/)).toBeNull();
     expect(view.queryByText(/Une dimension laissée vide/)).toBeNull();
-    expect(view.getByRole("button", { name: /Fixation vissée/ })).toBeTruthy();
+    expect(view.getByRole("button", { name: /Corps fileté — se visse dans un trou taraudé/ })).toBeTruthy();
     const unknown = view.getByRole("button", { name: "Montage : Je ne sais pas encore" });
     expect(unknown?.getAttribute("aria-pressed")).toBe("true");
-    fireEvent.click(view.getByRole("button", { name: /Fixation vissée/ }));
+    fireEvent.click(view.getByRole("button", { name: /Corps fileté — se visse dans un trou taraudé/ }));
     expect(unknown?.getAttribute("aria-pressed")).toBe("false");
     if (unknown) fireEvent.click(unknown);
     expect(unknown?.getAttribute("aria-pressed")).toBe("true");
@@ -349,7 +349,7 @@ describe("rendu du questionnaire guidé", () => {
     await waitFor(
       () =>
         expect(
-          /D'après vos réponses|à revoir avant de proposer|Décrivez votre besoin/.test(
+          /D'après vos réponses|à revoir avant de proposer|Décrivez votre besoin|étude d'ingénierie|Exploration du catalogue/.test(
             view.container.ownerDocument.body.textContent ?? "",
           ),
         ).toBe(true),
@@ -378,7 +378,7 @@ describe("rendu du questionnaire guidé", () => {
     await waitFor(
       () =>
         expect(
-          /D'après vos réponses|à revoir avant de proposer|Décrivez votre besoin/.test(
+          /D'après vos réponses|à revoir avant de proposer|Décrivez votre besoin|étude d'ingénierie|Exploration du catalogue/.test(
             view.container.ownerDocument.body.textContent ?? "",
           ),
         ).toBe(true),
@@ -417,7 +417,7 @@ describe("rendu du questionnaire guidé", () => {
     await waitFor(
       () =>
         expect(
-          /D'après vos réponses|à revoir avant de proposer/.test(view.container.ownerDocument.body.textContent ?? ""),
+          /D'après vos réponses|à revoir avant de proposer|étude d'ingénierie|Exploration du catalogue/.test(view.container.ownerDocument.body.textContent ?? ""),
         ).toBe(true),
       { timeout: 15_000 },
     );

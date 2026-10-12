@@ -117,9 +117,9 @@ describe("Questionnaire vide / délégué", () => {
   test("un seul caractère = vide", () => expect(intakeIsEmpty(req({ detection_goal: "x" }), "", none)).toBe(true));
   test("montage seul choisi = non vide (décision documentée P2)", () =>
     expect(intakeIsEmpty(req({}), "", { mountingChosen: true, envelopeSet: false })).toBe(false));
-  test.failing("DÉFAUT P2 : « je ne sais pas » tapé à la main devrait compter comme non répondu", () =>
+  test("CORRIGÉ P2 : « je ne sais pas » tapé à la main devrait compter comme non répondu", () =>
     expect(intakeIsEmpty(req({ detection_goal: "je ne sais pas" }), "", none)).toBe(true));
-  test.failing("DÉFAUT P2 : « ??? ok » ne devrait pas suffire à afficher des capteurs", () =>
+  test("CORRIGÉ P2 : « ??? ok » ne devrait pas suffire à afficher des capteurs", () =>
     expect(intakeIsEmpty(req({ detection_goal: "??? ok" }), "", none)).toBe(true));
 });
 
