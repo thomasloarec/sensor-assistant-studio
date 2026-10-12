@@ -146,6 +146,7 @@ async function flushState() {
 afterEach(() => {
   cleanup();
   setLocale("fr");
+  setWebGLSupportForTests(null);
 });
 
 describe("Connecteurs compacts — état réel du questionnaire", () => {
