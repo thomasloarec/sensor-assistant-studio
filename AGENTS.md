@@ -77,23 +77,15 @@ correction d'une ligne. En cas de doute, la règle gagne contre l'habitude.
 ### Vérifier avant de livrer
 
 ```bash
-bun test tests/        # 189 tests, 16 412 assertions — doivent rester verts
+bun test tests/        # toute la suite doit rester verte
 bunx tsgo --noEmit
 bun run build
 
-# 1. Couleurs Tailwind brutes (préfixe d'utilitaire + palette + graduation)
+# Contrôles de charte (tous doivent être vides)
 rg -n "\b(?:bg|text|border|ring|fill|stroke|from|via|to|shadow|outline|decoration|accent|caret|divide|placeholder)-(?:slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-\d{2,3}\b" src/
-
-# 2. Hexadécimaux en dur dans le code applicatif (les commentaires de styles.css
-#    et les matériaux Three.js sont hors périmètre)
 rg -n "#[0-9a-fA-F]{6}\b" src/routes/ src/components/leadmagnet/ --glob '*.tsx'
-
-# 3. Durées et courbes écrites à la main
 rg -n "\b(?:duration|delay)-\d+\b|cubic-bezier\(" src/ --glob '!src/styles.css'
-
-# 4. Anciens motifs de séparation et de typographie
-rg -n "\brounded-md border\b|\bborder border-input\b|\btext-xs\b" src/ \
-  --glob '!src/components/ui/**' --glob '!src/styles.css'
+rg -n "\brounded-md border\b|\bborder border-input\b|\btext-xs\b" src/ --glob '!src/components/ui/**' --glob '!src/styles.css'
 ```
 
 ### Faire évoluer le système
