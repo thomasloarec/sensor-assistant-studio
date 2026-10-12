@@ -41,12 +41,12 @@ begin
               and (v::text)::numeric > 0
               and (v::text)::numeric = trunc((v::text)::numeric)
               and (v::text)::numeric <= 1000000000) then
-    missing := missing || 'annualVolume';
+    missing := array_append(missing, 'annualVolume');
   end if;
   -- Phase : « unknown » n'est valable qu'avec le marqueur explicite.
   if not ((b ->> 'projectPhase') in ('exploration','design','prototype','industrialisation')
           or ((b ->> 'projectPhase') = 'unknown' and deferred ? 'projectPhase')) then
-    missing := missing || 'projectPhase';
+    missing := array_append(missing, 'projectPhase');
   end if;
   -- Date de lancement série
   if not (deferred ? 'seriesStartDate') then
@@ -59,7 +59,7 @@ begin
       exception when others then d := null;
       end;
     end if;
-    if d is null then missing := missing || 'seriesStartDate'; end if;
+    if d is null then missing := array_append(missing, 'seriesStartDate'); end if;
   end if;
   -- Durée de série
   v := b -> 'seriesDurationYears';
@@ -67,7 +67,7 @@ begin
      and not (jsonb_typeof(v) = 'number'
               and (v::text)::numeric > 0
               and (v::text)::numeric <= 100) then
-    missing := missing || 'seriesDurationYears';
+    missing := array_append(missing, 'seriesDurationYears');
   end if;
   return missing;
 end $$;
