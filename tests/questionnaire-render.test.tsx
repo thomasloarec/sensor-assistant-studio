@@ -336,6 +336,7 @@ describe("rendu du questionnaire guidé", () => {
       ).toBe("step");
     });
     await flushState();
+    if (process.env.DBG) { const panel = [...view.container.ownerDocument.body.querySelectorAll("[role=tabpanel]")].find((x) => x.getAttribute("data-state") === "active"); console.log("DBG", panel?.innerHTML.length, panel?.innerHTML.slice(0, 400)); }
     // Le volet « Couples » peut se monter après un chargement différé : on
     // attend son contenu réel (cartes ou encart), jamais un délai fixe.
     await waitFor(
