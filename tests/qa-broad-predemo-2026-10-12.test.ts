@@ -13,6 +13,7 @@ import { checkSubmission, submissionBinding, type SubmissionInput } from "@/lib/
 import { INITIAL_NDA } from "@/lib/leadmagnet/nda";
 import { ACTIVATION_GUIDE } from "@/lib/standex/activation-guide";
 import { SENSOR_SPECIFICATIONS } from "@/lib/standex/sensor-specifications";
+import { thermalWarning } from "@/lib/leadmagnet/thermal-fit";
 
 const req = (a: Record<string, string>): Requirement[] =>
   Object.entries(a).map(([key, value]) => ({ key, value }) as unknown as Requirement);
@@ -158,8 +159,12 @@ describe("Seuils P0 confrontés aux données catalogue", () => {
   });
   test("P1 : 150 °C est déclaré « sans correspondance documentée » alors que MK21 est documenté à 150 °C", () =>
     expect(ids({ environment: "Sensor must withstand 150°C" })).toEqual([]));
-  test.failing("P1 : 140 °C dépasse toutes les gammes sauf MK21 mais ne déclenche aucun avertissement candidat", () =>
-    expect(ids({ environment: "Sensor must withstand 140°C" }).length).toBeGreaterThan(0));
+  test("CORRIGÉ P1 : 140 °C → aucun blocage global, avertissement par gamme (MK03 dépassé, MK21 couvert)", () => {
+    const r = assessApplicationFit(req({ environment: "Sensor must withstand 140°C" }), "", none);
+    expect(r.blocking).toBe(false);
+    expect(thermalWarning("MK03", r.sensorSiteC)?.status).toBe("exceeded");
+    expect(thermalWarning("MK21", r.sensorSiteC)).toBeNull();
+  });
 });
 
 /* ------------------------------------------------------------------ */
