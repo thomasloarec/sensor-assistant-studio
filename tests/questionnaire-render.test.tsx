@@ -10,7 +10,7 @@ if (typeof document === "undefined" || typeof window === "undefined") {
   }
 }
 
-import { afterEach, describe, expect, mock, test } from "bun:test";
+import { afterEach, beforeEach, describe, expect, mock, test } from "bun:test";
 import * as React from "react";
 import {
   act,
@@ -67,6 +67,10 @@ mock.module("@radix-ui/react-use-layout-effect", () => ({
 }));
 
 const { DesignSpace } = await import("../src/components/leadmagnet/design-space");
+const { ConnectorChoices } = await import("../src/components/leadmagnet/connector-choices");
+const { DOCUMENTED_HOUSINGS, terminationFromHousing } = await import("../src/lib/leadmagnet/connector-library");
+const { LANGUAGES } = await import("../src/lib/i18n/core");
+const { setWebGLSupportForTests } = await import("../src/hooks/use-webgl-slot");
 const { setLocale } = await import("../src/lib/i18n/core");
 const { createDossier, proposeRequirement, confirmRequirement } =
   await import("../src/lib/leadmagnet/dossier");
@@ -139,12 +143,81 @@ async function flushState() {
   await act(async () => Promise.resolve());
 }
 
-afterEach(() => {
-  cleanup();
+beforeEach(() => {
+  // Other suites unregister the shared Happy DOM globals; isolated selector
+  // renders need the same restoration as renderQuestionnaire.
+  if (typeof document === "undefined" || typeof window === "undefined") {
+    GlobalRegistrator.unregister();
+    GlobalRegistrator.register({ url: "https://exemple.invalid/" });
+  }
   setLocale("fr");
 });
 
+afterEach(() => {
+  cleanup();
+  setLocale("fr");
+  setWebGLSupportForTests(null);
+});
+
 describe("Connecteurs compacts — état réel du questionnaire", () => {
+  for (const { id } of LANGUAGES) test(`quatre aperçus distincts avant sélection — ${id}`, () => {
+    setLocale(id);
+    setWebGLSupportForTests(false);
+    const onSelect = mock(() => undefined);
+    const view = render(<ConnectorChoices termination={{ kind: "bare_leads" }} onSelect={onSelect} />);
+    const details = view.getByTestId("connector-technical-details") as HTMLDetailsElement;
+    expect(details.open).toBe(false);
+    const previews = view.container.querySelectorAll("[data-housing]");
+    expect(previews).toHaveLength(4);
+    expect(view.container.querySelector(".grid")?.className).toContain("grid-cols-2");
+    for (const housing of DOCUMENTED_HOUSINGS) {
+      const preview = view.container.querySelector(`[data-housing="${housing.housingMpn}"]`);
+      expect(preview).toBeTruthy();
+      expect(preview?.closest("details, button")).toBeNull();
+      expect(preview?.getAttribute("data-live")).toBe("2d");
+      expect(preview?.querySelectorAll("svg rect")).toHaveLength(housing.positions);
+      const button = view.getByRole("button", { name: `${housing.manufacturer} ${housing.housingMpn}` });
+      expect(button.tagName).toBe("BUTTON");
+      expect(button.getAttribute("type")).toBe("button");
+      expect(button.getAttribute("aria-pressed")).toBe("false");
+      expect(button.parentElement).toBe(preview?.parentElement);
+      button.focus();
+      expect(document.activeElement).toBe(button);
+      if (preview) {
+        fireEvent.pointerDown(preview);
+        fireEvent.pointerMove(preview);
+        fireEvent.pointerUp(preview);
+        fireEvent.click(preview);
+      }
+    }
+    expect(new Set(Array.from(previews).map(p => p.querySelector("svg path")?.getAttribute("d"))).size).toBeGreaterThan(1);
+    expect(onSelect).not.toHaveBeenCalled();
+    expect(details.querySelector("[data-housing], canvas")).toBeNull();
+  });
+
+  test("sélection explicite unique, conservation au remontage et détails sans contexte supplémentaire", async () => {
+    const initial = DOCUMENTED_HOUSINGS[0];
+    const next = DOCUMENTED_HOUSINGS[3];
+    if (!initial || !next) throw new Error("Documented connector fixtures missing");
+    setWebGLSupportForTests(false);
+    const onSelect = mock(() => undefined);
+    const view = render(<ConnectorChoices termination={terminationFromHousing(initial)} onSelect={onSelect} />);
+    expect(view.container.querySelectorAll('button[aria-pressed="true"]')).toHaveLength(1);
+    await act(async () => fireEvent.click(view.getByRole("button", { name: `${next.manufacturer} ${next.housingMpn}` })));
+    expect(onSelect).toHaveBeenCalledWith(next);
+    view.rerender(<ConnectorChoices termination={terminationFromHousing(next)} onSelect={onSelect} />);
+    expect(view.container.querySelectorAll('button[aria-pressed="true"]')).toHaveLength(1);
+    expect(view.getByRole("button", { name: `${next.manufacturer} ${next.housingMpn}` }).getAttribute("aria-pressed")).toBe("true");
+    const details = view.getByTestId("connector-technical-details") as HTMLDetailsElement;
+    await act(async () => { details.open = true; fireEvent(details, new Event("toggle")); });
+    expect(within(details).getAllByRole("link", { name: "Source fabricant" })).toHaveLength(4);
+    expect(details.querySelector("[data-housing], canvas")).toBeNull();
+    view.unmount();
+    const reopened = render(<ConnectorChoices termination={terminationFromHousing(next)} onSelect={onSelect} />);
+    expect(reopened.getByRole("button", { name: `${next.manufacturer} ${next.housingMpn}` }).getAttribute("aria-pressed")).toBe("true");
+    expect(reopened.container.querySelectorAll("[data-housing]")).toHaveLength(4);
+  });
+
   test("préférence, sélection, sources repliées et conservation après fermeture", async () => {
     const view = renderQuestionnaire(390);
     await act(async () => fireEvent.click(view.getByRole("button", { name: /4\. Avec Standex/ })));
@@ -177,7 +250,8 @@ describe("Connecteurs compacts — état réel du questionnaire", () => {
     expect(details.textContent).toContain("disponibilité restent inconnus");
     expect(details.textContent).toContain("Câble, genre des contacts, sertissage");
     expect(details.textContent).toContain("SPH-002T-P0.5S");
-    expect(details.querySelector('[data-housing="PHR-2"]')).toBeTruthy();
+    expect(details.querySelector('[data-housing]')).toBeNull();
+    expect(view.container.querySelectorAll('[data-housing]')).toHaveLength(4);
     await act(async () => { details.open = false; fireEvent(details, new Event("toggle")); });
     expect(picker.getByRole("button", { name: "JST PHR-2" }).getAttribute("aria-pressed")).toBe("true");
     await act(async () => fireEvent.click(choices.getByRole("button", { name: "Je ne sais pas" })));

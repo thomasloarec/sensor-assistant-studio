@@ -1,3 +1,3 @@
 # Lead magnet presentation
 
-- Connector selection UI is shared through ConnectorChoices while DesignSpace owns its state and callbacks, so both entry points preserve the same dossier and safety behavior.
+- ConnectorChoices shares selection UI with four visible previews as siblings of native selection buttons, while DesignSpace owns callbacks; both entry points retain dossier behavior and viewer gestures never select a connector.

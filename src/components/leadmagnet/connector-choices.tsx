@@ -14,7 +14,6 @@ export function ConnectorChoices({ termination, onSelect }: {
 }) {
   useLocale();
   const selectedMpn = termination.kind === "unqualified_connector" ? termination.spec.mpn : null;
-  const selected = DOCUMENTED_HOUSINGS.find(h => h.housingMpn === selectedMpn);
   const name = termination.kind === "bare_leads" ? null
     : termination.kind === "free_reference" ? termination.text
     : termination.kind === "qualified_connector"
@@ -27,12 +26,15 @@ export function ConnectorChoices({ termination, onSelect }: {
       {t("Compatibilité à confirmer par Standex")}
     </p>
     <p className="t-caption">{t("Boîtiers documentés par le fabricant")}</p>
-    <div className="grid gap-3 sm:grid-cols-2">
+    <div className="grid grid-cols-2 gap-3">
       {DOCUMENTED_HOUSINGS.map(h => {
         const geometry = geometryByHousingId(h.housingMpn);
         const isSelected = h.housingMpn === selectedMpn;
-        return <Button key={h.housingMpn} type="button" variant="ghost"
-          className="connector-option surface-interactive h-auto min-h-11 min-w-0 flex-col items-start whitespace-normal p-4 text-left"
+        return <div key={h.housingMpn} data-testid="connector-option-card"
+          className="surface min-w-0 overflow-hidden">
+          <ConnectorPreview housing={h} showCaption={false} />
+          <Button type="button" variant="ghost"
+          className="connector-option h-auto min-h-11 w-full min-w-0 flex-col items-start whitespace-normal p-3 text-left"
           aria-label={`${h.manufacturer} ${h.housingMpn}`}
           aria-pressed={isSelected} onClick={() => onSelect(h)}>
           <span className="t-title-s flex items-center gap-2">
@@ -42,7 +44,8 @@ export function ConnectorChoices({ termination, onSelect }: {
           {geometry ? <span className="t-caption"><span className="t-metric">
             {geometry.width.valueMm} × {envelopeHeightMm(geometry)} × {geometry.depth.valueMm} mm
           </span></span> : null}
-        </Button>;
+          </Button>
+        </div>;
       })}
     </div>
     <details data-testid="connector-technical-details">
@@ -57,7 +60,6 @@ export function ConnectorChoices({ termination, onSelect }: {
         {termination.kind !== "bare_leads" ? <ul className="t-caption list-disc pl-5">
           {connectorSummaryLines(termination, t).map((line, i) => <li key={i}>{line}</li>)}
         </ul> : null}
-        {selected ? <ConnectorPreview housing={selected} showCaption={false} /> : null}
         <dl className="space-y-3">
           {DOCUMENTED_HOUSINGS.map(h => <div key={h.housingMpn}>
             <dt className="t-body font-semibold">{h.manufacturer} {h.housingMpn}</dt>

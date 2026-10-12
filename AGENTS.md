@@ -11,10 +11,8 @@
 
 ## Système de design — lecture obligatoire avant toute modification du front
 
-Ce projet suit un langage de design formalisé, aligné sur la charte de marque
-Standex Electronics STA001 V3.1. La référence complète est
-**`docs/design-language.md`** : lis-la avant de modifier quoi que ce soit sous
-`src/routes/`, `src/components/` ou `src/styles.css`.
+Lire **`docs/design-language.md`**, charte Standex STA001 V3.1, avant toute
+modification de `src/routes/`, `src/components/` ou `src/styles.css`.
 
 Les règles ci-dessous sont non négociables. Elles s'appliquent même à une
 correction d'une ligne. En cas de doute, la règle gagne contre l'habitude.
@@ -92,4 +90,6 @@ rg -n "\brounded-md border\b|\bborder border-input\b|\btext-xs\b" src/ --glob '!
 
 Toute évolution met à jour `docs/design-language.md` dans le même commit ; aucun
 jeton sans documentation ni contournement ponctuel.
+
+- Keep connector previews beside buttons in shared ConnectorChoices, never inside buttons or details, so rotation cannot select or duplicate WebGL contexts.
 
