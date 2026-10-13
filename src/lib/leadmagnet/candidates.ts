@@ -77,7 +77,7 @@ function mountingVerdict(
           return { status: "excluded", reason: `Filetage M${own} documenté, filetage M${mounting.threadMm} demandé.` };
         return mounting.threadMm
           ? { status: "kept", reason: `Corps fileté M${own ?? mounting.threadMm} : se visse dans un trou taraudé du même filetage.` }
-          : { status: "to_verify", reason: "Corps fileté : taille de filetage non renseignée, à vérifier." };
+          : { status: "kept", reason: "Corps fileté : le capteur se visse dans un trou taraudé ou se fixe par écrous. Taille de filetage à vérifier." };
       }
       if (mounting.style === "screw_fixed")
         return sensor.shape === "flange" || sensor.shape === "block"
@@ -129,7 +129,7 @@ function mountingVerdict(
         status: "to_verify",
         retention: "adapter_required",
         reason:
-          `Portion insérée ${insertion} mm dans un trou ${mounting.holeDiameterMm} mm : le corps entre, mais aucune retention directe n'est documentée dans ce trou. Douille, adaptateur ou fixation complémentaire à étudier avec la R&D Standex.` +
+          `Portion insérée ${insertion} mm dans un trou ${mounting.holeDiameterMm} mm : le corps entre, mais aucun maintien direct n'est documenté dans ce trou. Douille, adaptateur ou fixation complémentaire à étudier avec la R&D Standex.` +
           collarNote,
       };
     }
