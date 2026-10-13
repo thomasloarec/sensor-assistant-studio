@@ -109,6 +109,29 @@ function preparePointer(view: ReturnType<typeof render>) {
 }
 
 describe("Rendered discovery interactions", () => {
+  test("rotation closure updates the instruction and returning to initial ON does not finish", () => {
+    const v = render(<MagnetPlay />); const { handle } = preparePointer(v);
+    const evt = { pointerId: 4, pointerType: "mouse", isPrimary: true, button: 0 };
+    fireEvent.click(v.getByRole("button", { name: "Perpendiculaire" }));
+    fireEvent.pointerDown(handle, { ...evt, clientX:365, clientY:225 });
+    fireEvent.pointerMove(handle, { ...evt, clientX:405, clientY:225 });
+    fireEvent.pointerMove(handle, { ...evt, clientX:405, clientY:140 });
+    fireEvent.pointerMove(handle, { ...evt, clientX:305, clientY:140 });
+    fireEvent.pointerUp(handle, evt);
+    fireEvent.click(v.getByRole("button", { name: "Parallèle" }));
+    expect(v.getByTestId("reed-discovery").dataset.progress).toBe("1");
+    expect(v.getByText("Reculez doucement dans la zone de maintien.")).toBeTruthy();
+    fireEvent.pointerDown(handle,{...evt,clientX:305,clientY:140});
+    fireEvent.pointerMove(handle,{...evt,clientX:359,clientY:140});
+    fireEvent.pointerUp(handle,evt);
+    fireEvent.click(v.getByRole("button", { name: "Perpendiculaire" }));
+    fireEvent.click(v.getByRole("button", { name: "Parallèle" }));
+    fireEvent.pointerDown(handle,{...evt,clientX:359,clientY:140});
+    fireEvent.pointerMove(handle,{...evt,clientX:305,clientY:140});
+    fireEvent.pointerUp(handle,evt);
+    expect(v.getByTestId("reed-discovery").dataset.progress).toBe("2");
+    expect(v.queryByText("Hystérésis observée. Continuez à explorer librement.")).toBeNull();
+  });
   test("initial complete sensor opaque; no bogus distances, no integrated indicator", () => {
     const v = render(<MagnetPlay />);
     expect(v.getByTestId("reed-interior").getAttribute("visibility")).toBe("hidden");

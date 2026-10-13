@@ -22,7 +22,7 @@ export function MagnetPlay({ onStart }: { onStart?: () => void }) {
   const zone = reedZone(state.point, state.orientation);
   const status = state.closed ? t("Contact fermé") : t("Contact ouvert");
   const instruction = state.progress === 0 ? t("Déplacez l'aimant pour trouver une zone qui ferme le contact.")
-    : state.progress === 1 ? t("Reculez doucement dans la zone de maintien.")
+    : state.progress === 1 ? (state.closed ? t("Reculez doucement dans la zone de maintien.") : t("Déplacez l'aimant pour trouver une zone qui ferme le contact."))
     : state.progress === 2 ? (state.closed ? t("Toujours fermé ! Changez l'orientation de l'aimant.") : t("Déplacez l'aimant pour trouver une zone qui ferme le contact."))
     : state.progress === 3 ? t("Retrouvez une zone qui ferme le contact dans cette orientation.")
     : t("Hystérésis observée. Continuez à explorer librement.");

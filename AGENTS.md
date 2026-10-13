@@ -90,4 +90,4 @@ jeton sans documentation ni contournement ponctuel.
 
 Subdirectories have their own `AGENTS.md`; read them before changing files there.
 
-- Home Reed discovery uses a standalone dimensionless model shared by contours and state; never reuse it for product qualification or persist its exploration.
+- Home Reed discovery shares one dimensionless axial dipole response with contour generation and contact memory; track the HOLD orientation to prevent false progression, never qualify products or persist exploration.
