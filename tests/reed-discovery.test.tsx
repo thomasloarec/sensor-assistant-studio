@@ -133,6 +133,15 @@ function preparePointer(view: ReturnType<typeof render>) {
 }
 
 describe("Rendered discovery interactions", () => {
+  test("current uses a lighter, thinner shared flow than the signal blades", () => {
+    const css = readFileSync("src/components/leadmagnet/reed-discovery.css", "utf8");
+    const flow = css.match(/\.reed-current \{([^}]+)\}/)?.[1];
+    expect(flow).toContain("stroke: var(--heading)");
+    expect(flow).toContain("stroke-width: 1.5");
+    expect(flow).toContain("stroke-dasharray: 3 12");
+    expect(css).toContain("stroke-dashoffset: -30");
+    expect(css).toContain("animation: none !important");
+  });
   test("current and signal follow closed in opaque/interior and HOLD, disappear open; no sleeve or central ring", () => {
     const v=render(<MagnetPlay />); const {handle}=preparePointer(v);
     const evt={pointerId:9,pointerType:"mouse",isPrimary:true,button:0};

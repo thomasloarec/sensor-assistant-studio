@@ -63,3 +63,11 @@ Empreintes SHA256 du code testé :
 - CSS : `1a03cb256e743bcd0ebef544b4112e9fccff05390d52f865809fcfd3b7d8e56a`
 
 Aucune publication, migration, modification backend, NDA, auth, dossiers ou atelier métier. Exploration en mémoire du composant, aucun transfert ajouté.
+
+## Finition du flux — 10:17 UTC
+
+Recette indépendante sur l'accueil connecté fournie par Thomas : lobes, défaut, raccord et contour extérieur validés ; tirets des contacts auparavant confondus avec les lames. Correction locale CSS : flux partagé câble/contacts `--heading`, largeur 1,5 ; lames fermées inchangées `--signal`, largeur 2,5. Moteur et SVG inchangés.
+
+Playwright sur le vrai composant isolé (accueil sandbox toujours « Accès réservé »), script `/tmp/browser/reed-current/check_current.py` : style calculé flux `oklch(0.985 0.004 250)` / `1.5px`, lames `oklch(0.72 0.13 205)` / `2.5px`. Sur 350 ms, dashoffset contacts `0 → -1.30003px`, câble `-0.278696 → -3.53556px` ; différence de couleur/épaisseur et mouvement vérifiés par assertions. Reduced-motion : animation `none`, offsets `0 → 0px` pour les deux flux sur 350 ms. Ouvert : les deux éléments disparaissent ; opaque fermé : câble seul. Quatre captures de scène examinées dans `/tmp/browser/reed-current/` (`interior-closed`, `interior-reduced`, `interior-open`, `exterior-closed`). Aucun pageerror.
+
+Tests ciblés : **31 pass, 0 fail, 47 249 assertions** ; compilation automatique **build OK à 10:18:03 UTC**. Suite complète antérieure non relancée pour cette finition demandée locale. Changements de finition : CSS, test ciblé, documentation de design, feuille de route et cette note ; aucune publication.
