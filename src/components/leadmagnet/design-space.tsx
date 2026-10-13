@@ -103,7 +103,7 @@ import {
 } from "@/lib/leadmagnet/dossier";
 import { detectMountingIntent } from "@/lib/leadmagnet/mounting-intent";
 import { CANDIDATE_DISCLAIMER, evaluateCandidates } from "@/lib/leadmagnet/candidates";
-import { assessApplicationFit, FIT_PANEL } from "@/lib/leadmagnet/application-fit";
+import { assessApplicationFit, FIT_PANEL, VALIDATION_POINT } from "@/lib/leadmagnet/application-fit";
 import { THERMAL_SHORT, thermalWarning } from "@/lib/leadmagnet/thermal-fit";
 import { detectEnvelopeFromText, ENVELOPE_TEXT, envelopeIsEmpty } from "@/lib/leadmagnet/envelope-text";
 import { CompatibilityPanel } from "./compatibility-panel";
@@ -1019,9 +1019,15 @@ export function DesignSpace({
   const [envelopeDeclined, setEnvelopeDeclined] = useState<string | null>(null);
   const envelopeHintView =
     envelopeHint && envelopeDeclined !== envelopeHint.quote ? (
-      <div className={envelopeHint.kind === "found" ? "notice-info space-y-3" : "notice-warning"} data-testid="envelope-hint" data-kind={envelopeHint.kind}>
+      <section
+        className={envelopeHint.kind === "found" ? "notice-warning space-y-3" : "notice-warning"}
+        data-testid="envelope-hint"
+        data-kind={envelopeHint.kind}
+        aria-labelledby="envelope-hint-title"
+      >
         {envelopeHint.kind === "found" ? (
           <>
+            <h3 id="envelope-hint-title" className="t-title-s">{t(ENVELOPE_TEXT.title)}</h3>
             <p className="t-body">
               {msg(ENVELOPE_TEXT.found, [
                 formatMm(envelopeHint.envelope.lengthMm),
@@ -1030,6 +1036,7 @@ export function DesignSpace({
               ])}
             </p>
             <p className="t-body-s">« {envelopeHint.quote} »</p>
+            <p className="t-body-s" data-testid="envelope-hint-warning"><strong>{t(ENVELOPE_TEXT.notYet)}</strong></p>
             <div className="flex flex-wrap gap-3">
               <Button
                 className="min-h-11 text-base"
@@ -1043,15 +1050,15 @@ export function DesignSpace({
               >
                 {t(ENVELOPE_TEXT.apply)}
               </Button>
-              <Button variant="outline" className="min-h-11 text-base" onClick={() => setEnvelopeDeclined(envelopeHint.quote)}>
+              <Button variant="ghost" className="min-h-11 text-base" data-testid="envelope-decline" onClick={() => setEnvelopeDeclined(envelopeHint.quote)}>
                 {t(ENVELOPE_TEXT.decline)}
               </Button>
             </div>
           </>
         ) : (
-          <p className="t-body-s">{t(ENVELOPE_TEXT.ambiguous)}</p>
+          <p className="t-body-s" id="envelope-hint-title">{t(ENVELOPE_TEXT.ambiguous)}</p>
         )}
-      </div>
+      </section>
     ) : null;
   /** Aucune réponse réelle : le bouton final ne mène pas à des capteurs au hasard. */
   const intakeEmpty = fit.issues.some((i) => i.id === "no_meaningful_requirement");
@@ -1857,21 +1864,61 @@ export function DesignSpace({
             <Label className="t-label" htmlFor="guided-hole">
               {t("Diamètre du trou (mm)")}
             </Label>
-            <Input
+            <DecimalMmInput
               id="guided-hole"
-              className="t-metric w-32 text-right"
-              inputMode="decimal"
-              value={dossier.mounting.holeDiameterMm || ""}
-              onChange={(e) =>
+              value={dossier.mounting.holeDiameterMm}
+              onValue={(mm) =>
                 setDossier((d) => ({
                   ...d,
-                  mounting: { kind: "press_fit", holeDiameterMm: num(e.target.value) ?? 0 },
+                  mounting: { kind: "press_fit", holeDiameterMm: mm ?? 0 },
                   updatedAt: new Date().toISOString(),
                 }))
               }
             />
             <p className="t-caption mt-1">
               {t("Laissez vide si vous ne le connaissez pas : inconnu ne vaut pas zéro.")}
+            </p>
+          </div>
+        ) : null}
+        {dossier.mounting.kind === "screw" && dossier.mounting.style === "threaded_body" ? (
+          <div className="mt-3" data-testid="thread-size">
+            <p className="t-label" id="thread-size-label">{t("Taille du filetage (diamètre nominal extérieur)")}</p>
+            <div className="mt-2 flex flex-wrap gap-2" role="group" aria-labelledby="thread-size-label">
+              {[5, 6, 8].map((m) => {
+                const on = dossier.mounting.kind === "screw" && dossier.mounting.threadMm === m;
+                return (
+                  <Button
+                    key={m}
+                    type="button"
+                    variant="ghost"
+                    aria-pressed={on}
+                    className={`answer-filter ${on ? "bg-[var(--primary)] text-[var(--primary-foreground)]" : "bg-[var(--surface-sunken)] text-[var(--muted-foreground)]"}`}
+                    onClick={() =>
+                      setDossier((d) => ({
+                        ...d,
+                        mounting: on ? { kind: "screw", style: "threaded_body" } : { kind: "screw", style: "threaded_body", threadMm: m },
+                        updatedAt: new Date().toISOString(),
+                      }))
+                    }
+                  >
+                    {`M${m}`}
+                  </Button>
+                );
+              })}
+              <Button
+                type="button"
+                variant="ghost"
+                aria-pressed={dossier.mounting.kind === "screw" && !dossier.mounting.threadMm}
+                className={`answer-filter ${dossier.mounting.kind === "screw" && !dossier.mounting.threadMm ? "bg-[var(--primary)] text-[var(--primary-foreground)]" : "bg-[var(--surface-sunken)] text-[var(--muted-foreground)]"}`}
+                onClick={() =>
+                  setDossier((d) => ({ ...d, mounting: { kind: "screw", style: "threaded_body" }, updatedAt: new Date().toISOString() }))
+                }
+              >
+                {t("Taille inconnue — à vérifier")}
+              </Button>
+            </div>
+            <p className="t-caption mt-1">
+              {t("M5, M6, M8 : diamètre nominal du filetage, pas le diamètre de perçage avant taraudage.")}
             </p>
           </div>
         ) : null}
@@ -2205,15 +2252,14 @@ export function DesignSpace({
         </Select>
         {dossier.mounting.kind === "press_fit" ? (
           <div className="mt-2 max-w-xs">
-            <Label className="t-label">{t("Diamètre du trou (mm)")}</Label>
-            <Input
-              className="t-metric w-32 text-right"
-              inputMode="decimal"
-              value={dossier.mounting.holeDiameterMm || ""}
-              onChange={(e) =>
+            <Label className="t-label" htmlFor="detailed-hole">{t("Diamètre du trou (mm)")}</Label>
+            <DecimalMmInput
+              id="detailed-hole"
+              value={dossier.mounting.holeDiameterMm}
+              onValue={(mm) =>
                 setDossier((d) => ({
                   ...d,
-                  mounting: { kind: "press_fit", holeDiameterMm: num(e.target.value) ?? 0 },
+                  mounting: { kind: "press_fit", holeDiameterMm: mm ?? 0 },
                 }))
               }
             />
