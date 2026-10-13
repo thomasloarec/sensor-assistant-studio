@@ -1,5 +1,5 @@
 /** Generic teaching geometry, NOT a physical calibration or a product rating.
- * Axial point-dipole response with an excluded central core. Contour vertices
+ * Regularized axial dipole teaching response with angular OFF corridors. Contour vertices
  * solve the SAME response analytically; straight SVG segments approximate it.
  * Positions are dimensionless scene coordinates; no distance in mm exists.
  */
@@ -11,21 +11,31 @@ export const REED_SCENE = { width: 440, height: 280, margin: 34 };
 export const ACTIVATE = 0.5;
 export const RELEASE = 1 / 3;
 export const REED_INITIAL: ReedState = { point: { x: 365, y: 225 }, orientation: "parallel", closed: false, progress: 0 };
-// Axial |Bx| of a point dipole, in scene units only. A core of radius 18
-// is excluded (point-dipole approximation invalid there); r^3+core^3 caps
-// response outside it. Both axes remain EXACT nulls for a vertical magnet.
+// Dimensionless teaching model, not a physical calibration. A smooth radial
+// taper r³/(r³+CORE³)² replaces the excluded disk, vanishes at the origin,
+// and is asymptotically dipolar. OFF corridors are shared by state and contours.
 const CORE = 18;
 const SCALE = 80;
+const DEAD_HALF_ANGLE = 0.10; // ~5.7° per side, a small readable gap at 320px.
+const DEAD_BLEND_ANGLE = 0.16;
+function reedCuts(orientation: ReedOrientation): number[] {
+  const alpha = Math.acos(1 / Math.sqrt(3));
+  return orientation === "perpendicular" ? [0, Math.PI / 2, Math.PI, 3 * Math.PI / 2, 2 * Math.PI] : [-alpha, alpha, Math.PI - alpha, Math.PI + alpha, 2 * Math.PI - alpha];
+}
 export function reedAngular(theta: number, orientation: ReedOrientation): number {
-  return orientation === "parallel" ? Math.abs(3 * Math.cos(theta) ** 2 - 1) : Math.abs(3 * Math.cos(theta) * Math.sin(theta));
+  const distance = Math.min(...reedCuts(orientation).map(a => Math.abs(Math.atan2(Math.sin(theta-a), Math.cos(theta-a)))));
+  if (distance <= DEAD_HALF_ANGLE) return 0;
+  const blend = Math.min(1, (distance - DEAD_HALF_ANGLE) / (DEAD_BLEND_ANGLE - DEAD_HALF_ANGLE));
+  const angular = orientation === "parallel" ? Math.abs(3 * Math.cos(theta) ** 2 - 1) : Math.abs(3 * Math.cos(theta) * Math.sin(theta));
+  return angular * blend * blend * (3 - 2 * blend);
 }
 export function reedResponse(point: ReedPoint, orientation: ReedOrientation): number {
   const x = point.x - 220, y = point.y - 140;
   const r = Math.hypot(x, y);
-  if (r < CORE) return 0;
+  if (r === 0) return 0;
   // Avoid floating point residues on perpendicular null axes.
   if (orientation === "perpendicular" && (x === 0 || y === 0)) return 0;
-  return SCALE ** 3 * reedAngular(Math.atan2(y, x), orientation) / (r ** 3 + CORE ** 3);
+  return SCALE ** 3 * reedAngular(Math.atan2(y, x), orientation) * r ** 3 / (r ** 3 + CORE ** 3) ** 2;
 }
 export function reedZone(point: ReedPoint, orientation: ReedOrientation): ReedZone {
   const force = reedResponse(point, orientation);
@@ -37,9 +47,8 @@ export function reedContact(closed: boolean, point: ReedPoint, orientation: Reed
 }
 export function reedContours(orientation: ReedOrientation, threshold: number) {
   // Four angular sectors bounded by dipole null directions, not hand-drawn blobs.
-  const alpha = Math.acos(1 / Math.sqrt(3));
-  const cuts = orientation === "perpendicular" ? [0, Math.PI / 2, Math.PI, 3 * Math.PI / 2, 2 * Math.PI] : [-alpha, alpha, Math.PI - alpha, Math.PI + alpha, 2 * Math.PI - alpha];
-  const required = threshold * 2 * CORE ** 3 / SCALE ** 3;
+  const cuts = reedCuts(orientation);
+  const required = threshold * 4 * CORE ** 3 / SCALE ** 3;
   const polar = (r: number, a: number) => ({ x: 220 + r * Math.cos(a), y: 140 + r * Math.sin(a) });
   return cuts.slice(0, -1).map((start, i) => {
     const end = cuts[i + 1] ?? start;
@@ -54,10 +63,18 @@ export function reedContours(orientation: ReedOrientation, threshold: number) {
     };
     const lo = boundary(start), hi = boundary(end);
     const angles = Array.from({ length: 721 }, (_, j) => lo + (hi - lo) * (1 - Math.cos(Math.PI * j / 720)) / 2);
-    const outer = angles.map(a => polar(Math.cbrt(SCALE ** 3 * reedAngular(a, orientation) / threshold - CORE ** 3), a));
-    const points = [...outer, ...[...angles].reverse().map(a => polar(CORE, a))];
+    // Quadratic roots in u=r³; product CORE⁶ avoids cancellation for inner root.
+    const radii = angles.map(a => {
+      const strength = SCALE ** 3 * reedAngular(a, orientation) / threshold;
+      const u = (strength - 2 * CORE ** 3 + Math.sqrt(Math.max(0, strength * (strength - 4 * CORE ** 3)))) / 2;
+      return { outer: Math.cbrt(u), inner: Math.cbrt(CORE ** 6 / u) };
+    });
+    const outer = angles.map((a, j) => polar(radii[j]?.outer ?? CORE, a));
+    const inner = angles.map((a, j) => polar(radii[j]?.inner ?? CORE, a));
+    const points = [...outer, ...[...inner].reverse()];
     const path = points.map((p, j) => `${j ? "L" : "M"}${p.x},${p.y}`).join(" ") + " Z";
-    return { outer, points, path };
+    const outerPath = outer.map((p, j) => `${j ? "L" : "M"}${p.x},${p.y}`).join(" ");
+    return { outer, inner, points, path, outerPath };
   });
 }
 export function clampReedPoint(point: ReedPoint): ReedPoint {
