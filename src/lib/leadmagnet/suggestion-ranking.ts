@@ -112,24 +112,26 @@ export interface RankedSuggestion {
 /** Retenue documentée du capteur dans le trou déclaré (emboîtement). */
 export type Retention = "documented" | "adapter_required" | null;
 
+export type RankInput = Pick<CandidateResult, "id" | "status"> & { retention?: Retention };
+
 /**
  * Classe les identifiants REÇUS (déjà filtrés par les critères mécaniques),
  * de façon stable : à rang égal, l'ordre reçu est conservé.
  */
 export function rankSuggestions(
-  candidates: readonly Pick<CandidateResult, "id" | "status"> & { retention?: Retention }[] | readonly (Pick<CandidateResult, "id" | "status"> & { retention?: Retention })[],
+  candidates: readonly RankInput[],
   ctx: RankingContext,
   preferredSensorId: string | null = null,
 ): RankedSuggestion[] {
   const site = ctx.fit.sensorSiteC;
-  const rows = (candidates as readonly (Pick<CandidateResult, "id" | "status"> & { retention?: Retention })[]).map((c, index) => {
+  const rows = candidates.map((c, index) => {
     const promoted = specialtyReason(c.id, ctx);
     const reserved = !!SPECIALIZED[c.id] && !promoted;
     const w = site ? thermalWarning(c.id, site) : null;
     const thermal = !w ? 0 : w.status === "conditional" ? 1 : w.status === "unknown" ? 2 : 3;
     const retention = c.retention === "documented" ? 0 : c.retention === "adapter_required" ? 1 : 0;
     const status = c.status === "kept" ? 0 : c.status === "to_verify" ? 1 : 2;
-    let tier = (promoted ? 0 : 10) + thermal * 3 + retention + status * 0.5 + (reserved ? 100 : 0);
+    let tier: number = (promoted ? 0 : 10) + thermal * 3 + retention + status * 0.5 + (reserved ? 100 : 0);
     let reason: string | null = promoted ? RANK_REASON[promoted] : null;
     if (preferredSensorId && c.id === preferredSensorId) {
       tier = -1;
