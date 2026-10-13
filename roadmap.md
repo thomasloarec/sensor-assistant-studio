@@ -88,3 +88,7 @@
 ## Remédiation round 2 (2026-10-12)
 - [x] D01–D06 corrigés, P2 faible risque traités ; rapport docs/QA_ROUND2_P1_REMEDIATION_2026-10-12.md
 - [ ] Recette navigateur authentifiée (WebGL, soumission) — attend le propriétaire
+
+## Lot 1 retours manuels (2026-10-13)
+- [x] A01 A02 A05 B01–B06 C03, puces 8 langues — voir docs/QA_MANUAL_FEEDBACK_REMEDIATION_LOT1_2026-10-13.md
+- [ ] 3D MK20 (lot précision séparé)

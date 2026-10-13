@@ -93,3 +93,5 @@ jeton sans documentation ni contournement ponctuel.
 
 - Keep connector previews beside buttons in shared ConnectorChoices, never inside buttons or details, so rotation cannot select or duplicate WebGL contexts.
 
+
+- Order suggested pairs through `src/lib/leadmagnet/suggestion-ranking.ts` (explicit, reasoned tiers), never catalog insertion order: specialised families must not reach the top three without a verified written requirement.
