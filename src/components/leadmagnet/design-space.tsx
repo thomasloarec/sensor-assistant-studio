@@ -2734,6 +2734,8 @@ export function DesignSpace({
         {card.sensorId !== CUSTOM_SENSOR_ID ? (
           <dl className="pair-card-facts" aria-label={t("Données de choix")}>
             {card.materialLabel ? <div><dt>{t("Matériau de l'aimant")}</dt><dd>{t(card.materialLabel)}</dd></div> : null}
+            {card.sensorMaterialLabel ? <div data-testid="pair-sensor-material"><dt>{t("Boîtier du capteur")}</dt><dd>{t(card.sensorMaterialLabel)}</dd></div> : null}
+            {card.threadLabel ? <div data-testid="pair-thread"><dt>{t("Filetage")}</dt><dd className="t-metric">{card.threadLabel}</dd></div> : null}
             <div><dt>{t("Montage du capteur")}</dt><dd>{t(card.fixingLabel)}</dd></div>
             <div><dt>{t("Dimensions du capteur")}</dt><dd className="t-metric">{card.size}</dd></div>
           </dl>

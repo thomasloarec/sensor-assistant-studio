@@ -105,6 +105,18 @@ export function SensorPlan({
         stroke={model.color}
         strokeWidth={0.28}
       />
+      {model.section === "one_flat" ? (
+        <line
+          data-profile="one_flat"
+          x1={-l / 2 + 0.3}
+          x2={l / 2 - 0.3}
+          y1={w / 2 - 0.35}
+          y2={w / 2 - 0.35}
+          stroke="#a7b5bd"
+          strokeWidth={0.18}
+          strokeDasharray="0.6 0.4"
+        />
+      ) : null}
       {/* Repère de polarité d'un AIMANT : deux demi-teintes N/S posées sur
           l'enveloppe réellement documentée. C'est un repère de lecture, jamais
           l'axe magnétique actif, qui n'est pas déduit ici. Sans lui, un boîtier
