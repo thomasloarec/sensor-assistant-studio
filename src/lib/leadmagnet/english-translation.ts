@@ -378,7 +378,9 @@ export function englishReportBody(dto: ClientDossierDto, meta: { revision: numbe
   const mounting =
     dto.mounting.kind === "press_fit"
       ? `press-fit, hole diameter ${dto.mounting.holeDiameterMm} mm`
-      : dto.mounting.kind === "other"
+      : dto.mounting.kind === "screw" && "threadMm" in dto.mounting && dto.mounting.threadMm
+        ? `threaded body, thread M${dto.mounting.threadMm}`
+        : dto.mounting.kind === "other"
         ? dto.mounting.description
         : (MOUNTING_EN[dto.mounting.kind] ?? dto.mounting.kind);
   const env = dto.envelope;

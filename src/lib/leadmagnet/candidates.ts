@@ -19,6 +19,21 @@ export interface CandidateResult {
   size: string;
   status: CandidateStatus;
   reasons: string[];
+  /** Emboîtement : retenue DOCUMENTÉE dans ce trou, ou corps qui entre
+   *  seulement physiquement (douille / adaptateur à prévoir). */
+  retention?: "documented" | "adapter_required" | null;
+}
+
+/** Trou de montage documenté des capteurs encastrés MK36/MK37/MK38 : 3/8 po
+ *  nominal, « au moins 9,53 mm » (fiches V00 du 17 janvier 2025). */
+export const DOCUMENTED_PRESSFIT_HOLE_MM: Readonly<Record<string, number>> = { MK36: 9.53, MK37: 9.53, MK38: 9.53 };
+/** Écart au-delà duquel le trou n'est plus le trou documenté. Ce n'est PAS une
+ *  tolérance de serrage : aucune n'est publiée. */
+const DOCUMENTED_HOLE_WINDOW_MM = 0.3;
+/** Diamètre nominal du filetage lu dans la référence (« MK11-M8 » → 8). */
+export function threadOf(sensorId: string): number | null {
+  const m = /-M(\d+(?:\.\d+)?)$/.exec(sensorId);
+  return m ? Number(m[1]) : null;
 }
 
 const SCREW_SHAPES = new Set(["flange", "block", "threaded"]);
@@ -26,7 +41,7 @@ const SCREW_SHAPES = new Set(["flange", "block", "threaded"]);
 function mountingVerdict(
   sensor: SensorModel,
   mounting: MountingChoice,
-): { status: CandidateStatus; reason: string } {
+): { status: CandidateStatus; reason: string; retention?: "documented" | "adapter_required" } {
   // Une conception sur mesure n'est jamais écartée par un filtre mécanique :
   // c'est justement la géométrie qui serait définie avec la R&D.
   if (sensor.shape === "custom_pcb")
@@ -54,10 +69,16 @@ function mountingVerdict(
           }
         : { status: "excluded", reason: "Pas de version traversante documentée ici." };
     case "screw":
-      if (mounting.style === "threaded_body")
-        return sensor.shape === "threaded"
-          ? { status: "kept", reason: "Corps fileté : le capteur se visse dans un trou taraudé ou se fixe par écrous." }
-          : { status: "excluded", reason: "Pas de corps fileté documenté pour ce boîtier." };
+      if (mounting.style === "threaded_body") {
+        if (sensor.shape !== "threaded")
+          return { status: "excluded", reason: "Pas de corps fileté documenté pour ce boîtier." };
+        const own = threadOf(sensor.id);
+        if (mounting.threadMm && own !== null && Math.abs(own - mounting.threadMm) > 0.001)
+          return { status: "excluded", reason: `Filetage M${own} documenté, filetage M${mounting.threadMm} demandé.` };
+        return mounting.threadMm
+          ? { status: "kept", reason: `Corps fileté M${own ?? mounting.threadMm} : se visse dans un trou taraudé du même filetage.` }
+          : { status: "to_verify", reason: "Corps fileté : taille de filetage non renseignée, à vérifier." };
+      }
       if (mounting.style === "screw_fixed")
         return sensor.shape === "flange" || sensor.shape === "block"
           ? { status: "kept", reason: "Boîtier à fixation par vis." }
@@ -91,10 +112,24 @@ function mountingVerdict(
           : collar > mounting.holeDiameterMm
             ? ` Collerette ${collar} mm : elle sert de butée en appui autour du trou ; prévoir cette surface d'appui et le volume qu'elle occupe côté visible.`
             : ` Collerette ${collar} mm : plus étroite que le trou, l'appui en butée n'est pas assuré, à vérifier.`;
+      const documentedHole = DOCUMENTED_PRESSFIT_HOLE_MM[sensor.id];
+      if (
+        documentedHole !== undefined &&
+        mounting.holeDiameterMm + 0.001 >= documentedHole &&
+        mounting.holeDiameterMm <= documentedHole + DOCUMENTED_HOLE_WINDOW_MM
+      )
+        return {
+          status: "to_verify",
+          retention: "documented",
+          reason:
+            `Montage encastré documenté pour un trou de ${documentedHole} mm (3/8 po) avec nervures de maintien ; trou déclaré ${mounting.holeDiameterMm} mm : ajustement réel à confirmer, aucun serrage n'est garanti.` +
+            collarNote,
+        };
       return {
         status: "to_verify",
+        retention: "adapter_required",
         reason:
-          `Portion insérée ${insertion} mm dans un trou ${mounting.holeDiameterMm} mm : ajustement (serrage, jeu, maintien) à vérifier par la R&D.` +
+          `Portion insérée ${insertion} mm dans un trou ${mounting.holeDiameterMm} mm : le corps entre, mais aucune retention directe n'est documentée dans ce trou. Douille, adaptateur ou fixation complémentaire à étudier avec la R&D Standex.` +
           collarNote,
       };
     }
@@ -200,6 +235,7 @@ export function evaluateCandidates(
     const mount = mountingVerdict(sensor, dossier.mounting);
     reasons.push(mount.reason);
     let status = mount.status;
+    const retention = mount.retention ?? null;
     const named = intentVerdict(sensor, intent);
     if (named) {
       reasons.push(named.reason);
@@ -239,6 +275,7 @@ export function evaluateCandidates(
       size: custom ? `${sizeLabel(sensor)} · cotes pédagogiques` : sizeLabel(sensor),
       status,
       reasons,
+      ...(retention ? { retention } : {}),
     };
   });
 }
