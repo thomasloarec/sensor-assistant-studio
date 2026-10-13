@@ -22,3 +22,9 @@ Base demandée : `86cdc3f`. Commit de l'implémentation finale vérifiée : `63b
 
 ## Limites
 Formes adaptées à la scène 440 × 280 et au boîtier, pas reproduction pixel pour pixel ni calibration physique. Une recharge complète réinitialise la mémoire de visite ; navigation interne aller/retour conserve la terminaison. Recette visuelle isolée, **pas une recette de l'accueil connecté** : le propriétaire effectuera ce contrôle comme annoncé. Aucun contournement de connexion, envoi confidentiel, modification backend, migration ni publication.
+
+## Retouche des seuls lobes principaux parallèles — retour 11:11 UTC
+- Contour `main` : largeur extérieure 120, hauteur 129 unités SVG, racines à ±5..6 sous le boîtier ; flancs monotones à tangentes continues vers le capuchon arrondi, sans épaule. Homothétie intérieure recentrée à la racine (±6) : le contour ON rejoint également le bord du boîtier. Géométries latérales et perpendiculaires, invitation, courant et transitions d'état inchangés.
+- Tests ciblés : **30/30**, **18 507 assertions**. Nouveau contrôle de proportions, racines et monotonie des flancs ; tests existants de géométrie partagée, OFF diagonal, hystérésis, progression et gestes tous conservés et verts.
+- Chromium, vrai module monté isolément : captures examinées à **320/378/1280**, racines masquées par le boîtier opaque, lobes visuellement allongés sans fond détaché ; version perpendiculaire comparée inchangée. Glisser dans le lobe principal ferme réellement le contact et affiche le courant ; invitation présente avant interaction, supprimée à la première flèche. Aucun débordement horizontal.
+- Captures et script : `/tmp/browser/reed-taper/`. Compilation plateforme **build OK**, entrée `2026-10-13T11:12:06Z`. Vérification ciblée uniquement, pas nouvelle recette connectée ni suite complète relancée pour cette retouche. Aucune publication ni délégation.
