@@ -89,3 +89,5 @@ Toute évolution met à jour `docs/design-language.md` dans le même commit ; au
 jeton sans documentation ni contournement ponctuel.
 
 Subdirectories have their own `AGENTS.md`; read them before changing files there.
+
+- Home Reed discovery uses a standalone dimensionless model shared by contours and state; never reuse it for product qualification or persist its exploration.

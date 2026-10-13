@@ -3428,6 +3428,15 @@
     "Custodia documentata",
     "記載されたハウジング"
   ],
+  "Boîtier du capteur": [
+    "Sensor housing",
+    "传感器外壳",
+    "Sensorgehäuse",
+    "Carcasa del sensor",
+    "Корпус датчика",
+    "Corpo del sensore",
+    "センサーハウジング"
+  ],
   "Boîtier en acier inoxydable": [
     "Stainless steel housing",
     "不锈钢外壳",
@@ -3499,6 +3508,15 @@
     "Прямоугольный корпус",
     "Custodia rettangolare",
     "直方体ハウジング"
+  ],
+  "Boîtier unique à un méplat, deux fils isolés": [
+    "Single housing with one flat, two insulated wires",
+    "单一外壳带一个平面，两根绝缘导线",
+    "Einzelgehäuse mit einer Abflachung, zwei isolierte Litzen",
+    "Carcasa única con un plano, dos hilos aislados",
+    "Единый корпус с одной лыской, два изолированных провода",
+    "Corpo unico con un piano, due fili isolati",
+    "片側フラットの単一ハウジング、絶縁電線2本"
   ],
   "Boîtier à collerette pour montage encastré": [
     "Collared housing for recessed installation",
@@ -3706,6 +3724,15 @@
     "Датчик: {0} мм; поворот {1}°. Магнит: {2} мм; поворот {3}°.",
     "Sensore: {0} mm; rotazione {1}°. Magnete: {2} mm; rotazione {3}°.",
     "センサー：{0} mm、回転 {1}°。磁石：{2} mm、回転 {3}°。"
+  ],
+  "Capteur Reed générique en boîtier avec câble et aimant mobile": [
+    "Generic housed Reed sensor with cable and movable magnet",
+    "带外壳、电缆和可移动磁铁的通用簧片传感器",
+    "Generischer Reed-Sensor mit Gehäuse, Kabel und beweglichem Magneten",
+    "Sensor reed genérico con carcasa, cable e imán móvil",
+    "Типовой герконовый датчик в корпусе с кабелем и подвижным магнитом",
+    "Sensore reed generico con custodia, cavo e magnete mobile",
+    "ケーブル付き汎用リードセンサーと可動磁石"
   ],
   "Capteur et aimant": [
     "Sensor and magnet",
@@ -6389,6 +6416,15 @@
     "Salvare e riprendere questo progetto",
     "プロジェクトの保存と再開"
   ],
+  "Conserve l'état précédent": [
+    "Keeps the previous state",
+    "保持先前状态",
+    "Behält den vorherigen Zustand",
+    "Conserva el estado anterior",
+    "Сохраняет предыдущее состояние",
+    "Mantiene lo stato precedente",
+    "前の状態を保持"
+  ],
   "Console Standex": [
     "Standex Console",
     "Standex 控制台",
@@ -7883,6 +7919,15 @@
     "Due coppie per il vostro progetto",
     "プロジェクト向けの2つのペア"
   ],
+  "Deux fils isolés séparés 2 × 0,06 mm²": [
+    "Two separate insulated wires 2 × 0.06 mm²",
+    "两根独立绝缘导线 2 × 0.06 mm²",
+    "Zwei separate isolierte Litzen 2 × 0,06 mm²",
+    "Dos hilos aislados separados 2 × 0,06 mm²",
+    "Два отдельных изолированных провода 2 × 0,06 мм²",
+    "Due fili isolati separati 2 × 0,06 mm²",
+    "独立した絶縁電線2本 2 × 0.06 mm²"
+  ],
   "Deux sorties ou positions indépendantes : prévoir deux éléments de détection distincts ou une autre architecture multi-sorties validée. Nombre d'éléments, câblage et écartement à valider avec la R&D Standex ; un capteur proposé n'est qu'un élément du système.": [
     "Two independent outputs or positions: plan two distinct detection elements or another validated multi-output architecture. Number of elements, wiring and spacing to be validated with Standex R&D; a suggested sensor is only one element of the system.",
     "两个独立输出或位置：需要两个独立的检测元件或其他经验证的多输出架构。元件数量、接线和间距需与 Standex 研发确认；推荐的传感器只是系统中的一个元件。",
@@ -9152,6 +9197,15 @@
     "Spostare il magnete",
     "磁石を移動"
   ],
+  "Déplacer l'aimant dans le plan": [
+    "Move the magnet in the plane",
+    "在平面内移动磁铁",
+    "Magnet in der Ebene bewegen",
+    "Mover el imán en el plano",
+    "Перемещать магнит в плоскости",
+    "Muovi il magnete nel piano",
+    "平面内で磁石を動かす"
+  ],
   "Déplacer le couple entier": [
     "Move the whole pair",
     "整体移动这一对",
@@ -9160,6 +9214,15 @@
     "Переместить пару целиком",
     "Spostare l'intera coppia",
     "ペア全体を移動"
+  ],
+  "Déplacez l'aimant pour trouver une zone qui ferme le contact.": [
+    "Move the magnet to find a zone that closes the contact.",
+    "移动磁铁，寻找使触点闭合的区域。",
+    "Bewegen Sie den Magneten in eine Zone, die den Kontakt schließt.",
+    "Mueva el imán para encontrar una zona que cierre el contacto.",
+    "Перемещайте магнит, чтобы найти зону замыкания контакта.",
+    "Muovi il magnete per trovare una zona che chiude il contatto.",
+    "磁石を動かして、接点が閉じる領域を探してください。"
   ],
   "Déposé : {0} — empreinte {1}…": [
     "Uploaded: {0} — fingerprint {1}…",
@@ -10385,6 +10448,15 @@
     "Esplora un lobo decentrato",
     "ずれた動作領域を調べる"
   ],
+  "Explorez le principe Reed": [
+    "Explore the Reed principle",
+    "探索簧片开关原理",
+    "Das Reed-Prinzip entdecken",
+    "Explore el principio reed",
+    "Изучите принцип геркона",
+    "Esplora il principio reed",
+    "リードスイッチの原理を探る"
+  ],
   "Export Markdown copiable": [
     "Copyable Markdown export",
     "可复制的 Markdown 导出",
@@ -10709,6 +10781,15 @@
     "Chiude",
     "クローズ"
   ],
+  "Ferme le contact": [
+    "Closes the contact",
+    "使触点闭合",
+    "Schließt den Kontakt",
+    "Cierra el contacto",
+    "Замыкает контакт",
+    "Chiude il contatto",
+    "接点を閉じる"
+  ],
   "Ferme à": [
     "Closes at",
     "闭合于",
@@ -10960,6 +11041,15 @@
     "Фактически переданные файлы:",
     "File effettivamente trasmessi:",
     "実際に送信されたファイル:"
+  ],
+  "Filetage": [
+    "Thread",
+    "螺纹",
+    "Gewinde",
+    "Rosca",
+    "Резьба",
+    "Filettatura",
+    "ねじ"
   ],
   "Filetage M{0}": [
     "M{0} thread",
@@ -11635,6 +11725,15 @@
     "Проверьте определения подходов, базу/магнитный центр и активную геометрию.",
     "Verificare definizioni di approccio, riferimento/centro magnetico e geometria attiva.",
     "接近定義、基準・磁気中心、有効磁石形状を確認してください。"
+  ],
+  "Hystérésis observée. Continuez à explorer librement.": [
+    "Hysteresis observed. Keep exploring freely.",
+    "已观察到滞后现象。继续自由探索。",
+    "Hysterese beobachtet. Erkunden Sie weiter frei.",
+    "Histéresis observada. Siga explorando libremente.",
+    "Гистерезис наблюдался. Продолжайте свободное исследование.",
+    "Isteresi osservata. Continua a esplorare liberamente.",
+    "ヒステリシスを確認しました。自由に探索を続けてください。"
   ],
   "I · Pièces ferromagnétiques": [
     "I · Ferromagnetic parts",
@@ -18386,6 +18485,15 @@
     "Piano e asse di riferimento",
     "基準面と基準軸"
   ],
+  "Plastique Crastin": [
+    "Crastin plastic",
+    "Crastin 塑料",
+    "Crastin-Kunststoff",
+    "Plástico Crastin",
+    "Пластик Crastin",
+    "Plastica Crastin",
+    "Crastin樹脂"
+  ],
   "Plus de détails sur le projet": [
     "More details about the project",
     "更多项目细节",
@@ -20258,6 +20366,15 @@
     "Consigliato",
     "推奨"
   ],
+  "Reculez doucement dans la zone de maintien.": [
+    "Move back slowly into the hold zone.",
+    "缓慢退回保持区域。",
+    "Bewegen Sie sich langsam in die Haltezone zurück.",
+    "Retroceda lentamente a la zona de mantenimiento.",
+    "Медленно вернитесь в зону сохранения состояния.",
+    "Torna lentamente nella zona di mantenimento.",
+    "保持領域へゆっくり戻してください。"
+  ],
   "Reed": [
     "Reed",
     "干簧管",
@@ -20275,6 +20392,15 @@
     "Миниатюрный геркон в литом корпусе, выводы загнуты вниз",
     "Reed miniaturizzato sovrastampato, terminali sotto il corpo",
     "小型樹脂成形リード、本体下へ折り曲げた端子"
+  ],
+  "Reed normalement ouvert. Illustration du principe, pas une mesure : la distance réelle dépend du capteur, de l'aimant et du montage.": [
+    "Normally open Reed. Principle illustration, not a measurement: actual distance depends on the sensor, magnet and mounting.",
+    "常开簧片开关。仅为原理示意，并非测量：实际距离取决于传感器、磁铁和安装方式。",
+    "Normalerweise offener Reed-Kontakt. Prinzipdarstellung, keine Messung: Der reale Abstand hängt von Sensor, Magnet und Montage ab.",
+    "Reed normalmente abierto. Ilustración del principio, no una medición: la distancia real depende del sensor, el imán y el montaje.",
+    "Нормально разомкнутый геркон. Иллюстрация принципа, не измерение: реальное расстояние зависит от датчика, магнита и монтажа.",
+    "Reed normalmente aperto. Illustrazione del principio, non una misura: la distanza reale dipende dal sensore, dal magnete e dal montaggio.",
+    "常開型リードスイッチ。原理の模式図であり測定ではありません。実際の距離はセンサー、磁石、取り付け条件によって異なります。"
   ],
   "Reed nu soudé sur circuit imprimé : schéma pédagogique proportionnel": [
     "Bare reed soldered onto PCB: proportional educational diagram",
@@ -20887,6 +21013,15 @@
     "Найти мои проекты",
     "Trova i miei progetti",
     "マイプロジェクトを表示"
+  ],
+  "Retrouvez une zone qui ferme le contact dans cette orientation.": [
+    "Find a closing zone with this orientation.",
+    "在此方向下重新寻找闭合区域。",
+    "Finden Sie mit dieser Ausrichtung eine Schließzone.",
+    "Encuentre una zona de cierre con esta orientación.",
+    "Найдите зону замыкания при этой ориентации.",
+    "Trova una zona di chiusura con questo orientamento.",
+    "この向きで接点が閉じる領域を探してください。"
   ],
   "Revalidation annulée.": [
     "Revalidation cancelled.",
@@ -23489,6 +23624,15 @@
     "Tolleranza proposta (± mm)",
     "提案された公差（± mm）"
   ],
+  "Toujours fermé ! Changez l'orientation de l'aimant.": [
+    "Still closed! Change the magnet orientation.",
+    "仍然闭合！改变磁铁方向。",
+    "Noch geschlossen! Ändern Sie die Magnetausrichtung.",
+    "¡Sigue cerrado! Cambie la orientación del imán.",
+    "Всё ещё замкнут! Измените ориентацию магнита.",
+    "Ancora chiuso! Cambia l'orientamento del magnete.",
+    "閉じたままです！磁石の向きを変えてください。"
+  ],
   "Tourner": [
     "Rotate",
     "旋转",
@@ -23911,6 +24055,15 @@
     "Отверстие от 9,53 мм. Есть адаптеры для стали. Буртик Ø 10,7 мм.",
     "Foro minimo 9,53 mm. Adattatori per acciaio disponibili. Collarino Ø 10,7 mm.",
     "取付穴9.53 mm以上。鋼材用アダプターあり。つば径10.7 mm。"
+  ],
+  "Trouver un capteur pour mon application": [
+    "Find a sensor for my application",
+    "为我的应用寻找传感器",
+    "Sensor für meine Anwendung finden",
+    "Encontrar un sensor para mi aplicación",
+    "Найти датчик для моей задачи",
+    "Trova un sensore per la mia applicazione",
+    "用途に合うセンサーを探す"
   ],
   "Trouvez le capteur adapté à votre projet.": [
     "Find the right sensor for your project.",
@@ -24677,6 +24830,15 @@
     "Usa questa ipotesi",
     "この仮定を使用"
   ],
+  "Utilisez les flèches pour déplacer l'aimant. Majuscule pour affiner.": [
+    "Use arrow keys to move the magnet. Hold Shift for fine adjustment.",
+    "使用方向键移动磁铁。按住 Shift 进行微调。",
+    "Mit den Pfeiltasten bewegen; mit Umschalt fein einstellen.",
+    "Use las flechas para mover el imán. Mantenga Mayús para ajustar con precisión.",
+    "Перемещайте магнит стрелками. Удерживайте Shift для точной настройки.",
+    "Usa le frecce per muovere il magnete. Tieni premuto Maiusc per regolare finemente.",
+    "矢印キーで磁石を動かします。Shift キーで微調整できます。"
+  ],
   "Utilisée tant que volume et prix ne permettent pas le calcul ; elle n'est jamais effacée.": [
     "Used as long as volume and price do not allow the calculation; it is never erased.",
     "在数量与价格无法计算之前使用；该值不会被清除。",
@@ -25370,6 +25532,15 @@
     "Vedi i dettagli",
     "詳細を見る"
   ],
+  "Voir les zones": [
+    "Show zones",
+    "显示区域",
+    "Zonen anzeigen",
+    "Ver zonas",
+    "Показать зоны",
+    "Mostra zone",
+    "領域を表示"
+  ],
   "Voir tous les couples possibles ({0})": [
     "See all possible pairs ({0})",
     "查看所有可能的组合（{0}）",
@@ -25387,6 +25558,15 @@
     "Показать весь монтаж",
     "Mostra tutto il montaggio",
     "構成全体を表示"
+  ],
+  "Voir à l'intérieur": [
+    "See inside",
+    "查看内部",
+    "Innenansicht",
+    "Ver el interior",
+    "Показать внутри",
+    "Vedi all'interno",
+    "内部を見る"
   ],
   "Volume": [
     "Volume",
@@ -26080,6 +26260,15 @@
     "Участок платы: 8 × 4 mm; высота не более 3 mm с выводами.",
     "Area sulla scheda: 8 × 4 mm; altezza massima 3 mm, terminali inclusi.",
     "基板上の面積8 × 4 mm、端子を含め高さ最大3 mm。"
+  ],
+  "Zones de commutation indicatives": [
+    "Illustrative switching zones",
+    "示意切换区域",
+    "Illustrative Schaltzonen",
+    "Zonas de conmutación ilustrativas",
+    "Иллюстративные зоны переключения",
+    "Zone di commutazione indicative",
+    "切り替え領域の模式図"
   ],
   "Zoom sur le capteur": [
     "Zoom to sensor",
@@ -30049,50 +30238,5 @@
     "…. Изменение, внесенное здесь, ни в коем случае не считается опубликованным отзывом.",
     "…. Una modifica apportata qui non vale mai come riscontro pubblicato.",
     "…。ここで行われた変更は公開されたフィードバックとはみなされません。"
-  ],
-  "Boîtier unique à un méplat, deux fils isolés": [
-    "Single housing with one flat, two insulated wires",
-    "单一外壳带一个平面，两根绝缘导线",
-    "Einzelgehäuse mit einer Abflachung, zwei isolierte Litzen",
-    "Carcasa única con un plano, dos hilos aislados",
-    "Единый корпус с одной лыской, два изолированных провода",
-    "Corpo unico con un piano, due fili isolati",
-    "片側フラットの単一ハウジング、絶縁電線2本"
-  ],
-  "Deux fils isolés séparés 2 × 0,06 mm²": [
-    "Two separate insulated wires 2 × 0.06 mm²",
-    "两根独立绝缘导线 2 × 0.06 mm²",
-    "Zwei separate isolierte Litzen 2 × 0,06 mm²",
-    "Dos hilos aislados separados 2 × 0,06 mm²",
-    "Два отдельных изолированных провода 2 × 0,06 мм²",
-    "Due fili isolati separati 2 × 0,06 mm²",
-    "独立した絶縁電線2本 2 × 0.06 mm²"
-  ],
-  "Plastique Crastin": [
-    "Crastin plastic",
-    "Crastin 塑料",
-    "Crastin-Kunststoff",
-    "Plástico Crastin",
-    "Пластик Crastin",
-    "Plastica Crastin",
-    "Crastin樹脂"
-  ],
-  "Boîtier du capteur": [
-    "Sensor housing",
-    "传感器外壳",
-    "Sensorgehäuse",
-    "Carcasa del sensor",
-    "Корпус датчика",
-    "Corpo del sensore",
-    "センサーハウジング"
-  ],
-  "Filetage": [
-    "Thread",
-    "螺纹",
-    "Gewinde",
-    "Rosca",
-    "Резьба",
-    "Filettatura",
-    "ねじ"
   ]
 }

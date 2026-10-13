@@ -94,7 +94,7 @@ describe("Couverture des langues de l'interface", () => {
     // de la variante D1 et de la carte de question (exemple, flèches, invitations).
     // + 10 entrées : points de validation (aimant intégré, acier, blindage, aimants voisins, deux sorties) et revue Hall linéaire.
     // + 22 entrées (lot 1 retours manuels 2026-10-13) : raisons de classement, puces paramétrées, alertes thermiques courtes, filetage, dimensions détectées, aimant intégré ; texte deux sorties remplacé.
-    expect(Object.keys(dictionary)).toHaveLength(3_344);
+    expect(Object.keys(dictionary)).toHaveLength(3_360);
     const broken = Object.entries(dictionary).filter(
       ([, v]) => v.length !== 7 || v.some((x) => typeof x !== "string" || x.trim() === ""),
     );

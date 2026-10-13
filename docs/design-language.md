@@ -200,7 +200,7 @@ neutralise les translations de survol et de pression. Aucune exception.
 
 ## 8. Trois moments signature
 
-1. **Comprendre** — le héros et l'aimant pédagogique associent champ, halo,
+1. **Comprendre** — le héros et l'aimant pédagogique associent zones de commutation,
    déplacement direct et retour d'état dans une seule carte immersive.
 2. **Concevoir** — l'espace projet utilise un rail segmenté, une question calme
    à la fois et des panneaux contextuels qui préservent toujours le contexte.
@@ -475,3 +475,6 @@ n'est autorisée.
 
 ### Connecteurs — divulgation progressive (12 octobre 2026)
 Chaque tuile documentée montre son aperçu géométrique avant sélection dans une grille à deux colonnes. Le bouton du socle, avec état sélectionné explicite et dimensions en `t-metric`, est un frère de l’aperçu : la rotation ne sélectionne pas le connecteur. Le nom choisi et la confirmation Standex restent visibles ; seules les sources et limites sont regroupées dans un dépliant natif fermé par défaut, sans aperçu supplémentaire. Aucun lien, dépliant ni canevas interactif n’est imbriqué dans le bouton de sélection. Les couleurs du repli SVG utilisent les jetons existants, sans nouveau jeton.
+
+### Découverte Reed — 13 octobre 2026
+La carte d'accueil présente un capteur générique complet en boîtier avec câble, opaque par défaut. L'intérieur optionnel montre les lames, jamais une LED fictive. Le contact extérieur associe symbole et texte. Les zones ON translucides utilisent `--signal`, HOLD des hachures `--muted-foreground`, OFF la surface sombre ; elles représentent la commutation, pas des lignes de champ. Les deux orientations utilisent un pouce glissant, les autres commandes des boutons du socle. La poignée seule neutralise le défilement tactile ; cible 56 px, déplacement 2D et focus visible. Les contours et hachures sont immobiles, la progression n'anime pas la scène. Les couleurs, rayons et transitions renvoient aux jetons existants, avec neutralisation sous mouvement réduit. Aucun nouveau jeton ni nouvelle dépendance.
