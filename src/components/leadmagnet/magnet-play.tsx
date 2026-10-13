@@ -16,7 +16,7 @@ export function MagnetPlay({ onStart }: { onStart?: () => void }) {
   const svgRef = useRef<SVGSVGElement | null>(null);
   const drag = useRef<{ pointerId: number; offset: ReedPoint } | null>(null);
   const [state, setState] = useState(REED_INITIAL);
-  const [zones, setZones] = useState(false);
+  const [zones, setZones] = useState(true);
   const [inside, setInside] = useState(false);
   const contours = useMemo(() => ({ outer: reedContours(state.orientation, RELEASE), inner: reedContours(state.orientation, ACTIVATE) }), [state.orientation]);
   const zone = reedZone(state.point, state.orientation);
@@ -58,7 +58,7 @@ export function MagnetPlay({ onStart }: { onStart?: () => void }) {
             <Button type="button" variant="ghost" className="t-body" aria-label={t("Perpendiculaire")} title={t("Perpendiculaire")} aria-pressed={state.orientation === "perpendicular"} onClick={() => orient("perpendicular")}><MoveVertical />{t("À 90°")}</Button>
           </div>
         </div>
-        <Button type="button" variant={zones ? "secondary" : "ghost"} className="t-caption flex-1" aria-pressed={zones} aria-controls={`${id}-zones`} onClick={() => setZones(!zones)}><Layers />{t("Voir les zones")}</Button>
+        <Button type="button" variant={zones ? "secondary" : "ghost"} className="t-caption flex-1" aria-pressed={zones} aria-controls={`${id}-zones`} onClick={() => setZones(!zones)}><Layers />{t("Champ magnétique")}</Button>
         <Button type="button" variant={inside ? "secondary" : "ghost"} className="t-caption flex-1" aria-pressed={inside} aria-controls={`${id}-inside`} onClick={() => setInside(!inside)}><Eye />{t("Voir à l'intérieur")}</Button>
       </div>
       <div className="reed-scene">
@@ -73,21 +73,22 @@ export function MagnetPlay({ onStart }: { onStart?: () => void }) {
               if (!inner) return null;
               return <g key={i}>
                 <path data-testid="reed-hold-contour" d={`${outer.path} ${inner.path}`} fill={`url(#${id}-hatch)`} fillRule="evenodd" />
-                <path data-testid="reed-on-contour" d={inner.path} fill="var(--signal)" fillOpacity="0.25" stroke="var(--signal)" strokeWidth="1.5" />
-                <path d={outer.path} fill="none" stroke="var(--muted-foreground)" strokeWidth="1" strokeDasharray="3 4" />
+                <path data-testid="reed-on-contour" d={inner.path} fill="var(--signal)" fillOpacity="0.25" />
+                <path d={inner.outerPath} fill="none" stroke="var(--signal)" strokeWidth="1.5" />
+                <path d={outer.outerPath} fill="none" stroke="var(--muted-foreground)" strokeWidth="1" strokeDasharray="3 4" />
               </g>;
             })}
           </g>
           {/* Complete sensor: cable exits the housing; no fictitious integrated LED. */}
-          <path d="M174 140 H135 Q110 140 110 163 V199 Q110 220 85 220 H12" fill="none" stroke="var(--standex-gray)" strokeWidth="9" />
-          <path d="M174 138 H135 Q112 138 112 163" fill="none" stroke="var(--muted-foreground)" strokeOpacity="0.4" strokeWidth="1.5" />
-          <rect x="168" y="130" width="14" height="20" rx="4" fill="var(--standex-gray)" />
-          <rect x="178" y="122" width="84" height="36" rx="9" fill={`url(#${id}-housing)`} fillOpacity={inside ? 0.25 : 1} stroke="var(--muted-foreground)" strokeWidth="1.5" />
-          <path d="M186 127 H254" stroke="var(--muted-foreground)" strokeOpacity="0.55" strokeWidth="1.5" />
+          <path d="M181 140 H135 Q110 140 110 163 V199 Q110 220 85 220 H12" fill="none" stroke="var(--standex-gray)" strokeWidth="9" />
+          {state.closed ? <path data-testid="reed-cable-current" className="reed-current" d="M12 220 H85 Q110 220 110 199 V163 Q110 140 135 140 H181" /> : null}
+          <rect data-testid="reed-housing" x="178" y="122" width="84" height="36" rx="9" fill={`url(#${id}-housing)`} fillOpacity={inside ? 0.25 : 1} stroke={state.closed ? "var(--signal)" : "var(--muted-foreground)"} strokeWidth={state.closed ? 3 : 1.5} />
+          {!inside ? <path data-testid="reed-housing-reflection" d="M186 127 H254" stroke="var(--muted-foreground)" strokeOpacity="0.55" strokeWidth="1.5" /> : null}
           <g id={`${id}-inside`} data-testid="reed-interior" visibility={inside ? "visible" : "hidden"}>
             <rect x="190" y="129" width="60" height="22" rx="10" fill="var(--surface-tint)" stroke="var(--muted-foreground)" />
-            <path data-testid="reed-left-blade" d={state.closed ? "M181 140 H218 L226 140" : "M181 140 H218 L226 136"} stroke="var(--foreground)" strokeWidth="2.5" fill="none" />
-            <path data-testid="reed-right-blade" d={state.closed ? "M258 140 H234 L222 140" : "M258 140 H234 L222 144"} stroke="var(--foreground)" strokeWidth="2.5" fill="none" />
+            <path data-testid="reed-left-blade" d={state.closed ? "M181 140 H218 L226 140" : "M181 140 H218 L226 136"} stroke={state.closed ? "var(--signal)" : "var(--foreground)"} strokeWidth="2.5" fill="none" />
+            <path data-testid="reed-right-blade" d={state.closed ? "M258 140 H234 L222 140" : "M258 140 H234 L222 144"} stroke={state.closed ? "var(--signal)" : "var(--foreground)"} strokeWidth="2.5" fill="none" />
+            {state.closed && inside ? <path data-testid="reed-contact-current" className="reed-current" d="M181 140 H258" /> : null}
           </g>
           <g transform={`translate(${state.point.x} ${state.point.y}) rotate(${state.orientation === "parallel" ? 0 : 90})`}>
             <rect x="-32" y="-18" width="64" height="36" rx="4" fill="var(--standex-blue-50)" stroke="var(--foreground)" strokeWidth="1" />
@@ -122,6 +123,7 @@ export function MagnetPlay({ onStart }: { onStart?: () => void }) {
           }}><span className="sr-only" id={`${id}-keyboard`}>{t("Utilisez les flèches pour déplacer l'aimant. Majuscule pour affiner.")}</span></Button>
       </div>
       {zones ? <div className="reed-legend t-caption" aria-label={t("Zones de commutation indicatives")}>
+        <p className="reed-legend-title">{t("Zones de commutation indicatives")}</p>
         <span><i className="reed-swatch reed-swatch-on" aria-hidden="true" />{t("Ferme le contact")}</span>
         <span><i className="reed-swatch reed-swatch-hold" aria-hidden="true" />{t("Conserve l'état précédent")}</span>
         <span><i className="reed-swatch" aria-hidden="true" />{t("Contact ouvert")}</span>
