@@ -101,3 +101,7 @@
 ## Revue indépendante découverte Reed
 - [x] Réponse axiale dipolaire et contours communs, progression par orientation.
 - [x] Cibles intactes à 320 px, compacité, 1 724 tests verts et rapport sans publication ; recette intégrée réservée au propriétaire connecté.
+
+## Finition visuelle Reed — 13 octobre 2026
+- [x] Libellé compact traduit « À 90° », nom accessible explicite et scène pleine largeur ; moteur inchangé.
+- [ ] Vérifier les quatre bords, focus et N/S à 320/378 px, suite et inventaire ; rapport factuel sans publication.

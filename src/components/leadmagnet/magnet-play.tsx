@@ -55,7 +55,7 @@ export function MagnetPlay({ onStart }: { onStart?: () => void }) {
           <div className="reed-segment" data-perpendicular={state.orientation === "perpendicular"}>
             <span className="reed-segment-thumb" aria-hidden="true" />
             <Button type="button" variant="ghost" className="t-body" aria-pressed={state.orientation === "parallel"} onClick={() => orient("parallel")}><MoveHorizontal />{t("Parallèle")}</Button>
-            <Button type="button" variant="ghost" className="t-body" aria-pressed={state.orientation === "perpendicular"} onClick={() => orient("perpendicular")}><MoveVertical />{t("Perpendiculaire")}</Button>
+            <Button type="button" variant="ghost" className="t-body" aria-label={t("Perpendiculaire")} title={t("Perpendiculaire")} aria-pressed={state.orientation === "perpendicular"} onClick={() => orient("perpendicular")}><MoveVertical />{t("À 90°")}</Button>
           </div>
         </div>
         <Button type="button" variant={zones ? "secondary" : "ghost"} className="t-caption flex-1" aria-pressed={zones} aria-controls={`${id}-zones`} onClick={() => setZones(!zones)}><Layers />{t("Voir les zones")}</Button>
