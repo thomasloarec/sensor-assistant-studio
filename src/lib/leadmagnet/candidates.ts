@@ -77,7 +77,7 @@ function mountingVerdict(
           return { status: "excluded", reason: `Filetage M${own} documenté, filetage M${mounting.threadMm} demandé.` };
         return mounting.threadMm
           ? { status: "kept", reason: `Corps fileté M${own ?? mounting.threadMm} : se visse dans un trou taraudé du même filetage.` }
-          : { status: "kept", reason: "Corps fileté : le capteur se visse dans un trou taraudé ou se fixe par écrous. Taille de filetage à vérifier." };
+          : { status: "kept", reason: "Corps fileté : le capteur se visse dans un trou taraudé ou se fixe par écrous." };
       }
       if (mounting.style === "screw_fixed")
         return sensor.shape === "flange" || sensor.shape === "block"
