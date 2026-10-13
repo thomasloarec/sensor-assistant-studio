@@ -82,7 +82,7 @@ describe("Reed teaching model — independent history oracle", () => {
   test("rotation to ON in other orientation can itself complete discovery", () => {
     let s = moveReed(REED_INITIAL,{x:305,y:140});
     // This diagonal is HOLD in parallel but ON in perpendicular.
-    s = moveReed(s,{x:295,y:215});
+    s = moveReed(s,{x:280,y:200});
     expect(s.progress).toBe(2); expect(s.holdOrientation).toBe("parallel");
     s = orientReed(s,"perpendicular"); expect(s.closed).toBe(true); expect(s.progress).toBe(4);
   });

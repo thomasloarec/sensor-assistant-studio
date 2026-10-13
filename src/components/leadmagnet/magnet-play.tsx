@@ -1,4 +1,4 @@
-import { useId, useRef, useState } from "react";
+import { useId, useMemo, useRef, useState } from "react";
 import type { CSSProperties, PointerEvent } from "react";
 import { ArrowRight, Eye, Layers, Move, MoveHorizontal, MoveVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -18,6 +18,7 @@ export function MagnetPlay({ onStart }: { onStart?: () => void }) {
   const [state, setState] = useState(REED_INITIAL);
   const [zones, setZones] = useState(false);
   const [inside, setInside] = useState(false);
+  const contours = useMemo(() => ({ outer: reedContours(state.orientation, RELEASE), inner: reedContours(state.orientation, ACTIVATE) }), [state.orientation]);
   const zone = reedZone(state.point, state.orientation);
   const status = state.closed ? t("Contact fermé") : t("Contact ouvert");
   const instruction = state.progress === 0 ? t("Déplacez l'aimant pour trouver une zone qui ferme le contact.")
@@ -67,8 +68,8 @@ export function MagnetPlay({ onStart }: { onStart?: () => void }) {
             <linearGradient id={`${id}-housing`} x1="0" y1="0" x2="0" y2="1"><stop stopColor="var(--standex-gray)" /><stop offset="1" stopColor="var(--standex-deep)" /></linearGradient>
           </defs>
           <g id={`${id}-zones`} data-testid="reed-zones" visibility={zones ? "visible" : "hidden"}>
-            {reedContours(state.orientation, RELEASE).map((outer, i) => {
-              const inner = reedContours(state.orientation, ACTIVATE)[i];
+            {contours.outer.map((outer, i) => {
+              const inner = contours.inner[i];
               if (!inner) return null;
               return <g key={i}>
                 <path data-testid="reed-hold-contour" d={`${outer.path} ${inner.path}`} fill={`url(#${id}-hatch)`} fillRule="evenodd" />

@@ -6,7 +6,7 @@
 export type ReedOrientation = "parallel" | "perpendicular";
 export type ReedPoint = { x: number; y: number };
 export type ReedZone = "ON" | "HOLD" | "OFF";
-export type ReedState = { point: ReedPoint; orientation: ReedOrientation; closed: boolean; progress: number; holdOrientation?: ReedOrientation };
+export type ReedState = { point: ReedPoint; orientation: ReedOrientation; closed: boolean; progress: number; holdOrientation?: ReedOrientation | undefined };
 export const REED_SCENE = { width: 440, height: 280, margin: 34 };
 export const ACTIVATE = 0.5;
 export const RELEASE = 1 / 3;
@@ -53,9 +53,9 @@ export function reedContours(orientation: ReedOrientation, threshold: number) {
       return inside;
     };
     const lo = boundary(start), hi = boundary(end);
-    const angles = Array.from({ length: 181 }, (_, j) => lo + (hi - lo) * j / 180);
+    const angles = Array.from({ length: 721 }, (_, j) => lo + (hi - lo) * (1 - Math.cos(Math.PI * j / 720)) / 2);
     const outer = angles.map(a => polar(Math.cbrt(SCALE ** 3 * reedAngular(a, orientation) / threshold - CORE ** 3), a));
-    const points = [...outer, ...angles.toReversed().map(a => polar(CORE, a))];
+    const points = [...outer, ...[...angles].reverse().map(a => polar(CORE, a))];
     const path = points.map((p, j) => `${j ? "L" : "M"}${p.x},${p.y}`).join(" ") + " Z";
     return { outer, points, path };
   });
@@ -83,7 +83,7 @@ export function moveReed(state: ReedState, destination: ReedPoint): ReedState {
   // Proof of hysteresis requires stopping IN HOLD after activation, not merely
   // crossing it (nor activating once, nor toggling a visual overlay).
   if (progress === 1 && closed && reedZone(point, state.orientation) === "HOLD") progress = 2;
-  return { ...state, point, closed, progress, holdOrientation: progress === 2 && state.progress === 1 ? state.orientation : state.holdOrientation };
+  return { ...state, point, closed, progress, holdOrientation: progress === 2 && !state.holdOrientation ? state.orientation : state.holdOrientation };
 }
 export function orientReed(state: ReedState, orientation: ReedOrientation): ReedState {
   if (state.orientation === orientation) return state;
