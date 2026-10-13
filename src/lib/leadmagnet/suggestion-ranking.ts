@@ -1,11 +1,11 @@
 /** Classement TRAÇABLE des capteurs suggérés, selon les exigences écrites.
  *
  * Avant ce module, l'ordre des cartes était l'ordre d'insertion du catalogue
- * (puis « couples documentés d'abord ») : MK26 montait dans les trois premières
- * cartes d'un lave-vaisselle ordinaire uniquement parce qu'il suit MK13 dans la
- * liste. Ici, chaque position est EXPLIQUÉE par une règle :
+ * (puis « couples documentés d'abord »). Ici, chaque position est EXPLIQUÉE par une règle :
  *
- *  - les gammes SPÉCIALISÉES (MK26 commutation tension plus élevée, MK21 haute
+ *  - MK26 reste éligible normalement (correction utilisateur 2026-10-13) ; une
+ *    tension commutée plus élevée vérifiée peut seulement le promouvoir ;
+ *  - les gammes SPÉCIALISÉES (MK21 haute
  *    température, MK02 cible ferreuse, MK27 boîtier aluminium) sont réservées à
  *    la liste complète tant qu'aucune exigence écrite ne justifie leur
  *    spécialité ; une exigence vérifiée les promeut en tête, avec sa raison ;
@@ -34,6 +34,9 @@ export const SPECIALIZED: Readonly<Record<string, Specialty>> = {
   MK02: "ferrous_target",
   MK27: "metal_housing",
 };
+
+/** Gammes à spécialité promouvable mais jamais écartées des cartes suggérées. */
+export const UNRESERVED: ReadonlySet<string> = new Set(["MK26"]);
 
 /* i18n-canonical : raisons de classement affichées sur les cartes. */
 export const RANK_REASON = {
@@ -126,7 +129,10 @@ export function rankSuggestions(
   const site = ctx.fit.sensorSiteC;
   const rows = candidates.map((c, index) => {
     const promoted = specialtyReason(c.id, ctx);
-    const reserved = !!SPECIALIZED[c.id] && !promoted;
+    // MK26 n'est PAS réservé : correction utilisateur du 2026-10-13 (remarque
+    // MK26 retirée, confusion avec MK27). Il reste classé sur ses critères
+    // ordinaires ; une tension élevée vérifiée ne fait que le promouvoir.
+    const reserved = !!SPECIALIZED[c.id] && !UNRESERVED.has(c.id) && !promoted;
     const w = site ? thermalWarning(c.id, site) : null;
     const thermal = !w ? 0 : w.status === "conditional" ? 1 : w.status === "unknown" ? 2 : 3;
     const retention = c.retention === "documented" ? 0 : c.retention === "adapter_required" ? 1 : 0;
