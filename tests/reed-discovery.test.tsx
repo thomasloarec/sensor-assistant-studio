@@ -140,7 +140,7 @@ describe("Rendered discovery interactions", () => {
     expect(v.queryByTestId("reed-contact-current")).toBeNull();
     expect(v.container.querySelector('rect[x="168"]')).toBeNull();
     expect(v.getByTestId("reed-zones").querySelectorAll("circle,ellipse")).toHaveLength(0);
-    expect(v.getByTestId("reed-on-contour")).toBeDefined;
+    expect(v.getAllByTestId("reed-on-contour")).toHaveLength(4);
     fireEvent.pointerDown(handle,{...evt,clientX:365,clientY:225});
     fireEvent.pointerMove(handle,{...evt,clientX:305,clientY:140});
     expect(v.getByTestId("reed-cable-current")).toBeTruthy();
