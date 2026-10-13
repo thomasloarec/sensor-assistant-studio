@@ -65,12 +65,9 @@ correction d'une ligne. En cas de doute, la règle gagne contre l'habitude.
    règles, l'accessibilité gagne et tu le signales.
 
 9. **Primitives shadcn non migrées.** Les composants de `src/components/ui/`
-   qui n'apparaissent sur aucun écran monté n'ont pas été refondus : ils
-   utilisent encore `border`, `bg-background`, `shadow-lg`, `duration-200`,
-   `text-sm`. C'est un état connu et accepté. **Mais** dès qu'un écran adopte
-   l'un d'eux, il est migré sur le socle dans le même commit, avant d'être
-   monté — jamais après. Monter une primitive non migrée est une régression
-   visuelle, pas un raccourci.
+   absents des écrans montés gardent `border`, `shadow-lg`, `text-sm` (état
+   accepté). Un écran qui en adopte un le migre dans le même commit, avant
+   montage.
 
 ### Vérifier avant de livrer
 
