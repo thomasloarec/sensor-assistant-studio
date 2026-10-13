@@ -17,6 +17,29 @@ import {
 } from "@/lib/standex/sensor-catalog";
 import { SCREW_STYLE_SHAPES, type EnvelopeMm, type MountingChoice } from "./dossier";
 import { detectMountingIntent, MOUNTING_INTENT_LABEL } from "./mounting-intent";
+import { threadOf } from "./candidates";
+
+/* i18n-canonical : gabarits de puces, traduits au rendu avec leurs valeurs. */
+export const FILTER_LABEL = {
+  hole: "Corps tubulaire qui entre dans un trou de {0} mm",
+  envelope: "Tient dans la place annoncée ({0})",
+  thread: "Filetage M{0}",
+  or: "{0} ou {1}",
+} as const;
+const fmtMm = (n: number) => String(Math.round(n * 100) / 100);
+
+/** Libellé d'une puce dans la langue affichée. `tr` traduit une clé simple,
+ *  `fmt` traduit un gabarit puis place ses valeurs. */
+export function filterLabel(
+  f: Pick<SuggestionFilter, "label" | "labelKey" | "labelArgs" | "labelParts">,
+  tr: (s: string) => string,
+  fmt: (template: string, args: string[]) => string,
+): string {
+  if (f.labelKey) return fmt(f.labelKey, f.labelArgs ?? []);
+  if (f.labelParts && f.labelParts.length > 1)
+    return f.labelParts.map(tr).reduce((a, b) => fmt(FILTER_LABEL.or, [a, b]));
+  return tr(f.label);
+}
 
 export type SuggestionFilterId = "fixation" | "forme" | "encombrement";
 
@@ -26,8 +49,14 @@ export type SuggestionFilterSource = "answers" | "exploration";
 
 export interface SuggestionFilter {
   id: SuggestionFilterId;
-  /** Puce visible : court, sans jargon. */
+  /** Puce visible : court, sans jargon (français déjà interpolé, compatibilité). */
   label: string;
+  /** Gabarit canonique traduisible ({0}, {1}…) et ses valeurs : c'est lui qui
+   *  est rendu, car une phrase interpolée n'est pas une clé de traduction. */
+  labelKey?: string;
+  labelArgs?: string[];
+  /** Libellés canoniques à traduire un par un, joints par « ou ». */
+  labelParts?: string[];
   /** Question structurée dont ce filtre est issu. */
   requirementKey: "mounting" | "envelope";
   /** Motif technique, réservé au dépliant « détails ». */
@@ -43,6 +72,8 @@ export interface SuggestionFilter {
     /** Formes acceptées quand la fixation a été NOMMÉE en texte libre (« vissé
      * ou collé ») : au moins une des fixations nommées doit convenir. */
     shapes?: readonly SensorShape[];
+    /** Filetage nominal demandé (mm). */
+    threadMm?: number;
   };
 }
 
@@ -133,17 +164,34 @@ export function suggestionFilters(input: {
       filters.push({
         id: "fixation",
         label: intent.kinds.map((k) => MOUNTING_INTENT_LABEL[k]).join(" ou "),
+        labelParts: intent.kinds.map((k) => MOUNTING_INTENT_LABEL[k]),
         requirementKey: "mounting",
         technical: `Fixation nommée dans votre réponse. Formes de boîtier retenues : ${intent.allowedShapes.join(", ")}. Aucune fixation n'est ajoutée à un boîtier qui ne la documente pas.`,
         source: "answers",
         criteria: { shapes: intent.allowedShapes },
       });
   }
+  if (input.mounting.kind === "screw" && input.mounting.style === "threaded_body" && input.mounting.threadMm) {
+    const m = input.mounting.threadMm;
+    filters.push({
+      id: "forme",
+      label: `Filetage M${m}`,
+      labelKey: FILTER_LABEL.thread,
+      labelArgs: [String(m)],
+      requirementKey: "mounting",
+      technical:
+        "Diamètre nominal du filetage extérieur (M5, M6, M8), pas le diamètre de perçage avant taraudage.",
+      source: "answers",
+      criteria: { threadMm: m },
+    });
+  }
   if (input.mounting.kind === "press_fit" && input.mounting.holeDiameterMm > 0) {
     const hole = input.mounting.holeDiameterMm;
     filters.push({
       id: "forme",
       label: `Corps tubulaire qui entre dans un trou de ${hole} mm`,
+      labelKey: FILTER_LABEL.hole,
+      labelArgs: [fmtMm(hole)],
       requirementKey: "mounting",
       technical:
         `Portion insérée ≤ ${hole} mm. La collerette peut être plus large : ` +
@@ -158,6 +206,8 @@ export function suggestionFilters(input: {
     filters.push({
       id: "encombrement",
       label: `Tient dans la place annoncée (${dims.map((d) => `${d} mm`).join(" × ")})`,
+      labelKey: FILTER_LABEL.envelope,
+      labelArgs: [dims.map((d) => `${fmtMm(d)} mm`).join(" × ")],
       requirementKey: "envelope",
       technical:
         "Encombrement hors tout comparé aux dimensions renseignées, terminaisons documentées comprises. " +
@@ -235,6 +285,10 @@ export function passesFilter(
     }
     case "forme": {
       if (filter.criteria?.shape) return model.shape === filter.criteria.shape;
+      if (filter.criteria?.threadMm) {
+        const own = threadOf(model.id);
+        return model.shape === "threaded" && own !== null && Math.abs(own - filter.criteria.threadMm) < 0.001;
+      }
       if (input.mounting.kind !== "press_fit") return true;
       return insertionAcross(model) <= input.mounting.holeDiameterMm + EPSILON_MM;
     }
