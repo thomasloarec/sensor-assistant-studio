@@ -1,3 +1,4 @@
+import { threadOf } from "@/lib/leadmagnet/candidates";
 import { msg, t } from "@/lib/i18n/core";
 import { documentedLabel, thermalWarning } from "@/lib/leadmagnet/thermal-fit";
 import { useLocale } from "@/lib/i18n/react";
@@ -193,7 +194,12 @@ export default function SensorCard({
                       <Layers3 />
                       <small>{t("Boîtier")}</small>
                       <strong className="sc-material">{t(specs.material)}</strong>
-                      <span>{t(model.category)}</span>
+                      <span data-testid="detail-housing-context">
+                        {t(model.category)}
+                        {model.shape === "threaded" && threadOf(model.id) !== null
+                          ? ` · ${t("Filetage")} M${threadOf(model.id)}`
+                          : ""}
+                      </span>
                     </article>
                   </div>
                   <h3>
