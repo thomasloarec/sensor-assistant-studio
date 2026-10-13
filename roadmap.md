@@ -1,8 +1,8 @@
 # Feuille de route — lot des 7 correctifs (base 12be3e3d)
 
 ## Retours Reed — 13 octobre 2026, base 44b443c
-- [ ] Couloirs OFF réels, lobes sans anneau central, dessin simplifié et courant conditionné au contact.
-- [ ] Huit langues, tests et captures 320/378/desktop, aperçu uniquement.
+- [x] Couloirs OFF réels, lobes sans anneau central, dessin simplifié et courant conditionné au contact.
+- [x] Huit langues, 1 729 tests verts, captures 320/378/desktop, compilation plateforme OK ; aperçu uniquement. Recette home intégrée réservée au propriétaire (accès sandbox restreint).
 
 ## Correctif responsive et langue — 18 septembre 2026
 - [x] En-tête projet lisible avec titre et statut complets aux largeurs contraintes.
