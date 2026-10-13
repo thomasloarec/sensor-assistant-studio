@@ -94,6 +94,6 @@
 - [ ] 3D MK20 (lot précision séparé)
 
 ## Découverte Reed sur l'accueil — 13 octobre 2026
-- [ ] Modèle pédagogique partagé, hystérésis et découverte 2D accessible, sans modification de l'atelier métier.
-- [ ] Huit langues, tests moteur/composant et vérification navigateur 320/390 px et desktop.
-- [ ] Suite complète, inventaire, contrôles de charte et rapport des limites sans publication.
+- [x] Modèle pédagogique partagé, hystérésis et découverte 2D accessible, sans modification de l'atelier métier.
+- [x] Huit langues, tests moteur/composant et vérification navigateur isolée 320/390 px et desktop ; accueil connecté non vérifié, session indisponible.
+- [x] Suite complète, inventaire, contrôles de charte et rapport des limites sans publication.
