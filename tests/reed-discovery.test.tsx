@@ -36,7 +36,7 @@ describe("Reed teaching model — independent history oracle", () => {
     s = moveReed(s, { x: 359, y: 140 });
     s = orientReed(s, "perpendicular"); expect(s.progress).toBe(3);
     expect(s.closed).toBe(false);
-    s = moveReed(s, { x: 220, y: 65 }); expect(s.progress).toBe(4); expect(s.closed).toBe(true);
+    s = moveReed(s, { x: 280, y: 200 }); expect(s.progress).toBe(4); expect(s.closed).toBe(true);
   });
   test("fast paths activate before ending in HOLD, but direct OFF→HOLD does not", () => {
     const s = { ...REED_INITIAL, point: { x: 220, y: 140 } };
@@ -46,22 +46,53 @@ describe("Reed teaching model — independent history oracle", () => {
   });
   for (const orientation of ["parallel", "perpendicular"] as const) {
     test(`${orientation}: all contour samples share the response model`, () => {
-      for (const threshold of [ACTIVATE, RELEASE]) for (const ellipse of reedContours(orientation, threshold)) {
-        for (let a = 0; a < 360; a += 15) {
-          const angle = a * Math.PI / 180;
-          expect(reedResponse({ x: ellipse.x + ellipse.rx * Math.cos(angle), y: ellipse.y + ellipse.ry * Math.sin(angle) }, orientation)).toBeCloseTo(threshold, 12);
+      for (const threshold of [ACTIVATE, RELEASE]) for (const contour of reedContours(orientation, threshold)) {
+        for (const point of contour.outer.slice(1, -1)) {
+          expect(reedResponse(point, orientation)).toBeCloseTo(threshold, 10);
+        }
+        // Mid-edge SVG interpolation is close to the same level set.
+        for (let i = 1; i < contour.outer.length - 2; i++) {
+          const a = contour.outer[i], b = contour.outer[i + 1];
+          if (a && b) expect(Math.abs(reedResponse({ x: (a.x+b.x)/2, y:(a.y+b.y)/2 }, orientation)-threshold)).toBeLessThan(0.004);
         }
       }
       expect(ACTIVATE).toBeGreaterThan(RELEASE);
     });
   }
+  test("vertical dipole has exact dead axes and four live quadrants", () => {
+    for (const d of [-100,-60,-20,0,20,60,100]) {
+      expect(reedResponse({x:220+d,y:140}, "perpendicular")).toBe(0);
+      expect(reedResponse({x:220,y:140+d}, "perpendicular")).toBe(0);
+    }
+    for (const x of [-60,60]) for (const y of [-60,60]) expect(reedZone({x:220+x,y:140+y}, "perpendicular")).toBe("ON");
+    expect(reedResponse({x:220,y:140}, "parallel")).toBe(0);
+    expect(reedResponse({x:300,y:140}, "parallel")).toBeGreaterThan(reedResponse({x:220,y:220}, "parallel"));
+  });
+  test("rotation before first closure recognizes closure; initial orientation cannot cheat final discovery", () => {
+    let s = {...REED_INITIAL, point:{x:275,y:195}};
+    expect(reedZone(s.point,"parallel")).toBe("ON");
+    s = {...s,orientation:"perpendicular" as const,point:{x:305,y:140}};
+    s = orientReed(s,"parallel"); expect(s.closed).toBe(true); expect(s.progress).toBe(1);
+    s = moveReed(s,{x:359,y:140}); expect(s.holdOrientation).toBe("parallel");
+    s = orientReed(s,"perpendicular"); expect(s.progress).toBe(3);
+    s = orientReed(s,"parallel"); s = moveReed(s,{x:305,y:140}); expect(s.progress).toBe(2);
+    s = orientReed(s,"perpendicular"); expect(s.closed).toBe(false);
+    s = moveReed(s,{x:280,y:200}); expect(s.progress).toBe(4);
+  });
+  test("rotation to ON in other orientation can itself complete discovery", () => {
+    let s = moveReed(REED_INITIAL,{x:305,y:140});
+    // This diagonal is HOLD in parallel but ON in perpendicular.
+    s = moveReed(s,{x:280,y:200});
+    expect(s.progress).toBe(2); expect(s.holdOrientation).toBe("parallel");
+    s = orientReed(s,"perpendicular"); expect(s.closed).toBe(true); expect(s.progress).toBe(4);
+  });
   test("CTM inverse handles scaling, offset and letterboxing, not width-only mapping", () => {
     expect(mapReedPointer(300, 200, { a: 2, b: 0, c: 0, d: 2, e: -400, f: -200 })).toEqual({ x: 200, y: 200 });
     expect(mapReedPointer(200, 300, { a: 0, b: -1, c: 1, d: 0, e: 5, f: 10 })).toEqual({ x: 305, y: -190 });
   });
   test("clamping, invalid inputs and state are independent of path geometry", () => {
     expect(moveReed(REED_INITIAL, { x: NaN, y: 0 })).toBe(REED_INITIAL);
-    expect(moveReed(REED_INITIAL, { x: 1000, y: -50 }).point).toEqual({ x: 410, y: 30 });
+    expect(moveReed(REED_INITIAL, { x: 1000, y: -50 }).point).toEqual({ x: 406, y: 34 });
     const before = reedContours("parallel", ACTIVATE);
     moveReed(REED_INITIAL, { x: 305, y: 140 });
     expect(reedContours("parallel", ACTIVATE)).toEqual(before);
@@ -78,6 +109,29 @@ function preparePointer(view: ReturnType<typeof render>) {
 }
 
 describe("Rendered discovery interactions", () => {
+  test("rotation closure updates the instruction and returning to initial ON does not finish", () => {
+    const v = render(<MagnetPlay />); const { handle } = preparePointer(v);
+    const evt = { pointerId: 4, pointerType: "mouse", isPrimary: true, button: 0 };
+    fireEvent.click(v.getByRole("button", { name: "Perpendiculaire" }));
+    fireEvent.pointerDown(handle, { ...evt, clientX:365, clientY:225 });
+    fireEvent.pointerMove(handle, { ...evt, clientX:405, clientY:225 });
+    fireEvent.pointerMove(handle, { ...evt, clientX:405, clientY:140 });
+    fireEvent.pointerMove(handle, { ...evt, clientX:305, clientY:140 });
+    fireEvent.pointerUp(handle, evt);
+    fireEvent.click(v.getByRole("button", { name: "Parallèle" }));
+    expect(v.getByTestId("reed-discovery").dataset.progress).toBe("1");
+    expect(v.getByText("Reculez doucement dans la zone de maintien.")).toBeTruthy();
+    fireEvent.pointerDown(handle,{...evt,clientX:305,clientY:140});
+    fireEvent.pointerMove(handle,{...evt,clientX:359,clientY:140});
+    fireEvent.pointerUp(handle,evt);
+    fireEvent.click(v.getByRole("button", { name: "Perpendiculaire" }));
+    fireEvent.click(v.getByRole("button", { name: "Parallèle" }));
+    fireEvent.pointerDown(handle,{...evt,clientX:359,clientY:140});
+    fireEvent.pointerMove(handle,{...evt,clientX:305,clientY:140});
+    fireEvent.pointerUp(handle,evt);
+    expect(v.getByTestId("reed-discovery").dataset.progress).toBe("2");
+    expect(v.queryByText("Hystérésis observée. Continuez à explorer librement.")).toBeNull();
+  });
   test("initial complete sensor opaque; no bogus distances, no integrated indicator", () => {
     const v = render(<MagnetPlay />);
     expect(v.getByTestId("reed-interior").getAttribute("visibility")).toBe("hidden");
@@ -115,10 +169,11 @@ describe("Rendered discovery interactions", () => {
     expect(v.getByTestId("reed-interior").getAttribute("visibility")).toBe("visible");
     expect(v.getByTestId("reed-left-blade").getAttribute("d")).toBe("M181 140 H218 L226 140");
     expect(v.getByTestId("reed-right-blade").getAttribute("d")).toBe("M258 140 H234 L222 140");
-    expect(v.getAllByTestId("reed-on-contour")[1]?.getAttribute("rx")).toBe("45");
+    expect(v.getAllByTestId("reed-on-contour")).toHaveLength(4);
+    const before = v.getAllByTestId("reed-on-contour")[0]?.getAttribute("d");
     fireEvent.click(v.getByRole("button", { name: "Perpendiculaire" }));
     expect(v.getByTestId("reed-discovery").dataset.closed).toBe("false");
-    expect(v.getAllByTestId("reed-on-contour")[0]?.getAttribute("rx")).toBe("72");
+    expect(v.getAllByTestId("reed-on-contour")[0]?.getAttribute("d")).not.toBe(before);
   });
   test("CTA invokes existing callback once; home keeps DesignSpace mounted", () => {
     let calls = 0; const v = render(<MagnetPlay onStart={() => calls++} />);

@@ -1,4 +1,4 @@
-import { useId, useRef, useState } from "react";
+import { useId, useMemo, useRef, useState } from "react";
 import type { CSSProperties, PointerEvent } from "react";
 import { ArrowRight, Eye, Layers, Move, MoveHorizontal, MoveVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -18,10 +18,11 @@ export function MagnetPlay({ onStart }: { onStart?: () => void }) {
   const [state, setState] = useState(REED_INITIAL);
   const [zones, setZones] = useState(false);
   const [inside, setInside] = useState(false);
+  const contours = useMemo(() => ({ outer: reedContours(state.orientation, RELEASE), inner: reedContours(state.orientation, ACTIVATE) }), [state.orientation]);
   const zone = reedZone(state.point, state.orientation);
   const status = state.closed ? t("Contact fermé") : t("Contact ouvert");
   const instruction = state.progress === 0 ? t("Déplacez l'aimant pour trouver une zone qui ferme le contact.")
-    : state.progress === 1 ? t("Reculez doucement dans la zone de maintien.")
+    : state.progress === 1 ? (state.closed ? t("Reculez doucement dans la zone de maintien.") : t("Déplacez l'aimant pour trouver une zone qui ferme le contact."))
     : state.progress === 2 ? (state.closed ? t("Toujours fermé ! Changez l'orientation de l'aimant.") : t("Déplacez l'aimant pour trouver une zone qui ferme le contact."))
     : state.progress === 3 ? t("Retrouvez une zone qui ferme le contact dans cette orientation.")
     : t("Hystérésis observée. Continuez à explorer librement.");
@@ -67,14 +68,13 @@ export function MagnetPlay({ onStart }: { onStart?: () => void }) {
             <linearGradient id={`${id}-housing`} x1="0" y1="0" x2="0" y2="1"><stop stopColor="var(--standex-gray)" /><stop offset="1" stopColor="var(--standex-deep)" /></linearGradient>
           </defs>
           <g id={`${id}-zones`} data-testid="reed-zones" visibility={zones ? "visible" : "hidden"}>
-            {reedContours(state.orientation, RELEASE).map((outer, i) => {
-              const inner = reedContours(state.orientation, ACTIVATE)[i];
+            {contours.outer.map((outer, i) => {
+              const inner = contours.inner[i];
               if (!inner) return null;
-              const ellipsePath = (l: typeof inner) => `M${l.x - l.rx},${l.y} a${l.rx},${l.ry} 0 1,0 ${2 * l.rx},0 a${l.rx},${l.ry} 0 1,0 ${-2 * l.rx},0`;
               return <g key={i}>
-                <path data-testid="reed-hold-contour" d={`${ellipsePath(outer)} ${ellipsePath(inner)}`} fill={`url(#${id}-hatch)`} fillRule="evenodd" />
-                <ellipse data-testid="reed-on-contour" cx={inner.x} cy={inner.y} rx={inner.rx} ry={inner.ry} fill="var(--signal)" fillOpacity="0.25" stroke="var(--signal)" strokeWidth="1.5" />
-                <ellipse cx={outer.x} cy={outer.y} rx={outer.rx} ry={outer.ry} fill="none" stroke="var(--muted-foreground)" strokeWidth="1" strokeDasharray="3 4" />
+                <path data-testid="reed-hold-contour" d={`${outer.path} ${inner.path}`} fill={`url(#${id}-hatch)`} fillRule="evenodd" />
+                <path data-testid="reed-on-contour" d={inner.path} fill="var(--signal)" fillOpacity="0.25" stroke="var(--signal)" strokeWidth="1.5" />
+                <path d={outer.path} fill="none" stroke="var(--muted-foreground)" strokeWidth="1" strokeDasharray="3 4" />
               </g>;
             })}
           </g>
