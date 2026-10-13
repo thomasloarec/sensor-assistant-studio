@@ -15,6 +15,7 @@ export function requirementAnswer(d: DesignDossier, key: string, tr = (s: string
     };
     lines.push(tr(names[d.mounting.kind]));
     if (d.mounting.kind === "other" && d.mounting.description) lines.push(d.mounting.description);
+    if (d.mounting.kind === "screw" && d.mounting.threadMm) lines.push(`M${d.mounting.threadMm}`);
     if (d.mounting.kind === "press_fit" && d.mounting.holeDiameterMm > 0)
       lines.push(`Ø ${d.mounting.holeDiameterMm} mm`);
   }

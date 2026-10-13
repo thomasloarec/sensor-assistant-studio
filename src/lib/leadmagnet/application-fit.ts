@@ -217,10 +217,10 @@ function heavyLoad(frags: Fragment[]): { found: boolean; label: string | null } 
  * magnétique, aimant sur le capot mobile » décrit un matériau, pas un refus, et
  * ne doit donc rien déclencher (`magnet\b` exclut « magnetic »). */
 const REFUSE_MAGNET = [
-  /(aucun|aucune|pas de|pas d|sans|no|without|non)\s?[^.,;]{0,22}(aimant|aimants|magnet|magnets)\b/,
-  /(aucun|aucune|pas de|pas d|sans|no|without)\s?[^.,;]{0,22}(element magnetique|elements magnetiques|magnetic element|magnetic elements)\b/,
+  /\b(aucun|aucune|pas de|pas d|sans|no|without|non)\b\s?[^.,;]{0,22}\b(aimant|aimants|magnet|magnets)\b/,
+  /\b(aucun|aucune|pas de|pas d|sans|no|without)\b\s?[^.,;]{0,22}(element magnetique|elements magnetiques|magnetic element|magnetic elements)\b/,
   /(aimant|aimants|magnet|magnets)\b[^.]{0,40}(interdit|interdite|interdits|impossible|not allowed|not permitted|forbidden|cannot be added|can not be added|can t be added)/,
-  /(impossible|interdit|pas possible|not possible|cannot|can not|can t)[^.]{0,50}(ajouter|fixer|coller|add|adding|attach|fit)[^.]{0,30}(un |une |a |an )?(aimant|magnet)\b/,
+  /\b(impossible|interdit|pas possible|not possible|cannot|can not|can t)\b[^.]{0,50}(ajouter|fixer|coller|add|adding|attach|fit)[^.]{0,30}(un |une |a |an )?(aimant|magnet)\b/,
 ];
 
 /** Contexte BÉNIN, reconnu DANS LA PHRASE MÊME qui semble refuser : un aimant
@@ -494,8 +494,8 @@ export function assessApplicationFit(
  * ------------------------------------------------------------------------- */
 
 const ANALOG_CONTINUOUS = [
-  /\b4\s*(?:-|–|to|a)\s*20\s*ma\b/,
-  /\b0\s*(?:-|–|to|a)\s*10\s*v\b/,
+  /\b4\s*(?:-|–|—|to|a)\s*20\s*ma\b/,
+  /\b0\s*(?:-|–|—|to|a)\s*10\s*(?:v|vdc|v dc)\b/,
   /\banalog\w*|\banaloo\w*|模拟|连续/,
   /\b(kontinuierlich|continuamente|continua|continuo|stetig|en permanence|permanentemente)\b/,
   /\b(analog|analogue|analogique|proportionnel|proportionnelle|proportional|proportionally|continuous|continuously|continue|continu|en continu)\b/,
@@ -516,7 +516,9 @@ const FLOW_MEASURE = [
 /** Un détecteur de débit tout-ou-rien (contacteur de débit) reste un usage reed. */
 const FLOW_SWITCH = /\b(flow switch|contacteur de debit|detecteur de debit|interrupteur de debit)\b/;
 const FORBID_MOVING = [
-  /\b(sans|without|no|pas de|pas d|aucun|aucune)\b[^.,;]{0,40}\b(turbine|rotor|flotteur|float|piece mobile|pieces mobiles|moving part|moving parts|moving element|moving elements|element mobile|elements mobiles|palette|paddle|aimant|magnet)\b/,
+  /\b(sans|without|no|pas de|pas d|aucun|aucune)\b[^.,;]{0,40}\b(turbine|rotor|flotteur|float|piece mobile|pieces mobiles|moving part|moving parts|moving element|moving elements|element mobile|elements mobiles|palette|paddle|aimant|magnet|magnetic marker|magnetic markers|marqueur magnetique)\b/,
+  // Négation APRÈS la liste : « rotor, paddle or magnetic marker are not permitted ».
+  /\b(turbine|rotor|flotteur|float|moving parts?|moving elements?|pieces? mobiles?|palette|paddle|magnetic markers?|marqueur magnetique)\b[^.]{0,60}\b(not permitted|not allowed|forbidden|prohibited|not possible|interdit\w*|exclu\w*|pas autorise\w*|must not|cannot)\b/,
 ];
 /** Une partie mobile ou un aimant décrits positivement : la mesure n'est plus
  *  une pure grandeur continue, on ne bloque pas (flotteur magnétique, rotor). */
@@ -632,8 +634,21 @@ export const VALIDATION_POINT = {
   crosstalk:
     "Aimants voisins : leur champ peut actionner ou bloquer le capteur (interférence). L'immunité n'est pas garantie sans essai Standex.",
   dualOutput:
-    "Deux seuils ou deux sorties indépendants : il faut deux éléments de détection distincts, un seul contact reed ne donne qu'un état. À valider avec la R&D Standex.",
+    "Deux sorties ou positions indépendantes : prévoir deux éléments de détection distincts ou une autre architecture multi-sorties validée. Nombre d'éléments, câblage et écartement à valider avec la R&D Standex ; un capteur proposé n'est qu'un élément du système.",
 } as const;
+
+/** Deux sorties ou deux positions de détection INDÉPENDANTES. Deux états
+ *  mécaniques d'une seule sortie (« ouvert / fermé ») ne comptent pas. */
+const DUAL_OUTPUT = [
+  /\b(two|deux|2|zwei|dos|due|twee)\b[^.]{0,20}\b(distinct\w*|independent\w*|independant\w*|separate\w*|separe\w*|unabhangig\w*|getrennt\w*|independiente\w*|indipendent\w*)\b[^.]{0,40}\b(limits?|thresholds?|seuils?|niveaux?|levels?|channels?|canaux|elements?|outputs?|sorties?|signals?|signaux|contacts?|positions?|ausgange|salidas|uscite)\b/,
+  /\b(two|deux|2)\s+(normally open|no|na)\s+(outputs?|contacts?|sorties?)\b/,
+  /\b(three[- ]wire|3[- ]wire|trois fils|3 fils)\b[^.]{0,60}\b(common|commun)\b|\b(common|commun)\b[^.]{0,40}\b(three[- ]wire|3[- ]wire|trois fils|3 fils)\b/,
+  /\bone common wire\b[^.]{0,40}\b(two|deux)\b|\b(two|deux)\b[^.]{0,60}\b(one common|un commun|fil commun)\b/,
+];
+const SINGLE_OUTPUT = /\b(single output|one output|une seule sortie|un seul contact|one contact|single contact|une sortie)\b/;
+function dualOutputRequested(frags: Fragment[]): boolean {
+  return frags.some((f) => !SINGLE_OUTPUT.test(f.text) && DUAL_OUTPUT.some((p) => p.test(f.text)));
+}
 
 function validationPoints(frags: Fragment[]): string[] {
   const out: string[] = [];
@@ -664,10 +679,10 @@ function validationPoints(frags: Fragment[]): string[] {
     out.push(VALIDATION_POINT.ferrousStructure);
   if (has(/\b(shield|shielded|shielding|blindage|blinde|ecran magnetique|abschirmung|mu-metal)\b/))
     out.push(VALIDATION_POINT.shielding);
-  if (has(/\b(cross-?talk|diaphonie|adjacent magnets?|neighbou?r\w* magnets?|aimants? voisins?|two adjacent|deux aimants)\b/))
+  if (has(/\b(cross-?talk|diaphonie|adjacent magnets?|neighbou?r\w* magnets?|aimants? voisins?|two adjacent|deux aimants)\b/) ||
+    has(/\b(another|other|second|autre|second|deuxieme|weiterer|otro|altro)\b[^.]{0,30}\b(magnet|aimant|magnete|magnet|iman|magnete)\b[^.]{0,40}\b(nearby|near|close|adjacent|located|a proximite|proche|voisin\w*|in der nahe|cerca|vicino)\b/))
     out.push(VALIDATION_POINT.crosstalk);
-  if (has(/\b(two|deux|2)\s+(distinct|independent|separate|independants?|independantes?|distincts?|separes?)\s+(level |sensor )?(limits?|thresholds?|seuils?|niveaux?|channels?|canaux|elements?|outputs?|sorties?)\b|\btwo independent sensor elements\b/))
-    out.push(VALIDATION_POINT.dualOutput);
+  if (dualOutputRequested(frags)) out.push(VALIDATION_POINT.dualOutput);
   return out;
 }
 

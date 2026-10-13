@@ -116,7 +116,7 @@ export function pairCardFor(sensor: SensorModel): PairCard {
  */
 export function pairCards(
   sensorIds: readonly string[],
-  options: { limit?: number; preferredSensorId?: string | null } = {},
+  options: { limit?: number; preferredSensorId?: string | null; keepOrder?: boolean } = {},
 ): PairCard[] {
   const limit = options.limit ?? 3;
   const cards = [...new Set(sensorIds)]
@@ -124,7 +124,8 @@ export function pairCards(
     .map((id) => pairCardFor(sensorById(id)));
   const documented = cards.filter((c) => c.maxPullInMm !== null);
   const rest = cards.filter((c) => c.maxPullInMm === null);
-  const ordered = [...documented, ...rest];
+  // `keepOrder` : l'ordre vient déjà du classement traçable (suggestion-ranking).
+  const ordered = options.keepOrder ? cards : [...documented, ...rest];
   const preferred = options.preferredSensorId
     ? ordered.find((c) => c.sensorId === options.preferredSensorId)
     : undefined;

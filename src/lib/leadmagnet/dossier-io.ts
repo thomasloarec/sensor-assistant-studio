@@ -97,7 +97,11 @@ const cabling = z.object({
 const mountingSchema = z.union([
   z.object({ kind: z.literal("pcb_smd") }),
   z.object({ kind: z.literal("pcb_through_hole") }),
-  z.object({ kind: z.literal("screw"), style: z.enum(["threaded_body", "screw_fixed"]).optional() }),
+  z.object({
+    kind: z.literal("screw"),
+    style: z.enum(["threaded_body", "screw_fixed"]).optional(),
+    threadMm: z.number().finite().positive().max(100).optional(),
+  }),
   z.object({ kind: z.literal("press_fit"), holeDiameterMm: z.number().finite().positive() }),
   z.object({ kind: z.literal("other"), description: z.string() }),
   z.object({ kind: z.literal("undecided") }),

@@ -38,7 +38,9 @@ export const SCREW_STYLE_SHAPES: Readonly<Record<ScrewStyle, readonly ("threaded
 export type MountingChoice =
   | { kind: "pcb_smd" }
   | { kind: "pcb_through_hole" }
-  | { kind: "screw"; style?: ScrewStyle | undefined }
+  /** `threadMm` : diamètre NOMINAL du filetage extérieur (M5 = 5), jamais le
+   *  diamètre de perçage avant taraudage. Absent = taille à vérifier. */
+  | { kind: "screw"; style?: ScrewStyle | undefined; threadMm?: number | undefined }
   | { kind: "press_fit"; holeDiameterMm: number }
   | { kind: "other"; description: string }
   | { kind: "undecided" };

@@ -71,6 +71,9 @@ export const envelopeIsEmpty = (e: EnvelopeMm) => e.lengthMm === null && e.width
 /* i18n-canonical */
 export const ENVELOPE_TEXT = {
   found: "Place disponible détectée dans vos réponses : {0} × {1} × {2} mm. L'appliquer aux dimensions ?",
+  title: "Dimensions détectées dans vos réponses",
+  notYet:
+    "Les couples ci-dessous ne tiennent pas encore compte de ces dimensions : elles ne seront utilisées qu'après votre confirmation.",
   apply: "Appliquer ces dimensions",
   decline: "Ne pas appliquer",
   ambiguous:

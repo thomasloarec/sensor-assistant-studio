@@ -1,4 +1,5 @@
-import { t } from "@/lib/i18n/core";
+import { msg, t } from "@/lib/i18n/core";
+import { documentedLabel, thermalWarning } from "@/lib/leadmagnet/thermal-fit";
 import { useLocale } from "@/lib/i18n/react";
 import { useEffect, useId, useRef, useState } from "react";
 import {
@@ -26,7 +27,9 @@ export default function SensorCard({
   contact,
   onClose,
   onSelect,
+  requestedRangeC,
 }: {
+  requestedRangeC?: { min: number | null; max: number | null } | null;
   sensorId: string;
   contact?: Contact;
   onClose: () => void;
@@ -283,6 +286,16 @@ export default function SensorCard({
                       </div>
                     ))}
                   </div>
+                  {(() => {
+                    const w = requestedRangeC ? thermalWarning(model.id, requestedRangeC) : null;
+                    return requestedRangeC && (requestedRangeC.min !== null || requestedRangeC.max !== null) ? (
+                      <p className={w ? "notice-warning" : "notice-info"} data-testid="detail-thermal">
+                        {w ? msg(w.text, [w.asked, documentedLabel(w, t)]) : t("Plage demandée couverte par toutes les conditions documentées ci-dessus. Ce n'est pas une qualification : référence et câble confirmés par Standex.")}
+                        {" "}
+                        {msg("Source : fiche de série, révision {0}.", [specs.revision])}
+                      </p>
+                    ) : null;
+                  })()}
                   <h3>
                     <Ruler size={19} />
                     {t("Préparer le montage")}
