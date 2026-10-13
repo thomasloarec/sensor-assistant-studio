@@ -1,4 +1,5 @@
 import { cableConstruction } from "@/lib/leadmagnet/product-presentation";
+import { bodyKind, oneFlatProfile } from "@/lib/standex/section-profile";
 import {
   transverseApproach,
   workshopHousingYawDeg,
@@ -228,6 +229,13 @@ function BareReedBody({ model }: { model: SensorModel }) {
     </group>
   );
 }
+function oneFlatShape(diameter: number, flatAcross: number) {
+  const pts = oneFlatProfile(diameter, flatAcross);
+  const s = new Shape();
+  pts.forEach(([x, y], i) => (i ? s.lineTo(x, y) : s.moveTo(x, y)));
+  s.closePath();
+  return s;
+}
 function mk18Profile() {
   const s = new Shape(),
     r = 2.5,
@@ -300,6 +308,13 @@ function StandardBody({
             args={[mk18Profile(), { depth: l, bevelEnabled: false, curveSegments: 24 }]}
           />
           {material}
+        </mesh>
+      ) : bodyKind(model) === "one_flat" ? (
+        <mesh position={[-l / 2, 0, 0]} rotation={[0, Math.PI / 2, 0]} data-body="one_flat">
+          <extrudeGeometry
+            args={[oneFlatShape(h, w), { depth: l, bevelEnabled: false, curveSegments: 24 }]}
+          />
+          {t(material)}
         </mesh>
       ) : cylindrical ? (
         <mesh rotation={[0, 0, Math.PI / 2]} scale={[h / 2, 1, w / 2]}>
