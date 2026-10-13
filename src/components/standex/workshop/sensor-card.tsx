@@ -1,4 +1,5 @@
-import { t } from "@/lib/i18n/core";
+import { msg, t } from "@/lib/i18n/core";
+import { documentedLabel, thermalWarning } from "@/lib/leadmagnet/thermal-fit";
 import { useLocale } from "@/lib/i18n/react";
 import { useEffect, useId, useRef, useState } from "react";
 import {
