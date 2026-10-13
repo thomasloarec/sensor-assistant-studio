@@ -46,7 +46,10 @@ import {
   EXPLORABLE_SHAPES,
   type ExplorationChoice,
   type SuggestionFilterId,
+  filterLabel,
 } from "@/lib/leadmagnet/suggestion-filters";
+import { rankSuggestions, suggestedOrder } from "@/lib/leadmagnet/suggestion-ranking";
+import { DecimalMmInput } from "@/components/leadmagnet/decimal-mm-input";
 
 import {
   checklistProgress,
@@ -101,7 +104,7 @@ import {
 import { detectMountingIntent } from "@/lib/leadmagnet/mounting-intent";
 import { CANDIDATE_DISCLAIMER, evaluateCandidates } from "@/lib/leadmagnet/candidates";
 import { assessApplicationFit, FIT_PANEL } from "@/lib/leadmagnet/application-fit";
-import { documentedLabel, thermalWarning } from "@/lib/leadmagnet/thermal-fit";
+import { THERMAL_SHORT, thermalWarning } from "@/lib/leadmagnet/thermal-fit";
 import { detectEnvelopeFromText, ENVELOPE_TEXT, envelopeIsEmpty } from "@/lib/leadmagnet/envelope-text";
 import { CompatibilityPanel } from "./compatibility-panel";
 import { LocalizedValidationMessage } from "./localized-validation-message";
@@ -2266,6 +2269,8 @@ export function DesignSpace({
    * interprété. Les désactiver n'écrit rien dans le dossier : c'est une aide à
    * l'exploration, pas une exigence. */
   const filterInput = { mounting: dossier.mounting, envelope: dossier.envelope };
+  /** Puce dans la langue affichée : gabarit traduit PUIS valeurs placées. */
+  const fl = (f: Parameters<typeof filterLabel>[0]) => filterLabel(f, t, msg);
   const answerFilters = useMemo(
     () =>
       suggestionFilters({
@@ -2322,14 +2327,23 @@ export function DesignSpace({
   /** Trois couples au maximum, dans l'ordre décidé par `pair-cards.ts` : les
    * couples documentés au registre d'abord, l'ordre du moteur ensuite. Un
    * capteur déjà choisi dans un dossier repris ouvre la liste. */
-  const suggestedPairs = useMemo(
+  /** Classement traçable (suggestion-ranking.ts) : gammes spécialisées
+   * réservées à la liste complète sauf exigence écrite vérifiée. */
+  const ranking = useMemo(
     () =>
-      pairCards(
-        plausibleCandidates.map((r) => r.candidate.id),
-        { limit: 3, preferredSensorId: dossier.selectedSensorId ?? null },
+      rankSuggestions(
+        plausibleCandidates.map((r) => r.candidate),
+        { fit, requirements: dossier.requirements, freeConstraints: dossier.freeConstraints },
+        dossier.selectedSensorId ?? null,
       ),
-    [plausibleCandidates, dossier.selectedSensorId],
+    [plausibleCandidates, fit, dossier.requirements, dossier.freeConstraints, dossier.selectedSensorId],
   );
+  const suggestedPairs = useMemo(
+    () => pairCards(suggestedOrder(ranking), { limit: 3, keepOrder: true }),
+    [ranking],
+  );
+  /** MK02 retenu pour une cible en acier : son aimant est INTÉGRÉ. */
+  const integratedBias = fit.validationPoints.includes(VALIDATION_POINT.internalBias);
   /** Liste complète repliée : les mêmes couples, en cartes compactes. */
   const allPairs = useMemo(
     () =>
@@ -2413,7 +2427,7 @@ export function DesignSpace({
             }
           >
             <span aria-hidden="true">{on ? "✓" : "+"}</span>
-            <span>{t(f.label)}</span>
+            <span>{fl(f)}</span>
             {f.source === "exploration" ? (
               <span className="t-caption">{t("· autre critère")}</span>
             ) : null}
@@ -2547,7 +2561,7 @@ export function DesignSpace({
           <ul className="mt-2 space-y-1">
             {shownFilters.map((f) => (
               <li key={f.id} className="t-caption">
-                <strong>{t(f.label)}</strong> — {t(f.technical)}
+                <strong>{fl(f)}</strong> — {t(f.technical)}
               </li>
             ))}
           </ul>
@@ -2623,7 +2637,7 @@ export function DesignSpace({
     ? msg("{0}. Testez-les dans votre montage.", [
         shownFilters
           .filter((f) => activeFilterIds.includes(f.id))
-          .map((f) => t(f.label))
+          .map((f) => fl(f))
           .join(", "),
       ])
     : t("Aucun critère actif : testez-les dans votre montage.");
@@ -2651,7 +2665,7 @@ export function DesignSpace({
         {/* Les deux références restent séparées et alignées avec leurs images. */}
         <div className="pair-card-identities" aria-label={t("Capteur et aimant")}>
           <div><span className="t-label">{t("Capteur")}</span><strong className="t-title-m" data-testid="pair-sensor-title">{sensorDisplayTitle(card.sensorId)}</strong>{sensorDisplayVariant(card.sensorId) ? <span className="t-caption" data-testid="pair-sensor-variant">{t(sensorDisplayVariant(card.sensorId)!)}</span> : null}</div>
-          <div><span className="t-label">{t("Aimant")}</span><strong className="t-title-m">{card.magnetId}</strong></div>
+          {integratedBias && card.sensorId === "MK02" ? <div data-testid="pair-integrated-bias"><span className="t-label">{t("Aimant")}</span><strong className="t-title-m">{t("Intégré au capteur")}</strong><span className="t-caption">{t("Cible en acier : aucun aimant externe à ajouter.")}</span></div> : <div><span className="t-label">{t("Aimant")}</span><strong className="t-title-m">{card.magnetId}</strong></div>}
         </div>
         {card.sensorId === CUSTOM_SENSOR_ID ? <p className="notice-info t-caption">{t("Conception sur mesure : forme, fixation et distances à définir avec Standex. Schéma illustratif, sans performance validée.")}</p> : null}
         {(() => {
@@ -2661,12 +2675,16 @@ export function DesignSpace({
           if (card.sensorId === CUSTOM_SENSOR_ID) return null;
           const w = thermalWarning(card.sensorId, fit.sensorSiteC);
           return w ? (
-            <p className="notice-warning t-caption" data-testid="thermal-warning" data-status={w.status}>
-              {msg(w.text, [w.asked, documentedLabel(w, t)])}
+            <p className="notice-warning t-body-s" data-testid="thermal-warning" data-status={w.status}>
+              <strong>{msg(THERMAL_SHORT[w.status], [w.asked])}</strong>
             </p>
           ) : null;
         })()}
-        {compact && blocked.length > 0 ? <p className="notice-warning t-caption">{t("Compromis nécessaire avec vos critères")} : {shownFilters.filter(f => blocked.includes(f.id)).map(f => t(f.label)).join(" · ")}</p> : null}
+        {(() => {
+          const reason = compact ? null : ranking.find((r) => r.id === card.sensorId)?.reason;
+          return reason ? <p className="notice-info t-caption" data-testid="rank-reason">{t(reason)}</p> : null;
+        })()}
+        {compact && blocked.length > 0 ? <p className="notice-warning t-caption">{t("Compromis nécessaire avec vos critères")} : {shownFilters.filter(f => blocked.includes(f.id)).map(f => fl(f)).join(" · ")}</p> : null}
         {card.sensorId !== CUSTOM_SENSOR_ID ? (
           <dl className="pair-card-facts" aria-label={t("Données de choix")}>
             {card.materialLabel ? <div><dt>{t("Matériau de l'aimant")}</dt><dd>{t(card.materialLabel)}</dd></div> : null}
@@ -2703,6 +2721,7 @@ export function DesignSpace({
           type="button"
           className="t-caption mt-2 min-h-11 underline"
           onClick={() => setDetailSensorId(card.sensorId)}
+          data-testid="pair-details"
         >
           {t("Voir les détails")}
         </button>
@@ -2725,6 +2744,7 @@ export function DesignSpace({
         onContactStandex={() => setTab("revue")}
         showResolved={fitEverBlockedRef.current}
       />
+      {fitBlocked ? null : envelopeHintView}
       {fitBlocked ? null : (
       <div className="panel-block-lg">
         <p className="t-label">{t("D'après vos réponses")}</p>
@@ -2742,7 +2762,6 @@ export function DesignSpace({
         <div className="mt-1">{filterAdjust}</div>
       </div>
       )}
-      {fitBlocked ? null : envelopeHintView}
       {fit.validationPoints.length > 0 ? (
         <div className="notice-info space-y-1" data-testid="validation-points">
           <p className="t-label">{t("Points à valider avec la R&D Standex")}</p>
@@ -2970,7 +2989,7 @@ export function DesignSpace({
                     const f = answerFilters.find((x) => x.id === id);
                     return f ? (
                       <li key={id} className="t-caption">
-                        {msg("Écarté par le critère « {0} ». {1}", [t(f.label), t(f.technical)])}
+                        {msg("Écarté par le critère « {0} ». {1}", [fl(f), t(f.technical)])}
                       </li>
                     ) : null;
                   })}
@@ -5087,6 +5106,7 @@ export function DesignSpace({
       {detailSensorId ? (
         <SensorCard
           sensorId={detailSensorId}
+          requestedRangeC={fit.sensorSiteC}
           onClose={() => setDetailSensorId(null)}
           onSelect={(id) => {
             chooseSensor(id, t(sensorById(id).name));
