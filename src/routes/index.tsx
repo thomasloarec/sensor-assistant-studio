@@ -162,7 +162,7 @@ function HomeRoute() {
                 aria-label={t("Comprendre le principe de détection")}
                 className="anim-scale-in relative z-10 overflow-hidden rounded-[var(--r-2xl)] bg-[var(--surface)] shadow-[var(--e-4)] backdrop-blur-2xl lg:[animation-delay:260ms]"
               >
-                <MagnetPlay />
+                <MagnetPlay onStart={openWorkspace} />
               </section>
             </div>
           </div>

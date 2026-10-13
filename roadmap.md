@@ -92,3 +92,8 @@
 ## Lot 1 retours manuels (2026-10-13)
 - [x] A01 A02 A05 B01–B06 C03, puces 8 langues — voir docs/QA_MANUAL_FEEDBACK_REMEDIATION_LOT1_2026-10-13.md
 - [ ] 3D MK20 (lot précision séparé)
+
+## Découverte Reed sur l'accueil — 13 octobre 2026
+- [x] Modèle pédagogique partagé, hystérésis et découverte 2D accessible, sans modification de l'atelier métier.
+- [x] Huit langues, tests moteur/composant et vérification navigateur isolée 320/390 px et desktop ; accueil connecté non vérifié, session indisponible.
+- [x] Suite complète, inventaire, contrôles de charte et rapport des limites sans publication.

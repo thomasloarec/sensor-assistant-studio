@@ -1,316 +1,134 @@
+import { useId, useRef, useState } from "react";
+import type { CSSProperties, PointerEvent } from "react";
+import { ArrowRight, Eye, Layers, Move, MoveHorizontal, MoveVertical } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { t } from "@/lib/i18n/core";
 import { useLocale } from "@/lib/i18n/react";
-import { msg, t } from "@/lib/i18n/core";
-/** Démonstration pédagogique : un aimant déplaçable devant un capteur reed.
- *
- * Le dessin est un SVG natif (ampoule de verre, deux lamelles, fils, aimant
- * bicolore N/S) : rien n'est une image figée. Aucune mesure physique n'est
- * affichée pour un capteur réel : l'étiquette parle de la démonstration seule.
- * Souris, tactile, clavier et curseur donnent exactement le même contrôle.
- */
-import { useCallback, useRef, useState } from "react";
-import { Slider } from "@/components/ui/slider";
+import { ACTIVATE, RELEASE, REED_INITIAL, REED_SCENE, mapReedPointer, moveReed, orientReed, reedContours, reedZone } from "@/lib/leadmagnet/reed-discovery";
+import type { ReedOrientation, ReedPoint } from "@/lib/leadmagnet/reed-discovery";
+import "./reed-discovery.css";
 
-/** Position de l'aimant, en pourcentage de la largeur de la scène. */
-const MIN = 34;
-const MAX = 92;
-/** Seuil pédagogique : en deçà, l'aimant referme le contact. */
-const THRESHOLD = 52;
-/** Distance annoncée par la DÉMONSTRATION uniquement : ce n'est pas une mesure
- *  et ce n'est pas une valeur publiée pour un capteur réel (la légende le dit). */
-const DEMO_DISTANCE_MM = 14;
-
-export function MagnetPlay() {
+/** Home-only, generic complete cabled sensor. No product, calibration, persistence,
+ * field lines or real distance. All contours and state use the same pure model. */
+export function MagnetPlay({ onStart }: { onStart?: () => void }) {
   useLocale();
-  const [pos, setPos] = useState(86);
-  const [dragging, setDragging] = useState(false);
-  const sceneRef = useRef<HTMLDivElement | null>(null);
-  const draggingRef = useRef(false);
-
-  const clamp = (v: number) => Math.min(MAX, Math.max(MIN, v));
-  const detected = pos <= THRESHOLD;
-  /** 0 loin → 1 au plus près : sert au rapprochement des lamelles et au halo. */
-  const near = Math.min(1, Math.max(0, (MAX - pos) / (MAX - MIN)));
-
-  const moveTo = useCallback((clientX: number) => {
-    const box = sceneRef.current?.getBoundingClientRect();
-    if (!box || box.width === 0) return;
-    setPos(clamp(((clientX - box.left) / box.width) * 100));
-  }, []);
-
-  // Géométrie du SVG (viewBox 0 0 100 60) : le capteur est fixe à gauche.
-  const gap = detected ? 0 : 1.6 + 2.4 * (1 - near);
-  const magnetX = pos;
-
+  const id = useId().replace(/:/g, "");
+  const svgRef = useRef<SVGSVGElement | null>(null);
+  const drag = useRef<{ pointerId: number; offset: ReedPoint } | null>(null);
+  const [state, setState] = useState(REED_INITIAL);
+  const [zones, setZones] = useState(false);
+  const [inside, setInside] = useState(false);
+  const zone = reedZone(state.point, state.orientation);
+  const status = state.closed ? t("Contact fermé") : t("Contact ouvert");
+  const instruction = state.progress === 0 ? t("Déplacez l'aimant pour trouver une zone qui ferme le contact.")
+    : state.progress === 1 ? t("Reculez doucement dans la zone de maintien.")
+    : state.progress === 2 ? (state.closed ? t("Toujours fermé ! Changez l'orientation de l'aimant.") : t("Déplacez l'aimant pour trouver une zone qui ferme le contact."))
+    : state.progress === 3 ? t("Retrouvez une zone qui ferme le contact dans cette orientation.")
+    : t("Hystérésis observée. Continuez à explorer librement.");
+  const pointFromEvent = (e: PointerEvent<HTMLButtonElement>): ReedPoint | null => {
+    const matrix = svgRef.current?.getScreenCTM();
+    if (!matrix) return null;
+    return mapReedPointer(e.clientX, e.clientY, matrix.inverse());
+  };
+  const stopDrag = (e: PointerEvent<HTMLButtonElement>) => {
+    if (drag.current?.pointerId !== e.pointerId) return;
+    drag.current = null;
+    if (e.currentTarget.hasPointerCapture?.(e.pointerId)) e.currentTarget.releasePointerCapture(e.pointerId);
+  };
+  const orient = (orientation: ReedOrientation) => setState((current) => orientReed(current, orientation));
   return (
-    <div className="w-full overflow-hidden rounded-[var(--r-2xl)]">
-      <div
-        ref={sceneRef}
-        className={`magnet-scene relative w-full touch-none overflow-hidden rounded-t-[var(--r-2xl)] ${
-          detected ? "is-detected" : ""
-        }`}
-        onPointerMove={(e) => {
-          if (draggingRef.current) moveTo(e.clientX);
-        }}
-        onPointerUp={() => {
-          draggingRef.current = false;
-          setDragging(false);
-        }}
-        onPointerLeave={() => {
-          draggingRef.current = false;
-          setDragging(false);
-        }}
-      >
-        <svg
-          viewBox="0 0 100 60"
-          role="img"
-          aria-label={t("Un aimant que l'on approche d'un capteur reed sous ampoule de verre")}
-          className="block h-72 w-full sm:h-[22rem]"
-        >
+    <div className="reed-discovery" data-testid="reed-discovery" data-zone={zone} data-closed={state.closed} data-progress={state.progress}>
+      <div className="reed-heading">
+        <h2 className="t-title-s">{t("Explorez le principe Reed")}</h2>
+        <span className="reed-status t-body" data-closed={state.closed} role="status" aria-live="polite">
+          <svg viewBox="0 0 40 24" width="32" height="24" aria-hidden="true">
+            <path d={state.closed ? "M2 16 H10 L30 16 H38" : "M2 16 H10 L28 5 M30 16 H38"} fill="none" stroke="currentColor" strokeWidth="2" />
+            <circle cx="10" cy="16" r="2" fill="currentColor" /><circle cx="30" cy="16" r="2" fill="currentColor" />
+          </svg>
+          {status}
+        </span>
+      </div>
+      <div className="reed-controls">
+        <div className="reed-orientation" role="group" aria-label={t("Orientation de l'aimant")}>
+          <p className="t-caption">{t("Orientation de l'aimant")}</p>
+          <div className="reed-segment" data-perpendicular={state.orientation === "perpendicular"}>
+            <span className="reed-segment-thumb" aria-hidden="true" />
+            <Button type="button" variant="ghost" className="t-body" aria-pressed={state.orientation === "parallel"} onClick={() => orient("parallel")}><MoveHorizontal />{t("Parallèle")}</Button>
+            <Button type="button" variant="ghost" className="t-body" aria-pressed={state.orientation === "perpendicular"} onClick={() => orient("perpendicular")}><MoveVertical />{t("Perpendiculaire")}</Button>
+          </div>
+        </div>
+        <Button type="button" variant={zones ? "secondary" : "ghost"} className="t-caption flex-1" aria-pressed={zones} aria-controls={`${id}-zones`} onClick={() => setZones(!zones)}><Layers />{t("Voir les zones")}</Button>
+        <Button type="button" variant={inside ? "secondary" : "ghost"} className="t-caption flex-1" aria-pressed={inside} aria-controls={`${id}-inside`} onClick={() => setInside(!inside)}><Eye />{t("Voir à l'intérieur")}</Button>
+      </div>
+      <div className="reed-scene">
+        <svg ref={svgRef} viewBox={`0 0 ${REED_SCENE.width} ${REED_SCENE.height}`} preserveAspectRatio="xMidYMid meet" role="img" aria-label={t("Capteur Reed générique en boîtier avec câble et aimant mobile") }>
           <defs>
-            <linearGradient id="mp-glass" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor={t("oklch(1 0 0)")} stopOpacity="0.05" />
-              <stop offset="50%" stopColor={t("oklch(1 0 0)")} stopOpacity="0.14" />
-              <stop offset="100%" stopColor={t("oklch(1 0 0)")} stopOpacity="0.05" />
-            </linearGradient>
-            <linearGradient id="mp-north" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor={t("oklch(0.62 0.19 25)")} />
-              <stop offset="100%" stopColor={t("oklch(0.48 0.17 25)")} />
-            </linearGradient>
-            <linearGradient id="mp-south" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor={t("oklch(0.5 0.09 258)")} />
-              <stop offset="100%" stopColor={t("oklch(0.34 0.07 258)")} />
-            </linearGradient>
-            <linearGradient id="mp-bevel" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stopColor="white" stopOpacity="0.32" />
-              <stop offset="28%" stopColor="white" stopOpacity="0" />
-              <stop offset="78%" stopColor="black" stopOpacity="0" />
-              <stop offset="100%" stopColor="black" stopOpacity="0.28" />
-            </linearGradient>
-            <filter id="mp-shadow" x="-50%" y="-50%" width="200%" height="200%">
-              <feDropShadow
-                dx="0"
-                dy={1.8 - near * 0.8}
-                stdDeviation={1.8 - near * 0.7}
-                floodOpacity={0.42 - near * 0.12}
-              />
-            </filter>
-            <filter id="mp-signal-glow" x="-100%" y="-100%" width="300%" height="300%">
-              <feGaussianBlur stdDeviation="1.6" result="blur" />
-              <feMerge>
-                <feMergeNode in="blur" />
-                <feMergeNode in="SourceGraphic" />
-              </feMerge>
-            </filter>
+            <pattern id={`${id}-hatch`} width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(35)"><path d="M0 0 V8" stroke="var(--muted-foreground)" strokeWidth="2" opacity="0.5" /></pattern>
+            <linearGradient id={`${id}-housing`} x1="0" y1="0" x2="0" y2="1"><stop stopColor="var(--standex-gray)" /><stop offset="1" stopColor="var(--standex-deep)" /></linearGradient>
           </defs>
-
-          {/* Halo de proximité */}
-          <ellipse
-            cx="22"
-            cy="30"
-            rx={12 + 10 * near}
-            ry={9 + 7 * near}
-            className="text-signal transition-all duration-[var(--d-base)] ease-[var(--ease-spring)] motion-reduce:transition-none"
-            fill="currentColor"
-            opacity={detected ? 0.34 : 0.04 + 0.12 * near}
-          />
-
-          {/* Fils de sortie */}
-          <path
-            d="M2 30 H10"
-            className="text-muted-foreground"
-            stroke="currentColor"
-            strokeWidth="0.9"
-          />
-          <path
-            d="M34 30 H44"
-            className="text-muted-foreground"
-            stroke="currentColor"
-            strokeWidth="0.9"
-          />
-
-          {/* Ampoule de verre */}
-          <rect
-            x="10"
-            y="21"
-            width="24"
-            height="18"
-            rx="9"
-            fill="url(#mp-glass)"
-            stroke="oklch(1 0 0 / 0.35)"
-            strokeWidth="0.5"
-          />
-          <path
-            d="M13 26 Q22 21.5 31 26"
-            fill="none"
-            stroke="oklch(1 0 0 / 0.45)"
-            strokeLinecap="round"
-            strokeWidth="0.45"
-          />
-
-          {/* Deux lamelles ferromagnétiques qui se rapprochent */}
-          <path
-            d={`M10 30 H16 L25 ${30 - gap}`}
-            className="transition-all duration-[var(--d-base)] ease-[var(--ease-spring)] motion-reduce:transition-none"
-            stroke="oklch(0.82 0.01 250)"
-            strokeWidth="1.2"
-            fill="none"
-            strokeLinecap="round"
-          />
-          <path
-            d={`M34 30 H30 L22 ${30 + gap}`}
-            className="transition-all duration-[var(--d-base)] ease-[var(--ease-spring)] motion-reduce:transition-none"
-            stroke="oklch(0.82 0.01 250)"
-            strokeWidth="1.2"
-            fill="none"
-            strokeLinecap="round"
-          />
-
-          {detected ? (
-            <path
-              d="M22 30 H25"
-              fill="none"
-              stroke="var(--signal)"
-              strokeLinecap="round"
-              strokeWidth="1.5"
-              filter="url(#mp-signal-glow)"
-            />
-          ) : null}
-
-          {/* Lignes de champ entre l'aimant et le capteur */}
-          <g
-            className="text-signal transition-opacity duration-[var(--d-base)] motion-reduce:transition-none"
-            fill="none"
-            opacity={0.16 + 0.66 * near}
-          >
-            {[4, 8, 12].flatMap((r, index) => {
-              const controlX = 22 + (magnetX - 22) * (0.46 + near * 0.08);
-              const bow = 11 + r * (0.65 + near * 0.25);
-              const width = 0.45 - index * 0.125;
-              return [
-                <path
-                  key={`upper-${r}`}
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeWidth={width}
-                  d={`M${magnetX} 19 Q${controlX} ${30 - bow} 22 ${30 - r}`}
-                />,
-                <path
-                  key={`lower-${r}`}
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeWidth={width}
-                  d={`M${magnetX} 41 Q${controlX} ${30 + bow} 22 ${30 + r}`}
-                />,
-              ];
+          <g id={`${id}-zones`} data-testid="reed-zones" visibility={zones ? "visible" : "hidden"}>
+            {reedContours(state.orientation, RELEASE).map((outer, i) => {
+              const inner = reedContours(state.orientation, ACTIVATE)[i];
+              if (!inner) return null;
+              const ellipsePath = (l: typeof inner) => `M${l.x - l.rx},${l.y} a${l.rx},${l.ry} 0 1,0 ${2 * l.rx},0 a${l.rx},${l.ry} 0 1,0 ${-2 * l.rx},0`;
+              return <g key={i}>
+                <path data-testid="reed-hold-contour" d={`${ellipsePath(outer)} ${ellipsePath(inner)}`} fill={`url(#${id}-hatch)`} fillRule="evenodd" />
+                <ellipse data-testid="reed-on-contour" cx={inner.x} cy={inner.y} rx={inner.rx} ry={inner.ry} fill="var(--signal)" fillOpacity="0.25" stroke="var(--signal)" strokeWidth="1.5" />
+                <ellipse cx={outer.x} cy={outer.y} rx={outer.rx} ry={outer.ry} fill="none" stroke="var(--muted-foreground)" strokeWidth="1" strokeDasharray="3 4" />
+              </g>;
             })}
           </g>
-          <g
-            className="text-signal transition-opacity duration-[var(--d-base)] motion-reduce:transition-none"
-            fill="none"
-            opacity={0.05 + 0.2 * near}
-          >
-            <path
-              className="magnet-flux-line"
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeWidth="0.35"
-              d={`M${magnetX} 19 Q${22 + (magnetX - 22) * (0.46 + near * 0.08)} ${18 - near * 3} 22 24`}
-            />
-            <path
-              className="magnet-flux-line"
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeWidth="0.35"
-              d={`M${magnetX} 41 Q${22 + (magnetX - 22) * (0.46 + near * 0.08)} ${42 + near * 3} 22 36`}
-            />
+          {/* Complete sensor: cable exits the housing; no fictitious integrated LED. */}
+          <path d="M174 140 H135 Q110 140 110 163 V199 Q110 220 85 220 H12" fill="none" stroke="var(--standex-gray)" strokeWidth="9" />
+          <path d="M174 138 H135 Q112 138 112 163" fill="none" stroke="var(--muted-foreground)" strokeOpacity="0.4" strokeWidth="1.5" />
+          <rect x="168" y="130" width="14" height="20" rx="4" fill="var(--standex-gray)" />
+          <rect x="178" y="122" width="84" height="36" rx="9" fill={`url(#${id}-housing)`} fillOpacity={inside ? 0.25 : 1} stroke="var(--muted-foreground)" strokeWidth="1.5" />
+          <path d="M186 127 H254" stroke="var(--muted-foreground)" strokeOpacity="0.55" strokeWidth="1.5" />
+          <g id={`${id}-inside`} data-testid="reed-interior" visibility={inside ? "visible" : "hidden"}>
+            <rect x="190" y="129" width="60" height="22" rx="10" fill="var(--surface-tint)" stroke="var(--muted-foreground)" />
+            <path data-testid="reed-left-blade" d={state.closed ? "M181 140 H218 L226 140" : "M181 140 H218 L226 136"} stroke="var(--foreground)" strokeWidth="2.5" fill="none" />
+            <path data-testid="reed-right-blade" d={state.closed ? "M258 140 H234 L222 140" : "M258 140 H234 L222 144"} stroke="var(--foreground)" strokeWidth="2.5" fill="none" />
           </g>
-
-          {/* Aimant bicolore N / S, en volume */}
-          <g
-            transform={`translate(${magnetX} 30) scale(${dragging ? 1.04 : 1})`}
-            filter="url(#mp-shadow)"
-            className="transition-transform duration-[var(--d-fast)] ease-[var(--ease-spring)] motion-reduce:transition-none"
-          >
-            <rect x="-4" y="-11" width="8" height="11" rx="1.4" fill="url(#mp-north)" />
-            <rect x="-4" y="0" width="8" height="11" rx="1.4" fill="url(#mp-south)" />
-            <rect x="-4" y="-11" width="8" height="22" rx="1.4" fill="url(#mp-bevel)" />
-            <text x="0" y="-4" textAnchor="middle" fontSize="5" fill="white">
-              N
-            </text>
-            <text x="0" y="8" textAnchor="middle" fontSize="5" fill="white">
-              S
-            </text>
+          <g transform={`translate(${state.point.x} ${state.point.y}) rotate(${state.orientation === "parallel" ? 0 : 90})`}>
+            <rect x="-32" y="-18" width="64" height="36" rx="4" fill="var(--standex-blue-50)" stroke="var(--foreground)" strokeWidth="1" />
+            <path d="M-28 -17 H0 V17 H-28 Q-32 17 -32 13 V-13 Q-32 -17 -28 -17" fill="var(--standex-blue)" />
+            <text x="-16" y="8" textAnchor="middle" fontSize="24" fill="var(--heading)">N</text>
+            <text x="16" y="8" textAnchor="middle" fontSize="24" fill="var(--heading)">S</text>
           </g>
         </svg>
-
-        {/* Poignée réelle superposée à l'aimant : souris, tactile et clavier */}
-        <button
-          type="button"
-          role="slider"
-          aria-label={t("Position de l'aimant devant le capteur")}
-          aria-valuemin={MIN}
-          aria-valuemax={MAX}
-          aria-valuenow={Math.round(pos)}
-          aria-valuetext={
-            detected
-              ? msg("Détecté à {0} mm", [String(DEMO_DISTANCE_MM)])
-              : t("Rapprochez l'aimant →")
-          }
-          className="magnet-handle absolute top-1/2 h-24 w-14 -translate-x-1/2 -translate-y-1/2 cursor-grab touch-none rounded-xl border-2 border-transparent bg-transparent focus-visible:border-ring active:cursor-grabbing"
-          style={{ left: `${pos}%` }}
+        <Button type="button" variant="ghost" className="reed-handle" aria-label={t("Déplacer l'aimant dans le plan")} aria-describedby={`${id}-instruction ${id}-keyboard`} data-testid="reed-handle"
+          style={{ left: `${state.point.x / REED_SCENE.width * 100}%`, top: `${state.point.y / REED_SCENE.height * 100}%` } as CSSProperties}
           onPointerDown={(e) => {
-            draggingRef.current = true;
-            setDragging(true);
+            if (!e.isPrimary || (e.pointerType === "mouse" && e.button !== 0)) return;
+            const point = pointFromEvent(e);
+            if (!point) return;
+            drag.current = { pointerId: e.pointerId, offset: { x: state.point.x - point.x, y: state.point.y - point.y } };
             e.currentTarget.setPointerCapture(e.pointerId);
+            e.currentTarget.focus();
           }}
-          onPointerCancel={() => {
-            draggingRef.current = false;
-            setDragging(false);
+          onPointerMove={(e) => {
+            const current = drag.current;
+            if (!current || current.pointerId !== e.pointerId) return;
+            const point = pointFromEvent(e);
+            if (point) setState((s) => moveReed(s, { x: point.x + current.offset.x, y: point.y + current.offset.y }));
           }}
+          onPointerUp={stopDrag} onPointerCancel={stopDrag} onLostPointerCapture={(e) => { if (drag.current?.pointerId === e.pointerId) drag.current = null; }}
           onKeyDown={(e) => {
-            if (e.key === "ArrowLeft") setPos((p) => clamp(p - 4));
-            else if (e.key === "ArrowRight") setPos((p) => clamp(p + 4));
-            else return;
+            const direction = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[e.key];
+            if (!direction) return;
             e.preventDefault();
-          }}
-        >
-          <span className="sr-only">{t("Déplacer l'aimant")}</span>
-        </button>
-
-        <p
-          aria-live="polite"
-          className={`material absolute bottom-4 left-1/2 flex min-h-11 -translate-x-1/2 items-center gap-2 whitespace-nowrap rounded-[var(--r-pill)] px-5 py-2 text-base font-semibold shadow-[var(--e-2)] transition-[color,transform,opacity] duration-[var(--d-base)] ease-[var(--ease-spring)] ${
-            detected
-              ? "scale-100 text-signal opacity-100"
-              : "scale-[0.98] text-foreground opacity-90"
-          }`}
-        >
-          {detected ? (
-            <span className="magnet-status-dot size-2 rounded-full bg-signal" aria-hidden="true" />
-          ) : null}
-          {detected
-            ? msg("Détecté à {0} mm", [String(DEMO_DISTANCE_MM)])
-            : t("Rapprochez l'aimant →")}
-        </p>
+            const step = e.shiftKey ? 2 : 8;
+            setState((s) => moveReed(s, { x: s.point.x + (direction[0] ?? 0) * step, y: s.point.y + (direction[1] ?? 0) * step }));
+          }}><span className="sr-only" id={`${id}-keyboard`}>{t("Utilisez les flèches pour déplacer l'aimant. Majuscule pour affiner.")}</span></Button>
       </div>
-
-      <div className="px-5 pb-5 pt-5 sm:px-7 sm:pb-7">
-        <div className="flex items-center gap-5">
-          <span className="t-label shrink-0">{t("Distance")}</span>
-          <Slider
-            className="min-w-0 flex-1"
-            value={[MAX + MIN - pos]}
-            min={MIN}
-            max={MAX}
-            step={1}
-            aria-label={t("Rapprocher ou éloigner l'aimant du capteur")}
-            onValueChange={(v) => setPos(clamp(MAX + MIN - (v[0] ?? pos)))}
-          />
-        </div>
-        <p className="t-caption mt-4">
-          {t("Illustration du principe, pas une mesure : la distance réelle dépend du capteur, de l'aimant et du montage.")}
-        </p>
-      </div>
+      {zones ? <div className="reed-legend t-caption" aria-label={t("Zones de commutation indicatives")}>
+        <span><i className="reed-swatch reed-swatch-on" aria-hidden="true" />{t("Ferme le contact")}</span>
+        <span><i className="reed-swatch reed-swatch-hold" aria-hidden="true" />{t("Conserve l'état précédent")}</span>
+        <span><i className="reed-swatch" aria-hidden="true" />{t("Contact ouvert")}</span>
+      </div> : null}
+      <p id={`${id}-instruction`} className="reed-prompt t-body" aria-live="polite"><Move className="inline size-4 mr-2" aria-hidden="true" />{instruction}</p>
+      <p className="t-caption">{t("Reed normalement ouvert. Illustration du principe, pas une mesure : la distance réelle dépend du capteur, de l'aimant et du montage.")}</p>
+      {onStart ? <Button type="button" variant="link" className="reed-cta t-body mt-2" onClick={onStart}>{t("Trouver un capteur pour mon application")}<ArrowRight /></Button> : null}
     </div>
   );
 }
