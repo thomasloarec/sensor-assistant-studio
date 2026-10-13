@@ -44,16 +44,22 @@ describe("A01 — classement traçable, MK26 spécialisé", () => {
     expect(SENSOR_SPECIFICATIONS.MK27!.material).toBe("Aluminium");
     expect(SENSOR_SPECIFICATIONS["MK11-M8"]!.material).toBe("Acier inoxydable");
   });
-  test("lave-vaisselle vissé 35×15×10 : MK26 hors des trois cartes, gammes ordinaires en tête", () => {
+  // Correction utilisateur 2026-10-13 : la remarque MK26 est RETIRÉE (confusion
+  // avec MK27). Ces tests remplacent l'ancienne exigence révoquée « MK26 exclu ».
+  test("lave-vaisselle vissé 35×15×10 : MK26 éligible normalement, non réservé, sans raison promue", () => {
     const { ids, ranked } = top3(A01, { kind: "screw", style: "screw_fixed" }, { lengthMm: 35, widthMm: 15, heightMm: 10 });
-    expect(ids).not.toContain("MK26");
-    expect(ids[0]).toBe("MK04");
+    const mk26 = ranked.find((r) => r.id === "MK26");
+    expect(mk26).toBeDefined();
+    expect(mk26!.reserved).toBe(false);
+    expect(mk26!.reason).toBeNull();
+    expect(ids).toContain("MK04");
     expect(ids).toContain("MK13");
-    expect(ranked.find((r) => r.id === "MK26")?.reserved).toBe(true);
+    expect(ids.length).toBeLessThanOrEqual(3);
   });
-  test("sans montage : top 3 ordinaire, aucune gamme spécialisée", () => {
-    const { ids } = top3(A01);
-    for (const id of ["MK26", "MK21", "MK02", "MK27"]) expect(ids).not.toContain(id);
+  test("sans montage : MK26 jamais réservé ; MK21, MK02, MK27 restent hors des trois cartes", () => {
+    const { ids, ranked } = top3(A01);
+    expect(ranked.find((r) => r.id === "MK26")?.reserved ?? false).toBe(false);
+    for (const id of ["MK21", "MK02", "MK27"]) expect(ids).not.toContain(id);
   });
   test("tension commutée 200 V documentée seulement par MK26 : il est promu avec sa raison", () => {
     const { ranked } = top3({ ...A01, electrical: "Signal 200 V DC, 1 mA, NO" }, { kind: "screw", style: "screw_fixed" });
