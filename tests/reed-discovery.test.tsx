@@ -188,6 +188,12 @@ describe("Rendered discovery interactions", () => {
     for (const key of ["Voir les zones", "Voir à l'intérieur", "Parallèle", "Perpendiculaire", "Trouver un capteur pour mon application", "Déplacer l'aimant dans le plan"]) {
       expect(v.getByRole("button", { name: t(key, locale.id) })).toBeTruthy();
     }
+    const perpendicular = v.getByRole("button", { name: t("Perpendiculaire", locale.id) });
+    expect(perpendicular.textContent).toBe(t("À 90°", locale.id));
+    expect(perpendicular.getAttribute("title")).toBe(t("Perpendiculaire", locale.id));
+    expect(perpendicular.getAttribute("aria-pressed")).toBe("false");
+    fireEvent.click(perpendicular);
+    expect(perpendicular.getAttribute("aria-pressed")).toBe("true");
     expect(v.getByRole("status").textContent).toContain(t("Contact ouvert", locale.id));
     expect(v.getByTestId("reed-discovery").dataset.closed).toBe("false");
     fireEvent.click(v.getByRole("button", { name: t("Voir les zones", locale.id) }));
