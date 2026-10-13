@@ -19,6 +19,11 @@ export interface SensorModel {
   description: string;
   contact: "A" | "unsupported";
   cableSide?: -1 | 1;
+  /** Section transversale documentée : `one_flat` = cylindre à un méplat
+   * (body[1] = diamètre, body[2] = cote sur méplat). Profil illustratif. */
+  section?: "one_flat";
+  /** Sortie : `wires` = fils isolés séparés, sans gaine commune. */
+  leads?: "wires";
   reedOffsetZ?: number;
   terminalSpan?: number;
   collarDiameter?: number;
@@ -201,8 +206,8 @@ export const SENSOR_CATALOG: readonly SensorModel[] = [
   ]),
   cylindrical("MK14", 25.5, 4),
   { ...cylindrical("MK18", 17, 5, 4.6), description: "Corps Ø 5 mm avec méplats, deux fils séparés" },
-  { ...cylindrical("MK20_1", 10, 3, 2.7), description: "Petit boîtier à section ovale" },
-  { ...cylindrical("MK20_2", 7.5, 2.7, 2.5), description: "Boîtier miniature à section ovale" },
+  { ...cylindrical("MK20_1", 10, 3, 2.7), section: "one_flat", leads: "wires", description: "Boîtier unique à un méplat, deux fils isolés" },
+  { ...cylindrical("MK20_2", 7.5, 2.7, 2.5), section: "one_flat", leads: "wires", description: "Boîtier unique à un méplat, deux fils isolés" },
   flanged("MK21", 28.5, 19, 6.25, 9.5, 3.4, [
     [-8.25, 4.78, 7.2, 3.25],
     [8.25, 4.78, 7.2, 3.25],

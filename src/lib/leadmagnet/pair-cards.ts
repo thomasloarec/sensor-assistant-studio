@@ -19,6 +19,8 @@ import { defaultMagnetFor } from "@/lib/standex/default-pairs";
 import { fixingGroup } from "@/lib/standex/catalog-filters";
 import { defaultGuideSelection, guideMagnetMaterial } from "@/lib/standex/activation-guide";
 import { BARE_MAGNETS } from "@/lib/standex/magnet-catalog";
+import { SENSOR_SPECIFICATIONS } from "@/lib/standex/sensor-specifications";
+import { threadOf } from "@/lib/leadmagnet/candidates";
 
 export interface PairCard {
   sensorId: string;
@@ -46,7 +48,10 @@ export interface PairCard {
   /** Matériau lisible de l'aimant proposé (« Ferrite », « AlNiCo »), quand le
    * guide le publie. Le code de référence reste affiché à part. */
   materialLabel: string | null;
-
+  /** Matériau du BOÎTIER CAPTEUR lu sur la fiche (jamais celui de l'aimant). */
+  sensorMaterialLabel: string | null;
+  /** Taille de filetage métrique (« M8 ») pour un corps fileté, sinon `null`. */
+  threadLabel: string | null;
 }
 
 const FIXING_LABEL: Readonly<Record<string, string>> = {
@@ -106,6 +111,8 @@ export function pairCardFor(sensor: SensorModel): PairCard {
     // Matériau LU sur la référence : le guide d'abord, sinon la fiche catalogue.
     // « unknown » n'est jamais affiché comme un matériau.
     materialLabel: materialLabelFor(magnetId),
+    sensorMaterialLabel: SENSOR_SPECIFICATIONS[sensor.id]?.material ?? null,
+    threadLabel: sensor.shape === "threaded" && threadOf(sensor.id) !== null ? `M${threadOf(sensor.id)}` : null,
   };
 }
 

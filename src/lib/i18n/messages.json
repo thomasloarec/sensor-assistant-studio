@@ -30049,5 +30049,50 @@
     "…. Изменение, внесенное здесь, ни в коем случае не считается опубликованным отзывом.",
     "…. Una modifica apportata qui non vale mai come riscontro pubblicato.",
     "…。ここで行われた変更は公開されたフィードバックとはみなされません。"
+  ],
+  "Boîtier unique à un méplat, deux fils isolés": [
+    "Single housing with one flat, two insulated wires",
+    "单一外壳带一个平面，两根绝缘导线",
+    "Einzelgehäuse mit einer Abflachung, zwei isolierte Litzen",
+    "Carcasa única con un plano, dos hilos aislados",
+    "Единый корпус с одной лыской, два изолированных провода",
+    "Corpo unico con un piano, due fili isolati",
+    "片側フラットの単一ハウジング、絶縁電線2本"
+  ],
+  "Deux fils isolés séparés 2 × 0,06 mm²": [
+    "Two separate insulated wires 2 × 0.06 mm²",
+    "两根独立绝缘导线 2 × 0.06 mm²",
+    "Zwei separate isolierte Litzen 2 × 0,06 mm²",
+    "Dos hilos aislados separados 2 × 0,06 mm²",
+    "Два отдельных изолированных провода 2 × 0,06 мм²",
+    "Due fili isolati separati 2 × 0,06 mm²",
+    "独立した絶縁電線2本 2 × 0.06 mm²"
+  ],
+  "Plastique Crastin": [
+    "Crastin plastic",
+    "Crastin 塑料",
+    "Crastin-Kunststoff",
+    "Plástico Crastin",
+    "Пластик Crastin",
+    "Plastica Crastin",
+    "Crastin樹脂"
+  ],
+  "Boîtier du capteur": [
+    "Sensor housing",
+    "传感器外壳",
+    "Sensorgehäuse",
+    "Carcasa del sensor",
+    "Корпус датчика",
+    "Corpo del sensore",
+    "センサーハウジング"
+  ],
+  "Filetage": [
+    "Thread",
+    "螺纹",
+    "Gewinde",
+    "Rosca",
+    "Резьба",
+    "Filettatura",
+    "ねじ"
   ]
 }

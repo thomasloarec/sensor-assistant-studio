@@ -147,6 +147,7 @@ export const SENSOR_SPECIFICATIONS: Readonly<Record<string, SensorSpecifications
   MK20_1: {
     ...standard,
     material: "PBT 30 % fibres de verre",
+    cableMaterial: "Deux fils isolés séparés 2 × 0,06 mm²",
     cableLengths: [100, 200, 300, 500],
     temperatures: temperature(-30, 70),
     electrical: [option("80", 10, 170, 0.5, 0.5)],
@@ -155,6 +156,7 @@ export const SENSOR_SPECIFICATIONS: Readonly<Record<string, SensorSpecifications
   MK20_2: {
     ...standard,
     material: "PBT 30 % fibres de verre",
+    cableMaterial: "Deux fils isolés séparés 2 × 0,06 mm²",
     cableLengths: [100, 200, 300, 500],
     temperatures: temperature(-30, 70),
     electrical: [option("04", 3, 30, 0.3, 0.5)],
@@ -194,7 +196,7 @@ export const SENSOR_SPECIFICATIONS: Readonly<Record<string, SensorSpecifications
   },
   "MK11-M5": { ...threaded, material: "Acier inoxydable" },
   "MK11-M8": { ...threaded, material: "Acier inoxydable" },
-  "MK11-P-M8": { ...threaded, material: "Crastin" },
+  "MK11-P-M8": { ...threaded, material: "Plastique Crastin" },
   "MK11-B-M6": { ...threaded, material: "Laiton" },
   MK36: { ...recessed, electrical: [option("1A", 3, 30, 0.2, 0.3)] },
   MK37: { ...recessed, electrical: [option("1A", 10, 180, 0.5, 1), option("1B", 3, 30, 0.2, 0.5)] },

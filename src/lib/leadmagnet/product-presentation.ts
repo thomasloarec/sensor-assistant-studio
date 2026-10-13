@@ -9,6 +9,7 @@ export function isPcbSensor(id: string | null | undefined): boolean {
 
 export function cableConstruction(model: SensorModel): "none" | "wires" | "jacket" | "metal" {
   if (model.magnet || isPcbSensor(model.id)) return "none";
+  if (model.leads === "wires") return "wires";
   return model.id === "MK18" ? "wires" : model.id === "MK27" ? "metal" : "jacket";
 }
 
