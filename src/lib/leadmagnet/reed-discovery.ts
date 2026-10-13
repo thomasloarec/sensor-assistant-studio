@@ -28,9 +28,9 @@ function shape(start: ReedPoint, curves: Curve[]): ReedPoint[] {
 const quarter = shape(p(12,-40), [
   [p(12,-52),p(12,-66),p(12,-78)],
   [p(12,-142),p(134,-142),p(140,-78)],
-  [p(148,-32),p(103,-22),p(68,-22)],
-  [p(54,-22),p(40,-22),p(28,-22)],
-  [p(18,-22),p(12,-28),p(12,-40)],
+  [p(148,-32),p(103,-14),p(68,-14)],
+  [p(54,-14),p(40,-14),p(28,-14)],
+  [p(18,-14),p(12,-28),p(12,-40)],
 ]);
 const main = shape(p(-16,-6), [
   [p(-24,-30),p(-60,-72),p(-60,-96)],
@@ -39,20 +39,42 @@ const main = shape(p(-16,-6), [
   [p(60,-72),p(24,-30),p(16,-6)],
   [p(10,-5),p(-10,-5),p(-16,-6)],
 ]);
-const side = shape(p(54,0), [
-  [p(72,-10),p(95,-53),p(123,-53)],
+const side = shape(p(38,-8), [
+  [p(72,-8),p(95,-53),p(123,-53)],
   [p(176,-53),p(176,53),p(123,53)],
-  [p(95,53),p(72,10),p(54,0)],
+  [p(95,53),p(72,8),p(38,8)],
+  [p(34,8),p(34,-8),p(38,-8)],
 ]);
-function region(points: ReedPoint[], cx: number, cy: number, sx=1, sy=1) {
+const smooth = (value: number) => { const t=Math.max(0,Math.min(1,value)); return t*t*(3-2*t); };
+/** Pin finite-width roots, reducing only away from the attachment. These exact
+ * nested polygons drive both SVG and hit-testing, not a painted overlay. */
+const quarterInner = shape(p(12,-40), [
+  [p(12,-50),p(12,-60),p(12,-70)],
+  [p(12,-118),p(110,-118),p(116,-70)],
+  [p(122,-32),p(93,-14),p(68,-14)],
+  [p(54,-14),p(40,-14),p(28,-14)],
+  [p(18,-14),p(12,-28),p(12,-40)],
+]);
+const sideInner = shape(p(38,-8), [
+  [p(72,-8),p(95,-39),p(123,-39)],
+  [p(158,-39),p(158,39),p(123,39)],
+  [p(95,39),p(72,8),p(38,8)],
+  [p(34,8),p(34,-8),p(38,-8)],
+]);
+function rootedInner(v: ReedPoint): ReedPoint {
+  const root=p(0,-6);
+  const reduction=1-0.26*smooth(Math.hypot(v.x-root.x,v.y-root.y)/60);
+  return p(root.x+(v.x-root.x)*reduction,root.y+(v.y-root.y)*reduction);
+}
+function region(points: ReedPoint[], kind: "main" | "side" | "quarter", sx=1, sy=1) {
   const outer=points.map(v=>p(220+sx*v.x,140+sy*v.y));
-  const inner=points.map(v=>p(220+sx*(cx+(v.x-cx)*0.74),140+sy*(cy+(v.y-cy)*0.74)));
+  const reduced=kind === "quarter" ? quarterInner : kind === "side" ? sideInner : points.map(rootedInner);
+  const inner=reduced.map(q=>p(220+sx*q.x,140+sy*q.y));
   return {outer,inner};
 }
 const geometry = {
-  perpendicular: [region(quarter,76,-74),region(quarter,76,-74,-1),region(quarter,76,-74,1,-1),region(quarter,76,-74,-1,-1)],
-  // Root-centred reduction keeps both contours joined beneath the housing.
-  parallel: [region(main,0,-6),region(main,0,-6,1,-1),region(side,117,0),region(side,117,0,-1)],
+  perpendicular: [region(quarter,"quarter"),region(quarter,"quarter",-1),region(quarter,"quarter",1,-1),region(quarter,"quarter",-1,-1)],
+  parallel: [region(main,"main"),region(main,"main",1,-1),region(side,"side"),region(side,"side",-1)],
 };
 function contains(points: ReedPoint[], point: ReedPoint): boolean {
   let inside=false;

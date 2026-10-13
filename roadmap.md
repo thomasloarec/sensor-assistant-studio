@@ -1,5 +1,10 @@
 # Feuille de route — lot des 7 correctifs (base 12be3e3d)
 
+## Racines ON et état électrique Reed — base 79a282b
+- [ ] Raccords ON de largeur finie dans les deux orientations, contours partagés et couloirs OFF conservés.
+- [ ] État fermé ambré et courant jaune pâle distinct, uniquement dans Reed.
+- [ ] Tests, contrôles de charte et revue visuelle 320/378/desktop ; rapport sans publication.
+
 ## Formes PIC et invitation Reed — base 86cdc3f
 - [x] Géométries SVG originales partagées dessin/hit-testing, hystérésis et gestes conservés.
 - [x] Invitation discrète terminée pour la visite après interaction, suspendue hors écran/onglet et statique en mouvement réduit.
