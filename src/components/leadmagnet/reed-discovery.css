@@ -27,3 +27,8 @@
 .reed-discovery .reed-cta { height: auto; min-height: 44px; white-space: normal; text-align: left; justify-content: flex-start; padding-left: 0; padding-right: 0; }
 @media (max-width: 359px) { .reed-discovery { padding: .75rem; } .reed-heading { align-items: flex-start; flex-direction: column; } .reed-segment button { flex-direction: column; min-height: 64px; gap: .25rem; } }
 @media (prefers-reduced-motion: reduce) { .reed-discovery *, .reed-discovery *::before { transition: none !important; animation: none !important; } }
+.reed-invitation { position: absolute; pointer-events: none; color: var(--heading); transform: translate(-50%, -50%); width: 56px; height: 56px; }
+.reed-invitation-hand { position: absolute; right: -8px; bottom: -12px; width: 24px; height: 24px; opacity: .65; animation: reed-invitation-drag calc(var(--d-hero) * 6) var(--ease-in-out) infinite; animation-play-state: paused; }
+.reed-invitation[data-running="true"] .reed-invitation-hand { animation-play-state: running; }
+@keyframes reed-invitation-drag { 0%, 12%, 65%, 100% { transform: translate(0, 0); opacity: .55; } 35%, 48% { transform: translate(-14px, -6px); opacity: .85; } }
+@media (prefers-reduced-motion: reduce) { .reed-invitation-hand { animation: none !important; transform: none; opacity: .65; } }

@@ -1,7 +1,7 @@
 import { GlobalRegistrator } from "@happy-dom/global-registrator";
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import { act, cleanup, fireEvent, render } from "@testing-library/react";
-import { ACTIVATE, RELEASE, REED_INITIAL, mapReedPointer, moveReed, orientReed, reedContact, reedContours, reedResponse, reedZone } from "@/lib/leadmagnet/reed-discovery";
+import { ACTIVATE, RELEASE, REED_INITIAL, mapReedPointer, moveReed, orientReed, reedContact, reedContours, reedZone } from "@/lib/leadmagnet/reed-discovery";
 import { MagnetPlay } from "@/components/leadmagnet/magnet-play";
 import { LANGUAGES, setLocale, t } from "@/lib/i18n/core";
 import { readFileSync } from "node:fs";
@@ -16,32 +16,46 @@ beforeEach(async () => {
 afterEach(() => { cleanup(); setLocale("fr"); });
 
 describe("Reed teaching model — independent history oracle", () => {
-  for (const orientation of ["parallel", "perpendicular"] as const) test(`${orientation}: finite dead corridors release a previously closed contact near every null`, () => {
-    const alpha = Math.acos(1 / Math.sqrt(3));
-    const nulls = orientation === "parallel" ? [alpha, Math.PI-alpha, Math.PI+alpha, 2*Math.PI-alpha] : [0, Math.PI/2, Math.PI, 3*Math.PI/2];
-    for (const angle of nulls) for (const offset of [-0.09,-0.04,0,0.04,0.09]) for (const radius of [5,12,18,24,40,75]) {
-      const point = { x:220+radius*Math.cos(angle+offset), y:140+radius*Math.sin(angle+offset) };
-      expect(reedResponse(point,orientation)).toBe(0);
-      expect(reedZone(point,orientation)).toBe("OFF");
-      expect(reedContact(true,point,orientation)).toBe(false);
-      expect(moveReed({...REED_INITIAL,orientation,closed:true},point).closed).toBe(false);
-    }
-    expect(reedContours(orientation,ACTIVATE)).toHaveLength(4);
-  });
-  for (const orientation of ["parallel", "perpendicular"] as const) test(`${orientation}: inner contours solve the threshold, no constant-radius circular closure`, () => {
-    for (const threshold of [ACTIVATE,RELEASE]) for (const contour of reedContours(orientation,threshold)) {
-      for (const point of contour.inner) expect(reedResponse(point,orientation)).toBeCloseTo(threshold,9);
-      const radii = contour.inner.map(p => Math.hypot(p.x-220,p.y-140));
-      expect(Math.max(...radii)-Math.min(...radii)).toBeGreaterThan(10);
-      expect(contour.outerPath).not.toContain("Z");
-      for (let i=1;i<contour.inner.length-2;i++) {
-        const a=contour.inner[i],b=contour.inner[i+1];
-        if(a && b) expect(Math.abs(reedResponse({x:(a.x+b.x)/2,y:(a.y+b.y)/2},orientation)-threshold)).toBeLessThan(0.004);
+  // Dipole level-set/analytic-null assertions intentionally retired: user-approved
+  // schematic PIC silhouettes replace physics. Keep independent geometry/history tests.
+  for (const orientation of ["parallel", "perpendicular"] as const) {
+    test(`${orientation}: exact drawn polygons agree with ON/HOLD/OFF at every edge`, () => {
+      const inner=reedContours(orientation,ACTIVATE), outer=reedContours(orientation,RELEASE);
+      expect(inner).toHaveLength(4); expect(outer).toHaveLength(4);
+      const inPolygon=(points: {x:number;y:number}[], q:{x:number;y:number}) => {
+        let yes=false;
+        for(let i=0,j=points.length-1;i<points.length;j=i++) {
+          const a=points[i],b=points[j]; if(!a || !b) continue;
+          if((a.y>q.y)!==(b.y>q.y) && q.x<(b.x-a.x)*(q.y-a.y)/(b.y-a.y)+a.x) yes=!yes;
+        }
+        return yes;
+      };
+      for(let x=1.37;x<440;x+=4) for(let y=1.61;y<280;y+=4) {
+        const q={x,y};
+        const expected=inner.some(c=>inPolygon(c.points,q)) ? "ON" : outer.some(c=>inPolygon(c.points,q)) ? "HOLD" : "OFF";
+        expect(reedZone(q,orientation)).toBe(expected);
       }
+      for(const c of inner) for(const q of c.points) expect(reedZone(q,orientation)).toBe("ON");
+      expect(ACTIVATE).toBeGreaterThan(RELEASE);
+    });
+  }
+  test("perpendicular: regular flat OFF cross releases closed contact near and far", () => {
+    for(let d=-120;d<=120;d+=4) for(const q of [{x:220+d,y:140},{x:220,y:140+d},{x:229,y:140+d},{x:211,y:140+d},{x:220+d,y:159},{x:220+d,y:121}]) {
+      expect(reedZone(q,"perpendicular")).toBe("OFF");
+      expect(reedContact(true,q,"perpendicular")).toBe(false);
     }
+    for(const x of [-60,60])for(const y of [-60,60]) expect(reedZone({x:220+x,y:140+y},"perpendicular")).toBe("ON");
+  });
+  test("parallel: main vertical lobes, smaller side drops and real near-sensor gaps", () => {
+    const shapes=reedContours("parallel",RELEASE);
+    const area=(points:{x:number;y:number}[])=>Math.abs(points.reduce((sum,a,i)=>{const b=points[(i+1)%points.length];return sum+(b ? a.x*b.y-b.x*a.y : 0)},0))/2;
+    expect(area(shapes[0]?.points ?? [])).toBeGreaterThan(area(shapes[2]?.points ?? [])*1.25);
+    expect(reedZone({x:220,y:70},"parallel")).toBe("ON");
+    expect(reedZone({x:220,y:210},"parallel")).toBe("ON");
+    for(const q of [{x:220,y:140},{x:260,y:118},{x:180,y:162}]) expect(reedContact(true,q,"parallel")).toBe(false);
   });
   test("OPEN → ON → HOLD → OFF; OFF → same HOLD stays OPEN", () => {
-    const on = { x: 305, y: 140 }, hold = { x: 359, y: 140 }, off = { x: 405, y: 140 };
+    const on = { x: 305, y: 140 }, hold = { x: 371, y: 140 }, off = { x: 405, y: 140 };
     let s = moveReed(REED_INITIAL, off);
     expect(s.closed).toBe(false);
     s = moveReed(s, on); expect(s.closed).toBe(true); expect(s.progress).toBe(1);
@@ -57,47 +71,23 @@ describe("Reed teaching model — independent history oracle", () => {
     expect(reedZone({ x: 305, y: 140 }, "perpendicular")).toBe("OFF");
     let s = moveReed(REED_INITIAL, { x: 305, y: 140 });
     expect(orientReed(s, "perpendicular").progress).toBe(1);
-    s = moveReed(s, { x: 359, y: 140 });
+    s = moveReed(s, { x: 371, y: 140 });
     s = orientReed(s, "perpendicular"); expect(s.progress).toBe(3);
     expect(s.closed).toBe(false);
     s = moveReed(s, { x: 280, y: 200 }); expect(s.progress).toBe(4); expect(s.closed).toBe(true);
   });
   test("fast paths activate before ending in HOLD, but direct OFF→HOLD does not", () => {
     const s = { ...REED_INITIAL, point: { x: 220, y: 140 } };
-    const fast = moveReed(s, { x: 359, y: 140 });
+    const fast = moveReed(s, { x: 371, y: 140 });
     expect(fast.closed).toBe(true); expect(fast.progress).toBe(2);
-    expect(moveReed({ ...s, point: { x: 405, y: 140 } }, { x: 359, y: 140 }).closed).toBe(false);
-  });
-  for (const orientation of ["parallel", "perpendicular"] as const) {
-    test(`${orientation}: all contour samples share the response model`, () => {
-      for (const threshold of [ACTIVATE, RELEASE]) for (const contour of reedContours(orientation, threshold)) {
-        for (const point of contour.outer.slice(1, -1)) {
-          expect(reedResponse(point, orientation)).toBeCloseTo(threshold, 10);
-        }
-        // Mid-edge SVG interpolation is close to the same level set.
-        for (let i = 1; i < contour.outer.length - 2; i++) {
-          const a = contour.outer[i], b = contour.outer[i + 1];
-          if (a && b) expect(Math.abs(reedResponse({ x: (a.x+b.x)/2, y:(a.y+b.y)/2 }, orientation)-threshold)).toBeLessThan(0.004);
-        }
-      }
-      expect(ACTIVATE).toBeGreaterThan(RELEASE);
-    });
-  }
-  test("vertical dipole has exact dead axes and four live quadrants", () => {
-    for (const d of [-100,-60,-20,0,20,60,100]) {
-      expect(reedResponse({x:220+d,y:140}, "perpendicular")).toBe(0);
-      expect(reedResponse({x:220,y:140+d}, "perpendicular")).toBe(0);
-    }
-    for (const x of [-60,60]) for (const y of [-60,60]) expect(reedZone({x:220+x,y:140+y}, "perpendicular")).toBe("ON");
-    expect(reedResponse({x:220,y:140}, "parallel")).toBe(0);
-    expect(reedResponse({x:300,y:140}, "parallel")).toBeGreaterThan(reedResponse({x:220,y:220}, "parallel"));
+    expect(moveReed({ ...s, point: { x: 405, y: 140 } }, { x: 371, y: 140 }).closed).toBe(false);
   });
   test("rotation before first closure recognizes closure; initial orientation cannot cheat final discovery", () => {
     let s = {...REED_INITIAL, point:{x:275,y:195}};
-    expect(reedZone(s.point,"parallel")).toBe("ON");
+    expect(reedZone(s.point,"parallel")).toBe("OFF");
     s = {...s,orientation:"perpendicular" as const,point:{x:305,y:140}};
     s = orientReed(s,"parallel"); expect(s.closed).toBe(true); expect(s.progress).toBe(1);
-    s = moveReed(s,{x:359,y:140}); expect(s.holdOrientation).toBe("parallel");
+    s = moveReed(s,{x:371,y:140}); expect(s.holdOrientation).toBe("parallel");
     s = orientReed(s,"perpendicular"); expect(s.progress).toBe(3);
     s = orientReed(s,"parallel"); s = moveReed(s,{x:305,y:140}); expect(s.progress).toBe(2);
     s = orientReed(s,"perpendicular"); expect(s.closed).toBe(false);
@@ -106,7 +96,8 @@ describe("Reed teaching model — independent history oracle", () => {
   test("rotation to ON in other orientation can itself complete discovery", () => {
     let s = moveReed(REED_INITIAL,{x:305,y:140});
     // This diagonal is HOLD in parallel but ON in perpendicular.
-    s = moveReed(s,{x:280,y:200});
+    s = moveReed(s,{x:220,y:179});
+    s = moveReed(s,{x:252,y:179});
     expect(s.progress).toBe(2); expect(s.holdOrientation).toBe("parallel");
     s = orientReed(s,"perpendicular"); expect(s.closed).toBe(true); expect(s.progress).toBe(4);
   });
@@ -133,6 +124,22 @@ function preparePointer(view: ReturnType<typeof render>) {
 }
 
 describe("Rendered discovery interactions", () => {
+  test("invitation is decorative, not triggered by toggles, completed for tab lifetime by a key", () => {
+    const v=render(<MagnetPlay />);
+    const hint=v.getByTestId("reed-invitation");
+    expect(hint.getAttribute("aria-hidden")).toBe("true");
+    fireEvent.click(v.getByRole("button",{name:"Perpendiculaire"}));
+    fireEvent.click(v.getByRole("button",{name:"Voir à l'intérieur"}));
+    expect(v.queryByTestId("reed-invitation")).toBeTruthy();
+    expect(v.getByTestId("reed-discovery").dataset.closed).toBe("false");
+    fireEvent.keyDown(v.getByTestId("reed-handle"),{key:"Tab"});
+    expect(v.queryByTestId("reed-invitation")).toBeTruthy();
+    fireEvent.keyDown(v.getByTestId("reed-handle"),{key:"ArrowLeft"});
+    expect(v.queryByTestId("reed-invitation")).toBeNull();
+    v.unmount();
+    const again=render(<MagnetPlay />);
+    expect(again.queryByTestId("reed-invitation")).toBeNull();
+  });
   test("current uses a lighter, thinner shared flow than the signal blades", () => {
     const css = readFileSync("src/components/leadmagnet/reed-discovery.css", "utf8");
     const flow = css.match(/\.reed-current \{([^}]+)\}/)?.[1];
@@ -160,13 +167,13 @@ describe("Rendered discovery interactions", () => {
     expect(v.queryByTestId("reed-housing-reflection")).toBeNull();
     expect(v.getByTestId("reed-contact-current")).toBeTruthy();
     expect(v.getByTestId("reed-left-blade").getAttribute("stroke")).toBe("var(--signal)");
-    fireEvent.pointerMove(handle,{...evt,clientX:359,clientY:140});
+    fireEvent.pointerMove(handle,{...evt,clientX:371,clientY:140});
     expect(v.getByTestId("reed-discovery").dataset.zone).toBe("HOLD");
     expect(v.getByTestId("reed-cable-current")).toBeTruthy();
     fireEvent.pointerMove(handle,{...evt,clientX:405,clientY:140});
     expect(v.queryByTestId("reed-cable-current")).toBeNull();
     expect(v.queryByTestId("reed-contact-current")).toBeNull();
-    fireEvent.pointerMove(handle,{...evt,clientX:359,clientY:140});
+    fireEvent.pointerMove(handle,{...evt,clientX:371,clientY:140});
     expect(v.getByTestId("reed-discovery").dataset.zone).toBe("HOLD");
     expect(v.queryByTestId("reed-cable-current")).toBeNull();
     fireEvent.pointerUp(handle,evt);
@@ -186,11 +193,11 @@ describe("Rendered discovery interactions", () => {
     expect(v.getByTestId("reed-discovery").dataset.progress).toBe("1");
     expect(v.getByText("Reculez doucement dans la zone de maintien.")).toBeTruthy();
     fireEvent.pointerDown(handle,{...evt,clientX:305,clientY:140});
-    fireEvent.pointerMove(handle,{...evt,clientX:359,clientY:140});
+    fireEvent.pointerMove(handle,{...evt,clientX:371,clientY:140});
     fireEvent.pointerUp(handle,evt);
     fireEvent.click(v.getByRole("button", { name: "Perpendiculaire" }));
     fireEvent.click(v.getByRole("button", { name: "Parallèle" }));
-    fireEvent.pointerDown(handle,{...evt,clientX:359,clientY:140});
+    fireEvent.pointerDown(handle,{...evt,clientX:371,clientY:140});
     fireEvent.pointerMove(handle,{...evt,clientX:305,clientY:140});
     fireEvent.pointerUp(handle,evt);
     expect(v.getByTestId("reed-discovery").dataset.progress).toBe("2");
@@ -208,10 +215,10 @@ describe("Rendered discovery interactions", () => {
     const evt = { pointerId: 7, pointerType, isPrimary: true, button: 0 };
     fireEvent.pointerDown(handle, { ...evt, clientX: 365, clientY: 225 }); expect(captured.has(7)).toBe(true);
     fireEvent.pointerMove(handle, { ...evt, clientX: 305, clientY: 140 }); expect(v.getByTestId("reed-discovery").dataset.closed).toBe("true");
-    fireEvent.pointerMove(handle, { ...evt, clientX: 359, clientY: 140 }); expect(v.getByTestId("reed-discovery").dataset.progress).toBe("2");
+    fireEvent.pointerMove(handle, { ...evt, clientX: 371, clientY: 140 }); expect(v.getByTestId("reed-discovery").dataset.progress).toBe("2");
     fireEvent.pointerUp(handle, evt); expect(captured.size).toBe(0);
     fireEvent.pointerMove(handle, { ...evt, clientX: 405, clientY: 140 }); expect(v.getByTestId("reed-discovery").dataset.closed).toBe("true");
-    fireEvent.pointerDown(handle, { ...evt, clientX: 359, clientY: 140 });
+    fireEvent.pointerDown(handle, { ...evt, clientX: 371, clientY: 140 });
     fireEvent.pointerCancel(handle, evt); expect(captured.size).toBe(0);
     fireEvent.pointerMove(handle, { ...evt, clientX: 405, clientY: 140 }); expect(v.getByTestId("reed-discovery").dataset.closed).toBe("true");
   });

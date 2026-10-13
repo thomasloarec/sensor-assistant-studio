@@ -1,12 +1,15 @@
-import { useId, useMemo, useRef, useState } from "react";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
 import type { CSSProperties, PointerEvent } from "react";
-import { ArrowRight, Eye, Layers, Move, MoveHorizontal, MoveVertical } from "lucide-react";
+import { ArrowRight, Hand, Eye, Layers, Move, MoveHorizontal, MoveVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { t } from "@/lib/i18n/core";
 import { useLocale } from "@/lib/i18n/react";
 import { ACTIVATE, RELEASE, REED_INITIAL, REED_SCENE, mapReedPointer, moveReed, orientReed, reedContours, reedZone } from "@/lib/leadmagnet/reed-discovery";
 import type { ReedOrientation, ReedPoint } from "@/lib/leadmagnet/reed-discovery";
 import "./reed-discovery.css";
+
+// Tab-lifetime completion only; no design, storage or transmission.
+let invitationDone = false;
 
 /** Home-only, generic complete cabled sensor. No product, calibration, persistence,
  * field lines or real distance. All contours and state use the same pure model. */
@@ -18,6 +21,25 @@ export function MagnetPlay({ onStart }: { onStart?: () => void }) {
   const [state, setState] = useState(REED_INITIAL);
   const [zones, setZones] = useState(true);
   const [inside, setInside] = useState(false);
+  const [invitation, setInvitation] = useState(false);
+  const [hintRunning, setHintRunning] = useState(false);
+  useEffect(() => { setInvitation(!invitationDone); }, []);
+  useEffect(() => {
+    if (!invitation) return;
+    const scene = svgRef.current;
+    if (!scene) return;
+    let visible = false;
+    const update = () => setHintRunning(visible && document.visibilityState === "visible");
+    const observer = typeof IntersectionObserver === "undefined" ? null : new IntersectionObserver(([entry]) => {
+      visible = entry?.isIntersecting ?? false;
+      update();
+    });
+    if (observer) observer.observe(scene);
+    else { visible = true; update(); }
+    document.addEventListener("visibilitychange", update);
+    return () => { observer?.disconnect(); document.removeEventListener("visibilitychange", update); };
+  }, [invitation]);
+  const dismissInvitation = () => { invitationDone = true; setInvitation(false); };
   const contours = useMemo(() => ({ outer: reedContours(state.orientation, RELEASE), inner: reedContours(state.orientation, ACTIVATE) }), [state.orientation]);
   const zone = reedZone(state.point, state.orientation);
   const status = state.closed ? t("Contact fermé") : t("Contact ouvert");
@@ -97,10 +119,15 @@ export function MagnetPlay({ onStart }: { onStart?: () => void }) {
             <text x="16" y="8" textAnchor="middle" fontSize="24" fill="var(--heading)">S</text>
           </g>
         </svg>
+        {invitation ? <span className="reed-invitation" data-testid="reed-invitation" data-running={hintRunning} aria-hidden="true"
+          style={{ left: `${state.point.x / REED_SCENE.width * 100}%`, top: `${state.point.y / REED_SCENE.height * 100}%` } as CSSProperties}>
+          <Hand className="reed-invitation-hand" />
+        </span> : null}
         <Button type="button" variant="ghost" className="reed-handle" aria-label={t("Déplacer l'aimant dans le plan")} aria-describedby={`${id}-instruction ${id}-keyboard`} data-testid="reed-handle"
           style={{ left: `${state.point.x / REED_SCENE.width * 100}%`, top: `${state.point.y / REED_SCENE.height * 100}%` } as CSSProperties}
           onPointerDown={(e) => {
             if (!e.isPrimary || (e.pointerType === "mouse" && e.button !== 0)) return;
+            dismissInvitation();
             const point = pointFromEvent(e);
             if (!point) return;
             drag.current = { pointerId: e.pointerId, offset: { x: state.point.x - point.x, y: state.point.y - point.y } };
@@ -118,6 +145,7 @@ export function MagnetPlay({ onStart }: { onStart?: () => void }) {
             const direction = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[e.key];
             if (!direction) return;
             e.preventDefault();
+            dismissInvitation();
             const step = e.shiftKey ? 2 : 8;
             setState((s) => moveReed(s, { x: s.point.x + (direction[0] ?? 0) * step, y: s.point.y + (direction[1] ?? 0) * step }));
           }}><span className="sr-only" id={`${id}-keyboard`}>{t("Utilisez les flèches pour déplacer l'aimant. Majuscule pour affiner.")}</span></Button>

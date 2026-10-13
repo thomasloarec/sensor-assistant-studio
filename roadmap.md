@@ -1,5 +1,10 @@
 # Feuille de route — lot des 7 correctifs (base 12be3e3d)
 
+## Formes PIC et invitation Reed — base 86cdc3f
+- [x] Géométries SVG originales partagées dessin/hit-testing, hystérésis et gestes conservés.
+- [x] Invitation discrète terminée pour la visite après interaction, suspendue hors écran/onglet et statique en mouvement réduit.
+- [x] 1 728 tests verts, huit langues sans manque, compilation plateforme OK, revue visuelle 320/378/desktop ; note docs/QA_REED_PIC_2026-10-13.md. Aucun transfert ni publication ; contrôle accueil connecté réservé au propriétaire.
+
 ## Retours Reed — 13 octobre 2026, base 44b443c
 - [x] Finition locale du courant : flux clair/fin, couleur et dashoffset réels, suppression ouvert et immobilité reduced-motion ; 31 tests ciblés verts et note QA actualisée.
 - [x] Couloirs OFF réels, lobes sans anneau central, dessin simplifié et courant conditionné au contact.
