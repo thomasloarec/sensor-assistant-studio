@@ -91,7 +91,4 @@ rg -n "\brounded-md border\b|\bborder border-input\b|\btext-xs\b" src/ --glob '!
 Toute évolution met à jour `docs/design-language.md` dans le même commit ; aucun
 jeton sans documentation ni contournement ponctuel.
 
-- Keep connector previews beside buttons in shared ConnectorChoices, never inside buttons or details, so rotation cannot select or duplicate WebGL contexts.
-
-
-- Order suggested pairs through `src/lib/leadmagnet/suggestion-ranking.ts` (explicit, reasoned tiers), never catalog insertion order: specialised families must not reach the top three without a verified written requirement.
+Subdirectories have their own `AGENTS.md`; read them before changing files there.
