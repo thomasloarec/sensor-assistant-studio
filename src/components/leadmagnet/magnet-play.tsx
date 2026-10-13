@@ -104,12 +104,12 @@ export function MagnetPlay({ onStart }: { onStart?: () => void }) {
           {/* Complete sensor: cable exits the housing; no fictitious integrated LED. */}
           <path d="M181 140 H135 Q110 140 110 163 V199 Q110 220 85 220 H12" fill="none" stroke="var(--standex-gray)" strokeWidth="9" />
           {state.closed ? <path data-testid="reed-cable-current" className="reed-current" d="M12 220 H85 Q110 220 110 199 V163 Q110 140 135 140 H181" /> : null}
-          <rect data-testid="reed-housing" x="178" y="122" width="84" height="36" rx="9" fill={`url(#${id}-housing)`} fillOpacity={inside ? 0.25 : 1} stroke={state.closed ? "var(--signal)" : "var(--muted-foreground)"} strokeWidth={state.closed ? 3 : 1.5} />
+          <rect data-testid="reed-housing" x="178" y="122" width="84" height="36" rx="9" fill={`url(#${id}-housing)`} fillOpacity={inside ? 0.25 : 1} stroke={state.closed ? "var(--reed-closed)" : "var(--muted-foreground)"} strokeWidth={state.closed ? 3 : 1.5} />
           {!inside ? <path data-testid="reed-housing-reflection" d="M186 127 H254" stroke="var(--muted-foreground)" strokeOpacity="0.55" strokeWidth="1.5" /> : null}
           <g id={`${id}-inside`} data-testid="reed-interior" visibility={inside ? "visible" : "hidden"}>
             <rect x="190" y="129" width="60" height="22" rx="10" fill="var(--surface-tint)" stroke="var(--muted-foreground)" />
-            <path data-testid="reed-left-blade" d={state.closed ? "M181 140 H218 L226 140" : "M181 140 H218 L226 136"} stroke={state.closed ? "var(--signal)" : "var(--foreground)"} strokeWidth="2.5" fill="none" />
-            <path data-testid="reed-right-blade" d={state.closed ? "M258 140 H234 L222 140" : "M258 140 H234 L222 144"} stroke={state.closed ? "var(--signal)" : "var(--foreground)"} strokeWidth="2.5" fill="none" />
+            <path data-testid="reed-left-blade" d={state.closed ? "M181 140 H218 L226 140" : "M181 140 H218 L226 136"} stroke={state.closed ? "var(--reed-closed)" : "var(--foreground)"} strokeWidth="2.5" fill="none" />
+            <path data-testid="reed-right-blade" d={state.closed ? "M258 140 H234 L222 140" : "M258 140 H234 L222 144"} stroke={state.closed ? "var(--reed-closed)" : "var(--foreground)"} strokeWidth="2.5" fill="none" />
             {state.closed && inside ? <path data-testid="reed-contact-current" className="reed-current" d="M181 140 H258" /> : null}
           </g>
           <g transform={`translate(${state.point.x} ${state.point.y}) rotate(${state.orientation === "parallel" ? 0 : 90})`}>

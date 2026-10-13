@@ -40,7 +40,9 @@ describe("Reed teaching model — independent history oracle", () => {
     });
   }
   test("perpendicular: regular flat OFF cross releases closed contact near and far", () => {
-    for(let d=-120;d<=120;d+=4) for(const q of [{x:220+d,y:140},{x:220,y:140+d},{x:229,y:140+d},{x:211,y:140+d},{x:220+d,y:159},{x:220+d,y:121}]) {
+    // Horizontal corridor narrows locally to +/-14 so quadrant roots reach
+    // beneath y122/158; its legitimate +/-13 interior remains entirely OFF.
+    for(let d=-120;d<=120;d+=4) for(const q of [{x:220+d,y:140},{x:220,y:140+d},{x:229,y:140+d},{x:211,y:140+d},{x:220+d,y:153},{x:220+d,y:127}]) {
       expect(reedZone(q,"perpendicular")).toBe("OFF");
       expect(reedContact(true,q,"perpendicular")).toBe(false);
     }
@@ -74,6 +76,51 @@ describe("Reed teaching model — independent history oracle", () => {
         }
       }
     }
+  });
+  test("both orientations: finite ON attachment bands close from OPEN, not only on an axis", () => {
+    for(const offset of [-6,-3,0,3,6]) for(let depth=0;depth<=16;depth+=2) {
+      for(const point of [{x:220+offset,y:123-depth},{x:220+offset,y:157+depth},{x:261+depth,y:140+offset},{x:179-depth,y:140+offset}]) {
+        expect(reedZone(point,"parallel")).toBe("ON");
+        expect(reedContact(false,point,"parallel")).toBe(true);
+        expect(moveReed({...REED_INITIAL,point,closed:false},point).closed).toBe(true);
+      }
+    }
+    for(const sx of [-1,1]) for(const sy of [-1,1]) for(let x=24;x<=38;x+=2) for(let depth=16;depth<=42;depth+=2) {
+      const point={x:220+sx*x,y:140+sy*depth};
+      expect(reedZone(point,"perpendicular")).toBe("ON");
+      expect(reedContact(false,point,"perpendicular")).toBe(true);
+      expect(moveReed({...REED_INITIAL,orientation:"perpendicular",point,closed:false},point).closed).toBe(true);
+    }
+  });
+  test("each ON polygon and every edge midpoint is contained in its own outer contour", () => {
+    const contains=(ps:{x:number;y:number}[],q:{x:number;y:number})=>{
+      let yes=false;
+      for(let i=0,j=ps.length-1;i<ps.length;j=i++) {
+        const a=ps[i],b=ps[j]; if(!a||!b)continue;
+        const cross=(q.x-a.x)*(b.y-a.y)-(q.y-a.y)*(b.x-a.x);
+        if(Math.abs(cross)<1e-7&&q.x>=Math.min(a.x,b.x)-1e-7&&q.x<=Math.max(a.x,b.x)+1e-7&&q.y>=Math.min(a.y,b.y)-1e-7&&q.y<=Math.max(a.y,b.y)+1e-7)return true;
+        if((a.y>q.y)!==(b.y>q.y)&&q.x<(b.x-a.x)*(q.y-a.y)/(b.y-a.y)+a.x)yes=!yes;
+      }return yes;
+    };
+    for(const o of ["parallel","perpendicular"] as const) {
+      const outer=reedContours(o,RELEASE);
+      reedContours(o,ACTIVATE).forEach((c,index)=>{
+        const boundary=outer[index]; if(!boundary)throw new Error("Missing outer contour");
+        c.points.forEach((q,i)=>{const next=c.points[(i+1)%c.points.length];
+          expect(contains(boundary.points,q)).toBe(true);
+          if(next)expect(contains(boundary.points,{x:(q.x+next.x)/2,y:(q.y+next.y)/2})).toBe(true);
+        });
+      });
+    }
+  });
+  test("perpendicular outer HOLD still retains closed but never closes OPEN",()=>{
+    for(const sx of [-1,1])for(const sy of [-1,1]) {
+      const point={x:220+sx*76,y:140+sy*112};
+      expect(reedZone(point,"perpendicular")).toBe("HOLD");
+      expect(reedContact(true,point,"perpendicular")).toBe(true);
+      expect(reedContact(false,point,"perpendicular")).toBe(false);
+    }
+    for(const point of [{x:260,y:118},{x:180,y:162},{x:260,y:162},{x:180,y:118}])expect(reedContact(true,point,"parallel")).toBe(false);
   });
   test("OPEN → ON → HOLD → OFF; OFF → same HOLD stays OPEN", () => {
     const on = { x: 305, y: 140 }, hold = { x: 371, y: 140 }, off = { x: 405, y: 140 };
@@ -164,7 +211,7 @@ describe("Rendered discovery interactions", () => {
   test("current uses a lighter, thinner shared flow than the signal blades", () => {
     const css = readFileSync("src/components/leadmagnet/reed-discovery.css", "utf8");
     const flow = css.match(/\.reed-current \{([^}]+)\}/)?.[1];
-    expect(flow).toContain("stroke: var(--heading)");
+    expect(flow).toContain("stroke: var(--reed-current)");
     expect(flow).toContain("stroke-width: 1.5");
     expect(flow).toContain("stroke-dasharray: 3 12");
     expect(css).toContain("stroke-dashoffset: -30");
@@ -182,12 +229,12 @@ describe("Rendered discovery interactions", () => {
     fireEvent.pointerMove(handle,{...evt,clientX:305,clientY:140});
     expect(v.getByTestId("reed-cable-current")).toBeTruthy();
     expect(v.queryByTestId("reed-contact-current")).toBeNull();
-    expect(v.getByTestId("reed-housing").getAttribute("stroke")).toBe("var(--signal)");
+    expect(v.getByTestId("reed-housing").getAttribute("stroke")).toBe("var(--reed-closed)");
     expect(v.getByTestId("reed-interior").getAttribute("visibility")).toBe("hidden");
     fireEvent.click(v.getByRole("button",{name:"Voir à l'intérieur"}));
     expect(v.queryByTestId("reed-housing-reflection")).toBeNull();
     expect(v.getByTestId("reed-contact-current")).toBeTruthy();
-    expect(v.getByTestId("reed-left-blade").getAttribute("stroke")).toBe("var(--signal)");
+    expect(v.getByTestId("reed-left-blade").getAttribute("stroke")).toBe("var(--reed-closed)");
     fireEvent.pointerMove(handle,{...evt,clientX:371,clientY:140});
     expect(v.getByTestId("reed-discovery").dataset.zone).toBe("HOLD");
     expect(v.getByTestId("reed-cable-current")).toBeTruthy();

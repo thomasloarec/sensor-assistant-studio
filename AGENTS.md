@@ -90,4 +90,4 @@ jeton sans documentation ni contournement ponctuel.
 
 Subdirectories have their own `AGENTS.md`; read them before changing files there.
 
-- Home Reed discovery renders and hit-tests the same original sampled schematic polygons (nested ON/HOLD, real OFF gaps); current follows closed and HOLD orientation guards progression. Never qualify products or persist exploration. The first-use invitation stores completion only in tab-lifetime module memory and observes viewport/document visibility; it never changes sensor state.
+- Reed uses shared sampled SVG/hit-test polygons with finite ON roots, outer HOLD and real OFF gaps, preventing attachment plugs. Exploration never qualifies products or persists. Current follows closed; progression guards HOLD orientation. Invitation completion is tab-memory only, observes visibility and never changes sensor state.

@@ -223,6 +223,12 @@
   --detect-blue: var(--standex-blue);
 }
 
+/* Owner-requested electrical state, scoped to Reed; cyan field unchanged. */
+.reed-discovery {
+  --reed-closed: oklch(0.82 0.16 85);
+  --reed-current: oklch(0.98 0.06 100);
+}
+
 /* Contexte immersif : classe posée sur une SECTION, pas un thème global. */
 .immersive {
   color-scheme: dark;
