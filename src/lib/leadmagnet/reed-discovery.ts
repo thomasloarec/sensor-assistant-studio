@@ -32,12 +32,12 @@ const quarter = shape(p(12,-40), [
   [p(54,-22),p(40,-22),p(28,-22)],
   [p(18,-22),p(12,-28),p(12,-40)],
 ]);
-const main = shape(p(-26,-22), [
-  [p(-32,-46),p(-68,-66),p(-68,-80)],
-  [p(-68,-112),p(-38,-136),p(0,-136)],
-  [p(38,-136),p(68,-112),p(68,-80)],
-  [p(68,-66),p(32,-46),p(26,-22)],
-  [p(18,-18),p(-18,-18),p(-26,-22)],
+const main = shape(p(-16,-6), [
+  [p(-24,-30),p(-60,-72),p(-60,-96)],
+  [p(-60,-117),p(-34,-134),p(0,-134)],
+  [p(34,-134),p(60,-117),p(60,-96)],
+  [p(60,-72),p(24,-30),p(16,-6)],
+  [p(10,-5),p(-10,-5),p(-16,-6)],
 ]);
 const side = shape(p(54,0), [
   [p(72,-10),p(95,-53),p(123,-53)],
@@ -51,7 +51,8 @@ function region(points: ReedPoint[], cx: number, cy: number, sx=1, sy=1) {
 }
 const geometry = {
   perpendicular: [region(quarter,76,-74),region(quarter,76,-74,-1),region(quarter,76,-74,1,-1),region(quarter,76,-74,-1,-1)],
-  parallel: [region(main,0,-80),region(main,0,-80,1,-1),region(side,117,0),region(side,117,0,-1)],
+  // Root-centred reduction keeps both contours joined beneath the housing.
+  parallel: [region(main,0,-6),region(main,0,-6,1,-1),region(side,117,0),region(side,117,0,-1)],
 };
 function contains(points: ReedPoint[], point: ReedPoint): boolean {
   let inside=false;

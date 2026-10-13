@@ -54,6 +54,27 @@ describe("Reed teaching model — independent history oracle", () => {
     expect(reedZone({x:220,y:210},"parallel")).toBe("ON");
     for(const q of [{x:220,y:140},{x:260,y:118},{x:180,y:162}]) expect(reedContact(true,q,"parallel")).toBe(false);
   });
+  test("parallel mains are elongated, smoothly tapered and rooted beneath the housing", () => {
+    for (const threshold of [ACTIVATE, RELEASE]) {
+      const mains=reedContours("parallel",threshold).slice(0,2);
+      for (const [index,contour] of mains.entries()) {
+        const xs=contour.points.map(q=>q.x), ys=contour.points.map(q=>Math.abs(q.y-140));
+        const width=Math.max(...xs)-Math.min(...xs), height=Math.max(...ys)-Math.min(...ys);
+        expect(height).toBeGreaterThan(width);
+        expect(Math.min(...ys)).toBeLessThan(8);
+        expect(reedZone({x:220,y:140+(index===0 ? -17 : 17)},"parallel")).toBe("ON");
+        if(threshold===RELEASE) { expect(width).toBe(120); expect(height).toBeGreaterThanOrEqual(128); }
+        // Root-to-cap flanks widen monotonically, without a mushroom shoulder.
+        const flank=contour.points.slice(0,49);
+        for(let i=1;i<flank.length;i++) {
+          const previous=flank[i-1], current=flank[i];
+          if(!previous || !current) continue;
+          expect(Math.abs(current.x-220)).toBeGreaterThanOrEqual(Math.abs(previous.x-220));
+          expect(Math.abs(current.y-140)).toBeGreaterThanOrEqual(Math.abs(previous.y-140));
+        }
+      }
+    }
+  });
   test("OPEN → ON → HOLD → OFF; OFF → same HOLD stays OPEN", () => {
     const on = { x: 305, y: 140 }, hold = { x: 371, y: 140 }, off = { x: 405, y: 140 };
     let s = moveReed(REED_INITIAL, off);
