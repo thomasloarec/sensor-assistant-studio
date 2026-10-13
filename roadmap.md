@@ -97,3 +97,7 @@
 - [x] Modèle pédagogique partagé, hystérésis et découverte 2D accessible, sans modification de l'atelier métier.
 - [x] Huit langues, tests moteur/composant et vérification navigateur isolée 320/390 px et desktop ; accueil connecté non vérifié, session indisponible.
 - [x] Suite complète, inventaire, contrôles de charte et rapport des limites sans publication.
+
+## Revue indépendante découverte Reed
+- [ ] Réponse axiale dipolaire et contours communs, progression par orientation.
+- [ ] Cibles intactes à 320 px, compacité, tests et rapport sans publication.
