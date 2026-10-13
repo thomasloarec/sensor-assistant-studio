@@ -10,7 +10,7 @@ import { rankSuggestions, suggestedOrder } from "@/lib/leadmagnet/suggestion-ran
 import { thermalWarning, THERMAL_SHORT } from "@/lib/leadmagnet/thermal-fit";
 import { parseDecimalMm } from "@/lib/leadmagnet/decimal";
 import { detectEnvelopeFromText, ENVELOPE_TEXT } from "@/lib/leadmagnet/envelope-text";
-import { parseDossierImport } from "@/lib/leadmagnet/dossier-io";
+import { parseDossierExport } from "@/lib/leadmagnet/dossier-io";
 import { sensorById } from "@/lib/standex/sensor-catalog";
 import { SENSOR_SPECIFICATIONS } from "@/lib/standex/sensor-specifications";
 import { LANGUAGES, msg, t } from "@/lib/i18n/core";
@@ -123,7 +123,7 @@ describe("A05 — taille de filetage", () => {
     expect(evaluateCandidates({ mounting: { kind: "screw", style: "threaded_body" }, envelope: NO_ENV }).filter((c) => c.id.startsWith("MK11") && c.status !== "excluded")).toHaveLength(4);
     const src = readFileSync("src/lib/leadmagnet/dossier-io.ts", "utf8");
     expect(src).toMatch(/threadMm: z\.number\(\)\.finite\(\)\.positive\(\)\.max\(100\)\.optional\(\)/);
-    expect(typeof parseDossierImport).toBe("function");
+    expect(typeof parseDossierExport).toBe("function");
   });
   test("l'écran affiche M5/M6/M8 et « taille inconnue — à vérifier »", () => {
     const src = readFileSync("src/components/leadmagnet/design-space.tsx", "utf8");
