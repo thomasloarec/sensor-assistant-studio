@@ -104,4 +104,4 @@
 
 ## Finition visuelle Reed — 13 octobre 2026
 - [x] Libellé compact traduit « À 90° », nom accessible explicite et scène pleine largeur ; moteur inchangé.
-- [ ] Vérifier les quatre bords, focus et N/S à 320/378 px, suite et inventaire ; rapport factuel sans publication.
+- [x] Quatre bords/focus/N/S vérifiés à 320/378 px et desktop ; 1 724 tests verts, inventaire zéro, compilation plateforme OK ; rapport QA_REED_VISUAL_FINISH_2026-10-13.md. Recette iframe finale laissée au propriétaire.
