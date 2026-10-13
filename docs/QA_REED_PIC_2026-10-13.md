@@ -1,0 +1,24 @@
+# Reed — formes PIC et invitation, 13 octobre 2026
+
+Base demandée : `86cdc3f`. Commit de l'implémentation finale vérifiée : `63b5d9b` (le commit de cette note est attribué ensuite automatiquement par la plateforme).
+
+## Changements
+- `src/lib/leadmagnet/reed-discovery.ts` : remplacement intentionnel du dipôle par des régions schématiques originales. À 90°, quatre volumes similaires avec bords internes plats et croix OFF ; parallèle, grands lobes verticaux à bouts arrondis et petites gouttes latérales. Les courbes originales sont échantillonnées une fois : les mêmes sommets servent aux chemins SVG et au test d'appartenance. ON intérieur, HOLD dans la couronne, OFF extérieur et couloirs. Pas de bitmap PIC, logo ou texte copié. État, parcours rapide et progression conservés.
+- `src/components/leadmagnet/magnet-play.tsx` : invitation décorative par main, sans texte ni déplacement artificiel. Terminée immédiatement à la prise primaire souris/tactile ou première flèche ; état de terminaison seulement en mémoire du module pour la visite de l'onglet, sans stockage ni transfert. Vue/zones/orientation ne la terminent pas ni ne la réactivent. Observateurs nettoyés au démontage.
+- `src/components/leadmagnet/reed-discovery.css` : faible déplacement de main, cycle de 6 × durée hero avec pause ; pause hors écran ou document masqué, représentation statique en reduced-motion. Courant clair/fin inchangé.
+- `tests/reed-discovery.test.tsx` : assertions de dipôle et seuils analytiques retirées explicitement car elles ne correspondent plus au modèle demandé ; remplacement par oracle indépendant d'appartenance aux polygones, croix OFF, proportions et maintien des tests d'hystérésis, trajectoires, progression, gestes et huit langues. Points HOLD et trajets adaptés à la nouvelle géométrie, sans affaiblir les états attendus.
+- `AGENTS.md`, `docs/design-language.md`, `roadmap.md` : règles du modèle et invitation actualisées. Aucune route, atelier métier, donnée, dépendance ou commande existante modifiée.
+
+## Vérifications
+- Ciblés : **29/29**, **18 107 assertions**, aucun échec.
+- Suite complète finale : **1 728/1 728**, **116 564 assertions**, 109 fichiers, aucun échec. Le total baisse de deux tests : les tests de physique inapplicables ont été remplacés, pas marqués ignorés.
+- Inventaire i18n : **0** non traduit/manquant/code traduit/figé ; huit langues couvertes, aucune nouvelle chaîne visible.
+- Compilation plateforme : **build OK**, dernière entrée observée `2026-10-13T11:05:55Z` ; aucun build/typecheck manuel lancé. `git diff --check` propre.
+- Chromium réel, module monté isolément avec CSS Standex immersif, largeurs **320 / 378 / 1280** : captures des deux orientations comparées visuellement aux deux références jointes, état initial, extérieur fermé, intérieur fermé/ouvert, perpendicular fermé. Silhouettes immobiles ; poignée 56 × 56 px ; aucune largeur de page excessive.
+- Dans chacune des trois largeurs : ON ferme, HOLD conserve fermé ; OFF ouvre puis même HOLD conserve ouvert ; axe mort proche `(223,165)` en perpendicular ouvre depuis fermé. Courants supprimés ouvert, visibles dans câble fermé et contacts intérieurs seulement. Remontage du module après interaction ne réactive pas l'invitation.
+- Flux contacts : `stroke oklch(0.985 0.004 250)` distinct des lames `oklch(0.72 0.13 205)` ; déplacement réel du dashoffset observé (exemple desktop −0,0083 → −1,3000 px). Reduced-motion : animation `none`, dashoffset immobile après 400 ms, contact statiquement fermé.
+- Main : transformation change dans le temps sans changement de position/contact du capteur ; disparition clavier, pointerdown souris et prise tactile vérifiées. Pause réelle par défilement hors écran puis reprise. Gestion hidden/visible vérifiée avec événement `visibilitychange` et état de visibilité contrôlé en navigateur : pause, transformation constante, reprise. Ce dernier contrôle est une simulation de visibilité, pas une assertion sur une fenêtre OS réelle.
+- Captures et scripts de recette : `/tmp/browser/reed-pic/` (`*-parallel.png`, `*-perpendicular.png`, `*-closed-opaque.png`, `*-closed-interior.png`, `*-open-interior.png`, `reduced-initial.png`, `reduced-closed.png`).
+
+## Limites
+Formes adaptées à la scène 440 × 280 et au boîtier, pas reproduction pixel pour pixel ni calibration physique. Une recharge complète réinitialise la mémoire de visite ; navigation interne aller/retour conserve la terminaison. Recette visuelle isolée, **pas une recette de l'accueil connecté** : le propriétaire effectuera ce contrôle comme annoncé. Aucun contournement de connexion, envoi confidentiel, modification backend, migration ni publication.

@@ -90,4 +90,4 @@ jeton sans documentation ni contournement ponctuel.
 
 Subdirectories have their own `AGENTS.md`; read them before changing files there.
 
-- Home Reed discovery shares one regularized dimensionless axial dipole teaching response with angular OFF corridors and analytic inner/outer contours, with all current visuals driven by closed; track the HOLD orientation to prevent false progression, never qualify products or persist exploration.
+- Home Reed discovery renders and hit-tests the same original sampled schematic polygons (nested ON/HOLD, real OFF gaps); current follows closed and HOLD orientation guards progression. Never qualify products or persist exploration. The first-use invitation stores completion only in tab-lifetime module memory and observes viewport/document visibility; it never changes sensor state.
