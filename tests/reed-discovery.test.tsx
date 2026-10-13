@@ -16,6 +16,30 @@ beforeEach(async () => {
 afterEach(() => { cleanup(); setLocale("fr"); });
 
 describe("Reed teaching model — independent history oracle", () => {
+  for (const orientation of ["parallel", "perpendicular"] as const) test(`${orientation}: finite dead corridors release a previously closed contact near every null`, () => {
+    const alpha = Math.acos(1 / Math.sqrt(3));
+    const nulls = orientation === "parallel" ? [alpha, Math.PI-alpha, Math.PI+alpha, 2*Math.PI-alpha] : [0, Math.PI/2, Math.PI, 3*Math.PI/2];
+    for (const angle of nulls) for (const offset of [-0.09,-0.04,0,0.04,0.09]) for (const radius of [5,12,18,24,40,75]) {
+      const point = { x:220+radius*Math.cos(angle+offset), y:140+radius*Math.sin(angle+offset) };
+      expect(reedResponse(point,orientation)).toBe(0);
+      expect(reedZone(point,orientation)).toBe("OFF");
+      expect(reedContact(true,point,orientation)).toBe(false);
+      expect(moveReed({...REED_INITIAL,orientation,closed:true},point).closed).toBe(false);
+    }
+    expect(reedContours(orientation,ACTIVATE)).toHaveLength(4);
+  });
+  for (const orientation of ["parallel", "perpendicular"] as const) test(`${orientation}: inner contours solve the threshold, no constant-radius circular closure`, () => {
+    for (const threshold of [ACTIVATE,RELEASE]) for (const contour of reedContours(orientation,threshold)) {
+      for (const point of contour.inner) expect(reedResponse(point,orientation)).toBeCloseTo(threshold,9);
+      const radii = contour.inner.map(p => Math.hypot(p.x-220,p.y-140));
+      expect(Math.max(...radii)-Math.min(...radii)).toBeGreaterThan(10);
+      expect(contour.outerPath).not.toContain("Z");
+      for (let i=1;i<contour.inner.length-2;i++) {
+        const a=contour.inner[i],b=contour.inner[i+1];
+        if(a && b) expect(Math.abs(reedResponse({x:(a.x+b.x)/2,y:(a.y+b.y)/2},orientation)-threshold)).toBeLessThan(0.004);
+      }
+    }
+  });
   test("OPEN → ON → HOLD → OFF; OFF → same HOLD stays OPEN", () => {
     const on = { x: 305, y: 140 }, hold = { x: 359, y: 140 }, off = { x: 405, y: 140 };
     let s = moveReed(REED_INITIAL, off);
@@ -109,6 +133,37 @@ function preparePointer(view: ReturnType<typeof render>) {
 }
 
 describe("Rendered discovery interactions", () => {
+  test("current and signal follow closed in opaque/interior and HOLD, disappear open; no sleeve or central ring", () => {
+    const v=render(<MagnetPlay />); const {handle}=preparePointer(v);
+    const evt={pointerId:9,pointerType:"mouse",isPrimary:true,button:0};
+    expect(v.queryByTestId("reed-cable-current")).toBeNull();
+    expect(v.queryByTestId("reed-contact-current")).toBeNull();
+    expect(v.container.querySelector('rect[x="168"]')).toBeNull();
+    expect(v.getByTestId("reed-zones").querySelectorAll("circle,ellipse")).toHaveLength(0);
+    expect(v.getByTestId("reed-on-contour")).toBeDefined;
+    fireEvent.pointerDown(handle,{...evt,clientX:365,clientY:225});
+    fireEvent.pointerMove(handle,{...evt,clientX:305,clientY:140});
+    expect(v.getByTestId("reed-cable-current")).toBeTruthy();
+    expect(v.queryByTestId("reed-contact-current")).toBeNull();
+    expect(v.getByTestId("reed-housing").getAttribute("stroke")).toBe("var(--signal)");
+    expect(v.getByTestId("reed-interior").getAttribute("visibility")).toBe("hidden");
+    fireEvent.click(v.getByRole("button",{name:"Voir à l'intérieur"}));
+    expect(v.queryByTestId("reed-housing-reflection")).toBeNull();
+    expect(v.getByTestId("reed-contact-current")).toBeTruthy();
+    expect(v.getByTestId("reed-left-blade").getAttribute("stroke")).toBe("var(--signal)");
+    fireEvent.pointerMove(handle,{...evt,clientX:359,clientY:140});
+    expect(v.getByTestId("reed-discovery").dataset.zone).toBe("HOLD");
+    expect(v.getByTestId("reed-cable-current")).toBeTruthy();
+    fireEvent.pointerMove(handle,{...evt,clientX:405,clientY:140});
+    expect(v.queryByTestId("reed-cable-current")).toBeNull();
+    expect(v.queryByTestId("reed-contact-current")).toBeNull();
+    fireEvent.pointerMove(handle,{...evt,clientX:359,clientY:140});
+    expect(v.getByTestId("reed-discovery").dataset.zone).toBe("HOLD");
+    expect(v.queryByTestId("reed-cable-current")).toBeNull();
+    fireEvent.pointerUp(handle,evt);
+    fireEvent.click(v.getByRole("button",{name:"Voir à l'intérieur"}));
+    expect(v.getByTestId("reed-housing-reflection")).toBeTruthy();
+  });
   test("rotation closure updates the instruction and returning to initial ON does not finish", () => {
     const v = render(<MagnetPlay />); const { handle } = preparePointer(v);
     const evt = { pointerId: 4, pointerType: "mouse", isPrimary: true, button: 0 };
@@ -135,7 +190,7 @@ describe("Rendered discovery interactions", () => {
   test("initial complete sensor opaque; no bogus distances, no integrated indicator", () => {
     const v = render(<MagnetPlay />);
     expect(v.getByTestId("reed-interior").getAttribute("visibility")).toBe("hidden");
-    expect(v.getByTestId("reed-zones").getAttribute("visibility")).toBe("hidden");
+    expect(v.getByTestId("reed-zones").getAttribute("visibility")).toBe("visible");
     expect(v.getByRole("status").textContent).toContain("Contact ouvert");
     expect(v.container.textContent).not.toMatch(/\d+\s*mm|LED|Détecté à/);
   });
@@ -163,7 +218,7 @@ describe("Rendered discovery interactions", () => {
     for (let i = 0; i < 11; i++) fireEvent.keyDown(handle, { key: "ArrowUp" });
     for (let i = 0; i < 7; i++) fireEvent.keyDown(handle, { key: "ArrowLeft" });
     expect(v.getByTestId("reed-discovery").dataset.closed).toBe("true");
-    fireEvent.click(v.getByRole("button", { name: "Voir les zones" }));
+    fireEvent.click(v.getByRole("button", { name: "Champ magnétique" }));
     fireEvent.click(v.getByRole("button", { name: "Voir à l'intérieur" }));
     expect(v.getByTestId("reed-discovery").dataset.closed).toBe("true");
     expect(v.getByTestId("reed-interior").getAttribute("visibility")).toBe("visible");
@@ -185,7 +240,7 @@ describe("Rendered discovery interactions", () => {
   for (const locale of LANGUAGES) test(`${locale.id}: all controls and instructions translate without changing state`, () => {
     const v = render(<MagnetPlay onStart={() => {}} />);
     act(() => setLocale(locale.id));
-    for (const key of ["Voir les zones", "Voir à l'intérieur", "Parallèle", "Perpendiculaire", "Trouver un capteur pour mon application", "Déplacer l'aimant dans le plan"]) {
+    for (const key of ["Champ magnétique", "Voir à l'intérieur", "Parallèle", "Perpendiculaire", "Trouver un capteur pour mon application", "Déplacer l'aimant dans le plan"]) {
       expect(v.getByRole("button", { name: t(key, locale.id) })).toBeTruthy();
     }
     const perpendicular = v.getByRole("button", { name: t("Perpendiculaire", locale.id) });
@@ -196,8 +251,9 @@ describe("Rendered discovery interactions", () => {
     expect(perpendicular.getAttribute("aria-pressed")).toBe("true");
     expect(v.getByRole("status").textContent).toContain(t("Contact ouvert", locale.id));
     expect(v.getByTestId("reed-discovery").dataset.closed).toBe("false");
-    fireEvent.click(v.getByRole("button", { name: t("Voir les zones", locale.id) }));
     expect(v.getByText(t("Conserve l'état précédent", locale.id))).toBeTruthy();
+    fireEvent.click(v.getByRole("button", { name: t("Champ magnétique", locale.id) }));
+    expect(v.getByTestId("reed-zones").getAttribute("visibility")).toBe("hidden");
     expect(v.container.textContent).toContain("NS");
   });
 });
