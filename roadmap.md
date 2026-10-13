@@ -99,5 +99,5 @@
 - [x] Suite complète, inventaire, contrôles de charte et rapport des limites sans publication.
 
 ## Revue indépendante découverte Reed
-- [ ] Réponse axiale dipolaire et contours communs, progression par orientation.
-- [ ] Cibles intactes à 320 px, compacité, tests et rapport sans publication.
+- [x] Réponse axiale dipolaire et contours communs, progression par orientation.
+- [x] Cibles intactes à 320 px, compacité, 1 724 tests verts et rapport sans publication ; recette intégrée réservée au propriétaire connecté.
