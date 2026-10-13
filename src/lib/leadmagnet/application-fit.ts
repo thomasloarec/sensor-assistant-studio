@@ -634,7 +634,7 @@ export const VALIDATION_POINT = {
   crosstalk:
     "Aimants voisins : leur champ peut actionner ou bloquer le capteur (interférence). L'immunité n'est pas garantie sans essai Standex.",
   dualOutput:
-    "Deux seuils ou deux sorties indépendants : il faut deux éléments de détection distincts, un seul contact reed ne donne qu'un état. À valider avec la R&D Standex.",
+    "Deux sorties ou positions indépendantes : prévoir deux éléments de détection distincts ou une autre architecture multi-sorties validée. Nombre d'éléments, câblage et écartement à valider avec la R&D Standex ; un capteur proposé n'est qu'un élément du système.",
 } as const;
 
 /** Deux sorties ou deux positions de détection INDÉPENDANTES. Deux états

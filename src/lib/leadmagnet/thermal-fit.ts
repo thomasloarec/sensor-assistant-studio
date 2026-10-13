@@ -43,6 +43,14 @@ export const THERMAL_TEXT = {
     "Plage de température de cette gamme non transcrite dans l'outil : inconnue — à vérifier avec la R&D Standex pour {0}.",
 } as const;
 
+/* i18n-canonical : version COURTE affichée sur la carte ; le détail complet
+ * (plages par état du câble, source) est dans « Voir les détails ». */
+export const THERMAL_SHORT = {
+  exceeded: "Plage demandée {0} hors de la plage documentée de cette gamme : revue d'ingénierie nécessaire.",
+  conditional: "Plage demandée {0} couverte seulement sous condition documentée : à confirmer par Standex.",
+  unknown: "Plage demandée {0} : limite de cette gamme non transcrite, à vérifier.",
+} as const;
+
 export function thermalWarning(sensorId: string, range: SiteRangeC | null): ThermalWarning | null {
   if (!range || (range.min === null && range.max === null)) return null;
   const spec = SENSOR_SPECIFICATIONS[sensorId];
