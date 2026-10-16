@@ -3574,10 +3574,10 @@ export function DesignSpace({
   );
 
   /** Les couples sont dans « Couples proposés », le câble et le connecteur dans
-   * « Avec Standex » : le lien mène à l'onglet où la saisie existe réellement,
+   * « Résultat » : le lien mène à l'onglet où la saisie existe réellement,
    * pas dans un panneau, donc aucun cul-de-sac. */
   const goToInlineSection = (id: string) => {
-    setTab(id === "section-cablage" ? "revue" : "montage");
+    setTab(id === "section-cablage" ? "resultat" : "montage");
     requestAnimationFrame(() => {
       const node = document.getElementById(id);
       if (node instanceof HTMLDetailsElement) node.open = true;
@@ -4257,6 +4257,90 @@ export function DesignSpace({
     </div>
   );
 
+  /** Étape 4 : la configuration technique en LECTURE SEULE. Les états viennent
+   * de la checklist partagée : une terminaison par défaut n'y vaut jamais un
+   * choix, et une longueur de gamme n'est jamais présentée comme une MPN. */
+  const cableItem = checklist.find((i) => i.id === "cable");
+  const connectorItem = checklist.find((i) => i.id === "connecteur");
+  const reviewLengthMm = dossier.workshop?.cableLengthMm ?? null;
+  const reviewLengthKind =
+    cabling.lengthChoice === "standard_to_confirm"
+      ? "Standard"
+      : cabling.lengthChoice === "custom_to_confirm"
+        ? "Sur mesure"
+        : null;
+  const reviewCableText = !cableItem
+    ? ""
+    : cableItem.state === "delegated"
+      ? t("Longueur à définir avec Standex.")
+      : cableItem.state === "todo"
+        ? t("Longueur non définie : ce n'est pas obligatoire à ce stade.")
+        : reviewLengthMm !== null
+          ? `${reviewLengthKind ? `${t(reviewLengthKind)} — ` : ""}${msg("{0} mm, à confirmer par Standex.", [reviewLengthMm])}`
+          : reviewLengthKind === "Standard"
+            ? t("Longueur de gamme, valeur exacte à confirmer en revue.")
+            : t("Longueur sur mesure, valeur exacte à confirmer en revue.");
+  const reviewTermination = dossier.termination;
+  const reviewConnectorValue =
+    reviewTermination.kind === "unqualified_connector"
+      ? `${reviewTermination.spec.manufacturer} ${reviewTermination.spec.mpn}`.trim()
+      : reviewTermination.kind === "qualified_connector"
+        ? `${reviewTermination.combo.connector.manufacturer} ${reviewTermination.combo.connector.mpn}`.trim()
+        : reviewTermination.kind === "free_reference"
+          ? reviewTermination.text.trim()
+          : null;
+  const reviewConnectorText = !connectorItem
+    ? ""
+    : connectorItem.state === "delegated"
+      ? t("Choix du connecteur confié à Standex.")
+      : connectorItem.state === "todo"
+        ? t("Aucune préférence de connecteur exprimée.")
+        : reviewConnectorValue
+          ? msg("{0} — à vérifier par les ingénieurs Standex.", [reviewConnectorValue])
+          : t("Fils nus, sans connecteur");
+  const reviewSensorText = dossier.selectedSensorId
+    ? msg("Gamme {0}, pas encore une référence commandable.", [dossier.selectedSensorId])
+    : isDelegated(dossier, DELEGATED_SENSOR)
+      ? t("À définir avec Standex : aucune gamme n'est présélectionnée.")
+      : t("Aucun capteur choisi, et aucun choix confié à Standex.");
+  const reviewConfiguration = (
+    <div className="panel-block-lg" data-testid="review-configuration">
+      <h3 className="t-title-m">{t("Configuration technique")}</h3>
+      <dl className="review-facts mt-3">
+        <div className="review-fact">
+          <dt className="review-fact-label">{t("Capteur")}</dt>
+          <dd className="t-body" data-testid="review-config-sensor">{reviewSensorText}</dd>
+        </div>
+        {pcbSelected ? (
+          <div className="review-fact">
+            <dt className="review-fact-label">{t("Câble et connexion")}</dt>
+            <dd className="t-body" data-testid="review-config-pcb">
+              {t("Non applicable : capteur pour circuit imprimé.")}
+            </dd>
+          </div>
+        ) : (
+          <>
+            <div className="review-fact">
+              <dt className="review-fact-label">{t("Longueur de câble")}</dt>
+              <dd className="t-body" data-testid="review-config-cable">{reviewCableText}</dd>
+            </div>
+            <div className="review-fact">
+              <dt className="review-fact-label">{t("Connecteur")}</dt>
+              <dd className="t-body" data-testid="review-config-connector">{reviewConnectorText}</dd>
+            </div>
+          </>
+        )}
+      </dl>
+      <button
+        type="button"
+        className="text-link mt-3 min-h-11"
+        onClick={() => goToInlineSection("section-cablage")}
+      >
+        {t("Modifier la configuration")}
+      </button>
+    </div>
+  );
+
   const revueSection = (
     <div className="space-y-5">
       <div>
@@ -4300,7 +4384,7 @@ export function DesignSpace({
             </dl>
           </div>
 
-          {!isPcbSensor(dossier.selectedSensorId) ? optionalQuestions : null}
+          {reviewConfiguration}
 
           <section className="panel-block-lg space-y-4">
             <h3 className="t-title-m">{t("Détails du projet")}</h3>
@@ -4452,7 +4536,63 @@ export function DesignSpace({
       updatedAt: new Date().toISOString(),
     }));
 
+  /** Étape 3 : après le résultat, la configuration câble/connecteur du capteur
+   * RÉELLEMENT retenu. Les mêmes champs et handlers qu'avant (aucun état
+   * dupliqué) ; tout reste facultatif et rien ne bloque la suite. */
+  const pcbSelected = isPcbSensor(dossier.selectedSensorId);
+  const configureSection = (
+    <section
+      id="section-configuration"
+      aria-labelledby="configure-sensor-title"
+      className="space-y-4"
+      data-testid="configure-sensor"
+    >
+      <h2 id="configure-sensor-title" className="t-display-m">
+        {t("Configurer votre capteur")}
+      </h2>
+      {dossier.selectedSensorId ? (
+        <>
+          <p className="t-body">
+            {msg("Vous avez choisi le capteur {0}.", [dossier.selectedSensorId])}
+          </p>
+          {pcbSelected ? (
+            <p className="notice notice-info" data-testid="configure-pcb">
+              {t("Capteur pour circuit imprimé : le câble et le connecteur ne s'appliquent pas.")}
+            </p>
+          ) : (
+            <>
+              <p className="t-body">
+                {t("Voici les possibilités de câble et de connecteur pour ce capteur.")}
+              </p>
+              {optionalQuestions}
+            </>
+          )}
+        </>
+      ) : (
+        <div className="notice notice-info space-y-3" data-testid="configure-no-sensor">
+          <p>
+            {t(
+              "Aucun capteur n'est encore choisi. Choisissez un couple pour configurer son câble et son connecteur.",
+            )}
+          </p>
+          <Button variant="outline" className="min-h-11" onClick={() => setTab("montage")}>
+            {t("Voir les couples proposés")}
+          </Button>
+        </div>
+      )}
+      <div className="flex flex-wrap gap-3">
+        <Button className="min-h-11" onClick={() => setTab("revue")}>
+          {t("Continuer avec Standex →")}
+        </Button>
+        <Button variant="outline" className="min-h-11" onClick={() => setTab("montage")}>
+          {t("Retour aux couples")}
+        </Button>
+      </div>
+    </section>
+  );
+
   const resultatSection = (
+    <div className="space-y-10">
     <ResultView
       pair={latestTestedPair(dossier.testedPairs)}
       // Un point de compatibilité ouvert interdit un résultat positif : la
@@ -4467,6 +4607,13 @@ export function DesignSpace({
       proposals={suggestedPairs}
       onSeePairs={() => setTab("montage")}
       onConfirmWithStandex={() => setTab("revue")}
+      // Le bouton principal d'un résultat documenté mène d'abord à la
+      // configuration ci-dessous, qui porte « Continuer avec Standex ».
+      onContinue={() =>
+        document
+          .getElementById("section-configuration")
+          ?.scrollIntoView({ behavior: "smooth", block: "start" })
+      }
       onRequestTrial={() => {
         if (!isDelegated(dossier, TRIAL_REQUEST)) toggleDelegated(TRIAL_REQUEST);
         setTab("revue");
@@ -4479,6 +4626,8 @@ export function DesignSpace({
         if (card) testPair(card);
       }}
     />
+    {configureSection}
+    </div>
   );
 
   const workshopSection = (
