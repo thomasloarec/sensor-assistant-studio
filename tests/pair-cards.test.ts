@@ -78,10 +78,14 @@ describe("couples proposés — écran d'après les six questions", () => {
     expect(tab).not.toContain("{cablageSection}");
     // La checklist n'est plus affichée : elle ne pilote plus l'écran d'envoi.
     expect(source).not.toContain("{projectSummaryCard}");
-    // Le câble vit dans les questions facultatives de la page « Avec Standex ».
-    const questions = source.slice(source.indexOf("const optionalQuestions"));
-    expect(questions).toContain("{cablageSection}");
-    const revue = source.slice(source.indexOf("const revueSection"));
-    expect(revue).toContain("!isPcbSensor(dossier.selectedSensorId) ? optionalQuestions : null");
+    // Le câble vit dans la configuration de l'étape « Résultat » ; l'étape
+    // « Avec Standex » n'en garde qu'un récapitulatif en lecture seule.
+    const configure = source.slice(source.indexOf("const configureSection"), source.indexOf("const resultatSection"));
+    expect(configure).toContain("{optionalQuestions}");
+    const resultat = source.slice(source.indexOf("const resultatSection"), source.indexOf("const workshopSection"));
+    expect(resultat).toContain("{configureSection}");
+    const revue = source.slice(source.indexOf("const revueSection"), source.indexOf("const configureSection"));
+    expect(revue).not.toContain("optionalQuestions");
+    expect(revue).toContain("{reviewConfiguration}");
   });
 });

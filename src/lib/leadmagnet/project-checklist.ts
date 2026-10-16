@@ -196,7 +196,7 @@ export function projectChecklist(d: DesignDossier): ChecklistItem[] {
       : lengthDecided
         ? lengthText
         : "Longueur non définie : ce n'est pas obligatoire à ce stade.",
-    tab: "revue",
+    tab: "resultat",
     section: "section-cablage",
   };
 
@@ -222,7 +222,7 @@ export function projectChecklist(d: DesignDossier): ChecklistItem[] {
       : connectorValue !== null
         ? `Connecteur retenu : ${connectorValue} — à vérifier par la R&D.`
         : "Aucune préférence de connecteur exprimée.",
-    tab: "revue",
+    tab: "resultat",
     section: "section-cablage",
   };
 

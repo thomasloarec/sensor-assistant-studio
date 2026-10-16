@@ -74,6 +74,7 @@ const { setWebGLSupportForTests } = await import("../src/hooks/use-webgl-slot");
 const { setLocale } = await import("../src/lib/i18n/core");
 const { createDossier, proposeRequirement, confirmRequirement } =
   await import("../src/lib/leadmagnet/dossier");
+const { isPcbSensor } = await import("../src/lib/leadmagnet/product-presentation");
 const { buildDossierExport } = await import("../src/lib/leadmagnet/dossier-io");
 
 const router = createRouter({
@@ -94,6 +95,29 @@ function renderQuestionnaire(width: 390 | 320) {
       <DesignSpace visible />
     </RouterContextProvider>,
   );
+}
+
+/** Retient un capteur par le chemin réel du parcours (carte de couple), puis
+ * ouvre l'étape « Résultat », où vit désormais la configuration câble/connecteur. */
+async function chooseFirstPairAndOpenResult(view: RenderResult, pcb = false) {
+  const goal = view.container.querySelector("#guide-detection_goal");
+  if (!(goal instanceof HTMLTextAreaElement)) throw new Error("Question 1 absente");
+  await act(async () => changeValue(goal, "Détecter le niveau de liquide dans une cuve"));
+  await act(async () => fireEvent.click(view.getByRole("button", { name: /2\. Couples proposés/ })));
+  const more = await waitFor(() => view.getByRole("button", { name: /Voir tous les couples possibles/ }), { timeout: 15000 });
+  await act(async () => fireEvent.click(more));
+  const card = await waitFor(
+    () => {
+      const found = view
+        .getAllByTestId("pair-card")
+        .find((c) => isPcbSensor(c.getAttribute("data-sensor-id")) === pcb);
+      if (!found) throw new Error("Aucune carte de couple adaptée");
+      return found;
+    },
+    { timeout: 15000 },
+  );
+  await act(async () => fireEvent.click(within(card).getByRole("button", { name: "Tester ce couple →" })));
+  await act(async () => fireEvent.click(view.getByRole("button", { name: /3\. Résultat/ })));
 }
 
 function continueButton(view: RenderResult) {
@@ -220,7 +244,7 @@ describe("Connecteurs compacts — état réel du questionnaire", () => {
 
   test("préférence, sélection, sources repliées et conservation après fermeture", async () => {
     const view = renderQuestionnaire(390);
-    await act(async () => fireEvent.click(view.getByRole("button", { name: /4\. Avec Standex/ })));
+    await chooseFirstPairAndOpenResult(view);
     const choices = within(view.getByTestId("connector-choice"));
     expect(choices.getByRole("button", { name: "Je ne sais pas" }).getAttribute("aria-pressed")).toBe("true");
     expect(view.queryByTestId("connector-choices")).toBeNull();
@@ -609,4 +633,93 @@ describe("rendu du questionnaire guidé", () => {
     expect(view.getByText("回答")).toBeTruthy();
     expect(view.getByRole("button", { name: "次の例" })).toBeTruthy();
   });
+});
+
+describe("Configuration câble/connecteur déplacée à l'étape « Résultat »", () => {
+  const stepButton = (view: RenderResult, re: RegExp) => view.getByRole("button", { name: re });
+
+  test("configuration interactive en Résultat seulement ; récapitulatif en lecture seule en Avec Standex", async () => {
+    const view = renderQuestionnaire(390);
+    await chooseFirstPairAndOpenResult(view);
+    const config = view.getByTestId("configure-sensor");
+    const sensorId = config.textContent?.match(/capteur (\S+)\./)?.[1] ?? "";
+    expect(sensorId).not.toBe("");
+    expect(within(config).getByTestId("connector-choice")).toBeTruthy();
+    expect(view.container.querySelector("#section-cablage")).not.toBeNull();
+    // Longueur standard : les options viennent de standardLengthsMm pour CE capteur.
+    const { standardLengthsMm } = await import("../src/lib/leadmagnet/cable-options");
+    await act(async () => fireEvent.click(within(config).getByRole("button", { name: "Standard" })));
+    const select = view.container.querySelector("#standard-length") as HTMLSelectElement;
+    const options = [...select.options].map((o) => o.value).filter(Boolean).map(Number);
+    expect(options).toEqual([...standardLengthsMm(sensorId)]);
+    const first = options[0]!;
+    await act(async () => fireEvent.change(select, { target: { value: String(first) } }));
+    await act(async () => fireEvent.click(within(config).getByRole("button", { name: "Pas besoin de connecteur" })));
+    await act(async () => fireEvent.click(within(config).getByRole("button", { name: "Continuer avec Standex →" })));
+    expect(stepButton(view, /4\. Avec Standex/).getAttribute("aria-current")).toBe("step");
+    // Aucun champ éditable de câble/connecteur dans l'étape 4.
+    expect(view.queryByTestId("connector-choice")).toBeNull();
+    expect(view.container.querySelector("#standard-length, #custom-length, #section-cablage")).toBeNull();
+    const summary = view.getByTestId("review-configuration");
+    expect(summary.querySelector("input, select, textarea")).toBeNull();
+    expect(view.getByTestId("review-config-sensor").textContent).toContain(`Gamme ${sensorId}, pas encore une référence commandable.`);
+    expect(view.getByTestId("review-config-cable").textContent).toBe(`Standard — ${first} mm, à confirmer par Standex.`);
+    expect(view.getByTestId("review-config-connector").textContent).toBe("Fils nus, sans connecteur");
+    // « Modifier la configuration » ramène à l'étape 3, choix conservés.
+    await act(async () => fireEvent.click(within(summary).getByRole("button", { name: "Modifier la configuration" })));
+    expect(stepButton(view, /3\. Résultat/).getAttribute("aria-current")).toBe("step");
+    expect((view.container.querySelector("#standard-length") as HTMLSelectElement).value).toBe(String(first));
+  }, 30000);
+
+  test("trois branches connecteur, longueur sur mesure et délégation reflétées en lecture seule", async () => {
+    const view = renderQuestionnaire(390);
+    await chooseFirstPairAndOpenResult(view);
+    const choices = () => within(view.getByTestId("connector-choice"));
+    const config = () => within(view.getByTestId("configure-sensor"));
+    const readConnector = async () => {
+      await act(async () => fireEvent.click(stepButton(view, /4\. Avec Standex/)));
+      const text = view.getByTestId("review-config-connector").textContent;
+      await act(async () => fireEvent.click(stepButton(view, /3\. Résultat/)));
+      return text;
+    };
+    // Défaut : aucune décision, jamais présenté comme « fils nus ».
+    expect(await readConnector()).toBe("Aucune préférence de connecteur exprimée.");
+    await act(async () => fireEvent.click(choices().getByRole("button", { name: "Je ne sais pas" })));
+    expect(await readConnector()).toBe("Choix du connecteur confié à Standex.");
+    await act(async () => fireEvent.click(choices().getByRole("button", { name: "J'ai une préférence" })));
+    await act(async () => fireEvent.click(view.getByRole("button", { name: "JST PHR-2" })));
+    expect(await readConnector()).toMatch(/^JST .*PHR-2.* — à vérifier par les ingénieurs Standex\.$/);
+    await act(async () => fireEvent.click(choices().getByRole("button", { name: "Pas besoin de connecteur" })));
+    expect(await readConnector()).toBe("Fils nus, sans connecteur");
+
+    await act(async () => fireEvent.click(config().getByRole("button", { name: "Sur mesure" })));
+    const custom = view.container.querySelector("#custom-length") as HTMLInputElement;
+    await act(async () => changeValue(custom, "42.5"));
+    await act(async () => fireEvent.click(stepButton(view, /4\. Avec Standex/)));
+    expect(view.getByTestId("review-config-cable").textContent).toBe("Sur mesure — 425 mm, à confirmer par Standex.");
+    await act(async () => fireEvent.click(stepButton(view, /3\. Résultat/)));
+    await act(async () => fireEvent.click(config().getAllByRole("button", { name: "Je ne sais pas" })[0]!));
+    await act(async () => fireEvent.click(stepButton(view, /4\. Avec Standex/)));
+    expect(view.getByTestId("review-config-cable").textContent).toBe("Longueur à définir avec Standex.");
+  }, 30000);
+
+  test("capteur pour circuit imprimé : câble et connecteur non applicables", async () => {
+    const view = renderQuestionnaire(390);
+    await chooseFirstPairAndOpenResult(view, true);
+    expect(view.getByTestId("configure-pcb")).toBeTruthy();
+    expect(view.queryByTestId("connector-choice")).toBeNull();
+    await act(async () => fireEvent.click(stepButton(view, /4\. Avec Standex/)));
+    expect(view.getByTestId("review-config-pcb").textContent).toBe("Non applicable : capteur pour circuit imprimé.");
+    expect(view.queryByTestId("review-config-cable")).toBeNull();
+  }, 30000);
+
+  test("sans capteur : invitation à choisir, jamais un capteur prétendu choisi", async () => {
+    const view = renderQuestionnaire(390);
+    await act(async () => fireEvent.click(stepButton(view, /3\. Résultat/)));
+    expect(view.getByTestId("configure-no-sensor")).toBeTruthy();
+    expect(view.queryByTestId("connector-choice")).toBeNull();
+    expect(view.getByTestId("configure-sensor").textContent).not.toContain("Vous avez choisi");
+    await act(async () => fireEvent.click(stepButton(view, /4\. Avec Standex/)));
+    expect(view.getByTestId("review-config-sensor").textContent).toBe("Aucun capteur choisi, et aucun choix confié à Standex.");
+  }, 30000);
 });
