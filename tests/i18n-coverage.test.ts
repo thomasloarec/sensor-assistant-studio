@@ -95,7 +95,8 @@ describe("Couverture des langues de l'interface", () => {
     // + 10 entrées : points de validation (aimant intégré, acier, blindage, aimants voisins, deux sorties) et revue Hall linéaire.
     // + 22 entrées (lot 1 retours manuels 2026-10-13) : raisons de classement, puces paramétrées, alertes thermiques courtes, filetage, dimensions détectées, aimant intégré ; texte deux sorties remplacé.
     // + 1 compact orientation label; explicit perpendicular accessible name retained.
-    expect(Object.keys(dictionary)).toHaveLength(3_361);
+    // + 13 entrées : configuration câble/connecteur déplacée à l'étape « Résultat » et récapitulatif en lecture seule.
+    expect(Object.keys(dictionary)).toHaveLength(3_374);
     const broken = Object.entries(dictionary).filter(
       ([, v]) => v.length !== 7 || v.some((x) => typeof x !== "string" || x.trim() === ""),
     );
