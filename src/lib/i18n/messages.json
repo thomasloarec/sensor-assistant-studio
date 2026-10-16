@@ -2294,15 +2294,6 @@
     "Nessun sensore documentato corrisponde a questi filtri. L'opzione su misura resta aperta.",
     "これらの条件に合う資料済みセンサーはありません。カスタム対応は引き続き可能です。"
   ],
-  "Aucun capteur n'est encore choisi. Choisissez un couple pour configurer son câble et son connecteur.": [
-    "No sensor has been chosen yet. Choose a pair to configure its cable and connector.",
-    "尚未选择传感器。请选择一个组合以配置其电缆和连接器。",
-    "Noch kein Sensor gewählt. Wählen Sie ein Paar, um Kabel und Steckverbinder zu konfigurieren.",
-    "Aún no se ha elegido ningún sensor. Elija una pareja para configurar su cable y su conector.",
-    "Датчик ещё не выбран. Выберите пару, чтобы настроить кабель и разъём.",
-    "Nessun sensore è ancora scelto. Scelga una coppia per configurarne cavo e connettore.",
-    "まだセンサーが選択されていません。組み合わせを選んでケーブルとコネクタを設定してください。"
-  ],
   "Aucun capteur ne correspond à cette recherche.": [
     "No sensors match your search.",
     "没有符合搜索条件的传感器。",
@@ -3761,15 +3752,6 @@
     "Sensore all’esterno del cilindro in un foro Ø 8 mm; fissaggio da definire.",
     "シリンダー外側の直径8 mmの穴に配置。保持方法は未定。"
   ],
-  "Capteur pour circuit imprimé : le câble et le connecteur ne s'appliquent pas.": [
-    "PCB-mounted sensor: cable and connector do not apply.",
-    "印刷电路板传感器：电缆和连接器不适用。",
-    "Leiterplattensensor: Kabel und Steckverbinder entfallen.",
-    "Sensor para circuito impreso: el cable y el conector no se aplican.",
-    "Датчик для печатной платы: кабель и разъём не применяются.",
-    "Sensore per circuito stampato: cavo e connettore non si applicano.",
-    "基板実装センサー：ケーブルとコネクタは対象外です。"
-  ],
   "Capteur reed (signal de position)": [
     "Reed sensor (position signal)",
     "干簧管传感器（位置信号）",
@@ -4894,15 +4876,6 @@
     "Идеальное поле",
     "Campo ideale",
     "理想磁場"
-  ],
-  "Champ magnétique": [
-    "Magnetic field",
-    "磁场",
-    "Magnetfeld",
-    "Campo magnético",
-    "Магнитное поле",
-    "Campo magnetico",
-    "磁場"
   ],
   "Champs manquants prioritaires": [
     "Priority missing fields",
@@ -6137,33 +6110,6 @@
     "Configurazione del montaggio",
     "組付け構成"
   ],
-  "Configuration technique": [
-    "Technical configuration",
-    "技术配置",
-    "Technische Konfiguration",
-    "Configuración técnica",
-    "Техническая конфигурация",
-    "Configurazione tecnica",
-    "技術構成"
-  ],
-  "Configurer votre capteur": [
-    "Configure your sensor",
-    "配置您的传感器",
-    "Ihren Sensor konfigurieren",
-    "Configure su sensor",
-    "Настройте ваш датчик",
-    "Configuri il suo sensore",
-    "センサーを設定する"
-  ],
-  "Configurer votre capteur →": [
-    "Configure your sensor →",
-    "配置您的传感器 →",
-    "Ihren Sensor konfigurieren →",
-    "Configure su sensor →",
-    "Настроить датчик →",
-    "Configuri il suo sensore →",
-    "センサーを設定する →"
-  ],
   "Confirmer": [
     "Confirm",
     "确认",
@@ -6838,15 +6784,6 @@
     "Продолжить",
     "Continua",
     "次へ"
-  ],
-  "Continuer avec Standex →": [
-    "Continue with Standex →",
-    "继续与 Standex 沟通 →",
-    "Weiter mit Standex →",
-    "Continuar con Standex →",
-    "Продолжить со Standex →",
-    "Continuare con Standex →",
-    "Standex と続ける →"
   ],
   "Continuer l'édition": [
     "Continue editing",
@@ -11528,15 +11465,6 @@
     "Gamma documentata; il codice esatto viene stabilito dopo la revisione R&D.",
     "文書化された製品ファミリー。正確な型番は R&D レビュー後に決定されます。"
   ],
-  "Gamme {0}, pas encore une référence commandable.": [
-    "{0} range, not yet an orderable part number.",
-    "{0} 系列，尚非可订购型号。",
-    "Baureihe {0}, noch keine bestellbare Artikelnummer.",
-    "Gama {0}, todavía no es una referencia pedible.",
-    "Серия {0}, ещё не артикул для заказа.",
-    "Gamma {0}, non ancora un codice ordinabile.",
-    "{0} シリーズ。まだ注文可能な型番ではありません。"
-  ],
   "Garde-fous": [
     "Guardrails",
     "限制条件",
@@ -16037,15 +15965,6 @@
     "Modifica questa risposta",
     "この回答を修正"
   ],
-  "Modifier la configuration": [
-    "Edit the configuration",
-    "修改配置",
-    "Konfiguration ändern",
-    "Modificar la configuración",
-    "Изменить конфигурацию",
-    "Modificare la configurazione",
-    "構成を変更する"
-  ],
   "Modifier la fiche": [
     "Edit the record",
     "编辑资料",
@@ -16882,15 +16801,6 @@
     "Нет",
     "No",
     "いいえ"
-  ],
-  "Non applicable : capteur pour circuit imprimé.": [
-    "Not applicable: PCB-mounted sensor.",
-    "不适用：印刷电路板传感器。",
-    "Entfällt: Leiterplattensensor.",
-    "No aplicable: sensor para circuito impreso.",
-    "Не применимо: датчик для печатной платы.",
-    "Non applicabile: sensore per circuito stampato.",
-    "対象外：基板実装センサーです。"
   ],
   "Non authentifié : session testeur invalide ou expirée.": [
     "Not authenticated: tester session invalid or expired.",
@@ -18124,6 +18034,15 @@
     "Проницаемость материала",
     "Permeabilità del materiale",
     "材料の透磁率"
+  ],
+  "À 90°": [
+    "At 90°",
+    "90°",
+    "90°",
+    "A 90°",
+    "На 90°",
+    "A 90°",
+    "90°"
   ],
   "Perpendiculaire": [
     "Perpendicular",
@@ -25424,15 +25343,6 @@
     "Ecco cosa riceveranno i nostri ingegneri. Nulla parte senza il vostro clic.",
     "これがエンジニアに届く内容です。クリックしない限り何も送信されません。"
   ],
-  "Voici les possibilités de câble et de connecteur pour ce capteur.": [
-    "Here are the cable and connector options for this sensor.",
-    "以下是该传感器的电缆和连接器选项。",
-    "Hier sind die Kabel- und Steckverbinderoptionen für diesen Sensor.",
-    "Estas son las opciones de cable y conector para este sensor.",
-    "Вот варианты кабеля и разъёма для этого датчика.",
-    "Ecco le possibilità di cavo e connettore per questo sensore.",
-    "このセンサーのケーブルとコネクタの選択肢です。"
-  ],
   "Voie distributeur": [
     "Distributor route",
     "经销商渠道",
@@ -25630,6 +25540,15 @@
     "Посмотреть подробности",
     "Vedi i dettagli",
     "詳細を見る"
+  ],
+  "Champ magnétique": [
+    "Magnetic field",
+    "磁场",
+    "Magnetfeld",
+    "Campo magnético",
+    "Магнитное поле",
+    "Campo magnetico",
+    "磁場"
   ],
   "Voir tous les couples possibles ({0})": [
     "See all possible pairs ({0})",
@@ -26116,15 +26035,6 @@
     "Вы выбрали зачищенные провода без разъёма. Этот выбор сохраняется как есть: он не передаётся Standex и отображается в сводке вашего проекта.",
     "Ha scelto fili nudi, senza connettore. Questa scelta è registrata come tale: non è affidata a Standex e appare nel riepilogo del suo progetto.",
     "コネクターなしの裸線を選択しました。この選択はそのまま記録されます。Standex に委ねられることはなく、プロジェクトの要約に表示されます。"
-  ],
-  "Vous avez choisi le capteur {0}.": [
-    "You have chosen the {0} sensor.",
-    "您已选择传感器 {0}。",
-    "Sie haben den Sensor {0} gewählt.",
-    "Ha elegido el sensor {0}.",
-    "Вы выбрали датчик {0}.",
-    "Ha scelto il sensore {0}.",
-    "センサー {0} を選択しました。"
   ],
   "Vous avez terminé la présentation de votre projet. Merci pour ces informations : un membre de l’équipe Standex reviendra très rapidement vers vous pour préparer la suite ensemble.": [
     "You have completed your project presentation. Thank you for the information: a member of the Standex team will get back to you very soon to plan the next steps together.",
@@ -29267,15 +29177,6 @@
     "{0} mm tip.",
     "{0} mm 代表値"
   ],
-  "{0} mm, à confirmer par Standex.": [
-    "{0} mm, to be confirmed by Standex.",
-    "{0} mm，待 Standex 确认。",
-    "{0} mm, von Standex zu bestätigen.",
-    "{0} mm, a confirmar por Standex.",
-    "{0} мм, требует подтверждения Standex.",
-    "{0} mm, da confermare da Standex.",
-    "{0} mm、Standex による確認が必要です。"
-  ],
   "{0} ou {1}": [
     "{0} or {1}",
     "{0} 或 {1}",
@@ -29365,15 +29266,6 @@
     "Обработано {0} из {1} шагов. На данном этапе техническая проверка не проводилась.",
     "{0} passaggio/i completato/i su {1}. Nulla è tecnicamente convalidato in questa fase.",
     "{1} 件中 {0} 件のステップが処理済み。この段階では技術的な検証は行われていません。"
-  ],
-  "{0} — à vérifier par les ingénieurs Standex.": [
-    "{0} — to be checked by Standex engineers.",
-    "{0} — 待 Standex 工程师核实。",
-    "{0} — von Standex-Ingenieuren zu prüfen.",
-    "{0} — a verificar por los ingenieros de Standex.",
-    "{0} — требует проверки инженерами Standex.",
-    "{0} — da verificare dagli ingegneri Standex.",
-    "{0} — Standex のエンジニアによる確認が必要です。"
   ],
   "{0}. Testez-les dans votre montage.": [
     "{0}. Test them in your assembly.",
@@ -29518,15 +29410,6 @@
     "· Недостающие обязательные элементы:",
     "· Elementi obbligatori mancanti:",
     "· 必須項目の不足："
-  ],
-  "À 90°": [
-    "At 90°",
-    "90°",
-    "90°",
-    "A 90°",
-    "На 90°",
-    "A 90°",
-    "90°"
   ],
   "À L'INTÉRIEUR DU CAPTEUR": [
     "INSIDE THE SENSOR",
@@ -30364,5 +30247,122 @@
     "…. Изменение, внесенное здесь, ни в коем случае не считается опубликованным отзывом.",
     "…. Una modifica apportata qui non vale mai come riscontro pubblicato.",
     "…。ここで行われた変更は公開されたフィードバックとはみなされません。"
+  ],
+  "Configurer votre capteur": [
+    "Configure your sensor",
+    "配置您的传感器",
+    "Ihren Sensor konfigurieren",
+    "Configure su sensor",
+    "Настройте ваш датчик",
+    "Configuri il suo sensore",
+    "センサーを設定する"
+  ],
+  "Configurer votre capteur →": [
+    "Configure your sensor →",
+    "配置您的传感器 →",
+    "Ihren Sensor konfigurieren →",
+    "Configure su sensor →",
+    "Настроить датчик →",
+    "Configuri il suo sensore →",
+    "センサーを設定する →"
+  ],
+  "Vous avez choisi le capteur {0}.": [
+    "You have chosen the {0} sensor.",
+    "您已选择传感器 {0}。",
+    "Sie haben den Sensor {0} gewählt.",
+    "Ha elegido el sensor {0}.",
+    "Вы выбрали датчик {0}.",
+    "Ha scelto il sensore {0}.",
+    "センサー {0} を選択しました。"
+  ],
+  "Capteur pour circuit imprimé : le câble et le connecteur ne s'appliquent pas.": [
+    "PCB-mounted sensor: cable and connector do not apply.",
+    "印刷电路板传感器：电缆和连接器不适用。",
+    "Leiterplattensensor: Kabel und Steckverbinder entfallen.",
+    "Sensor para circuito impreso: el cable y el conector no se aplican.",
+    "Датчик для печатной платы: кабель и разъём не применяются.",
+    "Sensore per circuito stampato: cavo e connettore non si applicano.",
+    "基板実装センサー：ケーブルとコネクタは対象外です。"
+  ],
+  "Voici les possibilités de câble et de connecteur pour ce capteur.": [
+    "Here are the cable and connector options for this sensor.",
+    "以下是该传感器的电缆和连接器选项。",
+    "Hier sind die Kabel- und Steckverbinderoptionen für diesen Sensor.",
+    "Estas son las opciones de cable y conector para este sensor.",
+    "Вот варианты кабеля и разъёма для этого датчика.",
+    "Ecco le possibilità di cavo e connettore per questo sensore.",
+    "このセンサーのケーブルとコネクタの選択肢です。"
+  ],
+  "Aucun capteur n'est encore choisi. Choisissez un couple pour configurer son câble et son connecteur.": [
+    "No sensor has been chosen yet. Choose a pair to configure its cable and connector.",
+    "尚未选择传感器。请选择一个组合以配置其电缆和连接器。",
+    "Noch kein Sensor gewählt. Wählen Sie ein Paar, um Kabel und Steckverbinder zu konfigurieren.",
+    "Aún no se ha elegido ningún sensor. Elija una pareja para configurar su cable y su conector.",
+    "Датчик ещё не выбран. Выберите пару, чтобы настроить кабель и разъём.",
+    "Nessun sensore è ancora scelto. Scelga una coppia per configurarne cavo e connettore.",
+    "まだセンサーが選択されていません。組み合わせを選んでケーブルとコネクタを設定してください。"
+  ],
+  "Continuer avec Standex →": [
+    "Continue with Standex →",
+    "继续与 Standex 沟通 →",
+    "Weiter mit Standex →",
+    "Continuar con Standex →",
+    "Продолжить со Standex →",
+    "Continuare con Standex →",
+    "Standex と続ける →"
+  ],
+  "{0} mm, à confirmer par Standex.": [
+    "{0} mm, to be confirmed by Standex.",
+    "{0} mm，待 Standex 确认。",
+    "{0} mm, von Standex zu bestätigen.",
+    "{0} mm, a confirmar por Standex.",
+    "{0} мм, требует подтверждения Standex.",
+    "{0} mm, da confermare da Standex.",
+    "{0} mm、Standex による確認が必要です。"
+  ],
+  "{0} — à vérifier par les ingénieurs Standex.": [
+    "{0} — to be checked by Standex engineers.",
+    "{0} — 待 Standex 工程师核实。",
+    "{0} — von Standex-Ingenieuren zu prüfen.",
+    "{0} — a verificar por los ingenieros de Standex.",
+    "{0} — требует проверки инженерами Standex.",
+    "{0} — da verificare dagli ingegneri Standex.",
+    "{0} — Standex のエンジニアによる確認が必要です。"
+  ],
+  "Gamme {0}, pas encore une référence commandable.": [
+    "{0} range, not yet an orderable part number.",
+    "{0} 系列，尚非可订购型号。",
+    "Baureihe {0}, noch keine bestellbare Artikelnummer.",
+    "Gama {0}, todavía no es una referencia pedible.",
+    "Серия {0}, ещё не артикул для заказа.",
+    "Gamma {0}, non ancora un codice ordinabile.",
+    "{0} シリーズ。まだ注文可能な型番ではありません。"
+  ],
+  "Configuration technique": [
+    "Technical configuration",
+    "技术配置",
+    "Technische Konfiguration",
+    "Configuración técnica",
+    "Техническая конфигурация",
+    "Configurazione tecnica",
+    "技術構成"
+  ],
+  "Non applicable : capteur pour circuit imprimé.": [
+    "Not applicable: PCB-mounted sensor.",
+    "不适用：印刷电路板传感器。",
+    "Entfällt: Leiterplattensensor.",
+    "No aplicable: sensor para circuito impreso.",
+    "Не применимо: датчик для печатной платы.",
+    "Non applicabile: sensore per circuito stampato.",
+    "対象外：基板実装センサーです。"
+  ],
+  "Modifier la configuration": [
+    "Edit the configuration",
+    "修改配置",
+    "Konfiguration ändern",
+    "Modificar la configuración",
+    "Изменить конфигурацию",
+    "Modificare la configurazione",
+    "構成を変更する"
   ]
 }
