@@ -22,7 +22,7 @@ describe("en-tête des panneaux : marque et nom de l'outil (point 11)", () => {
 
 describe("outil de pointage du câble : réservé au pointage actif", () => {
   // La navigation en quatre étapes a disparu de l'atelier recadré : le
-  // configurateur de câble vit dans « Avec Standex ». Le pointage 3D reste
+  // configurateur de câble vit dans l'étape « Résultat ». Le pointage 3D reste
   // disponible depuis les réglages avancés et n'apparaît dans la scène que
   // lorsqu'il est RÉELLEMENT actif.
   test("le bloc n'est rendu que lorsque le pointage est actif", () => {
