@@ -4266,9 +4266,9 @@ export function DesignSpace({
   const reviewLengthMm = dossier.workshop?.cableLengthMm ?? null;
   const reviewLengthKind =
     cabling.lengthChoice === "standard_to_confirm"
-      ? "Standard"
+      ? t("Standard")
       : cabling.lengthChoice === "custom_to_confirm"
-        ? "Sur mesure"
+        ? t("Sur mesure")
         : null;
   const reviewCableText = !cableItem
     ? ""
@@ -4277,8 +4277,8 @@ export function DesignSpace({
       : cableItem.state === "todo"
         ? t("Longueur non définie : ce n'est pas obligatoire à ce stade.")
         : reviewLengthMm !== null
-          ? `${reviewLengthKind ? `${t(reviewLengthKind)} — ` : ""}${msg("{0} mm, à confirmer par Standex.", [reviewLengthMm])}`
-          : reviewLengthKind === "Standard"
+          ? `${reviewLengthKind ? `${reviewLengthKind} — ` : ""}${msg("{0} mm, à confirmer par Standex.", [reviewLengthMm])}`
+          : cabling.lengthChoice === "standard_to_confirm"
             ? t("Longueur de gamme, valeur exacte à confirmer en revue.")
             : t("Longueur sur mesure, valeur exacte à confirmer en revue.");
   const reviewTermination = dossier.termination;
