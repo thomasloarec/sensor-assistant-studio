@@ -698,7 +698,7 @@ describe("Configuration câble/connecteur déplacée à l'étape « Résultat »
     await act(async () => fireEvent.click(stepButton(view, /4\. Avec Standex/)));
     expect(view.getByTestId("review-config-cable").textContent).toBe("Sur mesure — 425 mm, à confirmer par Standex.");
     await act(async () => fireEvent.click(stepButton(view, /3\. Résultat/)));
-    await act(async () => fireEvent.click(config().getByRole("button", { name: "Je ne sais pas" })));
+    await act(async () => fireEvent.click(config().getAllByRole("button", { name: "Je ne sais pas" })[0]!));
     await act(async () => fireEvent.click(stepButton(view, /4\. Avec Standex/)));
     expect(view.getByTestId("review-config-cable").textContent).toBe("Longueur à définir avec Standex.");
   }, 30000);
