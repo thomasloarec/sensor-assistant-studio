@@ -102,14 +102,14 @@ function renderQuestionnaire(width: 390 | 320) {
 async function chooseFirstPairAndOpenResult(view: RenderResult, pcb = false) {
   const goal = view.container.querySelector("#guide-detection_goal");
   if (!(goal instanceof HTMLTextAreaElement)) throw new Error("Question 1 absente");
-  await act(async () => changeValue(goal, "Détecter la fermeture d'une porte"));
+  await act(async () => changeValue(goal, "Détecter le niveau de liquide dans une cuve"));
   await act(async () => fireEvent.click(view.getByRole("button", { name: /2\. Couples proposés/ })));
   const card = await waitFor(
     () => {
       const found = view
         .getAllByTestId("pair-card")
         .find((c) => isPcbSensor(c.getAttribute("data-sensor-id")) === pcb);
-      if (!found) throw new Error("Aucune carte de couple adaptée");
+      if (!found) throw new Error("Aucune carte: " + view.getAllByTestId("pair-card").map((c) => c.getAttribute("data-sensor-id")).join(","));
       return found;
     },
     { timeout: 15000 },
