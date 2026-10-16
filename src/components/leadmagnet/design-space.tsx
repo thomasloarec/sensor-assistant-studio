@@ -2695,6 +2695,7 @@ export function DesignSpace({
       <div
         key={card.sensorId}
         data-testid="pair-card"
+        data-sensor-id={card.sensorId}
         className={`surface-interactive p-5 ${chosen ? "candidate-selected" : ""}`}
       >
         <PairThumbnail

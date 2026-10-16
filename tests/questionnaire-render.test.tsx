@@ -74,6 +74,7 @@ const { setWebGLSupportForTests } = await import("../src/hooks/use-webgl-slot");
 const { setLocale } = await import("../src/lib/i18n/core");
 const { createDossier, proposeRequirement, confirmRequirement } =
   await import("../src/lib/leadmagnet/dossier");
+const { isPcbSensor } = await import("../src/lib/leadmagnet/product-presentation");
 const { buildDossierExport } = await import("../src/lib/leadmagnet/dossier-io");
 
 const router = createRouter({
@@ -98,12 +99,21 @@ function renderQuestionnaire(width: 390 | 320) {
 
 /** Retient un capteur par le chemin réel du parcours (carte de couple), puis
  * ouvre l'étape « Résultat », où vit désormais la configuration câble/connecteur. */
-async function chooseFirstPairAndOpenResult(view: RenderResult) {
+async function chooseFirstPairAndOpenResult(view: RenderResult, pcb = false) {
   const goal = view.container.querySelector("#guide-detection_goal");
   if (!(goal instanceof HTMLTextAreaElement)) throw new Error("Question 1 absente");
   await act(async () => changeValue(goal, "Détecter la fermeture d'une porte"));
   await act(async () => fireEvent.click(view.getByRole("button", { name: /2\. Couples proposés/ })));
-  const card = await waitFor(() => view.getAllByTestId("pair-card")[0]!, { timeout: 15000 });
+  const card = await waitFor(
+    () => {
+      const found = view
+        .getAllByTestId("pair-card")
+        .find((c) => isPcbSensor(c.getAttribute("data-sensor-id")) === pcb);
+      if (!found) throw new Error("Aucune carte de couple adaptée");
+      return found;
+    },
+    { timeout: 15000 },
+  );
   await act(async () => fireEvent.click(within(card).getByRole("button", { name: "Tester ce couple →" })));
   await act(async () => fireEvent.click(view.getByRole("button", { name: /3\. Résultat/ })));
 }
@@ -233,7 +243,6 @@ describe("Connecteurs compacts — état réel du questionnaire", () => {
   test("préférence, sélection, sources repliées et conservation après fermeture", async () => {
     const view = renderQuestionnaire(390);
     await chooseFirstPairAndOpenResult(view);
-    console.log("DBG", view.queryByTestId("configure-sensor")?.textContent?.slice(0,300));
     const choices = within(view.getByTestId("connector-choice"));
     expect(choices.getByRole("button", { name: "Je ne sais pas" }).getAttribute("aria-pressed")).toBe("true");
     expect(view.queryByTestId("connector-choices")).toBeNull();
