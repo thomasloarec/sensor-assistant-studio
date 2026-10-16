@@ -100,7 +100,8 @@ function renderQuestionnaire(width: 390 | 320) {
  * ouvre l'étape « Résultat », où vit désormais la configuration câble/connecteur. */
 async function chooseFirstPairAndOpenResult(view: RenderResult) {
   await act(async () => fireEvent.click(view.getByRole("button", { name: /2\. Couples proposés/ })));
-  const card = await waitFor(() => view.getAllByTestId("pair-card")[0]!, { timeout: 15000 });
+  await new Promise((r) => setTimeout(r, 1500)); console.log("DBG", view.container.textContent?.slice(0, 1500));
+  const card = await waitFor(() => view.getAllByTestId("pair-card")[0]!, { timeout: 3000 });
   await act(async () => fireEvent.click(within(card).getByRole("button", { name: "Tester ce couple →" })));
   await act(async () => fireEvent.click(view.getByRole("button", { name: /3\. Résultat/ })));
 }
