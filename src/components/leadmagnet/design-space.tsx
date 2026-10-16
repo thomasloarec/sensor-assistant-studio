@@ -3585,14 +3585,14 @@ export function DesignSpace({
     });
   };
 
-  /** Carte de résumé PARTAGÉE entre « Mon montage » et « Avec Standex ».
+  /** États partagés entre « Résultat » et le récapitulatif « Avec Standex ».
    * Aucun pourcentage automatique, aucune case cochée parce qu'un objet par
    * défaut existe : une délégation est une étape traitée, pas une validation. */
   const checklist = projectChecklist(dossier);
   const checklistState = checklistProgress(checklist);
 
   /** Onglet 2 : les COUPLES à tester, et rien au-dessus. Le placement se fait
-   * dans l'atelier, le câble est dans « Avec Standex », le résumé de projet
+   * dans l'atelier, le câble est dans « Résultat », le résumé de projet
    * reste dans « Avec Standex ». Le mode réglages détaillés garde ses champs. */
   const montageSection = (
     <div className="space-y-4">
@@ -4260,6 +4260,7 @@ export function DesignSpace({
   /** Étape 4 : la configuration technique en LECTURE SEULE. Les états viennent
    * de la checklist partagée : une terminaison par défaut n'y vaut jamais un
    * choix, et une longueur de gamme n'est jamais présentée comme une MPN. */
+  const pcbSelected = isPcbSensor(dossier.selectedSensorId);
   const cableItem = checklist.find((i) => i.id === "cable");
   const connectorItem = checklist.find((i) => i.id === "connecteur");
   const reviewLengthMm = dossier.workshop?.cableLengthMm ?? null;
@@ -4539,7 +4540,6 @@ export function DesignSpace({
   /** Étape 3 : après le résultat, la configuration câble/connecteur du capteur
    * RÉELLEMENT retenu. Les mêmes champs et handlers qu'avant (aucun état
    * dupliqué) ; tout reste facultatif et rien ne bloque la suite. */
-  const pcbSelected = isPcbSensor(dossier.selectedSensorId);
   const configureSection = (
     <section
       id="section-configuration"

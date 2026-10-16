@@ -108,6 +108,8 @@ export interface ResultViewProps {
   proposals: readonly PairCard[];
   onSeePairs: () => void;
   onConfirmWithStandex: () => void;
+  /** Parcours simplifié : mène à la configuration câble/connecteur avant l'envoi. */
+  onContinue?: () => void;
   onRequestTrial: () => void;
   onReplaceMagnet: () => void;
   onTestPair: (sensorId: string) => void;
@@ -123,6 +125,7 @@ export function ResultView({
   proposals,
   onSeePairs,
   onConfirmWithStandex,
+  onContinue,
   onRequestTrial,
   onReplaceMagnet,
   onTestPair,
@@ -245,8 +248,8 @@ export function ResultView({
               </p>
             </div>
             <div className="flex flex-wrap gap-3">
-              <Button className="min-h-11" onClick={onConfirmWithStandex}>
-                {t("Confirmer avec Standex →")}
+              <Button className="min-h-11" onClick={onContinue ?? onConfirmWithStandex}>
+                {onContinue ? t("Configurer votre capteur →") : t("Confirmer avec Standex →")}
               </Button>
               <Button variant="outline" className="min-h-11" onClick={onSeePairs}>
                 {t("Tester un autre couple")}
