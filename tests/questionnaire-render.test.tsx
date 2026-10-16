@@ -96,6 +96,15 @@ function renderQuestionnaire(width: 390 | 320) {
   );
 }
 
+/** Retient un capteur par le chemin réel du parcours (carte de couple), puis
+ * ouvre l'étape « Résultat », où vit désormais la configuration câble/connecteur. */
+async function chooseFirstPairAndOpenResult(view: RenderResult) {
+  await act(async () => fireEvent.click(view.getByRole("button", { name: /2\. Couples proposés/ })));
+  const card = await waitFor(() => view.getAllByTestId("pair-card")[0]!, { timeout: 15000 });
+  await act(async () => fireEvent.click(within(card).getByRole("button", { name: "Tester ce couple →" })));
+  await act(async () => fireEvent.click(view.getByRole("button", { name: /3\. Résultat/ })));
+}
+
 function continueButton(view: RenderResult) {
   return view.getByRole("button", { name: "Continuer" });
 }
@@ -220,7 +229,7 @@ describe("Connecteurs compacts — état réel du questionnaire", () => {
 
   test("préférence, sélection, sources repliées et conservation après fermeture", async () => {
     const view = renderQuestionnaire(390);
-    await act(async () => fireEvent.click(view.getByRole("button", { name: /4\. Avec Standex/ })));
+    await chooseFirstPairAndOpenResult(view);
     const choices = within(view.getByTestId("connector-choice"));
     expect(choices.getByRole("button", { name: "Je ne sais pas" }).getAttribute("aria-pressed")).toBe("true");
     expect(view.queryByTestId("connector-choices")).toBeNull();
