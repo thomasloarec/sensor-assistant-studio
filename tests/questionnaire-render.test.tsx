@@ -694,7 +694,7 @@ describe("Configuration câble/connecteur déplacée à l'étape « Résultat »
 
     await act(async () => fireEvent.click(config().getByRole("button", { name: "Sur mesure" })));
     const custom = view.container.querySelector("#custom-length") as HTMLInputElement;
-    await act(async () => fireEvent.change(custom, { target: { value: "42.5" } }));
+    await act(async () => changeValue(custom, "42.5"));
     await act(async () => fireEvent.click(stepButton(view, /4\. Avec Standex/)));
     expect(view.getByTestId("review-config-cable").textContent).toBe("Sur mesure — 425 mm, à confirmer par Standex.");
     await act(async () => fireEvent.click(stepButton(view, /3\. Résultat/)));
