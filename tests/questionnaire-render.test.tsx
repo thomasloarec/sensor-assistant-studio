@@ -104,12 +104,14 @@ async function chooseFirstPairAndOpenResult(view: RenderResult, pcb = false) {
   if (!(goal instanceof HTMLTextAreaElement)) throw new Error("Question 1 absente");
   await act(async () => changeValue(goal, "Détecter le niveau de liquide dans une cuve"));
   await act(async () => fireEvent.click(view.getByRole("button", { name: /2\. Couples proposés/ })));
+  const more = await waitFor(() => view.getByRole("button", { name: /Voir tous les couples possibles/ }), { timeout: 15000 });
+  await act(async () => fireEvent.click(more));
   const card = await waitFor(
     () => {
       const found = view
         .getAllByTestId("pair-card")
         .find((c) => isPcbSensor(c.getAttribute("data-sensor-id")) === pcb);
-      if (!found) throw new Error("Aucune carte: " + view.getAllByTestId("pair-card").map((c) => c.getAttribute("data-sensor-id")).join(","));
+      if (!found) throw new Error("Aucune carte de couple adaptée");
       return found;
     },
     { timeout: 15000 },
