@@ -233,6 +233,7 @@ describe("Connecteurs compacts — état réel du questionnaire", () => {
   test("préférence, sélection, sources repliées et conservation après fermeture", async () => {
     const view = renderQuestionnaire(390);
     await chooseFirstPairAndOpenResult(view);
+    console.log("DBG", view.queryByTestId("configure-sensor")?.textContent?.slice(0,300), view.getAllByTestId("pair-card")[0]?.textContent?.slice(0,200));
     const choices = within(view.getByTestId("connector-choice"));
     expect(choices.getByRole("button", { name: "Je ne sais pas" }).getAttribute("aria-pressed")).toBe("true");
     expect(view.queryByTestId("connector-choices")).toBeNull();
