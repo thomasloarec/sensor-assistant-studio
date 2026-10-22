@@ -214,7 +214,9 @@ export function parseMachine(value: unknown): MachineAssembly | null {
   }
   if (x["axisVector"] !== undefined) {
     if (!finiteVec(x["axisVector"]) || !unit(x["axisVector"] as Vec3)) return null;
-    out.axisVector = unit(x["axisVector"] as Vec3)!;
+    const v = x["axisVector"] as Vec3;
+    // Un vecteur déjà unitaire est conservé tel quel (relecture exacte).
+    out.axisVector = Math.abs(norm(v) - 1) < 1e-12 ? [...v] : unit(v)!;
   }
   if (x["motionStatus"] !== undefined) {
     if (!["unset", "draft", "confirmed"].includes(x["motionStatus"] as string)) return null;
