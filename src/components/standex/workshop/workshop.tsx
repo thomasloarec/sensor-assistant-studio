@@ -2136,7 +2136,7 @@ export default function MagneticWorkshop({
                 <p className="t-body">
                   {msg("{0} : refusé avec les unités « {1} ». Choisissez les unités du fichier puis réessayez. Le montage actuel reste inchangé.", [
                     pendingUnits.fileName,
-                    t(UNIT_LABEL[pendingUnits.tried] ?? ""),
+                    UNIT_LABEL[pendingUnits.tried] ? t(UNIT_LABEL[pendingUnits.tried]!) : String(pendingUnits.tried),
                   ])}
                 </p>
                 <label className="mw-select-label">
