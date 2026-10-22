@@ -88,7 +88,9 @@ export function analyzeAnimations(
           s: object.scale.clone(),
         });
       animated.add(path);
-      bound.push({ object, prop, interpolant: track.createInterpolant() });
+      // Interpolation RÉELLE de la piste (STEP, LINEAR, slerp, CUBICSPLINE glTF).
+      const interpolant = (track as unknown as { createInterpolant: () => Interpolant }).createInterpolant();
+      bound.push({ object, prop, interpolant });
     }
     const animatedPaths = [...animated].sort();
     if (!issues.size && !meshPaths.some((p) => animatedPaths.some((a) => within(p, a))))

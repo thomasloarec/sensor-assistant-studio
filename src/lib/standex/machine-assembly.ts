@@ -149,7 +149,8 @@ export function componentPose(
     const d = attach ? partDelta(m, attach.partPath, u) : null;
     if (!d) return { position, transform: (v) => rotate(v, rotation), rotationDeg: [...rotation] };
     const q = new Quaternion(...d.quaternion);
-    const own = new Quaternion().setFromEuler(new Euler(...rotation.map((n) => (n * Math.PI) / 180), "XYZ"));
+    const [rx, ry, rz] = rotation.map((n) => (n * Math.PI) / 180) as Vec3;
+    const own = new Quaternion().setFromEuler(new Euler(rx, ry, rz, "XYZ"));
     const e = new Euler().setFromQuaternion(q.clone().multiply(own), "XYZ");
     return {
       position: applyDelta(d, position),

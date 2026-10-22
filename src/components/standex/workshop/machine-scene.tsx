@@ -459,7 +459,7 @@ function Assembly({
         <>
           <Line points={reading.points} color="#ae5b31" lineWidth={2} />
           <Html
-            position={reading.points.map((v, i) => (v + reading.points[1][i]!) / 2) as Vec3}
+            position={reading.points[0].map((v, i) => (v + reading.points[1][i]!) / 2) as Vec3}
             center
             style={{ pointerEvents: "none" }}
           >
