@@ -403,6 +403,29 @@ cibles de 44 px conformes).
   - Les filets de séparation encore présents dans l'atelier sont des séparateurs
     de scène interne, pas la bordure grise 1 px proscrite par la règle 2.
 
+#### Parcours guidé du modèle importé (lot 1, 22 octobre 2026)
+
+Sans modèle importé, l'atelier reste inchangé. Dès qu'un GLB (ou un exemple)
+est ouvert, un bloc `.mw-guide` apparaît en tête de la colonne de réglages,
+au-dessus de « Lancer le mouvement » et des réglages avancés : cinq étapes
+Modèle → Pièces mobiles → Mouvement → Installation → Essai, **une seule
+développée**, la scène restant visible à droite.
+
+- Navigation des étapes : grille de boutons ≥ 44 px sur `--surface-sunken`,
+  étape courante en `--surface-tint` + `--e-1`, `aria-current="step"`.
+- Choix exclusifs (Coulisse/Pivote, Capteur/Aimant, Sur une surface/À travers
+  une paroi) : contrôle segmenté `.mw-segmented`, `role="radio"`.
+- Arborescence des pièces : liste indentée par `--depth`, noms du fichier en
+  `translate="no"` (jamais traduits), pièce mobile en `--surface-tint`.
+- Champs numériques remplis sans bordure (`--mw-field`), invalidité signalée
+  par `aria-invalid` et un anneau `--destructive`, valeur précédente rétablie.
+- Couleurs ajoutées seulement dans la scène Three.js (exception documentée) :
+  surlignage des pièces mobiles, axe en tirets, points relevés.
+- Toutes les couleurs suivent le contexte `.immersive` de l'atelier
+  (`--foreground`, `--heading`, `--surface*`), jamais les jetons de marque bruts.
+- La source du contact (illustratif, non prédit) est affichée dans l'étape
+  Essai, à l'endroit où on lit le résultat.
+
 ## 11. Ce qui reste ouvert
 
 - La console `/standex` ne peut être validée de bout en bout sans session staff

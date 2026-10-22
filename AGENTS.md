@@ -91,3 +91,4 @@ jeton sans documentation ni contournement ponctuel.
 Subdirectories have their own `AGENTS.md`; read them before changing files there.
 
 - Reed uses shared sampled SVG/hit-test polygons with finite ON roots, outer HOLD and real OFF gaps, preventing attachment plugs. Exploration never qualifies products or persists. Current follows closed; progression guards HOLD orientation. Invitation completion is tab-memory only, observes visibility and never changes sensor state.
+- Imported machines: moving set is `movingNodes` (normalized, each part drawn once), arbitrary axes go through axis-angle → XYZ Euler in `movingRotation` so scene, simulation and bridge share one transform; new imports start `motionStatus: "unset"` and no cycle is computed until the user confirms motion. Attachments (`machine-mounting.ts`) are stored in the closed-pose model frame and re-derive poses; no hole centre is ever inferred.
