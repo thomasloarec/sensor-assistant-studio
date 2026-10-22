@@ -2472,9 +2472,16 @@ export default function MagneticWorkshop({
               avec. L'état d'enregistrement, lui, vit dans la barre du panneau. */}
           {/* Sans distance publiée pour ce couple, on ne prétend PAS en afficher :
               le pied de page dit alors que la commutation est illustrative. */}
+          {/* Avec une ligne nominale publiée pour la classe choisie mais une
+              simulation toujours illustrative, le pied de page nomme cette
+              source sans la présenter comme caractéristique du montage. */}
           {reference && !illustrative ? (
             t(
               "Distances typiques publiées par Standex pour ce couple, dans cette position. À confirmer par un essai dans votre application.",
+            )
+          ) : reference && illustration.kind === "nominal" ? (
+            t(
+              "La commutation illustrative utilise les distances nominales publiées pour la classe choisie. Ces valeurs ne caractérisent pas votre montage et doivent être validées par des essais.",
             )
           ) : reference && guideRangesAvailable ? (
             t(

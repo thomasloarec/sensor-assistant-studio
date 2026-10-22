@@ -68,4 +68,11 @@ describe("le mode illustratif remonte jusqu'à l'écran", () => {
       "Aucune distance publiée pour ce couple : la commutation montrée est illustrative",
     );
   });
+
+  test("le pied de page nomme la source nominale d'une commutation illustrative", () => {
+    expect(WORKSHOP).toContain('reference && illustration.kind === "nominal"');
+    expect(WORKSHOP).toContain(
+      "La commutation illustrative utilise les distances nominales publiées pour la classe choisie. Ces valeurs ne caractérisent pas votre montage et doivent être validées par des essais.",
+    );
+  });
 });
