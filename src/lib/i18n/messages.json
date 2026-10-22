@@ -31228,5 +31228,14 @@
     "Стенка 6 мм, отверстие Ø 8 мм с центром X 0 / Y 60, ось Z; заслонка скользит на 40 мм по X.",
     "Parete 6 mm, alesaggio Ø 8 mm centrato in X 0 / Y 60, asse Z; sportello scorrevole 40 mm in X.",
     "厚さ 6 mm の壁、Ø 8 mm の穴（中心 X 0 / Y 60、Z 軸）、X 方向に 40 mm スライドするシャッター。"
+  ],
+  "Aucun contact n'est affiché : il n'est pas prédit pour ce montage.": [
+    "No contact is shown: it is not predicted for this assembly.",
+    "不显示触点：此装配不做预测。",
+    "Kein Kontakt angezeigt: Für diese Montage wird er nicht vorhergesagt.",
+    "No se muestra ningún contacto: no se predice para este montaje.",
+    "Контакт не показан: для этого монтажа он не прогнозируется.",
+    "Nessun contatto mostrato: non è previsto per questo montaggio.",
+    "接点は表示されません：この取り付けでは予測しません。"
   ]
 }

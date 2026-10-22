@@ -96,7 +96,7 @@ describe("Couverture des langues de l'interface", () => {
     // + 22 entrées (lot 1 retours manuels 2026-10-13) : raisons de classement, puces paramétrées, alertes thermiques courtes, filetage, dimensions détectées, aimant intégré ; texte deux sorties remplacé.
     // + 1 compact orientation label; explicit perpendicular accessible name retained.
     // + 13 entrées : configuration câble/connecteur déplacée à l'étape « Résultat » et récapitulatif en lecture seule.
-    expect(Object.keys(dictionary)).toHaveLength(3_470);
+    expect(Object.keys(dictionary)).toHaveLength(3_471);
     const broken = Object.entries(dictionary).filter(
       ([, v]) => v.length !== 7 || v.some((x) => typeof x !== "string" || x.trim() === ""),
     );
