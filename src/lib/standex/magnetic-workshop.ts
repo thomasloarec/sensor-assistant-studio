@@ -16,7 +16,7 @@ import {
   MAGNET_REFERENCE,
   CUSTOM_SENSOR_ID,
 } from "./sensor-catalog";
-import { parseMachine, componentPose, openingAt, rotate } from "./machine-assembly";
+import { parseMachine, componentPose, openingAt, rotate, motionProblem, movingSelection } from "./machine-assembly";
 import { documentedMagnetAngleDeg } from "./mounting/profiles";
 import { workshopGuideRange, GUIDE_SIMULATION_NOTE } from "./workshop-guide";
 import { defaultGuideSelection, guideSelectionFor } from "./activation-guide";
@@ -464,6 +464,12 @@ export function referenceAllowed(c: WorkshopConfig): boolean {
 }
 
 export function unavailableReason(c: WorkshopConfig): string | null {
+  // Un mouvement de machine non défini ou invalide n'est jamais simulé, même
+  // en démonstration : aucune course arbitraire n'est présentée comme celle du client.
+  if (c.machine) {
+    const problem = motionProblem(c.machine);
+    if (problem) return problem;
+  }
   if (c.mode === "education") return null;
   if (sensorById(c.sensorId).contact === "unsupported")
     return "Le MK02 détecte du métal ferreux avec un aimant intégré. Son activation n'est pas modélisée dans cet atelier à aimant externe.";
@@ -757,9 +763,9 @@ export function summarizeWorkshop(c: WorkshopConfig): string {
       : []),
     ...(c.machine
       ? [
-          `Fichier 3D : ${c.machine.fileName} (${c.machine.assetKey}). Géométrie importée conservée dans le navigateur ; à réimporter sur un autre poste. Pièce mobile : ${c.machine.movingNode}.`,
+          `Fichier 3D : ${c.machine.fileName} (${c.machine.assetKey}). Géométrie importée conservée dans le navigateur ; à réimporter sur un autre poste. Pièces mobiles : ${movingSelection(c.machine).join(" ; ") || "aucune"}.`,
           `Capteur : ${c.machine.sensorPosition.join(", ")} mm ; rotation ${c.machine.sensorRotation.join(", ")}°. Aimant : ${c.machine.magnetPosition.join(", ")} mm ; rotation ${c.machine.magnetRotation.join(", ")}°.`,
-          `Mouvement : ${c.machine.motion}, déplacement ${c.machine.travel.join(", ")} mm, pivot ${c.machine.pivot.join(", ")} mm, axe ${c.machine.rotationAxis}, angle ${c.machine.openingAngle}°.`,
+          `Mouvement : ${c.machine.motion}, déplacement ${c.machine.travel.join(", ")} mm, pivot ${c.machine.pivot.join(", ")} mm, axe ${c.machine.axisVector ? c.machine.axisVector.map((v) => v.toFixed(4)).join(", ") : c.machine.rotationAxis}, angle ${c.machine.openingAngle}° ; mouvement ${c.machine.motionStatus ?? "confirmed"}. Attaches : capteur ${c.machine.sensorAttach?.kind ?? "pose libre"}, aimant ${c.machine.magnetAttach?.kind ?? "pose libre"}.`,
         ]
       : []),
     `Boîtier : ${sizeLabel(sensorById(c.sensorId))}. Contacts internes schématiques, position non caractérisée.`,
