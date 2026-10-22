@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DesignRouteImport } from './routes/design'
 import { Route as InternalRouteImport } from './routes/internal'
+import { Route as RecetteAtelierTmpRouteImport } from './routes/recette-atelier-tmp'
 import { Route as StandexRouteImport } from './routes/standex'
 import { Route as StandexIndexRouteImport } from './routes/standex.index'
 import { Route as StandexAdminRouteImport } from './routes/standex.admin'
@@ -33,6 +34,11 @@ const DesignRoute = DesignRouteImport.update({
 const InternalRoute = InternalRouteImport.update({
   id: '/internal',
   path: '/internal',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RecetteAtelierTmpRoute = RecetteAtelierTmpRouteImport.update({
+  id: '/recette-atelier-tmp',
+  path: '/recette-atelier-tmp',
   getParentRoute: () => rootRouteImport,
 } as any)
 const StandexRoute = StandexRouteImport.update({
@@ -76,6 +82,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/design': typeof DesignRoute
   '/internal': typeof InternalRoute
+  '/recette-atelier-tmp': typeof RecetteAtelierTmpRoute
   '/standex': typeof StandexRouteWithChildren
   '/standex/admin': typeof StandexAdminRoute
   '/standex/console': typeof StandexConsoleRoute
@@ -88,6 +95,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/design': typeof DesignRoute
   '/internal': typeof InternalRoute
+  '/recette-atelier-tmp': typeof RecetteAtelierTmpRoute
   '/standex/admin': typeof StandexAdminRoute
   '/standex/console': typeof StandexConsoleRoute
   '/standex/detection-data': typeof StandexDetectionDataRoute
@@ -100,6 +108,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/design': typeof DesignRoute
   '/internal': typeof InternalRoute
+  '/recette-atelier-tmp': typeof RecetteAtelierTmpRoute
   '/standex': typeof StandexRouteWithChildren
   '/standex/admin': typeof StandexAdminRoute
   '/standex/console': typeof StandexConsoleRoute
@@ -114,6 +123,7 @@ export interface FileRouteTypes {
     | '/'
     | '/design'
     | '/internal'
+    | '/recette-atelier-tmp'
     | '/standex'
     | '/standex/admin'
     | '/standex/console'
@@ -126,6 +136,7 @@ export interface FileRouteTypes {
     | '/'
     | '/design'
     | '/internal'
+    | '/recette-atelier-tmp'
     | '/standex/admin'
     | '/standex/console'
     | '/standex/detection-data'
@@ -137,6 +148,7 @@ export interface FileRouteTypes {
     | '/'
     | '/design'
     | '/internal'
+    | '/recette-atelier-tmp'
     | '/standex'
     | '/standex/admin'
     | '/standex/console'
@@ -150,6 +162,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DesignRoute: typeof DesignRoute
   InternalRoute: typeof InternalRoute
+  RecetteAtelierTmpRoute: typeof RecetteAtelierTmpRoute
   StandexRoute: typeof StandexRouteWithChildren
 }
 
@@ -174,6 +187,13 @@ declare module '@tanstack/react-router' {
       path: '/internal'
       fullPath: '/internal'
       preLoaderRoute: typeof InternalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/recette-atelier-tmp': {
+      id: '/recette-atelier-tmp'
+      path: '/recette-atelier-tmp'
+      fullPath: '/recette-atelier-tmp'
+      preLoaderRoute: typeof RecetteAtelierTmpRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/standex': {
@@ -253,6 +273,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DesignRoute: DesignRoute,
   InternalRoute: InternalRoute,
+  RecetteAtelierTmpRoute: RecetteAtelierTmpRoute,
   StandexRoute: StandexRouteWithChildren,
 }
 export const routeTree = rootRouteImport
