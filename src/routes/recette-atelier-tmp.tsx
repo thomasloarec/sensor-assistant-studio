@@ -23,7 +23,7 @@ function Page() {
         initialConfig={(cfg ?? undefined) as never}
         storageMode="memory"
         onClose={() => {}}
-        onSave={(c: unknown) => {
+        onSave={async (c: unknown) => {
           (window as unknown as { __saved: unknown }).__saved = c;
         }}
       />
