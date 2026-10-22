@@ -12,7 +12,12 @@ export interface MachinePart {
 }
 export interface MachineNode {
   path: string;
+  /** Nom exact du fichier : affiché tel quel, jamais traduit. */
   name: string;
+  /** Profondeur dans l'arborescence du fichier (0 = racine). */
+  depth: number;
+  /** Nombre de maillages contenus (le nœud et ses descendants). */
+  meshCount: number;
 }
 export interface MachineAsset {
   parts: MachinePart[];
@@ -20,8 +25,17 @@ export interface MachineAsset {
   size: Vec3;
   center: Vec3;
   min: Vec3;
+  /** Animations présentes dans le fichier : signalées, pas encore rejouées (lot 2). */
+  animationCount: number;
   dispose: () => void;
 }
+/** Exemples intégrés : fichiers autonomes servis par l'application. */
+export const BUILTIN_FILES: Record<string, string> = {
+  "builtin:coffee-v1": "/models/machine-cafe-bac-mobile.glb",
+  "builtin:drawer-v1": "/models/demo-tiroir-deux-pieces.glb",
+  "builtin:door-v1": "/models/demo-porte-axe-incline.glb",
+  "builtin:wall-v1": "/models/demo-paroi-alesage.glb",
+};
 const DB = "standex-machine-assets-v1";
 async function database(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
@@ -129,8 +143,9 @@ export function validateGlb(data: ArrayBuffer) {
     throw new Error("Exportez un GLB sans compression Draco, Meshopt ou KTX2.");
 }
 async function readFile(key: string, mode: AssetStorageMode): Promise<ArrayBuffer> {
-  if (key === COFFEE_ASSET) {
-    const r = await fetch("/models/machine-cafe-bac-mobile.glb");
+  const builtin = key === COFFEE_ASSET ? BUILTIN_FILES[COFFEE_ASSET] : BUILTIN_FILES[key];
+  if (builtin) {
+    const r = await fetch(builtin);
     if (!r.ok) throw new Error("Exemple 3D indisponible.");
     return r.arrayBuffer();
   }
@@ -180,15 +195,23 @@ export async function loadMachineAsset(
   const parts: MachinePart[] = [],
     nodes: MachineNode[] = [];
   let vertices = 0;
+  const meshesIn = (o: Object3D) => {
+    let n = 0;
+    o.traverse((c) => {
+      if (c instanceof Mesh) n++;
+    });
+    return n;
+  };
   const collect = (o: Object3D, path: string) => {
-    const containsMesh = o instanceof Mesh || o.children.length > 0;
-    if (containsMesh) nodes.push({ path, name: o.name || "Pièce " + path });
+    const meshCount = meshesIn(o);
+    if (meshCount > 0)
+      nodes.push({ path, name: o.name || "#" + path, depth: path.split("/").length - 1, meshCount });
     if (o instanceof Mesh) {
       vertices += o.geometry.getAttribute("position")?.count ?? 0;
       const geometry = o.geometry.clone().applyMatrix4(o.matrixWorld);
       parts.push({
         path,
-        name: o.name || "Pièce " + path,
+        name: o.name || "#" + path,
         geometry,
         material: Array.isArray(o.material) ? o.material.map((m) => m.clone()) : o.material.clone(),
       });
@@ -239,6 +262,7 @@ export async function loadMachineAsset(
     size,
     center: bounds.getCenter(new Vector3()).toArray() as Vec3,
     min: bounds.min.toArray() as Vec3,
+    animationCount: gltf.animations.length,
     dispose,
   };
 }
