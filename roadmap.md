@@ -1,5 +1,13 @@
 # Feuille de route — lot des 7 correctifs (base 12be3e3d)
 
+## Atelier 3D — lot 1 du parcours modèle importé (22 octobre 2026)
+- [x] Sélection multi-pièces scène + arborescence, isoler/restaurer, monobloc expliqué.
+- [x] Mouvement Coulisse/Pivote sur axe quelconque (face ou deux points), validation explicite, aucun mouvement supposé à l'import.
+- [x] Montage « Sur une surface » / « À travers une paroi », attaches persistantes, pose libre qui libère l'attache, annuler/rétablir.
+- [x] Essai : ouverture mm/° et sens séparés de l'écart, pas manuel, source du contact affichée.
+- [x] Trois modèles de démonstration autonomes, café conservé ; tests, traductions, documentation.
+- [ ] Lot 2 (après revue) : relecture des animations GLB, mesure d'ouverture entre repères, étude STEP.
+
 ## Racines ON et état électrique Reed — base 79a282b
 - [x] Raccords ON de largeur finie dans les deux orientations, contours partagés et couloirs OFF conservés.
 - [x] État fermé ambré et courant jaune pâle distinct, uniquement dans Reed.

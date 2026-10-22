@@ -505,7 +505,7 @@ export default function MachineGuide({
             onChange={(e) => setProgress(Number(e.target.value) / 100)}
           />
         </label>
-        <p className="t-body t-metric" data-testid="guide-opening">
+        <p className="t-body" data-testid="guide-opening">
           {msg("Ouverture : {0} {1}", [opening.value.toFixed(1), opening.unit])}
         </p>
         {problem && <p className="notice-warning">{t(problem)}</p>}
@@ -700,7 +700,7 @@ export default function MachineGuide({
     ),
     test: (
       <>
-        <p className="t-body t-metric" data-testid="guide-test-opening">
+        <p className="t-body" data-testid="guide-test-opening">
           {msg("Ouverture du mécanisme : {0} {1} · {2}", [
             opening.value.toFixed(1),
             opening.unit,
@@ -711,7 +711,7 @@ export default function MachineGuide({
             ),
           ])}
         </p>
-        <p className="t-body t-metric">
+        <p className="t-body">
           {msg("Distance entre centres capteur–aimant : {0} mm", [formatMm(sample.distance, 1)])}
         </p>
         <div className="mw-guide-row">
@@ -751,11 +751,16 @@ export default function MachineGuide({
             t({ open: "ouvert", closed: "fermé", unknown: "indéterminé" }[sample.contact]),
           ])}
         </p>
-        <p className={reason ? "notice-warning" : "notice-info"} data-testid="guide-source">
-          {reason
-            ? t(reason)
+        {reason && (
+          <p className="notice-warning" data-testid="guide-reason">
+            {t(reason)}
+          </p>
+        )}
+        <p className="notice-info" data-testid="guide-source">
+          {sample.contact === "unknown"
+            ? t("Aucun contact n'est affiché : il n'est pas prédit pour ce montage.")
             : t(
-                config.mode === "education"
+                config.mode === "education" || reason
                   ? "Contact illustratif : modèle pédagogique non calibré, ce n'est pas une prédiction. Une machine importée n'est jamais validée par l'atelier."
                   : "Source : distances publiées pour ce couple, en espace libre. Une machine importée n'est jamais validée par l'atelier.",
               )}

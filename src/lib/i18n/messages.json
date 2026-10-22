@@ -30364,5 +30364,887 @@
     "Изменить конфигурацию",
     "Modificare la configurazione",
     "構成を変更する"
+  ],
+  "Fichier :": [
+    "File:",
+    "文件：",
+    "Datei:",
+    "Archivo:",
+    "Файл:",
+    "File:",
+    "ファイル："
+  ],
+  "(X × Y × Z). Vérifiez que cette taille est réaliste.": [
+    "(X × Y × Z). Check that this size is realistic.",
+    "(X × Y × Z)。请确认该尺寸合理。",
+    "(X × Y × Z). Prüfen Sie, ob diese Größe realistisch ist.",
+    "(X × Y × Z). Compruebe que este tamaño es realista.",
+    "(X × Y × Z). Проверьте, что размер реалистичен.",
+    "(X × Y × Z). Verificate che la dimensione sia realistica.",
+    "(X × Y × Z)。このサイズが妥当か確認してください。"
+  ],
+  "Ce fichier ne contient qu'un seul bloc : aucune pièce ne peut bouger séparément. Réexportez le modèle depuis votre CAO avec la pièce mobile comme corps ou composant séparé (GLB, une pièce par nœud).": [
+    "This file contains a single block: no part can move separately. Re-export the model from your CAD with the moving part as a separate body or component (GLB, one part per node).",
+    "该文件只有一个整体：没有零件可以单独运动。请从 CAD 重新导出，将运动件作为独立实体或组件（GLB，每个节点一个零件）。",
+    "Diese Datei enthält nur einen Block: Kein Teil kann sich getrennt bewegen. Exportieren Sie das Modell aus Ihrem CAD erneut, mit dem beweglichen Teil als separatem Körper oder Bauteil (GLB, ein Teil pro Knoten).",
+    "Este archivo contiene un solo bloque: ninguna pieza puede moverse por separado. Vuelva a exportar el modelo desde su CAD con la pieza móvil como cuerpo o componente independiente (GLB, una pieza por nodo).",
+    "Файл содержит один монолитный блок: ни одна деталь не может двигаться отдельно. Повторно экспортируйте модель из САПР, выделив подвижную деталь в отдельное тело или компонент (GLB, одна деталь на узел).",
+    "Questo file contiene un solo blocco: nessuna parte può muoversi separatamente. Riesportate il modello dal CAD con la parte mobile come corpo o componente separato (GLB, una parte per nodo).",
+    "このファイルは単一ブロックのため、部品を個別に動かせません。可動部品を別のボディまたはコンポーネントとして CAD から再エクスポートしてください（GLB、ノードごとに1部品）。"
+  ],
+  "Ce fichier contient {0} animation(s). Elles ne sont pas encore rejouées : définissez le mouvement dans l'étape Mouvement.": [
+    "This file contains {0} animation(s). They are not replayed yet: define the movement in the Movement step.",
+    "该文件包含 {0} 个动画。目前尚不回放：请在“运动”步骤中定义运动。",
+    "Diese Datei enthält {0} Animation(en). Sie werden noch nicht abgespielt: Definieren Sie die Bewegung im Schritt Bewegung.",
+    "Este archivo contiene {0} animación(es). Aún no se reproducen: defina el movimiento en el paso Movimiento.",
+    "Файл содержит анимаций: {0}. Пока они не воспроизводятся: задайте движение на шаге «Движение».",
+    "Questo file contiene {0} animazione/i. Non sono ancora riprodotte: definite il movimento nel passo Movimento.",
+    "このファイルには {0} 件のアニメーションがあります。まだ再生されません。「動き」ステップで動きを定義してください。"
+  ],
+  "Le fichier reste dans ce navigateur ; il n'est pas envoyé.": [
+    "The file stays in this browser; it is not sent.",
+    "文件保留在此浏览器中，不会被发送。",
+    "Die Datei bleibt in diesem Browser; sie wird nicht gesendet.",
+    "El archivo permanece en este navegador; no se envía.",
+    "Файл остаётся в этом браузере и никуда не отправляется.",
+    "Il file resta in questo browser; non viene inviato.",
+    "ファイルはこのブラウザ内に留まり、送信されません。"
+  ],
+  "Tout est fixe par défaut. Cliquez une pièce dans la scène ou dans la liste pour l'ajouter ou la retirer. Choisir un groupe inclut toutes ses sous-pièces.": [
+    "Everything is fixed by default. Click a part in the scene or in the list to add or remove it. Choosing a group includes all its sub-parts.",
+    "默认全部固定。在场景或列表中点击零件即可添加或移除。选择一个组会包含其所有子零件。",
+    "Standardmäßig ist alles fest. Klicken Sie ein Teil in der Szene oder Liste an, um es hinzuzufügen oder zu entfernen. Eine Gruppe umfasst alle Unterteile.",
+    "Todo es fijo por defecto. Haga clic en una pieza en la escena o en la lista para añadirla o quitarla. Elegir un grupo incluye todas sus subpiezas.",
+    "По умолчанию всё неподвижно. Щёлкните деталь в сцене или в списке, чтобы добавить или убрать её. Выбор группы включает все её вложенные детали.",
+    "Per impostazione predefinita tutto è fisso. Cliccate una parte nella scena o nell'elenco per aggiungerla o toglierla. Scegliere un gruppo include tutte le sue sottoparti.",
+    "初期状態ではすべて固定です。シーンまたは一覧で部品をクリックすると追加・削除できます。グループを選ぶとそのサブ部品もすべて含まれます。"
+  ],
+  "Terminer la sélection": [
+    "Finish selection",
+    "完成选择",
+    "Auswahl beenden",
+    "Terminar la selección",
+    "Завершить выбор",
+    "Termina la selezione",
+    "選択を終了"
+  ],
+  "Sélectionner dans la scène": [
+    "Select in the scene",
+    "在场景中选择",
+    "In der Szene auswählen",
+    "Seleccionar en la escena",
+    "Выбрать в сцене",
+    "Seleziona nella scena",
+    "シーンで選択"
+  ],
+  "Tout afficher": [
+    "Show all",
+    "全部显示",
+    "Alles anzeigen",
+    "Mostrar todo",
+    "Показать всё",
+    "Mostra tutto",
+    "すべて表示"
+  ],
+  "Isoler les pièces mobiles": [
+    "Isolate moving parts",
+    "隔离运动件",
+    "Bewegliche Teile isolieren",
+    "Aislar las piezas móviles",
+    "Выделить подвижные детали",
+    "Isola le parti mobili",
+    "可動部品を分離表示"
+  ],
+  "Pièces du fichier": [
+    "Parts in the file",
+    "文件中的零件",
+    "Teile der Datei",
+    "Piezas del archivo",
+    "Детали файла",
+    "Parti del file",
+    "ファイル内の部品"
+  ],
+  "inclus par le groupe": [
+    "included by the group",
+    "已由组包含",
+    "durch die Gruppe enthalten",
+    "incluida por el grupo",
+    "входит в группу",
+    "inclusa dal gruppo",
+    "グループに含まれる"
+  ],
+  "mobile": [
+    "moving",
+    "运动",
+    "beweglich",
+    "móvil",
+    "подвижная",
+    "mobile",
+    "可動"
+  ],
+  "groupe · {0} pièces": [
+    "group · {0} parts",
+    "组 · {0} 个零件",
+    "Gruppe · {0} Teile",
+    "grupo · {0} piezas",
+    "группа · деталей: {0}",
+    "gruppo · {0} parti",
+    "グループ · {0} 部品"
+  ],
+  "fixe": [
+    "fixed",
+    "固定",
+    "fest",
+    "fija",
+    "неподвижная",
+    "fissa",
+    "固定"
+  ],
+  "{0} élément(s) mobile(s) sélectionné(s).": [
+    "{0} moving item(s) selected.",
+    "已选择 {0} 个运动元素。",
+    "{0} bewegliche(s) Element(e) ausgewählt.",
+    "{0} elemento(s) móvil(es) seleccionado(s).",
+    "Выбрано подвижных элементов: {0}.",
+    "{0} elemento/i mobile/i selezionato/i.",
+    "{0} 個の可動要素を選択済み。"
+  ],
+  "Aucune pièce mobile : l'ensemble est fixe.": [
+    "No moving part: the whole assembly is fixed.",
+    "无运动件：整体固定。",
+    "Kein bewegliches Teil: Die Baugruppe ist fest.",
+    "Ninguna pieza móvil: el conjunto es fijo.",
+    "Нет подвижных деталей: вся сборка неподвижна.",
+    "Nessuna parte mobile: l'insieme è fisso.",
+    "可動部品なし：全体が固定です。"
+  ],
+  "Direction : cliquez une face dont la normale donne le sens d'ouverture, ou deux points le long de la glissière.": [
+    "Direction: click a face whose normal gives the opening direction, or two points along the slide.",
+    "方向：点击一个法线指向打开方向的面，或沿导轨点击两个点。",
+    "Richtung: Klicken Sie eine Fläche, deren Normale die Öffnungsrichtung angibt, oder zwei Punkte entlang der Führung.",
+    "Dirección: haga clic en una cara cuya normal indique el sentido de apertura, o en dos puntos a lo largo de la guía.",
+    "Направление: щёлкните грань, нормаль которой задаёт направление открытия, или две точки вдоль направляющей.",
+    "Direzione: cliccate una faccia la cui normale dà il verso di apertura, oppure due punti lungo la guida.",
+    "方向：開く向きを法線が示す面をクリックするか、スライドに沿って2点をクリックします。"
+  ],
+  "Axe : cliquez deux points sur l'axe de la charnière, ou une face dont la normale est l'axe (le point cliqué devient le pivot).": [
+    "Axis: click two points on the hinge axis, or a face whose normal is the axis (the clicked point becomes the pivot).",
+    "轴：在铰链轴上点击两个点，或点击一个法线即为轴的面（点击点成为枢轴）。",
+    "Achse: Klicken Sie zwei Punkte auf der Scharnierachse oder eine Fläche, deren Normale die Achse ist (der geklickte Punkt wird Drehpunkt).",
+    "Eje: haga clic en dos puntos del eje de la bisagra, o en una cara cuya normal sea el eje (el punto pulsado será el pivote).",
+    "Ось: щёлкните две точки на оси шарнира или грань, нормаль которой является осью (выбранная точка станет центром поворота).",
+    "Asse: cliccate due punti sull'asse della cerniera, o una faccia la cui normale è l'asse (il punto cliccato diventa il perno).",
+    "軸：ヒンジ軸上の2点をクリックするか、法線が軸となる面をクリックします（クリック点がピボットになります）。"
+  ],
+  "Normale d'une face": [
+    "Face normal",
+    "面法线",
+    "Flächennormale",
+    "Normal de una cara",
+    "Нормаль грани",
+    "Normale di una faccia",
+    "面の法線"
+  ],
+  "Deux points": [
+    "Two points",
+    "两个点",
+    "Zwei Punkte",
+    "Dos puntos",
+    "Две точки",
+    "Due punti",
+    "2点"
+  ],
+  "Inverser le sens": [
+    "Reverse direction",
+    "反转方向",
+    "Richtung umkehren",
+    "Invertir el sentido",
+    "Обратить направление",
+    "Inverti il verso",
+    "向きを反転"
+  ],
+  "Point {0} sur 2 : cliquez dans la scène.": [
+    "Point {0} of 2: click in the scene.",
+    "第 {0} 点（共 2 点）：在场景中点击。",
+    "Punkt {0} von 2: Klicken Sie in die Szene.",
+    "Punto {0} de 2: haga clic en la escena.",
+    "Точка {0} из 2: щёлкните в сцене.",
+    "Punto {0} di 2: cliccate nella scena.",
+    "2点中の {0} 点目：シーンをクリックしてください。"
+  ],
+  "Choisissez d'abord une direction.": [
+    "Choose a direction first.",
+    "请先选择方向。",
+    "Wählen Sie zuerst eine Richtung.",
+    "Elija primero una dirección.",
+    "Сначала выберите направление.",
+    "Scegliete prima una direzione.",
+    "先に方向を選んでください。"
+  ],
+  "Position fermée = pose du fichier importé (0 mm / 0°). Le cycle va de la position fermée à l'ouverture complète, puis revient.": [
+    "Closed position = pose of the imported file (0 mm / 0°). The cycle goes from closed to fully open, then back.",
+    "关闭位置 = 导入文件中的姿态（0 mm / 0°）。循环从关闭到完全打开，再返回。",
+    "Geschlossene Stellung = Lage der importierten Datei (0 mm / 0°). Der Zyklus geht von geschlossen bis ganz offen und zurück.",
+    "Posición cerrada = pose del archivo importado (0 mm / 0°). El ciclo va de cerrado a apertura completa y vuelve.",
+    "Закрытое положение = положение в импортированном файле (0 мм / 0°). Цикл идёт от закрытого до полного открытия и обратно.",
+    "Posizione chiusa = posa del file importato (0 mm / 0°). Il ciclo va da chiuso ad apertura completa, poi ritorna.",
+    "閉位置 = 読み込んだファイルの姿勢（0 mm / 0°）。サイクルは閉位置から全開まで行き、戻ります。"
+  ],
+  "Valeurs précises": [
+    "Precise values",
+    "精确数值",
+    "Genaue Werte",
+    "Valores precisos",
+    "Точные значения",
+    "Valori precisi",
+    "正確な値"
+  ],
+  "Axe {0}": [
+    "{0} axis",
+    "{0} 轴",
+    "{0}-Achse",
+    "Eje {0}",
+    "Ось {0}",
+    "Asse {0}",
+    "{0} 軸"
+  ],
+  "Direction {0}": [
+    "Direction {0}",
+    "方向 {0}",
+    "Richtung {0}",
+    "Dirección {0}",
+    "Направление {0}",
+    "Direzione {0}",
+    "方向 {0}"
+  ],
+  "Pivot {0}": [
+    "Pivot {0}",
+    "枢轴 {0}",
+    "Drehpunkt {0}",
+    "Pivote {0}",
+    "Центр поворота {0}",
+    "Perno {0}",
+    "ピボット {0}"
+  ],
+  "Ouverture : {0} {1}": [
+    "Opening: {0} {1}",
+    "开度：{0} {1}",
+    "Öffnung: {0} {1}",
+    "Apertura: {0} {1}",
+    "Открытие: {0} {1}",
+    "Apertura: {0} {1}",
+    "開度：{0} {1}"
+  ],
+  "Mouvement validé": [
+    "Movement confirmed",
+    "运动已确认",
+    "Bewegung bestätigt",
+    "Movimiento validado",
+    "Движение подтверждено",
+    "Movimento convalidato",
+    "動きを確定済み"
+  ],
+  "Valider le mouvement": [
+    "Confirm movement",
+    "确认运动",
+    "Bewegung bestätigen",
+    "Validar el movimiento",
+    "Подтвердить движение",
+    "Convalida il movimento",
+    "動きを確定"
+  ],
+  "Composant à installer": [
+    "Component to install",
+    "要安装的组件",
+    "Zu montierendes Bauteil",
+    "Componente a instalar",
+    "Устанавливаемый компонент",
+    "Componente da installare",
+    "取り付ける部品"
+  ],
+  "« À travers une paroi » est réservé aux corps cylindriques, filetés ou à insérer.": [
+    "“Through a wall” is reserved for cylindrical, threaded or press-fit bodies.",
+    "“穿过壁面”仅适用于圆柱形、螺纹或压入式外壳。",
+    "„Durch eine Wand“ ist zylindrischen, Gewinde- oder Einpressgehäusen vorbehalten.",
+    "«A través de una pared» está reservado a cuerpos cilíndricos, roscados o a presión.",
+    "«Сквозь стенку» доступно только для цилиндрических, резьбовых и запрессовываемых корпусов.",
+    "«Attraverso una parete» è riservato a corpi cilindrici, filettati o a pressione.",
+    "「壁を貫通」は円筒形・ねじ付き・圧入形のボディ専用です。"
+  ],
+  "L'aimant se pose sur une surface.": [
+    "The magnet is mounted on a surface.",
+    "磁铁安装在表面上。",
+    "Der Magnet wird auf eine Fläche gesetzt.",
+    "El imán se coloca sobre una superficie.",
+    "Магнит устанавливается на поверхность.",
+    "Il magnete si posa su una superficie.",
+    "磁石は面の上に取り付けます。"
+  ],
+  "Annuler le pointage": [
+    "Cancel picking",
+    "取消拾取",
+    "Auswahl abbrechen",
+    "Cancelar la selección",
+    "Отменить указание",
+    "Annulla il puntamento",
+    "指定を取り消す"
+  ],
+  "Cliquer la face dans la scène": [
+    "Click the face in the scene",
+    "在场景中点击面",
+    "Fläche in der Szene anklicken",
+    "Hacer clic en la cara en la escena",
+    "Щёлкнуть грань в сцене",
+    "Clicca la faccia nella scena",
+    "シーンで面をクリック"
+  ],
+  "Axe d'un trou existant (deux points)": [
+    "Axis of an existing hole (two points)",
+    "现有孔的轴（两个点）",
+    "Achse einer vorhandenen Bohrung (zwei Punkte)",
+    "Eje de un orificio existente (dos puntos)",
+    "Ось существующего отверстия (две точки)",
+    "Asse di un foro esistente (due punti)",
+    "既存の穴の軸（2点）"
+  ],
+  "Point {0} sur 2 : d'abord l'entrée du trou, puis un point plus profond sur son axe.": [
+    "Point {0} of 2: first the hole entrance, then a deeper point on its axis.",
+    "第 {0} 点（共 2 点）：先点孔口，再点其轴线上更深的一点。",
+    "Punkt {0} von 2: zuerst der Bohrungseingang, dann ein tieferer Punkt auf ihrer Achse.",
+    "Punto {0} de 2: primero la entrada del orificio, luego un punto más profundo en su eje.",
+    "Точка {0} из 2: сначала вход в отверстие, затем точка глубже на его оси.",
+    "Punto {0} di 2: prima l'ingresso del foro, poi un punto più profondo sul suo asse.",
+    "2点中の {0} 点目：まず穴の入口、次に軸上のより深い点。"
+  ],
+  "Attache libérée : la pose a été modifiée librement, elle n'est plus contrainte à une face.": [
+    "Attachment released: the pose was edited freely and is no longer constrained to a face.",
+    "附着已解除：姿态已被自由修改，不再约束于某个面。",
+    "Befestigung gelöst: Die Lage wurde frei geändert und ist nicht mehr an eine Fläche gebunden.",
+    "Fijación liberada: la pose se modificó libremente y ya no está sujeta a una cara.",
+    "Привязка снята: положение изменено вручную и больше не привязано к грани.",
+    "Fissaggio rilasciato: la posa è stata modificata liberamente e non è più vincolata a una faccia.",
+    "固定を解除：姿勢が自由に変更されたため、面への拘束はありません。"
+  ],
+  "Support : {0}": [
+    "Support: {0}",
+    "支撑：{0}",
+    "Träger: {0}",
+    "Soporte: {0}",
+    "Опора: {0}",
+    "Supporto: {0}",
+    "支持：{0}"
+  ],
+  "pièce mobile": [
+    "moving part",
+    "运动件",
+    "bewegliches Teil",
+    "pieza móvil",
+    "подвижная деталь",
+    "parte mobile",
+    "可動部品"
+  ],
+  "pièce fixe": [
+    "fixed part",
+    "固定件",
+    "festes Teil",
+    "pieza fija",
+    "неподвижная деталь",
+    "parte fissa",
+    "固定部品"
+  ],
+  "Axe défini par vos deux points : le centre du trou n'est pas détecté automatiquement.": [
+    "Axis defined by your two points: the hole centre is not detected automatically.",
+    "轴由您的两个点定义：不会自动检测孔中心。",
+    "Achse durch Ihre zwei Punkte definiert: Die Bohrungsmitte wird nicht automatisch erkannt.",
+    "Eje definido por sus dos puntos: el centro del orificio no se detecta automáticamente.",
+    "Ось задана вашими двумя точками: центр отверстия автоматически не определяется.",
+    "Asse definito dai vostri due punti: il centro del foro non viene rilevato automaticamente.",
+    "軸はあなたの2点で定義されます。穴の中心は自動検出されません。"
+  ],
+  "Implantation d'un perçage à prévoir : le modèle n'est pas percé, l'axe suit la normale de la face cliquée.": [
+    "Location of a hole to be drilled: the model is not drilled; the axis follows the normal of the clicked face.",
+    "拟开孔位置：模型并未开孔，轴沿所点击面的法线。",
+    "Lage einer vorzusehenden Bohrung: Das Modell wird nicht gebohrt; die Achse folgt der Normalen der angeklickten Fläche.",
+    "Ubicación de un taladro a prever: el modelo no se perfora; el eje sigue la normal de la cara pulsada.",
+    "Место будущего отверстия: модель не сверлится, ось следует нормали выбранной грани.",
+    "Posizione di una foratura da prevedere: il modello non viene forato; l'asse segue la normale della faccia cliccata.",
+    "今後あける穴の位置：モデルは穴あけされず、軸はクリックした面の法線に沿います。"
+  ],
+  "Profondeur mesurée depuis": [
+    "Depth measured from",
+    "深度测量基准",
+    "Tiefe gemessen ab",
+    "Profundidad medida desde",
+    "Глубина отсчитывается от",
+    "Profondità misurata da",
+    "深さの基準"
+  ],
+  "l'arrière du corps (face d'appui / collerette)": [
+    "the rear of the body (seating face / collar)",
+    "壳体后端（支撑面/凸缘）",
+    "der Gehäuserückseite (Auflagefläche / Bund)",
+    "la parte trasera del cuerpo (cara de apoyo / collarín)",
+    "задний торец корпуса (опорная грань / буртик)",
+    "il retro del corpo (faccia d'appoggio / collare)",
+    "ボディ後端（座面／つば）"
+  ],
+  "l'extrémité avant du corps": [
+    "the front end of the body",
+    "壳体前端",
+    "dem vorderen Gehäuseende",
+    "el extremo delantero del cuerpo",
+    "передний конец корпуса",
+    "l'estremità anteriore del corpo",
+    "ボディ先端"
+  ],
+  "Référence affleurante avec la surface.": [
+    "Reference flush with the surface.",
+    "基准与表面齐平。",
+    "Referenz bündig mit der Fläche.",
+    "Referencia enrasada con la superficie.",
+    "Опорная точка заподлицо с поверхностью.",
+    "Riferimento a filo con la superficie.",
+    "基準は面と面一です。"
+  ],
+  "Référence en retrait, à l'intérieur de la paroi.": [
+    "Reference recessed, inside the wall.",
+    "基准内缩，位于壁内。",
+    "Referenz zurückgesetzt, innerhalb der Wand.",
+    "Referencia retranqueada, dentro de la pared.",
+    "Опорная точка утоплена внутрь стенки.",
+    "Riferimento arretrato, dentro la parete.",
+    "基準は壁の内側に引っ込んでいます。"
+  ],
+  "Référence qui dépasse de la surface.": [
+    "Reference protruding from the surface.",
+    "基准突出于表面。",
+    "Referenz steht über die Fläche hinaus.",
+    "Referencia que sobresale de la superficie.",
+    "Опорная точка выступает над поверхностью.",
+    "Riferimento sporgente dalla superficie.",
+    "基準は面から突き出ています。"
+  ],
+  "Inverser le sens d'insertion": [
+    "Reverse insertion direction",
+    "反转插入方向",
+    "Einsteckrichtung umkehren",
+    "Invertir el sentido de inserción",
+    "Обратить направление установки",
+    "Inverti il verso di inserimento",
+    "挿入方向を反転"
+  ],
+  "Retourner le composant": [
+    "Flip the component",
+    "翻转组件",
+    "Bauteil umdrehen",
+    "Dar la vuelta al componente",
+    "Перевернуть компонент",
+    "Capovolgi il componente",
+    "部品を裏返す"
+  ],
+  "Pose libre : aucune attache. Les coordonnées précises restent dans Réglages avancés › Positionnement.": [
+    "Free pose: no attachment. Precise coordinates remain in Advanced settings › Positioning.",
+    "自由姿态：无附着。精确坐标仍在“高级设置 › 定位”中。",
+    "Freie Lage: keine Befestigung. Genaue Koordinaten bleiben unter Erweiterte Einstellungen › Positionierung.",
+    "Pose libre: sin fijación. Las coordenadas precisas siguen en Ajustes avanzados › Posicionamiento.",
+    "Свободное положение: без привязки. Точные координаты — в разделе «Расширенные настройки › Позиционирование».",
+    "Posa libera: nessun fissaggio. Le coordinate precise restano in Impostazioni avanzate › Posizionamento.",
+    "自由姿勢：固定なし。正確な座標は「詳細設定 › 位置決め」にあります。"
+  ],
+  "Rétablir": [
+    "Redo",
+    "重做",
+    "Wiederherstellen",
+    "Rehacer",
+    "Повторить",
+    "Ripristina",
+    "やり直す"
+  ],
+  "Ouverture du mécanisme : {0} {1} · {2}": [
+    "Mechanism opening: {0} {1} · {2}",
+    "机构开度：{0} {1} · {2}",
+    "Öffnung des Mechanismus: {0} {1} · {2}",
+    "Apertura del mecanismo: {0} {1} · {2}",
+    "Открытие механизма: {0} {1} · {2}",
+    "Apertura del meccanismo: {0} {1} · {2}",
+    "機構の開度：{0} {1} · {2}"
+  ],
+  "ouverture": [
+    "opening",
+    "打开中",
+    "Öffnen",
+    "apertura",
+    "открытие",
+    "apertura",
+    "開く途中"
+  ],
+  "ouvert": [
+    "open",
+    "已打开",
+    "offen",
+    "abierto",
+    "открыто",
+    "aperto",
+    "開"
+  ],
+  "Distance entre centres capteur–aimant : {0} mm": [
+    "Sensor–magnet centre distance: {0} mm",
+    "传感器–磁铁中心距：{0} mm",
+    "Mittenabstand Sensor–Magnet: {0} mm",
+    "Distancia entre centros sensor–imán: {0} mm",
+    "Расстояние между центрами датчик–магнит: {0} мм",
+    "Distanza tra i centri sensore–magnete: {0} mm",
+    "センサー–磁石の中心間距離：{0} mm"
+  ],
+  "Lancer le cycle": [
+    "Run the cycle",
+    "运行循环",
+    "Zyklus starten",
+    "Iniciar el ciclo",
+    "Запустить цикл",
+    "Avvia il ciclo",
+    "サイクルを開始"
+  ],
+  "Reculer d'un pas": [
+    "Step back",
+    "后退一步",
+    "Einen Schritt zurück",
+    "Retroceder un paso",
+    "Шаг назад",
+    "Indietro di un passo",
+    "1ステップ戻る"
+  ],
+  "Avancer d'un pas": [
+    "Step forward",
+    "前进一步",
+    "Einen Schritt vor",
+    "Avanzar un paso",
+    "Шаг вперёд",
+    "Avanti di un passo",
+    "1ステップ進む"
+  ],
+  "Contact : {0}": [
+    "Contact: {0}",
+    "触点：{0}",
+    "Kontakt: {0}",
+    "Contacto: {0}",
+    "Контакт: {0}",
+    "Contatto: {0}",
+    "接点：{0}"
+  ],
+  "indéterminé": [
+    "undetermined",
+    "未确定",
+    "unbestimmt",
+    "indeterminado",
+    "не определён",
+    "indeterminato",
+    "不確定"
+  ],
+  "Contact illustratif : modèle pédagogique non calibré, ce n'est pas une prédiction. Une machine importée n'est jamais validée par l'atelier.": [
+    "Illustrative contact: uncalibrated teaching model, not a prediction. An imported machine is never validated by the workshop.",
+    "示意性触点：未校准的教学模型，并非预测。导入的机器永远不会由工作台验证。",
+    "Illustrativer Kontakt: unkalibriertes Lehrmodell, keine Vorhersage. Eine importierte Maschine wird von der Werkstatt nie validiert.",
+    "Contacto ilustrativo: modelo pedagógico no calibrado, no es una predicción. Una máquina importada nunca es validada por el taller.",
+    "Иллюстративный контакт: некалиброванная учебная модель, не прогноз. Импортированная машина мастерской никогда не валидируется.",
+    "Contatto illustrativo: modello didattico non calibrato, non è una previsione. Una macchina importata non è mai convalidata dall'atelier.",
+    "説明用の接点：未校正の教育モデルで、予測ではありません。読み込んだ機械がワークショップで検証されることはありません。"
+  ],
+  "Source : distances publiées pour ce couple, en espace libre. Une machine importée n'est jamais validée par l'atelier.": [
+    "Source: published distances for this pair, in free space. An imported machine is never validated by the workshop.",
+    "来源：该组合在自由空间中的公布距离。导入的机器永远不会由工作台验证。",
+    "Quelle: veröffentlichte Abstände für dieses Paar im freien Raum. Eine importierte Maschine wird von der Werkstatt nie validiert.",
+    "Fuente: distancias publicadas para este par, en espacio libre. Una máquina importada nunca es validada por el taller.",
+    "Источник: опубликованные расстояния для этой пары в свободном пространстве. Импортированная машина мастерской никогда не валидируется.",
+    "Fonte: distanze pubblicate per questa coppia, in spazio libero. Una macchina importata non è mai convalidata dall'atelier.",
+    "出典：この組み合わせの自由空間での公表距離。読み込んだ機械がワークショップで検証されることはありません。"
+  ],
+  "Parcours du modèle importé": [
+    "Imported model steps",
+    "导入模型流程",
+    "Ablauf des importierten Modells",
+    "Recorrido del modelo importado",
+    "Шаги для импортированной модели",
+    "Percorso del modello importato",
+    "読み込みモデルの手順"
+  ],
+  "← Précédent": [
+    "← Previous",
+    "← 上一步",
+    "← Zurück",
+    "← Anterior",
+    "← Назад",
+    "← Precedente",
+    "← 前へ"
+  ],
+  "Suivant →": [
+    "Next →",
+    "下一步 →",
+    "Weiter →",
+    "Siguiente →",
+    "Далее →",
+    "Successivo →",
+    "次へ →"
+  ],
+  "Modèles de démonstration": [
+    "Demonstration models",
+    "演示模型",
+    "Demonstrationsmodelle",
+    "Modelos de demostración",
+    "Демонстрационные модели",
+    "Modelli dimostrativi",
+    "デモモデル"
+  ],
+  "Le capteur et l'aimant restent votre sélection actuelle : l'exemple ne les impose pas.": [
+    "The sensor and magnet remain your current selection: the example does not impose them.",
+    "传感器和磁铁保持您当前的选择：示例不会强制指定。",
+    "Sensor und Magnet bleiben Ihre aktuelle Auswahl: Das Beispiel gibt sie nicht vor.",
+    "El sensor y el imán siguen siendo su selección actual: el ejemplo no los impone.",
+    "Датчик и магнит остаются вашим текущим выбором: пример их не навязывает.",
+    "Sensore e magnete restano la vostra selezione attuale: l'esempio non li impone.",
+    "センサーと磁石は現在の選択のままです。例がそれらを指定することはありません。"
+  ],
+  "Aucune pièce mobile choisie : sélectionnez au moins une pièce dans la scène ou la liste.": [
+    "No moving part chosen: select at least one part in the scene or the list.",
+    "未选择运动件：请在场景或列表中至少选择一个零件。",
+    "Kein bewegliches Teil gewählt: Wählen Sie mindestens ein Teil in der Szene oder Liste.",
+    "Ninguna pieza móvil elegida: seleccione al menos una pieza en la escena o en la lista.",
+    "Подвижная деталь не выбрана: выберите хотя бы одну деталь в сцене или в списке.",
+    "Nessuna parte mobile scelta: selezionate almeno una parte nella scena o nell'elenco.",
+    "可動部品が未選択です。シーンまたは一覧で少なくとも1つ選んでください。"
+  ],
+  "Mouvement non validé : définissez puis validez le mouvement de la pièce mobile. Aucun contact n'est calculé.": [
+    "Movement not confirmed: define then confirm the movement of the moving part. No contact is computed.",
+    "运动未确认：请定义并确认运动件的运动。不计算触点。",
+    "Bewegung nicht bestätigt: Definieren und bestätigen Sie die Bewegung des beweglichen Teils. Es wird kein Kontakt berechnet.",
+    "Movimiento no validado: defina y valide el movimiento de la pieza móvil. No se calcula ningún contacto.",
+    "Движение не подтверждено: задайте и подтвердите движение подвижной детали. Контакт не рассчитывается.",
+    "Movimento non convalidato: definite e convalidate il movimento della parte mobile. Nessun contatto viene calcolato.",
+    "動きが未確定です。可動部品の動きを定義して確定してください。接点は計算されません。"
+  ],
+  "Course invalide : indiquez une course entre 0,1 et 5000 mm.": [
+    "Invalid stroke: enter a stroke between 0.1 and 5000 mm.",
+    "行程无效：请输入 0.1 至 5000 mm 之间的行程。",
+    "Ungültiger Hub: Geben Sie einen Hub zwischen 0,1 und 5000 mm an.",
+    "Carrera no válida: indique una carrera entre 0,1 y 5000 mm.",
+    "Недопустимый ход: укажите ход от 0,1 до 5000 мм.",
+    "Corsa non valida: indicate una corsa tra 0,1 e 5000 mm.",
+    "無効なストローク：0.1〜5000 mm の範囲で入力してください。"
+  ],
+  "Axe de pivot nul : choisissez un axe.": [
+    "Zero pivot axis: choose an axis.",
+    "枢轴为零：请选择一个轴。",
+    "Drehachse null: Wählen Sie eine Achse.",
+    "Eje de pivote nulo: elija un eje.",
+    "Нулевая ось поворота: выберите ось.",
+    "Asse del perno nullo: scegliete un asse.",
+    "ピボット軸がゼロです。軸を選んでください。"
+  ],
+  "Angle invalide : indiquez un angle entre 0,1 et 360°.": [
+    "Invalid angle: enter an angle between 0.1 and 360°.",
+    "角度无效：请输入 0.1 至 360° 之间的角度。",
+    "Ungültiger Winkel: Geben Sie einen Winkel zwischen 0,1 und 360° an.",
+    "Ángulo no válido: indique un ángulo entre 0,1 y 360°.",
+    "Недопустимый угол: укажите угол от 0,1 до 360°.",
+    "Angolo non valido: indicate un angolo tra 0,1 e 360°.",
+    "無効な角度：0.1〜360° の範囲で入力してください。"
+  ],
+  "pose libre": [
+    "free pose",
+    "自由姿态",
+    "freie Lage",
+    "pose libre",
+    "свободное положение",
+    "posa libera",
+    "自由姿勢"
+  ],
+  "Modèle": [
+    "Model",
+    "模型",
+    "Modell",
+    "Modelo",
+    "Модель",
+    "Modello",
+    "モデル"
+  ],
+  "Pièces mobiles": [
+    "Moving parts",
+    "运动件",
+    "Bewegliche Teile",
+    "Piezas móviles",
+    "Подвижные детали",
+    "Parti mobili",
+    "可動部品"
+  ],
+  "Installation": [
+    "Installation",
+    "安装",
+    "Montage",
+    "Instalación",
+    "Установка",
+    "Installazione",
+    "取り付け"
+  ],
+  "Essai": [
+    "Test",
+    "试验",
+    "Test",
+    "Prueba",
+    "Испытание",
+    "Prova",
+    "試験"
+  ],
+  "Coulisse": [
+    "Slides",
+    "滑动",
+    "Gleitet",
+    "Desliza",
+    "Скользит",
+    "Scorre",
+    "スライド"
+  ],
+  "Pivote": [
+    "Pivots",
+    "旋转",
+    "Schwenkt",
+    "Pivota",
+    "Поворачивается",
+    "Ruota",
+    "回転"
+  ],
+  "Sur une surface": [
+    "On a surface",
+    "在表面上",
+    "Auf einer Fläche",
+    "Sobre una superficie",
+    "На поверхности",
+    "Su una superficie",
+    "面の上"
+  ],
+  "À travers une paroi": [
+    "Through a wall",
+    "穿过壁面",
+    "Durch eine Wand",
+    "A través de una pared",
+    "Сквозь стенку",
+    "Attraverso una parete",
+    "壁を貫通"
+  ],
+  "Course d'ouverture": [
+    "Opening stroke",
+    "打开行程",
+    "Öffnungshub",
+    "Carrera de apertura",
+    "Ход открытия",
+    "Corsa di apertura",
+    "開きストローク"
+  ],
+  "Angle d'ouverture": [
+    "Opening angle",
+    "打开角度",
+    "Öffnungswinkel",
+    "Ángulo de apertura",
+    "Угол открытия",
+    "Angolo di apertura",
+    "開き角度"
+  ],
+  "Écart entre face d'appui et surface": [
+    "Gap between seating face and surface",
+    "支撑面与表面的间隙",
+    "Abstand zwischen Auflagefläche und Fläche",
+    "Separación entre cara de apoyo y superficie",
+    "Зазор между опорной гранью и поверхностью",
+    "Distanza tra faccia d'appoggio e superficie",
+    "座面と面のすき間"
+  ],
+  "Profondeur sous la surface": [
+    "Depth below the surface",
+    "表面以下深度",
+    "Tiefe unter der Fläche",
+    "Profundidad bajo la superficie",
+    "Глубина под поверхностью",
+    "Profondità sotto la superficie",
+    "面からの深さ"
+  ],
+  "Rotation dans le plan": [
+    "In-plane rotation",
+    "平面内旋转",
+    "Drehung in der Ebene",
+    "Rotación en el plano",
+    "Поворот в плоскости",
+    "Rotazione nel piano",
+    "面内回転"
+  ],
+  "Tiroir à deux pièces mobiles": [
+    "Drawer with two moving parts",
+    "带两个运动件的抽屉",
+    "Schublade mit zwei beweglichen Teilen",
+    "Cajón con dos piezas móviles",
+    "Ящик с двумя подвижными деталями",
+    "Cassetto con due parti mobili",
+    "可動部品2つの引き出し"
+  ],
+  "Coulisse +Z, 120 mm ; façade avec poignée et caisse séparées.": [
+    "Slides +Z, 120 mm; front with handle and box as separate parts.",
+    "沿 +Z 滑动 120 mm；带把手的面板与箱体分开。",
+    "Gleitet +Z, 120 mm; Front mit Griff und Kasten getrennt.",
+    "Desliza +Z, 120 mm; frente con tirador y caja separados.",
+    "Скользит по +Z на 120 мм; фасад с ручкой и короб — отдельные детали.",
+    "Scorre +Z, 120 mm; frontale con maniglia e cassa separati.",
+    "+Z 方向に 120 mm スライド。取っ手付き前板と箱は別部品。"
+  ],
+  "Porte sur axe incliné": [
+    "Door on an inclined axis",
+    "斜轴门",
+    "Tür an geneigter Achse",
+    "Puerta sobre eje inclinado",
+    "Дверь на наклонной оси",
+    "Porta su asse inclinato",
+    "傾斜軸のドア"
+  ],
+  "Pivot par l'origine, axe incliné de 15° dans le plan XY, 90°.": [
+    "Pivot through the origin, axis tilted 15° in the XY plane, 90°.",
+    "枢轴过原点，轴在 XY 平面内倾斜 15°，90°。",
+    "Drehpunkt im Ursprung, Achse in der XY-Ebene um 15° geneigt, 90°.",
+    "Pivote en el origen, eje inclinado 15° en el plano XY, 90°.",
+    "Поворот через начало координат, ось наклонена на 15° в плоскости XY, 90°.",
+    "Perno nell'origine, asse inclinato di 15° nel piano XY, 90°.",
+    "原点を通るピボット、XY 面内で 15° 傾いた軸、90°。"
+  ],
+  "Paroi avec alésage": [
+    "Wall with bore",
+    "带孔壁板",
+    "Wand mit Bohrung",
+    "Pared con taladro",
+    "Стенка с отверстием",
+    "Parete con alesaggio",
+    "穴付きの壁"
+  ],
+  "Paroi 6 mm, alésage Ø 8 mm centré X 0 / Y 60, axe Z ; volet coulissant 40 mm en X.": [
+    "6 mm wall, Ø 8 mm bore centred at X 0 / Y 60, Z axis; shutter sliding 40 mm in X.",
+    "6 mm 壁板，Ø 8 mm 孔中心 X 0 / Y 60，Z 轴；挡板沿 X 滑动 40 mm。",
+    "6-mm-Wand, Bohrung Ø 8 mm bei X 0 / Y 60, Z-Achse; Schieber gleitet 40 mm in X.",
+    "Pared de 6 mm, taladro Ø 8 mm centrado en X 0 / Y 60, eje Z; trampilla que desliza 40 mm en X.",
+    "Стенка 6 мм, отверстие Ø 8 мм с центром X 0 / Y 60, ось Z; заслонка скользит на 40 мм по X.",
+    "Parete 6 mm, alesaggio Ø 8 mm centrato in X 0 / Y 60, asse Z; sportello scorrevole 40 mm in X.",
+    "厚さ 6 mm の壁、Ø 8 mm の穴（中心 X 0 / Y 60、Z 軸）、X 方向に 40 mm スライドするシャッター。"
+  ],
+  "Aucun contact n'est affiché : il n'est pas prédit pour ce montage.": [
+    "No contact is shown: it is not predicted for this assembly.",
+    "不显示触点：此装配不做预测。",
+    "Kein Kontakt angezeigt: Für diese Montage wird er nicht vorhergesagt.",
+    "No se muestra ningún contacto: no se predice para este montaje.",
+    "Контакт не показан: для этого монтажа он не прогнозируется.",
+    "Nessun contatto mostrato: non è previsto per questo montaggio.",
+    "接点は表示されません：この取り付けでは予測しません。"
+  ],
+  "Coordonnées précises du capteur et de l'aimant. Le fichier, les pièces mobiles et le mouvement se règlent dans le parcours guidé.": [
+    "Precise coordinates of the sensor and magnet. The file, moving parts and movement are set in the guided steps.",
+    "传感器和磁铁的精确坐标。文件、运动件和运动在引导流程中设置。",
+    "Genaue Koordinaten von Sensor und Magnet. Datei, bewegliche Teile und Bewegung werden im geführten Ablauf eingestellt.",
+    "Coordenadas precisas del sensor y del imán. El archivo, las piezas móviles y el movimiento se ajustan en el recorrido guiado.",
+    "Точные координаты датчика и магнита. Файл, подвижные детали и движение настраиваются в пошаговом режиме.",
+    "Coordinate precise di sensore e magnete. File, parti mobili e movimento si impostano nel percorso guidato.",
+    "センサーと磁石の正確な座標。ファイル、可動部品、動きはガイド手順で設定します。"
   ]
 }

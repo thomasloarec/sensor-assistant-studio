@@ -90,55 +90,9 @@ export default function MachineControls({
       <h2>{t("Installer et essayer")}</h2>
       <p className="mw-help">
         {t(
-          "1. Importez l'objet. 2. Choisissez le capteur. 3. Placez les composants. 4. Ouvrez le bac.",
+          "Coordonnées précises du capteur et de l'aimant. Le fichier, les pièces mobiles et le mouvement se règlent dans le parcours guidé.",
         )}
       </p>
-      <details open>
-        <summary>{t("Objet 3D et pièce mobile")}</summary>
-        <strong className="mw-file-name t-metric">{t(m.fileName)}</strong>
-        <label className="mw-select-label">
-          {t("Unités du fichier")}
-          <select
-            value={m.unitScale}
-            onChange={(e) => onChange({ unitScale: Number(e.target.value) })}
-          >
-            <option value={1000}>{t("Mètres · standard GLB")}</option>
-            <option value={1}>{t("Millimètres")}</option>
-            <option value={10}>{t("Centimètres")}</option>
-          </select>
-        </label>
-        {asset && (
-          <p className="mw-help">
-            {t("Objet :")} {asset.size.map((n) => formatMm(n, 1)).join(" × ")} mm (X × Y × Z).
-          </p>
-        )}
-        <label className="mw-select-label">
-          {t("Pièce à mettre en mouvement")}
-          <select value={m.movingNode} onChange={(e) => onChange({ movingNode: e.target.value })}>
-            <option value="">{t("Choisir une pièce")}</option>
-            {asset?.nodes.map((n) => (
-              <option key={n.path} value={n.path}>
-                {t(n.name)}
-              </option>
-            ))}
-          </select>
-        </label>
-        <button className="mw-text-button" onClick={onExample}>
-          {t("Recharger l'exemple machine à café")}
-        </button>
-        <br />
-        <a href="/models/machine-cafe-bac-mobile.glb" download>
-          {t("Télécharger la machine à café (.glb) ↗")}
-        </a>
-        <p className="mw-help">
-          {t(
-            "Pour animer le bac seul, exportez-le comme une pièce séparée du châssis. Choisissez son nom dans la liste.",
-          )}
-        </p>
-        {asset && !asset.nodes.some((n) => n.path === m.movingNode) && (
-          <p className="mw-fit-no">{t("Choisissez la pièce mobile avant de lancer le cycle.")}</p>
-        )}
-      </details>
       <div className="mw-machine-product">
         <strong className="t-title-s">{t(sensor.name)}</strong>
         <button className="mw-product-card-button" onClick={onProductCard}>
@@ -257,58 +211,6 @@ export default function MachineControls({
               : "Le corps dépasse le gabarit déclaré.",
           )}
         </p>
-      </details>
-      <details open>
-        <summary>{t("Mouvement d'ouverture")}</summary>
-        <label className="mw-select-label">
-          {t("Type de mouvement")}
-          <select
-            value={m.motion}
-            onChange={(e) => onChange({ motion: e.target.value as "translation" | "rotation" })}
-          >
-            <option value="translation">{t("Translation · bac coulissant")}</option>
-            <option value="rotation">{t("Rotation · porte ou couvercle")}</option>
-          </select>
-        </label>
-        {m.motion === "translation" ? (
-          <VectorInput
-            label={t("Déplacement ouvert")}
-            value={m.travel}
-            onChange={(travel) => onChange({ travel })}
-          />
-        ) : (
-          <>
-            <VectorInput
-              label={t("Point du pivot")}
-              value={m.pivot}
-              onChange={(pivot) => onChange({ pivot })}
-            />
-            <label className="mw-select-label">
-              {t("Axe du pivot")}
-              <select
-                value={m.rotationAxis}
-                onChange={(e) => onChange({ rotationAxis: e.target.value as "x" | "y" | "z" })}
-              >
-                {["x", "y", "z"].map((x) => (
-                  <option key={x} value={x}>
-                    {t(x.toUpperCase())}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label className="mw-select-label">
-              {t("Angle ouvert (°)")}
-              <input
-                aria-label={t("Angle ouvert")}
-                type="number"
-                min={-360}
-                max={360}
-                value={m.openingAngle}
-                onChange={(e) => onChange({ openingAngle: Number(e.target.value) })}
-              />
-            </label>
-          </>
-        )}
       </details>
       <button className="mw-text-button" onClick={onExit}>
         {t("Revenir au montage sur le plan quadrillé")}
