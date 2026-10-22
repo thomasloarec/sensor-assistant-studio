@@ -40,7 +40,9 @@ export function playbackStep(
 ): number {
   if (!seconds || !(seconds > 0) || !Number.isFinite(elapsedMs) || elapsedMs <= 0) return progress;
   const dt = Math.min(MAX_FRAME_MS, elapsedMs) / 1000;
-  return Math.min(1, progress + dt / (seconds * (slow ? SLOW_FACTOR : 1)));
+  const next = progress + dt / (seconds * (slow ? SLOW_FACTOR : 1));
+  // Dernière image EXACTE : l'accumulation flottante ne laisse pas 0,99999…
+  return next >= 1 - 1e-9 ? 1 : next;
 }
 
 export interface SwitchEvent {
