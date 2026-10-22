@@ -2870,3 +2870,28 @@
     transition: none;
   }
 }
+.mw-guide input[type="number"],
+.mw-guide select {
+  width: 100%;
+  min-height: 44px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: var(--r-sm);
+  background: var(--mw-field);
+  color: var(--foreground);
+  font: var(--mw-t-body);
+}
+.mw-guide input[aria-invalid="true"] {
+  box-shadow: inset 0 0 0 2px var(--destructive);
+}
+.mw-guide input:focus-visible,
+.mw-guide select:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+.mw-guide .mw-check {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  min-height: 44px;
+}
