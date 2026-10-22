@@ -791,6 +791,19 @@ export function summarizeWorkshop(c: WorkshopConfig): string {
   ].join("\n");
 }
 const NOTE_MARKERS = [1, 2, 3].map((v) => `\n\n[STANDEX_MAGNETIC_WORKSHOP_V${v}]\n`);
+/** Taille maximale d'un fichier de montage relu par « Importer ». */
+export const WORKSHOP_IMPORT_LIMIT = 20000;
+/** Export relisible : lisible (indenté) s'il tient dans la limite, compact
+ *  sinon ; refusé plutôt que produire un fichier que l'import rejetterait. */
+export function workshopExportJson(c: WorkshopConfig): string {
+  if (!parseWorkshopConfig(c)) throw new Error("Montage invalide");
+  const bytes = (s: string) => new TextEncoder().encode(s).byteLength;
+  const pretty = JSON.stringify(c, null, 2);
+  if (bytes(pretty) <= WORKSHOP_IMPORT_LIMIT) return pretty;
+  const compact = JSON.stringify(c);
+  if (bytes(compact) <= WORKSHOP_IMPORT_LIMIT) return compact;
+  throw new Error("Montage trop volumineux pour être réimporté.");
+}
 export function serializeWorkshop(c: WorkshopConfig): string {
   if (!parseWorkshopConfig(c)) throw new Error("Montage invalide");
   return summarizeWorkshop(c) + NOTE_MARKERS[2] + JSON.stringify(c);

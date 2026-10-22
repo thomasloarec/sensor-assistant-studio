@@ -82,6 +82,8 @@ import {
   MODEL_VERSION,
   parseWorkshopConfig,
   simulateCycle,
+  WORKSHOP_IMPORT_LIMIT,
+  workshopExportJson,
   summarizeWorkshop,
   magnetSize,
   distanceBasis,
@@ -896,7 +898,7 @@ export default function MagneticWorkshop({
   async function importFile(file: File | undefined) {
     if (!file) return;
     try {
-      if (file.size > 20000) throw new Error(t("Le fichier de montage est trop volumineux."));
+      if (file.size > WORKSHOP_IMPORT_LIMIT) throw new Error(t("Le fichier de montage est trop volumineux."));
       const parsed = parseWorkshopConfig(JSON.parse(await file.text()));
       if (!parsed)
         throw new Error(t("Ce fichier ne contient pas un montage valide (V1, V2 ou V3)."));
