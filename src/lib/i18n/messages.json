@@ -31921,5 +31921,167 @@
     "{0} с",
     "{0} s",
     "{0} s"
+  ],
+  "Commutations illustratives": [
+    "Illustrative switching events",
+    "示意性切换",
+    "Veranschaulichende Schaltvorgänge",
+    "Conmutaciones ilustrativas",
+    "Иллюстративные переключения",
+    "Commutazioni illustrative",
+    "説明用の切り替え"
+  ],
+  "Contact indéterminé sur tout le cycle : aucune commutation n'est affichée.": [
+    "Contact undetermined over the whole cycle: no switching is shown.",
+    "整个周期内触点状态不确定：不显示任何切换。",
+    "Kontakt über den gesamten Zyklus unbestimmt: Es wird kein Schaltvorgang angezeigt.",
+    "Contacto indeterminado en todo el ciclo: no se muestra ninguna conmutación.",
+    "Состояние контакта не определено на всём цикле: переключения не показываются.",
+    "Contatto indeterminato per tutto il ciclo: nessuna commutazione mostrata.",
+    "サイクル全体で接点が不確定です：切り替えは表示されません。"
+  ],
+  "Aucune commutation pendant ce cycle.": [
+    "No switching during this cycle.",
+    "本周期内无切换。",
+    "Keine Schaltvorgänge in diesem Zyklus.",
+    "Ninguna conmutación durante este ciclo.",
+    "В этом цикле переключений нет.",
+    "Nessuna commutazione durante questo ciclo.",
+    "このサイクルでは切り替えはありません。"
+  ],
+  "{0} fermeture(s) · {1} ouverture(s)": [
+    "{0} closing(s) · {1} opening(s)",
+    "{0} 次闭合 · {1} 次断开",
+    "{0} Schließung(en) · {1} Öffnung(en)",
+    "{0} cierre(s) · {1} apertura(s)",
+    "Замыканий: {0} · размыканий: {1}",
+    "{0} chiusura/e · {1} apertura/e",
+    "閉: {0} 回 · 開: {1} 回"
+  ],
+  "Détail et placement sur un événement": [
+    "Details and jump to an event",
+    "详情及定位到事件",
+    "Details und Sprung zu einem Ereignis",
+    "Detalle y situarse en un evento",
+    "Подробности и переход к событию",
+    "Dettaglio e posizionamento su un evento",
+    "詳細とイベントへの移動"
+  ],
+  "ouverture ≈ {0} {1} ({2})": [
+    "opening ≈ {0} {1} ({2})",
+    "开度 ≈ {0} {1}（{2}）",
+    "Öffnung ≈ {0} {1} ({2})",
+    "apertura ≈ {0} {1} ({2})",
+    "открытие ≈ {0} {1} ({2})",
+    "apertura ≈ {0} {1} ({2})",
+    "開度 ≈ {0} {1}（{2}）"
+  ],
+  "temps ≈ {0} s": [
+    "time ≈ {0} s",
+    "时间 ≈ {0} 秒",
+    "Zeit ≈ {0} s",
+    "tiempo ≈ {0} s",
+    "время ≈ {0} с",
+    "tempo ≈ {0} s",
+    "時間 ≈ {0} 秒"
+  ],
+  "repères ≈ {0} mm": [
+    "markers ≈ {0} mm",
+    "标记 ≈ {0} mm",
+    "Marker ≈ {0} mm",
+    "marcadores ≈ {0} mm",
+    "метки ≈ {0} мм",
+    "riferimenti ≈ {0} mm",
+    "マーカー ≈ {0} mm"
+  ],
+  "Valeurs approchées au pas d'échantillonnage (≈ {0} {1}). Ce ne sont pas des distances entre centres capteur–aimant.": [
+    "Values approximate to the sampling step (≈ {0} {1}). These are not sensor–magnet centre distances.",
+    "数值按采样步长近似（≈ {0} {1}）。这些不是传感器–磁铁中心距离。",
+    "Werte auf den Abtastschritt genähert (≈ {0} {1}). Es sind keine Mittenabstände Sensor–Magnet.",
+    "Valores aproximados al paso de muestreo (≈ {0} {1}). No son distancias entre centros sensor–imán.",
+    "Значения приближены к шагу дискретизации (≈ {0} {1}). Это не расстояния между центрами датчика и магнита.",
+    "Valori approssimati al passo di campionamento (≈ {0} {1}). Non sono distanze tra i centri sensore–magnete.",
+    "値はサンプリング間隔に近似しています（≈ {0} {1}）。センサー–磁石の中心間距離ではありません。"
+  ],
+  "Source de l'illustration : ligne nominale publiée {0}, classe {1}, approche {2} — fermeture {3} mm, réouverture {4} mm. Couverture et verdict non validés pour cette machine.": [
+    "Illustration source: published nominal row {0}, class {1}, approach {2} — closing {3} mm, reopening {4} mm. Coverage and verdict not validated for this machine.",
+    "示意来源：已发布的标称行 {0}，等级 {1}，接近方式 {2} — 闭合 {3} mm，重新断开 {4} mm。该机器的覆盖范围和结论未经验证。",
+    "Quelle der Veranschaulichung: veröffentlichte Nennzeile {0}, Klasse {1}, Annäherung {2} — Schließen {3} mm, Wiederöffnen {4} mm. Abdeckung und Ergebnis für diese Maschine nicht validiert.",
+    "Fuente de la ilustración: fila nominal publicada {0}, clase {1}, aproximación {2} — cierre {3} mm, reapertura {4} mm. Cobertura y veredicto no validados para esta máquina.",
+    "Источник иллюстрации: опубликованная номинальная строка {0}, класс {1}, подход {2} — замыкание {3} мм, размыкание {4} мм. Покрытие и вывод для этой машины не подтверждены.",
+    "Fonte dell'illustrazione: riga nominale pubblicata {0}, classe {1}, approccio {2} — chiusura {3} mm, riapertura {4} mm. Copertura e verdetto non validati per questa macchina.",
+    "説明の出典：公開された公称行 {0}、クラス {1}、アプローチ {2} — 閉 {3} mm、再開 {4} mm。この機械に対する適用範囲と判定は未検証です。"
+  ],
+  "Source de l'illustration : plage du guide {0} (repères « up » / « to », pas des seuils). Couverture et verdict non validés pour cette machine.": [
+    "Illustration source: guide range {0} (“up” / “to” markers, not thresholds). Coverage and verdict not validated for this machine.",
+    "示意来源：指南范围 {0}（“up”/“to” 标记，并非阈值）。该机器的覆盖范围和结论未经验证。",
+    "Quelle der Veranschaulichung: Leitfadenbereich {0} („up“ / „to“-Marken, keine Schwellen). Abdeckung und Ergebnis für diese Maschine nicht validiert.",
+    "Fuente de la ilustración: rango de la guía {0} (marcas «up» / «to», no umbrales). Cobertura y veredicto no validados para esta máquina.",
+    "Источник иллюстрации: диапазон руководства {0} (метки «up» / «to», не пороги). Покрытие и вывод для этой машины не подтверждены.",
+    "Fonte dell'illustrazione: intervallo della guida {0} (riferimenti «up» / «to», non soglie). Copertura e verdetto non validati per questa macchina.",
+    "説明の出典：ガイドの範囲 {0}（「up」/「to」の目安でありしきい値ではありません）。この機械に対する適用範囲と判定は未検証です。"
+  ],
+  "Aucune ligne publiée exploitable pour cette classe : repli générique 15 / 18 mm. La distance d'activation choisie ne modifie pas cette illustration.": [
+    "No usable published row for this class: generic 15 / 18 mm fallback. The chosen activation distance does not change this illustration.",
+    "此等级没有可用的已发布数据行：使用通用 15 / 18 mm 备用值。所选的激活距离不会改变此示意。",
+    "Keine verwendbare veröffentlichte Zeile für diese Klasse: generischer Ersatz 15 / 18 mm. Der gewählte Schaltabstand ändert diese Veranschaulichung nicht.",
+    "No hay fila publicada utilizable para esta clase: valores genéricos 15 / 18 mm. La distancia de activación elegida no modifica esta ilustración.",
+    "Для этого класса нет пригодной опубликованной строки: общий запасной вариант 15 / 18 мм. Выбранное расстояние срабатывания не меняет эту иллюстрацию.",
+    "Nessuna riga pubblicata utilizzabile per questa classe: valori generici 15 / 18 mm. La distanza di attivazione scelta non modifica questa illustrazione.",
+    "このクラスに使用できる公開行はありません：汎用の 15 / 18 mm を使用します。選択した作動距離はこの説明を変えません。"
+  ],
+  "Aucune ligne publiée exploitable pour cette classe et cette approche : ce choix ne modifie pas la commutation illustrative du modèle importé.": [
+    "No usable published row for this class and approach: this choice does not change the illustrative switching of the imported model.",
+    "此等级和接近方式没有可用的已发布数据行：此选择不会改变导入模型的示意性切换。",
+    "Keine verwendbare veröffentlichte Zeile für diese Klasse und Annäherung: Diese Wahl ändert das veranschaulichende Schalten des importierten Modells nicht.",
+    "No hay fila publicada utilizable para esta clase y aproximación: esta elección no modifica la conmutación ilustrativa del modelo importado.",
+    "Для этого класса и подхода нет пригодной опубликованной строки: этот выбор не меняет иллюстративное переключение импортированной модели.",
+    "Nessuna riga pubblicata utilizzabile per questa classe e questo approccio: questa scelta non modifica la commutazione illustrativa del modello importato.",
+    "このクラスとアプローチに使用できる公開行はありません：この選択はインポートしたモデルの説明用の切り替えを変えません。"
+  ],
+  "Unités du nouveau fichier": [
+    "Units of the new file",
+    "新文件的单位",
+    "Einheiten der neuen Datei",
+    "Unidades del nuevo archivo",
+    "Единицы нового файла",
+    "Unità del nuovo file",
+    "新しいファイルの単位"
+  ],
+  "{0} : refusé avec les unités « {1} ». Choisissez les unités du fichier puis réessayez. Le montage actuel reste inchangé.": [
+    "{0}: rejected with “{1}” units. Choose the file's units and try again. The current setup is unchanged.",
+    "{0}：使用“{1}”单位时被拒绝。请选择文件的单位后重试。当前装配保持不变。",
+    "{0}: mit den Einheiten „{1}“ abgelehnt. Wählen Sie die Einheiten der Datei und versuchen Sie es erneut. Die aktuelle Montage bleibt unverändert.",
+    "{0}: rechazado con las unidades «{1}». Elija las unidades del archivo y vuelva a intentarlo. El montaje actual no cambia.",
+    "{0}: отклонён с единицами «{1}». Выберите единицы файла и повторите попытку. Текущий монтаж не изменён.",
+    "{0}: rifiutato con le unità «{1}». Scegli le unità del file e riprova. Il montaggio attuale resta invariato.",
+    "{0}：単位「{1}」では拒否されました。ファイルの単位を選んで再試行してください。現在の取付は変わりません。"
+  ],
+  "Réessayer avec ces unités": [
+    "Try again with these units",
+    "使用这些单位重试",
+    "Mit diesen Einheiten erneut versuchen",
+    "Reintentar con estas unidades",
+    "Повторить с этими единицами",
+    "Riprova con queste unità",
+    "この単位で再試行"
+  ],
+  "Annuler l'import": [
+    "Cancel import",
+    "取消导入",
+    "Import abbrechen",
+    "Cancelar la importación",
+    "Отменить импорт",
+    "Annulla l'importazione",
+    "インポートを取り消す"
+  ],
+  "Géométrie hors échelle avec les unités choisies : choisissez les unités du fichier puis réessayez. Limite : 20 m.": [
+    "Geometry out of scale with the chosen units: choose the file's units and try again. Limit: 20 m.",
+    "按所选单位几何尺寸超出范围：请选择文件的单位后重试。上限：20 m。",
+    "Geometrie mit den gewählten Einheiten außerhalb des Maßstabs: Wählen Sie die Einheiten der Datei und versuchen Sie es erneut. Grenze: 20 m.",
+    "Geometría fuera de escala con las unidades elegidas: elija las unidades del archivo y vuelva a intentarlo. Límite: 20 m.",
+    "Геометрия вне масштаба при выбранных единицах: выберите единицы файла и повторите попытку. Предел: 20 м.",
+    "Geometria fuori scala con le unità scelte: scegli le unità del file e riprova. Limite: 20 m.",
+    "選択した単位では形状が範囲外です：ファイルの単位を選んで再試行してください。上限：20 m。"
   ]
 }

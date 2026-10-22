@@ -457,6 +457,20 @@ Lot 2 — animations du fichier et repères (22 octobre 2026) :
   toujours distinguée de l'écart capteur–aimant et de l'entrefer.
 - Scène : repères et cote en couleur de rendu Three.js (exception documentée).
 
+Revue lot 2 (22 octobre 2026) :
+
+- Menu « Essayer un modèle de démonstration » : surface OPAQUE `--popover` /
+  `--popover-foreground`, élévation `--e-4`, défilement interne ; il passe
+  au-dessus du verdict et de la scène sans les laisser transparaître.
+- Refus d'échelle à l'import : encart `.notice-warning` `.mw-units-retry` sous
+  les actions principales, sélecteur d'unités et « Réessayer avec ces unités » ;
+  aucune unité devinée, montage précédent intact jusqu'à validation.
+- Étape Essai : bloc `.mw-switch-events` sur `--surface-sunken` — résumé
+  « fermeture(s) / ouverture(s) » en `.t-metric`, liste repliable d'événements
+  (boutons ≥ 44 px sur `--surface-tint`) qui placent la lecture ; pas
+  d'échantillonnage et source de l'illustration (ligne nominale publiée, plage
+  du guide ou repli 15 / 18 mm) en `.t-caption`.
+
 ## 11. Ce qui reste ouvert
 
 - La console `/standex` ne peut être validée de bout en bout sans session staff

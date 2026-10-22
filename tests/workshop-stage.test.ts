@@ -1,3 +1,4 @@
+import { cycleSeconds, playbackStep } from "../src/lib/standex/machine-playback";
 import { describe, expect, test } from "bun:test";
 import { readFileSync } from "node:fs";
 
@@ -185,11 +186,19 @@ describe("colonne de gauche : réglages essentiels", () => {
 
 describe("chronologie et lecture", () => {
   test("un aller-retour dure 6 secondes en lecture normale", () => {
-    expect(WORKSHOP).toContain("const CYCLE_STEPS_NORMAL = 120;");
+    // Lecture au temps écoulé : 6 s d'images de 16 ms mènent exactement à la fin.
+    expect(cycleSeconds(null)).toBe(6);
+    let p = 0;
+    for (let t = 0; t < 5900; t += 16) p = playbackStep(p, 16, 6, false);
+    expect(p).toBeLessThan(1);
+    for (let t = 0; t < 200; t += 16) p = playbackStep(p, 16, 6, false);
+    expect(p).toBe(1);
+    expect(WORKSHOP).toContain("playbackStep(v, dt, seconds, playbackSpeed === \"slow\")");
   });
   test("la lecture lente reste disponible dans les réglages avancés", () => {
     expect(WORKSHOP).toContain('t("Vitesse de lecture")');
-    expect(WORKSHOP).toContain("const CYCLE_STEPS_SLOW = 240;");
+    // Lent = 12 s pour un aller-retour.
+    expect(playbackStep(0, 200, 6, true)).toBeCloseTo(200 / 12000, 9);
   });
   test("la chronologie utilise les mêmes échantillons que la scène", () => {
     const cycle = WORKSHOP.slice(WORKSHOP.indexOf('className="mw-cycle"'));

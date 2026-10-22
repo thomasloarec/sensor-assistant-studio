@@ -32,6 +32,8 @@ import type { CycleSample, Vec3, WorkshopConfig } from "@/lib/standex/magnetic-w
 import { magnetSize } from "@/lib/standex/magnetic-workshop";
 import { formatMm, sensorById } from "@/lib/standex/sensor-catalog";
 import { CLIP_ISSUE_TEXT } from "@/lib/standex/machine-animation";
+import type { SwitchEvent } from "@/lib/standex/machine-playback";
+import type { IllustrationSource } from "@/lib/standex/workshop-guide";
 import type { GuideOverlay, MachineTool, SceneHit } from "./machine-scene";
 
 export type GuideStep = "model" | "parts" | "motion" | "install" | "test";
@@ -228,6 +230,10 @@ export default function MachineGuide({
   onDemo,
   onMarkers,
   reduced = false,
+  events = [],
+  resolution = null,
+  illustration = null,
+  anyKnown = true,
 }: {
   state: GuideState;
   setState: (f: (s: GuideState) => GuideState) => void;
@@ -246,6 +252,10 @@ export default function MachineGuide({
   onDemo: (key: string) => void;
   onMarkers: (markers: Marker[]) => void;
   reduced?: boolean;
+  events?: SwitchEvent[];
+  resolution?: { value: number; unit: "mm" | "°" | "s" } | null;
+  illustration?: IllustrationSource | null;
+  anyKnown?: boolean;
 }) {
   const m = config.machine!;
   const selection = movingSelection(m);
@@ -1051,6 +1061,96 @@ export default function MachineGuide({
             {t(reason)}
           </p>
         )}
+        <section className="mw-switch-events" data-testid="guide-switch-events" aria-labelledby="mw-switch-events-title">
+          <p className="t-body" id="mw-switch-events-title">
+            <strong>{t("Commutations illustratives")}</strong>
+          </p>
+          {!anyKnown ? (
+            <p className="t-body" data-testid="guide-switch-none">
+              {t("Contact indéterminé sur tout le cycle : aucune commutation n'est affichée.")}
+            </p>
+          ) : events.length === 0 ? (
+            <p className="t-body" data-testid="guide-switch-none">
+              {t("Aucune commutation pendant ce cycle.")}
+            </p>
+          ) : (
+            <>
+              <p className="t-body t-metric" data-testid="guide-switch-summary">
+                {msg("{0} fermeture(s) · {1} ouverture(s)", [
+                  String(events.filter((e) => e.kind === "close").length),
+                  String(events.filter((e) => e.kind === "open").length),
+                ])}
+              </p>
+              <details data-testid="guide-switch-details">
+                <summary className="t-body">{t("Détail et placement sur un événement")}</summary>
+                <ol>
+                  {events.map((e, i) => (
+                    <li key={i}>
+                      <button
+                        type="button"
+                        className="t-body t-metric"
+                        data-testid="guide-switch-event"
+                        onClick={() => {
+                          setPlaying(false);
+                          setProgress(e.t);
+                        }}
+                      >
+                        {[
+                          t(e.kind === "close" ? "Fermeture" : "Ouverture"),
+                          e.opening
+                            ? msg("ouverture ≈ {0} {1} ({2})", [
+                                e.opening.value.toFixed(1),
+                                e.opening.unit,
+                                t(e.opening.phase),
+                              ])
+                            : e.clipSeconds !== undefined
+                              ? msg("temps ≈ {0} s", [e.clipSeconds.toFixed(2)])
+                              : "",
+                          e.markerMm !== undefined
+                            ? msg("repères ≈ {0} mm", [e.markerMm.toFixed(1)])
+                            : "",
+                        ]
+                          .filter(Boolean)
+                          .join(" · ")}
+                      </button>
+                    </li>
+                  ))}
+                </ol>
+              </details>
+            </>
+          )}
+          {resolution && (
+            <p className="t-caption" data-testid="guide-switch-resolution">
+              {msg(
+                "Valeurs approchées au pas d'échantillonnage (≈ {0} {1}). Ce ne sont pas des distances entre centres capteur–aimant.",
+                [resolution.value < 0.1 ? resolution.value.toFixed(3) : resolution.value.toFixed(2), resolution.unit],
+              )}
+            </p>
+          )}
+          {illustration && (
+            <p className="t-caption" data-testid="guide-illustration-source">
+              {illustration.kind === "nominal"
+                ? msg(
+                    "Source de l'illustration : ligne nominale publiée {0}, classe {1}, approche {2} — fermeture {3} mm, réouverture {4} mm. Couverture et verdict non validés pour cette machine.",
+                    [
+                      illustration.sensorReference,
+                      illustration.sensitivityClass,
+                      illustration.approach,
+                      formatMm(illustration.bounds.nearMm, 1),
+                      formatMm(illustration.bounds.farMm, 1),
+                    ],
+                  )
+                : illustration.kind === "guide"
+                  ? msg(
+                      "Source de l'illustration : plage du guide {0} (repères « up » / « to », pas des seuils). Couverture et verdict non validés pour cette machine.",
+                      [illustration.reference],
+                    )
+                  : t(
+                      "Aucune ligne publiée exploitable pour cette classe : repli générique 15 / 18 mm. La distance d'activation choisie ne modifie pas cette illustration.",
+                    )}
+            </p>
+          )}
+        </section>
         <div className="mw-markers" data-testid="guide-markers">
           <p className="t-body">
             <strong>{t("Distance entre les repères")}</strong>
