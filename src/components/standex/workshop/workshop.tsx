@@ -82,6 +82,8 @@ import {
   MODEL_VERSION,
   parseWorkshopConfig,
   simulateCycle,
+  WORKSHOP_IMPORT_LIMIT,
+  workshopExportJson,
   summarizeWorkshop,
   magnetSize,
   distanceBasis,
@@ -92,7 +94,7 @@ import {
 import type { WorkshopConfig, Contact, Vec3 } from "@/lib/standex/magnetic-workshop";
 import "./workshop.css";
 import { COFFEE_ASSEMBLY } from "@/lib/standex/machine-assembly";
-import type { MachineAssembly } from "@/lib/standex/machine-assembly";
+import type { MachineAssembly, Marker as MarkerT } from "@/lib/standex/machine-assembly";
 import type { MachineAsset } from "@/lib/standex/machine-assets";
 import type { MachineTool } from "./machine-scene";
 import type { TestedPair } from "@/lib/leadmagnet/tested-pairs";
@@ -115,8 +117,9 @@ import {
   throughAllowed,
 } from "@/lib/standex/machine-mounting";
 import {
+  cycleU,
+  markerReading,
   motionProblem,
-  openingAt,
   rescaleMachine,
   syncAttachSupports,
 } from "@/lib/standex/machine-assembly";
@@ -300,8 +303,7 @@ export default function MagneticWorkshop({
   const [tool, setTool] = useState<MachineTool>("navigate"),
     [transformMode, setTransformMode] = useState<"translate" | "rotate">("translate");
   const [showMachine, setShowMachine] = useState(true),
-    [showSpace, setShowSpace] = useState(true),
-    [measure, setMeasure] = useState<number | null>(null);
+    [showSpace, setShowSpace] = useState(true);
   const machine = config.machine;
   const [guideState, setGuideState] = useState<GuideState>(INITIAL_GUIDE);
   /** Historique des opérations de montage, propre au fichier courant. */
@@ -315,7 +317,7 @@ export default function MagneticWorkshop({
   const preloadedRef = useRef<{ key: string; scale: number; asset: MachineAsset } | null>(null);
   /** Lecture « montage guidé » recalculée à chaque changement d'entrée : un verdict
    * n'est jamais conservé ni importé, il est toujours recalculé ici. */
-  const guided = useGuidedMounting(config);
+  const guided = useGuidedMounting(config, machineAsset);
   /** Ligne du guide d'activation et approche choisies EXPLICITEMENT pour la
    *  démonstration illustrative de portée. Aucun profil n'est créé, aucune
    *  qualification n'en dépend. */
@@ -352,7 +354,11 @@ export default function MagneticWorkshop({
   }, [config.sensorId, config.magnetModel, config.sensitivity, config.geometry, config.mode]);
   useEffect(() => {
     let cancelled = false,
-      loaded: MachineAsset | null = null;
+      loaded: MachineAsset | null = null,
+      unregister: (() => void) | null = null;
+    // Annulation réelle : un fichier remplacé pendant sa lecture est abandonné
+    // et ses ressources libérées dès qu'il arrive.
+    const abort = new AbortController();
     setMachineAsset(null);
     setAssetError(null);
     if (!machine) return;
@@ -362,15 +368,20 @@ export default function MagneticWorkshop({
       pre && pre.key === machine.assetKey && pre.scale === machine.unitScale
         ? Promise.resolve(pre.asset)
         : import("@/lib/standex/machine-assets").then((m) =>
-            m.loadMachineAsset(machine.assetKey, machine.unitScale, storageMode),
+            m.loadMachineAsset(machine.assetKey, machine.unitScale, storageMode, abort.signal),
           )
     )
-      .then((asset) => {
+      .then(async (asset) => {
         if (cancelled) {
           asset.dispose();
           return;
         }
         loaded = asset;
+        // Les clips du fichier ne sont évaluables qu'une fois le fichier chargé :
+        // avant, le contact reste indéterminé.
+        const { registerAnimation } = await import("@/lib/standex/machine-clip-registry");
+        if (cancelled) return;
+        unregister = registerAnimation(machine.assetKey, machine.unitScale, asset.animation);
         setMachineAsset(asset);
         // Nouveau fichier : AUCUNE pièce mobile n'est devinée et aucun mouvement
         // n'est supposé. Seules les poses initiales sont rapprochées de l'objet.
@@ -406,6 +417,8 @@ export default function MagneticWorkshop({
       });
     return () => {
       cancelled = true;
+      abort.abort();
+      unregister?.();
       loaded?.dispose();
     };
     // Positions and cycle changes reuse the loaded geometry.
@@ -450,6 +463,24 @@ export default function MagneticWorkshop({
         freed: g.freed.filter((w) => !(w + "Attach" in patch)),
       }));
     update({ machine: next });
+  }
+  /** Repères de mesure : annulables, mais l'instant de lecture est conservé
+   *  (un repère peut se poser pendant l'animation). */
+  function setMarkers(markers: MarkerT[]) {
+    if (!machine) return;
+    const next: MachineAssembly = { ...machine, markers };
+    if (!markers.length) delete next.markers;
+    if (!parseWorkshopConfig({ ...config, machine: next })) return;
+    const h = historyRef.current;
+    if (h.key !== machine.assetKey) {
+      h.key = machine.assetKey;
+      h.past = [];
+      h.future = [];
+    }
+    h.past = [...h.past.slice(-49), machine];
+    h.future = [];
+    setHistoryTick((v) => v + 1);
+    setConfig((c) => ({ ...c, machine: next }));
   }
   function travelHistory(direction: "undo" | "redo") {
     const h = historyRef.current;
@@ -510,8 +541,9 @@ export default function MagneticWorkshop({
   }
   function chooseTool(next: MachineTool) {
     setPlaying(false);
-    // Le tracé de câble se relève DANS la pose courante : on ne remet pas le cycle à zéro.
-    if (next !== "cable") setProgress(0);
+    // Le tracé de câble et les repères se relèvent DANS la pose courante : on
+    // ne remet pas le cycle à zéro.
+    if (next !== "cable" && next !== "measure") setProgress(0);
     setTool(next);
   }
   function exampleMachine() {
@@ -661,7 +693,7 @@ export default function MagneticWorkshop({
         scenePoseSampler(config),
         illustrativeBounds,
       ),
-    [guided, config, illustrativeBounds, dataRevision],
+    [guided, config, illustrativeBounds, dataRevision, machineAsset],
   );
 
   /** Aucun contact n'est montré tant que le mouvement est absent, en brouillon,
@@ -790,17 +822,23 @@ export default function MagneticWorkshop({
             },
           },
           Math.max(...machineAsset.size),
-          openingAt(progress),
+          cycleU(machine, sample.t),
         )
       : undefined;
 
   useEffect(() => {
     if (!playing) return;
     // 50 ms par pas : 120 pas = 6 s pour un aller-retour, 240 pas en lecture lente.
-    const steps = playbackSpeed === "normal" ? CYCLE_STEPS_NORMAL : CYCLE_STEPS_SLOW;
+    // Un clip se lit à sa vitesse réelle (50 ms par pas), sans aller-retour ajouté.
+    const clipSeconds = machine?.motionSource === "clip" ? machine.clip?.duration : undefined;
+    const base = clipSeconds
+      ? Math.min(6000, Math.max(20, Math.round(clipSeconds * 20)))
+      : CYCLE_STEPS_NORMAL;
+    const steps = playbackSpeed === "normal" ? base : base * (CYCLE_STEPS_SLOW / CYCLE_STEPS_NORMAL);
     const timer = setInterval(() => setProgress((v) => Math.min(1, v + 1 / steps)), 50);
     return () => clearInterval(timer);
-  }, [playing, playbackSpeed]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [playing, playbackSpeed, machine?.motionSource, machine?.clip?.duration]);
   useEffect(() => {
     if (progress >= 1) setPlaying(false);
   }, [progress]);
@@ -860,7 +898,7 @@ export default function MagneticWorkshop({
   async function importFile(file: File | undefined) {
     if (!file) return;
     try {
-      if (file.size > 20000) throw new Error(t("Le fichier de montage est trop volumineux."));
+      if (file.size > WORKSHOP_IMPORT_LIMIT) throw new Error(t("Le fichier de montage est trop volumineux."));
       const parsed = parseWorkshopConfig(JSON.parse(await file.text()));
       if (!parsed)
         throw new Error(t("Ce fichier ne contient pas un montage valide (V1, V2 ou V3)."));
@@ -1777,7 +1815,7 @@ export default function MagneticWorkshop({
             onExit={() => update({ machine: null })}
             onCatalog={() => setCatalogOpen(true)}
             onProductCard={() => setProductCard(true)}
-            measure={measure}
+            measure={machine ? (markerReading(machine, cycleU(machine, sample.t))?.distance ?? null) : null}
           />
         )}
         {machine && (
@@ -1829,11 +1867,17 @@ export default function MagneticWorkshop({
           <button
             className="mw-text-button"
             onClick={() =>
-              download(
-                "montage-magnetique.json",
-                JSON.stringify(config, null, 2),
-                "application/json",
-              )
+              {
+                // L'export doit rester relisible par « Importer » (limite de taille).
+                let text: string;
+                try {
+                  text = workshopExportJson(config);
+                } catch {
+                  setError(t("Montage trop volumineux pour être réimporté : réduisez le nombre de pièces mobiles sélectionnées."));
+                  return;
+                }
+                download("montage-magnetique.json", text, "application/json");
+              }
             }
           >
             {t("Télécharger le fichier de montage")}
@@ -1971,6 +2015,7 @@ export default function MagneticWorkshop({
               setPlaying={setPlaying}
               reason={result.reason}
               onDemo={openDemo}
+              onMarkers={setMarkers}
               reduced={reduced}
             />
           ) : null}
@@ -2115,7 +2160,7 @@ export default function MagneticWorkshop({
                       showMagnetName={showMagnetName}
                       reduced={reduced}
                       onChange={machineChange}
-                      onMeasure={setMeasure}
+                      onMarkers={setMarkers}
                       onPlaced={() => setTool("navigate")}
                       onContextLost={failed3d}
                       ghost={ghost}

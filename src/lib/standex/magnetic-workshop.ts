@@ -16,7 +16,7 @@ import {
   MAGNET_REFERENCE,
   CUSTOM_SENSOR_ID,
 } from "./sensor-catalog";
-import { parseMachine, componentPose, openingAt, rotate, motionProblem, movingSelection } from "./machine-assembly";
+import { parseMachine, componentPose, cycleU, openingAt, rotate, motionProblem, movingSelection } from "./machine-assembly";
 import { documentedMagnetAngleDeg } from "./mounting/profiles";
 import { workshopGuideRange, GUIDE_SIMULATION_NOTE } from "./workshop-guide";
 import { defaultGuideSelection, guideSelectionFor } from "./activation-guide";
@@ -544,8 +544,8 @@ export function poseAt(
     u = phase <= 0.5 ? phase * 2 : (1 - phase) * 2;
   const distance = c.start + (c.end - c.start) * u;
   if (c.machine) {
-    const m = componentPose(c.machine, "magnet", openingAt(phase)),
-      sensor = componentPose(c.machine, "sensor", openingAt(phase));
+    const m = componentPose(c.machine, "magnet", cycleU(c.machine, phase)),
+      sensor = componentPose(c.machine, "sensor", cycleU(c.machine, phase));
     return {
       position: m.position,
       angle: 0,
@@ -621,7 +621,7 @@ export function demoField(point: Vec3, magnet: Vec3, moment: Vec3, reach: number
 }
 export function educationSignal(c: WorkshopConfig, position: Vec3, angle: number, t = 0): number {
   const model = sensorById(c.sensorId),
-    u = openingAt(t);
+    u = cycleU(c.machine, t);
   const sensor = c.machine
     ? componentPose(c.machine, "sensor", u)
     : { position: [0, 0, 0] as Vec3, transform: (v: Vec3) => rotate(v, [0, -c.sensorAngle, 0]) };
@@ -765,7 +765,17 @@ export function summarizeWorkshop(c: WorkshopConfig): string {
       ? [
           `Fichier 3D : ${c.machine.fileName} (${c.machine.assetKey}). Géométrie importée conservée dans le navigateur ; à réimporter sur un autre poste. Pièces mobiles : ${movingSelection(c.machine).join(" ; ") || "aucune"}.`,
           `Capteur : ${c.machine.sensorPosition.join(", ")} mm ; rotation ${c.machine.sensorRotation.join(", ")}°. Aimant : ${c.machine.magnetPosition.join(", ")} mm ; rotation ${c.machine.magnetRotation.join(", ")}°.`,
-          `Mouvement : ${c.machine.motion}, déplacement ${c.machine.travel.join(", ")} mm, pivot ${c.machine.pivot.join(", ")} mm, axe ${c.machine.axisVector ? c.machine.axisVector.map((v) => v.toFixed(4)).join(", ") : c.machine.rotationAxis}, angle ${c.machine.openingAngle}° ; mouvement ${c.machine.motionStatus ?? "confirmed"}. Attaches : capteur ${c.machine.sensorAttach?.kind ?? "pose libre"}, aimant ${c.machine.magnetAttach?.kind ?? "pose libre"}.`,
+          ...(c.machine.motionSource === "clip" && c.machine.clip
+            ? [
+                `Mouvement lu dans le fichier : animation « ${c.machine.clip.name} » (n° ${c.machine.clip.index}, ${c.machine.clip.duration} s), jouée telle qu'enregistrée, sans aller-retour ajouté. Les pistes restent dans le fichier : elles ne sont ni copiées ni validées. Contact illustratif uniquement.`,
+              ]
+            : []),
+          ...(c.machine.markers?.length === 2
+            ? [
+                `Repères de mesure : ${c.machine.markers.map((k) => `${k.partPath} (${k.point.map((v) => v.toFixed(1)).join(", ")} mm)`).join(" ↔ ")} ; distance entre les repères, pas un entrefer.`,
+              ]
+            : []),
+          `Mouvement${c.machine.motionSource === "clip" ? " saisi (non utilisé)" : ""} : ${c.machine.motion}, déplacement ${c.machine.travel.join(", ")} mm, pivot ${c.machine.pivot.join(", ")} mm, axe ${c.machine.axisVector ? c.machine.axisVector.map((v) => v.toFixed(4)).join(", ") : c.machine.rotationAxis}, angle ${c.machine.openingAngle}° ; mouvement ${c.machine.motionStatus ?? "confirmed"}. Attaches : capteur ${c.machine.sensorAttach?.kind ?? "pose libre"}, aimant ${c.machine.magnetAttach?.kind ?? "pose libre"}.`,
         ]
       : []),
     `Boîtier : ${sizeLabel(sensorById(c.sensorId))}. Contacts internes schématiques, position non caractérisée.`,
@@ -791,6 +801,19 @@ export function summarizeWorkshop(c: WorkshopConfig): string {
   ].join("\n");
 }
 const NOTE_MARKERS = [1, 2, 3].map((v) => `\n\n[STANDEX_MAGNETIC_WORKSHOP_V${v}]\n`);
+/** Taille maximale d'un fichier de montage relu par « Importer ». */
+export const WORKSHOP_IMPORT_LIMIT = 20000;
+/** Export relisible : lisible (indenté) s'il tient dans la limite, compact
+ *  sinon ; refusé plutôt que produire un fichier que l'import rejetterait. */
+export function workshopExportJson(c: WorkshopConfig): string {
+  if (!parseWorkshopConfig(c)) throw new Error("Montage invalide");
+  const bytes = (s: string) => new TextEncoder().encode(s).byteLength;
+  const pretty = JSON.stringify(c, null, 2);
+  if (bytes(pretty) <= WORKSHOP_IMPORT_LIMIT) return pretty;
+  const compact = JSON.stringify(c);
+  if (bytes(compact) <= WORKSHOP_IMPORT_LIMIT) return compact;
+  throw new Error("Montage trop volumineux pour être réimporté.");
+}
 export function serializeWorkshop(c: WorkshopConfig): string {
   if (!parseWorkshopConfig(c)) throw new Error("Montage invalide");
   return summarizeWorkshop(c) + NOTE_MARKERS[2] + JSON.stringify(c);

@@ -67,8 +67,10 @@ export const LIMIT_LABEL: Record<string, string> = {
   switching_rate: "La cadence de commutation n'est pas couverte.",
 };
 
-export function useGuidedMounting(config: WorkshopConfig): GuidedMounting {
-  return useMemo(() => withComputed(mountingFromWorkshop(config)), [config]);
+/** `loaded` : fichier 3D chargé (son animation éventuelle change les poses). */
+export function useGuidedMounting(config: WorkshopConfig, loaded: unknown = null): GuidedMounting {
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  return useMemo(() => withComputed(mountingFromWorkshop(config)), [config, loaded]);
 }
 
 /** Verdict honnête : couverture, source, puis conclusion. Jamais « validé terrain ». */
