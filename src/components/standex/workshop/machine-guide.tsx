@@ -915,6 +915,11 @@ export const DEMOS: [string, string, string][] = [
   ["builtin:door-v1", "Porte sur axe incliné", "Pivot par l'origine, axe incliné de 15° dans le plan XY, 90°."],
   ["builtin:wall-v1", "Paroi avec alésage", "Paroi 6 mm, alésage Ø 8 mm centré X 0 / Y 60, axe Z ; volet coulissant 40 mm en X."],
 ];
+/** Le raccourci de démonstration se referme après un choix : la scène reste dégagée. */
+const closeShortcut = (el: HTMLElement) => {
+  const d = el.closest(".mw-demo-shortcut");
+  if (d instanceof HTMLDetailsElement) d.open = false;
+};
 export function DemoButtons({
   onDemo,
   onCoffee,
@@ -926,7 +931,14 @@ export function DemoButtons({
     <ul className="mw-demo-list">
       {onCoffee && (
         <li>
-          <button className="mw-button mw-secondary" data-testid="demo-coffee" onClick={onCoffee}>
+          <button
+            className="mw-button mw-secondary"
+            data-testid="demo-coffee"
+            onClick={(e) => {
+              closeShortcut(e.currentTarget);
+              onCoffee();
+            }}
+          >
             {t("Machine à café")}
           </button>
           <span className="t-caption">
@@ -936,7 +948,14 @@ export function DemoButtons({
       )}
       {DEMOS.map(([key, name, detail]) => (
         <li key={key}>
-          <button className="mw-button mw-secondary" data-testid={"demo-" + key} onClick={() => onDemo(key)}>
+          <button
+            className="mw-button mw-secondary"
+            data-testid={"demo-" + key}
+            onClick={(e) => {
+              closeShortcut(e.currentTarget);
+              onDemo(key);
+            }}
+          >
             {t(name)}
           </button>
           <span className="t-caption">{t(detail)}</span>

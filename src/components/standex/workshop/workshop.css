@@ -2945,8 +2945,8 @@
 .mw-demo-shortcut[open] > .mw-demo-list {
   position: absolute;
   z-index: 20;
-  inset-inline-start: 0;
-  width: min(360px, 90vw);
+  inset-inline-end: 0;
+  width: min(360px, calc(100vw - 32px));
   padding: 12px;
   border-radius: var(--r-lg);
   background: var(--surface);
