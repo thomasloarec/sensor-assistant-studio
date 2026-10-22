@@ -333,7 +333,7 @@ function Assembly({
   const clip = usesClip(machine);
   const draw = (moving: boolean, parts = asset.parts) =>
     parts
-      .filter((p) => (clip ? moving : isMovingPath(machine, p.path) === moving))
+      .filter((p) => clip || isMovingPath(machine, p.path) === moving)
       .map((p) => (
         <mesh
           key={p.path}

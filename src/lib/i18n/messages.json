@@ -31471,5 +31471,455 @@
     "← Назад",
     "← Precedente",
     "← 前へ"
+  ],
+  "Distance entre les repères : {0} mm": [
+    "Distance between markers: {0} mm",
+    "标记点之间的距离：{0} mm",
+    "Abstand zwischen den Markierungen: {0} mm",
+    "Distancia entre los marcadores: {0} mm",
+    "Расстояние между метками: {0} мм",
+    "Distanza tra i marcatori: {0} mm",
+    "マーカー間の距離：{0} mm"
+  ],
+  "Montage trop volumineux pour être réimporté : réduisez le nombre de pièces mobiles sélectionnées.": [
+    "Assembly too large to be re-imported: reduce the number of selected moving parts.",
+    "装配过大，无法重新导入：请减少所选活动部件的数量。",
+    "Montage zu groß für einen erneuten Import: Verringern Sie die Anzahl der ausgewählten beweglichen Teile.",
+    "Montaje demasiado grande para volver a importarse: reduzca el número de piezas móviles seleccionadas.",
+    "Сборка слишком велика для повторного импорта: уменьшите число выбранных подвижных деталей.",
+    "Montaggio troppo grande per essere reimportato: riducete il numero di parti mobili selezionate.",
+    "アセンブリが大きすぎて再インポートできません。選択した可動部品の数を減らしてください。"
+  ],
+  "Ce fichier contient {0} animation(s) :": [
+    "This file contains {0} animation(s):",
+    "此文件包含 {0} 个动画：",
+    "Diese Datei enthält {0} Animation(en):",
+    "Este archivo contiene {0} animación(es):",
+    "Этот файл содержит анимаций: {0}:",
+    "Questo file contiene {0} animazione/i:",
+    "このファイルには {0} 件のアニメーションがあります："
+  ],
+  "· mouvement rigide pris en charge": [
+    "· rigid motion supported",
+    "· 支持的刚体运动",
+    "· starre Bewegung unterstützt",
+    "· movimiento rígido compatible",
+    "· жёсткое движение поддерживается",
+    "· movimento rigido supportato",
+    "· 剛体運動に対応"
+  ],
+  "· refusée : {0}": [
+    "· rejected: {0}",
+    "· 已拒绝：{0}",
+    "· abgelehnt: {0}",
+    "· rechazada: {0}",
+    "· отклонена: {0}",
+    "· rifiutata: {0}",
+    "· 不可：{0}"
+  ],
+  "Une animation refusée n'est jamais rejouée en partie : le modèle statique et les clips pris en charge restent utilisables.": [
+    "A rejected animation is never partially replayed: the static model and supported clips remain usable.",
+    "被拒绝的动画绝不会被部分回放：静态模型和受支持的片段仍可使用。",
+    "Eine abgelehnte Animation wird nie teilweise abgespielt: Das statische Modell und die unterstützten Clips bleiben nutzbar.",
+    "Una animación rechazada nunca se reproduce parcialmente: el modelo estático y los clips compatibles siguen disponibles.",
+    "Отклонённая анимация никогда не воспроизводится частично: статическая модель и поддерживаемые клипы остаются доступными.",
+    "Un'animazione rifiutata non viene mai riprodotta in parte: il modello statico e le clip supportate restano utilizzabili.",
+    "不可のアニメーションが部分的に再生されることはありません。静的モデルと対応クリップは引き続き使用できます。"
+  ],
+  "Animation du fichier : les pièces mobiles sont celles que le clip anime. La sélection ci-dessous ne sert qu'à « Définir le mouvement » et reste conservée.": [
+    "File animation: the moving parts are those animated by the clip. The selection below is only used for “Define the motion” and is kept.",
+    "文件动画：活动部件即该片段所驱动的部件。下方的选择仅用于“定义运动”，并会保留。",
+    "Dateianimation: Beweglich sind die Teile, die der Clip animiert. Die Auswahl unten dient nur für „Bewegung festlegen“ und bleibt erhalten.",
+    "Animación del archivo: las piezas móviles son las que anima el clip. La selección de abajo solo sirve para «Definir el movimiento» y se conserva.",
+    "Анимация файла: подвижны детали, которые анимирует клип. Выбор ниже используется только для «Задать движение» и сохраняется.",
+    "Animazione del file: le parti mobili sono quelle animate dalla clip. La selezione qui sotto serve solo per «Definire il movimento» e viene conservata.",
+    "ファイルのアニメーション：可動部品はクリップが動かす部品です。下の選択は「動きを定義」専用で、保持されます。"
+  ],
+  "Source du mouvement": [
+    "Motion source",
+    "运动来源",
+    "Bewegungsquelle",
+    "Origen del movimiento",
+    "Источник движения",
+    "Origine del movimento",
+    "動きの出所"
+  ],
+  "Définir le mouvement": [
+    "Define the motion",
+    "定义运动",
+    "Bewegung festlegen",
+    "Definir el movimiento",
+    "Задать движение",
+    "Definire il movimento",
+    "動きを定義"
+  ],
+  "Animation du fichier": [
+    "File animation",
+    "文件动画",
+    "Dateianimation",
+    "Animación del archivo",
+    "Анимация файла",
+    "Animazione del file",
+    "ファイルのアニメーション"
+  ],
+  "Aucune animation de ce fichier n'est un mouvement rigide pris en charge : définissez le mouvement.": [
+    "No animation in this file is a supported rigid motion: define the motion.",
+    "此文件中没有受支持的刚体运动动画：请定义运动。",
+    "Keine Animation dieser Datei ist eine unterstützte starre Bewegung: Legen Sie die Bewegung fest.",
+    "Ninguna animación de este archivo es un movimiento rígido compatible: defina el movimiento.",
+    "Ни одна анимация этого файла не является поддерживаемым жёстким движением: задайте движение.",
+    "Nessuna animazione di questo file è un movimento rigido supportato: definite il movimento.",
+    "このファイルに対応する剛体運動のアニメーションはありません。動きを定義してください。"
+  ],
+  "Animation": [
+    "Animation",
+    "动画",
+    "Animation",
+    "Animación",
+    "Анимация",
+    "Animazione",
+    "アニメーション"
+  ],
+  "Le clip est lu tel qu'il est enregistré, du début à la fin, sans aller-retour ajouté. Pose d'installation = début du clip (0 s).": [
+    "The clip plays as recorded, from start to end, with no added back-and-forth. Installation pose = start of the clip (0 s).",
+    "片段按记录内容从头播放到尾，不额外添加往返。安装姿态 = 片段开始（0 s）。",
+    "Der Clip wird wie aufgezeichnet von Anfang bis Ende abgespielt, ohne zusätzliches Hin und Zurück. Einbaupose = Clipbeginn (0 s).",
+    "El clip se reproduce tal como está grabado, de principio a fin, sin ida y vuelta añadida. Pose de instalación = inicio del clip (0 s).",
+    "Клип воспроизводится как записан, от начала до конца, без добавленного возврата. Поза установки = начало клипа (0 с).",
+    "La clip viene riprodotta come registrata, dall'inizio alla fine, senza andata e ritorno aggiunti. Posa di installazione = inizio della clip (0 s).",
+    "クリップは記録どおり最初から最後まで再生され、往復は追加されません。取付姿勢 = クリップの開始（0 s）。"
+  ],
+  "Attaches et repères sont enregistrés dans la pose statique du fichier et suivent exactement leur pièce. Un composant non attaché reste fixe.": [
+    "Attachments and markers are stored in the file's static pose and follow their part exactly. An unattached component stays fixed.",
+    "附着点和标记点以文件的静态姿态保存，并精确跟随其部件。未附着的组件保持固定。",
+    "Befestigungen und Markierungen werden in der statischen Pose der Datei gespeichert und folgen genau ihrem Teil. Eine nicht befestigte Komponente bleibt fest.",
+    "Las fijaciones y los marcadores se guardan en la pose estática del archivo y siguen exactamente su pieza. Un componente no fijado permanece fijo.",
+    "Крепления и метки сохраняются в статической позе файла и точно следуют за своей деталью. Неприкреплённый компонент остаётся неподвижным.",
+    "Fissaggi e marcatori sono registrati nella posa statica del file e seguono esattamente la loro parte. Un componente non fissato resta fermo.",
+    "取付とマーカーはファイルの静的姿勢で保存され、部品に正確に追従します。取り付けていない部品は固定のままです。"
+  ],
+  "Temps : {0} s / {1} s": [
+    "Time: {0} s / {1} s",
+    "时间：{0} s / {1} s",
+    "Zeit: {0} s / {1} s",
+    "Tiempo: {0} s / {1} s",
+    "Время: {0} с / {1} с",
+    "Tempo: {0} s / {1} s",
+    "時間：{0} s / {1} s"
+  ],
+  "pièce animée par le clip": [
+    "part animated by the clip",
+    "由片段驱动的部件",
+    "vom Clip animiertes Teil",
+    "pieza animada por el clip",
+    "деталь, анимируемая клипом",
+    "parte animata dalla clip",
+    "クリップで動く部品"
+  ],
+  "Pose libre : aucune attache. Avec l'animation du fichier, un composant non attaché reste fixe. Les coordonnées précises restent dans Réglages avancés › Positionnement.": [
+    "Free pose: no attachment. With the file animation, an unattached component stays fixed. Precise coordinates remain in Advanced settings › Positioning.",
+    "自由姿态：无附着。使用文件动画时，未附着的组件保持固定。精确坐标仍在 高级设置 › 定位 中。",
+    "Freie Pose: keine Befestigung. Mit der Dateianimation bleibt eine nicht befestigte Komponente fest. Genaue Koordinaten finden Sie unter Erweiterte Einstellungen › Positionierung.",
+    "Pose libre: sin fijación. Con la animación del archivo, un componente no fijado permanece fijo. Las coordenadas precisas siguen en Ajustes avanzados › Posicionamiento.",
+    "Свободная поза: без крепления. При анимации файла неприкреплённый компонент остаётся неподвижным. Точные координаты — в разделе Расширенные настройки › Позиционирование.",
+    "Posa libera: nessun fissaggio. Con l'animazione del file, un componente non fissato resta fermo. Le coordinate precise restano in Impostazioni avanzate › Posizionamento.",
+    "自由配置：取付なし。ファイルのアニメーションでは、取り付けていない部品は固定のままです。正確な座標は 詳細設定 › 配置 にあります。"
+  ],
+  "Animation {0} : {1} s / {2} s ({3} %)": [
+    "Animation {0}: {1} s / {2} s ({3} %)",
+    "动画 {0}：{1} s / {2} s（{3} %）",
+    "Animation {0}: {1} s / {2} s ({3} %)",
+    "Animación {0}: {1} s / {2} s ({3} %)",
+    "Анимация {0}: {1} с / {2} с ({3} %)",
+    "Animazione {0}: {1} s / {2} s ({3} %)",
+    "アニメーション {0}：{1} s / {2} s（{3} %）"
+  ],
+  "Animation non disponible : aucune pose animée n'est lue.": [
+    "Animation unavailable: no animated pose is read.",
+    "动画不可用：不读取任何动画姿态。",
+    "Animation nicht verfügbar: Es wird keine animierte Pose gelesen.",
+    "Animación no disponible: no se lee ninguna pose animada.",
+    "Анимация недоступна: анимированная поза не считывается.",
+    "Animazione non disponibile: nessuna posa animata viene letta.",
+    "アニメーションは利用できません：動いた姿勢は読み取られません。"
+  ],
+  "Revenir au début": [
+    "Back to start",
+    "回到开头",
+    "Zurück zum Anfang",
+    "Volver al inicio",
+    "В начало",
+    "Torna all'inizio",
+    "最初に戻る"
+  ],
+  "Aller à la fin": [
+    "Go to end",
+    "跳到结尾",
+    "Zum Ende",
+    "Ir al final",
+    "В конец",
+    "Vai alla fine",
+    "最後へ"
+  ],
+  "Distance entre les repères": [
+    "Distance between markers",
+    "标记点之间的距离",
+    "Abstand zwischen den Markierungen",
+    "Distancia entre los marcadores",
+    "Расстояние между метками",
+    "Distanza tra i marcatori",
+    "マーカー間の距離"
+  ],
+  "Terminer les repères": [
+    "Finish markers",
+    "完成标记",
+    "Markierungen beenden",
+    "Terminar los marcadores",
+    "Завершить метки",
+    "Termina i marcatori",
+    "マーカーを終了"
+  ],
+  "Placer deux repères": [
+    "Place two markers",
+    "放置两个标记点",
+    "Zwei Markierungen setzen",
+    "Colocar dos marcadores",
+    "Поставить две метки",
+    "Posiziona due marcatori",
+    "マーカーを2つ置く"
+  ],
+  "Effacer les repères": [
+    "Clear markers",
+    "清除标记点",
+    "Markierungen löschen",
+    "Borrar los marcadores",
+    "Стереть метки",
+    "Cancella i marcatori",
+    "マーカーを消去"
+  ],
+  "Distance entre les repères : {0} mm · variation depuis le début : {1} mm": [
+    "Distance between markers: {0} mm · change since start: {1} mm",
+    "标记点之间的距离：{0} mm · 相对开始的变化：{1} mm",
+    "Abstand zwischen den Markierungen: {0} mm · Änderung seit Beginn: {1} mm",
+    "Distancia entre los marcadores: {0} mm · variación desde el inicio: {1} mm",
+    "Расстояние между метками: {0} мм · изменение с начала: {1} мм",
+    "Distanza tra i marcatori: {0} mm · variazione dall'inizio: {1} mm",
+    "マーカー間の距離：{0} mm · 開始からの変化：{1} mm"
+  ],
+  "Repère 1 placé : cliquez un second point sur une pièce.": [
+    "Marker 1 placed: click a second point on a part.",
+    "已放置标记点 1：请在部件上点击第二个点。",
+    "Markierung 1 gesetzt: Klicken Sie einen zweiten Punkt auf einem Teil an.",
+    "Marcador 1 colocado: haga clic en un segundo punto de una pieza.",
+    "Метка 1 поставлена: щёлкните второй точкой на детали.",
+    "Marcatore 1 posizionato: fate clic su un secondo punto di una parte.",
+    "マーカー1を配置しました。部品上の2点目をクリックしてください。"
+  ],
+  "Cliquez deux points sur les pièces : chaque repère suit sa pièce pendant la lecture.": [
+    "Click two points on the parts: each marker follows its part during playback.",
+    "在部件上点击两个点：播放时每个标记点都跟随其部件。",
+    "Klicken Sie zwei Punkte auf den Teilen an: Jede Markierung folgt beim Abspielen ihrem Teil.",
+    "Haga clic en dos puntos de las piezas: cada marcador sigue su pieza durante la reproducción.",
+    "Щёлкните две точки на деталях: каждая метка следует за своей деталью при воспроизведении.",
+    "Fate clic su due punti delle parti: ogni marcatore segue la sua parte durante la riproduzione.",
+    "部品上の2点をクリックします。再生中、各マーカーは自分の部品に追従します。"
+  ],
+  "Distance en ligne droite entre deux points choisis : ce n'est ni l'entrefer minimal entre surfaces, ni l'écart capteur–aimant, ni la course du mouvement.": [
+    "Straight-line distance between two chosen points: it is neither the minimum air gap between surfaces, nor the sensor–magnet distance, nor the motion stroke.",
+    "两个所选点之间的直线距离：它既不是表面间的最小气隙，也不是传感器–磁铁距离，也不是运动行程。",
+    "Luftlinie zwischen zwei gewählten Punkten: weder der minimale Luftspalt zwischen Flächen noch der Abstand Sensor–Magnet noch der Bewegungshub.",
+    "Distancia en línea recta entre dos puntos elegidos: no es el entrehierro mínimo entre superficies, ni la distancia sensor–imán, ni la carrera del movimiento.",
+    "Расстояние по прямой между двумя выбранными точками: это не минимальный зазор между поверхностями, не расстояние датчик–магнит и не ход движения.",
+    "Distanza in linea retta tra due punti scelti: non è il traferro minimo tra superfici, né la distanza sensore–magnete, né la corsa del movimento.",
+    "選んだ2点間の直線距離です。面間の最小エアギャップでも、センサー–磁石間距離でも、動きのストロークでもありません。"
+  ],
+  "Tiroir, porte, paroi et bras animé : le capteur et l'aimant restent votre sélection actuelle, ces exemples ne les imposent pas.": [
+    "Drawer, door, wall and animated arm: the sensor and magnet remain your current selection; these examples do not impose them.",
+    "抽屉、门、壁板和动画臂：传感器和磁铁保持您当前的选择，这些示例不会强制指定。",
+    "Schublade, Tür, Wand und animierter Arm: Sensor und Magnet bleiben Ihre aktuelle Auswahl, diese Beispiele geben sie nicht vor.",
+    "Cajón, puerta, pared y brazo animado: el sensor y el imán siguen siendo su selección actual; estos ejemplos no los imponen.",
+    "Ящик, дверь, стенка и анимированный рычаг: датчик и магнит остаются вашим текущим выбором, эти примеры их не навязывают.",
+    "Cassetto, porta, parete e braccio animato: sensore e magnete restano la vostra selezione attuale, questi esempi non li impongono.",
+    "引き出し・扉・壁・動くアーム：センサーと磁石は現在の選択のままで、これらの例が指定することはありません。"
+  ],
+  "Aucune animation choisie : choisissez un clip du fichier ou définissez le mouvement.": [
+    "No animation chosen: choose a clip from the file or define the motion.",
+    "未选择动画：请选择文件中的片段或定义运动。",
+    "Keine Animation gewählt: Wählen Sie einen Clip der Datei oder legen Sie die Bewegung fest.",
+    "Ninguna animación elegida: elija un clip del archivo o defina el movimiento.",
+    "Анимация не выбрана: выберите клип файла или задайте движение.",
+    "Nessuna animazione scelta: scegliete una clip del file o definite il movimento.",
+    "アニメーションが選ばれていません。ファイルのクリップを選ぶか、動きを定義してください。"
+  ],
+  "Animation du fichier non chargée : aucun contact n'est calculé tant que le fichier n'est pas chargé.": [
+    "File animation not loaded: no contact is computed until the file is loaded.",
+    "文件动画未加载：在文件加载之前不计算任何触点。",
+    "Dateianimation nicht geladen: Bis die Datei geladen ist, wird kein Kontakt berechnet.",
+    "Animación del archivo no cargada: no se calcula ningún contacto hasta que se cargue el archivo.",
+    "Анимация файла не загружена: контакт не рассчитывается, пока файл не загружен.",
+    "Animazione del file non caricata: nessun contatto viene calcolato finché il file non è caricato.",
+    "ファイルのアニメーションが読み込まれていません。読み込まれるまで接点は計算されません。"
+  ],
+  "Animation absente de ce fichier : le clip enregistré n'existe plus. Choisissez un clip disponible ou définissez le mouvement.": [
+    "Animation missing from this file: the saved clip no longer exists. Choose an available clip or define the motion.",
+    "此文件中没有该动画：已保存的片段不存在。请选择可用的片段或定义运动。",
+    "Animation fehlt in dieser Datei: Der gespeicherte Clip existiert nicht mehr. Wählen Sie einen verfügbaren Clip oder legen Sie die Bewegung fest.",
+    "Animación ausente de este archivo: el clip guardado ya no existe. Elija un clip disponible o defina el movimiento.",
+    "Анимации нет в этом файле: сохранённый клип больше не существует. Выберите доступный клип или задайте движение.",
+    "Animazione assente da questo file: la clip registrata non esiste più. Scegliete una clip disponibile o definite il movimento.",
+    "このファイルにアニメーションがありません。保存されたクリップは存在しません。利用可能なクリップを選ぶか、動きを定義してください。"
+  ],
+  "Animation non prise en charge : ce clip n'est pas un mouvement rigide de pièces. Aucun contact n'est calculé.": [
+    "Animation not supported: this clip is not a rigid motion of parts. No contact is computed.",
+    "动画不受支持：此片段不是部件的刚体运动。不计算任何触点。",
+    "Animation nicht unterstützt: Dieser Clip ist keine starre Bewegung von Teilen. Es wird kein Kontakt berechnet.",
+    "Animación no compatible: este clip no es un movimiento rígido de piezas. No se calcula ningún contacto.",
+    "Анимация не поддерживается: этот клип не является жёстким движением деталей. Контакт не рассчитывается.",
+    "Animazione non supportata: questa clip non è un movimento rigido di parti. Nessun contatto viene calcolato.",
+    "非対応のアニメーション：このクリップは部品の剛体運動ではありません。接点は計算されません。"
+  ],
+  "Chargement annulé.": [
+    "Loading cancelled.",
+    "加载已取消。",
+    "Laden abgebrochen.",
+    "Carga cancelada.",
+    "Загрузка отменена.",
+    "Caricamento annullato.",
+    "読み込みを取り消しました。"
+  ],
+  "saisi (non utilisé)": [
+    "entered (not used)",
+    "手动输入（未使用）",
+    "eingegeben (nicht verwendet)",
+    "introducido (no utilizado)",
+    "заданное (не используется)",
+    "inserito (non utilizzato)",
+    "入力済み（未使用）"
+  ],
+  "Montage trop volumineux pour être réimporté.": [
+    "Assembly too large to be re-imported.",
+    "装配过大，无法重新导入。",
+    "Montage zu groß für einen erneuten Import.",
+    "Montaje demasiado grande para volver a importarse.",
+    "Сборка слишком велика для повторного импорта.",
+    "Montaggio troppo grande per essere reimportato.",
+    "アセンブリが大きすぎて再インポートできません。"
+  ],
+  "clip vide ou de durée nulle": [
+    "empty or zero-length clip",
+    "空片段或时长为零",
+    "leerer Clip oder Dauer null",
+    "clip vacío o de duración nula",
+    "пустой клип или нулевая длительность",
+    "clip vuota o di durata nulla",
+    "空またはゼロ長のクリップ"
+  ],
+  "déformation par morphing (poids de cibles), non prise en charge": [
+    "morph deformation (target weights), not supported",
+    "变形动画（目标权重），不受支持",
+    "Morphing-Verformung (Zielgewichte), nicht unterstützt",
+    "deformación por morphing (pesos de objetivos), no compatible",
+    "деформация морфингом (веса целей), не поддерживается",
+    "deformazione per morphing (pesi dei target), non supportata",
+    "モーフィング変形（ターゲットの重み）、非対応"
+  ],
+  "animation de squelette (os), non prise en charge": [
+    "skeletal animation (bones), not supported",
+    "骨骼动画（骨骼），不受支持",
+    "Skelettanimation (Knochen), nicht unterstützt",
+    "animación de esqueleto (huesos), no compatible",
+    "скелетная анимация (кости), не поддерживается",
+    "animazione scheletrica (ossa), non supportata",
+    "スケルトン（ボーン）アニメーション、非対応"
+  ],
+  "changement d'échelle au cours du clip, non pris en charge": [
+    "scale change during the clip, not supported",
+    "片段中的缩放变化，不受支持",
+    "Skalierungsänderung während des Clips, nicht unterstützt",
+    "cambio de escala durante el clip, no compatible",
+    "изменение масштаба в клипе, не поддерживается",
+    "cambio di scala durante la clip, non supportato",
+    "クリップ中の拡大縮小、非対応"
+  ],
+  "transformation non rigide (cisaillement ou échelle héritée), non prise en charge": [
+    "non-rigid transformation (shear or inherited scale), not supported",
+    "非刚体变换（剪切或继承缩放），不受支持",
+    "nicht starre Transformation (Scherung oder geerbte Skalierung), nicht unterstützt",
+    "transformación no rígida (cizalla o escala heredada), no compatible",
+    "нежёсткое преобразование (сдвиг или унаследованный масштаб), не поддерживается",
+    "trasformazione non rigida (taglio o scala ereditata), non supportata",
+    "非剛体変換（せん断または継承スケール）、非対応"
+  ],
+  "piste qui ne correspond à aucun nœud du fichier": [
+    "track that matches no node in the file",
+    "与文件中任何节点都不对应的轨道",
+    "Spur, die keinem Knoten der Datei entspricht",
+    "pista que no corresponde a ningún nodo del archivo",
+    "дорожка, не соответствующая ни одному узлу файла",
+    "traccia che non corrisponde ad alcun nodo del file",
+    "ファイル内のどのノードにも対応しないトラック"
+  ],
+  "propriété animée autre que position ou rotation": [
+    "animated property other than position or rotation",
+    "除位置或旋转之外的动画属性",
+    "animierte Eigenschaft außer Position oder Drehung",
+    "propiedad animada distinta de posición o rotación",
+    "анимируемое свойство помимо положения или поворота",
+    "proprietà animata diversa da posizione o rotazione",
+    "位置・回転以外のアニメーション属性"
+  ],
+  "aucune pièce visible n'est emportée par ce clip": [
+    "no visible part is moved by this clip",
+    "此片段不带动任何可见部件",
+    "dieser Clip bewegt kein sichtbares Teil",
+    "este clip no mueve ninguna pieza visible",
+    "этот клип не перемещает ни одной видимой детали",
+    "questa clip non sposta alcuna parte visibile",
+    "このクリップで動く見える部品はありません"
+  ],
+  "Bras animé (animation du fichier)": [
+    "Animated arm (file animation)",
+    "动画臂（文件动画）",
+    "Animierter Arm (Dateianimation)",
+    "Brazo animado (animación del archivo)",
+    "Анимированный рычаг (анимация файла)",
+    "Braccio animato (animazione del file)",
+    "動くアーム（ファイルのアニメーション）"
+  ],
+  "Portique incliné, chariot en translation et bras en rotation animés différemment ; trois clips dont un refusé (changement d'échelle).": [
+    "Tilted gantry, carriage translating and arm rotating, animated differently; three clips including one rejected (scale change).",
+    "倾斜龙门、平移的滑架和旋转的臂以不同方式动画；三个片段，其中一个被拒绝（缩放变化）。",
+    "Geneigtes Portal, verschiebender Schlitten und drehender Arm, unterschiedlich animiert; drei Clips, davon einer abgelehnt (Skalierungsänderung).",
+    "Pórtico inclinado, carro en traslación y brazo en rotación animados de forma distinta; tres clips, uno de ellos rechazado (cambio de escala).",
+    "Наклонный портал, каретка с поступательным движением и рычаг с поворотом анимированы по-разному; три клипа, один отклонён (изменение масштаба).",
+    "Portale inclinato, carrello in traslazione e braccio in rotazione animati diversamente; tre clip di cui una rifiutata (cambio di scala).",
+    "傾いたガントリー、並進するキャリッジ、回転するアームが別々に動きます。クリップ3件のうち1件は不可（拡大縮小）。"
+  ],
+  "Points sur deux pièces qui ne bougent pas ensemble dans l'animation : choisissez les deux points sur la même pièce.": [
+    "Points on two parts that do not move together in the animation: choose both points on the same part.",
+    "两个点位于动画中不一起运动的两个部件上：请在同一部件上选择两个点。",
+    "Punkte auf zwei Teilen, die sich in der Animation nicht gemeinsam bewegen: Wählen Sie beide Punkte auf demselben Teil.",
+    "Puntos en dos piezas que no se mueven juntas en la animación: elija ambos puntos en la misma pieza.",
+    "Точки на двух деталях, которые в анимации движутся не вместе: выберите обе точки на одной детали.",
+    "Punti su due parti che non si muovono insieme nell'animazione: scegliete entrambi i punti sulla stessa parte.",
+    "アニメーションで一緒に動かない2つの部品上の点です。同じ部品上で2点を選んでください。"
+  ],
+  "{0} — {1} s": [
+    "{0} — {1} s",
+    "{0} — {1} s",
+    "{0} — {1} s",
+    "{0} — {1} s",
+    "{0} — {1} с",
+    "{0} — {1} s",
+    "{0} — {1} s"
+  ],
+  "{0} s": [
+    "{0} s",
+    "{0} s",
+    "{0} s",
+    "{0} s",
+    "{0} с",
+    "{0} s",
+    "{0} s"
   ]
 }

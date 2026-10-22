@@ -2854,6 +2854,20 @@
   display: grid;
   gap: 8px;
 }
+/* Lot 2 : clips du fichier et repères de mesure (aucune bordure, surfaces). */
+.mw-clip-list {
+  display: grid;
+  gap: 4px;
+  margin: 6px 0 0;
+  padding: 0 0 0 18px;
+}
+.mw-markers {
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+  border-radius: var(--r-md);
+  background: var(--surface-sunken);
+}
 .mw-demo-list {
   display: grid;
   gap: 8px;

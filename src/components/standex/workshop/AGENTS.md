@@ -4,3 +4,6 @@
 - Le modèle importé se règle dans `machine-guide.tsx` (une étape ouverte à la fois) ; `machine-controls.tsx` ne garde que les coordonnées libres et le gabarit, pour éviter les doublons et toute commande sans effet.
 - Un import de GLB est transactionnel (chargement et validation avant de remplacer montage/historique, dernier import gagnant) et ne touche jamais capteur, aimant ni mode, pour qu'un fichier refusé ne casse rien.
 - Toute modification de montage passe par `machineChange` : historique annulable, support d'attache resynchronisé sur la sélection mobile (`syncAttachSupports`), unités rééchelonnées (`rescaleMachine`), et une pose libre libère l'attache (`freePosePatch`) au lieu de garder une fausse contrainte.
+- Animation d'un GLB : seuls les clips rigides (position/rotation) sont rejoués, évalués à la demande sur la hiérarchie conservée (`machine-animation.ts`) et inscrits au registre de l'onglet (`machine-clip-registry.ts`) ; le montage ne garde qu'une référence de clip, pour qu'aucune piste ne soit copiée ni transmise et qu'un clip non chargé laisse le contact indéterminé.
+- Toute pose liée à une pièce passe par `partDelta`/`pointAt`/`cycleU` de `machine-assembly.ts` (scène, attaches, repères, calcul illustratif), pour que géométrie, mesure et contact soient lus au même instant ; attaches et repères sont stockés en pose statique du fichier.
+

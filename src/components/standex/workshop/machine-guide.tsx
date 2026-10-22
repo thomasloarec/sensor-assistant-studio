@@ -177,6 +177,9 @@ function Num({
   );
 }
 
+/** Variation signée, une décimale (+ explicite). */
+const signedMm = (v: number) => (v >= 0 ? "+" : "") + v.toFixed(1);
+
 export function guideOverlay(
   state: GuideState,
   m: MachineAssembly,
@@ -1074,7 +1077,7 @@ export default function MachineGuide({
             <p className="t-body t-metric" data-testid="guide-marker-reading">
               {msg("Distance entre les repères : {0} mm · variation depuis le début : {1} mm", [
                 reading.distance.toFixed(1),
-                (reading.change >= 0 ? "+" : "") + reading.change.toFixed(1),
+                signedMm(reading.change),
               ])}
             </p>
           ) : (

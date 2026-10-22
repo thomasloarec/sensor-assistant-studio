@@ -7,7 +7,7 @@
 - [x] Essai : ouverture mm/° et sens séparés de l'écart, pas manuel, source du contact affichée.
 - [x] Trois modèles de démonstration autonomes, café conservé ; tests, traductions, documentation.
 - [x] Revue indépendante du lot 1 (13 points) : import transactionnel, supports/unités, commandes unifiées, traversant réconcilié, contact indéterminé sans mouvement, contraste/débordement, démos directes, trou à deux points, axe brut, saisies refusées, mouvement réduit, référence arrière, repères qui suivent.
-- [ ] Lot 2 (après revue) : relecture des animations GLB, mesure d'ouverture entre repères, étude STEP.
+- [x] Lot 2 : relecture des animations rigides d'un GLB (clips, refus expliqués), attaches sur pièces animées, mesure entre deux repères, démo bras animé, étude STEP (docs/ETUDE_IMPORT_STEP_2026-10-22.md).
 
 ## Racines ON et état électrique Reed — base 79a282b
 - [x] Raccords ON de largeur finie dans les deux orientations, contours partagés et couloirs OFF conservés.

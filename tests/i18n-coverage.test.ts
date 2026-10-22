@@ -97,7 +97,8 @@ describe("Couverture des langues de l'interface", () => {
     // + 1 compact orientation label; explicit perpendicular accessible name retained.
     // + 13 entrées : configuration câble/connecteur déplacée à l'étape « Résultat » et récapitulatif en lecture seule.
     // + 25 entrées : revue indépendante du lot 1 de l'atelier (import transactionnel, attaches, axes, saisies refusées, démos).
-    expect(Object.keys(dictionary)).toHaveLength(3_497);
+    // + 50 entrées : lot 2 de l'atelier (animations du fichier, raisons de refus, repères de mesure, bras animé).
+    expect(Object.keys(dictionary)).toHaveLength(3_547);
     const broken = Object.entries(dictionary).filter(
       ([, v]) => v.length !== 7 || v.some((x) => typeof x !== "string" || x.trim() === ""),
     );
