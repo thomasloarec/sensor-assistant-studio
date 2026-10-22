@@ -444,6 +444,19 @@ Revue indépendante du lot 1 (22 octobre 2026) :
   ◀ ▶ et le curseur restent disponibles.
 - Aucun débordement horizontal à 1265 px ni à 390 px (champs `min-width: 0`).
 
+Lot 2 — animations du fichier et repères (22 octobre 2026) :
+
+- Étape Modèle : liste `.mw-clip-list` des clips dans un encart `.notice-info`,
+  nom exact `translate="no"` et durée en `.t-metric` ; un clip refusé dit
+  pourquoi (morphing, squelette, échelle, non rigide, piste orpheline).
+- Étape Mouvement : contrôle segmenté « Définir le mouvement » / « Animation du
+  fichier », la seconde option n'existant que si un clip pris en charge existe.
+- Étape Essai : temps du clip (`.t-metric`) au lieu de l'ouverture pour une
+  animation générale ; boutons ⏮ ◀ ▶ ⏭ ≥ 44 px ; bloc `.mw-markers` sur
+  `--surface-sunken` (sans bordure) pour la « distance entre les repères »,
+  toujours distinguée de l'écart capteur–aimant et de l'entrefer.
+- Scène : repères et cote en couleur de rendu Three.js (exception documentée).
+
 ## 11. Ce qui reste ouvert
 
 - La console `/standex` ne peut être validée de bout en bout sans session staff

@@ -543,7 +543,7 @@ export default function MagneticWorkshop({
     setPlaying(false);
     // Le tracé de câble et les repères se relèvent DANS la pose courante : on
     // ne remet pas le cycle à zéro.
-    if (next !== "cable" && next !== "measure") setProgress(0);
+    if (next !== "cable" && next !== "measure" && tool !== "measure") setProgress(0);
     setTool(next);
   }
   function exampleMachine() {
