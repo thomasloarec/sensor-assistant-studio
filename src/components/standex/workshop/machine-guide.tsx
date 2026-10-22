@@ -760,7 +760,7 @@ export default function MachineGuide({
           {sample.contact === "unknown"
             ? t("Aucun contact n'est affiché : il n'est pas prédit pour ce montage.")
             : t(
-                config.mode === "education"
+                config.mode === "education" || reason
                   ? "Contact illustratif : modèle pédagogique non calibré, ce n'est pas une prédiction. Une machine importée n'est jamais validée par l'atelier."
                   : "Source : distances publiées pour ce couple, en espace libre. Une machine importée n'est jamais validée par l'atelier.",
               )}
