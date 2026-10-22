@@ -52,4 +52,19 @@ export const DEMO_ASSEMBLIES: Record<string, MachineAssembly> = {
     sensorPosition: [0, 60, -20],
     magnetPosition: [0, 60, 25],
   }),
+  // Lot 2 : mouvement lu dans le fichier (clip « Cycle_complet », aller et
+  // retour inclus). Le mouvement saisi reste « à définir » : rien n'est supposé.
+  "builtin:arm-v1": base({
+    assetKey: "builtin:arm-v1",
+    fileName: "demo-bras-anime.glb",
+    movingNodes: [],
+    movingNode: "",
+    motion: "translation",
+    travel: [0, 0, 0],
+    motionStatus: "unset",
+    motionSource: "clip",
+    clip: { index: 0, name: "Cycle_complet", duration: 4 },
+    sensorPosition: [-40, 20, 90],
+    magnetPosition: [-60, 20, 90],
+  }),
 };

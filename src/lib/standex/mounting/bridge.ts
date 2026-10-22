@@ -1,10 +1,13 @@
+import { Euler, Quaternion, Vector3 } from "three";
 import { transverseApproach } from "../housing-pose";
 import { poseAt } from "../magnetic-workshop";
 import type { WorkshopConfig } from "../magnetic-workshop";
 import {
   componentPose,
+  cycleU,
   movingRotation,
-  openingAt,
+  partDelta,
+  usesClip,
   add as addV,
   scale as scaleV,
 } from "../machine-assembly";
@@ -46,7 +49,10 @@ export function machineComponentPose(
   which: "sensor" | "magnet",
   u: number,
 ): Pose {
-  const { position } = componentPose(machine, which, u);
+  const { position, rotationDeg } = componentPose(machine, which, u);
+  // Animation du fichier : la rotation est celle de la pièce support réelle.
+  if (usesClip(machine) && rotationDeg)
+    return { positionMm: [...position] as Vec3, rotationDeg: [...rotationDeg] as Vec3 };
   const own = which === "sensor" ? machine.sensorRotation : machine.magnetRotation;
   const moving = (which === "sensor" ? machine.sensorMount : machine.magnetMount) === "moving";
   return {
@@ -62,6 +68,22 @@ export function componentBaseFromWorldPose(
   world: Pose,
   u: number,
 ): { position: Vec3; rotation: Vec3 } {
+  if (usesClip(machine)) {
+    const attach = which === "sensor" ? machine.sensorAttach : machine.magnetAttach;
+    const d = attach ? partDelta(machine, attach.partPath, u) : null;
+    if (!d) return { position: [...world.positionMm] as Vec3, rotation: [...world.rotationDeg] as Vec3 };
+    const inv = new Quaternion(...d.quaternion).invert();
+    const position = new Vector3(...world.positionMm)
+      .sub(new Vector3(...d.position))
+      .applyQuaternion(inv)
+      .toArray() as Vec3;
+    const r = world.rotationDeg.map((n) => (n * Math.PI) / 180) as Vec3;
+    const e = new Euler().setFromQuaternion(
+      inv.multiply(new Quaternion().setFromEuler(new Euler(...r, "XYZ"))),
+      "XYZ",
+    );
+    return { position, rotation: [e.x, e.y, e.z].map((n) => (n * 180) / Math.PI) as Vec3 };
+  }
   const moving = (which === "sensor" ? machine.sensorMount : machine.magnetMount) === "moving";
   if (!moving)
     return {
@@ -82,6 +104,10 @@ export function magnetBaseFromWorldPose(
   world: Pose,
   u: number,
 ): { magnetPosition: Vec3; magnetRotation: Vec3 } {
+  if (usesClip(machine)) {
+    const b = componentBaseFromWorldPose(machine, "magnet", world, u);
+    return { magnetPosition: b.position, magnetRotation: b.rotation };
+  }
   if (machine.magnetMount !== "moving")
     return {
       magnetPosition: [...world.positionMm] as Vec3,
@@ -183,7 +209,8 @@ export function relativePoseInMachine(machine: MachineAssembly, u: number): Pose
  *
  * On lit donc la pose au même endroit que la scène :
  * - montage importé : la pose des deux composants au point de cycle
- *   `openingAt(t)`, exactement comme la scène 3D ;
+ *   `cycleU(machine, t)` (aller-retour saisi, ou chronologie propre du clip),
+ *   exactement comme la scène 3D ;
  * - espace vide : la position dessinée par `poseAt`, y compris `slide` et
  *   `pivot`, exprimée dans le repère du capteur.
  *
@@ -192,7 +219,7 @@ export function relativePoseInMachine(machine: MachineAssembly, u: number): Pose
  */
 export function scenePoseSampler(c: WorkshopConfig): ScenePoseSampler {
   const machine = c.machine;
-  if (machine) return (t) => relativePoseInMachine(machine, openingAt(t));
+  if (machine) return (t) => relativePoseInMachine(machine, cycleU(machine, t));
   return (t) => {
     const drawn = poseAt(c, t);
     // Espace vide : le capteur est à l'origine, tourné de son propre lacet.

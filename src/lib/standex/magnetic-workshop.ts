@@ -16,7 +16,7 @@ import {
   MAGNET_REFERENCE,
   CUSTOM_SENSOR_ID,
 } from "./sensor-catalog";
-import { parseMachine, componentPose, openingAt, rotate, motionProblem, movingSelection } from "./machine-assembly";
+import { parseMachine, componentPose, cycleU, openingAt, rotate, motionProblem, movingSelection } from "./machine-assembly";
 import { documentedMagnetAngleDeg } from "./mounting/profiles";
 import { workshopGuideRange, GUIDE_SIMULATION_NOTE } from "./workshop-guide";
 import { defaultGuideSelection, guideSelectionFor } from "./activation-guide";
@@ -544,8 +544,8 @@ export function poseAt(
     u = phase <= 0.5 ? phase * 2 : (1 - phase) * 2;
   const distance = c.start + (c.end - c.start) * u;
   if (c.machine) {
-    const m = componentPose(c.machine, "magnet", openingAt(phase)),
-      sensor = componentPose(c.machine, "sensor", openingAt(phase));
+    const m = componentPose(c.machine, "magnet", cycleU(c.machine, phase)),
+      sensor = componentPose(c.machine, "sensor", cycleU(c.machine, phase));
     return {
       position: m.position,
       angle: 0,
@@ -621,7 +621,7 @@ export function demoField(point: Vec3, magnet: Vec3, moment: Vec3, reach: number
 }
 export function educationSignal(c: WorkshopConfig, position: Vec3, angle: number, t = 0): number {
   const model = sensorById(c.sensorId),
-    u = openingAt(t);
+    u = cycleU(c.machine, t);
   const sensor = c.machine
     ? componentPose(c.machine, "sensor", u)
     : { position: [0, 0, 0] as Vec3, transform: (v: Vec3) => rotate(v, [0, -c.sensorAngle, 0]) };

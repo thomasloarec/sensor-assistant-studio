@@ -1,7 +1,7 @@
 import { housingYawDeg } from "@/lib/standex/housing-pose";
 import { magnetSize } from "@/lib/standex/magnetic-workshop";
-import { t } from "@/lib/i18n/core";
-import { useRef, useState, useMemo, useEffect } from "react";
+import { msg, t } from "@/lib/i18n/core";
+import { useRef, useMemo, useEffect } from "react";
 import type { ReactNode } from "react";
 import { Canvas } from "@react-three/fiber";
 import type { ThreeEvent } from "@react-three/fiber";
@@ -17,14 +17,21 @@ import {
 } from "three";
 import type { TransformControls as TransformImpl } from "three-stdlib";
 import type { MachineAsset } from "@/lib/standex/machine-assets";
-import type { MachineAssembly } from "@/lib/standex/machine-assembly";
+import type { MachineAssembly, Marker } from "@/lib/standex/machine-assembly";
 import {
   movingRotation,
-  openingAt,
+  cycleU,
   scale,
   componentPose,
   isMovingPath,
+  markerReading,
+  partDelta,
+  partGroup,
+  pointAt,
+  toRest,
+  usesClip,
 } from "@/lib/standex/machine-assembly";
+import type { RigidDelta } from "@/lib/standex/machine-clip-registry";
 import type { CycleSample, WorkshopConfig, Vec3 } from "@/lib/standex/magnetic-workshop";
 import { sensorById, sizeLabel } from "@/lib/standex/sensor-catalog";
 import { Body, Contacts, Magnet, CameraRig, ContextGuard, GhostMagnet } from "./scene";
@@ -47,6 +54,8 @@ export interface SceneHit {
   normal: Vec3;
   path: string;
   moving: boolean;
+  /** Ensemble solidaire de la pièce (deux points d'un même ensemble bougent ensemble). */
+  group?: string;
 }
 /** Aides visuelles du parcours guidé : jamais enregistrées. */
 export interface GuideOverlay {
@@ -123,6 +132,41 @@ function Motion({
     </group>
   );
 }
+/** Transformation rigide d'une pièce animée (p' = q·p + t), appliquée UNE fois. */
+function DeltaGroup({ delta, children }: { delta: RigidDelta | null; children: ReactNode }) {
+  if (!delta) return <>{t(children)}</>;
+  return (
+    <group position={delta.position} quaternion={delta.quaternion}>
+      {t(children)}
+    </group>
+  );
+}
+/** Support d'un composant : pièce attachée (clip) ou sélection mobile (saisi). */
+function SupportFrame({
+  machine,
+  which,
+  u,
+  children,
+}: {
+  machine: MachineAssembly;
+  which: "sensor" | "magnet";
+  u: number;
+  children: ReactNode;
+}) {
+  if (usesClip(machine)) {
+    const a = which === "sensor" ? machine.sensorAttach : machine.magnetAttach;
+    return <DeltaGroup delta={a ? partDelta(machine, a.partPath, u) : null}>{t(children)}</DeltaGroup>;
+  }
+  return (
+    <MovingIf
+      moving={(which === "sensor" ? machine.sensorMount : machine.magnetMount) === "moving"}
+      machine={machine}
+      u={u}
+    >
+      {t(children)}
+    </MovingIf>
+  );
+}
 function MovingIf({
   moving,
   machine,
@@ -155,7 +199,7 @@ function Assembly({
   showMagnetName,
   reduced,
   onChange,
-  onMeasure,
+  onMarkers,
   onPlaced,
   routing,
   ghost,
@@ -175,7 +219,7 @@ function Assembly({
   showMagnetName: boolean;
   reduced: boolean;
   onChange: (patch: Partial<MachineAssembly>) => void;
-  onMeasure: (distance: number | null) => void;
+  onMarkers: (markers: Marker[]) => void;
   onPlaced: () => void;
   routing?: CableRouting | undefined;
   /** Prévisualisation seule, exprimée dans le repère du modèle importé. */
@@ -183,11 +227,13 @@ function Assembly({
 }) {
   const machine = config.machine!,
     model = sensorById(config.sensorId),
-    u = openingAt(sample.t);
+    u = cycleU(machine, sample.t);
   const sensorRef = useRef<Group>(null),
     magnetRef = useRef<Group>(null),
     control = useRef<TransformImpl>(null);
-  const [points, setPoints] = useState<Vec3[]>([]);
+  // Repères de mesure : enregistrés en pose statique, ils suivent leur support.
+  const reading = markerReading(machine, u);
+  const markerPoints = (machine.markers ?? []).map((k) => pointAt(machine, k.partPath, k.point, u));
   const ghosts = useMemo(
     () =>
       ["#8babbf", "#cf936e"].map(
@@ -216,11 +262,15 @@ function Assembly({
       .clone()
       .applyMatrix3(new Matrix3().getNormalMatrix(event.object.matrixWorld))
       .normalize();
+    // Le point affiché est ramené à la pose statique du fichier : base commune
+    // des attaches et repères, quel que soit l'instant du clip.
+    const rest = toRest(machine, path, event.point.toArray() as Vec3, normal.toArray() as Vec3, u);
     return {
-      point: event.point.toArray() as Vec3,
-      normal: normal.toArray() as Vec3,
+      point: rest.point,
+      normal: rest.normal,
       path,
       moving,
+      group: partGroup(machine, path),
     };
   };
   const place = (event: ThreeEvent<MouseEvent>, moving: boolean, path = "") => {
@@ -243,10 +293,12 @@ function Assembly({
       return;
     }
     if (tool === "measure") {
-      const p = event.point.toArray() as Vec3,
-        next = points.length === 1 ? [points[0]!, p] : [p];
-      setPoints(next);
-      onMeasure(next.length === 2 ? new Vector3(...next[0]!).distanceTo(new Vector3(...p)) : null);
+      // Un repère est mémorisé sur SA pièce, à tout instant du cycle.
+      if (!path) return;
+      const rest = toRest(machine, path, event.point.toArray() as Vec3, [0, 1, 0], u);
+      const marker: Marker = { partPath: path, point: rest.point };
+      const current = machine.markers ?? [];
+      onMarkers(current.length === 1 ? [current[0]!, marker] : [marker]);
       return;
     }
 
@@ -278,9 +330,10 @@ function Assembly({
   };
   // Chaque pièce est dessinée une seule fois, dans le groupe fixe OU mobile :
   // un groupe sélectionné n'applique jamais deux fois la transformation.
-  const draw = (moving: boolean) =>
-    asset.parts
-      .filter((p) => isMovingPath(machine, p.path) === moving)
+  const clip = usesClip(machine);
+  const draw = (moving: boolean, parts = asset.parts) =>
+    parts
+      .filter((p) => (clip ? moving : isMovingPath(machine, p.path) === moving))
       .map((p) => (
         <mesh
           key={p.path}
@@ -298,13 +351,34 @@ function Assembly({
           dispose={null}
         />
       ));
+  // Animation du fichier : chaque ensemble solidaire reçoit SA transformation,
+  // une seule fois (les pièces sont figées en pose statique, sans parent).
+  const groups = new Map<string, typeof asset.parts>();
+  if (clip)
+    for (const p of asset.parts) {
+      const g = partGroup(machine, p.path);
+      groups.set(g, [...(groups.get(g) ?? []), p]);
+    }
   return (
     <>
-      <group>{t(draw(false))}</group>
-      <Motion machine={machine} u={u}>
-        {t(draw(true))}
-      </Motion>
-      <MovingIf moving={machine.sensorMount === "moving"} machine={machine} u={u}>
+      {clip ? (
+        [...groups].map(([g, parts]) => {
+          const d = parts[0] ? partDelta(machine, parts[0].path, u) : null;
+          return (
+            <DeltaGroup key={g} delta={d}>
+              {t(draw(!!d, parts))}
+            </DeltaGroup>
+          );
+        })
+      ) : (
+        <>
+          <group>{t(draw(false))}</group>
+          <Motion machine={machine} u={u}>
+            {t(draw(true))}
+          </Motion>
+        </>
+      )}
+      <SupportFrame which="sensor" machine={machine} u={u}>
         <group
           ref={sensorRef}
           position={machine.sensorPosition}
@@ -334,8 +408,8 @@ function Assembly({
             </Html>
           )}
         </group>
-      </MovingIf>
-      <MovingIf moving={machine.magnetMount === "moving"} machine={machine} u={u}>
+      </SupportFrame>
+      <SupportFrame which="magnet" machine={machine} u={u}>
         <group
           ref={magnetRef}
           position={machine.magnetPosition}
@@ -350,7 +424,7 @@ function Assembly({
             sample={{ ...sample, position: [0, 0, 0], angle: 0 }}
           />
         </group>
-      </MovingIf>
+      </SupportFrame>
       {editable && (
         <TransformControls
           ref={control}
@@ -375,13 +449,22 @@ function Assembly({
           }}
         />
       )}
-      {points.length === 2 && (
+      {markerPoints.map((p, i) => (
+        <mesh key={"marker" + i} position={p}>
+          <sphereGeometry args={[1.8, 12, 12]} />
+          <meshBasicMaterial color="#ae5b31" />
+        </mesh>
+      ))}
+      {reading && (
         <>
-          <Line points={points} color="#ae5b31" lineWidth={2} />
-          <Html position={points[1]!}>
-            <span className="mw-scene-label">
-              {t("Mesure :")}{" "}
-              {t(new Vector3(...points[0]!).distanceTo(new Vector3(...points[1]!)).toFixed(1))} mm
+          <Line points={reading.points} color="#ae5b31" lineWidth={2} />
+          <Html
+            position={reading.points.map((v, i) => (v + reading.points[1][i]!) / 2) as Vec3}
+            center
+            style={{ pointerEvents: "none" }}
+          >
+            <span className="mw-scene-label t-metric" data-testid="scene-marker-distance">
+              {msg("Distance entre les repères : {0} mm", [reading.distance.toFixed(1)])}
             </span>
           </Html>
         </>
@@ -434,7 +517,7 @@ export default function MachineScene({
   showMagnetName = true,
   reduced,
   onChange,
-  onMeasure,
+  onMarkers,
   onPlaced,
   onContextLost,
   routing,
@@ -458,7 +541,7 @@ export default function MachineScene({
   showMagnetName?: boolean;
   reduced: boolean;
   onChange: (patch: Partial<MachineAssembly>) => void;
-  onMeasure: (distance: number | null) => void;
+  onMarkers: (markers: Marker[]) => void;
   onPlaced: () => void;
   onContextLost: () => void;
   /** Absent = comportement d'origine, aucun tracé de câble. */
@@ -470,7 +553,7 @@ export default function MachineScene({
     extent = Math.max(...asset.size),
     sensor = sensorById(config.sensorId);
   const target: Vec3 =
-    focus === "sensor" ? componentPose(m, "sensor", openingAt(sample.t)).position : asset.center;
+    focus === "sensor" ? componentPose(m, "sensor", cycleU(m, sample.t)).position : asset.center;
   const distance = focus === "sensor" ? Math.max(45, sensor.body[0] * 2.5) : extent * 1.35;
   return (
     <Canvas
@@ -506,7 +589,7 @@ export default function MachineScene({
         showMagnetName={showMagnetName}
         reduced={reduced}
         onChange={onChange}
-        onMeasure={onMeasure}
+        onMarkers={onMarkers}
         onPlaced={onPlaced}
         routing={routing}
         ghost={ghost}

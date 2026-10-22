@@ -103,3 +103,61 @@ await mkdir("public/models", { recursive: true });
   root.add(wall, slider);
   await save(root, "demo-paroi-alesage.glb");
 }
+
+// 4. Bras animé (lot 2) : PARENT « Portique » avec position et rotation non
+// triviales, deux sous-pièces animées DIFFÉREMMENT (chariot en translation,
+// bras porté par le chariot en rotation, donc translation + rotation
+// combinées), deux pièces fixes au même nom « Vis ». Trois clips :
+//  - Cycle_complet (4 s) : aller puis retour inclus dans le clip ;
+//  - Ouverture_seule (2 s) : aller seulement ;
+//  - Etirement (2 s) : changement d'échelle, REFUSÉ par l'atelier.
+// Les poses sont exprimées dans le repère local de chaque nœud (glTF).
+{
+  const root = new THREE.Group();
+  root.name = "Demo_Bras_anime";
+  const base = new THREE.Group();
+  base.name = "Socle_fixe";
+  box(base, "Plateau", [320, 8, 160], [80, -4, 0], M.frame);
+  box(base, "Vis", [10, 10, 10], [-60, 5, 60], M.metal);
+  box(base, "Vis", [10, 10, 10], [-60, 5, -60], M.metal);
+  const gantry = new THREE.Group();
+  gantry.name = "Portique";
+  gantry.position.set(20, 30, -15);
+  gantry.rotation.set((8 * Math.PI) / 180, (25 * Math.PI) / 180, 0);
+  box(gantry, "Rail", [240, 10, 20], [60, 0, 0], M.frame);
+  const carriage = new THREE.Group();
+  carriage.name = "Chariot";
+  carriage.position.set(0, 12, 0);
+  box(carriage, "Plaque_chariot", [40, 14, 36], [0, 0, 0], M.moving);
+  const arm = new THREE.Group();
+  arm.name = "Bras";
+  arm.position.set(0, 10, 0);
+  box(arm, "Levier", [12, 80, 12], [0, 40, 0], M.moving);
+  box(arm, "Tete", [30, 10, 24], [0, 82, 0], M.metal);
+  carriage.add(arm);
+  gantry.add(carriage);
+  root.add(base, gantry);
+  const z = (deg) => new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 0, 1), (deg * Math.PI) / 180).toArray();
+  const pos = (x) => [x, 12, 0];
+  const full = new THREE.AnimationClip("Cycle_complet", 4, [
+    new THREE.VectorKeyframeTrack("Chariot.position", [0, 2, 4], [...pos(0), ...pos(120), ...pos(0)]),
+    new THREE.QuaternionKeyframeTrack("Bras.quaternion", [0, 1, 2, 3, 4], [...z(0), ...z(30), ...z(60), ...z(30), ...z(0)]),
+  ]);
+  const open = new THREE.AnimationClip("Ouverture_seule", 2, [
+    new THREE.VectorKeyframeTrack("Chariot.position", [0, 2], [...pos(0), ...pos(120)]),
+    new THREE.QuaternionKeyframeTrack("Bras.quaternion", [0, 2], [...z(0), ...z(45)]),
+  ]);
+  const stretch = new THREE.AnimationClip("Etirement", 2, [
+    new THREE.VectorKeyframeTrack("Bras.scale", [0, 2], [1, 1, 1, 1, 1.6, 1]),
+  ]);
+  root.scale.setScalar(0.001);
+  root.updateMatrixWorld(true);
+  const binary = await new GLTFExporter().parseAsync(root, {
+    binary: true,
+    onlyVisible: true,
+    trs: true,
+    animations: [full, open, stretch],
+  });
+  await writeFile("public/models/demo-bras-anime.glb", Buffer.from(binary));
+  console.log("demo-bras-anime.glb", binary.byteLength, "bytes");
+}

@@ -3,6 +3,8 @@ import type { BufferGeometry, Material, Object3D } from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { COFFEE_ASSET } from "./machine-assembly";
 import type { Vec3 } from "./magnetic-workshop";
+import { analyzeAnimations } from "./machine-animation";
+import type { MachineAnimation } from "./machine-clip-registry";
 
 export interface MachinePart {
   path: string;
@@ -25,8 +27,10 @@ export interface MachineAsset {
   size: Vec3;
   center: Vec3;
   min: Vec3;
-  /** Animations présentes dans le fichier : signalées, pas encore rejouées (lot 2). */
+  /** Nombre d'animations présentes dans le fichier. */
   animationCount: number;
+  /** Clips analysés et évaluables à la demande (hiérarchie conservée). */
+  animation: MachineAnimation;
   dispose: () => void;
 }
 /** Exemples intégrés : fichiers autonomes servis par l'application. */
@@ -35,6 +39,7 @@ export const BUILTIN_FILES: Record<string, string> = {
   "builtin:drawer-v1": "/models/demo-tiroir-deux-pieces.glb",
   "builtin:door-v1": "/models/demo-porte-axe-incline.glb",
   "builtin:wall-v1": "/models/demo-paroi-alesage.glb",
+  "builtin:arm-v1": "/models/demo-bras-anime.glb",
 };
 const DB = "standex-machine-assets-v1";
 async function database(): Promise<IDBDatabase> {
@@ -180,8 +185,21 @@ export async function loadMachineAsset(
   key: string,
   unitScale: number,
   mode: AssetStorageMode = "local-device",
+  signal?: AbortSignal,
 ): Promise<MachineAsset> {
   const data = await readFile(key, mode);
+  if (signal?.aborted) throw new DOMException("Chargement annulé.", "AbortError");
+  return parseMachineAsset(data, unitScale, signal);
+}
+
+/** Lecture complète d'un GLB autonome. La hiérarchie du fichier est CONSERVÉE
+ *  (transformations locales) pour évaluer ses animations ; la géométrie
+ *  affichée est figée une seule fois dans la pose statique du fichier. */
+export async function parseMachineAsset(
+  data: ArrayBuffer,
+  unitScale: number,
+  signal?: AbortSignal,
+): Promise<MachineAsset> {
   validateGlb(data);
   const manager = new LoadingManager();
   manager.setURLModifier((url) => {
@@ -194,6 +212,14 @@ export async function loadMachineAsset(
   root.updateMatrixWorld(true);
   const parts: MachinePart[] = [],
     nodes: MachineNode[] = [];
+  const pathOf = new Map<Object3D, string>(),
+    objectOf = new Map<string, Object3D>();
+  // Nom d'origine du nœud glTF (le chargeur rend les doublons uniques).
+  const json = gltf.parser.json as { nodes?: { name?: string }[] };
+  const originalName = (o: Object3D) => {
+    const n = gltf.parser.associations.get(o)?.nodes;
+    return (n !== undefined ? json.nodes?.[n]?.name : undefined) || o.name;
+  };
   let vertices = 0;
   const meshesIn = (o: Object3D) => {
     let n = 0;
@@ -203,15 +229,17 @@ export async function loadMachineAsset(
     return n;
   };
   const collect = (o: Object3D, path: string) => {
+    pathOf.set(o, path);
+    objectOf.set(path, o);
     const meshCount = meshesIn(o);
     if (meshCount > 0)
-      nodes.push({ path, name: o.name || "#" + path, depth: path.split("/").length - 1, meshCount });
+      nodes.push({ path, name: originalName(o) || "#" + path, depth: path.split("/").length - 1, meshCount });
     if (o instanceof Mesh) {
       vertices += o.geometry.getAttribute("position")?.count ?? 0;
       const geometry = o.geometry.clone().applyMatrix4(o.matrixWorld);
       parts.push({
         path,
-        name: o.name || "#" + path,
+        name: originalName(o) || "#" + path,
         geometry,
         material: Array.isArray(o.material) ? o.material.map((m) => m.clone()) : o.material.clone(),
       });
@@ -223,7 +251,10 @@ export async function loadMachineAsset(
   parts.forEach((p) => view.add(new Mesh(p.geometry, p.material)));
   const bounds = new Box3().setFromObject(view),
     size = bounds.getSize(new Vector3()).toArray() as Vec3;
+  let disposed = false;
   const dispose = () => {
+    if (disposed) return;
+    disposed = true;
     for (const p of parts) {
       p.geometry.dispose();
       for (const m of Array.isArray(p.material) ? p.material : [p.material]) m.dispose();
@@ -243,7 +274,14 @@ export async function loadMachineAsset(
         }
       }
     });
+    view.clear();
+    pathOf.clear();
+    objectOf.clear();
   };
+  if (signal?.aborted) {
+    dispose();
+    throw new DOMException("Chargement annulé.", "AbortError");
+  }
   if (
     !parts.length ||
     vertices > 1500000 ||
@@ -256,6 +294,13 @@ export async function loadMachineAsset(
       "Géométrie vide, trop détaillée ou hors échelle. Vérifiez les unités et limitez le modèle à 1,5 million de sommets / 20 m.",
     );
   }
+  const animation = analyzeAnimations(
+    root,
+    gltf.animations,
+    pathOf,
+    objectOf,
+    parts.map((p) => p.path),
+  );
   return {
     parts,
     nodes,
@@ -263,6 +308,7 @@ export async function loadMachineAsset(
     center: bounds.getCenter(new Vector3()).toArray() as Vec3,
     min: bounds.min.toArray() as Vec3,
     animationCount: gltf.animations.length,
+    animation,
     dispose,
   };
 }
