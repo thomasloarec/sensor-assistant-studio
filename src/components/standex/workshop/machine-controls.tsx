@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useLocale } from "@/lib/i18n/react";
 import { msg, t } from "@/lib/i18n/core";
 import type { MachineAsset } from "@/lib/standex/machine-assets";
@@ -21,6 +22,7 @@ function VectorInput({
   min?: number;
   max?: number;
 }) {
+  const [invalid, setInvalid] = useState(false);
   return (
     <fieldset className="mw-vector">
       <legend className="t-label">
@@ -45,8 +47,10 @@ function VectorInput({
                 const n = Number(e.target.value);
                 if (e.target.value === "" || !Number.isFinite(n) || n < min || n > max) {
                   e.target.value = String(Math.round(value[i]! * 100) / 100);
+                  setInvalid(true);
                   return;
                 }
+                setInvalid(false);
                 const v = [...value] as Vec3;
                 v[i] = n;
                 onChange(v);
@@ -55,6 +59,14 @@ function VectorInput({
           </label>
         ))}
       </div>
+      {invalid && (
+        <span className="mw-field-error" role="alert">
+          {msg("Valeur refusée : saisissez un nombre entre {0} et {1}. La valeur précédente est conservée.", [
+            String(min),
+            String(max),
+          ])}
+        </span>
+      )}
     </fieldset>
   );
 }
@@ -106,12 +118,12 @@ export default function MachineControls({
         <summary>{t("Aide au placement")}</summary>
         <p>
           {t(
-            "Choisissez d’abord la pièce mobile dans la liste. Un groupe déplace toutes ses sous-pièces. Au début du cycle, activez Placer le capteur ou Placer l’aimant, puis cliquez sur une face : le composant s’aligne sur cette surface. Les coordonnées permettent un réglage précis.",
+            "Les pièces mobiles, le mouvement et les attaches se règlent dans le parcours guidé. Ici, les coordonnées libres modifient directement la pose : toute attache du composant est alors libérée.",
           )}
         </p>
         <p>
           {t(
-            "Pour un capteur cylindrique à insérer dans un trou, utilisez les rotations et coordonnées. Le modèle ne perce pas la pièce et ne vérifie pas les collisions.",
+            "Pour un capteur cylindrique à insérer dans un trou, utilisez « À travers une paroi » dans l'étape Installation. Le modèle ne perce pas la pièce et ne vérifie pas les collisions.",
           )}
         </p>
       </details>

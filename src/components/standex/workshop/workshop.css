@@ -2011,7 +2011,7 @@
   display: flex;
   align-items: center;
   gap: var(--sp-2, 0.5rem);
-  color: var(--standex-blue);
+  color: var(--heading);
 }
 .mw-guide-actions {
   display: flex;
@@ -2894,4 +2894,78 @@
   gap: 8px;
   align-items: center;
   min-height: 44px;
+}
+/* Retour lisible d'une saisie refusée. */
+.mw-field-error {
+  color: var(--destructive);
+  font: var(--mw-t-body);
+}
+/* Aucun débordement horizontal : champs et lignes se contraignent au panneau. */
+.mw-guide,
+.mw-guide-body,
+.mw-guide .mw-select-label,
+.mw-guide-body > * {
+  min-width: 0;
+}
+.mw-guide-body {
+  overflow-x: hidden;
+}
+.mw-guide input[type="number"],
+.mw-guide input[type="range"],
+.mw-guide select {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+.mw-guide .mw-segmented {
+  flex-wrap: wrap;
+}
+.mw-guide .mw-segmented button {
+  min-width: 0;
+  padding: 0 10px;
+}
+/* Accès direct aux démonstrations, à côté de l'import. */
+.mw-demo-shortcut {
+  position: relative;
+}
+.mw-demo-shortcut > summary {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  padding: 0 14px;
+  border-radius: var(--r-pill);
+  background: var(--surface);
+  color: var(--heading);
+  box-shadow: var(--e-1);
+  cursor: pointer;
+}
+.mw-demo-shortcut > summary:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+.mw-demo-shortcut[open] > .mw-demo-list {
+  position: absolute;
+  z-index: 20;
+  inset-inline-end: 0;
+  width: min(360px, calc(100vw - 32px));
+  padding: 12px;
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  box-shadow: var(--e-3);
+}
+/* Contexte immersif : boutons du parcours sur jetons sémantiques (contraste AA). */
+.immersive .mw-guide .mw-secondary,
+.immersive .mw-demo-list .mw-secondary {
+  background: var(--surface-sunken);
+  color: var(--heading);
+  border-color: transparent;
+  box-shadow: var(--e-1);
+}
+.immersive .mw-guide .mw-secondary[aria-pressed="true"] {
+  background: var(--surface-tint);
+}
+.immersive .mw-guide .mw-text-button {
+  color: var(--heading);
+}
+.immersive .mw-guide .mw-button:disabled {
+  opacity: 0.6;
 }

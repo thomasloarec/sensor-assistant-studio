@@ -1,12 +1,16 @@
 /** Parcours guidé du modèle importé : Modèle → Pièces mobiles → Mouvement →
  *  Installation → Essai. Une seule étape développée à la fois ; la scène reste
  *  visible à côté. Les coordonnées libres restent dans les réglages avancés. */
+import { useState } from "react";
 import { msg, t } from "@/lib/i18n/core";
 import type { MachineAsset } from "@/lib/standex/machine-assets";
 import type { MachineAssembly } from "@/lib/standex/machine-assembly";
 import {
+  isMovingPath,
   motionAxis,
+  motionDirection,
   motionProblem,
+  movePoint,
   movingSelection,
   norm,
   toggleMoving,
@@ -30,10 +34,19 @@ export type GuideStep = "model" | "parts" | "motion" | "install" | "test";
 export interface GuideState {
   step: GuideStep;
   isolate: boolean;
-  pick: null | { purpose: "axis-points" | "axis-face" | "hole-points"; points: Vec3[] };
+  pick: null | {
+    purpose: "axis-points" | "axis-face" | "hole-points";
+    points: Vec3[];
+    /** Support du PREMIER point d'un axe de trou : le second doit être solidaire. */
+    support?: { path: string; moving: boolean };
+  };
   target: "sensor" | "magnet";
   kind: { sensor: MountKind; magnet: MountKind };
   freed: ("sensor" | "magnet")[];
+  /** Attaches libérées parce que le produit choisi ne permet plus ce montage. */
+  incompatible?: ("sensor" | "magnet")[];
+  /** Explication d'un pointage refusé (points confondus, supports distincts). */
+  notice?: string | null;
 }
 export const INITIAL_GUIDE: GuideState = {
   step: "model",
@@ -120,6 +133,7 @@ function Num({
   onCommit: (v: number) => void;
   testId?: string;
 }) {
+  const [invalid, setInvalid] = useState(false);
   return (
     <label className="mw-select-label">
       {msg("{0} ({1})", [t(label), u])}
@@ -139,13 +153,22 @@ function Num({
           const n = Number(e.target.value.replace(",", "."));
           if (e.target.value.trim() === "" || !Number.isFinite(n) || n < min || n > max) {
             e.target.value = String(Math.round(value * 1000) / 1000);
-            e.target.setAttribute("aria-invalid", "true");
+            setInvalid(true);
             return;
           }
-          e.target.removeAttribute("aria-invalid");
+          setInvalid(false);
           onCommit(n);
         }}
+        aria-invalid={invalid || undefined}
       />
+      {invalid && (
+        <span className="mw-field-error" role="alert">
+          {msg("Valeur refusée : saisissez un nombre entre {0} et {1}. La valeur précédente est conservée.", [
+            String(min),
+            String(max),
+          ])}
+        </span>
+      )}
     </label>
   );
 }
@@ -155,8 +178,9 @@ export function guideOverlay(
   m: MachineAssembly,
   handlers: Pick<GuideOverlay, "onPickPart" | "onPickPoint" | "onPlace">,
   extent: number,
+  u = 0,
 ): GuideOverlay {
-  const axisDir = m.axisVector ? motionAxis(m) : m.motion === "rotation" ? motionAxis(m) : unit(m.travel);
+  const axisDir = motionDirection(m);
   const origin: Vec3 =
     m.motion === "rotation"
       ? m.pivot
@@ -171,7 +195,10 @@ export function guideOverlay(
         ? { origin, dir: axisDir, length: Math.max(20, extent * 0.4) }
         : null,
     points: state.pick?.points ?? [],
-    attachMarks: [m.sensorAttach?.point, m.magnetAttach?.point].filter(Boolean) as Vec3[],
+    // Un repère d'attache suit exactement la transformation de son support.
+    attachMarks: [m.sensorAttach, m.magnetAttach]
+      .filter((a): a is Attachment => !!a)
+      .map((a) => (isMovingPath(m, a.partPath) ? movePoint(m, a.point, u) : a.point)),
     ...handlers,
   };
 }
@@ -192,6 +219,7 @@ export default function MachineGuide({
   setPlaying,
   reason,
   onDemo,
+  reduced = false,
 }: {
   state: GuideState;
   setState: (f: (s: GuideState) => GuideState) => void;
@@ -208,6 +236,7 @@ export default function MachineGuide({
   setPlaying: (v: boolean) => void;
   reason: string | null;
   onDemo: (key: string) => void;
+  reduced?: boolean;
 }) {
   const m = config.machine!;
   const selection = movingSelection(m);
@@ -389,14 +418,17 @@ export default function MachineGuide({
           </button>
           <button
             className="mw-button mw-secondary"
-            disabled={!m.axisVector && norm(m.travel) === 0}
-            onClick={() =>
+            disabled={!motionDirection(m)}
+            onClick={() => {
+              // Une coulisse ancienne sans vecteur libre s'inverse selon sa course.
+              const d = motionDirection(m);
+              if (!d) return;
               onChange({
-                axisVector: motionAxis(m).map((v) => -v) as Vec3,
+                axisVector: d.map((v) => -v) as Vec3,
                 travel: m.travel.map((v) => -v) as Vec3,
                 motionStatus: "draft",
-              })
-            }
+              });
+            }}
           >
             {t("Inverser le sens")}
           </button>
@@ -416,7 +448,7 @@ export default function MachineGuide({
             testId="guide-stroke"
             value={norm(m.travel)}
             onCommit={(s) => {
-              const d = unit(m.travel) ?? (m.axisVector ? motionAxis(m) : null);
+              const d = motionDirection(m);
               if (d) onChange({ travel: d.map((v) => v * s) as Vec3, axisVector: d, motionStatus: "draft" });
             }}
           />
@@ -556,7 +588,13 @@ export default function MachineGuide({
               role="radio"
               aria-checked={kind === v}
               disabled={v === "through" && !canThrough}
-              onClick={() => setState((s) => ({ ...s, kind: { ...s.kind, [target]: v } }))}
+              onClick={() =>
+                setState((s) => ({
+                  ...s,
+                  kind: { ...s.kind, [target]: v },
+                  incompatible: (s.incompatible ?? []).filter((w) => w !== target),
+                }))
+              }
             >
               {t(label)}
             </button>
@@ -598,7 +636,19 @@ export default function MachineGuide({
             )}
           </p>
         )}
-        {state.freed.includes(target) && !attach && (
+        {state.notice && (
+          <p className="notice-warning" role="alert" data-testid="guide-notice">
+            {t(state.notice)}
+          </p>
+        )}
+        {(state.incompatible ?? []).includes(target) && !attach && (
+          <p className="notice-warning" data-testid="guide-incompatible">
+            {t(
+              "Attache traversante libérée : le produit choisi n'a pas un corps cylindrique, fileté ou à insérer. Posez-le sur une surface ou choisissez un autre produit.",
+            )}
+          </p>
+        )}
+        {state.freed.includes(target) && !attach && !(state.incompatible ?? []).includes(target) && (
           <p className="notice-warning">
             {t("Attache libérée : la pose a été modifiée librement, elle n'est plus contrainte à une face.")}
           </p>
@@ -615,7 +665,7 @@ export default function MachineGuide({
               <p className="notice-info">
                 {t(
                   attach.axisSource !== "face"
-                    ? "Axe défini par vos deux points : le centre du trou n'est pas détecté automatiquement."
+                    ? "Axe défini par vos points ou valeurs : le centre du trou n'est pas détecté automatiquement. Deux clics sur la paroi du trou ne donnent pas son centre : saisissez le point d'entrée et la direction précis dans « Valeurs précises de l'axe »."
                     : "Implantation d'un perçage à prévoir : le modèle n'est pas percé, l'axe suit la normale de la face cliquée.",
                 )}
               </p>
@@ -639,8 +689,8 @@ export default function MachineGuide({
                     value={attach.depthRef}
                     onChange={(e) => editAttach({ depthRef: e.target.value as "collar" | "tip" })}
                   >
-                    <option value="collar">{t("l'arrière du corps (face d'appui / collerette)")}</option>
-                    <option value="tip">{t("l'extrémité avant du corps")}</option>
+                    <option value="collar">{t("l'extrémité arrière du corps modélisé")}</option>
+                    <option value="tip">{t("la pointe avant du corps modélisé")}</option>
                   </select>
                 </label>
                 <Num
@@ -652,6 +702,53 @@ export default function MachineGuide({
                   value={attach.offsetMm}
                   onCommit={(offsetMm) => editAttach({ offsetMm })}
                 />
+                <p className="t-caption">
+                  {t(
+                    "Aucune collerette n'est modélisée : la profondeur se mesure depuis une extrémité du corps dessiné, pas depuis une face d'appui réelle.",
+                  )}
+                </p>
+                <details>
+                  <summary>{t("Valeurs précises de l'axe")}</summary>
+                  {(["X", "Y", "Z"] as const).map((a, i) => (
+                    <Num
+                      key={"p" + a}
+                      label={msg("Point d'entrée {0}", [a])}
+                      unit="mm"
+                      min={-10000}
+                      max={10000}
+                      testId={"guide-hole-point-" + a}
+                      value={attach.point[i]!}
+                      onCommit={(v) => {
+                        const point = [...attach.point] as Vec3;
+                        point[i] = v;
+                        editAttach({ point, axisSource: "manual" });
+                      }}
+                    />
+                  ))}
+                  {(["X", "Y", "Z"] as const).map((a, i) => (
+                    <Num
+                      key={"n" + a}
+                      label={msg("Normale sortante {0}", [a])}
+                      unit="—"
+                      min={-1}
+                      max={1}
+                      step={0.001}
+                      value={attach.normal[i]!}
+                      onCommit={(v) => {
+                        const d = [...attach.normal] as Vec3;
+                        d[i] = v;
+                        const n = unit(d);
+                        // i18n-canonical : message traduit au rendu par t().
+                        if (!n) {
+                          setState((s) => ({ ...s, notice: "Direction nulle refusée : au moins une composante doit être non nulle." }));
+                          return;
+                        }
+                        setState((s) => ({ ...s, notice: null }));
+                        editAttach({ normal: n, axisSource: "manual" });
+                      }}
+                    />
+                  ))}
+                </details>
                 <p className="t-caption" data-testid="guide-depth-reading">
                   {t(
                     depthReading(attach) === "flush"
@@ -663,6 +760,7 @@ export default function MachineGuide({
                 </p>
               </>
             )}
+            {/* i18n-canonical : libellés français traduits au rendu par t(). */}
             <Num
               label="Rotation dans le plan"
               unit="°"
@@ -717,7 +815,8 @@ export default function MachineGuide({
         <div className="mw-guide-row">
           <button
             className="mw-button"
-            disabled={!!reason && reason === motionProblem(m)}
+            data-testid="guide-play"
+            disabled={reduced || (!!reason && reason === motionProblem(m))}
             onClick={() => {
               if (progress >= 1) setProgress(0);
               setPlaying(!playing);
@@ -746,6 +845,11 @@ export default function MachineGuide({
             ▶
           </button>
         </div>
+        {reduced && (
+          <p className="t-caption" data-testid="guide-reduced">
+            {t("Mouvement réduit activé : la lecture automatique est désactivée. Avancez pas à pas avec ◀ ▶ ou le curseur.")}
+          </p>
+        )}
         <p className="t-body" data-testid="guide-contact">
           {msg("Contact : {0}", [
             t({ open: "ouvert", closed: "fermé", unknown: "indéterminé" }[sample.contact]),
@@ -760,7 +864,7 @@ export default function MachineGuide({
           {sample.contact === "unknown"
             ? t("Aucun contact n'est affiché : il n'est pas prédit pour ce montage.")
             : t(
-                config.mode === "education" || reason
+                config.mode === "education" || reason || config.machine?.assetKey.startsWith("sha256:")
                   ? "Contact illustratif : modèle pédagogique non calibré, ce n'est pas une prédiction. Une machine importée n'est jamais validée par l'atelier."
                   : "Source : distances publiées pour ce couple, en espace libre. Une machine importée n'est jamais validée par l'atelier.",
               )}
@@ -799,7 +903,7 @@ export default function MachineGuide({
       </div>
       <details className="mw-guide-demos">
         <summary>{t("Modèles de démonstration")}</summary>
-        <DemoButtons onDemo={onDemo} />
+        <DemoButtons onDemo={onDemo} onCoffee={() => onDemo("builtin:coffee-v1")} />
       </details>
     </section>
   );
@@ -811,12 +915,47 @@ export const DEMOS: [string, string, string][] = [
   ["builtin:door-v1", "Porte sur axe incliné", "Pivot par l'origine, axe incliné de 15° dans le plan XY, 90°."],
   ["builtin:wall-v1", "Paroi avec alésage", "Paroi 6 mm, alésage Ø 8 mm centré X 0 / Y 60, axe Z ; volet coulissant 40 mm en X."],
 ];
-export function DemoButtons({ onDemo }: { onDemo: (key: string) => void }) {
+/** Le raccourci de démonstration se referme après un choix : la scène reste dégagée. */
+const closeShortcut = (el: HTMLElement) => {
+  const d = el.closest(".mw-demo-shortcut");
+  if (d instanceof HTMLDetailsElement) d.open = false;
+};
+export function DemoButtons({
+  onDemo,
+  onCoffee,
+}: {
+  onDemo: (key: string) => void;
+  onCoffee?: () => void;
+}) {
   return (
     <ul className="mw-demo-list">
+      {onCoffee && (
+        <li>
+          <button
+            className="mw-button mw-secondary"
+            data-testid="demo-coffee"
+            onClick={(e) => {
+              closeShortcut(e.currentTarget);
+              onCoffee();
+            }}
+          >
+            {t("Machine à café")}
+          </button>
+          <span className="t-caption">
+            {t("Exemple complet : impose le capteur MK24-A-J et son aimant documenté par défaut.")}
+          </span>
+        </li>
+      )}
       {DEMOS.map(([key, name, detail]) => (
         <li key={key}>
-          <button className="mw-button mw-secondary" data-testid={"demo-" + key} onClick={() => onDemo(key)}>
+          <button
+            className="mw-button mw-secondary"
+            data-testid={"demo-" + key}
+            onClick={(e) => {
+              closeShortcut(e.currentTarget);
+              onDemo(key);
+            }}
+          >
             {t(name)}
           </button>
           <span className="t-caption">{t(detail)}</span>
@@ -824,14 +963,15 @@ export function DemoButtons({ onDemo }: { onDemo: (key: string) => void }) {
       ))}
       <li>
         <span className="t-caption">
-          {t("Le capteur et l'aimant restent votre sélection actuelle : l'exemple ne les impose pas.")}
+          {t("Tiroir, porte et paroi : le capteur et l'aimant restent votre sélection actuelle, ces exemples ne les imposent pas.")}
         </span>
       </li>
     </ul>
   );
 }
 
-/** Traitement d'un point relevé selon l'outil en cours. */
+/** Traitement d'un point relevé selon l'outil en cours.
+ *  i18n-canonical : les messages refusés sont traduits au rendu par t(). */
 export function handlePick(
   state: GuideState,
   m: MachineAssembly,
@@ -839,22 +979,44 @@ export function handlePick(
   config: WorkshopConfig,
 ): { state: GuideState; patch: Partial<MachineAssembly> | null; done: boolean } {
   const pick = state.pick;
-  if (!pick) return { state, patch: null, done: true };
+  const base = { ...state, notice: null };
+  if (!pick) return { state: base, patch: null, done: true };
+  const fail = (notice: string) => ({ state: { ...state, pick: null, notice }, patch: null, done: true });
   if (pick.purpose === "axis-face") {
-    return { state: { ...state, pick: null }, patch: motionFromPick(m, hit.normal, hit.point), done: true };
+    const p = motionFromPick(m, hit.normal, hit.point);
+    if (!p) return fail("Normale de face illisible : cliquez une autre face.");
+    return { state: { ...base, pick: null }, patch: p, done: true };
   }
   const points = [...pick.points, hit.point];
-  if (points.length < 2) return { state: { ...state, pick: { ...pick, points } }, patch: null, done: false };
+  if (points.length < 2)
+    return {
+      state: { ...base, pick: { ...pick, points, support: { path: hit.path, moving: hit.moving } } },
+      patch: null,
+      done: false,
+    };
   if (pick.purpose === "axis-points") {
     const d = points[1]!.map((v, i) => v - points[0]![i]!) as Vec3;
-    return { state: { ...state, pick: null }, patch: motionFromPick(m, d, points[0]!), done: true };
+    const p = motionFromPick(m, d, points[0]!);
+    if (!p) return fail("Les deux points sont confondus : choisissez deux points distincts sur l'axe.");
+    return { state: { ...base, pick: null }, patch: p, done: true };
   }
+  const first = pick.support ?? { path: hit.path, moving: hit.moving };
+  // Les deux points doivent appartenir au même ensemble solidaire (tous deux
+  // fixes, ou tous deux emportés par la pièce mobile).
+  if (first.moving !== hit.moving)
+    return fail(
+      "Points sur deux supports non solidaires (l'un fixe, l'autre mobile) : choisissez les deux points sur la même pièce.",
+    );
   const axis = axisFromTwoPoints(points[0]!, points[1]!);
-  if (!axis) return { state: { ...state, pick: null }, patch: null, done: true };
+  if (!axis) return fail("Les deux points sont confondus : choisissez deux points distincts sur l'axe du trou.");
   const prev = m.sensorAttach;
   const a: Attachment = {
-    ...attachFromHit({ ...hit, point: axis.point, normal: axis.normal }, "through", prev),
+    ...attachFromHit(
+      { ...hit, path: first.path, moving: first.moving, point: axis.point, normal: axis.normal },
+      "through",
+      prev,
+    ),
     axisSource: "two-points",
   };
-  return { state: { ...state, pick: null }, patch: attachPatch("sensor", a, config), done: true };
+  return { state: { ...base, pick: null }, patch: attachPatch("sensor", a, config), done: true };
 }

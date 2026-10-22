@@ -102,9 +102,12 @@ describe("colonne de gauche : réglages essentiels", () => {
       WORKSHOP.indexOf('<aside className="mw-controls">'),
       WORKSHOP.indexOf('<section className="mw-main"'),
     );
-    expect(column).toContain("{approachPicker}");
-    expect(column).toContain("{activationDistanceControl}");
-    expect(column).toContain("{playButton}");
+    // Modèle importé : le parcours guidé passe en premier, sans gabarit D1/D3 ;
+    // la sensibilité reste accessible juste après lui.
+    expect(column).toContain("{!machine && approachPicker}");
+    expect(column).toContain("{!machine && activationDistanceControl}");
+    expect(column).toContain("{machine && activationDistanceControl}");
+    expect(column).toContain("{!machine && playButton}");
     expect(column).toContain("{advancedSettings}");
     // Aucun réglage avancé n'est ouvert directement dans la colonne.
     expect(column).not.toContain("Orientation sur la machine");
