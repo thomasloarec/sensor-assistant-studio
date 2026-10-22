@@ -406,7 +406,7 @@ export default function MachineGuide({
             {msg("Point {0} sur 2 : cliquez dans la scène.", [String(state.pick.points.length + 1)])}
           </p>
         )}
-/* i18n-canonical : libellés français traduits au rendu par t(). */
+        {/* i18n-canonical : libellés français traduits au rendu par t(). */}
         {m.motion === "translation" ? (
           <Num
             label="Course d'ouverture"
@@ -523,7 +523,7 @@ export default function MachineGuide({
     ),
     install: (
       <>
-/* i18n-canonical : libellés français traduits au rendu par t(). */
+        {/* i18n-canonical : libellés français traduits au rendu par t(). */}
         <div className="mw-segmented" role="radiogroup" aria-label={t("Composant à installer")}>
           {(
             [
@@ -620,7 +620,7 @@ export default function MachineGuide({
                 )}
               </p>
             )}
-/* i18n-canonical : libellés français traduits au rendu par t(). */
+            {/* i18n-canonical : libellés français traduits au rendu par t(). */}
             {attach.kind === "surface" ? (
               <Num
                 label="Écart entre face d'appui et surface"
