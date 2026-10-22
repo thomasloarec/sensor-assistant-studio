@@ -97,6 +97,19 @@ import type { MachineAsset } from "@/lib/standex/machine-assets";
 import type { MachineTool } from "./machine-scene";
 import type { TestedPair } from "@/lib/leadmagnet/tested-pairs";
 import MachineControls from "./machine-controls";
+import MachineGuide, {
+  INITIAL_GUIDE,
+  DemoButtons,
+  attachFromHit,
+  attachPatch,
+  dimsFor,
+  guideOverlay,
+  handlePick,
+} from "./machine-guide";
+import type { GuideState } from "./machine-guide";
+import { movingSelection, toggleMoving } from "@/lib/standex/machine-assembly";
+import { applyAttachments, freePosePatch } from "@/lib/standex/machine-mounting";
+import { DEMO_ASSEMBLIES } from "@/lib/standex/machine-demos";
 import FlatScene from "./flat-scene";
 import SensorCatalog from "./sensor-catalog";
 import ContactIndicator from "./contact-indicator";
@@ -279,6 +292,14 @@ export default function MagneticWorkshop({
     [showSpace, setShowSpace] = useState(true),
     [measure, setMeasure] = useState<number | null>(null);
   const machine = config.machine;
+  const [guideState, setGuideState] = useState<GuideState>(INITIAL_GUIDE);
+  /** Historique des opérations de montage, propre au fichier courant. */
+  const historyRef = useRef<{ key: string; past: MachineAssembly[]; future: MachineAssembly[] }>({
+    key: "",
+    past: [],
+    future: [],
+  });
+  const [, setHistoryTick] = useState(0);
   /** Lecture « montage guidé » recalculée à chaque changement d'entrée : un verdict
    * n'est jamais conservé ni importé, il est toujours recalculé ici. */
   const guided = useGuidedMounting(config);
@@ -331,21 +352,18 @@ export default function MagneticWorkshop({
         }
         loaded = asset;
         setMachineAsset(asset);
-        if (!machine.movingNode) {
-          const tray = asset.nodes.find((n) => n.name === "Bac_mobile"),
-            first =
-              tray ??
-              asset.nodes.find((n) => /mobile|drawer|door|lid|couvercle|porte/i.test(n.name));
+        // Nouveau fichier : AUCUNE pièce mobile n'est devinée et aucun mouvement
+        // n'est supposé. Seules les poses initiales sont rapprochées de l'objet.
+        if (machine.motionStatus === "unset" && movingSelection(machine).length === 0) {
           setConfig((c) =>
-            c.machine?.assetKey === machine.assetKey
+            c.machine?.assetKey === machine.assetKey &&
+            !c.machine.sensorAttach &&
+            !c.machine.magnetAttach
               ? {
                   ...c,
                   machine: {
                     ...c.machine,
-                    movingNode: first?.path ?? "",
-                    ...(tray
-                      ? {}
-                      : {
+                    ...({
                           sensorPosition: [
                             asset.center[0] + asset.size[0] / 2 + 8,
                             asset.center[1],
