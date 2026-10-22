@@ -2751,7 +2751,6 @@
   background: transparent;
   color: var(--standex-gray);
   font: inherit;
-  font-size: 15px;
   cursor: pointer;
   transition: background var(--d-fast) var(--ease-out), box-shadow var(--d-fast) var(--ease-out);
 }
