@@ -13148,6 +13148,15 @@
     "La combinazione di questa riga non cambia: identifica il dato. Per un'altra combinazione, creane una nuova.",
     "この行の組み合わせはデータを識別するため変更できません。別の組み合わせは新規作成してください。"
   ],
+  "La commutation illustrative utilise les distances nominales publiées pour la classe choisie. Ces valeurs ne caractérisent pas votre montage et doivent être validées par des essais.": [
+    "The illustrative switching uses the published nominal distances for the selected class. These values do not characterise your assembly and must be validated by testing.",
+    "示意切换使用所选等级已公布的标称距离。这些数值不能表征您的装配，必须通过试验验证。",
+    "Das illustrative Schalten verwendet die veröffentlichten Nennabstände der gewählten Klasse. Diese Werte charakterisieren Ihren Aufbau nicht und müssen durch Versuche bestätigt werden.",
+    "La conmutación ilustrativa utiliza las distancias nominales publicadas para la clase seleccionada. Estos valores no caracterizan su montaje y deben validarse mediante ensayos.",
+    "Иллюстративное переключение использует опубликованные номинальные расстояния выбранного класса. Эти значения не характеризуют вашу сборку и должны быть подтверждены испытаниями.",
+    "La commutazione illustrativa utilizza le distanze nominali pubblicate per la classe selezionata. Questi valori non caratterizzano il vostro montaggio e devono essere validati con prove.",
+    "参考表示の切り替えは、選択した等級の公開された公称距離を使用しています。これらの値はお客様の組立を表すものではなく、試験による検証が必要です。"
+  ],
   "La comparaison retient l'orientation la plus favorable ; l'orientation réelle reste à décider.": [
     "The comparison uses the most favorable orientation; the actual orientation remains to be decided.",
     "比较时采用最有利的方向；实际方向仍有待决定。",
