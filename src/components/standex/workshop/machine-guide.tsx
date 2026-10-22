@@ -235,7 +235,7 @@ export default function MachineGuide({
   const body: Record<GuideStep, React.ReactNode> = {
     model: (
       <>
-        <p className="t-body-s">
+        <p className="t-body">
           {t("Fichier :")} <strong className="mw-file-name t-metric">{m.fileName}</strong>
         </p>
         <label className="mw-select-label">
@@ -250,7 +250,7 @@ export default function MachineGuide({
           </select>
         </label>
         {asset && (
-          <p className="t-body-s">
+          <p className="t-body">
             {t("Objet :")}{" "}
             <span className="t-metric">{asset.size.map((n) => formatMm(n, 1)).join(" × ")} mm</span>{" "}
             {t("(X × Y × Z). Vérifiez que cette taille est réaliste.")}
@@ -278,7 +278,7 @@ export default function MachineGuide({
     ),
     parts: (
       <>
-        <p className="t-body-s">
+        <p className="t-body">
           {t(
             "Tout est fixe par défaut. Cliquez une pièce dans la scène ou dans la liste pour l'ajouter ou la retirer. Choisir un groupe inclut toutes ses sous-pièces.",
           )}
@@ -329,7 +329,7 @@ export default function MachineGuide({
             );
           })}
         </ul>
-        <p className="t-body-s" data-testid="guide-selection-count">
+        <p className="t-body" data-testid="guide-selection-count">
           {selection.length
             ? msg("{0} élément(s) mobile(s) sélectionné(s).", [String(selection.length)])
             : t("Aucune pièce mobile : l'ensemble est fixe.")}
@@ -363,7 +363,7 @@ export default function MachineGuide({
             </button>
           ))}
         </div>
-        <p className="t-body-s">
+        <p className="t-body">
           {t(
             m.motion === "translation"
               ? "Direction : cliquez une face dont la normale donne le sens d'ouverture, ou deux points le long de la glissière."
@@ -503,7 +503,7 @@ export default function MachineGuide({
             onChange={(e) => setProgress(Number(e.target.value) / 100)}
           />
         </label>
-        <p className="t-body-s t-metric" data-testid="guide-opening">
+        <p className="t-body t-metric" data-testid="guide-opening">
           {msg("Ouverture : {0} {1}", [opening.value.toFixed(1), opening.unit])}
         </p>
         {problem && <p className="notice-warning">{t(problem)}</p>}
@@ -602,7 +602,7 @@ export default function MachineGuide({
         )}
         {attach ? (
           <div className="mw-attach" data-testid="guide-attach">
-            <p className="t-body-s">
+            <p className="t-body">
               {msg("Support : {0}", [t(attach.support === "moving" ? "pièce mobile" : "pièce fixe")])}{" "}
               <span translate="no" className="t-metric">
                 {asset?.nodes.find((n) => n.path === attach.partPath)?.name ?? attach.partPath}
@@ -696,7 +696,7 @@ export default function MachineGuide({
     ),
     test: (
       <>
-        <p className="t-body-s t-metric" data-testid="guide-test-opening">
+        <p className="t-body t-metric" data-testid="guide-test-opening">
           {msg("Ouverture du mécanisme : {0} {1} · {2}", [
             opening.value.toFixed(1),
             opening.unit,
@@ -707,7 +707,7 @@ export default function MachineGuide({
             ),
           ])}
         </p>
-        <p className="t-body-s t-metric">
+        <p className="t-body t-metric">
           {msg("Distance entre centres capteur–aimant : {0} mm", [formatMm(sample.distance, 1)])}
         </p>
         <div className="mw-guide-row">
@@ -742,7 +742,7 @@ export default function MachineGuide({
             ▶
           </button>
         </div>
-        <p className="t-body-s" data-testid="guide-contact">
+        <p className="t-body" data-testid="guide-contact">
           {msg("Contact : {0}", [
             t({ open: "ouvert", closed: "fermé", unknown: "indéterminé" }[sample.contact]),
           ])}

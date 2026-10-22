@@ -2723,3 +2723,149 @@
     min-height: 340px;
   }
 }
+
+/* Parcours guidé du modèle importé : une étape ouverte à la fois, scène visible. */
+.mw-guide {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  box-shadow: var(--e-1);
+}
+.mw-guide-steps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 0;
+  padding: 4px;
+  list-style: none;
+  border-radius: var(--r-pill);
+  background: var(--surface-sunken);
+}
+.mw-guide-steps button {
+  min-height: 44px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: var(--r-pill);
+  background: transparent;
+  color: var(--standex-gray);
+  font: inherit;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background var(--d-fast) var(--ease-out), box-shadow var(--d-fast) var(--ease-out);
+}
+.mw-guide-steps button[aria-current="step"] {
+  background: var(--surface);
+  color: var(--standex-blue);
+  box-shadow: var(--e-1);
+  font-weight: 600;
+}
+.mw-guide-steps button:focus-visible,
+.mw-part-tree button:focus-visible,
+.mw-segmented button:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+.mw-guide-body {
+  display: grid;
+  gap: 10px;
+  max-height: min(52vh, 560px);
+  overflow: auto;
+}
+.mw-guide-row,
+.mw-guide-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+.mw-guide-nav {
+  justify-content: space-between;
+}
+.mw-guide .mw-segmented {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  border-radius: var(--r-pill);
+  background: var(--surface-sunken);
+}
+.mw-guide .mw-segmented button {
+  flex: 1;
+  min-height: 44px;
+  border: 0;
+  border-radius: var(--r-pill);
+  background: transparent;
+  color: var(--standex-gray);
+  font: inherit;
+  cursor: pointer;
+}
+.mw-guide .mw-segmented button[aria-checked="true"] {
+  background: var(--surface);
+  color: var(--standex-blue);
+  box-shadow: var(--e-1);
+  font-weight: 600;
+}
+.mw-guide .mw-segmented button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.mw-part-tree {
+  display: grid;
+  gap: 2px;
+  max-height: 260px;
+  overflow: auto;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.mw-part-tree li {
+  padding-inline-start: calc(var(--depth, 0) * 14px);
+}
+.mw-part-tree button {
+  display: flex;
+  width: 100%;
+  min-height: 44px;
+  justify-content: space-between;
+  gap: 8px;
+  align-items: center;
+  padding: 0 10px;
+  border: 0;
+  border-radius: var(--r-sm);
+  background: transparent;
+  color: var(--standex-gray);
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+.mw-part-tree button[aria-pressed="true"] {
+  background: var(--surface-tint);
+  color: var(--standex-blue);
+  font-weight: 600;
+}
+.mw-part-tree button:disabled {
+  cursor: default;
+}
+.mw-part-name {
+  overflow-wrap: anywhere;
+}
+.mw-attach {
+  display: grid;
+  gap: 8px;
+}
+.mw-demo-list {
+  display: grid;
+  gap: 8px;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.mw-demo-list li {
+  display: grid;
+  gap: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .mw-guide-steps button {
+    transition: none;
+  }
+}
