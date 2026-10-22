@@ -31237,5 +31237,14 @@
     "Контакт не показан: для этого монтажа он не прогнозируется.",
     "Nessun contatto mostrato: non è previsto per questo montaggio.",
     "接点は表示されません：この取り付けでは予測しません。"
+  ],
+  "Coordonnées précises du capteur et de l'aimant. Le fichier, les pièces mobiles et le mouvement se règlent dans le parcours guidé.": [
+    "Precise coordinates of the sensor and magnet. The file, moving parts and movement are set in the guided steps.",
+    "传感器和磁铁的精确坐标。文件、运动件和运动在引导流程中设置。",
+    "Genaue Koordinaten von Sensor und Magnet. Datei, bewegliche Teile und Bewegung werden im geführten Ablauf eingestellt.",
+    "Coordenadas precisas del sensor y del imán. El archivo, las piezas móviles y el movimiento se ajustan en el recorrido guiado.",
+    "Точные координаты датчика и магнита. Файл, подвижные детали и движение настраиваются в пошаговом режиме.",
+    "Coordinate precise di sensore e magnete. File, parti mobili e movimento si impostano nel percorso guidato.",
+    "センサーと磁石の正確な座標。ファイル、可動部品、動きはガイド手順で設定します。"
   ]
 }
