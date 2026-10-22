@@ -282,14 +282,29 @@ export async function parseMachineAsset(
     dispose();
     throw new DOMException("Chargement annulé.", "AbortError");
   }
+  const finiteSize = size.every((n) => Number.isFinite(n));
+  const scaleOnly =
+    !!parts.length &&
+    vertices <= 1500000 &&
+    finiteSize &&
+    (Math.max(...size) > 20000 || Math.max(...size) < 0.1);
   if (
     !parts.length ||
     vertices > 1500000 ||
-    !size.every((n) => Number.isFinite(n)) ||
+    !finiteSize ||
     Math.max(...size) > 20000 ||
     Math.max(...size) < 0.1
   ) {
     dispose();
+    // Seul un refus d'ÉCHELLE peut être réessayé avec d'autres unités ; les
+    // limites restent identiques et aucune unité n'est devinée.
+    if (scaleOnly)
+      throw Object.assign(
+        new Error(
+          "Géométrie hors échelle avec les unités choisies : choisissez les unités du fichier puis réessayez. Limite : 20 m.",
+        ),
+        { code: "scale" as const, sizeMm: size },
+      );
     throw new Error(
       "Géométrie vide, trop détaillée ou hors échelle. Vérifiez les unités et limitez le modèle à 1,5 million de sommets / 20 m.",
     );
