@@ -1365,6 +1365,13 @@ export default function MagneticWorkshop({
             "Ces distances sont indicatives. La distance d’activation réelle sera déterminée avec les équipes Standex.",
           )}
         </p>
+        {machine && illustration.kind !== "nominal" && (
+          <p className="notice-warning" data-testid="activation-inert">
+            {t(
+              "Aucune ligne publiée exploitable pour cette classe et cette approche : ce choix ne modifie pas la commutation illustrative du modèle importé.",
+            )}
+          </p>
+        )}
       </fieldset>
     ) : null;
 
@@ -2103,6 +2110,7 @@ export default function MagneticWorkshop({
               events={events}
               resolution={resolution}
               illustration={illustration}
+              anyKnown={result.samples.some((x) => x.contact !== "unknown")}
             />
           ) : null}
           {machine && activationDistanceControl}
