@@ -116,7 +116,7 @@ import MachineGuide, {
   handlePick,
 } from "./machine-guide";
 import type { GuideState } from "./machine-guide";
-import { movingSelection, toggleMoving } from "@/lib/standex/machine-assembly";
+import { activeClip, movingSelection, toggleMoving } from "@/lib/standex/machine-assembly";
 import {
   applyAttachments,
   freePosePatch,
@@ -138,6 +138,12 @@ import ContactCircuit from "./contact-circuit";
 import { SensorPlan } from "./sensor-plan";
 import { sensorById, sizeLabel, sensorSource } from "@/lib/standex/sensor-catalog";
 
+/* i18n-canonical : libellés traduits au rendu par t(). */
+const UNIT_LABEL: Record<number, string> = {
+  1000: "Mètres · standard GLB",
+  1: "Millimètres",
+  10: "Centimètres",
+};
 const Scene = lazy(() => import("./scene"));
 const MachineScene = lazy(() => import("./machine-scene"));
 /* i18n-canonical : libellés stockés en français, traduits au rendu par t(). */
@@ -2116,6 +2122,37 @@ export default function MagneticWorkshop({
                 }}
               />
             </label>
+            {pendingUnits && (
+              <div className="mw-units-retry notice-warning" role="group" data-testid="units-retry"
+                aria-label={t("Unités du nouveau fichier")}>
+                <p className="t-body">
+                  {msg("{0} : refusé avec les unités « {1} ». Choisissez les unités du fichier puis réessayez. Le montage actuel reste inchangé.", [
+                    pendingUnits.fileName,
+                    t(UNIT_LABEL[pendingUnits.tried] ?? ""),
+                  ])}
+                </p>
+                <label className="mw-select-label">
+                  {t("Unités du fichier")}
+                  <select
+                    data-testid="units-retry-select"
+                    value={pendingUnits.choice}
+                    onChange={(e) => setPendingUnits({ ...pendingUnits, choice: Number(e.target.value) })}
+                  >
+                    {[1000, 1, 10].map((v) => (
+                      <option key={v} value={v}>{t(UNIT_LABEL[v]!)}</option>
+                    ))}
+                  </select>
+                </label>
+                <div className="mw-guide-row">
+                  <button className="mw-button" data-testid="units-retry-go" onClick={() => void retryUnits()}>
+                    {t("Réessayer avec ces unités")}
+                  </button>
+                  <button className="mw-button mw-secondary" onClick={() => { setPendingUnits(null); setError(null); }}>
+                    {t("Annuler l'import")}
+                  </button>
+                </div>
+              </div>
+            )}
             <details className="mw-demo-shortcut" data-testid="demo-shortcut">
               <summary>{t("Essayer un modèle de démonstration")}</summary>
               <DemoButtons onDemo={openDemo} onCoffee={exampleMachine} />
