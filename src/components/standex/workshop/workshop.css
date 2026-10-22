@@ -2961,10 +2961,46 @@
   z-index: 20;
   inset-inline-end: 0;
   width: min(360px, calc(100vw - 32px));
+  max-height: min(70vh, 520px);
+  overflow-y: auto;
   padding: 12px;
   border-radius: var(--r-lg);
-  background: var(--surface);
-  box-shadow: var(--e-3);
+  /* Surface OPAQUE : le menu passe au-dessus du verdict et de la scène. */
+  background: var(--popover);
+  color: var(--popover-foreground);
+  box-shadow: var(--e-4);
+}
+.mw-units-retry {
+  flex-basis: 100%;
+  display: grid;
+  gap: 0.75rem;
+}
+.mw-switch-events {
+  display: grid;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border-radius: var(--r-md);
+  background: var(--surface-sunken);
+}
+.mw-switch-events ol {
+  display: grid;
+  gap: 0.25rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.mw-switch-events li button {
+  width: 100%;
+  min-height: 44px;
+  text-align: start;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--r-sm);
+  background: var(--surface-tint);
+  color: var(--foreground);
+}
+.mw-switch-events li button:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
 }
 /* Contexte immersif : boutons du parcours sur jetons sémantiques (contraste AA). */
 .immersive .mw-guide .mw-secondary,
