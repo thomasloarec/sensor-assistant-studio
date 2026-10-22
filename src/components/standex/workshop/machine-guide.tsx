@@ -266,7 +266,7 @@ export default function MachineGuide({
     onChange(attachPatch(target, { ...attach, ...patch }, config));
   };
   const opening = openingReading(m, sample.t);
-  const clips = asset?.animation.clips ?? [];
+  const clips = asset?.animation?.clips ?? [];
   const supportedClips = clips.filter((c) => c.supported);
   const clipMode = usesClip(m);
   const sampler = activeClip(m);
