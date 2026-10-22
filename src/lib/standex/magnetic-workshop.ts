@@ -765,7 +765,17 @@ export function summarizeWorkshop(c: WorkshopConfig): string {
       ? [
           `Fichier 3D : ${c.machine.fileName} (${c.machine.assetKey}). Géométrie importée conservée dans le navigateur ; à réimporter sur un autre poste. Pièces mobiles : ${movingSelection(c.machine).join(" ; ") || "aucune"}.`,
           `Capteur : ${c.machine.sensorPosition.join(", ")} mm ; rotation ${c.machine.sensorRotation.join(", ")}°. Aimant : ${c.machine.magnetPosition.join(", ")} mm ; rotation ${c.machine.magnetRotation.join(", ")}°.`,
-          `Mouvement : ${c.machine.motion}, déplacement ${c.machine.travel.join(", ")} mm, pivot ${c.machine.pivot.join(", ")} mm, axe ${c.machine.axisVector ? c.machine.axisVector.map((v) => v.toFixed(4)).join(", ") : c.machine.rotationAxis}, angle ${c.machine.openingAngle}° ; mouvement ${c.machine.motionStatus ?? "confirmed"}. Attaches : capteur ${c.machine.sensorAttach?.kind ?? "pose libre"}, aimant ${c.machine.magnetAttach?.kind ?? "pose libre"}.`,
+          ...(c.machine.motionSource === "clip" && c.machine.clip
+            ? [
+                `Mouvement lu dans le fichier : animation « ${c.machine.clip.name} » (n° ${c.machine.clip.index}, ${c.machine.clip.duration} s), jouée telle qu'enregistrée, sans aller-retour ajouté. Les pistes restent dans le fichier : elles ne sont ni copiées ni validées. Contact illustratif uniquement.`,
+              ]
+            : []),
+          ...(c.machine.markers?.length === 2
+            ? [
+                `Repères de mesure : ${c.machine.markers.map((k) => `${k.partPath} (${k.point.map((v) => v.toFixed(1)).join(", ")} mm)`).join(" ↔ ")} ; distance entre les repères, pas un entrefer.`,
+              ]
+            : []),
+          `Mouvement${c.machine.motionSource === "clip" ? " saisi (non utilisé)" : ""} : ${c.machine.motion}, déplacement ${c.machine.travel.join(", ")} mm, pivot ${c.machine.pivot.join(", ")} mm, axe ${c.machine.axisVector ? c.machine.axisVector.map((v) => v.toFixed(4)).join(", ") : c.machine.rotationAxis}, angle ${c.machine.openingAngle}° ; mouvement ${c.machine.motionStatus ?? "confirmed"}. Attaches : capteur ${c.machine.sensorAttach?.kind ?? "pose libre"}, aimant ${c.machine.magnetAttach?.kind ?? "pose libre"}.`,
         ]
       : []),
     `Boîtier : ${sizeLabel(sensorById(c.sensorId))}. Contacts internes schématiques, position non caractérisée.`,
