@@ -123,3 +123,49 @@ export function openingReading(
   const phase = t <= 1e-9 || t >= 1 - 1e-9 ? "closed" : Math.abs(t - 0.5) < 1e-9 ? "open" : t < 0.5 ? "opening" : "return";
   return { value: full * u, unit: m.motion === "translation" ? "mm" : "°", phase };
 }
+
+interface Attachable {
+  sensorPosition: Vec3;
+  sensorRotation: Vec3;
+  magnetPosition: Vec3;
+  magnetRotation: Vec3;
+  sensorMount: "fixed" | "moving";
+  magnetMount: "fixed" | "moving";
+  sensorAttach?: Attachment;
+  magnetAttach?: Attachment;
+}
+type Dims = { lengthMm: number; heightMm: number };
+/** Recalcule les poses issues des attaches (changement de produit, de réglage).
+ *  Le support du composant suit toujours celui de son attache. */
+export function applyAttachments<T extends Attachable>(m: T, sensor: Dims, magnet: Dims): T {
+  const out = { ...m };
+  if (m.sensorAttach) {
+    const p = attachPose(m.sensorAttach, sensor);
+    out.sensorPosition = p.position;
+    out.sensorRotation = p.rotation;
+    out.sensorMount = m.sensorAttach.support;
+  }
+  if (m.magnetAttach) {
+    const p = attachPose(m.magnetAttach, magnet);
+    out.magnetPosition = p.position;
+    out.magnetRotation = p.rotation;
+    out.magnetMount = m.magnetAttach.support;
+  }
+  return out;
+}
+/** Une modification libre de pose ou de support libère honnêtement l'attache :
+ *  aucune contrainte fictive n'est conservée. */
+export function freePosePatch<P extends Partial<Attachable>>(patch: P): P & {
+  freed: ("sensor" | "magnet")[];
+} {
+  const out = { ...patch, freed: [] as ("sensor" | "magnet")[] };
+  const touches = (k: "sensor" | "magnet") =>
+    (k + "Position" in patch || k + "Rotation" in patch || k + "Mount" in patch) &&
+    !(k + "Attach" in patch);
+  for (const k of ["sensor", "magnet"] as const)
+    if (touches(k)) {
+      (out as Record<string, unknown>)[k + "Attach"] = undefined;
+      out.freed.push(k);
+    }
+  return out;
+}
