@@ -426,6 +426,24 @@ développée**, la scène restant visible à droite.
 - La source du contact (illustratif, non prédit) est affichée dans l'étape
   Essai, à l'endroit où on lit le résultat.
 
+Revue indépendante du lot 1 (22 octobre 2026) :
+
+- Avec un modèle importé, le parcours passe **en premier** ; les gabarits
+  D1/D3 et le bouton « Lancer le mouvement » général sont retirés de la
+  colonne, la distance d'activation réelle reste juste sous le parcours.
+- Boutons secondaires du parcours sous `.immersive` : `--surface-sunken` +
+  `--heading` (contraste mesuré ≥ 10:1), jamais `--standex-blue` sur sombre.
+- Saisie refusée : message `.mw-field-error` (`role="alert"`, `--destructive`)
+  avec les bornes, en plus de `aria-invalid` ; jamais de retour silencieux.
+- Pointage refusé (points confondus, supports non solidaires, traversant
+  incompatible) : encart `.notice-warning` dans l'étape Installation.
+- Démonstrations : raccourci `.mw-demo-shortcut` (pilule ≥ 44 px) à côté de
+  « Importer mon modèle 3D », refermé après un choix ; le café annonce les
+  produits qu'il impose.
+- Mouvement réduit : « Lancer le cycle » est désactivé et expliqué, les pas
+  ◀ ▶ et le curseur restent disponibles.
+- Aucun débordement horizontal à 1265 px ni à 390 px (champs `min-width: 0`).
+
 ## 11. Ce qui reste ouvert
 
 - La console `/standex` ne peut être validée de bout en bout sans session staff

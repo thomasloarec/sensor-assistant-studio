@@ -6,6 +6,7 @@
 - [x] Montage « Sur une surface » / « À travers une paroi », attaches persistantes, pose libre qui libère l'attache, annuler/rétablir.
 - [x] Essai : ouverture mm/° et sens séparés de l'écart, pas manuel, source du contact affichée.
 - [x] Trois modèles de démonstration autonomes, café conservé ; tests, traductions, documentation.
+- [x] Revue indépendante du lot 1 (13 points) : import transactionnel, supports/unités, commandes unifiées, traversant réconcilié, contact indéterminé sans mouvement, contraste/débordement, démos directes, trou à deux points, axe brut, saisies refusées, mouvement réduit, référence arrière, repères qui suivent.
 - [ ] Lot 2 (après revue) : relecture des animations GLB, mesure d'ouverture entre repères, étude STEP.
 
 ## Racines ON et état électrique Reed — base 79a282b
