@@ -18,13 +18,47 @@ import {
 import type { TransformControls as TransformImpl } from "three-stdlib";
 import type { MachineAsset } from "@/lib/standex/machine-assets";
 import type { MachineAssembly } from "@/lib/standex/machine-assembly";
-import { movingRotation, openingAt, scale, componentPose } from "@/lib/standex/machine-assembly";
+import {
+  movingRotation,
+  openingAt,
+  scale,
+  componentPose,
+  isMovingPath,
+} from "@/lib/standex/machine-assembly";
 import type { CycleSample, WorkshopConfig, Vec3 } from "@/lib/standex/magnetic-workshop";
 import { sensorById, sizeLabel } from "@/lib/standex/sensor-catalog";
 import { Body, Contacts, Magnet, CameraRig, ContextGuard, GhostMagnet } from "./scene";
 import type { GhostPose } from "./scene";
 
-export type MachineTool = "navigate" | "sensor" | "magnet" | "measure" | "cable";
+export type MachineTool =
+  | "navigate"
+  | "sensor"
+  | "magnet"
+  | "measure"
+  | "cable"
+  /** Sélection des pièces mobiles. */
+  | "select"
+  /** Relevé d'un point (et de la normale de sa face) pour un axe ou une attache. */
+  | "pick";
+
+/** Point relevé sur une pièce, en mm, repère du modèle en position fermée. */
+export interface SceneHit {
+  point: Vec3;
+  normal: Vec3;
+  path: string;
+  moving: boolean;
+}
+/** Aides visuelles du parcours guidé : jamais enregistrées. */
+export interface GuideOverlay {
+  highlightMoving: boolean;
+  isolate: boolean;
+  axis: { origin: Vec3; dir: Vec3; length: number } | null;
+  points: Vec3[];
+  attachMarks: Vec3[];
+  onPickPart?: ((path: string) => void) | undefined;
+  onPickPoint?: ((hit: SceneHit) => void) | undefined;
+  onPlace?: ((which: "sensor" | "magnet", hit: SceneHit) => void) | undefined;
+}
 
 /** Tracé de câble : entièrement optionnel. Sans cette prop, la scène est inchangée. */
 export interface CableRouting {
@@ -125,7 +159,9 @@ function Assembly({
   onPlaced,
   routing,
   ghost,
+  guide,
 }: {
+  guide?: GuideOverlay | undefined;
   asset: MachineAsset;
   config: WorkshopConfig;
   sample: CycleSample;
@@ -167,11 +203,40 @@ function Assembly({
     [],
   );
   useEffect(() => () => ghosts.forEach((material) => material.dispose()), [ghosts]);
+  const highlight = useMemo(
+    () => new MeshStandardMaterial({ color: "#f0b429", emissive: "#7a4f00", roughness: 0.5 }),
+    [],
+  );
+  useEffect(() => () => highlight.dispose(), [highlight]);
   const editable = (tool === "sensor" || tool === "magnet") && sample.t === 0;
   const selected = tool === "sensor" ? sensorRef : magnetRef;
-  const place = (event: ThreeEvent<MouseEvent>, moving: boolean) => {
+  const hitOf = (event: ThreeEvent<MouseEvent>, path: string, moving: boolean): SceneHit | null => {
+    if (!event.face) return null;
+    const normal = event.face.normal
+      .clone()
+      .applyMatrix3(new Matrix3().getNormalMatrix(event.object.matrixWorld))
+      .normalize();
+    return {
+      point: event.point.toArray() as Vec3,
+      normal: normal.toArray() as Vec3,
+      path,
+      moving,
+    };
+  };
+  const place = (event: ThreeEvent<MouseEvent>, moving: boolean, path = "") => {
     if (tool === "navigate") return;
+    // Un glisser de navigation n'est jamais un clic : il ne sélectionne ni ne place rien.
+    if (event.delta > 4) return;
     event.stopPropagation();
+    if (tool === "select") {
+      if (path && sample.t === 0) guide?.onPickPart?.(path);
+      return;
+    }
+    if (tool === "pick") {
+      const hit = sample.t === 0 ? hitOf(event, path, moving) : null;
+      if (hit) guide?.onPickPoint?.(hit);
+      return;
+    }
     if (tool === "cable") {
       // event.point est déjà en millimètres après unitScale : aucune remise à l'échelle.
       if (routing) routing.onPick(event.point.toArray() as [number, number, number]);
@@ -186,6 +251,12 @@ function Assembly({
     }
 
     if (!editable || !event.face) return;
+    if (guide?.onPlace) {
+      const hit = hitOf(event, path, moving);
+      if (hit) guide.onPlace(tool === "sensor" ? "sensor" : "magnet", hit);
+      onPlaced();
+      return;
+    }
     const normal = event.face.normal
       .clone()
       .applyMatrix3(new Matrix3().getNormalMatrix(event.object.matrixWorld))
@@ -205,18 +276,25 @@ function Assembly({
     );
     onPlaced();
   };
+  // Chaque pièce est dessinée une seule fois, dans le groupe fixe OU mobile :
+  // un groupe sélectionné n'applique jamais deux fois la transformation.
   const draw = (moving: boolean) =>
     asset.parts
-      .filter(
-        (p) =>
-          (p.path === machine.movingNode || p.path.startsWith(machine.movingNode + "/")) === moving,
-      )
+      .filter((p) => isMovingPath(machine, p.path) === moving)
       .map((p) => (
         <mesh
           key={p.path}
           geometry={p.geometry}
-          material={showMachine ? p.material : ghosts[moving ? 1 : 0]!}
-          onClick={(event) => place(event, moving)}
+          material={
+            guide?.isolate && !moving
+              ? ghosts[0]!
+              : moving && guide?.highlightMoving
+                ? highlight
+                : showMachine
+                  ? p.material
+                  : ghosts[moving ? 1 : 0]!
+          }
+          onClick={(event) => place(event, moving, p.path)}
           dispose={null}
         />
       ));
@@ -280,8 +358,8 @@ function Assembly({
           mode={transformMode}
           space="world"
           size={0.75}
-          translationSnap={0.5}
-          rotationSnap={Math.PI / 12}
+          translationSnap={0.1}
+          rotationSnap={Math.PI / 180}
           onMouseUp={() => {
             const object = selected.current;
             if (!object) return;
@@ -309,6 +387,33 @@ function Assembly({
         </>
       )}
       {ghost && <GhostMagnet ghost={ghost} />}
+      {guide?.axis && (
+        <Line
+          points={[
+            guide.axis.origin.map((v, i) => v - guide.axis!.dir[i]! * guide.axis!.length) as Vec3,
+            guide.axis.origin.map((v, i) => v + guide.axis!.dir[i]! * guide.axis!.length) as Vec3,
+          ]}
+          color="#d9480f"
+          lineWidth={3}
+          dashed
+          dashSize={4}
+          gapSize={2}
+        />
+      )}
+      {guide?.axis && (
+        <mesh
+          position={guide.axis.origin.map((v, i) => v + guide.axis!.dir[i]! * guide.axis!.length) as Vec3}
+        >
+          <sphereGeometry args={[2.2, 12, 12]} />
+          <meshBasicMaterial color="#d9480f" />
+        </mesh>
+      )}
+      {[...(guide?.points ?? []), ...(guide?.attachMarks ?? [])].map((p, i) => (
+        <mesh key={i + ":" + p.join(",")} position={p}>
+          <sphereGeometry args={[1.4, 10, 10]} />
+          <meshBasicMaterial color={i < (guide?.points.length ?? 0) ? "#d9480f" : "#159776"} />
+        </mesh>
+      ))}
       {routing && routing.points.length > 0 && <CableOverlay routing={routing} />}
     </>
   );
@@ -334,7 +439,9 @@ export default function MachineScene({
   onContextLost,
   routing,
   ghost,
+  guide,
 }: {
+  guide?: GuideOverlay | undefined;
   asset: MachineAsset;
   config: WorkshopConfig;
   sample: CycleSample;
@@ -403,6 +510,7 @@ export default function MachineScene({
         onPlaced={onPlaced}
         routing={routing}
         ghost={ghost}
+        guide={guide}
       />
 
       <OrbitControls

@@ -97,6 +97,19 @@ import type { MachineAsset } from "@/lib/standex/machine-assets";
 import type { MachineTool } from "./machine-scene";
 import type { TestedPair } from "@/lib/leadmagnet/tested-pairs";
 import MachineControls from "./machine-controls";
+import MachineGuide, {
+  INITIAL_GUIDE,
+  DemoButtons,
+  attachFromHit,
+  attachPatch,
+  dimsFor,
+  guideOverlay,
+  handlePick,
+} from "./machine-guide";
+import type { GuideState } from "./machine-guide";
+import { movingSelection, toggleMoving } from "@/lib/standex/machine-assembly";
+import { applyAttachments, freePosePatch } from "@/lib/standex/machine-mounting";
+import { DEMO_ASSEMBLIES } from "@/lib/standex/machine-demos";
 import FlatScene from "./flat-scene";
 import SensorCatalog from "./sensor-catalog";
 import ContactIndicator from "./contact-indicator";
@@ -279,6 +292,14 @@ export default function MagneticWorkshop({
     [showSpace, setShowSpace] = useState(true),
     [measure, setMeasure] = useState<number | null>(null);
   const machine = config.machine;
+  const [guideState, setGuideState] = useState<GuideState>(INITIAL_GUIDE);
+  /** Historique des opérations de montage, propre au fichier courant. */
+  const historyRef = useRef<{ key: string; past: MachineAssembly[]; future: MachineAssembly[] }>({
+    key: "",
+    past: [],
+    future: [],
+  });
+  const [, setHistoryTick] = useState(0);
   /** Lecture « montage guidé » recalculée à chaque changement d'entrée : un verdict
    * n'est jamais conservé ni importé, il est toujours recalculé ici. */
   const guided = useGuidedMounting(config);
@@ -331,21 +352,18 @@ export default function MagneticWorkshop({
         }
         loaded = asset;
         setMachineAsset(asset);
-        if (!machine.movingNode) {
-          const tray = asset.nodes.find((n) => n.name === "Bac_mobile"),
-            first =
-              tray ??
-              asset.nodes.find((n) => /mobile|drawer|door|lid|couvercle|porte/i.test(n.name));
+        // Nouveau fichier : AUCUNE pièce mobile n'est devinée et aucun mouvement
+        // n'est supposé. Seules les poses initiales sont rapprochées de l'objet.
+        if (machine.motionStatus === "unset" && movingSelection(machine).length === 0) {
           setConfig((c) =>
-            c.machine?.assetKey === machine.assetKey
+            c.machine?.assetKey === machine.assetKey &&
+            !c.machine.sensorAttach &&
+            !c.machine.magnetAttach
               ? {
                   ...c,
                   machine: {
                     ...c.machine,
-                    movingNode: first?.path ?? "",
-                    ...(tray
-                      ? {}
-                      : {
+                    ...({
                           sensorPosition: [
                             asset.center[0] + asset.size[0] / 2 + 8,
                             asset.center[1],
@@ -373,8 +391,64 @@ export default function MagneticWorkshop({
     // Positions and cycle changes reuse the loaded geometry.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [machine?.assetKey, machine?.unitScale, storageMode]);
+  /** Toute opération sur le montage passe ici : historique annulable, et une
+   * pose modifiée librement libère honnêtement son attache. */
   function machineChange(patch: Partial<MachineAssembly>) {
-    if (machine) update({ machine: { ...machine, ...patch } });
+    if (!machine) return;
+    const { freed, ...clean } = freePosePatch(patch);
+    const next = { ...machine, ...clean } as MachineAssembly;
+    for (const k of ["sensorAttach", "magnetAttach"] as const)
+      if (k in next && next[k] === undefined) delete next[k];
+    if (!parseWorkshopConfig({ ...config, machine: next })) return;
+    const h = historyRef.current;
+    if (h.key !== machine.assetKey) {
+      h.key = machine.assetKey;
+      h.past = [];
+      h.future = [];
+    }
+    h.past = [...h.past.slice(-49), machine];
+    h.future = [];
+    setHistoryTick((v) => v + 1);
+    if (freed.length)
+      setGuideState((g) => ({ ...g, freed: [...new Set([...g.freed, ...freed])] }));
+    else if ("sensorAttach" in patch || "magnetAttach" in patch)
+      setGuideState((g) => ({
+        ...g,
+        freed: g.freed.filter((w) => !(w + "Attach" in patch)),
+      }));
+    update({ machine: next });
+  }
+  function travelHistory(direction: "undo" | "redo") {
+    const h = historyRef.current;
+    if (!machine || h.key !== machine.assetKey) return;
+    const from = direction === "undo" ? h.past : h.future,
+      to = direction === "undo" ? h.future : h.past;
+    const target = from.pop();
+    if (!target) return;
+    to.push(machine);
+    setHistoryTick((v) => v + 1);
+    update({ machine: target });
+  }
+  // Changer de capteur ou d'aimant garde les attaches : la pose est recalculée
+  // pour que la face d'appui (ou la profondeur) reste celle choisie.
+  useEffect(() => {
+    if (!machine || (!machine.sensorAttach && !machine.magnetAttach)) return;
+    const next = applyAttachments(machine, dimsFor(config, "sensor"), dimsFor(config, "magnet"));
+    if (JSON.stringify(next) !== JSON.stringify(machine)) setConfig((c) => ({ ...c, machine: next }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [config.sensorId, config.magnetModel]);
+  function openDemo(key: string) {
+    if (key === "builtin:coffee-v1") return exampleMachine();
+    const demo = DEMO_ASSEMBLIES[key];
+    if (!demo) return;
+    // Le capteur et l'aimant courants sont conservés : l'exemple ne les impose pas.
+    update({ machine: structuredClone(demo) });
+    setGuideState({ ...INITIAL_GUIDE });
+    historyRef.current = { key: demo.assetKey, past: [], future: [] };
+    setView("3d");
+    setFocus("assembly");
+    setResetEpoch((v) => v + 1);
+    setSceneError(false);
   }
   function chooseTool(next: MachineTool) {
     setPlaying(false);
@@ -407,9 +481,15 @@ export default function MagneticWorkshop({
       const { storeMachineFileWithMode } = await import("@/lib/standex/machine-assets");
       const assetKey = await storeMachineFileWithMode(file, storageMode);
       const same = machine?.assetKey === assetKey;
+      if (!same) {
+        setGuideState({ ...INITIAL_GUIDE });
+        historyRef.current = { key: assetKey, past: [], future: [] };
+      }
       update({
         mode: "reference",
         magnetModel: defaultMagnetFor(config.sensorId),
+        // Nouveau fichier : aucune pièce mobile, aucun mouvement supposé. Le
+        // mouvement de l'exemple café n'est jamais repris pour un client.
         machine: same
           ? { ...machine! }
           : {
@@ -417,6 +497,10 @@ export default function MagneticWorkshop({
               assetKey,
               fileName: file.name.slice(0, 180),
               movingNode: "",
+              movingNodes: [],
+              travel: [0, 0, 0],
+              magnetMount: "fixed",
+              motionStatus: "unset",
             },
       });
       setView("3d");
@@ -584,7 +668,35 @@ export default function MagneticWorkshop({
   const pull = referencePair?.[0] ?? "—",
     drop = referencePair?.[1] ?? "—";
   const unknown = result.unknown;
-  const machineReady = !machine || !!machineAsset?.nodes.some((n) => n.path === machine.movingNode);
+  const machineReady =
+    !machine ||
+    (movingSelection(machine).length > 0 &&
+      movingSelection(machine).every((p) => !!machineAsset?.nodes.some((n) => n.path === p)));
+  const overlay =
+    machine && machineAsset
+      ? guideOverlay(
+          guideState,
+          machine,
+          {
+            onPickPart: (path) => machineChange({
+              ...toggleMoving(machine, path),
+              motionStatus: machine.motionStatus === "confirmed" ? "draft" : (machine.motionStatus ?? "draft"),
+            }),
+            onPickPoint: (hit) => {
+              const r = handlePick(guideState, machine, hit, config);
+              setGuideState(r.state);
+              if (r.patch) machineChange(r.patch);
+              if (r.done) setTool("navigate");
+            },
+            onPlace: (which, hit) => {
+              const kind = guideState.kind[which];
+              const prev = which === "sensor" ? machine.sensorAttach : machine.magnetAttach;
+              machineChange(attachPatch(which, attachFromHit(hit, kind, prev), config));
+            },
+          },
+          Math.max(...machineAsset.size),
+        )
+      : undefined;
 
   useEffect(() => {
     if (!playing) return;
@@ -1639,6 +1751,7 @@ export default function MagneticWorkshop({
           <a href="/models/machine-cafe-bac-mobile.glb" download>
             {t("Télécharger le fichier 3D")}
           </a>
+          <DemoButtons onDemo={openDemo} />
         </details>
           </div>
         </details>
@@ -1736,6 +1849,35 @@ export default function MagneticWorkshop({
         <aside className="mw-controls">
           {approachPicker}
           {activationDistanceControl}
+          {machine ? (
+            <MachineGuide
+              state={guideState}
+              setState={setGuideState}
+              config={config}
+              asset={machineAsset}
+              tool={tool}
+              setTool={chooseTool}
+              onChange={machineChange}
+              history={{
+                canUndo:
+                  historyRef.current.key === machine.assetKey && historyRef.current.past.length > 0,
+                canRedo:
+                  historyRef.current.key === machine.assetKey && historyRef.current.future.length > 0,
+                undo: () => travelHistory("undo"),
+                redo: () => travelHistory("redo"),
+              }}
+              sample={sample}
+              progress={progress}
+              setProgress={(v) => {
+                setPlaying(false);
+                setProgress(v);
+              }}
+              playing={playing}
+              setPlaying={setPlaying}
+              reason={result.reason}
+              onDemo={openDemo}
+            />
+          ) : null}
           {playButton}
           {advancedSettings}
         </aside>
@@ -1876,6 +2018,7 @@ export default function MagneticWorkshop({
                       onPlaced={() => setTool("navigate")}
                       onContextLost={failed3d}
                       ghost={ghost}
+                      guide={overlay}
                       routing={
                         cableRouting
                           ? {
