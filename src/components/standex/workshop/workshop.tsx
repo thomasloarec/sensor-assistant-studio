@@ -92,7 +92,7 @@ import {
 import type { WorkshopConfig, Contact, Vec3 } from "@/lib/standex/magnetic-workshop";
 import "./workshop.css";
 import { COFFEE_ASSEMBLY } from "@/lib/standex/machine-assembly";
-import type { MachineAssembly } from "@/lib/standex/machine-assembly";
+import type { MachineAssembly, Marker as MarkerT } from "@/lib/standex/machine-assembly";
 import type { MachineAsset } from "@/lib/standex/machine-assets";
 import type { MachineTool } from "./machine-scene";
 import type { TestedPair } from "@/lib/leadmagnet/tested-pairs";
@@ -115,8 +115,9 @@ import {
   throughAllowed,
 } from "@/lib/standex/machine-mounting";
 import {
+  cycleU,
+  markerReading,
   motionProblem,
-  openingAt,
   rescaleMachine,
   syncAttachSupports,
 } from "@/lib/standex/machine-assembly";
@@ -1864,10 +1865,17 @@ export default function MagneticWorkshop({
           <button
             className="mw-text-button"
             onClick={() =>
-              download(
-                "montage-magnetique.json",
-                JSON.stringify(config, null, 2),
-                "application/json",
+              {
+                // L'export doit rester relisible par « Importer » (limite de taille).
+                let text: string;
+                try {
+                  text = workshopExportJson(config);
+                } catch {
+                  setError(t("Montage trop volumineux pour être réimporté : réduisez le nombre de pièces mobiles sélectionnées."));
+                  return;
+                }
+                download("montage-magnetique.json", text, "application/json");
+              }
               )
             }
           >
