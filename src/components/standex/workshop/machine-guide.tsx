@@ -43,6 +43,7 @@ export const INITIAL_GUIDE: GuideState = {
   kind: { sensor: "surface", magnet: "surface" },
   freed: [],
 };
+/* i18n-canonical : libellés français traduits au rendu par t(). */
 const STEPS: [GuideStep, string][] = [
   ["model", "Modèle"],
   ["parts", "Pièces mobiles"],
@@ -405,6 +406,7 @@ export default function MachineGuide({
             {msg("Point {0} sur 2 : cliquez dans la scène.", [String(state.pick.points.length + 1)])}
           </p>
         )}
+/* i18n-canonical : libellés français traduits au rendu par t(). */
         {m.motion === "translation" ? (
           <Num
             label="Course d'ouverture"
@@ -521,6 +523,7 @@ export default function MachineGuide({
     ),
     install: (
       <>
+/* i18n-canonical : libellés français traduits au rendu par t(). */
         <div className="mw-segmented" role="radiogroup" aria-label={t("Composant à installer")}>
           {(
             [
@@ -611,12 +614,13 @@ export default function MachineGuide({
             {attach.kind === "through" && (
               <p className="notice-info">
                 {t(
-                  attach.axisSource === "two-points"
+                  attach.axisSource !== "face"
                     ? "Axe défini par vos deux points : le centre du trou n'est pas détecté automatiquement."
                     : "Implantation d'un perçage à prévoir : le modèle n'est pas percé, l'axe suit la normale de la face cliquée.",
                 )}
               </p>
             )}
+/* i18n-canonical : libellés français traduits au rendu par t(). */
             {attach.kind === "surface" ? (
               <Num
                 label="Écart entre face d'appui et surface"
@@ -796,6 +800,7 @@ export default function MachineGuide({
   );
 }
 
+/* i18n-canonical : libellés français traduits au rendu par t(). */
 export const DEMOS: [string, string, string][] = [
   ["builtin:drawer-v1", "Tiroir à deux pièces mobiles", "Coulisse +Z, 120 mm ; façade avec poignée et caisse séparées."],
   ["builtin:door-v1", "Porte sur axe incliné", "Pivot par l'origine, axe incliné de 15° dans le plan XY, 90°."],
