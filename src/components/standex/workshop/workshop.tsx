@@ -4,7 +4,14 @@ import {
   onDocumentedPosition,
   GUIDE_SIMULATION_NOTE,
   illustrativeNoteFor,
+  illustrationSourceFor,
 } from "@/lib/standex/workshop-guide";
+import {
+  cycleSeconds,
+  eventResolution,
+  playbackStep,
+  switchEvents,
+} from "@/lib/standex/machine-playback";
 import { ACTIVATION_GUIDE, formatGuideBound } from "@/lib/standex/activation-guide";
 import { isPcbSensor } from "@/lib/leadmagnet/product-presentation";
 import {
@@ -131,9 +138,6 @@ import ContactCircuit from "./contact-circuit";
 import { SensorPlan } from "./sensor-plan";
 import { sensorById, sizeLabel, sensorSource } from "@/lib/standex/sensor-catalog";
 
-/** Pas de lecture : 120 pas × 50 ms = 6 s (normal), 240 pas = 12 s (lent). */
-const CYCLE_STEPS_NORMAL = 120;
-const CYCLE_STEPS_SLOW = 240;
 const Scene = lazy(() => import("./scene"));
 const MachineScene = lazy(() => import("./machine-scene"));
 /* i18n-canonical : libellés stockés en français, traduits au rendu par t(). */
@@ -315,6 +319,16 @@ export default function MagneticWorkshop({
   const [, setHistoryTick] = useState(0);
   const importSeqRef = useRef(0);
   const preloadedRef = useRef<{ key: string; scale: number; asset: MachineAsset } | null>(null);
+  /** Relance explicite du chargement (même fichier réimporté alors qu'il manquait). */
+  const [assetEpoch, setAssetEpoch] = useState(0);
+  /** Fichier refusé pour son échelle : en attente d'un nouvel essai avec d'autres
+   *  unités choisies par l'utilisateur. L'ancien montage reste intact. */
+  const [pendingUnits, setPendingUnits] = useState<{
+    assetKey: string;
+    fileName: string;
+    tried: number;
+    choice: number;
+  } | null>(null);
   /** Lecture « montage guidé » recalculée à chaque changement d'entrée : un verdict
    * n'est jamais conservé ni importé, il est toujours recalculé ici. */
   const guided = useGuidedMounting(config, machineAsset);
@@ -423,7 +437,7 @@ export default function MagneticWorkshop({
     };
     // Positions and cycle changes reuse the loaded geometry.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [machine?.assetKey, machine?.unitScale, storageMode]);
+  }, [machine?.assetKey, machine?.unitScale, storageMode, assetEpoch]);
   /** Toute opération sur le montage passe ici : historique annulable, et une
    * pose modifiée librement libère honnêtement son attache. */
   function machineChange(patch: Partial<MachineAssembly>) {
@@ -571,52 +585,92 @@ export default function MagneticWorkshop({
   async function importMachine(file: File | undefined) {
     if (!file) return;
     setError(null);
+    setPendingUnits(null);
     const seq = ++importSeqRef.current;
     try {
-      const { storeMachineFileWithMode, loadMachineAsset } = await import(
-        "@/lib/standex/machine-assets"
-      );
+      const { storeMachineFileWithMode } = await import("@/lib/standex/machine-assets");
       const assetKey = await storeMachineFileWithMode(file, storageMode);
+      if (seq !== importSeqRef.current) return;
       const same = machine?.assetKey === assetKey;
-      const scale = same ? machine!.unitScale : COFFEE_ASSEMBLY.unitScale;
-      const asset = await loadMachineAsset(assetKey, scale, storageMode);
-      if (seq !== importSeqRef.current) {
-        asset.dispose();
-        return;
-      }
-      if (same) {
-        // Réimport du même fichier : rien ne change, l'asset courant reste.
-        asset.dispose();
-        return;
-      }
-      preloadedRef.current = { key: assetKey, scale, asset };
-      setGuideState({ ...INITIAL_GUIDE });
-      historyRef.current = { key: assetKey, past: [], future: [] };
-      update({
-        // Capteur, aimant et mode restent ceux choisis par l'utilisateur.
-        // Nouveau fichier : aucune pièce mobile, aucun mouvement supposé. Le
-        // mouvement de l'exemple café n'est jamais repris pour un client.
-        machine: same
-          ? { ...machine! }
-          : {
-              ...structuredClone(COFFEE_ASSEMBLY),
-              assetKey,
-              fileName: file.name.slice(0, 180),
-              movingNode: "",
-              movingNodes: [],
-              travel: [0, 0, 0],
-              magnetMount: "fixed",
-              motionStatus: "unset",
-            },
-      });
-      setView("3d");
-      setFocus("assembly");
-      setSceneError(false);
-      setResetEpoch((v) => v + 1);
+      await installMachine(assetKey, file.name, same ? machine!.unitScale : COFFEE_ASSEMBLY.unitScale, seq);
     } catch (e) {
       if (seq !== importSeqRef.current) return;
       setError(e instanceof Error ? e.message : t("Import impossible."));
     }
+  }
+  /** Nouvel essai explicite d'un fichier refusé pour son échelle, avec les
+   *  unités choisies : rien n'est deviné et les limites ne changent pas. */
+  async function retryUnits() {
+    if (!pendingUnits) return;
+    const p = pendingUnits;
+    setError(null);
+    const seq = ++importSeqRef.current;
+    try {
+      await installMachine(p.assetKey, p.fileName, p.choice, seq);
+      if (seq === importSeqRef.current) setPendingUnits(null);
+    } catch (e) {
+      if (seq !== importSeqRef.current) return;
+      setError(e instanceof Error ? e.message : t("Import impossible."));
+    }
+  }
+  async function installMachine(assetKey: string, fileName: string, scale: number, seq: number) {
+    const { loadMachineAsset } = await import("@/lib/standex/machine-assets");
+    const same = machine?.assetKey === assetKey && machine.unitScale === scale;
+    if (same && machineAsset) {
+      // Même fichier déjà chargé : rien ne change, aucune ressource en double.
+      return;
+    }
+    let asset: MachineAsset;
+    try {
+      asset = await loadMachineAsset(assetKey, scale, storageMode);
+    } catch (e) {
+      if (seq === importSeqRef.current && (e as { code?: string }).code === "scale")
+        setPendingUnits({
+          assetKey,
+          fileName,
+          tried: scale,
+          choice: scale === 1 ? 1000 : 1,
+        });
+      throw e;
+    }
+    if (seq !== importSeqRef.current) {
+      asset.dispose();
+      return;
+    }
+    preloadedRef.current?.asset.dispose();
+    preloadedRef.current = { key: assetKey, scale, asset };
+    if (same) {
+      // Même fichier, absent de la mémoire : on installe l'asset relu sans
+      // toucher aux réglages, attaches, clip ni repères, et on relance le chargement.
+      setAssetEpoch((v) => v + 1);
+      setSceneError(false);
+      return;
+    }
+    const keepSame = machine?.assetKey === assetKey;
+    setGuideState({ ...INITIAL_GUIDE });
+    if (!keepSame) historyRef.current = { key: assetKey, past: [], future: [] };
+    update({
+      // Capteur, aimant et mode restent ceux choisis par l'utilisateur.
+      // Nouveau fichier : aucune pièce mobile, aucun mouvement supposé. Le
+      // mouvement de l'exemple café n'est jamais repris pour un client.
+      machine: keepSame
+        ? rescaleMachine(machine!, scale)
+        : {
+            ...structuredClone(COFFEE_ASSEMBLY),
+            assetKey,
+            fileName: fileName.slice(0, 180),
+            unitScale: scale,
+            movingNode: "",
+            movingNodes: [],
+            travel: [0, 0, 0],
+            magnetMount: "fixed",
+            motionStatus: "unset",
+          },
+    });
+    setView("3d");
+    setFocus("assembly");
+    setSceneError(false);
+    setResetEpoch((v) => v + 1);
   }
   function failed3d() {
     setSceneError(true);
@@ -680,10 +734,19 @@ export default function MagneticWorkshop({
   const guideDemoRange = useMemo(() => {
     return workshopGuideRange(config);
   }, [config.sensorId, config.magnetModel, config.guideReference, config.geometry, dataRevision]);
-  const illustrativeBounds = useMemo(
-    () => guideIllustrativeMarks(guideDemoRange),
-    [guideDemoRange],
+  /** Source identifiable de la commutation illustrative : ligne nominale
+   *  publiée de la classe choisie, sinon plage du guide choisie, sinon aucune. */
+  const illustration = useMemo(
+    () =>
+      illustrationSourceFor(
+        config,
+        guideIllustrativeMarks(guideDemoRange),
+        guideDemoRange?.sensorReference ?? null,
+      ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [config.sensorId, config.magnetModel, config.geometry, config.sensitivity, guideDemoRange, dataRevision],
   );
+  const illustrativeBounds = illustration.bounds;
   const guidedSim = useMemo(
     () =>
       simulateMounting(
@@ -786,10 +849,16 @@ export default function MagneticWorkshop({
   const pull = referencePair?.[0] ?? "—",
     drop = referencePair?.[1] ?? "—";
   const unknown = result.unknown;
+  // Clip : seule compte la disponibilité effective du clip pris en charge dans
+  // le fichier chargé ; aucune sélection manuelle n'est redemandée.
   const machineReady =
     !machine ||
-    (movingSelection(machine).length > 0 &&
+    (machine.motionSource === "clip"
+      ? !!machineAsset && !!activeClip(machine)
+      : movingSelection(machine).length > 0 &&
       movingSelection(machine).every((p) => !!machineAsset?.nodes.some((n) => n.path === p)));
+  const events = useMemo(() => switchEvents(machine ?? null, result.samples), [machine, result, machineAsset]);
+  const resolution = eventResolution(machine ?? null, result.samples.length);
   const overlay =
     machine && machineAsset
       ? guideOverlay(
@@ -828,17 +897,25 @@ export default function MagneticWorkshop({
 
   useEffect(() => {
     if (!playing) return;
-    // 50 ms par pas : 120 pas = 6 s pour un aller-retour, 240 pas en lecture lente.
-    // Un clip se lit à sa vitesse réelle (50 ms par pas), sans aller-retour ajouté.
-    const clipSeconds = machine?.motionSource === "clip" ? machine.clip?.duration : undefined;
-    const base = clipSeconds
-      ? Math.min(6000, Math.max(20, Math.round(clipSeconds * 20)))
-      : CYCLE_STEPS_NORMAL;
-    const steps = playbackSpeed === "normal" ? base : base * (CYCLE_STEPS_SLOW / CYCLE_STEPS_NORMAL);
-    const timer = setInterval(() => setProgress((v) => Math.min(1, v + 1 / steps)), 50);
-    return () => clearInterval(timer);
+    // Temps écoulé réel rapporté à la durée réelle : clip CHARGÉ (pas la durée
+    // enregistrée dans le JSON) ou aller-retour manuel de 6 s ; ralenti × 2.
+    const seconds = cycleSeconds(machine);
+    if (!seconds) {
+      setPlaying(false);
+      return;
+    }
+    let raf = 0,
+      last = performance.now();
+    const tick = (now: number) => {
+      const dt = now - last;
+      last = now;
+      setProgress((v) => playbackStep(v, dt, seconds, playbackSpeed === "slow"));
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [playing, playbackSpeed, machine?.motionSource, machine?.clip?.duration]);
+  }, [playing, playbackSpeed, machine?.motionSource, machine?.clip?.index, machineAsset]);
   useEffect(() => {
     if (progress >= 1) setPlaying(false);
   }, [progress]);
@@ -2017,6 +2094,9 @@ export default function MagneticWorkshop({
               onDemo={openDemo}
               onMarkers={setMarkers}
               reduced={reduced}
+              events={events}
+              resolution={resolution}
+              illustration={illustration}
             />
           ) : null}
           {machine && activationDistanceControl}
