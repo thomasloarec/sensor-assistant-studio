@@ -1878,7 +1878,6 @@ export default function MagneticWorkshop({
                 }
                 download("montage-magnetique.json", text, "application/json");
               }
-              )
             }
           >
             {t("Télécharger le fichier de montage")}
