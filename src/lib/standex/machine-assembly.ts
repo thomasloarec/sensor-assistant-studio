@@ -84,7 +84,16 @@ export function motionAxis(m: MachineAssembly): Vec3 {
     const u = unit(m.axisVector);
     if (u) return u;
   }
+  return frameAxis(m);
+}
+function frameAxis(m: MachineAssembly): Vec3 {
   return m.rotationAxis === "x" ? [1, 0, 0] : m.rotationAxis === "y" ? [0, 1, 0] : [0, 0, 1];
+}
+/** Direction réelle du mouvement : vecteur libre, sinon `unit(travel)` pour une
+ *  coulisse (ancien montage), sinon axe du repère pour un pivot. */
+export function motionDirection(m: MachineAssembly): Vec3 | null {
+  if (m.axisVector) return unit(m.axisVector);
+  return m.motion === "translation" ? unit(m.travel) : frameAxis(m);
 }
 /** Rotation de la pièce mobile en Euler XYZ (degrés). Un axe incliné passe par
  *  un quaternion axe-angle : capteur, aimant, scène et calcul partagent cette
@@ -143,6 +152,10 @@ export function toggleMoving(m: MachineAssembly, node: string): Pick<MachineAsse
 export function motionProblem(m: MachineAssembly): string | null {
   if (movingSelection(m).length === 0)
     return "Aucune pièce mobile choisie : sélectionnez au moins une pièce dans la scène ou la liste.";
+  // Un vecteur fourni explicitement est validé BRUT : un axe nul ou non fini
+  // n'est jamais remplacé en silence par un axe du repère.
+  if (m.axisVector !== undefined && !unit(m.axisVector))
+    return "Axe nul ou non fini : choisissez une direction valide.";
   if (m.motionStatus === "unset" || m.motionStatus === "draft")
     return "Mouvement non validé : définissez puis validez le mouvement de la pièce mobile. Aucun contact n'est calculé.";
   if (m.motion === "translation") {
@@ -150,7 +163,7 @@ export function motionProblem(m: MachineAssembly): string | null {
     if (!Number.isFinite(s) || s < 0.1 || s > 5000)
       return "Course invalide : indiquez une course entre 0,1 et 5000 mm.";
   } else {
-    if (!unit(motionAxis(m))) return "Axe de pivot nul : choisissez un axe.";
+    if (!m.pivot.every(Number.isFinite)) return "Pivot non fini : indiquez un point valide.";
     const a = Math.abs(m.openingAngle);
     if (!Number.isFinite(a) || a < 0.1 || a > 360)
       return "Angle invalide : indiquez un angle entre 0,1 et 360°.";
@@ -228,5 +241,41 @@ export function parseMachine(value: unknown): MachineAssembly | null {
     if (!a) return null;
     out[k] = a;
   }
+  return syncAttachSupports(out);
+}
+
+/** Le support d'une attache suit TOUJOURS la sélection mobile réelle : ajouter
+ *  ou retirer une pièce (ou son groupe parent) met à jour support et montage. */
+export function syncAttachSupports(m: MachineAssembly): MachineAssembly {
+  let out = m;
+  for (const k of ["sensor", "magnet"] as const) {
+    const a = out[`${k}Attach`];
+    if (!a) continue;
+    const support = isMovingPath(out, a.partPath) ? "moving" : "fixed";
+    if (a.support === support && out[`${k}Mount`] === support) continue;
+    out = { ...out, [`${k}Attach`]: { ...a, support }, [`${k}Mount`]: support };
+  }
+  return out;
+}
+
+/** Changement d'unités du fichier : tout ce qui est exprimé dans le repère du
+ *  modèle (positions, pivot, course, points d'attache) est rééchelonné pour
+ *  rester sur la même face ; les tailles des produits, angles, écarts et
+ *  profondeurs physiques (mm) sont conservés. */
+export function rescaleMachine(m: MachineAssembly, unitScale: number): MachineAssembly {
+  const r = unitScale / m.unitScale;
+  if (!Number.isFinite(r) || r === 1) return { ...m, unitScale };
+  const out: MachineAssembly = {
+    ...m,
+    unitScale,
+    sensorPosition: scale(m.sensorPosition, r),
+    magnetPosition: scale(m.magnetPosition, r),
+    pivot: scale(m.pivot, r),
+    travel: scale(m.travel, r),
+  };
+  if (m.sensorAttach) out.sensorAttach = { ...m.sensorAttach, point: scale(m.sensorAttach.point, r) };
+  if (m.magnetAttach) out.magnetAttach = { ...m.magnetAttach, point: scale(m.magnetAttach.point, r) };
+  // La course a changé d'échelle : elle doit être revue et revalidée.
+  if (m.motionStatus === "confirmed" || m.motionStatus === undefined) out.motionStatus = "draft";
   return out;
 }

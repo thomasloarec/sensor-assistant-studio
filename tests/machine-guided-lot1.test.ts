@@ -268,6 +268,8 @@ describe("sauvegarde et rechargement", () => {
   test("sélection, axe, statut et attaches survivent à la note sérialisée", () => {
     const m: MachineAssembly = {
       ...DEMO_ASSEMBLIES["builtin:door-v1"]!,
+      // Support réel : la pièce 0/1 est mobile, le montage suit donc l'attache.
+      sensorMount: "moving",
       sensorAttach: surface({ kind: "through", support: "moving", partPath: "0/1", offsetMm: 2.5, spinDeg: 30, flip: true, depthRef: "tip", axisSource: "two-points" }),
     };
     const c = cfg(m);

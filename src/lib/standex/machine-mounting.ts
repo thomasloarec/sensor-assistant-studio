@@ -27,7 +27,7 @@ export interface Attachment {
   flip: boolean;
   /** Traversant : référence de la profondeur. */
   depthRef: "collar" | "tip";
-  axisSource: "face" | "two-points";
+  axisSource: "face" | "two-points" | "manual";
 }
 export const ATTACH_LIMIT_MM = 500;
 
@@ -97,7 +97,7 @@ export function parseAttachment(value: unknown): Attachment | null {
   if (Math.abs(x["spinDeg"] as number) > 360) return null;
   if (typeof x["flip"] !== "boolean") return null;
   if (!["collar", "tip"].includes(x["depthRef"] as string)) return null;
-  if (!["face", "two-points"].includes(x["axisSource"] as string)) return null;
+  if (!["face", "two-points", "manual"].includes(x["axisSource"] as string)) return null;
   return {
     kind: x["kind"] as MountKind,
     support: x["support"] as "fixed" | "moving",
@@ -108,7 +108,7 @@ export function parseAttachment(value: unknown): Attachment | null {
     spinDeg: x["spinDeg"] as number,
     flip: x["flip"] as boolean,
     depthRef: x["depthRef"] as "collar" | "tip",
-    axisSource: x["axisSource"] as "face" | "two-points",
+    axisSource: x["axisSource"] as Attachment["axisSource"],
   };
 }
 
@@ -155,6 +155,24 @@ export function applyAttachments<T extends Attachable>(m: T, sensor: Dims, magne
 }
 /** Une modification libre de pose ou de support libère honnêtement l'attache :
  *  aucune contrainte fictive n'est conservée. */
+/** Attaches incompatibles avec le produit courant (traversant sur un corps non
+ *  cylindrique, ou sur l'aimant) : retirées, et signalées comme libérées. */
+export function reconcileAttachments<T extends Attachable>(
+  m: T,
+  sensorShape: string,
+): { machine: T; freed: ("sensor" | "magnet")[] } {
+  const out = { ...m },
+    freed: ("sensor" | "magnet")[] = [];
+  if (m.sensorAttach?.kind === "through" && !throughAllowed(sensorShape)) {
+    delete out.sensorAttach;
+    freed.push("sensor");
+  }
+  if (m.magnetAttach?.kind === "through") {
+    delete out.magnetAttach;
+    freed.push("magnet");
+  }
+  return { machine: out, freed };
+}
 export function freePosePatch<P extends Partial<Attachable>>(patch: P): P & {
   freed: ("sensor" | "magnet")[];
 } {

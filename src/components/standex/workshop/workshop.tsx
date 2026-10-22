@@ -108,7 +108,18 @@ import MachineGuide, {
 } from "./machine-guide";
 import type { GuideState } from "./machine-guide";
 import { movingSelection, toggleMoving } from "@/lib/standex/machine-assembly";
-import { applyAttachments, freePosePatch } from "@/lib/standex/machine-mounting";
+import {
+  applyAttachments,
+  freePosePatch,
+  reconcileAttachments,
+  throughAllowed,
+} from "@/lib/standex/machine-mounting";
+import {
+  motionProblem,
+  openingAt,
+  rescaleMachine,
+  syncAttachSupports,
+} from "@/lib/standex/machine-assembly";
 import { DEMO_ASSEMBLIES } from "@/lib/standex/machine-demos";
 import FlatScene from "./flat-scene";
 import SensorCatalog from "./sensor-catalog";
@@ -300,6 +311,8 @@ export default function MagneticWorkshop({
     future: [],
   });
   const [, setHistoryTick] = useState(0);
+  const importSeqRef = useRef(0);
+  const preloadedRef = useRef<{ key: string; scale: number; asset: MachineAsset } | null>(null);
   /** Lecture « montage guidé » recalculée à chaque changement d'entrée : un verdict
    * n'est jamais conservé ni importé, il est toujours recalculé ici. */
   const guided = useGuidedMounting(config);
@@ -343,8 +356,15 @@ export default function MagneticWorkshop({
     setMachineAsset(null);
     setAssetError(null);
     if (!machine) return;
-    void import("@/lib/standex/machine-assets")
-      .then((m) => m.loadMachineAsset(machine.assetKey, machine.unitScale, storageMode))
+    const pre = preloadedRef.current;
+    preloadedRef.current = null;
+    void (
+      pre && pre.key === machine.assetKey && pre.scale === machine.unitScale
+        ? Promise.resolve(pre.asset)
+        : import("@/lib/standex/machine-assets").then((m) =>
+            m.loadMachineAsset(machine.assetKey, machine.unitScale, storageMode),
+          )
+    )
       .then((asset) => {
         if (cancelled) {
           asset.dispose();
@@ -396,9 +416,22 @@ export default function MagneticWorkshop({
   function machineChange(patch: Partial<MachineAssembly>) {
     if (!machine) return;
     const { freed, ...clean } = freePosePatch(patch);
-    const next = { ...machine, ...clean } as MachineAssembly;
+    // Changement d'unités : repères, attaches et course liés au modèle sont
+    // rééchelonnés ; la taille physique des produits ne change pas.
+    const base =
+      patch.unitScale !== undefined && patch.unitScale !== machine.unitScale
+        ? rescaleMachine(machine, patch.unitScale)
+        : machine;
+    delete (clean as Partial<MachineAssembly>).unitScale;
+    let next = { ...base, ...clean } as MachineAssembly;
     for (const k of ["sensorAttach", "magnetAttach"] as const)
       if (k in next && next[k] === undefined) delete next[k];
+    // Le support d'une attache suit la sélection mobile réelle.
+    next = applyAttachments(
+      syncAttachSupports(next),
+      dimsFor(config, "sensor"),
+      dimsFor(config, "magnet"),
+    );
     if (!parseWorkshopConfig({ ...config, machine: next })) return;
     const h = historyRef.current;
     if (h.key !== machine.assetKey) {
@@ -431,12 +464,37 @@ export default function MagneticWorkshop({
   }
   // Changer de capteur ou d'aimant garde les attaches : la pose est recalculée
   // pour que la face d'appui (ou la profondeur) reste celle choisie.
+  const dimsKey = JSON.stringify([dimsFor(config, "sensor"), dimsFor(config, "magnet")]);
+  const sensorShape = sensorById(config.sensorId).shape;
   useEffect(() => {
     if (!machine || (!machine.sensorAttach && !machine.magnetAttach)) return;
-    const next = applyAttachments(machine, dimsFor(config, "sensor"), dimsFor(config, "magnet"));
+    // Une attache traversante devenue incompatible (produit non cylindrique)
+    // est libérée et signalée, jamais conservée en fausse contrainte.
+    const { machine: kept, freed } = reconcileAttachments(machine, sensorShape);
+    const next = applyAttachments(
+      syncAttachSupports(kept),
+      dimsFor(config, "sensor"),
+      dimsFor(config, "magnet"),
+    );
+    if (freed.length)
+      setGuideState((g) => ({
+        ...g,
+        freed: [...new Set([...g.freed, ...freed])],
+        incompatible: [...new Set([...(g.incompatible ?? []), ...freed])],
+      }));
     if (JSON.stringify(next) !== JSON.stringify(machine)) setConfig((c) => ({ ...c, machine: next }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [config.sensorId, config.magnetModel]);
+  }, [dimsKey, sensorShape, machine?.sensorAttach, machine?.magnetAttach]);
+  // Le mode affiché suit l'attache enregistrée (relecture, annuler, démo).
+  useEffect(() => {
+    const s = machine?.sensorAttach?.kind,
+      g = machine?.magnetAttach?.kind;
+    setGuideState((st) =>
+      (s && s !== st.kind.sensor) || (g && g !== st.kind.magnet)
+        ? { ...st, kind: { sensor: s ?? st.kind.sensor, magnet: g ?? st.kind.magnet } }
+        : st,
+    );
+  }, [machine?.sensorAttach?.kind, machine?.magnetAttach?.kind]);
   function openDemo(key: string) {
     if (key === "builtin:coffee-v1") return exampleMachine();
     const demo = DEMO_ASSEMBLIES[key];
@@ -474,20 +532,36 @@ export default function MagneticWorkshop({
     setResetEpoch((v) => v + 1);
     setSceneError(false);
   }
+  /** Import en TRANSACTION : le fichier est entièrement chargé et sa géométrie
+   *  validée AVANT de remplacer le montage, l'historique ou l'asset. En cas
+   *  d'échec, le montage précédent, le capteur et l'aimant restent intacts.
+   *  Seul le dernier import demandé est appliqué. */
   async function importMachine(file: File | undefined) {
     if (!file) return;
     setError(null);
+    const seq = ++importSeqRef.current;
     try {
-      const { storeMachineFileWithMode } = await import("@/lib/standex/machine-assets");
+      const { storeMachineFileWithMode, loadMachineAsset } = await import(
+        "@/lib/standex/machine-assets"
+      );
       const assetKey = await storeMachineFileWithMode(file, storageMode);
       const same = machine?.assetKey === assetKey;
-      if (!same) {
-        setGuideState({ ...INITIAL_GUIDE });
-        historyRef.current = { key: assetKey, past: [], future: [] };
+      const scale = same ? machine!.unitScale : COFFEE_ASSEMBLY.unitScale;
+      const asset = await loadMachineAsset(assetKey, scale, storageMode);
+      if (seq !== importSeqRef.current) {
+        asset.dispose();
+        return;
       }
+      if (same) {
+        // Réimport du même fichier : rien ne change, l'asset courant reste.
+        asset.dispose();
+        return;
+      }
+      preloadedRef.current = { key: assetKey, scale, asset };
+      setGuideState({ ...INITIAL_GUIDE });
+      historyRef.current = { key: assetKey, past: [], future: [] };
       update({
-        mode: "reference",
-        magnetModel: defaultMagnetFor(config.sensorId),
+        // Capteur, aimant et mode restent ceux choisis par l'utilisateur.
         // Nouveau fichier : aucune pièce mobile, aucun mouvement supposé. Le
         // mouvement de l'exemple café n'est jamais repris pour un client.
         machine: same
@@ -508,6 +582,7 @@ export default function MagneticWorkshop({
       setSceneError(false);
       setResetEpoch((v) => v + 1);
     } catch (e) {
+      if (seq !== importSeqRef.current) return;
       setError(e instanceof Error ? e.message : t("Import impossible."));
     }
   }
@@ -589,12 +664,19 @@ export default function MagneticWorkshop({
     [guided, config, illustrativeBounds, dataRevision],
   );
 
+  /** Aucun contact n'est montré tant que le mouvement est absent, en brouillon,
+   *  invalide, ou que le fichier n'est pas chargé : seul l'aperçu mécanique reste. */
+  const machineBlocked = !!machine && (!!motionProblem(machine) || !machineAsset);
   const result = useMemo(() => {
     const raw = simulateCycle(config);
     const last = guidedSim.samples.length - 1;
     const samples = raw.samples.map((s) => {
       const g = guidedSim.samples[Math.min(last, Math.round(s.t * last))]!;
-      const shown = g.covered || guidedSim.illustrative ? g.contact : "unknown";
+      const shown = machineBlocked
+        ? "unknown"
+        : g.covered || guidedSim.illustrative
+          ? g.contact
+          : "unknown";
       return { ...s, contact: shown as Contact };
     });
     // Les transitions et les comptages doivent découler des MÊMES échantillons
@@ -618,9 +700,13 @@ export default function MagneticWorkshop({
       transitions,
       closures,
       releases,
-      unknown: raw.unknown || guidedSim.coverage !== "covered",
+      unknown: raw.unknown || machineBlocked || guidedSim.coverage !== "covered",
+      // i18n-canonical : raison traduite au rendu par t().
+      reason:
+        raw.reason ??
+        (machine && !machineAsset ? "Fichier 3D non chargé : aucun contact n'est affiché." : null),
     };
-  }, [config, guidedSim]);
+  }, [config, guidedSim, machineBlocked, machine, machineAsset]);
   const sample =
     result.samples[
       Math.min(result.samples.length - 1, Math.round(progress * (result.samples.length - 1)))
@@ -690,11 +776,21 @@ export default function MagneticWorkshop({
             },
             onPlace: (which, hit) => {
               const kind = guideState.kind[which];
+              // i18n-canonical : message traduit au rendu par t().
+              if (kind === "through" && (which === "magnet" || !throughAllowed(sensorShape))) {
+                setGuideState((g) => ({
+                  ...g,
+                  notice:
+                    "Montage traversant refusé : il est réservé aux capteurs à corps cylindrique, fileté ou à insérer.",
+                }));
+                return;
+              }
               const prev = which === "sensor" ? machine.sensorAttach : machine.magnetAttach;
               machineChange(attachPatch(which, attachFromHit(hit, kind, prev), config));
             },
           },
           Math.max(...machineAsset.size),
+          openingAt(progress),
         )
       : undefined;
 
@@ -1751,7 +1847,6 @@ export default function MagneticWorkshop({
           <a href="/models/machine-cafe-bac-mobile.glb" download>
             {t("Télécharger le fichier 3D")}
           </a>
-          <DemoButtons onDemo={openDemo} />
         </details>
           </div>
         </details>
@@ -1847,8 +1942,8 @@ export default function MagneticWorkshop({
       )}
       <div className="mw-stage-grid">
         <aside className="mw-controls">
-          {approachPicker}
-          {activationDistanceControl}
+          {!machine && approachPicker}
+          {!machine && activationDistanceControl}
           {machine ? (
             <MachineGuide
               state={guideState}
@@ -1876,9 +1971,11 @@ export default function MagneticWorkshop({
               setPlaying={setPlaying}
               reason={result.reason}
               onDemo={openDemo}
+              reduced={reduced}
             />
           ) : null}
-          {playButton}
+          {machine && activationDistanceControl}
+          {!machine && playButton}
           {advancedSettings}
         </aside>
         <section className="mw-main" aria-label={t("Simulation du montage")}>
@@ -1894,6 +1991,10 @@ export default function MagneticWorkshop({
                 }}
               />
             </label>
+            <details className="mw-demo-shortcut" data-testid="demo-shortcut">
+              <summary>{t("Essayer un modèle de démonstration")}</summary>
+              <DemoButtons onDemo={openDemo} onCoffee={exampleMachine} />
+            </details>
 
             <button
               className="mw-button"
