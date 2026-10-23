@@ -2401,7 +2401,7 @@
 }
 @media (max-width: 639px) {
   .mw-contact-circuit {
-    inline-size: 168px;
+    inline-size: 120px;
     inset-block-start: auto;
     inset-block-end: 36px;
     inset-inline-end: 8px;
@@ -2708,6 +2708,7 @@
   white-space: normal;
   padding: 6px 10px;
 }
+.mw-imported .mw-verdict-bar-text > p { margin-block: 2px; }
 .mw-imported .mw-verdict-bar .notice-warning {
   margin: 4px 0 0;
   padding: 4px 8px;
