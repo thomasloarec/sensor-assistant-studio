@@ -2073,6 +2073,7 @@ export default function MagneticWorkshop({
       )}
       {!embedded && (
         <AppHeader
+          tone="reversed"
           context={t("Atelier 3D")}
           back={{ label: t("Retour au projet"), onClick: onClose, disabled: saving }}
         >
