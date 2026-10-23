@@ -473,6 +473,34 @@ Revue lot 2 (22 octobre 2026) :
 
 ## 11. Ce qui reste ouvert
 
+### Atelier intégré — lisibilité et placement (23 octobre 2026)
+
+Le même `.mw-stage` utilise la hauteur réellement disponible dans le panneau
+client ou l'écran autonome. Sur grand écran, la colonne de commandes mesure
+360 à 400 px ; elle est l'unique zone de défilement des réglages. Le parcours
+et l'arbre n'ont plus de défilement imbriqué ni de panneau décoratif interne.
+La scène absorbe la hauteur restante, la chronologie reste en dehors du
+défilement. Sur téléphone, scène et chronologie précèdent les commandes qui
+défilent dans l'espace restant. Aucun texte n'est réduit pour gagner de la place.
+Sources, résumé et outils secondaires rejoignent le même défilement de commandes.
+Sur téléphone, les étapes et le cadrage sont des sélecteurs natifs de 44 px ;
+les actions d'import/résultat se replient dans « Modèle et résultat ».
+
+Axes X/Y/Z et course sont accessibles directement ; course nulle et mouvement
+non prêt donnent une prochaine action explicite. L'installation réaffiche les
+pièces fixes sans changer la sélection. L'arbre simplifié masque uniquement les
+parents sans maillage ayant un seul enfant ; les noms, chemins et sélections
+restent ceux du fichier, avec accès à l'arbre complet.
+
+Les commandes Vue d'ensemble / pièce mobile / capteur / aimant utilisent les
+boutons du socle et les surfaces opaques `--popover` / `--popover-foreground`.
+Le cadrage suit la pose courante sans remettre le zoom manuel à zéro ; il ne
+modifie aucune pose du montage. Le support courant reste nommé et remplaçable
+dans Installation. Les couleurs, rayons, typographies et mouvements gardent
+les jetons existants et la neutralisation en mouvement réduit.
+L'en-tête autonome conserve le composant partagé avec le bloc S inversé pour
+réserver la hauteur au travail ; le verrou complet n'est jamais rétréci.
+
 - La console `/standex` ne peut être validée de bout en bout sans session staff
   et rôle attribué par le backend. Son écran d'authentification et son état
   protégé restent néanmoins couverts visuellement.

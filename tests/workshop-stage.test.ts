@@ -49,9 +49,11 @@ describe("barre et disposition", () => {
     expect(SPACE).toContain('data-testid="workshop-save-state"');
     expect(SPACE).toContain("${workshop.sensorId} + ${workshop.magnetModel}");
   });
-  test("la grille est 320px + reste, et la colonne ne défile pas seule", () => {
-    expect(CSS).toContain("grid-template-columns: 320px minmax(0, 1fr)");
-    expect(CSS).toMatch(/\.mw-stage \.mw-controls \{[^}]*overflow: visible/s);
+  test("la colonne adaptative porte le seul défilement des commandes", () => {
+    expect(CSS).toContain("grid-template-columns: clamp(360px, 22vw, 400px) minmax(0, 1fr)");
+    expect(CSS).toMatch(/\.mw-stage \.mw-controls \{[^}]*overflow-y: auto/s);
+    expect(CSS).toMatch(/\.mw-guide-body \{[^}]*overflow: visible/s);
+    expect(CSS).toMatch(/\.mw-part-tree \{[^}]*overflow: visible/s);
   });
   test("sous 1024 px, tout s'empile et la scène reste en tête", () => {
     expect(CSS).toMatch(
@@ -60,8 +62,8 @@ describe("barre et disposition", () => {
     expect(CSS).toMatch(/\.mw-stage \.mw-main \{\s*order: 1;/);
     expect(CSS).toMatch(/\.mw-stage \.mw-controls \{\s*order: 2;/);
   });
-  test("la scène garde au moins 420 px de hauteur", () => {
-    expect(CSS).toMatch(/\.mw-stage \.mw-canvas \{[^}]*min-height: 420px/s);
+  test("la scène utilise la hauteur restante sans plafond rigide", () => {
+    expect(CSS).toMatch(/\.mw-stage \.mw-canvas \{[^}]*flex: 1 1 auto[^}]*max-height: none/s);
   });
 });
 

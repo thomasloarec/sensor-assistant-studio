@@ -1,3 +1,5 @@
+import { Button } from "@/components/ui/button";
+import type { MachineFocus } from "@/lib/standex/machine-view";
 import { observedCycleVerdict } from "@/lib/leadmagnet/tested-pairs";
 import {
   workshopGuideRange,
@@ -275,6 +277,14 @@ export default function MagneticWorkshop({
   onSaveState,
 }: WorkshopProps) {
   useLocale();
+  const [primaryMenuOpen, setPrimaryMenuOpen] = useState(true);
+  useEffect(() => {
+    const media = window.matchMedia("(max-width: 1023px)");
+    const sync = () => setPrimaryMenuOpen(!media.matches);
+    sync();
+    media.addEventListener("change", sync);
+    return () => media.removeEventListener("change", sync);
+  }, []);
   const [cableOpen, setCableOpen] = useState(initialCableOpen);
   const [advancedOpen, setAdvancedOpen] = useState(initialCableOpen);
   const [productOpen, setProductOpen] = useState(initialCableOpen);
@@ -300,7 +310,7 @@ export default function MagneticWorkshop({
     [dimensions, setDimensions] = useState(false),
     [showNames, setShowNames] = useState(true),
     [showMagnetName, setShowMagnetName] = useState(true),
-    [focus, setFocus] = useState<"assembly" | "sensor">("assembly"),
+    [focus, setFocus] = useState<MachineFocus>("assembly"),
     [catalogOpen, setCatalogOpen] = useState(false);
   /** Vitesse de lecture. Par défaut un aller-retour dure 6 s : la lecture
    * ralentie reste disponible dans les réglages avancés, elle ne disparaît pas. */
@@ -2052,7 +2062,7 @@ export default function MagneticWorkshop({
   );
 
   return (
-    <main className="mw mw-stage immersive" aria-label={t("Atelier 3D")}>
+    <main className={`mw mw-stage immersive ${embedded ? "mw-embedded" : "mw-autonomous"} ${machine ? "mw-imported" : ""}`} aria-label={t("Atelier 3D")}>
       {productCard && (
         <SensorCard
           key={sensor.id}
@@ -2063,6 +2073,8 @@ export default function MagneticWorkshop({
       )}
       {!embedded && (
         <AppHeader
+          logoVariant="mark"
+          tone="reversed"
           context={t("Atelier 3D")}
           back={{ label: t("Retour au projet"), onClick: onClose, disabled: saving }}
         >
@@ -2116,8 +2128,87 @@ export default function MagneticWorkshop({
           {machine && activationDistanceControl}
           {!machine && playButton}
           {advancedSettings}
+      {!embedded ? (
+        <details className="mw-advanced">
+          <summary>{t("Données et outils avancés")}</summary>
+          <StudioV2
+            config={config}
+            onApply={update}
+            initialStudy={initialStudy}
+            onStudyChange={onStudyChange}
+            dossierId={dossierId}
+            revision={revision}
+          />
+        </details>
+      ) : null}
+      <footer className="mw-footer">
+        <p>
+          {/* Une seule phrase : la provenance des distances et la limite qui va
+              avec. L'état d'enregistrement, lui, vit dans la barre du panneau. */}
+          {/* Sans distance publiée pour ce couple, on ne prétend PAS en afficher :
+              le pied de page dit alors que la commutation est illustrative. */}
+          {/* Avec une ligne nominale publiée pour la classe choisie mais une
+              simulation toujours illustrative, le pied de page nomme cette
+              source sans la présenter comme caractéristique du montage. */}
+          {reference && !illustrative ? (
+            t(
+              "Distances typiques publiées par Standex pour ce couple, dans cette position. À confirmer par un essai dans votre application.",
+            )
+          ) : reference && illustration.kind === "nominal" ? (
+            t(
+              "La commutation illustrative utilise les distances nominales publiées pour la classe choisie. Ces valeurs ne caractérisent pas votre montage et doivent être validées par des essais.",
+            )
+          ) : reference && guideRangesAvailable ? (
+            t(
+              "Le guide d'activation publie des plages de mesure pour ce couple, mais aucun seuil de fermeture ni de réouverture : la commutation montrée est illustrative et doit être validée par des essais.",
+            )
+          ) : reference ? (
+            t(
+              "Aucune distance publiée pour ce couple : la commutation montrée est illustrative et doit être validée par des essais.",
+            )
+          ) : (
+            <>
+              <strong>{t("Illustration pédagogique.")}</strong> {t(EDUCATION_NOTE)}
+            </>
+          )}{" "}
+          <a
+            href={
+              guideDemoRange
+                ? ACTIVATION_GUIDE.source.url
+                : reference
+                  ? DISTANCE_SOURCE
+                  : INTERACTION_SOURCE
+            }
+            target="_blank"
+            rel="noreferrer"
+          >
+            {t("Source Standex ↗")}
+          </a>
+        </p>
+      </footer>
+
+      <details className="mw-summary">
+        <summary>{t("Résumé du montage et hypothèses")}</summary>
+        <pre>{t(summary)}</pre>
+        {!embedded ? (
+          <p>
+            {msg(
+              "Version du calcul : {0}. La scène et ses résultats sont recalculés à chaque modification.",
+              [MODEL_VERSION],
+            )}
+          </p>
+        ) : null}
+        <button
+          className="mw-text-button"
+          onClick={() => download("dossier-montage-magnetique.md", summary, "text/markdown")}
+        >
+          {t("Télécharger le résumé")}
+        </button>
+      </details>
         </aside>
         <section className="mw-main" aria-label={t("Simulation du montage")}>
+          <details className="mw-primary-menu" open={primaryMenuOpen} onToggle={(e) => setPrimaryMenuOpen(e.currentTarget.open)}>
+            <summary>{t("Modèle et résultat")}</summary>
           <div className="mw-primary-actions">
             <label className="mw-file-label">
               {machine ? machine.fileName : t("Importer mon modèle 3D")}
@@ -2173,6 +2264,30 @@ export default function MagneticWorkshop({
               {t("Valider ce choix et voir le résultat")}
             </button>
           </div>
+          </details>
+          {machine && (
+            <div className="mw-camera-actions" role="group" aria-label={t("Cadrage de la scène")}>
+              <select className="mw-camera-select" aria-label={t("Cadrage de la scène")} value={focus}
+                onChange={(e) => { setFocus(e.target.value as MachineFocus); setResetEpoch((v) => v + 1); }}>
+                <option value="assembly">{t("Vue d’ensemble")}</option>
+                <option value="moving">{t("Cadrer la pièce mobile")}</option>
+                <option value="sensor">{t("Cadrer le capteur")}</option>
+                <option value="magnet">{t("Cadrer l’aimant")}</option>
+              </select>
+              {/* i18n-canonical : libellés français traduits au rendu par t(). */}
+              {([
+                ["assembly", "Vue d’ensemble"],
+                ["moving", "Cadrer la pièce mobile"],
+                ["sensor", "Cadrer le capteur"],
+                ["magnet", "Cadrer l’aimant"],
+              ] as const).map(([next, label]) => (
+                <Button key={next} className="mw-button mw-secondary" data-testid={"camera-" + next}
+                  aria-pressed={focus === next} onClick={() => { setFocus(next); setResetEpoch((v) => v + 1); }}>
+                  {t(label)}
+                </Button>
+              ))}
+            </div>
+          )}
           {verdictBanner}
           <div
             className="mw-canvas"
@@ -2262,7 +2377,7 @@ export default function MagneticWorkshop({
                 </div>
               ) : (
                 <SceneBoundary
-                  key={"machine:" + resetEpoch}
+                  key={"machine:" + machine.assetKey}
                   onError={failed3d}
                   fallback={<div className="mw-loading">{t("La scène 3D a été interrompue.")}</div>}
                 >
@@ -2274,7 +2389,7 @@ export default function MagneticWorkshop({
                       config={config}
                       sample={sample}
                       view={view}
-                      focus={focus}
+                      focus={machine ? focus : focus === "sensor" ? "sensor" : "assembly"}
                       resetEpoch={resetEpoch}
                       tool={tool}
                       transformMode={transformMode}
@@ -2314,7 +2429,7 @@ export default function MagneticWorkshop({
                 showNames={showNames}
                 showMagnetName={showMagnetName}
                 zones={zones}
-                focus={focus}
+                focus={focus === "sensor" ? "sensor" : "assembly"}
               />
             ) : (
               <SceneBoundary
@@ -2334,7 +2449,7 @@ export default function MagneticWorkshop({
                       showNames={showNames}
                       showMagnetName={showMagnetName}
                       zones={zones}
-                      focus={focus}
+                      focus={focus === "sensor" ? "sensor" : "assembly"}
                     />
                   </div>
                 }
@@ -2355,7 +2470,7 @@ export default function MagneticWorkshop({
                     dimensions={dimensions}
                     showNames={showNames}
                     showMagnetName={showMagnetName}
-                    focus={focus}
+                    focus={focus === "sensor" ? "sensor" : "assembly"}
                     reduced={reduced}
                     ghost={ghost}
                   />
@@ -2453,64 +2568,6 @@ export default function MagneticWorkshop({
           </div>
         </section>
       </div>
-      {!embedded ? (
-        <details className="mw-advanced">
-          <summary>{t("Données et outils avancés")}</summary>
-          <StudioV2
-            config={config}
-            onApply={update}
-            initialStudy={initialStudy}
-            onStudyChange={onStudyChange}
-            dossierId={dossierId}
-            revision={revision}
-          />
-        </details>
-      ) : null}
-      <footer className="mw-footer">
-        <p>
-          {/* Une seule phrase : la provenance des distances et la limite qui va
-              avec. L'état d'enregistrement, lui, vit dans la barre du panneau. */}
-          {/* Sans distance publiée pour ce couple, on ne prétend PAS en afficher :
-              le pied de page dit alors que la commutation est illustrative. */}
-          {/* Avec une ligne nominale publiée pour la classe choisie mais une
-              simulation toujours illustrative, le pied de page nomme cette
-              source sans la présenter comme caractéristique du montage. */}
-          {reference && !illustrative ? (
-            t(
-              "Distances typiques publiées par Standex pour ce couple, dans cette position. À confirmer par un essai dans votre application.",
-            )
-          ) : reference && illustration.kind === "nominal" ? (
-            t(
-              "La commutation illustrative utilise les distances nominales publiées pour la classe choisie. Ces valeurs ne caractérisent pas votre montage et doivent être validées par des essais.",
-            )
-          ) : reference && guideRangesAvailable ? (
-            t(
-              "Le guide d'activation publie des plages de mesure pour ce couple, mais aucun seuil de fermeture ni de réouverture : la commutation montrée est illustrative et doit être validée par des essais.",
-            )
-          ) : reference ? (
-            t(
-              "Aucune distance publiée pour ce couple : la commutation montrée est illustrative et doit être validée par des essais.",
-            )
-          ) : (
-            <>
-              <strong>{t("Illustration pédagogique.")}</strong> {t(EDUCATION_NOTE)}
-            </>
-          )}{" "}
-          <a
-            href={
-              guideDemoRange
-                ? ACTIVATION_GUIDE.source.url
-                : reference
-                  ? DISTANCE_SOURCE
-                  : INTERACTION_SOURCE
-            }
-            target="_blank"
-            rel="noreferrer"
-          >
-            {t("Source Standex ↗")}
-          </a>
-        </p>
-      </footer>
       {catalogOpen && (
         <SensorCatalog
           selected={config.sensorId}
@@ -2522,24 +2579,7 @@ export default function MagneticWorkshop({
           }}
         />
       )}
-      <details className="mw-summary">
-        <summary>{t("Résumé du montage et hypothèses")}</summary>
-        <pre>{t(summary)}</pre>
-        {!embedded ? (
-          <p>
-            {msg(
-              "Version du calcul : {0}. La scène et ses résultats sont recalculés à chaque modification.",
-              [MODEL_VERSION],
-            )}
-          </p>
-        ) : null}
-        <button
-          className="mw-text-button"
-          onClick={() => download("dossier-montage-magnetique.md", summary, "text/markdown")}
-        >
-          {t("Télécharger le résumé")}
-        </button>
-      </details>
+
     </main>
   );
 }
