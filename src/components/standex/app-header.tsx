@@ -24,6 +24,7 @@ export type AppHeaderBack = {
 };
 
 export type AppHeaderProps = {
+  logoVariant?: "lockup" | "mark";
   tone?: "light" | "reversed";
   /** Libellé de contexte de l'écran, posé après le logo. */
   context?: string;
@@ -63,6 +64,7 @@ export function usePublishedHeaderHeight<T extends HTMLElement>() {
 }
 
 export function AppHeader({
+  logoVariant = "lockup",
   tone = "light",
   context,
   back,
@@ -98,7 +100,7 @@ export function AppHeader({
             </button>
           )
         ) : null}
-        <BrandLogo tone={tone} height={44} />
+        <BrandLogo variant={logoVariant} tone={tone} height={logoVariant === "mark" ? 32 : 44} />
         {/* Nom de l'outil visible partout, à côté de la marque conservée. */}
         <span className="app-header-tool t-title-s">Sensor Studio</span>
         {context ? <p className="app-header-context">{context}</p> : null}
