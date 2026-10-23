@@ -1,7 +1,7 @@
 /** Parcours guidé du modèle importé : Modèle → Pièces mobiles → Mouvement →
  *  Installation → Essai. Une seule étape développée à la fois ; la scène reste
  *  visible à côté. Les coordonnées libres restent dans les réglages avancés. */
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { displayMachineNodes } from "@/lib/standex/machine-view";
 import { msg, t } from "@/lib/i18n/core";
@@ -265,6 +265,7 @@ export default function MachineGuide({
   illustration?: IllustrationSource | null;
   anyKnown?: boolean;
 }) {
+  const guideRef = useRef<HTMLElement>(null);
   const m = config.machine;
   const [detailedTree, setDetailedTree] = useState(false);
   if (!m) return null;
@@ -275,6 +276,8 @@ export default function MachineGuide({
   const go = (step: GuideStep) => {
     setTool("navigate");
     setState((s) => guideStepState(s, step));
+    const scroller = guideRef.current?.closest(".mw-controls");
+    if (scroller) scroller.scrollTop = 0;
   };
   const startPick = (purpose: NonNullable<GuideState["pick"]>["purpose"]) => {
     setState((s) => ({ ...s, pick: { purpose, points: [] } }));
@@ -641,7 +644,7 @@ export default function MachineGuide({
               testId="guide-stroke"
               value={norm(m.travel)}
               onCommit={(s) => {
-                const d = motionDirection(m);
+                const d = m.axisVector ? unit(m.axisVector) : unit(m.travel);
                 if (d) onChange({ travel: d.map((v) => v * s) as Vec3, axisVector: d, motionStatus: "draft" });
               }}
             />
@@ -1245,7 +1248,7 @@ export default function MachineGuide({
   };
 
   return (
-    <section className="mw-guide" aria-label={t("Parcours du modèle importé")} data-testid="machine-guide">
+    <section ref={guideRef} className="mw-guide" aria-label={t("Parcours du modèle importé")} data-testid="machine-guide">
       <label className="mw-guide-step-select">
         {t("Étape de préparation")}
         <select value={state.step} onChange={(e) => go(e.target.value as GuideStep)}>
@@ -1277,6 +1280,9 @@ export default function MachineGuide({
         )}
         {body[state.step]}
       </div>
+      {state.step === "install" && !ready && (
+        <p className="notice-warning">{t("Mouvement non prêt : revenez à Mouvement, choisissez la direction et la course, puis validez.")}</p>
+      )}
       <div className="mw-guide-nav">
         {stepIndex > 0 && (
           <Button className="mw-text-button" onClick={() => go(STEPS[stepIndex - 1]![0])}>
@@ -1284,7 +1290,7 @@ export default function MachineGuide({
           </Button>
         )}
         {stepIndex < STEPS.length - 1 && (
-          <Button className="mw-button mw-secondary" onClick={() => go(STEPS[stepIndex + 1]![0])}>
+          <Button className="mw-button mw-secondary" disabled={state.step === "install" && !ready} onClick={() => go(STEPS[stepIndex + 1]![0])}>
             {t("Suivant →")}
           </Button>
         )}

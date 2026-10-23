@@ -26,7 +26,7 @@ export function machineFrame(asset: MachineAsset, m: MachineAssembly, focus: Mac
   const clip = usesClip(m) ? activeClip(m) : null;
   for (const p of asset.parts) {
     if (focus === "moving" && !(clip ? clip.affects(p.path) : isMovingPath(m, p.path))) continue;
-    p.geometry.computeBoundingBox();
+    if (!p.geometry.boundingBox) p.geometry.computeBoundingBox();
     const bounds = p.geometry.boundingBox;
     if (!bounds) continue;
     for (const x of [bounds.min.x, bounds.max.x]) for (const y of [bounds.min.y, bounds.max.y]) for (const z of [bounds.min.z, bounds.max.z])

@@ -2799,7 +2799,8 @@
   padding: 4px;
   list-style: none;
   border-radius: var(--r-md);
-  background: var(--surface-sunken);
+  background: var(--popover);
+  box-shadow: var(--e-2);
 }
 .mw-guide-steps button {
   width: 100%;
