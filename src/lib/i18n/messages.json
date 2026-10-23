@@ -32092,5 +32092,176 @@
     "Геометрия вне масштаба при выбранных единицах: выберите единицы файла и повторите попытку. Предел: 20 м.",
     "Geometria fuori scala con le unità scelte: scegli le unità del file e riprova. Limite: 20 m.",
     "選択した単位では形状が範囲外です：ファイルの単位を選んで再試行してください。上限：20 m。"
+  ],
+  "Ce fichier ne contient pas d’animation. Définissez le mouvement ci-dessous.": [
+    "This file contains no animation. Define the movement below.",
+    "此文件不包含动画。请在下方定义运动。",
+    "Diese Datei enthält keine Animation. Definieren Sie die Bewegung unten.",
+    "Este archivo no contiene animación. Defina el movimiento a continuación.",
+    "Этот файл не содержит анимации. Задайте движение ниже.",
+    "Questo file non contiene animazioni. Definisci il movimento qui sotto.",
+    "このファイルにはアニメーションがありません。下で動きを定義してください。"
+  ],
+  "Afficher tous les parents du fichier": [
+    "Show all parent nodes in the file",
+    "显示文件中的所有父节点",
+    "Alle übergeordneten Knoten der Datei anzeigen",
+    "Mostrar todos los nodos padre del archivo",
+    "Показать все родительские узлы файла",
+    "Mostra tutti i nodi genitori del file",
+    "ファイルのすべての親ノードを表示"
+  ],
+  "Direction rapide": [
+    "Quick direction",
+    "快速方向选择",
+    "Direktwahl der Richtung",
+    "Dirección rápida",
+    "Быстрый выбор направления",
+    "Direzione rapida",
+    "方向のクイック選択"
+  ],
+  "Choisissez X, Y ou Z, puis saisissez une course supérieure à 0 mm et validez le mouvement.": [
+    "Choose X, Y or Z, then enter a travel greater than 0 mm and confirm the movement.",
+    "选择 X、Y 或 Z，然后输入大于 0 mm 的行程并确认运动。",
+    "Wählen Sie X, Y oder Z, geben Sie einen Hub größer als 0 mm ein und bestätigen Sie die Bewegung.",
+    "Elija X, Y o Z, introduzca un recorrido mayor que 0 mm y confirme el movimiento.",
+    "Выберите X, Y или Z, задайте ход больше 0 мм и подтвердите движение.",
+    "Scegli X, Y o Z, inserisci una corsa maggiore di 0 mm e conferma il movimento.",
+    "X、Y、Z のいずれかを選び、0 mm より大きいストロークを入力して動きを確定してください。"
+  ],
+  "Voir ouvert": [
+    "Show open",
+    "查看打开位置",
+    "Geöffnet anzeigen",
+    "Ver abierto",
+    "Показать открытое положение",
+    "Mostra aperto",
+    "開いた位置を表示"
+  ],
+  "Voir fermé": [
+    "Show closed",
+    "查看关闭位置",
+    "Geschlossen anzeigen",
+    "Ver cerrado",
+    "Показать закрытое положение",
+    "Mostra chiuso",
+    "閉じた位置を表示"
+  ],
+  "Changer de support : cliquer une autre face": [
+    "Change support: click another face",
+    "更换支撑部件：点击另一个面",
+    "Träger wechseln: andere Fläche anklicken",
+    "Cambiar soporte: haga clic en otra cara",
+    "Сменить опору: нажмите на другую грань",
+    "Cambia supporto: fai clic su un’altra faccia",
+    "支持部品を変更：別の面をクリック"
+  ],
+  "Annuler le dernier réglage": [
+    "Undo the last adjustment",
+    "撤销上次调整",
+    "Letzte Einstellung rückgängig machen",
+    "Deshacer el último ajuste",
+    "Отменить последнюю настройку",
+    "Annulla l’ultima regolazione",
+    "最後の調整を元に戻す"
+  ],
+  "Pièces fixes masquées": [
+    "Fixed parts hidden",
+    "固定部件已隐藏",
+    "Feste Teile ausgeblendet",
+    "Piezas fijas ocultas",
+    "Неподвижные детали скрыты",
+    "Parti fisse nascoste",
+    "固定部品は非表示です"
+  ],
+  "Mouvement non prêt : revenez à Mouvement, choisissez la direction et la course, puis validez.": [
+    "Movement not ready: return to Movement, choose the direction and travel, then confirm.",
+    "运动尚未就绪：返回“运动”，选择方向和行程，然后确认。",
+    "Bewegung noch nicht bereit: Gehen Sie zu Bewegung zurück, wählen Sie Richtung und Hub und bestätigen Sie.",
+    "Movimiento no preparado: vuelva a Movimiento, elija dirección y recorrido y confirme.",
+    "Движение не готово: вернитесь к шагу «Движение», выберите направление и ход, затем подтвердите.",
+    "Movimento non pronto: torna a Movimento, scegli direzione e corsa, poi conferma.",
+    "動きが未設定です：「動き」に戻り、方向とストロークを選んで確定してください。"
+  ],
+  "Cadrage de la scène": [
+    "Scene framing",
+    "场景取景",
+    "Szenenausschnitt",
+    "Encuadre de la escena",
+    "Кадрирование сцены",
+    "Inquadratura della scena",
+    "シーンの表示範囲"
+  ],
+  "Vue d’ensemble": [
+    "Overview",
+    "整体视图",
+    "Gesamtansicht",
+    "Vista general",
+    "Общий вид",
+    "Vista d’insieme",
+    "全体表示"
+  ],
+  "Cadrer la pièce mobile": [
+    "Frame the moving part",
+    "聚焦移动部件",
+    "Bewegliches Teil einrahmen",
+    "Encuadrar la pieza móvil",
+    "Показать подвижную деталь крупно",
+    "Inquadra la parte mobile",
+    "可動部品を表示"
+  ],
+  "Cadrer le capteur": [
+    "Frame the sensor",
+    "聚焦传感器",
+    "Sensor einrahmen",
+    "Encuadrar el sensor",
+    "Показать датчик крупно",
+    "Inquadra il sensore",
+    "センサーを表示"
+  ],
+  "Cadrer l’aimant": [
+    "Frame the magnet",
+    "聚焦磁铁",
+    "Magnet einrahmen",
+    "Encuadrar el imán",
+    "Показать магнит крупно",
+    "Inquadra il magnete",
+    "磁石を表示"
+  ],
+  "Aperçu de la position": [
+    "Position preview",
+    "位置预览",
+    "Positionsvorschau",
+    "Vista previa de la posición",
+    "Предпросмотр положения",
+    "Anteprima della posizione",
+    "位置のプレビュー"
+  ],
+  "Choisir le placement avec Standex": [
+    "Choose the placement with Standex",
+    "与 Standex 共同选择安装位置",
+    "Platzierung gemeinsam mit Standex wählen",
+    "Elegir la ubicación con Standex",
+    "Выбрать размещение вместе со Standex",
+    "Scegli il posizionamento con Standex",
+    "Standex と取り付け位置を選ぶ"
+  ],
+  "Modèle et résultat": [
+    "Model and result",
+    "模型与结果",
+    "Modell und Ergebnis",
+    "Modelo y resultado",
+    "Модель и результат",
+    "Modello e risultato",
+    "モデルと結果"
+  ],
+  "Étape de préparation": [
+    "Preparation step",
+    "准备步骤",
+    "Vorbereitungsschritt",
+    "Paso de preparación",
+    "Этап подготовки",
+    "Fase di preparazione",
+    "準備ステップ"
   ]
 }

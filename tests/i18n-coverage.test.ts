@@ -98,7 +98,7 @@ describe("Couverture des langues de l'interface", () => {
     // + 13 entrées : configuration câble/connecteur déplacée à l'étape « Résultat » et récapitulatif en lecture seule.
     // + 25 entrées : revue indépendante du lot 1 de l'atelier (import transactionnel, attaches, axes, saisies refusées, démos).
     // + 50 entrées : lot 2 de l'atelier (animations du fichier, raisons de refus, repères de mesure, bras animé).
-    expect(Object.keys(dictionary)).toHaveLength(3_566);
+    expect(Object.keys(dictionary)).toHaveLength(3_585);
     const broken = Object.entries(dictionary).filter(
       ([, v]) => v.length !== 7 || v.some((x) => typeof x !== "string" || x.trim() === ""),
     );

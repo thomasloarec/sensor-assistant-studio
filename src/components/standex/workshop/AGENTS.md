@@ -9,3 +9,5 @@
 - Lecture : avance au temps écoulé (`machine-playback.ts`) sur la durée du clip CHARGÉ, jamais celle du JSON, pour que les clips très courts ou très longs gardent leur durée réelle ; le curseur de cycle d'un clip ne dépend que du fichier et du clip pris en charge.
 - Commutation illustrative : bornes de la ligne nominale publiée de la classe choisie (`illustrationSourceFor`), sinon plage du guide choisie, sinon repli 15/18 signalé ; seules ouvert↔fermé sont des événements, pour qu'aucune sortie d'indéterminé ne passe pour un enclenchement.
 - Import : un refus d'échelle (`code: "scale"`) ouvre un nouvel essai avec unités choisies ; réimporter le même fichier absent relance le chargement (`assetEpoch`) sans toucher au montage.
+- Camera framing and simplified node display use `machine-view.ts`; paths remain unchanged, framing follows current support poses, and only explicit camera commands reset zoom.
+- The stage owns its available height in embedded and standalone modes; only the controls column scrolls, while guide content and the node tree stay in that same scrolling flow.

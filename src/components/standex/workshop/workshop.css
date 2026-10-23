@@ -848,7 +848,7 @@
   display: flex;
   gap: 15px;
   flex-wrap: wrap;
-  margin-top: 12px;
+  margin-top: 0;
   font: var(--mw-t-dense);
   color: var(--muted-foreground);
 }
@@ -2095,13 +2095,16 @@
 .mw.mw-stage {
   display: flex;
   flex-direction: column;
-  /* Pas de zone à défilement interne : la page défile, ou rien ne défile. */
-  overflow: visible;
+  block-size: 100dvh;
+  min-block-size: 0;
+  overflow: hidden;
   padding-bottom: 0;
 }
 .mw-stage .mw-stage-grid {
   display: grid;
-  grid-template-columns: 320px minmax(0, 1fr);
+  grid-template-columns: clamp(360px, 22vw, 400px) minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
+  overflow: hidden;
   gap: 16px;
   padding: 16px;
   flex: 1 1 auto;
@@ -2112,11 +2115,13 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  /* Aperçu autonome : le panneau plein écran borne séparément cette colonne. */
-  overflow: visible;
+  min-height: 0;
+  min-width: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
   max-height: none;
-  padding: 16px;
-  padding-inline-end: 20px;
+  padding: 12px;
 }
 .mw-stage .mw-controls-links {
   margin-top: auto;
@@ -2132,11 +2137,9 @@
 }
 .mw-stage .mw-canvas {
   flex: 1 1 auto;
-  min-height: 420px;
-  /* La scène reste une fenêtre de la taille de l'écran. Sans ce plafond, ouvrir
-     les réglages avancés allongeait la colonne de gauche, la scène s'étirait à
-     plusieurs milliers de pixels et le couple sortait du cadre visible. */
-  max-height: calc(100svh - 240px);
+  min-height: 160px;
+  height: auto;
+  max-height: none;
 }
 /* ---- Bandeau de verdict ---- */
 .mw-verdict-bar {
@@ -2461,18 +2464,28 @@
 @media (max-width: 1023px) {
   .mw-stage .mw-stage-grid {
     grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    padding: 8px;
+    gap: 8px;
   }
   /* Sur une seule colonne, le verdict et la scène restent en tête : c'est la
      réponse à la question posée. Les réglages viennent juste après, dans le
      même ordre de lecture que sur grand écran. */
   .mw-stage .mw-main {
     order: 1;
+    grid-column: 1;
+    grid-row: 1;
+    gap: 6px;
   }
   .mw-stage .mw-controls {
     order: 2;
+    grid-column: 1;
+    grid-row: 2;
   }
   .mw-stage .mw-canvas {
-    min-height: 340px;
+    flex: none;
+    height: clamp(160px, 22dvh, 250px);
+    min-height: 160px;
   }
 }
 @media (max-width: 639px) {
@@ -2572,12 +2585,12 @@
   justify-content: flex-end;
   align-items: center;
   gap: 1rem;
-  padding: 1rem;
+  padding: 6px;
   background: var(--surface);
 }
 .mw-primary-actions .mw-file-label {
   min-height: 44px;
-  padding: 0.75rem 1rem;
+  padding: 6px 12px;
   box-shadow: var(--e-1);
   border-radius: var(--r-sm);
   color: var(--foreground);
@@ -2650,30 +2663,77 @@
   }
 }
 
-/* September feedback: independent control and scene scrolling. */
+/* Model/result actions fold on narrow screens, camera commands stay direct. */
+.mw-guide-step-select { display: none; }
+.mw-primary-menu { display: contents; }
+.mw-primary-menu > summary { display: none; }
+.mw-primary-menu > .mw-primary-actions { display: flex; }
+.mw-camera-select { display: none; }
+.mw-stage .mw-cycle { min-block-size: 0; padding: 6px 10px; gap: 4px; }
+.mw-stage .mw-cycle .mw-legend { margin-top: 0; }
+/* The client panel lends its real available height to the same stage layout. */
 .workspace-panel-bare > div {
   height: 100%;
   min-height: 0;
 }
 .workspace-panel-bare .mw.mw-stage {
   height: 100%;
-  min-height: 0;
-  overflow: hidden;
 }
-.workspace-panel-bare .mw-stage-grid {
-  overflow: hidden;
+.mw-stage .mw-footer,
+.mw-stage > .mw-summary,
+.mw-stage > .mw-advanced {
+  flex: 0 0 auto;
+  margin: 0;
+  padding: 4px 16px;
+  font: var(--mw-t-dense);
 }
-.workspace-panel-bare .mw-stage .mw-controls,
-.workspace-panel-bare .mw-stage .mw-main {
-  min-height: 0;
-  overflow-y: auto;
-  overscroll-behavior: contain;
+.mw-stage .mw-footer p { margin: 0; }
+.mw-stage > .mw-summary[open],
+.mw-stage > .mw-advanced[open] {
+  max-height: 35dvh;
+  overflow: auto;
 }
-.workspace-panel-bare .mw-stage .mw-canvas {
-  flex: 1 1 auto;
-  min-height: 280px;
+.mw-stage .mw-camera-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  flex: 0 0 auto;
+}
+.mw-stage .mw-camera-actions .mw-button {
+  background: var(--popover);
+  color: var(--popover-foreground);
+  font: var(--mw-t-dense);
   height: auto;
-  max-height: none;
+  min-height: 44px;
+  white-space: normal;
+  padding: 6px 10px;
+}
+.mw-imported .mw-verdict-bar .notice-warning {
+  margin: 4px 0 0;
+  padding: 4px 8px;
+  font: var(--mw-t-dense);
+}
+@media (max-width: 1023px) {
+  .mw-guide-step-select { display: grid; gap: 4px; position: sticky; top: -12px; z-index: 2; background: var(--popover); color: var(--popover-foreground); padding: 4px; }
+  .mw-guide .mw-guide-steps { display: none; }
+  .mw-imported .mw-verdict-bar-text > .t-title-s { display: none; }
+  .mw-stage .mw-cycle .mw-legend { display: none; }
+  .mw-stage .mw-scene-tools { inset-block-start: 4px; inset-block-end: auto; }
+  .mw-stage .mw-scene-tools > :first-child:not(:last-child) { margin-inline-start: 0; }
+  .mw-stage .mw-primary-menu { display: block; flex: 0 0 auto; position: relative; z-index: 5; }
+  .mw-stage .mw-primary-menu > summary { display: flex; align-items: center; min-height: 44px; padding: 6px 12px; background: var(--popover); color: var(--popover-foreground); border-radius: var(--r-sm); cursor: pointer; }
+  .mw-stage .mw-primary-menu:not([open]) > .mw-primary-actions { display: none; }
+  .mw-stage .mw-primary-menu[open] > .mw-primary-actions { position: absolute; inset-inline: 0; background: var(--popover); box-shadow: var(--e-4); }
+  .mw-stage .mw-camera-select { display: block; min-height: 44px; margin: 0; }
+  .mw-stage .mw-camera-actions > .mw-button { display: none; }
+  .mw-imported .mw-primary-actions { gap: 4px; }
+  .mw-imported .mw-primary-actions .mw-button { font: var(--mw-t-dense); }
+  .mw-imported .mw-camera-actions { gap: 4px; }
+  .mw-imported .mw-camera-actions > .mw-button { flex: 1 1 40%; }
+  .mw-imported .mw-verdict-bar { padding: 6px 8px; min-block-size: 0; }
+  .mw-imported .mw-verdict-bar-text > .t-caption { display: none; }
+  .mw-stage > .mw-summary { padding-block: 0; }
+  .mw-stage .mw-footer { display: none; }
 }
 .mw .mw-display-body {
   background: var(--standex-deep);
@@ -2702,41 +2762,20 @@
   overflow-y: auto;
   overscroll-behavior: contain;
 }
-@media (max-width: 1023px) {
-  .workspace-panel-bare .mw-stage-grid {
-    display: flex;
-    flex-direction: column;
-    overflow-y: auto;
-  }
-  .workspace-panel-bare .mw-stage .mw-main {
-    flex-shrink: 0;
-    overflow: visible;
-  }
-  .workspace-panel-bare .mw-stage .mw-controls {
-    flex-shrink: 0;
-    max-height: 45dvh;
-    overflow-y: auto;
-  }
-  .workspace-panel-bare .mw-stage .mw-canvas {
-    flex: none;
-    height: 55dvh;
-    min-height: 340px;
-  }
-}
-
 /* Parcours guidé du modèle importé : une étape ouverte à la fois, scène visible. */
 .mw-guide {
   display: grid;
   gap: 12px;
-  padding: 14px;
-  border-radius: var(--r-lg);
-  background: var(--surface);
-  box-shadow: var(--e-1);
+  padding: 0;
+  background: transparent;
 }
 .mw-guide-steps {
   gap: 4px;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(104px, 1fr));
+  position: sticky;
+  inset-block-start: -12px;
+  z-index: 2;
   margin: 0;
   padding: 4px;
   list-style: none;
@@ -2771,8 +2810,8 @@
 .mw-guide-body {
   display: grid;
   gap: 10px;
-  max-height: min(52vh, 560px);
-  overflow: auto;
+  max-height: none;
+  overflow: visible;
 }
 .mw-guide-row,
 .mw-guide-nav {
@@ -2814,8 +2853,7 @@
 .mw-part-tree {
   display: grid;
   gap: 2px;
-  max-height: 260px;
-  overflow: auto;
+  overflow: visible;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -2829,8 +2867,9 @@
   min-height: 44px;
   justify-content: space-between;
   gap: 8px;
-  align-items: center;
-  padding: 0 10px;
+  align-items: flex-start;
+  flex-direction: column;
+  padding: 8px 10px;
   border: 0;
   border-radius: var(--r-sm);
   background: transparent;
@@ -2921,9 +2960,14 @@
 .mw-guide-body > * {
   min-width: 0;
 }
-.mw-guide-body {
-  overflow-x: hidden;
+.mw-guide :where(button, summary, p, span) {
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
+.mw-guide button { height: auto; min-height: 44px; }
+.mw-guide p { margin-block: 4px; }
+.mw-guide .mw-select-label { font: var(--mw-t-body); }
+.mw-isolation { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
 .mw-guide input[type="number"],
 .mw-guide input[type="range"],
 .mw-guide select {

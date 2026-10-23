@@ -1,3 +1,6 @@
+import { machineFrame } from "@/lib/standex/machine-view";
+import type { MachineFocus } from "@/lib/standex/machine-view";
+import { MachineCamera } from "./machine-camera";
 import { housingYawDeg } from "@/lib/standex/housing-pose";
 import { magnetSize } from "@/lib/standex/magnetic-workshop";
 import { msg, t } from "@/lib/i18n/core";
@@ -529,7 +532,7 @@ export default function MachineScene({
   config: WorkshopConfig;
   sample: CycleSample;
   view: "3d" | "top";
-  focus: "assembly" | "sensor";
+  focus: MachineFocus;
   resetEpoch: number;
   tool: MachineTool;
   transformMode: "translate" | "rotate";
@@ -549,12 +552,11 @@ export default function MachineScene({
   /** Prévisualisation seule : jamais enregistrée dans le montage. */
   ghost?: GhostPose | null | undefined;
 }) {
-  const m = config.machine!,
-    extent = Math.max(...asset.size),
+  const m = config.machine;
+  if (!m) return null;
+  const extent = Math.max(...asset.size),
     sensor = sensorById(config.sensorId);
-  const target: Vec3 =
-    focus === "sensor" ? componentPose(m, "sensor", cycleU(m, sample.t)).position : asset.center;
-  const distance = focus === "sensor" ? Math.max(45, sensor.body[0] * 2.5) : extent * 1.35;
+  const frame = machineFrame(asset, m, focus, cycleU(m, sample.t), [...sensor.body], magnetSize(config));
   return (
     <Canvas
       camera={{ position: [440, 360, 530], near: 0.1, far: 100000, fov: 43 }}
@@ -599,15 +601,14 @@ export default function MachineScene({
       <OrbitControls
         makeDefault
         enableRotate={view === "3d"}
-        target={target}
         minDistance={8}
-        maxDistance={extent * 8}
+        maxDistance={Math.max(500, extent * 8)}
       />
-      <CameraRig
-        target={target}
-        distance={distance}
+      <MachineCamera
+        target={frame.target}
+        radius={frame.radius}
         view={view}
-        resetKey={[m.assetKey, m.unitScale, config.sensorId, focus, view, resetEpoch].join(":")}
+        command={[m.assetKey, m.unitScale, config.sensorId, focus, view, resetEpoch].join(":")}
       />
     </Canvas>
   );
