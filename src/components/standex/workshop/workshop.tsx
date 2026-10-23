@@ -2128,6 +2128,83 @@ export default function MagneticWorkshop({
           {machine && activationDistanceControl}
           {!machine && playButton}
           {advancedSettings}
+      {!embedded ? (
+        <details className="mw-advanced">
+          <summary>{t("Données et outils avancés")}</summary>
+          <StudioV2
+            config={config}
+            onApply={update}
+            initialStudy={initialStudy}
+            onStudyChange={onStudyChange}
+            dossierId={dossierId}
+            revision={revision}
+          />
+        </details>
+      ) : null}
+      <footer className="mw-footer">
+        <p>
+          {/* Une seule phrase : la provenance des distances et la limite qui va
+              avec. L'état d'enregistrement, lui, vit dans la barre du panneau. */}
+          {/* Sans distance publiée pour ce couple, on ne prétend PAS en afficher :
+              le pied de page dit alors que la commutation est illustrative. */}
+          {/* Avec une ligne nominale publiée pour la classe choisie mais une
+              simulation toujours illustrative, le pied de page nomme cette
+              source sans la présenter comme caractéristique du montage. */}
+          {reference && !illustrative ? (
+            t(
+              "Distances typiques publiées par Standex pour ce couple, dans cette position. À confirmer par un essai dans votre application.",
+            )
+          ) : reference && illustration.kind === "nominal" ? (
+            t(
+              "La commutation illustrative utilise les distances nominales publiées pour la classe choisie. Ces valeurs ne caractérisent pas votre montage et doivent être validées par des essais.",
+            )
+          ) : reference && guideRangesAvailable ? (
+            t(
+              "Le guide d'activation publie des plages de mesure pour ce couple, mais aucun seuil de fermeture ni de réouverture : la commutation montrée est illustrative et doit être validée par des essais.",
+            )
+          ) : reference ? (
+            t(
+              "Aucune distance publiée pour ce couple : la commutation montrée est illustrative et doit être validée par des essais.",
+            )
+          ) : (
+            <>
+              <strong>{t("Illustration pédagogique.")}</strong> {t(EDUCATION_NOTE)}
+            </>
+          )}{" "}
+          <a
+            href={
+              guideDemoRange
+                ? ACTIVATION_GUIDE.source.url
+                : reference
+                  ? DISTANCE_SOURCE
+                  : INTERACTION_SOURCE
+            }
+            target="_blank"
+            rel="noreferrer"
+          >
+            {t("Source Standex ↗")}
+          </a>
+        </p>
+      </footer>
+
+      <details className="mw-summary">
+        <summary>{t("Résumé du montage et hypothèses")}</summary>
+        <pre>{t(summary)}</pre>
+        {!embedded ? (
+          <p>
+            {msg(
+              "Version du calcul : {0}. La scène et ses résultats sont recalculés à chaque modification.",
+              [MODEL_VERSION],
+            )}
+          </p>
+        ) : null}
+        <button
+          className="mw-text-button"
+          onClick={() => download("dossier-montage-magnetique.md", summary, "text/markdown")}
+        >
+          {t("Télécharger le résumé")}
+        </button>
+      </details>
         </aside>
         <section className="mw-main" aria-label={t("Simulation du montage")}>
           <details className="mw-primary-menu" open={primaryMenuOpen} onToggle={(e) => setPrimaryMenuOpen(e.currentTarget.open)}>
@@ -2491,64 +2568,6 @@ export default function MagneticWorkshop({
           </div>
         </section>
       </div>
-      {!embedded ? (
-        <details className="mw-advanced">
-          <summary>{t("Données et outils avancés")}</summary>
-          <StudioV2
-            config={config}
-            onApply={update}
-            initialStudy={initialStudy}
-            onStudyChange={onStudyChange}
-            dossierId={dossierId}
-            revision={revision}
-          />
-        </details>
-      ) : null}
-      <footer className="mw-footer">
-        <p>
-          {/* Une seule phrase : la provenance des distances et la limite qui va
-              avec. L'état d'enregistrement, lui, vit dans la barre du panneau. */}
-          {/* Sans distance publiée pour ce couple, on ne prétend PAS en afficher :
-              le pied de page dit alors que la commutation est illustrative. */}
-          {/* Avec une ligne nominale publiée pour la classe choisie mais une
-              simulation toujours illustrative, le pied de page nomme cette
-              source sans la présenter comme caractéristique du montage. */}
-          {reference && !illustrative ? (
-            t(
-              "Distances typiques publiées par Standex pour ce couple, dans cette position. À confirmer par un essai dans votre application.",
-            )
-          ) : reference && illustration.kind === "nominal" ? (
-            t(
-              "La commutation illustrative utilise les distances nominales publiées pour la classe choisie. Ces valeurs ne caractérisent pas votre montage et doivent être validées par des essais.",
-            )
-          ) : reference && guideRangesAvailable ? (
-            t(
-              "Le guide d'activation publie des plages de mesure pour ce couple, mais aucun seuil de fermeture ni de réouverture : la commutation montrée est illustrative et doit être validée par des essais.",
-            )
-          ) : reference ? (
-            t(
-              "Aucune distance publiée pour ce couple : la commutation montrée est illustrative et doit être validée par des essais.",
-            )
-          ) : (
-            <>
-              <strong>{t("Illustration pédagogique.")}</strong> {t(EDUCATION_NOTE)}
-            </>
-          )}{" "}
-          <a
-            href={
-              guideDemoRange
-                ? ACTIVATION_GUIDE.source.url
-                : reference
-                  ? DISTANCE_SOURCE
-                  : INTERACTION_SOURCE
-            }
-            target="_blank"
-            rel="noreferrer"
-          >
-            {t("Source Standex ↗")}
-          </a>
-        </p>
-      </footer>
       {catalogOpen && (
         <SensorCatalog
           selected={config.sensorId}
@@ -2560,24 +2579,7 @@ export default function MagneticWorkshop({
           }}
         />
       )}
-      <details className="mw-summary">
-        <summary>{t("Résumé du montage et hypothèses")}</summary>
-        <pre>{t(summary)}</pre>
-        {!embedded ? (
-          <p>
-            {msg(
-              "Version du calcul : {0}. La scène et ses résultats sont recalculés à chaque modification.",
-              [MODEL_VERSION],
-            )}
-          </p>
-        ) : null}
-        <button
-          className="mw-text-button"
-          onClick={() => download("dossier-montage-magnetique.md", summary, "text/markdown")}
-        >
-          {t("Télécharger le résumé")}
-        </button>
-      </details>
+
     </main>
   );
 }

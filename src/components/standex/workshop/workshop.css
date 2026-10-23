@@ -2669,7 +2669,7 @@
 .mw-autonomous > .app-header .app-header-row { padding: 6px 12px; gap: 8px; }
 .mw-autonomous > .mw-alert { margin: 0; padding: 4px 12px; font: var(--mw-t-dense); }
 .mw-autonomous > .mw-alert::before { display: none; }
-.mw-autonomous > .mw-advanced:not([open]) > summary { min-height: 44px; padding: 0; }
+
 .mw-guide-step-select { display: none; }
 .mw-primary-menu { display: contents; }
 .mw-primary-menu > summary { display: none; }
@@ -2688,20 +2688,14 @@
 .workspace-panel-bare .mw.mw-stage {
   height: 100%;
 }
-.mw-stage .mw-footer,
-.mw-stage > .mw-summary,
-.mw-stage > .mw-advanced {
-  flex: 0 0 auto;
+.mw-stage .mw-controls > :is(.mw-footer, .mw-summary, .mw-advanced) {
   margin: 0;
-  padding: 4px 16px;
+  padding: 4px 0;
   font: var(--mw-t-dense);
+  max-width: 100%;
 }
 .mw-stage .mw-footer p { margin: 0; }
-.mw-stage > .mw-summary[open],
-.mw-stage > .mw-advanced[open] {
-  max-height: 35dvh;
-  overflow: auto;
-}
+.mw-stage .mw-controls > .mw-summary pre { overflow-wrap: anywhere; }
 .mw-stage .mw-camera-actions {
   display: flex;
   flex-wrap: wrap;
@@ -2751,8 +2745,8 @@
   .mw-imported .mw-camera-actions > .mw-button { flex: 1 1 40%; }
   .mw-imported .mw-verdict-bar { padding: 6px 8px; min-block-size: 0; }
   .mw-imported .mw-verdict-bar-text > .t-caption { display: none; }
-  .mw-stage > .mw-summary { padding-block: 0; }
-  .mw-stage .mw-footer { display: none; }
+
+
 }
 .mw .mw-display-body {
   background: var(--standex-deep);
