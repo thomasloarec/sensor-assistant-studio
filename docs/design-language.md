@@ -482,6 +482,9 @@ et l'arbre n'ont plus de défilement imbriqué ni de panneau décoratif interne.
 La scène absorbe la hauteur restante, la chronologie reste en dehors du
 défilement. Sur téléphone, scène et chronologie précèdent les commandes qui
 défilent dans l'espace restant. Aucun texte n'est réduit pour gagner de la place.
+Sources, résumé et outils secondaires rejoignent le même défilement de commandes.
+Sur téléphone, les étapes et le cadrage sont des sélecteurs natifs de 44 px ;
+les actions d'import/résultat se replient dans « Modèle et résultat ».
 
 Axes X/Y/Z et course sont accessibles directement ; course nulle et mouvement
 non prêt donnent une prochaine action explicite. L'installation réaffiche les
@@ -495,6 +498,8 @@ Le cadrage suit la pose courante sans remettre le zoom manuel à zéro ; il ne
 modifie aucune pose du montage. Le support courant reste nommé et remplaçable
 dans Installation. Les couleurs, rayons, typographies et mouvements gardent
 les jetons existants et la neutralisation en mouvement réduit.
+L'en-tête autonome conserve le composant partagé avec le bloc S inversé pour
+réserver la hauteur au travail ; le verrou complet n'est jamais rétréci.
 
 - La console `/standex` ne peut être validée de bout en bout sans session staff
   et rôle attribué par le backend. Son écran d'authentification et son état

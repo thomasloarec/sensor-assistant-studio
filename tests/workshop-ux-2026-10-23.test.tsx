@@ -58,6 +58,16 @@ function Guide({ step = "motion", isolation = false }: { step?: GuideState["step
 }
 
 describe("Targeted workshop UX", () => {
+  test("entering a stroke before choosing direction never silently imposes X", () => {
+    const v = render(<Guide />);
+    const stroke = v.getByTestId("guide-stroke");
+    fireEvent.change(stroke, { target: { value: "300" } });
+    fireEvent.blur(stroke);
+    const m = JSON.parse(v.getByTestId("machine-state").textContent ?? "{}");
+    expect(m.travel).toEqual([0, 0, 0]);
+    expect(m.axisVector).toBeUndefined();
+    expect(m.motionStatus).toBe("unset");
+  });
   test("manual direction Z + 300 mm stays draft until explicit confirmation, then open/closed preview", () => {
     const v = render(<Guide />);
     fireEvent.click(v.getByTestId("guide-axis-Z"));

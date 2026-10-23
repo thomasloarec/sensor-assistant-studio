@@ -10,12 +10,22 @@ export type MachineFocus = "assembly" | "moving" | "sensor" | "magnet";
 /** Hide only meshless one-child wrappers; never rewrite paths or selection. */
 export function displayMachineNodes(asset: Pick<MachineAsset, "nodes" | "parts">, detailed: boolean): MachineNode[] {
   if (detailed) return asset.nodes;
+  const meshPaths = new Set(asset.parts.map((p) => p.path));
+  const childCounts = new Map<string, number>();
+  for (const n of asset.nodes) {
+    const parent = n.path.slice(0, n.path.lastIndexOf("/"));
+    childCounts.set(parent, (childCounts.get(parent) ?? 0) + 1);
+  }
   const visible = asset.nodes.filter((n) => {
-    const ownMesh = asset.parts.some((p) => p.path === n.path);
-    const children = asset.nodes.filter((c) => c.path.slice(0, c.path.lastIndexOf("/")) === n.path);
-    return ownMesh || children.length !== 1;
+    return meshPaths.has(n.path) || childCounts.get(n.path) !== 1;
   });
-  return visible.map((n) => ({ ...n, depth: visible.filter((p) => n.path.startsWith(p.path + "/")).length }));
+  const visiblePaths = new Set(visible.map((n) => n.path));
+  return visible.map((n) => {
+    const path = n.path.split("/");
+    let depth = 0;
+    for (let i = 1; i < path.length; i++) if (visiblePaths.has(path.slice(0, i).join("/"))) depth++;
+    return { ...n, depth };
+  });
 }
 
 export function machineFrame(asset: MachineAsset, m: MachineAssembly, focus: MachineFocus, u: number, sensorSize: Vec3, magnetSize: Vec3): { target: Vec3; radius: number } {
