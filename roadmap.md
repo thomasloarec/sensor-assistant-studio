@@ -1,10 +1,10 @@
 # Feuille de route — lot des 7 correctifs (base 12be3e3d)
 
 ## Atelier 3D — UX intégrée (23 octobre 2026)
-- [ ] Un seul défilement de commandes, scène/timeline dimensionnées dans les deux modes.
-- [ ] Mouvement explicite, isolation et arbre simplifié sans changer les identités.
-- [ ] Cadrage courant et support de placement visibles, huit langues.
-- [ ] Tests comportementaux, recette intégrée et autonome, documentation et contrôles.
+- [x] Un seul défilement de commandes, scène/timeline dimensionnées dans les deux modes.
+- [x] Mouvement explicite, isolation et arbre simplifié sans changer les identités.
+- [x] Cadrage courant et support de placement visibles, huit langues.
+- [x] Tests comportementaux, recette intégrée et autonome, documentation et contrôles.
 
 ## Atelier 3D — lot 1 du parcours modèle importé (22 octobre 2026)
 - [x] Sélection multi-pièces scène + arborescence, isoler/restaurer, monobloc expliqué.
