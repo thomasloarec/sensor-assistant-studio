@@ -2666,6 +2666,7 @@
 /* Model/result actions fold on narrow screens, camera commands stay direct. */
 /* Keep standalone chrome compact; all diagnostic text remains available. */
 .mw-autonomous > .app-header { flex: 0 0 auto; }
+.mw-autonomous > .app-header .app-header-row { padding: 6px 12px; gap: 8px; }
 .mw-autonomous > .mw-alert { margin: 0; padding: 4px 12px; font: var(--mw-t-dense); }
 .mw-autonomous > .mw-alert::before { display: none; }
 .mw-autonomous > .mw-advanced:not([open]) > summary { min-height: 44px; padding: 0; }
@@ -2675,7 +2676,10 @@
 .mw-primary-menu > .mw-primary-actions { display: flex; }
 .mw-camera-select { display: none; }
 .mw-stage .mw-cycle { min-block-size: 0; padding: 6px 10px; gap: 4px; }
-.mw-stage .mw-cycle .mw-legend { margin-top: 0; }
+.mw-stage .mw-cycle .mw-legend { margin-top: 0; position: absolute; inset-inline-end: 8px; inset-block-start: 0; }
+.mw-stage .mw-cycle { position: relative; padding-bottom: 6px; }
+.mw-stage .mw-cycle .mw-legend > span { display: none; }
+.mw-stage .mw-cycle-head { padding-inline-end: 44px; }
 /* The client panel lends its real available height to the same stage layout. */
 .workspace-panel-bare > div {
   height: 100%;
@@ -2714,6 +2718,8 @@
   padding: 6px 10px;
 }
 .mw-imported .mw-verdict-bar-text > p { margin-block: 2px; }
+.mw-imported .mw-verdict-bar { padding: 6px 12px; }
+.mw-imported .mw-verdict-bar .t-caption { margin: 0; }
 .mw-imported .mw-verdict-bar .notice-warning {
   margin: 4px 0 0;
   padding: 4px 8px;
@@ -2721,7 +2727,6 @@
 }
 @media (max-width: 1023px) {
   .mw-autonomous > .app-header .app-header-row { gap: 4px; padding: 6px 8px; }
-  .mw-autonomous > .app-header .app-header-row > .brand-logo,
   .mw-autonomous > .app-header .app-header-row > .app-header-tool { display: none; }
   .mw-autonomous > .app-header .app-header-back { min-width: 44px; padding: 6px; }
   .mw-autonomous > .app-header .app-header-back span { display: none; }
