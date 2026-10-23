@@ -2785,7 +2785,10 @@
 .mw-guide-steps {
   gap: 4px;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(104px, 1fr));
+  /* Deux colonnes : les cinq libellés (« Installation » en particulier)
+     restent entiers dès la sidebar minimale de 360 px, sans troncature ni
+     police réduite. Une étape orpheline occupe toute la largeur. */
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   position: sticky;
   inset-block-start: -12px;
   z-index: 2;
@@ -2796,6 +2799,7 @@
   background: var(--popover);
   box-shadow: var(--e-2);
 }
+.mw-guide-steps button:nth-child(odd):last-child { grid-column: 1 / -1; }
 .mw-guide-steps button {
   width: 100%;
   min-height: 44px;

@@ -65,6 +65,13 @@ describe("barre et disposition", () => {
   test("la scène utilise la hauteur restante sans plafond rigide", () => {
     expect(CSS).toMatch(/\.mw-stage \.mw-canvas \{[^}]*flex: 1 1 auto[^}]*max-height: none/s);
   });
+  test("les cinq étapes du parcours tiennent sur deux colonnes entières", () => {
+    // « Installation » ne se coupe plus en deux : deux colonnes, jamais trois.
+    expect(CSS).toMatch(/\.mw-guide-steps \{[^}]*grid-template-columns: repeat\(2, minmax\(0, 1fr\)\)/s);
+    expect(CSS).not.toContain("minmax(104px, 1fr)");
+    // Une cinquième étape seule occupe toute la largeur.
+    expect(CSS).toContain(".mw-guide-steps button:nth-child(odd):last-child { grid-column: 1 / -1; }");
+  });
 });
 
 describe("bandeau de verdict", () => {
