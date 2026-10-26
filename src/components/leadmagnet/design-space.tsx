@@ -4610,7 +4610,9 @@ export function DesignSpace({
       onConfirmWithStandex={() => setTab("revue")}
       // Le bouton principal d'un résultat documenté mène d'abord à la
       // configuration ci-dessous, qui porte « Continuer avec Standex ».
-      onContinue={() =>
+      // Capteur PCB : aucune configuration à faire, la section est masquée ;
+      // le bouton principal mène donc directement à Standex.
+      onContinue={pcbSelected ? undefined : () =>
         document
           .getElementById("section-configuration")
           ?.scrollIntoView({ behavior: "smooth", block: "start" })
@@ -4627,7 +4629,7 @@ export function DesignSpace({
         if (card) testPair(card);
       }}
     />
-    {configureSection}
+    {pcbSelected ? null : configureSection}
     </div>
   );
 
