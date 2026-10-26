@@ -1159,7 +1159,7 @@ export default function MachineGuide({
                 onCommit={(v) => {
                   const p = [...(target === "sensor" ? m.sensorPosition : m.magnetPosition)] as Vec3;
                   p[i] = v;
-                  onChange(target === "sensor" ? { sensorPosition: p, sensorAttach: undefined } : { magnetPosition: p, magnetAttach: undefined });
+                  onChange((target === "sensor" ? { sensorPosition: p, sensorAttach: undefined } : { magnetPosition: p, magnetAttach: undefined }) as Partial<MachineAssembly>);
                 }}
               />
             ))}

@@ -70,6 +70,10 @@ export interface GuideOverlay {
   onPickPart?: ((path: string) => void) | undefined;
   onPickPoint?: ((hit: SceneHit) => void) | undefined;
   onPlace?: ((which: "sensor" | "magnet", hit: SceneHit) => void) | undefined;
+  /** « Centrer dans un trou », second clic : plan verrouillé tel qu'affiché.
+   *  Tout clic devient un rayon coupé par CE plan, jamais un raycast des pièces. */
+  holePlane?: { point: Vec3; normal: Vec3; radius: number } | null | undefined;
+  onHoleRay?: ((ray: { origin: Vec3; direction: Vec3 }) => void) | undefined;
 }
 
 /** Tracé de câble : entièrement optionnel. Sans cette prop, la scène est inchangée. */
@@ -113,6 +117,55 @@ function CableOverlay({ routing }: { routing: CableRouting }) {
         );
       })}
     </group>
+  );
+}
+
+/** Prévisualisation du plan verrouillé : disque translucide qui capte aussi les
+ *  clics dans le vide du trou (même calcul rayon/plan). Le repère de centre
+ *  survolé ne capte jamais le pointeur. */
+function HolePlanePreview({
+  plane,
+  onRay,
+}: {
+  plane: { point: Vec3; normal: Vec3; radius: number };
+  onRay: (origin: Vec3, direction: Vec3) => void;
+}) {
+  const [hover, setHover] = useState<Vec3 | null>(null);
+  const q = useMemo(
+    () => new Quaternion().setFromUnitVectors(new Vector3(0, 0, 1), new Vector3(...plane.normal).normalize()),
+    [plane.normal],
+  );
+  const noRaycast = () => null;
+  return (
+    <>
+      <mesh
+        position={plane.point}
+        quaternion={q}
+        renderOrder={10}
+        onPointerMove={(e) => setHover(e.point.toArray() as Vec3)}
+        onPointerOut={() => setHover(null)}
+        onClick={(e) => {
+          if (e.delta > 4) return;
+          e.stopPropagation();
+          onRay(e.ray.origin.toArray() as Vec3, e.ray.direction.toArray() as Vec3);
+        }}
+      >
+        <circleGeometry args={[plane.radius, 48]} />
+        <meshBasicMaterial color="#f0b429" transparent opacity={0.16} depthWrite={false} side={DoubleSide} />
+      </mesh>
+      {hover && (
+        <group position={hover} quaternion={q}>
+          <mesh raycast={noRaycast}>
+            <ringGeometry args={[1.2, 1.8, 24]} />
+            <meshBasicMaterial color="#f0b429" side={DoubleSide} depthTest={false} />
+          </mesh>
+          <mesh raycast={noRaycast}>
+            <sphereGeometry args={[0.5, 10, 10]} />
+            <meshBasicMaterial color="#f0b429" depthTest={false} />
+          </mesh>
+        </group>
+      )}
+    </>
   );
 }
 
@@ -285,6 +338,13 @@ function Assembly({
       if (path && sample.t === 0) guide?.onPickPart?.(path);
       return;
     }
+    if (tool === "pick" && guide?.holePlane) {
+      guide.onHoleRay?.({
+        origin: event.ray.origin.toArray() as Vec3,
+        direction: event.ray.direction.toArray() as Vec3,
+      });
+      return;
+    }
     if (tool === "pick") {
       const hit = sample.t === 0 ? hitOf(event, path, moving) : null;
       if (hit) guide?.onPickPoint?.(hit);
@@ -387,7 +447,9 @@ function Assembly({
           position={machine.sensorPosition}
           rotation={machine.sensorRotation.map((n) => (n * Math.PI) / 180) as Vec3}
           onClick={(e) =>
-            tool === "cable" ? place(e, machine.sensorMount === "moving") : e.stopPropagation()
+            tool === "cable" || (tool === "pick" && guide?.holePlane)
+              ? place(e, machine.sensorMount === "moving")
+              : e.stopPropagation()
           }
         >
           <group rotation={[0, housingYawDeg(model.id) * Math.PI / 180, 0]}><Body model={model} xray={xray} showCable={!routing?.points.length} />
@@ -452,6 +514,7 @@ function Assembly({
           }}
         />
       )}
+      {guide?.holePlane && tool === "pick" && <HolePlanePreview plane={guide.holePlane} onRay={(o, d) => guide.onHoleRay?.({ origin: o, direction: d })} />}
       {markerPoints.map((p, i) => (
         <mesh key={"marker" + i} position={p}>
           <sphereGeometry args={[1.8, 12, 12]} />
