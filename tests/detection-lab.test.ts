@@ -1,5 +1,6 @@
 /** Laboratoire de détection reed — noyau pur. Aucune assertion ne fige un accord
  * physique : on teste invariances, seuil partagé, falsification et domaine. */
+import { createHash } from "node:crypto";
 import { paletteFromCss } from "@/lib/detection-lab/report";
 import { describe, expect, test } from "bun:test";
 import { cylinderField, cylinderAxialMt, dipoleFieldMt, cel } from "../src/lib/detection-lab/field";
@@ -22,7 +23,25 @@ describe("données et conversion du moment", () => {
     const d = formData as { rows: unknown[]; source: { sha256: string } };
     expect(d.rows).toHaveLength(96);
     expect(d.source.sha256).toBe("711bc6f75bec192fc6765dd6e299f2cdd322bb49ec62880c486b16a57b926f8f");
-    expect(readFileSync("src/data/detection-lab/brochure-form-rows.json", "utf8")).toBe(readFileSync("/mnt/user-uploads/brochure-form-rows.json", "utf8"));
+    // Empreinte stable, indépendante des fins de ligne et de l'indentation : SHA-256 du JSON canonique
+    // (clés d'objets triées récursivement, ordre des tableaux conservé, JSON.stringify sans espaces).
+    // Valeur relevée sur la transcription versionnée, identique à celle de la pièce jointe d'origine.
+    const canon = (v: unknown): string => Array.isArray(v) ? `[${v.map(canon).join(",")}]`
+      : v && typeof v === "object" ? `{${Object.keys(v).sort().map((k) => `${JSON.stringify(k)}:${canon((v as Record<string, unknown>)[k])}`).join(",")}}`
+      : JSON.stringify(v);
+    const text = readFileSync("src/data/detection-lab/brochure-form-rows.json", "utf8").replace(/\r\n/g, "\n");
+    expect(createHash("sha256").update(canon(JSON.parse(text))).digest("hex")).toBe("52c2ac988b2696ebd87675346c37230ff172bc35f53d0632c89be23246e0fc3b");
+    // Contenu et provenance : 2 reeds × 6 classes × 8 aimants, 4 approches, bornes brutes conservées.
+    const rows = (formData as unknown as { rows: { page: number; reedLabel: string; class: string; magnetLabel: string; momentRaw: string; distances: Record<string, { upRaw: string | null; toRaw: string | null }> }[] }).rows;
+    expect(new Set(rows.map((r) => r.reedLabel)).size).toBe(2);
+    expect(new Set(rows.map((r) => r.class)).size).toBe(6);
+    expect(new Set(rows.map((r) => r.magnetLabel)).size).toBe(8);
+    expect(new Set(rows.map((r) => `${r.reedLabel}|${r.class}|${r.magnetLabel}`)).size).toBe(96);
+    expect(rows.every((r) => Number.isInteger(r.page) && r.page >= 1 && r.page <= 40 && /moment/i.test(r.momentRaw))).toBe(true);
+    expect(rows.every((r) => ["D1", "D3", "D4", "D5"].every((k) => k in r.distances))).toBe(true);
+    expect(rows.reduce((n, r) => n + Object.keys(r.distances).length * 2, 0)).toBe(768);
+    expect(rows[0]!.distances.D1!.upRaw).toBe("10.8");
+    expect((formData as { source: { url: string } }).source.url).toContain("brochure-reed-sensor-activation-guide.pdf");
   });
   test("m = q·1e-8/μ0 : SmCo ≈ 0.0572958, N45 ≈ 0.2450986 A·m²", () => {
     expect(SMCO.momentAm2).toBeCloseTo(0.0572958, 6);
