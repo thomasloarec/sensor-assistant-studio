@@ -27,7 +27,8 @@ export interface Attachment {
   flip: boolean;
   /** Traversant : référence de la profondeur. */
   depthRef: "collar" | "tip";
-  axisSource: "face" | "two-points" | "manual";
+  /** `plane-centre` : centre désigné par l'utilisateur dans le plan de la face d'entrée (jamais détecté). */
+  axisSource: "face" | "two-points" | "manual" | "plane-centre";
 }
 export const ATTACH_LIMIT_MM = 500;
 
@@ -97,7 +98,7 @@ export function parseAttachment(value: unknown): Attachment | null {
   if (Math.abs(x["spinDeg"] as number) > 360) return null;
   if (typeof x["flip"] !== "boolean") return null;
   if (!["collar", "tip"].includes(x["depthRef"] as string)) return null;
-  if (!["face", "two-points", "manual"].includes(x["axisSource"] as string)) return null;
+  if (!["face", "two-points", "manual", "plane-centre"].includes(x["axisSource"] as string)) return null;
   return {
     kind: x["kind"] as MountKind,
     support: x["support"] as "fixed" | "moving",
