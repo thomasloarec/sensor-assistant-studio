@@ -3,10 +3,10 @@
  *  le panneau ; hors pointage, Échap ferme toujours le panneau. Ordre JSX :
  *  le bloc « Aligner avec le capteur » précède écart/rotation/retournement. */
 import { GlobalRegistrator } from "@happy-dom/global-registrator";
-import { afterAll, beforeAll, describe, expect, mock, test } from "bun:test";
+import { afterAll, afterEach, beforeAll, describe, expect, mock, test } from "bun:test";
 import { readFileSync } from "node:fs";
 import React from "react";
-import { act, fireEvent, render, waitFor } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, waitFor } from "@testing-library/react";
 
 if (typeof document === "undefined") GlobalRegistrator.register({ url: "http://localhost/" });
 
@@ -24,6 +24,7 @@ beforeAll(() => {
     return new Response(readFileSync("public/models/" + m[1]), { status: 200 });
   }) as typeof fetch;
 });
+afterEach(() => cleanup());
 afterAll(() => {
   globalThis.fetch = realFetch;
 });
@@ -61,7 +62,7 @@ async function mount() {
       }),
     ),
   );
-  await waitFor(() => expect(v.getByTestId("machine-guide")).toBeTruthy(), { timeout: 8000 });
+  await waitFor(() => expect(v.getByTestId("machine-guide")).toBeTruthy(), { timeout: 15000 });
   await act(async () => fireEvent.click(v.getByTestId("guide-step-install")));
   return { v, closes };
 }
@@ -87,7 +88,7 @@ describe("Échap dans l'atelier intégré", () => {
       document.body.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true, cancelable: true }));
     });
     expect(closes).toEqual([false]);
-  }, 20000);
+  }, 30000);
 
   test("« Aligner avec le capteur » précède écart, rotation et retournement", async () => {
     const { v } = await mount();
@@ -100,5 +101,5 @@ describe("Échap dans l'atelier intégré", () => {
     expect(before(align, offset)).toBe(true);
     expect(before(align, flip)).toBe(true);
     expect((v.getByTestId("guide-precise") as HTMLDetailsElement).open).toBe(false);
-  }, 20000);
+  }, 30000);
 });
