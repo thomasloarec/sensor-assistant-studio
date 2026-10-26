@@ -87,8 +87,8 @@ export function suggest(magnet: PilotMagnet, pose: MagnetPose, th: Thresholds | 
 }
 
 export interface CutCell { x: number; y: number; category: Category; cause?: Cause | undefined; ratio: number | null }
-export interface CutMark { label: string; pose: MagnetPose; category: Category; cause?: Cause }
-export interface PathPoint { x: number; y: number; category: Category; cause?: Cause }
+export interface CutMark { label: string; pose: MagnetPose; category: Category; cause?: Cause | undefined }
+export interface PathPoint { x: number; y: number; category: Category; cause?: Cause | undefined }
 export interface Cut {
   id: string; title: string; magnetId: string; className: PilotClass; model: ResponseModel; convention: DistanceConvention;
   axis: Vec3; thresholds: Thresholds | null;

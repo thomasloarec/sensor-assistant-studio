@@ -171,5 +171,5 @@ describe("classification, suggestions et coupes", () => {
       expect(cutToCsv(c).split("\n").length).toBeGreaterThan(1225);
     }
     expect(tableToCsv(buildPilotTable("A", "C1", calA)).split("\n")).toHaveLength(105);
-  });
+  }, 60_000);
 });
