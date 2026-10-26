@@ -2,11 +2,13 @@
  *  Workshop. L'alignement se fait à l'instant affiché et doit le conserver
  *  jusque dans la mutation centrale (machineChange → update), ainsi qu'en
  *  annulation/rétablissement. Démo paroi, aimant sur Plaque_volet (0/1/0). */
-import "./support/happy-dom-first";
+import { GlobalRegistrator } from "@happy-dom/global-registrator";
 import { afterAll, beforeAll, describe, expect, mock, test } from "bun:test";
 import { readFileSync } from "node:fs";
 import React from "react";
 import { act, fireEvent, render, waitFor } from "@testing-library/react";
+
+if (typeof document === "undefined") GlobalRegistrator.register({ url: "http://localhost/" });
 
 
 // La scène WebGL n'est pas l'objet du test : elle est remplacée par un témoin.
@@ -85,7 +87,12 @@ describe("Aligner l'aimant dans le Workshop intégré", () => {
     const point = () => v.getAllByTestId("guide-precise-point")[0]!.textContent ?? "";
     const seek = async (pct: number) =>
       act(async () => {
-        fireEvent.change(scrubber(), { target: { value: String(pct) } });
+        // Dans ce DOM de test, React ne voit pas les événements « change » simulés :
+        // on appelle le VRAI gestionnaire du curseur (même méthode que questionnaire-render).
+        const el = scrubber();
+        Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")!.set!.call(el, String(pct));
+        const key = Object.keys(el).find((k) => k.startsWith("__reactProps$"))!;
+        (el as unknown as Record<string, { onChange: (e: { target: HTMLElement }) => void }>)[key]!.onChange({ target: el });
       });
 
     await seek(25);
