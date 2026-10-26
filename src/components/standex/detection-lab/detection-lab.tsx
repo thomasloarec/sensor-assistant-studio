@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { downloadText } from "@/lib/standex/export";
 import { summarize, ROW_GROUPS, type Calibrations, type PilotRow, type PilotClass, type RowGroup } from "@/lib/detection-lab/pilot";
-import { CUT_IDS, classifyPose, rotateZ, suggest, thresholdsFor, type Cut, type CutId, type Suggestion } from "@/lib/detection-lab/classify";
+import { CUT_IDS, classifyPose, suggest, thresholdsFor, type Cut, type CutId, type Suggestion } from "@/lib/detection-lab/classify";
 import { PILOT_MAGNETS } from "@/lib/detection-lab/magnets";
 import { PROFILE, type DistanceConvention, type ResponseModel } from "@/lib/detection-lab/profile";
 import { CATEGORY_LABEL, CAUSE_LABEL, buildReportJson, cutToCsv, cutToJson, cutToSvg, paletteFromElement, tableToCsv, type LabPalette } from "@/lib/detection-lab/report";
