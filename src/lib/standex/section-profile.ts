@@ -1,10 +1,9 @@
 import type { SensorModel } from "./sensor-catalog";
 
 /** Rendu de corps partagé par l'atelier ET les vignettes (même composant Body). */
-export type BodyKind = "mk18" | "one_flat" | "cylinder" | "extrude";
+export type BodyKind = "one_flat" | "cylinder" | "extrude";
 
 export function bodyKind(model: SensorModel): BodyKind {
-  if (model.id === "MK18") return "mk18";
   if (model.section === "one_flat") return "one_flat";
   return ["cylinder", "threaded", "pressfit", "glass"].includes(model.shape) ? "cylinder" : "extrude";
 }
