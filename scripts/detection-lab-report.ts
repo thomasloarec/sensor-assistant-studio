@@ -62,7 +62,7 @@ md.push(`# Laboratoire de détection reed — rapport de cohérence (pilote)`, "
   `- PDF : ${provenance().form.pdf.url} — SHA256 ${provenance().form.pdf.sha256}.`,
   `- Tableaux commerciaux : \`src/data/studio-v2/activation-guide.json\` (${provenance().commercial.version}, 3 004 entrées, inchangées, non toutes fiables).`,
   `- Classes AT : ${provenance().atClasses}. Disponibilité des lettres non universalisée.`,
-  `- Pull-in/drop-out distincts : ${provenance().pullInDropOut}. Les bornes up/to sont les deux bornes d'une PLAGE typique pour un aimant appairé, pas une hystérésis ni une bande de dispersion ; aucune transposition vers un autre aimant.`, "",
+  `- ${provenance().brochureBounds}`, `- ${provenance().pullInDropOutPage} Source : ${provenance().pullInDropOut}`, "",
   "Exceptions connues :", ...provenance().exceptions.map((e) => `- ${e}`), "",
   "## Conversion du moment", "",
   "Valeur q en 10⁻⁶ V·s·cm → q·10⁻⁸ Wb·m → m = q·10⁻⁸/μ0 (A·m²), μ0 = 4π·10⁻⁷. V = πr²h (m³), J_eff = μ0·m/V. Aimantation supposée uniforme et rigide (pas de démagnétisation partielle, de perméabilité du reed ni de pièce ferreuse).", "",
