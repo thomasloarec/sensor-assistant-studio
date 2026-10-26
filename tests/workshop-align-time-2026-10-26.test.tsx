@@ -87,6 +87,7 @@ describe("Aligner l'aimant dans le Workshop intégré", () => {
     const seek = async (pct: number) =>
       act(async () => {
         const el = scrubber();
+        console.log("DBG-el", el.disabled, el.outerHTML.slice(0,200), Object.keys(el).filter(k=>k.startsWith("__react")));
         Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value")!.set!.call(el, String(pct));
         el.dispatchEvent(new window.Event("input", { bubbles: true }));
         el.dispatchEvent(new window.Event("change", { bubbles: true }));
