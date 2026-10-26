@@ -86,8 +86,10 @@ describe("Aligner l'aimant dans le Workshop intégré", () => {
     const point = () => v.getAllByTestId("guide-precise-point")[0]!.textContent ?? "";
     const seek = async (pct: number) =>
       act(async () => {
-        fireEvent.input(scrubber(), { target: { value: String(pct) } });
-        fireEvent.change(scrubber(), { target: { value: String(pct) } });
+        const el = scrubber();
+        Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value")!.set!.call(el, String(pct));
+        el.dispatchEvent(new window.Event("input", { bubbles: true }));
+        el.dispatchEvent(new window.Event("change", { bubbles: true }));
       });
 
     await seek(25);
