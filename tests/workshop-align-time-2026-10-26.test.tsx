@@ -38,7 +38,7 @@ describe("Aligner l'aimant dans le Workshop intégré", () => {
     const { default: MagneticWorkshop } = await import("../src/components/standex/workshop/workshop");
     const { DEFAULT_WORKSHOP } = await import("../src/lib/standex/magnetic-workshop");
     const { DEMO_ASSEMBLIES } = await import("../src/lib/standex/machine-demos");
-    const { defaultMagnetFor } = await import("../src/lib/standex/paired-magnets");
+    const { defaultMagnetFor } = await import("../src/lib/standex/default-pairs");
     const machine = {
       ...structuredClone(DEMO_ASSEMBLIES["builtin:wall-v1"]!),
       motionStatus: "confirmed" as const,
