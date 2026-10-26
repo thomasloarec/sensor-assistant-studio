@@ -53,8 +53,8 @@ async function mount() {
       { open: true, onOpenChange: (o: boolean) => closes.push(o), title: "Atelier" },
       React.createElement(MagneticWorkshop, {
         initialConfig: {
-          ...DEFAULT_WORKSHOP, mode: "reference", sensorId: "MK04",
-          magnetModel: defaultMagnetFor("MK04"), machine,
+          ...DEFAULT_WORKSHOP, mode: "reference", sensorId: "MK14",
+          magnetModel: defaultMagnetFor("MK14"), machine,
         },
         onClose: () => {},
         onSave: () => {},
