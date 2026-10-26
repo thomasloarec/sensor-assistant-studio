@@ -2104,7 +2104,7 @@ export default function MagneticWorkshop({
         </div>
       )}
       <div className="mw-stage-grid">
-        <aside className="mw-controls">
+        <aside className="mw-controls" data-dbg={String(sample.t) + "/" + result.samples.length + "/" + progress}>
           {!machine && approachPicker}
           {!machine && activationDistanceControl}
           {machine ? (

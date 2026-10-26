@@ -91,6 +91,7 @@ describe("Aligner l'aimant dans le Workshop intégré", () => {
       });
 
     await seek(25);
+    console.log("DBG", v.container.querySelector(".mw-controls")?.getAttribute("data-dbg"));
     expect(Number(scrubber().value)).toBe(25);
     expect(shift()).toBeCloseTo(38.64, 1);
 
