@@ -8,7 +8,7 @@ import { evaluatePose, normalize, type MagnetPose } from "./pose";
 import { PROFILE, type DistanceConvention, type ResponseModel, type ReedScenario } from "./profile";
 
 export type Category = "favorable" | "variable" | "unfavorable" | "unavailable";
-export type Cause = "too_far" | "orientation";
+export type Cause = "too_far" | "orientation" | "undetermined";
 export interface Thresholds { up: number; to: number }
 export interface Classification {
   category: Category; cause?: Cause | undefined; reason?: string;
@@ -22,7 +22,6 @@ export function thresholdsFor(cal: Calibrations, c: PilotClass): Thresholds | nu
 }
 
 const RANK: Record<Category, number> = { favorable: 3, variable: 2, unfavorable: 1, unavailable: 0 };
-const PRINCIPAL: Vec3[] = [[1, 0, 0], [0, 1, 0], [0, 0, 1]];
 
 export function classifyPose(
   magnet: PilotMagnet, pose: MagnetPose, th: Thresholds | null, model: ResponseModel,
@@ -38,15 +37,34 @@ export function classifyPose(
   const m = PROFILE.classification.boundaryMargin;
   const ratios = responses.map((r) => r / th.up);
   if (responses.every((r) => r >= th.up * (1 + m))) return { category: "favorable", ratios };
-  if (responses.every((r) => r <= th.to * (1 - m))) {
-    // Contrefactuel : même centre, aimant tourné sur un axe principal (nominal).
-    const best = Math.max(...PRINCIPAL.map((axis) => {
-      const e = evaluatePose(magnet, { center: pose.center, axis }, scenarios[0]!, model);
-      return e.ok ? e.response : 0;
-    }));
-    return { category: "unfavorable", cause: best >= th.to ? "orientation" : "too_far", ratios };
-  }
+  if (responses.every((r) => r <= th.to * (1 - m))) return { category: "unfavorable", cause: diagnose(magnet, pose, th, model, scenarios[0]!), ratios };
   return { category: "variable", ratios };
+}
+
+/** Diagnostic contrefactuel (scénario nominal) :
+ *  - une rotation autorisée (±90° autour de z, à la même place) atteint θ_to → orientation ;
+ *  - sinon un rapprochement valide (même alignement, |y| réduit par pas de 1 mm, sans collision) atteint θ_to → trop loin ;
+ *  - sinon cause non déterminée (décentrage, oblique ou collision à examiner). */
+export function diagnose(magnet: PilotMagnet, pose: MagnetPose, th: Thresholds, model: ResponseModel, nominal: ReedScenario = PROFILE.scenarios[0]!): Cause {
+  const axis = normalize(pose.axis);
+  if (!axis) return "undetermined";
+  const resp = (p: MagnetPose) => { const e = evaluatePose(magnet, p, nominal, model); return e.ok ? e.response : null; };
+  for (const sign of [1, -1] as const) {
+    const r = resp({ center: pose.center, axis: rotateZ(axis, sign) });
+    if (r != null && r >= th.to) return "orientation";
+  }
+  const y = pose.center[1], dir = Math.sign(y) || 1;
+  for (let k = 1; k <= Math.floor(Math.abs(y)); k++) {
+    const r = resp({ center: [pose.center[0], y - dir * k, pose.center[2]], axis });
+    if (r == null) break; // collision ou hors domaine : on n'extrapole pas
+    if (r >= th.to) return "too_far";
+  }
+  return "undetermined";
+}
+
+/** Rotation de ±90° autour de z (plan du démonstrateur). */
+export function rotateZ(axis: Vec3, sign: 1 | -1): Vec3 {
+  return [-sign * axis[1], sign * axis[0], axis[2]];
 }
 
 export function rotate90(axis: Vec3, about: 0 | 1 | 2): Vec3 {
@@ -58,9 +76,9 @@ export function rotate90(axis: Vec3, about: 0 | 1 | 2): Vec3 {
 
 export type Suggestion =
   | { kind: "shift"; dxMm: number; before: Category; after: Category; pose: MagnetPose }
-  | { kind: "rotate"; about: "x" | "y" | "z"; before: Category; after: Category; pose: MagnetPose };
+  | { kind: "rotate"; degrees: 90 | -90; before: Category; after: Category; pose: MagnetPose };
 
-/** Un SEUL déplacement latéral (le long des lames) OU une rotation de 90°, recalculé et vérifié. */
+/** Un SEUL décalage selon x (le long des lames) OU une rotation ±90° autour de z, recalculé, sans collision ni hors domaine, et retenu seulement s'il améliore la catégorie. */
 export function suggest(magnet: PilotMagnet, pose: MagnetPose, th: Thresholds | null, model: ResponseModel): Suggestion | null {
   const before = classifyPose(magnet, pose, th, model).category;
   if (before === "favorable" || !th) return null;
@@ -72,11 +90,10 @@ export function suggest(magnet: PilotMagnet, pose: MagnetPose, th: Thresholds | 
   };
   const axis = normalize(pose.axis);
   if (!axis) return null;
-  (["x", "y", "z"] as const).forEach((name, i) => {
-    const p: MagnetPose = { center: pose.center, axis: rotate90(axis, i as 0 | 1 | 2) };
-    if (Math.abs(p.axis[0] * axis[0] + p.axis[1] * axis[1] + p.axis[2] * axis[2]) > 0.999) return;
-    consider({ kind: "rotate", about: name, before, after: classifyPose(magnet, p, th, model).category, pose: p }, 0.5);
-  });
+  for (const sign of [1, -1] as const) {
+    const p: MagnetPose = { center: pose.center, axis: rotateZ(axis, sign) };
+    consider({ kind: "rotate", degrees: sign === 1 ? 90 : -90, before, after: classifyPose(magnet, p, th, model).category, pose: p }, 0.5);
+  }
   const { maxShiftMm, shiftStepMm } = PROFILE.suggestions;
   for (let k = shiftStepMm; k <= maxShiftMm; k += shiftStepMm)
     for (const sgn of [1, -1]) {
