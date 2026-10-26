@@ -245,6 +245,7 @@ export default function MachineGuide({
   tool,
   setTool,
   onChange,
+  onChangeAtTime,
   history,
   sample,
   progress,
@@ -267,6 +268,8 @@ export default function MachineGuide({
   tool: MachineTool;
   setTool: (t: MachineTool) => void;
   onChange: (patch: Partial<MachineAssembly>) => void;
+  /** Réglage fait à l'instant affiché : le temps courant est conservé. */
+  onChangeAtTime?: (patch: Partial<MachineAssembly>) => void;
   history: { canUndo: boolean; canRedo: boolean; undo: () => void; redo: () => void };
   sample: CycleSample;
   progress: number;
@@ -932,7 +935,7 @@ export default function MachineGuide({
                   designated
                     ? "Centre désigné sur le plan de la paroi : l'axe suit la normale de cette face. Le trou, son diamètre et son centre ne sont pas détectés."
                     : attach.axisSource !== "face"
-                    ? "Axe défini par vos points ou valeurs : le centre du trou n'est pas détecté automatiquement. Deux clics sur la paroi du trou ne donnent pas son centre : saisissez le point d'entrée et la direction précis dans « Valeurs précises de l'axe »."
+                    ? "Axe défini par vos points ou valeurs : le centre du trou n'est pas détecté automatiquement. Deux clics sur la paroi du trou ne donnent pas son centre : saisissez le point d'entrée et la direction précis dans « Position précise »."
                     : "Implantation d'un perçage à prévoir : le modèle n'est pas percé, l'axe suit la normale de la face cliquée.",
                 )}
               </p>
@@ -1016,7 +1019,7 @@ export default function MachineGuide({
                       return;
                     }
                     setState((s) => ({ ...s, notice: null }));
-                    onChange(attachPatch("magnet", r.attach, config));
+                    (onChangeAtTime ?? onChange)(attachPatch("magnet", r.attach, config));
                   }}
                 >
                   {t("Aligner avec le capteur")}
@@ -1170,8 +1173,8 @@ export default function MachineGuide({
             <p className="t-caption">
               {t(
                 clipMode
-                  ? "Pose libre : aucune attache. Avec l'animation du fichier, un composant non attaché reste fixe. Les coordonnées précises restent dans Réglages avancés › Positionnement."
-                  : "Pose libre : aucune attache. Les coordonnées précises restent dans Réglages avancés › Positionnement.",
+                  ? "Pose libre : aucune attache. Avec l'animation du fichier, un composant non attaché reste fixe. Ses coordonnées se règlent dans « Position précise » ci-dessus."
+                  : "Pose libre : aucune attache. Ses coordonnées se règlent dans « Position précise » ci-dessus.",
               )}
             </p>
           )}
