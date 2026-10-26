@@ -73,6 +73,7 @@ export function distanceFor(magnet: PilotMagnet, approach: ApproachId, theta: nu
   if (top.ok && top.value >= theta) return { ok: false, reason: "beyond_domain" };
   for (let d = dMaxMm - dScanStepMm; d >= 0; d -= dScanStepMm) {
     const v = responseAt(magnet, approach, d, conv, model, step);
+    if (!v.ok && v.reason === "no_secondary_lobe") continue; // pas de lobe secondaire dans la plage : réponse nulle
     if (!v.ok) return { ok: false, reason: "collision_before_threshold" };
     if (v.value >= theta) {
       let lo = d, hi = d + dScanStepMm, x = v.x;
