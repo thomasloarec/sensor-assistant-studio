@@ -116,6 +116,7 @@ import MachineGuide, {
   dimsFor,
   guideOverlay,
   handlePick,
+  handleHoleRay,
 } from "./machine-guide";
 import type { GuideState } from "./machine-guide";
 import { activeClip, movingSelection, toggleMoving } from "@/lib/standex/machine-assembly";
@@ -904,6 +905,13 @@ export default function MagneticWorkshop({
               }
               const prev = which === "sensor" ? machine.sensorAttach : machine.magnetAttach;
               machineChange(attachPatch(which, attachFromHit(hit, kind, prev), config));
+            },
+            onHoleRay: (ray) => {
+              setPlaying(false);
+              const r = handleHoleRay(guideState, machine, ray, cycleU(machine, sample.t), config);
+              setGuideState(r.state);
+              if (r.patch) machineChange(r.patch);
+              if (r.done) setTool("navigate");
             },
           },
           Math.max(...machineAsset.size),
