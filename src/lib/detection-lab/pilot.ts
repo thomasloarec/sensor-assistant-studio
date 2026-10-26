@@ -39,12 +39,15 @@ export const KNOWN_EXCEPTIONS = [
   "La brochure n'est pas reproduite sans exceptions.",
 ];
 
-export type RowStatus = "training" | "control" | "missing" | "unavailable" | "quarantine";
+export type RowStatus = "training" | "control" | "adaptation" | "missing" | "unavailable" | "quarantine";
+/** Groupe scientifique : seuls D3/D4/D5 Form sont des contrôles hors apprentissage. Les lignes
+ * MK03/MK13 sont des ADAPTATIONS documentaires de ces estimations, pas des validations indépendantes. */
+export type RowGroup = "training" | "form_control" | "doc_adaptation" | "quarantine";
 export interface PilotRow {
   source: "Form" | "MK03" | "MK13" | "MK04";
   page: number; reference: string; magnet: string; className: string; approach: ApproachId; bound: Bound;
   raw: string | null; published: number | null; estimated: number | null; errorMm: number | null; errorPct: number | null;
-  status: RowStatus; anomalies: string[]; convention: DistanceConvention; model: ResponseModel; sharedThreshold: number | null;
+  group: RowGroup; status: RowStatus; anomalies: string[]; convention: DistanceConvention; model: ResponseModel; sharedThreshold: number | null;
 }
 
 export type Calibrations = Record<string, SharedThreshold>;
@@ -92,7 +95,7 @@ export function buildPilotTable(model: ResponseModel, conv: DistanceConvention, 
             const th = cal[calKey(c, b)]!.shared;
             if (fam === "MK04") {
               const inverted = g && g.upMm != null && g.toMm != null && g.upMm > g.toMm;
-              rows.push({ source: fam, page: g?.page ?? 0, reference: ref, magnet: m.id, className: c, approach: a, bound: b, raw: pub == null ? null : String(pub), published: pub, estimated: null, errorMm: null, errorPct: null, status: "quarantine", anomalies: ["MK04 D3 en quarantaine (71/96 plages inversées)", ...(inverted ? ["plage inversée up > to"] : [])], convention: conv, model, sharedThreshold: th });
+              rows.push({ source: fam, page: g?.page ?? 0, reference: ref, magnet: m.id, className: c, approach: a, bound: b, raw: pub == null ? null : String(pub), published: pub, estimated: null, errorMm: null, errorPct: null, group: "quarantine", status: "quarantine", anomalies: ["MK04 D3 en quarantaine (71/96 plages inversées)", ...(inverted ? ["plage inversée up > to"] : [])], convention: conv, model, sharedThreshold: th });
               continue;
             }
             const est = estimates.get(`${c}|${m.id}|${a}|${b}`)!;
@@ -117,26 +120,31 @@ function makeRow(
   const errorMm = pub != null && est != null ? round(est - pub) : null;
   const errorPct = errorMm != null && pub ? round((100 * errorMm) / pub, 2) : null;
   if (errorPct != null && Math.abs(errorPct) > 20) anomalies.push("écart > 20 %");
-  const status: RowStatus = pub == null ? "missing" : est == null ? "unavailable" : training ? "training" : "control";
-  return { source, page, reference, magnet: m.id, className: c, approach: a, bound: b, raw, published: pub, estimated: est == null ? null : round(est), errorMm, errorPct, status, anomalies, convention: conv, model, sharedThreshold: th == null ? null : round(th, 6) };
+  const group: RowGroup = training ? "training" : adapted ? "doc_adaptation" : "form_control";
+  const status: RowStatus = pub == null ? "missing" : est == null ? "unavailable" : training ? "training" : adapted ? "adaptation" : "control";
+  return { source, group, page, reference, magnet: m.id, className: c, approach: a, bound: b, raw, published: pub, estimated: est == null ? null : round(est), errorMm, errorPct, status, anomalies, convention: conv, model, sharedThreshold: th == null ? null : round(th, 6) };
 }
 
-export interface TableSummary {
-  total: number; byStatus: Record<RowStatus, number>;
-  controls: { n: number; meanAbsMm: number | null; medianAbsPct: number | null; over20: number };
-  training: { n: number; meanAbsMm: number | null };
+export interface GroupSummary {
+  rows: number; published: number; missing: number; estimated: number; unavailable: number;
+  meanAbsMm: number | null; medianAbsPct: number | null; over20: number;
 }
+export interface TableSummary { total: number; groups: Record<RowGroup, GroupSummary> }
+export const ROW_GROUPS: RowGroup[] = ["training", "form_control", "doc_adaptation", "quarantine"];
+
 export function summarize(rows: PilotRow[]): TableSummary {
-  const byStatus = { training: 0, control: 0, missing: 0, unavailable: 0, quarantine: 0 } as Record<RowStatus, number>;
-  rows.forEach((r) => byStatus[r.status]++);
-  const ctl = rows.filter((r) => r.status === "control" && r.errorMm != null);
-  const tr = rows.filter((r) => r.status === "training" && r.errorMm != null);
   const mean = (v: number[]) => (v.length ? round(v.reduce((s, x) => s + x, 0) / v.length, 3) : null);
-  const pcts = ctl.map((r) => Math.abs(r.errorPct!)).sort((a, b) => a - b);
-  const median = pcts.length ? round(pcts.length % 2 ? pcts[(pcts.length - 1) / 2]! : (pcts[pcts.length / 2 - 1]! + pcts[pcts.length / 2]!) / 2, 2) : null;
-  return {
-    total: rows.length, byStatus,
-    controls: { n: ctl.length, meanAbsMm: mean(ctl.map((r) => Math.abs(r.errorMm!))), medianAbsPct: median, over20: pcts.filter((p) => p > 20).length },
-    training: { n: tr.length, meanAbsMm: mean(tr.map((r) => Math.abs(r.errorMm!))) },
-  };
+  const groups = {} as Record<RowGroup, GroupSummary>;
+  for (const g of ROW_GROUPS) {
+    const rs = rows.filter((r) => r.group === g);
+    const cmp = rs.filter((r) => r.errorMm != null);
+    const pcts = cmp.map((r) => Math.abs(r.errorPct!)).sort((a, b) => a - b);
+    const median = pcts.length ? round(pcts.length % 2 ? pcts[(pcts.length - 1) / 2]! : (pcts[pcts.length / 2 - 1]! + pcts[pcts.length / 2]!) / 2, 2) : null;
+    groups[g] = {
+      rows: rs.length, published: rs.filter((r) => r.published != null).length, missing: rs.filter((r) => r.published == null).length,
+      estimated: cmp.length, unavailable: rs.filter((r) => r.published != null && r.estimated == null && g !== "quarantine").length,
+      meanAbsMm: mean(cmp.map((r) => Math.abs(r.errorMm!))), medianAbsPct: median, over20: pcts.filter((p) => p > 20).length,
+    };
+  }
+  return { total: rows.length, groups };
 }

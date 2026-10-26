@@ -10,12 +10,13 @@ import { PROFILE, MU0, type DistanceConvention, type ResponseModel } from "../sr
 import { distanceFor } from "../src/lib/detection-lab/calibration";
 import { evaluatePose } from "../src/lib/detection-lab/pose";
 import { cylinderField, cylinderAxialMt, dipoleFieldMt } from "../src/lib/detection-lab/field";
-import { buildReportJson, cutToSvg, cutToCsv, tableToCsv, provenance, CATEGORY_LABEL } from "../src/lib/detection-lab/report";
+import { buildReportJson, paletteFromCss, cutToSvg, cutToCsv, tableToCsv, provenance, CATEGORY_LABEL } from "../src/lib/detection-lab/report";
 
 const OUT = "docs/detection-lab";
 mkdirSync(`${OUT}/svg`, { recursive: true });
 const sha = (p: string) => createHash("sha256").update(readFileSync(p)).digest("hex");
 const f = (v: number | null | undefined, n = 2) => (v == null ? "—" : v.toFixed(n));
+const PALETTE = paletteFromCss(readFileSync("src/styles.css", "utf8")); // jetons de charte
 const md: string[] = [];
 const timings: string[] = [];
 const time = <T,>(label: string, fn: () => T): T => { const t = performance.now(); const r = fn(); timings.push(`| ${label} | ${Math.round(performance.now() - t)} ms |`); return r; };
@@ -35,7 +36,7 @@ for (const model of ["A", "B"] as const)
       const cut = time(`Coupe ${id} ${mag.id} ${model}/C1`, () => computeCutById(id, mag, model, "C1", cals.get(model + "C1")!));
       cuts.push(cut);
       const base = `${OUT}/svg/${id}_${mag.id}_${model}`;
-      writeFileSync(`${base}.svg`, cutToSvg(cut));
+      writeFileSync(`${base}.svg`, cutToSvg(cut, PALETTE));
       writeFileSync(`${base}.csv`, cutToCsv(cut));
     }
 for (const [m, c] of combos) {
@@ -54,6 +55,11 @@ const q12 = evaluatePose(smco, poseTest, PROFILE.scenarios[0]!, "A", 12), q24 = 
 const quadErr = q12.ok && q24.ok ? Math.abs(q12.response - q24.response) / q24.response : NaN;
 const thC = cals.get("AC1")![calKey("C", "up")]!.shared!;
 const lobe1 = distanceFor(smco, "D4", thC, "C1", "A", 1), lobe05 = distanceFor(smco, "D4", thC, "C1", "A", 0.5);
+const d5conv = PILOT_MAGNETS.flatMap((mg) => (["A", "B"] as const).map((mo) => {
+  const th = cals.get(mo + "C1")![calKey("C", "up")]!.shared!;
+  const a = distanceFor(mg, "D5", th, "C1", mo, 1), b = distanceFor(mg, "D5", th, "C1", mo, 0.5);
+  return `| Maximum de lobe D5 : pas t 1 mm vs 0,5 mm (${mg.id}, C, ${mo}) | ${f(a.ok ? a.value : null, 4)} vs ${f(b.ok ? b.value : null, 4)} mm |`;
+}));
 
 md.push(`# Laboratoire de détection reed — rapport de cohérence (pilote)`, "",
   `Généré par \`bun scripts/detection-lab-report.ts\` le ${new Date().toISOString().slice(0, 10)} à partir du noyau \`src/lib/detection-lab/\`. Préversion interne staff. **Ordres de grandeur pédagogiques : aucune garantie de commutation au millimètre, aucun résultat qualifié.**`, "",
@@ -62,7 +68,7 @@ md.push(`# Laboratoire de détection reed — rapport de cohérence (pilote)`, "
   `- PDF : ${provenance().form.pdf.url} — SHA256 ${provenance().form.pdf.sha256}.`,
   `- Tableaux commerciaux : \`src/data/studio-v2/activation-guide.json\` (${provenance().commercial.version}, 3 004 entrées, inchangées, non toutes fiables).`,
   `- Classes AT : ${provenance().atClasses}. Disponibilité des lettres non universalisée.`,
-  `- Pull-in/drop-out distincts : ${provenance().pullInDropOut}. Les bornes up/to sont les deux bornes d'une PLAGE typique pour un aimant appairé, pas une hystérésis ni une bande de dispersion ; aucune transposition vers un autre aimant.`, "",
+  `- ${provenance().brochureBounds}`, `- ${provenance().pullInDropOutPage} Source : ${provenance().pullInDropOut}`, "",
   "Exceptions connues :", ...provenance().exceptions.map((e) => `- ${e}`), "",
   "## Conversion du moment", "",
   "Valeur q en 10⁻⁶ V·s·cm → q·10⁻⁸ Wb·m → m = q·10⁻⁸/μ0 (A·m²), μ0 = 4π·10⁻⁷. V = πr²h (m³), J_eff = μ0·m/V. Aimantation supposée uniforme et rigide (pas de démagnétisation partielle, de perméabilité du reed ni de pièce ferreuse).", "",
@@ -76,9 +82,10 @@ md.push(`# Laboratoire de détection reed — rapport de cohérence (pilote)`, "
   `| Limite lointaine vs dipôle (r = 100 mm) | écart relatif ${farErr.toExponential(2)} |`,
   `| Quadrature 12 vs 24 points/lame (pose test) | écart relatif ${quadErr.toExponential(2)} |`,
   `| Maximum de lobe D4 : pas x 1 mm vs 0,5 mm (SmCo, C, A) | ${f(lobe1.ok ? lobe1.value : null, 4)} vs ${f(lobe05.ok ? lobe05.value : null, 4)} mm |`,
+  ...d5conv,
   `| Bissection des racines | tolérance ${PROFILE.search.bisectTolMm} mm ; section dorée ${PROFILE.search.goldenTolMm} mm |`, "",
   "## Profil d'hypothèses", "", `\`${PROFILE.id}\` v${PROFILE.version} figé le ${PROFILE.frozenOn}.`, "",
-  `- H-L1 longueur effective nominale ${PROFILE.reed.effectiveLengthMm} mm (non publiée), enveloppe de verre rayon ${PROFILE.reed.envelopeRadiusMm} mm, demi-longueur ${PROFILE.reed.envelopeHalfLengthMm} mm.`,
+  `- H-L1 longueur effective nominale ${PROFILE.reed.effectiveLengthMm} mm (hypothèse, non publiée). Exclusion géométrique conservative distincte = encombrement publié KSK-1A66 14,0 mm max × Ø 2,2 mm (rayon ${PROFILE.reed.envelopeRadiusMm} mm, demi-longueur ${PROFILE.reed.envelopeHalfLengthMm} mm), source ${PROFILE.reed.envelopeSource}. Boîtiers et montages non qualifiés.`,
   `- Scénarios déterministes (un facteur à la fois + nominal, ${PROFILE.scenarios.length} au total, identiques sur tout un parcours) : ${PROFILE.scenarios.map((s) => s.id).join(", ")}. Position interne : déplacements ±1 mm selon x (axe des lames) et ±1 mm selon y (normale d'approche) — l'ensemble effectivement échantillonné n'est PAS le pavé continu.`,
   `- Retrait de frontière : favorable si tous les scénarios ≥ θ_up·(1+${PROFILE.classification.boundaryMargin}) ; défavorable si tous ≤ θ_to·(1−${PROFILE.classification.boundaryMargin}) ; sinon variable. Aucun pourcentage de confiance.`,
   `- Les seuils sont calibrés sur le seul scénario nominal ; les scénarios font varier la physique à seuil fixe.`, "",
@@ -97,17 +104,19 @@ for (const [m, c] of combos)
   }
 md.push("", "Lecture : un désaccord ×1,4 à ×1,6 (C1) ou ×2,1 à ×2,7 (C2) entre les seuils implicites des deux aimants signifie que le modèle ne reproduit pas, avec un seul seuil, le rapport des distances publiées. Il est affiché, pas compensé.", "");
 
-md.push("## Bilan par modèle et convention", "", "| Modèle | Conv. | lignes | apprentissage | contrôles | manquants | indisponibles | quarantaine | écart absolu moyen contrôles (mm) | médiane écart absolu % | contrôles > 20 % |", "|---|---|---|---|---|---|---|---|---|---|---|");
+const GL: Record<string, string> = { training: "apprentissage D1 Form", form_control: "contrôles hors apprentissage D3/D4/D5 Form", doc_adaptation: "adaptations documentaires MK03/MK13 (copies décalées, non indépendantes)", quarantine: "quarantaine MK04" };
+md.push("## Bilan par groupe, modèle et convention", "", "Seuls les contrôles D3/D4/D5 Form sont hors apprentissage. Les adaptations MK03/MK13 (dont leurs D1, dérivés du D1 d'apprentissage) ne sont PAS des validations physiques indépendantes : elles sont listées à part et n'entrent pas dans la comparaison A/B. Les prédictions croisées (tableau précédent) sont des contrôles séparés.", "",
+  "| Modèle | Conv. | groupe | lignes | publiées | absentes | estimées | indisponibles | écart abs. moyen (mm) | médiane écart abs. % | > 20 % / estimées |", "|---|---|---|---|---|---|---|---|---|---|---|");
 for (const [m, c] of combos) {
   const s = summarize(tables.get(m + c)!);
-  md.push(`| ${m} | ${c} | ${s.total} | ${s.byStatus.training} | ${s.byStatus.control} | ${s.byStatus.missing} | ${s.byStatus.unavailable} | ${s.byStatus.quarantine} | ${f(s.controls.meanAbsMm)} | ${f(s.controls.medianAbsPct)} | ${s.controls.over20} |`);
+  for (const [g, x] of Object.entries(s.groups)) md.push(`| ${m} | ${c} | ${GL[g]} | ${x.rows} | ${x.published} | ${x.missing} | ${x.estimated} | ${x.unavailable} | ${f(x.meanAbsMm)} | ${f(x.medianAbsPct)} | ${x.over20} / ${x.estimated} |`);
 }
-md.push("", "Les deux modèles restent **candidats non départagés** : B (C1) est meilleur sur la médiane, mais les écarts > 20 % restent nombreux dans les deux. Aucune correction n'a été appliquée pour franchir un seuil de 20 %. La convention C2 dégrade nettement les contrôles ; elle n'est pas déclarée réfutée pour autant, le datum source restant ambigu.", "");
+md.push("", "A et B restent **candidats non départagés** ; la comparaison ne porte que sur les contrôles D3/D4/D5 Form et les prédictions croisées, avec leurs dénominateurs. Aucune correction n'a été appliquée pour franchir un seuil de 20 %. A et B donnent le même D1 centré par symétrie.", "");
 
 for (const [m, c] of combos) {
-  md.push(`## Tableau complet — modèle ${m}, convention ${c}`, "", "| source | page | référence | aimant | cl. | D | borne | publié | estimé | écart mm | écart % | statut | anomalies | θ partagé |", "|---|---|---|---|---|---|---|---|---|---|---|---|---|---|");
+  md.push(`## Tableau complet — modèle ${m}, convention ${c}`, "", "| source | page | référence | aimant | cl. | D | borne | publié | estimé | écart mm | écart % | groupe | statut | anomalies | θ partagé |", "|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|");
   for (const r of tables.get(m + c)!)
-    md.push(`| ${r.source} | ${r.page} | ${r.reference} | ${r.magnet} | ${r.className} | ${r.approach} | ${r.bound} | ${r.published ?? "—"} | ${f(r.estimated, 3)} | ${f(r.errorMm, 3)} | ${f(r.errorPct, 1)} | ${r.status} | ${r.anomalies.join(" ; ") || "—"} | ${f(r.sharedThreshold, 3)} |`);
+    md.push(`| ${r.source} | ${r.page} | ${r.reference} | ${r.magnet} | ${r.className} | ${r.approach} | ${r.bound} | ${r.published ?? "—"} | ${f(r.estimated, 3)} | ${f(r.errorMm, 3)} | ${f(r.errorPct, 1)} | ${r.group} | ${r.status} | ${r.anomalies.join(" ; ") || "—"} | ${f(r.sharedThreshold, 3)} |`);
   md.push("");
 }
 
@@ -120,9 +129,10 @@ for (const cut of cuts.filter((c) => c.model === "B" || c.model === "A")) {
 }
 md.push("## Temps de calcul (machine de génération)", "", "| Étape | Durée |", "|---|---|", ...timings, "",
   "## Limites", "",
-  "- Datums D1/D3 ambigus dans la source ; D4/D5 sont des hypothèses géométriques nommées (H-D4, H-D5), non documentées par Standex.",
-  "- Longueur effective, enveloppe et réponse de lame sont des hypothèses ; aucun paramètre de lame n'est qualifié.",
-  "- Les produits MK03/MK13 sont estimés par adaptation documentaire (décalages empiriques par borne) ; D1 produit n'est donc pas un contrôle indépendant.",
+  "- Datums D1/D3 ambigus dans la source ; D4 (H-D4) est une hypothèse ; D5 suit le schéma source tourné rigidement (aimant ⟂ lames, approche par l'extrémité, maximum de lobe sur t ≥ 0).",
+  "- Longueur effective et réponse de lame sont des hypothèses ; l'exclusion suit l'encombrement publié KSK-1A66 ; aucun paramètre de lame n'est qualifié.",
+  "- Les produits MK03/MK13 sont estimés par adaptation documentaire (décalages empiriques par borne) : ce ne sont pas des contrôles indépendants.",
+  "- Le diagnostic « trop loin » / « orientation » est contrefactuel et limité aux essais autorisés (rotation ±90° autour de z, rapprochement en y sans collision) ; sinon la cause reste non déterminée.",
   "- MK04 D3 en quarantaine : aucune estimation n'est produite.",
   "- Pas de volume 3D dans ce lot. Pas d'intégration atelier ni client.", "");
 writeFileSync(`${OUT}/RAPPORT_COHERENCE_2026-10-26.md`, md.join("\n"));

@@ -1,17 +1,12 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 668 520" width="668" height="520" role="img" aria-label="Axes parallèles — classe C">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 668 540" width="668" height="540" role="img" aria-label="Axes parallèles — classe C">
 <style>
-.lab-fav{fill:var(--lab-favorable,oklch(0.72 0.13 205))}
-.lab-var{fill:var(--lab-variable,oklch(0.86 0.05 220))}
-.lab-far{fill:var(--lab-far,oklch(0.95 0.004 250))}
-.lab-orient{fill:var(--lab-orientation,oklch(0.9 0.03 60))}
-.lab-na{fill:var(--lab-na,oklch(0.82 0.005 250))}
-.lab-ink{fill:var(--lab-ink,oklch(0.3665 0.0662 254.28))}
-.lab-stroke{stroke:var(--lab-ink,oklch(0.3665 0.0662 254.28));fill:none}
-.lab-reed{stroke:var(--lab-ink,oklch(0.3665 0.0662 254.28));stroke-width:3}
-.lab-text{font:13px sans-serif;fill:var(--lab-ink,oklch(0.3665 0.0662 254.28))}
-.lab-pattern{stroke:var(--lab-ink,oklch(0.3665 0.0662 254.28));stroke-width:1;opacity:.45}</style><defs>
+.lab-fav{fill:oklch(0.72 0.13 205)}.lab-var{fill:oklch(0.9417 0.0052 247.88)}.lab-far{fill:oklch(0.9625 0.0035 258)}.lab-orient{fill:oklch(0.962 0.032 82)}
+.lab-undet{fill:oklch(0.8725 0.0018 247.84)}.lab-na{fill:oklch(0.9417 0.0052 247.88)}.lab-ink{fill:oklch(0.3665 0.0662 254.28)}
+.lab-stroke{stroke:oklch(0.3665 0.0662 254.28);fill:none}.lab-reed{stroke:oklch(0.3665 0.0662 254.28);stroke-width:3}
+.lab-text{font:15px sans-serif;fill:oklch(0.3665 0.0662 254.28)}.lab-pattern{stroke:oklch(0.3665 0.0662 254.28);stroke-width:1;opacity:.45}</style><defs>
 <pattern id="lab-hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" class="lab-var"/><line x1="0" y1="0" x2="0" y2="6" class="lab-pattern"/></pattern>
 <pattern id="lab-dots" width="6" height="6" patternUnits="userSpaceOnUse"><rect width="6" height="6" class="lab-orient"/><circle cx="3" cy="3" r="1.2" class="lab-ink" opacity=".55"/></pattern>
+<pattern id="lab-lines" width="6" height="6" patternUnits="userSpaceOnUse"><rect width="6" height="6" class="lab-undet"/><line x1="0" y1="3" x2="6" y2="3" class="lab-pattern"/></pattern>
 <pattern id="lab-cross" width="6" height="6" patternUnits="userSpaceOnUse"><rect width="6" height="6" class="lab-na"/><path d="M0 0L6 6M6 0L0 6" class="lab-pattern"/></pattern>
 </defs>
 <text x="56" y="20" class="lab-text" font-weight="700">Axes parallèles — classe C · N45-4X19 · modèle B · C1</text>
@@ -21,8 +16,8 @@
 <rect x="92" y="332" width="12" height="12" class="lab-fav"/>
 <rect x="104" y="332" width="12" height="12" class="lab-fav"/>
 <rect x="116" y="332" width="12" height="12" class="lab-fav"/>
-<rect x="128" y="332" width="12" height="12" class="lab-fav"/>
-<rect x="140" y="332" width="12" height="12" class="lab-fav"/>
+<rect x="128" y="332" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="140" y="332" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
 <rect x="152" y="332" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
 <rect x="164" y="332" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
 <rect x="176" y="332" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
@@ -56,8 +51,8 @@
 <rect x="512" y="332" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
 <rect x="524" y="332" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
 <rect x="536" y="332" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
-<rect x="548" y="332" width="12" height="12" class="lab-fav"/>
-<rect x="560" y="332" width="12" height="12" class="lab-fav"/>
+<rect x="548" y="332" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="560" y="332" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
 <rect x="572" y="332" width="12" height="12" class="lab-fav"/>
 <rect x="584" y="332" width="12" height="12" class="lab-fav"/>
 <rect x="596" y="332" width="12" height="12" class="lab-fav"/>
@@ -70,8 +65,8 @@
 <rect x="92" y="320" width="12" height="12" class="lab-fav"/>
 <rect x="104" y="320" width="12" height="12" class="lab-fav"/>
 <rect x="116" y="320" width="12" height="12" class="lab-fav"/>
-<rect x="128" y="320" width="12" height="12" class="lab-fav"/>
-<rect x="140" y="320" width="12" height="12" class="lab-fav"/>
+<rect x="128" y="320" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="140" y="320" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
 <rect x="152" y="320" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
 <rect x="164" y="320" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
 <rect x="176" y="320" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
@@ -105,8 +100,8 @@
 <rect x="512" y="320" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
 <rect x="524" y="320" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
 <rect x="536" y="320" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
-<rect x="548" y="320" width="12" height="12" class="lab-fav"/>
-<rect x="560" y="320" width="12" height="12" class="lab-fav"/>
+<rect x="548" y="320" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="560" y="320" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
 <rect x="572" y="320" width="12" height="12" class="lab-fav"/>
 <rect x="584" y="320" width="12" height="12" class="lab-fav"/>
 <rect x="596" y="320" width="12" height="12" class="lab-fav"/>
@@ -119,8 +114,8 @@
 <rect x="92" y="308" width="12" height="12" class="lab-fav"/>
 <rect x="104" y="308" width="12" height="12" class="lab-fav"/>
 <rect x="116" y="308" width="12" height="12" class="lab-fav"/>
-<rect x="128" y="308" width="12" height="12" class="lab-fav"/>
-<rect x="140" y="308" width="12" height="12" class="lab-fav"/>
+<rect x="128" y="308" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="140" y="308" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
 <rect x="152" y="308" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
 <rect x="164" y="308" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
 <rect x="176" y="308" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
@@ -154,8 +149,8 @@
 <rect x="512" y="308" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
 <rect x="524" y="308" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
 <rect x="536" y="308" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
-<rect x="548" y="308" width="12" height="12" class="lab-fav"/>
-<rect x="560" y="308" width="12" height="12" class="lab-fav"/>
+<rect x="548" y="308" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="560" y="308" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
 <rect x="572" y="308" width="12" height="12" class="lab-fav"/>
 <rect x="584" y="308" width="12" height="12" class="lab-fav"/>
 <rect x="596" y="308" width="12" height="12" class="lab-fav"/>
@@ -169,8 +164,8 @@
 <rect x="104" y="296" width="12" height="12" class="lab-fav"/>
 <rect x="116" y="296" width="12" height="12" class="lab-fav"/>
 <rect x="128" y="296" width="12" height="12" class="lab-fav"/>
-<rect x="140" y="296" width="12" height="12" class="lab-fav"/>
-<rect x="152" y="296" width="12" height="12" class="lab-fav"/>
+<rect x="140" y="296" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="152" y="296" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
 <rect x="164" y="296" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
 <rect x="176" y="296" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
 <rect x="188" y="296" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
@@ -202,8 +197,8 @@
 <rect x="500" y="296" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
 <rect x="512" y="296" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
 <rect x="524" y="296" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
-<rect x="536" y="296" width="12" height="12" class="lab-fav"/>
-<rect x="548" y="296" width="12" height="12" class="lab-fav"/>
+<rect x="536" y="296" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="548" y="296" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
 <rect x="560" y="296" width="12" height="12" class="lab-fav"/>
 <rect x="572" y="296" width="12" height="12" class="lab-fav"/>
 <rect x="584" y="296" width="12" height="12" class="lab-fav"/>
@@ -219,39 +214,39 @@
 <rect x="116" y="284" width="12" height="12" class="lab-fav"/>
 <rect x="128" y="284" width="12" height="12" class="lab-fav"/>
 <rect x="140" y="284" width="12" height="12" class="lab-fav"/>
-<rect x="152" y="284" width="12" height="12" class="lab-fav"/>
-<rect x="164" y="284" width="12" height="12" class="lab-fav"/>
-<rect x="176" y="284" width="12" height="12" class="lab-fav"/>
-<rect x="188" y="284" width="12" height="12" class="lab-fav"/>
-<rect x="200" y="284" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
-<rect x="212" y="284" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
-<rect x="224" y="284" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
-<rect x="236" y="284" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
-<rect x="248" y="284" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
-<rect x="260" y="284" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
-<rect x="272" y="284" width="12" height="12" class="lab-fav"/>
-<rect x="284" y="284" width="12" height="12" class="lab-fav"/>
-<rect x="296" y="284" width="12" height="12" class="lab-fav"/>
-<rect x="308" y="284" width="12" height="12" class="lab-fav"/>
-<rect x="320" y="284" width="12" height="12" class="lab-fav"/>
-<rect x="332" y="284" width="12" height="12" class="lab-fav"/>
-<rect x="344" y="284" width="12" height="12" class="lab-fav"/>
-<rect x="356" y="284" width="12" height="12" class="lab-fav"/>
-<rect x="368" y="284" width="12" height="12" class="lab-fav"/>
-<rect x="380" y="284" width="12" height="12" class="lab-fav"/>
-<rect x="392" y="284" width="12" height="12" class="lab-fav"/>
-<rect x="404" y="284" width="12" height="12" class="lab-fav"/>
-<rect x="416" y="284" width="12" height="12" class="lab-fav"/>
-<rect x="428" y="284" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
-<rect x="440" y="284" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
-<rect x="452" y="284" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
-<rect x="464" y="284" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
-<rect x="476" y="284" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
-<rect x="488" y="284" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
-<rect x="500" y="284" width="12" height="12" class="lab-fav"/>
-<rect x="512" y="284" width="12" height="12" class="lab-fav"/>
-<rect x="524" y="284" width="12" height="12" class="lab-fav"/>
-<rect x="536" y="284" width="12" height="12" class="lab-fav"/>
+<rect x="152" y="284" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="164" y="284" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="176" y="284" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="188" y="284" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="200" y="284" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="212" y="284" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="224" y="284" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="236" y="284" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="248" y="284" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="260" y="284" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="272" y="284" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="284" y="284" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="296" y="284" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="308" y="284" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="320" y="284" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="332" y="284" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="344" y="284" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="356" y="284" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="368" y="284" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="380" y="284" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="392" y="284" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="404" y="284" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="416" y="284" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="428" y="284" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="440" y="284" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="452" y="284" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="464" y="284" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="476" y="284" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="488" y="284" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="500" y="284" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="512" y="284" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="524" y="284" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="536" y="284" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
 <rect x="548" y="284" width="12" height="12" class="lab-fav"/>
 <rect x="560" y="284" width="12" height="12" class="lab-fav"/>
 <rect x="572" y="284" width="12" height="12" class="lab-fav"/>
@@ -274,8 +269,8 @@
 <rect x="188" y="272" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
 <rect x="200" y="272" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
 <rect x="212" y="272" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
-<rect x="224" y="272" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
-<rect x="236" y="272" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="224" y="272" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="236" y="272" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
 <rect x="248" y="272" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
 <rect x="260" y="272" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
 <rect x="272" y="272" width="12" height="12" class="lab-fav"/>
@@ -293,8 +288,8 @@
 <rect x="416" y="272" width="12" height="12" class="lab-fav"/>
 <rect x="428" y="272" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
 <rect x="440" y="272" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
-<rect x="452" y="272" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
-<rect x="464" y="272" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="452" y="272" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="464" y="272" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
 <rect x="476" y="272" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
 <rect x="488" y="272" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
 <rect x="500" y="272" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
@@ -323,8 +318,8 @@
 <rect x="188" y="260" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
 <rect x="200" y="260" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
 <rect x="212" y="260" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
-<rect x="224" y="260" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
-<rect x="236" y="260" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="224" y="260" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="236" y="260" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
 <rect x="248" y="260" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
 <rect x="260" y="260" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
 <rect x="272" y="260" width="12" height="12" class="lab-fav"/>
@@ -342,8 +337,8 @@
 <rect x="416" y="260" width="12" height="12" class="lab-fav"/>
 <rect x="428" y="260" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
 <rect x="440" y="260" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
-<rect x="452" y="260" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
-<rect x="464" y="260" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="452" y="260" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="464" y="260" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
 <rect x="476" y="260" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
 <rect x="488" y="260" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
 <rect x="500" y="260" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
@@ -372,8 +367,8 @@
 <rect x="188" y="248" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
 <rect x="200" y="248" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
 <rect x="212" y="248" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
-<rect x="224" y="248" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
-<rect x="236" y="248" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="224" y="248" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="236" y="248" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
 <rect x="248" y="248" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
 <rect x="260" y="248" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
 <rect x="272" y="248" width="12" height="12" class="lab-fav"/>
@@ -391,8 +386,8 @@
 <rect x="416" y="248" width="12" height="12" class="lab-fav"/>
 <rect x="428" y="248" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
 <rect x="440" y="248" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
-<rect x="452" y="248" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
-<rect x="464" y="248" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="452" y="248" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="464" y="248" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
 <rect x="476" y="248" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
 <rect x="488" y="248" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
 <rect x="500" y="248" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
@@ -421,8 +416,8 @@
 <rect x="188" y="236" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
 <rect x="200" y="236" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
 <rect x="212" y="236" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
-<rect x="224" y="236" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
-<rect x="236" y="236" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="224" y="236" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="236" y="236" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
 <rect x="248" y="236" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
 <rect x="260" y="236" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
 <rect x="272" y="236" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
@@ -440,8 +435,8 @@
 <rect x="416" y="236" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
 <rect x="428" y="236" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
 <rect x="440" y="236" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
-<rect x="452" y="236" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
-<rect x="464" y="236" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="452" y="236" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="464" y="236" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
 <rect x="476" y="236" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
 <rect x="488" y="236" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
 <rect x="500" y="236" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
@@ -470,8 +465,8 @@
 <rect x="188" y="224" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
 <rect x="200" y="224" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
 <rect x="212" y="224" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
-<rect x="224" y="224" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
-<rect x="236" y="224" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="224" y="224" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="236" y="224" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
 <rect x="248" y="224" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
 <rect x="260" y="224" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
 <rect x="272" y="224" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
@@ -489,8 +484,8 @@
 <rect x="416" y="224" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
 <rect x="428" y="224" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
 <rect x="440" y="224" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
-<rect x="452" y="224" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
-<rect x="464" y="224" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="452" y="224" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="464" y="224" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
 <rect x="476" y="224" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
 <rect x="488" y="224" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
 <rect x="500" y="224" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
@@ -520,7 +515,7 @@
 <rect x="200" y="212" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
 <rect x="212" y="212" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
 <rect x="224" y="212" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
-<rect x="236" y="212" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="236" y="212" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
 <rect x="248" y="212" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
 <rect x="260" y="212" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
 <rect x="272" y="212" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
@@ -538,7 +533,7 @@
 <rect x="416" y="212" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
 <rect x="428" y="212" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
 <rect x="440" y="212" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
-<rect x="452" y="212" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="452" y="212" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
 <rect x="464" y="212" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
 <rect x="476" y="212" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
 <rect x="488" y="212" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
@@ -1106,7 +1101,7 @@
 <rect x="176" y="68" width="12" height="12" class="lab-far"/>
 <rect x="188" y="68" width="12" height="12" class="lab-far"/>
 <rect x="200" y="68" width="12" height="12" class="lab-far"/>
-<rect x="212" y="68" width="12" height="12" class="lab-far"/>
+<rect x="212" y="68" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
 <rect x="224" y="68" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
 <rect x="236" y="68" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
 <rect x="248" y="68" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
@@ -1128,7 +1123,7 @@
 <rect x="440" y="68" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
 <rect x="452" y="68" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
 <rect x="464" y="68" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
-<rect x="476" y="68" width="12" height="12" class="lab-far"/>
+<rect x="476" y="68" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
 <rect x="488" y="68" width="12" height="12" class="lab-far"/>
 <rect x="500" y="68" width="12" height="12" class="lab-far"/>
 <rect x="512" y="68" width="12" height="12" class="lab-far"/>
@@ -1155,10 +1150,10 @@
 <rect x="176" y="56" width="12" height="12" class="lab-far"/>
 <rect x="188" y="56" width="12" height="12" class="lab-far"/>
 <rect x="200" y="56" width="12" height="12" class="lab-far"/>
-<rect x="212" y="56" width="12" height="12" class="lab-far"/>
-<rect x="224" y="56" width="12" height="12" class="lab-far"/>
-<rect x="236" y="56" width="12" height="12" class="lab-far"/>
-<rect x="248" y="56" width="12" height="12" class="lab-far"/>
+<rect x="212" y="56" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="224" y="56" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="236" y="56" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="248" y="56" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
 <rect x="260" y="56" width="12" height="12" class="lab-far"/>
 <rect x="272" y="56" width="12" height="12" class="lab-far"/>
 <rect x="284" y="56" width="12" height="12" class="lab-far"/>
@@ -1174,10 +1169,10 @@
 <rect x="404" y="56" width="12" height="12" class="lab-far"/>
 <rect x="416" y="56" width="12" height="12" class="lab-far"/>
 <rect x="428" y="56" width="12" height="12" class="lab-far"/>
-<rect x="440" y="56" width="12" height="12" class="lab-far"/>
-<rect x="452" y="56" width="12" height="12" class="lab-far"/>
-<rect x="464" y="56" width="12" height="12" class="lab-far"/>
-<rect x="476" y="56" width="12" height="12" class="lab-far"/>
+<rect x="440" y="56" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="452" y="56" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="464" y="56" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="476" y="56" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
 <rect x="488" y="56" width="12" height="12" class="lab-far"/>
 <rect x="500" y="56" width="12" height="12" class="lab-far"/>
 <rect x="512" y="56" width="12" height="12" class="lab-far"/>
@@ -1204,10 +1199,10 @@
 <rect x="176" y="44" width="12" height="12" class="lab-far"/>
 <rect x="188" y="44" width="12" height="12" class="lab-far"/>
 <rect x="200" y="44" width="12" height="12" class="lab-far"/>
-<rect x="212" y="44" width="12" height="12" class="lab-far"/>
-<rect x="224" y="44" width="12" height="12" class="lab-far"/>
-<rect x="236" y="44" width="12" height="12" class="lab-far"/>
-<rect x="248" y="44" width="12" height="12" class="lab-far"/>
+<rect x="212" y="44" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="224" y="44" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="236" y="44" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="248" y="44" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
 <rect x="260" y="44" width="12" height="12" class="lab-far"/>
 <rect x="272" y="44" width="12" height="12" class="lab-far"/>
 <rect x="284" y="44" width="12" height="12" class="lab-far"/>
@@ -1223,10 +1218,10 @@
 <rect x="404" y="44" width="12" height="12" class="lab-far"/>
 <rect x="416" y="44" width="12" height="12" class="lab-far"/>
 <rect x="428" y="44" width="12" height="12" class="lab-far"/>
-<rect x="440" y="44" width="12" height="12" class="lab-far"/>
-<rect x="452" y="44" width="12" height="12" class="lab-far"/>
-<rect x="464" y="44" width="12" height="12" class="lab-far"/>
-<rect x="476" y="44" width="12" height="12" class="lab-far"/>
+<rect x="440" y="44" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="452" y="44" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="464" y="44" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="476" y="44" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
 <rect x="488" y="44" width="12" height="12" class="lab-far"/>
 <rect x="500" y="44" width="12" height="12" class="lab-far"/>
 <rect x="512" y="44" width="12" height="12" class="lab-far"/>
@@ -1277,7 +1272,9 @@
 <text x="78" y="444" class="lab-text">Placement défavorable — Trop loin</text>
 <rect x="56" y="452" width="14" height="14" class="lab-orient" style="fill:url(#lab-dots)"/><rect x="56" y="452" width="14" height="14" class="lab-stroke"/>
 <text x="78" y="464" class="lab-text">Placement défavorable — Orientation défavorable</text>
-<rect x="56" y="472" width="14" height="14" class="lab-na" style="fill:url(#lab-cross)"/><rect x="56" y="472" width="14" height="14" class="lab-stroke"/>
-<text x="78" y="484" class="lab-text">Estimation indisponible</text>
-<text x="56" y="500" class="lab-text">Ordres de grandeur pédagogiques, jamais une garantie de commutation. reed-lab-hypotheses v1.0.0</text>
+<rect x="56" y="472" width="14" height="14" class="lab-undet" style="fill:url(#lab-lines)"/><rect x="56" y="472" width="14" height="14" class="lab-stroke"/>
+<text x="78" y="484" class="lab-text">Placement défavorable — Cause non déterminée (décentrage à examiner)</text>
+<rect x="56" y="492" width="14" height="14" class="lab-na" style="fill:url(#lab-cross)"/><rect x="56" y="492" width="14" height="14" class="lab-stroke"/>
+<text x="78" y="504" class="lab-text">Estimation indisponible</text>
+<text x="56" y="520" class="lab-text">Ordres de grandeur pédagogiques, jamais une garantie de commutation. reed-lab-hypotheses v1.1.0</text>
 </svg>

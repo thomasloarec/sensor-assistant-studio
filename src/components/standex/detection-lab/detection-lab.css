@@ -6,6 +6,7 @@
   --lab-orientation: var(--warning-soft);
   --lab-na: var(--surface-tint);
   --lab-ink: var(--heading);
+  --lab-undet: var(--standex-gray-25);
   max-width: 76rem;
   margin: 0 auto;
   padding: 1.5rem 1rem 4rem;
@@ -42,8 +43,12 @@
 .lab-table tr[data-status="quarantine"] td:first-child,
 .lab-table tr[data-status="missing"] td:first-child,
 .lab-table tr[data-status="unavailable"] td:first-child { box-shadow: inset 4px 0 0 var(--warning); }
-.lab-svg { overflow-x: auto; }
-.lab-svg svg { max-width: 100%; height: auto; }
+.lab-svg { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.lab-svg svg { max-width: none; height: auto; display: block; }
+.lab-svg:focus-visible { outline: 3px solid var(--ring); outline-offset: 2px; }
+.lab-figure { display: grid; gap: 0.75rem; margin: 0; }
+.lab-figure figcaption { color: var(--heading); }
+.lab-legend { display: grid; gap: 0.25rem; padding-left: 1.25rem; list-style: disc; }
 .lab-list { display: grid; gap: 0.5rem; padding-left: 1.25rem; list-style: disc; }
 @media (prefers-reduced-motion: reduce) {
   .lab *, .lab *::before, .lab *::after { transition: none !important; animation: none !important; }

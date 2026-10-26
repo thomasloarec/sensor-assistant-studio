@@ -1,105 +1,105 @@
-source,page,reference,magnet,class,D,bound,raw,published_mm,estimated_mm,error_mm,error_pct,status,anomalies,convention,model,shared_threshold_mT
-Form,4,MK03Form-C 66-er,SMCO5-5X4,C,D1,up,7.3,7.3,8.5556,1.2556,17.2,training,,C1,B,3.542861
-Form,4,MK03Form-C 66-er,SMCO5-5X4,C,D1,to,8.9,8.9,10.115,1.215,13.65,training,,C1,B,2.482277
-Form,4,MK03Form-C 66-er,SMCO5-5X4,C,D3,up,7.5,7.5,6.9285,-0.5715,-7.62,control,,C1,B,3.542861
-Form,4,MK03Form-C 66-er,SMCO5-5X4,C,D3,to,9.8,9.8,8.7767,-1.0233,-10.44,control,,C1,B,2.482277
-Form,4,MK03Form-C 66-er,SMCO5-5X4,C,D4,up,6.8,6.8,8.5977,1.7977,26.44,control,écart > 20 %,C1,B,3.542861
-Form,4,MK03Form-C 66-er,SMCO5-5X4,C,D4,to,8.7,8.7,10.0675,1.3675,15.72,control,,C1,B,2.482277
-Form,4,MK03Form-C 66-er,SMCO5-5X4,C,D5,up,3.2,3.2,3.9417,0.7417,23.18,control,écart > 20 %,C1,B,3.542861
-Form,4,MK03Form-C 66-er,SMCO5-5X4,C,D5,to,5,5,4.8617,-0.1383,-2.77,control,,C1,B,2.482277
-Form,5,MK03Form-C 66-er,N45-4X19,C,D1,up,15,15,14.2835,-0.7165,-4.78,training,,C1,B,3.542861
-Form,5,MK03Form-C 66-er,N45-4X19,C,D1,to,17.7,17.7,17.005,-0.695,-3.93,training,,C1,B,2.482277
-Form,5,MK03Form-C 66-er,N45-4X19,C,D3,up,12.4,12.4,10.8733,-1.5267,-12.31,control,,C1,B,3.542861
-Form,5,MK03Form-C 66-er,N45-4X19,C,D3,to,17.7,17.7,13.6595,-4.0405,-22.83,control,écart > 20 %,C1,B,2.482277
-Form,5,MK03Form-C 66-er,N45-4X19,C,D4,up,10.1,10.1,10.8683,0.7683,7.61,control,,C1,B,3.542861
-Form,5,MK03Form-C 66-er,N45-4X19,C,D4,to,12.5,12.5,12.9372,0.4372,3.5,control,,C1,B,2.482277
-Form,5,MK03Form-C 66-er,N45-4X19,C,D5,up,9.8,9.8,7.6236,-2.1764,-22.21,control,écart > 20 %,C1,B,3.542861
-Form,5,MK03Form-C 66-er,N45-4X19,C,D5,to,"12,4",12.4,9.1627,-3.2373,-26.11,control,"virgule décimale dans la source (« 12,4 ») | écart > 20 %",C1,B,2.482277
-Form,4,MK03Form-E 66-er,SMCO5-5X4,E,D1,up,5.9,5.9,7.2432,1.3432,22.77,training,écart > 20 %,C1,B,4.931706
-Form,4,MK03Form-E 66-er,SMCO5-5X4,E,D1,to,6.9,6.9,8.1196,1.2196,17.68,training,,C1,B,3.940832
-Form,4,MK03Form-E 66-er,SMCO5-5X4,E,D3,up,5.6,5.6,5.3982,-0.2018,-3.6,control,,C1,B,4.931706
-Form,4,MK03Form-E 66-er,SMCO5-5X4,E,D3,to,6.8,6.8,6.4171,-0.3829,-5.63,control,,C1,B,3.940832
-Form,4,MK03Form-E 66-er,SMCO5-5X4,E,D4,up,5.7,5.7,7.3638,1.6638,29.19,control,écart > 20 %,C1,B,4.931706
-Form,4,MK03Form-E 66-er,SMCO5-5X4,E,D4,to,6.7,6.7,8.1874,1.4874,22.2,control,écart > 20 %,C1,B,3.940832
-Form,4,MK03Form-E 66-er,SMCO5-5X4,E,D5,up,-,,3.1659,,,missing,borne non publiée,C1,B,4.931706
-Form,4,MK03Form-E 66-er,SMCO5-5X4,E,D5,to,2.7,2.7,3.6842,0.9842,36.45,control,écart > 20 %,C1,B,3.940832
-Form,5,MK03Form-E 66-er,N45-4X19,E,D1,up,12.7,12.7,11.9514,-0.7486,-5.89,training,,C1,B,4.931706
-Form,5,MK03Form-E 66-er,N45-4X19,E,D1,to,14.2,14.2,13.5138,-0.6862,-4.83,training,,C1,B,3.940832
-Form,5,MK03Form-E 66-er,N45-4X19,E,D3,up,9.4,9.4,8.6038,-0.7962,-8.47,control,,C1,B,4.931706
-Form,5,MK03Form-E 66-er,N45-4X19,E,D3,to,11.3,11.3,10.1107,-1.1893,-10.52,control,,C1,B,3.940832
-Form,5,MK03Form-E 66-er,N45-4X19,E,D4,up,7.3,7.3,9.1814,1.8814,25.77,control,écart > 20 %,C1,B,4.931706
-Form,5,MK03Form-E 66-er,N45-4X19,E,D4,to,9.3,9.3,10.3019,1.0019,10.77,control,,C1,B,3.940832
-Form,5,MK03Form-E 66-er,N45-4X19,E,D5,up,7.3,7.3,6.3322,-0.9678,-13.26,control,,C1,B,4.931706
-Form,5,MK03Form-E 66-er,N45-4X19,E,D5,to,"8,6",8.6,7.194,-1.406,-16.35,control,"virgule décimale dans la source (« 8,6 »)",C1,B,3.940832
-MK03,4,MK03-1A66C-X,SMCO5-5X4,C,D1,up,4.65,4.65,5.9056,1.2556,27,control,"adaptation documentaire Form→produit (décalage empirique) | D1 produit : dérivé du D1 d'apprentissage Form, pas un contrôle indépendant de la physique | écart > 20 %",C1,B,3.542861
-MK03,4,MK03-1A66C-X,SMCO5-5X4,C,D1,to,7.95,7.95,9.165,1.215,15.28,control,"adaptation documentaire Form→produit (décalage empirique) | D1 produit : dérivé du D1 d'apprentissage Form, pas un contrôle indépendant de la physique",C1,B,2.482277
-MK03,4,MK03-1A66C-X,SMCO5-5X4,C,D3,up,6.7,6.7,6.1285,-0.5715,-8.53,control,adaptation documentaire Form→produit (décalage empirique),C1,B,3.542861
-MK03,4,MK03-1A66C-X,SMCO5-5X4,C,D3,to,9,9,7.9767,-1.0233,-11.37,control,adaptation documentaire Form→produit (décalage empirique),C1,B,2.482277
-MK03,4,MK03-1A66C-X,SMCO5-5X4,C,D4,up,4.15,4.15,5.9477,1.7977,43.32,control,adaptation documentaire Form→produit (décalage empirique) | écart > 20 %,C1,B,3.542861
-MK03,4,MK03-1A66C-X,SMCO5-5X4,C,D4,to,7.75,7.75,9.1175,1.3675,17.65,control,adaptation documentaire Form→produit (décalage empirique),C1,B,2.482277
-MK03,4,MK03-1A66C-X,SMCO5-5X4,C,D5,up,2.4,2.4,3.1417,0.7417,30.9,control,adaptation documentaire Form→produit (décalage empirique) | écart > 20 %,C1,B,3.542861
-MK03,4,MK03-1A66C-X,SMCO5-5X4,C,D5,to,4.2,4.2,4.0617,-0.1383,-3.29,control,adaptation documentaire Form→produit (décalage empirique),C1,B,2.482277
-MK03,5,MK03-1A66C-X,N45-4X19,C,D1,up,12.35,12.35,11.6335,-0.7165,-5.8,control,"adaptation documentaire Form→produit (décalage empirique) | D1 produit : dérivé du D1 d'apprentissage Form, pas un contrôle indépendant de la physique",C1,B,3.542861
-MK03,5,MK03-1A66C-X,N45-4X19,C,D1,to,16.75,16.75,16.055,-0.695,-4.15,control,"adaptation documentaire Form→produit (décalage empirique) | D1 produit : dérivé du D1 d'apprentissage Form, pas un contrôle indépendant de la physique",C1,B,2.482277
-MK03,5,MK03-1A66C-X,N45-4X19,C,D3,up,11.6,11.6,10.0733,-1.5267,-13.16,control,adaptation documentaire Form→produit (décalage empirique),C1,B,3.542861
-MK03,5,MK03-1A66C-X,N45-4X19,C,D3,to,16.9,16.9,12.8595,-4.0405,-23.91,control,adaptation documentaire Form→produit (décalage empirique) | écart > 20 %,C1,B,2.482277
-MK03,5,MK03-1A66C-X,N45-4X19,C,D4,up,7.45,7.45,8.2183,0.7683,10.31,control,adaptation documentaire Form→produit (décalage empirique),C1,B,3.542861
-MK03,5,MK03-1A66C-X,N45-4X19,C,D4,to,11.55,11.55,11.9872,0.4372,3.79,control,adaptation documentaire Form→produit (décalage empirique),C1,B,2.482277
-MK03,5,MK03-1A66C-X,N45-4X19,C,D5,up,9,9,6.8236,-2.1764,-24.18,control,adaptation documentaire Form→produit (décalage empirique) | écart > 20 %,C1,B,3.542861
-MK03,5,MK03-1A66C-X,N45-4X19,C,D5,to,11.6,11.6,8.3627,-3.2373,-27.91,control,adaptation documentaire Form→produit (décalage empirique) | écart > 20 %,C1,B,2.482277
-MK03,4,MK03-1A66E-X,SMCO5-5X4,E,D1,up,3.25,3.25,4.5932,1.3432,41.33,control,"adaptation documentaire Form→produit (décalage empirique) | D1 produit : dérivé du D1 d'apprentissage Form, pas un contrôle indépendant de la physique | écart > 20 %",C1,B,4.931706
-MK03,4,MK03-1A66E-X,SMCO5-5X4,E,D1,to,5.95,5.95,7.1696,1.2196,20.5,control,"adaptation documentaire Form→produit (décalage empirique) | D1 produit : dérivé du D1 d'apprentissage Form, pas un contrôle indépendant de la physique | écart > 20 %",C1,B,3.940832
-MK03,4,MK03-1A66E-X,SMCO5-5X4,E,D3,up,4.8,4.8,4.5982,-0.2018,-4.2,control,adaptation documentaire Form→produit (décalage empirique),C1,B,4.931706
-MK03,4,MK03-1A66E-X,SMCO5-5X4,E,D3,to,6,6,5.6171,-0.3829,-6.38,control,adaptation documentaire Form→produit (décalage empirique),C1,B,3.940832
-MK03,4,MK03-1A66E-X,SMCO5-5X4,E,D4,up,3.05,3.05,4.7138,1.6638,54.55,control,adaptation documentaire Form→produit (décalage empirique) | écart > 20 %,C1,B,4.931706
-MK03,4,MK03-1A66E-X,SMCO5-5X4,E,D4,to,5.75,5.75,7.2374,1.4874,25.87,control,adaptation documentaire Form→produit (décalage empirique) | écart > 20 %,C1,B,3.940832
-MK03,4,MK03-1A66E-X,SMCO5-5X4,E,D5,up,,,2.3659,,,missing,borne non publiée | adaptation documentaire Form→produit (décalage empirique),C1,B,4.931706
-MK03,4,MK03-1A66E-X,SMCO5-5X4,E,D5,to,1.9,1.9,2.8842,0.9842,51.8,control,adaptation documentaire Form→produit (décalage empirique) | écart > 20 %,C1,B,3.940832
-MK03,5,MK03-1A66E-X,N45-4X19,E,D1,up,10.05,10.05,9.3014,-0.7486,-7.45,control,"adaptation documentaire Form→produit (décalage empirique) | D1 produit : dérivé du D1 d'apprentissage Form, pas un contrôle indépendant de la physique",C1,B,4.931706
-MK03,5,MK03-1A66E-X,N45-4X19,E,D1,to,13.25,13.25,12.5638,-0.6862,-5.18,control,"adaptation documentaire Form→produit (décalage empirique) | D1 produit : dérivé du D1 d'apprentissage Form, pas un contrôle indépendant de la physique",C1,B,3.940832
-MK03,5,MK03-1A66E-X,N45-4X19,E,D3,up,8.6,8.6,7.8038,-0.7962,-9.26,control,adaptation documentaire Form→produit (décalage empirique),C1,B,4.931706
-MK03,5,MK03-1A66E-X,N45-4X19,E,D3,to,10.5,10.5,9.3107,-1.1893,-11.33,control,adaptation documentaire Form→produit (décalage empirique),C1,B,3.940832
-MK03,5,MK03-1A66E-X,N45-4X19,E,D4,up,4.65,4.65,6.5314,1.8814,40.46,control,adaptation documentaire Form→produit (décalage empirique) | écart > 20 %,C1,B,4.931706
-MK03,5,MK03-1A66E-X,N45-4X19,E,D4,to,8.35,8.35,9.3519,1.0019,12,control,adaptation documentaire Form→produit (décalage empirique),C1,B,3.940832
-MK03,5,MK03-1A66E-X,N45-4X19,E,D5,up,6.5,6.5,5.5322,-0.9678,-14.89,control,adaptation documentaire Form→produit (décalage empirique),C1,B,4.931706
-MK03,5,MK03-1A66E-X,N45-4X19,E,D5,to,7.8,7.8,6.394,-1.406,-18.03,control,adaptation documentaire Form→produit (décalage empirique),C1,B,3.940832
-MK13,24,MK13-1A66C-X,SMCO5-5X4,C,D1,up,2.8,2.8,4.0556,1.2556,44.84,control,"adaptation documentaire Form→produit (décalage empirique) | D1 produit : dérivé du D1 d'apprentissage Form, pas un contrôle indépendant de la physique | écart > 20 %",C1,B,3.542861
-MK13,24,MK13-1A66C-X,SMCO5-5X4,C,D1,to,5.85,5.85,7.065,1.215,20.77,control,"adaptation documentaire Form→produit (décalage empirique) | D1 produit : dérivé du D1 d'apprentissage Form, pas un contrôle indépendant de la physique | écart > 20 %",C1,B,2.482277
-MK13,24,MK13-1A66C-X,SMCO5-5X4,C,D3,up,4.1,4.1,3.5285,-0.5715,-13.94,control,adaptation documentaire Form→produit (décalage empirique),C1,B,3.542861
-MK13,24,MK13-1A66C-X,SMCO5-5X4,C,D3,to,8.2,8.2,7.1767,-1.0233,-12.48,control,adaptation documentaire Form→produit (décalage empirique),C1,B,2.482277
-MK13,24,MK13-1A66C-X,SMCO5-5X4,C,D4,up,2.3,2.3,4.0977,1.7977,78.16,control,adaptation documentaire Form→produit (décalage empirique) | écart > 20 %,C1,B,3.542861
-MK13,24,MK13-1A66C-X,SMCO5-5X4,C,D4,to,5.65,5.65,7.0175,1.3675,24.2,control,adaptation documentaire Form→produit (décalage empirique) | écart > 20 %,C1,B,2.482277
-MK13,24,MK13-1A66C-X,SMCO5-5X4,C,D5,up,,,0.5417,,,missing,borne non publiée | adaptation documentaire Form→produit (décalage empirique),C1,B,3.542861
-MK13,24,MK13-1A66C-X,SMCO5-5X4,C,D5,to,3.4,3.4,3.2617,-0.1383,-4.07,control,adaptation documentaire Form→produit (décalage empirique),C1,B,2.482277
-MK13,25,MK13-1A66C-X,N45-4X19,C,D1,up,10.5,10.5,9.7835,-0.7165,-6.82,control,"adaptation documentaire Form→produit (décalage empirique) | D1 produit : dérivé du D1 d'apprentissage Form, pas un contrôle indépendant de la physique",C1,B,3.542861
-MK13,25,MK13-1A66C-X,N45-4X19,C,D1,to,14.65,14.65,13.955,-0.695,-4.74,control,"adaptation documentaire Form→produit (décalage empirique) | D1 produit : dérivé du D1 d'apprentissage Form, pas un contrôle indépendant de la physique",C1,B,2.482277
-MK13,25,MK13-1A66C-X,N45-4X19,C,D3,up,9,9,7.4733,-1.5267,-16.96,control,adaptation documentaire Form→produit (décalage empirique),C1,B,3.542861
-MK13,25,MK13-1A66C-X,N45-4X19,C,D3,to,16.1,16.1,12.0595,-4.0405,-25.1,control,adaptation documentaire Form→produit (décalage empirique) | écart > 20 %,C1,B,2.482277
-MK13,25,MK13-1A66C-X,N45-4X19,C,D4,up,5.6,5.6,6.3683,0.7683,13.72,control,adaptation documentaire Form→produit (décalage empirique),C1,B,3.542861
-MK13,25,MK13-1A66C-X,N45-4X19,C,D4,to,9.45,9.45,9.8872,0.4372,4.63,control,adaptation documentaire Form→produit (décalage empirique),C1,B,2.482277
-MK13,25,MK13-1A66C-X,N45-4X19,C,D5,up,6.4,6.4,4.2236,-2.1764,-34.01,control,adaptation documentaire Form→produit (décalage empirique) | écart > 20 %,C1,B,3.542861
-MK13,25,MK13-1A66C-X,N45-4X19,C,D5,to,10.8,10.8,7.5627,-3.2373,-29.97,control,adaptation documentaire Form→produit (décalage empirique) | écart > 20 %,C1,B,2.482277
-MK13,24,MK13-1A66E-X,SMCO5-5X4,E,D1,up,1.4,1.4,2.7432,1.3432,95.94,control,"adaptation documentaire Form→produit (décalage empirique) | D1 produit : dérivé du D1 d'apprentissage Form, pas un contrôle indépendant de la physique | écart > 20 %",C1,B,4.931706
-MK13,24,MK13-1A66E-X,SMCO5-5X4,E,D1,to,3.85,3.85,5.0696,1.2196,31.68,control,"adaptation documentaire Form→produit (décalage empirique) | D1 produit : dérivé du D1 d'apprentissage Form, pas un contrôle indépendant de la physique | écart > 20 %",C1,B,3.940832
-MK13,24,MK13-1A66E-X,SMCO5-5X4,E,D3,up,2.2,2.2,1.9982,-0.2018,-9.17,control,adaptation documentaire Form→produit (décalage empirique),C1,B,4.931706
-MK13,24,MK13-1A66E-X,SMCO5-5X4,E,D3,to,5.2,5.2,4.8171,-0.3829,-7.36,control,adaptation documentaire Form→produit (décalage empirique),C1,B,3.940832
-MK13,24,MK13-1A66E-X,SMCO5-5X4,E,D4,up,1.2,1.2,2.8638,1.6638,138.65,control,adaptation documentaire Form→produit (décalage empirique) | écart > 20 %,C1,B,4.931706
-MK13,24,MK13-1A66E-X,SMCO5-5X4,E,D4,to,3.65,3.65,5.1374,1.4874,40.75,control,adaptation documentaire Form→produit (décalage empirique) | écart > 20 %,C1,B,3.940832
-MK13,24,MK13-1A66E-X,SMCO5-5X4,E,D5,up,,,,,,missing,borne non publiée | estimation indisponible : negative_after_offset | adaptation documentaire Form→produit (décalage empirique),C1,B,4.931706
-MK13,24,MK13-1A66E-X,SMCO5-5X4,E,D5,to,1.1,1.1,2.0842,0.9842,89.47,control,adaptation documentaire Form→produit (décalage empirique) | écart > 20 %,C1,B,3.940832
-MK13,25,MK13-1A66E-X,N45-4X19,E,D1,up,8.2,8.2,7.4514,-0.7486,-9.13,control,"adaptation documentaire Form→produit (décalage empirique) | D1 produit : dérivé du D1 d'apprentissage Form, pas un contrôle indépendant de la physique",C1,B,4.931706
-MK13,25,MK13-1A66E-X,N45-4X19,E,D1,to,11.15,11.15,10.4638,-0.6862,-6.15,control,"adaptation documentaire Form→produit (décalage empirique) | D1 produit : dérivé du D1 d'apprentissage Form, pas un contrôle indépendant de la physique",C1,B,3.940832
-MK13,25,MK13-1A66E-X,N45-4X19,E,D3,up,6,6,5.2038,-0.7962,-13.27,control,adaptation documentaire Form→produit (décalage empirique),C1,B,4.931706
-MK13,25,MK13-1A66E-X,N45-4X19,E,D3,to,9.7,9.7,8.5107,-1.1893,-12.26,control,adaptation documentaire Form→produit (décalage empirique),C1,B,3.940832
-MK13,25,MK13-1A66E-X,N45-4X19,E,D4,up,2.8,2.8,4.6814,1.8814,67.19,control,adaptation documentaire Form→produit (décalage empirique) | écart > 20 %,C1,B,4.931706
-MK13,25,MK13-1A66E-X,N45-4X19,E,D4,to,6.25,6.25,7.2519,1.0019,16.03,control,adaptation documentaire Form→produit (décalage empirique),C1,B,3.940832
-MK13,25,MK13-1A66E-X,N45-4X19,E,D5,up,3.9,3.9,2.9322,-0.9678,-24.82,control,adaptation documentaire Form→produit (décalage empirique) | écart > 20 %,C1,B,4.931706
-MK13,25,MK13-1A66E-X,N45-4X19,E,D5,to,7,7,5.594,-1.406,-20.09,control,adaptation documentaire Form→produit (décalage empirique) | écart > 20 %,C1,B,3.940832
-MK04,12,MK04-1A66C-X,SMCO5-5X4,C,D3,up,6.4,6.4,,,,quarantine,MK04 D3 en quarantaine (71/96 plages inversées) | plage inversée up > to,C1,B,3.542860619580966
-MK04,12,MK04-1A66C-X,SMCO5-5X4,C,D3,to,5.2,5.2,,,,quarantine,MK04 D3 en quarantaine (71/96 plages inversées) | plage inversée up > to,C1,B,2.4822772081831888
-MK04,13,MK04-1A66C-X,N45-4X19,C,D3,up,14.3,14.3,,,,quarantine,MK04 D3 en quarantaine (71/96 plages inversées) | plage inversée up > to,C1,B,3.542860619580966
-MK04,13,MK04-1A66C-X,N45-4X19,C,D3,to,8.5,8.5,,,,quarantine,MK04 D3 en quarantaine (71/96 plages inversées) | plage inversée up > to,C1,B,2.4822772081831888
-MK04,12,MK04-1A66E-X,SMCO5-5X4,E,D3,up,3.4,3.4,,,,quarantine,MK04 D3 en quarantaine (71/96 plages inversées),C1,B,4.931706030597784
-MK04,12,MK04-1A66E-X,SMCO5-5X4,E,D3,to,4.1,4.1,,,,quarantine,MK04 D3 en quarantaine (71/96 plages inversées),C1,B,3.940831585071642
-MK04,13,MK04-1A66E-X,N45-4X19,E,D3,up,7.9,7.9,,,,quarantine,MK04 D3 en quarantaine (71/96 plages inversées) | plage inversée up > to,C1,B,4.931706030597784
-MK04,13,MK04-1A66E-X,N45-4X19,E,D3,to,5.7,5.7,,,,quarantine,MK04 D3 en quarantaine (71/96 plages inversées) | plage inversée up > to,C1,B,3.940831585071642
+source,page,reference,magnet,class,D,bound,raw,published_mm,estimated_mm,error_mm,error_pct,group,status,anomalies,convention,model,shared_threshold_mT
+Form,4,MK03Form-C 66-er,SMCO5-5X4,C,D1,up,7.3,7.3,8.5556,1.2556,17.2,training,training,,C1,B,3.542861
+Form,4,MK03Form-C 66-er,SMCO5-5X4,C,D1,to,8.9,8.9,10.115,1.215,13.65,training,training,,C1,B,2.482277
+Form,4,MK03Form-C 66-er,SMCO5-5X4,C,D3,up,7.5,7.5,6.9285,-0.5715,-7.62,form_control,control,,C1,B,3.542861
+Form,4,MK03Form-C 66-er,SMCO5-5X4,C,D3,to,9.8,9.8,8.7767,-1.0233,-10.44,form_control,control,,C1,B,2.482277
+Form,4,MK03Form-C 66-er,SMCO5-5X4,C,D4,up,6.8,6.8,8.5977,1.7977,26.44,form_control,control,écart > 20 %,C1,B,3.542861
+Form,4,MK03Form-C 66-er,SMCO5-5X4,C,D4,to,8.7,8.7,10.0675,1.3675,15.72,form_control,control,,C1,B,2.482277
+Form,4,MK03Form-C 66-er,SMCO5-5X4,C,D5,up,3.2,3.2,2.8839,-0.3161,-9.88,form_control,control,,C1,B,3.542861
+Form,4,MK03Form-C 66-er,SMCO5-5X4,C,D5,to,5,5,4.2634,-0.7366,-14.73,form_control,control,,C1,B,2.482277
+Form,5,MK03Form-C 66-er,N45-4X19,C,D1,up,15,15,14.2835,-0.7165,-4.78,training,training,,C1,B,3.542861
+Form,5,MK03Form-C 66-er,N45-4X19,C,D1,to,17.7,17.7,17.005,-0.695,-3.93,training,training,,C1,B,2.482277
+Form,5,MK03Form-C 66-er,N45-4X19,C,D3,up,12.4,12.4,10.8733,-1.5267,-12.31,form_control,control,,C1,B,3.542861
+Form,5,MK03Form-C 66-er,N45-4X19,C,D3,to,17.7,17.7,13.6595,-4.0405,-22.83,form_control,control,écart > 20 %,C1,B,2.482277
+Form,5,MK03Form-C 66-er,N45-4X19,C,D4,up,10.1,10.1,10.8683,0.7683,7.61,form_control,control,,C1,B,3.542861
+Form,5,MK03Form-C 66-er,N45-4X19,C,D4,to,12.5,12.5,12.9372,0.4372,3.5,form_control,control,,C1,B,2.482277
+Form,5,MK03Form-C 66-er,N45-4X19,C,D5,up,9.8,9.8,8.6342,-1.1658,-11.9,form_control,control,,C1,B,3.542861
+Form,5,MK03Form-C 66-er,N45-4X19,C,D5,to,"12,4",12.4,11.0542,-1.3458,-10.85,form_control,control,"virgule décimale dans la source (« 12,4 »)",C1,B,2.482277
+Form,4,MK03Form-E 66-er,SMCO5-5X4,E,D1,up,5.9,5.9,7.2432,1.3432,22.77,training,training,écart > 20 %,C1,B,4.931706
+Form,4,MK03Form-E 66-er,SMCO5-5X4,E,D1,to,6.9,6.9,8.1196,1.2196,17.68,training,training,,C1,B,3.940832
+Form,4,MK03Form-E 66-er,SMCO5-5X4,E,D3,up,5.6,5.6,5.3982,-0.2018,-3.6,form_control,control,,C1,B,4.931706
+Form,4,MK03Form-E 66-er,SMCO5-5X4,E,D3,to,6.8,6.8,6.4171,-0.3829,-5.63,form_control,control,,C1,B,3.940832
+Form,4,MK03Form-E 66-er,SMCO5-5X4,E,D4,up,5.7,5.7,7.3638,1.6638,29.19,form_control,control,écart > 20 %,C1,B,4.931706
+Form,4,MK03Form-E 66-er,SMCO5-5X4,E,D4,to,6.7,6.7,8.1874,1.4874,22.2,form_control,control,écart > 20 %,C1,B,3.940832
+Form,4,MK03Form-E 66-er,SMCO5-5X4,E,D5,up,-,,1.7455,,,form_control,missing,borne non publiée,C1,B,4.931706
+Form,4,MK03Form-E 66-er,SMCO5-5X4,E,D5,to,2.7,2.7,2.5031,-0.1969,-7.29,form_control,control,,C1,B,3.940832
+Form,5,MK03Form-E 66-er,N45-4X19,E,D1,up,12.7,12.7,11.9514,-0.7486,-5.89,training,training,,C1,B,4.931706
+Form,5,MK03Form-E 66-er,N45-4X19,E,D1,to,14.2,14.2,13.5138,-0.6862,-4.83,training,training,,C1,B,3.940832
+Form,5,MK03Form-E 66-er,N45-4X19,E,D3,up,9.4,9.4,8.6038,-0.7962,-8.47,form_control,control,,C1,B,4.931706
+Form,5,MK03Form-E 66-er,N45-4X19,E,D3,to,11.3,11.3,10.1107,-1.1893,-10.52,form_control,control,,C1,B,3.940832
+Form,5,MK03Form-E 66-er,N45-4X19,E,D4,up,7.3,7.3,9.1814,1.8814,25.77,form_control,control,écart > 20 %,C1,B,4.931706
+Form,5,MK03Form-E 66-er,N45-4X19,E,D4,to,9.3,9.3,10.3019,1.0019,10.77,form_control,control,,C1,B,3.940832
+Form,5,MK03Form-E 66-er,N45-4X19,E,D5,up,7.3,7.3,6.6118,-0.6882,-9.43,form_control,control,,C1,B,4.931706
+Form,5,MK03Form-E 66-er,N45-4X19,E,D5,to,"8,6",8.6,7.9603,-0.6397,-7.44,form_control,control,"virgule décimale dans la source (« 8,6 »)",C1,B,3.940832
+MK03,4,MK03-1A66C-X,SMCO5-5X4,C,D1,up,4.65,4.65,5.9056,1.2556,27,doc_adaptation,adaptation,"adaptation documentaire Form→produit (décalage empirique) | D1 produit : dérivé du D1 d'apprentissage Form, pas un contrôle indépendant de la physique | écart > 20 %",C1,B,3.542861
+MK03,4,MK03-1A66C-X,SMCO5-5X4,C,D1,to,7.95,7.95,9.165,1.215,15.28,doc_adaptation,adaptation,"adaptation documentaire Form→produit (décalage empirique) | D1 produit : dérivé du D1 d'apprentissage Form, pas un contrôle indépendant de la physique",C1,B,2.482277
+MK03,4,MK03-1A66C-X,SMCO5-5X4,C,D3,up,6.7,6.7,6.1285,-0.5715,-8.53,doc_adaptation,adaptation,adaptation documentaire Form→produit (décalage empirique),C1,B,3.542861
+MK03,4,MK03-1A66C-X,SMCO5-5X4,C,D3,to,9,9,7.9767,-1.0233,-11.37,doc_adaptation,adaptation,adaptation documentaire Form→produit (décalage empirique),C1,B,2.482277
+MK03,4,MK03-1A66C-X,SMCO5-5X4,C,D4,up,4.15,4.15,5.9477,1.7977,43.32,doc_adaptation,adaptation,adaptation documentaire Form→produit (décalage empirique) | écart > 20 %,C1,B,3.542861
+MK03,4,MK03-1A66C-X,SMCO5-5X4,C,D4,to,7.75,7.75,9.1175,1.3675,17.65,doc_adaptation,adaptation,adaptation documentaire Form→produit (décalage empirique),C1,B,2.482277
+MK03,4,MK03-1A66C-X,SMCO5-5X4,C,D5,up,2.4,2.4,2.0839,-0.3161,-13.17,doc_adaptation,adaptation,adaptation documentaire Form→produit (décalage empirique),C1,B,3.542861
+MK03,4,MK03-1A66C-X,SMCO5-5X4,C,D5,to,4.2,4.2,3.4634,-0.7366,-17.54,doc_adaptation,adaptation,adaptation documentaire Form→produit (décalage empirique),C1,B,2.482277
+MK03,5,MK03-1A66C-X,N45-4X19,C,D1,up,12.35,12.35,11.6335,-0.7165,-5.8,doc_adaptation,adaptation,"adaptation documentaire Form→produit (décalage empirique) | D1 produit : dérivé du D1 d'apprentissage Form, pas un contrôle indépendant de la physique",C1,B,3.542861
+MK03,5,MK03-1A66C-X,N45-4X19,C,D1,to,16.75,16.75,16.055,-0.695,-4.15,doc_adaptation,adaptation,"adaptation documentaire Form→produit (décalage empirique) | D1 produit : dérivé du D1 d'apprentissage Form, pas un contrôle indépendant de la physique",C1,B,2.482277
+MK03,5,MK03-1A66C-X,N45-4X19,C,D3,up,11.6,11.6,10.0733,-1.5267,-13.16,doc_adaptation,adaptation,adaptation documentaire Form→produit (décalage empirique),C1,B,3.542861
+MK03,5,MK03-1A66C-X,N45-4X19,C,D3,to,16.9,16.9,12.8595,-4.0405,-23.91,doc_adaptation,adaptation,adaptation documentaire Form→produit (décalage empirique) | écart > 20 %,C1,B,2.482277
+MK03,5,MK03-1A66C-X,N45-4X19,C,D4,up,7.45,7.45,8.2183,0.7683,10.31,doc_adaptation,adaptation,adaptation documentaire Form→produit (décalage empirique),C1,B,3.542861
+MK03,5,MK03-1A66C-X,N45-4X19,C,D4,to,11.55,11.55,11.9872,0.4372,3.79,doc_adaptation,adaptation,adaptation documentaire Form→produit (décalage empirique),C1,B,2.482277
+MK03,5,MK03-1A66C-X,N45-4X19,C,D5,up,9,9,7.8342,-1.1658,-12.95,doc_adaptation,adaptation,adaptation documentaire Form→produit (décalage empirique),C1,B,3.542861
+MK03,5,MK03-1A66C-X,N45-4X19,C,D5,to,11.6,11.6,10.2542,-1.3458,-11.6,doc_adaptation,adaptation,adaptation documentaire Form→produit (décalage empirique),C1,B,2.482277
+MK03,4,MK03-1A66E-X,SMCO5-5X4,E,D1,up,3.25,3.25,4.5932,1.3432,41.33,doc_adaptation,adaptation,"adaptation documentaire Form→produit (décalage empirique) | D1 produit : dérivé du D1 d'apprentissage Form, pas un contrôle indépendant de la physique | écart > 20 %",C1,B,4.931706
+MK03,4,MK03-1A66E-X,SMCO5-5X4,E,D1,to,5.95,5.95,7.1696,1.2196,20.5,doc_adaptation,adaptation,"adaptation documentaire Form→produit (décalage empirique) | D1 produit : dérivé du D1 d'apprentissage Form, pas un contrôle indépendant de la physique | écart > 20 %",C1,B,3.940832
+MK03,4,MK03-1A66E-X,SMCO5-5X4,E,D3,up,4.8,4.8,4.5982,-0.2018,-4.2,doc_adaptation,adaptation,adaptation documentaire Form→produit (décalage empirique),C1,B,4.931706
+MK03,4,MK03-1A66E-X,SMCO5-5X4,E,D3,to,6,6,5.6171,-0.3829,-6.38,doc_adaptation,adaptation,adaptation documentaire Form→produit (décalage empirique),C1,B,3.940832
+MK03,4,MK03-1A66E-X,SMCO5-5X4,E,D4,up,3.05,3.05,4.7138,1.6638,54.55,doc_adaptation,adaptation,adaptation documentaire Form→produit (décalage empirique) | écart > 20 %,C1,B,4.931706
+MK03,4,MK03-1A66E-X,SMCO5-5X4,E,D4,to,5.75,5.75,7.2374,1.4874,25.87,doc_adaptation,adaptation,adaptation documentaire Form→produit (décalage empirique) | écart > 20 %,C1,B,3.940832
+MK03,4,MK03-1A66E-X,SMCO5-5X4,E,D5,up,,,0.9455,,,doc_adaptation,missing,borne non publiée | adaptation documentaire Form→produit (décalage empirique),C1,B,4.931706
+MK03,4,MK03-1A66E-X,SMCO5-5X4,E,D5,to,1.9,1.9,1.7031,-0.1969,-10.36,doc_adaptation,adaptation,adaptation documentaire Form→produit (décalage empirique),C1,B,3.940832
+MK03,5,MK03-1A66E-X,N45-4X19,E,D1,up,10.05,10.05,9.3014,-0.7486,-7.45,doc_adaptation,adaptation,"adaptation documentaire Form→produit (décalage empirique) | D1 produit : dérivé du D1 d'apprentissage Form, pas un contrôle indépendant de la physique",C1,B,4.931706
+MK03,5,MK03-1A66E-X,N45-4X19,E,D1,to,13.25,13.25,12.5638,-0.6862,-5.18,doc_adaptation,adaptation,"adaptation documentaire Form→produit (décalage empirique) | D1 produit : dérivé du D1 d'apprentissage Form, pas un contrôle indépendant de la physique",C1,B,3.940832
+MK03,5,MK03-1A66E-X,N45-4X19,E,D3,up,8.6,8.6,7.8038,-0.7962,-9.26,doc_adaptation,adaptation,adaptation documentaire Form→produit (décalage empirique),C1,B,4.931706
+MK03,5,MK03-1A66E-X,N45-4X19,E,D3,to,10.5,10.5,9.3107,-1.1893,-11.33,doc_adaptation,adaptation,adaptation documentaire Form→produit (décalage empirique),C1,B,3.940832
+MK03,5,MK03-1A66E-X,N45-4X19,E,D4,up,4.65,4.65,6.5314,1.8814,40.46,doc_adaptation,adaptation,adaptation documentaire Form→produit (décalage empirique) | écart > 20 %,C1,B,4.931706
+MK03,5,MK03-1A66E-X,N45-4X19,E,D4,to,8.35,8.35,9.3519,1.0019,12,doc_adaptation,adaptation,adaptation documentaire Form→produit (décalage empirique),C1,B,3.940832
+MK03,5,MK03-1A66E-X,N45-4X19,E,D5,up,6.5,6.5,5.8118,-0.6882,-10.59,doc_adaptation,adaptation,adaptation documentaire Form→produit (décalage empirique),C1,B,4.931706
+MK03,5,MK03-1A66E-X,N45-4X19,E,D5,to,7.8,7.8,7.1603,-0.6397,-8.2,doc_adaptation,adaptation,adaptation documentaire Form→produit (décalage empirique),C1,B,3.940832
+MK13,24,MK13-1A66C-X,SMCO5-5X4,C,D1,up,2.8,2.8,4.0556,1.2556,44.84,doc_adaptation,adaptation,"adaptation documentaire Form→produit (décalage empirique) | D1 produit : dérivé du D1 d'apprentissage Form, pas un contrôle indépendant de la physique | écart > 20 %",C1,B,3.542861
+MK13,24,MK13-1A66C-X,SMCO5-5X4,C,D1,to,5.85,5.85,7.065,1.215,20.77,doc_adaptation,adaptation,"adaptation documentaire Form→produit (décalage empirique) | D1 produit : dérivé du D1 d'apprentissage Form, pas un contrôle indépendant de la physique | écart > 20 %",C1,B,2.482277
+MK13,24,MK13-1A66C-X,SMCO5-5X4,C,D3,up,4.1,4.1,3.5285,-0.5715,-13.94,doc_adaptation,adaptation,adaptation documentaire Form→produit (décalage empirique),C1,B,3.542861
+MK13,24,MK13-1A66C-X,SMCO5-5X4,C,D3,to,8.2,8.2,7.1767,-1.0233,-12.48,doc_adaptation,adaptation,adaptation documentaire Form→produit (décalage empirique),C1,B,2.482277
+MK13,24,MK13-1A66C-X,SMCO5-5X4,C,D4,up,2.3,2.3,4.0977,1.7977,78.16,doc_adaptation,adaptation,adaptation documentaire Form→produit (décalage empirique) | écart > 20 %,C1,B,3.542861
+MK13,24,MK13-1A66C-X,SMCO5-5X4,C,D4,to,5.65,5.65,7.0175,1.3675,24.2,doc_adaptation,adaptation,adaptation documentaire Form→produit (décalage empirique) | écart > 20 %,C1,B,2.482277
+MK13,24,MK13-1A66C-X,SMCO5-5X4,C,D5,up,,,,,,doc_adaptation,missing,borne non publiée | estimation indisponible : negative_after_offset | adaptation documentaire Form→produit (décalage empirique),C1,B,3.542861
+MK13,24,MK13-1A66C-X,SMCO5-5X4,C,D5,to,3.4,3.4,2.6634,-0.7366,-21.66,doc_adaptation,adaptation,adaptation documentaire Form→produit (décalage empirique) | écart > 20 %,C1,B,2.482277
+MK13,25,MK13-1A66C-X,N45-4X19,C,D1,up,10.5,10.5,9.7835,-0.7165,-6.82,doc_adaptation,adaptation,"adaptation documentaire Form→produit (décalage empirique) | D1 produit : dérivé du D1 d'apprentissage Form, pas un contrôle indépendant de la physique",C1,B,3.542861
+MK13,25,MK13-1A66C-X,N45-4X19,C,D1,to,14.65,14.65,13.955,-0.695,-4.74,doc_adaptation,adaptation,"adaptation documentaire Form→produit (décalage empirique) | D1 produit : dérivé du D1 d'apprentissage Form, pas un contrôle indépendant de la physique",C1,B,2.482277
+MK13,25,MK13-1A66C-X,N45-4X19,C,D3,up,9,9,7.4733,-1.5267,-16.96,doc_adaptation,adaptation,adaptation documentaire Form→produit (décalage empirique),C1,B,3.542861
+MK13,25,MK13-1A66C-X,N45-4X19,C,D3,to,16.1,16.1,12.0595,-4.0405,-25.1,doc_adaptation,adaptation,adaptation documentaire Form→produit (décalage empirique) | écart > 20 %,C1,B,2.482277
+MK13,25,MK13-1A66C-X,N45-4X19,C,D4,up,5.6,5.6,6.3683,0.7683,13.72,doc_adaptation,adaptation,adaptation documentaire Form→produit (décalage empirique),C1,B,3.542861
+MK13,25,MK13-1A66C-X,N45-4X19,C,D4,to,9.45,9.45,9.8872,0.4372,4.63,doc_adaptation,adaptation,adaptation documentaire Form→produit (décalage empirique),C1,B,2.482277
+MK13,25,MK13-1A66C-X,N45-4X19,C,D5,up,6.4,6.4,5.2342,-1.1658,-18.22,doc_adaptation,adaptation,adaptation documentaire Form→produit (décalage empirique),C1,B,3.542861
+MK13,25,MK13-1A66C-X,N45-4X19,C,D5,to,10.8,10.8,9.4542,-1.3458,-12.46,doc_adaptation,adaptation,adaptation documentaire Form→produit (décalage empirique),C1,B,2.482277
+MK13,24,MK13-1A66E-X,SMCO5-5X4,E,D1,up,1.4,1.4,2.7432,1.3432,95.94,doc_adaptation,adaptation,"adaptation documentaire Form→produit (décalage empirique) | D1 produit : dérivé du D1 d'apprentissage Form, pas un contrôle indépendant de la physique | écart > 20 %",C1,B,4.931706
+MK13,24,MK13-1A66E-X,SMCO5-5X4,E,D1,to,3.85,3.85,5.0696,1.2196,31.68,doc_adaptation,adaptation,"adaptation documentaire Form→produit (décalage empirique) | D1 produit : dérivé du D1 d'apprentissage Form, pas un contrôle indépendant de la physique | écart > 20 %",C1,B,3.940832
+MK13,24,MK13-1A66E-X,SMCO5-5X4,E,D3,up,2.2,2.2,1.9982,-0.2018,-9.17,doc_adaptation,adaptation,adaptation documentaire Form→produit (décalage empirique),C1,B,4.931706
+MK13,24,MK13-1A66E-X,SMCO5-5X4,E,D3,to,5.2,5.2,4.8171,-0.3829,-7.36,doc_adaptation,adaptation,adaptation documentaire Form→produit (décalage empirique),C1,B,3.940832
+MK13,24,MK13-1A66E-X,SMCO5-5X4,E,D4,up,1.2,1.2,2.8638,1.6638,138.65,doc_adaptation,adaptation,adaptation documentaire Form→produit (décalage empirique) | écart > 20 %,C1,B,4.931706
+MK13,24,MK13-1A66E-X,SMCO5-5X4,E,D4,to,3.65,3.65,5.1374,1.4874,40.75,doc_adaptation,adaptation,adaptation documentaire Form→produit (décalage empirique) | écart > 20 %,C1,B,3.940832
+MK13,24,MK13-1A66E-X,SMCO5-5X4,E,D5,up,,,,,,doc_adaptation,missing,borne non publiée | estimation indisponible : negative_after_offset | adaptation documentaire Form→produit (décalage empirique),C1,B,4.931706
+MK13,24,MK13-1A66E-X,SMCO5-5X4,E,D5,to,1.1,1.1,0.9031,-0.1969,-17.9,doc_adaptation,adaptation,adaptation documentaire Form→produit (décalage empirique),C1,B,3.940832
+MK13,25,MK13-1A66E-X,N45-4X19,E,D1,up,8.2,8.2,7.4514,-0.7486,-9.13,doc_adaptation,adaptation,"adaptation documentaire Form→produit (décalage empirique) | D1 produit : dérivé du D1 d'apprentissage Form, pas un contrôle indépendant de la physique",C1,B,4.931706
+MK13,25,MK13-1A66E-X,N45-4X19,E,D1,to,11.15,11.15,10.4638,-0.6862,-6.15,doc_adaptation,adaptation,"adaptation documentaire Form→produit (décalage empirique) | D1 produit : dérivé du D1 d'apprentissage Form, pas un contrôle indépendant de la physique",C1,B,3.940832
+MK13,25,MK13-1A66E-X,N45-4X19,E,D3,up,6,6,5.2038,-0.7962,-13.27,doc_adaptation,adaptation,adaptation documentaire Form→produit (décalage empirique),C1,B,4.931706
+MK13,25,MK13-1A66E-X,N45-4X19,E,D3,to,9.7,9.7,8.5107,-1.1893,-12.26,doc_adaptation,adaptation,adaptation documentaire Form→produit (décalage empirique),C1,B,3.940832
+MK13,25,MK13-1A66E-X,N45-4X19,E,D4,up,2.8,2.8,4.6814,1.8814,67.19,doc_adaptation,adaptation,adaptation documentaire Form→produit (décalage empirique) | écart > 20 %,C1,B,4.931706
+MK13,25,MK13-1A66E-X,N45-4X19,E,D4,to,6.25,6.25,7.2519,1.0019,16.03,doc_adaptation,adaptation,adaptation documentaire Form→produit (décalage empirique),C1,B,3.940832
+MK13,25,MK13-1A66E-X,N45-4X19,E,D5,up,3.9,3.9,3.2118,-0.6882,-17.65,doc_adaptation,adaptation,adaptation documentaire Form→produit (décalage empirique),C1,B,4.931706
+MK13,25,MK13-1A66E-X,N45-4X19,E,D5,to,7,7,6.3603,-0.6397,-9.14,doc_adaptation,adaptation,adaptation documentaire Form→produit (décalage empirique),C1,B,3.940832
+MK04,12,MK04-1A66C-X,SMCO5-5X4,C,D3,up,6.4,6.4,,,,quarantine,quarantine,MK04 D3 en quarantaine (71/96 plages inversées) | plage inversée up > to,C1,B,3.542860619580966
+MK04,12,MK04-1A66C-X,SMCO5-5X4,C,D3,to,5.2,5.2,,,,quarantine,quarantine,MK04 D3 en quarantaine (71/96 plages inversées) | plage inversée up > to,C1,B,2.4822772081831888
+MK04,13,MK04-1A66C-X,N45-4X19,C,D3,up,14.3,14.3,,,,quarantine,quarantine,MK04 D3 en quarantaine (71/96 plages inversées) | plage inversée up > to,C1,B,3.542860619580966
+MK04,13,MK04-1A66C-X,N45-4X19,C,D3,to,8.5,8.5,,,,quarantine,quarantine,MK04 D3 en quarantaine (71/96 plages inversées) | plage inversée up > to,C1,B,2.4822772081831888
+MK04,12,MK04-1A66E-X,SMCO5-5X4,E,D3,up,3.4,3.4,,,,quarantine,quarantine,MK04 D3 en quarantaine (71/96 plages inversées),C1,B,4.931706030597784
+MK04,12,MK04-1A66E-X,SMCO5-5X4,E,D3,to,4.1,4.1,,,,quarantine,quarantine,MK04 D3 en quarantaine (71/96 plages inversées),C1,B,3.940831585071642
+MK04,13,MK04-1A66E-X,N45-4X19,E,D3,up,7.9,7.9,,,,quarantine,quarantine,MK04 D3 en quarantaine (71/96 plages inversées) | plage inversée up > to,C1,B,4.931706030597784
+MK04,13,MK04-1A66E-X,N45-4X19,E,D3,to,5.7,5.7,,,,quarantine,quarantine,MK04 D3 en quarantaine (71/96 plages inversées) | plage inversée up > to,C1,B,3.940831585071642

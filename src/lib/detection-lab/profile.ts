@@ -27,15 +27,17 @@ export interface ReedScenario {
 
 export const PROFILE = {
   id: "reed-lab-hypotheses",
-  version: "1.0.0",
+  version: "1.1.0",
   frozenOn: "2026-10-26",
   reed: {
     id: "66-er",
     /** H-L1 : longueur effective nominale, non publiée. */
     effectiveLengthMm: 8,
-    /** H-ENV : enveloppe de verre pour l'exclusion de collision (capsule). */
-    envelopeRadiusMm: 1,
-    envelopeHalfLengthMm: 5,
+    /** Exclusion géométrique conservative = encombrement PUBLIÉ du KSK-1A66 (14,0 mm max × Ø 2,2 mm),
+     * distinct de la longueur effective hypothétique. Boîtiers et montages non qualifiés ici. */
+    envelopeRadiusMm: 1.1,
+    envelopeHalfLengthMm: 7,
+    envelopeSource: "https://standexdetect.com/wp-content/uploads/sites/2/2025/09/datasheet-reed-switch-series-ksk-1a66_15551c.pdf",
     /** Gauss-Legendre par lame (moitié de longueur effective). */
     quadraturePerBlade: 12,
   },
@@ -74,7 +76,7 @@ export const PROFILE = {
     D1: "Aimant parallèle aux lames (aimantation selon x), centré en x, approche latérale selon y. Datum ambigu dans la source (registre R2b).",
     D3: "Aimant coaxial aux lames, approche par l'extrémité selon x. Datum ambigu dans la source (registre R2b).",
     D4: "H-D4 : aimant perpendiculaire aux lames (aimantation selon y), approche selon y ; distance = maximum de lobe sur x.",
-    D5: "H-D5 : aimant parallèle aux lames (aimantation selon x), approche selon y ; distance = maximum du lobe SECONDAIRE (au-delà du premier minimum en x). Hypothèse : deux variantes perpendiculaires essayées donnent Bx ≡ 0 sur l'axe (reed dans le plan médian de l'aimant) et ont été rejetées.",
+    D5: "D5 : schéma source (reed vertical, aimant horizontal, approche par l'extrémité) tourné rigidement : aimantation selon y (⟂ lames), approche selon x par l'extrémité, lobes de part et d'autre ; distance = maximum de lobe sur t = y ≥ 0. Réponse nulle à t = 0 (zone centrale entre lobes).",
   },
   models: {
     A: "Réponse A : |moyenne de Bx sur la longueur effective| (poids de Gauss normalisés), mT.",

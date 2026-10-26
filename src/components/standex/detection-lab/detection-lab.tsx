@@ -1,27 +1,37 @@
 /** Laboratoire de détection reed — préversion interne staff.
  * Aucune physique ici : tout vient du noyau pur src/lib/detection-lab. */
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowLeft, Download } from "lucide-react";
 import { t, msg, number } from "@/lib/i18n/core";
 import { useLocale } from "@/lib/i18n/react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { downloadText } from "@/lib/standex/export";
-import { buildCalibrations, buildPilotTable, summarize, type Calibrations, type PilotRow, type PilotClass } from "@/lib/detection-lab/pilot";
-import { CUT_IDS, classifyPose, computeCutById, suggest, thresholdsFor, type Cut, type CutId, type Suggestion } from "@/lib/detection-lab/classify";
+import { summarize, ROW_GROUPS, type Calibrations, type PilotRow, type PilotClass, type RowGroup } from "@/lib/detection-lab/pilot";
+import { CUT_IDS, classifyPose, suggest, thresholdsFor, type Cut, type CutId, type Suggestion } from "@/lib/detection-lab/classify";
 import { PILOT_MAGNETS } from "@/lib/detection-lab/magnets";
 import { PROFILE, type DistanceConvention, type ResponseModel } from "@/lib/detection-lab/profile";
-import { CATEGORY_LABEL, CAUSE_LABEL, buildReportJson, cutToCsv, cutToJson, cutToSvg, tableToCsv } from "@/lib/detection-lab/report";
+import { CATEGORY_LABEL, CAUSE_LABEL, buildReportJson, cutToCsv, cutToJson, cutToSvg, paletteFromElement, tableToCsv, type LabPalette } from "@/lib/detection-lab/report";
+import { createLabRunner, LabDisposedError, type LabRunner } from "./lab-runner";
 import type { Vec3 } from "@/lib/detection-lab/field";
 import "./detection-lab.css";
 
-const tick = () => new Promise<void>((r) => setTimeout(r, 0));
 // i18n-canonical : libellés français canoniques, traduits au rendu par t().
-const ORIENTATIONS: { id: string; label: string; axis: Vec3 }[] = [
-  { id: "par", label: "Parallèle aux lames", axis: [1, 0, 0] },
-  { id: "perp", label: "Perpendiculaire aux lames", axis: [0, 1, 0] },
-  { id: "45", label: "Intermédiaire 45°", axis: [Math.SQRT1_2, Math.SQRT1_2, 0] },
+// Angle de l'axe d'aimantation dans le plan (x, y), modulo 180° (N/S donnent la même réponse).
+const ORIENTATIONS: { deg: number; label: string }[] = [
+  { deg: 0, label: "Parallèle aux lames" },
+  { deg: 45, label: "Intermédiaire 45°" },
+  { deg: 90, label: "Perpendiculaire aux lames" },
+  { deg: 135, label: "Intermédiaire 135°" },
 ];
+const axisOf = (deg: number): Vec3 => [Math.cos((deg * Math.PI) / 180), Math.sin((deg * Math.PI) / 180), 0];
+const norm180 = (deg: number) => ((deg % 180) + 180) % 180;
+const GROUP_LABEL: Record<RowGroup, string> = {
+  training: "Apprentissage D1 Form",
+  form_control: "Contrôles hors apprentissage D3/D4/D5 Form",
+  doc_adaptation: "Adaptations documentaires MK03/MK13 (non indépendantes)",
+  quarantine: "Quarantaine MK04",
+};
 const CUT_LABEL: Record<CutId, string> = {
   "1-parallel-C": "Axes parallèles — classe C",
   "2-perpendicular-centred-C": "Perpendiculaire centré — classe C",
@@ -33,64 +43,71 @@ const CUT_LABEL: Record<CutId, string> = {
 const STATUS_LABEL: Record<PilotRow["status"], string> = {
   training: "Apprentissage",
   control: "Contrôle",
+  adaptation: "Adaptation documentaire",
   missing: "Manquant",
   unavailable: "Indisponible",
   quarantine: "Quarantaine",
 };
 const fmt = (v: number | null, n = 1) => (v == null ? "—" : number(v, n));
 
-export default function DetectionLab({ onClose }: { onClose: () => void }) {
+export default function DetectionLab({ onClose, runner: injected }: { onClose: () => void; runner?: LabRunner }) {
   useLocale();
   const [model, setModel] = useState<ResponseModel>("A");
   const [conv, setConv] = useState<DistanceConvention>("C1");
-  const [cal, setCal] = useState<Calibrations | null>(null);
-  const [rows, setRows] = useState<PilotRow[]>([]);
-  const [busy, setBusy] = useState(true);
+  const key = `${model}|${conv}`;
+  const [calRes, setCalRes] = useState<{ key: string; cal: Calibrations; rows: PilotRow[] } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [magnetId, setMagnetId] = useState(PILOT_MAGNETS[0]!.id);
   const [cutId, setCutId] = useState<CutId>("1-parallel-C");
-  const [cut, setCut] = useState<Cut | null>(null);
-  const [cutBusy, setCutBusy] = useState(false);
+  const [cutRes, setCutRes] = useState<{ key: string; cut: Cut } | null>(null);
+  const runnerRef = useRef<LabRunner | null>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const [palette, setPalette] = useState<LabPalette | null>(null);
+
+  // Un exécuteur par montage ; démontage (fermeture, session révoquée) = arrêt réel des calculs.
+  useEffect(() => {
+    const r = injected ?? createLabRunner();
+    runnerRef.current = r;
+    return () => { runnerRef.current = null; r.dispose(); };
+  }, [injected]);
+  useEffect(() => { if (rootRef.current) setPalette(paletteFromElement(rootRef.current)); }, []);
 
   useEffect(() => {
-    let alive = true;
-    setBusy(true); setError(null); setCal(null); setRows([]);
-    (async () => {
-      try {
-        await tick();
-        const c = buildCalibrations(model, conv);
-        await tick();
-        const r = buildPilotTable(model, conv, c);
-        if (alive) { setCal(c); setRows(r); }
-      } catch {
-        if (alive) setError(t("Le calcul a échoué. Aucun résultat n'est affiché."));
-      } finally {
-        if (alive) setBusy(false);
-      }
-    })();
-    return () => { alive = false; };
-  }, [model, conv]);
+    const r = runnerRef.current;
+    if (!r) return;
+    let current = true;
+    setError(null);
+    r.run({ kind: "calibrate", model, conv }).then(
+      (res) => { if (current && res.kind === "calibrate") setCalRes({ key, cal: res.cal, rows: res.rows }); },
+      (e) => { if (current && !(e instanceof LabDisposedError)) setError(t("Le calcul a échoué. Aucun résultat n'est affiché.")); },
+    );
+    return () => { current = false; };
+  }, [model, conv, key]);
 
-  const magnet = PILOT_MAGNETS.find((m) => m.id === magnetId)!;
+  const live = calRes && calRes.key === key ? calRes : null;
+  const cal = live?.cal ?? null;
+  const rows = useMemo(() => live?.rows ?? [], [live]);
+  const busy = !live && !error;
+  const cutKey = `${key}|${cutId}|${magnetId}`;
   useEffect(() => {
-    if (!cal) return;
-    let alive = true;
-    setCutBusy(true); setCut(null);
-    (async () => {
-      await tick();
-      try { const c = computeCutById(cutId, magnet, model, conv, cal); if (alive) setCut(c); }
-      catch { if (alive) setError(t("Le calcul a échoué. Aucun résultat n'est affiché.")); }
-      finally { if (alive) setCutBusy(false); }
-    })();
-    return () => { alive = false; };
-  }, [cal, cutId, magnet, model, conv]);
+    const r = runnerRef.current;
+    if (!r || !cal) return;
+    let current = true;
+    r.run({ kind: "cut", cutId, magnetId, model, conv, cal }).then(
+      (res) => { if (current && res.kind === "cut") setCutRes({ key: cutKey, cut: res.cut }); },
+      (e) => { if (current && !(e instanceof LabDisposedError)) setError(t("Le calcul a échoué. Aucun résultat n'est affiché.")); },
+    );
+    return () => { current = false; };
+  }, [cal, cutId, magnetId, model, conv, cutKey]);
+  const cut = cutRes && cutRes.key === cutKey ? cutRes.cut : null;
+  const cutBusy = !!cal && !cut && !error;
 
   const summary = useMemo(() => summarize(rows), [rows]);
-  const svg = useMemo(() => (cut ? cutToSvg(cut, (s) => t(s)) : ""), [cut]);
+  const svg = useMemo(() => (cut && palette ? cutToSvg(cut, palette, (s) => t(s)) : ""), [cut, palette]);
   const base = `laboratoire-${model}-${conv}`;
 
   return (
-    <div className="lab">
+    <div className="lab" ref={rootRef}>
       <header className="lab-head">
         <Button variant="ghost" onClick={onClose}><ArrowLeft size={18} /> {t("Retour au banc")}</Button>
         <div>
@@ -133,11 +150,18 @@ export default function DetectionLab({ onClose }: { onClose: () => void }) {
               <h2 className="t-title-m">{t("Seuils partagés entre aimants")}</h2>
               <ThresholdTable cal={cal} />
               <h2 className="t-title-m">{t("Bilan")}</h2>
-              <p className="t-body">
-                {msg("{0} lignes : {1} apprentissage, {2} contrôles, {3} manquantes, {4} indisponibles, {5} en quarantaine.", [summary.total, summary.byStatus.training, summary.byStatus.control, summary.byStatus.missing, summary.byStatus.unavailable, summary.byStatus.quarantine])}
-                {" "}
-                {msg("Écart moyen des contrôles {0} mm, médiane {1} %, {2} contrôles au-delà de 20 %.", [fmt(summary.controls.meanAbsMm, 2), fmt(summary.controls.medianAbsPct, 1), summary.controls.over20])}
-              </p>
+              <p className="t-body">{t("Seuls les contrôles D3/D4/D5 Form sont hors apprentissage. Les adaptations MK03/MK13 ne sont pas des validations physiques indépendantes et n'entrent pas dans la comparaison A/B.")}</p>
+              <div className="lab-table-wrap" tabIndex={0} aria-label={t("Bilan")}>
+                <table className="lab-table">
+                  {/* i18n-canonical : en-têtes traduits par t(h) */}
+                  <thead><tr>{["Groupe", "Lignes", "Publiées", "Absentes", "Estimées", "Écart moyen mm", "Médiane %", "> 20 %"].map((h) => <th key={h} scope="col">{t(h)}</th>)}</tr></thead>
+                  <tbody>
+                    {ROW_GROUPS.map((g) => { const x = summary.groups[g]; return (
+                      <tr key={g}><td>{t(GROUP_LABEL[g])}</td><td className="t-metric">{x.rows}</td><td className="t-metric">{x.published}</td><td className="t-metric">{x.missing}</td><td className="t-metric">{x.estimated}</td><td className="t-metric">{fmt(x.meanAbsMm, 2)}</td><td className="t-metric">{fmt(x.medianAbsPct, 1)}</td><td className="t-metric">{x.over20} / {x.estimated}</td></tr>
+                    ); })}
+                  </tbody>
+                </table>
+              </div>
               <div className="lab-actions">
                 <Button variant="secondary" onClick={() => downloadText(`${base}-tableau.csv`, tableToCsv(rows), "text/csv")}><Download size={16} /> CSV</Button>
                 <Button variant="secondary" onClick={() => downloadText(`${base}-rapport.json`, JSON.stringify(buildReportJson(model, conv, cal, rows), null, 1), "application/json")}><Download size={16} /> JSON</Button>
@@ -177,10 +201,18 @@ export default function DetectionLab({ onClose }: { onClose: () => void }) {
               {cutBusy && <p className="notice-info" role="status" aria-live="polite">{t("Calcul de la coupe…")}</p>}
               {cut && (
                 <>
-                  <div className="lab-svg" dangerouslySetInnerHTML={{ __html: svg }} />
+                  <figure className="lab-figure">
+                    <figcaption className="t-title-s">{`${t(cut.title)} · ${cut.magnetId} · ${t("modèle")} ${cut.model} · ${cut.convention}`}</figcaption>
+                    <div className="lab-svg" tabIndex={0} aria-label={t("Coupe 2D, défilement horizontal")} dangerouslySetInnerHTML={{ __html: svg }} />
+                    <ul className="lab-legend t-body">
+                      {(["favorable", "variable"] as const).map((c) => <li key={c}>{t(CATEGORY_LABEL[c])}</li>)}
+                      {(["too_far", "orientation", "undetermined"] as const).map((c) => <li key={c}>{t(CATEGORY_LABEL.unfavorable)} — {t(CAUSE_LABEL[c])}</li>)}
+                      <li>{t(CATEGORY_LABEL.unavailable)}</li>
+                    </ul>
+                  </figure>
                   <p className="t-caption">{msg("Calculée en {0} ms sur {1} scénarios déterministes.", [cut.computeMs, PROFILE.scenarios.length])}</p>
                   <div className="lab-actions">
-                    <Button variant="secondary" onClick={() => downloadText(`${cut.id}-${cut.magnetId}-${model}.svg`, cutToSvg(cut), "image/svg+xml")}><Download size={16} /> SVG</Button>
+                    <Button variant="secondary" disabled={!svg} onClick={() => downloadText(`${cut.id}-${cut.magnetId}-${model}.svg`, svg, "image/svg+xml")}><Download size={16} /> SVG</Button>
                     <Button variant="secondary" onClick={() => downloadText(`${cut.id}-${cut.magnetId}-${model}.csv`, cutToCsv(cut), "text/csv")}><Download size={16} /> CSV</Button>
                     <Button variant="secondary" onClick={() => downloadText(`${cut.id}-${cut.magnetId}-${model}.json`, cutToJson(cut), "application/json")}><Download size={16} /> JSON</Button>
                   </div>
@@ -241,16 +273,16 @@ function ThresholdTable({ cal }: { cal: Calibrations }) {
 
 function Trial({ cal, model }: { cal: Calibrations; model: ResponseModel }) {
   const [magnetId, setMagnetId] = useState(PILOT_MAGNETS[0]!.id);
-  const [orient, setOrient] = useState("perp");
+  const [deg, setDeg] = useState(90);
   const [cls, setCls] = useState<PilotClass>("C");
   const [x, setX] = useState(0);
   const [y, setY] = useState(8);
   const [sugg, setSugg] = useState<Suggestion | null | undefined>(undefined);
   const magnet = PILOT_MAGNETS.find((m) => m.id === magnetId)!;
-  const axis = ORIENTATIONS.find((o) => o.id === orient)!.axis;
+  const axis = useMemo(() => axisOf(deg), [deg]);
   const th = thresholdsFor(cal, cls);
   const result = useMemo(() => classifyPose(magnet, { center: [x, y, 0], axis }, th, model), [magnet, x, y, axis, th, model]);
-  useEffect(() => setSugg(undefined), [magnetId, orient, cls, x, y, model]);
+  useEffect(() => setSugg(undefined), [magnetId, deg, cls, x, y, model]);
   const tone = result.category === "favorable" ? "notice-success" : result.category === "variable" ? "notice-info" : result.category === "unfavorable" ? "notice-warning" : "notice-danger";
   return (
     <section className="panel-block lab-section">
@@ -259,7 +291,7 @@ function Trial({ cal, model }: { cal: Calibrations; model: ResponseModel }) {
           <select value={magnetId} onChange={(e) => setMagnetId(e.target.value as typeof magnetId)}>{PILOT_MAGNETS.map((m) => <option key={m.id} value={m.id}>{m.label}</option>)}</select>
         </label>
         <label className="lab-field"><span className="t-label">{t("Orientation")}</span>
-          <select value={orient} onChange={(e) => setOrient(e.target.value)}>{ORIENTATIONS.map((o) => <option key={o.id} value={o.id}>{t(o.label)}</option>)}</select>
+          <select value={deg} onChange={(e) => setDeg(Number(e.target.value))}>{ORIENTATIONS.map((o) => <option key={o.deg} value={o.deg}>{t(o.label)}</option>)}</select>
         </label>
         <label className="lab-field"><span className="t-label">{t("Classe")}</span>
           <select value={cls} onChange={(e) => setCls(e.target.value as PilotClass)}><option value="C">C</option><option value="E">E</option></select>
@@ -275,18 +307,19 @@ function Trial({ cal, model }: { cal: Calibrations; model: ResponseModel }) {
         <strong>{t(CATEGORY_LABEL[result.category])}</strong>
         {result.cause && <> — {t(CAUSE_LABEL[result.cause])}</>}
         {result.cause === "orientation" && <> · {t("L'aimant est proche, mais une rotation à la même place augmenterait le couplage.")}</>}
-        {result.cause === "too_far" && <> · {t("Même la meilleure orientation à cette place reste sous le seuil.")}</>}
+        {result.cause === "too_far" && <> · {t("Parmi les orientations testées, aucune ne suffit à cette place ; un rapprochement valide dans le même alignement atteindrait le seuil.")}</>}
+        {result.cause === "undetermined" && <> · {t("Ni la rotation de ±90° ni le rapprochement testés n'atteignent le seuil : décentrage, orientation oblique ou collision à examiner.")}</>}
         {result.category === "unavailable" && <> · {t("Collision, hors domaine ou seuil absent : aucune estimation.")}</>}
       </p>
       <div className="lab-actions">
         <Button variant="secondary" disabled={result.category === "favorable" || result.category === "unavailable"} onClick={() => setSugg(suggest(magnet, { center: [x, y, 0], axis }, th, model))}>{t("Proposer un déplacement ou une rotation")}</Button>
       </div>
-      {sugg === null && <p className="notice-info">{t("Aucun déplacement latéral ni rotation de 90° n'améliore la catégorie.")}</p>}
+      {sugg === null && <p className="notice-info">{t("Aucun décalage le long des lames ni rotation de ±90° dans le plan n'améliore la catégorie.")}</p>}
       {sugg && (
         <p className="notice-success">
-          {sugg.kind === "shift" ? msg("Décaler de {0} mm le long des lames", [number(sugg.dxMm, 0)]) : msg("Tourner de 90° autour de {0}", [sugg.about])}
+          {sugg.kind === "shift" ? msg("Décaler de {0} mm le long des lames", [number(sugg.dxMm, 0)]) : msg("Tourner de {0}° dans le plan", [sugg.degrees > 0 ? "+90" : "−90"])}
           {" → "}{t(CATEGORY_LABEL[sugg.after])}{" "}{t("(recalculé et vérifié)")}
-          {sugg.kind === "shift" && <> <Button variant="ghost" onClick={() => setX(sugg.pose.center[0])}>{t("Appliquer")}</Button></>}
+          {" "}<Button variant="ghost" onClick={() => (sugg.kind === "shift" ? setX(sugg.pose.center[0]) : setDeg(norm180(deg + sugg.degrees)))}>{t("Appliquer")}</Button>
         </p>
       )}
       <p className="t-caption">{msg("Accord requis des {0} scénarios avec un retrait de frontière de {1} %. Pas de pourcentage de confiance.", [PROFILE.scenarios.length, PROFILE.classification.boundaryMargin * 100])}</p>

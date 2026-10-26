@@ -21,13 +21,15 @@ export function approachPose(magnet: PilotMagnet, approach: ApproachId, d: numbe
     case "D4":
       return { center: [x, d + (c1 ? h : 0), 0], axis: [0, 1, 0] };
     case "D5":
-      return { center: [x, d + (c1 ? r : 0), 0], axis: [1, 0, 0] };
+      // Schéma D5 (reed vertical, aimant horizontal, approche par l'extrémité) tourné
+      // rigidement dans le repère reed : aimant ⟂ lames, approche selon x, lobes en ±t (= y).
+      return { center: [PROFILE.reed.effectiveLengthMm / 2 + d + (c1 ? r : 0), x, 0], axis: [0, 1, 0] };
   }
 }
 
 export type Value = { ok: true; value: number; x: number } | { ok: false; reason: string };
 
-/** Maximum de lobe sur x ≥ 0 (symétrie du nominal) : balayage puis section dorée. */
+/** Maximum de lobe sur le paramètre t ≥ 0 (x pour D4, y pour D5) (symétrie du nominal) : balayage puis section dorée. */
 export function lobeMax(
   magnet: PilotMagnet, approach: "D4" | "D5", d: number, conv: DistanceConvention, model: ResponseModel,
   scenario: ReedScenario = NOMINAL, step: number = PROFILE.search.xScanStepMm,
@@ -37,18 +39,12 @@ export function lobeMax(
     const e = evaluatePose(magnet, approachPose(magnet, approach, d, conv, x), scenario, model);
     return e.ok ? e.response : -1;
   };
-  const xs: number[] = [], vs: number[] = [];
-  for (let x = 0; x <= PROFILE.search.xScanMaxMm + 1e-9; x += step) { xs.push(x); vs.push(at(x)); }
-  // D5 (H-D5) : lobe SECONDAIRE, au-delà du premier minimum local du profil en x.
-  let start = 0;
-  if (approach === "D5") {
-    start = -1;
-    for (let i = 1; i < vs.length - 1; i++) if (vs[i]! >= 0 && vs[i]! < vs[i - 1]! && vs[i]! <= vs[i + 1]!) { start = i + 1; break; }
-    if (start < 0) return { ok: false, reason: "no_secondary_lobe" };
+  for (let x = 0; x <= PROFILE.search.xScanMaxMm + 1e-9; x += step) {
+    const v = at(x);
+    if (v > best) { best = v; bx = x; }
   }
-  for (let i = start; i < vs.length; i++) if (vs[i]! > best) { best = vs[i]!; bx = xs[i]!; }
   if (best < 0) return { ok: false, reason: "collision" };
-  let lo = Math.max(approach === "D5" ? xs[start]! - step : 0, bx - step), hi = bx + step;
+  let lo = Math.max(0, bx - step), hi = bx + step;
   const gr = (Math.sqrt(5) - 1) / 2;
   let c = hi - gr * (hi - lo), e = lo + gr * (hi - lo), fc = at(c), fe = at(e);
   while (hi - lo > PROFILE.search.goldenTolMm) {
@@ -73,7 +69,6 @@ export function distanceFor(magnet: PilotMagnet, approach: ApproachId, theta: nu
   if (top.ok && top.value >= theta) return { ok: false, reason: "beyond_domain" };
   for (let d = dMaxMm - dScanStepMm; d >= 0; d -= dScanStepMm) {
     const v = responseAt(magnet, approach, d, conv, model, step);
-    if (!v.ok && v.reason === "no_secondary_lobe") continue; // pas de lobe secondaire dans la plage : réponse nulle
     if (!v.ok) return { ok: false, reason: "collision_before_threshold" };
     if (v.value >= theta) {
       let lo = d, hi = d + dScanStepMm, x = v.x;
