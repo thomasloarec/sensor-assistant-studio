@@ -72,7 +72,11 @@ describe("Aligner l'aimant dans le Workshop intégré", () => {
       return Number(/([\d.,]+)\s*mm/.exec(text)![1]!.replace(",", "."));
     };
     const point = () => v.getAllByTestId("guide-precise-point")[0]!.textContent ?? "";
-    const seek = async (pct: number) => act(async () => fireEvent.change(scrubber(), { target: { value: String(pct) } }));
+    const seek = async (pct: number) =>
+      act(async () => {
+        fireEvent.input(scrubber(), { target: { value: String(pct) } });
+        fireEvent.change(scrubber(), { target: { value: String(pct) } });
+      });
 
     await seek(25);
     console.log("DBG", v.queryByTestId("guide-reason")?.textContent, v.container.querySelector(".mw-controls")?.textContent?.slice(0,600));
