@@ -49,7 +49,7 @@ export function cutToSvg(cut: Cut, tr: Tr = id): string {
   const py = (y: number) => T + (g.yMax - y + g.stepMm / 2) * S;
   const parts: string[] = [];
   const timelineH = cut.path ? 56 : 0;
-  const total = T + H + 40 + timelineH + 116;
+  const total = T + H + 40 + timelineH + 136;
   parts.push(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${L + W + 24} ${total}" width="${L + W + 24}" height="${total}" role="img" aria-label="${esc(tr(cut.title))}">`);
   parts.push(`<style>${STYLE}</style><defs>
 <pattern id="lab-hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" class="lab-var"/><line x1="0" y1="0" x2="0" y2="6" class="lab-pattern"/></pattern>
@@ -59,7 +59,7 @@ export function cutToSvg(cut: Cut, tr: Tr = id): string {
   parts.push(`<text x="${L}" y="20" class="lab-text" font-weight="700">${esc(tr(cut.title))} · ${esc(cut.magnetId)} · ${tr("modèle")} ${cut.model} · ${cut.convention}</text>`);
   for (const c of cut.cells) {
     const f = fill(c.category, c.cause);
-    parts.push(`<rect x="${px(c.x) - S / 2}" y="${py(c.y) - S / 2}" width="${S}" height="${S}" class="${cls(c.category, c.cause)}"${f ? ` fill="${f}"` : ""}/>`);
+    parts.push(`<rect x="${px(c.x) - S / 2}" y="${py(c.y) - S / 2}" width="${S}" height="${S}" class="${cls(c.category, c.cause)}"${f ? ` style="fill:${f}"` : ""}/>`);
   }
   // Axes en mm, graduations entières tous les 4 mm (pas de précision au centième).
   parts.push(`<rect x="${L}" y="${T}" width="${W}" height="${H}" class="lab-stroke"/>`);
@@ -78,7 +78,7 @@ export function cutToSvg(cut: Cut, tr: Tr = id): string {
     parts.push(`<line x1="${x - ux * len}" y1="${y - uy * len}" x2="${x + ux * len}" y2="${y + uy * len}" class="lab-stroke" stroke-width="5"/>`);
     parts.push(`<text x="${x + ux * (len + 8)}" y="${y + uy * (len + 8) + 4}" class="lab-text" text-anchor="middle" font-weight="700">N</text>`);
     parts.push(`<text x="${x - ux * (len + 8)}" y="${y - uy * (len + 8) + 4}" class="lab-text" text-anchor="middle" font-weight="700">S</text>`);
-    if (label) parts.push(`<text x="${x}" y="${y - 24}" class="lab-text" text-anchor="middle">${esc(label)}</text>`);
+    if (label) parts.push(`<text x="${x - 34}" y="${y + 4}" class="lab-text" text-anchor="end">${esc(label)}</text>`);
   };
   glyph(L + W - 40, T + 30, tr("aimant"));
   for (const m of cut.marks) {
@@ -88,13 +88,13 @@ export function cutToSvg(cut: Cut, tr: Tr = id): string {
   let yy = T + H + 48;
   if (cut.path) {
     const pts = cut.path.points;
-    parts.push(`<polyline points="${pts.map((p) => `${px(p.x)},${py(p.y)}`).join(" ")}" class="lab-stroke" stroke-width="2"/>`);
-    pts.forEach((p) => parts.push(`<circle cx="${px(p.x)}" cy="${py(p.y)}" r="3" class="${cls(p.category, p.cause)} lab-stroke-none"/>`));
+    parts.push(`<polyline points="${pts.map((p) => `${px(p.x)},${py(p.y)}`).join(" ")}" class="lab-stroke" stroke-width="2" stroke-dasharray="4 3"/>`);
+    pts.forEach((p) => parts.push(`<circle cx="${px(p.x)}" cy="${py(p.y)}" r="3" class="${cls(p.category, p.cause)}" stroke-width="1" style="stroke:var(--lab-ink,oklch(0.3665 0.0662 254.28))"/>`));
     parts.push(`<text x="${L}" y="${yy + 2}" class="lab-text">${esc(tr("Chronologie des catégories le long du trajet (sans hystérésis)"))}</text>`);
     const step = W / pts.length;
     pts.forEach((p, i) => {
       const f = fill(p.category, p.cause);
-      parts.push(`<rect x="${L + i * step}" y="${yy + 10}" width="${step}" height="20" class="${cls(p.category, p.cause)}"${f ? ` fill="${f}"` : ""}/>`);
+      parts.push(`<rect x="${L + i * step}" y="${yy + 10}" width="${step}" height="20" class="${cls(p.category, p.cause)}"${f ? ` style="fill:${f}"` : ""}/>`);
     });
     cut.path.segments.forEach((s) => parts.push(`<line x1="${L + s.from * step}" y1="${yy + 8}" x2="${L + s.from * step}" y2="${yy + 32}" class="lab-stroke"/>`));
     yy += timelineH;
@@ -108,7 +108,7 @@ export function cutToSvg(cut: Cut, tr: Tr = id): string {
   ];
   legend.forEach(([c, cause, label], i) => {
     const f = fill(c, cause), ly = yy + i * 20;
-    parts.push(`<rect x="${L}" y="${ly}" width="14" height="14" class="${cls(c, cause)}"${f ? ` fill="${f}"` : ""}/><rect x="${L}" y="${ly}" width="14" height="14" class="lab-stroke"/>`);
+    parts.push(`<rect x="${L}" y="${ly}" width="14" height="14" class="${cls(c, cause)}"${f ? ` style="fill:${f}"` : ""}/><rect x="${L}" y="${ly}" width="14" height="14" class="lab-stroke"/>`);
     parts.push(`<text x="${L + 22}" y="${ly + 12}" class="lab-text">${esc(tr(CATEGORY_LABEL[c]) + (cause ? " — " + tr(CAUSE_LABEL[cause]) : ""))}</text>`);
     void label;
   });
