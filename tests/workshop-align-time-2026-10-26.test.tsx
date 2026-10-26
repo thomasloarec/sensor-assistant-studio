@@ -6,10 +6,9 @@ import { GlobalRegistrator } from "@happy-dom/global-registrator";
 import { afterAll, beforeAll, describe, expect, mock, test } from "bun:test";
 import { readFileSync } from "node:fs";
 import React from "react";
+import { act, fireEvent, render, waitFor } from "@testing-library/react";
 
-beforeAll(() => {
-  if (typeof document === "undefined") GlobalRegistrator.register({ url: "http://localhost/" });
-});
+if (typeof document === "undefined") GlobalRegistrator.register({ url: "http://localhost/" });
 
 // La scène WebGL n'est pas l'objet du test : elle est remplacée par un témoin.
 mock.module("../src/components/standex/workshop/machine-scene", () => ({
@@ -34,7 +33,6 @@ afterAll(() => {
 
 describe("Aligner l'aimant dans le Workshop intégré", () => {
   test("25 % conservé après alignement, annuler et rétablir ; suivi de la pièce à 0 puis 50 %", async () => {
-    const { act, fireEvent, render, waitFor } = await import("@testing-library/react");
     const { setLocale } = await import("../src/lib/i18n/core");
     setLocale("fr");
     const { default: MagneticWorkshop } = await import("../src/components/standex/workshop/workshop");
