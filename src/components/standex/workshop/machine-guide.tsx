@@ -1046,7 +1046,7 @@ export default function MachineGuide({
                   {([0, 1] as const).map((k) => (
                     <div key={k} className="mw-nudge" data-testid={"guide-nudge-" + k}>
                       <p className="t-body">
-                        {msg("Direction {0} dans le plan : {1}", [String(k + 1), directionLabel(tangents[k])])}
+                        {msg("Direction {0} dans le plan : {1}", [String(k + 1), directionLabel(tangents![k])])}
                       </p>
                       <div className="mw-guide-row">
                         {[-1, -0.1, 0.1, 1].map((d) => (
