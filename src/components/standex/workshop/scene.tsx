@@ -382,7 +382,7 @@ function StandardBody({
     </group>
   );
 }
-function SensorCable({ model }: { model: SensorModel }) {
+export function SensorCable({ model }: { model: SensorModel }) {
   const kind = cableConstruction(model);
   if (kind === "none") return null;
   const side = model.cableSide ?? -1;
