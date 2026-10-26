@@ -69,7 +69,7 @@ export const PROFILE = {
   /** Fraction de la portée D4 estimée pour le trajet de la coupe 6. */
   pathDepthFraction: 0.8,
   conventions: {
-    C1: "Distance publiée = jeu entre la face de l'aimant la plus proche et le repère actif (axe du reed pour D1/D4/D5, extrémité de la longueur effective nominale pour D3). Le centre de l'aimant est décalé de la demi-dimension projetée.",
+    C1: "Distance publiée = jeu entre la face de l'aimant la plus proche et le repère actif (axe du reed pour D1/D4, extrémité de la longueur effective nominale pour D3/D5). Le centre de l'aimant est décalé de la demi-dimension projetée.",
     C2: "Variante : distance publiée = du repère actif au CENTRE de l'aimant (demi-dimension ignorée). Présentée pour l'audit, non prouvée.",
   },
   approaches: {

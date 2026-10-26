@@ -47,34 +47,46 @@ export function paletteFromCss(css: string): LabPalette {
   }
   return out;
 }
-export function paletteFromElement(el: Element): LabPalette {
-  const cs = getComputedStyle(el), out = {} as LabPalette;
-  for (const [k, tok] of Object.entries(LAB_TOKENS) as [keyof LabPalette, string][]) out[k] = cs.getPropertyValue(tok).trim() || "currentColor";
-  return out;
-}
 const styleFor = (p: LabPalette) => `
 .lab-fav{fill:${p.fav}}.lab-var{fill:${p.var}}.lab-far{fill:${p.far}}.lab-orient{fill:${p.orient}}
 .lab-undet{fill:${p.undet}}.lab-na{fill:${p.na}}.lab-ink{fill:${p.ink}}
 .lab-stroke{stroke:${p.ink};fill:none}.lab-reed{stroke:${p.ink};stroke-width:3}
 .lab-text{font:15px sans-serif;fill:${p.ink}}.lab-pattern{stroke:${p.ink};stroke-width:1;opacity:.45}`;
 
+/** Retour à la ligne conservateur pour du texte à 15 px (≈ 9 px par caractère, CJK compté double). */
+export function wrapSvgText(text: string, widthPx: number, charPx = 9): string[] {
+  const cost = (w: string) => [...w].reduce((n, ch) => n + (/[\u2E80-\uFFFF]/.test(ch) ? 2 : 1), 0) * charPx;
+  const words = /[\u3000-\u9FFF]/.test(text) && !text.includes(" ") ? [...text] : text.split(" ");
+  const sep = words.length === text.length ? "" : " ";
+  const lines: string[] = [];
+  let cur = "";
+  for (const w of words) {
+    const next = cur ? cur + sep + w : w;
+    if (cur && cost(next) > widthPx) { lines.push(cur); cur = w; } else cur = next;
+  }
+  if (cur) lines.push(cur);
+  return lines;
+}
+const LINE = 20;
+
 export function cutToSvg(cut: Cut, palette: LabPalette, tr: Tr = id): string {
-  const S = 12, L = 56, T = 44;
+  const S = 12, L = 56;
   const g = cut.grid;
   const W = (g.xMax - g.xMin + g.stepMm) * S, H = (g.yMax - g.yMin + g.stepMm) * S;
   const px = (x: number) => L + (x - g.xMin + g.stepMm / 2) * S;
   const py = (y: number) => T + (g.yMax - y + g.stepMm / 2) * S;
-  const parts: string[] = [];
+  const parts: string[] = [""];
+  const textW = W + 24 - L - 8;
+  const titleLines = wrapSvgText(`${tr(cut.title)} · ${cut.magnetId} · ${tr("modèle")} ${cut.model} · ${cut.convention}`, textW);
+  const T = 24 + titleLines.length * LINE;
   const timelineH = cut.path ? 56 : 0;
-  const total = T + H + 40 + timelineH + 156 + cut.marks.length * 20 + (cut.marks.length ? 8 : 0);
-  parts.push(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${L + W + 24} ${total}" width="${L + W + 24}" height="${total}" role="img" aria-label="${esc(tr(cut.title))}">`);
   parts.push(`<style>${styleFor(palette)}</style><defs>
 <pattern id="lab-hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" class="lab-var"/><line x1="0" y1="0" x2="0" y2="6" class="lab-pattern"/></pattern>
 <pattern id="lab-dots" width="6" height="6" patternUnits="userSpaceOnUse"><rect width="6" height="6" class="lab-orient"/><circle cx="3" cy="3" r="1.2" class="lab-ink" opacity=".55"/></pattern>
 <pattern id="lab-lines" width="6" height="6" patternUnits="userSpaceOnUse"><rect width="6" height="6" class="lab-undet"/><line x1="0" y1="3" x2="6" y2="3" class="lab-pattern"/></pattern>
 <pattern id="lab-cross" width="6" height="6" patternUnits="userSpaceOnUse"><rect width="6" height="6" class="lab-na"/><path d="M0 0L6 6M6 0L0 6" class="lab-pattern"/></pattern>
 </defs>`);
-  parts.push(`<text x="${L}" y="20" class="lab-text" font-weight="700">${esc(tr(cut.title))} · ${esc(cut.magnetId)} · ${tr("modèle")} ${cut.model} · ${cut.convention}</text>`);
+  titleLines.forEach((l, i) => parts.push(`<text x="${L}" y="${20 + i * LINE}" class="lab-text" font-weight="700">${esc(l)}</text>`));
   for (const c of cut.cells) {
     const f = fill(c.category, c.cause);
     parts.push(`<rect x="${px(c.x) - S / 2}" y="${py(c.y) - S / 2}" width="${S}" height="${S}" class="${cls(c.category, c.cause)}"${f ? ` style="fill:${f}"` : ""}/>`);
@@ -89,7 +101,8 @@ export function cutToSvg(cut: Cut, palette: LabPalette, tr: Tr = id): string {
   parts.push(`<text x="14" y="${T + H / 2}" class="lab-text" transform="rotate(-90 14 ${T + H / 2})" text-anchor="middle">${esc(tr("y centre de l'aimant (mm)"))}</text>`);
   const half = PROFILE.reed.effectiveLengthMm / 2;
   parts.push(`<line x1="${px(-half)}" y1="${py(0)}" x2="${px(half)}" y2="${py(0)}" class="lab-reed"/>`);
-  parts.push(`<text x="${px(half) + 6}" y="${py(0) - 6}" class="lab-text">${esc(tr("reed (longueur effective)"))}</text>`);
+  const reedLines = wrapSvgText(tr("reed (longueur effective)"), L + W + 24 - (px(half) + 6) - 8);
+  reedLines.forEach((l, i) => parts.push(`<text x="${px(half) + 6}" y="${py(0) - 6 - (reedLines.length - 1 - i) * LINE}" class="lab-text">${esc(l)}</text>`));
   // Glyphe d'aimant : orientation projetée, pôle N du côté +axe.
   const glyph = (x: number, y: number, label?: string) => {
     const [ax, ay] = cut.axis, n = Math.hypot(ax, ay) || 1, ux = ax / n, uy = -ay / n, len = 18;
@@ -105,15 +118,18 @@ export function cutToSvg(cut: Cut, palette: LabPalette, tr: Tr = id): string {
   });
   let yy = T + H + 48;
   cut.marks.forEach((m, i) => {
-    parts.push(`<text x="${L}" y="${yy + 2}" class="lab-text">${i + 1}. ${esc(tr(m.label))} — ${esc(tr(CATEGORY_LABEL[m.category]))}${m.cause ? " — " + esc(tr(CAUSE_LABEL[m.cause])) : ""}</text>`);
-    yy += 20;
+    const lines = wrapSvgText(`${i + 1}. ${tr(m.label)} — ${tr(CATEGORY_LABEL[m.category])}${m.cause ? " — " + tr(CAUSE_LABEL[m.cause]) : ""}`, textW);
+    lines.forEach((l, j) => parts.push(`<text x="${L}" y="${yy + 2 + j * LINE}" class="lab-text">${esc(l)}</text>`));
+    yy += lines.length * LINE;
   });
   if (cut.marks.length) yy += 8;
   if (cut.path) {
     const pts = cut.path.points;
     parts.push(`<polyline points="${pts.map((p) => `${px(p.x)},${py(p.y)}`).join(" ")}" class="lab-stroke" stroke-width="2" stroke-dasharray="4 3"/>`);
     pts.forEach((p) => parts.push(`<circle cx="${px(p.x)}" cy="${py(p.y)}" r="3" class="${cls(p.category, p.cause)}" stroke="${palette.ink}" stroke-width="1"/>`));
-    parts.push(`<text x="${L}" y="${yy + 2}" class="lab-text">${esc(tr("Chronologie des catégories le long du trajet (sans hystérésis)"))}</text>`);
+    const tl = wrapSvgText(tr("Chronologie des catégories le long du trajet (sans hystérésis)"), textW);
+    tl.forEach((l, j) => parts.push(`<text x="${L}" y="${yy + 2 + j * LINE}" class="lab-text">${esc(l)}</text>`));
+    yy += (tl.length - 1) * LINE;
     const step = W / pts.length;
     pts.forEach((p, i) => {
       const f = fill(p.category, p.cause);
@@ -130,13 +146,23 @@ export function cutToSvg(cut: Cut, palette: LabPalette, tr: Tr = id): string {
     ["unfavorable", "undetermined", `${CATEGORY_LABEL.unfavorable} — ${CAUSE_LABEL.undetermined}`],
     ["unavailable", undefined, CATEGORY_LABEL.unavailable],
   ];
-  legend.forEach(([c, cause, label], i) => {
-    const f = fill(c, cause), ly = yy + i * 20;
+  let ly = yy;
+  legend.forEach(([c, cause, label]) => {
+    const f = fill(c, cause);
     parts.push(`<rect x="${L}" y="${ly}" width="14" height="14" class="${cls(c, cause)}"${f ? ` style="fill:${f}"` : ""}/><rect x="${L}" y="${ly}" width="14" height="14" class="lab-stroke"/>`);
-    parts.push(`<text x="${L + 22}" y="${ly + 12}" class="lab-text">${esc(tr(CATEGORY_LABEL[c]) + (cause ? " — " + tr(CAUSE_LABEL[cause]) : ""))}</text>`);
+    const lines = wrapSvgText(tr(CATEGORY_LABEL[c]) + (cause ? " — " + tr(CAUSE_LABEL[cause]) : ""), textW - 22);
+    lines.forEach((l, i) => parts.push(`<text x="${L + 22}" y="${ly + 12 + i * LINE}" class="lab-text">${esc(l)}</text>`));
+    ly += lines.length * LINE;
     void label;
   });
-  parts.push(`<text x="${L}" y="${yy + 128}" class="lab-text">${esc(tr("Ordres de grandeur pédagogiques, jamais une garantie de commutation."))} ${PROFILE.id} v${PROFILE.version}</text>`);
+  // Avertissement et version sur des lignes séparées, avec retour à la ligne : rien n'est coupé.
+  ly += 12;
+  for (const l of [...wrapSvgText(tr("Ordres de grandeur pédagogiques, jamais une garantie de commutation."), textW), `${PROFILE.id} v${PROFILE.version}`]) {
+    parts.push(`<text x="${L}" y="${ly + 12}" class="lab-text">${esc(l)}</text>`);
+    ly += LINE;
+  }
+  const total = ly + 12;
+  parts[0] = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${L + W + 24} ${total}" width="${L + W + 24}" height="${total}" role="img" aria-label="${esc(tr(cut.title))}">`;
   parts.push(`</svg>`);
   return parts.join("\n");
 }
