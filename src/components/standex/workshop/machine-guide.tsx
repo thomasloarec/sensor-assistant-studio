@@ -320,6 +320,8 @@ export default function MachineGuide({
   const attach = target === "sensor" ? m.sensorAttach : m.magnetAttach;
   const kind = state.kind[target];
   const canThrough = target === "sensor" && throughAllowed(sensor.shape);
+  const tangents = attach ? faceTangents(attach.normal) : null;
+  const alignPreview = target === "magnet" && attach?.kind === "surface" ? alignMagnetToSensor(m, cycleU(m, sample.t)) : null;
   const editAttach = (patch: Partial<Attachment>) => {
     if (!attach) return;
     onChange(attachPatch(target, { ...attach, ...patch }, config));
@@ -970,8 +972,121 @@ export default function MachineGuide({
                     "Aucune collerette n'est modélisée : la profondeur se mesure depuis une extrémité du corps dessiné, pas depuis une face d'appui réelle.",
                   )}
                 </p>
-                <details>
-                  <summary>{t("Valeurs précises de l'axe")}</summary>
+                <p className="t-caption" data-testid="guide-depth-reading">
+                  {t(
+                    depthReading(attach) === "flush"
+                      ? "Référence affleurante avec la surface."
+                      : depthReading(attach) === "recessed"
+                        ? "Référence en retrait, à l'intérieur de la paroi."
+                        : "Référence qui dépasse de la surface.",
+                  )}
+                </p>
+              </>
+            )}
+            {/* i18n-canonical : libellés français traduits au rendu par t(). */}
+            <Num
+              label="Rotation dans le plan"
+              unit="°"
+              min={-360}
+              max={360}
+              step={1}
+              value={attach.spinDeg}
+              onCommit={(spinDeg) => editAttach({ spinDeg })}
+            />
+            <label className="mw-check">
+              <input
+                type="checkbox"
+                checked={attach.flip}
+                onChange={(e) => editAttach({ flip: e.target.checked })}
+              />
+              {t(attach.kind === "through" ? "Inverser le sens d'insertion" : "Retourner le composant")}
+            </label>
+            {target === "magnet" && attach.kind === "surface" && (
+              <div className="mw-align" data-testid="guide-align">
+                <Button
+                  className="mw-button"
+                  data-testid="guide-align-magnet"
+                  onClick={() => {
+                    setPlaying(false);
+                    const r = alignMagnetToSensor(m, u);
+                    if (!r.ok) {
+                      setState((s) => ({ ...s, notice: r.reason }));
+                      return;
+                    }
+                    setState((s) => ({ ...s, notice: null }));
+                    onChange(attachPatch("magnet", r.attach, config));
+                  }}
+                >
+                  {t("Aligner avec le capteur")}
+                </Button>
+                <p className="t-caption">{t("Centre l’aimant en face du capteur sur sa face de pose.")}</p>
+                {alignPreview?.ok && (
+                  <p className="t-caption t-metric" data-testid="guide-align-shift">
+                    {msg("Décalage actuel dans le plan de pose : {0} mm", [formatMm(alignPreview.shiftMm, 2)])}
+                  </p>
+                )}
+                {alignPreview?.ok && alignPreview.oblique && (
+                  <p className="notice-warning" data-testid="guide-align-oblique">
+                    {t("L'axe du capteur n'est pas perpendiculaire à cette face : l'aimant est centré par projection sur sa face, pas rendu coaxial.")}
+                  </p>
+                )}
+                <p className="t-caption">
+                  {t("Alignement géométrique à l'instant affiché, sans garantie de détection. La présence de matière sous le nouveau point n'est pas vérifiée.")}
+                </p>
+              </div>
+            )}
+            <details className="mw-precise" data-testid="guide-precise">
+              <summary className="t-body">{t("Position précise")}</summary>
+              <p className="t-caption">{t("Repère : coordonnées du fichier en pose statique (mécanisme au repos), en mm. Le point suit ensuite sa pièce support.")}</p>
+              {attach.kind === "surface" ? (
+                <>
+                  <p className="t-body t-metric" data-testid="guide-precise-point">
+                    {msg("Point de pose : X {0} · Y {1} · Z {2} mm", attach.point.map((v) => formatMm(v, 2)))}
+                  </p>
+                  {([0, 1] as const).map((k) => (
+                    <div key={k} className="mw-nudge" data-testid={"guide-nudge-" + k}>
+                      <p className="t-body">
+                        {msg("Direction {0} dans le plan : {1}", [String(k + 1), directionLabel(tangents[k])])}
+                      </p>
+                      <div className="mw-guide-row">
+                        {[-1, -0.1, 0.1, 1].map((d) => (
+                          <Button
+                            key={d}
+                            className="mw-button mw-secondary t-metric"
+                            aria-label={msg("Déplacer de {0} mm selon la direction {1}", [String(d), String(k + 1)])}
+                            onClick={() => editAttach(shiftAlongFace(attach, k === 0 ? d : 0, k === 1 ? d : 0))}
+                          >
+                            {(d > 0 ? "+" : "−") + Math.abs(d)}
+                          </Button>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                  {(["X", "Y", "Z"] as const).map((a, i) => (
+                    <Num
+                      key={"s" + a}
+                      label={msg("Point de pose {0}", [a])}
+                      unit="mm"
+                      min={-10000}
+                      max={10000}
+                      testId={"guide-surface-point-" + a}
+                      value={attach.point[i]!}
+                      onCommit={(v) => {
+                        const p = [...attach.point] as Vec3;
+                        p[i] = v;
+                        editAttach(projectOntoFace(attach, p));
+                      }}
+                    />
+                  ))}
+                  <p className="t-caption">
+                    {t("Une coordonnée saisie est ramenée sur le plan de la face conservée : l'attache, sa pièce et son mouvement sont gardés. L'écart à la face se règle à part, ci-dessus.")}
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p className="t-body t-metric" data-testid="guide-precise-point">
+                    {msg("Point d'entrée : X {0} · Y {1} · Z {2} mm", attach.point.map((v) => formatMm(v, 2)))}
+                  </p>
                   {(["X", "Y", "Z"] as const).map((a, i) => (
                     <Num
                       key={"p" + a}
@@ -1011,39 +1126,45 @@ export default function MachineGuide({
                       }}
                     />
                   ))}
-                </details>
-                <p className="t-caption" data-testid="guide-depth-reading">
-                  {t(
-                    depthReading(attach) === "flush"
-                      ? "Référence affleurante avec la surface."
-                      : depthReading(attach) === "recessed"
-                        ? "Référence en retrait, à l'intérieur de la paroi."
-                        : "Référence qui dépasse de la surface.",
-                  )}
-                </p>
-              </>
-            )}
-            {/* i18n-canonical : libellés français traduits au rendu par t(). */}
-            <Num
-              label="Rotation dans le plan"
-              unit="°"
-              min={-360}
-              max={360}
-              step={1}
-              value={attach.spinDeg}
-              onCommit={(spinDeg) => editAttach({ spinDeg })}
-            />
-            <label className="mw-check">
-              <input
-                type="checkbox"
-                checked={attach.flip}
-                onChange={(e) => editAttach({ flip: e.target.checked })}
-              />
-              {t(attach.kind === "through" ? "Inverser le sens d'insertion" : "Retourner le composant")}
-            </label>
+                                  <p className="t-caption">{t("La profondeur et sa référence se règlent ci-dessus ; l'axe suit la normale sortante.")}</p>
+                </>
+              )}
+            </details>
           </div>
         ) : (
-          !state.freed.includes(target) && (
+          <>
+          <details className="mw-precise" data-testid="guide-precise">
+            <summary className="t-body">{t("Position précise")}</summary>
+            <p className="t-body" data-testid="guide-precise-support">
+              {msg("Support : {0}", [
+                t(
+                  clipMode
+                    ? "pièce fixe (non attaché : reste fixe avec l'animation du fichier)"
+                    : (target === "sensor" ? m.sensorMount : m.magnetMount) === "moving"
+                      ? "pièce mobile"
+                      : "pièce fixe",
+                ),
+              ])}
+            </p>
+            <p className="t-caption">{t("Repère : coordonnées du fichier en pose statique (mécanisme au repos), en mm, centre du composant.")}</p>
+            {(["X", "Y", "Z"] as const).map((a, i) => (
+              <Num
+                key={"f" + a}
+                label={msg("Centre {0}", [a])}
+                unit="mm"
+                min={-10000}
+                max={10000}
+                testId={"guide-free-" + a}
+                value={(target === "sensor" ? m.sensorPosition : m.magnetPosition)[i]!}
+                onCommit={(v) => {
+                  const p = [...(target === "sensor" ? m.sensorPosition : m.magnetPosition)] as Vec3;
+                  p[i] = v;
+                  onChange(target === "sensor" ? { sensorPosition: p, sensorAttach: undefined } : { magnetPosition: p, magnetAttach: undefined });
+                }}
+              />
+            ))}
+          </details>
+          {!state.freed.includes(target) && (
             <p className="t-caption">
               {t(
                 clipMode
@@ -1051,7 +1172,8 @@ export default function MachineGuide({
                   : "Pose libre : aucune attache. Les coordonnées précises restent dans Réglages avancés › Positionnement.",
               )}
             </p>
-          )
+          )}
+          </>
         )}
         <div className="mw-guide-row">
           <Button className="mw-button mw-secondary" disabled={!history.canUndo} onClick={history.undo}>
