@@ -79,6 +79,7 @@ export function cutToSvg(cut: Cut, palette: LabPalette, tr: Tr = id): string {
   const textW = W + 24 - L - 8;
   const titleLines = wrapSvgText(`${tr(cut.title)} · ${cut.magnetId} · ${tr("modèle")} ${cut.model} · ${cut.convention}`, textW);
   const T = 24 + titleLines.length * LINE;
+  const timelineH = cut.path ? 56 : 0;
   parts.push(`<style>${styleFor(palette)}</style><defs>
 <pattern id="lab-hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" class="lab-var"/><line x1="0" y1="0" x2="0" y2="6" class="lab-pattern"/></pattern>
 <pattern id="lab-dots" width="6" height="6" patternUnits="userSpaceOnUse"><rect width="6" height="6" class="lab-orient"/><circle cx="3" cy="3" r="1.2" class="lab-ink" opacity=".55"/></pattern>
@@ -116,15 +117,18 @@ export function cutToSvg(cut: Cut, palette: LabPalette, tr: Tr = id): string {
   });
   let yy = T + H + 48;
   cut.marks.forEach((m, i) => {
-    parts.push(`<text x="${L}" y="${yy + 2}" class="lab-text">${i + 1}. ${esc(tr(m.label))} — ${esc(tr(CATEGORY_LABEL[m.category]))}${m.cause ? " — " + esc(tr(CAUSE_LABEL[m.cause])) : ""}</text>`);
-    yy += 20;
+    const lines = wrapSvgText(`${i + 1}. ${tr(m.label)} — ${tr(CATEGORY_LABEL[m.category])}${m.cause ? " — " + tr(CAUSE_LABEL[m.cause]) : ""}`, textW);
+    lines.forEach((l, j) => parts.push(`<text x="${L}" y="${yy + 2 + j * LINE}" class="lab-text">${esc(l)}</text>`));
+    yy += lines.length * LINE;
   });
   if (cut.marks.length) yy += 8;
   if (cut.path) {
     const pts = cut.path.points;
     parts.push(`<polyline points="${pts.map((p) => `${px(p.x)},${py(p.y)}`).join(" ")}" class="lab-stroke" stroke-width="2" stroke-dasharray="4 3"/>`);
     pts.forEach((p) => parts.push(`<circle cx="${px(p.x)}" cy="${py(p.y)}" r="3" class="${cls(p.category, p.cause)}" stroke="${palette.ink}" stroke-width="1"/>`));
-    parts.push(`<text x="${L}" y="${yy + 2}" class="lab-text">${esc(tr("Chronologie des catégories le long du trajet (sans hystérésis)"))}</text>`);
+    const tl = wrapSvgText(tr("Chronologie des catégories le long du trajet (sans hystérésis)"), textW);
+    tl.forEach((l, j) => parts.push(`<text x="${L}" y="${yy + 2 + j * LINE}" class="lab-text">${esc(l)}</text>`));
+    yy += (tl.length - 1) * LINE;
     const step = W / pts.length;
     pts.forEach((p, i) => {
       const f = fill(p.category, p.cause);
