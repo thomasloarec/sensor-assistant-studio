@@ -93,7 +93,7 @@ export interface Cut {
   id: string; title: string; magnetId: string; className: PilotClass; model: ResponseModel; convention: DistanceConvention;
   axis: Vec3; thresholds: Thresholds | null;
   grid: { xMin: number; xMax: number; yMin: number; yMax: number; stepMm: number };
-  cells: CutCell[]; marks: CutMark[]; path?: { points: PathPoint[]; segments: { from: number; to: number; category: Category }[] };
+  cells: CutCell[]; marks: CutMark[]; path?: undefined | { points: PathPoint[]; segments: { from: number; to: number; category: Category }[] };
   computeMs: number;
 }
 
