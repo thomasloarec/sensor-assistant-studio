@@ -74,7 +74,7 @@ export const PROFILE = {
     D1: "Aimant parallèle aux lames (aimantation selon x), centré en x, approche latérale selon y. Datum ambigu dans la source (registre R2b).",
     D3: "Aimant coaxial aux lames, approche par l'extrémité selon x. Datum ambigu dans la source (registre R2b).",
     D4: "H-D4 : aimant perpendiculaire aux lames (aimantation selon y), approche selon y ; distance = maximum de lobe sur x.",
-    D5: "H-D5 : aimant normal au plan (aimantation selon z), approche selon y ; distance = maximum de lobe sur x.",
+    D5: "H-D5 : aimant perpendiculaire aux lames (aimantation selon y), déplacé selon z, face latérale vers le reed ; distance = maximum de lobe sur x. (Une première variante aimantée selon z, approchée selon y, donne Bx ≡ 0 dans le plan médian : rejetée et consignée.)",
   },
   models: {
     A: "Réponse A : |moyenne de Bx sur la longueur effective| (poids de Gauss normalisés), mT.",

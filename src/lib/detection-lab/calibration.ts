@@ -21,7 +21,7 @@ export function approachPose(magnet: PilotMagnet, approach: ApproachId, d: numbe
     case "D4":
       return { center: [x, d + (c1 ? h : 0), 0], axis: [0, 1, 0] };
     case "D5":
-      return { center: [x, d + (c1 ? r : 0), 0], axis: [0, 0, 1] };
+      return { center: [x, 0, d + (c1 ? r : 0)], axis: [0, 1, 0] };
   }
 }
 
