@@ -1,8 +1,8 @@
 # Feuille de route — lot des 7 correctifs (base 12be3e3d)
 
 ## Géométries MK14 / MK18 — 26 octobre 2026
-- [ ] MK14 cylindrique noir, deux fils bleus sans gaine ; MK18 un seul méplat circulaire partagé.
-- [ ] Cohérence des rendus et STEP ciblé, tests complets et préversion seule ; aucune publication.
+- [x] MK14 cylindrique noir, deux fils bleus sans gaine ; MK18 un seul méplat circulaire partagé.
+- [x] Cohérence des rendus et STEP ciblé, 1 850 tests verts et préversion seule ; aucune publication (rapport QA_MK14_MK18_2026-10-26.md).
 
 ## Atelier 3D — UX intégrée (23 octobre 2026)
 - [x] Un seul défilement de commandes, scène/timeline dimensionnées dans les deux modes.
