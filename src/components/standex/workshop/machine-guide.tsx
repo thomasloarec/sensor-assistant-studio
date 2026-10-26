@@ -1444,6 +1444,19 @@ export function handlePick(
     if (!p) return fail("Normale de face illisible : cliquez une autre face.");
     return { state: { ...base, pick: null }, patch: p, done: true };
   }
+  if (pick.purpose === "hole-centre") {
+    // Premier clic : verrouille le support réel, le plan et sa normale, sans
+    // toucher au montage. Le second clic passe par `handleHoleRay`.
+    if (pick.plane) return { state, patch: null, done: false };
+    return {
+      state: {
+        ...base,
+        pick: { ...pick, plane: { path: hit.path, moving: hit.moving, group: hit.group, point: hit.point, normal: hit.normal } },
+      },
+      patch: null,
+      done: false,
+    };
+  }
   const points = [...pick.points, hit.point];
   if (points.length < 2)
     return {
@@ -1483,4 +1496,27 @@ export function handlePick(
     axisSource: "two-points",
   };
   return { state: { ...base, pick: null }, patch: attachPatch("sensor", a, config), done: true };
+}
+
+/** Second clic de « Centrer dans un trou » : intersection rayon/plan de la face
+ *  verrouillée, une seule action annulable ; un refus ne modifie rien et laisse
+ *  la sélection ouverte pour réessayer. */
+export function handleHoleRay(
+  state: GuideState,
+  m: MachineAssembly,
+  ray: { origin: Vec3; direction: Vec3 },
+  u: number,
+  config: WorkshopConfig,
+): { state: GuideState; patch: Partial<MachineAssembly> | null; done: boolean } {
+  const plane = state.pick?.purpose === "hole-centre" ? state.pick.plane : undefined;
+  if (!plane) return { state, patch: null, done: false };
+  if (!throughAllowed(sensorById(config.sensorId).shape))
+    return {
+      state: { ...state, pick: null, notice: "Montage traversant refusé : il est réservé aux capteurs à corps cylindrique, fileté ou à insérer." },
+      patch: null,
+      done: true,
+    };
+  const r = holeCentreAttach(m, plane, ray, u, m.sensorAttach);
+  if (!r.ok) return { state: { ...state, notice: r.reason }, patch: null, done: false };
+  return { state: { ...state, pick: null, notice: null }, patch: attachPatch("sensor", r.attach, config), done: true };
 }
