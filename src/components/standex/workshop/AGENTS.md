@@ -11,3 +11,4 @@
 - Import : un refus d'échelle (`code: "scale"`) ouvre un nouvel essai avec unités choisies ; réimporter le même fichier absent relance le chargement (`assetEpoch`) sans toucher au montage.
 - Camera framing and simplified node display use `machine-view.ts`; paths remain unchanged, framing follows current support poses, and only explicit camera commands reset zoom.
 - The stage owns its available height in embedded and standalone modes; only the controls column scrolls, while guide content and the node tree stay in that same scrolling flow.
+- Precision mounting lives in `machine-alignment.ts`: "Centrer dans un trou" locks the first-click face (support, plane, normal) and resolves the second click by ray/plane only; magnet alignment shifts the attach point tangentially via `partDelta`/`componentPose` converted to rest pose, so support, offset, spin, flip and motion tracking are never lost and no hole or magnetic axis is ever claimed as detected.
