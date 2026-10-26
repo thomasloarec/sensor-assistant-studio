@@ -97,7 +97,7 @@ for (const [m, c] of combos)
   }
 md.push("", "Lecture : un désaccord ×1,4 à ×1,6 (C1) ou ×2,1 à ×2,7 (C2) entre les seuils implicites des deux aimants signifie que le modèle ne reproduit pas, avec un seul seuil, le rapport des distances publiées. Il est affiché, pas compensé.", "");
 
-md.push("## Bilan par modèle et convention", "", "| Modèle | Conv. | lignes | apprentissage | contrôles | manquants | indisponibles | quarantaine | |écart| moyen contrôles (mm) | médiane |%| | contrôles > 20 % |", "|---|---|---|---|---|---|---|---|---|---|---|");
+md.push("## Bilan par modèle et convention", "", "| Modèle | Conv. | lignes | apprentissage | contrôles | manquants | indisponibles | quarantaine | écart absolu moyen contrôles (mm) | médiane écart absolu % | contrôles > 20 % |", "|---|---|---|---|---|---|---|---|---|---|---|");
 for (const [m, c] of combos) {
   const s = summarize(tables.get(m + c)!);
   md.push(`| ${m} | ${c} | ${s.total} | ${s.byStatus.training} | ${s.byStatus.control} | ${s.byStatus.missing} | ${s.byStatus.unavailable} | ${s.byStatus.quarantine} | ${f(s.controls.meanAbsMm)} | ${f(s.controls.medianAbsPct)} | ${s.controls.over20} |`);

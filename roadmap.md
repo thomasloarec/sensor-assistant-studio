@@ -144,3 +144,4 @@
 - [x] Atelier 3D : centrer dans un trou (rayon/plan), aligner l aimant avec le capteur, position précise étape 4 (26/10/2026)
 - [x] Recette 288835bc : alignement à l'instant affiché conservé (Aligner, Annuler, Rétablir) ; textes « Position précise » cohérents (26/10/2026)
 - [x] Échap annule le centrage sans fermer le panneau ; bloc Aligner placé avant écart/rotation/retournement (26/10/2026)
+- [x] Laboratoire de détection reed interne staff (tableau pilote, six coupes, rapport) — revue propriétaire avant toute intégration atelier
