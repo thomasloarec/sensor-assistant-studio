@@ -33523,5 +33523,212 @@
     "Magnetic moment: 30,8 x 10e-6Vs x cm",
     "Magnetic moment: 30,8 x 10e-6Vs x cm",
     "Magnetic moment: 30,8 x 10e-6Vs x cm"
+  ],
+  "Aucun décalage le long des lames ni rotation de ±90° dans le plan n'améliore la catégorie.": [
+    "No shift along the reeds and no ±90° in-plane rotation improves the category.",
+    "沿簧片方向的平移或平面内 ±90° 旋转均不能改善类别。",
+    "Weder eine Verschiebung entlang der Zungen noch eine Drehung um ±90° in der Ebene verbessert die Kategorie.",
+    "Ningún desplazamiento a lo largo de las láminas ni rotación de ±90° en el plano mejora la categoría.",
+    "Ни сдвиг вдоль контактов, ни поворот на ±90° в плоскости не улучшают категорию.",
+    "Nessuno spostamento lungo le lamine né rotazione di ±90° nel piano migliora la categoria.",
+    "リードに沿った移動も面内 ±90° 回転もカテゴリを改善しません。"
+  ],
+  "Brochure : plage d'activation associée à la classe de sensibilité (up = moins sensible, to = plus sensible). Ce n'est pas une hystérésis et cela ne fournit ni distribution gaussienne ni probabilité.": [
+    "Brochure: activation range associated with the sensitivity class (up = less sensitive, to = more sensitive). This is not hysteresis and provides neither a Gaussian distribution nor a probability.",
+    "手册：与灵敏度等级相关的动作范围（up = 较不灵敏，to = 较灵敏）。这不是迟滞，也不提供高斯分布或概率。",
+    "Broschüre: Aktivierungsbereich der Empfindlichkeitsklasse (up = weniger empfindlich, to = empfindlicher). Das ist keine Hysterese und liefert weder eine Gauß-Verteilung noch eine Wahrscheinlichkeit.",
+    "Folleto: rango de activación asociado a la clase de sensibilidad (up = menos sensible, to = más sensible). No es una histéresis y no proporciona ni distribución gaussiana ni probabilidad.",
+    "Брошюра: диапазон срабатывания, связанный с классом чувствительности (up — менее чувствительный, to — более чувствительный). Это не гистерезис и не даёт ни гауссова распределения, ни вероятности.",
+    "Brochure: intervallo di attivazione associato alla classe di sensibilità (up = meno sensibile, to = più sensibile). Non è un'isteresi e non fornisce né distribuzione gaussiana né probabilità.",
+    "カタログ：感度クラスに対応する動作範囲（up = 低感度、to = 高感度）。ヒステリシスではなく、ガウス分布や確率も示しません。"
+  ],
+  "Cause non déterminée (décentrage à examiner)": [
+    "Cause undetermined (check centring)",
+    "原因未确定（需检查偏心）",
+    "Ursache unbestimmt (Zentrierung prüfen)",
+    "Causa no determinada (revisar el centrado)",
+    "Причина не определена (проверить центровку)",
+    "Causa non determinata (verificare la centratura)",
+    "原因不明（中心ずれを確認）"
+  ],
+  "Coupe 2D, défilement horizontal": [
+    "2D cross-section, horizontal scrolling",
+    "二维剖面，可横向滚动",
+    "2D-Schnitt, horizontal scrollbar",
+    "Corte 2D, desplazamiento horizontal",
+    "2D-сечение, горизонтальная прокрутка",
+    "Sezione 2D, scorrimento orizzontale",
+    "2D 断面（横スクロール）"
+  ],
+  "D5 : schéma source (reed vertical, aimant horizontal, approche par l'extrémité) tourné rigidement : aimantation selon y (⟂ lames), approche selon x par l'extrémité, lobes de part et d'autre ; distance = maximum de lobe sur t = y ≥ 0. Réponse nulle à t = 0 (zone centrale entre lobes).": [
+    "D5: source diagram (vertical reed, horizontal magnet, end approach) rotated rigidly: magnetisation along y (⟂ reeds), approach along x from the end, lobes on both sides; distance = lobe maximum over t = y ≥ 0. Zero response at t = 0 (central zone between lobes).",
+    "D5：将来源示意图（簧管竖直、磁铁水平、从端部接近）刚性旋转：磁化沿 y（⟂ 簧片），沿 x 从端部接近，两侧各有波瓣；距离 = t = y ≥ 0 上的波瓣最大值。t = 0 处响应为零（波瓣之间的中心区）。",
+    "D5: Quellschema (Reed senkrecht, Magnet waagrecht, Annäherung über das Ende) starr gedreht: Magnetisierung entlang y (⟂ Zungen), Annäherung entlang x über das Ende, Keulen beidseitig; Abstand = Keulenmaximum über t = y ≥ 0. Antwort null bei t = 0 (Mittelzone zwischen den Keulen).",
+    "D5: esquema fuente (reed vertical, imán horizontal, aproximación por el extremo) girado rígidamente: imanación según y (⟂ láminas), aproximación según x por el extremo, lóbulos a ambos lados; distancia = máximo de lóbulo sobre t = y ≥ 0. Respuesta nula en t = 0 (zona central entre lóbulos).",
+    "D5: исходная схема (геркон вертикально, магнит горизонтально, подход с торца), жёстко повёрнутая: намагниченность по y (⟂ контактам), подход по x с торца, лепестки с обеих сторон; расстояние = максимум лепестка по t = y ≥ 0. Нулевой отклик при t = 0 (центральная зона между лепестками).",
+    "D5: schema di origine (reed verticale, magnete orizzontale, avvicinamento dall'estremità) ruotato rigidamente: magnetizzazione lungo y (⟂ lamine), avvicinamento lungo x dall'estremità, lobi su entrambi i lati; distanza = massimo del lobo su t = y ≥ 0. Risposta nulla a t = 0 (zona centrale tra i lobi).",
+    "D5：出典図（リード縦、磁石横、端部から接近）を剛体回転：磁化は y 方向（⟂ リード）、x 方向に端部から接近、両側にローブ；距離 = t = y ≥ 0 でのローブ最大値。t = 0 で応答ゼロ（ローブ間の中央域）。"
+  ],
+  "Ni la rotation de ±90° ni le rapprochement testés n'atteignent le seuil : décentrage, orientation oblique ou collision à examiner.": [
+    "Neither the tested ±90° rotation nor moving closer reaches the threshold: check centring, oblique orientation or collision.",
+    "测试的 ±90° 旋转和靠近均未达到阈值：需检查偏心、斜向或碰撞。",
+    "Weder die getestete Drehung um ±90° noch die Annäherung erreicht die Schwelle: Zentrierung, schräge Ausrichtung oder Kollision prüfen.",
+    "Ni la rotación de ±90° ni el acercamiento probados alcanzan el umbral: revisar centrado, orientación oblicua o colisión.",
+    "Ни проверенный поворот на ±90°, ни приближение не достигают порога: проверьте центровку, наклонную ориентацию или столкновение.",
+    "Né la rotazione di ±90° né l'avvicinamento testati raggiungono la soglia: verificare centratura, orientamento obliquo o collisione.",
+    "試した ±90° 回転も接近もしきい値に届きません：中心ずれ、斜め配置、干渉を確認してください。"
+  ],
+  "Page web : pull-in et drop-out sont des transitions distinctes, distances typiques pour des aimants appairés spécifiques, sans transposition automatique vers un autre aimant.": [
+    "Web page: pull-in and drop-out are distinct transitions, typical distances for specific paired magnets, with no automatic transfer to another magnet.",
+    "网页：吸合与释放是不同的转变，为特定配对磁铁的典型距离，不能自动套用到其他磁铁。",
+    "Webseite: Pull-in und Drop-out sind getrennte Übergänge, typische Abstände für bestimmte gepaarte Magnete, ohne automatische Übertragung auf einen anderen Magneten.",
+    "Página web: pull-in y drop-out son transiciones distintas, distancias típicas para imanes emparejados específicos, sin transposición automática a otro imán.",
+    "Веб-страница: срабатывание и отпускание — разные переходы, типичные расстояния для конкретных парных магнитов, без автоматического переноса на другой магнит.",
+    "Pagina web: pull-in e drop-out sono transizioni distinte, distanze tipiche per magneti abbinati specifici, senza trasposizione automatica ad altro magnete.",
+    "Web ページ：プルインとドロップアウトは別の遷移で、特定のペア磁石の代表距離であり、他の磁石へ自動的に転用しません。"
+  ],
+  "Parmi les orientations testées, aucune ne suffit à cette place ; un rapprochement valide dans le même alignement atteindrait le seuil.": [
+    "Among the tested orientations, none is enough at this position; a valid closer position in the same alignment would reach the threshold.",
+    "在所测试的方向中，此位置均不足；在同一对准下有效靠近可达到阈值。",
+    "Unter den getesteten Ausrichtungen reicht an dieser Stelle keine; eine gültige Annäherung in gleicher Ausrichtung würde die Schwelle erreichen.",
+    "Entre las orientaciones probadas, ninguna basta en esta posición; un acercamiento válido en la misma alineación alcanzaría el umbral.",
+    "Среди проверенных ориентаций ни одна не достаточна в этом месте; допустимое приближение при том же выравнивании достигло бы порога.",
+    "Tra gli orientamenti testati nessuno basta in questa posizione; un avvicinamento valido nello stesso allineamento raggiungerebbe la soglia.",
+    "試した向きのいずれもこの位置では不十分です。同じ配置のまま有効に近づければしきい値に届きます。"
+  ],
+  "Seuls les contrôles D3/D4/D5 Form sont hors apprentissage. Les adaptations MK03/MK13 ne sont pas des validations physiques indépendantes et n'entrent pas dans la comparaison A/B.": [
+    "Only the D3/D4/D5 Form controls are outside training. MK03/MK13 adaptations are not independent physical validations and are excluded from the A/B comparison.",
+    "只有 D3/D4/D5 Form 对照不属于训练数据。MK03/MK13 改编不是独立的物理验证，不参与 A/B 比较。",
+    "Nur die Kontrollen D3/D4/D5 Form liegen außerhalb des Trainings. Die MK03/MK13-Anpassungen sind keine unabhängigen physikalischen Validierungen und gehen nicht in den A/B-Vergleich ein.",
+    "Solo los controles D3/D4/D5 Form están fuera del aprendizaje. Las adaptaciones MK03/MK13 no son validaciones físicas independientes y no entran en la comparación A/B.",
+    "Вне обучения только контроли D3/D4/D5 Form. Адаптации MK03/MK13 не являются независимыми физическими проверками и не входят в сравнение A/B.",
+    "Solo i controlli D3/D4/D5 Form sono fuori addestramento. Gli adattamenti MK03/MK13 non sono validazioni fisiche indipendenti e non entrano nel confronto A/B.",
+    "学習外は D3/D4/D5 Form の検証のみです。MK03/MK13 の適用は独立した物理検証ではなく、A/B 比較に含めません。"
+  ],
+  "Tourner de {0}° dans le plan": [
+    "Rotate by {0}° in the plane",
+    "在平面内旋转 {0}°",
+    "In der Ebene um {0}° drehen",
+    "Girar {0}° en el plano",
+    "Повернуть на {0}° в плоскости",
+    "Ruotare di {0}° nel piano",
+    "面内で {0}° 回転"
+  ],
+  "Apprentissage D1 Form": [
+    "D1 Form training",
+    "D1 Form 训练",
+    "Training D1 Form",
+    "Aprendizaje D1 Form",
+    "Обучение D1 Form",
+    "Addestramento D1 Form",
+    "D1 Form 学習"
+  ],
+  "Contrôles hors apprentissage D3/D4/D5 Form": [
+    "Out-of-training controls D3/D4/D5 Form",
+    "训练外对照 D3/D4/D5 Form",
+    "Kontrollen außerhalb des Trainings D3/D4/D5 Form",
+    "Controles fuera del aprendizaje D3/D4/D5 Form",
+    "Контроли вне обучения D3/D4/D5 Form",
+    "Controlli fuori addestramento D3/D4/D5 Form",
+    "学習外検証 D3/D4/D5 Form"
+  ],
+  "Adaptations documentaires MK03/MK13 (non indépendantes)": [
+    "MK03/MK13 documentary adaptations (not independent)",
+    "MK03/MK13 文档改编（非独立）",
+    "Dokumentarische Anpassungen MK03/MK13 (nicht unabhängig)",
+    "Adaptaciones documentales MK03/MK13 (no independientes)",
+    "Документальные адаптации MK03/MK13 (не независимые)",
+    "Adattamenti documentali MK03/MK13 (non indipendenti)",
+    "MK03/MK13 資料上の適用（独立ではない）"
+  ],
+  "Quarantaine MK04": [
+    "MK04 quarantine",
+    "MK04 隔离",
+    "Quarantäne MK04",
+    "Cuarentena MK04",
+    "Карантин MK04",
+    "Quarantena MK04",
+    "MK04 隔離"
+  ],
+  "Adaptation documentaire": [
+    "Documentary adaptation",
+    "文档改编",
+    "Dokumentarische Anpassung",
+    "Adaptación documental",
+    "Документальная адаптация",
+    "Adattamento documentale",
+    "資料上の適用"
+  ],
+  "Intermédiaire 135°": [
+    "Intermediate 135°",
+    "中间 135°",
+    "Zwischenstellung 135°",
+    "Intermedio 135°",
+    "Промежуточно 135°",
+    "Intermedio 135°",
+    "中間 135°"
+  ],
+  "Groupe": [
+    "Group",
+    "组",
+    "Gruppe",
+    "Grupo",
+    "Группа",
+    "Gruppo",
+    "グループ"
+  ],
+  "Lignes": [
+    "Rows",
+    "行",
+    "Zeilen",
+    "Filas",
+    "Строки",
+    "Righe",
+    "行数"
+  ],
+  "Publiées": [
+    "Published",
+    "已发布",
+    "Veröffentlicht",
+    "Publicadas",
+    "Опубликовано",
+    "Pubblicate",
+    "公表"
+  ],
+  "Absentes": [
+    "Missing",
+    "缺失",
+    "Fehlend",
+    "Ausentes",
+    "Отсутствуют",
+    "Assenti",
+    "欠落"
+  ],
+  "Estimées": [
+    "Estimated",
+    "已估算",
+    "Geschätzt",
+    "Estimadas",
+    "Оценено",
+    "Stimate",
+    "推定"
+  ],
+  "Écart moyen mm": [
+    "Mean gap mm",
+    "平均偏差 mm",
+    "Mittlere Abweichung mm",
+    "Desviación media mm",
+    "Среднее отклонение, мм",
+    "Scarto medio mm",
+    "平均差 mm"
+  ],
+  "Médiane %": [
+    "Median %",
+    "中位数 %",
+    "Median %",
+    "Mediana %",
+    "Медиана, %",
+    "Mediana %",
+    "中央値 %"
   ]
 }
