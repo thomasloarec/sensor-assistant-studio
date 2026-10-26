@@ -26,6 +26,7 @@
  *    et les trous de fixation sont représentés.
  */
 import { mkdir, writeFile } from "node:fs/promises";
+import { oneFlatProfile } from "../src/lib/standex/section-profile";
 import {
   SENSOR_CATALOG,
   overallEnvelope,
@@ -264,6 +265,18 @@ export function solidsFor(doc: StepDoc, s: SensorModel): string[] {
     case "cylinder":
     case "glass": {
       const [l, h, w] = s.body;
+      // MK18 correction only: preserve all other existing STEP files, including MK20.
+      if (s.id === "MK18" && s.section === "one_flat") {
+        const profile = oneFlatProfile(h, w);
+        const ring = (x: number): Pt[] => profile.map(([z, y]) => [x, y, -z]);
+        const r0 = ring(-l / 2), r1 = ring(l / 2);
+        const faces = [face(doc, [...r0].reverse()), face(doc, r1)];
+        for (let i = 0; i < profile.length; i++) {
+          const j = (i + 1) % profile.length;
+          faces.push(face(doc, [r0[i], r0[j], r1[j], r1[i]]));
+        }
+        return [closedSolid(doc, s.id + "_corps", faces)];
+      }
       return [ellipseCylinder(doc, s.id + "_corps", 0, 0, 0, l, h, w)];
     }
     case "flange":

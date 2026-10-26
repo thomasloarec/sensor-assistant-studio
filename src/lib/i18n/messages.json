@@ -7433,14 +7433,23 @@
     "Corpo tubolare che entra in un foro da {0} mm",
     "{0} mm の穴に入る円筒形本体"
   ],
-  "Corps Ø 5 mm avec méplats, deux fils séparés": [
-    "Ø 5 mm body with flats, two separate wires",
-    "Ø 5 mm带平面壳体，两根独立导线",
-    "Gehäuse Ø 5 mm mit Abflachungen, zwei Einzeladern",
-    "Cuerpo Ø 5 mm con planos, dos hilos separados",
-    "Корпус Ø 5 mm с плоскими гранями, два отдельных провода",
-    "Corpo Ø 5 mm con piani, due fili separati",
-    "直径5 mmの平面付き本体、独立した2本のリード線"
+  "Boîtier cylindrique avec deux fils isolés bleus": [
+    "Cylindrical housing with two blue insulated wires",
+    "圆柱形壳体，两根蓝色绝缘导线",
+    "Zylindrisches Gehäuse mit zwei blau isolierten Drähten",
+    "Carcasa cilíndrica con dos hilos aislados azules",
+    "Цилиндрический корпус с двумя проводами в синей изоляции",
+    "Custodia cilindrica con due fili isolati blu",
+    "円筒形本体、青色絶縁の独立した2本のリード線"
+  ],
+  "Corps Ø 5 mm avec un méplat, deux fils séparés": [
+    "Ø 5 mm body with one flat, two separate wires",
+    "Ø 5 mm壳体，单个切平面，两根独立导线",
+    "Gehäuse Ø 5 mm mit einer Abflachung, zwei Einzeladern",
+    "Cuerpo Ø 5 mm con un plano, dos hilos separados",
+    "Корпус Ø 5 mm с одной плоской гранью, два отдельных провода",
+    "Corpo Ø 5 mm con un piano, due fili separati",
+    "直径5 mmの単一平面付き本体、独立した2本のリード線"
   ],
   "Corps à collerette": [
     "Flanged body",
@@ -9944,14 +9953,14 @@
     "E-mail",
     "メール"
   ],
-  "Embout avec méplats": [
-    "End with flats",
-    "带平面的端部",
-    "Ende mit Abflachungen",
-    "Extremo con planos",
-    "Торец с плоскими гранями",
-    "Estremità con piani",
-    "平面部のある端面"
+  "Embout avec un méplat": [
+    "End with one flat",
+    "带单个切平面的端部",
+    "Ende mit einer Abflachung",
+    "Extremo con un plano",
+    "Торец с одной плоской гранью",
+    "Estremità con un piano",
+    "単一平面部のある端面"
   ],
   "Emboîtement dans un trou": [
     "Push-fit into hole",
@@ -27170,14 +27179,14 @@
     "Vista quotata · passa il mouse per il 3D",
     "寸法付きの図 · カーソルを合わせると3D"
   ],
-  "Vue de l’embout : Ø 5 mm, méplats à 4,6 mm": [
-    "End view: Ø 5 mm, 4.6 mm across flats",
-    "端面图：Ø 5 mm，对边4.6 mm",
-    "Stirnansicht: Ø 5 mm, Abflachungen bei 4,6 mm",
-    "Vista del extremo: Ø 5 mm, entre planos 4,6 mm",
-    "Вид с торца: Ø 5 mm, размер между плоскостями 4,6 mm",
-    "Vista dell’estremità: Ø 5 mm, distanza tra piani 4,6 mm",
-    "端面図：直径5 mm、平面間4.6 mm"
+  "Vue de l’embout : Ø 5 mm, un méplat à 4,6 mm": [
+    "End view: Ø 5 mm, one flat at 4.6 mm across",
+    "端面图：Ø 5 mm，单个切平面，跨平面尺寸4.6 mm",
+    "Stirnansicht: Ø 5 mm, eine Abflachung, Maß darüber 4,6 mm",
+    "Vista del extremo: Ø 5 mm, un plano, dimensión transversal 4,6 mm",
+    "Вид с торца: Ø 5 mm, одна плоская грань, поперечный размер 4,6 mm",
+    "Vista dell’estremità: Ø 5 mm, un piano, ingombro trasversale 4,6 mm",
+    "端面図：直径5 mm、単一平面部を通る寸法4.6 mm"
   ],
   "Vue indicative des boîtiers. Les dimensions de l’aimant standard viennent de sa fiche ; son axe magnétique interne reste à confirmer.": [
     "Indicative housings. Standard magnet dimensions come from its datasheet; the internal magnetic axis remains unconfirmed.",

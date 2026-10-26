@@ -21,6 +21,7 @@ import { stepEnvelopeFor } from "@/lib/standex/step-envelope";
 import type { Contact } from "@/lib/standex/magnetic-workshop";
 import { BrandLogo } from "@/components/standex/brand-logo";
 import { SensorPlan } from "./sensor-plan";
+import { oneFlatProfile } from "@/lib/standex/section-profile";
 import "./sensor-card.css";
 
 export default function SensorCard({
@@ -83,7 +84,7 @@ export default function SensorCard({
             {t(model.name)}
           </h2>
           <p>{t(model.description)}</p>
-          {model.id === "MK18" ? <div className="panel-block"><p>{t("Vue de l’embout : Ø 5 mm, méplats à 4,6 mm")}</p><svg viewBox="-4 -4 8 8" width="100" height="100" role="img" aria-label={t("Embout avec méplats")}><path d="M2.3 -0.98 A2.5 2.5 0 0 0 -2.3 -0.98 L-2.3 0.98 A2.5 2.5 0 0 0 2.3 0.98 Z" fill="currentColor" /><circle cx="0" cy="-0.7" r="0.35" fill="var(--surface)"/><circle cx="0" cy="0.7" r="0.35" fill="var(--surface)"/></svg></div> : null}
+          {model.id === "MK18" ? <div className="panel-block"><p>{t("Vue de l’embout : Ø 5 mm, un méplat à 4,6 mm")}</p><svg viewBox="-4 -4 8 8" width="100" height="100" role="img" aria-label={t("Embout avec un méplat")}><path d={`${oneFlatProfile(model.body[1], model.body[2]).map(([x, y], i) => `${i ? "L" : "M"}${x} ${y}`).join(" ")} Z`} fill="currentColor" /><circle cx="0" cy="-0.7" r="0.35" fill="var(--surface)"/><circle cx="0" cy="0.7" r="0.35" fill="var(--surface)"/></svg></div> : null}
           <div className="sc-drawing">
             <svg
               viewBox={`${-model.body[0] / 2 - drawingPad} ${-height / 2 - 6 * drawingUnit} ${model.body[0] + drawingPad * 2} ${height + 18 * drawingUnit}`}
