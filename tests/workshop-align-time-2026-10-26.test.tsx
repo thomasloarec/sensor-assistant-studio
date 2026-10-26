@@ -75,6 +75,7 @@ describe("Aligner l'aimant dans le Workshop intégré", () => {
     const seek = async (pct: number) => act(async () => fireEvent.change(scrubber(), { target: { value: String(pct) } }));
 
     await seek(25);
+    console.log("DBG", v.queryByTestId("guide-reason")?.textContent, v.container.querySelector(".mw-controls")?.textContent?.slice(0,600));
     expect(Number(scrubber().value)).toBe(25);
     expect(shift()).toBeCloseTo(38.64, 1);
 
