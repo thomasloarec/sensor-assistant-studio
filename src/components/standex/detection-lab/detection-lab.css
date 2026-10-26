@@ -1,0 +1,50 @@
+/* Laboratoire de détection — jetons de la charte uniquement. */
+.lab {
+  --lab-favorable: var(--signal);
+  --lab-variable: var(--standex-blue-10);
+  --lab-far: var(--surface-sunken);
+  --lab-orientation: var(--warning-soft);
+  --lab-na: var(--surface-tint);
+  --lab-ink: var(--heading);
+  max-width: 76rem;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 4rem;
+  display: grid;
+  gap: 1rem;
+}
+.lab-head { display: grid; gap: 0.5rem; }
+.lab-head h1 { color: var(--heading); }
+.lab-controls { display: flex; flex-wrap: wrap; gap: 0.75rem 1.25rem; align-items: flex-end; }
+.lab-field { display: grid; gap: 0.25rem; min-width: 12rem; flex: 1 1 12rem; }
+.lab-field select,
+.lab-field input[type="range"] {
+  min-height: 44px;
+  font-size: 1rem;
+  background: var(--surface-sunken);
+  border-radius: var(--r-sm);
+  padding: 0 0.75rem;
+  color: var(--foreground);
+}
+.lab-field select:focus-visible,
+.lab-field input:focus-visible,
+.lab-table-wrap:focus-visible { outline: 3px solid var(--ring); outline-offset: 2px; }
+.lab-tabs { flex-wrap: wrap; height: auto; }
+.lab-tabs button { min-height: 44px; }
+.lab-section { display: grid; gap: 1rem; margin-top: 1rem; }
+.lab-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.lab-actions button { min-height: 44px; }
+.lab-table-wrap { overflow-x: auto; border-radius: var(--r-md); box-shadow: var(--e-1); }
+.lab-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+.lab-table th { text-align: left; color: var(--heading); background: var(--surface-tint); padding: 0.5rem; position: sticky; top: 0; }
+.lab-table td { padding: 0.4rem 0.5rem; vertical-align: top; }
+.lab-table tbody tr:nth-child(even) { background: var(--surface-sunken); }
+.lab-table tr[data-status="training"] td:first-child { box-shadow: inset 4px 0 0 var(--standex-blue); }
+.lab-table tr[data-status="quarantine"] td:first-child,
+.lab-table tr[data-status="missing"] td:first-child,
+.lab-table tr[data-status="unavailable"] td:first-child { box-shadow: inset 4px 0 0 var(--warning); }
+.lab-svg { overflow-x: auto; }
+.lab-svg svg { max-width: 100%; height: auto; }
+.lab-list { display: grid; gap: 0.5rem; padding-left: 1.25rem; list-style: disc; }
+@media (prefers-reduced-motion: reduce) {
+  .lab *, .lab *::before, .lab *::after { transition: none !important; animation: none !important; }
+}
