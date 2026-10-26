@@ -11,7 +11,7 @@ import { summarize, ROW_GROUPS, type Calibrations, type PilotRow, type PilotClas
 import { CUT_IDS, classifyPose, suggest, thresholdsFor, type Cut, type CutId, type Suggestion } from "@/lib/detection-lab/classify";
 import { PILOT_MAGNETS } from "@/lib/detection-lab/magnets";
 import { PROFILE, type DistanceConvention, type ResponseModel } from "@/lib/detection-lab/profile";
-import { CATEGORY_LABEL, CAUSE_LABEL, buildReportJson, cutToCsv, cutToJson, cutToSvg, paletteFromElement, tableToCsv, type LabPalette } from "@/lib/detection-lab/report";
+import { CATEGORY_LABEL, CAUSE_LABEL, buildReportJson, cutToCsv, cutToJson, cutToSvg, LAB_TOKENS, tableToCsv, type LabPalette } from "@/lib/detection-lab/report";
 import { createLabRunner, LabDisposedError, type LabRunner } from "./lab-runner";
 import type { Vec3 } from "@/lib/detection-lab/field";
 import "./detection-lab.css";
@@ -49,6 +49,13 @@ const STATUS_LABEL: Record<PilotRow["status"], string> = {
   quarantine: "Quarantaine",
 };
 const fmt = (v: number | null, n = 1) => (v == null ? "—" : number(v, n));
+
+/** Palette lue dans le DOM (jetons de charte calculés) : reste côté interface, le noyau n'en dépend pas. */
+function paletteFromElement(el: Element): LabPalette {
+  const cs = getComputedStyle(el), out = {} as LabPalette;
+  for (const [k, tok] of Object.entries(LAB_TOKENS) as [keyof LabPalette, string][]) out[k] = cs.getPropertyValue(tok).trim() || "currentColor";
+  return out;
+}
 
 export default function DetectionLab({ onClose, runner: injected }: { onClose: () => void; runner?: LabRunner }) {
   useLocale();

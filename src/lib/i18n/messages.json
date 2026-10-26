@@ -33137,14 +33137,14 @@
     "Richiesto l'accordo dei {0} scenari con un margine di confine del {1} %. Nessuna percentuale di confidenza.",
     "{0} 個すべてのシナリオの一致と境界余裕 {1} % が必要です。信頼度の割合は示しません。"
   ],
-  "Distance publiée = jeu entre la face de l'aimant la plus proche et le repère actif (axe du reed pour D1/D4/D5, extrémité de la longueur effective nominale pour D3). Le centre de l'aimant est décalé de la demi-dimension projetée.": [
-    "Published distance = gap between the nearest magnet face and the active datum (reed axis for D1/D4/D5, end of the nominal effective length for D3). The magnet centre is offset by the projected half-dimension.",
-    "公布距离 = 最近磁铁表面与有效基准之间的间隙（D1/D4/D5 为簧片轴线，D3 为名义有效长度端部）。磁铁中心偏移投影半尺寸。",
-    "Veröffentlichter Abstand = Spalt zwischen nächster Magnetfläche und aktivem Bezug (Reed-Achse für D1/D4/D5, Ende der nominalen wirksamen Länge für D3). Die Magnetmitte ist um die projizierte halbe Abmessung versetzt.",
-    "Distancia publicada = holgura entre la cara más cercana del imán y la referencia activa (eje del reed para D1/D4/D5, extremo de la longitud efectiva nominal para D3). El centro del imán se desplaza la semidimensión proyectada.",
-    "Опубликованное расстояние = зазор между ближайшей гранью магнита и активной базой (ось геркона для D1/D4/D5, конец номинальной эффективной длины для D3). Центр магнита смещён на проекцию половины размера.",
-    "Distanza pubblicata = distanza tra la faccia del magnete più vicina e il riferimento attivo (asse del reed per D1/D4/D5, estremità della lunghezza efficace nominale per D3). Il centro del magnete è spostato della semidimensione proiettata.",
-    "公表距離＝最も近い磁石面と有効基準との隙間（D1/D4/D5 はリード軸、D3 は公称有効長の端）。磁石中心は投影した半寸法だけずれます。"
+  "Distance publiée = jeu entre la face de l'aimant la plus proche et le repère actif (axe du reed pour D1/D4, extrémité de la longueur effective nominale pour D3/D5). Le centre de l'aimant est décalé de la demi-dimension projetée.": [
+    "Published distance = gap between the nearest magnet face and the active datum (reed axis for D1/D4, end of the nominal effective length for D3/D5). The magnet centre is offset by the projected half-dimension.",
+    "公布距离 = 最近磁铁表面与有效基准之间的间隙（D1/D4 为簧片轴线，D3/D5 为名义有效长度端部）。磁铁中心偏移投影半尺寸。",
+    "Veröffentlichter Abstand = Spalt zwischen nächster Magnetfläche und aktivem Bezug (Reed-Achse für D1/D4, Ende der nominalen wirksamen Länge für D3/D5). Die Magnetmitte ist um die projizierte halbe Abmessung versetzt.",
+    "Distancia publicada = holgura entre la cara más cercana del imán y la referencia activa (eje del reed para D1/D4, extremo de la longitud efectiva nominal para D3/D5). El centro del imán se desplaza la semidimensión proyectada.",
+    "Опубликованное расстояние = зазор между ближайшей гранью магнита и активной базой (ось геркона для D1/D4, конец номинальной эффективной длины для D3/D5). Центр магнита смещён на проекцию половины размера.",
+    "Distanza pubblicata = distanza tra la faccia del magnete più vicina e il riferimento attivo (asse del reed per D1/D4, estremità della lunghezza efficace nominale per D3/D5). Il centro del magnete è spostato della semidimensione proiettata.",
+    "公表距離＝最も近い磁石面と有効基準との隙間（D1/D4 はリード軸、D3/D5 は公称有効長の端）。磁石中心は投影した半寸法だけずれます。"
   ],
   "Variante : distance publiée = du repère actif au CENTRE de l'aimant (demi-dimension ignorée). Présentée pour l'audit, non prouvée.": [
     "Variant: published distance = from the active datum to the magnet CENTRE (half-dimension ignored). Shown for audit, not proven.",
