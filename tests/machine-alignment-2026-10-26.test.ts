@@ -81,7 +81,7 @@ function settle(m: MachineAssembly, sensorId = "MK24-A-J"): MachineAssembly {
 function pivotMachine(magnet: Attachment, sensor?: Attachment): MachineAssembly {
   return settle({
     ...structuredClone(COFFEE_ASSEMBLY),
-    assetKey: "sha256:align-test",
+    assetKey: "sha256:" + "a".repeat(64),
     movingNode: "0/1",
     movingNodes: ["0/1"],
     motion: "rotation",
