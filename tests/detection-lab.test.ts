@@ -276,7 +276,7 @@ describe("export SVG : rien n'est coupé", () => {
       const texts = [...svg.matchAll(/<text x="([\d.-]+)" y="([\d.-]+)"([^>]*)>([^<]*)<\/text>/g)];
       for (const [, x, y, attrs, body] of texts) {
         expect(Number(y)).toBeLessThanOrEqual(vh!);
-        if (!/text-anchor|transform/.test(attrs!)) expect(Number(x) + body!.length * 9).toBeLessThanOrEqual(vw! + 1e-9);
+        if (!/text-anchor|transform/.test(attrs!) && Number(x) + body!.length * 9 > vw!) throw new Error(body);
       }
       const footer = texts.findIndex((t) => t[4]!.startsWith(PROFILE.id));
       expect(texts[footer]![4]).toBe(`${PROFILE.id} v${PROFILE.version}`);
