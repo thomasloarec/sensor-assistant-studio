@@ -294,11 +294,15 @@ export default function MachineGuide({
     if (!picking) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key !== "Escape") return;
+      // Capture sur window : passe avant le document (panneau d'espace de travail),
+      // qui fermerait sinon le panneau au lieu d'annuler le pointage.
+      e.preventDefault();
+      e.stopPropagation();
       setState((s) => ({ ...s, pick: null, notice: null }));
       setTool("navigate");
     };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    window.addEventListener("keydown", onKey, true);
+    return () => window.removeEventListener("keydown", onKey, true);
   }, [picking, setState, setTool]);
   if (!m) return null;
   const selection = movingSelection(m);
@@ -929,6 +933,40 @@ export default function MachineGuide({
                 {asset?.nodes.find((n) => n.path === attach.partPath)?.name ?? attach.partPath}
               </span>
             </p>
+            {target === "magnet" && attach.kind === "surface" && (
+              <div className="mw-align" data-testid="guide-align">
+                <Button
+                  className="mw-button"
+                  data-testid="guide-align-magnet"
+                  onClick={() => {
+                    setPlaying(false);
+                    const r = alignMagnetToSensor(m, u);
+                    if (!r.ok) {
+                      setState((s) => ({ ...s, notice: r.reason }));
+                      return;
+                    }
+                    setState((s) => ({ ...s, notice: null }));
+                    (onChangeAtTime ?? onChange)(attachPatch("magnet", r.attach, config));
+                  }}
+                >
+                  {t("Aligner avec le capteur")}
+                </Button>
+                <p className="t-caption">{t("Centre l’aimant en face du capteur sur sa face de pose.")}</p>
+                {alignPreview?.ok && (
+                  <p className="t-caption t-metric" data-testid="guide-align-shift">
+                    {msg("Décalage actuel dans le plan de pose : {0} mm", [formatMm(alignPreview.shiftMm, 2)])}
+                  </p>
+                )}
+                {alignPreview?.ok && alignPreview.oblique && (
+                  <p className="notice-warning" data-testid="guide-align-oblique">
+                    {t("L'axe du capteur n'est pas perpendiculaire à cette face : l'aimant est centré par projection sur sa face, pas rendu coaxial.")}
+                  </p>
+                )}
+                <p className="t-caption">
+                  {t("Alignement géométrique à l'instant affiché, sans garantie de détection. La présence de matière sous le nouveau point n'est pas vérifiée.")}
+                </p>
+              </div>
+            )}
             {attach.kind === "through" && (
               <p className="notice-info">
                 {t(
@@ -1006,40 +1044,6 @@ export default function MachineGuide({
               />
               {t(attach.kind === "through" ? "Inverser le sens d'insertion" : "Retourner le composant")}
             </label>
-            {target === "magnet" && attach.kind === "surface" && (
-              <div className="mw-align" data-testid="guide-align">
-                <Button
-                  className="mw-button"
-                  data-testid="guide-align-magnet"
-                  onClick={() => {
-                    setPlaying(false);
-                    const r = alignMagnetToSensor(m, u);
-                    if (!r.ok) {
-                      setState((s) => ({ ...s, notice: r.reason }));
-                      return;
-                    }
-                    setState((s) => ({ ...s, notice: null }));
-                    (onChangeAtTime ?? onChange)(attachPatch("magnet", r.attach, config));
-                  }}
-                >
-                  {t("Aligner avec le capteur")}
-                </Button>
-                <p className="t-caption">{t("Centre l’aimant en face du capteur sur sa face de pose.")}</p>
-                {alignPreview?.ok && (
-                  <p className="t-caption t-metric" data-testid="guide-align-shift">
-                    {msg("Décalage actuel dans le plan de pose : {0} mm", [formatMm(alignPreview.shiftMm, 2)])}
-                  </p>
-                )}
-                {alignPreview?.ok && alignPreview.oblique && (
-                  <p className="notice-warning" data-testid="guide-align-oblique">
-                    {t("L'axe du capteur n'est pas perpendiculaire à cette face : l'aimant est centré par projection sur sa face, pas rendu coaxial.")}
-                  </p>
-                )}
-                <p className="t-caption">
-                  {t("Alignement géométrique à l'instant affiché, sans garantie de détection. La présence de matière sous le nouveau point n'est pas vérifiée.")}
-                </p>
-              </div>
-            )}
             <details className="mw-precise" data-testid="guide-precise">
               <summary className="t-body">{t("Position précise")}</summary>
               <p className="t-caption">{t("Repère : coordonnées du fichier en pose statique (mécanisme au repos), en mm. Le point suit ensuite sa pièce support.")}</p>
