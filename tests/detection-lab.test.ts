@@ -264,3 +264,24 @@ describe("revue indépendante — D5, enveloppe, provenance", () => {
     }
   });
 });
+
+describe("export SVG : rien n'est coupé", () => {
+  test("avertissement et version sur lignes séparées, textes longs repliés dans le viewBox, 15 px", () => {
+    const pal = paletteFromCss(readFileSync("src/styles.css", "utf8"));
+    const cut = computeCutById("3-perpendicular-offset-C", SMCO, "B", "C1", buildCalibrations("B", "C1"));
+    const long = (s: string) => `${s} ${s} ${s} ${s}`; // traduction artificiellement longue
+    for (const tr of [(s: string) => s, long]) {
+      const svg = cutToSvg(cut, pal, tr);
+      const [, vw, vh] = /viewBox="0 0 (\d+(?:\.\d+)?) (\d+(?:\.\d+)?)"/.exec(svg)!.map(Number) as [number, number, number];
+      const texts = [...svg.matchAll(/<text x="([\d.-]+)" y="([\d.-]+)"[^>]*>([^<]*)<\/text>/g)];
+      for (const [, x, y, body] of texts) {
+        expect(Number(y)).toBeLessThanOrEqual(vh!);
+        if (!/text-anchor/.test(body!)) expect(Number(x) + body!.length * 9).toBeLessThanOrEqual(vw! + 1e-9);
+      }
+      const footer = texts.findIndex((t) => t[3]!.startsWith(PROFILE.id));
+      expect(texts[footer]![3]).toBe(`${PROFILE.id} v${PROFILE.version}`);
+      expect(texts[footer - 1]![3]).not.toContain(PROFILE.id);
+      expect(svg).toContain("font:15px");
+    }
+  });
+});
