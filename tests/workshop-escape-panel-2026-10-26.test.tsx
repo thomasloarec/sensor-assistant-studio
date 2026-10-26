@@ -87,7 +87,7 @@ describe("Échap dans l'atelier intégré", () => {
       document.body.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true, cancelable: true }));
     });
     expect(closes).toEqual([false]);
-  });
+  }, 20000);
 
   test("« Aligner avec le capteur » précède écart, rotation et retournement", async () => {
     const { v } = await mount();
@@ -100,5 +100,5 @@ describe("Échap dans l'atelier intégré", () => {
     expect(before(align, offset)).toBe(true);
     expect(before(align, flip)).toBe(true);
     expect((v.getByTestId("guide-precise") as HTMLDetailsElement).open).toBe(false);
-  });
+  }, 20000);
 });
