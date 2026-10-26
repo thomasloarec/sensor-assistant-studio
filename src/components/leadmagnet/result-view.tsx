@@ -109,7 +109,7 @@ export interface ResultViewProps {
   onSeePairs: () => void;
   onConfirmWithStandex: () => void;
   /** Parcours simplifié : mène à la configuration câble/connecteur avant l'envoi. */
-  onContinue?: () => void;
+  onContinue?: (() => void) | undefined;
   onRequestTrial: () => void;
   onReplaceMagnet: () => void;
   onTestPair: (sensorId: string) => void;
