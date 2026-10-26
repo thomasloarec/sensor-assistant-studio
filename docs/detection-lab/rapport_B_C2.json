@@ -1,8 +1,8 @@
 {
- "reportVersion": "reed-lab-report-1.0.0",
+ "reportVersion": "reed-lab-report-1.1.0",
  "profile": {
   "id": "reed-lab-hypotheses",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "frozenOn": "2026-10-26"
  },
  "form": {
@@ -20,6 +20,8 @@
   "version": "guide-40p-owner-extraction-2026-09-15"
  },
  "atClasses": "https://standexdetect.com/wp-content/uploads/sites/2/2025/09/datasheet-reed-sensor-series-mk04.pdf p2 (A5-10 … G35-40 AT, MK04 uniquement)",
+ "brochureBounds": "Brochure : plage d'activation associée à la classe de sensibilité (up = moins sensible, to = plus sensible). Ce n'est pas une hystérésis et cela ne fournit ni distribution gaussienne ni probabilité.",
+ "pullInDropOutPage": "Page web : pull-in et drop-out sont des transitions distinctes, distances typiques pour des aimants appairés spécifiques, sans transposition automatique vers un autre aimant.",
  "pullInDropOut": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/",
  "docOffsets": {
   "MK03": {
@@ -96,13 +98,14 @@
  "convention": "C2",
  "profileFull": {
   "id": "reed-lab-hypotheses",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "frozenOn": "2026-10-26",
   "reed": {
    "id": "66-er",
    "effectiveLengthMm": 8,
-   "envelopeRadiusMm": 1,
-   "envelopeHalfLengthMm": 5,
+   "envelopeRadiusMm": 1.1,
+   "envelopeHalfLengthMm": 7,
+   "envelopeSource": "https://standexdetect.com/wp-content/uploads/sites/2/2025/09/datasheet-reed-switch-series-ksk-1a66_15551c.pdf",
    "quadraturePerBlade": 12
   },
   "scenarios": [
@@ -231,7 +234,7 @@
    "D1": "Aimant parallèle aux lames (aimantation selon x), centré en x, approche latérale selon y. Datum ambigu dans la source (registre R2b).",
    "D3": "Aimant coaxial aux lames, approche par l'extrémité selon x. Datum ambigu dans la source (registre R2b).",
    "D4": "H-D4 : aimant perpendiculaire aux lames (aimantation selon y), approche selon y ; distance = maximum de lobe sur x.",
-   "D5": "H-D5 : aimant parallèle aux lames (aimantation selon x), approche selon y ; distance = maximum du lobe SECONDAIRE (au-delà du premier minimum en x). Hypothèse : deux variantes perpendiculaires essayées donnent Bx ≡ 0 sur l'axe (reed dans le plan médian de l'aimant) et ont été rejetées."
+   "D5": "D5 : schéma source (reed vertical, aimant horizontal, approche par l'extrémité) tourné rigidement : aimantation selon y (⟂ lames), approche selon x par l'extrémité, lobes de part et d'autre ; distance = maximum de lobe sur t = y ≥ 0. Réponse nulle à t = 0 (zone centrale entre lobes)."
   },
   "models": {
    "A": "Réponse A : |moyenne de Bx sur la longueur effective| (poids de Gauss normalisés), mT.",
@@ -366,27 +369,53 @@
  },
  "summary": {
   "total": 104,
-  "byStatus": {
-   "training": 8,
-   "control": 84,
-   "missing": 4,
-   "unavailable": 0,
-   "quarantine": 8
-  },
-  "controls": {
-   "n": 84,
-   "meanAbsMm": 3.077,
-   "medianAbsPct": 35.63,
-   "over20": 53
-  },
-  "training": {
-   "n": 8,
-   "meanAbsMm": 1.801
+  "groups": {
+   "training": {
+    "rows": 8,
+    "published": 8,
+    "missing": 0,
+    "estimated": 8,
+    "unavailable": 0,
+    "meanAbsMm": 1.801,
+    "medianAbsPct": 17.74,
+    "over20": 4
+   },
+   "form_control": {
+    "rows": 24,
+    "published": 23,
+    "missing": 1,
+    "estimated": 22,
+    "unavailable": 1,
+    "meanAbsMm": 3.288,
+    "medianAbsPct": 30.53,
+    "over20": 13
+   },
+   "doc_adaptation": {
+    "rows": 64,
+    "published": 61,
+    "missing": 3,
+    "estimated": 59,
+    "unavailable": 2,
+    "meanAbsMm": 2.925,
+    "medianAbsPct": 37.25,
+    "over20": 35
+   },
+   "quarantine": {
+    "rows": 8,
+    "published": 8,
+    "missing": 0,
+    "estimated": 0,
+    "unavailable": 0,
+    "meanAbsMm": null,
+    "medianAbsPct": null,
+    "over20": 0
+   }
   }
  },
  "table": [
   {
    "source": "Form",
+   "group": "training",
    "page": 4,
    "reference": "MK03Form-C 66-er",
    "magnet": "SMCO5-5X4",
@@ -408,6 +437,7 @@
   },
   {
    "source": "Form",
+   "group": "training",
    "page": 4,
    "reference": "MK03Form-C 66-er",
    "magnet": "SMCO5-5X4",
@@ -429,6 +459,7 @@
   },
   {
    "source": "Form",
+   "group": "form_control",
    "page": 4,
    "reference": "MK03Form-C 66-er",
    "magnet": "SMCO5-5X4",
@@ -448,6 +479,7 @@
   },
   {
    "source": "Form",
+   "group": "form_control",
    "page": 4,
    "reference": "MK03Form-C 66-er",
    "magnet": "SMCO5-5X4",
@@ -467,6 +499,7 @@
   },
   {
    "source": "Form",
+   "group": "form_control",
    "page": 4,
    "reference": "MK03Form-C 66-er",
    "magnet": "SMCO5-5X4",
@@ -488,6 +521,7 @@
   },
   {
    "source": "Form",
+   "group": "form_control",
    "page": 4,
    "reference": "MK03Form-C 66-er",
    "magnet": "SMCO5-5X4",
@@ -509,6 +543,7 @@
   },
   {
    "source": "Form",
+   "group": "form_control",
    "page": 4,
    "reference": "MK03Form-C 66-er",
    "magnet": "SMCO5-5X4",
@@ -517,9 +552,9 @@
    "bound": "up",
    "raw": "3.2",
    "published": 3.2,
-   "estimated": 5.5866,
-   "errorMm": 2.3866,
-   "errorPct": 74.58,
+   "estimated": 4.1311,
+   "errorMm": 0.9311,
+   "errorPct": 29.1,
    "status": "control",
    "anomalies": [
     "écart > 20 %"
@@ -530,6 +565,7 @@
   },
   {
    "source": "Form",
+   "group": "form_control",
    "page": 4,
    "reference": "MK03Form-C 66-er",
    "magnet": "SMCO5-5X4",
@@ -538,19 +574,18 @@
    "bound": "to",
    "raw": "5",
    "published": 5,
-   "estimated": 6.4865,
-   "errorMm": 1.4865,
-   "errorPct": 29.73,
+   "estimated": 5.4505,
+   "errorMm": 0.4505,
+   "errorPct": 9.01,
    "status": "control",
-   "anomalies": [
-    "écart > 20 %"
-   ],
+   "anomalies": [],
    "convention": "C2",
    "model": "B",
    "sharedThreshold": 3.478933
   },
   {
    "source": "Form",
+   "group": "training",
    "page": 5,
    "reference": "MK03Form-C 66-er",
    "magnet": "N45-4X19",
@@ -570,6 +605,7 @@
   },
   {
    "source": "Form",
+   "group": "training",
    "page": 5,
    "reference": "MK03Form-C 66-er",
    "magnet": "N45-4X19",
@@ -589,6 +625,7 @@
   },
   {
    "source": "Form",
+   "group": "form_control",
    "page": 5,
    "reference": "MK03Form-C 66-er",
    "magnet": "N45-4X19",
@@ -610,6 +647,7 @@
   },
   {
    "source": "Form",
+   "group": "form_control",
    "page": 5,
    "reference": "MK03Form-C 66-er",
    "magnet": "N45-4X19",
@@ -629,6 +667,7 @@
   },
   {
    "source": "Form",
+   "group": "form_control",
    "page": 5,
    "reference": "MK03Form-C 66-er",
    "magnet": "N45-4X19",
@@ -650,6 +689,7 @@
   },
   {
    "source": "Form",
+   "group": "form_control",
    "page": 5,
    "reference": "MK03Form-C 66-er",
    "magnet": "N45-4X19",
@@ -671,6 +711,7 @@
   },
   {
    "source": "Form",
+   "group": "form_control",
    "page": 5,
    "reference": "MK03Form-C 66-er",
    "magnet": "N45-4X19",
@@ -679,9 +720,9 @@
    "bound": "up",
    "raw": "9.8",
    "published": 9.8,
-   "estimated": 8.2011,
-   "errorMm": -1.5989,
-   "errorPct": -16.32,
+   "estimated": 8.4071,
+   "errorMm": -1.3929,
+   "errorPct": -14.21,
    "status": "control",
    "anomalies": [],
    "convention": "C2",
@@ -690,6 +731,7 @@
   },
   {
    "source": "Form",
+   "group": "form_control",
    "page": 5,
    "reference": "MK03Form-C 66-er",
    "magnet": "N45-4X19",
@@ -698,13 +740,12 @@
    "bound": "to",
    "raw": "12,4",
    "published": 12.4,
-   "estimated": 9.6985,
-   "errorMm": -2.7015,
-   "errorPct": -21.79,
+   "estimated": 10.7517,
+   "errorMm": -1.6483,
+   "errorPct": -13.29,
    "status": "control",
    "anomalies": [
-    "virgule décimale dans la source (« 12,4 »)",
-    "écart > 20 %"
+    "virgule décimale dans la source (« 12,4 »)"
    ],
    "convention": "C2",
    "model": "B",
@@ -712,6 +753,7 @@
   },
   {
    "source": "Form",
+   "group": "training",
    "page": 4,
    "reference": "MK03Form-E 66-er",
    "magnet": "SMCO5-5X4",
@@ -733,6 +775,7 @@
   },
   {
    "source": "Form",
+   "group": "training",
    "page": 4,
    "reference": "MK03Form-E 66-er",
    "magnet": "SMCO5-5X4",
@@ -754,6 +797,7 @@
   },
   {
    "source": "Form",
+   "group": "form_control",
    "page": 4,
    "reference": "MK03Form-E 66-er",
    "magnet": "SMCO5-5X4",
@@ -762,17 +806,20 @@
    "bound": "up",
    "raw": "5.6",
    "published": 5.6,
-   "estimated": 5.7876,
-   "errorMm": 0.1876,
-   "errorPct": 3.35,
-   "status": "control",
-   "anomalies": [],
+   "estimated": null,
+   "errorMm": null,
+   "errorPct": null,
+   "status": "unavailable",
+   "anomalies": [
+    "estimation indisponible : collision_before_threshold"
+   ],
    "convention": "C2",
    "model": "B",
    "sharedThreshold": 7.307427
   },
   {
    "source": "Form",
+   "group": "form_control",
    "page": 4,
    "reference": "MK03Form-E 66-er",
    "magnet": "SMCO5-5X4",
@@ -792,6 +839,7 @@
   },
   {
    "source": "Form",
+   "group": "form_control",
    "page": 4,
    "reference": "MK03Form-E 66-er",
    "magnet": "SMCO5-5X4",
@@ -813,6 +861,7 @@
   },
   {
    "source": "Form",
+   "group": "form_control",
    "page": 4,
    "reference": "MK03Form-E 66-er",
    "magnet": "SMCO5-5X4",
@@ -834,6 +883,7 @@
   },
   {
    "source": "Form",
+   "group": "form_control",
    "page": 4,
    "reference": "MK03Form-E 66-er",
    "magnet": "SMCO5-5X4",
@@ -842,7 +892,7 @@
    "bound": "up",
    "raw": "-",
    "published": null,
-   "estimated": 4.8263,
+   "estimated": 3.0532,
    "errorMm": null,
    "errorPct": null,
    "status": "missing",
@@ -855,6 +905,7 @@
   },
   {
    "source": "Form",
+   "group": "form_control",
    "page": 4,
    "reference": "MK03Form-E 66-er",
    "magnet": "SMCO5-5X4",
@@ -863,9 +914,9 @@
    "bound": "to",
    "raw": "2.7",
    "published": 2.7,
-   "estimated": 5.3357,
-   "errorMm": 2.6357,
-   "errorPct": 97.62,
+   "estimated": 3.7707,
+   "errorMm": 1.0707,
+   "errorPct": 39.66,
    "status": "control",
    "anomalies": [
     "écart > 20 %"
@@ -876,6 +927,7 @@
   },
   {
    "source": "Form",
+   "group": "training",
    "page": 5,
    "reference": "MK03Form-E 66-er",
    "magnet": "N45-4X19",
@@ -895,6 +947,7 @@
   },
   {
    "source": "Form",
+   "group": "training",
    "page": 5,
    "reference": "MK03Form-E 66-er",
    "magnet": "N45-4X19",
@@ -914,6 +967,7 @@
   },
   {
    "source": "Form",
+   "group": "form_control",
    "page": 5,
    "reference": "MK03Form-E 66-er",
    "magnet": "N45-4X19",
@@ -935,6 +989,7 @@
   },
   {
    "source": "Form",
+   "group": "form_control",
    "page": 5,
    "reference": "MK03Form-E 66-er",
    "magnet": "N45-4X19",
@@ -956,6 +1011,7 @@
   },
   {
    "source": "Form",
+   "group": "form_control",
    "page": 5,
    "reference": "MK03Form-E 66-er",
    "magnet": "N45-4X19",
@@ -977,6 +1033,7 @@
   },
   {
    "source": "Form",
+   "group": "form_control",
    "page": 5,
    "reference": "MK03Form-E 66-er",
    "magnet": "N45-4X19",
@@ -998,6 +1055,7 @@
   },
   {
    "source": "Form",
+   "group": "form_control",
    "page": 5,
    "reference": "MK03Form-E 66-er",
    "magnet": "N45-4X19",
@@ -1006,9 +1064,9 @@
    "bound": "up",
    "raw": "7.3",
    "published": 7.3,
-   "estimated": 6.953,
-   "errorMm": -0.347,
-   "errorPct": -4.75,
+   "estimated": 6.4689,
+   "errorMm": -0.8311,
+   "errorPct": -11.38,
    "status": "control",
    "anomalies": [],
    "convention": "C2",
@@ -1017,6 +1075,7 @@
   },
   {
    "source": "Form",
+   "group": "form_control",
    "page": 5,
    "reference": "MK03Form-E 66-er",
    "magnet": "N45-4X19",
@@ -1025,9 +1084,9 @@
    "bound": "to",
    "raw": "8,6",
    "published": 8.6,
-   "estimated": 7.7867,
-   "errorMm": -0.8133,
-   "errorPct": -9.46,
+   "estimated": 7.7613,
+   "errorMm": -0.8387,
+   "errorPct": -9.75,
    "status": "control",
    "anomalies": [
     "virgule décimale dans la source (« 8,6 »)"
@@ -1038,6 +1097,7 @@
   },
   {
    "source": "MK03",
+   "group": "doc_adaptation",
    "page": 4,
    "reference": "MK03-1A66C-X",
    "magnet": "SMCO5-5X4",
@@ -1049,7 +1109,7 @@
    "estimated": 6.9596,
    "errorMm": 2.3096,
    "errorPct": 49.67,
-   "status": "control",
+   "status": "adaptation",
    "anomalies": [
     "adaptation documentaire Form→produit (décalage empirique)",
     "D1 produit : dérivé du D1 d'apprentissage Form, pas un contrôle indépendant de la physique",
@@ -1061,6 +1121,7 @@
   },
   {
    "source": "MK03",
+   "group": "doc_adaptation",
    "page": 4,
    "reference": "MK03-1A66C-X",
    "magnet": "SMCO5-5X4",
@@ -1072,7 +1133,7 @@
    "estimated": 10.1815,
    "errorMm": 2.2315,
    "errorPct": 28.07,
-   "status": "control",
+   "status": "adaptation",
    "anomalies": [
     "adaptation documentaire Form→produit (décalage empirique)",
     "D1 produit : dérivé du D1 d'apprentissage Form, pas un contrôle indépendant de la physique",
@@ -1084,6 +1145,7 @@
   },
   {
    "source": "MK03",
+   "group": "doc_adaptation",
    "page": 4,
    "reference": "MK03-1A66C-X",
    "magnet": "SMCO5-5X4",
@@ -1095,7 +1157,7 @@
    "estimated": 6.444,
    "errorMm": -0.256,
    "errorPct": -3.82,
-   "status": "control",
+   "status": "adaptation",
    "anomalies": [
     "adaptation documentaire Form→produit (décalage empirique)"
    ],
@@ -1105,6 +1167,7 @@
   },
   {
    "source": "MK03",
+   "group": "doc_adaptation",
    "page": 4,
    "reference": "MK03-1A66C-X",
    "magnet": "SMCO5-5X4",
@@ -1116,7 +1179,7 @@
    "estimated": 8.2178,
    "errorMm": -0.7822,
    "errorPct": -8.69,
-   "status": "control",
+   "status": "adaptation",
    "anomalies": [
     "adaptation documentaire Form→produit (décalage empirique)"
    ],
@@ -1126,6 +1189,7 @@
   },
   {
    "source": "MK03",
+   "group": "doc_adaptation",
    "page": 4,
    "reference": "MK03-1A66C-X",
    "magnet": "SMCO5-5X4",
@@ -1137,7 +1201,7 @@
    "estimated": 6.5885,
    "errorMm": 2.4385,
    "errorPct": 58.76,
-   "status": "control",
+   "status": "adaptation",
    "anomalies": [
     "adaptation documentaire Form→produit (décalage empirique)",
     "écart > 20 %"
@@ -1148,6 +1212,7 @@
   },
   {
    "source": "MK03",
+   "group": "doc_adaptation",
    "page": 4,
    "reference": "MK03-1A66C-X",
    "magnet": "SMCO5-5X4",
@@ -1159,7 +1224,7 @@
    "estimated": 9.7192,
    "errorMm": 1.9692,
    "errorPct": 25.41,
-   "status": "control",
+   "status": "adaptation",
    "anomalies": [
     "adaptation documentaire Form→produit (décalage empirique)",
     "écart > 20 %"
@@ -1170,6 +1235,7 @@
   },
   {
    "source": "MK03",
+   "group": "doc_adaptation",
    "page": 4,
    "reference": "MK03-1A66C-X",
    "magnet": "SMCO5-5X4",
@@ -1178,10 +1244,10 @@
    "bound": "up",
    "raw": "2.4",
    "published": 2.4,
-   "estimated": 4.7866,
-   "errorMm": 2.3866,
-   "errorPct": 99.44,
-   "status": "control",
+   "estimated": 3.3311,
+   "errorMm": 0.9311,
+   "errorPct": 38.8,
+   "status": "adaptation",
    "anomalies": [
     "adaptation documentaire Form→produit (décalage empirique)",
     "écart > 20 %"
@@ -1192,6 +1258,7 @@
   },
   {
    "source": "MK03",
+   "group": "doc_adaptation",
    "page": 4,
    "reference": "MK03-1A66C-X",
    "magnet": "SMCO5-5X4",
@@ -1200,13 +1267,12 @@
    "bound": "to",
    "raw": "4.2",
    "published": 4.2,
-   "estimated": 5.6865,
-   "errorMm": 1.4865,
-   "errorPct": 35.39,
-   "status": "control",
+   "estimated": 4.6505,
+   "errorMm": 0.4505,
+   "errorPct": 10.73,
+   "status": "adaptation",
    "anomalies": [
-    "adaptation documentaire Form→produit (décalage empirique)",
-    "écart > 20 %"
+    "adaptation documentaire Form→produit (décalage empirique)"
    ],
    "convention": "C2",
    "model": "B",
@@ -1214,6 +1280,7 @@
   },
   {
    "source": "MK03",
+   "group": "doc_adaptation",
    "page": 5,
    "reference": "MK03-1A66C-X",
    "magnet": "N45-4X19",
@@ -1225,7 +1292,7 @@
    "estimated": 11.0612,
    "errorMm": -1.2888,
    "errorPct": -10.44,
-   "status": "control",
+   "status": "adaptation",
    "anomalies": [
     "adaptation documentaire Form→produit (décalage empirique)",
     "D1 produit : dérivé du D1 d'apprentissage Form, pas un contrôle indépendant de la physique"
@@ -1236,6 +1303,7 @@
   },
   {
    "source": "MK03",
+   "group": "doc_adaptation",
    "page": 5,
    "reference": "MK03-1A66C-X",
    "magnet": "N45-4X19",
@@ -1247,7 +1315,7 @@
    "estimated": 15.4671,
    "errorMm": -1.2829,
    "errorPct": -7.66,
-   "status": "control",
+   "status": "adaptation",
    "anomalies": [
     "adaptation documentaire Form→produit (décalage empirique)",
     "D1 produit : dérivé du D1 d'apprentissage Form, pas un contrôle indépendant de la physique"
@@ -1258,6 +1326,7 @@
   },
   {
    "source": "MK03",
+   "group": "doc_adaptation",
    "page": 5,
    "reference": "MK03-1A66C-X",
    "magnet": "N45-4X19",
@@ -1269,7 +1338,7 @@
    "estimated": 17.0774,
    "errorMm": 5.4774,
    "errorPct": 47.22,
-   "status": "control",
+   "status": "adaptation",
    "anomalies": [
     "adaptation documentaire Form→produit (décalage empirique)",
     "écart > 20 %"
@@ -1280,6 +1349,7 @@
   },
   {
    "source": "MK03",
+   "group": "doc_adaptation",
    "page": 5,
    "reference": "MK03-1A66C-X",
    "magnet": "N45-4X19",
@@ -1291,7 +1361,7 @@
    "estimated": 19.7069,
    "errorMm": 2.8069,
    "errorPct": 16.61,
-   "status": "control",
+   "status": "adaptation",
    "anomalies": [
     "adaptation documentaire Form→produit (décalage empirique)"
    ],
@@ -1301,6 +1371,7 @@
   },
   {
    "source": "MK03",
+   "group": "doc_adaptation",
    "page": 5,
    "reference": "MK03-1A66C-X",
    "magnet": "N45-4X19",
@@ -1312,7 +1383,7 @@
    "estimated": 15.8628,
    "errorMm": 8.4128,
    "errorPct": 112.92,
-   "status": "control",
+   "status": "adaptation",
    "anomalies": [
     "adaptation documentaire Form→produit (décalage empirique)",
     "écart > 20 %"
@@ -1323,6 +1394,7 @@
   },
   {
    "source": "MK03",
+   "group": "doc_adaptation",
    "page": 5,
    "reference": "MK03-1A66C-X",
    "magnet": "N45-4X19",
@@ -1334,7 +1406,7 @@
    "estimated": 19.5176,
    "errorMm": 7.9676,
    "errorPct": 68.98,
-   "status": "control",
+   "status": "adaptation",
    "anomalies": [
     "adaptation documentaire Form→produit (décalage empirique)",
     "écart > 20 %"
@@ -1345,6 +1417,7 @@
   },
   {
    "source": "MK03",
+   "group": "doc_adaptation",
    "page": 5,
    "reference": "MK03-1A66C-X",
    "magnet": "N45-4X19",
@@ -1353,10 +1426,10 @@
    "bound": "up",
    "raw": "9",
    "published": 9,
-   "estimated": 7.4011,
-   "errorMm": -1.5989,
-   "errorPct": -17.77,
-   "status": "control",
+   "estimated": 7.6071,
+   "errorMm": -1.3929,
+   "errorPct": -15.48,
+   "status": "adaptation",
    "anomalies": [
     "adaptation documentaire Form→produit (décalage empirique)"
    ],
@@ -1366,6 +1439,7 @@
   },
   {
    "source": "MK03",
+   "group": "doc_adaptation",
    "page": 5,
    "reference": "MK03-1A66C-X",
    "magnet": "N45-4X19",
@@ -1374,13 +1448,12 @@
    "bound": "to",
    "raw": "11.6",
    "published": 11.6,
-   "estimated": 8.8985,
-   "errorMm": -2.7015,
-   "errorPct": -23.29,
-   "status": "control",
+   "estimated": 9.9517,
+   "errorMm": -1.6483,
+   "errorPct": -14.21,
+   "status": "adaptation",
    "anomalies": [
-    "adaptation documentaire Form→produit (décalage empirique)",
-    "écart > 20 %"
+    "adaptation documentaire Form→produit (décalage empirique)"
    ],
    "convention": "C2",
    "model": "B",
@@ -1388,6 +1461,7 @@
   },
   {
    "source": "MK03",
+   "group": "doc_adaptation",
    "page": 4,
    "reference": "MK03-1A66E-X",
    "magnet": "SMCO5-5X4",
@@ -1399,7 +1473,7 @@
    "estimated": 5.6815,
    "errorMm": 2.4315,
    "errorPct": 74.82,
-   "status": "control",
+   "status": "adaptation",
    "anomalies": [
     "adaptation documentaire Form→produit (décalage empirique)",
     "D1 produit : dérivé du D1 d'apprentissage Form, pas un contrôle indépendant de la physique",
@@ -1411,6 +1485,7 @@
   },
   {
    "source": "MK03",
+   "group": "doc_adaptation",
    "page": 4,
    "reference": "MK03-1A66E-X",
    "magnet": "SMCO5-5X4",
@@ -1422,7 +1497,7 @@
    "estimated": 8.2365,
    "errorMm": 2.2865,
    "errorPct": 38.43,
-   "status": "control",
+   "status": "adaptation",
    "anomalies": [
     "adaptation documentaire Form→produit (décalage empirique)",
     "D1 produit : dérivé du D1 d'apprentissage Form, pas un contrôle indépendant de la physique",
@@ -1434,6 +1509,7 @@
   },
   {
    "source": "MK03",
+   "group": "doc_adaptation",
    "page": 4,
    "reference": "MK03-1A66E-X",
    "magnet": "SMCO5-5X4",
@@ -1442,11 +1518,12 @@
    "bound": "up",
    "raw": "4.8",
    "published": 4.8,
-   "estimated": 4.9876,
-   "errorMm": 0.1876,
-   "errorPct": 3.91,
-   "status": "control",
+   "estimated": null,
+   "errorMm": null,
+   "errorPct": null,
+   "status": "unavailable",
    "anomalies": [
+    "estimation indisponible : collision_before_threshold",
     "adaptation documentaire Form→produit (décalage empirique)"
    ],
    "convention": "C2",
@@ -1455,6 +1532,7 @@
   },
   {
    "source": "MK03",
+   "group": "doc_adaptation",
    "page": 4,
    "reference": "MK03-1A66E-X",
    "magnet": "SMCO5-5X4",
@@ -1466,7 +1544,7 @@
    "estimated": 5.958,
    "errorMm": -0.042,
    "errorPct": -0.7,
-   "status": "control",
+   "status": "adaptation",
    "anomalies": [
     "adaptation documentaire Form→produit (décalage empirique)"
    ],
@@ -1476,6 +1554,7 @@
   },
   {
    "source": "MK03",
+   "group": "doc_adaptation",
    "page": 4,
    "reference": "MK03-1A66E-X",
    "magnet": "SMCO5-5X4",
@@ -1487,7 +1566,7 @@
    "estimated": 5.3913,
    "errorMm": 2.3413,
    "errorPct": 76.76,
-   "status": "control",
+   "status": "adaptation",
    "anomalies": [
     "adaptation documentaire Form→produit (décalage empirique)",
     "écart > 20 %"
@@ -1498,6 +1577,7 @@
   },
   {
    "source": "MK03",
+   "group": "doc_adaptation",
    "page": 4,
    "reference": "MK03-1A66E-X",
    "magnet": "SMCO5-5X4",
@@ -1509,7 +1589,7 @@
    "estimated": 7.8916,
    "errorMm": 2.1416,
    "errorPct": 37.25,
-   "status": "control",
+   "status": "adaptation",
    "anomalies": [
     "adaptation documentaire Form→produit (décalage empirique)",
     "écart > 20 %"
@@ -1520,6 +1600,7 @@
   },
   {
    "source": "MK03",
+   "group": "doc_adaptation",
    "page": 4,
    "reference": "MK03-1A66E-X",
    "magnet": "SMCO5-5X4",
@@ -1528,7 +1609,7 @@
    "bound": "up",
    "raw": null,
    "published": null,
-   "estimated": 4.0263,
+   "estimated": 2.2532,
    "errorMm": null,
    "errorPct": null,
    "status": "missing",
@@ -1542,6 +1623,7 @@
   },
   {
    "source": "MK03",
+   "group": "doc_adaptation",
    "page": 4,
    "reference": "MK03-1A66E-X",
    "magnet": "SMCO5-5X4",
@@ -1550,10 +1632,10 @@
    "bound": "to",
    "raw": "1.9",
    "published": 1.9,
-   "estimated": 4.5357,
-   "errorMm": 2.6357,
-   "errorPct": 138.72,
-   "status": "control",
+   "estimated": 2.9707,
+   "errorMm": 1.0707,
+   "errorPct": 56.35,
+   "status": "adaptation",
    "anomalies": [
     "adaptation documentaire Form→produit (décalage empirique)",
     "écart > 20 %"
@@ -1564,6 +1646,7 @@
   },
   {
    "source": "MK03",
+   "group": "doc_adaptation",
    "page": 5,
    "reference": "MK03-1A66E-X",
    "magnet": "N45-4X19",
@@ -1575,7 +1658,7 @@
    "estimated": 8.7292,
    "errorMm": -1.3208,
    "errorPct": -13.14,
-   "status": "control",
+   "status": "adaptation",
    "anomalies": [
     "adaptation documentaire Form→produit (décalage empirique)",
     "D1 produit : dérivé du D1 d'apprentissage Form, pas un contrôle indépendant de la physique"
@@ -1586,6 +1669,7 @@
   },
   {
    "source": "MK03",
+   "group": "doc_adaptation",
    "page": 5,
    "reference": "MK03-1A66E-X",
    "magnet": "N45-4X19",
@@ -1597,7 +1681,7 @@
    "estimated": 11.9966,
    "errorMm": -1.2534,
    "errorPct": -9.46,
-   "status": "control",
+   "status": "adaptation",
    "anomalies": [
     "adaptation documentaire Form→produit (décalage empirique)",
     "D1 produit : dérivé du D1 d'apprentissage Form, pas un contrôle indépendant de la physique"
@@ -1608,6 +1692,7 @@
   },
   {
    "source": "MK03",
+   "group": "doc_adaptation",
    "page": 5,
    "reference": "MK03-1A66E-X",
    "magnet": "N45-4X19",
@@ -1619,7 +1704,7 @@
    "estimated": 14.9639,
    "errorMm": 6.3639,
    "errorPct": 74,
-   "status": "control",
+   "status": "adaptation",
    "anomalies": [
     "adaptation documentaire Form→produit (décalage empirique)",
     "écart > 20 %"
@@ -1630,6 +1715,7 @@
   },
   {
    "source": "MK03",
+   "group": "doc_adaptation",
    "page": 5,
    "reference": "MK03-1A66E-X",
    "magnet": "N45-4X19",
@@ -1641,7 +1727,7 @@
    "estimated": 16.367,
    "errorMm": 5.867,
    "errorPct": 55.88,
-   "status": "control",
+   "status": "adaptation",
    "anomalies": [
     "adaptation documentaire Form→produit (décalage empirique)",
     "écart > 20 %"
@@ -1652,6 +1738,7 @@
   },
   {
    "source": "MK03",
+   "group": "doc_adaptation",
    "page": 5,
    "reference": "MK03-1A66E-X",
    "magnet": "N45-4X19",
@@ -1663,7 +1750,7 @@
    "estimated": 14.2839,
    "errorMm": 9.6339,
    "errorPct": 207.18,
-   "status": "control",
+   "status": "adaptation",
    "anomalies": [
     "adaptation documentaire Form→produit (décalage empirique)",
     "écart > 20 %"
@@ -1674,6 +1761,7 @@
   },
   {
    "source": "MK03",
+   "group": "doc_adaptation",
    "page": 5,
    "reference": "MK03-1A66E-X",
    "magnet": "N45-4X19",
@@ -1685,7 +1773,7 @@
    "estimated": 17.0333,
    "errorMm": 8.6833,
    "errorPct": 103.99,
-   "status": "control",
+   "status": "adaptation",
    "anomalies": [
     "adaptation documentaire Form→produit (décalage empirique)",
     "écart > 20 %"
@@ -1696,6 +1784,7 @@
   },
   {
    "source": "MK03",
+   "group": "doc_adaptation",
    "page": 5,
    "reference": "MK03-1A66E-X",
    "magnet": "N45-4X19",
@@ -1704,10 +1793,10 @@
    "bound": "up",
    "raw": "6.5",
    "published": 6.5,
-   "estimated": 6.153,
-   "errorMm": -0.347,
-   "errorPct": -5.34,
-   "status": "control",
+   "estimated": 5.6689,
+   "errorMm": -0.8311,
+   "errorPct": -12.79,
+   "status": "adaptation",
    "anomalies": [
     "adaptation documentaire Form→produit (décalage empirique)"
    ],
@@ -1717,6 +1806,7 @@
   },
   {
    "source": "MK03",
+   "group": "doc_adaptation",
    "page": 5,
    "reference": "MK03-1A66E-X",
    "magnet": "N45-4X19",
@@ -1725,10 +1815,10 @@
    "bound": "to",
    "raw": "7.8",
    "published": 7.8,
-   "estimated": 6.9867,
-   "errorMm": -0.8133,
-   "errorPct": -10.43,
-   "status": "control",
+   "estimated": 6.9613,
+   "errorMm": -0.8387,
+   "errorPct": -10.75,
+   "status": "adaptation",
    "anomalies": [
     "adaptation documentaire Form→produit (décalage empirique)"
    ],
@@ -1738,6 +1828,7 @@
   },
   {
    "source": "MK13",
+   "group": "doc_adaptation",
    "page": 24,
    "reference": "MK13-1A66C-X",
    "magnet": "SMCO5-5X4",
@@ -1749,7 +1840,7 @@
    "estimated": 5.1096,
    "errorMm": 2.3096,
    "errorPct": 82.49,
-   "status": "control",
+   "status": "adaptation",
    "anomalies": [
     "adaptation documentaire Form→produit (décalage empirique)",
     "D1 produit : dérivé du D1 d'apprentissage Form, pas un contrôle indépendant de la physique",
@@ -1761,6 +1852,7 @@
   },
   {
    "source": "MK13",
+   "group": "doc_adaptation",
    "page": 24,
    "reference": "MK13-1A66C-X",
    "magnet": "SMCO5-5X4",
@@ -1772,7 +1864,7 @@
    "estimated": 8.0815,
    "errorMm": 2.2315,
    "errorPct": 38.15,
-   "status": "control",
+   "status": "adaptation",
    "anomalies": [
     "adaptation documentaire Form→produit (décalage empirique)",
     "D1 produit : dérivé du D1 d'apprentissage Form, pas un contrôle indépendant de la physique",
@@ -1784,6 +1876,7 @@
   },
   {
    "source": "MK13",
+   "group": "doc_adaptation",
    "page": 24,
    "reference": "MK13-1A66C-X",
    "magnet": "SMCO5-5X4",
@@ -1795,7 +1888,7 @@
    "estimated": 3.844,
    "errorMm": -0.256,
    "errorPct": -6.24,
-   "status": "control",
+   "status": "adaptation",
    "anomalies": [
     "adaptation documentaire Form→produit (décalage empirique)"
    ],
@@ -1805,6 +1898,7 @@
   },
   {
    "source": "MK13",
+   "group": "doc_adaptation",
    "page": 24,
    "reference": "MK13-1A66C-X",
    "magnet": "SMCO5-5X4",
@@ -1816,7 +1910,7 @@
    "estimated": 7.4178,
    "errorMm": -0.7822,
    "errorPct": -9.54,
-   "status": "control",
+   "status": "adaptation",
    "anomalies": [
     "adaptation documentaire Form→produit (décalage empirique)"
    ],
@@ -1826,6 +1920,7 @@
   },
   {
    "source": "MK13",
+   "group": "doc_adaptation",
    "page": 24,
    "reference": "MK13-1A66C-X",
    "magnet": "SMCO5-5X4",
@@ -1837,7 +1932,7 @@
    "estimated": 4.7385,
    "errorMm": 2.4385,
    "errorPct": 106.02,
-   "status": "control",
+   "status": "adaptation",
    "anomalies": [
     "adaptation documentaire Form→produit (décalage empirique)",
     "écart > 20 %"
@@ -1848,6 +1943,7 @@
   },
   {
    "source": "MK13",
+   "group": "doc_adaptation",
    "page": 24,
    "reference": "MK13-1A66C-X",
    "magnet": "SMCO5-5X4",
@@ -1859,7 +1955,7 @@
    "estimated": 7.6192,
    "errorMm": 1.9692,
    "errorPct": 34.85,
-   "status": "control",
+   "status": "adaptation",
    "anomalies": [
     "adaptation documentaire Form→produit (décalage empirique)",
     "écart > 20 %"
@@ -1870,6 +1966,7 @@
   },
   {
    "source": "MK13",
+   "group": "doc_adaptation",
    "page": 24,
    "reference": "MK13-1A66C-X",
    "magnet": "SMCO5-5X4",
@@ -1878,7 +1975,7 @@
    "bound": "up",
    "raw": null,
    "published": null,
-   "estimated": 2.1866,
+   "estimated": 0.7311,
    "errorMm": null,
    "errorPct": null,
    "status": "missing",
@@ -1892,6 +1989,7 @@
   },
   {
    "source": "MK13",
+   "group": "doc_adaptation",
    "page": 24,
    "reference": "MK13-1A66C-X",
    "magnet": "SMCO5-5X4",
@@ -1900,13 +1998,12 @@
    "bound": "to",
    "raw": "3.4",
    "published": 3.4,
-   "estimated": 4.8865,
-   "errorMm": 1.4865,
-   "errorPct": 43.72,
-   "status": "control",
+   "estimated": 3.8505,
+   "errorMm": 0.4505,
+   "errorPct": 13.25,
+   "status": "adaptation",
    "anomalies": [
-    "adaptation documentaire Form→produit (décalage empirique)",
-    "écart > 20 %"
+    "adaptation documentaire Form→produit (décalage empirique)"
    ],
    "convention": "C2",
    "model": "B",
@@ -1914,6 +2011,7 @@
   },
   {
    "source": "MK13",
+   "group": "doc_adaptation",
    "page": 25,
    "reference": "MK13-1A66C-X",
    "magnet": "N45-4X19",
@@ -1925,7 +2023,7 @@
    "estimated": 9.2112,
    "errorMm": -1.2888,
    "errorPct": -12.27,
-   "status": "control",
+   "status": "adaptation",
    "anomalies": [
     "adaptation documentaire Form→produit (décalage empirique)",
     "D1 produit : dérivé du D1 d'apprentissage Form, pas un contrôle indépendant de la physique"
@@ -1936,6 +2034,7 @@
   },
   {
    "source": "MK13",
+   "group": "doc_adaptation",
    "page": 25,
    "reference": "MK13-1A66C-X",
    "magnet": "N45-4X19",
@@ -1947,7 +2046,7 @@
    "estimated": 13.3671,
    "errorMm": -1.2829,
    "errorPct": -8.76,
-   "status": "control",
+   "status": "adaptation",
    "anomalies": [
     "adaptation documentaire Form→produit (décalage empirique)",
     "D1 produit : dérivé du D1 d'apprentissage Form, pas un contrôle indépendant de la physique"
@@ -1958,6 +2057,7 @@
   },
   {
    "source": "MK13",
+   "group": "doc_adaptation",
    "page": 25,
    "reference": "MK13-1A66C-X",
    "magnet": "N45-4X19",
@@ -1969,7 +2069,7 @@
    "estimated": 14.4774,
    "errorMm": 5.4774,
    "errorPct": 60.86,
-   "status": "control",
+   "status": "adaptation",
    "anomalies": [
     "adaptation documentaire Form→produit (décalage empirique)",
     "écart > 20 %"
@@ -1980,6 +2080,7 @@
   },
   {
    "source": "MK13",
+   "group": "doc_adaptation",
    "page": 25,
    "reference": "MK13-1A66C-X",
    "magnet": "N45-4X19",
@@ -1991,7 +2092,7 @@
    "estimated": 18.9069,
    "errorMm": 2.8069,
    "errorPct": 17.43,
-   "status": "control",
+   "status": "adaptation",
    "anomalies": [
     "adaptation documentaire Form→produit (décalage empirique)"
    ],
@@ -2001,6 +2102,7 @@
   },
   {
    "source": "MK13",
+   "group": "doc_adaptation",
    "page": 25,
    "reference": "MK13-1A66C-X",
    "magnet": "N45-4X19",
@@ -2012,7 +2114,7 @@
    "estimated": 14.0128,
    "errorMm": 8.4128,
    "errorPct": 150.23,
-   "status": "control",
+   "status": "adaptation",
    "anomalies": [
     "adaptation documentaire Form→produit (décalage empirique)",
     "écart > 20 %"
@@ -2023,6 +2125,7 @@
   },
   {
    "source": "MK13",
+   "group": "doc_adaptation",
    "page": 25,
    "reference": "MK13-1A66C-X",
    "magnet": "N45-4X19",
@@ -2034,7 +2137,7 @@
    "estimated": 17.4176,
    "errorMm": 7.9676,
    "errorPct": 84.31,
-   "status": "control",
+   "status": "adaptation",
    "anomalies": [
     "adaptation documentaire Form→produit (décalage empirique)",
     "écart > 20 %"
@@ -2045,6 +2148,7 @@
   },
   {
    "source": "MK13",
+   "group": "doc_adaptation",
    "page": 25,
    "reference": "MK13-1A66C-X",
    "magnet": "N45-4X19",
@@ -2053,10 +2157,10 @@
    "bound": "up",
    "raw": "6.4",
    "published": 6.4,
-   "estimated": 4.8011,
-   "errorMm": -1.5989,
-   "errorPct": -24.98,
-   "status": "control",
+   "estimated": 5.0071,
+   "errorMm": -1.3929,
+   "errorPct": -21.76,
+   "status": "adaptation",
    "anomalies": [
     "adaptation documentaire Form→produit (décalage empirique)",
     "écart > 20 %"
@@ -2067,6 +2171,7 @@
   },
   {
    "source": "MK13",
+   "group": "doc_adaptation",
    "page": 25,
    "reference": "MK13-1A66C-X",
    "magnet": "N45-4X19",
@@ -2075,13 +2180,12 @@
    "bound": "to",
    "raw": "10.8",
    "published": 10.8,
-   "estimated": 8.0985,
-   "errorMm": -2.7015,
-   "errorPct": -25.01,
-   "status": "control",
+   "estimated": 9.1517,
+   "errorMm": -1.6483,
+   "errorPct": -15.26,
+   "status": "adaptation",
    "anomalies": [
-    "adaptation documentaire Form→produit (décalage empirique)",
-    "écart > 20 %"
+    "adaptation documentaire Form→produit (décalage empirique)"
    ],
    "convention": "C2",
    "model": "B",
@@ -2089,6 +2193,7 @@
   },
   {
    "source": "MK13",
+   "group": "doc_adaptation",
    "page": 24,
    "reference": "MK13-1A66E-X",
    "magnet": "SMCO5-5X4",
@@ -2100,7 +2205,7 @@
    "estimated": 3.8315,
    "errorMm": 2.4315,
    "errorPct": 173.68,
-   "status": "control",
+   "status": "adaptation",
    "anomalies": [
     "adaptation documentaire Form→produit (décalage empirique)",
     "D1 produit : dérivé du D1 d'apprentissage Form, pas un contrôle indépendant de la physique",
@@ -2112,6 +2217,7 @@
   },
   {
    "source": "MK13",
+   "group": "doc_adaptation",
    "page": 24,
    "reference": "MK13-1A66E-X",
    "magnet": "SMCO5-5X4",
@@ -2123,7 +2229,7 @@
    "estimated": 6.1365,
    "errorMm": 2.2865,
    "errorPct": 59.39,
-   "status": "control",
+   "status": "adaptation",
    "anomalies": [
     "adaptation documentaire Form→produit (décalage empirique)",
     "D1 produit : dérivé du D1 d'apprentissage Form, pas un contrôle indépendant de la physique",
@@ -2135,6 +2241,7 @@
   },
   {
    "source": "MK13",
+   "group": "doc_adaptation",
    "page": 24,
    "reference": "MK13-1A66E-X",
    "magnet": "SMCO5-5X4",
@@ -2143,11 +2250,12 @@
    "bound": "up",
    "raw": "2.2",
    "published": 2.2,
-   "estimated": 2.3876,
-   "errorMm": 0.1876,
-   "errorPct": 8.53,
-   "status": "control",
+   "estimated": null,
+   "errorMm": null,
+   "errorPct": null,
+   "status": "unavailable",
    "anomalies": [
+    "estimation indisponible : collision_before_threshold",
     "adaptation documentaire Form→produit (décalage empirique)"
    ],
    "convention": "C2",
@@ -2156,6 +2264,7 @@
   },
   {
    "source": "MK13",
+   "group": "doc_adaptation",
    "page": 24,
    "reference": "MK13-1A66E-X",
    "magnet": "SMCO5-5X4",
@@ -2167,7 +2276,7 @@
    "estimated": 5.158,
    "errorMm": -0.042,
    "errorPct": -0.81,
-   "status": "control",
+   "status": "adaptation",
    "anomalies": [
     "adaptation documentaire Form→produit (décalage empirique)"
    ],
@@ -2177,6 +2286,7 @@
   },
   {
    "source": "MK13",
+   "group": "doc_adaptation",
    "page": 24,
    "reference": "MK13-1A66E-X",
    "magnet": "SMCO5-5X4",
@@ -2188,7 +2298,7 @@
    "estimated": 3.5413,
    "errorMm": 2.3413,
    "errorPct": 195.11,
-   "status": "control",
+   "status": "adaptation",
    "anomalies": [
     "adaptation documentaire Form→produit (décalage empirique)",
     "écart > 20 %"
@@ -2199,6 +2309,7 @@
   },
   {
    "source": "MK13",
+   "group": "doc_adaptation",
    "page": 24,
    "reference": "MK13-1A66E-X",
    "magnet": "SMCO5-5X4",
@@ -2210,7 +2321,7 @@
    "estimated": 5.7916,
    "errorMm": 2.1416,
    "errorPct": 58.67,
-   "status": "control",
+   "status": "adaptation",
    "anomalies": [
     "adaptation documentaire Form→produit (décalage empirique)",
     "écart > 20 %"
@@ -2221,6 +2332,7 @@
   },
   {
    "source": "MK13",
+   "group": "doc_adaptation",
    "page": 24,
    "reference": "MK13-1A66E-X",
    "magnet": "SMCO5-5X4",
@@ -2229,12 +2341,13 @@
    "bound": "up",
    "raw": null,
    "published": null,
-   "estimated": 1.4263,
+   "estimated": null,
    "errorMm": null,
    "errorPct": null,
    "status": "missing",
    "anomalies": [
     "borne non publiée",
+    "estimation indisponible : negative_after_offset",
     "adaptation documentaire Form→produit (décalage empirique)"
    ],
    "convention": "C2",
@@ -2243,6 +2356,7 @@
   },
   {
    "source": "MK13",
+   "group": "doc_adaptation",
    "page": 24,
    "reference": "MK13-1A66E-X",
    "magnet": "SMCO5-5X4",
@@ -2251,10 +2365,10 @@
    "bound": "to",
    "raw": "1.1",
    "published": 1.1,
-   "estimated": 3.7357,
-   "errorMm": 2.6357,
-   "errorPct": 239.61,
-   "status": "control",
+   "estimated": 2.1707,
+   "errorMm": 1.0707,
+   "errorPct": 97.34,
+   "status": "adaptation",
    "anomalies": [
     "adaptation documentaire Form→produit (décalage empirique)",
     "écart > 20 %"
@@ -2265,6 +2379,7 @@
   },
   {
    "source": "MK13",
+   "group": "doc_adaptation",
    "page": 25,
    "reference": "MK13-1A66E-X",
    "magnet": "N45-4X19",
@@ -2276,7 +2391,7 @@
    "estimated": 6.8792,
    "errorMm": -1.3208,
    "errorPct": -16.11,
-   "status": "control",
+   "status": "adaptation",
    "anomalies": [
     "adaptation documentaire Form→produit (décalage empirique)",
     "D1 produit : dérivé du D1 d'apprentissage Form, pas un contrôle indépendant de la physique"
@@ -2287,6 +2402,7 @@
   },
   {
    "source": "MK13",
+   "group": "doc_adaptation",
    "page": 25,
    "reference": "MK13-1A66E-X",
    "magnet": "N45-4X19",
@@ -2298,7 +2414,7 @@
    "estimated": 9.8966,
    "errorMm": -1.2534,
    "errorPct": -11.24,
-   "status": "control",
+   "status": "adaptation",
    "anomalies": [
     "adaptation documentaire Form→produit (décalage empirique)",
     "D1 produit : dérivé du D1 d'apprentissage Form, pas un contrôle indépendant de la physique"
@@ -2309,6 +2425,7 @@
   },
   {
    "source": "MK13",
+   "group": "doc_adaptation",
    "page": 25,
    "reference": "MK13-1A66E-X",
    "magnet": "N45-4X19",
@@ -2320,7 +2437,7 @@
    "estimated": 12.3639,
    "errorMm": 6.3639,
    "errorPct": 106.07,
-   "status": "control",
+   "status": "adaptation",
    "anomalies": [
     "adaptation documentaire Form→produit (décalage empirique)",
     "écart > 20 %"
@@ -2331,6 +2448,7 @@
   },
   {
    "source": "MK13",
+   "group": "doc_adaptation",
    "page": 25,
    "reference": "MK13-1A66E-X",
    "magnet": "N45-4X19",
@@ -2342,7 +2460,7 @@
    "estimated": 15.567,
    "errorMm": 5.867,
    "errorPct": 60.48,
-   "status": "control",
+   "status": "adaptation",
    "anomalies": [
     "adaptation documentaire Form→produit (décalage empirique)",
     "écart > 20 %"
@@ -2353,6 +2471,7 @@
   },
   {
    "source": "MK13",
+   "group": "doc_adaptation",
    "page": 25,
    "reference": "MK13-1A66E-X",
    "magnet": "N45-4X19",
@@ -2364,7 +2483,7 @@
    "estimated": 12.4339,
    "errorMm": 9.6339,
    "errorPct": 344.07,
-   "status": "control",
+   "status": "adaptation",
    "anomalies": [
     "adaptation documentaire Form→produit (décalage empirique)",
     "écart > 20 %"
@@ -2375,6 +2494,7 @@
   },
   {
    "source": "MK13",
+   "group": "doc_adaptation",
    "page": 25,
    "reference": "MK13-1A66E-X",
    "magnet": "N45-4X19",
@@ -2386,7 +2506,7 @@
    "estimated": 14.9333,
    "errorMm": 8.6833,
    "errorPct": 138.93,
-   "status": "control",
+   "status": "adaptation",
    "anomalies": [
     "adaptation documentaire Form→produit (décalage empirique)",
     "écart > 20 %"
@@ -2397,6 +2517,7 @@
   },
   {
    "source": "MK13",
+   "group": "doc_adaptation",
    "page": 25,
    "reference": "MK13-1A66E-X",
    "magnet": "N45-4X19",
@@ -2405,12 +2526,13 @@
    "bound": "up",
    "raw": "3.9",
    "published": 3.9,
-   "estimated": 3.553,
-   "errorMm": -0.347,
-   "errorPct": -8.9,
-   "status": "control",
+   "estimated": 3.0689,
+   "errorMm": -0.8311,
+   "errorPct": -21.31,
+   "status": "adaptation",
    "anomalies": [
-    "adaptation documentaire Form→produit (décalage empirique)"
+    "adaptation documentaire Form→produit (décalage empirique)",
+    "écart > 20 %"
    ],
    "convention": "C2",
    "model": "B",
@@ -2418,6 +2540,7 @@
   },
   {
    "source": "MK13",
+   "group": "doc_adaptation",
    "page": 25,
    "reference": "MK13-1A66E-X",
    "magnet": "N45-4X19",
@@ -2426,10 +2549,10 @@
    "bound": "to",
    "raw": "7",
    "published": 7,
-   "estimated": 6.1867,
-   "errorMm": -0.8133,
-   "errorPct": -11.62,
-   "status": "control",
+   "estimated": 6.1613,
+   "errorMm": -0.8387,
+   "errorPct": -11.98,
+   "status": "adaptation",
    "anomalies": [
     "adaptation documentaire Form→produit (décalage empirique)"
    ],
@@ -2450,6 +2573,7 @@
    "estimated": null,
    "errorMm": null,
    "errorPct": null,
+   "group": "quarantine",
    "status": "quarantine",
    "anomalies": [
     "MK04 D3 en quarantaine (71/96 plages inversées)",
@@ -2472,6 +2596,7 @@
    "estimated": null,
    "errorMm": null,
    "errorPct": null,
+   "group": "quarantine",
    "status": "quarantine",
    "anomalies": [
     "MK04 D3 en quarantaine (71/96 plages inversées)",
@@ -2494,6 +2619,7 @@
    "estimated": null,
    "errorMm": null,
    "errorPct": null,
+   "group": "quarantine",
    "status": "quarantine",
    "anomalies": [
     "MK04 D3 en quarantaine (71/96 plages inversées)",
@@ -2516,6 +2642,7 @@
    "estimated": null,
    "errorMm": null,
    "errorPct": null,
+   "group": "quarantine",
    "status": "quarantine",
    "anomalies": [
     "MK04 D3 en quarantaine (71/96 plages inversées)",
@@ -2538,6 +2665,7 @@
    "estimated": null,
    "errorMm": null,
    "errorPct": null,
+   "group": "quarantine",
    "status": "quarantine",
    "anomalies": [
     "MK04 D3 en quarantaine (71/96 plages inversées)"
@@ -2559,6 +2687,7 @@
    "estimated": null,
    "errorMm": null,
    "errorPct": null,
+   "group": "quarantine",
    "status": "quarantine",
    "anomalies": [
     "MK04 D3 en quarantaine (71/96 plages inversées)"
@@ -2580,6 +2709,7 @@
    "estimated": null,
    "errorMm": null,
    "errorPct": null,
+   "group": "quarantine",
    "status": "quarantine",
    "anomalies": [
     "MK04 D3 en quarantaine (71/96 plages inversées)",
@@ -2602,6 +2732,7 @@
    "estimated": null,
    "errorMm": null,
    "errorPct": null,
+   "group": "quarantine",
    "status": "quarantine",
    "anomalies": [
     "MK04 D3 en quarantaine (71/96 plages inversées)",

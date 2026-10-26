@@ -130,9 +130,9 @@ for (const cut of cuts.filter((c) => c.model === "B" || c.model === "A")) {
 md.push("## Temps de calcul (machine de génération)", "", "| Étape | Durée |", "|---|---|", ...timings, "",
   "## Limites", "",
   "- Datums D1/D3 ambigus dans la source ; D4 (H-D4) est une hypothèse ; D5 suit le schéma source tourné rigidement (aimant ⟂ lames, approche par l'extrémité, maximum de lobe sur t ≥ 0).",
-  "- Longueur effective, enveloppe et réponse de lame sont des hypothèses ; aucun paramètre de lame n'est qualifié.",
-  "- Les produits MK03/MK13 sont estimés par adaptation documentaire (décalages empiriques par borne) : ce ne sont pas des contrôles indépendants.
-- Le diagnostic « trop loin » / « orientation » est contrefactuel et limité aux essais autorisés (rotation ±90° autour de z, rapprochement en y sans collision) ; sinon la cause reste non déterminée.",
+  "- Longueur effective et réponse de lame sont des hypothèses ; l'exclusion suit l'encombrement publié KSK-1A66 ; aucun paramètre de lame n'est qualifié.",
+  "- Les produits MK03/MK13 sont estimés par adaptation documentaire (décalages empiriques par borne) : ce ne sont pas des contrôles indépendants.",
+  "- Le diagnostic « trop loin » / « orientation » est contrefactuel et limité aux essais autorisés (rotation ±90° autour de z, rapprochement en y sans collision) ; sinon la cause reste non déterminée.",
   "- MK04 D3 en quarantaine : aucune estimation n'est produite.",
   "- Pas de volume 3D dans ce lot. Pas d'intégration atelier ni client.", "");
 writeFileSync(`${OUT}/RAPPORT_COHERENCE_2026-10-26.md`, md.join("\n"));
