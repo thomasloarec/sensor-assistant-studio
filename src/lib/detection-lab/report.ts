@@ -87,7 +87,7 @@ export function cutToSvg(cut: Cut, tr: Tr = id): string {
   });
   let yy = T + H + 48;
   cut.marks.forEach((m, i) => {
-    parts.push(`<text x="${L}" y="${yy + 2}" class="lab-text">${i + 1}. ${esc(m.label)} — ${esc(tr(CATEGORY_LABEL[m.category]))}${m.cause ? " — " + esc(tr(CAUSE_LABEL[m.cause])) : ""}</text>`);
+    parts.push(`<text x="${L}" y="${yy + 2}" class="lab-text">${i + 1}. ${esc(tr(m.label))} — ${esc(tr(CATEGORY_LABEL[m.category]))}${m.cause ? " — " + esc(tr(CAUSE_LABEL[m.cause])) : ""}</text>`);
     yy += 20;
   });
   if (cut.marks.length) yy += 8;
