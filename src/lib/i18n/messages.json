@@ -3329,14 +3329,14 @@
     "Asse definito dai vostri due punti: il centro del foro non viene rilevato automaticamente.",
     "軸はあなたの2点で定義されます。穴の中心は自動検出されません。"
   ],
-  "Axe défini par vos points ou valeurs : le centre du trou n'est pas détecté automatiquement. Deux clics sur la paroi du trou ne donnent pas son centre : saisissez le point d'entrée et la direction précis dans « Valeurs précises de l'axe ».": [
-    "Axis set by your points or values: the hole centre is not detected automatically. Two clicks on the hole wall do not give its centre: enter the precise entry point and direction in “Precise axis values”.",
-    "轴由您的点或数值定义：不会自动检测孔中心。在孔壁上点击两次并不能得到中心：请在“轴的精确数值”中输入精确的入口点和方向。",
-    "Achse durch Ihre Punkte oder Werte festgelegt: Die Bohrungsmitte wird nicht automatisch erkannt. Zwei Klicks auf die Bohrungswand ergeben nicht ihre Mitte: Geben Sie Eintrittspunkt und Richtung unter „Genaue Achswerte“ ein.",
-    "Eje definido por sus puntos o valores: el centro del orificio no se detecta automáticamente. Dos clics en la pared del orificio no dan su centro: introduzca el punto de entrada y la dirección precisos en «Valores precisos del eje».",
-    "Ось задана вашими точками или значениями: центр отверстия не определяется автоматически. Два щелчка по стенке отверстия не дают его центр: введите точную точку входа и направление в «Точные значения оси».",
-    "Asse definito dai tuoi punti o valori: il centro del foro non è rilevato automaticamente. Due clic sulla parete del foro non ne danno il centro: inserisci punto d'ingresso e direzione precisi in «Valori precisi dell'asse».",
-    "軸はあなたの点または値で定義されています：穴の中心は自動検出されません。穴の壁を2回クリックしても中心にはなりません。「軸の正確な値」で正確な入口点と方向を入力してください。"
+  "Axe défini par vos points ou valeurs : le centre du trou n'est pas détecté automatiquement. Deux clics sur la paroi du trou ne donnent pas son centre : saisissez le point d'entrée et la direction précis dans « Position précise ».": [
+    "Axis set by your points or values: the hole centre is not detected automatically. Two clicks on the hole wall do not give its centre: enter the precise entry point and direction in “Precise position”.",
+    "轴由您的点或数值确定：不会自动检测孔中心。在孔壁上点击两次并不能得到其中心：请在“精确位置”中输入精确的入口点和方向。",
+    "Achse durch Ihre Punkte oder Werte festgelegt: Die Bohrungsmitte wird nicht automatisch erkannt. Zwei Klicks auf die Bohrungswand ergeben nicht deren Mitte: Geben Sie Eintrittspunkt und Richtung genau unter „Genaue Position“ ein.",
+    "Eje definido por sus puntos o valores: el centro del orificio no se detecta automáticamente. Dos clics en la pared del orificio no dan su centro: introduzca el punto de entrada y la dirección precisos en «Posición precisa».",
+    "Ось задана вашими точками или значениями: центр отверстия не определяется автоматически. Два щелчка по стенке отверстия не дают его центр: введите точную точку входа и направление в разделе «Точное положение».",
+    "Asse definito dai tuoi punti o valori: il centro del foro non viene rilevato automaticamente. Due clic sulla parete del foro non ne danno il centro: inserisci punto d'ingresso e direzione precisi in «Posizione precisa».",
+    "軸は指定した点または値で決まります：穴の中心は自動検出されません。穴の壁を2回クリックしても中心にはなりません。「正確な位置」で入口点と方向を正確に入力してください。"
   ],
   "Axe nul ou non fini : choisissez une direction valide.": [
     "Zero or non-finite axis: choose a valid direction.",
@@ -19493,14 +19493,14 @@
     "Portata lunga, sensibile alla temperatura",
     "動作距離は長いが温度に敏感"
   ],
-  "Pose libre : aucune attache. Les coordonnées précises restent dans Réglages avancés › Positionnement.": [
-    "Free pose: no attachment. Precise coordinates remain in Advanced settings › Positioning.",
-    "自由姿态：无附着。精确坐标仍在“高级设置 › 定位”中。",
-    "Freie Lage: keine Befestigung. Genaue Koordinaten bleiben unter Erweiterte Einstellungen › Positionierung.",
-    "Pose libre: sin fijación. Las coordenadas precisas siguen en Ajustes avanzados › Posicionamiento.",
-    "Свободное положение: без привязки. Точные координаты — в разделе «Расширенные настройки › Позиционирование».",
-    "Posa libera: nessun fissaggio. Le coordinate precise restano in Impostazioni avanzate › Posizionamento.",
-    "自由姿勢：固定なし。正確な座標は「詳細設定 › 位置決め」にあります。"
+  "Pose libre : aucune attache. Ses coordonnées se règlent dans « Position précise » ci-dessus.": [
+    "Free pose: no attachment. Its coordinates are set in “Precise position” above.",
+    "自由放置：无附着。其坐标在上方的“精确位置”中设置。",
+    "Freie Pose: keine Befestigung. Die Koordinaten werden oben unter „Genaue Position“ eingestellt.",
+    "Pose libre: sin fijación. Sus coordenadas se ajustan en «Posición precisa», arriba.",
+    "Свободная установка: без крепления. Координаты задаются выше, в разделе «Точное положение».",
+    "Posa libera: nessun attacco. Le coordinate si regolano in «Posizione precisa» qui sopra.",
+    "自由配置：取付なし。座標は上の「正確な位置」で設定します。"
   ],
   "Position": [
     "Position",
@@ -31634,14 +31634,14 @@
     "parte animata dalla clip",
     "クリップで動く部品"
   ],
-  "Pose libre : aucune attache. Avec l'animation du fichier, un composant non attaché reste fixe. Les coordonnées précises restent dans Réglages avancés › Positionnement.": [
-    "Free pose: no attachment. With the file animation, an unattached component stays fixed. Precise coordinates remain in Advanced settings › Positioning.",
-    "自由姿态：无附着。使用文件动画时，未附着的组件保持固定。精确坐标仍在 高级设置 › 定位 中。",
-    "Freie Pose: keine Befestigung. Mit der Dateianimation bleibt eine nicht befestigte Komponente fest. Genaue Koordinaten finden Sie unter Erweiterte Einstellungen › Positionierung.",
-    "Pose libre: sin fijación. Con la animación del archivo, un componente no fijado permanece fijo. Las coordenadas precisas siguen en Ajustes avanzados › Posicionamiento.",
-    "Свободная поза: без крепления. При анимации файла неприкреплённый компонент остаётся неподвижным. Точные координаты — в разделе Расширенные настройки › Позиционирование.",
-    "Posa libera: nessun fissaggio. Con l'animazione del file, un componente non fissato resta fermo. Le coordinate precise restano in Impostazioni avanzate › Posizionamento.",
-    "自由配置：取付なし。ファイルのアニメーションでは、取り付けていない部品は固定のままです。正確な座標は 詳細設定 › 配置 にあります。"
+  "Pose libre : aucune attache. Avec l'animation du fichier, un composant non attaché reste fixe. Ses coordonnées se règlent dans « Position précise » ci-dessus.": [
+    "Free pose: no attachment. With the file animation, an unattached component stays fixed. Its coordinates are set in “Precise position” above.",
+    "自由放置：无附着。使用文件动画时，未附着的组件保持固定。其坐标在上方的“精确位置”中设置。",
+    "Freie Pose: keine Befestigung. Mit der Dateianimation bleibt ein nicht befestigtes Bauteil fest. Die Koordinaten werden oben unter „Genaue Position“ eingestellt.",
+    "Pose libre: sin fijación. Con la animación del archivo, un componente no fijado permanece fijo. Sus coordenadas se ajustan en «Posición precisa», arriba.",
+    "Свободная установка: без крепления. При анимации файла незакреплённый компонент остаётся неподвижным. Координаты задаются выше, в разделе «Точное положение».",
+    "Posa libera: nessun attacco. Con l'animazione del file, un componente non attaccato resta fisso. Le coordinate si regolano in «Posizione precisa» qui sopra.",
+    "自由配置：取付なし。ファイルのアニメーションでは、取り付けていない部品は固定のままです。座標は上の「正確な位置」で設定します。"
   ],
   "Animation {0} : {1} s / {2} s ({3} %)": [
     "Animation {0}: {1} s / {2} s ({3} %)",
