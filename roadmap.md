@@ -140,3 +140,5 @@
 ## Finition visuelle Reed — 13 octobre 2026
 - [x] Libellé compact traduit « À 90° », nom accessible explicite et scène pleine largeur ; moteur inchangé.
 - [x] Quatre bords/focus/N/S vérifiés à 320/378 px et desktop ; 1 724 tests verts, inventaire zéro, compilation plateforme OK ; rapport QA_REED_VISUAL_FINISH_2026-10-13.md. Recette iframe finale laissée au propriétaire.
+
+- [x] Atelier 3D : centrer dans un trou (rayon/plan), aligner l aimant avec le capteur, position précise étape 4 (26/10/2026)
