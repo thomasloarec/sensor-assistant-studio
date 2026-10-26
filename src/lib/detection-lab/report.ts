@@ -101,7 +101,8 @@ export function cutToSvg(cut: Cut, palette: LabPalette, tr: Tr = id): string {
   parts.push(`<text x="14" y="${T + H / 2}" class="lab-text" transform="rotate(-90 14 ${T + H / 2})" text-anchor="middle">${esc(tr("y centre de l'aimant (mm)"))}</text>`);
   const half = PROFILE.reed.effectiveLengthMm / 2;
   parts.push(`<line x1="${px(-half)}" y1="${py(0)}" x2="${px(half)}" y2="${py(0)}" class="lab-reed"/>`);
-  parts.push(`<text x="${px(half) + 6}" y="${py(0) - 6}" class="lab-text">${esc(tr("reed (longueur effective)"))}</text>`);
+  const reedLines = wrapSvgText(tr("reed (longueur effective)"), L + W + 24 - (px(half) + 6) - 8);
+  reedLines.forEach((l, i) => parts.push(`<text x="${px(half) + 6}" y="${py(0) - 6 - (reedLines.length - 1 - i) * LINE}" class="lab-text">${esc(l)}</text>`));
   // Glyphe d'aimant : orientation projetée, pôle N du côté +axe.
   const glyph = (x: number, y: number, label?: string) => {
     const [ax, ay] = cut.axis, n = Math.hypot(ax, ay) || 1, ux = ax / n, uy = -ay / n, len = 18;
