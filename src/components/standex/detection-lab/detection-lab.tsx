@@ -16,6 +16,7 @@ import type { Vec3 } from "@/lib/detection-lab/field";
 import "./detection-lab.css";
 
 const tick = () => new Promise<void>((r) => setTimeout(r, 0));
+// i18n-canonical : libellés français canoniques, traduits au rendu par t().
 const ORIENTATIONS: { id: string; label: string; axis: Vec3 }[] = [
   { id: "par", label: "Parallèle aux lames", axis: [1, 0, 0] },
   { id: "perp", label: "Perpendiculaire aux lames", axis: [0, 1, 0] },
@@ -143,6 +144,7 @@ export default function DetectionLab({ onClose }: { onClose: () => void }) {
               </div>
               <div className="lab-table-wrap" tabIndex={0} aria-label={t("Tableau publié, estimé, écart et anomalie")}>
                 <table className="lab-table">
+                  {/* i18n-canonical : en-têtes traduits par t(h) */}
                   <thead><tr>{["Source", "Page", "Référence", "Aimant", "Classe", "D", "Borne", "Publié", "Estimé", "Écart mm", "Écart %", "Statut", "Anomalies"].map((h) => <th key={h} scope="col">{t(h)}</th>)}</tr></thead>
                   <tbody>
                     {rows.map((r, i) => (
@@ -216,6 +218,7 @@ function ThresholdTable({ cal }: { cal: Calibrations }) {
   return (
     <div className="lab-table-wrap" tabIndex={0} aria-label={t("Seuils partagés entre aimants")}>
       <table className="lab-table">
+        {/* i18n-canonical : en-têtes traduits par t(h) */}
         <thead><tr>{["Classe", "Borne", "Seuil SmCo", "Seuil N45", "Désaccord", "Seuil partagé", "SmCo→N45", "N45→SmCo"].map((h) => <th key={h} scope="col">{t(h)}</th>)}</tr></thead>
         <tbody>
           {Object.values(cal).map((s) => {

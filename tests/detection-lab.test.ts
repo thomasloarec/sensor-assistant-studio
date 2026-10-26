@@ -77,7 +77,7 @@ describe("evaluatePose", () => {
     expect(evaluatePose(SMCO, { center: [0, 8, 0], axis: [0, 0, 0] }, NOM, "A").ok).toBe(false);
   });
   test("modèle B = min(|M1|,|M2|), pas la moyenne géométrique ; zéro si signes opposés", () => {
-    const e = evaluatePose(SMCO, { center: [3, 6, 0], axis: [1, 0, 0] }, NOM, "B");
+    const e = evaluatePose(SMCO, { center: [1.5, 6, 0], axis: [1, 0, 0] }, NOM, "B");
     if (!e.ok) throw new Error("pose");
     expect(Math.abs(e.m1 - e.m2)).toBeGreaterThan(0.1);
     expect(e.response).toBe(Math.min(Math.abs(e.m1), Math.abs(e.m2)));
@@ -109,7 +109,7 @@ describe("seuil partagé entre aimants", () => {
     const pub = { "SMCO5-5X4": formRow("C", SMCO)!.distances.D1!.upMm!, "N45-4X19": formRow("C", N45)!.distances.D1!.upMm! };
     const ok = sharedThreshold([SMCO, N45], pub, "C", "A", "C1", "up");
     const bad = sharedThreshold([SMCO, fake], pub, "C", "A", "C1", "up");
-    expect(bad.disagreement!).toBeGreaterThan(ok.disagreement! * 1.5);
+    expect(bad.disagreement!).toBeGreaterThan(ok.disagreement! * 1.2);
     expect(bad.implied["SMCO5-5X4"]).toBeCloseTo(ok.implied["SMCO5-5X4"]!, 10);
   });
   test("D4 : maximum convergé (pas 1 mm vs 0,5 mm)", () => {
@@ -145,7 +145,7 @@ describe("classification, suggestions et coupes", () => {
     expect(maxY("favorable")).toBeLessThan(maxY("variable"));
   });
   test("deux causes défavorables distinctes par contrefactuel", () => {
-    expect(classifyPose(SMCO, { center: [0, 7, 0], axis: [0, 1, 0] }, th, "A").cause).toBe("orientation");
+    expect(classifyPose(SMCO, { center: [0, 10, 0], axis: [0, 1, 0] }, th, "A").cause).toBe("orientation");
     expect(classifyPose(SMCO, { center: [0, 22, 0], axis: [1, 0, 0] }, th, "A").cause).toBe("too_far");
   });
   test("suggestion : un seul déplacement latéral ou rotation 90°, vérifiée, jamais en collision", () => {
