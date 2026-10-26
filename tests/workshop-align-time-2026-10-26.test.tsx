@@ -38,6 +38,7 @@ describe("Aligner l'aimant dans le Workshop intégré", () => {
     const { default: MagneticWorkshop } = await import("../src/components/standex/workshop/workshop");
     const { DEFAULT_WORKSHOP } = await import("../src/lib/standex/magnetic-workshop");
     const { DEMO_ASSEMBLIES } = await import("../src/lib/standex/machine-demos");
+    const { defaultMagnetFor } = await import("../src/lib/standex/paired-magnets");
     const machine = {
       ...structuredClone(DEMO_ASSEMBLIES["builtin:wall-v1"]!),
       motionStatus: "confirmed" as const,
@@ -57,7 +58,18 @@ describe("Aligner l'aimant dans le Workshop intégré", () => {
     };
     const v = render(
       React.createElement(MagneticWorkshop, {
-        initialConfig: { ...DEFAULT_WORKSHOP, mode: "education", magnetModel: "generic", machine },
+        // Couple documenté de l'exemple intégré (MK24-A-J), pour un cycle réellement calculé.
+        initialConfig: {
+          ...DEFAULT_WORKSHOP,
+          mode: "reference",
+          sensorId: "MK24-A-J",
+          magnetModel: defaultMagnetFor("MK24-A-J"),
+          demoReach: 25,
+          initialContact: "open",
+          magnetization: "axial",
+          polarity: 1,
+          machine,
+        },
         onClose: () => {},
         onSave: () => {},
       }),
@@ -79,9 +91,6 @@ describe("Aligner l'aimant dans le Workshop intégré", () => {
       });
 
     await seek(25);
-    await act(async () => fireEvent.click(v.getByTestId("guide-step-test")));
-    console.log("DBG", v.queryByTestId("guide-test-opening")?.textContent, v.queryByTestId("guide-reason")?.textContent, scrubber().value);
-    await act(async () => fireEvent.click(v.getByTestId("guide-step-install")));
     expect(Number(scrubber().value)).toBe(25);
     expect(shift()).toBeCloseTo(38.64, 1);
 
