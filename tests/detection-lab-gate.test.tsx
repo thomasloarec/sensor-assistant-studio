@@ -5,6 +5,7 @@ import { act, cleanup, render } from "@testing-library/react";
 import { StaffLabEntry } from "@/components/standex/detection-lab/staff-gate";
 import { setLocale } from "@/lib/i18n/core";
 import { readFileSync } from "node:fs";
+import DetectionLab from "@/components/standex/detection-lab/detection-lab";
 
 beforeEach(() => {
   if (typeof document === "undefined") GlobalRegistrator.register({ url: "http://localhost/" });
@@ -47,4 +48,16 @@ describe("accès staff", () => {
     expect(internal).toContain('lazy(() => import("@/components/standex/detection-lab/detection-lab"))');
     expect(internal).not.toMatch(/import DetectionLab|from "@\/components\/standex\/detection-lab\/detection-lab"/);
   });
+});
+
+describe("rendu du laboratoire", () => {
+  test("état occupé puis tableau avec seuils partagés, en anglais", async () => {
+    setLocale("en");
+    const r = render(<DetectionLab onClose={() => {}} />);
+    expect(r.container.textContent).toContain("Computing shared thresholds");
+    for (let i = 0; i < 100 && !r.container.textContent?.includes("Consistency table"); i++) await flush();
+    expect(r.container.textContent).toContain("Thresholds shared between magnets");
+    expect(r.container.querySelectorAll("table tbody tr").length).toBeGreaterThan(100);
+    setLocale("fr");
+  }, 60_000);
 });

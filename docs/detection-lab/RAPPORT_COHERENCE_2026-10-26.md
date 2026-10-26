@@ -543,182 +543,182 @@ Grille 1 mm, x ∈ [−24, 24], y ∈ [0, 24] (centre de l'aimant, plan z = 0). 
 
 ![Axes parallèles — classe C](svg/1-parallel-C_SMCO5-5X4_A.svg)
 
-Cellules : unfavorable/too_far 812, variable 213, favorable 79, unavailable 83, unfavorable/orientation 38.  Calcul : 147 ms.
+Cellules : unfavorable/too_far 812, variable 213, favorable 79, unavailable 83, unfavorable/orientation 38.  Calcul : 197 ms.
 
 ### 2-perpendicular-centred-C — SMCO5-5X4 — modèle A
 
 ![Perpendiculaire centré — classe C](svg/2-perpendicular-centred-C_SMCO5-5X4_A.svg)
 
-Cellules : unfavorable/too_far 804, unfavorable/orientation 48, variable 215, unavailable 74, favorable 84. Repère « centré » : Placement défavorable (orientation). Calcul : 137 ms.
+Cellules : unfavorable/too_far 804, unfavorable/orientation 48, variable 215, unavailable 74, favorable 84. Repère « centré » : Placement défavorable (orientation). Calcul : 204 ms.
 
 ### 3-perpendicular-offset-C — SMCO5-5X4 — modèle A
 
 ![Perpendiculaire décalé — classe C](svg/3-perpendicular-offset-C_SMCO5-5X4_A.svg)
 
-Cellules : unfavorable/too_far 804, unfavorable/orientation 48, variable 215, unavailable 74, favorable 84. Repère « centré » : Placement défavorable (orientation). Repère « décalé +4 mm » : Placement favorable. Calcul : 164 ms.
+Cellules : unfavorable/too_far 804, unfavorable/orientation 48, variable 215, unavailable 74, favorable 84. Repère « centré » : Placement défavorable (orientation). Repère « décalé +4 mm » : Placement favorable. Calcul : 205 ms.
 
 ### 4-oblique-45-C — SMCO5-5X4 — modèle A
 
 ![Orientation intermédiaire 45° — classe C](svg/4-oblique-45-C_SMCO5-5X4_A.svg)
 
-Cellules : unfavorable/too_far 812, variable 215, favorable 68, unavailable 96, unfavorable/orientation 34.  Calcul : 186 ms.
+Cellules : unfavorable/too_far 812, variable 215, favorable 68, unavailable 96, unfavorable/orientation 34.  Calcul : 191 ms.
 
 ### 5-parallel-E — SMCO5-5X4 — modèle A
 
 ![Axes parallèles — classe E](svg/5-parallel-E_SMCO5-5X4_A.svg)
 
-Cellules : unfavorable/too_far 912, variable 152, favorable 52, unavailable 83, unfavorable/orientation 26.  Calcul : 170 ms.
+Cellules : unfavorable/too_far 912, variable 152, favorable 52, unavailable 83, unfavorable/orientation 26.  Calcul : 189 ms.
 
 ### 6-path-C — SMCO5-5X4 — modèle A
 
 ![Trajet traversant les lobes — classe C](svg/6-path-C_SMCO5-5X4_A.svg)
 
-Cellules : unfavorable/too_far 804, unfavorable/orientation 48, variable 215, unavailable 74, favorable 84.  Trajet y = 8.5 mm : [-20…-15] unfavorable, [-14.5…-8.5] variable, [-8…-4] favorable, [-3.5…-0.5] variable, [0…0] unfavorable, [0.5…3.5] variable, [4…8] favorable, [8.5…14.5] variable, [15…20] unfavorable. Calcul : 143 ms.
+Cellules : unfavorable/too_far 804, unfavorable/orientation 48, variable 215, unavailable 74, favorable 84.  Trajet y = 8.5 mm : [-20…-15] unfavorable, [-14.5…-8.5] variable, [-8…-4] favorable, [-3.5…-0.5] variable, [0…0] unfavorable, [0.5…3.5] variable, [4…8] favorable, [8.5…14.5] variable, [15…20] unfavorable. Calcul : 220 ms.
 
 ### 1-parallel-C — N45-4X19 — modèle A
 
 ![Axes parallèles — classe C](svg/1-parallel-C_N45-4X19_A.svg)
 
-Cellules : favorable 292, unavailable 130, variable 342, unfavorable/orientation 206, unfavorable/too_far 255.  Calcul : 115 ms.
+Cellules : favorable 292, unavailable 130, variable 342, unfavorable/orientation 206, unfavorable/too_far 255.  Calcul : 173 ms.
 
 ### 2-perpendicular-centred-C — N45-4X19 — modèle A
 
 ![Perpendiculaire centré — classe C](svg/2-perpendicular-centred-C_N45-4X19_A.svg)
 
-Cellules : unfavorable/orientation 135, unfavorable/too_far 185, unavailable 202, variable 471, favorable 232. Repère « centré » : Détection variable. Calcul : 108 ms.
+Cellules : unfavorable/orientation 135, unfavorable/too_far 185, unavailable 202, variable 471, favorable 232. Repère « centré » : Détection variable. Calcul : 144 ms.
 
 ### 3-perpendicular-offset-C — N45-4X19 — modèle A
 
 ![Perpendiculaire décalé — classe C](svg/3-perpendicular-offset-C_N45-4X19_A.svg)
 
-Cellules : unfavorable/orientation 135, unfavorable/too_far 185, unavailable 202, variable 471, favorable 232. Repère « centré » : Détection variable. Repère « décalé +4 mm » : Placement favorable. Calcul : 95 ms.
+Cellules : unfavorable/orientation 135, unfavorable/too_far 185, unavailable 202, variable 471, favorable 232. Repère « centré » : Détection variable. Repère « décalé +4 mm » : Placement favorable. Calcul : 145 ms.
 
 ### 4-oblique-45-C — N45-4X19 — modèle A
 
 ![Orientation intermédiaire 45° — classe C](svg/4-oblique-45-C_N45-4X19_A.svg)
 
-Cellules : variable 415, favorable 234, unavailable 201, unfavorable/orientation 173, unfavorable/too_far 202.  Calcul : 102 ms.
+Cellules : variable 415, favorable 234, unavailable 201, unfavorable/orientation 173, unfavorable/too_far 202.  Calcul : 144 ms.
 
 ### 5-parallel-E — N45-4X19 — modèle A
 
 ![Axes parallèles — classe E](svg/5-parallel-E_N45-4X19_A.svg)
 
-Cellules : variable 293, favorable 206, unavailable 130, unfavorable/orientation 164, unfavorable/too_far 432.  Calcul : 111 ms.
+Cellules : variable 293, favorable 206, unavailable 130, unfavorable/orientation 164, unfavorable/too_far 432.  Calcul : 168 ms.
 
 ### 6-path-C — N45-4X19 — modèle A
 
 ![Trajet traversant les lobes — classe C](svg/6-path-C_N45-4X19_A.svg)
 
-Cellules : unfavorable/orientation 135, unfavorable/too_far 185, unavailable 202, variable 471, favorable 232.  Trajet y = 16.5 mm : [-20…-13] variable, [-12.5…-3.5] favorable, [-3…3] variable, [3.5…12.5] favorable, [13…20] variable. Calcul : 108 ms.
+Cellules : unfavorable/orientation 135, unfavorable/too_far 185, unavailable 202, variable 471, favorable 232.  Trajet y = 16.5 mm : [-20…-13] variable, [-12.5…-3.5] favorable, [-3…3] variable, [3.5…12.5] favorable, [13…20] variable. Calcul : 153 ms.
 
 ### 1-parallel-C — SMCO5-5X4 — modèle B
 
 ![Axes parallèles — classe C](svg/1-parallel-C_SMCO5-5X4_B.svg)
 
-Cellules : unfavorable/too_far 878, variable 173, favorable 27, unavailable 83, unfavorable/orientation 64.  Calcul : 125 ms.
+Cellules : unfavorable/too_far 878, variable 173, favorable 27, unavailable 83, unfavorable/orientation 64.  Calcul : 172 ms.
 
 ### 2-perpendicular-centred-C — SMCO5-5X4 — modèle B
 
 ![Perpendiculaire centré — classe C](svg/2-perpendicular-centred-C_SMCO5-5X4_B.svg)
 
-Cellules : unfavorable/too_far 888, unfavorable/orientation 65, unavailable 74, variable 162, favorable 36. Repère « centré » : Placement défavorable (orientation). Calcul : 141 ms.
+Cellules : unfavorable/too_far 888, unfavorable/orientation 65, unavailable 74, variable 162, favorable 36. Repère « centré » : Placement défavorable (orientation). Calcul : 174 ms.
 
 ### 3-perpendicular-offset-C — SMCO5-5X4 — modèle B
 
 ![Perpendiculaire décalé — classe C](svg/3-perpendicular-offset-C_SMCO5-5X4_B.svg)
 
-Cellules : unfavorable/too_far 888, unfavorable/orientation 65, unavailable 74, variable 162, favorable 36. Repère « centré » : Placement défavorable (orientation). Repère « décalé +4 mm » : Détection variable. Calcul : 131 ms.
+Cellules : unfavorable/too_far 888, unfavorable/orientation 65, unavailable 74, variable 162, favorable 36. Repère « centré » : Placement défavorable (orientation). Repère « décalé +4 mm » : Détection variable. Calcul : 209 ms.
 
 ### 4-oblique-45-C — SMCO5-5X4 — modèle B
 
 ![Orientation intermédiaire 45° — classe C](svg/4-oblique-45-C_SMCO5-5X4_B.svg)
 
-Cellules : unfavorable/too_far 890, variable 163, unavailable 96, favorable 28, unfavorable/orientation 48.  Calcul : 125 ms.
+Cellules : unfavorable/too_far 890, variable 163, unavailable 96, favorable 28, unfavorable/orientation 48.  Calcul : 171 ms.
 
 ### 5-parallel-E — SMCO5-5X4 — modèle B
 
 ![Axes parallèles — classe E](svg/5-parallel-E_SMCO5-5X4_B.svg)
 
-Cellules : unfavorable/too_far 974, variable 117, favorable 9, unavailable 83, unfavorable/orientation 42.  Calcul : 137 ms.
+Cellules : unfavorable/too_far 974, variable 117, favorable 9, unavailable 83, unfavorable/orientation 42.  Calcul : 192 ms.
 
 ### 6-path-C — SMCO5-5X4 — modèle B
 
 ![Trajet traversant les lobes — classe C](svg/6-path-C_SMCO5-5X4_B.svg)
 
-Cellules : unfavorable/too_far 888, unfavorable/orientation 65, unavailable 74, variable 162, favorable 36.  Trajet y = 8.5 mm : [-20…-12.5] unfavorable, [-12…-6.5] variable, [-6…-5] favorable, [-4.5…-2] variable, [-1.5…1.5] unfavorable, [2…4.5] variable, [5…6] favorable, [6.5…12] variable, [12.5…20] unfavorable. Calcul : 137 ms.
+Cellules : unfavorable/too_far 888, unfavorable/orientation 65, unavailable 74, variable 162, favorable 36.  Trajet y = 8.5 mm : [-20…-12.5] unfavorable, [-12…-6.5] variable, [-6…-5] favorable, [-4.5…-2] variable, [-1.5…1.5] unfavorable, [2…4.5] variable, [5…6] favorable, [6.5…12] variable, [12.5…20] unfavorable. Calcul : 188 ms.
 
 ### 1-parallel-C — N45-4X19 — modèle B
 
 ![Axes parallèles — classe C](svg/1-parallel-C_N45-4X19_B.svg)
 
-Cellules : variable 332, favorable 206, unavailable 130, unfavorable/orientation 244, unfavorable/too_far 313.  Calcul : 114 ms.
+Cellules : variable 332, favorable 206, unavailable 130, unfavorable/orientation 244, unfavorable/too_far 313.  Calcul : 156 ms.
 
 ### 2-perpendicular-centred-C — N45-4X19 — modèle B
 
 ![Perpendiculaire centré — classe C](svg/2-perpendicular-centred-C_N45-4X19_B.svg)
 
-Cellules : unfavorable/orientation 182, unfavorable/too_far 281, unavailable 202, variable 420, favorable 140. Repère « centré » : Placement défavorable (orientation). Calcul : 120 ms.
+Cellules : unfavorable/orientation 182, unfavorable/too_far 281, unavailable 202, variable 420, favorable 140. Repère « centré » : Placement défavorable (orientation). Calcul : 157 ms.
 
 ### 3-perpendicular-offset-C — N45-4X19 — modèle B
 
 ![Perpendiculaire décalé — classe C](svg/3-perpendicular-offset-C_N45-4X19_B.svg)
 
-Cellules : unfavorable/orientation 182, unfavorable/too_far 281, unavailable 202, variable 420, favorable 140. Repère « centré » : Placement défavorable (orientation). Repère « décalé +5 mm » : Placement favorable. Calcul : 124 ms.
+Cellules : unfavorable/orientation 182, unfavorable/too_far 281, unavailable 202, variable 420, favorable 140. Repère « centré » : Placement défavorable (orientation). Repère « décalé +5 mm » : Placement favorable. Calcul : 128 ms.
 
 ### 4-oblique-45-C — N45-4X19 — modèle B
 
 ![Orientation intermédiaire 45° — classe C](svg/4-oblique-45-C_N45-4X19_B.svg)
 
-Cellules : variable 393, favorable 151, unavailable 201, unfavorable/orientation 220, unfavorable/too_far 260.  Calcul : 105 ms.
+Cellules : variable 393, favorable 151, unavailable 201, unfavorable/orientation 220, unfavorable/too_far 260.  Calcul : 123 ms.
 
 ### 5-parallel-E — N45-4X19 — modèle B
 
 ![Axes parallèles — classe E](svg/5-parallel-E_N45-4X19_B.svg)
 
-Cellules : variable 279, favorable 134, unavailable 130, unfavorable/orientation 174, unfavorable/too_far 508.  Calcul : 115 ms.
+Cellules : variable 279, favorable 134, unavailable 130, unfavorable/orientation 174, unfavorable/too_far 508.  Calcul : 168 ms.
 
 ### 6-path-C — N45-4X19 — modèle B
 
 ![Trajet traversant les lobes — classe C](svg/6-path-C_N45-4X19_B.svg)
 
-Cellules : unfavorable/orientation 182, unfavorable/too_far 281, unavailable 202, variable 420, favorable 140.  Trajet y = 16.5 mm : [-20…-19.5] unfavorable, [-19…-11] variable, [-10.5…-5] favorable, [-4.5…-2] variable, [-1.5…1.5] unfavorable, [2…4.5] variable, [5…10.5] favorable, [11…19] variable, [19.5…20] unfavorable. Calcul : 108 ms.
+Cellules : unfavorable/orientation 182, unfavorable/too_far 281, unavailable 202, variable 420, favorable 140.  Trajet y = 16.5 mm : [-20…-19.5] unfavorable, [-19…-11] variable, [-10.5…-5] favorable, [-4.5…-2] variable, [-1.5…1.5] unfavorable, [2…4.5] variable, [5…10.5] favorable, [11…19] variable, [19.5…20] unfavorable. Calcul : 162 ms.
 
 ## Temps de calcul (machine de génération)
 
 | Étape | Durée |
 |---|---|
-| Seuils partagés A/C1 | 327 ms |
-| Tableau pilote A/C1 | 584 ms |
-| Seuils partagés B/C1 | 282 ms |
-| Tableau pilote B/C1 | 645 ms |
-| Seuils partagés A/C2 | 320 ms |
-| Tableau pilote A/C2 | 590 ms |
-| Seuils partagés B/C2 | 324 ms |
-| Tableau pilote B/C2 | 547 ms |
-| Coupe 1-parallel-C SMCO5-5X4 A/C1 | 184 ms |
-| Coupe 2-perpendicular-centred-C SMCO5-5X4 A/C1 | 165 ms |
-| Coupe 3-perpendicular-offset-C SMCO5-5X4 A/C1 | 222 ms |
-| Coupe 4-oblique-45-C SMCO5-5X4 A/C1 | 222 ms |
-| Coupe 5-parallel-E SMCO5-5X4 A/C1 | 228 ms |
-| Coupe 6-path-C SMCO5-5X4 A/C1 | 177 ms |
-| Coupe 1-parallel-C N45-4X19 A/C1 | 147 ms |
-| Coupe 2-perpendicular-centred-C N45-4X19 A/C1 | 136 ms |
-| Coupe 3-perpendicular-offset-C N45-4X19 A/C1 | 134 ms |
-| Coupe 4-oblique-45-C N45-4X19 A/C1 | 129 ms |
-| Coupe 5-parallel-E N45-4X19 A/C1 | 144 ms |
-| Coupe 6-path-C N45-4X19 A/C1 | 133 ms |
-| Coupe 1-parallel-C SMCO5-5X4 B/C1 | 162 ms |
-| Coupe 2-perpendicular-centred-C SMCO5-5X4 B/C1 | 172 ms |
-| Coupe 3-perpendicular-offset-C SMCO5-5X4 B/C1 | 168 ms |
-| Coupe 4-oblique-45-C SMCO5-5X4 B/C1 | 157 ms |
-| Coupe 5-parallel-E SMCO5-5X4 B/C1 | 170 ms |
-| Coupe 6-path-C SMCO5-5X4 B/C1 | 169 ms |
-| Coupe 1-parallel-C N45-4X19 B/C1 | 143 ms |
-| Coupe 2-perpendicular-centred-C N45-4X19 B/C1 | 150 ms |
-| Coupe 3-perpendicular-offset-C N45-4X19 B/C1 | 160 ms |
-| Coupe 4-oblique-45-C N45-4X19 B/C1 | 143 ms |
-| Coupe 5-parallel-E N45-4X19 B/C1 | 149 ms |
-| Coupe 6-path-C N45-4X19 B/C1 | 137 ms |
+| Seuils partagés A/C1 | 341 ms |
+| Tableau pilote A/C1 | 723 ms |
+| Seuils partagés B/C1 | 326 ms |
+| Tableau pilote B/C1 | 746 ms |
+| Seuils partagés A/C2 | 398 ms |
+| Tableau pilote A/C2 | 723 ms |
+| Seuils partagés B/C2 | 350 ms |
+| Tableau pilote B/C2 | 720 ms |
+| Coupe 1-parallel-C SMCO5-5X4 A/C1 | 249 ms |
+| Coupe 2-perpendicular-centred-C SMCO5-5X4 A/C1 | 250 ms |
+| Coupe 3-perpendicular-offset-C SMCO5-5X4 A/C1 | 262 ms |
+| Coupe 4-oblique-45-C SMCO5-5X4 A/C1 | 239 ms |
+| Coupe 5-parallel-E SMCO5-5X4 A/C1 | 242 ms |
+| Coupe 6-path-C SMCO5-5X4 A/C1 | 289 ms |
+| Coupe 1-parallel-C N45-4X19 A/C1 | 222 ms |
+| Coupe 2-perpendicular-centred-C N45-4X19 A/C1 | 186 ms |
+| Coupe 3-perpendicular-offset-C N45-4X19 A/C1 | 188 ms |
+| Coupe 4-oblique-45-C N45-4X19 A/C1 | 194 ms |
+| Coupe 5-parallel-E N45-4X19 A/C1 | 206 ms |
+| Coupe 6-path-C N45-4X19 A/C1 | 200 ms |
+| Coupe 1-parallel-C SMCO5-5X4 B/C1 | 207 ms |
+| Coupe 2-perpendicular-centred-C SMCO5-5X4 B/C1 | 221 ms |
+| Coupe 3-perpendicular-offset-C SMCO5-5X4 B/C1 | 259 ms |
+| Coupe 4-oblique-45-C SMCO5-5X4 B/C1 | 223 ms |
+| Coupe 5-parallel-E SMCO5-5X4 B/C1 | 231 ms |
+| Coupe 6-path-C SMCO5-5X4 B/C1 | 233 ms |
+| Coupe 1-parallel-C N45-4X19 B/C1 | 195 ms |
+| Coupe 2-perpendicular-centred-C N45-4X19 B/C1 | 197 ms |
+| Coupe 3-perpendicular-offset-C N45-4X19 B/C1 | 167 ms |
+| Coupe 4-oblique-45-C N45-4X19 B/C1 | 160 ms |
+| Coupe 5-parallel-E N45-4X19 B/C1 | 213 ms |
+| Coupe 6-path-C N45-4X19 B/C1 | 207 ms |
 
 ## Limites
 
