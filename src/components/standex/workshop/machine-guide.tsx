@@ -1,7 +1,7 @@
 /** Parcours guidé du modèle importé : Modèle → Pièces mobiles → Mouvement →
  *  Installation → Essai. Une seule étape développée à la fois ; la scène reste
  *  visible à côté. Les coordonnées libres restent dans les réglages avancés. */
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { displayMachineNodes } from "@/lib/standex/machine-view";
 import { msg, t } from "@/lib/i18n/core";
@@ -29,6 +29,16 @@ import {
   openingReading,
   throughAllowed,
 } from "@/lib/standex/machine-mounting";
+import {
+  alignMagnetToSensor,
+  directionLabel,
+  faceTangents,
+  holeCentreAttach,
+  planeAt,
+  projectOntoFace,
+  shiftAlongFace,
+} from "@/lib/standex/machine-alignment";
+import type { LockedPlane } from "@/lib/standex/machine-alignment";
 import type { Attachment, MountKind } from "@/lib/standex/machine-mounting";
 import type { CycleSample, Vec3, WorkshopConfig } from "@/lib/standex/magnetic-workshop";
 import { magnetSize } from "@/lib/standex/magnetic-workshop";
@@ -43,8 +53,11 @@ export interface GuideState {
   step: GuideStep;
   isolate: boolean;
   pick: null | {
-    purpose: "axis-points" | "axis-face" | "hole-points";
+    purpose: "axis-points" | "axis-face" | "hole-points" | "hole-centre";
     points: Vec3[];
+    /** « Centrer dans un trou » : face d'entrée verrouillée par le premier clic
+     *  (pose statique). Sélection temporaire, jamais enregistrée. */
+    plane?: LockedPlane;
     /** Support du PREMIER point d'un axe de trou : le second doit être solidaire. */
     support?: { path: string; moving: boolean; group?: string | undefined };
   };
@@ -193,7 +206,7 @@ const signedMm = (v: number) => (v >= 0 ? "+" : "") + v.toFixed(1);
 export function guideOverlay(
   state: GuideState,
   m: MachineAssembly,
-  handlers: Pick<GuideOverlay, "onPickPart" | "onPickPoint" | "onPlace">,
+  handlers: Pick<GuideOverlay, "onPickPart" | "onPickPoint" | "onPlace" | "onHoleRay">,
   extent: number,
   u = 0,
 ): GuideOverlay {
@@ -216,6 +229,10 @@ export function guideOverlay(
     attachMarks: [m.sensorAttach, m.magnetAttach]
       .filter((a): a is Attachment => !!a)
       .map((a) => pointAt(m, a.partPath, a.point, u)),
+    holePlane:
+      state.pick?.purpose === "hole-centre" && state.pick.plane
+        ? { ...planeAt(m, state.pick.plane, u), radius: Math.max(8, extent * 0.12) }
+        : null,
     ...handlers,
   };
 }
@@ -268,6 +285,18 @@ export default function MachineGuide({
   const guideRef = useRef<HTMLElement>(null);
   const m = config.machine;
   const [detailedTree, setDetailedTree] = useState(false);
+  const picking = !!state.pick;
+  // Échap annule toute sélection temporaire, sans toucher au montage.
+  useEffect(() => {
+    if (!picking) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== "Escape") return;
+      setState((s) => ({ ...s, pick: null, notice: null }));
+      setTool("navigate");
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [picking, setState, setTool]);
   if (!m) return null;
   const selection = movingSelection(m);
   const sensor = sensorById(config.sensorId);
@@ -280,8 +309,12 @@ export default function MachineGuide({
     if (scroller) scroller.scrollTop = 0;
   };
   const startPick = (purpose: NonNullable<GuideState["pick"]>["purpose"]) => {
-    setState((s) => ({ ...s, pick: { purpose, points: [] } }));
+    setState((s) => ({ ...s, pick: { purpose, points: [] }, notice: null }));
     setTool("pick");
+  };
+  const cancelPick = () => {
+    setState((s) => ({ ...s, pick: null, notice: null }));
+    setTool("navigate");
   };
   const target = state.target;
   const attach = target === "sensor" ? m.sensorAttach : m.magnetAttach;
@@ -810,14 +843,41 @@ export default function MachineGuide({
           </Button>
           {kind === "through" && (
             <Button
+              className="mw-button"
+              aria-pressed={state.pick?.purpose === "hole-centre"}
+              data-testid="guide-hole-centre"
+              onClick={() => (state.pick?.purpose === "hole-centre" ? cancelPick() : startPick("hole-centre"))}
+            >
+              {t(state.pick?.purpose === "hole-centre" ? "Annuler le centrage" : "Centrer dans un trou")}
+            </Button>
+          )}
+        </div>
+        {state.pick?.purpose === "hole-centre" && (
+          <div className="notice-info mw-pick-steps" data-testid="guide-hole-centre-steps" role="status">
+            <p className="t-body">{t("Cliquez la paroi près du trou, puis le centre du trou.")}</p>
+            <p className="t-body t-metric">
+              {msg("Clic {0} sur 2", [String(state.pick.plane ? 2 : 1)])} ·{" "}
+              {t(state.pick.plane ? "centre du trou dans le plan de la paroi" : "matière de la face d'entrée")}
+            </p>
+            <p className="t-caption">
+              {t("Le centre est celui que vous désignez sur le plan : ni le trou ni son diamètre ne sont détectés. Échap annule.")}
+            </p>
+            <Button className="mw-button mw-secondary" onClick={cancelPick}>{t("Annuler")}</Button>
+          </div>
+        )}
+        {kind === "through" && (
+          <details className="mw-advanced-axis">
+            <summary className="t-body">{t("Options avancées de l'axe")}</summary>
+            <Button
               className="mw-button mw-secondary"
               aria-pressed={state.pick?.purpose === "hole-points"}
               onClick={() => startPick("hole-points")}
             >
               {t("Axe d'un trou existant (deux points)")}
             </Button>
-          )}
-        </div>
+            <p className="t-caption">{t("Deux points sur l'axe, choisis vous-même : utile pour un axe incliné, pas pour viser le centre d'un trou.")}</p>
+          </details>
+        )}
         {state.pick?.purpose === "hole-points" && (
           <p className="notice-info">
             {msg(
@@ -865,7 +925,9 @@ export default function MachineGuide({
             {attach.kind === "through" && (
               <p className="notice-info">
                 {t(
-                  attach.axisSource !== "face"
+                  attach.axisSource === "plane-centre"
+                    ? "Centre désigné sur le plan de la paroi : l'axe suit la normale de cette face. Le trou, son diamètre et son centre ne sont pas détectés."
+                    : attach.axisSource !== "face"
                     ? "Axe défini par vos points ou valeurs : le centre du trou n'est pas détecté automatiquement. Deux clics sur la paroi du trou ne donnent pas son centre : saisissez le point d'entrée et la direction précis dans « Valeurs précises de l'axe »."
                     : "Implantation d'un perçage à prévoir : le modèle n'est pas percé, l'axe suit la normale de la face cliquée.",
                 )}
