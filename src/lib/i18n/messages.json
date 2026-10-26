@@ -32578,5 +32578,950 @@
     "Выравнивание отклонено: полученная точка выходит за пределы модели. Настройки не изменены.",
     "Allineamento rifiutato: il punto ottenuto esce dal modello. Nessuna impostazione è stata modificata.",
     "位置合わせを拒否しました：得られた点がモデルの外にあります。設定は変更されていません。"
+  ],
+  "Ouverture du laboratoire…": [
+    "Opening the lab…",
+    "正在打开实验室…",
+    "Labor wird geöffnet…",
+    "Abriendo el laboratorio…",
+    "Открытие лаборатории…",
+    "Apertura del laboratorio…",
+    "ラボを開いています…"
+  ],
+  "Laboratoire de détection": [
+    "Detection lab",
+    "检测实验室",
+    "Detektionslabor",
+    "Laboratorio de detección",
+    "Лаборатория обнаружения",
+    "Laboratorio di rilevamento",
+    "検出ラボ"
+  ],
+  "Interne staff · tableau de cohérence et six coupes": [
+    "Staff only · consistency table and six cuts",
+    "仅限员工 · 一致性表与六个截面",
+    "Nur intern · Konsistenztabelle und sechs Schnitte",
+    "Solo personal · tabla de coherencia y seis cortes",
+    "Только для сотрудников · таблица согласованности и шесть срезов",
+    "Solo staff · tabella di coerenza e sei sezioni",
+    "スタッフ専用 · 整合性表と6つの断面"
+  ],
+  "Parallèle aux lames": [
+    "Parallel to the blades",
+    "平行于簧片",
+    "Parallel zu den Zungen",
+    "Paralelo a las láminas",
+    "Параллельно контактам",
+    "Parallelo alle lamine",
+    "リードに平行"
+  ],
+  "Perpendiculaire aux lames": [
+    "Perpendicular to the blades",
+    "垂直于簧片",
+    "Senkrecht zu den Zungen",
+    "Perpendicular a las láminas",
+    "Перпендикулярно контактам",
+    "Perpendicolare alle lamine",
+    "リードに垂直"
+  ],
+  "Intermédiaire 45°": [
+    "Intermediate 45°",
+    "中间 45°",
+    "Zwischenstellung 45°",
+    "Intermedio 45°",
+    "Промежуточное 45°",
+    "Intermedio 45°",
+    "中間 45°"
+  ],
+  "Axes parallèles — classe C": [
+    "Parallel axes — class C",
+    "平行轴 — C 类",
+    "Parallele Achsen — Klasse C",
+    "Ejes paralelos — clase C",
+    "Параллельные оси — класс C",
+    "Assi paralleli — classe C",
+    "平行軸 — クラス C"
+  ],
+  "Perpendiculaire centré — classe C": [
+    "Perpendicular, centred — class C",
+    "垂直居中 — C 类",
+    "Senkrecht, mittig — Klasse C",
+    "Perpendicular centrado — clase C",
+    "Перпендикулярно, по центру — класс C",
+    "Perpendicolare centrato — classe C",
+    "垂直・中央 — クラス C"
+  ],
+  "Perpendiculaire décalé — classe C": [
+    "Perpendicular, offset — class C",
+    "垂直偏移 — C 类",
+    "Senkrecht, versetzt — Klasse C",
+    "Perpendicular desplazado — clase C",
+    "Перпендикулярно, со смещением — класс C",
+    "Perpendicolare spostato — classe C",
+    "垂直・オフセット — クラス C"
+  ],
+  "Orientation intermédiaire 45° — classe C": [
+    "Intermediate 45° orientation — class C",
+    "中间 45° 方向 — C 类",
+    "Zwischenausrichtung 45° — Klasse C",
+    "Orientación intermedia 45° — clase C",
+    "Промежуточная ориентация 45° — класс C",
+    "Orientamento intermedio 45° — classe C",
+    "中間 45° 方向 — クラス C"
+  ],
+  "Axes parallèles — classe E": [
+    "Parallel axes — class E",
+    "平行轴 — E 类",
+    "Parallele Achsen — Klasse E",
+    "Ejes paralelos — clase E",
+    "Параллельные оси — класс E",
+    "Assi paralleli — classe E",
+    "平行軸 — クラス E"
+  ],
+  "Trajet traversant les lobes — classe C": [
+    "Path across the lobes — class C",
+    "穿过波瓣的路径 — C 类",
+    "Bahn durch die Keulen — Klasse C",
+    "Trayecto a través de los lóbulos — clase C",
+    "Траектория через лепестки — класс C",
+    "Percorso attraverso i lobi — classe C",
+    "ローブを横切る経路 — クラス C"
+  ],
+  "Contrôle": [
+    "Check",
+    "对照",
+    "Kontrolle",
+    "Control",
+    "Контроль",
+    "Controllo",
+    "検証"
+  ],
+  "Le calcul a échoué. Aucun résultat n'est affiché.": [
+    "The calculation failed. No result is shown.",
+    "计算失败，不显示任何结果。",
+    "Die Berechnung ist fehlgeschlagen. Es wird kein Ergebnis angezeigt.",
+    "El cálculo ha fallado. No se muestra ningún resultado.",
+    "Расчёт не удался. Результаты не показаны.",
+    "Il calcolo non è riuscito. Nessun risultato visualizzato.",
+    "計算に失敗しました。結果は表示されません。"
+  ],
+  "Retour au banc": [
+    "Back to the bench",
+    "返回测试台",
+    "Zurück zum Prüfstand",
+    "Volver al banco",
+    "Назад к стенду",
+    "Torna al banco",
+    "ベンチに戻る"
+  ],
+  "Préversion interne staff": [
+    "Internal staff preview",
+    "内部员工预览版",
+    "Interne Vorabversion für Mitarbeitende",
+    "Versión preliminar interna para el personal",
+    "Внутренняя предварительная версия для сотрудников",
+    "Anteprima interna per lo staff",
+    "スタッフ向け社内プレビュー"
+  ],
+  "Placements favorables et ordres de grandeur pédagogiques. Jamais une garantie de commutation au millimètre.": [
+    "Favourable placements and teaching orders of magnitude. Never a guarantee of switching to the millimetre.",
+    "有利布置与教学用数量级。绝不保证毫米级的切换。",
+    "Günstige Platzierungen und didaktische Größenordnungen. Niemals eine millimetergenaue Schaltgarantie.",
+    "Ubicaciones favorables y órdenes de magnitud pedagógicos. Nunca una garantía de conmutación al milímetro.",
+    "Благоприятные размещения и учебные порядки величин. Никогда не гарантия срабатывания с точностью до миллиметра.",
+    "Posizionamenti favorevoli e ordini di grandezza didattici. Mai una garanzia di commutazione al millimetro.",
+    "有利な配置と教育用の目安。ミリ単位での切替保証ではありません。"
+  ],
+  "Modèle de réponse": [
+    "Response model",
+    "响应模型",
+    "Antwortmodell",
+    "Modelo de respuesta",
+    "Модель отклика",
+    "Modello di risposta",
+    "応答モデル"
+  ],
+  "A — intégrale signée": [
+    "A — signed integral",
+    "A — 有符号积分",
+    "A — vorzeichenbehaftetes Integral",
+    "A — integral con signo",
+    "A — интеграл со знаком",
+    "A — integrale con segno",
+    "A — 符号付き積分"
+  ],
+  "B — deux lames, minimum": [
+    "B — two blades, minimum",
+    "B — 两片簧片，取最小值",
+    "B — zwei Zungen, Minimum",
+    "B — dos láminas, mínimo",
+    "B — два контакта, минимум",
+    "B — due lamine, minimo",
+    "B — 2 枚リード、最小値"
+  ],
+  "Convention de distance": [
+    "Distance convention",
+    "距离约定",
+    "Abstandskonvention",
+    "Convención de distancia",
+    "Соглашение о расстоянии",
+    "Convenzione di distanza",
+    "距離の定義"
+  ],
+  "C1 — jeu face d'aimant": [
+    "C1 — gap to magnet face",
+    "C1 — 到磁铁表面的间隙",
+    "C1 — Spalt zur Magnetfläche",
+    "C1 — holgura a la cara del imán",
+    "C1 — зазор до грани магнита",
+    "C1 — distanza dalla faccia del magnete",
+    "C1 — 磁石面までの隙間"
+  ],
+  "C2 — centre de l'aimant (variante)": [
+    "C2 — magnet centre (variant)",
+    "C2 — 磁铁中心（变体）",
+    "C2 — Magnetmitte (Variante)",
+    "C2 — centro del imán (variante)",
+    "C2 — центр магнита (вариант)",
+    "C2 — centro del magnete (variante)",
+    "C2 — 磁石中心（変形）"
+  ],
+  "Profil {0} v{1}": [
+    "Profile {0} v{1}",
+    "配置 {0} v{1}",
+    "Profil {0} v{1}",
+    "Perfil {0} v{1}",
+    "Профиль {0} v{1}",
+    "Profilo {0} v{1}",
+    "プロファイル {0} v{1}"
+  ],
+  "Calcul des seuils partagés…": [
+    "Computing shared thresholds…",
+    "正在计算共享阈值…",
+    "Gemeinsame Schwellen werden berechnet…",
+    "Calculando umbrales compartidos…",
+    "Расчёт общих порогов…",
+    "Calcolo delle soglie condivise…",
+    "共有しきい値を計算中…"
+  ],
+  "Tableau de cohérence": [
+    "Consistency table",
+    "一致性表",
+    "Konsistenztabelle",
+    "Tabla de coherencia",
+    "Таблица согласованности",
+    "Tabella di coerenza",
+    "整合性表"
+  ],
+  "Six coupes": [
+    "Six cuts",
+    "六个截面",
+    "Sechs Schnitte",
+    "Seis cortes",
+    "Шесть срезов",
+    "Sei sezioni",
+    "6 つの断面"
+  ],
+  "Essai de placement": [
+    "Placement trial",
+    "布置试验",
+    "Platzierungstest",
+    "Prueba de ubicación",
+    "Проба размещения",
+    "Prova di posizionamento",
+    "配置の試行"
+  ],
+  "Hypothèses": [
+    "Assumptions",
+    "假设",
+    "Annahmen",
+    "Hipótesis",
+    "Допущения",
+    "Ipotesi",
+    "仮定"
+  ],
+  "Seuils partagés entre aimants": [
+    "Thresholds shared between magnets",
+    "磁铁间共享的阈值",
+    "Zwischen Magneten geteilte Schwellen",
+    "Umbrales compartidos entre imanes",
+    "Общие для магнитов пороги",
+    "Soglie condivise tra magneti",
+    "磁石間で共有するしきい値"
+  ],
+  "Bilan": [
+    "Summary",
+    "汇总",
+    "Bilanz",
+    "Balance",
+    "Итоги",
+    "Bilancio",
+    "まとめ"
+  ],
+  "{0} lignes : {1} apprentissage, {2} contrôles, {3} manquantes, {4} indisponibles, {5} en quarantaine.": [
+    "{0} rows: {1} training, {2} checks, {3} missing, {4} unavailable, {5} quarantined.",
+    "{0} 行：{1} 训练，{2} 对照，{3} 缺失，{4} 不可用，{5} 隔离。",
+    "{0} Zeilen: {1} Anpassung, {2} Kontrollen, {3} fehlend, {4} nicht verfügbar, {5} in Quarantäne.",
+    "{0} filas: {1} de aprendizaje, {2} controles, {3} faltantes, {4} no disponibles, {5} en cuarentena.",
+    "{0} строк: {1} обучение, {2} контроль, {3} отсутствуют, {4} недоступны, {5} на карантине.",
+    "{0} righe: {1} apprendimento, {2} controlli, {3} mancanti, {4} non disponibili, {5} in quarantena.",
+    "{0} 行：学習 {1}、検証 {2}、欠落 {3}、算出不可 {4}、隔離 {5}。"
+  ],
+  "Écart moyen des contrôles {0} mm, médiane {1} %, {2} contrôles au-delà de 20 %.": [
+    "Mean check deviation {0} mm, median {1} %, {2} checks beyond 20 %.",
+    "对照平均偏差 {0} mm，中位数 {1} %，{2} 个对照超过 20 %。",
+    "Mittlere Kontrollabweichung {0} mm, Median {1} %, {2} Kontrollen über 20 %.",
+    "Desviación media de los controles {0} mm, mediana {1} %, {2} controles por encima del 20 %.",
+    "Среднее отклонение контроля {0} мм, медиана {1} %, {2} контролей свыше 20 %.",
+    "Scarto medio dei controlli {0} mm, mediana {1} %, {2} controlli oltre il 20 %.",
+    "検証の平均偏差 {0} mm、中央値 {1} %、20 % 超の検証 {2} 件。"
+  ],
+  "Tableau publié, estimé, écart et anomalie": [
+    "Published, estimated, deviation and anomaly table",
+    "公布值、估计值、偏差与异常表",
+    "Tabelle veröffentlicht, geschätzt, Abweichung und Anomalie",
+    "Tabla publicado, estimado, desviación y anomalía",
+    "Таблица: опубликовано, оценка, отклонение, аномалия",
+    "Tabella pubblicato, stimato, scarto e anomalia",
+    "公表値・推定値・偏差・異常の表"
+  ],
+  "Publié": [
+    "Published",
+    "公布值",
+    "Veröffentlicht",
+    "Publicado",
+    "Опубликовано",
+    "Pubblicato",
+    "公表値"
+  ],
+  "Estimé": [
+    "Estimated",
+    "估计值",
+    "Geschätzt",
+    "Estimado",
+    "Оценка",
+    "Stimato",
+    "推定値"
+  ],
+  "Écart mm": [
+    "Deviation mm",
+    "偏差 mm",
+    "Abweichung mm",
+    "Desviación mm",
+    "Отклонение, мм",
+    "Scarto mm",
+    "偏差 mm"
+  ],
+  "Écart %": [
+    "Deviation %",
+    "偏差 %",
+    "Abweichung %",
+    "Desviación %",
+    "Отклонение, %",
+    "Scarto %",
+    "偏差 %"
+  ],
+  "Coupe": [
+    "Cut",
+    "截面",
+    "Schnitt",
+    "Corte",
+    "Срез",
+    "Sezione",
+    "断面"
+  ],
+  "Calcul de la coupe…": [
+    "Computing the cut…",
+    "正在计算截面…",
+    "Schnitt wird berechnet…",
+    "Calculando el corte…",
+    "Расчёт среза…",
+    "Calcolo della sezione…",
+    "断面を計算中…"
+  ],
+  "Calculée en {0} ms sur {1} scénarios déterministes.": [
+    "Computed in {0} ms over {1} deterministic scenarios.",
+    "在 {1} 个确定性情景上计算，用时 {0} ms。",
+    "In {0} ms über {1} deterministische Szenarien berechnet.",
+    "Calculado en {0} ms sobre {1} escenarios deterministas.",
+    "Рассчитано за {0} мс по {1} детерминированным сценариям.",
+    "Calcolata in {0} ms su {1} scenari deterministici.",
+    "{1} 個の決定論的シナリオで {0} ms で計算。"
+  ],
+  "Hypothèses et provenance": [
+    "Assumptions and provenance",
+    "假设与来源",
+    "Annahmen und Herkunft",
+    "Hipótesis y procedencia",
+    "Допущения и происхождение данных",
+    "Ipotesi e provenienza",
+    "仮定と出典"
+  ],
+  "Hypothèses de modèle, non qualifiées. Le centre et les seuils ne caractérisent aucun montage réel.": [
+    "Model assumptions, not qualified. The centre and thresholds do not characterise any real assembly.",
+    "模型假设，未经验证。中心与阈值不代表任何实际安装。",
+    "Modellannahmen, nicht qualifiziert. Mitte und Schwellen beschreiben keine reale Montage.",
+    "Hipótesis de modelo, no cualificadas. El centro y los umbrales no caracterizan ningún montaje real.",
+    "Допущения модели, не квалифицированы. Центр и пороги не характеризуют реальный монтаж.",
+    "Ipotesi di modello, non qualificate. Centro e soglie non caratterizzano alcun montaggio reale.",
+    "未検証のモデル仮定です。中心としきい値は実際の取付けを表しません。"
+  ],
+  "Scénarios déterministes": [
+    "Deterministic scenarios",
+    "确定性情景",
+    "Deterministische Szenarien",
+    "Escenarios deterministas",
+    "Детерминированные сценарии",
+    "Scenari deterministici",
+    "決定論的シナリオ"
+  ],
+  "Aimants pilotes": [
+    "Pilot magnets",
+    "试点磁铁",
+    "Pilotmagnete",
+    "Imanes piloto",
+    "Пилотные магниты",
+    "Magneti pilota",
+    "パイロット磁石"
+  ],
+  "Seuil SmCo": [
+    "SmCo threshold",
+    "SmCo 阈值",
+    "Schwelle SmCo",
+    "Umbral SmCo",
+    "Порог SmCo",
+    "Soglia SmCo",
+    "SmCo しきい値"
+  ],
+  "Seuil N45": [
+    "N45 threshold",
+    "N45 阈值",
+    "Schwelle N45",
+    "Umbral N45",
+    "Порог N45",
+    "Soglia N45",
+    "N45 しきい値"
+  ],
+  "Désaccord": [
+    "Disagreement",
+    "不一致",
+    "Abweichung",
+    "Desacuerdo",
+    "Расхождение",
+    "Disaccordo",
+    "不一致"
+  ],
+  "Seuil partagé": [
+    "Shared threshold",
+    "共享阈值",
+    "Gemeinsame Schwelle",
+    "Umbral compartido",
+    "Общий порог",
+    "Soglia condivisa",
+    "共有しきい値"
+  ],
+  "Orientation": [
+    "Orientation",
+    "方向",
+    "Ausrichtung",
+    "Orientación",
+    "Ориентация",
+    "Orientamento",
+    "向き"
+  ],
+  "x le long des lames : {0} mm": [
+    "x along the blades: {0} mm",
+    "沿簧片的 x：{0} mm",
+    "x entlang der Zungen: {0} mm",
+    "x a lo largo de las láminas: {0} mm",
+    "x вдоль контактов: {0} мм",
+    "x lungo le lamine: {0} mm",
+    "リード方向の x：{0} mm"
+  ],
+  "y centre de l'aimant : {0} mm": [
+    "y magnet centre: {0} mm",
+    "磁铁中心 y：{0} mm",
+    "y Magnetmitte: {0} mm",
+    "y centro del imán: {0} mm",
+    "y центра магнита: {0} мм",
+    "y centro del magnete: {0} mm",
+    "磁石中心の y：{0} mm"
+  ],
+  "L'aimant est proche, mais une rotation à la même place augmenterait le couplage.": [
+    "The magnet is close, but a rotation at the same place would increase coupling.",
+    "磁铁很近，但在原位旋转会增强耦合。",
+    "Der Magnet ist nah, aber eine Drehung an derselben Stelle würde die Kopplung erhöhen.",
+    "El imán está cerca, pero una rotación en el mismo lugar aumentaría el acoplamiento.",
+    "Магнит близко, но поворот на том же месте усилил бы связь.",
+    "Il magnete è vicino, ma una rotazione nello stesso punto aumenterebbe l'accoppiamento.",
+    "磁石は近いですが、同じ位置で回転すると結合が強まります。"
+  ],
+  "Même la meilleure orientation à cette place reste sous le seuil.": [
+    "Even the best orientation at this place stays below the threshold.",
+    "即使在此位置采用最佳方向，仍低于阈值。",
+    "Selbst die beste Ausrichtung an dieser Stelle bleibt unter der Schwelle.",
+    "Incluso la mejor orientación en este lugar queda por debajo del umbral.",
+    "Даже лучшая ориентация в этом месте остаётся ниже порога.",
+    "Anche il miglior orientamento in questo punto resta sotto la soglia.",
+    "この位置では最良の向きでもしきい値未満です。"
+  ],
+  "Collision, hors domaine ou seuil absent : aucune estimation.": [
+    "Collision, out of domain or missing threshold: no estimate.",
+    "碰撞、超出范围或缺少阈值：无估计。",
+    "Kollision, außerhalb des Bereichs oder fehlende Schwelle: keine Schätzung.",
+    "Colisión, fuera de dominio o umbral ausente: sin estimación.",
+    "Столкновение, вне области или нет порога: оценки нет.",
+    "Collisione, fuori dominio o soglia assente: nessuna stima.",
+    "衝突・範囲外・しきい値なし：推定なし。"
+  ],
+  "Proposer un déplacement ou une rotation": [
+    "Suggest a shift or a rotation",
+    "建议平移或旋转",
+    "Verschiebung oder Drehung vorschlagen",
+    "Proponer un desplazamiento o una rotación",
+    "Предложить сдвиг или поворот",
+    "Proponi uno spostamento o una rotazione",
+    "移動または回転を提案"
+  ],
+  "Aucun déplacement latéral ni rotation de 90° n'améliore la catégorie.": [
+    "No lateral shift or 90° rotation improves the category.",
+    "任何横向平移或 90° 旋转都不能改善类别。",
+    "Keine seitliche Verschiebung und keine 90°-Drehung verbessert die Kategorie.",
+    "Ningún desplazamiento lateral ni rotación de 90° mejora la categoría.",
+    "Ни боковой сдвиг, ни поворот на 90° не улучшают категорию.",
+    "Nessuno spostamento laterale né rotazione di 90° migliora la categoria.",
+    "横方向の移動や 90° 回転ではカテゴリーは改善しません。"
+  ],
+  "Décaler de {0} mm le long des lames": [
+    "Shift by {0} mm along the blades",
+    "沿簧片平移 {0} mm",
+    "Um {0} mm entlang der Zungen verschieben",
+    "Desplazar {0} mm a lo largo de las láminas",
+    "Сдвинуть на {0} мм вдоль контактов",
+    "Spostare di {0} mm lungo le lamine",
+    "リード方向に {0} mm 移動"
+  ],
+  "Tourner de 90° autour de {0}": [
+    "Rotate 90° about {0}",
+    "绕 {0} 旋转 90°",
+    "Um 90° um {0} drehen",
+    "Girar 90° alrededor de {0}",
+    "Повернуть на 90° вокруг {0}",
+    "Ruotare di 90° attorno a {0}",
+    "{0} 軸まわりに 90° 回転"
+  ],
+  "(recalculé et vérifié)": [
+    "(recomputed and checked)",
+    "（已重新计算并核实）",
+    "(neu berechnet und geprüft)",
+    "(recalculado y verificado)",
+    "(пересчитано и проверено)",
+    "(ricalcolato e verificato)",
+    "（再計算・確認済み）"
+  ],
+  "Appliquer": [
+    "Apply",
+    "应用",
+    "Anwenden",
+    "Aplicar",
+    "Применить",
+    "Applica",
+    "適用"
+  ],
+  "Accord requis des {0} scénarios avec un retrait de frontière de {1} %. Pas de pourcentage de confiance.": [
+    "All {0} scenarios must agree, with a {1} % boundary margin. No confidence percentage.",
+    "要求全部 {0} 个情景一致，边界余量 {1} %。不给出置信百分比。",
+    "Alle {0} Szenarien müssen übereinstimmen, mit {1} % Grenzabstand. Kein Konfidenzprozentsatz.",
+    "Se exige el acuerdo de los {0} escenarios con un margen de frontera del {1} %. Sin porcentaje de confianza.",
+    "Требуется согласие всех {0} сценариев с отступом от границы {1} %. Без процента достоверности.",
+    "Richiesto l'accordo dei {0} scenari con un margine di confine del {1} %. Nessuna percentuale di confidenza.",
+    "{0} 個すべてのシナリオの一致と境界余裕 {1} % が必要です。信頼度の割合は示しません。"
+  ],
+  "Distance publiée = jeu entre la face de l'aimant la plus proche et le repère actif (axe du reed pour D1/D4/D5, extrémité de la longueur effective nominale pour D3). Le centre de l'aimant est décalé de la demi-dimension projetée.": [
+    "Published distance = gap between the nearest magnet face and the active datum (reed axis for D1/D4/D5, end of the nominal effective length for D3). The magnet centre is offset by the projected half-dimension.",
+    "公布距离 = 最近磁铁表面与有效基准之间的间隙（D1/D4/D5 为簧片轴线，D3 为名义有效长度端部）。磁铁中心偏移投影半尺寸。",
+    "Veröffentlichter Abstand = Spalt zwischen nächster Magnetfläche und aktivem Bezug (Reed-Achse für D1/D4/D5, Ende der nominalen wirksamen Länge für D3). Die Magnetmitte ist um die projizierte halbe Abmessung versetzt.",
+    "Distancia publicada = holgura entre la cara más cercana del imán y la referencia activa (eje del reed para D1/D4/D5, extremo de la longitud efectiva nominal para D3). El centro del imán se desplaza la semidimensión proyectada.",
+    "Опубликованное расстояние = зазор между ближайшей гранью магнита и активной базой (ось геркона для D1/D4/D5, конец номинальной эффективной длины для D3). Центр магнита смещён на проекцию половины размера.",
+    "Distanza pubblicata = distanza tra la faccia del magnete più vicina e il riferimento attivo (asse del reed per D1/D4/D5, estremità della lunghezza efficace nominale per D3). Il centro del magnete è spostato della semidimensione proiettata.",
+    "公表距離＝最も近い磁石面と有効基準との隙間（D1/D4/D5 はリード軸、D3 は公称有効長の端）。磁石中心は投影した半寸法だけずれます。"
+  ],
+  "Variante : distance publiée = du repère actif au CENTRE de l'aimant (demi-dimension ignorée). Présentée pour l'audit, non prouvée.": [
+    "Variant: published distance = from the active datum to the magnet CENTRE (half-dimension ignored). Shown for audit, not proven.",
+    "变体：公布距离 = 从有效基准到磁铁中心（忽略半尺寸）。仅供审核，未经证实。",
+    "Variante: veröffentlichter Abstand = vom aktiven Bezug zur Magnet-MITTE (halbe Abmessung ignoriert). Zur Prüfung gezeigt, nicht bewiesen.",
+    "Variante: distancia publicada = de la referencia activa al CENTRO del imán (semidimensión ignorada). Presentada para auditoría, no probada.",
+    "Вариант: опубликованное расстояние = от активной базы до ЦЕНТРА магнита (половина размера не учитывается). Для аудита, не доказано.",
+    "Variante: distanza pubblicata = dal riferimento attivo al CENTRO del magnete (semidimensione ignorata). Presentata per l'audit, non dimostrata.",
+    "変形：公表距離＝有効基準から磁石の中心まで（半寸法は無視）。監査用で、証明されていません。"
+  ],
+  "H-D4 : aimant perpendiculaire aux lames (aimantation selon y), approche selon y ; distance = maximum de lobe sur x.": [
+    "H-D4: magnet perpendicular to the blades (magnetised along y), approach along y; distance = lobe maximum over x.",
+    "H-D4：磁铁垂直于簧片（沿 y 磁化），沿 y 接近；距离 = 沿 x 的波瓣最大值。",
+    "H-D4: Magnet senkrecht zu den Zungen (Magnetisierung entlang y), Annäherung entlang y; Abstand = Keulenmaximum über x.",
+    "H-D4: imán perpendicular a las láminas (imantado según y), aproximación según y; distancia = máximo de lóbulo sobre x.",
+    "H-D4: магнит перпендикулярен контактам (намагничен по y), подход по y; расстояние = максимум лепестка по x.",
+    "H-D4: magnete perpendicolare alle lamine (magnetizzato lungo y), avvicinamento lungo y; distanza = massimo del lobo su x.",
+    "H-D4：リードに垂直な磁石（y 方向着磁）、y 方向から接近。距離＝x 方向のローブ最大値。"
+  ],
+  "H-D5 : aimant parallèle aux lames (aimantation selon x), approche selon y ; distance = maximum du lobe SECONDAIRE (au-delà du premier minimum en x). Hypothèse : deux variantes perpendiculaires essayées donnent Bx ≡ 0 sur l'axe (reed dans le plan médian de l'aimant) et ont été rejetées.": [
+    "H-D5: magnet parallel to the blades (magnetised along x), approach along y; distance = maximum of the SECONDARY lobe (beyond the first minimum in x). Assumption: two perpendicular variants tried give Bx ≡ 0 on the axis (reed in the magnet mid-plane) and were rejected.",
+    "H-D5：磁铁平行于簧片（沿 x 磁化），沿 y 接近；距离 = 次级波瓣最大值（x 方向第一个极小值之外）。假设：尝试的两种垂直变体在轴上给出 Bx ≡ 0（簧片位于磁铁中面），已被否决。",
+    "H-D5: Magnet parallel zu den Zungen (Magnetisierung entlang x), Annäherung entlang y; Abstand = Maximum der NEBENKEULE (jenseits des ersten Minimums in x). Annahme: zwei getestete senkrechte Varianten ergeben Bx ≡ 0 auf der Achse (Reed in der Mittelebene des Magneten) und wurden verworfen.",
+    "H-D5: imán paralelo a las láminas (imantado según x), aproximación según y; distancia = máximo del lóbulo SECUNDARIO (más allá del primer mínimo en x). Hipótesis: dos variantes perpendiculares probadas dan Bx ≡ 0 en el eje (reed en el plano medio del imán) y se descartaron.",
+    "H-D5: магнит параллелен контактам (намагничен по x), подход по y; расстояние = максимум ВТОРИЧНОГО лепестка (за первым минимумом по x). Допущение: два опробованных перпендикулярных варианта дают Bx ≡ 0 на оси (геркон в средней плоскости магнита) и отклонены.",
+    "H-D5: magnete parallelo alle lamine (magnetizzato lungo x), avvicinamento lungo y; distanza = massimo del lobo SECONDARIO (oltre il primo minimo in x). Ipotesi: due varianti perpendicolari provate danno Bx ≡ 0 sull'asse (reed nel piano mediano del magnete) e sono state scartate.",
+    "H-D5：リードに平行な磁石（x 方向着磁）、y 方向から接近。距離＝副ローブの最大値（x 方向の最初の極小より外側）。仮定：試した 2 つの垂直案は軸上で Bx ≡ 0（リードが磁石の中央面にある）となり不採用。"
+  ],
+  "Réponse A : |moyenne de Bx sur la longueur effective| (poids de Gauss normalisés), mT.": [
+    "Response A: |mean of Bx over the effective length| (normalised Gauss weights), mT.",
+    "响应 A：|有效长度上 Bx 的平均值|（归一化高斯权重），mT。",
+    "Antwort A: |Mittelwert von Bx über die wirksame Länge| (normierte Gauß-Gewichte), mT.",
+    "Respuesta A: |media de Bx sobre la longitud efectiva| (pesos de Gauss normalizados), mT.",
+    "Отклик A: |среднее Bx по эффективной длине| (нормированные веса Гаусса), мТл.",
+    "Risposta A: |media di Bx sulla lunghezza efficace| (pesi di Gauss normalizzati), mT.",
+    "応答 A：|有効長での Bx の平均|（正規化ガウス重み）、mT。"
+  ],
+  "Réponse B : M1, M2 = moyennes de Bx sur chaque lame ; réponse = min(|M1|, |M2|) si M1·M2 > 0, sinon 0. Le minimum n'est PAS la moyenne géométrique.": [
+    "Response B: M1, M2 = means of Bx over each blade; response = min(|M1|, |M2|) if M1·M2 > 0, otherwise 0. The minimum is NOT the geometric mean.",
+    "响应 B：M1、M2 = 每片簧片上 Bx 的平均值；若 M1·M2 > 0，响应 = min(|M1|, |M2|)，否则为 0。最小值不是几何平均值。",
+    "Antwort B: M1, M2 = Mittelwerte von Bx je Zunge; Antwort = min(|M1|, |M2|) falls M1·M2 > 0, sonst 0. Das Minimum ist NICHT das geometrische Mittel.",
+    "Respuesta B: M1, M2 = medias de Bx en cada lámina; respuesta = min(|M1|, |M2|) si M1·M2 > 0, si no 0. El mínimo NO es la media geométrica.",
+    "Отклик B: M1, M2 = средние Bx по каждому контакту; отклик = min(|M1|, |M2|) при M1·M2 > 0, иначе 0. Минимум НЕ равен среднему геометрическому.",
+    "Risposta B: M1, M2 = medie di Bx su ciascuna lamina; risposta = min(|M1|, |M2|) se M1·M2 > 0, altrimenti 0. Il minimo NON è la media geometrica.",
+    "応答 B：M1、M2＝各リードでの Bx の平均。M1·M2 > 0 なら応答＝min(|M1|, |M2|)、それ以外は 0。最小値は幾何平均ではありません。"
+  ],
+  "moindres carrés conjoints sur D1 (log θ, section dorée)": [
+    "joint least squares on D1 (log θ, golden section)",
+    "D1 上的联合最小二乘（log θ，黄金分割）",
+    "gemeinsame kleinste Quadrate auf D1 (log θ, goldener Schnitt)",
+    "mínimos cuadrados conjuntos sobre D1 (log θ, sección áurea)",
+    "совместный МНК по D1 (log θ, золотое сечение)",
+    "minimi quadrati congiunti su D1 (log θ, sezione aurea)",
+    "D1 での同時最小二乗（log θ、黄金分割）"
+  ],
+  "MK04 D3 : 71 plages inversées sur 96 (up > to) — quarantaine, donnée inconnue.": [
+    "MK04 D3: 71 of 96 ranges inverted (up > to) — quarantined, unknown data.",
+    "MK04 D3：96 个范围中 71 个颠倒（up > to）— 隔离，数据未知。",
+    "MK04 D3: 71 von 96 Bereichen vertauscht (up > to) — Quarantäne, unbekannte Daten.",
+    "MK04 D3: 71 de 96 rangos invertidos (up > to) — cuarentena, dato desconocido.",
+    "MK04 D3: 71 из 96 диапазонов перевёрнуты (up > to) — карантин, данные неизвестны.",
+    "MK04 D3: 71 intervalli su 96 invertiti (up > to) — quarantena, dato sconosciuto.",
+    "MK04 D3：96 範囲中 71 が逆転（up > to）— 隔離、データ不明。"
+  ],
+  "MK04 D1/D4/D5 : décalages identiques à MK13 (non utilisés pour une estimation dans ce lot).": [
+    "MK04 D1/D4/D5: offsets identical to MK13 (not used for an estimate in this batch).",
+    "MK04 D1/D4/D5：偏移与 MK13 相同（本批次未用于估计）。",
+    "MK04 D1/D4/D5: Versätze identisch zu MK13 (in diesem Los nicht für eine Schätzung genutzt).",
+    "MK04 D1/D4/D5: desfases idénticos a MK13 (no usados para una estimación en este lote).",
+    "MK04 D1/D4/D5: смещения те же, что у MK13 (в этом пакете для оценки не используются).",
+    "MK04 D1/D4/D5: scostamenti identici a MK13 (non usati per una stima in questo lotto).",
+    "MK04 D1/D4/D5：オフセットは MK13 と同一（本ロットでは推定に未使用）。"
+  ],
+  "MK12 : ne suit pas une règle de décalage constant.": [
+    "MK12: does not follow a constant-offset rule.",
+    "MK12：不符合恒定偏移规则。",
+    "MK12: folgt keiner Regel mit konstantem Versatz.",
+    "MK12: no sigue una regla de desfase constante.",
+    "MK12: не следует правилу постоянного смещения.",
+    "MK12: non segue una regola di scostamento costante.",
+    "MK12：一定オフセットの規則に従いません。"
+  ],
+  "MK21 66 D4 up : décalage non constant.": [
+    "MK21 66 D4 up: non-constant offset.",
+    "MK21 66 D4 up：偏移不恒定。",
+    "MK21 66 D4 up: nicht konstanter Versatz.",
+    "MK21 66 D4 up: desfase no constante.",
+    "MK21 66 D4 up: непостоянное смещение.",
+    "MK21 66 D4 up: scostamento non costante.",
+    "MK21 66 D4 up：オフセットが一定ではありません。"
+  ],
+  "La brochure n'est pas reproduite sans exceptions.": [
+    "The brochure is not reproduced without exceptions.",
+    "该手册并非无例外地复现。",
+    "Die Broschüre wird nicht ausnahmslos reproduziert.",
+    "El folleto no se reproduce sin excepciones.",
+    "Брошюра воспроизводится не без исключений.",
+    "La brochure non è riprodotta senza eccezioni.",
+    "パンフレットは例外なく再現されてはいません。"
+  ],
+  "MK04 D3 en quarantaine (71/96 plages inversées)": [
+    "MK04 D3 quarantined (71/96 ranges inverted)",
+    "MK04 D3 已隔离（71/96 范围颠倒）",
+    "MK04 D3 in Quarantäne (71/96 Bereiche vertauscht)",
+    "MK04 D3 en cuarentena (71/96 rangos invertidos)",
+    "MK04 D3 на карантине (71/96 диапазонов перевёрнуты)",
+    "MK04 D3 in quarantena (71/96 intervalli invertiti)",
+    "MK04 D3 隔離（71/96 範囲が逆転）"
+  ],
+  "plage inversée up > to": [
+    "inverted range up > to",
+    "范围颠倒 up > to",
+    "vertauschter Bereich up > to",
+    "rango invertido up > to",
+    "перевёрнутый диапазон up > to",
+    "intervallo invertito up > to",
+    "範囲の逆転 up > to"
+  ],
+  "borne non publiée": [
+    "bound not published",
+    "界限未公布",
+    "Grenze nicht veröffentlicht",
+    "límite no publicado",
+    "граница не опубликована",
+    "limite non pubblicato",
+    "境界値は未公表"
+  ],
+  "adaptation documentaire Form→produit (décalage empirique)": [
+    "documentary Form→product adaptation (empirical offset)",
+    "文档 Form→产品 适配（经验偏移）",
+    "dokumentarische Anpassung Form→Produkt (empirischer Versatz)",
+    "adaptación documental Form→producto (desfase empírico)",
+    "документальная адаптация Form→изделие (эмпирическое смещение)",
+    "adattamento documentale Form→prodotto (scostamento empirico)",
+    "Form→製品の資料上の換算（経験的オフセット）"
+  ],
+  "D1 produit : dérivé du D1 d'apprentissage Form, pas un contrôle indépendant de la physique": [
+    "Product D1: derived from the Form training D1, not an independent check of the physics",
+    "产品 D1：源自 Form 训练 D1，不是对物理模型的独立对照",
+    "Produkt-D1: aus dem Anpassungs-D1 der Form abgeleitet, keine unabhängige Kontrolle der Physik",
+    "D1 producto: derivado del D1 de aprendizaje Form, no es un control independiente de la física",
+    "D1 изделия: выведено из обучающего D1 Form, не независимая проверка физики",
+    "D1 prodotto: derivato dal D1 di apprendimento Form, non un controllo indipendente della fisica",
+    "製品 D1：Form の学習用 D1 から導出。物理の独立した検証ではありません"
+  ],
+  "écart > 20 %": [
+    "deviation > 20 %",
+    "偏差 > 20 %",
+    "Abweichung > 20 %",
+    "desviación > 20 %",
+    "отклонение > 20 %",
+    "scarto > 20 %",
+    "偏差 > 20 %"
+  ],
+  "centré": [
+    "centred",
+    "居中",
+    "mittig",
+    "centrado",
+    "по центру",
+    "centrato",
+    "中央"
+  ],
+  "Placement favorable": [
+    "Favourable placement",
+    "有利布置",
+    "Günstige Platzierung",
+    "Ubicación favorable",
+    "Благоприятное размещение",
+    "Posizionamento favorevole",
+    "有利な配置"
+  ],
+  "Détection variable": [
+    "Variable detection",
+    "检测不稳定",
+    "Variable Detektion",
+    "Detección variable",
+    "Нестабильное обнаружение",
+    "Rilevamento variabile",
+    "検出が不安定"
+  ],
+  "Placement défavorable": [
+    "Unfavourable placement",
+    "不利布置",
+    "Ungünstige Platzierung",
+    "Ubicación desfavorable",
+    "Неблагоприятное размещение",
+    "Posizionamento sfavorevole",
+    "不利な配置"
+  ],
+  "Estimation indisponible": [
+    "Estimate unavailable",
+    "无法估计",
+    "Schätzung nicht verfügbar",
+    "Estimación no disponible",
+    "Оценка недоступна",
+    "Stima non disponibile",
+    "推定できません"
+  ],
+  "Trop loin": [
+    "Too far",
+    "太远",
+    "Zu weit",
+    "Demasiado lejos",
+    "Слишком далеко",
+    "Troppo lontano",
+    "遠すぎる"
+  ],
+  "Orientation défavorable": [
+    "Unfavourable orientation",
+    "方向不利",
+    "Ungünstige Ausrichtung",
+    "Orientación desfavorable",
+    "Неблагоприятная ориентация",
+    "Orientamento sfavorevole",
+    "向きが不利"
+  ],
+  "modèle": [
+    "model",
+    "模型",
+    "Modell",
+    "modelo",
+    "модель",
+    "modello",
+    "モデル"
+  ],
+  "x le long des lames (mm)": [
+    "x along the blades (mm)",
+    "沿簧片的 x (mm)",
+    "x entlang der Zungen (mm)",
+    "x a lo largo de las láminas (mm)",
+    "x вдоль контактов (мм)",
+    "x lungo le lamine (mm)",
+    "リード方向の x (mm)"
+  ],
+  "y centre de l'aimant (mm)": [
+    "y magnet centre (mm)",
+    "磁铁中心 y (mm)",
+    "y Magnetmitte (mm)",
+    "y centro del imán (mm)",
+    "y центра магнита (мм)",
+    "y centro del magnete (mm)",
+    "磁石中心の y (mm)"
+  ],
+  "reed (longueur effective)": [
+    "reed (effective length)",
+    "簧片（有效长度）",
+    "Reed (wirksame Länge)",
+    "reed (longitud efectiva)",
+    "геркон (эффективная длина)",
+    "reed (lunghezza efficace)",
+    "リード（有効長）"
+  ],
+  "Chronologie des catégories le long du trajet (sans hystérésis)": [
+    "Category timeline along the path (no hysteresis)",
+    "沿路径的类别时间线（无滞后）",
+    "Kategorienverlauf entlang der Bahn (ohne Hysterese)",
+    "Cronología de categorías a lo largo del trayecto (sin histéresis)",
+    "Хронология категорий вдоль траектории (без гистерезиса)",
+    "Cronologia delle categorie lungo il percorso (senza isteresi)",
+    "経路に沿ったカテゴリーの推移（ヒステリシスなし）"
+  ],
+  "Ordres de grandeur pédagogiques, jamais une garantie de commutation.": [
+    "Teaching orders of magnitude, never a switching guarantee.",
+    "教学用数量级，绝不保证切换。",
+    "Didaktische Größenordnungen, niemals eine Schaltgarantie.",
+    "Órdenes de magnitud pedagógicos, nunca una garantía de conmutación.",
+    "Учебные порядки величин, никогда не гарантия срабатывания.",
+    "Ordini di grandezza didattici, mai una garanzia di commutazione.",
+    "教育用の目安であり、切替の保証ではありません。"
+  ],
+  "décalé {0} mm": [
+    "offset {0} mm",
+    "偏移 {0} mm",
+    "versetzt {0} mm",
+    "desplazado {0} mm",
+    "смещено {0} мм",
+    "spostato {0} mm",
+    "オフセット {0} mm"
+  ],
+  "estimation indisponible : {0}": [
+    "estimate unavailable: {0}",
+    "无法估计：{0}",
+    "Schätzung nicht verfügbar: {0}",
+    "estimación no disponible: {0}",
+    "оценка недоступна: {0}",
+    "stima non disponibile: {0}",
+    "推定不可：{0}"
+  ],
+  "virgule décimale dans la source (« {0} »)": [
+    "decimal comma in the source (“{0}”)",
+    "来源中使用小数逗号（“{0}”）",
+    "Dezimalkomma in der Quelle („{0}“)",
+    "coma decimal en la fuente («{0}»)",
+    "десятичная запятая в источнике («{0}»)",
+    "virgola decimale nella fonte («{0}»)",
+    "出典で小数点にコンマ（「{0}」）"
+  ],
+  "Apprentissage": [
+    "Training",
+    "训练",
+    "Anpassung",
+    "Aprendizaje",
+    "Обучение",
+    "Apprendimento",
+    "学習"
+  ],
+  "Manquant": [
+    "Missing",
+    "缺失",
+    "Fehlend",
+    "Faltante",
+    "Отсутствует",
+    "Mancante",
+    "欠落"
+  ],
+  "Indisponible": [
+    "Unavailable",
+    "不可用",
+    "Nicht verfügbar",
+    "No disponible",
+    "Недоступно",
+    "Non disponibile",
+    "算出不可"
+  ],
+  "Quarantaine": [
+    "Quarantine",
+    "隔离",
+    "Quarantäne",
+    "Cuarentena",
+    "Карантин",
+    "Quarantena",
+    "隔離"
+  ],
+  "MAGNET SmCo5 5 x 4mm": [
+    "MAGNET SmCo5 5 x 4mm",
+    "MAGNET SmCo5 5 x 4mm",
+    "MAGNET SmCo5 5 x 4mm",
+    "MAGNET SmCo5 5 x 4mm",
+    "MAGNET SmCo5 5 x 4mm",
+    "MAGNET SmCo5 5 x 4mm",
+    "MAGNET SmCo5 5 x 4mm"
+  ],
+  "Magnetic moment: 7,2 x 10e-6Vs x cm": [
+    "Magnetic moment: 7,2 x 10e-6Vs x cm",
+    "Magnetic moment: 7,2 x 10e-6Vs x cm",
+    "Magnetic moment: 7,2 x 10e-6Vs x cm",
+    "Magnetic moment: 7,2 x 10e-6Vs x cm",
+    "Magnetic moment: 7,2 x 10e-6Vs x cm",
+    "Magnetic moment: 7,2 x 10e-6Vs x cm",
+    "Magnetic moment: 7,2 x 10e-6Vs x cm"
+  ],
+  "MAGNET NdFeB N45 4 x 19mm": [
+    "MAGNET NdFeB N45 4 x 19mm",
+    "MAGNET NdFeB N45 4 x 19mm",
+    "MAGNET NdFeB N45 4 x 19mm",
+    "MAGNET NdFeB N45 4 x 19mm",
+    "MAGNET NdFeB N45 4 x 19mm",
+    "MAGNET NdFeB N45 4 x 19mm",
+    "MAGNET NdFeB N45 4 x 19mm"
+  ],
+  "NdFeB N45": [
+    "NdFeB N45",
+    "NdFeB N45",
+    "NdFeB N45",
+    "NdFeB N45",
+    "NdFeB N45",
+    "NdFeB N45",
+    "NdFeB N45"
+  ],
+  "Magnetic moment: 30,8 x 10e-6Vs x cm": [
+    "Magnetic moment: 30,8 x 10e-6Vs x cm",
+    "Magnetic moment: 30,8 x 10e-6Vs x cm",
+    "Magnetic moment: 30,8 x 10e-6Vs x cm",
+    "Magnetic moment: 30,8 x 10e-6Vs x cm",
+    "Magnetic moment: 30,8 x 10e-6Vs x cm",
+    "Magnetic moment: 30,8 x 10e-6Vs x cm",
+    "Magnetic moment: 30,8 x 10e-6Vs x cm"
   ]
 }

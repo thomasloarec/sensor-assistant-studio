@@ -1,0 +1,3276 @@
+{
+  "version": "brochure-form-transcription-2026-10-26",
+  "source": {
+    "title": "Reed Sensor Activation Guide",
+    "url": "https://standexdetect.com/wp-content/uploads/sites/2/2025/10/brochure-reed-sensor-activation-guide.pdf",
+    "sha256": "711bc6f75bec192fc6765dd6e299f2cdd322bb49ec62880c486b16a57b926f8f",
+    "pages": 40
+  },
+  "notice": "Transcription des 96 lignes Form visibles, sans correction ni affirmation de mesure de reed nu. Repères actifs et génération restent des hypothèses de modèle. Valeurs et marqueurs bruts conservés. Les 751 lignes commerciales restent dans activation-guide.json.",
+  "rows": [
+    {
+      "page": 4,
+      "printedLabel": "MK03Form-A 66-er",
+      "reedLabel": "66-er",
+      "class": "A",
+      "magnetLabel": "MAGNET SmCo5 5 x 4mm",
+      "momentRaw": "Magnetic moment: 7,2 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "10.8",
+          "toRaw": "12.5",
+          "upMm": 10.8,
+          "toMm": 12.5
+        },
+        "D3": {
+          "upRaw": "11.8",
+          "toRaw": "13.7",
+          "upMm": 11.8,
+          "toMm": 13.7
+        },
+        "D4": {
+          "upRaw": "9.8",
+          "toRaw": "11.1",
+          "upMm": 9.8,
+          "toMm": 11.1
+        },
+        "D5": {
+          "upRaw": "6.3",
+          "toRaw": "8.1",
+          "upMm": 6.3,
+          "toMm": 8.1
+        }
+      }
+    },
+    {
+      "page": 4,
+      "printedLabel": "MK03Form-B 66-er",
+      "reedLabel": "66-er",
+      "class": "B",
+      "magnetLabel": "MAGNET SmCo5 5 x 4mm",
+      "momentRaw": "Magnetic moment: 7,2 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "8.5",
+          "toRaw": "11.2",
+          "upMm": 8.5,
+          "toMm": 11.2
+        },
+        "D3": {
+          "upRaw": "9.4",
+          "toRaw": "12.2",
+          "upMm": 9.4,
+          "toMm": 12.2
+        },
+        "D4": {
+          "upRaw": "8.3",
+          "toRaw": "10.2",
+          "upMm": 8.3,
+          "toMm": 10.2
+        },
+        "D5": {
+          "upRaw": "4.6",
+          "toRaw": "6.7",
+          "upMm": 4.6,
+          "toMm": 6.7
+        }
+      }
+    },
+    {
+      "page": 4,
+      "printedLabel": "MK03Form-C 66-er",
+      "reedLabel": "66-er",
+      "class": "C",
+      "magnetLabel": "MAGNET SmCo5 5 x 4mm",
+      "momentRaw": "Magnetic moment: 7,2 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "7.3",
+          "toRaw": "8.9",
+          "upMm": 7.3,
+          "toMm": 8.9
+        },
+        "D3": {
+          "upRaw": "7.5",
+          "toRaw": "9.8",
+          "upMm": 7.5,
+          "toMm": 9.8
+        },
+        "D4": {
+          "upRaw": "6.8",
+          "toRaw": "8.7",
+          "upMm": 6.8,
+          "toMm": 8.7
+        },
+        "D5": {
+          "upRaw": "3.2",
+          "toRaw": "5",
+          "upMm": 3.2,
+          "toMm": 5.0
+        }
+      }
+    },
+    {
+      "page": 4,
+      "printedLabel": "MK03Form-D 66-er",
+      "reedLabel": "66-er",
+      "class": "D",
+      "magnetLabel": "MAGNET SmCo5 5 x 4mm",
+      "momentRaw": "Magnetic moment: 7,2 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "6.5",
+          "toRaw": "7.7",
+          "upMm": 6.5,
+          "toMm": 7.7
+        },
+        "D3": {
+          "upRaw": "6.4",
+          "toRaw": "7.9",
+          "upMm": 6.4,
+          "toMm": 7.9
+        },
+        "D4": {
+          "upRaw": "6.3",
+          "toRaw": "7.2",
+          "upMm": 6.3,
+          "toMm": 7.2
+        },
+        "D5": {
+          "upRaw": "2.3",
+          "toRaw": "3.6",
+          "upMm": 2.3,
+          "toMm": 3.6
+        }
+      }
+    },
+    {
+      "page": 4,
+      "printedLabel": "MK03Form-E 66-er",
+      "reedLabel": "66-er",
+      "class": "E",
+      "magnetLabel": "MAGNET SmCo5 5 x 4mm",
+      "momentRaw": "Magnetic moment: 7,2 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "5.9",
+          "toRaw": "6.9",
+          "upMm": 5.9,
+          "toMm": 6.9
+        },
+        "D3": {
+          "upRaw": "5.6",
+          "toRaw": "6.8",
+          "upMm": 5.6,
+          "toMm": 6.8
+        },
+        "D4": {
+          "upRaw": "5.7",
+          "toRaw": "6.7",
+          "upMm": 5.7,
+          "toMm": 6.7
+        },
+        "D5": {
+          "upRaw": "-",
+          "toRaw": "2.7",
+          "upMm": null,
+          "toMm": 2.7
+        }
+      }
+    },
+    {
+      "page": 4,
+      "printedLabel": "MK03Form-F 66-er",
+      "reedLabel": "66-er",
+      "class": "F",
+      "magnetLabel": "MAGNET SmCo5 5 x 4mm",
+      "momentRaw": "Magnetic moment: 7,2 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "5.1",
+          "toRaw": "6.3",
+          "upMm": 5.1,
+          "toMm": 6.3
+        },
+        "D3": {
+          "upRaw": "4.5",
+          "toRaw": "6",
+          "upMm": 4.5,
+          "toMm": 6.0
+        },
+        "D4": {
+          "upRaw": "5",
+          "toRaw": "6.1",
+          "upMm": 5.0,
+          "toMm": 6.1
+        },
+        "D5": {
+          "upRaw": "-",
+          "toRaw": "-",
+          "upMm": null,
+          "toMm": null
+        }
+      }
+    },
+    {
+      "page": 4,
+      "printedLabel": "MK03Form-A GP501",
+      "reedLabel": "GP501",
+      "class": "A",
+      "magnetLabel": "MAGNET SmCo5 5 x 4mm",
+      "momentRaw": "Magnetic moment: 7,2 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "9",
+          "toRaw": "10",
+          "upMm": 9.0,
+          "toMm": 10.0
+        },
+        "D3": {
+          "upRaw": "9.9",
+          "toRaw": "11.2",
+          "upMm": 9.9,
+          "toMm": 11.2
+        },
+        "D4": {
+          "upRaw": "8.7",
+          "toRaw": "9.7",
+          "upMm": 8.7,
+          "toMm": 9.7
+        },
+        "D5": {
+          "upRaw": "6.1",
+          "toRaw": "8.4",
+          "upMm": 6.1,
+          "toMm": 8.4
+        }
+      }
+    },
+    {
+      "page": 4,
+      "printedLabel": "MK03Form-B GP501",
+      "reedLabel": "GP501",
+      "class": "B",
+      "magnetLabel": "MAGNET SmCo5 5 x 4mm",
+      "momentRaw": "Magnetic moment: 7,2 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "8.4",
+          "toRaw": "9.6",
+          "upMm": 8.4,
+          "toMm": 9.6
+        },
+        "D3": {
+          "upRaw": "8.9",
+          "toRaw": "10.5",
+          "upMm": 8.9,
+          "toMm": 10.5
+        },
+        "D4": {
+          "upRaw": "8",
+          "toRaw": "9.3",
+          "upMm": 8.0,
+          "toMm": 9.3
+        },
+        "D5": {
+          "upRaw": "4.2",
+          "toRaw": "6.7",
+          "upMm": 4.2,
+          "toMm": 6.7
+        }
+      }
+    },
+    {
+      "page": 4,
+      "printedLabel": "MK03Form-C GP501",
+      "reedLabel": "GP501",
+      "class": "C",
+      "magnetLabel": "MAGNET SmCo5 5 x 4mm",
+      "momentRaw": "Magnetic moment: 7,2 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "7.9",
+          "toRaw": "9",
+          "upMm": 7.9,
+          "toMm": 9.0
+        },
+        "D3": {
+          "upRaw": "7.9",
+          "toRaw": "9.5",
+          "upMm": 7.9,
+          "toMm": 9.5
+        },
+        "D4": {
+          "upRaw": "7.4",
+          "toRaw": "8.6",
+          "upMm": 7.4,
+          "toMm": 8.6
+        },
+        "D5": {
+          "upRaw": "3.1",
+          "toRaw": "4.8",
+          "upMm": 3.1,
+          "toMm": 4.8
+        }
+      }
+    },
+    {
+      "page": 4,
+      "printedLabel": "MK03Form-D GP501",
+      "reedLabel": "GP501",
+      "class": "D",
+      "magnetLabel": "MAGNET SmCo5 5 x 4mm",
+      "momentRaw": "Magnetic moment: 7,2 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "7.4",
+          "toRaw": "8.5",
+          "upMm": 7.4,
+          "toMm": 8.5
+        },
+        "D3": {
+          "upRaw": "7.1",
+          "toRaw": "8.5",
+          "upMm": 7.1,
+          "toMm": 8.5
+        },
+        "D4": {
+          "upRaw": "6.9",
+          "toRaw": "8",
+          "upMm": 6.9,
+          "toMm": 8.0
+        },
+        "D5": {
+          "upRaw": "2.5",
+          "toRaw": "3.7",
+          "upMm": 2.5,
+          "toMm": 3.7
+        }
+      }
+    },
+    {
+      "page": 4,
+      "printedLabel": "MK03Form-E GP501",
+      "reedLabel": "GP501",
+      "class": "E",
+      "magnetLabel": "MAGNET SmCo5 5 x 4mm",
+      "momentRaw": "Magnetic moment: 7,2 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "6.9",
+          "toRaw": "8",
+          "upMm": 6.9,
+          "toMm": 8.0
+        },
+        "D3": {
+          "upRaw": "6.4",
+          "toRaw": "7.7",
+          "upMm": 6.4,
+          "toMm": 7.7
+        },
+        "D4": {
+          "upRaw": "6.4",
+          "toRaw": "7.5",
+          "upMm": 6.4,
+          "toMm": 7.5
+        },
+        "D5": {
+          "upRaw": "2.1",
+          "toRaw": "3.1",
+          "upMm": 2.1,
+          "toMm": 3.1
+        }
+      }
+    },
+    {
+      "page": 4,
+      "printedLabel": "MK03Form-F GP501",
+      "reedLabel": "GP501",
+      "class": "F",
+      "magnetLabel": "MAGNET SmCo5 5 x 4mm",
+      "momentRaw": "Magnetic moment: 7,2 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "6.4",
+          "toRaw": "7.5",
+          "upMm": 6.4,
+          "toMm": 7.5
+        },
+        "D3": {
+          "upRaw": "5.8",
+          "toRaw": "7",
+          "upMm": 5.8,
+          "toMm": 7.0
+        },
+        "D4": {
+          "upRaw": "5.9",
+          "toRaw": "6.9",
+          "upMm": 5.9,
+          "toMm": 6.9
+        },
+        "D5": {
+          "upRaw": "1.8",
+          "toRaw": "2.6",
+          "upMm": 1.8,
+          "toMm": 2.6
+        }
+      }
+    },
+    {
+      "page": 5,
+      "printedLabel": "MK03Form-A 66-er",
+      "reedLabel": "66-er",
+      "class": "A",
+      "magnetLabel": "MAGNET NdFeB N45 4 x 19mm",
+      "momentRaw": "Magnetic moment: 30,8 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "20.8",
+          "toRaw": "22.1",
+          "upMm": 20.8,
+          "toMm": 22.1
+        },
+        "D3": {
+          "upRaw": "19.2",
+          "toRaw": "21",
+          "upMm": 19.2,
+          "toMm": 21.0
+        },
+        "D4": {
+          "upRaw": "14.5",
+          "toRaw": "16",
+          "upMm": 14.5,
+          "toMm": 16.0
+        },
+        "D5": {
+          "upRaw": "15.3",
+          "toRaw": "17,5",
+          "upMm": 15.3,
+          "toMm": 17.5
+        }
+      }
+    },
+    {
+      "page": 5,
+      "printedLabel": "MK03Form-B 66-er",
+      "reedLabel": "66-er",
+      "class": "B",
+      "magnetLabel": "MAGNET NdFeB N45 4 x 19mm",
+      "momentRaw": "Magnetic moment: 30,8 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "17.3",
+          "toRaw": "21.2",
+          "upMm": 17.3,
+          "toMm": 21.2
+        },
+        "D3": {
+          "upRaw": "17.3",
+          "toRaw": "19.6",
+          "upMm": 17.3,
+          "toMm": 19.6
+        },
+        "D4": {
+          "upRaw": "12.1",
+          "toRaw": "14.9",
+          "upMm": 12.1,
+          "toMm": 14.9
+        },
+        "D5": {
+          "upRaw": "12",
+          "toRaw": "15,7",
+          "upMm": 12.0,
+          "toMm": 15.7
+        }
+      }
+    },
+    {
+      "page": 5,
+      "printedLabel": "MK03Form-C 66-er",
+      "reedLabel": "66-er",
+      "class": "C",
+      "magnetLabel": "MAGNET NdFeB N45 4 x 19mm",
+      "momentRaw": "Magnetic moment: 30,8 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "15",
+          "toRaw": "17.7",
+          "upMm": 15.0,
+          "toMm": 17.7
+        },
+        "D3": {
+          "upRaw": "12.4",
+          "toRaw": "17.7",
+          "upMm": 12.4,
+          "toMm": 17.7
+        },
+        "D4": {
+          "upRaw": "10.1",
+          "toRaw": "12.5",
+          "upMm": 10.1,
+          "toMm": 12.5
+        },
+        "D5": {
+          "upRaw": "9.8",
+          "toRaw": "12,4",
+          "upMm": 9.8,
+          "toMm": 12.4
+        }
+      }
+    },
+    {
+      "page": 5,
+      "printedLabel": "MK03Form-D 66-er",
+      "reedLabel": "66-er",
+      "class": "D",
+      "magnetLabel": "MAGNET NdFeB N45 4 x 19mm",
+      "momentRaw": "Magnetic moment: 30,8 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "13.8",
+          "toRaw": "15.4",
+          "upMm": 13.8,
+          "toMm": 15.4
+        },
+        "D3": {
+          "upRaw": "10.9",
+          "toRaw": "12.8",
+          "upMm": 10.9,
+          "toMm": 12.8
+        },
+        "D4": {
+          "upRaw": "8.9",
+          "toRaw": "10.5",
+          "upMm": 8.9,
+          "toMm": 10.5
+        },
+        "D5": {
+          "upRaw": "8.2",
+          "toRaw": "10,2",
+          "upMm": 8.2,
+          "toMm": 10.2
+        }
+      }
+    },
+    {
+      "page": 5,
+      "printedLabel": "MK03Form-E 66-er",
+      "reedLabel": "66-er",
+      "class": "E",
+      "magnetLabel": "MAGNET NdFeB N45 4 x 19mm",
+      "momentRaw": "Magnetic moment: 30,8 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "12.7",
+          "toRaw": "14.2",
+          "upMm": 12.7,
+          "toMm": 14.2
+        },
+        "D3": {
+          "upRaw": "9.4",
+          "toRaw": "11.3",
+          "upMm": 9.4,
+          "toMm": 11.3
+        },
+        "D4": {
+          "upRaw": "7.3",
+          "toRaw": "9.3",
+          "upMm": 7.3,
+          "toMm": 9.3
+        },
+        "D5": {
+          "upRaw": "7.3",
+          "toRaw": "8,6",
+          "upMm": 7.3,
+          "toMm": 8.6
+        }
+      }
+    },
+    {
+      "page": 5,
+      "printedLabel": "MK03Form-F 66-er",
+      "reedLabel": "66-er",
+      "class": "F",
+      "magnetLabel": "MAGNET NdFeB N45 4 x 19mm",
+      "momentRaw": "Magnetic moment: 30,8 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "11.1",
+          "toRaw": "13.1",
+          "upMm": 11.1,
+          "toMm": 13.1
+        },
+        "D3": {
+          "upRaw": "8",
+          "toRaw": "9.8",
+          "upMm": 8.0,
+          "toMm": 9.8
+        },
+        "D4": {
+          "upRaw": "6.4",
+          "toRaw": "7.7",
+          "upMm": 6.4,
+          "toMm": 7.7
+        },
+        "D5": {
+          "upRaw": "5.8",
+          "toRaw": "7,7",
+          "upMm": 5.8,
+          "toMm": 7.7
+        }
+      }
+    },
+    {
+      "page": 5,
+      "printedLabel": "MK03Form-A GP501",
+      "reedLabel": "GP501",
+      "class": "A",
+      "magnetLabel": "MAGNET NdFeB N45 4 x 19mm",
+      "momentRaw": "Magnetic moment: 30,8 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "18.3",
+          "toRaw": "19.7",
+          "upMm": 18.3,
+          "toMm": 19.7
+        },
+        "D3": {
+          "upRaw": "15.9",
+          "toRaw": "17.5",
+          "upMm": 15.9,
+          "toMm": 17.5
+        },
+        "D4": {
+          "upRaw": "12.7",
+          "toRaw": "13.9",
+          "upMm": 12.7,
+          "toMm": 13.9
+        },
+        "D5": {
+          "upRaw": "12.6",
+          "toRaw": "14,1",
+          "upMm": 12.6,
+          "toMm": 14.1
+        }
+      }
+    },
+    {
+      "page": 5,
+      "printedLabel": "MK03Form-B GP501",
+      "reedLabel": "GP501",
+      "class": "B",
+      "magnetLabel": "MAGNET NdFeB N45 4 x 19mm",
+      "momentRaw": "Magnetic moment: 30,8 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "17.1",
+          "toRaw": "18.9",
+          "upMm": 17.1,
+          "toMm": 18.9
+        },
+        "D3": {
+          "upRaw": "14.4",
+          "toRaw": "16.5",
+          "upMm": 14.4,
+          "toMm": 16.5
+        },
+        "D4": {
+          "upRaw": "11.7",
+          "toRaw": "13.3",
+          "upMm": 11.7,
+          "toMm": 13.3
+        },
+        "D5": {
+          "upRaw": "11.3",
+          "toRaw": "13,2",
+          "upMm": 11.3,
+          "toMm": 13.2
+        }
+      }
+    },
+    {
+      "page": 5,
+      "printedLabel": "MK03Form-C GP501",
+      "reedLabel": "GP501",
+      "class": "C",
+      "magnetLabel": "MAGNET NdFeB N45 4 x 19mm",
+      "momentRaw": "Magnetic moment: 30,8 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "16",
+          "toRaw": "17.7",
+          "upMm": 16.0,
+          "toMm": 17.7
+        },
+        "D3": {
+          "upRaw": "13.1",
+          "toRaw": "15",
+          "upMm": 13.1,
+          "toMm": 15.0
+        },
+        "D4": {
+          "upRaw": "10.8",
+          "toRaw": "12.3",
+          "upMm": 10.8,
+          "toMm": 12.3
+        },
+        "D5": {
+          "upRaw": "10.2",
+          "toRaw": "11,9",
+          "upMm": 10.2,
+          "toMm": 11.9
+        }
+      }
+    },
+    {
+      "page": 5,
+      "printedLabel": "MK03Form-D GP501",
+      "reedLabel": "GP501",
+      "class": "D",
+      "magnetLabel": "MAGNET NdFeB N45 4 x 19mm",
+      "momentRaw": "Magnetic moment: 30,8 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "15",
+          "toRaw": "16.6",
+          "upMm": 15.0,
+          "toMm": 16.6
+        },
+        "D3": {
+          "upRaw": "11.9",
+          "toRaw": "13.7",
+          "upMm": 11.9,
+          "toMm": 13.7
+        },
+        "D4": {
+          "upRaw": "10",
+          "toRaw": "11.4",
+          "upMm": 10.0,
+          "toMm": 11.4
+        },
+        "D5": {
+          "upRaw": "9.2",
+          "toRaw": "10,8",
+          "upMm": 9.2,
+          "toMm": 10.8
+        }
+      }
+    },
+    {
+      "page": 5,
+      "printedLabel": "MK03Form-E GP501",
+      "reedLabel": "GP501",
+      "class": "E",
+      "magnetLabel": "MAGNET NdFeB N45 4 x 19mm",
+      "momentRaw": "Magnetic moment: 30,8 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "14",
+          "toRaw": "15.6",
+          "upMm": 14.0,
+          "toMm": 15.6
+        },
+        "D3": {
+          "upRaw": "10.8",
+          "toRaw": "12.3",
+          "upMm": 10.8,
+          "toMm": 12.3
+        },
+        "D4": {
+          "upRaw": "9.2",
+          "toRaw": "10.6",
+          "upMm": 9.2,
+          "toMm": 10.6
+        },
+        "D5": {
+          "upRaw": "8.3",
+          "toRaw": "9,8",
+          "upMm": 8.3,
+          "toMm": 9.8
+        }
+      }
+    },
+    {
+      "page": 5,
+      "printedLabel": "MK03Form-F GP501",
+      "reedLabel": "GP501",
+      "class": "F",
+      "magnetLabel": "MAGNET NdFeB N45 4 x 19mm",
+      "momentRaw": "Magnetic moment: 30,8 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "13.1",
+          "toRaw": "14.6",
+          "upMm": 13.1,
+          "toMm": 14.6
+        },
+        "D3": {
+          "upRaw": "9.9",
+          "toRaw": "11.4",
+          "upMm": 9.9,
+          "toMm": 11.4
+        },
+        "D4": {
+          "upRaw": "8.5",
+          "toRaw": "9.8",
+          "upMm": 8.5,
+          "toMm": 9.8
+        },
+        "D5": {
+          "upRaw": "7.5",
+          "toRaw": "8,9",
+          "upMm": 7.5,
+          "toMm": 8.9
+        }
+      }
+    },
+    {
+      "page": 6,
+      "printedLabel": "MK03Form-A 66-er",
+      "reedLabel": "66-er",
+      "class": "A",
+      "magnetLabel": "MAGNET NdFeB 10 x 5 x 1,9",
+      "momentRaw": "Magnetic moment: 10,3 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "10.4",
+          "toRaw": "11.7",
+          "upMm": 10.4,
+          "toMm": 11.7
+        },
+        "D3": {
+          "upRaw": "15.5",
+          "toRaw": "17.3",
+          "upMm": 15.5,
+          "toMm": 17.3
+        },
+        "D4": {
+          "upRaw": "12.7",
+          "toRaw": "14",
+          "upMm": 12.7,
+          "toMm": 14.0
+        },
+        "D5": {
+          "upRaw": "6.7",
+          "toRaw": "9.3",
+          "upMm": 6.7,
+          "toMm": 9.3
+        }
+      }
+    },
+    {
+      "page": 6,
+      "printedLabel": "MK03Form-B 66-er",
+      "reedLabel": "66-er",
+      "class": "B",
+      "magnetLabel": "MAGNET NdFeB 10 x 5 x 1,9",
+      "momentRaw": "Magnetic moment: 10,3 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "8.9",
+          "toRaw": "10.8",
+          "upMm": 8.9,
+          "toMm": 10.8
+        },
+        "D3": {
+          "upRaw": "12.2",
+          "toRaw": "15.9",
+          "upMm": 12.2,
+          "toMm": 15.9
+        },
+        "D4": {
+          "upRaw": "10.6",
+          "toRaw": "13.1",
+          "upMm": 10.6,
+          "toMm": 13.1
+        },
+        "D5": {
+          "upRaw": "4.5",
+          "toRaw": "7.1",
+          "upMm": 4.5,
+          "toMm": 7.1
+        }
+      }
+    },
+    {
+      "page": 6,
+      "printedLabel": "MK03Form-C 66-er",
+      "reedLabel": "66-er",
+      "class": "C",
+      "magnetLabel": "MAGNET NdFeB 10 x 5 x 1,9",
+      "momentRaw": "Magnetic moment: 10,3 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "7.3",
+          "toRaw": "9.3",
+          "upMm": 7.3,
+          "toMm": 9.3
+        },
+        "D3": {
+          "upRaw": "10.2",
+          "toRaw": "12.6",
+          "upMm": 10.2,
+          "toMm": 12.6
+        },
+        "D4": {
+          "upRaw": "9.2",
+          "toRaw": "12",
+          "upMm": 9.2,
+          "toMm": 12.0
+        },
+        "D5": {
+          "upRaw": "2.6",
+          "toRaw": "4.9",
+          "upMm": 2.6,
+          "toMm": 4.9
+        }
+      }
+    },
+    {
+      "page": 6,
+      "printedLabel": "MK03Form-D 66-er",
+      "reedLabel": "66-er",
+      "class": "D",
+      "magnetLabel": "MAGNET NdFeB 10 x 5 x 1,9",
+      "momentRaw": "Magnetic moment: 10,3 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "6.8",
+          "toRaw": "7.7",
+          "upMm": 6.8,
+          "toMm": 7.7
+        },
+        "D3": {
+          "upRaw": "8.7",
+          "toRaw": "10.6",
+          "upMm": 8.7,
+          "toMm": 10.6
+        },
+        "D4": {
+          "upRaw": "8.8",
+          "toRaw": "9.6",
+          "upMm": 8.8,
+          "toMm": 9.6
+        },
+        "D5": {
+          "upRaw": "1.9",
+          "toRaw": "3",
+          "upMm": 1.9,
+          "toMm": 3.0
+        }
+      }
+    },
+    {
+      "page": 6,
+      "printedLabel": "MK03Form-E 66-er",
+      "reedLabel": "66-er",
+      "class": "E",
+      "magnetLabel": "MAGNET NdFeB 10 x 5 x 1,9",
+      "momentRaw": "Magnetic moment: 10,3 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "6",
+          "toRaw": "7.2",
+          "upMm": 6.0,
+          "toMm": 7.2
+        },
+        "D3": {
+          "upRaw": "8",
+          "toRaw": "8.9",
+          "upMm": 8.0,
+          "toMm": 8.9
+        },
+        "D4": {
+          "upRaw": "8.1",
+          "toRaw": "9.2",
+          "upMm": 8.1,
+          "toMm": 9.2
+        },
+        "D5": {
+          "upRaw": "-",
+          "toRaw": "2.3",
+          "upMm": null,
+          "toMm": 2.3
+        }
+      }
+    },
+    {
+      "page": 6,
+      "printedLabel": "MK03Form-F 66-er",
+      "reedLabel": "66-er",
+      "class": "F",
+      "magnetLabel": "MAGNET NdFeB 10 x 5 x 1,9",
+      "momentRaw": "Magnetic moment: 10,3 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "5.2",
+          "toRaw": "6.4",
+          "upMm": 5.2,
+          "toMm": 6.4
+        },
+        "D3": {
+          "upRaw": "6.8",
+          "toRaw": "8.4",
+          "upMm": 6.8,
+          "toMm": 8.4
+        },
+        "D4": {
+          "upRaw": "7.3",
+          "toRaw": "8.5",
+          "upMm": 7.3,
+          "toMm": 8.5
+        },
+        "D5": {
+          "upRaw": "-",
+          "toRaw": "-",
+          "upMm": null,
+          "toMm": null
+        }
+      }
+    },
+    {
+      "page": 6,
+      "printedLabel": "MK03Form-A GP501",
+      "reedLabel": "GP501",
+      "class": "A",
+      "magnetLabel": "MAGNET NdFeB 10 x 5 x 1,9",
+      "momentRaw": "Magnetic moment: 10,3 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "9.2",
+          "toRaw": "10.2",
+          "upMm": 9.2,
+          "toMm": 10.2
+        },
+        "D3": {
+          "upRaw": "12.8",
+          "toRaw": "14.2",
+          "upMm": 12.8,
+          "toMm": 14.2
+        },
+        "D4": {
+          "upRaw": "11.5",
+          "toRaw": "12.6",
+          "upMm": 11.5,
+          "toMm": 12.6
+        },
+        "D5": {
+          "upRaw": "6.5",
+          "toRaw": "10",
+          "upMm": 6.5,
+          "toMm": 10.0
+        }
+      }
+    },
+    {
+      "page": 6,
+      "printedLabel": "MK03Form-B GP501",
+      "reedLabel": "GP501",
+      "class": "B",
+      "magnetLabel": "MAGNET NdFeB 10 x 5 x 1,9",
+      "momentRaw": "Magnetic moment: 10,3 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "8.6",
+          "toRaw": "9.8",
+          "upMm": 8.6,
+          "toMm": 9.8
+        },
+        "D3": {
+          "upRaw": "11.7",
+          "toRaw": "13.4",
+          "upMm": 11.7,
+          "toMm": 13.4
+        },
+        "D4": {
+          "upRaw": "10.7",
+          "toRaw": "12",
+          "upMm": 10.7,
+          "toMm": 12.0
+        },
+        "D5": {
+          "upRaw": "3.9",
+          "toRaw": "7.1",
+          "upMm": 3.9,
+          "toMm": 7.1
+        }
+      }
+    },
+    {
+      "page": 6,
+      "printedLabel": "MK03Form-C GP501",
+      "reedLabel": "GP501",
+      "class": "C",
+      "magnetLabel": "MAGNET NdFeB 10 x 5 x 1,9",
+      "momentRaw": "Magnetic moment: 10,3 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "8",
+          "toRaw": "9.2",
+          "upMm": 8.0,
+          "toMm": 9.2
+        },
+        "D3": {
+          "upRaw": "10.7",
+          "toRaw": "12.3",
+          "upMm": 10.7,
+          "toMm": 12.3
+        },
+        "D4": {
+          "upRaw": "10",
+          "toRaw": "11.3",
+          "upMm": 10.0,
+          "toMm": 11.3
+        },
+        "D5": {
+          "upRaw": "2.6",
+          "toRaw": "4.5",
+          "upMm": 2.6,
+          "toMm": 4.5
+        }
+      }
+    },
+    {
+      "page": 6,
+      "printedLabel": "MK03Form-D GP501",
+      "reedLabel": "GP501",
+      "class": "D",
+      "magnetLabel": "MAGNET NdFeB 10 x 5 x 1,9",
+      "momentRaw": "Magnetic moment: 10,3 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "7.5",
+          "toRaw": "8.6",
+          "upMm": 7.5,
+          "toMm": 8.6
+        },
+        "D3": {
+          "upRaw": "9.8",
+          "toRaw": "11.3",
+          "upMm": 9.8,
+          "toMm": 11.3
+        },
+        "D4": {
+          "upRaw": "9.3",
+          "toRaw": "10.6",
+          "upMm": 9.3,
+          "toMm": 10.6
+        },
+        "D5": {
+          "upRaw": "2.1",
+          "toRaw": "3.2",
+          "upMm": 2.1,
+          "toMm": 3.2
+        }
+      }
+    },
+    {
+      "page": 6,
+      "printedLabel": "MK03Form-E GP501",
+      "reedLabel": "GP501",
+      "class": "E",
+      "magnetLabel": "MAGNET NdFeB 10 x 5 x 1,9",
+      "momentRaw": "Magnetic moment: 10,3 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "7",
+          "toRaw": "8.1",
+          "upMm": 7.0,
+          "toMm": 8.1
+        },
+        "D3": {
+          "upRaw": "9",
+          "toRaw": "10.4",
+          "upMm": 9.0,
+          "toMm": 10.4
+        },
+        "D4": {
+          "upRaw": "8.7",
+          "toRaw": "9.9",
+          "upMm": 8.7,
+          "toMm": 9.9
+        },
+        "D5": {
+          "upRaw": "-",
+          "toRaw": "2.7",
+          "upMm": null,
+          "toMm": 2.7
+        }
+      }
+    },
+    {
+      "page": 6,
+      "printedLabel": "MK03Form-F GP501",
+      "reedLabel": "GP501",
+      "class": "F",
+      "magnetLabel": "MAGNET NdFeB 10 x 5 x 1,9",
+      "momentRaw": "Magnetic moment: 10,3 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "6.6",
+          "toRaw": "7.6",
+          "upMm": 6.6,
+          "toMm": 7.6
+        },
+        "D3": {
+          "upRaw": "8.2",
+          "toRaw": "9.6",
+          "upMm": 8.2,
+          "toMm": 9.6
+        },
+        "D4": {
+          "upRaw": "8.1",
+          "toRaw": "9.3",
+          "upMm": 8.1,
+          "toMm": 9.3
+        },
+        "D5": {
+          "upRaw": "-",
+          "toRaw": "-",
+          "upMm": null,
+          "toMm": null
+        }
+      }
+    },
+    {
+      "page": 7,
+      "printedLabel": "MK03Form-A 66-er",
+      "reedLabel": "66-er",
+      "class": "A",
+      "magnetLabel": "MAGNET HF 32/25 14,95 x 10 x 5",
+      "momentRaw": "Magnetic moment: 28,8 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "18.8",
+          "toRaw": "20.6",
+          "upMm": 18.8,
+          "toMm": 20.6
+        },
+        "D3": {
+          "upRaw": "21.8",
+          "toRaw": "24.1",
+          "upMm": 21.8,
+          "toMm": 24.1
+        },
+        "D4": {
+          "upRaw": "17.9",
+          "toRaw": "19.4",
+          "upMm": 17.9,
+          "toMm": 19.4
+        },
+        "D5": {
+          "upRaw": "11.8",
+          "toRaw": "13.2",
+          "upMm": 11.8,
+          "toMm": 13.2
+        }
+      }
+    },
+    {
+      "page": 7,
+      "printedLabel": "MK03Form-B 66-er",
+      "reedLabel": "66-er",
+      "class": "B",
+      "magnetLabel": "MAGNET HF 32/25 14,95 x 10 x 5",
+      "momentRaw": "Magnetic moment: 28,8 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "15.6",
+          "toRaw": "19.2",
+          "upMm": 15.6,
+          "toMm": 19.2
+        },
+        "D3": {
+          "upRaw": "17.6",
+          "toRaw": "22.2",
+          "upMm": 17.6,
+          "toMm": 22.2
+        },
+        "D4": {
+          "upRaw": "15.1",
+          "toRaw": "18.3",
+          "upMm": 15.1,
+          "toMm": 18.3
+        },
+        "D5": {
+          "upRaw": "9.4",
+          "toRaw": "12.2",
+          "upMm": 9.4,
+          "toMm": 12.2
+        }
+      }
+    },
+    {
+      "page": 7,
+      "printedLabel": "MK03Form-C 66-er",
+      "reedLabel": "66-er",
+      "class": "C",
+      "magnetLabel": "MAGNET HF 32/25 14,95 x 10 x 5",
+      "momentRaw": "Magnetic moment: 28,8 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "13.4",
+          "toRaw": "16",
+          "upMm": 13.4,
+          "toMm": 16.0
+        },
+        "D3": {
+          "upRaw": "15.4",
+          "toRaw": "18",
+          "upMm": 15.4,
+          "toMm": 18.0
+        },
+        "D4": {
+          "upRaw": "13.2",
+          "toRaw": "15.5",
+          "upMm": 13.2,
+          "toMm": 15.5
+        },
+        "D5": {
+          "upRaw": "7.2",
+          "toRaw": "9.8",
+          "upMm": 7.2,
+          "toMm": 9.8
+        }
+      }
+    },
+    {
+      "page": 7,
+      "printedLabel": "MK03Form-D 66-er",
+      "reedLabel": "66-er",
+      "class": "D",
+      "magnetLabel": "MAGNET HF 32/25 14,95 x 10 x 5",
+      "momentRaw": "Magnetic moment: 28,8 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "12.3",
+          "toRaw": "13.8",
+          "upMm": 12.3,
+          "toMm": 13.8
+        },
+        "D3": {
+          "upRaw": "13.6",
+          "toRaw": "15.8",
+          "upMm": 13.6,
+          "toMm": 15.8
+        },
+        "D4": {
+          "upRaw": "12.2",
+          "toRaw": "13.6",
+          "upMm": 12.2,
+          "toMm": 13.6
+        },
+        "D5": {
+          "upRaw": "6.2",
+          "toRaw": "7.6",
+          "upMm": 6.2,
+          "toMm": 7.6
+        }
+      }
+    },
+    {
+      "page": 7,
+      "printedLabel": "MK03Form-E 66-er",
+      "reedLabel": "66-er",
+      "class": "E",
+      "magnetLabel": "MAGNET HF 32/25 14,95 x 10 x 5",
+      "momentRaw": "Magnetic moment: 28,8 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "11.3",
+          "toRaw": "12.7",
+          "upMm": 11.3,
+          "toMm": 12.7
+        },
+        "D3": {
+          "upRaw": "12.3",
+          "toRaw": "14",
+          "upMm": 12.3,
+          "toMm": 14.0
+        },
+        "D4": {
+          "upRaw": "11.4",
+          "toRaw": "12.6",
+          "upMm": 11.4,
+          "toMm": 12.6
+        },
+        "D5": {
+          "upRaw": "5.1",
+          "toRaw": "6.6",
+          "upMm": 5.1,
+          "toMm": 6.6
+        }
+      }
+    },
+    {
+      "page": 7,
+      "printedLabel": "MK03Form-F 66-er",
+      "reedLabel": "66-er",
+      "class": "F",
+      "magnetLabel": "MAGNET HF 32/25 14,95 x 10 x 5",
+      "momentRaw": "Magnetic moment: 28,8 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "10.1",
+          "toRaw": "11.7",
+          "upMm": 10.1,
+          "toMm": 11.7
+        },
+        "D3": {
+          "upRaw": "10.6",
+          "toRaw": "12.7",
+          "upMm": 10.6,
+          "toMm": 12.7
+        },
+        "D4": {
+          "upRaw": "10.1",
+          "toRaw": "11.8",
+          "upMm": 10.1,
+          "toMm": 11.8
+        },
+        "D5": {
+          "upRaw": "4.4",
+          "toRaw": "5.5",
+          "upMm": 4.4,
+          "toMm": 5.5
+        }
+      }
+    },
+    {
+      "page": 7,
+      "printedLabel": "MK03Form-A GP501",
+      "reedLabel": "GP501",
+      "class": "A",
+      "magnetLabel": "MAGNET HF 32/25 14,95 x 10 x 5",
+      "momentRaw": "Magnetic moment: 28,8 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "16.3",
+          "toRaw": "17.6",
+          "upMm": 16.3,
+          "toMm": 17.6
+        },
+        "D3": {
+          "upRaw": "19.2",
+          "toRaw": "20.8",
+          "upMm": 19.2,
+          "toMm": 20.8
+        },
+        "D4": {
+          "upRaw": "15.8",
+          "toRaw": "17",
+          "upMm": 15.8,
+          "toMm": 17.0
+        },
+        "D5": {
+          "upRaw": "10.2",
+          "toRaw": "11.7",
+          "upMm": 10.2,
+          "toMm": 11.7
+        }
+      }
+    },
+    {
+      "page": 7,
+      "printedLabel": "MK03Form-B GP501",
+      "reedLabel": "GP501",
+      "class": "B",
+      "magnetLabel": "MAGNET HF 32/25 14,95 x 10 x 5",
+      "momentRaw": "Magnetic moment: 28,8 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "15.2",
+          "toRaw": "16.9",
+          "upMm": 15.2,
+          "toMm": 16.9
+        },
+        "D3": {
+          "upRaw": "17.7",
+          "toRaw": "19.8",
+          "upMm": 17.7,
+          "toMm": 19.8
+        },
+        "D4": {
+          "upRaw": "14.7",
+          "toRaw": "16.4",
+          "upMm": 14.7,
+          "toMm": 16.4
+        },
+        "D5": {
+          "upRaw": "8.8",
+          "toRaw": "10.8",
+          "upMm": 8.8,
+          "toMm": 10.8
+        }
+      }
+    },
+    {
+      "page": 7,
+      "printedLabel": "MK03Form-C GP501",
+      "reedLabel": "GP501",
+      "class": "C",
+      "magnetLabel": "MAGNET HF 32/25 14,95 x 10 x 5",
+      "momentRaw": "Magnetic moment: 28,8 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "14.1",
+          "toRaw": "15.8",
+          "upMm": 14.1,
+          "toMm": 15.8
+        },
+        "D3": {
+          "upRaw": "16.3",
+          "toRaw": "18.3",
+          "upMm": 16.3,
+          "toMm": 18.3
+        },
+        "D4": {
+          "upRaw": "13.8",
+          "toRaw": "15.3",
+          "upMm": 13.8,
+          "toMm": 15.3
+        },
+        "D5": {
+          "upRaw": "7.7",
+          "toRaw": "9.4",
+          "upMm": 7.7,
+          "toMm": 9.4
+        }
+      }
+    },
+    {
+      "page": 7,
+      "printedLabel": "MK03Form-D GP501",
+      "reedLabel": "GP501",
+      "class": "D",
+      "magnetLabel": "MAGNET HF 32/25 14,95 x 10 x 5",
+      "momentRaw": "Magnetic moment: 28,8 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "13.2",
+          "toRaw": "14.7",
+          "upMm": 13.2,
+          "toMm": 14.7
+        },
+        "D3": {
+          "upRaw": "15",
+          "toRaw": "16.9",
+          "upMm": 15.0,
+          "toMm": 16.9
+        },
+        "D4": {
+          "upRaw": "12.9",
+          "toRaw": "14.4",
+          "upMm": 12.9,
+          "toMm": 14.4
+        },
+        "D5": {
+          "upRaw": "6.7",
+          "toRaw": "8.3",
+          "upMm": 6.7,
+          "toMm": 8.3
+        }
+      }
+    },
+    {
+      "page": 7,
+      "printedLabel": "MK03Form-E GP501",
+      "reedLabel": "GP501",
+      "class": "E",
+      "magnetLabel": "MAGNET HF 32/25 14,95 x 10 x 5",
+      "momentRaw": "Magnetic moment: 28,8 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "12.3",
+          "toRaw": "13.8",
+          "upMm": 12.3,
+          "toMm": 13.8
+        },
+        "D3": {
+          "upRaw": "13.9",
+          "toRaw": "15.6",
+          "upMm": 13.9,
+          "toMm": 15.6
+        },
+        "D4": {
+          "upRaw": "12.1",
+          "toRaw": "13.5",
+          "upMm": 12.1,
+          "toMm": 13.5
+        },
+        "D5": {
+          "upRaw": "5.9",
+          "toRaw": "7.3",
+          "upMm": 5.9,
+          "toMm": 7.3
+        }
+      }
+    },
+    {
+      "page": 7,
+      "printedLabel": "MK03Form-F GP501",
+      "reedLabel": "GP501",
+      "class": "F",
+      "magnetLabel": "MAGNET HF 32/25 14,95 x 10 x 5",
+      "momentRaw": "Magnetic moment: 28,8 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "11.4",
+          "toRaw": "12.9",
+          "upMm": 11.4,
+          "toMm": 12.9
+        },
+        "D3": {
+          "upRaw": "12.8",
+          "toRaw": "14.5",
+          "upMm": 12.8,
+          "toMm": 14.5
+        },
+        "D4": {
+          "upRaw": "11.3",
+          "toRaw": "12.7",
+          "upMm": 11.3,
+          "toMm": 12.7
+        },
+        "D5": {
+          "upRaw": "5.3",
+          "toRaw": "6.5",
+          "upMm": 5.3,
+          "toMm": 6.5
+        }
+      }
+    },
+    {
+      "page": 8,
+      "printedLabel": "MK03Form-A 66-er",
+      "reedLabel": "66-er",
+      "class": "A",
+      "magnetLabel": "MAGNET AlNiCo500 5,5 x 22mm",
+      "momentRaw": "Magnetic moment: 36,6 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "21",
+          "toRaw": "22.8",
+          "upMm": 21.0,
+          "toMm": 22.8
+        },
+        "D3": {
+          "upRaw": "18",
+          "toRaw": "19.2",
+          "upMm": 18.0,
+          "toMm": 19.2
+        },
+        "D4": {
+          "upRaw": "13.2",
+          "toRaw": "14.8",
+          "upMm": 13.2,
+          "toMm": 14.8
+        },
+        "D5": {
+          "upRaw": "15",
+          "toRaw": "17.1",
+          "upMm": 15.0,
+          "toMm": 17.1
+        }
+      }
+    },
+    {
+      "page": 8,
+      "printedLabel": "MK03Form-B 66-er",
+      "reedLabel": "66-er",
+      "class": "B",
+      "magnetLabel": "MAGNET AlNiCo500 5,5 x 22mm",
+      "momentRaw": "Magnetic moment: 36,6 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "17.4",
+          "toRaw": "21.4",
+          "upMm": 17.4,
+          "toMm": 21.4
+        },
+        "D3": {
+          "upRaw": "13.7",
+          "toRaw": "18.4",
+          "upMm": 13.7,
+          "toMm": 18.4
+        },
+        "D4": {
+          "upRaw": "10.6",
+          "toRaw": "13.6",
+          "upMm": 10.6,
+          "toMm": 13.6
+        },
+        "D5": {
+          "upRaw": "11.7",
+          "toRaw": "15.4",
+          "upMm": 11.7,
+          "toMm": 15.4
+        }
+      }
+    },
+    {
+      "page": 8,
+      "printedLabel": "MK03Form-C 66-er",
+      "reedLabel": "66-er",
+      "class": "C",
+      "magnetLabel": "MAGNET AlNiCo500 5,5 x 22mm",
+      "momentRaw": "Magnetic moment: 36,6 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "15.1",
+          "toRaw": "17.8",
+          "upMm": 15.1,
+          "toMm": 17.8
+        },
+        "D3": {
+          "upRaw": "11.2",
+          "toRaw": "14.1",
+          "upMm": 11.2,
+          "toMm": 14.1
+        },
+        "D4": {
+          "upRaw": "8.8",
+          "toRaw": "11",
+          "upMm": 8.8,
+          "toMm": 11.0
+        },
+        "D5": {
+          "upRaw": "9.5",
+          "toRaw": "12.1",
+          "upMm": 9.5,
+          "toMm": 12.1
+        }
+      }
+    },
+    {
+      "page": 8,
+      "printedLabel": "MK03Form-D 66-er",
+      "reedLabel": "66-er",
+      "class": "D",
+      "magnetLabel": "MAGNET AlNiCo500 5,5 x 22mm",
+      "momentRaw": "Magnetic moment: 36,6 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "13.6",
+          "toRaw": "15.5",
+          "upMm": 13.6,
+          "toMm": 15.5
+        },
+        "D3": {
+          "upRaw": "9.6",
+          "toRaw": "11.6",
+          "upMm": 9.6,
+          "toMm": 11.6
+        },
+        "D4": {
+          "upRaw": "7.5",
+          "toRaw": "9.2",
+          "upMm": 7.5,
+          "toMm": 9.2
+        },
+        "D5": {
+          "upRaw": "7.8",
+          "toRaw": "9.9",
+          "upMm": 7.8,
+          "toMm": 9.9
+        }
+      }
+    },
+    {
+      "page": 8,
+      "printedLabel": "MK03Form-E 66-er",
+      "reedLabel": "66-er",
+      "class": "E",
+      "magnetLabel": "MAGNET AlNiCo500 5,5 x 22mm",
+      "momentRaw": "Magnetic moment: 36,6 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "13",
+          "toRaw": "14",
+          "upMm": 13.0,
+          "toMm": 14.0
+        },
+        "D3": {
+          "upRaw": "8.4",
+          "toRaw": "10",
+          "upMm": 8.4,
+          "toMm": 10.0
+        },
+        "D4": {
+          "upRaw": "7.1",
+          "toRaw": "7.9",
+          "upMm": 7.1,
+          "toMm": 7.9
+        },
+        "D5": {
+          "upRaw": "7",
+          "toRaw": "8.2",
+          "upMm": 7.0,
+          "toMm": 8.2
+        }
+      }
+    },
+    {
+      "page": 8,
+      "printedLabel": "MK03Form-F 66-er",
+      "reedLabel": "66-er",
+      "class": "F",
+      "magnetLabel": "MAGNET AlNiCo500 5,5 x 22mm",
+      "momentRaw": "Magnetic moment: 36,6 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "11.7",
+          "toRaw": "13.4",
+          "upMm": 11.7,
+          "toMm": 13.4
+        },
+        "D3": {
+          "upRaw": "7.7",
+          "toRaw": "8.8",
+          "upMm": 7.7,
+          "toMm": 8.8
+        },
+        "D4": {
+          "upRaw": "6.1",
+          "toRaw": "7.5",
+          "upMm": 6.1,
+          "toMm": 7.5
+        },
+        "D5": {
+          "upRaw": "5.8",
+          "toRaw": "7.4",
+          "upMm": 5.8,
+          "toMm": 7.4
+        }
+      }
+    },
+    {
+      "page": 8,
+      "printedLabel": "MK03Form-A GP501",
+      "reedLabel": "GP501",
+      "class": "A",
+      "magnetLabel": "MAGNET AlNiCo500 5,5 x 22mm",
+      "momentRaw": "Magnetic moment: 36,6 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "18.4",
+          "toRaw": "19.9",
+          "upMm": 18.4,
+          "toMm": 19.9
+        },
+        "D3": {
+          "upRaw": "14.9",
+          "toRaw": "16.5",
+          "upMm": 14.9,
+          "toMm": 16.5
+        },
+        "D4": {
+          "upRaw": "11.3",
+          "toRaw": "12.6",
+          "upMm": 11.3,
+          "toMm": 12.6
+        },
+        "D5": {
+          "upRaw": "12.4",
+          "toRaw": "13.9",
+          "upMm": 12.4,
+          "toMm": 13.9
+        }
+      }
+    },
+    {
+      "page": 8,
+      "printedLabel": "MK03Form-B GP501",
+      "reedLabel": "GP501",
+      "class": "B",
+      "magnetLabel": "MAGNET AlNiCo500 5,5 x 22mm",
+      "momentRaw": "Magnetic moment: 36,6 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "17.2",
+          "toRaw": "19",
+          "upMm": 17.2,
+          "toMm": 19.0
+        },
+        "D3": {
+          "upRaw": "13.2",
+          "toRaw": "15.5",
+          "upMm": 13.2,
+          "toMm": 15.5
+        },
+        "D4": {
+          "upRaw": "10.2",
+          "toRaw": "11.9",
+          "upMm": 10.2,
+          "toMm": 11.9
+        },
+        "D5": {
+          "upRaw": "11",
+          "toRaw": "13",
+          "upMm": 11.0,
+          "toMm": 13.0
+        }
+      }
+    },
+    {
+      "page": 8,
+      "printedLabel": "MK03Form-C GP501",
+      "reedLabel": "GP501",
+      "class": "C",
+      "magnetLabel": "MAGNET AlNiCo500 5,5 x 22mm",
+      "momentRaw": "Magnetic moment: 36,6 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "16",
+          "toRaw": "17.8",
+          "upMm": 16.0,
+          "toMm": 17.8
+        },
+        "D3": {
+          "upRaw": "11.8",
+          "toRaw": "13.8",
+          "upMm": 11.8,
+          "toMm": 13.8
+        },
+        "D4": {
+          "upRaw": "9.3",
+          "toRaw": "10.8",
+          "upMm": 9.3,
+          "toMm": 10.8
+        },
+        "D5": {
+          "upRaw": "9.8",
+          "toRaw": "11.6",
+          "upMm": 9.8,
+          "toMm": 11.6
+        }
+      }
+    },
+    {
+      "page": 8,
+      "printedLabel": "MK03Form-D GP501",
+      "reedLabel": "GP501",
+      "class": "D",
+      "magnetLabel": "MAGNET AlNiCo500 5,5 x 22mm",
+      "momentRaw": "Magnetic moment: 36,6 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "14.9",
+          "toRaw": "16.6",
+          "upMm": 14.9,
+          "toMm": 16.6
+        },
+        "D3": {
+          "upRaw": "10.6",
+          "toRaw": "12.4",
+          "upMm": 10.6,
+          "toMm": 12.4
+        },
+        "D4": {
+          "upRaw": "8.4",
+          "toRaw": "9.9",
+          "upMm": 8.4,
+          "toMm": 9.9
+        },
+        "D5": {
+          "upRaw": "8.8",
+          "toRaw": "10.4",
+          "upMm": 8.8,
+          "toMm": 10.4
+        }
+      }
+    },
+    {
+      "page": 8,
+      "printedLabel": "MK03Form-E GP501",
+      "reedLabel": "GP501",
+      "class": "E",
+      "magnetLabel": "MAGNET AlNiCo500 5,5 x 22mm",
+      "momentRaw": "Magnetic moment: 36,6 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "13.8",
+          "toRaw": "15.5",
+          "upMm": 13.8,
+          "toMm": 15.5
+        },
+        "D3": {
+          "upRaw": "9.5",
+          "toRaw": "11.2",
+          "upMm": 9.5,
+          "toMm": 11.2
+        },
+        "D4": {
+          "upRaw": "7.7",
+          "toRaw": "9",
+          "upMm": 7.7,
+          "toMm": 9.0
+        },
+        "D5": {
+          "upRaw": "7.9",
+          "toRaw": "9.4",
+          "upMm": 7.9,
+          "toMm": 9.4
+        }
+      }
+    },
+    {
+      "page": 8,
+      "printedLabel": "MK03Form-F GP501",
+      "reedLabel": "GP501",
+      "class": "F",
+      "magnetLabel": "MAGNET AlNiCo500 5,5 x 22mm",
+      "momentRaw": "Magnetic moment: 36,6 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "12.9",
+          "toRaw": "14.4",
+          "upMm": 12.9,
+          "toMm": 14.4
+        },
+        "D3": {
+          "upRaw": "8.5",
+          "toRaw": "9.1",
+          "upMm": 8.5,
+          "toMm": 9.1
+        },
+        "D4": {
+          "upRaw": "7",
+          "toRaw": "8.3",
+          "upMm": 7.0,
+          "toMm": 8.3
+        },
+        "D5": {
+          "upRaw": "7.1",
+          "toRaw": "8.5",
+          "upMm": 7.1,
+          "toMm": 8.5
+        }
+      }
+    },
+    {
+      "page": 9,
+      "printedLabel": "MK03Form-A 66-er",
+      "reedLabel": "66-er",
+      "class": "A",
+      "magnetLabel": "ROUND MAGNET AlNiCo500 4,0 x 19mm",
+      "momentRaw": "Magnetic moment: 14,8 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "14.6",
+          "toRaw": "16.2",
+          "upMm": 14.6,
+          "toMm": 16.2
+        },
+        "D3": {
+          "upRaw": "11.5",
+          "toRaw": "14",
+          "upMm": 11.5,
+          "toMm": 14.0
+        },
+        "D4": {
+          "upRaw": "8.8",
+          "toRaw": "10.7",
+          "upMm": 8.8,
+          "toMm": 10.7
+        },
+        "D5": {
+          "upRaw": "9.2",
+          "toRaw": "11.1",
+          "upMm": 9.2,
+          "toMm": 11.1
+        }
+      }
+    },
+    {
+      "page": 9,
+      "printedLabel": "MK03Form-B 66-er",
+      "reedLabel": "66-er",
+      "class": "B",
+      "magnetLabel": "ROUND MAGNET AlNiCo500 4,0 x 19mm",
+      "momentRaw": "Magnetic moment: 14,8 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "11.8",
+          "toRaw": "15",
+          "upMm": 11.8,
+          "toMm": 15.0
+        },
+        "D3": {
+          "upRaw": "8.6",
+          "toRaw": "11.9",
+          "upMm": 8.6,
+          "toMm": 11.9
+        },
+        "D4": {
+          "upRaw": "7.1",
+          "toRaw": "9.2",
+          "upMm": 7.1,
+          "toMm": 9.2
+        },
+        "D5": {
+          "upRaw": "7.2",
+          "toRaw": "9.6",
+          "upMm": 7.2,
+          "toMm": 9.6
+        }
+      }
+    },
+    {
+      "page": 9,
+      "printedLabel": "MK03Form-C 66-er",
+      "reedLabel": "66-er",
+      "class": "C",
+      "magnetLabel": "ROUND MAGNET AlNiCo500 4,0 x 19mm",
+      "momentRaw": "Magnetic moment: 14,8 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "10",
+          "toRaw": "12.2",
+          "upMm": 10.0,
+          "toMm": 12.2
+        },
+        "D3": {
+          "upRaw": "6.3",
+          "toRaw": "9",
+          "upMm": 6.3,
+          "toMm": 9.0
+        },
+        "D4": {
+          "upRaw": "5.3",
+          "toRaw": "7.5",
+          "upMm": 5.3,
+          "toMm": 7.5
+        },
+        "D5": {
+          "upRaw": "5.3",
+          "toRaw": "7.6",
+          "upMm": 5.3,
+          "toMm": 7.6
+        }
+      }
+    },
+    {
+      "page": 9,
+      "printedLabel": "MK03Form-D 66-er",
+      "reedLabel": "66-er",
+      "class": "D",
+      "magnetLabel": "ROUND MAGNET AlNiCo500 4,0 x 19mm",
+      "momentRaw": "Magnetic moment: 14,8 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "9",
+          "toRaw": "10.4",
+          "upMm": 9.0,
+          "toMm": 10.4
+        },
+        "D3": {
+          "upRaw": "5.3",
+          "toRaw": "6.7",
+          "upMm": 5.3,
+          "toMm": 6.7
+        },
+        "D4": {
+          "upRaw": "4.7",
+          "toRaw": "5.7",
+          "upMm": 4.7,
+          "toMm": 5.7
+        },
+        "D5": {
+          "upRaw": "4.2",
+          "toRaw": "5.7",
+          "upMm": 4.2,
+          "toMm": 5.7
+        }
+      }
+    },
+    {
+      "page": 9,
+      "printedLabel": "MK03Form-E 66-er",
+      "reedLabel": "66-er",
+      "class": "E",
+      "magnetLabel": "ROUND MAGNET AlNiCo500 4,0 x 19mm",
+      "momentRaw": "Magnetic moment: 14,8 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "8.2",
+          "toRaw": "9.4",
+          "upMm": 8.2,
+          "toMm": 9.4
+        },
+        "D3": {
+          "upRaw": "4.3",
+          "toRaw": "5.7",
+          "upMm": 4.3,
+          "toMm": 5.7
+        },
+        "D4": {
+          "upRaw": "4.1",
+          "toRaw": "5.1",
+          "upMm": 4.1,
+          "toMm": 5.1
+        },
+        "D5": {
+          "upRaw": "3.3",
+          "toRaw": "4.6",
+          "upMm": 3.3,
+          "toMm": 4.6
+        }
+      }
+    },
+    {
+      "page": 9,
+      "printedLabel": "MK03Form-F 66-er",
+      "reedLabel": "66-er",
+      "class": "F",
+      "magnetLabel": "ROUND MAGNET AlNiCo500 4,0 x 19mm",
+      "momentRaw": "Magnetic moment: 14,8 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "7.3",
+          "toRaw": "8.6",
+          "upMm": 7.3,
+          "toMm": 8.6
+        },
+        "D3": {
+          "upRaw": "3.4",
+          "toRaw": "4.7",
+          "upMm": 3.4,
+          "toMm": 4.7
+        },
+        "D4": {
+          "upRaw": "2.9",
+          "toRaw": "4.5",
+          "upMm": 2.9,
+          "toMm": 4.5
+        },
+        "D5": {
+          "upRaw": "2.5",
+          "toRaw": "3.7",
+          "upMm": 2.5,
+          "toMm": 3.7
+        }
+      }
+    },
+    {
+      "page": 9,
+      "printedLabel": "MK03Form-A GP501",
+      "reedLabel": "GP501",
+      "class": "A",
+      "magnetLabel": "ROUND MAGNET AlNiCo500 4,0 x 19mm",
+      "momentRaw": "Magnetic moment: 14,8 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "12.8",
+          "toRaw": "14",
+          "upMm": 12.8,
+          "toMm": 14.0
+        },
+        "D3": {
+          "upRaw": "9.3",
+          "toRaw": "10.7",
+          "upMm": 9.3,
+          "toMm": 10.7
+        },
+        "D4": {
+          "upRaw": "7.7",
+          "toRaw": "8.9",
+          "upMm": 7.7,
+          "toMm": 8.9
+        },
+        "D5": {
+          "upRaw": "7.6",
+          "toRaw": "9.1",
+          "upMm": 7.6,
+          "toMm": 9.1
+        }
+      }
+    },
+    {
+      "page": 9,
+      "printedLabel": "MK03Form-B GP501",
+      "reedLabel": "GP501",
+      "class": "B",
+      "magnetLabel": "ROUND MAGNET AlNiCo500 4,0 x 19mm",
+      "momentRaw": "Magnetic moment: 14,8 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "11.8",
+          "toRaw": "13.4",
+          "upMm": 11.8,
+          "toMm": 13.4
+        },
+        "D3": {
+          "upRaw": "8",
+          "toRaw": "9.9",
+          "upMm": 8.0,
+          "toMm": 9.9
+        },
+        "D4": {
+          "upRaw": "6.8",
+          "toRaw": "8.3",
+          "upMm": 6.8,
+          "toMm": 8.3
+        },
+        "D5": {
+          "upRaw": "6.4",
+          "toRaw": "8.2",
+          "upMm": 6.4,
+          "toMm": 8.2
+        }
+      }
+    },
+    {
+      "page": 9,
+      "printedLabel": "MK03Form-C GP501",
+      "reedLabel": "GP501",
+      "class": "C",
+      "magnetLabel": "ROUND MAGNET AlNiCo500 4,0 x 19mm",
+      "momentRaw": "Magnetic moment: 14,8 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "10.9",
+          "toRaw": "12.4",
+          "upMm": 10.9,
+          "toMm": 12.4
+        },
+        "D3": {
+          "upRaw": "6.9",
+          "toRaw": "8.6",
+          "upMm": 6.9,
+          "toMm": 8.6
+        },
+        "D4": {
+          "upRaw": "6",
+          "toRaw": "7.4",
+          "upMm": 6.0,
+          "toMm": 7.4
+        },
+        "D5": {
+          "upRaw": "5.4",
+          "toRaw": "7",
+          "upMm": 5.4,
+          "toMm": 7.0
+        }
+      }
+    },
+    {
+      "page": 9,
+      "printedLabel": "MK03Form-D GP501",
+      "reedLabel": "GP501",
+      "class": "D",
+      "magnetLabel": "ROUND MAGNET AlNiCo500 4,0 x 19mm",
+      "momentRaw": "Magnetic moment: 14,8 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "10.1",
+          "toRaw": "11.5",
+          "upMm": 10.1,
+          "toMm": 11.5
+        },
+        "D3": {
+          "upRaw": "6.1",
+          "toRaw": "7.5",
+          "upMm": 6.1,
+          "toMm": 7.5
+        },
+        "D4": {
+          "upRaw": "5.3",
+          "toRaw": "6.6",
+          "upMm": 5.3,
+          "toMm": 6.6
+        },
+        "D5": {
+          "upRaw": "4.6",
+          "toRaw": "6",
+          "upMm": 4.6,
+          "toMm": 6.0
+        }
+      }
+    },
+    {
+      "page": 9,
+      "printedLabel": "MK03Form-E GP501",
+      "reedLabel": "GP501",
+      "class": "E",
+      "magnetLabel": "ROUND MAGNET AlNiCo500 4,0 x 19mm",
+      "momentRaw": "Magnetic moment: 14,8 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "9.3",
+          "toRaw": "10.7",
+          "upMm": 9.3,
+          "toMm": 10.7
+        },
+        "D3": {
+          "upRaw": "5.3",
+          "toRaw": "6.7",
+          "upMm": 5.3,
+          "toMm": 6.7
+        },
+        "D4": {
+          "upRaw": "4.7",
+          "toRaw": "5.9",
+          "upMm": 4.7,
+          "toMm": 5.9
+        },
+        "D5": {
+          "upRaw": "4",
+          "toRaw": "5.2",
+          "upMm": 4.0,
+          "toMm": 5.2
+        }
+      }
+    },
+    {
+      "page": 9,
+      "printedLabel": "MK03Form-F GP501",
+      "reedLabel": "GP501",
+      "class": "F",
+      "magnetLabel": "ROUND MAGNET AlNiCo500 4,0 x 19mm",
+      "momentRaw": "Magnetic moment: 14,8 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "8.6",
+          "toRaw": "9.9",
+          "upMm": 8.6,
+          "toMm": 9.9
+        },
+        "D3": {
+          "upRaw": "4.7",
+          "toRaw": "5.9",
+          "upMm": 4.7,
+          "toMm": 5.9
+        },
+        "D4": {
+          "upRaw": "4.2",
+          "toRaw": "5.3",
+          "upMm": 4.2,
+          "toMm": 5.3
+        },
+        "D5": {
+          "upRaw": "3.5",
+          "toRaw": "4.6",
+          "upMm": 3.5,
+          "toMm": 4.6
+        }
+      }
+    },
+    {
+      "page": 10,
+      "printedLabel": "MK03Form-A 66-er",
+      "reedLabel": "66-er",
+      "class": "A",
+      "magnetLabel": "ROUND MAGNET AlNiCo500 3,7 x 22mm",
+      "momentRaw": "Magnetic moment: 19,8 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "15.7",
+          "toRaw": "18.3",
+          "upMm": 15.7,
+          "toMm": 18.3
+        },
+        "D3": {
+          "upRaw": "12.2",
+          "toRaw": "14.1",
+          "upMm": 12.2,
+          "toMm": 14.1
+        },
+        "D4": {
+          "upRaw": "9.5",
+          "toRaw": "11.4",
+          "upMm": 9.5,
+          "toMm": 11.4
+        },
+        "D5": {
+          "upRaw": "10.7",
+          "toRaw": "12.5",
+          "upMm": 10.7,
+          "toMm": 12.5
+        }
+      }
+    },
+    {
+      "page": 10,
+      "printedLabel": "MK03Form-B 66-er",
+      "reedLabel": "66-er",
+      "class": "B",
+      "magnetLabel": "ROUND MAGNET AlNiCo500 3,7 x 22mm",
+      "momentRaw": "Magnetic moment: 19,8 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "13",
+          "toRaw": "16.3",
+          "upMm": 13.0,
+          "toMm": 16.3
+        },
+        "D3": {
+          "upRaw": "10.1",
+          "toRaw": "12.6",
+          "upMm": 10.1,
+          "toMm": 12.6
+        },
+        "D4": {
+          "upRaw": "7",
+          "toRaw": "9.9",
+          "upMm": 7.0,
+          "toMm": 9.9
+        },
+        "D5": {
+          "upRaw": "8.6",
+          "toRaw": "11.1",
+          "upMm": 8.6,
+          "toMm": 11.1
+        }
+      }
+    },
+    {
+      "page": 10,
+      "printedLabel": "MK03Form-C 66-er",
+      "reedLabel": "66-er",
+      "class": "C",
+      "magnetLabel": "ROUND MAGNET AlNiCo500 3,7 x 22mm",
+      "momentRaw": "Magnetic moment: 19,8 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "11.1",
+          "toRaw": "13.3",
+          "upMm": 11.1,
+          "toMm": 13.3
+        },
+        "D3": {
+          "upRaw": "7.7",
+          "toRaw": "10.5",
+          "upMm": 7.7,
+          "toMm": 10.5
+        },
+        "D4": {
+          "upRaw": "5.6",
+          "toRaw": "7.4",
+          "upMm": 5.6,
+          "toMm": 7.4
+        },
+        "D5": {
+          "upRaw": "6.5",
+          "toRaw": "9",
+          "upMm": 6.5,
+          "toMm": 9.0
+        }
+      }
+    },
+    {
+      "page": 10,
+      "printedLabel": "MK03Form-D 66-er",
+      "reedLabel": "66-er",
+      "class": "D",
+      "magnetLabel": "ROUND MAGNET AlNiCo500 3,7 x 22mm",
+      "momentRaw": "Magnetic moment: 19,8 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "10.2",
+          "toRaw": "11.7",
+          "upMm": 10.2,
+          "toMm": 11.7
+        },
+        "D3": {
+          "upRaw": "6.2",
+          "toRaw": "8.1",
+          "upMm": 6.2,
+          "toMm": 8.1
+        },
+        "D4": {
+          "upRaw": "4.7",
+          "toRaw": "6",
+          "upMm": 4.7,
+          "toMm": 6.0
+        },
+        "D5": {
+          "upRaw": "5.3",
+          "toRaw": "6.9",
+          "upMm": 5.3,
+          "toMm": 6.9
+        }
+      }
+    },
+    {
+      "page": 10,
+      "printedLabel": "MK03Form-E 66-er",
+      "reedLabel": "66-er",
+      "class": "E",
+      "magnetLabel": "ROUND MAGNET AlNiCo500 3,7 x 22mm",
+      "momentRaw": "Magnetic moment: 19,8 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "9.1",
+          "toRaw": "10.8",
+          "upMm": 9.1,
+          "toMm": 10.8
+        },
+        "D3": {
+          "upRaw": "4.1",
+          "toRaw": "6.6",
+          "upMm": 4.1,
+          "toMm": 6.6
+        },
+        "D4": {
+          "upRaw": "4.1",
+          "toRaw": "5.1",
+          "upMm": 4.1,
+          "toMm": 5.1
+        },
+        "D5": {
+          "upRaw": "4.4",
+          "toRaw": "5.7",
+          "upMm": 4.4,
+          "toMm": 5.7
+        }
+      }
+    },
+    {
+      "page": 10,
+      "printedLabel": "MK03Form-F 66-er",
+      "reedLabel": "66-er",
+      "class": "F",
+      "magnetLabel": "ROUND MAGNET AlNiCo500 3,7 x 22mm",
+      "momentRaw": "Magnetic moment: 19,8 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "8",
+          "toRaw": "9.7",
+          "upMm": 8.0,
+          "toMm": 9.7
+        },
+        "D3": {
+          "upRaw": "3.9",
+          "toRaw": "4.5",
+          "upMm": 3.9,
+          "toMm": 4.5
+        },
+        "D4": {
+          "upRaw": "3.1",
+          "toRaw": "4.5",
+          "upMm": 3.1,
+          "toMm": 4.5
+        },
+        "D5": {
+          "upRaw": "3.5",
+          "toRaw": "4.8",
+          "upMm": 3.5,
+          "toMm": 4.8
+        }
+      }
+    },
+    {
+      "page": 10,
+      "printedLabel": "MK03Form-A GP501",
+      "reedLabel": "GP501",
+      "class": "A",
+      "magnetLabel": "ROUND MAGNET AlNiCo500 3,7 x 22mm",
+      "momentRaw": "Magnetic moment: 19,8 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "14",
+          "toRaw": "15.2",
+          "upMm": 14.0,
+          "toMm": 15.2
+        },
+        "D3": {
+          "upRaw": "11",
+          "toRaw": "12.6",
+          "upMm": 11.0,
+          "toMm": 12.6
+        },
+        "D4": {
+          "upRaw": "8.3",
+          "toRaw": "9.5",
+          "upMm": 8.3,
+          "toMm": 9.5
+        },
+        "D5": {
+          "upRaw": "9.1",
+          "toRaw": "10.5",
+          "upMm": 9.1,
+          "toMm": 10.5
+        }
+      }
+    },
+    {
+      "page": 10,
+      "printedLabel": "MK03Form-B GP501",
+      "reedLabel": "GP501",
+      "class": "B",
+      "magnetLabel": "ROUND MAGNET AlNiCo500 3,7 x 22mm",
+      "momentRaw": "Magnetic moment: 19,8 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "13",
+          "toRaw": "14.6",
+          "upMm": 13.0,
+          "toMm": 14.6
+        },
+        "D3": {
+          "upRaw": "9.5",
+          "toRaw": "11.6",
+          "upMm": 9.5,
+          "toMm": 11.6
+        },
+        "D4": {
+          "upRaw": "7.2",
+          "toRaw": "8.9",
+          "upMm": 7.2,
+          "toMm": 8.9
+        },
+        "D5": {
+          "upRaw": "7.9",
+          "toRaw": "9.7",
+          "upMm": 7.9,
+          "toMm": 9.7
+        }
+      }
+    },
+    {
+      "page": 10,
+      "printedLabel": "MK03Form-C GP501",
+      "reedLabel": "GP501",
+      "class": "C",
+      "magnetLabel": "ROUND MAGNET AlNiCo500 3,7 x 22mm",
+      "momentRaw": "Magnetic moment: 19,8 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "12",
+          "toRaw": "13.6",
+          "upMm": 12.0,
+          "toMm": 13.6
+        },
+        "D3": {
+          "upRaw": "8.3",
+          "toRaw": "10.1",
+          "upMm": 8.3,
+          "toMm": 10.1
+        },
+        "D4": {
+          "upRaw": "6.4",
+          "toRaw": "7.8",
+          "upMm": 6.4,
+          "toMm": 7.8
+        },
+        "D5": {
+          "upRaw": "6.9",
+          "toRaw": "8.5",
+          "upMm": 6.9,
+          "toMm": 8.5
+        }
+      }
+    },
+    {
+      "page": 10,
+      "printedLabel": "MK03Form-D GP501",
+      "reedLabel": "GP501",
+      "class": "D",
+      "magnetLabel": "ROUND MAGNET AlNiCo500 3,7 x 22mm",
+      "momentRaw": "Magnetic moment: 19,8 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "11.1",
+          "toRaw": "12.6",
+          "upMm": 11.1,
+          "toMm": 12.6
+        },
+        "D3": {
+          "upRaw": "7.2",
+          "toRaw": "8.9",
+          "upMm": 7.2,
+          "toMm": 8.9
+        },
+        "D4": {
+          "upRaw": "5.6",
+          "toRaw": "7",
+          "upMm": 5.6,
+          "toMm": 7.0
+        },
+        "D5": {
+          "upRaw": "6",
+          "toRaw": "7.5",
+          "upMm": 6.0,
+          "toMm": 7.5
+        }
+      }
+    },
+    {
+      "page": 10,
+      "printedLabel": "MK03Form-E GP501",
+      "reedLabel": "GP501",
+      "class": "E",
+      "magnetLabel": "ROUND MAGNET AlNiCo500 3,7 x 22mm",
+      "momentRaw": "Magnetic moment: 19,8 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "10.3",
+          "toRaw": "11.7",
+          "upMm": 10.3,
+          "toMm": 11.7
+        },
+        "D3": {
+          "upRaw": "6.4",
+          "toRaw": "7.8",
+          "upMm": 6.4,
+          "toMm": 7.8
+        },
+        "D4": {
+          "upRaw": "4.9",
+          "toRaw": "6.2",
+          "upMm": 4.9,
+          "toMm": 6.2
+        },
+        "D5": {
+          "upRaw": "5.3",
+          "toRaw": "6.6",
+          "upMm": 5.3,
+          "toMm": 6.6
+        }
+      }
+    },
+    {
+      "page": 10,
+      "printedLabel": "MK03Form-F GP501",
+      "reedLabel": "GP501",
+      "class": "F",
+      "magnetLabel": "ROUND MAGNET AlNiCo500 3,7 x 22mm",
+      "momentRaw": "Magnetic moment: 19,8 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "9.6",
+          "toRaw": "10.9",
+          "upMm": 9.6,
+          "toMm": 10.9
+        },
+        "D3": {
+          "upRaw": "5.6",
+          "toRaw": "7",
+          "upMm": 5.6,
+          "toMm": 7.0
+        },
+        "D4": {
+          "upRaw": "4.4",
+          "toRaw": "5.5",
+          "upMm": 4.4,
+          "toMm": 5.5
+        },
+        "D5": {
+          "upRaw": "4.7",
+          "toRaw": "5.9",
+          "upMm": 4.7,
+          "toMm": 5.9
+        }
+      }
+    },
+    {
+      "page": 11,
+      "printedLabel": "MK03Form-A 66-er",
+      "reedLabel": "66-er",
+      "class": "A",
+      "magnetLabel": "MAGNET NdFeB N35 4 x 2mm",
+      "momentRaw": "Magnetic moment: 3,39 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "6.9",
+          "toRaw": "8.2",
+          "upMm": 6.9,
+          "toMm": 8.2
+        },
+        "D3": {
+          "upRaw": "8.2",
+          "toRaw": "9.8",
+          "upMm": 8.2,
+          "toMm": 9.8
+        },
+        "D4": {
+          "upRaw": "7",
+          "toRaw": "8.1",
+          "upMm": 7.0,
+          "toMm": 8.1
+        },
+        "D5": {
+          "upRaw": "3.9",
+          "toRaw": "5.6",
+          "upMm": 3.9,
+          "toMm": 5.6
+        }
+      }
+    },
+    {
+      "page": 11,
+      "printedLabel": "MK03Form-B 66-er",
+      "reedLabel": "66-er",
+      "class": "B",
+      "magnetLabel": "MAGNET NdFeB N35 4 x 2mm",
+      "momentRaw": "Magnetic moment: 3,39 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "5.4",
+          "toRaw": "7.3",
+          "upMm": 5.4,
+          "toMm": 7.3
+        },
+        "D3": {
+          "upRaw": "6.3",
+          "toRaw": "8.6",
+          "upMm": 6.3,
+          "toMm": 8.6
+        },
+        "D4": {
+          "upRaw": "5.8",
+          "toRaw": "7.4",
+          "upMm": 5.8,
+          "toMm": 7.4
+        },
+        "D5": {
+          "upRaw": "2.3",
+          "toRaw": "4.3",
+          "upMm": 2.3,
+          "toMm": 4.3
+        }
+      }
+    },
+    {
+      "page": 11,
+      "printedLabel": "MK03Form-C 66-er",
+      "reedLabel": "66-er",
+      "class": "C",
+      "magnetLabel": "MAGNET NdFeB N35 4 x 2mm",
+      "momentRaw": "Magnetic moment: 3,39 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "4.3",
+          "toRaw": "5.8",
+          "upMm": 4.3,
+          "toMm": 5.8
+        },
+        "D3": {
+          "upRaw": "5",
+          "toRaw": "6.7",
+          "upMm": 5.0,
+          "toMm": 6.7
+        },
+        "D4": {
+          "upRaw": "4.9",
+          "toRaw": "6.2",
+          "upMm": 4.9,
+          "toMm": 6.2
+        },
+        "D5": {
+          "upRaw": "-",
+          "toRaw": "2.7",
+          "upMm": null,
+          "toMm": 2.7
+        }
+      }
+    },
+    {
+      "page": 11,
+      "printedLabel": "MK03Form-D 66-er",
+      "reedLabel": "66-er",
+      "class": "D",
+      "magnetLabel": "MAGNET NdFeB N35 4 x 2mm",
+      "momentRaw": "Magnetic moment: 3,39 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "3.9",
+          "toRaw": "4.7",
+          "upMm": 3.9,
+          "toMm": 4.7
+        },
+        "D3": {
+          "upRaw": "4.4",
+          "toRaw": "5.4",
+          "upMm": 4.4,
+          "toMm": 5.4
+        },
+        "D4": {
+          "upRaw": "4.4",
+          "toRaw": "5.3",
+          "upMm": 4.4,
+          "toMm": 5.3
+        },
+        "D5": {
+          "upRaw": "-",
+          "toRaw": "-",
+          "upMm": null,
+          "toMm": null
+        }
+      }
+    },
+    {
+      "page": 11,
+      "printedLabel": "MK03Form-E 66-er",
+      "reedLabel": "66-er",
+      "class": "E",
+      "magnetLabel": "MAGNET NdFeB N35 4 x 2mm",
+      "momentRaw": "Magnetic moment: 3,39 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "3.3",
+          "toRaw": "4.3",
+          "upMm": 3.3,
+          "toMm": 4.3
+        },
+        "D3": {
+          "upRaw": "3.8",
+          "toRaw": "4.8",
+          "upMm": 3.8,
+          "toMm": 4.8
+        },
+        "D4": {
+          "upRaw": "3.9",
+          "toRaw": "4.8",
+          "upMm": 3.9,
+          "toMm": 4.8
+        },
+        "D5": {
+          "upRaw": "-",
+          "toRaw": "-",
+          "upMm": null,
+          "toMm": null
+        }
+      }
+    },
+    {
+      "page": 11,
+      "printedLabel": "MK03Form-F 66-er",
+      "reedLabel": "66-er",
+      "class": "F",
+      "magnetLabel": "MAGNET NdFeB N35 4 x 2mm",
+      "momentRaw": "Magnetic moment: 3,39 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "2.8",
+          "toRaw": "3.7",
+          "upMm": 2.8,
+          "toMm": 3.7
+        },
+        "D3": {
+          "upRaw": "2.5",
+          "toRaw": "4.2",
+          "upMm": 2.5,
+          "toMm": 4.2
+        },
+        "D4": {
+          "upRaw": "3.4",
+          "toRaw": "4.3",
+          "upMm": 3.4,
+          "toMm": 4.3
+        },
+        "D5": {
+          "upRaw": "-",
+          "toRaw": "-",
+          "upMm": null,
+          "toMm": null
+        }
+      }
+    },
+    {
+      "page": 11,
+      "printedLabel": "MK03Form-A GP501",
+      "reedLabel": "GP501",
+      "class": "A",
+      "magnetLabel": "MAGNET NdFeB N35 4 x 2mm",
+      "momentRaw": "Magnetic moment: 3,39 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "5.8",
+          "toRaw": "6.7",
+          "upMm": 5.8,
+          "toMm": 6.7
+        },
+        "D3": {
+          "upRaw": "6.6",
+          "toRaw": "7.9",
+          "upMm": 6.6,
+          "toMm": 7.9
+        },
+        "D4": {
+          "upRaw": "6.4",
+          "toRaw": "7.6",
+          "upMm": 6.4,
+          "toMm": 7.6
+        },
+        "D5": {
+          "upRaw": "4.2",
+          "toRaw": "7",
+          "upMm": 4.2,
+          "toMm": 7.0
+        }
+      }
+    },
+    {
+      "page": 11,
+      "printedLabel": "MK03Form-B GP501",
+      "reedLabel": "GP501",
+      "class": "B",
+      "magnetLabel": "MAGNET NdFeB N35 4 x 2mm",
+      "momentRaw": "Magnetic moment: 3,39 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "5.3",
+          "toRaw": "6.3",
+          "upMm": 5.3,
+          "toMm": 6.3
+        },
+        "D3": {
+          "upRaw": "5.7",
+          "toRaw": "7.2",
+          "upMm": 5.7,
+          "toMm": 7.2
+        },
+        "D4": {
+          "upRaw": "5.9",
+          "toRaw": "7",
+          "upMm": 5.9,
+          "toMm": 7.0
+        },
+        "D5": {
+          "upRaw": "-",
+          "toRaw": "4.9",
+          "upMm": null,
+          "toMm": 4.9
+        }
+      }
+    },
+    {
+      "page": 11,
+      "printedLabel": "MK03Form-C GP501",
+      "reedLabel": "GP501",
+      "class": "C",
+      "magnetLabel": "MAGNET NdFeB N35 4 x 2mm",
+      "momentRaw": "Magnetic moment: 3,39 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "4.9",
+          "toRaw": "5.9",
+          "upMm": 4.9,
+          "toMm": 5.9
+        },
+        "D3": {
+          "upRaw": "4.9",
+          "toRaw": "6.3",
+          "upMm": 4.9,
+          "toMm": 6.3
+        },
+        "D4": {
+          "upRaw": "5.4",
+          "toRaw": "6.5",
+          "upMm": 5.4,
+          "toMm": 6.5
+        },
+        "D5": {
+          "upRaw": "-",
+          "toRaw": "-",
+          "upMm": null,
+          "toMm": null
+        }
+      }
+    },
+    {
+      "page": 11,
+      "printedLabel": "MK03Form-D GP501",
+      "reedLabel": "GP501",
+      "class": "D",
+      "magnetLabel": "MAGNET NdFeB N35 4 x 2mm",
+      "momentRaw": "Magnetic moment: 3,39 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "4.5",
+          "toRaw": "5.5",
+          "upMm": 4.5,
+          "toMm": 5.5
+        },
+        "D3": {
+          "upRaw": "4.3",
+          "toRaw": "5.5",
+          "upMm": 4.3,
+          "toMm": 5.5
+        },
+        "D4": {
+          "upRaw": "4.9",
+          "toRaw": "6",
+          "upMm": 4.9,
+          "toMm": 6.0
+        },
+        "D5": {
+          "upRaw": "-",
+          "toRaw": "-",
+          "upMm": null,
+          "toMm": null
+        }
+      }
+    },
+    {
+      "page": 11,
+      "printedLabel": "MK03Form-E GP501",
+      "reedLabel": "GP501",
+      "class": "E",
+      "magnetLabel": "MAGNET NdFeB N35 4 x 2mm",
+      "momentRaw": "Magnetic moment: 3,39 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "4.2",
+          "toRaw": "5.1",
+          "upMm": 4.2,
+          "toMm": 5.1
+        },
+        "D3": {
+          "upRaw": "3.8",
+          "toRaw": "4.9",
+          "upMm": 3.8,
+          "toMm": 4.9
+        },
+        "D4": {
+          "upRaw": "4.5",
+          "toRaw": "5.5",
+          "upMm": 4.5,
+          "toMm": 5.5
+        },
+        "D5": {
+          "upRaw": "-",
+          "toRaw": "-",
+          "upMm": null,
+          "toMm": null
+        }
+      }
+    },
+    {
+      "page": 11,
+      "printedLabel": "MK03Form-F GP501",
+      "reedLabel": "GP501",
+      "class": "F",
+      "magnetLabel": "MAGNET NdFeB N35 4 x 2mm",
+      "momentRaw": "Magnetic moment: 3,39 x 10e-6Vs x cm",
+      "distances": {
+        "D1": {
+          "upRaw": "3.8",
+          "toRaw": "4.7",
+          "upMm": 3.8,
+          "toMm": 4.7
+        },
+        "D3": {
+          "upRaw": "3.4",
+          "toRaw": "4.4",
+          "upMm": 3.4,
+          "toMm": 4.4
+        },
+        "D4": {
+          "upRaw": "4.2",
+          "toRaw": "5.1",
+          "upMm": 4.2,
+          "toMm": 5.1
+        },
+        "D5": {
+          "upRaw": "-",
+          "toRaw": "-",
+          "upMm": null,
+          "toMm": null
+        }
+      }
+    }
+  ]
+}

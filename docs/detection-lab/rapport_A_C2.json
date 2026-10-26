@@ -1,0 +1,2633 @@
+{
+ "reportVersion": "reed-lab-report-1.0.0",
+ "profile": {
+  "id": "reed-lab-hypotheses",
+  "version": "1.0.0",
+  "frozenOn": "2026-10-26"
+ },
+ "form": {
+  "file": "src/data/detection-lab/brochure-form-rows.json",
+  "version": "brochure-form-transcription-2026-10-26",
+  "pdf": {
+   "title": "Reed Sensor Activation Guide",
+   "url": "https://standexdetect.com/wp-content/uploads/sites/2/2025/10/brochure-reed-sensor-activation-guide.pdf",
+   "sha256": "711bc6f75bec192fc6765dd6e299f2cdd322bb49ec62880c486b16a57b926f8f",
+   "pages": 40
+  }
+ },
+ "commercial": {
+  "file": "src/data/studio-v2/activation-guide.json",
+  "version": "guide-40p-owner-extraction-2026-09-15"
+ },
+ "atClasses": "https://standexdetect.com/wp-content/uploads/sites/2/2025/09/datasheet-reed-sensor-series-mk04.pdf p2 (A5-10 … G35-40 AT, MK04 uniquement)",
+ "pullInDropOut": "https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/",
+ "docOffsets": {
+  "MK03": {
+   "D1": {
+    "up": 2.65,
+    "to": 0.95
+   },
+   "D4": {
+    "up": 2.65,
+    "to": 0.95
+   },
+   "D3": {
+    "up": 0.8,
+    "to": 0.8
+   },
+   "D5": {
+    "up": 0.8,
+    "to": 0.8
+   }
+  },
+  "MK13": {
+   "D1": {
+    "up": 4.5,
+    "to": 3.05
+   },
+   "D4": {
+    "up": 4.5,
+    "to": 3.05
+   },
+   "D3": {
+    "up": 3.4,
+    "to": 1.6
+   },
+   "D5": {
+    "up": 3.4,
+    "to": 1.6
+   }
+  }
+ },
+ "exceptions": [
+  "MK04 D3 : 71 plages inversées sur 96 (up > to) — quarantaine, donnée inconnue.",
+  "MK04 D1/D4/D5 : décalages identiques à MK13 (non utilisés pour une estimation dans ce lot).",
+  "MK12 : ne suit pas une règle de décalage constant.",
+  "MK21 66 D4 up : décalage non constant.",
+  "La brochure n'est pas reproduite sans exceptions."
+ ],
+ "magnets": [
+  {
+   "id": "SMCO5-5X4",
+   "label": "MAGNET SmCo5 5 x 4mm",
+   "material": "SmCo5",
+   "diameterMm": 5,
+   "lengthMm": 4,
+   "momentRaw": "Magnetic moment: 7,2 x 10e-6Vs x cm",
+   "q": 7.2,
+   "momentAm2": 0.05729577951308233,
+   "volumeM3": 7.853981633974483e-8,
+   "jT": 0.9167324722093173
+  },
+  {
+   "id": "N45-4X19",
+   "label": "MAGNET NdFeB N45 4 x 19mm",
+   "material": "NdFeB N45",
+   "diameterMm": 4,
+   "lengthMm": 19,
+   "momentRaw": "Magnetic moment: 30,8 x 10e-6Vs x cm",
+   "q": 30.8,
+   "momentAm2": 0.24509861236151884,
+   "volumeM3": 2.3876104167282423e-7,
+   "jT": 1.289992696639573
+  }
+ ],
+ "model": "A",
+ "convention": "C2",
+ "profileFull": {
+  "id": "reed-lab-hypotheses",
+  "version": "1.0.0",
+  "frozenOn": "2026-10-26",
+  "reed": {
+   "id": "66-er",
+   "effectiveLengthMm": 8,
+   "envelopeRadiusMm": 1,
+   "envelopeHalfLengthMm": 5,
+   "quadraturePerBlade": 12
+  },
+  "scenarios": [
+   {
+    "id": "nominal",
+    "lengthFactor": 1,
+    "shift": [
+     0,
+     0,
+     0
+    ],
+    "momentFactor": 1
+   },
+   {
+    "id": "L-30%",
+    "lengthFactor": 0.7,
+    "shift": [
+     0,
+     0,
+     0
+    ],
+    "momentFactor": 1
+   },
+   {
+    "id": "L+30%",
+    "lengthFactor": 1.3,
+    "shift": [
+     0,
+     0,
+     0
+    ],
+    "momentFactor": 1
+   },
+   {
+    "id": "x-1mm",
+    "lengthFactor": 1,
+    "shift": [
+     -1,
+     0,
+     0
+    ],
+    "momentFactor": 1
+   },
+   {
+    "id": "x+1mm",
+    "lengthFactor": 1,
+    "shift": [
+     1,
+     0,
+     0
+    ],
+    "momentFactor": 1
+   },
+   {
+    "id": "y-1mm",
+    "lengthFactor": 1,
+    "shift": [
+     0,
+     -1,
+     0
+    ],
+    "momentFactor": 1
+   },
+   {
+    "id": "y+1mm",
+    "lengthFactor": 1,
+    "shift": [
+     0,
+     1,
+     0
+    ],
+    "momentFactor": 1
+   },
+   {
+    "id": "m-10%",
+    "lengthFactor": 1,
+    "shift": [
+     0,
+     0,
+     0
+    ],
+    "momentFactor": 0.9
+   },
+   {
+    "id": "m+10%",
+    "lengthFactor": 1,
+    "shift": [
+     0,
+     0,
+     0
+    ],
+    "momentFactor": 1.1
+   }
+  ],
+  "classification": {
+   "boundaryMargin": 0.2
+  },
+  "domain": {
+   "maxCenterMm": 60
+  },
+  "grid": {
+   "xMin": -24,
+   "xMax": 24,
+   "yMin": 0,
+   "yMax": 24,
+   "stepMm": 1
+  },
+  "search": {
+   "dMaxMm": 40,
+   "dScanStepMm": 0.5,
+   "xScanStepMm": 1,
+   "xScanMaxMm": 24,
+   "bisectTolMm": 0.0001,
+   "goldenTolMm": 0.001
+  },
+  "suggestions": {
+   "maxShiftMm": 12,
+   "shiftStepMm": 1
+  },
+  "pathDepthFraction": 0.8,
+  "conventions": {
+   "C1": "Distance publiée = jeu entre la face de l'aimant la plus proche et le repère actif (axe du reed pour D1/D4/D5, extrémité de la longueur effective nominale pour D3). Le centre de l'aimant est décalé de la demi-dimension projetée.",
+   "C2": "Variante : distance publiée = du repère actif au CENTRE de l'aimant (demi-dimension ignorée). Présentée pour l'audit, non prouvée."
+  },
+  "approaches": {
+   "D1": "Aimant parallèle aux lames (aimantation selon x), centré en x, approche latérale selon y. Datum ambigu dans la source (registre R2b).",
+   "D3": "Aimant coaxial aux lames, approche par l'extrémité selon x. Datum ambigu dans la source (registre R2b).",
+   "D4": "H-D4 : aimant perpendiculaire aux lames (aimantation selon y), approche selon y ; distance = maximum de lobe sur x.",
+   "D5": "H-D5 : aimant parallèle aux lames (aimantation selon x), approche selon y ; distance = maximum du lobe SECONDAIRE (au-delà du premier minimum en x). Hypothèse : deux variantes perpendiculaires essayées donnent Bx ≡ 0 sur l'axe (reed dans le plan médian de l'aimant) et ont été rejetées."
+  },
+  "models": {
+   "A": "Réponse A : |moyenne de Bx sur la longueur effective| (poids de Gauss normalisés), mT.",
+   "B": "Réponse B : M1, M2 = moyennes de Bx sur chaque lame ; réponse = min(|M1|, |M2|) si M1·M2 > 0, sinon 0. Le minimum n'est PAS la moyenne géométrique."
+  }
+ },
+ "calibrations": {
+  "C:up": {
+   "className": "C",
+   "model": "A",
+   "convention": "C2",
+   "bound": "up",
+   "implied": {
+    "SMCO5-5X4": 10.013025284194512,
+    "N45-4X19": 4.237272509364837
+   },
+   "method": "moindres carrés conjoints sur D1 (log θ, section dorée)",
+   "disagreement": 2.3630826816223474,
+   "shared": 5.109742602871686,
+   "fitted": {
+    "SMCO5-5X4": 9.609588623046875,
+    "N45-4X19": 13.711212158203125
+   },
+   "cross": [
+    {
+     "fromMagnet": "SMCO5-5X4",
+     "toMagnet": "N45-4X19",
+     "predictedMm": 9.435821533203125,
+     "publishedMm": 15
+    },
+    {
+     "fromMagnet": "N45-4X19",
+     "toMagnet": "SMCO5-5X4",
+     "predictedMm": 10.330108642578125,
+     "publishedMm": 7.3
+    }
+   ]
+  },
+  "C:to": {
+   "className": "C",
+   "model": "A",
+   "convention": "C2",
+   "bound": "to",
+   "implied": {
+    "SMCO5-5X4": 6.206002847666701,
+    "N45-4X19": 2.9324752557654827
+   },
+   "method": "moindres carrés conjoints sur D1 (log θ, section dorée)",
+   "disagreement": 2.11630186323489,
+   "shared": 3.4789328602798064,
+   "fitted": {
+    "SMCO5-5X4": 11.131500244140625,
+    "N45-4X19": 16.417144775390625
+   },
+   "cross": [
+    {
+     "fromMagnet": "SMCO5-5X4",
+     "toMagnet": "N45-4X19",
+     "predictedMm": 12.424896240234375,
+     "publishedMm": 17.7
+    },
+    {
+     "fromMagnet": "N45-4X19",
+     "toMagnet": "SMCO5-5X4",
+     "predictedMm": 11.864044189453125,
+     "publishedMm": 8.9
+    }
+   ]
+  },
+  "E:up": {
+   "className": "E",
+   "model": "A",
+   "convention": "C2",
+   "bound": "up",
+   "implied": {
+    "SMCO5-5X4": 15.991206838256305,
+    "N45-4X19": 5.949616658846935
+   },
+   "method": "moindres carrés conjoints sur D1 (log θ, section dorée)",
+   "disagreement": 2.687770953188685,
+   "shared": 7.307426720908188,
+   "fitted": {
+    "SMCO5-5X4": 8.331451416015625,
+    "N45-4X19": 11.379241943359375
+   },
+   "cross": [
+    {
+     "fromMagnet": "SMCO5-5X4",
+     "toMagnet": "N45-4X19",
+     "predictedMm": 6.633270263671875,
+     "publishedMm": 12.7
+    },
+    {
+     "fromMagnet": "N45-4X19",
+     "toMagnet": "SMCO5-5X4",
+     "predictedMm": 9.050872802734375,
+     "publishedMm": 5.9
+    }
+   ]
+  },
+  "E:to": {
+   "className": "E",
+   "model": "A",
+   "convention": "C2",
+   "bound": "to",
+   "implied": {
+    "SMCO5-5X4": 11.390810202184266,
+    "N45-4X19": 4.755238377734711
+   },
+   "method": "moindres carrés conjoints sur D1 (log θ, section dorée)",
+   "disagreement": 2.395423593382629,
+   "shared": 5.73048587252394,
+   "fitted": {
+    "SMCO5-5X4": 9.186492919921875,
+    "N45-4X19": 12.946563720703125
+   },
+   "cross": [
+    {
+     "fromMagnet": "SMCO5-5X4",
+     "toMagnet": "N45-4X19",
+     "predictedMm": 8.660186767578125,
+     "publishedMm": 14.2
+    },
+    {
+     "fromMagnet": "N45-4X19",
+     "toMagnet": "SMCO5-5X4",
+     "predictedMm": 9.881866455078125,
+     "publishedMm": 6.9
+    }
+   ]
+  }
+ },
+ "summary": {
+  "total": 104,
+  "byStatus": {
+   "training": 8,
+   "control": 84,
+   "missing": 4,
+   "unavailable": 0,
+   "quarantine": 8
+  },
+  "controls": {
+   "n": 84,
+   "meanAbsMm": 3.726,
+   "medianAbsPct": 44.04,
+   "over20": 66
+  },
+  "training": {
+   "n": 8,
+   "meanAbsMm": 1.801
+  }
+ },
+ "table": [
+  {
+   "source": "Form",
+   "page": 4,
+   "reference": "MK03Form-C 66-er",
+   "magnet": "SMCO5-5X4",
+   "className": "C",
+   "approach": "D1",
+   "bound": "up",
+   "raw": "7.3",
+   "published": 7.3,
+   "estimated": 9.6096,
+   "errorMm": 2.3096,
+   "errorPct": 31.64,
+   "status": "training",
+   "anomalies": [
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 5.109743
+  },
+  {
+   "source": "Form",
+   "page": 4,
+   "reference": "MK03Form-C 66-er",
+   "magnet": "SMCO5-5X4",
+   "className": "C",
+   "approach": "D1",
+   "bound": "to",
+   "raw": "8.9",
+   "published": 8.9,
+   "estimated": 11.1315,
+   "errorMm": 2.2315,
+   "errorPct": 25.07,
+   "status": "training",
+   "anomalies": [
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 3.478933
+  },
+  {
+   "source": "Form",
+   "page": 4,
+   "reference": "MK03Form-C 66-er",
+   "magnet": "SMCO5-5X4",
+   "className": "C",
+   "approach": "D3",
+   "bound": "up",
+   "raw": "7.5",
+   "published": 7.5,
+   "estimated": 9.8179,
+   "errorMm": 2.3179,
+   "errorPct": 30.91,
+   "status": "control",
+   "anomalies": [
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 5.109743
+  },
+  {
+   "source": "Form",
+   "page": 4,
+   "reference": "MK03Form-C 66-er",
+   "magnet": "SMCO5-5X4",
+   "className": "C",
+   "approach": "D3",
+   "bound": "to",
+   "raw": "9.8",
+   "published": 9.8,
+   "estimated": 11.53,
+   "errorMm": 1.73,
+   "errorPct": 17.65,
+   "status": "control",
+   "anomalies": [],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 3.478933
+  },
+  {
+   "source": "Form",
+   "page": 4,
+   "reference": "MK03Form-C 66-er",
+   "magnet": "SMCO5-5X4",
+   "className": "C",
+   "approach": "D4",
+   "bound": "up",
+   "raw": "6.8",
+   "published": 6.8,
+   "estimated": 9.2668,
+   "errorMm": 2.4668,
+   "errorPct": 36.28,
+   "status": "control",
+   "anomalies": [
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 5.109743
+  },
+  {
+   "source": "Form",
+   "page": 4,
+   "reference": "MK03Form-C 66-er",
+   "magnet": "SMCO5-5X4",
+   "className": "C",
+   "approach": "D4",
+   "bound": "to",
+   "raw": "8.7",
+   "published": 8.7,
+   "estimated": 10.6881,
+   "errorMm": 1.9881,
+   "errorPct": 22.85,
+   "status": "control",
+   "anomalies": [
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 3.478933
+  },
+  {
+   "source": "Form",
+   "page": 4,
+   "reference": "MK03Form-C 66-er",
+   "magnet": "SMCO5-5X4",
+   "className": "C",
+   "approach": "D5",
+   "bound": "up",
+   "raw": "3.2",
+   "published": 3.2,
+   "estimated": 5.6794,
+   "errorMm": 2.4794,
+   "errorPct": 77.48,
+   "status": "control",
+   "anomalies": [
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 5.109743
+  },
+  {
+   "source": "Form",
+   "page": 4,
+   "reference": "MK03Form-C 66-er",
+   "magnet": "SMCO5-5X4",
+   "className": "C",
+   "approach": "D5",
+   "bound": "to",
+   "raw": "5",
+   "published": 5,
+   "estimated": 6.5488,
+   "errorMm": 1.5488,
+   "errorPct": 30.98,
+   "status": "control",
+   "anomalies": [
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 3.478933
+  },
+  {
+   "source": "Form",
+   "page": 5,
+   "reference": "MK03Form-C 66-er",
+   "magnet": "N45-4X19",
+   "className": "C",
+   "approach": "D1",
+   "bound": "up",
+   "raw": "15",
+   "published": 15,
+   "estimated": 13.7112,
+   "errorMm": -1.2888,
+   "errorPct": -8.59,
+   "status": "training",
+   "anomalies": [],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 5.109743
+  },
+  {
+   "source": "Form",
+   "page": 5,
+   "reference": "MK03Form-C 66-er",
+   "magnet": "N45-4X19",
+   "className": "C",
+   "approach": "D1",
+   "bound": "to",
+   "raw": "17.7",
+   "published": 17.7,
+   "estimated": 16.4171,
+   "errorMm": -1.2829,
+   "errorPct": -7.25,
+   "status": "training",
+   "anomalies": [],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 3.478933
+  },
+  {
+   "source": "Form",
+   "page": 5,
+   "reference": "MK03Form-C 66-er",
+   "magnet": "N45-4X19",
+   "className": "C",
+   "approach": "D3",
+   "bound": "up",
+   "raw": "12.4",
+   "published": 12.4,
+   "estimated": 20.2998,
+   "errorMm": 7.8998,
+   "errorPct": 63.71,
+   "status": "control",
+   "anomalies": [
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 5.109743
+  },
+  {
+   "source": "Form",
+   "page": 5,
+   "reference": "MK03Form-C 66-er",
+   "magnet": "N45-4X19",
+   "className": "C",
+   "approach": "D3",
+   "bound": "to",
+   "raw": "17.7",
+   "published": 17.7,
+   "estimated": 22.8718,
+   "errorMm": 5.1718,
+   "errorPct": 29.22,
+   "status": "control",
+   "anomalies": [
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 3.478933
+  },
+  {
+   "source": "Form",
+   "page": 5,
+   "reference": "MK03Form-C 66-er",
+   "magnet": "N45-4X19",
+   "className": "C",
+   "approach": "D4",
+   "bound": "up",
+   "raw": "10.1",
+   "published": 10.1,
+   "estimated": 18.5271,
+   "errorMm": 8.4271,
+   "errorPct": 83.44,
+   "status": "control",
+   "anomalies": [
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 5.109743
+  },
+  {
+   "source": "Form",
+   "page": 5,
+   "reference": "MK03Form-C 66-er",
+   "magnet": "N45-4X19",
+   "className": "C",
+   "approach": "D4",
+   "bound": "to",
+   "raw": "12.5",
+   "published": 12.5,
+   "estimated": 20.4761,
+   "errorMm": 7.9761,
+   "errorPct": 63.81,
+   "status": "control",
+   "anomalies": [
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 3.478933
+  },
+  {
+   "source": "Form",
+   "page": 5,
+   "reference": "MK03Form-C 66-er",
+   "magnet": "N45-4X19",
+   "className": "C",
+   "approach": "D5",
+   "bound": "up",
+   "raw": "9.8",
+   "published": 9.8,
+   "estimated": 8.2264,
+   "errorMm": -1.5736,
+   "errorPct": -16.06,
+   "status": "control",
+   "anomalies": [],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 5.109743
+  },
+  {
+   "source": "Form",
+   "page": 5,
+   "reference": "MK03Form-C 66-er",
+   "magnet": "N45-4X19",
+   "className": "C",
+   "approach": "D5",
+   "bound": "to",
+   "raw": "12,4",
+   "published": 12.4,
+   "estimated": 9.7145,
+   "errorMm": -2.6855,
+   "errorPct": -21.66,
+   "status": "control",
+   "anomalies": [
+    "virgule décimale dans la source (« 12,4 »)",
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 3.478933
+  },
+  {
+   "source": "Form",
+   "page": 4,
+   "reference": "MK03Form-E 66-er",
+   "magnet": "SMCO5-5X4",
+   "className": "E",
+   "approach": "D1",
+   "bound": "up",
+   "raw": "5.9",
+   "published": 5.9,
+   "estimated": 8.3315,
+   "errorMm": 2.4315,
+   "errorPct": 41.21,
+   "status": "training",
+   "anomalies": [
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 7.307427
+  },
+  {
+   "source": "Form",
+   "page": 4,
+   "reference": "MK03Form-E 66-er",
+   "magnet": "SMCO5-5X4",
+   "className": "E",
+   "approach": "D1",
+   "bound": "to",
+   "raw": "6.9",
+   "published": 6.9,
+   "estimated": 9.1865,
+   "errorMm": 2.2865,
+   "errorPct": 33.14,
+   "status": "training",
+   "anomalies": [
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 5.730486
+  },
+  {
+   "source": "Form",
+   "page": 4,
+   "reference": "MK03Form-E 66-er",
+   "magnet": "SMCO5-5X4",
+   "className": "E",
+   "approach": "D3",
+   "bound": "up",
+   "raw": "5.6",
+   "published": 5.6,
+   "estimated": 8.4231,
+   "errorMm": 2.8231,
+   "errorPct": 50.41,
+   "status": "control",
+   "anomalies": [
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 7.307427
+  },
+  {
+   "source": "Form",
+   "page": 4,
+   "reference": "MK03Form-E 66-er",
+   "magnet": "SMCO5-5X4",
+   "className": "E",
+   "approach": "D3",
+   "bound": "to",
+   "raw": "6.8",
+   "published": 6.8,
+   "estimated": 9.3512,
+   "errorMm": 2.5512,
+   "errorPct": 37.52,
+   "status": "control",
+   "anomalies": [
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 5.730486
+  },
+  {
+   "source": "Form",
+   "page": 4,
+   "reference": "MK03Form-E 66-er",
+   "magnet": "SMCO5-5X4",
+   "className": "E",
+   "approach": "D4",
+   "bound": "up",
+   "raw": "5.7",
+   "published": 5.7,
+   "estimated": 8.0825,
+   "errorMm": 2.3825,
+   "errorPct": 41.8,
+   "status": "control",
+   "anomalies": [
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 7.307427
+  },
+  {
+   "source": "Form",
+   "page": 4,
+   "reference": "MK03Form-E 66-er",
+   "magnet": "SMCO5-5X4",
+   "className": "E",
+   "approach": "D4",
+   "bound": "to",
+   "raw": "6.7",
+   "published": 6.7,
+   "estimated": 8.8736,
+   "errorMm": 2.1736,
+   "errorPct": 32.44,
+   "status": "control",
+   "anomalies": [
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 5.730486
+  },
+  {
+   "source": "Form",
+   "page": 4,
+   "reference": "MK03Form-E 66-er",
+   "magnet": "SMCO5-5X4",
+   "className": "E",
+   "approach": "D5",
+   "bound": "up",
+   "raw": "-",
+   "published": null,
+   "estimated": 4.9622,
+   "errorMm": null,
+   "errorPct": null,
+   "status": "missing",
+   "anomalies": [
+    "borne non publiée"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 7.307427
+  },
+  {
+   "source": "Form",
+   "page": 4,
+   "reference": "MK03Form-E 66-er",
+   "magnet": "SMCO5-5X4",
+   "className": "E",
+   "approach": "D5",
+   "bound": "to",
+   "raw": "2.7",
+   "published": 2.7,
+   "estimated": 5.4403,
+   "errorMm": 2.7403,
+   "errorPct": 101.49,
+   "status": "control",
+   "anomalies": [
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 5.730486
+  },
+  {
+   "source": "Form",
+   "page": 5,
+   "reference": "MK03Form-E 66-er",
+   "magnet": "N45-4X19",
+   "className": "E",
+   "approach": "D1",
+   "bound": "up",
+   "raw": "12.7",
+   "published": 12.7,
+   "estimated": 11.3792,
+   "errorMm": -1.3208,
+   "errorPct": -10.4,
+   "status": "training",
+   "anomalies": [],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 7.307427
+  },
+  {
+   "source": "Form",
+   "page": 5,
+   "reference": "MK03Form-E 66-er",
+   "magnet": "N45-4X19",
+   "className": "E",
+   "approach": "D1",
+   "bound": "to",
+   "raw": "14.2",
+   "published": 14.2,
+   "estimated": 12.9466,
+   "errorMm": -1.2534,
+   "errorPct": -8.83,
+   "status": "training",
+   "anomalies": [],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 5.730486
+  },
+  {
+   "source": "Form",
+   "page": 5,
+   "reference": "MK03Form-E 66-er",
+   "magnet": "N45-4X19",
+   "className": "E",
+   "approach": "D3",
+   "bound": "up",
+   "raw": "9.4",
+   "published": 9.4,
+   "estimated": 18.2481,
+   "errorMm": 8.8481,
+   "errorPct": 94.13,
+   "status": "control",
+   "anomalies": [
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 7.307427
+  },
+  {
+   "source": "Form",
+   "page": 5,
+   "reference": "MK03Form-E 66-er",
+   "magnet": "N45-4X19",
+   "className": "E",
+   "approach": "D3",
+   "bound": "to",
+   "raw": "11.3",
+   "published": 11.3,
+   "estimated": 19.6082,
+   "errorMm": 8.3082,
+   "errorPct": 73.52,
+   "status": "control",
+   "anomalies": [
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 5.730486
+  },
+  {
+   "source": "Form",
+   "page": 5,
+   "reference": "MK03Form-E 66-er",
+   "magnet": "N45-4X19",
+   "className": "E",
+   "approach": "D4",
+   "bound": "up",
+   "raw": "7.3",
+   "published": 7.3,
+   "estimated": 16.9573,
+   "errorMm": 9.6573,
+   "errorPct": 132.29,
+   "status": "control",
+   "anomalies": [
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 7.307427
+  },
+  {
+   "source": "Form",
+   "page": 5,
+   "reference": "MK03Form-E 66-er",
+   "magnet": "N45-4X19",
+   "className": "E",
+   "approach": "D4",
+   "bound": "to",
+   "raw": "9.3",
+   "published": 9.3,
+   "estimated": 18,
+   "errorMm": 8.7,
+   "errorPct": 93.55,
+   "status": "control",
+   "anomalies": [
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 5.730486
+  },
+  {
+   "source": "Form",
+   "page": 5,
+   "reference": "MK03Form-E 66-er",
+   "magnet": "N45-4X19",
+   "className": "E",
+   "approach": "D5",
+   "bound": "up",
+   "raw": "7.3",
+   "published": 7.3,
+   "estimated": 6.9929,
+   "errorMm": -0.3071,
+   "errorPct": -4.21,
+   "status": "control",
+   "anomalies": [],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 7.307427
+  },
+  {
+   "source": "Form",
+   "page": 5,
+   "reference": "MK03Form-E 66-er",
+   "magnet": "N45-4X19",
+   "className": "E",
+   "approach": "D5",
+   "bound": "to",
+   "raw": "8,6",
+   "published": 8.6,
+   "estimated": 7.8159,
+   "errorMm": -0.7841,
+   "errorPct": -9.12,
+   "status": "control",
+   "anomalies": [
+    "virgule décimale dans la source (« 8,6 »)"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 5.730486
+  },
+  {
+   "source": "MK03",
+   "page": 4,
+   "reference": "MK03-1A66C-X",
+   "magnet": "SMCO5-5X4",
+   "className": "C",
+   "approach": "D1",
+   "bound": "up",
+   "raw": "4.65",
+   "published": 4.65,
+   "estimated": 6.9596,
+   "errorMm": 2.3096,
+   "errorPct": 49.67,
+   "status": "control",
+   "anomalies": [
+    "adaptation documentaire Form→produit (décalage empirique)",
+    "D1 produit : dérivé du D1 d'apprentissage Form, pas un contrôle indépendant de la physique",
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 5.109743
+  },
+  {
+   "source": "MK03",
+   "page": 4,
+   "reference": "MK03-1A66C-X",
+   "magnet": "SMCO5-5X4",
+   "className": "C",
+   "approach": "D1",
+   "bound": "to",
+   "raw": "7.95",
+   "published": 7.95,
+   "estimated": 10.1815,
+   "errorMm": 2.2315,
+   "errorPct": 28.07,
+   "status": "control",
+   "anomalies": [
+    "adaptation documentaire Form→produit (décalage empirique)",
+    "D1 produit : dérivé du D1 d'apprentissage Form, pas un contrôle indépendant de la physique",
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 3.478933
+  },
+  {
+   "source": "MK03",
+   "page": 4,
+   "reference": "MK03-1A66C-X",
+   "magnet": "SMCO5-5X4",
+   "className": "C",
+   "approach": "D3",
+   "bound": "up",
+   "raw": "6.7",
+   "published": 6.7,
+   "estimated": 9.0179,
+   "errorMm": 2.3179,
+   "errorPct": 34.6,
+   "status": "control",
+   "anomalies": [
+    "adaptation documentaire Form→produit (décalage empirique)",
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 5.109743
+  },
+  {
+   "source": "MK03",
+   "page": 4,
+   "reference": "MK03-1A66C-X",
+   "magnet": "SMCO5-5X4",
+   "className": "C",
+   "approach": "D3",
+   "bound": "to",
+   "raw": "9",
+   "published": 9,
+   "estimated": 10.73,
+   "errorMm": 1.73,
+   "errorPct": 19.22,
+   "status": "control",
+   "anomalies": [
+    "adaptation documentaire Form→produit (décalage empirique)"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 3.478933
+  },
+  {
+   "source": "MK03",
+   "page": 4,
+   "reference": "MK03-1A66C-X",
+   "magnet": "SMCO5-5X4",
+   "className": "C",
+   "approach": "D4",
+   "bound": "up",
+   "raw": "4.15",
+   "published": 4.15,
+   "estimated": 6.6168,
+   "errorMm": 2.4668,
+   "errorPct": 59.44,
+   "status": "control",
+   "anomalies": [
+    "adaptation documentaire Form→produit (décalage empirique)",
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 5.109743
+  },
+  {
+   "source": "MK03",
+   "page": 4,
+   "reference": "MK03-1A66C-X",
+   "magnet": "SMCO5-5X4",
+   "className": "C",
+   "approach": "D4",
+   "bound": "to",
+   "raw": "7.75",
+   "published": 7.75,
+   "estimated": 9.7381,
+   "errorMm": 1.9881,
+   "errorPct": 25.65,
+   "status": "control",
+   "anomalies": [
+    "adaptation documentaire Form→produit (décalage empirique)",
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 3.478933
+  },
+  {
+   "source": "MK03",
+   "page": 4,
+   "reference": "MK03-1A66C-X",
+   "magnet": "SMCO5-5X4",
+   "className": "C",
+   "approach": "D5",
+   "bound": "up",
+   "raw": "2.4",
+   "published": 2.4,
+   "estimated": 4.8794,
+   "errorMm": 2.4794,
+   "errorPct": 103.31,
+   "status": "control",
+   "anomalies": [
+    "adaptation documentaire Form→produit (décalage empirique)",
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 5.109743
+  },
+  {
+   "source": "MK03",
+   "page": 4,
+   "reference": "MK03-1A66C-X",
+   "magnet": "SMCO5-5X4",
+   "className": "C",
+   "approach": "D5",
+   "bound": "to",
+   "raw": "4.2",
+   "published": 4.2,
+   "estimated": 5.7488,
+   "errorMm": 1.5488,
+   "errorPct": 36.88,
+   "status": "control",
+   "anomalies": [
+    "adaptation documentaire Form→produit (décalage empirique)",
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 3.478933
+  },
+  {
+   "source": "MK03",
+   "page": 5,
+   "reference": "MK03-1A66C-X",
+   "magnet": "N45-4X19",
+   "className": "C",
+   "approach": "D1",
+   "bound": "up",
+   "raw": "12.35",
+   "published": 12.35,
+   "estimated": 11.0612,
+   "errorMm": -1.2888,
+   "errorPct": -10.44,
+   "status": "control",
+   "anomalies": [
+    "adaptation documentaire Form→produit (décalage empirique)",
+    "D1 produit : dérivé du D1 d'apprentissage Form, pas un contrôle indépendant de la physique"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 5.109743
+  },
+  {
+   "source": "MK03",
+   "page": 5,
+   "reference": "MK03-1A66C-X",
+   "magnet": "N45-4X19",
+   "className": "C",
+   "approach": "D1",
+   "bound": "to",
+   "raw": "16.75",
+   "published": 16.75,
+   "estimated": 15.4671,
+   "errorMm": -1.2829,
+   "errorPct": -7.66,
+   "status": "control",
+   "anomalies": [
+    "adaptation documentaire Form→produit (décalage empirique)",
+    "D1 produit : dérivé du D1 d'apprentissage Form, pas un contrôle indépendant de la physique"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 3.478933
+  },
+  {
+   "source": "MK03",
+   "page": 5,
+   "reference": "MK03-1A66C-X",
+   "magnet": "N45-4X19",
+   "className": "C",
+   "approach": "D3",
+   "bound": "up",
+   "raw": "11.6",
+   "published": 11.6,
+   "estimated": 19.4998,
+   "errorMm": 7.8998,
+   "errorPct": 68.1,
+   "status": "control",
+   "anomalies": [
+    "adaptation documentaire Form→produit (décalage empirique)",
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 5.109743
+  },
+  {
+   "source": "MK03",
+   "page": 5,
+   "reference": "MK03-1A66C-X",
+   "magnet": "N45-4X19",
+   "className": "C",
+   "approach": "D3",
+   "bound": "to",
+   "raw": "16.9",
+   "published": 16.9,
+   "estimated": 22.0718,
+   "errorMm": 5.1718,
+   "errorPct": 30.6,
+   "status": "control",
+   "anomalies": [
+    "adaptation documentaire Form→produit (décalage empirique)",
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 3.478933
+  },
+  {
+   "source": "MK03",
+   "page": 5,
+   "reference": "MK03-1A66C-X",
+   "magnet": "N45-4X19",
+   "className": "C",
+   "approach": "D4",
+   "bound": "up",
+   "raw": "7.45",
+   "published": 7.45,
+   "estimated": 15.8771,
+   "errorMm": 8.4271,
+   "errorPct": 113.12,
+   "status": "control",
+   "anomalies": [
+    "adaptation documentaire Form→produit (décalage empirique)",
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 5.109743
+  },
+  {
+   "source": "MK03",
+   "page": 5,
+   "reference": "MK03-1A66C-X",
+   "magnet": "N45-4X19",
+   "className": "C",
+   "approach": "D4",
+   "bound": "to",
+   "raw": "11.55",
+   "published": 11.55,
+   "estimated": 19.5261,
+   "errorMm": 7.9761,
+   "errorPct": 69.06,
+   "status": "control",
+   "anomalies": [
+    "adaptation documentaire Form→produit (décalage empirique)",
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 3.478933
+  },
+  {
+   "source": "MK03",
+   "page": 5,
+   "reference": "MK03-1A66C-X",
+   "magnet": "N45-4X19",
+   "className": "C",
+   "approach": "D5",
+   "bound": "up",
+   "raw": "9",
+   "published": 9,
+   "estimated": 7.4264,
+   "errorMm": -1.5736,
+   "errorPct": -17.48,
+   "status": "control",
+   "anomalies": [
+    "adaptation documentaire Form→produit (décalage empirique)"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 5.109743
+  },
+  {
+   "source": "MK03",
+   "page": 5,
+   "reference": "MK03-1A66C-X",
+   "magnet": "N45-4X19",
+   "className": "C",
+   "approach": "D5",
+   "bound": "to",
+   "raw": "11.6",
+   "published": 11.6,
+   "estimated": 8.9145,
+   "errorMm": -2.6855,
+   "errorPct": -23.15,
+   "status": "control",
+   "anomalies": [
+    "adaptation documentaire Form→produit (décalage empirique)",
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 3.478933
+  },
+  {
+   "source": "MK03",
+   "page": 4,
+   "reference": "MK03-1A66E-X",
+   "magnet": "SMCO5-5X4",
+   "className": "E",
+   "approach": "D1",
+   "bound": "up",
+   "raw": "3.25",
+   "published": 3.25,
+   "estimated": 5.6815,
+   "errorMm": 2.4315,
+   "errorPct": 74.82,
+   "status": "control",
+   "anomalies": [
+    "adaptation documentaire Form→produit (décalage empirique)",
+    "D1 produit : dérivé du D1 d'apprentissage Form, pas un contrôle indépendant de la physique",
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 7.307427
+  },
+  {
+   "source": "MK03",
+   "page": 4,
+   "reference": "MK03-1A66E-X",
+   "magnet": "SMCO5-5X4",
+   "className": "E",
+   "approach": "D1",
+   "bound": "to",
+   "raw": "5.95",
+   "published": 5.95,
+   "estimated": 8.2365,
+   "errorMm": 2.2865,
+   "errorPct": 38.43,
+   "status": "control",
+   "anomalies": [
+    "adaptation documentaire Form→produit (décalage empirique)",
+    "D1 produit : dérivé du D1 d'apprentissage Form, pas un contrôle indépendant de la physique",
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 5.730486
+  },
+  {
+   "source": "MK03",
+   "page": 4,
+   "reference": "MK03-1A66E-X",
+   "magnet": "SMCO5-5X4",
+   "className": "E",
+   "approach": "D3",
+   "bound": "up",
+   "raw": "4.8",
+   "published": 4.8,
+   "estimated": 7.6231,
+   "errorMm": 2.8231,
+   "errorPct": 58.81,
+   "status": "control",
+   "anomalies": [
+    "adaptation documentaire Form→produit (décalage empirique)",
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 7.307427
+  },
+  {
+   "source": "MK03",
+   "page": 4,
+   "reference": "MK03-1A66E-X",
+   "magnet": "SMCO5-5X4",
+   "className": "E",
+   "approach": "D3",
+   "bound": "to",
+   "raw": "6",
+   "published": 6,
+   "estimated": 8.5512,
+   "errorMm": 2.5512,
+   "errorPct": 42.52,
+   "status": "control",
+   "anomalies": [
+    "adaptation documentaire Form→produit (décalage empirique)",
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 5.730486
+  },
+  {
+   "source": "MK03",
+   "page": 4,
+   "reference": "MK03-1A66E-X",
+   "magnet": "SMCO5-5X4",
+   "className": "E",
+   "approach": "D4",
+   "bound": "up",
+   "raw": "3.05",
+   "published": 3.05,
+   "estimated": 5.4325,
+   "errorMm": 2.3825,
+   "errorPct": 78.11,
+   "status": "control",
+   "anomalies": [
+    "adaptation documentaire Form→produit (décalage empirique)",
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 7.307427
+  },
+  {
+   "source": "MK03",
+   "page": 4,
+   "reference": "MK03-1A66E-X",
+   "magnet": "SMCO5-5X4",
+   "className": "E",
+   "approach": "D4",
+   "bound": "to",
+   "raw": "5.75",
+   "published": 5.75,
+   "estimated": 7.9236,
+   "errorMm": 2.1736,
+   "errorPct": 37.8,
+   "status": "control",
+   "anomalies": [
+    "adaptation documentaire Form→produit (décalage empirique)",
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 5.730486
+  },
+  {
+   "source": "MK03",
+   "page": 4,
+   "reference": "MK03-1A66E-X",
+   "magnet": "SMCO5-5X4",
+   "className": "E",
+   "approach": "D5",
+   "bound": "up",
+   "raw": null,
+   "published": null,
+   "estimated": 4.1622,
+   "errorMm": null,
+   "errorPct": null,
+   "status": "missing",
+   "anomalies": [
+    "borne non publiée",
+    "adaptation documentaire Form→produit (décalage empirique)"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 7.307427
+  },
+  {
+   "source": "MK03",
+   "page": 4,
+   "reference": "MK03-1A66E-X",
+   "magnet": "SMCO5-5X4",
+   "className": "E",
+   "approach": "D5",
+   "bound": "to",
+   "raw": "1.9",
+   "published": 1.9,
+   "estimated": 4.6403,
+   "errorMm": 2.7403,
+   "errorPct": 144.23,
+   "status": "control",
+   "anomalies": [
+    "adaptation documentaire Form→produit (décalage empirique)",
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 5.730486
+  },
+  {
+   "source": "MK03",
+   "page": 5,
+   "reference": "MK03-1A66E-X",
+   "magnet": "N45-4X19",
+   "className": "E",
+   "approach": "D1",
+   "bound": "up",
+   "raw": "10.05",
+   "published": 10.05,
+   "estimated": 8.7292,
+   "errorMm": -1.3208,
+   "errorPct": -13.14,
+   "status": "control",
+   "anomalies": [
+    "adaptation documentaire Form→produit (décalage empirique)",
+    "D1 produit : dérivé du D1 d'apprentissage Form, pas un contrôle indépendant de la physique"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 7.307427
+  },
+  {
+   "source": "MK03",
+   "page": 5,
+   "reference": "MK03-1A66E-X",
+   "magnet": "N45-4X19",
+   "className": "E",
+   "approach": "D1",
+   "bound": "to",
+   "raw": "13.25",
+   "published": 13.25,
+   "estimated": 11.9966,
+   "errorMm": -1.2534,
+   "errorPct": -9.46,
+   "status": "control",
+   "anomalies": [
+    "adaptation documentaire Form→produit (décalage empirique)",
+    "D1 produit : dérivé du D1 d'apprentissage Form, pas un contrôle indépendant de la physique"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 5.730486
+  },
+  {
+   "source": "MK03",
+   "page": 5,
+   "reference": "MK03-1A66E-X",
+   "magnet": "N45-4X19",
+   "className": "E",
+   "approach": "D3",
+   "bound": "up",
+   "raw": "8.6",
+   "published": 8.6,
+   "estimated": 17.4481,
+   "errorMm": 8.8481,
+   "errorPct": 102.88,
+   "status": "control",
+   "anomalies": [
+    "adaptation documentaire Form→produit (décalage empirique)",
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 7.307427
+  },
+  {
+   "source": "MK03",
+   "page": 5,
+   "reference": "MK03-1A66E-X",
+   "magnet": "N45-4X19",
+   "className": "E",
+   "approach": "D3",
+   "bound": "to",
+   "raw": "10.5",
+   "published": 10.5,
+   "estimated": 18.8082,
+   "errorMm": 8.3082,
+   "errorPct": 79.13,
+   "status": "control",
+   "anomalies": [
+    "adaptation documentaire Form→produit (décalage empirique)",
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 5.730486
+  },
+  {
+   "source": "MK03",
+   "page": 5,
+   "reference": "MK03-1A66E-X",
+   "magnet": "N45-4X19",
+   "className": "E",
+   "approach": "D4",
+   "bound": "up",
+   "raw": "4.65",
+   "published": 4.65,
+   "estimated": 14.3073,
+   "errorMm": 9.6573,
+   "errorPct": 207.68,
+   "status": "control",
+   "anomalies": [
+    "adaptation documentaire Form→produit (décalage empirique)",
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 7.307427
+  },
+  {
+   "source": "MK03",
+   "page": 5,
+   "reference": "MK03-1A66E-X",
+   "magnet": "N45-4X19",
+   "className": "E",
+   "approach": "D4",
+   "bound": "to",
+   "raw": "8.35",
+   "published": 8.35,
+   "estimated": 17.05,
+   "errorMm": 8.7,
+   "errorPct": 104.19,
+   "status": "control",
+   "anomalies": [
+    "adaptation documentaire Form→produit (décalage empirique)",
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 5.730486
+  },
+  {
+   "source": "MK03",
+   "page": 5,
+   "reference": "MK03-1A66E-X",
+   "magnet": "N45-4X19",
+   "className": "E",
+   "approach": "D5",
+   "bound": "up",
+   "raw": "6.5",
+   "published": 6.5,
+   "estimated": 6.1929,
+   "errorMm": -0.3071,
+   "errorPct": -4.72,
+   "status": "control",
+   "anomalies": [
+    "adaptation documentaire Form→produit (décalage empirique)"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 7.307427
+  },
+  {
+   "source": "MK03",
+   "page": 5,
+   "reference": "MK03-1A66E-X",
+   "magnet": "N45-4X19",
+   "className": "E",
+   "approach": "D5",
+   "bound": "to",
+   "raw": "7.8",
+   "published": 7.8,
+   "estimated": 7.0159,
+   "errorMm": -0.7841,
+   "errorPct": -10.05,
+   "status": "control",
+   "anomalies": [
+    "adaptation documentaire Form→produit (décalage empirique)"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 5.730486
+  },
+  {
+   "source": "MK13",
+   "page": 24,
+   "reference": "MK13-1A66C-X",
+   "magnet": "SMCO5-5X4",
+   "className": "C",
+   "approach": "D1",
+   "bound": "up",
+   "raw": "2.8",
+   "published": 2.8,
+   "estimated": 5.1096,
+   "errorMm": 2.3096,
+   "errorPct": 82.49,
+   "status": "control",
+   "anomalies": [
+    "adaptation documentaire Form→produit (décalage empirique)",
+    "D1 produit : dérivé du D1 d'apprentissage Form, pas un contrôle indépendant de la physique",
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 5.109743
+  },
+  {
+   "source": "MK13",
+   "page": 24,
+   "reference": "MK13-1A66C-X",
+   "magnet": "SMCO5-5X4",
+   "className": "C",
+   "approach": "D1",
+   "bound": "to",
+   "raw": "5.85",
+   "published": 5.85,
+   "estimated": 8.0815,
+   "errorMm": 2.2315,
+   "errorPct": 38.15,
+   "status": "control",
+   "anomalies": [
+    "adaptation documentaire Form→produit (décalage empirique)",
+    "D1 produit : dérivé du D1 d'apprentissage Form, pas un contrôle indépendant de la physique",
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 3.478933
+  },
+  {
+   "source": "MK13",
+   "page": 24,
+   "reference": "MK13-1A66C-X",
+   "magnet": "SMCO5-5X4",
+   "className": "C",
+   "approach": "D3",
+   "bound": "up",
+   "raw": "4.1",
+   "published": 4.1,
+   "estimated": 6.4179,
+   "errorMm": 2.3179,
+   "errorPct": 56.53,
+   "status": "control",
+   "anomalies": [
+    "adaptation documentaire Form→produit (décalage empirique)",
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 5.109743
+  },
+  {
+   "source": "MK13",
+   "page": 24,
+   "reference": "MK13-1A66C-X",
+   "magnet": "SMCO5-5X4",
+   "className": "C",
+   "approach": "D3",
+   "bound": "to",
+   "raw": "8.2",
+   "published": 8.2,
+   "estimated": 9.93,
+   "errorMm": 1.73,
+   "errorPct": 21.1,
+   "status": "control",
+   "anomalies": [
+    "adaptation documentaire Form→produit (décalage empirique)",
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 3.478933
+  },
+  {
+   "source": "MK13",
+   "page": 24,
+   "reference": "MK13-1A66C-X",
+   "magnet": "SMCO5-5X4",
+   "className": "C",
+   "approach": "D4",
+   "bound": "up",
+   "raw": "2.3",
+   "published": 2.3,
+   "estimated": 4.7668,
+   "errorMm": 2.4668,
+   "errorPct": 107.25,
+   "status": "control",
+   "anomalies": [
+    "adaptation documentaire Form→produit (décalage empirique)",
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 5.109743
+  },
+  {
+   "source": "MK13",
+   "page": 24,
+   "reference": "MK13-1A66C-X",
+   "magnet": "SMCO5-5X4",
+   "className": "C",
+   "approach": "D4",
+   "bound": "to",
+   "raw": "5.65",
+   "published": 5.65,
+   "estimated": 7.6381,
+   "errorMm": 1.9881,
+   "errorPct": 35.19,
+   "status": "control",
+   "anomalies": [
+    "adaptation documentaire Form→produit (décalage empirique)",
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 3.478933
+  },
+  {
+   "source": "MK13",
+   "page": 24,
+   "reference": "MK13-1A66C-X",
+   "magnet": "SMCO5-5X4",
+   "className": "C",
+   "approach": "D5",
+   "bound": "up",
+   "raw": null,
+   "published": null,
+   "estimated": 2.2794,
+   "errorMm": null,
+   "errorPct": null,
+   "status": "missing",
+   "anomalies": [
+    "borne non publiée",
+    "adaptation documentaire Form→produit (décalage empirique)"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 5.109743
+  },
+  {
+   "source": "MK13",
+   "page": 24,
+   "reference": "MK13-1A66C-X",
+   "magnet": "SMCO5-5X4",
+   "className": "C",
+   "approach": "D5",
+   "bound": "to",
+   "raw": "3.4",
+   "published": 3.4,
+   "estimated": 4.9488,
+   "errorMm": 1.5488,
+   "errorPct": 45.55,
+   "status": "control",
+   "anomalies": [
+    "adaptation documentaire Form→produit (décalage empirique)",
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 3.478933
+  },
+  {
+   "source": "MK13",
+   "page": 25,
+   "reference": "MK13-1A66C-X",
+   "magnet": "N45-4X19",
+   "className": "C",
+   "approach": "D1",
+   "bound": "up",
+   "raw": "10.5",
+   "published": 10.5,
+   "estimated": 9.2112,
+   "errorMm": -1.2888,
+   "errorPct": -12.27,
+   "status": "control",
+   "anomalies": [
+    "adaptation documentaire Form→produit (décalage empirique)",
+    "D1 produit : dérivé du D1 d'apprentissage Form, pas un contrôle indépendant de la physique"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 5.109743
+  },
+  {
+   "source": "MK13",
+   "page": 25,
+   "reference": "MK13-1A66C-X",
+   "magnet": "N45-4X19",
+   "className": "C",
+   "approach": "D1",
+   "bound": "to",
+   "raw": "14.65",
+   "published": 14.65,
+   "estimated": 13.3671,
+   "errorMm": -1.2829,
+   "errorPct": -8.76,
+   "status": "control",
+   "anomalies": [
+    "adaptation documentaire Form→produit (décalage empirique)",
+    "D1 produit : dérivé du D1 d'apprentissage Form, pas un contrôle indépendant de la physique"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 3.478933
+  },
+  {
+   "source": "MK13",
+   "page": 25,
+   "reference": "MK13-1A66C-X",
+   "magnet": "N45-4X19",
+   "className": "C",
+   "approach": "D3",
+   "bound": "up",
+   "raw": "9",
+   "published": 9,
+   "estimated": 16.8998,
+   "errorMm": 7.8998,
+   "errorPct": 87.78,
+   "status": "control",
+   "anomalies": [
+    "adaptation documentaire Form→produit (décalage empirique)",
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 5.109743
+  },
+  {
+   "source": "MK13",
+   "page": 25,
+   "reference": "MK13-1A66C-X",
+   "magnet": "N45-4X19",
+   "className": "C",
+   "approach": "D3",
+   "bound": "to",
+   "raw": "16.1",
+   "published": 16.1,
+   "estimated": 21.2718,
+   "errorMm": 5.1718,
+   "errorPct": 32.12,
+   "status": "control",
+   "anomalies": [
+    "adaptation documentaire Form→produit (décalage empirique)",
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 3.478933
+  },
+  {
+   "source": "MK13",
+   "page": 25,
+   "reference": "MK13-1A66C-X",
+   "magnet": "N45-4X19",
+   "className": "C",
+   "approach": "D4",
+   "bound": "up",
+   "raw": "5.6",
+   "published": 5.6,
+   "estimated": 14.0271,
+   "errorMm": 8.4271,
+   "errorPct": 150.48,
+   "status": "control",
+   "anomalies": [
+    "adaptation documentaire Form→produit (décalage empirique)",
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 5.109743
+  },
+  {
+   "source": "MK13",
+   "page": 25,
+   "reference": "MK13-1A66C-X",
+   "magnet": "N45-4X19",
+   "className": "C",
+   "approach": "D4",
+   "bound": "to",
+   "raw": "9.45",
+   "published": 9.45,
+   "estimated": 17.4261,
+   "errorMm": 7.9761,
+   "errorPct": 84.4,
+   "status": "control",
+   "anomalies": [
+    "adaptation documentaire Form→produit (décalage empirique)",
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 3.478933
+  },
+  {
+   "source": "MK13",
+   "page": 25,
+   "reference": "MK13-1A66C-X",
+   "magnet": "N45-4X19",
+   "className": "C",
+   "approach": "D5",
+   "bound": "up",
+   "raw": "6.4",
+   "published": 6.4,
+   "estimated": 4.8264,
+   "errorMm": -1.5736,
+   "errorPct": -24.59,
+   "status": "control",
+   "anomalies": [
+    "adaptation documentaire Form→produit (décalage empirique)",
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 5.109743
+  },
+  {
+   "source": "MK13",
+   "page": 25,
+   "reference": "MK13-1A66C-X",
+   "magnet": "N45-4X19",
+   "className": "C",
+   "approach": "D5",
+   "bound": "to",
+   "raw": "10.8",
+   "published": 10.8,
+   "estimated": 8.1145,
+   "errorMm": -2.6855,
+   "errorPct": -24.87,
+   "status": "control",
+   "anomalies": [
+    "adaptation documentaire Form→produit (décalage empirique)",
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 3.478933
+  },
+  {
+   "source": "MK13",
+   "page": 24,
+   "reference": "MK13-1A66E-X",
+   "magnet": "SMCO5-5X4",
+   "className": "E",
+   "approach": "D1",
+   "bound": "up",
+   "raw": "1.4",
+   "published": 1.4,
+   "estimated": 3.8315,
+   "errorMm": 2.4315,
+   "errorPct": 173.68,
+   "status": "control",
+   "anomalies": [
+    "adaptation documentaire Form→produit (décalage empirique)",
+    "D1 produit : dérivé du D1 d'apprentissage Form, pas un contrôle indépendant de la physique",
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 7.307427
+  },
+  {
+   "source": "MK13",
+   "page": 24,
+   "reference": "MK13-1A66E-X",
+   "magnet": "SMCO5-5X4",
+   "className": "E",
+   "approach": "D1",
+   "bound": "to",
+   "raw": "3.85",
+   "published": 3.85,
+   "estimated": 6.1365,
+   "errorMm": 2.2865,
+   "errorPct": 59.39,
+   "status": "control",
+   "anomalies": [
+    "adaptation documentaire Form→produit (décalage empirique)",
+    "D1 produit : dérivé du D1 d'apprentissage Form, pas un contrôle indépendant de la physique",
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 5.730486
+  },
+  {
+   "source": "MK13",
+   "page": 24,
+   "reference": "MK13-1A66E-X",
+   "magnet": "SMCO5-5X4",
+   "className": "E",
+   "approach": "D3",
+   "bound": "up",
+   "raw": "2.2",
+   "published": 2.2,
+   "estimated": 5.0231,
+   "errorMm": 2.8231,
+   "errorPct": 128.32,
+   "status": "control",
+   "anomalies": [
+    "adaptation documentaire Form→produit (décalage empirique)",
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 7.307427
+  },
+  {
+   "source": "MK13",
+   "page": 24,
+   "reference": "MK13-1A66E-X",
+   "magnet": "SMCO5-5X4",
+   "className": "E",
+   "approach": "D3",
+   "bound": "to",
+   "raw": "5.2",
+   "published": 5.2,
+   "estimated": 7.7512,
+   "errorMm": 2.5512,
+   "errorPct": 49.06,
+   "status": "control",
+   "anomalies": [
+    "adaptation documentaire Form→produit (décalage empirique)",
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 5.730486
+  },
+  {
+   "source": "MK13",
+   "page": 24,
+   "reference": "MK13-1A66E-X",
+   "magnet": "SMCO5-5X4",
+   "className": "E",
+   "approach": "D4",
+   "bound": "up",
+   "raw": "1.2",
+   "published": 1.2,
+   "estimated": 3.5825,
+   "errorMm": 2.3825,
+   "errorPct": 198.54,
+   "status": "control",
+   "anomalies": [
+    "adaptation documentaire Form→produit (décalage empirique)",
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 7.307427
+  },
+  {
+   "source": "MK13",
+   "page": 24,
+   "reference": "MK13-1A66E-X",
+   "magnet": "SMCO5-5X4",
+   "className": "E",
+   "approach": "D4",
+   "bound": "to",
+   "raw": "3.65",
+   "published": 3.65,
+   "estimated": 5.8236,
+   "errorMm": 2.1736,
+   "errorPct": 59.55,
+   "status": "control",
+   "anomalies": [
+    "adaptation documentaire Form→produit (décalage empirique)",
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 5.730486
+  },
+  {
+   "source": "MK13",
+   "page": 24,
+   "reference": "MK13-1A66E-X",
+   "magnet": "SMCO5-5X4",
+   "className": "E",
+   "approach": "D5",
+   "bound": "up",
+   "raw": null,
+   "published": null,
+   "estimated": 1.5622,
+   "errorMm": null,
+   "errorPct": null,
+   "status": "missing",
+   "anomalies": [
+    "borne non publiée",
+    "adaptation documentaire Form→produit (décalage empirique)"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 7.307427
+  },
+  {
+   "source": "MK13",
+   "page": 24,
+   "reference": "MK13-1A66E-X",
+   "magnet": "SMCO5-5X4",
+   "className": "E",
+   "approach": "D5",
+   "bound": "to",
+   "raw": "1.1",
+   "published": 1.1,
+   "estimated": 3.8403,
+   "errorMm": 2.7403,
+   "errorPct": 249.12,
+   "status": "control",
+   "anomalies": [
+    "adaptation documentaire Form→produit (décalage empirique)",
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 5.730486
+  },
+  {
+   "source": "MK13",
+   "page": 25,
+   "reference": "MK13-1A66E-X",
+   "magnet": "N45-4X19",
+   "className": "E",
+   "approach": "D1",
+   "bound": "up",
+   "raw": "8.2",
+   "published": 8.2,
+   "estimated": 6.8792,
+   "errorMm": -1.3208,
+   "errorPct": -16.11,
+   "status": "control",
+   "anomalies": [
+    "adaptation documentaire Form→produit (décalage empirique)",
+    "D1 produit : dérivé du D1 d'apprentissage Form, pas un contrôle indépendant de la physique"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 7.307427
+  },
+  {
+   "source": "MK13",
+   "page": 25,
+   "reference": "MK13-1A66E-X",
+   "magnet": "N45-4X19",
+   "className": "E",
+   "approach": "D1",
+   "bound": "to",
+   "raw": "11.15",
+   "published": 11.15,
+   "estimated": 9.8966,
+   "errorMm": -1.2534,
+   "errorPct": -11.24,
+   "status": "control",
+   "anomalies": [
+    "adaptation documentaire Form→produit (décalage empirique)",
+    "D1 produit : dérivé du D1 d'apprentissage Form, pas un contrôle indépendant de la physique"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 5.730486
+  },
+  {
+   "source": "MK13",
+   "page": 25,
+   "reference": "MK13-1A66E-X",
+   "magnet": "N45-4X19",
+   "className": "E",
+   "approach": "D3",
+   "bound": "up",
+   "raw": "6",
+   "published": 6,
+   "estimated": 14.8481,
+   "errorMm": 8.8481,
+   "errorPct": 147.47,
+   "status": "control",
+   "anomalies": [
+    "adaptation documentaire Form→produit (décalage empirique)",
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 7.307427
+  },
+  {
+   "source": "MK13",
+   "page": 25,
+   "reference": "MK13-1A66E-X",
+   "magnet": "N45-4X19",
+   "className": "E",
+   "approach": "D3",
+   "bound": "to",
+   "raw": "9.7",
+   "published": 9.7,
+   "estimated": 18.0082,
+   "errorMm": 8.3082,
+   "errorPct": 85.65,
+   "status": "control",
+   "anomalies": [
+    "adaptation documentaire Form→produit (décalage empirique)",
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 5.730486
+  },
+  {
+   "source": "MK13",
+   "page": 25,
+   "reference": "MK13-1A66E-X",
+   "magnet": "N45-4X19",
+   "className": "E",
+   "approach": "D4",
+   "bound": "up",
+   "raw": "2.8",
+   "published": 2.8,
+   "estimated": 12.4573,
+   "errorMm": 9.6573,
+   "errorPct": 344.9,
+   "status": "control",
+   "anomalies": [
+    "adaptation documentaire Form→produit (décalage empirique)",
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 7.307427
+  },
+  {
+   "source": "MK13",
+   "page": 25,
+   "reference": "MK13-1A66E-X",
+   "magnet": "N45-4X19",
+   "className": "E",
+   "approach": "D4",
+   "bound": "to",
+   "raw": "6.25",
+   "published": 6.25,
+   "estimated": 14.95,
+   "errorMm": 8.7,
+   "errorPct": 139.2,
+   "status": "control",
+   "anomalies": [
+    "adaptation documentaire Form→produit (décalage empirique)",
+    "écart > 20 %"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 5.730486
+  },
+  {
+   "source": "MK13",
+   "page": 25,
+   "reference": "MK13-1A66E-X",
+   "magnet": "N45-4X19",
+   "className": "E",
+   "approach": "D5",
+   "bound": "up",
+   "raw": "3.9",
+   "published": 3.9,
+   "estimated": 3.5929,
+   "errorMm": -0.3071,
+   "errorPct": -7.87,
+   "status": "control",
+   "anomalies": [
+    "adaptation documentaire Form→produit (décalage empirique)"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 7.307427
+  },
+  {
+   "source": "MK13",
+   "page": 25,
+   "reference": "MK13-1A66E-X",
+   "magnet": "N45-4X19",
+   "className": "E",
+   "approach": "D5",
+   "bound": "to",
+   "raw": "7",
+   "published": 7,
+   "estimated": 6.2159,
+   "errorMm": -0.7841,
+   "errorPct": -11.2,
+   "status": "control",
+   "anomalies": [
+    "adaptation documentaire Form→produit (décalage empirique)"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 5.730486
+  },
+  {
+   "source": "MK04",
+   "page": 12,
+   "reference": "MK04-1A66C-X",
+   "magnet": "SMCO5-5X4",
+   "className": "C",
+   "approach": "D3",
+   "bound": "up",
+   "raw": "6.4",
+   "published": 6.4,
+   "estimated": null,
+   "errorMm": null,
+   "errorPct": null,
+   "status": "quarantine",
+   "anomalies": [
+    "MK04 D3 en quarantaine (71/96 plages inversées)",
+    "plage inversée up > to"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 5.109742602871686
+  },
+  {
+   "source": "MK04",
+   "page": 12,
+   "reference": "MK04-1A66C-X",
+   "magnet": "SMCO5-5X4",
+   "className": "C",
+   "approach": "D3",
+   "bound": "to",
+   "raw": "5.2",
+   "published": 5.2,
+   "estimated": null,
+   "errorMm": null,
+   "errorPct": null,
+   "status": "quarantine",
+   "anomalies": [
+    "MK04 D3 en quarantaine (71/96 plages inversées)",
+    "plage inversée up > to"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 3.4789328602798064
+  },
+  {
+   "source": "MK04",
+   "page": 13,
+   "reference": "MK04-1A66C-X",
+   "magnet": "N45-4X19",
+   "className": "C",
+   "approach": "D3",
+   "bound": "up",
+   "raw": "14.3",
+   "published": 14.3,
+   "estimated": null,
+   "errorMm": null,
+   "errorPct": null,
+   "status": "quarantine",
+   "anomalies": [
+    "MK04 D3 en quarantaine (71/96 plages inversées)",
+    "plage inversée up > to"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 5.109742602871686
+  },
+  {
+   "source": "MK04",
+   "page": 13,
+   "reference": "MK04-1A66C-X",
+   "magnet": "N45-4X19",
+   "className": "C",
+   "approach": "D3",
+   "bound": "to",
+   "raw": "8.5",
+   "published": 8.5,
+   "estimated": null,
+   "errorMm": null,
+   "errorPct": null,
+   "status": "quarantine",
+   "anomalies": [
+    "MK04 D3 en quarantaine (71/96 plages inversées)",
+    "plage inversée up > to"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 3.4789328602798064
+  },
+  {
+   "source": "MK04",
+   "page": 12,
+   "reference": "MK04-1A66E-X",
+   "magnet": "SMCO5-5X4",
+   "className": "E",
+   "approach": "D3",
+   "bound": "up",
+   "raw": "3.4",
+   "published": 3.4,
+   "estimated": null,
+   "errorMm": null,
+   "errorPct": null,
+   "status": "quarantine",
+   "anomalies": [
+    "MK04 D3 en quarantaine (71/96 plages inversées)"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 7.307426720908188
+  },
+  {
+   "source": "MK04",
+   "page": 12,
+   "reference": "MK04-1A66E-X",
+   "magnet": "SMCO5-5X4",
+   "className": "E",
+   "approach": "D3",
+   "bound": "to",
+   "raw": "4.1",
+   "published": 4.1,
+   "estimated": null,
+   "errorMm": null,
+   "errorPct": null,
+   "status": "quarantine",
+   "anomalies": [
+    "MK04 D3 en quarantaine (71/96 plages inversées)"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 5.73048587252394
+  },
+  {
+   "source": "MK04",
+   "page": 13,
+   "reference": "MK04-1A66E-X",
+   "magnet": "N45-4X19",
+   "className": "E",
+   "approach": "D3",
+   "bound": "up",
+   "raw": "7.9",
+   "published": 7.9,
+   "estimated": null,
+   "errorMm": null,
+   "errorPct": null,
+   "status": "quarantine",
+   "anomalies": [
+    "MK04 D3 en quarantaine (71/96 plages inversées)",
+    "plage inversée up > to"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 7.307426720908188
+  },
+  {
+   "source": "MK04",
+   "page": 13,
+   "reference": "MK04-1A66E-X",
+   "magnet": "N45-4X19",
+   "className": "E",
+   "approach": "D3",
+   "bound": "to",
+   "raw": "5.7",
+   "published": 5.7,
+   "estimated": null,
+   "errorMm": null,
+   "errorPct": null,
+   "status": "quarantine",
+   "anomalies": [
+    "MK04 D3 en quarantaine (71/96 plages inversées)",
+    "plage inversée up > to"
+   ],
+   "convention": "C2",
+   "model": "A",
+   "sharedThreshold": 5.73048587252394
+  }
+ ],
+ "cuts": []
+}

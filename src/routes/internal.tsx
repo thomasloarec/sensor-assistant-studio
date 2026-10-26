@@ -27,6 +27,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Label } from "@/components/ui/label";
+import { StaffLabEntry, serverStaffCheck } from "@/components/standex/detection-lab/staff-gate";
 import {
   Select,
   SelectContent,
@@ -78,6 +79,13 @@ import {
 } from "@/lib/standex/types";
 
 const MagneticWorkshop = lazy(() => import("@/components/standex/workshop/workshop"));
+// Chargé uniquement après rôle staff renvoyé par le serveur (voir StaffLabEntry).
+const DetectionLab = lazy(() => import("@/components/standex/detection-lab/detection-lab"));
+const subscribeSession = (onChange: () => void) => {
+  if (!supabase) return () => {};
+  const { data } = supabase.auth.onAuthStateChange(() => onChange());
+  return () => data.subscription.unsubscribe();
+};
 
 export const Route = createFileRoute("/internal")({
   head: () => ({
@@ -645,6 +653,15 @@ function Bench({ user }: { user: User }) {
           </span>
           <ArrowUpRight size={19} />
         </button>
+        <StaffLabEntry
+          check={serverStaffCheck}
+          subscribe={subscribeSession}
+          renderLab={(close) => (
+            <Suspense fallback={<p className="p-8">{t("Ouverture du laboratoire…")}</p>}>
+              <DetectionLab onClose={close} />
+            </Suspense>
+          )}
+        />
       </div>
       <div className="studio-mobile-sessions">
         <select
