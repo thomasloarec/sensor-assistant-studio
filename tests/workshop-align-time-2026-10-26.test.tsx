@@ -79,7 +79,9 @@ describe("Aligner l'aimant dans le Workshop intégré", () => {
       });
 
     await seek(25);
-    console.log("DBG", v.queryByTestId("guide-reason")?.textContent, v.container.querySelector(".mw-controls")?.textContent?.slice(0,600));
+    await act(async () => fireEvent.click(v.getByTestId("guide-step-test")));
+    console.log("DBG", v.queryByTestId("guide-test-opening")?.textContent, v.queryByTestId("guide-reason")?.textContent, scrubber().value);
+    await act(async () => fireEvent.click(v.getByTestId("guide-step-install")));
     expect(Number(scrubber().value)).toBe(25);
     expect(shift()).toBeCloseTo(38.64, 1);
 
