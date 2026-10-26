@@ -91,6 +91,7 @@ describe("Aligner l'aimant dans le Workshop intégré", () => {
         Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value")!.set!.call(el, String(pct));
         el.dispatchEvent(new window.Event("input", { bubbles: true }));
         el.dispatchEvent(new window.Event("change", { bubbles: true }));
+        console.log("DBG-after", el.value, (el as any)._valueTracker?.getValue(), Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value") ? "proto" : "noproto", el instanceof window.HTMLInputElement);
       });
 
     await seek(25);
