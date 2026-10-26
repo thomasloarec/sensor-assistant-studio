@@ -2549,6 +2549,7 @@ export default function MagneticWorkshop({
               step="0.1"
               value={progress * 100}
               onChange={(e) => {
+                console.log("DBG-scrub", e.target.value);
                 setPlaying(false);
                 setProgress(Number(e.target.value) / 100);
               }}
