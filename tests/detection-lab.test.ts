@@ -1,16 +1,15 @@
 /** Laboratoire de détection reed — noyau pur. Aucune assertion ne fige un accord
  * physique : on teste invariances, seuil partagé, falsification et domaine. */
-import { readFileSync } from "node:fs";
 import { paletteFromCss } from "@/lib/detection-lab/report";
 import { describe, expect, test } from "bun:test";
 import { cylinderField, cylinderAxialMt, dipoleFieldMt, cel } from "../src/lib/detection-lab/field";
 import { evaluatePose, toReedFrame } from "../src/lib/detection-lab/pose";
 import { PILOT_MAGNETS, magnetFrom } from "../src/lib/detection-lab/magnets";
 import { PROFILE } from "../src/lib/detection-lab/profile";
-import { distanceFor, lobeMax, sharedThreshold } from "../src/lib/detection-lab/calibration";
+import { approachPose, distanceFor, lobeMax, sharedThreshold } from "../src/lib/detection-lab/calibration";
 import { buildCalibrations, buildPilotTable, summarize, formRow } from "../src/lib/detection-lab/pilot";
 import { classifyPose, computeCutById, suggest, thresholdsFor, CUT_IDS } from "../src/lib/detection-lab/classify";
-import { cutToSvg, cutToCsv, tableToCsv } from "../src/lib/detection-lab/report";
+import { cutToSvg, cutToCsv, tableToCsv, provenance } from "../src/lib/detection-lab/report";
 import formData from "../src/data/detection-lab/brochure-form-rows.json";
 import { readFileSync } from "node:fs";
 
@@ -179,4 +178,70 @@ describe("classification, suggestions et coupes", () => {
     }
     expect(tableToCsv(buildPilotTable("A", "C1", calA)).split("\n")).toHaveLength(105);
   }, 60_000);
+});
+
+describe("revue indépendante — D5, enveloppe, provenance", () => {
+  const L = PROFILE.reed.effectiveLengthMm;
+  test("D5 = schéma source tourné rigidement : aimant ⟂ lames, approche par l'extrémité", () => {
+    // Schéma : reed vertical (Y_s), aimant horizontal (X_s), centre (t, L/2 + d + r). Rotation −90° autour de z : (X, Y) → (Y, −X).
+    const d = 4, t = 2.5, r = SMCO.diameterMm / 2;
+    const sch = { c: [t, L / 2 + d + r], a: [1, 0] };
+    const rot = (v: number[]) => [v[1]!, -v[0]!];
+    const p = approachPose(SMCO, "D5", d, "C1", t);
+    const rc = rot(sch.c), ra = rot(sch.a);
+    // Égalité à la symétrie près (t ↦ −t, inversion N-S), qui laisse la réponse inchangée.
+    expect(p.center[0]).toBeCloseTo(rc[0]!, 12);
+    expect(Math.abs(p.center[1])).toBeCloseTo(Math.abs(rc[1]!), 12);
+    expect(Math.abs(p.axis[1])).toBeCloseTo(Math.abs(ra[1]!), 12);
+    expect(p.axis[0]).toBe(0); // perpendiculaire aux lames
+    expect(p.center[0]).toBeGreaterThan(L / 2); // au-delà de l'extrémité
+    const mirrored = evaluatePose(SMCO, { center: [rc[0]!, rc[1]!, 0], axis: [ra[0]!, ra[1]!, 0] }, NOM, "A");
+    const e = evaluatePose(SMCO, p, NOM, "A");
+    expect(e.ok && mirrored.ok && Math.abs(e.response - mirrored.response) < 1e-9).toBe(true);
+  });
+  test("D5 : réponse nulle centrée, non nulle hors axe, deux réponses", () => {
+    for (const model of ["A", "B"] as const) {
+      const c = evaluatePose(SMCO, approachPose(SMCO, "D5", 5, "C1", 0), NOM, model);
+      const off = evaluatePose(SMCO, approachPose(SMCO, "D5", 5, "C1", 3), NOM, model);
+      expect(c.ok && c.response < 1e-9).toBe(true);
+      expect(off.ok && off.response > 1e-3).toBe(true);
+    }
+  });
+  test("D5 : maximum convergé (pas 1 vs 0,5 mm), deux aimants × deux réponses", () => {
+    for (const model of ["A", "B"] as const) {
+      const cal = model === "A" ? calA : buildCalibrations("B", "C1");
+      const th = cal["C:up"]!.shared!;
+      for (const m of PILOT_MAGNETS) {
+        const a = distanceFor(m, "D5", th, "C1", model, 1), b = distanceFor(m, "D5", th, "C1", model, 0.5);
+        expect(a.ok && b.ok).toBe(true);
+        if (a.ok && b.ok) expect(Math.abs(a.value - b.value)).toBeLessThan(0.05);
+      }
+    }
+  }, 60_000);
+  test("exclusion = encombrement publié KSK-1A66 (14,0 × Ø 2,2 mm), distinct de la longueur effective", () => {
+    expect(PROFILE.reed.envelopeHalfLengthMm * 2).toBe(14);
+    expect(PROFILE.reed.envelopeRadiusMm * 2).toBeCloseTo(2.2, 12);
+    expect(PROFILE.reed.envelopeSource).toContain("ksk-1a66");
+    expect(PROFILE.reed.effectiveLengthMm).toBeLessThan(14);
+    // Face d'aimant à 0,5 mm de l'axe, à mi-capsule : collision, donc aucune estimation.
+    expect(evaluatePose(SMCO, { center: [5, 0.5 + 2.5, 0], axis: [0, 1, 0] }, NOM, "A").ok).toBe(true);
+    expect(evaluatePose(SMCO, { center: [6, 1.0, 0], axis: [1, 0, 0] }, NOM, "A").ok).toBe(false);
+  });
+  test("provenance : brochure (plage de classe) et page web (pull-in/drop-out) distinctes", () => {
+    const p = provenance();
+    expect(p.brochureBounds).toMatch(/classe de sensibilité/);
+    expect(p.brochureBounds).toMatch(/ni distribution gaussienne ni probabilité/);
+    expect(p.pullInDropOutPage).toMatch(/aimants appairés/);
+    expect(JSON.stringify(p)).not.toMatch(/bande de dispersion/);
+  });
+  test("diagnostic : la rotation proposée est une rotation ±90° autour de z, applicable", () => {
+    const th = thresholdsFor(calA, "C");
+    const s = suggest(SMCO, { center: [0, 10, 0], axis: [0, 1, 0] }, th, "A")!;
+    expect(s.kind).toBe("rotate");
+    if (s.kind === "rotate") {
+      expect(Math.abs(s.degrees)).toBe(90);
+      expect(s.pose.axis[2]).toBe(0);
+      expect(Math.abs(s.pose.axis[0])).toBeCloseTo(1, 12);
+    }
+  });
 });
