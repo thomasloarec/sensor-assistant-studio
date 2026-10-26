@@ -457,7 +457,7 @@ export default function MagneticWorkshop({
   }, [machine?.assetKey, machine?.unitScale, storageMode, assetEpoch]);
   /** Toute opération sur le montage passe ici : historique annulable, et une
    * pose modifiée librement libère honnêtement son attache. */
-  function machineChange(patch: Partial<MachineAssembly>) {
+  function machineChange(patch: Partial<MachineAssembly>, opts: { keepTime?: boolean } = {}) {
     if (!machine) return;
     const { freed, ...clean } = freePosePatch(patch);
     // Changement d'unités : repères, attaches et course liés au modèle sont
@@ -486,6 +486,9 @@ export default function MagneticWorkshop({
     h.past = [...h.past.slice(-49), machine];
     h.future = [];
     setHistoryTick((v) => v + 1);
+    // Un alignement « à l'instant affiché » garde le temps courant, y compris
+    // quand on l'annule ou le rétablit (comparaison au même instant).
+    if (opts.keepTime) timedChanges.current.add(next);
     if (freed.length)
       setGuideState((g) => ({ ...g, freed: [...new Set([...g.freed, ...freed])] }));
     else if ("sensorAttach" in patch || "magnetAttach" in patch)
@@ -493,7 +496,7 @@ export default function MagneticWorkshop({
         ...g,
         freed: g.freed.filter((w) => !(w + "Attach" in patch)),
       }));
-    update({ machine: next });
+    update({ machine: next }, { keepTime: !!opts.keepTime });
   }
   /** Repères de mesure : annulables, mais l'instant de lecture est conservé
    *  (un repère peut se poser pendant l'animation). */
@@ -522,7 +525,10 @@ export default function MagneticWorkshop({
     if (!target) return;
     to.push(machine);
     setHistoryTick((v) => v + 1);
-    update({ machine: target });
+    // Défaire/refaire un réglage horodaté reste au même instant ; les autres
+    // réglages gardent leur règle habituelle (retour au début du cycle).
+    const keepTime = timedChanges.current.has(direction === "undo" ? machine : target);
+    update({ machine: target }, { keepTime });
   }
   // Changer de capteur ou d'aimant garde les attaches : la pose est recalculée
   // pour que la face d'appui (ou la profondeur) reste celle choisie.
@@ -944,7 +950,7 @@ export default function MagneticWorkshop({
     if (progress >= 1) setPlaying(false);
   }, [progress]);
 
-  function update(patch: Partial<WorkshopConfig>) {
+  function update(patch: Partial<WorkshopConfig>, opts: { keepTime?: boolean } = {}) {
     const next = { ...config, ...patch };
     if (next.end >= next.start) {
       if (patch.start !== undefined) next.end = Math.max(1, next.start - 1);
@@ -952,7 +958,7 @@ export default function MagneticWorkshop({
     }
     if (!parseWorkshopConfig(next)) return;
     setPlaying(false);
-    setProgress(0);
+    if (!opts.keepTime) setProgress(0);
     setConfig(next);
     setError(null);
     setImportNotice(null);
@@ -2107,6 +2113,7 @@ export default function MagneticWorkshop({
               tool={tool}
               setTool={chooseTool}
               onChange={machineChange}
+              onChangeAtTime={(patch) => machineChange(patch, { keepTime: true })}
               history={{
                 canUndo:
                   historyRef.current.key === machine.assetKey && historyRef.current.past.length > 0,
