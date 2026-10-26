@@ -57,7 +57,7 @@ describe("Aligner l'aimant dans le Workshop intégré", () => {
     };
     const v = render(
       React.createElement(MagneticWorkshop, {
-        initialConfig: { ...DEFAULT_WORKSHOP, machine },
+        initialConfig: { ...DEFAULT_WORKSHOP, mode: "education", magnetModel: "generic", machine },
         onClose: () => {},
         onSave: () => {},
       }),
