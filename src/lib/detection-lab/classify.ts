@@ -11,7 +11,7 @@ export type Category = "favorable" | "variable" | "unfavorable" | "unavailable";
 export type Cause = "too_far" | "orientation";
 export interface Thresholds { up: number; to: number }
 export interface Classification {
-  category: Category; cause?: Cause; reason?: string;
+  category: Category; cause?: Cause | undefined; reason?: string;
   /** Réponse / seuil moins sensible (up) par scénario, dans l'ordre du profil. */
   ratios: number[];
 }
@@ -86,14 +86,14 @@ export function suggest(magnet: PilotMagnet, pose: MagnetPose, th: Thresholds | 
   return best;
 }
 
-export interface CutCell { x: number; y: number; category: Category; cause?: Cause; ratio: number | null }
-export interface CutMark { label: string; pose: MagnetPose; category: Category; cause?: Cause }
-export interface PathPoint { x: number; y: number; category: Category; cause?: Cause }
+export interface CutCell { x: number; y: number; category: Category; cause?: Cause | undefined; ratio: number | null }
+export interface CutMark { label: string; pose: MagnetPose; category: Category; cause?: Cause | undefined }
+export interface PathPoint { x: number; y: number; category: Category; cause?: Cause | undefined }
 export interface Cut {
   id: string; title: string; magnetId: string; className: PilotClass; model: ResponseModel; convention: DistanceConvention;
   axis: Vec3; thresholds: Thresholds | null;
   grid: { xMin: number; xMax: number; yMin: number; yMax: number; stepMm: number };
-  cells: CutCell[]; marks: CutMark[]; path?: { points: PathPoint[]; segments: { from: number; to: number; category: Category }[] };
+  cells: CutCell[]; marks: CutMark[]; path?: undefined | { points: PathPoint[]; segments: { from: number; to: number; category: Category }[] };
   computeMs: number;
 }
 

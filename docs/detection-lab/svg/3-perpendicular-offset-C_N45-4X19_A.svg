@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 668 520" width="668" height="520" role="img" aria-label="Perpendiculaire décalé — classe C">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 668 568" width="668" height="568" role="img" aria-label="Perpendiculaire décalé — classe C">
 <style>
 .lab-fav{fill:var(--lab-favorable,oklch(0.72 0.13 205))}
 .lab-var{fill:var(--lab-variable,oklch(0.86 0.05 220))}
@@ -1270,18 +1270,20 @@
 <text x="604" y="104" class="lab-text" text-anchor="middle" font-weight="700">S</text>
 <text x="570" y="78" class="lab-text" text-anchor="end">aimant</text>
 <circle cx="350" cy="140" r="7" class="lab-stroke" stroke-width="3"/>
-<text x="350" y="128" class="lab-text" text-anchor="middle">centré · Détection variable</text>
+<text x="350" y="128" class="lab-text" text-anchor="middle" font-weight="700">1</text>
 <circle cx="398" cy="140" r="7" class="lab-stroke" stroke-width="3"/>
-<text x="398" y="128" class="lab-text" text-anchor="middle">décalé +4 mm · Placement favorable</text>
-<rect x="56" y="392" width="14" height="14" class="lab-fav"/><rect x="56" y="392" width="14" height="14" class="lab-stroke"/>
-<text x="78" y="404" class="lab-text">Placement favorable</text>
-<rect x="56" y="412" width="14" height="14" class="lab-var" style="fill:url(#lab-hatch)"/><rect x="56" y="412" width="14" height="14" class="lab-stroke"/>
-<text x="78" y="424" class="lab-text">Détection variable</text>
-<rect x="56" y="432" width="14" height="14" class="lab-far"/><rect x="56" y="432" width="14" height="14" class="lab-stroke"/>
-<text x="78" y="444" class="lab-text">Placement défavorable — Trop loin</text>
-<rect x="56" y="452" width="14" height="14" class="lab-orient" style="fill:url(#lab-dots)"/><rect x="56" y="452" width="14" height="14" class="lab-stroke"/>
-<text x="78" y="464" class="lab-text">Placement défavorable — Orientation défavorable</text>
-<rect x="56" y="472" width="14" height="14" class="lab-na" style="fill:url(#lab-cross)"/><rect x="56" y="472" width="14" height="14" class="lab-stroke"/>
-<text x="78" y="484" class="lab-text">Estimation indisponible</text>
-<text x="56" y="500" class="lab-text">Ordres de grandeur pédagogiques, jamais une garantie de commutation. reed-lab-hypotheses v1.0.0</text>
+<text x="398" y="128" class="lab-text" text-anchor="middle" font-weight="700">2</text>
+<text x="56" y="394" class="lab-text">1. centré — Détection variable</text>
+<text x="56" y="414" class="lab-text">2. décalé +4 mm — Placement favorable</text>
+<rect x="56" y="440" width="14" height="14" class="lab-fav"/><rect x="56" y="440" width="14" height="14" class="lab-stroke"/>
+<text x="78" y="452" class="lab-text">Placement favorable</text>
+<rect x="56" y="460" width="14" height="14" class="lab-var" style="fill:url(#lab-hatch)"/><rect x="56" y="460" width="14" height="14" class="lab-stroke"/>
+<text x="78" y="472" class="lab-text">Détection variable</text>
+<rect x="56" y="480" width="14" height="14" class="lab-far"/><rect x="56" y="480" width="14" height="14" class="lab-stroke"/>
+<text x="78" y="492" class="lab-text">Placement défavorable — Trop loin</text>
+<rect x="56" y="500" width="14" height="14" class="lab-orient" style="fill:url(#lab-dots)"/><rect x="56" y="500" width="14" height="14" class="lab-stroke"/>
+<text x="78" y="512" class="lab-text">Placement défavorable — Orientation défavorable</text>
+<rect x="56" y="520" width="14" height="14" class="lab-na" style="fill:url(#lab-cross)"/><rect x="56" y="520" width="14" height="14" class="lab-stroke"/>
+<text x="78" y="532" class="lab-text">Estimation indisponible</text>
+<text x="56" y="548" class="lab-text">Ordres de grandeur pédagogiques, jamais une garantie de commutation. reed-lab-hypotheses v1.0.0</text>
 </svg>
