@@ -2104,7 +2104,7 @@ export default function MagneticWorkshop({
         </div>
       )}
       <div className="mw-stage-grid">
-        <aside className="mw-controls" data-dbg={String(sample.t) + "/" + result.samples.length + "/" + progress}>
+        <aside className="mw-controls">
           {!machine && approachPicker}
           {!machine && activationDistanceControl}
           {machine ? (
@@ -2549,7 +2549,6 @@ export default function MagneticWorkshop({
               step="0.1"
               value={progress * 100}
               onChange={(e) => {
-                console.log("DBG-scrub", e.target.value);
                 setPlaying(false);
                 setProgress(Number(e.target.value) / 100);
               }}

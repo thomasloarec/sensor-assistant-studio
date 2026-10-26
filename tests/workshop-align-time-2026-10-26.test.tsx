@@ -2,13 +2,12 @@
  *  Workshop. L'alignement se fait à l'instant affiché et doit le conserver
  *  jusque dans la mutation centrale (machineChange → update), ainsi qu'en
  *  annulation/rétablissement. Démo paroi, aimant sur Plaque_volet (0/1/0). */
-import { GlobalRegistrator } from "@happy-dom/global-registrator";
+import "./support/happy-dom-first";
 import { afterAll, beforeAll, describe, expect, mock, test } from "bun:test";
 import { readFileSync } from "node:fs";
 import React from "react";
 import { act, fireEvent, render, waitFor } from "@testing-library/react";
 
-if (typeof document === "undefined") GlobalRegistrator.register({ url: "http://localhost/" });
 
 // La scène WebGL n'est pas l'objet du test : elle est remplacée par un témoin.
 mock.module("../src/components/standex/workshop/machine-scene", () => ({
@@ -86,16 +85,10 @@ describe("Aligner l'aimant dans le Workshop intégré", () => {
     const point = () => v.getAllByTestId("guide-precise-point")[0]!.textContent ?? "";
     const seek = async (pct: number) =>
       act(async () => {
-        const el = scrubber();
-        console.log("DBG-el", el.disabled, el.outerHTML.slice(0,200), Object.keys(el).filter(k=>k.startsWith("__react")));
-        Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value")!.set!.call(el, String(pct));
-        el.dispatchEvent(new window.Event("input", { bubbles: true }));
-        el.dispatchEvent(new window.Event("change", { bubbles: true }));
-        console.log("DBG-after", el.value, (el as any)._valueTracker?.getValue(), Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value") ? "proto" : "noproto", el instanceof window.HTMLInputElement);
+        fireEvent.change(scrubber(), { target: { value: String(pct) } });
       });
 
     await seek(25);
-    console.log("DBG", v.container.querySelector(".mw-controls")?.getAttribute("data-dbg"));
     expect(Number(scrubber().value)).toBe(25);
     expect(shift()).toBeCloseTo(38.64, 1);
 
