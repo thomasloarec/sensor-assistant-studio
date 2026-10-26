@@ -4,7 +4,7 @@ import { MachineCamera } from "./machine-camera";
 import { housingYawDeg } from "@/lib/standex/housing-pose";
 import { magnetSize } from "@/lib/standex/magnetic-workshop";
 import { msg, t } from "@/lib/i18n/core";
-import { useRef, useMemo, useEffect } from "react";
+import { useRef, useMemo, useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import { Canvas } from "@react-three/fiber";
 import type { ThreeEvent } from "@react-three/fiber";
