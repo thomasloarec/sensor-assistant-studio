@@ -223,8 +223,8 @@ describe("revue indépendante — D5, enveloppe, provenance", () => {
     expect(PROFILE.reed.envelopeRadiusMm * 2).toBeCloseTo(2.2, 12);
     expect(PROFILE.reed.envelopeSource).toContain("ksk-1a66");
     expect(PROFILE.reed.effectiveLengthMm).toBeLessThan(14);
-    // Face d'aimant à 0,5 mm de l'axe, à mi-capsule : collision, donc aucune estimation.
-    expect(evaluatePose(SMCO, { center: [5, 0.5 + 2.5, 0], axis: [0, 1, 0] }, NOM, "A").ok).toBe(true);
+    // Aimant chevauchant la capsule publiée (x = 6 mm < 7 mm) : collision, aucune estimation.
+    expect(evaluatePose(SMCO, { center: [0, 8, 0], axis: [1, 0, 0] }, NOM, "A").ok).toBe(true);
     expect(evaluatePose(SMCO, { center: [6, 1.0, 0], axis: [1, 0, 0] }, NOM, "A").ok).toBe(false);
   });
   test("provenance : brochure (plage de classe) et page web (pull-in/drop-out) distinctes", () => {
