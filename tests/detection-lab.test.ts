@@ -1,5 +1,7 @@
 /** Laboratoire de détection reed — noyau pur. Aucune assertion ne fige un accord
  * physique : on teste invariances, seuil partagé, falsification et domaine. */
+import { readFileSync } from "node:fs";
+import { paletteFromCss } from "@/lib/detection-lab/report";
 import { describe, expect, test } from "bun:test";
 import { cylinderField, cylinderAxialMt, dipoleFieldMt, cel } from "../src/lib/detection-lab/field";
 import { evaluatePose, toReedFrame } from "../src/lib/detection-lab/pose";
@@ -122,10 +124,12 @@ describe("seuil partagé entre aimants", () => {
   test("tableau : manquants et quarantaine comptés, apprentissage séparé", () => {
     const s = summarize(buildPilotTable("A", "C1", calA));
     expect(s.total).toBe(104);
-    expect(s.byStatus.training).toBe(8);
-    expect(s.byStatus.quarantine).toBe(8);
-    expect(s.byStatus.missing).toBeGreaterThan(0);
-    expect(s.byStatus.training + s.byStatus.control + s.byStatus.missing + s.byStatus.unavailable + s.byStatus.quarantine).toBe(104);
+    const g = s.groups;
+    expect(g.training.rows).toBe(8);
+    expect([g.form_control.rows, g.form_control.published, g.form_control.missing]).toEqual([24, 23, 1]);
+    expect([g.doc_adaptation.rows, g.doc_adaptation.published, g.doc_adaptation.missing]).toEqual([64, 61, 3]);
+    expect(g.quarantine.rows).toBe(8);
+    expect(g.training.rows + g.form_control.rows + g.doc_adaptation.rows + g.quarantine.rows).toBe(104);
   });
   test("donnée suspecte : MK04 D3 inversé jamais estimé", () => {
     const r = buildPilotTable("A", "C1", calA).filter((x) => x.source === "MK04");
@@ -134,6 +138,7 @@ describe("seuil partagé entre aimants", () => {
   });
 });
 
+const TEST_PALETTE = paletteFromCss(readFileSync("src/styles.css", "utf8"));
 describe("classification, suggestions et coupes", () => {
   const th = thresholdsFor(calA, "C");
   test("favorable exige l'accord de tous les scénarios ; enveloppes emboîtées", () => {
@@ -147,6 +152,8 @@ describe("classification, suggestions et coupes", () => {
   test("deux causes défavorables distinctes par contrefactuel", () => {
     expect(classifyPose(SMCO, { center: [0, 10, 0], axis: [0, 1, 0] }, th, "A").cause).toBe("orientation");
     expect(classifyPose(SMCO, { center: [0, 22, 0], axis: [1, 0, 0] }, th, "A").cause).toBe("too_far");
+    // Zone centrale nulle en perpendiculaire, loin : ni rotation ±90° ni rapprochement ne suffisent → non déterminé.
+    expect(classifyPose(SMCO, { center: [0, 22, 0], axis: [0, 1, 0] }, th, "A").cause).toBe("undetermined");
   });
   test("suggestion : un seul déplacement latéral ou rotation 90°, vérifiée, jamais en collision", () => {
     const pose = { center: [0, 7, 0] as [number, number, number], axis: [0, 1, 0] as [number, number, number] };
@@ -167,7 +174,7 @@ describe("classification, suggestions et coupes", () => {
     for (const id of CUT_IDS) {
       const c = computeCutById(id, N45, "B", "C1", calA);
       expect(c.cells).toHaveLength(49 * 25);
-      expect(cutToSvg(c)).toContain("<svg");
+      expect(cutToSvg(c, TEST_PALETTE)).toContain("<svg");
       expect(cutToCsv(c).split("\n").length).toBeGreaterThan(1225);
     }
     expect(tableToCsv(buildPilotTable("A", "C1", calA)).split("\n")).toHaveLength(105);
