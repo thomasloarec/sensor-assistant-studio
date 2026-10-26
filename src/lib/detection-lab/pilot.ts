@@ -55,7 +55,7 @@ export function buildCalibrations(model: ResponseModel, conv: DistanceConvention
   for (const c of PILOT_CLASSES)
     for (const b of BOUNDS) {
       const published: Record<string, number> = {};
-      for (const m of magnets) published[m.id] = formRow(c, m)!.distances.D1![b === "up" ? "upMm" : "toMm"]!;
+      for (const m of magnets) published[m.id] = formRow(c, m)!.distances["D1"]![b === "up" ? "upMm" : "toMm"]!;
       out[calKey(c, b)] = sharedThreshold(magnets, published, c, model, conv, b);
     }
   return out;
