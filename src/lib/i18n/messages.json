@@ -32272,5 +32272,311 @@
     "Этап подготовки",
     "Fase di preparazione",
     "準備ステップ"
+  ],
+  "Annuler le centrage": [
+    "Cancel centring",
+    "取消定心",
+    "Zentrieren abbrechen",
+    "Cancelar el centrado",
+    "Отменить центрирование",
+    "Annulla centratura",
+    "センタリングを取り消す"
+  ],
+  "Centrer dans un trou": [
+    "Centre in a hole",
+    "在孔中定心",
+    "In einer Bohrung zentrieren",
+    "Centrar en un orificio",
+    "Центрировать в отверстии",
+    "Centra in un foro",
+    "穴に合わせて中心を決める"
+  ],
+  "Cliquez la paroi près du trou, puis le centre du trou.": [
+    "Click the wall near the hole, then the centre of the hole.",
+    "先点击孔附近的壁面，再点击孔的中心。",
+    "Klicken Sie auf die Wand nahe der Bohrung, dann auf die Mitte der Bohrung.",
+    "Haga clic en la pared cerca del orificio y luego en el centro del orificio.",
+    "Щёлкните по стенке рядом с отверстием, затем по центру отверстия.",
+    "Fai clic sulla parete vicino al foro, poi sul centro del foro.",
+    "穴の近くの壁をクリックし、次に穴の中心をクリックしてください。"
+  ],
+  "Clic {0} sur 2": [
+    "Click {0} of 2",
+    "第 {0} 次点击（共 2 次）",
+    "Klick {0} von 2",
+    "Clic {0} de 2",
+    "Щелчок {0} из 2",
+    "Clic {0} di 2",
+    "クリック {0}／2"
+  ],
+  "centre du trou dans le plan de la paroi": [
+    "centre of the hole in the wall plane",
+    "壁面平面内的孔中心",
+    "Bohrungsmitte in der Wandebene",
+    "centro del orificio en el plano de la pared",
+    "центр отверстия в плоскости стенки",
+    "centro del foro nel piano della parete",
+    "壁面の平面上の穴の中心"
+  ],
+  "matière de la face d'entrée": [
+    "material of the entry face",
+    "入口面的实体部分",
+    "Material der Eintrittsfläche",
+    "material de la cara de entrada",
+    "материал входной грани",
+    "materiale della faccia d'ingresso",
+    "入口面の実体部分"
+  ],
+  "Le centre est celui que vous désignez sur le plan : ni le trou ni son diamètre ne sont détectés. Échap annule.": [
+    "The centre is the point you designate on the plane: neither the hole nor its diameter is detected. Esc cancels.",
+    "中心是您在平面上指定的点：不会检测孔或其直径。按 Esc 取消。",
+    "Die Mitte ist der Punkt, den Sie auf der Ebene festlegen: Weder Bohrung noch Durchmesser werden erkannt. Esc bricht ab.",
+    "El centro es el que usted designa en el plano: no se detectan ni el orificio ni su diámetro. Esc cancela.",
+    "Центр — это точка, которую вы указываете на плоскости: ни отверстие, ни его диаметр не распознаются. Esc отменяет.",
+    "Il centro è quello che indichi sul piano: né il foro né il suo diametro vengono rilevati. Esc annulla.",
+    "中心は平面上で指定した点です。穴やその直径は検出されません。Esc で取り消します。"
+  ],
+  "Options avancées de l'axe": [
+    "Advanced axis options",
+    "轴的高级选项",
+    "Erweiterte Achsoptionen",
+    "Opciones avanzadas del eje",
+    "Дополнительные параметры оси",
+    "Opzioni avanzate dell'asse",
+    "軸の詳細オプション"
+  ],
+  "Deux points sur l'axe, choisis vous-même : utile pour un axe incliné, pas pour viser le centre d'un trou.": [
+    "Two points on the axis, chosen by you: useful for an inclined axis, not for aiming at the centre of a hole.",
+    "由您选择轴上的两点：适用于倾斜轴，不适用于瞄准孔中心。",
+    "Zwei selbst gewählte Punkte auf der Achse: nützlich für eine geneigte Achse, nicht zum Anvisieren einer Bohrungsmitte.",
+    "Dos puntos del eje elegidos por usted: útil para un eje inclinado, no para apuntar al centro de un orificio.",
+    "Две точки на оси, выбранные вами: полезно для наклонной оси, но не для наведения на центр отверстия.",
+    "Due punti sull'asse scelti da te: utile per un asse inclinato, non per mirare al centro di un foro.",
+    "ご自身で選ぶ軸上の2点：傾いた軸に便利ですが、穴の中心を狙う用途ではありません。"
+  ],
+  "Centre désigné sur le plan de la paroi : l'axe suit la normale de cette face. Le trou, son diamètre et son centre ne sont pas détectés.": [
+    "Centre designated on the wall plane: the axis follows this face's normal. The hole, its diameter and its centre are not detected.",
+    "在壁面平面上指定的中心：轴沿该面的法线。不会检测孔、其直径及中心。",
+    "Auf der Wandebene festgelegte Mitte: Die Achse folgt der Normalen dieser Fläche. Bohrung, Durchmesser und Mitte werden nicht erkannt.",
+    "Centro designado en el plano de la pared: el eje sigue la normal de esta cara. No se detectan el orificio, su diámetro ni su centro.",
+    "Центр указан на плоскости стенки: ось следует нормали этой грани. Отверстие, его диаметр и центр не распознаются.",
+    "Centro indicato sul piano della parete: l'asse segue la normale di questa faccia. Il foro, il suo diametro e il suo centro non vengono rilevati.",
+    "壁面の平面上で指定した中心：軸はこの面の法線に沿います。穴、直径、中心は検出されません。"
+  ],
+  "Aligner avec le capteur": [
+    "Align with the sensor",
+    "与传感器对齐",
+    "Am Sensor ausrichten",
+    "Alinear con el sensor",
+    "Выровнять по датчику",
+    "Allinea con il sensore",
+    "センサーに合わせる"
+  ],
+  "Centre l’aimant en face du capteur sur sa face de pose.": [
+    "Centres the magnet opposite the sensor on its mounting face.",
+    "在安装面上将磁铁居中于传感器正对位置。",
+    "Zentriert den Magneten gegenüber dem Sensor auf seiner Auflagefläche.",
+    "Centra el imán frente al sensor sobre su cara de apoyo.",
+    "Центрирует магнит напротив датчика на его опорной грани.",
+    "Centra il magnete di fronte al sensore sulla sua faccia di appoggio.",
+    "取付面上で磁石をセンサーの正面に合わせて中心に置きます。"
+  ],
+  "Décalage actuel dans le plan de pose : {0} mm": [
+    "Current offset in the mounting plane: {0} mm",
+    "安装平面内当前偏移：{0} mm",
+    "Aktueller Versatz in der Auflageebene: {0} mm",
+    "Desfase actual en el plano de apoyo: {0} mm",
+    "Текущее смещение в плоскости установки: {0} мм",
+    "Scostamento attuale nel piano di appoggio: {0} mm",
+    "取付平面内の現在のずれ：{0} mm"
+  ],
+  "L'axe du capteur n'est pas perpendiculaire à cette face : l'aimant est centré par projection sur sa face, pas rendu coaxial.": [
+    "The sensor axis is not perpendicular to this face: the magnet is centred by projection onto its face, not made coaxial.",
+    "传感器轴与该面不垂直：磁铁通过投影在其面上居中，并未同轴。",
+    "Die Sensorachse steht nicht senkrecht zu dieser Fläche: Der Magnet wird per Projektion auf seiner Fläche zentriert, nicht koaxial ausgerichtet.",
+    "El eje del sensor no es perpendicular a esta cara: el imán se centra por proyección sobre su cara, no queda coaxial.",
+    "Ось датчика не перпендикулярна этой грани: магнит центрируется проекцией на свою грань, а не становится соосным.",
+    "L'asse del sensore non è perpendicolare a questa faccia: il magnete è centrato per proiezione sulla sua faccia, non reso coassiale.",
+    "センサー軸はこの面に垂直ではありません。磁石は面への投影で中心合わせされ、同軸にはなりません。"
+  ],
+  "Alignement géométrique à l'instant affiché, sans garantie de détection. La présence de matière sous le nouveau point n'est pas vérifiée.": [
+    "Geometric alignment at the displayed instant, with no detection guarantee. Whether there is material under the new point is not checked.",
+    "在当前显示时刻的几何对齐，不保证检测。不检查新点下方是否有实体。",
+    "Geometrische Ausrichtung zum angezeigten Zeitpunkt, ohne Erkennungsgarantie. Ob unter dem neuen Punkt Material ist, wird nicht geprüft.",
+    "Alineación geométrica en el instante mostrado, sin garantía de detección. No se comprueba si hay material bajo el nuevo punto.",
+    "Геометрическое выравнивание в отображаемый момент, без гарантии срабатывания. Наличие материала под новой точкой не проверяется.",
+    "Allineamento geometrico all'istante mostrato, senza garanzia di rilevamento. La presenza di materiale sotto il nuovo punto non è verificata.",
+    "表示中の時点での幾何学的な位置合わせで、検出は保証されません。新しい点の下に実体があるかは確認されません。"
+  ],
+  "Position précise": [
+    "Precise position",
+    "精确位置",
+    "Genaue Position",
+    "Posición precisa",
+    "Точное положение",
+    "Posizione precisa",
+    "正確な位置"
+  ],
+  "Repère : coordonnées du fichier en pose statique (mécanisme au repos), en mm. Le point suit ensuite sa pièce support.": [
+    "Frame: file coordinates in the static pose (mechanism at rest), in mm. The point then follows its supporting part.",
+    "坐标系：文件在静态姿态（机构静止）下的坐标，单位 mm。该点随后跟随其支撑零件。",
+    "Bezugssystem: Dateikoordinaten in der statischen Pose (Mechanismus in Ruhe), in mm. Der Punkt folgt dann seinem Trägerteil.",
+    "Referencia: coordenadas del archivo en la pose estática (mecanismo en reposo), en mm. Después el punto sigue a su pieza de soporte.",
+    "Система координат: координаты файла в статичной позе (механизм в покое), в мм. Затем точка следует за своей опорной деталью.",
+    "Riferimento: coordinate del file nella posa statica (meccanismo a riposo), in mm. Il punto segue poi il suo pezzo di supporto.",
+    "座標系：静止姿勢（機構が静止）のファイル座標、単位 mm。点はその後、支持部品に追従します。"
+  ],
+  "Point de pose : X {0} · Y {1} · Z {2} mm": [
+    "Mounting point: X {0} · Y {1} · Z {2} mm",
+    "安装点：X {0} · Y {1} · Z {2} mm",
+    "Auflagepunkt: X {0} · Y {1} · Z {2} mm",
+    "Punto de apoyo: X {0} · Y {1} · Z {2} mm",
+    "Точка установки: X {0} · Y {1} · Z {2} мм",
+    "Punto di appoggio: X {0} · Y {1} · Z {2} mm",
+    "取付点：X {0} · Y {1} · Z {2} mm"
+  ],
+  "Direction {0} dans le plan : {1}": [
+    "In-plane direction {0}: {1}",
+    "平面内方向 {0}：{1}",
+    "Richtung {0} in der Ebene: {1}",
+    "Dirección {0} en el plano: {1}",
+    "Направление {0} в плоскости: {1}",
+    "Direzione {0} nel piano: {1}",
+    "平面内の方向 {0}：{1}"
+  ],
+  "Déplacer de {0} mm selon la direction {1}": [
+    "Move {0} mm along direction {1}",
+    "沿方向 {1} 移动 {0} mm",
+    "Um {0} mm in Richtung {1} verschieben",
+    "Desplazar {0} mm según la dirección {1}",
+    "Сместить на {0} мм по направлению {1}",
+    "Sposta di {0} mm lungo la direzione {1}",
+    "方向 {1} に {0} mm 移動"
+  ],
+  "Point de pose {0}": [
+    "Mounting point {0}",
+    "安装点 {0}",
+    "Auflagepunkt {0}",
+    "Punto de apoyo {0}",
+    "Точка установки {0}",
+    "Punto di appoggio {0}",
+    "取付点 {0}"
+  ],
+  "Une coordonnée saisie est ramenée sur le plan de la face conservée : l'attache, sa pièce et son mouvement sont gardés. L'écart à la face se règle à part, ci-dessus.": [
+    "An entered coordinate is brought back onto the plane of the kept face: the attachment, its part and its motion are kept. The gap to the face is set separately, above.",
+    "输入的坐标会被投影回保留面的平面：附着、其零件及运动均保持不变。与面的间距在上方单独设置。",
+    "Eine eingegebene Koordinate wird auf die Ebene der beibehaltenen Fläche zurückgeführt: Befestigung, Teil und Bewegung bleiben erhalten. Der Abstand zur Fläche wird oben separat eingestellt.",
+    "Una coordenada introducida se lleva al plano de la cara conservada: se mantienen la fijación, su pieza y su movimiento. La separación a la cara se ajusta aparte, arriba.",
+    "Введённая координата переносится на плоскость сохранённой грани: крепление, его деталь и движение сохраняются. Зазор до грани задаётся отдельно, выше.",
+    "Una coordinata inserita viene riportata sul piano della faccia conservata: l'attacco, il suo pezzo e il suo movimento sono mantenuti. La distanza dalla faccia si regola a parte, sopra.",
+    "入力した座標は保持された面の平面上に戻されます。取付、その部品、動きは維持されます。面との隙間は上で別途設定します。"
+  ],
+  "Point d'entrée : X {0} · Y {1} · Z {2} mm": [
+    "Entry point: X {0} · Y {1} · Z {2} mm",
+    "入口点：X {0} · Y {1} · Z {2} mm",
+    "Eintrittspunkt: X {0} · Y {1} · Z {2} mm",
+    "Punto de entrada: X {0} · Y {1} · Z {2} mm",
+    "Точка входа: X {0} · Y {1} · Z {2} мм",
+    "Punto d'ingresso: X {0} · Y {1} · Z {2} mm",
+    "入口点：X {0} · Y {1} · Z {2} mm"
+  ],
+  "La profondeur et sa référence se règlent ci-dessus ; l'axe suit la normale sortante.": [
+    "Depth and its reference are set above; the axis follows the outward normal.",
+    "深度及其基准在上方设置；轴沿向外法线。",
+    "Tiefe und Bezug werden oben eingestellt; die Achse folgt der nach außen gerichteten Normalen.",
+    "La profundidad y su referencia se ajustan arriba; el eje sigue la normal saliente.",
+    "Глубина и её отсчёт задаются выше; ось следует внешней нормали.",
+    "La profondità e il suo riferimento si regolano sopra; l'asse segue la normale uscente.",
+    "深さとその基準は上で設定します。軸は外向き法線に沿います。"
+  ],
+  "pièce fixe (non attaché : reste fixe avec l'animation du fichier)": [
+    "fixed part (not attached: stays fixed with the file animation)",
+    "固定零件（未附着：在文件动画中保持固定）",
+    "festes Teil (nicht befestigt: bleibt bei der Dateianimation fest)",
+    "pieza fija (no fijado: permanece fijo con la animación del archivo)",
+    "неподвижная деталь (не закреплён: остаётся неподвижным при анимации файла)",
+    "pezzo fisso (non attaccato: resta fisso con l'animazione del file)",
+    "固定部品（未取付：ファイルのアニメーションでは固定のまま）"
+  ],
+  "Repère : coordonnées du fichier en pose statique (mécanisme au repos), en mm, centre du composant.": [
+    "Frame: file coordinates in the static pose (mechanism at rest), in mm, component centre.",
+    "坐标系：文件在静态姿态（机构静止）下的坐标，单位 mm，组件中心。",
+    "Bezugssystem: Dateikoordinaten in der statischen Pose (Mechanismus in Ruhe), in mm, Bauteilmitte.",
+    "Referencia: coordenadas del archivo en la pose estática (mecanismo en reposo), en mm, centro del componente.",
+    "Система координат: координаты файла в статичной позе (механизм в покое), в мм, центр компонента.",
+    "Riferimento: coordinate del file nella posa statica (meccanismo a riposo), in mm, centro del componente.",
+    "座標系：静止姿勢（機構が静止）のファイル座標、単位 mm、部品の中心。"
+  ],
+  "Centre {0}": [
+    "Centre {0}",
+    "中心 {0}",
+    "Mitte {0}",
+    "Centro {0}",
+    "Центр {0}",
+    "Centro {0}",
+    "中心 {0}"
+  ],
+  "Point refusé : rayon ou plan illisible. Aucun réglage n'a été modifié.": [
+    "Point refused: unreadable ray or plane. No setting was changed.",
+    "点被拒绝：射线或平面无法读取。未更改任何设置。",
+    "Punkt abgelehnt: Strahl oder Ebene unlesbar. Keine Einstellung wurde geändert.",
+    "Punto rechazado: rayo o plano ilegible. No se ha modificado ningún ajuste.",
+    "Точка отклонена: луч или плоскость не читаются. Настройки не изменены.",
+    "Punto rifiutato: raggio o piano illeggibile. Nessuna impostazione è stata modificata.",
+    "点を拒否しました：光線または平面が読み取れません。設定は変更されていません。"
+  ],
+  "Vue rasante : le regard est presque parallèle à la paroi. Tournez la vue face au trou puis cliquez son centre. Aucun réglage n'a été modifié.": [
+    "Grazing view: the line of sight is almost parallel to the wall. Turn the view to face the hole, then click its centre. No setting was changed.",
+    "掠视角：视线几乎与壁面平行。请将视角转向正对孔，再点击其中心。未更改任何设置。",
+    "Streifende Ansicht: Die Blickrichtung ist fast parallel zur Wand. Drehen Sie die Ansicht zur Bohrung und klicken Sie deren Mitte. Keine Einstellung wurde geändert.",
+    "Vista rasante: la mirada es casi paralela a la pared. Gire la vista frente al orificio y haga clic en su centro. No se ha modificado ningún ajuste.",
+    "Скользящий вид: направление взгляда почти параллельно стенке. Поверните вид к отверстию и щёлкните по его центру. Настройки не изменены.",
+    "Vista radente: lo sguardo è quasi parallelo alla parete. Ruota la vista di fronte al foro, poi fai clic sul suo centro. Nessuna impostazione è stata modificata.",
+    "かすめる視点：視線が壁とほぼ平行です。穴の正面に向けてから中心をクリックしてください。設定は変更されていません。"
+  ],
+  "Le plan de la paroi est derrière la caméra : tournez la vue vers la paroi. Aucun réglage n'a été modifié.": [
+    "The wall plane is behind the camera: turn the view towards the wall. No setting was changed.",
+    "壁面平面在相机后方：请将视角转向壁面。未更改任何设置。",
+    "Die Wandebene liegt hinter der Kamera: Drehen Sie die Ansicht zur Wand. Keine Einstellung wurde geändert.",
+    "El plano de la pared está detrás de la cámara: gire la vista hacia la pared. No se ha modificado ningún ajuste.",
+    "Плоскость стенки находится за камерой: поверните вид к стенке. Настройки не изменены.",
+    "Il piano della parete è dietro la telecamera: ruota la vista verso la parete. Nessuna impostazione è stata modificata.",
+    "壁の平面がカメラの後ろにあります：視点を壁に向けてください。設定は変更されていません。"
+  ],
+  "Point trop éloigné du modèle : cliquez le centre du trou plus près de la paroi. Aucun réglage n'a été modifié.": [
+    "Point too far from the model: click the centre of the hole closer to the wall. No setting was changed.",
+    "点离模型太远：请在更靠近壁面处点击孔中心。未更改任何设置。",
+    "Punkt zu weit vom Modell entfernt: Klicken Sie die Bohrungsmitte näher an der Wand. Keine Einstellung wurde geändert.",
+    "Punto demasiado alejado del modelo: haga clic en el centro del orificio más cerca de la pared. No se ha modificado ningún ajuste.",
+    "Точка слишком далеко от модели: щёлкните по центру отверстия ближе к стенке. Настройки не изменены.",
+    "Punto troppo lontano dal modello: fai clic sul centro del foro più vicino alla parete. Nessuna impostazione è stata modificata.",
+    "点がモデルから遠すぎます：壁に近い位置で穴の中心をクリックしてください。設定は変更されていません。"
+  ],
+  "Alignement indisponible : posez d'abord l'aimant sur une surface.": [
+    "Alignment unavailable: first mount the magnet on a surface.",
+    "无法对齐：请先将磁铁安装在表面上。",
+    "Ausrichtung nicht verfügbar: Setzen Sie den Magneten zuerst auf eine Fläche.",
+    "Alineación no disponible: primero coloque el imán sobre una superficie.",
+    "Выравнивание недоступно: сначала установите магнит на поверхность.",
+    "Allineamento non disponibile: prima posa il magnete su una superficie.",
+    "位置合わせできません：まず磁石を面に取り付けてください。"
+  ],
+  "Alignement refusé : pose du capteur ou de l'aimant illisible. Aucun réglage n'a été modifié.": [
+    "Alignment refused: unreadable sensor or magnet pose. No setting was changed.",
+    "对齐被拒绝：传感器或磁铁姿态无法读取。未更改任何设置。",
+    "Ausrichtung abgelehnt: Pose von Sensor oder Magnet unlesbar. Keine Einstellung wurde geändert.",
+    "Alineación rechazada: pose del sensor o del imán ilegible. No se ha modificado ningún ajuste.",
+    "Выравнивание отклонено: положение датчика или магнита не читается. Настройки не изменены.",
+    "Allineamento rifiutato: posa del sensore o del magnete illeggibile. Nessuna impostazione è stata modificata.",
+    "位置合わせを拒否しました：センサーまたは磁石の姿勢が読み取れません。設定は変更されていません。"
+  ],
+  "Alignement refusé : le point obtenu sort du modèle. Aucun réglage n'a été modifié.": [
+    "Alignment refused: the resulting point is outside the model. No setting was changed.",
+    "对齐被拒绝：得到的点超出模型范围。未更改任何设置。",
+    "Ausrichtung abgelehnt: Der ermittelte Punkt liegt außerhalb des Modells. Keine Einstellung wurde geändert.",
+    "Alineación rechazada: el punto obtenido queda fuera del modelo. No se ha modificado ningún ajuste.",
+    "Выравнивание отклонено: полученная точка выходит за пределы модели. Настройки не изменены.",
+    "Allineamento rifiutato: il punto ottenuto esce dal modello. Nessuna impostazione è stata modificata.",
+    "位置合わせを拒否しました：得られた点がモデルの外にあります。設定は変更されていません。"
   ]
 }

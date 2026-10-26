@@ -1,7 +1,7 @@
 /** Parcours guidé du modèle importé : Modèle → Pièces mobiles → Mouvement →
  *  Installation → Essai. Une seule étape développée à la fois ; la scène reste
  *  visible à côté. Les coordonnées libres restent dans les réglages avancés. */
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { displayMachineNodes } from "@/lib/standex/machine-view";
 import { msg, t } from "@/lib/i18n/core";
@@ -29,6 +29,16 @@ import {
   openingReading,
   throughAllowed,
 } from "@/lib/standex/machine-mounting";
+import {
+  alignMagnetToSensor,
+  directionLabel,
+  faceTangents,
+  holeCentreAttach,
+  planeAt,
+  projectOntoFace,
+  shiftAlongFace,
+} from "@/lib/standex/machine-alignment";
+import type { LockedPlane } from "@/lib/standex/machine-alignment";
 import type { Attachment, MountKind } from "@/lib/standex/machine-mounting";
 import type { CycleSample, Vec3, WorkshopConfig } from "@/lib/standex/magnetic-workshop";
 import { magnetSize } from "@/lib/standex/magnetic-workshop";
@@ -43,8 +53,11 @@ export interface GuideState {
   step: GuideStep;
   isolate: boolean;
   pick: null | {
-    purpose: "axis-points" | "axis-face" | "hole-points";
+    purpose: "axis-points" | "axis-face" | "hole-points" | "hole-centre";
     points: Vec3[];
+    /** « Centrer dans un trou » : face d'entrée verrouillée par le premier clic
+     *  (pose statique). Sélection temporaire, jamais enregistrée. */
+    plane?: LockedPlane;
     /** Support du PREMIER point d'un axe de trou : le second doit être solidaire. */
     support?: { path: string; moving: boolean; group?: string | undefined };
   };
@@ -193,7 +206,7 @@ const signedMm = (v: number) => (v >= 0 ? "+" : "") + v.toFixed(1);
 export function guideOverlay(
   state: GuideState,
   m: MachineAssembly,
-  handlers: Pick<GuideOverlay, "onPickPart" | "onPickPoint" | "onPlace">,
+  handlers: Pick<GuideOverlay, "onPickPart" | "onPickPoint" | "onPlace" | "onHoleRay">,
   extent: number,
   u = 0,
 ): GuideOverlay {
@@ -216,6 +229,10 @@ export function guideOverlay(
     attachMarks: [m.sensorAttach, m.magnetAttach]
       .filter((a): a is Attachment => !!a)
       .map((a) => pointAt(m, a.partPath, a.point, u)),
+    holePlane:
+      state.pick?.purpose === "hole-centre" && state.pick.plane
+        ? { ...planeAt(m, state.pick.plane, u), radius: Math.max(8, extent * 0.12) }
+        : null,
     ...handlers,
   };
 }
@@ -268,6 +285,18 @@ export default function MachineGuide({
   const guideRef = useRef<HTMLElement>(null);
   const m = config.machine;
   const [detailedTree, setDetailedTree] = useState(false);
+  const picking = !!state.pick;
+  // Échap annule toute sélection temporaire, sans toucher au montage.
+  useEffect(() => {
+    if (!picking) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== "Escape") return;
+      setState((s) => ({ ...s, pick: null, notice: null }));
+      setTool("navigate");
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [picking, setState, setTool]);
   if (!m) return null;
   const selection = movingSelection(m);
   const sensor = sensorById(config.sensorId);
@@ -280,13 +309,21 @@ export default function MachineGuide({
     if (scroller) scroller.scrollTop = 0;
   };
   const startPick = (purpose: NonNullable<GuideState["pick"]>["purpose"]) => {
-    setState((s) => ({ ...s, pick: { purpose, points: [] } }));
+    setState((s) => ({ ...s, pick: { purpose, points: [] }, notice: null }));
     setTool("pick");
+  };
+  const cancelPick = () => {
+    setState((s) => ({ ...s, pick: null, notice: null }));
+    setTool("navigate");
   };
   const target = state.target;
   const attach = target === "sensor" ? m.sensorAttach : m.magnetAttach;
   const kind = state.kind[target];
   const canThrough = target === "sensor" && throughAllowed(sensor.shape);
+  const centring = state.pick?.purpose === "hole-centre";
+  const designated = attach?.axisSource === "plane-centre";
+  const tangents = attach ? faceTangents(attach.normal) : null;
+  const alignPreview = target === "magnet" && attach?.kind === "surface" ? alignMagnetToSensor(m, cycleU(m, sample.t)) : null;
   const editAttach = (patch: Partial<Attachment>) => {
     if (!attach) return;
     onChange(attachPatch(target, { ...attach, ...patch }, config));
@@ -810,14 +847,41 @@ export default function MachineGuide({
           </Button>
           {kind === "through" && (
             <Button
+              className="mw-button"
+              aria-pressed={state.pick?.purpose === "hole-centre"}
+              data-testid="guide-hole-centre"
+              onClick={() => (state.pick?.purpose === "hole-centre" ? cancelPick() : startPick("hole-centre"))}
+            >
+              {t(centring ? "Annuler le centrage" : "Centrer dans un trou")}
+            </Button>
+          )}
+        </div>
+        {state.pick?.purpose === "hole-centre" && (
+          <div className="notice-info mw-pick-steps" data-testid="guide-hole-centre-steps" role="status">
+            <p className="t-body">{t("Cliquez la paroi près du trou, puis le centre du trou.")}</p>
+            <p className="t-body t-metric">
+              {msg("Clic {0} sur 2", [String(state.pick.plane ? 2 : 1)])} ·{" "}
+              {t(state.pick.plane ? "centre du trou dans le plan de la paroi" : "matière de la face d'entrée")}
+            </p>
+            <p className="t-caption">
+              {t("Le centre est celui que vous désignez sur le plan : ni le trou ni son diamètre ne sont détectés. Échap annule.")}
+            </p>
+            <Button className="mw-button mw-secondary" onClick={cancelPick}>{t("Annuler")}</Button>
+          </div>
+        )}
+        {kind === "through" && (
+          <details className="mw-advanced-axis">
+            <summary className="t-body">{t("Options avancées de l'axe")}</summary>
+            <Button
               className="mw-button mw-secondary"
               aria-pressed={state.pick?.purpose === "hole-points"}
               onClick={() => startPick("hole-points")}
             >
               {t("Axe d'un trou existant (deux points)")}
             </Button>
-          )}
-        </div>
+            <p className="t-caption">{t("Deux points sur l'axe, choisis vous-même : utile pour un axe incliné, pas pour viser le centre d'un trou.")}</p>
+          </details>
+        )}
         {state.pick?.purpose === "hole-points" && (
           <p className="notice-info">
             {msg(
@@ -865,7 +929,9 @@ export default function MachineGuide({
             {attach.kind === "through" && (
               <p className="notice-info">
                 {t(
-                  attach.axisSource !== "face"
+                  designated
+                    ? "Centre désigné sur le plan de la paroi : l'axe suit la normale de cette face. Le trou, son diamètre et son centre ne sont pas détectés."
+                    : attach.axisSource !== "face"
                     ? "Axe défini par vos points ou valeurs : le centre du trou n'est pas détecté automatiquement. Deux clics sur la paroi du trou ne donnent pas son centre : saisissez le point d'entrée et la direction précis dans « Valeurs précises de l'axe »."
                     : "Implantation d'un perçage à prévoir : le modèle n'est pas percé, l'axe suit la normale de la face cliquée.",
                 )}
@@ -908,8 +974,121 @@ export default function MachineGuide({
                     "Aucune collerette n'est modélisée : la profondeur se mesure depuis une extrémité du corps dessiné, pas depuis une face d'appui réelle.",
                   )}
                 </p>
-                <details>
-                  <summary>{t("Valeurs précises de l'axe")}</summary>
+                <p className="t-caption" data-testid="guide-depth-reading">
+                  {t(
+                    depthReading(attach) === "flush"
+                      ? "Référence affleurante avec la surface."
+                      : depthReading(attach) === "recessed"
+                        ? "Référence en retrait, à l'intérieur de la paroi."
+                        : "Référence qui dépasse de la surface.",
+                  )}
+                </p>
+              </>
+            )}
+            {/* i18n-canonical : libellés français traduits au rendu par t(). */}
+            <Num
+              label="Rotation dans le plan"
+              unit="°"
+              min={-360}
+              max={360}
+              step={1}
+              value={attach.spinDeg}
+              onCommit={(spinDeg) => editAttach({ spinDeg })}
+            />
+            <label className="mw-check">
+              <input
+                type="checkbox"
+                checked={attach.flip}
+                onChange={(e) => editAttach({ flip: e.target.checked })}
+              />
+              {t(attach.kind === "through" ? "Inverser le sens d'insertion" : "Retourner le composant")}
+            </label>
+            {target === "magnet" && attach.kind === "surface" && (
+              <div className="mw-align" data-testid="guide-align">
+                <Button
+                  className="mw-button"
+                  data-testid="guide-align-magnet"
+                  onClick={() => {
+                    setPlaying(false);
+                    const r = alignMagnetToSensor(m, u);
+                    if (!r.ok) {
+                      setState((s) => ({ ...s, notice: r.reason }));
+                      return;
+                    }
+                    setState((s) => ({ ...s, notice: null }));
+                    onChange(attachPatch("magnet", r.attach, config));
+                  }}
+                >
+                  {t("Aligner avec le capteur")}
+                </Button>
+                <p className="t-caption">{t("Centre l’aimant en face du capteur sur sa face de pose.")}</p>
+                {alignPreview?.ok && (
+                  <p className="t-caption t-metric" data-testid="guide-align-shift">
+                    {msg("Décalage actuel dans le plan de pose : {0} mm", [formatMm(alignPreview.shiftMm, 2)])}
+                  </p>
+                )}
+                {alignPreview?.ok && alignPreview.oblique && (
+                  <p className="notice-warning" data-testid="guide-align-oblique">
+                    {t("L'axe du capteur n'est pas perpendiculaire à cette face : l'aimant est centré par projection sur sa face, pas rendu coaxial.")}
+                  </p>
+                )}
+                <p className="t-caption">
+                  {t("Alignement géométrique à l'instant affiché, sans garantie de détection. La présence de matière sous le nouveau point n'est pas vérifiée.")}
+                </p>
+              </div>
+            )}
+            <details className="mw-precise" data-testid="guide-precise">
+              <summary className="t-body">{t("Position précise")}</summary>
+              <p className="t-caption">{t("Repère : coordonnées du fichier en pose statique (mécanisme au repos), en mm. Le point suit ensuite sa pièce support.")}</p>
+              {attach.kind === "surface" ? (
+                <>
+                  <p className="t-body t-metric" data-testid="guide-precise-point">
+                    {msg("Point de pose : X {0} · Y {1} · Z {2} mm", attach.point.map((v) => formatMm(v, 2)))}
+                  </p>
+                  {([0, 1] as const).map((k) => (
+                    <div key={k} className="mw-nudge" data-testid={"guide-nudge-" + k}>
+                      <p className="t-body">
+                        {msg("Direction {0} dans le plan : {1}", [String(k + 1), directionLabel(tangents![k])])}
+                      </p>
+                      <div className="mw-guide-row">
+                        {[-1, -0.1, 0.1, 1].map((d) => (
+                          <Button
+                            key={d}
+                            className="mw-button mw-secondary t-metric"
+                            aria-label={msg("Déplacer de {0} mm selon la direction {1}", [String(d), String(k + 1)])}
+                            onClick={() => editAttach(shiftAlongFace(attach, k === 0 ? d : 0, k === 1 ? d : 0))}
+                          >
+                            {(d > 0 ? "+" : "−") + Math.abs(d)}
+                          </Button>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                  {(["X", "Y", "Z"] as const).map((a, i) => (
+                    <Num
+                      key={"s" + a}
+                      label={msg("Point de pose {0}", [a])}
+                      unit="mm"
+                      min={-10000}
+                      max={10000}
+                      testId={"guide-surface-point-" + a}
+                      value={attach.point[i]!}
+                      onCommit={(v) => {
+                        const p = [...attach.point] as Vec3;
+                        p[i] = v;
+                        editAttach(projectOntoFace(attach, p));
+                      }}
+                    />
+                  ))}
+                  <p className="t-caption">
+                    {t("Une coordonnée saisie est ramenée sur le plan de la face conservée : l'attache, sa pièce et son mouvement sont gardés. L'écart à la face se règle à part, ci-dessus.")}
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p className="t-body t-metric" data-testid="guide-precise-point">
+                    {msg("Point d'entrée : X {0} · Y {1} · Z {2} mm", attach.point.map((v) => formatMm(v, 2)))}
+                  </p>
                   {(["X", "Y", "Z"] as const).map((a, i) => (
                     <Num
                       key={"p" + a}
@@ -949,39 +1128,45 @@ export default function MachineGuide({
                       }}
                     />
                   ))}
-                </details>
-                <p className="t-caption" data-testid="guide-depth-reading">
-                  {t(
-                    depthReading(attach) === "flush"
-                      ? "Référence affleurante avec la surface."
-                      : depthReading(attach) === "recessed"
-                        ? "Référence en retrait, à l'intérieur de la paroi."
-                        : "Référence qui dépasse de la surface.",
-                  )}
-                </p>
-              </>
-            )}
-            {/* i18n-canonical : libellés français traduits au rendu par t(). */}
-            <Num
-              label="Rotation dans le plan"
-              unit="°"
-              min={-360}
-              max={360}
-              step={1}
-              value={attach.spinDeg}
-              onCommit={(spinDeg) => editAttach({ spinDeg })}
-            />
-            <label className="mw-check">
-              <input
-                type="checkbox"
-                checked={attach.flip}
-                onChange={(e) => editAttach({ flip: e.target.checked })}
-              />
-              {t(attach.kind === "through" ? "Inverser le sens d'insertion" : "Retourner le composant")}
-            </label>
+                                  <p className="t-caption">{t("La profondeur et sa référence se règlent ci-dessus ; l'axe suit la normale sortante.")}</p>
+                </>
+              )}
+            </details>
           </div>
         ) : (
-          !state.freed.includes(target) && (
+          <>
+          <details className="mw-precise" data-testid="guide-precise">
+            <summary className="t-body">{t("Position précise")}</summary>
+            <p className="t-body" data-testid="guide-precise-support">
+              {msg("Support : {0}", [
+                t(
+                  clipMode
+                    ? "pièce fixe (non attaché : reste fixe avec l'animation du fichier)"
+                    : (target === "sensor" ? m.sensorMount : m.magnetMount) === "moving"
+                      ? "pièce mobile"
+                      : "pièce fixe",
+                ),
+              ])}
+            </p>
+            <p className="t-caption">{t("Repère : coordonnées du fichier en pose statique (mécanisme au repos), en mm, centre du composant.")}</p>
+            {(["X", "Y", "Z"] as const).map((a, i) => (
+              <Num
+                key={"f" + a}
+                label={msg("Centre {0}", [a])}
+                unit="mm"
+                min={-10000}
+                max={10000}
+                testId={"guide-free-" + a}
+                value={(target === "sensor" ? m.sensorPosition : m.magnetPosition)[i]!}
+                onCommit={(v) => {
+                  const p = [...(target === "sensor" ? m.sensorPosition : m.magnetPosition)] as Vec3;
+                  p[i] = v;
+                  onChange((target === "sensor" ? { sensorPosition: p, sensorAttach: undefined } : { magnetPosition: p, magnetAttach: undefined }) as unknown as Partial<MachineAssembly>);
+                }}
+              />
+            ))}
+          </details>
+          {!state.freed.includes(target) && (
             <p className="t-caption">
               {t(
                 clipMode
@@ -989,7 +1174,8 @@ export default function MachineGuide({
                   : "Pose libre : aucune attache. Les coordonnées précises restent dans Réglages avancés › Positionnement.",
               )}
             </p>
-          )
+          )}
+          </>
         )}
         <div className="mw-guide-row">
           <Button className="mw-button mw-secondary" disabled={!history.canUndo} onClick={history.undo}>
@@ -1382,6 +1568,19 @@ export function handlePick(
     if (!p) return fail("Normale de face illisible : cliquez une autre face.");
     return { state: { ...base, pick: null }, patch: p, done: true };
   }
+  if (pick.purpose === "hole-centre") {
+    // Premier clic : verrouille le support réel, le plan et sa normale, sans
+    // toucher au montage. Le second clic passe par `handleHoleRay`.
+    if (pick.plane) return { state, patch: null, done: false };
+    return {
+      state: {
+        ...base,
+        pick: { ...pick, plane: { path: hit.path, moving: hit.moving, group: hit.group, point: hit.point, normal: hit.normal } },
+      },
+      patch: null,
+      done: false,
+    };
+  }
   const points = [...pick.points, hit.point];
   if (points.length < 2)
     return {
@@ -1421,4 +1620,28 @@ export function handlePick(
     axisSource: "two-points",
   };
   return { state: { ...base, pick: null }, patch: attachPatch("sensor", a, config), done: true };
+}
+
+/** Second clic de « Centrer dans un trou » : intersection rayon/plan de la face
+ *  verrouillée, une seule action annulable ; un refus ne modifie rien et laisse
+ *  la sélection ouverte pour réessayer.
+ *  i18n-canonical : les messages refusés sont traduits au rendu par t(). */
+export function handleHoleRay(
+  state: GuideState,
+  m: MachineAssembly,
+  ray: { origin: Vec3; direction: Vec3 },
+  u: number,
+  config: WorkshopConfig,
+): { state: GuideState; patch: Partial<MachineAssembly> | null; done: boolean } {
+  const plane = state.pick?.purpose === "hole-centre" ? state.pick.plane : undefined;
+  if (!plane) return { state, patch: null, done: false };
+  if (!throughAllowed(sensorById(config.sensorId).shape))
+    return {
+      state: { ...state, pick: null, notice: "Montage traversant refusé : il est réservé aux capteurs à corps cylindrique, fileté ou à insérer." },
+      patch: null,
+      done: true,
+    };
+  const r = holeCentreAttach(m, plane, ray, u, m.sensorAttach);
+  if (!r.ok) return { state: { ...state, notice: r.reason }, patch: null, done: false };
+  return { state: { ...state, pick: null, notice: null }, patch: attachPatch("sensor", r.attach, config), done: true };
 }
