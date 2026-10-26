@@ -105,7 +105,7 @@ describe("Aligner l'aimant dans le Workshop intégré", () => {
     expect(point()).toMatch(/X\s*[-−]20\b.*Y\s*60\b.*Z\s*22\b/);
     // Écart et rotation conservés (champs du guide).
     expect((v.getByTestId("guide-offset") as HTMLInputElement).defaultValue).toBe("2");
-    expect(v.getByDisplayValue("35")).toBeTruthy();
+    expect((v.getByLabelText("Rotation dans le plan (°)") as HTMLInputElement).value).toBe("35");
 
     // Annuler puis rétablir : comparaison au même instant.
     await act(async () => fireEvent.click(v.getByRole("button", { name: "Annuler le dernier réglage" })));
