@@ -320,6 +320,8 @@ export default function MachineGuide({
   const attach = target === "sensor" ? m.sensorAttach : m.magnetAttach;
   const kind = state.kind[target];
   const canThrough = target === "sensor" && throughAllowed(sensor.shape);
+  const centring = state.pick?.purpose === "hole-centre";
+  const designated = attach?.axisSource === "plane-centre";
   const tangents = attach ? faceTangents(attach.normal) : null;
   const alignPreview = target === "magnet" && attach?.kind === "surface" ? alignMagnetToSensor(m, cycleU(m, sample.t)) : null;
   const editAttach = (patch: Partial<Attachment>) => {
@@ -850,7 +852,7 @@ export default function MachineGuide({
               data-testid="guide-hole-centre"
               onClick={() => (state.pick?.purpose === "hole-centre" ? cancelPick() : startPick("hole-centre"))}
             >
-              {t(state.pick?.purpose === "hole-centre" ? "Annuler le centrage" : "Centrer dans un trou")}
+              {t(centring ? "Annuler le centrage" : "Centrer dans un trou")}
             </Button>
           )}
         </div>
@@ -927,7 +929,7 @@ export default function MachineGuide({
             {attach.kind === "through" && (
               <p className="notice-info">
                 {t(
-                  attach.axisSource === "plane-centre"
+                  designated
                     ? "Centre désigné sur le plan de la paroi : l'axe suit la normale de cette face. Le trou, son diamètre et son centre ne sont pas détectés."
                     : attach.axisSource !== "face"
                     ? "Axe défini par vos points ou valeurs : le centre du trou n'est pas détecté automatiquement. Deux clics sur la paroi du trou ne donnent pas son centre : saisissez le point d'entrée et la direction précis dans « Valeurs précises de l'axe »."
@@ -1622,7 +1624,8 @@ export function handlePick(
 
 /** Second clic de « Centrer dans un trou » : intersection rayon/plan de la face
  *  verrouillée, une seule action annulable ; un refus ne modifie rien et laisse
- *  la sélection ouverte pour réessayer. */
+ *  la sélection ouverte pour réessayer.
+ *  i18n-canonical : les messages refusés sont traduits au rendu par t(). */
 export function handleHoleRay(
   state: GuideState,
   m: MachineAssembly,
