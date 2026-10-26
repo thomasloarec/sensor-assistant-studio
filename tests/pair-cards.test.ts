@@ -83,7 +83,7 @@ describe("couples proposés — écran d'après les six questions", () => {
     const configure = source.slice(source.indexOf("const configureSection"), source.indexOf("const resultatSection"));
     expect(configure).toContain("{optionalQuestions}");
     const resultat = source.slice(source.indexOf("const resultatSection"), source.indexOf("const workshopSection"));
-    expect(resultat).toContain("{configureSection}");
+    expect(resultat).toContain("{pcbSelected ? null : configureSection}");
     const revue = source.slice(source.indexOf("const revueSection"), source.indexOf("const configureSection"));
     expect(revue).not.toContain("optionalQuestions");
     expect(revue).toContain("{reviewConfiguration}");
