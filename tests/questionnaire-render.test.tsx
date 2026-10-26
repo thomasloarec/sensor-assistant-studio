@@ -706,8 +706,15 @@ describe("Configuration câble/connecteur déplacée à l'étape « Résultat »
   test("capteur pour circuit imprimé : câble et connecteur non applicables", async () => {
     const view = renderQuestionnaire(390);
     await chooseFirstPairAndOpenResult(view, true);
-    expect(view.getByTestId("configure-pcb")).toBeTruthy();
+    // Section entièrement masquée : ni titre, ni « Vous avez choisi », ni avis PCB.
+    expect(view.queryByTestId("configure-sensor")).toBeNull();
+    expect(view.queryByTestId("configure-pcb")).toBeNull();
+    expect(view.container.textContent).not.toContain("Configurer votre capteur");
+    expect(view.container.textContent).not.toContain("Vous avez choisi");
     expect(view.queryByTestId("connector-choice")).toBeNull();
+    // La navigation vers les couples et Standex reste disponible.
+    expect(view.queryByRole("button", { name: /Configurer votre capteur →/ })).toBeNull();
+    expect(view.getAllByRole("button", { name: /Standex|essai|couple/i }).length).toBeGreaterThan(0);
     await act(async () => fireEvent.click(stepButton(view, /4\. Avec Standex/)));
     expect(view.getByTestId("review-config-pcb").textContent).toBe("Non applicable : capteur pour circuit imprimé.");
     expect(view.queryByTestId("review-config-cable")).toBeNull();
