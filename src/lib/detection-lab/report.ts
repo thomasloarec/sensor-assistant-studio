@@ -49,7 +49,7 @@ export function cutToSvg(cut: Cut, tr: Tr = id): string {
   const py = (y: number) => T + (g.yMax - y + g.stepMm / 2) * S;
   const parts: string[] = [];
   const timelineH = cut.path ? 56 : 0;
-  const total = T + H + 40 + timelineH + 136;
+  const total = T + H + 40 + timelineH + 136 + cut.marks.length * 20 + (cut.marks.length ? 8 : 0);
   parts.push(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${L + W + 24} ${total}" width="${L + W + 24}" height="${total}" role="img" aria-label="${esc(tr(cut.title))}">`);
   parts.push(`<style>${STYLE}</style><defs>
 <pattern id="lab-hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" class="lab-var"/><line x1="0" y1="0" x2="0" y2="6" class="lab-pattern"/></pattern>
@@ -81,11 +81,16 @@ export function cutToSvg(cut: Cut, tr: Tr = id): string {
     if (label) parts.push(`<text x="${x - 34}" y="${y + 4}" class="lab-text" text-anchor="end">${esc(label)}</text>`);
   };
   glyph(L + W - 40, T + 30, tr("aimant"));
-  for (const m of cut.marks) {
+  cut.marks.forEach((m, i) => {
     parts.push(`<circle cx="${px(m.pose.center[0])}" cy="${py(m.pose.center[1])}" r="7" class="lab-stroke" stroke-width="3"/>`);
-    parts.push(`<text x="${px(m.pose.center[0])}" y="${py(m.pose.center[1]) - 12}" class="lab-text" text-anchor="middle">${esc(tr(m.label))} · ${esc(tr(CATEGORY_LABEL[m.category]))}</text>`);
-  }
+    parts.push(`<text x="${px(m.pose.center[0])}" y="${py(m.pose.center[1]) - 12}" class="lab-text" text-anchor="middle" font-weight="700">${i + 1}</text>`);
+  });
   let yy = T + H + 48;
+  cut.marks.forEach((m, i) => {
+    parts.push(`<text x="${L}" y="${yy + 2}" class="lab-text">${i + 1}. ${esc(m.label)} — ${esc(tr(CATEGORY_LABEL[m.category]))}${m.cause ? " — " + esc(tr(CAUSE_LABEL[m.cause])) : ""}</text>`);
+    yy += 20;
+  });
+  if (cut.marks.length) yy += 8;
   if (cut.path) {
     const pts = cut.path.points;
     parts.push(`<polyline points="${pts.map((p) => `${px(p.x)},${py(p.y)}`).join(" ")}" class="lab-stroke" stroke-width="2" stroke-dasharray="4 3"/>`);
