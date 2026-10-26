@@ -24,6 +24,8 @@ export interface SensorModel {
   section?: "one_flat";
   /** Sortie : `wires` = fils isolés séparés, sans gaine commune. */
   leads?: "wires";
+  /** Visual insulation colour, scoped to the documented product only. */
+  wireColor?: string;
   reedOffsetZ?: number;
   terminalSpan?: number;
   collarDiameter?: number;
@@ -204,8 +206,8 @@ export const SENSOR_CATALOG: readonly SensorModel[] = [
     [-6.225, 3.05, 9, 3.1],
     [6.225, 3.05, 9, 3.1],
   ]),
-  cylindrical("MK14", 25.5, 4),
-  { ...cylindrical("MK18", 17, 5, 4.6), description: "Corps Ø 5 mm avec méplats, deux fils séparés" },
+  { ...cylindrical("MK14", 25.5, 4), color: "#171717", leads: "wires", wireColor: "#1674d1", description: "Boîtier cylindrique avec deux fils isolés bleus" },
+  { ...cylindrical("MK18", 17, 5, 4.6), section: "one_flat", leads: "wires", description: "Corps Ø 5 mm avec un méplat, deux fils séparés" },
   { ...cylindrical("MK20_1", 10, 3, 2.7), section: "one_flat", leads: "wires", description: "Boîtier unique à un méplat, deux fils isolés" },
   { ...cylindrical("MK20_2", 7.5, 2.7, 2.5), section: "one_flat", leads: "wires", description: "Boîtier unique à un méplat, deux fils isolés" },
   flanged("MK21", 28.5, 19, 6.25, 9.5, 3.4, [

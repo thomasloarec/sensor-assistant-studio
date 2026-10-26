@@ -236,17 +236,6 @@ function oneFlatShape(diameter: number, flatAcross: number) {
   s.closePath();
   return s;
 }
-function mk18Profile() {
-  const s = new Shape(),
-    r = 2.5,
-    flat = 2.3,
-    a = Math.acos(flat / r);
-  s.absarc(0, 0, r, a, Math.PI - a, false);
-  s.lineTo(-flat, -Math.sqrt(r * r - flat * flat));
-  s.absarc(0, 0, r, Math.PI + a, 2 * Math.PI - a, false);
-  s.closePath();
-  return s;
-}
 function StandardBody({
   model,
   xray,
@@ -302,14 +291,7 @@ function StandardBody({
   const cylindrical = ["cylinder", "threaded", "pressfit", "glass"].includes(model.shape);
   return (
     <group>
-      {model.id === "MK18" ? (
-        <mesh position={[-l / 2, 0, 0]} rotation={[0, Math.PI / 2, 0]}>
-          <extrudeGeometry
-            args={[mk18Profile(), { depth: l, bevelEnabled: false, curveSegments: 24 }]}
-          />
-          {material}
-        </mesh>
-      ) : bodyKind(model) === "one_flat" ? (
+      {bodyKind(model) === "one_flat" ? (
         <mesh position={[-l / 2, 0, 0]} rotation={[0, Math.PI / 2, 0]} data-body="one_flat">
           <extrudeGeometry
             args={[oneFlatShape(h, w), { depth: l, bevelEnabled: false, curveSegments: 24 }]}
@@ -400,7 +382,7 @@ function StandardBody({
     </group>
   );
 }
-function SensorCable({ model }: { model: SensorModel }) {
+export function SensorCable({ model }: { model: SensorModel }) {
   const kind = cableConstruction(model);
   if (kind === "none") return null;
   const side = model.cableSide ?? -1;
@@ -428,7 +410,7 @@ function SensorCable({ model }: { model: SensorModel }) {
               [start + side * split, y, z + sign * 0.4],
               [start + side * 10, y, z + sign * 0.65],
             ]}
-            color="#60727d"
+            color={model.wireColor ?? "#60727d"}
             lineWidth={2}
           />
           <Line
