@@ -327,10 +327,10 @@ export default function MagneticWorkshop({
     [showSpace, setShowSpace] = useState(true);
   const machine = config.machine;
   const [guideState, setGuideState] = useState<GuideState>(INITIAL_GUIDE);
-  /** Historique des opérations de montage, propre au fichier courant. */
   /** Montages issus d'un réglage fait « à l'instant affiché » (alignement) : leur
    *  annulation/rétablissement conserve le temps courant. */
   const timedChanges = useRef(new WeakSet<MachineAssembly>());
+  /** Historique des opérations de montage, propre au fichier courant. */
   const historyRef = useRef<{ key: string; past: MachineAssembly[]; future: MachineAssembly[] }>({
     key: "",
     past: [],
