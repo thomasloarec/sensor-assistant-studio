@@ -45,7 +45,7 @@ export function PedagogicalLayer({frame,settings,volume,zones=true,zonesOnly=fal
     </>}
   </group>;
 }
-export function PedagogicalCut({volume,frame,body}:{volume:SampledVolume|null;frame:PedagogicalFrame;body?:readonly number[]|undefined}) {
+export function PedagogicalCut({volume,frame,body,reedMm}:{volume:SampledVolume|null;frame:PedagogicalFrame;body?:readonly number[]|undefined;reedMm?:number|undefined}) {
   const ref=useRef<SVGSVGElement>(null),[size,setSize]=useState({width:640,height:590});
   useEffect(()=>{const el=ref.current;if(!el)return;const observer=new ResizeObserver(entries=>{const r=entries[0]?.contentRect;if(r&&r.width>0&&r.height>0)setSize({width:r.width,height:r.height});});observer.observe(el);return()=>observer.disconnect();},[]);
   const scale=Math.max(.5,Math.min((size.width-100)/48,(size.height-110)/48));
@@ -61,15 +61,18 @@ export function PedagogicalCut({volume,frame,body}:{volume:SampledVolume|null;fr
     <line x1={cx} y1={y(24)} x2={cx} y2={y(-24)} className="mw-cut-axis"/>
     {[-20,0,20].map(n=><g key={n}><text x={x(n)} y={y(-24)+20} textAnchor="middle" className="t-caption">{n}</text><text x={x(-24)-10} y={y(n)+5} textAnchor="end" className="t-caption">{n}</text></g>)}
     <text x={x(24)+8} y={y(-24)+20} className="t-caption">x</text><text x={x(-24)-10} y={y(24)-8} className="t-caption">y</text>
-    {(()=>{const r=body?(body[1]??2)/2:PROFILE.reed.envelopeRadiusMm,h=body?(body[0]??16)/2-r:PROFILE.reed.envelopeHalfLengthMm,z=frame.pose.center[2],cut=Math.abs(z)<r,hw=cut?Math.sqrt(r*r-z*z):r;
+    {body?(()=>{const [bx=0,by=0,bz=0]=body,cut=Math.abs(frame.pose.center[2])<bz/2;
+      // Catalogue: the conservative rectangular envelope actually tested (X×Y), projection when the plane misses it.
+      return <g data-testid="pedagogical-cut-body" data-section={cut?'section':'projection'} data-envelope="box"><rect x={x(-bx/2)} y={y(by/2)} width={bx*scale} height={by*scale} className={cut?'mw-cut-body':'mw-cut-body-projection'}/></g>;})():(()=>{const r=PROFILE.reed.envelopeRadiusMm,h=PROFILE.reed.envelopeHalfLengthMm,z=frame.pose.center[2],cut=Math.abs(z)<r,hw=cut?Math.sqrt(r*r-z*z):r;
       // Real section only if plane z crosses the capsule; otherwise an explicitly labelled projection outline.
       return <g data-testid="pedagogical-cut-body" data-section={cut?'section':'projection'}><rect x={x(-h-hw)} y={y(hw)} width={2*(h+hw)*scale} height={2*hw*scale} rx={hw*scale} className={cut?'mw-cut-body':'mw-cut-body-projection'}/>
         </g>;})()}
-    <line x1={x(-EXPERIMENT.effectiveLengthMm/2)} y1={cy} x2={x(EXPERIMENT.effectiveLengthMm/2)} y2={cy} className="mw-cut-datum"/>
+    <line data-testid="pedagogical-cut-reed" data-length-mm={reedMm??EXPERIMENT.effectiveLengthMm} x1={x(-(reedMm??EXPERIMENT.effectiveLengthMm)/2)} y1={cy} x2={x((reedMm??EXPERIMENT.effectiveLengthMm)/2)} y2={cy} className="mw-cut-datum"/>
 
     <circle cx={x(frame.pose.center[0])} cy={y(frame.pose.center[1])} r="6" className="mw-cut-point"/>
   </svg><figcaption className="mw-ped-cut-caption">
-    <span className="t-caption">{t(body?'Centre et axe internes estimés, non mesurés par le fabricant.':inPlane?'Capteur générique, reed 66 monté':'Capteur générique, reed 66 monté — projection, hors du plan de coupe')}</span>
+    <span className="t-caption">{t(body?'Enveloppe simplifiée testée · centre interne estimé, non mesuré':inPlane?'Capteur générique, reed 66 monté':'Capteur générique, reed 66 monté — projection, hors du plan de coupe')}</span>
+    {volume&&Math.abs(frame.pose.center[2])>volume.extent&&<span className="t-caption" data-testid="cut-out-of-domain">{t('Plan de coupe hors du domaine calculé (±24 mm)')}</span>}
     {hatched&&<span className="t-caption">{t('Hachuré : chevauchement possible avec une pièce du montage — à vérifier')}</span>}
   </figcaption></figure>;
 }
