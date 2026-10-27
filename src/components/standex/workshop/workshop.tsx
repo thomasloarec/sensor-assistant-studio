@@ -2194,7 +2194,7 @@ export default function MagneticWorkshop({
   );
 
   return (
-    <main className={`mw mw-stage immersive ${pedagogical?"mw-pedagogical":""} ${embedded ? "mw-embedded" : "mw-autonomous"} ${machine ? "mw-imported" : ""}`} aria-label={t("Atelier 3D")}>
+    <main className={`mw mw-stage immersive ${pedagogical?"mw-pedagogical":""} ${clientPedagogical ? "mw-client-pedagogical" : ""} ${embedded ? "mw-embedded" : "mw-autonomous"} ${machine ? "mw-imported" : ""}`} aria-label={t("Atelier 3D")}>
       {productCard && !pedagogical && (
         <SensorCard
           key={sensor.id}
