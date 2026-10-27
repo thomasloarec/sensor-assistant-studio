@@ -382,7 +382,7 @@ export default function MagneticWorkshop({
   const sampled = usePedagogicalVolume(pedagogical && !playing && eligible, activeExperiment, pedagogicalPose, config.machine ? frameObstacles : null,catalogue?config:undefined);
   const [timelineResult, setPedTimeline] = useState<(ReturnType<typeof placementTimeline>&{key:string}) | null>(null);
   const clipGeneration=config.machine?animationGeneration(config.machine.assetKey,config.machine.unitScale):0;
-  const timelineKey=pedagogicalTimelineKey(effectiveExperiment,config,machineAssetId,envelopes,clipGeneration);
+  const timelineKey=pedagogicalTimelineKey(effectiveExperiment,config,machineAssetId,envelopes,clipGeneration)+'|'+(catalogue?catalogueProfile?.version:'frozen');
   const pedTimeline=eligible&&timelineResult?.key===timelineKey?timelineResult:null;
   useEffect(() => {
     setPedTimeline(null);

@@ -8,13 +8,15 @@ import { guideRangesFor } from './activation-guide';
 import { pedagogicalFrame, type PedagogicalFrame } from './pedagogical-poses';
 import { rotate, componentPose, cycleU } from './machine-assembly';
 import type { Vec3 } from './magnetic-workshop';
-import { momentFor, type WorkshopConfig } from './magnetic-workshop';
+import { momentFor, magnetSize, type WorkshopConfig } from './magnetic-workshop';
 import { PILOT_MAGNETS, type PilotMagnet } from '../detection-lab/magnets';
 import { evaluatePose, type MagnetPose } from '../detection-lab/pose';
 import { EXPERIMENT, DEFAULT_EXPERIMENT, classThresholds, experimentalScenarios, axisNodes, type PlacementEvidence, type SampledVolume, type TableSample } from '../detection-lab/workshop-experiment';
 import { magnetObb, obbOverlap, type Obb } from '../detection-lab/obstacles';
 
 export const CATALOGUE_MODEL_VERSION='catalogue-b-analogy-1';
+/* i18n-canonical: internal diagnostic codes, never UI labels. */
+const INTERNAL={missing:'Catalogue profile missing',prior:'catalogue modelling prior',source:'catalogue illustrative',leads:'length-only analogy; permeability/leads uncharacterized'};
 /* i18n-canonical: model status, not product qualification. */
 export const CATALOGUE_LABELS={form66:'Modèle 66 adapté',documented:'Modèle appuyé sur distances documentées',analogy:'Modèle par analogie',notice:'Simulation indicative · distances à confirmer avec Standex',datum:'Centre et axe internes estimés, non mesurés par le fabricant.',proxy:'Aimant représenté par un cylindre équivalent approximatif ; identité et boîtier conservés.',class:'Classe de modèle indicative ; le contact électrique ne définit pas une classe AT.',material:'Matériaux et implantation non caractérisés : zones indicatives, pas de prédiction affirmative.'};
 type Family='66-capable'|'other'|'illustrative';
@@ -38,24 +40,24 @@ export const CATALOGUE_PROFILES:Record<string,{family:Family;lengthMm:number;met
  CUSTOM:{family:'illustrative',lengthMm:14,method:'illustrative-centre'},
 };
 export function catalogueModel(c:WorkshopConfig){
- const p=CATALOGUE_PROFILES[c.sensorId];if(!p)throw Error('Catalogue profile missing');
+ const p=CATALOGUE_PROFILES[c.sensorId];if(!p)throw Error(INTERNAL.missing);
  const sensor=sensorById(c.sensorId),rows=guideRangesFor(c.sensorId,c.magnetModel);
  const selected=c.guideReference??'';
  const family=selected.includes('GP501')?'GP501':selected.includes('66')&&p.family==='66-capable'?'66':p.family==='66-capable'&&!selected?'66-assumed':'analogy';
  const status=family==='66'||family==='66-assumed'?'form66':rows.length?'documented':'analogy';
  const lengthMm=family==='GP501'?Math.min(10,sensor.body[0]*.7):p.lengthMm;
  const bare=BARE_MAGNETS.find(m=>m.id===c.magnetModel),pack=packagedMagnet(c.magnetModel);
- const body=bare?.body??(pack?sensorById(pack.housing).body:[5,4,4] as const);
+ const body=magnetSize(c);
  const moments=pack?.momentTypE6Vscm;const q=bare?.moment??(typeof moments==='number'?moments:Array.isArray(moments)?Math.min(...moments):null);
  const verified=PILOT_MAGNETS.find(m=>m.id===c.magnetModel);
  // Unknown active material/geometry: equivalent cylinder, explicit fixed SmCo moment prior.
  const diameterMm=bare?.shape==='cylinder'?body[1]:Math.sqrt(4*body[1]*body[2]/Math.PI);
  const magnetLengthMm=body[0],jT=(q??7.2)*1e-8/(Math.PI*(diameterMm/2000)**2*(magnetLengthMm/1000));
  const scale=lengthMm/14;
- const magnet:PilotMagnet=verified&&scale===1?verified:{...PILOT_MAGNETS[0],id:'SMCO5-5X4',label:c.magnetModel,material:bare?.material??pack?.magnetMaterial??'unknown',diameterMm:(verified?.diameterMm??diameterMm)/scale,lengthMm:(verified?.lengthMm??magnetLengthMm)/scale,jT:verified?.jT??jT,q:q??7.2,momentAm2:(q??7.2)*1e-8/(4*Math.PI*1e-7),volumeM3:Math.PI*(diameterMm/2000)**2*(magnetLengthMm/1000),momentRaw:'catalogue modelling prior'};
+ const magnet:PilotMagnet=verified&&scale===1?verified:{...PILOT_MAGNETS[0],id:'SMCO5-5X4',label:c.magnetModel,material:bare?.material??pack?.magnetMaterial??'unknown',diameterMm:(verified?.diameterMm??diameterMm)/scale,lengthMm:(verified?.lengthMm??magnetLengthMm)/scale,jT:verified?.jT??jT,q:q??7.2,momentAm2:(q??7.2)*1e-8/(4*Math.PI*1e-7),volumeM3:Math.PI*(diameterMm/2000)**2*(magnetLengthMm/1000),momentRaw:INTERNAL.prior};
  const className=['B','C','D','E','F'].includes(c.sensitivity)?c.sensitivity:'C';
  const reasons=[CATALOGUE_LABELS.notice,CATALOGUE_LABELS.datum,...(!verified||bare?.shape==='block'?[CATALOGUE_LABELS.proxy]:[]),...(className!==c.sensitivity?[CATALOGUE_LABELS.class]:[]),...(c.ferromagnetic||c.temperature!=='ambient'?[CATALOGUE_LABELS.material]:[])];
- return {version:CATALOGUE_MODEL_VERSION,sensorId:c.sensorId,magnetId:c.magnetModel,family,status:status as 'form66'|'documented'|'analogy',lengthMm,scale,centre:[0,0,0] as Vec3,axis:[1,0,0] as Vec3,body:sensor.body,magnetBody:body,magnet,magnetGeometry:verified?'verified-cylinder':bare?.shape==='cylinder'&&q!==null?'moment-cylinder':'equivalent-cylinder',moment:q,unknownMoment:q===null,className,contact:sensor.contact,reference:selected,rows,reasons,sources:[ACTIVATION_BROCHURE,sensor.sourceFile??'catalogue illustrative'],method:p.method,leadEffect:'length-only analogy; permeability/leads uncharacterized'};
+ return {version:CATALOGUE_MODEL_VERSION,sensorId:c.sensorId,magnetId:c.magnetModel,family,status:status as 'form66'|'documented'|'analogy',lengthMm,scale,centre:[0,0,0] as Vec3,axis:[1,0,0] as Vec3,body:sensor.body,magnetBody:body,magnet,magnetGeometry:verified?'verified-cylinder':bare?.shape==='cylinder'&&q!==null?'moment-cylinder':'equivalent-cylinder',moment:q,unknownMoment:q===null,className,contact:sensor.contact,reference:selected,rows,reasons,sources:[ACTIVATION_BROCHURE,sensor.sourceFile??INTERNAL.source],method:p.method,leadEffect:INTERNAL.leads};
 }
 export function catalogueFrame(c:WorkshopConfig,t:number):PedagogicalFrame{
  const f=pedagogicalFrame(c,t);

@@ -900,7 +900,7 @@ export default function WorkshopScene({
   ghost?: GhostPose | null | undefined;
 }) {
   const frame=hideElectrical&&config.sensorId!=='GENERIC'?catalogueFrame(config,suppliedSample.t):null;
-  const local=frame?frame.world.center.map((n,i)=>n-(frame.origin[i]??0)) as Vec3:null;
+  const local=frame?new Vector3(...frame.world.center).sub(new Vector3(...frame.origin)).applyAxisAngle(new Vector3(0,1,0),config.mountAngle*Math.PI/180).toArray() as Vec3:null;
   const sample=local?{...suppliedSample,position:local}:suppliedSample;
   const model = sensorById(config.sensorId),
     reference = config.mode === "reference",

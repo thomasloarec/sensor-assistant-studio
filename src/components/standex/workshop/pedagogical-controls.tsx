@@ -7,13 +7,14 @@ import type { PlacementDiagnosis } from '@/lib/detection-lab/placement-diagnosis
 import type { WorkshopConfig } from '@/lib/standex/magnetic-workshop';
 import type { Obb } from '@/lib/detection-lab/obstacles';
 import { fingerprint } from '@/lib/standex/mounting/geometry';
+import { CATALOGUE_MODEL_VERSION } from '@/lib/standex/catalogue-pedagogical';
 const cache=new Map<string,SampledVolume>();
 /** `obstacles`: loaded part boxes in the reed frame of the SAME instant; they enter the key. */
 export function usePedagogicalVolume(enabled:boolean,settings:ExperimentSettings,frame:PedagogicalFrame,obstacles:readonly Obb[]|null=null,catalogue?:WorkshopConfig) {
   const [result,setResult]=useState<SampledVolume|null>(null),[busy,setBusy]=useState(false),[failed,setFailed]=useState(false);
   // Quantization is not applied to physics orientation. The exact axis and plane enter the key.
   const available=!!catalogue||experimentAvailable(settings);
-  const key=settingsKey(settings,frame.pose.axis,frame.pose.center[2])+'|'+(obstacles?fingerprint(obstacles):'free')+'|'+JSON.stringify(catalogue??null);
+  const key=settingsKey(settings,frame.pose.axis,frame.pose.center[2])+'|'+(obstacles?fingerprint(obstacles):'free')+'|'+(catalogue?CATALOGUE_MODEL_VERSION:'frozen')+'|'+JSON.stringify(catalogue??null);
   useEffect(()=>{
     setResult(null);setFailed(false);
     if(!enabled||!available){setBusy(false);return;}
