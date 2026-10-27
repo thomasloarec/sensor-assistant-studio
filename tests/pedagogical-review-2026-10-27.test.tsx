@@ -85,3 +85,11 @@ test('Review11 REAL animated GLB attachments and clip pose preserved at 25 perce
  expect(pedagogicalAvailability(parsed.config)).toBe('mounting');
  }finally{dispose();asset.dispose();}
 });
+
+test('Review8/R12 frozen UI distance rows reproduce the source CSV, without mutating physical estimates',()=>{
+ const lines=readFileSync('docs/detection-lab-pass3/tableau_Lfit-d4corr.csv','utf8').trim().split('\n').slice(1);
+ for(const cls of ['A','B','C','D','E','F'])for(const magnetId of ['SMCO5-5X4','N45-4X19'])for(const approach of ['D1','D3','D4','D5']){
+  const rows=documentaryDistances({...DEFAULT_EXPERIMENT,className:cls,magnetId},approach);
+  for(const r of rows){const line=lines.find(l=>{const x=l.split(',');return x[0]===cls&&x[1]===magnetId&&x[2]===approach&&x[3]===r.bound;});expect(line).toBeDefined();const cols=line?.split(',')??[];expect(r.estimatedRawMm).toBe(cols[7]?Number(cols[7]):null);expect(r.publishedMm).toBe(cols[6]?Number(cols[6]):null);}
+ }
+});

@@ -19,7 +19,7 @@ export function usePedagogicalVolume(enabled:boolean,settings:ExperimentSettings
       worker=new Worker(new URL('./pedagogical.worker.ts',import.meta.url),{type:'module'});
       worker.onmessage=(event:MessageEvent<{key:string;result?:SampledVolume;error?:boolean}>)=>{
         if(!current||event.data.key!==key)return;
-        if(event.data.result){if(cache.size>=3){const first=cache.keys().next().value;if(first)cache.delete(first);}cache.set(key,event.data.result);setResult(event.data.result);}else setFailed(true);
+        if(event.data.result&&event.data.result.key===key&&experimentAvailable(settings)){if(cache.size>=3){const first=cache.keys().next().value;if(first)cache.delete(first);}cache.set(key,event.data.result);setResult(event.data.result);}else setFailed(true);
         setBusy(false);worker?.terminate();worker=null;
       };
       worker.onerror=()=>{if(current){setBusy(false);setFailed(true);}worker?.terminate();};

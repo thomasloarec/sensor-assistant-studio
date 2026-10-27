@@ -42,7 +42,7 @@ export function experimentAvailable(settings: ExperimentSettings): boolean {
 }
 /** Frozen documentary estimates only: no field/pose modification or refit. */
 export function documentaryDistances(settings: ExperimentSettings, approach: string) {
-  if(!experimentAvailable(settings))return [];
+  if(!experimentAvailable(settings)||report.profileVersion!==EXPERIMENT.version)return [];
   return report.rows.filter(r=>r.className===settings.className && r.magnetId===settings.magnetId && r.approach===approach && r.publishedMm!==null && (settings.className!=='A'||r.bound==='up')).map(r=>({...r,prudentMm:r.estimatedRawMm===null?null:conservativeDistance(r.estimatedRawMm,r.approach)}));
 }
 export function evaluatePlacement(settings: ExperimentSettings, pose: MagnetPose, mountingCollision = false): PlacementEvidence {
