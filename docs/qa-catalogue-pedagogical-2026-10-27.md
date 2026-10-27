@@ -148,3 +148,17 @@ Sources supplémentaires fournies, pas réingérées ni revendiquées comme insp
 - Classe A conservée : borne prudente 10 AT seule, aucune zone sous la borne (pas de remplissage à zéro).
 - Limite du modèle : en approche frontale F1 avec les hypothèses actuelles, MK36 atteint une zone estimée ; MK37/M37-N42 et MK38/M38-N42 n'en atteignent aucune sur [0,5 ; 30] mm. C'est une limite du modèle par analogie, pas une impossibilité du capteur (la table source reste prioritaire).
 - Non refait dans ce passage : comparaison source/estimation D4/D5 par recherche de lobes, légendes catalogue de coupe, longueur de reed de la coupe, recette visuelle.
+
+## Contre-revue 7bfabe11 — corrections
+- `catalogueFrame` compose `poseAt` avec le montage global (mountX/Z, mountAngle) puis la rotation du capteur ; réponse relative invariante (test).
+- Repère complet du corps transmis au volume (worker et clé de cache) : cellule de volume = évaluation ponctuelle ; roulis d'un pavé autour de pôles inchangés change clé et valeurs (tests).
+- Classes AT du guide (lettre après « 66 ») ajoutées au sélecteur client : MK04 + SmCo propose C et E ; la forme de contact 1A n'est jamais une classe AT.
+- Libellé « Distances constructeur disponibles · géométrie estimée » (aucune calibration catalogue revendiquée) ; mention MK02 détecteur ferreux ; classe A partielle signalée dans les raisons.
+- Cartes de l'étape 2 : « Distance typique publiée : X mm · indicatif, à confirmer ».
+
+## Non achevé dans ce lot (ne pas considérer comme terminé)
+- Point 4 : légendes noyau/coque/gris en mode catalogue, statut calcul en cours/interrompu/tronqué, coupe hors domaine (z > ±24) expliquée, ligne de reed de coupe à la longueur du profil.
+- Point 5 : séparation complète famille/analogie/distances dans l'interface au-delà du libellé ; causes et repli de classe affichés près du verdict.
+- Point 8 : comparaison source/estimation refaite avec mêmes repères et recherche des lobes latéraux ; l'ancienne section de comparaison reste INVALIDE (centre vs faces, D4/D5 sur l'axe nul) et ne doit pas être lue comme résultat.
+- Point 9 : message utilisateur pour F1 MK37/MK38 (documenté ici seulement).
+- Point 10 : centre interne des boîtiers à collerette (bladeOffsetZ, housingYaw) non harmonisé.
