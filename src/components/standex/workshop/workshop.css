@@ -3242,3 +3242,7 @@
     overflow-wrap: anywhere;
   }
 }
+/* Client cut: bounded drawing height so the measured SVG cannot grow its own viewBox
+   (intrinsic-ratio feedback). The SVG fills the constrained figure (flex-basis 0). */
+.mw-client-pedagogical .mw-ped-cut-figure { height: clamp(400px, calc(100dvh - 280px), 720px); }
+.mw-client-pedagogical .mw-ped-cut { flex: 1 1 0; height: 0; min-height: 0; }
