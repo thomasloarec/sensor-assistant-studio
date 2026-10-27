@@ -42,7 +42,7 @@ export const CATALOGUE_PROFILES:Record<string,{family:Family;lengthMm:number;met
 };
 export function catalogueModel(c:WorkshopConfig){
  const p=CATALOGUE_PROFILES[c.sensorId];if(!p)throw Error(INTERNAL.missing);
- const sensor=sensorById(c.sensorId),rows=guideRangesFor(c.sensorId,c.magnetModel),publishedRows=publishedRowsForCouple(c.sensorId,c.magnetModel);
+ const sensor=sensorById(c.sensorId),rows=guideRangesFor(c.sensorId,c.magnetModel),publishedRows=publishedRowsForCouple(c.sensorId,c.magnetModel,PUBLISHED_REGISTRY);
  const publishedSelection=publishedRows.find(r=>r.sensitivityClass===c.sensitivity);
  const selected=c.guideReference??publishedSelection?.sensorReference??'';
  const family=selected.includes('GP501')?'GP501':selected.includes('85')?'85':selected.includes('90')?'90':selected.includes('66')&&p.family==='66-capable'?'66':p.family==='66-capable'&&!selected&&c.sensorId!=='MK38'?'66-assumed':'analogy';
