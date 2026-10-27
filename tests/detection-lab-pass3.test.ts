@@ -5,7 +5,7 @@
 import { describe, expect, test } from "bun:test";
 import { approachPose, distanceFor } from "../src/lib/detection-lab/calibration";
 import { PILOT_MAGNETS } from "../src/lib/detection-lab/magnets";
-import { buildPass2Table, fitK, fitLength, type FormRow } from "../src/lib/detection-lab/pass2";
+import { buildPass2Table, fitK, fitLength, scenarioForLength, type FormRow } from "../src/lib/detection-lab/pass2";
 import {
   D4_ANCHOR, DATUM_ANCHOR, PASS3_CRITERION, PASS3_VARIANTS, bPrime, boundPasses,
   buildPass3Table, distanceForBPrime, fitAxialDatum, fitD4Correction, pass3ControlRows,
