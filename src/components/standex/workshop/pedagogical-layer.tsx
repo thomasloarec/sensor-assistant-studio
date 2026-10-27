@@ -35,7 +35,7 @@ export function PedagogicalLayer({frame,settings,volume,zones=true}:{frame:Pedag
     <mesh rotation={[0,0,Math.PI/2]} name="pedagogical-generic-body" userData={{lengthMm:2*(PROFILE.reed.envelopeHalfLengthMm+PROFILE.reed.envelopeRadiusMm),diameterMm:2*PROFILE.reed.envelopeRadiusMm}}><capsuleGeometry args={[PROFILE.reed.envelopeRadiusMm,2*PROFILE.reed.envelopeHalfLengthMm,8,24]}/><meshStandardMaterial color="#254061" roughness={.5} metalness={.1}/></mesh>
     <Line points={[[-12,0,0],[12,0,0]]} color="#254061" lineWidth={2}/>
     <Line points={[[-EXPERIMENT.effectiveLengthMm/2,0,0],[EXPERIMENT.effectiveLengthMm/2,0,0]]} color="#535759" lineWidth={4}/>
-    <Html position={[0,-4,0]} center><span className="mw-scene-label">{t('Capteur générique, reed 66 monté')} · {t('Repère reed Form66 exploratoire')}</span></Html>
+    <Html position={[0,-4,0]} center><span className="mw-scene-label mw-ped-body-label" data-testid="pedagogical-body-label">{t('Capteur générique, reed 66 monté')}</span></Html>
     <group position={frame.pose.center} quaternion={q}>
       {[-1,1].map(sign=><mesh key={sign} position={[0,sign*magnet.lengthMm/4,0]}><cylinderGeometry args={[magnet.diameterMm/2,magnet.diameterMm/2,magnet.lengthMm/2,32]}/><meshStandardMaterial color={sign>0?'#bb454d':'#3a72ac'} roughness={.35} metalness={.25}/></mesh>)}
       <Line points={[[0,-magnet.lengthMm/2-3,0],[0,magnet.lengthMm/2+3,0]]} color="#254061" lineWidth={2}/>
