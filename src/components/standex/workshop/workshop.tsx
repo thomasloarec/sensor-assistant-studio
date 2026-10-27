@@ -313,17 +313,15 @@ export default function MagneticWorkshop({
   const [suggestion, setSuggestion] = useState<WorkshopConfig | null>(null);
   const [placementUndo, setPlacementUndo] = useState<WorkshopConfig | null>(null);
   const pedagogicalPose = useMemo(() => pedagogicalFrame(config, progress), [config, progress]);
-  const placement = useMemo(() => evaluatePlacement(experiment, pedagogicalPose.pose), [experiment, pedagogicalPose]);
-  const sampled = usePedagogicalVolume(pedagogical, experiment, pedagogicalPose);
+  // Until imported-solid collision is characterized, never issue a favorable imported verdict.
+  const placement = useMemo(() => evaluatePlacement(config.machine ? {...experiment,integration:"unknown"} : experiment, pedagogicalPose.pose), [experiment, pedagogicalPose,config.machine]);
+  const sampled = usePedagogicalVolume(pedagogical && !playing, experiment, pedagogicalPose);
   const [pedTimeline, setPedTimeline] = useState<ReturnType<typeof placementTimeline> | null>(null);
   useEffect(() => {
     setPedTimeline(null);
     if (!pedagogical) return;
     // Clips remain in the local hierarchy registry, never serialized to a worker.
-    if (config.machine?.motionSource === "clip") {
-      const timer = setTimeout(() => setPedTimeline(placementTimeline(experiment, t => pedagogicalFrame(config,t).pose)), 0);
-      return () => clearTimeout(timer);
-    }
+    if (config.machine) return; // Imported solids/clip event resolution remains explicitly uncharacterized.
     if (typeof Worker === "undefined") return;
     let current = true;
     const worker = new Worker(new URL("./pedagogical.worker.ts", import.meta.url), {type:"module"});
@@ -2146,8 +2144,8 @@ export default function MagneticWorkshop({
         <aside className="mw-controls">
           {pedagogical && <PedagogicalControls settings={experiment} setSettings={setExperiment} config={config} update={update} frame={pedagogicalPose} busy={sampled.busy} volume={sampled.volume} failed={sampled.failed} canUndo={placementUndo!==null} onUndo={()=>{if(placementUndo){setConfig(placementUndo);setPlacementUndo(null);setSuggestion(null);}}} onSuggest={()=>{const p=findPlacement(experiment,pedagogicalPose.pose,!!machine);if(!p){setError(t("Aucune suggestion disponible dans les libertés déclarées."));return;}const angle=Math.atan2(p.axis[1],p.axis[0])*180/Math.PI;setSuggestion({...config,magnetAngle:angle,lateralShift:p.center[0]});}} />}
           {suggestion && <div className="notice-info"><p>{t("Placement proposé : appliquer explicitement, puis recalculer")}</p><Button onClick={()=>{setPlacementUndo(config);setConfig(suggestion);setSuggestion(null);setPlaying(false);}}>{t("Appliquer le placement proposé")}</Button><Button variant="secondary" onClick={()=>setSuggestion(null)}>{t("Annuler")}</Button></div>}
-          {!pedagogical && !machine && approachPicker}
-          {!pedagogical && !machine && activationDistanceControl}
+          {!pedagogical && <>{!machine && approachPicker}
+          {!machine && activationDistanceControl}</>}
           {machine ? (
             <MachineGuide
               pedagogical={pedagogical}
@@ -2185,9 +2183,9 @@ export default function MagneticWorkshop({
               anyKnown={result.samples.some((x) => x.contact !== "unknown")}
             />
           ) : null}
-          {!pedagogical && machine && activationDistanceControl}
+          {!pedagogical && <>{machine && activationDistanceControl}</>}
           {!machine && playButton}
-          {!pedagogical && advancedSettings}
+          {!pedagogical && <>{advancedSettings}</>}
           {pedagogical && <details className="mw-file-tools"><summary>{t("Exporter le montage")}</summary><Button variant="secondary" onClick={()=>download("atelier-pedagogique.json",JSON.stringify({kind:"pedagogical-workshop",version:1,config,settings:experiment,profile:EXPERIMENT,progress,limits:{qualified:false,requiresGlbReimport:true,remoteClips:false}}),"application/json")}>{t("Télécharger le fichier de montage")}</Button><label className="mw-file-label">{t("Importer un fichier de montage")}<input type="file" accept=".json" onChange={e=>void importFile(e.target.files?.[0])}/></label></details>}
       {!embedded && !pedagogical ? (
         <details className="mw-advanced">
@@ -2322,7 +2320,7 @@ export default function MagneticWorkshop({
               className="mw-button"
               onClick={() => (onResult ? onResult(testedPair()) : onClose())}
             >
-              {t(pedagogical ? "Fermer" : "Valider ce choix et voir le résultat")}
+              {pedagogical ? t("Fermer") : t("Valider ce choix et voir le résultat")}
             </button>
           </div>
           </details>
@@ -2366,9 +2364,9 @@ export default function MagneticWorkshop({
               {/* La source des distances est portée par le bandeau de verdict.
                   Elle n'est répétée sur la scène que pour une référence
                   fictive, où l'avertissement doit rester sous les yeux. */}
-              {basis === "fictitious" ? (
+              {!pedagogical && <>{basis === "fictitious" ? (
                 <span className="mw-kind education">{basisLabel}</span>
-              ) : null}
+              ) : null}</>}
               <div className="mw-view-switch">
                 <button aria-pressed={view === "3d"} onClick={request3d}>
                   3D
@@ -2377,7 +2375,7 @@ export default function MagneticWorkshop({
                   {t(pedagogical ? "Vue en coupe" : "Vue plane")}
                 </button>
               </div>
-              {displayMenu}
+              {!pedagogical && displayMenu}
             </div>
             {!pedagogical && <ContactCircuit contact={sample.contact} />}
             {/* Outil de pointage du câble : seulement quand le pointage est
@@ -2540,14 +2538,14 @@ export default function MagneticWorkshop({
                 </Suspense>
               </SceneBoundary>
             )}
-            <p className="mw-orbit-help">
+            {!pedagogical && <p className="mw-orbit-help">
               <Expand size={13} />
               {t(
                 view === "3d"
                   ? "Glisser pour tourner · molette pour zoomer"
                   : "Vue plane · même montage et même calcul",
               )}
-            </p>
+            </p>}
           </div>
           {/* Chronologie du cycle : mêmes échantillons que la scène et le verdict. */}
           <div className="mw-cycle" aria-label={t("Chronologie du cycle")}>

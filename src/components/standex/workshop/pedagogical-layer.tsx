@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { BufferGeometry, Float32BufferAttribute, Matrix4, Quaternion, Vector3, DoubleSide } from 'three';
 import { Html, Line } from '@react-three/drei';
 import '@react-three/fiber';
@@ -42,14 +42,19 @@ export function PedagogicalLayer({frame,settings,volume,zones=true}:{frame:Pedag
   </group>;
 }
 export function PedagogicalCut({volume,frame}:{volume:SampledVolume|null;frame:PedagogicalFrame}) {
-  return <svg className="mw-ped-cut" viewBox="0 0 640 590" role="img" aria-label={t('Coupe du même calcul au niveau du centre de l’aimant')}>
-    <text x="36" y="30" className="t-caption">{t('Repère reed · millimètres')} · z = {frame.pose.center[2].toFixed(1)} mm</text>
-    {volume?.cut.map(c=><rect key={`${c.x},${c.y}`} x={80+(c.x0+24)*10} y={60+(24-c.y1)*10} width={(c.x1-c.x0)*10} height={(c.y1-c.y0)*10} className={c.response===null?'mw-cut-collision':c.zone===2?'mw-cut-high':c.zone===1?'mw-cut-low':'mw-cut-empty'}/>)}
-    <line x1="80" y1="300" x2="560" y2="300" className="mw-cut-axis"/>
-    <line x1="320" y1="60" x2="320" y2="540" className="mw-cut-axis"/>
-    {[-20,-10,0,10,20].map(n=><g key={n}><text x={320+n*10} y="565" textAnchor="middle" className="t-caption">{n}</text><text x="65" y={300-n*10+5} textAnchor="end" className="t-caption">{n}</text></g>)}
-    <text x="580" y="565" className="t-caption">x mm</text><text x="36" y="55" className="t-caption">y mm</text>
-    <line x1="239" y1="300" x2="401" y2="300" className="mw-cut-reed"/>
-    <circle cx={320+frame.pose.center[0]*10} cy={300-frame.pose.center[1]*10} r="6" className="mw-cut-point"/>
+  const ref=useRef<SVGSVGElement>(null),[size,setSize]=useState({width:640,height:590});
+  useEffect(()=>{const el=ref.current;if(!el)return;const observer=new ResizeObserver(entries=>{const r=entries[0]?.contentRect;if(r&&r.width>0&&r.height>0)setSize({width:r.width,height:r.height});});observer.observe(el);return()=>observer.disconnect();},[]);
+  const scale=Math.max(.5,Math.min((size.width-100)/48,(size.height-110)/48));
+  const cx=size.width/2+15,cy=size.height/2+5,x=(n:number)=>cx+n*scale,y=(n:number)=>cy-n*scale;
+  return <svg ref={ref} className="mw-ped-cut" viewBox={`0 0 ${size.width} ${size.height}`} role="img" aria-label={t('Coupe du même calcul au niveau du centre de l’aimant')}>
+    <text x="12" y="22" className="t-caption">{t('Repère reed · millimètres')}</text>
+    <text x="12" y="42" className="t-caption">z = {frame.pose.center[2].toFixed(1)} mm</text>
+    {volume?.cut.map(c=><rect key={`${c.x},${c.y}`} x={x(c.x0)} y={y(c.y1)} width={(c.x1-c.x0)*scale} height={(c.y1-c.y0)*scale} className={c.response===null?'mw-cut-collision':c.zone===2?'mw-cut-high':c.zone===1?'mw-cut-low':'mw-cut-empty'}/>)}
+    <line x1={x(-24)} y1={cy} x2={x(24)} y2={cy} className="mw-cut-axis"/>
+    <line x1={cx} y1={y(24)} x2={cx} y2={y(-24)} className="mw-cut-axis"/>
+    {[-20,0,20].map(n=><g key={n}><text x={x(n)} y={y(-24)+20} textAnchor="middle" className="t-caption">{n}</text><text x={x(-24)-10} y={y(n)+5} textAnchor="end" className="t-caption">{n}</text></g>)}
+    <text x={x(24)+8} y={y(-24)+20} className="t-caption">x</text><text x={x(-24)-10} y={y(24)-8} className="t-caption">y</text>
+    <line x1={x(-8.1)} y1={cy} x2={x(8.1)} y2={cy} className="mw-cut-reed"/>
+    <circle cx={x(frame.pose.center[0])} cy={y(frame.pose.center[1])} r="6" className="mw-cut-point"/>
   </svg>;
 }
