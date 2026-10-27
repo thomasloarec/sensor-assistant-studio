@@ -221,6 +221,7 @@ describe("contre-revue 4311e3ca", () => {
     const v = render(React.createElement(MagneticWorkshop, { pedagogical: true, initialPedagogicalDraft: { ...d, progress: .5 }, onClose: () => {}, onSave: () => {} }));
     await waitFor(() => expect(v.getByTestId("pedagogical-cause").textContent).toBe("Zone centrale entre les deux lobes"));
     await act(async () => fireEvent.click(v.getByRole("button", { name: /Lancer le mouvement/ })));
+    console.log("DBG", v.getAllByRole("button", { name: /Lancer le mouvement|Pause/ }).map(b=>b.getAttribute("aria-pressed")+b.textContent));
     expect(v.getByTestId("pedagogical-verdict").textContent).not.toContain("zone centrale à éviter");
     expect(v.getByTestId("pedagogical-verdict").getAttribute("data-cause")).toMatch(/pending|none|unavailable|reed_overlap|collision/);
     await act(async () => fireEvent.click(v.getByRole("button", { name: /Pause/ })));
