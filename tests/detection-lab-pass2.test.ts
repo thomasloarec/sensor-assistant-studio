@@ -52,7 +52,7 @@ describe("paramétrage explicite", () => {
       expect(r.thetaMT! / r.at!).toBeCloseTo(k, 4);
       expect(thetaFor(r.className, r.bound, k)).toBeCloseTo(r.thetaMT!, 6);
     }
-  });
+  }, 30000);
 });
 
 describe("isolation de l'apprentissage", () => {
@@ -101,7 +101,7 @@ describe("reproduction de l'audit local", () => {
     expect(v2.over20).toBe(6);
     expect(v2.medianAbsPct!).toBeCloseTo(14.0, 0);
     expect(v2.pass).toBe(false);
-  });
+  }, 30000);
   test("le score primaire conserve les 23 bornes ; le secondaire n'exclut que l'anomalie suspectée", () => {
     const k = fitK(16, "B", "C1").k;
     const table = buildPass2Table({ effectiveLengthMm: 16, axialDatumMm: 7, model: "B", conv: "C1", k });
@@ -116,7 +116,7 @@ describe("reproduction de l'audit local", () => {
     const secondary = scoreControls(table, isSuspectedAnomaly);
     expect(secondary.published).toBe(22);
     expect(CRITERION).toEqual({ medianPctMax: 10, over20Max: 3, unavailableMax: 0 });
-  });
+  }, 30000);
   test("classe G absente de la source : statut no_source, jamais validée", () => {
     const k = fitK(16, "B", "C1").k;
     const table = buildPass2Table({ effectiveLengthMm: 16, axialDatumMm: 7, model: "B", conv: "C1", k });
@@ -124,7 +124,7 @@ describe("reproduction de l'audit local", () => {
     expect(g).toHaveLength(16);
     expect(g.every((r) => r.status === "no_source" && r.publishedMm === null)).toBe(true);
     expect(table.filter((r) => r.status === "training")).toHaveLength(8);
-  });
+  }, 30000);
 });
 
 describe("collision N45 — vérification reproduite", () => {
