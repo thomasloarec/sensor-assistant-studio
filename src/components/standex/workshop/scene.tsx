@@ -1,4 +1,5 @@
 import { cableConstruction } from "@/lib/leadmagnet/product-presentation";
+import { catalogueFrame } from '@/lib/standex/catalogue-pedagogical';
 import { bodyKind, oneFlatProfile } from "@/lib/standex/section-profile";
 import {
   transverseApproach,
@@ -863,7 +864,7 @@ export function CameraRig({
 }
 export default function WorkshopScene({
   config,
-  sample,
+  sample: suppliedSample,
   samples,
   zones,
   field,
@@ -898,6 +899,9 @@ export default function WorkshopScene({
   /** Prévisualisation seule : le fantôme n'écrit rien dans la configuration. */
   ghost?: GhostPose | null | undefined;
 }) {
+  const frame=hideElectrical&&config.sensorId!=='GENERIC'?catalogueFrame(config,suppliedSample.t):null;
+  const local=frame?frame.world.center.map((n,i)=>n-(frame.origin[i]??0)) as Vec3:null;
+  const sample=local?{...suppliedSample,position:local}:suppliedSample;
   const model = sensorById(config.sensorId),
     reference = config.mode === "reference",
     available = !unavailableReason(config);
