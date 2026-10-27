@@ -103,3 +103,9 @@ Vérification finale après toutes éditions code : **1965 tests pass /0fail**,1
 3. Repère : profondeur = centre aimant → repère reed, différent de face → repère brochure (note affichée). Distances repliées, « borne prudente » / « borne haute indicative », « maximum du lobe documenté, pas une portée dans la position affichée » ; up/to brut seulement dans Provenance ; correction D4 et arrondi inchangés.
 4. Chronologie : clé = réglages + configuration + identité + empreinte du contenu des boîtes + génération de chargement du clip ; un rechargement du même identifiant masque immédiatement l'ancien résultat.
 Recette staff navigateur : non effectuée de mon côté (Thomas).
+
+## Complément de recette 86e8 (12:34)
+
+- Réouverture : le recentrage automatique des composants n'a lieu que pour un NOUVEL import non positionné (fichier différent). Réouverture, remontage après revalidation staff, rechargement du GLB et reprise d'un brouillon (clip ou non) gardent les positions explicites, le temps, le profil et les réglages. Test React réel (`tests/pedagogical-reopen-pick-2026-10-27.test.tsx`) : bras animé (clip, mouvement non confirmé, aucune pièce mobile), reed [0,200,0] / aimant [6,206,0] à 25 %, deux cycles montage → chargement du GLB → démontage → réouverture. Contre-épreuve : ce test échoue sans la correction.
+- Pointage : `handlePick` et `handleHoleRay` reçoivent les corps pilotes. Test du vrai guide (axe d'un trou, deux points) : la pose finale égale la chaîne pilote et diffère de la chaîne catalogue. Remarque honnête : la normalisation centrale (`machineChange` → `applyAttachments` avec les corps pilotes) corrigeait déjà la pose finale, si bien que ce test passe aussi sans la correction ; il garantit le résultat, la correction supprime l'incohérence intermédiaire.
+- Authentification inchangée ; recette staff navigateur non effectuée de mon côté.
