@@ -35,10 +35,26 @@ export function usePedagogicalVolume(enabled:boolean,settings:ExperimentSettings
 /* i18n-canonical: shared placement labels translated at the point of display. */
 export const PLACEMENT_LABEL={favorable:'Placement favorable',variable:'Détection variable',unfavorable:'Placement défavorable',unavailable:'Estimation indisponible'};
 const CAUSE_LABEL={motion:'Mouvement non confirmé : estimation indisponible',clip:'Clip absent ou non pris en charge : estimation indisponible',asset:'Fichier 3D non chargé ou géométrie invalide : estimation indisponible',reed_overlap:'Chevauchement possible du reed, logement à vérifier : estimation indisponible',scenario_overlap:'Pose nominale dégagée ; chevauchement possible du reed dans une hypothèse de position ±1 mm',overlap:'Chevauchement possible du corps de l’aimant avec l’enveloppe d’une pièce, à vérifier : estimation indisponible',distance:'Trop loin pour la plage explorée',orientation:'Orientation défavorable / zone centrale à éviter',collision:'Collision du corps de l’aimant avec l’enveloppe ou le montage',scenario_collision:'Pose nominale valide ; collision dans une hypothèse',domain:'Hors du domaine de calcul',missing:'Aimant, reed ou intégration non caractérisés',material:'Matériau voisin non pris en compte',stale:'Ancienne version : recalcul nécessaire',partial:'Classe A partielle : ATmax 10 seulement, seconde surface non caractérisée'};
-export function PedagogicalBanner({evidence}:{evidence:PlacementEvidence}) {
-  return <div className={`mw-verdict-banner notice-${evidence.state==='favorable'?'info':evidence.state==='unfavorable'?'warning':'info'}`} role="status" data-testid="pedagogical-verdict">
+/* i18n-canonical: diagnosed causes (explanation only, never a new state). */
+export const DIAGNOSIS_LABEL:Record<string,string>={central:'Zone centrale entre les deux lobes',axial:'Orientation défavorable sur le prolongement axial du reed',orientation:'Orientation défavorable à cet endroit',distance:'Aimant trop éloigné à cette orientation',combined:'Trop éloigné et orientation défavorable à cet endroit',undetermined:'Cause non déterminée'};
+export function causeLabel(d:PlacementDiagnosis,evidence:PlacementEvidence){
+  return DIAGNOSIS_LABEL[d.cause]??CAUSE_LABEL[evidence.cause];
+}
+export function remedyLabel(r:PedagogicalRemedy):string|null{
+  if(r.kind==='verified')return r.rotationDeg&&r.lateralMm?msg('Placement favorable vérifié : rotation de {0}° et décalage de {1} mm',[r.rotationDeg,number(r.lateralMm,2)]):r.rotationDeg?msg('Placement favorable vérifié : rotation de {0}°',[r.rotationDeg]):msg('Placement favorable vérifié : décalage de {0} mm',[number(r.lateralMm,2)]);
+  if(r.kind==='none-found')return t('Aucun placement favorable trouvé dans les mouvements autorisés');
+  if(r.kind==='no-freedom')return t('Aucune liberté de mouvement déclarée : aucune action proposée');
+  if(r.kind==='locked')return t('Montage importé : aucun mouvement proposé hors de ce montage');
+  return t('Mouvement non pris en charge par la recherche : aucune action proposée');
+}
+export function PedagogicalBanner({evidence,diagnosis,remedy,onPropose}:{evidence:PlacementEvidence;diagnosis?:PlacementDiagnosis|null;remedy?:PedagogicalRemedy|null;onPropose?:(r:PedagogicalRemedy)=>void}) {
+  const cause=evidence.state==='favorable'?null:evidence.state==='variable'&&diagnosis?.cause!=='undetermined'&&diagnosis?causeLabel(diagnosis,evidence):evidence.state==='variable'?'Le résultat dépend de la sensibilité ou des hypothèses':diagnosis?causeLabel(diagnosis,evidence):CAUSE_LABEL[evidence.cause];
+  const remedyText=evidence.state!=='favorable'&&remedy?remedyLabel(remedy):null;
+  return <div className={`mw-verdict-banner notice-${evidence.state==='unfavorable'?'warning':'info'}`} role="status" data-testid="pedagogical-verdict" data-cause={evidence.state==='favorable'?'none':diagnosis?.cause??evidence.cause}>
     <strong className="t-title-s">{t(PLACEMENT_LABEL[evidence.state])}</strong>
-    <span className="t-caption">{t(evidence.state==='favorable'?'Accord des hypothèses internes, sans garantie de fabrication':evidence.state==='variable'?'Le résultat dépend de la sensibilité ou des hypothèses':CAUSE_LABEL[evidence.cause])}</span>
+    <span className="t-caption">{t('Estimation indicative')}</span>
+    {cause&&<span className="t-body" data-testid="pedagogical-cause">{t(cause)}</span>}
+    {remedyText&&<span className="t-caption" data-testid="pedagogical-remedy">{remedyText}{remedy?.kind==='verified'&&onPropose&&<> <Button variant="secondary" onClick={()=>onPropose(remedy)}>{t('Proposer ce placement')}</Button></>}</span>}
   </div>;
 }
 export function PedagogicalControls({settings,setSettings,config,update,frame,busy,volume,failed,onSuggest,onUndo,canUndo,mounting}:{
