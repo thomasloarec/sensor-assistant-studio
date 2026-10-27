@@ -34378,5 +34378,50 @@
     "Минимальная глубина",
     "Profondità minima",
     "最小深さ"
+  ],
+  "Fichier 3D non chargé ou géométrie invalide : estimation indisponible": [
+    "3D file not loaded or invalid geometry: estimate unavailable",
+    "3D 文件未加载或几何无效：无法估计",
+    "3D-Datei nicht geladen oder ungültige Geometrie: Schätzung nicht verfügbar",
+    "Archivo 3D no cargado o geometría no válida: estimación no disponible",
+    "3D-файл не загружен или геометрия недопустима: оценка недоступна",
+    "File 3D non caricato o geometria non valida: stima non disponibile",
+    "3D ファイル未読み込みまたは形状が無効：推定不可"
+  ],
+  "Chevauchement possible du corps de l’aimant avec l’enveloppe d’une pièce, à vérifier : estimation indisponible": [
+    "Possible overlap of the magnet body with a part envelope, to be checked: estimate unavailable",
+    "磁铁本体可能与零件包络重叠，需核实：无法估计",
+    "Mögliche Überschneidung des Magnetkörpers mit der Hüllkurve eines Teils, zu prüfen: Schätzung nicht verfügbar",
+    "Posible solapamiento del cuerpo del imán con la envolvente de una pieza, a verificar: estimación no disponible",
+    "Возможное перекрытие корпуса магнита с оболочкой детали, требуется проверка: оценка недоступна",
+    "Possibile sovrapposizione del corpo del magnete con l’ingombro di un pezzo, da verificare: stima non disponibile",
+    "磁石本体が部品の包絡と重なる可能性あり、要確認：推定不可"
+  ],
+  "Montage importé : boîtes englobantes de {0} pièces, mêmes poses que la scène ; dégagement établi seulement dans cette approximation.": [
+    "Imported mounting: bounding boxes of {0} parts, same poses as the scene; clearance established only within this approximation.",
+    "导入的装配：{0} 个零件的包围盒，与场景位姿相同；间隙仅在此近似下成立。",
+    "Importierte Montage: Hüllquader von {0} Teilen, gleiche Posen wie die Szene; Freiraum nur in dieser Näherung festgestellt.",
+    "Montaje importado: cajas envolventes de {0} piezas, mismas poses que la escena; holgura establecida solo en esta aproximación.",
+    "Импортированный монтаж: охватывающие боксы {0} деталей, те же позы, что и в сцене; зазор установлен только в этом приближении.",
+    "Montaggio importato: riquadri di ingombro di {0} pezzi, stesse pose della scena; spazio libero stabilito solo in questa approssimazione.",
+    "インポートした取付：{0} 部品の外接ボックス、シーンと同じ姿勢。クリアランスはこの近似の範囲でのみ確認。"
+  ],
+  "Capsule reed dans l’enveloppe d’une pièce : logement à vérifier.": [
+    "Reed capsule inside a part envelope: housing to be checked.",
+    "干簧管胶囊位于零件包络内：需核实安装位。",
+    "Reed-Kapsel innerhalb der Hüllkurve eines Teils: Aufnahme prüfen.",
+    "Cápsula reed dentro de la envolvente de una pieza: alojamiento a verificar.",
+    "Капсула геркона внутри оболочки детали: посадочное место требует проверки.",
+    "Capsula reed all’interno dell’ingombro di un pezzo: alloggiamento da verificare.",
+    "リードカプセルが部品の包絡内：取付部を要確認。"
+  ],
+  "Hachuré : chevauchement possible avec l’enveloppe d’une pièce": [
+    "Hatched: possible overlap with a part envelope",
+    "阴影：可能与零件包络重叠",
+    "Schraffiert: mögliche Überschneidung mit der Hüllkurve eines Teils",
+    "Rayado: posible solapamiento con la envolvente de una pieza",
+    "Штриховка: возможное перекрытие с оболочкой детали",
+    "Tratteggiato: possibile sovrapposizione con l’ingombro di un pezzo",
+    "ハッチング：部品の包絡と重なる可能性"
   ]
 }
