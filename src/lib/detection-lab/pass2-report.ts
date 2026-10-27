@@ -79,10 +79,11 @@ export function fineCutToSvg(cut: FineCut, magnet: PilotMagnet, palette: LabPale
   // Capsule de collision EFFECTIVEMENT TESTÉE : segment [-7, +7] épaissi du rayon
   // 1,1 mm → étendue réelle [-8,1, +8,1], longueur 16,2 mm (approximation conservative).
   const env = PROFILE.reed;
+  const r2 = (v: number) => Math.round(v * 100) / 100;
   const capHalf = env.envelopeHalfLengthMm + env.envelopeRadiusMm; // 8,1 mm
-  parts.push(`<rect x="${px(-capHalf)}" y="${py(env.envelopeRadiusMm)}" width="${2 * capHalf * S}" height="${2 * env.envelopeRadiusMm * S}" rx="${env.envelopeRadiusMm * S}" class="lab-reed"/>`);
+  parts.push(`<rect x="${r2(px(-capHalf))}" y="${r2(py(env.envelopeRadiusMm))}" width="${r2(2 * capHalf * S)}" height="${r2(2 * env.envelopeRadiusMm * S)}" rx="${r2(env.envelopeRadiusMm * S)}" class="lab-reed"/>`);
   // Verre publié : 14 mm max × Ø 2,2 mm (KSK-1A66), distinct de la capsule testée.
-  parts.push(`<rect x="${px(-7)}" y="${py(env.envelopeRadiusMm)}" width="${14 * S}" height="${2 * env.envelopeRadiusMm * S}" rx="${env.envelopeRadiusMm * S}" class="lab-glass"/>`);
+  parts.push(`<rect x="${r2(px(-7))}" y="${r2(py(env.envelopeRadiusMm))}" width="${14 * S}" height="${r2(2 * env.envelopeRadiusMm * S)}" rx="${r2(env.envelopeRadiusMm * S)}" class="lab-glass"/>`);
   // Longueur effective 8 mm (hypothèse du profil 1.1) : trait plein.
   const half = env.effectiveLengthMm / 2;
   parts.push(`<line x1="${px(-half)}" y1="${py(0)}" x2="${px(half)}" y2="${py(0)}" class="lab-reed" stroke-width="3"/>`);

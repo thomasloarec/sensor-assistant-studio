@@ -167,7 +167,7 @@ export function centralNullHalfWidth(magnet: PilotMagnet, y: number, stepMm: num
 
 /** Largeurs comparées aux pas 1 / 0,25 / 0,125 mm sur des profondeurs où les deux
  * aimants sont physiquement valides (au-delà de la capsule de collision). */
-export function centralNullWidthTable(magnet: PilotMagnet, depths: number[] = [12, 16, 20, 24]): { y: number; stepMm: number; scan: NullWidthScan }[] {
+export function centralNullWidthTable(magnet: PilotMagnet, depths: number[] = [14, 18, 22, 24]): { y: number; stepMm: number; scan: NullWidthScan }[] {
   const out: { y: number; stepMm: number; scan: NullWidthScan }[] = [];
   for (const y of depths) for (const stepMm of [1, 0.25, 0.125]) out.push({ y, stepMm, scan: centralNullHalfWidth(magnet, y, stepMm) });
   return out;

@@ -142,7 +142,7 @@ for (const n of nodeChecks) {
 }
 md.push("", "Demi-largeur de la zone centrale à réponse nominale nulle (modèle B, scénario nominal) selon le pas de balayage — intervalle [dernier point nul ; premier point positif], statuts explicites :", "", "| aimant | profondeur y (mm) | pas 1 | pas 0,25 | pas 0,125 |", "|---|---|---|---|---|---|");
 for (const w of widthTables)
-  for (const y of [12, 16, 20, 24]) {
+  for (const y of [14, 18, 22, 24]) {
     const at = (s: number) => w.rows.find((r) => r.y === y && r.stepMm === s)?.scan;
     md.push(`| ${w.magnetId} | ${y} | ${fmtScan(at(1))} | ${fmtScan(at(0.25))} | ${fmtScan(at(0.125))} |`);
   }

@@ -204,13 +204,15 @@ describe("grille raffinée", () => {
   test("état nominal distingué du diagnostic toutes hypothèses", () => {
     // SmCo à [0,4,0] : pose nominale valide (réponse nulle au centre), mais le
     // scénario y−1 mm entre en collision → collision_hypothese, PAS collision nominale.
-    const cell = classifyFineCell(SMCO, { x: 0, y: 4, x0: -0.125, x1: 0.125, y0: 3.875, y1: 4.125 }, [0, 1, 0], null);
+    const cell = classifyFineCell(SMCO, { x: 0, y: 6, x0: -0.125, x1: 0.125, y0: 5.875, y1: 6.125 }, [0, 1, 0], null);
     expect(cell.nominal).toBe("nulle");
     expect(cell.reading).toBe("reponse_nulle");
-    const cellHyp = classifyFineCell(SMCO, { x: 2, y: 4, x0: 1.875, x1: 2.125, y0: 3.875, y1: 4.125 }, [0, 1, 0], { up: 0.001, to: 0.0005 });
-    expect(cellHyp.nominal).not.toBe("collision");
-    if (cellHyp.category === "unavailable" && cellHyp.reading !== "reponse_nulle")
-      expect(cellHyp.reading).toBe("collision_hypothese");
+    // SmCo à [2,6,0] : pose nominale valide et positive, mais le scénario y−1 mm
+    // entre en collision → collision_hypothese, jamais collision nominale.
+    const cellHyp = classifyFineCell(SMCO, { x: 2, y: 6, x0: 1.875, x1: 2.125, y0: 5.875, y1: 6.125 }, [0, 1, 0], { up: 0.001, to: 0.0005 });
+    expect(cellHyp.nominal).toBe("positive");
+    expect(cellHyp.category).toBe("unavailable");
+    expect(cellHyp.reading).toBe("collision_hypothese");
     // N45 à [0,5,0] : collision NOMINALE du corps dessiné.
     expect(nominalState(N45, 0, 5, [0, 1, 0])).toBe("collision");
     const cellN = classifyFineCell(N45, { x: 0, y: 5, x0: -0.125, x1: 0.125, y0: 4.875, y1: 5.125 }, [0, 1, 0], null);
@@ -219,7 +221,7 @@ describe("grille raffinée", () => {
   test("le SVG dessine la capsule testée (16,2 mm), le verre publié (14 mm) et réserve le texte reed", () => {
     const cal = buildCalibrations("B", "C1");
     const cut = computeFineCut("2-perpendicular-centred-C", SMCO, cal);
-    const svg = fineCutToSvg(cut, SMCO, paletteFromCss("/* test */ :root{}"));
+    const svg = fineCutToSvg(cut, SMCO, { fav: "a", var: "b", far: "c", orient: "d", undet: "e", na: "f", ink: "g" });
     // Capsule testée : largeur 16,2 mm × 12 px/mm = 194,4 ; verre publié : 14 × 12 = 168.
     expect(svg).toContain('width="194.4"');
     expect(svg).toContain('width="168"');
@@ -231,14 +233,14 @@ describe("grille raffinée", () => {
 describe("largeur de zone centrale — profondeurs physiquement valides", () => {
   test("statuts explicites, x=0 vérifié, plusieurs largeurs numériques par aimant, convergence 1 / 0,25 / 0,125", () => {
     for (const m of [SMCO, N45]) {
-      const rows = centralNullWidthTable(m, [12, 16, 20, 24]);
+      const rows = centralNullWidthTable(m, [14, 18, 22, 24]);
       expect(rows).toHaveLength(12);
       // x = 0 vérifié : réponse nominale nulle au centre, jamais une collision à ces profondeurs.
-      const atZero = evaluatePose(m, { center: [0, 12, 0], axis: [0, 1, 0] }, PROFILE.scenarios[0]!, "B");
+      const atZero = evaluatePose(m, { center: [0, 14, 0], axis: [0, 1, 0] }, PROFILE.scenarios[0]!, "B");
       expect(atZero.ok).toBe(true);
       if (atZero.ok) expect(atZero.response).toBe(0);
       let numeric = 0;
-      for (const y of [12, 16, 20, 24]) {
+      for (const y of [14, 18, 22, 24]) {
         const s1 = rows.find((r) => r.y === y && r.stepMm === 1)!.scan;
         const s25 = rows.find((r) => r.y === y && r.stepMm === 0.25)!.scan;
         const s125 = rows.find((r) => r.y === y && r.stepMm === 0.125)!.scan;
@@ -261,7 +263,7 @@ describe("largeur de zone centrale — profondeurs physiquement valides", () => 
   test("statuts collision et sortie non trouvée distincts", () => {
     const coll = centralNullHalfWidth(N45, 5, 0.25);
     expect(coll.status).toBe("collision");
-    const nf = centralNullHalfWidth(SMCO, 24, 0.25, 0.5);
+    const nf = centralNullHalfWidth(SMCO, 24, 0.25, 0);
     expect(nf.status).toBe("not_found");
   });
 });
