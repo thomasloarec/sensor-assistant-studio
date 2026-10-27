@@ -396,6 +396,9 @@ export default function MagneticWorkshop({
   const [, setHistoryTick] = useState(0);
   const importSeqRef = useRef(0);
   const preloadedRef = useRef<{ key: string; scale: number; asset: MachineAsset } | null>(null);
+  /** Set ONLY by a new, not-yet-positioned import: reopening, reloading or resuming
+   *  a draft (clip or not) never moves explicit component positions. */
+  const freshImportRef = useRef<string | null>(null);
   /** Relance explicite du chargement (même fichier réimporté alors qu'il manquait). */
   const [assetEpoch, setAssetEpoch] = useState(0);
   /** Fichier refusé pour son échelle : en attente d'un nouvel essai avec d'autres
@@ -456,6 +459,8 @@ export default function MagneticWorkshop({
     if (!machine) return;
     const pre = preloadedRef.current;
     preloadedRef.current = null;
+    const fresh = freshImportRef.current === machine.assetKey + "|" + machine.unitScale;
+    freshImportRef.current = null;
     void (
       pre && pre.key === machine.assetKey && pre.scale === machine.unitScale
         ? Promise.resolve(pre.asset)
@@ -478,7 +483,7 @@ export default function MagneticWorkshop({
         setMachineAssetId(machine.assetKey + "|" + machine.unitScale);
         // Nouveau fichier : AUCUNE pièce mobile n'est devinée et aucun mouvement
         // n'est supposé. Seules les poses initiales sont rapprochées de l'objet.
-        if (machine.motionStatus === "unset" && movingSelection(machine).length === 0) {
+        if (fresh && machine.motionStatus === "unset" && movingSelection(machine).length === 0) {
           setConfig((c) =>
             c.machine?.assetKey === machine.assetKey &&
             !c.machine.sensorAttach &&
@@ -732,6 +737,7 @@ export default function MagneticWorkshop({
       return;
     }
     const keepSame = machine?.assetKey === assetKey;
+    if (!keepSame) freshImportRef.current = assetKey + "|" + scale;
     setGuideState({ ...INITIAL_GUIDE });
     if (!keepSame) historyRef.current = { key: assetKey, past: [], future: [] };
     update({
@@ -955,7 +961,7 @@ export default function MagneticWorkshop({
               motionStatus: machine.motionStatus === "confirmed" ? "draft" : (machine.motionStatus ?? "draft"),
             }),
             onPickPoint: (hit) => {
-              const r = handlePick(guideState, machine, hit, config);
+              const r = handlePick(guideState, machine, hit, bodyConfig);
               setGuideState(r.state);
               if (r.patch) machineChange(r.patch);
               if (r.done) setTool("navigate");
@@ -976,7 +982,7 @@ export default function MagneticWorkshop({
             },
             onHoleRay: (ray) => {
               setPlaying(false);
-              const r = handleHoleRay(guideState, machine, ray, cycleU(machine, sample.t), config);
+              const r = handleHoleRay(guideState, machine, ray, cycleU(machine, sample.t), bodyConfig);
               setGuideState(r.state);
               if (r.patch) machineChange(r.patch);
               if (r.done) setTool("navigate");
