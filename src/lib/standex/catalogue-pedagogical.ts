@@ -51,8 +51,8 @@ export function catalogueModel(c:WorkshopConfig){
  const moments=pack?.momentTypE6Vscm;const q=bare?.moment??(typeof moments==='number'?moments:Array.isArray(moments)?Math.min(...moments):null);
  const verified=PILOT_MAGNETS.find(m=>m.id===c.magnetModel);
  // Unknown active material/geometry: equivalent cylinder, explicit fixed SmCo moment prior.
- const diameterMm=bare?.shape==='cylinder'?body[1]:Math.sqrt(4*body[1]*body[2]/Math.PI);
- const magnetLengthMm=body[0],jT=(q??7.2)*1e-8/(Math.PI*(diameterMm/2000)**2*(magnetLengthMm/1000));
+ const diameterMm=pack?Math.min(5,Math.min(body[1],body[2])):bare?.shape==='cylinder'?body[1]:Math.sqrt(4*body[1]*body[2]/Math.PI);
+ const magnetLengthMm=pack?Math.min(8,body[0]):body[0],jT=(q??7.2)*1e-8/(Math.PI*(diameterMm/2000)**2*(magnetLengthMm/1000));
  const scale=lengthMm/14;
  const magnet:PilotMagnet=verified&&scale===1?verified:{...PILOT_MAGNETS[0],id:'SMCO5-5X4',label:c.magnetModel,material:bare?.material??pack?.magnetMaterial??'unknown',diameterMm:(verified?.diameterMm??diameterMm)/scale,lengthMm:(verified?.lengthMm??magnetLengthMm)/scale,jT:verified?.jT??jT,q:q??7.2,momentAm2:(q??7.2)*1e-8/(4*Math.PI*1e-7),volumeM3:Math.PI*(diameterMm/2000)**2*(magnetLengthMm/1000),momentRaw:INTERNAL.prior};
  const className=['B','C','D','E','F'].includes(c.sensitivity)?c.sensitivity:'C';

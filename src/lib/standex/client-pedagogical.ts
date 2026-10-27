@@ -1,7 +1,7 @@
-/** Client boundary v1. No field/threshold changes and no inferred housing pose.
+/** Client boundary: versioned catalogue modelling hypotheses; no frozen field/threshold changes.
  * Evidence: docs/detection-lab/RAPPORT_COHERENCE_2026-10-26.md §§ MK03/MK13;
  * docs/detection-lab-pass3/RAPPORT_PASS3_2026-10-27.md (documentary datums).
- * None of the named housings has a sourced variant-66 + physical face adapter.
+ * Estimated internal pose is explicitly not a measured manufacturer datum.
  */
 import { DEFAULT_EXPERIMENT, EXPERIMENT, type ExperimentSettings, type PlacementState } from '@/lib/detection-lab/workshop-experiment';
 import type { WorkshopConfig } from './magnetic-workshop';

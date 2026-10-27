@@ -1,6 +1,7 @@
 # Architecture de l’atelier
 
 - Pedagogical rendering is optional: client DesignSpace uses an explicit versioned product boundary and a separate action-only Form66 exploration; audit/calibration entries remain staff-gated. Scene/MachineScene keep real products when no exploratory layer is present and suppress binary electrical rendering in client estimation. Memory-only imports preserve the normal guide, and separate experimental exports never overwrite client drafts; nominal volumes are worker-sampled and stale computations are terminated. Staff rechecks retain their server grant requirement.
+- Catalogue client zones use the separate versioned catalogue evaluator and overlay without replacing real bodies; exact pose/configuration/version/envelopes key workers, while original Form66 exploration stays frozen and isolated.
 
 - Répartir les réglages avancés entre produit, aimant et positionnement pour éviter les doublons et préserver l’accès direct au câble.
 - Cable routing is disconnected at the Workshop prop boundary for PCB sensors and exploration, with entry controls guarded too; simple client geometry and motion/environment controls share one disclosure so no setting disappears.
