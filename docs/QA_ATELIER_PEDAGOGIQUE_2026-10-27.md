@@ -135,3 +135,12 @@ Validations exécutées : test ciblé 14/14 ; suite complète 1 996/1 996 (relan
 Non exécuté de mon côté : recette navigateur staff authentifiée, capture 390 px, chemin de clic réel de centrage mécanique dans le navigateur (le centrage ne porte pas le mot « favorable » et ne force aucun état : code + test composant existant). R11 suggestions et N/S : recette navigateur partielle déjà au journal 3c45 (non refaite).
 
 Lot suivant (non codé) : pré-calcul des volumes, maillages lissés, colonne client ; critère de raffinement d'orientation (variation de demi-largeur centrale ≤ 0,5 mm, 7,5° non garanti), orientation discrète affichée, pas d'interpolation entre volumes ; collisions de montage restent dynamiques.
+
+## Contre-revue 4311e3ca
+
+1. Lecture : le diagnostic n'est pas calculé pendant le mouvement ; le bandeau affiche « Mettre en pause pour analyser la cause » (`data-cause="pending"`), sans cause ni remède périmés. Le repli `CAUSE_LABEL.orientation/distance` (« Orientation défavorable / zone centrale à éviter ») est supprimé ; les raisons d'indisponibilité connues restent affichées immédiatement.
+2. Orientation : seules les orientations DIFFÉRENTES de l'axe courant (±, tolérance 1e-6) comptent ; un nominal ≥ borne haute en état variable donne la cause « hypotheses » (0 sonde). SmCo [0,4.75,0] x̂ : variable, nominal 7,4734260482 ≥ 2,7121097617 → hypothèses. N45 [0,16.5,0] x̂ : variable, nominal 3,0716881913 → hypothèses.
+3. Constats secondaires (essais nominaux, jamais un remède) conservés pour central/axial/indéterminé : `rotationInPlace` suffisante/insuffisante et `closerAndRotated`. N45 [30,0,0] ŷ : axial, rotation sur place insuffisante (parallèle nominal ≈ 1,52 < seuil), cause double distance+orientation démontrée par rapprochement+rotation, énoncée comme constat sans action ; verdict identique avant/après.
+4. « Sources et limites » suit la case hypothèses (neuf hypothèses / nominal seul) ; les suggestions restent vérifiées avec les neuf.
+5. Légendes longues de la coupe (projection hors plan, hachures) déplacées en HTML sous le dessin, avec retour à la ligne.
+Tests : `tests/pedagogical-diagnosis-2026-10-27.test.tsx` 20/20 (valeurs attendues saisies depuis la revue, composant monté pour lecture/pause et mode hypothèses). Non fait de mon côté : recette navigateur authentifiée et capture mobile réelle.
