@@ -3135,6 +3135,9 @@
 .mw-cut-low { fill: var(--warning); fill-opacity: .35; }
 .mw-cut-empty { fill: var(--surface-product); }
 .mw-cut-collision { fill: var(--standex-gray-25); }
+.mw-cut-blocked { fill: url(#mw-cut-hatch); }
+.mw-cut-blocked-bg { fill: var(--standex-gray-25); }
+.mw-cut-blocked-line { stroke: var(--standex-gray-75, var(--standex-gray-50)); stroke-width: 2; }
 .mw-cut-axis { stroke: var(--standex-gray-50); stroke-width: 1; }
 .mw-cut-reed { stroke: var(--standex-blue); stroke-width: 8; stroke-linecap: round; }
 .mw-cut-point { fill: var(--destructive); stroke: var(--surface-product); stroke-width: 2; }
