@@ -4,11 +4,32 @@ import {DEFAULT_WORKSHOP} from '../src/lib/standex/magnetic-workshop';
 import {CATALOGUE_PROFILES,catalogueModel,cataloguePlacement,catalogueFrame,catalogueTimeline,catalogueVolume} from '../src/lib/standex/catalogue-pedagogical';
 import {BARE_MAGNETS} from '../src/lib/standex/magnet-catalog';
 import {defaultMagnetFor} from '../src/lib/standex/default-pairs';
+import {ACTIVATION_GUIDE} from '../src/lib/standex/activation-guide';
 import {evaluatePlacement,DEFAULT_EXPERIMENT} from '../src/lib/detection-lab/workshop-experiment';
 import {createDossier} from '../src/lib/leadmagnet/dossier';
 import {recordClientTrace,currentClientTrace} from '../src/lib/standex/client-pedagogical';
 import {buildDossierExport,parseDossierExport} from '../src/lib/leadmagnet/dossier-io';
 describe('versioned catalogue layer, unchanged reference B',()=>{
+ test('guide inventory distinguishes rows from numeric bounds',()=>{
+  expect(ACTIVATION_GUIDE.rows.length).toBe(3004);
+  expect(ACTIVATION_GUIDE.rows.reduce((n,r)=>n+Number(typeof r.upMm==='number')+Number(typeof r.toMm==='number'),0)).toBe(5744);
+ });
+ test('published 66 families and MK38 variants stay distinct with exact couple sources',()=>{
+  for(const [sensorId,magnetModel,sensitivity] of [['MK14','M02','B'],['MK11-M8','M02','B'],['MK38','M38-N42','1A66B']]){
+   const m=catalogueModel({...DEFAULT_WORKSHOP,sensorId:sensorId??'',magnetModel:magnetModel??'',sensitivity:sensitivity??'',guideReference:null});expect(m.family).toBe('66');expect(m.publishedRows.length).toBeGreaterThan(0);
+  }
+  for(const [sensitivity,family] of [['1A85C','85'],['1B90C','90'],['1C90C','90']]){
+   const m=catalogueModel({...DEFAULT_WORKSHOP,sensorId:'MK38',magnetModel:'M38-N42',sensitivity:sensitivity??'',guideReference:null});expect(m.family).toBe(family);expect(m.status).toBe('documented');
+  }
+  for(const sensorId of ['MK04','MK05','MK13']){const m=catalogueModel({...DEFAULT_WORKSHOP,sensorId,magnetModel:sensorId.replace('MK','M')});expect(m.publishedRows.length).toBe(20);expect(m.publishedRows.every(r=>r.magnetId===m.magnetId)).toBe(true);}
+  expect(catalogueModel({...DEFAULT_WORKSHOP,sensorId:'MK38',magnetModel:'N45-4X19'}).publishedRows.length).toBe(0);
+ });
+ test('F1 uses frontal faces and preserves gap without becoming D1',()=>{
+  const c={...DEFAULT_WORKSHOP,sensorId:'MK38',magnetModel:'M38-N42',geometry:'F1' as const,start:20,end:10};
+  const m=catalogueModel(c),f=catalogueFrame(c,.5);
+  expect(f.world.center[0]).toBe(10+(m.body[0]+m.magnetBody[0])/2);expect(f.world.center[2]).toBe(c.lateralShift);
+  expect(m.publishedRows.every(r=>r.approachId==='F1'&&r.datum==='frontal_faces')).toBe(true);
+ });
  test('31 explicit profiles retain every visual body and exact magnet identity',()=>{
   expect(SENSOR_CATALOG.length).toBe(31);expect(Object.keys(CATALOGUE_PROFILES).length).toBe(31);
   for(const s of SENSOR_CATALOG){const m=catalogueModel({...DEFAULT_WORKSHOP,sensorId:s.id});expect(m.body).toEqual(s.body);expect(m.lengthMm).toBeLessThanOrEqual(s.body[0]);expect(m.magnetId).toBe('M04');}

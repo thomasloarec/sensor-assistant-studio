@@ -474,6 +474,7 @@ Revue lot 2 (22 octobre 2026) :
 ## 11. Ce qui reste ouvert
 
 ### Atelier pédagogique interne — 27 octobre 2026
+Complément sources15:57 : distances du registre publié affichées avec référence et aimant exacts dans Sources et limites, séparées des bornes up/to ; variantes66/85/90 non fusionnées. F1 garde son repère frontal entre faces, sans requalification enD1. Aucun nouveau jeton.
 Extension catalogue autorisée15:41 : les zones d’activation estimées sont superposées aux vrais corps sélectionnés, sans capsule générique de remplacement. Bandeau constant « Simulation indicative · distances à confirmer avec Standex » et statut Modèle66 adapté / distances documentées / analogie ; paramètres/centres/axes estimés repliés. Coupe du même évaluateur avec enveloppe produit simplifiée, sans nouveau jeton. Le résultat/reprise conserve une trace indicative nonqualifiante, jamais un contact binaire promis.
 Complément15:32 : un seul accordéon « Position et environnement » en produit simple rassemble D1/D3, trajectoire, orientation et environnement ; capteurs PCB sans commande de câble. Aucun nouveau libellé ni jeton.
 En-tête mobile client (complément 15:28) : placement explicite en deux rangées, retour / marque+titre / fermer puis contexte+statut / langue. Le contexte est un frère de la zone titre, pas son enfant comprimé ; ses retours à la ligne utilisent toute la largeur réservée de la seconde rangée. Cibles ≥44px, typographies et jetons inchangés. Bureau et autres panneaux conservent leur disposition.
