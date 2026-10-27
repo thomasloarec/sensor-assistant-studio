@@ -101,7 +101,8 @@ describe("Couverture des langues de l'interface", () => {
     // + 105 entrées : laboratoire de détection reed interne staff (2026-10-26), libellés source brochure conservés à l'identique.
     // + 23 entrées : revue indépendante du laboratoire (D5, groupes du bilan, diagnostic contrefactuel, provenance brochure/page web).
     // + 60 entrées : atelier pédagogique interne, volumes et limites scientifiques (8 langues).
-    expect(Object.keys(dictionary)).toHaveLength(3_820);
+    // + 5 entrées : montage importé pédagogique (enveloppes de pièces, chevauchement possible, hachures).
+    expect(Object.keys(dictionary)).toHaveLength(3_825);
     const broken = Object.entries(dictionary).filter(
       ([, v]) => v.length !== 7 || v.some((x) => typeof x !== "string" || x.trim() === ""),
     );
