@@ -145,3 +145,11 @@
 - [x] Recette 288835bc : alignement à l'instant affiché conservé (Aligner, Annuler, Rétablir) ; textes « Position précise » cohérents (26/10/2026)
 - [x] Échap annule le centrage sans fermer le panneau ; bloc Aligner placé avant écart/rotation/retournement (26/10/2026)
 - [x] Laboratoire de détection reed interne staff (tableau pilote, six coupes, rapport) — revue propriétaire avant toute intégration atelier
+
+## Laboratoire de détection — lot 2 : expérience de calibration (27 octobre 2026)
+- [ ] Module pur paramétrable (L, repère axial D3/D5 explicite, θ = k·AT sourcé MK04) + script `detection-lab-pass2-report.ts` régénérant `docs/detection-lab-pass2/` ; profil 1.1 et client préservés.
+- [ ] Quatre variantes (L16/d7, L16/d4, L8/d7, L ajusté D1/d7), tableaux A..G avec disponibilité réelle, D1 B/D isolé.
+- [ ] Score primaire sur les 23 bornes publiées C/E D3/D4/D5, secondaire sans C-N45-D3to 17,7 (anomalie suspectée), critère explicite médiane ≤10 % et ≤3/23 >20 % et zéro indisponible.
+- [ ] Coupes perpendiculaires raffinées (0,25 mm dans |x|≤5, y≤5 ; 1 mm ailleurs, sans recouvrement), CSV+SVG, nœuds communs et largeur de zone centrale ; trois états de lecture distingués.
+- [ ] Vérification collision N45 reproduite ; enveloppe capsule surdimensionnée axialement signalée distinctement.
+- [ ] Tests (repère indépendant de L, θ/AT constant, ajustement sans contrôles, grille fine disjointe) + suite/types/build/scans ; rapport FR avec sources pattes Standex.

@@ -9,7 +9,11 @@ export type ApproachId = "D1" | "D3" | "D4" | "D5";
 export const APPROACHES: ApproachId[] = ["D1", "D3", "D4", "D5"];
 const NOMINAL = PROFILE.scenarios[0]!;
 
-export function approachPose(magnet: PilotMagnet, approach: ApproachId, d: number, conv: DistanceConvention, x = 0): MagnetPose {
+export function approachPose(
+  magnet: PilotMagnet, approach: ApproachId, d: number, conv: DistanceConvention, x = 0,
+  /** Repère axial D3/D5 (mm) : défaut = demi-longueur effective du profil (lot 1). Explicite pour les expériences. */
+  datumMm: number = PROFILE.reed.effectiveLengthMm / 2,
+): MagnetPose {
   const r = magnet.diameterMm / 2,
     h = magnet.lengthMm / 2,
     c1 = conv === "C1";
@@ -17,13 +21,13 @@ export function approachPose(magnet: PilotMagnet, approach: ApproachId, d: numbe
     case "D1":
       return { center: [x, d + (c1 ? r : 0), 0], axis: [1, 0, 0] };
     case "D3":
-      return { center: [PROFILE.reed.effectiveLengthMm / 2 + d + (c1 ? h : 0), 0, 0], axis: [1, 0, 0] };
+      return { center: [datumMm + d + (c1 ? h : 0), 0, 0], axis: [1, 0, 0] };
     case "D4":
       return { center: [x, d + (c1 ? h : 0), 0], axis: [0, 1, 0] };
     case "D5":
       // Schéma D5 (reed vertical, aimant horizontal, approche par l'extrémité) tourné
       // rigidement dans le repère reed : aimant ⟂ lames, approche selon x, lobes en ±t (= y).
-      return { center: [PROFILE.reed.effectiveLengthMm / 2 + d + (c1 ? r : 0), x, 0], axis: [0, 1, 0] };
+      return { center: [datumMm + d + (c1 ? r : 0), x, 0], axis: [0, 1, 0] };
   }
 }
 
