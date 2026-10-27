@@ -1,6 +1,9 @@
 import {expect,test,afterEach} from 'bun:test';
 import {readFileSync} from 'node:fs';
 import {GlobalRegistrator} from '@happy-dom/global-registrator';
+import {useState} from 'react';
+import {PedagogicalControls,PedagogicalBanner} from '../src/components/standex/workshop/pedagogical-controls';
+import {fireEvent} from '@testing-library/react';
 import {render,act,cleanup} from '@testing-library/react';
 import {StaffLabEntry} from '../src/components/standex/detection-lab/staff-gate';
 import {DEFAULT_EXPERIMENT,EXPERIMENT,sampleVolume,evaluatePlacement,placementTimeline,replayDocumentedSwitch,documentaryDistances} from '../src/lib/detection-lab/workshop-experiment';
@@ -93,3 +96,26 @@ test('Review8/R12 frozen UI distance rows reproduce the source CSV, without muta
   for(const r of rows){const line=lines.find(l=>{const x=l.split(',');return x[0]===cls&&x[1]===magnetId&&x[2]===approach&&x[3]===r.bound;});expect(line).toBeDefined();const cols=line?.split(',')??[];expect(r.estimatedRawMm).toBe(cols[7]?Number(cols[7]):null);expect(r.publishedMm).toBe(cols[6]?Number(cols[6]):null);}
  }
 });
+
+
+for(const [magnetId,depth] of [['SMCO5-5X4',6],['N45-4X19',16]] as const){
+ test(`Complement UI ${magnetId}: same-depth centred/offset under nine hypotheses without time reset`,()=>{
+  function Harness(){
+   const [config,setConfig]=useState({...DEFAULT_WORKSHOP,geometry:'D1' as const,motion:'approach' as const,start:24,end:12,magnetAngle:90,lateralShift:0});
+   const [settings,setSettings]=useState<import("../src/lib/detection-lab/workshop-experiment").ExperimentSettings>({...DEFAULT_EXPERIMENT,magnetId});
+   const progress=.5,frame=pedagogicalFrame(config,progress),evidence=evaluatePlacement(settings,frame.pose);
+   return <><PedagogicalControls settings={settings} setSettings={setSettings} config={config} update={patch=>setConfig(c=>({...c,...patch}))} frame={frame} busy={false} volume={null} failed={false} onSuggest={()=>{}} onUndo={()=>{}} canUndo={false}/><PedagogicalBanner evidence={evidence}/><output data-testid="depth">{frame.pose.center[1]}</output><output data-testid="time">{progress}</output><output data-testid="scenario-count">{evidence.scenarios.length}</output></>;
+  }
+  const r=render(<Harness/>);
+  fireEvent.input(r.getByRole('slider',{name:'Profondeur minimale'}),{target:{value:String(depth)}});
+  expect(r.getByTestId('depth').textContent).toBe(String(depth));expect(r.getByTestId('time').textContent).toBe('0.5');
+  expect(r.getByTestId('pedagogical-verdict').textContent).toContain('Placement défavorable');
+  expect(r.getByTestId('pedagogical-verdict').textContent).toContain('Orientation défavorable');
+  for(const offset of [6,8]){
+   if(magnetId==='N45-4X19'&&offset===6)continue;
+   fireEvent.input(r.getByRole('slider',{name:'Décalage latéral'}),{target:{value:String(offset)}});
+   expect(r.getByTestId('depth').textContent).toBe(String(depth));expect(r.getByTestId('time').textContent).toBe('0.5');
+   expect(r.getByTestId('scenario-count').textContent).toBe('9');expect(r.getByTestId('pedagogical-verdict').textContent).toContain('Placement favorable');
+  }
+ });
+}
