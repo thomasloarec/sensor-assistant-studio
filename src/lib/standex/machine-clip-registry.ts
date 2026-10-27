@@ -49,7 +49,8 @@ export interface MachineAnimation {
   sampler: (index: number) => ClipSampler | null;
 }
 
-const registry = new Map<string, MachineAnimation>();
+const registry = new Map<string, { animation: MachineAnimation; generation: number }>();
+let generations = 0;
 const key = (assetKey: string, unitScale: number) => assetKey + "|" + unitScale;
 
 /** Inscrit l'animation d'un fichier chargé ; renvoie la désinscription. */
@@ -59,11 +60,17 @@ export function registerAnimation(
   animation: MachineAnimation,
 ): () => void {
   const k = key(assetKey, unitScale);
-  registry.set(k, animation);
+  const entry = { animation, generation: ++generations };
+  registry.set(k, entry);
   return () => {
-    if (registry.get(k) === animation) registry.delete(k);
+    if (registry.get(k) === entry) registry.delete(k);
   };
 }
 export function animationFor(assetKey: string, unitScale: number): MachineAnimation | undefined {
-  return registry.get(key(assetKey, unitScale));
+  return registry.get(key(assetKey, unitScale))?.animation;
+}
+/** Load generation of the registered animation (0 = none): a reload of the same
+ *  file identity gets a NEW generation, so derived results keyed on it expire. */
+export function animationGeneration(assetKey: string, unitScale: number): number {
+  return registry.get(key(assetKey, unitScale))?.generation ?? 0;
 }

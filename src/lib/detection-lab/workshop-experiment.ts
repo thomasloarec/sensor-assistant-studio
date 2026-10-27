@@ -6,7 +6,7 @@ import { PILOT_MAGNETS } from './magnets';
 import { evaluatePose, type MagnetPose, type PoseEvaluation } from './pose';
 import { PROFILE, type ReedScenario } from './profile';
 import type { Vec3 } from './field';
-import { magnetOverlaps, type Obb } from './obstacles';
+import { magnetOverlaps, reedOverlaps, type Obb } from './obstacles';
 import report from '@/data/detection-lab/workshop-distances.json';
 
 export const EXPERIMENT = Object.freeze({...frozen,baseProfile:Object.freeze({...frozen.baseProfile})});
@@ -33,7 +33,7 @@ export function classThresholds(className: string): { low: number | null; high: 
   return row ? { low: row.min * EXPERIMENT.kMtPerAt, high: row.max * EXPERIMENT.kMtPerAt } : null;
 }
 export interface PlacementEvidence {
-  state: PlacementState; cause: 'distance' | 'orientation' | 'collision' | 'scenario_collision' | 'domain' | 'missing' | 'material' | 'stale' | 'partial' | 'motion' | 'clip' | 'asset' | 'overlap';
+  state: PlacementState; cause: 'distance' | 'orientation' | 'collision' | 'scenario_collision' | 'domain' | 'missing' | 'material' | 'stale' | 'partial' | 'motion' | 'clip' | 'asset' | 'overlap' | 'reed_overlap' | 'scenario_overlap';
   nominal: PoseEvaluation | null; scenarios: { id: string; result: PoseEvaluation }[];
   /** 0 below range, 1 sensitivity-dependent, 2 above high bound; never electrical ON/OFF. */
   zone: 0 | 1 | 2; partial: boolean;
@@ -54,12 +54,17 @@ export function evaluatePlacement(settings: ExperimentSettings, pose: MagnetPose
   if (!magnet || !thresholds || settings.integration !== 'form66') return unavailable('missing');
   if (settings.nearbyMaterial) return unavailable('material');
   const nominal = evaluatePose(magnet,pose,nominalScenario(),'B');
+  // The reed capsule itself must clear the loaded envelopes before any lobe is meaningful.
+  if (Array.isArray(mounting) && reedOverlaps(mounting)) return unavailable('reed_overlap', nominal);
   const overlap = mounting === true || (Array.isArray(mounting) && magnetOverlaps(mounting, magnet.diameterMm, magnet.lengthMm, pose) !== false);
   if (overlap) return unavailable('overlap', nominal);
   if (!nominal.ok) return unavailable(nominal.reason==='domain'?'domain':nominal.reason==='collision'?'collision':'missing',nominal);
   const scenarios = experimentalScenarios(settings.hypotheses).map(s => ({id:s.id,result:evaluatePose(magnet,pose,s,'B')}));
   const partial = thresholds.low === null;
   const zone = nominal.response >= thresholds.high ? 2 : thresholds.low !== null && nominal.response >= thresholds.low ? 1 : 0;
+  // Hypothetical ±1 mm reed shifts are checked mechanically too (reed moved, magnet unchanged).
+  if (Array.isArray(mounting) && settings.hypotheses && experimentalScenarios(true).some(s => (s.shift[0] || s.shift[1] || s.shift[2]) && reedOverlaps(mounting, s.shift as Vec3)))
+    return {state:'unavailable',cause:'scenario_overlap',nominal,scenarios,zone,partial};
   const bad = scenarios.find(s => !s.result.ok);
   if (bad) return {state:'unavailable',cause:!bad.result.ok&&bad.result.reason==='domain'?'domain':'scenario_collision',nominal,scenarios,zone,partial};
   const responses = scenarios.flatMap(s => s.result.ok ? [s.result.response] : []);
@@ -84,7 +89,7 @@ export function settingsKey(s: ExperimentSettings, axis: Vec3, planeZ: number) {
   return JSON.stringify([EXPERIMENT,s,axis,planeZ]);
 }
 export interface SampleCell { i:number;j:number;k:number;x:number;y:number;z:number;x0:number;x1:number;y0:number;y1:number;z0:number;z1:number;zone:0|1|2;response:number|null;blocked?:boolean }
-export interface SampledVolume { key:string;cells:SampleCell[];cut:SampleCell[];computeMs:number;nodeCount:number;axis:Vec3;planeZ:number;extent:number;truncated:boolean }
+export interface SampledVolume { reedBlocked?:boolean;key:string;cells:SampleCell[];cut:SampleCell[];computeMs:number;nodeCount:number;axis:Vec3;planeZ:number;extent:number;truncated:boolean }
 export function axisNodes(lo:number,hi:number,fine=false): number[] {
   const values=new Set<number>();
   for(let x=lo;x<=hi;x++) values.add(x);
@@ -100,6 +105,8 @@ export function sampleVolume(settings:ExperimentSettings,axis:Vec3,planeZ:number
   const cells:SampleCell[]=[],cut:SampleCell[]=[];
   if(!magnet||!th||settings.integration!=='form66'||settings.nearbyMaterial||settings.profileVersion!==EXPERIMENT.version||settings.dataVersion!==EXPERIMENT.dataVersion) return {key:settingsKey(settings,axis,planeZ),cells,cut,computeMs:0,nodeCount:0,axis,planeZ,extent,truncated:false};
   const nominal=nominalScenario();
+  // Reed itself inside an envelope: no lobe anywhere (same check as the point verdict).
+  if(obstacles.length>0&&reedOverlaps(obstacles)) return {key:settingsKey(settings,axis,planeZ),cells,cut,computeMs:performance.now()-start,nodeCount:0,axis,planeZ,extent,truncated:false,reedBlocked:true};
   for(let k=0;k<zs.length;k++) for(let j=0;j<ys.length;j++) for(let i=0;i<xs.length;i++) {
     const x=xs[i]??0,y=ys[j]??0,z=zs[k]??0;
     const e=evaluatePose(magnet,{center:[x,y,z],axis},nominal,'B');
