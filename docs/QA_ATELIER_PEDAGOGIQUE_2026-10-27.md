@@ -95,3 +95,11 @@ Vérification finale après toutes éditions code : **1965 tests pass /0fail**,1
 - Attaches/alignement en mode pédagogique utilisent les corps pilotes (non sérialisés), jamais les dimensions catalogue.
 - Preuves : `tests/pedagogical-imported-2026-10-27.test.tsx` (bras animé réel avec attache mobile à 25 %, reprise + rechargement GLB identiques ; paroi réelle ; unités 1000/1 ; N45 long traversant une boîte ; trou = chevauchement possible ; coupe/volume/point identiques ; polarité ; rotation rigide globale ; états absents/périmés). Suite complète 1 974 tests, types, build, i18n et charte OK.
 - Non vérifié : recette staff authentifiée dans le navigateur (réservée à Thomas), solides exacts (au-delà des boîtes), matériaux ferromagnétiques du fichier (réglage manuel seulement).
+
+## Revue 86e82ae5 (corrections)
+
+1. Reed : la capsule réelle (16,2 × Ø2,2 mm, pas la longueur magnétique) est testée contre les boîtes à chaque instant ; recouvrement → indisponible, cause « chevauchement possible du reed, logement à vérifier » (point, volume sans aucun lobe, coupe, chronologie). Hypothèses ±1 mm : le reed déplacé est aussi contrôlé (cause `scenario_overlap`) ; le libellé sépare robustesse magnétique et dégagement.
+2. Six cas par pilote : SmCo profondeur 6 mm, N45 16 mm ; centré/décalé (x0/x8) à même profondeur et même instant ; parallèle/oblique/classe E sans collision ; traversée (SmCo décalage 6, course 20 ; N45 16, course 24) passe favorable → défavorable central → favorable. Temps conservé. En glissement, Profondeur/Course pilotent offset/travel et le décalage latéral sans effet est retiré. Cas masqués pour un montage importé.
+3. Repère : profondeur = centre aimant → repère reed, différent de face → repère brochure (note affichée). Distances repliées, « borne prudente » / « borne haute indicative », « maximum du lobe documenté, pas une portée dans la position affichée » ; up/to brut seulement dans Provenance ; correction D4 et arrondi inchangés.
+4. Chronologie : clé = réglages + configuration + identité + empreinte du contenu des boîtes + génération de chargement du clip ; un rechargement du même identifiant masque immédiatement l'ancien résultat.
+Recette staff navigateur : non effectuée de mon côté (Thomas).
