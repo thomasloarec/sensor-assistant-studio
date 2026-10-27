@@ -30,6 +30,7 @@ const SKIP_FILES = [
   "src/lib/detection-lab/pass2.ts", // expérience de calibration interne : libellés de rapport FR, hors interface
   "src/lib/detection-lab/pass2-cuts.ts", // figures de revue internes, hors interface
   "src/lib/detection-lab/pass2-report.ts", // exports SVG/CSV de revue, hors interface
+  "src/lib/detection-lab/pass3.ts", // expérience de calibration interne : libellés de rapport FR, hors interface
 ];
 const SKIP_DIRS = ["src/components/ui", "src/lib/i18n"];
 
