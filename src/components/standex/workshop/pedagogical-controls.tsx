@@ -35,11 +35,19 @@ export function usePedagogicalVolume(enabled:boolean,settings:ExperimentSettings
 }
 /* i18n-canonical: shared placement labels translated at the point of display. */
 export const PLACEMENT_LABEL={favorable:'Placement favorable',variable:'Détection variable',unfavorable:'Placement défavorable',unavailable:'Estimation indisponible'};
-const CAUSE_LABEL={motion:'Mouvement non confirmé : estimation indisponible',clip:'Clip absent ou non pris en charge : estimation indisponible',asset:'Fichier 3D non chargé ou géométrie invalide : estimation indisponible',reed_overlap:'Chevauchement possible du reed, logement à vérifier : estimation indisponible',scenario_overlap:'Pose nominale dégagée ; chevauchement possible du reed dans une hypothèse de position ±1 mm',overlap:'Chevauchement possible du corps de l’aimant avec l’enveloppe d’une pièce, à vérifier : estimation indisponible',distance:'Trop loin pour la plage explorée',orientation:'Orientation défavorable / zone centrale à éviter',collision:'Collision du corps de l’aimant avec l’enveloppe ou le montage',scenario_collision:'Pose nominale valide ; collision dans une hypothèse',domain:'Hors du domaine de calcul',missing:'Aimant, reed ou intégration non caractérisés',material:'Matériau voisin non pris en compte',stale:'Ancienne version : recalcul nécessaire',partial:'Classe A partielle : ATmax 10 seulement, seconde surface non caractérisée'};
+/* No 'distance'/'orientation' fallback: those come only from the diagnosis layer. */
+const CAUSE_LABEL:Partial<Record<PlacementEvidence['cause'],string>>={motion:'Mouvement non confirmé : estimation indisponible',clip:'Clip absent ou non pris en charge : estimation indisponible',asset:'Fichier 3D non chargé ou géométrie invalide : estimation indisponible',reed_overlap:'Chevauchement possible du reed, logement à vérifier : estimation indisponible',scenario_overlap:'Pose nominale dégagée ; chevauchement possible du reed dans une hypothèse de position ±1 mm',overlap:'Chevauchement possible du corps de l’aimant avec l’enveloppe d’une pièce, à vérifier : estimation indisponible',collision:'Collision du corps de l’aimant avec l’enveloppe ou le montage',scenario_collision:'Pose nominale valide ; collision dans une hypothèse',domain:'Hors du domaine de calcul',missing:'Aimant, reed ou intégration non caractérisés',material:'Matériau voisin non pris en compte',stale:'Ancienne version : recalcul nécessaire',partial:'Classe A partielle : ATmax 10 seulement, seconde surface non caractérisée'};
 /* i18n-canonical: diagnosed causes (explanation only, never a new state). */
-export const DIAGNOSIS_LABEL:Record<string,string>={central:'Zone centrale entre les deux lobes',axial:'Orientation défavorable sur le prolongement axial du reed',orientation:'Orientation défavorable à cet endroit',distance:'Aimant trop éloigné à cette orientation',combined:'Trop éloigné et orientation défavorable à cet endroit',undetermined:'Cause non déterminée'};
-export function causeLabel(d:PlacementDiagnosis,evidence:PlacementEvidence){
-  return DIAGNOSIS_LABEL[d.cause]??CAUSE_LABEL[evidence.cause];
+export const DIAGNOSIS_LABEL:Record<string,string>={central:'Zone centrale entre les deux lobes',axial:'Orientation défavorable sur le prolongement axial du reed',orientation:'Orientation défavorable à cet endroit',distance:'Aimant trop éloigné à cette orientation',combined:'Trop éloigné et orientation défavorable à cet endroit',hypotheses:'Réponse nominale suffisante ; le résultat dépend de la sensibilité ou des hypothèses internes',undetermined:'Cause non déterminée'};
+export function causeLabel(d:PlacementDiagnosis,evidence:PlacementEvidence):string{
+  return DIAGNOSIS_LABEL[d.cause]??CAUSE_LABEL[d.cause as PlacementEvidence['cause']]??CAUSE_LABEL[evidence.cause]??'Cause non déterminée';
+}
+/** Secondary nominal findings for central/axial/undetermined causes. Never a remedy. */
+export function findingLabels(d:PlacementDiagnosis):string[]{
+  if(!['central','axial','undetermined'].includes(d.cause)||!d.rotationInPlace)return [];
+  const out=[d.rotationInPlace==='sufficient'?'Une autre orientation au même endroit atteint la borne nominale (essai nominal, pas un placement vérifié)':'Une rotation à position constante n’atteint pas la borne nominale'];
+  if(d.rotationInPlace==='insufficient')out.push(d.closerAndRotated?'Cause double : distance et orientation — la borne nominale n’est atteinte qu’en combinant rapprochement et rotation (constat, pas une action)':'Ni rotation ni rapprochement combinés n’atteignent la borne nominale dans les essais');
+  return out;
 }
 export function remedyLabel(r:PedagogicalRemedy):string|null{
   if(r.kind==='verified')return r.rotationDeg&&r.lateralMm?msg('Placement favorable vérifié : rotation de {0}° et décalage de {1} mm',[r.rotationDeg,number(r.lateralMm,2)]):r.rotationDeg?msg('Placement favorable vérifié : rotation de {0}°',[r.rotationDeg]):msg('Placement favorable vérifié : décalage de {0} mm',[number(r.lateralMm,2)]);
@@ -49,12 +57,16 @@ export function remedyLabel(r:PedagogicalRemedy):string|null{
   return t('Mouvement non pris en charge par la recherche : aucune action proposée');
 }
 export function PedagogicalBanner({evidence,diagnosis,remedy,onPropose}:{evidence:PlacementEvidence;diagnosis?:PlacementDiagnosis|null;remedy?:PedagogicalRemedy|null;onPropose?:(r:PedagogicalRemedy)=>void}) {
-  const cause=evidence.state==='favorable'?null:evidence.state==='variable'&&diagnosis?.cause!=='undetermined'&&diagnosis?causeLabel(diagnosis,evidence):evidence.state==='variable'?'Le résultat dépend de la sensibilité ou des hypothèses':diagnosis?causeLabel(diagnosis,evidence):CAUSE_LABEL[evidence.cause];
-  const remedyText=evidence.state!=='favorable'&&remedy?remedyLabel(remedy):null;
-  return <div className={`mw-verdict-banner notice-${evidence.state==='unfavorable'?'warning':'info'}`} role="status" data-testid="pedagogical-verdict" data-cause={evidence.state==='favorable'?'none':diagnosis?.cause??evidence.cause}>
+  // Not analysed (e.g. during playback): known unavailability reasons stay; never a stale cause or remedy.
+  const pending=!diagnosis&&evidence.state!=='favorable'&&evidence.state!=='unavailable';
+  const cause=evidence.state==='favorable'?null:diagnosis?causeLabel(diagnosis,evidence):evidence.state==='unavailable'?CAUSE_LABEL[evidence.cause]??'Cause non déterminée':'Mettre en pause pour analyser la cause';
+  const findings=diagnosis&&evidence.state!=='favorable'?findingLabels(diagnosis):[];
+  const remedyText=evidence.state!=='favorable'&&diagnosis&&remedy?remedyLabel(remedy):null;
+  return <div className={`mw-verdict-banner notice-${evidence.state==='unfavorable'?'warning':'info'}`} role="status" data-testid="pedagogical-verdict" data-cause={evidence.state==='favorable'?'none':pending?'pending':diagnosis?.cause??evidence.cause}>
     <strong className="t-title-s">{t(PLACEMENT_LABEL[evidence.state])}</strong>
     <span className="t-caption">{t('Estimation indicative')}</span>
     {cause&&<span className="t-body" data-testid="pedagogical-cause">{t(cause)}</span>}
+    {findings.map(f=><span key={f} className="t-caption" data-testid="pedagogical-finding">{t(f)}</span>)}
     {remedyText&&<span className="t-caption" data-testid="pedagogical-remedy">{remedyText}{remedy?.kind==='verified'&&onPropose&&<> <Button variant="secondary" onClick={()=>onPropose(remedy)}>{t('Proposer ce placement')}</Button></>}</span>}
   </div>;
 }
@@ -108,8 +120,9 @@ export function PedagogicalControls({timelineNote,settings,setSettings,config,up
       <details><summary>{t('Provenance')}</summary>{distances.map(r=><p className="t-caption" key={r.bound}>{r.approach} · {r.bound} · {t('Publié')} {number(r.publishedMm??0,1)} mm</p>)}</details>
     </details>}
     <details className="mw-advanced" data-testid="pedagogical-sources"><summary>{t('Sources et limites')}</summary>
-      <p className="t-caption">{t('Accord des hypothèses internes, sans garantie de fabrication')}</p>
-      <p className="t-caption">{t('Les deux lobes sont nominaux (bornes de la classe) ; le verdict exige l’accord des neuf hypothèses internes.')}</p>
+      <p className="t-caption" data-testid="pedagogical-hypotheses-mode">{t(settings.hypotheses?'Verdict : accord des neuf hypothèses internes, sans garantie de fabrication':'Verdict : scénario nominal seul (hypothèses internes désactivées), sans garantie de fabrication')}</p>
+      <p className="t-caption">{t('Les suggestions de placement restent toujours vérifiées avec les neuf hypothèses.')}</p>
+      <p className="t-caption">{t('Les deux lobes sont nominaux (bornes de la classe), distincts du verdict.')}</p>
       <p className="t-caption">{t('Capteur générique, reed 66 monté : gabarit exploratoire égal à l’enveloppe mécanique testée, pas les dimensions d’un boîtier commercial.')}</p>
       {volume&&<p className="t-caption">{t('Volumes nominaux indicatifs, non corrigés')} · <span className="t-metric">{number(volume.computeMs/1000,2)} s</span> · <span className="t-metric">{volume.nodeCount}</span> {t('positions calculées')}</p>}
       {timelineNote}

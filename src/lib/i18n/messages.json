@@ -34568,15 +34568,6 @@
     "Fonti e limiti",
     "出典と制約"
   ],
-  "Les deux lobes sont nominaux (bornes de la classe) ; le verdict exige l’accord des neuf hypothèses internes.": [
-    "Both lobes are nominal (class bounds); the verdict requires agreement of the nine internal hypotheses.",
-    "两个瓣区为名义值（等级界限）；结论需要九个内部假设一致。",
-    "Beide Keulen sind nominal (Klassengrenzen); das Urteil verlangt die Übereinstimmung der neun internen Annahmen.",
-    "Los dos lóbulos son nominales (límites de clase); el veredicto exige el acuerdo de las nueve hipótesis internas.",
-    "Оба лепестка номинальные (границы класса); вердикт требует согласия девяти внутренних гипотез.",
-    "I due lobi sono nominali (limiti di classe); il verdetto richiede l’accordo delle nove ipotesi interne.",
-    "2つのローブは公称値（クラス境界）です。判定には9つの内部仮定の一致が必要です。"
-  ],
   "Capteur générique, reed 66 monté : gabarit exploratoire égal à l’enveloppe mécanique testée, pas les dimensions d’un boîtier commercial.": [
     "Generic sensor, mounted reed 66: exploratory template equal to the tested mechanical envelope, not the dimensions of a commercial housing.",
     "通用传感器，已装 66 型干簧管：探索性模板，等于已测试的机械包络，并非商业外壳尺寸。",
@@ -34702,5 +34693,95 @@
     "Причина не установлена",
     "Causa non determinata",
     "原因は未確定"
+  ],
+  "Mettre en pause pour analyser la cause": [
+    "Pause to analyse the cause",
+    "暂停以分析原因",
+    "Pausieren, um die Ursache zu analysieren",
+    "Pausar para analizar la causa",
+    "Поставьте на паузу, чтобы проанализировать причину",
+    "Metti in pausa per analizzare la causa",
+    "一時停止して原因を分析"
+  ],
+  "Réponse nominale suffisante ; le résultat dépend de la sensibilité ou des hypothèses internes": [
+    "Nominal response sufficient; the result depends on sensitivity or internal hypotheses",
+    "名义响应足够；结果取决于灵敏度或内部假设",
+    "Nominale Antwort ausreichend; das Ergebnis hängt von der Empfindlichkeit oder den internen Annahmen ab",
+    "Respuesta nominal suficiente; el resultado depende de la sensibilidad o de las hipótesis internas",
+    "Номинального отклика достаточно; результат зависит от чувствительности или внутренних гипотез",
+    "Risposta nominale sufficiente; il risultato dipende dalla sensibilità o dalle ipotesi interne",
+    "公称応答は十分です。結果は感度または内部仮定に依存します"
+  ],
+  "Une autre orientation au même endroit atteint la borne nominale (essai nominal, pas un placement vérifié)": [
+    "Another orientation at the same spot reaches the nominal bound (nominal trial, not a verified placement)",
+    "同一位置的另一方向达到名义界限（名义试算，并非已验证放置）",
+    "Eine andere Ausrichtung an derselben Stelle erreicht die nominale Grenze (nominaler Versuch, keine geprüfte Platzierung)",
+    "Otra orientación en el mismo punto alcanza el límite nominal (prueba nominal, no una colocación verificada)",
+    "Другая ориентация в том же месте достигает номинальной границы (номинальная проба, не проверенное размещение)",
+    "Un altro orientamento nello stesso punto raggiunge il limite nominale (prova nominale, non un posizionamento verificato)",
+    "同じ位置の別の向きで公称境界に達します（公称試行であり、確認済みの配置ではありません）"
+  ],
+  "Une rotation à position constante n’atteint pas la borne nominale": [
+    "A rotation at constant position does not reach the nominal bound",
+    "在位置不变的情况下旋转达不到名义界限",
+    "Eine Drehung an gleicher Position erreicht die nominale Grenze nicht",
+    "Una rotación sin cambiar de posición no alcanza el límite nominal",
+    "Поворот без смены положения не достигает номинальной границы",
+    "Una rotazione a posizione costante non raggiunge il limite nominale",
+    "位置を変えない回転では公称境界に達しません"
+  ],
+  "Cause double : distance et orientation — la borne nominale n’est atteinte qu’en combinant rapprochement et rotation (constat, pas une action)": [
+    "Double cause: distance and orientation — the nominal bound is reached only by combining a closer position and a rotation (finding, not an action)",
+    "双重原因：距离与方向——只有同时靠近并旋转才能达到名义界限（结论，并非操作）",
+    "Doppelte Ursache: Abstand und Ausrichtung – die nominale Grenze wird nur durch Annäherung und Drehung zusammen erreicht (Befund, keine Maßnahme)",
+    "Causa doble: distancia y orientación; el límite nominal solo se alcanza combinando acercamiento y rotación (constatación, no una acción)",
+    "Двойная причина: расстояние и ориентация — номинальная граница достигается только сочетанием приближения и поворота (констатация, не действие)",
+    "Causa doppia: distanza e orientamento — il limite nominale si raggiunge solo combinando avvicinamento e rotazione (constatazione, non un’azione)",
+    "二重の原因：距離と向き — 接近と回転を組み合わせた場合にのみ公称境界に達します（所見であり操作ではありません）"
+  ],
+  "Ni rotation ni rapprochement combinés n’atteignent la borne nominale dans les essais": [
+    "Neither rotation nor a combined closer position reaches the nominal bound in the trials",
+    "试算中旋转或结合靠近均未达到名义界限",
+    "Weder Drehung noch kombinierte Annäherung erreichen in den Versuchen die nominale Grenze",
+    "Ni la rotación ni el acercamiento combinado alcanzan el límite nominal en las pruebas",
+    "Ни поворот, ни сочетание с приближением не достигают номинальной границы в пробах",
+    "Né la rotazione né l’avvicinamento combinato raggiungono il limite nominale nelle prove",
+    "試行では回転も接近との組み合わせも公称境界に達しません"
+  ],
+  "Verdict : accord des neuf hypothèses internes, sans garantie de fabrication": [
+    "Verdict: agreement of the nine internal hypotheses, without manufacturing guarantee",
+    "结论：九个内部假设一致，不构成制造保证",
+    "Urteil: Übereinstimmung der neun internen Annahmen, ohne Fertigungsgarantie",
+    "Veredicto: acuerdo de las nueve hipótesis internas, sin garantía de fabricación",
+    "Вердикт: согласие девяти внутренних гипотез, без гарантии изготовления",
+    "Verdetto: accordo delle nove ipotesi interne, senza garanzia di fabbricazione",
+    "判定：9つの内部仮定の一致、製造保証なし"
+  ],
+  "Verdict : scénario nominal seul (hypothèses internes désactivées), sans garantie de fabrication": [
+    "Verdict: nominal scenario only (internal hypotheses disabled), without manufacturing guarantee",
+    "结论：仅名义情景（内部假设已关闭），不构成制造保证",
+    "Urteil: nur nominales Szenario (interne Annahmen deaktiviert), ohne Fertigungsgarantie",
+    "Veredicto: solo escenario nominal (hipótesis internas desactivadas), sin garantía de fabricación",
+    "Вердикт: только номинальный сценарий (внутренние гипотезы отключены), без гарантии изготовления",
+    "Verdetto: solo scenario nominale (ipotesi interne disattivate), senza garanzia di fabbricazione",
+    "判定：公称シナリオのみ（内部仮定は無効）、製造保証なし"
+  ],
+  "Les suggestions de placement restent toujours vérifiées avec les neuf hypothèses.": [
+    "Placement suggestions are always verified with the nine hypotheses.",
+    "放置建议始终以九个假设验证。",
+    "Platzierungsvorschläge werden immer mit den neun Annahmen geprüft.",
+    "Las sugerencias de colocación siempre se verifican con las nueve hipótesis.",
+    "Предложения размещения всегда проверяются по девяти гипотезам.",
+    "I suggerimenti di posizionamento sono sempre verificati con le nove ipotesi.",
+    "配置の提案は常に9つの仮定で確認されます。"
+  ],
+  "Les deux lobes sont nominaux (bornes de la classe), distincts du verdict.": [
+    "Both lobes are nominal (class bounds), distinct from the verdict.",
+    "两个瓣区为名义值（等级界限），与结论不同。",
+    "Beide Keulen sind nominal (Klassengrenzen), getrennt vom Urteil.",
+    "Los dos lóbulos son nominales (límites de clase), distintos del veredicto.",
+    "Оба лепестка номинальные (границы класса) и отличаются от вердикта.",
+    "I due lobi sono nominali (limiti di classe), distinti dal verdetto.",
+    "2つのローブは公称値（クラス境界）で、判定とは別です。"
   ]
 }
