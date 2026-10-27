@@ -87,3 +87,14 @@ test('MK04 + SmCo offers guide classes C and E for the 66 reed',()=>{
   const k=catalogueClasses('MK04','SMCO5-5X4',publishedClasses('MK04','SMCO5-5X4'));
   expect(k).toContain('C');expect(k).toContain('E');
 });
+import { catalogueVerdictNotes, catalogueFamilySentence, CATALOGUE_LABELS } from '../src/lib/standex/catalogue-pedagogical';
+test('verdict notes: A partial, C fallback, F1 MK37/38 limit, MK02 function',()=>{
+  const a={...DEFAULT_WORKSHOP,sensorId:'MK03',magnetModel:'SMCO5-5X4',sensitivity:'A'};
+  expect(catalogueVerdictNotes(a,catalogueModel(a))).toContain(CATALOGUE_LABELS.partialA);
+  const g={...DEFAULT_WORKSHOP,sensorId:'MK03',magnetModel:'SMCO5-5X4',sensitivity:'G'};
+  expect(catalogueVerdictNotes(g,catalogueModel(g))).toContain(CATALOGUE_LABELS.fallbackC);
+  for(const id of ['MK37','MK38']){const c={...DEFAULT_WORKSHOP,sensorId:id,magnetModel:DEFAULT_PAIRS[id]!,geometry:'F1' as const};expect(catalogueVerdictNotes(c,catalogueModel(c))).toContain(CATALOGUE_LABELS.f1);}
+  const m2={...DEFAULT_WORKSHOP,sensorId:'MK02',magnetModel:DEFAULT_PAIRS.MK02??DEFAULT_WORKSHOP.magnetModel};
+  expect(catalogueVerdictNotes(m2,catalogueModel(m2))).toContain(CATALOGUE_LABELS.ferrous);
+  expect(catalogueFamilySentence(catalogueModel({...DEFAULT_WORKSHOP,sensorId:'MK24-A-J'}))).toBe(CATALOGUE_LABELS.analogyReed);
+});

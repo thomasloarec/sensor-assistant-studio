@@ -3,7 +3,7 @@ import { t, msg } from '@/lib/i18n/core';
 import { CLIENT_LIMITS, VERIFIED_PILOTS, clientCoupleAdapter } from '@/lib/standex/client-pedagogical';
 import type { WorkshopConfig } from '@/lib/standex/magnetic-workshop';
 import { publishedClasses } from '@/lib/standex/magnetics/registries';
-import { catalogueClasses, catalogueFamilySentence, CATALOGUE_LABELS } from '@/lib/standex/catalogue-pedagogical';
+import { catalogueClasses, catalogueFamilySentence } from '@/lib/standex/catalogue-pedagogical';
 import { magnetOptionsFor } from '@/lib/standex/default-pairs';
 import { guideRangesFor, formatGuideBound, ACTIVATION_GUIDE } from '@/lib/standex/activation-guide';
 import { sensorById } from '@/lib/standex/sensor-catalog';
