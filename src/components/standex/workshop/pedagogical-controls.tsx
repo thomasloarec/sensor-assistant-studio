@@ -123,6 +123,7 @@ export function PedagogicalControls({timelineNote,settings,setSettings,config,up
       <p className="t-caption" data-testid="pedagogical-hypotheses-mode">{t(settings.hypotheses?'Verdict : accord des neuf hypothèses internes, sans garantie de fabrication':'Verdict : scénario nominal seul (hypothèses internes désactivées), sans garantie de fabrication')}</p>
       <p className="t-caption">{t('Les suggestions de placement restent toujours vérifiées avec les neuf hypothèses.')}</p>
       <p className="t-caption">{t('Les deux lobes sont nominaux (bornes de la classe), distincts du verdict.')}</p>
+      <p className="t-caption">{t('Repère reed Form66 exploratoire')}</p>
       <p className="t-caption">{t('Capteur générique, reed 66 monté : gabarit exploratoire égal à l’enveloppe mécanique testée, pas les dimensions d’un boîtier commercial.')}</p>
       {volume&&<p className="t-caption">{t('Volumes nominaux indicatifs, non corrigés')} · <span className="t-metric">{number(volume.computeMs/1000,2)} s</span> · <span className="t-metric">{volume.nodeCount}</span> {t('positions calculées')}</p>}
       {timelineNote}
