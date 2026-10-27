@@ -165,3 +165,8 @@
 - [ ] Finir collisions solides GLB, chronologie importée/clip, suggestions attachées et convergence volumes ; nominal/coupe/profil figé fonctionnels.
 - [x] Export/reprise versionnés et huit langues, tests R01–R12 partiels, suite complète 1952/0 et scans ; limites dans rapport QA.
 - [ ] Recette staff authentifiée desktop/mobile : bloquée par session indisponible ; rendu isolé et rapport QA disponibles.
+
+## Revue indépendante cb43c203 — 27 octobre 2026
+- [ ] Corriger invalidation, suggestions effectives au même temps, maintien brouillon au recontrôle staff, collisions/clip fail-closed.
+- [ ] Corriger chronologie proportionnelle, hystérésis inconnue, accessibilité/cadrage, distances documentaires, import et faces topologiques/troncature.
+- [ ] Ajouter preuves distinctes et test GLB clip/attaches ; suite complète, huit langues/scans et recette propriétaire sans contourner auth.
