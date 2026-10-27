@@ -109,3 +109,8 @@ Recette staff navigateur : non effectuée de mon côté (Thomas).
 - Réouverture : le recentrage automatique des composants n'a lieu que pour un NOUVEL import non positionné (fichier différent). Réouverture, remontage après revalidation staff, rechargement du GLB et reprise d'un brouillon (clip ou non) gardent les positions explicites, le temps, le profil et les réglages. Test React réel (`tests/pedagogical-reopen-pick-2026-10-27.test.tsx`) : bras animé (clip, mouvement non confirmé, aucune pièce mobile), reed [0,200,0] / aimant [6,206,0] à 25 %, deux cycles montage → chargement du GLB → démontage → réouverture. Contre-épreuve : ce test échoue sans la correction.
 - Pointage : `handlePick` et `handleHoleRay` reçoivent les corps pilotes. Test du vrai guide (axe d'un trou, deux points) : la pose finale égale la chaîne pilote et diffère de la chaîne catalogue. Remarque honnête : la normalisation centrale (`machineChange` → `applyAttachments` avec les corps pilotes) corrigeait déjà la pose finale, si bien que ce test passe aussi sans la correction ; il garantit le résultat, la correction supprime l'incohérence intermédiaire.
 - Authentification inchangée ; recette staff navigateur non effectuée de mon côté.
+
+## Ajustement 8cbf1d5 (12:50)
+
+- En mode pédagogique, revenir à l'outil de navigation (passer d'une étape du guide à l'autre, dont « 5 Essai ») garde l'instant affiché. Entrer dans un outil de montage remet toujours le temps à zéro et la lecture reste arrêtée ; poses et profil inchangés.
+- Test React de reprise : après rechargement du GLB, clic réel « 5 Essai », puis 4 → 5 : progression 0,25 et positions conservées. Contre-épreuve : échoue sans la correction.
