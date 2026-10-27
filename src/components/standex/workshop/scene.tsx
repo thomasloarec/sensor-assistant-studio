@@ -7,7 +7,7 @@ import {
 } from "@/lib/standex/housing-pose";
 import { pairedMagnetModel } from "@/lib/standex/paired-magnets";
 import { t } from "@/lib/i18n/core";
-import { useMemo, useRef, useEffect } from "react";
+import { useMemo, useRef, useEffect, type ReactNode } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Html, Line, OrbitControls, Grid } from "@react-three/drei";
 import { Shape, Path, Quaternion, Vector3 } from "three";
@@ -876,7 +876,9 @@ export default function WorkshopScene({
   resetEpoch = 0,
   onContextLost,
   ghost,
+  pedagogicalLayer,
 }: {
+  pedagogicalLayer?: ReactNode;
   config: WorkshopConfig;
   sample: CycleSample;
   samples: CycleSample[];
@@ -975,7 +977,7 @@ export default function WorkshopScene({
         position={[config.mountX, 0, config.mountZ]}
         rotation={[0, (-config.mountAngle * Math.PI) / 180, 0]}
       >
-        <group
+        {!pedagogicalLayer && <group
           rotation={[
             0,
             ((workshopHousingYawDeg(config.sensorId, config.geometry, model.cableSide) -
@@ -1005,7 +1007,9 @@ export default function WorkshopScene({
         <Trajectory samples={samples} returning={sample.t > 0.5} colored={zones} />
         {reference && available && zones && <ReferenceMarkers config={config} />}
         {!reference && available && field && <FieldLines config={config} sample={sample} />}
+        </>}
       </group>
+      {pedagogicalLayer}
       {onContextLost && <ContextGuard onLost={onContextLost} />}
       <OrbitControls makeDefault target={target} minDistance={5} maxDistance={400} />
       <CameraRig

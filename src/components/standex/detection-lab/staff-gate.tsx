@@ -5,6 +5,7 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { FlaskConical, ArrowUpRight } from "lucide-react";
 import { t } from "@/lib/i18n/core";
+import { Button } from "@/components/ui/button";
 
 export type StaffAccess = "loading" | "staff" | "denied" | "error";
 export type StaffCheck = () => Promise<boolean>;
@@ -36,7 +37,7 @@ export function useStaffAccess(check: StaffCheck, subscribe?: SessionSubscribe):
   return access;
 }
 
-export function StaffLabEntry({ check, subscribe, renderLab }: { check: StaffCheck; subscribe?: SessionSubscribe; renderLab: (close: () => void) => ReactNode }) {
+export function StaffLabEntry({ check, subscribe, renderLab, pedagogical = false }: { check: StaffCheck; subscribe?: SessionSubscribe; renderLab: (close: () => void) => ReactNode; pedagogical?: boolean }) {
   const access = useStaffAccess(check, subscribe);
   const [open, setOpen] = useState(false);
   useEffect(() => { if (access !== "staff") setOpen(false); }, [access]);
@@ -44,13 +45,13 @@ export function StaffLabEntry({ check, subscribe, renderLab }: { check: StaffChe
   if (open)
     return <div className="fixed inset-0 z-50 overflow-auto bg-background" data-testid="detection-lab-overlay">{renderLab(() => setOpen(false))}</div>;
   return (
-    <button type="button" className="studio-workshop-link" onClick={() => setOpen(true)}>
+    <Button type="button" variant="ghost" className="studio-workshop-link" onClick={() => setOpen(true)}>
       <span className="studio-workshop-icon"><FlaskConical size={25} /></span>
       <span>
-        <strong>{t("Laboratoire de détection")}</strong>
-        <small>{t("Interne staff · tableau de cohérence et six coupes")}</small>
+        <strong>{t(pedagogical ? "Atelier pédagogique" : "Laboratoire de détection")}</strong>
+        <small>{t(pedagogical ? "Interne staff · volumes 3D et coupe 2D" : "Interne staff · tableau de cohérence et six coupes")}</small>
       </span>
       <ArrowUpRight size={19} />
-    </button>
+    </Button>
   );
 }

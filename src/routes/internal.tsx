@@ -656,6 +656,16 @@ function Bench({ user }: { user: User }) {
         <StaffLabEntry
           check={serverStaffCheck}
           subscribe={subscribeSession}
+          pedagogical
+          renderLab={(close) => (
+            <Suspense fallback={<p className="p-8">{t("Ouverture de l’atelier pédagogique…")}</p>}>
+              <MagneticWorkshop pedagogical storageMode="memory" onClose={close} onSave={async () => {}} />
+            </Suspense>
+          )}
+        />
+        <StaffLabEntry
+          check={serverStaffCheck}
+          subscribe={subscribeSession}
           renderLab={(close) => (
             <Suspense fallback={<p className="p-8">{t("Ouverture du laboratoire…")}</p>}>
               <DetectionLab onClose={close} />
