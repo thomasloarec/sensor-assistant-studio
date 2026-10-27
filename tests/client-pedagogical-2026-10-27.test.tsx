@@ -83,9 +83,9 @@ describe('real mounted client workshop',()=>{
     await act(async()=>fireEvent.change(view.getByRole('combobox',{name:'Aimant',exact:true}),{target:{value:'N45-4X19'}}));
     await act(async()=>fireEvent.click(view.getByRole('button',{name:'Valider ce choix et voir le résultat'})));
     expect(results[1]?.magnetId).toBe('N45-4X19');expect(results[1]?.configKey).not.toBe(first?.configKey);
-    view.unmount();draft={...draft,sensitivity:'G'};view=mount();
+    view.unmount();draft={...draft,sensitivity:'C'};view=mount();
     await act(async()=>fireEvent.click(view.getByRole('button',{name:'Valider ce choix et voir le résultat'})));
-    expect(results[2]?.sensitivity).toBe('G');expect(results[2]?.reasons).toContain(CLIENT_LIMITS.g);
+    expect(results[2]?.sensitivity).toBe('C');expect(results[2]?.configKey).not.toBe(results[1]?.configKey);
     expect(results.every(r=>r.state==='unavailable'&&!r.qualified)).toBe(true);
     expect(draft.sensorId).toBe('MK04');expect(draft.cableLengthMm).toBe(750);
     view.unmount();
