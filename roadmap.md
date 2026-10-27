@@ -1,6 +1,7 @@
 # Feuille de route — lot des 7 correctifs (base 12be3e3d)
 
 ## Intégration pédagogique client autorisée — 27 octobre 2026
+- [ ] Complément15:32 : interdire câble PCB (bouton/panneau/callbacks), réunir les réglages position, tests ciblés et rapport ; aucun nouvel import réel validé.
 - [x] Raccorder l’atelier existant étape 2 au couple du dossier, sans repli catalogue ni transfert.
 - [x] Exploration Form66 explicite et isolée, quatre états/circuit cohérents, sources et limites.
 - [x] Clôture a7778c80 : 23 tests client / 2 026 tests complets verts, types/compilation automatiques OK, 103 empreintes identiques, i18n/scans et rapport docs/qa-client-pedagogical-2026-10-27.md.
