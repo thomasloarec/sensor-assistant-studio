@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 420" font-family="sans-serif" font-size="14">
+<rect width="960" height="420" fill="#ffffff"/>
+<text x="56" y="26" font-size="16" fill="oklch(0.3665 0.0662 254.28)">Écarts signés — L = 16 mm, repère recalé + correction scalaire D4</text>
+<rect x="56" y="161" width="888" height="78" fill="oklch(0.8725 0.0018 247.84)" opacity="0.18"/>
+<line x1="56" y1="200" x2="944" y2="200" stroke="oklch(0.3665 0.0662 254.28)" stroke-width="1"/>
+<line x1="56" y1="161" x2="944" y2="161" stroke="oklch(0.3665 0.0662 254.28)" stroke-width="0.5" stroke-dasharray="4 3"/>
+<line x1="56" y1="239" x2="944" y2="239" stroke="oklch(0.3665 0.0662 254.28)" stroke-width="0.5" stroke-dasharray="4 3"/>
+<text x="8" y="205" fill="oklch(0.3665 0.0662 254.28)">0</text>
+<text x="8" y="166" fill="oklch(0.3665 0.0662 254.28)">+1</text>
+<text x="8" y="244" fill="oklch(0.3665 0.0662 254.28)">−1</text>
+<text x="8" y="49" fill="oklch(0.3665 0.0662 254.28)">+4</text>
+<text x="8" y="361" fill="oklch(0.3665 0.0662 254.28)">−4</text>
+<text x="168.4" y="376" fill="oklch(0.3665 0.0662 254.28)">B</text>
+<text x="385.46666666666664" y="376" fill="oklch(0.3665 0.0662 254.28)">C</text>
+<line x1="292.8" y1="44" x2="292.8" y2="356" stroke="oklch(0.3665 0.0662 254.28)" stroke-width="0.4" stroke-dasharray="2 4"/>
+<text x="602.5333333333333" y="376" fill="oklch(0.3665 0.0662 254.28)">D</text>
+<line x1="490.1333333333333" y1="44" x2="490.1333333333333" y2="356" stroke="oklch(0.3665 0.0662 254.28)" stroke-width="0.4" stroke-dasharray="2 4"/>
+<text x="829.4666666666667" y="376" fill="oklch(0.3665 0.0662 254.28)">E</text>
+<line x1="726.9333333333333" y1="44" x2="726.9333333333333" y2="356" stroke="oklch(0.3665 0.0662 254.28)" stroke-width="0.4" stroke-dasharray="2 4"/>
+<circle cx="65.86666666666667" cy="212.3201" r="4" fill="oklch(0.72 0.13 205)" opacity="0.85"><title>B SMCO5-5X4 D3 up : publié 9.4 mm, estimé 9.0841 mm, écart -0.3159 mm</title></circle>
+<circle cx="85.6" cy="223.166" r="4" fill="oklch(0.72 0.13 205)" opacity="0.85"><title>B SMCO5-5X4 D3 to : publié 12.2 mm, estimé 11.606 mm, écart -0.594 mm</title></circle>
+<circle cx="105.33333333333334" cy="202.5467" r="4" fill="oklch(0.72 0.13 205)" opacity="0.85"><title>B SMCO5-5X4 D4 up : publié 8.3 mm, estimé 8.2347 mm, écart -0.0653 mm</title></circle>
+<circle cx="125.06666666666666" cy="191.0456" r="4" fill="oklch(0.72 0.13 205)" opacity="0.85"><title>B SMCO5-5X4 D4 to : publié 10.2 mm, estimé 10.4296 mm, écart 0.2296 mm</title></circle>
+<circle cx="144.8" cy="210.3701" r="4" fill="oklch(0.72 0.13 205)" opacity="0.85"><title>B SMCO5-5X4 D5 up : publié 4.6 mm, estimé 4.3341 mm, écart -0.2659 mm</title></circle>
+<circle cx="164.53333333333333" cy="219.4688" r="4" fill="oklch(0.72 0.13 205)" opacity="0.85"><title>B SMCO5-5X4 D5 to : publié 6.7 mm, estimé 6.2008 mm, écart -0.4992 mm</title></circle>
+<circle cx="184.26666666666668" cy="310.3076" r="4" fill="oklch(0.9625 0.0035 258)" opacity="0.85"><title>B N45-4X19 D3 up : publié 17.3 mm, estimé 14.4716 mm, écart -2.8284 mm — HORS tolérance</title></circle>
+<circle cx="204" cy="246.9131" r="4" fill="oklch(0.9417 0.0052 247.88)" opacity="0.85"><title>B N45-4X19 D3 to : publié 19.6 mm, estimé 18.3971 mm, écart -1.2029 mm</title></circle>
+<circle cx="223.73333333333332" cy="203.6933" r="4" fill="oklch(0.9417 0.0052 247.88)" opacity="0.85"><title>B N45-4X19 D4 up : publié 12.1 mm, estimé 12.0053 mm, écart -0.0947 mm</title></circle>
+<circle cx="243.46666666666667" cy="192.98" r="4" fill="oklch(0.9417 0.0052 247.88)" opacity="0.85"><title>B N45-4X19 D4 to : publié 14.9 mm, estimé 15.08 mm, écart 0.18 mm</title></circle>
+<circle cx="263.2" cy="215.4635" r="4" fill="oklch(0.9417 0.0052 247.88)" opacity="0.85"><title>B N45-4X19 D5 up : publié 12 mm, estimé 11.6035 mm, écart -0.3965 mm</title></circle>
+<circle cx="282.93333333333334" cy="232.0346" r="4" fill="oklch(0.9417 0.0052 247.88)" opacity="0.85"><title>B N45-4X19 D5 to : publié 15.7 mm, estimé 14.8786 mm, écart -0.8214 mm</title></circle>
+<circle cx="302.66666666666663" cy="227.9201" r="4" fill="oklch(0.72 0.13 205)" opacity="0.85"><title>C SMCO5-5X4 D3 to : publié 9.8 mm, estimé 9.0841 mm, écart -0.7159 mm</title></circle>
+<circle cx="322.4" cy="218.1467" r="4" fill="oklch(0.72 0.13 205)" opacity="0.85"><title>C SMCO5-5X4 D4 to : publié 8.7 mm, estimé 8.2347 mm, écart -0.4653 mm</title></circle>
+<circle cx="342.1333333333333" cy="201.2558" r="4" fill="oklch(0.72 0.13 205)" opacity="0.85"><title>C SMCO5-5X4 D5 up : publié 3.2 mm, estimé 3.1678 mm, écart -0.0322 mm</title></circle>
+<circle cx="361.8666666666667" cy="225.9701" r="4" fill="oklch(0.72 0.13 205)" opacity="0.85"><title>C SMCO5-5X4 D5 to : publié 5 mm, estimé 4.3341 mm, écart -0.6659 mm</title></circle>
+<circle cx="381.6" cy="214.3559" r="4" fill="oklch(0.9417 0.0052 247.88)" opacity="0.85"><title>C N45-4X19 D3 up : publié 12.4 mm, estimé 12.0319 mm, écart -0.3681 mm</title></circle>
+<circle cx="401.3333333333333" cy="325.9076" r="4" fill="oklch(0.9625 0.0035 258)" opacity="0.85"><title>C N45-4X19 D3 to : publié 17.7 mm, estimé 14.4716 mm, écart -3.2284 mm — HORS tolérance</title></circle>
+<circle cx="421.06666666666666" cy="201.4508" r="4" fill="oklch(0.9417 0.0052 247.88)" opacity="0.85"><title>C N45-4X19 D4 up : publié 10.1 mm, estimé 10.0628 mm, écart -0.0372 mm</title></circle>
+<circle cx="440.8" cy="219.2933" r="4" fill="oklch(0.9417 0.0052 247.88)" opacity="0.85"><title>C N45-4X19 D4 to : publié 12.5 mm, estimé 12.0053 mm, écart -0.4947 mm</title></circle>
+<circle cx="460.53333333333336" cy="210.8108" r="4" fill="oklch(0.9417 0.0052 247.88)" opacity="0.85"><title>C N45-4X19 D5 up : publié 9.8 mm, estimé 9.5228 mm, écart -0.2772 mm</title></circle>
+<circle cx="480.26666666666665" cy="231.0635" r="4" fill="oklch(0.9417 0.0052 247.88)" opacity="0.85"><title>C N45-4X19 D5 to : publié 12.4 mm, estimé 11.6035 mm, écart -0.7965 mm</title></circle>
+<circle cx="500" cy="200.8814" r="4" fill="oklch(0.72 0.13 205)" opacity="0.85"><title>D SMCO5-5X4 D3 up : publié 6.4 mm, estimé 6.3774 mm, écart -0.0226 mm</title></circle>
+<circle cx="519.7333333333333" cy="215.6" r="4" fill="oklch(0.72 0.13 205)" opacity="0.85"><title>D SMCO5-5X4 D3 to : publié 7.9 mm, estimé 7.5 mm, écart -0.4 mm</title></circle>
+<circle cx="539.4666666666667" cy="221.6645" r="4" fill="oklch(0.72 0.13 205)" opacity="0.85"><title>D SMCO5-5X4 D4 up : publié 6.3 mm, estimé 5.7445 mm, écart -0.5555 mm</title></circle>
+<circle cx="559.2" cy="215.6" r="4" fill="oklch(0.72 0.13 205)" opacity="0.85"><title>D SMCO5-5X4 D4 to : publié 7.2 mm, estimé 6.8 mm, écart -0.4 mm</title></circle>
+<circle cx="578.9333333333333" cy="198.2294" r="4" fill="oklch(0.72 0.13 205)" opacity="0.85"><title>D SMCO5-5X4 D5 up : publié 2.3 mm, estimé 2.3454 mm, écart 0.0454 mm</title></circle>
+<circle cx="598.6666666666666" cy="216.8558" r="4" fill="oklch(0.72 0.13 205)" opacity="0.85"><title>D SMCO5-5X4 D5 to : publié 3.6 mm, estimé 3.1678 mm, écart -0.4322 mm</title></circle>
+<circle cx="618.4" cy="222.6512" r="4" fill="oklch(0.9417 0.0052 247.88)" opacity="0.85"><title>D N45-4X19 D3 up : publié 10.9 mm, estimé 10.3192 mm, écart -0.5808 mm</title></circle>
+<circle cx="638.1333333333333" cy="229.95589999999999" r="4" fill="oklch(0.9417 0.0052 247.88)" opacity="0.85"><title>D N45-4X19 D3 to : publié 12.8 mm, estimé 12.0319 mm, écart -0.7681 mm</title></circle>
+<circle cx="657.8666666666667" cy="208.7594" r="4" fill="oklch(0.9417 0.0052 247.88)" opacity="0.85"><title>D N45-4X19 D4 up : publié 8.9 mm, estimé 8.6754 mm, écart -0.2246 mm</title></circle>
+<circle cx="677.6" cy="217.0508" r="4" fill="oklch(0.9417 0.0052 247.88)" opacity="0.85"><title>D N45-4X19 D4 to : publié 10.5 mm, estimé 10.0628 mm, écart -0.4372 mm</title></circle>
+<circle cx="697.3333333333334" cy="206.4155" r="4" fill="oklch(0.9417 0.0052 247.88)" opacity="0.85"><title>D N45-4X19 D5 up : publié 8.2 mm, estimé 8.0355 mm, écart -0.1645 mm</title></circle>
+<circle cx="717.0666666666667" cy="226.4108" r="4" fill="oklch(0.9417 0.0052 247.88)" opacity="0.85"><title>D N45-4X19 D5 to : publié 10.2 mm, estimé 9.5228 mm, écart -0.6772 mm</title></circle>
+<circle cx="736.8" cy="202.9679" r="4" fill="oklch(0.72 0.13 205)" opacity="0.85"><title>E SMCO5-5X4 D3 up : publié 5.6 mm, estimé 5.5239 mm, écart -0.0761 mm</title></circle>
+<circle cx="756.5333333333333" cy="216.4814" r="4" fill="oklch(0.72 0.13 205)" opacity="0.85"><title>E SMCO5-5X4 D3 to : publié 6.8 mm, estimé 6.3774 mm, écart -0.4226 mm</title></circle>
+<circle cx="776.2666666666667" cy="230.7281" r="4" fill="oklch(0.72 0.13 205)" opacity="0.85"><title>E SMCO5-5X4 D4 up : publié 5.7 mm, estimé 4.9121 mm, écart -0.7879 mm</title></circle>
+<circle cx="796" cy="237.2645" r="4" fill="oklch(0.72 0.13 205)" opacity="0.85"><title>E SMCO5-5X4 D4 to : publié 6.7 mm, estimé 5.7445 mm, écart -0.9555 mm</title></circle>
+<circle cx="815.7333333333333" cy="213.8294" r="4" fill="oklch(0.72 0.13 205)" opacity="0.85"><title>E SMCO5-5X4 D5 to : publié 2.7 mm, estimé 2.3454 mm, écart -0.3546 mm</title></circle>
+<circle cx="835.4666666666667" cy="214.4924" r="4" fill="oklch(0.9417 0.0052 247.88)" opacity="0.85"><title>E N45-4X19 D3 up : publié 9.4 mm, estimé 9.0284 mm, écart -0.3716 mm</title></circle>
+<circle cx="855.2" cy="238.25119999999998" r="4" fill="oklch(0.9417 0.0052 247.88)" opacity="0.85"><title>E N45-4X19 D3 to : publié 11.3 mm, estimé 10.3192 mm, écart -0.9808 mm</title></circle>
+<circle cx="874.9333333333333" cy="187.8866" r="4" fill="oklch(0.9417 0.0052 247.88)" opacity="0.85"><title>E N45-4X19 D4 up : publié 7.3 mm, estimé 7.6106 mm, écart 0.3106 mm</title></circle>
+<circle cx="894.6666666666666" cy="224.3594" r="4" fill="oklch(0.9417 0.0052 247.88)" opacity="0.85"><title>E N45-4X19 D4 to : publié 9.3 mm, estimé 8.6754 mm, écart -0.6246 mm</title></circle>
+<circle cx="914.4" cy="215.6975" r="4" fill="oklch(0.9417 0.0052 247.88)" opacity="0.85"><title>E N45-4X19 D5 up : publié 7.3 mm, estimé 6.8975 mm, écart -0.4025 mm</title></circle>
+<circle cx="934.1333333333333" cy="222.0155" r="4" fill="oklch(0.9417 0.0052 247.88)" opacity="0.85"><title>E N45-4X19 D5 to : publié 8.6 mm, estimé 8.0355 mm, écart -0.5645 mm</title></circle>
+<circle cx="64" cy="394" r="4" fill="oklch(0.72 0.13 205)"/><text x="74" y="398" fill="oklch(0.3665 0.0662 254.28)">SmCo5 5×4</text>
+<circle cx="174" cy="394" r="4" fill="oklch(0.9417 0.0052 247.88)"/><text x="184" y="398" fill="oklch(0.3665 0.0662 254.28)">NdFeB N45 4×19</text>
+<circle cx="304" cy="394" r="4" fill="oklch(0.9625 0.0035 258)"/><text x="314" y="398" fill="oklch(0.3665 0.0662 254.28)">hors tolérance max(1 mm, 15 %)</text>
+<text x="64" y="414" font-size="12" fill="oklch(0.3665 0.0662 254.28)">Écarts signés estimation − publié (mm), contrôles B–E D3/D4/D5, ancres exclues. La bande ±1 mm n'est qu'un repère : la tolérance est max(1 mm, 15 % du publié).</text>
+</svg>

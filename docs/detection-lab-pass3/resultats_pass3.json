@@ -1,0 +1,2057 @@
+{
+ "version": "reed-lab-pass3-1.0.0",
+ "profile": {
+  "id": "reed-lab-hypotheses",
+  "version": "1.1.0"
+ },
+ "model": "B",
+ "convention": "C1",
+ "atSource": {
+  "title": "MK04 Series Datasheet — glossary « Magnetic Sensitivity », page 2, version 02 (28 Feb 2019)",
+  "url": "https://standexdetect.com/wp-content/uploads/sites/2/2025/09/datasheet-reed-sensor-series-mk04.pdf",
+  "checkedOn": "2026-10-27"
+ },
+ "criterion": {
+  "toleranceMm": 1,
+  "tolerancePct": 15,
+  "minPassRatio": 0.9,
+  "maxAbsBiasMm": 1
+ },
+ "anchors": {
+  "datum": {
+   "className": "C",
+   "magnetId": "SMCO5-5X4",
+   "approach": "D3",
+   "bound": "up"
+  },
+  "d4": {
+   "className": "C",
+   "magnetId": "SMCO5-5X4",
+   "approach": "D4",
+   "bound": "up"
+  }
+ },
+ "retrospective": "Ancres choisies après lecture des données : validation rétrospective, pas un test indépendant nouveau.",
+ "lengthFitMm": 15.63399603080886,
+ "variants": [
+  {
+   "id": "L16-axial",
+   "mode": "axial",
+   "L": 16,
+   "k": 0.1336655628592061,
+   "datumMm": 3.345869560770513,
+   "datumResidualMm": -0.000030517578125,
+   "d4DeltaMm": null,
+   "d4AnchorRawMm": null,
+   "scores": {
+    "ce": {
+     "total": 22,
+     "passed": 19,
+     "failed": 3,
+     "unavailable": 0,
+     "ratio": 0.8636,
+     "medianAbsMm": 0.67225,
+     "maxAbsMm": 3.2284,
+     "biases": [
+      {
+       "approach": "D3",
+       "n": 7,
+       "meanMm": -0.8805,
+       "medianMm": -0.4226
+      },
+      {
+       "approach": "D4",
+       "n": 8,
+       "meanMm": 1.084675,
+       "medianMm": 0.9865
+      },
+      {
+       "approach": "D5",
+       "n": 7,
+       "meanMm": -0.441914,
+       "medianMm": -0.4025
+      }
+     ],
+     "pass": false,
+     "failures": [
+      {
+       "className": "C",
+       "magnetId": "SMCO5-5X4",
+       "approach": "D4",
+       "bound": "up",
+       "publishedMm": 6.8,
+       "estimatedMm": 8.2665,
+       "errorMm": 1.4665
+      },
+      {
+       "className": "C",
+       "magnetId": "N45-4X19",
+       "approach": "D3",
+       "bound": "to",
+       "publishedMm": 17.7,
+       "estimatedMm": 14.4716,
+       "errorMm": -3.2284
+      },
+      {
+       "className": "E",
+       "magnetId": "N45-4X19",
+       "approach": "D4",
+       "bound": "up",
+       "publishedMm": 7.3,
+       "estimatedMm": 9.0771,
+       "errorMm": 1.7771
+      }
+     ]
+    },
+    "bd": {
+     "total": 24,
+     "passed": 21,
+     "failed": 3,
+     "unavailable": 0,
+     "ratio": 0.875,
+     "medianAbsMm": 0.72265,
+     "maxAbsMm": 2.8284,
+     "biases": [
+      {
+       "approach": "D3",
+       "n": 8,
+       "meanMm": -0.839087,
+       "medianMm": -0.5873999999999999
+      },
+      {
+       "approach": "D4",
+       "n": 8,
+       "meanMm": 1.295537,
+       "medianMm": 1.3068499999999998
+      },
+      {
+       "approach": "D5",
+       "n": 8,
+       "meanMm": -0.401437,
+       "medianMm": -0.41435
+      }
+     ],
+     "pass": false,
+     "failures": [
+      {
+       "className": "B",
+       "magnetId": "SMCO5-5X4",
+       "approach": "D4",
+       "bound": "up",
+       "publishedMm": 8.3,
+       "estimatedMm": 9.7012,
+       "errorMm": 1.4012
+      },
+      {
+       "className": "B",
+       "magnetId": "SMCO5-5X4",
+       "approach": "D4",
+       "bound": "to",
+       "publishedMm": 10.2,
+       "estimatedMm": 11.8961,
+       "errorMm": 1.6961
+      },
+      {
+       "className": "B",
+       "magnetId": "N45-4X19",
+       "approach": "D3",
+       "bound": "up",
+       "publishedMm": 17.3,
+       "estimatedMm": 14.4716,
+       "errorMm": -2.8284
+      }
+     ]
+    },
+    "grouped": {
+     "total": 46,
+     "passed": 40,
+     "failed": 6,
+     "unavailable": 0,
+     "ratio": 0.8696,
+     "medianAbsMm": 0.6779,
+     "maxAbsMm": 3.2284,
+     "biases": [
+      {
+       "approach": "D3",
+       "n": 15,
+       "meanMm": -0.858413,
+       "medianMm": -0.5808
+      },
+      {
+       "approach": "D4",
+       "n": 16,
+       "meanMm": 1.190106,
+       "medianMm": 1.1542
+      },
+      {
+       "approach": "D5",
+       "n": 15,
+       "meanMm": -0.420327,
+       "medianMm": -0.4025
+      }
+     ],
+     "pass": false,
+     "failures": [
+      {
+       "className": "B",
+       "magnetId": "SMCO5-5X4",
+       "approach": "D4",
+       "bound": "up",
+       "publishedMm": 8.3,
+       "estimatedMm": 9.7012,
+       "errorMm": 1.4012
+      },
+      {
+       "className": "B",
+       "magnetId": "SMCO5-5X4",
+       "approach": "D4",
+       "bound": "to",
+       "publishedMm": 10.2,
+       "estimatedMm": 11.8961,
+       "errorMm": 1.6961
+      },
+      {
+       "className": "B",
+       "magnetId": "N45-4X19",
+       "approach": "D3",
+       "bound": "up",
+       "publishedMm": 17.3,
+       "estimatedMm": 14.4716,
+       "errorMm": -2.8284
+      },
+      {
+       "className": "C",
+       "magnetId": "SMCO5-5X4",
+       "approach": "D4",
+       "bound": "up",
+       "publishedMm": 6.8,
+       "estimatedMm": 8.2665,
+       "errorMm": 1.4665
+      },
+      {
+       "className": "C",
+       "magnetId": "N45-4X19",
+       "approach": "D3",
+       "bound": "to",
+       "publishedMm": 17.7,
+       "estimatedMm": 14.4716,
+       "errorMm": -3.2284
+      },
+      {
+       "className": "E",
+       "magnetId": "N45-4X19",
+       "approach": "D4",
+       "bound": "up",
+       "publishedMm": 7.3,
+       "estimatedMm": 9.0771,
+       "errorMm": 1.7771
+      }
+     ]
+    }
+   },
+   "af": {
+    "total": 30,
+    "passed": 18,
+    "failed": 11,
+    "unavailable": 1,
+    "ratio": 0.6,
+    "medianAbsMm": 0.8029,
+    "maxAbsMm": 6.8966,
+    "biases": [
+     {
+      "approach": "D3",
+      "n": 7,
+      "meanMm": 0.932129,
+      "medianMm": -0.194
+     },
+     {
+      "approach": "D4",
+      "n": 8,
+      "meanMm": 2.54355,
+      "medianMm": 1.93335
+     },
+     {
+      "approach": "D5",
+      "n": 6,
+      "meanMm": 0.818483,
+      "medianMm": 0.043949999999999996
+     }
+    ],
+    "pass": false,
+    "failures": [
+     {
+      "className": "A",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D1",
+      "bound": "to",
+      "publishedMm": 12.5,
+      "estimatedMm": 16.3512,
+      "errorMm": 3.8512
+     },
+     {
+      "className": "A",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D3",
+      "bound": "to",
+      "publishedMm": 13.7,
+      "estimatedMm": 16.8295,
+      "errorMm": 3.1295
+     },
+     {
+      "className": "A",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D4",
+      "bound": "up",
+      "publishedMm": 9.8,
+      "estimatedMm": 11.8961,
+      "errorMm": 2.0961
+     },
+     {
+      "className": "A",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D4",
+      "bound": "to",
+      "publishedMm": 11.1,
+      "estimatedMm": 16.242,
+      "errorMm": 5.142
+     },
+     {
+      "className": "A",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D5",
+      "bound": "to",
+      "publishedMm": 8.1,
+      "estimatedMm": 10.091,
+      "errorMm": 1.991
+     },
+     {
+      "className": "A",
+      "magnetId": "N45-4X19",
+      "approach": "D1",
+      "bound": "to",
+      "publishedMm": 22.1,
+      "estimatedMm": 28.9948,
+      "errorMm": 6.8948
+     },
+     {
+      "className": "A",
+      "magnetId": "N45-4X19",
+      "approach": "D3",
+      "bound": "to",
+      "publishedMm": 21,
+      "estimatedMm": 26.6311,
+      "errorMm": 5.6311
+     },
+     {
+      "className": "A",
+      "magnetId": "N45-4X19",
+      "approach": "D4",
+      "bound": "to",
+      "publishedMm": 16,
+      "estimatedMm": 22.8966,
+      "errorMm": 6.8966
+     },
+     {
+      "className": "A",
+      "magnetId": "N45-4X19",
+      "approach": "D5",
+      "bound": "to",
+      "publishedMm": 17.5,
+      "estimatedMm": 21.5559,
+      "errorMm": 4.0559
+     },
+     {
+      "className": "F",
+      "magnetId": "N45-4X19",
+      "approach": "D4",
+      "bound": "up",
+      "publishedMm": 6.4,
+      "estimatedMm": 8.2202,
+      "errorMm": 1.8202
+     },
+     {
+      "className": "F",
+      "magnetId": "N45-4X19",
+      "approach": "D4",
+      "bound": "to",
+      "publishedMm": 7.7,
+      "estimatedMm": 9.0771,
+      "errorMm": 1.3771
+     }
+    ]
+   }
+  },
+  {
+   "id": "L16-bprime",
+   "mode": "bprime",
+   "L": 16,
+   "k": 0.1336655628592061,
+   "datumMm": 3.345869560770513,
+   "datumResidualMm": -0.000030517578125,
+   "d4DeltaMm": null,
+   "d4AnchorRawMm": null,
+   "scores": {
+    "ce": {
+     "total": 22,
+     "passed": 19,
+     "failed": 3,
+     "unavailable": 0,
+     "ratio": 0.8636,
+     "medianAbsMm": 0.72035,
+     "maxAbsMm": 3.2284,
+     "biases": [
+      {
+       "approach": "D3",
+       "n": 7,
+       "meanMm": -0.8805,
+       "medianMm": -0.4226
+      },
+      {
+       "approach": "D4",
+       "n": 8,
+       "meanMm": 1.228088,
+       "medianMm": 1.0821999999999998
+      },
+      {
+       "approach": "D5",
+       "n": 7,
+       "meanMm": -0.441914,
+       "medianMm": -0.4025
+      }
+     ],
+     "pass": false,
+     "failures": [
+      {
+       "className": "C",
+       "magnetId": "SMCO5-5X4",
+       "approach": "D4",
+       "bound": "up",
+       "publishedMm": 6.8,
+       "estimatedMm": 8.4411,
+       "errorMm": 1.6411
+      },
+      {
+       "className": "C",
+       "magnetId": "N45-4X19",
+       "approach": "D3",
+       "bound": "to",
+       "publishedMm": 17.7,
+       "estimatedMm": 14.4716,
+       "errorMm": -3.2284
+      },
+      {
+       "className": "E",
+       "magnetId": "N45-4X19",
+       "approach": "D4",
+       "bound": "up",
+       "publishedMm": 7.3,
+       "estimatedMm": 9.2071,
+       "errorMm": 1.9071
+      }
+     ]
+    },
+    "bd": {
+     "total": 24,
+     "passed": 18,
+     "failed": 6,
+     "unavailable": 0,
+     "ratio": 0.75,
+     "medianAbsMm": 0.72265,
+     "maxAbsMm": 2.8284,
+     "biases": [
+      {
+       "approach": "D3",
+       "n": 8,
+       "meanMm": -0.839087,
+       "medianMm": -0.5873999999999999
+      },
+      {
+       "approach": "D4",
+       "n": 8,
+       "meanMm": 1.407125,
+       "medianMm": 1.3876
+      },
+      {
+       "approach": "D5",
+       "n": 8,
+       "meanMm": -0.401437,
+       "medianMm": -0.41435
+      }
+     ],
+     "pass": false,
+     "failures": [
+      {
+       "className": "B",
+       "magnetId": "SMCO5-5X4",
+       "approach": "D4",
+       "bound": "up",
+       "publishedMm": 8.3,
+       "estimatedMm": 9.8356,
+       "errorMm": 1.5356
+      },
+      {
+       "className": "B",
+       "magnetId": "SMCO5-5X4",
+       "approach": "D4",
+       "bound": "to",
+       "publishedMm": 10.2,
+       "estimatedMm": 11.9889,
+       "errorMm": 1.7889
+      },
+      {
+       "className": "B",
+       "magnetId": "N45-4X19",
+       "approach": "D3",
+       "bound": "up",
+       "publishedMm": 17.3,
+       "estimatedMm": 14.4716,
+       "errorMm": -2.8284
+      },
+      {
+       "className": "D",
+       "magnetId": "SMCO5-5X4",
+       "approach": "D4",
+       "bound": "up",
+       "publishedMm": 6.3,
+       "estimatedMm": 7.4248,
+       "errorMm": 1.1248
+      },
+      {
+       "className": "D",
+       "magnetId": "SMCO5-5X4",
+       "approach": "D4",
+       "bound": "to",
+       "publishedMm": 7.2,
+       "estimatedMm": 8.4411,
+       "errorMm": 1.2411
+      },
+      {
+       "className": "D",
+       "magnetId": "N45-4X19",
+       "approach": "D4",
+       "bound": "up",
+       "publishedMm": 8.9,
+       "estimatedMm": 10.2464,
+       "errorMm": 1.3464
+      }
+     ]
+    },
+    "grouped": {
+     "total": 46,
+     "passed": 37,
+     "failed": 9,
+     "unavailable": 0,
+     "ratio": 0.8043,
+     "medianAbsMm": 0.72035,
+     "maxAbsMm": 3.2284,
+     "biases": [
+      {
+       "approach": "D3",
+       "n": 15,
+       "meanMm": -0.858413,
+       "medianMm": -0.5808
+      },
+      {
+       "approach": "D4",
+       "n": 16,
+       "meanMm": 1.317606,
+       "medianMm": 1.2937500000000002
+      },
+      {
+       "approach": "D5",
+       "n": 15,
+       "meanMm": -0.420327,
+       "medianMm": -0.4025
+      }
+     ],
+     "pass": false,
+     "failures": [
+      {
+       "className": "B",
+       "magnetId": "SMCO5-5X4",
+       "approach": "D4",
+       "bound": "up",
+       "publishedMm": 8.3,
+       "estimatedMm": 9.8356,
+       "errorMm": 1.5356
+      },
+      {
+       "className": "B",
+       "magnetId": "SMCO5-5X4",
+       "approach": "D4",
+       "bound": "to",
+       "publishedMm": 10.2,
+       "estimatedMm": 11.9889,
+       "errorMm": 1.7889
+      },
+      {
+       "className": "B",
+       "magnetId": "N45-4X19",
+       "approach": "D3",
+       "bound": "up",
+       "publishedMm": 17.3,
+       "estimatedMm": 14.4716,
+       "errorMm": -2.8284
+      },
+      {
+       "className": "C",
+       "magnetId": "SMCO5-5X4",
+       "approach": "D4",
+       "bound": "up",
+       "publishedMm": 6.8,
+       "estimatedMm": 8.4411,
+       "errorMm": 1.6411
+      },
+      {
+       "className": "C",
+       "magnetId": "N45-4X19",
+       "approach": "D3",
+       "bound": "to",
+       "publishedMm": 17.7,
+       "estimatedMm": 14.4716,
+       "errorMm": -3.2284
+      },
+      {
+       "className": "D",
+       "magnetId": "SMCO5-5X4",
+       "approach": "D4",
+       "bound": "up",
+       "publishedMm": 6.3,
+       "estimatedMm": 7.4248,
+       "errorMm": 1.1248
+      },
+      {
+       "className": "D",
+       "magnetId": "SMCO5-5X4",
+       "approach": "D4",
+       "bound": "to",
+       "publishedMm": 7.2,
+       "estimatedMm": 8.4411,
+       "errorMm": 1.2411
+      },
+      {
+       "className": "D",
+       "magnetId": "N45-4X19",
+       "approach": "D4",
+       "bound": "up",
+       "publishedMm": 8.9,
+       "estimatedMm": 10.2464,
+       "errorMm": 1.3464
+      },
+      {
+       "className": "E",
+       "magnetId": "N45-4X19",
+       "approach": "D4",
+       "bound": "up",
+       "publishedMm": 7.3,
+       "estimatedMm": 9.2071,
+       "errorMm": 1.9071
+      }
+     ]
+    }
+   },
+   "af": {
+    "total": 30,
+    "passed": 18,
+    "failed": 11,
+    "unavailable": 1,
+    "ratio": 0.6,
+    "medianAbsMm": 0.8518,
+    "maxAbsMm": 6.9126,
+    "biases": [
+     {
+      "approach": "D3",
+      "n": 7,
+      "meanMm": 0.932129,
+      "medianMm": -0.194
+     },
+     {
+      "approach": "D4",
+      "n": 8,
+      "meanMm": 2.671563,
+      "medianMm": 2.0292
+     },
+     {
+      "approach": "D5",
+      "n": 6,
+      "meanMm": 0.818483,
+      "medianMm": 0.043949999999999996
+     }
+    ],
+    "pass": false,
+    "failures": [
+     {
+      "className": "A",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D1",
+      "bound": "to",
+      "publishedMm": 12.5,
+      "estimatedMm": 16.3512,
+      "errorMm": 3.8512
+     },
+     {
+      "className": "A",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D3",
+      "bound": "to",
+      "publishedMm": 13.7,
+      "estimatedMm": 16.8295,
+      "errorMm": 3.1295
+     },
+     {
+      "className": "A",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D4",
+      "bound": "up",
+      "publishedMm": 9.8,
+      "estimatedMm": 11.9889,
+      "errorMm": 2.1889
+     },
+     {
+      "className": "A",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D4",
+      "bound": "to",
+      "publishedMm": 11.1,
+      "estimatedMm": 16.2907,
+      "errorMm": 5.1907
+     },
+     {
+      "className": "A",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D5",
+      "bound": "to",
+      "publishedMm": 8.1,
+      "estimatedMm": 10.091,
+      "errorMm": 1.991
+     },
+     {
+      "className": "A",
+      "magnetId": "N45-4X19",
+      "approach": "D1",
+      "bound": "to",
+      "publishedMm": 22.1,
+      "estimatedMm": 28.9948,
+      "errorMm": 6.8948
+     },
+     {
+      "className": "A",
+      "magnetId": "N45-4X19",
+      "approach": "D3",
+      "bound": "to",
+      "publishedMm": 21,
+      "estimatedMm": 26.6311,
+      "errorMm": 5.6311
+     },
+     {
+      "className": "A",
+      "magnetId": "N45-4X19",
+      "approach": "D4",
+      "bound": "to",
+      "publishedMm": 16,
+      "estimatedMm": 22.9126,
+      "errorMm": 6.9126
+     },
+     {
+      "className": "A",
+      "magnetId": "N45-4X19",
+      "approach": "D5",
+      "bound": "to",
+      "publishedMm": 17.5,
+      "estimatedMm": 21.5559,
+      "errorMm": 4.0559
+     },
+     {
+      "className": "F",
+      "magnetId": "N45-4X19",
+      "approach": "D4",
+      "bound": "up",
+      "publishedMm": 6.4,
+      "estimatedMm": 8.3764,
+      "errorMm": 1.9764
+     },
+     {
+      "className": "F",
+      "magnetId": "N45-4X19",
+      "approach": "D4",
+      "bound": "to",
+      "publishedMm": 7.7,
+      "estimatedMm": 9.2071,
+      "errorMm": 1.5071
+     }
+    ]
+   }
+  },
+  {
+   "id": "L16-d4corr",
+   "mode": "d4corr",
+   "L": 16,
+   "k": 0.1336655628592061,
+   "datumMm": 3.345869560770513,
+   "datumResidualMm": -0.000030517578125,
+   "d4DeltaMm": 1.4665100097656252,
+   "d4AnchorRawMm": 8.266510009765625,
+   "scores": {
+    "ce": {
+     "total": 21,
+     "passed": 20,
+     "failed": 1,
+     "unavailable": 0,
+     "ratio": 0.9524,
+     "medianAbsMm": 0.4653,
+     "maxAbsMm": 3.2284,
+     "biases": [
+      {
+       "approach": "D3",
+       "n": 7,
+       "meanMm": -0.8805,
+       "medianMm": -0.4226
+      },
+      {
+       "approach": "D4",
+       "n": 7,
+       "meanMm": -0.436371,
+       "medianMm": -0.4947
+      },
+      {
+       "approach": "D5",
+       "n": 7,
+       "meanMm": -0.441914,
+       "medianMm": -0.4025
+      }
+     ],
+     "pass": true,
+     "failures": [
+      {
+       "className": "C",
+       "magnetId": "N45-4X19",
+       "approach": "D3",
+       "bound": "to",
+       "publishedMm": 17.7,
+       "estimatedMm": 14.4716,
+       "errorMm": -3.2284
+      }
+     ]
+    },
+    "bd": {
+     "total": 24,
+     "passed": 23,
+     "failed": 1,
+     "unavailable": 0,
+     "ratio": 0.9583,
+     "medianAbsMm": 0.4,
+     "maxAbsMm": 2.8284,
+     "biases": [
+      {
+       "approach": "D3",
+       "n": 8,
+       "meanMm": -0.839087,
+       "medianMm": -0.5873999999999999
+      },
+      {
+       "approach": "D4",
+       "n": 8,
+       "meanMm": -0.170962,
+       "medianMm": -0.15965000000000001
+      },
+      {
+       "approach": "D5",
+       "n": 8,
+       "meanMm": -0.401437,
+       "medianMm": -0.41435
+      }
+     ],
+     "pass": true,
+     "failures": [
+      {
+       "className": "B",
+       "magnetId": "N45-4X19",
+       "approach": "D3",
+       "bound": "up",
+       "publishedMm": 17.3,
+       "estimatedMm": 14.4716,
+       "errorMm": -2.8284
+      }
+     ]
+    },
+    "grouped": {
+     "total": 45,
+     "passed": 43,
+     "failed": 2,
+     "unavailable": 0,
+     "ratio": 0.9556,
+     "medianAbsMm": 0.4226,
+     "maxAbsMm": 3.2284,
+     "biases": [
+      {
+       "approach": "D3",
+       "n": 15,
+       "meanMm": -0.858413,
+       "medianMm": -0.5808
+      },
+      {
+       "approach": "D4",
+       "n": 15,
+       "meanMm": -0.29482,
+       "medianMm": -0.4
+      },
+      {
+       "approach": "D5",
+       "n": 15,
+       "meanMm": -0.420327,
+       "medianMm": -0.4025
+      }
+     ],
+     "pass": true,
+     "failures": [
+      {
+       "className": "B",
+       "magnetId": "N45-4X19",
+       "approach": "D3",
+       "bound": "up",
+       "publishedMm": 17.3,
+       "estimatedMm": 14.4716,
+       "errorMm": -2.8284
+      },
+      {
+       "className": "C",
+       "magnetId": "N45-4X19",
+       "approach": "D3",
+       "bound": "to",
+       "publishedMm": 17.7,
+       "estimatedMm": 14.4716,
+       "errorMm": -3.2284
+      }
+     ]
+    }
+   },
+   "af": {
+    "total": 30,
+    "passed": 20,
+    "failed": 9,
+    "unavailable": 1,
+    "ratio": 0.6667,
+    "medianAbsMm": 0.7753,
+    "maxAbsMm": 6.8948,
+    "biases": [
+     {
+      "approach": "D3",
+      "n": 7,
+      "meanMm": 0.932129,
+      "medianMm": -0.194
+     },
+     {
+      "approach": "D4",
+      "n": 8,
+      "meanMm": 1.077038,
+      "medianMm": 0.46685
+     },
+     {
+      "approach": "D5",
+      "n": 6,
+      "meanMm": 0.818483,
+      "medianMm": 0.043949999999999996
+     }
+    ],
+    "pass": false,
+    "failures": [
+     {
+      "className": "A",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D1",
+      "bound": "to",
+      "publishedMm": 12.5,
+      "estimatedMm": 16.3512,
+      "errorMm": 3.8512
+     },
+     {
+      "className": "A",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D3",
+      "bound": "to",
+      "publishedMm": 13.7,
+      "estimatedMm": 16.8295,
+      "errorMm": 3.1295
+     },
+     {
+      "className": "A",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D4",
+      "bound": "to",
+      "publishedMm": 11.1,
+      "estimatedMm": 14.7755,
+      "errorMm": 3.6755
+     },
+     {
+      "className": "A",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D5",
+      "bound": "to",
+      "publishedMm": 8.1,
+      "estimatedMm": 10.091,
+      "errorMm": 1.991
+     },
+     {
+      "className": "A",
+      "magnetId": "N45-4X19",
+      "approach": "D1",
+      "bound": "to",
+      "publishedMm": 22.1,
+      "estimatedMm": 28.9948,
+      "errorMm": 6.8948
+     },
+     {
+      "className": "A",
+      "magnetId": "N45-4X19",
+      "approach": "D3",
+      "bound": "to",
+      "publishedMm": 21,
+      "estimatedMm": 26.6311,
+      "errorMm": 5.6311
+     },
+     {
+      "className": "A",
+      "magnetId": "N45-4X19",
+      "approach": "D4",
+      "bound": "to",
+      "publishedMm": 16,
+      "estimatedMm": 21.4301,
+      "errorMm": 5.4301
+     },
+     {
+      "className": "A",
+      "magnetId": "N45-4X19",
+      "approach": "D5",
+      "bound": "to",
+      "publishedMm": 17.5,
+      "estimatedMm": 21.5559,
+      "errorMm": 4.0559
+     },
+     {
+      "className": "F",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D4",
+      "bound": "to",
+      "publishedMm": 6.1,
+      "estimatedMm": 4.9121,
+      "errorMm": -1.1879
+     }
+    ]
+   }
+  },
+  {
+   "id": "Lfit-axial",
+   "mode": "axial",
+   "L": 15.63399603080886,
+   "k": 0.13560548808516593,
+   "datumMm": 3.3340917480896373,
+   "datumResidualMm": -0.000030517578125,
+   "d4DeltaMm": null,
+   "d4AnchorRawMm": null,
+   "scores": {
+    "ce": {
+     "total": 22,
+     "passed": 19,
+     "failed": 3,
+     "unavailable": 0,
+     "ratio": 0.8636,
+     "medianAbsMm": 0.6878500000000001,
+     "maxAbsMm": 3.2717,
+     "biases": [
+      {
+       "approach": "D3",
+       "n": 7,
+       "meanMm": -0.896514,
+       "medianMm": -0.4188
+      },
+      {
+       "approach": "D4",
+       "n": 8,
+       "meanMm": 1.08545,
+       "medianMm": 0.9663999999999999
+      },
+      {
+       "approach": "D5",
+       "n": 7,
+       "meanMm": -0.444029,
+       "medianMm": -0.4098
+      }
+     ],
+     "pass": false,
+     "failures": [
+      {
+       "className": "C",
+       "magnetId": "SMCO5-5X4",
+       "approach": "D4",
+       "bound": "up",
+       "publishedMm": 6.8,
+       "estimatedMm": 8.2913,
+       "errorMm": 1.4913
+      },
+      {
+       "className": "C",
+       "magnetId": "N45-4X19",
+       "approach": "D3",
+       "bound": "to",
+       "publishedMm": 17.7,
+       "estimatedMm": 14.4283,
+       "errorMm": -3.2717
+      },
+      {
+       "className": "E",
+       "magnetId": "N45-4X19",
+       "approach": "D4",
+       "bound": "up",
+       "publishedMm": 7.3,
+       "estimatedMm": 9.0664,
+       "errorMm": 1.7664
+      }
+     ]
+    },
+    "bd": {
+     "total": 24,
+     "passed": 20,
+     "failed": 4,
+     "unavailable": 0,
+     "ratio": 0.8333,
+     "medianAbsMm": 0.7468,
+     "maxAbsMm": 2.8717,
+     "biases": [
+      {
+       "approach": "D3",
+       "n": 8,
+       "meanMm": -0.861362,
+       "medianMm": -0.60695
+      },
+      {
+       "approach": "D4",
+       "n": 8,
+       "meanMm": 1.281088,
+       "medianMm": 1.2715
+      },
+      {
+       "approach": "D5",
+       "n": 8,
+       "meanMm": -0.406262,
+       "medianMm": -0.41879999999999995
+      }
+     ],
+     "pass": false,
+     "failures": [
+      {
+       "className": "B",
+       "magnetId": "SMCO5-5X4",
+       "approach": "D4",
+       "bound": "up",
+       "publishedMm": 8.3,
+       "estimatedMm": 9.7105,
+       "errorMm": 1.4105
+      },
+      {
+       "className": "B",
+       "magnetId": "SMCO5-5X4",
+       "approach": "D4",
+       "bound": "to",
+       "publishedMm": 10.2,
+       "estimatedMm": 11.8853,
+       "errorMm": 1.6853
+      },
+      {
+       "className": "B",
+       "magnetId": "N45-4X19",
+       "approach": "D3",
+       "bound": "up",
+       "publishedMm": 17.3,
+       "estimatedMm": 14.4283,
+       "errorMm": -2.8717
+      },
+      {
+       "className": "D",
+       "magnetId": "SMCO5-5X4",
+       "approach": "D4",
+       "bound": "to",
+       "publishedMm": 7.2,
+       "estimatedMm": 8.2913,
+       "errorMm": 1.0913
+      }
+     ]
+    },
+    "grouped": {
+     "total": 46,
+     "passed": 39,
+     "failed": 7,
+     "unavailable": 0,
+     "ratio": 0.8478,
+     "medianAbsMm": 0.70765,
+     "maxAbsMm": 3.2717,
+     "biases": [
+      {
+       "approach": "D3",
+       "n": 15,
+       "meanMm": -0.877767,
+       "medianMm": -0.6046
+      },
+      {
+       "approach": "D4",
+       "n": 16,
+       "meanMm": 1.183269,
+       "medianMm": 1.156
+      },
+      {
+       "approach": "D5",
+       "n": 15,
+       "meanMm": -0.423887,
+       "medianMm": -0.417
+      }
+     ],
+     "pass": false,
+     "failures": [
+      {
+       "className": "B",
+       "magnetId": "SMCO5-5X4",
+       "approach": "D4",
+       "bound": "up",
+       "publishedMm": 8.3,
+       "estimatedMm": 9.7105,
+       "errorMm": 1.4105
+      },
+      {
+       "className": "B",
+       "magnetId": "SMCO5-5X4",
+       "approach": "D4",
+       "bound": "to",
+       "publishedMm": 10.2,
+       "estimatedMm": 11.8853,
+       "errorMm": 1.6853
+      },
+      {
+       "className": "B",
+       "magnetId": "N45-4X19",
+       "approach": "D3",
+       "bound": "up",
+       "publishedMm": 17.3,
+       "estimatedMm": 14.4283,
+       "errorMm": -2.8717
+      },
+      {
+       "className": "C",
+       "magnetId": "SMCO5-5X4",
+       "approach": "D4",
+       "bound": "up",
+       "publishedMm": 6.8,
+       "estimatedMm": 8.2913,
+       "errorMm": 1.4913
+      },
+      {
+       "className": "C",
+       "magnetId": "N45-4X19",
+       "approach": "D3",
+       "bound": "to",
+       "publishedMm": 17.7,
+       "estimatedMm": 14.4283,
+       "errorMm": -3.2717
+      },
+      {
+       "className": "D",
+       "magnetId": "SMCO5-5X4",
+       "approach": "D4",
+       "bound": "to",
+       "publishedMm": 7.2,
+       "estimatedMm": 8.2913,
+       "errorMm": 1.0913
+      },
+      {
+       "className": "E",
+       "magnetId": "N45-4X19",
+       "approach": "D4",
+       "bound": "up",
+       "publishedMm": 7.3,
+       "estimatedMm": 9.0664,
+       "errorMm": 1.7664
+      }
+     ]
+    }
+   },
+   "af": {
+    "total": 30,
+    "passed": 18,
+    "failed": 11,
+    "unavailable": 1,
+    "ratio": 0.6,
+    "medianAbsMm": 0.8098,
+    "maxAbsMm": 6.7827,
+    "biases": [
+     {
+      "approach": "D3",
+      "n": 7,
+      "meanMm": 0.897786,
+      "medianMm": -0.2093
+     },
+     {
+      "approach": "D4",
+      "n": 8,
+      "meanMm": 2.5256,
+      "medianMm": 1.8963999999999999
+     },
+     {
+      "approach": "D5",
+      "n": 6,
+      "meanMm": 0.7992,
+      "medianMm": 0.044700000000000004
+     }
+    ],
+    "pass": false,
+    "failures": [
+     {
+      "className": "A",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D1",
+      "bound": "to",
+      "publishedMm": 12.5,
+      "estimatedMm": 16.3218,
+      "errorMm": 3.8218
+     },
+     {
+      "className": "A",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D3",
+      "bound": "to",
+      "publishedMm": 13.7,
+      "estimatedMm": 16.7927,
+      "errorMm": 3.0927
+     },
+     {
+      "className": "A",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D4",
+      "bound": "up",
+      "publishedMm": 9.8,
+      "estimatedMm": 11.8853,
+      "errorMm": 2.0853
+     },
+     {
+      "className": "A",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D4",
+      "bound": "to",
+      "publishedMm": 11.1,
+      "estimatedMm": 16.1978,
+      "errorMm": 5.0978
+     },
+     {
+      "className": "A",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D5",
+      "bound": "to",
+      "publishedMm": 8.1,
+      "estimatedMm": 10.0821,
+      "errorMm": 1.9821
+     },
+     {
+      "className": "A",
+      "magnetId": "N45-4X19",
+      "approach": "D1",
+      "bound": "to",
+      "publishedMm": 22.1,
+      "estimatedMm": 28.866,
+      "errorMm": 6.766
+     },
+     {
+      "className": "A",
+      "magnetId": "N45-4X19",
+      "approach": "D3",
+      "bound": "to",
+      "publishedMm": 21,
+      "estimatedMm": 26.5293,
+      "errorMm": 5.5293
+     },
+     {
+      "className": "A",
+      "magnetId": "N45-4X19",
+      "approach": "D4",
+      "bound": "to",
+      "publishedMm": 16,
+      "estimatedMm": 22.7827,
+      "errorMm": 6.7827
+     },
+     {
+      "className": "A",
+      "magnetId": "N45-4X19",
+      "approach": "D5",
+      "bound": "to",
+      "publishedMm": 17.5,
+      "estimatedMm": 21.4917,
+      "errorMm": 3.9917
+     },
+     {
+      "className": "F",
+      "magnetId": "N45-4X19",
+      "approach": "D4",
+      "bound": "up",
+      "publishedMm": 6.4,
+      "estimatedMm": 8.2185,
+      "errorMm": 1.8185
+     },
+     {
+      "className": "F",
+      "magnetId": "N45-4X19",
+      "approach": "D4",
+      "bound": "to",
+      "publishedMm": 7.7,
+      "estimatedMm": 9.0664,
+      "errorMm": 1.3664
+     }
+    ]
+   }
+  },
+  {
+   "id": "Lfit-bprime",
+   "mode": "bprime",
+   "L": 15.63399603080886,
+   "k": 0.13560548808516593,
+   "datumMm": 3.3340917480896373,
+   "datumResidualMm": -0.000030517578125,
+   "d4DeltaMm": null,
+   "d4AnchorRawMm": null,
+   "scores": {
+    "ce": {
+     "total": 22,
+     "passed": 19,
+     "failed": 3,
+     "unavailable": 0,
+     "ratio": 0.8636,
+     "medianAbsMm": 0.7342,
+     "maxAbsMm": 3.2717,
+     "biases": [
+      {
+       "approach": "D3",
+       "n": 7,
+       "meanMm": -0.896514,
+       "medianMm": -0.4188
+      },
+      {
+       "approach": "D4",
+       "n": 8,
+       "meanMm": 1.218563,
+       "medianMm": 1.0553
+      },
+      {
+       "approach": "D5",
+       "n": 7,
+       "meanMm": -0.444029,
+       "medianMm": -0.4098
+      }
+     ],
+     "pass": false,
+     "failures": [
+      {
+       "className": "C",
+       "magnetId": "SMCO5-5X4",
+       "approach": "D4",
+       "bound": "up",
+       "publishedMm": 6.8,
+       "estimatedMm": 8.4531,
+       "errorMm": 1.6531
+      },
+      {
+       "className": "C",
+       "magnetId": "N45-4X19",
+       "approach": "D3",
+       "bound": "to",
+       "publishedMm": 17.7,
+       "estimatedMm": 14.4283,
+       "errorMm": -3.2717
+      },
+      {
+       "className": "E",
+       "magnetId": "N45-4X19",
+       "approach": "D4",
+       "bound": "up",
+       "publishedMm": 7.3,
+       "estimatedMm": 9.1875,
+       "errorMm": 1.8875
+      }
+     ]
+    },
+    "bd": {
+     "total": 24,
+     "passed": 19,
+     "failed": 5,
+     "unavailable": 0,
+     "ratio": 0.7917,
+     "medianAbsMm": 0.7468,
+     "maxAbsMm": 2.8717,
+     "biases": [
+      {
+       "approach": "D3",
+       "n": 8,
+       "meanMm": -0.861362,
+       "medianMm": -0.60695
+      },
+      {
+       "approach": "D4",
+       "n": 8,
+       "meanMm": 1.384688,
+       "medianMm": 1.3468
+      },
+      {
+       "approach": "D5",
+       "n": 8,
+       "meanMm": -0.406262,
+       "medianMm": -0.41879999999999995
+      }
+     ],
+     "pass": false,
+     "failures": [
+      {
+       "className": "B",
+       "magnetId": "SMCO5-5X4",
+       "approach": "D4",
+       "bound": "up",
+       "publishedMm": 8.3,
+       "estimatedMm": 9.8352,
+       "errorMm": 1.5352
+      },
+      {
+       "className": "B",
+       "magnetId": "SMCO5-5X4",
+       "approach": "D4",
+       "bound": "to",
+       "publishedMm": 10.2,
+       "estimatedMm": 11.9713,
+       "errorMm": 1.7713
+      },
+      {
+       "className": "B",
+       "magnetId": "N45-4X19",
+       "approach": "D3",
+       "bound": "up",
+       "publishedMm": 17.3,
+       "estimatedMm": 14.4283,
+       "errorMm": -2.8717
+      },
+      {
+       "className": "D",
+       "magnetId": "SMCO5-5X4",
+       "approach": "D4",
+       "bound": "up",
+       "publishedMm": 6.3,
+       "estimatedMm": 7.4468,
+       "errorMm": 1.1468
+      },
+      {
+       "className": "D",
+       "magnetId": "SMCO5-5X4",
+       "approach": "D4",
+       "bound": "to",
+       "publishedMm": 7.2,
+       "estimatedMm": 8.4531,
+       "errorMm": 1.2531
+      }
+     ]
+    },
+    "grouped": {
+     "total": 46,
+     "passed": 38,
+     "failed": 8,
+     "unavailable": 0,
+     "ratio": 0.8261,
+     "medianAbsMm": 0.7342,
+     "maxAbsMm": 3.2717,
+     "biases": [
+      {
+       "approach": "D3",
+       "n": 15,
+       "meanMm": -0.877767,
+       "medianMm": -0.6046
+      },
+      {
+       "approach": "D4",
+       "n": 16,
+       "meanMm": 1.301625,
+       "medianMm": 1.28565
+      },
+      {
+       "approach": "D5",
+       "n": 15,
+       "meanMm": -0.423887,
+       "medianMm": -0.417
+      }
+     ],
+     "pass": false,
+     "failures": [
+      {
+       "className": "B",
+       "magnetId": "SMCO5-5X4",
+       "approach": "D4",
+       "bound": "up",
+       "publishedMm": 8.3,
+       "estimatedMm": 9.8352,
+       "errorMm": 1.5352
+      },
+      {
+       "className": "B",
+       "magnetId": "SMCO5-5X4",
+       "approach": "D4",
+       "bound": "to",
+       "publishedMm": 10.2,
+       "estimatedMm": 11.9713,
+       "errorMm": 1.7713
+      },
+      {
+       "className": "B",
+       "magnetId": "N45-4X19",
+       "approach": "D3",
+       "bound": "up",
+       "publishedMm": 17.3,
+       "estimatedMm": 14.4283,
+       "errorMm": -2.8717
+      },
+      {
+       "className": "C",
+       "magnetId": "SMCO5-5X4",
+       "approach": "D4",
+       "bound": "up",
+       "publishedMm": 6.8,
+       "estimatedMm": 8.4531,
+       "errorMm": 1.6531
+      },
+      {
+       "className": "C",
+       "magnetId": "N45-4X19",
+       "approach": "D3",
+       "bound": "to",
+       "publishedMm": 17.7,
+       "estimatedMm": 14.4283,
+       "errorMm": -3.2717
+      },
+      {
+       "className": "D",
+       "magnetId": "SMCO5-5X4",
+       "approach": "D4",
+       "bound": "up",
+       "publishedMm": 6.3,
+       "estimatedMm": 7.4468,
+       "errorMm": 1.1468
+      },
+      {
+       "className": "D",
+       "magnetId": "SMCO5-5X4",
+       "approach": "D4",
+       "bound": "to",
+       "publishedMm": 7.2,
+       "estimatedMm": 8.4531,
+       "errorMm": 1.2531
+      },
+      {
+       "className": "E",
+       "magnetId": "N45-4X19",
+       "approach": "D4",
+       "bound": "up",
+       "publishedMm": 7.3,
+       "estimatedMm": 9.1875,
+       "errorMm": 1.8875
+      }
+     ]
+    }
+   },
+   "af": {
+    "total": 30,
+    "passed": 17,
+    "failed": 12,
+    "unavailable": 1,
+    "ratio": 0.5667,
+    "medianAbsMm": 0.865,
+    "maxAbsMm": 6.7976,
+    "biases": [
+     {
+      "approach": "D3",
+      "n": 7,
+      "meanMm": 0.897786,
+      "medianMm": -0.2093
+     },
+     {
+      "approach": "D4",
+      "n": 8,
+      "meanMm": 2.644288,
+      "medianMm": 1.98575
+     },
+     {
+      "approach": "D5",
+      "n": 6,
+      "meanMm": 0.7992,
+      "medianMm": 0.044700000000000004
+     }
+    ],
+    "pass": false,
+    "failures": [
+     {
+      "className": "A",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D1",
+      "bound": "to",
+      "publishedMm": 12.5,
+      "estimatedMm": 16.3218,
+      "errorMm": 3.8218
+     },
+     {
+      "className": "A",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D3",
+      "bound": "to",
+      "publishedMm": 13.7,
+      "estimatedMm": 16.7927,
+      "errorMm": 3.0927
+     },
+     {
+      "className": "A",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D4",
+      "bound": "up",
+      "publishedMm": 9.8,
+      "estimatedMm": 11.9713,
+      "errorMm": 2.1713
+     },
+     {
+      "className": "A",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D4",
+      "bound": "to",
+      "publishedMm": 11.1,
+      "estimatedMm": 16.2429,
+      "errorMm": 5.1429
+     },
+     {
+      "className": "A",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D5",
+      "bound": "to",
+      "publishedMm": 8.1,
+      "estimatedMm": 10.0821,
+      "errorMm": 1.9821
+     },
+     {
+      "className": "A",
+      "magnetId": "N45-4X19",
+      "approach": "D1",
+      "bound": "to",
+      "publishedMm": 22.1,
+      "estimatedMm": 28.866,
+      "errorMm": 6.766
+     },
+     {
+      "className": "A",
+      "magnetId": "N45-4X19",
+      "approach": "D3",
+      "bound": "to",
+      "publishedMm": 21,
+      "estimatedMm": 26.5293,
+      "errorMm": 5.5293
+     },
+     {
+      "className": "A",
+      "magnetId": "N45-4X19",
+      "approach": "D4",
+      "bound": "to",
+      "publishedMm": 16,
+      "estimatedMm": 22.7976,
+      "errorMm": 6.7976
+     },
+     {
+      "className": "A",
+      "magnetId": "N45-4X19",
+      "approach": "D5",
+      "bound": "to",
+      "publishedMm": 17.5,
+      "estimatedMm": 21.4917,
+      "errorMm": 3.9917
+     },
+     {
+      "className": "F",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D4",
+      "bound": "up",
+      "publishedMm": 5,
+      "estimatedMm": 6.0215,
+      "errorMm": 1.0215
+     },
+     {
+      "className": "F",
+      "magnetId": "N45-4X19",
+      "approach": "D4",
+      "bound": "up",
+      "publishedMm": 6.4,
+      "estimatedMm": 8.3643,
+      "errorMm": 1.9643
+     },
+     {
+      "className": "F",
+      "magnetId": "N45-4X19",
+      "approach": "D4",
+      "bound": "to",
+      "publishedMm": 7.7,
+      "estimatedMm": 9.1875,
+      "errorMm": 1.4875
+     }
+    ]
+   }
+  },
+  {
+   "id": "Lfit-d4corr",
+   "mode": "d4corr",
+   "L": 15.63399603080886,
+   "k": 0.13560548808516593,
+   "datumMm": 3.3340917480896373,
+   "datumResidualMm": -0.000030517578125,
+   "d4DeltaMm": 1.4912902832031252,
+   "d4AnchorRawMm": 8.291290283203125,
+   "scores": {
+    "ce": {
+     "total": 21,
+     "passed": 20,
+     "failed": 1,
+     "unavailable": 0,
+     "ratio": 0.9524,
+     "medianAbsMm": 0.4807,
+     "maxAbsMm": 3.2717,
+     "biases": [
+      {
+       "approach": "D3",
+       "n": 7,
+       "meanMm": -0.896514,
+       "medianMm": -0.4188
+      },
+      {
+       "approach": "D4",
+       "n": 7,
+       "meanMm": -0.463814,
+       "medianMm": -0.569
+      },
+      {
+       "approach": "D5",
+       "n": 7,
+       "meanMm": -0.444029,
+       "medianMm": -0.4098
+      }
+     ],
+     "pass": true,
+     "failures": [
+      {
+       "className": "C",
+       "magnetId": "N45-4X19",
+       "approach": "D3",
+       "bound": "to",
+       "publishedMm": 17.7,
+       "estimatedMm": 14.4283,
+       "errorMm": -3.2717
+      }
+     ]
+    },
+    "bd": {
+     "total": 24,
+     "passed": 23,
+     "failed": 1,
+     "unavailable": 0,
+     "ratio": 0.9583,
+     "medianAbsMm": 0.4085,
+     "maxAbsMm": 2.8717,
+     "biases": [
+      {
+       "approach": "D3",
+       "n": 8,
+       "meanMm": -0.861362,
+       "medianMm": -0.60695
+      },
+      {
+       "approach": "D4",
+       "n": 8,
+       "meanMm": -0.210187,
+       "medianMm": -0.2198
+      },
+      {
+       "approach": "D5",
+       "n": 8,
+       "meanMm": -0.406262,
+       "medianMm": -0.41879999999999995
+      }
+     ],
+     "pass": true,
+     "failures": [
+      {
+       "className": "B",
+       "magnetId": "N45-4X19",
+       "approach": "D3",
+       "bound": "up",
+       "publishedMm": 17.3,
+       "estimatedMm": 14.4283,
+       "errorMm": -2.8717
+      }
+     ]
+    },
+    "grouped": {
+     "total": 45,
+     "passed": 43,
+     "failed": 2,
+     "unavailable": 0,
+     "ratio": 0.9556,
+     "medianAbsMm": 0.4188,
+     "maxAbsMm": 3.2717,
+     "biases": [
+      {
+       "approach": "D3",
+       "n": 15,
+       "meanMm": -0.877767,
+       "medianMm": -0.6046
+      },
+      {
+       "approach": "D4",
+       "n": 15,
+       "meanMm": -0.328547,
+       "medianMm": -0.4
+      },
+      {
+       "approach": "D5",
+       "n": 15,
+       "meanMm": -0.423887,
+       "medianMm": -0.417
+      }
+     ],
+     "pass": true,
+     "failures": [
+      {
+       "className": "B",
+       "magnetId": "N45-4X19",
+       "approach": "D3",
+       "bound": "up",
+       "publishedMm": 17.3,
+       "estimatedMm": 14.4283,
+       "errorMm": -2.8717
+      },
+      {
+       "className": "C",
+       "magnetId": "N45-4X19",
+       "approach": "D3",
+       "bound": "to",
+       "publishedMm": 17.7,
+       "estimatedMm": 14.4283,
+       "errorMm": -3.2717
+      }
+     ]
+    }
+   },
+   "af": {
+    "total": 30,
+    "passed": 20,
+    "failed": 9,
+    "unavailable": 1,
+    "ratio": 0.6667,
+    "medianAbsMm": 0.7396,
+    "maxAbsMm": 6.766,
+    "biases": [
+     {
+      "approach": "D3",
+      "n": 7,
+      "meanMm": 0.897786,
+      "medianMm": -0.2093
+     },
+     {
+      "approach": "D4",
+      "n": 8,
+      "meanMm": 1.034325,
+      "medianMm": 0.4051
+     },
+     {
+      "approach": "D5",
+      "n": 6,
+      "meanMm": 0.7992,
+      "medianMm": 0.044700000000000004
+     }
+    ],
+    "pass": false,
+    "failures": [
+     {
+      "className": "A",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D1",
+      "bound": "to",
+      "publishedMm": 12.5,
+      "estimatedMm": 16.3218,
+      "errorMm": 3.8218
+     },
+     {
+      "className": "A",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D3",
+      "bound": "to",
+      "publishedMm": 13.7,
+      "estimatedMm": 16.7927,
+      "errorMm": 3.0927
+     },
+     {
+      "className": "A",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D4",
+      "bound": "to",
+      "publishedMm": 11.1,
+      "estimatedMm": 14.7065,
+      "errorMm": 3.6065
+     },
+     {
+      "className": "A",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D5",
+      "bound": "to",
+      "publishedMm": 8.1,
+      "estimatedMm": 10.0821,
+      "errorMm": 1.9821
+     },
+     {
+      "className": "A",
+      "magnetId": "N45-4X19",
+      "approach": "D1",
+      "bound": "to",
+      "publishedMm": 22.1,
+      "estimatedMm": 28.866,
+      "errorMm": 6.766
+     },
+     {
+      "className": "A",
+      "magnetId": "N45-4X19",
+      "approach": "D3",
+      "bound": "to",
+      "publishedMm": 21,
+      "estimatedMm": 26.5293,
+      "errorMm": 5.5293
+     },
+     {
+      "className": "A",
+      "magnetId": "N45-4X19",
+      "approach": "D4",
+      "bound": "to",
+      "publishedMm": 16,
+      "estimatedMm": 21.2915,
+      "errorMm": 5.2915
+     },
+     {
+      "className": "A",
+      "magnetId": "N45-4X19",
+      "approach": "D5",
+      "bound": "to",
+      "publishedMm": 17.5,
+      "estimatedMm": 21.4917,
+      "errorMm": 3.9917
+     },
+     {
+      "className": "F",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D4",
+      "bound": "to",
+      "publishedMm": 6.1,
+      "estimatedMm": 4.9368,
+      "errorMm": -1.1632
+     }
+    ]
+   }
+  }
+ ]
+}
