@@ -35008,5 +35008,104 @@
     "Опубликованное типичное расстояние: {0} мм · ориентировочно, требует подтверждения",
     "Distanza tipica pubblicata: {0} mm · indicativa, da confermare",
     "公表された代表距離：{0} mm · 目安、要確認"
+  ],
+  "Enveloppe simplifiée testée · centre interne estimé, non mesuré": [
+    "Simplified tested envelope · estimated internal centre, not measured",
+    "简化测试包络 · 内部中心为估算，未测量",
+    "Vereinfachte geprüfte Hülle · innerer Mittelpunkt geschätzt, nicht gemessen",
+    "Envolvente simplificada probada · centro interno estimado, no medido",
+    "Упрощённая проверенная оболочка · внутренний центр оценён, не измерен",
+    "Involucro semplificato testato · centro interno stimato, non misurato",
+    "簡略化した検査外形 · 内部中心は推定、未測定"
+  ],
+  "Plan de coupe hors du domaine calculé (±24 mm)": [
+    "Section plane outside the computed domain (±24 mm)",
+    "剖面超出计算范围（±24 mm）",
+    "Schnittebene außerhalb des berechneten Bereichs (±24 mm)",
+    "Plano de corte fuera del dominio calculado (±24 mm)",
+    "Плоскость сечения вне расчётной области (±24 мм)",
+    "Piano di sezione fuori dal dominio calcolato (±24 mm)",
+    "断面が計算範囲外（±24 mm）"
+  ],
+  "Couleurs : valeurs nominales ; le verdict vérifie les neuf hypothèses": [
+    "Colours: nominal values; the verdict checks all nine hypotheses",
+    "颜色：名义值；结论检验全部九种假设",
+    "Farben: Nennwerte; das Urteil prüft alle neun Hypothesen",
+    "Colores: valores nominales; el veredicto verifica las nueve hipótesis",
+    "Цвета: номинальные значения; вердикт проверяет все девять гипотез",
+    "Colori: valori nominali; il verdetto verifica le nove ipotesi",
+    "色：公称値。判定は9つの仮説すべてを確認"
+  ],
+  "Calcul des zones interrompu": [
+    "Zone calculation interrupted",
+    "区域计算已中断",
+    "Zonenberechnung unterbrochen",
+    "Cálculo de zonas interrumpido",
+    "Расчёт зон прерван",
+    "Calcolo delle zone interrotto",
+    "ゾーン計算が中断されました"
+  ],
+  "L’implantation interne supposée ne reproduit pas encore la distance frontale publiée. Les zones affichées ne permettent pas de conclure sur cette approche ; faire confirmer le placement par Standex.": [
+    "The assumed internal layout does not yet reproduce the published frontal distance. The zones shown do not allow a conclusion for this approach; have Standex confirm the placement.",
+    "假设的内部布置尚未再现公布的正面距离。所示区域无法对该接近方式下结论；请由 Standex 确认放置。",
+    "Die angenommene innere Anordnung bildet den veröffentlichten frontalen Abstand noch nicht nach. Die gezeigten Zonen erlauben keine Aussage zu dieser Annäherung; Platzierung von Standex bestätigen lassen.",
+    "La implantación interna supuesta aún no reproduce la distancia frontal publicada. Las zonas mostradas no permiten concluir sobre esta aproximación; haga confirmar la colocación por Standex.",
+    "Предполагаемая внутренняя компоновка пока не воспроизводит опубликованное фронтальное расстояние. Показанные зоны не позволяют сделать вывод для этого подхода; подтвердите размещение у Standex.",
+    "L’implantazione interna ipotizzata non riproduce ancora la distanza frontale pubblicata. Le zone mostrate non consentono conclusioni su questo approccio; far confermare il posizionamento da Standex.",
+    "想定した内部配置は公表された正面距離をまだ再現していません。表示ゾーンではこの接近方向について結論できません。配置は Standex に確認してください。"
+  ],
+  "Classe de modèle C de repli : classe du produit non connue.": [
+    "Fallback model class C: product class unknown.",
+    "备用模型等级 C：产品等级未知。",
+    "Ersatz-Modellklasse C: Produktklasse unbekannt.",
+    "Clase de modelo C de respaldo: clase del producto desconocida.",
+    "Резервный класс модели C: класс изделия неизвестен.",
+    "Classe di modello C di ripiego: classe del prodotto sconosciuta.",
+    "代替モデルクラス C：製品クラス不明。"
+  ],
+  "Reed 66 identifié par la variante choisie": [
+    "66 reed identified by the chosen variant",
+    "由所选型号确定为 66 干簧管",
+    "66er-Reed durch die gewählte Variante identifiziert",
+    "Reed 66 identificado por la variante elegida",
+    "Геркон 66 определён выбранным вариантом",
+    "Reed 66 identificato dalla variante scelta",
+    "選択した品番で 66 リードと特定"
+  ],
+  "Reed 66 supposé : variante non précisée": [
+    "66 reed assumed: variant not specified",
+    "假定为 66 干簧管：未指定型号",
+    "66er-Reed angenommen: Variante nicht angegeben",
+    "Reed 66 supuesto: variante no especificada",
+    "Предполагается геркон 66: вариант не указан",
+    "Reed 66 ipotizzato: variante non specificata",
+    "66 リードと想定：品番未指定"
+  ],
+  "Analogie avec un autre reed : réponse transposée, non mesurée": [
+    "Analogy with another reed: transposed response, not measured",
+    "与其他干簧管类比：响应为换算，未测量",
+    "Analogie zu einem anderen Reed: übertragene Antwort, nicht gemessen",
+    "Analogía con otro reed: respuesta transpuesta, no medida",
+    "Аналогия с другим герконом: перенесённый отклик, не измерен",
+    "Analogia con un altro reed: risposta trasposta, non misurata",
+    "別リードとの類推：換算した応答、未測定"
+  ],
+  "Longueur de reed hypothétique : {0} mm": [
+    "Hypothetical reed length: {0} mm",
+    "假设干簧管长度：{0} mm",
+    "Hypothetische Reed-Länge: {0} mm",
+    "Longitud de reed hipotética: {0} mm",
+    "Гипотетическая длина геркона: {0} мм",
+    "Lunghezza reed ipotetica: {0} mm",
+    "仮定リード長：{0} mm"
+  ],
+  "Détail technique": [
+    "Technical detail",
+    "技术细节",
+    "Technisches Detail",
+    "Detalle técnico",
+    "Технические сведения",
+    "Dettaglio tecnico",
+    "技術詳細"
   ]
 }

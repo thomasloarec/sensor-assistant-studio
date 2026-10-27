@@ -3,7 +3,7 @@ import { t, msg } from '@/lib/i18n/core';
 import { CLIENT_LIMITS, VERIFIED_PILOTS, clientCoupleAdapter } from '@/lib/standex/client-pedagogical';
 import type { WorkshopConfig } from '@/lib/standex/magnetic-workshop';
 import { publishedClasses } from '@/lib/standex/magnetics/registries';
-import { catalogueClasses } from '@/lib/standex/catalogue-pedagogical';
+import { catalogueClasses, catalogueFamilySentence, CATALOGUE_LABELS } from '@/lib/standex/catalogue-pedagogical';
 import { magnetOptionsFor } from '@/lib/standex/default-pairs';
 import { guideRangesFor, formatGuideBound, ACTIVATION_GUIDE } from '@/lib/standex/activation-guide';
 import { sensorById } from '@/lib/standex/sensor-catalog';
@@ -52,7 +52,7 @@ export function ClientPedagogicalControls({config,update,onCatalog,onExplore,onC
     {!isPcbSensor(config.sensorId) && <Button variant="secondary" disabled={!config.machine} onClick={onCable}>{t('Pointer le câble dans la 3D')}</Button>}
     <details className="mw-advanced" data-testid="client-pedagogical-sources"><summary>{t('Sources et limites')}</summary>
       {adapter.reasons.map(reason=><p className="t-caption" key={reason}>{t(reason)}</p>)}
-      <p className="t-caption">{adapter.model.family} · {adapter.model.lengthMm} mm · {adapter.model.method} · {adapter.version}</p>
+      <p className="t-caption">{t(catalogueFamilySentence(adapter.model))}</p><p className="t-caption">{t(CATALOGUE_LABELS.datum)}</p><p className="t-caption">{msg('Longueur de reed hypothétique : {0} mm',[String(adapter.model.lengthMm)])}</p><p className="t-caption">{t('Détail technique')} · {adapter.version}</p>
       <p className="t-caption">{t('Plage documentaire indicative, sans validation de la simulation.')}</p>
       {rows.map((r,i)=><p className="t-caption" key={i}>{r.sensorReference} · {r.approachId} · <span className="t-metric">{formatGuideBound(r.upMm,r.upNote)} – {formatGuideBound(r.toMm,r.toNote)} mm</span> · {msg('Guide Standex, page {0}',[String(r.page)])}</p>)}
       {adapter.model.publishedRows.map(r=><p className="t-caption" key={r.id}>{r.sensorReference} · {r.magnetId} · {r.approachId} · {t(r.thresholdKind==='min_activation_max_release'?'Activation minimale / relâchement maximal':'Plage documentaire indicative, sans validation de la simulation.')} : <span className="t-metric">{r.pullInMm} / {r.dropOutMm} mm</span></p>)}

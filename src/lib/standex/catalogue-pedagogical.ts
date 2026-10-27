@@ -22,7 +22,7 @@ export const CATALOGUE_MODEL_VERSION='catalogue-b-analogy-1.1';
 /* i18n-canonical: internal diagnostic codes, never UI labels. */
 const INTERNAL={missing:'catalogue_profile_missing',prior:'catalogue_modelling_prior',source:'catalogue_illustrative',leads:'length_only_analogy_leads_uncharacterized'};
 /* i18n-canonical: model status, not product qualification. */
-export const CATALOGUE_LABELS={form66:'Modèle 66 adapté',documented:'Distances constructeur disponibles · géométrie estimée',analogy:'Modèle par analogie',notice:'Simulation indicative · distances à confirmer avec Standex',datum:'Centre et axe internes estimés, non mesurés par le fabricant.',proxy:'Aimant représenté par un cylindre équivalent approximatif ; identité et boîtier conservés.',class:'Classe de modèle indicative ; le contact électrique ne définit pas une classe AT.',ferrous:'MK02 est un détecteur de métal ferreux à aimant intégré : cette illustration reed + aimant externe ne prédit pas sa fonction.',partialA:'Classe A : seule la borne prudente de 10 AT est modélisée ; aucune conclusion en dessous.',material:'Matériaux et implantation non caractérisés : zones indicatives, pas de prédiction affirmative.'};
+export const CATALOGUE_LABELS={form66:'Modèle 66 adapté',documented:'Distances constructeur disponibles · géométrie estimée',analogy:'Modèle par analogie',notice:'Simulation indicative · distances à confirmer avec Standex',datum:'Centre et axe internes estimés, non mesurés par le fabricant.',proxy:'Aimant représenté par un cylindre équivalent approximatif ; identité et boîtier conservés.',class:'Classe de modèle indicative ; le contact électrique ne définit pas une classe AT.',ferrous:'MK02 est un détecteur de métal ferreux à aimant intégré : cette illustration reed + aimant externe ne prédit pas sa fonction.',f1:'L’implantation interne supposée ne reproduit pas encore la distance frontale publiée. Les zones affichées ne permettent pas de conclure sur cette approche ; faire confirmer le placement par Standex.',fallbackC:'Classe de modèle C de repli : classe du produit non connue.',reed66:'Reed 66 identifié par la variante choisie',reed66assumed:'Reed 66 supposé : variante non précisée',analogyReed:'Analogie avec un autre reed : réponse transposée, non mesurée',partialA:'Classe A : seule la borne prudente de 10 AT est modélisée ; aucune conclusion en dessous.',material:'Matériaux et implantation non caractérisés : zones indicatives, pas de prédiction affirmative.'};
 type Family='66-capable'|'other'|'illustrative';
 /** Each entry is intentional. The length is a bounded modelling prior, NOT glass specification. */
 export const CATALOGUE_PROFILES:Record<string,{family:Family;lengthMm:number;method:string}>= {
@@ -162,3 +162,10 @@ export function catalogueClasses(sensorId:string,magnetModel:string,published:re
  const guide=guideRangesFor(sensorId,magnetModel).flatMap(r=>{const m=/66([A-G])\b|66([A-G])-/.exec(r.sensorReference);const k=m?.[1]??m?.[2];return k?[k]:[];});
  return [...new Set([...published,...guide])].sort();
 }
+
+/** Notes shown next to the verdict (never remedies). */
+export function catalogueVerdictNotes(c:WorkshopConfig,m:ReturnType<typeof catalogueModel>):string[]{
+ return [...(m.className==='A'?[CATALOGUE_LABELS.partialA]:[]),...(m.className!==c.sensitivity?[CATALOGUE_LABELS.fallbackC]:[]),...(c.geometry==='F1'&&['MK37','MK38'].includes(c.sensorId)?[CATALOGUE_LABELS.f1]:[]),...(c.sensorId==='MK02'?[CATALOGUE_LABELS.ferrous]:[])];
+}
+/** Plain-language family sentence for Sources et limites. */
+export function catalogueFamilySentence(m:ReturnType<typeof catalogueModel>):string{return m.family==='66'?CATALOGUE_LABELS.reed66:m.family==='66-assumed'?CATALOGUE_LABELS.reed66assumed:CATALOGUE_LABELS.analogyReed;}
