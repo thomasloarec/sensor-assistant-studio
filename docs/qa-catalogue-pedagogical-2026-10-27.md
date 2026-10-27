@@ -54,8 +54,8 @@ Toutes les coordonnées internes de cette table sont des hypothèses. Sources : 
 |MK04 / M04|20|MK04-1A66B-500W; MK04-1A66C-500W; MK04-1A66D-500W; MK04-1A66E-500W|D1 / lateral_surface; D2 / lateral_surface; D3 / lateral_surface; D4 / lateral_surface; D5 / lateral_surface|https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/|
 |MK05 / M05|20|MK05-1A66B-500W; MK05-1A66C-500W; MK05-1A66D-500W; MK05-1A66E-500W|D1 / lateral_surface; D2 / lateral_surface; D3 / lateral_surface; D4 / lateral_surface; D5 / lateral_surface|https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/|
 |MK13 / M13|20|MK13-1A66B-500W; MK13-1A66C-500W; MK13-1A66D-500W; MK13-1A66E-500W|D1 / lateral_surface; D2 / lateral_surface; D3 / lateral_surface; D4 / lateral_surface; D5 / lateral_surface|https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/|
-|MK14 / M02|0|||—|
-|MK11-M8 / M02|0|||—|
+|MK14 / M02|20|MK14-1A66B-100W; MK14-1A66C-100W; MK14-1A66D-100W; MK14-1A66E-100W|D1 / lateral_surface; D2 / lateral_surface; D3 / lateral_surface; D4 / lateral_surface; D5 / lateral_surface|https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/|
+|MK11-M8 / M02|20|MK11/M8-1A66B-500W; MK11/M8-1A66C-500W; MK11/M8-1A66D-500W; MK11/M8-1A66E-500W|D1 / lateral_surface; D2 / lateral_surface; D3 / lateral_surface; D4 / lateral_surface; D5 / lateral_surface|https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/|
 |MK36 / M36-N42|1|MK36-1A|F1 / frontal_faces|https://standexdetect.com/wp-content/uploads/sites/2/2026/06/datasheet-reed-sensor-series-mk36.pdf|
 |MK37 / M37-N42|2|MK37-1A; MK37-1B|F1 / frontal_faces|https://standexdetect.com/wp-content/uploads/sites/2/2026/06/datasheet-reed-sensor-series-mk37.pdf|
 |MK38 / M38-N42|4|MK38-1A66B; MK38-1A85C; MK38-1B90C; MK38-1C90C|F1 / frontal_faces|https://standexdetect.com/wp-content/uploads/sites/2/2026/06/datasheet-reed-sensor-series-mk38.pdf|
