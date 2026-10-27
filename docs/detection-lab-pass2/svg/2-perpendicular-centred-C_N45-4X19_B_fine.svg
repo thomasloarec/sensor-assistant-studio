@@ -1,0 +1,2091 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 668 804" width="668" height="804" role="img" aria-label="Perpendiculaire centré — classe C (raffinée)">
+<style>
+.lab-fav{fill:oklch(0.72 0.13 205)}.lab-var{fill:oklch(0.9417 0.0052 247.88)}.lab-far{fill:oklch(0.9625 0.0035 258)}.lab-orient{fill:oklch(0.962 0.032 82)}
+.lab-undet{fill:oklch(0.8725 0.0018 247.84)}.lab-na{fill:oklch(0.9417 0.0052 247.88)}.lab-ink{fill:oklch(0.3665 0.0662 254.28)}
+.lab-stroke{stroke:oklch(0.3665 0.0662 254.28);fill:none}.lab-reed{stroke:oklch(0.3665 0.0662 254.28);stroke-width:2;fill:none}
+.lab-text{font:15px sans-serif;fill:oklch(0.3665 0.0662 254.28)}.lab-pattern{stroke:oklch(0.3665 0.0662 254.28);stroke-width:1;opacity:.45}</style><defs>
+<pattern id="lab-hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" class="lab-var"/><line x1="0" y1="0" x2="0" y2="6" class="lab-pattern"/></pattern>
+<pattern id="lab-dots" width="6" height="6" patternUnits="userSpaceOnUse"><rect width="6" height="6" class="lab-orient"/><circle cx="3" cy="3" r="1.2" class="lab-ink" opacity=".55"/></pattern>
+<pattern id="lab-lines" width="6" height="6" patternUnits="userSpaceOnUse"><rect width="6" height="6" class="lab-undet"/><line x1="0" y1="3" x2="6" y2="3" class="lab-pattern"/></pattern>
+<pattern id="lab-cross" width="6" height="6" patternUnits="userSpaceOnUse"><rect width="6" height="6" class="lab-na"/><path d="M0 0L6 6M6 0L0 6" class="lab-pattern"/></pattern>
+</defs>
+<text x="56" y="20" class="lab-text" font-weight="700">Perpendiculaire centré — classe C (raffinée) · N45-4X19 ·</text>
+<text x="56" y="40" class="lab-text" font-weight="700">modèle B · C1 · audit géométrique (profil 1.1)</text>
+<rect x="56" y="352" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="68" y="352" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="80" y="352" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="92" y="352" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="104" y="352" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="116" y="352" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="128" y="352" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="140" y="352" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="152" y="352" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="164" y="352" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="176" y="352" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="188" y="352" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="200" y="352" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="212" y="352" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="224" y="352" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="236" y="352" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="248" y="352" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="260" y="352" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="272" y="352" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="416" y="352" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="428" y="352" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="440" y="352" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="452" y="352" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="464" y="352" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="476" y="352" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="488" y="352" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="500" y="352" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="512" y="352" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="524" y="352" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="536" y="352" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="548" y="352" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="560" y="352" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="572" y="352" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="584" y="352" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="596" y="352" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="608" y="352" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="620" y="352" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="632" y="352" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="56" y="340" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="68" y="340" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="80" y="340" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="92" y="340" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="104" y="340" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="116" y="340" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="128" y="340" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="140" y="340" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="152" y="340" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="164" y="340" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="176" y="340" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="188" y="340" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="200" y="340" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="212" y="340" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="224" y="340" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="236" y="340" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="248" y="340" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="260" y="340" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="272" y="340" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="416" y="340" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="428" y="340" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="440" y="340" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="452" y="340" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="464" y="340" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="476" y="340" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="488" y="340" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="500" y="340" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="512" y="340" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="524" y="340" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="536" y="340" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="548" y="340" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="560" y="340" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="572" y="340" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="584" y="340" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="596" y="340" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="608" y="340" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="620" y="340" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="632" y="340" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="56" y="328" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="68" y="328" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="80" y="328" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="92" y="328" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="104" y="328" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="116" y="328" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="128" y="328" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="140" y="328" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="152" y="328" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="164" y="328" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="176" y="328" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="188" y="328" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="200" y="328" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="212" y="328" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="224" y="328" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="236" y="328" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="248" y="328" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="260" y="328" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="272" y="328" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="416" y="328" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="428" y="328" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="440" y="328" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="452" y="328" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="464" y="328" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="476" y="328" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="488" y="328" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="500" y="328" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="512" y="328" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="524" y="328" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="536" y="328" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="548" y="328" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="560" y="328" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="572" y="328" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="584" y="328" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="596" y="328" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="608" y="328" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="620" y="328" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="632" y="328" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="56" y="316" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="68" y="316" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="80" y="316" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="92" y="316" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="104" y="316" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="116" y="316" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="128" y="316" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="140" y="316" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="152" y="316" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="164" y="316" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="176" y="316" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="188" y="316" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="200" y="316" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="212" y="316" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="224" y="316" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="236" y="316" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="248" y="316" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="260" y="316" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="272" y="316" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="416" y="316" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="428" y="316" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="440" y="316" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="452" y="316" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="464" y="316" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="476" y="316" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="488" y="316" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="500" y="316" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="512" y="316" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="524" y="316" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="536" y="316" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="548" y="316" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="560" y="316" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="572" y="316" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="584" y="316" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="596" y="316" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="608" y="316" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="620" y="316" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="632" y="316" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="56" y="304" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="68" y="304" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="80" y="304" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="92" y="304" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="104" y="304" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="116" y="304" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="128" y="304" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="140" y="304" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="152" y="304" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="164" y="304" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="176" y="304" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="188" y="304" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="200" y="304" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="212" y="304" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="224" y="304" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="236" y="304" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="248" y="304" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="260" y="304" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="272" y="304" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="416" y="304" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="428" y="304" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="440" y="304" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="452" y="304" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="464" y="304" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="476" y="304" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="488" y="304" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="500" y="304" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="512" y="304" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="524" y="304" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="536" y="304" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="548" y="304" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="560" y="304" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="572" y="304" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="584" y="304" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="596" y="304" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="608" y="304" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="620" y="304" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="632" y="304" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="56" y="292" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="68" y="292" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="80" y="292" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="92" y="292" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="104" y="292" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="116" y="292" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="128" y="292" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="140" y="292" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="152" y="292" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="164" y="292" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="176" y="292" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="188" y="292" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="200" y="292" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="212" y="292" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="224" y="292" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="236" y="292" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="248" y="292" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="260" y="292" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="272" y="292" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="416" y="292" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="428" y="292" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="440" y="292" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="452" y="292" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="464" y="292" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="476" y="292" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="488" y="292" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="500" y="292" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="512" y="292" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="524" y="292" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="536" y="292" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="548" y="292" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="560" y="292" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="572" y="292" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="584" y="292" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="596" y="292" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="608" y="292" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="620" y="292" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="632" y="292" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="56" y="280" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="68" y="280" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="80" y="280" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="92" y="280" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="104" y="280" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="116" y="280" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="128" y="280" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="140" y="280" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="152" y="280" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="164" y="280" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="176" y="280" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="188" y="280" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="200" y="280" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="212" y="280" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="224" y="280" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="236" y="280" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="248" y="280" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="260" y="280" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="272" y="280" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="284" y="280" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="296" y="280" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="308" y="280" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="320" y="280" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="332" y="280" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="344" y="280" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="356" y="280" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="368" y="280" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="380" y="280" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="392" y="280" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="404" y="280" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="416" y="280" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="428" y="280" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="440" y="280" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="452" y="280" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="464" y="280" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="476" y="280" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="488" y="280" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="500" y="280" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="512" y="280" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="524" y="280" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="536" y="280" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="548" y="280" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="560" y="280" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="572" y="280" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="584" y="280" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="596" y="280" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="608" y="280" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="620" y="280" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="632" y="280" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="56" y="268" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="68" y="268" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="80" y="268" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="92" y="268" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="104" y="268" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="116" y="268" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="128" y="268" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="140" y="268" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="152" y="268" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="164" y="268" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="176" y="268" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="188" y="268" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="200" y="268" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="212" y="268" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="224" y="268" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="236" y="268" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="248" y="268" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="260" y="268" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="272" y="268" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="284" y="268" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="296" y="268" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="308" y="268" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="320" y="268" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="332" y="268" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="344" y="268" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="356" y="268" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="368" y="268" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="380" y="268" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="392" y="268" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="404" y="268" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="416" y="268" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="428" y="268" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="440" y="268" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="452" y="268" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="464" y="268" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="476" y="268" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="488" y="268" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="500" y="268" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="512" y="268" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="524" y="268" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="536" y="268" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="548" y="268" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="560" y="268" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="572" y="268" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="584" y="268" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="596" y="268" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="608" y="268" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="620" y="268" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="632" y="268" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="56" y="256" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="68" y="256" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="80" y="256" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="92" y="256" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="104" y="256" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="116" y="256" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="128" y="256" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="140" y="256" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="152" y="256" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="164" y="256" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="176" y="256" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="188" y="256" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="200" y="256" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="212" y="256" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="224" y="256" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="236" y="256" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="248" y="256" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="260" y="256" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="272" y="256" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="284" y="256" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="296" y="256" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="308" y="256" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="320" y="256" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="332" y="256" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="344" y="256" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="356" y="256" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="368" y="256" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="380" y="256" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="392" y="256" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="404" y="256" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="416" y="256" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="428" y="256" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="440" y="256" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="452" y="256" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="464" y="256" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="476" y="256" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="488" y="256" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="500" y="256" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="512" y="256" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="524" y="256" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="536" y="256" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="548" y="256" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="560" y="256" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="572" y="256" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="584" y="256" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="596" y="256" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="608" y="256" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="620" y="256" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="632" y="256" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="56" y="244" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="68" y="244" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="80" y="244" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="92" y="244" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="104" y="244" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="116" y="244" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="128" y="244" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="140" y="244" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="152" y="244" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="164" y="244" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="176" y="244" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="188" y="244" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="200" y="244" width="12" height="12" class="lab-fav"/>
+<rect x="212" y="244" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="224" y="244" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="236" y="244" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="248" y="244" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="260" y="244" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="272" y="244" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="284" y="244" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="296" y="244" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="308" y="244" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="320" y="244" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="332" y="244" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="344" y="244" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="356" y="244" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="368" y="244" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="380" y="244" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="392" y="244" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="404" y="244" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="416" y="244" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="428" y="244" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="440" y="244" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="452" y="244" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="464" y="244" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="476" y="244" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="488" y="244" width="12" height="12" class="lab-fav"/>
+<rect x="500" y="244" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="512" y="244" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="524" y="244" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="536" y="244" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="548" y="244" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="560" y="244" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="572" y="244" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="584" y="244" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="596" y="244" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="608" y="244" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="620" y="244" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="632" y="244" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="56" y="232" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="68" y="232" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="80" y="232" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="92" y="232" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="104" y="232" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="116" y="232" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="128" y="232" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="140" y="232" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="152" y="232" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="164" y="232" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="176" y="232" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="188" y="232" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="200" y="232" width="12" height="12" class="lab-fav"/>
+<rect x="212" y="232" width="12" height="12" class="lab-fav"/>
+<rect x="224" y="232" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="236" y="232" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="248" y="232" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="260" y="232" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="272" y="232" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="284" y="232" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="296" y="232" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="308" y="232" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="320" y="232" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="332" y="232" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="344" y="232" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="356" y="232" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="368" y="232" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="380" y="232" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="392" y="232" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="404" y="232" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="416" y="232" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="428" y="232" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="440" y="232" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="452" y="232" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="464" y="232" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="476" y="232" width="12" height="12" class="lab-fav"/>
+<rect x="488" y="232" width="12" height="12" class="lab-fav"/>
+<rect x="500" y="232" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="512" y="232" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="524" y="232" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="536" y="232" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="548" y="232" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="560" y="232" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="572" y="232" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="584" y="232" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="596" y="232" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="608" y="232" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="620" y="232" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="632" y="232" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="56" y="220" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="68" y="220" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="80" y="220" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="92" y="220" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="104" y="220" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="116" y="220" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="128" y="220" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="140" y="220" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="152" y="220" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="164" y="220" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="176" y="220" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="188" y="220" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="200" y="220" width="12" height="12" class="lab-fav"/>
+<rect x="212" y="220" width="12" height="12" class="lab-fav"/>
+<rect x="224" y="220" width="12" height="12" class="lab-fav"/>
+<rect x="236" y="220" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="248" y="220" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="260" y="220" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="272" y="220" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="284" y="220" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="296" y="220" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="308" y="220" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="320" y="220" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="332" y="220" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="344" y="220" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="356" y="220" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="368" y="220" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="380" y="220" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="392" y="220" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="404" y="220" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="416" y="220" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="428" y="220" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="440" y="220" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="452" y="220" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="464" y="220" width="12" height="12" class="lab-fav"/>
+<rect x="476" y="220" width="12" height="12" class="lab-fav"/>
+<rect x="488" y="220" width="12" height="12" class="lab-fav"/>
+<rect x="500" y="220" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="512" y="220" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="524" y="220" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="536" y="220" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="548" y="220" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="560" y="220" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="572" y="220" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="584" y="220" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="596" y="220" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="608" y="220" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="620" y="220" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="632" y="220" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="56" y="208" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="68" y="208" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="80" y="208" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="92" y="208" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="104" y="208" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="116" y="208" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="128" y="208" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="140" y="208" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="152" y="208" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="164" y="208" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="176" y="208" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="188" y="208" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="200" y="208" width="12" height="12" class="lab-fav"/>
+<rect x="212" y="208" width="12" height="12" class="lab-fav"/>
+<rect x="224" y="208" width="12" height="12" class="lab-fav"/>
+<rect x="236" y="208" width="12" height="12" class="lab-fav"/>
+<rect x="248" y="208" width="12" height="12" class="lab-fav"/>
+<rect x="260" y="208" width="12" height="12" class="lab-fav"/>
+<rect x="272" y="208" width="12" height="12" class="lab-fav"/>
+<rect x="284" y="208" width="12" height="12" class="lab-fav"/>
+<rect x="296" y="208" width="12" height="12" class="lab-fav"/>
+<rect x="308" y="208" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="320" y="208" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="332" y="208" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="344" y="208" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="356" y="208" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="368" y="208" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="380" y="208" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="392" y="208" width="12" height="12" class="lab-fav"/>
+<rect x="404" y="208" width="12" height="12" class="lab-fav"/>
+<rect x="416" y="208" width="12" height="12" class="lab-fav"/>
+<rect x="428" y="208" width="12" height="12" class="lab-fav"/>
+<rect x="440" y="208" width="12" height="12" class="lab-fav"/>
+<rect x="452" y="208" width="12" height="12" class="lab-fav"/>
+<rect x="464" y="208" width="12" height="12" class="lab-fav"/>
+<rect x="476" y="208" width="12" height="12" class="lab-fav"/>
+<rect x="488" y="208" width="12" height="12" class="lab-fav"/>
+<rect x="500" y="208" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="512" y="208" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="524" y="208" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="536" y="208" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="548" y="208" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="560" y="208" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="572" y="208" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="584" y="208" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="596" y="208" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="608" y="208" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="620" y="208" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="632" y="208" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="56" y="196" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="68" y="196" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="80" y="196" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="92" y="196" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="104" y="196" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="116" y="196" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="128" y="196" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="140" y="196" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="152" y="196" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="164" y="196" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="176" y="196" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="188" y="196" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="200" y="196" width="12" height="12" class="lab-fav"/>
+<rect x="212" y="196" width="12" height="12" class="lab-fav"/>
+<rect x="224" y="196" width="12" height="12" class="lab-fav"/>
+<rect x="236" y="196" width="12" height="12" class="lab-fav"/>
+<rect x="248" y="196" width="12" height="12" class="lab-fav"/>
+<rect x="260" y="196" width="12" height="12" class="lab-fav"/>
+<rect x="272" y="196" width="12" height="12" class="lab-fav"/>
+<rect x="284" y="196" width="12" height="12" class="lab-fav"/>
+<rect x="296" y="196" width="12" height="12" class="lab-fav"/>
+<rect x="308" y="196" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="320" y="196" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="332" y="196" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="344" y="196" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="356" y="196" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="368" y="196" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="380" y="196" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="392" y="196" width="12" height="12" class="lab-fav"/>
+<rect x="404" y="196" width="12" height="12" class="lab-fav"/>
+<rect x="416" y="196" width="12" height="12" class="lab-fav"/>
+<rect x="428" y="196" width="12" height="12" class="lab-fav"/>
+<rect x="440" y="196" width="12" height="12" class="lab-fav"/>
+<rect x="452" y="196" width="12" height="12" class="lab-fav"/>
+<rect x="464" y="196" width="12" height="12" class="lab-fav"/>
+<rect x="476" y="196" width="12" height="12" class="lab-fav"/>
+<rect x="488" y="196" width="12" height="12" class="lab-fav"/>
+<rect x="500" y="196" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="512" y="196" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="524" y="196" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="536" y="196" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="548" y="196" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="560" y="196" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="572" y="196" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="584" y="196" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="596" y="196" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="608" y="196" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="620" y="196" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="632" y="196" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="56" y="184" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="68" y="184" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="80" y="184" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="92" y="184" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="104" y="184" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="116" y="184" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="128" y="184" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="140" y="184" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="152" y="184" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="164" y="184" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="176" y="184" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="188" y="184" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="200" y="184" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="212" y="184" width="12" height="12" class="lab-fav"/>
+<rect x="224" y="184" width="12" height="12" class="lab-fav"/>
+<rect x="236" y="184" width="12" height="12" class="lab-fav"/>
+<rect x="248" y="184" width="12" height="12" class="lab-fav"/>
+<rect x="260" y="184" width="12" height="12" class="lab-fav"/>
+<rect x="272" y="184" width="12" height="12" class="lab-fav"/>
+<rect x="284" y="184" width="12" height="12" class="lab-fav"/>
+<rect x="296" y="184" width="12" height="12" class="lab-fav"/>
+<rect x="308" y="184" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="320" y="184" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="332" y="184" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="344" y="184" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="356" y="184" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="368" y="184" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="380" y="184" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="392" y="184" width="12" height="12" class="lab-fav"/>
+<rect x="404" y="184" width="12" height="12" class="lab-fav"/>
+<rect x="416" y="184" width="12" height="12" class="lab-fav"/>
+<rect x="428" y="184" width="12" height="12" class="lab-fav"/>
+<rect x="440" y="184" width="12" height="12" class="lab-fav"/>
+<rect x="452" y="184" width="12" height="12" class="lab-fav"/>
+<rect x="464" y="184" width="12" height="12" class="lab-fav"/>
+<rect x="476" y="184" width="12" height="12" class="lab-fav"/>
+<rect x="488" y="184" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="500" y="184" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="512" y="184" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="524" y="184" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="536" y="184" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="548" y="184" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="560" y="184" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="572" y="184" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="584" y="184" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="596" y="184" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="608" y="184" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="620" y="184" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="632" y="184" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="56" y="172" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="68" y="172" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="80" y="172" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="92" y="172" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="104" y="172" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="116" y="172" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="128" y="172" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="140" y="172" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="152" y="172" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="164" y="172" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="176" y="172" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="188" y="172" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="200" y="172" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="212" y="172" width="12" height="12" class="lab-fav"/>
+<rect x="224" y="172" width="12" height="12" class="lab-fav"/>
+<rect x="236" y="172" width="12" height="12" class="lab-fav"/>
+<rect x="248" y="172" width="12" height="12" class="lab-fav"/>
+<rect x="260" y="172" width="12" height="12" class="lab-fav"/>
+<rect x="272" y="172" width="12" height="12" class="lab-fav"/>
+<rect x="284" y="172" width="12" height="12" class="lab-fav"/>
+<rect x="296" y="172" width="12" height="12" class="lab-fav"/>
+<rect x="308" y="172" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="320" y="172" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="332" y="172" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="344" y="172" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="356" y="172" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="368" y="172" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="380" y="172" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="392" y="172" width="12" height="12" class="lab-fav"/>
+<rect x="404" y="172" width="12" height="12" class="lab-fav"/>
+<rect x="416" y="172" width="12" height="12" class="lab-fav"/>
+<rect x="428" y="172" width="12" height="12" class="lab-fav"/>
+<rect x="440" y="172" width="12" height="12" class="lab-fav"/>
+<rect x="452" y="172" width="12" height="12" class="lab-fav"/>
+<rect x="464" y="172" width="12" height="12" class="lab-fav"/>
+<rect x="476" y="172" width="12" height="12" class="lab-fav"/>
+<rect x="488" y="172" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="500" y="172" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="512" y="172" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="524" y="172" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="536" y="172" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="548" y="172" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="560" y="172" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="572" y="172" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="584" y="172" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="596" y="172" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="608" y="172" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="620" y="172" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="632" y="172" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="56" y="160" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="68" y="160" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="80" y="160" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="92" y="160" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="104" y="160" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="116" y="160" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="128" y="160" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="140" y="160" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="152" y="160" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="164" y="160" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="176" y="160" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="188" y="160" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="200" y="160" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="212" y="160" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="224" y="160" width="12" height="12" class="lab-fav"/>
+<rect x="236" y="160" width="12" height="12" class="lab-fav"/>
+<rect x="248" y="160" width="12" height="12" class="lab-fav"/>
+<rect x="260" y="160" width="12" height="12" class="lab-fav"/>
+<rect x="272" y="160" width="12" height="12" class="lab-fav"/>
+<rect x="284" y="160" width="12" height="12" class="lab-fav"/>
+<rect x="296" y="160" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="308" y="160" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="320" y="160" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="332" y="160" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="344" y="160" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="356" y="160" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="368" y="160" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="380" y="160" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="392" y="160" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="404" y="160" width="12" height="12" class="lab-fav"/>
+<rect x="416" y="160" width="12" height="12" class="lab-fav"/>
+<rect x="428" y="160" width="12" height="12" class="lab-fav"/>
+<rect x="440" y="160" width="12" height="12" class="lab-fav"/>
+<rect x="452" y="160" width="12" height="12" class="lab-fav"/>
+<rect x="464" y="160" width="12" height="12" class="lab-fav"/>
+<rect x="476" y="160" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="488" y="160" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="500" y="160" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="512" y="160" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="524" y="160" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="536" y="160" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="548" y="160" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="560" y="160" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="572" y="160" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="584" y="160" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="596" y="160" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="608" y="160" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="620" y="160" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="632" y="160" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="56" y="148" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="68" y="148" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="80" y="148" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="92" y="148" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="104" y="148" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="116" y="148" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="128" y="148" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="140" y="148" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="152" y="148" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="164" y="148" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="176" y="148" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="188" y="148" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="200" y="148" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="212" y="148" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="224" y="148" width="12" height="12" class="lab-fav"/>
+<rect x="236" y="148" width="12" height="12" class="lab-fav"/>
+<rect x="248" y="148" width="12" height="12" class="lab-fav"/>
+<rect x="260" y="148" width="12" height="12" class="lab-fav"/>
+<rect x="272" y="148" width="12" height="12" class="lab-fav"/>
+<rect x="284" y="148" width="12" height="12" class="lab-fav"/>
+<rect x="296" y="148" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="308" y="148" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="320" y="148" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="332" y="148" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="344" y="148" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="356" y="148" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="368" y="148" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="380" y="148" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="392" y="148" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="404" y="148" width="12" height="12" class="lab-fav"/>
+<rect x="416" y="148" width="12" height="12" class="lab-fav"/>
+<rect x="428" y="148" width="12" height="12" class="lab-fav"/>
+<rect x="440" y="148" width="12" height="12" class="lab-fav"/>
+<rect x="452" y="148" width="12" height="12" class="lab-fav"/>
+<rect x="464" y="148" width="12" height="12" class="lab-fav"/>
+<rect x="476" y="148" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="488" y="148" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="500" y="148" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="512" y="148" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="524" y="148" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="536" y="148" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="548" y="148" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="560" y="148" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="572" y="148" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="584" y="148" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="596" y="148" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="608" y="148" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="620" y="148" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="632" y="148" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="56" y="136" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="68" y="136" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="80" y="136" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="92" y="136" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="104" y="136" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="116" y="136" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="128" y="136" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="140" y="136" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="152" y="136" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="164" y="136" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="176" y="136" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="188" y="136" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="200" y="136" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="212" y="136" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="224" y="136" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="236" y="136" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="248" y="136" width="12" height="12" class="lab-fav"/>
+<rect x="260" y="136" width="12" height="12" class="lab-fav"/>
+<rect x="272" y="136" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="284" y="136" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="296" y="136" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="308" y="136" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="320" y="136" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="332" y="136" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="344" y="136" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="356" y="136" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="368" y="136" width="12" height="12" class="lab-orient" style="fill:url(#lab-dots)"/>
+<rect x="380" y="136" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="392" y="136" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="404" y="136" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="416" y="136" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="428" y="136" width="12" height="12" class="lab-fav"/>
+<rect x="440" y="136" width="12" height="12" class="lab-fav"/>
+<rect x="452" y="136" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="464" y="136" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="476" y="136" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="488" y="136" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="500" y="136" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="512" y="136" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="524" y="136" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="536" y="136" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="548" y="136" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="560" y="136" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="572" y="136" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="584" y="136" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="596" y="136" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="608" y="136" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="620" y="136" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="632" y="136" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="56" y="124" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="68" y="124" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="80" y="124" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="92" y="124" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="104" y="124" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="116" y="124" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="128" y="124" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="140" y="124" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="152" y="124" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="164" y="124" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="176" y="124" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="188" y="124" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="200" y="124" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="212" y="124" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="224" y="124" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="236" y="124" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="248" y="124" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="260" y="124" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="272" y="124" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="284" y="124" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="296" y="124" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="308" y="124" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="320" y="124" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="332" y="124" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="344" y="124" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="356" y="124" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="368" y="124" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="380" y="124" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="392" y="124" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="404" y="124" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="416" y="124" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="428" y="124" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="440" y="124" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="452" y="124" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="464" y="124" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="476" y="124" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="488" y="124" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="500" y="124" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="512" y="124" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="524" y="124" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="536" y="124" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="548" y="124" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="560" y="124" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="572" y="124" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="584" y="124" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="596" y="124" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="608" y="124" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="620" y="124" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="632" y="124" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="56" y="112" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="68" y="112" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="80" y="112" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="92" y="112" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="104" y="112" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="116" y="112" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="128" y="112" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="140" y="112" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="152" y="112" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="164" y="112" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="176" y="112" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="188" y="112" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="200" y="112" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="212" y="112" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="224" y="112" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="236" y="112" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="248" y="112" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="260" y="112" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="272" y="112" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="284" y="112" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="296" y="112" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="308" y="112" width="12" height="12" class="lab-far"/>
+<rect x="320" y="112" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="332" y="112" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="344" y="112" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="356" y="112" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="368" y="112" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="380" y="112" width="12" height="12" class="lab-far"/>
+<rect x="392" y="112" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="404" y="112" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="416" y="112" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="428" y="112" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="440" y="112" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="452" y="112" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="464" y="112" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="476" y="112" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="488" y="112" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="500" y="112" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="512" y="112" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="524" y="112" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="536" y="112" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="548" y="112" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="560" y="112" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="572" y="112" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="584" y="112" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="596" y="112" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="608" y="112" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="620" y="112" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="632" y="112" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="56" y="100" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="68" y="100" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="80" y="100" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="92" y="100" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="104" y="100" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="116" y="100" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="128" y="100" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="140" y="100" width="12" height="12" class="lab-far"/>
+<rect x="152" y="100" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="164" y="100" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="176" y="100" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="188" y="100" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="200" y="100" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="212" y="100" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="224" y="100" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="236" y="100" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="248" y="100" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="260" y="100" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="272" y="100" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="284" y="100" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="296" y="100" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="308" y="100" width="12" height="12" class="lab-far"/>
+<rect x="320" y="100" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="332" y="100" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="344" y="100" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="356" y="100" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="368" y="100" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="380" y="100" width="12" height="12" class="lab-far"/>
+<rect x="392" y="100" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="404" y="100" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="416" y="100" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="428" y="100" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="440" y="100" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="452" y="100" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="464" y="100" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="476" y="100" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="488" y="100" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="500" y="100" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="512" y="100" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="524" y="100" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="536" y="100" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="548" y="100" width="12" height="12" class="lab-far"/>
+<rect x="560" y="100" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="572" y="100" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="584" y="100" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="596" y="100" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="608" y="100" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="620" y="100" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="632" y="100" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="56" y="88" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="68" y="88" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="80" y="88" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="92" y="88" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="104" y="88" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="116" y="88" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="128" y="88" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="140" y="88" width="12" height="12" class="lab-far"/>
+<rect x="152" y="88" width="12" height="12" class="lab-far"/>
+<rect x="164" y="88" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="176" y="88" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="188" y="88" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="200" y="88" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="212" y="88" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="224" y="88" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="236" y="88" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="248" y="88" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="260" y="88" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="272" y="88" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="284" y="88" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="296" y="88" width="12" height="12" class="lab-far"/>
+<rect x="308" y="88" width="12" height="12" class="lab-far"/>
+<rect x="320" y="88" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="332" y="88" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="344" y="88" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="356" y="88" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="368" y="88" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="380" y="88" width="12" height="12" class="lab-far"/>
+<rect x="392" y="88" width="12" height="12" class="lab-far"/>
+<rect x="404" y="88" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="416" y="88" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="428" y="88" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="440" y="88" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="452" y="88" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="464" y="88" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="476" y="88" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="488" y="88" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="500" y="88" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="512" y="88" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="524" y="88" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="536" y="88" width="12" height="12" class="lab-far"/>
+<rect x="548" y="88" width="12" height="12" class="lab-far"/>
+<rect x="560" y="88" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="572" y="88" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="584" y="88" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="596" y="88" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="608" y="88" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="620" y="88" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="632" y="88" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="56" y="76" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="68" y="76" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="80" y="76" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="92" y="76" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="104" y="76" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="116" y="76" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="128" y="76" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="140" y="76" width="12" height="12" class="lab-far"/>
+<rect x="152" y="76" width="12" height="12" class="lab-far"/>
+<rect x="164" y="76" width="12" height="12" class="lab-far"/>
+<rect x="176" y="76" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="188" y="76" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="200" y="76" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="212" y="76" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="224" y="76" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="236" y="76" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="248" y="76" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="260" y="76" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="272" y="76" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="284" y="76" width="12" height="12" class="lab-far"/>
+<rect x="296" y="76" width="12" height="12" class="lab-far"/>
+<rect x="308" y="76" width="12" height="12" class="lab-far"/>
+<rect x="320" y="76" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="332" y="76" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="344" y="76" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="356" y="76" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="368" y="76" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="380" y="76" width="12" height="12" class="lab-far"/>
+<rect x="392" y="76" width="12" height="12" class="lab-far"/>
+<rect x="404" y="76" width="12" height="12" class="lab-far"/>
+<rect x="416" y="76" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="428" y="76" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="440" y="76" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="452" y="76" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="464" y="76" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="476" y="76" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="488" y="76" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="500" y="76" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="512" y="76" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="524" y="76" width="12" height="12" class="lab-far"/>
+<rect x="536" y="76" width="12" height="12" class="lab-far"/>
+<rect x="548" y="76" width="12" height="12" class="lab-far"/>
+<rect x="560" y="76" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="572" y="76" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="584" y="76" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="596" y="76" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="608" y="76" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="620" y="76" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="632" y="76" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="56" y="64" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="68" y="64" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="80" y="64" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="92" y="64" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="104" y="64" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="116" y="64" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="128" y="64" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="140" y="64" width="12" height="12" class="lab-far"/>
+<rect x="152" y="64" width="12" height="12" class="lab-far"/>
+<rect x="164" y="64" width="12" height="12" class="lab-far"/>
+<rect x="176" y="64" width="12" height="12" class="lab-far"/>
+<rect x="188" y="64" width="12" height="12" class="lab-far"/>
+<rect x="200" y="64" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="212" y="64" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="224" y="64" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="236" y="64" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="248" y="64" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="260" y="64" width="12" height="12" class="lab-far"/>
+<rect x="272" y="64" width="12" height="12" class="lab-far"/>
+<rect x="284" y="64" width="12" height="12" class="lab-far"/>
+<rect x="296" y="64" width="12" height="12" class="lab-far"/>
+<rect x="308" y="64" width="12" height="12" class="lab-far"/>
+<rect x="320" y="64" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="332" y="64" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="344" y="64" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="356" y="64" width="12" height="12" class="lab-na" style="fill:url(#lab-cross)"/>
+<rect x="368" y="64" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="380" y="64" width="12" height="12" class="lab-far"/>
+<rect x="392" y="64" width="12" height="12" class="lab-far"/>
+<rect x="404" y="64" width="12" height="12" class="lab-far"/>
+<rect x="416" y="64" width="12" height="12" class="lab-far"/>
+<rect x="428" y="64" width="12" height="12" class="lab-far"/>
+<rect x="440" y="64" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="452" y="64" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="464" y="64" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="476" y="64" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="488" y="64" width="12" height="12" class="lab-var" style="fill:url(#lab-hatch)"/>
+<rect x="500" y="64" width="12" height="12" class="lab-far"/>
+<rect x="512" y="64" width="12" height="12" class="lab-far"/>
+<rect x="524" y="64" width="12" height="12" class="lab-far"/>
+<rect x="536" y="64" width="12" height="12" class="lab-far"/>
+<rect x="548" y="64" width="12" height="12" class="lab-far"/>
+<rect x="560" y="64" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="572" y="64" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="584" y="64" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="596" y="64" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="608" y="64" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="620" y="64" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="632" y="64" width="12" height="12" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="288.5" y="356.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="291.5" y="356.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="294.5" y="356.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="297.5" y="356.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="300.5" y="356.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="303.5" y="356.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="306.5" y="356.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="309.5" y="356.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="312.5" y="356.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="315.5" y="356.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="318.5" y="356.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="321.5" y="356.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="324.5" y="356.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="327.5" y="356.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="330.5" y="356.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="333.5" y="356.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="336.5" y="356.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="339.5" y="356.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="342.5" y="356.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="345.5" y="356.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="348.5" y="356.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="351.5" y="356.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="354.5" y="356.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="357.5" y="356.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="360.5" y="356.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="363.5" y="356.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="366.5" y="356.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="369.5" y="356.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="372.5" y="356.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="375.5" y="356.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="378.5" y="356.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="381.5" y="356.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="384.5" y="356.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="387.5" y="356.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="390.5" y="356.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="393.5" y="356.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="396.5" y="356.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="399.5" y="356.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="402.5" y="356.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="405.5" y="356.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="408.5" y="356.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="288.5" y="353.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="291.5" y="353.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="294.5" y="353.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="297.5" y="353.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="300.5" y="353.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="303.5" y="353.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="306.5" y="353.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="309.5" y="353.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="312.5" y="353.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="315.5" y="353.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="318.5" y="353.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="321.5" y="353.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="324.5" y="353.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="327.5" y="353.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="330.5" y="353.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="333.5" y="353.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="336.5" y="353.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="339.5" y="353.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="342.5" y="353.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="345.5" y="353.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="348.5" y="353.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="351.5" y="353.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="354.5" y="353.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="357.5" y="353.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="360.5" y="353.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="363.5" y="353.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="366.5" y="353.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="369.5" y="353.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="372.5" y="353.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="375.5" y="353.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="378.5" y="353.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="381.5" y="353.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="384.5" y="353.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="387.5" y="353.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="390.5" y="353.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="393.5" y="353.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="396.5" y="353.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="399.5" y="353.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="402.5" y="353.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="405.5" y="353.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="408.5" y="353.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="288.5" y="350.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="291.5" y="350.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="294.5" y="350.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="297.5" y="350.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="300.5" y="350.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="303.5" y="350.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="306.5" y="350.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="309.5" y="350.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="312.5" y="350.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="315.5" y="350.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="318.5" y="350.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="321.5" y="350.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="324.5" y="350.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="327.5" y="350.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="330.5" y="350.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="333.5" y="350.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="336.5" y="350.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="339.5" y="350.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="342.5" y="350.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="345.5" y="350.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="348.5" y="350.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="351.5" y="350.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="354.5" y="350.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="357.5" y="350.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="360.5" y="350.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="363.5" y="350.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="366.5" y="350.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="369.5" y="350.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="372.5" y="350.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="375.5" y="350.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="378.5" y="350.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="381.5" y="350.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="384.5" y="350.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="387.5" y="350.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="390.5" y="350.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="393.5" y="350.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="396.5" y="350.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="399.5" y="350.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="402.5" y="350.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="405.5" y="350.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="408.5" y="350.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="288.5" y="347.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="291.5" y="347.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="294.5" y="347.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="297.5" y="347.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="300.5" y="347.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="303.5" y="347.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="306.5" y="347.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="309.5" y="347.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="312.5" y="347.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="315.5" y="347.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="318.5" y="347.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="321.5" y="347.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="324.5" y="347.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="327.5" y="347.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="330.5" y="347.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="333.5" y="347.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="336.5" y="347.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="339.5" y="347.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="342.5" y="347.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="345.5" y="347.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="348.5" y="347.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="351.5" y="347.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="354.5" y="347.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="357.5" y="347.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="360.5" y="347.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="363.5" y="347.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="366.5" y="347.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="369.5" y="347.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="372.5" y="347.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="375.5" y="347.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="378.5" y="347.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="381.5" y="347.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="384.5" y="347.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="387.5" y="347.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="390.5" y="347.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="393.5" y="347.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="396.5" y="347.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="399.5" y="347.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="402.5" y="347.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="405.5" y="347.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="408.5" y="347.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="288.5" y="344.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="291.5" y="344.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="294.5" y="344.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="297.5" y="344.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="300.5" y="344.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="303.5" y="344.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="306.5" y="344.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="309.5" y="344.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="312.5" y="344.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="315.5" y="344.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="318.5" y="344.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="321.5" y="344.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="324.5" y="344.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="327.5" y="344.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="330.5" y="344.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="333.5" y="344.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="336.5" y="344.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="339.5" y="344.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="342.5" y="344.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="345.5" y="344.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="348.5" y="344.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="351.5" y="344.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="354.5" y="344.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="357.5" y="344.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="360.5" y="344.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="363.5" y="344.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="366.5" y="344.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="369.5" y="344.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="372.5" y="344.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="375.5" y="344.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="378.5" y="344.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="381.5" y="344.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="384.5" y="344.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="387.5" y="344.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="390.5" y="344.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="393.5" y="344.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="396.5" y="344.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="399.5" y="344.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="402.5" y="344.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="405.5" y="344.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="408.5" y="344.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="288.5" y="341.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="291.5" y="341.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="294.5" y="341.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="297.5" y="341.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="300.5" y="341.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="303.5" y="341.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="306.5" y="341.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="309.5" y="341.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="312.5" y="341.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="315.5" y="341.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="318.5" y="341.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="321.5" y="341.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="324.5" y="341.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="327.5" y="341.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="330.5" y="341.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="333.5" y="341.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="336.5" y="341.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="339.5" y="341.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="342.5" y="341.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="345.5" y="341.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="348.5" y="341.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="351.5" y="341.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="354.5" y="341.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="357.5" y="341.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="360.5" y="341.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="363.5" y="341.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="366.5" y="341.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="369.5" y="341.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="372.5" y="341.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="375.5" y="341.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="378.5" y="341.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="381.5" y="341.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="384.5" y="341.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="387.5" y="341.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="390.5" y="341.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="393.5" y="341.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="396.5" y="341.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="399.5" y="341.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="402.5" y="341.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="405.5" y="341.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="408.5" y="341.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="288.5" y="338.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="291.5" y="338.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="294.5" y="338.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="297.5" y="338.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="300.5" y="338.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="303.5" y="338.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="306.5" y="338.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="309.5" y="338.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="312.5" y="338.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="315.5" y="338.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="318.5" y="338.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="321.5" y="338.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="324.5" y="338.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="327.5" y="338.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="330.5" y="338.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="333.5" y="338.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="336.5" y="338.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="339.5" y="338.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="342.5" y="338.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="345.5" y="338.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="348.5" y="338.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="351.5" y="338.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="354.5" y="338.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="357.5" y="338.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="360.5" y="338.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="363.5" y="338.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="366.5" y="338.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="369.5" y="338.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="372.5" y="338.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="375.5" y="338.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="378.5" y="338.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="381.5" y="338.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="384.5" y="338.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="387.5" y="338.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="390.5" y="338.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="393.5" y="338.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="396.5" y="338.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="399.5" y="338.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="402.5" y="338.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="405.5" y="338.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="408.5" y="338.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="288.5" y="335.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="291.5" y="335.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="294.5" y="335.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="297.5" y="335.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="300.5" y="335.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="303.5" y="335.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="306.5" y="335.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="309.5" y="335.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="312.5" y="335.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="315.5" y="335.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="318.5" y="335.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="321.5" y="335.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="324.5" y="335.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="327.5" y="335.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="330.5" y="335.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="333.5" y="335.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="336.5" y="335.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="339.5" y="335.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="342.5" y="335.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="345.5" y="335.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="348.5" y="335.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="351.5" y="335.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="354.5" y="335.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="357.5" y="335.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="360.5" y="335.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="363.5" y="335.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="366.5" y="335.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="369.5" y="335.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="372.5" y="335.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="375.5" y="335.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="378.5" y="335.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="381.5" y="335.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="384.5" y="335.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="387.5" y="335.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="390.5" y="335.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="393.5" y="335.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="396.5" y="335.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="399.5" y="335.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="402.5" y="335.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="405.5" y="335.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="408.5" y="335.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="288.5" y="332.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="291.5" y="332.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="294.5" y="332.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="297.5" y="332.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="300.5" y="332.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="303.5" y="332.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="306.5" y="332.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="309.5" y="332.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="312.5" y="332.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="315.5" y="332.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="318.5" y="332.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="321.5" y="332.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="324.5" y="332.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="327.5" y="332.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="330.5" y="332.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="333.5" y="332.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="336.5" y="332.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="339.5" y="332.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="342.5" y="332.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="345.5" y="332.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="348.5" y="332.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="351.5" y="332.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="354.5" y="332.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="357.5" y="332.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="360.5" y="332.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="363.5" y="332.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="366.5" y="332.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="369.5" y="332.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="372.5" y="332.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="375.5" y="332.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="378.5" y="332.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="381.5" y="332.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="384.5" y="332.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="387.5" y="332.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="390.5" y="332.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="393.5" y="332.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="396.5" y="332.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="399.5" y="332.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="402.5" y="332.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="405.5" y="332.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="408.5" y="332.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="288.5" y="329.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="291.5" y="329.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="294.5" y="329.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="297.5" y="329.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="300.5" y="329.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="303.5" y="329.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="306.5" y="329.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="309.5" y="329.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="312.5" y="329.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="315.5" y="329.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="318.5" y="329.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="321.5" y="329.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="324.5" y="329.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="327.5" y="329.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="330.5" y="329.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="333.5" y="329.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="336.5" y="329.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="339.5" y="329.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="342.5" y="329.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="345.5" y="329.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="348.5" y="329.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="351.5" y="329.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="354.5" y="329.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="357.5" y="329.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="360.5" y="329.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="363.5" y="329.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="366.5" y="329.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="369.5" y="329.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="372.5" y="329.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="375.5" y="329.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="378.5" y="329.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="381.5" y="329.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="384.5" y="329.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="387.5" y="329.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="390.5" y="329.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="393.5" y="329.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="396.5" y="329.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="399.5" y="329.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="402.5" y="329.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="405.5" y="329.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="408.5" y="329.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="288.5" y="326.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="291.5" y="326.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="294.5" y="326.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="297.5" y="326.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="300.5" y="326.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="303.5" y="326.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="306.5" y="326.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="309.5" y="326.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="312.5" y="326.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="315.5" y="326.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="318.5" y="326.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="321.5" y="326.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="324.5" y="326.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="327.5" y="326.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="330.5" y="326.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="333.5" y="326.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="336.5" y="326.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="339.5" y="326.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="342.5" y="326.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="345.5" y="326.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="348.5" y="326.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="351.5" y="326.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="354.5" y="326.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="357.5" y="326.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="360.5" y="326.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="363.5" y="326.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="366.5" y="326.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="369.5" y="326.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="372.5" y="326.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="375.5" y="326.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="378.5" y="326.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="381.5" y="326.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="384.5" y="326.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="387.5" y="326.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="390.5" y="326.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="393.5" y="326.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="396.5" y="326.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="399.5" y="326.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="402.5" y="326.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="405.5" y="326.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="408.5" y="326.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="288.5" y="323.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="291.5" y="323.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="294.5" y="323.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="297.5" y="323.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="300.5" y="323.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="303.5" y="323.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="306.5" y="323.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="309.5" y="323.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="312.5" y="323.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="315.5" y="323.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="318.5" y="323.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="321.5" y="323.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="324.5" y="323.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="327.5" y="323.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="330.5" y="323.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="333.5" y="323.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="336.5" y="323.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="339.5" y="323.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="342.5" y="323.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="345.5" y="323.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="348.5" y="323.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="351.5" y="323.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="354.5" y="323.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="357.5" y="323.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="360.5" y="323.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="363.5" y="323.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="366.5" y="323.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="369.5" y="323.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="372.5" y="323.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="375.5" y="323.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="378.5" y="323.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="381.5" y="323.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="384.5" y="323.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="387.5" y="323.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="390.5" y="323.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="393.5" y="323.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="396.5" y="323.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="399.5" y="323.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="402.5" y="323.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="405.5" y="323.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="408.5" y="323.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="288.5" y="320.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="291.5" y="320.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="294.5" y="320.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="297.5" y="320.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="300.5" y="320.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="303.5" y="320.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="306.5" y="320.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="309.5" y="320.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="312.5" y="320.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="315.5" y="320.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="318.5" y="320.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="321.5" y="320.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="324.5" y="320.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="327.5" y="320.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="330.5" y="320.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="333.5" y="320.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="336.5" y="320.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="339.5" y="320.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="342.5" y="320.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="345.5" y="320.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="348.5" y="320.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="351.5" y="320.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="354.5" y="320.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="357.5" y="320.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="360.5" y="320.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="363.5" y="320.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="366.5" y="320.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="369.5" y="320.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="372.5" y="320.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="375.5" y="320.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="378.5" y="320.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="381.5" y="320.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="384.5" y="320.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="387.5" y="320.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="390.5" y="320.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="393.5" y="320.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="396.5" y="320.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="399.5" y="320.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="402.5" y="320.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="405.5" y="320.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="408.5" y="320.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="288.5" y="317.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="291.5" y="317.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="294.5" y="317.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="297.5" y="317.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="300.5" y="317.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="303.5" y="317.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="306.5" y="317.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="309.5" y="317.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="312.5" y="317.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="315.5" y="317.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="318.5" y="317.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="321.5" y="317.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="324.5" y="317.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="327.5" y="317.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="330.5" y="317.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="333.5" y="317.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="336.5" y="317.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="339.5" y="317.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="342.5" y="317.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="345.5" y="317.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="348.5" y="317.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="351.5" y="317.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="354.5" y="317.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="357.5" y="317.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="360.5" y="317.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="363.5" y="317.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="366.5" y="317.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="369.5" y="317.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="372.5" y="317.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="375.5" y="317.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="378.5" y="317.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="381.5" y="317.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="384.5" y="317.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="387.5" y="317.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="390.5" y="317.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="393.5" y="317.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="396.5" y="317.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="399.5" y="317.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="402.5" y="317.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="405.5" y="317.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="408.5" y="317.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="288.5" y="314.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="291.5" y="314.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="294.5" y="314.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="297.5" y="314.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="300.5" y="314.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="303.5" y="314.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="306.5" y="314.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="309.5" y="314.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="312.5" y="314.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="315.5" y="314.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="318.5" y="314.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="321.5" y="314.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="324.5" y="314.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="327.5" y="314.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="330.5" y="314.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="333.5" y="314.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="336.5" y="314.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="339.5" y="314.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="342.5" y="314.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="345.5" y="314.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="348.5" y="314.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="351.5" y="314.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="354.5" y="314.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="357.5" y="314.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="360.5" y="314.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="363.5" y="314.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="366.5" y="314.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="369.5" y="314.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="372.5" y="314.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="375.5" y="314.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="378.5" y="314.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="381.5" y="314.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="384.5" y="314.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="387.5" y="314.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="390.5" y="314.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="393.5" y="314.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="396.5" y="314.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="399.5" y="314.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="402.5" y="314.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="405.5" y="314.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="408.5" y="314.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="288.5" y="311.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="291.5" y="311.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="294.5" y="311.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="297.5" y="311.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="300.5" y="311.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="303.5" y="311.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="306.5" y="311.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="309.5" y="311.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="312.5" y="311.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="315.5" y="311.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="318.5" y="311.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="321.5" y="311.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="324.5" y="311.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="327.5" y="311.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="330.5" y="311.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="333.5" y="311.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="336.5" y="311.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="339.5" y="311.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="342.5" y="311.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="345.5" y="311.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="348.5" y="311.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="351.5" y="311.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="354.5" y="311.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="357.5" y="311.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="360.5" y="311.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="363.5" y="311.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="366.5" y="311.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="369.5" y="311.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="372.5" y="311.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="375.5" y="311.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="378.5" y="311.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="381.5" y="311.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="384.5" y="311.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="387.5" y="311.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="390.5" y="311.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="393.5" y="311.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="396.5" y="311.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="399.5" y="311.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="402.5" y="311.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="405.5" y="311.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="408.5" y="311.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="288.5" y="308.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="291.5" y="308.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="294.5" y="308.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="297.5" y="308.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="300.5" y="308.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="303.5" y="308.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="306.5" y="308.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="309.5" y="308.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="312.5" y="308.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="315.5" y="308.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="318.5" y="308.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="321.5" y="308.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="324.5" y="308.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="327.5" y="308.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="330.5" y="308.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="333.5" y="308.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="336.5" y="308.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="339.5" y="308.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="342.5" y="308.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="345.5" y="308.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="348.5" y="308.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="351.5" y="308.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="354.5" y="308.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="357.5" y="308.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="360.5" y="308.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="363.5" y="308.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="366.5" y="308.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="369.5" y="308.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="372.5" y="308.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="375.5" y="308.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="378.5" y="308.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="381.5" y="308.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="384.5" y="308.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="387.5" y="308.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="390.5" y="308.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="393.5" y="308.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="396.5" y="308.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="399.5" y="308.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="402.5" y="308.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="405.5" y="308.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="408.5" y="308.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="288.5" y="305.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="291.5" y="305.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="294.5" y="305.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="297.5" y="305.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="300.5" y="305.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="303.5" y="305.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="306.5" y="305.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="309.5" y="305.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="312.5" y="305.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="315.5" y="305.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="318.5" y="305.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="321.5" y="305.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="324.5" y="305.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="327.5" y="305.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="330.5" y="305.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="333.5" y="305.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="336.5" y="305.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="339.5" y="305.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="342.5" y="305.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="345.5" y="305.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="348.5" y="305.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="351.5" y="305.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="354.5" y="305.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="357.5" y="305.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="360.5" y="305.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="363.5" y="305.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="366.5" y="305.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="369.5" y="305.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="372.5" y="305.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="375.5" y="305.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="378.5" y="305.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="381.5" y="305.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="384.5" y="305.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="387.5" y="305.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="390.5" y="305.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="393.5" y="305.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="396.5" y="305.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="399.5" y="305.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="402.5" y="305.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="405.5" y="305.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="408.5" y="305.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="288.5" y="302.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="291.5" y="302.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="294.5" y="302.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="297.5" y="302.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="300.5" y="302.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="303.5" y="302.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="306.5" y="302.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="309.5" y="302.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="312.5" y="302.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="315.5" y="302.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="318.5" y="302.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="321.5" y="302.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="324.5" y="302.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="327.5" y="302.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="330.5" y="302.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="333.5" y="302.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="336.5" y="302.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="339.5" y="302.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="342.5" y="302.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="345.5" y="302.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="348.5" y="302.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="351.5" y="302.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="354.5" y="302.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="357.5" y="302.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="360.5" y="302.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="363.5" y="302.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="366.5" y="302.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="369.5" y="302.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="372.5" y="302.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="375.5" y="302.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="378.5" y="302.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="381.5" y="302.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="384.5" y="302.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="387.5" y="302.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="390.5" y="302.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="393.5" y="302.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="396.5" y="302.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="399.5" y="302.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="402.5" y="302.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="405.5" y="302.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="408.5" y="302.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="288.5" y="299.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="291.5" y="299.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="294.5" y="299.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="297.5" y="299.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="300.5" y="299.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="303.5" y="299.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="306.5" y="299.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="309.5" y="299.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="312.5" y="299.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="315.5" y="299.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="318.5" y="299.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="321.5" y="299.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="324.5" y="299.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="327.5" y="299.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="330.5" y="299.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="333.5" y="299.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="336.5" y="299.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="339.5" y="299.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="342.5" y="299.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="345.5" y="299.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="348.5" y="299.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="351.5" y="299.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="354.5" y="299.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="357.5" y="299.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="360.5" y="299.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="363.5" y="299.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="366.5" y="299.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="369.5" y="299.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="372.5" y="299.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="375.5" y="299.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="378.5" y="299.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="381.5" y="299.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="384.5" y="299.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="387.5" y="299.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="390.5" y="299.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="393.5" y="299.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="396.5" y="299.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="399.5" y="299.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="402.5" y="299.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="405.5" y="299.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="408.5" y="299.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="288.5" y="296.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="291.5" y="296.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="294.5" y="296.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="297.5" y="296.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="300.5" y="296.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="303.5" y="296.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="306.5" y="296.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="309.5" y="296.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="312.5" y="296.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="315.5" y="296.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="318.5" y="296.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="321.5" y="296.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="324.5" y="296.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="327.5" y="296.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="330.5" y="296.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="333.5" y="296.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="336.5" y="296.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="339.5" y="296.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="342.5" y="296.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="345.5" y="296.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="348.5" y="296.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="351.5" y="296.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="354.5" y="296.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="357.5" y="296.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="360.5" y="296.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="363.5" y="296.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="366.5" y="296.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="369.5" y="296.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="372.5" y="296.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="375.5" y="296.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="378.5" y="296.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="381.5" y="296.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="384.5" y="296.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="387.5" y="296.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="390.5" y="296.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="393.5" y="296.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="396.5" y="296.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="399.5" y="296.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="402.5" y="296.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="405.5" y="296.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="408.5" y="296.5" width="3" height="3" class="lab-undet" style="fill:url(#lab-lines)"/>
+<rect x="56" y="64" width="588" height="300" class="lab-stroke"/>
+<text x="62" y="380" class="lab-text" text-anchor="middle">-24</text>
+<text x="110" y="380" class="lab-text" text-anchor="middle">-20</text>
+<text x="158" y="380" class="lab-text" text-anchor="middle">-16</text>
+<text x="206" y="380" class="lab-text" text-anchor="middle">-12</text>
+<text x="254" y="380" class="lab-text" text-anchor="middle">-8</text>
+<text x="302" y="380" class="lab-text" text-anchor="middle">-4</text>
+<text x="350" y="380" class="lab-text" text-anchor="middle">0</text>
+<text x="398" y="380" class="lab-text" text-anchor="middle">4</text>
+<text x="446" y="380" class="lab-text" text-anchor="middle">8</text>
+<text x="494" y="380" class="lab-text" text-anchor="middle">12</text>
+<text x="542" y="380" class="lab-text" text-anchor="middle">16</text>
+<text x="590" y="380" class="lab-text" text-anchor="middle">20</text>
+<text x="638" y="380" class="lab-text" text-anchor="middle">24</text>
+<text x="48" y="362" class="lab-text" text-anchor="end">0</text>
+<text x="48" y="314" class="lab-text" text-anchor="end">4</text>
+<text x="48" y="266" class="lab-text" text-anchor="end">8</text>
+<text x="48" y="218" class="lab-text" text-anchor="end">12</text>
+<text x="48" y="170" class="lab-text" text-anchor="end">16</text>
+<text x="48" y="122" class="lab-text" text-anchor="end">20</text>
+<text x="48" y="74" class="lab-text" text-anchor="end">24</text>
+<text x="350" y="398" class="lab-text" text-anchor="middle">x le long des lames (mm)</text>
+<text x="14" y="214" class="lab-text" transform="rotate(-90 14 214)" text-anchor="middle">y centre de l'aimant (mm)</text>
+<rect x="266" y="344.79999999999995" width="168" height="26.400000000000002" rx="13.200000000000001" class="lab-reed" stroke-dasharray="5 3"/>
+<line x1="302" y1="358" x2="398" y2="358" class="lab-reed" stroke-width="3"/>
+<text x="56" y="36" class="lab-text">reed : trait = longueur effective (hypothèse), capsule</text>
+<text x="56" y="56" class="lab-text">pointillée = encombrement publié</text>
+<rect x="326" y="46" width="48" height="228" class="lab-reed"/>
+<text x="350" y="42" class="lab-text" text-anchor="middle" font-weight="700">N</text>
+<text x="350" y="288" class="lab-text" text-anchor="middle" font-weight="700">S</text>
+<text x="380" y="164" class="lab-text" font-weight="700">1</text>
+<text x="56" y="414" class="lab-text">1. centré — Placement défavorable — Orientation défavorable</text>
+<text x="56" y="434" class="lab-text">(aimant dessiné à taille réelle)</text>
+<rect x="56" y="460" width="14" height="14" class="lab-fav"/><rect x="56" y="460" width="14" height="14" class="lab-stroke"/>
+<text x="78" y="472" class="lab-text">Placement favorable</text>
+<rect x="56" y="480" width="14" height="14" class="lab-var" style="fill:url(#lab-hatch)"/><rect x="56" y="480" width="14" height="14" class="lab-stroke"/>
+<text x="78" y="492" class="lab-text">Détection variable</text>
+<rect x="56" y="500" width="14" height="14" class="lab-far"/><rect x="56" y="500" width="14" height="14" class="lab-stroke"/>
+<text x="78" y="512" class="lab-text">Placement défavorable — Trop loin</text>
+<rect x="56" y="520" width="14" height="14" class="lab-orient" style="fill:url(#lab-dots)"/><rect x="56" y="520" width="14" height="14" class="lab-stroke"/>
+<text x="78" y="532" class="lab-text">Placement défavorable — Orientation défavorable</text>
+<rect x="56" y="540" width="14" height="14" class="lab-undet" style="fill:url(#lab-lines)"/><rect x="56" y="540" width="14" height="14" class="lab-stroke"/>
+<text x="78" y="552" class="lab-text">Placement défavorable — Cause non déterminée (décentrage à</text>
+<text x="78" y="572" class="lab-text">examiner)</text>
+<rect x="56" y="580" width="14" height="14" class="lab-na" style="fill:url(#lab-cross)"/><rect x="56" y="580" width="14" height="14" class="lab-stroke"/>
+<text x="78" y="592" class="lab-text">Réponse nominale nulle (zone centrale, modèle B)</text>
+<rect x="56" y="600" width="14" height="14" class="lab-undet" style="fill:url(#lab-lines)"/><rect x="56" y="600" width="14" height="14" class="lab-stroke"/>
+<text x="78" y="612" class="lab-text">Collision avec l'enveloppe de verre (invalidité</text>
+<text x="78" y="632" class="lab-text">géométrique)</text>
+<rect x="56" y="640" width="14" height="14" class="lab-na" style="fill:url(#lab-cross)"/><rect x="56" y="640" width="14" height="14" class="lab-stroke"/>
+<text x="78" y="652" class="lab-text">Estimation indisponible (hors collision)</text>
+<text x="56" y="684" class="lab-text">Cellules à dimension réelle : 0,25 mm dans la zone locale</text>
+<text x="56" y="704" class="lab-text">|x| ≤ 5 mm et y ≤ 5 mm, 1 mm ailleurs, sans recouvrement.</text>
+<text x="56" y="724" class="lab-text">Ordres de grandeur pédagogiques, jamais une garantie de</text>
+<text x="56" y="744" class="lab-text">commutation. Les largeurs de zone ne sont pas des</text>
+<text x="56" y="764" class="lab-text">probabilités.</text>
+<text x="56" y="784" class="lab-text">reed-lab-hypotheses v1.1.0 · reed-lab-pass2-1.0.0</text>
+</svg>
