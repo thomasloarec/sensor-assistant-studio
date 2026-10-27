@@ -34477,5 +34477,230 @@
     "Происхождение",
     "Provenienza",
     "出典"
+  ],
+  "Placement favorable vérifié : rotation de {0}° et décalage de {1} mm": [
+    "Favorable placement verified: {0}° rotation and {1} mm offset",
+    "已验证有利放置：旋转 {0}° 并偏移 {1} mm",
+    "Günstige Platzierung geprüft: Drehung um {0}° und Versatz um {1} mm",
+    "Colocación favorable verificada: rotación de {0}° y desplazamiento de {1} mm",
+    "Благоприятное размещение проверено: поворот на {0}° и смещение на {1} мм",
+    "Posizionamento favorevole verificato: rotazione di {0}° e spostamento di {1} mm",
+    "有利な配置を確認：{0}° 回転と {1} mm のずらし"
+  ],
+  "Placement favorable vérifié : rotation de {0}°": [
+    "Favorable placement verified: {0}° rotation",
+    "已验证有利放置：旋转 {0}°",
+    "Günstige Platzierung geprüft: Drehung um {0}°",
+    "Colocación favorable verificada: rotación de {0}°",
+    "Благоприятное размещение проверено: поворот на {0}°",
+    "Posizionamento favorevole verificato: rotazione di {0}°",
+    "有利な配置を確認：{0}° 回転"
+  ],
+  "Placement favorable vérifié : décalage de {0} mm": [
+    "Favorable placement verified: {0} mm offset",
+    "已验证有利放置：偏移 {0} mm",
+    "Günstige Platzierung geprüft: Versatz um {0} mm",
+    "Colocación favorable verificada: desplazamiento de {0} mm",
+    "Благоприятное размещение проверено: смещение на {0} мм",
+    "Posizionamento favorevole verificato: spostamento di {0} mm",
+    "有利な配置を確認：{0} mm のずらし"
+  ],
+  "Aucun placement favorable trouvé dans les mouvements autorisés": [
+    "No favorable placement found within the allowed movements",
+    "在允许的移动范围内未找到有利放置",
+    "Keine günstige Platzierung innerhalb der erlaubten Bewegungen gefunden",
+    "No se encontró ninguna colocación favorable en los movimientos permitidos",
+    "В разрешённых перемещениях благоприятное размещение не найдено",
+    "Nessun posizionamento favorevole trovato nei movimenti consentiti",
+    "許可された動きの範囲で有利な配置は見つかりません"
+  ],
+  "Aucune liberté de mouvement déclarée : aucune action proposée": [
+    "No freedom of movement declared: no action proposed",
+    "未声明移动自由度：不提出任何操作",
+    "Keine Bewegungsfreiheit angegeben: keine Maßnahme vorgeschlagen",
+    "No se ha declarado libertad de movimiento: no se propone ninguna acción",
+    "Свобода перемещения не задана: действие не предлагается",
+    "Nessuna libertà di movimento dichiarata: nessuna azione proposta",
+    "移動の自由度が未設定：操作は提案しません"
+  ],
+  "Montage importé : aucun mouvement proposé hors de ce montage": [
+    "Imported assembly: no movement proposed outside this assembly",
+    "导入的装配：不提出此装配之外的移动",
+    "Importierte Montage: keine Bewegung außerhalb dieser Montage vorgeschlagen",
+    "Montaje importado: no se propone ningún movimiento fuera de este montaje",
+    "Импортированный монтаж: перемещения вне этого монтажа не предлагаются",
+    "Montaggio importato: nessun movimento proposto al di fuori di questo montaggio",
+    "読み込んだ取付：この取付以外の動きは提案しません"
+  ],
+  "Mouvement non pris en charge par la recherche : aucune action proposée": [
+    "Movement not supported by the search: no action proposed",
+    "搜索不支持此运动：不提出任何操作",
+    "Bewegung von der Suche nicht unterstützt: keine Maßnahme vorgeschlagen",
+    "Movimiento no admitido por la búsqueda: no se propone ninguna acción",
+    "Поиск не поддерживает это движение: действие не предлагается",
+    "Movimento non supportato dalla ricerca: nessuna azione proposta",
+    "この動きは探索の対象外：操作は提案しません"
+  ],
+  "Estimation indicative": [
+    "Indicative estimate",
+    "参考估算",
+    "Richtwert",
+    "Estimación indicativa",
+    "Ориентировочная оценка",
+    "Stima indicativa",
+    "参考推定"
+  ],
+  "Proposer ce placement": [
+    "Propose this placement",
+    "提出此放置",
+    "Diese Platzierung vorschlagen",
+    "Proponer esta colocación",
+    "Предложить это размещение",
+    "Proponi questo posizionamento",
+    "この配置を提案"
+  ],
+  "Sources et limites": [
+    "Sources and limits",
+    "来源与局限",
+    "Quellen und Grenzen",
+    "Fuentes y límites",
+    "Источники и ограничения",
+    "Fonti e limiti",
+    "出典と制約"
+  ],
+  "Les deux lobes sont nominaux (bornes de la classe) ; le verdict exige l’accord des neuf hypothèses internes.": [
+    "Both lobes are nominal (class bounds); the verdict requires agreement of the nine internal hypotheses.",
+    "两个瓣区为名义值（等级界限）；结论需要九个内部假设一致。",
+    "Beide Keulen sind nominal (Klassengrenzen); das Urteil verlangt die Übereinstimmung der neun internen Annahmen.",
+    "Los dos lóbulos son nominales (límites de clase); el veredicto exige el acuerdo de las nueve hipótesis internas.",
+    "Оба лепестка номинальные (границы класса); вердикт требует согласия девяти внутренних гипотез.",
+    "I due lobi sono nominali (limiti di classe); il verdetto richiede l’accordo delle nove ipotesi interne.",
+    "2つのローブは公称値（クラス境界）です。判定には9つの内部仮定の一致が必要です。"
+  ],
+  "Capteur générique, reed 66 monté : gabarit exploratoire égal à l’enveloppe mécanique testée, pas les dimensions d’un boîtier commercial.": [
+    "Generic sensor, mounted reed 66: exploratory template equal to the tested mechanical envelope, not the dimensions of a commercial housing.",
+    "通用传感器，已装 66 型干簧管：探索性模板，等于已测试的机械包络，并非商业外壳尺寸。",
+    "Generischer Sensor, Reed 66 montiert: explorative Schablone gleich der geprüften mechanischen Hülle, keine Abmessungen eines handelsüblichen Gehäuses.",
+    "Sensor genérico, reed 66 montado: plantilla exploratoria igual a la envolvente mecánica probada, no las dimensiones de una carcasa comercial.",
+    "Типовой датчик со смонтированным герконом 66: исследовательский шаблон, равный проверенной механической оболочке, а не размеры серийного корпуса.",
+    "Sensore generico, reed 66 montato: sagoma esplorativa pari all’involucro meccanico testato, non le dimensioni di un contenitore commerciale.",
+    "汎用センサー（リード66実装）：試験した機械的外形と同じ探索用テンプレートであり、市販ハウジングの寸法ではありません。"
+  ],
+  "Chronologie des états de placement, pas du contact électrique.": [
+    "Timeline of placement states, not of the electrical contact.",
+    "放置状态时间线，而非电气触点。",
+    "Zeitverlauf der Platzierungszustände, nicht des elektrischen Kontakts.",
+    "Cronología de estados de colocación, no del contacto eléctrico.",
+    "Хронология состояний размещения, а не электрического контакта.",
+    "Cronologia degli stati di posizionamento, non del contatto elettrico.",
+    "配置状態のタイムラインであり、電気接点ではありません。"
+  ],
+  "Zone favorable estimée": [
+    "Estimated favorable zone",
+    "估算有利区",
+    "Geschätzte günstige Zone",
+    "Zona favorable estimada",
+    "Оценочная благоприятная зона",
+    "Zona favorevole stimata",
+    "推定有利ゾーン"
+  ],
+  "Capteur générique, reed 66 monté": [
+    "Generic sensor, mounted reed 66",
+    "通用传感器，已装 66 型干簧管",
+    "Generischer Sensor, Reed 66 montiert",
+    "Sensor genérico, reed 66 montado",
+    "Типовой датчик, геркон 66 смонтирован",
+    "Sensore generico, reed 66 montato",
+    "汎用センサー、リード66実装"
+  ],
+  "Positions où l’aimant rencontrerait ce corps": [
+    "Positions where the magnet would hit this body",
+    "磁铁会碰到此本体的位置",
+    "Positionen, an denen der Magnet diesen Körper berühren würde",
+    "Posiciones donde el imán tocaría este cuerpo",
+    "Положения, где магнит столкнулся бы с этим корпусом",
+    "Posizioni in cui il magnete toccherebbe questo corpo",
+    "磁石がこの本体に当たる位置"
+  ],
+  "Chevauchement possible avec une pièce du montage — à vérifier": [
+    "Possible overlap with an assembly part — to verify",
+    "可能与装配零件重叠——待核实",
+    "Mögliche Überschneidung mit einem Montageteil – zu prüfen",
+    "Posible solapamiento con una pieza del montaje: a verificar",
+    "Возможное пересечение с деталью монтажа — проверить",
+    "Possibile sovrapposizione con un pezzo del montaggio — da verificare",
+    "取付部品と重なる可能性 — 要確認"
+  ],
+  "Capteur générique, reed 66 monté — projection, hors du plan de coupe": [
+    "Generic sensor, mounted reed 66 — projection, outside the cut plane",
+    "通用传感器，已装 66 型干簧管——投影，不在剖切面内",
+    "Generischer Sensor, Reed 66 montiert – Projektion, außerhalb der Schnittebene",
+    "Sensor genérico, reed 66 montado: proyección, fuera del plano de corte",
+    "Типовой датчик, геркон 66 — проекция, вне плоскости сечения",
+    "Sensore generico, reed 66 montato — proiezione, fuori dal piano di sezione",
+    "汎用センサー、リード66実装 — 投影、断面外"
+  ],
+  "Hachuré : chevauchement possible avec une pièce du montage — à vérifier": [
+    "Hatched: possible overlap with an assembly part — to verify",
+    "阴影：可能与装配零件重叠——待核实",
+    "Schraffiert: mögliche Überschneidung mit einem Montageteil – zu prüfen",
+    "Rayado: posible solapamiento con una pieza del montaje, a verificar",
+    "Штриховка: возможное пересечение с деталью монтажа — проверить",
+    "Tratteggio: possibile sovrapposizione con un pezzo del montaggio — da verificare",
+    "斜線：取付部品と重なる可能性 — 要確認"
+  ],
+  "Zone centrale entre les deux lobes": [
+    "Central zone between the two lobes",
+    "两个瓣区之间的中心区",
+    "Mittlere Zone zwischen den beiden Keulen",
+    "Zona central entre los dos lóbulos",
+    "Центральная зона между двумя лепестками",
+    "Zona centrale tra i due lobi",
+    "2つのローブの間の中央ゾーン"
+  ],
+  "Orientation défavorable sur le prolongement axial du reed": [
+    "Unfavorable orientation on the reed’s axial extension",
+    "在干簧管轴向延长线上方向不利",
+    "Ungünstige Ausrichtung in axialer Verlängerung des Reeds",
+    "Orientación desfavorable en la prolongación axial del reed",
+    "Неблагоприятная ориентация на осевом продолжении геркона",
+    "Orientamento sfavorevole sul prolungamento assiale del reed",
+    "リードの軸方向延長上で向きが不利"
+  ],
+  "Orientation défavorable à cet endroit": [
+    "Unfavorable orientation at this location",
+    "此处方向不利",
+    "Ungünstige Ausrichtung an dieser Stelle",
+    "Orientación desfavorable en este punto",
+    "Неблагоприятная ориентация в этом месте",
+    "Orientamento sfavorevole in questo punto",
+    "この位置では向きが不利"
+  ],
+  "Aimant trop éloigné à cette orientation": [
+    "Magnet too far at this orientation",
+    "此方向下磁铁过远",
+    "Magnet bei dieser Ausrichtung zu weit entfernt",
+    "Imán demasiado lejos en esta orientación",
+    "Магнит слишком далеко при этой ориентации",
+    "Magnete troppo lontano con questo orientamento",
+    "この向きでは磁石が遠すぎます"
+  ],
+  "Trop éloigné et orientation défavorable à cet endroit": [
+    "Too far and unfavorable orientation at this location",
+    "此处过远且方向不利",
+    "Zu weit entfernt und ungünstige Ausrichtung an dieser Stelle",
+    "Demasiado lejos y orientación desfavorable en este punto",
+    "Слишком далеко и неблагоприятная ориентация в этом месте",
+    "Troppo lontano e orientamento sfavorevole in questo punto",
+    "この位置では遠すぎ、向きも不利"
+  ],
+  "Cause non déterminée": [
+    "Cause not determined",
+    "原因未确定",
+    "Ursache nicht bestimmt",
+    "Causa no determinada",
+    "Причина не установлена",
+    "Causa non determinata",
+    "原因は未確定"
   ]
 }
