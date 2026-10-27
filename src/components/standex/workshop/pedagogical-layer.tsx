@@ -8,14 +8,14 @@ import { EXPERIMENT, type ExperimentSettings, type SampledVolume, type SampleCel
 import type { PedagogicalFrame } from '@/lib/standex/pedagogical-poses';
 
 /** Boundary faces of sampled voxels. Never interpolate across null/zero samples. */
-function surface(cells:SampleCell[],zone:1|2) {
-  const selected=cells.filter(c=>c.zone===zone), keys=new Set(selected.map(c=>`${c.x},${c.y},${c.z}`));
+export function surface(cells:SampleCell[],zone:1|2) {
+  const selected=cells.filter(c=>c.zone===zone), keys=new Set(selected.map(c=>`${c.i},${c.j},${c.k}`));
   const positions:number[]=[];
   for(const c of selected){
     const {x0:a,x1:b,y0:d,y1:e,z0:f,z1:g}=c;
     const faces=[[[a,d,f],[a,e,f],[a,e,g],[a,d,g]],[[b,d,g],[b,e,g],[b,e,f],[b,d,f]],[[a,d,g],[b,d,g],[b,d,f],[a,d,f]],[[a,e,f],[b,e,f],[b,e,g],[a,e,g]],[[b,d,f],[b,e,f],[a,e,f],[a,d,f]],[[a,d,g],[a,e,g],[b,e,g],[b,d,g]]];
-    const steps=[[-(b-a),0,0],[b-a,0,0],[0,-(e-d),0],[0,e-d,0],[0,0,-(g-f)],[0,0,g-f]];
-    faces.forEach((face,i)=>{const step=steps[i];if(!step)return;if(keys.has(`${c.x+(step[0]??0)},${c.y+(step[1]??0)},${c.z+(step[2]??0)}`))return;for(const index of [0,1,2,0,2,3]){const p=face[index];if(p)positions.push(...p);}});
+    const steps=[[-1,0,0],[1,0,0],[0,-1,0],[0,1,0],[0,0,-1],[0,0,1]];
+    faces.forEach((face,i)=>{const step=steps[i];if(!step)return;if(keys.has(`${c.i+(step[0]??0)},${c.j+(step[1]??0)},${c.k+(step[2]??0)}`))return;for(const index of [0,1,2,0,2,3]){const p=face[index];if(p)positions.push(...p);}});
   }
   const geometry=new BufferGeometry();geometry.setAttribute('position',new Float32BufferAttribute(positions,3));geometry.computeVertexNormals();return geometry;
 }

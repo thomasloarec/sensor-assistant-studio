@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { t, msg, number } from '@/lib/i18n/core';
-import { DEFAULT_EXPERIMENT, EXPERIMENT, FORM_ANOMALIES, evaluatePlacement, settingsKey, type ExperimentSettings, type SampledVolume, type PlacementEvidence } from '@/lib/detection-lab/workshop-experiment';
+import { DEFAULT_EXPERIMENT, EXPERIMENT, FORM_ANOMALIES, documentaryDistances, experimentAvailable, evaluatePlacement, settingsKey, type ExperimentSettings, type SampledVolume, type PlacementEvidence } from '@/lib/detection-lab/workshop-experiment';
 import type { PedagogicalFrame } from '@/lib/standex/pedagogical-poses';
 import type { WorkshopConfig } from '@/lib/standex/magnetic-workshop';
 const cache=new Map<string,SampledVolume>();
@@ -11,7 +11,7 @@ export function usePedagogicalVolume(enabled:boolean,settings:ExperimentSettings
   const key=settingsKey(settings,frame.pose.axis,frame.pose.center[2]);
   useEffect(()=>{
     setResult(null);setFailed(false);
-    if(!enabled)return;
+    if(!enabled||!experimentAvailable(settings)){setBusy(false);return;}
     const hit=cache.get(key);if(hit){setResult(hit);setBusy(false);return;}
     if(typeof Worker==='undefined'){setFailed(true);return;}
     let current=true,worker:Worker|null=null;setBusy(true);
@@ -19,7 +19,7 @@ export function usePedagogicalVolume(enabled:boolean,settings:ExperimentSettings
       worker=new Worker(new URL('./pedagogical.worker.ts',import.meta.url),{type:'module'});
       worker.onmessage=(event:MessageEvent<{key:string;result?:SampledVolume;error?:boolean}>)=>{
         if(!current||event.data.key!==key)return;
-        if(event.data.result){if(cache.size>=3){const first=cache.keys().next().value;if(first)cache.delete(first);}cache.set(key,event.data.result);setResult(event.data.result);}else setFailed(true);
+        if(event.data.result&&event.data.result.key===key&&experimentAvailable(settings)){if(cache.size>=3){const first=cache.keys().next().value;if(first)cache.delete(first);}cache.set(key,event.data.result);setResult(event.data.result);}else setFailed(true);
         setBusy(false);worker?.terminate();worker=null;
       };
       worker.onerror=()=>{if(current){setBusy(false);setFailed(true);}worker?.terminate();};
@@ -27,11 +27,11 @@ export function usePedagogicalVolume(enabled:boolean,settings:ExperimentSettings
     },0);
     return ()=>{current=false;clearTimeout(timer);worker?.terminate();};
   },[enabled,key]);
-  return {volume:result?.key===key?result:null,busy,failed};
+  return {volume:enabled&&experimentAvailable(settings)&&result?.key===key?result:null,busy,failed};
 }
 /* i18n-canonical: shared placement labels translated at the point of display. */
 export const PLACEMENT_LABEL={favorable:'Placement favorable',variable:'Détection variable',unfavorable:'Placement défavorable',unavailable:'Estimation indisponible'};
-const CAUSE_LABEL={distance:'Trop loin pour la plage explorée',orientation:'Orientation défavorable / zone centrale à éviter',collision:'Collision du corps de l’aimant avec l’enveloppe ou le montage',scenario_collision:'Pose nominale valide ; collision dans une hypothèse',domain:'Hors du domaine de calcul',missing:'Aimant, reed ou intégration non caractérisés',material:'Matériau voisin non pris en compte',stale:'Ancienne version : recalcul nécessaire',partial:'Classe A partielle : ATmax 10 seulement, seconde surface non caractérisée'};
+const CAUSE_LABEL={motion:'Mouvement non confirmé : estimation indisponible',clip:'Clip absent ou non pris en charge : estimation indisponible',mounting:'Collision avec les solides du montage non vérifiable : estimation indisponible',distance:'Trop loin pour la plage explorée',orientation:'Orientation défavorable / zone centrale à éviter',collision:'Collision du corps de l’aimant avec l’enveloppe ou le montage',scenario_collision:'Pose nominale valide ; collision dans une hypothèse',domain:'Hors du domaine de calcul',missing:'Aimant, reed ou intégration non caractérisés',material:'Matériau voisin non pris en compte',stale:'Ancienne version : recalcul nécessaire',partial:'Classe A partielle : ATmax 10 seulement, seconde surface non caractérisée'};
 export function PedagogicalBanner({evidence}:{evidence:PlacementEvidence}) {
   return <div className={`mw-verdict-banner notice-${evidence.state==='favorable'?'info':evidence.state==='unfavorable'?'warning':'info'}`} role="status" data-testid="pedagogical-verdict">
     <strong className="t-title-s">{t(PLACEMENT_LABEL[evidence.state])}</strong>
@@ -41,6 +41,9 @@ export function PedagogicalBanner({evidence}:{evidence:PlacementEvidence}) {
 export function PedagogicalControls({settings,setSettings,config,update,frame,busy,volume,failed,onSuggest,onUndo,canUndo}:{
   settings:ExperimentSettings;setSettings:(s:ExperimentSettings)=>void;config:WorkshopConfig;update:(p:Partial<WorkshopConfig>)=>void;frame:PedagogicalFrame;busy:boolean;volume:SampledVolume|null;failed:boolean;onSuggest:()=>void;onUndo:()=>void;canUndo:boolean;
 }) {
+  const canonical=!config.machine&&config.motion==='approach'&&config.magnetTilt===0;
+  const approach=canonical?(config.geometry==='D3'&&config.magnetAngle===0&&config.lateralShift===0?'D3':config.geometry==='D1'&&config.magnetAngle===0&&config.lateralShift===0?'D1':config.geometry==='D1'&&Math.abs(config.magnetAngle)===90?'D4':null):null;
+  const distances=approach?documentaryDistances(settings,approach):[];
   const change=(patch:Partial<ExperimentSettings>)=>setSettings({...settings,...patch});
   return <div className="mw-ped-controls">
     <h2 className="t-title-m">{t('Atelier pédagogique')}</h2>
@@ -66,6 +69,13 @@ export function PedagogicalControls({settings,setSettings,config,update,frame,bu
       <label><input type="checkbox" checked={config.polarity===-1} onChange={e=>update({polarity:e.target.checked?-1:1})}/>{t('Inverser N/S')}</label>
     </details>
     <details className="mw-advanced"><summary>{t('Six cas pédagogiques')}</summary>{['Parallèle','Perpendiculaire centré','Perpendiculaire décalé','Oblique 45°','Parallèle · classe E','Traversée des lobes'].map((label,i)=><Button key={label} variant="secondary" onClick={()=>{change({className:i===4?'E':'C'});if(!config.machine)update({geometry:'D1',motion:i===5?'slide':'approach',magnetAngle:i===0||i===4?0:i===3?45:90,lateralShift:i===2?8:0,start:24,end:12,offset:16});}}>{t(label)}</Button>)}</details>
+    {volume?.truncated&&<p className="notice-warning t-caption">{t('Lobes tronqués aux limites du domaine affiché ±24 mm ; aucune fermeture physique déduite.')}</p>}
+    {distances.length>0&&<section aria-label={t('Distances indicatives, calibrées sur la brochure Standex')}>
+      <h3 className="t-title-s">{t('Distances indicatives, calibrées sur la brochure Standex')}</h3>
+      <p className="t-caption">{t('Borne documentaire prudente ; aucune portée pour une pose oblique ou importée.')}</p>
+      {distances.map(r=><p className="t-metric" key={r.bound}>{r.approach} · {r.bound} : {r.prudentMm===null?t('Estimation indisponible'):`${number(r.prudentMm,1)} mm`} · {t('Publié')} {number(r.publishedMm??0,1)} mm</p>)}
+      <p className="t-caption">{t('Correction D4 avant arrondi prudent ; volumes non corrigés.')}</p>
+    </section>}
     <details className="mw-advanced"><summary>{t('Périmètre et sources')}</summary>
       <p className="t-caption">{t('Distances indicatives, calibrées sur la brochure Standex. B–E, deux aimants, montage Form66 ; modèle 3D pédagogique non qualifié.')}</p>
       <p className="t-caption">{t('A : ATmax 10 seulement. F : SmCo D3-up indisponible, D4-to hors tolérance, D5 absent. G hors périmètre.')}</p>

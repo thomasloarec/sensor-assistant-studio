@@ -34270,5 +34270,104 @@
     "← Назад",
     "← Precedente",
     "← 前へ"
+  ],
+  "Lobes tronqués aux limites du domaine affiché ±24 mm ; aucune fermeture physique déduite.": [
+    "Lobes truncated at the displayed ±24 mm boundary; no physical closure inferred.",
+    "波瓣在显示的 ±24 mm 边界被截断；不推断物理闭合。",
+    "Loben an der dargestellten Grenze ±24 mm abgeschnitten; keine physische Schließung abgeleitet.",
+    "Lóbulos truncados en el límite mostrado de ±24 mm; no se deduce cierre físico.",
+    "Лепестки обрезаны на границе ±24 мм; физическое замыкание не выводится.",
+    "Lobi troncati al limite visualizzato ±24 mm; nessuna chiusura fisica dedotta.",
+    "表示範囲 ±24 mm の境界でローブが切れています。物理的な閉鎖は推定しません。"
+  ],
+  "Distances indicatives, calibrées sur la brochure Standex": [
+    "Indicative distances, calibrated against the Standex brochure",
+    "参考距离，按 Standex 手册校准",
+    "Richtwerte, anhand der Standex-Broschüre kalibriert",
+    "Distancias orientativas, calibradas con el folleto Standex",
+    "Ориентировочные расстояния, откалиброванные по брошюре Standex",
+    "Distanze indicative, calibrate sulla brochure Standex",
+    "Standex カタログに合わせた参考距離"
+  ],
+  "Borne documentaire prudente ; aucune portée pour une pose oblique ou importée.": [
+    "Conservative documentary bound; no range for an oblique or imported pose.",
+    "保守的文档界限；不用于倾斜或导入姿态的范围。",
+    "Vorsichtige Dokumentationsgrenze; keine Reichweite für schräge oder importierte Posen.",
+    "Límite documental prudente; sin alcance para posiciones oblicuas o importadas.",
+    "Консервативная документальная граница; не дальность для наклонной или импортированной позы.",
+    "Limite documentale prudente; nessuna portata per pose oblique o importate.",
+    "控えめな資料上の境界値です。斜めやインポートした姿勢の到達距離ではありません。"
+  ],
+  "Correction D4 avant arrondi prudent ; volumes non corrigés.": [
+    "D4 correction before conservative rounding; volumes are uncorrected.",
+    "D4 修正在保守舍入前应用；体积未经修正。",
+    "D4-Korrektur vor vorsichtiger Rundung; Volumen bleiben unkorrigiert.",
+    "Corrección D4 antes del redondeo prudente; volúmenes sin corregir.",
+    "Поправка D4 до округления вниз; объёмы без поправки.",
+    "Correzione D4 prima dell’arrotondamento prudente; volumi non corretti.",
+    "D4 補正後に控えめに丸めます。ボリュームには補正していません。"
+  ],
+  "Fichier pédagogique invalide : version, profil ou paramètres incompatibles.": [
+    "Invalid pedagogical file: incompatible version, profile or parameters.",
+    "教学文件无效：版本、配置或参数不兼容。",
+    "Ungültige Lern-Datei: Version, Profil oder Parameter inkompatibel.",
+    "Archivo pedagógico inválido: versión, perfil o parámetros incompatibles.",
+    "Неверный учебный файл: несовместимая версия, профиль или параметры.",
+    "File didattico non valido: versione, profilo o parametri incompatibili.",
+    "教育用ファイルが無効です。バージョン、プロファイルまたはパラメーターが適合しません。"
+  ],
+  "Montage importé en mémoire de cet onglet ; GLB à réimporter si absent.": [
+    "Assembly imported into this tab’s memory; reimport the GLB if missing.",
+    "装配已导入此标签页内存；GLB 缺失时需重新导入。",
+    "Aufbau in den Speicher dieses Tabs importiert; fehlende GLB erneut importieren.",
+    "Montaje importado en la memoria de esta pestaña; reimporte el GLB si falta.",
+    "Сборка импортирована в память вкладки; отсутствующий GLB нужно импортировать снова.",
+    "Montaggio importato nella memoria della scheda; reimportare il GLB se assente.",
+    "組立をこのタブのメモリに読み込みました。GLB がなければ再インポートしてください。"
+  ],
+  "Capacité d’activation estimée ; réouverture non caractérisée : Ton/Toff non documentés": [
+    "Activation capability estimated; reopening uncharacterized: Ton/Toff undocumented",
+    "激活能力为估计值；重新断开未表征：Ton/Toff 无文档",
+    "Aktivierungsfähigkeit geschätzt; Wiederöffnung nicht charakterisiert: Ton/Toff undokumentiert",
+    "Capacidad de activación estimada; reapertura no caracterizada: Ton/Toff sin documentar",
+    "Способность активации оценена; повторное размыкание не охарактеризовано: Ton/Toff не документированы",
+    "Capacità di attivazione stimata; riapertura non caratterizzata: Ton/Toff non documentati",
+    "作動能力は推定値です。再開放は未評価：Ton/Toff の資料がありません"
+  ],
+  "Résolution des traversées non certifiée ; un passage rapide peut être manqué.": [
+    "Crossing resolution is not certified; a fast crossing may be missed.",
+    "穿越分辨率未认证；可能遗漏快速穿越。",
+    "Auflösung der Durchgänge nicht zertifiziert; schnelle Durchgänge können fehlen.",
+    "Resolución de cruces no certificada; puede omitirse un cruce rápido.",
+    "Разрешение пересечений не подтверждено; быстрый проход может быть пропущен.",
+    "Risoluzione degli attraversamenti non certificata; un passaggio rapido può sfuggire.",
+    "横断の解像度は未保証です。速い通過を見逃す場合があります。"
+  ],
+  "Mouvement non confirmé : estimation indisponible": [
+    "Unconfirmed motion: estimate unavailable",
+    "运动未确认：估计不可用",
+    "Bewegung nicht bestätigt: Schätzung nicht verfügbar",
+    "Movimiento no confirmado: estimación no disponible",
+    "Движение не подтверждено: оценка недоступна",
+    "Movimento non confermato: stima non disponibile",
+    "動きが未確認のため推定できません"
+  ],
+  "Clip absent ou non pris en charge : estimation indisponible": [
+    "Missing or unsupported clip: estimate unavailable",
+    "动画片段缺失或不支持：估计不可用",
+    "Clip fehlt oder nicht unterstützt: Schätzung nicht verfügbar",
+    "Clip ausente o no compatible: estimación no disponible",
+    "Клип отсутствует или не поддерживается: оценка недоступна",
+    "Clip assente o non supportato: stima non disponibile",
+    "クリップがないか非対応のため推定できません"
+  ],
+  "Collision avec les solides du montage non vérifiable : estimation indisponible": [
+    "Collision with mounting solids cannot be verified: estimate unavailable",
+    "无法验证与装配实体的碰撞：估计不可用",
+    "Kollision mit Montagekörpern nicht prüfbar: Schätzung nicht verfügbar",
+    "Colisión con sólidos del montaje no verificable: estimación no disponible",
+    "Столкновение с телами сборки не проверяемо: оценка недоступна",
+    "Collisione con i solidi del montaggio non verificabile: stima non disponibile",
+    "組立の立体との衝突を検証できないため推定できません"
   ]
 }

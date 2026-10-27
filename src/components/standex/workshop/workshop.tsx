@@ -140,10 +140,10 @@ import ContactIndicator from "./contact-indicator";
 import ContactCircuit from "./contact-circuit";
 import { SensorPlan } from "./sensor-plan";
 import { sensorById, sizeLabel, sensorSource } from "@/lib/standex/sensor-catalog";
-import { pedagogicalFrame } from "@/lib/standex/pedagogical-poses";
+import { pedagogicalFrame, pedagogicalAvailability, suggestPedagogicalConfig, parsePedagogicalEnvelope, type PedagogicalDraft } from "@/lib/standex/pedagogical-poses";
 import { PedagogicalLayer, PedagogicalCut } from "./pedagogical-layer";
 import { PedagogicalControls, PedagogicalBanner, usePedagogicalVolume, PLACEMENT_LABEL } from "./pedagogical-controls";
-import { DEFAULT_EXPERIMENT, EXPERIMENT, evaluatePlacement, findPlacement, placementTimeline, type ExperimentSettings } from "@/lib/detection-lab/workshop-experiment";
+import { DEFAULT_EXPERIMENT, EXPERIMENT, experimentAvailable, evaluatePlacement, placementTimeline, type ExperimentSettings } from "@/lib/detection-lab/workshop-experiment";
 
 /* i18n-canonical : libellés traduits au rendu par t(). */
 const UNIT_LABEL: Record<number, string> = {
@@ -240,6 +240,8 @@ export interface WorkshopCableRouting {
 export interface WorkshopProps {
   /** Staff-gated internal experiment only; never promoted into a client result. */
   pedagogical?: boolean;
+  initialPedagogicalDraft?: PedagogicalDraft | null;
+  onPedagogicalDraftChange?: (draft:PedagogicalDraft)=>void;
   embedded?: boolean;
   initialStudy?: StudioStudy | null | undefined;
   onStudyChange?: ((study: StudioStudy, freeze: DesignFreeze | null) => void) | undefined;
@@ -267,6 +269,7 @@ export interface WorkshopProps {
 }
 export default function MagneticWorkshop({
   pedagogical = false,
+  initialPedagogicalDraft, onPedagogicalDraftChange,
   embedded = false,
   initialStudy,
   onStudyChange,
@@ -301,35 +304,41 @@ export default function MagneticWorkshop({
   const [config, setConfig] = useState<WorkshopConfig>(
     // La variante documentée par défaut est résolue à l'ouverture : sans cela un
     // couple pourtant publié restait affiché comme non caractérisé.
-    () => withDefaultGuideSelection(parseWorkshopConfig(initialConfig) ?? { ...DEFAULT_WORKSHOP, ...(pedagogical ? { sensorId: "GENERIC", mode: "education" as const, magnetModel: "generic", start: 24, end: 12, magnetAngle: 90 } : {}) }),
+    () => withDefaultGuideSelection(parseWorkshopConfig(initialPedagogicalDraft?.config??initialConfig) ?? { ...DEFAULT_WORKSHOP, ...(pedagogical ? { sensorId: "GENERIC", mode: "education" as const, magnetModel: "generic", start: 24, end: 12, magnetAngle: 90 } : {}) }),
   );
   useEffect(() => {
     onDraftChange?.(config);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [config]);
-  const [progress, setProgress] = useState(0),
+  const [progress, setProgress] = useState(initialPedagogicalDraft?.progress??0),
     [playing, setPlaying] = useState(false);
-  const [experiment, setExperiment] = useState<ExperimentSettings>({...DEFAULT_EXPERIMENT});
+  const [experiment, setExperiment] = useState<ExperimentSettings>({...initialPedagogicalDraft?.settings??DEFAULT_EXPERIMENT});
   const [suggestion, setSuggestion] = useState<WorkshopConfig | null>(null);
   const [placementUndo, setPlacementUndo] = useState<WorkshopConfig | null>(null);
   const pedagogicalPose = useMemo(() => pedagogicalFrame(config, progress), [config, progress]);
+  useEffect(()=>{if(pedagogical)onPedagogicalDraftChange?.({config,settings:experiment,progress});},[pedagogical,config,experiment,progress,onPedagogicalDraftChange]);
+  const availability=pedagogicalAvailability(config);
+  const activeExperiment=availability==='ready'?experiment:{...experiment,integration:'unknown' as const};
+  const eligible=availability==='ready'&&experimentAvailable(experiment);
   // Until imported-solid collision is characterized, never issue a favorable imported verdict.
-  const placement = useMemo(() => evaluatePlacement(config.machine ? {...experiment,integration:"unknown"} : experiment, pedagogicalPose.pose), [experiment, pedagogicalPose,config.machine]);
-  const sampled = usePedagogicalVolume(pedagogical && !playing, experiment, pedagogicalPose);
-  const [pedTimeline, setPedTimeline] = useState<ReturnType<typeof placementTimeline> | null>(null);
+  const placement = useMemo(() => {const e=evaluatePlacement(activeExperiment,pedagogicalPose.pose,false);return availability==="ready"?e:{...e,cause:availability};}, [experiment, pedagogicalPose,config.machine,availability]);
+  const sampled = usePedagogicalVolume(pedagogical && !playing && eligible, activeExperiment, pedagogicalPose);
+  const [timelineResult, setPedTimeline] = useState<(ReturnType<typeof placementTimeline>&{key:string}) | null>(null);
+  const timelineKey=JSON.stringify([experiment,config]);
+  const pedTimeline=eligible&&timelineResult?.key===timelineKey?timelineResult:null;
   useEffect(() => {
     setPedTimeline(null);
-    if (!pedagogical) return;
+    if (!pedagogical||!eligible) return;
     // Clips remain in the local hierarchy registry, never serialized to a worker.
     if (config.machine) return; // Imported solids/clip event resolution remains explicitly uncharacterized.
     if (typeof Worker === "undefined") return;
     let current = true;
     const worker = new Worker(new URL("./pedagogical.worker.ts", import.meta.url), {type:"module"});
     const key = JSON.stringify([experiment,config]);
-    worker.onmessage = (event) => {if(current && event.data.key === key && event.data.result){setPedTimeline(event.data.result);worker.terminate();}};
+    worker.onmessage = (event) => {if(current && event.data.key === key && event.data.result){setPedTimeline({...event.data.result,key});worker.terminate();}};
     worker.postMessage({settings:experiment,config,key});
     return () => {current=false;worker.terminate();};
-  }, [pedagogical, config, experiment]);
+  }, [pedagogical, config, experiment,eligible]);
   const experimentalLayer = pedagogical ? <PedagogicalLayer frame={pedagogicalPose} settings={experiment} volume={sampled.volume} zones={true} /> : undefined;
   const [view, setView] = useState<"3d" | "top">("3d"),
     [zones, setZones] = useState(true),
@@ -873,7 +882,7 @@ export default function MagneticWorkshop({
   const basis = distanceBasis(config),
     fictitious = isFictitiousSensor(config.sensorId);
   const basisLabel =
-    basis === "standex"
+    pedagogical ? t("Atelier pédagogique") : basis === "standex"
       ? t("Données Standex · distances publiées pour ce couple")
       : basis === "unavailable"
         ? t(
@@ -1039,20 +1048,18 @@ export default function MagneticWorkshop({
     try {
       if (file.size > WORKSHOP_IMPORT_LIMIT) throw new Error(t("Le fichier de montage est trop volumineux."));
       const envelope = JSON.parse(await file.text());
-      const parsed = parseWorkshopConfig(pedagogical && envelope?.kind === "pedagogical-workshop" ? envelope.config : envelope);
+      const resumed=pedagogical?parsePedagogicalEnvelope(envelope):null;
+      if(pedagogical&&!resumed)throw new Error(t("Fichier pédagogique invalide : version, profil ou paramètres incompatibles."));
+      const parsed = resumed?.config ?? parseWorkshopConfig(envelope);
       if (!parsed)
         throw new Error(t("Ce fichier ne contient pas un montage valide (V1, V2 ou V3)."));
       setPlaying(false);
-      setProgress(pedagogical && Number.isFinite(envelope.progress) ? Math.min(1, Math.max(0,envelope.progress)) : 0);
-      if (pedagogical && envelope.kind === "pedagogical-workshop") {
-        const s = envelope.settings;
-        if (s && typeof s.className === "string" && typeof s.magnetId === "string")
-          setExperiment({...DEFAULT_EXPERIMENT, className:s.className, magnetId:s.magnetId, profileVersion:String(s.profileVersion), dataVersion:String(s.dataVersion), integration:s.integration === "form66" ? "form66" : "unknown", hypotheses:s.hypotheses === true, nearbyMaterial:s.nearbyMaterial === true, rotationFreedom:s.rotationFreedom === true, lateralFreedomMm:Number.isFinite(s.lateralFreedomMm) && s.lateralFreedomMm>=0 && s.lateralFreedomMm<=12 ? s.lateralFreedomMm : 0});
-      }
+      setProgress(resumed?.progress??0);
+      if(resumed)setExperiment(resumed.settings);
       setConfig(parsed);
       setSaved(null);
       setError(null);
-      setImportNotice(t("Montage importé. Il est enregistré automatiquement dans votre projet."));
+      setImportNotice(t(storageMode==="memory"?"Montage importé en mémoire de cet onglet ; GLB à réimporter si absent.":"Montage importé. Il est enregistré automatiquement dans votre projet."));
     } catch (e) {
       setError(e instanceof Error ? e.message : t("Fichier illisible."));
     }
@@ -2116,7 +2123,7 @@ export default function MagneticWorkshop({
   );
 
   return (
-    <main className={`mw mw-stage immersive ${embedded ? "mw-embedded" : "mw-autonomous"} ${machine ? "mw-imported" : ""}`} aria-label={t("Atelier 3D")}>
+    <main className={`mw mw-stage immersive ${pedagogical?"mw-pedagogical":""} ${embedded ? "mw-embedded" : "mw-autonomous"} ${machine ? "mw-imported" : ""}`} aria-label={t("Atelier 3D")}>
       {productCard && (
         <SensorCard
           key={sensor.id}
@@ -2142,7 +2149,7 @@ export default function MagneticWorkshop({
       )}
       <div className="mw-stage-grid">
         <aside className="mw-controls">
-          {pedagogical && <PedagogicalControls settings={experiment} setSettings={setExperiment} config={config} update={update} frame={pedagogicalPose} busy={sampled.busy} volume={sampled.volume} failed={sampled.failed} canUndo={placementUndo!==null} onUndo={()=>{if(placementUndo){setConfig(placementUndo);setPlacementUndo(null);setSuggestion(null);}}} onSuggest={()=>{const p=findPlacement(experiment,pedagogicalPose.pose,!!machine);if(!p){setError(t("Aucune suggestion disponible dans les libertés déclarées."));return;}const angle=Math.atan2(p.axis[1],p.axis[0])*180/Math.PI;setSuggestion({...config,magnetAngle:angle,lateralShift:p.center[0]});}} />}
+          {pedagogical && <PedagogicalControls settings={activeExperiment} setSettings={setExperiment} config={config} update={patch=>update(patch,{keepTime:true})} frame={pedagogicalPose} busy={sampled.busy} volume={sampled.volume} failed={sampled.failed} canUndo={placementUndo!==null} onUndo={()=>{if(placementUndo){setConfig(placementUndo);setPlacementUndo(null);setSuggestion(null);}}} onSuggest={()=>{const candidate=suggestPedagogicalConfig(config,progress,experiment);if(!candidate){setError(t("Aucune suggestion disponible dans les libertés déclarées."));return;}setSuggestion(candidate);}} />}
           {suggestion && <div className="notice-info"><p>{t("Placement proposé : appliquer explicitement, puis recalculer")}</p><Button onClick={()=>{setPlacementUndo(config);setConfig(suggestion);setSuggestion(null);setPlaying(false);}}>{t("Appliquer le placement proposé")}</Button><Button variant="secondary" onClick={()=>setSuggestion(null)}>{t("Annuler")}</Button></div>}
           {!pedagogical && <>{!machine && approachPicker}
           {!machine && activationDistanceControl}</>}
@@ -2350,14 +2357,14 @@ export default function MagneticWorkshop({
           {pedagogical ? <PedagogicalBanner evidence={placement}/> : verdictBanner}
           <div
             className="mw-canvas"
-            role="img"
+            role={pedagogical?"group":"img"}
             aria-label={msg("Montage {0}. {1}.", [
               machine
                 ? machine.fileName
                 : reference
                   ? t(config.geometry)
                   : t(motionLabels[config.motion]),
-              t(contactLabel[sample.contact]),
+              t(pedagogical?PLACEMENT_LABEL[placement.state]:contactLabel[sample.contact]),
             ])}
           >
             <div className="mw-scene-tools">
@@ -2549,7 +2556,7 @@ export default function MagneticWorkshop({
           </div>
           {/* Chronologie du cycle : mêmes échantillons que la scène et le verdict. */}
           <div className="mw-cycle" aria-label={t("Chronologie du cycle")}>
-            {pedagogical && <p className="t-caption">{t("Capacité d’activation et réouverture non caractérisées : Ton/Toff non documentés")}{pedTimeline && <> · {pedTimeline.events.length} {t("transitions de placement")}{pedTimeline.events.some(e=>!e.resolved)&&<> · {t("Événement non résolu")}</>}</>}</p>}
+            {pedagogical && <p className="t-caption">{t("Capacité d’activation estimée ; réouverture non caractérisée : Ton/Toff non documentés")}{<> · {t("Résolution des traversées non certifiée ; un passage rapide peut être manqué.")}</>}{pedTimeline && <> · {pedTimeline.events.length} {t("transitions de placement")}{pedTimeline.events.some(e=>!e.resolved)&&<> · {t("Événement non résolu")}</>}</>}</p>}
             {!pedagogical && <>
             <div className="mw-cycle-head">
               {timelineContacts.map((contact, index) => (
@@ -2585,7 +2592,7 @@ export default function MagneticWorkshop({
               </div>
             )}
             </>}
-            {pedagogical && <div className="mw-ped-timeline">{pedTimeline?.points.filter((_,i)=>i%4===0).map(p=><span key={p.t} data-state={p.state} title={t(PLACEMENT_LABEL[p.state])}/>)}</div>}
+            {pedagogical && <div className="mw-ped-timeline">{pedTimeline?.points.slice(0,-1).map((p,i)=><span key={p.t} style={{width:`${((pedTimeline.points[i+1]?.t??p.t)-p.t)*100}%`}} data-state={p.state} title={`${t(PLACEMENT_LABEL[p.state])} · ${p.t.toFixed(6)}–${pedTimeline.points[i+1]?.t.toFixed(6)}`}/>)}</div>}
             <input
               className="mw-scrubber"
               disabled={!machineReady}

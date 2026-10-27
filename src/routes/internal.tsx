@@ -141,7 +141,7 @@ function TestBench() {
       ) : !user ? (
         <SignIn />
       ) : (
-        <Bench user={user} />
+        <Bench key={user.id} user={user} />
       )}
     </div>
   );
@@ -306,6 +306,7 @@ interface BatchRow {
 }
 
 function Bench({ user }: { user: User }) {
+  const [pedagogicalDraft,setPedagogicalDraft]=useState<import("@/lib/standex/pedagogical-poses").PedagogicalDraft|null>(null);
   const [workshopOpen, setWorkshopOpen] = useState(false);
   const [sessions, setSessions] = useState<SensorTestSession[]>([]);
   const [scenarios, setScenarios] = useState<SensorTestScenario[]>([]);
@@ -657,9 +658,11 @@ function Bench({ user }: { user: User }) {
           check={serverStaffCheck}
           subscribe={subscribeSession}
           pedagogical
+          key={user.id}
+          onResetDraft={()=>setPedagogicalDraft(null)}
           renderLab={(close) => (
             <Suspense fallback={<p className="p-8">{t("Ouverture de l’atelier pédagogique…")}</p>}>
-              <MagneticWorkshop pedagogical storageMode="memory" onClose={close} onSave={async () => {}} />
+              <MagneticWorkshop pedagogical initialPedagogicalDraft={pedagogicalDraft} onPedagogicalDraftChange={setPedagogicalDraft} storageMode="memory" onClose={close} onSave={async () => {}} />
             </Suspense>
           )}
         />

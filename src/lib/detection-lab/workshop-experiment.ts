@@ -6,6 +6,7 @@ import { PILOT_MAGNETS } from './magnets';
 import { evaluatePose, type MagnetPose, type PoseEvaluation } from './pose';
 import { PROFILE, type ReedScenario } from './profile';
 import type { Vec3 } from './field';
+import report from '@/data/detection-lab/workshop-distances.json';
 
 export const EXPERIMENT = Object.freeze({...frozen,baseProfile:Object.freeze({...frozen.baseProfile})});
 export type PlacementState = 'favorable' | 'variable' | 'unfavorable' | 'unavailable';
@@ -31,10 +32,18 @@ export function classThresholds(className: string): { low: number | null; high: 
   return row ? { low: row.min * EXPERIMENT.kMtPerAt, high: row.max * EXPERIMENT.kMtPerAt } : null;
 }
 export interface PlacementEvidence {
-  state: PlacementState; cause: 'distance' | 'orientation' | 'collision' | 'scenario_collision' | 'domain' | 'missing' | 'material' | 'stale' | 'partial';
+  state: PlacementState; cause: 'distance' | 'orientation' | 'collision' | 'scenario_collision' | 'domain' | 'missing' | 'material' | 'stale' | 'partial' | 'motion' | 'clip' | 'mounting';
   nominal: PoseEvaluation | null; scenarios: { id: string; result: PoseEvaluation }[];
   /** 0 below range, 1 sensitivity-dependent, 2 above high bound; never electrical ON/OFF. */
   zone: 0 | 1 | 2; partial: boolean;
+}
+export function experimentAvailable(settings: ExperimentSettings): boolean {
+  return settings.profileVersion===EXPERIMENT.version && settings.dataVersion===EXPERIMENT.dataVersion && settings.integration==='form66' && !settings.nearbyMaterial && !!classThresholds(settings.className) && PILOT_MAGNETS.some(m=>m.id===settings.magnetId);
+}
+/** Frozen documentary estimates only: no field/pose modification or refit. */
+export function documentaryDistances(settings: ExperimentSettings, approach: string) {
+  if(!experimentAvailable(settings)||report.profileVersion!==EXPERIMENT.version)return [];
+  return report.rows.filter(r=>r.className===settings.className && r.magnetId===settings.magnetId && r.approach===approach && r.publishedMm!==null && (settings.className!=='A'||r.bound==='up')).map(r=>({...r,prudentMm:r.estimatedRawMm===null?null:conservativeDistance(r.estimatedRawMm,r.approach)}));
 }
 export function evaluatePlacement(settings: ExperimentSettings, pose: MagnetPose, mountingCollision = false): PlacementEvidence {
   const unavailable = (cause: PlacementEvidence['cause'], nominal: PoseEvaluation | null = null): PlacementEvidence => ({ state:'unavailable', cause, nominal, scenarios:[],zone:0,partial:settings.className==='A' });
@@ -71,8 +80,8 @@ export function derivedDatum(base: number, offset: number, claimed: number, kind
 export function settingsKey(s: ExperimentSettings, axis: Vec3, planeZ: number) {
   return JSON.stringify([EXPERIMENT,s,axis,planeZ]);
 }
-export interface SampleCell { x:number;y:number;z:number;x0:number;x1:number;y0:number;y1:number;z0:number;z1:number;zone:0|1|2;response:number|null }
-export interface SampledVolume { key:string;cells:SampleCell[];cut:SampleCell[];computeMs:number;nodeCount:number;axis:Vec3;planeZ:number }
+export interface SampleCell { i:number;j:number;k:number;x:number;y:number;z:number;x0:number;x1:number;y0:number;y1:number;z0:number;z1:number;zone:0|1|2;response:number|null }
+export interface SampledVolume { key:string;cells:SampleCell[];cut:SampleCell[];computeMs:number;nodeCount:number;axis:Vec3;planeZ:number;extent:number;truncated:boolean }
 export function axisNodes(lo:number,hi:number,fine=false): number[] {
   const values=new Set<number>();
   for(let x=lo;x<=hi;x++) values.add(x);
@@ -86,25 +95,25 @@ export function sampleVolume(settings:ExperimentSettings,axis:Vec3,planeZ:number
   if(planeZ>=-extent&&planeZ<=extent&&!zs.includes(planeZ)) {zs.push(planeZ);zs.sort((a,b)=>a-b);}
   const magnet=PILOT_MAGNETS.find(m=>m.id===settings.magnetId),th=classThresholds(settings.className);
   const cells:SampleCell[]=[],cut:SampleCell[]=[];
-  if(!magnet||!th||settings.integration!=='form66'||settings.nearbyMaterial||settings.profileVersion!==EXPERIMENT.version||settings.dataVersion!==EXPERIMENT.dataVersion) return {key:settingsKey(settings,axis,planeZ),cells,cut,computeMs:0,nodeCount:0,axis,planeZ};
+  if(!magnet||!th||settings.integration!=='form66'||settings.nearbyMaterial||settings.profileVersion!==EXPERIMENT.version||settings.dataVersion!==EXPERIMENT.dataVersion) return {key:settingsKey(settings,axis,planeZ),cells,cut,computeMs:0,nodeCount:0,axis,planeZ,extent,truncated:false};
   const nominal=nominalScenario();
   for(let k=0;k<zs.length;k++) for(let j=0;j<ys.length;j++) for(let i=0;i<xs.length;i++) {
     const x=xs[i]??0,y=ys[j]??0,z=zs[k]??0;
     const e=evaluatePose(magnet,{center:[x,y,z],axis},nominal,'B');
     const zone=e.ok&&e.response>=th.high?2:e.ok&&th.low!==null&&e.response>=th.low?1:0;
     const [x0,x1]=bounds(xs,i,-extent,extent),[y0,y1]=bounds(ys,j,-extent,extent),[z0,z1]=bounds(zs,k,-extent,extent);
-    const cell:SampleCell={x,y,z,x0,x1,y0,y1,z0,z1,zone,response:e.ok?e.response:null};
+    const cell:SampleCell={i,j,k,x,y,z,x0,x1,y0,y1,z0,z1,zone,response:e.ok?e.response:null};
     if(zone)cells.push(cell);
     if(z===planeZ)cut.push(cell);
   }
-  return {key:settingsKey(settings,axis,planeZ),cells,cut,computeMs:performance.now()-start,nodeCount:xs.length*ys.length*zs.length,axis,planeZ};
+  return {key:settingsKey(settings,axis,planeZ),cells,cut,computeMs:performance.now()-start,nodeCount:xs.length*ys.length*zs.length,axis,planeZ,extent,truncated:cells.some(c=>c.i===0||c.j===0||c.k===0||c.i===xs.length-1||c.j===ys.length-1||c.k===zs.length-1)};
 }
 export interface TimelinePoint {t:number;state:PlacementState;response:number|null;zone:0|1|2}
 export interface TimelineEvent {from:number;to:number;resolved:boolean;before:PlacementState;after:PlacementState}
 /** Adaptive bounded sampling. Unresolved intervals stay explicit; no electrical hysteresis from sensitivity bounds. */
-export function placementTimeline(settings:ExperimentSettings,poseAt:(t:number)=>MagnetPose,steps=128,maxDepth=10) {
+export function placementTimeline(settings:ExperimentSettings,poseAt:(t:number)=>MagnetPose,steps=128,maxDepth=10,mountingCollisionAt:(t:number)=>boolean|undefined=()=>false) {
   const points=new Map<number,TimelinePoint>(),events:TimelineEvent[]=[];
-  const sample=(t:number)=>{const hit=points.get(t);if(hit)return hit;const e=evaluatePlacement(settings,poseAt(t));const p={t,state:e.state,response:e.nominal?.ok?e.nominal.response:null,zone:e.zone};points.set(t,p);return p;};
+  const sample=(t:number)=>{const hit=points.get(t);if(hit)return hit;const collision=mountingCollisionAt(t);const e=evaluatePlacement(collision===undefined?{...settings,integration:'unknown'}:settings,poseAt(t),collision===true);const p={t,state:e.state,response:e.nominal?.ok?e.nominal.response:null,zone:e.zone};points.set(t,p);return p;};
   const refine=(a:number,b:number,depth:number)=>{
     const pa=sample(a),pb=sample(b),mid=(a+b)/2,pm=sample(mid);
     const transition=pa.state!==pb.state||pa.state!==pm.state||pa.zone!==pb.zone||pa.zone!==pm.zone;
@@ -113,14 +122,14 @@ export function placementTimeline(settings:ExperimentSettings,poseAt:(t:number)=
     refine(a,mid,depth+1);refine(mid,b,depth+1);
   };
   for(let i=0;i<steps;i++)refine(i/steps,(i+1)/steps,0);
-  return {points:[...points.values()].sort((a,b)=>a.t-b.t),events,electrical:'uncharacterized' as const,baseResolution:1/(steps*2)};
+  return {points:[...points.values()].sort((a,b)=>a.t-b.t),events,electrical:'uncharacterized' as const,baseResolution:1/(steps*2),resolutionCertified:false as const};
 }
 export interface DocumentedSwitch {name:string;ton:number;toff:number;initial:'open'|'closed';source:string}
 /** Explicit documented switching only. Replays the entire ordered history, independent of UI click order. */
 export function replayDocumentedSwitch(points:readonly {t:number;response:number|null}[],piece:DocumentedSwitch|null) {
   if(!piece||!piece.source||!Number.isFinite(piece.ton)||!Number.isFinite(piece.toff)||piece.ton<=piece.toff||piece.toff<0)return null;
-  let state:'open'|'closed'=piece.initial;
-  return [...points].sort((a,b)=>a.t-b.t).map(p=>{if(p.response===null)return {...p,state:'unknown' as const};if(state==='open'&&p.response>=piece.ton)state='closed';else if(state==='closed'&&p.response<=piece.toff)state='open';return {...p,state};});
+  let state:'open'|'closed'|'unknown'=piece.initial;
+  return [...points].sort((a,b)=>a.t-b.t).map(p=>{if(p.response===null||!Number.isFinite(p.response)){state='unknown';return {...p,state};}if(p.response>=piece.ton)state='closed';else if(p.response<=piece.toff)state='open';return {...p,state};});
 }
 export function findPlacement(settings:ExperimentSettings,pose:MagnetPose,locked:boolean):MagnetPose|null {
   if(locked||settings.integration!=='form66'||settings.nearbyMaterial)return null;

@@ -929,7 +929,7 @@ export default function WorkshopScene({
   const boxSize = boxMax.map((v, i) => v - boxMin[i]!) as Vec3;
   /* Rayon de la sphère englobante : le cadrage tient donc quel que soit l'angle
      de vue, sans dépendre de l'orientation courante de la caméra. */
-  const fitRadius = pedagogicalLayer ? 35 : Math.max(6, 0.5 * Math.hypot(boxSize[0]!, boxSize[1]!, boxSize[2]!));
+  const fitRadius = pedagogicalLayer ? Math.max(35,Math.hypot(...openPose.position)*.7) : Math.max(6, 0.5 * Math.hypot(boxSize[0]!, boxSize[1]!, boxSize[2]!));
   /* Milieu du segment capteur (origine locale) – aimant en position ouverte. */
   const mid: Vec3 = [
     openPose.position[0]! / 2,
@@ -941,7 +941,7 @@ export default function WorkshopScene({
     target: Vec3 =
       focus === "sensor"
         ? [config.mountX, 0, config.mountZ]
-        : pedagogicalLayer ? [config.mountX,0,config.mountZ] : [config.mountX + mid[0], mid[1], config.mountZ + mid[2]];
+        : pedagogicalLayer ? [config.mountX+mid[0],mid[1],config.mountZ+mid[2]] : [config.mountX + mid[0], mid[1], config.mountZ + mid[2]];
 
   return (
     <Canvas
