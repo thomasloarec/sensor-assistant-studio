@@ -131,7 +131,7 @@ describe("Workshop monté : quatre états sans circuit électrique", () => {
     await act(async () => fireEvent.click(v.getByText("Proposer ce placement")));
     expect(v.getByText("Appliquer le placement proposé")).toBeTruthy();
     // Pose change (keyboard-equivalent slider input): remedy recomputed for the NEW pose.
-    await act(async () => fireEvent.input(v.getByLabelText("Décalage latéral"), { target: { value: "8" } }));
+    await act(async () => fireEvent.input(v.getByRole("slider", { name: "Décalage latéral" }), { target: { value: "8" } }));
     await waitFor(() => expect(v.getByTestId("pedagogical-verdict").textContent).toContain("Placement favorable"));
     expect(v.queryByTestId("pedagogical-remedy")).toBeNull();
     v.unmount();
