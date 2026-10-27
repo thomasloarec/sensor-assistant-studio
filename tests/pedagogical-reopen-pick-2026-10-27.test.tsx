@@ -60,6 +60,18 @@ describe("Atelier pédagogique : reprise et pointage réels", () => {
       expect(draft!.config.machine!.magnetPosition).toEqual([6, 206, 0]);
       expect(draft!.progress).toBe(0.25);
       expect(draft!.settings).toEqual(DEFAULT_EXPERIMENT);
+      if (round === 1) {
+        // Real "5 Essai" click after reload, then 4 → 5 again: the instant stays 25 %.
+        await waitFor(() => expect(v.getByTestId("machine-guide")).toBeTruthy(), { timeout: 8000 });
+        await act(async () => fireEvent.click(v.getByTestId("guide-step-" + TRY_STEP)));
+        expect(draft!.progress).toBe(0.25);
+        await act(async () => fireEvent.click(v.getByTestId("guide-step-install")));
+        expect(draft!.progress).toBe(0.25);
+        await act(async () => fireEvent.click(v.getByTestId("guide-step-" + TRY_STEP)));
+        expect(draft!.progress).toBe(0.25);
+        expect(draft!.config.machine!.sensorPosition).toEqual([0, 200, 0]);
+        expect(draft!.config.machine!.magnetPosition).toEqual([6, 206, 0]);
+      }
       v.unmount();
     }
   }, 40000);
