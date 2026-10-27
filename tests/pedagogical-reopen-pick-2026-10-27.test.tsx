@@ -74,15 +74,14 @@ describe("Atelier pédagogique : reprise et pointage réels", () => {
     const machine = { ...structuredClone(DEMO_ASSEMBLIES["builtin:wall-v1"]!), motionStatus: "confirmed" as const };
     const { defaultMagnetFor } = await import("../src/lib/standex/default-pairs");
     const { parseWorkshopConfig } = await import("../src/lib/standex/magnetic-workshop");
-    const config = { ...DEFAULT_WORKSHOP, sensorId: "MK24-A-J", magnetModel: defaultMagnetFor("MK24-A-J"), mode: "education" as const, machine };
-    expect(parseWorkshopConfig(config)?.sensorId).toBe("MK24-A-J");
+    const config = { ...DEFAULT_WORKSHOP, sensorId: "MK03", magnetModel: defaultMagnetFor("MK03"), mode: "education" as const, machine };
+    expect(parseWorkshopConfig(config)?.sensorId).toBe("MK03");
     let draft: { config: typeof config } | null = null;
     const v = render(React.createElement(MagneticWorkshop, { pedagogical: true, initialPedagogicalDraft: { config, settings: { ...DEFAULT_EXPERIMENT }, progress: 0 }, onPedagogicalDraftChange: (x: { config: typeof config }) => { draft = x; }, onClose: () => {}, onSave: () => {} }));
     await waitFor(() => expect(v.getByTestId("machine-guide")).toBeTruthy(), { timeout: 10000 });
     await act(async () => fireEvent.click(v.getByTestId("guide-step-install")));
     await act(async () => fireEvent.click(v.getByRole("radio", { name: "Capteur" })));
     await act(async () => fireEvent.click(v.getByRole("radio", { name: "À travers une paroi" })));
-    console.log("DBG", (draft as any)?.config.sensorId, v.getByTestId("machine-guide").textContent?.includes("réservé aux corps"));
     await act(async () => fireEvent.click(v.getByRole("button", { name: "Axe d'un trou existant (deux points)", hidden: true })));
     const hits = [
       { point: [0, 60, -5] as [number, number, number], normal: [0, 0, -1] as [number, number, number], path: "0/0", moving: false, group: "" },
