@@ -42,7 +42,7 @@ const magnetById = (id: string): PilotMagnet => PILOT_MAGNETS.find((m) => m.id =
 export const DATUM_ANCHOR = { className: "C", magnetId: "SMCO5-5X4", approach: "D3", bound: "up" } as const;
 /** Correction scalaire D4 : unique borne Form C — SmCo — D4 — up (seconde ancre). */
 export const D4_ANCHOR = { className: "C", magnetId: "SMCO5-5X4", approach: "D4", bound: "up" } as const;
-const isAnchor = (a: typeof DATUM_ANCHOR, className: string, magnetId: string, approach: string, bound: string) =>
+const isAnchor = (a: { className: string; magnetId: string; approach: string; bound: string }, className: string, magnetId: string, approach: string, bound: string) =>
   a.className === className && a.magnetId === magnetId && a.approach === approach && a.bound === bound;
 
 /** Critère révisé, explicite : par borne |erreur| ≤ max(1 mm, 15 % du publié) ;
