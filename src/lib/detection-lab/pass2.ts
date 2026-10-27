@@ -105,18 +105,23 @@ export function fitK(effectiveLengthMm: number, model: ResponseModel, conv: Dist
 export interface LengthFitPair { className: string; bound: Bound; thetaSmCo: number | null; thetaN45: number | null }
 export interface LengthFit { effectiveLengthMm: number; rmsLogDisagreement: number; pairs: LengthFitPair[] }
 
-/** Ajustement de L par accord INTER-AIMANTS sur D1 seul : minimise
- * Σ (log θ_N45 − log θ_SmCo)² sur les bornes d'apprentissage. Paramètre ajusté,
+/** Ajustement de L par accord INTER-AIMANTS sur D1 seul : pour chaque borne
+ * (classe × up/to), θ_m = réponse de l'aimant m à SA distance publiée D1 ;
+ * minimise Σ (log θ_N45 − log θ_SmCo)² sur ces 4 bornes. Paramètre ajusté,
  * pas une dimension prouvée. Aucune borne de contrôle n'est lue. */
 export function fitLength(model: ResponseModel, conv: DistanceConvention, rows?: FormRow[]): LengthFit {
   const bounds = trainingBounds(rows);
-  const theta = (m: PilotMagnet, b: TrainingBound, L: number) => {
-    const v = responseAt(m, "D1", b.publishedMm, conv, model, undefined, scenarioForLength(L));
+  const combos = [...new Set(bounds.map((b) => `${b.className}|${b.bound}`))].map((key) => {
+    const [className, bound] = key.split("|") as [string, Bound];
+    return { className, bound, smco: bounds.find((b) => b.className === className && b.bound === bound && b.magnetId === "SMCO5-5X4")!, n45: bounds.find((b) => b.className === className && b.bound === bound && b.magnetId === "N45-4X19")! };
+  });
+  const theta = (m: PilotMagnet, publishedMm: number, L: number) => {
+    const v = responseAt(m, "D1", publishedMm, conv, model, undefined, scenarioForLength(L));
     return v.ok && v.value > 0 ? v.value : null;
   };
   const sse = (L: number) =>
-    bounds.reduce((s, b) => {
-      const ts = theta(PILOT_MAGNETS[0]!, b, L), tn = theta(PILOT_MAGNETS[1]!, b, L);
+    combos.reduce((s, c) => {
+      const ts = theta(PILOT_MAGNETS[0]!, c.smco.publishedMm, L), tn = theta(PILOT_MAGNETS[1]!, c.n45.publishedMm, L);
       return s + (ts != null && tn != null ? (Math.log(tn) - Math.log(ts)) ** 2 : 1e6);
     }, 0);
   let lo = 4, hi = 30;
