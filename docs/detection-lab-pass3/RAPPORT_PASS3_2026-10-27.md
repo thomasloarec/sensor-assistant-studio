@@ -156,10 +156,10 @@ A/F ne font pas partie du critère (classes hors apprentissage et hors contrôle
 
 | Étape | Durée |
 |---|---|
-| Ajustement de L (accord inter-aimants D1, lot 2) | 27 ms |
-| Variante L16-axial (fit k, repère, tableau 112, scores) | 3120 ms |
-| Variante L16-bprime (fit k, repère, tableau 112, scores) | 2920 ms |
-| Variante L16-d4corr (fit k, repère, tableau 112, scores) | 3165 ms |
-| Variante Lfit-axial (fit k, repère, tableau 112, scores) | 3294 ms |
-| Variante Lfit-bprime (fit k, repère, tableau 112, scores) | 3142 ms |
-| Variante Lfit-d4corr (fit k, repère, tableau 112, scores) | 2884 ms |
+| Ajustement de L (accord inter-aimants D1, lot 2) | 26 ms |
+| Variante L16-axial (fit k, repère, tableau 112, scores) | 3952 ms |
+| Variante L16-bprime (fit k, repère, tableau 112, scores) | 4220 ms |
+| Variante L16-d4corr (fit k, repère, tableau 112, scores) | 4114 ms |
+| Variante Lfit-axial (fit k, repère, tableau 112, scores) | 3911 ms |
+| Variante Lfit-bprime (fit k, repère, tableau 112, scores) | 3866 ms |
+| Variante Lfit-d4corr (fit k, repère, tableau 112, scores) | 4030 ms |
