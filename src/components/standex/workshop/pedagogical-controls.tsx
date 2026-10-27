@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { t, msg, number } from '@/lib/i18n/core';
 import { DEFAULT_EXPERIMENT, EXPERIMENT, FORM_ANOMALIES, documentaryDistances, experimentAvailable, evaluatePlacement, settingsKey, type ExperimentSettings, type SampledVolume, type PlacementEvidence } from '@/lib/detection-lab/workshop-experiment';
-import { PEDAGOGICAL_CASES, pedagogicalPreset, type PedagogicalFrame } from '@/lib/standex/pedagogical-poses';
+import { PEDAGOGICAL_CASES, pedagogicalPreset, type PedagogicalFrame, type PedagogicalRemedy } from '@/lib/standex/pedagogical-poses';
+import type { PlacementDiagnosis } from '@/lib/detection-lab/placement-diagnosis';
 import type { WorkshopConfig } from '@/lib/standex/magnetic-workshop';
 import type { Obb } from '@/lib/detection-lab/obstacles';
 import { fingerprint } from '@/lib/standex/mounting/geometry';
@@ -57,8 +58,8 @@ export function PedagogicalBanner({evidence,diagnosis,remedy,onPropose}:{evidenc
     {remedyText&&<span className="t-caption" data-testid="pedagogical-remedy">{remedyText}{remedy?.kind==='verified'&&onPropose&&<> <Button variant="secondary" onClick={()=>onPropose(remedy)}>{t('Proposer ce placement')}</Button></>}</span>}
   </div>;
 }
-export function PedagogicalControls({settings,setSettings,config,update,frame,busy,volume,failed,onSuggest,onUndo,canUndo,mounting}:{
-  mounting?:{parts:number;reedOverlap:string[]}|null;settings:ExperimentSettings;setSettings:(s:ExperimentSettings)=>void;config:WorkshopConfig;update:(p:Partial<WorkshopConfig>)=>void;frame:PedagogicalFrame;busy:boolean;volume:SampledVolume|null;failed:boolean;onSuggest:()=>void;onUndo:()=>void;canUndo:boolean;
+export function PedagogicalControls({timelineNote,settings,setSettings,config,update,frame,busy,volume,failed,onSuggest,onUndo,canUndo,mounting}:{
+  timelineNote?:import('react').ReactNode;mounting?:{parts:number;reedOverlap:string[]}|null;settings:ExperimentSettings;setSettings:(s:ExperimentSettings)=>void;config:WorkshopConfig;update:(p:Partial<WorkshopConfig>)=>void;frame:PedagogicalFrame;busy:boolean;volume:SampledVolume|null;failed:boolean;onSuggest:()=>void;onUndo:()=>void;canUndo:boolean;
 }) {
   const canonical=!config.machine&&config.motion==='approach'&&config.magnetTilt===0;
   const approach=canonical?(config.geometry==='D3'&&config.magnetAngle===0&&config.lateralShift===0?'D3':config.geometry==='D1'&&config.magnetAngle===0&&config.lateralShift===0?'D1':config.geometry==='D1'&&Math.abs(config.magnetAngle)===90?'D4':null):null;
@@ -81,7 +82,7 @@ export function PedagogicalControls({settings,setSettings,config,update,frame,bu
       </>}
       <p className="t-caption" data-testid="pedagogical-depth-datum">{t('Profondeur : centre de l’aimant → repère du reed. Les distances de brochure se mesurent de la face de l’aimant au repère : pas de comparaison directe au millimètre.')}</p>
     </>}
-    <p className="t-caption" role="status">{volume?.reedBlocked?t('Chevauchement possible du reed, logement à vérifier : estimation indisponible'):t(busy?'Calcul des volumes en cours…':failed?'Volumes indisponibles : calcul interrompu':volume?'Volumes recalculés':'Volumes en attente')} {volume&&`${number(volume.computeMs/1000,2)} s · ${volume.nodeCount} ${t('positions calculées')}`}</p>
+    <p className="t-caption" role="status">{volume?.reedBlocked?t('Chevauchement possible du reed, logement à vérifier : estimation indisponible'):t(busy?'Calcul des volumes en cours…':failed?'Volumes indisponibles : calcul interrompu':volume?'Volumes recalculés':'Volumes en attente')}</p>
     <details className="mw-advanced"><summary>{t('Avancés')}</summary>
       <label className="mw-select-label">{t('Classe de sensibilité')}<select value={settings.className} onChange={e=>change({className:e.target.value})}>{['A','B','C','D','E','F','G'].map(c=><option key={c}>{c}</option>)}</select></label>
       <p className="t-caption">{t('Hypothèses : robustesse magnétique ; un montage importé contrôle aussi le dégagement du reed déplacé de ±1 mm.')}</p>
@@ -102,11 +103,16 @@ export function PedagogicalControls({settings,setSettings,config,update,frame,bu
     {volume?.truncated&&<p className="notice-warning t-caption">{t('Lobes tronqués aux limites du domaine affiché ±24 mm ; aucune fermeture physique déduite.')}</p>}
     {distances.length>0&&<details className="mw-advanced" data-testid="pedagogical-distances"><summary>{t('Distances indicatives, calibrées sur la brochure Standex')}</summary>
       <p className="t-caption">{t('Maximum du lobe documenté, pas une portée dans la position affichée.')}</p>
-      {distances.map(r=><p className="t-metric" key={r.bound}>{t(r.bound==='up'?'Borne prudente':'Borne haute indicative')} : {r.prudentMm===null?t('Estimation indisponible'):`${number(r.prudentMm,1)} mm`}</p>)}
+      {distances.map(r=><p className="t-body" key={r.bound} data-testid="pedagogical-bound">{t(r.bound==='up'?'Borne prudente':'Borne haute indicative')} : {r.prudentMm===null?t('Estimation indisponible'):<span className="t-metric">{number(r.prudentMm,1)} mm</span>}</p>)}
       <p className="t-caption">{t('Correction D4 avant arrondi prudent ; volumes non corrigés.')}</p>
       <details><summary>{t('Provenance')}</summary>{distances.map(r=><p className="t-caption" key={r.bound}>{r.approach} · {r.bound} · {t('Publié')} {number(r.publishedMm??0,1)} mm</p>)}</details>
     </details>}
-    <details className="mw-advanced"><summary>{t('Périmètre et sources')}</summary>
+    <details className="mw-advanced" data-testid="pedagogical-sources"><summary>{t('Sources et limites')}</summary>
+      <p className="t-caption">{t('Accord des hypothèses internes, sans garantie de fabrication')}</p>
+      <p className="t-caption">{t('Les deux lobes sont nominaux (bornes de la classe) ; le verdict exige l’accord des neuf hypothèses internes.')}</p>
+      <p className="t-caption">{t('Capteur générique, reed 66 monté : gabarit exploratoire égal à l’enveloppe mécanique testée, pas les dimensions d’un boîtier commercial.')}</p>
+      {volume&&<p className="t-caption">{t('Volumes nominaux indicatifs, non corrigés')} · <span className="t-metric">{number(volume.computeMs/1000,2)} s</span> · <span className="t-metric">{volume.nodeCount}</span> {t('positions calculées')}</p>}
+      {timelineNote}
       <p className="t-caption">{t('Distances indicatives, calibrées sur la brochure Standex. B–E, deux aimants, montage Form66 ; modèle 3D pédagogique non qualifié.')}</p>
       <p className="t-caption">{t('A : ATmax 10 seulement. F : SmCo D3-up indisponible, D4-to hors tolérance, D5 absent. G hors périmètre.')}</p>
       <p className="t-caption">{t('Repère axial et correction D4 documentaires uniquement ; aucun déplacement du volume. Correction D4 avant arrondi prudent à 0,5 mm, jamais une marge physique.')}</p>
