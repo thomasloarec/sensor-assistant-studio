@@ -153,20 +153,21 @@ describe("grille raffinée", () => {
     expect(cells.every((c) => c.sizeMm === 0.25 || c.sizeMm === 1)).toBe(true);
     // Aucune cellule grossière centrée dans la zone fine.
     expect(coarse.every((c) => Math.abs(c.x) > 5 || c.y > 5)).toBe(true);
-    // Disjointedness : balayage par lignes — deux rectangles ne se recouvrent jamais.
+    // Disjonction : deux cellules de la même ligne (même y0) ne se recouvrent jamais ;
+    // les lignes fines (y0 = ±0,125 près) et grossières (y0 = ±0,5 près) ne partagent
+    // aucun y0, et l'étendue fine maximale (5,125) reste sous le bord grossier (5,5).
     const rects = cells.map((c) => ({ x0: c.x - c.sizeMm / 2, x1: c.x + c.sizeMm / 2, y0: c.y - c.sizeMm / 2, y1: c.y + c.sizeMm / 2 }));
     const byRow = new Map<number, { x0: number; x1: number }[]>();
     for (const r of rects) {
-      const key = Math.round(r.y0 * 8); // lignes de même hauteur fine/grossière distinctes
-      for (const dy of [0, 1]) {
-        const k = key + dy * 0; // même ligne seulement : les pas 0,25 et 1 ne partagent pas y0 hors zone fine
-        void dy;
-        const arr = byRow.get(k) ?? [];
-        for (const o of arr) expect(r.x1 <= o.x0 + 1e-9 || r.x0 >= o.x1 - 1e-9).toBe(true);
-        arr.push({ x0: r.x0, x1: r.x1 });
-        byRow.set(k, arr);
-      }
+      const key = Math.round(r.y0 * 8);
+      const arr = byRow.get(key) ?? [];
+      for (const o of arr) expect(r.x1 <= o.x0 + 1e-9 || r.x0 >= o.x1 - 1e-9).toBe(true);
+      arr.push({ x0: r.x0, x1: r.x1 });
+      byRow.set(key, arr);
     }
+    const fineMax = Math.max(...fine.map((c) => Math.abs(c.x) + c.sizeMm / 2), ...fine.map((c) => c.y + c.sizeMm / 2));
+    expect(fineMax).toBeCloseTo(5.125, 9);
+    expect(fineMax).toBeLessThan(5.5);
   });
   test("nœuds communs : la grille fine retrouve la catégorie de la coupe 1 mm", () => {
     const cal = buildCalibrations("B", "C1");
