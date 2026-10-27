@@ -6,9 +6,11 @@ import { publishedClasses } from '@/lib/standex/magnetics/registries';
 import { magnetOptionsFor } from '@/lib/standex/default-pairs';
 import { guideRangesFor, formatGuideBound, ACTIVATION_GUIDE } from '@/lib/standex/activation-guide';
 import { sensorById } from '@/lib/standex/sensor-catalog';
+import { isPcbSensor } from '@/lib/leadmagnet/product-presentation';
+import type { ReactNode } from 'react';
 
-export function ClientPedagogicalControls({config,update,onCatalog,onExplore,onCable}: {
-  config:WorkshopConfig;update:(patch:Partial<WorkshopConfig>)=>void;onCatalog:()=>void;onExplore:()=>void;onCable:()=>void;
+export function ClientPedagogicalControls({config,update,onCatalog,onExplore,onCable,approachControls}: {
+  config:WorkshopConfig;update:(patch:Partial<WorkshopConfig>)=>void;onCatalog:()=>void;onExplore:()=>void;onCable:()=>void;approachControls?:ReactNode;
 }) {
   const adapter=clientCoupleAdapter(config);
   const classes=[...new Set([config.sensitivity,...publishedClasses(config.sensorId,config.magnetModel)])];
@@ -29,6 +31,7 @@ export function ClientPedagogicalControls({config,update,onCatalog,onExplore,onC
       <label className="mw-field"><span>{t('Décalage latéral')}<output className="t-metric">{config.lateralShift} mm</output></span><input aria-label={t('Décalage latéral')} type="range" min="-24" max="24" step=".25" value={config.lateralShift} onChange={e=>update({lateralShift:Number(e.target.value)})}/></label>
     </>}
     <details className="mw-advanced"><summary>{t('Position et environnement')}</summary>
+      {!config.machine && approachControls}
       {!config.machine&&<>
         <label className="mw-select-label">{t('Trajectoire')}<select aria-label={t('Trajectoire')} value={config.motion} onChange={e=>update({motion:e.target.value as WorkshopConfig['motion']})}>
           <option value="approach">{t('Approche et retrait')}</option><option value="slide">{t('Passage latéral')}</option><option value="pivot">{t('Pivot')}</option>
@@ -44,7 +47,7 @@ export function ClientPedagogicalControls({config,update,onCatalog,onExplore,onC
       <label className="mw-check"><input type="checkbox" checked={config.ferromagnetic} onChange={e=>update({ferromagnetic:e.target.checked})}/>{t('Acier ou autre matière ferromagnétique proche')}</label>
       <label className="mw-select-label">{t('Température')}<select aria-label={t('Température')} value={config.temperature} onChange={e=>update({temperature:e.target.value as WorkshopConfig['temperature']})}><option value="ambient">{t('Ambiante · exemple de référence')}</option><option value="other">{t('Autre température')}</option></select></label>
     </details>
-    <Button variant="secondary" disabled={!config.machine} onClick={onCable}>{t('Pointer le câble dans la 3D')}</Button>
+    {!isPcbSensor(config.sensorId) && <Button variant="secondary" disabled={!config.machine} onClick={onCable}>{t('Pointer le câble dans la 3D')}</Button>}
     <details className="mw-advanced" data-testid="client-pedagogical-sources"><summary>{t('Sources et limites')}</summary>
       {adapter.reasons.map(reason=><p className="t-caption" key={reason}>{t(reason)}</p>)}
       <p className="t-caption">{t(CLIENT_LIMITS.missing)}</p>

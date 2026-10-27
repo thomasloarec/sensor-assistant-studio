@@ -293,7 +293,7 @@ export default function MagneticWorkshop({
   onSave,
   storageLabel = t("la session et le projet"),
   storageMode = "local-device",
-  cableRouting,
+  cableRouting: providedCableRouting,
   initialCableOpen = false,
   onDraftChange,
   onResult,
@@ -325,6 +325,9 @@ export default function MagneticWorkshop({
     // couple pourtant publié restait affiché comme non caractérisé.
     () => withDefaultGuideSelection(parseWorkshopConfig(initialPedagogicalDraft?.config??initialConfig) ?? { ...DEFAULT_WORKSHOP, ...(staffPedagogical ? { sensorId: "GENERIC", mode: "education" as const, magnetModel: "generic", start: 24, end: 12, magnetAngle: 90 } : {}) }),
   );
+  // Disconnect all routing consumers, including scene callbacks, for PCB and
+  // isolated exploration; hiding the entry button alone is not sufficient.
+  const cableRouting = !exploring && !isPcbSensor(config.sensorId) ? providedCableRouting : undefined;
   useEffect(() => {
     if (!exploring) onDraftChange?.(config);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -680,6 +683,7 @@ export default function MagneticWorkshop({
     setSceneError(false);
   }
   function chooseTool(next: MachineTool) {
+    if (next === "cable" && (exploring || isPcbSensor(config.sensorId))) return;
     setPlaying(false);
     // Le tracé de câble et les repères se relèvent DANS la pose courante : on
     // ne remet pas le cycle à zéro.
@@ -2220,11 +2224,10 @@ export default function MagneticWorkshop({
       )}
       <div className="mw-stage-grid">
         <aside className="mw-controls">
-          {clientPedagogical && !exploring && <ClientPedagogicalControls config={config} update={patch=>update(patch,{keepTime:true})} onCatalog={()=>setCatalogOpen(true)} onExplore={beginExploration} onCable={()=>chooseTool('cable')}/>}
+          {clientPedagogical && !exploring && <ClientPedagogicalControls config={config} update={patch=>update(patch,{keepTime:true})} onCatalog={()=>setCatalogOpen(true)} onExplore={beginExploration} onCable={()=>chooseTool('cable')} approachControls={approachPicker}/>}
           {clientPedagogical && exploring && <div className="notice-info" data-testid="client-exploration"><p className="t-body">{t(CLIENT_LIMITS.exploration)}</p><Button variant="secondary" onClick={endExploration}>{t('Revenir au couple de mon dossier')}</Button></div>}
           {pedagogical && (!clientPedagogical || exploring) && <PedagogicalControls diagnosis={diagnosis} timelineNote={<p className="t-caption" data-testid="pedagogical-timeline-limits">{t("Capacité d’activation estimée ; réouverture non caractérisée : Ton/Toff non documentés")} · {t("Résolution des traversées non certifiée ; un passage rapide peut être manqué.")}{pedTimeline && <> · <span className="t-metric">{pedTimeline.events.length}</span> {t("transitions de placement")}{pedTimeline.events.some(e=>!e.resolved)&&<> · {t("Événement non résolu")}</>}</>}</p>} settings={activeExperiment} setSettings={setExperiment} config={config} update={patch=>update(patch,{keepTime:true})} mounting={config.machine&&envelopes?{parts:envelopes.length,reedOverlap}:null} frame={pedagogicalPose} busy={sampled.busy} volume={sampled.volume} failed={sampled.failed} canUndo={placementUndo!==null} onUndo={()=>{if(placementUndo){setConfig(placementUndo);setPlacementUndo(null);setSuggestion(null);}}} onSuggest={()=>{const candidate=suggestPedagogicalConfig(config,progress,experiment);if(!candidate){setError(t("Aucune suggestion disponible dans les libertés déclarées."));return;}setSuggestion(candidate);}} />}
           {suggestion && <div className="notice-info"><p>{t("Placement proposé : appliquer explicitement, puis recalculer")}</p><Button onClick={()=>{setPlacementUndo(config);setConfig(suggestion);setSuggestion(null);setPlaying(false);}}>{t("Appliquer le placement proposé")}</Button><Button variant="secondary" onClick={()=>setSuggestion(null)}>{t("Annuler")}</Button></div>}
-          {clientPedagogical&&!exploring&&!machine&&<details className="mw-advanced"><summary>{t('Position et environnement')}</summary>{approachPicker}</details>}
           {!pedagogical && <>{!machine && approachPicker}
           {!machine && activationDistanceControl}</>}
           {machine ? (

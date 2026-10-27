@@ -50,6 +50,39 @@ describe('client boundary: no catalogue alias or fictitious qualification',()=>{
   });
 });
 describe('real mounted client workshop',()=>{
+  test('PCB MK01 arm cannot expose cable routing while wired MK04 retains working callbacks',async()=>{
+    const {setLocale}=await import('../src/lib/i18n/core');setLocale('fr');
+    const {default:Workshop}=await import('../src/components/standex/workshop/workshop');
+    const {DEMO_ASSEMBLIES}=await import('../src/lib/standex/machine-demos');
+    const machine=structuredClone(DEMO_ASSEMBLIES['builtin:arm-v1']);if(!machine)throw Error('fixture missing');
+    for(const sensorId of ['MK01','MK04']){
+      let calls=0;
+      const view=render(<Workshop clientPedagogical embedded initialCableOpen initialConfig={{...DEFAULT_WORKSHOP,sensorId,machine}} storageMode="memory" onClose={()=>{}} onSave={async()=>{}} cableRouting={{slot:'sensor',points:[],targetLabel:'Sortie capteur',lengthLabel:'Non choisie',setSlot:()=>{calls++;},onPick:()=>{calls++;},onUndo:()=>{calls++;},onReset:()=>{calls++;}}}/>);
+      if(sensorId==='MK01'){
+        expect(view.queryByRole('button',{name:'Pointer le câble dans la 3D',exact:true})).toBeNull();
+        expect(view.queryByTestId('cable-routing-panel')).toBeNull();expect(calls).toBe(0);
+      }else{
+        await act(async()=>fireEvent.click(view.getByRole('button',{name:'Pointer le câble dans la 3D',exact:true})));
+        expect(view.getByTestId('cable-routing-panel')).toBeTruthy();
+        await act(async()=>fireEvent.click(view.getByTestId('cable-slot-waypoint')));
+        await act(async()=>fireEvent.click(view.getByRole('button',{name:'Effacer le trajet',exact:true})));
+        expect(calls).toBe(2);
+      }
+      view.unmount();
+    }
+  });
+  test('merged simple position controls preserve D3 geometry and independent motion/environment edits',async()=>{
+    const {setLocale}=await import('../src/lib/i18n/core');setLocale('fr');
+    const {default:Workshop}=await import('../src/components/standex/workshop/workshop');
+    let draft={...DEFAULT_WORKSHOP};
+    const view=render(<Workshop clientPedagogical embedded initialConfig={draft} storageMode="memory" onClose={()=>{}} onSave={async()=>{}} onDraftChange={c=>{draft=c;}}/>);
+    await act(async()=>fireEvent.click(view.getByRole('button',{name:'Dans l’alignement',exact:true})));
+    expect(draft.geometry).toBe('D3');
+    await act(async()=>fireEvent.change(view.getByRole('combobox',{name:'Trajectoire'}),{target:{value:'slide'}}));
+    await act(async()=>fireEvent.change(view.getByRole('combobox',{name:'Température'}),{target:{value:'other'}}));
+    expect(draft.geometry).toBe('D3');expect(draft.motion).toBe('slide');expect(draft.temperature).toBe('other');
+    view.unmount();
+  });
   test('old expected cannot reappear after conservative dossier export/reprise',()=>{
     const old={...createDossier(),workshop:{...DEFAULT_WORKSHOP},testedPairs:[{sensorId:'MK04',magnetId:'M04',approach:'D1',sensitivity:'B',verdict:'expected' as const,pullInMm:15,dropOutMm:18,travelStartMm:30,travelEndMm:5,mainMessage:null,limits:[],at:'2026-10-27T15:11:00Z'}]};
     const next=recordClientTrace(old,DEFAULT_WORKSHOP);const exported=buildDossierExport(next);const resumed=parseDossierExport(JSON.parse(JSON.stringify(exported)));
