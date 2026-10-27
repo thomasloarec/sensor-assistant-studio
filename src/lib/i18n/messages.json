@@ -34342,5 +34342,32 @@
     "Разрешение пересечений не подтверждено; быстрый проход может быть пропущен.",
     "Risoluzione degli attraversamenti non certificata; un passaggio rapido può sfuggire.",
     "横断の解像度は未保証です。速い通過を見逃す場合があります。"
+  ],
+  "Mouvement non confirmé : estimation indisponible": [
+    "Unconfirmed motion: estimate unavailable",
+    "运动未确认：估计不可用",
+    "Bewegung nicht bestätigt: Schätzung nicht verfügbar",
+    "Movimiento no confirmado: estimación no disponible",
+    "Движение не подтверждено: оценка недоступна",
+    "Movimento non confermato: stima non disponibile",
+    "動きが未確認のため推定できません"
+  ],
+  "Clip absent ou non pris en charge : estimation indisponible": [
+    "Missing or unsupported clip: estimate unavailable",
+    "动画片段缺失或不支持：估计不可用",
+    "Clip fehlt oder nicht unterstützt: Schätzung nicht verfügbar",
+    "Clip ausente o no compatible: estimación no disponible",
+    "Клип отсутствует или не поддерживается: оценка недоступна",
+    "Clip assente o non supportato: stima non disponibile",
+    "クリップがないか非対応のため推定できません"
+  ],
+  "Collision avec les solides du montage non vérifiable : estimation indisponible": [
+    "Collision with mounting solids cannot be verified: estimate unavailable",
+    "无法验证与装配实体的碰撞：估计不可用",
+    "Kollision mit Montagekörpern nicht prüfbar: Schätzung nicht verfügbar",
+    "Colisión con sólidos del montaje no verificable: estimación no disponible",
+    "Столкновение с телами сборки не проверяемо: оценка недоступна",
+    "Collisione con i solidi del montaggio non verificabile: stima non disponibile",
+    "組立の立体との衝突を検証できないため推定できません"
   ]
 }

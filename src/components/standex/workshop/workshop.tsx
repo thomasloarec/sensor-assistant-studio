@@ -321,7 +321,7 @@ export default function MagneticWorkshop({
   const activeExperiment=availability==='ready'?experiment:{...experiment,integration:'unknown' as const};
   const eligible=availability==='ready'&&experimentAvailable(experiment);
   // Until imported-solid collision is characterized, never issue a favorable imported verdict.
-  const placement = useMemo(() => evaluatePlacement(activeExperiment, pedagogicalPose.pose, false), [experiment, pedagogicalPose,config.machine]);
+  const placement = useMemo(() => {const e=evaluatePlacement(activeExperiment,pedagogicalPose.pose,false);return availability==="ready"?e:{...e,cause:availability};}, [experiment, pedagogicalPose,config.machine,availability]);
   const sampled = usePedagogicalVolume(pedagogical && !playing && eligible, activeExperiment, pedagogicalPose);
   const [timelineResult, setPedTimeline] = useState<(ReturnType<typeof placementTimeline>&{key:string}) | null>(null);
   const timelineKey=JSON.stringify([experiment,config]);

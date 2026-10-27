@@ -32,7 +32,7 @@ export function classThresholds(className: string): { low: number | null; high: 
   return row ? { low: row.min * EXPERIMENT.kMtPerAt, high: row.max * EXPERIMENT.kMtPerAt } : null;
 }
 export interface PlacementEvidence {
-  state: PlacementState; cause: 'distance' | 'orientation' | 'collision' | 'scenario_collision' | 'domain' | 'missing' | 'material' | 'stale' | 'partial';
+  state: PlacementState; cause: 'distance' | 'orientation' | 'collision' | 'scenario_collision' | 'domain' | 'missing' | 'material' | 'stale' | 'partial' | 'motion' | 'clip' | 'mounting';
   nominal: PoseEvaluation | null; scenarios: { id: string; result: PoseEvaluation }[];
   /** 0 below range, 1 sensitivity-dependent, 2 above high bound; never electrical ON/OFF. */
   zone: 0 | 1 | 2; partial: boolean;
