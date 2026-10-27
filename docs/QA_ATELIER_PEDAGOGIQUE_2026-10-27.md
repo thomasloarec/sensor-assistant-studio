@@ -131,7 +131,7 @@ Corps : capsule opaque = enveloppe testée 16,2 × Ø2,2 mm (`PROFILE.reed`, `RE
 
 Électrique : circuit, schéma de contact, fiche produit, contact du guide, piste « contact souhaité » et lames de scène absents en pédagogique ; `aria-label` = état de placement. Vérifié sur le vrai `Workshop` monté pour les quatre états (test composant).
 
-Validations exécutées : test ciblé 14/14 ; suite complète, types, inventaire i18n (0), scans de charte (seules les exceptions documentées / primitives existantes).
+Validations exécutées : test ciblé 14/14 ; suite complète 1 996/1 996 (relancée après la dernière édition), build, types, inventaire i18n (0), scans de charte (seules les exceptions documentées / primitives existantes).
 Non exécuté de mon côté : recette navigateur staff authentifiée, capture 390 px, chemin de clic réel de centrage mécanique dans le navigateur (le centrage ne porte pas le mot « favorable » et ne force aucun état : code + test composant existant). R11 suggestions et N/S : recette navigateur partielle déjà au journal 3c45 (non refaite).
 
 Lot suivant (non codé) : pré-calcul des volumes, maillages lissés, colonne client ; critère de raffinement d'orientation (variation de demi-largeur centrale ≤ 0,5 mm, 7,5° non garanti), orientation discrète affichée, pas d'interpolation entre volumes ; collisions de montage restent dynamiques.
