@@ -206,9 +206,9 @@ describe("grille raffinée", () => {
     const cell = classifyFineCell(SMCO, { x: 0, y: 6, x0: -0.125, x1: 0.125, y0: 5.875, y1: 6.125 }, [0, 1, 0], null);
     expect(cell.nominal).toBe("nulle");
     expect(cell.reading).toBe("reponse_nulle");
-    // SmCo à [2,6,0] : pose nominale valide et positive, mais le scénario y−1 mm
+    // SmCo à [2,4,0] : pose nominale valide et positive, mais une hypothèse ±1 mm
     // entre en collision → collision_hypothese, jamais collision nominale.
-    const cellHyp = classifyFineCell(SMCO, { x: 2, y: 6, x0: 1.875, x1: 2.125, y0: 5.875, y1: 6.125 }, [0, 1, 0], { up: 0.001, to: 0.0005 });
+    const cellHyp = classifyFineCell(SMCO, { x: 2, y: 4, x0: 1.875, x1: 2.125, y0: 3.875, y1: 4.125 }, [0, 1, 0], { up: 0.001, to: 0.0005 });
     expect(cellHyp.nominal).toBe("positive");
     expect(cellHyp.category).toBe("unavailable");
     expect(cellHyp.reading).toBe("collision_hypothese");
@@ -224,7 +224,8 @@ describe("grille raffinée", () => {
     // Capsule testée : largeur 16,2 mm × 12 px/mm = 194,4 ; verre publié : 14 × 12 = 168.
     expect(svg).toContain('width="194.4"');
     expect(svg).toContain('width="168"');
-    expect(svg).toContain("approximation conservative");
+    expect(svg).toContain("capsule de collision testée");
+    expect(svg).toContain("verre publié 14 mm");
     expect(svg).not.toContain("encombrement publié");
   }, 120000);
 });
