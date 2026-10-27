@@ -1,0 +1,113 @@
+class,magnet,approach,bound,at,theta_mT,published_mm,estimated_mm,error_mm,error_pct,status,notes
+A,SMCO5-5X4,D1,up,10,1.336656,10.8,11.6518,0.8518,7.89,control,
+A,SMCO5-5X4,D1,to,5,0.668328,12.5,16.3512,3.8512,30.81,control,
+A,SMCO5-5X4,D3,up,10,1.336656,11.8,7.9519,-3.8481,-32.61,control,
+A,SMCO5-5X4,D3,to,5,0.668328,13.7,13.1754,-0.5246,-3.83,control,
+A,SMCO5-5X4,D4,up,10,1.336656,9.8,11.8961,2.0961,21.39,control,
+A,SMCO5-5X4,D4,to,5,0.668328,11.1,16.242,5.142,46.32,control,
+A,SMCO5-5X4,D5,up,10,1.336656,6.3,2.5467,-3.7533,-59.58,control,
+A,SMCO5-5X4,D5,to,5,0.668328,8.1,6.4368,-1.6632,-20.53,control,
+A,N45-4X19,D1,up,10,1.336656,20.8,21.6008,0.8008,3.85,control,
+A,N45-4X19,D1,to,5,0.668328,22.1,28.9948,6.8948,31.2,control,
+A,N45-4X19,D3,up,10,1.336656,19.2,14.7429,-4.4571,-23.21,control,
+A,N45-4X19,D3,to,5,0.668328,21,22.9769,1.9769,9.41,control,
+A,N45-4X19,D4,up,10,1.336656,14.5,16.5465,2.0465,14.11,control,
+A,N45-4X19,D4,to,5,0.668328,16,22.8966,6.8966,43.1,control,
+A,N45-4X19,D5,up,10,1.336656,15.3,11.2245,-4.0755,-26.64,control,
+A,N45-4X19,D5,to,5,0.668328,17.5,17.9018,0.4018,2.3,control,
+B,SMCO5-5X4,D1,up,15,2.004983,8.5,9.2349,0.7349,8.65,control,D1 hors apprentissage : contrôle isolé
+B,SMCO5-5X4,D1,to,10,1.336656,11.2,11.6518,0.4518,4.03,control,D1 hors apprentissage : contrôle isolé
+B,SMCO5-5X4,D3,up,15,2.004983,9.4,5.43,-3.97,-42.23,control,
+B,SMCO5-5X4,D3,to,10,1.336656,12.2,7.9519,-4.2481,-34.82,control,
+B,SMCO5-5X4,D4,up,15,2.004983,8.3,9.7012,1.4012,16.88,control,
+B,SMCO5-5X4,D4,to,10,1.336656,10.2,11.8961,1.6961,16.63,control,
+B,SMCO5-5X4,D5,up,15,2.004983,4.6,0.6799,-3.9201,-85.22,control,
+B,SMCO5-5X4,D5,to,10,1.336656,6.7,2.5467,-4.1533,-61.99,control,
+B,N45-4X19,D1,up,15,2.004983,17.3,17.9068,0.6068,3.51,control,D1 hors apprentissage : contrôle isolé
+B,N45-4X19,D1,to,10,1.336656,21.2,21.6008,0.4008,1.89,control,D1 hors apprentissage : contrôle isolé
+B,N45-4X19,D3,up,15,2.004983,17.3,10.8175,-6.4825,-37.47,control,
+B,N45-4X19,D3,to,10,1.336656,19.6,14.7429,-4.8571,-24.78,control,
+B,N45-4X19,D4,up,15,2.004983,12.1,13.4718,1.3718,11.34,control,
+B,N45-4X19,D4,to,10,1.336656,14.9,16.5465,1.6465,11.05,control,
+B,N45-4X19,D5,up,15,2.004983,12,7.9494,-4.0506,-33.76,control,
+B,N45-4X19,D5,to,10,1.336656,15.7,11.2245,-4.4755,-28.51,control,
+C,SMCO5-5X4,D1,up,20,2.673311,7.3,7.6247,0.3247,4.45,training,apprentissage : k ajusté sur cette borne
+C,SMCO5-5X4,D1,to,15,2.004983,8.9,9.2349,0.3349,3.76,training,apprentissage : k ajusté sur cette borne
+C,SMCO5-5X4,D3,up,20,2.673311,7.5,3.8459,-3.6541,-48.72,control,
+C,SMCO5-5X4,D3,to,15,2.004983,9.8,5.43,-4.37,-44.59,control,
+C,SMCO5-5X4,D4,up,20,2.673311,6.8,8.2665,1.4665,21.57,control,
+C,SMCO5-5X4,D4,to,15,2.004983,8.7,9.7012,1.0012,11.51,control,
+C,SMCO5-5X4,D5,up,20,2.673311,3.2,,,,unavailable,estimation indisponible : not_reached
+C,SMCO5-5X4,D5,to,15,2.004983,5,0.6799,-4.3201,-86.4,control,
+C,N45-4X19,D1,up,20,2.673311,15,15.527,0.527,3.51,training,apprentissage : k ajusté sur cette borne
+C,N45-4X19,D1,to,15,2.004983,17.7,17.9068,0.2068,1.17,training,apprentissage : k ajusté sur cette borne
+C,N45-4X19,D3,up,20,2.673311,12.4,8.3777,-4.0223,-32.44,control,
+C,N45-4X19,D3,to,15,2.004983,17.7,10.8175,-6.8825,-38.88,control,
+C,N45-4X19,D4,up,20,2.673311,10.1,11.5293,1.4293,14.15,control,
+C,N45-4X19,D4,to,15,2.004983,12.5,13.4718,0.9718,7.77,control,
+C,N45-4X19,D5,up,20,2.673311,9.8,5.8686,-3.9314,-40.12,control,
+C,N45-4X19,D5,to,15,2.004983,12.4,7.9494,-4.4506,-35.89,control,
+D,SMCO5-5X4,D1,up,25,3.341639,6.5,6.4151,-0.0849,-1.31,control,D1 hors apprentissage : contrôle isolé
+D,SMCO5-5X4,D1,to,20,2.673311,7.7,7.6247,-0.0753,-0.98,control,D1 hors apprentissage : contrôle isolé
+D,SMCO5-5X4,D3,up,25,3.341639,6.4,2.7232,-3.6768,-57.45,control,
+D,SMCO5-5X4,D3,to,20,2.673311,7.9,3.8459,-4.0541,-51.32,control,
+D,SMCO5-5X4,D4,up,25,3.341639,6.3,7.211,0.911,14.46,control,
+D,SMCO5-5X4,D4,to,20,2.673311,7.2,8.2665,1.0665,14.81,control,
+D,SMCO5-5X4,D5,up,25,3.341639,2.3,,,,unavailable,estimation indisponible : not_reached
+D,SMCO5-5X4,D5,to,20,2.673311,3.6,,,,unavailable,estimation indisponible : not_reached
+D,N45-4X19,D1,up,25,3.341639,13.8,13.8065,0.0065,0.05,control,D1 hors apprentissage : contrôle isolé
+D,N45-4X19,D1,to,20,2.673311,15.4,15.527,0.127,0.82,control,D1 hors apprentissage : contrôle isolé
+D,N45-4X19,D3,up,25,3.341639,10.9,6.6651,-4.2349,-38.85,control,
+D,N45-4X19,D3,to,20,2.673311,12.8,8.3777,-4.4223,-34.55,control,
+D,N45-4X19,D4,up,25,3.341639,8.9,10.1419,1.2419,13.95,control,
+D,N45-4X19,D4,to,20,2.673311,10.5,11.5293,1.0293,9.8,control,
+D,N45-4X19,D5,up,25,3.341639,8.2,4.3813,-3.8187,-46.57,control,
+D,N45-4X19,D5,to,20,2.673311,10.2,5.8686,-4.3314,-42.46,control,
+E,SMCO5-5X4,D1,up,30,4.009967,5.9,5.4392,-0.4608,-7.81,training,apprentissage : k ajusté sur cette borne
+E,SMCO5-5X4,D1,to,25,3.341639,6.9,6.4151,-0.4849,-7.03,training,apprentissage : k ajusté sur cette borne
+E,SMCO5-5X4,D3,up,30,4.009967,5.6,1.8698,-3.7302,-66.61,control,
+E,SMCO5-5X4,D3,to,25,3.341639,6.8,2.7232,-4.0768,-59.95,control,
+E,SMCO5-5X4,D4,up,30,4.009967,5.7,6.3786,0.6786,11.91,control,
+E,SMCO5-5X4,D4,to,25,3.341639,6.7,7.211,0.511,7.63,control,
+E,SMCO5-5X4,D5,up,30,4.009967,,,,,missing,estimation indisponible : not_reached
+E,SMCO5-5X4,D5,to,25,3.341639,2.7,,,,unavailable,estimation indisponible : not_reached
+E,N45-4X19,D1,up,30,4.009967,12.7,12.4773,-0.2227,-1.75,training,apprentissage : k ajusté sur cette borne
+E,N45-4X19,D1,to,25,3.341639,14.2,13.8065,-0.3935,-2.77,training,apprentissage : k ajusté sur cette borne
+E,N45-4X19,D3,up,30,4.009967,9.4,5.3742,-4.0258,-42.83,control,
+E,N45-4X19,D3,to,25,3.341639,11.3,6.6651,-4.6349,-41.02,control,
+E,N45-4X19,D4,up,30,4.009967,7.3,9.0771,1.7771,24.34,control,
+E,N45-4X19,D4,to,25,3.341639,9.3,10.1419,0.8419,9.05,control,
+E,N45-4X19,D5,up,30,4.009967,7.3,3.2433,-4.0567,-55.57,control,
+E,N45-4X19,D5,to,25,3.341639,8.6,4.3813,-4.2187,-49.05,control,
+F,SMCO5-5X4,D1,up,35,4.678295,5.1,4.6125,-0.4875,-9.56,control,
+F,SMCO5-5X4,D1,to,30,4.009967,6.3,5.4392,-0.8608,-13.66,control,
+F,SMCO5-5X4,D3,up,35,4.678295,4.5,,,,unavailable,estimation indisponible : collision_before_threshold
+F,SMCO5-5X4,D3,to,30,4.009967,6,1.8698,-4.1302,-68.84,control,
+F,SMCO5-5X4,D4,up,35,4.678295,5,5.6913,0.6913,13.83,control,
+F,SMCO5-5X4,D4,to,30,4.009967,6.1,6.3786,0.2786,4.57,control,
+F,SMCO5-5X4,D5,up,35,4.678295,,,,,missing,estimation indisponible : not_reached
+F,SMCO5-5X4,D5,to,30,4.009967,,,,,missing,estimation indisponible : not_reached
+F,N45-4X19,D1,up,35,4.678295,11.1,11.4048,0.3048,2.75,control,
+F,N45-4X19,D1,to,30,4.009967,13.1,12.4773,-0.6227,-4.75,control,
+F,N45-4X19,D3,up,35,4.678295,8,4.3548,-3.6452,-45.56,control,
+F,N45-4X19,D3,to,30,4.009967,9.8,5.3742,-4.4258,-45.16,control,
+F,N45-4X19,D4,up,35,4.678295,6.4,8.2202,1.8202,28.44,control,
+F,N45-4X19,D4,to,30,4.009967,7.7,9.0771,1.3771,17.88,control,
+F,N45-4X19,D5,up,35,4.678295,5.8,2.333,-3.467,-59.78,control,
+F,N45-4X19,D5,to,30,4.009967,7.7,3.2433,-4.4567,-57.88,control,
+G,SMCO5-5X4,D1,up,40,5.346623,,3.886,,,no_source,classe absente de la transcription Form 66 : aucune validation prétendue
+G,SMCO5-5X4,D1,to,35,4.678295,,4.6125,,,no_source,classe absente de la transcription Form 66 : aucune validation prétendue
+G,SMCO5-5X4,D3,up,40,5.346623,,,,,no_source,classe absente de la transcription Form 66 : aucune validation prétendue | estimation indisponible : collision_before_threshold
+G,SMCO5-5X4,D3,to,35,4.678295,,,,,no_source,classe absente de la transcription Form 66 : aucune validation prétendue | estimation indisponible : collision_before_threshold
+G,SMCO5-5X4,D4,up,40,5.346623,,5.1043,,,no_source,classe absente de la transcription Form 66 : aucune validation prétendue
+G,SMCO5-5X4,D4,to,35,4.678295,,5.6913,,,no_source,classe absente de la transcription Form 66 : aucune validation prétendue
+G,SMCO5-5X4,D5,up,40,5.346623,,,,,no_source,classe absente de la transcription Form 66 : aucune validation prétendue | estimation indisponible : not_reached
+G,SMCO5-5X4,D5,to,35,4.678295,,,,,no_source,classe absente de la transcription Form 66 : aucune validation prétendue | estimation indisponible : not_reached
+G,N45-4X19,D1,up,40,5.346623,,10.5128,,,no_source,classe absente de la transcription Form 66 : aucune validation prétendue
+G,N45-4X19,D1,to,35,4.678295,,11.4048,,,no_source,classe absente de la transcription Form 66 : aucune validation prétendue
+G,N45-4X19,D3,up,40,5.346623,,3.5225,,,no_source,classe absente de la transcription Form 66 : aucune validation prétendue
+G,N45-4X19,D3,to,35,4.678295,,4.3548,,,no_source,classe absente de la transcription Form 66 : aucune validation prétendue
+G,N45-4X19,D4,up,40,5.346623,,7.5069,,,no_source,classe absente de la transcription Form 66 : aucune validation prétendue
+G,N45-4X19,D4,to,35,4.678295,,8.2202,,,no_source,classe absente de la transcription Form 66 : aucune validation prétendue
+G,N45-4X19,D5,up,40,5.346623,,1.5815,,,no_source,classe absente de la transcription Form 66 : aucune validation prétendue
+G,N45-4X19,D5,to,35,4.678295,,2.333,,,no_source,classe absente de la transcription Form 66 : aucune validation prétendue

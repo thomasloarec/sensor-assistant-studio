@@ -1,0 +1,166 @@
+{
+ "version": "reed-lab-pass2-1.0.0",
+ "profile": {
+  "id": "reed-lab-hypotheses",
+  "version": "1.1.0"
+ },
+ "model": "B",
+ "convention": "C1",
+ "atSource": {
+  "title": "MK04 Series Datasheet — glossary « Magnetic Sensitivity », page 2, version 02 (28 Feb 2019)",
+  "url": "https://standexdetect.com/wp-content/uploads/sites/2/2025/09/datasheet-reed-sensor-series-mk04.pdf",
+  "checkedOn": "2026-10-27"
+ },
+ "criterion": {
+  "medianPctMax": 10,
+  "over20Max": 3,
+  "unavailableMax": 0
+ },
+ "suspectedAnomaly": {
+  "className": "C",
+  "magnetId": "N45-4X19",
+  "approach": "D3",
+  "bound": "to",
+  "publishedMm": 17.7
+ },
+ "lengthFit": {
+  "effectiveLengthMm": 15.63399603080886,
+  "rmsLogDisagreement": 0.031444760042380476,
+  "pairs": [
+   {
+    "className": "C",
+    "bound": "up",
+    "thetaSmCo": 2.9161317521308896,
+    "thetaN45": 2.8788826935084266
+   },
+   {
+    "className": "C",
+    "bound": "to",
+    "thetaSmCo": 2.1750863653917007,
+    "thetaN45": 2.0667246352372537
+   },
+   {
+    "className": "E",
+    "bound": "up",
+    "thetaSmCo": 3.801548441026271,
+    "thetaN45": 3.918155277156691
+   },
+   {
+    "className": "E",
+    "bound": "to",
+    "thetaSmCo": 3.14366153141608,
+    "thetaN45": 3.1953023844559953
+   }
+  ]
+ },
+ "variants": [
+  {
+   "id": "V1-L16-d7",
+   "L": 16,
+   "datumMm": 7,
+   "k": 0.1336655628592061,
+   "kMedianAbsPct": 3.6381193582484768,
+   "primary": {
+    "total": 24,
+    "published": 23,
+    "missing": 1,
+    "computable": 21,
+    "unavailable": 2,
+    "medianAbsPct": 38.88,
+    "over20": 15,
+    "pass": false
+   },
+   "secondary": {
+    "total": 23,
+    "published": 22,
+    "missing": 1,
+    "computable": 20,
+    "unavailable": 2,
+    "medianAbsPct": 38,
+    "over20": 14,
+    "pass": false
+   }
+  },
+  {
+   "id": "V2-L16-d4",
+   "L": 16,
+   "datumMm": 4,
+   "k": 0.1336655628592061,
+   "kMedianAbsPct": 3.6381193582484768,
+   "primary": {
+    "total": 24,
+    "published": 23,
+    "missing": 1,
+    "computable": 23,
+    "unavailable": 0,
+    "medianAbsPct": 13.98,
+    "over20": 6,
+    "pass": false
+   },
+   "secondary": {
+    "total": 23,
+    "published": 22,
+    "missing": 1,
+    "computable": 22,
+    "unavailable": 0,
+    "medianAbsPct": 13.51,
+    "over20": 5,
+    "pass": false
+   }
+  },
+  {
+   "id": "V3-L8-d7",
+   "L": 8,
+   "datumMm": 7,
+   "k": 0.16622670562856973,
+   "kMedianAbsPct": 10.453256932141034,
+   "primary": {
+    "total": 24,
+    "published": 23,
+    "missing": 1,
+    "computable": 22,
+    "unavailable": 1,
+    "medianAbsPct": 39.14,
+    "over20": 17,
+    "pass": false
+   },
+   "secondary": {
+    "total": 23,
+    "published": 22,
+    "missing": 1,
+    "computable": 21,
+    "unavailable": 1,
+    "medianAbsPct": 38.29,
+    "over20": 16,
+    "pass": false
+   }
+  },
+  {
+   "id": "V4-Lfit-d7",
+   "L": 15.63399603080886,
+   "datumMm": 7,
+   "k": 0.13560548808516593,
+   "kMedianAbsPct": 3.679175602520049,
+   "primary": {
+    "total": 24,
+    "published": 23,
+    "missing": 1,
+    "computable": 21,
+    "unavailable": 2,
+    "medianAbsPct": 39.2,
+    "over20": 15,
+    "pass": false
+   },
+   "secondary": {
+    "total": 23,
+    "published": 22,
+    "missing": 1,
+    "computable": 20,
+    "unavailable": 2,
+    "medianAbsPct": 38.29,
+    "over20": 14,
+    "pass": false
+   }
+  }
+ ]
+}
