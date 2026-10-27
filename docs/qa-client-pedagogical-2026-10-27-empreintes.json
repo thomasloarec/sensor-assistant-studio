@@ -1,0 +1,623 @@
+{
+  "base": "9488f7a379d0f1ecf85ae1bd68652e53a037cc16",
+  "files": [
+    {
+      "file": "docs/detection-lab-pass2/RAPPORT_PASS2_2026-10-27.md",
+      "before": "328f63881807895f8ef786d999f0bf9b6b20f260bca0f245db34aecdd2692233",
+      "after": "328f63881807895f8ef786d999f0bf9b6b20f260bca0f245db34aecdd2692233",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab-pass2/resultats_pass2.json",
+      "before": "d4281dd8a37bbb3674a086bbd050696c0447bb61e06db9838d6e5cb36e09a14c",
+      "after": "d4281dd8a37bbb3674a086bbd050696c0447bb61e06db9838d6e5cb36e09a14c",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab-pass2/svg/2-perpendicular-centred-C_N45-4X19_B_fine.csv",
+      "before": "1fe04223bbcc3353f8b842825bbac7a6a7297aad09121ed0f80cbe43af852654",
+      "after": "1fe04223bbcc3353f8b842825bbac7a6a7297aad09121ed0f80cbe43af852654",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab-pass2/svg/2-perpendicular-centred-C_N45-4X19_B_fine.svg",
+      "before": "fa182dde39e59bc197978ef413aa9565bdeb34530ebd682049c93d2994919345",
+      "after": "fa182dde39e59bc197978ef413aa9565bdeb34530ebd682049c93d2994919345",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab-pass2/svg/2-perpendicular-centred-C_SMCO5-5X4_B_fine.csv",
+      "before": "e713956aa16858fd5b68292152d38037342a6d05ea1adbf6a18e26e2aa5a280b",
+      "after": "e713956aa16858fd5b68292152d38037342a6d05ea1adbf6a18e26e2aa5a280b",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab-pass2/svg/2-perpendicular-centred-C_SMCO5-5X4_B_fine.svg",
+      "before": "5a76664761151986338ac946376017d03e071f7845869fc5fe70271c09ecd391",
+      "after": "5a76664761151986338ac946376017d03e071f7845869fc5fe70271c09ecd391",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab-pass2/svg/3-perpendicular-offset-C_N45-4X19_B_fine.csv",
+      "before": "92faf8510e4170de5ed876ab77fb6610b0cfef6a134049cf4fcc60d2a1965038",
+      "after": "92faf8510e4170de5ed876ab77fb6610b0cfef6a134049cf4fcc60d2a1965038",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab-pass2/svg/3-perpendicular-offset-C_N45-4X19_B_fine.svg",
+      "before": "adda447e2f6941091ad4d6927a43b231ae1e12143d1f47c295c04960139810df",
+      "after": "adda447e2f6941091ad4d6927a43b231ae1e12143d1f47c295c04960139810df",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab-pass2/svg/3-perpendicular-offset-C_SMCO5-5X4_B_fine.csv",
+      "before": "89fd11a3751cbeb4226e319f28e4c13409a72594a7d61224d6e9d0d62a6f4b65",
+      "after": "89fd11a3751cbeb4226e319f28e4c13409a72594a7d61224d6e9d0d62a6f4b65",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab-pass2/svg/3-perpendicular-offset-C_SMCO5-5X4_B_fine.svg",
+      "before": "10afbeca2e306aeb74a4597ec0de62eedaae953d4a5592641a002ed91328fad3",
+      "after": "10afbeca2e306aeb74a4597ec0de62eedaae953d4a5592641a002ed91328fad3",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab-pass2/tableau_V1-L16-d7.csv",
+      "before": "6fbe9dc56fd7f3f25269919b52bef8c0f6a675b14c9fcb27b434b1160f566adb",
+      "after": "6fbe9dc56fd7f3f25269919b52bef8c0f6a675b14c9fcb27b434b1160f566adb",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab-pass2/tableau_V2-L16-d4.csv",
+      "before": "95dc22ed8129122882e0933d2ede4e06b92eb57ddd9f615fb1c596e75b0b3d63",
+      "after": "95dc22ed8129122882e0933d2ede4e06b92eb57ddd9f615fb1c596e75b0b3d63",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab-pass2/tableau_V3-L8-d7.csv",
+      "before": "23fa3b6284382d21e54b6588f78ba52efab068df73b2eda216b79d9f67d3736d",
+      "after": "23fa3b6284382d21e54b6588f78ba52efab068df73b2eda216b79d9f67d3736d",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab-pass2/tableau_V4-Lfit-d7.csv",
+      "before": "016f73bb1afc5f1a4303220e4e6837fc507c1bad2869ac1378af7540b949ae7d",
+      "after": "016f73bb1afc5f1a4303220e4e6837fc507c1bad2869ac1378af7540b949ae7d",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab-pass3/RAPPORT_PASS3_2026-10-27.md",
+      "before": "98850b5074d548a0dd2a2dd29f00c130034012c4f04ea6c117fc9ed0094fc153",
+      "after": "98850b5074d548a0dd2a2dd29f00c130034012c4f04ea6c117fc9ed0094fc153",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab-pass3/resultats_pass3.json",
+      "before": "57c8193ca15b4af41e73b600ee93bb829a9b47b302e3407b0d6a4fd15e7600b1",
+      "after": "57c8193ca15b4af41e73b600ee93bb829a9b47b302e3407b0d6a4fd15e7600b1",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab-pass3/svg/ecarts_signes_L16-d4corr.svg",
+      "before": "b00c99a554120d71fee5b5525bc2bdc535eab2615d2916eb5bd8235753b58ad1",
+      "after": "b00c99a554120d71fee5b5525bc2bdc535eab2615d2916eb5bd8235753b58ad1",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab-pass3/svg/ecarts_signes_Lfit-d4corr.svg",
+      "before": "629cf54dd755145f362f6d09cd02dbcad9ecb94787414a2992981f204d317180",
+      "after": "629cf54dd755145f362f6d09cd02dbcad9ecb94787414a2992981f204d317180",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab-pass3/tableau_L16-axial.csv",
+      "before": "bce00c241499066525d8c930ab0b5ce9843d5051f3263c22db2eabc1ac4b16b1",
+      "after": "bce00c241499066525d8c930ab0b5ce9843d5051f3263c22db2eabc1ac4b16b1",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab-pass3/tableau_L16-bprime.csv",
+      "before": "1b78c5d610e5f3f5f1e4fe628b7dccdded175225d7bb42b118b7903c89c87f75",
+      "after": "1b78c5d610e5f3f5f1e4fe628b7dccdded175225d7bb42b118b7903c89c87f75",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab-pass3/tableau_L16-d4corr.csv",
+      "before": "f03410caf3fbbac0fbde0ec1f224e7cca9c1c6aa24ae3596e52fd2d80486470e",
+      "after": "f03410caf3fbbac0fbde0ec1f224e7cca9c1c6aa24ae3596e52fd2d80486470e",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab-pass3/tableau_Lfit-axial.csv",
+      "before": "f2f4dc6e6114d56c525db335d42ba4c0fa44c2af12508032a42bc15336f910a7",
+      "after": "f2f4dc6e6114d56c525db335d42ba4c0fa44c2af12508032a42bc15336f910a7",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab-pass3/tableau_Lfit-bprime.csv",
+      "before": "ebcd2ff7ce030a23c4690924b4efe39b4006da8a1bcd3853e56f01b95bb68c4a",
+      "after": "ebcd2ff7ce030a23c4690924b4efe39b4006da8a1bcd3853e56f01b95bb68c4a",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab-pass3/tableau_Lfit-d4corr.csv",
+      "before": "d37626ff09679228605dac79f89e179404df237128e3a75c4812420e69d998c2",
+      "after": "d37626ff09679228605dac79f89e179404df237128e3a75c4812420e69d998c2",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab/RAPPORT_COHERENCE_2026-10-26.md",
+      "before": "1bda55bfe59b489dcc33b804c964a11fc41ebd37b9688ab2affb826c23c55cbb",
+      "after": "1bda55bfe59b489dcc33b804c964a11fc41ebd37b9688ab2affb826c23c55cbb",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab/rapport_A_C1.json",
+      "before": "1a8ed510ec9dce3af4172956740c45799c530a82c9551339d315cd7ce62140e2",
+      "after": "1a8ed510ec9dce3af4172956740c45799c530a82c9551339d315cd7ce62140e2",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab/rapport_A_C2.json",
+      "before": "3cdc49ea5d877e13ad0b3b5a72ae92748ce58abd5a8eca6b2d796ba30b222f71",
+      "after": "3cdc49ea5d877e13ad0b3b5a72ae92748ce58abd5a8eca6b2d796ba30b222f71",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab/rapport_B_C1.json",
+      "before": "53dbae66b1305fd343299479ebb1e8552dc6ba02e88463f64520df5a17423191",
+      "after": "53dbae66b1305fd343299479ebb1e8552dc6ba02e88463f64520df5a17423191",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab/rapport_B_C2.json",
+      "before": "e46eaa9e8615dcdb21a3d1eba9d4bf0382cc11d66b5ffd94d323326fabae4e9a",
+      "after": "e46eaa9e8615dcdb21a3d1eba9d4bf0382cc11d66b5ffd94d323326fabae4e9a",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab/svg/1-parallel-C_N45-4X19_A.csv",
+      "before": "786d5a3d094d60db298071c9d86b3ba2e1fbb2a4b206a3b7bbce9b1cc25cd47f",
+      "after": "786d5a3d094d60db298071c9d86b3ba2e1fbb2a4b206a3b7bbce9b1cc25cd47f",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab/svg/1-parallel-C_N45-4X19_A.svg",
+      "before": "3012046686a175da48f0a24c2d821a832cde62d24967139fe7eb1f5c3a5baa0e",
+      "after": "3012046686a175da48f0a24c2d821a832cde62d24967139fe7eb1f5c3a5baa0e",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab/svg/1-parallel-C_N45-4X19_B.csv",
+      "before": "1ee00d15c5578299fb6e7faba547bebabdadfb642765f0c6329f8e97f6ecf9b0",
+      "after": "1ee00d15c5578299fb6e7faba547bebabdadfb642765f0c6329f8e97f6ecf9b0",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab/svg/1-parallel-C_N45-4X19_B.svg",
+      "before": "cc15f47c9cd25212f64f04622d81a0289dbc91a2a58bd426d34291a1a02bd664",
+      "after": "cc15f47c9cd25212f64f04622d81a0289dbc91a2a58bd426d34291a1a02bd664",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab/svg/1-parallel-C_SMCO5-5X4_A.csv",
+      "before": "529c43881bec6a0926c7942af8a68b9af0de8a86bd3303febde92e48f8fafd9a",
+      "after": "529c43881bec6a0926c7942af8a68b9af0de8a86bd3303febde92e48f8fafd9a",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab/svg/1-parallel-C_SMCO5-5X4_A.svg",
+      "before": "c24afe6c3882597be9c495ff5d1192f4770f80592cdaaf48c984757d79df9069",
+      "after": "c24afe6c3882597be9c495ff5d1192f4770f80592cdaaf48c984757d79df9069",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab/svg/1-parallel-C_SMCO5-5X4_B.csv",
+      "before": "ec0148039cb5351d08ce11af1ac1da0887c9393886d1c7e89bcf912c23477f0f",
+      "after": "ec0148039cb5351d08ce11af1ac1da0887c9393886d1c7e89bcf912c23477f0f",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab/svg/1-parallel-C_SMCO5-5X4_B.svg",
+      "before": "19e69c8e2a527e2f2774574eba2b6dbae8f501b1b05c85e86249a531006e5da9",
+      "after": "19e69c8e2a527e2f2774574eba2b6dbae8f501b1b05c85e86249a531006e5da9",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab/svg/2-perpendicular-centred-C_N45-4X19_A.csv",
+      "before": "4ae8cbc1927527b5f118cdf2f35b8ede9b775d89c9d6cf6bf40808d3c404e7a1",
+      "after": "4ae8cbc1927527b5f118cdf2f35b8ede9b775d89c9d6cf6bf40808d3c404e7a1",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab/svg/2-perpendicular-centred-C_N45-4X19_A.svg",
+      "before": "cd3814905342cdf0b25d7c50001e9d85c33a997930f769d51eb248c9857d8bd4",
+      "after": "cd3814905342cdf0b25d7c50001e9d85c33a997930f769d51eb248c9857d8bd4",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab/svg/2-perpendicular-centred-C_N45-4X19_B.csv",
+      "before": "54cf175bdf3f646b9c40c65a2715a596271c21efcd14bbd9c962e75ca2989742",
+      "after": "54cf175bdf3f646b9c40c65a2715a596271c21efcd14bbd9c962e75ca2989742",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab/svg/2-perpendicular-centred-C_N45-4X19_B.svg",
+      "before": "40dbf4d2f90568d100baf1b48c83f1b843022fae04105fa9691d1bc908d87259",
+      "after": "40dbf4d2f90568d100baf1b48c83f1b843022fae04105fa9691d1bc908d87259",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab/svg/2-perpendicular-centred-C_SMCO5-5X4_A.csv",
+      "before": "4c2e2df61fb4fadd2a37ca24ff14c1951b1e25a8ffe3f96035c3f1b36903487a",
+      "after": "4c2e2df61fb4fadd2a37ca24ff14c1951b1e25a8ffe3f96035c3f1b36903487a",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab/svg/2-perpendicular-centred-C_SMCO5-5X4_A.svg",
+      "before": "62239032a2bb2b764f9f6f776774178e7abd65b470e024ef60bd1be902f480b2",
+      "after": "62239032a2bb2b764f9f6f776774178e7abd65b470e024ef60bd1be902f480b2",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab/svg/2-perpendicular-centred-C_SMCO5-5X4_B.csv",
+      "before": "3970b4170ff933294ecb8e20c1a7b69a4322ec9271200cf2e297759f8793e1e0",
+      "after": "3970b4170ff933294ecb8e20c1a7b69a4322ec9271200cf2e297759f8793e1e0",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab/svg/2-perpendicular-centred-C_SMCO5-5X4_B.svg",
+      "before": "8038ea69583e6c82db1097671a381b3cf5a63a3687f58e75c98bfe733c6cae7e",
+      "after": "8038ea69583e6c82db1097671a381b3cf5a63a3687f58e75c98bfe733c6cae7e",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab/svg/3-perpendicular-offset-C_N45-4X19_A.csv",
+      "before": "aaf8a29bedd33686d4ee3116215ab9e5f4383fecb5a609a4b624fb7c7901a06b",
+      "after": "aaf8a29bedd33686d4ee3116215ab9e5f4383fecb5a609a4b624fb7c7901a06b",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab/svg/3-perpendicular-offset-C_N45-4X19_A.svg",
+      "before": "0147ff77fc81dbabf7268850ac3f41d4ed65fb4d0ab2eba42e9ebbf5bd402b2f",
+      "after": "0147ff77fc81dbabf7268850ac3f41d4ed65fb4d0ab2eba42e9ebbf5bd402b2f",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab/svg/3-perpendicular-offset-C_N45-4X19_B.csv",
+      "before": "2b941756bc58d15c98be47d3d6d916abc4261bd7cac88a857bc075302b41e1d4",
+      "after": "2b941756bc58d15c98be47d3d6d916abc4261bd7cac88a857bc075302b41e1d4",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab/svg/3-perpendicular-offset-C_N45-4X19_B.svg",
+      "before": "aa87e5787605988ff73469cffb901a2c29fa0f150113b1e532cc755a0ae049ff",
+      "after": "aa87e5787605988ff73469cffb901a2c29fa0f150113b1e532cc755a0ae049ff",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab/svg/3-perpendicular-offset-C_SMCO5-5X4_A.csv",
+      "before": "fa04cd2b34c487a76a131227843ee03444efdca8de5b0f0808b81642b89c021b",
+      "after": "fa04cd2b34c487a76a131227843ee03444efdca8de5b0f0808b81642b89c021b",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab/svg/3-perpendicular-offset-C_SMCO5-5X4_A.svg",
+      "before": "2d185e993cbe50c493ad9eaf908725474f7d70836c1fe34f2ecd5c0c883480dd",
+      "after": "2d185e993cbe50c493ad9eaf908725474f7d70836c1fe34f2ecd5c0c883480dd",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab/svg/3-perpendicular-offset-C_SMCO5-5X4_B.csv",
+      "before": "90db642a69509457877ad5faec7f5f99fcef35e4a58cc72bdaf6b0e03a6a7488",
+      "after": "90db642a69509457877ad5faec7f5f99fcef35e4a58cc72bdaf6b0e03a6a7488",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab/svg/3-perpendicular-offset-C_SMCO5-5X4_B.svg",
+      "before": "22f937f164c063afea51519d247e3be27916232182ca1358e2074a50cd99c2bc",
+      "after": "22f937f164c063afea51519d247e3be27916232182ca1358e2074a50cd99c2bc",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab/svg/4-oblique-45-C_N45-4X19_A.csv",
+      "before": "ca6678fb575b49741ae07bc94bc46fedb69c3c5120102cfdc5ae21aec48c2a14",
+      "after": "ca6678fb575b49741ae07bc94bc46fedb69c3c5120102cfdc5ae21aec48c2a14",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab/svg/4-oblique-45-C_N45-4X19_A.svg",
+      "before": "57a96152d9e8823dddc14955daa11aa5701a5ada12be3f583c45d078426b065d",
+      "after": "57a96152d9e8823dddc14955daa11aa5701a5ada12be3f583c45d078426b065d",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab/svg/4-oblique-45-C_N45-4X19_B.csv",
+      "before": "ca92208fb65b4f933d873bf7fb9b96978f3c8f22187d6cf386490f8b1283539f",
+      "after": "ca92208fb65b4f933d873bf7fb9b96978f3c8f22187d6cf386490f8b1283539f",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab/svg/4-oblique-45-C_N45-4X19_B.svg",
+      "before": "d5c347b6e18714aea2efb8f10f083899db1d72f8f5198dd32d28b08c96aafcfe",
+      "after": "d5c347b6e18714aea2efb8f10f083899db1d72f8f5198dd32d28b08c96aafcfe",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab/svg/4-oblique-45-C_SMCO5-5X4_A.csv",
+      "before": "ddf045ee36b19cd7d6e0451ad1d2b46a9c4487abde2f68a5da29ac517c3d9183",
+      "after": "ddf045ee36b19cd7d6e0451ad1d2b46a9c4487abde2f68a5da29ac517c3d9183",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab/svg/4-oblique-45-C_SMCO5-5X4_A.svg",
+      "before": "cc9d18ba497ec1bd0b66e57b14c32077d87e28178e6b4a7488bac340b154b602",
+      "after": "cc9d18ba497ec1bd0b66e57b14c32077d87e28178e6b4a7488bac340b154b602",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab/svg/4-oblique-45-C_SMCO5-5X4_B.csv",
+      "before": "47af52d86cc07e9093fbd8c895c588ee40cf649aae429effff32a776b2eee1ff",
+      "after": "47af52d86cc07e9093fbd8c895c588ee40cf649aae429effff32a776b2eee1ff",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab/svg/4-oblique-45-C_SMCO5-5X4_B.svg",
+      "before": "8bfc6d3b9a5d2c691f6866dd614a15c7128233d988d386e8305abc7aa7da629a",
+      "after": "8bfc6d3b9a5d2c691f6866dd614a15c7128233d988d386e8305abc7aa7da629a",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab/svg/5-parallel-E_N45-4X19_A.csv",
+      "before": "cb335705b91fa1fef9fd385272bf55102f0b27b9037cbd8fa21be73c58e3b47f",
+      "after": "cb335705b91fa1fef9fd385272bf55102f0b27b9037cbd8fa21be73c58e3b47f",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab/svg/5-parallel-E_N45-4X19_A.svg",
+      "before": "cdcd77c4aaa82d805dabb20c1c8efd7c9dc6447509eda6d386de8b016643eb3e",
+      "after": "cdcd77c4aaa82d805dabb20c1c8efd7c9dc6447509eda6d386de8b016643eb3e",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab/svg/5-parallel-E_N45-4X19_B.csv",
+      "before": "19a2003c5626a143033e7259fc0795135194684423ec4849beeb510ea72606a2",
+      "after": "19a2003c5626a143033e7259fc0795135194684423ec4849beeb510ea72606a2",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab/svg/5-parallel-E_N45-4X19_B.svg",
+      "before": "9e9f4c7667aea8ac1b1276afc06caec40bc8b1df4ad92c275c1b71457b199be5",
+      "after": "9e9f4c7667aea8ac1b1276afc06caec40bc8b1df4ad92c275c1b71457b199be5",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab/svg/5-parallel-E_SMCO5-5X4_A.csv",
+      "before": "3f577de0524dc01a5e30ba264007a3106b8a27c9d77a55585f946231c0f8ac36",
+      "after": "3f577de0524dc01a5e30ba264007a3106b8a27c9d77a55585f946231c0f8ac36",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab/svg/5-parallel-E_SMCO5-5X4_A.svg",
+      "before": "c58915051d8f0f277f6f788a947ce9ce6afce70935c77b3e3476dabadc7d8d9e",
+      "after": "c58915051d8f0f277f6f788a947ce9ce6afce70935c77b3e3476dabadc7d8d9e",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab/svg/5-parallel-E_SMCO5-5X4_B.csv",
+      "before": "a0484274953c1ffb4d6b504aa7000ff2e45264b3ceca29577a94f2f7268490a9",
+      "after": "a0484274953c1ffb4d6b504aa7000ff2e45264b3ceca29577a94f2f7268490a9",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab/svg/5-parallel-E_SMCO5-5X4_B.svg",
+      "before": "f6cd28f75a487b229435bce21719e94eea111e1dc4a95babd1a68a038c0b5705",
+      "after": "f6cd28f75a487b229435bce21719e94eea111e1dc4a95babd1a68a038c0b5705",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab/svg/6-path-C_N45-4X19_A.csv",
+      "before": "050f1f14ddc90993987146af79b830731504163d1752816763b348e30bfccd95",
+      "after": "050f1f14ddc90993987146af79b830731504163d1752816763b348e30bfccd95",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab/svg/6-path-C_N45-4X19_A.svg",
+      "before": "bd750af65f2f280cf1bc89616d23caf16120ccd9eceaae3230159f43f4b0d611",
+      "after": "bd750af65f2f280cf1bc89616d23caf16120ccd9eceaae3230159f43f4b0d611",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab/svg/6-path-C_N45-4X19_B.csv",
+      "before": "e1c8e0a5a055a6cb722df6e3ee48a35ef9103c23158071dc27be9dc129fe6216",
+      "after": "e1c8e0a5a055a6cb722df6e3ee48a35ef9103c23158071dc27be9dc129fe6216",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab/svg/6-path-C_N45-4X19_B.svg",
+      "before": "b728f238215db692d37f3aeef3fd25b74ad5f44a11858652821bfdf9b91f8b24",
+      "after": "b728f238215db692d37f3aeef3fd25b74ad5f44a11858652821bfdf9b91f8b24",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab/svg/6-path-C_SMCO5-5X4_A.csv",
+      "before": "4cbe1a3fbf687ceceafa954715f06488b58076ce723b3fda1c88b9372881df08",
+      "after": "4cbe1a3fbf687ceceafa954715f06488b58076ce723b3fda1c88b9372881df08",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab/svg/6-path-C_SMCO5-5X4_A.svg",
+      "before": "51847d41d68c52ef84a5d6c1645d1526ca0dcab9f58c251bbebb4245d706a21d",
+      "after": "51847d41d68c52ef84a5d6c1645d1526ca0dcab9f58c251bbebb4245d706a21d",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab/svg/6-path-C_SMCO5-5X4_B.csv",
+      "before": "a28079e243453eae55a667fcaef031159c90f021cd6327ee1a5f5d458009d18f",
+      "after": "a28079e243453eae55a667fcaef031159c90f021cd6327ee1a5f5d458009d18f",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab/svg/6-path-C_SMCO5-5X4_B.svg",
+      "before": "99a763e779b6ec114c729eae5f5f467528af78f9f6d800e7f3a592a530fac685",
+      "after": "99a763e779b6ec114c729eae5f5f467528af78f9f6d800e7f3a592a530fac685",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab/tableau_A_C1.csv",
+      "before": "2de8ff8498dc8d9aa260e57914e65aa9a2134af546f9a224799872b3b25ca646",
+      "after": "2de8ff8498dc8d9aa260e57914e65aa9a2134af546f9a224799872b3b25ca646",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab/tableau_A_C2.csv",
+      "before": "c23ed31b9355824165a81f177422952786afc2324f38800250d9d3a13f7a6634",
+      "after": "c23ed31b9355824165a81f177422952786afc2324f38800250d9d3a13f7a6634",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab/tableau_B_C1.csv",
+      "before": "ae4da7f092bcc3537be510b8eb4e35042101cc316eeb31db883a81d652e71e74",
+      "after": "ae4da7f092bcc3537be510b8eb4e35042101cc316eeb31db883a81d652e71e74",
+      "identical": true
+    },
+    {
+      "file": "docs/detection-lab/tableau_B_C2.csv",
+      "before": "09b1d9f93e9e0ebdacef7978fdd4c3d6034c5658a3b2520804999cf084d43d32",
+      "after": "09b1d9f93e9e0ebdacef7978fdd4c3d6034c5658a3b2520804999cf084d43d32",
+      "identical": true
+    },
+    {
+      "file": "public/legal/nda-standex-k-motor-16062026.docx",
+      "before": "6e25345f1e83e92630258774d27a451d65d615cdd9f41a5331dae75c4072740b",
+      "after": "6e25345f1e83e92630258774d27a451d65d615cdd9f41a5331dae75c4072740b",
+      "identical": true
+    },
+    {
+      "file": "src/data/detection-lab/at-classes-mk04.json",
+      "before": "881bb3bb9d28c3997c7fb5361e361835438773c98fc7887fbc0945657a49193e",
+      "after": "881bb3bb9d28c3997c7fb5361e361835438773c98fc7887fbc0945657a49193e",
+      "identical": true
+    },
+    {
+      "file": "src/data/detection-lab/brochure-form-rows.json",
+      "before": "7131f8c90c119969273d7b3aa92cd853f116c0b20e9fca678765be393f185802",
+      "after": "7131f8c90c119969273d7b3aa92cd853f116c0b20e9fca678765be393f185802",
+      "identical": true
+    },
+    {
+      "file": "src/data/detection-lab/workshop-distances.json",
+      "before": "952e789aa69c9262545301f5bd2a56d59986413715ff1743b2e780f0686f4059",
+      "after": "952e789aa69c9262545301f5bd2a56d59986413715ff1743b2e780f0686f4059",
+      "identical": true
+    },
+    {
+      "file": "src/data/detection-lab/workshop-profile.json",
+      "before": "bb83d53439847176e699e19aac644bdab8c330bb89f5de001ccf45223e421c91",
+      "after": "bb83d53439847176e699e19aac644bdab8c330bb89f5de001ccf45223e421c91",
+      "identical": true
+    },
+    {
+      "file": "src/lib/detection-lab/calibration.ts",
+      "before": "96d17d190981ee4934ac31e5b659071449c77765b3e22b723a2337cdb6af4c61",
+      "after": "96d17d190981ee4934ac31e5b659071449c77765b3e22b723a2337cdb6af4c61",
+      "identical": true
+    },
+    {
+      "file": "src/lib/detection-lab/classify.ts",
+      "before": "346f97745f9505007c896360627ffce83f4af03a5f056448a4c0e12d925f00cb",
+      "after": "346f97745f9505007c896360627ffce83f4af03a5f056448a4c0e12d925f00cb",
+      "identical": true
+    },
+    {
+      "file": "src/lib/detection-lab/field.ts",
+      "before": "67a01932c103c0986d22f8179843be26a3223a9d7b1eaaed49d1cd4cd31937fb",
+      "after": "67a01932c103c0986d22f8179843be26a3223a9d7b1eaaed49d1cd4cd31937fb",
+      "identical": true
+    },
+    {
+      "file": "src/lib/detection-lab/magnets.ts",
+      "before": "a40d7c5279d6d2a23522dadf0beeb6eb25a3991a026a628ed179ffadc4c443b3",
+      "after": "a40d7c5279d6d2a23522dadf0beeb6eb25a3991a026a628ed179ffadc4c443b3",
+      "identical": true
+    },
+    {
+      "file": "src/lib/detection-lab/obstacles.ts",
+      "before": "4058e4516a23a71e3a8ac3a0ae73ce06bf853ca111e9edf97c23475a84ae6972",
+      "after": "4058e4516a23a71e3a8ac3a0ae73ce06bf853ca111e9edf97c23475a84ae6972",
+      "identical": true
+    },
+    {
+      "file": "src/lib/detection-lab/pass2-cuts.ts",
+      "before": "6db2267edd670b80b89cb5fd3f0e6076f4cdb1ef5a38b99d0fc287203c430b48",
+      "after": "6db2267edd670b80b89cb5fd3f0e6076f4cdb1ef5a38b99d0fc287203c430b48",
+      "identical": true
+    },
+    {
+      "file": "src/lib/detection-lab/pass2-report.ts",
+      "before": "662360556597547d0d55ed43f932f3ee48e8e14fdbe702c56ad1c68f2b3a5107",
+      "after": "662360556597547d0d55ed43f932f3ee48e8e14fdbe702c56ad1c68f2b3a5107",
+      "identical": true
+    },
+    {
+      "file": "src/lib/detection-lab/pass2.ts",
+      "before": "1ec66a3156eccd8b829c3be6c00c533285d6106fed4ded55fd735cafe5e9abb4",
+      "after": "1ec66a3156eccd8b829c3be6c00c533285d6106fed4ded55fd735cafe5e9abb4",
+      "identical": true
+    },
+    {
+      "file": "src/lib/detection-lab/pass3.ts",
+      "before": "b6eb519ba25691e0d07f10a892d638989579440b5d4e920f9ed19786e9f74d1e",
+      "after": "b6eb519ba25691e0d07f10a892d638989579440b5d4e920f9ed19786e9f74d1e",
+      "identical": true
+    },
+    {
+      "file": "src/lib/detection-lab/pilot.ts",
+      "before": "37fd88de6da271acff6326192f7b51e7cd78513cc1a500710c6472493dd4f0a4",
+      "after": "37fd88de6da271acff6326192f7b51e7cd78513cc1a500710c6472493dd4f0a4",
+      "identical": true
+    },
+    {
+      "file": "src/lib/detection-lab/placement-diagnosis.ts",
+      "before": "8b4e28d9423b2aa18d53df9ab5d924a0275b1d19b288317cd003590262168aee",
+      "after": "8b4e28d9423b2aa18d53df9ab5d924a0275b1d19b288317cd003590262168aee",
+      "identical": true
+    },
+    {
+      "file": "src/lib/detection-lab/pose.ts",
+      "before": "c1bcd4b45f63e12aec63809ea5823807964fedd6d897f847071e3fcd18e8817e",
+      "after": "c1bcd4b45f63e12aec63809ea5823807964fedd6d897f847071e3fcd18e8817e",
+      "identical": true
+    },
+    {
+      "file": "src/lib/detection-lab/profile.ts",
+      "before": "688691b840960ac3abfab0339868678c55d67c6c506f5855d1938354335d0bd8",
+      "after": "688691b840960ac3abfab0339868678c55d67c6c506f5855d1938354335d0bd8",
+      "identical": true
+    },
+    {
+      "file": "src/lib/detection-lab/report.ts",
+      "before": "25d7100466a996c71f3d3b901ddfbdcf90dea1f7695ae50c714b247a2ce1af8a",
+      "after": "25d7100466a996c71f3d3b901ddfbdcf90dea1f7695ae50c714b247a2ce1af8a",
+      "identical": true
+    },
+    {
+      "file": "src/lib/detection-lab/workshop-experiment.ts",
+      "before": "196100d84f0797e2556ec8fb241dc51667e5847761883c80e47c2d55d9a2e1f5",
+      "after": "196100d84f0797e2556ec8fb241dc51667e5847761883c80e47c2d55d9a2e1f5",
+      "identical": true
+    },
+    {
+      "file": "src/lib/standex/pedagogical-envelopes.ts",
+      "before": "d0ff66e4eeed483823e2723b4eff5e437d93d7617cb0cbc5036b2f5824494d3a",
+      "after": "d0ff66e4eeed483823e2723b4eff5e437d93d7617cb0cbc5036b2f5824494d3a",
+      "identical": true
+    },
+    {
+      "file": "src/lib/standex/pedagogical-poses.ts",
+      "before": "7ca8bc6079eb3cff8bbeee18edab11a07e76ffa4e326ce076f21884f8c5e8cfa",
+      "after": "7ca8bc6079eb3cff8bbeee18edab11a07e76ffa4e326ce076f21884f8c5e8cfa",
+      "identical": true
+    }
+  ]
+}
