@@ -60,3 +60,30 @@ test('F1 frontal approach of MK36 reaches an estimated zone along its own faces'
   let best=0;for(let i=0;i<=50;i++)best=Math.max(best,cataloguePlacement(c,catalogueFrame(c,i/100).pose,[],undefined,true).zone);
   expect(best).toBeGreaterThan(0);
 });
+import { catalogueVolume, catalogueClasses } from '../src/lib/standex/catalogue-pedagogical';
+import { rotate } from '../src/lib/standex/machine-assembly';
+import { publishedClasses } from '../src/lib/standex/magnetics/registries';
+test('global mounting composes with poseAt; relative response unchanged',()=>{
+  const c={...DEFAULT_WORKSHOP,sensorId:'MK04',magnetModel:'M04',mountX:12,mountZ:-7,mountAngle:30,sensorAngle:20};
+  const p=poseAt(c,.5),r=rotate(p.position,[0,-30,0]),w=catalogueFrame(c,.5).world.center;
+  [r[0]+12,r[1],r[2]-7].forEach((v,i)=>expect(w[i]).toBeCloseTo(v,9));
+  const c0={...c,mountX:0,mountZ:0,mountAngle:0},a=cataloguePlacement(c,catalogueFrame(c,.5).pose),b=cataloguePlacement(c0,catalogueFrame(c0,.5).pose);
+  expect(a.nominal?.ok&&a.nominal.response).toBeCloseTo(b.nominal?.ok?b.nominal.response:NaN,10);
+});
+test('volume cell equals point evaluation with the same body frame',()=>{
+  const c={...DEFAULT_WORKSHOP,sensorId:'MK24-A-J',magnetModel:'HF3225-14.95X10X5',magnetization:'thickness' as const,sensorAngle:45,magnetAngle:0,magnetTilt:0};
+  const f=catalogueFrame(c,0),v=catalogueVolume(c,f.pose.axis,0,[],6,f.pose.frame);
+  const cell=v.cut.find(k=>k.x===2&&k.y===6&&k.z===0)!,pt=cataloguePlacement(c,{...f.pose,center:[2,6,0]},[],catalogueModel(c),true);
+  expect(cell.response).toBeCloseTo(pt.nominal?.ok?pt.nominal.response:NaN,12);
+});
+test('rolling a block around unchanged poles changes the volume key and values',()=>{
+  const c={...DEFAULT_WORKSHOP,sensorId:'MK24-A-J',magnetModel:'HF3225-14.95X10X5',magnetization:'thickness' as const};
+  const f0=magnetBodyFrame(c,0),f1:typeof f0=[f0[2],f0[1],[-f0[0][0],-f0[0][1],-f0[0][2]]];
+  const a=catalogueVolume(c,[0,1,0],0,[],6,f0),b=catalogueVolume(c,[0,1,0],0,[],6,f1);
+  expect(a.key).not.toBe(b.key);
+  expect(JSON.stringify(a.cut.map(k=>k.response))).not.toBe(JSON.stringify(b.cut.map(k=>k.response)));
+});
+test('MK04 + SmCo offers guide classes C and E for the 66 reed',()=>{
+  const k=catalogueClasses('MK04','SMCO5-5X4',publishedClasses('MK04','SMCO5-5X4'));
+  expect(k).toContain('C');expect(k).toContain('E');
+});

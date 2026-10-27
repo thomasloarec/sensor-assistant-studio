@@ -22,7 +22,7 @@ export const CATALOGUE_MODEL_VERSION='catalogue-b-analogy-1.1';
 /* i18n-canonical: internal diagnostic codes, never UI labels. */
 const INTERNAL={missing:'catalogue_profile_missing',prior:'catalogue_modelling_prior',source:'catalogue_illustrative',leads:'length_only_analogy_leads_uncharacterized'};
 /* i18n-canonical: model status, not product qualification. */
-export const CATALOGUE_LABELS={form66:'Modèle 66 adapté',documented:'Modèle appuyé sur distances documentées',analogy:'Modèle par analogie',notice:'Simulation indicative · distances à confirmer avec Standex',datum:'Centre et axe internes estimés, non mesurés par le fabricant.',proxy:'Aimant représenté par un cylindre équivalent approximatif ; identité et boîtier conservés.',class:'Classe de modèle indicative ; le contact électrique ne définit pas une classe AT.',material:'Matériaux et implantation non caractérisés : zones indicatives, pas de prédiction affirmative.'};
+export const CATALOGUE_LABELS={form66:'Modèle 66 adapté',documented:'Distances constructeur disponibles · géométrie estimée',analogy:'Modèle par analogie',notice:'Simulation indicative · distances à confirmer avec Standex',datum:'Centre et axe internes estimés, non mesurés par le fabricant.',proxy:'Aimant représenté par un cylindre équivalent approximatif ; identité et boîtier conservés.',class:'Classe de modèle indicative ; le contact électrique ne définit pas une classe AT.',ferrous:'MK02 est un détecteur de métal ferreux à aimant intégré : cette illustration reed + aimant externe ne prédit pas sa fonction.',partialA:'Classe A : seule la borne prudente de 10 AT est modélisée ; aucune conclusion en dessous.',material:'Matériaux et implantation non caractérisés : zones indicatives, pas de prédiction affirmative.'};
 type Family='66-capable'|'other'|'illustrative';
 /** Each entry is intentional. The length is a bounded modelling prior, NOT glass specification. */
 export const CATALOGUE_PROFILES:Record<string,{family:Family;lengthMm:number;method:string}>= {
@@ -65,7 +65,7 @@ export function catalogueModel(c:WorkshopConfig){
  const field:CatalogueField=verified?{kind:'cylinder',radiusMm:verified.diameterMm/2,lengthMm:verified.lengthMm,jT:verified.jT}:bare?.shape==='block'?{kind:'block',dims:[body[0],body[1],body[2]],brMt:J*1000}:pack?{kind:'cylinder',radiusMm:insertD/2,lengthMm:insertL,jT:J}:{kind:'cylinder',radiusMm:body[1]/2,lengthMm:body[0],jT:J};
  const magnet:PilotMagnet=verified??{...PILOT_MAGNETS[0]!,label:c.magnetModel,material:bare?.material??pack?.magnetMaterial??'unknown',momentRaw:INTERNAL.prior};
  const className=['A','B','C','D','E','F'].includes(c.sensitivity)?c.sensitivity:'C';
- const reasons=[CATALOGUE_LABELS.notice,CATALOGUE_LABELS.datum,...(pack||(!verified&&bare?.shape!=='block')?[CATALOGUE_LABELS.proxy]:[]),...(className!==c.sensitivity?[CATALOGUE_LABELS.class]:[]),...(c.ferromagnetic||c.temperature!=='ambient'?[CATALOGUE_LABELS.material]:[])];
+ const reasons=[CATALOGUE_LABELS.notice,CATALOGUE_LABELS.datum,...(pack||(!verified&&bare?.shape!=='block')?[CATALOGUE_LABELS.proxy]:[]),...(className!==c.sensitivity?[CATALOGUE_LABELS.class]:[]),...(className==='A'?[CATALOGUE_LABELS.partialA]:[]),...(c.sensorId==='MK02'?[CATALOGUE_LABELS.ferrous]:[]),...(c.ferromagnetic||c.temperature!=='ambient'?[CATALOGUE_LABELS.material]:[])];
  return {version:CATALOGUE_MODEL_VERSION,sensorId:c.sensorId,magnetId:c.magnetModel,family,status:status as 'form66'|'documented'|'analogy',lengthMm,scale:lengthMm/14,centre:[0,0,0] as Vec3,axis:[1,0,0] as Vec3,body:sensor.body,magnetBody:body,magnet,field,magnetGeometry:verified?'verified-cylinder':bare?.shape==='block'?'analytic-block':bare?.shape==='cylinder'&&q!==null?'moment-cylinder':'equivalent-cylinder',moment:q,unknownMoment:q===null,className,contact:sensor.contact,reference:selected,rows,publishedRows,publishedSource:publishedRowsSourceUrl(publishedRows),familyReferences:PUBLISHED_REGISTRY.rows.filter(r=>r.sensorFamily===c.sensorId).map(r=>r.sensorReference),reasons,sources:[ACTIVATION_BROCHURE,publishedRowsSourceUrl(publishedRows)??sensor.sourceFile??INTERNAL.source],method:p.method,leadEffect:INTERNAL.leads};
 }
 type Frame=[Vec3,Vec3,Vec3];
@@ -85,10 +85,13 @@ export function catalogueFrame(c:WorkshopConfig,t:number):PedagogicalFrame&{pose
   const toLocal=(v:Vec3)=>f.basis.map(b=>dot(b,v)) as Vec3;
   return {...f,world:{...f.world,axis,frame:wf},pose:{...f.pose,axis:toLocal(axis),frame:wf.map(toLocal) as Frame}};
  }
- const p=poseAt(c,t),axis=momentFor(c,p.angle),wf=magnetBodyFrame(c,p.angle);
- const basis=E.map(e=>rotate(e,[0,-c.sensorAngle,0])) as Frame,origin:Vec3=[0,0,0];
+ // Global mounting (mountX/Z, mountAngle) then the sensor's own rotation, as in the scene.
+ const p=poseAt(c,t),M=(v:Vec3)=>rotate(v,[0,-c.mountAngle,0]),origin:Vec3=[c.mountX,0,c.mountZ];
+ const axis=M(momentFor(c,p.angle)),wf=magnetBodyFrame(c,p.angle).map(M) as Frame;
+ const basis=E.map(e=>M(rotate(e,[0,-c.sensorAngle,0]))) as Frame,mp=M(p.position);
+ const center=mp.map((v,i)=>v+(origin[i]??0)) as Vec3;
  const toLocal=(v:Vec3)=>basis.map(b=>dot(b,v)) as Vec3;
- return {origin,basis,world:{center:p.position,axis,frame:wf},pose:{center:toLocal(p.position),axis:toLocal(axis),frame:wf.map(toLocal) as Frame}};
+ return {origin,basis,world:{center,axis,frame:wf},pose:{center:toLocal(mp),axis:toLocal(axis),frame:wf.map(toLocal) as Frame}};
 }
 export function catalogueBodyObb(c:WorkshopConfig):Obb{return {path:'sensor-body',c:[0,0,0],a:E,h:sensorById(c.sensorId).body.map(n=>n/2) as Vec3};}
 /** Catalogue evaluator (physical mm). Same blade integral, Gauss nodes and B response as the
@@ -131,7 +134,7 @@ export function cataloguePlacement(c:WorkshopConfig,pose:CataloguePose,obstacles
  if((c.ferromagnetic||c.temperature!=='ambient'||m.unknownMoment||m.className!==c.sensitivity)&&state==='favorable')state='variable';
  return {state,cause:nominal.response===0?'orientation':'distance',nominal,scenarios,zone,partial};
 }
-export function catalogueVolume(c:WorkshopConfig,axis:Vec3,planeZ:number,obstacles:readonly Obb[]=[],extent=24):SampledVolume{
+export function catalogueVolume(c:WorkshopConfig,axis:Vec3,planeZ:number,obstacles:readonly Obb[]=[],extent=24,frame?:Frame):SampledVolume{
  const start=performance.now(),xs=axisNodes(-extent,extent,true),ys=axisNodes(-extent,extent),zs=axisNodes(-extent,extent);
  if(!zs.includes(planeZ)&&Math.abs(planeZ)<=extent){zs.push(planeZ);zs.sort((a,b)=>a-b);}
  const cells:SampledVolume['cells']=[],cut:SampledVolume['cut']=[];
@@ -139,12 +142,12 @@ export function catalogueVolume(c:WorkshopConfig,axis:Vec3,planeZ:number,obstacl
  const bound=(ns:number[],i:number):[number,number]=>[i===0?-extent:((ns[i-1]??0)+(ns[i]??0))/2,i===ns.length-1?extent:((ns[i]??0)+(ns[i+1]??0))/2];
  // Same evaluator as point/cut/timeline, including body collision; no angle quantization.
  for(let k=0;k<zs.length;k++)for(let j=0;j<ys.length;j++)for(let i=0;i<xs.length;i++){
-  const x=xs[i]??0,y=ys[j]??0,z=zs[k]??0,e=cataloguePlacement(c,{center:[x,y,z],axis},obstacles,model,true);
+  const x=xs[i]??0,y=ys[j]??0,z=zs[k]??0,e=cataloguePlacement(c,frame?{center:[x,y,z],axis,frame}:{center:[x,y,z],axis},obstacles,model,true);
   const [x0,x1]=bound(xs,i),[y0,y1]=bound(ys,j),[z0,z1]=bound(zs,k);
   const cell={i,j,k,x,y,z,x0,x1,y0,y1,z0,z1,zone:e.zone,response:e.nominal?.ok?e.nominal.response:null,blocked:e.cause==='overlap'};
   if(e.zone)cells.push(cell);if(z===planeZ)cut.push(cell);
  }
- return {key:JSON.stringify([CATALOGUE_MODEL_VERSION,c,axis,planeZ,obstacles]),cells,cut,axis,planeZ,extent,computeMs:performance.now()-start,nodeCount:xs.length*ys.length*zs.length,truncated:cells.some(c=>Math.max(Math.abs(c.x),Math.abs(c.y),Math.abs(c.z))===extent)};
+ return {key:JSON.stringify([CATALOGUE_MODEL_VERSION,c,axis,frame??null,planeZ,obstacles]),cells,cut,axis,planeZ,extent,computeMs:performance.now()-start,nodeCount:xs.length*ys.length*zs.length,truncated:cells.some(c=>Math.max(Math.abs(c.x),Math.abs(c.y),Math.abs(c.z))===extent)};
 }
 export function catalogueTimeline(c:WorkshopConfig,table?:readonly TableSample[],steps=128){
  const samples=table??Array.from({length:steps*2+1},(_,i)=>{const t=i/(steps*2);return {t,pose:catalogueFrame(c,t).pose,obstacles:[]};});
@@ -153,3 +156,9 @@ export function catalogueTimeline(c:WorkshopConfig,table?:readonly TableSample[]
  return {points,events,electrical:'uncharacterized' as const,baseResolution:1/(steps*2),resolutionCertified:false as const};
 }
 export function catalogueCoverage(){return SENSOR_CATALOG.map(s=>({sensorId:s.id,body:s.body,profile:CATALOGUE_PROFILES[s.id]}));}
+/** AT classes selectable for the couple: published registry classes plus the 66-reed guide rows
+ * (class letter right after "66"). Contact form (1A/1B/1C) is never an AT class. */
+export function catalogueClasses(sensorId:string,magnetModel:string,published:readonly string[]):string[]{
+ const guide=guideRangesFor(sensorId,magnetModel).flatMap(r=>{const m=/66([A-G])\b|66([A-G])-/.exec(r.sensorReference);const k=m?.[1]??m?.[2];return k?[k]:[];});
+ return [...new Set([...published,...guide])].sort();
+}

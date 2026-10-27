@@ -10763,15 +10763,6 @@
     "Dettagli tecnici — traccia interna",
     "技術詳細 — 内部記録"
   ],
-  "Détecte jusqu'à {0} mm": [
-    "Detects up to {0} mm",
-    "检测距离可达 {0} mm",
-    "Erkennt bis {0} mm",
-    "Detecta hasta {0} mm",
-    "Обнаруживает до {0} мм",
-    "Rileva fino a {0} mm",
-    "最大 {0} mm で検出"
-  ],
   "Détecter la fermeture du tiroir de cartouche d’un appareil de diagnostic médical.": [
     "Detect closure of the cartridge drawer in a medical diagnostic device.",
     "检测医疗诊断设备的试剂盒抽屉是否关闭。",
@@ -34919,15 +34910,6 @@
     "Modello 66 adattato",
     "適応66モデル"
   ],
-  "Modèle appuyé sur distances documentées": [
-    "Model supported by documented distances",
-    "有文档距离支持的模型",
-    "Modell mit dokumentierten Abständen",
-    "Modelo respaldado por distancias documentadas",
-    "Модель с документированными расстояниями",
-    "Modello basato su distanze documentate",
-    "文書化された距離に基づくモデル"
-  ],
   "Modèle par analogie": [
     "Analogy model",
     "类比模型",
@@ -34990,5 +34972,41 @@
     "Оценочные зоны активации",
     "Zone di attivazione stimate",
     "推定動作領域"
+  ],
+  "Distances constructeur disponibles · géométrie estimée": [
+    "Manufacturer distances available · estimated geometry",
+    "有制造商距离数据 · 几何为估算",
+    "Herstellerabstände verfügbar · Geometrie geschätzt",
+    "Distancias del fabricante disponibles · geometría estimada",
+    "Есть расстояния производителя · геометрия оценочная",
+    "Distanze del costruttore disponibili · geometria stimata",
+    "メーカー距離あり · 形状は推定"
+  ],
+  "MK02 est un détecteur de métal ferreux à aimant intégré : cette illustration reed + aimant externe ne prédit pas sa fonction.": [
+    "MK02 is a ferrous-metal detector with a built-in magnet: this reed + external magnet illustration does not predict its function.",
+    "MK02 是内置磁铁的铁磁金属检测器：此干簧管+外部磁铁示意不能预测其功能。",
+    "MK02 ist ein Eisenmetall-Detektor mit integriertem Magneten: diese Darstellung Reed + externer Magnet sagt seine Funktion nicht voraus.",
+    "MK02 es un detector de metal ferroso con imán integrado: esta ilustración reed + imán externo no predice su función.",
+    "MK02 — детектор чёрного металла со встроенным магнитом: эта иллюстрация геркон + внешний магнит не предсказывает его работу.",
+    "MK02 è un rilevatore di metalli ferrosi con magnete integrato: questa illustrazione reed + magnete esterno non ne prevede la funzione.",
+    "MK02 は磁石内蔵の鉄系金属検出器です。このリード＋外部磁石の図はその機能を予測しません。"
+  ],
+  "Classe A : seule la borne prudente de 10 AT est modélisée ; aucune conclusion en dessous.": [
+    "Class A: only the prudent 10 AT bound is modelled; no conclusion below it.",
+    "A 类：仅模拟 10 AT 保守界限；低于此不作结论。",
+    "Klasse A: nur die vorsichtige 10-AT-Grenze ist modelliert; darunter keine Aussage.",
+    "Clase A: solo se modela el límite prudente de 10 AT; sin conclusión por debajo.",
+    "Класс A: моделируется только осторожная граница 10 AT; ниже — без выводов.",
+    "Classe A: è modellato solo il limite prudente di 10 AT; nessuna conclusione al di sotto.",
+    "クラス A：慎重な 10 AT 境界のみをモデル化。それ未満は結論なし。"
+  ],
+  "Distance typique publiée : {0} mm · indicatif, à confirmer": [
+    "Published typical distance: {0} mm · indicative, to be confirmed",
+    "公布典型距离：{0} mm · 仅供参考，待确认",
+    "Veröffentlichter typischer Abstand: {0} mm · indikativ, zu bestätigen",
+    "Distancia típica publicada: {0} mm · indicativa, a confirmar",
+    "Опубликованное типичное расстояние: {0} мм · ориентировочно, требует подтверждения",
+    "Distanza tipica pubblicata: {0} mm · indicativa, da confermare",
+    "公表された代表距離：{0} mm · 目安、要確認"
   ]
 }

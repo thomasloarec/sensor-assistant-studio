@@ -14,7 +14,7 @@ export function usePedagogicalVolume(enabled:boolean,settings:ExperimentSettings
   const [result,setResult]=useState<SampledVolume|null>(null),[busy,setBusy]=useState(false),[failed,setFailed]=useState(false);
   // Quantization is not applied to physics orientation. The exact axis and plane enter the key.
   const available=!!catalogue||experimentAvailable(settings);
-  const key=settingsKey(settings,frame.pose.axis,frame.pose.center[2])+'|'+(obstacles?fingerprint(obstacles):'free')+'|'+(catalogue?CATALOGUE_MODEL_VERSION:'frozen')+'|'+JSON.stringify(catalogue??null);
+  const key=settingsKey(settings,frame.pose.axis,frame.pose.center[2])+'|'+(obstacles?fingerprint(obstacles):'free')+'|'+(catalogue?CATALOGUE_MODEL_VERSION:'frozen')+'|'+JSON.stringify(catalogue??null)+'|'+JSON.stringify(catalogue?(frame.pose as {frame?:unknown}).frame??null:null);
   useEffect(()=>{
     setResult(null);setFailed(false);
     if(!enabled||!available){setBusy(false);return;}
@@ -29,7 +29,7 @@ export function usePedagogicalVolume(enabled:boolean,settings:ExperimentSettings
         setBusy(false);worker?.terminate();worker=null;
       };
       worker.onerror=()=>{if(current){setBusy(false);setFailed(true);}worker?.terminate();};
-      worker.postMessage({settings,axis:frame.pose.axis,planeZ:frame.pose.center[2],key,obstacles:obstacles??[],catalogue});
+      worker.postMessage({settings,axis:frame.pose.axis,planeZ:frame.pose.center[2],key,obstacles:obstacles??[],catalogue,frame:catalogue?(frame.pose as {frame?:unknown}).frame:undefined});
     },0);
     return ()=>{current=false;clearTimeout(timer);worker?.terminate();};
   },[enabled,key]);

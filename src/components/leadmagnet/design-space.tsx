@@ -2753,7 +2753,7 @@ export function DesignSpace({
                 <p className="t-caption"><strong>{t("Référence documentaire")}</strong> · {card.guideReference} · {card.guideApproach}</p>
               </>
             ) : card.maxPullInMm !== null ? (
-              <p className="t-body"><strong>{msg("Détecte jusqu'à {0} mm", [formatMm(card.maxPullInMm)])}</strong></p>
+              <p className="t-body"><strong>{msg("Distance typique publiée : {0} mm · indicatif, à confirmer", [formatMm(card.maxPullInMm)])}</strong></p>
             ) : (
               <p className="t-caption">{t("Distances non publiées pour ce couple")}</p>
             )}

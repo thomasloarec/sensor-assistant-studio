@@ -3,6 +3,7 @@ import { t, msg } from '@/lib/i18n/core';
 import { CLIENT_LIMITS, VERIFIED_PILOTS, clientCoupleAdapter } from '@/lib/standex/client-pedagogical';
 import type { WorkshopConfig } from '@/lib/standex/magnetic-workshop';
 import { publishedClasses } from '@/lib/standex/magnetics/registries';
+import { catalogueClasses } from '@/lib/standex/catalogue-pedagogical';
 import { magnetOptionsFor } from '@/lib/standex/default-pairs';
 import { guideRangesFor, formatGuideBound, ACTIVATION_GUIDE } from '@/lib/standex/activation-guide';
 import { sensorById } from '@/lib/standex/sensor-catalog';
@@ -14,7 +15,7 @@ export function ClientPedagogicalControls({config,update,onCatalog,onExplore,onC
   config:WorkshopConfig;update:(patch:Partial<WorkshopConfig>)=>void;onCatalog:()=>void;onExplore:()=>void;onCable:()=>void;approachControls?:ReactNode;
 }) {
   const adapter=clientCoupleAdapter(config);
-  const classes=[...new Set([config.sensitivity,...publishedClasses(config.sensorId,config.magnetModel)])];
+  const classes=[...new Set([config.sensitivity,...catalogueClasses(config.sensorId,config.magnetModel,publishedClasses(config.sensorId,config.magnetModel))])];
   const magnets=[...new Set([config.magnetModel,...magnetOptionsFor(config.sensorId,undefined,config.magnetModel),...VERIFIED_PILOTS])];
   const rows=guideRangesFor(config.sensorId,config.magnetModel);
   return <div className="mw-ped-controls" data-testid="client-pedagogical-controls">
