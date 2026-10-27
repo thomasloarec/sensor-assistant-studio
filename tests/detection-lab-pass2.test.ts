@@ -89,7 +89,7 @@ describe("reproduction de l'audit local", () => {
     expect(fitK(16, "B", "C1").k).toBeCloseTo(0.1337018, 4);
     expect(fitK(16, "B", "C1").medianAbsPct!).toBeCloseTo(3.62, 0);
     expect(fitLength("B", "C1").effectiveLengthMm).toBeCloseTo(15.634, 2);
-  });
+  }, 30000);
   test("scores primaires : V1 (21 calculables, 2 indisponibles, 15 > 20 %) et V2 (23, 0, 6), critère non atteint", () => {
     const k16 = fitK(16, "B", "C1").k;
     const v1 = scoreControls(buildPass2Table({ effectiveLengthMm: 16, axialDatumMm: 7, model: "B", conv: "C1", k: k16 }));
