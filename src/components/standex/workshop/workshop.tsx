@@ -2144,8 +2144,8 @@ export default function MagneticWorkshop({
         <aside className="mw-controls">
           {pedagogical && <PedagogicalControls settings={experiment} setSettings={setExperiment} config={config} update={update} frame={pedagogicalPose} busy={sampled.busy} volume={sampled.volume} failed={sampled.failed} canUndo={placementUndo!==null} onUndo={()=>{if(placementUndo){setConfig(placementUndo);setPlacementUndo(null);setSuggestion(null);}}} onSuggest={()=>{const p=findPlacement(experiment,pedagogicalPose.pose,!!machine);if(!p){setError(t("Aucune suggestion disponible dans les libertés déclarées."));return;}const angle=Math.atan2(p.axis[1],p.axis[0])*180/Math.PI;setSuggestion({...config,magnetAngle:angle,lateralShift:p.center[0]});}} />}
           {suggestion && <div className="notice-info"><p>{t("Placement proposé : appliquer explicitement, puis recalculer")}</p><Button onClick={()=>{setPlacementUndo(config);setConfig(suggestion);setSuggestion(null);setPlaying(false);}}>{t("Appliquer le placement proposé")}</Button><Button variant="secondary" onClick={()=>setSuggestion(null)}>{t("Annuler")}</Button></div>}
-          {!pedagogical && !machine && approachPicker}
-          {!pedagogical && !machine && activationDistanceControl}
+          {!pedagogical && <>{!machine && approachPicker}
+          {!machine && activationDistanceControl}</>}
           {machine ? (
             <MachineGuide
               pedagogical={pedagogical}
@@ -2183,9 +2183,9 @@ export default function MagneticWorkshop({
               anyKnown={result.samples.some((x) => x.contact !== "unknown")}
             />
           ) : null}
-          {!pedagogical && machine && activationDistanceControl}
+          {!pedagogical && <>{machine && activationDistanceControl}</>}
           {!machine && playButton}
-          {!pedagogical && advancedSettings}
+          {!pedagogical && <>{advancedSettings}</>}
           {pedagogical && <details className="mw-file-tools"><summary>{t("Exporter le montage")}</summary><Button variant="secondary" onClick={()=>download("atelier-pedagogique.json",JSON.stringify({kind:"pedagogical-workshop",version:1,config,settings:experiment,profile:EXPERIMENT,progress,limits:{qualified:false,requiresGlbReimport:true,remoteClips:false}}),"application/json")}>{t("Télécharger le fichier de montage")}</Button><label className="mw-file-label">{t("Importer un fichier de montage")}<input type="file" accept=".json" onChange={e=>void importFile(e.target.files?.[0])}/></label></details>}
       {!embedded && !pedagogical ? (
         <details className="mw-advanced">
@@ -2320,7 +2320,7 @@ export default function MagneticWorkshop({
               className="mw-button"
               onClick={() => (onResult ? onResult(testedPair()) : onClose())}
             >
-              {t(pedagogical ? "Fermer" : "Valider ce choix et voir le résultat")}
+              {pedagogical ? t("Fermer") : t("Valider ce choix et voir le résultat")}
             </button>
           </div>
           </details>
