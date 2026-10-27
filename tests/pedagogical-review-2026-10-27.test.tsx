@@ -107,13 +107,13 @@ for(const [magnetId,depth] of [['SMCO5-5X4',6],['N45-4X19',16]] as const){
    return <><PedagogicalControls settings={settings} setSettings={setSettings} config={config} update={patch=>setConfig(c=>({...c,...patch}))} frame={frame} busy={false} volume={null} failed={false} onSuggest={()=>{}} onUndo={()=>{}} canUndo={false}/><PedagogicalBanner evidence={evidence}/><output data-testid="depth">{frame.pose.center[1]}</output><output data-testid="time">{progress}</output><output data-testid="scenario-count">{evidence.scenarios.length}</output></>;
   }
   const r=render(<Harness/>);
-  fireEvent.change(r.getByRole('slider',{name:'Profondeur minimale'}),{target:{value:String(depth)}});
+  fireEvent.input(r.getByRole('slider',{name:'Profondeur minimale'}),{target:{value:String(depth)}});
   expect(r.getByTestId('depth').textContent).toBe(String(depth));expect(r.getByTestId('time').textContent).toBe('0.5');
   expect(r.getByTestId('pedagogical-verdict').textContent).toContain('Placement défavorable');
   expect(r.getByTestId('pedagogical-verdict').textContent).toContain('Orientation défavorable');
   for(const offset of [6,8]){
    if(magnetId==='N45-4X19'&&offset===6)continue;
-   fireEvent.change(r.getByRole('slider',{name:'Décalage latéral'}),{target:{value:String(offset)}});
+   fireEvent.input(r.getByRole('slider',{name:'Décalage latéral'}),{target:{value:String(offset)}});
    expect(r.getByTestId('depth').textContent).toBe(String(depth));expect(r.getByTestId('time').textContent).toBe('0.5');
    expect(r.getByTestId('scenario-count').textContent).toBe('9');expect(r.getByTestId('pedagogical-verdict').textContent).toContain('Placement favorable');
   }
