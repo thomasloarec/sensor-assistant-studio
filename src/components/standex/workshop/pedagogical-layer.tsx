@@ -4,7 +4,7 @@ import { Html, Line } from '@react-three/drei';
 import '@react-three/fiber';
 import { t } from '@/lib/i18n/core';
 import { PILOT_MAGNETS } from '@/lib/detection-lab/magnets';
-import type { ExperimentSettings, SampledVolume, SampleCell } from '@/lib/detection-lab/workshop-experiment';
+import { EXPERIMENT, type ExperimentSettings, type SampledVolume, type SampleCell } from '@/lib/detection-lab/workshop-experiment';
 import type { PedagogicalFrame } from '@/lib/standex/pedagogical-poses';
 
 /** Boundary faces of sampled voxels. Never interpolate across null/zero samples. */
@@ -32,7 +32,7 @@ export function PedagogicalLayer({frame,settings,volume,zones=true}:{frame:Pedag
     </mesh>)}
     <mesh rotation={[0,0,Math.PI/2]}><capsuleGeometry args={[1.1,14,8,24]}/><meshPhysicalMaterial color="#cedcda" transparent opacity={.4} roughness={.15} depthWrite={false}/></mesh>
     <Line points={[[-12,0,0],[12,0,0]]} color="#254061" lineWidth={2}/>
-    <Line points={[[-7.816998,0,0],[7.816998,0,0]]} color="#535759" lineWidth={4}/>
+    <Line points={[[-EXPERIMENT.effectiveLengthMm/2,0,0],[EXPERIMENT.effectiveLengthMm/2,0,0]]} color="#535759" lineWidth={4}/>
     <Html position={[0,-4,0]} center><span className="mw-scene-label">{t('Repère reed Form66 exploratoire')}</span></Html>
     <group position={frame.pose.center} quaternion={q}>
       {[-1,1].map(sign=><mesh key={sign} position={[0,sign*magnet.lengthMm/4,0]}><cylinderGeometry args={[magnet.diameterMm/2,magnet.diameterMm/2,magnet.lengthMm/2,32]}/><meshStandardMaterial color={sign>0?'#bb454d':'#3a72ac'} roughness={.35} metalness={.25}/></mesh>)}

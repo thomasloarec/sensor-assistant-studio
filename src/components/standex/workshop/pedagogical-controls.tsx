@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { t, msg, number } from '@/lib/i18n/core';
 import { DEFAULT_EXPERIMENT, EXPERIMENT, FORM_ANOMALIES, evaluatePlacement, settingsKey, type ExperimentSettings, type SampledVolume, type PlacementEvidence } from '@/lib/detection-lab/workshop-experiment';
@@ -41,7 +41,6 @@ export function PedagogicalBanner({evidence}:{evidence:PlacementEvidence}) {
 export function PedagogicalControls({settings,setSettings,config,update,frame,busy,volume,failed,onSuggest,onUndo,canUndo}:{
   settings:ExperimentSettings;setSettings:(s:ExperimentSettings)=>void;config:WorkshopConfig;update:(p:Partial<WorkshopConfig>)=>void;frame:PedagogicalFrame;busy:boolean;volume:SampledVolume|null;failed:boolean;onSuggest:()=>void;onUndo:()=>void;canUndo:boolean;
 }) {
-  const file=useRef<HTMLInputElement>(null);
   const change=(patch:Partial<ExperimentSettings>)=>setSettings({...settings,...patch});
   return <div className="mw-ped-controls">
     <h2 className="t-title-m">{t('Atelier pédagogique')}</h2>

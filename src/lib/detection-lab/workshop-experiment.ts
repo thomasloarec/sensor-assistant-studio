@@ -61,7 +61,7 @@ export const FORM_ANOMALIES = (['B','C'] as const).map(className => {
   const row = formData.rows.find(r=>r.reedLabel==='66-er'&&r.class===className&&r.magnetLabel===PILOT_MAGNETS[1]?.label);
   const d = row?.distances as Record<string,{upMm:number|null;toMm:number|null}> | undefined;
   const key = bound==='up'?'upMm':'toMm';
-  return {className,magnetId:'N45-4X19',approach:'D3',bound,publishedMm:d?.D3?.[key]??null,d1Mm:d?.D1?.[key]??null,equalToD1:d?.D3?.[key]!=null&&d?.D3?.[key]===d?.D1?.[key],status:'suspected-d1-d3-copy',manufacturerConfirmed:false};
+  return {className,magnetId:'N45-4X19',approach:'D3',bound,publishedMm:d?.['D3']?.[key]??null,d1Mm:d?.['D1']?.[key]??null,equalToD1:d?.['D3']?.[key]!=null&&d?.['D3']?.[key]===d?.['D1']?.[key],status:'suspected-d1-d3-copy',manufacturerConfirmed:false};
 });
 export const conservativeDistance = (raw: number, approach: string) => Math.floor((raw-(approach==='D4'?EXPERIMENT.documentaryD4DeltaMm:0))*2)/2;
 /** Derived housing datum is usable only when provenance reproduces base + offset. D4 empirical correction is not a housing offset. */

@@ -2539,7 +2539,7 @@ export default function MagneticWorkshop({
           </div>
           {/* Chronologie du cycle : mêmes échantillons que la scène et le verdict. */}
           <div className="mw-cycle" aria-label={t("Chronologie du cycle")}>
-            {pedagogical && <p className="t-caption">{t("Capacité d’activation et réouverture non caractérisées : Ton/Toff non documentés")}{pedTimeline && <> · {pedTimeline.events.length} {t("transitions de placement")}{pedTimeline.events.some(e=>!e.resolved)&&<> · {t("Événement non résolu")}</>}</p>}
+            {pedagogical && <p className="t-caption">{t("Capacité d’activation et réouverture non caractérisées : Ton/Toff non documentés")}{pedTimeline && <> · {pedTimeline.events.length} {t("transitions de placement")}{pedTimeline.events.some(e=>!e.resolved)&&<> · {t("Événement non résolu")}</>}</>}</p>}
             {!pedagogical && <>
             <div className="mw-cycle-head">
               {timelineContacts.map((contact, index) => (
