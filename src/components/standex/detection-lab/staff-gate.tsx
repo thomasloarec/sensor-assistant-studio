@@ -37,10 +37,10 @@ export function useStaffAccess(check: StaffCheck, subscribe?: SessionSubscribe):
   return access;
 }
 
-export function StaffLabEntry({ check, subscribe, renderLab, pedagogical = false }: { check: StaffCheck; subscribe?: SessionSubscribe; renderLab: (close: () => void) => ReactNode; pedagogical?: boolean }) {
+export function StaffLabEntry({ check, subscribe, renderLab, pedagogical = false, onResetDraft }: { check: StaffCheck; subscribe?: SessionSubscribe; renderLab: (close: () => void) => ReactNode; pedagogical?: boolean; onResetDraft?: () => void }) {
   const access = useStaffAccess(check, subscribe);
   const [open, setOpen] = useState(false);
-  useEffect(() => { if (access !== "staff") setOpen(false); }, [access]);
+  useEffect(() => { if (access === "denied" || access === "error") {setOpen(false);onResetDraft?.();} }, [access, onResetDraft]);
   if (access !== "staff") return null;
   if (open)
     return <div className="fixed inset-0 z-50 overflow-auto bg-background" data-testid="detection-lab-overlay">{renderLab(() => setOpen(false))}</div>;

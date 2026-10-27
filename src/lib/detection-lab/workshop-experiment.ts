@@ -6,7 +6,7 @@ import { PILOT_MAGNETS } from './magnets';
 import { evaluatePose, type MagnetPose, type PoseEvaluation } from './pose';
 import { PROFILE, type ReedScenario } from './profile';
 import type { Vec3 } from './field';
-import report from '../../../docs/detection-lab-pass3/resultats_pass3.json';
+import report from '@/data/detection-lab/workshop-distances.json';
 
 export const EXPERIMENT = Object.freeze({...frozen,baseProfile:Object.freeze({...frozen.baseProfile})});
 export type PlacementState = 'favorable' | 'variable' | 'unfavorable' | 'unavailable';
@@ -43,8 +43,7 @@ export function experimentAvailable(settings: ExperimentSettings): boolean {
 /** Frozen documentary estimates only: no field/pose modification or refit. */
 export function documentaryDistances(settings: ExperimentSettings, approach: string) {
   if(!experimentAvailable(settings))return [];
-  const variant=report.variants.find(v=>v.id==='Lfit-d4corr');
-  return (variant?.rows??[]).filter(r=>r.className===settings.className && r.magnetId===settings.magnetId && r.approach===approach && r.publishedMm!==null && (settings.className!=='A'||r.bound==='up')).map(r=>({...r,prudentMm:r.estimatedRawMm===null?null:conservativeDistance(r.estimatedRawMm,r.approach)}));
+  return report.rows.filter(r=>r.className===settings.className && r.magnetId===settings.magnetId && r.approach===approach && r.publishedMm!==null && (settings.className!=='A'||r.bound==='up')).map(r=>({...r,prudentMm:r.estimatedRawMm===null?null:conservativeDistance(r.estimatedRawMm,r.approach)}));
 }
 export function evaluatePlacement(settings: ExperimentSettings, pose: MagnetPose, mountingCollision = false): PlacementEvidence {
   const unavailable = (cause: PlacementEvidence['cause'], nominal: PoseEvaluation | null = null): PlacementEvidence => ({ state:'unavailable', cause, nominal, scenarios:[],zone:0,partial:settings.className==='A' });

@@ -1,0 +1,902 @@
+{
+  "source": "docs/detection-lab-pass3/tableau_Lfit-d4corr.csv",
+  "profileVersion": "1.0.0",
+  "rows": [
+    {
+      "className": "A",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D1",
+      "bound": "up",
+      "publishedMm": 10.8,
+      "estimatedRawMm": 11.6653
+    },
+    {
+      "className": "A",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D1",
+      "bound": "to",
+      "publishedMm": 12.5,
+      "estimatedRawMm": 16.3218
+    },
+    {
+      "className": "A",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D3",
+      "bound": "up",
+      "publishedMm": 11.8,
+      "estimatedRawMm": 11.5907
+    },
+    {
+      "className": "A",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D3",
+      "bound": "to",
+      "publishedMm": 13.7,
+      "estimatedRawMm": 16.7927
+    },
+    {
+      "className": "A",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D4",
+      "bound": "up",
+      "publishedMm": 9.8,
+      "estimatedRawMm": 11.8853
+    },
+    {
+      "className": "A",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D4",
+      "bound": "to",
+      "publishedMm": 11.1,
+      "estimatedRawMm": 16.1978
+    },
+    {
+      "className": "A",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D5",
+      "bound": "up",
+      "publishedMm": 6.3,
+      "estimatedRawMm": 6.2065
+    },
+    {
+      "className": "A",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D5",
+      "bound": "to",
+      "publishedMm": 8.1,
+      "estimatedRawMm": 10.0821
+    },
+    {
+      "className": "A",
+      "magnetId": "N45-4X19",
+      "approach": "D1",
+      "bound": "up",
+      "publishedMm": 20.8,
+      "estimatedRawMm": 21.5108
+    },
+    {
+      "className": "A",
+      "magnetId": "N45-4X19",
+      "approach": "D1",
+      "bound": "to",
+      "publishedMm": 22.1,
+      "estimatedRawMm": 28.866
+    },
+    {
+      "className": "A",
+      "magnetId": "N45-4X19",
+      "approach": "D3",
+      "bound": "up",
+      "publishedMm": 19.2,
+      "estimatedRawMm": 18.335
+    },
+    {
+      "className": "A",
+      "magnetId": "N45-4X19",
+      "approach": "D3",
+      "bound": "to",
+      "publishedMm": 21.0,
+      "estimatedRawMm": 26.5293
+    },
+    {
+      "className": "A",
+      "magnetId": "N45-4X19",
+      "approach": "D4",
+      "bound": "up",
+      "publishedMm": 14.5,
+      "estimatedRawMm": 16.4743
+    },
+    {
+      "className": "A",
+      "magnetId": "N45-4X19",
+      "approach": "D4",
+      "bound": "to",
+      "publishedMm": 16.0,
+      "estimatedRawMm": 22.7827
+    },
+    {
+      "className": "A",
+      "magnetId": "N45-4X19",
+      "approach": "D5",
+      "bound": "up",
+      "publishedMm": 15.3,
+      "estimatedRawMm": 14.8418
+    },
+    {
+      "className": "A",
+      "magnetId": "N45-4X19",
+      "approach": "D5",
+      "bound": "to",
+      "publishedMm": 17.5,
+      "estimatedRawMm": 21.4917
+    },
+    {
+      "className": "B",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D1",
+      "bound": "up",
+      "publishedMm": 8.5,
+      "estimatedRawMm": 9.2766
+    },
+    {
+      "className": "B",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D1",
+      "bound": "to",
+      "publishedMm": 11.2,
+      "estimatedRawMm": 11.6653
+    },
+    {
+      "className": "B",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D3",
+      "bound": "up",
+      "publishedMm": 9.4,
+      "estimatedRawMm": 9.0784
+    },
+    {
+      "className": "B",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D3",
+      "bound": "to",
+      "publishedMm": 12.2,
+      "estimatedRawMm": 11.5907
+    },
+    {
+      "className": "B",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D4",
+      "bound": "up",
+      "publishedMm": 8.3,
+      "estimatedRawMm": 9.7105
+    },
+    {
+      "className": "B",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D4",
+      "bound": "to",
+      "publishedMm": 10.2,
+      "estimatedRawMm": 11.8853
+    },
+    {
+      "className": "B",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D5",
+      "bound": "up",
+      "publishedMm": 4.6,
+      "estimatedRawMm": 4.3459
+    },
+    {
+      "className": "B",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D5",
+      "bound": "to",
+      "publishedMm": 6.7,
+      "estimatedRawMm": 6.2065
+    },
+    {
+      "className": "B",
+      "magnetId": "N45-4X19",
+      "approach": "D1",
+      "bound": "up",
+      "publishedMm": 17.3,
+      "estimatedRawMm": 17.836
+    },
+    {
+      "className": "B",
+      "magnetId": "N45-4X19",
+      "approach": "D1",
+      "bound": "to",
+      "publishedMm": 21.2,
+      "estimatedRawMm": 21.5108
+    },
+    {
+      "className": "B",
+      "magnetId": "N45-4X19",
+      "approach": "D3",
+      "bound": "up",
+      "publishedMm": 17.3,
+      "estimatedRawMm": 14.4283
+    },
+    {
+      "className": "B",
+      "magnetId": "N45-4X19",
+      "approach": "D3",
+      "bound": "to",
+      "publishedMm": 19.6,
+      "estimatedRawMm": 18.335
+    },
+    {
+      "className": "B",
+      "magnetId": "N45-4X19",
+      "approach": "D4",
+      "bound": "up",
+      "publishedMm": 12.1,
+      "estimatedRawMm": 13.4223
+    },
+    {
+      "className": "B",
+      "magnetId": "N45-4X19",
+      "approach": "D4",
+      "bound": "to",
+      "publishedMm": 14.9,
+      "estimatedRawMm": 16.4743
+    },
+    {
+      "className": "B",
+      "magnetId": "N45-4X19",
+      "approach": "D5",
+      "bound": "up",
+      "publishedMm": 12.0,
+      "estimatedRawMm": 11.5794
+    },
+    {
+      "className": "B",
+      "magnetId": "N45-4X19",
+      "approach": "D5",
+      "bound": "to",
+      "publishedMm": 15.7,
+      "estimatedRawMm": 14.8418
+    },
+    {
+      "className": "C",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D1",
+      "bound": "up",
+      "publishedMm": 7.3,
+      "estimatedRawMm": 7.6895
+    },
+    {
+      "className": "C",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D1",
+      "bound": "to",
+      "publishedMm": 8.9,
+      "estimatedRawMm": 9.2766
+    },
+    {
+      "className": "C",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D3",
+      "bound": "up",
+      "publishedMm": 7.5,
+      "estimatedRawMm": 7.5
+    },
+    {
+      "className": "C",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D3",
+      "bound": "to",
+      "publishedMm": 9.8,
+      "estimatedRawMm": 9.0784
+    },
+    {
+      "className": "C",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D4",
+      "bound": "up",
+      "publishedMm": 6.8,
+      "estimatedRawMm": 8.2913
+    },
+    {
+      "className": "C",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D4",
+      "bound": "to",
+      "publishedMm": 8.7,
+      "estimatedRawMm": 9.7105
+    },
+    {
+      "className": "C",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D5",
+      "bound": "up",
+      "publishedMm": 3.2,
+      "estimatedRawMm": 3.183
+    },
+    {
+      "className": "C",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D5",
+      "bound": "to",
+      "publishedMm": 5.0,
+      "estimatedRawMm": 4.3459
+    },
+    {
+      "className": "C",
+      "magnetId": "N45-4X19",
+      "approach": "D1",
+      "bound": "up",
+      "publishedMm": 15.0,
+      "estimatedRawMm": 15.4682
+    },
+    {
+      "className": "C",
+      "magnetId": "N45-4X19",
+      "approach": "D1",
+      "bound": "to",
+      "publishedMm": 17.7,
+      "estimatedRawMm": 17.836
+    },
+    {
+      "className": "C",
+      "magnetId": "N45-4X19",
+      "approach": "D3",
+      "bound": "up",
+      "publishedMm": 12.4,
+      "estimatedRawMm": 12.0001
+    },
+    {
+      "className": "C",
+      "magnetId": "N45-4X19",
+      "approach": "D3",
+      "bound": "to",
+      "publishedMm": 17.7,
+      "estimatedRawMm": 14.4283
+    },
+    {
+      "className": "C",
+      "magnetId": "N45-4X19",
+      "approach": "D4",
+      "bound": "up",
+      "publishedMm": 10.1,
+      "estimatedRawMm": 11.4956
+    },
+    {
+      "className": "C",
+      "magnetId": "N45-4X19",
+      "approach": "D4",
+      "bound": "to",
+      "publishedMm": 12.5,
+      "estimatedRawMm": 13.4223
+    },
+    {
+      "className": "C",
+      "magnetId": "N45-4X19",
+      "approach": "D5",
+      "bound": "up",
+      "publishedMm": 9.8,
+      "estimatedRawMm": 9.5063
+    },
+    {
+      "className": "C",
+      "magnetId": "N45-4X19",
+      "approach": "D5",
+      "bound": "to",
+      "publishedMm": 12.4,
+      "estimatedRawMm": 11.5794
+    },
+    {
+      "className": "D",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D1",
+      "bound": "up",
+      "publishedMm": 6.5,
+      "estimatedRawMm": 6.5011
+    },
+    {
+      "className": "D",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D1",
+      "bound": "to",
+      "publishedMm": 7.7,
+      "estimatedRawMm": 7.6895
+    },
+    {
+      "className": "D",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D3",
+      "bound": "up",
+      "publishedMm": 6.4,
+      "estimatedRawMm": 6.3812
+    },
+    {
+      "className": "D",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D3",
+      "bound": "to",
+      "publishedMm": 7.9,
+      "estimatedRawMm": 7.5
+    },
+    {
+      "className": "D",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D4",
+      "bound": "up",
+      "publishedMm": 6.3,
+      "estimatedRawMm": 7.2487
+    },
+    {
+      "className": "D",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D4",
+      "bound": "to",
+      "publishedMm": 7.2,
+      "estimatedRawMm": 8.2913
+    },
+    {
+      "className": "D",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D5",
+      "bound": "up",
+      "publishedMm": 2.3,
+      "estimatedRawMm": 2.3627
+    },
+    {
+      "className": "D",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D5",
+      "bound": "to",
+      "publishedMm": 3.6,
+      "estimatedRawMm": 3.183
+    },
+    {
+      "className": "D",
+      "magnetId": "N45-4X19",
+      "approach": "D1",
+      "bound": "up",
+      "publishedMm": 13.8,
+      "estimatedRawMm": 13.756
+    },
+    {
+      "className": "D",
+      "magnetId": "N45-4X19",
+      "approach": "D1",
+      "bound": "to",
+      "publishedMm": 15.4,
+      "estimatedRawMm": 15.4682
+    },
+    {
+      "className": "D",
+      "magnetId": "N45-4X19",
+      "approach": "D3",
+      "bound": "up",
+      "publishedMm": 10.9,
+      "estimatedRawMm": 10.2954
+    },
+    {
+      "className": "D",
+      "magnetId": "N45-4X19",
+      "approach": "D3",
+      "bound": "to",
+      "publishedMm": 12.8,
+      "estimatedRawMm": 12.0001
+    },
+    {
+      "className": "D",
+      "magnetId": "N45-4X19",
+      "approach": "D4",
+      "bound": "up",
+      "publishedMm": 8.9,
+      "estimatedRawMm": 10.1207
+    },
+    {
+      "className": "D",
+      "magnetId": "N45-4X19",
+      "approach": "D4",
+      "bound": "to",
+      "publishedMm": 10.5,
+      "estimatedRawMm": 11.4956
+    },
+    {
+      "className": "D",
+      "magnetId": "N45-4X19",
+      "approach": "D5",
+      "bound": "up",
+      "publishedMm": 8.2,
+      "estimatedRawMm": 8.0243
+    },
+    {
+      "className": "D",
+      "magnetId": "N45-4X19",
+      "approach": "D5",
+      "bound": "to",
+      "publishedMm": 10.2,
+      "estimatedRawMm": 9.5063
+    },
+    {
+      "className": "E",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D1",
+      "bound": "up",
+      "publishedMm": 5.9,
+      "estimatedRawMm": 5.5457
+    },
+    {
+      "className": "E",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D1",
+      "bound": "to",
+      "publishedMm": 6.9,
+      "estimatedRawMm": 6.5011
+    },
+    {
+      "className": "E",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D3",
+      "bound": "up",
+      "publishedMm": 5.6,
+      "estimatedRawMm": 5.5305
+    },
+    {
+      "className": "E",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D3",
+      "bound": "to",
+      "publishedMm": 6.8,
+      "estimatedRawMm": 6.3812
+    },
+    {
+      "className": "E",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D4",
+      "bound": "up",
+      "publishedMm": 5.7,
+      "estimatedRawMm": 6.4281
+    },
+    {
+      "className": "E",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D4",
+      "bound": "to",
+      "publishedMm": 6.7,
+      "estimatedRawMm": 7.2487
+    },
+    {
+      "className": "E",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D5",
+      "bound": "up",
+      "publishedMm": null,
+      "estimatedRawMm": 1.7419
+    },
+    {
+      "className": "E",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D5",
+      "bound": "to",
+      "publishedMm": 2.7,
+      "estimatedRawMm": 2.3627
+    },
+    {
+      "className": "E",
+      "magnetId": "N45-4X19",
+      "approach": "D1",
+      "bound": "up",
+      "publishedMm": 12.7,
+      "estimatedRawMm": 12.4327
+    },
+    {
+      "className": "E",
+      "magnetId": "N45-4X19",
+      "approach": "D1",
+      "bound": "to",
+      "publishedMm": 14.2,
+      "estimatedRawMm": 13.756
+    },
+    {
+      "className": "E",
+      "magnetId": "N45-4X19",
+      "approach": "D3",
+      "bound": "up",
+      "publishedMm": 9.4,
+      "estimatedRawMm": 9.0105
+    },
+    {
+      "className": "E",
+      "magnetId": "N45-4X19",
+      "approach": "D3",
+      "bound": "to",
+      "publishedMm": 11.3,
+      "estimatedRawMm": 10.2954
+    },
+    {
+      "className": "E",
+      "magnetId": "N45-4X19",
+      "approach": "D4",
+      "bound": "up",
+      "publishedMm": 7.3,
+      "estimatedRawMm": 9.0664
+    },
+    {
+      "className": "E",
+      "magnetId": "N45-4X19",
+      "approach": "D4",
+      "bound": "to",
+      "publishedMm": 9.3,
+      "estimatedRawMm": 10.1207
+    },
+    {
+      "className": "E",
+      "magnetId": "N45-4X19",
+      "approach": "D5",
+      "bound": "up",
+      "publishedMm": 7.3,
+      "estimatedRawMm": 6.8902
+    },
+    {
+      "className": "E",
+      "magnetId": "N45-4X19",
+      "approach": "D5",
+      "bound": "to",
+      "publishedMm": 8.6,
+      "estimatedRawMm": 8.0243
+    },
+    {
+      "className": "F",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D1",
+      "bound": "up",
+      "publishedMm": 5.1,
+      "estimatedRawMm": 4.7397
+    },
+    {
+      "className": "F",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D1",
+      "bound": "to",
+      "publishedMm": 6.3,
+      "estimatedRawMm": 5.5457
+    },
+    {
+      "className": "F",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D3",
+      "bound": "up",
+      "publishedMm": 4.5,
+      "estimatedRawMm": null
+    },
+    {
+      "className": "F",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D3",
+      "bound": "to",
+      "publishedMm": 6.0,
+      "estimatedRawMm": 5.5305
+    },
+    {
+      "className": "F",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D4",
+      "bound": "up",
+      "publishedMm": 5.0,
+      "estimatedRawMm": 5.7517
+    },
+    {
+      "className": "F",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D4",
+      "bound": "to",
+      "publishedMm": 6.1,
+      "estimatedRawMm": 6.4281
+    },
+    {
+      "className": "F",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D5",
+      "bound": "up",
+      "publishedMm": null,
+      "estimatedRawMm": 1.2498
+    },
+    {
+      "className": "F",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D5",
+      "bound": "to",
+      "publishedMm": null,
+      "estimatedRawMm": 1.7419
+    },
+    {
+      "className": "F",
+      "magnetId": "N45-4X19",
+      "approach": "D1",
+      "bound": "up",
+      "publishedMm": 11.1,
+      "estimatedRawMm": 11.3648
+    },
+    {
+      "className": "F",
+      "magnetId": "N45-4X19",
+      "approach": "D1",
+      "bound": "to",
+      "publishedMm": 13.1,
+      "estimatedRawMm": 12.4327
+    },
+    {
+      "className": "F",
+      "magnetId": "N45-4X19",
+      "approach": "D3",
+      "bound": "up",
+      "publishedMm": 8.0,
+      "estimatedRawMm": 7.9958
+    },
+    {
+      "className": "F",
+      "magnetId": "N45-4X19",
+      "approach": "D3",
+      "bound": "to",
+      "publishedMm": 9.8,
+      "estimatedRawMm": 9.0105
+    },
+    {
+      "className": "F",
+      "magnetId": "N45-4X19",
+      "approach": "D4",
+      "bound": "up",
+      "publishedMm": 6.4,
+      "estimatedRawMm": 8.2185
+    },
+    {
+      "className": "F",
+      "magnetId": "N45-4X19",
+      "approach": "D4",
+      "bound": "to",
+      "publishedMm": 7.7,
+      "estimatedRawMm": 9.0664
+    },
+    {
+      "className": "F",
+      "magnetId": "N45-4X19",
+      "approach": "D5",
+      "bound": "up",
+      "publishedMm": 5.8,
+      "estimatedRawMm": 5.9829
+    },
+    {
+      "className": "F",
+      "magnetId": "N45-4X19",
+      "approach": "D5",
+      "bound": "to",
+      "publishedMm": 7.7,
+      "estimatedRawMm": 6.8902
+    },
+    {
+      "className": "G",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D1",
+      "bound": "up",
+      "publishedMm": null,
+      "estimatedRawMm": 4.0348
+    },
+    {
+      "className": "G",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D1",
+      "bound": "to",
+      "publishedMm": null,
+      "estimatedRawMm": 4.7397
+    },
+    {
+      "className": "G",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D3",
+      "bound": "up",
+      "publishedMm": null,
+      "estimatedRawMm": null
+    },
+    {
+      "className": "G",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D3",
+      "bound": "to",
+      "publishedMm": null,
+      "estimatedRawMm": null
+    },
+    {
+      "className": "G",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D4",
+      "bound": "up",
+      "publishedMm": null,
+      "estimatedRawMm": 5.1757
+    },
+    {
+      "className": "G",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D4",
+      "bound": "to",
+      "publishedMm": null,
+      "estimatedRawMm": 5.7517
+    },
+    {
+      "className": "G",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D5",
+      "bound": "up",
+      "publishedMm": null,
+      "estimatedRawMm": 0.8466
+    },
+    {
+      "className": "G",
+      "magnetId": "SMCO5-5X4",
+      "approach": "D5",
+      "bound": "to",
+      "publishedMm": null,
+      "estimatedRawMm": 1.2498
+    },
+    {
+      "className": "G",
+      "magnetId": "N45-4X19",
+      "approach": "D1",
+      "bound": "up",
+      "publishedMm": null,
+      "estimatedRawMm": 10.4762
+    },
+    {
+      "className": "G",
+      "magnetId": "N45-4X19",
+      "approach": "D1",
+      "bound": "to",
+      "publishedMm": null,
+      "estimatedRawMm": 11.3648
+    },
+    {
+      "className": "G",
+      "magnetId": "N45-4X19",
+      "approach": "D3",
+      "bound": "up",
+      "publishedMm": null,
+      "estimatedRawMm": 7.1671
+    },
+    {
+      "className": "G",
+      "magnetId": "N45-4X19",
+      "approach": "D3",
+      "bound": "to",
+      "publishedMm": null,
+      "estimatedRawMm": 7.9958
+    },
+    {
+      "className": "G",
+      "magnetId": "N45-4X19",
+      "approach": "D4",
+      "bound": "up",
+      "publishedMm": null,
+      "estimatedRawMm": 7.5133
+    },
+    {
+      "className": "G",
+      "magnetId": "N45-4X19",
+      "approach": "D4",
+      "bound": "to",
+      "publishedMm": null,
+      "estimatedRawMm": 8.2185
+    },
+    {
+      "className": "G",
+      "magnetId": "N45-4X19",
+      "approach": "D5",
+      "bound": "up",
+      "publishedMm": null,
+      "estimatedRawMm": 5.234
+    },
+    {
+      "className": "G",
+      "magnetId": "N45-4X19",
+      "approach": "D5",
+      "bound": "to",
+      "publishedMm": null,
+      "estimatedRawMm": 5.9829
+    }
+  ]
+}
