@@ -114,3 +114,24 @@ Recette staff navigateur : non effectuée de mon côté (Thomas).
 
 - En mode pédagogique, revenir à l'outil de navigation (passer d'une étape du guide à l'autre, dont « 5 Essai ») garde l'instant affiché. Entrer dans un outil de montage remet toujours le temps à zéro et la lecture reste arrêtée ; poses et profil inchangés.
 - Test React de reprise : après rechargement du GLB, clic réel « 5 Essai », puis 4 → 5 : progression 0,25 et positions conservées. Contre-épreuve : échoue sans la correction.
+
+## Lot « causes, légendes, lisibilité » (base 6beb400c)
+
+Fichiers changés : `src/lib/detection-lab/placement-diagnosis.ts` (nouveau), `src/lib/standex/pedagogical-poses.ts` (remède vérifié, `pedagogicalRemedy`), `src/components/standex/workshop/pedagogical-controls.tsx` (bandeau à deux étages, « Sources et limites », bornes `.t-metric`), `pedagogical-layer.tsx` (corps générique opaque, section/projection en coupe), `workshop.tsx` (diagnostic borné, légendes, fiche produit masquée en pédagogique), `workshop.css`, `src/lib/i18n/messages.json` (+25 entrées × 7), `tests/pedagogical-diagnosis-2026-10-27.test.tsx`, `tests/i18n-coverage.test.ts` (compteur 3 856).
+
+Figé : B, profils, seuils, distances, correction D4, `evaluatePose`, collisions, bornes, volumes. `evaluatePlacement` est inchangé (son champ `cause` hérité reste « distance » pour un favorable, il n'est plus affiché).
+
+Diagnostic (pur, même moteur, scénario nominal, borne haute de classe) : tolérance de symétrie 1e-6 (bruit flottant ~1e-12, pas d'échantillonnage 0,25 mm) — pas un seuil de détection. Sondes ≤ 14 `evaluatePose`. Mesures :
+- SmCo [0,6,0] ⟂ et N45 [0,16,0] ⟂ : « zone centrale » (sondes x ± 7 mm plus fortes) ; [8,·,0] même profondeur : favorable, aucune cause.
+- Prolongement axial ⟂ (SmCo x14, N45 x26) : « orientation axiale ».
+- SmCo [0,40,0] parallèle : « Cause non déterminée » (ni orientation, ni rapprochement 0,75/0,5, ni combinaison n'atteint la borne).
+- Remède : `evaluatePlacement` toutes hypothèses activées, libertés déclarées seulement (rotation ±90°, latéral ≤ 12 mm, combinaisons). N45 centré + rotation : -90° vérifié. SmCo centré + rotation seule : « Aucun placement favorable trouvé dans les mouvements autorisés » ; rotation + latéral : vérifié, profondeur inchangée. Zéro liberté / import / glissement : aucune action. Jamais de rapprochement proposé. Calcul suspendu pendant la lecture ; recalculé avec pose, instant, réglages, libertés et enveloppes.
+
+Corps : capsule opaque = enveloppe testée 16,2 × Ø2,2 mm (`PROFILE.reed`, `REED_CAPSULE_OBB`). Zone grise = centres en collision (`evaluatePose` → collision), légende distincte ; hachures import distinctes ; coupe : section réelle si |z| < 1,1 mm, sinon contour pointillé « projection, hors du plan de coupe ».
+
+Électrique : circuit, schéma de contact, fiche produit, contact du guide, piste « contact souhaité » et lames de scène absents en pédagogique ; `aria-label` = état de placement. Vérifié sur le vrai `Workshop` monté pour les quatre états (test composant).
+
+Validations exécutées : test ciblé 14/14 ; suite complète, types, inventaire i18n (0), scans de charte (seules les exceptions documentées / primitives existantes).
+Non exécuté de mon côté : recette navigateur staff authentifiée, capture 390 px, chemin de clic réel de centrage mécanique dans le navigateur (le centrage ne porte pas le mot « favorable » et ne force aucun état : code + test composant existant). R11 suggestions et N/S : recette navigateur partielle déjà au journal 3c45 (non refaite).
+
+Lot suivant (non codé) : pré-calcul des volumes, maillages lissés, colonne client ; critère de raffinement d'orientation (variation de demi-largeur centrale ≤ 0,5 mm, 7,5° non garanti), orientation discrète affichée, pas d'interpolation entre volumes ; collisions de montage restent dynamiques.
