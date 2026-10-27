@@ -3170,7 +3170,7 @@
 /* Recette mobile 4311 : la bulle du corps revient à la ligne dans la scène ;
    la coupe garde une hauteur utile minimale, la colonne défile verticalement. */
 .mw-pedagogical .mw-ped-body-label { white-space: normal; max-width: min(60vw, 220px); text-align: center; }
-.mw-ped-cut { min-height: 300px; }
+.mw-ped-cut { min-height: 400px; }
 @media (max-width: 1023px) {
-  .mw-stage.mw-pedagogical .mw-canvas { height: auto; min-height: 360px; }
+  .mw-stage.mw-pedagogical .mw-canvas { height: auto; min-height: 460px; max-height: none; }
 }
