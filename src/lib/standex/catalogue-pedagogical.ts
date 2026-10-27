@@ -13,8 +13,9 @@ import { PILOT_MAGNETS, type PilotMagnet } from '../detection-lab/magnets';
 import { evaluatePose, type MagnetPose } from '../detection-lab/pose';
 import { EXPERIMENT, DEFAULT_EXPERIMENT, classThresholds, experimentalScenarios, axisNodes, type PlacementEvidence, type SampledVolume, type TableSample } from '../detection-lab/workshop-experiment';
 import { magnetObb, obbOverlap, type Obb } from '../detection-lab/obstacles';
+import { publishedRowsForCouple, publishedRowsSourceUrl, PUBLISHED_REGISTRY } from './magnetics/registries';
 
-export const CATALOGUE_MODEL_VERSION='catalogue-b-analogy-1';
+export const CATALOGUE_MODEL_VERSION='catalogue-b-analogy-1.1';
 /* i18n-canonical: internal diagnostic codes, never UI labels. */
 const INTERNAL={missing:'catalogue_profile_missing',prior:'catalogue_modelling_prior',source:'catalogue_illustrative',leads:'length_only_analogy_leads_uncharacterized'};
 /* i18n-canonical: model status, not product qualification. */
@@ -29,22 +30,23 @@ export const CATALOGUE_PROFILES:Record<string,{family:Family;lengthMm:number;met
  'MK24-A-J':{family:'other',lengthMm:3,method:'miniature-centre'}, MK03:{family:'66-capable',lengthMm:14,method:'body-centre'},
  MK02:{family:'other',lengthMm:14,method:'body-centre'}, MK04:{family:'66-capable',lengthMm:14,method:'body-centre'},
  MK05:{family:'66-capable',lengthMm:14,method:'body-centre'}, MK13:{family:'66-capable',lengthMm:14,method:'body-centre'},
- MK14:{family:'other',lengthMm:14,method:'body-centre'}, MK18:{family:'other',lengthMm:10,method:'body-centre'},
+ MK14:{family:'66-capable',lengthMm:14,method:'body-centre'}, MK18:{family:'other',lengthMm:10,method:'body-centre'},
  MK20_1:{family:'other',lengthMm:6,method:'body-centre'}, MK20_2:{family:'other',lengthMm:5,method:'body-centre'},
  MK21:{family:'66-capable',lengthMm:14,method:'body-centre'}, MK21PR:{family:'other',lengthMm:14,method:'body-centre'},
  MK26:{family:'other',lengthMm:14,method:'body-centre'}, MK27:{family:'other',lengthMm:14,method:'body-centre'},
- 'MK11-M5':{family:'other',lengthMm:14,method:'body-centre'}, 'MK11-M8':{family:'other',lengthMm:14,method:'body-centre'},
+ 'MK11-M5':{family:'other',lengthMm:14,method:'body-centre'}, 'MK11-M8':{family:'66-capable',lengthMm:14,method:'body-centre'},
  'MK11-P-M8':{family:'other',lengthMm:14,method:'body-centre'}, 'MK11-B-M6':{family:'other',lengthMm:14,method:'body-centre'},
  MK36:{family:'other',lengthMm:10,method:'body-centre'}, MK37:{family:'other',lengthMm:14,method:'body-centre'},
- MK38:{family:'other',lengthMm:14,method:'body-centre'}, GENERIC:{family:'illustrative',lengthMm:14,method:'illustrative-centre'},
+ MK38:{family:'66-capable',lengthMm:14,method:'body-centre'}, GENERIC:{family:'illustrative',lengthMm:14,method:'illustrative-centre'},
  CUSTOM:{family:'illustrative',lengthMm:14,method:'illustrative-centre'},
 };
 export function catalogueModel(c:WorkshopConfig){
  const p=CATALOGUE_PROFILES[c.sensorId];if(!p)throw Error(INTERNAL.missing);
- const sensor=sensorById(c.sensorId),rows=guideRangesFor(c.sensorId,c.magnetModel);
- const selected=c.guideReference??'';
- const family=selected.includes('GP501')?'GP501':selected.includes('66')&&p.family==='66-capable'?'66':p.family==='66-capable'&&!selected?'66-assumed':'analogy';
- const status=family==='66'||family==='66-assumed'?'form66':rows.length?'documented':'analogy';
+ const sensor=sensorById(c.sensorId),rows=guideRangesFor(c.sensorId,c.magnetModel),publishedRows=publishedRowsForCouple(c.sensorId,c.magnetModel,PUBLISHED_REGISTRY);
+ const publishedSelection=publishedRows.find(r=>r.sensitivityClass===c.sensitivity);
+ const selected=c.guideReference??publishedSelection?.sensorReference??'';
+ const family=selected.includes('GP501')?'GP501':selected.includes('85')?'85':selected.includes('90')?'90':selected.includes('66')&&p.family==='66-capable'?'66':p.family==='66-capable'&&!selected&&c.sensorId!=='MK38'?'66-assumed':'analogy';
+ const status=family==='66'||family==='66-assumed'?'form66':rows.length||publishedRows.length?'documented':'analogy';
  const lengthMm=family==='GP501'?Math.min(10,sensor.body[0]*.7):p.lengthMm;
  const bare=BARE_MAGNETS.find(m=>m.id===c.magnetModel),pack=packagedMagnet(c.magnetModel);
  const body=magnetSize(c);
@@ -57,7 +59,7 @@ export function catalogueModel(c:WorkshopConfig){
  const magnet:PilotMagnet=verified&&scale===1?verified:{...PILOT_MAGNETS[0],id:'SMCO5-5X4',label:c.magnetModel,material:bare?.material??pack?.magnetMaterial??'unknown',diameterMm:(verified?.diameterMm??diameterMm)/scale,lengthMm:(verified?.lengthMm??magnetLengthMm)/scale,jT:verified?.jT??jT,q:q??7.2,momentAm2:(q??7.2)*1e-8/(4*Math.PI*1e-7),volumeM3:Math.PI*(diameterMm/2000)**2*(magnetLengthMm/1000),momentRaw:INTERNAL.prior};
  const className=['B','C','D','E','F'].includes(c.sensitivity)?c.sensitivity:'C';
  const reasons=[CATALOGUE_LABELS.notice,CATALOGUE_LABELS.datum,...(!verified||bare?.shape==='block'?[CATALOGUE_LABELS.proxy]:[]),...(className!==c.sensitivity?[CATALOGUE_LABELS.class]:[]),...(c.ferromagnetic||c.temperature!=='ambient'?[CATALOGUE_LABELS.material]:[])];
- return {version:CATALOGUE_MODEL_VERSION,sensorId:c.sensorId,magnetId:c.magnetModel,family,status:status as 'form66'|'documented'|'analogy',lengthMm,scale,centre:[0,0,0] as Vec3,axis:[1,0,0] as Vec3,body:sensor.body,magnetBody:body,magnet,magnetGeometry:verified?'verified-cylinder':bare?.shape==='cylinder'&&q!==null?'moment-cylinder':'equivalent-cylinder',moment:q,unknownMoment:q===null,className,contact:sensor.contact,reference:selected,rows,reasons,sources:[ACTIVATION_BROCHURE,sensor.sourceFile??INTERNAL.source],method:p.method,leadEffect:INTERNAL.leads};
+ return {version:CATALOGUE_MODEL_VERSION,sensorId:c.sensorId,magnetId:c.magnetModel,family,status:status as 'form66'|'documented'|'analogy',lengthMm,scale,centre:[0,0,0] as Vec3,axis:[1,0,0] as Vec3,body:sensor.body,magnetBody:body,magnet,magnetGeometry:verified?'verified-cylinder':bare?.shape==='cylinder'&&q!==null?'moment-cylinder':'equivalent-cylinder',moment:q,unknownMoment:q===null,className,contact:sensor.contact,reference:selected,rows,publishedRows,publishedSource:publishedRowsSourceUrl(publishedRows),familyReferences:PUBLISHED_REGISTRY.rows.filter(r=>r.sensorFamily===c.sensorId).map(r=>r.sensorReference),reasons,sources:[ACTIVATION_BROCHURE,publishedRowsSourceUrl(publishedRows)??sensor.sourceFile??INTERNAL.source],method:p.method,leadEffect:INTERNAL.leads};
 }
 export function catalogueFrame(c:WorkshopConfig,t:number):PedagogicalFrame{
  const f=pedagogicalFrame(c,t);
@@ -69,7 +71,9 @@ export function catalogueFrame(c:WorkshopConfig,t:number):PedagogicalFrame{
   return {...f,world:{...f.world,axis},pose:{...f.pose,axis:f.basis.map(v=>dot(v,axis)) as Vec3}};
  }
  const u=t<=.5?t*2:(1-t)*2,depth=c.start+(c.end-c.start)*u;
- const center:Vec3=c.motion==='slide'?[-c.travel+2*c.travel*u,0,c.offset]:c.motion==='pivot'?[Math.sin(c.span*(u-.5)*Math.PI/180)*c.offset,0,Math.cos(c.span*(u-.5)*Math.PI/180)*c.offset]:c.geometry==='D3'?[depth,0,c.lateralShift]:[c.lateralShift,0,depth];
+ const frontal=c.geometry==='F1'&&['MK36','MK37','MK38'].includes(c.sensorId);
+ const centreDistance=frontal?depth+(sensorById(c.sensorId).body[0]+magnetSize(c)[0])/2:depth;
+ const center:Vec3=c.motion==='slide'?[-c.travel+2*c.travel*u,0,c.offset]:c.motion==='pivot'?[Math.sin(c.span*(u-.5)*Math.PI/180)*c.offset,0,Math.cos(c.span*(u-.5)*Math.PI/180)*c.offset]:c.geometry==='D3'||frontal?[centreDistance,0,c.lateralShift]:[c.lateralShift,0,depth];
  const angle=c.magnetAngle+(c.motion==='pivot'?c.span*(u-.5):0);
  const axis=momentFor(c,angle);
  const transform=(v:Vec3)=>f.basis[0].map((_,j)=>(f.basis[0][j]??0)*v[0]+(f.basis[1][j]??0)*v[1]+(f.basis[2][j]??0)*v[2]) as Vec3;
