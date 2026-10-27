@@ -249,6 +249,7 @@ export interface WorkshopCableRouting {
 export interface WorkshopProps {
   /** Staff experiment uses pilots; client integration requires a separate explicit boundary. */
   clientPedagogical?: boolean;
+  onExplorationChange?: (exploring:boolean)=>void;
   onClientPedagogicalResult?: (result:ClientPedagogicalResult)=>void;
   pedagogical?: boolean;
   initialPedagogicalDraft?: PedagogicalDraft | null;
@@ -280,7 +281,7 @@ export interface WorkshopProps {
 }
 export default function MagneticWorkshop({
   pedagogical: staffPedagogical = false,
-  clientPedagogical = false, onClientPedagogicalResult,
+  clientPedagogical = false, onClientPedagogicalResult, onExplorationChange,
   initialPedagogicalDraft, onPedagogicalDraftChange,
   embedded = false,
   initialStudy,
@@ -304,6 +305,8 @@ export default function MagneticWorkshop({
   const [exploring, setExploring] = useState(false);
   const originalConfig = useRef<WorkshopConfig | null>(null);
   const originalProgress = useRef(0);
+  const originalUi = useRef<{tool:MachineTool;guide:GuideState;history:{key:string;past:MachineAssembly[];future:MachineAssembly[]}} | null>(null);
+  useEffect(()=>{onExplorationChange?.(exploring);return()=>onExplorationChange?.(false);},[exploring,onExplorationChange]);
   const [primaryMenuOpen, setPrimaryMenuOpen] = useState(true);
   useEffect(() => {
     const media = window.matchMedia("(max-width: 1023px)");
@@ -336,6 +339,8 @@ export default function MagneticWorkshop({
   function beginExploration() {
     if(exploring)return;
     originalConfig.current = structuredClone(config); originalProgress.current = progress;
+    originalUi.current={tool,guide:structuredClone(guideState),history:structuredClone(historyRef.current)};
+    importSeqRef.current++;setPendingUnits(null);setTool('navigate');
     setPlaying(false); setSuggestion(null); setPlacementUndo(null);
     setExperiment(explorationSettings(config));
     setConfig({...structuredClone(config),sensorId:'GENERIC',magnetModel:'generic',mode:'education'});
@@ -343,6 +348,8 @@ export default function MagneticWorkshop({
   }
   function endExploration() {
     const original=originalConfig.current;if(!original)return;
+    importSeqRef.current++;setPendingUnits(null);freshImportRef.current=null;
+    if(originalUi.current){setTool(originalUi.current.tool);setGuideState(originalUi.current.guide);historyRef.current=originalUi.current.history;}
     setPlaying(false);setConfig(original);setProgress(originalProgress.current);
     setExploring(false);setSuggestion(null);setPlacementUndo(null);originalConfig.current=null;
   }
@@ -1053,6 +1060,8 @@ export default function MagneticWorkshop({
 
   function update(patch: Partial<WorkshopConfig>, opts: { keepTime?: boolean } = {}) {
     const next = { ...config, ...patch };
+    if(clientPedagogical&&!exploring&&(patch.magnetModel!==undefined||patch.sensitivity!==undefined||patch.geometry!==undefined))
+      next.guideReference=guideSelectionFor(next.sensorId,next.magnetModel,next.geometry,null)?.reference??null;
     if (next.end >= next.start) {
       if (patch.start !== undefined) next.end = Math.max(1, next.start - 1);
       else next.start = Math.min(60, next.end + 1);
@@ -1195,9 +1204,9 @@ export default function MagneticWorkshop({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fingerprint, dirty, saving, exploring]);
   useEffect(() => {
-    onSaveState?.(saving ? "saving" : dirty ? "draft" : "saved");
+    if(!exploring)onSaveState?.(saving ? "saving" : dirty ? "draft" : "saved");
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [saving, dirty]);
+  }, [saving, dirty, exploring]);
 
   /* ---------------------------------------------------------------- */
   /* Bandeau de verdict                                               */
@@ -2215,6 +2224,7 @@ export default function MagneticWorkshop({
           {clientPedagogical && exploring && <div className="notice-info" data-testid="client-exploration"><p className="t-body">{t(CLIENT_LIMITS.exploration)}</p><Button variant="secondary" onClick={endExploration}>{t('Revenir au couple de mon dossier')}</Button></div>}
           {pedagogical && (!clientPedagogical || exploring) && <PedagogicalControls diagnosis={diagnosis} timelineNote={<p className="t-caption" data-testid="pedagogical-timeline-limits">{t("Capacité d’activation estimée ; réouverture non caractérisée : Ton/Toff non documentés")} · {t("Résolution des traversées non certifiée ; un passage rapide peut être manqué.")}{pedTimeline && <> · <span className="t-metric">{pedTimeline.events.length}</span> {t("transitions de placement")}{pedTimeline.events.some(e=>!e.resolved)&&<> · {t("Événement non résolu")}</>}</>}</p>} settings={activeExperiment} setSettings={setExperiment} config={config} update={patch=>update(patch,{keepTime:true})} mounting={config.machine&&envelopes?{parts:envelopes.length,reedOverlap}:null} frame={pedagogicalPose} busy={sampled.busy} volume={sampled.volume} failed={sampled.failed} canUndo={placementUndo!==null} onUndo={()=>{if(placementUndo){setConfig(placementUndo);setPlacementUndo(null);setSuggestion(null);}}} onSuggest={()=>{const candidate=suggestPedagogicalConfig(config,progress,experiment);if(!candidate){setError(t("Aucune suggestion disponible dans les libertés déclarées."));return;}setSuggestion(candidate);}} />}
           {suggestion && <div className="notice-info"><p>{t("Placement proposé : appliquer explicitement, puis recalculer")}</p><Button onClick={()=>{setPlacementUndo(config);setConfig(suggestion);setSuggestion(null);setPlaying(false);}}>{t("Appliquer le placement proposé")}</Button><Button variant="secondary" onClick={()=>setSuggestion(null)}>{t("Annuler")}</Button></div>}
+          {clientPedagogical&&!exploring&&!machine&&<details className="mw-advanced"><summary>{t('Position et environnement')}</summary>{approachPicker}</details>}
           {!pedagogical && <>{!machine && approachPicker}
           {!machine && activationDistanceControl}</>}
           {machine ? (
@@ -2422,6 +2432,7 @@ export default function MagneticWorkshop({
             </div>
           )}
           {clientPedagogical && !exploring ? <div className="mw-verdict-banner notice-info" role="status" data-testid="client-pedagogical-verdict"><strong className="t-title-s">{t('Estimation indisponible')}</strong><span className="t-caption">{t('Estimation indicative')}</span>{clientAdapter.reasons.map(reason=><span className="t-body" key={reason}>{t(reason)}</span>)}</div> : pedagogical ? <PedagogicalBanner evidence={placement} diagnosis={diagnosis} remedy={remedy} onPropose={r=>{if(r.kind==="verified")setSuggestion(r.config);}}/> : verdictBanner}
+          {clientPedagogical&&exploring&&<p className="notice-info t-body" data-testid="client-exploration-context">{t('Exemple générique — ce résultat ne concerne pas le couple de votre dossier')}</p>}
           <div
             className="mw-canvas"
             role={pedagogical?"group":"img"}
@@ -2454,7 +2465,7 @@ export default function MagneticWorkshop({
             {!pedagogical && <ContactCircuit contact={sample.contact} />}
             {/* Outil de pointage du câble : seulement quand le pointage est
                 réellement actif. Les trajets existants restent intacts. */}
-            {cableRouting && tool === "cable" ? (
+            {!exploring && cableRouting && tool === "cable" ? (
               <div className="mw-cable-panel" data-testid="cable-routing-panel">
                 <div className="mw-cable-row">
                   <strong>{t("Tracé du câble")}</strong>
@@ -2541,12 +2552,12 @@ export default function MagneticWorkshop({
                       ghost={ghost}
                       guide={overlay}
                       routing={
-                        cableRouting
+                        !exploring && cableRouting
                           ? {
                               slot: cableRouting.slot,
                               points: cableRouting.points,
                               targetLabel: cableRouting.targetLabel,
-                              onPick: (point) => cableRouting.onPick(point, sample.t),
+                              onPick: (point) => {if(!exploring)cableRouting.onPick(point, sample.t);},
                             }
                           : undefined
                       }
