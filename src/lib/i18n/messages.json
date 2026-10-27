@@ -34909,5 +34909,86 @@
     "Общий пример — этот результат не относится к паре в вашем досье",
     "Esempio generico — questo risultato non riguarda la coppia del vostro dossier",
     "汎用例 — この結果は案件で選択した組み合わせには適用されません"
+  ],
+  "Modèle 66 adapté": [
+    "Adapted 66 model",
+    "适配66模型",
+    "Angepasstes 66-Modell",
+    "Modelo 66 adaptado",
+    "Адаптированная модель 66",
+    "Modello 66 adattato",
+    "適応66モデル"
+  ],
+  "Modèle appuyé sur distances documentées": [
+    "Model supported by documented distances",
+    "有文档距离支持的模型",
+    "Modell mit dokumentierten Abständen",
+    "Modelo respaldado por distancias documentadas",
+    "Модель с документированными расстояниями",
+    "Modello basato su distanze documentate",
+    "文書化された距離に基づくモデル"
+  ],
+  "Modèle par analogie": [
+    "Analogy model",
+    "类比模型",
+    "Analogiemodell",
+    "Modelo por analogía",
+    "Модель по аналогии",
+    "Modello per analogia",
+    "類推モデル"
+  ],
+  "Simulation indicative · distances à confirmer avec Standex": [
+    "Indicative simulation · confirm distances with Standex",
+    "示意仿真 · 距离需与Standex确认",
+    "Indikative Simulation · Abstände mit Standex bestätigen",
+    "Simulación indicativa · confirmar distancias con Standex",
+    "Ориентировочная симуляция · расстояния подтвердить со Standex",
+    "Simulazione indicativa · distanze da confermare con Standex",
+    "参考シミュレーション · 距離はStandexに確認"
+  ],
+  "Centre et axe internes estimés, non mesurés par le fabricant.": [
+    "Estimated internal centre and axis, not measured by the manufacturer.",
+    "内部中心和轴为估计值，并非厂家测量。",
+    "Geschätztes internes Zentrum und Achse, nicht vom Hersteller gemessen.",
+    "Centro y eje internos estimados, no medidos por el fabricante.",
+    "Оценочные внутренние центр и ось, не измеренные изготовителем.",
+    "Centro e asse interni stimati, non misurati dal produttore.",
+    "内部中心と軸は推定値で、メーカー測定値ではありません。"
+  ],
+  "Aimant représenté par un cylindre équivalent approximatif ; identité et boîtier conservés.": [
+    "Magnet represented by an approximate equivalent cylinder; identity and housing preserved.",
+    "磁铁以近似等效圆柱表示；保留型号和外壳。",
+    "Magnet als näherungsweise äquivalenter Zylinder; Identität und Gehäuse bleiben erhalten.",
+    "Imán representado por un cilindro equivalente aproximado; identidad y carcasa conservadas.",
+    "Магнит представлен приблизительным эквивалентным цилиндром; модель и корпус сохранены.",
+    "Magnete rappresentato da un cilindro equivalente approssimativo; identità e involucro conservati.",
+    "磁石は近似等価円柱で表現し、型式と筐体を保持します。"
+  ],
+  "Classe de modèle indicative ; le contact électrique ne définit pas une classe AT.": [
+    "Indicative model class; electrical contact does not define an AT class.",
+    "示意模型等级；电气触点不定义AT等级。",
+    "Indikative Modellklasse; der elektrische Kontakt bestimmt keine AT-Klasse.",
+    "Clase indicativa del modelo; el contacto eléctrico no define una clase AT.",
+    "Ориентировочный класс модели; электрический контакт не определяет класс AT.",
+    "Classe indicativa del modello; il contatto elettrico non definisce una classe AT.",
+    "参考モデルクラス。電気接点はATクラスを定義しません。"
+  ],
+  "Matériaux et implantation non caractérisés : zones indicatives, pas de prédiction affirmative.": [
+    "Uncharacterised materials and installation: indicative zones, not a definitive prediction.",
+    "材料和安装未表征：区域仅作示意，不是确定性预测。",
+    "Material und Einbau nicht charakterisiert: indikative Zonen, keine gesicherte Vorhersage.",
+    "Materiales e instalación no caracterizados: zonas indicativas, no predicción definitiva.",
+    "Материалы и монтаж не охарактеризованы: зоны ориентировочные, не достоверный прогноз.",
+    "Materiali e montaggio non caratterizzati: zone indicative, non previsione certa.",
+    "材料と設置は未評価。領域は参考であり確定的予測ではありません。"
+  ],
+  "Zones d’activation estimées": [
+    "Estimated activation zones",
+    "估计激活区域",
+    "Geschätzte Aktivierungszonen",
+    "Zonas de activación estimadas",
+    "Оценочные зоны активации",
+    "Zone di attivazione stimate",
+    "推定動作領域"
   ]
 }
