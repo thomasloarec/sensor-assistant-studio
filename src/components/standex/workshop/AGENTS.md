@@ -14,3 +14,5 @@
 - Camera framing and simplified node display use `machine-view.ts`; paths remain unchanged, framing follows current support poses, and only explicit camera commands reset zoom.
 - The stage owns its available height in embedded and standalone modes; only the controls column scrolls, while guide content and the node tree stay in that same scrolling flow.
 - Precision mounting lives in `machine-alignment.ts`: "Centrer dans un trou" locks the first-click face (support, plane, normal) and resolves the second click by ray/plane only; magnet alignment shifts the attach point tangentially via `partDelta`/`componentPose` converted to rest pose, so support, offset, spin, flip and motion tracking are never lost and no hole or magnetic axis is ever claimed as detected.
+
+- Pedagogical imported mounting: mechanical clearance uses per-part OBBs of the loaded file posed by the shared `pointAt`/`cycleU` adapter (`pedagogical-envelopes.ts`, `obstacles.ts`) and the full pilot body; overlap is reported as possible-to-verify (unavailable), never as certain collision, and no geometry is serialized or reused across reloads.

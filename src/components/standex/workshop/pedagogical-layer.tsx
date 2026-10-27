@@ -47,14 +47,16 @@ export function PedagogicalCut({volume,frame}:{volume:SampledVolume|null;frame:P
   const scale=Math.max(.5,Math.min((size.width-100)/48,(size.height-110)/48));
   const cx=size.width/2+15,cy=size.height/2+5,x=(n:number)=>cx+n*scale,y=(n:number)=>cy-n*scale;
   return <svg ref={ref} className="mw-ped-cut" viewBox={`0 0 ${size.width} ${size.height}`} role="img" aria-label={t('Coupe du même calcul au niveau du centre de l’aimant')}>
+    <defs><pattern id="mw-cut-hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" className="mw-cut-blocked-bg"/><line x1="0" y1="0" x2="0" y2="6" className="mw-cut-blocked-line"/></pattern></defs>
     <text x="12" y="22" className="t-caption">{t('Repère reed · millimètres')}</text>
     <text x="12" y="42" className="t-caption">z = {frame.pose.center[2].toFixed(1)} mm</text>
-    {volume?.cut.map(c=><rect key={`${c.x},${c.y}`} x={x(c.x0)} y={y(c.y1)} width={(c.x1-c.x0)*scale} height={(c.y1-c.y0)*scale} className={c.response===null?'mw-cut-collision':c.zone===2?'mw-cut-high':c.zone===1?'mw-cut-low':'mw-cut-empty'}/>)}
+    {volume?.cut.map(c=><rect key={`${c.x},${c.y}`} x={x(c.x0)} y={y(c.y1)} width={(c.x1-c.x0)*scale} height={(c.y1-c.y0)*scale} className={c.blocked?'mw-cut-blocked':c.response===null?'mw-cut-collision':c.zone===2?'mw-cut-high':c.zone===1?'mw-cut-low':'mw-cut-empty'}/>)}
     <line x1={x(-24)} y1={cy} x2={x(24)} y2={cy} className="mw-cut-axis"/>
     <line x1={cx} y1={y(24)} x2={cx} y2={y(-24)} className="mw-cut-axis"/>
     {[-20,0,20].map(n=><g key={n}><text x={x(n)} y={y(-24)+20} textAnchor="middle" className="t-caption">{n}</text><text x={x(-24)-10} y={y(n)+5} textAnchor="end" className="t-caption">{n}</text></g>)}
     <text x={x(24)+8} y={y(-24)+20} className="t-caption">x</text><text x={x(-24)-10} y={y(24)-8} className="t-caption">y</text>
     <line x1={x(-8.1)} y1={cy} x2={x(8.1)} y2={cy} className="mw-cut-reed"/>
+    {volume?.cut.some(c=>c.blocked)&&<text x="12" y={size.height-12} className="t-caption">{t('Hachuré : chevauchement possible avec l’enveloppe d’une pièce')}</text>}
     <circle cx={x(frame.pose.center[0])} cy={y(frame.pose.center[1])} r="6" className="mw-cut-point"/>
   </svg>;
 }

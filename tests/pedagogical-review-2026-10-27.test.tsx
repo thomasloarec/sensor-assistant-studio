@@ -85,7 +85,8 @@ test('Review11 REAL animated GLB attachments and clip pose preserved at 25 perce
  const before=pedagogicalFrame(c,.25);expect(before.world.center).not.toEqual(pedagogicalFrame(c,0).world.center);
  const v=JSON.parse(JSON.stringify({kind:'pedagogical-workshop',version:1,config:c,settings:DEFAULT_EXPERIMENT,profile:EXPERIMENT,progress:.25}));const parsed=parsePedagogicalEnvelope(v);expect(parsed).not.toBeNull();if(!parsed)throw Error('parse');
  expect(parsed.config.machine?.magnetAttach).toEqual(attach);expect(parsed.config.machine?.clip?.name).toBe('Cycle_complet');expect(parsed.config.machine?.unitScale).toBe(1000);expect(pedagogicalFrame(parsed.config,parsed.progress)).toEqual(before);
- expect(pedagogicalAvailability(parsed.config)).toBe('mounting');
+ // Reimported JSON alone never carries geometry: unavailable until the GLB boxes are rebuilt.
+ expect(pedagogicalAvailability(parsed.config)).toBe('asset');expect(pedagogicalAvailability(parsed.config,true)).toBe('ready');
  }finally{dispose();asset.dispose();}
 });
 

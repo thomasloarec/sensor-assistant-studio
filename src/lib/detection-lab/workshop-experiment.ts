@@ -6,6 +6,7 @@ import { PILOT_MAGNETS } from './magnets';
 import { evaluatePose, type MagnetPose, type PoseEvaluation } from './pose';
 import { PROFILE, type ReedScenario } from './profile';
 import type { Vec3 } from './field';
+import { magnetOverlaps, type Obb } from './obstacles';
 import report from '@/data/detection-lab/workshop-distances.json';
 
 export const EXPERIMENT = Object.freeze({...frozen,baseProfile:Object.freeze({...frozen.baseProfile})});
@@ -32,7 +33,7 @@ export function classThresholds(className: string): { low: number | null; high: 
   return row ? { low: row.min * EXPERIMENT.kMtPerAt, high: row.max * EXPERIMENT.kMtPerAt } : null;
 }
 export interface PlacementEvidence {
-  state: PlacementState; cause: 'distance' | 'orientation' | 'collision' | 'scenario_collision' | 'domain' | 'missing' | 'material' | 'stale' | 'partial' | 'motion' | 'clip' | 'mounting';
+  state: PlacementState; cause: 'distance' | 'orientation' | 'collision' | 'scenario_collision' | 'domain' | 'missing' | 'material' | 'stale' | 'partial' | 'motion' | 'clip' | 'asset' | 'overlap';
   nominal: PoseEvaluation | null; scenarios: { id: string; result: PoseEvaluation }[];
   /** 0 below range, 1 sensitivity-dependent, 2 above high bound; never electrical ON/OFF. */
   zone: 0 | 1 | 2; partial: boolean;
@@ -45,14 +46,16 @@ export function documentaryDistances(settings: ExperimentSettings, approach: str
   if(!experimentAvailable(settings)||report.profileVersion!==EXPERIMENT.version)return [];
   return report.rows.filter(r=>r.className===settings.className && r.magnetId===settings.magnetId && r.approach===approach && r.publishedMm!==null && (settings.className!=='A'||r.bound==='up')).map(r=>({...r,prudentMm:r.estimatedRawMm===null?null:conservativeDistance(r.estimatedRawMm,r.approach)}));
 }
-export function evaluatePlacement(settings: ExperimentSettings, pose: MagnetPose, mountingCollision = false): PlacementEvidence {
+/** `mounting`: true = possible overlap already established; an obstacle list = loaded part envelopes in the reed frame, tested against the FULL pilot body. */
+export function evaluatePlacement(settings: ExperimentSettings, pose: MagnetPose, mounting: boolean | readonly Obb[] = false): PlacementEvidence {
   const unavailable = (cause: PlacementEvidence['cause'], nominal: PoseEvaluation | null = null): PlacementEvidence => ({ state:'unavailable', cause, nominal, scenarios:[],zone:0,partial:settings.className==='A' });
   if (settings.profileVersion !== EXPERIMENT.version || settings.dataVersion !== EXPERIMENT.dataVersion) return unavailable('stale');
   const magnet = PILOT_MAGNETS.find(m => m.id === settings.magnetId), thresholds = classThresholds(settings.className);
   if (!magnet || !thresholds || settings.integration !== 'form66') return unavailable('missing');
   if (settings.nearbyMaterial) return unavailable('material');
   const nominal = evaluatePose(magnet,pose,nominalScenario(),'B');
-  if (mountingCollision) return unavailable('collision', nominal);
+  const overlap = mounting === true || (Array.isArray(mounting) && magnetOverlaps(mounting, magnet.diameterMm, magnet.lengthMm, pose) !== false);
+  if (overlap) return unavailable('overlap', nominal);
   if (!nominal.ok) return unavailable(nominal.reason==='domain'?'domain':nominal.reason==='collision'?'collision':'missing',nominal);
   const scenarios = experimentalScenarios(settings.hypotheses).map(s => ({id:s.id,result:evaluatePose(magnet,pose,s,'B')}));
   const partial = thresholds.low === null;
@@ -80,7 +83,7 @@ export function derivedDatum(base: number, offset: number, claimed: number, kind
 export function settingsKey(s: ExperimentSettings, axis: Vec3, planeZ: number) {
   return JSON.stringify([EXPERIMENT,s,axis,planeZ]);
 }
-export interface SampleCell { i:number;j:number;k:number;x:number;y:number;z:number;x0:number;x1:number;y0:number;y1:number;z0:number;z1:number;zone:0|1|2;response:number|null }
+export interface SampleCell { i:number;j:number;k:number;x:number;y:number;z:number;x0:number;x1:number;y0:number;y1:number;z0:number;z1:number;zone:0|1|2;response:number|null;blocked?:boolean }
 export interface SampledVolume { key:string;cells:SampleCell[];cut:SampleCell[];computeMs:number;nodeCount:number;axis:Vec3;planeZ:number;extent:number;truncated:boolean }
 export function axisNodes(lo:number,hi:number,fine=false): number[] {
   const values=new Set<number>();
@@ -90,7 +93,7 @@ export function axisNodes(lo:number,hi:number,fine=false): number[] {
 }
 const bounds=(nodes:number[],i:number,lo:number,hi:number):[number,number]=>[i===0?lo:((nodes[i-1]??lo)+(nodes[i]??lo))/2,i===nodes.length-1?hi:((nodes[i]??hi)+(nodes[i+1]??hi))/2];
 /** Nominal volumes, NOT robustness contours. Midpoint voxels, no interpolation across zero response. */
-export function sampleVolume(settings:ExperimentSettings,axis:Vec3,planeZ:number,extent=24):SampledVolume {
+export function sampleVolume(settings:ExperimentSettings,axis:Vec3,planeZ:number,extent=24,obstacles:readonly Obb[]=[]):SampledVolume {
   const start=performance.now(), xs=axisNodes(-extent,extent,true),ys=axisNodes(-extent,extent),zs=axisNodes(-extent,extent);
   if(planeZ>=-extent&&planeZ<=extent&&!zs.includes(planeZ)) {zs.push(planeZ);zs.sort((a,b)=>a-b);}
   const magnet=PILOT_MAGNETS.find(m=>m.id===settings.magnetId),th=classThresholds(settings.className);
@@ -100,9 +103,11 @@ export function sampleVolume(settings:ExperimentSettings,axis:Vec3,planeZ:number
   for(let k=0;k<zs.length;k++) for(let j=0;j<ys.length;j++) for(let i=0;i<xs.length;i++) {
     const x=xs[i]??0,y=ys[j]??0,z=zs[k]??0;
     const e=evaluatePose(magnet,{center:[x,y,z],axis},nominal,'B');
-    const zone=e.ok&&e.response>=th.high?2:e.ok&&th.low!==null&&e.response>=th.low?1:0;
+    // Same mechanical check as the point verdict: blocked centres never carry a lobe.
+    const blocked=obstacles.length>0&&magnetOverlaps(obstacles,magnet.diameterMm,magnet.lengthMm,{center:[x,y,z],axis})!==false;
+    const zone=blocked?0:e.ok&&e.response>=th.high?2:e.ok&&th.low!==null&&e.response>=th.low?1:0;
     const [x0,x1]=bounds(xs,i,-extent,extent),[y0,y1]=bounds(ys,j,-extent,extent),[z0,z1]=bounds(zs,k,-extent,extent);
-    const cell:SampleCell={i,j,k,x,y,z,x0,x1,y0,y1,z0,z1,zone,response:e.ok?e.response:null};
+    const cell:SampleCell={i,j,k,x,y,z,x0,x1,y0,y1,z0,z1,zone,response:e.ok?e.response:null,...(blocked?{blocked:true}:{})};
     if(zone)cells.push(cell);
     if(z===planeZ)cut.push(cell);
   }
@@ -123,6 +128,18 @@ export function placementTimeline(settings:ExperimentSettings,poseAt:(t:number)=
   };
   for(let i=0;i<steps;i++)refine(i/steps,(i+1)/steps,0);
   return {points:[...points.values()].sort((a,b)=>a.t-b.t),events,electrical:'uncharacterized' as const,baseResolution:1/(steps*2),resolutionCertified:false as const};
+}
+export interface TableSample {t:number;pose:MagnetPose;obstacles:readonly Obb[]|null}
+/** Imported mounting timeline: poses and envelopes are prepared by the shared
+ *  adapter at EACH tabulated instant; no refinement beyond the table step, so
+ *  every transition is reported unresolved within that step. */
+export function tableTimeline(settings:ExperimentSettings,table:readonly TableSample[]) {
+  const sorted=[...table].sort((a,b)=>a.t-b.t);
+  const points:TimelinePoint[]=sorted.map(s=>{const e=s.obstacles===null?evaluatePlacement({...settings,integration:'unknown'},s.pose):evaluatePlacement(settings,s.pose,s.obstacles);return {t:s.t,state:e.state,response:e.nominal?.ok?e.nominal.response:null,zone:e.zone};});
+  const events:TimelineEvent[]=[];
+  for(let i=1;i<points.length;i++){const a=points[i-1]!,b=points[i]!;if(a.state!==b.state||a.zone!==b.zone)events.push({from:a.t,to:b.t,resolved:false,before:a.state,after:b.state});}
+  const step=sorted.length>1?Math.max(...sorted.slice(1).map((s,i)=>s.t-(sorted[i]?.t??0))):1;
+  return {points,events,electrical:'uncharacterized' as const,baseResolution:step,resolutionCertified:false as const};
 }
 export interface DocumentedSwitch {name:string;ton:number;toff:number;initial:'open'|'closed';source:string}
 /** Explicit documented switching only. Replays the entire ordered history, independent of UI click order. */
