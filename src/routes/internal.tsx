@@ -141,7 +141,7 @@ function TestBench() {
       ) : !user ? (
         <SignIn />
       ) : (
-        <Bench user={user} />
+        <Bench key={user.id} user={user} />
       )}
     </div>
   );
