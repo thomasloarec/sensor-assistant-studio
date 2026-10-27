@@ -91,7 +91,7 @@ export function PedagogicalControls({timelineNote,settings,setSettings,config,up
       <label><input type="checkbox" checked={settings.integration==='form66'} onChange={e=>change({integration:e.target.checked?'form66':'unknown'})}/>{t('Montage Form66 exploratoire au repère reed explicite')}</label>
       <label><input type="checkbox" checked={settings.nearbyMaterial} onChange={e=>change({nearbyMaterial:e.target.checked})}/>{t('Matériau voisin non pris en compte')}</label>
       <label><input type="checkbox" checked={settings.rotationFreedom} onChange={e=>change({rotationFreedom:e.target.checked})}/>{t('Liberté déclarée : rotation ±90°')}</label>
-      <label className="mw-field"><span>{t('Liberté latérale déclarée')}<output>{settings.lateralFreedomMm} mm</output></span><input type="range" aria-label={t('Liberté latérale déclarée')} min="0" max="12" step=".25" value={settings.lateralFreedomMm} onChange={e=>change({lateralFreedomMm:Number(e.target.value)})}/></label>
+      <label className="mw-field"><span>{t('Liberté latérale déclarée')}<output className="t-metric">{settings.lateralFreedomMm} mm</output></span><input type="range" aria-label={t('Liberté latérale déclarée')} min="0" max="12" step=".25" value={settings.lateralFreedomMm} onChange={e=>change({lateralFreedomMm:Number(e.target.value)})}/></label>
       <Button variant="secondary" onClick={onSuggest}>{t('Chercher un placement favorable')}</Button>
       <p className="t-caption">{t('Sans liberté déclarée ou sous fixation verrouillée, aucune suggestion disponible. L’alignement mécanique ne valide pas la détection.')}</p>
       {canUndo&&<Button variant="secondary" onClick={onUndo}>{t('Annuler le placement proposé')}</Button>}
