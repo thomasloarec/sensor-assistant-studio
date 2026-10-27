@@ -139,3 +139,12 @@ Limites à ne pas masquer : le champ analytique de pavé existe déjà dans src/
 Recette visuelle client réelle **non exécutée par agent** : l’accès de sa session était réservé lors du lot précédent, aucune garde modifiée. Ne pas confondre tests HappyDOM et WebGL. Recette à réaliser depuis / → Commencer → étape2 → Tester ce couple, sur390px/bureau, variantes66/GP501, aimants/câble/retour/imports. Aucun nouvel import réel validé depuis la permission extension signalée.
 
 Sources supplémentaires fournies, pas réingérées ni revendiquées comme inspectées par agent : https://standexdetect.com/resources/reed-technology-academy/reed-sensor-activation-distances/ ; ficheMK05 2025/09 (66/90) ; ficheMK24 (AT sans équivalence66).
+
+## Correctif physique (catalogue-b-analogy-1, évaluateur en mm physiques)
+- Intégrale B recalculée en mm physiques (`catalogueEvaluate`) avec `cylinderField`/`gaussLegendre` figés ; domaine fixe `PROFILE.domain.maxCenterMm` (60 mm), indépendant de la longueur du reed. Hypothèse déclarée : longueur effective ET décalages de scénario ±1 mm sont multipliés par longueurEstimée/14.
+- MK24/N45 C, [0,0,20], axe X : 2,25882959405002 mT (contrôle indépendant Gauss 48).
+- Pose = `poseAt` (écart entre surfaces, F1 entre faces) ; MK04/M04 à 6 mm → z = 19,9 mm.
+- Repère complet du corps aimant (`magnetBodyFrame`) distinct des pôles ; collisions par OBB du corps réel ; blocs nus via le champ analytique de pavé (`magnetics/field.ts`), inserts de boîtiers = cylindre équivalent déclaré.
+- Classe A conservée : borne prudente 10 AT seule, aucune zone sous la borne (pas de remplissage à zéro).
+- Limite du modèle : en approche frontale F1 avec les hypothèses actuelles, MK36 atteint une zone estimée ; MK37/M37-N42 et MK38/M38-N42 n'en atteignent aucune sur [0,5 ; 30] mm. C'est une limite du modèle par analogie, pas une impossibilité du capteur (la table source reste prioritaire).
+- Non refait dans ce passage : comparaison source/estimation D4/D5 par recherche de lobes, légendes catalogue de coupe, longueur de reed de la coupe, recette visuelle.

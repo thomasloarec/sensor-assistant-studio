@@ -54,3 +54,9 @@ describe('catalogue housing regressions (physical invariants)',()=>{
     expect(a.ok&&b.ok&&a.response).toBeCloseTo(b.ok?b.response:NaN,12);
   });
 });
+import { DEFAULT_PAIRS } from '../src/lib/standex/default-pairs';
+test('F1 frontal approach of MK36 reaches an estimated zone along its own faces',()=>{
+  const c={...DEFAULT_WORKSHOP,sensorId:'MK36',magnetModel:DEFAULT_PAIRS.MK36!,geometry:'F1' as const,motion:'approach' as const,start:30,end:.5};
+  let best=0;for(let i=0;i<=50;i++)best=Math.max(best,cataloguePlacement(c,catalogueFrame(c,i/100).pose,[],undefined,true).zone);
+  expect(best).toBeGreaterThan(0);
+});
