@@ -3,6 +3,7 @@ import {SENSOR_CATALOG} from '../src/lib/standex/sensor-catalog';
 import {DEFAULT_WORKSHOP} from '../src/lib/standex/magnetic-workshop';
 import {CATALOGUE_PROFILES,catalogueModel,cataloguePlacement,catalogueFrame,catalogueTimeline,catalogueVolume} from '../src/lib/standex/catalogue-pedagogical';
 import {BARE_MAGNETS} from '../src/lib/standex/magnet-catalog';
+import {defaultMagnetFor} from '../src/lib/standex/default-pairs';
 import {evaluatePlacement,DEFAULT_EXPERIMENT} from '../src/lib/detection-lab/workshop-experiment';
 import {createDossier} from '../src/lib/leadmagnet/dossier';
 import {recordClientTrace,currentClientTrace} from '../src/lib/standex/client-pedagogical';
@@ -11,6 +12,12 @@ describe('versioned catalogue layer, unchanged reference B',()=>{
  test('31 explicit profiles retain every visual body and exact magnet identity',()=>{
   expect(SENSOR_CATALOG.length).toBe(31);expect(Object.keys(CATALOGUE_PROFILES).length).toBe(31);
   for(const s of SENSOR_CATALOG){const m=catalogueModel({...DEFAULT_WORKSHOP,sensorId:s.id});expect(m.body).toEqual(s.body);expect(m.lengthMm).toBeLessThanOrEqual(s.body[0]);expect(m.magnetId).toBe('M04');}
+ });
+ test('every catalogue proposed couple has indicative zones inside displayed domain',()=>{
+  for(const s of SENSOR_CATALOG){const c={...DEFAULT_WORKSHOP,sensorId:s.id,magnetModel:defaultMagnetFor(s.id)},m=catalogueModel(c);let found=false;
+   for(let x=-24;x<=24&&!found;x++)for(let z=-24;z<=24&&!found;z++)found=cataloguePlacement(c,{center:[x,0,z],axis:[1,0,0]},[],m,true).zone>0;
+   expect(found).toBe(true);
+  }
  });
  test('selected GP501 never inherits 66; miniature MK24 uses 3mm not 14mm',()=>{
   expect(catalogueModel({...DEFAULT_WORKSHOP,sensorId:'MK03',guideReference:'MK03-GP501C-X'}).family).toBe('GP501');
