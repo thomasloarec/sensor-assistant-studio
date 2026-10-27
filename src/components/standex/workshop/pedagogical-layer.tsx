@@ -48,7 +48,9 @@ export function PedagogicalCut({volume,frame}:{volume:SampledVolume|null;frame:P
   useEffect(()=>{const el=ref.current;if(!el)return;const observer=new ResizeObserver(entries=>{const r=entries[0]?.contentRect;if(r&&r.width>0&&r.height>0)setSize({width:r.width,height:r.height});});observer.observe(el);return()=>observer.disconnect();},[]);
   const scale=Math.max(.5,Math.min((size.width-100)/48,(size.height-110)/48));
   const cx=size.width/2+15,cy=size.height/2+5,x=(n:number)=>cx+n*scale,y=(n:number)=>cy-n*scale;
-  return <svg ref={ref} className="mw-ped-cut" viewBox={`0 0 ${size.width} ${size.height}`} role="img" aria-label={t('Coupe du même calcul au niveau du centre de l’aimant')}>
+  const {envelopeRadiusMm:rr}=PROFILE.reed,inPlane=Math.abs(frame.pose.center[2])<rr,hatched=!!volume?.cut.some(c=>c.blocked);
+  // Long legends live in HTML below the drawing so they wrap on small screens (never truncated in SVG).
+  return <figure className="mw-ped-cut-figure"><svg ref={ref} className="mw-ped-cut" viewBox={`0 0 ${size.width} ${size.height}`} role="img" aria-label={t('Coupe du même calcul au niveau du centre de l’aimant')}>
     <defs><pattern id="mw-cut-hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" className="mw-cut-blocked-bg"/><line x1="0" y1="0" x2="0" y2="6" className="mw-cut-blocked-line"/></pattern></defs>
     <text x="12" y="22" className="t-caption">{t('Repère reed · millimètres')}</text>
     <text x="12" y="42" className="t-caption">z = {frame.pose.center[2].toFixed(1)} mm</text>
@@ -60,9 +62,12 @@ export function PedagogicalCut({volume,frame}:{volume:SampledVolume|null;frame:P
     {(()=>{const {envelopeRadiusMm:r,envelopeHalfLengthMm:h}=PROFILE.reed,z=frame.pose.center[2],cut=Math.abs(z)<r,hw=cut?Math.sqrt(r*r-z*z):r;
       // Real section only if plane z crosses the capsule; otherwise an explicitly labelled projection outline.
       return <g data-testid="pedagogical-cut-body" data-section={cut?'section':'projection'}><rect x={x(-h-hw)} y={y(hw)} width={2*(h+hw)*scale} height={2*hw*scale} rx={hw*scale} className={cut?'mw-cut-body':'mw-cut-body-projection'}/>
-        <text x="12" y="62" className="t-caption">{t(cut?'Capteur générique, reed 66 monté':'Capteur générique, reed 66 monté — projection, hors du plan de coupe')}</text></g>;})()}
+        </g>;})()}
     <line x1={x(-EXPERIMENT.effectiveLengthMm/2)} y1={cy} x2={x(EXPERIMENT.effectiveLengthMm/2)} y2={cy} className="mw-cut-datum"/>
-    {volume?.cut.some(c=>c.blocked)&&<text x="12" y={size.height-12} className="t-caption">{t('Hachuré : chevauchement possible avec une pièce du montage — à vérifier')}</text>}
+
     <circle cx={x(frame.pose.center[0])} cy={y(frame.pose.center[1])} r="6" className="mw-cut-point"/>
-  </svg>;
+  </svg><figcaption className="mw-ped-cut-caption">
+    <span className="t-caption">{t(inPlane?'Capteur générique, reed 66 monté':'Capteur générique, reed 66 monté — projection, hors du plan de coupe')}</span>
+    {hatched&&<span className="t-caption">{t('Hachuré : chevauchement possible avec une pièce du montage — à vérifier')}</span>}
+  </figcaption></figure>;
 }
