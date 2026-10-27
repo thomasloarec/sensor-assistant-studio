@@ -77,7 +77,7 @@ test('Review11 REAL animated GLB attachments and clip pose preserved at 25 perce
  try{
  const clip=asset.animation.clips[0];expect(clip?.name).toBe('Cycle_complet');expect(clip?.supported).toBe(true);
  const node=asset.nodes.find(n=>n.name==='Levier');if(!node)throw Error('lever');
- const attach={partPath:node.path,point:[0,40,0] as [number,number,number],normal:[0,1,0] as [number,number,number],offsetMm:0,spinDeg:0,flip:false,depthRef:'collar' as const,axisSource:'face' as const};
+ const attach={kind:'surface' as const,support:'fixed' as const,partPath:node.path,point:[0,40,0] as [number,number,number],normal:[0,1,0] as [number,number,number],offsetMm:0,spinDeg:0,flip:false,depthRef:'collar' as const,axisSource:'face' as const};
  const c={...DEFAULT_WORKSHOP,machine:{...m,magnetAttach:attach}};
  const before=pedagogicalFrame(c,.25);expect(before.world.center).not.toEqual(pedagogicalFrame(c,0).world.center);
  const v=JSON.parse(JSON.stringify({kind:'pedagogical-workshop',version:1,config:c,settings:DEFAULT_EXPERIMENT,profile:EXPERIMENT,progress:.25}));const parsed=parsePedagogicalEnvelope(v);expect(parsed).not.toBeNull();if(!parsed)throw Error('parse');
