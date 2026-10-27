@@ -647,7 +647,10 @@ export default function MagneticWorkshop({
     setPlaying(false);
     // Le tracé de câble et les repères se relèvent DANS la pose courante : on
     // ne remet pas le cycle à zéro.
-    if (next !== "cable" && next !== "measure" && tool !== "measure") setProgress(0);
+    // Pedagogical mode: returning to navigation (e.g. moving between guide steps)
+    // keeps the displayed instant; entering a mounting tool still resets it.
+    const keepTime = pedagogical && next === "navigate";
+    if (!keepTime && next !== "cable" && next !== "measure" && tool !== "measure") setProgress(0);
     setTool(next);
   }
   function exampleMachine() {
