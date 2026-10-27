@@ -340,8 +340,8 @@ export default function MagneticWorkshop({
   // Imported mounting: same evaluatePlacement, same thresholds, FULL pilot body against loaded part boxes.
   const placement = useMemo(() => {const e=evaluatePlacement(activeExperiment,pedagogicalPose.pose,frameObstacles??false);return availability==="ready"?e:{...e,cause:availability};}, [experiment, pedagogicalPose,frameObstacles,availability]);
   // Bounded explanation: recomputed from the SAME pose/instant/settings/freedoms/envelopes, never while playing.
-  const diagnosis = useMemo(() => pedagogical && !playing ? diagnosePlacement(activeExperiment, pedagogicalPose.pose, frameObstacles ?? false, placement) : null, [pedagogical, playing, activeExperiment, pedagogicalPose, frameObstacles, placement]);
-  const remedy = useMemo(() => pedagogical && !playing && placement.state !== "favorable" && placement.state !== "unavailable" ? pedagogicalRemedy(config, progress, activeExperiment) : null, [pedagogical, playing, placement.state, config, progress, activeExperiment]);
+  const diagnosis = useMemo(() => pedagogical && !playing ? diagnosePlacement(activeExperiment, pedagogicalPose.pose, frameObstacles ?? false, placement) : null, [pedagogical, playing, experiment, availability, pedagogicalPose, frameObstacles, placement]);
+  const remedy = useMemo(() => pedagogical && !playing && placement.state !== "favorable" && placement.state !== "unavailable" ? pedagogicalRemedy(config, progress, activeExperiment) : null, [pedagogical, playing, placement.state, config, progress, experiment, availability]);
   const sampled = usePedagogicalVolume(pedagogical && !playing && eligible, activeExperiment, pedagogicalPose, config.machine ? frameObstacles : null);
   const [timelineResult, setPedTimeline] = useState<(ReturnType<typeof placementTimeline>&{key:string}) | null>(null);
   const clipGeneration=config.machine?animationGeneration(config.machine.assetKey,config.machine.unitScale):0;
