@@ -161,7 +161,7 @@
 - [x] Tests (ancres exclues 46 puis 45, invariance physique/repère, B′ ≥ B et égalité D1, isolation des ancres, non-régression lot 1/2, aucune fuite vers le moteur) + suite complète/types/build/scans ; aucune publication.
 
 ## Atelier pédagogique interne — 27 octobre 2026, base 91c0dd0
-- [ ] Intégrer le mode staff au vrai MagneticWorkshop, préserver les anciens modes et le profil 1.1.
-- [ ] Profil Lfit figé, poses partagées, volumes worker/coupe/point/chronologie, limites scientifiques et suggestions contraintes.
-- [ ] Export/reprise versionnés et huit langues, tests R01–R12, suite complète et scans.
-- [ ] Revue navigateur staff desktop/mobile et rapport QA avec preuves et limites honnêtes.
+- [x] Intégrer le mode staff au vrai MagneticWorkshop, préserver les anciens modes et le profil 1.1.
+- [ ] Finir collisions solides GLB, chronologie importée/clip, suggestions attachées et convergence volumes ; nominal/coupe/profil figé fonctionnels.
+- [x] Export/reprise versionnés et huit langues, tests R01–R12 partiels, suite complète 1952/0 et scans ; limites dans rapport QA.
+- [ ] Recette staff authentifiée desktop/mobile : bloquée par session indisponible ; rendu isolé et rapport QA disponibles.
