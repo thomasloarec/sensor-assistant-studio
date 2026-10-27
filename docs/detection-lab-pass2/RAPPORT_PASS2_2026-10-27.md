@@ -77,7 +77,7 @@ La transcription Form 66 contient les classes A..F ; **G est absente de la sourc
 
 ## Coupes perpendiculaires raffinées (audit géométrique, profil 1.1, B/C1)
 
-Maillage continu du domaine dessiné : pas 0,25 mm dans la bande |x| ≤ 5 mm sur toute la hauteur y = 0..24, 1 mm ailleurs ; frontières de cellules aux milieux entre nœuds, tronquées au domaine — sans recouvrement ni trou, cellules dessinées à leurs bornes réelles. États de lecture distingués : collision NOMINALE (invalidité géométrique du corps dessiné), collision dans une hypothèse ±1 mm (pose nominale valide), réponse nominale nulle (zone centrale du modèle B), diagnostic défavorable. Ces largeurs ne sont pas des probabilités.
+Maillage continu du domaine dessiné : pas vertical 0,25 mm partout (y = 0..24) ; pas horizontal 0,25 mm dans la bande |x| ≤ 5 mm, 1 mm ailleurs (cellules extérieures 1 × 0,25 mm, pas des carrés de 1 mm) ; frontières de cellules aux milieux entre nœuds, tronquées au domaine — sans recouvrement ni trou, cellules dessinées à leurs bornes réelles. États de lecture distingués : collision NOMINALE (invalidité géométrique du corps dessiné), collision dans une hypothèse ±1 mm (pose nominale valide), réponse nominale nulle (zone centrale du modèle B), diagnostic défavorable. Ces largeurs ne sont pas des probabilités.
 
 | Coupe | aimant | cellules | nœuds communs vérifiés | désaccords |
 |---|---|---|---|---|
@@ -119,27 +119,27 @@ Point distinct : la capsule de collision du lot 1 (segment ±7 mm épaissi du ra
 
 | Étape | Durée |
 |---|---|
-| Ajustement de L (accord inter-aimants D1) | 34 ms |
-| Ajustement de k (V1-L16-d7) | 742 ms |
-| Tableau A..G (V1-L16-d7) | 2797 ms |
-| Ajustement de k (V2-L16-d4) | 737 ms |
-| Tableau A..G (V2-L16-d4) | 2970 ms |
-| Ajustement de k (V3-L8-d7) | 785 ms |
-| Tableau A..G (V3-L8-d7) | 2828 ms |
-| Ajustement de k (V4-Lfit-d7) | 721 ms |
-| Tableau A..G (V4-Lfit-d7) | 3092 ms |
-| Seuils partagés lot 1 (B/C1) | 366 ms |
-| Coupe raffinée 2-perpendicular-centred-C SMCO5-5X4 | 2354 ms |
-| Coupe raffinée 3-perpendicular-offset-C SMCO5-5X4 | 2258 ms |
-| Coupe raffinée 2-perpendicular-centred-C N45-4X19 | 1275 ms |
-| Coupe raffinée 3-perpendicular-offset-C N45-4X19 | 1356 ms |
-| Nœuds communs 2-perpendicular-centred-C SMCO5-5X4 | 443 ms |
-| Nœuds communs 3-perpendicular-offset-C SMCO5-5X4 | 470 ms |
-| Nœuds communs 2-perpendicular-centred-C N45-4X19 | 294 ms |
-| Nœuds communs 3-perpendicular-offset-C N45-4X19 | 265 ms |
-| Largeurs zone centrale SMCO5-5X4 | 2 ms |
-| Largeurs zone centrale N45-4X19 | 1 ms |
-| Coupe 1 mm lot 1 (N45, B) | 290 ms |
+| Ajustement de L (accord inter-aimants D1) | 36 ms |
+| Ajustement de k (V1-L16-d7) | 811 ms |
+| Tableau A..G (V1-L16-d7) | 3235 ms |
+| Ajustement de k (V2-L16-d4) | 830 ms |
+| Tableau A..G (V2-L16-d4) | 3158 ms |
+| Ajustement de k (V3-L8-d7) | 709 ms |
+| Tableau A..G (V3-L8-d7) | 3322 ms |
+| Ajustement de k (V4-Lfit-d7) | 808 ms |
+| Tableau A..G (V4-Lfit-d7) | 3701 ms |
+| Seuils partagés lot 1 (B/C1) | 451 ms |
+| Coupe raffinée 2-perpendicular-centred-C SMCO5-5X4 | 3050 ms |
+| Coupe raffinée 3-perpendicular-offset-C SMCO5-5X4 | 2839 ms |
+| Coupe raffinée 2-perpendicular-centred-C N45-4X19 | 1333 ms |
+| Coupe raffinée 3-perpendicular-offset-C N45-4X19 | 1496 ms |
+| Nœuds communs 2-perpendicular-centred-C SMCO5-5X4 | 522 ms |
+| Nœuds communs 3-perpendicular-offset-C SMCO5-5X4 | 467 ms |
+| Nœuds communs 2-perpendicular-centred-C N45-4X19 | 284 ms |
+| Nœuds communs 3-perpendicular-offset-C N45-4X19 | 273 ms |
+| Largeurs zone centrale SMCO5-5X4 | 1 ms |
+| Largeurs zone centrale N45-4X19 | 2 ms |
+| Coupe 1 mm lot 1 (N45, B) | 253 ms |
 
 ## Limites
 

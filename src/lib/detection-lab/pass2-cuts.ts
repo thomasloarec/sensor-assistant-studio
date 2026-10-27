@@ -1,7 +1,8 @@
 /** Coupes perpendiculaires RAFFINÉES — figures de revue du lot 2, pas d'UI client.
- * Maillage CONTINU du domaine dessiné, sans recouvrement ni trou : nœuds de calcul
- * au pas 0,25 mm dans la bande |x| ≤ 5 mm SUR TOUTE LA HAUTEUR y = 0..24, pas 1 mm
- * ailleurs. Chaque cellule porte ses bornes RÉELLES (rectangles) : frontières aux
+ * Maillage CONTINU du domaine dessiné, sans recouvrement ni trou : pas vertical
+ * 0,25 mm partout (y = 0..24) ; pas horizontal 0,25 mm dans la bande |x| ≤ 5 mm,
+ * 1 mm ailleurs (cellules extérieures 1 × 0,25 mm, pas des carrés de 1 mm).
+ * Chaque cellule porte ses bornes RÉELLES (rectangles) : frontières aux
  * milieux entre nœuds voisins, tronquées au domaine ; x, y restent les points de
  * calcul. Classification inchangée du lot 1 (profil 1.1, modèle B, convention C1,
  * seuils partagés) : c'est un audit géométrique, pas une recalibration.

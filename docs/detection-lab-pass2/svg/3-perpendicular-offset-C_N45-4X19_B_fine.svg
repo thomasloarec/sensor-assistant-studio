@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 656 1020" width="656" height="1020" role="img" aria-label="Perpendiculaire décalé — classe C (raffinée)">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 656 1060" width="656" height="1060" role="img" aria-label="Perpendiculaire décalé — classe C (raffinée)">
 <style>
 .lab-fav{fill:oklch(0.72 0.13 205)}.lab-var{fill:oklch(0.9417 0.0052 247.88)}.lab-far{fill:oklch(0.9625 0.0035 258)}.lab-orient{fill:oklch(0.962 0.032 82)}
 .lab-undet{fill:oklch(0.8725 0.0018 247.84)}.lab-na{fill:oklch(0.9417 0.0052 247.88)}.lab-ink{fill:oklch(0.3665 0.0662 254.28)}
@@ -7681,19 +7681,19 @@
 <rect x="614" y="172" width="12" height="1.5" class="lab-undet" style="fill:url(#lab-lines)"/>
 <rect x="626" y="172" width="6" height="1.5" class="lab-undet" style="fill:url(#lab-lines)"/>
 <rect x="56" y="172" width="576" height="288" class="lab-stroke"/>
-<text x="56" y="476" class="lab-text" text-anchor="middle">-24</text>
-<text x="104" y="476" class="lab-text" text-anchor="middle">-20</text>
-<text x="152" y="476" class="lab-text" text-anchor="middle">-16</text>
-<text x="200" y="476" class="lab-text" text-anchor="middle">-12</text>
-<text x="248" y="476" class="lab-text" text-anchor="middle">-8</text>
-<text x="296" y="476" class="lab-text" text-anchor="middle">-4</text>
-<text x="344" y="476" class="lab-text" text-anchor="middle">0</text>
-<text x="392" y="476" class="lab-text" text-anchor="middle">4</text>
-<text x="440" y="476" class="lab-text" text-anchor="middle">8</text>
-<text x="488" y="476" class="lab-text" text-anchor="middle">12</text>
-<text x="536" y="476" class="lab-text" text-anchor="middle">16</text>
-<text x="584" y="476" class="lab-text" text-anchor="middle">20</text>
-<text x="632" y="476" class="lab-text" text-anchor="middle">24</text>
+<text x="56" y="496" class="lab-text" text-anchor="middle">-24</text>
+<text x="104" y="496" class="lab-text" text-anchor="middle">-20</text>
+<text x="152" y="496" class="lab-text" text-anchor="middle">-16</text>
+<text x="200" y="496" class="lab-text" text-anchor="middle">-12</text>
+<text x="248" y="496" class="lab-text" text-anchor="middle">-8</text>
+<text x="296" y="496" class="lab-text" text-anchor="middle">-4</text>
+<text x="344" y="496" class="lab-text" text-anchor="middle">0</text>
+<text x="392" y="496" class="lab-text" text-anchor="middle">4</text>
+<text x="440" y="496" class="lab-text" text-anchor="middle">8</text>
+<text x="488" y="496" class="lab-text" text-anchor="middle">12</text>
+<text x="536" y="496" class="lab-text" text-anchor="middle">16</text>
+<text x="584" y="496" class="lab-text" text-anchor="middle">20</text>
+<text x="632" y="496" class="lab-text" text-anchor="middle">24</text>
 <text x="48" y="464" class="lab-text" text-anchor="end">0</text>
 <text x="48" y="416" class="lab-text" text-anchor="end">4</text>
 <text x="48" y="368" class="lab-text" text-anchor="end">8</text>
@@ -7701,7 +7701,7 @@
 <text x="48" y="272" class="lab-text" text-anchor="end">16</text>
 <text x="48" y="224" class="lab-text" text-anchor="end">20</text>
 <text x="48" y="176" class="lab-text" text-anchor="end">24</text>
-<text x="344" y="494" class="lab-text" text-anchor="middle">x le long des lames (mm)</text>
+<text x="344" y="514" class="lab-text" text-anchor="middle">x le long des lames (mm)</text>
 <text x="14" y="316" class="lab-text" transform="rotate(-90 14 316)" text-anchor="middle">y centre de l'aimant (mm)</text>
 <rect x="246.8" y="446.8" width="194.4" height="26.4" rx="13.2" class="lab-reed"/>
 <rect x="260" y="446.8" width="168" height="26.4" rx="13.2" class="lab-glass"/>
@@ -7714,37 +7714,38 @@
 <text x="404" y="144" class="lab-text" text-anchor="middle" font-weight="700">N</text>
 <text x="404" y="390" class="lab-text" text-anchor="middle" font-weight="700">S</text>
 <text x="434" y="266" class="lab-text" font-weight="700">2</text>
-<text x="56" y="510" class="lab-text">1. centré — Placement défavorable — Orientation défavorable</text>
-<text x="56" y="530" class="lab-text">(aimant dessiné à taille réelle)</text>
-<text x="56" y="550" class="lab-text">2. décalé +5 mm — Placement favorable (aimant dessiné à</text>
-<text x="56" y="570" class="lab-text">taille réelle)</text>
-<rect x="56" y="596" width="14" height="14" class="lab-fav"/><rect x="56" y="596" width="14" height="14" class="lab-stroke"/>
-<text x="78" y="608" class="lab-text">Placement favorable</text>
-<rect x="56" y="616" width="14" height="14" class="lab-var" style="fill:url(#lab-hatch)"/><rect x="56" y="616" width="14" height="14" class="lab-stroke"/>
-<text x="78" y="628" class="lab-text">Détection variable</text>
-<rect x="56" y="636" width="14" height="14" class="lab-far"/><rect x="56" y="636" width="14" height="14" class="lab-stroke"/>
-<text x="78" y="648" class="lab-text">Placement défavorable — Trop loin</text>
-<rect x="56" y="656" width="14" height="14" class="lab-orient" style="fill:url(#lab-dots)"/><rect x="56" y="656" width="14" height="14" class="lab-stroke"/>
-<text x="78" y="668" class="lab-text">Placement défavorable — Orientation défavorable</text>
-<rect x="56" y="676" width="14" height="14" class="lab-undet" style="fill:url(#lab-lines)"/><rect x="56" y="676" width="14" height="14" class="lab-stroke"/>
-<text x="78" y="688" class="lab-text">Placement défavorable — Cause non déterminée (décentrage</text>
-<text x="78" y="708" class="lab-text">à examiner)</text>
-<rect x="56" y="716" width="14" height="14" class="lab-na" style="fill:url(#lab-cross)"/><rect x="56" y="716" width="14" height="14" class="lab-stroke"/>
-<text x="78" y="728" class="lab-text">Réponse nominale nulle (zone centrale, modèle B)</text>
-<rect x="56" y="736" width="14" height="14" class="lab-undet" style="fill:url(#lab-lines)"/><rect x="56" y="736" width="14" height="14" class="lab-stroke"/>
-<text x="78" y="748" class="lab-text">Collision nominale avec la capsule testée (invalidité</text>
-<text x="78" y="768" class="lab-text">géométrique)</text>
-<rect x="56" y="776" width="14" height="14" class="lab-undet" style="fill:url(#lab-lines)"/><rect x="56" y="776" width="14" height="14" class="lab-stroke"/>
-<text x="78" y="788" class="lab-text">Collision dans une hypothèse ±1 mm — pose nominale</text>
-<text x="78" y="808" class="lab-text">valide, pas un chevauchement du corps dessiné</text>
-<rect x="56" y="816" width="14" height="14" class="lab-na" style="fill:url(#lab-cross)"/><rect x="56" y="816" width="14" height="14" class="lab-stroke"/>
-<text x="78" y="828" class="lab-text">Estimation indisponible (hors collision)</text>
-<text x="56" y="860" class="lab-text">Cellules à bornes réelles : pas 0,25 mm dans la bande |x| ≤</text>
-<text x="56" y="880" class="lab-text">5 mm sur toute la hauteur, 1 mm ailleurs ; frontières aux</text>
-<text x="56" y="900" class="lab-text">milieux entre nœuds, tronquées au domaine — sans</text>
-<text x="56" y="920" class="lab-text">recouvrement ni trou.</text>
-<text x="56" y="940" class="lab-text">Ordres de grandeur pédagogiques, jamais une garantie de</text>
-<text x="56" y="960" class="lab-text">commutation. Les largeurs de zone ne sont pas des</text>
-<text x="56" y="980" class="lab-text">probabilités.</text>
-<text x="56" y="1000" class="lab-text">reed-lab-hypotheses v1.1.0 · reed-lab-pass2-1.0.0</text>
+<text x="56" y="530" class="lab-text">1. centré — Placement défavorable — Orientation défavorable</text>
+<text x="56" y="550" class="lab-text">(aimant dessiné à taille réelle)</text>
+<text x="56" y="570" class="lab-text">2. décalé +5 mm — Placement favorable (aimant dessiné à</text>
+<text x="56" y="590" class="lab-text">taille réelle)</text>
+<rect x="56" y="616" width="14" height="14" class="lab-fav"/><rect x="56" y="616" width="14" height="14" class="lab-stroke"/>
+<text x="78" y="628" class="lab-text">Placement favorable</text>
+<rect x="56" y="636" width="14" height="14" class="lab-var" style="fill:url(#lab-hatch)"/><rect x="56" y="636" width="14" height="14" class="lab-stroke"/>
+<text x="78" y="648" class="lab-text">Détection variable</text>
+<rect x="56" y="656" width="14" height="14" class="lab-far"/><rect x="56" y="656" width="14" height="14" class="lab-stroke"/>
+<text x="78" y="668" class="lab-text">Placement défavorable — Trop loin</text>
+<rect x="56" y="676" width="14" height="14" class="lab-orient" style="fill:url(#lab-dots)"/><rect x="56" y="676" width="14" height="14" class="lab-stroke"/>
+<text x="78" y="688" class="lab-text">Placement défavorable — Orientation défavorable</text>
+<rect x="56" y="696" width="14" height="14" class="lab-undet" style="fill:url(#lab-lines)"/><rect x="56" y="696" width="14" height="14" class="lab-stroke"/>
+<text x="78" y="708" class="lab-text">Placement défavorable — Cause non déterminée (décentrage</text>
+<text x="78" y="728" class="lab-text">à examiner)</text>
+<rect x="56" y="736" width="14" height="14" class="lab-na" style="fill:url(#lab-cross)"/><rect x="56" y="736" width="14" height="14" class="lab-stroke"/>
+<text x="78" y="748" class="lab-text">Réponse nominale nulle (zone centrale, modèle B)</text>
+<rect x="56" y="756" width="14" height="14" class="lab-undet" style="fill:url(#lab-lines)"/><rect x="56" y="756" width="14" height="14" class="lab-stroke"/>
+<text x="78" y="768" class="lab-text">Collision nominale avec la capsule testée (invalidité</text>
+<text x="78" y="788" class="lab-text">géométrique)</text>
+<rect x="56" y="796" width="14" height="14" class="lab-undet" style="fill:url(#lab-lines)"/><rect x="56" y="796" width="14" height="14" class="lab-stroke"/>
+<text x="78" y="808" class="lab-text">Collision dans une hypothèse ±1 mm — pose nominale</text>
+<text x="78" y="828" class="lab-text">valide, pas un chevauchement du corps dessiné</text>
+<rect x="56" y="836" width="14" height="14" class="lab-na" style="fill:url(#lab-cross)"/><rect x="56" y="836" width="14" height="14" class="lab-stroke"/>
+<text x="78" y="848" class="lab-text">Estimation indisponible (hors collision)</text>
+<text x="56" y="880" class="lab-text">Cellules à bornes réelles : pas vertical 0,25 mm partout ;</text>
+<text x="56" y="900" class="lab-text">pas horizontal 0,25 mm dans la bande |x| ≤ 5 mm, 1 mm</text>
+<text x="56" y="920" class="lab-text">ailleurs (cellules extérieures 1 × 0,25 mm) ; frontières</text>
+<text x="56" y="940" class="lab-text">aux milieux entre nœuds, tronquées au domaine — sans</text>
+<text x="56" y="960" class="lab-text">recouvrement ni trou.</text>
+<text x="56" y="980" class="lab-text">Ordres de grandeur pédagogiques, jamais une garantie de</text>
+<text x="56" y="1000" class="lab-text">commutation. Les largeurs de zone ne sont pas des</text>
+<text x="56" y="1020" class="lab-text">probabilités.</text>
+<text x="56" y="1040" class="lab-text">reed-lab-hypotheses v1.1.0 · reed-lab-pass2-1.0.0</text>
 </svg>

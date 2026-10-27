@@ -70,11 +70,14 @@ export function fineCutToSvg(cut: FineCut, magnet: PilotMagnet, palette: LabPale
     parts.push(`<rect x="${px(c.x0)}" y="${py(c.y1)}" width="${(c.x1 - c.x0) * S}" height="${(c.y1 - c.y0) * S}" class="${cls(key, c.cause)}"${f ? ` style="fill:${f}"` : ""}/>`);
   }
   parts.push(`<rect x="${L}" y="${T}" width="${W}" height="${H}" class="lab-stroke"/>`);
+  // 20 px réservés sous le tracé : la capsule du reed (étendue sous y = 0) ne
+  // chevauche ni les graduations ni le titre de l'axe x.
+  const below = 20;
   for (let x = Math.ceil(g.xMin / 4) * 4; x <= g.xMax; x += 4)
-    parts.push(`<text x="${px(x)}" y="${T + H + 16}" class="lab-text" text-anchor="middle">${x}</text>`);
+    parts.push(`<text x="${px(x)}" y="${T + H + below + 16}" class="lab-text" text-anchor="middle">${x}</text>`);
   for (let y = Math.ceil(g.yMin / 4) * 4; y <= g.yMax; y += 4)
     parts.push(`<text x="${L - 8}" y="${py(y) + 4}" class="lab-text" text-anchor="end">${y}</text>`);
-  parts.push(`<text x="${L + W / 2}" y="${T + H + 34}" class="lab-text" text-anchor="middle">x le long des lames (mm)</text>`);
+  parts.push(`<text x="${L + W / 2}" y="${T + H + below + 34}" class="lab-text" text-anchor="middle">x le long des lames (mm)</text>`);
   parts.push(`<text x="14" y="${T + H / 2}" class="lab-text" transform="rotate(-90 14 ${T + H / 2})" text-anchor="middle">y centre de l'aimant (mm)</text>`);
   // Capsule de collision EFFECTIVEMENT TESTÉE : segment [-7, +7] épaissi du rayon
   // 1,1 mm → étendue réelle [-8,1, +8,1], longueur 16,2 mm (approximation conservative).
@@ -97,7 +100,7 @@ export function fineCutToSvg(cut: FineCut, magnet: PilotMagnet, palette: LabPale
     parts.push(`<text x="${cx}" y="${cy + h / 2 + 14}" class="lab-text" text-anchor="middle" font-weight="700">S</text>`);
     parts.push(`<text x="${cx + w / 2 + 6}" y="${cy + 4}" class="lab-text" font-weight="700">${i + 1}</text>`);
   });
-  let yy = T + H + 48;
+  let yy = T + H + below + 48;
   cut.marks.forEach((m, i) => {
     const lines = wrapSvgText(`${i + 1}. ${m.label} — ${CATEGORY_LABEL[m.category]}${m.cause ? " — " + CAUSE_LABEL[m.cause] : ""} (aimant dessiné à taille réelle)`, textW);
     lines.forEach((l, j) => parts.push(`<text x="${L}" y="${yy + 2 + j * LINE}" class="lab-text">${esc(l)}</text>`));
@@ -124,7 +127,7 @@ export function fineCutToSvg(cut: FineCut, magnet: PilotMagnet, palette: LabPale
   });
   yy += 12;
   for (const l of [
-    ...wrapSvgText(`Cellules à bornes réelles : pas 0,25 mm dans la bande |x| ≤ 5 mm sur toute la hauteur, 1 mm ailleurs ; frontières aux milieux entre nœuds, tronquées au domaine — sans recouvrement ni trou.`, textW),
+    ...wrapSvgText(`Cellules à bornes réelles : pas vertical 0,25 mm partout ; pas horizontal 0,25 mm dans la bande |x| ≤ 5 mm, 1 mm ailleurs (cellules extérieures 1 × 0,25 mm) ; frontières aux milieux entre nœuds, tronquées au domaine — sans recouvrement ni trou.`, textW),
     ...wrapSvgText("Ordres de grandeur pédagogiques, jamais une garantie de commutation. Les largeurs de zone ne sont pas des probabilités.", textW),
     `${PROFILE.id} v${PROFILE.version} · ${PASS2_VERSION}`,
   ]) {
