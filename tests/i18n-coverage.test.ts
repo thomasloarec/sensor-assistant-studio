@@ -102,7 +102,8 @@ describe("Couverture des langues de l'interface", () => {
     // + 23 entrées : revue indépendante du laboratoire (D5, groupes du bilan, diagnostic contrefactuel, provenance brochure/page web).
     // + 60 entrées : atelier pédagogique interne, volumes et limites scientifiques (8 langues).
     // + 5 entrées : montage importé pédagogique (enveloppes de pièces, chevauchement possible, hachures).
-    expect(Object.keys(dictionary)).toHaveLength(3_825);
+    // + 6 entrées nettes : revue 86e82ae5 (reed recouvert, repère de profondeur, bornes documentaires repliées).
+    expect(Object.keys(dictionary)).toHaveLength(3_831);
     const broken = Object.entries(dictionary).filter(
       ([, v]) => v.length !== 7 || v.some((x) => typeof x !== "string" || x.trim() === ""),
     );
