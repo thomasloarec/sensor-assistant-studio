@@ -53,7 +53,7 @@ describe('Pedagogical imported mounting', () => {
     expect(verdict('SMCO5-5X4', [8, 16, 0], box).cause).not.toBe('overlap');
   });
   test('a box enclosing a bore is only a possible overlap, never a certain collision', () => {
-    const e = verdict('SMCO5-5X4', [6, 6, 0], { path: 'fixed', c: [6, 6, 0], size: [10, 10, 10] });
+    const e = verdict('SMCO5-5X4', [6, 6, 0], { path: 'fixed', c: [6, 6, 0], size: [8, 8, 8] });
     expect(e.cause).toBe('overlap'); expect(e.cause).not.toBe('collision');
   });
   test('cut, volume and point share the same mechanical check; polarity invariant', () => {
