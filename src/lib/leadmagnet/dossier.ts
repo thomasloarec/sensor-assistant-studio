@@ -322,7 +322,9 @@ export function currentMounting(d: DesignDossier) {
     : chosen !== null
       ? { points: [] as [number, number, number][], lengthMm: chosen }
       : null;
-  return withComputed({ ...base, cable });
+  const result=withComputed({ ...base, cable });
+  // No binary result is exported as current when the product estimate is unavailable.
+  return currentClientTrace(d)?{...result,computed:null}:result;
 }
 
 export function toClientDto(d: DesignDossier): ClientDossierDto {

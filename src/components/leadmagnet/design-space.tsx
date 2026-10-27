@@ -225,7 +225,7 @@ import {
   terminationFromHousing,
 } from "@/lib/leadmagnet/connector-library";
 import { routeSamples, SEARCH_LINK_DISCLAIMER } from "@/lib/leadmagnet/samples";
-import { DEFAULT_WORKSHOP, applyPairSelection } from "@/lib/standex/magnetic-workshop";
+import { DEFAULT_WORKSHOP, applyPairSelection, parseWorkshopConfig } from "@/lib/standex/magnetic-workshop";
 import { reviewIllustrativeNote } from "@/lib/standex/workshop-guide";
 import type { WorkshopConfig } from "@/lib/standex/magnetic-workshop";
 import { ProjectContextFields } from "./project-context-fields";
