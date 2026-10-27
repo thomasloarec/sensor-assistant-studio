@@ -1,6 +1,7 @@
 # Feuille de route — lot des 7 correctifs (base 12be3e3d)
 
 ## Intégration pédagogique client autorisée — 27 octobre 2026
+- [ ] Nouveau lot15:41 : registre31profils/29commerciaux et aimants, modèle catalogue séparé, zones sur vrais boîtiers, trace nonqualifiante, couverture/comparaisons/tests/langues ; plafond40,6 total,28,2 connus,12,4 restants, arrêt au checkpoint sans publication.
 - [x] Complément15:32 : câble PCB neutralisé, réglages réunis ;81ciblés/2030suite verts, langues/scans/103empreintes vérifiés et rapport ; aucun nouvel import réel validé, recette visuelle finale attendue.
 - [x] Raccorder l’atelier existant étape 2 au couple du dossier, sans repli catalogue ni transfert.
 - [x] Exploration Form66 explicite et isolée, quatre états/circuit cohérents, sources et limites.
