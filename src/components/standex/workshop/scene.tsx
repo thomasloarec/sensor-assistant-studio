@@ -876,9 +876,10 @@ export default function WorkshopScene({
   resetEpoch = 0,
   onContextLost,
   ghost,
-  pedagogicalLayer,
+  pedagogicalLayer, hideElectrical = false,
 }: {
   pedagogicalLayer?: ReactNode;
+  hideElectrical?: boolean;
   config: WorkshopConfig;
   sample: CycleSample;
   samples: CycleSample[];
@@ -990,7 +991,7 @@ export default function WorkshopScene({
           <Body model={model} xray={xray} />
           {/* Le reed nu est déjà transparent : ses lames restent visibles sans
               passer l'atelier en radiographie, la carte imprimée reste opaque. */}
-          {(xray || model.shape === "custom_pcb") && (
+          {!hideElectrical && (xray || model.shape === "custom_pcb") && (
             <Contacts model={model} contact={sample.contact} reduced={reduced} />
           )}
 

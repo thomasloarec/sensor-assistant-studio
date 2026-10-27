@@ -34793,6 +34793,51 @@
     "Prova nominale: la soglia si raggiunge combinando uno degli avvicinamenti provati con una rotazione; solo constatazione, nessun rimedio proposto",
     "公称試行：試した接近の一つと回転を組み合わせるとしきい値に達します。所見のみで、対処は提案しません"
   ],
+  "Repère du reed dans ce boîtier non caractérisé : estimation du produit indisponible.": [
+    "Reed datum in this housing is not characterized: product estimate unavailable.",
+    "此外壳内的干簧管基准未表征：产品估算不可用。",
+    "Reed-Bezugspunkt in diesem Gehäuse nicht charakterisiert: Produktschätzung nicht verfügbar.",
+    "Referencia del reed en esta carcasa no caracterizada: estimación del producto no disponible.",
+    "Положение геркона в этом корпусе не охарактеризовано: оценка изделия недоступна.",
+    "Riferimento del reed in questo involucro non caratterizzato: stima del prodotto non disponibile.",
+    "この筐体内のリード基準は未確認です。製品の推定は利用できません。"
+  ],
+  "Aimant non pris en charge : seuls SMCO5-5X4 et N45-4X19 sont caractérisés pour ce modèle.": [
+    "Unsupported magnet: only SMCO5-5X4 and N45-4X19 are characterized for this model.",
+    "不支持此磁铁：此模型仅表征了 SMCO5-5X4 和 N45-4X19。",
+    "Magnet nicht unterstützt: Nur SMCO5-5X4 und N45-4X19 sind für dieses Modell charakterisiert.",
+    "Imán no compatible: solo SMCO5-5X4 y N45-4X19 están caracterizados para este modelo.",
+    "Магнит не поддерживается: для этой модели охарактеризованы только SMCO5-5X4 и N45-4X19.",
+    "Magnete non supportato: solo SMCO5-5X4 e N45-4X19 sono caratterizzati per questo modello.",
+    "未対応の磁石です。このモデルで確認済みなのは SMCO5-5X4 と N45-4X19 のみです。"
+  ],
+  "Classe AT non établie : une configuration de contact ne définit pas une classe de sensibilité.": [
+    "AT class not established: a contact configuration does not define a sensitivity class.",
+    "AT 等级尚未确定：触点配置不定义灵敏度等级。",
+    "AT-Klasse nicht festgestellt: Eine Kontaktkonfiguration definiert keine Empfindlichkeitsklasse.",
+    "Clase AT no establecida: una configuración de contacto no define una clase de sensibilidad.",
+    "Класс AT не установлен: конфигурация контакта не определяет класс чувствительности.",
+    "Classe AT non stabilita: una configurazione di contatto non definisce una classe di sensibilità.",
+    "AT クラスは未確定です。接点構成は感度クラスを定義しません。"
+  ],
+  "Classe G hors du domaine du modèle figé.": [
+    "Class G is outside the frozen model domain.", "G 等级超出固定模型的范围。", "Klasse G liegt außerhalb des eingefrorenen Modellbereichs.", "La clase G está fuera del dominio del modelo fijo.", "Класс G вне области фиксированной модели.", "Classe G fuori dal dominio del modello fisso.", "クラス G は固定モデルの対象範囲外です。"
+  ],
+  "Classe A partielle : seule la borne prudente ATmax 10 est disponible.": [
+    "Partial class A: only the conservative ATmax 10 bound is available.", "A 等级数据不完整：仅提供保守界限 ATmax 10。", "Klasse A unvollständig: Nur die vorsichtige Grenze ATmax 10 ist verfügbar.", "Clase A parcial: solo está disponible el límite prudente ATmax 10.", "Класс A частичный: доступна только консервативная граница ATmax 10.", "Classe A parziale: disponibile solo il limite prudente ATmax 10.", "クラス A は部分的です。保守的な ATmax 10 の境界のみ利用可能です。"
+  ],
+  "Exploration Form66 indépendante du produit choisi ; aucun résultat ne qualifie ce produit.": [
+    "Form66 exploration is independent of the selected product; no result qualifies this product.", "Form66 探索独立于所选产品；任何结果都不构成该产品的鉴定。", "Form66-Erkundung unabhängig vom gewählten Produkt; kein Ergebnis qualifiziert dieses Produkt.", "Exploración Form66 independiente del producto elegido; ningún resultado cualifica este producto.", "Исследование Form66 независимо от выбранного изделия; результаты не подтверждают его пригодность.", "Esplorazione Form66 indipendente dal prodotto scelto; nessun risultato qualifica questo prodotto.", "Form66 の探索は選択製品と独立しています。結果は製品の適合認定にはなりません。"
+  ],
+  "Il manque une variante reed 66 sourcée, son orientation dans le boîtier et les repères par face. Les décalages de brochure ne sont pas des positions internes mesurées.": [
+    "A sourced reed 66 variant, its orientation in the housing and face datums are missing. Brochure offsets are not measured internal positions.", "缺少有来源的 reed 66 变体、其在外壳内的方向和各面基准。手册偏移量不是实测内部位置。", "Es fehlen eine belegte Reed-66-Variante, ihre Orientierung im Gehäuse und Bezugspunkte je Fläche. Broschürenversätze sind keine gemessenen Innenpositionen.", "Faltan una variante reed 66 documentada, su orientación en la carcasa y las referencias por cara. Los desplazamientos del folleto no son posiciones internas medidas.", "Отсутствуют документированный вариант геркона 66, его ориентация в корпусе и реперы граней. Смещения в брошюре не являются измеренными внутренними положениями.", "Mancano una variante reed 66 documentata, il suo orientamento nell’involucro e i riferimenti per faccia. Gli scostamenti della brochure non sono posizioni interne misurate.", "出典付きの reed 66 型、筐体内の方向、各面の基準が不足しています。カタログのオフセットは内部位置の実測値ではありません。"
+  ],
+  "Explorer Form66 sans modifier mon produit": [
+    "Explore Form66 without changing my product", "探索 Form66，不修改我的产品", "Form66 erkunden, ohne mein Produkt zu ändern", "Explorar Form66 sin modificar mi producto", "Исследовать Form66 без изменения моего изделия", "Esplorare Form66 senza modificare il mio prodotto", "製品を変更せずに Form66 を探索"
+  ],
+  "Revenir au couple de mon dossier": [
+    "Return to my project pair", "返回项目中的组合", "Zum Paar meines Projekts zurückkehren", "Volver a la pareja de mi proyecto", "Вернуться к паре моего проекта", "Tornare alla coppia del mio progetto", "プロジェクトの組み合わせに戻る"
+  ],
   "Essai nominal : ni les rotations ni les rapprochements testés combinés n’atteignent le seuil": [
     "Nominal trial: neither the rotations nor the tested closer positions combined reach the threshold",
     "名义试算：所试旋转及其与靠近的组合均未达到阈值",
