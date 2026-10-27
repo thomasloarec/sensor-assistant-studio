@@ -170,7 +170,7 @@ describe("invariance de la physique sous repère documentaire", () => {
     const a3 = distanceFor(SMCO, "D3", theta, "C1", "B", undefined, undefined, 3.345867);
     const a7 = distanceFor(SMCO, "D3", theta, "C1", "B", undefined, undefined, 7);
     expect(a3.ok && a7.ok).toBe(true);
-    if (a3.ok && a7.ok) expect(a7.value - a3.value).toBeCloseTo(7 - 3.345867, 3);
+    if (a3.ok && a7.ok) expect(a3.value - a7.value).toBeCloseTo(7 - 3.345867, 3);
     // La pose monde construite à partir des deux repères est la même.
     if (a3.ok && a7.ok) {
       const p3 = approachPose(SMCO, "D3", a3.value, "C1", 0, 3.345867);
