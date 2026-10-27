@@ -220,11 +220,15 @@ describe("contre-revue 4311e3ca", () => {
     const d = (await states()).unfavorable;
     const v = render(React.createElement(MagneticWorkshop, { pedagogical: true, initialPedagogicalDraft: { ...d, progress: .5 }, onClose: () => {}, onSave: () => {} }));
     await waitFor(() => expect(v.getByTestId("pedagogical-cause").textContent).toBe("Zone centrale entre les deux lobes"));
-    await act(async () => fireEvent.click(v.getByRole("button", { name: /Lancer le mouvement/ })));
-    console.log("DBG", v.getAllByRole("button", { name: /Lancer le mouvement|Pause/ }).map(b=>b.getAttribute("aria-pressed")+String((b as HTMLButtonElement).disabled)+b.textContent));
-    expect(v.getByTestId("pedagogical-verdict").textContent).not.toContain("zone centrale à éviter");
-    expect(v.getByTestId("pedagogical-verdict").getAttribute("data-cause")).toMatch(/pending|none|unavailable|reed_overlap|collision/);
-    await act(async () => fireEvent.click(v.getByRole("button", { name: /Pause/ })));
+    // Synchronous act: inspect while playback is running (before the 6 s cycle ends).
+    act(() => { fireEvent.click(v.getByRole("button", { name: /Lancer le mouvement/ })); });
+    const banner = v.getByTestId("pedagogical-verdict");
+    expect(v.getByRole("button", { name: /Pause/ }).getAttribute("aria-pressed")).toBe("true");
+    expect(banner.textContent).not.toContain("zone centrale à éviter");
+    expect(banner.textContent).not.toContain("Zone centrale entre les deux lobes");
+    expect(v.queryByTestId("pedagogical-remedy")).toBeNull();
+    if (["unfavorable", "variable"].some(s => banner.textContent!.includes({ unfavorable: "Placement défavorable", variable: "Détection variable" }[s]!))) expect(banner.getAttribute("data-cause")).toBe("pending");
+    act(() => { fireEvent.click(v.getByRole("button", { name: /Pause/ })); });
     expect(v.getByTestId("pedagogical-verdict").getAttribute("data-cause")).not.toBe("pending");
     v.unmount();
   }, 20000);
