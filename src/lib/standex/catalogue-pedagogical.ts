@@ -8,9 +8,12 @@ import { guideRangesFor } from './activation-guide';
 import { pedagogicalFrame, type PedagogicalFrame } from './pedagogical-poses';
 import { rotate, componentPose, cycleU } from './machine-assembly';
 import type { Vec3 } from './magnetic-workshop';
-import { momentFor, magnetSize, type WorkshopConfig } from './magnetic-workshop';
+import { momentFor, magnetSize, poseAt, type WorkshopConfig } from './magnetic-workshop';
 import { PILOT_MAGNETS, type PilotMagnet } from '../detection-lab/magnets';
-import { evaluatePose, type MagnetPose } from '../detection-lab/pose';
+import { gaussLegendre, type MagnetPose, type PoseEvaluation } from '../detection-lab/pose';
+import { cylinderField, cylinderSignedDistance } from '../detection-lab/field';
+import { PROFILE, type ReedScenario } from '../detection-lab/profile';
+import { fieldAtPoint } from './magnetics/field';
 import { EXPERIMENT, DEFAULT_EXPERIMENT, classThresholds, experimentalScenarios, axisNodes, type PlacementEvidence, type SampledVolume, type TableSample } from '../detection-lab/workshop-experiment';
 import { magnetObb, obbOverlap, type Obb } from '../detection-lab/obstacles';
 import { publishedRowsForCouple, publishedRowsSourceUrl, PUBLISHED_REGISTRY } from './magnetics/registries';
@@ -52,52 +55,81 @@ export function catalogueModel(c:WorkshopConfig){
  const body=magnetSize(c);
  const moments=pack?.momentTypE6Vscm;const q=bare?.moment??(typeof moments==='number'?moments:Array.isArray(moments)?Math.min(...moments):null);
  const verified=PILOT_MAGNETS.find(m=>m.id===c.magnetModel);
- // Unknown active material/geometry: equivalent cylinder, explicit fixed SmCo moment prior.
- const diameterMm=pack?Math.min(5,Math.min(body[1],body[2])):bare?.shape==='cylinder'?body[1]:Math.sqrt(4*body[1]*body[2]/Math.PI);
- const magnetLengthMm=pack?Math.min(8,body[0]):body[0],jT=(q??7.2)*1e-8/(Math.PI*(diameterMm/2000)**2*(magnetLengthMm/1000));
- const scale=lengthMm/14;
- const magnet:PilotMagnet=verified&&scale===1?verified:{...PILOT_MAGNETS[0],id:'SMCO5-5X4',label:c.magnetModel,material:bare?.material??pack?.magnetMaterial??'unknown',diameterMm:(verified?.diameterMm??diameterMm)/scale,lengthMm:(verified?.lengthMm??magnetLengthMm)/scale,jT:verified?.jT??jT,q:q??7.2,momentAm2:(q??7.2)*1e-8/(4*Math.PI*1e-7),volumeM3:Math.PI*(diameterMm/2000)**2*(magnetLengthMm/1000),momentRaw:INTERNAL.prior};
- const className=['B','C','D','E','F'].includes(c.sensitivity)?c.sensitivity:'C';
- const reasons=[CATALOGUE_LABELS.notice,CATALOGUE_LABELS.datum,...(!verified||bare?.shape==='block'?[CATALOGUE_LABELS.proxy]:[]),...(className!==c.sensitivity?[CATALOGUE_LABELS.class]:[]),...(c.ferromagnetic||c.temperature!=='ambient'?[CATALOGUE_LABELS.material]:[])];
- return {version:CATALOGUE_MODEL_VERSION,sensorId:c.sensorId,magnetId:c.magnetModel,family,status:status as 'form66'|'documented'|'analogy',lengthMm,scale,centre:[0,0,0] as Vec3,axis:[1,0,0] as Vec3,body:sensor.body,magnetBody:body,magnet,magnetGeometry:verified?'verified-cylinder':bare?.shape==='cylinder'&&q!==null?'moment-cylinder':'equivalent-cylinder',moment:q,unknownMoment:q===null,className,contact:sensor.contact,reference:selected,rows,publishedRows,publishedSource:publishedRowsSourceUrl(publishedRows),familyReferences:PUBLISHED_REGISTRY.rows.filter(r=>r.sensorFamily===c.sensorId).map(r=>r.sensorReference),reasons,sources:[ACTIVATION_BROCHURE,publishedRowsSourceUrl(publishedRows)??sensor.sourceFile??INTERNAL.source],method:p.method,leadEffect:INTERNAL.leads};
+ // Field source in PHYSICAL mm (never rescaled by the reed length):
+ // verified pilots keep their frozen cylinder; bare catalogue blocks use the
+ // analytic block field; bare cylinders use their own geometry; packaged inserts
+ // are an explicit equivalent-cylinder hypothesis inside the real outer body.
+ const vol=(bare?.shape==='block'?body[0]*body[1]*body[2]:Math.PI*(body[1]/2)**2*body[0])*1e-9;
+ const insertD=Math.min(5,body[1],body[2]),insertL=Math.min(8,body[0]);
+ const J=(q??7.2)*1e-8/(pack?Math.PI*(insertD/2000)**2*(insertL/1000):vol);
+ const field:CatalogueField=verified?{kind:'cylinder',radiusMm:verified.diameterMm/2,lengthMm:verified.lengthMm,jT:verified.jT}:bare?.shape==='block'?{kind:'block',dims:[body[0],body[1],body[2]],brMt:J*1000}:pack?{kind:'cylinder',radiusMm:insertD/2,lengthMm:insertL,jT:J}:{kind:'cylinder',radiusMm:body[1]/2,lengthMm:body[0],jT:J};
+ const magnet:PilotMagnet=verified??{...PILOT_MAGNETS[0]!,label:c.magnetModel,material:bare?.material??pack?.magnetMaterial??'unknown',momentRaw:INTERNAL.prior};
+ const className=['A','B','C','D','E','F'].includes(c.sensitivity)?c.sensitivity:'C';
+ const reasons=[CATALOGUE_LABELS.notice,CATALOGUE_LABELS.datum,...(pack||(!verified&&bare?.shape!=='block')?[CATALOGUE_LABELS.proxy]:[]),...(className!==c.sensitivity?[CATALOGUE_LABELS.class]:[]),...(c.ferromagnetic||c.temperature!=='ambient'?[CATALOGUE_LABELS.material]:[])];
+ return {version:CATALOGUE_MODEL_VERSION,sensorId:c.sensorId,magnetId:c.magnetModel,family,status:status as 'form66'|'documented'|'analogy',lengthMm,scale,centre:[0,0,0] as Vec3,axis:[1,0,0] as Vec3,body:sensor.body,magnetBody:body,magnet,field,magnetGeometry:verified?'verified-cylinder':bare?.shape==='block'?'analytic-block':bare?.shape==='cylinder'&&q!==null?'moment-cylinder':'equivalent-cylinder',moment:q,unknownMoment:q===null,className,contact:sensor.contact,reference:selected,rows,publishedRows,publishedSource:publishedRowsSourceUrl(publishedRows),familyReferences:PUBLISHED_REGISTRY.rows.filter(r=>r.sensorFamily===c.sensorId).map(r=>r.sensorReference),reasons,sources:[ACTIVATION_BROCHURE,publishedRowsSourceUrl(publishedRows)??sensor.sourceFile??INTERNAL.source],method:p.method,leadEffect:INTERNAL.leads};
 }
-export function catalogueFrame(c:WorkshopConfig,t:number):PedagogicalFrame{
+type Frame=[Vec3,Vec3,Vec3];
+export type CatalogueField={kind:'cylinder';radiusMm:number;lengthMm:number;jT:number}|{kind:'block';dims:Vec3;brMt:number};
+/** Magnet pose with its full BODY frame (rows = body X/Y/Z), independent of the pole axis. */
+export type CataloguePose=MagnetPose&{frame?:Frame};
+const dot=(a:readonly number[],b:readonly number[])=>a.reduce((sum,n,i)=>sum+n*(b[i]??0),0);
+const E:Frame=[[1,0,0],[0,1,0],[0,0,1]];
+/** Body frame in WORLD axes, same rotation as the scene and approachOffset. */
+export function magnetBodyFrame(c:WorkshopConfig,angle:number):Frame{return E.map(e=>rotate(e,[0,-angle,c.magnetTilt])) as Frame;}
+/** Shares poseAt (surface-gap convention incl. F1 faces) for position and the scene rotation for the body. */
+export function catalogueFrame(c:WorkshopConfig,t:number):PedagogicalFrame&{pose:CataloguePose;world:CataloguePose}{
  const f=pedagogicalFrame(c,t);
- // The scene already rotates the sensor body about local Y. Apply the same
- // orientation to the estimated reed, never brochure up/to datum offsets.
  if(c.machine){
-  const magnet=componentPose(c.machine,'magnet',cycleU(c.machine,t)),axis=magnet.transform(momentFor({...c,magnetTilt:0},0));
-  const dot=(a:Vec3,b:Vec3)=>a.reduce((sum,n,i)=>sum+n*(b[i]??0),0);
-  return {...f,world:{...f.world,axis},pose:{...f.pose,axis:f.basis.map(v=>dot(v,axis)) as Vec3}};
+  const mp=componentPose(c.machine,'magnet',cycleU(c.machine,t)),axis=mp.transform(momentFor({...c,magnetTilt:0},0));
+  const wf=magnetBodyFrame({...c,magnetTilt:0},0).map(v=>mp.transform(v)) as Frame;
+  const toLocal=(v:Vec3)=>f.basis.map(b=>dot(b,v)) as Vec3;
+  return {...f,world:{...f.world,axis,frame:wf},pose:{...f.pose,axis:toLocal(axis),frame:wf.map(toLocal) as Frame}};
  }
- const u=t<=.5?t*2:(1-t)*2,depth=c.start+(c.end-c.start)*u;
- const frontal=c.geometry==='F1'&&['MK36','MK37','MK38'].includes(c.sensorId);
- const centreDistance=frontal?depth+(sensorById(c.sensorId).body[0]+magnetSize(c)[0])/2:depth;
- const center:Vec3=c.motion==='slide'?[-c.travel+2*c.travel*u,0,c.offset]:c.motion==='pivot'?[Math.sin(c.span*(u-.5)*Math.PI/180)*c.offset,0,Math.cos(c.span*(u-.5)*Math.PI/180)*c.offset]:c.geometry==='D3'||frontal?[centreDistance,0,c.lateralShift]:[c.lateralShift,0,depth];
- const angle=c.magnetAngle+(c.motion==='pivot'?c.span*(u-.5):0);
- const axis=momentFor(c,angle);
- const transform=(v:Vec3)=>f.basis[0].map((_,j)=>(f.basis[0][j]??0)*v[0]+(f.basis[1][j]??0)*v[1]+(f.basis[2][j]??0)*v[2]) as Vec3;
- const world={center:transform(center).map((n,i)=>n+(f.origin[i]??0)) as Vec3,axis:transform(axis)};
- const basis=f.basis.map((_,i)=>{const v=rotate(([ [1,0,0],[0,1,0],[0,0,1] ][i]??[1,0,0]) as Vec3,[0,-c.sensorAngle,0]);return f.basis[0].map((__,j)=>(f.basis[0][j]??0)*v[0]+(f.basis[1][j]??0)*v[1]+(f.basis[2][j]??0)*v[2]) as Vec3;}) as [Vec3,Vec3,Vec3];
- const dot=(a:Vec3,b:Vec3)=>a.reduce((sum,n,i)=>sum+n*(b[i]??0),0),d=world.center.map((n,i)=>n-(f.origin[i]??0)) as Vec3;
- return {...f,world,basis,pose:{center:basis.map(v=>dot(v,d)) as Vec3,axis:basis.map(v=>dot(v,world.axis)) as Vec3}};
+ const p=poseAt(c,t),axis=momentFor(c,p.angle),wf=magnetBodyFrame(c,p.angle);
+ const basis=E.map(e=>rotate(e,[0,-c.sensorAngle,0])) as Frame,origin:Vec3=[0,0,0];
+ const toLocal=(v:Vec3)=>basis.map(b=>dot(b,v)) as Vec3;
+ return {origin,basis,world:{center:p.position,axis,frame:wf},pose:{center:toLocal(p.position),axis:toLocal(axis),frame:wf.map(toLocal) as Frame}};
 }
-export function catalogueBodyObb(c:WorkshopConfig):Obb{return {path:'sensor-body',c:[0,0,0],a:[[1,0,0],[0,1,0],[0,0,1]],h:sensorById(c.sensorId).body.map(n=>n/2) as Vec3};}
-export function cataloguePlacement(c:WorkshopConfig,pose:MagnetPose,obstacles:readonly Obb[]=[],model=catalogueModel(c),nominalOnly=false):PlacementEvidence{
- const m=model,p={center:pose.center.map(n=>n/m.scale) as Vec3,axis:pose.axis},th=classThresholds(m.className);
+export function catalogueBodyObb(c:WorkshopConfig):Obb{return {path:'sensor-body',c:[0,0,0],a:E,h:sensorById(c.sensorId).body.map(n=>n/2) as Vec3};}
+/** Catalogue evaluator (physical mm). Same blade integral, Gauss nodes and B response as the
+ * frozen kernel; reed effective length and scenario shifts scale with the profile's estimated
+ * reed length (documented hypothesis); the calculation domain does NOT. */
+export function catalogueEvaluate(m:ReturnType<typeof catalogueModel>,pose:CataloguePose,s:ReedScenario,frame:Frame,quadrature=PROFILE.reed.quadraturePerBlade):PoseEvaluation{
+ const n=Math.hypot(...pose.axis);if(!(n>0)||!pose.center.every(Number.isFinite))return {ok:false,reason:'invalid'};
+ if(Math.hypot(...pose.center)>PROFILE.domain.maxCenterMm)return {ok:false,reason:'domain'};
+ const axis=pose.axis.map(v=>v/n) as Vec3,k=m.lengthMm/14,half=PROFILE.reed.effectiveLengthMm*s.lengthFactor*k/2,sh=s.shift.map(v=>v*k);
+ const fd=m.field;
+ const B=(q:Vec3):number=>{
+  if(fd.kind==='cylinder'){const body={radiusMm:fd.radiusMm,lengthMm:fd.lengthMm,jT:fd.jT*s.momentFactor,center:pose.center,axis};return cylinderSignedDistance(body,q)<=0?NaN:cylinderField(body,q)[0];}
+  const d=q.map((v,i)=>v-(pose.center[i]??0)) as Vec3,local=frame.map(r=>dot(r,d)) as Vec3;
+  const proj=frame.map(r=>dot(r,axis)),ax=proj.map(Math.abs).indexOf(Math.max(...proj.map(Math.abs))) as 0|1|2;
+  const r=fieldAtPoint({shape:'block',dimensionsMm:fd.dims,innerDiameterMm:0,magnetizationAxis:ax,brMt:fd.brMt*s.momentFactor,polarity:(proj[ax]??1)<0?-1:1,pose:{positionMm:[0,0,0],rotationDeg:[0,0,0]}} as Parameters<typeof fieldAtPoint>[0],local);
+  if(!r.ok)return NaN;const b=r.field.bVectorMt;return frame.reduce((sum,row,i)=>sum+(b[i]??0)*(row[0]??0),0);
+ };
+ const g=gaussLegendre(quadrature);
+ const blade=(from:number,to:number)=>{let sum=0;for(let i=0;i<g.x.length;i++){const x=from+((g.x[i]!+1)/2)*(to-from);sum+=(g.w[i]!/2)*B([x+(sh[0]??0),sh[1]??0,sh[2]??0]);}return sum;};
+ const m1=blade(-half,0),m2=blade(0,half);
+ if(!Number.isFinite(m1)||!Number.isFinite(m2))return {ok:false,reason:'collision'};
+ return {ok:true,response:m1*m2>0?Math.min(Math.abs(m1),Math.abs(m2)):0,m1,m2};
+}
+export function cataloguePlacement(c:WorkshopConfig,pose:CataloguePose,obstacles:readonly Obb[]=[],model=catalogueModel(c),nominalOnly=false):PlacementEvidence{
+ const m=model,th=classThresholds(m.className);
  const unavailable=(cause:PlacementEvidence['cause']):PlacementEvidence=>({state:'unavailable',cause,nominal:null,scenarios:[],zone:0,partial:false});
  if(!th)return unavailable('missing');
- const realMagnet=magnetObb(Math.max(m.magnetBody[1],m.magnetBody[2]),m.magnetBody[0],pose);
- if(!realMagnet)return unavailable('domain');
+ if(!(Math.hypot(...pose.axis)>0)||!pose.center.every(Number.isFinite))return unavailable('domain');
+ const frame=pose.frame??magnetBodyFrame(c,c.magnetAngle);
+ const realMagnet:Obb={path:'magnet',c:[...pose.center],a:frame,h:m.magnetBody.map(n=>n/2) as Vec3};
  if(obbOverlap(realMagnet,catalogueBodyObb(c))||obstacles.some(o=>obbOverlap(realMagnet,o)))return unavailable('overlap');
- const scenarios=experimentalScenarios(!nominalOnly).map(s=>({id:s.id,result:evaluatePose(m.magnet,p,s,'B')}));
- const nominal=evaluatePose(m.magnet,p,experimentalScenarios(false)[0]??{id:'nominal',shift:[0,0,0],lengthFactor:1,momentFactor:1},'B');
+ const nominal=catalogueEvaluate(m,pose,nominalScenario(),frame);
  if(!nominal.ok)return unavailable(nominal.reason==='domain'?'domain':'collision');
+ const scenarios=nominalOnly?[]:experimentalScenarios(true).map(s=>({id:s.id,result:catalogueEvaluate(m,pose,s,frame)}));
  const responses=scenarios.flatMap(s=>s.result.ok?[s.result.response]:[]);
- const zone=nominal.response>=th.high?2:nominal.response>=(th.low??0)?1:0;
- let state:PlacementEvidence['state']=!nominalOnly&&responses.length!==9?'variable':responses.every(r=>r>=th.high)?'favorable':responses.every(r=>r<(th.low??0))?'unfavorable':'variable';
- if((c.ferromagnetic||c.temperature!=='ambient'||m.unknownMoment||!['B','C','D','E','F'].includes(c.sensitivity))&&state==='favorable')state='variable';
- return {state,cause:nominal.response===0?'orientation':'distance',nominal,scenarios,zone,partial:false};
+ const partial=th.low===null;
+ const zone=nominal.response>=th.high?2:th.low!==null&&nominal.response>=th.low?1:0;
+ // Class A: only the prudent 10 AT bound exists; below it nothing is claimed (never zero-filled).
+ let state:PlacementEvidence['state']=nominalOnly||responses.length!==scenarios.length?'variable':responses.every(r=>r>=th.high)?'favorable':th.low!==null&&responses.every(r=>r<th.low!)?'unfavorable':'variable';
+ if((c.ferromagnetic||c.temperature!=='ambient'||m.unknownMoment||m.className!==c.sensitivity)&&state==='favorable')state='variable';
+ return {state,cause:nominal.response===0?'orientation':'distance',nominal,scenarios,zone,partial};
 }
 export function catalogueVolume(c:WorkshopConfig,axis:Vec3,planeZ:number,obstacles:readonly Obb[]=[],extent=24):SampledVolume{
  const start=performance.now(),xs=axisNodes(-extent,extent,true),ys=axisNodes(-extent,extent),zs=axisNodes(-extent,extent);
