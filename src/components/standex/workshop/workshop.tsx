@@ -2364,7 +2364,7 @@ export default function MagneticWorkshop({
               {/* La source des distances est portée par le bandeau de verdict.
                   Elle n'est répétée sur la scène que pour une référence
                   fictive, où l'avertissement doit rester sous les yeux. */}
-              {basis === "fictitious" ? (
+              {!pedagogical && basis === "fictitious" ? (
                 <span className="mw-kind education">{basisLabel}</span>
               ) : null}
               <div className="mw-view-switch">
@@ -2375,7 +2375,7 @@ export default function MagneticWorkshop({
                   {t(pedagogical ? "Vue en coupe" : "Vue plane")}
                 </button>
               </div>
-              {displayMenu}
+              {!pedagogical && displayMenu}
             </div>
             {!pedagogical && <ContactCircuit contact={sample.contact} />}
             {/* Outil de pointage du câble : seulement quand le pointage est
@@ -2538,14 +2538,14 @@ export default function MagneticWorkshop({
                 </Suspense>
               </SceneBoundary>
             )}
-            <p className="mw-orbit-help">
+            {!pedagogical && <p className="mw-orbit-help">
               <Expand size={13} />
               {t(
                 view === "3d"
                   ? "Glisser pour tourner · molette pour zoomer"
                   : "Vue plane · même montage et même calcul",
               )}
-            </p>
+            </p>}
           </div>
           {/* Chronologie du cycle : mêmes échantillons que la scène et le verdict. */}
           <div className="mw-cycle" aria-label={t("Chronologie du cycle")}>
