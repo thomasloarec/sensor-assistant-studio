@@ -1,3 +1,4 @@
+import { CLIENT_LIMITS, type ClientPedagogicalResult } from "@/lib/standex/client-pedagogical";
 import { ILLUSTRATIVE_NOTE, GUIDE_UNPUBLISHED_NOTE } from "@/lib/standex/workshop-guide";
 import { CompatibilityPanel } from "@/components/leadmagnet/compatibility-panel";
 import { FIT_PANEL, type FitAssessment } from "@/lib/leadmagnet/application-fit";
@@ -93,6 +94,7 @@ function ResultCycle({ pair }: { pair: TestedPair }) {
 }
 
 export interface ResultViewProps {
+  pedagogicalResult?: ClientPedagogicalResult | null;
   pair: TestedPair | null;
   /** Un point de compatibilité du besoin reste ouvert : aucun résultat ne peut
    *  être présenté comme positif, même si la démonstration a fermé le contact. */
@@ -116,6 +118,7 @@ export interface ResultViewProps {
 }
 
 export function ResultView({
+  pedagogicalResult,
   pair,
   applicationBlocked = false,
   fit = null,
@@ -139,6 +142,15 @@ export function ResultView({
       <CompatibilityPanel assessment={fit} onGoToStep={onGoToStep} onContactStandex={onConfirmWithStandex} />
     ) : null;
 
+  if(pedagogicalResult)return <section className="space-y-4" data-testid="client-pedagogical-result">
+    {fitPanel}
+    <h2 className="t-display-m">{t('Estimation indisponible')}</h2>
+    <p className="t-title-m">{pedagogicalResult.sensorId} + {pedagogicalResult.magnetId} · {pedagogicalResult.sensitivity}</p>
+    {pedagogicalResult.reasons.map(reason=><p className="t-body" key={reason}>{t(reason)}</p>)}
+    <p className="notice-info t-body">{t(CLIENT_LIMITS.exploration)}</p>
+    <p className="t-caption">{t('Une revue publiée atteste la revue de cette révision, pas une certification du produit.')}</p>
+    <div className="flex flex-wrap gap-3"><Button variant="secondary" onClick={onReplaceMagnet}>{t("Replacer l'aimant")}</Button><Button onClick={onContinue??onConfirmWithStandex}>{onContinue?t('Configurer votre capteur →'):t('Confirmer avec Standex →')}</Button><Button variant="secondary" onClick={onSeePairs}>{t('Tester un autre couple')}</Button></div>
+  </section>;
   if (!pair)
     return fitPanel ? (
       <div className="space-y-5" data-testid="result-blocked-empty">

@@ -260,9 +260,10 @@ function Assembly({
   routing,
   ghost,
   guide,
-  pedagogicalLayer,
+  pedagogicalLayer, hideElectrical = false,
 }: {
   pedagogicalLayer?: ReactNode;
+  hideElectrical?: boolean;
   guide?: GuideOverlay | undefined;
   asset: MachineAsset;
   config: WorkshopConfig;
@@ -455,7 +456,7 @@ function Assembly({
           }
         >
           <group rotation={[0, housingYawDeg(model.id) * Math.PI / 180, 0]}><Body model={model} xray={xray} showCable={!routing?.points.length} />
-          {xray && <Contacts model={model} contact={sample.contact} reduced={reduced} />}</group>
+          {!hideElectrical && xray && <Contacts model={model} contact={sample.contact} reduced={reduced} />}</group>
           {showSpace && (
             <mesh>
               <boxGeometry args={machine.space} />
@@ -592,9 +593,10 @@ export default function MachineScene({
   routing,
   ghost,
   guide,
-  pedagogicalLayer,
+  pedagogicalLayer, hideElectrical = false,
 }: {
   pedagogicalLayer?: ReactNode;
+  hideElectrical?: boolean;
   guide?: GuideOverlay | undefined;
   asset: MachineAsset;
   config: WorkshopConfig;
@@ -665,6 +667,7 @@ export default function MachineScene({
         ghost={ghost}
         guide={guide}
         pedagogicalLayer={pedagogicalLayer}
+        hideElectrical={hideElectrical}
       />
       {pedagogicalLayer}
 

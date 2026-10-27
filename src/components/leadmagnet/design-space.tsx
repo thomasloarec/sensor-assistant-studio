@@ -1,3 +1,4 @@
+import type { ClientPedagogicalResult } from "@/lib/standex/client-pedagogical";
 import { NeedExamples } from "./need-examples";
 import { BookingDialog } from "./booking-dialog";
 import { COUNTRY_CODES, salesContactFor } from "@/lib/leadmagnet/sales-contact";
@@ -651,6 +652,7 @@ export function DesignSpace({
   const [selectionAnnounce, setSelectionAnnounce] = useState("");
   /** Fiche détaillée d'un capteur (cotes, sources, téléchargement STEP). */
   const [detailSensorId, setDetailSensorId] = useState<string | null>(null);
+  const [clientPedagogicalResult, setClientPedagogicalResult] = useState<ClientPedagogicalResult | null>(null);
   const [workshop, setWorkshop] = useState<WorkshopConfig | null>(null);
   /** Remonté à chaque chargement d'un AUTRE contenu (import, dossier serveur,
    * variante) : l'atelier est alors réellement remplacé, sans modèle fantôme. */
@@ -4502,6 +4504,7 @@ export function DesignSpace({
    * Aucun réseau, aucune écriture sur l'appareil : tout reste en mémoire. */
   const applyWorkshopConfig = useCallback((c: WorkshopConfig) => {
     setWorkshop(c);
+    setClientPedagogicalResult(r=>r?.configKey===JSON.stringify(c)?r:null);
     setDossier((d) => ({
       ...d,
       workshop: c,
@@ -4595,6 +4598,7 @@ export function DesignSpace({
   const resultatSection = (
     <div className="space-y-10">
     <ResultView
+      pedagogicalResult={clientPedagogicalResult?.configKey===JSON.stringify(workshop ?? dossier.workshop ?? DEFAULT_WORKSHOP)?clientPedagogicalResult:null}
       pair={latestTestedPair(dossier.testedPairs)}
       // Un point de compatibilité ouvert interdit un résultat positif : la
       // démonstration ne vérifie pas l'application.
@@ -4637,6 +4641,11 @@ export function DesignSpace({
     <div>
       <Suspense fallback={<p className="text-base">{t("Chargement de l'atelier…")}</p>}>
         <MagneticWorkshop
+          clientPedagogical
+          onClientPedagogicalResult={result=>{
+            if(workshopDraftRef.current)applyWorkshopConfig(workshopDraftRef.current);
+            setClientPedagogicalResult(result);setShowWorkshop(false);setPanel(null);setTab('resultat');
+          }}
           embedded
           initialCableOpen={cablePanelOpen}
           initialStudy={dossier.studioV2}
