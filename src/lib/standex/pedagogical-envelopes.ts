@@ -7,6 +7,7 @@ import { cycleU, pointAt, type MachineAssembly } from './machine-assembly';
 import type { Vec3 } from './magnetic-workshop';
 import type { Obb } from '@/lib/detection-lab/obstacles';
 import type { PedagogicalFrame } from './pedagogical-poses';
+import { fingerprint } from './mounting/geometry';
 
 export interface PartEnvelope { path: string; min: Vec3; max: Vec3 }
 /** Every part is kept; a part without finite bounds makes the whole set unavailable (null). */
@@ -41,4 +42,11 @@ export function toReedObstacles(world: readonly Obb[], frame: Pick<PedagogicalFr
 }
 export function reedObstaclesAt(m: MachineAssembly, envelopes: readonly PartEnvelope[], t: number, frame: Pick<PedagogicalFrame, 'origin' | 'basis'>): Obb[] {
   return toReedObstacles(worldObstacles(m, envelopes, cycleU(m, t)), frame);
+}
+
+/** Timeline cache key: settings, config, loaded file identity, CONTENT of the
+ *  boxes and load generation of the clip. A reload of the same identifier with
+ *  other boxes or a re-registered clip never matches an earlier result. */
+export function pedagogicalTimelineKey(settings: unknown, config: unknown, assetId: string | null, envelopes: readonly PartEnvelope[] | null, clipGeneration: number): string {
+  return JSON.stringify([settings, config, assetId, envelopes ? fingerprint(envelopes) : null, clipGeneration]);
 }

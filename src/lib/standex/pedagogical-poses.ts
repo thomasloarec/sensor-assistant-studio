@@ -60,3 +60,26 @@ export function parsePedagogicalEnvelope(value:unknown):PedagogicalDraft|null {
   if(!config)return null;
   return {config,settings:{...s},progress:v['progress']};
 }
+
+/** Six teaching cases, per pilot magnet (positions checked against the frozen
+ *  kernel in tests): SmCo at 6 mm, N45 at 16 mm; centred vs offset share depth.
+ *  Free (non-imported) workshop only. Time is never touched. */
+export type PedagogicalCase = 'parallel' | 'centred' | 'offset' | 'oblique' | 'classE' | 'traverse';
+export const PEDAGOGICAL_CASES: { id: PedagogicalCase; label: string }[] = [
+  { id: 'parallel', label: 'Parallèle' }, { id: 'centred', label: 'Perpendiculaire centré' }, { id: 'offset', label: 'Perpendiculaire décalé' },
+  { id: 'oblique', label: 'Oblique 45°' }, { id: 'classE', label: 'Parallèle · classe E' }, { id: 'traverse', label: 'Traversée des lobes' },
+];
+type Spot = { x: number; depth: number; angle: number };
+const CASE_SPOTS: Record<string, Record<Exclude<PedagogicalCase, 'traverse'>, Spot> & { traverse: { offset: number; travel: number } }> = {
+  'SMCO5-5X4': { parallel: { x: 0, depth: 7, angle: 0 }, centred: { x: 0, depth: 6, angle: 90 }, offset: { x: 8, depth: 6, angle: 90 }, oblique: { x: 10, depth: 6, angle: 45 }, classE: { x: 0, depth: 6, angle: 0 }, traverse: { offset: 6, travel: 10 } },
+  'N45-4X19': { parallel: { x: 0, depth: 16, angle: 0 }, centred: { x: 0, depth: 16, angle: 90 }, offset: { x: 8, depth: 16, angle: 90 }, oblique: { x: -4, depth: 16, angle: 45 }, classE: { x: 0, depth: 10, angle: 0 }, traverse: { offset: 16, travel: 12 } },
+};
+/** Approach cases end at `depth` (centre of magnet → reed datum) after 12 mm of travel. */
+export function pedagogicalPreset(id: PedagogicalCase, magnetId: string): { config: Partial<WorkshopConfig>; className: string } | null {
+  const spots = CASE_SPOTS[magnetId];
+  if (!spots) return null;
+  const className = id === 'classE' ? 'E' : 'C';
+  if (id === 'traverse') return { className, config: { geometry: 'D1', motion: 'slide', magnetAngle: 90, magnetTilt: 0, lateralShift: 0, offset: spots.traverse.offset, travel: spots.traverse.travel } };
+  const s = spots[id];
+  return { className, config: { geometry: 'D1', motion: 'approach', magnetAngle: s.angle, magnetTilt: 0, lateralShift: s.x, end: s.depth, start: s.depth + 12 } };
+}

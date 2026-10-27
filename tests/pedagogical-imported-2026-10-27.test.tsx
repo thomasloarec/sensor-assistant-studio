@@ -53,7 +53,7 @@ describe('Pedagogical imported mounting', () => {
     expect(verdict('SMCO5-5X4', [8, 16, 0], box).cause).not.toBe('overlap');
   });
   test('a box enclosing a bore is only a possible overlap, never a certain collision', () => {
-    const e = verdict('SMCO5-5X4', [6, 6, 0], { path: 'fixed', c: [6, 6, 0], size: [10, 10, 10] });
+    const e = verdict('SMCO5-5X4', [6, 6, 0], { path: 'fixed', c: [6, 6, 0], size: [8, 8, 8] });
     expect(e.cause).toBe('overlap'); expect(e.cause).not.toBe('collision');
   });
   test('cut, volume and point share the same mechanical check; polarity invariant', () => {
@@ -140,5 +140,82 @@ describe('Pedagogical imported mounting', () => {
     const obsS = reedObstaclesAt(cs.machine, envS, .25, fs);
     obsS.forEach((o, i) => { o.c.forEach((v, j) => expect(v * 1000).toBeCloseTo(obs[i]!.c[j]!, 4)); o.h.forEach((v, j) => expect(v * 1000).toBeCloseTo(obs[i]!.h[j]!, 4)); });
     fs.pose.center.forEach((v, j) => expect(v * 1000).toBeCloseTo(f.pose.center[j]!, 6));
+  });
+});
+
+import { renderToStaticMarkup } from 'react-dom/server';
+import { PedagogicalControls } from '../src/components/standex/workshop/pedagogical-controls';
+import { PEDAGOGICAL_CASES, pedagogicalPreset } from '../src/lib/standex/pedagogical-poses';
+import { animationGeneration } from '../src/lib/standex/machine-clip-registry';
+import { pedagogicalTimelineKey } from '../src/lib/standex/pedagogical-envelopes';
+import { placementTimeline } from '../src/lib/detection-lab/workshop-experiment';
+
+describe('Review 86e82ae5', () => {
+  const reedBox = (c: Vec3 = [0, 0, 0]): Obb => ({ path: 'housing', c, a: [[1, 0, 0], [0, 1, 0], [0, 0, 1]], h: [3, 3, 3] });
+  test('1) reed inside an envelope: magnet [6,6,0] clear/favorable becomes unavailable for point, volume, cut and timeline; clearing restores', () => {
+    const s = DEFAULT_EXPERIMENT, pose = { center: [6, 6, 0] as Vec3, axis: [0, 1, 0] as Vec3 };
+    expect(evaluatePlacement(s, pose, []).state).toBe('favorable');
+    const blocked = evaluatePlacement(s, pose, [reedBox()]);
+    expect(blocked.state).toBe('unavailable'); expect(blocked.cause).toBe('reed_overlap'); expect(blocked.cause).not.toBe('collision');
+    const v = sampleVolume(s, pose.axis, 0, 8, [reedBox()]);
+    expect(v.reedBlocked).toBe(true); expect(v.cells.length).toBe(0); expect(v.cut.length).toBe(0);
+    const tl = tableTimeline(s, [0, .5, 1].map(t => ({ t, pose, obstacles: [reedBox()] })));
+    expect(tl.points.every(p => p.state === 'unavailable')).toBe(true);
+    expect(evaluatePlacement(s, pose, [reedBox([0, -30, 0])]).state).toBe('favorable');
+    expect(sampleVolume(s, pose.axis, 0, 8, [reedBox([0, -30, 0])]).cells.some(c => c.zone === 2)).toBe(true);
+  });
+  test('1) ±1 mm reed shift hypotheses are checked mechanically; nominal-only is not', () => {
+    const pose = { center: [6, 6, 0] as Vec3, axis: [0, 1, 0] as Vec3 };
+    // Box just touching the capsule at y = 1.1 overlaps once the reed moves +1 mm in y.
+    const near: Obb = { path: 'wall', c: [0, 2.6, 0], a: [[1, 0, 0], [0, 1, 0], [0, 0, 1]], h: [2, 1.5, 2] };
+    expect(evaluatePlacement(DEFAULT_EXPERIMENT, pose, [near]).cause).toBe('scenario_overlap');
+    expect(evaluatePlacement({ ...DEFAULT_EXPERIMENT, hypotheses: false }, pose, [near]).cause).not.toBe('scenario_overlap');
+  });
+  test('2) per-pilot presets: same depth centred vs offset, exploitable cases, traverse crosses favorable–central unfavorable–favorable', () => {
+    for (const [id, depth] of [['SMCO5-5X4', 6], ['N45-4X19', 16]] as const) {
+      const s = { ...DEFAULT_EXPERIMENT, magnetId: id };
+      const at = (c: (typeof PEDAGOGICAL_CASES)[number]['id'], t = .5) => { const p = pedagogicalPreset(c, id)!; const cfg = { ...DEFAULT_WORKSHOP, ...p.config }; return { f: pedagogicalFrame(cfg, t), e: evaluatePlacement({ ...s, className: p.className }, pedagogicalFrame(cfg, t).pose) }; };
+      const centred = at('centred'), offset = at('offset');
+      expect(centred.f.pose.center[1]).toBe(depth); expect(offset.f.pose.center[1]).toBe(depth);
+      expect(centred.e.state).toBe('unfavorable'); expect(offset.e.state).toBe('favorable');
+      for (const c of ['parallel', 'oblique', 'classE'] as const) { const e = at(c).e; expect(['favorable', 'variable']).toContain(e.state); }
+      const p = pedagogicalPreset('traverse', id)!, cfg = { ...DEFAULT_WORKSHOP, ...p.config };
+      const tl = placementTimeline(s, t => pedagogicalFrame(cfg, t).pose, 64);
+      const seq = tl.points.filter(q => q.t <= .5).map(q => q.state).filter((x, i, a) => i === 0 || a[i - 1] !== x);
+      const f1 = seq.indexOf('favorable'), u = seq.indexOf('unfavorable', f1), f2 = seq.indexOf('favorable', u);
+      expect(f1).toBeGreaterThanOrEqual(0); expect(u).toBeGreaterThan(f1); expect(f2).toBeGreaterThan(u);
+    }
+  });
+  test('2) slide controls drive offset/travel, presets hidden for imported mounting', () => {
+    const slide = { ...DEFAULT_WORKSHOP, ...pedagogicalPreset('traverse', 'SMCO5-5X4')!.config };
+    expect(pedagogicalFrame({ ...slide, offset: 9 }, .25).pose.center[1]).toBe(9);
+    expect(pedagogicalFrame({ ...slide, travel: 20 }, 0).pose.center[0]).toBe(-20);
+    const props = { settings: DEFAULT_EXPERIMENT, setSettings: () => {}, update: () => {}, busy: false, volume: null, failed: false, onSuggest: () => {}, onUndo: () => {}, canUndo: false };
+    const html = renderToStaticMarkup(<PedagogicalControls {...props} config={slide} frame={pedagogicalFrame(slide, 0)} />);
+    expect(html).not.toContain('Décalage latéral'); expect(html).toContain('6 mm'); expect(html).toContain('20 mm');
+    const imported = { ...DEFAULT_WORKSHOP, machine: base([6, 6, 0]) };
+    const h2 = renderToStaticMarkup(<PedagogicalControls {...props} config={imported} frame={pedagogicalFrame(imported, 0)} mounting={null} />);
+    expect(h2).toContain('pedagogical-cases-unavailable'); expect(h2).not.toContain('Traversée des lobes');
+  });
+  test('3) distances are collapsed lobe maxima with prudent/high labels; raw bound only in provenance', () => {
+    const c = { ...DEFAULT_WORKSHOP, geometry: 'D1' as const, magnetAngle: 0 };
+    const html = renderToStaticMarkup(<PedagogicalControls settings={DEFAULT_EXPERIMENT} setSettings={() => {}} update={() => {}} busy={false} volume={null} failed={false} onSuggest={() => {}} onUndo={() => {}} canUndo={false} config={c} frame={pedagogicalFrame(c, 0)} />);
+    expect(html).toContain('pedagogical-depth-datum');
+    if (html.includes('pedagogical-distances')) {
+      expect(html).toMatch(/<details[^>]*data-testid="pedagogical-distances"(?![^>]*open)/);
+      expect(html).toContain('Borne prudente'); expect(html).toContain('pas une portée dans la position affichée');
+      const main = html.slice(html.indexOf('pedagogical-distances'), html.indexOf('Provenance'));
+      expect(main).not.toMatch(/D[1-5] · (up|to)/);
+    }
+  });
+  test('4) same identifier with new boxes or re-registered clip changes the timeline key', async () => {
+    const env1 = [{ path: 'a', min: [0, 0, 0] as Vec3, max: [1, 1, 1] as Vec3 }], env2 = [{ path: 'a', min: [0, 0, 0] as Vec3, max: [2, 1, 1] as Vec3 }];
+    const asset = await load('demo-bras-anime.glb', 'builtin:arm-v1');
+    const g1 = animationGeneration('builtin:arm-v1', 1000);
+    const k1 = pedagogicalTimelineKey(DEFAULT_EXPERIMENT, DEFAULT_WORKSHOP, 'builtin:arm-v1|1000', env1, g1);
+    expect(pedagogicalTimelineKey(DEFAULT_EXPERIMENT, DEFAULT_WORKSHOP, 'builtin:arm-v1|1000', env2, g1)).not.toBe(k1);
+    cleanup.push(registerAnimation('builtin:arm-v1', 1000, asset.animation));
+    const g2 = animationGeneration('builtin:arm-v1', 1000); expect(g2).not.toBe(g1);
+    expect(pedagogicalTimelineKey(DEFAULT_EXPERIMENT, DEFAULT_WORKSHOP, 'builtin:arm-v1|1000', env1, g2)).not.toBe(k1);
   });
 });

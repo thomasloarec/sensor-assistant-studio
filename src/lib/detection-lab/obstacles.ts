@@ -33,7 +33,8 @@ export function magnetObb(diameterMm: number, lengthMm: number, pose: MagnetPose
   const xr = cross(seed, y), xl = Math.hypot(...xr), x: Vec3 = [xr[0] / xl, xr[1] / xl, xr[2] / xl];
   return { path: 'magnet', c: [...pose.center], a: [x, y, cross(x, y)], h: [diameterMm / 2, lengthMm / 2, diameterMm / 2] };
 }
-/** Form66 exploratory capsule [-7,+7] + r 1.1 enclosed in the reed frame. */
+/** Form66 exploratory capsule BODY (glass [-7,+7] mm + r 1.1 mm, i.e. 16.2 × Ø2.2 mm) enclosed in the reed frame.
+ *  This is the mechanical body, never the hypothetical magnetic effective length. */
 export const REED_CAPSULE_OBB: Obb = { path: 'reed', c: [0, 0, 0], a: [[1, 0, 0], [0, 1, 0], [0, 0, 1]], h: [8.1, 1.1, 1.1] };
 /** Paths of every part envelope possibly overlapped by `body`. */
 export function overlappedPaths(obstacles: readonly Obb[], body: Obb): string[] {
@@ -42,5 +43,11 @@ export function overlappedPaths(obstacles: readonly Obb[], body: Obb): string[] 
 export function magnetOverlaps(obstacles: readonly Obb[], diameterMm: number, lengthMm: number, pose: MagnetPose): boolean | null {
   const body = magnetObb(diameterMm, lengthMm, pose);
   if (!body) return null;
+  return obstacles.some(o => obbOverlap(o, body));
+}
+/** Reed capsule box displaced by a scenario shift (the reed moves by `shift` in its frame). */
+export const reedCapsuleAt = (shift: Vec3 = [0, 0, 0]): Obb => ({ ...REED_CAPSULE_OBB, c: [shift[0], shift[1], shift[2]] });
+export function reedOverlaps(obstacles: readonly Obb[], shift: Vec3 = [0, 0, 0]): boolean {
+  const body = reedCapsuleAt(shift);
   return obstacles.some(o => obbOverlap(o, body));
 }

@@ -34289,15 +34289,6 @@
     "Distanze indicative, calibrate sulla brochure Standex",
     "Standex カタログに合わせた参考距離"
   ],
-  "Borne documentaire prudente ; aucune portée pour une pose oblique ou importée.": [
-    "Conservative documentary bound; no range for an oblique or imported pose.",
-    "保守的文档界限；不用于倾斜或导入姿态的范围。",
-    "Vorsichtige Dokumentationsgrenze; keine Reichweite für schräge oder importierte Posen.",
-    "Límite documental prudente; sin alcance para posiciones oblicuas o importadas.",
-    "Консервативная документальная граница; не дальность для наклонной или импортированной позы.",
-    "Limite documentale prudente; nessuna portata per pose oblique o importate.",
-    "控えめな資料上の境界値です。斜めやインポートした姿勢の到達距離ではありません。"
-  ],
   "Correction D4 avant arrondi prudent ; volumes non corrigés.": [
     "D4 correction before conservative rounding; volumes are uncorrected.",
     "D4 修正在保守舍入前应用；体积未经修正。",
@@ -34361,15 +34352,6 @@
     "Clip assente o non supportato: stima non disponibile",
     "クリップがないか非対応のため推定できません"
   ],
-  "Collision avec les solides du montage non vérifiable : estimation indisponible": [
-    "Collision with mounting solids cannot be verified: estimate unavailable",
-    "无法验证与装配实体的碰撞：估计不可用",
-    "Kollision mit Montagekörpern nicht prüfbar: Schätzung nicht verfügbar",
-    "Colisión con sólidos del montaje no verificable: estimación no disponible",
-    "Столкновение с телами сборки не проверяемо: оценка недоступна",
-    "Collisione con i solidi del montaggio non verificabile: stima non disponibile",
-    "組立の立体との衝突を検証できないため推定できません"
-  ],
   "Profondeur minimale": [
     "Minimum depth",
     "最小深度",
@@ -34406,15 +34388,6 @@
     "Montaggio importato: riquadri di ingombro di {0} pezzi, stesse pose della scena; spazio libero stabilito solo in questa approssimazione.",
     "インポートした取付：{0} 部品の外接ボックス、シーンと同じ姿勢。クリアランスはこの近似の範囲でのみ確認。"
   ],
-  "Capsule reed dans l’enveloppe d’une pièce : logement à vérifier.": [
-    "Reed capsule inside a part envelope: housing to be checked.",
-    "干簧管胶囊位于零件包络内：需核实安装位。",
-    "Reed-Kapsel innerhalb der Hüllkurve eines Teils: Aufnahme prüfen.",
-    "Cápsula reed dentro de la envolvente de una pieza: alojamiento a verificar.",
-    "Капсула геркона внутри оболочки детали: посадочное место требует проверки.",
-    "Capsula reed all’interno dell’ingombro di un pezzo: alloggiamento da verificare.",
-    "リードカプセルが部品の包絡内：取付部を要確認。"
-  ],
   "Hachuré : chevauchement possible avec l’enveloppe d’une pièce": [
     "Hatched: possible overlap with a part envelope",
     "阴影：可能与零件包络重叠",
@@ -34423,5 +34396,86 @@
     "Штриховка: возможное перекрытие с оболочкой детали",
     "Tratteggiato: possibile sovrapposizione con l’ingombro di un pezzo",
     "ハッチング：部品の包絡と重なる可能性"
+  ],
+  "Chevauchement possible du reed, logement à vérifier : estimation indisponible": [
+    "Possible reed overlap, housing to be checked: estimate unavailable",
+    "干簧管可能重叠，需核实安装位：无法估计",
+    "Mögliche Überschneidung des Reed, Aufnahme prüfen: Schätzung nicht verfügbar",
+    "Posible solapamiento del reed, alojamiento a verificar: estimación no disponible",
+    "Возможное перекрытие геркона, посадочное место требует проверки: оценка недоступна",
+    "Possibile sovrapposizione del reed, alloggiamento da verificare: stima non disponibile",
+    "リードが重なる可能性あり、取付部を要確認：推定不可"
+  ],
+  "Pose nominale dégagée ; chevauchement possible du reed dans une hypothèse de position ±1 mm": [
+    "Nominal pose clear; possible reed overlap in a ±1 mm position hypothesis",
+    "名义位姿无干涉；在 ±1 mm 位置假设下干簧管可能重叠",
+    "Nominale Pose frei; mögliche Reed-Überschneidung in einer Positionshypothese ±1 mm",
+    "Pose nominal libre; posible solapamiento del reed en una hipótesis de posición ±1 mm",
+    "Номинальная поза свободна; возможное перекрытие геркона в гипотезе положения ±1 мм",
+    "Posa nominale libera; possibile sovrapposizione del reed in un’ipotesi di posizione ±1 mm",
+    "公称姿勢は干渉なし。±1 mm 位置仮定でリードが重なる可能性"
+  ],
+  "Hypothèses : robustesse magnétique ; un montage importé contrôle aussi le dégagement du reed déplacé de ±1 mm.": [
+    "Hypotheses: magnetic robustness; an imported mounting also checks clearance of the reed shifted by ±1 mm.",
+    "假设：磁稳健性；导入的装配还会检查偏移 ±1 mm 的干簧管间隙。",
+    "Hypothesen: magnetische Robustheit; eine importierte Montage prüft auch den Freiraum des um ±1 mm verschobenen Reed.",
+    "Hipótesis: robustez magnética; un montaje importado también comprueba la holgura del reed desplazado ±1 mm.",
+    "Гипотезы: магнитная устойчивость; импортированный монтаж также проверяет зазор геркона, смещённого на ±1 мм.",
+    "Ipotesi: robustezza magnetica; un montaggio importato verifica anche lo spazio libero del reed spostato di ±1 mm.",
+    "仮定：磁気的ロバスト性。インポートした取付では ±1 mm ずらしたリードのクリアランスも確認。"
+  ],
+  "Profondeur : centre de l’aimant → repère du reed. Les distances de brochure se mesurent de la face de l’aimant au repère : pas de comparaison directe au millimètre.": [
+    "Depth: magnet centre → reed datum. Brochure distances are measured from the magnet face to the datum: no direct millimetre comparison.",
+    "深度：磁铁中心 → 干簧管基准。手册距离从磁铁端面量到基准：不能逐毫米直接比较。",
+    "Tiefe: Magnetmitte → Reed-Bezugspunkt. Broschürenabstände werden von der Magnetfläche zum Bezugspunkt gemessen: kein direkter Millimetervergleich.",
+    "Profundidad: centro del imán → referencia del reed. Las distancias del folleto se miden desde la cara del imán a la referencia: sin comparación directa al milímetro.",
+    "Глубина: центр магнита → опорная точка геркона. Расстояния брошюры измеряются от торца магнита до опорной точки: прямое сравнение по миллиметрам невозможно.",
+    "Profondità: centro del magnete → riferimento del reed. Le distanze della brochure si misurano dalla faccia del magnete al riferimento: nessun confronto diretto al millimetro.",
+    "深さ：磁石中心 → リード基準点。カタログ距離は磁石端面から基準点まで：ミリ単位の直接比較は不可。"
+  ],
+  "Cas pédagogiques réservés à l’atelier libre : un montage importé garde ses propres poses.": [
+    "Teaching cases are for the free workshop only: an imported mounting keeps its own poses.",
+    "教学案例仅用于自由工作台：导入的装配保留其自身位姿。",
+    "Lehrfälle nur für die freie Werkstatt: eine importierte Montage behält ihre eigenen Posen.",
+    "Casos pedagógicos solo para el taller libre: un montaje importado conserva sus propias poses.",
+    "Учебные случаи только для свободной мастерской: импортированный монтаж сохраняет свои позы.",
+    "Casi didattici riservati all’officina libera: un montaggio importato mantiene le proprie pose.",
+    "教育用ケースは自由ワークショップ専用：インポートした取付は独自の姿勢を保持。"
+  ],
+  "Maximum du lobe documenté, pas une portée dans la position affichée.": [
+    "Documented lobe maximum, not a range at the displayed position.",
+    "文档记载的波瓣最大值，并非当前位置的作用距离。",
+    "Dokumentiertes Keulenmaximum, keine Reichweite an der angezeigten Position.",
+    "Máximo del lóbulo documentado, no un alcance en la posición mostrada.",
+    "Документированный максимум лепестка, а не дальность в показанном положении.",
+    "Massimo del lobo documentato, non una portata nella posizione mostrata.",
+    "文書化されたローブの最大値であり、表示位置での到達距離ではない。"
+  ],
+  "Borne prudente": [
+    "Prudent bound",
+    "保守界限",
+    "Vorsichtige Grenze",
+    "Límite prudente",
+    "Осторожная граница",
+    "Limite prudente",
+    "慎重な限界"
+  ],
+  "Borne haute indicative": [
+    "Indicative upper bound",
+    "参考上限",
+    "Indikative Obergrenze",
+    "Límite superior indicativo",
+    "Ориентировочная верхняя граница",
+    "Limite superiore indicativo",
+    "参考上限"
+  ],
+  "Provenance": [
+    "Provenance",
+    "来源",
+    "Herkunft",
+    "Procedencia",
+    "Происхождение",
+    "Provenienza",
+    "出典"
   ]
 }
