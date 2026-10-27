@@ -85,3 +85,13 @@ Deux tests supplémentaires montent les vrais **PedagogicalControls**, actionnen
 Navigateur isolé du vrai MagneticWorkshop : curseur cycle50%, profondeur6 SmCo puis16 N45, x0→x8, états défavorable→favorable dans les deux cas ; **curseur reste50**. Captures revues `depth_SMCO5-5X4.png`, `depth_N45-4X19.png` sous `/tmp/browser/pedagogical/`. Zéro pageerror/débordement. La capture N45 est prise pendant recalcul des volumes, pas revendiquée comme mesh final. Aucun accès staff contourné ; la recette authentifiée demeure celle du propriétaire.
 
 Vérification finale après toutes éditions code : **1965 tests pass /0fail**,126fichiers,143749assertions,122.90s. Tests revue+complément :13pass/332assertions. Inventaire8langues TOTAL0 ; une clé traduite×7langues. Types/compilation plateforme **build OK11:45:57UTC**. Scans couleurs/classes interdits vides ; exceptions hex/durées préexistantes inchangées. Aucun backend, publication, recalibration ni changement des contrôles de consommation.
+
+## Montage importé (base 3c45a4f8)
+
+- Un montage importé n'est plus masqué : point, volume, coupe et chronologie sont calculés par `evaluatePose` à partir des boîtes englobantes (OBB) de CHAQUE pièce du fichier réellement chargé (même `assetKey`/échelle), posées par `pointAt`/`cycleU`/`partDelta` au même instant que la scène, clips rigides compris.
+- Le corps COMPLET du pilote (N45 Ø4×19, SmCo Ø5×4) est testé ; la capsule Form66 est signalée si elle est dans une enveloppe. Dégagé → verdict physique ; recouvrement → « chevauchement possible, à vérifier » (indisponible, cause `overlap`), jamais une collision certaine. Une boîte ne représente ni surface ni trou.
+- Sans fichier chargé, clip absent ou mouvement non confirmé : indisponible (`asset`/`clip`/`motion`). Le JSON reste mémoire ; à la reprise, la géométrie est recalculée depuis le GLB, aucun résultat ancien n'est réutilisé.
+- Chronologie importée : 513 instants préparés dans l'onglet, transitions jamais certifiées, pas d'hystérésis inventée. Volume ±24 mm : ~3–3,6 s en worker annulable.
+- Attaches/alignement en mode pédagogique utilisent les corps pilotes (non sérialisés), jamais les dimensions catalogue.
+- Preuves : `tests/pedagogical-imported-2026-10-27.test.tsx` (bras animé réel avec attache mobile à 25 %, reprise + rechargement GLB identiques ; paroi réelle ; unités 1000/1 ; N45 long traversant une boîte ; trou = chevauchement possible ; coupe/volume/point identiques ; polarité ; rotation rigide globale ; états absents/périmés). Suite complète 1 974 tests, types, build, i18n et charte OK.
+- Non vérifié : recette staff authentifiée dans le navigateur (réservée à Thomas), solides exacts (au-delà des boîtes), matériaux ferromagnétiques du fichier (réglage manuel seulement).
