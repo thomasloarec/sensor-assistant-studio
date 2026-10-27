@@ -20,6 +20,16 @@ L’action « Comprendre les zones de détection » ouvre une exploration sépar
 
 ## Résultats exécutés
 
+### Complément mobile signalé à 15:19 UTC
+
+- Thomas rapporte sur Chrome client racine 390×844 : grille 727 px / scrollH857, commandes 26 px / scrollH1061, chronologie interceptant Explorer. Ce sont ses mesures, non celles de l'agent.
+- Correction limitée au client embedded : classe de scope explicite, grille mobile à deux rangées intrinsèques `max-content` avec un seul défilement vertical ; main/commandes non compressés et sans défilement imbriqué. Sur bureau, main défile si nécessaire et ses enfants ne rétrécissent pas. Badge couple mobile borné et revenant à la ligne. Physique, produits, accès, traductions et backend inchangés.
+- Régression câble existante réexécutée : DEFAULT_WORKSHOP + clone builtin:arm-v1 + cableRouting → Pointer le câble → Comprendre les zones de détection : panneau absent, zéro callback, montage/outil/câble restaurés au retour. Le garde `!exploring && cableRouting && tool === "cable"` est déjà présent dans cette préversion ; aucune seconde implémentation ajoutée.
+- Tests ciblés client/coquille/i18n : **79 pass, 0 fail, 491 assertions**. Suite entière après correction : **2 028 pass, 0 fail, 145 737 assertions, 130 fichiers**, 134,05 s. Inventaire i18n : **TOTAL 0**. Scans : **0/6/6/0**, mêmes exceptions préexistantes documentées ci-dessous. **103 empreintes inchangées**. Compilation automatique : **build OK à 15:20:43 UTC** ; aucun build/typecheck manuel exécuté.
+- Navigateur racine de l'agent : « Accès réservé — Vérification de l'accès… ». Aucune garde modifiée. **Pas de recette réelle client authenticated réalisée par l'agent.**
+- Contrôle Playwright distinct, isolé et non connecté : reproduction HTML de la coquille avec les CSS réelles compilées et contenu long, pas Workshop/DesignSpace ni WebGL. À **390×844**, grille 739,52 px / scrollH1297 ; main 698,69 px ; commandes 573,94 px, placées après main. Défilement puis clic Explorer réussi, largeur document 390 et titre sans débordement (clientWidth=scrollWidth=213). À **1280×900**, colonnes 840,11 px ; clic réussi, largeur document 1280. Captures inspectées `/tmp/browser/client-mobile/layout-{390,1280}.png`. Ces mesures prouvent uniquement le comportement de cette coquille isolée, pas la recette visuelle de l'atelier client réel.
+- À reproduire par Thomas : racine → Commencer → étape 2 → Tester ce couple, en 390×844 puis 1280×900 ; défiler jusqu'à Comprendre les zones de détection, vérifier clic reçu, contexte générique et chronologie séparés, puis retour produit. Refaire avec outil câble actif et un montage ; aucun panneau ni callback câble durant exploration, restauration au retour. Vérifier les références longues de l'en-tête et les huit langues.
+
 | Contrôle | Résultat et preuve |
 | --- | --- |
 | Tests client + i18n ciblés | **42 pass, 0 fail, 370 assertions** (25 client, 17 i18n) ; export/reprise réel via JSON, rendu ResultView et rapport, Workshop monté en outil câble |

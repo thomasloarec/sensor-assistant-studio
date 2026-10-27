@@ -3172,6 +3172,32 @@
    reed et lobes ; elle est masquée à toutes les tailles, la légende complète reste sous la scène. */
 .mw-pedagogical .mw-ped-body-label { display: none; }
 .mw-ped-cut { min-height: 400px; }
+/* Client embedded : desktop columns scroll independently; on small screens
+   the complete scene/timeline and controls share one intrinsic-height flow. */
+.mw-client-pedagogical.mw-embedded .mw-main { overflow-y: auto; }
+.mw-client-pedagogical.mw-embedded .mw-main > * { flex-shrink: 0; }
 @media (max-width: 1023px) {
   .mw-stage.mw-pedagogical .mw-canvas { height: auto; min-height: 460px; max-height: none; }
+  .mw-client-pedagogical.mw-embedded .mw-stage-grid {
+    grid-template-rows: max-content max-content;
+    align-content: start;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+  .mw-client-pedagogical.mw-embedded .mw-main,
+  .mw-client-pedagogical.mw-embedded .mw-controls {
+    overflow: visible;
+    min-height: auto;
+  }
+  .workspace-panel-shell:has(.mw-client-pedagogical) .workspace-panel-heading > span {
+    min-width: 0;
+    max-width: 100%;
+    flex-shrink: 1;
+    flex-wrap: wrap;
+  }
+  .workspace-panel-shell:has(.mw-client-pedagogical) .project-state-badge {
+    min-width: 0;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+  }
 }
