@@ -6,7 +6,7 @@ import { SENSOR_CATALOG, sensorById } from './sensor-catalog';
 import { BARE_MAGNETS, packagedMagnet, ACTIVATION_BROCHURE } from './magnet-catalog';
 import { guideRangesFor } from './activation-guide';
 import { pedagogicalFrame, type PedagogicalFrame } from './pedagogical-poses';
-import { rotate } from './machine-assembly';
+import { rotate, componentPose, cycleU } from './machine-assembly';
 import type { Vec3 } from './magnetic-workshop';
 import type { WorkshopConfig } from './magnetic-workshop';
 import { PILOT_MAGNETS, type PilotMagnet } from '../detection-lab/magnets';
@@ -61,7 +61,11 @@ export function catalogueFrame(c:WorkshopConfig,t:number):PedagogicalFrame{
  const f=pedagogicalFrame(c,t);
  // The scene already rotates the sensor body about local Y. Apply the same
  // orientation to the estimated reed, never brochure up/to datum offsets.
- if(c.machine)return f;
+ if(c.machine){
+  const magnet=componentPose(c.machine,'magnet',cycleU(c.machine,t)),axis=magnet.transform([c.polarity,0,0]);
+  const dot=(a:Vec3,b:Vec3)=>a.reduce((sum,n,i)=>sum+n*(b[i]??0),0);
+  return {...f,world:{...f.world,axis},pose:{...f.pose,axis:f.basis.map(v=>dot(v,axis)) as Vec3}};
+ }
  const u=t<=.5?t*2:(1-t)*2,depth=c.start+(c.end-c.start)*u;
  const center:Vec3=c.motion==='slide'?[-c.travel+2*c.travel*u,0,c.offset]:c.motion==='pivot'?[Math.sin(c.span*(u-.5)*Math.PI/180)*c.offset,0,Math.cos(c.span*(u-.5)*Math.PI/180)*c.offset]:c.geometry==='D3'?[depth,0,c.lateralShift]:[c.lateralShift,0,depth];
  const angle=c.magnetAngle+(c.motion==='pivot'?c.span*(u-.5):0);
@@ -72,13 +76,12 @@ export function catalogueFrame(c:WorkshopConfig,t:number):PedagogicalFrame{
  const dot=(a:Vec3,b:Vec3)=>a.reduce((sum,n,i)=>sum+n*(b[i]??0),0),d=world.center.map((n,i)=>n-(f.origin[i]??0)) as Vec3;
  return {...f,world,basis,pose:{center:basis.map(v=>dot(v,d)) as Vec3,axis:basis.map(v=>dot(v,world.axis)) as Vec3}};
 }
-function kernelPose(c:WorkshopConfig,pose:MagnetPose):MagnetPose{const m=catalogueModel(c);return {center:pose.center.map(n=>n/m.scale) as Vec3,axis:pose.axis};}
 export function catalogueBodyObb(c:WorkshopConfig):Obb{return {path:'sensor-body',c:[0,0,0],a:[[1,0,0],[0,1,0],[0,0,1]],h:sensorById(c.sensorId).body.map(n=>n/2) as Vec3};}
 export function cataloguePlacement(c:WorkshopConfig,pose:MagnetPose,obstacles:readonly Obb[]=[],model=catalogueModel(c),nominalOnly=false):PlacementEvidence{
  const m=model,p={center:pose.center.map(n=>n/m.scale) as Vec3,axis:pose.axis},th=classThresholds(m.className);
  const unavailable=(cause:PlacementEvidence['cause']):PlacementEvidence=>({state:'unavailable',cause,nominal:null,scenarios:[],zone:0,partial:false});
  if(!th)return unavailable('missing');
- const realMagnet=magnetObb(m.magnetBody[1],m.magnetBody[0],pose);
+ const realMagnet=magnetObb(Math.max(m.magnetBody[1],m.magnetBody[2]),m.magnetBody[0],pose);
  if(!realMagnet)return unavailable('domain');
  if(obbOverlap(realMagnet,catalogueBodyObb(c))||obstacles.some(o=>obbOverlap(realMagnet,o)))return unavailable('overlap');
  const scenarios=experimentalScenarios(!nominalOnly).map(s=>({id:s.id,result:evaluatePose(m.magnet,p,s,'B')}));
