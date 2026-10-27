@@ -1,10 +1,11 @@
 # Feuille de route — lot des 7 correctifs (base 12be3e3d)
 
 ## Intégration pédagogique client autorisée — 27 octobre 2026
-- [ ] Raccorder l’atelier existant étape 2 au couple du dossier, sans repli catalogue ni transfert.
-- [ ] Exploration Form66 explicite et isolée, quatre états/circuit cohérents, sources et limites.
-- [ ] Tests comportementaux, recette racine bureau/mobile, hashes figés, i18n/scans et rapport exact.
-- [ ] Préversion uniquement, respecter le contrôle de consommation 20 crédits.
+- [x] Raccorder l’atelier existant étape 2 au couple du dossier, sans repli catalogue ni transfert.
+- [x] Exploration Form66 explicite et isolée, quatre états/circuit cohérents, sources et limites.
+- [x] Clôture a7778c80 : 23 tests client / 2 026 tests complets verts, types/compilation automatiques OK, 103 empreintes identiques, i18n/scans et rapport docs/qa-client-pedagogical-2026-10-27.md.
+- [ ] Recette racine bureau/mobile : Thomas la réalise dans sa session ; aucune garde d’accès modifiée.
+- [x] Préversion uniquement, respecter le contrôle de consommation 20 crédits (8 déjà consommés, 12 restants autorisés pour la clôture).
 
 ## Géométries MK14 / MK18 — 26 octobre 2026
 - [x] MK14 cylindrique noir, deux fils bleus sans gaine ; MK18 un seul méplat circulaire partagé.

@@ -1,0 +1,107 @@
+# QA — intégration pédagogique client, 27 octobre 2026
+
+## Livraison et périmètre
+
+- Intégration examinée : `a7778c80f82645b801759213e8bf9a23ae6bdcaa`, base scientifique `9488f7a379d0f1ecf85ae1bd68652e53a037cc16`.
+- Commit des tests complétés observé avant ce rapport : `90c2633a344a4566913bcfa53805bef79224bd75`. Le commit automatique de ce rapport est nécessairement postérieur ; il est à lire dans l’historique, sans fabriquer un SHA autoréférent.
+- Préversion racine : https://id-preview--9aff67a3-e0d0-4a40-95e1-da809f7ff333.lovable.app/
+- Aucun appel de publication, migration, écriture de données réelles, changement d’authentification ou contournement d’accès. Thomas prend en charge la recette navigateur dans sa session (instruction du 27 octobre à 15:02 UTC).
+- Cette clôture ajoute une régression comportementale et ce rapport ; elle ne change ni le moteur ni l’interface.
+
+## Ce qui fonctionne et ce que cela ne prétend pas faire
+
+Le même `MagneticWorkshop` est raccordé à l’étape 2 du `DesignSpace` client. Le retour pédagogique est versionné, séparé de `testedPairs`, limité à la mémoire de l’onglet, et marqué `qualified: false`. Le couple produit est conservé : MK04/M04 ne devient pas N45 par similitude de matériau ou dimensions. La scène normale et l’audit/calibration restent distincts ; aucune garde staff n’a changé.
+
+**Aucun boîtier nommé n’a actuellement d’adaptateur reed-66 par face suffisamment sourcé.** L’estimation attribuée au produit est donc indisponible, même avec un aimant pilote. Il manque : variante reed 66 sourcée, orientation du reed dans le boîtier et repères documentaires par face permettant un adaptateur explicite. Les orientations de présentation, cotes extérieures et décalages scalaires de brochure ne mesurent pas cette intégration interne.
+
+Sources déjà référencées par la frontière : `docs/detection-lab/RAPPORT_COHERENCE_2026-10-26.md` (MK03/MK13), `docs/detection-lab-pass3/RAPPORT_PASS3_2026-10-27.md` (datums documentaires). Aucune nouvelle position interne, nuance magnétique ni qualification inventée.
+
+L’action « Explorer Form66 sans modifier mon produit » ouvre une exploration séparée dans le même atelier. Seuls SMCO5-5X4 et N45-4X19 sont pilotes caractérisés. B–F sont évaluables dans ce modèle, sans validation 3D catalogue ; A reste partielle (ATmax 10, estimation quatre états indisponible faute de deuxième borne), G hors domaine. Un contact 1A n’est pas une classe AT. F conserve ses limites documentaires. Les classes F/G sont testées dans les réglages exploratoires, **pas annoncées comme nouvelles variantes acceptées dans le dossier normal** : le parseur historique du dossier est inchangé.
+
+## Résultats exécutés
+
+| Contrôle | Résultat et preuve |
+| --- | --- |
+| Nouvelles régressions client, `bun test tests/client-pedagogical-2026-10-27.test.tsx` | **23 pass, 0 fail, 114 assertions**, incluant deux tests du vrai Workshop monté sous Happy DOM |
+| Suite entière finale, `bun test tests/` | **2 026 pass, 0 fail, 145 650 assertions, 130 fichiers**, 130,79 s |
+| Types automatiques de la plateforme | `tsgo -b --noEmit --incremental`, **exit 0**, 15:07:38 UTC ; `/tmp/exec-logs/d835f21c-189f-488b-b127-10857bfb0558.log` |
+| Compilation automatique de la plateforme | **build OK**, 15:06:57 et 15:07:38 UTC ; `/tmp/observability/build-errors.log` ; aucun build/typecheck manuel relancé |
+| Inventaire, `bun scripts/i18n-inventory.ts` | **TOTAL 0** : untranslated 0, missing 0, code-translated 0, frozen 0 |
+| Dictionnaire | **3 876 entrées**, sept traductions non vides par entrée ; FR, EN, ZH, DE, ES, RU, IT, JA ; tests d’inventaire inclus dans la suite entière |
+| Diff | `git diff --check` sans erreur |
+| Empreintes scientifiques et NDA | **103 fichiers identiques à la base**, zéro changement ; manifeste adjacent détaillé avant/après |
+
+Les journaux `/tmp` sont des preuves locales de l’exécution, pas des fichiers livrés ni des URL durables. Le manifeste d’empreintes est conservé dans le dépôt.
+
+### Scans de charte, résultats bruts et exceptions
+
+Les quatre commandes exactes d’`AGENTS.md` ont été exécutées, sans ignorer les résultats :
+
+1. Couleurs Tailwind brutes dans `src/` : **0**.
+2. Hex dans routes/leadmagnet TSX : **6** préexistants, aucun ajouté par le lot. Un `theme-color` `#254061` dans `__root.tsx` (exception explicite). Cinq couleurs de rendu Three.js dans `connector-preview-scene.tsx` (clearColor et matériaux), pas des couleurs d’interface ; fichier inchangé.
+3. Durées numériques/cubic-bezier hors `src/styles.css` : **6** préexistants dans les primitives UI : accordion 1, input-otp 1, navigation-menu 1, sidebar 3. État des primitives non migrées accepté par la charte ; aucun de ces fichiers changé ou nouvellement monté par ce lot.
+4. Bordures/champs/text-xs hors primitives : **0**.
+
+Ne pas présenter les scans bruts 2/3 comme vides. Le lot n’ajoute aucune occurrence ; charte client documentée dans `docs/design-language.md`, sans nouveau jeton.
+
+## Couverture exacte
+
+### Tests client nouveaux
+
+- Identité exacte M04, M13, 4003004003 et des deux pilotes ; boîtier inconnu donc état indisponible, jamais faux favorable.
+- Contact 1A distinct d’une classe AT ; exploration ne modifie pas le choix original.
+- Deux pilotes × A–G dans l’exploration ; causes partial/missing pour A/G.
+- Même profondeur et instant : centré perpendiculaire défavorable, décalé favorable sous les neuf hypothèses ; inversion N/S conserve l’état.
+- Workshop réellement monté : action explicite, changement de pilote exploratoire, retour Résultat attribué à MK04/M04 et son câble 500 mm ; aucun circuit électrique binaire dans le conteneur monté ; aucun brouillon GENERIC transmis.
+- Régression de clôture : retour explicite au dossier, fermeture par démontage puis réouverture, pose latérale 3 mm/rotation 25° et câble 750 mm préservés ; changement de l’aimant produit vers N45 puis de classe B vers C, nouvelles clés de configuration et retours toujours non qualifiants.
+
+Ces tests montent Workshop directement : **ils ne constituent pas une recette de la racine ou un test du parent DesignSpace → ResultView**. Les callbacks sont témoins de test. Le contrôle `configKey` et l’effacement au changement de configuration dans DesignSpace ont été inspectés, pas exercés de bout en bout dans le navigateur. Le test de changements de couple prouve de nouveaux résultats au niveau Workshop, pas le rendu du résultat périmé dans son parent.
+
+### Régressions partagées existantes (suite entière verte)
+
+- `pedagogical-diagnosis-2026-10-27.test.tsx` : causes cumulables, nominal déjà favorable expliqué par les hypothèses, constats limités aux essais, remède vérifié dans les libertés déclarées, neuf hypothèses, quatre états/circuit du Workshop, pause sans ancienne cause, légendes de coupe hors SVG.
+- `pedagogical-review-2026-10-27.test.tsx` : arrondi prudent D4 après correction documentaire, reproduction CSV source, refus de profils/intégrations inconnus, clip GLB réel et poses, chronologie non certifiée.
+- `pedagogical-imported-2026-10-27.test.tsx` : OBB par pièce et corps pilote complet, chevauchement possible pas collision certaine, absence d’asset/clip/mouvement confirmé, même pose pour coupe/point/volume.
+- `pedagogical-reopen-pick-2026-10-27.test.tsx` : GLB réellement rechargé, poses/instant 25 % conservés et navigation Installation → Essai. Scène remplacée par un témoin ; ce n’est pas une preuve de rendu WebGL client.
+
+Ces tests partagés portent sur le moteur ou l’atelier pilote/staff. Ils ne sont pas rebaptisés tests navigateur client. Les solides exacts, matériaux ferromagnétiques du GLB, convergence des volumes et traversées rapides restent non caractérisés ; aucune interpolation angulaire ou optimisation nouvelle.
+
+## Empreintes
+
+Manifeste : `qa-client-pedagogical-2026-10-27-empreintes.json`, 103 chemins triés ; SHA-256 agrégé des lignes UTF-8 `chemin + NUL + hash-après + LF` :
+
+`ec69e9b335a0e61e85d60526de51ecbda77df539e2820d517f18d86aa4707621`
+
+| Fichier clé | SHA-256 identique avant/après |
+| --- | --- |
+| `src/data/detection-lab/workshop-profile.json` | `bb83d53439847176e699e19aac644bdab8c330bb89f5de001ccf45223e421c91` |
+| `src/lib/detection-lab/workshop-experiment.ts` | `196100d84f0797e2556ec8fb241dc51667e5847761883c80e47c2d55d9a2e1f5` |
+| NDA original | `6e25345f1e83e92630258774d27a451d65d615cdd9f41a5331dae75c4072740b` |
+
+Le manifeste couvre tous les fichiers suivis à la base dans `src/lib/detection-lab`, `src/data/detection-lab`, `docs/detection-lab`, `docs/detection-lab-pass2`, `docs/detection-lab-pass3`, plus `pedagogical-poses.ts`, `pedagogical-envelopes.ts` et le NDA original. Les guards staff, routes, serveur existant et migrations n’ont pas de diff avec la base d’intégration.
+
+## Fichiers du lot
+
+- Frontière : `src/lib/standex/client-pedagogical.ts`.
+- Atelier : `workshop.tsx`, `client-pedagogical-controls.tsx`, `scene.tsx`, `machine-scene.tsx` sous `src/components/standex/workshop/`.
+- Parcours : `src/components/leadmagnet/design-space.tsx`, `result-view.tsx`.
+- Langues/tests : `src/lib/i18n/messages.json`, `tests/client-pedagogical-2026-10-27.test.tsx`, `tests/i18n-coverage.test.ts`.
+- Règles/docs : `AGENTS.md`, AGENTS imbriqués leadmagnet/workshop, `docs/design-language.md`, `roadmap.md`, présent rapport et manifeste.
+
+## Recette navigateur confiée à Thomas — non exécutée par l’agent
+
+Partir de la **racine de préversion**, jamais `/internal`, sur bureau puis Chrome 390×844 :
+
+1. Démarrer le nouveau parcours, aller à l’étape 2 et ouvrir l’atelier existant. Contrôler quatre étapes, absence de l’ancien chat, couple/variante/classe/câble du dossier conservés.
+2. MK04/M04 par défaut : indisponibilité produit explicite, corps réel opaque conservé, pas de pilote N45 implicite ni lampe/contact binaire contradictoire. Ouvrir Sources et limites : plages documentaires distinctes des poses.
+3. Déclencher l’exploration Form66 ; contrôler sa légende indépendante. Essayer SmCo puis N45, B–F, A partielle et G hors domaine. Changer les choix sans ancien volume/verdict ; lancer puis mettre en pause sans ancienne cause/remède.
+4. À profondeur 6 mm SmCo ou 16 mm N45, même instant, comparer centré perpendiculaire et décalé 8 mm ; inverser N/S. Vérifier causes/constats limités aux essais et remède seulement confirmé dans les libertés déclarées.
+5. Revenir au couple d’origine, fermer/réouvrir puis Résultat. Vérifier pose, produit et câble inchangés, indisponibilité produit et aucune qualification générique. Changer couple/classe puis contrôler qu’un ancien résultat ne s’affiche plus.
+6. Importer un GLB volontairement, conserver attaches et mouvements ; tester mouvement non confirmé puis confirmé, fichier absent à la reprise. Aucune fausse estimation favorable. Installation → Essai conserve l’instant ; ne pas envoyer le fichier.
+7. Bureau/mobile : scène, chronologie, commandes et coupe accessibles ; légendes complètes (projection hors-plan/hachures), N/S visibles, aucune bulle redondante recouvrant reed/lobes, aucun débordement horizontal. Vérifier bascule de langue et mouvement réduit.
+
+**Statut : vérifications automatisées terminées ; recette visuelle client à confirmer par Thomas.** Aucun résultat navigateur authentifié, écran mobile ou rendu WebGL final n’est prétendu vérifié ici.
+
+## Consommation
+
+Le plafond autorisé reste 20 crédits pour le lot : 8 déclarés pour le premier tour, 12 disponibles pour cette clôture. Contrôle existant appelé au début puis en cours : compteur de période 1453 puis 1458 (+5 constatés à ce contrôle, pas coût final garanti). Aucun contournement de pause. Le coût facturé final se lit dans le contrôle existant ; ces valeurs ne sont pas une limite de facturation configurée côté serveur.
