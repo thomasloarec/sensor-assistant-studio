@@ -116,7 +116,7 @@ Pour chaque famille, première ligne C-66 si présente, sinon première ligne di
 
 ## Vérifications et couverture restante
 
-52tests ciblés verts /588assertions (8 nouveaux tests catalogue,27client,17i18n), dont chaque couple proposé possède des zones dans le domaine affiché. Suite avant dernier ajustement proxy :2037tests/131fichiers verts. Inventaire huit langues0manque,3888entrées ; scans0/6/6/0 (exceptions UI/Three préexistantes).103empreintes scientifiques/NDA inchangées. Compilation automatique OK15:53:56UTC. Aucun build/typecheck manuel.
+52tests ciblés verts /588assertions (8 nouveaux tests catalogue,27client,17i18n), dont chaque couple proposé possède des zones dans le domaine affiché. Suite finale :2038tests/131fichiers verts,146162assertions,139,30s. Inventaire huit langues0manque,3888entrées ; scans0/6/6/0 (exceptions UI/Three préexistantes).103empreintes scientifiques/NDA inchangées. Compilation automatique OK15:54:26UTC. Aucun build/typecheck manuel.
 
 Fonctionnel : profils pour chaque entrée, bodies/identités conservés, adaptation sur produit dans atelier existant, volumes worker bornés au domaine±24mm avec résolution centrale0,25mm, coupe/chronologie même couche, annulation worker et clé versionnée avec configuration/axe exact/enveloppes. Trace ajoute hypothèses/prior/progress nonqualifiants ; reprise recalcule sans croire un verdict importé. Fix PCB et exploration séparée conservés.
 
