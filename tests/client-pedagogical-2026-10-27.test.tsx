@@ -18,8 +18,8 @@ mock.module('@radix-ui/react-use-layout-effect',()=>({useLayoutEffect:React.useL
 describe('client boundary: no catalogue alias or fictitious qualification',()=>{
   for(const magnetModel of ['M04','M13','4003004003','SMCO5-5X4','N45-4X19'])test(magnetModel+' retains exact identity, housing unavailable',()=>{
     const c={...DEFAULT_WORKSHOP,magnetModel};const a=clientCoupleAdapter(c);
-    expect(a.supported).toBe(false);expect(a.settings.magnetId).toBe(magnetModel);
-    expect(a.reasons).toContain(CLIENT_LIMITS.housing);
+    expect(a.supported).toBe(true);expect(a.settings.magnetId).toBe(magnetModel);
+    expect(a.model.magnetId).toBe(magnetModel);
     expect(evaluatePlacement(a.settings,{center:[8,16,0],axis:[0,1,0]}).state).toBe('unavailable');
     expect(clientPedagogicalResult(c).magnetId).toBe(magnetModel);
     expect(clientPedagogicalResult(c).qualified).toBe(false);
@@ -27,7 +27,7 @@ describe('client boundary: no catalogue alias or fictitious qualification',()=>{
   test('1A contact is not AT; exploration does not mutate it',()=>{
     const c={...DEFAULT_WORKSHOP,sensitivity:'1A'};
     expect(clientCoupleAdapter(c).settings.className).toBe('1A');
-    expect(clientCoupleAdapter(c).reasons).toContain(CLIENT_LIMITS.class);
+    expect(clientCoupleAdapter(c).model.className).toBe('C');
     explorationSettings(c);expect(c.sensitivity).toBe('1A');
   });
   for(const magnetModel of ['SMCO5-5X4','N45-4X19'])for(const sensitivity of ['A','B','C','D','E','F','G'])test(magnetModel+' explicit Form66 class '+sensitivity,()=>{

@@ -6,7 +6,8 @@ import { SENSOR_CATALOG, sensorById } from './sensor-catalog';
 import { BARE_MAGNETS, packagedMagnet, ACTIVATION_BROCHURE } from './magnet-catalog';
 import { guideRangesFor } from './activation-guide';
 import { pedagogicalFrame, type PedagogicalFrame } from './pedagogical-poses';
-import { rotate, type Vec3 } from './machine-assembly';
+import { rotate } from './machine-assembly';
+import type { Vec3 } from './magnetic-workshop';
 import type { WorkshopConfig } from './magnetic-workshop';
 import { PILOT_MAGNETS, type PilotMagnet } from '../detection-lab/magnets';
 import { evaluatePose, type MagnetPose } from '../detection-lab/pose';
@@ -61,9 +62,15 @@ export function catalogueFrame(c:WorkshopConfig,t:number):PedagogicalFrame{
  // The scene already rotates the sensor body about local Y. Apply the same
  // orientation to the estimated reed, never brochure up/to datum offsets.
  if(c.machine)return f;
+ const u=t<=.5?t*2:(1-t)*2,depth=c.start+(c.end-c.start)*u;
+ const center:Vec3=c.motion==='slide'?[-c.travel+2*c.travel*u,0,c.offset]:c.motion==='pivot'?[Math.sin(c.span*(u-.5)*Math.PI/180)*c.offset,0,Math.cos(c.span*(u-.5)*Math.PI/180)*c.offset]:c.geometry==='D3'?[depth,0,c.lateralShift]:[c.lateralShift,0,depth];
+ const angle=c.magnetAngle+(c.motion==='pivot'?c.span*(u-.5):0);
+ const axis=rotate([c.polarity,0,0],[0,-angle,c.magnetTilt]);
+ const transform=(v:Vec3)=>f.basis[0].map((_,j)=>(f.basis[0][j]??0)*v[0]+(f.basis[1][j]??0)*v[1]+(f.basis[2][j]??0)*v[2]) as Vec3;
+ const world={center:transform(center).map((n,i)=>n+(f.origin[i]??0)) as Vec3,axis:transform(axis)};
  const basis=f.basis.map((_,i)=>{const v=rotate(([ [1,0,0],[0,1,0],[0,0,1] ][i]??[1,0,0]) as Vec3,[0,-c.sensorAngle,0]);return f.basis[0].map((__,j)=>(f.basis[0][j]??0)*v[0]+(f.basis[1][j]??0)*v[1]+(f.basis[2][j]??0)*v[2]) as Vec3;}) as [Vec3,Vec3,Vec3];
- const dot=(a:Vec3,b:Vec3)=>a.reduce((sum,n,i)=>sum+n*(b[i]??0),0),d=f.world.center.map((n,i)=>n-(f.origin[i]??0)) as Vec3;
- return {...f,basis,pose:{center:basis.map(v=>dot(v,d)) as Vec3,axis:basis.map(v=>dot(v,f.world.axis)) as Vec3}};
+ const dot=(a:Vec3,b:Vec3)=>a.reduce((sum,n,i)=>sum+n*(b[i]??0),0),d=world.center.map((n,i)=>n-(f.origin[i]??0)) as Vec3;
+ return {...f,world,basis,pose:{center:basis.map(v=>dot(v,d)) as Vec3,axis:basis.map(v=>dot(v,world.axis)) as Vec3}};
 }
 function kernelPose(c:WorkshopConfig,pose:MagnetPose):MagnetPose{const m=catalogueModel(c);return {center:pose.center.map(n=>n/m.scale) as Vec3,axis:pose.axis};}
 export function catalogueBodyObb(c:WorkshopConfig):Obb{return {path:'sensor-body',c:[0,0,0],a:[[1,0,0],[0,1,0],[0,0,1]],h:sensorById(c.sensorId).body.map(n=>n/2) as Vec3};}

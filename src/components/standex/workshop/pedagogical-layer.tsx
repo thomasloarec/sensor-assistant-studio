@@ -45,7 +45,7 @@ export function PedagogicalLayer({frame,settings,volume,zones=true,zonesOnly=fal
     </>}
   </group>;
 }
-export function PedagogicalCut({volume,frame,body}:{volume:SampledVolume|null;frame:PedagogicalFrame;body?:readonly number[]}) {
+export function PedagogicalCut({volume,frame,body}:{volume:SampledVolume|null;frame:PedagogicalFrame;body?:readonly number[]|undefined}) {
   const ref=useRef<SVGSVGElement>(null),[size,setSize]=useState({width:640,height:590});
   useEffect(()=>{const el=ref.current;if(!el)return;const observer=new ResizeObserver(entries=>{const r=entries[0]?.contentRect;if(r&&r.width>0&&r.height>0)setSize({width:r.width,height:r.height});});observer.observe(el);return()=>observer.disconnect();},[]);
   const scale=Math.max(.5,Math.min((size.width-100)/48,(size.height-110)/48));
