@@ -4,6 +4,7 @@ import { Html, Line } from '@react-three/drei';
 import '@react-three/fiber';
 import { t } from '@/lib/i18n/core';
 import { PILOT_MAGNETS } from '@/lib/detection-lab/magnets';
+import { PROFILE } from '@/lib/detection-lab/profile';
 import { EXPERIMENT, type ExperimentSettings, type SampledVolume, type SampleCell } from '@/lib/detection-lab/workshop-experiment';
 import type { PedagogicalFrame } from '@/lib/standex/pedagogical-poses';
 
@@ -30,10 +31,11 @@ export function PedagogicalLayer({frame,settings,volume,zones=true}:{frame:Pedag
     {zones&&geometries.map((geometry,i)=><mesh key={i} geometry={geometry} renderOrder={i}>
       <meshBasicMaterial color={i===0?'#d2a746':'#32a9a8'} opacity={i===0?.12:.22} transparent depthWrite={false} side={DoubleSide}/>
     </mesh>)}
-    <mesh rotation={[0,0,Math.PI/2]}><capsuleGeometry args={[1.1,14,8,24]}/><meshPhysicalMaterial color="#cedcda" transparent opacity={.4} roughness={.15} depthWrite={false}/></mesh>
+    {/* Generic sensor body = EXACTLY the tested mechanical envelope (glass ±7 mm + r 1.1 mm = 16,2 × Ø2,2 mm). Opaque. */}
+    <mesh rotation={[0,0,Math.PI/2]} name="pedagogical-generic-body" userData={{lengthMm:2*(PROFILE.reed.envelopeHalfLengthMm+PROFILE.reed.envelopeRadiusMm),diameterMm:2*PROFILE.reed.envelopeRadiusMm}}><capsuleGeometry args={[PROFILE.reed.envelopeRadiusMm,2*PROFILE.reed.envelopeHalfLengthMm,8,24]}/><meshStandardMaterial color="#254061" roughness={.5} metalness={.1}/></mesh>
     <Line points={[[-12,0,0],[12,0,0]]} color="#254061" lineWidth={2}/>
     <Line points={[[-EXPERIMENT.effectiveLengthMm/2,0,0],[EXPERIMENT.effectiveLengthMm/2,0,0]]} color="#535759" lineWidth={4}/>
-    <Html position={[0,-4,0]} center><span className="mw-scene-label">{t('Repère reed Form66 exploratoire')}</span></Html>
+    <Html position={[0,-4,0]} center><span className="mw-scene-label">{t('Capteur générique, reed 66 monté')} · {t('Repère reed Form66 exploratoire')}</span></Html>
     <group position={frame.pose.center} quaternion={q}>
       {[-1,1].map(sign=><mesh key={sign} position={[0,sign*magnet.lengthMm/4,0]}><cylinderGeometry args={[magnet.diameterMm/2,magnet.diameterMm/2,magnet.lengthMm/2,32]}/><meshStandardMaterial color={sign>0?'#bb454d':'#3a72ac'} roughness={.35} metalness={.25}/></mesh>)}
       <Line points={[[0,-magnet.lengthMm/2-3,0],[0,magnet.lengthMm/2+3,0]]} color="#254061" lineWidth={2}/>
@@ -55,8 +57,12 @@ export function PedagogicalCut({volume,frame}:{volume:SampledVolume|null;frame:P
     <line x1={cx} y1={y(24)} x2={cx} y2={y(-24)} className="mw-cut-axis"/>
     {[-20,0,20].map(n=><g key={n}><text x={x(n)} y={y(-24)+20} textAnchor="middle" className="t-caption">{n}</text><text x={x(-24)-10} y={y(n)+5} textAnchor="end" className="t-caption">{n}</text></g>)}
     <text x={x(24)+8} y={y(-24)+20} className="t-caption">x</text><text x={x(-24)-10} y={y(24)-8} className="t-caption">y</text>
-    <line x1={x(-8.1)} y1={cy} x2={x(8.1)} y2={cy} className="mw-cut-reed"/>
-    {volume?.cut.some(c=>c.blocked)&&<text x="12" y={size.height-12} className="t-caption">{t('Hachuré : chevauchement possible avec l’enveloppe d’une pièce')}</text>}
+    {(()=>{const {envelopeRadiusMm:r,envelopeHalfLengthMm:h}=PROFILE.reed,z=frame.pose.center[2],cut=Math.abs(z)<r,hw=cut?Math.sqrt(r*r-z*z):r;
+      // Real section only if plane z crosses the capsule; otherwise an explicitly labelled projection outline.
+      return <g data-testid="pedagogical-cut-body" data-section={cut?'section':'projection'}><rect x={x(-h-hw)} y={y(hw)} width={2*(h+hw)*scale} height={2*hw*scale} rx={hw*scale} className={cut?'mw-cut-body':'mw-cut-body-projection'}/>
+        <text x="12" y="62" className="t-caption">{t(cut?'Capteur générique, reed 66 monté':'Capteur générique, reed 66 monté — projection, hors du plan de coupe')}</text></g>;})()}
+    <line x1={x(-EXPERIMENT.effectiveLengthMm/2)} y1={cy} x2={x(EXPERIMENT.effectiveLengthMm/2)} y2={cy} className="mw-cut-datum"/>
+    {volume?.cut.some(c=>c.blocked)&&<text x="12" y={size.height-12} className="t-caption">{t('Hachuré : chevauchement possible avec une pièce du montage — à vérifier')}</text>}
     <circle cx={x(frame.pose.center[0])} cy={y(frame.pose.center[1])} r="6" className="mw-cut-point"/>
   </svg>;
 }

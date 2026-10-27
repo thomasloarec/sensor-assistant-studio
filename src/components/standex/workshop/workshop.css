@@ -3154,3 +3154,13 @@
 .mw-stage.mw-pedagogical .mw-cycle .mw-legend > span { display: inline-flex; }
 .mw-stage.mw-pedagogical .mw-cycle { flex: 0 0 auto; }
 .mw-pedagogical .mw-cycle > p { margin: 4px 0; }
+
+/* Lot causes/légendes : corps générique opaque distinct de la zone grise (centres en collision). */
+.mw-cut-body { fill: var(--standex-blue); }
+.mw-cut-body-projection { fill: none; stroke: var(--standex-blue); stroke-width: 2; stroke-dasharray: 4 3; }
+.mw-cut-datum { stroke: var(--surface-product); stroke-width: 1; }
+.mw-ped-body::before, .mw-ped-gray::before, .mw-ped-hatch::before { content: ''; width: 12px; height: 12px; display: inline-block; margin-right: 6px; vertical-align: middle; }
+.mw-ped-body::before { background: var(--standex-blue); border-radius: var(--r-pill, 999px); }
+.mw-ped-gray::before { background: var(--standex-gray-25); }
+.mw-ped-hatch::before { background: repeating-linear-gradient(45deg, var(--standex-gray-75) 0 2px, var(--standex-gray-25) 2px 6px); }
+.mw-pedagogical .mw-legend { flex-wrap: wrap; }
