@@ -977,7 +977,7 @@ export default function WorkshopScene({
         position={[config.mountX, 0, config.mountZ]}
         rotation={[0, (-config.mountAngle * Math.PI) / 180, 0]}
       >
-        {!pedagogicalLayer && <group
+        {!pedagogicalLayer && <><group
           rotation={[
             0,
             ((workshopHousingYawDeg(config.sensorId, config.geometry, model.cableSide) -
