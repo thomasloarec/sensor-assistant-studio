@@ -331,9 +331,19 @@ export function runPass3Variant(
 
 // --- Graphique SVG simple : écarts signés par classe et aimant ---
 export interface LabPalette { fav: string; var: string; far: string; orient: string; undet: string; na: string; ink: string }
+/** Couleurs fortes pour les points : les jetons de cellules (var/far) sont des
+ * teintes claires illisibles en petits points — N45 et hors tolérance prennent
+ * des jetons forts (--standex-blue, --warning) extraits de la charte. */
+export interface PointColors { n45: string; failure: string }
+/** Extrait un jeton du premier bloc :root d'un texte CSS (même convention que paletteFromCss). */
+export function tokenFromCss(css: string, token: string): string {
+  const m = new RegExp(`${token}:\\s*([^;]+);`).exec(css);
+  if (!m) throw new Error(`jeton ${token} introuvable`);
+  return m[1]!.trim();
+}
 /** Points = écarts signés (mm) des contrôles, x = borne groupée par classe, couleur = aimant.
  * Lignes ±1 mm et 0 rappelées ; la tolérance réelle est max(1 mm, 15 %) par borne. */
-export function signedErrorsSvg(title: string, rows: Pass3Row[], palette: LabPalette): string {
+export function signedErrorsSvg(title: string, rows: Pass3Row[], palette: LabPalette, points: PointColors): string {
   const W = 960, H = 420, ml = 56, mr = 16, mt = 44, mb = 64;
   const pw = W - ml - mr, ph = H - mt - mb;
   const errs = rows.map((r) => r.errorMm!).filter((v) => v != null);
@@ -369,17 +379,17 @@ export function signedErrorsSvg(title: string, rows: Pass3Row[], palette: LabPal
       parts.push(`<text x="${sx(i) - 4}" y="${sy(0) - 6}" font-size="12" fill="${palette.na}">∅</text>`);
       return;
     }
-    const color = r.magnetId === "SMCO5-5X4" ? palette.fav : palette.var;
+    const color = r.magnetId === "SMCO5-5X4" ? palette.fav : points.n45;
     const ok = boundPasses(r.publishedMm!, r.errorMm);
     parts.push(
-      `<circle cx="${sx(i)}" cy="${sy(r.errorMm)}" r="4" fill="${ok ? color : palette.far}" opacity="0.85">` +
+      `<circle cx="${sx(i)}" cy="${sy(r.errorMm)}" r="4" fill="${ok ? color : points.failure}" opacity="0.9">` +
         `<title>${r.className} ${r.magnetId} ${r.approach} ${r.bound} : publié ${r.publishedMm} mm, estimé ${r.estimatedMm} mm, écart ${r.errorMm} mm${ok ? "" : " — HORS tolérance"}</title></circle>`,
     );
   });
   parts.push(
     `<circle cx="${ml + 8}" cy="${H - 26}" r="4" fill="${palette.fav}"/><text x="${ml + 18}" y="${H - 22}" fill="${palette.ink}">SmCo5 5×4</text>`,
-    `<circle cx="${ml + 118}" cy="${H - 26}" r="4" fill="${palette.var}"/><text x="${ml + 128}" y="${H - 22}" fill="${palette.ink}">NdFeB N45 4×19</text>`,
-    `<circle cx="${ml + 248}" cy="${H - 26}" r="4" fill="${palette.far}"/><text x="${ml + 258}" y="${H - 22}" fill="${palette.ink}">hors tolérance max(1 mm, 15 %)</text>`,
+    `<circle cx="${ml + 118}" cy="${H - 26}" r="4" fill="${points.n45}"/><text x="${ml + 128}" y="${H - 22}" fill="${palette.ink}">NdFeB N45 4×19</text>`,
+    `<circle cx="${ml + 248}" cy="${H - 26}" r="4" fill="${points.failure}"/><text x="${ml + 258}" y="${H - 22}" fill="${palette.ink}">hors tolérance max(1 mm, 15 %)</text>`,
     `<text x="${ml + 8}" y="${H - 6}" font-size="12" fill="${palette.ink}">Écarts signés estimation − publié (mm), contrôles B–E D3/D4/D5, ancres exclues. La bande ±1 mm n'est qu'un repère : la tolérance est max(1 mm, 15 % du publié).</text>`,
     `</svg>`,
   );
