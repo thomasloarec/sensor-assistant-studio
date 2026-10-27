@@ -159,3 +159,9 @@
 - [x] Script `detection-lab-pass3-report.ts` → `docs/detection-lab-pass3/` (FR, 6 CSV de 112 lignes, JSON, SVG écarts signés) ; profil 1.1 et lot 2 intacts.
 - [x] Reproduction de l'audit : L16 axial 40/46 échec, B′ 37/46 échec, correction 43/45 atteint (médiane 0,423 mm, max 3,228) ; Lfit idem (0,419 / 3,272) ; A/F 20/30 + 1 indisponible ; deux échecs N45 D3 conservés.
 - [x] Tests (ancres exclues 46 puis 45, invariance physique/repère, B′ ≥ B et égalité D1, isolation des ancres, non-régression lot 1/2, aucune fuite vers le moteur) + suite complète/types/build/scans ; aucune publication.
+
+## Atelier pédagogique interne — 27 octobre 2026, base 91c0dd0
+- [ ] Intégrer le mode staff au vrai MagneticWorkshop, préserver les anciens modes et le profil 1.1.
+- [ ] Profil Lfit figé, poses partagées, volumes worker/coupe/point/chronologie, limites scientifiques et suggestions contraintes.
+- [ ] Export/reprise versionnés et huit langues, tests R01–R12, suite complète et scans.
+- [ ] Revue navigateur staff desktop/mobile et rapport QA avec preuves et limites honnêtes.
