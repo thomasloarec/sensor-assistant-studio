@@ -2,6 +2,8 @@
 
 ## Livraison et périmètre
 
+**Extension catalogue autorisée15:41** : ce rapport historique décrit le lot précédent. Le blocage systématique des boîtiers est remplacé par la couche indicative `catalogue-b-analogy-1` ; couverture/méthode/comparaisons et limites courantes dans `docs/qa-catalogue-pedagogical-2026-10-27.md`. Les tests anciens ne prouvent pas les nouvelles poses/rendus catalogue. Aucun moteur figé retouché.
+
 - Intégration examinée : `a7778c80f82645b801759213e8bf9a23ae6bdcaa`, base scientifique `9488f7a379d0f1ecf85ae1bd68652e53a037cc16`.
 - Commit des tests complétés observé avant ce rapport : `90c2633a344a4566913bcfa53805bef79224bd75`. Le commit automatique de ce rapport est nécessairement postérieur ; il est à lire dans l’historique, sans fabriquer un SHA autoréférent.
 - Préversion racine : https://id-preview--9aff67a3-e0d0-4a40-95e1-da809f7ff333.lovable.app/

@@ -1,4 +1,5 @@
 import { cableConstruction } from "@/lib/leadmagnet/product-presentation";
+import { catalogueFrame } from '@/lib/standex/catalogue-pedagogical';
 import { bodyKind, oneFlatProfile } from "@/lib/standex/section-profile";
 import {
   transverseApproach,
@@ -863,7 +864,7 @@ export function CameraRig({
 }
 export default function WorkshopScene({
   config,
-  sample,
+  sample: suppliedSample,
   samples,
   zones,
   field,
@@ -898,6 +899,9 @@ export default function WorkshopScene({
   /** Prévisualisation seule : le fantôme n'écrit rien dans la configuration. */
   ghost?: GhostPose | null | undefined;
 }) {
+  const frame=hideElectrical&&config.sensorId!=='GENERIC'?catalogueFrame(config,suppliedSample.t):null;
+  const local=frame?new Vector3(...frame.world.center).sub(new Vector3(...frame.origin)).applyAxisAngle(new Vector3(0,1,0),config.mountAngle*Math.PI/180).toArray() as Vec3:null;
+  const sample=local?{...suppliedSample,position:local}:suppliedSample;
   const model = sensorById(config.sensorId),
     reference = config.mode === "reference",
     available = !unavailableReason(config);
@@ -978,7 +982,7 @@ export default function WorkshopScene({
         position={[config.mountX, 0, config.mountZ]}
         rotation={[0, (-config.mountAngle * Math.PI) / 180, 0]}
       >
-        {!pedagogicalLayer && <><group
+        {(!pedagogicalLayer || hideElectrical && config.sensorId!=='GENERIC') && <><group
           rotation={[
             0,
             ((workshopHousingYawDeg(config.sensorId, config.geometry, model.cableSide) -

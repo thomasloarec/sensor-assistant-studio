@@ -106,7 +106,7 @@ describe("Couverture des langues de l'interface", () => {
     // + 9 entrées nettes : contre-revue 4311e3ca (lecture en cours, constats nominaux, mode hypothèses).
     // + 25 entrées : lot causes/légendes/lisibilité (diagnostic, remède vérifié, corps générique, Sources et limites).
     // + 2 entrées nettes : constats limités aux essais (bandeau) et détail replié dans Sources et limites.
-    expect(Object.keys(dictionary)).toHaveLength(3_879);
+    expect(Object.keys(dictionary)).toHaveLength(3_888);
     const broken = Object.entries(dictionary).filter(
       ([, v]) => v.length !== 7 || v.some((x) => typeof x !== "string" || x.trim() === ""),
     );

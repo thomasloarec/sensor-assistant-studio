@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { ClientPedagogicalControls } from './client-pedagogical-controls';
 import { CLIENT_LIMITS, clientCoupleAdapter, explorationSettings, clientPedagogicalResult, type ClientPedagogicalResult } from '@/lib/standex/client-pedagogical';
+import { catalogueFrame, cataloguePlacement, catalogueModel, CATALOGUE_LABELS } from '@/lib/standex/catalogue-pedagogical';
 import type { MachineFocus } from "@/lib/standex/machine-view";
 import { observedCycleVerdict } from "@/lib/leadmagnet/tested-pairs";
 import {
@@ -356,7 +357,9 @@ export default function MagneticWorkshop({
     setPlaying(false);setConfig(original);setProgress(originalProgress.current);
     setExploring(false);setSuggestion(null);setPlacementUndo(null);originalConfig.current=null;
   }
-  const pedagogicalPose = useMemo(() => pedagogicalFrame(config, progress), [config, progress]);
+  const catalogue=clientPedagogical&&!exploring;
+  const catalogueProfile=useMemo(()=>catalogue?catalogueModel(config):null,[catalogue,config]);
+  const pedagogicalPose = useMemo(() => catalogue?catalogueFrame(config, progress):pedagogicalFrame(config, progress), [config, progress,catalogue]);
   useEffect(()=>{if(staffPedagogical)onPedagogicalDraftChange?.({config,settings:experiment,progress});},[pedagogical,config,experiment,progress,onPedagogicalDraftChange]);
   const [machineAsset, setMachineAsset] = useState<MachineAsset | null>(null),
     [machineAssetId, setMachineAssetId] = useState<string | null>(null),
@@ -370,16 +373,16 @@ export default function MagneticWorkshop({
   const frameObstacles = useMemo(() => config.machine && envelopes && availability === "ready" ? reedObstaclesAt(config.machine, envelopes, progress, pedagogicalPose) : null, [config.machine, envelopes, availability, progress, pedagogicalPose]);
   const reedOverlap = useMemo(() => frameObstacles ? overlappedPaths(frameObstacles, REED_CAPSULE_OBB) : [], [frameObstacles]);
   const activeExperiment=availability==='ready'?effectiveExperiment:{...effectiveExperiment,integration:'unknown' as const};
-  const eligible=availability==='ready'&&experimentAvailable(effectiveExperiment);
+  const eligible=availability==='ready'&&(catalogue||experimentAvailable(effectiveExperiment));
   // Imported mounting: same evaluatePlacement, same thresholds, FULL pilot body against loaded part boxes.
-  const placement = useMemo(() => {const e=evaluatePlacement(activeExperiment,pedagogicalPose.pose,frameObstacles??false);return availability==="ready"?e:{...e,cause:availability};}, [effectiveExperiment, pedagogicalPose,frameObstacles,availability]);
+  const placement = useMemo(() => {const e=catalogue?cataloguePlacement(config,pedagogicalPose.pose,frameObstacles??[]):evaluatePlacement(activeExperiment,pedagogicalPose.pose,frameObstacles??false);return availability==="ready"?e:{...e,state:'unavailable' as const,cause:availability};}, [effectiveExperiment, pedagogicalPose,frameObstacles,availability,catalogue,config]);
   // Bounded explanation: recomputed from the SAME pose/instant/settings/freedoms/envelopes, never while playing.
-  const diagnosis = useMemo(() => pedagogical && !playing ? diagnosePlacement(activeExperiment, pedagogicalPose.pose, frameObstacles ?? false, placement) : null, [pedagogical, playing, effectiveExperiment, availability, pedagogicalPose, frameObstacles, placement]);
-  const remedy = useMemo(() => pedagogical && !playing && placement.state !== "favorable" && placement.state !== "unavailable" ? pedagogicalRemedy(config, progress, activeExperiment) : null, [pedagogical, playing, placement.state, config, progress, effectiveExperiment, availability]);
-  const sampled = usePedagogicalVolume(pedagogical && !playing && eligible, activeExperiment, pedagogicalPose, config.machine ? frameObstacles : null);
+  const diagnosis = useMemo(() => pedagogical && !playing && !catalogue ? diagnosePlacement(activeExperiment, pedagogicalPose.pose, frameObstacles ?? false, placement) : null, [pedagogical, playing, effectiveExperiment, availability, pedagogicalPose, frameObstacles, placement,catalogue]);
+  const remedy = useMemo(() => pedagogical && !playing && !catalogue && placement.state !== "favorable" && placement.state !== "unavailable" ? pedagogicalRemedy(config, progress, activeExperiment) : null, [pedagogical, playing, placement.state, config, progress, effectiveExperiment, availability,catalogue]);
+  const sampled = usePedagogicalVolume(pedagogical && !playing && eligible, activeExperiment, pedagogicalPose, config.machine ? frameObstacles : null,catalogue?config:undefined);
   const [timelineResult, setPedTimeline] = useState<(ReturnType<typeof placementTimeline>&{key:string}) | null>(null);
   const clipGeneration=config.machine?animationGeneration(config.machine.assetKey,config.machine.unitScale):0;
-  const timelineKey=pedagogicalTimelineKey(effectiveExperiment,config,machineAssetId,envelopes,clipGeneration);
+  const timelineKey=pedagogicalTimelineKey(effectiveExperiment,config,machineAssetId,envelopes,clipGeneration)+'|'+(catalogue?catalogueProfile?.version:'frozen');
   const pedTimeline=eligible&&timelineResult?.key===timelineKey?timelineResult:null;
   useEffect(() => {
     setPedTimeline(null);
@@ -391,15 +394,15 @@ export default function MagneticWorkshop({
     // Imported mounting: poses and boxes prepared HERE by the shared adapter
     // (clip registry stays in this tab); only numbers reach the worker.
     const table = config.machine && envelopes ? Array.from({ length: PED_TABLE_STEPS + 1 }, (_, i) => {
-      const t = i / PED_TABLE_STEPS, f = pedagogicalFrame(config, t);
+      const t = i / PED_TABLE_STEPS, f = catalogue?catalogueFrame(config,t):pedagogicalFrame(config, t);
       return { t, pose: f.pose, obstacles: reedObstaclesAt(config.machine!, envelopes, t, f) };
     }) : undefined;
     const worker = new Worker(new URL("./pedagogical.worker.ts", import.meta.url), {type:"module"});
     worker.onmessage = (event) => {if(current && event.data.key === key && event.data.result){setPedTimeline({...event.data.result,key});worker.terminate();}};
-    worker.postMessage(table ? {settings:effectiveExperiment,table,key} : {settings:effectiveExperiment,config,key});
+    worker.postMessage(table ? {settings:effectiveExperiment,table,key,catalogue:catalogue?config:undefined} : {settings:effectiveExperiment,config,key,catalogue:catalogue?config:undefined});
     return () => {current=false;worker.terminate();};
   }, [pedagogical, timelineKey, eligible]);
-  const experimentalLayer = pedagogical && (!clientPedagogical || exploring) ? <PedagogicalLayer frame={pedagogicalPose} settings={effectiveExperiment} volume={sampled.volume} zones={true} /> : undefined;
+  const experimentalLayer = pedagogical ? <PedagogicalLayer frame={pedagogicalPose} settings={effectiveExperiment} volume={sampled.volume} zones={true} zonesOnly={catalogue}/> : undefined;
   const [view, setView] = useState<"3d" | "top">("3d"),
     [zones, setZones] = useState(true),
     [field, setField] = useState(false),
@@ -2403,7 +2406,7 @@ export default function MagneticWorkshop({
             <button
               className="mw-button"
               onClick={() => {
-                if(clientPedagogical){const product=exploring?originalConfig.current:config;if(!product)return;onClientPedagogicalResult?.(clientPedagogicalResult(product));if(exploring)endExploration();return;}
+                if(clientPedagogical){const product=exploring?originalConfig.current:config;if(!product)return;onClientPedagogicalResult?.(clientPedagogicalResult(product,exploring?originalProgress.current:progress));if(exploring)endExploration();return;}
                 if(staffPedagogical){onClose();return;}if(onResult)onResult(testedPair());else onClose();
               }}
             >
@@ -2434,7 +2437,7 @@ export default function MagneticWorkshop({
               ))}
             </div>
           )}
-          {clientPedagogical && !exploring ? <div className="mw-verdict-banner notice-info" role="status" data-testid="client-pedagogical-verdict"><strong className="t-title-s">{t('Estimation indisponible')}</strong><span className="t-caption">{t('Estimation indicative')}</span>{clientAdapter.reasons.map(reason=><span className="t-body" key={reason}>{t(reason)}</span>)}</div> : pedagogical ? <PedagogicalBanner evidence={placement} diagnosis={diagnosis} remedy={remedy} onPropose={r=>{if(r.kind==="verified")setSuggestion(r.config);}}/> : verdictBanner}
+          {catalogue ? <div className="mw-verdict-banner notice-info" role="status" data-testid="client-pedagogical-verdict"><strong className="t-title-s">{t(playing?'Mettre en pause pour analyser la cause':PLACEMENT_LABEL[placement.state])}</strong><span className="t-caption">{t(CATALOGUE_LABELS.notice)}</span><span className="t-body">{t(catalogueProfile?CATALOGUE_LABELS[catalogueProfile.status]:CATALOGUE_LABELS.analogy)}</span><span className="t-caption">{t(playing?'Mettre en pause pour analyser la cause':placement.cause==='overlap'?'Collision du corps de l’aimant avec l’enveloppe ou le montage':placement.cause==='orientation'?'Orientation défavorable à cet endroit':placement.state==='unavailable'?'Estimation indisponible':'Zones d’activation estimées')}</span></div> : pedagogical ? <PedagogicalBanner evidence={placement} diagnosis={diagnosis} remedy={remedy} onPropose={r=>{if(r.kind==="verified")setSuggestion(r.config);}}/> : verdictBanner}
           {clientPedagogical&&exploring&&<p className="notice-info t-body" data-testid="client-exploration-context">{t('Exemple générique — ce résultat ne concerne pas le couple de votre dossier')}</p>}
           <div
             className="mw-canvas"
@@ -2511,7 +2514,7 @@ export default function MagneticWorkshop({
                 </p>
               </div>
             ) : null}
-            {pedagogical && (!clientPedagogical || exploring) && view === "top" ? <PedagogicalCut volume={sampled.volume} frame={pedagogicalPose}/> : machine ? (
+            {pedagogical && view === "top" ? <PedagogicalCut volume={sampled.volume} frame={pedagogicalPose} body={catalogueProfile?.body}/> : machine ? (
               assetError ? (
                 <div className="mw-loading" role="alert">
                   {t(assetError)}
@@ -2690,7 +2693,7 @@ export default function MagneticWorkshop({
                 setProgress(Number(e.target.value) / 100);
               }}
             />
-            {clientPedagogical && !exploring ? <div className="mw-legend" data-testid="client-product-legend"><span>{config.sensorId} + {config.magnetModel}</span><span>{t('Estimation indisponible')}</span></div> : pedagogical ? <div className="mw-legend" data-testid="pedagogical-legend"><span className="mw-ped-high">{t("Zone favorable estimée")}</span><span className="mw-ped-low">{t("Dépend de la sensibilité")}</span><span className="mw-ped-body">{t("Capteur générique, reed 66 monté")}</span><span className="mw-ped-gray">{t("Positions où l’aimant rencontrerait ce corps")}</span>{machine&&<span className="mw-ped-hatch">{t("Chevauchement possible avec une pièce du montage — à vérifier")}</span>}<span>{t("Estimation indicative")}</span></div> : <div className="mw-legend">
+            {clientPedagogical && !exploring ? <div className="mw-legend" data-testid="client-product-legend"><span>{config.sensorId} + {config.magnetModel}</span><span>{t(CATALOGUE_LABELS.notice)}</span></div> : pedagogical ? <div className="mw-legend" data-testid="pedagogical-legend"><span className="mw-ped-high">{t("Zone favorable estimée")}</span><span className="mw-ped-low">{t("Dépend de la sensibilité")}</span><span className="mw-ped-body">{t("Capteur générique, reed 66 monté")}</span><span className="mw-ped-gray">{t("Positions où l’aimant rencontrerait ce corps")}</span>{machine&&<span className="mw-ped-hatch">{t("Chevauchement possible avec une pièce du montage — à vérifier")}</span>}<span>{t("Estimation indicative")}</span></div> : <div className="mw-legend">
               <span>
                 <i className="closed" />
                 {t("Fermé")}

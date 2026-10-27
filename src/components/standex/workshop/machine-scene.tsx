@@ -444,7 +444,7 @@ function Assembly({
           </Motion>
         </>
       )}
-      {!pedagogicalLayer && <><SupportFrame which="sensor" machine={machine} u={u}>
+      {(!pedagogicalLayer || hideElectrical && config.sensorId!=='GENERIC') && <><SupportFrame which="sensor" machine={machine} u={u}>
         <group
           ref={sensorRef}
           position={machine.sensorPosition}
@@ -494,7 +494,7 @@ function Assembly({
         </group>
       </SupportFrame>
       </>}
-      {editable && !pedagogicalLayer && (
+      {editable && (!pedagogicalLayer || hideElectrical && config.sensorId!=='GENERIC') && (
         <TransformControls
           ref={control}
           object={selected as React.RefObject<Group>}

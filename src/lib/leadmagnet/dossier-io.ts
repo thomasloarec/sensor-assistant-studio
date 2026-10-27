@@ -365,7 +365,8 @@ export function parseDossierExport(raw: unknown, now = new Date().toISOString())
   // Le montage guidé d'un fichier importé est INTÉGRALEMENT reconstruit à partir
   // de la configuration d'atelier, du besoin et du câble réellement repris :
   // aucun verdict, aucune couverture et aucune limite importés ne sont crus.
-  const resumed=data.clientPedagogical&&workshop?recordClientTrace(dossier,workshop):dossier;
+  const trace=data.clientPedagogical as {indicative?:{progress?:number}}|null|undefined;
+  const resumed=data.clientPedagogical&&workshop?recordClientTrace(dossier,workshop,trace?.indicative?.progress):dossier;
   return {
     ok: true,
     dossier: { ...resumed, guidedMounting: currentMounting(resumed) },

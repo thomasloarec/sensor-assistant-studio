@@ -8,6 +8,7 @@ import { guideRangesFor, formatGuideBound, ACTIVATION_GUIDE } from '@/lib/stande
 import { sensorById } from '@/lib/standex/sensor-catalog';
 import { isPcbSensor } from '@/lib/leadmagnet/product-presentation';
 import type { ReactNode } from 'react';
+import { CATALOGUE_LABELS } from '@/lib/standex/catalogue-pedagogical';
 
 export function ClientPedagogicalControls({config,update,onCatalog,onExplore,onCable,approachControls}: {
   config:WorkshopConfig;update:(patch:Partial<WorkshopConfig>)=>void;onCatalog:()=>void;onExplore:()=>void;onCable:()=>void;approachControls?:ReactNode;
@@ -22,7 +23,7 @@ export function ClientPedagogicalControls({config,update,onCatalog,onExplore,onC
     <label className="mw-select-label">{t('Aimant')}<select aria-label={t('Aimant')} value={config.magnetModel} onChange={e=>update({magnetModel:e.target.value})}>{magnets.map(id=><option key={id} value={id}>{id}</option>)}</select></label>
     <label className="mw-select-label">{t('Classe de sensibilité')}<select aria-label={t('Classe de sensibilité')} value={config.sensitivity} onChange={e=>update({sensitivity:e.target.value})}>{classes.map(c=><option key={c} value={c}>{c}</option>)}</select></label>
     {config.guideReference&&<p className="t-caption">{t('Référence documentaire')} : {config.guideReference}</p>}
-    <p className="t-body">{t(CLIENT_LIMITS.housing)}</p>
+    <p className="t-body">{t(CATALOGUE_LABELS[adapter.model.status])}</p>
     <Button variant="secondary" onClick={onExplore}>{t('Comprendre les zones de détection')}</Button>
     {!config.machine&&<>
       <label className="mw-field"><span>{t('Écart au départ')}<output className="t-metric">{config.start} mm</output></span><input aria-label={t('Écart au départ')} type="range" min="2" max="60" step=".5" value={config.start} onChange={e=>update({start:Number(e.target.value)})}/></label>
@@ -50,7 +51,7 @@ export function ClientPedagogicalControls({config,update,onCatalog,onExplore,onC
     {!isPcbSensor(config.sensorId) && <Button variant="secondary" disabled={!config.machine} onClick={onCable}>{t('Pointer le câble dans la 3D')}</Button>}
     <details className="mw-advanced" data-testid="client-pedagogical-sources"><summary>{t('Sources et limites')}</summary>
       {adapter.reasons.map(reason=><p className="t-caption" key={reason}>{t(reason)}</p>)}
-      <p className="t-caption">{t(CLIENT_LIMITS.missing)}</p>
+      <p className="t-caption">{adapter.model.family} · {adapter.model.lengthMm} mm · {adapter.model.method} · {adapter.version}</p>
       <p className="t-caption">{t('Plage documentaire indicative, sans validation de la simulation.')}</p>
       {rows.map((r,i)=><p className="t-caption" key={i}>{r.sensorReference} · {r.approachId} · <span className="t-metric">{formatGuideBound(r.upMm,r.upNote)} – {formatGuideBound(r.toMm,r.toNote)} mm</span> · {msg('Guide Standex, page {0}',[String(r.page)])}</p>)}
       <a href={ACTIVATION_GUIDE.source.url} target="_blank" rel="noreferrer">{t('Source Standex ↗')}</a>
