@@ -82,6 +82,7 @@ describe("Atelier pédagogique : reprise et pointage réels", () => {
     await act(async () => fireEvent.click(v.getByTestId("guide-step-install")));
     await act(async () => fireEvent.click(v.getByRole("radio", { name: "Capteur" })));
     await act(async () => fireEvent.click(v.getByRole("radio", { name: "À travers une paroi" })));
+    console.log("DBG", (draft as any)?.config.sensorId, v.getByTestId("machine-guide").textContent?.includes("réservé aux corps"));
     await act(async () => fireEvent.click(v.getByRole("button", { name: "Axe d'un trou existant (deux points)", hidden: true })));
     const hits = [
       { point: [0, 60, -5] as [number, number, number], normal: [0, 0, -1] as [number, number, number], path: "0/0", moving: false, group: "" },
