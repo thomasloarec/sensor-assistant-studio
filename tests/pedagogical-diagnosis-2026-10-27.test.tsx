@@ -171,3 +171,81 @@ describe("corps générique = enveloppe mécanique testée", () => {
     expect(b.container.textContent).toContain("projection, hors du plan de coupe"); b.unmount();
   });
 });
+
+describe("contre-revue 4311e3ca", () => {
+  // Expected values written from the review (independent of the implementation).
+  const HIGH_C = 2.7121097617;
+  test("2) nominal déjà favorable mais variable : cause hypothèses, jamais orientation", async () => {
+    const { DEFAULT_EXPERIMENT, evaluatePlacement, classThresholds } = await lab(); const { diagnosePlacement } = await diag();
+    expect(classThresholds("C")!.high).toBeCloseTo(HIGH_C, 9);
+    for (const [id, center, nominal] of [["SMCO5-5X4", [0, 4.75, 0], 7.4734260482], ["N45-4X19", [0, 16.5, 0], 3.0716881913]] as const) {
+      const s = { ...DEFAULT_EXPERIMENT, magnetId: id }, pose = { center: [...center] as [number, number, number], axis: [1, 0, 0] as [number, number, number] };
+      const e = evaluatePlacement(s, pose);
+      expect(e.state).toBe("variable");
+      expect(e.nominal!.ok && e.nominal!.response).toBeCloseTo(nominal, 8);
+      const d = diagnosePlacement(s, pose);
+      expect(d.cause).toBe("hypotheses");
+      expect(d.cause).not.toBe("orientation");
+    }
+  });
+  test("3) N45 [30,0,0] ⟂ : axial + rotation sur place insuffisante + cause double démontrée, verdict inchangé", async () => {
+    const { DEFAULT_EXPERIMENT, evaluatePlacement, classThresholds } = await lab(); const { diagnosePlacement } = await diag();
+    const { evaluatePose } = await import("../src/lib/detection-lab/pose"); const { PILOT_MAGNETS } = await import("../src/lib/detection-lab/magnets");
+    const { nominalScenario } = await lab();
+    const s = { ...DEFAULT_EXPERIMENT, magnetId: "N45-4X19" }, pose = { center: [30, 0, 0] as [number, number, number], axis: [0, 1, 0] as [number, number, number] };
+    const before = evaluatePlacement(s, pose);
+    const par = evaluatePose(PILOT_MAGNETS.find(m => m.id === "N45-4X19")!, { center: [30, 0, 0], axis: [1, 0, 0] }, nominalScenario(), "B");
+    expect(par.ok && par.response).toBeCloseTo(1.52, 1);
+    expect(par.ok && par.response < classThresholds("C")!.high).toBe(true);
+    const d = diagnosePlacement(s, pose);
+    expect(d).toMatchObject({ cause: "axial", rotationInPlace: "insufficient", closerAndRotated: true });
+    expect(evaluatePlacement(s, pose)).toEqual(before);
+  });
+  test("1) bandeau pendant la lecture : pas d'ancienne cause ni de remède ; indisponibilité conservée", async () => {
+    const { PedagogicalBanner } = await import("../src/components/standex/workshop/pedagogical-controls");
+    const { DEFAULT_EXPERIMENT, evaluatePlacement } = await lab();
+    const s = { ...DEFAULT_EXPERIMENT, magnetId: "N45-4X19" };
+    const unf = evaluatePlacement(s, { center: [0, 16, 0], axis: [0, 1, 0] });
+    const a = render(React.createElement(PedagogicalBanner, { evidence: unf, diagnosis: null, remedy: { kind: "none-found" } }));
+    expect(a.getByTestId("pedagogical-cause").textContent).toBe("Mettre en pause pour analyser la cause");
+    expect(a.queryByTestId("pedagogical-remedy")).toBeNull();
+    expect(a.container.textContent).not.toContain("zone centrale à éviter");
+    a.unmount();
+    const b = render(React.createElement(PedagogicalBanner, { evidence: { ...unf, state: "unavailable", cause: "reed_overlap" }, diagnosis: null }));
+    expect(b.getByTestId("pedagogical-cause").textContent).toContain("Chevauchement possible du reed");
+    b.unmount();
+  });
+  test("1) Workshop monté : Lancer le mouvement → cause en attente, Pause → cause recalculée", async () => {
+    const { default: MagneticWorkshop } = await import("../src/components/standex/workshop/workshop");
+    const d = (await states()).unfavorable;
+    const v = render(React.createElement(MagneticWorkshop, { pedagogical: true, initialPedagogicalDraft: { ...d, progress: .5 }, onClose: () => {}, onSave: () => {} }));
+    await waitFor(() => expect(v.getByTestId("pedagogical-cause").textContent).toBe("Zone centrale entre les deux lobes"));
+    await act(async () => fireEvent.click(v.getByRole("button", { name: /Lancer le mouvement/ })));
+    expect(v.getByTestId("pedagogical-verdict").textContent).not.toContain("zone centrale à éviter");
+    expect(v.getByTestId("pedagogical-verdict").getAttribute("data-cause")).toMatch(/pending|none|unavailable|reed_overlap|collision/);
+    await act(async () => fireEvent.click(v.getByRole("button", { name: /Pause/ })));
+    expect(v.getByTestId("pedagogical-verdict").getAttribute("data-cause")).not.toBe("pending");
+    v.unmount();
+  }, 20000);
+  test("4) Sources et limites suit la case hypothèses", async () => {
+    const { default: MagneticWorkshop } = await import("../src/components/standex/workshop/workshop");
+    const d = (await states()).unfavorable;
+    for (const hypotheses of [true, false]) {
+      const v = render(React.createElement(MagneticWorkshop, { pedagogical: true, initialPedagogicalDraft: { ...d, settings: { ...d.settings, hypotheses }, progress: .5 }, onClose: () => {}, onSave: () => {} }));
+      const txt = (await waitFor(() => v.getByTestId("pedagogical-hypotheses-mode"))).textContent!;
+      expect(txt).toContain(hypotheses ? "accord des neuf hypothèses" : "scénario nominal seul");
+      v.unmount();
+    }
+  }, 20000);
+  test("5) légendes longues de la coupe en HTML (retour à la ligne), pas en SVG", async () => {
+    const { PedagogicalCut } = await import("../src/components/standex/workshop/pedagogical-layer");
+    const frame = { origin: [0, 0, 0], basis: [[1, 0, 0], [0, 1, 0], [0, 0, 1]], pose: { center: [8, 6, 5], axis: [0, 1, 0] }, world: { center: [8, 6, 5], axis: [0, 1, 0] } } as never;
+    const vol = { cut: [{ x: 0, y: 0, x0: 0, x1: 1, y0: 0, y1: 1, zone: 0, response: 1, blocked: true }] } as never;
+    const r = render(React.createElement(PedagogicalCut, { volume: vol, frame }));
+    const svgText = r.container.querySelector("svg")!.textContent!;
+    expect(svgText).not.toContain("projection"); expect(svgText).not.toContain("Hachuré");
+    const cap = r.container.querySelector("figcaption")!.textContent!;
+    expect(cap).toContain("projection, hors du plan de coupe"); expect(cap).toContain("Hachuré : chevauchement possible avec une pièce du montage");
+    r.unmount();
+  });
+});
