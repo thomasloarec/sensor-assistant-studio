@@ -8,7 +8,7 @@ import { parseMachineAsset, type MachineAsset } from '../src/lib/standex/machine
 import { registerAnimation } from '../src/lib/standex/machine-clip-registry';
 import { DEMO_ASSEMBLIES } from '../src/lib/standex/machine-demos';
 import { activeClip, rescaleMachine, type MachineAssembly } from '../src/lib/standex/machine-assembly';
-import { DEFAULT_WORKSHOP, type Vec3, type WorkshopConfig } from '../src/lib/standex/magnetic-workshop';
+import { DEFAULT_WORKSHOP, parseWorkshopConfig, type Vec3, type WorkshopConfig } from '../src/lib/standex/magnetic-workshop';
 import { partEnvelopes, reedObstaclesAt, toReedObstacles, worldObstacles } from '../src/lib/standex/pedagogical-envelopes';
 import { pedagogicalAvailability, pedagogicalFrame, parsePedagogicalEnvelope, pilotBodies } from '../src/lib/standex/pedagogical-poses';
 import { DEFAULT_EXPERIMENT, EXPERIMENT, evaluatePlacement, sampleVolume, tableTimeline } from '../src/lib/detection-lab/workshop-experiment';
@@ -107,7 +107,9 @@ describe('Pedagogical imported mounting', () => {
     const box = env.find(e => e.path === moving)!;
     const a = { kind: 'surface' as const, support: 'moving' as const, partPath: moving, point: [(box.min[0] + box.max[0]) / 2, box.max[1], (box.min[2] + box.max[2]) / 2] as Vec3, normal: [0, 1, 0] as Vec3, offsetMm: 0, spinDeg: 0, flip: false, depthRef: 'collar' as const, axisSource: 'face' as const };
     m = { ...m, ...attachPatch('magnet', a, { ...DEFAULT_WORKSHOP, pilotBodies: pilotBodies('SMCO5-5X4')! } as WorkshopConfig) } as MachineAssembly;
-    const c: WorkshopConfig = { ...DEFAULT_WORKSHOP, machine: m };
+    // Same normalization as the app (support resynchronised, JSON numbers).
+    const c: WorkshopConfig = parseWorkshopConfig(JSON.parse(JSON.stringify({ ...DEFAULT_WORKSHOP, machine: m })))!; m = c.machine!;
+    expect(m.magnetAttach?.partPath).toBe(moving);
     expect(pedagogicalAvailability(c, true)).toBe('ready');
     const rows = table(c, env, 64), at25 = rows.find(r => r.t === .25)!;
     expect(at25.pose).toEqual(pedagogicalFrame(c, .25).pose);
