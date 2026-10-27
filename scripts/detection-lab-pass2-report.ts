@@ -15,7 +15,7 @@ import {
   buildPass2Table, controlRows, fitK, fitLength, isSuspectedAnomaly, scoreControls,
   type Pass2Params, type Pass2Row,
 } from "../src/lib/detection-lab/pass2";
-import { centralNullWidthTable, commonNodeComparison, computeFineCut, fineGridCells, type FineCut } from "../src/lib/detection-lab/pass2-cuts";
+import { centralNullWidthTable, commonNodeComparison, computeFineCut, type FineCut, type NullWidthScan } from "../src/lib/detection-lab/pass2-cuts";
 import { fineCutToCsv, fineCutToSvg } from "../src/lib/detection-lab/pass2-report";
 
 const OUT = "docs/detection-lab-pass2";
@@ -54,6 +54,15 @@ writeFileSync(`${OUT}/resultats_pass2.json`, JSON.stringify({
   lengthFit, variants: variantResults.map((r) => ({ id: r.variant.id, L: r.L, datumMm: r.variant.axialDatumMm, k: r.kFit.k, kMedianAbsPct: r.kFit.medianAbsPct, primary: r.primary, secondary: r.secondary })),
 }, null, 1));
 
+/** Statistiques chiffrées d'un sous-ensemble de lignes (résumés B/D du rapport). */
+function subsetStats(rows: Pass2Row[]) {
+  const published = rows.filter((r) => r.publishedMm != null);
+  const cmp = published.filter((r) => r.errorPct != null);
+  const pcts = cmp.map((r) => Math.abs(r.errorPct!)).sort((a, b) => a - b);
+  const median = pcts.length ? (pcts.length % 2 ? pcts[(pcts.length - 1) / 2]! : (pcts[pcts.length / 2 - 1]! + pcts[pcts.length / 2]!) / 2) : null;
+  return { published: published.length, computable: cmp.length, unavailable: published.length - cmp.length, median, over20: pcts.filter((p) => p > 20).length };
+}
+
 // --- Coupes perpendiculaires raffinées (profil 1.1, B/C1, seuils partagés du lot 1) ---
 const calB = time("Seuils partagés lot 1 (B/C1)", () => buildCalibrations("B", "C1"));
 const fineCuts: FineCut[] = [];
@@ -73,6 +82,9 @@ const favCells = coarseCut2.cells.filter((c) => c.category === "favorable");
 const favAtY5 = favCells.filter((c) => c.y === 5).length;
 const n45Probe = evaluatePose(PILOT_MAGNETS[1]!, { center: [0, 5, 0], axis: [0, 1, 0] }, PROFILE.scenarios[0]!, "B");
 
+const fmtScan = (s: NullWidthScan | undefined) =>
+  s == null ? "—" : s.status === "collision" ? `collision à ${f(s.atMm, 3)}` : s.status === "not_found" ? "sortie non trouvée" : `[${f(s.lastNullMm, 3)} ; ${f(s.firstPositiveMm, 3)}]`;
+
 // --- Rapport Markdown ---
 md.push(`# Laboratoire de détection reed — expérience de calibration (lot 2)`, "",
   `Généré par \`bun scripts/detection-lab-pass2-report.ts\` le ${new Date().toISOString().slice(0, 10)}. Préversion interne staff. **Ordres de grandeur pédagogiques : aucune garantie de commutation au millimètre. Paramètres ajustés, pas des dimensions prouvées.**`, "",
@@ -89,13 +101,13 @@ md.push("", `Ajustement de L par accord inter-aimants sur D1 seul (Σ log² θ_N
   "Ces valeurs sont des paramètres ajustés sur 8 bornes d'apprentissage, pas des dimensions prouvées.", "",
   "## Score des contrôles — critère explicite", "",
   `Contrôles = toutes les bornes publiées C/E D3/D4/D5 des deux aimants (23 publiées, 1 manquante : SmCo E D5 up « - » dans la source). Critère reçu : médiane ≤ ${CRITERION.medianPctMax} % ET ≤ ${CRITERION.over20Max}/23 bornes > 20 % ET aucune indisponible. Score secondaire : sans la seule borne suspectée C-N45-D3 to = ${SUSPECTED_ANOMALY.publishedMm} (identique au D1 to du même couple — anomalie de source suspectée, jamais corrigée, jamais exclue du score primaire).`, "",
-  "| Variante | score | publiées | calculables | indisponibles | manquantes | médiane |écart| % | > 20 % | critère |", "|---|---|---|---|---|---|---|---|---|");
+  "| Variante | score | publiées | calculables | indisponibles | manquantes | médiane \\|écart\\| % | > 20 % | critère |", "|---|---|---|---|---|---|---|---|---|");
 for (const r of variantResults) {
   const p = r.primary, s = r.secondary;
   md.push(`| ${r.variant.id} | primaire (23 bornes) | ${p.published} | ${p.computable} | ${p.unavailable} | ${p.missing} | ${f(p.medianAbsPct)} | ${p.over20} | ${p.pass ? "ATTEINT" : "NON ATTEINT"} |`);
   md.push(`| ${r.variant.id} | secondaire (sans anomalie) | ${s.published} | ${s.computable} | ${s.unavailable} | ${s.missing} | ${f(s.medianAbsPct)} | ${s.over20} | ${s.pass ? "ATTEINT" : "NON ATTEINT"} |`);
 }
-md.push("", "Détail par approche (score primaire) :", "", "| Variante | approche | calculables | médiane |écart| % | > 20 % |", "|---|---|---|---|---|---|");
+md.push("", "Détail par approche (score primaire) :", "", "| Variante | approche | calculables | médiane \\|écart\\| % | > 20 % |", "|---|---|---|---|---|---|");
 for (const r of variantResults)
   for (const a of ["D3", "D4", "D5"] as const) {
     const rows = controlRows(r.table).filter((x) => x.approach === a && x.publishedMm != null);
@@ -106,27 +118,39 @@ for (const r of variantResults)
   }
 md.push("", "Un résidu systématique n'est pas une marge validée. Si le critère n'est pas atteint : pas de volume 3D.", "");
 
+md.push("## Classes B et D (hors apprentissage) — résumé chiffré", "",
+  "Classes B/D jamais utilisées pour ajuster k ni L. D1 est un contrôle isolé ; D3/D4/D5 sont des contrôles au même titre que C/E. Détail ligne à ligne dans les CSV.", "",
+  "| Variante | sous-ensemble | publiées | calculables | indisponibles | médiane \\|écart\\| % | > 20 % |", "|---|---|---|---|---|---|---|");
+for (const r of variantResults) {
+  const bd = r.table.filter((x) => x.className === "B" || x.className === "D");
+  const d1 = subsetStats(bd.filter((x) => x.approach === "D1"));
+  const other = subsetStats(bd.filter((x) => x.approach !== "D1"));
+  md.push(`| ${r.variant.id} | B/D — D1 seul | ${d1.published} | ${d1.computable} | ${d1.unavailable} | ${f(d1.median)} | ${d1.over20} |`);
+  md.push(`| ${r.variant.id} | B/D — D3/D4/D5 | ${other.published} | ${other.computable} | ${other.unavailable} | ${f(other.median)} | ${other.over20} |`);
+}
+md.push("");
+
 md.push("## Disponibilité réelle des classes", "",
-  `La transcription Form 66 contient les classes A..F ; **G est absente de la source** — les lignes G des tableaux portent le statut « no_source » et ne sont jamais présentées comme validées. D1 des classes B/D : contrôles isolés hors apprentissage, listés dans les tableaux CSV (\`tableau_V*.csv\`, 112 lignes chacun : 7 classes × 4 approches × 2 bornes × 2 aimants).`, "");
+  `La transcription Form 66 contient les classes A..F ; **G est absente de la source** — les lignes G des tableaux portent le statut « no_source » et ne sont jamais présentées comme validées. Tableaux CSV (\`tableau_V*.csv\`, 112 lignes chacun : 7 classes × 4 approches × 2 bornes × 2 aimants).`, "");
 
 md.push("## Coupes perpendiculaires raffinées (audit géométrique, profil 1.1, B/C1)", "",
-  "Pas 0,25 mm dans la zone locale |x| ≤ 5 mm et y ≤ 5 mm, 1 mm ailleurs, cellules à dimension réelle sans recouvrement. Trois états de lecture distingués : collision (invalidité géométrique), réponse nominale nulle (zone centrale du modèle B), diagnostic défavorable. Ces largeurs ne sont pas des probabilités.", "",
+  "Maillage continu du domaine dessiné : pas 0,25 mm dans la bande |x| ≤ 5 mm sur toute la hauteur y = 0..24, 1 mm ailleurs ; frontières de cellules aux milieux entre nœuds, tronquées au domaine — sans recouvrement ni trou, cellules dessinées à leurs bornes réelles. États de lecture distingués : collision NOMINALE (invalidité géométrique du corps dessiné), collision dans une hypothèse ±1 mm (pose nominale valide), réponse nominale nulle (zone centrale du modèle B), diagnostic défavorable. Ces largeurs ne sont pas des probabilités.", "",
   "| Coupe | aimant | cellules | nœuds communs vérifiés | désaccords |", "|---|---|---|---|---|");
 for (const n of nodeChecks) {
   const cut = fineCuts.find((c) => c.id === n.id && c.magnetId === n.magnetId)!;
   md.push(`| ${n.id} | ${n.magnetId} | ${cut.cells.length} | ${n.nodes} | ${n.mismatches} |`);
 }
-md.push("", "Demi-largeur de la zone centrale à réponse nominale nulle (modèle B, scénario nominal) selon le pas de balayage :", "", "| aimant | profondeur y (mm) | pas 1,25 | pas 0,25 | pas 0,125 |", "|---|---|---|---|---|---|");
+md.push("", "Demi-largeur de la zone centrale à réponse nominale nulle (modèle B, scénario nominal) selon le pas de balayage — intervalle [dernier point nul ; premier point positif], statuts explicites :", "", "| aimant | profondeur y (mm) | pas 1 | pas 0,25 | pas 0,125 |", "|---|---|---|---|---|---|");
 for (const w of widthTables)
-  for (const y of [6, 8, 10]) {
-    const at = (s: number) => w.rows.find((r) => r.y === y && r.stepMm === s)?.halfWidthMm;
-    md.push(`| ${w.magnetId} | ${y} | ${f(at(1.25), 3)} | ${f(at(0.25), 3)} | ${f(at(0.125), 3)} |`);
+  for (const y of [12, 16, 20, 24]) {
+    const at = (s: number) => w.rows.find((r) => r.y === y && r.stepMm === s)?.scan;
+    md.push(`| ${w.magnetId} | ${y} | ${fmtScan(at(1))} | ${fmtScan(at(0.25))} | ${fmtScan(at(0.125))} |`);
   }
-md.push("", "Figures : `svg/2-perpendicular-centred-C_*_B_fine.svg` et `svg/3-perpendicular-offset-C_*_B_fine.svg` (+ CSV). L'enveloppe de verre publiée (capsule pointillée) et l'aimant aux repères sont dessinés à taille réelle.", "");
+md.push("", "Figures : `svg/2-perpendicular-centred-C_*_B_fine.svg` et `svg/3-perpendicular-offset-C_*_B_fine.svg` (+ CSV). La capsule de collision testée, le verre publié 14 mm et l'aimant aux repères sont dessinés à taille réelle.", "");
 
 md.push("## Vérification collision N45 (reproduction)", "",
-  `Coupe 1 mm du lot 1 (2-perpendicular-centred-C, N45, B/C1) recalculée : **${favCells.length} cellules favorables, ${favAtY5} à y = 5 mm**. La pose centre [0, 5, 0], axe [0, 1, 0] renvoie **${n45Probe.ok ? "ok" : `collision (${n45Probe.reason})`}** : le corps du cylindre est bien testé dans \`pose.ts\` et les cellules proches du reed à y = 5 sont indisponibles pour collision — aucune collision n'est manquée ni inventée.`, "",
-  `Point distinct : l'enveloppe conservative du lot 1 (capsule ±${PROFILE.reed.envelopeHalfLengthMm} mm, rayon ${PROFILE.reed.envelopeRadiusMm} mm, encombrement publié KSK-1A66) est **surdimensionnée axialement** par rapport à la demi-longueur effective du profil 1.1 (${PROFILE.reed.effectiveLengthMm / 2} mm) ; avec L = 16 mm elle serait au contraire plus courte que la zone d'intégration (8 mm). C'est une exclusion géométrique conservative, pas une dimension de lame.`, "");
+  `Coupe 1 mm du lot 1 (2-perpendicular-centred-C, N45, B/C1) recalculée : **${favCells.length} cellules favorables, ${favAtY5} à y = 5 mm**. La pose centre [0, 5, 0], axe [0, 1, 0] renvoie **${n45Probe.ok ? "ok" : `collision (${n45Probe.reason})`}** : le corps du cylindre est bien testé dans \`pose.ts\` et, sur les cellules contrôlées de cette coupe, les cellules proches du reed à y = 5 sont indisponibles pour collision.`, "",
+  `Point distinct : la capsule de collision du lot 1 (segment ±${PROFILE.reed.envelopeHalfLengthMm} mm épaissi du rayon ${PROFILE.reed.envelopeRadiusMm} mm, étendue réelle ±${PROFILE.reed.envelopeHalfLengthMm + PROFILE.reed.envelopeRadiusMm} mm, longueur ${2 * (PROFILE.reed.envelopeHalfLengthMm + PROFILE.reed.envelopeRadiusMm)} mm) est une **approximation conservative**, pas l'encombrement publié. Son surdimensionnement se mesure au verre publié KSK-1A66 (14 mm max) : +${f(2 * (PROFILE.reed.envelopeHalfLengthMm + PROFILE.reed.envelopeRadiusMm) - 14, 1)} mm en longueur axiale. C'est une exclusion géométrique conservative, pas une dimension de lame.`, "");
 
 md.push("## Conclusions factuelles", "",
   "- Les quatre variantes sont évaluées avec le même apprentissage (8 bornes D1 C/E) et le même critère ; les tableaux complets A..G sont dans les CSV.",
@@ -138,7 +162,7 @@ md.push("## Conclusions factuelles", "",
   "## Limites", "",
   "- Expérience de calibration et figures de revue uniquement : pas de volume 3D, pas d'intégration atelier ni client, pas de remplacement du profil 1.1.",
   "- MK04 D3 reste en quarantaine (lot 1) ; les adaptations documentaires MK03/MK13 ne sont pas des contrôles indépendants.",
-  "- La zone fine couvre |x| ≤ 5 mm et y ≤ 5 mm ; au-delà, le pas reste 1 mm.",
+  "- La bande fine couvre |x| ≤ 5 mm sur toute la hauteur ; au-delà, le pas reste 1 mm.",
   "");
 writeFileSync(`${OUT}/RAPPORT_PASS2_2026-10-27.md`, md.join("\n"));
 console.log(timings.join("\n"));

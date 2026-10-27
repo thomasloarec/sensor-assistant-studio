@@ -12,7 +12,12 @@ import {
   AT_CLASSES, AT_SOURCE, CRITERION, atRange, buildPass2Table, controlRows, fitK, fitLength,
   isSuspectedAnomaly, scoreControls, thetaFor, trainingBounds, type FormRow,
 } from "../src/lib/detection-lab/pass2";
-import { centralNullHalfWidth, commonNodeComparison, computeFineCut, fineGridCells } from "../src/lib/detection-lab/pass2-cuts";
+import {
+  centralNullHalfWidth, centralNullWidthTable, classifyFineCell, commonNodeComparison,
+  computeFineCut, fineGridCells, nominalState,
+} from "../src/lib/detection-lab/pass2-cuts";
+import { fineCutToSvg } from "../src/lib/detection-lab/pass2-report";
+import { paletteFromCss } from "../src/lib/detection-lab/report";
 import formData from "../src/data/detection-lab/brochure-form-rows.json";
 
 const [SMCO, N45] = PILOT_MAGNETS as [typeof PILOT_MAGNETS[0], typeof PILOT_MAGNETS[0]];
@@ -102,7 +107,7 @@ describe("reproduction de l'audit local", () => {
     expect(v2.medianAbsPct!).toBeCloseTo(14.0, 0);
     expect(v2.pass).toBe(false);
   }, 30000);
-  test("le score primaire conserve les 23 bornes ; le secondaire n'exclut que l'anomalie suspectée", () => {
+  test("le score primaire conserve les 23 bornes ; le secondaire n'exclue que l'anomalie suspectée", () => {
     const k = fitK(16, "B", "C1").k;
     const table = buildPass2Table({ effectiveLengthMm: 16, axialDatumMm: 7, model: "B", conv: "C1", k });
     const controls = controlRows(table);
@@ -138,53 +143,125 @@ describe("collision N45 — vérification reproduite", () => {
     expect(fav.filter((c) => c.y === 5)).toHaveLength(0);
     expect(cut.cells.filter((c) => c.y === 5 && c.category === "unavailable").length).toBeGreaterThan(0);
   });
-  test("l'enveloppe capsule du lot 1 est surdimensionnée axialement vs la demi-longueur effective du profil", () => {
+  test("la capsule testée est une approximation conservative : étendue réelle ±8,1 mm (16,2 mm), verre publié 14 mm", () => {
+    // Physique du lot 1 inchangée : segment ±7 mm épaissi du rayon 1,1 mm.
     expect(PROFILE.reed.envelopeHalfLengthMm).toBe(7);
-    expect(PROFILE.reed.envelopeHalfLengthMm).toBeGreaterThan(PROFILE.reed.effectiveLengthMm / 2);
+    expect(PROFILE.reed.envelopeRadiusMm).toBe(1.1);
+    // Étendue réelle testée : 7 + 1,1 = 8,1 mm → longueur 16,2 mm, surdimensionnée
+    // de +2,2 mm par rapport au verre publié (14 mm max), PAS à la longueur effective.
+    expect(PROFILE.reed.envelopeHalfLengthMm + PROFILE.reed.envelopeRadiusMm).toBeCloseTo(8.1, 12);
+    expect(2 * (PROFILE.reed.envelopeHalfLengthMm + PROFILE.reed.envelopeRadiusMm) - 14).toBeCloseTo(2.2, 12);
   });
 });
 
 describe("grille raffinée", () => {
-  test("cellules disjointes, dimensions réelles, zone fine 0,25 mm", () => {
+  test("maillage continu : couverture exacte de l'aire, aucun chevauchement, bande fine sur toute la hauteur", () => {
     const cells = fineGridCells();
-    const fine = cells.filter((c) => c.sizeMm === 0.25);
-    const coarse = cells.filter((c) => c.sizeMm === 1);
-    expect(fine.length).toBe(41 * 21);
-    expect(cells.every((c) => c.sizeMm === 0.25 || c.sizeMm === 1)).toBe(true);
-    // Aucune cellule grossière centrée dans la zone fine.
-    expect(coarse.every((c) => Math.abs(c.x) > 5 || c.y > 5)).toBe(true);
-    // Disjonction : deux cellules de la même ligne (même y0) ne se recouvrent jamais ;
-    // les lignes fines (y0 = ±0,125 près) et grossières (y0 = ±0,5 près) ne partagent
-    // aucun y0, et l'étendue fine maximale (5,125) reste sous le bord grossier (5,5).
-    const rects = cells.map((c) => ({ x0: c.x - c.sizeMm / 2, x1: c.x + c.sizeMm / 2, y0: c.y - c.sizeMm / 2, y1: c.y + c.sizeMm / 2 }));
-    const byRow = new Map<number, { x0: number; x1: number }[]>();
-    for (const r of rects) {
-      const key = Math.round(r.y0 * 8);
-      const arr = byRow.get(key) ?? [];
-      for (const o of arr) expect(r.x1 <= o.x0 + 1e-9 || r.x0 >= o.x1 - 1e-9).toBe(true);
-      arr.push({ x0: r.x0, x1: r.x1 });
-      byRow.set(key, arr);
+    // Nœuds : x grossiers |x| > 5 (38) + fins |x| ≤ 5 (41) = 79 ; y fins 0..24 (97).
+    expect(cells.length).toBe(79 * 97);
+    // Couverture d'aire exacte du domaine 48 × 24 mm (bornes exactes en binaire).
+    const area = cells.reduce((s, c) => s + (c.x1 - c.x0) * (c.y1 - c.y0), 0);
+    expect(area).toBeCloseTo(48 * 24, 9);
+    // Aucun chevauchement : intervalles triés par bande y puis x, contigus.
+    const rows = new Map<string, { x0: number; x1: number }[]>();
+    for (const c of cells) {
+      const key = `${c.y0}|${c.y1}`;
+      const arr = rows.get(key) ?? [];
+      arr.push({ x0: c.x0, x1: c.x1 });
+      rows.set(key, arr);
     }
-    const fineMax = Math.max(...fine.map((c) => Math.abs(c.x) + c.sizeMm / 2), ...fine.map((c) => c.y + c.sizeMm / 2));
-    expect(fineMax).toBeCloseTo(5.125, 9);
-    expect(fineMax).toBeLessThan(5.5);
+    let prevY1 = 0;
+    const yBands = [...rows.keys()].map((k) => k.split("|").map(Number) as [number, number]).sort((a, b) => a[0] - b[0]);
+    expect(yBands[0]![0]).toBe(0);
+    for (const [y0, y1] of yBands) {
+      expect(y0).toBeCloseTo(prevY1, 12); // contiguïté verticale, aucun trou
+      prevY1 = y1;
+      const ints = rows.get(`${y0}|${y1}`)!.sort((a, b) => a.x0 - b.x0);
+      expect(ints[0]!.x0).toBe(-24);
+      for (let i = 1; i < ints.length; i++) expect(ints[i]!.x0).toBeCloseTo(ints[i - 1]!.x1, 12);
+      expect(ints[ints.length - 1]!.x1).toBe(24);
+    }
+    expect(prevY1).toBe(24);
+    // Bande fine sur TOUTE la hauteur : nœuds fins à chaque y de 0 à 24.
+    const fine = cells.filter((c) => Math.abs(c.x) <= 5 && c.x1 - c.x0 <= 0.25 + 1e-9);
+    expect(new Set(fine.map((c) => c.y)).size).toBe(97);
+    // Raccord sans trou : la cellule fine à x = 5 s'étend jusqu'à 5,5 (milieu 5–6).
+    const edge = cells.find((c) => c.x === 5 && c.y === 12)!;
+    expect(edge.x1).toBeCloseTo(5.5, 12);
+    expect(edge.x0).toBeCloseTo(4.875, 12);
   });
-  test("nœuds communs : la grille fine retrouve la catégorie de la coupe 1 mm", () => {
+  test("nœuds communs sur toute la hauteur : la grille fine retrouve la coupe 1 mm de même identifiant", () => {
     const cal = buildCalibrations("B", "C1");
-    const fine = computeFineCut("2-perpendicular-centred-C", N45, cal);
-    const cmp = commonNodeComparison(fine, N45, cal);
-    expect(cmp.nodes).toBe(66); // 11 × 6 nœuds entiers dans la zone fine
-    expect(cmp.mismatches).toBe(0);
-    expect(fine.cells.some((c) => c.reading === "collision")).toBe(true);
-    expect(fine.cells.some((c) => c.reading === "reponse_nulle")).toBe(true);
-  });
-  test("largeur de zone centrale : convergée entre les pas 0,25 et 0,125, jamais négative", () => {
-    for (const y of [6, 8, 10]) {
-      const coarse = centralNullHalfWidth(N45, y, 1.25);
-      const fine = centralNullHalfWidth(N45, y, 0.25);
-      const finer = centralNullHalfWidth(N45, y, 0.125);
-      if (fine != null && finer != null) expect(Math.abs(fine - finer)).toBeLessThanOrEqual(0.125);
-      if (coarse != null && fine != null) expect(Math.abs(coarse - fine)).toBeLessThanOrEqual(1.25);
+    for (const id of ["2-perpendicular-centred-C", "3-perpendicular-offset-C"] as const) {
+      const fine = computeFineCut(id, N45, cal);
+      const cmp = commonNodeComparison(fine, N45, cal);
+      expect(cmp.nodes).toBe(11 * 25); // |x| ≤ 5 entiers × y entiers 0..24
+      expect(cmp.mismatches).toBe(0);
+      expect(fine.cells.some((c) => c.reading === "collision")).toBe(true);
+      expect(fine.cells.some((c) => c.reading === "reponse_nulle")).toBe(true);
     }
+  }, 120000);
+  test("état nominal distingué du diagnostic toutes hypothèses", () => {
+    // SmCo à [0,4,0] : pose nominale valide (réponse nulle au centre), mais le
+    // scénario y−1 mm entre en collision → collision_hypothese, PAS collision nominale.
+    const cell = classifyFineCell(SMCO, { x: 0, y: 4, x0: -0.125, x1: 0.125, y0: 3.875, y1: 4.125 }, [0, 1, 0], null);
+    expect(cell.nominal).toBe("nulle");
+    expect(cell.reading).toBe("reponse_nulle");
+    const cellHyp = classifyFineCell(SMCO, { x: 2, y: 4, x0: 1.875, x1: 2.125, y0: 3.875, y1: 4.125 }, [0, 1, 0], { up: 0.001, to: 0.0005 });
+    expect(cellHyp.nominal).not.toBe("collision");
+    if (cellHyp.category === "unavailable" && cellHyp.reading !== "reponse_nulle")
+      expect(cellHyp.reading).toBe("collision_hypothese");
+    // N45 à [0,5,0] : collision NOMINALE du corps dessiné.
+    expect(nominalState(N45, 0, 5, [0, 1, 0])).toBe("collision");
+    const cellN = classifyFineCell(N45, { x: 0, y: 5, x0: -0.125, x1: 0.125, y0: 4.875, y1: 5.125 }, [0, 1, 0], null);
+    expect(cellN.reading).toBe("collision");
+  });
+  test("le SVG dessine la capsule testée (16,2 mm), le verre publié (14 mm) et réserve le texte reed", () => {
+    const cal = buildCalibrations("B", "C1");
+    const cut = computeFineCut("2-perpendicular-centred-C", SMCO, cal);
+    const svg = fineCutToSvg(cut, SMCO, paletteFromCss("/* test */ :root{}"));
+    // Capsule testée : largeur 16,2 mm × 12 px/mm = 194,4 ; verre publié : 14 × 12 = 168.
+    expect(svg).toContain('width="194.4"');
+    expect(svg).toContain('width="168"');
+    expect(svg).toContain("approximation conservative");
+    expect(svg).not.toContain("encombrement publié");
+  }, 120000);
+});
+
+describe("largeur de zone centrale — profondeurs physiquement valides", () => {
+  test("statuts explicites, x=0 vérifié, plusieurs largeurs numériques par aimant, convergence 1 / 0,25 / 0,125", () => {
+    for (const m of [SMCO, N45]) {
+      const rows = centralNullWidthTable(m, [12, 16, 20, 24]);
+      expect(rows).toHaveLength(12);
+      // x = 0 vérifié : réponse nominale nulle au centre, jamais une collision à ces profondeurs.
+      const atZero = evaluatePose(m, { center: [0, 12, 0], axis: [0, 1, 0] }, PROFILE.scenarios[0]!, "B");
+      expect(atZero.ok).toBe(true);
+      if (atZero.ok) expect(atZero.response).toBe(0);
+      let numeric = 0;
+      for (const y of [12, 16, 20, 24]) {
+        const s1 = rows.find((r) => r.y === y && r.stepMm === 1)!.scan;
+        const s25 = rows.find((r) => r.y === y && r.stepMm === 0.25)!.scan;
+        const s125 = rows.find((r) => r.y === y && r.stepMm === 0.125)!.scan;
+        // Aucun statut collision ni sortie non trouvée à ces profondeurs.
+        expect(s1.status).toBe("ok");
+        expect(s25.status).toBe("ok");
+        expect(s125.status).toBe("ok");
+        if (s1.status === "ok" && s25.status === "ok" && s125.status === "ok") {
+          numeric++;
+          // Intervalle [dernier nul ; premier positif] cohérent avec le pas.
+          expect(s25.firstPositiveMm - s25.lastNullMm).toBeLessThanOrEqual(0.25 + 1e-9);
+          // Convergence : jamais null/null — trois largeurs numériques comparées.
+          expect(Math.abs(s25.firstPositiveMm - s125.firstPositiveMm)).toBeLessThanOrEqual(0.125 + 1e-9);
+          expect(Math.abs(s1.firstPositiveMm - s25.firstPositiveMm)).toBeLessThanOrEqual(1 + 1e-9);
+        }
+      }
+      expect(numeric).toBeGreaterThanOrEqual(3); // plusieurs largeurs numériques par aimant
+    }
+  }, 60000);
+  test("statuts collision et sortie non trouvée distincts", () => {
+    const coll = centralNullHalfWidth(N45, 5, 0.25);
+    expect(coll.status).toBe("collision");
+    const nf = centralNullHalfWidth(SMCO, 24, 0.25, 0.5);
+    expect(nf.status).toBe("not_found");
   });
 });
