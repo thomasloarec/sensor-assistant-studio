@@ -132,8 +132,8 @@ export function fitLength(model: ResponseModel, conv: DistanceConvention, rows?:
     else { lo = c; c = e; fc = fe; e = lo + gr * (hi - lo); fe = sse(e); }
   }
   const L = (lo + hi) / 2;
-  const pairs: LengthFitPair[] = bounds.map((b) => ({ className: b.className, bound: b.bound, thetaSmCo: theta(PILOT_MAGNETS[0]!, b, L), thetaN45: theta(PILOT_MAGNETS[1]!, b, L) }));
-  return { effectiveLengthMm: L, rmsLogDisagreement: Math.sqrt(sse(L) / Math.max(1, bounds.length)), pairs };
+  const pairs: LengthFitPair[] = combos.map((c) => ({ className: c.className, bound: c.bound, thetaSmCo: theta(PILOT_MAGNETS[0]!, c.smco.publishedMm, L), thetaN45: theta(PILOT_MAGNETS[1]!, c.n45.publishedMm, L) }));
+  return { effectiveLengthMm: L, rmsLogDisagreement: Math.sqrt(sse(L) / Math.max(1, combos.length)), pairs };
 }
 
 // --- Tableau complet : classes A..G, toutes approches, disponibilité réelle ---
