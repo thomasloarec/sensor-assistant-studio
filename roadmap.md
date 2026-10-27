@@ -150,6 +150,6 @@
 - [x] Module pur paramétrable (L, repère axial D3/D5 explicite, θ = k·AT sourcé MK04) + script `detection-lab-pass2-report.ts` régénérant `docs/detection-lab-pass2/` ; profil 1.1 et client préservés.
 - [x] Quatre variantes (L16/d7, L16/d4, L8/d7, L ajusté D1/d7), tableaux A..G avec disponibilité réelle, D1 B/D isolé.
 - [x] Score primaire sur les 23 bornes publiées C/E D3/D4/D5, secondaire sans C-N45-D3to 17,7 (anomalie suspectée), critère explicite médiane ≤10 % et ≤3/23 >20 % et zéro indisponible.
-- [x] Coupes perpendiculaires raffinées (0,25 mm dans |x|≤5, y≤5 ; 1 mm ailleurs, sans recouvrement), CSV+SVG, nœuds communs et largeur de zone centrale ; trois états de lecture distingués.
+- [x] Coupes perpendiculaires raffinées (revue 41669806 : bande fine toute hauteur, maillage continu, capsule testée dessinée, nominal/hypothèses distingués) (0,25 mm dans |x|≤5, y≤5 ; 1 mm ailleurs, sans recouvrement), CSV+SVG, nœuds communs et largeur de zone centrale ; trois états de lecture distingués.
 - [x] Vérification collision N45 reproduite ; enveloppe capsule surdimensionnée axialement signalée distinctement.
 - [x] Tests (repère indépendant de L, θ/AT constant, ajustement sans contrôles, grille fine disjointe) + suite/types/build/scans ; rapport FR avec sources pattes Standex.

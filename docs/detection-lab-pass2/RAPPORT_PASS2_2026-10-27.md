@@ -26,7 +26,7 @@ Ces valeurs sont des paramètres ajustés sur 8 bornes d'apprentissage, pas des 
 
 Contrôles = toutes les bornes publiées C/E D3/D4/D5 des deux aimants (23 publiées, 1 manquante : SmCo E D5 up « - » dans la source). Critère reçu : médiane ≤ 10 % ET ≤ 3/23 bornes > 20 % ET aucune indisponible. Score secondaire : sans la seule borne suspectée C-N45-D3 to = 17.7 (identique au D1 to du même couple — anomalie de source suspectée, jamais corrigée, jamais exclue du score primaire).
 
-| Variante | score | publiées | calculables | indisponibles | manquantes | médiane |écart| % | > 20 % | critère |
+| Variante | score | publiées | calculables | indisponibles | manquantes | médiane \|écart\| % | > 20 % | critère |
 |---|---|---|---|---|---|---|---|---|
 | V1-L16-d7 | primaire (23 bornes) | 23 | 21 | 2 | 1 | 38.88 | 15 | NON ATTEINT |
 | V1-L16-d7 | secondaire (sans anomalie) | 22 | 20 | 2 | 1 | 38.00 | 14 | NON ATTEINT |
@@ -39,7 +39,7 @@ Contrôles = toutes les bornes publiées C/E D3/D4/D5 des deux aimants (23 publi
 
 Détail par approche (score primaire) :
 
-| Variante | approche | calculables | médiane |écart| % | > 20 % |
+| Variante | approche | calculables | médiane \|écart\| % | > 20 % |
 |---|---|---|---|---|---|
 | V1-L16-d7 | D3 | 8/8 | 43.71 | 8 |
 | V1-L16-d7 | D4 | 8/8 | 11.71 | 2 |
@@ -56,39 +56,56 @@ Détail par approche (score primaire) :
 
 Un résidu systématique n'est pas une marge validée. Si le critère n'est pas atteint : pas de volume 3D.
 
+## Classes B et D (hors apprentissage) — résumé chiffré
+
+Classes B/D jamais utilisées pour ajuster k ni L. D1 est un contrôle isolé ; D3/D4/D5 sont des contrôles au même titre que C/E. Détail ligne à ligne dans les CSV.
+
+| Variante | sous-ensemble | publiées | calculables | indisponibles | médiane \|écart\| % | > 20 % |
+|---|---|---|---|---|---|---|
+| V1-L16-d7 | B/D — D1 seul | 8 | 8 | 0 | 1.60 | 0 |
+| V1-L16-d7 | B/D — D3/D4/D5 | 24 | 22 | 2 | 34.16 | 14 |
+| V2-L16-d4 | B/D — D1 seul | 8 | 8 | 0 | 1.60 | 0 |
+| V2-L16-d4 | B/D — D3/D4/D5 | 24 | 24 | 0 | 12.20 | 3 |
+| V3-L8-d7 | B/D — D1 seul | 8 | 8 | 0 | 6.36 | 1 |
+| V3-L8-d7 | B/D — D3/D4/D5 | 24 | 23 | 1 | 33.25 | 18 |
+| V4-Lfit-d7 | B/D — D1 seul | 8 | 8 | 0 | 0.95 | 0 |
+| V4-Lfit-d7 | B/D — D3/D4/D5 | 24 | 22 | 2 | 34.47 | 14 |
+
 ## Disponibilité réelle des classes
 
-La transcription Form 66 contient les classes A..F ; **G est absente de la source** — les lignes G des tableaux portent le statut « no_source » et ne sont jamais présentées comme validées. D1 des classes B/D : contrôles isolés hors apprentissage, listés dans les tableaux CSV (`tableau_V*.csv`, 112 lignes chacun : 7 classes × 4 approches × 2 bornes × 2 aimants).
+La transcription Form 66 contient les classes A..F ; **G est absente de la source** — les lignes G des tableaux portent le statut « no_source » et ne sont jamais présentées comme validées. Tableaux CSV (`tableau_V*.csv`, 112 lignes chacun : 7 classes × 4 approches × 2 bornes × 2 aimants).
 
 ## Coupes perpendiculaires raffinées (audit géométrique, profil 1.1, B/C1)
 
-Pas 0,25 mm dans la zone locale |x| ≤ 5 mm et y ≤ 5 mm, 1 mm ailleurs, cellules à dimension réelle sans recouvrement. Trois états de lecture distingués : collision (invalidité géométrique), réponse nominale nulle (zone centrale du modèle B), diagnostic défavorable. Ces largeurs ne sont pas des probabilités.
+Maillage continu du domaine dessiné : pas 0,25 mm dans la bande |x| ≤ 5 mm sur toute la hauteur y = 0..24, 1 mm ailleurs ; frontières de cellules aux milieux entre nœuds, tronquées au domaine — sans recouvrement ni trou, cellules dessinées à leurs bornes réelles. États de lecture distingués : collision NOMINALE (invalidité géométrique du corps dessiné), collision dans une hypothèse ±1 mm (pose nominale valide), réponse nominale nulle (zone centrale du modèle B), diagnostic défavorable. Ces largeurs ne sont pas des probabilités.
 
 | Coupe | aimant | cellules | nœuds communs vérifiés | désaccords |
 |---|---|---|---|---|
-| 2-perpendicular-centred-C | SMCO5-5X4 | 2020 | 66 | 0 |
-| 3-perpendicular-offset-C | SMCO5-5X4 | 2020 | 66 | 0 |
-| 2-perpendicular-centred-C | N45-4X19 | 2020 | 66 | 0 |
-| 3-perpendicular-offset-C | N45-4X19 | 2020 | 66 | 0 |
+| 2-perpendicular-centred-C | SMCO5-5X4 | 7663 | 275 | 0 |
+| 3-perpendicular-offset-C | SMCO5-5X4 | 7663 | 275 | 0 |
+| 2-perpendicular-centred-C | N45-4X19 | 7663 | 275 | 0 |
+| 3-perpendicular-offset-C | N45-4X19 | 7663 | 275 | 0 |
 
-Demi-largeur de la zone centrale à réponse nominale nulle (modèle B, scénario nominal) selon le pas de balayage :
+Demi-largeur de la zone centrale à réponse nominale nulle (modèle B, scénario nominal) selon le pas de balayage — intervalle [dernier point nul ; premier point positif], statuts explicites :
 
-| aimant | profondeur y (mm) | pas 1,25 | pas 0,25 | pas 0,125 |
+| aimant | profondeur y (mm) | pas 1 | pas 0,25 | pas 0,125 |
 |---|---|---|---|---|---|
-| SMCO5-5X4 | 6 | 2.500 | 2.000 | 2.000 |
-| SMCO5-5X4 | 8 | 2.500 | 2.250 | 2.125 |
-| SMCO5-5X4 | 10 | 2.500 | 2.000 | 2.000 |
-| N45-4X19 | 6 | — | — | — |
-| N45-4X19 | 8 | — | — | — |
-| N45-4X19 | 10 | — | — | — |
+| SMCO5-5X4 | 14 | [1.000 ; 2.000] | [1.750 ; 2.000] | [1.875 ; 2.000] |
+| SMCO5-5X4 | 18 | [1.000 ; 2.000] | [1.750 ; 2.000] | [1.875 ; 2.000] |
+| SMCO5-5X4 | 22 | [1.000 ; 2.000] | [1.750 ; 2.000] | [1.875 ; 2.000] |
+| SMCO5-5X4 | 24 | [1.000 ; 2.000] | [1.750 ; 2.000] | [1.875 ; 2.000] |
+| N45-4X19 | 14 | [2.000 ; 3.000] | [2.000 ; 2.250] | [2.000 ; 2.125] |
+| N45-4X19 | 18 | [1.000 ; 2.000] | [1.750 ; 2.000] | [1.875 ; 2.000] |
+| N45-4X19 | 22 | [1.000 ; 2.000] | [1.750 ; 2.000] | [1.875 ; 2.000] |
+| N45-4X19 | 24 | [1.000 ; 2.000] | [1.750 ; 2.000] | [1.875 ; 2.000] |
 
-Figures : `svg/2-perpendicular-centred-C_*_B_fine.svg` et `svg/3-perpendicular-offset-C_*_B_fine.svg` (+ CSV). L'enveloppe de verre publiée (capsule pointillée) et l'aimant aux repères sont dessinés à taille réelle.
+Figures : `svg/2-perpendicular-centred-C_*_B_fine.svg` et `svg/3-perpendicular-offset-C_*_B_fine.svg` (+ CSV). La capsule de collision testée, le verre publié 14 mm et l'aimant aux repères sont dessinés à taille réelle.
 
 ## Vérification collision N45 (reproduction)
 
-Coupe 1 mm du lot 1 (2-perpendicular-centred-C, N45, B/C1) recalculée : **108 cellules favorables, 0 à y = 5 mm**. La pose centre [0, 5, 0], axe [0, 1, 0] renvoie **collision (collision)** : le corps du cylindre est bien testé dans `pose.ts` et les cellules proches du reed à y = 5 sont indisponibles pour collision — aucune collision n'est manquée ni inventée.
+Coupe 1 mm du lot 1 (2-perpendicular-centred-C, N45, B/C1) recalculée : **108 cellules favorables, 0 à y = 5 mm**. La pose centre [0, 5, 0], axe [0, 1, 0] renvoie **collision (collision)** : le corps du cylindre est bien testé dans `pose.ts` et, sur les cellules contrôlées de cette coupe, les cellules proches du reed à y = 5 sont indisponibles pour collision.
 
-Point distinct : l'enveloppe conservative du lot 1 (capsule ±7 mm, rayon 1.1 mm, encombrement publié KSK-1A66) est **surdimensionnée axialement** par rapport à la demi-longueur effective du profil 1.1 (4 mm) ; avec L = 16 mm elle serait au contraire plus courte que la zone d'intégration (8 mm). C'est une exclusion géométrique conservative, pas une dimension de lame.
+Point distinct : la capsule de collision du lot 1 (segment ±7 mm épaissi du rayon 1.1 mm, étendue réelle ±8.1 mm, longueur 16.2 mm) est une **approximation conservative**, pas l'encombrement publié. Son surdimensionnement se mesure au verre publié KSK-1A66 (14 mm max) : +2.2 mm en longueur axiale. C'est une exclusion géométrique conservative, pas une dimension de lame.
 
 ## Conclusions factuelles
 
@@ -102,30 +119,30 @@ Point distinct : l'enveloppe conservative du lot 1 (capsule ±7 mm, rayon 1.1 mm
 
 | Étape | Durée |
 |---|---|
-| Ajustement de L (accord inter-aimants D1) | 26 ms |
-| Ajustement de k (V1-L16-d7) | 557 ms |
-| Tableau A..G (V1-L16-d7) | 2209 ms |
-| Ajustement de k (V2-L16-d4) | 492 ms |
-| Tableau A..G (V2-L16-d4) | 2074 ms |
-| Ajustement de k (V3-L8-d7) | 466 ms |
-| Tableau A..G (V3-L8-d7) | 2014 ms |
-| Ajustement de k (V4-Lfit-d7) | 521 ms |
-| Tableau A..G (V4-Lfit-d7) | 2038 ms |
-| Seuils partagés lot 1 (B/C1) | 303 ms |
-| Coupe raffinée 2-perpendicular-centred-C SMCO5-5X4 | 347 ms |
-| Coupe raffinée 3-perpendicular-offset-C SMCO5-5X4 | 323 ms |
-| Coupe raffinée 2-perpendicular-centred-C N45-4X19 | 196 ms |
-| Coupe raffinée 3-perpendicular-offset-C N45-4X19 | 190 ms |
-| Nœuds communs 2-perpendicular-centred-C SMCO5-5X4 | 296 ms |
-| Nœuds communs 3-perpendicular-offset-C SMCO5-5X4 | 295 ms |
-| Nœuds communs 2-perpendicular-centred-C N45-4X19 | 198 ms |
-| Nœuds communs 3-perpendicular-offset-C N45-4X19 | 165 ms |
-| Largeurs zone centrale SMCO5-5X4 | 1 ms |
-| Largeurs zone centrale N45-4X19 | 0 ms |
-| Coupe 1 mm lot 1 (N45, B) | 180 ms |
+| Ajustement de L (accord inter-aimants D1) | 34 ms |
+| Ajustement de k (V1-L16-d7) | 742 ms |
+| Tableau A..G (V1-L16-d7) | 2797 ms |
+| Ajustement de k (V2-L16-d4) | 737 ms |
+| Tableau A..G (V2-L16-d4) | 2970 ms |
+| Ajustement de k (V3-L8-d7) | 785 ms |
+| Tableau A..G (V3-L8-d7) | 2828 ms |
+| Ajustement de k (V4-Lfit-d7) | 721 ms |
+| Tableau A..G (V4-Lfit-d7) | 3092 ms |
+| Seuils partagés lot 1 (B/C1) | 366 ms |
+| Coupe raffinée 2-perpendicular-centred-C SMCO5-5X4 | 2354 ms |
+| Coupe raffinée 3-perpendicular-offset-C SMCO5-5X4 | 2258 ms |
+| Coupe raffinée 2-perpendicular-centred-C N45-4X19 | 1275 ms |
+| Coupe raffinée 3-perpendicular-offset-C N45-4X19 | 1356 ms |
+| Nœuds communs 2-perpendicular-centred-C SMCO5-5X4 | 443 ms |
+| Nœuds communs 3-perpendicular-offset-C SMCO5-5X4 | 470 ms |
+| Nœuds communs 2-perpendicular-centred-C N45-4X19 | 294 ms |
+| Nœuds communs 3-perpendicular-offset-C N45-4X19 | 265 ms |
+| Largeurs zone centrale SMCO5-5X4 | 2 ms |
+| Largeurs zone centrale N45-4X19 | 1 ms |
+| Coupe 1 mm lot 1 (N45, B) | 290 ms |
 
 ## Limites
 
 - Expérience de calibration et figures de revue uniquement : pas de volume 3D, pas d'intégration atelier ni client, pas de remplacement du profil 1.1.
 - MK04 D3 reste en quarantaine (lot 1) ; les adaptations documentaires MK03/MK13 ne sont pas des contrôles indépendants.
-- La zone fine couvre |x| ≤ 5 mm et y ≤ 5 mm ; au-delà, le pas reste 1 mm.
+- La bande fine couvre |x| ≤ 5 mm sur toute la hauteur ; au-delà, le pas reste 1 mm.
