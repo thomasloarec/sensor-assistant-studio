@@ -17,7 +17,6 @@ import {
   computeFineCut, fineGridCells, nominalState,
 } from "../src/lib/detection-lab/pass2-cuts";
 import { fineCutToSvg } from "../src/lib/detection-lab/pass2-report";
-import { paletteFromCss } from "../src/lib/detection-lab/report";
 import formData from "../src/data/detection-lab/brochure-form-rows.json";
 
 const [SMCO, N45] = PILOT_MAGNETS as [typeof PILOT_MAGNETS[0], typeof PILOT_MAGNETS[0]];
