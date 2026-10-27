@@ -1,6 +1,7 @@
 # Feuille de route — lot des 7 correctifs (base 12be3e3d)
 
 ## Intégration pédagogique client autorisée — 27 octobre 2026
+- [ ] Complément15:57 : inventaire3004lignes/5744bornes, variantes66/85/90 exactes, sources couples/N42, F1 frontal ; réutilisation pavé existant à diagnostiquer sans doublon ni calibration cachée.
 - [x] Nouveau lot15:41 premier ensemble : registre31profils/29commerciaux et aimants, couche pure séparée/volumes worker sur vrais corps, trace hypothèses/instant nonqualifiante, couverture/comparaisons/langues/tests ; aucun envoi/publication. Plafond40,6 total,28,2 connus avant lot.
 - [ ] Compléments catalogue : recette client réelle/GLB, reed intérieur, diagnostic/remèdes catalogue détaillés, retour instant dans UI depuis trace, section exacte et calibration/effet pattes ; non livrés dans ce premier ensemble, attendre checkpoint budgétaire/contre-revue avant continuation.
 - [x] Complément15:32 : câble PCB neutralisé, réglages réunis ;81ciblés/2030suite verts, langues/scans/103empreintes vérifiés et rapport ; aucun nouvel import réel validé, recette visuelle finale attendue.

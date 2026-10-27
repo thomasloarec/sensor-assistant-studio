@@ -54,6 +54,8 @@ export function ClientPedagogicalControls({config,update,onCatalog,onExplore,onC
       <p className="t-caption">{adapter.model.family} · {adapter.model.lengthMm} mm · {adapter.model.method} · {adapter.version}</p>
       <p className="t-caption">{t('Plage documentaire indicative, sans validation de la simulation.')}</p>
       {rows.map((r,i)=><p className="t-caption" key={i}>{r.sensorReference} · {r.approachId} · <span className="t-metric">{formatGuideBound(r.upMm,r.upNote)} – {formatGuideBound(r.toMm,r.toNote)} mm</span> · {msg('Guide Standex, page {0}',[String(r.page)])}</p>)}
+      {adapter.model.publishedRows.map(r=><p className="t-caption" key={r.id}>{r.sensorReference} · {r.magnetId} · {r.approachId} · {t('Pull-in')} / {t('Drop-out')} : <span className="t-metric">{r.pullInMm} / {r.dropOutMm} mm</span></p>)}
+      {adapter.model.publishedSource&&<a href={adapter.model.publishedSource} target="_blank" rel="noreferrer">{t('Source Standex ↗')}</a>}
       <a href={ACTIVATION_GUIDE.source.url} target="_blank" rel="noreferrer">{t('Source Standex ↗')}</a>
     </details>
   </div>;
