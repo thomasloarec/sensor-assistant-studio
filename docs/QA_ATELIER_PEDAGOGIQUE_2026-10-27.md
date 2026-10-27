@@ -75,3 +75,13 @@ Thomas confirme staff authentifié ; N45 t33.3%, y16.008 : x0 défavorable/orien
 - Scans : zéro couleur brute/texte interdit nouveau ; six hex préexistants (matériaux connecteur/theme-color) et six durées primitives non migrées préexistantes, non retouchés.
 - Rendu isolé du vrai composant, 1920×960 et390×844 : 189679 positions en **2,37s SmCo** ; case matériau voisin ⇒ **0 rect SVG**, état indisponible ; décochage retrouve le résultat valide courant. Légende visible, zéro pageerror/débordement. Captures revues sous `/tmp/browser/pedagogical/`. Ces preuves ne remplacent pas votre recette staff authentifiée.
 - Pas de recalibration, sources/profils1.1/pass2/pass3/catalogue inchangés ; aucun changement DB/auth/publication ni aux contrôles de consommation. Enregistrement du checkpoint géré par plateforme, pas de commande Git stateful.
+
+
+## Complément profondeur minimale — 11:41 UTC
+Le curseur **Profondeur minimale** règle `end` de1 à24mm par.25mm, conserve la course en décalant `start` et passe par le même `update(...,{keepTime:true})`. Il ne modifie aucun seuil/physique. Les réglages centré/décalé sont désormais accessibles à profondeur6mm SmCo et16mm N45.
+
+Deux tests supplémentaires montent les vrais **PedagogicalControls**, actionnent profondeur puis décalage, vérifient profondeur effective via adaptateur, neuf hypothèses, état affiché et temps. SmCo ày6 : x0 défavorable/orientation, x6 etx8 favorables. N45 ày16 : x0 défavorable/orientation, x8 favorable. Le temps reste.5 ; pas de pose test inatteignable. Sélecteur d'aimant nommé explicitement pour accessibilité.
+
+Navigateur isolé du vrai MagneticWorkshop : curseur cycle50%, profondeur6 SmCo puis16 N45, x0→x8, états défavorable→favorable dans les deux cas ; **curseur reste50**. Captures revues `depth_SMCO5-5X4.png`, `depth_N45-4X19.png` sous `/tmp/browser/pedagogical/`. Zéro pageerror/débordement. La capture N45 est prise pendant recalcul des volumes, pas revendiquée comme mesh final. Aucun accès staff contourné ; la recette authentifiée demeure celle du propriétaire.
+
+Vérification finale après toutes éditions code : **1965 tests pass /0fail**,126fichiers,143749assertions,122.90s. Tests revue+complément :13pass/332assertions. Inventaire8langues TOTAL0 ; une clé traduite×7langues. Types/compilation plateforme **build OK11:45:57UTC**. Scans couleurs/classes interdits vides ; exceptions hex/durées préexistantes inchangées. Aucun backend, publication, recalibration ni changement des contrôles de consommation.

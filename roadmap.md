@@ -171,4 +171,4 @@
 - [x] Corriger chronologie proportionnelle/non certifiée, hystérésis inconnue, accessibilité/cadrage, distances canoniques documentaires, import strict et faces topologiques/troncature.
 - [x] Preuves distinctes et test réel GLB clip/attaches ; suite complète 1963/0, huit langues/scans, types/compilation plateforme OK ; recette finale propriétaire sans contourner auth.
 
-- [ ] Complément SmCo/N45 : profondeur minimale réglable et comparaison même-distance via vrais contrôles UI, sans reset du temps.
+- [x] Complément SmCo/N45 : profondeur minimale réglable ; vrais contrôles/tests/navigateur même-distance sans reset du temps, suite1965/0.
