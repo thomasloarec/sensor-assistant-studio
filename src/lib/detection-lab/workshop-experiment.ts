@@ -7,7 +7,7 @@ import { evaluatePose, type MagnetPose, type PoseEvaluation } from './pose';
 import { PROFILE, type ReedScenario } from './profile';
 import type { Vec3 } from './field';
 
-export const EXPERIMENT = Object.freeze(frozen);
+export const EXPERIMENT = Object.freeze({...frozen,baseProfile:Object.freeze({...frozen.baseProfile})});
 export type PlacementState = 'favorable' | 'variable' | 'unfavorable' | 'unavailable';
 export interface ExperimentSettings {
   profileVersion: string; dataVersion: string; magnetId: string; className: string;
@@ -86,7 +86,7 @@ export function sampleVolume(settings:ExperimentSettings,axis:Vec3,planeZ:number
   if(planeZ>=-extent&&planeZ<=extent&&!zs.includes(planeZ)) {zs.push(planeZ);zs.sort((a,b)=>a-b);}
   const magnet=PILOT_MAGNETS.find(m=>m.id===settings.magnetId),th=classThresholds(settings.className);
   const cells:SampleCell[]=[],cut:SampleCell[]=[];
-  if(!magnet||!th) return {key:settingsKey(settings,axis,planeZ),cells,cut,computeMs:0,nodeCount:0,axis,planeZ};
+  if(!magnet||!th||settings.integration!=='form66'||settings.nearbyMaterial||settings.profileVersion!==EXPERIMENT.version||settings.dataVersion!==EXPERIMENT.dataVersion) return {key:settingsKey(settings,axis,planeZ),cells,cut,computeMs:0,nodeCount:0,axis,planeZ};
   const nominal=nominalScenario();
   for(let k=0;k<zs.length;k++) for(let j=0;j<ys.length;j++) for(let i=0;i<xs.length;i++) {
     const x=xs[i]??0,y=ys[j]??0,z=zs[k]??0;

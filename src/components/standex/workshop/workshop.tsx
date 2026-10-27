@@ -313,17 +313,15 @@ export default function MagneticWorkshop({
   const [suggestion, setSuggestion] = useState<WorkshopConfig | null>(null);
   const [placementUndo, setPlacementUndo] = useState<WorkshopConfig | null>(null);
   const pedagogicalPose = useMemo(() => pedagogicalFrame(config, progress), [config, progress]);
-  const placement = useMemo(() => evaluatePlacement(experiment, pedagogicalPose.pose), [experiment, pedagogicalPose]);
-  const sampled = usePedagogicalVolume(pedagogical, experiment, pedagogicalPose);
+  // Until imported-solid collision is characterized, never issue a favorable imported verdict.
+  const placement = useMemo(() => evaluatePlacement(config.machine ? {...experiment,integration:"unknown"} : experiment, pedagogicalPose.pose), [experiment, pedagogicalPose,config.machine]);
+  const sampled = usePedagogicalVolume(pedagogical && !playing, experiment, pedagogicalPose);
   const [pedTimeline, setPedTimeline] = useState<ReturnType<typeof placementTimeline> | null>(null);
   useEffect(() => {
     setPedTimeline(null);
     if (!pedagogical) return;
     // Clips remain in the local hierarchy registry, never serialized to a worker.
-    if (config.machine?.motionSource === "clip") {
-      const timer = setTimeout(() => setPedTimeline(placementTimeline(experiment, t => pedagogicalFrame(config,t).pose)), 0);
-      return () => clearTimeout(timer);
-    }
+    if (config.machine) return; // Imported solids/clip event resolution remains explicitly uncharacterized.
     if (typeof Worker === "undefined") return;
     let current = true;
     const worker = new Worker(new URL("./pedagogical.worker.ts", import.meta.url), {type:"module"});
