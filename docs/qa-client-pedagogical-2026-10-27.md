@@ -26,6 +26,7 @@ L’action « Comprendre les zones de détection » ouvre une exploration sépar
 - Correctif : bouton client masqué pour `isPcbSensor`, refus d'entrer dans l'outil câble pour PCB/exploration, prop câble déconnectée pour tous ses consommateurs (panneau et scène/callbacks). MK04 conserve le pointage. D1/D3 est intégré au même accordéon Position et environnement que trajectoire/orientation/température, sans retirer de réglage ni ajouter de traduction.
 - Deux nouvelles régressions comportementales : MK01+builtin:arm-v1 sans bouton/panneau/callback, témoin MK04 ouvrant le panneau et déclenchant réellement les callbacks waypoint/reset ; D3 puis passage latéral puis température autre, valeurs indépendantes conservées. Ces tests montent Workshop sous HappyDOM ; le chargement GLB réel et un clic WebGL ne sont pas prouvés par ce test (fetch local refusé possible).
 - Ciblés client/coquille/i18n : **81pass,0fail,500assertions**. Compilation automatique **build OK15:33:22UTC**. Nouvelle recette visuelle réelle laissée à la session prévue, sans reproduction HTML ni publication.
+- Suite complète après ce correctif : **2030pass,0fail,145746assertions,130fichiers**,152,72s ; inventaire i18n **TOTAL0**, scans **0/6/6/0** (exceptions préexistantes inchangées), **103empreintes identiques**, diff sans erreur. Types/compilation gérés par la plateforme, sans commande manuelle. Aucune vérification automatique n'est présentée comme la recette client Chrome réelle.
 
 ### Recette ChatGPT communiquée à 15:28 UTC, puis correctif d'en-tête
 
