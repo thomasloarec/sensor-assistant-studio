@@ -36,11 +36,11 @@ export type Value = { ok: true; value: number; x: number } | { ok: false; reason
 /** Maximum de lobe sur le paramètre t ≥ 0 (x pour D4, y pour D5) (symétrie du nominal) : balayage puis section dorée. */
 export function lobeMax(
   magnet: PilotMagnet, approach: "D4" | "D5", d: number, conv: DistanceConvention, model: ResponseModel,
-  scenario: ReedScenario = NOMINAL, step: number = PROFILE.search.xScanStepMm,
+  scenario: ReedScenario = NOMINAL, step: number = PROFILE.search.xScanStepMm, datumMm?: number,
 ): Value {
   let best = -1, bx = 0;
   const at = (x: number) => {
-    const e = evaluatePose(magnet, approachPose(magnet, approach, d, conv, x), scenario, model);
+    const e = evaluatePose(magnet, approachPose(magnet, approach, d, conv, x, datumMm ?? PROFILE.reed.effectiveLengthMm / 2), scenario, model);
     return e.ok ? e.response : -1;
   };
   for (let x = 0; x <= PROFILE.search.xScanMaxMm + 1e-9; x += step) {
@@ -59,25 +59,31 @@ export function lobeMax(
   return vm >= best ? { ok: true, value: vm, x: xm } : { ok: true, value: best, x: bx };
 }
 
-export function responseAt(magnet: PilotMagnet, approach: ApproachId, d: number, conv: DistanceConvention, model: ResponseModel, step?: number): Value {
-  if (approach === "D4" || approach === "D5") return lobeMax(magnet, approach, d, conv, model, NOMINAL, step);
-  const e = evaluatePose(magnet, approachPose(magnet, approach, d, conv), NOMINAL, model);
+export function responseAt(
+  magnet: PilotMagnet, approach: ApproachId, d: number, conv: DistanceConvention, model: ResponseModel,
+  step?: number, scenario: ReedScenario = NOMINAL, datumMm?: number,
+): Value {
+  if (approach === "D4" || approach === "D5") return lobeMax(magnet, approach, d, conv, model, scenario, step, datumMm);
+  const e = evaluatePose(magnet, approachPose(magnet, approach, d, conv, 0, datumMm ?? PROFILE.reed.effectiveLengthMm / 2), scenario, model);
   return e.ok ? { ok: true, value: e.response, x: 0 } : { ok: false, reason: e.reason };
 }
 
 /** Plus grande distance où la réponse atteint θ (balayage descendant puis bissection). */
-export function distanceFor(magnet: PilotMagnet, approach: ApproachId, theta: number, conv: DistanceConvention, model: ResponseModel, step?: number): Value {
+export function distanceFor(
+  magnet: PilotMagnet, approach: ApproachId, theta: number, conv: DistanceConvention, model: ResponseModel,
+  step?: number, scenario: ReedScenario = NOMINAL, datumMm?: number,
+): Value {
   if (!(theta > 0) || !Number.isFinite(theta)) return { ok: false, reason: "threshold" };
   const { dMaxMm, dScanStepMm, bisectTolMm } = PROFILE.search;
-  const top = responseAt(magnet, approach, dMaxMm, conv, model, step);
+  const top = responseAt(magnet, approach, dMaxMm, conv, model, step, scenario, datumMm);
   if (top.ok && top.value >= theta) return { ok: false, reason: "beyond_domain" };
   for (let d = dMaxMm - dScanStepMm; d >= 0; d -= dScanStepMm) {
-    const v = responseAt(magnet, approach, d, conv, model, step);
+    const v = responseAt(magnet, approach, d, conv, model, step, scenario, datumMm);
     if (!v.ok) return { ok: false, reason: "collision_before_threshold" };
     if (v.value >= theta) {
       let lo = d, hi = d + dScanStepMm, x = v.x;
       while (hi - lo > bisectTolMm) {
-        const mid = (lo + hi) / 2, m = responseAt(magnet, approach, mid, conv, model, step);
+        const mid = (lo + hi) / 2, m = responseAt(magnet, approach, mid, conv, model, step, scenario, datumMm);
         if (m.ok && m.value >= theta) { lo = mid; x = m.x; } else hi = mid;
       }
       return { ok: true, value: (lo + hi) / 2, x };
