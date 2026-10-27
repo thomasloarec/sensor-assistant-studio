@@ -34712,42 +34712,6 @@
     "Risposta nominale sufficiente; il risultato dipende dalla sensibilità o dalle ipotesi interne",
     "公称応答は十分です。結果は感度または内部仮定に依存します"
   ],
-  "Une autre orientation au même endroit atteint la borne nominale (essai nominal, pas un placement vérifié)": [
-    "Another orientation at the same spot reaches the nominal bound (nominal trial, not a verified placement)",
-    "同一位置的另一方向达到名义界限（名义试算，并非已验证放置）",
-    "Eine andere Ausrichtung an derselben Stelle erreicht die nominale Grenze (nominaler Versuch, keine geprüfte Platzierung)",
-    "Otra orientación en el mismo punto alcanza el límite nominal (prueba nominal, no una colocación verificada)",
-    "Другая ориентация в том же месте достигает номинальной границы (номинальная проба, не проверенное размещение)",
-    "Un altro orientamento nello stesso punto raggiunge il limite nominale (prova nominale, non un posizionamento verificato)",
-    "同じ位置の別の向きで公称境界に達します（公称試行であり、確認済みの配置ではありません）"
-  ],
-  "Une rotation à position constante n’atteint pas la borne nominale": [
-    "A rotation at constant position does not reach the nominal bound",
-    "在位置不变的情况下旋转达不到名义界限",
-    "Eine Drehung an gleicher Position erreicht die nominale Grenze nicht",
-    "Una rotación sin cambiar de posición no alcanza el límite nominal",
-    "Поворот без смены положения не достигает номинальной границы",
-    "Una rotazione a posizione costante non raggiunge il limite nominale",
-    "位置を変えない回転では公称境界に達しません"
-  ],
-  "Cause double : distance et orientation — la borne nominale n’est atteinte qu’en combinant rapprochement et rotation (constat, pas une action)": [
-    "Double cause: distance and orientation — the nominal bound is reached only by combining a closer position and a rotation (finding, not an action)",
-    "双重原因：距离与方向——只有同时靠近并旋转才能达到名义界限（结论，并非操作）",
-    "Doppelte Ursache: Abstand und Ausrichtung – die nominale Grenze wird nur durch Annäherung und Drehung zusammen erreicht (Befund, keine Maßnahme)",
-    "Causa doble: distancia y orientación; el límite nominal solo se alcanza combinando acercamiento y rotación (constatación, no una acción)",
-    "Двойная причина: расстояние и ориентация — номинальная граница достигается только сочетанием приближения и поворота (констатация, не действие)",
-    "Causa doppia: distanza e orientamento — il limite nominale si raggiunge solo combinando avvicinamento e rotazione (constatazione, non un’azione)",
-    "二重の原因：距離と向き — 接近と回転を組み合わせた場合にのみ公称境界に達します（所見であり操作ではありません）"
-  ],
-  "Ni rotation ni rapprochement combinés n’atteignent la borne nominale dans les essais": [
-    "Neither rotation nor a combined closer position reaches the nominal bound in the trials",
-    "试算中旋转或结合靠近均未达到名义界限",
-    "Weder Drehung noch kombinierte Annäherung erreichen in den Versuchen die nominale Grenze",
-    "Ni la rotación ni el acercamiento combinado alcanzan el límite nominal en las pruebas",
-    "Ни поворот, ни сочетание с приближением не достигают номинальной границы в пробах",
-    "Né la rotazione né l’avvicinamento combinato raggiungono il limite nominale nelle prove",
-    "試行では回転も接近との組み合わせも公称境界に達しません"
-  ],
   "Verdict : accord des neuf hypothèses internes, sans garantie de fabrication": [
     "Verdict: agreement of the nine internal hypotheses, without manufacturing guarantee",
     "结论：九个内部假设一致，不构成制造保证",
@@ -34783,5 +34747,59 @@
     "Оба лепестка номинальные (границы класса) и отличаются от вердикта.",
     "I due lobi sono nominali (limiti di classe), distinti dal verdetto.",
     "2つのローブは公称値（クラス境界）で、判定とは別です。"
+  ],
+  "Dans les essais, distance et orientation contribuent au résultat": [
+    "In the trials, distance and orientation both contribute to the result",
+    "在试算中，距离和方向共同影响结果",
+    "In den Versuchen tragen Abstand und Ausrichtung zum Ergebnis bei",
+    "En las pruebas, la distancia y la orientación contribuyen al resultado",
+    "В пробах на результат влияют и расстояние, и ориентация",
+    "Nelle prove, distanza e orientamento contribuiscono al risultato",
+    "試行では、距離と向きの両方が結果に影響します"
+  ],
+  "Les rotations testées seules ne suffisent pas à cet endroit": [
+    "The rotations tested alone are not enough at this spot",
+    "仅靠所试的旋转在此位置不够",
+    "Die getesteten Drehungen allein reichen an dieser Stelle nicht aus",
+    "Las rotaciones probadas por sí solas no bastan en este punto",
+    "Одних проверенных поворотов в этом месте недостаточно",
+    "Le sole rotazioni provate non bastano in questo punto",
+    "この位置では、試した回転だけでは不十分です"
+  ],
+  "Essai nominal : une autre orientation testée au même endroit atteint le seuil nominal (pas un placement vérifié)": [
+    "Nominal trial: another orientation tested at the same spot reaches the nominal threshold (not a verified placement)",
+    "名义试算：同一位置所试的另一方向达到名义阈值（并非已验证放置）",
+    "Nominaler Versuch: Eine andere getestete Ausrichtung an derselben Stelle erreicht die nominale Schwelle (keine geprüfte Platzierung)",
+    "Prueba nominal: otra orientación probada en el mismo punto alcanza el umbral nominal (no es una colocación verificada)",
+    "Номинальная проба: другая проверенная ориентация в том же месте достигает номинального порога (не проверенное размещение)",
+    "Prova nominale: un altro orientamento provato nello stesso punto raggiunge la soglia nominale (non un posizionamento verificato)",
+    "公称試行：同じ位置で試した別の向きが公称しきい値に達します（確認済みの配置ではありません）"
+  ],
+  "Essai nominal : les orientations testées à position constante restent sous le seuil nominal": [
+    "Nominal trial: the orientations tested at constant position stay below the nominal threshold",
+    "名义试算：位置不变时所试方向均低于名义阈值",
+    "Nominaler Versuch: Die an gleicher Position getesteten Ausrichtungen bleiben unter der nominalen Schwelle",
+    "Prueba nominal: las orientaciones probadas sin cambiar de posición quedan por debajo del umbral nominal",
+    "Номинальная проба: проверенные ориентации без смены положения остаются ниже номинального порога",
+    "Prova nominale: gli orientamenti provati a posizione costante restano sotto la soglia nominale",
+    "公称試行：位置を変えずに試した向きは公称しきい値を下回ります"
+  ],
+  "Essai nominal : le seuil est atteint en combinant un des rapprochements testés et une rotation ; constat, aucun remède proposé": [
+    "Nominal trial: the threshold is reached by combining one of the tested closer positions with a rotation; finding only, no remedy proposed",
+    "名义试算：将所试的某一靠近位置与旋转结合可达到阈值；仅为结论，不提出补救",
+    "Nominaler Versuch: Die Schwelle wird erreicht, wenn eine der getesteten Annäherungen mit einer Drehung kombiniert wird; nur Befund, keine Abhilfe vorgeschlagen",
+    "Prueba nominal: el umbral se alcanza combinando uno de los acercamientos probados con una rotación; solo constatación, sin remedio propuesto",
+    "Номинальная проба: порог достигается сочетанием одного из проверенных приближений с поворотом; только констатация, решение не предлагается",
+    "Prova nominale: la soglia si raggiunge combinando uno degli avvicinamenti provati con una rotazione; solo constatazione, nessun rimedio proposto",
+    "公称試行：試した接近の一つと回転を組み合わせるとしきい値に達します。所見のみで、対処は提案しません"
+  ],
+  "Essai nominal : ni les rotations ni les rapprochements testés combinés n’atteignent le seuil": [
+    "Nominal trial: neither the rotations nor the tested closer positions combined reach the threshold",
+    "名义试算：所试旋转及其与靠近的组合均未达到阈值",
+    "Nominaler Versuch: Weder die Drehungen noch die getesteten Annäherungen in Kombination erreichen die Schwelle",
+    "Prueba nominal: ni las rotaciones ni los acercamientos probados combinados alcanzan el umbral",
+    "Номинальная проба: ни повороты, ни их сочетание с проверенными приближениями не достигают порога",
+    "Prova nominale: né le rotazioni né gli avvicinamenti provati combinati raggiungono la soglia",
+    "公称試行：回転も、試した接近との組み合わせも、しきい値に達しません"
   ]
 }

@@ -42,12 +42,17 @@ export const DIAGNOSIS_LABEL:Record<string,string>={central:'Zone centrale entre
 export function causeLabel(d:PlacementDiagnosis,evidence:PlacementEvidence):string{
   return DIAGNOSIS_LABEL[d.cause]??CAUSE_LABEL[d.cause as PlacementEvidence['cause']]??CAUSE_LABEL[evidence.cause]??'Cause non déterminée';
 }
-/** Secondary nominal findings for central/axial/undetermined causes. Never a remedy. */
+/** Banner finding: at most one short line, explicitly limited to the trials. Never a remedy. */
 export function findingLabels(d:PlacementDiagnosis):string[]{
+  if(!['central','axial','undetermined'].includes(d.cause)||d.rotationInPlace!=='insufficient')return [];
+  return [d.closerAndRotated?'Dans les essais, distance et orientation contribuent au résultat':'Les rotations testées seules ne suffisent pas à cet endroit'];
+}
+/** Technical detail of the same nominal trials, folded in « Sources et limites ». */
+export function findingDetails(d:PlacementDiagnosis):string[]{
   if(!['central','axial','undetermined'].includes(d.cause)||!d.rotationInPlace)return [];
-  const out=[d.rotationInPlace==='sufficient'?'Une autre orientation au même endroit atteint la borne nominale (essai nominal, pas un placement vérifié)':'Une rotation à position constante n’atteint pas la borne nominale'];
-  if(d.rotationInPlace==='insufficient')out.push(d.closerAndRotated?'Cause double : distance et orientation — la borne nominale n’est atteinte qu’en combinant rapprochement et rotation (constat, pas une action)':'Ni rotation ni rapprochement combinés n’atteignent la borne nominale dans les essais');
-  return out;
+  if(d.rotationInPlace==='sufficient')return ['Essai nominal : une autre orientation testée au même endroit atteint le seuil nominal (pas un placement vérifié)'];
+  return ['Essai nominal : les orientations testées à position constante restent sous le seuil nominal',
+    d.closerAndRotated?'Essai nominal : le seuil est atteint en combinant un des rapprochements testés et une rotation ; constat, aucun remède proposé':'Essai nominal : ni les rotations ni les rapprochements testés combinés n’atteignent le seuil'];
 }
 export function remedyLabel(r:PedagogicalRemedy):string|null{
   if(r.kind==='verified')return r.rotationDeg&&r.lateralMm?msg('Placement favorable vérifié : rotation de {0}° et décalage de {1} mm',[r.rotationDeg,number(r.lateralMm,2)]):r.rotationDeg?msg('Placement favorable vérifié : rotation de {0}°',[r.rotationDeg]):msg('Placement favorable vérifié : décalage de {0} mm',[number(r.lateralMm,2)]);
@@ -70,8 +75,8 @@ export function PedagogicalBanner({evidence,diagnosis,remedy,onPropose}:{evidenc
     {remedyText&&<span className="t-caption" data-testid="pedagogical-remedy">{remedyText}{remedy?.kind==='verified'&&onPropose&&<> <Button variant="secondary" onClick={()=>onPropose(remedy)}>{t('Proposer ce placement')}</Button></>}</span>}
   </div>;
 }
-export function PedagogicalControls({timelineNote,settings,setSettings,config,update,frame,busy,volume,failed,onSuggest,onUndo,canUndo,mounting}:{
-  timelineNote?:import('react').ReactNode;mounting?:{parts:number;reedOverlap:string[]}|null;settings:ExperimentSettings;setSettings:(s:ExperimentSettings)=>void;config:WorkshopConfig;update:(p:Partial<WorkshopConfig>)=>void;frame:PedagogicalFrame;busy:boolean;volume:SampledVolume|null;failed:boolean;onSuggest:()=>void;onUndo:()=>void;canUndo:boolean;
+export function PedagogicalControls({diagnosis,timelineNote,settings,setSettings,config,update,frame,busy,volume,failed,onSuggest,onUndo,canUndo,mounting}:{
+  diagnosis?:PlacementDiagnosis|null;timelineNote?:import('react').ReactNode;mounting?:{parts:number;reedOverlap:string[]}|null;settings:ExperimentSettings;setSettings:(s:ExperimentSettings)=>void;config:WorkshopConfig;update:(p:Partial<WorkshopConfig>)=>void;frame:PedagogicalFrame;busy:boolean;volume:SampledVolume|null;failed:boolean;onSuggest:()=>void;onUndo:()=>void;canUndo:boolean;
 }) {
   const canonical=!config.machine&&config.motion==='approach'&&config.magnetTilt===0;
   const approach=canonical?(config.geometry==='D3'&&config.magnetAngle===0&&config.lateralShift===0?'D3':config.geometry==='D1'&&config.magnetAngle===0&&config.lateralShift===0?'D1':config.geometry==='D1'&&Math.abs(config.magnetAngle)===90?'D4':null):null;
@@ -127,6 +132,7 @@ export function PedagogicalControls({timelineNote,settings,setSettings,config,up
       <p className="t-caption">{t('Capteur générique, reed 66 monté : gabarit exploratoire égal à l’enveloppe mécanique testée, pas les dimensions d’un boîtier commercial.')}</p>
       {volume&&<p className="t-caption">{t('Volumes nominaux indicatifs, non corrigés')} · <span className="t-metric">{number(volume.computeMs/1000,2)} s</span> · <span className="t-metric">{volume.nodeCount}</span> {t('positions calculées')}</p>}
       {timelineNote}
+      {diagnosis&&findingDetails(diagnosis).map(f=><p key={f} className="t-caption" data-testid="pedagogical-finding-detail">{t(f)}</p>)}
       <p className="t-caption">{t('Distances indicatives, calibrées sur la brochure Standex. B–E, deux aimants, montage Form66 ; modèle 3D pédagogique non qualifié.')}</p>
       <p className="t-caption">{t('A : ATmax 10 seulement. F : SmCo D3-up indisponible, D4-to hors tolérance, D5 absent. G hors périmètre.')}</p>
       <p className="t-caption">{t('Repère axial et correction D4 documentaires uniquement ; aucun déplacement du volume. Correction D4 avant arrondi prudent à 0,5 mm, jamais une marge physique.')}</p>

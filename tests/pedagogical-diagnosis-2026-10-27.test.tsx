@@ -201,6 +201,21 @@ describe("contre-revue 4311e3ca", () => {
     expect(d).toMatchObject({ cause: "axial", rotationInPlace: "insufficient", closerAndRotated: true });
     expect(evaluatePlacement(s, pose)).toEqual(before);
   });
+  test("libellés : constat limité aux essais dans le bandeau, détail replié dans Sources et limites", async () => {
+    const { PedagogicalBanner, findingLabels, findingDetails } = await import("../src/components/standex/workshop/pedagogical-controls");
+    const { DEFAULT_EXPERIMENT, evaluatePlacement } = await lab(); const { diagnosePlacement } = await diag();
+    const s = { ...DEFAULT_EXPERIMENT, magnetId: "N45-4X19" }, pose = { center: [30, 0, 0] as [number, number, number], axis: [0, 1, 0] as [number, number, number] };
+    const ev = evaluatePlacement(s, pose), d = diagnosePlacement(s, pose);
+    expect(findingLabels(d)).toEqual(["Dans les essais, distance et orientation contribuent au résultat"]);
+    expect(findingLabels({ ...d, closerAndRotated: false })).toEqual(["Les rotations testées seules ne suffisent pas à cet endroit"]);
+    expect(findingLabels({ ...d, rotationInPlace: "sufficient" })).toEqual([]);
+    expect(findingDetails(d)).toHaveLength(2);
+    const v = render(React.createElement(PedagogicalBanner, { evidence: ev, diagnosis: d, remedy: { kind: "none-found" } }));
+    expect(v.getAllByTestId("pedagogical-finding")).toHaveLength(1);
+    const txt = v.container.textContent ?? "";
+    for (const w of ["borne nominale", "n’est atteinte", "rapprochement", "Essai nominal"]) expect(txt).not.toContain(w);
+    v.unmount();
+  });
   test("1) bandeau pendant la lecture : pas d'ancienne cause ni de remède ; indisponibilité conservée", async () => {
     const { PedagogicalBanner } = await import("../src/components/standex/workshop/pedagogical-controls");
     const { DEFAULT_EXPERIMENT, evaluatePlacement } = await lab();
