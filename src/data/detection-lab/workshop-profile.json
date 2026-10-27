@@ -1,0 +1,18 @@
+{
+  "id": "form66-lfit-b-c1",
+  "version": "1.0.0",
+  "sourceVersion": "reed-lab-pass3-1.0.0",
+  "dataVersion": "brochure-form-2026-10-26",
+  "baseProfile": {
+    "id": "reed-lab-hypotheses",
+    "version": "1.1.0"
+  },
+  "model": "B",
+  "convention": "C1",
+  "effectiveLengthMm": 15.63399603080886,
+  "kMtPerAt": 0.13560548808516593,
+  "documentaryDatumMm": 3.3340917480896373,
+  "documentaryD4DeltaMm": 1.4912902832031252,
+  "sourceResult": "docs/detection-lab-pass3/resultats_pass3.json",
+  "hypothesesVersion": "lfit-one-factor-1.0.0"
+}

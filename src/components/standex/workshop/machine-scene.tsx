@@ -260,7 +260,9 @@ function Assembly({
   routing,
   ghost,
   guide,
+  pedagogicalLayer,
 }: {
+  pedagogicalLayer?: ReactNode;
   guide?: GuideOverlay | undefined;
   asset: MachineAsset;
   config: WorkshopConfig;
@@ -441,7 +443,7 @@ function Assembly({
           </Motion>
         </>
       )}
-      <SupportFrame which="sensor" machine={machine} u={u}>
+      {!pedagogicalLayer && <><SupportFrame which="sensor" machine={machine} u={u}>
         <group
           ref={sensorRef}
           position={machine.sensorPosition}
@@ -490,7 +492,8 @@ function Assembly({
           />
         </group>
       </SupportFrame>
-      {editable && (
+      </>}
+      {editable && !pedagogicalLayer && (
         <TransformControls
           ref={control}
           object={selected as React.RefObject<Group>}
@@ -589,7 +592,9 @@ export default function MachineScene({
   routing,
   ghost,
   guide,
+  pedagogicalLayer,
 }: {
+  pedagogicalLayer?: ReactNode;
   guide?: GuideOverlay | undefined;
   asset: MachineAsset;
   config: WorkshopConfig;
@@ -659,7 +664,9 @@ export default function MachineScene({
         routing={routing}
         ghost={ghost}
         guide={guide}
+        pedagogicalLayer={pedagogicalLayer}
       />
+      {pedagogicalLayer}
 
       <OrbitControls
         makeDefault
