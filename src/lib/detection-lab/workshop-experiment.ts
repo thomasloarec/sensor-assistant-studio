@@ -102,7 +102,7 @@ export function sampleVolume(settings:ExperimentSettings,axis:Vec3,planeZ:number
 export interface TimelinePoint {t:number;state:PlacementState;response:number|null;zone:0|1|2}
 export interface TimelineEvent {from:number;to:number;resolved:boolean;before:PlacementState;after:PlacementState}
 /** Adaptive bounded sampling. Unresolved intervals stay explicit; no electrical hysteresis from sensitivity bounds. */
-export function placementTimeline(settings:ExperimentSettings,poseAt:(t:number)=>MagnetPose,steps=128,maxDepth=8) {
+export function placementTimeline(settings:ExperimentSettings,poseAt:(t:number)=>MagnetPose,steps=128,maxDepth=10) {
   const points=new Map<number,TimelinePoint>(),events:TimelineEvent[]=[];
   const sample=(t:number)=>{const hit=points.get(t);if(hit)return hit;const e=evaluatePlacement(settings,poseAt(t));const p={t,state:e.state,response:e.nominal?.ok?e.nominal.response:null,zone:e.zone};points.set(t,p);return p;};
   const refine=(a:number,b:number,depth:number)=>{

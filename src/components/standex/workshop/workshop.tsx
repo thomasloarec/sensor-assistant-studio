@@ -2017,7 +2017,7 @@ export default function MagneticWorkshop({
                 // L'export doit rester relisible par « Importer » (limite de taille).
                 let text: string;
                 try {
-                  text = pedagogical ? JSON.stringify({kind:"pedagogical-workshop",version:1,config,settings:experiment,profile:EXPERIMENT,progress,limits:"pedagogical-unqualified; GLB and clips must be reimported in a new tab"}) : workshopExportJson(config);
+                  text = pedagogical ? JSON.stringify({kind:"pedagogical-workshop",version:1,config,settings:experiment,profile:EXPERIMENT,progress,limits:{qualified:false,requiresGlbReimport:true,remoteClips:false}}) : workshopExportJson(config);
                 } catch {
                   setError(t("Montage trop volumineux pour être réimporté : réduisez le nombre de pièces mobiles sélectionnées."));
                   return;
@@ -2140,6 +2140,7 @@ export default function MagneticWorkshop({
           {!pedagogical && !machine && activationDistanceControl}
           {machine ? (
             <MachineGuide
+              pedagogical={pedagogical}
               state={guideState}
               setState={setGuideState}
               config={config}
@@ -2156,7 +2157,7 @@ export default function MagneticWorkshop({
                 undo: () => travelHistory("undo"),
                 redo: () => travelHistory("redo"),
               }}
-              sample={sample}
+              sample={pedagogical ? {...sample,contact:"unknown"} : sample}
               progress={progress}
               setProgress={(v) => {
                 setPlaying(false);

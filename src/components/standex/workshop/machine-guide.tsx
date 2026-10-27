@@ -260,7 +260,9 @@ export default function MachineGuide({
   resolution = null,
   illustration = null,
   anyKnown = true,
+  pedagogical = false,
 }: {
+  pedagogical?: boolean;
   state: GuideState;
   setState: (f: (s: GuideState) => GuideState) => void;
   config: WorkshopConfig;
@@ -1283,17 +1285,17 @@ export default function MachineGuide({
             {t("Mouvement réduit activé : la lecture automatique est désactivée. Avancez pas à pas avec ◀ ▶ ou le curseur.")}
           </p>
         )}
-        <p className="t-body" data-testid="guide-contact">
+        {!pedagogical && <p className="t-body" data-testid="guide-contact">
           {msg("Contact : {0}", [
             t({ open: "ouvert", closed: "fermé", unknown: "indéterminé" }[sample.contact]),
           ])}
-        </p>
+        </p>}
         {reason && (
           <p className="notice-warning" data-testid="guide-reason">
             {t(reason)}
           </p>
         )}
-        <section className="mw-switch-events" data-testid="guide-switch-events" aria-labelledby="mw-switch-events-title">
+        {!pedagogical && <section className="mw-switch-events" data-testid="guide-switch-events" aria-labelledby="mw-switch-events-title">
           <p className="t-body" id="mw-switch-events-title">
             <strong>{t("Commutations illustratives")}</strong>
           </p>
@@ -1382,7 +1384,7 @@ export default function MachineGuide({
                     )}
             </p>
           )}
-        </section>
+        </section>}
         <div className="mw-markers" data-testid="guide-markers">
           <p className="t-body">
             <strong>{t("Distance entre les repères")}</strong>
@@ -1427,7 +1429,7 @@ export default function MachineGuide({
             )}
           </p>
         </div>
-        <p className="notice-info" data-testid="guide-source">
+        {!pedagogical && <p className="notice-info" data-testid="guide-source">
           {sample.contact === "unknown"
             ? t("Aucun contact n'est affiché : il n'est pas prédit pour ce montage.")
             : t(
@@ -1435,7 +1437,7 @@ export default function MachineGuide({
                   ? "Contact illustratif : modèle pédagogique non calibré, ce n'est pas une prédiction. Une machine importée n'est jamais validée par l'atelier."
                   : "Source : distances publiées pour ce couple, en espace libre. Une machine importée n'est jamais validée par l'atelier.",
               )}
-        </p>
+        </p>}
       </>
     ),
   };
