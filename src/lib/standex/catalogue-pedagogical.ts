@@ -16,7 +16,7 @@ import { magnetObb, obbOverlap, type Obb } from '../detection-lab/obstacles';
 
 export const CATALOGUE_MODEL_VERSION='catalogue-b-analogy-1';
 /* i18n-canonical: internal diagnostic codes, never UI labels. */
-const INTERNAL={missing:'Catalogue profile missing',prior:'catalogue modelling prior',source:'catalogue illustrative',leads:'length-only analogy; permeability/leads uncharacterized'};
+const INTERNAL={missing:'catalogue_profile_missing',prior:'catalogue_modelling_prior',source:'catalogue_illustrative',leads:'length_only_analogy_leads_uncharacterized'};
 /* i18n-canonical: model status, not product qualification. */
 export const CATALOGUE_LABELS={form66:'Modèle 66 adapté',documented:'Modèle appuyé sur distances documentées',analogy:'Modèle par analogie',notice:'Simulation indicative · distances à confirmer avec Standex',datum:'Centre et axe internes estimés, non mesurés par le fabricant.',proxy:'Aimant représenté par un cylindre équivalent approximatif ; identité et boîtier conservés.',class:'Classe de modèle indicative ; le contact électrique ne définit pas une classe AT.',material:'Matériaux et implantation non caractérisés : zones indicatives, pas de prédiction affirmative.'};
 type Family='66-capable'|'other'|'illustrative';
