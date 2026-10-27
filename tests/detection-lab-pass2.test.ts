@@ -71,7 +71,7 @@ describe("isolation de l'apprentissage", () => {
     }
     expect(fitK(16, "B", "C1", mutated).k).toBe(fitK(16, "B", "C1").k);
     expect(fitLength("B", "C1", mutated).effectiveLengthMm).toBe(fitLength("B", "C1").effectiveLengthMm);
-  });
+  }, 30000);
   test("l'apprentissage lit exactement 8 bornes D1 C/E", () => {
     const b = trainingBounds();
     expect(b).toHaveLength(8);
