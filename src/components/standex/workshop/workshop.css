@@ -3122,3 +3122,26 @@
   min-width: 56px;
   min-height: 44px;
 }
+
+/* Staff-only pedagogical experiment: existing surfaces, typography and states. */
+.mw-ped-controls { display: grid; gap: 12px; min-width: 0; }
+.mw-ped-controls h2 { margin: 0; }
+.mw-ped-controls details > button { margin: 4px 0; width: 100%; white-space: normal; height: auto; min-height: 44px; }
+.mw-ped-controls label { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font: var(--mw-t-body); }
+.mw-ped-controls label > select { width: 100%; min-height: 44px; background: var(--mw-field); color: var(--foreground); border: 0; border-radius: var(--r-sm); font: var(--mw-t-body); }
+.mw-ped-cut { width: 100%; height: 100%; background: var(--surface-product); }
+.mw-ped-cut text { fill: var(--standex-gray); }
+.mw-cut-high { fill: var(--signal); fill-opacity: .6; }
+.mw-cut-low { fill: var(--warning); fill-opacity: .35; }
+.mw-cut-empty { fill: var(--surface-product); }
+.mw-cut-collision { fill: var(--standex-gray-25); }
+.mw-cut-axis { stroke: var(--standex-gray-50); stroke-width: 1; }
+.mw-cut-reed { stroke: var(--standex-blue); stroke-width: 8; stroke-linecap: round; }
+.mw-cut-point { fill: var(--destructive); stroke: var(--surface-product); stroke-width: 2; }
+.mw-ped-timeline { display: flex; height: 12px; width: 100%; }
+.mw-ped-timeline span { flex: 1; background: var(--surface-sunken); }
+.mw-ped-timeline [data-state="favorable"] { background: var(--signal); }
+.mw-ped-timeline [data-state="variable"] { background: var(--warning); }
+.mw-ped-timeline [data-state="unfavorable"] { background: var(--standex-gray-50); }
+.mw-ped-high::before, .mw-ped-low::before { content: ''; width: 12px; height: 12px; display: inline-block; margin-right: 6px; background: var(--signal); }
+.mw-ped-low::before { background: var(--warning); }
