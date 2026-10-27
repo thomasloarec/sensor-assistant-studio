@@ -1,6 +1,6 @@
 # Architecture de l’atelier
 
-- Pedagogical mode is optional and staff-gated: the existing Scene/MachineScene accept an experimental layer, memory-only imports preserve the normal guide, and separate experimental exports never overwrite client drafts; nominal volumes are worker-sampled and stale computations are terminated.
+- Pedagogical mode is optional and staff-gated: the existing Scene/MachineScene accept an experimental layer, memory-only imports preserve the normal guide, and separate experimental exports never overwrite client drafts; nominal volumes are worker-sampled and stale computations are terminated. Staff rechecks unmount rendering but retain same-account opening intent and a parent-owned tab-memory draft; error/refusal or account change clears that draft, and only a fresh server grant can remount it.
 
 - Répartir les réglages avancés entre produit, aimant et positionnement pour éviter les doublons et préserver l’accès direct au câble.
 - Le modèle importé se règle dans `machine-guide.tsx` (une étape ouverte à la fois) ; `machine-controls.tsx` ne garde que les coordonnées libres et le gabarit, pour éviter les doublons et toute commande sans effet.

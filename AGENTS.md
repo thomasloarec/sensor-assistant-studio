@@ -90,7 +90,7 @@ jeton sans documentation ni contournement ponctuel.
 
 Subdirectories have their own `AGENTS.md`; read them before changing files there.
 
-- The internal pedagogical mode extends MagneticWorkshop behind its continuously mounted server staff gate; frozen Form66 parameters live in a versioned data profile, nominal voxels/cuts and placement use evaluatePose, documentary corrections never enter physical poses, and imported mounting verdicts fail closed until solid-collision/event checks are characterized.
+- The internal pedagogical mode extends MagneticWorkshop behind its continuously mounted server staff gate; frozen Form66 parameters live in a versioned data profile, nominal voxels/cuts and placement use evaluatePose, documentary corrections never enter physical poses, and imported mounting verdicts/volumes/cuts fail closed until solid-collision/event checks are characterized. Documentary UI bounds are source-reproduced frozen rows; suggestions must be verified through the effective pose at the same time, with unsupported motion modes refused.
 
 - Reed uses shared sampled SVG/hit-test polygons with finite ON roots, outer HOLD and real OFF gaps, preventing attachment plugs. Exploration never qualifies products or persists. Current follows closed; progression guards HOLD orientation. Invitation completion is tab-memory only, observes visibility and never changes sensor state.
 - Sensor body sections use `section-profile.ts` across shared 3D renders and end views; insulation colours belong to individual catalogue models, so corrections cannot recolour other products. STEP exports remain body-only faceted envelopes, not illustrative cable assemblies.
