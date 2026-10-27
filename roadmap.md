@@ -155,7 +155,7 @@
 - [x] Tests (repère indépendant de L, θ/AT constant, ajustement sans contrôles, grille fine disjointe) + suite/types/build/scans ; rapport FR avec sources pattes Standex.
 
 ## Laboratoire de détection — passe 3 : repère recalé et correction scalaire D4 (27 octobre 2026, base 5e06d4c)
-- [ ] Module pur `pass3.ts` : repère axial ajusté sur l'unique ancre C-SmCo-D3-up, retrait scalaire D4 sur l'unique ancre C-SmCo-D4-up, diagnostic B′ strict, critère révisé par borne max(1 mm, 15 %) ≥ 90 % + biais ≤ 1 mm.
-- [ ] Script `detection-lab-pass3-report.ts` → `docs/detection-lab-pass3/` (FR, 6 CSV de 112 lignes, JSON, SVG écarts signés) ; profil 1.1 et lot 2 intacts.
-- [ ] Reproduction de l'audit : L16 axial 40/46 échec, B′ 37/46 échec, correction 43/45 atteint (médiane 0,423 mm, max 3,228) ; Lfit idem (0,419 / 3,272) ; A/F 20/30 + 1 indisponible ; deux échecs N45 D3 conservés.
-- [ ] Tests (ancres exclues 46 puis 45, invariance physique/repère, B′ ≥ B et égalité D1, isolation des ancres, non-régression lot 1/2, aucune fuite vers le moteur) + suite complète/types/build/scans ; aucune publication.
+- [x] Module pur `pass3.ts` : repère axial ajusté sur l'unique ancre C-SmCo-D3-up, retrait scalaire D4 sur l'unique ancre C-SmCo-D4-up, diagnostic B′ strict, critère révisé par borne max(1 mm, 15 %) ≥ 90 % + biais ≤ 1 mm.
+- [x] Script `detection-lab-pass3-report.ts` → `docs/detection-lab-pass3/` (FR, 6 CSV de 112 lignes, JSON, SVG écarts signés) ; profil 1.1 et lot 2 intacts.
+- [x] Reproduction de l'audit : L16 axial 40/46 échec, B′ 37/46 échec, correction 43/45 atteint (médiane 0,423 mm, max 3,228) ; Lfit idem (0,419 / 3,272) ; A/F 20/30 + 1 indisponible ; deux échecs N45 D3 conservés.
+- [x] Tests (ancres exclues 46 puis 45, invariance physique/repère, B′ ≥ B et égalité D1, isolation des ancres, non-régression lot 1/2, aucune fuite vers le moteur) + suite complète/types/build/scans ; aucune publication.
