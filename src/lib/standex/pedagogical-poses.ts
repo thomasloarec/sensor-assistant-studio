@@ -2,6 +2,7 @@
 import { componentPose, cycleU, rotate, activeClip, movingSelection } from './machine-assembly';
 import { parseWorkshopConfig, type WorkshopConfig, type Vec3 } from './magnetic-workshop';
 import { DEFAULT_EXPERIMENT, evaluatePlacement, type ExperimentSettings } from '@/lib/detection-lab/workshop-experiment';
+import { PILOT_MAGNETS } from '@/lib/detection-lab/magnets';
 import { toReedFrame, type MagnetPose } from '@/lib/detection-lab/pose';
 export interface PedagogicalFrame { origin:Vec3; basis:[Vec3,Vec3,Vec3]; pose:MagnetPose; world:MagnetPose }
 export function pedagogicalFrame(c:WorkshopConfig,t:number):PedagogicalFrame {
@@ -20,12 +21,19 @@ export function pedagogicalFrame(c:WorkshopConfig,t:number):PedagogicalFrame {
   const p=transform(center),world={center:p.map((v,i)=>v+(origin[i]??0)) as Vec3,axis:transform(axis)};
   return {origin,basis,pose:{center,axis},world};
 }
-/** Imported solid collision cannot be verified here: never use a static fallback as valid. */
-export function pedagogicalAvailability(c:WorkshopConfig): 'ready'|'motion'|'clip'|'mounting' {
+/** Imported mounting is explorable only with confirmed motion (or a loaded
+ *  supported clip) AND part envelopes of the loaded file; never a static fallback. */
+export function pedagogicalAvailability(c:WorkshopConfig,envelopesLoaded=false): 'ready'|'motion'|'clip'|'asset' {
   if(!c.machine)return 'ready';
   if(c.machine.motionSource==='clip') {if(!activeClip(c.machine))return 'clip';}
   else if(c.machine.motionStatus!=='confirmed'||movingSelection(c.machine).length===0)return 'motion';
-  return 'mounting';
+  return envelopesLoaded?'ready':'asset';
+}
+/** Pilot bodies used for attachment and alignment in the pedagogical mode:
+ *  the Form66 exploratory capsule and the real pilot cylinder (axis = local Y). */
+export function pilotBodies(magnetId:string):{sensor:{lengthMm:number;heightMm:number};magnet:{lengthMm:number;heightMm:number}}|null {
+  const m=PILOT_MAGNETS.find(p=>p.id===magnetId);
+  return m?{sensor:{lengthMm:16.2,heightMm:2.2},magnet:{lengthMm:m.diameterMm,heightMm:m.lengthMm}}:null;
 }
 /** Only D1 approach is currently supported. Verify through effective pose at the SAME instant. */
 export function suggestPedagogicalConfig(c:WorkshopConfig,t:number,settings:ExperimentSettings=DEFAULT_EXPERIMENT):WorkshopConfig|null {

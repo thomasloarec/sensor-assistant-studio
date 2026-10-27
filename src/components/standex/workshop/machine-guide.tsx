@@ -93,6 +93,9 @@ const STEPS: [GuideStep, string][] = [
 ];
 
 export function dimsFor(config: WorkshopConfig, which: "sensor" | "magnet") {
+  // Pedagogical mode only: derived, never serialized (see `pilotBodies`).
+  const pilot = (config as WorkshopConfig & { pilotBodies?: Record<"sensor" | "magnet", { lengthMm: number; heightMm: number }> }).pilotBodies;
+  if (pilot) return { ...pilot[which] };
   const body = which === "sensor" ? sensorById(config.sensorId).body : magnetSize(config);
   return { lengthMm: body[0], heightMm: body[1] };
 }
