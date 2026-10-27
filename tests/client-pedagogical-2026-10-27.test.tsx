@@ -51,7 +51,7 @@ describe('real mounted client workshop',()=>{
     const view=render(<Workshop clientPedagogical embedded initialConfig={config} storageMode="memory" onClose={()=>{}} onSave={async()=>{}} onDraftChange={c=>drafts.push(c as typeof config)} onClientPedagogicalResult={r=>results.push(r)}/>);
     await waitFor(()=>expect(view.getByTestId('client-product-legend').textContent).toContain('MK04 + M04'));
     expect(view.container.querySelector('.mw-contact-circuit')).toBeNull();
-    await act(async()=>fireEvent.click(view.getByRole('button',{name:'Explorer Form66 sans modifier mon produit'})));
+    await act(async()=>fireEvent.click(view.getByRole('button',{name:'Comprendre les zones de détection'})));
     await waitFor(()=>expect(view.getByTestId('client-exploration')).toBeTruthy());
     await act(async()=>fireEvent.change(view.getByRole('combobox',{name:'Aimant pilote vérifié'}),{target:{value:'N45-4X19'}}));
     await act(async()=>fireEvent.click(view.getByRole('button',{name:'Valider ce choix et voir le résultat'})));
@@ -70,7 +70,7 @@ describe('real mounted client workshop',()=>{
     const results:ReturnType<typeof clientPedagogicalResult>[]=[];
     const mount=()=>render(<Workshop clientPedagogical embedded initialConfig={draft} storageMode="memory" onClose={()=>{}} onSave={async()=>{}} onDraftChange={c=>{draft=c as typeof original;}} onClientPedagogicalResult={r=>results.push(r)}/>);
     let view=mount();
-    await act(async()=>fireEvent.click(view.getByRole('button',{name:'Explorer Form66 sans modifier mon produit'})));
+    await act(async()=>fireEvent.click(view.getByRole('button',{name:'Comprendre les zones de détection'})));
     await act(async()=>fireEvent.change(view.getByRole('combobox',{name:'Aimant pilote vérifié'}),{target:{value:'N45-4X19'}}));
     await act(async()=>fireEvent.click(view.getByRole('button',{name:'Revenir au couple de mon dossier'})));
     await waitFor(()=>expect(view.getByTestId('client-product-legend').textContent).toContain('MK04 + M04'));

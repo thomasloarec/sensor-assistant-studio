@@ -34821,22 +34821,58 @@
     "AT クラスは未確定です。接点構成は感度クラスを定義しません。"
   ],
   "Classe G hors du domaine du modèle figé.": [
-    "Class G is outside the frozen model domain.", "G 等级超出固定模型的范围。", "Klasse G liegt außerhalb des eingefrorenen Modellbereichs.", "La clase G está fuera del dominio del modelo fijo.", "Класс G вне области фиксированной модели.", "Classe G fuori dal dominio del modello fisso.", "クラス G は固定モデルの対象範囲外です。"
+    "Class G is outside the frozen model domain.",
+    "G 等级超出固定模型的范围。",
+    "Klasse G liegt außerhalb des eingefrorenen Modellbereichs.",
+    "La clase G está fuera del dominio del modelo fijo.",
+    "Класс G вне области фиксированной модели.",
+    "Classe G fuori dal dominio del modello fisso.",
+    "クラス G は固定モデルの対象範囲外です。"
   ],
   "Classe A partielle : seule la borne prudente ATmax 10 est disponible.": [
-    "Partial class A: only the conservative ATmax 10 bound is available.", "A 等级数据不完整：仅提供保守界限 ATmax 10。", "Klasse A unvollständig: Nur die vorsichtige Grenze ATmax 10 ist verfügbar.", "Clase A parcial: solo está disponible el límite prudente ATmax 10.", "Класс A частичный: доступна только консервативная граница ATmax 10.", "Classe A parziale: disponibile solo il limite prudente ATmax 10.", "クラス A は部分的です。保守的な ATmax 10 の境界のみ利用可能です。"
+    "Partial class A: only the conservative ATmax 10 bound is available.",
+    "A 等级数据不完整：仅提供保守界限 ATmax 10。",
+    "Klasse A unvollständig: Nur die vorsichtige Grenze ATmax 10 ist verfügbar.",
+    "Clase A parcial: solo está disponible el límite prudente ATmax 10.",
+    "Класс A частичный: доступна только консервативная граница ATmax 10.",
+    "Classe A parziale: disponibile solo il limite prudente ATmax 10.",
+    "クラス A は部分的です。保守的な ATmax 10 の境界のみ利用可能です。"
   ],
   "Exploration Form66 indépendante du produit choisi ; aucun résultat ne qualifie ce produit.": [
-    "Form66 exploration is independent of the selected product; no result qualifies this product.", "Form66 探索独立于所选产品；任何结果都不构成该产品的鉴定。", "Form66-Erkundung unabhängig vom gewählten Produkt; kein Ergebnis qualifiziert dieses Produkt.", "Exploración Form66 independiente del producto elegido; ningún resultado cualifica este producto.", "Исследование Form66 независимо от выбранного изделия; результаты не подтверждают его пригодность.", "Esplorazione Form66 indipendente dal prodotto scelto; nessun risultato qualifica questo prodotto.", "Form66 の探索は選択製品と独立しています。結果は製品の適合認定にはなりません。"
+    "Form66 exploration is independent of the selected product; no result qualifies this product.",
+    "Form66 探索独立于所选产品；任何结果都不构成该产品的鉴定。",
+    "Form66-Erkundung unabhängig vom gewählten Produkt; kein Ergebnis qualifiziert dieses Produkt.",
+    "Exploración Form66 independiente del producto elegido; ningún resultado cualifica este producto.",
+    "Исследование Form66 независимо от выбранного изделия; результаты не подтверждают его пригодность.",
+    "Esplorazione Form66 indipendente dal prodotto scelto; nessun risultato qualifica questo prodotto.",
+    "Form66 の探索は選択製品と独立しています。結果は製品の適合認定にはなりません。"
   ],
   "Il manque une variante reed 66 sourcée, son orientation dans le boîtier et les repères par face. Les décalages de brochure ne sont pas des positions internes mesurées.": [
-    "A sourced reed 66 variant, its orientation in the housing and face datums are missing. Brochure offsets are not measured internal positions.", "缺少有来源的 reed 66 变体、其在外壳内的方向和各面基准。手册偏移量不是实测内部位置。", "Es fehlen eine belegte Reed-66-Variante, ihre Orientierung im Gehäuse und Bezugspunkte je Fläche. Broschürenversätze sind keine gemessenen Innenpositionen.", "Faltan una variante reed 66 documentada, su orientación en la carcasa y las referencias por cara. Los desplazamientos del folleto no son posiciones internas medidas.", "Отсутствуют документированный вариант геркона 66, его ориентация в корпусе и реперы граней. Смещения в брошюре не являются измеренными внутренними положениями.", "Mancano una variante reed 66 documentata, il suo orientamento nell’involucro e i riferimenti per faccia. Gli scostamenti della brochure non sono posizioni interne misurate.", "出典付きの reed 66 型、筐体内の方向、各面の基準が不足しています。カタログのオフセットは内部位置の実測値ではありません。"
+    "A sourced reed 66 variant, its orientation in the housing and face datums are missing. Brochure offsets are not measured internal positions.",
+    "缺少有来源的 reed 66 变体、其在外壳内的方向和各面基准。手册偏移量不是实测内部位置。",
+    "Es fehlen eine belegte Reed-66-Variante, ihre Orientierung im Gehäuse und Bezugspunkte je Fläche. Broschürenversätze sind keine gemessenen Innenpositionen.",
+    "Faltan una variante reed 66 documentada, su orientación en la carcasa y las referencias por cara. Los desplazamientos del folleto no son posiciones internas medidas.",
+    "Отсутствуют документированный вариант геркона 66, его ориентация в корпусе и реперы граней. Смещения в брошюре не являются измеренными внутренними положениями.",
+    "Mancano una variante reed 66 documentata, il suo orientamento nell’involucro e i riferimenti per faccia. Gli scostamenti della brochure non sono posizioni interne misurate.",
+    "出典付きの reed 66 型、筐体内の方向、各面の基準が不足しています。カタログのオフセットは内部位置の実測値ではありません。"
   ],
   "Explorer Form66 sans modifier mon produit": [
-    "Explore Form66 without changing my product", "探索 Form66，不修改我的产品", "Form66 erkunden, ohne mein Produkt zu ändern", "Explorar Form66 sin modificar mi producto", "Исследовать Form66 без изменения моего изделия", "Esplorare Form66 senza modificare il mio prodotto", "製品を変更せずに Form66 を探索"
+    "Explore Form66 without changing my product",
+    "探索 Form66，不修改我的产品",
+    "Form66 erkunden, ohne mein Produkt zu ändern",
+    "Explorar Form66 sin modificar mi producto",
+    "Исследовать Form66 без изменения моего изделия",
+    "Esplorare Form66 senza modificare il mio prodotto",
+    "製品を変更せずに Form66 を探索"
   ],
   "Revenir au couple de mon dossier": [
-    "Return to my project pair", "返回项目中的组合", "Zum Paar meines Projekts zurückkehren", "Volver a la pareja de mi proyecto", "Вернуться к паре моего проекта", "Tornare alla coppia del mio progetto", "プロジェクトの組み合わせに戻る"
+    "Return to my project pair",
+    "返回项目中的组合",
+    "Zum Paar meines Projekts zurückkehren",
+    "Volver a la pareja de mi proyecto",
+    "Вернуться к паре моего проекта",
+    "Tornare alla coppia del mio progetto",
+    "プロジェクトの組み合わせに戻る"
   ],
   "Essai nominal : ni les rotations ni les rapprochements testés combinés n’atteignent le seuil": [
     "Nominal trial: neither the rotations nor the tested closer positions combined reach the threshold",
@@ -34846,5 +34882,32 @@
     "Номинальная проба: ни повороты, ни их сочетание с проверенными приближениями не достигают порога",
     "Prova nominale: né le rotazioni né gli avvicinamenti provati combinati raggiungono la soglia",
     "公称試行：回転も、試した接近との組み合わせも、しきい値に達しません"
+  ],
+  "Comprendre les zones de détection": [
+    "Understand the detection zones",
+    "了解检测区域",
+    "Erfassungszonen verstehen",
+    "Comprender las zonas de detección",
+    "Понять зоны обнаружения",
+    "Comprendere le zone di rilevamento",
+    "検出ゾーンを理解する"
+  ],
+  "Exemple générique": [
+    "Generic example",
+    "通用示例",
+    "Generisches Beispiel",
+    "Ejemplo genérico",
+    "Общий пример",
+    "Esempio generico",
+    "汎用例"
+  ],
+  "Exemple générique — ce résultat ne concerne pas le couple de votre dossier": [
+    "Generic example — this result does not apply to the pair in your dossier",
+    "通用示例 — 此结果不适用于您档案中的组合",
+    "Generisches Beispiel — dieses Ergebnis gilt nicht für das Paar in Ihrem Dossier",
+    "Ejemplo genérico — este resultado no corresponde al par de su expediente",
+    "Общий пример — этот результат не относится к паре в вашем досье",
+    "Esempio generico — questo risultato non riguarda la coppia del vostro dossier",
+    "汎用例 — この結果は案件で選択した組み合わせには適用されません"
   ]
 }
