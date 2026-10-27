@@ -140,7 +140,8 @@ import ContactIndicator from "./contact-indicator";
 import ContactCircuit from "./contact-circuit";
 import { SensorPlan } from "./sensor-plan";
 import { sensorById, sizeLabel, sensorSource } from "@/lib/standex/sensor-catalog";
-import { partEnvelopes, reedObstaclesAt } from "@/lib/standex/pedagogical-envelopes";
+import { partEnvelopes, reedObstaclesAt, pedagogicalTimelineKey } from "@/lib/standex/pedagogical-envelopes";
+import { animationGeneration } from "@/lib/standex/machine-clip-registry";
 import { overlappedPaths, REED_CAPSULE_OBB } from "@/lib/detection-lab/obstacles";
 /** Imported-mounting timeline table: 1/512 of the cycle, includes 25 %. */
 const PED_TABLE_STEPS = 512;
@@ -338,7 +339,8 @@ export default function MagneticWorkshop({
   const placement = useMemo(() => {const e=evaluatePlacement(activeExperiment,pedagogicalPose.pose,frameObstacles??false);return availability==="ready"?e:{...e,cause:availability};}, [experiment, pedagogicalPose,frameObstacles,availability]);
   const sampled = usePedagogicalVolume(pedagogical && !playing && eligible, activeExperiment, pedagogicalPose, config.machine ? frameObstacles : null);
   const [timelineResult, setPedTimeline] = useState<(ReturnType<typeof placementTimeline>&{key:string}) | null>(null);
-  const timelineKey=JSON.stringify([experiment,config,machineAssetId,!!envelopes]);
+  const clipGeneration=config.machine?animationGeneration(config.machine.assetKey,config.machine.unitScale):0;
+  const timelineKey=pedagogicalTimelineKey(experiment,config,machineAssetId,envelopes,clipGeneration);
   const pedTimeline=eligible&&timelineResult?.key===timelineKey?timelineResult:null;
   useEffect(() => {
     setPedTimeline(null);
