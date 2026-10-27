@@ -24,7 +24,7 @@ export function usePedagogicalVolume(enabled:boolean,settings:ExperimentSettings
       };
       worker.onerror=()=>{if(current){setBusy(false);setFailed(true);}worker?.terminate();};
       worker.postMessage({settings,axis:frame.pose.axis,planeZ:frame.pose.center[2],key});
-    },160);
+    },0);
     return ()=>{current=false;clearTimeout(timer);worker?.terminate();};
   },[enabled,key]);
   return {volume:result?.key===key?result:null,busy,failed};

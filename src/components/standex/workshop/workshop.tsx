@@ -319,8 +319,18 @@ export default function MagneticWorkshop({
   useEffect(() => {
     setPedTimeline(null);
     if (!pedagogical) return;
-    const timer = setTimeout(() => setPedTimeline(placementTimeline(experiment, t => pedagogicalFrame(config,t).pose)), 260);
-    return () => clearTimeout(timer);
+    // Clips remain in the local hierarchy registry, never serialized to a worker.
+    if (config.machine?.motionSource === "clip") {
+      const timer = setTimeout(() => setPedTimeline(placementTimeline(experiment, t => pedagogicalFrame(config,t).pose)), 0);
+      return () => clearTimeout(timer);
+    }
+    if (typeof Worker === "undefined") return;
+    let current = true;
+    const worker = new Worker(new URL("./pedagogical.worker.ts", import.meta.url), {type:"module"});
+    const key = JSON.stringify([experiment,config]);
+    worker.onmessage = (event) => {if(current && event.data.key === key && event.data.result){setPedTimeline(event.data.result);worker.terminate();}};
+    worker.postMessage({settings:experiment,config,key});
+    return () => {current=false;worker.terminate();};
   }, [pedagogical, config, experiment]);
   const experimentalLayer = pedagogical ? <PedagogicalLayer frame={pedagogicalPose} settings={experiment} volume={sampled.volume} zones={true} /> : undefined;
   const [view, setView] = useState<"3d" | "top">("3d"),
@@ -2177,7 +2187,8 @@ export default function MagneticWorkshop({
           ) : null}
           {!pedagogical && machine && activationDistanceControl}
           {!machine && playButton}
-          {advancedSettings}
+          {!pedagogical && advancedSettings}
+          {pedagogical && <details className="mw-file-tools"><summary>{t("Exporter le montage")}</summary><Button variant="secondary" onClick={()=>download("atelier-pedagogique.json",JSON.stringify({kind:"pedagogical-workshop",version:1,config,settings:experiment,profile:EXPERIMENT,progress,limits:{qualified:false,requiresGlbReimport:true,remoteClips:false}}),"application/json")}>{t("Télécharger le fichier de montage")}</Button><label className="mw-file-label">{t("Importer un fichier de montage")}<input type="file" accept=".json" onChange={e=>void importFile(e.target.files?.[0])}/></label></details>}
       {!embedded && !pedagogical ? (
         <details className="mw-advanced">
           <summary>{t("Données et outils avancés")}</summary>
@@ -2237,7 +2248,7 @@ export default function MagneticWorkshop({
         </p>
       </footer>}
 
-      <details className="mw-summary">
+      {!pedagogical && <details className="mw-summary">
         <summary>{t("Résumé du montage et hypothèses")}</summary>
         <pre>{t(summary)}</pre>
         {!embedded ? (
@@ -2254,7 +2265,7 @@ export default function MagneticWorkshop({
         >
           {t("Télécharger le résumé")}
         </button>
-      </details>
+      </details>}
         </aside>
         <section className="mw-main" aria-label={t("Simulation du montage")}>
           <details className="mw-primary-menu" open={primaryMenuOpen} onToggle={(e) => setPrimaryMenuOpen(e.currentTarget.open)}>
@@ -2311,7 +2322,7 @@ export default function MagneticWorkshop({
               className="mw-button"
               onClick={() => (onResult ? onResult(testedPair()) : onClose())}
             >
-              {t("Valider ce choix et voir le résultat")}
+              {t(pedagogical ? "Fermer" : "Valider ce choix et voir le résultat")}
             </button>
           </div>
           </details>
