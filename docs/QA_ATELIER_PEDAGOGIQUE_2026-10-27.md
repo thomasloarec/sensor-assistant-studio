@@ -144,3 +144,9 @@ Lot suivant (non codé) : pré-calcul des volumes, maillages lissés, colonne cl
 4. « Sources et limites » suit la case hypothèses (neuf hypothèses / nominal seul) ; les suggestions restent vérifiées avec les neuf.
 5. Légendes longues de la coupe (projection hors plan, hachures) déplacées en HTML sous le dessin, avec retour à la ligne.
 Tests : `tests/pedagogical-diagnosis-2026-10-27.test.tsx` 20/20 (valeurs attendues saisies depuis la revue, composant monté pour lecture/pause et mode hypothèses). Non fait de mon côté : recette navigateur authentifiée et capture mobile réelle.
+
+## Complément recette mobile 4311 (390×844)
+- Coupe : `.mw-ped-cut` hauteur utile minimale 400 px ; sous 1024 px, la scène pédagogique `.mw-canvas` passe à `height:auto; min-height:460px` et la page défile verticalement (contrôles et chronologie non masqués).
+- Légendes longues (projection hors plan, hachures) en `figcaption` HTML sous le dessin.
+- Bulle 3D du corps : seulement « Capteur générique, reed 66 monté », retour à la ligne (`max-width: min(60vw,220px)`) ; « Repère reed Form66 exploratoire » déplacé dans Sources et limites.
+- Mesure Chromium headless 390×844 (coupe rendue seule avec `workshop.css`, sans jetons globaux ni session staff) : SVG 374×400, figcaption 374×92 sous le SVG, deux légendes de 36 px chacune (deux lignes, sans troncature), largeur document 390 (aucun débordement). Ce n'est PAS la recette `/internal` authentifiée ; la bulle 3D n'a pas été mesurée en navigateur.
