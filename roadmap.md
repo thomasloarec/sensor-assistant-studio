@@ -7,6 +7,7 @@
 - [x] Contre-revue : contexte/statut, trace conservative export/reprise, réglages utiles et isolation câble/montage ; 2 028 tests verts, langues/scans/empreintes vérifiés, compilation automatique OK ; nouveau contrôle visuel par Thomas.
 - [ ] Recette racine bureau/mobile : Thomas la réalise dans sa session ; aucune garde d’accès modifiée.
 - [x] Complément mobile 15:19 : grille embedded client/titre corrigés ; câble ciblé et suite 2 028 verts, i18n/scans/103 empreintes vérifiés ; mesures isolées bureau/390px documentées, recette client réelle laissée à Thomas sans modifier l’accès.
+- [x] En-tête client mobile 15:28 : deux rangées explicites ; ciblés79/suite2028 verts, i18n/scans/103empreintes vérifiés, rapport actualisé ; recette ChatGPT consignée comme fournie, contrôle visuel final attendu sans reproduction HTML.
 - [x] Préversion uniquement, respecter le contrôle de consommation 20 crédits (8 déjà consommés, 12 restants autorisés pour la clôture).
 
 ## Géométries MK14 / MK18 — 26 octobre 2026

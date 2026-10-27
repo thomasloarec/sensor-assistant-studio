@@ -20,6 +20,17 @@ L’action « Comprendre les zones de détection » ouvre une exploration sépar
 
 ## Résultats exécutés
 
+### Recette ChatGPT communiquée à 15:28 UTC, puis correctif d'en-tête
+
+Attribution demandée explicitement : **recette ChatGPT**, transmise dans le fil ; ces mesures ne sont ni attribuées à Thomas ni présentées comme exécutées par l'agent Lovable.
+
+- Chrome réel sur `481a020`, racine → Commencer → étape 2 → Tester ce couple : à390×844 le clic « Comprendre les zones de détection » est reçu ; commandes **1331px**, main **984px**, sans recouvrement, largeur **390/390**.
+- Bureau : SmCo centré6mm/décalé8mm et N45 centré16mm/décalé8mm, t50 conservé, défavorable→favorable ; contexte et Résultat/revue conservatifs corrects. **26 tests client indépendants et71 régressions/i18n** passent dans la recette communiquée.
+- Défaut restant observé : en-tête **219px produit /194px générique**, titre/contexte comprimés dans une colonne ~80px à droite, générique sur3lignes et référence sur4.
+- Correction ciblée : contexte extrait de la zone titre pour les panneaux bare uniquement ; autres panneaux inchangés. Dans le client pédagogique sous1024px, placement explicite : retour / marque+titre / fermer sur rangée1, contexte+statut / langue sur rangée2. Retour/fermer restent des icônes à nom accessible, cibles44px ; contexte utilise les deux premières colonnes et n'est plus logé dans la colonne du titre. Aucune modification moteur/accès/métier, aucune publication, aucune nouvelle traduction.
+- Vérifications agent après correction : ciblés **79pass /0fail /491assertions** ; suite **2028pass /0fail /145737assertions /130fichiers**,116,65s ; inventaire i18n **TOTAL0**, scans **0/6/6/0** (exceptions inchangées), **103empreintes identiques**, diff sans erreur, compilation automatique **build OK15:29:52UTC**. Types/compilation gérés automatiquement par la plateforme, aucune commande manuelle relancée.
+- **Aucune reproduction HTML ni nouvelle recette visuelle client par l'agent** pour ce correctif : la recette réelle sera refaite dans la session prévue. À vérifier produit et générique à390×844, puis bureau : deux rangées, référence lisible, langue/retour/fermer accessibles, scène et commandes inchangées ; tester aussi les langues longues. La hauteur finale réelle de l'en-tête reste non mesurée à ce stade.
+
 ### Complément mobile signalé à 15:19 UTC
 
 - Thomas rapporte sur Chrome client racine 390×844 : grille 727 px / scrollH857, commandes 26 px / scrollH1061, chronologie interceptant Explorer. Ce sont ses mesures, non celles de l'agent.
