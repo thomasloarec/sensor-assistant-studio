@@ -1,6 +1,12 @@
 import { GlobalRegistrator } from '@happy-dom/global-registrator';
 import { describe, expect, test, mock } from 'bun:test';
 import React from 'react';
+import {createDossier} from '../src/lib/leadmagnet/dossier';
+import {buildDossierExport,parseDossierExport} from '../src/lib/leadmagnet/dossier-io';
+import {currentClientTrace,recordClientTrace} from '../src/lib/standex/client-pedagogical';
+import {projectReportSections} from '../src/lib/leadmagnet/project-report';
+import {ResultView} from '../src/components/leadmagnet/result-view';
+import {renderToStaticMarkup} from 'react-dom/server';
 import { render, fireEvent, act, waitFor } from '@testing-library/react';
 import { DEFAULT_WORKSHOP } from '../src/lib/standex/magnetic-workshop';
 import { CLIENT_LIMITS, clientCoupleAdapter, clientPedagogicalResult, explorationSettings } from '../src/lib/standex/client-pedagogical';
@@ -44,6 +50,19 @@ describe('client boundary: no catalogue alias or fictitious qualification',()=>{
   });
 });
 describe('real mounted client workshop',()=>{
+  test('old expected cannot reappear after conservative dossier export/reprise',()=>{
+    const old={...createDossier(),workshop:{...DEFAULT_WORKSHOP},testedPairs:[{sensorId:'MK04',magnetId:'M04',approach:'D1',sensitivity:'B',verdict:'expected' as const,pullInMm:15,dropOutMm:18,travelStartMm:30,travelEndMm:5,mainMessage:null,limits:[],at:'2026-10-27T15:11:00Z'}]};
+    const next=recordClientTrace(old,DEFAULT_WORKSHOP);const exported=buildDossierExport(next);const resumed=parseDossierExport(JSON.stringify(exported));
+    expect(resumed.ok).toBe(true);if(!resumed.ok)return;
+    expect(resumed.dossier.testedPairs?.some(p=>p.verdict==='expected')).toBe(false);
+    const trace=currentClientTrace(resumed.dossier);expect(trace?.qualified).toBe(false);expect(trace?.state).toBe('unavailable');
+    expect(currentClientTrace({...resumed.dossier,id:'another'})).toBeNull();
+    expect(currentClientTrace({...resumed.dossier,workshop:{...DEFAULT_WORKSHOP,lateralShift:8}})).toBeNull();
+    const html=renderToStaticMarkup(<ResultView pedagogicalResult={trace} pair={old.testedPairs[0]??null} tested={old.testedPairs} proposals={[]} detectionGoal={null} onSeePairs={()=>{}} onConfirmWithStandex={()=>{}} onRequestTrial={()=>{}} onReplaceMagnet={()=>{}} onTestPair={()=>{}}/>);
+    expect(html).toContain('client-pedagogical-result');expect(html).not.toContain('data-verdict="expected"');
+    expect(JSON.stringify(projectReportSections(resumed.dossier))).not.toContain('Détection prévue');
+    expect(JSON.stringify(exported)).not.toContain('"verdict":"expected"');
+  });
   test('explicit exploration never writes GENERIC into draft; result belongs to original product/cable',async()=>{
     const {setLocale}=await import('../src/lib/i18n/core');setLocale('fr');
     const {default:Workshop}=await import('../src/components/standex/workshop/workshop');

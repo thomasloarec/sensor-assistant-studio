@@ -1,4 +1,5 @@
 import { isPcbSensor } from "./product-presentation";
+import { currentClientTrace } from '../standex/client-pedagogical';
 import { workshopGuideRange, GUIDE_SIMULATION_NOTE, illustrativeNoteFor } from "../standex/workshop-guide";
 import { guideIllustrativeMarks, ACTIVATION_GUIDE } from "../standex/activation-guide";
 import { toClientDto, stableStringify, REQUIREMENT_LABELS, type DesignDossier } from "./dossier";
@@ -66,12 +67,13 @@ export function projectReportSections(
     return `${base} · ${tr(FIT_PANEL.historicalDemo)}`;
   };
   const w = d.workshop;
+  const trace=currentClientTrace(d);
   if (w) {
     const guide = workshopGuideRange(w);
     const mounting = toClientDto(d).guidedMounting;
     const computed = mounting?.computed;
     const sim = mounting ? simulateMounting(mounting, undefined, undefined, scenePoseSampler(w), guideIllustrativeMarks(guide)) : null;
-    const result = sim?.coverage === "covered" && !sim.illustrative
+    const result = trace ? 'Estimation indisponible' : sim?.coverage === "covered" && !sim.illustrative
       ? cycleMessage(sim.samples.some(s => s.contact === "closed") ? "expected" : "none")
       : guide ? GUIDE_SIMULATION_NOTE : computed?.mainMessage;
     add("Configuration du montage", [
@@ -94,9 +96,9 @@ export function projectReportSections(
         "Le résultat",
         result ? qualify(result, result === cycleMessage("expected")) : fit.blocking ? tr(FIT_PANEL.historicalDemo) : unknown,
       ),
-      entry("Ferme à", computed?.pullInMm == null ? unknown : `${computed.pullInMm} mm`),
-      entry("Ouvre à", computed?.dropOutMm == null ? unknown : `${computed.dropOutMm} mm`),
-      ...(computed?.illustrative
+      entry("Ferme à", trace||computed?.pullInMm == null ? unknown : `${computed.pullInMm} mm`),
+      entry("Ouvre à", trace||computed?.dropOutMm == null ? unknown : `${computed.dropOutMm} mm`),
+      ...(!trace&&computed?.illustrative
         ? [
             entry(
               "Le résultat",
