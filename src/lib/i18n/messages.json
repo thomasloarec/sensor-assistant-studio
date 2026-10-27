@@ -34369,5 +34369,14 @@
     "Столкновение с телами сборки не проверяемо: оценка недоступна",
     "Collisione con i solidi del montaggio non verificabile: stima non disponibile",
     "組立の立体との衝突を検証できないため推定できません"
+  ],
+  "Profondeur minimale": [
+    "Minimum depth",
+    "最小深度",
+    "Minimale Tiefe",
+    "Profundidad mínima",
+    "Минимальная глубина",
+    "Profondità minima",
+    "最小深さ"
   ]
 }

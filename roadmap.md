@@ -170,3 +170,5 @@
 - [x] Corriger invalidation, suggestions effectives au même temps (D1 approche seulement), maintien brouillon au recontrôle staff, collisions/clip fail-closed.
 - [x] Corriger chronologie proportionnelle/non certifiée, hystérésis inconnue, accessibilité/cadrage, distances canoniques documentaires, import strict et faces topologiques/troncature.
 - [x] Preuves distinctes et test réel GLB clip/attaches ; suite complète 1963/0, huit langues/scans, types/compilation plateforme OK ; recette finale propriétaire sans contourner auth.
+
+- [ ] Complément SmCo/N45 : profondeur minimale réglable et comparaison même-distance via vrais contrôles UI, sans reset du temps.
