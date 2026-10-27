@@ -1,5 +1,11 @@
 # Feuille de route — lot des 7 correctifs (base 12be3e3d)
 
+## Intégration pédagogique client autorisée — 27 octobre 2026
+- [ ] Raccorder l’atelier existant étape 2 au couple du dossier, sans repli catalogue ni transfert.
+- [ ] Exploration Form66 explicite et isolée, quatre états/circuit cohérents, sources et limites.
+- [ ] Tests comportementaux, recette racine bureau/mobile, hashes figés, i18n/scans et rapport exact.
+- [ ] Préversion uniquement, respecter le contrôle de consommation 20 crédits.
+
 ## Géométries MK14 / MK18 — 26 octobre 2026
 - [x] MK14 cylindrique noir, deux fils bleus sans gaine ; MK18 un seul méplat circulaire partagé.
 - [x] Cohérence des rendus et STEP ciblé, 1 850 tests verts et préversion seule ; aucune publication (rapport QA_MK14_MK18_2026-10-26.md).
