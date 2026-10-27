@@ -1,4 +1,5 @@
 import { CLIENT_LIMITS, type ClientPedagogicalResult } from "@/lib/standex/client-pedagogical";
+import { CATALOGUE_LABELS } from '@/lib/standex/catalogue-pedagogical';
 import { ILLUSTRATIVE_NOTE, GUIDE_UNPUBLISHED_NOTE } from "@/lib/standex/workshop-guide";
 import { CompatibilityPanel } from "@/components/leadmagnet/compatibility-panel";
 import { FIT_PANEL, type FitAssessment } from "@/lib/leadmagnet/application-fit";
@@ -144,10 +145,10 @@ export function ResultView({
 
   if(pedagogicalResult)return <section className="space-y-4" data-testid="client-pedagogical-result">
     {fitPanel}
-    <h2 className="t-display-m">{t('Estimation indisponible')}</h2>
+    <h2 className="t-display-m">{t(CATALOGUE_LABELS.notice)}</h2>
     <p className="t-title-m">{pedagogicalResult.sensorId} + {pedagogicalResult.magnetId} · {pedagogicalResult.sensitivity}</p>
     {pedagogicalResult.reasons.map(reason=><p className="t-body" key={reason}>{t(reason)}</p>)}
-    <p className="notice-info t-body">{t(CLIENT_LIMITS.exploration)}</p>
+    <p className="notice-info t-body">{t('Zones d’activation estimées')}</p>
     <p className="t-caption">{t('Une revue publiée atteste la revue de cette révision, pas une certification du produit.')}</p>
     <div className="flex flex-wrap gap-3"><Button variant="secondary" onClick={onReplaceMagnet}>{t("Replacer l'aimant")}</Button><Button onClick={onContinue??onConfirmWithStandex}>{onContinue?t('Configurer votre capteur →'):t('Confirmer avec Standex →')}</Button><Button variant="secondary" onClick={onSeePairs}>{t('Tester un autre couple')}</Button></div>
   </section>;
