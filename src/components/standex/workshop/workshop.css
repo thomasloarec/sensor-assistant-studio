@@ -3173,4 +3173,6 @@
 .mw-ped-cut { min-height: 400px; }
 @media (max-width: 1023px) {
   .mw-stage.mw-pedagogical .mw-canvas { height: auto; min-height: 460px; max-height: none; }
+  /* Recette 12448 : la bulle 3D masquait reed et lobes ; légende complète conservée dans .mw-legend. */
+  .mw-pedagogical .mw-ped-body-label { display: none; }
 }
