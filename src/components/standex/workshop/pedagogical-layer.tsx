@@ -20,17 +20,18 @@ export function surface(cells:SampleCell[],zone:1|2) {
   }
   const geometry=new BufferGeometry();geometry.setAttribute('position',new Float32BufferAttribute(positions,3));geometry.computeVertexNormals();return geometry;
 }
-export function PedagogicalLayer({frame,settings,volume,zones=true}:{frame:PedagogicalFrame;settings:ExperimentSettings;volume:SampledVolume|null;zones?:boolean}) {
+export function PedagogicalLayer({frame,settings,volume,zones=true,zonesOnly=false}:{frame:PedagogicalFrame;settings:ExperimentSettings;volume:SampledVolume|null;zones?:boolean;zonesOnly?:boolean}) {
   const magnet=PILOT_MAGNETS.find(m=>m.id===settings.magnetId);
   const rotation=useMemo(()=>new Quaternion().setFromRotationMatrix(new Matrix4().makeBasis(...frame.basis.map(v=>new Vector3(...v)) as [Vector3,Vector3,Vector3])),[frame.basis]);
   const q=useMemo(()=>new Quaternion().setFromUnitVectors(new Vector3(0,1,0),new Vector3(...frame.pose.axis).normalize()),[frame.pose.axis]);
   const geometries=useMemo(()=>volume?[surface(volume.cells,1),surface(volume.cells,2)]:[],[volume]);
   useEffect(()=>()=>geometries.forEach(g=>g.dispose()),[geometries]);
-  if(!magnet)return null;
+  if(!magnet&&!zonesOnly)return null;
   return <group position={frame.origin} quaternion={rotation}>
     {zones&&geometries.map((geometry,i)=><mesh key={i} geometry={geometry} renderOrder={i}>
       <meshBasicMaterial color={i===0?'#d2a746':'#32a9a8'} opacity={i===0?.12:.22} transparent depthWrite={false} side={DoubleSide}/>
     </mesh>)}
+    {!zonesOnly&&magnet&&<>
     {/* Generic sensor body = EXACTLY the tested mechanical envelope (glass ±7 mm + r 1.1 mm = 16,2 × Ø2,2 mm). Opaque. */}
     <mesh rotation={[0,0,Math.PI/2]} name="pedagogical-generic-body" userData={{lengthMm:2*(PROFILE.reed.envelopeHalfLengthMm+PROFILE.reed.envelopeRadiusMm),diameterMm:2*PROFILE.reed.envelopeRadiusMm}}><capsuleGeometry args={[PROFILE.reed.envelopeRadiusMm,2*PROFILE.reed.envelopeHalfLengthMm,8,24]}/><meshStandardMaterial color="#254061" roughness={.5} metalness={.1}/></mesh>
     <Line points={[[-12,0,0],[12,0,0]]} color="#254061" lineWidth={2}/>
@@ -41,9 +42,10 @@ export function PedagogicalLayer({frame,settings,volume,zones=true}:{frame:Pedag
       <Line points={[[0,-magnet.lengthMm/2-3,0],[0,magnet.lengthMm/2+3,0]]} color="#254061" lineWidth={2}/>
       {[-1,1].map(sign=><Html key={sign} position={[0,sign*(magnet.lengthMm/2+3),0]} center><span className="mw-scene-label">{sign>0?'N':'S'}</span></Html>)}
     </group>
+    </>}
   </group>;
 }
-export function PedagogicalCut({volume,frame}:{volume:SampledVolume|null;frame:PedagogicalFrame}) {
+export function PedagogicalCut({volume,frame,body}:{volume:SampledVolume|null;frame:PedagogicalFrame;body?:readonly number[]}) {
   const ref=useRef<SVGSVGElement>(null),[size,setSize]=useState({width:640,height:590});
   useEffect(()=>{const el=ref.current;if(!el)return;const observer=new ResizeObserver(entries=>{const r=entries[0]?.contentRect;if(r&&r.width>0&&r.height>0)setSize({width:r.width,height:r.height});});observer.observe(el);return()=>observer.disconnect();},[]);
   const scale=Math.max(.5,Math.min((size.width-100)/48,(size.height-110)/48));
@@ -59,7 +61,7 @@ export function PedagogicalCut({volume,frame}:{volume:SampledVolume|null;frame:P
     <line x1={cx} y1={y(24)} x2={cx} y2={y(-24)} className="mw-cut-axis"/>
     {[-20,0,20].map(n=><g key={n}><text x={x(n)} y={y(-24)+20} textAnchor="middle" className="t-caption">{n}</text><text x={x(-24)-10} y={y(n)+5} textAnchor="end" className="t-caption">{n}</text></g>)}
     <text x={x(24)+8} y={y(-24)+20} className="t-caption">x</text><text x={x(-24)-10} y={y(24)-8} className="t-caption">y</text>
-    {(()=>{const {envelopeRadiusMm:r,envelopeHalfLengthMm:h}=PROFILE.reed,z=frame.pose.center[2],cut=Math.abs(z)<r,hw=cut?Math.sqrt(r*r-z*z):r;
+    {(()=>{const r=body?(body[1]??2)/2:PROFILE.reed.envelopeRadiusMm,h=body?(body[0]??16)/2-r:PROFILE.reed.envelopeHalfLengthMm,z=frame.pose.center[2],cut=Math.abs(z)<r,hw=cut?Math.sqrt(r*r-z*z):r;
       // Real section only if plane z crosses the capsule; otherwise an explicitly labelled projection outline.
       return <g data-testid="pedagogical-cut-body" data-section={cut?'section':'projection'}><rect x={x(-h-hw)} y={y(hw)} width={2*(h+hw)*scale} height={2*hw*scale} rx={hw*scale} className={cut?'mw-cut-body':'mw-cut-body-projection'}/>
         </g>;})()}
@@ -67,7 +69,7 @@ export function PedagogicalCut({volume,frame}:{volume:SampledVolume|null;frame:P
 
     <circle cx={x(frame.pose.center[0])} cy={y(frame.pose.center[1])} r="6" className="mw-cut-point"/>
   </svg><figcaption className="mw-ped-cut-caption">
-    <span className="t-caption">{t(inPlane?'Capteur générique, reed 66 monté':'Capteur générique, reed 66 monté — projection, hors du plan de coupe')}</span>
+    <span className="t-caption">{t(body?'Centre et axe internes estimés, non mesurés par le fabricant.':inPlane?'Capteur générique, reed 66 monté':'Capteur générique, reed 66 monté — projection, hors du plan de coupe')}</span>
     {hatched&&<span className="t-caption">{t('Hachuré : chevauchement possible avec une pièce du montage — à vérifier')}</span>}
   </figcaption></figure>;
 }

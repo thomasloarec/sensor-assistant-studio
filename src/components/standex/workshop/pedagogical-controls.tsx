@@ -9,13 +9,14 @@ import type { Obb } from '@/lib/detection-lab/obstacles';
 import { fingerprint } from '@/lib/standex/mounting/geometry';
 const cache=new Map<string,SampledVolume>();
 /** `obstacles`: loaded part boxes in the reed frame of the SAME instant; they enter the key. */
-export function usePedagogicalVolume(enabled:boolean,settings:ExperimentSettings,frame:PedagogicalFrame,obstacles:readonly Obb[]|null=null) {
+export function usePedagogicalVolume(enabled:boolean,settings:ExperimentSettings,frame:PedagogicalFrame,obstacles:readonly Obb[]|null=null,catalogue?:WorkshopConfig) {
   const [result,setResult]=useState<SampledVolume|null>(null),[busy,setBusy]=useState(false),[failed,setFailed]=useState(false);
   // Quantization is not applied to physics orientation. The exact axis and plane enter the key.
-  const key=settingsKey(settings,frame.pose.axis,frame.pose.center[2])+'|'+(obstacles?fingerprint(obstacles):'free');
+  const available=!!catalogue||experimentAvailable(settings);
+  const key=settingsKey(settings,frame.pose.axis,frame.pose.center[2])+'|'+(obstacles?fingerprint(obstacles):'free')+'|'+JSON.stringify(catalogue??null);
   useEffect(()=>{
     setResult(null);setFailed(false);
-    if(!enabled||!experimentAvailable(settings)){setBusy(false);return;}
+    if(!enabled||!available){setBusy(false);return;}
     const hit=cache.get(key);if(hit){setResult(hit);setBusy(false);return;}
     if(typeof Worker==='undefined'){setFailed(true);return;}
     let current=true,worker:Worker|null=null;setBusy(true);
@@ -23,15 +24,15 @@ export function usePedagogicalVolume(enabled:boolean,settings:ExperimentSettings
       worker=new Worker(new URL('./pedagogical.worker.ts',import.meta.url),{type:'module'});
       worker.onmessage=(event:MessageEvent<{key:string;result?:SampledVolume;error?:boolean}>)=>{
         if(!current||event.data.key!==key)return;
-        if(event.data.result&&event.data.result.key===key&&experimentAvailable(settings)){if(cache.size>=3){const first=cache.keys().next().value;if(first)cache.delete(first);}cache.set(key,event.data.result);setResult(event.data.result);}else setFailed(true);
+        if(event.data.result&&event.data.result.key===key&&available){if(cache.size>=3){const first=cache.keys().next().value;if(first)cache.delete(first);}cache.set(key,event.data.result);setResult(event.data.result);}else setFailed(true);
         setBusy(false);worker?.terminate();worker=null;
       };
       worker.onerror=()=>{if(current){setBusy(false);setFailed(true);}worker?.terminate();};
-      worker.postMessage({settings,axis:frame.pose.axis,planeZ:frame.pose.center[2],key,obstacles:obstacles??[]});
+      worker.postMessage({settings,axis:frame.pose.axis,planeZ:frame.pose.center[2],key,obstacles:obstacles??[],catalogue});
     },0);
     return ()=>{current=false;clearTimeout(timer);worker?.terminate();};
   },[enabled,key]);
-  return {volume:enabled&&experimentAvailable(settings)&&result?.key===key?result:null,busy,failed};
+  return {volume:enabled&&available&&result?.key===key?result:null,busy,failed};
 }
 /* i18n-canonical: shared placement labels translated at the point of display. */
 export const PLACEMENT_LABEL={favorable:'Placement favorable',variable:'Détection variable',unfavorable:'Placement défavorable',unavailable:'Estimation indisponible'};

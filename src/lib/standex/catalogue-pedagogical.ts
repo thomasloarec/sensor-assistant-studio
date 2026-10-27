@@ -67,19 +67,19 @@ export function catalogueFrame(c:WorkshopConfig,t:number):PedagogicalFrame{
 }
 function kernelPose(c:WorkshopConfig,pose:MagnetPose):MagnetPose{const m=catalogueModel(c);return {center:pose.center.map(n=>n/m.scale) as Vec3,axis:pose.axis};}
 export function catalogueBodyObb(c:WorkshopConfig):Obb{return {path:'sensor-body',c:[0,0,0],a:[[1,0,0],[0,1,0],[0,0,1]],h:sensorById(c.sensorId).body.map(n=>n/2) as Vec3};}
-export function cataloguePlacement(c:WorkshopConfig,pose:MagnetPose,obstacles:readonly Obb[]=[]):PlacementEvidence{
- const m=catalogueModel(c),p=kernelPose(c,pose),th=classThresholds(m.className);
+export function cataloguePlacement(c:WorkshopConfig,pose:MagnetPose,obstacles:readonly Obb[]=[],model=catalogueModel(c),nominalOnly=false):PlacementEvidence{
+ const m=model,p={center:pose.center.map(n=>n/m.scale) as Vec3,axis:pose.axis},th=classThresholds(m.className);
  const unavailable=(cause:PlacementEvidence['cause']):PlacementEvidence=>({state:'unavailable',cause,nominal:null,scenarios:[],zone:0,partial:false});
  if(!th)return unavailable('missing');
  const realMagnet=magnetObb(m.magnetBody[1],m.magnetBody[0],pose);
  if(!realMagnet)return unavailable('domain');
  if(obbOverlap(realMagnet,catalogueBodyObb(c))||obstacles.some(o=>obbOverlap(realMagnet,o)))return unavailable('overlap');
- const scenarios=experimentalScenarios(true).map(s=>({id:s.id,result:evaluatePose(m.magnet,p,s,'B')}));
+ const scenarios=experimentalScenarios(!nominalOnly).map(s=>({id:s.id,result:evaluatePose(m.magnet,p,s,'B')}));
  const nominal=evaluatePose(m.magnet,p,experimentalScenarios(false)[0]??{id:'nominal',shift:[0,0,0],lengthFactor:1,momentFactor:1},'B');
  if(!nominal.ok)return unavailable(nominal.reason==='domain'?'domain':'collision');
  const responses=scenarios.flatMap(s=>s.result.ok?[s.result.response]:[]);
  const zone=nominal.response>=th.high?2:nominal.response>=(th.low??0)?1:0;
- let state:PlacementEvidence['state']=responses.length!==9?'variable':responses.every(r=>r>=th.high)?'favorable':responses.every(r=>r<(th.low??0))?'unfavorable':'variable';
+ let state:PlacementEvidence['state']=!nominalOnly&&responses.length!==9?'variable':responses.every(r=>r>=th.high)?'favorable':responses.every(r=>r<(th.low??0))?'unfavorable':'variable';
  if((c.ferromagnetic||c.temperature!=='ambient'||m.unknownMoment||!['B','C','D','E','F'].includes(c.sensitivity))&&state==='favorable')state='variable';
  return {state,cause:nominal.response===0?'orientation':'distance',nominal,scenarios,zone,partial:false};
 }
@@ -87,10 +87,11 @@ export function catalogueVolume(c:WorkshopConfig,axis:Vec3,planeZ:number,obstacl
  const start=performance.now(),xs=axisNodes(-extent,extent,true),ys=axisNodes(-extent,extent),zs=axisNodes(-extent,extent);
  if(!zs.includes(planeZ)&&Math.abs(planeZ)<=extent){zs.push(planeZ);zs.sort((a,b)=>a-b);}
  const cells:SampledVolume['cells']=[],cut:SampledVolume['cut']=[];
+ const model=catalogueModel(c);
  const bound=(ns:number[],i:number):[number,number]=>[i===0?-extent:((ns[i-1]??0)+(ns[i]??0))/2,i===ns.length-1?extent:((ns[i]??0)+(ns[i+1]??0))/2];
  // Same evaluator as point/cut/timeline, including body collision; no angle quantization.
  for(let k=0;k<zs.length;k++)for(let j=0;j<ys.length;j++)for(let i=0;i<xs.length;i++){
-  const x=xs[i]??0,y=ys[j]??0,z=zs[k]??0,e=cataloguePlacement(c,{center:[x,y,z],axis},obstacles);
+  const x=xs[i]??0,y=ys[j]??0,z=zs[k]??0,e=cataloguePlacement(c,{center:[x,y,z],axis},obstacles,model,true);
   const [x0,x1]=bound(xs,i),[y0,y1]=bound(ys,j),[z0,z1]=bound(zs,k);
   const cell={i,j,k,x,y,z,x0,x1,y0,y1,z0,z1,zone:e.zone,response:e.nominal?.ok?e.nominal.response:null,blocked:e.cause==='overlap'};
   if(e.zone)cells.push(cell);if(z===planeZ)cut.push(cell);
