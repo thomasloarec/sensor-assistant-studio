@@ -1,5 +1,7 @@
 # Lead magnet presentation
 
+- WorkspacePanel keeps context as a sibling of heading so client workshop mobile headers can explicitly place title/actions and context/language on separate rows without compressing references.
+
 - DesignSpace stores a conservative versioned product trace in the existing dossier/export/reprise; summaries prioritize it over superseded binary predictions, and explicit Form66 exploration never writes product, cable or study callbacks.
 
 - ConnectorChoices shares selection UI with four visible previews as siblings of native selection buttons, while DesignSpace owns callbacks; both entry points retain dossier behavior and viewer gestures never select a connector.
