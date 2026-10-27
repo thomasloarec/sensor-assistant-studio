@@ -1,4 +1,4 @@
-import type { ClientPedagogicalResult } from "@/lib/standex/client-pedagogical";
+import { currentClientTrace, recordClientTrace } from "@/lib/standex/client-pedagogical";
 import { NeedExamples } from "./need-examples";
 import { BookingDialog } from "./booking-dialog";
 import { COUNTRY_CODES, salesContactFor } from "@/lib/leadmagnet/sales-contact";
@@ -652,7 +652,7 @@ export function DesignSpace({
   const [selectionAnnounce, setSelectionAnnounce] = useState("");
   /** Fiche détaillée d'un capteur (cotes, sources, téléchargement STEP). */
   const [detailSensorId, setDetailSensorId] = useState<string | null>(null);
-  const [clientPedagogicalResult, setClientPedagogicalResult] = useState<ClientPedagogicalResult | null>(null);
+  const [workshopExploring, setWorkshopExploring] = useState(false);
   const [workshop, setWorkshop] = useState<WorkshopConfig | null>(null);
   /** Remonté à chaque chargement d'un AUTRE contenu (import, dossier serveur,
    * variante) : l'atelier est alors réellement remplacé, sans modèle fantôme. */
@@ -3627,11 +3627,12 @@ export function DesignSpace({
 
   /** Libellé du couple réellement testé : reprise du verdict enregistré, jamais
    * un recalcul, jamais une validation technique. */
-  const reviewTested = latestTestedPair(dossier.testedPairs);
+  const reviewTrace = currentClientTrace(dossier);
+  const reviewTested = reviewTrace ? null : latestTestedPair(dossier.testedPairs);
   /** Ligne du guide réellement enregistrée avec l'essai : même source que le
    *  PDF et l'historique. Les bornes « up »/« to » restent documentaires. */
   const reviewGuideFact = reviewTested ? testedPairGuideFact(reviewTested, t, msg) : null;
-  const reviewTestedLabel = reviewTested
+  const reviewTestedLabel = reviewTrace ? `${reviewTrace.sensorId} + ${reviewTrace.magnetId} · ${t('Estimation indisponible')}` : reviewTested
     ? [
         `${reviewTested.sensorId} + ${reviewTested.magnetId}`,
         `${
@@ -4504,10 +4505,10 @@ export function DesignSpace({
    * Aucun réseau, aucune écriture sur l'appareil : tout reste en mémoire. */
   const applyWorkshopConfig = useCallback((c: WorkshopConfig) => {
     setWorkshop(c);
-    setClientPedagogicalResult(r=>r?.configKey===JSON.stringify(c)?r:null);
     setDossier((d) => ({
       ...d,
       workshop: c,
+      clientPedagogical:d.clientPedagogical?.configKey===JSON.stringify(c)?d.clientPedagogical:null,
       cabling: {...d.cabling, lengthChoice: c.cableLengthMm !== null &&
         (d.cabling.lengthChoice === "undecided" || (d.cabling.lengthChoice === "standard_to_confirm" && !standardLengthsMm(c.sensorId).includes(c.cableLengthMm)))
           ? "custom_to_confirm" : d.cabling.lengthChoice},
@@ -4598,7 +4599,7 @@ export function DesignSpace({
   const resultatSection = (
     <div className="space-y-10">
     <ResultView
-      pedagogicalResult={clientPedagogicalResult?.configKey===JSON.stringify(workshop ?? dossier.workshop ?? DEFAULT_WORKSHOP)?clientPedagogicalResult:null}
+      pedagogicalResult={currentClientTrace(dossier)}
       pair={latestTestedPair(dossier.testedPairs)}
       // Un point de compatibilité ouvert interdit un résultat positif : la
       // démonstration ne vérifie pas l'application.
@@ -4642,9 +4643,12 @@ export function DesignSpace({
       <Suspense fallback={<p className="text-base">{t("Chargement de l'atelier…")}</p>}>
         <MagneticWorkshop
           clientPedagogical
+          onExplorationChange={setWorkshopExploring}
           onClientPedagogicalResult={result=>{
             if(workshopDraftRef.current)applyWorkshopConfig(workshopDraftRef.current);
-            setClientPedagogicalResult(result);setShowWorkshop(false);setPanel(null);setTab('resultat');
+            const config=workshopDraftRef.current??workshop??dossier.workshop;
+            if(config)setDossier(d=>recordClientTrace(d,config));
+            setShowWorkshop(false);setPanel(null);setTab('resultat');
           }}
           embedded
           initialCableOpen={cablePanelOpen}
@@ -5271,7 +5275,7 @@ export function DesignSpace({
         badge={
           <span className="flex shrink-0 items-center gap-2">
             {/* Références portées telles quelles, jamais traduites. */}
-            {workshop ? (
+            {workshopExploring ? <Badge className="project-state-badge">{t('Exemple générique')}</Badge> : workshop ? (
               <Badge className="project-state-badge">{`${workshop.sensorId} + ${workshop.magnetModel}`}</Badge>
             ) : null}
             <span className="t-caption" role="status" data-testid="workshop-save-state">
