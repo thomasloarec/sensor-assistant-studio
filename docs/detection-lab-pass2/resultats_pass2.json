@@ -24,56 +24,32 @@
   "publishedMm": 17.7
  },
  "lengthFit": {
-  "effectiveLengthMm": 4.000000000000005,
-  "rmsLogDisagreement": 0.9048780580233627,
+  "effectiveLengthMm": 15.63399603080886,
+  "rmsLogDisagreement": 0.031444760042380476,
   "pairs": [
    {
     "className": "C",
     "bound": "up",
-    "thetaSmCo": 5.761119238813089,
-    "thetaN45": 10.420635441501426
+    "thetaSmCo": 2.9161317521308896,
+    "thetaN45": 2.8788826935084266
    },
    {
     "className": "C",
     "bound": "to",
-    "thetaSmCo": 3.714838930712644,
-    "thetaN45": 8.09318706171071
-   },
-   {
-    "className": "C",
-    "bound": "up",
-    "thetaSmCo": 1.0514474643016591,
-    "thetaN45": 3.310583776131119
-   },
-   {
-    "className": "C",
-    "bound": "to",
-    "thetaSmCo": 0.6865617414522163,
-    "thetaN45": 2.337694290238545
+    "thetaSmCo": 2.1750863653917007,
+    "thetaN45": 2.0667246352372537
    },
    {
     "className": "E",
     "bound": "up",
-    "thetaSmCo": 8.958886990586807,
-    "thetaN45": 12.996702978013278
+    "thetaSmCo": 3.801548441026271,
+    "thetaN45": 3.918155277156691
    },
    {
     "className": "E",
     "bound": "to",
-    "thetaSmCo": 6.495688475249927,
-    "thetaN45": 11.102598272932113
-   },
-   {
-    "className": "E",
-    "bound": "up",
-    "thetaSmCo": 1.5957073618444728,
-    "thetaN45": 4.559871316671763
-   },
-   {
-    "className": "E",
-    "bound": "to",
-    "thetaSmCo": 1.2078884194634776,
-    "thetaN45": 3.6913307295655597
+    "thetaSmCo": 3.14366153141608,
+    "thetaN45": 3.1953023844559953
    }
   ]
  },
@@ -161,28 +137,28 @@
   },
   {
    "id": "V4-Lfit-d7",
-   "L": 4.000000000000005,
+   "L": 15.63399603080886,
    "datumMm": 7,
-   "k": 0.17463094921548034,
-   "kMedianAbsPct": 12.334965776653862,
+   "k": 0.13560548808516593,
+   "kMedianAbsPct": 3.679175602520049,
    "primary": {
     "total": 24,
     "published": 23,
     "missing": 1,
-    "computable": 22,
-    "unavailable": 1,
-    "medianAbsPct": 34.13,
-    "over20": 18,
+    "computable": 21,
+    "unavailable": 2,
+    "medianAbsPct": 39.2,
+    "over20": 15,
     "pass": false
    },
    "secondary": {
     "total": 23,
     "published": 22,
     "missing": 1,
-    "computable": 21,
-    "unavailable": 1,
-    "medianAbsPct": 33.27,
-    "over20": 17,
+    "computable": 20,
+    "unavailable": 2,
+    "medianAbsPct": 38.29,
+    "over20": 14,
     "pass": false
    }
   }

@@ -16,9 +16,9 @@ Généré par `bun scripts/detection-lab-pass2-report.ts` le 2026-10-27. Préver
 | V1-L16-d7 | 16.000 | 7 | 0.1336656 | 3.64 % |
 | V2-L16-d4 | 16.000 | 4 | 0.1336656 | 3.64 % |
 | V3-L8-d7 | 8.000 | 7 | 0.1662267 | 10.45 % |
-| V4-Lfit-d7 | 4.000 | 7 | 0.1746309 | 12.33 % |
+| V4-Lfit-d7 | 15.634 | 7 | 0.1356055 | 3.68 % |
 
-Ajustement de L par accord inter-aimants sur D1 seul (Σ log² θ_N45/θ_SmCo) : **L = 4.000 mm** (RMS log 0.9049). k ne dépend pas du repère axial (D1 n'utilise pas le repère) : V1 et V2 partagent le même k.
+Ajustement de L par accord inter-aimants sur D1 seul (Σ log² θ_N45/θ_SmCo) : **L = 15.634 mm** (RMS log 0.0314). k ne dépend pas du repère axial (D1 n'utilise pas le repère) : V1 et V2 partagent le même k.
 
 Ces valeurs sont des paramètres ajustés sur 8 bornes d'apprentissage, pas des dimensions prouvées.
 
@@ -34,8 +34,8 @@ Contrôles = toutes les bornes publiées C/E D3/D4/D5 des deux aimants (23 publi
 | V2-L16-d4 | secondaire (sans anomalie) | 22 | 22 | 0 | 1 | 13.51 | 5 | NON ATTEINT |
 | V3-L8-d7 | primaire (23 bornes) | 23 | 22 | 1 | 1 | 39.14 | 17 | NON ATTEINT |
 | V3-L8-d7 | secondaire (sans anomalie) | 22 | 21 | 1 | 1 | 38.29 | 16 | NON ATTEINT |
-| V4-Lfit-d7 | primaire (23 bornes) | 23 | 22 | 1 | 1 | 34.13 | 18 | NON ATTEINT |
-| V4-Lfit-d7 | secondaire (sans anomalie) | 22 | 21 | 1 | 1 | 33.27 | 17 | NON ATTEINT |
+| V4-Lfit-d7 | primaire (23 bornes) | 23 | 21 | 2 | 1 | 39.20 | 15 | NON ATTEINT |
+| V4-Lfit-d7 | secondaire (sans anomalie) | 22 | 20 | 2 | 1 | 38.29 | 14 | NON ATTEINT |
 
 Détail par approche (score primaire) :
 
@@ -50,9 +50,9 @@ Détail par approche (score primaire) :
 | V3-L8-d7 | D3 | 8/8 | 41.23 | 8 |
 | V3-L8-d7 | D4 | 8/8 | 17.36 | 3 |
 | V3-L8-d7 | D5 | 6/7 | 48.77 | 6 |
-| V4-Lfit-d7 | D3 | 8/8 | 35.23 | 8 |
-| V4-Lfit-d7 | D4 | 8/8 | 19.90 | 4 |
-| V4-Lfit-d7 | D5 | 6/7 | 41.13 | 6 |
+| V4-Lfit-d7 | D3 | 8/8 | 43.95 | 8 |
+| V4-Lfit-d7 | D4 | 8/8 | 12.19 | 2 |
+| V4-Lfit-d7 | D5 | 5/7 | 49.32 | 5 |
 
 Un résidu systématique n'est pas une marge validée. Si le critère n'est pas atteint : pas de volume 3D.
 
@@ -102,27 +102,27 @@ Point distinct : l'enveloppe conservative du lot 1 (capsule ±7 mm, rayon 1.1 mm
 
 | Étape | Durée |
 |---|---|
-| Ajustement de L (accord inter-aimants D1) | 31 ms |
-| Ajustement de k (V1-L16-d7) | 558 ms |
-| Tableau A..G (V1-L16-d7) | 2273 ms |
-| Ajustement de k (V2-L16-d4) | 596 ms |
-| Tableau A..G (V2-L16-d4) | 2186 ms |
-| Ajustement de k (V3-L8-d7) | 574 ms |
-| Tableau A..G (V3-L8-d7) | 2003 ms |
-| Ajustement de k (V4-Lfit-d7) | 507 ms |
-| Tableau A..G (V4-Lfit-d7) | 2148 ms |
-| Seuils partagés lot 1 (B/C1) | 320 ms |
-| Coupe raffinée 2-perpendicular-centred-C SMCO5-5X4 | 426 ms |
-| Coupe raffinée 3-perpendicular-offset-C SMCO5-5X4 | 417 ms |
-| Coupe raffinée 2-perpendicular-centred-C N45-4X19 | 259 ms |
-| Coupe raffinée 3-perpendicular-offset-C N45-4X19 | 244 ms |
-| Nœuds communs 2-perpendicular-centred-C SMCO5-5X4 | 416 ms |
-| Nœuds communs 3-perpendicular-offset-C SMCO5-5X4 | 327 ms |
-| Nœuds communs 2-perpendicular-centred-C N45-4X19 | 211 ms |
-| Nœuds communs 3-perpendicular-offset-C N45-4X19 | 237 ms |
+| Ajustement de L (accord inter-aimants D1) | 26 ms |
+| Ajustement de k (V1-L16-d7) | 557 ms |
+| Tableau A..G (V1-L16-d7) | 2209 ms |
+| Ajustement de k (V2-L16-d4) | 492 ms |
+| Tableau A..G (V2-L16-d4) | 2074 ms |
+| Ajustement de k (V3-L8-d7) | 466 ms |
+| Tableau A..G (V3-L8-d7) | 2014 ms |
+| Ajustement de k (V4-Lfit-d7) | 521 ms |
+| Tableau A..G (V4-Lfit-d7) | 2038 ms |
+| Seuils partagés lot 1 (B/C1) | 303 ms |
+| Coupe raffinée 2-perpendicular-centred-C SMCO5-5X4 | 347 ms |
+| Coupe raffinée 3-perpendicular-offset-C SMCO5-5X4 | 323 ms |
+| Coupe raffinée 2-perpendicular-centred-C N45-4X19 | 196 ms |
+| Coupe raffinée 3-perpendicular-offset-C N45-4X19 | 190 ms |
+| Nœuds communs 2-perpendicular-centred-C SMCO5-5X4 | 296 ms |
+| Nœuds communs 3-perpendicular-offset-C SMCO5-5X4 | 295 ms |
+| Nœuds communs 2-perpendicular-centred-C N45-4X19 | 198 ms |
+| Nœuds communs 3-perpendicular-offset-C N45-4X19 | 165 ms |
 | Largeurs zone centrale SMCO5-5X4 | 1 ms |
 | Largeurs zone centrale N45-4X19 | 0 ms |
-| Coupe 1 mm lot 1 (N45, B) | 207 ms |
+| Coupe 1 mm lot 1 (N45, B) | 180 ms |
 
 ## Limites
 
