@@ -180,9 +180,10 @@ export function WorkspacePanel({
               <span className="app-header-tool t-label">Sensor Studio</span>
             </div>
             <h2 className="workspace-panel-title t-title-s">{title}</h2>
+            {!bare ? badge : null}
             {description ? <p className="sr-only">{description}</p> : null}
           </div>
-          {badge ? <div className="workspace-panel-context min-w-0">{badge}</div> : null}
+          {bare && badge ? <div className="workspace-panel-context min-w-0">{badge}</div> : null}
           {languagePicker ? <LanguagePicker /> : null}
           {navigation}
           <Button

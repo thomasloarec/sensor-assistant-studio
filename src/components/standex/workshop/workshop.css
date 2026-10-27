@@ -3207,6 +3207,9 @@
     min-width: 44px;
     min-height: 44px;
   }
+  .workspace-panel-shell:has(.mw-client-pedagogical) .workspace-panel-header > button > span {
+    display: none;
+  }
   .workspace-panel-shell:has(.mw-client-pedagogical) .workspace-panel-heading {
     grid-column: 2;
     grid-row: 1;
