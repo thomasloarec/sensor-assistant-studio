@@ -197,7 +197,7 @@ describe("diagnostic B′", () => {
   test("D1 centré : B′ et B donnent la même distance (M1 = M2 par symétrie)", () => {
     const k = fitK(16, "B", "C1").k;
     const theta = k * 20;
-    const b = distanceFor(SMCO, "D1", theta, "C1", "B", undefined, undefined, 3.345867);
+    const b = distanceFor(SMCO, "D1", theta, "C1", "B", undefined, scenarioForLength(16), 3.345867);
     const bp = distanceForBPrime(SMCO, "D1", theta, "C1", 16, 3.345867);
     expect(b.ok && bp.ok).toBe(true);
     if (b.ok && bp.ok) expect(bp.value).toBeCloseTo(b.value, 3);
@@ -207,7 +207,7 @@ describe("diagnostic B′", () => {
     const axial = byId("L16-axial").table;
     const bp = byId("L16-bprime").table;
     for (const rowA of axial.filter((r) => r.approach === "D4" && r.estimatedRawMm != null)) {
-      const rowB = bp.find((r) => r.className === rowA.className && r.magnetId === rowA.magnetId && r.bound === rowA.bound)!;
+      const rowB = bp.find((r) => r.className === rowA.className && r.magnetId === rowA.magnetId && r.bound === rowA.bound && r.approach === "D4")!;
       expect(rowB.estimatedRawMm!).toBeGreaterThanOrEqual(rowA.estimatedRawMm! - 1e-3);
     }
   }, 300000);
