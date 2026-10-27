@@ -8,7 +8,7 @@ import { guideRangesFor } from './activation-guide';
 import { pedagogicalFrame, type PedagogicalFrame } from './pedagogical-poses';
 import { rotate, componentPose, cycleU } from './machine-assembly';
 import type { Vec3 } from './magnetic-workshop';
-import type { WorkshopConfig } from './magnetic-workshop';
+import { momentFor, type WorkshopConfig } from './magnetic-workshop';
 import { PILOT_MAGNETS, type PilotMagnet } from '../detection-lab/magnets';
 import { evaluatePose, type MagnetPose } from '../detection-lab/pose';
 import { EXPERIMENT, DEFAULT_EXPERIMENT, classThresholds, experimentalScenarios, axisNodes, type PlacementEvidence, type SampledVolume, type TableSample } from '../detection-lab/workshop-experiment';
@@ -62,14 +62,14 @@ export function catalogueFrame(c:WorkshopConfig,t:number):PedagogicalFrame{
  // The scene already rotates the sensor body about local Y. Apply the same
  // orientation to the estimated reed, never brochure up/to datum offsets.
  if(c.machine){
-  const magnet=componentPose(c.machine,'magnet',cycleU(c.machine,t)),axis=magnet.transform([c.polarity,0,0]);
+  const magnet=componentPose(c.machine,'magnet',cycleU(c.machine,t)),axis=magnet.transform(momentFor({...c,magnetTilt:0},0));
   const dot=(a:Vec3,b:Vec3)=>a.reduce((sum,n,i)=>sum+n*(b[i]??0),0);
   return {...f,world:{...f.world,axis},pose:{...f.pose,axis:f.basis.map(v=>dot(v,axis)) as Vec3}};
  }
  const u=t<=.5?t*2:(1-t)*2,depth=c.start+(c.end-c.start)*u;
  const center:Vec3=c.motion==='slide'?[-c.travel+2*c.travel*u,0,c.offset]:c.motion==='pivot'?[Math.sin(c.span*(u-.5)*Math.PI/180)*c.offset,0,Math.cos(c.span*(u-.5)*Math.PI/180)*c.offset]:c.geometry==='D3'?[depth,0,c.lateralShift]:[c.lateralShift,0,depth];
  const angle=c.magnetAngle+(c.motion==='pivot'?c.span*(u-.5):0);
- const axis=rotate([c.polarity,0,0],[0,-angle,c.magnetTilt]);
+ const axis=momentFor(c,angle);
  const transform=(v:Vec3)=>f.basis[0].map((_,j)=>(f.basis[0][j]??0)*v[0]+(f.basis[1][j]??0)*v[1]+(f.basis[2][j]??0)*v[2]) as Vec3;
  const world={center:transform(center).map((n,i)=>n+(f.origin[i]??0)) as Vec3,axis:transform(axis)};
  const basis=f.basis.map((_,i)=>{const v=rotate(([ [1,0,0],[0,1,0],[0,0,1] ][i]??[1,0,0]) as Vec3,[0,-c.sensorAngle,0]);return f.basis[0].map((__,j)=>(f.basis[0][j]??0)*v[0]+(f.basis[1][j]??0)*v[1]+(f.basis[2][j]??0)*v[2]) as Vec3;}) as [Vec3,Vec3,Vec3];
