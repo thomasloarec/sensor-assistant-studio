@@ -36,7 +36,7 @@ for(const sensorId of ['MK03','MK04','MK05','MK13','MK21','MK24-A-J'])for(const 
  }
 }
 lines.push('','## Vérifications et couverture restante','',
-'52tests ciblés verts /588assertions (8 nouveaux tests catalogue,27client,17i18n), dont chaque couple proposé possède des zones dans le domaine affiché. Suite finale :2038tests/131fichiers verts,146162assertions,139,30s. Inventaire huit langues0manque,3888entrées ; scans0/6/6/0 (exceptions UI/Three préexistantes).103empreintes scientifiques/NDA inchangées. Compilation automatique OK15:54:26UTC. Aucun build/typecheck manuel.',
+'Complément sources :60tests ciblés verts/658assertions, incluant inventaire3004/5744, variantes66/85/90,20lignes par couple etF1. Suite finale :2041tests/131fichiers verts,146186assertions,146,51s. Inventaire huit langues0manque,3888entrées. Compilation automatique OK15:59:19UTC. Aucun build/typecheck manuel. Les103empreintes et scans du premier ensemble restent le contrôle précédent, pas une nouvelle recette visuelle.',
 '',
 'Fonctionnel : profils pour chaque entrée, bodies/identités conservés, adaptation sur produit dans atelier existant, volumes worker bornés au domaine±24mm avec résolution centrale0,25mm, coupe/chronologie même couche, annulation worker et clé versionnée avec configuration/axe exact/enveloppes. Trace ajoute hypothèses/prior/progress nonqualifiants ; reprise recalcule sans croire un verdict importé. Fix PCB et exploration séparée conservés.',
 '',
