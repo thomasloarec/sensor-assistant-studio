@@ -2,6 +2,7 @@ import {expect,test,afterEach} from 'bun:test';
 import {readFileSync} from 'node:fs';
 import {GlobalRegistrator} from '@happy-dom/global-registrator';
 import {useState} from 'react';
+import {diagnosePlacement} from '../src/lib/detection-lab/placement-diagnosis';
 import {PedagogicalControls,PedagogicalBanner} from '../src/components/standex/workshop/pedagogical-controls';
 import {fireEvent} from '@testing-library/react';
 import {render,act,cleanup} from '@testing-library/react';
@@ -105,13 +106,13 @@ for(const [magnetId,depth] of [['SMCO5-5X4',6],['N45-4X19',16]] as const){
    const [config,setConfig]=useState({...DEFAULT_WORKSHOP,geometry:'D1' as const,motion:'approach' as const,start:24,end:12,magnetAngle:90,lateralShift:0});
    const [settings,setSettings]=useState<import("../src/lib/detection-lab/workshop-experiment").ExperimentSettings>({...DEFAULT_EXPERIMENT,magnetId});
    const progress=.5,frame=pedagogicalFrame(config,progress),evidence=evaluatePlacement(settings,frame.pose);
-   return <><PedagogicalControls settings={settings} setSettings={setSettings} config={config} update={patch=>setConfig(c=>({...c,...patch}))} frame={frame} busy={false} volume={null} failed={false} onSuggest={()=>{}} onUndo={()=>{}} canUndo={false}/><PedagogicalBanner evidence={evidence}/><output data-testid="depth">{frame.pose.center[1]}</output><output data-testid="time">{progress}</output><output data-testid="scenario-count">{evidence.scenarios.length}</output></>;
+   return <><PedagogicalControls settings={settings} setSettings={setSettings} config={config} update={patch=>setConfig(c=>({...c,...patch}))} frame={frame} busy={false} volume={null} failed={false} onSuggest={()=>{}} onUndo={()=>{}} canUndo={false}/><PedagogicalBanner evidence={evidence} diagnosis={diagnosePlacement(settings,frame.pose,false,evidence)}/><output data-testid="depth">{frame.pose.center[1]}</output><output data-testid="time">{progress}</output><output data-testid="scenario-count">{evidence.scenarios.length}</output></>;
   }
   const r=render(<Harness/>);
   fireEvent.input(r.getByRole('slider',{name:'Profondeur minimale'}),{target:{value:String(depth)}});
   expect(r.getByTestId('depth').textContent).toBe(String(depth));expect(r.getByTestId('time').textContent).toBe('0.5');
   expect(r.getByTestId('pedagogical-verdict').textContent).toContain('Placement défavorable');
-  expect(r.getByTestId('pedagogical-verdict').textContent).toContain('Orientation défavorable');
+  expect(r.getByTestId('pedagogical-verdict').textContent).toContain('Zone centrale entre les deux lobes');
   for(const offset of [6,8]){
    if(magnetId==='N45-4X19'&&offset===6)continue;
    fireEvent.input(r.getByRole('slider',{name:'Décalage latéral'}),{target:{value:String(offset)}});
