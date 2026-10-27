@@ -254,7 +254,7 @@ describe("conservation et non-régression", () => {
   test("le SVG des écarts signés distingue les aimants et marque les hors tolérance", () => {
     const svg = signedErrorsSvg("titre", pass3ControlRows(byId("L16-d4corr").table), {
       fav: "a", var: "b", far: "c", orient: "d", undet: "e", na: "f", ink: "g",
-    });
+    }, { n45: "h", failure: "i" });
     expect(svg).toContain("SmCo5 5×4");
     expect(svg).toContain("NdFeB N45 4×19");
     expect(svg).toContain("max(1 mm, 15 %");

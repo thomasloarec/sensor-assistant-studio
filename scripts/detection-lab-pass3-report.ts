@@ -11,7 +11,7 @@ import { paletteFromCss } from "../src/lib/detection-lab/report";
 import { AT_SOURCE, fitLength } from "../src/lib/detection-lab/pass2";
 import {
   D4_ANCHOR, DATUM_ANCHOR, PASS3_CRITERION, PASS3_VARIANTS, PASS3_VERSION,
-  pass3ControlRows, runPass3Variant, signedErrorsSvg, type Pass3Result, type Pass3Row, type Pass3Score,
+  pass3ControlRows, runPass3Variant, signedErrorsSvg, tokenFromCss, type Pass3Result, type Pass3Row, type Pass3Score,
 } from "../src/lib/detection-lab/pass3";
 
 const OUT = "docs/detection-lab-pass3";
@@ -57,10 +57,12 @@ writeFileSync(`${OUT}/resultats_pass3.json`, JSON.stringify({
 }, null, 1));
 
 // --- SVG des écarts signés (variantes corrigées) ---
+const CSS = readFileSync("src/styles.css", "utf8");
+const POINTS = { n45: tokenFromCss(CSS, "--standex-blue"), failure: tokenFromCss(CSS, "--warning") };
 for (const r of results.filter((x) => x.variant.mode === "d4corr"))
   writeFileSync(
     `${OUT}/svg/ecarts_signes_${r.variant.id}.svg`,
-    signedErrorsSvg(`Écarts signés — ${r.variant.label}`, pass3ControlRows(r.table), PALETTE),
+    signedErrorsSvg(`Écarts signés — ${r.variant.label}`, pass3ControlRows(r.table), PALETTE, POINTS),
   );
 
 // --- Rapport Markdown ---
