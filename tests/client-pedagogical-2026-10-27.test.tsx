@@ -52,7 +52,7 @@ describe('client boundary: no catalogue alias or fictitious qualification',()=>{
 describe('real mounted client workshop',()=>{
   test('old expected cannot reappear after conservative dossier export/reprise',()=>{
     const old={...createDossier(),workshop:{...DEFAULT_WORKSHOP},testedPairs:[{sensorId:'MK04',magnetId:'M04',approach:'D1',sensitivity:'B',verdict:'expected' as const,pullInMm:15,dropOutMm:18,travelStartMm:30,travelEndMm:5,mainMessage:null,limits:[],at:'2026-10-27T15:11:00Z'}]};
-    const next=recordClientTrace(old,DEFAULT_WORKSHOP);const exported=buildDossierExport(next);const resumed=parseDossierExport(JSON.stringify(exported));
+    const next=recordClientTrace(old,DEFAULT_WORKSHOP);const exported=buildDossierExport(next);const resumed=parseDossierExport(JSON.parse(JSON.stringify(exported)));
     expect(resumed.ok).toBe(true);if(!resumed.ok)return;
     expect(resumed.dossier.testedPairs?.some(p=>p.verdict==='expected')).toBe(false);
     const trace=currentClientTrace(resumed.dossier);expect(trace?.qualified).toBe(false);expect(trace?.state).toBe('unavailable');

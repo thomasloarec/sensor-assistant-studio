@@ -4645,9 +4645,8 @@ export function DesignSpace({
           clientPedagogical
           onExplorationChange={setWorkshopExploring}
           onClientPedagogicalResult={result=>{
-            if(workshopDraftRef.current)applyWorkshopConfig(workshopDraftRef.current);
-            const config=workshopDraftRef.current??workshop??dossier.workshop;
-            if(config)setDossier(d=>recordClientTrace(d,config));
+            const config=parseWorkshopConfig(JSON.parse(result.configKey));
+            if(config){applyWorkshopConfig(config);setDossier(d=>recordClientTrace(d,config));}
             setShowWorkshop(false);setPanel(null);setTab('resultat');
           }}
           embedded
