@@ -473,6 +473,9 @@ Revue lot 2 (22 octobre 2026) :
 
 ## 11. Ce qui reste ouvert
 
+### Atelier pédagogique interne — 27 octobre 2026
+Le mode expérimental réutilise la colonne et les scènes de l’atelier. Les volumes nominaux distinguent signal cyan et sensibilité intermédiaire ambre ; les collisions sont neutres dans la coupe. La coupe dimensionne son repère en pixels réels pour préserver les légendes 14 px sur téléphone. Les contrôles utilisent les surfaces, élévations, typographies et boutons du socle ; aucun nouveau jeton. L’état de placement reste textuel et ne représente pas un contact électrique.
+
 ### Atelier intégré — lisibilité et placement (23 octobre 2026)
 
 Le même `.mw-stage` utilise la hauteur réellement disponible dans le panneau

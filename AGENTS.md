@@ -90,6 +90,8 @@ jeton sans documentation ni contournement ponctuel.
 
 Subdirectories have their own `AGENTS.md`; read them before changing files there.
 
+- The internal pedagogical mode extends MagneticWorkshop behind its continuously mounted server staff gate; frozen Form66 parameters live in a versioned data profile, nominal voxels/cuts and placement use evaluatePose, documentary corrections never enter physical poses, and imported mounting verdicts fail closed until solid-collision/event checks are characterized.
+
 - Reed uses shared sampled SVG/hit-test polygons with finite ON roots, outer HOLD and real OFF gaps, preventing attachment plugs. Exploration never qualifies products or persists. Current follows closed; progression guards HOLD orientation. Invitation completion is tab-memory only, observes visibility and never changes sensor state.
 - Sensor body sections use `section-profile.ts` across shared 3D renders and end views; insulation colours belong to individual catalogue models, so corrections cannot recolour other products. STEP exports remain body-only faceted envelopes, not illustrative cable assemblies.
 - Imported machines: moving set is `movingNodes` (normalized, each part drawn once), arbitrary axes go through axis-angle → XYZ Euler in `movingRotation` so scene, simulation and bridge share one transform; new imports start `motionStatus: "unset"` and no cycle is computed until the user confirms motion. Attachments (`machine-mounting.ts`) and measurement markers are stored in the file's static pose and re-derive poses; no hole centre is ever inferred. A GLB clip is an alternative motion source referenced by index+name only (tracks stay in the loaded file), played on its own timeline via `cycleU`, never via the manual out-and-back.

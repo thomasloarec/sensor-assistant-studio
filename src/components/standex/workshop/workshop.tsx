@@ -2364,9 +2364,9 @@ export default function MagneticWorkshop({
               {/* La source des distances est portée par le bandeau de verdict.
                   Elle n'est répétée sur la scène que pour une référence
                   fictive, où l'avertissement doit rester sous les yeux. */}
-              {!pedagogical && basis === "fictitious" ? (
+              {!pedagogical && <>{basis === "fictitious" ? (
                 <span className="mw-kind education">{basisLabel}</span>
-              ) : null}
+              ) : null}</>}
               <div className="mw-view-switch">
                 <button aria-pressed={view === "3d"} onClick={request3d}>
                   3D
