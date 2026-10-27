@@ -14,7 +14,7 @@ import { gaussLegendre, type MagnetPose, type PoseEvaluation } from '../detectio
 import { cylinderField, cylinderSignedDistance } from '../detection-lab/field';
 import { PROFILE, type ReedScenario } from '../detection-lab/profile';
 import { fieldAtPoint } from './magnetics/field';
-import { EXPERIMENT, DEFAULT_EXPERIMENT, classThresholds, experimentalScenarios, axisNodes, type PlacementEvidence, type SampledVolume, type TableSample } from '../detection-lab/workshop-experiment';
+import { EXPERIMENT, DEFAULT_EXPERIMENT, classThresholds, experimentalScenarios, nominalScenario, axisNodes, type PlacementEvidence, type SampledVolume, type TableSample } from '../detection-lab/workshop-experiment';
 import { magnetObb, obbOverlap, type Obb } from '../detection-lab/obstacles';
 import { publishedRowsForCouple, publishedRowsSourceUrl, PUBLISHED_REGISTRY } from './magnetics/registries';
 
@@ -66,7 +66,7 @@ export function catalogueModel(c:WorkshopConfig){
  const magnet:PilotMagnet=verified??{...PILOT_MAGNETS[0]!,label:c.magnetModel,material:bare?.material??pack?.magnetMaterial??'unknown',momentRaw:INTERNAL.prior};
  const className=['A','B','C','D','E','F'].includes(c.sensitivity)?c.sensitivity:'C';
  const reasons=[CATALOGUE_LABELS.notice,CATALOGUE_LABELS.datum,...(pack||(!verified&&bare?.shape!=='block')?[CATALOGUE_LABELS.proxy]:[]),...(className!==c.sensitivity?[CATALOGUE_LABELS.class]:[]),...(c.ferromagnetic||c.temperature!=='ambient'?[CATALOGUE_LABELS.material]:[])];
- return {version:CATALOGUE_MODEL_VERSION,sensorId:c.sensorId,magnetId:c.magnetModel,family,status:status as 'form66'|'documented'|'analogy',lengthMm,scale,centre:[0,0,0] as Vec3,axis:[1,0,0] as Vec3,body:sensor.body,magnetBody:body,magnet,field,magnetGeometry:verified?'verified-cylinder':bare?.shape==='block'?'analytic-block':bare?.shape==='cylinder'&&q!==null?'moment-cylinder':'equivalent-cylinder',moment:q,unknownMoment:q===null,className,contact:sensor.contact,reference:selected,rows,publishedRows,publishedSource:publishedRowsSourceUrl(publishedRows),familyReferences:PUBLISHED_REGISTRY.rows.filter(r=>r.sensorFamily===c.sensorId).map(r=>r.sensorReference),reasons,sources:[ACTIVATION_BROCHURE,publishedRowsSourceUrl(publishedRows)??sensor.sourceFile??INTERNAL.source],method:p.method,leadEffect:INTERNAL.leads};
+ return {version:CATALOGUE_MODEL_VERSION,sensorId:c.sensorId,magnetId:c.magnetModel,family,status:status as 'form66'|'documented'|'analogy',lengthMm,scale:lengthMm/14,centre:[0,0,0] as Vec3,axis:[1,0,0] as Vec3,body:sensor.body,magnetBody:body,magnet,field,magnetGeometry:verified?'verified-cylinder':bare?.shape==='block'?'analytic-block':bare?.shape==='cylinder'&&q!==null?'moment-cylinder':'equivalent-cylinder',moment:q,unknownMoment:q===null,className,contact:sensor.contact,reference:selected,rows,publishedRows,publishedSource:publishedRowsSourceUrl(publishedRows),familyReferences:PUBLISHED_REGISTRY.rows.filter(r=>r.sensorFamily===c.sensorId).map(r=>r.sensorReference),reasons,sources:[ACTIVATION_BROCHURE,publishedRowsSourceUrl(publishedRows)??sensor.sourceFile??INTERNAL.source],method:p.method,leadEffect:INTERNAL.leads};
 }
 type Frame=[Vec3,Vec3,Vec3];
 export type CatalogueField={kind:'cylinder';radiusMm:number;lengthMm:number;jT:number}|{kind:'block';dims:Vec3;brMt:number};
