@@ -13,7 +13,7 @@ Export JSON expérimental séparé : paramètres, profil, pose/mécanique, temps
 - Collision du cylindre complet contre capsule : moteur historique inchangé. **Collision des solides GLB non caractérisée : verdict de montage importé forcé indisponible**, pour éviter un faux favorable. Le montage Form66 et l'aimant restent visibles et manipulables via le guide.
 - Chronologie importée/clip, résolution géométrique des événements et application de suggestions respectant une liberté de face attachée : non terminées. Aucun détachement automatique.
 - Ton/Toff documentés : relecture déterministe pure testée avec pièce synthétique ; aucun sélecteur de pièce documentée branché.
-- Lecture de distances documentaires D1/D3/D4/D5 : fonction correction avant arrondi testée, **comparaison de maxima non branchée dans l'interface**. Aucun maximum oblique inventé.
+- Distances documentaires désormais branchées pour D1/D3/D4 canoniques uniquement, depuis les valeurs figées du CSV passe3. D4 corrigée avant floor 0,5 mm. Aucun maximum oblique/importé ; D5 non proposé dans les préréglages actuels.
 - Raffinement 0,25 mm en x dans |x|≤5, y/z 1 mm : coupe/volume communs, pas interpolation de réponse nulle. Convergence volumique 0,25/0,125 et raffinement des autres directions non terminés ; aspect voxel indicatif.
 - Orientation libre pendant lecture : volumes invalidés et en attente, afin de ne pas afficher les lobes d'une ancienne orientation. Deux surfaces nominales ne représentent pas l'accord de toutes les hypothèses.
 
@@ -47,4 +47,31 @@ Performance observée : 189679 nœuds, SmCo perpendiculaire, volume complet ~3,0
 - Scans couleurs brutes et classes interdites : 0. Hex : 6 exceptions préexistantes (theme-color et matériaux connecteur). Durées : 6 exceptions primitives UI préexistantes. Aucun nouvel écart.
 - Profil 1.1, pass2, pass3 et sources brutes inchangés. Aucun commit créé manuellement ; enregistrement Git géré par la plateforme.
 
-Le lot reste ouvert pour collision montage, chronologie/clip importés, distances documentaires branchées, raffinement/convergence et recette staff authentifiée complète.
+Le lot initial reste ouvert pour collision montage vérifiable, chronologie/clip importés et convergence volumique ; les corrections de la revue ci-dessous sont intégrées. La recette staff finale est prise en charge par Thomas, pas bloquée sur la session sandbox.
+
+
+## Revue indépendante cb43c203 intégrée — preuves nouvelles
+Les 16 tests historiques restent **16/151 assertions**, ils ne couvrent pas à eux seuls cette revue. Nouveau fichier `tests/pedagogical-review-2026-10-27.test.tsx` : **11 tests / 312 assertions** ciblées.
+
+1. **Disponibilité** : profils/données périmés, intégration inconnue, matériau voisin donnent zéro cellule/coupe/nœud. G idem. Rendu masque immédiatement résultats même avant effet React ; cache et worker vérifient clé et périmètre. Chronologie keyed est masquée dès changement ; montage importé masque volumes, coupe et ancienne timeline.
+2. **Suggestions effectives** : D1 approche/tilt nul uniquement, candidat vérifié via `pedagogicalFrame(candidate,progress)` et `evaluatePlacement`, bornes latérales déclarées respectées. Slide/D3/pivot/import refusés explicitement (aucune proposition sans effet). Tous changements pédagogiques orientation/décalage/course gardent le temps via `keepTime:true`. Proposition/apply/undo ne remettent pas le curseur à zéro.
+3. **Recontrôle staff** : intention d'ouverture conservée pendant loading, rendu démonté jusqu'au nouveau grant serveur. Brouillon config/settings/progress dans parent en mémoire, remonté seulement au remontage autorisé. Erreur/refus effacent brouillon et intention ; changement compte remonte Bench et gate avec clé `user.id`. Aucun rôle local, session fictive ou maintien d'autorisation pendant attente. Test différé confirme masquage puis réouverture après grant et fermeture après refus.
+4. **Collision/mouvement** : collision réelle du cylindre pilote N45 à [0,5,0] testée, paramètre montage transmis au point/chronologie pure ; collision inconnue vaut indisponible. Sans clip chargé/supporté ou mouvement confirmé, pas de verdict statique de repli. Les solides GLB restent non vérifiables : cause explicite et résultats masqués, **pas une implémentation de collision GLB certifiée**. Aucune dimension catalogue utilisée pour le pilote.
+5. **Chronologie** : tous points conservés, largeur = delta t, aucun filter(i%4). Mention toujours visible « résolution des traversées non certifiée » même lorsque les événements trouvés sont précis. Trois échantillons égaux ne sont plus présentés comme preuve d'absence de passage rapide.
+6. **Histoire synthétique** : response null/non finie invalide l'état historique ; reste unknown entre Toff/Ton jusqu'à réponse ≥Ton ou ≤Toff. Test indépendant concret.
+7. **Présentation** : pas de badge distances fictives, pas d'aria Contact ouvert/fermé dans le mode. Groupe accessible avec commandes 3D/coupe, état et cause séparés. Capacité estimée/réouverture non caractérisée. Aimant initial visible ; légende dans le flux sous timeline à 1920×960 et 390×844, aucun débordement horizontal, zéro pageerror (captures isolées revues).
+8. **Distances UI** : `conservativeDistance` réellement appelé via `documentaryDistances`, données figées dérivées du CSV source et testées ligne par ligne. Libellé/périmètre/source exacts repliables, seuil A unique, données absentes ne donnent pas zéro. Les maxima D4 ne sont jamais portée du point courant, volumes restent non corrigés.
+9. **Reprise mémoire** : validation kind/version/profil/paramètres/progress, anciens profils marqués périmés et sans calcul. Message honnête mémoire/GLB à réimporter ; aucun enregistrement automatique dans projet. Le JSON ne récupère aucune autorisation ni ne transmet le GLB/clip.
+10. **Surfaces** : indices topologiques i/j/k remplacent largeur locale pour voisins ; test aux ruptures .25/1 enlève les deux faces internes. Cellules non nulles aux frontières détectées ; avertissement lobes tronqués ±24 mm, aucune fermeture silencieuse revendiquée. Domaine inchangé, pas de recalibration.
+11. **R08 renforcé réel** : parsing `demo-bras-anime.glb`, clip Cycle_complet supported, attache Levier, pose monde différente à25% ; export/reprise stricts conservent attache, échelle1000, clip et pose exactement au même .25, puis non-disponibilité montage vérifiée. Ce n'est plus le simple wall JSON. Réimport UI local reste à vérifier par propriétaire.
+
+### Preuves navigateur du propriétaire (rapportées, non réexécutées ici)
+Thomas confirme staff authentifié ; N45 t33.3%, y16.008 : x0 défavorable/orientation, x8 favorable. Volume189679 positions, SmCo3.64s/N451.49s ; coupe fonctionnelle. Vrai demo-bras-anime.glb avec clips ; JSON progress.25 et Cycle_complet conservés. Pas de reprise UI vérifiée (restriction fichiers locaux de l'extension). Aucun besoin de contourner auth ou de modifier backend.
+
+### Vérifications finales de cette revue
+- Suite COMPLETE : **1963 pass / 0 fail**, 126 fichiers, **143706 assertions**, 108,50s, après dernières éditions code.
+- Types/compilation automatique plateforme : **build OK 2026-10-27T11:38:25Z** (inclut typecheck). Commandes build/typecheck manuelles non exécutées selon règle plateforme.
+- Inventaire huit langues : **TOTAL0**, 11 nouvelles clés×7 traductions, aucune exemption UI ; complétude suite verte.
+- Scans : zéro couleur brute/texte interdit nouveau ; six hex préexistants (matériaux connecteur/theme-color) et six durées primitives non migrées préexistantes, non retouchés.
+- Rendu isolé du vrai composant, 1920×960 et390×844 : 189679 positions en **2,37s SmCo** ; case matériau voisin ⇒ **0 rect SVG**, état indisponible ; décochage retrouve le résultat valide courant. Légende visible, zéro pageerror/débordement. Captures revues sous `/tmp/browser/pedagogical/`. Ces preuves ne remplacent pas votre recette staff authentifiée.
+- Pas de recalibration, sources/profils1.1/pass2/pass3/catalogue inchangés ; aucun changement DB/auth/publication ni aux contrôles de consommation. Enregistrement du checkpoint géré par plateforme, pas de commande Git stateful.
