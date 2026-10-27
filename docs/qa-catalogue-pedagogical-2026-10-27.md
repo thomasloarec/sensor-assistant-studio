@@ -73,61 +73,29 @@ Toutes les coordonnées internes de cette table sont des hypothèses. Sources : 
 |ALNICO500-3.7X22|22 × 3.7 × 3.7|19.8|moment-cylinder|
 |N35-4X2|2 × 4 × 4|3.39|moment-cylinder|
 
-## Comparaison documentaire / modèle sans recalage
+## Comparaison documentaire / modèle — HORS SERVICE
+L'ancien tableau « écart » est retiré : il comparait une distance au centre à des distances entre faces et cherchait D4/D5 sur la ligne centrale au lieu des lobes latéraux. Aucun de ses chiffres ne doit être lu.
+Statut actuel pour TOUS les boîtiers : **non comparable, repère non établi** (centre interne estimé, non mesuré). Aucune calibration catalogue n'est revendiquée ; seules les références Form66 (SMCO5-5X4, N45-4X19, profil figé) restent calibrées. Une future comparaison exigera mêmes datums (faces), recherche du maximum latéral, exclusion mécanique, classe exacte et censure au bord du domaine ; up/to ne sont jamais traités comme hystérésis ; anomalies connues isolées.
 
-Pour chaque famille, première ligne C-66 si présente, sinon première ligne disponible. Les colonnes source sont conservées. Estimation : dernière distance nominale atteignant borne haute / basse sur le rayon explicite x ou z, pas une distance fabricant par face. Pas de décalage up/to ajouté à la pose. D4/D5 font tourner l’axe de90° ; résultat null = aucune intersection testée dans0..50mm. Cette comparaison expose le désaccord, elle ne valide pas les datums ni la3D. Résolution de recherche0,5mm ; aucune promesse de précision.
+### Couverture par capteur (famille, analogie, sources, limites)
+| Capteur | Famille reed | Type de modèle | Sources | Limites |
+|---|---|---|---|---|
+| MK03, MK04, MK05, MK13, MK21 | 66 identifié si variante 66 choisie, sinon supposé ; GP501 distinct | B figé, longueur 14 mm | Guide d'activation (3 004 lignes), fiches | centre interne estimé ; distances non comparées |
+| MK14, MK11-M8, MK38 | 66 selon registre publié (MK14-1A66, MK11/M8-1A66, MK38-1A66B) ; MK38 1A85C/1B90C/1C90C = autres reeds | B figé ou analogie | registre publié | MK38 F1 : aucune zone accessible avec l'hypothèse (limite du modèle) |
+| MK24-A-J | autre reed (Form A ≠ classe AT A) | analogie, longueur 3 mm | fiche MK24 (plages AT) | équivalence au 66 non établie |
+| MK37 | autre reed | analogie | fiche | F1 : aucune zone accessible (limite du modèle, pas du capteur) |
+| MK36 | autre reed | analogie | fiche | F1 atteint une zone estimée, non validée |
+| MK02 | détecteur ferreux à aimant intégré | illustration seule | note catalogue | ne prédit pas la fonction produit |
+| MK01, MK15, MK16, MK17, MK18, MK20_1, MK20_2, MK21PR, MK22, MK26, MK27, MK30, MK31, MK06-4, MK11-M5, MK11-P-M8, MK11-B-M6 | autre reed / inconnu | analogie, longueur hypothétique du registre `CATALOGUE_PROFILES` | fiche catalogue | centre, longueur et moment des inserts non mesurés |
+| GENERIC, CUSTOM | illustration | Form66 exploration | — | jamais attribué à un produit |
 
-|Capteur|Aimant|Référence|Approche|Source up/to mm|Dernière intersection nominale haute/basse mm|
-|---|---|---|---|---|---|
-|MK03|SMCO5-5X4|MK03-1A66C-X|D1|4.65 / 7.95|10 / 11.5|
-|MK03|SMCO5-5X4|MK03-1A66C-X|D3|6.7 / 9|— / —|
-|MK03|SMCO5-5X4|MK03-1A66C-X|D4|4.15 / 7.75|— / —|
-|MK03|SMCO5-5X4|MK03-1A66C-X|D5|2.4 / 4.2|— / —|
-|MK03|N45-4X19|MK03-1A66C-X|D1|12.35 / 16.75|17 / 19.5|
-|MK03|N45-4X19|MK03-1A66C-X|D3|11.6 / 16.9|24.5 / 27|
-|MK03|N45-4X19|MK03-1A66C-X|D4|7.45 / 11.55|— / —|
-|MK03|N45-4X19|MK03-1A66C-X|D5|9 / 11.6|— / —|
-|MK04|SMCO5-5X4|MK04-1A66C-X|D1|2.8 / 5.85|10 / 11.5|
-|MK04|SMCO5-5X4|MK04-1A66C-X|D3|6.4 / 5.2|— / 14|
-|MK04|SMCO5-5X4|MK04-1A66C-X|D4|2.3 / 5.65|— / —|
-|MK04|SMCO5-5X4|MK04-1A66C-X|D5|— / 3.4|— / —|
-|MK04|N45-4X19|MK04-1A66C-X|D1|10.5 / 14.65|17 / 19.5|
-|MK04|N45-4X19|MK04-1A66C-X|D3|14.3 / 8.5|24.5 / 27|
-|MK04|N45-4X19|MK04-1A66C-X|D4|5.6 / 9.45|— / —|
-|MK04|N45-4X19|MK04-1A66C-X|D5|6.4 / 10.8|— / —|
-|MK05|SMCO5-5X4|MK05-1A66C-X|D1|3 / 5.85|— / —|
-|MK05|SMCO5-5X4|MK05-1A66C-X|D3|4.1 / 8.2|— / 14|
-|MK05|SMCO5-5X4|MK05-1A66C-X|D4|2.5 / 7.4|— / —|
-|MK05|SMCO5-5X4|MK05-1A66C-X|D5|— / 3.4|— / —|
-|MK05|N45-4X19|MK05-1A66C-X|D1|10.7 / 14.65|17 / 19.5|
-|MK05|N45-4X19|MK05-1A66C-X|D3|9 / 16.1|24.5 / 27|
-|MK05|N45-4X19|MK05-1A66C-X|D4|5.8 / 11.2|— / —|
-|MK05|N45-4X19|MK05-1A66C-X|D5|6.4 / 10.8|— / —|
-|MK13|SMCO5-5X4|MK13-1A66C-X|D1|2.8 / 5.85|10 / 11.5|
-|MK13|SMCO5-5X4|MK13-1A66C-X|D3|4.1 / 8.2|— / 14|
-|MK13|SMCO5-5X4|MK13-1A66C-X|D4|2.3 / 5.65|— / —|
-|MK13|SMCO5-5X4|MK13-1A66C-X|D5|— / 3.4|— / —|
-|MK13|N45-4X19|MK13-1A66C-X|D1|10.5 / 14.65|17 / 19.5|
-|MK13|N45-4X19|MK13-1A66C-X|D3|9 / 16.1|24.5 / 27|
-|MK13|N45-4X19|MK13-1A66C-X|D4|5.6 / 9.45|— / —|
-|MK13|N45-4X19|MK13-1A66C-X|D5|6.4 / 10.8|— / —|
-|MK21|SMCO5-5X4|MK21-1A66C-X|D1|3.45 / 7.9|— / —|
-|MK21|SMCO5-5X4|MK21-1A66C-X|D3|6 / 8.3|— / —|
-|MK21|SMCO5-5X4|MK21-1A66C-X|D4|4.85 / 7.7|— / —|
-|MK21|SMCO5-5X4|MK21-1A66C-X|D5|1.7 / 3.5|— / —|
-|MK21|N45-4X19|MK21-1A66C-X|D1|11.15 / 16.7|17 / 19.5|
-|MK21|N45-4X19|MK21-1A66C-X|D3|10.9 / 16.2|24.5 / 27|
-|MK21|N45-4X19|MK21-1A66C-X|D4|8.65 / 11.5|— / —|
-|MK21|N45-4X19|MK21-1A66C-X|D5|8.3 / 10.9|— / —|
-|MK24-A-J|SMCO5-5X4|analogie sans borne|D1|— / —|12.5 / 12.5|
-|MK24-A-J|SMCO5-5X4|analogie sans borne|D3|— / —|12.5 / 12.5|
-|MK24-A-J|SMCO5-5X4|analogie sans borne|D4|— / —|— / —|
-|MK24-A-J|SMCO5-5X4|analogie sans borne|D5|— / —|— / —|
-|MK24-A-J|N45-4X19|analogie sans borne|D1|— / —|12.5 / 12.5|
-|MK24-A-J|N45-4X19|analogie sans borne|D3|— / —|12.5 / 12.5|
-|MK24-A-J|N45-4X19|analogie sans borne|D4|— / —|— / —|
-|MK24-A-J|N45-4X19|analogie sans borne|D5|— / —|— / —|
+Aimants : pilotes vérifiés (cylindres figés) ; pavés nus via champ analytique de pavé ; cylindres nus via leur géométrie ; inserts de boîtiers = cylindre équivalent déclaré (cotes du boîtier ≠ insert).
 
+## Contre-revue c5b6e077 — lecture client
+- Légende client catalogue : noyau/coque nominaux, verdict sur neuf hypothèses, gris collision ; états calcul en cours / interrompu / lobes tronqués ; coupe hors domaine expliquée.
+- Coupe : trait du reed à la longueur effective du profil (MK24 = 8×3/14 mm), enveloppe rectangulaire testée X×Y, projection si hors plan, « enveloppe simplifiée · centre interne estimé ». Reed interne non déplacé (centre hypothétique, y compris boîtiers à collerette).
+- Sources et limites : phrases famille/centre/longueur ; version en détail technique. Notes près du verdict : A partielle, classe C de repli, F1 MK37/38, MK02.
+- Restent : harmonisation bladeOffsetZ/housingYaw (point 10) ; comparaison documentaire refaite ; recette navigateur (Thomas).
 ## Vérifications et couverture restante
 
 Complément sources :60tests ciblés verts/658assertions, incluant inventaire3004/5744, variantes66/85/90,20lignes par couple etF1. Suite finale :2041tests/131fichiers verts,146186assertions,146,51s. Inventaire huit langues0manque,3888entrées. Compilation automatique OK15:59:19UTC. Aucun build/typecheck manuel. Les103empreintes et scans du premier ensemble restent le contrôle précédent, pas une nouvelle recette visuelle.
