@@ -6,28 +6,28 @@
 - Commit des tests complétés observé avant ce rapport : `90c2633a344a4566913bcfa53805bef79224bd75`. Le commit automatique de ce rapport est nécessairement postérieur ; il est à lire dans l’historique, sans fabriquer un SHA autoréférent.
 - Préversion racine : https://id-preview--9aff67a3-e0d0-4a40-95e1-da809f7ff333.lovable.app/
 - Aucun appel de publication, migration, écriture de données réelles, changement d’authentification ou contournement d’accès. Thomas prend en charge la recette navigateur dans sa session (instruction du 27 octobre à 15:02 UTC).
-- Cette clôture ajoute une régression comportementale et ce rapport ; elle ne change ni le moteur ni l’interface.
+- Contre-revue intégrée : contexte générique persistant près du verdict et en-tête distinct, statut produit non affecté par l’exploration, réglages mécaniques/environnement réintroduits progressivement, câble déconnecté pendant exploration, restauration outil/guide/historique/temps et annulation des imports en cours. Aucun moteur changé.
 
 ## Ce qui fonctionne et ce que cela ne prétend pas faire
 
-Le même `MagneticWorkshop` est raccordé à l’étape 2 du `DesignSpace` client. Le retour pédagogique est versionné, séparé de `testedPairs`, limité à la mémoire de l’onglet, et marqué `qualified: false`. Le couple produit est conservé : MK04/M04 ne devient pas N45 par similitude de matériau ou dimensions. La scène normale et l’audit/calibration restent distincts ; aucune garde staff n’a changé.
+Le même `MagneticWorkshop` est raccordé à l’étape 2 du `DesignSpace` client. Le retour produit indisponible est désormais une trace locale conservative versionnée du dossier et de son export/reprise, liée à l’identité/configuration et marquée `qualified:false`. Les anciennes prédictions binaires sont déclassées lors du nouvel essai ; le DTO n’exporte pas de computed binaire pour cette trace, et le rapport ne recalcule pas de détection prévue. Aucun favorable exploratoire n’est copié. Le couple produit reste conservé, les boîtiers indisponibles et les guards inchangés.
 
 **Aucun boîtier nommé n’a actuellement d’adaptateur reed-66 par face suffisamment sourcé.** L’estimation attribuée au produit est donc indisponible, même avec un aimant pilote. Il manque : variante reed 66 sourcée, orientation du reed dans le boîtier et repères documentaires par face permettant un adaptateur explicite. Les orientations de présentation, cotes extérieures et décalages scalaires de brochure ne mesurent pas cette intégration interne.
 
 Sources déjà référencées par la frontière : `docs/detection-lab/RAPPORT_COHERENCE_2026-10-26.md` (MK03/MK13), `docs/detection-lab-pass3/RAPPORT_PASS3_2026-10-27.md` (datums documentaires). Aucune nouvelle position interne, nuance magnétique ni qualification inventée.
 
-L’action « Explorer Form66 sans modifier mon produit » ouvre une exploration séparée dans le même atelier. Seuls SMCO5-5X4 et N45-4X19 sont pilotes caractérisés. B–F sont évaluables dans ce modèle, sans validation 3D catalogue ; A reste partielle (ATmax 10, estimation quatre états indisponible faute de deuxième borne), G hors domaine. Un contact 1A n’est pas une classe AT. F conserve ses limites documentaires. Les classes F/G sont testées dans les réglages exploratoires, **pas annoncées comme nouvelles variantes acceptées dans le dossier normal** : le parseur historique du dossier est inchangé.
+L’action « Comprendre les zones de détection » ouvre une exploration séparée dans le même atelier ; Form66 reste identifié dans Sources et limites. Seuls SMCO5-5X4 et N45-4X19 sont pilotes caractérisés. B–F sont évaluables dans ce modèle, sans validation 3D catalogue ; A reste partielle (ATmax 10), G hors domaine. Un contact 1A n’est pas une classe AT. F conserve ses limites documentaires. Le parseur historique du dossier est inchangé.
 
 ## Résultats exécutés
 
 | Contrôle | Résultat et preuve |
 | --- | --- |
-| Nouvelles régressions client, `bun test tests/client-pedagogical-2026-10-27.test.tsx` | **23 pass, 0 fail, 114 assertions**, incluant deux tests du vrai Workshop monté sous Happy DOM |
-| Suite entière finale, `bun test tests/` | **2 026 pass, 0 fail, 145 650 assertions, 130 fichiers**, 130,79 s |
+| Tests client + i18n ciblés | **42 pass, 0 fail, 370 assertions** (25 client, 17 i18n) ; export/reprise réel via JSON, rendu ResultView et rapport, Workshop monté en outil câble |
+| Suite entière finale, `bun test tests/` | **2 028 pass, 0 fail, 145 737 assertions, 130 fichiers**, 120,79 s |
 | Types automatiques de la plateforme | `tsgo -b --noEmit --incremental`, **exit 0**, 15:07:38 UTC ; `/tmp/exec-logs/d835f21c-189f-488b-b127-10857bfb0558.log` |
-| Compilation automatique de la plateforme | **build OK**, 15:06:57 et 15:07:38 UTC ; `/tmp/observability/build-errors.log` ; aucun build/typecheck manuel relancé |
+| Compilation automatique de la plateforme | **build OK**, 15:16:47 UTC après correction du dernier import manquant ; `/tmp/observability/build-errors.log` ; aucun build/typecheck manuel relancé |
 | Inventaire, `bun scripts/i18n-inventory.ts` | **TOTAL 0** : untranslated 0, missing 0, code-translated 0, frozen 0 |
-| Dictionnaire | **3 876 entrées**, sept traductions non vides par entrée ; FR, EN, ZH, DE, ES, RU, IT, JA ; tests d’inventaire inclus dans la suite entière |
+| Dictionnaire | **3 879 entrées**, sept traductions non vides par entrée ; FR, EN, ZH, DE, ES, RU, IT, JA |
 | Diff | `git diff --check` sans erreur |
 | Empreintes scientifiques et NDA | **103 fichiers identiques à la base**, zéro changement ; manifeste adjacent détaillé avant/après |
 
@@ -54,6 +54,7 @@ Ne pas présenter les scans bruts 2/3 comme vides. Le lot n’ajoute aucune occu
 - Même profondeur et instant : centré perpendiculaire défavorable, décalé favorable sous les neuf hypothèses ; inversion N/S conserve l’état.
 - Workshop réellement monté : action explicite, changement de pilote exploratoire, retour Résultat attribué à MK04/M04 et son câble 500 mm ; aucun circuit électrique binaire dans le conteneur monté ; aucun brouillon GENERIC transmis.
 - Régression de clôture : retour explicite au dossier, fermeture par démontage puis réouverture, pose latérale 3 mm/rotation 25° et câble 750 mm préservés ; changement de l’aimant produit vers N45 puis de classe B vers C, nouvelles clés de configuration et retours toujours non qualifiants.
+- Contre-revue : ancien expected puis trace indisponible, vrai export/reprise JSON, ResultView sans conclusion positive, rapport/export sans expected ; invalidation autre dossier/configuration. Outil câble actif à l’entrée : aucun panneau/callback ni changement de statut produit en exploration ; retour au montage/outil/câble original. Le test chargeant le montage peut journaliser un fetch local refusé sous Happy DOM : aucune assertion ne prétend que la géométrie GLB est chargée dans ce test.
 
 Ces tests montent Workshop directement : **ils ne constituent pas une recette de la racine ou un test du parent DesignSpace → ResultView**. Les callbacks sont témoins de test. Le contrôle `configKey` et l’effacement au changement de configuration dans DesignSpace ont été inspectés, pas exercés de bout en bout dans le navigateur. Le test de changements de couple prouve de nouveaux résultats au niveau Workshop, pas le rendu du résultat périmé dans son parent.
 
@@ -89,6 +90,8 @@ Le manifeste couvre tous les fichiers suivis à la base dans `src/lib/detection-
 - Règles/docs : `AGENTS.md`, AGENTS imbriqués leadmagnet/workshop, `docs/design-language.md`, `roadmap.md`, présent rapport et manifeste.
 
 ## Recette navigateur confiée à Thomas — non exécutée par l’agent
+
+Retour de Thomas à 15:11 UTC, Chrome racine : accueil → Commencer → question 1 → étape 2 → Tester ce couple PASS ; SmCo centré 6 mm à 50 % défavorable, décalé 8 mm favorable au même instant ; retour produit/Résultat correct immédiatement. Ces observations sont les siennes, pas celles de l’agent. Les quatre corrections de contre-revue nécessitent son nouveau contrôle visuel, notamment persistance du contexte après défilement, réimport exploratoire et reprise de dossier.
 
 Partir de la **racine de préversion**, jamais `/internal`, sur bureau puis Chrome 390×844 :
 

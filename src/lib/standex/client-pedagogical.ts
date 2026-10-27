@@ -5,6 +5,7 @@
  */
 import { DEFAULT_EXPERIMENT, EXPERIMENT, type ExperimentSettings, type PlacementState } from '@/lib/detection-lab/workshop-experiment';
 import type { WorkshopConfig } from './magnetic-workshop';
+import type { DesignDossier } from '../leadmagnet/dossier';
 
 export const CLIENT_PEDAGOGICAL_VERSION = 'client-form66-boundary-1';
 export const VERIFIED_PILOTS = ['SMCO5-5X4', 'N45-4X19'] as const;
@@ -38,7 +39,8 @@ export function explorationSettings(config: WorkshopConfig): ExperimentSettings 
 }
 export interface ClientPedagogicalResult {
   kind: 'client-pedagogical-result'; version: 1; adapterVersion: string; profileVersion: string;
-  /** Exact product configuration, NOT the exploratory capsule. Tab-memory only. */
+  /** Exact product configuration, NOT the exploratory capsule. Conservative local trace. */
+  dossierId?: string;
   configKey: string; sensorId: string; magnetId: string; sensitivity: string;
   state: PlacementState; qualified: false; reasons: string[];
 }
@@ -48,4 +50,17 @@ export function clientPedagogicalResult(config: WorkshopConfig): ClientPedagogic
     profileVersion: EXPERIMENT.version, configKey: JSON.stringify(config), sensorId: config.sensorId,
     magnetId: config.magnetModel, sensitivity: config.sensitivity, state: 'unavailable', qualified: false,
     reasons: [...adapter.reasons] };
+}
+
+/** This trace has no authority: even a file claiming favorable is rebuilt unavailable. */
+export function currentClientTrace(d: DesignDossier): ClientPedagogicalResult | null {
+  const r=d.clientPedagogical;
+  return r && d.workshop && r.dossierId===d.id && r.configKey===JSON.stringify(d.workshop)
+    ? {...clientPedagogicalResult(d.workshop),dossierId:d.id} : null;
+}
+export function recordClientTrace(d: DesignDossier, config: WorkshopConfig): DesignDossier {
+  return {...d,workshop:config,clientPedagogical:{...clientPedagogicalResult(config),dossierId:d.id},
+    // Superseded binary predictions cannot reappear in any existing summary/export path.
+    testedPairs:(d.testedPairs??[]).map(p=>p.verdict==='expected'?{...p,verdict:'undocumented' as const,
+      pullInMm:null,dropOutMm:null,mainMessage:CLIENT_LIMITS.housing,documentedPosition:false}:p)};
 }

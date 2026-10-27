@@ -13,6 +13,7 @@ import { isKnownSensorId } from "@/lib/standex/sensor-catalog";
 import { DEFAULT_TERMINATION } from "./connectors";
 import { parseGuidedMounting } from "../standex/mounting/contract";
 import { parseStudioStudy } from "../standex/studio-dossier";
+import { recordClientTrace } from '../standex/client-pedagogical';
 
 export const EXPORT_FORMAT = "standex-design-dossier";
 export const EXPORT_VERSION = 2;
@@ -193,6 +194,7 @@ const dossierSchema = z.object({
   mounting: z.unknown(),
   envelope: z.unknown(),
   workshop: z.unknown(),
+  clientPedagogical: z.object({kind:z.literal('client-pedagogical-result'),version:z.literal(1),configKey:z.string(),dossierId:z.string().optional()}).passthrough().nullable().optional().catch(null),
   business: z.unknown(),
   workshopSource: z.enum(["none", "example", "user_asset"]).catch("none"),
   selectedSensorId: knownSensorId,
@@ -363,9 +365,10 @@ export function parseDossierExport(raw: unknown, now = new Date().toISOString())
   // Le montage guidé d'un fichier importé est INTÉGRALEMENT reconstruit à partir
   // de la configuration d'atelier, du besoin et du câble réellement repris :
   // aucun verdict, aucune couverture et aucune limite importés ne sont crus.
+  const resumed=data.clientPedagogical&&workshop?recordClientTrace(dossier,workshop):dossier;
   return {
     ok: true,
-    dossier: { ...dossier, guidedMounting: currentMounting(dossier) },
+    dossier: { ...resumed, guidedMounting: currentMounting(resumed) },
     notices,
     ndaRequested: envelope.data.ndaRequested,
   };

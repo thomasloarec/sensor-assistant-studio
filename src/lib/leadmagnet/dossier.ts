@@ -4,6 +4,7 @@ import { isPcbSensor } from "./product-presentation";
  */
 import { isLocale, type Locale, t } from "@/lib/i18n/core";
 import type { WorkshopConfig } from "@/lib/standex/magnetic-workshop";
+import { currentClientTrace, recordClientTrace, type ClientPedagogicalResult } from '../standex/client-pedagogical';
 import { EMPTY_CABLING, type CablingConfig } from "./cabling";
 import { DEFAULT_TERMINATION, type Termination } from "./connectors";
 import { freezeContextKey } from "../standex/design-freeze";
@@ -108,6 +109,8 @@ export interface DesignDossier {
   mounting: MountingChoice;
   envelope: EnvelopeMm;
   workshop: WorkshopConfig | null;
+  /** Local, conservative estimation trace; never product qualification or server authority. */
+  clientPedagogical?: ClientPedagogicalResult | null;
   /** Provenance explicite du montage 3D : jamais déduite de la présence d'un montage. */
   workshopSource: "none" | "example" | "user_asset";
   /** Ressource 3D réellement rattachée (clé locale + provenance), sans fichier fantôme. */
@@ -319,12 +322,16 @@ export function currentMounting(d: DesignDossier) {
     : chosen !== null
       ? { points: [] as [number, number, number][], lengthMm: chosen }
       : null;
-  return withComputed({ ...base, cable });
+  const result=withComputed({ ...base, cable });
+  // No binary result is exported as current when the product estimate is unavailable.
+  return currentClientTrace(d)?{...result,computed:null}:result;
 }
 
 export function toClientDto(d: DesignDossier): ClientDossierDto {
   const current = isPcbSensor(d.selectedSensorId) ? { ...d, cabling: EMPTY_CABLING, termination: DEFAULT_TERMINATION, workshop: d.workshop ? { ...d.workshop, cableLengthMm: null } : null } : d;
-  const clone = { ...current, guidedMounting: currentMounting(current) };
+  const trace=currentClientTrace(current);
+  const safe=trace&&current.workshop?recordClientTrace(current,current.workshop):{...current,clientPedagogical:null};
+  const clone = { ...safe, guidedMounting: currentMounting(safe) };
   if (clone.designFreeze && clone.designFreeze.contextKey !== freezeContextKey(clone.workshop, clone.studioV2)) clone.designFreeze = null;
   delete (clone as Partial<DesignDossier>).internalNotes;
   return clone as ClientDossierDto;

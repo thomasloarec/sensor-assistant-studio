@@ -1,6 +1,6 @@
 # Lead magnet presentation
 
-- DesignSpace owns the versioned client pedagogical return in tab-memory separately from testedPairs; explicit Form66 exploration cannot overwrite product configuration or promote an exploratory verdict into qualification.
+- DesignSpace stores a conservative versioned product trace in the existing dossier/export/reprise; summaries prioritize it over superseded binary predictions, and explicit Form66 exploration never writes product, cable or study callbacks.
 
 - ConnectorChoices shares selection UI with four visible previews as siblings of native selection buttons, while DesignSpace owns callbacks; both entry points retain dossier behavior and viewer gestures never select a connector.
 - Keep connector previews beside buttons in shared ConnectorChoices, never inside buttons or details, so rotation cannot select or duplicate WebGL contexts.
