@@ -67,7 +67,7 @@ Toutes les coordonnées internes de cette table sont des hypothèses. Sources : 
 |SMCO5-5X4|4 × 5 × 5|7.2|verified-cylinder|
 |N45-4X19|19 × 4 × 4|30.8|verified-cylinder|
 |NDFEB-10X5X1.9|10 × 1.9 × 5|10.3|equivalent-cylinder|
-|HF3225-14.95X10X5|14.95 × 5 × 10|28.8|equivalent-cylinder|
+|HF3225-14.95X10X5|14.95 × 5 × 10|28.8|analytic-block|
 |ALNICO500-5.5X22|22 × 5.5 × 5.5|36.6|moment-cylinder|
 |ALNICO500-4X19|19 × 4 × 4|14.8|moment-cylinder|
 |ALNICO500-3.7X22|22 × 3.7 × 3.7|19.8|moment-cylinder|
