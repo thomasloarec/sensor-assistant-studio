@@ -35,18 +35,32 @@ export function pilotBodies(magnetId:string):{sensor:{lengthMm:number;heightMm:n
   const m=PILOT_MAGNETS.find(p=>p.id===magnetId);
   return m?{sensor:{lengthMm:16.2,heightMm:2.2},magnet:{lengthMm:m.diameterMm,heightMm:m.lengthMm}}:null;
 }
-/** Only D1 approach is currently supported. Verify through effective pose at the SAME instant. */
+/** Only D1 approach is currently supported. Verify through effective pose at the SAME instant,
+ *  with ALL internal hypotheses on: a candidate is returned only if it is favorable. Bounded:
+ *  at most 3 × (1 + 2·48) evaluations. Approach depth is never a declared freedom. */
 export function suggestPedagogicalConfig(c:WorkshopConfig,t:number,settings:ExperimentSettings=DEFAULT_EXPERIMENT):WorkshopConfig|null {
   if(c.machine||c.motion!=='approach'||c.geometry!=='D1'||c.magnetTilt!==0)return null;
+  const strict={...settings,hypotheses:true};
   const offsets=[0],angles=[0];
   if(settings.lateralFreedomMm>0&&settings.lateralFreedomMm<=12)for(let d=.25;d<=settings.lateralFreedomMm;d+=.25)offsets.push(-d,d);
   if(settings.rotationFreedom)angles.push(-90,90);
   for(const rotation of angles)for(const offset of offsets){
     if(rotation===0&&offset===0)continue;
     const candidate={...c,lateralShift:c.lateralShift+offset,magnetAngle:c.magnetAngle+rotation};
-    if(evaluatePlacement(settings,pedagogicalFrame(candidate,t).pose,false).state==='favorable')return candidate;
+    if(evaluatePlacement(strict,pedagogicalFrame(candidate,t).pose,false).state==='favorable')return candidate;
   }
   return null;
+}
+export type PedagogicalRemedy =
+  | {kind:'verified';config:WorkshopConfig;rotationDeg:number;lateralMm:number}
+  | {kind:'none-found'} | {kind:'no-freedom'} | {kind:'locked'} | {kind:'unsupported'};
+/** Second banner tier. Imported/attached mounting: never prescribes a motion. */
+export function pedagogicalRemedy(c:WorkshopConfig,t:number,settings:ExperimentSettings):PedagogicalRemedy {
+  if(c.machine)return {kind:'locked'};
+  if(!settings.rotationFreedom&&!(settings.lateralFreedomMm>0))return {kind:'no-freedom'};
+  if(c.motion!=='approach'||c.geometry!=='D1'||c.magnetTilt!==0)return {kind:'unsupported'};
+  const found=suggestPedagogicalConfig(c,t,settings);
+  return found?{kind:'verified',config:found,rotationDeg:found.magnetAngle-c.magnetAngle,lateralMm:found.lateralShift-c.lateralShift}:{kind:'none-found'};
 }
 
 export interface PedagogicalDraft { config:WorkshopConfig;settings:ExperimentSettings;progress:number }
