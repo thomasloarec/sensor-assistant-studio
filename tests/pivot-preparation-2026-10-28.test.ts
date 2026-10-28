@@ -94,8 +94,9 @@ describe('pause uses the exact pose', () => {
   });
   it('pivot notes are not nested in the circuit block', async () => {
     const src = await Bun.file('src/components/standex/workshop/workshop.tsx').text();
-    const i = src.indexOf('<PivotNotes'), c = src.indexOf('showCircuit && <div className="mw-circuit-ped"');
+    const i = src.indexOf('<PivotNotes'), c = src.indexOf('<div className="mw-circuit-ped"');
     expect(i).toBeGreaterThan(0); expect(i).toBeLessThan(c);
     expect(src.includes('précision de 0,5 mm')).toBe(false);
+    expect(src.includes('setShowCircuit')).toBe(false);
   });
 });

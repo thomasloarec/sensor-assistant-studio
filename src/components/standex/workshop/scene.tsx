@@ -262,8 +262,11 @@ function StandardBody({
     return s;
   }, [model, l, w]);
   // i18n-canonical: GLSL shader source below is code, never user-facing prose.
+  // Switching opacity alone can retain the opaque WebGL program. Recreate the
+  // material when entering/leaving x-ray so the internal contacts are visible.
   const material = (
     <meshStandardMaterial
+      key={xray ? "transparent-body" : "opaque-body"}
       color={poleColors ? "#ffffff" : model.color}
       onBeforeCompile={(shader) => {
         if (!poleColors) return;
@@ -836,10 +839,15 @@ export function CameraRig({
 }) {
   const { camera, controls, size } = useThree();
   const aspect = size.height > 0 ? size.width / size.height : 1;
+  const applied=useRef<string|null>(null);
   useEffect(() => {
     // Pendant une transition de mise en page, la hauteur passe par zéro : ne pas
     // recadrer sur un cadre dégénéré, la caméra partirait à l'infini.
     if (size.height < 80 || size.width < 80) return;
+    const command=resetKey+'|'+view;
+    // Banners/preparation change the canvas size. They are not camera commands:
+    // preserve the orbit chosen by the user, including a manual top view.
+    if(applied.current===command)return;
     const c = controls as unknown as { target: Vector3; update: () => void } | undefined;
     const perspective = camera as unknown as { fov?: number };
     const d =
@@ -857,6 +865,7 @@ export function CameraRig({
     camera.updateProjectionMatrix();
     c?.target.set(...target);
     c?.update();
+    if(c)applied.current=command;
     // Deliberately reset only on explicit view/setup changes, not every animation frame.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resetKey, camera, controls, aspect, fitRadius, view]);
@@ -877,10 +886,11 @@ export default function WorkshopScene({
   resetEpoch = 0,
   onContextLost,
   ghost,
-  pedagogicalLayer, hideElectrical = false,
+  pedagogicalLayer, hideElectrical = false, showIllustrativeContacts=false,
 }: {
   pedagogicalLayer?: ReactNode;
   hideElectrical?: boolean;
+  showIllustrativeContacts?: boolean;
   config: WorkshopConfig;
   sample: CycleSample;
   samples: CycleSample[];
@@ -995,7 +1005,7 @@ export default function WorkshopScene({
           <Body model={model} xray={xray} />
           {/* Le reed nu est déjà transparent : ses lames restent visibles sans
               passer l'atelier en radiographie, la carte imprimée reste opaque. */}
-          {!hideElectrical && (xray || model.shape === "custom_pcb") && (
+          {(!hideElectrical||showIllustrativeContacts) && (xray || model.shape === "custom_pcb") && (
             <Contacts model={model} contact={sample.contact} reduced={reduced} />
           )}
 

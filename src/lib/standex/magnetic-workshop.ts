@@ -99,7 +99,7 @@ export const DEFAULT_WORKSHOP: WorkshopConfig = {
   geometry: "D1",
   motion: "approach",
   start: 32,
-  end: 5,
+  end: 0.5,
   offset: 12,
   travel: 35,
   span: 160,
@@ -137,6 +137,7 @@ export const PUBLISHED_CLASS_VALUES: readonly string[] = [
     "C",
     "D",
     "E",
+    "F",
     ...effectivePublishedRegistry().rows.map((r) => r.sensitivityClass),
   ]),
 ];
@@ -218,8 +219,8 @@ export function parseWorkshopConfig(value: unknown): WorkshopConfig | null {
     lateralShift: [-50, 50],
     magnetTilt: [-180, 180],
     start: [1, 60],
-    end: [1, 60],
-    offset: [6, 30],
+    end: [0.25, 60],
+    offset: [0.25, 120],
     travel: [10, 50],
     span: [30, 300],
     sensorAngle: [-180, 180],
@@ -431,7 +432,7 @@ export function pairDemonstration(
     ? {
         ...aligned,
         start: Math.min(60, Math.max(thresholds[1] * 1.4, thresholds[1] + 5)),
-        end: Math.max(1, thresholds[0] * 0.5),
+        end: 0.5,
       }
     : aligned;
 }

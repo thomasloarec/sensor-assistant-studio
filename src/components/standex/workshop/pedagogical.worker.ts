@@ -13,12 +13,19 @@ self.onmessage=(event:MessageEvent<{settings:ExperimentSettings;axis:Vec3;planeZ
     const {settings,axis,planeZ,key,config,table,obstacles,catalogue,frame,mode}=event.data;
     if(catalogue&&mode==='plan'){
       const poses=new Map(event.data.orientations?.map(s=>[s.t,s.pose])),m=catalogueModel(catalogue);
+      // Probe depends on orientation only. Out-and-back poses share it exactly;
+      // avoid recomputing all rays for every repeated translation/time sample.
+      const probes=new Map<string,(number|null)[]>();
+      const probe=(t:number)=>{const p=poses.get(t);if(!p)return pivotBoundary(catalogue,t,m);
+        const id=JSON.stringify([p.axis,p.frame].map(v=>v?.flat().map(n=>Math.round(n*1e10)/1e10)));
+        const hit=probes.get(id);if(hit)return hit;
+        const value=orientationBoundary(catalogue,p,m);probes.set(id,value);return value;};
       const close=(a:number,b:number)=>{
         const p=poses.get(a),q=poses.get(b);if(!p||!q)return true;
         const axes=[p.axis,...p.frame??[]],other=[q.axis,...q.frame??[]];
         return axes.every((v,i)=>v.reduce((s,n,j)=>s+n*(other[i]?.[j]??0),0)>=Math.cos(7.5*Math.PI/180)-1e-12);
       };
-      self.postMessage({key,plan:adaptivePivotPlan(t=>{const p=poses.get(t);return p?orientationBoundary(catalogue,p,m):pivotBoundary(catalogue,t,m);},1/128,.5,(a,b,c)=>close(a,b)&&close(b,c)&&close(a,c))});return;
+      self.postMessage({key,plan:adaptivePivotPlan(probe,1/128,.5,(a,b,c)=>close(a,b)&&close(b,c)&&close(a,c))});return;
     }
     if(catalogue){
       if(config||table){self.postMessage({key,result:{...catalogueTimeline(catalogue,table),key}});return;}

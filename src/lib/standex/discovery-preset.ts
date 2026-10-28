@@ -2,15 +2,22 @@ import { approachOffset, magnetSize, type WorkshopConfig } from './magnetic-work
 import { sensorById } from './sensor-catalog';
 import { catalogueBodyObb, catalogueFrame } from './catalogue-pedagogical';
 import { obbOverlap, type Obb } from '../detection-lab/obstacles';
-/** Explicit discovery actions only. Mechanical clearance, never a magnetic success preset.
+/** Explicit discovery actions only. Mechanical clearance, never a forced magnetic state.
  * Imports, rendering, reopening and dossier restoration must not call this function. */
 export function discoveryPatch(c:WorkshopConfig,patch:Partial<WorkshopConfig>):Partial<WorkshopConfig>{
  if(c.machine)return patch;
  const next={...c,...patch},out={...patch};
- if(next.motion==='slide'){
+ if(next.motion==='approach'&&(patch.motion!==undefined||patch.geometry!==undefined)){
+  out.end=.5;
+  out.start=Math.max(next.start,24);
+ }else if(next.motion==='slide'){
   out.offset=approachOffset({...next,geometry:'D1'})+2;
   out.travel=Math.ceil((sensorById(next.sensorId).body[0]+magnetSize(next)[0])/2+12);
  }else if(next.motion==='pivot'){
+  // A short hinge movement stays near the useful region. The former 160° arc
+  // forced packaged magnets far away simply to clear the housing corners.
+  // This is a motion preset, not a threshold or an orientation-success search.
+  if(patch.motion==='pivot'){out.span=30;next.span=30;}
   const h=magnetSize(next).map(n=>n/2) as Obb['h'],sensor=catalogueBodyObb(next);
   // Search an entire cycle at fine angular intervals; 1 mm final clearance covers between samples.
   const ceiling=Math.ceil(Math.hypot(...sensor.h)+Math.hypot(...h))+2;

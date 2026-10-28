@@ -598,4 +598,12 @@ Avant la première lecture, les orientations du cycle complet sont préparées a
 
 Les surfaces sont construites dans le worker puis réutilisées. Les enveloppes mobiles masquent les fragments par le même test de séparation des boîtes complètes que le moteur ; aucun ancien masque n'est conservé pendant la lecture. La coupe utilise une section spatiale du même volume pendant la lecture et son calcul direct en pause. Ses contours linéaires remplacent les pixels sans raccorder les lobes à travers une cellule ambiguë ou invalide. Ni les seuils, ni les classes, ni la calibration ne changent.
 
-Les notes restent dans le bandeau, jamais dans le flux du canevas. Le circuit de principe suit exclusivement le verdict pédagogique ; les états variables/indisponibles et les formes de contact non caractérisées restent inconnus. Les matériaux Three conservent les deux couleurs de zone existantes. Aucune nouvelle dépendance ni nouveau jeton.
+Les notes restent dans le bandeau, jamais dans le flux du canevas. Les matériaux Three conservent les deux couleurs de zone existantes. Aucune nouvelle dépendance ni nouveau jeton.
+
+### Retours utilisateur — démonstration du 28 octobre 2026
+
+Le circuit est toujours visible, sans commande pour le masquer. Il représente un contact illustratif à sensibilité médiane, ouvert ou fermé, issu de la même réponse nominale que les zones ; A conserve sa seule borne prudente. Une pose non calculable désactive le schéma et porte un message explicite, sans point d’interrogation ni faux état réel. « Voir les contacts » rend le corps transparent et montre le même état dans la scène. Le jaune indique une dispersion de sensibilité, pas l’hystérésis. Les contacts sont symboliques, pas une reproduction qualifiée de chaque Form A/B/C.
+
+La sensibilité est visible en tête de colonne. Disposition, mouvement et quart de tour restent les choix principaux ; un seul curseur d’écart minimal entre boîtiers complète l’approche. Les préréglages explicites se rapprochent à 0,5 mm sans chevauchement, et le pivot de découverte parcourt 30°. Un dossier restauré ou un modèle importé conserve ses réglages. La préparation annonce son avancement et son démarrage automatique dans le bandeau ; aucun changement de hauteur ne réinitialise la caméra manuelle.
+
+La largeur des lobes centraux suit une hypothèse qualitative inspirée des dessins Standex, partagée par le calcul et le rendu. Les distances sur les axes calibrés restent identiques, les orientations perpendiculaires et collisions restent exclues. Cette largeur n’est pas présentée comme mesurée ; la limite est repliée dans Sources et limites. Pas de nouveau jeton ni de dépendance applicative.
