@@ -3,7 +3,7 @@ import { pedagogicalFrame } from '@/lib/standex/pedagogical-poses';
 import type { WorkshopConfig } from '@/lib/standex/magnetic-workshop';
 import type { Vec3 } from '@/lib/detection-lab/field';
 import type { Obb } from '@/lib/detection-lab/obstacles';
-import { catalogueVolume, catalogueCut, catalogueTimeline } from '@/lib/standex/catalogue-pedagogical';
+import { catalogueVolume, catalogueCut, catalogueTimeline, adaptivePivotPlan, pivotBoundary } from '@/lib/standex/catalogue-pedagogical';
 /** Physics only. Imported mountings arrive as numeric poses/boxes: no file, clip or track is sent here.
  * mode 'volume' returns the 3D grid (cut stripped); mode 'cut' computes ONLY the chosen plane.
  * Every result carries the REQUEST key: internal sampling keys never leak into the hook contract. */

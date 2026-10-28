@@ -208,7 +208,7 @@ export const PIVOT_PROBE_Z=[8,12,16] as const;
 export const PIVOT_TOL_MM=0.5;
 export function pivotBoundary(c:WorkshopConfig,t:number,model=catalogueModel(c),extent=24):(number|null)[]{
  const f=catalogueFrame(c,t);
- return PIVOT_PROBE_Z.map(z=>{for(let x=0;x<=extent+1e-9;x+=0.25){const e=cataloguePlacement(c,{center:[x,0,z],axis:f.pose.axis,frame:f.pose.frame},[],model,true);if(e.zone)return x;}return null;});
+ return PIVOT_PROBE_Z.map(z=>{for(let x=0;x<=extent+1e-9;x+=0.25){const e=cataloguePlacement(c,{center:[x,0,z],axis:f.pose.axis,...(f.pose.frame?{frame:f.pose.frame}:{})},[],model,true);if(e.zone)return x;}return null;});
 }
 export type PivotPlan={samples:number[];intervals:{t0:number;t1:number;certified:boolean}[]};
 /** Adaptive orientation plan: bisect [0,1] until adjacent samples' central boundaries differ by
