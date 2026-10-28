@@ -7,9 +7,10 @@ import { catalogueVolume, catalogueCut, catalogueTimeline } from '@/lib/standex/
 /** Physics only. Imported mountings arrive as numeric poses/boxes: no file, clip or track is sent here.
  * mode 'volume' returns the 3D grid (cut stripped); mode 'cut' computes ONLY the chosen plane.
  * Every result carries the REQUEST key: internal sampling keys never leak into the hook contract. */
-self.onmessage=(event:MessageEvent<{settings:ExperimentSettings;axis:Vec3;planeZ:number;key:string;config?:WorkshopConfig;catalogue?:WorkshopConfig;table?:TableSample[];obstacles?:Obb[];frame?:[Vec3,Vec3,Vec3];mode?:'volume'|'cut'|'full'}>)=>{
+self.onmessage=(event:MessageEvent<{settings:ExperimentSettings;axis:Vec3;planeZ:number;key:string;config?:WorkshopConfig;catalogue?:WorkshopConfig;table?:TableSample[];obstacles?:Obb[];frame?:[Vec3,Vec3,Vec3];mode?:'volume'|'cut'|'full'|'plan'}>)=>{
   try {
     const {settings,axis,planeZ,key,config,table,obstacles,catalogue,frame,mode}=event.data;
+    if(catalogue&&mode==='plan'){self.postMessage({key,plan:adaptivePivotPlan(t=>pivotBoundary(catalogue,t))});return;}
     if(catalogue){
       if(config||table){self.postMessage({key,result:{...catalogueTimeline(catalogue,table),key}});return;}
       if(mode==='cut'){self.postMessage({key,result:{...catalogueCut(catalogue,axis,planeZ,obstacles??[],24,frame),key}});return;}
