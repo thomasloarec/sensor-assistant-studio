@@ -21,7 +21,7 @@ export function ClientPedagogicalControls({config,update,onCatalog,onExplore,onC
   const classes=[...new Set([config.sensitivity,...catalogueClasses(config.sensorId,config.magnetModel,publishedClasses(config.sensorId,config.magnetModel))])];
   const magnets=[...new Set([config.magnetModel,...magnetOptionsFor(config.sensorId,undefined,config.magnetModel),...VERIFIED_PILOTS])];
   const rows=guideRangesFor(config.sensorId,config.magnetModel);
-  const motions:[WorkshopConfig['motion'],string][]=[['approach','Approche et retrait'],['slide','Passage latéral'],['pivot','Pivot']];
+  const motions:[WorkshopConfig['motion'],string][]=[['approach',t('Approche et retrait')],['slide',t('Passage latéral')],['pivot',t('Pivot')]];
   return <div className="mw-ped-controls" data-testid="client-pedagogical-controls">
     <h2 className="t-title-m">{t(sensorById(config.sensorId).name)}</h2>
     <Button variant="secondary" onClick={onCatalog}>{t('Changer de couple')}</Button>
