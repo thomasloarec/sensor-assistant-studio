@@ -39,7 +39,7 @@ export function ClientPedagogicalControls({config,update,onCatalog,onExplore,onC
       <section className="mw-choice" aria-label={t('Orientation de l’aimant')}>
         <p className="t-label">{t('Orientation de l’aimant')}</p>
         <Button variant="secondary" data-testid="quarter-turn" onClick={()=>update({magnetAngle:((config.magnetAngle+90+180)%360)-180})}>{t('Tourner de 90°')}</Button>
-        <p className="t-caption">{config.magnetAngle===0?t('Aucune rotation appliquée'):msg('Rotation appliquée : {0}°',String(config.magnetAngle))}</p>
+        <p className="t-caption">{config.magnetAngle===0?t('Aucune rotation appliquée'):msg('Rotation appliquée : {0}°',[config.magnetAngle])}</p>
       </section>
     </>}
     <Button variant="secondary" onClick={onExplore}>{t('Comprendre les zones de détection')}</Button>
