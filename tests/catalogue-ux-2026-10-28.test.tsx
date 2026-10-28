@@ -101,3 +101,43 @@ describe('lot UX 28/10 — colonne de découverte', () => {
     expect(patches).toEqual([{ motion: 'slide' }]);
   });
 });
+
+describe('lot UX 28/10 — contre-revue', () => {
+  test('le worker normalise result.key sur la clé de requête : le hook accepte le volume catalogue', async () => {
+    // Worker factice renvoyant la clé de REQUÊTE (contrat du worker réel après correction) :
+    // le hook doit accepter le résultat. Avant la correction, result.key interne ≠ clé requête
+    // et le hook rejetait chaque volume catalogue.
+    const RealWorker = (globalThis as { Worker?: unknown }).Worker;
+    class FakeWorker {
+      onmessage: ((e: { data: { key: string; result?: unknown } }) => void) | null = null;
+      onerror: (() => void) | null = null;
+      postMessage(m: { key: string; axis: number[]; planeZ: number }) {
+        this.onmessage?.({ data: { key: m.key, result: { key: m.key, cells: [], cut: [], axis: m.axis, planeZ: m.planeZ, extent: 24, computeMs: 1, nodeCount: 1, truncated: false } } });
+      }
+      terminate() {}
+    }
+    (globalThis as { Worker?: unknown }).Worker = FakeWorker;
+    try {
+      const { usePedagogicalVolume } = await import('../src/components/standex/workshop/pedagogical-controls');
+      const { waitFor } = await import('@testing-library/react');
+      const frame = catalogueFrame(config, 0.5);
+      function Harness() {
+        const { volume, failed } = usePedagogicalVolume(true, DEFAULT_EXPERIMENT, frame, null, config);
+        return <output data-testid="vol">{volume ? 'ok' : failed ? 'failed' : 'pending'}</output>;
+      }
+      const r = render(<Harness />);
+      await waitFor(() => expect(r.getByTestId('vol').textContent).toBe('ok'));
+    } finally {
+      (globalThis as { Worker?: unknown }).Worker = RealWorker;
+    }
+  });
+  test('la coupe catalogue ne calcule que le plan choisi, jamais le volume entier', async () => {
+    const { catalogueCut } = await import('../src/lib/standex/catalogue-pedagogical');
+    const f = catalogueFrame(config, 0.5);
+    const c = catalogueCut(config, f.pose.axis, 0, [], 24, f.pose.frame);
+    expect(c.cells).toHaveLength(0);
+    expect(c.cut.length).toBeGreaterThan(0);
+    expect(c.nodeCount).toBe(c.field.xs.length * c.field.ys.length);
+    expect(c.cut.every((cell) => cell.z === 0)).toBe(true);
+  });
+});
