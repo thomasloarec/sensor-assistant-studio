@@ -189,3 +189,42 @@ export function catalogueVerdictNotes(c:WorkshopConfig,m:ReturnType<typeof catal
 }
 /** Plain-language family sentence for Sources et limites. */
 export function catalogueFamilySentence(m:ReturnType<typeof catalogueModel>):string{return m.family==='66'?CATALOGUE_LABELS.reed66:m.family==='66-assumed'?CATALOGUE_LABELS.reed66assumed:CATALOGUE_LABELS.analogyReed;}
+/** Current mechanical exclusion for a prepared orientation field: the SAME magnet-body OBB test as
+ * cataloguePlacement, at each node, against the obstacles of the current instant. Rendering only;
+ * the verdict keeps calling cataloguePlacement with exact obstacles. */
+export function obstacleBlocked(c:WorkshopConfig,field:VolumeField,frame:[Vec3,Vec3,Vec3]|undefined,obstacles:readonly Obb[],model=catalogueModel(c)):boolean[]{
+ if(!obstacles.length)return field.blocked;
+ const a=frame??magnetBodyFrame(c,c.magnetAngle),h=model.magnetBody.map(n=>n/2) as Vec3,{xs,ys,zs}=field,out=field.blocked.slice();
+ for(let k=0;k<zs.length;k++)for(let j=0;j<ys.length;j++)for(let i=0;i<xs.length;i++){
+  const idx=(k*ys.length+j)*xs.length+i;if(out[idx])continue;
+  const m:Obb={path:'magnet',c:[xs[i]??0,ys[j]??0,zs[k]??0],a,h};
+  if(obstacles.some(o=>obbOverlap(m,o)))out[idx]=true;
+ }
+ return out;
+}
+/** Central-boundary probe of the pivot at instant t: on rays y=0, z∈PROBE_Z, first x≥0 (step
+ * 0.25 mm) where the nominal response reaches a zone. null = no boundary within the domain. */
+export const PIVOT_PROBE_Z=[8,12,16] as const;
+export const PIVOT_TOL_MM=0.5;
+export function pivotBoundary(c:WorkshopConfig,t:number,model=catalogueModel(c),extent=24):(number|null)[]{
+ const f=catalogueFrame(c,t);
+ return PIVOT_PROBE_Z.map(z=>{for(let x=0;x<=extent+1e-9;x+=0.25){const e=cataloguePlacement(c,{center:[x,0,z],axis:f.pose.axis,...(f.pose.frame?{frame:f.pose.frame}:{})},[],model,true);if(e.zone)return x;}return null;});
+}
+export type PivotPlan={samples:number[];intervals:{t0:number;t1:number;certified:boolean}[]};
+/** Adaptive orientation plan: bisect [0,1] until adjacent samples' central boundaries differ by
+ * ≤ PIVOT_TOL_MM on every probe ray (null≠number fails). Below minDt an interval is kept but
+ * flagged uncertified — its zones are never shown as current. No volume is interpolated. */
+export function adaptivePivotPlan(probe:(t:number)=>(number|null)[],minDt=1/128,tol=PIVOT_TOL_MM):PivotPlan{
+ const memo=new Map<number,(number|null)[]>(),at=(t:number)=>{let v=memo.get(t);if(!v){v=probe(t);memo.set(t,v);}return v;};
+ const ok=(a:(number|null)[],b:(number|null)[])=>a.every((x,i)=>{const y=b[i]??null;return x===null||y===null?x===y:Math.abs(x-y)<=tol;});
+ const intervals:PivotPlan['intervals']=[];
+ const split=(t0:number,t1:number)=>{if(ok(at(t0),at(t1))){intervals.push({t0,t1,certified:true});return;}if(t1-t0<=minDt){intervals.push({t0,t1,certified:false});return;}const m=(t0+t1)/2;split(t0,m);split(m,t1);};
+ split(0,1);
+ return {samples:[...new Set(intervals.flatMap(i=>[i.t0,i.t1]))].sort((a,b)=>a-b),intervals};
+}
+/** Sample displayed at progress u: nearest end of its interval, only when that interval is certified. */
+export function pivotSampleAt(plan:PivotPlan,u:number):number|null{
+ const iv=plan.intervals.find(i=>u>=i.t0&&u<=i.t1);
+ if(!iv||!iv.certified)return null;
+ return u-iv.t0<=iv.t1-u?iv.t0:iv.t1;
+}

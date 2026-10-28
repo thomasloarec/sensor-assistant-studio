@@ -7,7 +7,7 @@ import type { PlacementDiagnosis } from '@/lib/detection-lab/placement-diagnosis
 import type { WorkshopConfig } from '@/lib/standex/magnetic-workshop';
 import type { Obb } from '@/lib/detection-lab/obstacles';
 import { fingerprint } from '@/lib/standex/mounting/geometry';
-import { CATALOGUE_MODEL_VERSION } from '@/lib/standex/catalogue-pedagogical';
+import { CATALOGUE_MODEL_VERSION, type PivotPlan } from '@/lib/standex/catalogue-pedagogical';
 const cache=new Map<string,SampledVolume>();
 const cutCache=new Map<string,SampledVolume>();
 /** 3D volume key: couple, class, hypotheses, FULL magnet body orientation (axis + body frame)
@@ -26,7 +26,7 @@ function useWorkerVolume(enabled:boolean,available:boolean,key:string,mode:'volu
  useEffect(()=>{
   setResult(null);setFailed(false);
   if(!enabled||!available){setBusy(false);return;}
-  const hit=store.get(key);if(hit){setResult(hit);setBusy(false);return;}
+  const hit=(mode==='volume'?pinned.get(key):undefined)??store.get(key);if(hit){setResult(hit);setBusy(false);return;}
   if(typeof Worker==='undefined'){setFailed(true);return;}
   let current=true,worker:Worker|null=null;setBusy(true);
   const timer=setTimeout(()=>{
@@ -54,29 +54,38 @@ export function usePedagogicalCut(enabled:boolean,settings:ExperimentSettings,fr
  const available=!!catalogue||experimentAvailable(settings);
  return useWorkerVolume(enabled,available,cutKey(settings,frame,obstacles,catalogue),'cut',settings,frame,obstacles,catalogue);
 }
-/** Warm the volume cache for a set of prepared orientations BEFORE playback (pivot):
- * one worker computes each exact orientation sequentially; nothing is interpolated and no
- * old orientation is shown as current — the layer reads only these exact prepared keys. */
-export function prepareVolumes(requests:{key:string;settings:ExperimentSettings;frame:PedagogicalFrame;obstacles:readonly Obb[]|null;catalogue?:WorkshopConfig}[],onDone:(ok:boolean)=>void):()=>void{
- const pending=requests.filter(r=>!cache.has(r.key));
- if(!pending.length){onDone(true);return()=>{};}
- if(typeof Worker==='undefined'){onDone(false);return()=>{};}
- let current=true;const worker=new Worker(new URL('./pedagogical.worker.ts',import.meta.url),{type:'module'});
- let index=0;
- const send=()=>{
-  const r=pending[index];if(!r){worker.terminate();if(current)onDone(true);return;}
-  worker.postMessage({settings:r.settings,axis:r.frame.pose.axis,planeZ:r.frame.pose.center[2],key:r.key,mode:'volume',obstacles:r.obstacles??[],catalogue:r.catalogue,frame:r.catalogue?(r.frame.pose as {frame?:unknown}).frame:undefined});
- };
- worker.onmessage=(event:MessageEvent<{key:string;result?:SampledVolume;error?:boolean}>)=>{
+/** Pinned volumes of the CURRENT preparation: never evicted while it runs or plays; replaced
+ * wholesale by the next preparation (token). The general cache stays bounded at 12. */
+let pinned=new Map<string,SampledVolume>(),pinToken=0;
+export type PrepRequest={key:string;settings:ExperimentSettings;frame:PedagogicalFrame;obstacles:readonly Obb[]|null;catalogue?:WorkshopConfig};
+/** Pivot preparation: (1) worker computes the adaptive orientation plan, (2) each exact planned
+ * orientation volume is computed and pinned. Cancel terminates the worker; a stale token never
+ * writes nor calls onDone. onDone(null) = failure (playback must not start). */
+export function preparePivot(config:WorkshopConfig,request:(t:number)=>PrepRequest,onDone:(plan:PivotPlan|null)=>void,maxVolumes=48,factory:()=>Worker=()=>new Worker(new URL('./pedagogical.worker.ts',import.meta.url),{type:'module'})):()=>void{
+ const token=++pinToken,next=new Map<string,SampledVolume>();
+ let worker:Worker;try{worker=factory();}catch{onDone(null);return()=>{};}
+ let live=true,plan:PivotPlan|null=null,pending:PrepRequest[]=[],index=0;
+ const finish=(p:PivotPlan|null)=>{if(!live||token!==pinToken)return;live=false;worker.terminate();if(p)pinned=next;onDone(p);};
+ const send=()=>{const r=pending[index];if(!r){finish(plan);return;}
+  const hit=pinned.get(r.key)??cache.get(r.key);if(hit){next.set(r.key,hit);index++;send();return;}
+  worker.postMessage({settings:r.settings,axis:r.frame.pose.axis,planeZ:r.frame.pose.center[2],key:r.key,mode:'volume',obstacles:r.obstacles??[],catalogue:r.catalogue,frame:r.catalogue?(r.frame.pose as {frame?:unknown}).frame:undefined});};
+ worker.onmessage=(event:MessageEvent<{key:string;result?:SampledVolume;plan?:PivotPlan;error?:boolean}>)=>{
+  if(!live||token!==pinToken)return;
+  if(!plan){if(!event.data.plan){finish(null);return;}
+   const samples=event.data.plan.samples.slice(0,maxVolumes),kept=new Set(samples);
+   plan={samples,intervals:event.data.plan.intervals.map(i=>({...i,certified:i.certified&&kept.has(i.t0)&&kept.has(i.t1)}))};
+   pending=samples.map(request);send();return;}
   const r=pending[index];
-  if(r&&event.data.key===r.key&&event.data.result&&event.data.result.key===r.key){if(cache.size>=12){const first=cache.keys().next().value;if(first)cache.delete(first);}cache.set(r.key,event.data.result);}
-  index++;send();
+  if(!r||event.data.key!==r.key||!event.data.result||event.data.result.key!==r.key){finish(null);return;}
+  next.set(r.key,event.data.result);index++;send();
  };
- worker.onerror=()=>{worker.terminate();if(current)onDone(false);};
- send();
- return()=>{current=false;worker.terminate();};
+ worker.onerror=()=>finish(null);
+ worker.postMessage({key:'plan:'+token,mode:'plan',catalogue:config,settings:request(0).settings,axis:[0,1,0],planeZ:0});
+ return()=>{if(live){live=false;worker.terminate();}};
 }
-export function volumeCacheHas(key:string):boolean{return cache.has(key);}
+export function volumeCacheHas(key:string):boolean{return cache.has(key)||pinned.has(key);}
+export function pinnedVolume(key:string):SampledVolume|undefined{return pinned.get(key);}
+
 /* i18n-canonical: shared placement labels translated at the point of display. */
 export const PLACEMENT_LABEL={favorable:'Placement favorable',variable:'Détection variable',unfavorable:'Placement défavorable',unavailable:'Estimation indisponible'};
 /* No 'distance'/'orientation' fallback: those come only from the diagnosis layer. */
