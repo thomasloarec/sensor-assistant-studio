@@ -152,8 +152,8 @@ import { pedagogicalRemedy } from "@/lib/standex/pedagogical-poses";
 import { diagnosePlacement } from "@/lib/detection-lab/placement-diagnosis";
 import { pilotBodies, pedagogicalFrame, pedagogicalAvailability, suggestPedagogicalConfig, parsePedagogicalEnvelope, type PedagogicalDraft } from "@/lib/standex/pedagogical-poses";
 import { PedagogicalLayer, PedagogicalCut } from "./pedagogical-layer";
-import { PedagogicalControls, PedagogicalBanner, usePedagogicalVolume, PLACEMENT_LABEL } from "./pedagogical-controls";
-import { DEFAULT_EXPERIMENT, EXPERIMENT, experimentAvailable, evaluatePlacement, placementTimeline, type ExperimentSettings } from "@/lib/detection-lab/workshop-experiment";
+import { PedagogicalControls, PedagogicalBanner, usePedagogicalVolume, usePedagogicalCut, PLACEMENT_LABEL } from "./pedagogical-controls";
+import { DEFAULT_EXPERIMENT, EXPERIMENT, experimentAvailable, evaluatePlacement, placementTimeline, classThresholds, type ExperimentSettings } from "@/lib/detection-lab/workshop-experiment";
 
 /* i18n-canonical : libellés traduits au rendu par t(). */
 const UNIT_LABEL: Record<number, string> = {
@@ -379,7 +379,8 @@ export default function MagneticWorkshop({
   // Bounded explanation: recomputed from the SAME pose/instant/settings/freedoms/envelopes, never while playing.
   const diagnosis = useMemo(() => pedagogical && !playing && !catalogue ? diagnosePlacement(activeExperiment, pedagogicalPose.pose, frameObstacles ?? false, placement) : null, [pedagogical, playing, effectiveExperiment, availability, pedagogicalPose, frameObstacles, placement,catalogue]);
   const remedy = useMemo(() => pedagogical && !playing && !catalogue && placement.state !== "favorable" && placement.state !== "unavailable" ? pedagogicalRemedy(config, progress, activeExperiment) : null, [pedagogical, playing, placement.state, config, progress, effectiveExperiment, availability,catalogue]);
-  const sampled = usePedagogicalVolume(pedagogical && !playing && eligible, activeExperiment, pedagogicalPose, config.machine ? frameObstacles : null,catalogue?config:undefined);
+  // Le volume 3D ne dépend plus de l'instant : il reste calculé et affiché pendant la lecture.
+  const sampled = usePedagogicalVolume(pedagogical && eligible, activeExperiment, pedagogicalPose, config.machine ? frameObstacles : null,catalogue?config:undefined);
   const [timelineResult, setPedTimeline] = useState<(ReturnType<typeof placementTimeline>&{key:string}) | null>(null);
   const clipGeneration=config.machine?animationGeneration(config.machine.assetKey,config.machine.unitScale):0;
   const timelineKey=pedagogicalTimelineKey(effectiveExperiment,config,machineAssetId,envelopes,clipGeneration)+'|'+(catalogue?catalogueProfile?.version:'frozen');
@@ -402,7 +403,7 @@ export default function MagneticWorkshop({
     worker.postMessage(table ? {settings:effectiveExperiment,table,key,catalogue:catalogue?config:undefined} : {settings:effectiveExperiment,config,key,catalogue:catalogue?config:undefined});
     return () => {current=false;worker.terminate();};
   }, [pedagogical, timelineKey, eligible]);
-  const experimentalLayer = pedagogical ? <PedagogicalLayer frame={pedagogicalPose} settings={effectiveExperiment} volume={sampled.volume} zones={true} zonesOnly={catalogue}/> : undefined;
+  // experimentalLayer est défini après les états d'affichage (zones, circuit) plus bas.
   const [view, setView] = useState<"3d" | "top">("3d"),
     [zones, setZones] = useState(true),
     [field, setField] = useState(false),
@@ -414,6 +415,14 @@ export default function MagneticWorkshop({
     [showMagnetName, setShowMagnetName] = useState(true),
     [focus, setFocus] = useState<MachineFocus>("assembly"),
     [catalogOpen, setCatalogOpen] = useState(false);
+  const [showCircuit, setShowCircuit] = useState(true);
+  const layerThresholds = catalogueProfile ? classThresholds(catalogueProfile.className) : classThresholds(effectiveExperiment.className);
+  const experimentalLayer = pedagogical ? <PedagogicalLayer frame={pedagogicalPose} settings={effectiveExperiment} volume={sampled.volume} zones={zones} zonesOnly={catalogue} thresholds={layerThresholds}/> : undefined;
+  // Coupe instantanée : suit le plan choisi, recalculée seulement en pause dans la vue en coupe.
+  const cutSampled = usePedagogicalCut(pedagogical && eligible && !playing && view === "top", activeExperiment, pedagogicalPose, config.machine ? frameObstacles : null, catalogue ? config : undefined);
+  const cutVolume = useMemo(() => sampled.volume ? { ...sampled.volume, cut: cutSampled.volume?.cut ?? [] } : null, [sampled.volume, cutSampled.volume]);
+  // Circuit de principe : même instant et même moteur que le bandeau ; jamais le calcul binaire historique.
+  const circuitContact: Contact = catalogue && catalogueProfile && catalogueProfile.contact !== "1A" ? "unknown" : placement.state === "favorable" ? "closed" : placement.state === "unfavorable" ? "open" : "unknown";
   /** Vitesse de lecture. Par défaut un aller-retour dure 6 s : la lecture
    * ralentie reste disponible dans les réglages avancés, elle ne disparaît pas. */
   const [playbackSpeed, setPlaybackSpeed] = useState<"normal" | "slow">("normal");
