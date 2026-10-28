@@ -14,7 +14,12 @@ const cutCache=new Map<string,SampledVolume>();
  * and obstacles — never the magnet's translation nor the cut plane. A pure translation at
  * constant orientation therefore reuses the same volume during playback. */
 export function volumeKey(settings:ExperimentSettings,frame:PedagogicalFrame,obstacles:readonly Obb[]|null,catalogue?:WorkshopConfig):string{
- return settingsKey(settings,frame.pose.axis,0)+'|'+(obstacles?fingerprint(obstacles):'free')+'|'+(catalogue?CATALOGUE_MODEL_VERSION:'frozen')+'|'+JSON.stringify(catalogue??null)+'|'+JSON.stringify(catalogue?(frame.pose as {frame?:unknown}).frame??null:null);
+ // Floating arithmetic on the return leg must not create a second copy of the same orientation.
+ // 1e-10 is numerical identity only, not an angular display quantisation.
+ const round=(v:number)=>Math.round(v*1e10)/1e10;
+ const axis=catalogue?frame.pose.axis.map(round) as typeof frame.pose.axis:frame.pose.axis;
+ const body=(frame.pose as {frame?:number[][]}).frame?.map(row=>row.map(round));
+ return settingsKey(settings,axis,0)+'|'+(obstacles?fingerprint(obstacles):'free')+'|'+(catalogue?CATALOGUE_MODEL_VERSION:'frozen')+'|'+JSON.stringify(catalogue??null)+'|'+JSON.stringify(catalogue?body??null:null);
 }
 /** Cut key: same volume identity plus the exact plane of the chosen instant. */
 export function cutKey(settings:ExperimentSettings,frame:PedagogicalFrame,obstacles:readonly Obb[]|null,catalogue?:WorkshopConfig):string{
@@ -41,7 +46,9 @@ function useWorkerVolume(enabled:boolean,available:boolean,key:string,mode:'volu
   },0);
   return ()=>{current=false;clearTimeout(timer);worker?.terminate();};
  },[enabled,key]);
- return {volume:enabled&&available&&result?.key===key?result:null,busy,failed};
+ // Read a prepared hit synchronously. Waiting for an effect used to blank every orientation change.
+ const hit=(mode==='volume'?pinned.get(key):undefined)??store.get(key);
+ return {volume:enabled&&available?(hit??(result?.key===key?result:null)):null,busy:!hit&&busy,failed:!hit&&failed};
 }
 /** `obstacles`: loaded part boxes in the reed frame of the SAME instant; they enter the key.
  * The volume no longer depends on the instant: it stays computed and displayed during playback. */
@@ -61,26 +68,30 @@ export type PrepRequest={key:string;settings:ExperimentSettings;frame:Pedagogica
 /** Pivot preparation: (1) worker computes the adaptive orientation plan, (2) each exact planned
  * orientation volume is computed and pinned. Cancel terminates the worker; a stale token never
  * writes nor calls onDone. onDone(null) = failure (playback must not start). */
-export function preparePivot(config:WorkshopConfig,request:(t:number)=>PrepRequest,onDone:(plan:PivotPlan|null)=>void,maxVolumes=48,factory:()=>Worker=()=>new Worker(new URL('./pedagogical.worker.ts',import.meta.url),{type:'module'})):()=>void{
- const token=++pinToken,next=new Map<string,SampledVolume>();
+export function preparePivot(config:WorkshopConfig,request:(t:number)=>PrepRequest,onDone:(plan:PivotPlan|null)=>void,maxVolumes=Infinity,factory:()=>Worker=()=>new Worker(new URL('./pedagogical.worker.ts',import.meta.url),{type:'module'}),onProgress?:(done:number,total:number)=>void):()=>void{
+ const token=++pinToken,next=new Map<string,SampledVolume>(),previous=pinned;
  let worker:Worker;try{worker=factory();}catch{onDone(null);return()=>{};}
+ pinned=next;
  let live=true,plan:PivotPlan|null=null,pending:PrepRequest[]=[],index=0;
  const finish=(p:PivotPlan|null)=>{if(!live||token!==pinToken)return;live=false;worker.terminate();if(p)pinned=next;onDone(p);};
- const send=()=>{const r=pending[index];if(!r){finish(plan);return;}
-  const hit=pinned.get(r.key)??cache.get(r.key);if(hit){next.set(r.key,hit);index++;send();return;}
-  worker.postMessage({settings:r.settings,axis:r.frame.pose.axis,planeZ:r.frame.pose.center[2],key:r.key,mode:'volume',obstacles:r.obstacles??[],catalogue:r.catalogue,frame:r.catalogue?(r.frame.pose as {frame?:unknown}).frame:undefined});};
+ const send=()=>{onProgress?.(index,pending.length);const r=pending[index];if(!r){finish(plan);return;}
+  const hit=previous.get(r.key)??cache.get(r.key);if(hit){next.set(r.key,hit);index++;send();return;}
+  worker.postMessage({settings:r.settings,axis:r.frame.pose.axis,planeZ:0,key:r.key,mode:'volume',obstacles:r.obstacles??[],catalogue:r.catalogue,frame:r.catalogue?(r.frame.pose as {frame?:unknown}).frame:undefined});};
  worker.onmessage=(event:MessageEvent<{key:string;result?:SampledVolume;plan?:PivotPlan;error?:boolean}>)=>{
   if(!live||token!==pinToken)return;
   if(!plan){if(!event.data.plan){finish(null);return;}
    const samples=event.data.plan.samples.slice(0,maxVolumes),kept=new Set(samples);
    plan={samples,truncated:event.data.plan.samples.length>maxVolumes,intervals:event.data.plan.intervals.map(i=>({...i,certified:i.certified&&kept.has(i.t0)&&kept.has(i.t1)}))};
-   pending=samples.map(request);send();return;}
+   pending=[...new Map(samples.map(t=>{const r=request(t);return [r.key,r] as const;})).values()];send();return;}
   const r=pending[index];
   if(!r||event.data.key!==r.key||!event.data.result||event.data.result.key!==r.key){finish(null);return;}
   next.set(r.key,event.data.result);index++;send();
  };
  worker.onerror=()=>finish(null);
- worker.postMessage({key:'plan:'+token,mode:'plan',catalogue:config,settings:request(0).settings,axis:[0,1,0],planeZ:0});
+ // Shared pose adapter resolves the loaded clip HERE. The worker receives numeric orientations,
+ // never clip tracks or registry references. 256 includes every midpoint of the 1/128 plan.
+ const orientations=Array.from({length:257},(_,i)=>({t:i/256,pose:request(i/256).frame.pose}));
+ worker.postMessage({key:'plan:'+token,mode:'plan',catalogue:config,orientations,settings:request(0).settings,axis:[0,1,0],planeZ:0});
  return()=>{if(live){live=false;worker.terminate();}};
 }
 export function volumeCacheHas(key:string):boolean{return cache.has(key)||pinned.has(key);}
@@ -197,12 +208,10 @@ export function PedagogicalControls({diagnosis,timelineNote,settings,setSettings
   </div>;
 }
 export { DEFAULT_EXPERIMENT, evaluatePlacement };/** Pivot status notes, shown independently of the circuit toggle. */
-export function PivotNotes({failed,hidden,truncated}:{failed:boolean;hidden:boolean;truncated:boolean}){
- if(!failed&&!hidden&&!truncated)return null;
+export function PivotNotes({failed,hidden}:{failed:boolean;hidden:boolean}){
+ if(!failed&&!hidden)return null;
  return <div className="notice-info" data-testid="pivot-notes">
   {failed&&<p className="t-caption" role="alert">{t('Préparation impossible : zones non affichées, temps conservé.')}</p>}
   {hidden&&<p className="t-caption" role="status" data-testid="pivot-hidden">{t('Zones non disponibles pour cette orientation pendant le mouvement. Mettez en pause pour les recalculer.')}</p>}
-  {truncated&&<p className="t-caption" data-testid="pivot-truncated">{t('Préparation limitée à 48 orientations : certaines zones resteront masquées pendant le mouvement.')}</p>}
-  <details><summary className="t-caption">{t('Limites techniques')}</summary><p className="t-caption">{t('Contrôle sur trois rayons centraux seulement, pas sur tout le volume. Rotation relative d’un clip importé hors pivot non prise en charge.')}</p></details>
  </div>;
 }

@@ -1,7 +1,7 @@
 /** Parcours guidé du modèle importé : Modèle → Pièces mobiles → Mouvement →
  *  Installation → Essai. Une seule étape développée à la fois ; la scène reste
  *  visible à côté. Les coordonnées libres restent dans les réglages avancés. */
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { displayMachineNodes } from "@/lib/standex/machine-view";
 import { msg, t } from "@/lib/i18n/core";
@@ -255,6 +255,7 @@ export default function MachineGuide({
   setProgress,
   playing,
   setPlaying,
+  playControl,
   reason,
   onDemo,
   onMarkers,
@@ -281,6 +282,8 @@ export default function MachineGuide({
   setProgress: (v: number) => void;
   playing: boolean;
   setPlaying: (v: boolean) => void;
+  /** Shared preparation-aware control for catalogue zones. */
+  playControl?: ReactNode;
   reason: string | null;
   onDemo: (key: string) => void;
   onMarkers: (markers: Marker[]) => void;
@@ -1240,7 +1243,7 @@ export default function MachineGuide({
           >
             ⏮
           </Button>
-          <Button
+          {playControl ?? <Button
             className="mw-button"
             data-testid="guide-play"
             disabled={reduced || (!!reason && reason === motionProblem(m))}
@@ -1250,7 +1253,7 @@ export default function MachineGuide({
             }}
           >
             {t(playing ? "Pause" : "Lancer le cycle")}
-          </Button>
+          </Button>}
           <Button
             className="mw-button mw-secondary"
             aria-label={t("Reculer d'un pas")}
@@ -1293,7 +1296,7 @@ export default function MachineGuide({
             t({ open: "ouvert", closed: "fermé", unknown: "indéterminé" }[sample.contact]),
           ])}
         </p>}
-        {reason && (
+        {!pedagogical && reason && (
           <p className="notice-warning" data-testid="guide-reason">
             {t(reason)}
           </p>

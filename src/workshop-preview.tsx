@@ -3,7 +3,8 @@ import { t } from "@/lib/i18n/core";
 import { useLocale } from "./lib/i18n/react";
 import { createRoot } from "react-dom/client";
 import MagneticWorkshop from "./components/standex/workshop/workshop";
-import { parseWorkshopConfig } from "./lib/standex/magnetic-workshop";
+import { WorkspacePanel } from './components/leadmagnet/workspace-panel';
+import { DEFAULT_WORKSHOP, parseWorkshopConfig } from "./lib/standex/magnetic-workshop";
 const key = "standex-workshop-local-preview-v1";
 function stored() {
   try {
@@ -15,30 +16,24 @@ function stored() {
 // This harness is served only by vite.workshop.config.ts on loopback, with no backend.
 function Preview() {
   useLocale();
+  const close=()=>{window.location.href='https://sensor-pal-tester.lovable.app/';};
+  const fresh=new URLSearchParams(window.location.search).has('fresh');
   return (
-    <>
-      <div
-        style={{
-          padding: "7px 20px",
-          background: "#254061",
-          color: "#fff",
-          font: "11px system-ui",
-        }}
-      >
-        {t("Aperçu local · les sauvegardes de cette démonstration restent dans ce navigateur.")}
-      </div>
+    <WorkspacePanel open fullscreen bare languagePicker title={t('Atelier 3D')} onOpenChange={(open)=>{if(!open)close();}}
+      badge={<span className="t-caption">{t("Aperçu local · les sauvegardes de cette démonstration restent dans ce navigateur.")}</span>}>
       <MagneticWorkshop
-        initialConfig={stored()}
-        onClose={() => {
-          window.location.href =
-            "https://id-preview--9aff67a3-e0d0-4a40-95e1-da809f7ff333.lovable.app";
-        }}
+        clientPedagogical
+        embedded
+        initialConfig={fresh ? {...DEFAULT_WORKSHOP,sensorId:"MK04",magnetModel:"M04"} : stored()}
+        onClose={close}
         onSave={async (config) => {
           localStorage.setItem(key, JSON.stringify(config));
         }}
         storageLabel="ce navigateur (démonstration)"
       />
-    </>
+    </WorkspacePanel>
   );
 }
-createRoot(document.getElementById("root")!).render(<Preview />);
+const previewRoot=createRoot(document.getElementById("root")!);
+previewRoot.render(<Preview />);
+if(import.meta.hot)import.meta.hot.dispose(()=>previewRoot.unmount());

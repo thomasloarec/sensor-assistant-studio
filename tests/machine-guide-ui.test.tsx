@@ -32,7 +32,7 @@ const fresh: MachineAssembly = {
   travel: [0, 0, 0],
   motionStatus: "unset",
 };
-function render(step: GuideState["step"], machine = fresh, parts = 3, patch: Partial<WorkshopConfig> = {}) {
+function render(step: GuideState["step"], machine = fresh, parts = 3, patch: Partial<WorkshopConfig> = {}, playControl?: import("react").ReactNode) {
   const config: WorkshopConfig = { ...DEFAULT_WORKSHOP, mode: "education", magnetModel: "generic", machine, ...patch };
   const result = simulateCycle(config);
   return renderToStaticMarkup(
@@ -49,6 +49,7 @@ function render(step: GuideState["step"], machine = fresh, parts = 3, patch: Par
       progress={0}
       setProgress={noop}
       playing={false}
+      playControl={playControl}
       setPlaying={noop}
       reason={unavailableReason(config)}
       onDemo={noop}
@@ -97,3 +98,8 @@ describe("parcours guidé du modèle importé", () => {
     expect(ok).toContain("Ouverture du mécanisme");
   });
 });
+
+ test("imported pedagogical playback exposes preparation instead of a second immediate play button", () => {
+ const html=render("test", fresh, 3, {}, <button data-testid="prepared-play">Annuler la préparation · 50 %</button>);
+ expect(html).toContain("prepared-play"); expect(html).toContain("Annuler la préparation"); expect(html).not.toContain('data-testid="guide-play"'); expect(html).toContain("guide-start"); expect(html).toContain("guide-end");
+ });

@@ -1,7 +1,9 @@
 import { Button } from "@/components/ui/button";
+import { clearanceRegions } from '@/lib/standex/zone-clearance';
+import { sectionVolume } from '@/lib/standex/zone-section';
 import { ClientPedagogicalControls } from './client-pedagogical-controls';
 import { CLIENT_LIMITS, clientCoupleAdapter, explorationSettings, clientPedagogicalResult, type ClientPedagogicalResult } from '@/lib/standex/client-pedagogical';
-import { catalogueFrame, cataloguePlacement, catalogueModel, catalogueVerdictNotes, CATALOGUE_LABELS, obstacleBlocked, activePivotT, type PivotPlan, type VolumeField } from '@/lib/standex/catalogue-pedagogical';
+import { catalogueFrame, cataloguePlacement, catalogueModel, catalogueVerdictNotes, CATALOGUE_LABELS, nearestPreparedT, pivotSampleAt, type PivotPlan, type VolumeField } from '@/lib/standex/catalogue-pedagogical';
 import type { MachineFocus } from "@/lib/standex/machine-view";
 import { observedCycleVerdict } from "@/lib/leadmagnet/tested-pairs";
 import {
@@ -380,29 +382,31 @@ export default function MagneticWorkshop({
   const diagnosis = useMemo(() => pedagogical && !playing && !catalogue ? diagnosePlacement(activeExperiment, pedagogicalPose.pose, frameObstacles ?? false, placement) : null, [pedagogical, playing, effectiveExperiment, availability, pedagogicalPose, frameObstacles, placement,catalogue]);
   const remedy = useMemo(() => pedagogical && !playing && !catalogue && placement.state !== "favorable" && placement.state !== "unavailable" ? pedagogicalRemedy(config, progress, activeExperiment) : null, [pedagogical, playing, placement.state, config, progress, effectiveExperiment, availability,catalogue]);
   // Le volume 3D ne dépend plus de l'instant : il reste calculé et affiché pendant la lecture.
-  // Pivot : les orientations sont préparées AVANT la lecture (9 instants exacts, jamais interpolés) ;
+  // Les orientations sont préparées adaptativement AVANT la lecture, jamais interpolées ;
   // pendant la lecture, les zones montrent l'orientation préparée la plus proche — la pose, le verdict
   // et la chronologie restent calculés à l'instant exact. Aucune ancienne orientation n'est montrée
   // comme actuelle : sans volume préparé, aucune zone ne s'affiche.
+  const [prepProgress,setPrepProgress]=useState({done:0,total:0});
   const [preparing, setPreparing] = useState(false), [prepFailed, setPrepFailed] = useState(false), [pivotPlan, setPivotPlan] = useState<PivotPlan | null>(null);
   const prepCancel = useRef<(() => void) | null>(null);
   // Catalogue : le volume exclut les obstacles (clé indépendante de l'instant) ; l'exclusion
   // mécanique COURANTE est appliquée au rendu avec le même test de corps que le verdict.
-  const pivotPlanKey = catalogue && config.motion === "pivot" ? JSON.stringify([config, catalogueProfile?.version]) : null;
+  const clipGeneration=config.machine?animationGeneration(config.machine.assetKey,config.machine.unitScale):0;
+  const pivotPlanKey = catalogue ? JSON.stringify([config, catalogueProfile?.version, machineAssetId, clipGeneration]) : null;
   const [plannedKey, setPlannedKey] = useState<string | null>(null);
   useEffect(() => () => { prepCancel.current?.(); prepCancel.current = null; setPreparing(false); }, [pivotPlanKey, pedagogical, machineAssetId]);
   // Pause/scrub => exact pose; the prepared orientation is used only while playing.
-  const pivotT = activePivotT(playing, pivotPlanKey && plannedKey === pivotPlanKey ? pivotPlan : null, progress);
+  const activePlan=pivotPlanKey && plannedKey===pivotPlanKey ? pivotPlan : null;
+  const pivotT=playing&&activePlan ? nearestPreparedT(activePlan,progress) : null;
+  const orientationTransition=!!(playing&&activePlan&&pivotSampleAt(activePlan,progress)===null);
   const pivotHidden = !!pivotPlanKey && playing && pivotT === null;
   const volumeFrame = pivotT !== null ? catalogueFrame(config, pivotT) : pedagogicalPose;
   const sampledRaw = usePedagogicalVolume(pedagogical && eligible && !pivotHidden, activeExperiment, volumeFrame, catalogue ? null : config.machine ? frameObstacles : null, catalogue ? config : undefined);
-  const sampled = useMemo(() => {
-    const v = sampledRaw.volume as (typeof sampledRaw.volume & { field?: VolumeField }) | null;
-    if (!catalogue || !v?.field || !frameObstacles?.length) return sampledRaw;
-    return { ...sampledRaw, volume: { ...v, field: { ...v.field, blocked: obstacleBlocked(config, v.field, (volumeFrame.pose as { frame?: [Vec3, Vec3, Vec3] }).frame, frameObstacles) } } };
-  }, [sampledRaw, catalogue, frameObstacles, volumeFrame, config]);
+  const sampled=sampledRaw;
+  const clearance=useMemo(()=>{const bodyFrame=(pedagogicalPose.pose as {frame?:[Vec3,Vec3,Vec3]}).frame;
+    return catalogueProfile&&bodyFrame?clearanceRegions(bodyFrame,catalogueProfile.magnetBody,frameObstacles??[]):[];
+  },[catalogueProfile,pedagogicalPose,frameObstacles]);
   const [timelineResult, setPedTimeline] = useState<(ReturnType<typeof placementTimeline>&{key:string}) | null>(null);
-  const clipGeneration=config.machine?animationGeneration(config.machine.assetKey,config.machine.unitScale):0;
   const timelineKey=pedagogicalTimelineKey(effectiveExperiment,config,machineAssetId,envelopes,clipGeneration)+'|'+(catalogue?catalogueProfile?.version:'frozen');
   const pedTimeline=eligible&&timelineResult?.key===timelineKey?timelineResult:null;
   useEffect(() => {
@@ -439,10 +443,12 @@ export default function MagneticWorkshop({
   // Seuils mémorisés par classe : un objet frais à chaque frame ne doit pas reconstruire les surfaces.
   const layerClassName = catalogueProfile ? catalogueProfile.className : effectiveExperiment.className;
   const layerThresholds = useMemo(() => classThresholds(layerClassName), [layerClassName]);
-  const experimentalLayer = pedagogical ? <PedagogicalLayer frame={pedagogicalPose} settings={effectiveExperiment} volume={sampled.volume} zones={zones} zonesOnly={catalogue} thresholds={layerThresholds}/> : undefined;
+  const experimentalLayer = pedagogical ? <PedagogicalLayer frame={pedagogicalPose} settings={effectiveExperiment} volume={sampled.volume} zones={zones} zonesOnly={catalogue} thresholds={layerThresholds} clearance={clearance}/> : undefined;
   // Coupe instantanée : le worker ne calcule QUE le plan choisi (jamais le volume entier), en pause.
   const cutSampled = usePedagogicalCut(pedagogical && eligible && !playing && view === "top", activeExperiment, pedagogicalPose, config.machine ? frameObstacles : null, catalogue ? config : undefined);
-  const cutVolume = cutSampled.volume;
+  const cutVolume=useMemo(()=>catalogue&&playing&&sampled.volume&&layerThresholds&&view==='top'
+    ? sectionVolume(sampled.volume,pedagogicalPose.pose.center[2],layerThresholds,clearance) : cutSampled.volume,
+    [catalogue,playing,sampled.volume,layerThresholds,pedagogicalPose,clearance,cutSampled.volume,view]);
   // Circuit de principe : même instant et même moteur que le bandeau ; jamais le calcul binaire historique.
   const circuitContact: Contact = catalogue && catalogueProfile && catalogueProfile.contact !== "A" ? "unknown" : placement.state === "favorable" ? "closed" : placement.state === "unfavorable" ? "open" : "unknown";
   /** Vitesse de lecture. Par défaut un aller-retour dure 6 s : la lecture
@@ -1555,31 +1561,34 @@ export default function MagneticWorkshop({
       </fieldset>
     ) : null;
 
+  const stopPreparation = () => { prepCancel.current?.(); prepCancel.current=null; setPreparing(false); };
   const playButton = (
     <button
       ref={playRef}
       className="mw-button mw-wide mw-run"
-      disabled={!machineReady || preparing}
+      disabled={!machineReady || reduced}
       aria-pressed={playing}
       onClick={() => {
+        if(preparing){stopPreparation();return;}
         if (progress >= 1) setProgress(0);
         // Pivot : plan d'orientations adaptatif (frontière centrale ≤ 0,5 mm) préparé avant lecture.
         if (!playing && pivotPlanKey && plannedKey !== pivotPlanKey) {
           prepCancel.current?.();
-          setPreparing(true); setPrepFailed(false);
+          setPreparing(true); setPrepFailed(false);setPrepProgress({done:0,total:0});
           const key = pivotPlanKey;
           prepCancel.current = preparePivot(config, (u) => { const f = catalogueFrame(config, u); return { key: volumeKey(activeExperiment, f, null, config), settings: activeExperiment, frame: f, obstacles: null, catalogue: config }; }, (plan) => {
             prepCancel.current = null; setPreparing(false);
             if (!plan) { setPrepFailed(true); return; }
             setPivotPlan(plan); setPlannedKey(key); setPlaying(true);
-          });
+          },Infinity,undefined,(done,total)=>setPrepProgress({done,total}));
           return;
         }
         setPlaying(!playing);
       }}
     >
       {playing ? <Pause size={17} /> : <Play size={17} />}
-      {t(preparing ? "Préparation des orientations…" : playing ? "Pause" : prepFailed ? "Réessayer la préparation" : "Lancer le mouvement")}
+      {t(preparing ? "Annuler la préparation" : playing ? "Pause" : prepFailed ? "Réessayer la préparation" : "Lancer le mouvement")}
+      {preparing&&<span className="t-metric">{prepProgress.total?Math.floor(100*prepProgress.done/prepProgress.total)+" %":"…"}</span>}
     </button>
   );
 
@@ -2337,11 +2346,13 @@ export default function MagneticWorkshop({
               sample={pedagogical ? {...sample,contact:"unknown"} : sample}
               progress={progress}
               setProgress={(v) => {
+                stopPreparation();
                 setPlaying(false);
                 setProgress(v);
               }}
               playing={playing}
-              setPlaying={setPlaying}
+              playControl={catalogue ? playButton : undefined}
+              setPlaying={(value) => { if(!value)stopPreparation(); setPlaying(value); }}
               reason={result.reason}
               onDemo={openDemo}
               onMarkers={setMarkers}
@@ -2519,7 +2530,7 @@ export default function MagneticWorkshop({
               ))}
             </div>
           )}
-          {catalogue ? <div className="mw-verdict-banner notice-info" role="status" data-testid="client-pedagogical-verdict"><strong className="t-title-s">{t(PLACEMENT_LABEL[placement.state])}</strong><span className="t-caption">{t(CATALOGUE_LABELS.notice)}</span><span className="t-body">{t(catalogueProfile?CATALOGUE_LABELS[catalogueProfile.status]:CATALOGUE_LABELS.analogy)}</span>{catalogueProfile&&catalogueVerdictNotes(config,catalogueProfile).map(n=><span key={n} className="t-caption" data-testid="catalogue-verdict-note">{t(n)}</span>)}<span className="t-caption">{t(placement.state==='favorable'?'Zones d’activation estimées':placement.cause==='overlap'?'Collision du corps de l’aimant avec l’enveloppe ou le montage':'Position ou orientation à vérifier avec Standex')}</span>{pivotT!==null&&playing&&<span className="t-caption">{t('Pendant la lecture, les zones montrent l’orientation préparée la plus proche')}</span>}</div> : pedagogical ? <PedagogicalBanner evidence={placement} diagnosis={diagnosis} remedy={remedy} onPropose={r=>{if(r.kind==="verified")setSuggestion(r.config);}}/> : verdictBanner}
+          {catalogue ? <div className="mw-verdict-banner notice-info" role="status" data-testid="client-pedagogical-verdict"><strong className="t-title-s">{t(PLACEMENT_LABEL[placement.state])}</strong><span className="t-caption">{t(CATALOGUE_LABELS.notice)}</span><span className="t-body">{t(catalogueProfile?CATALOGUE_LABELS[catalogueProfile.status]:CATALOGUE_LABELS.analogy)}</span>{catalogueProfile&&catalogueVerdictNotes(config,catalogueProfile).map(n=><span key={n} className="t-caption" data-testid="catalogue-verdict-note">{t(n)}</span>)}<span className="t-caption">{t(placement.state==='favorable'?'Zones d’activation estimées':placement.cause==='overlap'?'Collision du corps de l’aimant avec l’enveloppe ou le montage':'Position ou orientation à vérifier avec Standex')}</span>{pivotT!==null&&playing&&<span className="t-caption">{t(orientationTransition?'La forme varie rapidement près de cette orientation. Mettre en pause pour affiner les zones.':'Pendant la lecture, les zones montrent l’orientation préparée la plus proche')}</span>}{clientPedagogical && <PivotNotes failed={prepFailed} hidden={pivotHidden} />}</div> : pedagogical ? <PedagogicalBanner evidence={placement} diagnosis={diagnosis} remedy={remedy} onPropose={r=>{if(r.kind==="verified")setSuggestion(r.config);}}/> : verdictBanner}
           {clientPedagogical&&exploring&&<p className="notice-info t-body" data-testid="client-exploration-context">{t('Exemple générique — ce résultat ne concerne pas le couple de votre dossier')}</p>}
           <div
             className="mw-canvas"
@@ -2552,7 +2563,7 @@ export default function MagneticWorkshop({
             </div>
             {/* Circuit de principe réintégré pour le parcours client (demande du 28/10) : même instant,
                 même moteur que le bandeau ; le banc staff conserve son rendu sans circuit. */}
-            {clientPedagogical && <PivotNotes failed={prepFailed} hidden={pivotHidden} truncated={!!(pivotPlanKey && plannedKey === pivotPlanKey && pivotPlan?.truncated)} />}{clientPedagogical ? (showCircuit && <div className="mw-circuit-ped" data-testid="pedagogical-circuit"><span className="t-caption">{t("Circuit de principe · état indicatif")}</span><ContactCircuit contact={circuitContact} /></div>) : !pedagogical ? <ContactCircuit contact={sample.contact} /> : null}
+            {clientPedagogical ? (showCircuit && <div className="mw-circuit-ped" data-testid="pedagogical-circuit"><span className="t-caption">{t("Circuit de principe · état indicatif")}</span><ContactCircuit contact={circuitContact} /></div>) : !pedagogical ? <ContactCircuit contact={sample.contact} /> : null}
             {/* Outil de pointage du câble : seulement quand le pointage est
                 réellement actif. Les trajets existants restent intacts. */}
             {!exploring && cableRouting && tool === "cable" ? (
@@ -2598,7 +2609,7 @@ export default function MagneticWorkshop({
                 </p>
               </div>
             ) : null}
-            {pedagogical && view === "top" ? (playing ? <p className="notice-info t-body" data-testid="cut-paused-note">{t('Mettez en pause pour voir la coupe à cet instant')}</p> : <PedagogicalCut volume={cutVolume} frame={pedagogicalPose} body={catalogueProfile?.body} reedMm={catalogueProfile?EXPERIMENT.effectiveLengthMm*catalogueProfile.lengthMm/14:undefined} zones={zones}/>) : machine ? (
+            {pedagogical && view === "top" ? (playing && !catalogue ? <p className="notice-info t-body" data-testid="cut-paused-note">{t('Mettez en pause pour voir la coupe à cet instant')}</p> : <PedagogicalCut volume={cutVolume} frame={pedagogicalPose} body={catalogueProfile?.body} reedMm={catalogueProfile?EXPERIMENT.effectiveLengthMm*catalogueProfile.lengthMm/14:undefined} zones={zones} thresholds={catalogue?layerThresholds:null}/>) : machine ? (
               assetError ? (
                 <div className="mw-loading" role="alert">
                   {t(assetError)}
@@ -2773,6 +2784,7 @@ export default function MagneticWorkshop({
               step="0.1"
               value={progress * 100}
               onChange={(e) => {
+                stopPreparation();
                 setPlaying(false);
                 setProgress(Number(e.target.value) / 100);
               }}

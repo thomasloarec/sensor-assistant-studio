@@ -10,6 +10,7 @@ import { sensorById } from '@/lib/standex/sensor-catalog';
 import { isPcbSensor } from '@/lib/leadmagnet/product-presentation';
 import type { ReactNode } from 'react';
 import { CATALOGUE_LABELS } from '@/lib/standex/catalogue-pedagogical';
+import { discoveryPatch } from '@/lib/standex/discovery-preset';
 
 /** Colonne de découverte avant import : trois choix (disposition, mouvement, quart de tour),
  * puis observation. Les curseurs numériques restent disponibles après import ou en exploration ;
@@ -33,12 +34,12 @@ export function ClientPedagogicalControls({config,update,onCatalog,onExplore,onC
       <section className="mw-choice" aria-label={t('Mouvement')}>
         <p className="t-label">{t('Mouvement')}</p>
         <div className="mw-approach-row">
-          {motions.map(([id,label])=><button key={id} type="button" className="mw-approach-button" aria-pressed={config.motion===id} onClick={()=>update({motion:id})}><span>{t(label)}</span></button>)}
+          {motions.map(([id,label])=><button key={id} type="button" className="mw-approach-button" aria-pressed={config.motion===id} onClick={()=>update(discoveryPatch(config,{motion:id}))}><span>{t(label)}</span></button>)}
         </div>
       </section>
       <section className="mw-choice" aria-label={t('Orientation de l’aimant')}>
         <p className="t-label">{t('Orientation de l’aimant')}</p>
-        <Button variant="secondary" data-testid="quarter-turn" onClick={()=>update({magnetAngle:((config.magnetAngle+90+180)%360)-180})}>{t('Tourner de 90°')}</Button>
+        <Button variant="secondary" data-testid="quarter-turn" onClick={()=>update(discoveryPatch(config,{magnetAngle:((config.magnetAngle+90+180)%360)-180}))}>{t('Tourner de 90°')}</Button>
         <p className="t-caption">{config.magnetAngle===0?t('Aucune rotation appliquée'):msg('Rotation appliquée : {0}°',[config.magnetAngle])}</p>
       </section>
     </>}
@@ -54,6 +55,7 @@ export function ClientPedagogicalControls({config,update,onCatalog,onExplore,onC
     </details>
     {!isPcbSensor(config.sensorId) && <Button variant="secondary" disabled={!config.machine} onClick={onCable}>{t('Pointer le câble dans la 3D')}</Button>}
     <details className="mw-advanced" data-testid="client-pedagogical-sources"><summary>{t('Sources et limites')}</summary>
+      <p className="t-caption">{t('Une orientation calculée est affichée, sans mélange de volumes. Le contrôle sur trois rayons centraux ne certifie pas tout le volume.')}</p>
       {adapter.reasons.map(reason=><p className="t-caption" key={reason}>{t(reason)}</p>)}
       <p className="t-caption">{t(catalogueFamilySentence(adapter.model))}</p><p className="t-caption">{t(CATALOGUE_LABELS.datum)}</p><p className="t-caption">{t('Longueur de reed hypothétique')} : <span className="t-metric">{adapter.model.lengthMm} mm</span></p><p className="t-caption">{t('Détail technique')} · {adapter.version}</p>
       <p className="t-caption">{t('Plage documentaire indicative, sans validation de la simulation.')}</p>

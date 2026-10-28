@@ -8,6 +8,9 @@ import { PROFILE } from '@/lib/detection-lab/profile';
 import { EXPERIMENT, type ExperimentSettings, type SampledVolume, type SampleCell } from '@/lib/detection-lab/workshop-experiment';
 import type { PedagogicalFrame } from '@/lib/standex/pedagogical-poses';
 import type { VolumeField } from '@/lib/standex/catalogue-pedagogical';
+import type { ClearanceRegion } from '@/lib/standex/zone-clearance';
+import { ZoneMaterial } from './zone-material';
+import { contourPath } from '@/lib/standex/zone-section';
 
 /** Boundary faces of sampled voxels. Never interpolate across null/zero samples. */
 export function surface(cells:SampleCell[],zone:1|2) {
@@ -21,60 +24,9 @@ export function surface(cells:SampleCell[],zone:1|2) {
   }
   const geometry=new BufferGeometry();geometry.setAttribute('position',new Float32BufferAttribute(positions,3));geometry.computeVertexNormals();return geometry;
 }
-/** Smooth threshold surface (surface nets) over the SAME sampled field: shared vertices, smooth
- * normals, local spatial interpolation at constant threshold only. Null or blocked nodes are
- * outside, so nothing bridges the central zero gap, obstacles stay masked and the domain
- * boundary is never closed. Rendering only — the verdict never reads this mesh. */
-export function smoothSurface(field:VolumeField,threshold:number):BufferGeometry {
-  const {xs,ys,zs,values,blocked}=field,nx=xs.length,ny=ys.length,nz=zs.length;
-  const at=(i:number,j:number,k:number)=>(k*ny+j)*nx+i;
-  const value=(idx:number)=>blocked[idx]?null:values[idx]??null;
-  const inside=(idx:number)=>{const v=value(idx);return v!==null&&v>=threshold;};
-  const coord=(i:number,j:number,k:number):[number,number,number]=>[xs[i]??0,ys[j]??0,zs[k]??0];
-  const EDGES:[number,number,number][][]=[[[0,0,0],[1,0,0]],[[0,1,0],[1,1,0]],[[0,0,1],[1,0,1]],[[0,1,1],[1,1,1]],[[0,0,0],[0,1,0]],[[1,0,0],[1,1,0]],[[0,0,1],[0,1,1]],[[1,0,1],[1,1,1]],[[0,0,0],[0,0,1]],[[1,0,0],[1,0,1]],[[0,1,0],[0,1,1]],[[1,1,0],[1,1,1]]];
-  const cellVertex=new Map<number,number>(),positions:number[]=[];
-  for(let k=0;k<nz-1;k++)for(let j=0;j<ny-1;j++)for(let i=0;i<nx-1;i++){
-    const corners=[0,1,0,1,0,1,0,1].map((_,e)=>at(i+(e&1),j+((e>>1)&1),k+((e>>2)&1)));
-    const mask=corners.map(inside);
-    if(mask.every(Boolean)||mask.every(m=>!m))continue;
-    let px=0,py=0,pz=0,crossings=0;
-    for(const [ca,cb] of EDGES){
-      const ia=at(i+(ca?.[0]??0),j+(ca?.[1]??0),k+(ca?.[2]??0)),ib=at(i+(cb?.[0]??0),j+(cb?.[1]??0),k+(cb?.[2]??0));
-      if(inside(ia)===inside(ib))continue;
-      const va=value(ia),vb=value(ib);
-      const pa=coord(i+(ca?.[0]??0),j+(ca?.[1]??0),k+(ca?.[2]??0)),pb=coord(i+(cb?.[0]??0),j+(cb?.[1]??0),k+(cb?.[2]??0));
-      const f=va!==null&&vb!==null&&vb!==va?Math.min(1,Math.max(0,(threshold-va)/(vb-va))):.5;
-      px+=pa[0]+f*(pb[0]-pa[0]);py+=pa[1]+f*(pb[1]-pa[1]);pz+=pa[2]+f*(pb[2]-pa[2]);crossings++;
-    }
-    if(!crossings)continue;
-    cellVertex.set((k*(ny-1)+j)*(nx-1)+i,positions.length/3);
-    positions.push(px/crossings,py/crossings,pz/crossings);
-  }
-  const indices:number[]=[];
-  const quad=(cells:(number|undefined)[],flip:boolean)=>{
-    const vs=cells.flatMap(c=>c===undefined?[]:[cellVertex.get(c)]).filter((v):v is number=>v!==undefined);
-    if(vs.length!==4)return;
-    const [a,b,c,d]=vs as [number,number,number,number];
-    if(flip)indices.push(a,c,b,a,d,c);else indices.push(a,b,c,a,c,d);
-  };
-  const cell=(i:number,j:number,k:number)=>i>=0&&j>=0&&k>=0&&i<nx-1&&j<ny-1&&k<nz-1?(k*(ny-1)+j)*(nx-1)+i:undefined;
-  for(let k=0;k<nz;k++)for(let j=0;j<ny;j++)for(let i=0;i<nx-1;i++){
-    const a=at(i,j,k),b=at(i+1,j,k);if(inside(a)===inside(b))continue;
-    quad([cell(i,j-1,k-1),cell(i,j,k-1),cell(i,j,k),cell(i,j-1,k)],inside(a));
-  }
-  for(let k=0;k<nz;k++)for(let j=0;j<ny-1;j++)for(let i=0;i<nx;i++){
-    const a=at(i,j,k),b=at(i,j+1,k);if(inside(a)===inside(b))continue;
-    quad([cell(i-1,j,k-1),cell(i-1,j,k),cell(i,j,k),cell(i,j,k-1)],inside(a));
-  }
-  for(let k=0;k<nz-1;k++)for(let j=0;j<ny;j++)for(let i=0;i<nx;i++){
-    const a=at(i,j,k),b=at(i,j,k+1);if(inside(a)===inside(b))continue;
-    quad([cell(i-1,j-1,k),cell(i,j-1,k),cell(i,j,k),cell(i-1,j,k)],inside(a));
-  }
-  const geometry=new BufferGeometry();
-  geometry.setAttribute('position',new Float32BufferAttribute(positions,3));
-  geometry.setIndex(indices);geometry.computeVertexNormals();return geometry;
-}
-export function PedagogicalLayer({frame,settings,volume,zones=true,zonesOnly=false,thresholds}:{frame:PedagogicalFrame;settings:ExperimentSettings;volume:SampledVolume|null;zones?:boolean;zonesOnly?:boolean;thresholds?:{low:number|null;high:number}|null}) {
+export { smoothSurface } from '@/lib/standex/zone-surface';
+import { smoothSurface, unpackSurface, type PackedSurface } from '@/lib/standex/zone-surface';
+export function PedagogicalLayer({frame,settings,volume,zones=true,zonesOnly=false,thresholds,clearance=[]}:{frame:PedagogicalFrame;settings:ExperimentSettings;volume:SampledVolume|null;zones?:boolean;zonesOnly?:boolean;thresholds?:{low:number|null;high:number}|null;clearance?:readonly ClearanceRegion[]}) {
   const magnet=PILOT_MAGNETS.find(m=>m.id===settings.magnetId);
   const rotation=useMemo(()=>new Quaternion().setFromRotationMatrix(new Matrix4().makeBasis(...frame.basis.map(v=>new Vector3(...v)) as [Vector3,Vector3,Vector3])),[frame.basis]);
   const q=useMemo(()=>new Quaternion().setFromUnitVectors(new Vector3(0,1,0),new Vector3(...frame.pose.axis).normalize()),[frame.pose.axis]);
@@ -83,6 +35,8 @@ export function PedagogicalLayer({frame,settings,volume,zones=true,zonesOnly=fal
   const low=thresholds?.low??null,high=thresholds?.high??null;
   const geometries=useMemo(()=>{
     if(!volume)return [null,null];
+    const packed=(volume as SampledVolume&{surfaces?:(PackedSurface|null)[]}).surfaces;
+    if(packed)return packed.map(p=>p?unpackSurface(p):null);
     if(field&&high!==null)return [low!==null?smoothSurface(field,low):null,smoothSurface(field,high)];
     return [surface(volume.cells,1),surface(volume.cells,2)];
   },[volume,field,low,high]);
@@ -92,7 +46,7 @@ export function PedagogicalLayer({frame,settings,volume,zones=true,zonesOnly=fal
      {/* Zone identity preserved: index 0 = coque (seuil bas), index 1 = noyau (seuil haut).
          Class A (low=null) keeps the core cyan at index 1 — never recoloured as shell. */}
      {zones&&geometries.map((geometry,i)=>geometry&&<mesh key={i} geometry={geometry} renderOrder={i}>
-      <meshBasicMaterial color={i===0?'#d2a746':'#32a9a8'} opacity={i===0?.12:.22} transparent depthWrite={false} side={DoubleSide}/>
+      <ZoneMaterial core={i===1} regions={clearance}/>
     </mesh>)}
     {!zonesOnly&&magnet&&<>
     {/* Generic sensor body = EXACTLY the tested mechanical envelope (glass ±7 mm + r 1.1 mm = 16,2 × Ø2,2 mm). Opaque. */}
@@ -108,18 +62,20 @@ export function PedagogicalLayer({frame,settings,volume,zones=true,zonesOnly=fal
     </>}
   </group>;
 }
-export function PedagogicalCut({volume,frame,body,reedMm,zones=true}:{volume:SampledVolume|null;frame:PedagogicalFrame;body?:readonly number[]|undefined;reedMm?:number|undefined;zones?:boolean}) {
+export function PedagogicalCut({volume,frame,body,reedMm,zones=true,thresholds}:{volume:SampledVolume|null;frame:PedagogicalFrame;body?:readonly number[]|undefined;reedMm?:number|undefined;zones?:boolean;thresholds?:{low:number|null;high:number}|null}) {
   const ref=useRef<SVGSVGElement>(null),[size,setSize]=useState({width:640,height:590});
   useEffect(()=>{const el=ref.current;if(!el)return;const observer=new ResizeObserver(entries=>{const r=entries[0]?.contentRect;if(r&&r.width>0&&r.height>0)setSize({width:r.width,height:r.height});});observer.observe(el);return()=>observer.disconnect();},[]);
   const scale=Math.max(.5,Math.min((size.width-100)/48,(size.height-110)/48));
   const cx=size.width/2+15,cy=size.height/2+5,x=(n:number)=>cx+n*scale,y=(n:number)=>cy-n*scale;
   const {envelopeRadiusMm:rr}=PROFILE.reed,inPlane=Math.abs(frame.pose.center[2])<rr,hatched=!!volume?.cut.some(c=>c.blocked);
+  const paths=useMemo(()=>thresholds&&volume?[thresholds.low===null?'':contourPath(volume.cut,thresholds.low),contourPath(volume.cut,thresholds.high)]:null,[volume,thresholds?.low,thresholds?.high]);
   // Long legends live in HTML below the drawing so they wrap on small screens (never truncated in SVG).
   return <figure className="mw-ped-cut-figure"><svg ref={ref} className="mw-ped-cut" viewBox={`0 0 ${size.width} ${size.height}`} role="img" aria-label={t('Coupe du même calcul au niveau du centre de l’aimant')}>
     <defs><pattern id="mw-cut-hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" className="mw-cut-blocked-bg"/><line x1="0" y1="0" x2="0" y2="6" className="mw-cut-blocked-line"/></pattern></defs>
     <text x="12" y="22" className="t-caption">{t('Repère reed · millimètres')}</text>
     <text x="12" y="42" className="t-caption">z = {frame.pose.center[2].toFixed(1)} mm</text>
-    {zones&&volume?.cut.map(c=><rect key={`${c.x},${c.y}`} x={x(c.x0)} y={y(c.y1)} width={(c.x1-c.x0)*scale} height={(c.y1-c.y0)*scale} className={c.blocked?'mw-cut-blocked':c.response===null?'mw-cut-collision':c.zone===2?'mw-cut-high':c.zone===1?'mw-cut-low':'mw-cut-empty'}/>)}
+    {zones&&volume?.cut.filter(c=>!paths||c.blocked||c.response===null).map(c=><rect key={`${c.x},${c.y}`} x={x(c.x0)} y={y(c.y1)} width={(c.x1-c.x0)*scale} height={(c.y1-c.y0)*scale} className={c.blocked?'mw-cut-blocked':c.response===null?'mw-cut-collision':c.zone===2?'mw-cut-high':c.zone===1?'mw-cut-low':'mw-cut-empty'}/>)}
+    {zones&&paths&&<g transform={`translate(${cx} ${cy}) scale(${scale} ${-scale})`} data-testid="smooth-cut"><path d={paths[0]} className="mw-cut-low"/><path d={paths[1]} className="mw-cut-high"/></g>}
     <line x1={x(-24)} y1={cy} x2={x(24)} y2={cy} className="mw-cut-axis"/>
     <line x1={cx} y1={y(24)} x2={cx} y2={y(-24)} className="mw-cut-axis"/>
     {[-20,0,20].map(n=><g key={n}><text x={x(n)} y={y(-24)+20} textAnchor="middle" className="t-caption">{n}</text><text x={x(-24)-10} y={y(n)+5} textAnchor="end" className="t-caption">{n}</text></g>)}

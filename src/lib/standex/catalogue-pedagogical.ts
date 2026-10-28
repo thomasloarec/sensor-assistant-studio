@@ -144,14 +144,29 @@ export function catalogueVolume(c:WorkshopConfig,axis:Vec3,planeZ:number,obstacl
  const cells:SampledVolume['cells']=[],cut:SampledVolume['cut']=[];
  const field:VolumeField={xs,ys,zs,values:[],blocked:[]};
  const model=catalogueModel(c);
+ const th=classThresholds(model.className)!;
+ // Nominal uniform magnets + centred reed/body are invariant under central inversion.
+ // In a planar body frame with a planar pole axis, reflection in y=0 is invariant too.
+ // Reuse exact samples only under those symmetries (never with imported obstacles or a shifted grid).
+ const symmetric=obstacles.length===0&&planeZ===0;
+ const bodyFrame=frame??magnetBodyFrame(c,c.magnetAngle);
+ const planar=symmetric&&Math.abs(axis[1])<1e-12&&bodyFrame.every(a=>Math.abs(a[1])<1e-12||Math.abs(Math.abs(a[1])-1)<1e-12);
  const bound=(ns:number[],i:number):[number,number]=>[i===0?-extent:((ns[i-1]??0)+(ns[i]??0))/2,i===ns.length-1?extent:((ns[i]??0)+(ns[i+1]??0))/2];
  // Same evaluator as point/cut/timeline, including body collision; no angle quantization.
  for(let k=0;k<zs.length;k++)for(let j=0;j<ys.length;j++)for(let i=0;i<xs.length;i++){
-  const x=xs[i]??0,y=ys[j]??0,z=zs[k]??0,e=cataloguePlacement(c,frame?{center:[x,y,z],axis,frame}:{center:[x,y,z],axis},obstacles,model,true);
+  const x=xs[i]??0,y=ys[j]??0,z=zs[k]??0,index=(k*ys.length+j)*xs.length+i;
+  const inverse=((zs.length-1-k)*ys.length+(ys.length-1-j))*xs.length+(xs.length-1-i);
+  const reflected=(k*ys.length+(ys.length-1-j))*xs.length+i;
+  const both=((zs.length-1-k)*ys.length+j)*xs.length+(xs.length-1-i);
+  const reuse=symmetric?Math.min(index,inverse,...(planar?[reflected,both]:[])):index;
+  const e=reuse<index?null:cataloguePlacement(c,frame?{center:[x,y,z],axis,frame}:{center:[x,y,z],axis},obstacles,model,true);
+  const response=reuse<index?field.values[reuse]??null:e?.nominal?.ok?e.nominal.response:null;
+  const blocked=reuse<index?field.blocked[reuse]??false:e?.cause==='overlap';
+  const zone:0|1|2=response===null?0:response>=th.high?2:th.low!==null&&response>=th.low?1:0;
   const [x0,x1]=bound(xs,i),[y0,y1]=bound(ys,j),[z0,z1]=bound(zs,k);
-  const cell={i,j,k,x,y,z,x0,x1,y0,y1,z0,z1,zone:e.zone,response:e.nominal?.ok?e.nominal.response:null,blocked:e.cause==='overlap'};
+  const cell={i,j,k,x,y,z,x0,x1,y0,y1,z0,z1,zone,response,blocked};
   field.values.push(cell.response);field.blocked.push(cell.blocked);
-  if(e.zone)cells.push(cell);if(z===planeZ)cut.push(cell);
+  if(zone)cells.push(cell);if(z===planeZ)cut.push(cell);
  }
  return {key:JSON.stringify([CATALOGUE_MODEL_VERSION,c,axis,frame??null,planeZ,obstacles]),cells,cut,field,axis,planeZ,extent,computeMs:performance.now()-start,nodeCount:xs.length*ys.length*zs.length,truncated:cells.some(c=>Math.max(Math.abs(c.x),Math.abs(c.y),Math.abs(c.z))===extent)};
 }
@@ -209,9 +224,12 @@ export function obstacleBlocked(c:WorkshopConfig,field:VolumeField,frame:[Vec3,V
 export const PIVOT_PROBE_Z=[8,12,16] as const;
 export const PIVOT_TOL_MM=0.5;
 export function pivotBoundary(c:WorkshopConfig,t:number,model=catalogueModel(c),extent=24):(number|null)[]{
- const f=catalogueFrame(c,t);
+ return orientationBoundary(c,catalogueFrame(c,t).pose,model,extent);
+}
+/** Numeric pose adapter also works for loaded clips. Tracks stay in the browser tab. */
+export function orientationBoundary(c:WorkshopConfig,pose:CataloguePose,model=catalogueModel(c),extent=24):(number|null)[]{
  return PIVOT_PROBE_Z.flatMap(z=>{let shell:number|null=null,core:number|null=null;
-  for(let x=0;x<=extent+1e-9&&core===null;x+=0.25){const e=cataloguePlacement(c,{center:[x,0,z],axis:f.pose.axis,...(f.pose.frame?{frame:f.pose.frame}:{})},[],model,true);
+  for(let x=0;x<=extent+1e-9&&core===null;x+=0.25){const e=cataloguePlacement(c,{...pose,center:[x,0,z]},[],model,true);
    if(shell===null&&(e.zone??0)>=1)shell=x;if(e.zone===2)core=x;}
   return [shell,core];});
 }
@@ -222,12 +240,12 @@ export const PIVOT_SEED=16;
  * interval compares start/middle/end; it is certified only when all three pairs differ by
  * ≤ tol on every probe (null≠number fails), otherwise bisected down to minDt, then kept
  * uncertified — its zones are never shown as current. No volume is interpolated. */
-export function adaptivePivotPlan(probe:(t:number)=>(number|null)[],minDt=1/128,tol=PIVOT_TOL_MM):PivotPlan{
+export function adaptivePivotPlan(probe:(t:number)=>(number|null)[],minDt=1/128,tol=PIVOT_TOL_MM,orientationFits:(a:number,m:number,b:number)=>boolean=()=>true):PivotPlan{
  const memo=new Map<number,(number|null)[]>(),at=(t:number)=>{let v=memo.get(t);if(!v){v=probe(t);memo.set(t,v);}return v;};
  const ok=(a:(number|null)[],b:(number|null)[])=>a.length===b.length&&a.every((x,i)=>{const y=b[i]??null;return x===null||y===null?x===y:Math.abs(x-y)<=tol;});
  const intervals:PivotPlan['intervals']=[];
  const split=(t0:number,t1:number)=>{const m=(t0+t1)/2,a=at(t0),b=at(m),c=at(t1);
-  if(ok(a,b)&&ok(b,c)&&ok(a,c)){intervals.push({t0,t1,certified:true});return;}
+  if(ok(a,b)&&ok(b,c)&&ok(a,c)&&orientationFits(t0,m,t1)){intervals.push({t0,t1,certified:true});return;}
   if(t1-t0<=minDt){intervals.push({t0,t1,certified:false});return;}split(t0,m);split(m,t1);};
  for(let s=0;s<PIVOT_SEED;s++)split(s/PIVOT_SEED,(s+1)/PIVOT_SEED);
  return {samples:[...new Set(intervals.flatMap(i=>[i.t0,i.t1]))].sort((a,b)=>a-b),intervals};
@@ -242,4 +260,12 @@ export function pivotSampleAt(plan:PivotPlan,u:number):number|null{
  * i.e. the caller uses the exact catalogueFrame(config, progress). */
 export function activePivotT(playing:boolean,plan:PivotPlan|null,u:number):number|null{
  return playing&&plan?pivotSampleAt(plan,u):null;
+}
+
+/** Display only: select one computed orientation, never blend two volumes. The sentinel
+ * result remains available separately; an unresolved transition is labelled, not certified. */
+export function nearestPreparedT(plan:PivotPlan,u:number):number|null{
+ let nearest:number|null=null,delta=Infinity;
+ for(const t of plan.samples){const d=Math.abs(u-t);if(d<delta){delta=d;nearest=t;}}
+ return nearest;
 }
