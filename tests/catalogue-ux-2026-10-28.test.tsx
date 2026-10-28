@@ -1,5 +1,7 @@
+import { GlobalRegistrator } from '@happy-dom/global-registrator';
 import { describe, expect, test } from 'bun:test';
 import React from 'react';
+if (typeof document === 'undefined') GlobalRegistrator.register({ url: 'http://localhost/' });
 import { render, fireEvent } from '@testing-library/react';
 import { volumeKey, cutKey } from '../src/components/standex/workshop/pedagogical-controls';
 import { smoothSurface } from '../src/components/standex/workshop/pedagogical-layer';

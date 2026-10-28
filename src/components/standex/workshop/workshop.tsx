@@ -422,7 +422,7 @@ export default function MagneticWorkshop({
   const cutSampled = usePedagogicalCut(pedagogical && eligible && !playing && view === "top", activeExperiment, pedagogicalPose, config.machine ? frameObstacles : null, catalogue ? config : undefined);
   const cutVolume = useMemo(() => sampled.volume ? { ...sampled.volume, cut: cutSampled.volume?.cut ?? [] } : null, [sampled.volume, cutSampled.volume]);
   // Circuit de principe : même instant et même moteur que le bandeau ; jamais le calcul binaire historique.
-  const circuitContact: Contact = catalogue && catalogueProfile && catalogueProfile.contact !== "1A" ? "unknown" : placement.state === "favorable" ? "closed" : placement.state === "unfavorable" ? "open" : "unknown";
+  const circuitContact: Contact = catalogue && catalogueProfile && catalogueProfile.contact !== "A" ? "unknown" : placement.state === "favorable" ? "closed" : placement.state === "unfavorable" ? "open" : "unknown";
   /** Vitesse de lecture. Par défaut un aller-retour dure 6 s : la lecture
    * ralentie reste disponible dans les réglages avancés, elle ne disparaît pas. */
   const [playbackSpeed, setPlaybackSpeed] = useState<"normal" | "slow">("normal");
