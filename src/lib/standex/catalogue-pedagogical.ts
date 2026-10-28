@@ -155,6 +155,20 @@ export function catalogueVolume(c:WorkshopConfig,axis:Vec3,planeZ:number,obstacl
  }
  return {key:JSON.stringify([CATALOGUE_MODEL_VERSION,c,axis,frame??null,planeZ,obstacles]),cells,cut,field,axis,planeZ,extent,computeMs:performance.now()-start,nodeCount:xs.length*ys.length*zs.length,truncated:cells.some(c=>Math.max(Math.abs(c.x),Math.abs(c.y),Math.abs(c.z))===extent)};
 }
+/** Plane-only cut: the SAME evaluator as the volume, but only the chosen plane is computed —
+ * never the whole 3D grid. Used while reading so a paused instant costs one plane, not one volume. */
+export function catalogueCut(c:WorkshopConfig,axis:Vec3,planeZ:number,obstacles:readonly Obb[]=[],extent=24,frame?:Frame):CatalogueVolume{
+ const start=performance.now(),xs=axisNodes(-extent,extent,true),ys=axisNodes(-extent,extent);
+ const cut:SampledVolume['cut']=[];
+ const model=catalogueModel(c);
+ const bound=(ns:number[],i:number):[number,number]=>[i===0?-extent:((ns[i-1]??0)+(ns[i]??0))/2,i===ns.length-1?extent:((ns[i]??0)+(ns[i+1]??0))/2];
+ for(let j=0;j<ys.length;j++)for(let i=0;i<xs.length;i++){
+  const x=xs[i]??0,y=ys[j]??0,e=cataloguePlacement(c,frame?{center:[x,y,planeZ],axis,frame}:{center:[x,y,planeZ],axis},obstacles,model,true);
+  const [x0,x1]=bound(xs,i),[y0,y1]=bound(ys,j);
+  cut.push({i,j,k:0,x,y,z:planeZ,x0,x1,y0,y1,z0:planeZ,z1:planeZ,zone:e.zone,response:e.nominal?.ok?e.nominal.response:null,blocked:e.cause==='overlap'});
+ }
+ return {key:'',cells:[],cut,field:{xs,ys,zs:[planeZ],values:[],blocked:[]},axis,planeZ,extent,computeMs:performance.now()-start,nodeCount:xs.length*ys.length,truncated:false};
+}
 export function catalogueTimeline(c:WorkshopConfig,table?:readonly TableSample[],steps=128){
  const samples=table??Array.from({length:steps*2+1},(_,i)=>{const t=i/(steps*2);return {t,pose:catalogueFrame(c,t).pose,obstacles:[]};});
  const points=samples.map(s=>{const e=s.obstacles===null?{state:'unavailable' as const,nominal:null,zone:0 as const}:cataloguePlacement(c,s.pose,s.obstacles);return {t:s.t,state:e.state,response:e.nominal?.ok?e.nominal.response:null,zone:e.zone};});
