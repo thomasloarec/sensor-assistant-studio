@@ -73,7 +73,7 @@ export function preparePivot(config:WorkshopConfig,request:(t:number)=>PrepReque
   if(!live||token!==pinToken)return;
   if(!plan){if(!event.data.plan){finish(null);return;}
    const samples=event.data.plan.samples.slice(0,maxVolumes),kept=new Set(samples);
-   plan={samples,intervals:event.data.plan.intervals.map(i=>({...i,certified:i.certified&&kept.has(i.t0)&&kept.has(i.t1)}))};
+   plan={samples,truncated:event.data.plan.samples.length>maxVolumes,intervals:event.data.plan.intervals.map(i=>({...i,certified:i.certified&&kept.has(i.t0)&&kept.has(i.t1)}))};
    pending=samples.map(request);send();return;}
   const r=pending[index];
   if(!r||event.data.key!==r.key||!event.data.result||event.data.result.key!==r.key){finish(null);return;}
