@@ -33,7 +33,7 @@ function useWorkerVolume(enabled:boolean,available:boolean,key:string,mode:'volu
    worker=new Worker(new URL('./pedagogical.worker.ts',import.meta.url),{type:'module'});
    worker.onmessage=(event:MessageEvent<{key:string;result?:SampledVolume;error?:boolean}>)=>{
     if(!current||event.data.key!==key)return;
-    if(event.data.result&&event.data.result.key===key&&available){if(store.size>=3){const first=store.keys().next().value;if(first)store.delete(first);}store.set(key,event.data.result);setResult(event.data.result);}else setFailed(true);
+    if(event.data.result&&event.data.result.key===key&&available){if(store.size>=12){const first=store.keys().next().value;if(first)store.delete(first);}store.set(key,event.data.result);setResult(event.data.result);}else setFailed(true);
     setBusy(false);worker?.terminate();worker=null;
    };
    worker.onerror=()=>{if(current){setBusy(false);setFailed(true);}worker?.terminate();};
@@ -54,6 +54,29 @@ export function usePedagogicalCut(enabled:boolean,settings:ExperimentSettings,fr
  const available=!!catalogue||experimentAvailable(settings);
  return useWorkerVolume(enabled,available,cutKey(settings,frame,obstacles,catalogue),'cut',settings,frame,obstacles,catalogue);
 }
+/** Warm the volume cache for a set of prepared orientations BEFORE playback (pivot):
+ * one worker computes each exact orientation sequentially; nothing is interpolated and no
+ * old orientation is shown as current — the layer reads only these exact prepared keys. */
+export function prepareVolumes(requests:{key:string;settings:ExperimentSettings;frame:PedagogicalFrame;obstacles:readonly Obb[]|null;catalogue?:WorkshopConfig}[],onDone:(ok:boolean)=>void):()=>void{
+ const pending=requests.filter(r=>!cache.has(r.key));
+ if(!pending.length){onDone(true);return()=>{};}
+ if(typeof Worker==='undefined'){onDone(false);return()=>{};}
+ let current=true;const worker=new Worker(new URL('./pedagogical.worker.ts',import.meta.url),{type:'module'});
+ let index=0;
+ const send=()=>{
+  const r=pending[index];if(!r){worker.terminate();if(current)onDone(true);return;}
+  worker.postMessage({settings:r.settings,axis:r.frame.pose.axis,planeZ:r.frame.pose.center[2],key:r.key,mode:'volume',obstacles:r.obstacles??[],catalogue:r.catalogue,frame:r.catalogue?(r.frame.pose as {frame?:unknown}).frame:undefined});
+ };
+ worker.onmessage=(event:MessageEvent<{key:string;result?:SampledVolume;error?:boolean}>)=>{
+  const r=pending[index];
+  if(r&&event.data.key===r.key&&event.data.result&&event.data.result.key===r.key){if(cache.size>=12){const first=cache.keys().next().value;if(first)cache.delete(first);}cache.set(r.key,event.data.result);}
+  index++;send();
+ };
+ worker.onerror=()=>{worker.terminate();if(current)onDone(false);};
+ send();
+ return()=>{current=false;worker.terminate();};
+}
+export function volumeCacheHas(key:string):boolean{return cache.has(key);}
 /* i18n-canonical: shared placement labels translated at the point of display. */
 export const PLACEMENT_LABEL={favorable:'Placement favorable',variable:'Détection variable',unfavorable:'Placement défavorable',unavailable:'Estimation indisponible'};
 /* No 'distance'/'orientation' fallback: those come only from the diagnosis layer. */
