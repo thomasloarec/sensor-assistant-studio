@@ -96,7 +96,7 @@ describe('lot UX 28/10 — colonne de découverte', () => {
   });
   test('le choix du mouvement ne réécrit aucune dimension existante', () => {
     const { r, patches } = renderControls();
-    fireEvent.click(r.getByText('Passage latéral'));
+    fireEvent.click(r.getAllByRole('button', { name: 'Passage latéral' })[0]!);
     expect(patches).toEqual([{ motion: 'slide' }]);
   });
 });
