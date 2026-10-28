@@ -8,7 +8,8 @@
  * reconfirmation de session du MÊME compte détruit un brouillon en cours.
  */
 import { GlobalRegistrator } from "@happy-dom/global-registrator";
-GlobalRegistrator.register({ url: "https://exemple.invalid/standex" });
+// Other UI suites may already have installed the shared DOM in this Bun process.
+if (typeof document === "undefined") GlobalRegistrator.register({ url: "https://exemple.invalid/standex" });
 
 import { afterEach, describe, expect, mock, test } from "bun:test";
 import * as React from "react";

@@ -35332,5 +35332,32 @@
     "Подготовка ограничена 48 ориентациями: некоторые зоны останутся скрытыми во время движения.",
     "Preparazione limitata a 48 orientamenti: alcune zone resteranno nascoste durante il movimento.",
     "準備は48方向までに制限：動作中は一部のゾーンが非表示のままになります。"
+  ],
+  "Annuler la préparation": [
+    "Cancel preparation",
+    "取消准备",
+    "Vorbereitung abbrechen",
+    "Cancelar preparación",
+    "Отменить подготовку",
+    "Annulla preparazione",
+    "準備をキャンセル"
+  ],
+  "La forme varie rapidement près de cette orientation. Mettre en pause pour affiner les zones.": [
+    "The shape changes rapidly near this orientation. Pause to refine the zones.",
+    "该方向附近的形状变化较快。暂停以细化区域。",
+    "Nahe dieser Ausrichtung ändert sich die Form schnell. Für genauere Zonen pausieren.",
+    "La forma cambia rápidamente cerca de esta orientación. Pausa para precisar las zonas.",
+    "Вблизи этой ориентации форма быстро меняется. Поставьте на паузу для уточнения зон.",
+    "La forma cambia rapidamente vicino a questo orientamento. Metti in pausa per affinare le zone.",
+    "この向きの付近では形状が急に変わります。一時停止すると領域を詳しく計算できます。"
+  ],
+  "Une orientation calculée est affichée, sans mélange de volumes. Le contrôle sur trois rayons centraux ne certifie pas tout le volume.": [
+    "One computed orientation is displayed, without blending volumes. The check along three central rays does not certify the entire volume.",
+    "显示一个已计算的方向，不混合体积。对三条中心射线的检查不能验证整个体积。",
+    "Eine berechnete Ausrichtung wird ohne Vermischen der Volumen angezeigt. Die Prüfung an drei zentralen Strahlen bestätigt nicht das gesamte Volumen.",
+    "Se muestra una orientación calculada sin mezclar volúmenes. La comprobación en tres rayos centrales no certifica todo el volumen.",
+    "Показана одна рассчитанная ориентация без смешивания объёмов. Проверка по трём центральным лучам не подтверждает весь объём.",
+    "Viene mostrato un orientamento calcolato, senza mescolare volumi. Il controllo su tre raggi centrali non certifica l’intero volume.",
+    "計算済みの一つの向きを表示し、体積同士を混合しません。中央の3本の線上の確認は、体積全体を保証するものではありません。"
   ]
 }

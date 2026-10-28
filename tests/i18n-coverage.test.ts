@@ -109,7 +109,8 @@ describe("Couverture des langues de l'interface", () => {
     // + 14 entrées : lot UX 28/10 (circuit de principe, trois choix de découverte, causes client).
     // + 5 entrées : contre-revue 28/10 (préparation pivot, coupe en pause, rotation honnête).
     // + 3 entrées : préparation pivot adaptative (échec, réessai, orientation non certifiée).
-    expect(Object.keys(dictionary)).toHaveLength(3_926);
+    // + 3 entrées : annulation et limites explicites des orientations préparées.
+    expect(Object.keys(dictionary)).toHaveLength(3_929);
     const broken = Object.entries(dictionary).filter(
       ([, v]) => v.length !== 7 || v.some((x) => typeof x !== "string" || x.trim() === ""),
     );

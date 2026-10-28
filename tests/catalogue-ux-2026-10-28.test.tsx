@@ -95,10 +95,13 @@ describe('lot UX 28/10 — colonne de découverte', () => {
     fireEvent.click(r.getByTestId('quarter-turn'));
     expect(patches).toEqual([{ magnetAngle: 120 }]);
   });
-  test('le choix du mouvement ne réécrit aucune dimension existante', () => {
+  test('le choix explicite du mouvement règle le dégagement sans changer le couple', () => {
     const { r, patches } = renderControls();
     fireEvent.click(r.getAllByRole('button', { name: 'Passage latéral' })[0]!);
-    expect(patches).toEqual([{ motion: 'slide' }]);
+    expect(patches[0]?.motion).toBe('slide');
+    expect(patches[0]?.offset).toBeGreaterThan(0);
+    expect(patches[0]?.sensorId).toBeUndefined();
+    expect(patches[0]?.magnetModel).toBeUndefined();
   });
 });
 
