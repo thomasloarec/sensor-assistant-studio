@@ -26,11 +26,13 @@ export function ClientPedagogicalControls({config,update,onCatalog,onExplore,onC
   return <div className="mw-ped-controls" data-testid="client-pedagogical-controls">
     <h2 className="t-title-m">{t(sensorById(config.sensorId).name)}</h2>
     <Button variant="secondary" onClick={onCatalog}>{t('Changer de couple')}</Button>
+    <label className="mw-select-label">{t('Classe de sensibilité')}<select aria-label={t('Classe de sensibilité')} value={config.sensitivity} onChange={e=>update({sensitivity:e.target.value})}>{classes.map(c=><option key={c} value={c}>{c}</option>)}</select></label>
     {!config.machine&&<>
       <section className="mw-choice" aria-label={t('Disposition')}>
         <p className="t-label">{t('Disposition')}</p>
         {approachControls}
       </section>
+      {config.motion==='approach'&&<label className="mw-field"><span>{t('Écart minimal entre les boîtiers')}<output className="t-metric">{config.end} mm</output></span><input type="range" aria-label={t('Écart minimal entre les boîtiers')} min="0.25" max="15" step="0.25" value={config.end} onInput={e=>update({end:Number(e.currentTarget.value)})}/></label>}
       <section className="mw-choice" aria-label={t('Mouvement')}>
         <p className="t-label">{t('Mouvement')}</p>
         <div className="mw-approach-row">
@@ -46,7 +48,6 @@ export function ClientPedagogicalControls({config,update,onCatalog,onExplore,onC
     <Button variant="secondary" onClick={onExplore}>{t('Comprendre les zones de détection')}</Button>
     <details className="mw-advanced"><summary>{t('Caractéristiques du couple')}</summary>
       <label className="mw-select-label">{t('Aimant')}<select aria-label={t('Aimant')} value={config.magnetModel} onChange={e=>update({magnetModel:e.target.value})}>{magnets.map(id=><option key={id} value={id}>{id}</option>)}</select></label>
-      <label className="mw-select-label">{t('Classe de sensibilité')}<select aria-label={t('Classe de sensibilité')} value={config.sensitivity} onChange={e=>update({sensitivity:e.target.value})}>{classes.map(c=><option key={c} value={c}>{c}</option>)}</select></label>
       {config.guideReference&&<p className="t-caption">{t('Référence documentaire')} : {config.guideReference}</p>}
       <p className="t-body">{t(CATALOGUE_LABELS[adapter.model.status])}</p>
       <Button variant="secondary" aria-pressed={config.polarity===-1} onClick={()=>update({polarity:config.polarity===1?-1:1})}>{t('Inverser N / S')}</Button>
@@ -55,6 +56,7 @@ export function ClientPedagogicalControls({config,update,onCatalog,onExplore,onC
     </details>
     {!isPcbSensor(config.sensorId) && <Button variant="secondary" disabled={!config.machine} onClick={onCable}>{t('Pointer le câble dans la 3D')}</Button>}
     <details className="mw-advanced" data-testid="client-pedagogical-sources"><summary>{t('Sources et limites')}</summary>
+      <p className="t-caption">{t('Forme des lobes centraux inspirée des schémas Standex, largeur non mesurée. Distances axiales calibrées conservées ; cette forme reste pédagogique.')}</p>
       <p className="t-caption">{t('Une orientation calculée est affichée, sans mélange de volumes. Le contrôle sur trois rayons centraux ne certifie pas tout le volume.')}</p>
       {adapter.reasons.map(reason=><p className="t-caption" key={reason}>{t(reason)}</p>)}
       <p className="t-caption">{t(catalogueFamilySentence(adapter.model))}</p><p className="t-caption">{t(CATALOGUE_LABELS.datum)}</p><p className="t-caption">{t('Longueur de reed hypothétique')} : <span className="t-metric">{adapter.model.lengthMm} mm</span></p><p className="t-caption">{t('Détail technique')} · {adapter.version}</p>

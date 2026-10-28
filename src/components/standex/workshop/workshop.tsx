@@ -2,6 +2,8 @@ import { Button } from "@/components/ui/button";
 import { clearanceRegions } from '@/lib/standex/zone-clearance';
 import { sectionVolume } from '@/lib/standex/zone-section';
 import { ClientPedagogicalControls } from './client-pedagogical-controls';
+import { discoveryPatch } from '@/lib/standex/discovery-preset';
+import { illustrativeContact } from '@/lib/standex/pedagogical-contact';
 import { CLIENT_LIMITS, clientCoupleAdapter, explorationSettings, clientPedagogicalResult, type ClientPedagogicalResult } from '@/lib/standex/client-pedagogical';
 import { catalogueFrame, cataloguePlacement, catalogueModel, catalogueVerdictNotes, CATALOGUE_LABELS, nearestPreparedT, pivotSampleAt, type PivotPlan, type VolumeField } from '@/lib/standex/catalogue-pedagogical';
 import type { MachineFocus } from "@/lib/standex/machine-view";
@@ -388,6 +390,8 @@ export default function MagneticWorkshop({
   // comme actuelle : sans volume préparé, aucune zone ne s'affiche.
   const [prepProgress,setPrepProgress]=useState({done:0,total:0});
   const [preparing, setPreparing] = useState(false), [prepFailed, setPrepFailed] = useState(false), [pivotPlan, setPivotPlan] = useState<PivotPlan | null>(null);
+  const [prepSeconds,setPrepSeconds]=useState(0);
+  useEffect(()=>{if(!preparing)return;setPrepSeconds(0);const began=performance.now();const id=window.setInterval(()=>setPrepSeconds(Math.floor((performance.now()-began)/1000)),1000);return()=>window.clearInterval(id);},[preparing]);
   const prepCancel = useRef<(() => void) | null>(null);
   // Catalogue : le volume exclut les obstacles (clé indépendante de l'instant) ; l'exclusion
   // mécanique COURANTE est appliquée au rendu avec le même test de corps que le verdict.
@@ -431,7 +435,7 @@ export default function MagneticWorkshop({
   const [view, setView] = useState<"3d" | "top">("3d"),
     [zones, setZones] = useState(true),
     [field, setField] = useState(false),
-    [xray, setXray] = useState(true),
+    [xray, setXray] = useState(false),
     // Les cotes de corps se superposaient aux noms : elles restent disponibles
     // dans « Affichage », mais décochées par défaut.
     [dimensions, setDimensions] = useState(false),
@@ -439,7 +443,6 @@ export default function MagneticWorkshop({
     [showMagnetName, setShowMagnetName] = useState(true),
     [focus, setFocus] = useState<MachineFocus>("assembly"),
     [catalogOpen, setCatalogOpen] = useState(false);
-  const [showCircuit, setShowCircuit] = useState(true);
   // Seuils mémorisés par classe : un objet frais à chaque frame ne doit pas reconstruire les surfaces.
   const layerClassName = catalogueProfile ? catalogueProfile.className : effectiveExperiment.className;
   const layerThresholds = useMemo(() => classThresholds(layerClassName), [layerClassName]);
@@ -450,7 +453,7 @@ export default function MagneticWorkshop({
     ? sectionVolume(sampled.volume,pedagogicalPose.pose.center[2],layerThresholds,clearance) : cutSampled.volume,
     [catalogue,playing,sampled.volume,layerThresholds,pedagogicalPose,clearance,cutSampled.volume,view]);
   // Circuit de principe : même instant et même moteur que le bandeau ; jamais le calcul binaire historique.
-  const circuitContact: Contact = catalogue && catalogueProfile && catalogueProfile.contact !== "A" ? "unknown" : placement.state === "favorable" ? "closed" : placement.state === "unfavorable" ? "open" : "unknown";
+  const circuitContact = illustrativeContact(placement,layerClassName);
   /** Vitesse de lecture. Par défaut un aller-retour dure 6 s : la lecture
    * ralentie reste disponible dans les réglages avancés, elle ne disparaît pas. */
   const [playbackSpeed, setPlaybackSpeed] = useState<"normal" | "slow">("normal");
@@ -1141,7 +1144,8 @@ export default function MagneticWorkshop({
   /** Sélection réelle d'un capteur : une seule logique centrale, partagée avec
    * l'espace de conception. */
   function selectSensor(sensorId: string) {
-    update(applySensorSelection(config, sensorId));
+    const next=applySensorSelection(config,sensorId);
+    update(catalogue&&!config.machine?{...next,...discoveryPatch(next,{motion:'approach'})}:next);
   }
 
   async function save() {
@@ -1398,7 +1402,9 @@ export default function MagneticWorkshop({
               aria-pressed={config.geometry === a.id}
               title={a.id === "D1" ? a.label : t(a.label)}
               onClick={() =>
-                update({
+                update(catalogue?discoveryPatch(config,{
+                  geometry:a.id,magnetAngle:documentedMagnetAngleDeg(a.id,config.sensorId),
+                }):{
                   geometry: a.id,
                   magnetAngle: documentedMagnetAngleDeg(a.id, config.sensorId),
                   // La variante du guide suit l'approche choisie : on garde la
@@ -2252,8 +2258,7 @@ export default function MagneticWorkshop({
     </details>
   );
 
-  /* Menu « Affichage » du mode pédagogique : interrupteurs indépendants.
-     Pas de « Voir les contacts » : ce mode ne les représente pas. */
+  /* Display toggles affect visibility only. The illustrative circuit is always present. */
   const pedagogicalDisplayMenu = (
     <details className="mw-display-menu" data-testid="display-menu">
       <summary>{t("Affichage ⌄")}</summary>
@@ -2275,8 +2280,8 @@ export default function MagneticWorkshop({
           {t("Zones de détection")}
         </label>
         <label>
-          <input type="checkbox" checked={showCircuit} onChange={(e) => setShowCircuit(e.target.checked)} />
-          {t("Circuit de principe")}
+          <input type="checkbox" checked={xray} onChange={(e) => setXray(e.target.checked)} />
+          {t("Voir les contacts")}
         </label>
         <button
           className="mw-text-button"
@@ -2531,6 +2536,7 @@ export default function MagneticWorkshop({
             </div>
           )}
           {catalogue ? <div className="mw-verdict-banner notice-info" role="status" data-testid="client-pedagogical-verdict"><strong className="t-title-s">{t(PLACEMENT_LABEL[placement.state])}</strong><span className="t-caption">{t(CATALOGUE_LABELS.notice)}</span><span className="t-body">{t(catalogueProfile?CATALOGUE_LABELS[catalogueProfile.status]:CATALOGUE_LABELS.analogy)}</span>{catalogueProfile&&catalogueVerdictNotes(config,catalogueProfile).map(n=><span key={n} className="t-caption" data-testid="catalogue-verdict-note">{t(n)}</span>)}<span className="t-caption">{t(placement.state==='favorable'?'Zones d’activation estimées':placement.cause==='overlap'?'Collision du corps de l’aimant avec l’enveloppe ou le montage':'Position ou orientation à vérifier avec Standex')}</span>{pivotT!==null&&playing&&<span className="t-caption">{t(orientationTransition?'La forme varie rapidement près de cette orientation. Mettre en pause pour affiner les zones.':'Pendant la lecture, les zones montrent l’orientation préparée la plus proche')}</span>}{clientPedagogical && <PivotNotes failed={prepFailed} hidden={pivotHidden} />}</div> : pedagogical ? <PedagogicalBanner evidence={placement} diagnosis={diagnosis} remedy={remedy} onPropose={r=>{if(r.kind==="verified")setSuggestion(r.config);}}/> : verdictBanner}
+          {catalogue&&preparing&&<div className="notice-info t-body" role="status" data-testid="zones-preparation">{t('Préparation des zones : le mouvement démarrera automatiquement.')} <span className="t-metric">{prepSeconds} s{prepProgress.total>0?' · '+prepProgress.done+'/'+prepProgress.total:''}</span></div>}
           {clientPedagogical&&exploring&&<p className="notice-info t-body" data-testid="client-exploration-context">{t('Exemple générique — ce résultat ne concerne pas le couple de votre dossier')}</p>}
           <div
             className="mw-canvas"
@@ -2563,7 +2569,7 @@ export default function MagneticWorkshop({
             </div>
             {/* Circuit de principe réintégré pour le parcours client (demande du 28/10) : même instant,
                 même moteur que le bandeau ; le banc staff conserve son rendu sans circuit. */}
-            {clientPedagogical ? (showCircuit && <div className="mw-circuit-ped" data-testid="pedagogical-circuit"><span className="t-caption">{t("Circuit de principe · état indicatif")}</span><ContactCircuit contact={circuitContact} /></div>) : !pedagogical ? <ContactCircuit contact={sample.contact} /> : null}
+            {clientPedagogical ? <div className="mw-circuit-ped" data-testid="pedagogical-circuit"><span className="t-caption">{t(layerClassName==='A'?"Circuit de principe · état indicatif":"Contact illustratif · sensibilité médiane")}</span><ContactCircuit contact={circuitContact??'open'} unavailable={circuitContact===null} /></div> : !pedagogical ? <ContactCircuit contact={sample.contact} /> : null}
             {/* Outil de pointage du câble : seulement quand le pointage est
                 réellement actif. Les trajets existants restent intacts. */}
             {!exploring && cableRouting && tool === "cable" ? (
@@ -2632,9 +2638,10 @@ export default function MagneticWorkshop({
                     <MachineScene
                       pedagogicalLayer={experimentalLayer}
                       hideElectrical={pedagogical}
+                      showIllustrativeContacts={catalogue&&circuitContact!==null}
                       asset={machineAsset}
                       config={config}
-                      sample={pedagogical ? {...sample,contact:"unknown"} : sample}
+                      sample={pedagogical ? {...sample,contact:circuitContact??"unknown"} : sample}
                       view={view}
                       focus={machine ? focus : focus === "sensor" ? "sensor" : "assembly"}
                       resetEpoch={resetEpoch}
@@ -2642,7 +2649,7 @@ export default function MagneticWorkshop({
                       transformMode={transformMode}
                       showMachine={showMachine}
                       showSpace={showSpace}
-                      xray={pedagogical ? false : xray}
+                      xray={!pedagogical||catalogue ? xray : false}
                       showNames={showNames}
                       showMagnetName={showMagnetName}
                       reduced={reduced}
@@ -2707,15 +2714,16 @@ export default function MagneticWorkshop({
                   <Scene
                     pedagogicalLayer={experimentalLayer}
                     hideElectrical={pedagogical}
+                    showIllustrativeContacts={catalogue&&circuitContact!==null}
                     config={config}
                     resetEpoch={resetEpoch}
                     onContextLost={failed3d}
-                    sample={pedagogical ? {...sample,contact:"unknown"} : sample}
+                    sample={pedagogical ? {...sample,contact:circuitContact??"unknown"} : sample}
                     samples={pedagogical ? result.samples.map(s=>({...s,contact:"unknown" as const})) : result.samples}
                     view={view}
                     zones={pedagogical ? false : zones}
                     field={pedagogical ? false : field}
-                    xray={pedagogical ? false : xray}
+                    xray={!pedagogical||catalogue ? xray : false}
                     dimensions={dimensions}
                     showNames={showNames}
                     showMagnetName={showMagnetName}
@@ -2789,7 +2797,7 @@ export default function MagneticWorkshop({
                 setProgress(Number(e.target.value) / 100);
               }}
             />
-            {clientPedagogical && !exploring ? <div className="mw-legend" data-testid="client-product-legend"><span>{config.sensorId} + {config.magnetModel}</span><span className="mw-ped-high">{t("Zone favorable estimée")}</span><span className="mw-ped-low">{t("Dépend de la sensibilité")}</span><span className="mw-ped-gray">{t("Positions où l’aimant rencontrerait ce corps")}</span><span>{t("Couleurs : valeurs nominales ; le verdict vérifie les neuf hypothèses")}</span>{sampled.busy&&<span>{t("Calcul des volumes en cours…")}</span>}{sampled.failed&&<span>{t("Calcul des zones interrompu")}</span>}{sampled.volume?.truncated&&<span>{t("Lobes tronqués aux limites du domaine affiché ±24 mm ; aucune fermeture physique déduite.")}</span>}<span>{t(CATALOGUE_LABELS.notice)}</span></div> : pedagogical ? <div className="mw-legend" data-testid="pedagogical-legend"><span className="mw-ped-high">{t("Zone favorable estimée")}</span><span className="mw-ped-low">{t("Dépend de la sensibilité")}</span><span className="mw-ped-body">{t("Capteur générique, reed 66 monté")}</span><span className="mw-ped-gray">{t("Positions où l’aimant rencontrerait ce corps")}</span>{machine&&<span className="mw-ped-hatch">{t("Chevauchement possible avec une pièce du montage — à vérifier")}</span>}<span>{t("Estimation indicative")}</span></div> : <div className="mw-legend">
+            {clientPedagogical && !exploring ? <div className="mw-legend" data-testid="client-product-legend"><span>{config.sensorId} + {config.magnetModel}</span><span className="mw-ped-high">{t("Zone favorable estimée")}</span><span className="mw-ped-low">{t("Dépend de la sensibilité")}</span><span className="mw-ped-gray">{t("Positions où l’aimant rencontrerait ce corps")}</span><span>{t('Zone jaune : selon la sensibilité de l’exemplaire, le contact peut commuter plus tôt ou plus tard. La lampe illustre un exemplaire au milieu de la classe.')}</span>{sampled.busy&&<span>{t("Calcul des volumes en cours…")}</span>}{sampled.failed&&<span>{t("Calcul des zones interrompu")}</span>}{sampled.volume?.truncated&&<span>{t("Lobes tronqués aux limites du domaine affiché ±24 mm ; aucune fermeture physique déduite.")}</span>}<span>{t(CATALOGUE_LABELS.notice)}</span></div> : pedagogical ? <div className="mw-legend" data-testid="pedagogical-legend"><span className="mw-ped-high">{t("Zone favorable estimée")}</span><span className="mw-ped-low">{t("Dépend de la sensibilité")}</span><span className="mw-ped-body">{t("Capteur générique, reed 66 monté")}</span><span className="mw-ped-gray">{t("Positions où l’aimant rencontrerait ce corps")}</span>{machine&&<span className="mw-ped-hatch">{t("Chevauchement possible avec une pièce du montage — à vérifier")}</span>}<span>{t("Estimation indicative")}</span></div> : <div className="mw-legend">
               <span>
                 <i className="closed" />
                 {t("Fermé")}

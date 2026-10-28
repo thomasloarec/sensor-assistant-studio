@@ -35359,5 +35359,59 @@
     "Показана одна рассчитанная ориентация без смешивания объёмов. Проверка по трём центральным лучам не подтверждает весь объём.",
     "Viene mostrato un orientamento calcolato, senza mescolare volumi. Il controllo su tre raggi centrali non certifica l’intero volume.",
     "計算済みの一つの向きを表示し、体積同士を混合しません。中央の3本の線上の確認は、体積全体を保証するものではありません。"
+  ],
+  "Écart minimal entre les boîtiers": [
+    "Minimum housing gap",
+    "外壳最小间隙",
+    "Minimaler Gehäuseabstand",
+    "Separación mínima entre carcasas",
+    "Минимальный зазор между корпусами",
+    "Distanza minima tra le custodie",
+    "ケース間の最小隙間"
+  ],
+  "Contact illustratif · sensibilité médiane": [
+    "Illustrative contact · mid-range sensitivity",
+    "示意触点 · 灵敏度范围中值",
+    "Beispielkontakt · mittlere Empfindlichkeit",
+    "Contacto ilustrativo · sensibilidad media",
+    "Иллюстрация контакта · средняя чувствительность",
+    "Contatto illustrativo · sensibilità intermedia",
+    "参考接点 · 感度区分の中間値"
+  ],
+  "Simulation indisponible à cette position": [
+    "Simulation unavailable at this position",
+    "此位置无法模拟",
+    "Simulation an dieser Position nicht verfügbar",
+    "Simulación no disponible en esta posición",
+    "Моделирование недоступно в этом положении",
+    "Simulazione non disponibile in questa posizione",
+    "この位置ではシミュレーションできません"
+  ],
+  "Préparation des zones : le mouvement démarrera automatiquement.": [
+    "Preparing zones: movement will start automatically.",
+    "正在准备区域：运动将自动开始。",
+    "Zonen werden vorbereitet: Die Bewegung startet automatisch.",
+    "Preparando zonas: el movimiento comenzará automáticamente.",
+    "Подготовка зон: движение начнётся автоматически.",
+    "Preparazione delle zone: il movimento partirà automaticamente.",
+    "領域を準備中です。動作は自動的に始まります。"
+  ],
+  "Zone jaune : selon la sensibilité de l’exemplaire, le contact peut commuter plus tôt ou plus tard. La lampe illustre un exemplaire au milieu de la classe.": [
+    "Yellow zone: switching may occur earlier or later depending on the individual sensor’s sensitivity. The lamp illustrates a specimen at the middle of the class.",
+    "黄色区域：切换时机因单个传感器的灵敏度而异。灯泡示意灵敏度处于该等级中值的样品。",
+    "Gelbe Zone: Je nach Empfindlichkeit des einzelnen Sensors schaltet der Kontakt früher oder später. Die Lampe zeigt ein Beispiel in der Mitte der Klasse.",
+    "Zona amarilla: la conmutación puede ocurrir antes o después según la sensibilidad de cada sensor. La lámpara representa un ejemplar en el centro de la clase.",
+    "Жёлтая зона: момент переключения зависит от чувствительности конкретного датчика. Лампа показывает пример со средней чувствительностью внутри класса.",
+    "Zona gialla: il contatto può commutare prima o dopo in base alla sensibilità del singolo sensore. La lampada rappresenta un esemplare al centro della classe.",
+    "黄色領域：個体の感度により接点が切り替わる位置が異なります。ランプは感度区分の中間値の個体を表します。"
+  ],
+  "Forme des lobes centraux inspirée des schémas Standex, largeur non mesurée. Distances axiales calibrées conservées ; cette forme reste pédagogique.": [
+    "Central lobe shape inspired by Standex diagrams; width is not measured. Calibrated axial distances are preserved; this shape is educational.",
+    "中央瓣形状参考 Standex 示意图，宽度未经测量。保留已校准的轴向距离；该形状仅用于教学。",
+    "Form der Mittelloben nach Standex-Skizzen; Breite nicht gemessen. Kalibrierte Achsabstände bleiben erhalten; die Form dient der Veranschaulichung.",
+    "Forma de los lóbulos centrales inspirada en los esquemas Standex; anchura no medida. Se conservan las distancias axiales calibradas; la forma es didáctica.",
+    "Форма центральных лепестков основана на схемах Standex; ширина не измерена. Калиброванные осевые расстояния сохранены; форма служит для обучения.",
+    "Forma dei lobi centrali ispirata agli schemi Standex; larghezza non misurata. Distanze assiali calibrate conservate; la forma è didattica.",
+    "中央ローブはStandexの図を参考にした形状で、幅は実測値ではありません。校正済みの軸方向距離は維持し、形状は学習用です。"
   ]
 }

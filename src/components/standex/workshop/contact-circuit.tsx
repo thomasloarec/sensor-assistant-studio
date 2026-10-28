@@ -2,17 +2,17 @@ import { t } from "@/lib/i18n/core";
 import type { Contact } from "@/lib/standex/magnetic-workshop";
 
 /** A readout of the simulation's contact, never a second electrical model. */
-export default function ContactCircuit({ contact }: { contact: Contact }) {
+export default function ContactCircuit({ contact, unavailable=false }: { contact: Contact;unavailable?:boolean }) {
   const closed = contact === "closed";
-  const unknown = contact === "unknown";
-  const label = t(unknown
+  const unknown = contact === "unknown"&&!unavailable;
+  const label = t(unavailable?'Simulation indisponible à cette position':unknown
     ? "Circuit indéterminé : lampe grisée"
     : closed
       ? "Circuit illustré fermé : lampe allumée"
       : "Circuit illustré ouvert : lampe éteinte");
 
   return (
-    <div className="mw-contact-circuit" data-contact={contact} role="img" aria-label={label}>
+    <div className="mw-contact-circuit" data-contact={unavailable?'unavailable':contact} role="img" aria-label={label}>
       <svg viewBox="0 0 208 86" aria-hidden="true">
         {/* The source, reed and lamp are in series, with gaps at each symbol. */}
         <path className="mw-mini-wire" d="M24 39 V20 H78 M130 20 H178 V35 M178 61 V74 H24 V53" />
@@ -29,7 +29,7 @@ export default function ContactCircuit({ contact }: { contact: Contact }) {
         {unknown ? <text x="104" y="25" textAnchor="middle">?</text> : null}
         <text x="104" y="57" textAnchor="middle">{t("Reed")}</text>
       </svg>
-      <span className="t-caption">{t(unknown ? "État indéterminé" : closed ? "Lampe allumée" : "Lampe éteinte")}</span>
+      <span className="t-caption">{t(unavailable ? 'Simulation indisponible à cette position' : unknown ? "État indéterminé" : closed ? "Contact fermé" : "Contact ouvert")}</span>
     </div>
   );
 }

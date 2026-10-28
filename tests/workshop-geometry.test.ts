@@ -42,8 +42,8 @@ describe("Documented body sizes and source plans", () => {
     }
   });
   test("reference gaps are between actual body envelopes", () => {
-    const d1 = { ...MK03_EXAMPLE },
-      d3 = { ...MK03_EXAMPLE, geometry: "D3" as const };
+    const d1 = { ...MK03_EXAMPLE, end:5 },
+      d3 = { ...MK03_EXAMPLE, end:5, geometry: "D3" as const };
     expect(approachOffset(d1)).toBeCloseTo((5.8 + 4) / 2, 10);
     expect(approachOffset(d3)).toBeCloseTo((25.5 + 19) / 2, 10);
     expect(poseAt(d1, 0.5).position[2] - approachOffset(d1)).toBe(5);

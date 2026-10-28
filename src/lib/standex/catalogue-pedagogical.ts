@@ -17,8 +17,9 @@ import { fieldAtPoint } from './magnetics/field';
 import { EXPERIMENT, DEFAULT_EXPERIMENT, classThresholds, experimentalScenarios, nominalScenario, axisNodes, type PlacementEvidence, type SampledVolume, type TableSample } from '../detection-lab/workshop-experiment';
 import { magnetObb, obbOverlap, type Obb } from '../detection-lab/obstacles';
 import { publishedRowsForCouple, publishedRowsSourceUrl, PUBLISHED_REGISTRY } from './magnetics/registries';
+import { centralLobeSample } from './pedagogical-shape';
 
-export const CATALOGUE_MODEL_VERSION='catalogue-b-analogy-1.1';
+export const CATALOGUE_MODEL_VERSION='catalogue-b-analogy-2.0-shape1';
 /* i18n-canonical: internal diagnostic codes, never UI labels. */
 const INTERNAL={missing:'catalogue_profile_missing',prior:'catalogue_modelling_prior',source:'catalogue_illustrative',leads:'length_only_analogy_leads_uncharacterized'};
 /* i18n-canonical: model status, not product qualification. */
@@ -123,9 +124,12 @@ export function cataloguePlacement(c:WorkshopConfig,pose:CataloguePose,obstacles
  const frame=pose.frame??magnetBodyFrame(c,c.magnetAngle);
  const realMagnet:Obb={path:'magnet',c:[...pose.center],a:frame,h:m.magnetBody.map(n=>n/2) as Vec3};
  if(obbOverlap(realMagnet,catalogueBodyObb(c))||obstacles.some(o=>obbOverlap(realMagnet,o)))return unavailable('overlap');
- const nominal=catalogueEvaluate(m,pose,nominalScenario(),frame);
+ // Keep the raw calibrated evaluator intact. Only the client pedagogical shape
+ // uses a documented morphology prior; collision above uses the actual pose.
+ const sampledPose={...pose,center:centralLobeSample(pose.center,pose.axis,m.lengthMm)};
+ const nominal=catalogueEvaluate(m,sampledPose,nominalScenario(),frame);
  if(!nominal.ok)return unavailable(nominal.reason==='domain'?'domain':'collision');
- const scenarios=nominalOnly?[]:experimentalScenarios(true).map(s=>({id:s.id,result:catalogueEvaluate(m,pose,s,frame)}));
+ const scenarios=nominalOnly?[]:experimentalScenarios(true).map(s=>({id:s.id,result:catalogueEvaluate(m,sampledPose,s,frame)}));
  const responses=scenarios.flatMap(s=>s.result.ok?[s.result.response]:[]);
  const partial=th.low===null;
  const zone=nominal.response>=th.high?2:th.low!==null&&nominal.response>=th.low?1:0;

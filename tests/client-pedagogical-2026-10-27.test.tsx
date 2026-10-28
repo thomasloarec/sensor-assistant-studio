@@ -105,8 +105,8 @@ describe('real mounted client workshop',()=>{
     await waitFor(()=>expect(view.getByTestId('client-product-legend').textContent).toContain('MK04 + M04'));
     // Circuit de principe réintégré (demande du 28/10) : même état pédagogique que le bandeau, jamais le contact binaire historique.
     const circuit=view.getByTestId('pedagogical-circuit');
-    expect(circuit.textContent).toContain('Circuit de principe · état indicatif');
-    expect(['closed','open','unknown']).toContain(circuit.querySelector('.mw-contact-circuit')?.getAttribute('data-contact'));
+    expect(circuit.textContent).toContain('Contact illustratif');
+    expect(['closed','open','unavailable']).toContain(circuit.querySelector('.mw-contact-circuit')?.getAttribute('data-contact'));
     await act(async()=>fireEvent.click(view.getByRole('button',{name:'Comprendre les zones de détection'})));
     await waitFor(()=>expect(view.getByTestId('client-exploration')).toBeTruthy());
     expect(view.getByTestId('client-exploration-context').parentElement).toBe(view.getByTestId('pedagogical-verdict').parentElement);
