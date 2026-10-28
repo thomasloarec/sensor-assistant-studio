@@ -1,8 +1,9 @@
 import { GlobalRegistrator } from '@happy-dom/global-registrator';
-import { describe, expect, test } from 'bun:test';
+import { afterEach, describe, expect, test } from 'bun:test';
 import React from 'react';
 try { if (typeof document === 'undefined') GlobalRegistrator.register({ url: 'http://localhost/' }); } catch { /* déjà enregistré par une autre suite */ }
-import { render, fireEvent } from '@testing-library/react';
+import { render, fireEvent, cleanup } from '@testing-library/react';
+afterEach(() => cleanup());
 import { volumeKey, cutKey } from '../src/components/standex/workshop/pedagogical-controls';
 import { smoothSurface } from '../src/components/standex/workshop/pedagogical-layer';
 import { ClientPedagogicalControls } from '../src/components/standex/workshop/client-pedagogical-controls';
