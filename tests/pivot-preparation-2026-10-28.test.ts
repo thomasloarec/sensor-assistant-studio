@@ -73,7 +73,7 @@ describe('out-and-back pivot (micro-fix 2026-10-28)', () => {
   it('real engine MK03/C N45 magnetAngle 90: not certified on [0,1], core and shell both probed', async () => {
     const { DEFAULT_WORKSHOP } = await import('@/lib/standex/magnetic-workshop') as any;
     const { pivotBoundary } = await import('@/lib/standex/catalogue-pedagogical');
-    const c = { ...(DEFAULT_WORKSHOP ?? {}), sensorId: 'MK03', motion: 'pivot', magnetAngle: 90, magnetModel: 'N45-10X5' } as never;
+    const c = { ...(DEFAULT_WORKSHOP ?? {}), sensorId: 'MK03', motion: 'pivot', magnetAngle: 90, magnetModel: 'N45-4X19', sensitivity: 'C' } as never;
     const b0 = pivotBoundary(c, 0), b1 = pivotBoundary(c, 0.125);
     expect(b0.length).toBe(6);
     expect(b0).toEqual(pivotBoundary(c, 1));
