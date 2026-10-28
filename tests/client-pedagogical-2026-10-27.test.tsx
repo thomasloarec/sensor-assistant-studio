@@ -78,7 +78,8 @@ describe('real mounted client workshop',()=>{
     const view=render(<Workshop clientPedagogical embedded initialConfig={draft} storageMode="memory" onClose={()=>{}} onSave={async()=>{}} onDraftChange={c=>{draft=c;}}/>);
     await act(async()=>fireEvent.click(view.getByRole('button',{name:'Dans l’alignement',exact:true})));
     expect(draft.geometry).toBe('D3');
-    await act(async()=>fireEvent.change(view.getByRole('combobox',{name:'Trajectoire'}),{target:{value:'slide'}}));
+    // Lot UX 28/10 : le mouvement se choisit par boutons, sans curseur numérique avant import.
+    await act(async()=>fireEvent.click(view.getByRole('button',{name:'Passage latéral',exact:true})));
     await act(async()=>fireEvent.change(view.getByRole('combobox',{name:'Température'}),{target:{value:'other'}}));
     expect(draft.geometry).toBe('D3');expect(draft.motion).toBe('slide');expect(draft.temperature).toBe('other');
     view.unmount();
@@ -102,7 +103,10 @@ describe('real mounted client workshop',()=>{
     const config={...DEFAULT_WORKSHOP,cableLengthMm:500};const drafts:typeof config[]=[];const results:ReturnType<typeof clientPedagogicalResult>[]=[];
     const view=render(<Workshop clientPedagogical embedded initialConfig={config} storageMode="memory" onClose={()=>{}} onSave={async()=>{}} onDraftChange={c=>drafts.push(c as typeof config)} onClientPedagogicalResult={r=>results.push(r)}/>);
     await waitFor(()=>expect(view.getByTestId('client-product-legend').textContent).toContain('MK04 + M04'));
-    expect(view.container.querySelector('.mw-contact-circuit')).toBeNull();
+    // Circuit de principe réintégré (demande du 28/10) : même état pédagogique que le bandeau, jamais le contact binaire historique.
+    const circuit=view.getByTestId('pedagogical-circuit');
+    expect(circuit.textContent).toContain('Circuit de principe · état indicatif');
+    expect(['closed','open','unknown']).toContain(circuit.querySelector('.mw-contact-circuit')?.getAttribute('data-contact'));
     await act(async()=>fireEvent.click(view.getByRole('button',{name:'Comprendre les zones de détection'})));
     await waitFor(()=>expect(view.getByTestId('client-exploration')).toBeTruthy());
     expect(view.getByTestId('client-exploration-context').parentElement).toBe(view.getByTestId('pedagogical-verdict').parentElement);

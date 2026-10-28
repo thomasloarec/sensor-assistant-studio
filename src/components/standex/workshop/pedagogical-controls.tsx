@@ -9,31 +9,50 @@ import type { Obb } from '@/lib/detection-lab/obstacles';
 import { fingerprint } from '@/lib/standex/mounting/geometry';
 import { CATALOGUE_MODEL_VERSION } from '@/lib/standex/catalogue-pedagogical';
 const cache=new Map<string,SampledVolume>();
-/** `obstacles`: loaded part boxes in the reed frame of the SAME instant; they enter the key. */
+const cutCache=new Map<string,SampledVolume>();
+/** 3D volume key: couple, class, hypotheses, FULL magnet body orientation (axis + body frame)
+ * and obstacles — never the magnet's translation nor the cut plane. A pure translation at
+ * constant orientation therefore reuses the same volume during playback. */
+export function volumeKey(settings:ExperimentSettings,frame:PedagogicalFrame,obstacles:readonly Obb[]|null,catalogue?:WorkshopConfig):string{
+ return settingsKey(settings,frame.pose.axis,0)+'|'+(obstacles?fingerprint(obstacles):'free')+'|'+(catalogue?CATALOGUE_MODEL_VERSION:'frozen')+'|'+JSON.stringify(catalogue??null)+'|'+JSON.stringify(catalogue?(frame.pose as {frame?:unknown}).frame??null:null);
+}
+/** Cut key: same volume identity plus the exact plane of the chosen instant. */
+export function cutKey(settings:ExperimentSettings,frame:PedagogicalFrame,obstacles:readonly Obb[]|null,catalogue?:WorkshopConfig):string{
+ return volumeKey(settings,frame,obstacles,catalogue)+'|plane:'+frame.pose.center[2];
+}
+function useWorkerVolume(enabled:boolean,available:boolean,key:string,mode:'volume'|'cut',settings:ExperimentSettings,frame:PedagogicalFrame,obstacles:readonly Obb[]|null,catalogue?:WorkshopConfig){
+ const store=mode==='volume'?cache:cutCache;
+ const [result,setResult]=useState<SampledVolume|null>(null),[busy,setBusy]=useState(false),[failed,setFailed]=useState(false);
+ useEffect(()=>{
+  setResult(null);setFailed(false);
+  if(!enabled||!available){setBusy(false);return;}
+  const hit=store.get(key);if(hit){setResult(hit);setBusy(false);return;}
+  if(typeof Worker==='undefined'){setFailed(true);return;}
+  let current=true,worker:Worker|null=null;setBusy(true);
+  const timer=setTimeout(()=>{
+   worker=new Worker(new URL('./pedagogical.worker.ts',import.meta.url),{type:'module'});
+   worker.onmessage=(event:MessageEvent<{key:string;result?:SampledVolume;error?:boolean}>)=>{
+    if(!current||event.data.key!==key)return;
+    if(event.data.result&&event.data.result.key===key&&available){if(store.size>=3){const first=store.keys().next().value;if(first)store.delete(first);}store.set(key,event.data.result);setResult(event.data.result);}else setFailed(true);
+    setBusy(false);worker?.terminate();worker=null;
+   };
+   worker.onerror=()=>{if(current){setBusy(false);setFailed(true);}worker?.terminate();};
+   worker.postMessage({settings,axis:frame.pose.axis,planeZ:frame.pose.center[2],key,mode,obstacles:obstacles??[],catalogue,frame:catalogue?(frame.pose as {frame?:unknown}).frame:undefined});
+  },0);
+  return ()=>{current=false;clearTimeout(timer);worker?.terminate();};
+ },[enabled,key]);
+ return {volume:enabled&&available&&result?.key===key?result:null,busy,failed};
+}
+/** `obstacles`: loaded part boxes in the reed frame of the SAME instant; they enter the key.
+ * The volume no longer depends on the instant: it stays computed and displayed during playback. */
 export function usePedagogicalVolume(enabled:boolean,settings:ExperimentSettings,frame:PedagogicalFrame,obstacles:readonly Obb[]|null=null,catalogue?:WorkshopConfig) {
-  const [result,setResult]=useState<SampledVolume|null>(null),[busy,setBusy]=useState(false),[failed,setFailed]=useState(false);
-  // Quantization is not applied to physics orientation. The exact axis and plane enter the key.
-  const available=!!catalogue||experimentAvailable(settings);
-  const key=settingsKey(settings,frame.pose.axis,frame.pose.center[2])+'|'+(obstacles?fingerprint(obstacles):'free')+'|'+(catalogue?CATALOGUE_MODEL_VERSION:'frozen')+'|'+JSON.stringify(catalogue??null)+'|'+JSON.stringify(catalogue?(frame.pose as {frame?:unknown}).frame??null:null);
-  useEffect(()=>{
-    setResult(null);setFailed(false);
-    if(!enabled||!available){setBusy(false);return;}
-    const hit=cache.get(key);if(hit){setResult(hit);setBusy(false);return;}
-    if(typeof Worker==='undefined'){setFailed(true);return;}
-    let current=true,worker:Worker|null=null;setBusy(true);
-    const timer=setTimeout(()=>{
-      worker=new Worker(new URL('./pedagogical.worker.ts',import.meta.url),{type:'module'});
-      worker.onmessage=(event:MessageEvent<{key:string;result?:SampledVolume;error?:boolean}>)=>{
-        if(!current||event.data.key!==key)return;
-        if(event.data.result&&event.data.result.key===key&&available){if(cache.size>=3){const first=cache.keys().next().value;if(first)cache.delete(first);}cache.set(key,event.data.result);setResult(event.data.result);}else setFailed(true);
-        setBusy(false);worker?.terminate();worker=null;
-      };
-      worker.onerror=()=>{if(current){setBusy(false);setFailed(true);}worker?.terminate();};
-      worker.postMessage({settings,axis:frame.pose.axis,planeZ:frame.pose.center[2],key,obstacles:obstacles??[],catalogue,frame:catalogue?(frame.pose as {frame?:unknown}).frame:undefined});
-    },0);
-    return ()=>{current=false;clearTimeout(timer);worker?.terminate();};
-  },[enabled,key]);
-  return {volume:enabled&&available&&result?.key===key?result:null,busy,failed};
+ const available=!!catalogue||experimentAvailable(settings);
+ return useWorkerVolume(enabled,available,volumeKey(settings,frame,obstacles,catalogue),'volume',settings,frame,obstacles,catalogue);
+}
+/** Instantaneous cut: follows the chosen plane, recomputed on pause or plane change only. */
+export function usePedagogicalCut(enabled:boolean,settings:ExperimentSettings,frame:PedagogicalFrame,obstacles:readonly Obb[]|null=null,catalogue?:WorkshopConfig) {
+ const available=!!catalogue||experimentAvailable(settings);
+ return useWorkerVolume(enabled,available,cutKey(settings,frame,obstacles,catalogue),'cut',settings,frame,obstacles,catalogue);
 }
 /* i18n-canonical: shared placement labels translated at the point of display. */
 export const PLACEMENT_LABEL={favorable:'Placement favorable',variable:'Détection variable',unfavorable:'Placement défavorable',unavailable:'Estimation indisponible'};

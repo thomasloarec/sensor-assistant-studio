@@ -134,10 +134,15 @@ export function cataloguePlacement(c:WorkshopConfig,pose:CataloguePose,obstacles
  if((c.ferromagnetic||c.temperature!=='ambient'||m.unknownMoment||m.className!==c.sensitivity)&&state==='favorable')state='variable';
  return {state,cause:nominal.response===0?'orientation':'distance',nominal,scenarios,zone,partial};
 }
-export function catalogueVolume(c:WorkshopConfig,axis:Vec3,planeZ:number,obstacles:readonly Obb[]=[],extent=24,frame?:Frame):SampledVolume{
+/** Rendering grid: every node's nominal response (null = not computable) and mechanical mask.
+ * Display data only — the verdict never reads it. Indexed [(k*ny+j)*nx+i]. */
+export type VolumeField={xs:number[];ys:number[];zs:number[];values:(number|null)[];blocked:boolean[]};
+export type CatalogueVolume=SampledVolume&{field:VolumeField};
+export function catalogueVolume(c:WorkshopConfig,axis:Vec3,planeZ:number,obstacles:readonly Obb[]=[],extent=24,frame?:Frame):CatalogueVolume{
  const start=performance.now(),xs=axisNodes(-extent,extent,true),ys=axisNodes(-extent,extent),zs=axisNodes(-extent,extent);
  if(!zs.includes(planeZ)&&Math.abs(planeZ)<=extent){zs.push(planeZ);zs.sort((a,b)=>a-b);}
  const cells:SampledVolume['cells']=[],cut:SampledVolume['cut']=[];
+ const field:VolumeField={xs,ys,zs,values:[],blocked:[]};
  const model=catalogueModel(c);
  const bound=(ns:number[],i:number):[number,number]=>[i===0?-extent:((ns[i-1]??0)+(ns[i]??0))/2,i===ns.length-1?extent:((ns[i]??0)+(ns[i+1]??0))/2];
  // Same evaluator as point/cut/timeline, including body collision; no angle quantization.
@@ -145,9 +150,10 @@ export function catalogueVolume(c:WorkshopConfig,axis:Vec3,planeZ:number,obstacl
   const x=xs[i]??0,y=ys[j]??0,z=zs[k]??0,e=cataloguePlacement(c,frame?{center:[x,y,z],axis,frame}:{center:[x,y,z],axis},obstacles,model,true);
   const [x0,x1]=bound(xs,i),[y0,y1]=bound(ys,j),[z0,z1]=bound(zs,k);
   const cell={i,j,k,x,y,z,x0,x1,y0,y1,z0,z1,zone:e.zone,response:e.nominal?.ok?e.nominal.response:null,blocked:e.cause==='overlap'};
+  field.values.push(cell.response);field.blocked.push(cell.blocked);
   if(e.zone)cells.push(cell);if(z===planeZ)cut.push(cell);
  }
- return {key:JSON.stringify([CATALOGUE_MODEL_VERSION,c,axis,frame??null,planeZ,obstacles]),cells,cut,axis,planeZ,extent,computeMs:performance.now()-start,nodeCount:xs.length*ys.length*zs.length,truncated:cells.some(c=>Math.max(Math.abs(c.x),Math.abs(c.y),Math.abs(c.z))===extent)};
+ return {key:JSON.stringify([CATALOGUE_MODEL_VERSION,c,axis,frame??null,planeZ,obstacles]),cells,cut,field,axis,planeZ,extent,computeMs:performance.now()-start,nodeCount:xs.length*ys.length*zs.length,truncated:cells.some(c=>Math.max(Math.abs(c.x),Math.abs(c.y),Math.abs(c.z))===extent)};
 }
 export function catalogueTimeline(c:WorkshopConfig,table?:readonly TableSample[],steps=128){
  const samples=table??Array.from({length:steps*2+1},(_,i)=>{const t=i/(steps*2);return {t,pose:catalogueFrame(c,t).pose,obstacles:[]};});
