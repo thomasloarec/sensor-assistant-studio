@@ -2399,6 +2399,32 @@
     stroke-dashoffset: -40;
   }
 }
+/* Lot UX 28/10 : circuit de principe du parcours client, compact sous « Affichage ».
+   Il suit l'état pédagogique de l'instant (favorable/variable/défavorable/indisponible),
+   jamais le contact binaire historique. Aucun nouveau jeton. */
+.mw-circuit-ped {
+  position: absolute;
+  inset-block-start: 64px;
+  inset-inline-end: 12px;
+  z-index: 2;
+  display: grid;
+  gap: 4px;
+  justify-items: center;
+  pointer-events: none;
+}
+.mw-circuit-ped .mw-contact-circuit {
+  position: static;
+}
+@media (max-width: 639px) {
+  .mw-circuit-ped {
+    inset-block-start: auto;
+    inset-block-end: 36px;
+    inset-inline-end: 8px;
+  }
+  .mw-circuit-ped .mw-contact-circuit {
+    inline-size: 120px;
+  }
+}
 @media (max-width: 639px) {
   .mw-contact-circuit {
     inline-size: 120px;
