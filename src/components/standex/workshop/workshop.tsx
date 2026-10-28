@@ -152,7 +152,7 @@ import { pedagogicalRemedy } from "@/lib/standex/pedagogical-poses";
 import { diagnosePlacement } from "@/lib/detection-lab/placement-diagnosis";
 import { pilotBodies, pedagogicalFrame, pedagogicalAvailability, suggestPedagogicalConfig, parsePedagogicalEnvelope, type PedagogicalDraft } from "@/lib/standex/pedagogical-poses";
 import { PedagogicalLayer, PedagogicalCut } from "./pedagogical-layer";
-import { PedagogicalControls, PedagogicalBanner, usePedagogicalVolume, usePedagogicalCut, prepareVolumes, volumeCacheHas, volumeKey, PLACEMENT_LABEL } from "./pedagogical-controls";
+import { PedagogicalControls, PedagogicalBanner, usePedagogicalVolume, usePedagogicalCut, preparePivot, volumeKey, PLACEMENT_LABEL } from "./pedagogical-controls";
 import { DEFAULT_EXPERIMENT, EXPERIMENT, experimentAvailable, evaluatePlacement, placementTimeline, classThresholds, type ExperimentSettings } from "@/lib/detection-lab/workshop-experiment";
 
 /* i18n-canonical : libellés traduits au rendu par t(). */
@@ -384,10 +384,22 @@ export default function MagneticWorkshop({
   // pendant la lecture, les zones montrent l'orientation préparée la plus proche — la pose, le verdict
   // et la chronologie restent calculés à l'instant exact. Aucune ancienne orientation n'est montrée
   // comme actuelle : sans volume préparé, aucune zone ne s'affiche.
-  const [preparing, setPreparing] = useState(false);
-  const pivotSnappedT = catalogue && config.motion === "pivot" && playing ? Math.round(progress * 8) / 8 : null;
-  const volumeFrame = pivotSnappedT !== null ? catalogueFrame(config, pivotSnappedT) : pedagogicalPose;
-  const sampled = usePedagogicalVolume(pedagogical && eligible, activeExperiment, volumeFrame, config.machine ? frameObstacles : null,catalogue?config:undefined);
+  const [preparing, setPreparing] = useState(false), [prepFailed, setPrepFailed] = useState(false), [pivotPlan, setPivotPlan] = useState<PivotPlan | null>(null);
+  const prepCancel = useRef<(() => void) | null>(null);
+  // Catalogue : le volume exclut les obstacles (clé indépendante de l'instant) ; l'exclusion
+  // mécanique COURANTE est appliquée au rendu avec le même test de corps que le verdict.
+  const pivotPlanKey = catalogue && config.motion === "pivot" ? JSON.stringify([config, catalogueProfile?.version]) : null;
+  const [plannedKey, setPlannedKey] = useState<string | null>(null);
+  useEffect(() => () => { prepCancel.current?.(); prepCancel.current = null; setPreparing(false); }, [pivotPlanKey, pedagogical, machineAssetId]);
+  const pivotT = pivotPlanKey && plannedKey === pivotPlanKey && pivotPlan ? pivotSampleAt(pivotPlan, progress) : null;
+  const pivotHidden = !!pivotPlanKey && playing && pivotT === null;
+  const volumeFrame = pivotT !== null ? catalogueFrame(config, pivotT) : pedagogicalPose;
+  const sampledRaw = usePedagogicalVolume(pedagogical && eligible && !pivotHidden, activeExperiment, volumeFrame, catalogue ? null : config.machine ? frameObstacles : null, catalogue ? config : undefined);
+  const sampled = useMemo(() => {
+    const v = sampledRaw.volume as (typeof sampledRaw.volume & { field?: VolumeField }) | null;
+    if (!catalogue || !v?.field || !frameObstacles?.length) return sampledRaw;
+    return { ...sampledRaw, volume: { ...v, field: { ...v.field, blocked: obstacleBlocked(config, v.field, (volumeFrame.pose as { frame?: [Vec3, Vec3, Vec3] }).frame, frameObstacles) } } };
+  }, [sampledRaw, catalogue, frameObstacles, volumeFrame, config]);
   const [timelineResult, setPedTimeline] = useState<(ReturnType<typeof placementTimeline>&{key:string}) | null>(null);
   const clipGeneration=config.machine?animationGeneration(config.machine.assetKey,config.machine.unitScale):0;
   const timelineKey=pedagogicalTimelineKey(effectiveExperiment,config,machineAssetId,envelopes,clipGeneration)+'|'+(catalogue?catalogueProfile?.version:'frozen');
@@ -1550,24 +1562,23 @@ export default function MagneticWorkshop({
       aria-pressed={playing}
       onClick={() => {
         if (progress >= 1) setProgress(0);
-        // Pivot : préparer les 9 orientations exactes avant de lancer, puis lire le cache.
-        if (!playing && catalogue && config.motion === "pivot") {
-          const obstacles = config.machine ? frameObstacles : null;
-          const requests = Array.from({ length: 9 }, (_, i) => {
-            const f = catalogueFrame(config, i / 8);
-            return { key: volumeKey(activeExperiment, f, obstacles, config), settings: activeExperiment, frame: f, obstacles, catalogue: config };
+        // Pivot : plan d'orientations adaptatif (frontière centrale ≤ 0,5 mm) préparé avant lecture.
+        if (!playing && pivotPlanKey && plannedKey !== pivotPlanKey) {
+          prepCancel.current?.();
+          setPreparing(true); setPrepFailed(false);
+          const key = pivotPlanKey;
+          prepCancel.current = preparePivot(config, (u) => { const f = catalogueFrame(config, u); return { key: volumeKey(activeExperiment, f, null, config), settings: activeExperiment, frame: f, obstacles: null, catalogue: config }; }, (plan) => {
+            prepCancel.current = null; setPreparing(false);
+            if (!plan) { setPrepFailed(true); return; }
+            setPivotPlan(plan); setPlannedKey(key); setPlaying(true);
           });
-          if (requests.some((r) => !volumeCacheHas(r.key))) {
-            setPreparing(true);
-            prepareVolumes(requests, () => { setPreparing(false); setPlaying(true); });
-            return;
-          }
+          return;
         }
         setPlaying(!playing);
       }}
     >
       {playing ? <Pause size={17} /> : <Play size={17} />}
-      {t(preparing ? "Préparation des orientations…" : playing ? "Pause" : "Lancer le mouvement")}
+      {t(preparing ? "Préparation des orientations…" : playing ? "Pause" : prepFailed ? "Réessayer la préparation" : "Lancer le mouvement")}
     </button>
   );
 

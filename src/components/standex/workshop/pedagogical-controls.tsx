@@ -63,7 +63,6 @@ export type PrepRequest={key:string;settings:ExperimentSettings;frame:Pedagogica
  * writes nor calls onDone. onDone(null) = failure (playback must not start). */
 export function preparePivot(config:WorkshopConfig,request:(t:number)=>PrepRequest,onDone:(plan:PivotPlan|null)=>void,maxVolumes=48,factory:()=>Worker=()=>new Worker(new URL('./pedagogical.worker.ts',import.meta.url),{type:'module'})):()=>void{
  const token=++pinToken,next=new Map<string,SampledVolume>();
- if(typeof Worker==='undefined'&&!factory.length){/* factory may be injected in tests */}
  let worker:Worker;try{worker=factory();}catch{onDone(null);return()=>{};}
  let live=true,plan:PivotPlan|null=null,pending:PrepRequest[]=[],index=0;
  const finish=(p:PivotPlan|null)=>{if(!live||token!==pinToken)return;live=false;worker.terminate();if(p)pinned=next;onDone(p);};
