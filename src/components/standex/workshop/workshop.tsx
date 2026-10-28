@@ -1546,15 +1546,28 @@ export default function MagneticWorkshop({
     <button
       ref={playRef}
       className="mw-button mw-wide mw-run"
-      disabled={!machineReady}
+      disabled={!machineReady || preparing}
       aria-pressed={playing}
       onClick={() => {
         if (progress >= 1) setProgress(0);
+        // Pivot : préparer les 9 orientations exactes avant de lancer, puis lire le cache.
+        if (!playing && catalogue && config.motion === "pivot") {
+          const obstacles = config.machine ? frameObstacles : null;
+          const requests = Array.from({ length: 9 }, (_, i) => {
+            const f = catalogueFrame(config, i / 8);
+            return { key: volumeKey(activeExperiment, f, obstacles, config), settings: activeExperiment, frame: f, obstacles, catalogue: config };
+          });
+          if (requests.some((r) => !volumeCacheHas(r.key))) {
+            setPreparing(true);
+            prepareVolumes(requests, () => { setPreparing(false); setPlaying(true); });
+            return;
+          }
+        }
         setPlaying(!playing);
       }}
     >
       {playing ? <Pause size={17} /> : <Play size={17} />}
-      {t(playing ? "Pause" : "Lancer le mouvement")}
+      {t(preparing ? "Préparation des orientations…" : playing ? "Pause" : "Lancer le mouvement")}
     </button>
   );
 
