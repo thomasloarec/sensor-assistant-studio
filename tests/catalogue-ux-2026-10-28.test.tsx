@@ -14,9 +14,9 @@ import type { VolumeField } from '../src/lib/standex/catalogue-pedagogical';
 import { setLocale } from '../src/lib/i18n/core';
 
 const config: WorkshopConfig = { ...DEFAULT_WORKSHOP, sensorId: 'MK04', magnetModel: 'M04', sensitivity: 'C' };
-setLocale('fr');
 
 describe('lot UX 28/10 — lobes en mouvement', () => {
+  setLocale('fr');
   test('la clé du volume 3D ignore la translation : même orientation, deux instants', () => {
     const a = catalogueFrame(config, 0.1), b = catalogueFrame(config, 0.6);
     expect(a.pose.center).not.toEqual(b.pose.center);
@@ -72,7 +72,9 @@ describe('lot UX 28/10 — rendu lisse', () => {
 });
 
 describe('lot UX 28/10 — colonne de découverte', () => {
+  setLocale('fr');
   const renderControls = (cfg: WorkshopConfig = config) => {
+    setLocale('fr');
     const patches: Partial<WorkshopConfig>[] = [];
     const r = render(<ClientPedagogicalControls config={cfg} update={(p) => patches.push(p)} onCatalog={() => {}} onExplore={() => {}} onCable={() => {}} approachControls={<div data-testid="approach-picker" />} />);
     return { r, patches };
