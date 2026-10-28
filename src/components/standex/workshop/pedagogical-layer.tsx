@@ -79,15 +79,19 @@ export function PedagogicalLayer({frame,settings,volume,zones=true,zonesOnly=fal
   const rotation=useMemo(()=>new Quaternion().setFromRotationMatrix(new Matrix4().makeBasis(...frame.basis.map(v=>new Vector3(...v)) as [Vector3,Vector3,Vector3])),[frame.basis]);
   const q=useMemo(()=>new Quaternion().setFromUnitVectors(new Vector3(0,1,0),new Vector3(...frame.pose.axis).normalize()),[frame.pose.axis]);
   const field=(volume as {field?:VolumeField}|null)?.field;
+  // Primitive threshold deps: a fresh thresholds object per frame must not rebuild the meshes.
+  const low=thresholds?.low??null,high=thresholds?.high??null;
   const geometries=useMemo(()=>{
-    if(!volume)return [];
-    if(field&&thresholds)return [thresholds.low!==null?smoothSurface(field,thresholds.low):null,smoothSurface(field,thresholds.high)].filter((g):g is BufferGeometry=>!!g);
+    if(!volume)return [null,null];
+    if(field&&high!==null)return [low!==null?smoothSurface(field,low):null,smoothSurface(field,high)];
     return [surface(volume.cells,1),surface(volume.cells,2)];
-  },[volume,field,thresholds]);
-  useEffect(()=>()=>geometries.forEach(g=>g.dispose()),[geometries]);
+  },[volume,field,low,high]);
+  useEffect(()=>()=>geometries.forEach(g=>g?.dispose()),[geometries]);
   if(!magnet&&!zonesOnly)return null;
   return <group position={frame.origin} quaternion={rotation}>
-    {zones&&geometries.map((geometry,i)=><mesh key={i} geometry={geometry} renderOrder={i}>
+     {/* Zone identity preserved: index 0 = coque (seuil bas), index 1 = noyau (seuil haut).
+         Class A (low=null) keeps the core cyan at index 1 — never recoloured as shell. */}
+     {zones&&geometries.map((geometry,i)=>geometry&&<mesh key={i} geometry={geometry} renderOrder={i}>
       <meshBasicMaterial color={i===0?'#d2a746':'#32a9a8'} opacity={i===0?.12:.22} transparent depthWrite={false} side={DoubleSide}/>
     </mesh>)}
     {!zonesOnly&&magnet&&<>
@@ -104,7 +108,7 @@ export function PedagogicalLayer({frame,settings,volume,zones=true,zonesOnly=fal
     </>}
   </group>;
 }
-export function PedagogicalCut({volume,frame,body,reedMm}:{volume:SampledVolume|null;frame:PedagogicalFrame;body?:readonly number[]|undefined;reedMm?:number|undefined}) {
+export function PedagogicalCut({volume,frame,body,reedMm,zones=true}:{volume:SampledVolume|null;frame:PedagogicalFrame;body?:readonly number[]|undefined;reedMm?:number|undefined;zones?:boolean}) {
   const ref=useRef<SVGSVGElement>(null),[size,setSize]=useState({width:640,height:590});
   useEffect(()=>{const el=ref.current;if(!el)return;const observer=new ResizeObserver(entries=>{const r=entries[0]?.contentRect;if(r&&r.width>0&&r.height>0)setSize({width:r.width,height:r.height});});observer.observe(el);return()=>observer.disconnect();},[]);
   const scale=Math.max(.5,Math.min((size.width-100)/48,(size.height-110)/48));
@@ -115,7 +119,7 @@ export function PedagogicalCut({volume,frame,body,reedMm}:{volume:SampledVolume|
     <defs><pattern id="mw-cut-hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" className="mw-cut-blocked-bg"/><line x1="0" y1="0" x2="0" y2="6" className="mw-cut-blocked-line"/></pattern></defs>
     <text x="12" y="22" className="t-caption">{t('Repère reed · millimètres')}</text>
     <text x="12" y="42" className="t-caption">z = {frame.pose.center[2].toFixed(1)} mm</text>
-    {volume?.cut.map(c=><rect key={`${c.x},${c.y}`} x={x(c.x0)} y={y(c.y1)} width={(c.x1-c.x0)*scale} height={(c.y1-c.y0)*scale} className={c.blocked?'mw-cut-blocked':c.response===null?'mw-cut-collision':c.zone===2?'mw-cut-high':c.zone===1?'mw-cut-low':'mw-cut-empty'}/>)}
+    {zones&&volume?.cut.map(c=><rect key={`${c.x},${c.y}`} x={x(c.x0)} y={y(c.y1)} width={(c.x1-c.x0)*scale} height={(c.y1-c.y0)*scale} className={c.blocked?'mw-cut-blocked':c.response===null?'mw-cut-collision':c.zone===2?'mw-cut-high':c.zone===1?'mw-cut-low':'mw-cut-empty'}/>)}
     <line x1={x(-24)} y1={cy} x2={x(24)} y2={cy} className="mw-cut-axis"/>
     <line x1={cx} y1={y(24)} x2={cx} y2={y(-24)} className="mw-cut-axis"/>
     {[-20,0,20].map(n=><g key={n}><text x={x(n)} y={y(-24)+20} textAnchor="middle" className="t-caption">{n}</text><text x={x(-24)-10} y={y(n)+5} textAnchor="end" className="t-caption">{n}</text></g>)}
