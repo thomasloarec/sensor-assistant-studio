@@ -11,7 +11,10 @@ import { DEFAULT_EXPERIMENT } from '../src/lib/detection-lab/workshop-experiment
 import { DEFAULT_WORKSHOP, type WorkshopConfig } from '../src/lib/standex/magnetic-workshop';
 import type { VolumeField } from '../src/lib/standex/catalogue-pedagogical';
 
+import { setLocale } from '../src/lib/i18n/core';
+
 const config: WorkshopConfig = { ...DEFAULT_WORKSHOP, sensorId: 'MK04', magnetModel: 'M04', sensitivity: 'C' };
+setLocale('fr');
 
 describe('lot UX 28/10 — lobes en mouvement', () => {
   test('la clé du volume 3D ignore la translation : même orientation, deux instants', () => {
