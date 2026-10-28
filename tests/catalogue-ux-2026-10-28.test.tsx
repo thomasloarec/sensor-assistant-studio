@@ -25,7 +25,8 @@ describe('lot UX 28/10 — lobes en mouvement', () => {
     expect(volumeKey(DEFAULT_EXPERIMENT, a, null, config)).not.toBe(volumeKey(DEFAULT_EXPERIMENT, b, null, turned));
   });
   test('la clé de coupe suit le plan choisi', () => {
-    const a = catalogueFrame(config, 0.2), b = catalogueFrame(config, 0.8);
+    const a = catalogueFrame(config, 0.2), b = catalogueFrame(config, 0.4);
+    expect(a.pose.center[2]).not.toBe(b.pose.center[2]);
     expect(cutKey(DEFAULT_EXPERIMENT, a, null, config)).not.toBe(cutKey(DEFAULT_EXPERIMENT, b, null, config));
   });
   test('le volume catalogue expose le champ échantillonné complet pour le rendu lisse', () => {
@@ -56,7 +57,7 @@ describe('lot UX 28/10 — rendu lisse', () => {
   test('les positions masquées mécaniquement restent hors de la surface', () => {
     const values: (number | null)[] = [];
     for (let k = 0; k < 3; k++) for (let j = 0; j < 3; j++) for (let i = 0; i < 5; i++) values.push(10);
-    const blocked = values.map((_, n) => n % 15 < 5);
+    const blocked = values.map((_, n) => n % 5 < 2);
     const g = smoothSurface(grid(values, blocked), 5);
     const pos = g.getAttribute('position');
     for (let n = 0; n < pos.count; n++) expect(pos.getX(n)).toBeGreaterThan(0.9);
