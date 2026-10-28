@@ -31,7 +31,7 @@ export function smoothSurface(field:VolumeField,threshold:number):BufferGeometry
   const value=(idx:number)=>blocked[idx]?null:values[idx]??null;
   const inside=(idx:number)=>{const v=value(idx);return v!==null&&v>=threshold;};
   const coord=(i:number,j:number,k:number):[number,number,number]=>[xs[i]??0,ys[j]??0,zs[k]??0];
-  const EDGES:[number,number][][]=[[[0,0,0],[1,0,0]],[[0,1,0],[1,1,0]],[[0,0,1],[1,0,1]],[[0,1,1],[1,1,1]],[[0,0,0],[0,1,0]],[[1,0,0],[1,1,0]],[[0,0,1],[0,1,1]],[[1,0,1],[1,1,1]],[[0,0,0],[0,0,1]],[[1,0,0],[1,0,1]],[[0,1,0],[0,1,1]],[[1,1,0],[1,1,1]]];
+  const EDGES:[number,number,number][][]=[[[0,0,0],[1,0,0]],[[0,1,0],[1,1,0]],[[0,0,1],[1,0,1]],[[0,1,1],[1,1,1]],[[0,0,0],[0,1,0]],[[1,0,0],[1,1,0]],[[0,0,1],[0,1,1]],[[1,0,1],[1,1,1]],[[0,0,0],[0,0,1]],[[1,0,0],[1,0,1]],[[0,1,0],[0,1,1]],[[1,1,0],[1,1,1]]];
   const cellVertex=new Map<number,number>(),positions:number[]=[];
   for(let k=0;k<nz-1;k++)for(let j=0;j<ny-1;j++)for(let i=0;i<nx-1;i++){
     const corners=[0,1,0,1,0,1,0,1].map((_,e)=>at(i+(e&1),j+((e>>1)&1),k+((e>>2)&1)));
