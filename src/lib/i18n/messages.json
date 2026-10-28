@@ -35233,5 +35233,50 @@
   "Руководство Standex, стр.",
   "Guida Standex, pagina",
   "Standexガイド、ページ"
+ ],
+ "Préparation des orientations…": [
+  "Preparing orientations…",
+  "正在准备方向……",
+  "Ausrichtungen werden vorbereitet…",
+  "Preparando orientaciones…",
+  "Подготовка ориентаций…",
+  "Preparazione degli orientamenti…",
+  "方向を準備しています…"
+ ],
+ "Pendant la lecture, les zones montrent l’orientation préparée la plus proche": [
+  "During playback, the zones show the nearest prepared orientation",
+  "播放期间，区域显示最接近的已准备方向",
+  "Während der Wiedergabe zeigen die Zonen die nächstliegende vorbereitete Ausrichtung",
+  "Durante la reproducción, las zonas muestran la orientación preparada más cercana",
+  "Во время воспроизведения зоны показывают ближайшую подготовленную ориентацию",
+  "Durante la riproduzione, le zone mostrano l’orientamento preparato più vicino",
+  "再生中、ゾーンは最も近い準備済みの方向を表示します"
+ ],
+ "Mettez en pause pour voir la coupe à cet instant": [
+  "Pause to see the cut at this instant",
+  "暂停以查看此刻的剖面",
+  "Pausieren, um den Schnitt zu diesem Zeitpunkt zu sehen",
+  "Pausa para ver el corte en este instante",
+  "Поставьте на паузу, чтобы увидеть сечение в этот момент",
+  "Metti in pausa per vedere la sezione in questo istante",
+  "一時停止するとこの瞬間の断面が表示されます"
+ ],
+ "Aucune rotation appliquée": [
+  "No rotation applied",
+  "未应用旋转",
+  "Keine Drehung angewendet",
+  "Sin rotación aplicada",
+  "Поворот не применён",
+  "Nessuna rotazione applicata",
+  "回転は適用されていません"
+ ],
+ "Rotation appliquée : {0}°": [
+  "Rotation applied: {0}°",
+  "已应用旋转：{0}°",
+  "Angewendete Drehung: {0}°",
+  "Rotación aplicada: {0}°",
+  "Применённый поворот: {0}°",
+  "Rotazione applicata: {0}°",
+  "適用された回転：{0}°"
  ]
 }
