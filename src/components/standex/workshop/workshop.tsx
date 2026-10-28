@@ -2209,6 +2209,45 @@ export default function MagneticWorkshop({
     </details>
   );
 
+  /* Menu « Affichage » du mode pédagogique : interrupteurs indépendants.
+     Pas de « Voir les contacts » : ce mode ne les représente pas. */
+  const pedagogicalDisplayMenu = (
+    <details className="mw-display-menu" data-testid="display-menu">
+      <summary>{t("Affichage ⌄")}</summary>
+      <div className="mw-display-body">
+        <label>
+          <input type="checkbox" checked={showNames} onChange={(e) => setShowNames(e.target.checked)} />
+          {t("Nom capteur")}
+        </label>
+        <label>
+          <input type="checkbox" checked={showMagnetName} onChange={(e) => setShowMagnetName(e.target.checked)} />
+          {t("Nom de l’aimant")}
+        </label>
+        <label>
+          <input type="checkbox" checked={dimensions} onChange={(e) => setDimensions(e.target.checked)} />
+          {t("Dimensions")}
+        </label>
+        <label>
+          <input type="checkbox" checked={zones} onChange={(e) => setZones(e.target.checked)} />
+          {t("Zones de détection")}
+        </label>
+        <label>
+          <input type="checkbox" checked={showCircuit} onChange={(e) => setShowCircuit(e.target.checked)} />
+          {t("Circuit de principe")}
+        </label>
+        <button
+          className="mw-text-button"
+          onClick={() => {
+            setFocus("assembly");
+            setResetEpoch((v) => v + 1);
+          }}
+        >
+          {t("Recadrer")}
+        </button>
+      </div>
+    </details>
+  );
+
   return (
     <main className={`mw mw-stage immersive ${pedagogical?"mw-pedagogical":""} ${clientPedagogical ? "mw-client-pedagogical" : ""} ${embedded ? "mw-embedded" : "mw-autonomous"} ${machine ? "mw-imported" : ""}`} aria-label={t("Atelier 3D")}>
       {productCard && !pedagogical && (
@@ -2446,7 +2485,7 @@ export default function MagneticWorkshop({
               ))}
             </div>
           )}
-          {catalogue ? <div className="mw-verdict-banner notice-info" role="status" data-testid="client-pedagogical-verdict"><strong className="t-title-s">{t(playing?'Mettre en pause pour analyser la cause':PLACEMENT_LABEL[placement.state])}</strong><span className="t-caption">{t(CATALOGUE_LABELS.notice)}</span><span className="t-body">{t(catalogueProfile?CATALOGUE_LABELS[catalogueProfile.status]:CATALOGUE_LABELS.analogy)}</span>{catalogueProfile&&catalogueVerdictNotes(config,catalogueProfile).map(n=><span key={n} className="t-caption" data-testid="catalogue-verdict-note">{t(n)}</span>)}<span className="t-caption">{t(playing?'Mettre en pause pour analyser la cause':placement.cause==='overlap'?'Collision du corps de l’aimant avec l’enveloppe ou le montage':placement.cause==='orientation'?'Orientation défavorable à cet endroit':placement.state==='unavailable'?'Estimation indisponible':'Zones d’activation estimées')}</span></div> : pedagogical ? <PedagogicalBanner evidence={placement} diagnosis={diagnosis} remedy={remedy} onPropose={r=>{if(r.kind==="verified")setSuggestion(r.config);}}/> : verdictBanner}
+          {catalogue ? <div className="mw-verdict-banner notice-info" role="status" data-testid="client-pedagogical-verdict"><strong className="t-title-s">{t(PLACEMENT_LABEL[placement.state])}</strong><span className="t-caption">{t(CATALOGUE_LABELS.notice)}</span><span className="t-body">{t(catalogueProfile?CATALOGUE_LABELS[catalogueProfile.status]:CATALOGUE_LABELS.analogy)}</span>{catalogueProfile&&catalogueVerdictNotes(config,catalogueProfile).map(n=><span key={n} className="t-caption" data-testid="catalogue-verdict-note">{t(n)}</span>)}<span className="t-caption">{t(placement.state==='favorable'?'Zones d’activation estimées':placement.state==='unavailable'?'Position ou orientation à vérifier avec Standex':placement.cause==='overlap'?'Collision du corps de l’aimant avec l’enveloppe ou le montage':placement.cause==='orientation'?'Orientation à revoir':'Aimant trop éloigné dans cette orientation')}</span></div> : pedagogical ? <PedagogicalBanner evidence={placement} diagnosis={diagnosis} remedy={remedy} onPropose={r=>{if(r.kind==="verified")setSuggestion(r.config);}}/> : verdictBanner}
           {clientPedagogical&&exploring&&<p className="notice-info t-body" data-testid="client-exploration-context">{t('Exemple générique — ce résultat ne concerne pas le couple de votre dossier')}</p>}
           <div
             className="mw-canvas"
@@ -2475,9 +2514,9 @@ export default function MagneticWorkshop({
                   {t(pedagogical ? "Vue en coupe" : "Vue plane")}
                 </button>
               </div>
-              {!pedagogical && displayMenu}
+              {pedagogical ? pedagogicalDisplayMenu : displayMenu}
             </div>
-            {!pedagogical && <ContactCircuit contact={sample.contact} />}
+            {pedagogical ? (showCircuit && <div className="mw-circuit-ped" data-testid="pedagogical-circuit"><span className="t-caption">{t("Circuit de principe · état indicatif")}</span><ContactCircuit contact={circuitContact} /></div>) : <ContactCircuit contact={sample.contact} />}
             {/* Outil de pointage du câble : seulement quand le pointage est
                 réellement actif. Les trajets existants restent intacts. */}
             {!exploring && cableRouting && tool === "cable" ? (
@@ -2523,7 +2562,7 @@ export default function MagneticWorkshop({
                 </p>
               </div>
             ) : null}
-            {pedagogical && view === "top" ? <PedagogicalCut volume={sampled.volume} frame={pedagogicalPose} body={catalogueProfile?.body} reedMm={catalogueProfile?EXPERIMENT.effectiveLengthMm*catalogueProfile.lengthMm/14:undefined}/> : machine ? (
+            {pedagogical && view === "top" ? <PedagogicalCut volume={cutVolume} frame={pedagogicalPose} body={catalogueProfile?.body} reedMm={catalogueProfile?EXPERIMENT.effectiveLengthMm*catalogueProfile.lengthMm/14:undefined}/> : machine ? (
               assetError ? (
                 <div className="mw-loading" role="alert">
                   {t(assetError)}
