@@ -107,7 +107,8 @@ describe("Couverture des langues de l'interface", () => {
     // + 25 entrées : lot causes/légendes/lisibilité (diagnostic, remède vérifié, corps générique, Sources et limites).
     // + 2 entrées nettes : constats limités aux essais (bandeau) et détail replié dans Sources et limites.
     // + 14 entrées : lot UX 28/10 (circuit de principe, trois choix de découverte, causes client).
-    expect(Object.keys(dictionary)).toHaveLength(3_915);
+    // + 5 entrées : contre-revue 28/10 (préparation pivot, coupe en pause, rotation honnête).
+    expect(Object.keys(dictionary)).toHaveLength(3_920);
     const broken = Object.entries(dictionary).filter(
       ([, v]) => v.length !== 7 || v.some((x) => typeof x !== "string" || x.trim() === ""),
     );
