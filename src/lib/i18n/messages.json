@@ -35297,13 +35297,40 @@
     "Preparazione non riuscita: zone non mostrate, tempo conservato.",
     "準備できません：ゾーンは非表示、時間は保持されます。"
   ],
-  "Orientation non préparée avec une précision de 0,5 mm : zones masquées à cet instant.": [
-    "Orientation not prepared to 0.5 mm accuracy: zones hidden at this instant.",
-    "该方向未按 0.5 mm 精度准备：此刻隐藏区域。",
-    "Ausrichtung nicht mit 0,5 mm Genauigkeit vorbereitet: Zonen in diesem Moment ausgeblendet.",
-    "Orientación no preparada con precisión de 0,5 mm: zonas ocultas en este instante.",
-    "Ориентация не подготовлена с точностью 0,5 мм: зоны скрыты в этот момент.",
-    "Orientamento non preparato con precisione di 0,5 mm: zone nascoste in questo istante.",
-    "0.5 mm 精度で準備されていない向き：この瞬間はゾーンを非表示。"
+  "Zones non disponibles pour cette orientation pendant le mouvement. Mettez en pause pour les recalculer.": [
+    "Zones not available for this orientation during motion. Pause to recalculate them.",
+    "运动过程中此方向的区域不可用。请暂停以重新计算。",
+    "Zonen für diese Ausrichtung während der Bewegung nicht verfügbar. Pausieren Sie, um sie neu zu berechnen.",
+    "Zonas no disponibles para esta orientación durante el movimiento. Ponga en pausa para recalcularlas.",
+    "Зоны для этой ориентации во время движения недоступны. Поставьте на паузу, чтобы пересчитать их.",
+    "Zone non disponibili per questo orientamento durante il movimento. Metti in pausa per ricalcolarle.",
+    "動作中はこの向きのゾーンを表示できません。一時停止すると再計算されます。"
+  ],
+  "Limites techniques": [
+    "Technical limits",
+    "技术限制",
+    "Technische Grenzen",
+    "Límites técnicos",
+    "Технические ограничения",
+    "Limiti tecnici",
+    "技術的な制限"
+  ],
+  "Contrôle sur trois rayons centraux seulement, pas sur tout le volume. Rotation relative d’un clip importé hors pivot non prise en charge.": [
+    "Checked on three central rays only, not on the whole volume. Relative rotation of an imported clip outside pivot is not supported.",
+    "仅在三条中心射线上检查，而非整个体积。不支持枢轴以外导入片段的相对旋转。",
+    "Nur auf drei zentralen Strahlen geprüft, nicht im gesamten Volumen. Relative Drehung eines importierten Clips außerhalb des Schwenks wird nicht unterstützt.",
+    "Comprobado solo en tres rayos centrales, no en todo el volumen. La rotación relativa de un clip importado fuera del pivote no está soportada.",
+    "Проверено только на трёх центральных лучах, а не во всём объёме. Относительный поворот импортированного клипа вне поворота не поддерживается.",
+    "Verificato solo su tre raggi centrali, non sull’intero volume. La rotazione relativa di una clip importata al di fuori del pivot non è supportata.",
+    "中央の3本の線でのみ確認し、体積全体ではありません。ピボット以外でのインポートクリップの相対回転には対応していません。"
+  ],
+  "Préparation limitée à 48 orientations : certaines zones resteront masquées pendant le mouvement.": [
+    "Preparation limited to 48 orientations: some zones will stay hidden during motion.",
+    "准备限制为 48 个方向：运动过程中部分区域将保持隐藏。",
+    "Vorbereitung auf 48 Ausrichtungen begrenzt: Einige Zonen bleiben während der Bewegung ausgeblendet.",
+    "Preparación limitada a 48 orientaciones: algunas zonas permanecerán ocultas durante el movimiento.",
+    "Подготовка ограничена 48 ориентациями: некоторые зоны останутся скрытыми во время движения.",
+    "Preparazione limitata a 48 orientamenti: alcune zone resteranno nascoste durante il movimento.",
+    "準備は48方向までに制限：動作中は一部のゾーンが非表示のままになります。"
   ]
 }

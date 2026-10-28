@@ -203,23 +203,33 @@ export function obstacleBlocked(c:WorkshopConfig,field:VolumeField,frame:[Vec3,V
  return out;
 }
 /** Central-boundary probe of the pivot at instant t: on rays y=0, z∈PROBE_Z, first x≥0 (step
- * 0.25 mm) where the nominal response reaches a zone. null = no boundary within the domain. */
+ * 0.25 mm) where the nominal response reaches the shell (zone≥1) AND, separately, the core
+ * (zone===2). Output = [shell z0, core z0, shell z1, core z1, …]; null = none within the domain.
+ * Three rays are a sentinel, not a proof for the whole volume. */
 export const PIVOT_PROBE_Z=[8,12,16] as const;
 export const PIVOT_TOL_MM=0.5;
 export function pivotBoundary(c:WorkshopConfig,t:number,model=catalogueModel(c),extent=24):(number|null)[]{
  const f=catalogueFrame(c,t);
- return PIVOT_PROBE_Z.map(z=>{for(let x=0;x<=extent+1e-9;x+=0.25){const e=cataloguePlacement(c,{center:[x,0,z],axis:f.pose.axis,...(f.pose.frame?{frame:f.pose.frame}:{})},[],model,true);if(e.zone)return x;}return null;});
+ return PIVOT_PROBE_Z.flatMap(z=>{let shell:number|null=null,core:number|null=null;
+  for(let x=0;x<=extent+1e-9&&core===null;x+=0.25){const e=cataloguePlacement(c,{center:[x,0,z],axis:f.pose.axis,...(f.pose.frame?{frame:f.pose.frame}:{})},[],model,true);
+   if(shell===null&&(e.zone??0)>=1)shell=x;if(e.zone===2)core=x;}
+  return [shell,core];});
 }
-export type PivotPlan={samples:number[];intervals:{t0:number;t1:number;certified:boolean}[]};
-/** Adaptive orientation plan: bisect [0,1] until adjacent samples' central boundaries differ by
- * ≤ PIVOT_TOL_MM on every probe ray (null≠number fails). Below minDt an interval is kept but
- * flagged uncertified — its zones are never shown as current. No volume is interpolated. */
+export type PivotPlan={samples:number[];intervals:{t0:number;t1:number;certified:boolean}[];truncated?:boolean};
+export const PIVOT_SEED=16;
+/** Adaptive orientation plan. [0,1] is first SEEDED into PIVOT_SEED sub-intervals (out-and-back:
+ * t=0 and t=1 are the same orientation, so endpoints alone never certify the cycle). Each
+ * interval compares start/middle/end; it is certified only when all three pairs differ by
+ * ≤ tol on every probe (null≠number fails), otherwise bisected down to minDt, then kept
+ * uncertified — its zones are never shown as current. No volume is interpolated. */
 export function adaptivePivotPlan(probe:(t:number)=>(number|null)[],minDt=1/128,tol=PIVOT_TOL_MM):PivotPlan{
  const memo=new Map<number,(number|null)[]>(),at=(t:number)=>{let v=memo.get(t);if(!v){v=probe(t);memo.set(t,v);}return v;};
- const ok=(a:(number|null)[],b:(number|null)[])=>a.every((x,i)=>{const y=b[i]??null;return x===null||y===null?x===y:Math.abs(x-y)<=tol;});
+ const ok=(a:(number|null)[],b:(number|null)[])=>a.length===b.length&&a.every((x,i)=>{const y=b[i]??null;return x===null||y===null?x===y:Math.abs(x-y)<=tol;});
  const intervals:PivotPlan['intervals']=[];
- const split=(t0:number,t1:number)=>{if(ok(at(t0),at(t1))){intervals.push({t0,t1,certified:true});return;}if(t1-t0<=minDt){intervals.push({t0,t1,certified:false});return;}const m=(t0+t1)/2;split(t0,m);split(m,t1);};
- split(0,1);
+ const split=(t0:number,t1:number)=>{const m=(t0+t1)/2,a=at(t0),b=at(m),c=at(t1);
+  if(ok(a,b)&&ok(b,c)&&ok(a,c)){intervals.push({t0,t1,certified:true});return;}
+  if(t1-t0<=minDt){intervals.push({t0,t1,certified:false});return;}split(t0,m);split(m,t1);};
+ for(let s=0;s<PIVOT_SEED;s++)split(s/PIVOT_SEED,(s+1)/PIVOT_SEED);
  return {samples:[...new Set(intervals.flatMap(i=>[i.t0,i.t1]))].sort((a,b)=>a-b),intervals};
 }
 /** Sample displayed at progress u: nearest end of its interval, only when that interval is certified. */
@@ -227,4 +237,9 @@ export function pivotSampleAt(plan:PivotPlan,u:number):number|null{
  const iv=plan.intervals.find(i=>u>=i.t0&&u<=i.t1);
  if(!iv||!iv.certified)return null;
  return u-iv.t0<=iv.t1-u?iv.t0:iv.t1;
+}
+/** Orientation used for zones: a prepared sample ONLY while playing; paused/scrubbed => null,
+ * i.e. the caller uses the exact catalogueFrame(config, progress). */
+export function activePivotT(playing:boolean,plan:PivotPlan|null,u:number):number|null{
+ return playing&&plan?pivotSampleAt(plan,u):null;
 }

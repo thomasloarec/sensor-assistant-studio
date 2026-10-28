@@ -73,7 +73,7 @@ export function preparePivot(config:WorkshopConfig,request:(t:number)=>PrepReque
   if(!live||token!==pinToken)return;
   if(!plan){if(!event.data.plan){finish(null);return;}
    const samples=event.data.plan.samples.slice(0,maxVolumes),kept=new Set(samples);
-   plan={samples,intervals:event.data.plan.intervals.map(i=>({...i,certified:i.certified&&kept.has(i.t0)&&kept.has(i.t1)}))};
+   plan={samples,truncated:event.data.plan.samples.length>maxVolumes,intervals:event.data.plan.intervals.map(i=>({...i,certified:i.certified&&kept.has(i.t0)&&kept.has(i.t1)}))};
    pending=samples.map(request);send();return;}
   const r=pending[index];
   if(!r||event.data.key!==r.key||!event.data.result||event.data.result.key!==r.key){finish(null);return;}
@@ -196,4 +196,13 @@ export function PedagogicalControls({diagnosis,timelineNote,settings,setSettings
     </details>
   </div>;
 }
-export { DEFAULT_EXPERIMENT, evaluatePlacement };
+export { DEFAULT_EXPERIMENT, evaluatePlacement };/** Pivot status notes, shown independently of the circuit toggle. */
+export function PivotNotes({failed,hidden,truncated}:{failed:boolean;hidden:boolean;truncated:boolean}){
+ if(!failed&&!hidden&&!truncated)return null;
+ return <div className="notice-info" data-testid="pivot-notes">
+  {failed&&<p className="t-caption" role="alert">{t('Préparation impossible : zones non affichées, temps conservé.')}</p>}
+  {hidden&&<p className="t-caption" role="status" data-testid="pivot-hidden">{t('Zones non disponibles pour cette orientation pendant le mouvement. Mettez en pause pour les recalculer.')}</p>}
+  {truncated&&<p className="t-caption" data-testid="pivot-truncated">{t('Préparation limitée à 48 orientations : certaines zones resteront masquées pendant le mouvement.')}</p>}
+  <details><summary className="t-caption">{t('Limites techniques')}</summary><p className="t-caption">{t('Contrôle sur trois rayons centraux seulement, pas sur tout le volume. Rotation relative d’un clip importé hors pivot non prise en charge.')}</p></details>
+ </div>;
+}

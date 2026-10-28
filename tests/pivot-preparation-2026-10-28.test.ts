@@ -61,3 +61,41 @@ describe('preparePivot cycle', () => {
     return import('@/components/standex/workshop/pedagogical-controls').then(m => { for (const t of samples) expect(m.pinnedVolume('k' + t)).toBeTruthy(); });
   });
 });
+
+describe('out-and-back pivot (micro-fix 2026-10-28)', () => {
+  it('non-monotone sine: endpoints equal never certify the whole cycle', () => {
+    const f = (t: number) => 20 * Math.sin(Math.PI * t) ** 2;
+    const plan = adaptivePivotPlan(t => [f(t)]);
+    expect(plan.intervals.length).toBeGreaterThan(2);
+    expect(plan.intervals.some(i => i.t0 === 0 && i.t1 === 1)).toBe(false);
+    for (const i of plan.intervals.filter(i => i.certified)) for (const u of [i.t0, (i.t0 + i.t1) / 2, i.t1]) expect(Math.abs(f(u) - f(i.t0))).toBeLessThanOrEqual(PIVOT_TOL_MM + 1e-9);
+  });
+  it('real engine MK03/C N45 magnetAngle 90: not certified on [0,1], core and shell both probed', async () => {
+    const { DEFAULT_WORKSHOP } = await import('@/lib/standex/magnetic-workshop') as any;
+    const { pivotBoundary } = await import('@/lib/standex/catalogue-pedagogical');
+    const c = { ...(DEFAULT_WORKSHOP ?? {}), sensorId: 'MK03', motion: 'pivot', magnetAngle: 90, magnetModel: 'N45-4X19', sensitivity: 'C' } as never;
+    const b0 = pivotBoundary(c, 0), b1 = pivotBoundary(c, 0.125);
+    expect(b0.length).toBe(6);
+    expect(b0).toEqual(pivotBoundary(c, 1));
+    const plan = adaptivePivotPlan(t => pivotBoundary(c, t), 1 / 16);
+    expect(plan.intervals.some(i => i.t0 === 0 && i.t1 === 1)).toBe(false);
+    expect(plan.intervals.length).toBeGreaterThanOrEqual(16);
+    console.log('MK03 t0', b0, 't.125', b1, 'uncertified', plan.intervals.filter(i => !i.certified).length);
+  }, 60000);
+});
+
+describe('pause uses the exact pose', () => {
+  it('prepared orientation only while playing', async () => {
+    const { activePivotT } = await import('@/lib/standex/catalogue-pedagogical');
+    const plan = adaptivePivotPlan(t => [20 * t]);
+    expect(activePivotT(false, plan, 0.37)).toBeNull();
+    expect(activePivotT(true, plan, 0.37)).not.toBeNull();
+    expect(activePivotT(true, null, 0.37)).toBeNull();
+  });
+  it('pivot notes are not nested in the circuit block', async () => {
+    const src = await Bun.file('src/components/standex/workshop/workshop.tsx').text();
+    const i = src.indexOf('<PivotNotes'), c = src.indexOf('showCircuit && <div className="mw-circuit-ped"');
+    expect(i).toBeGreaterThan(0); expect(i).toBeLessThan(c);
+    expect(src.includes('précision de 0,5 mm')).toBe(false);
+  });
+});

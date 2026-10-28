@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { ClientPedagogicalControls } from './client-pedagogical-controls';
 import { CLIENT_LIMITS, clientCoupleAdapter, explorationSettings, clientPedagogicalResult, type ClientPedagogicalResult } from '@/lib/standex/client-pedagogical';
-import { catalogueFrame, cataloguePlacement, catalogueModel, catalogueVerdictNotes, CATALOGUE_LABELS, obstacleBlocked, pivotSampleAt, type PivotPlan, type VolumeField } from '@/lib/standex/catalogue-pedagogical';
+import { catalogueFrame, cataloguePlacement, catalogueModel, catalogueVerdictNotes, CATALOGUE_LABELS, obstacleBlocked, activePivotT, type PivotPlan, type VolumeField } from '@/lib/standex/catalogue-pedagogical';
 import type { MachineFocus } from "@/lib/standex/machine-view";
 import { observedCycleVerdict } from "@/lib/leadmagnet/tested-pairs";
 import {
@@ -152,7 +152,7 @@ import { pedagogicalRemedy } from "@/lib/standex/pedagogical-poses";
 import { diagnosePlacement } from "@/lib/detection-lab/placement-diagnosis";
 import { pilotBodies, pedagogicalFrame, pedagogicalAvailability, suggestPedagogicalConfig, parsePedagogicalEnvelope, type PedagogicalDraft } from "@/lib/standex/pedagogical-poses";
 import { PedagogicalLayer, PedagogicalCut } from "./pedagogical-layer";
-import { PedagogicalControls, PedagogicalBanner, usePedagogicalVolume, usePedagogicalCut, preparePivot, volumeKey, PLACEMENT_LABEL } from "./pedagogical-controls";
+import { PedagogicalControls, PedagogicalBanner, PivotNotes, usePedagogicalVolume, usePedagogicalCut, preparePivot, volumeKey, PLACEMENT_LABEL } from "./pedagogical-controls";
 import { DEFAULT_EXPERIMENT, EXPERIMENT, experimentAvailable, evaluatePlacement, placementTimeline, classThresholds, type ExperimentSettings } from "@/lib/detection-lab/workshop-experiment";
 
 /* i18n-canonical : libellés traduits au rendu par t(). */
@@ -391,7 +391,8 @@ export default function MagneticWorkshop({
   const pivotPlanKey = catalogue && config.motion === "pivot" ? JSON.stringify([config, catalogueProfile?.version]) : null;
   const [plannedKey, setPlannedKey] = useState<string | null>(null);
   useEffect(() => () => { prepCancel.current?.(); prepCancel.current = null; setPreparing(false); }, [pivotPlanKey, pedagogical, machineAssetId]);
-  const pivotT = pivotPlanKey && plannedKey === pivotPlanKey && pivotPlan ? pivotSampleAt(pivotPlan, progress) : null;
+  // Pause/scrub => exact pose; the prepared orientation is used only while playing.
+  const pivotT = activePivotT(playing, pivotPlanKey && plannedKey === pivotPlanKey ? pivotPlan : null, progress);
   const pivotHidden = !!pivotPlanKey && playing && pivotT === null;
   const volumeFrame = pivotT !== null ? catalogueFrame(config, pivotT) : pedagogicalPose;
   const sampledRaw = usePedagogicalVolume(pedagogical && eligible && !pivotHidden, activeExperiment, volumeFrame, catalogue ? null : config.machine ? frameObstacles : null, catalogue ? config : undefined);
@@ -2551,7 +2552,7 @@ export default function MagneticWorkshop({
             </div>
             {/* Circuit de principe réintégré pour le parcours client (demande du 28/10) : même instant,
                 même moteur que le bandeau ; le banc staff conserve son rendu sans circuit. */}
-            {clientPedagogical ? (showCircuit && <div className="mw-circuit-ped" data-testid="pedagogical-circuit">{prepFailed && <span className="t-caption" role="alert">{t("Préparation impossible : zones non affichées, temps conservé.")}</span>}{pivotHidden && <span className="t-caption" role="status" data-testid="pivot-hidden">{t("Orientation non préparée avec une précision de 0,5 mm : zones masquées à cet instant.")}</span>}<span className="t-caption">{t("Circuit de principe · état indicatif")}</span><ContactCircuit contact={circuitContact} /></div>) : !pedagogical ? <ContactCircuit contact={sample.contact} /> : null}
+            {clientPedagogical && <PivotNotes failed={prepFailed} hidden={pivotHidden} truncated={!!(pivotPlanKey && plannedKey === pivotPlanKey && pivotPlan?.truncated)} />}{clientPedagogical ? (showCircuit && <div className="mw-circuit-ped" data-testid="pedagogical-circuit"><span className="t-caption">{t("Circuit de principe · état indicatif")}</span><ContactCircuit contact={circuitContact} /></div>) : !pedagogical ? <ContactCircuit contact={sample.contact} /> : null}
             {/* Outil de pointage du câble : seulement quand le pointage est
                 réellement actif. Les trajets existants restent intacts. */}
             {!exploring && cableRouting && tool === "cable" ? (
