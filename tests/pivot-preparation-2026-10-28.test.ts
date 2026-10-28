@@ -83,3 +83,19 @@ describe('out-and-back pivot (micro-fix 2026-10-28)', () => {
     console.log('MK03 t0', b0, 't.125', b1, 'uncertified', plan.intervals.filter(i => !i.certified).length);
   }, 60000);
 });
+
+describe('pause uses the exact pose', () => {
+  it('prepared orientation only while playing', async () => {
+    const { activePivotT } = await import('@/lib/standex/catalogue-pedagogical');
+    const plan = adaptivePivotPlan(t => [20 * t]);
+    expect(activePivotT(false, plan, 0.37)).toBeNull();
+    expect(activePivotT(true, plan, 0.37)).not.toBeNull();
+    expect(activePivotT(true, null, 0.37)).toBeNull();
+  });
+  it('pivot notes are not nested in the circuit block', async () => {
+    const src = await Bun.file('src/components/standex/workshop/workshop.tsx').text();
+    const i = src.indexOf('<PivotNotes'), c = src.indexOf('showCircuit && <div className="mw-circuit-ped"');
+    expect(i).toBeGreaterThan(0); expect(i).toBeLessThan(c);
+    expect(src.includes('précision de 0,5 mm')).toBe(false);
+  });
+});

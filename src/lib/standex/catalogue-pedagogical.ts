@@ -238,3 +238,8 @@ export function pivotSampleAt(plan:PivotPlan,u:number):number|null{
  if(!iv||!iv.certified)return null;
  return u-iv.t0<=iv.t1-u?iv.t0:iv.t1;
 }
+/** Orientation used for zones: a prepared sample ONLY while playing; paused/scrubbed => null,
+ * i.e. the caller uses the exact catalogueFrame(config, progress). */
+export function activePivotT(playing:boolean,plan:PivotPlan|null,u:number):number|null{
+ return playing&&plan?pivotSampleAt(plan,u):null;
+}

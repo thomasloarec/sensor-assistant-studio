@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { ClientPedagogicalControls } from './client-pedagogical-controls';
 import { CLIENT_LIMITS, clientCoupleAdapter, explorationSettings, clientPedagogicalResult, type ClientPedagogicalResult } from '@/lib/standex/client-pedagogical';
-import { catalogueFrame, cataloguePlacement, catalogueModel, catalogueVerdictNotes, CATALOGUE_LABELS, obstacleBlocked, pivotSampleAt, type PivotPlan, type VolumeField } from '@/lib/standex/catalogue-pedagogical';
+import { catalogueFrame, cataloguePlacement, catalogueModel, catalogueVerdictNotes, CATALOGUE_LABELS, obstacleBlocked, activePivotT,pivotSampleAt, type PivotPlan, type VolumeField } from '@/lib/standex/catalogue-pedagogical';
 import type { MachineFocus } from "@/lib/standex/machine-view";
 import { observedCycleVerdict } from "@/lib/leadmagnet/tested-pairs";
 import {
@@ -392,7 +392,7 @@ export default function MagneticWorkshop({
   const [plannedKey, setPlannedKey] = useState<string | null>(null);
   useEffect(() => () => { prepCancel.current?.(); prepCancel.current = null; setPreparing(false); }, [pivotPlanKey, pedagogical, machineAssetId]);
   // Pause/scrub => exact pose; the prepared orientation is used only while playing.
-  const pivotT = playing && pivotPlanKey && plannedKey === pivotPlanKey && pivotPlan ? pivotSampleAt(pivotPlan, progress) : null;
+  const pivotT = activePivotT(playing, pivotPlanKey && plannedKey === pivotPlanKey ? pivotPlan : null, progress);
   const pivotHidden = !!pivotPlanKey && playing && pivotT === null;
   const volumeFrame = pivotT !== null ? catalogueFrame(config, pivotT) : pedagogicalPose;
   const sampledRaw = usePedagogicalVolume(pedagogical && eligible && !pivotHidden, activeExperiment, volumeFrame, catalogue ? null : config.machine ? frameObstacles : null, catalogue ? config : undefined);
