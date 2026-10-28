@@ -2551,7 +2551,7 @@ export default function MagneticWorkshop({
             </div>
             {/* Circuit de principe réintégré pour le parcours client (demande du 28/10) : même instant,
                 même moteur que le bandeau ; le banc staff conserve son rendu sans circuit. */}
-            {clientPedagogical ? (showCircuit && <div className="mw-circuit-ped" data-testid="pedagogical-circuit"><span className="t-caption">{t("Circuit de principe · état indicatif")}</span><ContactCircuit contact={circuitContact} /></div>) : !pedagogical ? <ContactCircuit contact={sample.contact} /> : null}
+            {clientPedagogical ? (showCircuit && <div className="mw-circuit-ped" data-testid="pedagogical-circuit">{prepFailed && <span className="t-caption" role="alert">{t("Préparation impossible : zones non affichées, temps conservé.")}</span>}{pivotHidden && <span className="t-caption" role="status" data-testid="pivot-hidden">{t("Orientation non préparée avec une précision de 0,5 mm : zones masquées à cet instant.")}</span>}<span className="t-caption">{t("Circuit de principe · état indicatif")}</span><ContactCircuit contact={circuitContact} /></div>) : !pedagogical ? <ContactCircuit contact={sample.contact} /> : null}
             {/* Outil de pointage du câble : seulement quand le pointage est
                 réellement actif. Les trajets existants restent intacts. */}
             {!exploring && cableRouting && tool === "cable" ? (
