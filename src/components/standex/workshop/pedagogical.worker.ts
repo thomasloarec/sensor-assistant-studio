@@ -16,7 +16,7 @@ self.onmessage=(event:MessageEvent<{settings:ExperimentSettings;axis:Vec3;planeZ
       return;
     }
     const result=table?tableTimeline(settings,table):config?placementTimeline(settings,t=>pedagogicalFrame(config,t).pose):sampleVolume(settings,axis,planeZ,24,obstacles??[]);
-    self.postMessage({key,result:mode==='cut'?{...result,cells:[]}:mode==='volume'?{...result,cut:[]}:{...result,key}});
+    self.postMessage({key,result:mode==='cut'?{...result,cells:[],key}:mode==='volume'?{...result,cut:[],key}:{...result,key}});
   }
   catch {self.postMessage({key:event.data.key,error:true});}
 };
