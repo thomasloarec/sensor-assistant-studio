@@ -196,4 +196,13 @@ export function PedagogicalControls({diagnosis,timelineNote,settings,setSettings
     </details>
   </div>;
 }
-export { DEFAULT_EXPERIMENT, evaluatePlacement };
+export { DEFAULT_EXPERIMENT, evaluatePlacement };/** Pivot status notes, shown independently of the circuit toggle. */
+export function PivotNotes({failed,hidden,truncated}:{failed:boolean;hidden:boolean;truncated:boolean}){
+ if(!failed&&!hidden&&!truncated)return null;
+ return <div className="notice-info" data-testid="pivot-notes">
+  {failed&&<p className="t-caption" role="alert">{t('Préparation impossible : zones non affichées, temps conservé.')}</p>}
+  {hidden&&<p className="t-caption" role="status" data-testid="pivot-hidden">{t('Zones non disponibles pour cette orientation pendant le mouvement. Mettez en pause pour les recalculer.')}</p>}
+  {truncated&&<p className="t-caption" data-testid="pivot-truncated">{t('Préparation limitée à 48 orientations : certaines zones resteront masquées pendant le mouvement.')}</p>}
+  <details><summary className="t-caption">{t('Limites techniques')}</summary><p className="t-caption">{t('Contrôle sur trois rayons centraux seulement, pas sur tout le volume. Rotation relative d’un clip importé hors pivot non prise en charge.')}</p></details>
+ </div>;
+}

@@ -152,7 +152,7 @@ import { pedagogicalRemedy } from "@/lib/standex/pedagogical-poses";
 import { diagnosePlacement } from "@/lib/detection-lab/placement-diagnosis";
 import { pilotBodies, pedagogicalFrame, pedagogicalAvailability, suggestPedagogicalConfig, parsePedagogicalEnvelope, type PedagogicalDraft } from "@/lib/standex/pedagogical-poses";
 import { PedagogicalLayer, PedagogicalCut } from "./pedagogical-layer";
-import { PedagogicalControls, PedagogicalBanner, usePedagogicalVolume, usePedagogicalCut, preparePivot, volumeKey, PLACEMENT_LABEL } from "./pedagogical-controls";
+import { PedagogicalControls, PedagogicalBanner, PivotNotes, usePedagogicalVolume, usePedagogicalCut, preparePivot, volumeKey, PLACEMENT_LABEL } from "./pedagogical-controls";
 import { DEFAULT_EXPERIMENT, EXPERIMENT, experimentAvailable, evaluatePlacement, placementTimeline, classThresholds, type ExperimentSettings } from "@/lib/detection-lab/workshop-experiment";
 
 /* i18n-canonical : libellés traduits au rendu par t(). */
