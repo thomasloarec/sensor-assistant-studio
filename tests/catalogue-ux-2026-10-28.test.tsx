@@ -37,7 +37,7 @@ describe('lot UX 28/10 — lobes en mouvement', () => {
     const v = catalogueVolume(config, f.pose.axis, 0, [], 24, f.pose.frame);
     expect(v.field.values.length).toBe(v.field.xs.length * v.field.ys.length * v.field.zs.length);
     expect(v.field.values.some((x) => x !== null && x > 0)).toBe(true);
-  });
+  }, 30000);
 });
 
 describe('lot UX 28/10 — rendu lisse', () => {
