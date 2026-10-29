@@ -36,6 +36,8 @@ export default function FlatScene({
     config.sensorId,
     config.geometry,
     Boolean(actualMagnet),
+    sample.angle,
+    config.motion,
   );
   const axial = config.magnetization === "axial";
   const extent = focus === "sensor" ? Math.max(12, l * 1.6) : 180;

@@ -607,3 +607,14 @@ Le circuit est toujours visible, sans commande pour le masquer. Il représente u
 La sensibilité est visible en tête de colonne. Disposition, mouvement et quart de tour restent les choix principaux ; un seul curseur d’écart minimal entre boîtiers complète l’approche. Les préréglages explicites se rapprochent à 0,5 mm sans chevauchement, et le pivot de découverte parcourt 30°. Un dossier restauré ou un modèle importé conserve ses réglages. La préparation annonce son avancement et son démarrage automatique dans le bandeau ; aucun changement de hauteur ne réinitialise la caméra manuelle.
 
 La largeur des lobes centraux suit une hypothèse qualitative inspirée des dessins Standex, partagée par le calcul et le rendu. Les distances sur les axes calibrés restent identiques, les orientations perpendiculaires et collisions restent exclues. Cette largeur n’est pas présentée comme mesurée ; la limite est repliée dans Sources et limites. Pas de nouveau jeton ni de dépendance applicative.
+
+
+### Simplification MVP — 29 octobre 2026
+
+Cette révision remplace les choix de découverte et de contact du 28 octobre : l’entrée « Comprendre les zones de détection » et le pivot avant import sont retirés. Approche/retrait et passage latéral restent disponibles ; les montages importés conservent leur rotation. Les anciens préréglages pivot sans import sont ramenés à une approche. Le curseur d’écart suit l’orientation dans la colonne.
+
+Le contact illustratif utilise désormais la borne la plus sensible documentée de la classe (A : borne prudente seulement), et ferme donc dans le jaune nominal valide comme dans le vert. Le bandeau de placement conserve sa distinction favorable/variable. Une légende explique la dispersion et l’absence de garantie. Un point blanc cerclé Detect Blue indique le centre magnétique estimé : le recouvrement du corps de l’aimant avec un lobe ne suffit pas. Les positions invalides restent indisponibles, sans fermeture forcée. Le matériau du repère appartient à l’exception Three.js existante ; aucun nouveau jeton.
+
+En approche axiale à +90°, le boîtier d’aimant compatible reçoit un demi-tour de présentation pour orienter sa bride vers l’extérieur. Les poses importées et les passages latéraux restent inchangés. Aucun seuil physique, distance calibrée ni contour de lobe n’est modifié.
+
+Limite constatée : pour MK04/M04 B, le passage parallèle rectiligne sans chevauchement ne traverse pas les lobes secondaires avec le centre magnétique dans le modèle actuel. Trois activations ne sont donc pas promises ; le passage perpendiculaire montre deux fenêtres distinctes.

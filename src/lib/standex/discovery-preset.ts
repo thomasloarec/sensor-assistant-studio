@@ -2,6 +2,11 @@ import { approachOffset, magnetSize, type WorkshopConfig } from './magnetic-work
 import { sensorById } from './sensor-catalog';
 import { catalogueBodyObb, catalogueFrame } from './catalogue-pedagogical';
 import { obbOverlap, type Obb } from '../detection-lab/obstacles';
+/** MVP discovery no longer offers pivot. Migrate only the obsolete unimported
+ * demonstration; imported assemblies retain every saved transform and motion. */
+export function clientDiscoveryConfig(c:WorkshopConfig):WorkshopConfig {
+ return !c.machine&&c.motion==='pivot'?{...c,...discoveryPatch(c,{motion:'approach'})}:c;
+}
 /** Explicit discovery actions only. Mechanical clearance, never a forced magnetic state.
  * Imports, rendering, reopening and dossier restoration must not call this function. */
 export function discoveryPatch(c:WorkshopConfig,patch:Partial<WorkshopConfig>):Partial<WorkshopConfig>{

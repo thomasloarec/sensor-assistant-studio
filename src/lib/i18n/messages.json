@@ -35413,5 +35413,32 @@
     "Форма центральных лепестков основана на схемах Standex; ширина не измерена. Калиброванные осевые расстояния сохранены; форма служит для обучения.",
     "Forma dei lobi centrali ispirata agli schemi Standex; larghezza non misurata. Distanze assiali calibrate conservate; la forma è didattica.",
     "中央ローブはStandexの図を参考にした形状で、幅は実測値ではありません。校正済みの軸方向距離は維持し、形状は学習用です。"
+  ],
+  "Contact illustratif · exemplaire très sensible": [
+    "Illustrative contact · highly sensitive specimen",
+    "示意触点 · 高灵敏度样品",
+    "Beispielkontakt · sehr empfindliches Exemplar",
+    "Contacto ilustrativo · ejemplar muy sensible",
+    "Иллюстрация контакта · высокочувствительный экземпляр",
+    "Contatto illustrativo · esemplare molto sensibile",
+    "参考接点 · 高感度の個体"
+  ],
+  "Zone jaune : activation possible selon l’exemplaire. La lampe illustre la borne la plus sensible de la classe, pas une activation garantie.": [
+    "Yellow zone: activation depends on the individual specimen. The lamp illustrates the most sensitive class boundary, not guaranteed activation.",
+    "黄色区域：能否触发取决于个体。灯泡示意该等级最灵敏的边界，并不保证触发。",
+    "Gelbe Zone: Aktivierung hängt vom Exemplar ab. Die Lampe zeigt die empfindlichste Klassengrenze, keine garantierte Aktivierung.",
+    "Zona amarilla: la activación depende del ejemplar. La lámpara ilustra el límite más sensible de la clase, no una activación garantizada.",
+    "Жёлтая зона: срабатывание зависит от экземпляра. Лампа иллюстрирует наиболее чувствительную границу класса, а не гарантированное срабатывание.",
+    "Zona gialla: l’attivazione dipende dall’esemplare. La lampada illustra il limite più sensibile della classe, non un’attivazione garantita.",
+    "黄色領域：作動は個体により異なります。ランプは感度区分の最も敏感な境界を示し、作動を保証しません。"
+  ],
+  "Le repère indique le centre magnétique estimé ; c’est sa position dans les lobes qui commande la lampe.": [
+    "The marker shows the estimated magnetic centre; its position in the lobes controls the lamp.",
+    "标记表示估计的磁中心；灯泡由该点在瓣形区域中的位置控制。",
+    "Die Markierung zeigt das geschätzte magnetische Zentrum; seine Position in den Loben steuert die Lampe.",
+    "La marca indica el centro magnético estimado; su posición en los lóbulos controla la lámpara.",
+    "Метка показывает предполагаемый магнитный центр; его положение в лепестках управляет лампой.",
+    "Il riferimento indica il centro magnetico stimato; la sua posizione nei lobi controlla la lampada.",
+    "マーカーは推定磁気中心を示し、ローブ内でのその位置がランプを制御します。"
   ]
 }

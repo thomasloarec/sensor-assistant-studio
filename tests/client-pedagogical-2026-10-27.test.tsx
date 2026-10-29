@@ -107,10 +107,7 @@ describe('real mounted client workshop',()=>{
     const circuit=view.getByTestId('pedagogical-circuit');
     expect(circuit.textContent).toContain('Contact illustratif');
     expect(['closed','open','unavailable']).toContain(circuit.querySelector('.mw-contact-circuit')?.getAttribute('data-contact'));
-    await act(async()=>fireEvent.click(view.getByRole('button',{name:'Comprendre les zones de détection'})));
-    await waitFor(()=>expect(view.getByTestId('client-exploration')).toBeTruthy());
-    expect(view.getByTestId('client-exploration-context').parentElement).toBe(view.getByTestId('pedagogical-verdict').parentElement);
-    await act(async()=>fireEvent.change(view.getByRole('combobox',{name:'Aimant pilote vérifié'}),{target:{value:'N45-4X19'}}));
+    expect(view.queryByRole('button',{name:'Comprendre les zones de détection'})).toBeNull();
     await act(async()=>fireEvent.click(view.getByRole('button',{name:'Valider ce choix et voir le résultat'})));
     expect(results).toHaveLength(1);expect(results[0]?.sensorId).toBe('MK04');expect(results[0]?.magnetId).toBe('M04');
     expect(results[0]?.state).toBe('unavailable');
@@ -119,7 +116,7 @@ describe('real mounted client workshop',()=>{
     await waitFor(()=>expect(view.getByTestId('client-product-legend').textContent).toContain('MK04 + M04'));
     view.unmount();
   });
-  test('entering exploration from cable tool disconnects callbacks and restores product mounting',async()=>{
+  test('removing exploration keeps imported mounting and cable tool intact',async()=>{
     const {default:Workshop}=await import('../src/components/standex/workshop/workshop');
     const {DEMO_ASSEMBLIES}=await import('../src/lib/standex/machine-demos');
     const machine=structuredClone(DEMO_ASSEMBLIES['builtin:wall-v1']);if(!machine)throw Error('fixture missing');
@@ -128,15 +125,12 @@ describe('real mounted client workshop',()=>{
     const view=render(<Workshop clientPedagogical embedded initialConfig={config} storageMode="memory" onClose={()=>{}} onSave={async()=>{}} onSaveState={s=>states.push(s)} onDraftChange={c=>{draft=c as typeof config;}} cableRouting={{slot:'sensor',points:[],targetLabel:'Sortie capteur',lengthLabel:'Non choisie',setSlot:()=>{calls++;},onPick:()=>{calls++;},onUndo:()=>{calls++;},onReset:()=>{calls++;}}}/>);
     await act(async()=>fireEvent.click(view.getByRole('button',{name:'Pointer le câble dans la 3D',exact:true})));
     expect(view.getByTestId('cable-routing-panel')).toBeTruthy();const before=states.length;
-    await act(async()=>fireEvent.click(view.getByRole('button',{name:'Comprendre les zones de détection'})));
-    expect(view.queryByTestId('cable-routing-panel')).toBeNull();
-    await act(async()=>fireEvent.change(view.getByRole('combobox',{name:'Aimant pilote vérifié'}),{target:{value:'N45-4X19'}}));
+    expect(view.queryByRole('button',{name:'Comprendre les zones de détection'})).toBeNull();
     expect(states.length).toBe(before);expect(calls).toBe(0);
-    await act(async()=>fireEvent.click(view.getByRole('button',{name:'Revenir au couple de mon dossier'})));
     expect(view.getByTestId('cable-routing-panel')).toBeTruthy();expect(draft.machine).toEqual(machine);expect(draft.cableLengthMm).toBe(500);
     view.unmount();
   });
-  test('return and reopen preserve product pose and cable; changed pilot/class produce a new non-qualifying result',async()=>{
+  test('reopen preserves product pose and cable; changed pilot/class produce a new non-qualifying result',async()=>{
     const {setLocale}=await import('../src/lib/i18n/core');setLocale('fr');
     const {default:Workshop}=await import('../src/components/standex/workshop/workshop');
     const original={...DEFAULT_WORKSHOP,cableLengthMm:750,lateralShift:3,magnetAngle:25};
@@ -144,9 +138,7 @@ describe('real mounted client workshop',()=>{
     const results:ReturnType<typeof clientPedagogicalResult>[]=[];
     const mount=()=>render(<Workshop clientPedagogical embedded initialConfig={draft} storageMode="memory" onClose={()=>{}} onSave={async()=>{}} onDraftChange={c=>{draft=c as typeof original;}} onClientPedagogicalResult={r=>results.push(r)}/>);
     let view=mount();
-    await act(async()=>fireEvent.click(view.getByRole('button',{name:'Comprendre les zones de détection'})));
-    await act(async()=>fireEvent.change(view.getByRole('combobox',{name:'Aimant pilote vérifié'}),{target:{value:'N45-4X19'}}));
-    await act(async()=>fireEvent.click(view.getByRole('button',{name:'Revenir au couple de mon dossier'})));
+    expect(view.queryByRole('button',{name:'Comprendre les zones de détection'})).toBeNull();
     await waitFor(()=>expect(view.getByTestId('client-product-legend').textContent).toContain('MK04 + M04'));
     expect(draft.sensorId).toBe('MK04');expect(draft.magnetModel).toBe('M04');expect(draft.cableLengthMm).toBe(750);
     expect(draft.lateralShift).toBe(3);expect(draft.magnetAngle).toBe(25);expect(results).toHaveLength(0);

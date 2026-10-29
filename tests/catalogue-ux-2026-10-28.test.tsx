@@ -77,7 +77,7 @@ describe('lot UX 28/10 — colonne de découverte', () => {
   const renderControls = (cfg: WorkshopConfig = config) => {
     setLocale('fr');
     const patches: Partial<WorkshopConfig>[] = [];
-    const r = render(<ClientPedagogicalControls config={cfg} update={(p) => patches.push(p)} onCatalog={() => {}} onExplore={() => {}} onCable={() => {}} approachControls={<div data-testid="approach-picker" />} />);
+    const r = render(<ClientPedagogicalControls config={cfg} update={(p) => patches.push(p)} onCatalog={() => {}} onCable={() => {}} approachControls={<div data-testid="approach-picker" />} />);
     return { r, patches };
   };
   test('trois choix visibles, aucun curseur numérique rejeté', () => {
