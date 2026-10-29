@@ -196,7 +196,9 @@ export function catalogueCoverage(){return SENSOR_CATALOG.map(s=>({sensorId:s.id
 /** AT classes selectable for the couple: published registry classes plus the 66-reed guide rows
  * (class letter right after "66"). Contact form (1A/1B/1C) is never an AT class. */
 export function catalogueClasses(sensorId:string,magnetModel:string,published:readonly string[]):string[]{
- const guide=guideRangesFor(sensorId,magnetModel).flatMap(r=>{const m=/66([A-G])\b|66([A-G])-/.exec(r.sensorReference);const k=m?.[1]??m?.[2];return k?[k]:[];});
+ // MK15-B-X etc. encode a sensitivity too; MK24-A-J is a contact variant,
+ // so never infer a class from an arbitrary standalone letter in every family.
+ const guide=guideRangesFor(sensorId,magnetModel).flatMap(r=>{const m=/66([A-G])(?:\b|-)|^MK15-([A-G])-X$/.exec(r.sensorReference);const k=m?.[1]??m?.[2];return k?[k]:[];});
  return [...new Set([...published,...guide])].sort();
 }
 

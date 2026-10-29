@@ -20,7 +20,10 @@ export function volumeKey(settings:ExperimentSettings,frame:PedagogicalFrame,obs
  const round=(v:number)=>Math.round(v*1e10)/1e10;
  const axis=catalogue?frame.pose.axis.map(round) as typeof frame.pose.axis:frame.pose.axis;
  const body=(frame.pose as {frame?:number[][]}).frame?.map(row=>row.map(round));
- return settingsKey(settings,axis,0)+'|'+(obstacles?fingerprint(obstacles):'free')+'|'+(catalogue?CATALOGUE_MODEL_VERSION:'frozen')+'|'+JSON.stringify(catalogue??null)+'|'+JSON.stringify(catalogue?body??null:null);
+ // Discovery translations move the point through an unchanged sensor-local field.
+ // Keep the volume visible while dragging; full orientation and obstacles still key it.
+ const volumeConfig=catalogue?{...catalogue,lateralShift:0,start:0,end:0}:null;
+ return settingsKey(settings,axis,0)+'|'+(obstacles?fingerprint(obstacles):'free')+'|'+(catalogue?CATALOGUE_MODEL_VERSION:'frozen')+'|'+JSON.stringify(volumeConfig)+'|'+JSON.stringify(catalogue?body??null:null);
 }
 /** Cut key: fixed flat-face plane for catalogue; instant plane for historical staff mode. */
 export function cutKey(settings:ExperimentSettings,frame:PedagogicalFrame,obstacles:readonly Obb[]|null,catalogue?:WorkshopConfig):string{

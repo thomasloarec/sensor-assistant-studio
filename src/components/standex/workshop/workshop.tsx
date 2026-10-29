@@ -1109,9 +1109,9 @@ export default function MagneticWorkshop({
     if (!parseWorkshopConfig(next)) return;
     setPlaying(false);
     if (!opts.keepTime && !clientPedagogical) setProgress(0);
-    // The gap control previews the actual nearest pose, not an invisible future endpoint.
+    // Gap and offset preview the actual nearest pose, not an invisible future endpoint.
     // Imported mounting and unrelated controls must keep their current instant.
-    if(clientPedagogical&&!next.machine&&next.motion==='approach'&&patch.end!==undefined&&patch.geometry===undefined&&patch.motion===undefined){
+    if(clientPedagogical&&!next.machine&&next.motion==='approach'&&(patch.end!==undefined||patch.lateralShift!==undefined)&&patch.geometry===undefined&&patch.motion===undefined){
       setProgress(.5); gapPreview.current=true;
     }
     setSuggestion(null);setPlacementUndo(null);

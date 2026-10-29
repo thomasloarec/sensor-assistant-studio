@@ -113,7 +113,8 @@ describe("Couverture des langues de l'interface", () => {
     // + 6 entrées : retours utilisateur, écart minimal et commutation illustrative.
     // + 2 entrées : coupe par la face plate et aimant hors du plan (C1 %).
     // + 3 entrées : curseur pédagogique de sensibilité.
-    expect(Object.keys(dictionary)).toHaveLength(3_944);
+    // + 2 entrées : décalage en translation et recentrage.
+    expect(Object.keys(dictionary)).toHaveLength(3_946);
     const broken = Object.entries(dictionary).filter(
       ([, v]) => v.length !== 7 || v.some((x) => typeof x !== "string" || x.trim() === ""),
     );

@@ -4,19 +4,24 @@ import { VERIFIED_PILOTS } from '@/lib/standex/client-pedagogical';
 import type { WorkshopConfig } from '@/lib/standex/magnetic-workshop';
 import { publishedClasses } from '@/lib/standex/magnetics/registries';
 import { catalogueClasses } from '@/lib/standex/catalogue-pedagogical';
+import { catalogueThresholds } from '@/lib/standex/catalogue-response';
 import { magnetOptionsFor } from '@/lib/standex/default-pairs';
 import { sensorById } from '@/lib/standex/sensor-catalog';
 import { isPcbSensor } from '@/lib/leadmagnet/product-presentation';
 import type { ReactNode } from 'react';
 import { discoveryPatch } from '@/lib/standex/discovery-preset';
 
-/** Colonne de découverte avant import : trois choix (disposition, mouvement, quart de tour),
- * puis observation. Les curseurs numériques restent disponibles après import ou en exploration ;
+/** Colonne de découverte : disposition, mouvement, quart de tour et placement simple.
+ * Les réglages détaillés restent disponibles après import ou en exploration ;
  * une configuration existante n'est jamais réécrite parce que sa commande devient invisible. */
 export function ClientPedagogicalControls({config,update,onCatalog,onCable,approachControls}: {
   config:WorkshopConfig;update:(patch:Partial<WorkshopConfig>)=>void;onCatalog:()=>void;onCable:()=>void;approachControls?:ReactNode;
 }) {
-  const classes=[...new Set([config.sensitivity,...catalogueClasses(config.sensorId,config.magnetModel,publishedClasses(config.sensorId,config.magnetModel))])].sort();
+  // Keep an existing selection, but do not offer documented G as a new simulation
+  // choice: the current model has no threshold for it. Contact names stay unranked.
+  const available=catalogueClasses(config.sensorId,config.magnetModel,publishedClasses(config.sensorId,config.magnetModel))
+    .filter(c=>!(/^[A-G]$/.test(c))||catalogueThresholds(c)!==null);
+  const classes=[...new Set([config.sensitivity,...available])].sort();
   const ordinalClasses=classes.every(c=>/^[A-G]$/.test(c));
   const magnets=[...new Set([config.magnetModel,...magnetOptionsFor(config.sensorId,undefined,config.magnetModel),...VERIFIED_PILOTS])];
   const motions:[WorkshopConfig['motion'],string][]=[['approach',t('Approche et retrait')],['slide',t('Passage latéral')]];
@@ -45,7 +50,13 @@ export function ClientPedagogicalControls({config,update,onCatalog,onCable,appro
         <Button variant="secondary" data-testid="quarter-turn" onClick={()=>update(discoveryPatch(config,{magnetAngle:((config.magnetAngle+90+180)%360)-180}))}>{t('Tourner de 90°')}</Button>
         <p className="t-caption">{config.magnetAngle===0?t('Aucune rotation appliquée'):msg('Rotation appliquée : {0}°',[config.magnetAngle])}</p>
       </section>
-      {config.motion==='approach'&&<label className="mw-field"><span>{t('Écart minimal entre le capteur et l’aimant')}<output className="t-metric">{config.end} mm</output></span><input type="range" aria-label={t('Écart minimal entre le capteur et l’aimant')} min="0.25" max="15" step="0.25" value={config.end} onInput={e=>update({end:Number(e.currentTarget.value)})}/></label>}
+      {config.motion==='approach'&&<>
+        <div className="mw-offset-control">
+          <label className="mw-field"><span>{t('Décalage de l’aimant')}<output className="t-metric">{config.lateralShift>0?'+':''}{config.lateralShift} mm</output></span><input type="range" aria-label={t('Décalage de l’aimant')} min={Math.min(-20,config.lateralShift)} max={Math.max(20,config.lateralShift)} step="0.5" value={config.lateralShift} onInput={e=>update({lateralShift:Number(e.currentTarget.value)})}/></label>
+          <button type="button" className="mw-text-button" disabled={config.lateralShift===0} onClick={()=>update({lateralShift:0})}>{t('Recentrer')}</button>
+        </div>
+        <label className="mw-field"><span>{t('Écart minimal entre le capteur et l’aimant')}<output className="t-metric">{config.end} mm</output></span><input type="range" aria-label={t('Écart minimal entre le capteur et l’aimant')} min="0.25" max="15" step="0.25" value={config.end} onInput={e=>update({end:Number(e.currentTarget.value)})}/></label>
+      </>}
     </>}
     <details className="mw-advanced"><summary>{t('Caractéristiques du couple')}</summary>
       <label className="mw-select-label">{t('Aimant')}<select aria-label={t('Aimant')} value={config.magnetModel} onChange={e=>update({magnetModel:e.target.value})}>{magnets.map(id=><option key={id} value={id}>{id}</option>)}</select></label>
