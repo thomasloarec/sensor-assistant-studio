@@ -3,10 +3,11 @@
  * docs/detection-lab-pass3/RAPPORT_PASS3_2026-10-27.md (documentary datums).
  * Estimated internal pose is explicitly not a measured manufacturer datum.
  */
-import { DEFAULT_EXPERIMENT, EXPERIMENT, type ExperimentSettings, type PlacementState } from '@/lib/detection-lab/workshop-experiment';
+import { DEFAULT_EXPERIMENT, type ExperimentSettings, type PlacementState } from '@/lib/detection-lab/workshop-experiment';
 import type { WorkshopConfig } from './magnetic-workshop';
 import type { DesignDossier } from '../leadmagnet/dossier';
 import { catalogueModel, cataloguePlacement, catalogueFrame, CATALOGUE_MODEL_VERSION } from './catalogue-pedagogical';
+import { CATALOGUE_RESPONSE } from './catalogue-response';
 
 export const CLIENT_PEDAGOGICAL_VERSION = CATALOGUE_MODEL_VERSION;
 export const VERIFIED_PILOTS = ['SMCO5-5X4', 'N45-4X19'] as const;
@@ -47,7 +48,7 @@ export function clientPedagogicalResult(config: WorkshopConfig,progress=0): Clie
   const t=Number.isFinite(progress)?Math.max(0,Math.min(1,progress)):0,model=adapter.model;
   const evidence=config.machine?null:cataloguePlacement(config,catalogueFrame(config,t).pose);
   return { kind: 'client-pedagogical-result', version: 1, adapterVersion: adapter.version,
-    profileVersion: EXPERIMENT.version, configKey: JSON.stringify(config), sensorId: config.sensorId,
+    profileVersion: CATALOGUE_RESPONSE.id+'@'+CATALOGUE_RESPONSE.version, configKey: JSON.stringify(config), sensorId: config.sensorId,
     magnetId: config.magnetModel, sensitivity: config.sensitivity, state: 'unavailable', qualified: false,
     reasons: [...adapter.reasons],indicative:{version:CATALOGUE_MODEL_VERSION,progress:t,state:evidence?.state??'unavailable',family:model.family,status:model.status,lengthMm:model.lengthMm,centre:model.centre,axis:model.axis,magnetMethod:model.magnetGeometry,reference:model.reference} };
 }

@@ -63,6 +63,12 @@ export function collides(body: CylinderMagnetBody, shift: Vec3 = [0, 0, 0]): boo
   return false;
 }
 
+/** Shared response of the two equally long blade averages, in mT.
+ * A integrates the signed field over the full reed. B remains available for audits. */
+export function reedResponse(m1: number, m2: number, model: ResponseModel): number {
+  return model === "A" ? Math.abs((m1 + m2) / 2) : m1 * m2 > 0 ? Math.min(Math.abs(m1), Math.abs(m2)) : 0;
+}
+
 export function evaluatePose(
   magnet: PilotMagnet,
   pose: MagnetPose,
@@ -89,7 +95,7 @@ export function evaluatePose(
   const m1 = blade(-half, 0),
     m2 = blade(0, half);
   if (!Number.isFinite(m1) || !Number.isFinite(m2)) return { ok: false, reason: "collision" };
-  const response = model === "A" ? Math.abs((m1 + m2) / 2) : m1 * m2 > 0 ? Math.min(Math.abs(m1), Math.abs(m2)) : 0;
+  const response = reedResponse(m1, m2, model);
   return { ok: true, response, m1, m2 };
 }
 

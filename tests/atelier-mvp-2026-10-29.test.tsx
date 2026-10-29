@@ -35,9 +35,9 @@ test('lamp matches nominal yellow and green membership for all eight demonstrati
   }
  }
 });
-test('D3 at 3 mm closes in yellow; perpendicular lateral pass produces two separate closure windows',()=>{
+test('D3 at 3 mm closes inside A; perpendicular lateral pass produces two separate closure windows',()=>{
  const axial={...DEFAULT_WORKSHOP,geometry:'D3' as const,end:3};
- const e=cataloguePlacement(axial,catalogueFrame(axial,.5).pose);expect(e.zone).toBe(1);expect(illustrativeContact(e,'B')).toBe('closed');
+ const e=cataloguePlacement(axial,catalogueFrame(axial,.5).pose);expect(e.zone).toBeGreaterThan(0);expect(illustrativeContact(e,'B')).toBe('closed');
  for(const geometry of ['D1','D3'] as const){const base={...DEFAULT_WORKSHOP,geometry,magnetAngle:90};const c={...base,...discoveryPatch(base,{motion:'slide'})};let previous=false,closures=0;
   for(let i=0;i<=256;i++){const hit=illustrativeContact(cataloguePlacement(c,catalogueFrame(c,i/512).pose),'B')==='closed';if(hit&&!previous)closures++;previous=hit;}
   expect(closures).toBe(2);
@@ -55,9 +55,10 @@ test('D3 quarter-turn puts mounting holes outward without affecting lateral or i
 });
 
 
-test('D1 flare widens the actual activation window away from the housing',()=>{
+test('raw A central lobe narrows toward its rounded summit above the housing',()=>{
  const c=DEFAULT_WORKSHOP,m=catalogueModel(c);
  const width=(z:number)=>{let w=0;for(let x=0;x<14;x+=.1){const e=cataloguePlacement(c,{center:[x,0,z],axis:[1,0,0]},[],m,true);if(e.zone>0)w=x;}return w;};
- expect(width(18)).toBeGreaterThan(width(14.2)*1.45);
+ expect(width(14.2)).toBeGreaterThan(7);
+ expect(width(18)).toBeLessThan(width(14.2));
  expect(width(22)).toBe(0);
 });
