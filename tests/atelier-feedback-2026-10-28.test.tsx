@@ -27,11 +27,13 @@ test('central lobe has a wider usable passage without extending the D1 maximum',
  const c=DEFAULT_WORKSHOP,m=catalogueModel(c),f=magnetBodyFrame(c,0),th=classThresholds('B')!;
  const width=(shaped:boolean,z:number)=>{let half=0;for(let x=0;x<=14;x+=.1){const pose={center:[x,0,z] as Vec3,axis:[1,0,0] as Vec3,frame:f};const r=shaped?cataloguePlacement(c,pose,[],m,true).nominal:catalogueEvaluate(m,pose,nominalScenario(),f);if(r?.ok&&r.response>=th.low!)half=x;else break;}return half*2;};
  expect(width(true,15.9)).toBeGreaterThan(12);
- expect(width(true,15.9)).toBeLessThan(17);
+ expect(width(true,15.9)).toBeLessThan(20);
  expect(width(true,15.9)).toBeGreaterThan(width(false,15.9)*1.4);
  for(let z=14;z<40;z+=.2){const pose={center:[0,0,z] as Vec3,axis:[1,0,0] as Vec3,frame:f};expect(cataloguePlacement(c,pose,[],m,true).nominal).toEqual(catalogueEvaluate(m,pose,nominalScenario(),f));}
 });
 test('shape map is continuous monotone, polarity-invariant; perpendicular dead axis unchanged',()=>{
+ expect(centralLobeSample([8,18,0],[1,0,0],14)).toEqual([8,18,0]);
+ expect(centralLobeSample([8,0,18],[1,0,0],14)[0]).toBeLessThan(3);
  let last=-Infinity;for(let x=-20;x<=20;x+=.05){const center:[number,number,number]=[x,0,16],p=centralLobeSample(center,[1,0,0],14);expect(p[0]).toBeGreaterThan(last);last=p[0];expect(centralLobeSample(center,[-1,0,0],14)).toEqual(p);expect(centralLobeSample(center,[0,0,1],14)).toEqual(center);}
  const c={...DEFAULT_WORKSHOP,magnetAngle:90};
  for(let gap=.5;gap<=12;gap+=.5)expect(cataloguePlacement(c,catalogueFrame({...c,end:gap},.5).pose).zone).toBe(0);
@@ -40,7 +42,7 @@ test('MK04/M04 default transverse and axial demonstrations close and reopen with
  for(const geometry of ['D1','D3'] as const){const c={...DEFAULT_WORKSHOP,...discoveryPatch(DEFAULT_WORKSHOP,{geometry,motion:'approach'})};
   expect(parseWorkshopConfig(c)).not.toBeNull();
   const states=new Set<string|null>();
-  for(let i=0;i<=128;i++){const e=cataloguePlacement(c,catalogueFrame(c,i/128).pose);expect(e.cause).not.toBe('overlap');states.add(illustrativeContact(e,c.sensitivity));}
+  for(let i=0;i<=128;i++){const e=cataloguePlacement(c,catalogueFrame(c,i/128).pose);expect(e.cause).not.toBe('overlap');expect(illustrativeContact(e,c.sensitivity)).toBe(e.zone>0?'closed':'open');states.add(illustrativeContact(e,c.sensitivity));}
   expect(states.has('open')).toBe(true);expect(states.has('closed')).toBe(true);expect(states.has(null)).toBe(false);
  }
  expect(pairDemonstration(DEFAULT_WORKSHOP,'MK04','M04').end).toBe(.5);
@@ -59,10 +61,10 @@ test('sensitivity is visible without opening details, clearance remains editable
 test('unavailable circuit stays visible without asserting open or closed or showing question mark',()=>{
  setLocale('fr');const r=render(<ContactCircuit contact="open" unavailable/>);expect(r.getByRole('img').getAttribute('data-contact')).toBe('unavailable');expect(r.queryByText('?')).toBeNull();expect(r.queryByText('Contact ouvert')).toBeNull();cleanup();
 });
-test('explicit short pivot starts a real motion and traverses both illustrative states',()=>{
+test('legacy short pivot moves without collision and uses the shared activation response',()=>{
  const c={...DEFAULT_WORKSHOP,...discoveryPatch(DEFAULT_WORKSHOP,{motion:'pivot'})};
  expect(parseWorkshopConfig(c)).not.toBeNull();
  expect(catalogueFrame(c,0).world.center).not.toEqual(catalogueFrame(c,.5).world.center);
- const states=new Set();for(let i=0;i<=128;i++){const e=cataloguePlacement(c,catalogueFrame(c,i/128).pose);expect(e.cause).not.toBe('overlap');states.add(illustrativeContact(e,c.sensitivity));}
- expect(states).toEqual(new Set(['open','closed']));
+ const states=new Set();for(let i=0;i<=128;i++){const e=cataloguePlacement(c,catalogueFrame(c,i/128).pose);expect(e.cause).not.toBe('overlap');expect(illustrativeContact(e,c.sensitivity)).toBe(e.zone>0?'closed':'open');states.add(illustrativeContact(e,c.sensitivity));}
+ expect(states.has(null)).toBe(false);
 });

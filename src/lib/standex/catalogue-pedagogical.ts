@@ -19,7 +19,7 @@ import { magnetObb, obbOverlap, type Obb } from '../detection-lab/obstacles';
 import { publishedRowsForCouple, publishedRowsSourceUrl, PUBLISHED_REGISTRY } from './magnetics/registries';
 import { centralLobeSample } from './pedagogical-shape';
 
-export const CATALOGUE_MODEL_VERSION='catalogue-b-analogy-2.0-shape2';
+export const CATALOGUE_MODEL_VERSION='catalogue-b-analogy-2.0-shape3';
 /* i18n-canonical: internal diagnostic codes, never UI labels. */
 const INTERNAL={missing:'catalogue_profile_missing',prior:'catalogue_modelling_prior',source:'catalogue_illustrative',leads:'length_only_analogy_leads_uncharacterized'};
 /* i18n-canonical: model status, not product qualification. */

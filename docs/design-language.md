@@ -627,3 +627,12 @@ La sidebar client supprime polarité, matière ferromagnétique, température, s
 La morphologie qualitative central-lobe-2 développe progressivement la largeur loin du reed : compression longitudinale x’=x(1−a), avec a=0,98·cos⁸(angle)·(1−(x/L)²)²·smoothstep(u), u=clamp((r/L−0,7)/0,6,0,1), r=√(y²+z²). Hors |x|<L, la transformation est identité. La transformation est strictement croissante en x ; les axes x=0 et r=0 ainsi que l’orientation perpendiculaire restent inchangés. Point, volume, coupe, chronologie et circuit partagent la transformation ; les collisions utilisent la position réelle avant transformation. Ni la calibration ni les distances axiales ne sont réajustées. L’évasement est une hypothèse de présentation/calcul pédagogique, pas une mesure physique.
 
 Recette numérique MK04/M04 B : demi-largeur centrale jaune environ 6,4 mm à r=14,2 mm, 7,35 mm à r=18 mm, puis fermeture du lobe avant r=22 mm. L’évasement ne signifie donc pas une largeur croissante à toute distance : le sommet reste fermé. Les valeurs ne constituent pas des nouvelles spécifications fabricant. Ce modèle peut être soumis à Claude avec les tests d’identité axiale, de monotonie, de symétrie N/S et de préservation des zones mortes.
+
+
+### Évasement D1 visible — révision 3, 29 octobre 2026
+
+La révision 2 était trop peu évasée. La révision 3 remplace x(1−a) par x·exp(−a), a=4·cos⁸(angle)·(1−(x/L)²)²·smoothstep(u), u=clamp((r/L−0,9)/0,45,0,1). La dérivée longitudinale exp(−a)·(1−x·∂a/∂x) reste positive car x·∂a/∂x≤0. Identité sur les axes calibrés, hors |x|<L et à 90° ; exclusion mécanique avant transformation. Même fonction pour volumes et activation, aucune qualification physique nouvelle.
+
+MK04/M04 B, coupe y=0 : demi-largeur jaune environ 6,4 mm à r=14,2 mm, 9 mm à r=16 mm, 9,75 mm à r=18 mm et 9,1 mm à r=20 mm. La largeur à distance intermédiaire augmente de plus de 45 % par rapport à la racine accessible, avant fermeture du sommet. Les paramètres de ce profil restent une hypothèse pédagogique et non des valeurs mesurées.
+
+La profondeur de l’évasement est |z| dans le repère reed de l’approche, et non √(y²+z²). Ce choix pédagogique anisotrope évite que les parties hors plan du volume remplissent visuellement la taille resserrée en projection de dessus. Il ne revendique pas la symétrie d’un champ physique exact.
