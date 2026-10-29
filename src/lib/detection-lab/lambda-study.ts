@@ -1,7 +1,9 @@
 /** Isolated research: Claude's A–B family, never imported by client code.
  * M1/M2 are averages of Bx in mT, NOT measured magnetomotive forces.
  * Lambda is a phenomenological hypothesis, not a new physical validation.
- * No field, coordinate warp, threshold, datum or collision rule is refitted.
+ * No field, coordinate warp, threshold or collision rule is refitted.
+ * The default datum reproduces the fixed-datum study. An explicit datum allows
+ * the separate single-anchor comparison; it never changes evaluateLambda poses.
  */
 import { evaluatePose, type MagnetPose, type PoseEvaluation } from './pose';
 import { approachPose, type ApproachId, type Value } from './calibration';
@@ -25,8 +27,9 @@ export function evaluateLambda(magnet:PilotMagnet,pose:MagnetPose,lambda:number,
  * Callback caches only actual evaluatePose results; no synthetic field values.
  */
 export function lambdaResponseAt(magnet:PilotMagnet,approach:ApproachId,d:number,lambda:number,
-  sample:(pose:MagnetPose)=>PoseEvaluation=(pose)=>evaluatePose(magnet,pose,scenarioForLength(frozen.effectiveLengthMm),'B')):Value {
-  const at=(x:number)=>{const e=sample(approachPose(magnet,approach,d,'C1',x,frozen.documentaryDatumMm));return e.ok?responseLambda(e.m1,e.m2,lambda):-1;};
+  sample:(pose:MagnetPose)=>PoseEvaluation=(pose)=>evaluatePose(magnet,pose,scenarioForLength(frozen.effectiveLengthMm),'B'),
+  datumMm:number=frozen.documentaryDatumMm):Value {
+  const at=(x:number)=>{const e=sample(approachPose(magnet,approach,d,'C1',x,datumMm));return e.ok?responseLambda(e.m1,e.m2,lambda):-1;};
   if(approach==='D1'||approach==='D3'){const v=at(0);return v<0?{ok:false,reason:'collision'}:{ok:true,value:v,x:0};}
   let best=-1,bx=0;const step=PROFILE.search.xScanStepMm;
   for(let x=0;x<=PROFILE.search.xScanMaxMm+1e-9;x+=step){const v=at(x);if(v>best){best=v;bx=x;}}
@@ -37,9 +40,9 @@ export function lambdaResponseAt(magnet:PilotMagnet,approach:ApproachId,d:number
   const xm=(lo+hi)/2,vm=at(xm);return vm>=best?{ok:true,value:vm,x:xm}:{ok:true,value:best,x:bx};
 }
 export function lambdaDistanceFor(magnet:PilotMagnet,approach:ApproachId,theta:number,lambda:number,
-  sample?:(pose:MagnetPose)=>PoseEvaluation):Value {
+  sample?:(pose:MagnetPose)=>PoseEvaluation,datumMm:number=frozen.documentaryDatumMm):Value {
   if(!(theta>0)||!Number.isFinite(theta))return {ok:false,reason:'threshold'};
-  const at=(d:number)=>lambdaResponseAt(magnet,approach,d,lambda,sample);
+  const at=(d:number)=>lambdaResponseAt(magnet,approach,d,lambda,sample,datumMm);
   const {dMaxMm,dScanStepMm,bisectTolMm}=PROFILE.search;
   const top=at(dMaxMm);if(top.ok&&top.value>=theta)return {ok:false,reason:'beyond_domain'};
   for(let d=dMaxMm-dScanStepMm;d>=0;d-=dScanStepMm){const v=at(d);if(!v.ok)return {ok:false,reason:'collision_before_threshold'};
