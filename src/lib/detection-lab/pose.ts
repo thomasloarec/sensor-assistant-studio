@@ -65,7 +65,8 @@ export function collides(body: CylinderMagnetBody, shift: Vec3 = [0, 0, 0]): boo
 
 /** Shared response of the two equally long blade averages, in mT.
  * A integrates the signed field over the full reed. B remains available for audits. */
-export function reedResponse(m1: number, m2: number, model: ResponseModel): number {
+export function reedResponse(m1: number, m2: number, model: ResponseModel | "C", epsilon = 0): number {
+  if (model === "C") return signGatedResponse(m1, m2, epsilon);
   return model === "A" ? Math.abs((m1 + m2) / 2) : m1 * m2 > 0 ? Math.min(Math.abs(m1), Math.abs(m2)) : 0;
 }
 
@@ -107,4 +108,12 @@ export function toReedFrame(reedOrigin: Vec3, reedRows: [Vec3, Vec3, Vec3], worl
     center: [dot(reedRows[0], d), dot(reedRows[1], d), dot(reedRows[2], d)],
     axis: [dot(reedRows[0], world.axis), dot(reedRows[1], world.axis), dot(reedRows[2], world.axis)],
   };
+}
+
+/** C: sign gate on free-field blade averages, not a measured force law.
+ * The relative strip is an explicit modelling parameter, not roundoff. */
+export function signGatedResponse(m1: number, m2: number, epsilon = 0): number {
+  if (!Number.isFinite(m1) || !Number.isFinite(m2) || !Number.isFinite(epsilon) || epsilon < 0 || epsilon >= 1) throw new RangeError('C_INVALID_INPUT');
+  const amplitude = Math.abs((m1 + m2) / 2);
+  return m1 * m2 > 0 && Math.min(Math.abs(m1), Math.abs(m2)) > epsilon * amplitude ? amplitude : 0;
 }

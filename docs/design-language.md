@@ -636,3 +636,9 @@ La révision 2 était trop peu évasée. La révision 3 remplace x(1−a) par x�
 MK04/M04 B, coupe y=0 : demi-largeur jaune environ 6,4 mm à r=14,2 mm, 9 mm à r=16 mm, 9,75 mm à r=18 mm et 9,1 mm à r=20 mm. La largeur à distance intermédiaire augmente de plus de 45 % par rapport à la racine accessible, avant fermeture du sommet. Les paramètres de ce profil restent une hypothèse pédagogique et non des valeurs mesurées.
 
 La profondeur de l’évasement est |z| dans le repère reed de l’approche, et non √(y²+z²). Ce choix pédagogique anisotrope évite que les parties hors plan du volume remplissent visuellement la taille resserrée en projection de dessus. Il ne revendique pas la symétrie d’un champ physique exact.
+
+### Réponse C1 % et coupe par la face plate — 29 octobre 2026
+
+Cette décision remplace les déformations pédagogiques D1 décrites ci-dessus : aucune transformation de forme n'est appliquée. La réponse C utilise l'amplitude de A, autorisée seulement lorsque les deux moyennes de lame ont le même signe et dépassent la bande relative de 1 %. Les surfaces, le point, la chronologie et le circuit partagent cette réponse. La frontière de signe reste une hypothèse de modèle ; son aspect net ne constitue pas une mesure.
+
+La coupe catalogue utilise le plan local XY à z=0, contenant l'axe du reed et la normale à la face plate du MK04. Le montage ne change pas avec la vue. Si le centre de l'aimant est hors du plan, son marqueur est masqué et une légende courte l'indique. Les commandes et le circuit occupent un espace propre au-dessus du tracé de coupe : ils ne recouvrent ni les axes ni les légendes, y compris sur mobile. Les légendes sur fond clair utilisent Electronics Gray. Aucun nouveau réglage ni jeton de design.

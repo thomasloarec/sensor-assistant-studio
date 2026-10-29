@@ -31,7 +31,8 @@ describe('lot UX 28/10 — lobes en mouvement', () => {
   test('la clé de coupe suit le plan choisi', () => {
     const a = catalogueFrame(config, 0.2), b = catalogueFrame(config, 0.4);
     expect(a.pose.center[2]).not.toBe(b.pose.center[2]);
-    expect(cutKey(DEFAULT_EXPERIMENT, a, null, config)).not.toBe(cutKey(DEFAULT_EXPERIMENT, b, null, config));
+    expect(cutKey(DEFAULT_EXPERIMENT, a, null, config)).toBe(cutKey(DEFAULT_EXPERIMENT, b, null, config));
+    expect(cutKey(DEFAULT_EXPERIMENT,a,null)).not.toBe(cutKey(DEFAULT_EXPERIMENT,b,null));
   });
   test('le volume catalogue expose le champ échantillonné complet pour le rendu lisse', () => {
     const f = catalogueFrame(config, 0.5);

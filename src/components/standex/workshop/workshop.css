@@ -3272,3 +3272,30 @@
    (intrinsic-ratio feedback). The SVG fills the constrained figure (flex-basis 0). */
 .mw-client-pedagogical .mw-ped-cut-figure { height: clamp(400px, calc(100dvh - 280px), 720px); }
 .mw-client-pedagogical .mw-ped-cut { flex: 1 1 0; height: 0; min-height: 0; }
+/* A section has measured axes and captions: reserve layout space for controls and
+   circuit rather than overlaying them on these readings, especially on mobile. */
+.mw-client-pedagogical .mw-canvas:has(.mw-ped-cut-figure) {
+  display: flex;
+  flex-direction: column;
+  height: auto;
+  max-height: none;
+  background: var(--surface-product);
+}
+.mw-client-pedagogical .mw-canvas:has(.mw-ped-cut-figure) .mw-scene-tools {
+  position: relative;
+  inset: auto;
+  padding: 8px;
+  flex: none;
+}
+.mw-client-pedagogical .mw-canvas:has(.mw-ped-cut-figure) .mw-circuit-ped {
+  position: relative;
+  inset: auto;
+  align-self: flex-end;
+  margin: 8px 12px;
+  color: var(--standex-gray);
+}
+.mw-client-pedagogical .mw-ped-cut-figure { flex: none; }
+.mw-client-pedagogical .mw-ped-cut-caption .t-caption,
+.mw-client-pedagogical .mw-canvas:has(.mw-ped-cut-figure) .mw-circuit-ped > .t-caption {
+  color: var(--standex-gray);
+}

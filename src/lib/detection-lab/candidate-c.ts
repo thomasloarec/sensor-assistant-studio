@@ -2,7 +2,7 @@
  * M1/M2 are free-field averages, not measured blade magnetisations.
  * The sign gate is a phenomenological hypothesis, not a proven force law.
  */
-import {evaluatePose,type MagnetPose,type PoseEvaluation} from './pose';
+import {evaluatePose,signGatedResponse,type MagnetPose,type PoseEvaluation} from './pose';
 import {approachPose,type ApproachId,type Value} from './calibration';
 import {scenarioForLength} from './pass2';
 import {LAMBDA_STUDY} from './lambda-study';
@@ -13,9 +13,7 @@ export const C_STUDY_VERSION='sign-gated-a-study-1.0.0';
 /** epsilon=0 is C as proposed; 0.01 is a separate sensitivity experiment.
  * A relative 1% dead strip is a model choice, not floating-point roundoff. */
 export function responseC(m1:number,m2:number,epsilon=0):number{
- if(!Number.isFinite(m1)||!Number.isFinite(m2)||!Number.isFinite(epsilon)||epsilon<0||epsilon>=1)throw new RangeError('C_INVALID_INPUT');
- const a=Math.abs((m1+m2)/2);
- return m1*m2>0&&Math.min(Math.abs(m1),Math.abs(m2))>epsilon*a?a:0;
+ return signGatedResponse(m1,m2,epsilon);
 }
 export function evaluateC(magnet:PilotMagnet,pose:MagnetPose,epsilon=0,quadrature:number=PROFILE.reed.quadraturePerBlade):PoseEvaluation{
  const e=evaluatePose(magnet,pose,scenarioForLength(LAMBDA_STUDY.effectiveLengthMm),'A',quadrature);

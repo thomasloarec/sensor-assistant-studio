@@ -21,8 +21,8 @@ test('C retains collision masks and broad perpendicular dead band',()=>{
   expect(dead.ok&&on.ok).toBe(true);if(dead.ok&&on.ok){expect(dead.response).toBe(0);expect(on.response).toBeGreaterThan(15*LAMBDA_STUDY.kMtPerAt);}
  }
 });
-test('C D4/D5 maxima converge under finer scan and doubled quadrature; client remains A',()=>{
- expect(CATALOGUE_RESPONSE.model).toBe('A');
+test('C D4/D5 maxima converge under finer scan and doubled quadrature; client uses the reviewed C1%',()=>{
+ expect(CATALOGUE_RESPONSE.model).toBe('C');expect(CATALOGUE_RESPONSE.relativeSignEpsilon).toBe(.01);
  for(const m of PILOT_MAGNETS)for(const approach of ['D4','D5'] as const){const theta=20*LAMBDA_STUDY.kMtPerAt;
   const a=cDistanceFor(m,approach,theta,8.903167724609375),b=cDistanceFor(m,approach,theta,8.903167724609375,0,.25,24);
   expect(a.ok&&b.ok).toBe(true);if(a.ok&&b.ok)expect(Math.abs(a.value-b.value)).toBeLessThan(.001);
