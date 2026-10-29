@@ -2,7 +2,7 @@ import {test,expect} from 'bun:test';
 import {DEFAULT_WORKSHOP,type Vec3} from '../src/lib/standex/magnetic-workshop';
 import {catalogueModel,catalogueEvaluate,cataloguePlacement,catalogueFrame,catalogueVolume,catalogueCut,catalogueTimeline,magnetBodyFrame,CATALOGUE_MODEL_VERSION} from '../src/lib/standex/catalogue-pedagogical';
 import {CATALOGUE_RESPONSE,catalogueScenarios,catalogueThresholds} from '../src/lib/standex/catalogue-response';
-import {evaluatePose} from '../src/lib/detection-lab/pose';
+import {evaluatePose,signGatedResponse} from '../src/lib/detection-lab/pose';
 import {PILOT_MAGNETS} from '../src/lib/detection-lab/magnets';
 import {illustrativeContact} from '../src/lib/standex/pedagogical-contact';
 import {clientPedagogicalResult} from '../src/lib/standex/client-pedagogical';
@@ -12,12 +12,12 @@ import {parseMachineAsset} from '../src/lib/standex/machine-assets';
 import {DEMO_ASSEMBLIES} from '../src/lib/standex/machine-demos';
 import {partEnvelopes,reedObstaclesAt} from '../src/lib/standex/pedagogical-envelopes';
 
-test('66 housings reproduce raw pilot A under every versioned hypothesis',()=>{
+test('66 housings reproduce raw pilot C1% under every versioned hypothesis',()=>{
  for(const sensorId of ['MK03','MK04','MK05','MK13','MK14','MK21','MK11-M8','MK38'])for(const mag of PILOT_MAGNETS){
   const c={...DEFAULT_WORKSHOP,sensorId,magnetModel:mag.id,guideReference:`${sensorId}-1A66C-X`,sensitivity:'C'},m=catalogueModel(c),frame=magnetBodyFrame(c,0);
   for(const scenario of catalogueScenarios())for(const pose of [{center:[5,0,18] as Vec3,axis:[1,0,0] as Vec3},{center:[12,0,14] as Vec3,axis:[0,0,1] as Vec3}]){
    const expected=evaluatePose(mag,pose,scenario,'A'),actual=catalogueEvaluate(m,pose,scenario,frame);
-   expect(expected.ok&&actual.ok).toBe(true);if(expected.ok&&actual.ok)expect(actual.response).toBeCloseTo(expected.response,11);
+   expect(expected.ok&&actual.ok).toBe(true);if(expected.ok&&actual.ok)expect(actual.response).toBeCloseTo(signGatedResponse(expected.m1,expected.m2,.01),11);
   }
  }
  expect(catalogueThresholds('A')?.low).toBeNull();expect(catalogueThresholds('G')).toBeNull();
@@ -43,11 +43,11 @@ test('volume, cut and actual pose agree including body exclusions',()=>{
  }
  expect(cataloguePlacement(c,{center:[0,0,0],axis,frame}).cause).toBe('overlap');
 });
-test('saved client trace identifies A and remains non-qualifying',()=>{
+test('saved client trace identifies C1% and remains non-qualifying',()=>{
  const trace=clientPedagogicalResult(DEFAULT_WORKSHOP,.5);
- expect(trace.profileVersion).toBe('form66-lfit-a-c1@1.0.0');expect(trace.indicative?.version).toBe(CATALOGUE_MODEL_VERSION);expect(trace.qualified).toBe(false);
+ expect(trace.profileVersion).toBe('form66-lfit-c-eps01@1.0.0');expect(trace.indicative?.version).toBe(CATALOGUE_MODEL_VERSION);expect(trace.qualified).toBe(false);
 });
-test('loaded GLB mounting keeps transforms and feeds the same A timeline with real part envelopes',async()=>{
+test('loaded GLB mounting keeps transforms and feeds the same C1% timeline with real part envelopes',async()=>{
  const bytes=readFileSync('public/models/demo-paroi-alesage.glb');
  const asset=await parseMachineAsset(bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength),1000);
  try{

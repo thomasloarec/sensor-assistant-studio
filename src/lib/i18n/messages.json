@@ -35449,5 +35449,23 @@
     "Минимальный зазор между датчиком и магнитом",
     "Distanza minima tra sensore e magnete",
     "センサーと磁石の最小間隔"
+  ],
+  "Coupe par la face plate": [
+    "Section through the flat face",
+    "平面侧剖面",
+    "Schnitt durch die flache Seite",
+    "Sección por la cara plana",
+    "Сечение через плоскую грань",
+    "Sezione dalla faccia piana",
+    "平面側の断面"
+  ],
+  "Aimant hors du plan de coupe": [
+    "Magnet outside the section plane",
+    "磁铁位于剖面之外",
+    "Magnet außerhalb der Schnittebene",
+    "Imán fuera del plano de corte",
+    "Магнит вне плоскости сечения",
+    "Magnete fuori dal piano di sezione",
+    "磁石は断面の外側にあります"
   ]
 }

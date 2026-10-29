@@ -8,6 +8,7 @@ import type { WorkshopConfig } from '@/lib/standex/magnetic-workshop';
 import type { Obb } from '@/lib/detection-lab/obstacles';
 import { fingerprint } from '@/lib/standex/mounting/geometry';
 import { CATALOGUE_MODEL_VERSION, type PivotPlan } from '@/lib/standex/catalogue-pedagogical';
+import { CATALOGUE_CUT_PLANE_Z } from '@/lib/standex/catalogue-response';
 const cache=new Map<string,SampledVolume>();
 const cutCache=new Map<string,SampledVolume>();
 /** 3D volume key: couple, class, hypotheses, FULL magnet body orientation (axis + body frame)
@@ -21,9 +22,9 @@ export function volumeKey(settings:ExperimentSettings,frame:PedagogicalFrame,obs
  const body=(frame.pose as {frame?:number[][]}).frame?.map(row=>row.map(round));
  return settingsKey(settings,axis,0)+'|'+(obstacles?fingerprint(obstacles):'free')+'|'+(catalogue?CATALOGUE_MODEL_VERSION:'frozen')+'|'+JSON.stringify(catalogue??null)+'|'+JSON.stringify(catalogue?body??null:null);
 }
-/** Cut key: same volume identity plus the exact plane of the chosen instant. */
+/** Cut key: fixed flat-face plane for catalogue; instant plane for historical staff mode. */
 export function cutKey(settings:ExperimentSettings,frame:PedagogicalFrame,obstacles:readonly Obb[]|null,catalogue?:WorkshopConfig):string{
- return volumeKey(settings,frame,obstacles,catalogue)+'|plane:'+frame.pose.center[2];
+ return volumeKey(settings,frame,obstacles,catalogue)+'|plane:'+(catalogue?CATALOGUE_CUT_PLANE_Z:frame.pose.center[2]);
 }
 function useWorkerVolume(enabled:boolean,available:boolean,key:string,mode:'volume'|'cut',settings:ExperimentSettings,frame:PedagogicalFrame,obstacles:readonly Obb[]|null,catalogue?:WorkshopConfig){
  const store=mode==='volume'?cache:cutCache;
@@ -42,7 +43,7 @@ function useWorkerVolume(enabled:boolean,available:boolean,key:string,mode:'volu
     setBusy(false);worker?.terminate();worker=null;
    };
    worker.onerror=()=>{if(current){setBusy(false);setFailed(true);}worker?.terminate();};
-   worker.postMessage({settings,axis:frame.pose.axis,planeZ:frame.pose.center[2],key,mode,obstacles:obstacles??[],catalogue,frame:catalogue?(frame.pose as {frame?:unknown}).frame:undefined});
+   worker.postMessage({settings,axis:frame.pose.axis,planeZ:catalogue?CATALOGUE_CUT_PLANE_Z:frame.pose.center[2],key,mode,obstacles:obstacles??[],catalogue,frame:catalogue?(frame.pose as {frame?:unknown}).frame:undefined});
   },0);
   return ()=>{current=false;clearTimeout(timer);worker?.terminate();};
  },[enabled,key]);

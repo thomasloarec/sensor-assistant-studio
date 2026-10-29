@@ -6,7 +6,7 @@ import { discoveryPatch, clientDiscoveryConfig } from '@/lib/standex/discovery-p
 import { illustrativeContact } from '@/lib/standex/pedagogical-contact';
 import { CLIENT_LIMITS, clientCoupleAdapter, clientPedagogicalResult, type ClientPedagogicalResult } from '@/lib/standex/client-pedagogical';
 import { catalogueFrame, cataloguePlacement, catalogueModel, catalogueVerdictNotes, CATALOGUE_LABELS, nearestPreparedT, pivotSampleAt, type PivotPlan, type VolumeField } from '@/lib/standex/catalogue-pedagogical';
-import { catalogueThresholds, CATALOGUE_RESPONSE } from '@/lib/standex/catalogue-response';
+import { catalogueThresholds, CATALOGUE_RESPONSE, CATALOGUE_CUT_PLANE_Z } from '@/lib/standex/catalogue-response';
 import type { MachineFocus } from "@/lib/standex/machine-view";
 import { observedCycleVerdict } from "@/lib/leadmagnet/tested-pairs";
 import {
@@ -441,7 +441,7 @@ export default function MagneticWorkshop({
   // Coupe instantanée : le worker ne calcule QUE le plan choisi (jamais le volume entier), en pause.
   const cutSampled = usePedagogicalCut(pedagogical && eligible && !playing && view === "top", activeExperiment, pedagogicalPose, config.machine ? frameObstacles : null, catalogue ? config : undefined);
   const cutVolume=useMemo(()=>catalogue&&playing&&sampled.volume&&layerThresholds&&view==='top'
-    ? sectionVolume(sampled.volume,pedagogicalPose.pose.center[2],layerThresholds,clearance) : cutSampled.volume,
+    ? sectionVolume(sampled.volume,CATALOGUE_CUT_PLANE_Z,layerThresholds,clearance) : cutSampled.volume,
     [catalogue,playing,sampled.volume,layerThresholds,pedagogicalPose,clearance,cutSampled.volume,view]);
   // Circuit de principe : même instant et même moteur que le bandeau ; jamais le calcul binaire historique.
   const circuitContact = illustrativeContact(placement,layerClassName);
@@ -2607,7 +2607,7 @@ export default function MagneticWorkshop({
                 </p>
               </div>
             ) : null}
-            {pedagogical && view === "top" ? (playing && !catalogue ? <p className="notice-info t-body" data-testid="cut-paused-note">{t('Mettez en pause pour voir la coupe à cet instant')}</p> : <PedagogicalCut volume={cutVolume} frame={pedagogicalPose} body={catalogueProfile?.body} reedMm={catalogueProfile?CATALOGUE_RESPONSE.effectiveLengthMm*catalogueProfile.lengthMm/14:undefined} zones={zones} thresholds={catalogue?layerThresholds:null}/>) : machine ? (
+            {pedagogical && view === "top" ? (playing && !catalogue ? <p className="notice-info t-body" data-testid="cut-paused-note">{t('Mettez en pause pour voir la coupe à cet instant')}</p> : <PedagogicalCut volume={cutVolume} planeZ={catalogue?CATALOGUE_CUT_PLANE_Z:undefined} frame={pedagogicalPose} body={catalogueProfile?.body} reedMm={catalogueProfile?CATALOGUE_RESPONSE.effectiveLengthMm*catalogueProfile.lengthMm/14:undefined} zones={zones} thresholds={catalogue?layerThresholds:null}/>) : machine ? (
               assetError ? (
                 <div className="mw-loading" role="alert">
                   {t(assetError)}

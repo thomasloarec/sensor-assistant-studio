@@ -55,10 +55,9 @@ test('D3 quarter-turn puts mounting holes outward without affecting lateral or i
 });
 
 
-test('raw A central lobe narrows toward its rounded summit above the housing',()=>{
+test('C1% central lobe flares before narrowing toward its summit',()=>{
  const c=DEFAULT_WORKSHOP,m=catalogueModel(c);
  const width=(z:number)=>{let w=0;for(let x=0;x<14;x+=.1){const e=cataloguePlacement(c,{center:[x,0,z],axis:[1,0,0]},[],m,true);if(e.zone>0)w=x;}return w;};
- expect(width(14.2)).toBeGreaterThan(7);
- expect(width(18)).toBeLessThan(width(14.2));
+ expect(width(15.5)).toBeGreaterThan(width(14.0));
  expect(width(22)).toBe(0);
 });

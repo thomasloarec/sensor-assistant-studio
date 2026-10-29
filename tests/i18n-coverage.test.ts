@@ -111,7 +111,8 @@ describe("Couverture des langues de l'interface", () => {
     // + 3 entrées : préparation pivot adaptative (échec, réessai, orientation non certifiée).
     // + 3 entrées : annulation et limites explicites des orientations préparées.
     // + 6 entrées : retours utilisateur, écart minimal et commutation illustrative.
-    expect(Object.keys(dictionary)).toHaveLength(3_939);
+    // + 2 entrées : coupe par la face plate et aimant hors du plan (C1 %).
+    expect(Object.keys(dictionary)).toHaveLength(3_941);
     const broken = Object.entries(dictionary).filter(
       ([, v]) => v.length !== 7 || v.some((x) => typeof x !== "string" || x.trim() === ""),
     );
