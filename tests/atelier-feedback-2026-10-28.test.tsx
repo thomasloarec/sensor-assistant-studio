@@ -47,11 +47,11 @@ test('MK04/M04 default transverse and axial demonstrations close and reopen with
 });
 test('yellow band produces binary illustrative switching, not a third contact state',()=>{
  const c=DEFAULT_WORKSHOP,th=classThresholds('B')!,e=cataloguePlacement(c,catalogueFrame(c,.5).pose);
- for(const [response,expected] of [[th.low!+.01,'open'],[th.high-.01,'closed']] as const){expect(illustrativeContact({...e,state:'variable',zone:1,nominal:{ok:true,response,m1:response,m2:response}},'B')).toBe(expected);}
+ for(const [response,expected] of [[th.low!-.01,'open'],[th.low!+.01,'closed'],[th.high-.01,'closed']] as const){expect(illustrativeContact({...e,state:'variable',zone:1,nominal:{ok:true,response,m1:response,m2:response}},'B')).toBe(expected);}
  expect(illustrativeContact({...e,state:'unavailable',nominal:null},'B')).toBeNull();
 });
 test('sensitivity is visible without opening details, clearance remains editable',()=>{
- setLocale('fr');const patches:unknown[]=[];const r=render(<ClientPedagogicalControls config={DEFAULT_WORKSHOP} update={p=>patches.push(p)} onCatalog={()=>{}} onExplore={()=>{}} onCable={()=>{}}/>);
+ setLocale('fr');const patches:unknown[]=[];const r=render(<ClientPedagogicalControls config={DEFAULT_WORKSHOP} update={p=>patches.push(p)} onCatalog={()=>{}} onCable={()=>{}}/>);
  const select=r.getByLabelText('Classe de sensibilité');expect(select.closest('details')).toBeNull();
  fireEvent.change(select,{target:{value:'C'}});expect(patches).toContainEqual({sensitivity:'C'});
  fireEvent.input(r.getByRole('slider',{name:'Écart minimal entre les boîtiers'}),{target:{value:'1'}});expect(patches).toContainEqual({end:1});cleanup();

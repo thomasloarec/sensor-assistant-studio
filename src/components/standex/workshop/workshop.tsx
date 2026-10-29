@@ -2,9 +2,9 @@ import { Button } from "@/components/ui/button";
 import { clearanceRegions } from '@/lib/standex/zone-clearance';
 import { sectionVolume } from '@/lib/standex/zone-section';
 import { ClientPedagogicalControls } from './client-pedagogical-controls';
-import { discoveryPatch } from '@/lib/standex/discovery-preset';
+import { discoveryPatch, clientDiscoveryConfig } from '@/lib/standex/discovery-preset';
 import { illustrativeContact } from '@/lib/standex/pedagogical-contact';
-import { CLIENT_LIMITS, clientCoupleAdapter, explorationSettings, clientPedagogicalResult, type ClientPedagogicalResult } from '@/lib/standex/client-pedagogical';
+import { CLIENT_LIMITS, clientCoupleAdapter, clientPedagogicalResult, type ClientPedagogicalResult } from '@/lib/standex/client-pedagogical';
 import { catalogueFrame, cataloguePlacement, catalogueModel, catalogueVerdictNotes, CATALOGUE_LABELS, nearestPreparedT, pivotSampleAt, type PivotPlan, type VolumeField } from '@/lib/standex/catalogue-pedagogical';
 import type { MachineFocus } from "@/lib/standex/machine-view";
 import { observedCycleVerdict } from "@/lib/leadmagnet/tested-pairs";
@@ -328,7 +328,7 @@ export default function MagneticWorkshop({
   const [config, setConfig] = useState<WorkshopConfig>(
     // La variante documentée par défaut est résolue à l'ouverture : sans cela un
     // couple pourtant publié restait affiché comme non caractérisé.
-    () => withDefaultGuideSelection(parseWorkshopConfig(initialPedagogicalDraft?.config??initialConfig) ?? { ...DEFAULT_WORKSHOP, ...(staffPedagogical ? { sensorId: "GENERIC", mode: "education" as const, magnetModel: "generic", start: 24, end: 12, magnetAngle: 90 } : {}) }),
+    () => { const c=withDefaultGuideSelection(parseWorkshopConfig(initialPedagogicalDraft?.config??initialConfig) ?? { ...DEFAULT_WORKSHOP, ...(staffPedagogical ? { sensorId: "GENERIC", mode: "education" as const, magnetModel: "generic", start: 24, end: 12, magnetAngle: 90 } : {}) }); return clientPedagogical?clientDiscoveryConfig(c):c; },
   );
   // Disconnect all routing consumers, including scene callbacks, for PCB and
   // isolated exploration; hiding the entry button alone is not sufficient.
@@ -344,16 +344,6 @@ export default function MagneticWorkshop({
   const [placementUndo, setPlacementUndo] = useState<WorkshopConfig | null>(null);
   const clientAdapter = useMemo(()=>clientCoupleAdapter(config),[config]);
   const effectiveExperiment = clientPedagogical && !exploring ? clientAdapter.settings : experiment;
-  function beginExploration() {
-    if(exploring)return;
-    originalConfig.current = structuredClone(config); originalProgress.current = progress;
-    originalUi.current={tool,guide:structuredClone(guideState),history:structuredClone(historyRef.current)};
-    importSeqRef.current++;setPendingUnits(null);setTool('navigate');
-    setPlaying(false); setSuggestion(null); setPlacementUndo(null);
-    setExperiment(explorationSettings(config));
-    setConfig({...structuredClone(config),sensorId:'GENERIC',magnetModel:'generic',mode:'education'});
-    setExploring(true);
-  }
   function endExploration() {
     const original=originalConfig.current;if(!original)return;
     importSeqRef.current++;setPendingUnits(null);freshImportRef.current=null;
@@ -1106,7 +1096,8 @@ export default function MagneticWorkshop({
   }, [progress]);
 
   function update(patch: Partial<WorkshopConfig>, opts: { keepTime?: boolean } = {}) {
-    const next = { ...config, ...patch };
+    const merged = { ...config, ...patch };
+    const next = clientPedagogical&&!exploring?clientDiscoveryConfig(merged):merged;
     if(clientPedagogical&&!exploring&&(patch.magnetModel!==undefined||patch.sensitivity!==undefined||patch.geometry!==undefined))
       next.guideReference=guideSelectionFor(next.sensorId,next.magnetModel,next.geometry,null)?.reference??null;
     if (next.end >= next.start) {
@@ -1175,7 +1166,7 @@ export default function MagneticWorkshop({
       setPlaying(false);
       setProgress(resumed?.progress??0);
       if(resumed)setExperiment(resumed.settings);
-      setConfig(parsed);
+      setConfig(clientPedagogical?clientDiscoveryConfig(parsed):parsed);
       setSaved(null);
       setError(null);
       setImportNotice(t(storageMode==="memory"?"Montage importé en mémoire de cet onglet ; GLB à réimporter si absent.":"Montage importé. Il est enregistré automatiquement dans votre projet."));
@@ -2323,7 +2314,7 @@ export default function MagneticWorkshop({
       )}
       <div className="mw-stage-grid">
         <aside className="mw-controls">
-          {clientPedagogical && !exploring && <ClientPedagogicalControls config={config} update={patch=>update(patch,{keepTime:true})} onCatalog={()=>setCatalogOpen(true)} onExplore={beginExploration} onCable={()=>chooseTool('cable')} approachControls={approachPicker}/>}
+          {clientPedagogical && !exploring && <ClientPedagogicalControls config={config} update={patch=>update(patch,{keepTime:true})} onCatalog={()=>setCatalogOpen(true)} onCable={()=>chooseTool('cable')} approachControls={approachPicker}/>}
           {clientPedagogical && exploring && <div className="notice-info" data-testid="client-exploration"><p className="t-body">{t(CLIENT_LIMITS.exploration)}</p><Button variant="secondary" onClick={endExploration}>{t('Revenir au couple de mon dossier')}</Button></div>}
           {pedagogical && (!clientPedagogical || exploring) && <PedagogicalControls diagnosis={diagnosis} timelineNote={<p className="t-caption" data-testid="pedagogical-timeline-limits">{t("Capacité d’activation estimée ; réouverture non caractérisée : Ton/Toff non documentés")} · {t("Résolution des traversées non certifiée ; un passage rapide peut être manqué.")}{pedTimeline && <> · <span className="t-metric">{pedTimeline.events.length}</span> {t("transitions de placement")}{pedTimeline.events.some(e=>!e.resolved)&&<> · {t("Événement non résolu")}</>}</>}</p>} settings={activeExperiment} setSettings={setExperiment} config={config} update={patch=>update(patch,{keepTime:true})} mounting={config.machine&&envelopes?{parts:envelopes.length,reedOverlap}:null} frame={pedagogicalPose} busy={sampled.busy} volume={sampled.volume} failed={sampled.failed} canUndo={placementUndo!==null} onUndo={()=>{if(placementUndo){setConfig(placementUndo);setPlacementUndo(null);setSuggestion(null);}}} onSuggest={()=>{const candidate=suggestPedagogicalConfig(config,progress,experiment);if(!candidate){setError(t("Aucune suggestion disponible dans les libertés déclarées."));return;}setSuggestion(candidate);}} />}
           {suggestion && <div className="notice-info"><p>{t("Placement proposé : appliquer explicitement, puis recalculer")}</p><Button onClick={()=>{setPlacementUndo(config);setConfig(suggestion);setSuggestion(null);setPlaying(false);}}>{t("Appliquer le placement proposé")}</Button><Button variant="secondary" onClick={()=>setSuggestion(null)}>{t("Annuler")}</Button></div>}
@@ -2569,7 +2560,7 @@ export default function MagneticWorkshop({
             </div>
             {/* Circuit de principe réintégré pour le parcours client (demande du 28/10) : même instant,
                 même moteur que le bandeau ; le banc staff conserve son rendu sans circuit. */}
-            {clientPedagogical ? <div className="mw-circuit-ped" data-testid="pedagogical-circuit"><span className="t-caption">{t(layerClassName==='A'?"Circuit de principe · état indicatif":"Contact illustratif · sensibilité médiane")}</span><ContactCircuit contact={circuitContact??'open'} unavailable={circuitContact===null} /></div> : !pedagogical ? <ContactCircuit contact={sample.contact} /> : null}
+            {clientPedagogical ? <div className="mw-circuit-ped" data-testid="pedagogical-circuit"><span className="t-caption">{t(layerClassName==='A'?"Circuit de principe · état indicatif":"Contact illustratif · exemplaire très sensible")}</span><ContactCircuit contact={circuitContact??'open'} unavailable={circuitContact===null} /></div> : !pedagogical ? <ContactCircuit contact={sample.contact} /> : null}
             {/* Outil de pointage du câble : seulement quand le pointage est
                 réellement actif. Les trajets existants restent intacts. */}
             {!exploring && cableRouting && tool === "cable" ? (
@@ -2797,7 +2788,7 @@ export default function MagneticWorkshop({
                 setProgress(Number(e.target.value) / 100);
               }}
             />
-            {clientPedagogical && !exploring ? <div className="mw-legend" data-testid="client-product-legend"><span>{config.sensorId} + {config.magnetModel}</span><span className="mw-ped-high">{t("Zone favorable estimée")}</span><span className="mw-ped-low">{t("Dépend de la sensibilité")}</span><span className="mw-ped-gray">{t("Positions où l’aimant rencontrerait ce corps")}</span><span>{t('Zone jaune : selon la sensibilité de l’exemplaire, le contact peut commuter plus tôt ou plus tard. La lampe illustre un exemplaire au milieu de la classe.')}</span>{sampled.busy&&<span>{t("Calcul des volumes en cours…")}</span>}{sampled.failed&&<span>{t("Calcul des zones interrompu")}</span>}{sampled.volume?.truncated&&<span>{t("Lobes tronqués aux limites du domaine affiché ±24 mm ; aucune fermeture physique déduite.")}</span>}<span>{t(CATALOGUE_LABELS.notice)}</span></div> : pedagogical ? <div className="mw-legend" data-testid="pedagogical-legend"><span className="mw-ped-high">{t("Zone favorable estimée")}</span><span className="mw-ped-low">{t("Dépend de la sensibilité")}</span><span className="mw-ped-body">{t("Capteur générique, reed 66 monté")}</span><span className="mw-ped-gray">{t("Positions où l’aimant rencontrerait ce corps")}</span>{machine&&<span className="mw-ped-hatch">{t("Chevauchement possible avec une pièce du montage — à vérifier")}</span>}<span>{t("Estimation indicative")}</span></div> : <div className="mw-legend">
+            {clientPedagogical && !exploring ? <div className="mw-legend" data-testid="client-product-legend"><span>{config.sensorId} + {config.magnetModel}</span><span className="mw-ped-high">{t("Zone favorable estimée")}</span><span className="mw-ped-low">{t("Dépend de la sensibilité")}</span><span className="mw-ped-gray">{t("Positions où l’aimant rencontrerait ce corps")}</span>{layerThresholds?.low!=null&&<span>{t('Zone jaune : activation possible selon l’exemplaire. La lampe illustre la borne la plus sensible de la classe, pas une activation garantie.')}</span>}<span>{t('Le repère indique le centre magnétique estimé ; c’est sa position dans les lobes qui commande la lampe.')}</span>{sampled.busy&&<span>{t("Calcul des volumes en cours…")}</span>}{sampled.failed&&<span>{t("Calcul des zones interrompu")}</span>}{sampled.volume?.truncated&&<span>{t("Lobes tronqués aux limites du domaine affiché ±24 mm ; aucune fermeture physique déduite.")}</span>}<span>{t(CATALOGUE_LABELS.notice)}</span></div> : pedagogical ? <div className="mw-legend" data-testid="pedagogical-legend"><span className="mw-ped-high">{t("Zone favorable estimée")}</span><span className="mw-ped-low">{t("Dépend de la sensibilité")}</span><span className="mw-ped-body">{t("Capteur générique, reed 66 monté")}</span><span className="mw-ped-gray">{t("Positions où l’aimant rencontrerait ce corps")}</span>{machine&&<span className="mw-ped-hatch">{t("Chevauchement possible avec une pièce du montage — à vérifier")}</span>}<span>{t("Estimation indicative")}</span></div> : <div className="mw-legend">
               <span>
                 <i className="closed" />
                 {t("Fermé")}

@@ -43,6 +43,12 @@ export function PedagogicalLayer({frame,settings,volume,zones=true,zonesOnly=fal
   useEffect(()=>()=>geometries.forEach(g=>g?.dispose()),[geometries]);
   if(!magnet&&!zonesOnly)return null;
   return <group position={frame.origin} quaternion={rotation}>
+    {/* Annotation of the actual sampled centre, intentionally visible through
+        the opaque housing. Touching a lobe with a housing edge is not a hit. */}
+    {zonesOnly&&<group position={frame.pose.center}>
+      <mesh renderOrder={20}><sphereGeometry args={[.8,16,12]}/><meshBasicMaterial color="#254061" depthTest={false} depthWrite={false}/></mesh>
+      <mesh renderOrder={21}><sphereGeometry args={[.45,16,12]}/><meshBasicMaterial color="#ffffff" depthTest={false} depthWrite={false}/></mesh>
+    </group>}
      {/* Zone identity preserved: index 0 = coque (seuil bas), index 1 = noyau (seuil haut).
          Class A (low=null) keeps the core cyan at index 1 — never recoloured as shell. */}
      {zones&&geometries.map((geometry,i)=>geometry&&<mesh key={i} geometry={geometry} renderOrder={i}>

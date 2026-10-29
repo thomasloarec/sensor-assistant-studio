@@ -15,14 +15,14 @@ import { discoveryPatch } from '@/lib/standex/discovery-preset';
 /** Colonne de découverte avant import : trois choix (disposition, mouvement, quart de tour),
  * puis observation. Les curseurs numériques restent disponibles après import ou en exploration ;
  * une configuration existante n'est jamais réécrite parce que sa commande devient invisible. */
-export function ClientPedagogicalControls({config,update,onCatalog,onExplore,onCable,approachControls}: {
-  config:WorkshopConfig;update:(patch:Partial<WorkshopConfig>)=>void;onCatalog:()=>void;onExplore:()=>void;onCable:()=>void;approachControls?:ReactNode;
+export function ClientPedagogicalControls({config,update,onCatalog,onCable,approachControls}: {
+  config:WorkshopConfig;update:(patch:Partial<WorkshopConfig>)=>void;onCatalog:()=>void;onCable:()=>void;approachControls?:ReactNode;
 }) {
   const adapter=clientCoupleAdapter(config);
   const classes=[...new Set([config.sensitivity,...catalogueClasses(config.sensorId,config.magnetModel,publishedClasses(config.sensorId,config.magnetModel))])];
   const magnets=[...new Set([config.magnetModel,...magnetOptionsFor(config.sensorId,undefined,config.magnetModel),...VERIFIED_PILOTS])];
   const rows=guideRangesFor(config.sensorId,config.magnetModel);
-  const motions:[WorkshopConfig['motion'],string][]=[['approach',t('Approche et retrait')],['slide',t('Passage latéral')],['pivot',t('Pivot')]];
+  const motions:[WorkshopConfig['motion'],string][]=[['approach',t('Approche et retrait')],['slide',t('Passage latéral')]];
   return <div className="mw-ped-controls" data-testid="client-pedagogical-controls">
     <h2 className="t-title-m">{t(sensorById(config.sensorId).name)}</h2>
     <Button variant="secondary" onClick={onCatalog}>{t('Changer de couple')}</Button>
@@ -32,7 +32,6 @@ export function ClientPedagogicalControls({config,update,onCatalog,onExplore,onC
         <p className="t-label">{t('Disposition')}</p>
         {approachControls}
       </section>
-      {config.motion==='approach'&&<label className="mw-field"><span>{t('Écart minimal entre les boîtiers')}<output className="t-metric">{config.end} mm</output></span><input type="range" aria-label={t('Écart minimal entre les boîtiers')} min="0.25" max="15" step="0.25" value={config.end} onInput={e=>update({end:Number(e.currentTarget.value)})}/></label>}
       <section className="mw-choice" aria-label={t('Mouvement')}>
         <p className="t-label">{t('Mouvement')}</p>
         <div className="mw-approach-row">
@@ -44,8 +43,8 @@ export function ClientPedagogicalControls({config,update,onCatalog,onExplore,onC
         <Button variant="secondary" data-testid="quarter-turn" onClick={()=>update(discoveryPatch(config,{magnetAngle:((config.magnetAngle+90+180)%360)-180}))}>{t('Tourner de 90°')}</Button>
         <p className="t-caption">{config.magnetAngle===0?t('Aucune rotation appliquée'):msg('Rotation appliquée : {0}°',[config.magnetAngle])}</p>
       </section>
+      {config.motion==='approach'&&<label className="mw-field"><span>{t('Écart minimal entre les boîtiers')}<output className="t-metric">{config.end} mm</output></span><input type="range" aria-label={t('Écart minimal entre les boîtiers')} min="0.25" max="15" step="0.25" value={config.end} onInput={e=>update({end:Number(e.currentTarget.value)})}/></label>}
     </>}
-    <Button variant="secondary" onClick={onExplore}>{t('Comprendre les zones de détection')}</Button>
     <details className="mw-advanced"><summary>{t('Caractéristiques du couple')}</summary>
       <label className="mw-select-label">{t('Aimant')}<select aria-label={t('Aimant')} value={config.magnetModel} onChange={e=>update({magnetModel:e.target.value})}>{magnets.map(id=><option key={id} value={id}>{id}</option>)}</select></label>
       {config.guideReference&&<p className="t-caption">{t('Référence documentaire')} : {config.guideReference}</p>}

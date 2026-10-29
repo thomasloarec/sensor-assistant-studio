@@ -519,6 +519,8 @@ export function Magnet({
     config.geometry,
     Boolean(actualModel),
     Boolean(config.machine),
+    sample.angle,
+    config.motion,
   );
   return (
     <group
