@@ -5,11 +5,13 @@ import {CATALOGUE_PROFILES,catalogueModel,cataloguePlacement,catalogueFrame,cata
 import {BARE_MAGNETS} from '../src/lib/standex/magnet-catalog';
 import {defaultMagnetFor} from '../src/lib/standex/default-pairs';
 import {ACTIVATION_GUIDE} from '../src/lib/standex/activation-guide';
-import {evaluatePlacement,DEFAULT_EXPERIMENT} from '../src/lib/detection-lab/workshop-experiment';
+import {catalogueNominalScenario} from '../src/lib/standex/catalogue-response';
+import {evaluatePose} from '../src/lib/detection-lab/pose';
+import {PILOT_MAGNETS} from '../src/lib/detection-lab/magnets';
 import {createDossier} from '../src/lib/leadmagnet/dossier';
 import {recordClientTrace,currentClientTrace} from '../src/lib/standex/client-pedagogical';
 import {buildDossierExport,parseDossierExport} from '../src/lib/leadmagnet/dossier-io';
-describe('versioned catalogue layer, unchanged reference B',()=>{
+describe('versioned A catalogue layer, historical B isolated',()=>{
  test('guide inventory distinguishes rows from numeric bounds',()=>{
   expect(ACTIVATION_GUIDE.rows.length).toBe(3004);
   expect(ACTIVATION_GUIDE.rows.reduce((n,r)=>n+Number(typeof r.upMm==='number')+Number(typeof r.toMm==='number'),0)).toBe(5744);
@@ -50,12 +52,12 @@ describe('versioned catalogue layer, unchanged reference B',()=>{
   expect(catalogueModel({...DEFAULT_WORKSHOP,magnetModel:'M04'}).magnetGeometry).toBe('equivalent-cylinder');
   expect(catalogueModel({...DEFAULT_WORKSHOP,magnetModel:'4003004003'}).unknownMoment).toBe(true);
  });
- test('66 pilots centred vs offset and inversion match frozen reference at same pose',()=>{
+ test('66 pilots centred vs offset and inversion match raw A reference at same pose',()=>{
   for(const magnetModel of ['SMCO5-5X4','N45-4X19']){
    const c={...DEFAULT_WORKSHOP,sensorId:'MK03',guideReference:'MK03-1A66C-X',magnetModel,sensitivity:'C'};
    const depth=magnetModel==='SMCO5-5X4'?6:16;
    for(const x of [0,8]){const pose={center:[x,depth,0] as [number,number,number],axis:[0,1,0] as [number,number,number]};
-    const a=cataloguePlacement(c,pose),b=evaluatePlacement({...DEFAULT_EXPERIMENT,magnetId:magnetModel},pose);expect(a.state).toBe(b.state);expect(a.nominal).toEqual(b.nominal);
+    const a=cataloguePlacement(c,pose),b=evaluatePose(PILOT_MAGNETS.find(m=>m.id===magnetModel)!,pose,catalogueNominalScenario(),'A');expect(a.nominal).toEqual(b);
     expect(cataloguePlacement(c,{...pose,axis:[0,-1,0]}).state).toBe(a.state);
    }
   }

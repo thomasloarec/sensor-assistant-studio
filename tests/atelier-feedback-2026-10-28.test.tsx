@@ -4,7 +4,8 @@ import { render,cleanup,fireEvent } from '@testing-library/react';
 import { DEFAULT_WORKSHOP, parseWorkshopConfig, pairDemonstration, type Vec3 } from '@/lib/standex/magnetic-workshop';
 import { catalogueModel,catalogueFrame,cataloguePlacement,catalogueEvaluate,magnetBodyFrame } from '@/lib/standex/catalogue-pedagogical';
 import { nominalScenario,classThresholds } from '@/lib/detection-lab/workshop-experiment';
-import { centralLobeSample } from '@/lib/standex/pedagogical-shape';
+import { evaluatePose } from '@/lib/detection-lab/pose';
+import { PILOT_MAGNETS } from '@/lib/detection-lab/magnets';
 import { illustrativeContact } from '@/lib/standex/pedagogical-contact';
 import { discoveryPatch } from '@/lib/standex/discovery-preset';
 import { ClientPedagogicalControls } from '@/components/standex/workshop/client-pedagogical-controls';
@@ -23,18 +24,14 @@ test('D1 and D3 calibrated axes and perpendicular D4/D5 responses remain identic
   }
  }
 });
-test('central lobe has a wider usable passage without extending the D1 maximum',()=>{
- const c=DEFAULT_WORKSHOP,m=catalogueModel(c),f=magnetBodyFrame(c,0),th=classThresholds('B')!;
- const width=(shaped:boolean,z:number)=>{let half=0;for(let x=0;x<=14;x+=.1){const pose={center:[x,0,z] as Vec3,axis:[1,0,0] as Vec3,frame:f};const r=shaped?cataloguePlacement(c,pose,[],m,true).nominal:catalogueEvaluate(m,pose,nominalScenario(),f);if(r?.ok&&r.response>=th.low!)half=x;else break;}return half*2;};
- expect(width(true,15.9)).toBeGreaterThan(12);
- expect(width(true,15.9)).toBeLessThan(20);
- expect(width(true,15.9)).toBeGreaterThan(width(false,15.9)*1.4);
- for(let z=14;z<40;z+=.2){const pose={center:[0,0,z] as Vec3,axis:[1,0,0] as Vec3,frame:f};expect(cataloguePlacement(c,pose,[],m,true).nominal).toEqual(catalogueEvaluate(m,pose,nominalScenario(),f));}
+test('A broadens the raw SmCo passage while keeping D1 depth',()=>{
+ const mag=PILOT_MAGNETS[0]!,th=classThresholds('C')!;
+ const width=(model:'A'|'B')=>{let half=0;for(let x=0;x<=14;x+=.1){const r=evaluatePose(mag,{center:[x,0,6],axis:[1,0,0]},nominalScenario(),model);if(r.ok&&r.response>=th.low!)half=x;else break;}return half*2;};
+ expect(width('A')).toBeGreaterThan(width('B')*2);
+ for(let z=14;z<40;z+=.2){const pose={center:[0,0,z] as Vec3,axis:[1,0,0] as Vec3};const a=evaluatePose(mag,pose,nominalScenario(),'A'),b=evaluatePose(mag,pose,nominalScenario(),'B');if(a.ok&&b.ok)expect(a.response).toBeCloseTo(b.response,10);}
 });
-test('shape map is continuous monotone, polarity-invariant; perpendicular dead axis unchanged',()=>{
- expect(centralLobeSample([8,18,0],[1,0,0],14)).toEqual([8,18,0]);
- expect(centralLobeSample([8,0,18],[1,0,0],14)[0]).toBeLessThan(3);
- let last=-Infinity;for(let x=-20;x<=20;x+=.05){const center:[number,number,number]=[x,0,16],p=centralLobeSample(center,[1,0,0],14);expect(p[0]).toBeGreaterThan(last);last=p[0];expect(centralLobeSample(center,[-1,0,0],14)).toEqual(p);expect(centralLobeSample(center,[0,0,1],14)).toEqual(center);}
+
+test('perpendicular dead axis remains below threshold with A',()=>{
  const c={...DEFAULT_WORKSHOP,magnetAngle:90};
  for(let gap=.5;gap<=12;gap+=.5)expect(cataloguePlacement(c,catalogueFrame({...c,end:gap},.5).pose).zone).toBe(0);
 });

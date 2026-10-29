@@ -1,4 +1,5 @@
-import { sampleVolume, placementTimeline, tableTimeline, classThresholds, type ExperimentSettings, type TableSample } from '@/lib/detection-lab/workshop-experiment';
+import { sampleVolume, placementTimeline, tableTimeline, type ExperimentSettings, type TableSample } from '@/lib/detection-lab/workshop-experiment';
+import { catalogueThresholds as classThresholds } from '@/lib/standex/catalogue-response';
 import { pedagogicalFrame } from '@/lib/standex/pedagogical-poses';
 import type { WorkshopConfig } from '@/lib/standex/magnetic-workshop';
 import type { Vec3 } from '@/lib/detection-lab/field';

@@ -1,5 +1,5 @@
 import type { PlacementEvidence } from '../detection-lab/workshop-experiment';
-import { classThresholds } from '../detection-lab/workshop-experiment';
+import { catalogueThresholds as classThresholds } from './catalogue-response';
 
 /** One illustrative specimen at the most sensitive documented class bound.
  * The yellow band is class dispersion, never an invented hysteresis band.

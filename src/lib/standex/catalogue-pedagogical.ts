@@ -1,6 +1,6 @@
 /** Catalogue adaptation v1, separate from the frozen Form66 calibration.
  * Internal datums are explicit modelling hypotheses. No brochure bound is fitted.
- * All responses use evaluatePose/B and the common k×AT threshold.
+ * All responses use the shared A response and the common k×AT threshold.
  */
 import { SENSOR_CATALOG, sensorById } from './sensor-catalog';
 import { BARE_MAGNETS, packagedMagnet, ACTIVATION_BROCHURE } from './magnet-catalog';
@@ -10,16 +10,16 @@ import { rotate, componentPose, cycleU } from './machine-assembly';
 import type { Vec3 } from './magnetic-workshop';
 import { momentFor, magnetSize, poseAt, type WorkshopConfig } from './magnetic-workshop';
 import { PILOT_MAGNETS, type PilotMagnet } from '../detection-lab/magnets';
-import { gaussLegendre, type MagnetPose, type PoseEvaluation } from '../detection-lab/pose';
+import { gaussLegendre, reedResponse, type MagnetPose, type PoseEvaluation } from '../detection-lab/pose';
 import { cylinderField, cylinderSignedDistance } from '../detection-lab/field';
 import { PROFILE, type ReedScenario } from '../detection-lab/profile';
 import { fieldAtPoint } from './magnetics/field';
-import { EXPERIMENT, DEFAULT_EXPERIMENT, classThresholds, experimentalScenarios, nominalScenario, axisNodes, type PlacementEvidence, type SampledVolume, type TableSample } from '../detection-lab/workshop-experiment';
+import { axisNodes, type PlacementEvidence, type SampledVolume, type TableSample } from '../detection-lab/workshop-experiment';
 import { magnetObb, obbOverlap, type Obb } from '../detection-lab/obstacles';
 import { publishedRowsForCouple, publishedRowsSourceUrl, PUBLISHED_REGISTRY } from './magnetics/registries';
-import { centralLobeSample } from './pedagogical-shape';
+import { CATALOGUE_RESPONSE, catalogueThresholds as classThresholds, catalogueScenarios, catalogueNominalScenario as nominalScenario } from './catalogue-response';
 
-export const CATALOGUE_MODEL_VERSION='catalogue-b-analogy-2.0-shape3';
+export const CATALOGUE_MODEL_VERSION='catalogue-a-analogy-3.0.0';
 /* i18n-canonical: internal diagnostic codes, never UI labels. */
 const INTERNAL={missing:'catalogue_profile_missing',prior:'catalogue_modelling_prior',source:'catalogue_illustrative',leads:'length_only_analogy_leads_uncharacterized'};
 /* i18n-canonical: model status, not product qualification. */
@@ -95,7 +95,7 @@ export function catalogueFrame(c:WorkshopConfig,t:number):PedagogicalFrame&{pose
  return {origin,basis,world:{center,axis,frame:wf},pose:{center:toLocal(mp),axis:toLocal(axis),frame:wf.map(toLocal) as Frame}};
 }
 export function catalogueBodyObb(c:WorkshopConfig):Obb{return {path:'sensor-body',c:[0,0,0],a:E,h:sensorById(c.sensorId).body.map(n=>n/2) as Vec3};}
-/** Catalogue evaluator (physical mm). Same blade integral, Gauss nodes and B response as the
+/** Catalogue evaluator (physical mm). Same blade integral, Gauss nodes and A response as the
  * frozen kernel; reed effective length and scenario shifts scale with the profile's estimated
  * reed length (documented hypothesis); the calculation domain does NOT. */
 export function catalogueEvaluate(m:ReturnType<typeof catalogueModel>,pose:CataloguePose,s:ReedScenario,frame:Frame,quadrature=PROFILE.reed.quadraturePerBlade):PoseEvaluation{
@@ -114,7 +114,7 @@ export function catalogueEvaluate(m:ReturnType<typeof catalogueModel>,pose:Catal
  const blade=(from:number,to:number)=>{let sum=0;for(let i=0;i<g.x.length;i++){const x=from+((g.x[i]!+1)/2)*(to-from);sum+=(g.w[i]!/2)*B([x+(sh[0]??0),sh[1]??0,sh[2]??0]);}return sum;};
  const m1=blade(-half,0),m2=blade(0,half);
  if(!Number.isFinite(m1)||!Number.isFinite(m2))return {ok:false,reason:'collision'};
- return {ok:true,response:m1*m2>0?Math.min(Math.abs(m1),Math.abs(m2)):0,m1,m2};
+ return {ok:true,response:reedResponse(m1,m2,CATALOGUE_RESPONSE.model),m1,m2};
 }
 export function cataloguePlacement(c:WorkshopConfig,pose:CataloguePose,obstacles:readonly Obb[]=[],model=catalogueModel(c),nominalOnly=false):PlacementEvidence{
  const m=model,th=classThresholds(m.className);
@@ -124,12 +124,10 @@ export function cataloguePlacement(c:WorkshopConfig,pose:CataloguePose,obstacles
  const frame=pose.frame??magnetBodyFrame(c,c.magnetAngle);
  const realMagnet:Obb={path:'magnet',c:[...pose.center],a:frame,h:m.magnetBody.map(n=>n/2) as Vec3};
  if(obbOverlap(realMagnet,catalogueBodyObb(c))||obstacles.some(o=>obbOverlap(realMagnet,o)))return unavailable('overlap');
- // Keep the raw calibrated evaluator intact. Only the client pedagogical shape
- // uses a documented morphology prior; collision above uses the actual pose.
- const sampledPose={...pose,center:centralLobeSample(pose.center,pose.axis,m.lengthMm)};
- const nominal=catalogueEvaluate(m,sampledPose,nominalScenario(),frame);
+ // Actual pose for both mechanical exclusion and response. No morphology map.
+ const nominal=catalogueEvaluate(m,pose,nominalScenario(),frame);
  if(!nominal.ok)return unavailable(nominal.reason==='domain'?'domain':'collision');
- const scenarios=nominalOnly?[]:experimentalScenarios(true).map(s=>({id:s.id,result:catalogueEvaluate(m,sampledPose,s,frame)}));
+ const scenarios=nominalOnly?[]:catalogueScenarios().map(s=>({id:s.id,result:catalogueEvaluate(m,pose,s,frame)}));
  const responses=scenarios.flatMap(s=>s.result.ok?[s.result.response]:[]);
  const partial=th.low===null;
  const zone=nominal.response>=th.high?2:th.low!==null&&nominal.response>=th.low?1:0;

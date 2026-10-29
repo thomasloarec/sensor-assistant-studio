@@ -7,11 +7,11 @@ import { EXPERIMENT, nominalScenario } from '../src/lib/detection-lab/workshop-e
 import { PILOT_MAGNETS } from '../src/lib/detection-lab/magnets';
 
 // Independent physical-mm integral: Gauss 48 per blade, own loop.
-function independentB(center:[number,number,number],axis:[number,number,number],L:number){
+function independentA(center:[number,number,number],axis:[number,number,number],L:number){
   const n45=PILOT_MAGNETS.find(m=>m.id==='N45-4X19')!,g=gaussLegendre(48),h=L/2;
   const body={radiusMm:n45.diameterMm/2,lengthMm:n45.lengthMm,jT:n45.jT,center,axis};
   const mean=(a:number,b:number)=>g.x.reduce((s,x,i)=>s+g.w[i]!/2*cylinderField(body,[a+(x+1)/2*(b-a),0,0])[0],0);
-  const m1=mean(-h,0),m2=mean(0,h);return m1*m2>0?Math.min(Math.abs(m1),Math.abs(m2)):0;
+  const m1=mean(-h,0),m2=mean(0,h);return Math.abs((m1+m2)/2);
 }
 describe('catalogue housing regressions (physical invariants)',()=>{
   const mk24={...DEFAULT_WORKSHOP,sensorId:'MK24-A-J',magnetModel:'N45-4X19',sensitivity:'C'};
@@ -20,7 +20,7 @@ describe('catalogue housing regressions (physical invariants)',()=>{
   });
   test('MK24/N45 nominal integral in physical mm',()=>{
     const e=cataloguePlacement(mk24,{center:[0,0,20],axis:[1,0,0]});
-    const ref=independentB([0,0,20],[1,0,0],EXPERIMENT.effectiveLengthMm*3/14);
+    const ref=independentA([0,0,20],[1,0,0],EXPERIMENT.effectiveLengthMm*3/14);
     expect(ref).toBeCloseTo(2.25882959405002,12);
     expect(e.nominal?.ok&&e.nominal.response).toBeCloseTo(2.25882959405002,10);
   });
