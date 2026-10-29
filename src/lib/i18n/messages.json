@@ -35440,5 +35440,14 @@
     "Метка показывает предполагаемый магнитный центр; его положение в лепестках управляет лампой.",
     "Il riferimento indica il centro magnetico stimato; la sua posizione nei lobi controlla la lampada.",
     "マーカーは推定磁気中心を示し、ローブ内でのその位置がランプを制御します。"
+  ],
+  "Écart minimal entre le capteur et l’aimant": [
+    "Minimum gap between sensor and magnet",
+    "传感器与磁铁之间的最小间隙",
+    "Mindestabstand zwischen Sensor und Magnet",
+    "Distancia mínima entre el sensor y el imán",
+    "Минимальный зазор между датчиком и магнитом",
+    "Distanza minima tra sensore e magnete",
+    "センサーと磁石の最小間隔"
   ]
 }

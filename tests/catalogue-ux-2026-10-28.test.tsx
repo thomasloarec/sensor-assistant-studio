@@ -88,7 +88,7 @@ describe('lot UX 28/10 — colonne de découverte', () => {
     for (const gone of ['Écart au départ', 'Écart au plus près', 'Décalage latéral', 'Orientation propre du reed', 'Inclinaison hors du plan', 'Demi-course latérale'])
       expect(r.queryByLabelText(gone)).toBeNull();
     expect(r.getByText('Caractéristiques du couple')).toBeTruthy();
-    expect(r.getByText('Sources et limites')).toBeTruthy();
+    expect(r.queryByText('Sources et limites')).toBeNull();
   });
   test('le quart de tour tourne de 90° relatif à la pose courante', () => {
     const { r, patches } = renderControls({ ...config, magnetAngle: 30 });

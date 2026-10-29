@@ -8,12 +8,15 @@ import type { Vec3 } from './magnetic-workshop';
  * lobes are preserved. Actual mechanical exclusion always precedes this map.
  * All client samples (point, volume, cut, timeline, lamp) use the same map.
  */
-export const PEDAGOGICAL_SHAPE = Object.freeze({version:'central-lobe-1',strength:0.8,radialBlendMm:2});
+export const PEDAGOGICAL_SHAPE = Object.freeze({version:'central-lobe-2',strength:0.98,flareStart:0.7,flareEnd:1.3});
 export function centralLobeSample(center:Vec3,axis:Vec3,glassLengthMm:number):Vec3 {
   const [x,y,z]=center,r2=y*y+z*z,n=Math.hypot(...axis);
   if(!n||!r2||!x||glassLengthMm<=0||Math.abs(x)>=glassLengthMm)return center;
   const parallel=Math.pow(axis[0]/n,8);
   const taper=Math.pow(1-(x/glassLengthMm)**2,2);
-  const amount=PEDAGOGICAL_SHAPE.strength*parallel*taper*r2/(r2+PEDAGOGICAL_SHAPE.radialBlendMm**2);
+  // Widening develops away from the reed; strength < 1 keeps x monotone.
+  const u=Math.max(0,Math.min(1,(Math.sqrt(r2)/glassLengthMm-PEDAGOGICAL_SHAPE.flareStart)/(PEDAGOGICAL_SHAPE.flareEnd-PEDAGOGICAL_SHAPE.flareStart)));
+  const flare=u*u*(3-2*u);
+  const amount=PEDAGOGICAL_SHAPE.strength*parallel*taper*flare;
   return [x*(1-amount),y,z];
 }
