@@ -17,7 +17,8 @@ test('MVP discovery has two motions, no extra demonstration, gap after orientati
  setLocale('fr');const r=render(<ClientPedagogicalControls config={DEFAULT_WORKSHOP} update={()=>{}} onCatalog={()=>{}} onCable={()=>{}}/>);
  expect(r.queryByRole('button',{name:'Pivot',exact:true})).toBeNull();
  expect(r.queryByRole('button',{name:'Comprendre les zones de détection'})).toBeNull();
- const turn=r.getByRole('button',{name:'Tourner de 90°'}),gap=r.getByRole('slider',{name:'Écart minimal entre les boîtiers'});
+ for(const label of ['Sources et limites','Inverser N / S','Température','Acier ou autre matière ferromagnétique proche'])expect(r.queryByText(label)).toBeNull();
+ const turn=r.getByRole('button',{name:'Tourner de 90°'}),gap=r.getByRole('slider',{name:'Écart minimal entre le capteur et l’aimant'});
  expect(turn.compareDocumentPosition(gap)&4).toBe(4);
  expect(r.getByRole('button',{name:'Passage latéral'})).toBeTruthy();
 });
@@ -51,4 +52,12 @@ test('D3 quarter-turn puts mounting holes outward without affecting lateral or i
  expect(rotate([0,0,3.05],[0,-(90+yaw),0])[0]).toBeGreaterThan(0);
  expect(renderedMagnetHousingYawDeg('MK04','D3',true,false,90,'slide')).toBe(0);
  expect(renderedMagnetHousingYawDeg('MK04','D3',true,true,90,'approach')).toBe(0);
+});
+
+
+test('D1 flare widens the actual activation window away from the housing',()=>{
+ const c=DEFAULT_WORKSHOP,m=catalogueModel(c);
+ const width=(z:number)=>{let w=0;for(let x=0;x<14;x+=.1){const e=cataloguePlacement(c,{center:[x,0,z],axis:[1,0,0]},[],m,true);if(e.zone>0)w=x;}return w;};
+ expect(width(18)).toBeGreaterThan(width(14.2)+.7);
+ expect(width(22)).toBe(0);
 });

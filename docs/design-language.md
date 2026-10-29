@@ -618,3 +618,12 @@ Le contact illustratif utilise désormais la borne la plus sensible documentée 
 En approche axiale à +90°, le boîtier d’aimant compatible reçoit un demi-tour de présentation pour orienter sa bride vers l’extérieur. Les poses importées et les passages latéraux restent inchangés. Aucun seuil physique, distance calibrée ni contour de lobe n’est modifié.
 
 Limite constatée : pour MK04/M04 B, le passage parallèle rectiligne sans chevauchement ne traverse pas les lobes secondaires avec le centre magnétique dans le modèle actuel. Trois activations ne sont donc pas promises ; le passage perpendiculaire montre deux fenêtres distinctes.
+
+
+### Colonne épurée et D1 évasé — 29 octobre 2026
+
+La sidebar client supprime polarité, matière ferromagnétique, température, statut technique du modèle et Sources et limites. Les données sources et le moteur restent disponibles dans le code et le laboratoire staff. Le bandeau indicatif reste présent. Le réglage s’intitule « Écart minimal entre le capteur et l’aimant ». Aucun paramètre enregistré n’est réécrit par cette suppression visuelle.
+
+La morphologie qualitative central-lobe-2 développe progressivement la largeur loin du reed : compression longitudinale x’=x(1−a), avec a=0,98·cos⁸(angle)·(1−(x/L)²)²·smoothstep(u), u=clamp((r/L−0,7)/0,6,0,1), r=√(y²+z²). Hors |x|<L, la transformation est identité. La transformation est strictement croissante en x ; les axes x=0 et r=0 ainsi que l’orientation perpendiculaire restent inchangés. Point, volume, coupe, chronologie et circuit partagent la transformation ; les collisions utilisent la position réelle avant transformation. Ni la calibration ni les distances axiales ne sont réajustées. L’évasement est une hypothèse de présentation/calcul pédagogique, pas une mesure physique.
+
+Recette numérique MK04/M04 B : demi-largeur centrale jaune environ 6,4 mm à r=14,2 mm, 7,35 mm à r=18 mm, puis fermeture du lobe avant r=22 mm. L’évasement ne signifie donc pas une largeur croissante à toute distance : le sommet reste fermé. Les valeurs ne constituent pas des nouvelles spécifications fabricant. Ce modèle peut être soumis à Claude avec les tests d’identité axiale, de monotonie, de symétrie N/S et de préservation des zones mortes.

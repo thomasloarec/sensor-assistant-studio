@@ -80,8 +80,8 @@ describe('real mounted client workshop',()=>{
     expect(draft.geometry).toBe('D3');
     // Lot UX 28/10 : le mouvement se choisit par boutons, sans curseur numérique avant import.
     await act(async()=>fireEvent.click(view.getByRole('button',{name:'Passage latéral',exact:true})));
-    await act(async()=>fireEvent.change(view.getByRole('combobox',{name:'Température'}),{target:{value:'other'}}));
-    expect(draft.geometry).toBe('D3');expect(draft.motion).toBe('slide');expect(draft.temperature).toBe('other');
+    expect(view.queryByRole('combobox',{name:'Température'})).toBeNull();
+    expect(draft.geometry).toBe('D3');expect(draft.motion).toBe('slide');expect(draft.temperature).toBe(DEFAULT_WORKSHOP.temperature);
     view.unmount();
   });
   test('old expected cannot reappear after conservative dossier export/reprise',()=>{

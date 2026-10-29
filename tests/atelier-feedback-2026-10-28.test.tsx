@@ -54,7 +54,7 @@ test('sensitivity is visible without opening details, clearance remains editable
  setLocale('fr');const patches:unknown[]=[];const r=render(<ClientPedagogicalControls config={DEFAULT_WORKSHOP} update={p=>patches.push(p)} onCatalog={()=>{}} onCable={()=>{}}/>);
  const select=r.getByLabelText('Classe de sensibilité');expect(select.closest('details')).toBeNull();
  fireEvent.change(select,{target:{value:'C'}});expect(patches).toContainEqual({sensitivity:'C'});
- fireEvent.input(r.getByRole('slider',{name:'Écart minimal entre les boîtiers'}),{target:{value:'1'}});expect(patches).toContainEqual({end:1});cleanup();
+ fireEvent.input(r.getByRole('slider',{name:'Écart minimal entre le capteur et l’aimant'}),{target:{value:'1'}});expect(patches).toContainEqual({end:1});cleanup();
 });
 test('unavailable circuit stays visible without asserting open or closed or showing question mark',()=>{
  setLocale('fr');const r=render(<ContactCircuit contact="open" unavailable/>);expect(r.getByRole('img').getAttribute('data-contact')).toBe('unavailable');expect(r.queryByText('?')).toBeNull();expect(r.queryByText('Contact ouvert')).toBeNull();cleanup();
