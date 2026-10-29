@@ -642,3 +642,11 @@ La profondeur de l’évasement est |z| dans le repère reed de l’approche, et
 Cette décision remplace les déformations pédagogiques D1 décrites ci-dessus : aucune transformation de forme n'est appliquée. La réponse C utilise l'amplitude de A, autorisée seulement lorsque les deux moyennes de lame ont le même signe et dépassent la bande relative de 1 %. Les surfaces, le point, la chronologie et le circuit partagent cette réponse. La frontière de signe reste une hypothèse de modèle ; son aspect net ne constitue pas une mesure.
 
 La coupe catalogue utilise le plan local XY à z=0, contenant l'axe du reed et la normale à la face plate du MK04. Le montage ne change pas avec la vue. Si le centre de l'aimant est hors du plan, son marqueur est masqué et une légende courte l'indique. Les commandes et le circuit occupent un espace propre au-dessus du tracé de coupe : ils ne recouvrent ni les axes ni les légendes, y compris sur mobile. Les légendes sur fond clair utilisent Electronics Gray. Aucun nouveau réglage ni jeton de design.
+
+### Commandes pédagogiques et contacts visibles — 29 octobre 2026
+
+Les classes de sensibilité A–G disponibles sont ordonnées sur un curseur horizontal : plus sensible et détection plus lointaine à gauche, moins sensible et aimant plus proche à droite. Le code de classe reste secondaire. Une seule classe ne crée pas un faux curseur ; les références de contact comme 1A ne deviennent pas une échelle de sensibilité.
+
+Avant import, modifier l'écart minimal met la démonstration en pause à son point le plus proche ; son prochain lancement repart de loin. Cette prévisualisation ne déplace aucun montage importé. Le bouton de pointage du câble n'apparaît qu'après import sur un capteur câblé.
+
+Dans la visualisation explicite des contacts, les lames utilisent une ligne bleu sombre à l'ouverture et cuivre sombre à la fermeture, avec silhouette blanche et épaisseur écran constante, tracée au-dessus des lobes translucides. Les positions des lames et leur jonction restent celles du schéma interne ; leur épaisseur à l'écran est illustrative. Le courant animé conserve son arrêt sous mouvement réduit. Ni la couleur, ni ce traitement de lisibilité ne changent le modèle C1 % ou les seuils.

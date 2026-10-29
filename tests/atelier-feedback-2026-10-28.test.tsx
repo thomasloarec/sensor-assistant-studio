@@ -51,8 +51,8 @@ test('yellow band produces binary illustrative switching, not a third contact st
 });
 test('sensitivity is visible without opening details, clearance remains editable',()=>{
  setLocale('fr');const patches:unknown[]=[];const r=render(<ClientPedagogicalControls config={DEFAULT_WORKSHOP} update={p=>patches.push(p)} onCatalog={()=>{}} onCable={()=>{}}/>);
- const select=r.getByLabelText('Classe de sensibilité');expect(select.closest('details')).toBeNull();
- fireEvent.change(select,{target:{value:'C'}});expect(patches).toContainEqual({sensitivity:'C'});
+ const select=r.getByRole('slider',{name:'Sensibilité magnétique'});expect(select.closest('details')).toBeNull();
+ fireEvent.input(select,{target:{value:'1'}});expect(patches).toContainEqual({sensitivity:'C'});
  fireEvent.input(r.getByRole('slider',{name:'Écart minimal entre le capteur et l’aimant'}),{target:{value:'1'}});expect(patches).toContainEqual({end:1});cleanup();
 });
 test('unavailable circuit stays visible without asserting open or closed or showing question mark',()=>{

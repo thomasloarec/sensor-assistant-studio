@@ -338,6 +338,7 @@ export default function MagneticWorkshop({
     if (!exploring) onDraftChange?.(config);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [config, exploring]);
+  const gapPreview = useRef(false);
   const [progress, setProgress] = useState(initialPedagogicalDraft?.progress??0),
     [playing, setPlaying] = useState(false);
   const [experiment, setExperiment] = useState<ExperimentSettings>({...initialPedagogicalDraft?.settings??DEFAULT_EXPERIMENT});
@@ -1108,6 +1109,11 @@ export default function MagneticWorkshop({
     if (!parseWorkshopConfig(next)) return;
     setPlaying(false);
     if (!opts.keepTime && !clientPedagogical) setProgress(0);
+    // The gap control previews the actual nearest pose, not an invisible future endpoint.
+    // Imported mounting and unrelated controls must keep their current instant.
+    if(clientPedagogical&&!next.machine&&next.motion==='approach'&&patch.end!==undefined&&patch.geometry===undefined&&patch.motion===undefined){
+      setProgress(.5); gapPreview.current=true;
+    }
     setSuggestion(null);setPlacementUndo(null);
     setConfig(next);
     setError(null);
@@ -1568,7 +1574,8 @@ export default function MagneticWorkshop({
       aria-pressed={playing}
       onClick={() => {
         if(preparing){stopPreparation();return;}
-        if (progress >= 1) setProgress(0);
+        if (progress >= 1 || (!playing && gapPreview.current && !machine)) setProgress(0);
+        gapPreview.current=false;
         // Pivot : plan d'orientations adaptatif (frontière centrale ≤ 0,5 mm) préparé avant lecture.
         if (!playing && pivotPlanKey && plannedKey !== pivotPlanKey) {
           prepCancel.current?.();
