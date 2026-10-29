@@ -440,9 +440,9 @@ function ContactFlow({ span, reduced }: { span: number; reduced: boolean }) {
   return (
     <group ref={ref}>
       {[0, 1, 2, 3].map((i) => (
-        <mesh key={i} position={[0, 0.35, 0]}>
+        <mesh key={i} position={[0, 0.35, 0]} renderOrder={32}>
           <sphereGeometry args={[Math.max(0.1, Math.min(0.48, span * 0.025)), 10, 10]} />
-          <meshBasicMaterial color="#fff3ac" />
+          <meshBasicMaterial color="#fff3ac" transparent opacity={1} depthTest={false} depthWrite={false} />
         </mesh>
       ))}
     </group>
@@ -478,25 +478,15 @@ export function Contacts({
   if (!electricalDetailsAllowed(model)) return null;
   const span = bladeLength(model);
   const closed = contact === "closed";
-  const { thickness, gap } = contactGeometry(model, closed);
+  const { gap } = contactGeometry(model, closed);
   return (
     <group position={[0, bladeOffsetY(model), bladeOffsetZ(model)]}>
-      <mesh position={[-span * 0.23, 0, -gap]}>
-        <boxGeometry args={[span * 0.56, thickness, thickness]} />
-        <meshStandardMaterial
-          color={STATUS[contact]}
-          emissive={STATUS[contact]}
-          emissiveIntensity={closed ? 0.75 : 0.15}
-        />
-      </mesh>
-      <mesh position={[span * 0.23, 0, gap]}>
-        <boxGeometry args={[span * 0.56, thickness, thickness]} />
-        <meshStandardMaterial
-          color={STATUS[contact]}
-          emissive={STATUS[contact]}
-          emissiveIntensity={closed ? 0.75 : 0.15}
-        />
-      </mesh>
+      {/* Explicit X-ray view: dark blades on a light silhouette are drawn after
+          translucent zones. Separation/contact and moving current also convey state. */}
+      {([-1,1] as const).map(sign=><group key={sign} position={[sign*span*.23,0,sign*gap]}>
+        <Line points={[[-span*.28,0,0],[span*.28,0,0]]} color="#ffffff" lineWidth={6} transparent opacity={1} depthTest={false} depthWrite={false} renderOrder={30}/>
+        <Line points={[[-span*.28,0,0],[span*.28,0,0]]} color={closed?'#8b3f17':'#254061'} lineWidth={3} transparent opacity={1} depthTest={false} depthWrite={false} renderOrder={31}/>
+      </group>)}
       {closed && <ContactFlow span={span} reduced={reduced} />}
     </group>
   );

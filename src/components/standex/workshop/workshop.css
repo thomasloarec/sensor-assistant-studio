@@ -3295,6 +3295,9 @@
   color: var(--standex-gray);
 }
 .mw-client-pedagogical .mw-ped-cut-figure { flex: none; }
+.mw-sensitivity-ends { display: flex; justify-content: space-between; gap: 16px; }
+.mw-sensitivity-ends > span { flex: 1; }
+.mw-sensitivity-ends > span:last-child { text-align: end; }
 .mw-client-pedagogical .mw-ped-cut-caption .t-caption,
 .mw-client-pedagogical .mw-canvas:has(.mw-ped-cut-figure) .mw-circuit-ped > .t-caption {
   color: var(--standex-gray);

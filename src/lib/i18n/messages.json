@@ -35467,5 +35467,32 @@
     "Магнит вне плоскости сечения",
     "Magnete fuori dal piano di sezione",
     "磁石は断面の外側にあります"
+  ],
+  "Sensibilité magnétique": [
+    "Magnetic sensitivity",
+    "磁灵敏度",
+    "Magnetische Empfindlichkeit",
+    "Sensibilidad magnética",
+    "Магнитная чувствительность",
+    "Sensibilità magnetica",
+    "磁気感度"
+  ],
+  "Plus sensible · détecte de plus loin": [
+    "More sensitive · detects farther away",
+    "灵敏度更高 · 检测距离更远",
+    "Empfindlicher · erkennt aus größerer Entfernung",
+    "Más sensible · detecta desde más lejos",
+    "Чувствительнее · обнаруживает с большего расстояния",
+    "Più sensibile · rileva da più lontano",
+    "高感度 · より遠くから検出"
+  ],
+  "Moins sensible · aimant plus proche": [
+    "Less sensitive · magnet closer",
+    "灵敏度更低 · 磁铁需更近",
+    "Weniger empfindlich · Magnet näher",
+    "Menos sensible · imán más cerca",
+    "Менее чувствительный · магнит ближе",
+    "Meno sensibile · magnete più vicino",
+    "低感度 · 磁石をより近くへ"
   ]
 }

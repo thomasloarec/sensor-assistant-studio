@@ -16,13 +16,19 @@ import { discoveryPatch } from '@/lib/standex/discovery-preset';
 export function ClientPedagogicalControls({config,update,onCatalog,onCable,approachControls}: {
   config:WorkshopConfig;update:(patch:Partial<WorkshopConfig>)=>void;onCatalog:()=>void;onCable:()=>void;approachControls?:ReactNode;
 }) {
-  const classes=[...new Set([config.sensitivity,...catalogueClasses(config.sensorId,config.magnetModel,publishedClasses(config.sensorId,config.magnetModel))])];
+  const classes=[...new Set([config.sensitivity,...catalogueClasses(config.sensorId,config.magnetModel,publishedClasses(config.sensorId,config.magnetModel))])].sort();
+  const ordinalClasses=classes.every(c=>/^[A-G]$/.test(c));
   const magnets=[...new Set([config.magnetModel,...magnetOptionsFor(config.sensorId,undefined,config.magnetModel),...VERIFIED_PILOTS])];
   const motions:[WorkshopConfig['motion'],string][]=[['approach',t('Approche et retrait')],['slide',t('Passage latéral')]];
   return <div className="mw-ped-controls" data-testid="client-pedagogical-controls">
     <h2 className="t-title-m">{t(sensorById(config.sensorId).name)}</h2>
     <Button variant="secondary" onClick={onCatalog}>{t('Changer de couple')}</Button>
-    <label className="mw-select-label">{t('Classe de sensibilité')}<select aria-label={t('Classe de sensibilité')} value={config.sensitivity} onChange={e=>update({sensitivity:e.target.value})}>{classes.map(c=><option key={c} value={c}>{c}</option>)}</select></label>
+    {ordinalClasses ? <div className="mw-sensitivity-control">
+      <label className="mw-field"><span>{t('Sensibilité magnétique')}<output className="t-caption">{msg('Classe {0}',[config.sensitivity])}</output></span>
+        {classes.length>1&&<input type="range" aria-label={t('Sensibilité magnétique')} aria-valuetext={msg('Classe {0}',[config.sensitivity])} min="0" max={classes.length-1} step="1" value={classes.indexOf(config.sensitivity)} onInput={e=>update({sensitivity:classes[Number(e.currentTarget.value)]!})}/>}
+      </label>
+      {classes.length>1&&<div className="mw-sensitivity-ends t-caption"><span>{t('Plus sensible · détecte de plus loin')}</span><span>{t('Moins sensible · aimant plus proche')}</span></div>}
+    </div> : <label className="mw-select-label">{t('Configuration du contact')}<select aria-label={t('Configuration du contact')} value={config.sensitivity} onChange={e=>update({sensitivity:e.target.value})}>{classes.map(c=><option key={c} value={c}>{c}</option>)}</select></label>}
     {!config.machine&&<>
       <section className="mw-choice" aria-label={t('Disposition')}>
         <p className="t-label">{t('Disposition')}</p>
@@ -45,7 +51,7 @@ export function ClientPedagogicalControls({config,update,onCatalog,onCable,appro
       <label className="mw-select-label">{t('Aimant')}<select aria-label={t('Aimant')} value={config.magnetModel} onChange={e=>update({magnetModel:e.target.value})}>{magnets.map(id=><option key={id} value={id}>{id}</option>)}</select></label>
       {config.guideReference&&<p className="t-caption">{t('Référence documentaire')} : {config.guideReference}</p>}
     </details>
-    {!isPcbSensor(config.sensorId) && <Button variant="secondary" disabled={!config.machine} onClick={onCable}>{t('Pointer le câble dans la 3D')}</Button>}
+    {config.machine && !isPcbSensor(config.sensorId) && <Button variant="secondary" onClick={onCable}>{t('Pointer le câble dans la 3D')}</Button>}
 
   </div>;
 }
