@@ -1,5 +1,14 @@
 # Langage de design Standex DETECT
 
+### Lobes complets sans coupure d’affichage — 30 octobre 2026
+
+La grille catalogue s’étend automatiquement, axe par axe, lorsqu’un lobe atteint
+son bord. Les surfaces gardent leur arrondi issu du même calcul que le point et
+la lampe ; aucun cercle décoratif ni nouvelle zone d’activation n’est ajouté.
+Le calcul reste dans le worker, sans changement de caméra ou de commandes.
+Les zones mortes, exclusions mécaniques et couleurs existantes sont conservées.
+Les bornes explicites des rapports d’audit restent des recadrages intentionnels.
+
 ### Commande de lecture toujours visible — 30 octobre 2026
 
 « Lancer le mouvement » se place à gauche de la rangée d’actions de la scène
@@ -684,3 +693,21 @@ Les variantes N42 des trois modèles Press fit utilisent, sur demande utilisateu
 ### Calcul des zones — 30 octobre 2026
 
 Un indicateur circulaire sans texte visible est placé en haut à gauche de la scène, sous les commandes de vue. Il apparaît dès le changement de paramètres et disparaît après calcul ou erreur ; les résultats anciens ne sont pas réaffichés. Son nom accessible annonce le calcul aux lecteurs d’écran. Surfaces, contraste et animation utilisent les jetons existants ; mouvement neutralisé si demandé par le système. La sensibilité n’est affichée que si des classes sont documentées pour le couple. Le MK07 partage son profil à pointe lisse et écrou entre scène, plan et STEP simplifié ; le câble est visuellement raccourci.
+
+
+### Circuit inverseur et passage latéral Custom — 30 octobre 2026
+
+Le MK01 Form C affiche un contact mobile et deux branches repérées A et B,
+avec deux lampes : A est active au repos, B lorsque l'aimant est détecté.
+Une seule branche s'allume à la fois, selon le même état illustratif que les
+trois lames visibles. Une position indisponible ou indéterminée n'allume aucune
+branche. Les autres capteurs conservent le circuit ouvert/fermé. Légendes,
+couleurs et typographie utilisent les huit langues et les jetons existants ;
+aucune nouvelle commande ni animation n'est ajoutée. Sur un écran de bureau
+peu haut, la scène conserve au moins 340 px pour ne pas couper les deux
+branches et leur légende ; la colonne existante reste défilante.
+
+Le préréglage de passage latéral est plafonné à la demi-course de 50 mm
+acceptée par l'atelier. Le PCB Custom ne produit plus une configuration
+invalide qui empêchait de sélectionner ce mouvement. Aucun montage importé,
+seuil de détection ou volume magnétique n'est modifié.

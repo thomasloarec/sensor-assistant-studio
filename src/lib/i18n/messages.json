@@ -35737,5 +35737,32 @@
     "Ни один документированный контакт этого размера MK06 не соответствует всем указанным электрическим параметрам.",
     "Nessun contatto documentato di questa taglia MK06 copre tutti i valori elettrici indicati.",
     "このMK06サイズでは、単一の仕様記載接点で指定されたすべての電気的条件を満たせません。"
+  ],
+  "Circuit A actif": [
+    "Circuit A active",
+    "电路 A 接通",
+    "Stromkreis A aktiv",
+    "Circuito A activo",
+    "Цепь A активна",
+    "Circuito A attivo",
+    "回路Aが導通"
+  ],
+  "Circuit B actif": [
+    "Circuit B active",
+    "电路 B 接通",
+    "Stromkreis B aktiv",
+    "Circuito B activo",
+    "Цепь B активна",
+    "Circuito B attivo",
+    "回路Bが導通"
+  ],
+  "A : au repos · B : aimant détecté": [
+    "A: at rest · B: magnet detected",
+    "A：静止状态 · B：检测到磁铁",
+    "A: Ruhezustand · B: Magnet erkannt",
+    "A: en reposo · B: imán detectado",
+    "A: в покое · B: магнит обнаружен",
+    "A: a riposo · B: magnete rilevato",
+    "A：非作動時 · B：磁石検出時"
   ]
 }
