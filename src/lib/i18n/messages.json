@@ -35494,5 +35494,23 @@
     "Менее чувствительный · магнит ближе",
     "Meno sensibile · magnete più vicino",
     "低感度 · 磁石をより近くへ"
+  ],
+  "Décalage de l’aimant": [
+    "Magnet offset",
+    "磁铁偏移",
+    "Magnetversatz",
+    "Desplazamiento del imán",
+    "Смещение магнита",
+    "Spostamento del magnete",
+    "磁石の位置ずれ"
+  ],
+  "Recentrer": [
+    "Recenter",
+    "重新居中",
+    "Zentrieren",
+    "Centrar",
+    "По центру",
+    "Ricentra",
+    "中央に戻す"
   ]
 }
