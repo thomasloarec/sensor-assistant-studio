@@ -2399,18 +2399,18 @@
   stroke: var(--muted-foreground);
   stroke-width: 2;
 }
-.mw-contact-circuit[data-contact="closed"] .mw-mini-switch {
+.mw-contact-circuit:not(.mw-changeover-circuit)[data-contact="closed"] .mw-mini-switch {
   transform: rotate(0deg);
 }
-.mw-contact-circuit[data-contact="closed"] :is(.mw-mini-wire, .mw-mini-switch) {
+.mw-contact-circuit:not(.mw-changeover-circuit)[data-contact="closed"] :is(.mw-mini-wire, .mw-mini-switch) {
   stroke: var(--success);
 }
-.mw-contact-circuit[data-contact="closed"] .mw-mini-bulb {
+.mw-contact-circuit:not(.mw-changeover-circuit)[data-contact="closed"] .mw-mini-bulb {
   fill: var(--success);
   stroke: var(--success);
   filter: drop-shadow(0 0 5px var(--success));
 }
-.mw-contact-circuit[data-contact="closed"] .mw-mini-filament {
+.mw-contact-circuit:not(.mw-changeover-circuit)[data-contact="closed"] .mw-mini-filament {
   stroke: var(--standex-deep);
 }
 .mw-mini-rays {
@@ -3341,3 +3341,35 @@
 .mw-stage .mw-playback-bar.mw-playback-inline { padding: 0; margin-inline-end: auto; background: transparent; box-shadow: none; }
 .mw-stage .mw-playback-bar > .mw-run { background: var(--signal); color: var(--standex-abyss); box-shadow: var(--e-2); }
 .mw-stage .mw-playback-bar > .mw-run:hover { background: var(--signal); box-shadow: var(--e-3); }
+
+/* Form C changeover: only the selected branch lights up, including A at rest. */
+.mw-changeover-circuit { background: var(--standex-deep); }
+.mw-changeover-circuit .t-caption { color: var(--foreground); }
+.mw-changeover-blade {
+  fill: none;
+  stroke: var(--success);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+.mw-changeover-circuit[data-active-circuit="none"] .mw-changeover-blade {
+  stroke: var(--muted-foreground);
+}
+.mw-changeover-circuit [data-active="true"] .mw-mini-wire {
+  stroke: var(--success);
+}
+.mw-changeover-circuit [data-active="true"] .mw-mini-bulb {
+  fill: var(--success);
+  stroke: var(--success);
+  filter: drop-shadow(0 0 5px var(--success));
+}
+.mw-changeover-circuit [data-active="true"] .mw-mini-filament {
+  stroke: var(--standex-deep);
+}
+.mw-changeover-legend {
+  display: block;
+  margin-block-start: 4px;
+}
+@media (min-width: 1024px) {
+  /* Keep both branches and the legend inside the canvas on short viewports. */
+  .mw-stage .mw-canvas:has(.mw-changeover-circuit) { min-height: 340px; }
+}

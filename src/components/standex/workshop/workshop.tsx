@@ -2579,7 +2579,7 @@ export default function MagneticWorkshop({
             </div>
             {/* Circuit de principe réintégré pour le parcours client (demande du 28/10) : même instant,
                 même moteur que le bandeau ; le banc staff conserve son rendu sans circuit. */}
-            {clientPedagogical ? <div className="mw-circuit-ped" data-testid="pedagogical-circuit"><span className="t-caption">{t(layerClassName==='A'?"Circuit de principe · état indicatif":"Contact illustratif · exemplaire très sensible")}</span><ContactCircuit contact={circuitContact??'open'} unavailable={circuitContact===null} /></div> : !pedagogical ? <ContactCircuit contact={sample.contact} /> : null}
+            {clientPedagogical ? <div className="mw-circuit-ped" data-testid="pedagogical-circuit"><span className="t-caption">{t(layerClassName==='A'?"Circuit de principe · état indicatif":"Contact illustratif · exemplaire très sensible")}</span><ContactCircuit contact={circuitContact??'open'} unavailable={circuitContact===null} formC={sensor.contactForm==='C'} /></div> : !pedagogical ? <ContactCircuit contact={sample.contact} formC={sensor.contactForm==='C'} /> : null}
             {/* Outil de pointage du câble : seulement quand le pointage est
                 réellement actif. Les trajets existants restent intacts. */}
             {!exploring && cableRouting && tool === "cable" ? (
