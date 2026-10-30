@@ -1,5 +1,14 @@
 # Langage de design Standex DETECT
 
+### Lobes complets sans coupure d’affichage — 30 octobre 2026
+
+La grille catalogue s’étend automatiquement, axe par axe, lorsqu’un lobe atteint
+son bord. Les surfaces gardent leur arrondi issu du même calcul que le point et
+la lampe ; aucun cercle décoratif ni nouvelle zone d’activation n’est ajouté.
+Le calcul reste dans le worker, sans changement de caméra ou de commandes.
+Les zones mortes, exclusions mécaniques et couleurs existantes sont conservées.
+Les bornes explicites des rapports d’audit restent des recadrages intentionnels.
+
 ### Commande de lecture toujours visible — 30 octobre 2026
 
 « Lancer le mouvement » se place à gauche de la rangée d’actions de la scène

@@ -21,7 +21,7 @@ import { magnetObb, obbOverlap, type Obb } from '../detection-lab/obstacles';
 import { publishedRowsForCouple, publishedRowsSourceUrl, PUBLISHED_REGISTRY } from './magnetics/registries';
 import { CATALOGUE_RESPONSE, catalogueThresholds as classThresholds, catalogueScenarios, catalogueNominalScenario as nominalScenario } from './catalogue-response';
 
-export const CATALOGUE_MODEL_VERSION='catalogue-c1-analogy-4.2.0';
+export const CATALOGUE_MODEL_VERSION='catalogue-c1-analogy-4.2.1';
 /* i18n-canonical: internal diagnostic codes, never UI labels. */
 const INTERNAL={missing:'catalogue_profile_missing',prior:'catalogue_modelling_prior',source:'catalogue_illustrative',leads:'length_only_analogy_leads_uncharacterized'};
 /* i18n-canonical: model status, not product qualification. */
@@ -171,12 +171,50 @@ export function catalogueExtent(c:WorkshopConfig):number {
  const body=sensorById(c.sensorId);
  return body.shape==='pressfit'?48:body.insertionMount?40:24;
 }
-export function catalogueVolume(c:WorkshopConfig,axis:Vec3,planeZ:number,obstacles:readonly Obb[]=[],extent=catalogueExtent(c),frame?:Frame):CatalogueVolume{
- const start=performance.now(),xs=axisNodes(-extent,extent,true),ys=axisNodes(-extent,extent),zs=axisNodes(-extent,extent);
- if(!zs.includes(planeZ)&&Math.abs(planeZ)<=extent){zs.push(planeZ);zs.sort((a,b)=>a-b);}
+/** Expand the display grid until the nominal outer surface no longer reaches a face.
+ * Test the SAME nodes/response/threshold as the volume, before mechanical masking so
+ * an obstacle cannot hide a lobe continuing behind it. Grow only the necessary axes.
+ * An explicit extent is an audit crop and is deliberately kept fixed. This changes
+ * neither the point evaluator nor sensitivity; the old 24 mm crop was not an OFF zone.
+ */
+export function catalogueSamplingAxes(c:WorkshopConfig,axis:Vec3,planeZ:number,frame?:Frame,extent?:number,model=catalogueModel(c),planeOnly=false):[number[],number[],number[]]{
+ const extents=[extent??catalogueExtent(c),extent??catalogueExtent(c),extent??catalogueExtent(c)];
+ const axes=():[number[],number[],number[]]=>{
+  const ns=extents.map((r,i)=>axisNodes(-r,r,i===0)) as [number[],number[],number[]];
+  if(planeOnly){ns[2]=[planeZ];return ns;}
+  if(!ns[2].includes(planeZ)&&Math.abs(planeZ)<=extents[2]!){ns[2].push(planeZ);ns[2].sort((a,b)=>a-b);}
+  return ns;
+ };
+ if(extent!==undefined)return axes();
+ const th=classThresholds(model.className)!,threshold=th.low??th.high;
+ const bodyFrame=frame??magnetBodyFrame(c,c.magnetAngle),scenario=nominalScenario();
+ const limit=Math.ceil(PROFILE.domain.maxCenterMm+Math.max(...model.centre.map(Math.abs)));
+ const memo=new Map<string,boolean>();
+ const active=(center:Vec3)=>{
+  const key=center.join(',');const known=memo.get(key);if(known!==undefined)return known;
+  const e=catalogueEvaluate(model,{center,axis},scenario,bodyFrame);
+  const hit=e.ok&&e.response>=threshold;memo.set(key,hit);return hit;
+ };
+ for(;;){
+  const ns=axes(),grow=extents.map((r,a)=>{
+   if(r>=limit||(planeOnly&&a===2))return false;
+   const b=(a+1)%3,d=(a+2)%3;
+   for(const side of [-r,r])for(const u of ns[b]!)for(const v of ns[d]!){
+    const p:Vec3=[0,0,0];p[a]=side;p[b]=u;p[d]=v;if(active(p))return true;
+   }
+   return false;
+  });
+  if(!grow.some(Boolean))return ns;
+  grow.forEach((yes,i)=>{if(yes)extents[i]=Math.min(limit,extents[i]!+8);});
+ }
+}
+const nodeBounds=(ns:number[],i:number):[number,number]=>[i===0?ns[0]!:((ns[i-1]??0)+(ns[i]??0))/2,i===ns.length-1?ns.at(-1)!:((ns[i]??0)+(ns[i+1]??0))/2];
+export function catalogueVolume(c:WorkshopConfig,axis:Vec3,planeZ:number,obstacles:readonly Obb[]=[],extent?:number,frame?:Frame):CatalogueVolume{
+ const start=performance.now(),model=catalogueModel(c);
+ const [xs,ys,zs]=catalogueSamplingAxes(c,axis,planeZ,frame,extent,model);
+ const displayedExtent=Math.max(xs.at(-1)!,ys.at(-1)!,zs.at(-1)!);
  const cells:SampledVolume['cells']=[],cut:SampledVolume['cut']=[];
  const field:VolumeField={xs,ys,zs,values:[],blocked:[]};
- const model=catalogueModel(c);
  const th=classThresholds(model.className)!;
  // Nominal uniform magnets + centred reed/body are invariant under central inversion.
  // In a planar body frame with a planar pole axis, reflection in y=0 is invariant too.
@@ -184,7 +222,6 @@ export function catalogueVolume(c:WorkshopConfig,axis:Vec3,planeZ:number,obstacl
  const symmetric=obstacles.length===0&&planeZ===0&&model.centre.every(n=>n===0);
  const bodyFrame=frame??magnetBodyFrame(c,c.magnetAngle);
  const planar=obstacles.length===0&&planeZ===0&&model.centre[1]===0&&Math.abs(axis[1])<1e-12&&bodyFrame.every(a=>Math.abs(a[1])<1e-12||Math.abs(Math.abs(a[1])-1)<1e-12);
- const bound=(ns:number[],i:number):[number,number]=>[i===0?-extent:((ns[i-1]??0)+(ns[i]??0))/2,i===ns.length-1?extent:((ns[i]??0)+(ns[i+1]??0))/2];
  // Same evaluator as point/cut/timeline, including body collision; no angle quantization.
  for(let k=0;k<zs.length;k++)for(let j=0;j<ys.length;j++)for(let i=0;i<xs.length;i++){
   const x=xs[i]??0,y=ys[j]??0,z=zs[k]??0,index=(k*ys.length+j)*xs.length+i;
@@ -196,26 +233,28 @@ export function catalogueVolume(c:WorkshopConfig,axis:Vec3,planeZ:number,obstacl
   const response=reuse<index?field.values[reuse]??null:e?.nominal?.ok?e.nominal.response:null;
   const blocked=reuse<index?field.blocked[reuse]??false:e?.cause==='overlap';
   const zone:0|1|2=response===null?0:response>=th.high?2:th.low!==null&&response>=th.low?1:0;
-  const [x0,x1]=bound(xs,i),[y0,y1]=bound(ys,j),[z0,z1]=bound(zs,k);
+  const [x0,x1]=nodeBounds(xs,i),[y0,y1]=nodeBounds(ys,j),[z0,z1]=nodeBounds(zs,k);
   const cell={i,j,k,x,y,z,x0,x1,y0,y1,z0,z1,zone,response,blocked};
   field.values.push(cell.response);field.blocked.push(cell.blocked);
   if(zone)cells.push(cell);if(z===planeZ)cut.push(cell);
  }
- return {key:JSON.stringify([CATALOGUE_MODEL_VERSION,c,axis,frame??null,planeZ,obstacles]),cells,cut,field,axis,planeZ,extent,computeMs:performance.now()-start,nodeCount:xs.length*ys.length*zs.length,truncated:cells.some(c=>Math.max(Math.abs(c.x),Math.abs(c.y),Math.abs(c.z))===extent)};
+ const truncated=cells.some(p=>p.i===0||p.i===xs.length-1||p.j===0||p.j===ys.length-1||p.k===0||p.k===zs.length-1||Math.hypot(p.x-model.centre[0],p.y-model.centre[1],p.z-model.centre[2])>=PROFILE.domain.maxCenterMm-Math.sqrt(3));
+ return {key:JSON.stringify([CATALOGUE_MODEL_VERSION,c,axis,frame??null,planeZ,obstacles]),cells,cut,field,axis,planeZ,extent:displayedExtent,computeMs:performance.now()-start,nodeCount:xs.length*ys.length*zs.length,truncated};
 }
 /** Plane-only cut: the SAME evaluator as the volume, but only the chosen plane is computed —
  * never the whole 3D grid. Used while reading so a paused instant costs one plane, not one volume. */
-export function catalogueCut(c:WorkshopConfig,axis:Vec3,planeZ:number,obstacles:readonly Obb[]=[],extent=catalogueExtent(c),frame?:Frame):CatalogueVolume{
- const start=performance.now(),xs=axisNodes(-extent,extent,true),ys=axisNodes(-extent,extent);
+export function catalogueCut(c:WorkshopConfig,axis:Vec3,planeZ:number,obstacles:readonly Obb[]=[],extent?:number,frame?:Frame):CatalogueVolume{
+ const start=performance.now(),model=catalogueModel(c);
+ // A standalone cut only needs its four edges: do not precompute six 3D faces.
+ const [xs,ys,zs]=catalogueSamplingAxes(c,axis,planeZ,frame,extent,model,true);
+ const displayedExtent=Math.max(xs.at(-1)!,ys.at(-1)!,zs.at(-1)!);
  const cut:SampledVolume['cut']=[];
- const model=catalogueModel(c);
- const bound=(ns:number[],i:number):[number,number]=>[i===0?-extent:((ns[i-1]??0)+(ns[i]??0))/2,i===ns.length-1?extent:((ns[i]??0)+(ns[i+1]??0))/2];
  for(let j=0;j<ys.length;j++)for(let i=0;i<xs.length;i++){
   const x=xs[i]??0,y=ys[j]??0,e=cataloguePlacement(c,frame?{center:[x,y,planeZ],axis,frame}:{center:[x,y,planeZ],axis},obstacles,model,true);
-  const [x0,x1]=bound(xs,i),[y0,y1]=bound(ys,j);
+  const [x0,x1]=nodeBounds(xs,i),[y0,y1]=nodeBounds(ys,j);
   cut.push({i,j,k:0,x,y,z:planeZ,x0,x1,y0,y1,z0:planeZ,z1:planeZ,zone:e.zone,response:e.nominal?.ok?e.nominal.response:null,blocked:e.cause==='overlap'});
  }
- return {key:'',cells:[],cut,field:{xs,ys,zs:[planeZ],values:[],blocked:[]},axis,planeZ,extent,computeMs:performance.now()-start,nodeCount:xs.length*ys.length,truncated:false};
+ return {key:'',cells:[],cut,field:{xs,ys,zs:[planeZ],values:[],blocked:[]},axis,planeZ,extent:displayedExtent,computeMs:performance.now()-start,nodeCount:xs.length*ys.length,truncated:cut.some(p=>p.zone>0&&(p.i===0||p.i===xs.length-1||p.j===0||p.j===ys.length-1))};
 }
 export function catalogueTimeline(c:WorkshopConfig,table?:readonly TableSample[],steps=128){
  const samples=table??Array.from({length:steps*2+1},(_,i)=>{const t=i/(steps*2);return {t,pose:catalogueFrame(c,t).pose,obstacles:[]};});
