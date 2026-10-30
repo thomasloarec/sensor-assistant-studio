@@ -32,6 +32,13 @@ export interface SensorModel {
   /** Supplied MK07-1A66B-500W drawing, millimetres; rear shoulder split is illustrative. */
   insertionMount?: { noseDiameter:number; insertionLength:number; threadLength:number; threadDiameter:number; pitch:number; nutThickness:number; nutWidth:number; rearHexWidth:number; shoulderLength:number };
   reedOffsetZ?: number;
+  reedOffsetX?: number;
+  contactForm?: "C";
+  productFamily?: "MK06";
+  sizeVariant?: number;
+  pinPitch?: number;
+  pinLength?: number;
+  pinDiameter?: number;
   terminalSpan?: number;
   collarDiameter?: number;
   nutWidth?: number;
@@ -154,7 +161,7 @@ const surfaceMounted = (
   note: "Enveloppe de la variante dessinée dans la fiche source ; connexions représentées de manière simplifiée. Vérifier la variante avant conception du circuit.",
 });
 export const SENSOR_CATALOG: readonly SensorModel[] = [
-  { ...surfaceMounted("MK01", 18, 3.4, 3.7, 18.8), name: "MK01 · Form C", contact: "unsupported" },
+  { ...surfaceMounted("MK01", 18, 3.4, 3.7, 18.8), name: "MK01 · Form C", contact: "unsupported", contactForm: "C" },
   surfaceMounted("MK15", 16, 2.5, 2.5, 19.5),
   surfaceMounted("MK16", 11.6, 2.3, 2.3, 15.6),
   surfaceMounted("MK17", 8.5, 2.1, 2.1, 12.3),
@@ -163,15 +170,44 @@ export const SENSOR_CATALOG: readonly SensorModel[] = [
   surfaceMounted("MK31", 6.4, 1.95, 2.2, 6.9),
   {
     ...surfaceMounted("MK06-4", 12.06, 3.3, 3.3, 12.06),
-    sourceFile: "MK06.pdf",
-    name: "MK06 · taille 4",
-    category: "THT",
-    note: "Version à broches traversantes ; modèle visuel simplifié. Consulter la fiche pour les autres tailles.",
+    sourceFile: "MK06.pdf", drawingFile: "MK06-size-4.png",
+    name: "MK06 · taille 4", productFamily: "MK06", sizeVariant: 4, category: "THT",
+    color: "#4169c1", pinPitch: 10.16, pinLength: 2.9, pinDiameter: 0.3,
+  },
+  {
+    ...surfaceMounted("MK06-5", 14.3, 3.2, 2.8, 14.3),
+    sourceFile: "MK06.pdf", drawingFile: "MK06-size-5.png",
+    name: "MK06 · taille 5", productFamily: "MK06", sizeVariant: 5, category: "THT",
+    color: "#4169c1", pinPitch: 12.7, pinLength: 2.9, pinDiameter: 0.4,
+  },
+  {
+    ...surfaceMounted("MK06-6", 17.24, 4.2, 3.3, 17.24),
+    sourceFile: "MK06.pdf", drawingFile: "MK06-size-6.png",
+    name: "MK06 · taille 6", productFamily: "MK06", sizeVariant: 6, category: "THT",
+    color: "#4169c1", pinPitch: 15.24, pinLength: 2.9, pinDiameter: 0.4,
+  },
+  {
+    ...surfaceMounted("MK06-7", 19.78, 4.2, 3.3, 19.78),
+    sourceFile: "MK06.pdf", drawingFile: "MK06-size-7.png",
+    name: "MK06 · taille 7", productFamily: "MK06", sizeVariant: 7, category: "THT",
+    color: "#4169c1", pinPitch: 17.78, pinLength: 2.9, pinDiameter: 0.5,
+  },
+  {
+    ...surfaceMounted("MK06-8", 22.32, 4.2, 3.3, 22.32),
+    sourceFile: "MK06.pdf", drawingFile: "MK06-size-8.png",
+    name: "MK06 · taille 8", productFamily: "MK06", sizeVariant: 8, category: "THT",
+    color: "#4169c1", pinPitch: 20.32, pinLength: 2.9, pinDiameter: 0.5,
+  },
+  {
+    ...surfaceMounted("MK06-10", 28.5, 5.72, 3.81, 28.5),
+    sourceFile: "MK06.pdf", drawingFile: "MK06-size-10.png",
+    name: "MK06 · taille 10", productFamily: "MK06", sizeVariant: 10, category: "THT",
+    color: "#4169c1", pinPitch: 25.4, pinLength: 2.54, pinDiameter: 0.5,
   },
 
   {
     id: "MK24-A-J",
-    name: "MK24 · Form A · J",
+    name: "MK24",
     category: "CMS",
     shape: "smd",
     body: [5, 1.6, 2.2],
@@ -185,7 +221,8 @@ export const SENSOR_CATALOG: readonly SensorModel[] = [
   },
   cylindrical("MK03", 25.5, 5.8),
   {
-    ...cylindrical("MK07", 39.5, 13), color: "#202124", cableSide: 1,
+    // Estimated reed datum: 2 mm nose cover + half the 14 mm glass, NOT a measured internal dimension.
+    ...cylindrical("MK07", 39.5, 13), reedOffsetX: -10.75, color: "#202124", cableSide: 1,
     sourcePage: 2, drawingFile: "MK07-1A66B-500W.png",
     jacketColor: "#a3a7ac", wireColors: ["#79523a", "#eeeeea"],
     insertionMount: { noseDiameter:6.6, insertionLength:31.5, threadLength:6, threadDiameter:8, pitch:0.75, nutThickness:2.5, nutWidth:12, rearHexWidth:10, shoulderLength:1.5 },
@@ -366,6 +403,7 @@ export const sensorDrawingSource = (s: SensorModel) => s.drawingFile ? `/datashe
 export const bladeOffsetZ = (s: SensorModel) =>
   s.reedOffsetZ ?? (s.shape === "flange" ? -s.body[2] / 2 + (s.raisedDepth ?? s.body[2]) / 2 : 0);
 /** Le reed du schéma sur mesure repose SUR la carte : ses lames ne sont pas au centre. */
+export const bladeOffsetX = (s: SensorModel) => s.reedOffsetX ?? 0;
 export const bladeOffsetY = (s: SensorModel) => {
   const layout = customLayout(s);
   return layout ? -s.body[1] / 2 + layout.pcbThickness + layout.reedDiameter / 2 : 0;
@@ -387,5 +425,5 @@ export function overallEnvelope(s: SensorModel): readonly [number, number, numbe
 export const SENSOR_DISPLAY: Readonly<Record<string, { title: string; variant: string }>> = {
   "MK24-A-J": { title: "MK24", variant: "Forme A · connexions J — configuration illustrée" },
 };
-export const sensorDisplayTitle = (id: string, fallback: string = id) => SENSOR_DISPLAY[id]?.title ?? fallback;
+export const sensorDisplayTitle = (id: string, fallback: string = id) => (id.startsWith("MK06-") ? "MK06" : SENSOR_DISPLAY[id]?.title) ?? fallback;
 export const sensorDisplayVariant = (id: string): string | null => SENSOR_DISPLAY[id]?.variant ?? null;

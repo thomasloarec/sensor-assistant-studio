@@ -91,7 +91,7 @@ test("T2.4/T6.5 removing actual published data removes all product results inclu
       true,
     );
     const solutions = exploreSolutions(need, "D1", domain);
-    expect(solutions).toHaveLength(30);
+    expect(solutions).toHaveLength(35);
     expect(
       solutions.every(
         (s) => s.reference.verdict === "unavailable" && s.physical.verdict === "unavailable",
@@ -107,9 +107,10 @@ test("T6 expanded catalogue retains four MK03 classes and refuses physical predi
   // réellement publiés, sans qu'aucune valeur ne soit empruntée.
   // 73 : la règle de forme écarte les couples contradictoires des résultats.
   // MK07 adds one uncharacterized housing; no published switching row is invented.
-  expect(rows).toHaveLength(74);
-  expect(new Set(rows.map((r) => r.id)).size).toBe(74);
-  expect(new Set(rows.map((r) => r.sensorFamily)).size).toBe(30);
+  // Five MK06 size variants add uncharacterized entries, without invented registry rows.
+  expect(rows).toHaveLength(79);
+  expect(new Set(rows.map((r) => r.id)).size).toBe(79);
+  expect(new Set(rows.map((r) => r.sensorFamily)).size).toBe(35);
   expect(
     new Set(rows.filter((r) => r.sensorFamily === "MK03").map((r) => r.sensitivityClass)).size,
   ).toBe(4);

@@ -108,7 +108,7 @@ export const EXPLORABLE_MOUNTINGS: readonly { kind: string; label: string }[] = 
  * Même partition que l'évaluation des candidats : aucune forme n'est devinée. */
 const SHAPES_BY_MOUNTING: Record<string, readonly SensorModel["shape"][]> = {
   pcb_smd: ["smd"],
-  pcb_through_hole: ["glass"],
+  pcb_through_hole: ["glass", "smd"],
   screw: ["flange", "block", "threaded"],
   press_fit: ["pressfit", "cylinder"],
 };
@@ -278,6 +278,9 @@ export function passesFilter(
       if (filter.criteria?.shapes) return filter.criteria.shapes.includes(model.shape);
       /* Un filtre d'exploration porte son propre critère : il REMPLACE la
          fixation déclarée, il ne s'y ajoute pas. */
+      const kind=filter.criteria?.mountingKind ?? input.mounting.kind;
+      if(kind==="pcb_smd" && model.category==="THT")return false;
+      if(kind==="pcb_through_hole" && model.shape==="smd")return model.category==="THT";
       const shapes = filter.criteria?.mountingKind
         ? SHAPES_BY_MOUNTING[filter.criteria.mountingKind]
         : shapesForMounting(input.mounting);

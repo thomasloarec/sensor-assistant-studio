@@ -1,3 +1,4 @@
+import { useWorkshopDesktop } from "./use-workshop-desktop";
 import { Button } from "@/components/ui/button";
 import { clearanceRegions } from '@/lib/standex/zone-clearance';
 import { sectionVolume } from '@/lib/standex/zone-section';
@@ -339,6 +340,7 @@ export default function MagneticWorkshop({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [config, exploring]);
   const gapPreview = useRef(false);
+  const desktop = useWorkshopDesktop();
   const [progress, setProgress] = useState(initialPedagogicalDraft?.progress??0),
     [playing, setPlaying] = useState(false);
   const [experiment, setExperiment] = useState<ExperimentSettings>({...initialPedagogicalDraft?.settings??DEFAULT_EXPERIMENT});
@@ -845,7 +847,7 @@ export default function MagneticWorkshop({
   }
   function failed3d() {
     setSceneError(true);
-    if (!machine) setView("top");
+    // Remain in 3D: the existing renderer error/retry UI handles context loss.
   }
   function request3d() {
     setSceneError(false);
@@ -1112,8 +1114,8 @@ export default function MagneticWorkshop({
     if (!opts.keepTime && !clientPedagogical) setProgress(0);
     // Gap and offset preview the actual nearest pose, not an invisible future endpoint.
     // Imported mounting and unrelated controls must keep their current instant.
-    if(clientPedagogical&&!next.machine&&next.motion==='approach'&&(patch.end!==undefined||patch.lateralShift!==undefined)&&patch.geometry===undefined&&patch.motion===undefined){
-      setProgress(.5); gapPreview.current=true;
+    if(clientPedagogical&&!next.machine&&((next.motion==='approach'&&(patch.end!==undefined||patch.lateralShift!==undefined))||(next.motion==='slide'&&patch.offset!==undefined))&&patch.geometry===undefined&&patch.motion===undefined){
+      setProgress(next.motion==='slide'?.25:.5); gapPreview.current=true;
     }
     setSuggestion(null);setPlacementUndo(null);
     setConfig(next);
@@ -2329,7 +2331,7 @@ export default function MagneticWorkshop({
           {t(error ?? importNotice)}
         </div>
       )}
-      {(!machine || catalogue) && (
+      {!desktop && (!machine || catalogue) && (
         <div className="mw-playback-bar" data-testid="workshop-playback-bar">
           {playButton}
         </div>
@@ -2467,6 +2469,7 @@ export default function MagneticWorkshop({
           <details className="mw-primary-menu" open={primaryMenuOpen} onToggle={(e) => setPrimaryMenuOpen(e.currentTarget.open)}>
             <summary>{t("Modèle et résultat")}</summary>
           <div className="mw-primary-actions">
+            {desktop && (!machine || catalogue) && <div className="mw-playback-bar mw-playback-inline" data-testid="workshop-playback-bar">{playButton}</div>}
             <label className="mw-file-label">
               {machine ? machine.fileName : t("Importer mon modèle 3D")}
               <input
@@ -2571,14 +2574,7 @@ export default function MagneticWorkshop({
               {!pedagogical && <>{basis === "fictitious" ? (
                 <span className="mw-kind education">{basisLabel}</span>
               ) : null}</>}
-              <div className="mw-view-switch">
-                <button aria-pressed={view === "3d"} onClick={request3d}>
-                  3D
-                </button>
-                <button aria-pressed={view === "top"} onClick={() => setView("top")}>
-                  {t(pedagogical ? "Vue en coupe" : "Vue plane")}
-                </button>
-              </div>
+
               {clientPedagogical ? pedagogicalDisplayMenu : !pedagogical ? displayMenu : null}
             </div>
             {/* Circuit de principe réintégré pour le parcours client (demande du 28/10) : même instant,

@@ -123,7 +123,7 @@ export function pairCardFor(sensor: SensorModel): PairCard {
  */
 export function pairCards(
   sensorIds: readonly string[],
-  options: { limit?: number; preferredSensorId?: string | null; keepOrder?: boolean } = {},
+  options: { limit?: number; preferredSensorId?: string | null; keepOrder?: boolean; groupFamilies?: boolean } = {},
 ): PairCard[] {
   const limit = options.limit ?? 3;
   const cards = [...new Set(sensorIds)]
@@ -139,5 +139,6 @@ export function pairCards(
   const final = preferred
     ? [preferred, ...ordered.filter((c) => c !== preferred)]
     : ordered;
-  return final.slice(0, limit);
+  const grouped=options.groupFamilies?final.filter((c,i,all)=>{const family=sensorById(c.sensorId).productFamily;return !family||all.findIndex(v=>sensorById(v.sensorId).productFamily===family)===i;}):final;
+  return grouped.slice(0, limit);
 }

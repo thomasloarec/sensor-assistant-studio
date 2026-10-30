@@ -2,7 +2,8 @@
  * Une gamme n'est pas une référence commandable et rien n'est « validé » avant revue R&D.
  */
 import { SENSOR_CATALOG, sizeLabel, type SensorModel } from "@/lib/standex/sensor-catalog";
-import type { DesignDossier, EnvelopeMm, MountingChoice } from "./dossier";
+import { mk06ElectricalFits } from "./mk06-electrical";
+import type { DesignDossier, EnvelopeMm, MountingChoice, Requirement } from "./dossier";
 import {
   MOUNTING_INTENT_LABEL,
   detectMountingIntent,
@@ -13,6 +14,7 @@ import {
 export type CandidateStatus = "kept" | "to_verify" | "excluded";
 
 export interface CandidateResult {
+  electricalIncompatible?: true;
   id: string;
   name: string;
   familyOnly: true;
@@ -57,11 +59,13 @@ function mountingVerdict(
         reason: "Aucun montage mécanique choisi : le filtrage mécanique reste ouvert.",
       };
     case "pcb_smd":
-      return sensor.shape === "smd"
+      return sensor.shape === "smd" && sensor.category !== "THT"
         ? { status: "kept", reason: "Boîtier CMS compatible d'un report sur PCB." }
         : { status: "excluded", reason: "Boîtier non CMS : incompatible d'un report CMS." };
     case "pcb_through_hole":
-      return sensor.shape === "glass"
+      return sensor.category === "THT"
+        ? { status: "kept", reason: "Version à broches traversantes documentée." }
+        : sensor.shape === "glass"
         ? {
             status: "to_verify",
             reason:
@@ -225,6 +229,7 @@ export function evaluateCandidates(
   dossier: Pick<DesignDossier, "mounting" | "envelope"> & {
     /** Réponse en texte libre sur le montage, telle qu'elle a été écrite. */
     mountingText?: string | null;
+    requirements?: readonly Requirement[];
   },
   catalog: readonly SensorModel[] = SENSOR_CATALOG,
 ): CandidateResult[] {
@@ -268,7 +273,10 @@ export function evaluateCandidates(
     } else {
       reasons.push("Gamme documentée ; la référence exacte est fixée après revue R&D.");
     }
+    const electricalIncompatible=mk06ElectricalFits(sensor.id,dossier.requirements??[])===false;
+    if(electricalIncompatible){status="excluded";reasons.push("Cette taille du MK06 ne couvre pas les valeurs électriques indiquées avec un même contact documenté.");}
     return {
+      ...(electricalIncompatible?{electricalIncompatible:true as const}:{}),
       id: sensor.id,
       name: sensor.name,
       familyOnly: true as const,

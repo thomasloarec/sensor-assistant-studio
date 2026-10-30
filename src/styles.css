@@ -2501,7 +2501,7 @@
 }
 
 /* Icon-only feedback stays inside the workshop, including compact viewports. */
-.mw-zone-loading { position:absolute; top:64px; left:12px; z-index:6; width:40px; height:40px; display:grid; place-items:center; border-radius:var(--r-pill); background:var(--standex-deep); color:var(--foreground); box-shadow:var(--e-2); pointer-events:none; }
+.mw-zone-loading { position:absolute; top:8px; left:12px; z-index:6; width:40px; height:40px; display:grid; place-items:center; border-radius:var(--r-pill); background:var(--standex-deep); color:var(--foreground); box-shadow:var(--e-2); pointer-events:none; }
 .mw-zone-loading svg { animation:mw-zone-spin var(--d-hero) var(--ease-in-out) infinite; }
 @keyframes mw-zone-spin { to { transform:rotate(360deg); } }
 @media (prefers-reduced-motion:reduce) { .mw-zone-loading svg { animation:none; } }

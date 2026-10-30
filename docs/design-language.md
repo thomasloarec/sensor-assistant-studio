@@ -2,14 +2,21 @@
 
 ### Commande de lecture toujours visible — 30 octobre 2026
 
-« Lancer le mouvement » occupe une barre dédiée au-dessus de la grille de
-l’atelier, hors du défilement des réglages et de la scène. Sur ordinateur, le
-bouton est aligné à gauche ; sous 1024 px, il utilise toute la largeur. La barre
+« Lancer le mouvement » se place à gauche de la rangée d’actions de la scène
+sur ordinateur (à partir de 1024 px), avant l’import 3D. Son fond utilise
+`--signal`, son texte `--standex-abyss`, avec les élévations existantes.
+Sous 1024 px, il reste dans une barre dédiée au-dessus de la grille et utilise toute la largeur. La barre
 réserve sa propre hauteur et ne recouvre aucun contenu. Le même bouton conserve
 les états lecture, pause, préparation et annulation, y compris après import dans
 le parcours catalogue client ; aucune seconde commande de lecture n’est ajoutée
 dans le guide. Les restrictions de mouvement restent inchangées. Cible ≥ 44 px,
 libellé multiligne si nécessaire, surfaces et élévation issues des jetons existants.
+Une seule commande est montée à la fois, y compris lors d’un redimensionnement.
+Le témoin de calcul se trouve à 8 px du bord supérieur de la scène.
+Le sélecteur 3D/coupe est masqué uniquement dans l’atelier ; les outils de coupe
+restent disponibles aux autres consommateurs. La fiche MK06 regroupe les six
+tailles dans un champ rempli, avec dimensions et caractéristiques mises à jour
+ensemble. Les badges techniques répétitifs ont été retirés de la grille catalogue.
 
 Référence contraignante. Les règles opérationnelles condensées sont dans
 `AGENTS.md` ; ce document en est la version complète et fait autorité en cas

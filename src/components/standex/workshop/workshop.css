@@ -3336,3 +3336,8 @@
   .mw-catalog > .mw-catalog-view { margin-inline: 16px; }
   .mw-catalog-tools select { flex: 1 1 100%; width: 100%; }
 }
+
+/* Desktop playback shares the main action row; mobile keeps its reserved strip. */
+.mw-stage .mw-playback-bar.mw-playback-inline { padding: 0; margin-inline-end: auto; background: transparent; box-shadow: none; }
+.mw-stage .mw-playback-bar > .mw-run { background: var(--signal); color: var(--standex-abyss); box-shadow: var(--e-2); }
+.mw-stage .mw-playback-bar > .mw-run:hover { background: var(--signal); box-shadow: var(--e-3); }

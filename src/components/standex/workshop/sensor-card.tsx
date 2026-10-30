@@ -15,7 +15,7 @@ import {
   X,
   Zap,
 } from "lucide-react";
-import { sensorById, sizeLabel, formatMm, sensorSource } from "@/lib/standex/sensor-catalog";
+import { sensorById, sizeLabel, formatMm, sensorSource, sensorDisplayTitle, SENSOR_CATALOG } from "@/lib/standex/sensor-catalog";
 import { SENSOR_SPECIFICATIONS } from "@/lib/standex/sensor-specifications";
 import { stepEnvelopeFor } from "@/lib/standex/step-envelope";
 import type { Contact } from "@/lib/standex/magnetic-workshop";
@@ -38,13 +38,15 @@ export default function SensorCard({
   onSelect?: (id: string) => void;
 }) {
   useLocale();
-  const model = sensorById(sensorId),
+  const [selectedSize,setSelectedSize]=useState(sensorId);
+  const model = sensorById(selectedSize),
     specs = SENSOR_SPECIFICATIONS[model.id];
   const dialog = useRef<HTMLDialogElement>(null),
     titleId = useId();
   const [tab, setTab] = useState<"overview" | "electrical" | "integration">("overview");
   const [xray, setXray] = useState(false),
     [variant, setVariant] = useState(0);
+  useEffect(()=>{setSelectedSize(sensorId);setVariant(0);},[sensorId]);
   const rating = specs?.electrical[variant];
   const step = stepEnvelopeFor(model.id);
   useEffect(() => {
@@ -81,9 +83,11 @@ export default function SensorCard({
           </div>
           <span className="sc-category">{t(model.category)}</span>
           <h2 id={titleId} className="t-title-s">
-            {t(model.name)}
+            {t(sensorDisplayTitle(model.id,model.name))}
           </h2>
           <p>{t(model.description)}</p>
+          {model.contactForm === "C" && <p className="t-body">{t("Form C : un contact mobile bascule du contact normalement fermé (NC) vers le contact normalement ouvert (NO) à l’approche de l’aimant.")}</p>}
+          {model.productFamily === "MK06" && <label className="mw-select-label">{t("Taille du MK06")}<select aria-label={t("Taille du MK06")} value={model.id} onChange={e=>{setSelectedSize(e.target.value);setVariant(0);}}>{SENSOR_CATALOG.filter(v=>v.productFamily==="MK06").map(v=><option key={v.id} value={v.id}>{msg("Taille {0}",[String(v.sizeVariant)])} · {sizeLabel(v)}</option>)}</select></label>}
           {model.id === "MK18" ? <div className="panel-block"><p>{t("Vue de l’embout : Ø 5 mm, un méplat à 4,6 mm")}</p><svg viewBox="-4 -4 8 8" width="100" height="100" role="img" aria-label={t("Embout avec un méplat")}><path d={`${oneFlatProfile(model.body[1], model.body[2]).map(([x, y], i) => `${i ? "L" : "M"}${x} ${y}`).join(" ")} Z`} fill="currentColor" /><circle cx="0" cy="-0.7" r="0.35" fill="var(--surface)"/><circle cx="0" cy="0.7" r="0.35" fill="var(--surface)"/></svg></div> : null}
           <div className="sc-drawing">
             <svg
