@@ -58,7 +58,7 @@ export function ClientPedagogicalControls({config,update,onCatalog,onCable,appro
         <label className="mw-field"><span>{t('Écart minimal entre le capteur et l’aimant')}<output className="t-metric">{config.end} mm</output></span><input type="range" aria-label={t('Écart minimal entre le capteur et l’aimant')} min="0.25" max="15" step="0.25" value={config.end} onInput={e=>update({end:Number(e.currentTarget.value)})}/></label>
       </>}
     </>}
-    <details className="mw-advanced"><summary>{t('Caractéristiques du couple')}</summary>
+    <details className="mw-advanced"><summary>{t('Caractéristiques de l’aimant')}</summary>
       <label className="mw-select-label">{t('Aimant')}<select aria-label={t('Aimant')} value={config.magnetModel} onChange={e=>update({magnetModel:e.target.value})}>{magnets.map(id=><option key={id} value={id}>{id}</option>)}</select></label>
       {config.guideReference&&<p className="t-caption">{t('Référence documentaire')} : {config.guideReference}</p>}
     </details>

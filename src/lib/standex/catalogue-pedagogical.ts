@@ -2,7 +2,7 @@
  * Internal datums are explicit modelling hypotheses. No brochure bound is fitted.
  * All responses use the shared C1% response and the common k×AT threshold.
  */
-import { SENSOR_CATALOG, sensorById } from './sensor-catalog';
+import { SENSOR_CATALOG, sensorById, customLayout, bladeOffsetY } from './sensor-catalog';
 import { BARE_MAGNETS, packagedMagnet, ACTIVATION_BROCHURE } from './magnet-catalog';
 import { guideRangesFor } from './activation-guide';
 import { pedagogicalFrame, type PedagogicalFrame } from './pedagogical-poses';
@@ -19,7 +19,7 @@ import { magnetObb, obbOverlap, type Obb } from '../detection-lab/obstacles';
 import { publishedRowsForCouple, publishedRowsSourceUrl, PUBLISHED_REGISTRY } from './magnetics/registries';
 import { CATALOGUE_RESPONSE, catalogueThresholds as classThresholds, catalogueScenarios, catalogueNominalScenario as nominalScenario } from './catalogue-response';
 
-export const CATALOGUE_MODEL_VERSION='catalogue-c1-analogy-4.0.0';
+export const CATALOGUE_MODEL_VERSION='catalogue-c1-analogy-4.1.0';
 /* i18n-canonical: internal diagnostic codes, never UI labels. */
 const INTERNAL={missing:'catalogue_profile_missing',prior:'catalogue_modelling_prior',source:'catalogue_illustrative',leads:'length_only_analogy_leads_uncharacterized'};
 /* i18n-canonical: model status, not product qualification. */
@@ -55,6 +55,11 @@ export function catalogueModel(c:WorkshopConfig){
  const bare=BARE_MAGNETS.find(m=>m.id===c.magnetModel),pack=packagedMagnet(c.magnetModel);
  const body=magnetSize(c);
  const moments=pack?.momentTypE6Vscm;const q=bare?.moment??(typeof moments==='number'?moments:Array.isArray(moments)?Math.min(...moments):null);
+ // Explicit same-family prior for uncharacterised N42 variants. This is NOT
+ // a measured N42 moment: documentary q stays null and favorable stays variable.
+ const familySource=q===null&&pack?.grade==='N42'&&pack.documentedAs?packagedMagnet(pack.documentedAs):null;
+ const familyMoment=typeof familySource?.momentTypE6Vscm==='number'?familySource.momentTypE6Vscm:null;
+ const fieldMoment=q??familyMoment??7.2;
  const verified=PILOT_MAGNETS.find(m=>m.id===c.magnetModel);
  // Field source in PHYSICAL mm (never rescaled by the reed length):
  // verified pilots keep their frozen cylinder; bare catalogue blocks use the
@@ -62,12 +67,12 @@ export function catalogueModel(c:WorkshopConfig){
  // are an explicit equivalent-cylinder hypothesis inside the real outer body.
  const vol=(bare?.shape==='block'?body[0]*body[1]*body[2]:Math.PI*(body[1]/2)**2*body[0])*1e-9;
  const insertD=Math.min(5,body[1],body[2]),insertL=Math.min(8,body[0]);
- const J=(q??7.2)*1e-8/(pack?Math.PI*(insertD/2000)**2*(insertL/1000):vol);
+ const J=fieldMoment*1e-8/(pack?Math.PI*(insertD/2000)**2*(insertL/1000):vol);
  const field:CatalogueField=verified?{kind:'cylinder',radiusMm:verified.diameterMm/2,lengthMm:verified.lengthMm,jT:verified.jT}:bare?.shape==='block'?{kind:'block',dims:[body[0],body[1],body[2]],brMt:J*1000}:pack?{kind:'cylinder',radiusMm:insertD/2,lengthMm:insertL,jT:J}:{kind:'cylinder',radiusMm:body[1]/2,lengthMm:body[0],jT:J};
  const magnet:PilotMagnet=verified??{...PILOT_MAGNETS[0]!,label:c.magnetModel,material:bare?.material??pack?.magnetMaterial??'unknown',momentRaw:INTERNAL.prior};
  const className=['A','B','C','D','E','F'].includes(c.sensitivity)?c.sensitivity:'C';
  const reasons=[CATALOGUE_LABELS.notice,CATALOGUE_LABELS.datum,...(pack||(!verified&&bare?.shape!=='block')?[CATALOGUE_LABELS.proxy]:[]),...(className!==c.sensitivity?[CATALOGUE_LABELS.class]:[]),...(className==='A'?[CATALOGUE_LABELS.partialA]:[]),...(c.sensorId==='MK02'?[CATALOGUE_LABELS.ferrous]:[]),...(c.ferromagnetic||c.temperature!=='ambient'?[CATALOGUE_LABELS.material]:[])];
- return {version:CATALOGUE_MODEL_VERSION,sensorId:c.sensorId,magnetId:c.magnetModel,family,status:status as 'form66'|'documented'|'analogy',lengthMm,scale:lengthMm/14,centre:[0,0,0] as Vec3,axis:[1,0,0] as Vec3,body:sensor.body,magnetBody:body,magnet,field,magnetGeometry:verified?'verified-cylinder':bare?.shape==='block'?'analytic-block':bare?.shape==='cylinder'&&q!==null?'moment-cylinder':'equivalent-cylinder',moment:q,unknownMoment:q===null,className,contact:sensor.contact,reference:selected,rows,publishedRows,publishedSource:publishedRowsSourceUrl(publishedRows),familyReferences:PUBLISHED_REGISTRY.rows.filter(r=>r.sensorFamily===c.sensorId).map(r=>r.sensorReference),reasons,sources:[ACTIVATION_BROCHURE,publishedRowsSourceUrl(publishedRows)??sensor.sourceFile??INTERNAL.source],method:p.method,leadEffect:INTERNAL.leads};
+ return {version:CATALOGUE_MODEL_VERSION,sensorId:c.sensorId,magnetId:c.magnetModel,family,status:status as 'form66'|'documented'|'analogy',lengthMm,scale:lengthMm/14,centre:[0,bladeOffsetY(sensor),0] as Vec3,axis:[1,0,0] as Vec3,body:sensor.body,magnetBody:body,magnet,field,magnetGeometry:verified?'verified-cylinder':bare?.shape==='block'?'analytic-block':bare?.shape==='cylinder'&&q!==null?'moment-cylinder':'equivalent-cylinder',moment:q,fieldMoment,familyAnalogy:familyMoment!==null,familyMagnet:familyMoment!==null?familySource?.id:null,unknownMoment:q===null,className,contact:sensor.contact,reference:selected,rows,publishedRows,publishedSource:publishedRowsSourceUrl(publishedRows),familyReferences:PUBLISHED_REGISTRY.rows.filter(r=>r.sensorFamily===c.sensorId).map(r=>r.sensorReference),reasons,sources:[ACTIVATION_BROCHURE,publishedRowsSourceUrl(publishedRows)??sensor.sourceFile??INTERNAL.source,...(familyMoment!==null?['/datasheets/Packaged-Magnets.pdf']:[])],method:p.method,leadEffect:INTERNAL.leads};
 }
 type Frame=[Vec3,Vec3,Vec3];
 export type CatalogueField={kind:'cylinder';radiusMm:number;lengthMm:number;jT:number}|{kind:'block';dims:Vec3;brMt:number};
@@ -95,6 +100,16 @@ export function catalogueFrame(c:WorkshopConfig,t:number):PedagogicalFrame&{pose
  return {origin,basis,world:{center,axis,frame:wf},pose:{center:toLocal(mp),axis:toLocal(axis),frame:wf.map(toLocal) as Frame}};
 }
 export function catalogueBodyObb(c:WorkshopConfig):Obb{return {path:'sensor-body',c:[0,0,0],a:E,h:sensorById(c.sensorId).body.map(n=>n/2) as Vec3};}
+/** The custom PCB is not a solid box up to the top of the reed. Keep separate
+ * conservative envelopes for the board and its moulded component. */
+export function catalogueBodyObbs(c:WorkshopConfig):Obb[]{
+ const sensor=sensorById(c.sensorId),layout=customLayout(sensor);
+ if(!layout)return [catalogueBodyObb(c)];
+ return [
+  {path:'custom-pcb',c:[0,-sensor.body[1]/2+layout.pcbThickness/2,0],a:E,h:[layout.pcbLength/2,layout.pcbThickness/2,layout.pcbWidth/2]},
+  {path:'custom-reed',c:[0,bladeOffsetY(sensor),0],a:E,h:[layout.reedLength/2,layout.reedDiameter/2,layout.reedDiameter/2]},
+ ];
+}
 /** Catalogue evaluator (physical mm). Same blade integral, Gauss nodes and shared blade means as the
  * frozen kernel; reed effective length and scenario shifts scale with the profile's estimated
  * reed length (documented hypothesis); the calculation domain does NOT. */
@@ -111,7 +126,7 @@ export function catalogueEvaluate(m:ReturnType<typeof catalogueModel>,pose:Catal
   if(!r.ok)return NaN;const b=r.field.bVectorMt;return frame.reduce((sum,row,i)=>sum+(b[i]??0)*(row[0]??0),0);
  };
  const g=gaussLegendre(quadrature);
- const blade=(from:number,to:number)=>{let sum=0;for(let i=0;i<g.x.length;i++){const x=from+((g.x[i]!+1)/2)*(to-from);sum+=(g.w[i]!/2)*B([x+(sh[0]??0),sh[1]??0,sh[2]??0]);}return sum;};
+ const blade=(from:number,to:number)=>{let sum=0;for(let i=0;i<g.x.length;i++){const x=from+((g.x[i]!+1)/2)*(to-from);sum+=(g.w[i]!/2)*B([x+(sh[0]??0)+m.centre[0],(sh[1]??0)+m.centre[1],(sh[2]??0)+m.centre[2]]);}return sum;};
  const m1=blade(-half,0),m2=blade(0,half);
  if(!Number.isFinite(m1)||!Number.isFinite(m2))return {ok:false,reason:'collision'};
  return {ok:true,response:reedResponse(m1,m2,CATALOGUE_RESPONSE.model,CATALOGUE_RESPONSE.relativeSignEpsilon),m1,m2};
@@ -123,7 +138,7 @@ export function cataloguePlacement(c:WorkshopConfig,pose:CataloguePose,obstacles
  if(!(Math.hypot(...pose.axis)>0)||!pose.center.every(Number.isFinite))return unavailable('domain');
  const frame=pose.frame??magnetBodyFrame(c,c.magnetAngle);
  const realMagnet:Obb={path:'magnet',c:[...pose.center],a:frame,h:m.magnetBody.map(n=>n/2) as Vec3};
- if(obbOverlap(realMagnet,catalogueBodyObb(c))||obstacles.some(o=>obbOverlap(realMagnet,o)))return unavailable('overlap');
+ if(catalogueBodyObbs(c).some(o=>obbOverlap(realMagnet,o))||obstacles.some(o=>obbOverlap(realMagnet,o)))return unavailable('overlap');
  // Actual pose for both mechanical exclusion and response. No morphology map.
  const nominal=catalogueEvaluate(m,pose,nominalScenario(),frame);
  if(!nominal.ok)return unavailable(nominal.reason==='domain'?'domain':'collision');
@@ -140,7 +155,13 @@ export function cataloguePlacement(c:WorkshopConfig,pose:CataloguePose,obstacles
  * Display data only — the verdict never reads it. Indexed [(k*ny+j)*nx+i]. */
 export type VolumeField={xs:number[];ys:number[];zs:number[];values:(number|null)[];blocked:boolean[]};
 export type CatalogueVolume=SampledVolume&{field:VolumeField};
-export function catalogueVolume(c:WorkshopConfig,axis:Vec3,planeZ:number,obstacles:readonly Obb[]=[],extent=24,frame?:Frame):CatalogueVolume{
+/** Larger press-fit pairs need room beyond both frontal faces. The kernel's
+ * physical domain and thresholds remain unchanged; only sampling bounds grow. */
+export function catalogueExtent(c:WorkshopConfig):number {
+ const body=sensorById(c.sensorId);
+ return body.shape==='pressfit'?48:24;
+}
+export function catalogueVolume(c:WorkshopConfig,axis:Vec3,planeZ:number,obstacles:readonly Obb[]=[],extent=catalogueExtent(c),frame?:Frame):CatalogueVolume{
  const start=performance.now(),xs=axisNodes(-extent,extent,true),ys=axisNodes(-extent,extent),zs=axisNodes(-extent,extent);
  if(!zs.includes(planeZ)&&Math.abs(planeZ)<=extent){zs.push(planeZ);zs.sort((a,b)=>a-b);}
  const cells:SampledVolume['cells']=[],cut:SampledVolume['cut']=[];
@@ -150,7 +171,7 @@ export function catalogueVolume(c:WorkshopConfig,axis:Vec3,planeZ:number,obstacl
  // Nominal uniform magnets + centred reed/body are invariant under central inversion.
  // In a planar body frame with a planar pole axis, reflection in y=0 is invariant too.
  // Reuse exact samples only under those symmetries (never with imported obstacles or a shifted grid).
- const symmetric=obstacles.length===0&&planeZ===0;
+ const symmetric=obstacles.length===0&&planeZ===0&&model.centre.every(n=>n===0);
  const bodyFrame=frame??magnetBodyFrame(c,c.magnetAngle);
  const planar=symmetric&&Math.abs(axis[1])<1e-12&&bodyFrame.every(a=>Math.abs(a[1])<1e-12||Math.abs(Math.abs(a[1])-1)<1e-12);
  const bound=(ns:number[],i:number):[number,number]=>[i===0?-extent:((ns[i-1]??0)+(ns[i]??0))/2,i===ns.length-1?extent:((ns[i]??0)+(ns[i+1]??0))/2];
@@ -174,7 +195,7 @@ export function catalogueVolume(c:WorkshopConfig,axis:Vec3,planeZ:number,obstacl
 }
 /** Plane-only cut: the SAME evaluator as the volume, but only the chosen plane is computed —
  * never the whole 3D grid. Used while reading so a paused instant costs one plane, not one volume. */
-export function catalogueCut(c:WorkshopConfig,axis:Vec3,planeZ:number,obstacles:readonly Obb[]=[],extent=24,frame?:Frame):CatalogueVolume{
+export function catalogueCut(c:WorkshopConfig,axis:Vec3,planeZ:number,obstacles:readonly Obb[]=[],extent=catalogueExtent(c),frame?:Frame):CatalogueVolume{
  const start=performance.now(),xs=axisNodes(-extent,extent,true),ys=axisNodes(-extent,extent);
  const cut:SampledVolume['cut']=[];
  const model=catalogueModel(c);
@@ -204,7 +225,7 @@ export function catalogueClasses(sensorId:string,magnetModel:string,published:re
 
 /** Notes shown next to the verdict (never remedies). */
 export function catalogueVerdictNotes(c:WorkshopConfig,m:ReturnType<typeof catalogueModel>):string[]{
- return [...(m.className==='A'?[CATALOGUE_LABELS.partialA]:[]),...(m.className!==c.sensitivity?[CATALOGUE_LABELS.fallbackC]:[]),...(c.geometry==='F1'&&['MK37','MK38'].includes(c.sensorId)?[CATALOGUE_LABELS.f1]:[]),...(c.sensorId==='MK02'?[CATALOGUE_LABELS.ferrous]:[])];
+ return [...(m.familyAnalogy?['Zones estimées avec l’aimant de la même famille ; variante N42 non caractérisée.']:[]),...(m.className==='A'?[CATALOGUE_LABELS.partialA]:[]),...(m.className!==c.sensitivity?[CATALOGUE_LABELS.fallbackC]:[]),...(c.geometry==='F1'&&['MK37','MK38'].includes(c.sensorId)?[CATALOGUE_LABELS.f1]:[]),...(c.sensorId==='MK02'?[CATALOGUE_LABELS.ferrous]:[])];
 }
 /** Plain-language family sentence for Sources et limites. */
 export function catalogueFamilySentence(m:ReturnType<typeof catalogueModel>):string{return m.family==='66'?CATALOGUE_LABELS.reed66:m.family==='66-assumed'?CATALOGUE_LABELS.reed66assumed:CATALOGUE_LABELS.analogyReed;}

@@ -98,7 +98,7 @@ export default function CandidateThumbnailScene({
 
   // Le contact interne n'est lisible que sur les corps transparents.
   const electrical = electricalDetailsAllowed(model);
-  const showContacts = electrical && (model.shape === "glass" || model.shape === "custom_pcb");
+  const showContacts = electrical && model.shape === "glass";
 
   return (
     <div className="candidate-thumb-stage" ref={host}>

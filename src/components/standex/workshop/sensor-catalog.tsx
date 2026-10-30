@@ -37,6 +37,7 @@ const FIXING_OPTIONS = [
   ["screw", "Fixation par vis"],
   ["threaded", "Corps fileté"],
   ["pressfit", "À emmancher"],
+  ["pushin", "Insertion dans un alésage"],
   ["pcb", "Report sur circuit imprimé"],
   ["unknown", "Fixation non documentée"],
 ] as const;

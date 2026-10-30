@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { BufferGeometry, Float32BufferAttribute, Matrix4, Quaternion, Vector3, DoubleSide } from 'three';
 import { Html, Line } from '@react-three/drei';
 import '@react-three/fiber';
-import { t } from '@/lib/i18n/core';
+import { t, msg } from '@/lib/i18n/core';
 import { PILOT_MAGNETS } from '@/lib/detection-lab/magnets';
 import { PROFILE } from '@/lib/detection-lab/profile';
 import { EXPERIMENT, type ExperimentSettings, type SampledVolume, type SampleCell } from '@/lib/detection-lab/workshop-experiment';
@@ -68,11 +68,12 @@ export function PedagogicalLayer({frame,settings,volume,zones=true,zonesOnly=fal
     </>}
   </group>;
 }
-export function PedagogicalCut({volume,frame,body,reedMm,zones=true,thresholds,planeZ}:{planeZ?:number|undefined;volume:SampledVolume|null;frame:PedagogicalFrame;body?:readonly number[]|undefined;reedMm?:number|undefined;zones?:boolean;thresholds?:{low:number|null;high:number}|null}) {
+export function PedagogicalCut({volume,frame,body,bodyParts,reedCentre=[0,0,0],reedMm,zones=true,thresholds,planeZ}:{planeZ?:number|undefined;volume:SampledVolume|null;frame:PedagogicalFrame;body?:readonly number[]|undefined;bodyParts?:readonly {c:readonly number[];h:readonly number[]}[]|undefined;reedCentre?:readonly number[]|undefined;reedMm?:number|undefined;zones?:boolean;thresholds?:{low:number|null;high:number}|null}) {
   const zPlane=planeZ??frame.pose.center[2], magnetInPlane=Math.abs(frame.pose.center[2]-zPlane)<0.125;
   const ref=useRef<SVGSVGElement>(null),[size,setSize]=useState({width:640,height:590});
   useEffect(()=>{const el=ref.current;if(!el)return;const observer=new ResizeObserver(entries=>{const r=entries[0]?.contentRect;if(r&&r.width>0&&r.height>0)setSize({width:r.width,height:r.height});});observer.observe(el);return()=>observer.disconnect();},[]);
-  const scale=Math.max(.5,Math.min((size.width-100)/48,(size.height-110)/48));
+  const extent=volume?.extent??24;
+  const scale=Math.max(.5,Math.min((size.width-100)/(extent*2),(size.height-110)/(extent*2)));
   const cx=size.width/2+15,cy=size.height/2+5,x=(n:number)=>cx+n*scale,y=(n:number)=>cy-n*scale;
   const {envelopeRadiusMm:rr}=PROFILE.reed,inPlane=Math.abs(zPlane)<rr,hatched=!!volume?.cut.some(c=>c.blocked);
   const paths=useMemo(()=>thresholds&&volume?[thresholds.low===null?'':contourPath(volume.cut,thresholds.low),contourPath(volume.cut,thresholds.high)]:null,[volume,thresholds?.low,thresholds?.high]);
@@ -83,24 +84,24 @@ export function PedagogicalCut({volume,frame,body,reedMm,zones=true,thresholds,p
     <text x="12" y="42" className="t-caption">z = {zPlane.toFixed(1)} mm</text>
     {zones&&volume?.cut.filter(c=>!paths||c.blocked||c.response===null).map(c=><rect key={`${c.x},${c.y}`} x={x(c.x0)} y={y(c.y1)} width={(c.x1-c.x0)*scale} height={(c.y1-c.y0)*scale} className={c.blocked?'mw-cut-blocked':c.response===null?'mw-cut-collision':c.zone===2?'mw-cut-high':c.zone===1?'mw-cut-low':'mw-cut-empty'}/>)}
     {zones&&paths&&<g transform={`translate(${cx} ${cy}) scale(${scale} ${-scale})`} data-testid="smooth-cut"><path d={paths[0]} className="mw-cut-low"/><path d={paths[1]} className="mw-cut-high"/></g>}
-    <line x1={x(-24)} y1={cy} x2={x(24)} y2={cy} className="mw-cut-axis"/>
-    <line x1={cx} y1={y(24)} x2={cx} y2={y(-24)} className="mw-cut-axis"/>
-    {[-20,0,20].map(n=><g key={n}><text x={x(n)} y={y(-24)+20} textAnchor="middle" className="t-caption">{n}</text><text x={x(-24)-10} y={y(n)+5} textAnchor="end" className="t-caption">{n}</text></g>)}
-    <text x={x(24)+8} y={y(-24)+20} className="t-caption">x</text><text x={x(-24)-10} y={y(24)-8} className="t-caption">y</text>
-    {body?(()=>{const [bx=0,by=0,bz=0]=body,cut=Math.abs(zPlane)<bz/2;
+    <line x1={x(-extent)} y1={cy} x2={x(extent)} y2={cy} className="mw-cut-axis"/>
+    <line x1={cx} y1={y(extent)} x2={cx} y2={y(-extent)} className="mw-cut-axis"/>
+    {[-Math.floor(extent/5)*5,0,Math.floor(extent/5)*5].map(n=><g key={n}><text x={x(n)} y={y(-extent)+20} textAnchor="middle" className="t-caption">{n}</text><text x={x(-extent)-10} y={y(n)+5} textAnchor="end" className="t-caption">{n}</text></g>)}
+    <text x={x(extent)+8} y={y(-extent)+20} className="t-caption">x</text><text x={x(-extent)-10} y={y(extent)-8} className="t-caption">y</text>
+    {bodyParts?<g data-testid="pedagogical-cut-body" data-envelope="parts">{bodyParts.map((part,i)=><rect key={i} x={x((part.c[0]??0)-(part.h[0]??0))} y={y((part.c[1]??0)+(part.h[1]??0))} width={2*(part.h[0]??0)*scale} height={2*(part.h[1]??0)*scale} className={Math.abs(zPlane-(part.c[2]??0))<(part.h[2]??0)?"mw-cut-body":"mw-cut-body-projection"}/>)}</g>:body?(()=>{const [bx=0,by=0,bz=0]=body,cut=Math.abs(zPlane)<bz/2;
       // Catalogue: the conservative rectangular envelope actually tested (X×Y), projection when the plane misses it.
       return <g data-testid="pedagogical-cut-body" data-section={cut?'section':'projection'} data-envelope="box"><rect x={x(-bx/2)} y={y(by/2)} width={bx*scale} height={by*scale} className={cut?'mw-cut-body':'mw-cut-body-projection'}/></g>;})():(()=>{const r=PROFILE.reed.envelopeRadiusMm,h=PROFILE.reed.envelopeHalfLengthMm,z=zPlane,cut=Math.abs(z)<r,hw=cut?Math.sqrt(r*r-z*z):r;
       // Real section only if plane z crosses the capsule; otherwise an explicitly labelled projection outline.
       return <g data-testid="pedagogical-cut-body" data-section={cut?'section':'projection'}><rect x={x(-h-hw)} y={y(hw)} width={2*(h+hw)*scale} height={2*hw*scale} rx={hw*scale} className={cut?'mw-cut-body':'mw-cut-body-projection'}/>
         </g>;})()}
-    <line data-testid="pedagogical-cut-reed" data-length-mm={reedMm??EXPERIMENT.effectiveLengthMm} x1={x(-(reedMm??EXPERIMENT.effectiveLengthMm)/2)} y1={cy} x2={x((reedMm??EXPERIMENT.effectiveLengthMm)/2)} y2={cy} className="mw-cut-datum"/>
+    <line data-testid="pedagogical-cut-reed" data-length-mm={reedMm??EXPERIMENT.effectiveLengthMm} x1={x((reedCentre[0]??0)-(reedMm??EXPERIMENT.effectiveLengthMm)/2)} y1={y(reedCentre[1]??0)} x2={x((reedCentre[0]??0)+(reedMm??EXPERIMENT.effectiveLengthMm)/2)} y2={y(reedCentre[1]??0)} className="mw-cut-datum"/>
 
     {magnetInPlane&&<circle data-testid="cut-magnet-in-plane" cx={x(frame.pose.center[0])} cy={y(frame.pose.center[1])} r="6" className="mw-cut-point"/>}
   </svg><figcaption className="mw-ped-cut-caption">
     {planeZ!==undefined&&<span className="t-caption">{t('Coupe par la face plate')}</span>}
     {!magnetInPlane&&<span className="t-caption" data-testid="cut-magnet-out-of-plane">{t('Aimant hors du plan de coupe')}</span>}
     <span className="t-caption">{t(body?'Enveloppe simplifiée testée · centre interne estimé, non mesuré':inPlane?'Capteur générique, reed 66 monté':'Capteur générique, reed 66 monté — projection, hors du plan de coupe')}</span>
-    {volume&&Math.abs(zPlane)>volume.extent&&<span className="t-caption" data-testid="cut-out-of-domain">{t('Plan de coupe hors du domaine calculé (±24 mm)')}</span>}
+    {volume&&Math.abs(zPlane)>volume.extent&&<span className="t-caption" data-testid="cut-out-of-domain">{msg('Plan de coupe hors du domaine calculé (±{0} mm)',[extent])}</span>}
     {hatched&&<span className="t-caption">{t('Hachuré : chevauchement possible avec une pièce du montage — à vérifier')}</span>}
   </figcaption></figure>;
 }

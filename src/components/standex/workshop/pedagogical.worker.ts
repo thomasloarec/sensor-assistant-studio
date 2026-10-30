@@ -30,8 +30,8 @@ self.onmessage=(event:MessageEvent<{settings:ExperimentSettings;axis:Vec3;planeZ
     }
     if(catalogue){
       if(config||table){self.postMessage({key,result:{...catalogueTimeline(catalogue,table),key}});return;}
-      if(mode==='cut'){self.postMessage({key,result:{...catalogueCut(catalogue,axis,planeZ,obstacles??[],24,frame),key}});return;}
-      const v=catalogueVolume(catalogue,axis,mode==='volume'?0:planeZ,obstacles??[],24,frame);
+      if(mode==='cut'){self.postMessage({key,result:{...catalogueCut(catalogue,axis,planeZ,obstacles??[],undefined,frame),key}});return;}
+      const v=catalogueVolume(catalogue,axis,mode==='volume'?0:planeZ,obstacles??[],undefined,frame);
       const th=classThresholds(catalogueModel(catalogue).className);
       const surfaces=th?[th.low===null?null:packSurface(v.field,th.low),packSurface(v.field,th.high)]:undefined;
       // Meshes are built once off-thread. Playback never reconstructs 190k cells in the UI.

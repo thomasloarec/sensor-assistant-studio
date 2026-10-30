@@ -4,6 +4,7 @@ import {
   bladeLength,
   bladeOffsetZ,
   electricalDetailsAllowed,
+  customLayout,
 } from "@/lib/standex/sensor-catalog";
 import type { Contact } from "@/lib/standex/magnetic-workshop";
 
@@ -27,6 +28,19 @@ export function SensorPlan({
   const cableSide = model.cableSide ?? -1;
   const electrical = electricalDetailsAllowed(model);
   const revealContacts = electrical && xray;
+  const custom = customLayout(model);
+  if (custom) {
+    const { reedLength: rl, reedDiameter: rd, notchDepth: nd, notchWidth: nw } = custom;
+    return <g data-body="custom-pcb">
+      <path d={`M${-l/2+w/4} ${-w/2} H${l/2} V${-nw/2} H${l/2-nd} V${nw/2} H${l/2} V${w/2} H${-l/2+w/4} L${-l/2} ${w/4} V${-w/4} Z`} fill={model.color}/>
+      {[-1,1].map(sign=><g key={sign}>
+        <path d={`M${-l/2+w/4} ${sign*2.2} H${sign*(rl/2+rd*.9)} L${sign*(rl/2+rd*.5)} 0 H${sign*rl/2}`} fill="none" stroke="var(--chart-5)" strokeWidth="0.6"/>
+        <circle cx={-l/2+w/3} cy={sign*w*.3} r={custom.tabRadius} fill="var(--standex-blue-10)"/>
+      </g>)}
+      <rect x={-rl/2} y={-rd/2} width={rl} height={rd} rx="0.4" fill="var(--standex-deep)" fillOpacity={revealContacts ? .25 : 1}/>
+      {revealContacts && <path d={`M${-length/2} ${closed?0:-rd*.12} H${length*.03} M${length/2} ${closed?0:rd*.12} H${-length*.03}`} fill="none" stroke={color} strokeWidth="0.35"/>}
+    </g>;
+  }
   if (model.shape === "glass")
     return (
       <g>

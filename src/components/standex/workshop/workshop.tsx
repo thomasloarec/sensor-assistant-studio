@@ -5,7 +5,7 @@ import { ClientPedagogicalControls } from './client-pedagogical-controls';
 import { discoveryPatch, clientDiscoveryConfig } from '@/lib/standex/discovery-preset';
 import { illustrativeContact } from '@/lib/standex/pedagogical-contact';
 import { CLIENT_LIMITS, clientCoupleAdapter, clientPedagogicalResult, type ClientPedagogicalResult } from '@/lib/standex/client-pedagogical';
-import { catalogueFrame, cataloguePlacement, catalogueModel, catalogueVerdictNotes, CATALOGUE_LABELS, nearestPreparedT, pivotSampleAt, type PivotPlan, type VolumeField } from '@/lib/standex/catalogue-pedagogical';
+import { catalogueBodyObbs, catalogueFrame, cataloguePlacement, catalogueModel, catalogueVerdictNotes, CATALOGUE_LABELS, nearestPreparedT, pivotSampleAt, type PivotPlan, type VolumeField } from '@/lib/standex/catalogue-pedagogical';
 import { catalogueThresholds, CATALOGUE_RESPONSE, CATALOGUE_CUT_PLANE_Z } from '@/lib/standex/catalogue-response';
 import type { MachineFocus } from "@/lib/standex/machine-view";
 import { observedCycleVerdict } from "@/lib/leadmagnet/tested-pairs";
@@ -433,6 +433,7 @@ export default function MagneticWorkshop({
     [dimensions, setDimensions] = useState(false),
     [showNames, setShowNames] = useState(true),
     [showMagnetName, setShowMagnetName] = useState(true),
+    [showDistance, setShowDistance] = useState(true),
     [focus, setFocus] = useState<MachineFocus>("assembly"),
     [catalogOpen, setCatalogOpen] = useState(false);
   // Seuils mémorisés par classe : un objet frais à chaque frame ne doit pas reconstruire les surfaces.
@@ -2222,6 +2223,10 @@ export default function MagneticWorkshop({
         {!machine && (
           <>
             <label>
+              <input type="checkbox" checked={showDistance} onChange={(e) => setShowDistance(e.target.checked)} />
+              {t("Distance capteur–aimant")}
+            </label>
+            <label>
               <input
                 type="checkbox"
                 checked={dimensions}
@@ -2270,6 +2275,10 @@ export default function MagneticWorkshop({
           <input type="checkbox" checked={showMagnetName} onChange={(e) => setShowMagnetName(e.target.checked)} />
           {t("Nom de l’aimant")}
         </label>
+        {!machine && <label>
+          <input type="checkbox" checked={showDistance} onChange={(e) => setShowDistance(e.target.checked)} />
+          {t("Distance capteur–aimant")}
+        </label>}
         <label>
           <input type="checkbox" checked={dimensions} onChange={(e) => setDimensions(e.target.checked)} />
           {t("Dimensions")}
@@ -2619,7 +2628,7 @@ export default function MagneticWorkshop({
                 </p>
               </div>
             ) : null}
-            {pedagogical && view === "top" ? (playing && !catalogue ? <p className="notice-info t-body" data-testid="cut-paused-note">{t('Mettez en pause pour voir la coupe à cet instant')}</p> : <PedagogicalCut volume={cutVolume} planeZ={catalogue?CATALOGUE_CUT_PLANE_Z:undefined} frame={pedagogicalPose} body={catalogueProfile?.body} reedMm={catalogueProfile?CATALOGUE_RESPONSE.effectiveLengthMm*catalogueProfile.lengthMm/14:undefined} zones={zones} thresholds={catalogue?layerThresholds:null}/>) : machine ? (
+            {pedagogical && view === "top" ? (playing && !catalogue ? <p className="notice-info t-body" data-testid="cut-paused-note">{t('Mettez en pause pour voir la coupe à cet instant')}</p> : <PedagogicalCut volume={cutVolume} planeZ={catalogue?CATALOGUE_CUT_PLANE_Z:undefined} frame={pedagogicalPose} body={catalogueProfile?.body} bodyParts={catalogue&&config.sensorId==='CUSTOM'?catalogueBodyObbs(config):undefined} reedCentre={catalogueProfile?.centre} reedMm={catalogueProfile?CATALOGUE_RESPONSE.effectiveLengthMm*catalogueProfile.lengthMm/14:undefined} zones={zones} thresholds={catalogue?layerThresholds:null}/>) : machine ? (
               assetError ? (
                 <div className="mw-loading" role="alert">
                   {t(assetError)}
@@ -2731,6 +2740,7 @@ export default function MagneticWorkshop({
                     dimensions={dimensions}
                     showNames={showNames}
                     showMagnetName={showMagnetName}
+                    showDistance={showDistance}
                     focus={focus === "sensor" ? "sensor" : "assembly"}
                     reduced={reduced}
                     ghost={ghost}
@@ -2801,7 +2811,7 @@ export default function MagneticWorkshop({
                 setProgress(Number(e.target.value) / 100);
               }}
             />
-            {clientPedagogical && !exploring ? <div className="mw-legend" data-testid="client-product-legend"><span>{config.sensorId} + {config.magnetModel}</span><span className="mw-ped-high">{t("Zone favorable estimée")}</span><span className="mw-ped-low">{t("Dépend de la sensibilité")}</span><span className="mw-ped-gray">{t("Positions où l’aimant rencontrerait ce corps")}</span>{layerThresholds?.low!=null&&<span>{t('Zone jaune : activation possible selon l’exemplaire. La lampe illustre la borne la plus sensible de la classe, pas une activation garantie.')}</span>}<span>{t('Le repère indique le centre magnétique estimé ; c’est sa position dans les lobes qui commande la lampe.')}</span>{sampled.busy&&<span>{t("Calcul des volumes en cours…")}</span>}{sampled.failed&&<span>{t("Calcul des zones interrompu")}</span>}{sampled.volume?.truncated&&<span>{t("Lobes tronqués aux limites du domaine affiché ±24 mm ; aucune fermeture physique déduite.")}</span>}<span>{t(CATALOGUE_LABELS.notice)}</span></div> : pedagogical ? <div className="mw-legend" data-testid="pedagogical-legend"><span className="mw-ped-high">{t("Zone favorable estimée")}</span><span className="mw-ped-low">{t("Dépend de la sensibilité")}</span><span className="mw-ped-body">{t("Capteur générique, reed 66 monté")}</span><span className="mw-ped-gray">{t("Positions où l’aimant rencontrerait ce corps")}</span>{machine&&<span className="mw-ped-hatch">{t("Chevauchement possible avec une pièce du montage — à vérifier")}</span>}<span>{t("Estimation indicative")}</span></div> : <div className="mw-legend">
+            {clientPedagogical && !exploring ? <div className="mw-legend" data-testid="client-product-legend"><span>{config.sensorId} + {config.magnetModel}</span><span className="mw-ped-high">{t("Zone favorable estimée")}</span><span className="mw-ped-low">{t("Dépend de la sensibilité")}</span><span className="mw-ped-gray">{t("Positions où l’aimant rencontrerait ce corps")}</span>{layerThresholds?.low!=null&&<span>{t('Zone jaune : activation possible selon l’exemplaire. La lampe illustre la borne la plus sensible de la classe, pas une activation garantie.')}</span>}<span>{t('Le repère indique le centre magnétique estimé ; c’est sa position dans les lobes qui commande la lampe.')}</span>{sampled.busy&&<span>{t("Calcul des volumes en cours…")}</span>}{sampled.failed&&<span>{t("Calcul des zones interrompu")}</span>}{sampled.volume?.truncated&&<span>{msg("Lobes tronqués aux limites du domaine affiché ±{0} mm ; aucune fermeture physique déduite.",[sampled.volume.extent])}</span>}<span>{t(CATALOGUE_LABELS.notice)}</span></div> : pedagogical ? <div className="mw-legend" data-testid="pedagogical-legend"><span className="mw-ped-high">{t("Zone favorable estimée")}</span><span className="mw-ped-low">{t("Dépend de la sensibilité")}</span><span className="mw-ped-body">{t("Capteur générique, reed 66 monté")}</span><span className="mw-ped-gray">{t("Positions où l’aimant rencontrerait ce corps")}</span>{machine&&<span className="mw-ped-hatch">{t("Chevauchement possible avec une pièce du montage — à vérifier")}</span>}<span>{t("Estimation indicative")}</span></div> : <div className="mw-legend">
               <span>
                 <i className="closed" />
                 {t("Fermé")}
