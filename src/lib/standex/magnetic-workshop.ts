@@ -19,7 +19,7 @@ import {
 import { parseMachine, componentPose, cycleU, openingAt, rotate, motionProblem, movingSelection } from "./machine-assembly";
 import { documentedMagnetAngleDeg } from "./mounting/profiles";
 import { workshopGuideRange, GUIDE_SIMULATION_NOTE } from "./workshop-guide";
-import { defaultGuideSelection, guideSelectionFor } from "./activation-guide";
+import { defaultGuideSelection, guideSelectionFor, guideSensitivityClasses, guideReferenceForClass } from "./activation-guide";
 
 import type { MachineAssembly } from "./machine-assembly";
 import {
@@ -343,8 +343,9 @@ export function applyPairSelection(
   /* Règle de compatibilité de FORME : un aimant demandé dont la forme contredit
      celle du capteur est ramené au défaut du capteur. Rien n'est converti, aucune
      distance n'est reprise de l'aimant écarté. */
-  const magnetModel = fake ? "generic" : normalizedMagnetFor(sensorId, magnetId);
-  const classes = publishedClasses(sensorId, magnetModel);
+  const magnetModel = sensorId === "GENERIC" ? "generic" : normalizedMagnetFor(sensorId, magnetId);
+  const classes = [...new Set([...publishedClasses(sensorId, magnetModel), ...guideSensitivityClasses(sensorId, magnetModel)])].filter(k => k !== "G").sort();
+  const sensitivity = classes.length && !classes.includes(c.sensitivity) ? classes[0]! : c.sensitivity;
   const approaches = approachChoicesFor(sensorId, magnetModel);
   let geometry =
     approaches.length && !approaches.includes(c.geometry) ? approaches[0]! : c.geometry;
@@ -367,14 +368,14 @@ export function applyPairSelection(
         selection = fallback;
       }
     }
-    guideReference = selection?.reference ?? null;
+    guideReference = guideReferenceForClass(sensorId, magnetModel, geometry, sensitivity, selection?.reference) ?? selection?.reference ?? null;
   }
   return {
     ...c,
     sensorId,
     magnetModel,
     guideReference,
-    sensitivity: classes.length && !classes.includes(c.sensitivity) ? classes[0]! : c.sensitivity,
+    sensitivity,
     geometry,
     mode: fake ? "education" : "reference",
     sensorAngle: 0,

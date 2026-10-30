@@ -9,7 +9,7 @@ import {fixingGroup,filterCatalog,EMPTY_CATALOG_FILTERS} from '../src/lib/stande
 import {SensorPlan} from '../src/components/standex/workshop/sensor-plan';
 
 test('round push-in sensors have their own filter, separate from ribbed press-fit bodies',()=>{
- const ids=['MK03','MK14','MK18','MK20_1','MK20_2'];
+ const ids=['MK03','MK07','MK14','MK18','MK20_1','MK20_2'];
  expect(filterCatalog({...EMPTY_CATALOG_FILTERS,fixing:'pushin'}).map(s=>s.id)).toEqual([...ids,'CUSTOM']);
  for(const id of ['MK36','MK37','MK38'])expect(fixingGroup(sensorById(id))).toBe('pressfit');
  expect(fixingGroup(sensorById('MK02'))).toBe('screw');

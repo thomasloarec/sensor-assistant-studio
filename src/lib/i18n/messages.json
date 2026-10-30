@@ -35584,5 +35584,68 @@
     "Лепестки обрезаны на границе ±{0} мм; физическое замыкание не выводится.",
     "Lobi troncati al limite visualizzato di ±{0} mm; nessuna chiusura fisica dedotta.",
     "表示範囲±{0} mmでローブが切れています。物理的な閉成は推定していません。"
+  ],
+  "Corps à insérer dans un alésage, blocage par écrou M8 × 0,75": [
+    "Push-in body with M8 × 0.75 locknut",
+    "插入式壳体，M8 × 0.75 锁紧螺母",
+    "Einsteckgehäuse mit M8 × 0,75 Kontermutter",
+    "Cuerpo insertable con contratuerca M8 × 0,75",
+    "Вставной корпус с контргайкой M8 × 0,75",
+    "Corpo a inserimento con controdado M8 × 0,75",
+    "M8 × 0.75 ロックナット付き挿入型ケース"
+  ],
+  "Polyamide · encapsulation polyuréthane": [
+    "Polyamide · polyurethane encapsulation",
+    "聚酰胺 · 聚氨酯灌封",
+    "Polyamid · Polyurethan-Verguss",
+    "Poliamida · encapsulado de poliuretano",
+    "Полиамид · полиуретановая заливка",
+    "Poliammide · incapsulamento in poliuretano",
+    "ポリアミド · ポリウレタン封止"
+  ],
+  "PVC · 2 × 0,14–0,25 / 3 × 0,14 mm²": [
+    "PVC · 2 × 0.14–0.25 / 3 × 0.14 mm²",
+    "PVC · 2 × 0.14–0.25 / 3 × 0.14 mm²",
+    "PVC · 2 × 0,14–0,25 / 3 × 0,14 mm²",
+    "PVC · 2 × 0,14–0,25 / 3 × 0,14 mm²",
+    "ПВХ · 2 × 0,14–0,25 / 3 × 0,14 мм²",
+    "PVC · 2 × 0,14–0,25 / 3 × 0,14 mm²",
+    "PVC · 2 × 0.14–0.25 / 3 × 0.14 mm²"
+  ],
+  "Insertion avec écrou de blocage": [
+    "Push-in mounting with locknut",
+    "插入安装，带锁紧螺母",
+    "Einsteckmontage mit Kontermutter",
+    "Montaje por inserción con contratuerca",
+    "Вставной монтаж с контргайкой",
+    "Montaggio a inserimento con controdado",
+    "ロックナット付き挿入取付"
+  ],
+  "Filetage M8 × 0,75 ; couple maximal 1 Nm. Rayon de courbure du câble : 15 fois son diamètre ; garder 5 mm droits à la sortie. Éviter les vis ferromagnétiques.": [
+    "M8 × 0.75 thread; maximum torque 1 Nm. Cable bend radius: 15 times its diameter; keep 5 mm straight at the outlet. Avoid ferromagnetic screws.",
+    "M8 × 0.75 螺纹；最大扭矩 1 Nm。电缆弯曲半径：直径的 15 倍；出口处保留 5 mm 直线段。避免使用铁磁性螺钉。",
+    "M8 × 0,75 Gewinde; maximales Drehmoment 1 Nm. Kabelbiegeradius: 15-facher Durchmesser; am Austritt 5 mm gerade lassen. Ferromagnetische Schrauben vermeiden.",
+    "Rosca M8 × 0,75; par máximo 1 Nm. Radio de curvatura: 15 veces el diámetro del cable; mantener 5 mm rectos a la salida. Evitar tornillos ferromagnéticos.",
+    "Резьба M8 × 0,75; максимальный момент 1 Н·м. Радиус изгиба кабеля: 15 диаметров; оставить 5 мм прямого участка у выхода. Избегать ферромагнитных винтов.",
+    "Filettatura M8 × 0,75; coppia massima 1 Nm. Raggio di curvatura: 15 volte il diametro del cavo; mantenere 5 mm diritti in uscita. Evitare viti ferromagnetiche.",
+    "M8 × 0.75 ねじ、最大トルク 1 Nm。ケーブル曲げ半径は直径の 15 倍。出口から 5 mm は直線を保つ。強磁性ねじは避ける。"
+  ],
+  "Variante illustrée : MK07-1A66B-500W, câble gris de 500 mm avec conducteurs brun et blanc. Longueur affichée raccourcie.": [
+    "Illustrated variant: MK07-1A66B-500W, 500 mm grey cable with brown and white wires. Displayed length is shortened.",
+    "示例型号：MK07-1A66B-500W，500 mm 灰色电缆，棕色和白色导线。显示长度已缩短。",
+    "Dargestellte Variante: MK07-1A66B-500W, 500 mm graues Kabel mit brauner und weißer Ader. Verkürzte Darstellung.",
+    "Variante ilustrada: MK07-1A66B-500W, cable gris de 500 mm con conductores marrón y blanco. Longitud representada abreviada.",
+    "Показан вариант MK07-1A66B-500W: серый кабель 500 мм с коричневой и белой жилами. Длина на изображении сокращена.",
+    "Variante illustrata: MK07-1A66B-500W, cavo grigio da 500 mm con conduttori marrone e bianco. Lunghezza visualizzata ridotta.",
+    "図示仕様：MK07-1A66B-500W、茶・白の導線を備えた 500 mm グレーケーブル。表示長さは短縮。"
+  ],
+  "Plan MK07-1A66B-500W : corps 39,5 mm, insertion 31,5 mm, pointe Ø 6,6 mm. Câble 500 mm représenté raccourci ; raccords, filetage et position interne du reed illustratifs.": [
+    "MK07-1A66B-500W drawing: 39.5 mm body, 31.5 mm insertion, Ø 6.6 mm tip. The 500 mm cable is shortened; transitions, thread and internal reed position are illustrative.",
+    "MK07-1A66B-500W 图纸：壳体 39.5 mm，插入长度 31.5 mm，端部 Ø 6.6 mm。500 mm 电缆已缩短；过渡、螺纹和内部簧片位置为示意。",
+    "Zeichnung MK07-1A66B-500W: Gehäuse 39,5 mm, Einstecklänge 31,5 mm, Spitze Ø 6,6 mm. Das 500-mm-Kabel ist verkürzt; Übergänge, Gewinde und innere Reedposition sind schematisch.",
+    "Plano MK07-1A66B-500W: cuerpo 39,5 mm, inserción 31,5 mm, punta Ø 6,6 mm. Cable de 500 mm abreviado; transiciones, rosca y posición interna del reed ilustrativas.",
+    "Чертёж MK07-1A66B-500W: корпус 39,5 мм, вставная часть 31,5 мм, наконечник Ø 6,6 мм. Кабель 500 мм сокращён; переходы, резьба и положение геркона показаны условно.",
+    "Disegno MK07-1A66B-500W: corpo 39,5 mm, inserimento 31,5 mm, punta Ø 6,6 mm. Cavo da 500 mm accorciato; raccordi, filettatura e posizione interna del reed illustrativi.",
+    "MK07-1A66B-500W 図面：ケース 39.5 mm、挿入長 31.5 mm、先端 Ø 6.6 mm。500 mm ケーブルは短縮表示。段差、ねじ、内部リード位置は模式的。"
   ]
 }

@@ -42,7 +42,7 @@ alter table lead.detection_magnet_allow
   add column if not exists shape text check (shape in ('tubular','block'));
 
 -- Capteurs réels du catalogue. Les familles présentes uniquement dans la
--- brochure (MK06-5 à MK06-8, MK07, MK12) restent SANS forme déclarée : elles
+-- brochure (MK06-5 à MK06-8, MK12) restent SANS forme déclarée : elles
 -- n'acceptent pas de distance de commutation, donc aucune forme n'est inventée.
 update lead.detection_sensor_allow a
    set shape = v.shape
@@ -57,6 +57,7 @@ update lead.detection_sensor_allow a
   ('MK06-4','block'),
   ('MK24-A-J','block'),
   ('MK03','tubular'),
+  ('MK07','tubular'),
   ('MK02','block'),
   ('MK04','block'),
   ('MK05','block'),

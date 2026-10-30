@@ -30,6 +30,8 @@ import { isShapeCompatible, isShapeIncompatible } from "./shape-compatibility";
  * registre publié.
  */
 export const DEFAULT_PAIRS: Readonly<Record<string, string>> = {
+  // Strongest documented bare block offered for the illustrative PCB.
+  CUSTOM: "HF3225-14.95X10X5",
   MK02: "M02",
   MK03: "M03",
   MK04: "M04",

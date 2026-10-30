@@ -15,7 +15,7 @@ export const CATALOG_ALL = "all";
 export function fixingGroup(model: SensorModel): string {
   if (model.shape === "flange" || model.shape === "block") return "screw";
   if (model.shape === "threaded") return "threaded";
-  if (["MK03", "MK14", "MK18", "MK20_1", "MK20_2"].includes(model.id)) return "pushin";
+  if (["MK03", "MK07", "MK14", "MK18", "MK20_1", "MK20_2"].includes(model.id)) return "pushin";
   if (model.shape === "pressfit") return "pressfit";
   if (model.shape === "smd" || model.shape === "custom_pcb") return "pcb";
   return "unknown";

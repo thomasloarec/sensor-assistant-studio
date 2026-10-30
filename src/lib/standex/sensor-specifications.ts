@@ -128,6 +128,13 @@ export const SENSOR_SPECIFICATIONS: Readonly<Record<string, SensorSpecifications
     electrical: [v66, option("75", 10, 500, 0.5, 1), v90],
     strength: "Format cylindrique",
   },
+  MK07: {
+    ...standard, material: "Polyamide · encapsulation polyuréthane",
+    cableMaterial: "PVC · 2 × 0,14–0,25 / 3 × 0,14 mm²", cableLengths: [200,300,500,1000,1500],
+    electrical: [v66,v85,v90], strength: "Insertion avec écrou de blocage",
+    integration: "Filetage M8 × 0,75 ; couple maximal 1 Nm. Rayon de courbure du câble : 15 fois son diamètre ; garder 5 mm droits à la sortie. Éviter les vis ferromagnétiques.",
+    cableNote: "Variante illustrée : MK07-1A66B-500W, câble gris de 500 mm avec conducteurs brun et blanc. Longueur affichée raccourcie.",
+  },
   MK02: {
     ...standard,
     strength: "Détection de métal ferreux",

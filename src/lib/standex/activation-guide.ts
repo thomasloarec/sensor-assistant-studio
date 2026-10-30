@@ -470,3 +470,21 @@ export function formatGuideBound(
   if (bound === "below_zero") return "<0";
   return "—";
 }
+
+/** Explicit documented reference formats. A contact form (MK24-A-J) is not an AT class. */
+export function guideSensitivityClass(reference: string): string | null {
+  const m = /(?:66|GP501)([A-G])(?:\b|-)|^MK(?:06-[4-8]|15|16|17)-([A-G])(?:-X)?$/.exec(reference);
+  return m?.[1] ?? m?.[2] ?? null;
+}
+export function guideSensitivityClasses(sensorId: string, magnetId: string): string[] {
+  return [...new Set(guideRangesFor(sensorId, magnetId).flatMap(r => {
+    const k = guideSensitivityClass(r.sensorReference); return k ? [k] : [];
+  }))].sort();
+}
+/** Keep the reed variant when possible, and match the selected class to its printed row. */
+export function guideReferenceForClass(sensorId: string, magnetId: string, approach: string, sensitivity: string, preferred?: string | null): string | null {
+  if (!guideShapeAllowed(sensorId, magnetId)) return null;
+  const rows = guideRangesFor(sensorId, magnetId).filter(r => r.approachId === approach && guideSensitivityClass(r.sensorReference) === sensitivity && usableRow(r));
+  const stem = (ref: string) => ref.replace(/([A-G])(?=-X$|$)/, '');
+  return rows.find(r => preferred && stem(r.sensorReference) === stem(preferred))?.sensorReference ?? rows[0]?.sensorReference ?? null;
+}

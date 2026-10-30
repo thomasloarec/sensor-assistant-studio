@@ -94,6 +94,15 @@
       "dimensionsLabel": "corps 25.5×5.8×5.8 mm, enveloppe 25.5×5.8×5.8 mm"
     },
     {
+      "id": "MK07",
+      "fileName": "MK07.step",
+      "bytes": 31503,
+      "pedagogical": false,
+      "sourceLabel": "MK07-1A66B-500W.png",
+      "sourceUrl": "/datasheets/MK07-1A66B-500W.png",
+      "dimensionsLabel": "corps 39.5×13×13 mm, enveloppe 39.5×13.85640646055102×13 mm"
+    },
+    {
       "id": "MK02",
       "fileName": "MK02.step",
       "bytes": 5922,

@@ -28,12 +28,12 @@ export function ClientPedagogicalControls({config,update,onCatalog,onCable,appro
   return <div className="mw-ped-controls" data-testid="client-pedagogical-controls">
     <h2 className="t-title-m">{t(sensorById(config.sensorId).name)}</h2>
     <Button variant="secondary" onClick={onCatalog}>{t('Changer de couple')}</Button>
-    {ordinalClasses ? <div className="mw-sensitivity-control">
+    {available.length > 0 && (ordinalClasses ? <div className="mw-sensitivity-control">
       <label className="mw-field"><span>{t('Sensibilité magnétique')}<output className="t-caption">{msg('Classe {0}',[config.sensitivity])}</output></span>
         {classes.length>1&&<input type="range" aria-label={t('Sensibilité magnétique')} aria-valuetext={msg('Classe {0}',[config.sensitivity])} min="0" max={classes.length-1} step="1" value={classes.indexOf(config.sensitivity)} onInput={e=>update({sensitivity:classes[Number(e.currentTarget.value)]!})}/>}
       </label>
       {classes.length>1&&<div className="mw-sensitivity-ends t-caption"><span>{t('Plus sensible · détecte de plus loin')}</span><span>{t('Moins sensible · aimant plus proche')}</span></div>}
-    </div> : <label className="mw-select-label">{t('Configuration du contact')}<select aria-label={t('Configuration du contact')} value={config.sensitivity} onChange={e=>update({sensitivity:e.target.value})}>{classes.map(c=><option key={c} value={c}>{c}</option>)}</select></label>}
+    </div> : <label className="mw-select-label">{t('Configuration du contact')}<select aria-label={t('Configuration du contact')} value={config.sensitivity} onChange={e=>update({sensitivity:e.target.value})}>{classes.map(c=><option key={c} value={c}>{c}</option>)}</select></label>)}
     {!config.machine&&<>
       <section className="mw-choice" aria-label={t('Disposition')}>
         <p className="t-label">{t('Disposition')}</p>
