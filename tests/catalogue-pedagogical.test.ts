@@ -32,8 +32,8 @@ describe('versioned C1% catalogue layer, historical B isolated',()=>{
   expect(f.world.center[0]).toBe(10+(m.body[0]+m.magnetBody[0])/2);expect(f.world.center[2]).toBe(c.lateralShift);
   expect(m.publishedRows.every(r=>r.approachId==='F1'&&r.datum==='frontal_faces')).toBe(true);
  });
- test('31 explicit profiles retain every visual body and exact magnet identity',()=>{
-  expect(SENSOR_CATALOG.length).toBe(31);expect(Object.keys(CATALOGUE_PROFILES).length).toBe(31);
+ test('32 explicit profiles retain every visual body and exact magnet identity',()=>{
+  expect(SENSOR_CATALOG.length).toBe(32);expect(Object.keys(CATALOGUE_PROFILES).length).toBe(32);
   for(const s of SENSOR_CATALOG){const m=catalogueModel({...DEFAULT_WORKSHOP,sensorId:s.id});expect(m.body).toEqual(s.body);expect(m.lengthMm).toBeLessThanOrEqual(s.body[0]);expect(m.magnetId).toBe('M04');}
  });
  test('every catalogue proposed couple has indicative zones inside displayed domain',()=>{

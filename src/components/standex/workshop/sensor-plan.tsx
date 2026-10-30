@@ -1,3 +1,4 @@
+import { insertionParts } from '@/lib/standex/insertion-profile';
 import { cableConstruction } from "@/lib/leadmagnet/product-presentation";
 import type { SensorModel } from "@/lib/standex/sensor-catalog";
 import {
@@ -99,13 +100,14 @@ export function SensorPlan({
         ))
       ) : electrical && showCable && cableConstruction(model) !== "none" ? (
         <g transform={`translate(${cableSide * l / 2}, ${z}) scale(${cableSide},1)`} fill="none">
-          {cableConstruction(model) !== "wires" ? <path d="M0 0 H2 Q3 -1.2 4 0 T6 0 H7" stroke="#60727d" strokeWidth="1.6" /> : null}
+          {cableConstruction(model) !== "wires" ? <path d="M0 0 H2 Q3 -1.2 4 0 T6 0 H7" stroke={model.jacketColor ?? "#60727d"} strokeWidth="1.6" /> : null}
           {[-1,1].map(sign => <g key={sign}>
-            <path d={cableConstruction(model) === "wires" ? `M0 ${sign * 0.5} H2 Q3 ${sign * 0.5 - 1.2} 4 ${sign * 0.5} T6 ${sign * 0.5} H9` : `M7 ${sign * 0.35} L9 ${sign * 0.7}`} stroke={model.wireColor ?? "#60727d"} strokeWidth="0.5" />
+            <path d={cableConstruction(model) === "wires" ? `M0 ${sign * 0.5} H2 Q3 ${sign * 0.5 - 1.2} 4 ${sign * 0.5} T6 ${sign * 0.5} H9` : `M7 ${sign * 0.35} L9 ${sign * 0.7}`} stroke={model.wireColors?.[sign === -1 ? 0 : 1] ?? model.wireColor ?? "#60727d"} strokeWidth="0.5" />
             <path d={`M9 ${sign * (cableConstruction(model) === "wires" ? 0.5 : 0.7)} h2`} stroke="#a7b5bd" strokeWidth="0.3" />
           </g>)}
         </g>
       ) : null}
+      {model.insertionMount ? insertionParts(model).map(p=><rect key={p.name} x={p.center-p.length/2} y={-(p.hexWidth ?? p.diameter)/2} width={p.length} height={p.hexWidth ?? p.diameter} fill={p.metal ? 'var(--muted-foreground)' : model.color} fillOpacity={revealContacts ? .28 : 1}/>) : <>
       <rect
         x={-l / 2}
         y={-w / 2}
@@ -119,6 +121,7 @@ export function SensorPlan({
         stroke={model.color}
         strokeWidth={0.28}
       />
+      </>}
       {model.section === "one_flat" ? (
         <line
           data-profile="one_flat"

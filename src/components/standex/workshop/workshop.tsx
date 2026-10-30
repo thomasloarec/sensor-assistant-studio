@@ -36,7 +36,7 @@ import { GuideMaterials } from "./guide-materials";
 import {
   guideIllustrativeMarks,
   guideRangesFor,
-  guideSelectionFor,
+  guideReferenceForClass, guideSelectionFor,
 } from "@/lib/standex/activation-guide";
 
 import { standardShapeForSensor } from "@/lib/standex/magnet-recommendation";
@@ -1102,7 +1102,7 @@ export default function MagneticWorkshop({
     const merged = { ...config, ...patch };
     const next = clientPedagogical&&!exploring?clientDiscoveryConfig(merged):merged;
     if(clientPedagogical&&!exploring&&(patch.magnetModel!==undefined||patch.sensitivity!==undefined||patch.geometry!==undefined))
-      next.guideReference=guideSelectionFor(next.sensorId,next.magnetModel,next.geometry,null)?.reference??null;
+      next.guideReference=guideReferenceForClass(next.sensorId,next.magnetModel,next.geometry,next.sensitivity,next.guideReference);
     if (next.end >= next.start) {
       if (patch.start !== undefined) next.end = Math.max(1, next.start - 1);
       else next.start = Math.min(60, next.end + 1);
@@ -2563,6 +2563,7 @@ export default function MagneticWorkshop({
               t(pedagogical?PLACEMENT_LABEL[placement.state]:contactLabel[sample.contact]),
             ])}
           >
+            {pedagogical && zones && (preparing || (view === "top" && !playing ? cutSampled.busy : sampled.busy)) && <div className="mw-zone-loading" role="status" aria-label={t("Calcul des volumes en cours…")} data-testid="zone-loading"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true"><path d="M12 3a9 9 0 1 1-9 9" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/></svg></div>}
             <div className="mw-scene-tools">
               {/* La source des distances est portée par le bandeau de verdict.
                   Elle n'est répétée sur la scène que pour une référence
@@ -2811,7 +2812,7 @@ export default function MagneticWorkshop({
                 setProgress(Number(e.target.value) / 100);
               }}
             />
-            {clientPedagogical && !exploring ? <div className="mw-legend" data-testid="client-product-legend"><span>{config.sensorId} + {config.magnetModel}</span><span className="mw-ped-high">{t("Zone favorable estimée")}</span><span className="mw-ped-low">{t("Dépend de la sensibilité")}</span><span className="mw-ped-gray">{t("Positions où l’aimant rencontrerait ce corps")}</span>{layerThresholds?.low!=null&&<span>{t('Zone jaune : activation possible selon l’exemplaire. La lampe illustre la borne la plus sensible de la classe, pas une activation garantie.')}</span>}<span>{t('Le repère indique le centre magnétique estimé ; c’est sa position dans les lobes qui commande la lampe.')}</span>{sampled.busy&&<span>{t("Calcul des volumes en cours…")}</span>}{sampled.failed&&<span>{t("Calcul des zones interrompu")}</span>}{sampled.volume?.truncated&&<span>{msg("Lobes tronqués aux limites du domaine affiché ±{0} mm ; aucune fermeture physique déduite.",[sampled.volume.extent])}</span>}<span>{t(CATALOGUE_LABELS.notice)}</span></div> : pedagogical ? <div className="mw-legend" data-testid="pedagogical-legend"><span className="mw-ped-high">{t("Zone favorable estimée")}</span><span className="mw-ped-low">{t("Dépend de la sensibilité")}</span><span className="mw-ped-body">{t("Capteur générique, reed 66 monté")}</span><span className="mw-ped-gray">{t("Positions où l’aimant rencontrerait ce corps")}</span>{machine&&<span className="mw-ped-hatch">{t("Chevauchement possible avec une pièce du montage — à vérifier")}</span>}<span>{t("Estimation indicative")}</span></div> : <div className="mw-legend">
+            {clientPedagogical && !exploring ? <div className="mw-legend" data-testid="client-product-legend"><span>{config.sensorId} + {config.magnetModel}</span><span className="mw-ped-high">{t("Zone favorable estimée")}</span><span className="mw-ped-low">{t("Dépend de la sensibilité")}</span><span className="mw-ped-gray">{t("Positions où l’aimant rencontrerait ce corps")}</span>{layerThresholds?.low!=null&&<span>{t('Zone jaune : activation possible selon l’exemplaire. La lampe illustre la borne la plus sensible de la classe, pas une activation garantie.')}</span>}<span>{t('Le repère indique le centre magnétique estimé ; c’est sa position dans les lobes qui commande la lampe.')}</span>{sampled.failed&&<span>{t("Calcul des zones interrompu")}</span>}{sampled.volume?.truncated&&<span>{msg("Lobes tronqués aux limites du domaine affiché ±{0} mm ; aucune fermeture physique déduite.",[sampled.volume.extent])}</span>}<span>{t(CATALOGUE_LABELS.notice)}</span></div> : pedagogical ? <div className="mw-legend" data-testid="pedagogical-legend"><span className="mw-ped-high">{t("Zone favorable estimée")}</span><span className="mw-ped-low">{t("Dépend de la sensibilité")}</span><span className="mw-ped-body">{t("Capteur générique, reed 66 monté")}</span><span className="mw-ped-gray">{t("Positions où l’aimant rencontrerait ce corps")}</span>{machine&&<span className="mw-ped-hatch">{t("Chevauchement possible avec une pièce du montage — à vérifier")}</span>}<span>{t("Estimation indicative")}</span></div> : <div className="mw-legend">
               <span>
                 <i className="closed" />
                 {t("Fermé")}

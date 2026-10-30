@@ -31,28 +31,30 @@ export function cutKey(settings:ExperimentSettings,frame:PedagogicalFrame,obstac
 }
 function useWorkerVolume(enabled:boolean,available:boolean,key:string,mode:'volume'|'cut',settings:ExperimentSettings,frame:PedagogicalFrame,obstacles:readonly Obb[]|null,catalogue?:WorkshopConfig){
  const store=mode==='volume'?cache:cutCache;
- const [result,setResult]=useState<SampledVolume|null>(null),[busy,setBusy]=useState(false),[failed,setFailed]=useState(false);
+ const [result,setResult]=useState<SampledVolume|null>(null),[failedKey,setFailedKey]=useState<string|null>(null);
  useEffect(()=>{
-  setResult(null);setFailed(false);
-  if(!enabled||!available){setBusy(false);return;}
-  const hit=(mode==='volume'?pinned.get(key):undefined)??store.get(key);if(hit){setResult(hit);setBusy(false);return;}
-  if(typeof Worker==='undefined'){setFailed(true);return;}
-  let current=true,worker:Worker|null=null;setBusy(true);
+  setResult(null);setFailedKey(null);
+  if(!enabled||!available){return;}
+  const hit=(mode==='volume'?pinned.get(key):undefined)??store.get(key);if(hit){setResult(hit);return;}
+  if(typeof Worker==='undefined'){setFailedKey(key);return;}
+  let current=true,worker:Worker|null=null;
   const timer=setTimeout(()=>{
    worker=new Worker(new URL('./pedagogical.worker.ts',import.meta.url),{type:'module'});
    worker.onmessage=(event:MessageEvent<{key:string;result?:SampledVolume;error?:boolean}>)=>{
     if(!current||event.data.key!==key)return;
-    if(event.data.result&&event.data.result.key===key&&available){if(store.size>=12){const first=store.keys().next().value;if(first)store.delete(first);}store.set(key,event.data.result);setResult(event.data.result);}else setFailed(true);
-    setBusy(false);worker?.terminate();worker=null;
+    if(event.data.result&&event.data.result.key===key&&available){if(store.size>=12){const first=store.keys().next().value;if(first)store.delete(first);}store.set(key,event.data.result);setResult(event.data.result);}else setFailedKey(key);
+    worker?.terminate();worker=null;
    };
-   worker.onerror=()=>{if(current){setBusy(false);setFailed(true);}worker?.terminate();};
+   worker.onerror=()=>{if(current){setFailedKey(key);}worker?.terminate();};
    worker.postMessage({settings,axis:frame.pose.axis,planeZ:catalogue?CATALOGUE_CUT_PLANE_Z:frame.pose.center[2],key,mode,obstacles:obstacles??[],catalogue,frame:catalogue?(frame.pose as {frame?:unknown}).frame:undefined});
   },0);
   return ()=>{current=false;clearTimeout(timer);worker?.terminate();};
- },[enabled,key]);
+ },[enabled,available,key]);
  // Read a prepared hit synchronously. Waiting for an effect used to blank every orientation change.
  const hit=(mode==='volume'?pinned.get(key):undefined)??store.get(key);
- return {volume:enabled&&available?(hit??(result?.key===key?result:null)):null,busy:!hit&&busy,failed:!hit&&failed};
+ const volume=enabled&&available?(hit??(result?.key===key?result:null)):null;
+ const failed=enabled&&available&&!hit&&failedKey===key;
+ return {volume,busy:enabled&&available&&!volume&&!failed,failed};
 }
 /** `obstacles`: loaded part boxes in the reed frame of the SAME instant; they enter the key.
  * The volume no longer depends on the instant: it stays computed and displayed during playback. */

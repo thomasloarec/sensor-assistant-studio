@@ -2,9 +2,9 @@
  * Internal datums are explicit modelling hypotheses. No brochure bound is fitted.
  * All responses use the shared C1% response and the common k×AT threshold.
  */
-import { SENSOR_CATALOG, sensorById, customLayout, bladeOffsetY } from './sensor-catalog';
+import { SENSOR_CATALOG, sensorById, customLayout, bladeOffsetY, overallEnvelope } from './sensor-catalog';
 import { BARE_MAGNETS, packagedMagnet, ACTIVATION_BROCHURE } from './magnet-catalog';
-import { guideRangesFor } from './activation-guide';
+import { guideRangesFor, guideSensitivityClasses } from './activation-guide';
 import { pedagogicalFrame, type PedagogicalFrame } from './pedagogical-poses';
 import { rotate, componentPose, cycleU } from './machine-assembly';
 import type { Vec3 } from './magnetic-workshop';
@@ -32,6 +32,7 @@ export const CATALOGUE_PROFILES:Record<string,{family:Family;lengthMm:number;met
  MK22:{family:'other',lengthMm:8,method:'body-centre'}, MK30:{family:'other',lengthMm:14,method:'board-centre'},
  MK31:{family:'other',lengthMm:4,method:'board-centre'}, 'MK06-4':{family:'other',lengthMm:8,method:'body-centre'},
  'MK24-A-J':{family:'other',lengthMm:3,method:'miniature-centre'}, MK03:{family:'66-capable',lengthMm:14,method:'body-centre'},
+ MK07:{family:'66-capable',lengthMm:14,method:'body-centre'},
  MK02:{family:'other',lengthMm:14,method:'body-centre'}, MK04:{family:'66-capable',lengthMm:14,method:'body-centre'},
  MK05:{family:'66-capable',lengthMm:14,method:'body-centre'}, MK13:{family:'66-capable',lengthMm:14,method:'body-centre'},
  MK14:{family:'66-capable',lengthMm:14,method:'body-centre'}, MK18:{family:'other',lengthMm:10,method:'body-centre'},
@@ -99,7 +100,7 @@ export function catalogueFrame(c:WorkshopConfig,t:number):PedagogicalFrame&{pose
  const toLocal=(v:Vec3)=>basis.map(b=>dot(b,v)) as Vec3;
  return {origin,basis,world:{center,axis,frame:wf},pose:{center:toLocal(mp),axis:toLocal(axis),frame:wf.map(toLocal) as Frame}};
 }
-export function catalogueBodyObb(c:WorkshopConfig):Obb{return {path:'sensor-body',c:[0,0,0],a:E,h:sensorById(c.sensorId).body.map(n=>n/2) as Vec3};}
+export function catalogueBodyObb(c:WorkshopConfig):Obb{const s=sensorById(c.sensorId);return {path:'sensor-body',c:[0,0,0],a:E,h:(s.insertionMount?overallEnvelope(s):s.body).map(n=>n/2) as Vec3};}
 /** The custom PCB is not a solid box up to the top of the reed. Keep separate
  * conservative envelopes for the board and its moulded component. */
 export function catalogueBodyObbs(c:WorkshopConfig):Obb[]{
@@ -219,7 +220,7 @@ export function catalogueCoverage(){return SENSOR_CATALOG.map(s=>({sensorId:s.id
 export function catalogueClasses(sensorId:string,magnetModel:string,published:readonly string[]):string[]{
  // MK15-B-X etc. encode a sensitivity too; MK24-A-J is a contact variant,
  // so never infer a class from an arbitrary standalone letter in every family.
- const guide=guideRangesFor(sensorId,magnetModel).flatMap(r=>{const m=/66([A-G])(?:\b|-)|^MK15-([A-G])-X$/.exec(r.sensorReference);const k=m?.[1]??m?.[2];return k?[k]:[];});
+ const guide=guideSensitivityClasses(sensorId,magnetModel);
  return [...new Set([...published,...guide])].sort();
 }
 

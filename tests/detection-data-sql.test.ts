@@ -164,7 +164,7 @@ describe("migration 1.9 exécutée : chemin d'appel et autorisation réels", () 
     const db = await bootstrap();
     try {
       await asRole(db, "authenticated", ADMIN);
-      for (const family of ["NOT_A_SENSOR", "GENERIC", "CUSTOM", "MK07"])
+      for (const family of ["NOT_A_SENSOR", "GENERIC", "CUSTOM", "MK12"])
         await expect(save(db, { ...VALID, sensorFamily: family }, null)).rejects.toThrow(
           "DETECTION_UNKNOWN_SENSOR",
         );
@@ -624,3 +624,18 @@ describe("migration 1.10 exécutée sur le schéma 1.9 inchangé", () => {
     }
   });
 });
+
+// Upgrade path for installations that previously knew MK07 only as a guide row.
+test('MK07 catalogue migration promotes only its allow-list entry, without publishing distances',async()=>{
+ const db=await bootstrap();
+ try {
+  await db.exec(SHAPE_MIGRATION);
+  await db.exec("update lead.detection_sensor_allow set guide_only=true,shape=null where sensor_family='MK07'");
+  const sql=readFileSync('supabase/migrations/20261030105820_add_mk07_catalogue.sql','utf8');
+  await db.exec(sql);await db.exec(sql);
+  const r=await db.query("select guide_only,shape from lead.detection_sensor_allow where sensor_family='MK07'");
+  expect(r.rows).toEqual([{guide_only:false,shape:'tubular'}]);
+  const data=await db.query("select count(*)::int n from lead.detection_rows where sensor_family='MK07'");
+  expect(data.rows).toEqual([{n:0}]);
+ }finally{await db.close();}
+},30000);

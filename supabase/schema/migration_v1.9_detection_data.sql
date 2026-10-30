@@ -168,7 +168,7 @@ insert into lead.detection_sensor_allow (sensor_family, guide_only) values
   ('MK06-6', true),
   ('MK06-7', true),
   ('MK06-8', true),
-  ('MK07', true),
+  ('MK07', false),
   ('MK12', true)
 on conflict (sensor_family) do nothing;
 

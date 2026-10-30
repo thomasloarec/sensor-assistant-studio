@@ -1,7 +1,7 @@
 import MagnetCatalog from "./magnet-catalog";
 import { useEffect, useRef, useState } from "react";
 import { Search, X, ArrowUpRight, Check } from "lucide-react";
-import { sizeLabel, sensorSource } from "@/lib/standex/sensor-catalog";
+import { sizeLabel, sensorDrawingSource } from "@/lib/standex/sensor-catalog";
 import { CATALOG_ALL, documentedCount, filterCatalog } from "@/lib/standex/catalog-filters";
 import SensorCard from "./sensor-card";
 import { useLocale } from "@/lib/i18n/react";
@@ -363,8 +363,8 @@ export default function SensorCatalog({
                 <button className="mw-product-card-button" onClick={() => setCard(s.id)}>
                   {t("Découvrir ce capteur")}
                 </button>
-                {sensorSource(s) && (
-                  <a href={sensorSource(s)!} target="_blank" rel="noreferrer">
+                {sensorDrawingSource(s) && (
+                  <a href={sensorDrawingSource(s)!} target="_blank" rel="noreferrer">
                     {t("Consulter le plan Standex")}
                     <ArrowUpRight size={13} />
                   </a>

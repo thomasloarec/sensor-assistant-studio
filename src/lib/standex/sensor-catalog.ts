@@ -26,6 +26,11 @@ export interface SensorModel {
   leads?: "wires";
   /** Visual insulation colour, scoped to the documented product only. */
   wireColor?: string;
+  wireColors?: readonly [string, string];
+  jacketColor?: string;
+  drawingFile?: string;
+  /** Supplied MK07-1A66B-500W drawing, millimetres; rear shoulder split is illustrative. */
+  insertionMount?: { noseDiameter:number; insertionLength:number; threadLength:number; threadDiameter:number; pitch:number; nutThickness:number; nutWidth:number; rearHexWidth:number; shoulderLength:number };
   reedOffsetZ?: number;
   terminalSpan?: number;
   collarDiameter?: number;
@@ -179,6 +184,14 @@ export const SENSOR_CATALOG: readonly SensorModel[] = [
     note: "Corps 5 × 2,2 × 1,6 mm ; encombrement avec connexions J : 5,5 mm. Les autres connexions et Form B ont d'autres encombrements.",
   },
   cylindrical("MK03", 25.5, 5.8),
+  {
+    ...cylindrical("MK07", 39.5, 13), color: "#202124", cableSide: 1,
+    sourcePage: 2, drawingFile: "MK07-1A66B-500W.png",
+    jacketColor: "#a3a7ac", wireColors: ["#79523a", "#eeeeea"],
+    insertionMount: { noseDiameter:6.6, insertionLength:31.5, threadLength:6, threadDiameter:8, pitch:0.75, nutThickness:2.5, nutWidth:12, rearHexWidth:10, shoulderLength:1.5 },
+    description: "Corps à insérer dans un alésage, blocage par écrou M8 × 0,75",
+    note: "Plan MK07-1A66B-500W : corps 39,5 mm, insertion 31,5 mm, pointe Ø 6,6 mm. Câble 500 mm représenté raccourci ; raccords, filetage et position interne du reed illustratifs.",
+  },
   flanged(
     "MK02",
     32.4,
@@ -340,6 +353,7 @@ export { number as formatMm } from "@/lib/i18n/core";
 import { number as formatMm } from "@/lib/i18n/core";
 export function sizeLabel(s: SensorModel): string {
   const [l, h, w] = s.body;
+  if (s.insertionMount) return `${formatMm(l)} mm · Ø ${formatMm(s.insertionMount.noseDiameter)} mm · M${formatMm(s.insertionMount.threadDiameter)} × ${formatMm(s.insertionMount.pitch)}`;
   if (s.id === "MK18") return `${formatMm(l)} mm · Ø 5 mm`;
   if (["cylinder", "threaded", "pressfit", "glass"].includes(s.shape) && h === w)
     return `${formatMm(l)} mm · Ø ${formatMm(h)} mm`;
@@ -347,6 +361,7 @@ export function sizeLabel(s: SensorModel): string {
 }
 export const sensorSource = (s: SensorModel) =>
   s.sourceFile ? `/datasheets/${s.sourceFile}#page=${s.sourcePage}` : null;
+export const sensorDrawingSource = (s: SensorModel) => s.drawingFile ? `/datasheets/${s.drawingFile}` : sensorSource(s);
 /** Blade centre is illustrative, inside the raised part; this is not a CAD datum. */
 export const bladeOffsetZ = (s: SensorModel) =>
   s.reedOffsetZ ?? (s.shape === "flange" ? -s.body[2] / 2 + (s.raisedDepth ?? s.body[2]) / 2 : 0);
@@ -355,14 +370,15 @@ export const bladeOffsetY = (s: SensorModel) => {
   const layout = customLayout(s);
   return layout ? -s.body[1] / 2 + layout.pcbThickness + layout.reedDiameter / 2 : 0;
 };
-export const bladeLength = (s: SensorModel) => (s.reed ? s.reed[0] : s.body[0]) * 0.64;
+export const bladeLength = (s: SensorModel) => s.insertionMount ? 14 : (s.reed ? s.reed[0] : s.body[0]) * 0.64;
 export const MAGNET_REFERENCE = { length: 32.4, height: 10, width: 16.7 }; // M02, Packaged Magnets V03, 18 Jun 2026.
 /** Encombrement réellement occupé [longueur, hauteur, largeur] : la longueur
  * inclut les terminaisons quand elles sont documentées (MK24-A-J : 5,5 mm avec
  * connexions J, et non les 5 mm du seul corps). Aucune valeur n'est inventée :
  * sans terminaison documentée, c'est le corps qui fait foi. */
 export function overallEnvelope(s: SensorModel): readonly [number, number, number] {
-  return [Math.max(s.body[0], s.terminalSpan ?? 0), s.body[1], s.body[2]];
+  const nutDiameter = s.insertionMount ? s.insertionMount.nutWidth * 2 / Math.sqrt(3) : 0;
+  return [Math.max(s.body[0], s.terminalSpan ?? 0), Math.max(s.body[1], nutDiameter), Math.max(s.body[2], s.insertionMount?.nutWidth ?? 0)];
 }
 
 /** Titre AFFICHÉ d'une gamme et variante illustrée. L'identifiant interne, la

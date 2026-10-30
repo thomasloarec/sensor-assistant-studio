@@ -1,3 +1,4 @@
+import { insertionParts } from '@/lib/standex/insertion-profile';
 import { cableConstruction } from "@/lib/leadmagnet/product-presentation";
 import { catalogueFrame } from '@/lib/standex/catalogue-pedagogical';
 import { bodyKind, oneFlatProfile } from "@/lib/standex/section-profile";
@@ -293,7 +294,10 @@ function StandardBody({
   const cylindrical = ["cylinder", "threaded", "pressfit", "glass"].includes(model.shape);
   return (
     <group>
-      {bodyKind(model) === "one_flat" ? (
+      {model.insertionMount ? <>
+        {insertionParts(model).map(part=><mesh key={part.name} position={[part.center,0,0]} rotation={[0,0,Math.PI/2]}><cylinderGeometry args={[part.diameter/2,part.diameter/2,part.length,part.hexWidth?6:48,1,false,part.hexWidth?Math.PI/2:0]}/>{part.metal?<meshStandardMaterial color="#b7b9bc" metalness={0.8} roughness={0.3} transparent={xray} opacity={opacity} depthWrite={!xray}/>:material}</mesh>)}
+        {Array.from({length:Math.floor(model.insertionMount.threadLength/model.insertionMount.pitch)},(_,i)=><mesh key={i} position={[-l/2+model.insertionMount!.insertionLength-model.insertionMount!.threadLength+(i+0.5)*model.insertionMount!.pitch,0,0]} rotation={[0,Math.PI/2,0]}><torusGeometry args={[model.insertionMount!.threadDiameter/2,0.12,6,40]}/>{material}</mesh>)}
+      </> : bodyKind(model) === "one_flat" ? (
         <mesh position={[-l / 2, 0, 0]} rotation={[0, Math.PI / 2, 0]} data-body="one_flat">
           <extrudeGeometry
             args={[oneFlatShape(h, w), { depth: l, bevelEnabled: false, curveSegments: 24 }]}
@@ -399,7 +403,7 @@ export function SensorCable({ model }: { model: SensorModel }) {
         <mesh position={[start + side * 3.5, y, z]} rotation={[0, 0, Math.PI / 2]}>
           <cylinderGeometry args={[0.9, 0.9, 7, 16]} />
           <meshStandardMaterial
-            color={kind === "metal" ? "#a7b5bd" : "#60727d"}
+            color={model.jacketColor ?? (kind === "metal" ? "#a7b5bd" : "#60727d")}
             metalness={kind === "metal" ? 0.8 : 0.1}
             roughness={0.5}
           />
@@ -412,7 +416,7 @@ export function SensorCable({ model }: { model: SensorModel }) {
               [start + side * split, y, z + sign * 0.4],
               [start + side * 10, y, z + sign * 0.65],
             ]}
-            color={model.wireColor ?? "#60727d"}
+            color={model.wireColors?.[sign === -1 ? 0 : 1] ?? model.wireColor ?? "#60727d"}
             lineWidth={2}
           />
           <Line

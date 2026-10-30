@@ -1,3 +1,4 @@
+import { insertionParts } from '../src/lib/standex/insertion-profile';
 /**
  * Générateur reproductible de fichiers STEP (ISO-10303-21, schéma AP214)
  * d'ENCOMBREMENT pour chaque capteur de SENSOR_CATALOG.
@@ -31,7 +32,7 @@ import {
   SENSOR_CATALOG,
   overallEnvelope,
   customLayout,
-  sensorSource,
+  sensorDrawingSource,
   type SensorModel,
 } from "../src/lib/standex/sensor-catalog";
 
@@ -234,11 +235,12 @@ export const FACETED_APPROXIMATION_SIDES = 24;
 
 function provenance(s: SensorModel): string {
   if (!s.sourceFile) return "schéma pédagogique, aucune référence commandable";
-  return `${s.sourceFile}, page ${s.sourcePage}`;
+  return s.drawingFile ?? `${s.sourceFile}, page ${s.sourcePage}`;
 }
 
 export function solidsFor(doc: StepDoc, s: SensorModel): string[] {
   const [ox, oy, oz] = overallEnvelope(s);
+  if(s.insertionMount) return insertionParts(s).map(p=>p.hexWidth ? hexPrism(doc,s.id+'_'+p.name,p.center,0,0,p.length,p.hexWidth) : ellipseCylinder(doc,s.id+'_'+p.name,p.center,0,0,p.length,p.diameter,p.diameter));
   switch (s.shape) {
     case "threaded": {
       const [l, d] = s.body;
@@ -323,7 +325,7 @@ export function buildStepFile(s: SensorModel): string {
     (s.terminalSpan ? `, terminaisons ${s.terminalSpan} mm` : "") +
     (s.collarDiameter ? `, collerette Ø${s.collarDiameter} mm` : "") +
     (s.nutWidth ? `, écrou ${s.nutWidth} mm sur plats` : "") +
-    `, enveloppe ${ex}×${ey}×${ez} mm`;
+    `, enveloppe ${ex}×${Number(ey.toFixed(2))}×${Number(ez.toFixed(2))} mm`;
   const description =
     `STEP d'encombrement · modèle simplifié | capteur ${s.id} | ${cotes} | ` +
     `provenance : ${prov} | ` +
@@ -389,7 +391,7 @@ async function main() {
       bytes: text.length,
       pedagogical,
       sourceLabel: provenance(s),
-      sourceUrl: sensorSource(s),
+      sourceUrl: sensorDrawingSource(s),
       dimensionsLabel,
     });
     // eslint-disable-next-line no-console
