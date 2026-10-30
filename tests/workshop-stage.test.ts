@@ -107,7 +107,7 @@ describe("bandeau de verdict", () => {
 });
 
 describe("colonne de gauche : réglages essentiels", () => {
-  test("position, activation et lecture sont ouvertes ; la course reste avancée", () => {
+  test("position et activation restent ouvertes ; la lecture sort du défilement", () => {
     const column = WORKSHOP.slice(
       WORKSHOP.indexOf('<aside className="mw-controls">'),
       WORKSHOP.indexOf('<section className="mw-main"'),
@@ -117,7 +117,12 @@ describe("colonne de gauche : réglages essentiels", () => {
     expect(column).toContain("{!machine && approachPicker}");
     expect(column).toContain("{!machine && activationDistanceControl}");
     expect(column).toContain("{machine && activationDistanceControl}");
-    expect(column).toContain("{!machine && playButton}");
+    expect(column).not.toContain("{playButton}");
+    const playback = WORKSHOP.indexOf('className="mw-playback-bar"');
+    const grid = WORKSHOP.indexOf('className="mw-stage-grid"');
+    expect(playback).toBeGreaterThan(0);
+    expect(playback).toBeLessThan(grid);
+    expect(WORKSHOP.slice(playback, grid)).toContain("{playButton}");
     expect(column).toContain("{advancedSettings}");
     // Aucun réglage avancé n'est ouvert directement dans la colonne.
     expect(column).not.toContain("Orientation sur la machine");

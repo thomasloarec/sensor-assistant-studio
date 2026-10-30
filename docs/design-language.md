@@ -1,5 +1,16 @@
 # Langage de design Standex DETECT
 
+### Commande de lecture toujours visible — 30 octobre 2026
+
+« Lancer le mouvement » occupe une barre dédiée au-dessus de la grille de
+l’atelier, hors du défilement des réglages et de la scène. Sur ordinateur, le
+bouton est aligné à gauche ; sous 1024 px, il utilise toute la largeur. La barre
+réserve sa propre hauteur et ne recouvre aucun contenu. Le même bouton conserve
+les états lecture, pause, préparation et annulation, y compris après import dans
+le parcours catalogue client ; aucune seconde commande de lecture n’est ajoutée
+dans le guide. Les restrictions de mouvement restent inchangées. Cible ≥ 44 px,
+libellé multiligne si nécessaire, surfaces et élévation issues des jetons existants.
+
 Référence contraignante. Les règles opérationnelles condensées sont dans
 `AGENTS.md` ; ce document en est la version complète et fait autorité en cas
 d'écart.

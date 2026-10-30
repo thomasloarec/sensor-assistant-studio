@@ -2320,6 +2320,11 @@ export default function MagneticWorkshop({
           {t(error ?? importNotice)}
         </div>
       )}
+      {(!machine || catalogue) && (
+        <div className="mw-playback-bar" data-testid="workshop-playback-bar">
+          {playButton}
+        </div>
+      )}
       <div className="mw-stage-grid">
         <aside className="mw-controls">
           {clientPedagogical && !exploring && <ClientPedagogicalControls config={config} update={patch=>update(patch,{keepTime:true})} onCatalog={()=>setCatalogOpen(true)} onCable={()=>chooseTool('cable')} approachControls={approachPicker}/>}
@@ -2355,7 +2360,8 @@ export default function MagneticWorkshop({
                 setProgress(v);
               }}
               playing={playing}
-              playControl={catalogue ? playButton : undefined}
+              // Catalogue playback stays in the persistent bar, including during setup.
+              playControl={catalogue ? false : undefined}
               setPlaying={(value) => { if(!value)stopPreparation(); setPlaying(value); }}
               reason={result.reason}
               onDemo={openDemo}
@@ -2368,7 +2374,6 @@ export default function MagneticWorkshop({
             />
           ) : null}
           {!pedagogical && <>{machine && activationDistanceControl}</>}
-          {!machine && playButton}
           {!pedagogical && <>{advancedSettings}</>}
           {pedagogical && (!clientPedagogical || exploring) && <details className="mw-file-tools"><summary>{t("Exporter le montage")}</summary><Button variant="secondary" onClick={()=>download("atelier-pedagogique.json",JSON.stringify({kind:"pedagogical-workshop",version:1,config,settings:experiment,profile:EXPERIMENT,progress,limits:{qualified:false,requiresGlbReimport:true,remoteClips:false}}),"application/json")}>{t("Télécharger le fichier de montage")}</Button><label className="mw-file-label">{t("Importer un fichier de montage")}<input type="file" accept=".json" onChange={e=>void importFile(e.target.files?.[0])}/></label></details>}
       {!embedded && !pedagogical ? (
