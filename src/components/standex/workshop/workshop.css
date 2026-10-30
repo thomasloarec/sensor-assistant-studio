@@ -1230,8 +1230,12 @@
   border-bottom: 1px solid var(--hairline);
   background: var(--mw-surface);
 }
+.mw-catalog > .mw-catalog-view {
+  margin-inline: 28px;
+}
 .mw-catalog-search {
-  flex: 1;
+  flex: 1 1 100%;
+  min-width: 0;
   display: flex;
   gap: 10px;
   align-items: center;
@@ -1249,7 +1253,9 @@
   font: var(--mw-t-body);
 }
 .mw-catalog-tools select {
-  width: 155px;
+  flex: 1 1 260px;
+  min-width: min(260px, 100%);
+  width: auto;
 }
 .mw-catalog-tools {
   flex-wrap: wrap;
@@ -3324,4 +3330,9 @@
 .mw-client-pedagogical .mw-ped-cut-caption .t-caption,
 .mw-client-pedagogical .mw-canvas:has(.mw-ped-cut-figure) .mw-circuit-ped > .t-caption {
   color: var(--standex-gray);
+}
+
+@media (max-width: 540px) {
+  .mw-catalog > .mw-catalog-view { margin-inline: 16px; }
+  .mw-catalog-tools select { flex: 1 1 100%; width: 100%; }
 }

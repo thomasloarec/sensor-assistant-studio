@@ -35512,5 +35512,77 @@
     "По центру",
     "Ricentra",
     "中央に戻す"
+  ],
+  "Caractéristiques de l’aimant": [
+    "Magnet characteristics",
+    "磁体特性",
+    "Magneteigenschaften",
+    "Características del imán",
+    "Характеристики магнита",
+    "Caratteristiche del magnete",
+    "磁石の特性"
+  ],
+  "Distance capteur–aimant": [
+    "Sensor–magnet distance",
+    "传感器与磁体间距",
+    "Sensor–Magnet-Abstand",
+    "Distancia sensor–imán",
+    "Расстояние между датчиком и магнитом",
+    "Distanza sensore–magnete",
+    "センサーと磁石の距離"
+  ],
+  "Insertion dans un alésage": [
+    "Push-in mounting (round bore)",
+    "插入式安装（圆孔）",
+    "Einsteckmontage (Rundbohrung)",
+    "Montaje por inserción (orificio circular)",
+    "Вставной монтаж (круглое отверстие)",
+    "Montaggio a inserimento (foro circolare)",
+    "差し込み取付（丸穴）"
+  ],
+  "Reed surmoulé sur circuit imprimé : schéma pédagogique": [
+    "Overmoulded reed on a PCB: educational diagram",
+    "PCB上的包塑干簧管：教学示意图",
+    "Umspritzter Reed auf Leiterplatte: Lehrschema",
+    "Reed sobremoldeado sobre PCB: esquema didáctico",
+    "Геркон в залитом корпусе на плате: учебная схема",
+    "Reed sovrastampato su PCB: schema didattico",
+    "基板上のモールドリード：学習用概略図"
+  ],
+  "Schéma pédagogique uniquement : reed surmoulé de type MK15 sur circuit imprimé. Ce n’est pas une référence commandable ; les dimensions sont illustratives et aucune distance de commutation n’est validée.": [
+    "Educational diagram only: MK15-style overmoulded reed on a PCB. Not an orderable part; dimensions are illustrative and no switching distance is validated.",
+    "仅用于教学：PCB上的MK15式包塑干簧管。非可订购产品；尺寸仅为示意，未验证开关距离。",
+    "Nur Lehrschema: umspritzter Reed nach Art des MK15 auf Leiterplatte. Kein bestellbares Produkt; Maße sind illustrativ, kein Schaltabstand ist validiert.",
+    "Solo esquema didáctico: reed sobremoldeado tipo MK15 sobre PCB. No es una referencia disponible; dimensiones ilustrativas y ninguna distancia de conmutación validada.",
+    "Только учебная схема: геркон в корпусе типа MK15 на плате. Не является заказываемым изделием; размеры условные, расстояние срабатывания не подтверждено.",
+    "Solo schema didattico: reed sovrastampato tipo MK15 su PCB. Non è un articolo ordinabile; dimensioni illustrative e nessuna distanza di commutazione convalidata.",
+    "学習用のみ：基板上のMK15型モールドリード。注文可能な製品ではなく、寸法は概略で動作距離は未検証です。"
+  ],
+  "Zones estimées avec l’aimant de la même famille ; variante N42 non caractérisée.": [
+    "Zones estimated using the same magnet family; N42 variant not characterised.",
+    "根据同系列磁体估算区域；N42型号尚未表征。",
+    "Zonen anhand derselben Magnetfamilie geschätzt; N42-Variante nicht charakterisiert.",
+    "Zonas estimadas con la misma familia de imanes; variante N42 no caracterizada.",
+    "Зоны оценены по магниту того же семейства; вариант N42 не охарактеризован.",
+    "Zone stimate con la stessa famiglia di magneti; variante N42 non caratterizzata.",
+    "同じ磁石系列による推定領域。N42型の特性は未確認です。"
+  ],
+  "Plan de coupe hors du domaine calculé (±{0} mm)": [
+    "Cross-section outside the computed domain (±{0} mm)",
+    "截面超出计算范围（±{0} mm）",
+    "Schnittebene außerhalb des berechneten Bereichs (±{0} mm)",
+    "Sección fuera del dominio calculado (±{0} mm)",
+    "Сечение вне расчётной области (±{0} мм)",
+    "Sezione fuori dal dominio calcolato (±{0} mm)",
+    "断面が計算範囲外（±{0} mm）"
+  ],
+  "Lobes tronqués aux limites du domaine affiché ±{0} mm ; aucune fermeture physique déduite.": [
+    "Lobes truncated at the displayed ±{0} mm boundary; no physical closure inferred.",
+    "磁瓣在显示范围±{0} mm处截断；不能推断实际闭合。",
+    "Keulen an der dargestellten Grenze ±{0} mm abgeschnitten; kein physischer Kontaktschluss abgeleitet.",
+    "Lóbulos truncados en el límite mostrado de ±{0} mm; no se deduce cierre físico.",
+    "Лепестки обрезаны на границе ±{0} мм; физическое замыкание не выводится.",
+    "Lobi troncati al limite visualizzato di ±{0} mm; nessuna chiusura fisica dedotta.",
+    "表示範囲±{0} mmでローブが切れています。物理的な閉成は推定していません。"
   ]
 }

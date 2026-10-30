@@ -294,9 +294,9 @@ export const SENSOR_CATALOG: readonly SensorModel[] = [
     color: "#2f6b52",
     sourceFile: null,
     sourcePage: 1,
-    description: "Reed nu soudé sur circuit imprimé : schéma pédagogique proportionnel",
+    description: "Reed surmoulé sur circuit imprimé : schéma pédagogique",
     contact: "A",
-    note: "Schéma pédagogique uniquement : reed nu en verre de 20 mm × Ø 4 mm posé sur un circuit imprimé de 60 × 20 × 1,6 mm (longueur = 3 × le corps du reed, largeur = 5 × son diamètre). Ce n'est pas une référence commandable, aucune distance de commutation n'est documentée et aucune caractéristique n'est validée.",
+    note: "Schéma pédagogique uniquement : reed surmoulé de type MK15 sur circuit imprimé. Ce n’est pas une référence commandable ; les dimensions sont illustratives et aucune distance de commutation n’est validée.",
   },
 ];
 export function sensorById(id: string): SensorModel {

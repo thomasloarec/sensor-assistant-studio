@@ -63,7 +63,7 @@ function rounded(path: Shape | Path, x: number, z: number, w: number, h: number,
   path.quadraticCurveTo(x, z, x + r, z);
   path.closePath();
 }
-/** Schéma pédagogique « sur mesure » : reed nu en verre soudé sur un circuit
+/** Schéma pédagogique « sur mesure » : reed surmoulé soudé sur un circuit
  * imprimé volontairement NON rectangulaire (encoche de détrompage, coins
  * chanfreinés, pattes de fixation percées). Toutes les cotes viennent de
  * `customLayout`, dérivées du reed : rien n'est saisi à la main ici, et rien
@@ -112,7 +112,6 @@ function CustomBoard({ model, xray }: { model: SensorModel; xray: boolean }) {
     return s;
   }, [L, W, r, chamfer, nd, nw, layout.tabRadius]);
 
-  const opacity = xray ? 0.3 : 1;
   return (
     <group>
       {/* Circuit imprimé */}
@@ -120,9 +119,6 @@ function CustomBoard({ model, xray }: { model: SensorModel; xray: boolean }) {
         <extrudeGeometry args={[outline, { depth: pcbThickness, bevelEnabled: false }]} />
         <meshStandardMaterial
           color={model.color}
-          transparent={xray}
-          opacity={opacity}
-          depthWrite={!xray}
           roughness={0.72}
           metalness={0.05}
         />
@@ -147,16 +143,16 @@ function CustomBoard({ model, xray }: { model: SensorModel; xray: boolean }) {
           </mesh>
         </group>
       ))}
-      {/* Ampoule de verre du reed nu, transparente : les lames restent visibles */}
-      <mesh position={[0, reedY, 0]} rotation={[0, 0, Math.PI / 2]}>
-        <cylinderGeometry args={[reedDiameter / 2, reedDiameter / 2, reedLength, 32]} />
+      {/* Surmoulage illustratif de type MK15 ; le PCB reste opaque. */}
+      <mesh position={[0, reedY, 0]} name="custom-reed-housing">
+        <boxGeometry args={[reedLength, reedDiameter, reedDiameter]} />
         <meshStandardMaterial
-          color="#cfe6ec"
-          transparent
-          opacity={0.3}
-          depthWrite={false}
-          roughness={0.1}
-          metalness={0.05}
+          key={xray ? "custom-transparent" : "custom-opaque"}
+          color="#333d45"
+          transparent={xray}
+          opacity={xray ? 0.25 : 1}
+          depthWrite={!xray}
+          roughness={0.5}
         />
       </mesh>
       {/* Fils de sortie du reed, cintrés jusqu'aux pastilles */}
@@ -264,19 +260,21 @@ function StandardBody({
   // i18n-canonical: GLSL shader source below is code, never user-facing prose.
   // Switching opacity alone can retain the opaque WebGL program. Recreate the
   // material when entering/leaving x-ray so the internal contacts are visible.
+  // Geometry changes also reset the pole shader: a cylinder must not retain
+  // the block shader after selecting another sensor/magnet pair.
   const material = (
     <meshStandardMaterial
-      key={xray ? "transparent-body" : "opaque-body"}
+      key={`${bodyKind(model)}-${l}-${poleColors ? "poles" : "body"}-${xray ? "transparent" : "opaque"}`}
       color={poleColors ? "#ffffff" : model.color}
       onBeforeCompile={(shader) => {
         if (!poleColors) return;
-        const axis = ["cylinder", "threaded", "pressfit", "glass"].includes(model.shape)
-          ? "y"
-          : "x";
+        const coordinate = bodyKind(model) === "one_flat"
+          ? `(position.z - ${(l / 2).toFixed(8)})`
+          : bodyKind(model) === "cylinder" ? "-position.y" : "position.x";
         shader.vertexShader = "varying float polePosition;\n" + shader.vertexShader;
         shader.vertexShader = shader.vertexShader.replace(
           "#include <begin_vertex>",
-          `#include <begin_vertex>\npolePosition = position.${axis};`,
+          `#include <begin_vertex>\npolePosition = ${coordinate};`,
         );
         shader.fragmentShader = "varying float polePosition;\n" + shader.fragmentShader;
         shader.fragmentShader = shader.fragmentShader.replace(
@@ -284,7 +282,7 @@ function StandardBody({
           "#include <color_fragment>\ndiffuseColor.rgb = polePosition < 0.0 ? vec3(0.035, 0.205, 0.63) : vec3(0.67, 0.065, 0.055);",
         );
       }}
-      customProgramCacheKey={() => (poleColors ? `poles-${model.shape}` : "body")}
+      customProgramCacheKey={() => (poleColors ? `poles-${bodyKind(model)}-${l}` : "body")}
       transparent={xray}
       opacity={opacity}
       depthWrite={!xray}
@@ -873,6 +871,7 @@ export default function WorkshopScene({
   dimensions = true,
   showNames = true,
   showMagnetName = true,
+  showDistance = true,
   focus = "assembly",
   reduced = false,
   resetEpoch = 0,
@@ -894,6 +893,7 @@ export default function WorkshopScene({
   /** Affichage du nom du capteur : option d'affichage seule, jamais la géométrie. */
   showNames?: boolean;
   showMagnetName?: boolean;
+  showDistance?: boolean;
   focus?: "assembly" | "sensor";
   reduced?: boolean;
   resetEpoch?: number;
@@ -995,9 +995,9 @@ export default function WorkshopScene({
           ]}
         >
           <Body model={model} xray={xray} />
-          {/* Le reed nu est déjà transparent : ses lames restent visibles sans
-              passer l'atelier en radiographie, la carte imprimée reste opaque. */}
-          {(!hideElectrical||showIllustrativeContacts) && (xray || model.shape === "custom_pcb") && (
+          {/* Les contacts du Custom suivent la même commande que les capteurs
+              surmoulés ; le PCB reste opaque. */}
+          {(!hideElectrical||showIllustrativeContacts) && xray && (
             <Contacts model={model} contact={sample.contact} reduced={reduced} />
           )}
 
@@ -1009,7 +1009,7 @@ export default function WorkshopScene({
           {dimensions && <Dimensions model={model} />}
         </group>
         <Magnet config={config} sample={sample} showName={showMagnetName} />
-        <GapDimension sample={sample} />
+        {showDistance && <GapDimension sample={sample} />}
         {ghost && <GhostMagnet ghost={ghost} />}
         <Trajectory samples={samples} returning={sample.t > 0.5} colored={zones} />
         {reference && available && zones && <ReferenceMarkers config={config} />}
