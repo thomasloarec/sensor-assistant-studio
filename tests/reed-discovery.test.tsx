@@ -123,7 +123,7 @@ describe("Reed teaching model — independent history oracle", () => {
     for(const point of [{x:260,y:118},{x:180,y:162},{x:260,y:162},{x:180,y:118}])expect(reedContact(true,point,"parallel")).toBe(false);
   });
   test("OPEN → ON → HOLD → OFF; OFF → same HOLD stays OPEN", () => {
-    const on = { x: 305, y: 140 }, hold = { x: 371, y: 140 }, off = { x: 405, y: 140 };
+    const on = { x: 305, y: 140 }, hold = { x: 348, y: 140 }, off = { x: 405, y: 140 };
     let s = moveReed(REED_INITIAL, off);
     expect(s.closed).toBe(false);
     s = moveReed(s, on); expect(s.closed).toBe(true); expect(s.progress).toBe(1);
@@ -139,23 +139,23 @@ describe("Reed teaching model — independent history oracle", () => {
     expect(reedZone({ x: 305, y: 140 }, "perpendicular")).toBe("OFF");
     let s = moveReed(REED_INITIAL, { x: 305, y: 140 });
     expect(orientReed(s, "perpendicular").progress).toBe(1);
-    s = moveReed(s, { x: 371, y: 140 });
+    s = moveReed(s, { x: 348, y: 140 });
     s = orientReed(s, "perpendicular"); expect(s.progress).toBe(3);
     expect(s.closed).toBe(false);
     s = moveReed(s, { x: 280, y: 200 }); expect(s.progress).toBe(4); expect(s.closed).toBe(true);
   });
   test("fast paths activate before ending in HOLD, but direct OFF→HOLD does not", () => {
     const s = { ...REED_INITIAL, point: { x: 220, y: 140 } };
-    const fast = moveReed(s, { x: 371, y: 140 });
+    const fast = moveReed(s, { x: 348, y: 140 });
     expect(fast.closed).toBe(true); expect(fast.progress).toBe(2);
-    expect(moveReed({ ...s, point: { x: 405, y: 140 } }, { x: 371, y: 140 }).closed).toBe(false);
+    expect(moveReed({ ...s, point: { x: 405, y: 140 } }, { x: 348, y: 140 }).closed).toBe(false);
   });
   test("rotation before first closure recognizes closure; initial orientation cannot cheat final discovery", () => {
     let s = {...REED_INITIAL, point:{x:275,y:195}};
     expect(reedZone(s.point,"parallel")).toBe("OFF");
     s = {...s,orientation:"perpendicular" as const,point:{x:305,y:140}};
     s = orientReed(s,"parallel"); expect(s.closed).toBe(true); expect(s.progress).toBe(1);
-    s = moveReed(s,{x:371,y:140}); expect(s.holdOrientation).toBe("parallel");
+    s = moveReed(s,{x:348,y:140}); expect(s.holdOrientation).toBe("parallel");
     s = orientReed(s,"perpendicular"); expect(s.progress).toBe(3);
     s = orientReed(s,"parallel"); s = moveReed(s,{x:305,y:140}); expect(s.progress).toBe(2);
     s = orientReed(s,"perpendicular"); expect(s.closed).toBe(false);
@@ -235,13 +235,13 @@ describe("Rendered discovery interactions", () => {
     expect(v.queryByTestId("reed-housing-reflection")).toBeNull();
     expect(v.getByTestId("reed-contact-current")).toBeTruthy();
     expect(v.getByTestId("reed-left-blade").getAttribute("stroke")).toBe("var(--reed-closed)");
-    fireEvent.pointerMove(handle,{...evt,clientX:371,clientY:140});
+    fireEvent.pointerMove(handle,{...evt,clientX:348,clientY:140});
     expect(v.getByTestId("reed-discovery").dataset.zone).toBe("HOLD");
     expect(v.getByTestId("reed-cable-current")).toBeTruthy();
     fireEvent.pointerMove(handle,{...evt,clientX:405,clientY:140});
     expect(v.queryByTestId("reed-cable-current")).toBeNull();
     expect(v.queryByTestId("reed-contact-current")).toBeNull();
-    fireEvent.pointerMove(handle,{...evt,clientX:371,clientY:140});
+    fireEvent.pointerMove(handle,{...evt,clientX:348,clientY:140});
     expect(v.getByTestId("reed-discovery").dataset.zone).toBe("HOLD");
     expect(v.queryByTestId("reed-cable-current")).toBeNull();
     fireEvent.pointerUp(handle,evt);
@@ -261,11 +261,11 @@ describe("Rendered discovery interactions", () => {
     expect(v.getByTestId("reed-discovery").dataset.progress).toBe("1");
     expect(v.getByText("Reculez doucement dans la zone de maintien.")).toBeTruthy();
     fireEvent.pointerDown(handle,{...evt,clientX:305,clientY:140});
-    fireEvent.pointerMove(handle,{...evt,clientX:371,clientY:140});
+    fireEvent.pointerMove(handle,{...evt,clientX:348,clientY:140});
     fireEvent.pointerUp(handle,evt);
     fireEvent.click(v.getByRole("button", { name: "Perpendiculaire" }));
     fireEvent.click(v.getByRole("button", { name: "Parallèle" }));
-    fireEvent.pointerDown(handle,{...evt,clientX:371,clientY:140});
+    fireEvent.pointerDown(handle,{...evt,clientX:348,clientY:140});
     fireEvent.pointerMove(handle,{...evt,clientX:305,clientY:140});
     fireEvent.pointerUp(handle,evt);
     expect(v.getByTestId("reed-discovery").dataset.progress).toBe("2");
@@ -283,10 +283,10 @@ describe("Rendered discovery interactions", () => {
     const evt = { pointerId: 7, pointerType, isPrimary: true, button: 0 };
     fireEvent.pointerDown(handle, { ...evt, clientX: 365, clientY: 225 }); expect(captured.has(7)).toBe(true);
     fireEvent.pointerMove(handle, { ...evt, clientX: 305, clientY: 140 }); expect(v.getByTestId("reed-discovery").dataset.closed).toBe("true");
-    fireEvent.pointerMove(handle, { ...evt, clientX: 371, clientY: 140 }); expect(v.getByTestId("reed-discovery").dataset.progress).toBe("2");
+    fireEvent.pointerMove(handle, { ...evt, clientX: 348, clientY: 140 }); expect(v.getByTestId("reed-discovery").dataset.progress).toBe("2");
     fireEvent.pointerUp(handle, evt); expect(captured.size).toBe(0);
     fireEvent.pointerMove(handle, { ...evt, clientX: 405, clientY: 140 }); expect(v.getByTestId("reed-discovery").dataset.closed).toBe("true");
-    fireEvent.pointerDown(handle, { ...evt, clientX: 371, clientY: 140 });
+    fireEvent.pointerDown(handle, { ...evt, clientX: 348, clientY: 140 });
     fireEvent.pointerCancel(handle, evt); expect(captured.size).toBe(0);
     fireEvent.pointerMove(handle, { ...evt, clientX: 405, clientY: 140 }); expect(v.getByTestId("reed-discovery").dataset.closed).toBe("true");
   });

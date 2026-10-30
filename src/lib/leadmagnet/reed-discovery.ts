@@ -39,10 +39,12 @@ const main = shape(p(-16,-6), [
   [p(60,-72),p(24,-30),p(16,-6)],
   [p(10,-5),p(-10,-5),p(-16,-6)],
 ]);
+// Compact, rounded lateral drops inspired by the Standex parallel schematic.
+// Only these two mirrored lobes change; finite roots stay beneath the housing.
 const side = shape(p(38,-8), [
-  [p(72,-8),p(95,-53),p(123,-53)],
-  [p(176,-53),p(176,53),p(123,53)],
-  [p(95,53),p(72,8),p(38,8)],
+  [p(50,-20),p(70,-55),p(95,-55)],
+  [p(147,-55),p(147,55),p(95,55)],
+  [p(70,55),p(50,20),p(38,8)],
   [p(34,8),p(34,-8),p(38,-8)],
 ]);
 const smooth = (value: number) => { const t=Math.max(0,Math.min(1,value)); return t*t*(3-2*t); };
@@ -56,9 +58,9 @@ const quarterInner = shape(p(12,-40), [
   [p(18,-14),p(12,-28),p(12,-40)],
 ]);
 const sideInner = shape(p(38,-8), [
-  [p(72,-8),p(95,-39),p(123,-39)],
-  [p(158,-39),p(158,39),p(123,39)],
-  [p(95,39),p(72,8),p(38,8)],
+  [p(45,-14),p(66,-42),p(88,-42)],
+  [p(132,-42),p(132,42),p(88,42)],
+  [p(66,42),p(45,14),p(38,8)],
   [p(34,8),p(34,-8),p(38,-8)],
 ]);
 function rootedInner(v: ReedPoint): ReedPoint {
