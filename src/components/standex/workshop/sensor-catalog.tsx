@@ -1,7 +1,7 @@
 import MagnetCatalog from "./magnet-catalog";
 import { useEffect, useRef, useState } from "react";
 import { Search, X, ArrowUpRight, Check } from "lucide-react";
-import { sizeLabel, sensorDrawingSource } from "@/lib/standex/sensor-catalog";
+import { sizeLabel, sensorDrawingSource, sensorDisplayTitle } from "@/lib/standex/sensor-catalog";
 import { CATALOG_ALL, documentedCount, filterCatalog } from "@/lib/standex/catalog-filters";
 import SensorCard from "./sensor-card";
 import { useLocale } from "@/lib/i18n/react";
@@ -82,7 +82,7 @@ export default function SensorCatalog({
     dialog?.showModal();
     return () => dialog?.close();
   }, [inline]);
-  const list = filterCatalog({
+  const matches = filterCatalog({
     query,
     category,
     fixing,
@@ -91,6 +91,7 @@ export default function SensorCatalog({
     maxWidth,
     maxHeight,
   });
+  const list = matches.filter((s,i,all)=>!s.productFamily || all.findIndex(v=>v.productFamily===s.productFamily)===i);
   const documented = documentedCount(list);
   const activeCount = [
     query.trim(),
@@ -332,7 +333,7 @@ export default function SensorCatalog({
                         }
                         aria-hidden="true"
                       >
-                        <SensorPlan model={s} xray={false} />
+                        <g transform={s.id==="MK07"?"rotate(180)":undefined}><SensorPlan model={s} xray={false} /></g>
                         {sameScale && (
                           <g stroke="#a3b2bd" strokeWidth={0.25}>
                             <path d="M-25 14 H25 M-25 13 V15 M25 13 V15" />
@@ -345,20 +346,12 @@ export default function SensorCatalog({
                     )}
                   </div>
                   <div className="mw-catalog-name">
-                    <strong className="t-title-s">{t(s.name)}</strong>
+                    <strong className="t-title-s">{t(sensorDisplayTitle(s.id,s.name))}</strong>
                     {!inline && selected === s.id && <Check size={17} />}
                   </div>
                   <span className="mw-catalog-size t-metric">{t(sizeLabel(s))}</span>
                   <p>{t(s.description)}</p>
-                  <small>
-                    {t(
-                      s.contact === "unsupported"
-                        ? "Forme disponible · activation non modélisée"
-                        : s.id === "MK03"
-                          ? "Exemple documenté disponible"
-                          : "Contacts internes symboliques",
-                    )}
-                  </small>
+
                 </Choice>
                 <button className="mw-product-card-button" onClick={() => setCard(s.id)}>
                   {t("Découvrir ce capteur")}

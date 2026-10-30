@@ -994,8 +994,9 @@ export function DesignSpace({
         mounting: dossier.mounting,
         envelope: dossier.envelope,
         mountingText,
+        requirements:dossier.requirements,
       }),
-    [dossier.mounting, dossier.envelope, mountingText, dataRevision],
+    [dossier.mounting, dossier.envelope, dossier.requirements, mountingText, dataRevision],
   );
   /** Compatibilité pédagogique du BESOIN, indépendante du verdict géométrique :
    * une contradiction posée par la personne elle-même (puissance dans le
@@ -2364,7 +2365,7 @@ export function DesignSpace({
   /** Les critères actifs filtrent les suggestions. Les lever permet d'explorer
    * d'autres montages sans réécrire les exigences du dossier. */
   const plausibleCandidates = useMemo(
-    () => candidateRows.filter((r) => r.blocked.length === 0 && r.candidate.id !== "GENERIC"),
+    () => candidateRows.filter((r) => r.blocked.length === 0 && !r.candidate.electricalIncompatible && r.candidate.id !== "GENERIC"),
     [candidateRows],
   );
   const otherCandidates = useMemo(
@@ -2387,7 +2388,7 @@ export function DesignSpace({
     [plausibleCandidates, fit, dossier.requirements, dossier.freeConstraints, dossier.selectedSensorId],
   );
   const suggestedPairs = useMemo(
-    () => pairCards(suggestedOrder(ranking), { limit: 3, keepOrder: true }),
+    () => pairCards(suggestedOrder(ranking), { limit: 3, keepOrder: true, groupFamilies:true }),
     [ranking],
   );
   /** MK02 retenu pour une cible en acier : son aimant est INTÉGRÉ. */
@@ -2397,7 +2398,7 @@ export function DesignSpace({
     () =>
       pairCards(
         candidateRows.map((r) => r.candidate.id),
-        { limit: candidateRows.length, preferredSensorId: dossier.selectedSensorId ?? null },
+        { limit: candidateRows.length, groupFamilies:true, keepOrder:true, preferredSensorId: dossier.selectedSensorId ?? null },
       ),
     [candidateRows, dossier.selectedSensorId],
   );

@@ -1,8 +1,10 @@
+import { changeoverBlades } from "@/lib/standex/changeover-contacts";
 import { insertionParts } from '@/lib/standex/insertion-profile';
 import { cableConstruction } from "@/lib/leadmagnet/product-presentation";
 import type { SensorModel } from "@/lib/standex/sensor-catalog";
 import {
   bladeLength,
+  bladeOffsetX,
   bladeOffsetZ,
   electricalDetailsAllowed,
   customLayout,
@@ -207,9 +209,9 @@ export function SensorPlan({
         />
       )}
       {revealContacts && (
-        <g transform={`translate(0 ${z})`}>
+        <g transform={`translate(${bladeOffsetX(model)} ${z})`}>
           <path
-            d={`M${-length / 2} ${closed ? 0 : -w * 0.12} L${length * 0.03} ${closed ? 0 : -w * 0.12} M${length / 2} ${closed ? 0 : w * 0.12} L${-length * 0.03} ${closed ? 0 : w * 0.12}`}
+            d={model.contactForm==="C" ? changeoverBlades(length,Math.max(.17,w*.1),contact).map(points=>points.map((p,i)=>`${i?"L":"M"}${p[0]} ${p[2]}`).join(" ")).join(" ") : `M${-length / 2} ${closed ? 0 : -w * 0.12} L${length * 0.03} ${closed ? 0 : -w * 0.12} M${length / 2} ${closed ? 0 : w * 0.12} L${-length * 0.03} ${closed ? 0 : w * 0.12}`}
             stroke={color}
             strokeWidth={Math.max(0.12, Math.min(0.8, w * 0.12))}
             strokeLinecap="round"

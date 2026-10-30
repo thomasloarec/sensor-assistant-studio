@@ -69,16 +69,61 @@
     {
       "id": "MK06-4",
       "fileName": "MK06-4.step",
-      "bytes": 3414,
+      "bytes": 3413,
       "pedagogical": false,
-      "sourceLabel": "MK06.pdf, page 1",
-      "sourceUrl": "/datasheets/MK06.pdf#page=1",
+      "sourceLabel": "MK06-size-4.png",
+      "sourceUrl": "/datasheets/MK06-size-4.png",
       "dimensionsLabel": "corps 12.06×3.3×3.3 mm, terminaisons 12.06 mm, enveloppe 12.06×3.3×3.3 mm"
+    },
+    {
+      "id": "MK06-5",
+      "fileName": "MK06-5.step",
+      "bytes": 3407,
+      "pedagogical": false,
+      "sourceLabel": "MK06-size-5.png",
+      "sourceUrl": "/datasheets/MK06-size-5.png",
+      "dimensionsLabel": "corps 14.3×3.2×2.8 mm, terminaisons 14.3 mm, enveloppe 14.3×3.2×2.8 mm"
+    },
+    {
+      "id": "MK06-6",
+      "fileName": "MK06-6.step",
+      "bytes": 3413,
+      "pedagogical": false,
+      "sourceLabel": "MK06-size-6.png",
+      "sourceUrl": "/datasheets/MK06-size-6.png",
+      "dimensionsLabel": "corps 17.24×4.2×3.3 mm, terminaisons 17.24 mm, enveloppe 17.24×4.2×3.3 mm"
+    },
+    {
+      "id": "MK06-7",
+      "fileName": "MK06-7.step",
+      "bytes": 3413,
+      "pedagogical": false,
+      "sourceLabel": "MK06-size-7.png",
+      "sourceUrl": "/datasheets/MK06-size-7.png",
+      "dimensionsLabel": "corps 19.78×4.2×3.3 mm, terminaisons 19.78 mm, enveloppe 19.78×4.2×3.3 mm"
+    },
+    {
+      "id": "MK06-8",
+      "fileName": "MK06-8.step",
+      "bytes": 3421,
+      "pedagogical": false,
+      "sourceLabel": "MK06-size-8.png",
+      "sourceUrl": "/datasheets/MK06-size-8.png",
+      "dimensionsLabel": "corps 22.32×4.2×3.3 mm, terminaisons 22.32 mm, enveloppe 22.32×4.2×3.3 mm"
+    },
+    {
+      "id": "MK06-10",
+      "fileName": "MK06-10.step",
+      "bytes": 3430,
+      "pedagogical": false,
+      "sourceLabel": "MK06-size-10.png",
+      "sourceUrl": "/datasheets/MK06-size-10.png",
+      "dimensionsLabel": "corps 28.5×5.72×3.81 mm, terminaisons 28.5 mm, enveloppe 28.5×5.72×3.81 mm"
     },
     {
       "id": "MK24-A-J",
       "fileName": "MK24-A-J.step",
-      "bytes": 3410,
+      "bytes": 3397,
       "pedagogical": false,
       "sourceLabel": "MK24.pdf, page 1",
       "sourceUrl": "/datasheets/MK24.pdf#page=1",

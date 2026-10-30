@@ -379,7 +379,7 @@ describe("T0 — registres données-gated", () => {
       expect([Number(r["pull_in_mm"]), Number(r["drop_out_mm"])]).toEqual(pair);
     }
     expect(MAGNET_REFERENCE).toEqual({ length: 32.4, height: 10, width: 16.7 });
-    expect(SENSOR_CATALOG.filter((s) => s.sourceFile !== null).length).toBe(30);
+    expect(SENSOR_CATALOG.filter((s) => s.sourceFile !== null).length).toBe(35);
   });
   test("T0.25 contrôle de fuite dans tous les JSON applicatifs", () => {
     const walk = (dir: string): string[] =>

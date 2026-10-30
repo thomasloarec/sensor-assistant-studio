@@ -15,9 +15,10 @@ export function discoveryPatch(c:WorkshopConfig,patch:Partial<WorkshopConfig>):P
  if(next.motion==='approach'&&(patch.motion!==undefined||patch.geometry!==undefined)){
   out.end=.5;
   out.start=Math.max(next.start,24);
+  if(next.sensorId==='MK07')out.lateralShift=next.geometry==='D3'?0:(sensorById(next.sensorId).reedOffsetX??0);
  }else if(next.motion==='slide'){
   out.offset=approachOffset({...next,geometry:'D1'})+2;
-  out.travel=Math.ceil((sensorById(next.sensorId).body[0]+magnetSize(next)[0])/2+12);
+  out.travel=Math.ceil((sensorById(next.sensorId).body[0]+magnetSize(next)[0])/2+24);
  }else if(next.motion==='pivot'){
   // A short hinge movement stays near the useful region. The former 160° arc
   // forced packaged magnets far away simply to clear the housing corners.

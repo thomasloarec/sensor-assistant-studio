@@ -127,7 +127,7 @@ export default function CandidateThumbnailScene({
       <ambientLight intensity={2.1} />
       <directionalLight position={[span * 2, span * 3, span * 1.8]} intensity={2.2} />
       <directionalLight position={[-span * 2, span, -span * 2]} intensity={0.8} />
-      <group rotation={[0, layout?.sensorYaw ?? 0, 0]}>
+      <group rotation={[0, layout?.sensorYaw ?? (model.id === "MK07" ? Math.PI : 0), 0]}>
         <Body model={model} xray={showContacts} showCable={cableVisible} />
         {showContacts ? <Contacts model={model} contact="open" reduced /> : null}
       </group>

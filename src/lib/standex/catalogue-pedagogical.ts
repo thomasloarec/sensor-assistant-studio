@@ -2,7 +2,9 @@
  * Internal datums are explicit modelling hypotheses. No brochure bound is fitted.
  * All responses use the shared C1% response and the common k×AT threshold.
  */
-import { SENSOR_CATALOG, sensorById, customLayout, bladeOffsetY, overallEnvelope } from './sensor-catalog';
+import { insertionParts } from './insertion-profile';
+import { workshopHousingYawDeg } from './housing-pose';
+import { SENSOR_CATALOG, sensorById, customLayout, bladeOffsetX, bladeOffsetY, overallEnvelope } from './sensor-catalog';
 import { BARE_MAGNETS, packagedMagnet, ACTIVATION_BROCHURE } from './magnet-catalog';
 import { guideRangesFor, guideSensitivityClasses } from './activation-guide';
 import { pedagogicalFrame, type PedagogicalFrame } from './pedagogical-poses';
@@ -19,7 +21,7 @@ import { magnetObb, obbOverlap, type Obb } from '../detection-lab/obstacles';
 import { publishedRowsForCouple, publishedRowsSourceUrl, PUBLISHED_REGISTRY } from './magnetics/registries';
 import { CATALOGUE_RESPONSE, catalogueThresholds as classThresholds, catalogueScenarios, catalogueNominalScenario as nominalScenario } from './catalogue-response';
 
-export const CATALOGUE_MODEL_VERSION='catalogue-c1-analogy-4.1.0';
+export const CATALOGUE_MODEL_VERSION='catalogue-c1-analogy-4.2.0';
 /* i18n-canonical: internal diagnostic codes, never UI labels. */
 const INTERNAL={missing:'catalogue_profile_missing',prior:'catalogue_modelling_prior',source:'catalogue_illustrative',leads:'length_only_analogy_leads_uncharacterized'};
 /* i18n-canonical: model status, not product qualification. */
@@ -31,8 +33,10 @@ export const CATALOGUE_PROFILES:Record<string,{family:Family;lengthMm:number;met
  MK16:{family:'other',lengthMm:8,method:'body-centre'}, MK17:{family:'other',lengthMm:6,method:'body-centre'},
  MK22:{family:'other',lengthMm:8,method:'body-centre'}, MK30:{family:'other',lengthMm:14,method:'board-centre'},
  MK31:{family:'other',lengthMm:4,method:'board-centre'}, 'MK06-4':{family:'other',lengthMm:8,method:'body-centre'},
+ 'MK06-5':{family:'other',lengthMm:8,method:'body-centre'}, 'MK06-6':{family:'other',lengthMm:10,method:'body-centre'},
+ 'MK06-7':{family:'66-capable',lengthMm:14,method:'body-centre'}, 'MK06-8':{family:'66-capable',lengthMm:14,method:'body-centre'}, 'MK06-10':{family:'66-capable',lengthMm:14,method:'body-centre'},
  'MK24-A-J':{family:'other',lengthMm:3,method:'miniature-centre'}, MK03:{family:'66-capable',lengthMm:14,method:'body-centre'},
- MK07:{family:'66-capable',lengthMm:14,method:'body-centre'},
+ MK07:{family:'66-capable',lengthMm:14,method:'nose-datum-estimate-2mm-cover'},
  MK02:{family:'other',lengthMm:14,method:'body-centre'}, MK04:{family:'66-capable',lengthMm:14,method:'body-centre'},
  MK05:{family:'66-capable',lengthMm:14,method:'body-centre'}, MK13:{family:'66-capable',lengthMm:14,method:'body-centre'},
  MK14:{family:'66-capable',lengthMm:14,method:'body-centre'}, MK18:{family:'other',lengthMm:10,method:'body-centre'},
@@ -50,7 +54,7 @@ export function catalogueModel(c:WorkshopConfig){
  const sensor=sensorById(c.sensorId),rows=guideRangesFor(c.sensorId,c.magnetModel),publishedRows=publishedRowsForCouple(c.sensorId,c.magnetModel,PUBLISHED_REGISTRY);
  const publishedSelection=publishedRows.find(r=>r.sensitivityClass===c.sensitivity);
  const selected=c.guideReference??publishedSelection?.sensorReference??'';
- const family=selected.includes('GP501')?'GP501':selected.includes('85')?'85':selected.includes('90')?'90':selected.includes('66')&&p.family==='66-capable'?'66':p.family==='66-capable'&&!selected&&c.sensorId!=='MK38'?'66-assumed':'analogy';
+ const family=selected.includes('GP501')?'GP501':selected.includes('85')?'85':selected.includes('90')?'90':(selected.includes('66')||sensor.productFamily==='MK06')&&p.family==='66-capable'?'66':p.family==='66-capable'&&!selected&&c.sensorId!=='MK38'?'66-assumed':'analogy';
  const status=family==='66'||family==='66-assumed'?'form66':rows.length||publishedRows.length?'documented':'analogy';
  const lengthMm=family==='GP501'?Math.min(10,sensor.body[0]*.7):p.lengthMm;
  const bare=BARE_MAGNETS.find(m=>m.id===c.magnetModel),pack=packagedMagnet(c.magnetModel);
@@ -73,7 +77,7 @@ export function catalogueModel(c:WorkshopConfig){
  const magnet:PilotMagnet=verified??{...PILOT_MAGNETS[0]!,label:c.magnetModel,material:bare?.material??pack?.magnetMaterial??'unknown',momentRaw:INTERNAL.prior};
  const className=['A','B','C','D','E','F'].includes(c.sensitivity)?c.sensitivity:'C';
  const reasons=[CATALOGUE_LABELS.notice,CATALOGUE_LABELS.datum,...(pack||(!verified&&bare?.shape!=='block')?[CATALOGUE_LABELS.proxy]:[]),...(className!==c.sensitivity?[CATALOGUE_LABELS.class]:[]),...(className==='A'?[CATALOGUE_LABELS.partialA]:[]),...(c.sensorId==='MK02'?[CATALOGUE_LABELS.ferrous]:[]),...(c.ferromagnetic||c.temperature!=='ambient'?[CATALOGUE_LABELS.material]:[])];
- return {version:CATALOGUE_MODEL_VERSION,sensorId:c.sensorId,magnetId:c.magnetModel,family,status:status as 'form66'|'documented'|'analogy',lengthMm,scale:lengthMm/14,centre:[0,bladeOffsetY(sensor),0] as Vec3,axis:[1,0,0] as Vec3,body:sensor.body,magnetBody:body,magnet,field,magnetGeometry:verified?'verified-cylinder':bare?.shape==='block'?'analytic-block':bare?.shape==='cylinder'&&q!==null?'moment-cylinder':'equivalent-cylinder',moment:q,fieldMoment,familyAnalogy:familyMoment!==null,familyMagnet:familyMoment!==null?familySource?.id:null,unknownMoment:q===null,className,contact:sensor.contact,reference:selected,rows,publishedRows,publishedSource:publishedRowsSourceUrl(publishedRows),familyReferences:PUBLISHED_REGISTRY.rows.filter(r=>r.sensorFamily===c.sensorId).map(r=>r.sensorReference),reasons,sources:[ACTIVATION_BROCHURE,publishedRowsSourceUrl(publishedRows)??sensor.sourceFile??INTERNAL.source,...(familyMoment!==null?['/datasheets/Packaged-Magnets.pdf']:[])],method:p.method,leadEffect:INTERNAL.leads};
+ return {version:CATALOGUE_MODEL_VERSION,sensorId:c.sensorId,magnetId:c.magnetModel,family,status:status as 'form66'|'documented'|'analogy',lengthMm,scale:lengthMm/14,centre:rotate([bladeOffsetX(sensor),bladeOffsetY(sensor),0],[0,c.machine?0:workshopHousingYawDeg(c.sensorId,c.geometry,sensor.cableSide),0]),axis:[1,0,0] as Vec3,body:sensor.body,magnetBody:body,magnet,field,magnetGeometry:verified?'verified-cylinder':bare?.shape==='block'?'analytic-block':bare?.shape==='cylinder'&&q!==null?'moment-cylinder':'equivalent-cylinder',moment:q,fieldMoment,familyAnalogy:familyMoment!==null,familyMagnet:familyMoment!==null?familySource?.id:null,unknownMoment:q===null,className,contact:sensor.contact,reference:selected,rows,publishedRows,publishedSource:publishedRowsSourceUrl(publishedRows),familyReferences:PUBLISHED_REGISTRY.rows.filter(r=>r.sensorFamily===c.sensorId).map(r=>r.sensorReference),reasons,sources:[ACTIVATION_BROCHURE,publishedRowsSourceUrl(publishedRows)??sensor.sourceFile??INTERNAL.source,...(familyMoment!==null?['/datasheets/Packaged-Magnets.pdf']:[])],method:p.method,leadEffect:INTERNAL.leads};
 }
 type Frame=[Vec3,Vec3,Vec3];
 export type CatalogueField={kind:'cylinder';radiusMm:number;lengthMm:number;jT:number}|{kind:'block';dims:Vec3;brMt:number};
@@ -105,6 +109,10 @@ export function catalogueBodyObb(c:WorkshopConfig):Obb{const s=sensorById(c.sens
  * conservative envelopes for the board and its moulded component. */
 export function catalogueBodyObbs(c:WorkshopConfig):Obb[]{
  const sensor=sensorById(c.sensorId),layout=customLayout(sensor);
+ if(sensor.insertionMount){
+  const yaw=c.machine?0:workshopHousingYawDeg(c.sensorId,c.geometry,sensor.cableSide);
+  return insertionParts(sensor).map(p=>({path:`sensor-${p.name}`,c:rotate([p.center,0,0],[0,yaw,0]),a:E.map(v=>rotate(v,[0,yaw,0])) as Frame,h:[p.length/2,p.diameter/2,p.diameter/2] as Vec3}));
+ }
  if(!layout)return [catalogueBodyObb(c)];
  return [
   {path:'custom-pcb',c:[0,-sensor.body[1]/2+layout.pcbThickness/2,0],a:E,h:[layout.pcbLength/2,layout.pcbThickness/2,layout.pcbWidth/2]},
@@ -116,7 +124,8 @@ export function catalogueBodyObbs(c:WorkshopConfig):Obb[]{
  * reed length (documented hypothesis); the calculation domain does NOT. */
 export function catalogueEvaluate(m:ReturnType<typeof catalogueModel>,pose:CataloguePose,s:ReedScenario,frame:Frame,quadrature=PROFILE.reed.quadraturePerBlade):PoseEvaluation{
  const n=Math.hypot(...pose.axis);if(!(n>0)||!pose.center.every(Number.isFinite))return {ok:false,reason:'invalid'};
- if(Math.hypot(...pose.center)>PROFILE.domain.maxCenterMm)return {ok:false,reason:'domain'};
+ // The domain is measured from the reed datum, not the centre of a long housing.
+ if(Math.hypot(...pose.center.map((v,i)=>v-(m.centre[i]??0)))>PROFILE.domain.maxCenterMm)return {ok:false,reason:'domain'};
  const axis=pose.axis.map(v=>v/n) as Vec3,k=m.lengthMm/14,half=PROFILE.reed.effectiveLengthMm*s.lengthFactor*k/2,sh=s.shift.map(v=>v*k);
  const fd=m.field;
  const B=(q:Vec3):number=>{
@@ -160,7 +169,7 @@ export type CatalogueVolume=SampledVolume&{field:VolumeField};
  * physical domain and thresholds remain unchanged; only sampling bounds grow. */
 export function catalogueExtent(c:WorkshopConfig):number {
  const body=sensorById(c.sensorId);
- return body.shape==='pressfit'?48:24;
+ return body.shape==='pressfit'?48:body.insertionMount?40:24;
 }
 export function catalogueVolume(c:WorkshopConfig,axis:Vec3,planeZ:number,obstacles:readonly Obb[]=[],extent=catalogueExtent(c),frame?:Frame):CatalogueVolume{
  const start=performance.now(),xs=axisNodes(-extent,extent,true),ys=axisNodes(-extent,extent),zs=axisNodes(-extent,extent);
@@ -174,7 +183,7 @@ export function catalogueVolume(c:WorkshopConfig,axis:Vec3,planeZ:number,obstacl
  // Reuse exact samples only under those symmetries (never with imported obstacles or a shifted grid).
  const symmetric=obstacles.length===0&&planeZ===0&&model.centre.every(n=>n===0);
  const bodyFrame=frame??magnetBodyFrame(c,c.magnetAngle);
- const planar=symmetric&&Math.abs(axis[1])<1e-12&&bodyFrame.every(a=>Math.abs(a[1])<1e-12||Math.abs(Math.abs(a[1])-1)<1e-12);
+ const planar=obstacles.length===0&&planeZ===0&&model.centre[1]===0&&Math.abs(axis[1])<1e-12&&bodyFrame.every(a=>Math.abs(a[1])<1e-12||Math.abs(Math.abs(a[1])-1)<1e-12);
  const bound=(ns:number[],i:number):[number,number]=>[i===0?-extent:((ns[i-1]??0)+(ns[i]??0))/2,i===ns.length-1?extent:((ns[i]??0)+(ns[i+1]??0))/2];
  // Same evaluator as point/cut/timeline, including body collision; no angle quantization.
  for(let k=0;k<zs.length;k++)for(let j=0;j<ys.length;j++)for(let i=0;i<xs.length;i++){
@@ -182,7 +191,7 @@ export function catalogueVolume(c:WorkshopConfig,axis:Vec3,planeZ:number,obstacl
   const inverse=((zs.length-1-k)*ys.length+(ys.length-1-j))*xs.length+(xs.length-1-i);
   const reflected=(k*ys.length+(ys.length-1-j))*xs.length+i;
   const both=((zs.length-1-k)*ys.length+j)*xs.length+(xs.length-1-i);
-  const reuse=symmetric?Math.min(index,inverse,...(planar?[reflected,both]:[])):index;
+  const reuse=symmetric?Math.min(index,inverse,...(planar?[reflected,both]:[])):planar?Math.min(index,reflected):index;
   const e=reuse<index?null:cataloguePlacement(c,frame?{center:[x,y,z],axis,frame}:{center:[x,y,z],axis},obstacles,model,true);
   const response=reuse<index?field.values[reuse]??null:e?.nominal?.ok?e.nominal.response:null;
   const blocked=reuse<index?field.blocked[reuse]??false:e?.cause==='overlap';
@@ -220,7 +229,7 @@ export function catalogueCoverage(){return SENSOR_CATALOG.map(s=>({sensorId:s.id
 export function catalogueClasses(sensorId:string,magnetModel:string,published:readonly string[]):string[]{
  // MK15-B-X etc. encode a sensitivity too; MK24-A-J is a contact variant,
  // so never infer a class from an arbitrary standalone letter in every family.
- const guide=guideSensitivityClasses(sensorId,magnetModel);
+ const guide=[...guideSensitivityClasses(sensorId,magnetModel),...(sensorById(sensorId).productFamily==='MK06'?['B','C','D','E']:[])];
  return [...new Set([...published,...guide])].sort();
 }
 

@@ -1,3 +1,4 @@
+import { changeoverBlades } from "@/lib/standex/changeover-contacts";
 import { insertionParts } from '@/lib/standex/insertion-profile';
 import { cableConstruction } from "@/lib/leadmagnet/product-presentation";
 import { catalogueFrame } from '@/lib/standex/catalogue-pedagogical';
@@ -29,6 +30,7 @@ import {
   sensorById,
   bladeLength,
   bladeOffsetZ,
+  bladeOffsetX,
   bladeOffsetY,
   customLayout,
   electricalDetailsAllowed,
@@ -361,10 +363,10 @@ function StandardBody({
           {t(material)}
         </mesh>
       )}
-      {electrical && model.id === "MK06-4" ? (
+      {electrical && model.productFamily === "MK06" ? (
         [-1, 1].map((sign) => (
-          <mesh key={sign} position={[sign * 5.08, -h / 2 - 1.65, 0]}>
-            <boxGeometry args={[0.5, 3.3, 0.5]} />
+          <mesh key={sign} position={[sign * (model.pinPitch ?? 10.16)/2, -h / 2 - (model.pinLength ?? 2.9)/2, 0]}>
+            <cylinderGeometry args={[(model.pinDiameter ?? .3)/2,(model.pinDiameter ?? .3)/2,model.pinLength ?? 2.9,12]} />
             <meshStandardMaterial color="#a7b5bd" metalness={0.8} roughness={0.25} />
           </mesh>
         ))
@@ -482,14 +484,17 @@ export function Contacts({
   const closed = contact === "closed";
   const { gap } = contactGeometry(model, closed);
   return (
-    <group position={[0, bladeOffsetY(model), bladeOffsetZ(model)]}>
+    <group position={[bladeOffsetX(model), bladeOffsetY(model), bladeOffsetZ(model)]}>
       {/* Explicit X-ray view: dark blades on a light silhouette are drawn after
           translucent zones. Separation/contact and moving current also convey state. */}
-      {([-1,1] as const).map(sign=><group key={sign} position={[sign*span*.23,0,sign*gap]}>
+      {model.contactForm === 'C' ? changeoverBlades(span,contactGeometry(model,false).gap,contact).map((points,i)=><group key={i}>
+        <Line points={points} color="#ffffff" lineWidth={6} transparent opacity={1} depthTest={false} depthWrite={false} renderOrder={30}/>
+        <Line points={points} color={i===2?'#8b3f17':'#254061'} lineWidth={3} transparent opacity={1} depthTest={false} depthWrite={false} renderOrder={31}/>
+      </group>) : ([-1,1] as const).map(sign=><group key={sign} position={[sign*span*.23,0,sign*gap]}>
         <Line points={[[-span*.28,0,0],[span*.28,0,0]]} color="#ffffff" lineWidth={6} transparent opacity={1} depthTest={false} depthWrite={false} renderOrder={30}/>
         <Line points={[[-span*.28,0,0],[span*.28,0,0]]} color={closed?'#8b3f17':'#254061'} lineWidth={3} transparent opacity={1} depthTest={false} depthWrite={false} renderOrder={31}/>
       </group>)}
-      {closed && <ContactFlow span={span} reduced={reduced} />}
+      {closed && model.contactForm !== "C" && <ContactFlow span={span} reduced={reduced} />}
     </group>
   );
 }

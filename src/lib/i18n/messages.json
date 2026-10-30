@@ -17380,12 +17380,12 @@
   ],
   "MK06 · taille 4": [
     "MK06 · size 4",
-    "MK06 · 尺寸4",
-    "MK06 · Größe 4",
+    "MK06 · 尺寸 4",
+    "MK06 · Baugröße 4",
     "MK06 · tamaño 4",
     "MK06 · размер 4",
-    "MK06 · misura 4",
-    "MK06 · サイズ4"
+    "MK06 · taglia 4",
+    "MK06 · サイズ 4"
   ],
   "MK11 · inox M5": [
     "MK11 · stainless M5",
@@ -35647,5 +35647,95 @@
     "Чертёж MK07-1A66B-500W: корпус 39,5 мм, вставная часть 31,5 мм, наконечник Ø 6,6 мм. Кабель 500 мм сокращён; переходы, резьба и положение геркона показаны условно.",
     "Disegno MK07-1A66B-500W: corpo 39,5 mm, inserimento 31,5 mm, punta Ø 6,6 mm. Cavo da 500 mm accorciato; raccordi, filettatura e posizione interna del reed illustrativi.",
     "MK07-1A66B-500W 図面：ケース 39.5 mm、挿入長 31.5 mm、先端 Ø 6.6 mm。500 mm ケーブルは短縮表示。段差、ねじ、内部リード位置は模式的。"
+  ],
+  "Version à broches traversantes documentée.": [
+    "Documented through-hole version.",
+    "有文档记录的通孔引脚版本。",
+    "Dokumentierte Durchsteckversion.",
+    "Versión de montaje pasante documentada.",
+    "Документированное исполнение для монтажа в отверстия.",
+    "Versione a foro passante documentata.",
+    "スルーホール実装仕様の資料あり。"
+  ],
+  "Taille du MK06": [
+    "MK06 size",
+    "MK06 尺寸",
+    "MK06-Baugröße",
+    "Tamaño del MK06",
+    "Размер MK06",
+    "Taglia MK06",
+    "MK06のサイズ"
+  ],
+  "Taille {0}": [
+    "Size {0}",
+    "尺寸 {0}",
+    "Baugröße {0}",
+    "Tamaño {0}",
+    "Размер {0}",
+    "Taglia {0}",
+    "サイズ {0}"
+  ],
+  "Form C : un contact mobile bascule du contact normalement fermé (NC) vers le contact normalement ouvert (NO) à l’approche de l’aimant.": [
+    "Form C: as the magnet approaches, a moving contact switches from the normally closed (NC) contact to the normally open (NO) contact.",
+    "Form C：磁铁靠近时，动触点从常闭（NC）触点切换到常开（NO）触点。",
+    "Form C: Bei Annäherung des Magneten wechselt der bewegliche Kontakt vom Ruhekontakt (NC) zum Arbeitskontakt (NO).",
+    "Forma C: al acercarse el imán, un contacto móvil pasa del contacto normalmente cerrado (NC) al normalmente abierto (NO).",
+    "Форма C: при приближении магнита подвижный контакт переключается с нормально замкнутого (NC) на нормально разомкнутый (NO).",
+    "Forma C: avvicinando il magnete, un contatto mobile passa dal contatto normalmente chiuso (NC) a quello normalmente aperto (NO).",
+    "Form C：磁石が近づくと、可動接点が常閉接点（NC）から常開接点（NO）に切り替わります。"
+  ],
+  "MK06 · taille 5": [
+    "MK06 · size 5",
+    "MK06 · 尺寸 5",
+    "MK06 · Baugröße 5",
+    "MK06 · tamaño 5",
+    "MK06 · размер 5",
+    "MK06 · taglia 5",
+    "MK06 · サイズ 5"
+  ],
+  "MK06 · taille 6": [
+    "MK06 · size 6",
+    "MK06 · 尺寸 6",
+    "MK06 · Baugröße 6",
+    "MK06 · tamaño 6",
+    "MK06 · размер 6",
+    "MK06 · taglia 6",
+    "MK06 · サイズ 6"
+  ],
+  "MK06 · taille 7": [
+    "MK06 · size 7",
+    "MK06 · 尺寸 7",
+    "MK06 · Baugröße 7",
+    "MK06 · tamaño 7",
+    "MK06 · размер 7",
+    "MK06 · taglia 7",
+    "MK06 · サイズ 7"
+  ],
+  "MK06 · taille 8": [
+    "MK06 · size 8",
+    "MK06 · 尺寸 8",
+    "MK06 · Baugröße 8",
+    "MK06 · tamaño 8",
+    "MK06 · размер 8",
+    "MK06 · taglia 8",
+    "MK06 · サイズ 8"
+  ],
+  "MK06 · taille 10": [
+    "MK06 · size 10",
+    "MK06 · 尺寸 10",
+    "MK06 · Baugröße 10",
+    "MK06 · tamaño 10",
+    "MK06 · размер 10",
+    "MK06 · taglia 10",
+    "MK06 · サイズ 10"
+  ],
+  "Cette taille du MK06 ne couvre pas les valeurs électriques indiquées avec un même contact documenté.": [
+    "No single documented contact for this MK06 size covers the specified electrical values.",
+    "此 MK06 尺寸没有单一有文档记录的触点能够满足所填电气参数。",
+    "Kein dokumentierter Kontakt dieser MK06-Baugröße deckt alle angegebenen elektrischen Werte ab.",
+    "Ningún contacto documentado de este tamaño del MK06 cubre todos los valores eléctricos indicados.",
+    "Ни один документированный контакт этого размера MK06 не соответствует всем указанным электрическим параметрам.",
+    "Nessun contatto documentato di questa taglia MK06 copre tutti i valori elettrici indicati.",
+    "このMK06サイズでは、単一の仕様記載接点で指定されたすべての電気的条件を満たせません。"
   ]
 }

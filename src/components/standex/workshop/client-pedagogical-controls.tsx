@@ -1,14 +1,15 @@
 import { Button } from '@/components/ui/button';
 import { t, msg } from '@/lib/i18n/core';
 import { VERIFIED_PILOTS } from '@/lib/standex/client-pedagogical';
-import type { WorkshopConfig } from '@/lib/standex/magnetic-workshop';
+import { approachOffset, type WorkshopConfig } from '@/lib/standex/magnetic-workshop';
 import { publishedClasses } from '@/lib/standex/magnetics/registries';
 import { catalogueClasses } from '@/lib/standex/catalogue-pedagogical';
 import { catalogueThresholds } from '@/lib/standex/catalogue-response';
 import { magnetOptionsFor } from '@/lib/standex/default-pairs';
 import { sensorById } from '@/lib/standex/sensor-catalog';
 import { isPcbSensor } from '@/lib/leadmagnet/product-presentation';
-import type { ReactNode } from 'react';
+import { useMemo, type ReactNode } from 'react';
+import { slideGapLimit } from '@/lib/standex/discovery-slide';
 import { discoveryPatch } from '@/lib/standex/discovery-preset';
 
 /** Colonne de découverte : disposition, mouvement, quart de tour et placement simple.
@@ -24,6 +25,7 @@ export function ClientPedagogicalControls({config,update,onCatalog,onCable,appro
   const classes=[...new Set([config.sensitivity,...available])].sort();
   const ordinalClasses=classes.every(c=>/^[A-G]$/.test(c));
   const magnets=[...new Set([config.magnetModel,...magnetOptionsFor(config.sensorId,undefined,config.magnetModel),...VERIFIED_PILOTS])];
+  const slideMax=useMemo(()=>config.motion==='slide'?slideGapLimit(config):15,[config.sensorId,config.magnetModel,config.sensitivity,config.motion,config.geometry,config.magnetAngle,config.magnetTilt,config.sensorAngle]);
   const motions:[WorkshopConfig['motion'],string][]=[['approach',t('Approche et retrait')],['slide',t('Passage latéral')]];
   return <div className="mw-ped-controls" data-testid="client-pedagogical-controls">
     <h2 className="t-title-m">{t(sensorById(config.sensorId).name)}</h2>
@@ -50,6 +52,7 @@ export function ClientPedagogicalControls({config,update,onCatalog,onCable,appro
         <Button variant="secondary" data-testid="quarter-turn" onClick={()=>update(discoveryPatch(config,{magnetAngle:((config.magnetAngle+90+180)%360)-180}))}>{t('Tourner de 90°')}</Button>
         <p className="t-caption">{config.magnetAngle===0?t('Aucune rotation appliquée'):msg('Rotation appliquée : {0}°',[config.magnetAngle])}</p>
       </section>
+      {config.motion==='slide'&&<label className="mw-field"><span>{t('Écart minimal entre le capteur et l’aimant')}<output className="t-metric">{Math.round((config.offset-approachOffset({...config,geometry:'D1'}))*100)/100} mm</output></span><input type="range" aria-label={t('Écart minimal entre le capteur et l’aimant')} min="0.25" max={Math.max(slideMax,config.offset-approachOffset({...config,geometry:'D1'}))} step="0.25" value={config.offset-approachOffset({...config,geometry:'D1'})} onInput={e=>update({offset:approachOffset({...config,geometry:'D1'})+Number(e.currentTarget.value)})}/></label>}
       {config.motion==='approach'&&<>
         <div className="mw-offset-control">
           <label className="mw-field"><span>{t('Décalage de l’aimant')}<output className="t-metric">{config.lateralShift>0?'+':''}{config.lateralShift} mm</output></span><input type="range" aria-label={t('Décalage de l’aimant')} min={Math.min(-20,config.lateralShift)} max={Math.max(20,config.lateralShift)} step="0.5" value={config.lateralShift} onInput={e=>update({lateralShift:Number(e.currentTarget.value)})}/></label>

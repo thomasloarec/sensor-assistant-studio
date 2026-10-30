@@ -22,7 +22,7 @@ export function volumeKey(settings:ExperimentSettings,frame:PedagogicalFrame,obs
  const body=(frame.pose as {frame?:number[][]}).frame?.map(row=>row.map(round));
  // Discovery translations move the point through an unchanged sensor-local field.
  // Keep the volume visible while dragging; full orientation and obstacles still key it.
- const volumeConfig=catalogue?{...catalogue,lateralShift:0,start:0,end:0}:null;
+ const volumeConfig=catalogue?{...catalogue,lateralShift:0,start:0,end:0,offset:0}:null;
  return settingsKey(settings,axis,0)+'|'+(obstacles?fingerprint(obstacles):'free')+'|'+(catalogue?CATALOGUE_MODEL_VERSION:'frozen')+'|'+JSON.stringify(volumeConfig)+'|'+JSON.stringify(catalogue?body??null:null);
 }
 /** Cut key: fixed flat-face plane for catalogue; instant plane for historical staff mode. */

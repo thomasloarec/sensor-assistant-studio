@@ -127,7 +127,7 @@ function Fallback({
             layout ? `translate(${-layout.offset[0] / 2} ${-layout.offset[2] / 2})` : undefined
           }
         >
-          <g transform={layout ? `rotate(${(-layout.sensorYaw * 180) / Math.PI})` : undefined}>
+          <g transform={layout ? `rotate(${(-layout.sensorYaw * 180) / Math.PI})` : model.id === "MK07" ? "rotate(180)" : undefined}>
             <SensorPlan
               model={model}
               xray={false}

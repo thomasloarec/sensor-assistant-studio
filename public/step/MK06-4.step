@@ -1,6 +1,6 @@
 ISO-10303-21;
 HEADER;
-FILE_DESCRIPTION(('STEP d''encombrement · modèle simplifié | capteur MK06-4 | corps 12.06×3.3×3.3 mm, terminaisons 12.06 mm, enveloppe 12.06×3.3×3.3 mm | provenance : MK06.pdf, page 1 | Ce fichier n''est ni un fichier fabricant ni une CAO de fabrication : géométrie d''encombrement approximée (FACETED_BREP), générée par scripts/generate-step-envelopes.ts.'),'2;1');
+FILE_DESCRIPTION(('STEP d''encombrement · modèle simplifié | capteur MK06-4 | corps 12.06×3.3×3.3 mm, terminaisons 12.06 mm, enveloppe 12.06×3.3×3.3 mm | provenance : MK06-size-4.png | Ce fichier n''est ni un fichier fabricant ni une CAO de fabrication : géométrie d''encombrement approximée (FACETED_BREP), générée par scripts/generate-step-envelopes.ts.'),'2;1');
 FILE_NAME('step/MK06-4.step','2026-01-01T00:00:00',('Standex Sensor Studio'),('Standex Detect'),'generate-step-envelopes.ts','','');
 FILE_SCHEMA(('AUTOMOTIVE_DESIGN { 1 0 10303 214 1 1 1 1 }'));
 ENDSEC;
