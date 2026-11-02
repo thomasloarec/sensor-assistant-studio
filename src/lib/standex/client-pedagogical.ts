@@ -60,7 +60,8 @@ export function currentClientTrace(d: DesignDossier): ClientPedagogicalResult | 
     ? {...clientPedagogicalResult(d.workshop,r.indicative?.progress),dossierId:d.id} : null;
 }
 export function recordClientTrace(d: DesignDossier, config: WorkshopConfig,progress=d.clientPedagogical?.indicative?.progress??0): DesignDossier {
-  return {...d,workshop:config,clientPedagogical:{...clientPedagogicalResult(config,progress),dossierId:d.id},
+  return {...d,workshop:config,selectedSensorId:config.sensorId,workshopSensorId:config.sensorId,sensorSyncConfirmed:true,
+    clientPedagogical:{...clientPedagogicalResult(config,progress),dossierId:d.id},
     // Superseded binary predictions cannot reappear in any existing summary/export path.
     testedPairs:(d.testedPairs??[]).map(p=>p.verdict==='expected'?{...p,verdict:'undocumented' as const,
       pullInMm:null,dropOutMm:null,mainMessage:CLIENT_LIMITS.housing,documentedPosition:false}:p)};

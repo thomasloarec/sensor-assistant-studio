@@ -18,6 +18,11 @@ const base = (patch: Partial<MachineAssembly>): MachineAssembly => ({
   ...patch,
 });
 export const DEMO_ASSEMBLIES: Record<string, MachineAssembly> = {
+  "builtin:coffee-v1": base({
+    ...structuredClone(COFFEE_ASSEMBLY),
+    movingNodes: [COFFEE_ASSEMBLY.movingNode],
+    motionStatus: "confirmed",
+  }),
   "builtin:drawer-v1": base({
     assetKey: "builtin:drawer-v1",
     fileName: "demo-tiroir-deux-pieces.glb",

@@ -116,7 +116,8 @@ describe("Couverture des langues de l'interface", () => {
     // + 2 entrées : décalage en translation et recentrage.
     // + 8 entrées : catalogue, distance, surmoulage et approximation N42.
     // + 7 entrées : MK07, géométrie, câblage et montage.
-    expect(Object.keys(dictionary)).toHaveLength(3989);
+    // + 10 entries: visible installation rotation and coffee model description.
+    expect(Object.keys(dictionary)).toHaveLength(3999);
     const broken = Object.entries(dictionary).filter(
       ([, v]) => v.length !== 7 || v.some((x) => typeof x !== "string" || x.trim() === ""),
     );

@@ -1,6 +1,5 @@
 import { useWorkshopDesktop } from "./use-workshop-desktop";
 import { Button } from "@/components/ui/button";
-import { clearanceRegions } from '@/lib/standex/zone-clearance';
 import { sectionVolume } from '@/lib/standex/zone-section';
 import { ClientPedagogicalControls } from './client-pedagogical-controls';
 import { discoveryPatch, clientDiscoveryConfig } from '@/lib/standex/discovery-preset';
@@ -387,8 +386,8 @@ export default function MagneticWorkshop({
   const [prepSeconds,setPrepSeconds]=useState(0);
   useEffect(()=>{if(!preparing)return;setPrepSeconds(0);const began=performance.now();const id=window.setInterval(()=>setPrepSeconds(Math.floor((performance.now()-began)/1000)),1000);return()=>window.clearInterval(id);},[preparing]);
   const prepCancel = useRef<(() => void) | null>(null);
-  // Catalogue : le volume exclut les obstacles (clé indépendante de l'instant) ; l'exclusion
-  // mécanique COURANTE est appliquée au rendu avec le même test de corps que le verdict.
+  // Imported geometry does not model magnetic shielding. Display the full field;
+  // actual placement, search and timeline still test CURRENT mechanical envelopes.
   const clipGeneration=config.machine?animationGeneration(config.machine.assetKey,config.machine.unitScale):0;
   const pivotPlanKey = catalogue ? JSON.stringify([config, catalogueProfile?.version, machineAssetId, clipGeneration]) : null;
   const [plannedKey, setPlannedKey] = useState<string | null>(null);
@@ -401,9 +400,6 @@ export default function MagneticWorkshop({
   const volumeFrame = pivotT !== null ? catalogueFrame(config, pivotT) : pedagogicalPose;
   const sampledRaw = usePedagogicalVolume(pedagogical && eligible && !pivotHidden, activeExperiment, volumeFrame, catalogue ? null : config.machine ? frameObstacles : null, catalogue ? config : undefined);
   const sampled=sampledRaw;
-  const clearance=useMemo(()=>{const bodyFrame=(pedagogicalPose.pose as {frame?:[Vec3,Vec3,Vec3]}).frame;
-    return catalogueProfile&&bodyFrame?clearanceRegions(bodyFrame,catalogueProfile.magnetBody,frameObstacles??[]):[];
-  },[catalogueProfile,pedagogicalPose,frameObstacles]);
   const [timelineResult, setPedTimeline] = useState<(ReturnType<typeof placementTimeline>&{key:string}) | null>(null);
   const timelineKey=pedagogicalTimelineKey(effectiveExperiment,config,machineAssetId,envelopes,clipGeneration)+'|'+(catalogue?catalogueProfile?.version:'frozen');
   const pedTimeline=eligible&&timelineResult?.key===timelineKey?timelineResult:null;
@@ -441,12 +437,12 @@ export default function MagneticWorkshop({
   // Seuils mémorisés par classe : un objet frais à chaque frame ne doit pas reconstruire les surfaces.
   const layerClassName = catalogueProfile ? catalogueProfile.className : effectiveExperiment.className;
   const layerThresholds = useMemo(() => catalogue?catalogueThresholds(layerClassName):classThresholds(layerClassName), [layerClassName,catalogue]);
-  const experimentalLayer = pedagogical ? <PedagogicalLayer frame={pedagogicalPose} settings={effectiveExperiment} volume={sampled.volume} zones={zones} zonesOnly={catalogue} thresholds={layerThresholds} clearance={clearance}/> : undefined;
+  const experimentalLayer = pedagogical ? <PedagogicalLayer frame={pedagogicalPose} settings={effectiveExperiment} volume={sampled.volume} zones={zones} zonesOnly={catalogue} thresholds={layerThresholds} throughParts={catalogue && !!config.machine}/> : undefined;
   // Coupe instantanée : le worker ne calcule QUE le plan choisi (jamais le volume entier), en pause.
-  const cutSampled = usePedagogicalCut(pedagogical && eligible && !playing && view === "top", activeExperiment, pedagogicalPose, config.machine ? frameObstacles : null, catalogue ? config : undefined);
+  const cutSampled = usePedagogicalCut(pedagogical && eligible && !playing && view === "top", activeExperiment, pedagogicalPose, catalogue ? null : config.machine ? frameObstacles : null, catalogue ? config : undefined);
   const cutVolume=useMemo(()=>catalogue&&playing&&sampled.volume&&layerThresholds&&view==='top'
-    ? sectionVolume(sampled.volume,CATALOGUE_CUT_PLANE_Z,layerThresholds,clearance) : cutSampled.volume,
-    [catalogue,playing,sampled.volume,layerThresholds,pedagogicalPose,clearance,cutSampled.volume,view]);
+    ? sectionVolume(sampled.volume,CATALOGUE_CUT_PLANE_Z,layerThresholds) : cutSampled.volume,
+    [catalogue,playing,sampled.volume,layerThresholds,pedagogicalPose,cutSampled.volume,view]);
   // Circuit de principe : même instant et même moteur que le bandeau ; jamais le calcul binaire historique.
   const circuitContact = illustrativeContact(placement,layerClassName);
   /** Vitesse de lecture. Par défaut un aller-retour dure 6 s : la lecture
@@ -708,9 +704,15 @@ export default function MagneticWorkshop({
     );
   }, [machine?.sensorAttach?.kind, machine?.magnetAttach?.kind]);
   function openDemo(key: string) {
-    if (key === "builtin:coffee-v1") return exampleMachine();
+    if (key === "builtin:coffee-v1" && !clientPedagogical) return exampleMachine();
     const demo = DEMO_ASSEMBLIES[key];
     if (!demo) return;
+    importSeqRef.current++;
+    setPendingUnits(null);
+    freshImportRef.current = null;
+    setPlaying(false);
+    setProgress(0);
+    setTool("navigate");
     // Le capteur et l'aimant courants sont conservés : l'exemple ne les impose pas.
     update({ machine: structuredClone(demo) });
     setGuideState({ ...INITIAL_GUIDE });
@@ -732,7 +734,10 @@ export default function MagneticWorkshop({
     setTool(next);
   }
   function exampleMachine() {
-    if (clientPedagogical) { openDemo('builtin:arm-v1'); return; }
+    if (clientPedagogical) {
+      openDemo('builtin:coffee-v1');
+      return;
+    }
     update({
       machine: structuredClone(COFFEE_ASSEMBLY),
       demoReach: 25,

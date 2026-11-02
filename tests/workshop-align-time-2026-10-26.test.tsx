@@ -31,6 +31,57 @@ afterAll(() => {
 });
 
 describe("Positions de détection dans le Workshop intégré", () => {
+  test("drawer → coffee keeps the requested model and pair; both components expose free and attached rotations with undo", async()=>{
+    const {setLocale}=await import('../src/lib/i18n/core');setLocale('fr');
+    const {default:Workshop}=await import('../src/components/standex/workshop/workshop');
+    const {DEFAULT_WORKSHOP}=await import('../src/lib/standex/magnetic-workshop');
+    const {DEMO_ASSEMBLIES}=await import('../src/lib/standex/machine-demos');
+    const {attachPose}=await import('../src/lib/standex/machine-mounting');
+    let draft={...DEFAULT_WORKSHOP,sensorId:'MK03',magnetModel:'NDFEB250175H-6X10',
+      machine:structuredClone(DEMO_ASSEMBLIES['builtin:drawer-v1']!)};
+    const view=render(<Workshop clientPedagogical embedded initialConfig={draft} onDraftChange={c=>{draft=c as typeof draft;}} onClose={()=>{}} onSave={async()=>{}}/>);
+    try {
+      await act(async()=>fireEvent.click(view.getAllByTestId('demo-coffee')[0]!));
+      await waitFor(()=>expect(draft.machine.assetKey).toBe('builtin:coffee-v1'),{timeout:10000});
+      expect(draft.sensorId).toBe('MK03');expect(draft.magnetModel).toBe('NDFEB250175H-6X10');
+      await waitFor(()=>expect(view.getAllByText('machine-cafe-bac-mobile.glb').length).toBeGreaterThan(0));
+      await act(async()=>fireEvent.click(view.getByTestId('guide-step-install')));
+      expect(view.getByText('Rotation du capteur')).toBeTruthy();
+      const free=view.getByTestId('guide-free-rotation-Z') as HTMLInputElement;
+      free.value='90';await act(async()=>fireEvent.blur(free));
+      expect(draft.machine.sensorRotation[2]).toBe(90);
+      await act(async()=>fireEvent.click(view.getByRole('radio',{name:'Aimant'})));
+      expect(view.getByText('Rotation de l’aimant')).toBeTruthy();
+      expect(view.getByTestId('guide-free-rotation-X')).toBeTruthy();
+    }finally{view.unmount();}
+
+    const a={kind:'surface' as const,support:'moving' as const,partPath:'0/1/0',
+      point:[18,67,22] as [number,number,number],normal:[0,0,1] as [number,number,number],
+      offsetMm:0,spinDeg:0,flip:false,depthRef:'collar' as const,axisSource:'face' as const};
+    draft={...draft,machine:{...structuredClone(DEMO_ASSEMBLIES['builtin:wall-v1']!),magnetAttach:a,
+      sensorAttach:{...a,support:'fixed',partPath:'0/0/0',point:[0,60,6]}}};
+    const mounted=render(<Workshop clientPedagogical embedded initialConfig={draft} onDraftChange={c=>{draft=c as typeof draft;}} onClose={()=>{}} onSave={async()=>{}}/>);
+    try{
+      await act(async()=>fireEvent.click(mounted.getByTestId('guide-step-install')));
+      expect(mounted.getByText('Rotation du capteur')).toBeTruthy();
+      await act(async()=>fireEvent.click(mounted.getByRole('button',{name:'+90°',exact:true})));
+      expect(draft.machine.sensorAttach?.spinDeg).toBe(90);
+      expect(draft.machine.sensorAttach?.point).toEqual([0,60,6]);
+      await act(async()=>fireEvent.click(mounted.getByRole('radio',{name:'Aimant'})));
+      await act(async()=>fireEvent.change(mounted.getByTestId('guide-surface-orientation'),{target:{value:'end'}}));
+      expect(draft.machine.magnetAttach?.surfaceOrientation).toBe('end');
+      expect(draft.machine.magnetAttach?.point).toEqual(a.point);
+      await act(async()=>fireEvent.click(mounted.getByRole('button',{name:'+90°',exact:true})));
+      expect(draft.machine.magnetAttach?.spinDeg).toBe(90);
+      const before=structuredClone(draft.machine);
+      await act(async()=>fireEvent.click(mounted.getByTestId('guide-flip')));
+      expect(draft.machine.magnetAttach?.flip).toBe(true);
+      expect(draft.machine.magnetRotation).not.toEqual(before.magnetRotation);
+      expect(draft.machine.magnetPosition).toEqual(attachPose(draft.machine.magnetAttach!,{lengthMm:10,heightMm:6}).position);
+      await act(async()=>fireEvent.click(mounted.getByRole('button',{name:'Annuler le dernier réglage'})));
+      expect(draft.machine).toEqual(before);
+    }finally{mounted.unmount();}
+  },20000);
   test("C1% placement survives central normalization; undo/redo and both play controls share the real Workshop state", async () => {
     const { setLocale } = await import('../src/lib/i18n/core');setLocale('fr');
     const { default: Workshop } = await import('../src/components/standex/workshop/workshop');

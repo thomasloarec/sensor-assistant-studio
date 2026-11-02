@@ -84,7 +84,9 @@ export function mountingFootprint(c: WorkshopConfig, a: Attachment): Vec3[] {
     [1, -1],
     [1, 1],
     [-1, 1],
-  ].map(([x, z]) => rotate([(x! * size[0]) / 2, 0, (z! * size[2]) / 2], rotation));
+  ].map(([x, z]) => rotate(a.surfaceOrientation === "end"
+    ? [0, (x! * size[1]) / 2, (z! * size[2]) / 2]
+    : [(x! * size[0]) / 2, 0, (z! * size[2]) / 2], rotation));
 }
 export async function findDetectionPositions(
   c: WorkshopConfig,

@@ -5,7 +5,7 @@ import { clearanceTextureData, type ClearanceRegion } from '@/lib/standex/zone-c
 /** Fragment clipping avoids resampling the whole volume for every moving part.
  * Every visible fragment tests the full magnet body against CURRENT envelopes.
  * Mesh coordinates and envelope planes are both in the reed frame. */
-export function ZoneMaterial({core,regions}:{core:boolean;regions:readonly ClearanceRegion[]}){
+export function ZoneMaterial({core,regions,throughParts=false}:{core:boolean;regions:readonly ClearanceRegion[];throughParts?:boolean}){
  const state=useMemo(()=>{
   const texture=new DataTexture(new Float32Array(128),32,1,RGBAFormat,FloatType);
   const uniforms={zonePlanes:{value:texture},zoneParts:{value:0},zoneRows:{value:1}};
@@ -27,6 +27,7 @@ export function ZoneMaterial({core,regions}:{core:boolean;regions:readonly Clear
   material.customProgramCacheKey=()=> 'zone-clearance-v1';
   return {texture,material,uniforms};
  },[core]);
+ state.material.depthTest=!throughParts;
  // Updating this small texture preserves the mesh and shader program during animation.
  const data=useMemo(()=>clearanceTextureData(regions),[regions]);
  state.texture.image={data,width:32,height:Math.max(1,regions.length)};

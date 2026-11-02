@@ -116,6 +116,7 @@ export function attachFromHit(
     normal: hit.normal,
     offsetMm: same ? previous!.offsetMm : 0,
     spinDeg: same ? previous!.spinDeg : 0,
+    ...(same && previous?.surfaceOrientation ? { surfaceOrientation: previous.surfaceOrientation } : {}),
     flip: same ? previous!.flip : false,
     depthRef: same ? previous!.depthRef : "collar",
     axisSource: "face",
@@ -341,6 +342,7 @@ export default function MachineGuide({
   const tangents = attach ? faceTangents(attach.normal) : null;
   const editAttach = (patch: Partial<Attachment>) => {
     if (!attach) return;
+    setPlaying(false);
     onChange(attachPatch(target, { ...attach, ...patch }, config));
   };
   const opening = openingReading(m, sample.t);
@@ -355,6 +357,48 @@ export default function MachineGuide({
     asset?.nodes.find((n) => n.path === path)?.name ?? path;
   const ready = guideMotionReady(m, !!asset);
   const stepIndex = STEPS.findIndex(([s]) => s === state.step);
+  const orientationControls = (
+    <fieldset className="mw-attach" data-testid="guide-orientation">
+      <legend className="t-title-s">{t(target === "sensor" ? "Rotation du capteur" : "Rotation de l’aimant")}</legend>
+      {attach ? <>
+        {attach.kind === "surface" && <label className="mw-select-label">
+          {t("Sens du montage")}
+          <select value={attach.surfaceOrientation ?? "side"} data-testid="guide-surface-orientation"
+            onChange={e => editAttach({surfaceOrientation: e.target.value as "side" | "end"})}>
+            <option value="side">{t("Axe parallèle à la face")}</option>
+            <option value="end">{t("Axe perpendiculaire à la face")}</option>
+          </select>
+        </label>}
+        {/* i18n-canonical: Num translates its label at render time. */}
+        <Num label={attach.kind === "surface" ? "Rotation dans le plan" : "Rotation sur son axe"}
+          unit="°" min={-360} max={360} step={1} testId="guide-spin"
+          value={attach.spinDeg} onCommit={spinDeg => editAttach({spinDeg})}/>
+        <div className="mw-guide-row">
+          {[-90, 90].map(delta => <Button key={delta} className="mw-button mw-secondary"
+            onClick={() => editAttach({spinDeg: ((attach.spinDeg + delta) % 360 + 360) % 360})}>
+            {delta < 0 ? "−90°" : "+90°"}
+          </Button>)}
+        </div>
+        <label className="mw-check">
+          <input type="checkbox" checked={attach.flip} data-testid="guide-flip"
+            onChange={e => editAttach({flip:e.target.checked})}/>
+          {t(attach.kind === "through" ? "Inverser le sens d'insertion" : "Retourner le composant (180°)")}
+        </label>
+        <p className="t-caption">{t("Le point d’appui reste sur la face choisie. Les zones suivent l’orientation réelle du couple.")}</p>
+      </> : <>
+        <p className="t-caption">{t("Rotation autour du centre du composant. Cliquez une face pour fixer son point d’appui.")}</p>
+        {(["X", "Y", "Z"] as const).map((axis, i) => <Num key={axis} label={msg("Rotation {0}", [axis])}
+          unit="°" min={-360} max={360} step={1} testId={"guide-free-rotation-" + axis}
+          value={(target === "sensor" ? m.sensorRotation : m.magnetRotation)[i]!}
+          onCommit={value => {
+            setPlaying(false);
+            const rotation = [...(target === "sensor" ? m.sensorRotation : m.magnetRotation)] as Vec3;
+            rotation[i] = value;
+            onChange(target === "sensor" ? {sensorRotation:rotation} : {magnetRotation:rotation});
+          }}/>)}
+      </>}
+    </fieldset>
+  );
 
   const body: Record<GuideStep, React.ReactNode> = {
     model: (
@@ -818,6 +862,7 @@ export default function MachineGuide({
             </Button>
           ))}
         </div>
+        {orientationControls}
         <div className="mw-segmented" role="radiogroup" aria-label={t("Type de montage")}>
           {(
             [
@@ -1011,24 +1056,6 @@ export default function MachineGuide({
                 </p>
               </>
             )}
-            {/* i18n-canonical : libellés français traduits au rendu par t(). */}
-            <Num
-              label="Rotation dans le plan"
-              unit="°"
-              min={-360}
-              max={360}
-              step={1}
-              value={attach.spinDeg}
-              onCommit={(spinDeg) => editAttach({ spinDeg })}
-            />
-            <label className="mw-check">
-              <input
-                type="checkbox"
-                checked={attach.flip}
-                onChange={(e) => editAttach({ flip: e.target.checked })}
-              />
-              {t(attach.kind === "through" ? "Inverser le sens d'insertion" : "Retourner le composant")}
-            </label>
             <details className="mw-precise" data-testid="guide-precise">
               <summary className="t-body">{t("Position précise")}</summary>
               <p className="t-caption">{t("Repère : coordonnées du fichier en pose statique (mécanisme au repos), en mm. Le point suit ensuite sa pièce support.")}</p>
@@ -1513,7 +1540,7 @@ export function DemoButtons({
             {t("Machine à café")}
           </Button>
           <span className="t-caption">
-            {t("Exemple complet : impose le capteur MK24-A-J et son aimant documenté par défaut.")}
+            {t("Machine à café : bac mobile en translation.")}
           </span>
         </li>
       )}

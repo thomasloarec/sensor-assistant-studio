@@ -24,6 +24,8 @@ export interface Attachment {
    *  au-delà de la face (positif = en retrait dans la paroi, négatif = dépasse). */
   offsetMm: number;
   spinDeg: number;
+  /** Surface: longitudinal axis parallel to the support (default), or normal to it. */
+  surfaceOrientation?: "side" | "end";
   flip: boolean;
   /** Traversant : référence de la profondeur. */
   depthRef: "collar" | "tip";
@@ -41,7 +43,8 @@ const v3 = (a: Vec3) => new Vector3(...a);
 
 /** Pose (position + Euler XYZ en degrés) d'un composant attaché.
  *  `lengthMm` = dimension locale X (axe longitudinal), `heightMm` = dimension
- *  locale Y (la face d'appui est la face locale −Y). */
+ *  locale Y. Appui latéral sur ±Y, ou en bout sur ±X selon l'orientation
+ *  et le retournement ; le point de fixation reste inchangé. */
 export function attachPose(
   a: Attachment,
   dims: { lengthMm: number; heightMm: number },
@@ -50,9 +53,14 @@ export function attachPose(
   const spin = (a.spinDeg * Math.PI) / 180;
   if (a.kind === "surface") {
     const q = new Quaternion().setFromUnitVectors(new Vector3(0, 1, 0), n);
-    if (a.flip) q.multiply(new Quaternion().setFromAxisAngle(new Vector3(1, 0, 0), Math.PI));
+    if (a.surfaceOrientation === "end")
+      q.multiply(new Quaternion().setFromAxisAngle(new Vector3(0, 0, 1), Math.PI / 2));
+    // Reverse the longitudinal AND transverse axes: the previous roll around X
+    // left the poles of an axial magnet unchanged.
+    if (a.flip) q.multiply(new Quaternion().setFromAxisAngle(new Vector3(0, 0, 1), Math.PI));
     q.premultiply(new Quaternion().setFromAxisAngle(n, spin));
-    const p = v3(a.point).addScaledVector(n, dims.heightMm / 2 + a.offsetMm);
+    const height = a.surfaceOrientation === "end" ? dims.lengthMm : dims.heightMm;
+    const p = v3(a.point).addScaledVector(n, height / 2 + a.offsetMm);
     return { position: p.toArray() as Vec3, rotation: toDeg(new Euler().setFromQuaternion(q)) };
   }
   const i = a.flip ? n.clone() : n.clone().negate();
@@ -97,6 +105,7 @@ export function parseAttachment(value: unknown): Attachment | null {
   if (Math.abs(x["offsetMm"] as number) > ATTACH_LIMIT_MM) return null;
   if (Math.abs(x["spinDeg"] as number) > 360) return null;
   if (typeof x["flip"] !== "boolean") return null;
+  if (x["surfaceOrientation"] !== undefined && !["side", "end"].includes(x["surfaceOrientation"] as string)) return null;
   if (!["collar", "tip"].includes(x["depthRef"] as string)) return null;
   if (!["face", "two-points", "manual", "plane-centre"].includes(x["axisSource"] as string)) return null;
   return {
@@ -108,6 +117,7 @@ export function parseAttachment(value: unknown): Attachment | null {
     offsetMm: x["offsetMm"] as number,
     spinDeg: x["spinDeg"] as number,
     flip: x["flip"] as boolean,
+    ...(x["surfaceOrientation"] ? { surfaceOrientation: x["surfaceOrientation"] as "side" | "end" } : {}),
     depthRef: x["depthRef"] as "collar" | "tip",
     axisSource: x["axisSource"] as Attachment["axisSource"],
   };
