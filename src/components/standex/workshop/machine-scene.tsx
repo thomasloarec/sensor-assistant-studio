@@ -39,11 +39,15 @@ import type { CycleSample, WorkshopConfig, Vec3 } from "@/lib/standex/magnetic-w
 import { sensorById, sizeLabel } from "@/lib/standex/sensor-catalog";
 import { Body, Contacts, Magnet, CameraRig, ContextGuard, GhostMagnet } from "./scene";
 import type { GhostPose } from "./scene";
+import { surfaceMoveFrame, surfaceMovePatch } from "@/lib/standex/machine-surface-move";
+import { mountingFace } from "@/lib/standex/machine-face";
 
 export type MachineTool =
   | "navigate"
   | "sensor"
   | "magnet"
+  | "move-sensor"
+  | "move-magnet"
   | "measure"
   | "cable"
   /** Sélection des pièces mobiles. */
@@ -316,6 +320,16 @@ function Assembly({
   useEffect(() => () => highlight.dispose(), [highlight]);
   const editable = (tool === "sensor" || tool === "magnet") && sample.t === 0;
   const selected = tool === "sensor" ? sensorRef : magnetRef;
+  const moveTarget=tool==="move-sensor"?"sensor":tool==="move-magnet"?"magnet":null;
+  const moveFrame=useMemo(()=>moveTarget?surfaceMoveFrame(machine,moveTarget,u):null,[machine,moveTarget,u]);
+  const moveAttach=moveTarget==="sensor"?machine.sensorAttach:moveTarget==="magnet"?machine.magnetAttach:undefined;
+  const moveFace=useMemo(()=>moveAttach?mountingFace(asset,moveAttach):null,[asset,moveAttach]);
+  const moveProxy=useMemo(()=>new Group(),[]);
+  const [moveRejected,setMoveRejected]=useState(false);
+  useEffect(()=>{
+    if(moveFrame){moveProxy.position.set(...moveFrame.position);moveProxy.quaternion.copy(moveFrame.quaternion);moveProxy.updateMatrixWorld(true);}
+    setMoveRejected(false);
+  },[moveFrame,moveProxy]);
   const hitOf = (event: ThreeEvent<MouseEvent>, path: string, moving: boolean): SceneHit | null => {
     if (!event.face) return null;
     const normal = event.face.normal
@@ -334,7 +348,7 @@ function Assembly({
     };
   };
   const place = (event: ThreeEvent<MouseEvent>, moving: boolean, path = "") => {
-    if (tool === "navigate") return;
+    if (tool === "navigate" || moveTarget) return;
     // Un glisser de navigation n'est jamais un clic : il ne sélectionne ni ne place rien.
     if (event.delta > 4) return;
     event.stopPropagation();
@@ -495,7 +509,7 @@ function Assembly({
         </group>
       </SupportFrame>
       </>}
-      {editable && (!pedagogicalLayer || hideElectrical && config.sensorId!=='GENERIC') && (
+      {editable && !guide && (!pedagogicalLayer || hideElectrical && config.sensorId!=='GENERIC') && (
         <TransformControls
           ref={control}
           object={selected as React.RefObject<Group>}
@@ -519,6 +533,30 @@ function Assembly({
           }}
         />
       )}
+      {moveTarget && moveFrame && sample.t===0 && <>
+        <primitive object={moveProxy}/>
+        <TransformControls object={moveProxy} mode="translate" space="local"
+          showX showY showZ={false} size={0.75} translationSnap={0.1}
+          onObjectChange={()=>{
+            const patch=surfaceMovePatch(config,asset,moveTarget,moveProxy.position.toArray() as Vec3,u,moveFace);
+            const object=(moveTarget==="sensor"?sensorRef:magnetRef).current;
+            const position=moveTarget==="sensor"?patch?.sensorPosition:patch?.magnetPosition;
+            if(object&&position)object.position.set(...position);
+          }}
+          onMouseUp={()=>{
+            const patch=surfaceMovePatch(config,asset,moveTarget,moveProxy.position.toArray() as Vec3,u,moveFace);
+            if(patch){setMoveRejected(false);onChange(patch);}
+            else {
+              moveProxy.position.set(...moveFrame.position);moveProxy.updateMatrixWorld(true);
+              const object=(moveTarget==="sensor"?sensorRef:magnetRef).current;
+              if(object)object.position.set(...(moveTarget==="sensor"?machine.sensorPosition:machine.magnetPosition));
+              setMoveRejected(true);
+            }
+          }}/>
+        {moveRejected && <Html position={moveFrame.position} center>
+          <span className="mw-scene-label" role="status">{t("Déplacement refusé : restez sur la face de fixation.")}</span>
+        </Html>}
+      </>}
       {guide?.holePlane && tool === "pick" && <HolePlanePreview plane={guide.holePlane} onRay={(o, d) => guide.onHoleRay?.({ origin: o, direction: d })} />}
       {markerPoints.map((p, i) => (
         <mesh key={"marker" + i} position={p}>

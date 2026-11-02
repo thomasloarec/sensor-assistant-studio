@@ -47,6 +47,7 @@ describe("Positions de détection dans le Workshop intégré", () => {
       await waitFor(()=>expect(view.getAllByText('machine-cafe-bac-mobile.glb').length).toBeGreaterThan(0));
       await act(async()=>fireEvent.click(view.getByTestId('guide-step-install')));
       expect(view.getByText('Rotation du capteur')).toBeTruthy();
+      await act(async()=>fireEvent.click(view.getByText('Rotation du capteur')));
       const free=view.getByTestId('guide-free-rotation-Z') as HTMLInputElement;
       free.value='90';await act(async()=>fireEvent.blur(free));
       expect(draft.machine.sensorRotation[2]).toBe(90);
@@ -64,10 +65,12 @@ describe("Positions de détection dans le Workshop intégré", () => {
     try{
       await act(async()=>fireEvent.click(mounted.getByTestId('guide-step-install')));
       expect(mounted.getByText('Rotation du capteur')).toBeTruthy();
+      await act(async()=>fireEvent.click(mounted.getByText('Rotation du capteur')));
       await act(async()=>fireEvent.click(mounted.getByRole('button',{name:'+90°',exact:true})));
       expect(draft.machine.sensorAttach?.spinDeg).toBe(90);
       expect(draft.machine.sensorAttach?.point).toEqual([0,60,6]);
       await act(async()=>fireEvent.click(mounted.getByRole('radio',{name:'Aimant'})));
+      await act(async()=>fireEvent.click(mounted.getByText('Rotation de l’aimant')));
       await act(async()=>fireEvent.change(mounted.getByTestId('guide-surface-orientation'),{target:{value:'end'}}));
       expect(draft.machine.magnetAttach?.surfaceOrientation).toBe('end');
       expect(draft.machine.magnetAttach?.point).toEqual(a.point);

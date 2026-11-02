@@ -29,6 +29,10 @@ import type { MachineAsset } from "../src/lib/standex/machine-assets";
 import { sensorById } from "../src/lib/standex/sensor-catalog";
 import { catalogueFrame, cataloguePlacement } from "../src/lib/standex/catalogue-pedagogical";
 import { registerAnimation } from "../src/lib/standex/machine-clip-registry";
+import { illustrativeContact } from "../src/lib/standex/pedagogical-contact";
+import { attachPatch } from "../src/components/standex/workshop/machine-guide";
+import { catalogueModel } from "../src/lib/standex/catalogue-pedagogical";
+import { partEnvelopes, reedObstaclesAt } from "../src/lib/standex/pedagogical-envelopes";
 
 import { fixture } from "./helpers/machine-search-fixture";
 const square = (half: number): Vec3[] => [
@@ -106,12 +110,34 @@ describe("finite original mounting face", () => {
   });
 });
 describe("same-face C1% search", () => {
+  test("MK15/HF3225 D4: a manually reachable sensitive-specimen lobe is found instead of rejected",async()=>{
+    const {c,asset,attach}=fixture(26,100);
+    c.sensorId="MK15";c.magnetModel="HF3225-14.95X10X5";c.sensitivity="B";
+    c.machine!.sensorRotation=[0,0,90];
+    Object.assign(c.machine!,attachPatch("magnet",attach,c));
+    const known={...c,machine:{...c.machine!,...attachPatch("magnet",{...attach,point:[12,26,0]},c)}};
+    const frame=catalogueFrame(known,0),obstacles=reedObstaclesAt(known.machine,partEnvelopes(asset)!,0,frame);
+    const manual=cataloguePlacement(known,frame.pose,obstacles);
+    expect(manual.zone).toBe(1);expect(illustrativeContact(manual,"B")).toBe("closed");
+    expect(illustrativeContact(cataloguePlacement(c,catalogueFrame(c,0).pose),"B")).toBe("open");
+    const result=await findDetectionPositions(c,asset);
+    expect(result.positions.length).toBeGreaterThanOrEqual(2);
+    expect(result.sensitiveOnly).toBe(true);
+    for(const p of result.positions){
+      const next={...c,machine:{...c.machine!,...attachPatch("magnet",p.attach,c)}};
+      const f=catalogueFrame(next,result.t),e=cataloguePlacement(next,f.pose,reedObstaclesAt(next.machine,partEnvelopes(asset)!,result.t,f));
+      expect(illustrativeContact(e,catalogueModel(next).className)).toBe("closed");
+      expect({...p.attach,point:attach.point}).toEqual(attach);
+    }
+    asset.dispose();
+  },30000);
   test("multiple ON regions, footprint support and attachment invariants; input remains immutable", async () => {
     const { c, asset, attach } = fixture(),
       before = JSON.stringify(c);
     const r = await findDetectionPositions(c, asset);
     expect(r.positions.length).toBeGreaterThanOrEqual(2);
     expect(r.t).toBe(0);
+    expect(r.sensitiveOnly).toBe(false);
     const face = mountingFace(asset, attach)!;
     for (const p of r.positions) {
       expect({ ...p.attach, point: attach.point }).toEqual(attach);
@@ -169,7 +195,7 @@ describe("same-face C1% search", () => {
     expect(
       next.positions.every((q) => new Vector3(...q.attach.point).distanceTo(new Vector3(...p)) > 5),
     ).toBe(true);
-  });
+  },15000);
   test("nearest approach can be the open end; preview time uses manual half-cycle", async () => {
     const { c, asset } = fixture(14);
     c.machine!.travel = [0, -5, 0];

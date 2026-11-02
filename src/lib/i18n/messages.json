@@ -35989,5 +35989,77 @@
     "Ось перпендикулярна грани",
     "Asse perpendicolare alla faccia",
     "軸を面と垂直にする"
+  ],
+  "Choisir la face de fixation": [
+    "Choose mounting face",
+    "选择安装面",
+    "Montagefläche wählen",
+    "Elegir la cara de montaje",
+    "Выбрать монтажную грань",
+    "Scegli la faccia di montaggio",
+    "取り付け面を選択"
+  ],
+  "Changer de face de fixation": [
+    "Change mounting face",
+    "更换安装面",
+    "Montagefläche wechseln",
+    "Cambiar la cara de montaje",
+    "Изменить монтажную грань",
+    "Cambia la faccia di montaggio",
+    "取り付け面を変更"
+  ],
+  "Déplacer sur la face": [
+    "Move along the face",
+    "沿表面移动",
+    "Auf der Fläche verschieben",
+    "Mover sobre la cara",
+    "Переместить по грани",
+    "Sposta sulla faccia",
+    "面上で移動"
+  ],
+  "Terminer le déplacement": [
+    "Finish moving",
+    "完成移动",
+    "Verschieben beenden",
+    "Terminar el desplazamiento",
+    "Завершить перемещение",
+    "Termina lo spostamento",
+    "移動を終了"
+  ],
+  "Glissez les flèches pour déplacer le composant sur sa face. Un déplacement hors de cette face est refusé.": [
+    "Drag the arrows to move the component along its face. Moves outside this face are rejected.",
+    "拖动箭头以沿安装面移动组件。不能移出此表面。",
+    "Ziehen Sie die Pfeile, um das Bauteil auf seiner Fläche zu verschieben. Bewegungen außerhalb dieser Fläche werden abgelehnt.",
+    "Arrastre las flechas para mover el componente sobre su cara. Se rechazan los movimientos fuera de ella.",
+    "Перетаскивайте стрелки для перемещения компонента по грани. Перемещение за её пределы отклоняется.",
+    "Trascina le frecce per spostare il componente sulla sua faccia. Gli spostamenti fuori dalla faccia vengono rifiutati.",
+    "矢印をドラッグして面上で部品を移動します。この面の外への移動は拒否されます。"
+  ],
+  "Déplacement refusé : restez sur la face de fixation.": [
+    "Move rejected: stay on the mounting face.",
+    "移动被拒绝：请保持在安装面内。",
+    "Verschiebung abgelehnt: Bleiben Sie auf der Montagefläche.",
+    "Desplazamiento rechazado: permanezca en la cara de montaje.",
+    "Перемещение отклонено: оставайтесь на монтажной грани.",
+    "Spostamento rifiutato: resta sulla faccia di montaggio.",
+    "移動できません。取り付け面内に留めてください。"
+  ],
+  "Position détectée par l’exemplaire sensible illustré. Aucun noyau de détection plus prudent trouvé sur cette face.": [
+    "Position detected by the illustrated sensitive specimen. No more conservative detection core was found on this face.",
+    "图示高灵敏度样品可检测此位置。此表面上未找到更保守的检测核心区。",
+    "Position vom dargestellten empfindlichen Exemplar erkannt. Auf dieser Fläche wurde kein konservativerer Detektionskern gefunden.",
+    "Posición detectada por el ejemplar sensible ilustrado. No se encontró un núcleo de detección más conservador en esta cara.",
+    "Положение обнаруживается показанным чувствительным экземпляром. Более консервативная зона обнаружения на этой грани не найдена.",
+    "Posizione rilevata dall’esemplare sensibile illustrato. Nessun nucleo di rilevamento più prudente trovato su questa faccia.",
+    "図示された高感度個体が検出する位置です。この面には、より保守的な検出コアが見つかりませんでした。"
+  ],
+  "À propos de la recherche": [
+    "About the search",
+    "关于搜索",
+    "Über die Suche",
+    "Acerca de la búsqueda",
+    "О поиске",
+    "Informazioni sulla ricerca",
+    "検索について"
   ]
 }

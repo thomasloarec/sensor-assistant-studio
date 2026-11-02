@@ -734,8 +734,16 @@ seuil de détection ou volume magnétique n'est modifié.
 
 ### Installation et Résultat — 2 novembre 2026
 
-Dans Installation, le groupe de rotation du composant choisi précède les commandes de pose : axes libres avant fixation, puis rotation dans le plan, pas de 90°, montage longitudinal parallèle/perpendiculaire et retournement à 180°. Le point et la face support restent conservés ; le centre est ajusté à la nouvelle dimension d’appui. Les champs, boutons et titres réutilisent les jetons et tailles existants, dans les huit langues.
+Dans Installation, le groupe de rotation du composant choisi suit les commandes de pose et se replie par défaut : axes libres avant fixation, puis rotation dans le plan, pas de 90°, montage longitudinal parallèle/perpendiculaire et retournement à 180°. Le point et la face support restent conservés ; le centre est ajusté à la nouvelle dimension d’appui. Les champs, boutons et titres réutilisent les jetons et tailles existants, dans les huit langues.
 
 Les zones indicatives restent visibles à travers les pièces importées : leur géométrie ne constitue pas un modèle de blindage magnétique. Les contrôles de chevauchement restent actifs pour le placement et la recherche des positions. Aucun seuil ni réponse C1 % ne change.
 
 Résultat affiche les illustrations du couple effectivement validé et utilise le même capteur pour la configuration. Le titre indicatif est unique ; les détails répétitifs de modélisation quittent cet en-tête, tout en restant dans les données du dossier. Les actions sont ordonnées : Tester un autre couple (secondaire), puis Configurer votre capteur (primaire). Les entrées Replacer l’aimant et atelier câble sont retirées de Résultat en V1.
+
+### Organisation du montage — 2 novembre 2026
+
+Les cinq étapes restent identiques. Installation regroupe le choix du composant, le type de montage et les outils de fixation/déplacement dans une même surface. Choisir/changer la face sert uniquement à la fixation ; Déplacer sur la face active deux axes tangents et conserve la face finie, le support, les rotations et l’écart. Les réglages de position et de rotation sont repliés par défaut après les outils. La recherche conserve un bouton direct, ses explications passent dans un menu replié. Aucun réglage n’est supprimé.
+
+Tous les menus natifs de la colonne de gauche portent un chevron orienté selon leur état, sauf ceux ayant déjà leur icône. Surface, rayons, focus et typographie reprennent les jetons existants ; cibles de 44 px et retour à la ligne conservés.
+
+La recherche sur face échantillonne plus finement les lobes. Elle privilégie le seuil prudent et accepte, à défaut, une position au seuil de la lampe illustrative ; ce second cas est explicitement signalé. Les collisions, limites de face et critères physiques ne sont pas assouplis.
