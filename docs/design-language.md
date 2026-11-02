@@ -1,5 +1,18 @@
 # Langage de design Standex DETECT
 
+### Pile du circuit et envoi Standex — 2 novembre 2026
+
+Les schémas de contact représentent une pile à un seul élément : un trait long
+et un trait court plus épais, horizontaux, espacés de 4 unités SVG et raccordés
+en leur centre au fil vertical. La couleur suit celle du circuit ; le trait
+long reprend son épaisseur. Aucun trait de courant animé ne traverse l’espace
+entre les deux pôles. Référence de symbole :
+[pile à un élément, Siemens](https://symbols.radicasoftware.com/226/electronic-symbols/22/battery-single-cell).
+
+Avec Standex ne demande plus de cocher une relecture du résumé technique.
+Cette confirmation ne bloque plus l’envoi ; aucun acquittement n’est inventé
+dans les instantanés historiques. L’accord d’envoi du contenu reste explicite.
+
 ### Installation dans le modèle importé — 2 novembre 2026
 
 Le parcours conserve ses cinq étapes. Les caractéristiques de l’aimant utilisent

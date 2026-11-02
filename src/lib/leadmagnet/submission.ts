@@ -48,6 +48,7 @@ export interface SubmissionSnapshot {
   transferredFiles: { id: string; fileName: string; path: string; sha256: string }[];
   consents: ConsentRecord[];
   ndaStatus: NdaState["status"];
+  /** Historical record only; no longer a submission prerequisite. */
   reviewAcknowledged: boolean;
   /** Contexte serveur réellement visé par cet envoi. */
   binding: ConsentBinding;
@@ -57,6 +58,7 @@ export interface SubmissionInput {
   dossier: DesignDossier;
   nda: NdaState;
   consents: ConsentRecord[];
+  /** Legacy metadata: false when no separate review was requested. */
   reviewAcknowledged: boolean;
   additionalConstraints: string;
   /** Dossier serveur visé (null tant qu'aucun n'existe). */
@@ -140,7 +142,6 @@ export type SubmissionCheck = { ok: true } | { ok: false; problems: string[] };
 
 export async function checkSubmission(input: SubmissionInput): Promise<SubmissionCheck> {
   const problems: string[] = [];
-  if (!input.reviewAcknowledged) problems.push("Confirmez la relecture du résumé technique.");
   if (!input.dossier.business.contactEmail?.trim())
     problems.push("Renseignez un contact pour le retour Standex.");
   if (!input.dossier.business.siteCity?.trim() || !validSiteCountry(input.dossier.business.siteCountry))

@@ -1144,7 +1144,8 @@
   text-transform: uppercase;
 }
 .closed .mw-wire,
-.closed .mw-blade {
+.closed .mw-blade,
+.closed .mw-battery {
   stroke: var(--success);
 }
 .closed .mw-contact-dot {
@@ -2413,7 +2414,7 @@
 .mw-contact-circuit:not(.mw-changeover-circuit)[data-contact="closed"] .mw-mini-switch {
   transform: rotate(0deg);
 }
-.mw-contact-circuit:not(.mw-changeover-circuit)[data-contact="closed"] :is(.mw-mini-wire, .mw-mini-switch) {
+.mw-contact-circuit:not(.mw-changeover-circuit)[data-contact="closed"] :is(.mw-mini-wire, .mw-mini-switch, .mw-mini-source) {
   stroke: var(--success);
 }
 .mw-contact-circuit:not(.mw-changeover-circuit)[data-contact="closed"] .mw-mini-bulb {
@@ -2427,6 +2428,8 @@
 .mw-mini-rays {
   stroke: var(--success);
 }
+.mw-cell-negative { stroke-width: 3; }
+.mw-battery .mw-cell-negative { stroke-width: 3.5; }
 .mw-mini-current {
   fill: none;
   stroke: var(--success);

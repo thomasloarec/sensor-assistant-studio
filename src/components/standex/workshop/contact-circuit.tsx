@@ -16,14 +16,17 @@ export default function ContactCircuit({ contact, unavailable=false, formC=false
     <div className="mw-contact-circuit" data-contact={unavailable?'unavailable':contact} role="img" aria-label={label}>
       <svg viewBox="0 0 208 86" aria-hidden="true">
         {/* The source, reed and lamp are in series, with gaps at each symbol. */}
-        <path className="mw-mini-wire" d="M24 39 V20 H78 M130 20 H178 V35 M178 61 V74 H24 V53" />
-        <path className="mw-mini-source" d="M14 39 H34 M18 46 H30 M14 53 H34" />
+        <path className="mw-mini-wire" d="M24 44 V20 H78 M130 20 H178 V35 M178 61 V74 H24 V48" />
+        <g className="mw-mini-source">
+          <path d="M14 44 H34" />
+          <path className="mw-cell-negative" d="M18 48 H30" />
+        </g>
         <rect className="mw-mini-capsule" x="71" y="8" width="66" height="25" rx="12" />
         {!unknown && <path className="mw-mini-switch" d="M78 20 H114" />}
         <path className="mw-mini-wire" d="M115 20 H130" />
         <circle className="mw-mini-terminal" cx="78" cy="20" r="2.5" />
         <circle className="mw-mini-terminal" cx="114" cy="20" r="2.5" />
-        {closed && <path className="mw-mini-current" d="M24 20 H178 V74 H24 Z" />}
+        {closed && <path className="mw-mini-current" d="M24 44 V20 H178 V74 H24 V48" />}
         <circle className="mw-mini-bulb" cx="178" cy="48" r="13" />
         <path className="mw-mini-filament" d="M172 42 L184 54 M184 42 L172 54" />
         {closed && <path className="mw-mini-rays" d="M178 28 V25 M198 48 H201 M194 32 L197 29 M194 64 L197 67 M158 48 H155" />}
@@ -42,8 +45,11 @@ function ChangeoverCircuit({contact,unavailable}:{contact:Contact;unavailable:bo
   const label=t(unavailable?'Simulation indisponible à cette position':active==='A'?'Circuit A actif':active==='B'?'Circuit B actif':'État indéterminé');
   return <div className="mw-contact-circuit mw-changeover-circuit" data-contact={unavailable?'unavailable':contact} data-active-circuit={active??'none'} role="img" aria-label={label}>
     <svg viewBox="0 0 208 116" aria-hidden="true">
-      <path className="mw-mini-wire" d="M20 56 V40 H66 M20 70 V104 H182"/>
-      <path className="mw-mini-source" d="M10 56 H30 M14 63 H26 M10 70 H30"/>
+      <path className="mw-mini-wire" d="M20 61 V40 H66 M20 65 V104 H182"/>
+      <g className="mw-mini-source">
+        <path d="M10 61 H30"/>
+        <path className="mw-cell-negative" d="M14 65 H26"/>
+      </g>
       <rect className="mw-mini-capsule" x="59" y="10" width="60" height="61" rx="12"/>
       {(['A','B'] as const).map((branch)=>{
         const x=branch==='A'?142:182,y=branch==='A'?24:56;

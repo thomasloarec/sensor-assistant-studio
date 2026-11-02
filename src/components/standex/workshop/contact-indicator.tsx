@@ -40,7 +40,7 @@ export default function ContactIndicator({ contact }: { contact: Contact }) {
               : "Circuit illustré ouvert : lampe éteinte",
         )}
       >
-        <path className="mw-wire" d="M105 27 H26 V83 H136 M168 83 H294 V27 H224" />
+        <path className="mw-wire" d="M105 27 H26 V53 M26 57 V83 H294 V27 H224" />
         <rect className="mw-reed-capsule" x="92" y="9" width="143" height="38" rx="19" />
         <path
           className="mw-blade"
@@ -53,8 +53,11 @@ export default function ContactIndicator({ contact }: { contact: Contact }) {
           }
         />
         <circle className="mw-contact-dot" cx={closed ? 164 : 174} cy="27" r="4" />
-        {closed && <path className="mw-current" d="M26 27 H294 V83 H26 Z" />}
-        <path className="mw-battery" d="M147 70 V96 M159 75 V91 M136 83 H147 M159 83 H168" />
+        {closed && <path className="mw-current" d="M26 53 V27 H294 V83 H26 V57" />}
+        <g className="mw-battery">
+          <path d="M16 53 H36" />
+          <path className="mw-cell-negative" d="M20 57 H32" />
+        </g>
         <circle className="mw-lamp" cx="294" cy="56" r="12" />
         <path className="mw-lamp-filament" d="M288 50 L300 62 M300 50 L288 62" />
         <text x="163" y="63" textAnchor="middle">
