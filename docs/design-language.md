@@ -731,3 +731,11 @@ Le préréglage de passage latéral est plafonné à la demi-course de 50 mm
 acceptée par l'atelier. Le PCB Custom ne produit plus une configuration
 invalide qui empêchait de sélectionner ce mouvement. Aucun montage importé,
 seuil de détection ou volume magnétique n'est modifié.
+
+### Installation et Résultat — 2 novembre 2026
+
+Dans Installation, le groupe de rotation du composant choisi précède les commandes de pose : axes libres avant fixation, puis rotation dans le plan, pas de 90°, montage longitudinal parallèle/perpendiculaire et retournement à 180°. Le point et la face support restent conservés ; le centre est ajusté à la nouvelle dimension d’appui. Les champs, boutons et titres réutilisent les jetons et tailles existants, dans les huit langues.
+
+Les zones indicatives restent visibles à travers les pièces importées : leur géométrie ne constitue pas un modèle de blindage magnétique. Les contrôles de chevauchement restent actifs pour le placement et la recherche des positions. Aucun seuil ni réponse C1 % ne change.
+
+Résultat affiche les illustrations du couple effectivement validé et utilise le même capteur pour la configuration. Le titre indicatif est unique ; les détails répétitifs de modélisation quittent cet en-tête, tout en restant dans les données du dossier. Les actions sont ordonnées : Tester un autre couple (secondaire), puis Configurer votre capteur (primaire). Les entrées Replacer l’aimant et atelier câble sont retirées de Résultat en V1.

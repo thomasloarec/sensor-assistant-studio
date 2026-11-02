@@ -26,7 +26,7 @@ export function surface(cells:SampleCell[],zone:1|2) {
 }
 export { smoothSurface } from '@/lib/standex/zone-surface';
 import { smoothSurface, unpackSurface, type PackedSurface } from '@/lib/standex/zone-surface';
-export function PedagogicalLayer({frame,settings,volume,zones=true,zonesOnly=false,thresholds,clearance=[]}:{frame:PedagogicalFrame;settings:ExperimentSettings;volume:SampledVolume|null;zones?:boolean;zonesOnly?:boolean;thresholds?:{low:number|null;high:number}|null;clearance?:readonly ClearanceRegion[]}) {
+export function PedagogicalLayer({frame,settings,volume,zones=true,zonesOnly=false,thresholds,clearance=[],throughParts=false}:{frame:PedagogicalFrame;settings:ExperimentSettings;volume:SampledVolume|null;zones?:boolean;zonesOnly?:boolean;thresholds?:{low:number|null;high:number}|null;clearance?:readonly ClearanceRegion[];throughParts?:boolean}) {
   const magnet=PILOT_MAGNETS.find(m=>m.id===settings.magnetId);
   const rotation=useMemo(()=>new Quaternion().setFromRotationMatrix(new Matrix4().makeBasis(...frame.basis.map(v=>new Vector3(...v)) as [Vector3,Vector3,Vector3])),[frame.basis]);
   const q=useMemo(()=>new Quaternion().setFromUnitVectors(new Vector3(0,1,0),new Vector3(...frame.pose.axis).normalize()),[frame.pose.axis]);
@@ -52,7 +52,7 @@ export function PedagogicalLayer({frame,settings,volume,zones=true,zonesOnly=fal
      {/* Zone identity preserved: index 0 = coque (seuil bas), index 1 = noyau (seuil haut).
          Class A (low=null) keeps the core cyan at index 1 — never recoloured as shell. */}
      {zones&&geometries.map((geometry,i)=>geometry&&<mesh key={i} geometry={geometry} renderOrder={i}>
-      <ZoneMaterial core={i===1} regions={clearance}/>
+      <ZoneMaterial core={i===1} regions={clearance} throughParts={throughParts}/>
     </mesh>)}
     {!zonesOnly&&magnet&&<>
     {/* Generic sensor body = EXACTLY the tested mechanical envelope (glass ±7 mm + r 1.1 mm = 16,2 × Ø2,2 mm). Opaque. */}

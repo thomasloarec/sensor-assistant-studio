@@ -47,9 +47,10 @@ describe("guide source across workshop, result and reopening", () => {
     expect(returningBeyond20.length).toBeGreaterThan(0);
     expect(returningBeyond20.every(s => s.contact === "closed")).toBe(true);
   });
-  test("shifted pose offers replacement, material changes never reuse ferrite distances", () => {
+  test("shifted pose keeps the simple result actions, material changes never reuse ferrite distances", () => {
     const c = pairDemonstration(DEFAULT_WORKSHOP, "MK15", magnet);
-    expect(render(entry({ ...c, lateralShift: 10 }))).toContain("Revenir à une position documentée");
+    expect(render(entry({ ...c, lateralShift: 10 }))).not.toContain("Revenir à une position documentée");
+    expect(render(entry({ ...c, lateralShift: 10 }))).toContain("Tester un autre couple");
     expect(workshopGuideRange({ ...c, magnetModel: "NDFEB-10X5X1.9" })?.toMm).toBe(13.9);
     expect(workshopGuideRange({ ...c, geometry: "F1" })).toBeNull();
     expect(workshopGuideRange({ ...c, sensorId: "MK27", magnetModel: "M27" })).toBeNull();

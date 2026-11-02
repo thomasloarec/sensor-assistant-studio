@@ -24252,7 +24252,7 @@
     "Rotación del sensor",
     "Поворот датчика",
     "Rotazione del sensore",
-    "センサー回転"
+    "センサーの回転"
   ],
   "Rotation libre": [
     "Free rotation",
@@ -35899,5 +35899,95 @@
     "Запустить",
     "Avvia",
     "開始"
+  ],
+  "Rotation de l’aimant": [
+    "Magnet rotation",
+    "磁铁旋转",
+    "Magnetdrehung",
+    "Rotación del imán",
+    "Поворот магнита",
+    "Rotazione del magnete",
+    "磁石の回転"
+  ],
+  "Sens du montage": [
+    "Mounting orientation",
+    "安装方向",
+    "Montageausrichtung",
+    "Orientación de montaje",
+    "Ориентация монтажа",
+    "Orientamento di montaggio",
+    "取り付け方向"
+  ],
+  "Rotation sur son axe": [
+    "Rotation about its axis",
+    "绕自身轴旋转",
+    "Drehung um die eigene Achse",
+    "Rotación sobre su eje",
+    "Вращение вокруг своей оси",
+    "Rotazione sul proprio asse",
+    "自身の軸を中心に回転"
+  ],
+  "Retourner le composant (180°)": [
+    "Flip the component (180°)",
+    "翻转组件（180°）",
+    "Bauteil umdrehen (180°)",
+    "Invertir el componente (180°)",
+    "Перевернуть компонент (180°)",
+    "Capovolgi il componente (180°)",
+    "部品を反転（180°）"
+  ],
+  "Le point d’appui reste sur la face choisie. Les zones suivent l’orientation réelle du couple.": [
+    "The contact point stays on the selected face. The zones follow the actual orientation of the pair.",
+    "支撑点保持在所选表面上。区域随配对的实际方向变化。",
+    "Der Auflagepunkt bleibt auf der gewählten Fläche. Die Zonen folgen der tatsächlichen Ausrichtung des Paars.",
+    "El punto de apoyo permanece en la cara elegida. Las zonas siguen la orientación real del par.",
+    "Точка опоры остаётся на выбранной грани. Зоны следуют фактической ориентации пары.",
+    "Il punto di appoggio resta sulla faccia scelta. Le zone seguono l’orientamento reale della coppia.",
+    "接点は選択した面に保持されます。領域はペアの実際の向きに追従します。"
+  ],
+  "Rotation autour du centre du composant. Cliquez une face pour fixer son point d’appui.": [
+    "Rotation around the component centre. Click a face to set its contact point.",
+    "围绕组件中心旋转。点击表面以设置支撑点。",
+    "Drehung um die Bauteilmitte. Klicken Sie auf eine Fläche, um den Auflagepunkt festzulegen.",
+    "Rotación alrededor del centro del componente. Haga clic en una cara para fijar el punto de apoyo.",
+    "Вращение вокруг центра компонента. Нажмите на грань, чтобы задать точку опоры.",
+    "Rotazione attorno al centro del componente. Fai clic su una faccia per fissare il punto di appoggio.",
+    "部品の中心を軸に回転します。面をクリックして接点を固定してください。"
+  ],
+  "Rotation {0}": [
+    "Rotation {0}",
+    "旋转 {0}",
+    "Drehung {0}",
+    "Rotación {0}",
+    "Поворот {0}",
+    "Rotazione {0}",
+    "回転 {0}"
+  ],
+  "Machine à café : bac mobile en translation.": [
+    "Coffee machine: sliding tray.",
+    "咖啡机：平移托盘。",
+    "Kaffeemaschine: verschiebbarer Behälter.",
+    "Cafetera: bandeja deslizante.",
+    "Кофемашина: выдвижной поддон.",
+    "Macchina da caffè: vaschetta scorrevole.",
+    "コーヒーマシン：スライド式トレイ。"
+  ],
+  "Axe parallèle à la face": [
+    "Axis parallel to the face",
+    "轴平行于表面",
+    "Achse parallel zur Fläche",
+    "Eje paralelo a la cara",
+    "Ось параллельна грани",
+    "Asse parallelo alla faccia",
+    "軸を面と平行にする"
+  ],
+  "Axe perpendiculaire à la face": [
+    "Axis perpendicular to the face",
+    "轴垂直于表面",
+    "Achse senkrecht zur Fläche",
+    "Eje perpendicular a la cara",
+    "Ось перпендикулярна грани",
+    "Asse perpendicolare alla faccia",
+    "軸を面と垂直にする"
   ]
 }

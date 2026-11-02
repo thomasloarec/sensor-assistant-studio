@@ -1,7 +1,7 @@
 /** Recette : dans l'atelier intégré (Workshop dans WorkspacePanel), Échap
  *  pendant « Centrer dans un trou » annule la sélection temporaire SANS fermer
  *  le panneau ; hors pointage, Échap ferme toujours le panneau. Ordre JSX :
- *  le bloc La recherche de détection précède écart/rotation/retournement. */
+ *  les rotations visibles précèdent la recherche de détection, puis l'écart. */
 import { GlobalRegistrator } from "@happy-dom/global-registrator";
 import { afterAll, afterEach, beforeAll, describe, expect, mock, test } from "bun:test";
 import { readFileSync } from "node:fs";
@@ -90,16 +90,18 @@ describe("Échap dans l'atelier intégré", () => {
     expect(closes).toEqual([false]);
   }, 30000);
 
-  test("« Aligner avec le capteur » précède écart, rotation et retournement", async () => {
+  test("les rotations visibles précèdent la recherche de détection et l'écart", async () => {
     const { v } = await mount();
     await act(async () => fireEvent.click(v.getByRole("radio", { name: "Aimant" })));
     const attach = v.getByTestId("guide-attach");
     const align = v.getByTestId("guide-detection-positions");
     const offset = attach.querySelector('[data-testid="guide-offset"]') ?? v.getByText(/Écart entre face/);
-    const flip = v.getByText("Retourner le composant");
+    const flip = v.getByTestId("guide-flip");
+    const rotation = v.getByTestId("guide-spin");
     const before = (a: Node, b: Node) => !!(a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING);
     expect(before(align, offset)).toBe(true);
-    expect(before(align, flip)).toBe(true);
+    expect(before(rotation, align)).toBe(true);
+    expect(before(flip, align)).toBe(true);
     expect((v.getByTestId("guide-precise") as HTMLDetailsElement).open).toBe(false);
   }, 30000);
 });

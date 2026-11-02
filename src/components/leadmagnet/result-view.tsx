@@ -1,4 +1,4 @@
-import { CLIENT_LIMITS, type ClientPedagogicalResult } from "@/lib/standex/client-pedagogical";
+import { type ClientPedagogicalResult } from "@/lib/standex/client-pedagogical";
 import { CATALOGUE_LABELS } from '@/lib/standex/catalogue-pedagogical';
 import { ILLUSTRATIVE_NOTE, GUIDE_UNPUBLISHED_NOTE } from "@/lib/standex/workshop-guide";
 import { CompatibilityPanel } from "@/components/leadmagnet/compatibility-panel";
@@ -130,8 +130,6 @@ export function ResultView({
   onSeePairs,
   onConfirmWithStandex,
   onContinue,
-  onRequestTrial,
-  onReplaceMagnet,
   onTestPair,
 }: ResultViewProps) {
   /** Le même encart qu'ailleurs, avec ses boutons d'édition : tant qu'un point
@@ -147,10 +145,17 @@ export function ResultView({
     {fitPanel}
     <h2 className="t-display-m">{t(CATALOGUE_LABELS.notice)}</h2>
     <p className="t-title-m">{pedagogicalResult.sensorId} + {pedagogicalResult.magnetId} · {pedagogicalResult.sensitivity}</p>
-    {pedagogicalResult.reasons.map(reason=><p className="t-body" key={reason}>{t(reason)}</p>)}
-    <p className="notice-info t-body">{t('Zones d’activation estimées')}</p>
-    <p className="t-caption">{t('Une revue publiée atteste la revue de cette révision, pas une certification du produit.')}</p>
-    <div className="flex flex-wrap gap-3"><Button variant="secondary" onClick={onReplaceMagnet}>{t("Replacer l'aimant")}</Button><Button onClick={onContinue??onConfirmWithStandex}>{onContinue?t('Configurer votre capteur →'):t('Confirmer avec Standex →')}</Button><Button variant="secondary" onClick={onSeePairs}>{t('Tester un autre couple')}</Button></div>
+    <div className="max-w-xl">
+      <PairThumbnail key={pedagogicalResult.sensorId + ':' + pedagogicalResult.magnetId}
+        sensorId={pedagogicalResult.sensorId} magnetId={pedagogicalResult.magnetId}/>
+    </div>
+    {pedagogicalResult.reasons.filter(reason => ![
+      CATALOGUE_LABELS.notice, CATALOGUE_LABELS.datum, CATALOGUE_LABELS.proxy,
+    ].includes(reason)).map(reason=><p className="t-body" key={reason}>{t(reason)}</p>)}
+    <div className="flex flex-wrap gap-3">
+      <Button variant="secondary" onClick={onSeePairs}>{t('Tester un autre couple')}</Button>
+      <Button onClick={onContinue??onConfirmWithStandex}>{onContinue?t('Configurer votre capteur →'):t('Confirmer avec Standex →')}</Button>
+    </div>
   </section>;
   if (!pair)
     return fitPanel ? (
@@ -177,14 +182,6 @@ export function ResultView({
    *  commutation obtenue en démonstration ne vérifie pas l'application. */
   const positive = pair.verdict === "expected" && !applicationBlocked;
   const guide = pair.guideReference ? guideRange(pair.sensorId, pair.guideReference, pair.magnetId, pair.approach) : null;
-  /** Replacer l'aimant n'a de sens que si la POSITION est en cause. Quand aucune
-   *  ligne n'est publiée pour ce couple, déplacer l'aimant ne change rien : on ne
-   *  laisse donc pas entendre que la personne a bougé quelque chose. */
-  const canReplace =
-    !(pair.verdict === "unpublished" && !guide) &&
-    (pair.verdict === "none" ||
-      pair.documentedPosition === false ||
-      (pair.documentedPosition === undefined && pair.verdict === "undocumented"));
   const approachLabel =
     pair.approach === "F1"
       ? t("Face à face")
@@ -261,11 +258,11 @@ export function ResultView({
               </p>
             </div>
             <div className="flex flex-wrap gap-3">
+              <Button variant="secondary" className="min-h-11" onClick={onSeePairs}>
+                {t("Tester un autre couple")}
+              </Button>
               <Button className="min-h-11" onClick={onContinue ?? onConfirmWithStandex}>
                 {onContinue ? t("Configurer votre capteur →") : t("Confirmer avec Standex →")}
-              </Button>
-              <Button variant="outline" className="min-h-11" onClick={onSeePairs}>
-                {t("Tester un autre couple")}
               </Button>
             </div>
           </>
@@ -299,21 +296,11 @@ export function ResultView({
                 {t(hasGuideData(pair.sensorId) ? ILLUSTRATIVE_NOTE : GUIDE_UNPUBLISHED_NOTE)}
               </p>
             ) : null}
-            <div className="result-options">
-              {canReplace ? <div className="panel-block space-y-3">
-                <p className="t-title-s">{t("Option 1")}</p>
-                <p className="t-body">{pair.verdict === "none" ? t("Rapprocher l’aimant dans cette position") : t("Revenir à une position documentée")}</p>
-                <Button variant="outline" className="min-h-11" onClick={onReplaceMagnet}>
-                  {t("Replacer l'aimant")}
-                </Button>
-              </div> : null}
-              <div className="panel-block result-option-primary space-y-3">
-                {canReplace ? <p className="t-title-s">{t("Option 2")}</p> : null}
-                <p className="t-body">{t(guide && pair.documentedPosition ? "Faire confirmer par Standex" : "Demander un essai à Standex")}</p>
-                <Button className="min-h-11" onClick={guide && pair.documentedPosition ? onConfirmWithStandex : onRequestTrial}>
-                  {t(guide && pair.documentedPosition ? "Confirmer avec Standex →" : "Demander un essai →")}
-                </Button>
-              </div>
+            <div className="flex flex-wrap gap-3">
+              <Button variant="secondary" onClick={onSeePairs}>{t("Tester un autre couple")}</Button>
+              <Button onClick={onContinue ?? onConfirmWithStandex}>
+                {onContinue ? t("Configurer votre capteur →") : t("Confirmer avec Standex →")}
+              </Button>
             </div>
             {!guide ? <p className="t-caption">
               {t(

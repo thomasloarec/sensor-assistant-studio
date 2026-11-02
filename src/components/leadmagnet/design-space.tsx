@@ -4109,13 +4109,6 @@ export function DesignSpace({
           <Input id="custom-length" type="number" min="0.1" max="10000" step="0.1" value={dossier.workshop?.cableLengthMm != null ? dossier.workshop.cableLengthMm / 10 : ""}
             onChange={e => applyWorkshopConfig({...workshopDraftRef.current ?? workshop ?? dossier.workshop ?? DEFAULT_WORKSHOP, cableLengthMm:customLengthMm(e.target.value)})} />
         </div> : null}
-        <button
-          type="button"
-          className="text-link mt-2"
-          onClick={openCableWorkshopPanel}
-        >
-          {t("Préciser le trajet dans l'atelier câble")}
-        </button>
       </div>
 
       <div>
