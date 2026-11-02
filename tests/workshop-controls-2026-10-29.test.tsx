@@ -72,7 +72,7 @@ test('MK15 centered quarter-turn stays OFF; signed offsets reach a lobe without 
   }
  }
 });
-test('sensitivity slider keeps published order even when reopened in E; cable requires an imported model',()=>{
+test('sensitivity slider keeps published order even when reopened in E; cable pointing stays hidden after import',()=>{
  setLocale('fr');const patches:object[]=[];
  const props={update:(p:object)=>patches.push(p),onCatalog:()=>{},onCable:()=>{}};
  const v=render(<ClientPedagogicalControls {...props} config={{...DEFAULT_WORKSHOP,sensitivity:'E'}}/>);
@@ -82,7 +82,7 @@ test('sensitivity slider keeps published order even when reopened in E; cable re
  expect(v.getByText('Plus sensible · détecte de plus loin')).toBeTruthy();
  expect(v.queryByRole('button',{name:'Pointer le câble dans la 3D'})).toBeNull();
  v.rerender(<ClientPedagogicalControls {...props} config={{...DEFAULT_WORKSHOP,machine:structuredClone(DEMO_ASSEMBLIES['builtin:wall-v1'])}}/>);
- expect((v.getByRole('button',{name:'Pointer le câble dans la 3D'}) as HTMLButtonElement).disabled).toBe(false);
+ expect(v.queryByRole('button',{name:'Pointer le câble dans la 3D'})).toBeNull();
 });
 test('minimum-gap input shows nearest real pose; launch resets to far pose without changing the gap',async()=>{
  setLocale('fr');const {default:Workshop}=await import('../src/components/standex/workshop/workshop');

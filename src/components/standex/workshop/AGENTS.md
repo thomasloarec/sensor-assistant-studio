@@ -23,3 +23,5 @@
 
 - Pedagogical imported mounting: mechanical clearance uses per-part OBBs of the loaded file posed by the shared `pointAt`/`cycleU` adapter (`pedagogical-envelopes.ts`, `obstacles.ts`) and the full pilot body; overlap is reported as possible-to-verify (unavailable), never as certain collision, and no geometry is serialized or reused across reloads.
 - Automatic component placement on GLB load happens only for a new, different-file import (`freshImportRef`); reopen, remount, reload or draft resume never moves explicit positions.
+
+- Imported placement (2026-11-02): user-requested C1% suggestions are explicitly applied in Installation, via machineChange/history. machine-face validates the entire conservative footprint on the original edge-connected planar mesh face; no infinite-plane fallback. machine-detection-positions uses the shared response at closest sampled approach and preserves all attachment fields except tangential point. Search is cancellable and geometry/config scoped. Cable pointing entry controls are retired. The persistent bar and Essai share the same preparation-aware playback handler.

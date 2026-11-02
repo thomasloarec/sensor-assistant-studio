@@ -2,6 +2,8 @@
  *  Installation → Essai. Une seule étape développée à la fois ; la scène reste
  *  visible à côté. Les coordonnées libres restent dans les réglages avancés. */
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import { ChevronRight } from 'lucide-react';
+import { MachineDetectionPlacement } from './machine-detection-placement';
 import { Button } from "@/components/ui/button";
 import { displayMachineNodes } from "@/lib/standex/machine-view";
 import { msg, t } from "@/lib/i18n/core";
@@ -30,7 +32,6 @@ import {
   throughAllowed,
 } from "@/lib/standex/machine-mounting";
 import {
-  alignMagnetToSensor,
   directionLabel,
   faceTangents,
   holeCentreAttach,
@@ -338,7 +339,6 @@ export default function MachineGuide({
   const centring = state.pick?.purpose === "hole-centre";
   const designated = attach?.axisSource === "plane-centre";
   const tangents = attach ? faceTangents(attach.normal) : null;
-  const alignPreview = target === "magnet" && attach?.kind === "surface" ? alignMagnetToSensor(m, cycleU(m, sample.t)) : null;
   const editAttach = (patch: Partial<Attachment>) => {
     if (!attach) return;
     onChange(attachPatch(target, { ...attach, ...patch }, config));
@@ -942,38 +942,15 @@ export default function MachineGuide({
               </span>
             </p>
             {target === "magnet" && attach.kind === "surface" && (
-              <div className="mw-align" data-testid="guide-align">
-                <Button
-                  className="mw-button"
-                  data-testid="guide-align-magnet"
-                  onClick={() => {
-                    setPlaying(false);
-                    const r = alignMagnetToSensor(m, u);
-                    if (!r.ok) {
-                      setState((s) => ({ ...s, notice: r.reason }));
-                      return;
-                    }
-                    setState((s) => ({ ...s, notice: null }));
-                    (onChangeAtTime ?? onChange)(attachPatch("magnet", r.attach, config));
-                  }}
-                >
-                  {t("Aligner avec le capteur")}
-                </Button>
-                <p className="t-caption">{t("Centre l’aimant en face du capteur sur sa face de pose.")}</p>
-                {alignPreview?.ok && (
-                  <p className="t-caption t-metric" data-testid="guide-align-shift">
-                    {msg("Décalage actuel dans le plan de pose : {0} mm", [formatMm(alignPreview.shiftMm, 2)])}
-                  </p>
-                )}
-                {alignPreview?.ok && alignPreview.oblique && (
-                  <p className="notice-warning" data-testid="guide-align-oblique">
-                    {t("L'axe du capteur n'est pas perpendiculaire à cette face : l'aimant est centré par projection sur sa face, pas rendu coaxial.")}
-                  </p>
-                )}
-                <p className="t-caption">
-                  {t("Alignement géométrique à l'instant affiché, sans garantie de détection. La présence de matière sous le nouveau point n'est pas vérifiée.")}
-                </p>
-              </div>
+              <MachineDetectionPlacement config={config} asset={asset} ready={ready}
+                onPause={() => setPlaying(false)}
+                onApply={(patch, time) => {
+                  setPlaying(false);
+                  setTool("navigate");
+                  setState(s => ({...s, notice: null}));
+                  setProgress(time);
+                  (onChangeAtTime ?? onChange)(patch);
+                }} />
             )}
             {attach.kind === "through" && (
               <p className="notice-info">
@@ -1391,10 +1368,8 @@ export default function MachineGuide({
             </p>
           )}
         </section>}
-        <div className="mw-markers" data-testid="guide-markers">
-          <p className="t-body">
-            <strong>{t("Distance entre les repères")}</strong>
-          </p>
+        <details className="mw-markers mw-disclosure" data-testid="guide-markers">
+          <summary><ChevronRight aria-hidden="true" className="mw-disclosure-chevron" size={20}/>{t("Mesure libre — facultatif")}</summary>
           <div className="mw-guide-row">
             <Button
               className="mw-button mw-secondary"
@@ -1425,16 +1400,16 @@ export default function MachineGuide({
               {t(
                 m.markers?.length === 1
                   ? "Repère 1 placé : cliquez un second point sur une pièce."
-                  : "Cliquez deux points sur les pièces : chaque repère suit sa pièce pendant la lecture.",
+                  : "Mesurez la distance entre deux points de votre modèle pendant le mouvement.",
               )}
             </p>
           )}
           <p className="t-caption">
             {t(
-              "Distance en ligne droite entre deux points choisis : ce n'est ni l'entrefer minimal entre surfaces, ni l'écart capteur–aimant, ni la course du mouvement.",
+              "Cette mesure libre ne détermine pas la détection du capteur.",
             )}
           </p>
-        </div>
+        </details>
         {!pedagogical && <p className="notice-info" data-testid="guide-source">
           {sample.contact === "unknown"
             ? t("Aucun contact n'est affiché : il n'est pas prédit pour ce montage.")

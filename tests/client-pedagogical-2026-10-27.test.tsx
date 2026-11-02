@@ -50,7 +50,7 @@ describe('client boundary: no catalogue alias or fictitious qualification',()=>{
   });
 });
 describe('real mounted client workshop',()=>{
-  test('PCB MK01 arm cannot expose cable routing while wired MK04 retains working callbacks',async()=>{
+  test('cable pointing stays hidden on PCB and wired sensors after import',async()=>{
     const {setLocale}=await import('../src/lib/i18n/core');setLocale('fr');
     const {default:Workshop}=await import('../src/components/standex/workshop/workshop');
     const {DEMO_ASSEMBLIES}=await import('../src/lib/standex/machine-demos');
@@ -58,16 +58,8 @@ describe('real mounted client workshop',()=>{
     for(const sensorId of ['MK01','MK04']){
       let calls=0;
       const view=render(<Workshop clientPedagogical embedded initialCableOpen initialConfig={{...DEFAULT_WORKSHOP,sensorId,machine}} storageMode="memory" onClose={()=>{}} onSave={async()=>{}} cableRouting={{slot:'sensor',points:[],targetLabel:'Sortie capteur',lengthLabel:'Non choisie',setSlot:()=>{calls++;},onPick:()=>{calls++;},onUndo:()=>{calls++;},onReset:()=>{calls++;}}}/>);
-      if(sensorId==='MK01'){
-        expect(view.queryByRole('button',{name:'Pointer le câble dans la 3D',exact:true})).toBeNull();
-        expect(view.queryByTestId('cable-routing-panel')).toBeNull();expect(calls).toBe(0);
-      }else{
-        await act(async()=>fireEvent.click(view.getByRole('button',{name:'Pointer le câble dans la 3D',exact:true})));
-        expect(view.getByTestId('cable-routing-panel')).toBeTruthy();
-        await act(async()=>fireEvent.click(view.getByTestId('cable-slot-waypoint')));
-        await act(async()=>fireEvent.click(view.getByRole('button',{name:'Effacer le trajet',exact:true})));
-        expect(calls).toBe(2);
-      }
+      expect(view.queryByRole('button',{name:'Pointer le câble dans la 3D',exact:true})).toBeNull();
+      expect(view.queryByTestId('cable-routing-panel')).toBeNull();expect(calls).toBe(0);
       view.unmount();
     }
   });
@@ -116,18 +108,18 @@ describe('real mounted client workshop',()=>{
     await waitFor(()=>expect(view.getByTestId('client-product-legend').textContent).toContain('MK04 + M04'));
     view.unmount();
   });
-  test('removing exploration keeps imported mounting and cable tool intact',async()=>{
+  test('hidden cable pointing preserves existing imported mounting and cable data',async()=>{
     const {default:Workshop}=await import('../src/components/standex/workshop/workshop');
     const {DEMO_ASSEMBLIES}=await import('../src/lib/standex/machine-demos');
     const machine=structuredClone(DEMO_ASSEMBLIES['builtin:wall-v1']);if(!machine)throw Error('fixture missing');
     const config={...DEFAULT_WORKSHOP,machine,cableLengthMm:500};let draft=config;let calls=0;
     const states:string[]=[];
     const view=render(<Workshop clientPedagogical embedded initialConfig={config} storageMode="memory" onClose={()=>{}} onSave={async()=>{}} onSaveState={s=>states.push(s)} onDraftChange={c=>{draft=c as typeof config;}} cableRouting={{slot:'sensor',points:[],targetLabel:'Sortie capteur',lengthLabel:'Non choisie',setSlot:()=>{calls++;},onPick:()=>{calls++;},onUndo:()=>{calls++;},onReset:()=>{calls++;}}}/>);
-    await act(async()=>fireEvent.click(view.getByRole('button',{name:'Pointer le câble dans la 3D',exact:true})));
-    expect(view.getByTestId('cable-routing-panel')).toBeTruthy();const before=states.length;
+    expect(view.queryByRole('button',{name:'Pointer le câble dans la 3D',exact:true})).toBeNull();
+    const before=states.length;
     expect(view.queryByRole('button',{name:'Comprendre les zones de détection'})).toBeNull();
     expect(states.length).toBe(before);expect(calls).toBe(0);
-    expect(view.getByTestId('cable-routing-panel')).toBeTruthy();expect(draft.machine).toEqual(machine);expect(draft.cableLengthMm).toBe(500);
+    expect(view.queryByTestId('cable-routing-panel')).toBeNull();expect(draft.machine).toEqual(machine);expect(draft.cableLengthMm).toBe(500);
     view.unmount();
   });
   test('reopen preserves product pose and cable; changed pilot/class produce a new non-qualifying result',async()=>{

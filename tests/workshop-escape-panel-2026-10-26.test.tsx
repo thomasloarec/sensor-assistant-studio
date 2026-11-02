@@ -1,7 +1,7 @@
 /** Recette : dans l'atelier intégré (Workshop dans WorkspacePanel), Échap
  *  pendant « Centrer dans un trou » annule la sélection temporaire SANS fermer
  *  le panneau ; hors pointage, Échap ferme toujours le panneau. Ordre JSX :
- *  le bloc « Aligner avec le capteur » précède écart/rotation/retournement. */
+ *  le bloc La recherche de détection précède écart/rotation/retournement. */
 import { GlobalRegistrator } from "@happy-dom/global-registrator";
 import { afterAll, afterEach, beforeAll, describe, expect, mock, test } from "bun:test";
 import { readFileSync } from "node:fs";
@@ -94,7 +94,7 @@ describe("Échap dans l'atelier intégré", () => {
     const { v } = await mount();
     await act(async () => fireEvent.click(v.getByRole("radio", { name: "Aimant" })));
     const attach = v.getByTestId("guide-attach");
-    const align = v.getByTestId("guide-align");
+    const align = v.getByTestId("guide-detection-positions");
     const offset = attach.querySelector('[data-testid="guide-offset"]') ?? v.getByText(/Écart entre face/);
     const flip = v.getByText("Retourner le composant");
     const before = (a: Node, b: Node) => !!(a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING);

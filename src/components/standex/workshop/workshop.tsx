@@ -1569,12 +1569,13 @@ export default function MagneticWorkshop({
     ) : null;
 
   const stopPreparation = () => { prepCancel.current?.(); prepCancel.current=null; setPreparing(false); };
-  const playButton = (
+  const renderPlayButton = (inGuide = false) => (
     <button
-      ref={playRef}
-      className="mw-button mw-wide mw-run"
+      ref={inGuide ? undefined : playRef}
+      className={inGuide ? "mw-button mw-run" : "mw-button mw-wide mw-run"}
       disabled={!machineReady || reduced}
       aria-pressed={playing}
+      aria-label={t(preparing ? "Annuler la préparation" : playing ? "Pause" : prepFailed ? "Réessayer la préparation" : "Lancer le mouvement")}
       onClick={() => {
         if(preparing){stopPreparation();return;}
         if (progress >= 1 || (!playing && gapPreview.current && !machine)) setProgress(0);
@@ -1595,7 +1596,7 @@ export default function MagneticWorkshop({
       }}
     >
       {playing ? <Pause size={17} /> : <Play size={17} />}
-      {t(preparing ? "Annuler la préparation" : playing ? "Pause" : prepFailed ? "Réessayer la préparation" : "Lancer le mouvement")}
+      {t(preparing ? "Annuler la préparation" : playing ? "Pause" : prepFailed ? "Réessayer la préparation" : inGuide ? "Lancer" : "Lancer le mouvement")}
       {preparing&&<span className="t-metric">{prepProgress.total?Math.floor(100*prepProgress.done/prepProgress.total)+" %":"…"}</span>}
     </button>
   );
@@ -1808,33 +1809,6 @@ export default function MagneticWorkshop({
           <summary>{t("Positionnement du capteur et de l’aimant")}</summary>
           <div className="mw-advanced-category-body">
             {travelControls}
-        {!isPcbSensor(config.sensorId) ? (
-          <details
-            className="mw-cable-settings"
-            open={cableOpen}
-            onToggle={(event) => setCableOpen(event.currentTarget.open)}
-          >
-            <summary>{t("Trajet du câble")}</summary>
-            {cableRouting ? (
-              <button
-                className="mw-button mw-secondary mw-wide"
-                aria-pressed={tool === "cable"}
-                data-testid="cable-tool-toggle"
-                disabled={!machine}
-                onClick={() => chooseTool(tool === "cable" ? "navigate" : "cable")}
-              >
-                {t(tool === "cable" ? "Arrêter le pointage" : "Pointer le câble dans la 3D")}
-              </button>
-            ) : null}
-            {!machine ? (
-              <p className="mw-help">
-                {t(
-                  "Le pointage du trajet du câble nécessite l’import de votre modèle 3D. La longueur souhaitée se règle dans « Choix du produit ».",
-                )}
-              </p>
-            ) : null}
-          </details>
-        ) : null}
         <GuidedSuggestion
           config={config}
           update={update}
@@ -2333,7 +2307,7 @@ export default function MagneticWorkshop({
       )}
       {!desktop && (!machine || catalogue) && (
         <div className="mw-playback-bar" data-testid="workshop-playback-bar">
-          {playButton}
+          {renderPlayButton()}
         </div>
       )}
       <div className="mw-stage-grid">
@@ -2371,8 +2345,8 @@ export default function MagneticWorkshop({
                 setProgress(v);
               }}
               playing={playing}
-              // Catalogue playback stays in the persistent bar, including during setup.
-              playControl={catalogue ? false : undefined}
+              // Both controls share playback, preparation and cancellation state.
+              playControl={catalogue ? renderPlayButton(true) : undefined}
               setPlaying={(value) => { if(!value)stopPreparation(); setPlaying(value); }}
               reason={result.reason}
               onDemo={openDemo}
@@ -2469,7 +2443,7 @@ export default function MagneticWorkshop({
           <details className="mw-primary-menu" open={primaryMenuOpen} onToggle={(e) => setPrimaryMenuOpen(e.currentTarget.open)}>
             <summary>{t("Modèle et résultat")}</summary>
           <div className="mw-primary-actions">
-            {desktop && (!machine || catalogue) && <div className="mw-playback-bar mw-playback-inline" data-testid="workshop-playback-bar">{playButton}</div>}
+            {desktop && (!machine || catalogue) && <div className="mw-playback-bar mw-playback-inline" data-testid="workshop-playback-bar">{renderPlayButton()}</div>}
             <label className="mw-file-label">
               {machine ? machine.fileName : t("Importer mon modèle 3D")}
               <input
