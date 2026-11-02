@@ -562,7 +562,6 @@ export function DesignSpace({
   // Dossier serveur : créé à la première transmission réussie, puis réutilisé.
   const [serverDossierId, setServerDossierId] = useState<string | null>(null);
   const [serverRevision, setServerRevision] = useState(0);
-  const [acknowledged, setAcknowledged] = useState(false);
   const [extraConstraints, setExtraConstraints] = useState("");
   const [submitMessage, setSubmitMessage] = useState<string | null>(null);
   const [submitMessageTone, setSubmitMessageTone] = useState<"info" | "danger" | "success">("info");
@@ -694,7 +693,7 @@ export function DesignSpace({
   const [focusIdx, setFocusIdx] = useState(0);
   /** Ce à quoi un accord d'envoi se rattache à cet instant : dossier serveur visé,
    * révision suivante, empreinte du contenu relu et empreintes des fichiers déjà déposés.
-   * Dès qu'un de ces éléments change, l'accord précédent et la relecture tombent.
+   * Dès qu'un de ces éléments change, l'accord précédent tombe.
    */
   const [binding, setBinding] = useState<ConsentBinding | null>(null);
   const [consentNotice, setConsentNotice] = useState<string | null>(null);
@@ -942,7 +941,6 @@ export function DesignSpace({
         setPrivacy((p) => {
           const pruned = pruneStaleConsents(p, next);
           if (pruned !== p) {
-            setAcknowledged(false);
             setConsentNotice(consentNoticeFor(cycle.afterCommit));
           }
           return pruned;
@@ -1349,7 +1347,6 @@ export function DesignSpace({
     setBookingCountry(null);
     setVolumeError(null);
       setPrivacy((p) => ({ ...p, consents: [] }));
-      setAcknowledged(false);
       setPreparedUpload(null);
       setBinding(null);
       setConsentNotice(null);
@@ -1610,7 +1607,7 @@ export function DesignSpace({
       dossier,
       nda,
       consents: privacy.consents,
-      reviewAcknowledged: acknowledged,
+      reviewAcknowledged: false,
       additionalConstraints: extraConstraints,
       serverDossierId,
       serverRevision: serverRevision + 1,
@@ -1721,7 +1718,6 @@ export function DesignSpace({
     dossier,
     nda,
     privacy,
-    acknowledged,
     extraConstraints,
     backend,
     serverDossierId,
@@ -3948,14 +3944,6 @@ export function DesignSpace({
                 </p>
               </div>
             ) : null}
-            <hr className="standex-rule" />
-            <label className="t-caption flex items-center gap-2">
-              <Checkbox
-                checked={acknowledged}
-                onCheckedChange={(v) => setAcknowledged(Boolean(v))}
-              />
-              {t("J'ai relu le résumé technique et les inconnues listées.")}
-            </label>
             {!backend?.authenticated && !backend?.ready ? (
               <div className="space-y-2">
                 <p className="t-caption">
@@ -4902,7 +4890,7 @@ export function DesignSpace({
             // La numérotation interne des versions ne s'affiche plus au client :
             // seul le nom du projet et l'état du contenu rechargé le concernent.
             setSubmitMessage(
-              msg("Projet « {0} » ouvert{1}. Votre accord d'envoi et la relecture sont à refaire pour ce projet.", [
+              msg("Projet « {0} » ouvert{1}. Votre accord d'envoi est à renouveler pour ce projet.", [
                 title,
                 parsed && parsed.ok
                   ? t(", contenu envoyé rechargé")

@@ -247,7 +247,9 @@ test("soumission : pas de succès simulé sans backend, instantané immuable et 
     binding,
   }).consents;
   const input = { ...draft, consents };
-  expect((await checkSubmission({ ...input, reviewAcknowledged: false })).ok).toBe(false);
+  // The retired review checkbox must not leave an invisible submission blocker.
+  expect((await checkSubmission({ ...input, reviewAcknowledged: false })).ok).toBe(true);
+  expect((await buildSnapshot({ ...input, reviewAcknowledged: false })).reviewAcknowledged).toBe(false);
   // Un accord donné sur un AUTRE contenu ne vaut pas pour celui-ci.
   const stale = {
     ...input,

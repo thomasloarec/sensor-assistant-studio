@@ -72,7 +72,6 @@ describe("réinitialisation du contexte", () => {
     for (const line of [
       "setNda(INITIAL_NDA)",
       "consents: []",
-      "setAcknowledged(false)",
       "setPreparedUpload(null)",
       'setExtraConstraints("")',
       "setShareModel(false)",

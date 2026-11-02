@@ -21842,14 +21842,14 @@
     "Fascicolo trasmesso alla revisione Standex.",
     "プロジェクトを Standex レビューに送信しました。"
   ],
-  "Projet « {0} » ouvert{1}. Votre accord d'envoi et la relecture sont à refaire pour ce projet.": [
-    "Project “{0}” opened{1}. Your sending consent and the review must be done again for this project.",
-    "已打开项目“{0}”{1}。本项目的发送同意与复核需重新完成。",
-    "Projekt „{0}“ geöffnet{1}. Ihre Sendefreigabe und die Durchsicht sind für dieses Projekt erneut zu erteilen.",
-    "Proyecto «{0}» abierto{1}. Su consentimiento de envío y la revisión deben repetirse para este proyecto.",
-    "Проект «{0}» открыт{1}. Согласие на отправку и вычитку нужно выполнить для этого проекта заново.",
-    "Progetto «{0}» aperto{1}. Il consenso all'invio e la rilettura vanno rifatti per questo progetto.",
-    "プロジェクト「{0}」を開きました{1}。このプロジェクトでは送信の同意と読み返しをやり直してください。"
+  "Projet « {0} » ouvert{1}. Votre accord d'envoi est à renouveler pour ce projet.": [
+    "Project “{0}” opened{1}. Please renew your sending consent for this project.",
+    "已打开项目“{0}”{1}。请重新确认同意发送此项目。",
+    "Projekt „{0}“ geöffnet{1}. Bitte erneuern Sie Ihre Sendefreigabe für dieses Projekt.",
+    "Proyecto «{0}» abierto{1}. Renueve su consentimiento de envío para este proyecto.",
+    "Проект «{0}» открыт{1}. Подтвердите заново согласие на отправку этого проекта.",
+    "Progetto «{0}» aperto{1}. Rinnova il consenso all'invio per questo progetto.",
+    "プロジェクト「{0}」を開きました{1}。このプロジェクトの送信に再度同意してください。"
   ],
   "Projet à confirmer par Standex": [
     "Project subject to Standex confirmation",
