@@ -1,7 +1,5 @@
-/** Recette 288835bc : « Aligner avec le capteur » dans le VRAI composant
- *  Workshop. L'alignement se fait à l'instant affiché et doit le conserver
- *  jusque dans la mutation centrale (machineChange → update), ainsi qu'en
- *  annulation/rétablissement. Démo paroi, aimant sur Plaque_volet (0/1/0). */
+/** Real Workshop regression: face-constrained C1% placement, history, shared
+ * playback controls and refusal without mutating the existing mounting. */
 import { GlobalRegistrator } from "@happy-dom/global-registrator";
 import { afterAll, beforeAll, describe, expect, mock, test } from "bun:test";
 import { readFileSync } from "node:fs";
@@ -32,8 +30,39 @@ afterAll(() => {
   globalThis.fetch = realFetch;
 });
 
-describe("Aligner l'aimant dans le Workshop intégré", () => {
-  test("25 % conservé après alignement, annuler et rétablir ; suivi de la pièce à 0 puis 50 %", async () => {
+describe("Positions de détection dans le Workshop intégré", () => {
+  test("C1% placement survives central normalization; undo/redo and both play controls share the real Workshop state", async () => {
+    const { setLocale } = await import('../src/lib/i18n/core');setLocale('fr');
+    const { default: Workshop } = await import('../src/components/standex/workshop/workshop');
+    const { DEFAULT_WORKSHOP } = await import('../src/lib/standex/magnetic-workshop');
+    const { DEMO_ASSEMBLIES } = await import('../src/lib/standex/machine-demos');
+    const machine={...structuredClone(DEMO_ASSEMBLIES['builtin:wall-v1']!),sensorPosition:[0,60,36] as [number,number,number],sensorRotation:[0,0,0] as [number,number,number],magnetAttach:{kind:'surface' as const,support:'moving' as const,partPath:'0/1/0',point:[18,67,22] as [number,number,number],normal:[0,0,1] as [number,number,number],offsetMm:0,spinDeg:0,flip:false,depthRef:'collar' as const,axisSource:'face' as const}};
+    let draft={...DEFAULT_WORKSHOP,sensorId:'MK04',magnetModel:'M04',sensitivity:'B',machine};
+    const v=render(<Workshop clientPedagogical embedded initialConfig={draft} onDraftChange={c=>{draft=c as typeof draft;}} onClose={()=>{}} onSave={async()=>{}}/>);
+    try{
+      await act(async()=>fireEvent.click(v.getByTestId('guide-step-install')));
+      await act(async()=>fireEvent.click(v.getByRole('radio',{name:'Aimant'})));
+      await waitFor(()=>expect((v.getByTestId('guide-find-position') as HTMLButtonElement).disabled).toBe(false),{timeout:15000});
+      await act(async()=>new Promise(resolve=>setTimeout(resolve,0)));
+      const before=structuredClone(draft.machine.magnetAttach);
+      await act(async()=>fireEvent.click(v.getByTestId('guide-find-position')));
+      await waitFor(()=>expect(v.getByTestId('guide-detection-positions').textContent).toContain('Position 1 /'),{timeout:15000});
+      const placed=structuredClone(draft.machine.magnetAttach);
+      expect(placed.point).not.toEqual(before.point);expect({...placed,point:before.point}).toEqual(before);
+      await act(async()=>fireEvent.click(v.getByRole('button',{name:'Annuler le dernier réglage'})));
+      expect(draft.machine.magnetAttach).toEqual(before);
+      await act(async()=>fireEvent.click(v.getByRole('button',{name:'Rétablir'})));
+      expect(draft.machine.magnetAttach).toEqual(placed);
+      await act(async()=>fireEvent.click(v.getByTestId('guide-step-test')));
+      const buttons=v.getAllByRole('button',{name:'Lancer le mouvement',exact:true});expect(buttons).toHaveLength(2);
+      await act(async()=>fireEvent.click(buttons[1]!));
+      // The mocked browser has no worker: both expose the same cancellable preparation.
+      const cancel=v.getAllByRole('button',{name:/Annuler la préparation/});expect(cancel).toHaveLength(2);
+      await act(async()=>fireEvent.click(cancel[0]!));
+      expect(v.getAllByRole('button',{name:'Lancer le mouvement',exact:true})).toHaveLength(2);
+    }finally{v.unmount();}
+  },20000);
+  test("a search without accessible detection preserves time, placement and attachment settings", async () => {
     const { setLocale } = await import("../src/lib/i18n/core");
     setLocale("fr");
     const { default: MagneticWorkshop } = await import("../src/components/standex/workshop/workshop");
@@ -80,10 +109,6 @@ describe("Aligner l'aimant dans le Workshop intégré", () => {
     await act(async () => fireEvent.click(v.getByRole("radio", { name: "Aimant" })));
     const scrubber = () => v.getByLabelText("Position dans le cycle") as HTMLInputElement;
     await waitFor(() => expect(scrubber().disabled).toBe(false), { timeout: 8000 });
-    const shift = () => {
-      const text = v.getByTestId("guide-align-shift").textContent ?? "";
-      return Number(/([\d.,]+)\s*mm/.exec(text)![1]!.replace(",", "."));
-    };
     const point = () => v.getAllByTestId("guide-precise-point")[0]!.textContent ?? "";
     const seek = async (pct: number) =>
       act(async () => {
@@ -97,33 +122,13 @@ describe("Aligner l'aimant dans le Workshop intégré", () => {
 
     await seek(25);
     expect(Number(scrubber().value)).toBe(25);
-    expect(shift()).toBeCloseTo(38.64, 1);
-
-    await act(async () => fireEvent.click(v.getByTestId("guide-align-magnet")));
+    const before = point();
+    await act(async () => fireEvent.click(v.getByTestId("guide-find-position")));
+    await waitFor(() => expect(v.getByTestId('guide-detection-positions').textContent).toContain('Aucune position de détection trouvée sur cette face'), {timeout:15000});
     expect(Number(scrubber().value)).toBe(25);
-    expect(shift()).toBeCloseTo(0, 2);
-    expect(point()).toMatch(/X\s*[-−]20\b.*Y\s*60\b.*Z\s*22\b/);
-    // Écart et rotation conservés (champs du guide).
+    expect(point()).toBe(before);
     expect((v.getByTestId("guide-offset") as HTMLInputElement).defaultValue).toBe("2");
     expect((v.getByLabelText("Rotation dans le plan (°)") as HTMLInputElement).value).toBe("35");
-
-    // Annuler puis rétablir : comparaison au même instant.
-    await act(async () => fireEvent.click(v.getByRole("button", { name: "Annuler le dernier réglage" })));
-    expect(Number(scrubber().value)).toBe(25);
-    expect(shift()).toBeCloseTo(38.64, 1);
-    await act(async () => fireEvent.click(v.getByRole("button", { name: "Rétablir" })));
-    expect(Number(scrubber().value)).toBe(25);
-    expect(shift()).toBeCloseTo(0, 2);
-
-    // Retour volontaire à 0 puis 50 % : l'aimant suit la plaque (X −20 → +20 autour du capteur à X 0).
-    await seek(0);
-    expect(shift()).toBeCloseTo(20, 2);
-    await seek(50);
-    expect(shift()).toBeCloseTo(20, 2);
-    await seek(25);
-    expect(shift()).toBeCloseTo(0, 2);
-    // Le point d'attache reste en pose statique.
-    expect(point()).toMatch(/X\s*[-−]20\b/);
     v.unmount();
   }, 30000);
 });

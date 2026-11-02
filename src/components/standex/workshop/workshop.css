@@ -2051,6 +2051,17 @@
   align-items: center;
 }
 
+/* Explicit native disclosures: same keyboard semantics, visible affordance. */
+.mw-disclosure { background: var(--surface-sunken); border-radius: var(--r-md); padding: 8px 12px; }
+.mw-disclosure > summary { display: flex; align-items: center; gap: 8px; min-height: 44px; cursor: pointer; font: var(--t-body); font-weight: 600; color: var(--foreground); list-style: none; }
+.mw-disclosure > summary::-webkit-details-marker { display: none; }
+.mw-disclosure > summary:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; border-radius: var(--r-sm); }
+.mw-disclosure-chevron { flex-shrink: 0; }
+.mw-disclosure[open] > summary > .mw-disclosure-chevron { transform: rotate(90deg); }
+.mw-guide .mw-run { min-height: 44px; max-width: 100%; white-space: normal; background: var(--signal); color: var(--standex-abyss); box-shadow: var(--e-2); }
+.mw-guide .mw-run:hover { background: var(--signal); box-shadow: var(--e-3); }
+.mw-guide .mw-run > svg { flex-shrink: 0; }
+
 /* Table des distances réellement publiées pour le couple sélectionné.
    Les chiffres s'alignent (t-metric) ; la hiérarchie vient des surfaces. */
 .mw-published-table {

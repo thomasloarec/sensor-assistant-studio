@@ -35764,5 +35764,140 @@
     "A: в покое · B: магнит обнаружен",
     "A: a riposo · B: magnete rilevato",
     "A：非作動時 · B：磁石検出時"
+  ],
+  "Mesure libre — facultatif": [
+    "Free measurement — optional",
+    "自由测量 — 可选",
+    "Freie Messung — optional",
+    "Medición libre — opcional",
+    "Свободное измерение — необязательно",
+    "Misura libera — facoltativa",
+    "自由測定 — 任意"
+  ],
+  "Mesurez la distance entre deux points de votre modèle pendant le mouvement.": [
+    "Measure the distance between two points on your model during motion.",
+    "测量模型运动过程中两点之间的距离。",
+    "Messen Sie den Abstand zwischen zwei Punkten Ihres Modells während der Bewegung.",
+    "Mida la distancia entre dos puntos de su modelo durante el movimiento.",
+    "Измеряйте расстояние между двумя точками модели во время движения.",
+    "Misura la distanza tra due punti del modello durante il movimento.",
+    "モデルの動作中に2点間の距離を測定します。"
+  ],
+  "Cette mesure libre ne détermine pas la détection du capteur.": [
+    "This free measurement does not determine sensor detection.",
+    "此自由测量不用于判断传感器检测。",
+    "Diese freie Messung bestimmt nicht die Sensorerkennung.",
+    "Esta medición libre no determina la detección del sensor.",
+    "Это измерение не определяет срабатывание датчика.",
+    "Questa misura libera non determina il rilevamento del sensore.",
+    "この自由測定はセンサーの検出を判定するものではありません。"
+  ],
+  "Annuler la recherche": [
+    "Cancel search",
+    "取消搜索",
+    "Suche abbrechen",
+    "Cancelar búsqueda",
+    "Отменить поиск",
+    "Annulla ricerca",
+    "検索をキャンセル"
+  ],
+  "Position suivante": [
+    "Next position",
+    "下一个位置",
+    "Nächste Position",
+    "Siguiente posición",
+    "Следующее положение",
+    "Posizione successiva",
+    "次の位置"
+  ],
+  "Trouver une position de détection": [
+    "Find a detection position",
+    "查找检测位置",
+    "Erkennungsposition suchen",
+    "Buscar una posición de detección",
+    "Найти положение срабатывания",
+    "Trova una posizione di rilevamento",
+    "検出位置を検索"
+  ],
+  "Recherche des zones de détection…": [
+    "Searching detection zones…",
+    "正在搜索检测区域…",
+    "Erkennungszonen werden gesucht…",
+    "Buscando zonas de detección…",
+    "Поиск зон срабатывания…",
+    "Ricerca delle zone di rilevamento…",
+    "検出領域を検索中…"
+  ],
+  "Position {0} / {1}": [
+    "Position {0} / {1}",
+    "位置 {0} / {1}",
+    "Position {0} / {1}",
+    "Posición {0} / {1}",
+    "Положение {0} / {1}",
+    "Posizione {0} / {1}",
+    "位置 {0} / {1}"
+  ],
+  "Recherche au plus près du capteur, sur la face de fixation actuelle. L’orientation et l’écart de pose sont conservés.": [
+    "Search at the closest approach to the sensor, on the current mounting face. Orientation and mounting offset are preserved.",
+    "在最接近传感器时，于当前安装面上搜索。保持方向和安装间距不变。",
+    "Suche bei größter Annäherung an den Sensor auf der aktuellen Montagefläche. Ausrichtung und Montageabstand bleiben erhalten.",
+    "Búsqueda en el punto más cercano al sensor, sobre la cara de montaje actual. Se conservan la orientación y la separación de montaje.",
+    "Поиск при максимальном сближении с датчиком на текущей поверхности крепления. Ориентация и монтажный зазор сохраняются.",
+    "Ricerca nel punto più vicino al sensore, sulla faccia di montaggio attuale. Orientamento e distanza di montaggio restano invariati.",
+    "センサーに最も近づく時点で、現在の取付面上を検索します。向きと取付間隔は維持されます。"
+  ],
+  "Positions indicatives selon les zones simulées. La recherche conserve la surface d’appui et évite les zones mortes détectées.": [
+    "Indicative positions based on simulated zones. The search preserves the supporting surface and avoids detected dead zones.",
+    "位置仅供参考，基于模拟区域。搜索保持支承面不变，并避开已识别的死区。",
+    "Unverbindliche Positionen anhand simulierter Zonen. Die Suche erhält die Auflagefläche und vermeidet erkannte Totzonen.",
+    "Posiciones orientativas según las zonas simuladas. La búsqueda conserva la superficie de apoyo y evita las zonas muertas detectadas.",
+    "Ориентировочные положения по моделируемым зонам. Поиск сохраняет опорную поверхность и исключает выявленные мёртвые зоны.",
+    "Posizioni indicative secondo le zone simulate. La ricerca conserva la superficie di appoggio ed evita le zone morte rilevate.",
+    "シミュレーション領域に基づく参考位置です。支持面を維持し、検出された不感帯を避けて検索します。"
+  ],
+  "Posez d’abord l’aimant sur une face et confirmez le mouvement.": [
+    "First place the magnet on a face and confirm the motion.",
+    "请先将磁体放置在一个面上并确认运动。",
+    "Platzieren Sie zuerst den Magneten auf einer Fläche und bestätigen Sie die Bewegung.",
+    "Primero coloque el imán sobre una cara y confirme el movimiento.",
+    "Сначала установите магнит на поверхность и подтвердите движение.",
+    "Posiziona prima il magnete su una faccia e conferma il movimento.",
+    "まず磁石を面に配置し、動作を確定してください。"
+  ],
+  "La face de fixation ne peut pas être vérifiée. Choisissez une face plane du modèle chargé.": [
+    "The mounting face cannot be verified. Select a planar face of the loaded model.",
+    "无法验证安装面。请选择已加载模型的平面。",
+    "Die Montagefläche kann nicht geprüft werden. Wählen Sie eine ebene Fläche des geladenen Modells.",
+    "No se puede verificar la cara de montaje. Seleccione una cara plana del modelo cargado.",
+    "Не удалось проверить поверхность крепления. Выберите плоскую грань загруженной модели.",
+    "Impossibile verificare la faccia di montaggio. Scegli una faccia piana del modello caricato.",
+    "取付面を確認できません。読み込んだモデルの平面を選択してください。"
+  ],
+  "Aucune position de détection trouvée sur cette face. Le montage est conservé.": [
+    "No detection position found on this face. The mounting is unchanged.",
+    "在此面上未找到检测位置。保持安装配置不变。",
+    "Keine Erkennungsposition auf dieser Fläche gefunden. Die Montage bleibt unverändert.",
+    "No se encontró ninguna posición de detección en esta cara. Se conserva el montaje.",
+    "На этой поверхности положение срабатывания не найдено. Монтаж сохранён.",
+    "Nessuna posizione di rilevamento trovata su questa faccia. Il montaggio resta invariato.",
+    "この面に検出位置が見つかりませんでした。取付状態は維持されます。"
+  ],
+  "La recherche n’a pas abouti. Le montage est conservé.": [
+    "The search did not complete. The mounting is unchanged.",
+    "搜索未完成。保持安装配置不变。",
+    "Die Suche wurde nicht abgeschlossen. Die Montage bleibt unverändert.",
+    "La búsqueda no se completó. Se conserva el montaje.",
+    "Поиск не завершён. Монтаж сохранён.",
+    "La ricerca non è stata completata. Il montaggio resta invariato.",
+    "検索を完了できませんでした。取付状態は維持されます。"
+  ],
+  "Lancer": [
+    "Start",
+    "启动",
+    "Starten",
+    "Iniciar",
+    "Запустить",
+    "Avvia",
+    "開始"
   ]
 }

@@ -1,5 +1,24 @@
 # Langage de design Standex DETECT
 
+### Installation dans le modèle importé — 2 novembre 2026
+
+Le parcours conserve ses cinq étapes. Les caractéristiques de l’aimant utilisent
+un volet natif avec chevron visible et cible de 44 px. La mesure libre est
+facultative et repliée par défaut dans Essai. Les deux accès à la lecture
+(barre et Essai) partagent préparation, annulation et pause ; le bleu reprend
+`--signal` avec texte `--standex-abyss`. Aucun jeton nouveau.
+
+Installation propose une recherche indicative de positions dans les zones C1 %,
+sur la seule face plane connectée d’origine. Toute l’empreinte rectangulaire
+conservatrice de l’aimant doit rester couverte par les triangles de cette face :
+les bords, trous et îlots séparés sont exclus. Orientation, écart et support
+restent inchangés. Les positions sont parcourues avec un compteur ; la scène
+se place au rapprochement maximal échantillonné. Une absence de résultat
+conserve le montage. Les résultats sont invalidés par toute autre modification
+ou relecture de géométrie. La recherche se limite au domaine du modèle et
+reste une suggestion indicative, sans qualification physique du montage.
+
+
 ### Lobes complets sans coupure d’affichage — 30 octobre 2026
 
 La grille catalogue s’étend automatiquement, axe par axe, lorsqu’un lobe atteint
@@ -17,10 +36,11 @@ sur ordinateur (à partir de 1024 px), avant l’import 3D. Son fond utilise
 Sous 1024 px, il reste dans une barre dédiée au-dessus de la grille et utilise toute la largeur. La barre
 réserve sa propre hauteur et ne recouvre aucun contenu. Le même bouton conserve
 les états lecture, pause, préparation et annulation, y compris après import dans
-le parcours catalogue client ; aucune seconde commande de lecture n’est ajoutée
-dans le guide. Les restrictions de mouvement restent inchangées. Cible ≥ 44 px,
+le parcours catalogue client. Depuis le 2 novembre, une seconde commande partage
+exactement le même état dans l’étape Essai du modèle importé. Les restrictions de mouvement restent inchangées. Cible ≥ 44 px,
 libellé multiligne si nécessaire, surfaces et élévation issues des jetons existants.
-Une seule commande est montée à la fois, y compris lors d’un redimensionnement.
+Une seule commande de barre est montée à la fois lors d’un redimensionnement ;
+le guide Essai conserve son accès supplémentaire.
 Le témoin de calcul se trouve à 8 px du bord supérieur de la scène.
 Le sélecteur 3D/coupe est masqué uniquement dans l’atelier ; les outils de coupe
 restent disponibles aux autres consommateurs. La fiche MK06 regroupe les six

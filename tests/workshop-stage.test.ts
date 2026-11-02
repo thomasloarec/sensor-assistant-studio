@@ -117,12 +117,12 @@ describe("colonne de gauche : réglages essentiels", () => {
     expect(column).toContain("{!machine && approachPicker}");
     expect(column).toContain("{!machine && activationDistanceControl}");
     expect(column).toContain("{machine && activationDistanceControl}");
-    expect(column).not.toContain("{playButton}");
+    expect(column).not.toContain("{renderPlayButton()}");
     const playback = WORKSHOP.indexOf('className="mw-playback-bar"');
     const grid = WORKSHOP.indexOf('className="mw-stage-grid"');
     expect(playback).toBeGreaterThan(0);
     expect(playback).toBeLessThan(grid);
-    expect(WORKSHOP.slice(playback, grid)).toContain("{playButton}");
+    expect(WORKSHOP.slice(playback, grid)).toContain("{renderPlayButton()}");
     expect(column).toContain("{advancedSettings}");
     // Aucun réglage avancé n'est ouvert directement dans la colonne.
     expect(column).not.toContain("Orientation sur la machine");
@@ -193,8 +193,8 @@ describe("colonne de gauche : réglages essentiels", () => {
     );
     expect(magnetSection).not.toContain('className="mw-product"');
     expect(magnetSection).toContain('msg("Correspondance documentaire : {0}"');
-    expect(WORKSHOP).toContain('t("Trajet du câble")');
-    expect(WORKSHOP).toContain("Le pointage du trajet du câble nécessite l’import de votre modèle 3D.");
+    expect(WORKSHOP).not.toContain('data-testid="cable-tool-toggle"');
+    expect(WORKSHOP).not.toContain("Pointer le câble dans la 3D");
   });
 });
 

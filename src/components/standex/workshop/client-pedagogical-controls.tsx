@@ -7,7 +7,7 @@ import { catalogueClasses } from '@/lib/standex/catalogue-pedagogical';
 import { catalogueThresholds } from '@/lib/standex/catalogue-response';
 import { magnetOptionsFor } from '@/lib/standex/default-pairs';
 import { sensorById } from '@/lib/standex/sensor-catalog';
-import { isPcbSensor } from '@/lib/leadmagnet/product-presentation';
+import { ChevronRight } from 'lucide-react';
 import { useMemo, type ReactNode } from 'react';
 import { slideGapLimit } from '@/lib/standex/discovery-slide';
 import { discoveryPatch } from '@/lib/standex/discovery-preset';
@@ -15,7 +15,7 @@ import { discoveryPatch } from '@/lib/standex/discovery-preset';
 /** Colonne de découverte : disposition, mouvement, quart de tour et placement simple.
  * Les réglages détaillés restent disponibles après import ou en exploration ;
  * une configuration existante n'est jamais réécrite parce que sa commande devient invisible. */
-export function ClientPedagogicalControls({config,update,onCatalog,onCable,approachControls}: {
+export function ClientPedagogicalControls({config,update,onCatalog,approachControls}: {
   config:WorkshopConfig;update:(patch:Partial<WorkshopConfig>)=>void;onCatalog:()=>void;onCable:()=>void;approachControls?:ReactNode;
 }) {
   // Keep an existing selection, but do not offer documented G as a new simulation
@@ -61,11 +61,10 @@ export function ClientPedagogicalControls({config,update,onCatalog,onCable,appro
         <label className="mw-field"><span>{t('Écart minimal entre le capteur et l’aimant')}<output className="t-metric">{config.end} mm</output></span><input type="range" aria-label={t('Écart minimal entre le capteur et l’aimant')} min="0.25" max="15" step="0.25" value={config.end} onInput={e=>update({end:Number(e.currentTarget.value)})}/></label>
       </>}
     </>}
-    <details className="mw-advanced"><summary>{t('Caractéristiques de l’aimant')}</summary>
+    <details className="mw-advanced mw-disclosure"><summary><ChevronRight aria-hidden="true" className="mw-disclosure-chevron" size={20}/>{t('Caractéristiques de l’aimant')}</summary>
       <label className="mw-select-label">{t('Aimant')}<select aria-label={t('Aimant')} value={config.magnetModel} onChange={e=>update({magnetModel:e.target.value})}>{magnets.map(id=><option key={id} value={id}>{id}</option>)}</select></label>
       {config.guideReference&&<p className="t-caption">{t('Référence documentaire')} : {config.guideReference}</p>}
     </details>
-    {config.machine && !isPcbSensor(config.sensorId) && <Button variant="secondary" onClick={onCable}>{t('Pointer le câble dans la 3D')}</Button>}
 
   </div>;
 }
