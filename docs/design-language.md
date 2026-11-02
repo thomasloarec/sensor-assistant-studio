@@ -1,5 +1,29 @@
 # Langage de design Standex DETECT
 
+### Brief projet imprimable — 2 novembre 2026
+
+Le téléchargement client utilise une mise en page A4 distincte de la fiche de
+revue interne. Le nom du projet ouvre le document, puis viennent les coordonnées
+du prospect et le calendrier/volume, les besoins de l’application, la solution
+étudiée, et la préparation de l’échange (questions, confidentialité, historique,
+références). L’export ne reproduit plus le résumé Markdown en bloc.
+
+Logo officiel via `documentLogoSource`, Source Sans 3, bleu/gris et surfaces issus
+des jetons existants. Grilles de deux ou trois colonnes pour les valeurs courtes,
+lignes à libellés pour les descriptions, marges d’impression et pied de page
+avec pagination totale. Les commentaires longs se poursuivent avec un titre de
+suite ; mots, références longues et caractères internationaux restent entiers.
+Le rendu local est à 300 dpi. Un espace de notes est ajouté en fin de document
+si la place le permet. Le JSON complet reste joint, sans notes internes.
+
+Le montage d’une machine décrit son mouvement effectif, sans reprendre les
+positions ouvertes/fermées de la démonstration préalable. Les réserves et les
+limites des résultats restent visibles ; aucune estimation n’est une validation.
+Les données sans choix explicite restent inconnues, notamment le connecteur.
+
+Avec Standex conserve une seule formulation visible de l’accord d’envoi et ne
+présente plus de délai promis de réponse d’un ingénieur.
+
 ### Pile du circuit et envoi Standex — 2 novembre 2026
 
 Les schémas de contact représentent une pile à un seul élément : un trait long

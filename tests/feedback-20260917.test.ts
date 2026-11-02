@@ -81,7 +81,7 @@ describe("retours du 17 septembre : parcours et physique", () => {
       dossier.workshop = config;
       expect(
         projectReportSections(dossier)
-          .find((s) => s.title === "Configuration du montage")
+          .find((s) => s.title === "Le résultat")
           ?.entries.find((e) => e.label === "Le résultat")?.value,
       ).toBe("Détection prévue dans ce montage");
       const far = { ...config, start: 55, end: 50 };

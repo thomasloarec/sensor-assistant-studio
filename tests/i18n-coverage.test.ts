@@ -118,7 +118,8 @@ describe("Couverture des langues de l'interface", () => {
     // + 7 entrées : MK07, géométrie, câblage et montage.
     // + 10 entries: visible installation rotation and coffee model description.
     // + 8 entries: mounting/movement tools, search explanation and sensitive-specimen search.
-    expect(Object.keys(dictionary)).toHaveLength(4007);
+    // + 8 entries: printable project brief chapters and decision labels.
+    expect(Object.keys(dictionary)).toHaveLength(4015);
     const broken = Object.entries(dictionary).filter(
       ([, v]) => v.length !== 7 || v.some((x) => typeof x !== "string" || x.trim() === ""),
     );

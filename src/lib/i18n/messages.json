@@ -36061,5 +36061,77 @@
     "О поиске",
     "Informazioni sulla ricerca",
     "検索について"
+  ],
+  "Projet et application": [
+    "Project and application",
+    "项目与应用",
+    "Projekt und Anwendung",
+    "Proyecto y aplicación",
+    "Проект и применение",
+    "Progetto e applicazione",
+    "プロジェクトと用途"
+  ],
+  "Solution étudiée": [
+    "Proposed solution",
+    "研究方案",
+    "Untersuchte Lösung",
+    "Solución estudiada",
+    "Рассматриваемое решение",
+    "Soluzione esaminata",
+    "検討中のソリューション"
+  ],
+  "Préparer l’échange": [
+    "Prepare for the discussion",
+    "准备讨论",
+    "Gespräch vorbereiten",
+    "Preparar la reunión",
+    "Подготовка к обсуждению",
+    "Preparare il confronto",
+    "打ち合わせの準備"
+  ],
+  "Brief projet": [
+    "Project brief",
+    "项目简报",
+    "Projektbrief",
+    "Resumen del proyecto",
+    "Краткое описание проекта",
+    "Scheda progetto",
+    "プロジェクト概要"
+  ],
+  "Notes pour l’échange": [
+    "Discussion notes",
+    "讨论笔记",
+    "Gesprächsnotizen",
+    "Notas para la reunión",
+    "Заметки для обсуждения",
+    "Note per il confronto",
+    "打ち合わせメモ"
+  ],
+  "Standex DETECT · Sensor Studio": [
+    "Standex DETECT · Sensor Studio",
+    "Standex DETECT · Sensor Studio",
+    "Standex DETECT · Sensor Studio",
+    "Standex DETECT · Sensor Studio",
+    "Standex DETECT · Sensor Studio",
+    "Standex DETECT · Sensor Studio",
+    "Standex DETECT · Sensor Studio"
+  ],
+  "Décision": [
+    "Decision",
+    "决定",
+    "Entscheidung",
+    "Decisión",
+    "Решение",
+    "Decisione",
+    "決定"
+  ],
+  "À définir avec Standex": [
+    "To define with Standex",
+    "与 Standex 确定",
+    "Mit Standex festzulegen",
+    "Por definir con Standex",
+    "Определить со Standex",
+    "Da definire con Standex",
+    "Standex と決定"
   ]
 }
