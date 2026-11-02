@@ -334,6 +334,8 @@ export default function MachineGuide({
     setTool("navigate");
   };
   const target = state.target;
+  const moveTool = target === "sensor" ? "move-sensor" : "move-magnet";
+  const movingOnFace = tool === moveTool;
   const attach = target === "sensor" ? m.sensorAttach : m.magnetAttach;
   const kind = state.kind[target];
   const canThrough = target === "sensor" && throughAllowed(sensor.shape);
@@ -358,8 +360,9 @@ export default function MachineGuide({
   const ready = guideMotionReady(m, !!asset);
   const stepIndex = STEPS.findIndex(([s]) => s === state.step);
   const orientationControls = (
-    <fieldset className="mw-attach" data-testid="guide-orientation">
-      <legend className="t-title-s">{t(target === "sensor" ? "Rotation du capteur" : "Rotation de l’aimant")}</legend>
+    <details className="mw-precise mw-rotation" data-testid="guide-orientation" key={target}>
+      <summary className="t-body">{t(target === "sensor" ? "Rotation du capteur" : "Rotation de l’aimant")}</summary>
+      <div className="mw-attach">
       {attach ? <>
         {attach.kind === "surface" && <label className="mw-select-label">
           {t("Sens du montage")}
@@ -397,7 +400,8 @@ export default function MachineGuide({
             onChange(target === "sensor" ? {sensorRotation:rotation} : {magnetRotation:rotation});
           }}/>)}
       </>}
-    </fieldset>
+      </div>
+    </details>
   );
 
   const body: Record<GuideStep, React.ReactNode> = {
@@ -841,6 +845,7 @@ export default function MachineGuide({
     ),
     install: (
       <>
+        <div className="mw-install-setup">
         {/* i18n-canonical : libellés français traduits au rendu par t(). */}
         <div className="mw-segmented" role="radiogroup" aria-label={t("Composant à installer")}>
           {(
@@ -862,7 +867,6 @@ export default function MachineGuide({
             </Button>
           ))}
         </div>
-        {orientationControls}
         <div className="mw-segmented" role="radiogroup" aria-label={t("Type de montage")}>
           {(
             [
@@ -903,8 +907,13 @@ export default function MachineGuide({
             data-testid="guide-place"
             onClick={() => setTool(tool === target ? "navigate" : target)}
           >
-            {t(tool === target ? "Annuler le pointage" : "Cliquer la face dans la scène")}
+            {t(tool === target ? "Annuler le pointage" : attach ? "Changer de face de fixation" : "Choisir la face de fixation")}
           </Button>
+          {attach?.kind === "surface" && <Button className="mw-button mw-secondary"
+            data-testid="guide-move" aria-pressed={movingOnFace}
+            onClick={() => setTool(movingOnFace ? "navigate" : moveTool)}>
+            {t(movingOnFace ? "Terminer le déplacement" : "Déplacer sur la face")}
+          </Button>}
           {kind === "through" && (
             <Button
               className="mw-button"
@@ -915,6 +924,10 @@ export default function MachineGuide({
               {t(centring ? "Annuler le centrage" : "Centrer dans un trou")}
             </Button>
           )}
+        </div>
+        {movingOnFace && <p className="notice-info" role="status">
+          {t("Glissez les flèches pour déplacer le composant sur sa face. Un déplacement hors de cette face est refusé.")}
+        </p>}
         </div>
         {state.pick?.purpose === "hole-centre" && (
           <div className="notice-info mw-pick-steps" data-testid="guide-hole-centre-steps" role="status">
@@ -969,7 +982,6 @@ export default function MachineGuide({
         )}
         {attach ? (
           <div className="mw-attach" data-testid="guide-attach">
-            <Button className="mw-button mw-secondary" onClick={() => setTool(target)}>{t("Changer de support : cliquer une autre face")}</Button>
             <p className="t-body">
               {msg("Support : {0}", [
                 t(
@@ -1008,6 +1020,8 @@ export default function MachineGuide({
                 )}
               </p>
             )}
+            <details className="mw-precise" data-testid="guide-precise">
+              <summary className="t-body">{t("Position précise")}</summary>
             {/* i18n-canonical : libellés français traduits au rendu par t(). */}
             {attach.kind === "surface" ? (
               <Num
@@ -1056,8 +1070,6 @@ export default function MachineGuide({
                 </p>
               </>
             )}
-            <details className="mw-precise" data-testid="guide-precise">
-              <summary className="t-body">{t("Position précise")}</summary>
               <p className="t-caption">{t("Repère : coordonnées du fichier en pose statique (mécanisme au repos), en mm. Le point suit ensuite sa pièce support.")}</p>
               {attach.kind === "surface" ? (
                 <>
@@ -1196,6 +1208,7 @@ export default function MachineGuide({
           )}
           </>
         )}
+        {orientationControls}
         <div className="mw-guide-row">
           <Button className="mw-button mw-secondary" disabled={!history.canUndo} onClick={history.undo}>
             {t("Annuler le dernier réglage")}

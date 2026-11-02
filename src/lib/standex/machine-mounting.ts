@@ -84,6 +84,16 @@ export function depthReading(a: Attachment): "flush" | "recessed" | "protruding"
   return a.offsetMm > 0 ? "recessed" : "protruding";
 }
 
+/** Conservative support pad in the file's rest axes, relative to the anchor. */
+export function surfaceFootprint(a: Attachment, size: Vec3): Vec3[] {
+  const pose = attachPose(a, {lengthMm:size[0],heightMm:size[1]});
+  const rotation = new Euler(...pose.rotation.map(v=>v*Math.PI/180) as Vec3);
+  return [[-1,-1],[1,-1],[1,1],[-1,1]].map(([x,z])=>
+    new Vector3(...(a.surfaceOrientation==="end"
+      ? [0,x!*size[1]/2,z!*size[2]/2] : [x!*size[0]/2,0,z!*size[2]/2]) as Vec3)
+      .applyEuler(rotation).toArray() as Vec3);
+}
+
 const finite = (v: unknown, max: number): v is Vec3 =>
   Array.isArray(v) &&
   v.length === 3 &&

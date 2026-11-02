@@ -1,7 +1,7 @@
 /** Recette : dans l'atelier intégré (Workshop dans WorkspacePanel), Échap
  *  pendant « Centrer dans un trou » annule la sélection temporaire SANS fermer
  *  le panneau ; hors pointage, Échap ferme toujours le panneau. Ordre JSX :
- *  les rotations visibles précèdent la recherche de détection, puis l'écart. */
+ *  les choix de pose et de déplacement précèdent les réglages repliés. */
 import { GlobalRegistrator } from "@happy-dom/global-registrator";
 import { afterAll, afterEach, beforeAll, describe, expect, mock, test } from "bun:test";
 import { readFileSync } from "node:fs";
@@ -90,7 +90,7 @@ describe("Échap dans l'atelier intégré", () => {
     expect(closes).toEqual([false]);
   }, 30000);
 
-  test("les rotations visibles précèdent la recherche de détection et l'écart", async () => {
+  test("pose et déplacement sont regroupés avant recherche, position et rotation repliées", async () => {
     const { v } = await mount();
     await act(async () => fireEvent.click(v.getByRole("radio", { name: "Aimant" })));
     const attach = v.getByTestId("guide-attach");
@@ -100,8 +100,11 @@ describe("Échap dans l'atelier intégré", () => {
     const rotation = v.getByTestId("guide-spin");
     const before = (a: Node, b: Node) => !!(a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING);
     expect(before(align, offset)).toBe(true);
-    expect(before(rotation, align)).toBe(true);
-    expect(before(flip, align)).toBe(true);
+    expect(before(align, rotation)).toBe(true);
+    expect(before(align, flip)).toBe(true);
+    expect(before(v.getByTestId("guide-place"),v.getByTestId("guide-move"))).toBe(true);
+    expect(before(v.getByTestId("guide-move"),align)).toBe(true);
+    expect((v.getByTestId("guide-orientation") as HTMLDetailsElement).open).toBe(false);
     expect((v.getByTestId("guide-precise") as HTMLDetailsElement).open).toBe(false);
   }, 30000);
 });

@@ -104,11 +104,6 @@ export function MachineDetectionPlacement({
               : "Trouver une position de détection",
         )}
       </Button>
-      <p className="t-caption">
-        {t(
-          "Recherche au plus près du capteur, sur la face de fixation actuelle. L’orientation et l’écart de pose sont conservés.",
-        )}
-      </p>
       <div role="status" aria-live="polite">
         {busy && <p className="t-caption">{t("Recherche des zones de détection…")}</p>}
         {current && (
@@ -119,13 +114,16 @@ export function MachineDetectionPlacement({
             ])}
           </p>
         )}
+        {current?.result.sensitiveOnly && <p className="notice-info">
+          {t("Position détectée par l’exemplaire sensible illustré. Aucun noyau de détection plus prudent trouvé sur cette face.")}
+        </p>}
         {notice && <p className="notice-info">{t(notice)}</p>}
       </div>
-      <p className="t-caption">
-        {t(
-          "Positions indicatives selon les zones simulées. La recherche conserve la surface d’appui et évite les zones mortes détectées.",
-        )}
-      </p>
+      <details className="mw-search-help">
+        <summary className="t-body">{t("À propos de la recherche")}</summary>
+        <p className="t-caption">{t("Recherche au plus près du capteur, sur la face de fixation actuelle. L’orientation et l’écart de pose sont conservés.")}</p>
+        <p className="t-caption">{t("Positions indicatives selon les zones simulées. La recherche conserve la surface d’appui et évite les zones mortes détectées.")}</p>
+      </details>
     </div>
   );
 }

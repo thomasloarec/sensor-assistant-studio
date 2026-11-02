@@ -2897,6 +2897,20 @@
   max-height: none;
   overflow: visible;
 }
+.mw-install-setup { display: grid; gap: 8px; padding: 8px; background: var(--surface-sunken); border-radius: var(--r-md); }
+.mw-install-setup .mw-guide-row { align-items: stretch; }
+.mw-install-setup .mw-guide-row > button { flex: 1 1 100%; }
+.mw-controls details > summary { list-style: none; cursor: pointer; min-height: 44px; }
+.mw-controls details > summary::-webkit-details-marker { display: none; }
+.mw-controls details > summary:not(:has(.mw-disclosure-chevron)) { display: flex; align-items: center; gap: 10px; }
+.mw-controls details > summary:not(:has(.mw-disclosure-chevron))::before {
+  content: ""; flex: 0 0 auto; width: .5em; height: .5em;
+  border-inline-end: 2px solid currentColor; border-block-start: 2px solid currentColor;
+  transform: rotate(45deg);
+}
+.mw-controls details[open] > summary:not(:has(.mw-disclosure-chevron))::before { transform: rotate(135deg); }
+.mw-controls details > summary:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; border-radius: var(--r-sm); }
+.mw-rotation[open] > .mw-attach { margin-top: 10px; }
 .mw-guide-row,
 .mw-guide-nav {
   display: flex;

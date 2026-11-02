@@ -4,15 +4,16 @@
  */
 import { Quaternion, Vector3 } from "three";
 import { PROFILE } from "../detection-lab/profile";
-import { componentPose, partDelta, motionProblem, usesClip, rotate } from "./machine-assembly";
+import { componentPose, partDelta, motionProblem, usesClip } from "./machine-assembly";
 import type { MachineAssembly } from "./machine-assembly";
 import type { MachineAsset } from "./machine-assets";
-import { applyAttachments, attachPose, type Attachment } from "./machine-mounting";
+import { applyAttachments, surfaceFootprint, type Attachment } from "./machine-mounting";
 import { magnetSize, type Vec3, type WorkshopConfig } from "./magnetic-workshop";
 import { sensorById } from "./sensor-catalog";
 import { mountingFace, footprintFits, type MountingFace } from "./machine-face";
 import { catalogueFrame, catalogueModel, cataloguePlacement } from "./catalogue-pedagogical";
 import { partEnvelopes, reedObstaclesAt } from "./pedagogical-envelopes";
+import { catalogueThresholds } from "./catalogue-response";
 
 /* i18n-canonical: refusal messages are translated by the UI. */
 export const POSITION_MESSAGES = {
@@ -31,6 +32,8 @@ export interface DetectionPositions {
   t: number;
   stepMm: number;
   reason?: string;
+  /** No prudent core found: activation matches the displayed sensitive specimen. */
+  sensitiveOnly?: boolean;
 }
 function restPoint(m: MachineAssembly, path: string, p: Vec3, u: number): Vec3 {
   const d = partDelta(m, path, u),
@@ -77,16 +80,7 @@ export function closestFaceTime(m: MachineAssembly, face: MountingFace, path: st
   return usesClip(m) ? best : best / 2;
 }
 export function mountingFootprint(c: WorkshopConfig, a: Attachment): Vec3[] {
-  const size = magnetSize(c),
-    rotation = attachPose(a, { lengthMm: size[0], heightMm: size[1] }).rotation;
-  return [
-    [-1, -1],
-    [1, -1],
-    [1, 1],
-    [-1, 1],
-  ].map(([x, z]) => rotate(a.surfaceOrientation === "end"
-    ? [0, (x! * size[1]) / 2, (z! * size[2]) / 2]
-    : [(x! * size[0]) / 2, 0, (z! * size[2]) / 2], rotation));
+  return surfaceFootprint(a, magnetSize(c));
 }
 export async function findDetectionPositions(
   c: WorkshopConfig,
@@ -124,7 +118,8 @@ export async function findDetectionPositions(
   const min = face.bounds.min.map((v, i) => Math.max(v, centre[i]! - radius));
   const max = face.bounds.max.map((v, i) => Math.min(v, centre[i]! + radius));
   if (min.some((v, i) => v >= max[i]!)) return empty(POSITION_MESSAGES.none);
-  const step = Math.max(0.4, ...min.map((v, i) => (max[i]! - v) / 120));
+  // Half the former spacing resolves narrow D4 lobes without changing physics.
+  const step = Math.max(0.2, ...min.map((v, i) => (max[i]! - v) / 240));
   const nx = Math.ceil((max[0]! - min[0]!) / step) + 1,
     ny = Math.ceil((max[1]! - min[1]!) / step) + 1;
   const footprint = mountingFootprint(c, a),
@@ -136,7 +131,7 @@ export async function findDetectionPositions(
       { lengthMm: sensor.body[0], heightMm: sensor.body[1] },
       { lengthMm: size[0], heightMm: size[1] },
     );
-  const score = (point: Vec3): number => {
+  const responseAt = (point: Vec3): number => {
     if (point.some((v) => Math.abs(v) > 10000) || !footprintFits(face, point, footprint)) return 0;
     const candidate = { ...c, machine: machineAt({ ...a, point }) };
     const result = cataloguePlacement(
@@ -146,7 +141,7 @@ export async function findDetectionPositions(
       model,
       true,
     );
-    return result.zone === 2 && result.nominal?.ok ? result.nominal.response : 0;
+    return result.state !== "unavailable" && result.nominal?.ok ? result.nominal.response : 0;
   };
   const points: Vec3[] = [],
     scores = new Float64Array(nx * ny);
@@ -156,12 +151,20 @@ export async function findDetectionPositions(
       const point = face.to3([min[0]! + i * step, min[1]! + j * step]),
         k = j * nx + i;
       points[k] = point;
-      scores[k] = score(point);
+      scores[k] = responseAt(point);
     }
     // Keep cancellation, navigation and input responsive during the search.
     if (j % 3 === 0) await new Promise<void>((resolve) => setTimeout(resolve, 0));
   }
   aborted();
+  const thresholds=catalogueThresholds(model.className);
+  if(!thresholds)return empty(POSITION_MESSAGES.none);
+  // Prefer the prudent core. If none is reachable on this face, use exactly
+  // the same lower bound as illustrativeContact, and explicitly label it.
+  const sensitiveOnly=!scores.some(v=>v>=thresholds.high);
+  const threshold=sensitiveOnly ? thresholds.low??thresholds.high : thresholds.high;
+  for(let i=0;i<scores.length;i++)if(scores[i]!<threshold)scores[i]=0;
+  const score=(point:Vec3)=>{const value=responseAt(point);return value>=threshold?value:0;};
   const adjacent = (k: number) => [
     k % nx > 0 ? k - 1 : -1,
     k % nx < nx - 1 ? k + 1 : -1,
@@ -227,6 +230,7 @@ export async function findDetectionPositions(
     positions,
     t,
     stepMm: step,
+    sensitiveOnly,
     ...(!positions.length ? { reason: POSITION_MESSAGES.none } : {}),
   };
 }
