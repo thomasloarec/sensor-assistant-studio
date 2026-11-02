@@ -4,7 +4,10 @@ import { workshopGuideRange, GUIDE_SIMULATION_NOTE, illustrativeNoteFor } from "
 import { guideIllustrativeMarks, ACTIVATION_GUIDE } from "../standex/activation-guide";
 import { toClientDto, stableStringify, REQUIREMENT_LABELS, type DesignDossier } from "./dossier";
 import { assessApplicationFit, FIT_PANEL } from "./application-fit";
-import { technicalSummary } from "./submission";
+import { requirementAnswer } from "./requirement-answer";
+import { connectorSummaryLines } from "./connectors";
+import { estimateCableLength } from "./cabling";
+import { CHOSEN_BARE_LEADS, DELEGATED_CONNECTOR } from "./project-checklist";
 import {
   projectIdentity,
   PROVISIONAL_REFERENCE_NOTE,
@@ -29,6 +32,9 @@ export interface ReportSection {
   id: number;
   title: string;
   entries: { label: string; value: string }[];
+  group?: "overview" | "solution" | "discussion";
+  layout?: "hero" | "grid" | "rows";
+  columns?: 2 | 3;
 }
 
 /** Readable report; the full data is embedded as JSON in the same PDF. */
@@ -42,18 +48,36 @@ export function projectReportSections(
   const sections: ReportSection[] = [];
   const unknown = tr("Non défini pour le moment");
   const value = (v: unknown) => (v === null || v === undefined || v === "" ? unknown : String(v));
-  const add = (title: string, entries: { label: string; value: string }[]) =>
-    sections.push({ id: sections.length + 1, title: tr(title), entries });
+  let group: NonNullable<ReportSection["group"]> = "overview";
+  const add = (title: string, entries: { label: string; value: string }[], layout: ReportSection["layout"] = "rows", columns:2|3=2) =>
+    sections.push({ id: sections.length + 1, title: tr(title), entries, group, layout, columns });
   const entry = (label: string, v: unknown) => ({ label: tr(label), value: value(v) });
-  add("Votre projet", [{ label: d.title, value: technicalSummary(d, tr).replace(/^#+\s*/gm, "") }]);
+  add("Votre projet", [entry("Nom du projet", d.title)], "hero");
   add("Coordonnées et contexte", [
-    entry("Nom", d.business.contactName),
     entry("Entreprise", d.business.contactCompany),
+    entry("Nom", d.business.contactName),
     entry("E-mail professionnel", d.business.contactEmail),
     entry("Numéro de téléphone", d.business.contactPhone),
     entry("Ville du site", d.business.siteCity),
     entry("Pays du site", d.business.siteCountry),
-  ]);
+  ], "grid", 3);
+  /* i18n-canonical: field labels and statuses are translated at export. */
+  const phase = {exploration:"Exploration",design:"Conception",prototype:"Prototype",industrialisation:"Industrialisation",unknown:"Non défini pour le moment"};
+  add("Contexte projet", [
+    entry("Phase", tr(phase[d.business.projectPhase])),
+    entry("Volume annuel", d.business.annualVolume.kind === "known" ? `${d.business.annualVolume.sensorsPerYear} ${tr("capteurs/an")}` : unknown),
+    entry("Démarrage série", d.business.seriesStartDate),
+    entry("Échantillons utiles avant", d.business.samplesNeededBy),
+    entry("Durée série", d.business.seriesDurationYears == null ? unknown : `${d.business.seriesDurationYears} ${tr("ans")}`),
+  ], "grid", 3);
+  add("Application", d.requirements.map(r => {
+    const rawAnswer = requirementAnswer(d, r.key, tr);
+    const answer = r.key === "envelope" ? rawAnswer.replace(/\n/g," · ") : rawAnswer;
+    return entry(REQUIREMENT_LABELS[r.key] ?? r.label,
+      answer ? `${answer}${r.unit ? ` ${r.unit}` : ""}${r.state === "hypothesis" ? ` (${tr("hypothèse")})` : ""}` : unknown);
+  }));
+  if(d.freeConstraints.trim()) add("Contraintes libres", [entry("Contraintes supplémentaires", d.freeConstraints)]);
+  group = "solution";
   // Compatibilité du besoin : évaluée AVANT toute conclusion d'essai, pour
   // qu'aucun verdict magnétique antérieur ne soit écrit comme une validation de
   // l'application décrite aujourd'hui. Les données historiques restent intactes.
@@ -81,31 +105,33 @@ export function projectReportSections(
       entry("Aimant", w.magnetModel),
       ...(guide ? [entry("Plage du guide disponible", `${guide.sensorReference} · ${guide.approachId} · up ${guide.upMm ?? "—"} mm / to ${guide.toMm ?? "—"} mm · p. ${guide.page} · ${ACTIVATION_GUIDE.source.url}`)] : []),
       entry("Classe de sensibilité", w.sensitivity),
-      entry(
+      ...(!w.machine ? [entry(
         "Position",
         `${w.geometry} · ${tr(w.geometry === "F1" ? "Face à face" : w.geometry === "D1" ? "Parallèle" : "Perpendiculaire")}`,
-      ),
-      entry("Position ouverte", `${w.start} mm`),
-      entry("Position fermée", `${w.end} mm`),
-      ...(!isPcbSensor(d.selectedSensorId) ? [entry("Longueur de câble retenue (mm)", w.cableLengthMm)] : []),
-      entry("Orientation de l'aimant", `${w.magnetAngle}° / ${w.magnetTilt}°`),
-      entry("Orientation sur la machine", `${w.mountAngle}° · (${w.mountX}, ${w.mountZ}) mm`),
-      entry("Trajectoire", `${w.motion} · ${w.offset} / ${w.travel} mm · ${w.span}°`),
-      entry("Fichier 3D", w.machine?.fileName),
+      )] : []),
+      ...(w.machine ? [
+        entry("Fichier 3D", w.machine.fileName),
+        ...(w.machine.motionSource === "clip" ? [entry("Mouvement", w.machine.clip?.name || unknown)] : [
+          entry("Mouvement", tr(w.machine.motion === "rotation" ? "Rotation" : "Translation")),
+          entry(w.machine.motion === "rotation" ? "Angle d'ouverture" : "Course", w.machine.motion === "rotation" ? `${w.machine.openingAngle}°` : `${Math.hypot(...w.machine.travel).toFixed(1)} mm`),
+        ]),
+      ] : [
+        entry("Position ouverte", `${w.start} mm`),
+        entry("Position fermée", `${w.end} mm`),
+        entry("Orientation de l'aimant", `${w.magnetAngle}° / ${w.magnetTilt}°`),
+        entry("Trajectoire", `${w.motion} · ${w.offset} / ${w.travel} mm · ${w.span}°`),
+      ]),
+    ], "grid");
+    add("Le résultat", [
       entry(
         "Le résultat",
-        result ? qualify(result, result === cycleMessage("expected")) : fit.blocking ? tr(FIT_PANEL.historicalDemo) : unknown,
+        [...new Set([
+          result ? qualify(result, result === cycleMessage("expected")) : fit.blocking ? tr(FIT_PANEL.historicalDemo) : unknown,
+          ...(!trace && computed?.illustrative ? [qualify(guide ? GUIDE_SIMULATION_NOTE : illustrativeNoteFor(w), false)] : []),
+        ])].join("\n"),
       ),
-      entry("Ferme à", trace||computed?.pullInMm == null ? unknown : `${computed.pullInMm} mm`),
-      entry("Ouvre à", trace||computed?.dropOutMm == null ? unknown : `${computed.dropOutMm} mm`),
-      ...(!trace&&computed?.illustrative
-        ? [
-            entry(
-              "Le résultat",
-              qualify(guide ? GUIDE_SIMULATION_NOTE : illustrativeNoteFor(w), false),
-            ),
-          ]
-        : []),
+      ...(!trace && computed?.pullInMm != null ? [entry("Ferme à", `${computed.pullInMm} mm`)] : []),
+      ...(!trace && computed?.dropOutMm != null ? [entry("Ouvre à", `${computed.dropOutMm} mm`)] : []),
       entry(
         "Les hypothèses retenues",
         tr(
@@ -114,6 +140,25 @@ export function projectReportSections(
       ),
     ]);
   }
+  if(!w && d.selectedSensorId) add("Configuration du montage", [entry("Capteur", d.selectedSensorId)]);
+  if(isPcbSensor(d.selectedSensorId)) add("Câblage", [entry("Montage", tr("Montage sur PCB : câble et connecteur non applicables."))]);
+  else {
+    const cable = estimateCableLength(d.cabling);
+    add("Câblage", [
+      entry("Longueur de câble retenue (mm)", w?.cableLengthMm),
+      entry("Choix de longueur", tr(d.cabling.lengthChoice === "custom_to_confirm" ? "Sur mesure" : d.cabling.lengthChoice === "standard_to_confirm" ? "Standard" : "Non défini pour le moment")),
+      ...(cable.requiredMm !== null ? [entry("Longueur nécessaire", `${cable.requiredMm.toFixed(1)} mm`)] : []),
+      ...((d.delegatedDecisions ?? []).includes("cable") ? [entry("Décision", tr("À définir avec Standex"))] : []),
+    ], "grid");
+    const connector = (d.delegatedDecisions ?? []).includes(DELEGATED_CONNECTOR) ? [tr("À définir avec Standex")]
+      : d.termination.kind === "bare_leads" ? [(d.delegatedDecisions ?? []).includes(CHOSEN_BARE_LEADS) ? tr("Choix du client : pas de connecteur, fils nus.") : unknown]
+      : connectorSummaryLines(d.termination, tr);
+    add("Terminaison", connector.map(line => {
+      const split = line.indexOf(" : ");
+      return split < 0 ? entry("À retenir", line) : {label:line.slice(0,split),value:line.slice(split+3)};
+    }), "grid");
+  }
+  group = "overview";
   // Compatibilité du besoin : la MÊME vérité que l'écran des couples et le
   // résultat. Une contradiction posée dans les réponses reste écrite ici.
   if (fit.issues.length)
@@ -143,6 +188,7 @@ export function projectReportSections(
       ]),
       entry(tr("Ce que cela implique"), tr(FIT_PANEL.noProducts)),
     ]);
+  group = "discussion";
   if (d.testedPairs?.length)
     add(
       "Historique des essais",
@@ -169,10 +215,13 @@ export function projectReportSections(
       "Questions ouvertes",
       d.openQuestions.map((q, i) => entry(String(i + 1), q)),
     );
-  if (d.delegatedDecisions?.length || d.business.undefinedFields?.length)
+  /* i18n-canonical: storage keys are never printed as business labels. */
+  const decisionLabels:Record<string,string> = {sensor:"Capteur",cable:"Câblage",connector:"Terminaison",mounting:"Montage",context:"Contexte projet",trial_request:"Essai",annualVolume:"Volume annuel",projectPhase:"Phase",seriesStartDate:"Démarrage série",seriesDurationYears:"Durée série"};
+  const delegated=(d.delegatedDecisions??[]).filter(k=>k!==CHOSEN_BARE_LEADS);
+  if (delegated.length || d.business.undefinedFields?.length)
     add("Décisions confiées à Standex", [
-      entry("Décisions confiées à Standex", (d.delegatedDecisions ?? []).map(k=>tr(REQUIREMENT_LABELS[k.replace(/^question:/, "")] ?? k)).join(", ")),
-      entry("Non défini pour le moment", (d.business.undefinedFields ?? []).join(", ")),
+      ...(delegated.length ? [entry("Décisions confiées à Standex", delegated.map(k=>tr(REQUIREMENT_LABELS[k.replace(/^question:/, "")] ?? decisionLabels[k] ?? k)).join(", "))] : []),
+      ...(d.business.undefinedFields?.length ? [entry("Non défini pour le moment", d.business.undefinedFields.map(k=>tr(decisionLabels[k]??k)).join(", "))] : []),
     ]);
   if (d.attachments.length)
     add(
@@ -214,7 +263,11 @@ export function projectReportSections(
       tr("Les données détaillées du projet sont jointes à ce PDF dans dossier-complet.json."),
     ),
   ]);
-  return sections;
+  const order = {overview:0,solution:1,discussion:2};
+  const discussionOrder = ["Questions ouvertes","Décisions confiées à Standex","Confidentialité · NDA","Pièces jointes","Historique des essais","Revue de conception","Identification"].map(label=>tr(label));
+  return sections.sort((a,b) => order[a.group!] - order[b.group!] ||
+    (a.group === "discussion" ? discussionOrder.indexOf(a.title)-discussionOrder.indexOf(b.title) : 0))
+    .map((s,i)=>({...s,id:i+1}));
 }
 
 /** Exact current data, including NDA/extra constraints; never internal notes or binaries. */
@@ -230,7 +283,7 @@ export async function projectPdf(
   tr = (s: string) => s,
   serverDossierId: string | null = null,
 ) {
-  const { reviewPdf } = await import("@/lib/standex/studio-pdf");
+  const { projectBriefPdf } = await import("./project-brief-pdf");
   const data = projectReportData(dossier, nda);
   const digest = await crypto.subtle.digest(
     "SHA-256",
@@ -238,10 +291,10 @@ export async function projectPdf(
   );
   const hash = Array.from(new Uint8Array(digest), (v) => v.toString(16).padStart(2, "0")).join("");
   const identity = projectIdentity(serverDossierId, dossier.id);
-  return reviewPdf(
+  return projectBriefPdf(
     { sections: projectReportSections(dossier, nda, tr, serverDossierId), hash },
     logoUrl,
-    (s) => s,
+    tr,
     {
     // Le nom du projet est en tête du document ; la référence suit, provisoire si le projet n'est pas enregistré.
     title: dossier.title || tr("Rapport complet du projet"),

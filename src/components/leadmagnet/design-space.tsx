@@ -3876,14 +3876,6 @@ export function DesignSpace({
               />
               {t("J'autorise l'envoi de ce projet aux ingénieurs Standex.")}
             </label>
-            <details className="filter-adjust">
-              <summary className="t-caption min-h-11 cursor-pointer list-none py-2">
-                {t("Détails")}
-              </summary>
-              <p className="t-caption mt-1">
-                {t("J'autorise l'envoi de ce contenu à Standex (ingénieurs et commercial).")}
-              </p>
-            </details>
             {consentNotice && submissionStatusKind(lastSent, binding) !== "sent" ? <p className="notice notice-warning">{consentNotice}</p> : null}
 
             {/* Traduction externe COUPÉE pour ce parcours : ni case d'accord, ni
@@ -4447,7 +4439,6 @@ export function DesignSpace({
                 dernière action logique, l'envoi. */}
             <hr className="standex-rule" />
             {sendBlock}
-            <p className="t-caption">{t("Réponse d'un ingénieur sous 2 jours ouvrés.")}</p>
           </div>
 
           {lastSent ? (
