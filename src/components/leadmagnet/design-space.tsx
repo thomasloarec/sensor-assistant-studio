@@ -209,6 +209,8 @@ import {
 import { supabase } from "@/lib/standex/supabase";
 import { applyVariant } from "@/lib/leadmagnet/variant";
 import { AuthPanel } from "@/components/leadmagnet/auth-panel";
+import { CUSTOMER_EMAIL_ACCESS, customerRequest, savePendingProject, preparePendingFile, newPendingIdentity, customerAccessMessage, type PendingIdentity } from "@/lib/leadmagnet/customer-access";
+import { buildSnapshot } from "@/lib/leadmagnet/submission";
 import { ClientFollowUp } from "@/components/leadmagnet/client-followup";
 import { WorkspacePanel } from "@/components/leadmagnet/workspace-panel";
 import { ReviewSubmitControl } from "@/components/leadmagnet/review-submit-control";
@@ -707,6 +709,17 @@ export function DesignSpace({
     assetKey: string;
     file: UploadedFile;
   } | null>(null);
+  const [pendingSaved, setPendingSaved] = useState<{ id: string; email: string } | null>(null);
+  const pendingIdentityRef = useRef<{ localId: string; email: string; assetKey: string | null; identity: PendingIdentity } | null>(null);
+  const pendingIdentity = () => {
+    const email = dossier.business.contactEmail?.trim().toLowerCase() ?? "";
+    const previous = pendingIdentityRef.current;
+    const assetKey = dossier.workshopAsset?.assetKey ?? null;
+    if (previous?.localId === dossier.id && previous.email === email && previous.assetKey === assetKey) return previous.identity;
+    const identity = newPendingIdentity();
+    pendingIdentityRef.current = { localId: dossier.id, email, assetKey, identity };
+    return identity;
+  };
   /** Version d'origine d'un contenu repris, conservée à part : elle sert à
    * l'affichage, jamais de numéro de version attendu par le serveur. */
   const [reopenedFrom, setReopenedFrom] = useState<{
@@ -914,6 +927,25 @@ export function DesignSpace({
     });
     return () => data.subscription.unsubscribe();
   }, []);
+
+  // Un accord d'envoi ne vaut que pour le contenu exact qui a été relu.
+  useEffect(() => {
+    if (!CUSTOMER_EMAIL_ACCESS || !backend?.authenticated) return;
+    let active = true;
+    const generation = contextGenRef.current;
+    void customerRequest({ action: "list" }, true).then(({ profile }) => {
+      if (!active || contextGenRef.current !== generation || !profile) return;
+      setDossier(current => ({ ...current, business: {
+        ...current.business,
+        contactName: current.business.contactName || profile.contact_name,
+        contactCompany: current.business.contactCompany || profile.company,
+        contactPhone: current.business.contactPhone || profile.phone,
+        siteCity: current.business.siteCity || profile.city,
+        siteCountry: current.business.siteCountry || profile.country,
+      } }));
+    }).catch(() => {});
+    return () => { active = false; };
+  }, [backend?.authenticated, backend?.capabilities.userId, dossier.id]);
 
   // Un accord d'envoi ne vaut que pour le contenu exact qui a été relu.
   // La décision (liaison, accords consommés, message) vit dans
@@ -1331,6 +1363,8 @@ export function DesignSpace({
    */
   const resetServerContext = useCallback(
     (dossierId: string | null, revision: number) => {
+      pendingIdentityRef.current = null;
+      setPendingSaved(null);
       contextGenRef.current += 1;
       // Changement de dossier : une lecture ou une bascule NDA en vol devient périmée.
       ndaSync.invalidate();
@@ -1407,7 +1441,7 @@ export function DesignSpace({
       setSubmitMessageTone("danger");
       return;
     }
-    if (!backend?.ready) {
+    if (!backend?.ready && !(CUSTOMER_EMAIL_ACCESS && !backend?.authenticated && !nda.required)) {
       setSubmitMessage(
         backend?.message ??
           t("La liaison avec l'équipe Standex n'est pas active : rien n'a été déposé."),
@@ -1436,6 +1470,14 @@ export function DesignSpace({
         return;
       }
       let dossierId = serverDossierId;
+      let uploaded: UploadedFile;
+      if (CUSTOMER_EMAIL_ACCESS && !backend?.authenticated && !nda.required) {
+        const identity = pendingIdentity();
+        const response = await preparePendingFile(identity, dossier.business.contactEmail, bytes, dossier.workshopAsset.fileName);
+        if (!response.file) throw new Error("BAD_FILE");
+        dossierId = identity.id;
+        uploaded = { ...response.file, verified: true, verificationError: null };
+      } else {
       if (!dossierId) {
         dossierId = await createServerDossier(
           nda.required ? t("Préparation d'un accord de confidentialité") : dossier.title,
@@ -1444,7 +1486,7 @@ export function DesignSpace({
         if (stale()) return;
         setServerDossierId(dossierId);
       }
-      const uploaded = await uploadDesignFile(
+      uploaded = await uploadDesignFile(
         dossierId,
         { name: dossier.workshopAsset.fileName, data: new Uint8Array(bytes) },
         "design_model",
@@ -1456,6 +1498,7 @@ export function DesignSpace({
           revision: serverRevision + 1,
         },
       );
+      }
       if (stale()) return;
       if (!uploaded.verified) {
         // Un fichier non relu par le serveur ne peut PAS être annoncé : il
@@ -1470,7 +1513,7 @@ export function DesignSpace({
         return;
       }
       setPreparedUpload({
-        dossierId,
+        dossierId: dossierId!,
         revision: serverRevision + 1,
         assetKey: dossier.workshopAsset.assetKey,
         file: uploaded,
@@ -1478,7 +1521,7 @@ export function DesignSpace({
       setDossier((d) => ({
         ...d,
         attachments: [
-          ...d.attachments.filter((a) => a.fileName !== uploaded.fileName),
+          ...d.attachments.filter((a) => a.fileName !== uploaded.fileName && !(!backend?.authenticated && a.storagePath?.includes("/pending/"))),
           {
             id: uploaded.path,
             fileName: uploaded.fileName,
@@ -1499,7 +1542,7 @@ export function DesignSpace({
       setSubmitMessageTone("success");
     } catch (error) {
       setSubmitMessage(
-        uiError(error, "Le fichier 3D n'a pas pu être partagé."),
+        CUSTOMER_EMAIL_ACCESS && !backend?.authenticated ? t(customerAccessMessage(error)) : uiError(error, "Le fichier 3D n'a pas pu être partagé."),
       );
       setSubmitMessageTone("danger");
     } finally {
@@ -1510,6 +1553,8 @@ export function DesignSpace({
   }, [
     backend,
     dossier.workshopAsset,
+    dossier.id,
+    dossier.business.contactEmail,
     dossier.title,
     nda.required,
     serverDossierId,
@@ -1575,6 +1620,13 @@ export function DesignSpace({
    */
   const onSubmit = useCallback(async () => {
     if (busyRef.current) return;
+    if (pendingSaved) {
+      setSubmitMessage(t(customerAccessMessage(new Error("SEALED_SUBMISSION"))));
+      setSubmitMessageTone("info");
+      return;
+    }
+    const pendingFirstSubmission = CUSTOMER_EMAIL_ACCESS && !serverDossierId &&
+      (!backend?.authenticated || Boolean(preparedUpload?.file.path.includes("/pending/")));
     if (volumeError) {
       setSubmitMessage(volumeError);
       setSubmitMessageTone("danger");
@@ -1591,7 +1643,7 @@ export function DesignSpace({
     }
     if (
       preparedUpload &&
-      (preparedUpload.dossierId !== serverDossierId ||
+      (preparedUpload.dossierId !== (pendingFirstSubmission ? pendingIdentity().id : serverDossierId) ||
         preparedUpload.revision !== serverRevision + 1)
     ) {
       setPreparedUpload(null);
@@ -1640,6 +1692,22 @@ export function DesignSpace({
       submit: async () => {
         setSubmitMessage(null);
         phase = "awaiting_confirmation";
+        if (pendingFirstSubmission) {
+          try {
+            const response = await savePendingProject(pendingIdentity(), await buildSnapshot(input));
+            if (contextGenRef.current !== gen) return;
+            setPendingSaved({ id: response.id!, email: input.dossier.business.contactEmail! });
+            setSubmitMessage(t(response.emailRequested
+              ? "Votre projet est enregistré en attente de vérification pendant 24 heures maximum. Ouvrez l'email reçu pour confirmer votre adresse et transmettre le projet à Standex."
+              : "Votre projet est enregistré pendant 24 heures maximum, mais l'email n'a pas pu être envoyé. Réessayez l'envoi sans modifier le projet."));
+            setSubmitMessageTone("info");
+          } catch (error) {
+            if (contextGenRef.current !== gen) return;
+            setSubmitMessage(t(customerAccessMessage(error)));
+            setSubmitMessageTone("danger");
+          }
+          return;
+        }
         // Envoi réel dès que l'espace serveur est disponible et la session ouverte ;
         // sinon rien n'est transmis et rien n'est simulé.
         const outcome = await submit(
@@ -1716,6 +1784,7 @@ export function DesignSpace({
     setBusy(false);
   }, [
     dossier,
+    pendingSaved,
     nda,
     privacy,
     extraConstraints,
@@ -3906,7 +3975,13 @@ export function DesignSpace({
                 disabled={!dossier.workshopAsset}
                 onCheckedChange={(v) => {
                   setShareModel(Boolean(v));
-                  if (!v) setPreparedUpload(null);
+                  if (!v) {
+                    setPreparedUpload(null);
+                    if (CUSTOMER_EMAIL_ACCESS && !backend?.authenticated) {
+                      pendingIdentityRef.current = null;
+                      setDossier(d => ({ ...d, attachments: d.attachments.filter(a => !a.storagePath?.includes("/pending/")) }));
+                    }
+                  }
                 }}
               />
               {dossier.workshopAsset
@@ -3936,13 +4011,16 @@ export function DesignSpace({
                 </p>
               </div>
             ) : null}
-            {!backend?.authenticated && !backend?.ready ? (
+            {CUSTOMER_EMAIL_ACCESS && !backend?.authenticated && !nda.required ? (
+              <p className="t-caption">{t("À l'envoi, votre espace client sera créé sans mot de passe. Un email vous permettra de vérifier votre adresse et de retrouver ce projet.")}</p>
+            ) : !backend?.authenticated && !backend?.ready ? (
               <div className="space-y-2">
                 <p className="t-caption">
                   {t(backend?.message ?? "Vérification du backend en cours…")}
                 </p>
                 <AuthPanel
                   backend={backend}
+                  allowCreate={CUSTOMER_EMAIL_ACCESS && nda.required}
                   onChanged={() => {
                     checkLeadBackend()
                       .then(setBackend)
@@ -3951,7 +4029,7 @@ export function DesignSpace({
                 />
               </div>
             ) : !backend?.authenticated ? (
-              <AuthPanel backend={backend} />
+              <AuthPanel backend={backend} allowCreate={CUSTOMER_EMAIL_ACCESS && nda.required} />
             ) : null}
             {reopenedFrom ? (
               <p className="t-caption">
@@ -3976,6 +4054,22 @@ export function DesignSpace({
               onOpenNda={focusNdaSection}
               onRefreshNda={() => void refreshNdaStatus()}
             />
+            {pendingSaved ? <div className="notice-info space-y-3" role="status">
+              <p className="t-body">{t("Projet en attente de vérification de votre email.")}</p>
+              <div className="flex flex-wrap gap-3">
+                <Button type="button" variant="outline" className="min-h-11 t-body" disabled={busy} onClick={async () => {
+                  if (busyRef.current) return;
+                  busyRef.current = true;
+                  setBusy(true);
+                  try {
+                    await customerRequest({ action: "register", email: pendingSaved.email });
+                    setSubmitMessage(t("Si cette adresse peut recevoir un lien, un email de connexion vous sera envoyé. Vérifiez aussi vos courriers indésirables."));
+                  } catch(error) { setSubmitMessage(t(customerAccessMessage(error))); }
+                  finally { busyRef.current = false; setBusy(false); }
+                }}>{t("Renvoyer le lien par email")}</Button>
+                <Button asChild variant="outline" className="min-h-11 t-body"><Link to="/account" search={{pending:pendingSaved.id}}>{t("Retrouver mon projet")}</Link></Button>
+              </div>
+            </div> : null}
     </div>
   );
 

@@ -35,6 +35,7 @@ dist-ssr
 
 # Local source review and visual QA intermediates
 /tmp/
+/supabase/.temp/
 
 # Studio V2 : table privee, jamais versionnee ni transmise
 R3c_clients_prives.csv

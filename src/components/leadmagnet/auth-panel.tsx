@@ -3,7 +3,7 @@ import { msg, t } from "@/lib/i18n/core";
 /** Entrée de connexion réelle au projet Supabase existant.
  *
  * Aucun service externe n'est ajouté : on utilise le client déjà présent.
- * Aucun compte n'est créé ici ; les rôles restent provisionnés côté serveur.
+ * Account creation is explicit and server-controlled; staff roles are never self-assigned.
  */
 import { useId, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -12,17 +12,20 @@ import { Label } from "@/components/ui/label";
 import { supabase } from "@/lib/standex/supabase";
 import type { LeadBackendStatus } from "@/lib/leadmagnet/backend";
 import { Loader2 } from "lucide-react";
+import { CUSTOMER_EMAIL_ACCESS, customerRequest, customerAccessMessage } from "@/lib/leadmagnet/customer-access";
 
 interface Props {
   backend: LeadBackendStatus | null;
   /** Appelé après une connexion ou une déconnexion réussie. */
   onChanged?: () => void;
+  allowCreate?: boolean;
 }
 
-export function AuthPanel({ backend, onChanged }: Props) {
+export function AuthPanel({ backend, onChanged, allowCreate = false }: Props) {
   useLocale();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [usePassword, setUsePassword] = useState(!CUSTOMER_EMAIL_ACCESS);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const uid = useId();
@@ -58,12 +61,17 @@ export function AuthPanel({ backend, onChanged }: Props) {
 
   return (
     <form
-      className="field-row"
+      className="space-y-4"
       onSubmit={async (e) => {
         e.preventDefault();
         setBusy(true);
         setMessage(null);
         try {
+          if (!usePassword) {
+            await customerRequest({ action: allowCreate ? "register" : "login", email });
+            setMessage(t("Si cette adresse peut recevoir un lien, un email de connexion vous sera envoyé. Vérifiez aussi vos courriers indésirables."));
+            return;
+          }
           const { error } = await supabase!.auth.signInWithPassword({ email, password });
           if (error) {
             setMessage(t("Connexion refusée. Vérifiez l'adresse et le mot de passe."));
@@ -72,8 +80,8 @@ export function AuthPanel({ backend, onChanged }: Props) {
           setPassword("");
           setMessage(t("Connexion établie."));
           onChanged?.();
-        } catch {
-          setMessage(t("La connexion n'a pas abouti : réseau indisponible. Réessayez."));
+        } catch (error) {
+          setMessage(t(customerAccessMessage(error)));
         } finally {
           setBusy(false);
         }
@@ -94,7 +102,7 @@ export function AuthPanel({ backend, onChanged }: Props) {
         />
         <span />
       </div>
-      <div className="field">
+      {usePassword ? <div className="field">
         <Label htmlFor={passwordId} className="t-label">
           {t("Mot de passe")}
         </Label>
@@ -108,16 +116,22 @@ export function AuthPanel({ backend, onChanged }: Props) {
           required
         />
         <span />
-      </div>
+      </div> : null}
+      <div className="flex flex-wrap items-center gap-3">
       <Button
         type="submit"
-        className="field-actions min-h-11 text-base"
+        className="min-h-11 t-body"
         disabled={busy}
         aria-busy={busy ? "true" : undefined}
       >
         {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-        {busy ? t("Connexion…") : t("Se connecter")}
+        {busy ? t("Connexion…") : usePassword ? t("Se connecter") : t("Recevoir un lien de connexion")}
       </Button>
+      {CUSTOMER_EMAIL_ACCESS ? <Button type="button" variant="ghost" className="min-h-11 t-body" disabled={busy}
+        onClick={() => { setUsePassword(!usePassword); setPassword(""); setMessage(null); }}>
+        {usePassword ? t("Utiliser un lien par email") : t("Utiliser un mot de passe existant")}
+      </Button> : null}
+      </div>
       {message ? <p className="notice notice-info sm:col-span-full">{t(message)}</p> : null}
     </form>
   );

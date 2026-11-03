@@ -18,8 +18,13 @@ export async function requireTester(
     },
   });
   if (!res.ok) throw new Error("Non authentifié : session testeur invalide ou expirée.");
-  const user = (await res.json()) as { id?: string; email?: string | null };
+  const user = (await res.json()) as { id?: string; email?: string | null; email_confirmed_at?: string; is_anonymous?: boolean };
   if (!user.id) throw new Error("Non authentifié : session testeur invalide.");
+  // Public customer signup must not open the internal, personally billed AI tool.
+  const testers = (process.env["STANDEX_TESTER_EMAILS"] ?? "tloarec@standexelectronics.com")
+    .split(",").map(value => value.trim().toLowerCase()).filter(Boolean);
+  if (!user.email_confirmed_at || user.is_anonymous || !testers.includes(user.email?.toLowerCase() ?? ""))
+    throw new Error("Accès réservé aux testeurs autorisés.");
   return { id: user.id, email: user.email ?? null };
 }
 

@@ -9,6 +9,7 @@
  * serveur, aucun extrait du texte client, aucune trace fournisseur.
  */
 import { createServerFn } from "@tanstack/react-start";
+import { EXTERNAL_TRANSLATION_ENABLED } from "./external-translation";
 
 import {
   runEnglishReport,
@@ -21,6 +22,7 @@ export type { EnglishReportOutcome, EnglishReportRequest, EnglishReportCode } fr
 export const requestEnglishReport = createServerFn({ method: "POST" })
   .inputValidator((input: EnglishReportRequest) => input)
   .handler(async ({ data }): Promise<EnglishReportOutcome> => {
+    if (!EXTERNAL_TRANSLATION_ENABLED) return { state: "pending", code: "NOT_ALLOWED", retryable: false };
     const {
       serviceClient,
       userFromAccessToken,

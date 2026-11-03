@@ -1,5 +1,20 @@
 # Langage de design Standex DETECT
 
+### Customer email access — 3 November 2026
+
+The account screen uses the existing BrandLogo, language picker, typography,
+filled inputs, panel surfaces and status notices. Email access is primary;
+existing-password access is a secondary action. New visitors do not see a
+registration step before project submission. Pending verification is shown as
+an informational state, never as a completed submission.
+
+Controls keep 44 px minimum targets and visible focus. Email fields occupy a
+full row; actions wrap on narrow screens. The language selector and logo wrap
+without compressing the brand lockup. The confirmation screen consumes the
+email token only after an explicit button press. No new design token, color,
+animation or global dark mode is introduced. New interface messages cover all
+eight supported languages; deployment documentation and email templates are English.
+
 ### Brief projet imprimable — 2 novembre 2026
 
 Le téléchargement client utilise une mise en page A4 distincte de la fiche de

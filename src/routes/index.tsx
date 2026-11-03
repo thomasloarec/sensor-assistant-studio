@@ -16,6 +16,7 @@ import { MagnetPlay } from "@/components/leadmagnet/magnet-play";
 import { DesignSpace, PrivateDesignError } from "@/components/leadmagnet/design-space";
 import { useReveal } from "@/hooks/use-reveal";
 import { LanguagePicker, useLocale } from "@/lib/i18n/react";
+import { CUSTOMER_EMAIL_ACCESS } from "@/lib/leadmagnet/customer-access";
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -147,7 +148,7 @@ function HomeRoute() {
                   <button
                     type="button"
                     className="text-link t-body min-h-11"
-                    onClick={() => setAccountRequest((n) => n + 1)}
+                    onClick={() => CUSTOMER_EMAIL_ACCESS ? window.location.assign("/account") : setAccountRequest((n) => n + 1)}
                   >
                     {t("J'ai déjà un projet")}
                   </button>
