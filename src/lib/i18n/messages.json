@@ -36134,5 +36134,230 @@
     "Определить со Standex",
     "Da definire con Standex",
     "Standex と決定"
+  ],
+  "Mes projets": [
+    "My projects",
+    "我的项目",
+    "Meine Projekte",
+    "Mis proyectos",
+    "Мои проекты",
+    "I miei progetti",
+    "マイプロジェクト"
+  ],
+  "Confirmez l'ouverture de votre espace. Aucun mot de passe n'est nécessaire.": [
+    "Confirm access to your workspace. No password is needed.",
+    "请确认进入您的工作区。无需密码。",
+    "Bestätigen Sie den Zugang zu Ihrem Bereich. Ein Passwort ist nicht erforderlich.",
+    "Confirme el acceso a su espacio. No necesita contraseña.",
+    "Подтвердите вход в свой раздел. Пароль не нужен.",
+    "Conferma l'accesso al tuo spazio. Non serve una password.",
+    "ワークスペースへのアクセスを確認してください。パスワードは不要です。"
+  ],
+  "Accéder à mes projets": [
+    "Access my projects",
+    "访问我的项目",
+    "Meine Projekte öffnen",
+    "Acceder a mis proyectos",
+    "Открыть мои проекты",
+    "Accedi ai miei progetti",
+    "マイプロジェクトを開く"
+  ],
+  "Envois à confirmer": [
+    "Submissions to confirm",
+    "待确认的提交",
+    "Zu bestätigende Einreichungen",
+    "Envíos por confirmar",
+    "Отправки для подтверждения",
+    "Invii da confermare",
+    "確認が必要な送信"
+  ],
+  "Votre adresse est vérifiée. Confirmez les projets que vous souhaitez transmettre à Standex.": [
+    "Your email is verified. Confirm the projects you want to send to Standex.",
+    "您的邮箱已验证。请确认要发送给 Standex 的项目。",
+    "Ihre E-Mail-Adresse ist bestätigt. Bestätigen Sie die Projekte, die Sie an Standex senden möchten.",
+    "Su email está verificado. Confirme los proyectos que desea enviar a Standex.",
+    "Ваш email подтверждён. Подтвердите проекты, которые хотите отправить в Standex.",
+    "Il tuo indirizzo email è verificato. Conferma i progetti da inviare a Standex.",
+    "メールアドレスが確認されました。Standex に送信するプロジェクトを確認してください。"
+  ],
+  "Confirmer et ouvrir ce projet": [
+    "Confirm and open this project",
+    "确认并打开此项目",
+    "Projekt bestätigen und öffnen",
+    "Confirmar y abrir este proyecto",
+    "Подтвердить и открыть проект",
+    "Conferma e apri questo progetto",
+    "このプロジェクトを確認して開く"
+  ],
+  "Aucun projet envoyé pour le moment.": [
+    "No projects submitted yet.",
+    "尚未提交任何项目。",
+    "Noch keine Projekte eingereicht.",
+    "Todavía no hay proyectos enviados.",
+    "Пока нет отправленных проектов.",
+    "Nessun progetto ancora inviato.",
+    "まだ送信済みのプロジェクトはありません。"
+  ],
+  "Votre projet est enregistré en attente de vérification pendant 24 heures maximum. Ouvrez l'email reçu pour confirmer votre adresse et transmettre le projet à Standex.": [
+    "Your project is saved for up to 24 hours pending verification. Open the email to confirm your address and send the project to Standex.",
+    "您的项目已保存，将等待验证最多24小时。请打开收到的邮件，确认邮箱并将项目发送给 Standex。",
+    "Ihr Projekt ist bis zur Bestätigung höchstens 24 Stunden gespeichert. Öffnen Sie die E-Mail, um Ihre Adresse zu bestätigen und das Projekt an Standex zu senden.",
+    "Su proyecto se guarda hasta 24 horas pendiente de verificación. Abra el email para confirmar su dirección y enviar el proyecto a Standex.",
+    "Проект сохранён максимум на 24 часа до подтверждения. Откройте письмо, чтобы подтвердить адрес и отправить проект в Standex.",
+    "Il progetto è salvato per un massimo di 24 ore in attesa di verifica. Apri l'email per confermare l'indirizzo e inviare il progetto a Standex.",
+    "プロジェクトは確認待ちとして最大24時間保存されます。メールを開き、アドレスを確認して Standex に送信してください。"
+  ],
+  "Votre projet est enregistré pendant 24 heures maximum, mais l'email n'a pas pu être envoyé. Réessayez l'envoi sans modifier le projet.": [
+    "Your project is saved for up to 24 hours, but the email could not be sent. Try sending again without changing the project.",
+    "您的项目最多保存24小时，但邮件未能发送。请勿修改项目，并重试发送。",
+    "Ihr Projekt ist höchstens 24 Stunden gespeichert, aber die E-Mail konnte nicht gesendet werden. Versuchen Sie es erneut, ohne das Projekt zu ändern.",
+    "Su proyecto se guarda hasta 24 horas, pero no se pudo enviar el email. Reintente el envío sin modificar el proyecto.",
+    "Проект сохранён максимум на 24 часа, но письмо отправить не удалось. Повторите отправку, не изменяя проект.",
+    "Il progetto è salvato per un massimo di 24 ore, ma non è stato possibile inviare l'email. Riprova senza modificare il progetto.",
+    "プロジェクトは最大24時間保存されますが、メールを送信できませんでした。プロジェクトを変更せずに再送信してください。"
+  ],
+  "À l'envoi, votre espace client sera créé sans mot de passe. Un email vous permettra de vérifier votre adresse et de retrouver ce projet.": [
+    "Submitting creates your customer workspace without a password. An email lets you verify your address and return to this project.",
+    "提交时将创建您的客户空间，无需密码。您可以通过邮件验证邮箱并找回此项目。",
+    "Beim Einreichen wird Ihr Kundenbereich ohne Passwort erstellt. Per E-Mail bestätigen Sie Ihre Adresse und finden dieses Projekt wieder.",
+    "Al enviar se crea su espacio de cliente sin contraseña. Un email le permitirá verificar su dirección y recuperar este proyecto.",
+    "При отправке будет создан ваш раздел клиента без пароля. Письмо позволит подтвердить адрес и вернуться к проекту.",
+    "L'invio crea il tuo spazio cliente senza password. Un'email ti permette di verificare l'indirizzo e ritrovare il progetto.",
+    "送信時にパスワード不要の顧客スペースを作成します。メールでアドレスを確認し、このプロジェクトに戻れます。"
+  ],
+  "Projet en attente de vérification de votre email.": [
+    "Project awaiting email verification.",
+    "项目正在等待邮箱验证。",
+    "Projekt wartet auf E-Mail-Bestätigung.",
+    "Proyecto pendiente de verificar su email.",
+    "Проект ожидает подтверждения email.",
+    "Progetto in attesa di verifica email.",
+    "メールアドレスの確認待ちです。"
+  ],
+  "Si cette adresse peut recevoir un lien, un email de connexion vous sera envoyé. Vérifiez aussi vos courriers indésirables.": [
+    "If this address can receive a link, a sign-in email will be sent. Please also check your spam folder.",
+    "如果此地址可以接收链接，系统将发送登录邮件。也请检查垃圾邮件文件夹。",
+    "Wenn diese Adresse einen Link empfangen kann, wird eine Anmelde-E-Mail gesendet. Prüfen Sie auch den Spam-Ordner.",
+    "Si esta dirección puede recibir un enlace, se enviará un email de acceso. Revise también el correo no deseado.",
+    "Если на этот адрес можно отправить ссылку, вы получите письмо для входа. Проверьте также папку спама.",
+    "Se questo indirizzo può ricevere un link, verrà inviata un'email di accesso. Controlla anche la posta indesiderata.",
+    "このアドレスでリンクを受け取れる場合、ログインメールを送信します。迷惑メールフォルダーもご確認ください。"
+  ],
+  "Renvoyer le lien par email": [
+    "Resend the email link",
+    "重新发送邮件链接",
+    "E-Mail-Link erneut senden",
+    "Reenviar el enlace por email",
+    "Отправить ссылку повторно",
+    "Invia di nuovo il link",
+    "メールリンクを再送信"
+  ],
+  "Retrouver mon projet": [
+    "Find my project",
+    "找回我的项目",
+    "Mein Projekt wiederfinden",
+    "Recuperar mi proyecto",
+    "Найти мой проект",
+    "Ritrova il mio progetto",
+    "プロジェクトを見つける"
+  ],
+  "Trop de demandes. Patientez avant de réessayer.": [
+    "Too many requests. Please wait before trying again.",
+    "请求过多，请稍后重试。",
+    "Zu viele Anfragen. Bitte warten Sie vor einem erneuten Versuch.",
+    "Demasiadas solicitudes. Espere antes de reintentarlo.",
+    "Слишком много запросов. Подождите и попробуйте снова.",
+    "Troppe richieste. Attendi prima di riprovare.",
+    "リクエストが多すぎます。しばらく待ってから再試行してください。"
+  ],
+  "Cet envoi a expiré. Rouvrez votre projet et confirmez à nouveau son envoi.": [
+    "This submission has expired. Reopen your project and confirm its submission again.",
+    "此次提交已过期。请重新打开项目并再次确认提交。",
+    "Diese Einreichung ist abgelaufen. Öffnen Sie Ihr Projekt erneut und bestätigen Sie das Senden.",
+    "Este envío ha caducado. Abra su proyecto y confirme de nuevo el envío.",
+    "Срок этой отправки истёк. Откройте проект и подтвердите отправку снова.",
+    "Questo invio è scaduto. Riapri il progetto e conferma di nuovo l'invio.",
+    "この送信の有効期限が切れました。プロジェクトを開き直して送信を再確認してください。"
+  ],
+  "Vérifiez votre adresse email avant de continuer.": [
+    "Check your email address before continuing.",
+    "继续前请检查邮箱地址。",
+    "Prüfen Sie Ihre E-Mail-Adresse, bevor Sie fortfahren.",
+    "Compruebe su dirección de email antes de continuar.",
+    "Проверьте адрес email перед продолжением.",
+    "Controlla il tuo indirizzo email prima di continuare.",
+    "続行する前にメールアドレスを確認してください。"
+  ],
+  "Le fichier 3D doit être un GLB valide de 30 Mo maximum.": [
+    "The 3D file must be a valid GLB no larger than 30 MB.",
+    "3D文件必须是有效的GLB文件，大小不超过30 MB。",
+    "Die 3D-Datei muss eine gültige GLB-Datei mit maximal 30 MB sein.",
+    "El archivo 3D debe ser un GLB válido de 30 MB como máximo.",
+    "3D-файл должен быть корректным GLB размером не более 30 МБ.",
+    "Il file 3D deve essere un GLB valido di massimo 30 MB.",
+    "3Dファイルは30 MB以下の有効なGLBである必要があります。"
+  ],
+  "Connectez-vous pour retrouver vos projets.": [
+    "Sign in to find your projects.",
+    "登录以找回您的项目。",
+    "Melden Sie sich an, um Ihre Projekte zu finden.",
+    "Inicie sesión para recuperar sus proyectos.",
+    "Войдите, чтобы найти свои проекты.",
+    "Accedi per ritrovare i tuoi progetti.",
+    "ログインしてプロジェクトを表示してください。"
+  ],
+  "Cet envoi est déjà enregistré. Retrouvez-le depuis votre email avant de le modifier.": [
+    "This submission is already saved. Open it from your email before editing it.",
+    "此次提交已保存。请先通过邮件打开，再进行修改。",
+    "Diese Einreichung ist bereits gespeichert. Öffnen Sie sie über Ihre E-Mail, bevor Sie sie bearbeiten.",
+    "Este envío ya está guardado. Ábralo desde su email antes de modificarlo.",
+    "Эта отправка уже сохранена. Откройте её из письма перед изменением.",
+    "Questo invio è già salvato. Aprilo dall'email prima di modificarlo.",
+    "この送信は保存済みです。編集する前にメールから開いてください。"
+  ],
+  "Cette opération n'a pas abouti. Réessayez dans quelques instants.": [
+    "This operation did not complete. Please try again shortly.",
+    "操作未完成。请稍后重试。",
+    "Dieser Vorgang wurde nicht abgeschlossen. Bitte versuchen Sie es in Kürze erneut.",
+    "La operación no se completó. Inténtelo de nuevo en unos instantes.",
+    "Операция не завершена. Повторите попытку чуть позже.",
+    "L'operazione non è riuscita. Riprova tra qualche istante.",
+    "操作を完了できませんでした。しばらくしてから再試行してください。"
+  ],
+  "Recevoir un lien de connexion": [
+    "Send me a sign-in link",
+    "发送登录链接",
+    "Anmeldelink erhalten",
+    "Recibir un enlace de acceso",
+    "Получить ссылку для входа",
+    "Ricevi un link di accesso",
+    "ログインリンクを受け取る"
+  ],
+  "Utiliser un lien par email": [
+    "Use an email link",
+    "使用邮件链接",
+    "E-Mail-Link verwenden",
+    "Usar un enlace por email",
+    "Использовать ссылку из письма",
+    "Usa un link via email",
+    "メールリンクを使用"
+  ],
+  "Utiliser un mot de passe existant": [
+    "Use an existing password",
+    "使用现有密码",
+    "Vorhandenes Passwort verwenden",
+    "Usar una contraseña existente",
+    "Использовать существующий пароль",
+    "Usa una password esistente",
+    "既存のパスワードを使用"
+  ],
+  "Ce lien est expiré ou a déjà été utilisé. Demandez un nouveau lien de connexion.": [
+    "This link has expired or has already been used. Request a new sign-in link.",
+    "此链接已过期或已被使用。请申请新的登录链接。",
+    "Dieser Link ist abgelaufen oder wurde bereits verwendet. Fordern Sie einen neuen Anmeldelink an.",
+    "Este enlace ha caducado o ya se ha utilizado. Solicite un nuevo enlace de acceso.",
+    "Срок ссылки истёк или она уже использована. Запросите новую ссылку для входа.",
+    "Questo link è scaduto o è già stato usato. Richiedi un nuovo link di accesso.",
+    "このリンクは期限切れか使用済みです。新しいログインリンクをリクエストしてください。"
   ]
 }

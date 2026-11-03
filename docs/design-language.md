@@ -1,5 +1,39 @@
 # Langage de design Standex DETECT
 
+### Transactional customer emails — 3 November 2026
+
+The Supabase signup and magic-link email uses the official light-background
+lockup, obtained through `documentLogoSource`, without modification. It displays
+at 240 px wide with at least 24 px horizontal and 28 px vertical clearance on
+mobile. Detect Blue, Electronics Gray, the blue 10% tint and white surface are
+resolved from the existing brand definitions by `tools/build-customer-email.ts`.
+The generated HTML necessarily contains literal email-safe sRGB colors and a
+resolved logo path: email clients cannot render BrandLogo or site CSS variables.
+This export exception does not introduce an alternate brand definition.
+
+Presentation tables and inline styles provide an email-compatible layout with
+a 600 px maximum width, a 52 px action, 18 px body copy and at least 14 px secondary
+copy. Arial/Helvetica are local fallback fonts; no remote font or tracking pixel
+is loaded. The white logo area remains explicit for dark-mode clients. Some mail
+clients may still force color inversion; actual Outlook/Gmail dark-mode checks
+remain part of deployment acceptance. Images carry alt text and the action remains
+usable when images are blocked. Regenerate the email whenever brand assets change.
+
+### Customer email access — 3 November 2026
+
+The account screen uses the existing BrandLogo, language picker, typography,
+filled inputs, panel surfaces and status notices. Email access is primary;
+existing-password access is a secondary action. New visitors do not see a
+registration step before project submission. Pending verification is shown as
+an informational state, never as a completed submission.
+
+Controls keep 44 px minimum targets and visible focus. Email fields occupy a
+full row; actions wrap on narrow screens. The language selector and logo wrap
+without compressing the brand lockup. The confirmation screen consumes the
+email token only after an explicit button press. No new design token, color,
+animation or global dark mode is introduced. New interface messages cover all
+eight supported languages; deployment documentation and email templates are English.
+
 ### Brief projet imprimable — 2 novembre 2026
 
 Le téléchargement client utilise une mise en page A4 distincte de la fiche de
