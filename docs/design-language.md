@@ -349,6 +349,15 @@ Fichiers officiels dans `public/brand/`, référencés uniquement par
 
 ## 10 bis. Socle de l'espace de travail interne
 
+### Beta status - 3 November 2026
+
+The shared `/standex` workspace navigation displays a visible `Beta` badge
+above the Projects, Tasks and Dossiers tabs, including on small screens.
+It uses the existing Badge component and `t-caption` typography. The label
+applies to the internal project and lead-management workspace; it does not
+change its routes, role checks, actions or saved data. Quickbase integration
+is a separate planned capability and is not implied by the badge.
+
 Classes introduites pour `/standex` et réutilisables partout ailleurs. Toutes
 leurs valeurs viennent des jetons.
 

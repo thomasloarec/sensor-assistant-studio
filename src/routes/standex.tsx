@@ -164,6 +164,7 @@ export function WorkspaceHeader() {
           aria-label={t("Sections de l'espace de travail")}
           className="mx-auto max-w-6xl px-4 pb-3"
         >
+          <Badge className="mb-2 t-caption">{t("Bêta")}</Badge>
           <div className="segmented" style={{ ["--seg" as string]: Math.max(index, 0) }}>
             <span
               className="segmented-thumb"

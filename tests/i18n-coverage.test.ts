@@ -120,7 +120,8 @@ describe("Couverture des langues de l'interface", () => {
     // + 8 entries: mounting/movement tools, search explanation and sensitive-specimen search.
     // + 8 entries: printable project brief chapters and decision labels.
     // Customer email access: 25 entries.
-    expect(Object.keys(dictionary)).toHaveLength(4040);
+    // + 1 entry: internal workspace Beta status.
+    expect(Object.keys(dictionary)).toHaveLength(4041);
     const broken = Object.entries(dictionary).filter(
       ([, v]) => v.length !== 7 || v.some((x) => typeof x !== "string" || x.trim() === ""),
     );
