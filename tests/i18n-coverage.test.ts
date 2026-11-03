@@ -119,7 +119,8 @@ describe("Couverture des langues de l'interface", () => {
     // + 10 entries: visible installation rotation and coffee model description.
     // + 8 entries: mounting/movement tools, search explanation and sensitive-specimen search.
     // + 8 entries: printable project brief chapters and decision labels.
-    expect(Object.keys(dictionary)).toHaveLength(4015);
+    // + 1 entry: internal workspace Beta status.
+    expect(Object.keys(dictionary)).toHaveLength(4016);
     const broken = Object.entries(dictionary).filter(
       ([, v]) => v.length !== 7 || v.some((x) => typeof x !== "string" || x.trim() === ""),
     );
