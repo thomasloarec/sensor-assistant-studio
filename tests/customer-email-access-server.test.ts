@@ -101,6 +101,8 @@ async function snapshot() {
   dossier.requirements[0]!.value = "Detect a door";
   dossier.requirements[0]!.state = "confirmed";
   dossier.business.contactEmail = user.email;
+  dossier.business.industry = "Security";
+  dossier.business.industryConfirmed = true;
   dossier.business.siteCity = "Paris";
   dossier.business.siteCountry = "FR";
   dossier.business.undefinedFields = [

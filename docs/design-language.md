@@ -1,5 +1,16 @@
 # Langage de design Standex DETECT
 
+### Industrie et titre du projet — 4 novembre 2026
+
+Le champ Industrie se place entre Entreprise et E-mail dans Avec Standex. La liste
+native utilise la surface remplie et les libellés Quickbase canoniques. Une suggestion
+non confirmée porte un encart informatif et un bouton explicite ; un choix manuel
+confirme l’industrie. L’aide Claude est présentée avant les questions avec une case
+de désactivation, sans imposer un nouveau dialogue. Aucun nom technique de clé API
+n’apparaît dans ce parcours. Les responsabilités nationales par industrie utilisent
+les mêmes contrôles et le même récapitulatif avant/après que les territoires.
+Typographie, surfaces, focus et cibles de 44 px reprennent les jetons existants.
+
 ### Territoires et portraits — 4 novembre 2026
 
 L’annuaire ouvre « Photo et territoires » depuis les actions de la personne.

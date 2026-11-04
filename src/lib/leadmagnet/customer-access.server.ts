@@ -1,3 +1,4 @@
+import { hasConfirmedIndustry } from "./industries";
 /** Server-only boundary. Never import from a browser component. */
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { createHash, createHmac } from "node:crypto";
@@ -78,7 +79,9 @@ export async function validatePendingSnapshot(raw: unknown): Promise<SubmissionS
   )
     fail("BAD_INPUT");
   const parsed = parseServerSnapshot(s.dto);
-  if (!parsed.ok || missingBusinessContext(parsed.dossier).length) fail("BAD_INPUT");
+  if (!parsed.ok) return fail("BAD_INPUT");
+  if (missingBusinessContext(parsed.dossier).length) fail("BAD_INPUT");
+  if (!hasConfirmedIndustry(parsed.dossier.business)) fail("INDUSTRY_REQUIRED");
   if (
     "internalNotes" in s.dto ||
     !Array.isArray(s.consents) ||

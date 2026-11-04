@@ -36835,5 +36835,221 @@
     "GeoNames",
     "GeoNames",
     "GeoNames"
+  ],
+  "Industrie": [
+    "Industry",
+    "行业",
+    "Branche",
+    "Industria",
+    "Отрасль",
+    "Settore",
+    "業種"
+  ],
+  "Préparation du titre et de l’industrie…": [
+    "Preparing the title and industry…",
+    "正在生成标题和行业建议…",
+    "Titel und Branche werden vorbereitet…",
+    "Preparando el título y la industria…",
+    "Подготовка названия и отрасли…",
+    "Preparazione del titolo e del settore…",
+    "タイトルと業種を準備中…"
+  ],
+  "La suggestion automatique est indisponible. Choisissez votre industrie et modifiez le titre si nécessaire.": [
+    "Automatic suggestions are unavailable. Choose your industry and edit the title if needed.",
+    "自动建议暂不可用。请选择行业，并根据需要修改标题。",
+    "Automatische Vorschläge sind nicht verfügbar. Wählen Sie Ihre Branche und ändern Sie bei Bedarf den Titel.",
+    "Las sugerencias automáticas no están disponibles. Seleccione su industria y edite el título si es necesario.",
+    "Автоматические предложения недоступны. Выберите отрасль и при необходимости измените название.",
+    "I suggerimenti automatici non sono disponibili. Scegli il settore e modifica il titolo se necessario.",
+    "自動提案を利用できません。業種を選択し、必要に応じてタイトルを編集してください。"
+  ],
+  "Choisissez l’industrie de l’application finale du projet, pas l’activité de votre entreprise.": [
+    "Choose the industry of the project's end-use application, not your company's business.",
+    "请选择项目最终应用所属的行业，而非贵公司的主营业务。",
+    "Wählen Sie die Branche der Endanwendung des Projekts, nicht die Ihres Unternehmens.",
+    "Seleccione la industria de la aplicación final del proyecto, no la actividad de su empresa.",
+    "Выберите отрасль конечного применения проекта, а не сферу деятельности вашей компании.",
+    "Scegli il settore dell’applicazione finale del progetto, non l’attività della tua azienda.",
+    "会社の事業分野ではなく、プロジェクトの最終用途の業種を選択してください。"
+  ],
+  "Industrie suggérée : confirmez-la ou choisissez une autre industrie.": [
+    "Suggested industry: confirm it or choose another industry.",
+    "建议行业：请确认或选择其他行业。",
+    "Vorgeschlagene Branche: bestätigen oder eine andere Branche wählen.",
+    "Industria sugerida: confírmela o seleccione otra.",
+    "Предложенная отрасль: подтвердите или выберите другую.",
+    "Settore suggerito: confermalo o scegline un altro.",
+    "提案された業種を確認するか、別の業種を選択してください。"
+  ],
+  "Les réponses ont changé. Confirmez à nouveau l’industrie.": [
+    "Your answers have changed. Confirm the industry again.",
+    "回答已更改。请重新确认行业。",
+    "Die Antworten wurden geändert. Bestätigen Sie die Branche erneut.",
+    "Las respuestas han cambiado. Confirme de nuevo la industria.",
+    "Ответы изменились. Подтвердите отрасль ещё раз.",
+    "Le risposte sono cambiate. Conferma nuovamente il settore.",
+    "回答が変更されました。業種を再確認してください。"
+  ],
+  "Confirmer cette industrie": [
+    "Confirm this industry",
+    "确认此行业",
+    "Diese Branche bestätigen",
+    "Confirmar esta industria",
+    "Подтвердить отрасль",
+    "Conferma questo settore",
+    "この業種を確認"
+  ],
+  "Industrie confirmée": [
+    "Industry confirmed",
+    "行业已确认",
+    "Branche bestätigt",
+    "Industria confirmada",
+    "Отрасль подтверждена",
+    "Settore confermato",
+    "業種確認済み"
+  ],
+  "Responsable géographique": [
+    "Geographic owner",
+    "地域负责人",
+    "Gebietsverantwortlicher",
+    "Responsable geográfico",
+    "Ответственный за территорию",
+    "Responsabile territoriale",
+    "地域担当者"
+  ],
+  "Responsabilités par industrie": [
+    "Industry responsibilities",
+    "行业职责",
+    "Branchenzuständigkeiten",
+    "Responsabilidades por industria",
+    "Ответственность по отраслям",
+    "Responsabilità per settore",
+    "業種別の担当"
+  ],
+  "Une responsabilité par industrie s’applique au pays entier et prime sur la répartition géographique. Sans exception, le responsable géographique prend le relais.": [
+    "An industry responsibility covers the whole country and takes priority over geographic allocation. Without an exception, the geographic owner applies.",
+    "行业职责覆盖全国，优先于地域分配。未配置例外时，由地域负责人负责。",
+    "Eine Branchenzuständigkeit gilt landesweit und hat Vorrang vor der Gebietszuordnung. Ohne Ausnahme ist der Gebietsverantwortliche zuständig.",
+    "La responsabilidad por industria abarca todo el país y tiene prioridad sobre la asignación geográfica. Sin excepción, se aplica el responsable geográfico.",
+    "Ответственность по отрасли действует на всю страну и имеет приоритет над территориальным распределением. Без исключения действует ответственный за территорию.",
+    "La responsabilità per settore copre l’intero paese e ha priorità sulla ripartizione geografica. In assenza di eccezioni si applica il responsabile territoriale.",
+    "業種別の担当は全国に適用され、地域別の割り当てより優先されます。例外設定がなければ地域担当者が適用されます。"
+  ],
+  "Pays de l’industrie": [
+    "Industry country",
+    "行业所属国家",
+    "Land der Branchenzuständigkeit",
+    "País de la industria",
+    "Страна отраслевого назначения",
+    "Paese del settore",
+    "業種担当の国"
+  ],
+  "Attribuer cette industrie": [
+    "Assign this industry",
+    "分配此行业",
+    "Diese Branche zuweisen",
+    "Asignar esta industria",
+    "Назначить отрасль",
+    "Assegna questo settore",
+    "この業種を割り当て"
+  ],
+  "Retirer cette responsabilité": [
+    "Remove this responsibility",
+    "移除此职责",
+    "Diese Zuständigkeit entfernen",
+    "Retirar esta responsabilidad",
+    "Снять ответственность",
+    "Rimuovi questa responsabilità",
+    "この担当を解除"
+  ],
+  "Vérifier la responsabilité": [
+    "Review responsibility",
+    "审核职责",
+    "Zuständigkeit prüfen",
+    "Revisar la responsabilidad",
+    "Проверить назначение",
+    "Verifica la responsabilità",
+    "担当を確認"
+  ],
+  "Confirmer cette responsabilité": [
+    "Confirm this responsibility",
+    "确认此职责",
+    "Diese Zuständigkeit bestätigen",
+    "Confirmar esta responsabilidad",
+    "Подтвердить назначение",
+    "Conferma questa responsabilità",
+    "この担当を確定"
+  ],
+  "Sélectionnez et confirmez l’industrie de l’application finale.": [
+    "Select and confirm the end-use application's industry.",
+    "请选择并确认最终应用所属的行业。",
+    "Wählen und bestätigen Sie die Branche der Endanwendung.",
+    "Seleccione y confirme la industria de la aplicación final.",
+    "Выберите и подтвердите отрасль конечного применения.",
+    "Seleziona e conferma il settore dell’applicazione finale.",
+    "最終用途の業種を選択し、確認してください。"
+  ],
+  "Transférez ou retirez les territoires et les industries de cette personne avant de la désactiver ou de changer sa fonction.": [
+    "Transfer or remove this person's territories and industries before deactivating them or changing their role.",
+    "停用此人或更改其职务前，请转移或移除其负责的区域和行业。",
+    "Übertragen oder entfernen Sie die Gebiete und Branchen dieser Person, bevor Sie sie deaktivieren oder ihre Funktion ändern.",
+    "Transfiera o retire los territorios e industrias de esta persona antes de desactivarla o cambiar su función.",
+    "Перед деактивацией сотрудника или изменением его роли передайте или удалите его территории и отрасли.",
+    "Trasferisci o rimuovi i territori e i settori di questa persona prima di disattivarla o cambiarne il ruolo.",
+    "担当者を無効にするか役割を変更する前に、その地域と業種の担当を移管または解除してください。"
+  ],
+  "Choisir une industrie": [
+    "Choose an industry",
+    "选择行业",
+    "Branche wählen",
+    "Seleccionar una industria",
+    "Выберите отрасль",
+    "Scegli un settore",
+    "業種を選択"
+  ],
+  "Le détail de l’incident reste sur votre appareil : seul un code d’incident anonyme a été signalé.": [
+    "Incident details stay on your device; only an anonymous incident code was reported.",
+    "事件详情保留在您的设备上，仅报告了匿名事件代码。",
+    "Die Vorfalldetails bleiben auf Ihrem Gerät; nur ein anonymer Vorfallcode wurde gemeldet.",
+    "Los detalles del incidente permanecen en su dispositivo; solo se notificó un código anónimo.",
+    "Подробности сбоя остаются на вашем устройстве; передан только анонимный код.",
+    "I dettagli dell’incidente restano sul dispositivo; è stato segnalato solo un codice anonimo.",
+    "問題の詳細は端末に保存され、匿名のエラーコードのみが報告されました。"
+  ],
+  "Aide Claude pour le titre et l’industrie": [
+    "Claude assistance for title and industry",
+    "使用 Claude 辅助生成标题和行业",
+    "Claude-Hilfe für Titel und Branche",
+    "Ayuda de Claude para el título y la industria",
+    "Помощь Claude с названием и отраслью",
+    "Assistenza Claude per titolo e settore",
+    "Claude によるタイトルと業種の提案"
+  ],
+  "L’aide Claude est désactivée lorsqu’un NDA est demandé.": [
+    "Claude assistance is disabled when an NDA is requested.",
+    "申请保密协议时，Claude 辅助功能将关闭。",
+    "Bei angeforderter NDA ist die Claude-Hilfe deaktiviert.",
+    "La ayuda de Claude se desactiva cuando se solicita un NDA.",
+    "Помощь Claude отключена при запросе NDA.",
+    "L’assistenza Claude è disattivata quando viene richiesto un NDA.",
+    "NDA が要求されている場合、Claude の支援は無効になります。"
+  ],
+  "Après les six questions, vos réponses sont transmises à Claude pour proposer un titre et une industrie. Les champs de coordonnées et les fichiers ne sont pas inclus.": [
+    "After the six questions, your answers are sent to Claude to suggest a title and industry. Contact fields and files are not included.",
+    "完成六个问题后，您的回答将发送给 Claude 以建议标题和行业。不包含联系信息字段和文件。",
+    "Nach den sechs Fragen werden Ihre Antworten an Claude gesendet, um Titel und Branche vorzuschlagen. Kontaktfelder und Dateien werden nicht einbezogen.",
+    "Tras las seis preguntas, sus respuestas se envían a Claude para sugerir un título y una industria. No se incluyen los campos de contacto ni los archivos.",
+    "После шести вопросов ответы передаются Claude для предложения названия и отрасли. Контактные поля и файлы не включаются.",
+    "Dopo le sei domande, le risposte vengono inviate a Claude per suggerire titolo e settore. I campi dei contatti e i file non sono inclusi.",
+    "6つの質問の後、回答を Claude に送信してタイトルと業種を提案します。連絡先の入力欄やファイルは含まれません。"
+  ],
+  "La sélection des capteurs et les calculs techniques restent locaux.": [
+    "Sensor selection and engineering calculations stay local.",
+    "传感器选择和技术计算仍在本地完成。",
+    "Sensorauswahl und technische Berechnungen bleiben lokal.",
+    "La selección de sensores y los cálculos técnicos siguen siendo locales.",
+    "Подбор датчиков и технические расчёты остаются локальными.",
+    "La selezione dei sensori e i calcoli tecnici restano locali.",
+    "センサーの選定と技術計算は引き続きローカルで行われます。"
   ]
 }

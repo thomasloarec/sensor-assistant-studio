@@ -26,6 +26,7 @@ export interface SalesProfile {
   version: number;
 }
 export interface SalesOverview {
+  industries?: import("./industries").IndustryResponsibility[];
   territories: Territory[];
   regions: GeoRegion[];
   imports: { country: string; place_count: number; imported_at: string }[];

@@ -1,3 +1,5 @@
+import { IndustryField } from "./industry-field";
+import { useProjectIdentity } from "./use-project-identity";
 import { currentClientTrace, recordClientTrace } from "@/lib/standex/client-pedagogical";
 import { NeedExamples } from "./need-examples";
 import { SiteLocation } from "./site-location";
@@ -8,7 +10,7 @@ import {
   stripDisabledConsents,
 } from "@/lib/leadmagnet/external-translation";
 import { pairDemonstration } from "@/lib/standex/magnetic-workshop";
-import { isPcbSensor, housingMaterial, pairCategory, suggestedProjectTitle } from "@/lib/leadmagnet/product-presentation";
+import { isPcbSensor, housingMaterial, pairCategory } from "@/lib/leadmagnet/product-presentation";
 import { pairCardFor } from "@/lib/leadmagnet/pair-cards";
 import { useDetectionDataRevision } from "@/lib/standex/detection-data/store";
 import { requirementAnswer } from "@/lib/leadmagnet/requirement-answer";
@@ -263,7 +265,7 @@ export function PrivateDesignError({ reset }: { reset: () => void }) {
         <h1 className="text-xl font-semibold">{t("L'espace de conception s'est interrompu")}</h1>
         <p className="t-caption">
           {t(
-            "Rien de ce que vous avez saisi n'a été transmis. Le détail de l'incident reste sur votre appareil : seul un code d'incident anonyme a été signalé.",
+            "Le détail de l’incident reste sur votre appareil : seul un code d’incident anonyme a été signalé.",
           )}
         </p>
         <Button onClick={reset}>{t("Réessayer")}</Button>
@@ -672,6 +674,8 @@ export function DesignSpace({
 
   const [ndaDialogOpen, setNdaDialogOpen] = useState(false);
   const [bookingCityId, setBookingCityId] = useState<string | null>(null);
+  const [identityEnabled, setIdentityEnabled] = useState(true);
+  const [bookingIndustry, setBookingIndustry] = useState<string | null>(null);
   const [bookingCountry, setBookingCountry] = useState<string | null>(null);
   const [bookingOpen, setBookingOpen] = useState(false);
   const [cablePanelOpen, setCablePanelOpen] = useState(false);
@@ -682,14 +686,6 @@ export function DesignSpace({
   const [routingTarget, setRoutingTarget] = useState<RoutingTarget>({ kind: "base" });
   const [routingSlot, setRoutingSlot] = useState<RoutingSlot>("sensor");
   const [tab, setTab] = useState("besoin");
-  useEffect(() => {
-    if (tab !== "montage") return;
-    setDossier(d => {
-      if (d.title.trim() && d.title !== t("Nouveau projet", isLocale(d.sourceLocale) ? d.sourceLocale : "fr")) return d;
-      const title = suggestedProjectTitle(d.requirements.find(r => r.key === "detection_goal")?.value ?? "");
-      return title ? { ...d, title } : d;
-    });
-  }, [tab]);
   /** Divulgation progressive : les onglets détaillés restent accessibles à la demande. */
   const [showAdvanced, setShowAdvanced] = useState(false);
   /** Mode guidé : une seule question à la fois, sans rien retirer du dossier. */
@@ -711,6 +707,9 @@ export function DesignSpace({
     file: UploadedFile;
   } | null>(null);
   const [pendingSaved, setPendingSaved] = useState<{ id: string; email: string } | null>(null);
+  const questionnaireReady = focusIdx >= GUIDED_QUESTIONS.length - 1 || GUIDED_QUESTIONS.every(q =>
+    dossier.requirements.some(r => r.key === q.key && r.value.trim()) || (dossier.delegatedDecisions ?? []).includes(delegatedQuestion(q.key)));
+  const identityStatus = useProjectIdentity(dossier, setDossier, visible && questionnaireReady && tab !== "besoin" && !pendingSaved && identityEnabled && !nda.required);
   const pendingIdentityRef = useRef<{ localId: string; email: string; assetKey: string | null; identity: PendingIdentity } | null>(null);
   const pendingIdentity = () => {
     const email = dossier.business.contactEmail?.trim().toLowerCase() ?? "";
@@ -1381,6 +1380,7 @@ export function DesignSpace({
     setBookingOpen(false);
     setBookingCountry(null);
     setBookingCityId(null);
+    setBookingIndustry(null);
     setVolumeError(null);
       setPrivacy((p) => ({ ...p, consents: [] }));
       setPreparedUpload(null);
@@ -1746,6 +1746,7 @@ export function DesignSpace({
           setConsentNotice(null);
           setBookingCountry(input.dossier.business.siteCountry ?? null);
           setBookingCityId(input.dossier.business.siteCityId ?? null);
+          setBookingIndustry(input.dossier.business.industry ?? null);
           setBookingOpen(true);
           // Le succès n'est PAS un message libre : il décrit la révision
           // exactement confirmée par le serveur. Dès que le brouillon change,
@@ -2060,6 +2061,13 @@ export function DesignSpace({
   const besoinSection = (
     <div className="space-y-5">
       <Button variant="ghost" onClick={resetSearch}>{t("Réinitialiser ma recherche")}</Button>
+      <div className="panel-block space-y-2">
+        <label className="t-body flex min-h-11 items-center gap-3">
+          <input type="checkbox" checked={identityEnabled && !nda.required} disabled={nda.required} onChange={e=>setIdentityEnabled(e.target.checked)} />
+          {t("Aide Claude pour le titre et l’industrie")}
+        </label>
+        <p className="t-caption">{nda.required ? t("L’aide Claude est désactivée lorsqu’un NDA est demandé.") : t("Après les six questions, vos réponses sont transmises à Claude pour proposer un titre et une industrie. Les champs de coordonnées et les fichiers ne sont pas inclus.")}</p>
+      </div>
       {showAdvanced ? (
         <>
           <p className="text-base text-muted-foreground">{t(LOCAL_ASSISTANT_LABEL)}</p>
@@ -4502,6 +4510,9 @@ export function DesignSpace({
                 }
               />
             </div>
+            <IndustryField business={dossier.business} onChange={patch => setDossier(d => ({ ...d, business: { ...d.business, ...patch } }))} />
+            {identityStatus === "loading" ? <p className="t-caption" role="status">{t("Préparation du titre et de l’industrie…")}</p> : null}
+            {identityStatus === "unavailable" ? <p className="t-caption">{t("La suggestion automatique est indisponible. Choisissez votre industrie et modifiez le titre si nécessaire.")}</p> : null}
             <div>
               <Label className="t-label">{t("E-mail professionnel")}</Label>
               <Input
@@ -5218,7 +5229,7 @@ export function DesignSpace({
             key={dossier.id}
             title={dossier.title}
             onRename={(next) =>
-              setDossier((d) => ({ ...d, title: next, updatedAt: new Date().toISOString() }))
+              setDossier((d) => ({ ...d, title: next, titleSource: "user", updatedAt: new Date().toISOString() }))
             }
           />
           <div className="project-header-status flex flex-wrap items-center gap-2">
@@ -5372,7 +5383,7 @@ export function DesignSpace({
         {espaceSection}
       </WorkspacePanel>
 
-      <BookingDialog open={bookingOpen} onOpenChange={setBookingOpen} country={bookingCountry} cityId={bookingCityId} />
+      <BookingDialog open={bookingOpen} onOpenChange={setBookingOpen} country={bookingCountry} cityId={bookingCityId} industry={bookingIndustry} />
       {/* Fiche détaillée volontaire : cotes, sources et STEP d'encombrement. */}
       {detailSensorId ? (
         <SensorCard

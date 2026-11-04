@@ -645,6 +645,7 @@ function TrackingTab({
               onChange={(e) => setField("countryCode", e.target.value)}
             />
             {p.siteCity ? <p className="t-caption">{t("Ville du site")} : {p.siteCity}</p> : <span />}
+            {p.industry ? <p className="t-caption">{t("Industrie")} : {p.industry}</p> : null}
             {p.salesContactSuggested ? <p className="t-caption">{t("Échangez avec votre responsable Standex")} : {p.salesContactSuggested}</p> : null}
           </div>
           <div className="field">

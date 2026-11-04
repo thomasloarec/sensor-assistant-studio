@@ -48,6 +48,7 @@ const cities = [
   },
 ];
 mock.module("@/lib/leadmagnet/territory-adapter", () => ({
+  changeIndustryResponsibility: async () => { throw new Error("Not used by territory tests"); },
   fetchSalesOverview: async () => structuredClone(data),
   changeTerritory: async (...args: any[]) => {
     calls.push(args);

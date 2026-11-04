@@ -63,6 +63,9 @@ export interface BusinessMeta {
   contactName: string | null;
   contactEmail: string | null;
   contactCompany: string | null;
+  industry?: import("./industries").Industry | null | undefined;
+  industryConfirmed?: boolean | undefined;
+  industrySource?: "user" | "ai" | undefined;
   contactPhone?: string | null;
   siteCity?: string | null;
   siteCityId?: string | null | undefined;
@@ -102,6 +105,7 @@ export interface DesignDossier {
   revision: number;
   storage: StorageMode;
   title: string;
+  titleSource?: "user" | "ai" | undefined;
   /** Langue dans laquelle le projet a réellement démarré.
    * Elle est capturée au démarrage effectif du projet, jamais au montage caché
    * de l'espace, et n'est plus modifiée si l'utilisateur change la langue de

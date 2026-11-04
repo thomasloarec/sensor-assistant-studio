@@ -55,6 +55,7 @@ export function projectReportSections(
   add("Votre projet", [entry("Nom du projet", d.title)], "hero");
   add("Coordonnées et contexte", [
     entry("Entreprise", d.business.contactCompany),
+    entry("Industrie", d.business.industry),
     entry("Nom", d.business.contactName),
     entry("E-mail professionnel", d.business.contactEmail),
     entry("Numéro de téléphone", d.business.contactPhone),

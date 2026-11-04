@@ -173,6 +173,8 @@ describe("Soumission — garde-fous", () => {
     const d = createDossier("2026-10-12T00:00:00.000Z");
     if (deferAll) d.business.undefinedFields = ["annualVolume", "projectPhase", "seriesStartDate", "seriesDurationYears"];
     d.business.contactEmail = "qa@example.invalid";
+    d.business.industry = "Industrial Applications";
+    d.business.industryConfirmed = true;
     d.business.siteCity = "Lyon";
     d.business.siteCountry = "FR";
     return { dossier: d, nda: INITIAL_NDA, consents: [], reviewAcknowledged: true, additionalConstraints: "" };

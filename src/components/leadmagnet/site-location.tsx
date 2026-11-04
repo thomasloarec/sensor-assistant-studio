@@ -10,6 +10,7 @@ import {
   type ContactResult,
 } from "@/lib/leadmagnet/territories";
 import type { BusinessMeta } from "@/lib/leadmagnet/dossier";
+import { hasConfirmedIndustry } from "@/lib/leadmagnet/industries";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -58,8 +59,8 @@ export function SiteLocation({
   useEffect(() => {
     let live = true;
     setContact(null);
-    if (business.siteCountry)
-      void fetchSalesContact(business.siteCountry, business.siteCityId ?? null)
+    if (business.siteCountry && hasConfirmedIndustry(business))
+      void fetchSalesContact(business.siteCountry, business.siteCityId ?? null, business.industry ?? null)
         .then((r) => {
           if (live) setContact(r);
         })
@@ -67,7 +68,7 @@ export function SiteLocation({
     return () => {
       live = false;
     };
-  }, [business.siteCountry, business.siteCityId]);
+  }, [business.siteCountry, business.siteCityId, business.industry, business.industryConfirmed]);
   const countries = COUNTRY_CODES.map((code) => ({
     code,
     name: new Intl.DisplayNames([getLocale()], { type: "region" }).of(code) ?? code,

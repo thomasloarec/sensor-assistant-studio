@@ -122,7 +122,8 @@ describe("Couverture des langues de l'interface", () => {
     // Customer email access: 25 entries.
     // + 1 entry: internal workspace Beta status.
     // + 52 entries: sales territories, city lookup and profile portraits.
-    expect(Object.keys(dictionary)).toHaveLength(4093);
+    // + 24 entries: industry routing, assisted identity and transfer disclosure.
+    expect(Object.keys(dictionary)).toHaveLength(4117);
     const broken = Object.entries(dictionary).filter(
       ([, v]) => v.length !== 7 || v.some((x) => typeof x !== "string" || x.trim() === ""),
     );

@@ -82,6 +82,8 @@ function toProject(raw: unknown): CrmProject | null {
     countryCode: str(r["country_code"]),
     siteCity: str(r["site_city"]),
     salesContactSuggested: str(r["sales_contact_suggested"]),
+    industry: str(r["industry"]),
+    routingBasis: str(r["routing_basis"]),
     salesPersonId: str(r["sales_person"]),
     faePersonId: str(r["fae_person"]),
     currency: str(r["currency"]),

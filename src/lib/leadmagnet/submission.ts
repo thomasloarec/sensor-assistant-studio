@@ -1,3 +1,4 @@
+import { hasConfirmedIndustry } from "./industries";
 import { validSiteCountry } from "./sales-contact";
 import { isPcbSensor } from "./product-presentation";
 import { requirementAnswer } from "./requirement-answer";
@@ -142,6 +143,8 @@ export type SubmissionCheck = { ok: true } | { ok: false; problems: string[] };
 
 export async function checkSubmission(input: SubmissionInput): Promise<SubmissionCheck> {
   const problems: string[] = [];
+  if (!hasConfirmedIndustry(input.dossier.business))
+    problems.push("Sélectionnez et confirmez l’industrie de l’application finale.");
   if (!input.dossier.business.contactEmail?.trim())
     problems.push("Renseignez un contact pour le retour Standex.");
   if (!input.dossier.business.siteCity?.trim() || !validSiteCountry(input.dossier.business.siteCountry))
@@ -261,6 +264,7 @@ export function technicalSummary(dossier: DesignDossier, tr: Tr = identity): str
     dossier.freeConstraints || "—",
     "",
     `## ${tr("Contexte projet")}`,
+    `- ${tr("Industrie")} : ${dossier.business.industry || tr("inconnu")}`,
     `- ${tr("Numéro de téléphone")} : ${dossier.business.contactPhone || tr("inconnu")}`,
     `- ${tr("Ville du site")} : ${dossier.business.siteCity || tr("inconnu")}`,
     `- ${tr("Pays du site")} : ${dossier.business.siteCountry || tr("inconnu")}`,

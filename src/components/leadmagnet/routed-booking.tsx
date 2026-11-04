@@ -18,11 +18,13 @@ export function RoutedBooking({
   onOpenChange,
   country,
   cityId,
+  industry,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   country: string | null;
   cityId?: string | null;
+  industry?: string | null;
 }) {
   useLocale();
   const [result, setResult] = useState<ContactResult | null>(null),
@@ -32,7 +34,7 @@ export function RoutedBooking({
     setResult(null);
     setFailed(false);
     if (open && country)
-      void fetchSalesContact(country, cityId ?? null)
+      void fetchSalesContact(country, cityId ?? null, industry ?? null)
         .then((r) => {
           if (live) setResult(r);
         })
@@ -42,7 +44,7 @@ export function RoutedBooking({
     return () => {
       live = false;
     };
-  }, [open, country, cityId]);
+  }, [open, country, cityId, industry]);
   const contact = result?.contact;
   const url = bookingUrl(contact?.booking_url ?? undefined);
   return (

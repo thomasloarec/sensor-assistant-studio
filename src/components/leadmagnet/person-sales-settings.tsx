@@ -21,6 +21,7 @@ import {
   type TerritoryOperation,
 } from "@/lib/leadmagnet/territories";
 import { SalesAvatar } from "./sales-avatar";
+import { IndustrySettings } from "./industry-settings";
 
 export function PersonSalesSettings({
   person,
@@ -267,6 +268,7 @@ export function PersonSalesSettings({
       ) : null}
       {person.role === "sales" && person.active ? (
         <>
+          <IndustrySettings person={person} people={people} data={data} busy={busy} run={run} />
           <h4 className="t-title-s">{t("Territoires commerciaux")}</h4>
           {owned.length ? (
             <ul className="space-y-2">

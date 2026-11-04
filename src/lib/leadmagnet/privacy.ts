@@ -1,5 +1,6 @@
 /** Confidentialité : par défaut le projet d'exploration vit en mémoire de l'onglet.
- * Rien n'est écrit sur l'appareil ni transféré sans choix explicite.
+ * Storage/submission keep explicit choices. The optional project-identity helper
+ * separately discloses its six-answer Claude transfer before the questionnaire.
  */
 import type { StorageMode } from "./dossier";
 
@@ -50,7 +51,7 @@ export const MEMORY_LOSS_WARNING =
   "Ce projet n'existe que dans cet onglet : fermer ou recharger la page l'efface. Exportez le projet pour le reprendre plus tard.";
 
 export const LOCAL_ASSISTANT_LABEL =
-  "Qualification guidée locale — aucune IA distante n'est reliée. Vos réponses restent dans cet onglet.";
+  "La sélection des capteurs et les calculs techniques restent locaux.";
 
 export function sameBinding(a: ConsentBinding | undefined, b: ConsentBinding | undefined): boolean {
   // Un accord sans rattachement (ancienne forme) ne vaut rien : fail-closed.

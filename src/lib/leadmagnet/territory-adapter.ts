@@ -14,9 +14,9 @@ export function territoryError(error: unknown): string {
     error instanceof Error ? error.message : String((error as { message?: string })?.message ?? "");
   if (/TERRITORY_STALE/.test(code))
     return t("La répartition a changé. Rechargez puis vérifiez à nouveau le transfert.");
-  if (/TRANSFER_TERRITORIES_FIRST/.test(code))
+  if (/TRANSFER_TERRITORIES_FIRST|TRANSFER_INDUSTRIES_FIRST/.test(code))
     return t(
-      "Transférez ou retirez les territoires de cette personne avant de la désactiver ou de changer sa fonction.",
+      "Transférez ou retirez les territoires et les industries de cette personne avant de la désactiver ou de changer sa fonction.",
     );
   if (/CITY_SELECTION_REQUIRED/.test(code))
     return t("Sélectionnez à nouveau la ville dans la liste pour confirmer sa région.");
@@ -56,8 +56,14 @@ export const searchCities = (country: string, query: string) =>
       .replace(/[\u0300-\u036f]/g, "")
       .toLowerCase(),
   });
-export const fetchSalesContact = (country: string, city: string | null) =>
-  rpc<ContactResult>("lead_sales_contact", { p_country: country, p_city: city });
+export const fetchSalesContact = (country: string, city: string | null, industry: string | null = null) =>
+  rpc<ContactResult>("lead_sales_contact_for_industry", { p_country: country, p_city: city, p_industry: industry });
+export const changeIndustryResponsibility = (
+  country: string, industry: string, person: string, remove: boolean, version: number,
+) => rpc<SalesOverview>("lead_sales_industry_change", {
+  p_country: country, p_industry: industry, p_person: person,
+  p_remove: remove, p_version: version, p_confirm: true,
+});
 export const portraitUrl = (path: string) =>
   supabase?.storage.from("sales-portraits").getPublicUrl(path).data.publicUrl ?? "";
 export async function saveSalesProfile(

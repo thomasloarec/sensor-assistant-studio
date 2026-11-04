@@ -24,6 +24,8 @@ const SKIP_FILES = [
   "src/lib/standex/response-contract.ts", // contrat/prompt serveur
   "src/lib/standex/experimental.server.ts", // prompt serveur
   "src/lib/leadmagnet/english-report.server.ts", // prompt serveur de traduction
+  "src/lib/leadmagnet/project-identity.server.ts", // Server prompt and HTTP protocol, never UI
+  "src/lib/leadmagnet/industries.ts", // Exact Quickbase reference labels, stable across locales
   "src/lib/leadmagnet/english-translation.ts", // corps du rapport, en anglais par construction
   "src/lib/standex/migration-status.ts", // SQL et noms de colonnes
   "src/lib/error-page.ts", // page de secours statique hors React

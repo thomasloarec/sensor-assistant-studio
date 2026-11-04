@@ -111,6 +111,8 @@ export interface CrmProject {
   /** Submitted site; additive for servers preceding the location migration. */
   siteCity?: string | null;
   salesContactSuggested?: string | null;
+  industry?: string | null;
+  routingBasis?: string | null;
   salesPersonId: string | null;
   faePersonId: string | null;
   currency: string | null;

@@ -179,7 +179,7 @@ describe('Round2 dimensions, thermal and identities',()=>{
  for(const filler of ['I do not know','je ne sais pas','no sé','weiß nicht'])test(`Filler ${filler}`,()=>expect(isSubstantive(filler)).toBe(false));
 });
 
-function answeredBusiness(){const d=createDossier('2026-10-12T13:03:00Z');d.business={...d.business,annualVolume:{kind:'known',sensorsPerYear:2700},projectPhase:'exploration',seriesStartDate:'2028-02-29',seriesDurationYears:4.5,contactEmail:'qa@example.invalid',siteCity:'Lyon',siteCountry:'FR'};return d;}
+function answeredBusiness(){const d=createDossier('2026-10-12T13:03:00Z');d.business={...d.business,annualVolume:{kind:'known',sensorsPerYear:2700},projectPhase:'exploration',seriesStartDate:'2028-02-29',seriesDurationYears:4.5,industry:'Industrial Applications',industryConfirmed:true,contactEmail:'qa@example.invalid',siteCity:'Lyon',siteCountry:'FR'};return d;}
 describe('Round2 client business gates; no server assertion',()=>{
  for(const field of ['annualVolume','projectPhase','seriesStartDate','seriesDurationYears'] as const)test(`B-${field} explicit undefined marker is per-field`,()=>{
   const d=answeredBusiness();const fresh=createDossier('2026-10-12T13:03:00Z');Object.assign(d.business,{[field]:fresh.business[field]});

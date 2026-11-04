@@ -1,3 +1,4 @@
+import { INDUSTRIES } from "./industries";
 /** Export et reprise d'un dossier de conception.
  *
  * Règles non négociables :
@@ -118,6 +119,9 @@ const annualVolumeSchema = z.union([
 ]);
 
 const businessSchema = z.object({
+  industry: z.enum(INDUSTRIES).nullable().optional(),
+  industryConfirmed: z.boolean().optional(),
+  industrySource: z.enum(["user", "ai"]).optional(),
   projectPhase: z.enum(["exploration", "design", "prototype", "industrialisation", "unknown"]),
   seriesStartDate: z.string().nullable(),
   samplesNeededBy: z.string().nullable(),
@@ -190,6 +194,7 @@ const dossierSchema = z.object({
   studioV2: z.unknown().optional(),
   guidedMounting: z.unknown().optional(),
   title: z.string().catch("Projet repris"),
+  titleSource: z.enum(["user", "ai"]).optional(),
   // Un dossier plus ancien n'a pas de langue d'origine : le français fait foi.
   sourceLocale: z.enum(["fr", "en", "zh", "de", "es", "ru", "it", "ja"]).catch("fr"),
   requirements: z.array(requirement).catch([]),
@@ -333,6 +338,7 @@ export function parseDossierExport(raw: unknown, now = new Date().toISOString())
       ? { guidedMounting: parseGuidedMounting(data.guidedMounting), designFreeze: null }
       : {}),
     title: data.title,
+    ...(data.titleSource ? { titleSource: data.titleSource } : {}),
     sourceLocale: data.sourceLocale,
     requirements: data.requirements.length
       ? data.requirements.map((r) => ({
